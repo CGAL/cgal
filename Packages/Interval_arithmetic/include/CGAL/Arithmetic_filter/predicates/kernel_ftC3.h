@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 1999,2000 The CGAL Consortium
+// Copyright (c) 1999,2000,2001 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -24,6 +24,8 @@
 #ifndef CGAL_ARITHMETIC_FILTER_PREDICATES_KERNEL_FTC3_H
 #define CGAL_ARITHMETIC_FILTER_PREDICATES_KERNEL_FTC3_H
 
+#include <CGAL/Profile_counter.h>
+
 CGAL_BEGIN_NAMESPACE
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
@@ -44,6 +46,10 @@ strict_dominanceC3(
 {
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("IA strict_dominanceC3 calls");
+    ++calls;
+#endif
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return strict_dominanceC3(
 		px.interval(),
@@ -55,6 +61,10 @@ strict_dominanceC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("IA strict_dominanceC3 failures");
+    ++failures;
+#endif
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return strict_dominanceC3(
 		px.exact(),
@@ -72,8 +82,6 @@ struct Static_Filtered_strict_dominanceC3_6
 {
   static double _bound;
   static double _epsilon_0,_epsilon_1,_epsilon_2;
-  static unsigned number_of_failures; // ?
-  static unsigned number_of_updates;
 
   static bool update_epsilon(
 	const Static_filter_error &px,
@@ -100,7 +108,6 @@ struct Static_Filtered_strict_dominanceC3_6
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
-    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,_epsilon_0,_epsilon_1,_epsilon_2);
@@ -166,11 +173,19 @@ strict_dominanceC3(
     NEW_bound = max(NEW_bound, fabs(qy.to_double()));
     NEW_bound = max(NEW_bound, fabs(qz.to_double()));
     // Re-adjust the context.
+#ifdef CGAL_PROFILE
+    static Profile_counter updates("SA strict_dominanceC3 updates");
+    ++updates;
+#endif
     Static_Filtered_strict_dominanceC3_6::new_bound(NEW_bound);
   }
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("SA strict_dominanceC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_strict_dominanceC3_6::epsilon_variant(
 		px.dbl(),
 		py.dbl(),
@@ -188,7 +203,10 @@ strict_dominanceC3(
       // re_adjusted = true;
       // goto re_adjust;
     // }
-    Static_Filtered_strict_dominanceC3_6::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("SA strict_dominanceC3 failures");
+    ++failures;
+#endif
     return strict_dominanceC3(
 		px.exact(),
 		py.exact(),
@@ -226,6 +244,10 @@ strict_dominanceC3(
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("ST strict_dominanceC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_strict_dominanceC3_6::epsilon_variant(
 		px.dbl(),
 		py.dbl(),
@@ -239,7 +261,10 @@ strict_dominanceC3(
   }
   catch (...)
   {
-    Static_Filtered_strict_dominanceC3_6::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("ST strict_dominanceC3 failures");
+    ++failures;
+#endif
     return strict_dominanceC3(
 		px.exact(),
 		py.exact(),
@@ -270,6 +295,10 @@ dominanceC3(
 {
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("IA dominanceC3 calls");
+    ++calls;
+#endif
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return dominanceC3(
 		px.interval(),
@@ -281,6 +310,10 @@ dominanceC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("IA dominanceC3 failures");
+    ++failures;
+#endif
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return dominanceC3(
 		px.exact(),
@@ -298,8 +331,6 @@ struct Static_Filtered_dominanceC3_6
 {
   static double _bound;
   static double _epsilon_0,_epsilon_1,_epsilon_2;
-  static unsigned number_of_failures; // ?
-  static unsigned number_of_updates;
 
   static bool update_epsilon(
 	const Static_filter_error &px,
@@ -326,7 +357,6 @@ struct Static_Filtered_dominanceC3_6
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
-    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,_epsilon_0,_epsilon_1,_epsilon_2);
@@ -392,11 +422,19 @@ dominanceC3(
     NEW_bound = max(NEW_bound, fabs(qy.to_double()));
     NEW_bound = max(NEW_bound, fabs(qz.to_double()));
     // Re-adjust the context.
+#ifdef CGAL_PROFILE
+    static Profile_counter updates("SA dominanceC3 updates");
+    ++updates;
+#endif
     Static_Filtered_dominanceC3_6::new_bound(NEW_bound);
   }
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("SA dominanceC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_dominanceC3_6::epsilon_variant(
 		px.dbl(),
 		py.dbl(),
@@ -414,7 +452,10 @@ dominanceC3(
       // re_adjusted = true;
       // goto re_adjust;
     // }
-    Static_Filtered_dominanceC3_6::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("SA dominanceC3 failures");
+    ++failures;
+#endif
     return dominanceC3(
 		px.exact(),
 		py.exact(),
@@ -452,6 +493,10 @@ dominanceC3(
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("ST dominanceC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_dominanceC3_6::epsilon_variant(
 		px.dbl(),
 		py.dbl(),
@@ -465,7 +510,10 @@ dominanceC3(
   }
   catch (...)
   {
-    Static_Filtered_dominanceC3_6::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("ST dominanceC3 failures");
+    ++failures;
+#endif
     return dominanceC3(
 		px.exact(),
 		py.exact(),
@@ -499,6 +547,10 @@ collinearC3(
 {
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("IA collinearC3 calls");
+    ++calls;
+#endif
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return collinearC3(
 		px.interval(),
@@ -513,6 +565,10 @@ collinearC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("IA collinearC3 failures");
+    ++failures;
+#endif
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return collinearC3(
 		px.exact(),
@@ -533,8 +589,6 @@ struct Static_Filtered_collinearC3_9
 {
   static double _bound;
   static double _epsilon_0,_epsilon_1,_epsilon_2;
-  static unsigned number_of_failures; // ?
-  static unsigned number_of_updates;
 
   static bool update_epsilon(
 	const Static_filter_error &px,
@@ -571,7 +625,6 @@ struct Static_Filtered_collinearC3_9
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
-    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,b,_epsilon_0,_epsilon_1,_epsilon_2);
@@ -656,11 +709,19 @@ collinearC3(
     NEW_bound = max(NEW_bound, fabs(ry.to_double()));
     NEW_bound = max(NEW_bound, fabs(rz.to_double()));
     // Re-adjust the context.
+#ifdef CGAL_PROFILE
+    static Profile_counter updates("SA collinearC3 updates");
+    ++updates;
+#endif
     Static_Filtered_collinearC3_9::new_bound(NEW_bound);
   }
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("SA collinearC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_collinearC3_9::epsilon_variant(
 		px.dbl(),
 		py.dbl(),
@@ -681,7 +742,10 @@ collinearC3(
       // re_adjusted = true;
       // goto re_adjust;
     // }
-    Static_Filtered_collinearC3_9::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("SA collinearC3 failures");
+    ++failures;
+#endif
     return collinearC3(
 		px.exact(),
 		py.exact(),
@@ -728,6 +792,10 @@ collinearC3(
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("ST collinearC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_collinearC3_9::epsilon_variant(
 		px.dbl(),
 		py.dbl(),
@@ -744,7 +812,10 @@ collinearC3(
   }
   catch (...)
   {
-    Static_Filtered_collinearC3_9::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("ST collinearC3 failures");
+    ++failures;
+#endif
     return collinearC3(
 		px.exact(),
 		py.exact(),
@@ -784,6 +855,10 @@ orientationC3(
 {
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("IA orientationC3 calls");
+    ++calls;
+#endif
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return orientationC3(
 		px.interval(),
@@ -801,6 +876,10 @@ orientationC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("IA orientationC3 failures");
+    ++failures;
+#endif
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return orientationC3(
 		px.exact(),
@@ -824,8 +903,6 @@ struct Static_Filtered_orientationC3_12
 {
   static double _bound;
   static double _epsilon_0;
-  static unsigned number_of_failures; // ?
-  static unsigned number_of_updates;
 
   static Orientation update_epsilon(
 	const Static_filter_error &px,
@@ -854,7 +931,6 @@ struct Static_Filtered_orientationC3_12
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
-    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,b,b,_epsilon_0);
@@ -940,11 +1016,19 @@ orientationC3(
     NEW_bound = max(NEW_bound, fabs(sy.to_double()));
     NEW_bound = max(NEW_bound, fabs(sz.to_double()));
     // Re-adjust the context.
+#ifdef CGAL_PROFILE
+    static Profile_counter updates("SA orientationC3 updates");
+    ++updates;
+#endif
     Static_Filtered_orientationC3_12::new_bound(NEW_bound);
   }
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("SA orientationC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_orientationC3_12::epsilon_variant(
 		px.dbl(),
 		py.dbl(),
@@ -966,7 +1050,10 @@ orientationC3(
       // re_adjusted = true;
       // goto re_adjust;
     // }
-    Static_Filtered_orientationC3_12::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("SA orientationC3 failures");
+    ++failures;
+#endif
     return orientationC3(
 		px.exact(),
 		py.exact(),
@@ -1022,6 +1109,10 @@ orientationC3(
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("ST orientationC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_orientationC3_12::epsilon_variant(
 		px.dbl(),
 		py.dbl(),
@@ -1039,7 +1130,10 @@ orientationC3(
   }
   catch (...)
   {
-    Static_Filtered_orientationC3_12::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("ST orientationC3 failures");
+    ++failures;
+#endif
     return orientationC3(
 		px.exact(),
 		py.exact(),
@@ -1079,6 +1173,10 @@ angleC3(
 {
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("IA angleC3 calls");
+    ++calls;
+#endif
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return angleC3(
 		px.interval(),
@@ -1093,6 +1191,10 @@ angleC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("IA angleC3 failures");
+    ++failures;
+#endif
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return angleC3(
 		px.exact(),
@@ -1113,8 +1215,6 @@ struct Static_Filtered_angleC3_9
 {
   static double _bound;
   static double _epsilon_0;
-  static unsigned number_of_failures; // ?
-  static unsigned number_of_updates;
 
   static Angle update_epsilon(
 	const Static_filter_error &px,
@@ -1140,7 +1240,6 @@ struct Static_Filtered_angleC3_9
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
-    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,b,_epsilon_0);
@@ -1214,11 +1313,19 @@ angleC3(
     NEW_bound = max(NEW_bound, fabs(ry.to_double()));
     NEW_bound = max(NEW_bound, fabs(rz.to_double()));
     // Re-adjust the context.
+#ifdef CGAL_PROFILE
+    static Profile_counter updates("SA angleC3 updates");
+    ++updates;
+#endif
     Static_Filtered_angleC3_9::new_bound(NEW_bound);
   }
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("SA angleC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_angleC3_9::epsilon_variant(
 		px.dbl(),
 		py.dbl(),
@@ -1237,7 +1344,10 @@ angleC3(
       // re_adjusted = true;
       // goto re_adjust;
     // }
-    Static_Filtered_angleC3_9::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("SA angleC3 failures");
+    ++failures;
+#endif
     return angleC3(
 		px.exact(),
 		py.exact(),
@@ -1284,6 +1394,10 @@ angleC3(
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("ST angleC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_angleC3_9::epsilon_variant(
 		px.dbl(),
 		py.dbl(),
@@ -1298,7 +1412,10 @@ angleC3(
   }
   catch (...)
   {
-    Static_Filtered_angleC3_9::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("ST angleC3 failures");
+    ++failures;
+#endif
     return angleC3(
 		px.exact(),
 		py.exact(),
@@ -1338,6 +1455,10 @@ coplanar_side_of_bounded_circleC3(
 {
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("IA coplanar_side_of_bounded_circleC3 calls");
+    ++calls;
+#endif
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return coplanar_side_of_bounded_circleC3(
 		px.interval(),
@@ -1355,6 +1476,10 @@ coplanar_side_of_bounded_circleC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("IA coplanar_side_of_bounded_circleC3 failures");
+    ++failures;
+#endif
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return coplanar_side_of_bounded_circleC3(
 		px.exact(),
@@ -1378,8 +1503,6 @@ struct Static_Filtered_coplanar_side_of_bounded_circleC3_12
 {
   static double _bound;
   static double _epsilon_0;
-  static unsigned number_of_failures; // ?
-  static unsigned number_of_updates;
 
   static Bounded_side update_epsilon(
 	const Static_filter_error &px,
@@ -1435,7 +1558,6 @@ struct Static_Filtered_coplanar_side_of_bounded_circleC3_12
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
-    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,b,b,_epsilon_0);
@@ -1548,11 +1670,19 @@ coplanar_side_of_bounded_circleC3(
     NEW_bound = max(NEW_bound, fabs(ty.to_double()));
     NEW_bound = max(NEW_bound, fabs(tz.to_double()));
     // Re-adjust the context.
+#ifdef CGAL_PROFILE
+    static Profile_counter updates("SA coplanar_side_of_bounded_circleC3 updates");
+    ++updates;
+#endif
     Static_Filtered_coplanar_side_of_bounded_circleC3_12::new_bound(NEW_bound);
   }
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("SA coplanar_side_of_bounded_circleC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_coplanar_side_of_bounded_circleC3_12::epsilon_variant(
 		px.dbl(),
 		py.dbl(),
@@ -1574,7 +1704,10 @@ coplanar_side_of_bounded_circleC3(
       // re_adjusted = true;
       // goto re_adjust;
     // }
-    Static_Filtered_coplanar_side_of_bounded_circleC3_12::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("SA coplanar_side_of_bounded_circleC3 failures");
+    ++failures;
+#endif
     return coplanar_side_of_bounded_circleC3(
 		px.exact(),
 		py.exact(),
@@ -1630,6 +1763,10 @@ coplanar_side_of_bounded_circleC3(
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("ST coplanar_side_of_bounded_circleC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_coplanar_side_of_bounded_circleC3_12::epsilon_variant(
 		px.dbl(),
 		py.dbl(),
@@ -1647,7 +1784,10 @@ coplanar_side_of_bounded_circleC3(
   }
   catch (...)
   {
-    Static_Filtered_coplanar_side_of_bounded_circleC3_12::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("ST coplanar_side_of_bounded_circleC3 failures");
+    ++failures;
+#endif
     return coplanar_side_of_bounded_circleC3(
 		px.exact(),
 		py.exact(),
@@ -1684,6 +1824,10 @@ equal_directionC3(
 {
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("IA equal_directionC3 calls");
+    ++calls;
+#endif
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return equal_directionC3(
 		dx1.interval(),
@@ -1695,6 +1839,10 @@ equal_directionC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("IA equal_directionC3 failures");
+    ++failures;
+#endif
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return equal_directionC3(
 		dx1.exact(),
@@ -1712,8 +1860,6 @@ struct Static_Filtered_equal_directionC3_6
 {
   static double _bound;
   static double _epsilon_0,_epsilon_1,_epsilon_2,_epsilon_3,_epsilon_4,_epsilon_5,_epsilon_6,_epsilon_7,_epsilon_8;
-  static unsigned number_of_failures; // ?
-  static unsigned number_of_updates;
 
   static bool update_epsilon(
 	const Static_filter_error &dx1,
@@ -1755,7 +1901,6 @@ struct Static_Filtered_equal_directionC3_6
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
-    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,_epsilon_0,_epsilon_1,_epsilon_2,_epsilon_3,_epsilon_4,_epsilon_5,_epsilon_6,_epsilon_7,_epsilon_8);
@@ -1836,11 +1981,19 @@ equal_directionC3(
     NEW_bound = max(NEW_bound, fabs(dy2.to_double()));
     NEW_bound = max(NEW_bound, fabs(dz2.to_double()));
     // Re-adjust the context.
+#ifdef CGAL_PROFILE
+    static Profile_counter updates("SA equal_directionC3 updates");
+    ++updates;
+#endif
     Static_Filtered_equal_directionC3_6::new_bound(NEW_bound);
   }
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("SA equal_directionC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_equal_directionC3_6::epsilon_variant(
 		dx1.dbl(),
 		dy1.dbl(),
@@ -1864,7 +2017,10 @@ equal_directionC3(
       // re_adjusted = true;
       // goto re_adjust;
     // }
-    Static_Filtered_equal_directionC3_6::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("SA equal_directionC3 failures");
+    ++failures;
+#endif
     return equal_directionC3(
 		dx1.exact(),
 		dy1.exact(),
@@ -1902,6 +2058,10 @@ equal_directionC3(
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("ST equal_directionC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_equal_directionC3_6::epsilon_variant(
 		dx1.dbl(),
 		dy1.dbl(),
@@ -1921,7 +2081,10 @@ equal_directionC3(
   }
   catch (...)
   {
-    Static_Filtered_equal_directionC3_6::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("ST equal_directionC3 failures");
+    ++failures;
+#endif
     return equal_directionC3(
 		dx1.exact(),
 		dy1.exact(),
@@ -1954,6 +2117,10 @@ equal_planeC3(
 {
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("IA equal_planeC3 calls");
+    ++calls;
+#endif
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return equal_planeC3(
 		ha.interval(),
@@ -1967,6 +2134,10 @@ equal_planeC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("IA equal_planeC3 failures");
+    ++failures;
+#endif
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return equal_planeC3(
 		ha.exact(),
@@ -1986,8 +2157,6 @@ struct Static_Filtered_equal_planeC3_8
 {
   static double _bound;
   static double _epsilon_0,_epsilon_1,_epsilon_2,_epsilon_3,_epsilon_4,_epsilon_5,_epsilon_6,_epsilon_7,_epsilon_8,_epsilon_9,_epsilon_10,_epsilon_11,_epsilon_12,_epsilon_13,_epsilon_14,_epsilon_15,_epsilon_16,_epsilon_17;
-  static unsigned number_of_failures; // ?
-  static unsigned number_of_updates;
 
   static bool update_epsilon(
 	const Static_filter_error &ha,
@@ -2056,7 +2225,6 @@ struct Static_Filtered_equal_planeC3_8
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
-    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,_epsilon_0,_epsilon_1,_epsilon_2,_epsilon_3,_epsilon_4,_epsilon_5,_epsilon_6,_epsilon_7,_epsilon_8,_epsilon_9,_epsilon_10,_epsilon_11,_epsilon_12,_epsilon_13,_epsilon_14,_epsilon_15,_epsilon_16,_epsilon_17);
@@ -2170,11 +2338,19 @@ equal_planeC3(
     NEW_bound = max(NEW_bound, fabs(pc.to_double()));
     NEW_bound = max(NEW_bound, fabs(pd.to_double()));
     // Re-adjust the context.
+#ifdef CGAL_PROFILE
+    static Profile_counter updates("SA equal_planeC3 updates");
+    ++updates;
+#endif
     Static_Filtered_equal_planeC3_8::new_bound(NEW_bound);
   }
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("SA equal_planeC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_equal_planeC3_8::epsilon_variant(
 		ha.dbl(),
 		hb.dbl(),
@@ -2209,7 +2385,10 @@ equal_planeC3(
       // re_adjusted = true;
       // goto re_adjust;
     // }
-    Static_Filtered_equal_planeC3_8::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("SA equal_planeC3 failures");
+    ++failures;
+#endif
     return equal_planeC3(
 		ha.exact(),
 		hb.exact(),
@@ -2253,6 +2432,10 @@ equal_planeC3(
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("ST equal_planeC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_equal_planeC3_8::epsilon_variant(
 		ha.dbl(),
 		hb.dbl(),
@@ -2283,7 +2466,10 @@ equal_planeC3(
   }
   catch (...)
   {
-    Static_Filtered_equal_planeC3_8::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("ST equal_planeC3 failures");
+    ++failures;
+#endif
     return equal_planeC3(
 		ha.exact(),
 		hb.exact(),
@@ -2317,6 +2503,10 @@ side_of_oriented_planeC3(
 {
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("IA side_of_oriented_planeC3 calls");
+    ++calls;
+#endif
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return side_of_oriented_planeC3(
 		a.interval(),
@@ -2329,6 +2519,10 @@ side_of_oriented_planeC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("IA side_of_oriented_planeC3 failures");
+    ++failures;
+#endif
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return side_of_oriented_planeC3(
 		a.exact(),
@@ -2347,8 +2541,6 @@ struct Static_Filtered_side_of_oriented_planeC3_7
 {
   static double _bound;
   static double _epsilon_0;
-  static unsigned number_of_failures; // ?
-  static unsigned number_of_updates;
 
   static Oriented_side update_epsilon(
 	const Static_filter_error &a,
@@ -2370,7 +2562,6 @@ struct Static_Filtered_side_of_oriented_planeC3_7
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
-    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,_epsilon_0);
@@ -2434,11 +2625,19 @@ side_of_oriented_planeC3(
     NEW_bound = max(NEW_bound, fabs(py.to_double()));
     NEW_bound = max(NEW_bound, fabs(pz.to_double()));
     // Re-adjust the context.
+#ifdef CGAL_PROFILE
+    static Profile_counter updates("SA side_of_oriented_planeC3 updates");
+    ++updates;
+#endif
     Static_Filtered_side_of_oriented_planeC3_7::new_bound(NEW_bound);
   }
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("SA side_of_oriented_planeC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_side_of_oriented_planeC3_7::epsilon_variant(
 		a.dbl(),
 		b.dbl(),
@@ -2455,7 +2654,10 @@ side_of_oriented_planeC3(
       // re_adjusted = true;
       // goto re_adjust;
     // }
-    Static_Filtered_side_of_oriented_planeC3_7::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("SA side_of_oriented_planeC3 failures");
+    ++failures;
+#endif
     return side_of_oriented_planeC3(
 		a.exact(),
 		b.exact(),
@@ -2496,6 +2698,10 @@ side_of_oriented_planeC3(
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("ST side_of_oriented_planeC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_side_of_oriented_planeC3_7::epsilon_variant(
 		a.dbl(),
 		b.dbl(),
@@ -2508,7 +2714,10 @@ side_of_oriented_planeC3(
   }
   catch (...)
   {
-    Static_Filtered_side_of_oriented_planeC3_7::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("ST side_of_oriented_planeC3 failures");
+    ++failures;
+#endif
     return side_of_oriented_planeC3(
 		a.exact(),
 		b.exact(),
@@ -2549,6 +2758,10 @@ side_of_oriented_sphereC3(
 {
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("IA side_of_oriented_sphereC3 calls");
+    ++calls;
+#endif
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return side_of_oriented_sphereC3(
 		px.interval(),
@@ -2569,6 +2782,10 @@ side_of_oriented_sphereC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("IA side_of_oriented_sphereC3 failures");
+    ++failures;
+#endif
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return side_of_oriented_sphereC3(
 		px.exact(),
@@ -2595,8 +2812,6 @@ struct Static_Filtered_side_of_oriented_sphereC3_15
 {
   static double _bound;
   static double _epsilon_0;
-  static unsigned number_of_failures; // ?
-  static unsigned number_of_updates;
 
   static Oriented_side update_epsilon(
 	const Static_filter_error &px,
@@ -2645,7 +2860,6 @@ struct Static_Filtered_side_of_oriented_sphereC3_15
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
-    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,_epsilon_0);
@@ -2760,11 +2974,19 @@ side_of_oriented_sphereC3(
     NEW_bound = max(NEW_bound, fabs(ty.to_double()));
     NEW_bound = max(NEW_bound, fabs(tz.to_double()));
     // Re-adjust the context.
+#ifdef CGAL_PROFILE
+    static Profile_counter updates("SA side_of_oriented_sphereC3 updates");
+    ++updates;
+#endif
     Static_Filtered_side_of_oriented_sphereC3_15::new_bound(NEW_bound);
   }
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("SA side_of_oriented_sphereC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_side_of_oriented_sphereC3_15::epsilon_variant(
 		px.dbl(),
 		py.dbl(),
@@ -2789,7 +3011,10 @@ side_of_oriented_sphereC3(
       // re_adjusted = true;
       // goto re_adjust;
     // }
-    Static_Filtered_side_of_oriented_sphereC3_15::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("SA side_of_oriented_sphereC3 failures");
+    ++failures;
+#endif
     return side_of_oriented_sphereC3(
 		px.exact(),
 		py.exact(),
@@ -2854,6 +3079,10 @@ side_of_oriented_sphereC3(
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("ST side_of_oriented_sphereC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_side_of_oriented_sphereC3_15::epsilon_variant(
 		px.dbl(),
 		py.dbl(),
@@ -2874,7 +3103,10 @@ side_of_oriented_sphereC3(
   }
   catch (...)
   {
-    Static_Filtered_side_of_oriented_sphereC3_15::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("ST side_of_oriented_sphereC3 failures");
+    ++failures;
+#endif
     return side_of_oriented_sphereC3(
 		px.exact(),
 		py.exact(),
@@ -2923,6 +3155,10 @@ side_of_bounded_sphereC3(
 {
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("IA side_of_bounded_sphereC3 calls");
+    ++calls;
+#endif
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return side_of_bounded_sphereC3(
 		px.interval(),
@@ -2943,6 +3179,10 @@ side_of_bounded_sphereC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("IA side_of_bounded_sphereC3 failures");
+    ++failures;
+#endif
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return side_of_bounded_sphereC3(
 		px.exact(),
@@ -2969,8 +3209,6 @@ struct Static_Filtered_side_of_bounded_sphereC3_15
 {
   static double _bound;
   static double _epsilon_0,_epsilon_1;
-  static unsigned number_of_failures; // ?
-  static unsigned number_of_updates;
 
   static Bounded_side update_epsilon(
 	const Static_filter_error &px,
@@ -3011,7 +3249,6 @@ struct Static_Filtered_side_of_bounded_sphereC3_15
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
-    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,_epsilon_0,_epsilon_1);
@@ -3118,11 +3355,19 @@ side_of_bounded_sphereC3(
     NEW_bound = max(NEW_bound, fabs(ty.to_double()));
     NEW_bound = max(NEW_bound, fabs(tz.to_double()));
     // Re-adjust the context.
+#ifdef CGAL_PROFILE
+    static Profile_counter updates("SA side_of_bounded_sphereC3 updates");
+    ++updates;
+#endif
     Static_Filtered_side_of_bounded_sphereC3_15::new_bound(NEW_bound);
   }
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("SA side_of_bounded_sphereC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_side_of_bounded_sphereC3_15::epsilon_variant(
 		px.dbl(),
 		py.dbl(),
@@ -3148,7 +3393,10 @@ side_of_bounded_sphereC3(
       // re_adjusted = true;
       // goto re_adjust;
     // }
-    Static_Filtered_side_of_bounded_sphereC3_15::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("SA side_of_bounded_sphereC3 failures");
+    ++failures;
+#endif
     return side_of_bounded_sphereC3(
 		px.exact(),
 		py.exact(),
@@ -3213,6 +3461,10 @@ side_of_bounded_sphereC3(
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("ST side_of_bounded_sphereC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_side_of_bounded_sphereC3_15::epsilon_variant(
 		px.dbl(),
 		py.dbl(),
@@ -3234,7 +3486,10 @@ side_of_bounded_sphereC3(
   }
   catch (...)
   {
-    Static_Filtered_side_of_bounded_sphereC3_15::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("ST side_of_bounded_sphereC3 failures");
+    ++failures;
+#endif
     return side_of_bounded_sphereC3(
 		px.exact(),
 		py.exact(),
@@ -3277,6 +3532,10 @@ side_of_bounded_sphereC3(
 {
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("IA side_of_bounded_sphereC3 calls");
+    ++calls;
+#endif
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return side_of_bounded_sphereC3(
 		px.interval(),
@@ -3291,6 +3550,10 @@ side_of_bounded_sphereC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("IA side_of_bounded_sphereC3 failures");
+    ++failures;
+#endif
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return side_of_bounded_sphereC3(
 		px.exact(),
@@ -3311,8 +3574,6 @@ struct Static_Filtered_side_of_bounded_sphereC3_9
 {
   static double _bound;
   static double _epsilon_0;
-  static unsigned number_of_failures; // ?
-  static unsigned number_of_updates;
 
   static Bounded_side update_epsilon(
 	const Static_filter_error &px,
@@ -3339,7 +3600,6 @@ struct Static_Filtered_side_of_bounded_sphereC3_9
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
-    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,b,_epsilon_0);
@@ -3414,11 +3674,19 @@ side_of_bounded_sphereC3(
     NEW_bound = max(NEW_bound, fabs(ty.to_double()));
     NEW_bound = max(NEW_bound, fabs(tz.to_double()));
     // Re-adjust the context.
+#ifdef CGAL_PROFILE
+    static Profile_counter updates("SA side_of_bounded_sphereC3 updates");
+    ++updates;
+#endif
     Static_Filtered_side_of_bounded_sphereC3_9::new_bound(NEW_bound);
   }
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("SA side_of_bounded_sphereC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_side_of_bounded_sphereC3_9::epsilon_variant(
 		px.dbl(),
 		py.dbl(),
@@ -3437,7 +3705,10 @@ side_of_bounded_sphereC3(
       // re_adjusted = true;
       // goto re_adjust;
     // }
-    Static_Filtered_side_of_bounded_sphereC3_9::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("SA side_of_bounded_sphereC3 failures");
+    ++failures;
+#endif
     return side_of_bounded_sphereC3(
 		px.exact(),
 		py.exact(),
@@ -3484,6 +3755,10 @@ side_of_bounded_sphereC3(
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("ST side_of_bounded_sphereC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_side_of_bounded_sphereC3_9::epsilon_variant(
 		px.dbl(),
 		py.dbl(),
@@ -3498,7 +3773,10 @@ side_of_bounded_sphereC3(
   }
   catch (...)
   {
-    Static_Filtered_side_of_bounded_sphereC3_9::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("ST side_of_bounded_sphereC3 failures");
+    ++failures;
+#endif
     return side_of_bounded_sphereC3(
 		px.exact(),
 		py.exact(),
@@ -3535,6 +3813,10 @@ cmp_dist_to_pointC3(
 {
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("IA cmp_dist_to_pointC3 calls");
+    ++calls;
+#endif
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return cmp_dist_to_pointC3(
 		px.interval(),
@@ -3549,6 +3831,10 @@ cmp_dist_to_pointC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("IA cmp_dist_to_pointC3 failures");
+    ++failures;
+#endif
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return cmp_dist_to_pointC3(
 		px.exact(),
@@ -3569,8 +3855,6 @@ struct Static_Filtered_cmp_dist_to_pointC3_9
 {
   static double _bound;
   static double _epsilon_0;
-  static unsigned number_of_failures; // ?
-  static unsigned number_of_updates;
 
   static Comparison_result update_epsilon(
 	const Static_filter_error &px,
@@ -3595,7 +3879,6 @@ struct Static_Filtered_cmp_dist_to_pointC3_9
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
-    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,b,_epsilon_0);
@@ -3668,11 +3951,19 @@ cmp_dist_to_pointC3(
     NEW_bound = max(NEW_bound, fabs(ry.to_double()));
     NEW_bound = max(NEW_bound, fabs(rz.to_double()));
     // Re-adjust the context.
+#ifdef CGAL_PROFILE
+    static Profile_counter updates("SA cmp_dist_to_pointC3 updates");
+    ++updates;
+#endif
     Static_Filtered_cmp_dist_to_pointC3_9::new_bound(NEW_bound);
   }
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("SA cmp_dist_to_pointC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_cmp_dist_to_pointC3_9::epsilon_variant(
 		px.dbl(),
 		py.dbl(),
@@ -3691,7 +3982,10 @@ cmp_dist_to_pointC3(
       // re_adjusted = true;
       // goto re_adjust;
     // }
-    Static_Filtered_cmp_dist_to_pointC3_9::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("SA cmp_dist_to_pointC3 failures");
+    ++failures;
+#endif
     return cmp_dist_to_pointC3(
 		px.exact(),
 		py.exact(),
@@ -3738,6 +4032,10 @@ cmp_dist_to_pointC3(
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("ST cmp_dist_to_pointC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_cmp_dist_to_pointC3_9::epsilon_variant(
 		px.dbl(),
 		py.dbl(),
@@ -3752,7 +4050,10 @@ cmp_dist_to_pointC3(
   }
   catch (...)
   {
-    Static_Filtered_cmp_dist_to_pointC3_9::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("ST cmp_dist_to_pointC3 failures");
+    ++failures;
+#endif
     return cmp_dist_to_pointC3(
 		px.exact(),
 		py.exact(),
@@ -3792,6 +4093,10 @@ side_of_bounded_sphereC3(
 {
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("IA side_of_bounded_sphereC3 calls");
+    ++calls;
+#endif
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return side_of_bounded_sphereC3(
 		px.interval(),
@@ -3809,6 +4114,10 @@ side_of_bounded_sphereC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("IA side_of_bounded_sphereC3 failures");
+    ++failures;
+#endif
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return side_of_bounded_sphereC3(
 		px.exact(),
@@ -3832,8 +4141,6 @@ struct Static_Filtered_side_of_bounded_sphereC3_12
 {
   static double _bound;
   static double _epsilon_0;
-  static unsigned number_of_failures; // ?
-  static unsigned number_of_updates;
 
   static Bounded_side update_epsilon(
 	const Static_filter_error &px,
@@ -3896,7 +4203,6 @@ struct Static_Filtered_side_of_bounded_sphereC3_12
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
-    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,b,b,_epsilon_0);
@@ -4016,11 +4322,19 @@ side_of_bounded_sphereC3(
     NEW_bound = max(NEW_bound, fabs(ty.to_double()));
     NEW_bound = max(NEW_bound, fabs(tz.to_double()));
     // Re-adjust the context.
+#ifdef CGAL_PROFILE
+    static Profile_counter updates("SA side_of_bounded_sphereC3 updates");
+    ++updates;
+#endif
     Static_Filtered_side_of_bounded_sphereC3_12::new_bound(NEW_bound);
   }
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("SA side_of_bounded_sphereC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_side_of_bounded_sphereC3_12::epsilon_variant(
 		px.dbl(),
 		py.dbl(),
@@ -4042,7 +4356,10 @@ side_of_bounded_sphereC3(
       // re_adjusted = true;
       // goto re_adjust;
     // }
-    Static_Filtered_side_of_bounded_sphereC3_12::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("SA side_of_bounded_sphereC3 failures");
+    ++failures;
+#endif
     return side_of_bounded_sphereC3(
 		px.exact(),
 		py.exact(),
@@ -4098,6 +4415,10 @@ side_of_bounded_sphereC3(
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("ST side_of_bounded_sphereC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_side_of_bounded_sphereC3_12::epsilon_variant(
 		px.dbl(),
 		py.dbl(),
@@ -4115,7 +4436,10 @@ side_of_bounded_sphereC3(
   }
   catch (...)
   {
-    Static_Filtered_side_of_bounded_sphereC3_12::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("ST side_of_bounded_sphereC3 failures");
+    ++failures;
+#endif
     return side_of_bounded_sphereC3(
 		px.exact(),
 		py.exact(),
@@ -4155,6 +4479,10 @@ cmp_signed_dist_to_directionC3(
 {
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("IA cmp_signed_dist_to_directionC3 calls");
+    ++calls;
+#endif
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return cmp_signed_dist_to_directionC3(
 		pa.interval(),
@@ -4169,6 +4497,10 @@ cmp_signed_dist_to_directionC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("IA cmp_signed_dist_to_directionC3 failures");
+    ++failures;
+#endif
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return cmp_signed_dist_to_directionC3(
 		pa.exact(),
@@ -4189,8 +4521,6 @@ struct Static_Filtered_cmp_signed_dist_to_directionC3_9
 {
   static double _bound;
   static double _epsilon_0;
-  static unsigned number_of_failures; // ?
-  static unsigned number_of_updates;
 
   static Comparison_result update_epsilon(
 	const Static_filter_error &pa,
@@ -4215,7 +4545,6 @@ struct Static_Filtered_cmp_signed_dist_to_directionC3_9
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
-    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,b,_epsilon_0);
@@ -4288,11 +4617,19 @@ cmp_signed_dist_to_directionC3(
     NEW_bound = max(NEW_bound, fabs(qy.to_double()));
     NEW_bound = max(NEW_bound, fabs(qz.to_double()));
     // Re-adjust the context.
+#ifdef CGAL_PROFILE
+    static Profile_counter updates("SA cmp_signed_dist_to_directionC3 updates");
+    ++updates;
+#endif
     Static_Filtered_cmp_signed_dist_to_directionC3_9::new_bound(NEW_bound);
   }
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("SA cmp_signed_dist_to_directionC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_cmp_signed_dist_to_directionC3_9::epsilon_variant(
 		pa.dbl(),
 		pb.dbl(),
@@ -4311,7 +4648,10 @@ cmp_signed_dist_to_directionC3(
       // re_adjusted = true;
       // goto re_adjust;
     // }
-    Static_Filtered_cmp_signed_dist_to_directionC3_9::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("SA cmp_signed_dist_to_directionC3 failures");
+    ++failures;
+#endif
     return cmp_signed_dist_to_directionC3(
 		pa.exact(),
 		pb.exact(),
@@ -4358,6 +4698,10 @@ cmp_signed_dist_to_directionC3(
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("ST cmp_signed_dist_to_directionC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_cmp_signed_dist_to_directionC3_9::epsilon_variant(
 		pa.dbl(),
 		pb.dbl(),
@@ -4372,7 +4716,10 @@ cmp_signed_dist_to_directionC3(
   }
   catch (...)
   {
-    Static_Filtered_cmp_signed_dist_to_directionC3_9::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("ST cmp_signed_dist_to_directionC3 failures");
+    ++failures;
+#endif
     return cmp_signed_dist_to_directionC3(
 		pa.exact(),
 		pb.exact(),
@@ -4415,6 +4762,10 @@ cmp_signed_dist_to_planeC3(
 {
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("IA cmp_signed_dist_to_planeC3 calls");
+    ++calls;
+#endif
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return cmp_signed_dist_to_planeC3(
 		ppx.interval(),
@@ -4435,6 +4786,10 @@ cmp_signed_dist_to_planeC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("IA cmp_signed_dist_to_planeC3 failures");
+    ++failures;
+#endif
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return cmp_signed_dist_to_planeC3(
 		ppx.exact(),
@@ -4461,8 +4816,6 @@ struct Static_Filtered_cmp_signed_dist_to_planeC3_15
 {
   static double _bound;
   static double _epsilon_0;
-  static unsigned number_of_failures; // ?
-  static unsigned number_of_updates;
 
   static Comparison_result update_epsilon(
 	const Static_filter_error &ppx,
@@ -4495,7 +4848,6 @@ struct Static_Filtered_cmp_signed_dist_to_planeC3_15
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
-    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,_epsilon_0);
@@ -4594,11 +4946,19 @@ cmp_signed_dist_to_planeC3(
     NEW_bound = max(NEW_bound, fabs(qy.to_double()));
     NEW_bound = max(NEW_bound, fabs(qz.to_double()));
     // Re-adjust the context.
+#ifdef CGAL_PROFILE
+    static Profile_counter updates("SA cmp_signed_dist_to_planeC3 updates");
+    ++updates;
+#endif
     Static_Filtered_cmp_signed_dist_to_planeC3_15::new_bound(NEW_bound);
   }
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("SA cmp_signed_dist_to_planeC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_cmp_signed_dist_to_planeC3_15::epsilon_variant(
 		ppx.dbl(),
 		ppy.dbl(),
@@ -4623,7 +4983,10 @@ cmp_signed_dist_to_planeC3(
       // re_adjusted = true;
       // goto re_adjust;
     // }
-    Static_Filtered_cmp_signed_dist_to_planeC3_15::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("SA cmp_signed_dist_to_planeC3 failures");
+    ++failures;
+#endif
     return cmp_signed_dist_to_planeC3(
 		ppx.exact(),
 		ppy.exact(),
@@ -4688,6 +5051,10 @@ cmp_signed_dist_to_planeC3(
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("ST cmp_signed_dist_to_planeC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_cmp_signed_dist_to_planeC3_15::epsilon_variant(
 		ppx.dbl(),
 		ppy.dbl(),
@@ -4708,7 +5075,10 @@ cmp_signed_dist_to_planeC3(
   }
   catch (...)
   {
-    Static_Filtered_cmp_signed_dist_to_planeC3_15::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("ST cmp_signed_dist_to_planeC3 failures");
+    ++failures;
+#endif
     return cmp_signed_dist_to_planeC3(
 		ppx.exact(),
 		ppy.exact(),

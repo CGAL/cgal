@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 1999,2000 The CGAL Consortium
+// Copyright (c) 1999,2000,2001 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -23,6 +23,8 @@
 
 #ifndef CGAL_ARITHMETIC_FILTER_REGULAR_TRIANGULATION_FTC3_H
 #define CGAL_ARITHMETIC_FILTER_REGULAR_TRIANGULATION_FTC3_H
+
+#include <CGAL/Profile_counter.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -58,6 +60,10 @@ power_testC3(
 {
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("IA power_testC3 calls");
+    ++calls;
+#endif
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return power_testC3(
 		px.interval(),
@@ -83,6 +89,10 @@ power_testC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("IA power_testC3 failures");
+    ++failures;
+#endif
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return power_testC3(
 		px.exact(),
@@ -114,8 +124,6 @@ struct Static_Filtered_power_testC3_20
 {
   static double _bound;
   static double _epsilon_0;
-  static unsigned number_of_failures; // ?
-  static unsigned number_of_updates;
 
   static Oriented_side update_epsilon(
 	const Static_filter_error &px,
@@ -175,7 +183,6 @@ struct Static_Filtered_power_testC3_20
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
-    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,_epsilon_0);
@@ -316,11 +323,19 @@ power_testC3(
     NEW_bound = max(NEW_bound, fabs(tz.to_double()));
     NEW_bound = max(NEW_bound, fabs(twt.to_double()));
     // Re-adjust the context.
+#ifdef CGAL_PROFILE
+    static Profile_counter updates("SA power_testC3 updates");
+    ++updates;
+#endif
     Static_Filtered_power_testC3_20::new_bound(NEW_bound);
   }
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("SA power_testC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_power_testC3_20::epsilon_variant(
 		px.dbl(),
 		py.dbl(),
@@ -350,7 +365,10 @@ power_testC3(
       // re_adjusted = true;
       // goto re_adjust;
     // }
-    Static_Filtered_power_testC3_20::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("SA power_testC3 failures");
+    ++failures;
+#endif
     return power_testC3(
 		px.exact(),
 		py.exact(),
@@ -430,6 +448,10 @@ power_testC3(
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("ST power_testC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_power_testC3_20::epsilon_variant(
 		px.dbl(),
 		py.dbl(),
@@ -455,7 +477,10 @@ power_testC3(
   }
   catch (...)
   {
-    Static_Filtered_power_testC3_20::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("ST power_testC3 failures");
+    ++failures;
+#endif
     return power_testC3(
 		px.exact(),
 		py.exact(),
@@ -510,6 +535,10 @@ power_testC3(
 {
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("IA power_testC3 calls");
+    ++calls;
+#endif
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return power_testC3(
 		px.interval(),
@@ -531,6 +560,10 @@ power_testC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("IA power_testC3 failures");
+    ++failures;
+#endif
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return power_testC3(
 		px.exact(),
@@ -558,8 +591,6 @@ struct Static_Filtered_power_testC3_16
 {
   static double _bound;
   static double _epsilon_0,_epsilon_1,_epsilon_2,_epsilon_3,_epsilon_4,_epsilon_5;
-  static unsigned number_of_failures; // ?
-  static unsigned number_of_updates;
 
   static Oriented_side update_epsilon(
 	const Static_filter_error &px,
@@ -639,7 +670,6 @@ struct Static_Filtered_power_testC3_16
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
-    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,_epsilon_0,_epsilon_1,_epsilon_2,_epsilon_3,_epsilon_4,_epsilon_5);
@@ -788,11 +818,19 @@ power_testC3(
     NEW_bound = max(NEW_bound, fabs(tz.to_double()));
     NEW_bound = max(NEW_bound, fabs(twt.to_double()));
     // Re-adjust the context.
+#ifdef CGAL_PROFILE
+    static Profile_counter updates("SA power_testC3 updates");
+    ++updates;
+#endif
     Static_Filtered_power_testC3_16::new_bound(NEW_bound);
   }
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("SA power_testC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_power_testC3_16::epsilon_variant(
 		px.dbl(),
 		py.dbl(),
@@ -823,7 +861,10 @@ power_testC3(
       // re_adjusted = true;
       // goto re_adjust;
     // }
-    Static_Filtered_power_testC3_16::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("SA power_testC3 failures");
+    ++failures;
+#endif
     return power_testC3(
 		px.exact(),
 		py.exact(),
@@ -891,6 +932,10 @@ power_testC3(
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("ST power_testC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_power_testC3_16::epsilon_variant(
 		px.dbl(),
 		py.dbl(),
@@ -917,7 +962,10 @@ power_testC3(
   }
   catch (...)
   {
-    Static_Filtered_power_testC3_16::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("ST power_testC3 failures");
+    ++failures;
+#endif
     return power_testC3(
 		px.exact(),
 		py.exact(),
@@ -964,6 +1012,10 @@ power_testC3(
 {
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("IA power_testC3 calls");
+    ++calls;
+#endif
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return power_testC3(
 		px.interval(),
@@ -981,6 +1033,10 @@ power_testC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("IA power_testC3 failures");
+    ++failures;
+#endif
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return power_testC3(
 		px.exact(),
@@ -1004,8 +1060,6 @@ struct Static_Filtered_power_testC3_12
 {
   static double _bound;
   static double _epsilon_0,_epsilon_1,_epsilon_2,_epsilon_3,_epsilon_4,_epsilon_5;
-  static unsigned number_of_failures; // ?
-  static unsigned number_of_updates;
 
   static Oriented_side update_epsilon(
 	const Static_filter_error &px,
@@ -1067,7 +1121,6 @@ struct Static_Filtered_power_testC3_12
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
-    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,b,b,_epsilon_0,_epsilon_1,_epsilon_2,_epsilon_3,_epsilon_4,_epsilon_5);
@@ -1186,11 +1239,19 @@ power_testC3(
     NEW_bound = max(NEW_bound, fabs(tz.to_double()));
     NEW_bound = max(NEW_bound, fabs(twt.to_double()));
     // Re-adjust the context.
+#ifdef CGAL_PROFILE
+    static Profile_counter updates("SA power_testC3 updates");
+    ++updates;
+#endif
     Static_Filtered_power_testC3_12::new_bound(NEW_bound);
   }
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("SA power_testC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_power_testC3_12::epsilon_variant(
 		px.dbl(),
 		py.dbl(),
@@ -1217,7 +1278,10 @@ power_testC3(
       // re_adjusted = true;
       // goto re_adjust;
     // }
-    Static_Filtered_power_testC3_12::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("SA power_testC3 failures");
+    ++failures;
+#endif
     return power_testC3(
 		px.exact(),
 		py.exact(),
@@ -1273,6 +1337,10 @@ power_testC3(
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("ST power_testC3 calls");
+    ++calls;
+#endif
     return Static_Filtered_power_testC3_12::epsilon_variant(
 		px.dbl(),
 		py.dbl(),
@@ -1295,7 +1363,10 @@ power_testC3(
   }
   catch (...)
   {
-    Static_Filtered_power_testC3_12::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("ST power_testC3 failures");
+    ++failures;
+#endif
     return power_testC3(
 		px.exact(),
 		py.exact(),

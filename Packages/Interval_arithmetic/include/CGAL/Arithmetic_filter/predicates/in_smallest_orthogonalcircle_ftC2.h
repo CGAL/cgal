@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 1999,2000 The CGAL Consortium
+// Copyright (c) 1999,2000,2001 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -23,6 +23,8 @@
 
 #ifndef CGAL_ARITHMETIC_FILTER_IN_SMALLEST_ORTHOGONALCIRCLE_FTC2_H
 #define CGAL_ARITHMETIC_FILTER_IN_SMALLEST_ORTHOGONALCIRCLE_FTC2_H
+
+#include <CGAL/Profile_counter.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -47,6 +49,10 @@ in_smallest_orthogonalcircleC2(
 {
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("IA in_smallest_orthogonalcircleC2 calls");
+    ++calls;
+#endif
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return in_smallest_orthogonalcircleC2(
 		px.interval(),
@@ -61,6 +67,10 @@ in_smallest_orthogonalcircleC2(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("IA in_smallest_orthogonalcircleC2 failures");
+    ++failures;
+#endif
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return in_smallest_orthogonalcircleC2(
 		px.exact(),
@@ -81,8 +91,6 @@ struct Static_Filtered_in_smallest_orthogonalcircleC2_9
 {
   static double _bound;
   static double _epsilon_0;
-  static unsigned number_of_failures; // ?
-  static unsigned number_of_updates;
 
   static Bounded_side update_epsilon(
 	const Static_filter_error &px,
@@ -114,7 +122,6 @@ struct Static_Filtered_in_smallest_orthogonalcircleC2_9
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
-    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,b,_epsilon_0);
@@ -194,11 +201,19 @@ in_smallest_orthogonalcircleC2(
     NEW_bound = max(NEW_bound, fabs(ty.to_double()));
     NEW_bound = max(NEW_bound, fabs(tw.to_double()));
     // Re-adjust the context.
+#ifdef CGAL_PROFILE
+    static Profile_counter updates("SA in_smallest_orthogonalcircleC2 updates");
+    ++updates;
+#endif
     Static_Filtered_in_smallest_orthogonalcircleC2_9::new_bound(NEW_bound);
   }
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("SA in_smallest_orthogonalcircleC2 calls");
+    ++calls;
+#endif
     return Static_Filtered_in_smallest_orthogonalcircleC2_9::epsilon_variant(
 		px.dbl(),
 		py.dbl(),
@@ -217,7 +232,10 @@ in_smallest_orthogonalcircleC2(
       // re_adjusted = true;
       // goto re_adjust;
     // }
-    Static_Filtered_in_smallest_orthogonalcircleC2_9::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("SA in_smallest_orthogonalcircleC2 failures");
+    ++failures;
+#endif
     return in_smallest_orthogonalcircleC2(
 		px.exact(),
 		py.exact(),
@@ -264,6 +282,10 @@ in_smallest_orthogonalcircleC2(
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("ST in_smallest_orthogonalcircleC2 calls");
+    ++calls;
+#endif
     return Static_Filtered_in_smallest_orthogonalcircleC2_9::epsilon_variant(
 		px.dbl(),
 		py.dbl(),
@@ -278,7 +300,10 @@ in_smallest_orthogonalcircleC2(
   }
   catch (...)
   {
-    Static_Filtered_in_smallest_orthogonalcircleC2_9::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("ST in_smallest_orthogonalcircleC2 failures");
+    ++failures;
+#endif
     return in_smallest_orthogonalcircleC2(
 		px.exact(),
 		py.exact(),

@@ -1,6 +1,6 @@
 #!/usr/local/bin/perl -w
 #
-# Copyright (c) 1998-2000 The CGAL Consortium
+# Copyright (c) 1998-2001 The CGAL Consortium
 # Author: Sylvain Pion <Sylvain.Pion@sophia.inria.fr>.
 # Package: Interval Arithmetic.
 #
@@ -88,7 +88,7 @@ sub print_CGAL_header {
   print $output_file
 "// ======================================================================
 //
-// Copyright (c) 1999,2000 The CGAL Consortium
+// Copyright (c) 1999,2000,2001 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -110,7 +110,9 @@ sub print_CGAL_header {
 // scripts/filtered_predicates_generator.pl
 
 #ifndef $new_protect_name
-#define $new_protect_name\n\n";
+#define $new_protect_name
+
+#include <CGAL/Profile_counter.h>\n\n";
 }
 
 # Print dynamic versions
@@ -135,11 +137,19 @@ $fct_name($args_call)
 {
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls(\"IA $fct_name calls\");
+    ++calls;
+#endif
     ${CGAL}Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return $fct_name($args_inter);
   } 
   catch (${CGAL}Interval_nt_advanced::unsafe_comparison)
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures(\"IA $fct_name failures\");
+    ++failures;
+#endif
     ${CGAL}Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return $fct_name($args_exact);
   }
@@ -153,8 +163,6 @@ sub print_static_infos {
 
   print FL map("double $predicate_class_name\::_epsilon_$_;\n", 0..$eps-1);
   print FL "double $predicate_class_name\::_bound = -1.0;\n\n";
-  print FL "unsigned $predicate_class_name\::number_of_updates = 0;\n\n";
-  print FL "unsigned $predicate_class_name\::number_of_failures = 0;\n\n";
 }
 
 # Print the epsilon variant of the function
@@ -186,8 +194,6 @@ sub print_predicate_struct {
 {
   static double _bound;
   static double $epsilon_list;
-  static unsigned number_of_failures; // ?
-  static unsigned number_of_updates;
 
   $update_epsilon
 
@@ -195,7 +201,6 @@ sub print_predicate_struct {
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
-    number_of_updates++;
     // recompute the epsilons: \"just\" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon($bound_list$epsilon_list);
@@ -244,11 +249,18 @@ $fct_name($args_call)
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls(\"ST $fct_name calls\");
+    ++calls;
+#endif
     return $predicate_class_name\::epsilon_variant($args_dbl,$args_epsilons);
   }
   catch (...)
   {
-    $predicate_class_name\::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures(\"ST $fct_name failures\");
+    ++failures;
+#endif
     return $fct_name($args_exact);
   }";
   } else {
@@ -263,11 +275,19 @@ $fct_name($args_call)
     // Compute the new bound.
     double NEW_bound = 0.0;$compute_new_bound
     // Re-adjust the context.
+#ifdef CGAL_PROFILE
+    static Profile_counter updates(\"SA $fct_name updates\");
+    ++updates;
+#endif
     $predicate_class_name\::new_bound(NEW_bound);
   }
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls(\"SA $fct_name calls\");
+    ++calls;
+#endif
     return $predicate_class_name\::epsilon_variant($args_dbl,$args_epsilons);
   }
   catch (...)
@@ -276,7 +296,10 @@ $fct_name($args_call)
       // re_adjusted = true;
       // goto re_adjust;
     // }
-    $predicate_class_name\::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures(\"SA $fct_name failures\");
+    ++failures;
+#endif
     return $fct_name($args_exact);
   }";
   }

@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 1999,2000 The CGAL Consortium
+// Copyright (c) 1999,2000,2001 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -24,6 +24,8 @@
 #ifndef CGAL_ARITHMETIC_FILTER_PREDICATES_SIGN_OF_DETERMINANT_H
 #define CGAL_ARITHMETIC_FILTER_PREDICATES_SIGN_OF_DETERMINANT_H
 
+#include <CGAL/Profile_counter.h>
+
 CGAL_BEGIN_NAMESPACE
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
@@ -42,6 +44,10 @@ sign_of_determinant2x2(
 {
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("IA sign_of_determinant2x2 calls");
+    ++calls;
+#endif
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return sign_of_determinant2x2(
 		a00.interval(),
@@ -51,6 +57,10 @@ sign_of_determinant2x2(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("IA sign_of_determinant2x2 failures");
+    ++failures;
+#endif
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return sign_of_determinant2x2(
 		a00.exact(),
@@ -66,8 +76,6 @@ struct Static_Filtered_sign_of_determinant2x2_4
 {
   static double _bound;
   static double _epsilon_0;
-  static unsigned number_of_failures; // ?
-  static unsigned number_of_updates;
 
   static Sign update_epsilon(
 	const Static_filter_error &a00,
@@ -87,7 +95,6 @@ struct Static_Filtered_sign_of_determinant2x2_4
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
-    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,_epsilon_0);
@@ -140,11 +147,19 @@ sign_of_determinant2x2(
     NEW_bound = max(NEW_bound, fabs(a10.to_double()));
     NEW_bound = max(NEW_bound, fabs(a11.to_double()));
     // Re-adjust the context.
+#ifdef CGAL_PROFILE
+    static Profile_counter updates("SA sign_of_determinant2x2 updates");
+    ++updates;
+#endif
     Static_Filtered_sign_of_determinant2x2_4::new_bound(NEW_bound);
   }
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("SA sign_of_determinant2x2 calls");
+    ++calls;
+#endif
     return Static_Filtered_sign_of_determinant2x2_4::epsilon_variant(
 		a00.dbl(),
 		a01.dbl(),
@@ -158,7 +173,10 @@ sign_of_determinant2x2(
       // re_adjusted = true;
       // goto re_adjust;
     // }
-    Static_Filtered_sign_of_determinant2x2_4::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("SA sign_of_determinant2x2 failures");
+    ++failures;
+#endif
     return sign_of_determinant2x2(
 		a00.exact(),
 		a01.exact(),
@@ -190,6 +208,10 @@ sign_of_determinant2x2(
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("ST sign_of_determinant2x2 calls");
+    ++calls;
+#endif
     return Static_Filtered_sign_of_determinant2x2_4::epsilon_variant(
 		a00.dbl(),
 		a01.dbl(),
@@ -199,7 +221,10 @@ sign_of_determinant2x2(
   }
   catch (...)
   {
-    Static_Filtered_sign_of_determinant2x2_4::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("ST sign_of_determinant2x2 failures");
+    ++failures;
+#endif
     return sign_of_determinant2x2(
 		a00.exact(),
 		a01.exact(),
@@ -231,6 +256,10 @@ sign_of_determinant3x3(
 {
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("IA sign_of_determinant3x3 calls");
+    ++calls;
+#endif
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return sign_of_determinant3x3(
 		a00.interval(),
@@ -245,6 +274,10 @@ sign_of_determinant3x3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("IA sign_of_determinant3x3 failures");
+    ++failures;
+#endif
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return sign_of_determinant3x3(
 		a00.exact(),
@@ -265,8 +298,6 @@ struct Static_Filtered_sign_of_determinant3x3_9
 {
   static double _bound;
   static double _epsilon_0;
-  static unsigned number_of_failures; // ?
-  static unsigned number_of_updates;
 
   static Sign update_epsilon(
 	const Static_filter_error &a00,
@@ -292,7 +323,6 @@ struct Static_Filtered_sign_of_determinant3x3_9
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
-    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,b,_epsilon_0);
@@ -366,11 +396,19 @@ sign_of_determinant3x3(
     NEW_bound = max(NEW_bound, fabs(a21.to_double()));
     NEW_bound = max(NEW_bound, fabs(a22.to_double()));
     // Re-adjust the context.
+#ifdef CGAL_PROFILE
+    static Profile_counter updates("SA sign_of_determinant3x3 updates");
+    ++updates;
+#endif
     Static_Filtered_sign_of_determinant3x3_9::new_bound(NEW_bound);
   }
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("SA sign_of_determinant3x3 calls");
+    ++calls;
+#endif
     return Static_Filtered_sign_of_determinant3x3_9::epsilon_variant(
 		a00.dbl(),
 		a01.dbl(),
@@ -389,7 +427,10 @@ sign_of_determinant3x3(
       // re_adjusted = true;
       // goto re_adjust;
     // }
-    Static_Filtered_sign_of_determinant3x3_9::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("SA sign_of_determinant3x3 failures");
+    ++failures;
+#endif
     return sign_of_determinant3x3(
 		a00.exact(),
 		a01.exact(),
@@ -436,6 +477,10 @@ sign_of_determinant3x3(
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("ST sign_of_determinant3x3 calls");
+    ++calls;
+#endif
     return Static_Filtered_sign_of_determinant3x3_9::epsilon_variant(
 		a00.dbl(),
 		a01.dbl(),
@@ -450,7 +495,10 @@ sign_of_determinant3x3(
   }
   catch (...)
   {
-    Static_Filtered_sign_of_determinant3x3_9::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("ST sign_of_determinant3x3 failures");
+    ++failures;
+#endif
     return sign_of_determinant3x3(
 		a00.exact(),
 		a01.exact(),
@@ -494,6 +542,10 @@ sign_of_determinant4x4(
 {
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("IA sign_of_determinant4x4 calls");
+    ++calls;
+#endif
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return sign_of_determinant4x4(
 		a00.interval(),
@@ -515,6 +567,10 @@ sign_of_determinant4x4(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("IA sign_of_determinant4x4 failures");
+    ++failures;
+#endif
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return sign_of_determinant4x4(
 		a00.exact(),
@@ -542,8 +598,6 @@ struct Static_Filtered_sign_of_determinant4x4_16
 {
   static double _bound;
   static double _epsilon_0;
-  static unsigned number_of_failures; // ?
-  static unsigned number_of_updates;
 
   static Sign update_epsilon(
 	const Static_filter_error &a00,
@@ -577,7 +631,6 @@ struct Static_Filtered_sign_of_determinant4x4_16
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
-    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,_epsilon_0);
@@ -680,11 +733,19 @@ sign_of_determinant4x4(
     NEW_bound = max(NEW_bound, fabs(a32.to_double()));
     NEW_bound = max(NEW_bound, fabs(a33.to_double()));
     // Re-adjust the context.
+#ifdef CGAL_PROFILE
+    static Profile_counter updates("SA sign_of_determinant4x4 updates");
+    ++updates;
+#endif
     Static_Filtered_sign_of_determinant4x4_16::new_bound(NEW_bound);
   }
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("SA sign_of_determinant4x4 calls");
+    ++calls;
+#endif
     return Static_Filtered_sign_of_determinant4x4_16::epsilon_variant(
 		a00.dbl(),
 		a01.dbl(),
@@ -710,7 +771,10 @@ sign_of_determinant4x4(
       // re_adjusted = true;
       // goto re_adjust;
     // }
-    Static_Filtered_sign_of_determinant4x4_16::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("SA sign_of_determinant4x4 failures");
+    ++failures;
+#endif
     return sign_of_determinant4x4(
 		a00.exact(),
 		a01.exact(),
@@ -778,6 +842,10 @@ sign_of_determinant4x4(
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("ST sign_of_determinant4x4 calls");
+    ++calls;
+#endif
     return Static_Filtered_sign_of_determinant4x4_16::epsilon_variant(
 		a00.dbl(),
 		a01.dbl(),
@@ -799,7 +867,10 @@ sign_of_determinant4x4(
   }
   catch (...)
   {
-    Static_Filtered_sign_of_determinant4x4_16::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("ST sign_of_determinant4x4 failures");
+    ++failures;
+#endif
     return sign_of_determinant4x4(
 		a00.exact(),
 		a01.exact(),
@@ -859,6 +930,10 @@ sign_of_determinant5x5(
 {
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("IA sign_of_determinant5x5 calls");
+    ++calls;
+#endif
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return sign_of_determinant5x5(
 		a00.interval(),
@@ -889,6 +964,10 @@ sign_of_determinant5x5(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("IA sign_of_determinant5x5 failures");
+    ++failures;
+#endif
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return sign_of_determinant5x5(
 		a00.exact(),
@@ -925,8 +1004,6 @@ struct Static_Filtered_sign_of_determinant5x5_25
 {
   static double _bound;
   static double _epsilon_0;
-  static unsigned number_of_failures; // ?
-  static unsigned number_of_updates;
 
   static Sign update_epsilon(
 	const Static_filter_error &a00,
@@ -970,7 +1047,6 @@ struct Static_Filtered_sign_of_determinant5x5_25
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
-    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,_epsilon_0);
@@ -1110,11 +1186,19 @@ sign_of_determinant5x5(
     NEW_bound = max(NEW_bound, fabs(a43.to_double()));
     NEW_bound = max(NEW_bound, fabs(a44.to_double()));
     // Re-adjust the context.
+#ifdef CGAL_PROFILE
+    static Profile_counter updates("SA sign_of_determinant5x5 updates");
+    ++updates;
+#endif
     Static_Filtered_sign_of_determinant5x5_25::new_bound(NEW_bound);
   }
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("SA sign_of_determinant5x5 calls");
+    ++calls;
+#endif
     return Static_Filtered_sign_of_determinant5x5_25::epsilon_variant(
 		a00.dbl(),
 		a01.dbl(),
@@ -1149,7 +1233,10 @@ sign_of_determinant5x5(
       // re_adjusted = true;
       // goto re_adjust;
     // }
-    Static_Filtered_sign_of_determinant5x5_25::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("SA sign_of_determinant5x5 failures");
+    ++failures;
+#endif
     return sign_of_determinant5x5(
 		a00.exact(),
 		a01.exact(),
@@ -1244,6 +1331,10 @@ sign_of_determinant5x5(
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("ST sign_of_determinant5x5 calls");
+    ++calls;
+#endif
     return Static_Filtered_sign_of_determinant5x5_25::epsilon_variant(
 		a00.dbl(),
 		a01.dbl(),
@@ -1274,7 +1365,10 @@ sign_of_determinant5x5(
   }
   catch (...)
   {
-    Static_Filtered_sign_of_determinant5x5_25::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("ST sign_of_determinant5x5 failures");
+    ++failures;
+#endif
     return sign_of_determinant5x5(
 		a00.exact(),
 		a01.exact(),
@@ -1354,6 +1448,10 @@ sign_of_determinant6x6(
 {
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("IA sign_of_determinant6x6 calls");
+    ++calls;
+#endif
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return sign_of_determinant6x6(
 		a00.interval(),
@@ -1395,6 +1493,10 @@ sign_of_determinant6x6(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("IA sign_of_determinant6x6 failures");
+    ++failures;
+#endif
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return sign_of_determinant6x6(
 		a00.exact(),
@@ -1442,8 +1544,6 @@ struct Static_Filtered_sign_of_determinant6x6_36
 {
   static double _bound;
   static double _epsilon_0;
-  static unsigned number_of_failures; // ?
-  static unsigned number_of_updates;
 
   static Sign update_epsilon(
 	const Static_filter_error &a00,
@@ -1499,7 +1599,6 @@ struct Static_Filtered_sign_of_determinant6x6_36
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
-    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,_epsilon_0);
@@ -1684,11 +1783,19 @@ sign_of_determinant6x6(
     NEW_bound = max(NEW_bound, fabs(a54.to_double()));
     NEW_bound = max(NEW_bound, fabs(a55.to_double()));
     // Re-adjust the context.
+#ifdef CGAL_PROFILE
+    static Profile_counter updates("SA sign_of_determinant6x6 updates");
+    ++updates;
+#endif
     Static_Filtered_sign_of_determinant6x6_36::new_bound(NEW_bound);
   }
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("SA sign_of_determinant6x6 calls");
+    ++calls;
+#endif
     return Static_Filtered_sign_of_determinant6x6_36::epsilon_variant(
 		a00.dbl(),
 		a01.dbl(),
@@ -1734,7 +1841,10 @@ sign_of_determinant6x6(
       // re_adjusted = true;
       // goto re_adjust;
     // }
-    Static_Filtered_sign_of_determinant6x6_36::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("SA sign_of_determinant6x6 failures");
+    ++failures;
+#endif
     return sign_of_determinant6x6(
 		a00.exact(),
 		a01.exact(),
@@ -1862,6 +1972,10 @@ sign_of_determinant6x6(
 
   try
   {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("ST sign_of_determinant6x6 calls");
+    ++calls;
+#endif
     return Static_Filtered_sign_of_determinant6x6_36::epsilon_variant(
 		a00.dbl(),
 		a01.dbl(),
@@ -1903,7 +2017,10 @@ sign_of_determinant6x6(
   }
   catch (...)
   {
-    Static_Filtered_sign_of_determinant6x6_36::number_of_failures++;
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("ST sign_of_determinant6x6 failures");
+    ++failures;
+#endif
     return sign_of_determinant6x6(
 		a00.exact(),
 		a01.exact(),

@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 1999,2000 The CGAL Consortium
+// Copyright (c) 1999,2000,2001 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -24,21 +24,15 @@
 #ifndef CGAL_ARITHMETIC_FILTER_REGULAR_TRIANGULATION_FTC2_H_STATIC_INFO_H
 #define CGAL_ARITHMETIC_FILTER_REGULAR_TRIANGULATION_FTC2_H_STATIC_INFO_H
 
+#include <CGAL/Profile_counter.h>
+
 double Static_Filtered_power_testC2_12::_epsilon_0;
 double Static_Filtered_power_testC2_12::_bound = -1.0;
-
-unsigned Static_Filtered_power_testC2_12::number_of_updates = 0;
-
-unsigned Static_Filtered_power_testC2_12::number_of_failures = 0;
 
 double Static_Filtered_power_testC2_9::_epsilon_0;
 double Static_Filtered_power_testC2_9::_epsilon_1;
 double Static_Filtered_power_testC2_9::_epsilon_2;
 double Static_Filtered_power_testC2_9::_epsilon_3;
 double Static_Filtered_power_testC2_9::_bound = -1.0;
-
-unsigned Static_Filtered_power_testC2_9::number_of_updates = 0;
-
-unsigned Static_Filtered_power_testC2_9::number_of_failures = 0;
 
 #endif // CGAL_ARITHMETIC_FILTER_REGULAR_TRIANGULATION_FTC2_H_STATIC_INFO_H
