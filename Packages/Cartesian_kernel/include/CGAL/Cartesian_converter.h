@@ -23,14 +23,15 @@
 #ifndef CGAL_CARTESIAN_CONVERTER_H
 #define CGAL_CARTESIAN_CONVERTER_H
 
-// This file contains the definition of a "generic" kernel converter.
-// It is more [simple]cartesian oriented.
-// We should provide another one for homogeneous once this one is ok.
-// And an Homogeneous_to_Cartesian_converter as well.
+// This file contains the definition of a kernel converter, based on Cartesian
+// representation.  It should work between *Cartesian<A> and *Cartesian<B>,
+// provided you give a NT converter from a to B.
+// It's not recommended for converting with homogeneous-like kernels, since
+// robustness issues have not been checked (prefer a different converter for
+// that).
 
 // TODO :
-// - use data accessors ?
-// - Aff_transformation_[23] converters are missing.
+// - Probably we should use data accessors everywhere !
 
 #include <CGAL/basic.h>
 
@@ -114,6 +115,15 @@ public:
 		                                    operator()(a.max()));
     }
 
+    typename K2::Aff_transformation_2
+    operator()(const typename K1::Aff_transformation_2 &a) const
+    {
+	return k.construct_aff_transformation_2_object()(
+		c(a.cartesian(0,0)), c(a.cartesian(0,1)), c(a.cartesian(0,2)),
+		c(a.cartesian(1,0)), c(a.cartesian(1,1)), c(a.cartesian(1,2)));
+    }
+
+
     typename K2::Point_3
     operator()(const typename K1::Point_3 &a) const
     {
@@ -191,6 +201,18 @@ public:
     {
 	return k.construct_iso_cuboid_3_object()(operator()(a.min()),
 		                                 operator()(a.max()));
+    }
+
+    typename K2::Aff_transformation_3
+    operator()(const typename K1::Aff_transformation_3 &a) const
+    {
+	return k.construct_aff_transformation_3_object()(
+		c(a.cartesian(0,0)), c(a.cartesian(0,1)), c(a.cartesian(0,2)),
+		c(a.cartesian(0,3)),
+		c(a.cartesian(1,0)), c(a.cartesian(1,1)), c(a.cartesian(1,2)),
+		c(a.cartesian(1,3)),
+		c(a.cartesian(2,0)), c(a.cartesian(2,1)), c(a.cartesian(2,2)),
+		c(a.cartesian(2,3)));
     }
 
 private:
