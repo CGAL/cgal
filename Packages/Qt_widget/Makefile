@@ -20,6 +20,9 @@ all:
 	make -C src/CGALQt -f makefile_Qt
 	make -C demo/Qt_widget
 
+doc:
+	TEXINPUTS="`pwd`/demo:$$TEXINPUTS"; cd doc_tex/support/Qt_widget; latex wrapper.tex
+
 # clean all object files
 clean: 
 	make -C src/CGALQt -f makefile_Qt clean

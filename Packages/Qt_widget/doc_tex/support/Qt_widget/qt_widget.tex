@@ -76,7 +76,7 @@ without the views and tools.
 
 \subsection{Example: Hello Segment}
 The first example draws a red segment on an orange background.
-\ccIncludeExampleCode{../../examples/Qt_widget/hellosegment.C}
+\ccIncludeExampleCode{Qt_widget/Examples/hellosegment.C}
 
 There is a severe limitation in this example: When you resize the window it is empty, as nothing is
 redrawn, that is this style of programs makes only sense, if you quickly want to validate output
@@ -101,7 +101,7 @@ of the next example.
 This example is slightly more involved. The user can enter points and the application
 draws the Delaunay triangulation of the point set. 
 
-\ccIncludeExampleCode{../../demo/Qt_widget/basic/tutorial2/tutorial2.C}
+\ccIncludeExampleCode{Qt_widget/basic/tutorial2/tutorial2.C}
 
 Because the code for drawing the triangulation is put in the
 \ccStyle{redraw()} function, it is drawn after, e.g., resize
@@ -137,7 +137,7 @@ so that you can more easily write new views.
 
 
 \subsection{Example: Using A View for Output}
-\ccIncludeExampleCode{../../demo/Qt_widget/basic/tutorial3/tutorial3.C}
+\ccIncludeExampleCode{Qt_widget/basic/tutorial3/tutorial3.C}
 
 As you see, this example is very similar to the previous one, but
 the code for drawing the triangulation is no longer in the \ccStyle{redraw()}
@@ -194,7 +194,7 @@ the tool creates a point and passes it to the widget. The widget then
 creates a signal that gets passed to the connected slot
 \ccc{My_Window::get_new_object(CGAL::Object)}.
 
-\ccIncludeExampleCode{../../examples/Qt_widget/tool.C}
+\ccIncludeExampleCode{Qt_widget/Examples/tool.C}
 
 The \ccStyle{Qt_widget} forwards all event callbacks to the attached tool.
 
@@ -280,20 +280,20 @@ application.
 \newcounter{bean}
 The functionality of the toolbar is like this from the left to right:
 \begin{description}
-%	{Button---\Roman{bean}}{\usecounter{bean}\setlength{\rightmargin}{\leftmargin}}
-	\item[Point tool:] Detach the current tool from the standard toolbar.
+%       {Button---\Roman{bean}}{\usecounter{bean}\setlength{\rightmargin}{\leftmargin}}
+        \item[Point tool:] Detach the current tool from the standard toolbar.
 
-	\item[Zoom In:] The scales are multiplied by two keeping the same center.
+        \item[Zoom In:] The scales are multiplied by two keeping the same center.
 
-	\item[Zoom Out:] The scales are divided by two keeping the same center.
+        \item[Zoom Out:] The scales are divided by two keeping the same center.
 
-	\item[Zoom In Region:] Lets you choose the center of the region where you want to zoom in. 
+        \item[Zoom In Region:] Lets you choose the center of the region where you want to zoom in. 
            The scales are multiplied by two.
 
-	\item[Focus on the Region:] The area in the rectangle that you selected will be magnified to 
+        \item[Focus on the Region:] The area in the rectangle that you selected will be magnified to 
            best fit in the window.
 
-	\item[Hand Tool:] Used for translate. Click to select the first point of translation and 
+        \item[Hand Tool:] Used for translate. Click to select the first point of translation and 
            drag to select the second point.
 \end{description}
 
@@ -303,7 +303,7 @@ button, or you press the arrow button that deselects the active tool,
 no matter what tool it is.
 
 \ccExample
-\ccIncludeExampleCode{../../examples/Qt_widget/standard_toolbar.C}
+\ccIncludeExampleCode{Qt_widget/Examples/standard_toolbar.C}
 
 This example generates 100 points and inserts them in a Delaunay
 triangulation. Using the standard toolbar you can zoom in, zoom out,
@@ -354,7 +354,7 @@ buttons, like this:
 
 \ccExample
 \begin{ccExampleCode}
-    QToolButton *get_point_but;	//the toolbar button
+    QToolButton *get_point_but; //the toolbar button
     get_point_but =  new QToolButton(QPixmap( (const char**)point_xpm ),
                                      "Point Tool", 
                                      0, 
