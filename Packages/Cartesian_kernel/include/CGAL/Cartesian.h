@@ -22,6 +22,9 @@
 #ifndef CGAL_CARTESIAN_H
 #define CGAL_CARTESIAN_H
 
+#define CGAL_REP_CLASS_DEFINED
+#define CGAL_CARTESIAN_CLASS_DEFINED
+
 #include <CGAL/basic.h>
 #include <CGAL/basic_classes.h>
 #include <CGAL/cartesian_classes.h>
@@ -30,9 +33,6 @@
 
 #include <CGAL/Twotuple.h>
 #include <CGAL/Threetuple.h>
-
-#define CGAL_REP_CLASS_DEFINED
-#define CGAL_CARTESIAN_CLASS_DEFINED
 
 #include <CGAL/Cartesian/Point_2.h>
 #include <CGAL/Cartesian/Vector_2.h>
