@@ -1,6 +1,6 @@
 Changes done to the Interval Arithmetic package.
 
-Version 4.49 on ?? June 2000
+Version 4.49 on 21 June 2000
 - Fixed a bunch of namespace issues.
 - Interval_nt is now a template class.
 - Template parameter "Protection" of Filtered_exact is now a bool.
