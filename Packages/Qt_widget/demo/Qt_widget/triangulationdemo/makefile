@@ -13,7 +13,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = -I../../include/ \
+CXXFLAGS = -I../../../include/ \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
@@ -33,29 +33,33 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-SOURCES = ../../src/Qt_Widget.o ../../src/Qt_Widget_tool.o
+SOURCES = Qt_widget_toolbar.o Qt_widget_toolbar_views.o
 
-all: constrained$(EXE_EXT)
-	make -C triangulationdemo -f Makefile.local
-	make -C Partition_2 -f Makefile.local
-	make -C basic/first -f Makefile.local
-	make -C basic/second -f Makefile.local
+all: triangulationdemo
 
-constrained.moc: constrained.C
-	${QT_MOC} -o constrained.moc constrained.C
+Qt_widget_toolbar$(OBJ_EXT): Qt_widget_toolbar.C Qt_widget_toolbar.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar.C
 
-constrained$(OBJ_EXT): constrained.C constrained.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) constrained.C
+Qt_widget_toolbar.moc: Qt_widget_toolbar.h
+	$(QT_MOC) -o Qt_widget_toolbar.moc $<
 
-constrained$(EXE_EXT): constrained$(OBJ_EXT) $(SOURCES)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)constrained constrained$(OBJ_EXT) $(SOURCES) $(LDFLAGS)
+Qt_widget_toolbar_views$(OBJ_EXT): Qt_widget_toolbar_views.C \
+		Qt_widget_toolbar_views.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar_views.C
 
-clean: \
-                   constrained.clean
-	make -C triangulationdemo -f Makefile.local clean
-	make -C Partition_2 -f Makefile.local clean
-	make -C basic/first -f Makefile.local clean
-	make -C basic/second -f Makefile.local clean
+Qt_widget_toolbar_views.moc: Qt_widget_toolbar_views.h
+	$(QT_MOC) -o Qt_widget_toolbar_views.moc $<
+
+triangulationdemo.moc: triangulationdemo.C
+	${QT_MOC} -o triangulationdemo.moc triangulationdemo.C
+
+triangulationdemo$(OBJ_EXT): triangulationdemo.C triangulationdemo.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) triangulationdemo.C
+
+triangulationdemo$(EXE_EXT): triangulationdemo$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)triangulationdemo triangulationdemo$(OBJ_EXT) $(LDFLAGS)
+
+clean: triangulation.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules

@@ -13,7 +13,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = -I../../include/ \
+CXXFLAGS = -I../../../../include/ \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
@@ -33,29 +33,17 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-SOURCES = ../../src/Qt_Widget.o ../../src/Qt_Widget_tool.o
+SOURCES = ../../../../src/Qt_Widget.o ../../../../src/Qt_Widget_tool.o
 
-all: constrained$(EXE_EXT)
-	make -C triangulationdemo -f Makefile.local
-	make -C Partition_2 -f Makefile.local
-	make -C basic/first -f Makefile.local
-	make -C basic/second -f Makefile.local
+all: second$(EXE_EXT)
 
-constrained.moc: constrained.C
-	${QT_MOC} -o constrained.moc constrained.C
+second$(OBJ_EXT): second.C
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) second.C
 
-constrained$(OBJ_EXT): constrained.C constrained.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) constrained.C
+second$(EXE_EXT): second$(OBJ_EXT) $(SOURCES)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)second second$(OBJ_EXT) $(SOURCES) $(LDFLAGS)
 
-constrained$(EXE_EXT): constrained$(OBJ_EXT) $(SOURCES)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)constrained constrained$(OBJ_EXT) $(SOURCES) $(LDFLAGS)
-
-clean: \
-                   constrained.clean
-	make -C triangulationdemo -f Makefile.local clean
-	make -C Partition_2 -f Makefile.local clean
-	make -C basic/first -f Makefile.local clean
-	make -C basic/second -f Makefile.local clean
+clean: second.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules

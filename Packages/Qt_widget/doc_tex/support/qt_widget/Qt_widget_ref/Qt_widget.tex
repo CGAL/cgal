@@ -1,0 +1,72 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual: Reference manual for Qt_widget.tex
+% +------------------------------------------------------------------------+
+% |
+% | 13.12.2001	Radu Ursu
+% | 
+% | \RCSdef{\qtwidgetRev}{$Revision$}
+% | \RCSdefDate{\qtwidgetDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+% +-----------------------------------------------------+
+\begin{ccRefClass}{Qt_widget}
+
+\ccDefinition
+
+The widget Qt\_Widget is a class that bla bla bla.
+
+\ccInclude{CGAL/Qt_widget.h}
+
+\ccCreation
+\ccCreationVariable{win}
+\ccSetTwoColumns{Qt_widget}{}
+
+\ccConstructor{Qt\_widget(QWidget *parent = 0, const char *name = 0);}{}
+
+\ccOperations
+\ccSetThreeColumns{const_iterator}{container.begin() const;}{}
+%scenes
+\ccHeading{Scenes}
+\ccMethod{void add_scene(Qt_scene* s);}{Add the scene s in the list of scenes.
+The last added will be on top of the screen.}
+\ccMethod{void remove_scene(Qt_scene* s);}{Remove the scene s from the list.}
+\ccMethod{void redraw();}{Redraw the scenes situated in the list. Before 
+redraw the scenes clears the screen. Also calls \ccc{widget\_repainted()} for 
+current tool.}
+
+%scales
+\ccHeading{Scales}
+\ccMethod{void set_window(double x_min, double x_max, double y_min, double 
+y_max);}{Map the widget coordinates to the interval defined by the rectangle 
+with given coordinates. This method should be called before \ccc{show()} from 
+QWidget.}
+\ccMethod{void set_x_scale(double xscale);}{Set the current X scale.}
+\ccMethod{void set_y_scale(double yscale);}{Set the current Y scale.}
+\ccMethod{void zoom_in(double ratio);}{Multiply X and Y scales by \ccc{ratio}.}
+\ccMethod{void zoom_out(double ratio);}{Multiply X and Y scales by \ccc{ratio}.}
+
+\ccHeading{Paint}
+%painter
+\ccMethod{void clear();}{Clear the screen. The properties remain the same 
+after calling this member function.}
+
+\ccAccessFunctions
+\ccMethod{PointStyle point_style();}{Returns the current point style.}
+\ccMethod{uint point_size();}{Returns the current point size.}
+\ccMethod{uint line_width();}{Returns the current line width.}
+\ccMethod{QPixmap& get_pixmap();}{Returns the current pixmap.}
+\ccMethod{QPainter& painter();}{Returns the current painter.}
+\ccMethod{double x_min() const;}{Returns the left X coordinate  of the widget.}
+\ccMethod{double y_min() const;}{Returns the lower Y coordinate  of the widget.}
+\ccMethod{double x_max() const;}{Returns the right X coordinate of the widget.}
+\ccMethod{double y_max() const;}{Returns the upper Y coordinate of the widget.}
+
+
+\end{ccRefClass}
+
+% +-----------------------------------------------------+
+% EOF
+
+
+
+

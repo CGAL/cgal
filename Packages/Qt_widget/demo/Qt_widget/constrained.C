@@ -24,8 +24,8 @@ int main(int, char*)
 #include <CGAL/Triangulation_euclidean_traits_2.h>
 #include <CGAL/Constrained_triangulation_2.h>
 
-#include <CGAL/IO/Qt_Window.h>
-#include <CGAL/IO/Qt_Window_Get_point.h>
+#include <CGAL/IO/Qt_Widget.h>
+#include <CGAL/IO/Qt_Widget_Get_point.h>
 #include <qapplication.h>
 #include <qmainwindow.h>
 #include <qstatusbar.h>
@@ -52,13 +52,11 @@ typedef Constrained_triangulation::Constraint     Constraint;
 typedef Constrained_triangulation::Face_handle    Face_handle;
 typedef Constrained_triangulation::Vertex_handle  Vertex_handle;
 
-typedef CGAL::Qt_widget Window_stream;
-
 const QString my_title_string("Contrained Triangulation Demo with"
 			      " CGAL Qt_widget");
 
 void
-draw_constraints(Window_stream &win, std::list<Constraint> & lc)
+draw_constraints(CGAL::Qt_widget &win, std::list<Constraint> & lc)
 {
   win << CGAL::RED;
   win.lock();
@@ -87,25 +85,28 @@ input_constraints_from_file(std::list<Constraint> & list_contraintes,
 void
 draw_connected_component(const Point&  p, 
 			 const Constrained_triangulation& ct,
-			 Window_stream& win)
+			 CGAL::Qt_widget& win)
 {
+	
   Face_handle fh = ct.locate(p);
   std::set<Face_handle> component; 
-  std::stack<Face_handle> st; 
+  std::list<Face_handle> st; 
+  //std::list<Vertex_handle> stv; 
   // component includes the faces of the connected_component
   // stack includes the faces in component whose neighbors
   // have not yet been looked at
 
-  st.push(fh);
+  
+  st.push_back(fh);
   component.insert(fh);
   while (! st.empty()){
-    fh = st.top();
-    st.pop();
+    fh = st.back();
+    st.pop_back();
     for(int i = 0 ; i < 3 ; ++i){
       if ( (! fh->is_constrained(i)) && 
 	   component.find(fh->neighbor(i)) == component.end() ) {
 	component.insert(fh->neighbor(i));
-	st.push(fh->neighbor(i));
+	st.push_back(fh->neighbor(i));
       }
     }
   }
@@ -119,22 +120,22 @@ draw_connected_component(const Point&  p,
     else win << ct.segment(*it, (*it)->index(ct.infinite_vertex()));
   }
   win << CGAL::LineWidth(width);
+  
   return;
 }
-
 class MyWindow : public QMainWindow
 {
   Q_OBJECT
 public:
   MyWindow(int x, int y): win(this) {
     setCentralWidget(&win);
-    point_factory = new CGAL::Qt_widget_get_point<Rep>();    
-    connect(point_factory, SIGNAL(new_object(CGAL::Object)), this,
+    point_factory = new CGAL::Qt_widget_get_point<Rep>();
+    connect(&win, SIGNAL(new_cgal_object(CGAL::Object)), this,
 	    SLOT(new_point(CGAL::Object)));
     win << point_factory;
     connect(&win, SIGNAL(mousePressed(QMouseEvent*)), this,
 	    SLOT(mousePressedOnWin(QMouseEvent*)));
-    connect(&win, SIGNAL(resized()), this, SLOT(redrawWin()));
+    connect(&win, SIGNAL(redrawed()), this, SLOT(redrawWin()));
     statusBar();
     
     // file menu
@@ -155,7 +156,7 @@ public:
   void init_paint()
   {
     win.lock();
-    win.init(-1.1, 1.1, -1.1, 1.1); // we need to put it there because Qt
+    win.set_window(-1.1, 1.1, -1.1, 1.1); // we need to put it there because Qt
     // send resizeEvent only on show.
     load_file("data/fish");
     win.unlock();

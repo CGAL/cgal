@@ -8,8 +8,6 @@
 
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
-# QTDIR = ENTER_YOUR_QT_DIRECTORY
-MOC=$(QTDIR)/bin/moc
 
 #---------------------------------------------------------------------#
 #                    compiler flags
@@ -39,27 +37,53 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: Qt_Window.o Qt_Window_tool.o
+all: Qt_Widget$(OBJ_EXT) Qt_Widget_tool$(OBJ_EXT) Qt_Widget_MovePoint$(OBJ_EXT) Qt_Scene$(OBJ_EXT)
+#Qt_ScenesWidget$(OBJ_EXT)
 
-Qt_Window.o: Qt_Window.C Qt_Window.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_Window.C
+Qt_Widget$(OBJ_EXT): Qt_Widget.C Qt_Widget.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_Widget.C
 
-Qt_Window.moc: ../include/CGAL/IO/Qt_Window.h
-	$(MOC) -o Qt_Window.moc $<
+Qt_Widget.moc: ../include/CGAL/IO/Qt_Widget.h 
+	$(QT_MOC) -o Qt_Widget.moc $<
 
-Qt_Window_tool.o: Qt_Window_tool.C Qt_Window_tool.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_Window_tool.C
+Qt_Widget_tool$(OBJ_EXT): Qt_Widget_tool.C Qt_Widget_tool.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_Widget_tool.C
 
-Qt_Window_tool.moc: ../include/CGAL/IO/Qt_Window_tool.h
-	$(MOC) -o Qt_Window_tool.moc $<
+Qt_Widget_tool.moc: ../include/CGAL/IO/Qt_Widget_tool.h \
+                    ../include/CGAL/IO/Qt_Widget.h
+	$(QT_MOC) -o Qt_Widget_tool.moc $<
+
+Qt_Widget_MovePoint$(OBJ_EXT): Qt_Widget_MovePoint.C Qt_Widget_MovePoint.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_Widget_MovePoint.C
+
+Qt_Widget_MovePoint.moc: ../include/CGAL/IO/Qt_Widget_MovePoint.h \
+			../include/CGAL/IO/Qt_Widget_tool.h \
+	                ../include/CGAL/IO/Qt_Widget.h
+	$(QT_MOC) -o Qt_Widget_MovePoint.moc $<
+
+Qt_ScenesWidget$(OBJ_EXT): Qt_ScenesWidget.C Qt_ScenesWidget.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_ScenesWidget.C
+
+Qt_ScenesWidget.moc: ../include/CGAL/IO/Qt_ScenesWidget.h \
+		../include/CGAL/IO/Qt_Widget.h \
+		../include/CGAL/IO/Qt_Scene.h
+	$(QT_MOC) -o Qt_ScenesWidget.moc $<
+
+Qt_Scene$(OBJ_EXT): Qt_Scene.C Qt_Scene.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_Scene.C
+
+Qt_Scene.moc: ../include/CGAL/IO/Qt_Scene.h \
+		../include/CGAL/IO/Qt_Widget.h
+	$(QT_MOC) -o Qt_Scene.moc $<
 
 clean:
-	rm -f Qt_Window.o Qt_Window_tool.o
+	rm -f *$(OBJ_EXT)
 
+clean-all: clean
+	rm -f *.moc
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#
 
 .C$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
-

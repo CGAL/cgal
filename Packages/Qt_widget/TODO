@@ -1,19 +1,14 @@
-Perhaps, my setBackgroundColor should use a const QColor& instead of a 
-single QColor as argument.
-As well as other properties.
+Rineau:
+Patch create_makefile
+Patch CGALROOT/makefile
 ---
-Tools system:
-~~~~~~~~~~~~
-The virtual base class is done.
-Need now to derive some implementation classes.
-  Get_Point.h  (done)
-  Get_Segment.h
-  Get_Line.h
-  Get_Ray.h
-  Get_Triangle.h
-  Get_Circle.h
-  Get_Iso_rectangle.h
-  Get_Polygon.h (done)
+Rineau: study the effect of QPen::setCapStyle and QPen::setJoinStyle
 ---
-Scenes system
----
+Rineau roadmap 2001/12/17:
+ 1) merge the branch and the trunc
+ 2) rebuild Qt_scene_widget
+ 3) polish the interface
+ 4) work on the doc
+ 5) build automaticly makefile
+ 6) review the whole code
+ 7) work with Qt Designer

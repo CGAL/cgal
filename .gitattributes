@@ -1410,6 +1410,26 @@ Packages/Polyhedron/examples/Polyhedron/corner.off -text
 Packages/Polyhedron/examples/Polyhedron/corner_with_hole.off -text
 Packages/Polyhedron/examples/Polyhedron/corner_with_sharp_edge.off -text
 Packages/Polyhedron/examples/Polyhedron/cross.off -text
+Packages/Qt_widget/demo/Qt_widget/Partition_2/demo.dsp -text
+Packages/Qt_widget/include/CGAL/IO/pixmaps/greene_approx.xpm -text
+Packages/Qt_widget/include/CGAL/IO/pixmaps/hand.xpm -text
+Packages/Qt_widget/include/CGAL/IO/pixmaps/handtool.xpm -text
+Packages/Qt_widget/include/CGAL/IO/pixmaps/holddown.xpm -text
+Packages/Qt_widget/include/CGAL/IO/pixmaps/line.xpm -text
+Packages/Qt_widget/include/CGAL/IO/pixmaps/mouse_coord.xpm -text
+Packages/Qt_widget/include/CGAL/IO/pixmaps/movepoint.xpm -text
+Packages/Qt_widget/include/CGAL/IO/pixmaps/nearest_vertex.xpm -text
+Packages/Qt_widget/include/CGAL/IO/pixmaps/optimal_convex.xpm -text
+Packages/Qt_widget/include/CGAL/IO/pixmaps/point.xpm -text
+Packages/Qt_widget/include/CGAL/IO/pixmaps/points.xpm -text
+Packages/Qt_widget/include/CGAL/IO/pixmaps/polygon.xpm -text
+Packages/Qt_widget/include/CGAL/IO/pixmaps/show_polygon.xpm -text
+Packages/Qt_widget/include/CGAL/IO/pixmaps/triangulation.xpm -text
+Packages/Qt_widget/include/CGAL/IO/pixmaps/voronoi.xpm -text
+Packages/Qt_widget/include/CGAL/IO/pixmaps/ymonotone.xpm -text
+Packages/Qt_widget/include/CGAL/IO/pixmaps/zoom_in.xpm -text
+Packages/Qt_widget/include/CGAL/IO/pixmaps/zoom_in_rect.xpm -text
+Packages/Qt_widget/include/CGAL/IO/pixmaps/zoom_out.xpm -text
 Packages/SearchStructures/doc_tex/SearchStructures/d-range.eps -text
 Packages/SearchStructures/doc_tex/SearchStructures/d-range.gif -text svneol=unset#unset
 Packages/SearchStructures/doc_tex/SearchStructures/d-segment.eps -text
