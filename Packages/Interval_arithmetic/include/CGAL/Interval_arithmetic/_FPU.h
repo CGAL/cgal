@@ -24,21 +24,19 @@
 #ifndef CGAL_FPU_H
 #define CGAL_FPU_H
 
-/*
- * Specify some platform dependant functions, regarding the FPU
- * directed rounding modes. There is only support for double precision.
- *
- * I try to provide the equivalent assembly code for GNU C.
- */
+// This file specifies some platform dependant functions, regarding the FPU
+// directed rounding modes.  There is only support for double precision.
+
+
+// Some useful constants
+
+#define CGAL_IA_MIN_DOUBLE (5e-324) // subnormal
+#define CGAL_IA_MAX_DOUBLE (1.7976931348623157081e+308)
+
 
 #if defined(__osf__)
 #undef __osf
 #define __osf
-#endif
-
-#if defined(__i386__) || defined(i386)	/* Needed by some old egcs versions */
-#undef __i386
-#define __i386
 #endif
 
 #if (	!defined(__i386)  && \
@@ -46,7 +44,7 @@
 	!defined(__alpha) && \
 	!defined(__mips) \
 	)
-#error "Architecture not recognized."
+#error "Architecture not supported."
 #endif
 
 
@@ -69,16 +67,20 @@
 #endif
 #endif // CGAL_IA_DONT_USE_ASSEMBLY
 
-#ifndef CGAL_IA_USE_ASSEMBLY
 #ifdef __linux
 #include <fpu_control.h>
+#endif
+
+#ifndef CGAL_IA_USE_ASSEMBLY
+#ifdef __sun
+#include <ieeefp.h>
 #endif
 #ifdef __osf
 #include <float.h>
 #endif
 #ifdef __sgi
-  /* This #define is forced for backward compatibility with Irix 5.3. */
-  /* I think it slows down Irix 6.2... */
+  // This #define is forced for backward compatibility with Irix 5.3.
+  // I think it slows down Irix 6.2...
 #define __SGI_ieeefph__
 #ifdef __SGI_ieeefph__
 #include <ieeefp.h>
@@ -86,287 +88,168 @@
 #include <sys/fpu.h>
 #endif
 #endif
-#ifdef __sun
-#include <ieeefp.h>
-#endif
 #endif // CGAL_IA_USE_ASSEMBLY
 
 CGAL_BEGIN_NAMESPACE
 
-#ifdef CGAL_IA_USE_ASSEMBLY
 #ifdef __i386
-#define CGAL_IA_SETFPCW(CW) asm volatile ("fldcw %0" : : "m" (CW))
-#define CGAL_IA_GETFPCW(CW) asm volatile ("fstcw %0" : "=m" (CW) : )
-typedef unsigned short FPU_CW_t;
-// x86:                                      rounding | precision | def. mask
-static const FPU_CW_t FPU_cw_near = 0x0     |  0x200    | 0x107f;
-static const FPU_CW_t FPU_cw_zero = 0xC00   |  0x200    | 0x107f; 
-static const FPU_CW_t FPU_cw_up   = 0x800   |  0x200    | 0x107f; 
-static const FPU_CW_t FPU_cw_down = 0x400   |  0x200    | 0x107f;
+#ifdef CGAL_IA_USE_ASSEMBLY
+#define CGAL_IA_SETFPCW(CW) asm volatile ("fldcw %0" : :"m" (CW))
+#define CGAL_IA_GETFPCW(CW) asm volatile ("fstcw %0" : "=m" (CW))
 #endif
+typedef unsigned short FPU_CW_t;
+// x86:                                    rounding | def. mask
+static const FPU_CW_t FPU_cw_near = _FPU_RC_NEAREST | 0x127f;
+static const FPU_CW_t FPU_cw_zero = _FPU_RC_ZERO    | 0x127f;
+static const FPU_CW_t FPU_cw_up   = _FPU_RC_UP      | 0x127f;
+static const FPU_CW_t FPU_cw_down = _FPU_RC_DOWN    | 0x127f;
+#endif // __i386
+
 #ifdef __sparc
-#define CGAL_IA_SETFPCW(CW) asm volatile ("ld %0,%%fsr" : : "m" (CW))
+#ifdef CGAL_IA_USE_ASSEMBLY
+#define CGAL_IA_SETFPCW(CW) asm volatile ("ld %0,%%fsr" : :"m" (CW))
 #define CGAL_IA_GETFPCW(CW) asm volatile ("st %%fsr,%0" : "=m" (CW))
 typedef unsigned int FPU_CW_t;
-// Sparc:                                     rounding   | precision  |def.mask
+// Sparc:                           rounding   | precision  | def.mask
 static const FPU_CW_t FPU_cw_near = 0x0        | 0x20000000 | 0x1f;
 static const FPU_CW_t FPU_cw_zero = 0x40000000 | 0x20000000 | 0x1f;
 static const FPU_CW_t FPU_cw_up   = 0x80000000 | 0x20000000 | 0x1f;
 static const FPU_CW_t FPU_cw_down = 0xc0000000 | 0x20000000 | 0x1f;
+#else
+typedef fp_rnd FPU_CW_t;
+static const FPU_CW_t FPU_cw_near = FP_RN;
+static const FPU_CW_t FPU_cw_zero = FP_RZ;
+static const FPU_CW_t FPU_cw_up   = FP_RP;
+static const FPU_CW_t FPU_cw_down = FP_RM;
 #endif
+#endif // __sparc
+
 #ifdef __mips
-#if 1
-#define CGAL_IA_SETFPCW(CW) asm volatile ("ctc1 %0,$31" : : "r" (CW))
-#define CGAL_IA_GETFPCW(CW) asm volatile ("cfc1 %0,$31" : "=r" (CW) : )
-#else   // Old one, kept just in case the new one isn't fine.
-#define CGAL_IA_SETFPCW(CW) asm volatile ("lw $8,%0; ctc1 $8 $31": :"m" (CW))
-#define CGAL_IA_GETFPCW(CW) asm volatile ("cfc1 $8 $31; sw $8,%0": "=m" (CW) :)
-#endif
+#ifdef CGAL_IA_USE_ASSEMBLY
+#define CGAL_IA_SETFPCW(CW) asm volatile ("ctc1 %0,$31" : :"r" (CW))
+#define CGAL_IA_GETFPCW(CW) asm volatile ("cfc1 %0,$31" : "=r" (CW))
 typedef unsigned int FPU_CW_t;
 static const FPU_CW_t FPU_cw_near = 0x0;
 static const FPU_CW_t FPU_cw_zero = 0x1;
 static const FPU_CW_t FPU_cw_up   = 0x2;
 static const FPU_CW_t FPU_cw_down = 0x3;
+#else
+#ifdef __SGI_ieeefph__ // 2 cases for C... I love IRIX !!!
+typedef fp_rnd FPU_CW_t;
+static const FPU_CW_t FPU_cw_near = FP_RN;
+static const FPU_CW_t FPU_cw_zero = FP_RZ;
+static const FPU_CW_t FPU_cw_up   = FP_RP;
+static const FPU_CW_t FPU_cw_down = FP_RM;
+#else
+typedef int FPU_CW_t;
+static const FPU_CW_t FPU_cw_near = ROUND_TO_NEAREST;
+static const FPU_CW_t FPU_cw_zero = ROUND_TO_ZERO;
+static const FPU_CW_t FPU_cw_up   = ROUND_TO_PLUS_INFINITY;
+static const FPU_CW_t FPU_cw_down = ROUND_TO_MINUS_INFINITY;
 #endif
-#ifdef __alpha
-#define CGAL_IA_SETFPCW(CW) asm volatile ("mt_fpcr %0; excb" : : "f" (CW))
+#endif
+#endif // __mips
+
+#ifdef __alpha // This one is not really supported.
+#ifdef CGAL_IA_USE_ASSEMBLY
+#define CGAL_IA_SETFPCW(CW) asm volatile ("mt_fpcr %0; excb" : :"f" (CW))
 #define CGAL_IA_GETFPCW(CW) asm volatile ("excb; mf_fpcr %0" : "=f" (CW))
 typedef unsigned long FPU_CW_t;
-// Alpha:                                     rounding
+// Alpha:                           rounding
 static const FPU_CW_t FPU_cw_zero = 0x0000000000000000UL;
 static const FPU_CW_t FPU_cw_near = 0x0800000000000000UL;
 static const FPU_CW_t FPU_cw_up   = 0x0c00000000000000UL;
 static const FPU_CW_t FPU_cw_down = 0x0400000000000000UL;
+#else
+typedef unsigned int FPU_CW_t;
+static const FPU_CW_t FPU_cw_zero = FP_RND_RZ;
+static const FPU_CW_t FPU_cw_near = FP_RND_RN;
+static const FPU_CW_t FPU_cw_up   = FP_RND_RP;
+static const FPU_CW_t FPU_cw_down = FP_RND_RM;
+#endif
+#endif // __alpha
+
+
+// Generic part.
+
+static inline FPU_CW_t FPU_get_control_word (void)
+{
+    FPU_CW_t cw;
+#ifdef CGAL_IA_USE_ASSEMBLY
+    CGAL_IA_GETFPCW(cw);
+#else
+
+#ifdef __linux
+#error  // It seems there's no C function in libc5 !!!
+#endif
+
+#ifdef __osf
+    cw = read_rnd();
+#endif
+
+#ifdef __sun
+    cw = fpgetround();
+#endif
+
+#ifdef __sgi
+#ifdef __SGI_ieeefph__
+    cw = fpgetround();
+#else
+    union fpc_csr fpu_ctl;
+    fpu_ctl.fc_word = get_fpc_csr();
+    cw = fpu_ctl.fc_struct.rounding_mode;
 #endif
 #endif
 
-static inline void FPU_set_rounding_to_zero (void);
-static inline void FPU_set_rounding_to_nearest (void);
-static inline void FPU_set_rounding_to_infinity (void);
-static inline void FPU_set_rounding_to_minus_infinity (void);
+#endif
+    return cw;
+}
 
-static FPU_CW_t FPU_CW;
-static inline void FPU_save_control_word (void);
-static inline void FPU_restore_control_word (void);
+static inline void FPU_set_control_word (FPU_CW_t cw)
+{
+#ifdef CGAL_IA_USE_ASSEMBLY
+    CGAL_IA_SETFPCW(cw);
+#else
 
-/* Code of those inline functions: */
+#ifdef __linux
+    __setfpucw(cw);
+#endif
+
+#ifdef __osf
+    write_rnd(cw);
+#endif
+
+#ifdef __sun
+    fpsetround(cw);
+#endif
+
+#ifdef __sgi
+#ifdef __SGI_ieeefph__
+    fpsetround(cw);
+#else
+    union fpc_csr fpu_ctl;
+    fpu_ctl.fc_word = get_fpc_csr();
+    fpu_ctl.fc_struct.rounding_mode = cw;
+    set_fpc_csr (fpu_ctl.fc_word);
+#endif
+#endif
+
+#endif
+}
+
+// Obscolete: wrappers for the old interface.
 
 static inline void FPU_set_rounding_to_zero (void)
-{
-#ifdef CGAL_IA_USE_ASSEMBLY
-	CGAL_IA_SETFPCW(FPU_cw_zero);
-#else
-#ifdef __linux
-#ifdef __i386 
-        __setfpucw(0x1e72);
-#else
-        __setfpucw(0x1f72);	/* FIX ME */
-#endif
-#endif
-
-#ifdef __osf
-	write_rnd(FP_RND_RZ);
-#endif
-
-#ifdef __sun
-        fpsetround(FP_RZ);
-#endif
-
-#ifdef __sgi
-#ifdef __SGI_ieeefph__
-	fp_rnd mode = FP_RZ;
-	fpsetround(mode);
-#else
-	union fpc_csr fpu_ctl;
-	fpu_ctl.fc_word = get_fpc_csr();
-	fpu_ctl.fc_struct.rounding_mode = ROUND_TO_ZERO;
-	set_fpc_csr (fpu_ctl.fc_word);
-#endif
-#endif
-#endif
-}
+{ FPU_set_control_word(FPU_cw_zero); }
 
 static inline void FPU_set_rounding_to_nearest (void)
-{
-#ifdef CGAL_IA_USE_ASSEMBLY
-	CGAL_IA_SETFPCW(FPU_cw_near);
-#else
-#ifdef __osf
-	write_rnd(FP_RND_RN);
-#endif
-
-#ifdef __sun
-	fpsetround(FP_RN);
-#endif
-
-#ifdef __linux
-#ifdef __i386
-	__setfpucw(0x1272);
-#else
-	__setfpucw(0x1372);
-#endif
-#endif
-
-#ifdef __sgi
-#ifdef __SGI_ieeefph__
-	fp_rnd mode = FP_RN;
-	fpsetround(mode);
-#else
-	union fpc_csr fpu_ctl;
-	fpu_ctl.fc_word = get_fpc_csr();
-	fpu_ctl.fc_struct.rounding_mode = ROUND_TO_NEAREST;
-	set_fpc_csr (fpu_ctl.fc_word);
-#endif
-#endif
-#endif
-}
+{ FPU_set_control_word(FPU_cw_near); }
 
 static inline void FPU_set_rounding_to_infinity (void)
-{
-#ifdef CGAL_IA_USE_ASSEMBLY
-	CGAL_IA_SETFPCW(FPU_cw_up);
-#else
-#ifdef __osf
-	write_rnd(FP_RND_RP);
-#endif
-
-#ifdef __sun
-        fpsetround(FP_RP);
-#endif
-
-#ifdef __linux
-#ifdef __i386
-	__setfpucw(0x1a72);
-#else
-	__setfpucw(0x1b72);
-#endif
-#endif
-
-#ifdef __sgi
-#ifdef __SGI_ieeefph__
-	fp_rnd mode = FP_RP;
-	fpsetround(mode);
-#else
-	union fpc_csr fpu_ctl;
-	fpu_ctl.fc_word = get_fpc_csr();
-	fpu_ctl.fc_struct.rounding_mode = ROUND_TO_PLUS_INFINITY;
-	set_fpc_csr (fpu_ctl.fc_word);
-#endif
-#endif
-#endif
-}
+{ FPU_set_control_word(FPU_cw_up); }
 
 static inline void FPU_set_rounding_to_minus_infinity (void)
-{
-#ifdef CGAL_IA_USE_ASSEMBLY
-	CGAL_IA_SETFPCW(FPU_cw_down);
-#else
-#ifdef __osf
-	write_rnd(FP_RND_RM);
-#endif
-
-#ifdef __sun
-        fpsetround(FP_RM);
-#endif
-
-#ifdef __linux
-#ifdef __i386
-        __setfpucw(0x1672);
-#else
-        __setfpucw(0x1772);
-#endif
-#endif
-
-#ifdef __sgi
-#ifdef __SGI_ieeefph__
-	fp_rnd mode = FP_RM;
-	fpsetround(mode);
-#else
-	union fpc_csr fpu_ctl;
-	fpu_ctl.fc_word = get_fpc_csr();
-	fpu_ctl.fc_struct.rounding_mode = ROUND_TO_MINUS_INFINITY;
-	set_fpc_csr (fpu_ctl.fc_word);
-#endif
-#endif
-#endif
-}
-
-// Rounding mode empiric testing.
-
-enum FPU_rounding_mode
-{
-    FPU_MINUS_INFINITY,
-    FPU_ZERO,
-    FPU_NEAREST,
-    FPU_PLUS_INFINITY
-};
-
-
-// The results of 1-epsilon and -1+epsilon are enough
-// to detect exactly the rounding mode.
-// (epsilon = MIN_DOUBLE, ulp = 2^-52 or 2^-53).
-// ----------------------------------------------------
-// rounding mode:	 +inf	 -inf	 0	 nearest
-// ----------------------------------------------------
-//  1-epsilon		 1	 1-ulp	 1-ulp	 1
-// -1+epsilon		-1+ulp	-1	-1+ulp	-1
-// ----------------------------------------------------
-
-// Warning: it should not be inlined, but if not => in libCGAL.so.
-static inline FPU_rounding_mode FPU_get_rounding_mode ()
-{
-    // If not marked "volatile", the result is false when optimizing
-    // because the constants are pre-computed at compile time !!!
-    volatile const double m = 5e-324; // Interval_nt_advanced::min_double;
-    const double y = 1.0, z = -1.0;
-    double ye, ze;
-    ye = y - m;
-    ze = z + m;
-    if ((y == ye) && (z == ze)) return FPU_NEAREST;
-    if (y == ye) return FPU_PLUS_INFINITY;
-    if (z == ze) return FPU_MINUS_INFINITY;
-    return FPU_ZERO;
-}
-
-// Ok, first implementation based on the old one.
-static inline void FPU_set_rounding_mode (FPU_rounding_mode mode)
-{
-    switch (mode) {
-	case FPU_PLUS_INFINITY:
-	    FPU_set_rounding_to_infinity();
-	    break;
-	case FPU_NEAREST:
-	    FPU_set_rounding_to_nearest();
-	    break;
-	case FPU_MINUS_INFINITY:
-	    FPU_set_rounding_to_minus_infinity();
-	    break;
-	case FPU_ZERO:
-	    FPU_set_rounding_to_zero();
-	    break;
-    };
-}
-
-
-// Ok, the new save and restore stuff.
-
-static inline void FPU_save_control_word (void)
-{
-#ifdef CGAL_IA_USE_ASSEMBLY
-    CGAL_IA_GETFPCW(FPU_CW);
-#else
-#error Sorry, not yet implemented.
-#endif
-}
-
-static inline void FPU_restore_control_word (void)
-{
-#ifdef CGAL_IA_USE_ASSEMBLY
-    CGAL_IA_SETFPCW(FPU_CW);
-#else
-#error Sorry, not yet implemented.
-#endif
-}
+{ FPU_set_control_word(FPU_cw_down); }
 
 CGAL_END_NAMESPACE
 
