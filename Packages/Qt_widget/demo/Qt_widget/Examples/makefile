@@ -45,6 +45,11 @@ hellosegment$(EXE_EXT): hellosegment$(OBJ_EXT)
 standard_toolbar$(EXE_EXT): standard_toolbar$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)standard_toolbar standard_toolbar$(OBJ_EXT) $(LDFLAGS)
 
+tool.moc:  tool.C
+	$(QT_MOC) -o tool.moc $<
+
+tool$(OBJ_EXT): tool.moc
+
 tool$(EXE_EXT): tool$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)tool tool$(OBJ_EXT) $(LDFLAGS)
 

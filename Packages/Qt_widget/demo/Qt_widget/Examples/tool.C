@@ -1,7 +1,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 
-#include <CGAL/IO/Qt_Widget.h>
+#include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_get_point.h>
 
 #include <qapplication.h>
@@ -12,6 +12,7 @@ typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
 
 Delaunay dt;
 class My_Window : public CGAL::Qt_widget {
+  Q_OBJECT
 public:
   My_Window(int x, int y){
     resize(x,y);
@@ -37,7 +38,10 @@ private slots:
     redraw();
   }
 
-}//endclass;
+}; //endclass
+
+//  moc_source_file : tool.C
+#include "tool.moc"
 
 int main( int argc, char **argv )
 {

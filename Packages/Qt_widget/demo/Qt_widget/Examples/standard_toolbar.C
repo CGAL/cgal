@@ -10,6 +10,10 @@
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 #include <CGAL/point_generators_2.h>
 
+typedef CGAL::Cartesian<double>             Rep;
+typedef CGAL::Point_2<Rep>                  Point;
+typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
+
 Delaunay dt;
 
 class My_window : public QMainWindow{
@@ -31,14 +35,15 @@ public:
     stoolbar = new CGAL::Standard_toolbar(win, this);
     this->addToolBar(stoolbar->toolbar(), Top, FALSE);
 
-    win->redraw();
+    connect(win, SIGNAL(custom_redraw()),
+	    this, SLOT(redraw_win()) );
   }
-  ~My_Window(){delete win;}
-private:	//functions
-  void redraw()
+  ~My_window(){delete win;}
+private slots:	//functions
+  void redraw_win()
   {
-    Qt_widget::redraw();
-    *this << dt;
+    //CGAL::Qt_widget::redraw();
+    *win << dt;
   }
 
 private:	//members

@@ -16,7 +16,7 @@ int main( int argc, char **argv )
     W->set_window(0, 600, 0, 600);
     W->show();
     W->lock();
-    *W << BackgroundColor(ORANGE) << RED;
+    *W << CGAL::BackgroundColor(CGAL::ORANGE) << CGAL::RED;
     *W << Segment(Point(100,100), Point(400,400));
     W->unlock();
     return app.exec();
