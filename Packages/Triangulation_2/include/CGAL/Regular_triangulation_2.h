@@ -33,27 +33,27 @@ CGAL_BEGIN_NAMESPACE
 template < class Gt, 
            class Tds  = Triangulation_data_structure_2 <
                         Regular_triangulation_vertex_base_2<Gt>,
-		        Regular_triangulation_face_base_2<Gt> > >
+		        Regular_triangulation_face_base_2<> > >
 class Regular_triangulation_2 : public Triangulation_2<Gt,Tds>
 {
-
+  typedef Regular_triangulation_2<Gt, Tds>     Self;
+  typedef Triangulation_2<Gt,Tds>              Base;
 public:
-  typedef Regular_triangulation_2<Gt, Tds> Self;
-  typedef Triangulation_2<Gt,Tds>     Base;
-  typedef Gt                          Geom_traits;
-  typedef typename Gt::Bare_point     Bare_point;
-  typedef typename Gt::Weighted_point Weighted_point;
-  typedef typename Gt::Weighted_point Point;
-  typedef typename Gt::Weight         Weight;
+  typedef Tds                                  Triangulation_data_structure;
+  typedef Gt                                   Geom_traits;
+  typedef typename Gt::Bare_point              Bare_point;
+  typedef typename Gt::Weighted_point          Weighted_point;
+  typedef typename Gt::Weighted_point          Point;
+  typedef typename Gt::Weight                  Weight;
 
-  typedef typename Base::Face_handle    Face_handle;
-  typedef typename Base::Vertex_handle  Vertex_handle;
-  typedef typename Base::Vertex         Vertex;
-  typedef typename Base::Edge           Edge;
-  typedef typename Base::Locate_type    Locate_type;
-  typedef typename Base::Vertex_circulator     Vertex_circulator;
+  typedef typename Base::Face_handle           Face_handle;
+  typedef typename Base::Vertex_handle         Vertex_handle;
+  typedef typename Base::Vertex                Vertex;
+  typedef typename Base::Edge                  Edge;
+  typedef typename Base::Locate_type           Locate_type;
   typedef typename Base::Face_circulator       Face_circulator;
   typedef typename Base::Edge_circulator       Edge_circulator;
+  typedef typename Base::Vertex_circulator     Vertex_circulator;
   typedef typename Base::Finite_edges_iterator Finite_edges_iterator;
   typedef typename Base::All_edges_iterator    All_edges_iterator;
   typedef typename Base::Finite_faces_iterator Finite_faces_iterator;
@@ -68,7 +68,7 @@ private:
   public:
     bool operator()(const typename Base::All_vertices_iterator&  it){
       return it->is_hidden();
-    }
+     }
     bool operator()(const typename Base::Finite_vertices_iterator&  it){
       return it->is_hidden();
     }
@@ -185,7 +185,7 @@ private:
   Vertex_handle hide_new_vertex(Face_handle f, const Weighted_point& p);
   void hide_remove_degree_3(Face_handle fh, Vertex_handle vh);
   void hide_vertex(Face_handle f, Vertex_handle v);
-  void hide_vertex(Face_handle f, void* ptr);
+  //void hide_vertex(Face_handle f, void* ptr);
   void exchange_incidences(Vertex_handle va, Vertex_handle vb);
   void exchange_hidden(Vertex_handle va, Vertex_handle vb);
 
@@ -255,8 +255,13 @@ copy_triangulation(const Self &tr )
   // not good
   // clear them and next
   // scan the hidden vertices to retablish the list in faces
+<<<<<<< Regular_triangulation_2.h
   typename Tds::Iterator_base baseit = this->_tds.iterator_base_begin();
   for( ; baseit != this->_tds.iterator_base_end(); ++baseit){
+=======
+  typename Tds::Face_iterator_base baseit=_tds.face_iterator_base_begin();
+  for( ; baseit != _tds.face_iterator_base_end(); baseit++){
+>>>>>>> 1.55.2.3
     baseit->vertex_list().clear();
   }
   Hidden_vertices_iterator hvit = hidden_vertices_begin();
@@ -375,9 +380,8 @@ is_valid_face(Face_handle fh) const
   typename Vertex_list::iterator vlit = fh->vertex_list().begin(),
 	                       vldone = fh->vertex_list().end();
   for (; vlit != vldone; vlit++)    {
-    Vertex_handle v(static_cast<Vertex*>(*vlit));
-    result = result && power_test(fh, v->point()) == ON_NEGATIVE_SIDE;
-    result = result && (v->face() == fh);
+    result = result && power_test(fh, (*vlit)->point()) == ON_NEGATIVE_SIDE;
+    result = result && ((*vlit)->face() == fh);
     if (!result)     show_face(fh);
     CGAL_triangulation_assertion(result); 
   }
@@ -402,9 +406,14 @@ is_valid_vertex(Vertex_handle vh) const
 			 loc->neighbor(li)) );
         if ( !result) {
       std::cerr << vh->point() << " " << std::endl;
+<<<<<<< Regular_triangulation_2.h
       std::cerr << "vh_>face " <<  static_cast<void*>(&(*vh->face()))
 		<< " " << std::endl;
       std::cerr <<  "loc      " <<  static_cast<void*>(&(*loc)) 
+=======
+      std::cerr << "vh_>face " << &*(vh->face())  << " " << std::endl;
+      std::cerr <<  "loc      " <<  &*(loc )
+>>>>>>> 1.55.2.3
 	        << " lt " << lt  << " li " << li << std::endl;
       show_face(vh->face());
       show_face(loc);
@@ -530,8 +539,7 @@ show_face(Face_handle fh) const
   std::cerr << "  +++++>>>    ";
   for (current= fh->vertex_list().begin(); 
        current!= fh->vertex_list().end() ; current++ ) {
-    Vertex_handle v(static_cast<Vertex*>(*current));
-    std::cerr <<"[ "<< (v->point()) << " ] ,  ";
+        std::cerr <<"[ "<< ((*current)->point()) << " ] ,  ";
   }
   std::cerr <<std::endl;
 }
@@ -795,8 +803,7 @@ Regular_triangulation_2<Gt,Tds>::
 exchange_hidden(Vertex_handle va, Vertex_handle vb)
 { 
   CGAL_triangulation_assertion (vb->is_hidden());
-  CGAL_triangulation_assertion (vb == 
-	      static_cast<Vertex*>(*(vb->face()->vertex_list().rbegin())));
+  CGAL_triangulation_assertion (vb == vb->face()->vertex_list().back());
   vb->face()->vertex_list().pop_back();
   _hidden_vertices--;
   hide_vertex(vb->face(), va);
@@ -990,7 +997,7 @@ remove(Vertex_handle v )
 
   while (! p_list.empty())
   {
-    Vertex_handle v(static_cast<Vertex*>(p_list.front()));
+    Vertex_handle v(p_list.front());
     p_list.pop_front();
     if (is_infinite(neighboring)) {
       neighboring=neighboring->neighbor(neighboring->index(infinite_vertex()));
@@ -1191,10 +1198,7 @@ Regular_triangulation_2<Gt,Tds>::
 set_face(Vertex_list& vl, const Face_handle& fh)
 {
   for(typename Vertex_list::iterator it = vl.begin(); it != vl.end(); it++)
-    {
-      Vertex_handle v(static_cast<Vertex*>(*it));
-      v->set_face(fh);
-    }
+    (*it)->set_face(fh);
 }
 
 // add the vertex_list of f2 and f3 to the point list of f1
@@ -1243,10 +1247,9 @@ update_hidden_points_2_2(const Face_handle& f1, const Face_handle& f2)
     const Weighted_point& a1 = f1->vertex(f1->index(f2))->point();
     const Weighted_point& a  = f1->vertex(1-f1->index(f2))->point();
     while ( ! p_list.empty() ) {
-      Vertex_handle v(static_cast<Vertex*>(p_list.front()));
-      if ( compare_x(a, v->point()) == 
+      if ( compare_x(a, p_list.front()->point()) == 
 	   compare_x(a, a1)  &&
-	   compare_y(a, v->point()) == 
+	   compare_y(a, p_list.front()->point()) == 
 	   compare_y(a, a1))
 	{
 	  hide_vertex(f1, p_list.front());
@@ -1266,8 +1269,7 @@ update_hidden_points_2_2(const Face_handle& f1, const Face_handle& f2)
 
   while ( ! p_list.empty() )
     {
-      Vertex_handle v(static_cast<Vertex*>(p_list.front()));
-      if (orientation(v0->point(), v1->point(), v->point()) ==
+      if (orientation(v0->point(), v1->point(), p_list.front()->point()) ==
 	  COUNTERCLOCKWISE)
 	hide_vertex(f1, p_list.front());
 	else
@@ -1332,7 +1334,7 @@ update_hidden_points_1_3(const Face_handle& f1, const Face_handle& f2,
     // if here, v1,v2,v3 and v0 are finite vertices
     while(! p_list.empty())
     {
-      Vertex_handle v(static_cast<Vertex*>(p_list.front()));
+      Vertex_handle v(p_list.front());
 //       if(orientation(v2->point(),v0->point(), v->point()) !=
 // 	 orientation(v2->point(),v0->point(),v3->point()) )
 //       { // not in f1
@@ -1400,17 +1402,17 @@ hide_vertex(Face_handle f, Vertex_handle vh)
     _hidden_vertices++;
   }
   vh->set_face(f);
-  f->vertex_list().push_back(&(*vh));
+  f->vertex_list().push_back(vh);
 }
 
-template < class Gt, class Tds >
-void
-Regular_triangulation_2<Gt,Tds>::
-hide_vertex(Face_handle f, void* ptr)
-{
-  Vertex_handle v(static_cast<Vertex*>(ptr));
-  hide_vertex(f, v);
-}
+// template < class Gt, class Tds >
+// void
+// Regular_triangulation_2<Gt,Tds>::
+// hide_vertex(Face_handle f, void* ptr)
+// {
+//   Vertex_handle v(static_cast<Vertex*>(ptr));
+//   hide_vertex(f, v);
+// }
 
 
 

@@ -35,7 +35,7 @@ CGAL_BEGIN_NAMESPACE
 template <class Gt, 
           class Tds = Triangulation_data_structure_2 <
                       Triangulation_vertex_base_2<Gt>,
-		      Constrained_triangulation_face_base_2<Gt> >,
+		      Constrained_triangulation_face_base_2<> >,
 	  class Itag = No_intersection_tag >		
 class Constrained_Delaunay_triangulation_2
   : public  Constrained_triangulation_2<Gt, Tds, Itag> 

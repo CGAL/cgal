@@ -25,47 +25,73 @@
 #ifndef CGAL_TRIANGULATION_VERTEX_BASE_2_H
 #define CGAL_TRIANGULATION_VERTEX_BASE_2_H
 
+#include <CGAL/basic.h>
 #include <CGAL/Triangulation_short_names_2.h>
+#include <CGAL/Triangulation_ds_vertex_base_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template < class GT >
-class Triangulation_vertex_base_2 {
+template < typename GT,
+           typename Vb = Triangulation_ds_vertex_base_2<> >
+class Triangulation_vertex_base_2 
+  : public Vb
+
+{
+  typedef typename Vb::Triangulation_data_structure    Tds;
+public:
+  typedef GT                                    Geom_traits;
+  typedef typename GT::Point_2                  Point;
+  typedef Tds                                   Triangulation_data_structure;
+  typedef typename Tds::Face_handle             Face_handle;
+  typedef typename Tds::Vertex_handle           Vertex_handle;
+
+  template < typename TDS2 >
+  struct Rebind_TDS {
+    typedef typename Vb::template Rebind_TDS<TDS2>::Other  Vb2;
+    typedef Triangulation_vertex_base_2<GT, Vb2>           Other;
+  };
+
+private:
+  Point _p;
 
 public:
-  typedef typename GT::Point_2 Point;
-
-  Triangulation_vertex_base_2 ()
-    : _p(Point()), _f(NULL)
-    {}
-    
-  Triangulation_vertex_base_2(const Point & p, void * f = NULL)
-    :  _p(p), _f(f)
-    {}
+  Triangulation_vertex_base_2 () : Vb() {}
+  Triangulation_vertex_base_2(const Point & p) : Vb(), _p(p) {}
+  Triangulation_vertex_base_2(const Point & p, Face_handle f)
+    : Vb(f), _p(p) {}
 
   void set_point(const Point & p) { _p = p; }
-  void set_face(void* f) { _f = f ;}
- 
   const Point&  point() const { return _p; }
-  void* face() const { return _f;}
- 
+
   // the non const version of point() is undocument
   // but needed to make the point iterator works
   // using Lutz projection scheme
   Point&        point() { return _p; }
 
-    
   //the following trivial is_valid to allow
   // the user of derived face base classes 
   // to add their own purpose checking
   bool is_valid(bool /* verbose */ = false, int /* level */ = 0) const
     {return true;}
-
-private:
-        Point _p;
-        void * _f;
-
 };
+
+template < class GT, class Vb >
+std::istream&
+operator>>(std::istream &is, Triangulation_vertex_base_2<GT, Vb> &v)
+  // non combinatorial information. Default = point
+{
+  return is >> static_cast<Vb&>(v) >> v.point();
+}
+
+template < class GT, class Vb >
+std::ostream&
+operator<<(std::ostream &os, const Triangulation_vertex_base_2<GT, Vb> &v)
+  // non combinatorial information. Default = point
+{
+  return os << static_cast<const Vb&>(v) << v.point();
+}
+
+
 
 CGAL_END_NAMESPACE
 

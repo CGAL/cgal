@@ -249,7 +249,7 @@ _test_cls_triangulation_2( const Triangul & )
   Vertex_handle v2_3_4 = T2_3.insert(p4);
   assert( T2_3.dimension() == 2 );
   Vertex_handle v2_3_6 = T2_3.insert(p6, T2_3.finite_faces_begin());
-   Vertex_handle v2_3_0 = T2_3.insert(p0, ++T2_3.finite_faces_begin());
+  Vertex_handle v2_3_0 = T2_3.insert(p0, ++T2_3.finite_faces_begin());
   Vertex_handle v2_3_5 = T2_3.insert(p5);
   Vertex_handle v2_3_7 = T2_3.insert(p7);
   loc = T2_3.locate(p10,lt,li);

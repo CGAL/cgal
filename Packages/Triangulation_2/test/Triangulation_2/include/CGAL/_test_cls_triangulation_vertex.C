@@ -23,25 +23,29 @@
 
 #include <cassert>
 
-template <class Vertex>
+template <class Ve>
 void
-_test_cls_triangulation_vertex( const Vertex & )
+_test_cls_triangulation_vertex( const Ve & )
 {
   std::cout << "    vertex" << std::endl;
 
-  //typedef typename Vertex::Geom_traits          Gt;
+  typedef typename Ve::Point                         Point;
+  typedef typename Ve::Triangulation_data_structure  Tds;
 
-  typedef typename Vertex::Point                Point;
+  typedef typename Tds::Face                Face;
+  typedef typename Tds::Edge                Edge;
+  typedef typename Tds::Vertex              Vertex;
+  typedef typename Tds::Vertex_handle       Vertex_handle;
+  typedef typename Tds::Face_handle         Face_handle;
 
-  typedef typename Vertex::Face                 Face;
-  typedef typename Vertex::Edge                 Edge;
+  typedef typename Tds::Vertex_circulator   Vertex_circulator;
+  typedef typename Tds::Face_circulator     Face_circulator;
+  typedef typename Tds::Edge_circulator     Edge_circulator;
 
-  typedef typename Vertex::Vertex_handle        Vertex_handle;
-  typedef typename Vertex::Face_handle          Face_handle;
-
-  typedef typename Vertex::Vertex_circulator    Vertex_circulator;
-  typedef typename Vertex::Face_circulator      Face_circulator;
-  typedef typename Vertex::Edge_circulator      Edge_circulator;
+  
+  typedef typename Tds::Face                Face;
+  
+  
 
   // Build a few objects
   Point p2(5,6,1);
@@ -75,12 +79,12 @@ _test_cls_triangulation_vertex( const Vertex & )
   assert( v2.face() == f3.handle() );
   
   // Test ccw() and cw()
-  assert( v1.ccw(0) == 1 );
-  assert( v1.ccw(1) == 2 );
-  assert( v1.ccw(2) == 0 );
-  assert( v1.cw(0) == 2 );
-  assert( v1.cw(1) == 0 );
-  assert( v1.cw(2) == 1 );
+//   assert( v1.ccw(0) == 1 );
+//   assert( v1.ccw(1) == 2 );
+//   assert( v1.ccw(2) == 0 );
+//   assert( v1.cw(0) == 2 );
+//   assert( v1.cw(1) == 0 );
+//   assert( v1.cw(2) == 1 );
   
   // The functions degree(), incident_faces(), incident_vertices(),
   // incident_edges() need a vertex in some triangulation,

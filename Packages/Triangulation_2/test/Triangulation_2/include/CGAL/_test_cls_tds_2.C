@@ -29,9 +29,9 @@
 
 
 
-template <class Tds, class Gt>
+template <class Tds>
 void
-_test_cls_tds_2( const Tds &, const Gt &)
+_test_cls_tds_2( const Tds &)
 {
   
   typedef typename Tds::Vertex            Vertex;
@@ -48,11 +48,10 @@ _test_cls_tds_2( const Tds &, const Gt &)
   typedef typename Tds::Face_circulator   Face_circulator;
   typedef typename Tds::Edge_circulator   Edge_circulator;
 
-  typedef typename Gt::Point_2              Point;
-
+  
   // Test subclasses
-  CGAL::_test_cls_tds_vertex( Vertex(), Gt() );
-  CGAL::_test_cls_tds_face( Face(), Gt() );
+  CGAL::_test_cls_tds_vertex( Vertex());
+  CGAL::_test_cls_tds_face( Face());
 
   // Test constructors
   std::cout << "    constructors" << std::endl;
@@ -116,33 +115,21 @@ _test_cls_tds_2( const Tds &, const Gt &)
   Vertex_handle w4 = tds4.insert_first();
   Vertex_handle v4_1 = tds4.insert_second();
   Vertex_handle v4_2 = tds4.insert_dim_up(w4,true);
-   // from now on, coordinates have to be introduced for
-  // the ierators in is_valid() to work
-  Point p1(0,0);
-  Point p2(2,0);
-  Point p3(1,2);
-  Point p3bis(1,-2);
-  Point p4(1,1);
-  Point p5(1,0);
-  v4_1->set_point(p1);
-  v4_2->set_point(p2);
   //test insert_dim_up, remove _dim_down  from dimsension 1 to 2
   Vertex_handle v4_3 = tds4.insert_dim_up(w4,false);
-  v4_3->set_point(p3bis);
   assert(tds4.dimension()== 2);
   assert(tds4.number_of_vertices() == 4);
   assert(tds4.is_valid() );
   tds4.remove_dim_down(v4_3);
   assert(tds4.is_valid() );
   v4_3 = tds4.insert_dim_up(w4,true);
-  v4_3->set_point(p3);
   assert(tds4.is_valid() );
   // test insert-in-face, insert_in_egde dim==2
   // Find the face  v4_1 v4_2 v4_3 for insertion
   Face_circulator fc= v4_1->incident_faces();
   while( ! (fc->has_vertex(v4_2) && fc->has_vertex(v4_3)) ) fc++;
   Vertex_handle v4_4 = tds4.insert_in_face(&( *fc));
-  v4_4->set_point(p4);
+  assert(v4_4->degree() == 3);
   assert(tds4.is_valid() );
   // Find the edge v4_1v4_2 for insertion
   fc = v4_1->incident_faces();
@@ -150,7 +137,6 @@ _test_cls_tds_2( const Tds &, const Gt &)
   while(! (fc->has_vertex(v4_2, ic ) && ic == fc->ccw(fc->index(v4_1)))) 
     fc++;
   Vertex_handle v4_5 = tds4.insert_in_edge(&(*fc), ic);
-  v4_5->set_point(p5);
   assert(tds4.is_valid() );
   assert(tds4.dimension()== 2);
   assert(tds4.number_of_vertices() == 6);
@@ -288,18 +274,7 @@ _test_cls_tds_2( const Tds &, const Gt &)
 
   //test input, output
 
-  // first set_point to vertices which have not been set
-  //for clean input output of points
-  w1->set_point(p1);
-  w2->set_point(p1);
-  v2->set_point(p1);
-  w3->set_point(p1);
-  v3->set_point(p1);
-  w4->set_point(p1); 
-  vit = tds3.vertices_begin();
-  for ( ; vit != tds3.vertices_end(); vit++) {
-    vit->set_point(p1);
-  }
+
   std::cout << "    output to a file" << std::endl;
   std::ofstream of0("file_tds0");
   CGAL::set_ascii_mode(of0); 
@@ -435,7 +410,6 @@ _test_tds_iterators( const Tds&  tds)
   typedef typename Tds::Vertex_iterator   Vertex_iterator;
   typedef typename Tds::Face_iterator     Face_iterator;
   typedef typename Tds::Edge_iterator     Edge_iterator;
-  typedef typename Tds::Iterator_base     Iterator_base;
 
   int nv, ne, nf;
   nv = ne = nf = 0;

@@ -24,44 +24,32 @@
 #include <cassert>
 CGAL_BEGIN_NAMESPACE
 
-template <class Vertex, class Gt>
+template <class Vtds>
 void
-_test_cls_tds_vertex( const Vertex &, const Gt & )
+_test_cls_tds_vertex( const Vtds&)
 {
   std::cout << "    vertex" << std::endl;
 
-  typedef typename Vertex::Point                Point;
-  typedef typename Vertex::Face                 Face;
-  typedef typename Vertex::Edge                 Edge;
-  typedef typename Vertex::Face_handle          Face_handle;
-  typedef typename Vertex::Vertex_handle        Vertex_handle;
+  typedef typename Vtds::Face_handle          Face_handle;
+  typedef typename Vtds::Vertex_handle        Vertex_handle;
 
-  typedef typename Vertex::Vertex_circulator    Vertex_circulator;
-  typedef typename Vertex::Face_circulator      Face_circulator;
-  typedef typename Vertex::Edge_circulator      Edge_circulator;
+  typedef typename Vtds::Vertex_circulator    Vertex_circulator;
+  typedef typename Vtds::Face_circulator      Face_circulator;
+  typedef typename Vtds::Edge_circulator      Edge_circulator;
 
+  typedef typename Vtds::Tds                  Tds;
+  typedef typename Tds::Face                  Face;
+  typedef typename Vtds::Vertex               Vertex;
 
-  // Build a few objects
-  // Build a few objects
-  Point p2(1,2);
-  Point p3(2,3);
   Face f3;
   Face_handle fh3 = f3.handle();
   
   // Test constructors
   Vertex v1;
- //  Vertex v2(p2);
-//   Vertex v3(p3,fh3);
   Vertex v2, v3;
-  v2.set_point(p2);
-  v3.set_point(p3); v3.set_face(f3.handle());
+  v3.set_face(f3.handle());
   
-  // Test point()
-  // assert( Gt().compare_x_2_object()(v2.point(),p2) == CGAL::EQUAL &&
-// 	  Gt().compare_y_2_object()(v2.point(),p2) == CGAL::EQUAL) ;
-//   assert( Gt().compare_x_2_object()(v3.point(),p3) == CGAL::EQUAL &&
-// 	  Gt().compare_y_2_object()(v3.point(),p3) == CGAL::EQUAL) ;
-  
+
   // Test face()
   assert( v3.face() == fh3 );
   // to avoid "unused variable warning
@@ -71,18 +59,13 @@ _test_cls_tds_vertex( const Vertex &, const Gt & )
   v2.set_face(fh3);
   assert( v2.face() == fh3 );
   
-  // Test set_point()
-  v1.set_point(p3);
-  assert( Gt().compare_x_2_object()(v1.point(),p3) == CGAL::EQUAL &&
-	  Gt().compare_y_2_object()(v1.point(),p3) == CGAL::EQUAL) ;
-  
-  // Test ccw() and cw()
-  assert( v1.ccw(0) == 1 );
-  assert( v1.ccw(1) == 2 );
-  assert( v1.ccw(2) == 0 );
-  assert( v1.cw(0) == 2 );
-  assert( v1.cw(1) == 0 );
-  assert( v1.cw(2) == 1 );
+//   // Test ccw() and cw()
+//   assert( v1.ccw(0) == 1 );
+//   assert( v1.ccw(1) == 2 );
+//   assert( v1.ccw(2) == 0 );
+//   assert( v1.cw(0) == 2 );
+//   assert( v1.cw(1) == 0 );
+//   assert( v1.cw(2) == 1 );
   
   // The functions degree(), incident_faces(), incident_vertices(),
   // incident_edges() and is_valid() need a vertex in some

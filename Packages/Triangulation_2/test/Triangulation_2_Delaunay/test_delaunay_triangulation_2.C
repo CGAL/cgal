@@ -40,10 +40,7 @@ int main()
   std::cout << "Testing Delaunay Triangulation_2 " << std::endl; 
   std::cout << " with Euclidean cartesian points : " << std::endl;
   typedef CGAL::Triangulation_euclidean_traits_2<Test_rep_cartesian> Gt1;
-  typedef CGAL::Triangulation_vertex_base_2<Gt1>                  Vb1;
-  typedef CGAL::Triangulation_face_base_2<Gt1>                    Fb1;
-  typedef CGAL::Triangulation_data_structure_2<Vb1,Fb1> Tds1;
-  typedef CGAL::Delaunay_triangulation_2<Gt1,Tds1>                 Cls1;
+  typedef CGAL::Delaunay_triangulation_2<Gt1>                 Cls1;
 
   _test_cls_delaunay_triangulation_2( Cls1() );
 
@@ -51,10 +48,7 @@ int main()
   std::cout << "Testing Delaunay Triangulation_2 "<< std::endl; 
   std::cout << " with Triangulation_test_traits : " << std::endl;
   typedef CGAL::_Triangulation_test_traits                       Gt;
-  typedef CGAL::Triangulation_vertex_base_2<Gt>                  Vb;
-  typedef CGAL::Triangulation_face_base_2<Gt>                    Fb;
-  typedef CGAL::Triangulation_data_structure_2<Vb,Fb> Tds;
-  typedef CGAL::Delaunay_triangulation_2<Gt,Tds>                 Cls;
+  typedef CGAL::Delaunay_triangulation_2<Gt>                 Cls;
 
   _test_cls_delaunay_triangulation_2( Cls() ); 
 
@@ -72,10 +66,7 @@ int main()
   std::cout << " using Kernel_traits : " 	    << std::endl;
   std::cout << " and Homogeneous Points "       << std::endl;
   typedef CGAL::Homogeneous<double>                                 Gt4;
-  typedef CGAL::Triangulation_vertex_base_2<Gt4>                    Vb4;
-  typedef CGAL::Triangulation_face_base_2<Gt4>                      Fb4;
-  typedef CGAL::Triangulation_data_structure_2<Vb4,Fb4> Tds4;
-  typedef CGAL::Delaunay_triangulation_2<Gt4,Tds4>                   Cls4;
+  typedef CGAL::Delaunay_triangulation_2<Gt4>                   Cls4;
 
   _test_cls_delaunay_triangulation_2( Cls4() );
 

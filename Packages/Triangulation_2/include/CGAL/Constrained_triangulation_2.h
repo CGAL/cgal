@@ -49,7 +49,7 @@ struct Exact_predicates_tag{}; // to be used with filtered exact number
 template < class Gt, 
            class Tds = Triangulation_data_structure_2 <
                        Triangulation_vertex_base_2<Gt>,
-		       Constrained_triangulation_face_base_2<Gt> >, 
+		       Constrained_triangulation_face_base_2<> >, 
            class Itag = No_intersection_tag >
 class Constrained_triangulation_2  : public Triangulation_2<Gt,Tds>
 {
@@ -140,6 +140,7 @@ public:
   // QUERY
   bool is_constrained(Edge e) const;
   bool are_there_incident_constraints(Vertex_handle v) const;
+  bool is_valid(bool verbose = false, int level = 0) const;
   // template<class OutputIterator>
   // bool are_there_incident_constraints(Vertex_handle v, 
   //                                     OutputIterator out) const;
@@ -919,6 +920,23 @@ are_there_incident_constraints(Vertex_handle v) const
 template < class Gt, class Tds, class Itag >
 inline  bool 
 Constrained_triangulation_2<Gt,Tds,Itag>::
+is_valid(bool verbose = false, int level = 0) const
+{
+    bool result = Triangulation::is_valid(verbose,level);
+    for( All_faces_iterator it = all_faces_begin(); 
+	                    it != all_faces_end() ; it++) {
+      for(int i=0; i<3; i++) {
+	Face_handle n = it->neighbor(i);
+	result = result && 
+	  it->is_constrained(i) == n->is_constrained(n->index(it));
+      }
+    }
+    return result;
+}
+
+template < class Gt, class Tds, class Itag >
+inline  bool 
+Constrained_triangulation_2<Gt,Tds,Itag>::
 is_constrained(Edge e) const
 {
   return (e.first)->is_constrained(e.second);
@@ -1030,8 +1048,8 @@ file_output(std::ostream& os) const
   Triangulation_2<Gt, Tds>::file_output(os);
 
   // write constrained status
-  typename Tds::Iterator_base ib = this->_tds.iterator_base_begin();
-  for( ; ib != this->_tds.iterator_base_end(); ++ib) {
+  typename Tds::Face_iterator_base ib = this->_tds.face_iterator_base_begin();
+  for( ; ib != this->_tds.face_iterator_base_end(); ++ib) {
     for(int j = 0; j < 3; ++j){
       if (ib->is_constrained(j)) { os << "C";}
       else { os << "N";}

@@ -12,6 +12,7 @@
 // release_date  : $CGAL_Date$
 //
 // file          : include/CGAL/Regular_triangulation_face_base_2.h
+// package       : Triangulation_2
 // source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
@@ -31,16 +32,25 @@
 CGAL_BEGIN_NAMESPACE
 
 
-template <class Gt>
+template <class Fb = Triangulation_ds_face_base_2 <> >
 class Regular_triangulation_face_base_2
-  :  public Triangulation_face_base_2<Gt>
+  :  public Fb
 {
+  typedef Fb                                            Fbase;
+  typedef typename Fbase::Triangulation_data_structure  TDS;
 public:
-  typedef Gt Geom_traits;
-  typedef Triangulation_face_base_2<Gt> Fbase;
-  typedef Regular_triangulation_face_base_2<Gt> Regular_face_base;
-  typedef typename Gt::Weighted_point   Weighted_point;
-  typedef std::list<void*>              Vertex_list;
+  typedef TDS                                  Triangulation_data_structure;
+  typedef typename TDS::Vertex_handle          Vertex_handle;
+  typedef typename TDS::Face_handle            Face_handle;
+
+  template < typename TDS2 >
+  struct Rebind_TDS {
+    typedef typename Fb::template Rebind_TDS<TDS2>::Other   Fb2;
+    typedef Regular_triangulation_face_base_2<Fb2>             Other;
+  };
+
+  typedef std::list<Vertex_handle>             Vertex_list;
+
 protected:
   Vertex_list vlist;
 
@@ -49,12 +59,18 @@ public:
    : Fbase(),  vlist()
   {}
 
-  Regular_triangulation_face_base_2(void* v0, void* v1, void* v2)
+  Regular_triangulation_face_base_2(Vertex_handle v0, 
+				    Vertex_handle v1, 
+				    Vertex_handle v2)
     : Fbase(v0,v1,v2), vlist()
   { }
 
-  Regular_triangulation_face_base_2(void* v0, void* v1, void* v2,
-				    void* n0, void* n1, void* n2)
+  Regular_triangulation_face_base_2(Vertex_handle v0, 
+				    Vertex_handle v1, 
+				    Vertex_handle v2,
+				    Face_handle n0, 
+				    Face_handle n1, 
+				    Face_handle n2)
     : Fbase(v0,v1,v2,n0,n1,n2),  vlist()
   { }
 

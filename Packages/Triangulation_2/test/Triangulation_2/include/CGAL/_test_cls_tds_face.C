@@ -25,15 +25,17 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Face, class Gt>
+template <class Ftds>
 void
-_test_cls_tds_face( const Face &, const Gt & )
+_test_cls_tds_face( const Ftds )
 {
   std::cout << "    face" << std::endl;
 
-  typedef typename Face::Vertex               Vertex;
-  typedef typename Face::Face_handle          Face_handle;
-  typedef typename Face::Vertex_handle        Vertex_handle;
+  typedef typename Ftds::Tds                  Tds;
+  typedef typename Ftds::Vertex               Vertex;
+  typedef typename Ftds::Face                 Face;
+  typedef typename Ftds::Face_handle          Face_handle;
+  typedef typename Ftds::Vertex_handle        Vertex_handle;
 
   // Build a few objects
   int i;

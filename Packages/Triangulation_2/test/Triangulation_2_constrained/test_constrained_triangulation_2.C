@@ -42,7 +42,7 @@ int main()
   std::cout << "Testing constrained_triangulation "<< std::endl;
   std::cout << " with Exact_predicates_tag : " << std::endl;
   typedef CGAL::Triangulation_vertex_base_2<TestK>                 Vb;
-  typedef CGAL::Constrained_triangulation_face_base_2<TestK>       Fb;
+  typedef CGAL::Constrained_triangulation_face_base_2<>            Fb;
   typedef CGAL::Triangulation_data_structure_2<Vb,Fb>              TDS;
   typedef CGAL::Exact_predicates_tag                               Itag;
   typedef CGAL::Constrained_triangulation_2<TestK,TDS,Itag>        Ctwi;
@@ -51,7 +51,7 @@ int main()
   std::cout << "Testing constrained_triangulation "<< std::endl;
   std::cout << " with Exact_intersections_tag : " << std::endl;
   typedef CGAL::Triangulation_vertex_base_2<EK>                 Vbb;
-  typedef CGAL::Constrained_triangulation_face_base_2<EK>       Fbb;
+  typedef CGAL::Constrained_triangulation_face_base_2<>         Fbb;
   typedef CGAL::Triangulation_data_structure_2<Vbb,Fbb>         TDSS;
   typedef CGAL::Exact_intersections_tag                         EItag;
   typedef CGAL::Constrained_triangulation_2<EK,TDSS,EItag>      Ctwei;

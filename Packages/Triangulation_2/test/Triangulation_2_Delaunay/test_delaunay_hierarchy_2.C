@@ -43,7 +43,7 @@ typedef double                      Coord_type;
 typedef CGAL::Cartesian<Coord_type> Gt;
 typedef CGAL::Triangulation_vertex_base_2<Gt> Vbb;
 typedef CGAL::Triangulation_hierarchy_vertex_base_2<Vbb> Vb;
-typedef CGAL::Triangulation_face_base_2<Gt>  Fb;
+typedef CGAL::Triangulation_ds_face_base_2<>  Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb,Fb>  Tds;
 typedef CGAL::Delaunay_triangulation_2<Gt,Tds>  Dt;
 // Explicit instantiation of the whole class :

@@ -12,7 +12,7 @@
 // release_date  : 
 //
 // file          : include/CGAL/Triangulation_ds_iterators_2.h
-// package       : Triangulation 
+// package       : Triangulation_2
 // source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
@@ -28,65 +28,16 @@
 #include <iterator>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_2.h>
-
+#include <CGAL/Triangulation_iterator_adaptator.h>
 
 CGAL_BEGIN_NAMESPACE
-
-// The  iterator_base visits all the full dimensional faces 
-// of the Tds
-// whatever may be the dimension of the Tds
-// The following iterator visit the 2-faces
-
-template<class Tds>
-class Triangulation_ds_face_iterator_2
-  : public Tds::Iterator_base
-{
-public:
-  typedef typename Tds::Iterator_base           Base;
-  typedef typename Tds::Face_handle             Face_handle;
-  typedef Triangulation_ds_face_iterator_2<Tds> Face_iterator;
-
-  Triangulation_ds_face_iterator_2() : Base() {}
-   
-  Triangulation_ds_face_iterator_2(const Tds * tds) 
-    : Base(tds->face_container().begin())
-    {}
-
-  Triangulation_ds_face_iterator_2(const Tds* tds, int)
-    : Base(tds->face_container().end())
-    {}
-
-  operator Face_handle() const {return (*this)->handle();}
-};
-
-
-template < class Tds>
-class Triangulation_ds_vertex_iterator_2 
-  : public Tds::Vertex_container::iterator
-{
-public:
-  typedef typename Tds::Vertex_container::iterator Vertex_iterator_base;
-  typedef typename Tds::Vertex_handle              Vertex_handle;
-  typedef Triangulation_ds_vertex_iterator_2<Tds>  Vertex_iterator;
-  
-  Triangulation_ds_vertex_iterator_2() : Vertex_iterator_base() {}
-    
-  Triangulation_ds_vertex_iterator_2(const Tds* tds)
-    : Vertex_iterator_base(tds->vertex_container().begin()) {}
-   
-  Triangulation_ds_vertex_iterator_2(const Tds* tds, int )
-    : Vertex_iterator_base(tds->vertex_container().end()) {}
-   
-  operator Vertex_handle() const {return (*this)->handle();}
-};
-
 
 template <class Tds>
 class Triangulation_ds_edge_iterator_2
 {
 public:
   typedef typename Tds::Edge           Edge;
-  typedef typename Tds::Iterator_base  Iterator_base;
+  typedef typename Tds::Face_iterator  Face_iterator;
   typedef typename Tds::Face_handle    Face_handle;
     
   typedef Edge            value_type;
@@ -100,7 +51,7 @@ public:
   
 private:
 const Tds* _tds;
-Iterator_base pos;
+Face_iterator pos;
 mutable Edge edge;
 
 public:

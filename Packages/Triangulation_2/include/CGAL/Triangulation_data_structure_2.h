@@ -38,11 +38,10 @@
 #include <CGAL/Triangulation_utils_2.h>
 #include <CGAL/Trivial_iterator.h>
 #include <CGAL/DS_Container.h>
-#include <CGAL/Triangulation_vertex_base_2.h>
-#include <CGAL/Triangulation_face_base_2.h>
+#include <CGAL/Triangulation_ds_face_base_2.h>
+#include <CGAL/Triangulation_ds_vertex_base_2.h>
 #include <CGAL/Triangulation_ds_face_2.h>
 #include <CGAL/Triangulation_ds_vertex_2.h>
-#include <CGAL/Triangulation_ds_handles_2.h>
 #include <CGAL/Triangulation_ds_iterators_2.h>
 #include <CGAL/Triangulation_ds_circulators_2.h>
 
@@ -50,6 +49,22 @@
 #include <CGAL/IO/File_scanner_OFF.h>
 
 CGAL_BEGIN_NAMESPACE 
+
+// These two compilers seem to eat the concept checking code.
+#if defined __GNUG__ || defined __SUNPRO_CC
+template < typename T >
+struct vertex_and_cell_base_concept_checker {
+  template < typename T2 > struct check_for_rebind {};
+};
+
+template <>
+template < typename T >
+struct vertex_and_cell_base_concept_checker<T>::check_for_rebind<T>
+{ struct YOU_FORGOT_TO_ADD_A_Rebind_TO_YOUR_OWN_VERTEX_OR_CELL{}; };
+#endif
+
+
+
 template < class Vb, class Fb>
 class Triangulation_data_structure_2;
 
@@ -97,32 +112,57 @@ public:
 
  
 
-template <class Vb, class Fb>
+template < class Vb = Triangulation_ds_vertex_base_2<>, 
+           class Fb = Triangulation_ds_face_base_2<> >
 class Triangulation_data_structure_2 
   :public Triangulation_cw_ccw_2
 {
-public:
   typedef Triangulation_data_structure_2<Vb,Fb>  Tds;
 
-  friend class Triangulation_ds_face_iterator_2<Tds>;
+  typedef typename Vb::template Rebind_TDS<Tds>::Other  Vertex_base;
+  typedef typename Fb::template Rebind_TDS<Tds>::Other  Face_base;
+
+#if defined __GNUG__ || defined __SUNPRO_CC
+  // We verify that the user has not forgotten to add a Rebind_TDS in his own
+  // Vertex/Cell derived class, by checking that rebinding it to void gives
+  // the exact same type.
+  typedef vertex_and_cell_base_concept_checker<Vb>        checker_1;
+  typedef typename Vb::template Rebind_TDS<void>::Other   vb2;
+  typename checker_1::template check_for_rebind<vb2>::
+    YOU_FORGOT_TO_ADD_A_Rebind_TO_YOUR_OWN_VERTEX_OR_CELL o1;
+
+  typedef vertex_and_cell_base_concept_checker<Fb>        checker_2;
+  typedef typename Fb::template Rebind_TDS<void>::Other   fb2;
+  typename checker_2::template check_for_rebind<fb2>::
+    YOU_FORGOT_TO_ADD_A_Rebind_TO_YOUR_OWN_VERTEX_OR_CELL o2;
+#endif
+
   friend class Triangulation_ds_edge_iterator_2<Tds>;
-  friend class Triangulation_ds_vertex_iterator_2<Tds>;
-                   
-  typedef Vb                                         Vertex_base;
-  typedef Fb                                         Face_base;
-  typedef Triangulation_ds_vertex_2<Tds>             Vertex;
-  typedef Triangulation_ds_face_2<Tds>               Face;
+  friend class Triangulation_ds_face_circulator_2<Tds>;
+  friend class Triangulation_ds_edge_circulator_2<Tds>;
+  friend class Triangulation_ds_vertex_circulator_2<Tds>;
+                
+public:
+  typedef Triangulation_ds_vertex_2<Vertex_base>     Vertex;
+  typedef Triangulation_ds_face_2<Face_base>         Face;
   typedef CGAL_TRIVIAL_COMPARABLE_ITERATOR_CHECKER_POINTER(Face)   Face_handle;
   typedef CGAL_TRIVIAL_COMPARABLE_ITERATOR_CHECKER_POINTER(Vertex)
                                                      Vertex_handle;
   typedef std::pair<Face_handle, int>                Edge;
   
+protected:
   typedef DS_Container<Face>                         Face_container;
   typedef DS_Container<Vertex>                       Vertex_container;
-  typedef typename Face_container::iterator          Iterator_base;
-  typedef Triangulation_ds_face_iterator_2<Tds>      Face_iterator;
+
+public:
+  typedef typename Face_container::iterator          Face_iterator_base;
+  typedef typename Vertex_container::iterator        Vertex_iterator_base;
+
+  typedef Triangulation_iterator_handle_adaptor
+              <Face_iterator_base, Face_handle>      Face_iterator;
+  typedef Triangulation_iterator_handle_adaptor
+              <Vertex_iterator_base, Vertex_handle>  Vertex_iterator;
   typedef Triangulation_ds_edge_iterator_2<Tds>      Edge_iterator;
-  typedef Triangulation_ds_vertex_iterator_2<Tds>    Vertex_iterator;
 
   typedef Triangulation_ds_face_circulator_2<Tds>    Face_circulator;
   typedef Triangulation_ds_vertex_circulator_2<Tds>  Vertex_circulator;
@@ -173,34 +213,34 @@ public:
 
   // ITERATORS AND CIRCULATORS
 public:
-// The Iterator_base  gives the possibility to iterate over all
-// in the container  independently of the dimension.
+// The face_iterator_base_begin  gives the possibility to iterate over all
+// faces in the container  independently of the dimension.
   // public for the need of file_ouput() of Constrained triangulation
-  // should be made public later
+  // should be made private later
 
-  Iterator_base iterator_base_begin() const    {
+  Face_iterator face_iterator_base_begin() const    {
     return face_container().begin();
   }
-  Iterator_base iterator_base_end() const    {
+  Face_iterator face_iterator_base_end() const    {
     return face_container().end();
   }
 
 public:
   Face_iterator faces_begin() const {
     if (dimension() < 2) return faces_end();
-    return Face_iterator(this);
+    return face_container().begin();
   }
     
   Face_iterator faces_end() const {
-    return Face_iterator(this, 1);
+    return face_container().end();
   }
 
   Vertex_iterator vertices_begin() const  {
-    return Vertex_iterator(this);
+    return vertex_container().begin();
   }
 
   Vertex_iterator vertices_end() const {
-    return Vertex_iterator(this,1);
+    return vertex_container().end();
   }
   
   Edge_iterator edges_begin() const {
@@ -760,7 +800,7 @@ insert_dim_up(Vertex_handle w,  bool orient)
     v->set_face(f1);
     break;
   case 0 :
-    f1 = &(*iterator_base_begin());
+    f1 = &(*face_iterator_base_begin());
     f2 = create_face(v,Vertex_handle(NULL),Vertex_handle(NULL));
     f1->set_neighbor(0,f2);
     f2->set_neighbor(0,f1);
@@ -770,10 +810,10 @@ insert_dim_up(Vertex_handle w,  bool orient)
   case 2 :
     {
       std::list<Face_handle> faces_list;
-      Iterator_base ib= iterator_base_begin(); 
-      Iterator_base ib_end = iterator_base_end();
+      Face_iterator ib= face_iterator_base_begin(); 
+      Face_iterator ib_end = face_iterator_base_end();
       for (; ib != ib_end ; ++ib){
-	faces_list.push_back( & (*ib));
+	faces_list.push_back( ib);
       }
       
       std::list<Face_handle>  to_delete;
@@ -914,10 +954,10 @@ remove_dim_down(Vertex_handle v)
     // the other faces are deleted
     std::list<Face_handle > to_delete;
     std::list<Face_handle > to_downgrade;
-    Iterator_base ib = iterator_base_begin();
-    for( ; ib != iterator_base_end(); ++ib ){
-      if ( ! ib->has_vertex(v) ) { to_delete.push_back(&(*ib));}
-      else { to_downgrade.push_back(&(*ib));}
+    Face_iterator ib = face_iterator_base_begin();
+    for( ; ib != face_iterator_base_end(); ++ib ){
+      if ( ! ib->has_vertex(v) ) { to_delete.push_back(ib);}
+      else { to_downgrade.push_back(ib);}
     }
 
     typename std::list<Face_handle>::iterator lfit = to_downgrade.begin();
@@ -1228,8 +1268,8 @@ is_valid(bool verbose, int level) const
   CGAL_triangulation_assertion(result);
 
   //count and test the validity of the faces (for positive dimensions)
-  Iterator_base ib = iterator_base_begin(); 
-  Iterator_base ib_end = iterator_base_end();
+  Face_iterator ib = face_iterator_base_begin(); 
+  Face_iterator ib_end = face_iterator_base_end();
   int count_stored_faces =0;
   for ( ; ib != ib_end ; ++ib){
     count_stored_faces += 1;
@@ -1314,9 +1354,9 @@ copy_tds(const Tds &tds, Vertex_handle vh)
   //initializes maps
   std::map<Vertex_handle,Vertex_handle> vmap;
   std::map<Face_handle,Face_handle> fmap;
-  Iterator_base it1 = tds.iterator_base_begin();
-  Iterator_base it2 = iterator_base_begin();
-  for( ; it1 != tds.iterator_base_end(); ++it1,++it2) {
+  Face_iterator it1 = tds.face_iterator_base_begin();
+  Face_iterator it2 = face_iterator_base_begin();
+  for( ; it1 != tds.face_iterator_base_end(); ++it1,++it2) {
     fmap[it1->handle()] = it2->handle();
   }
   Vertex_iterator vit1 = tds.vertices_begin();
@@ -1326,11 +1366,11 @@ copy_tds(const Tds &tds, Vertex_handle vh)
   }
 
   //update pointers
-  it2 = iterator_base_begin();
+  it2 = face_iterator_base_begin();
   int j;
   if (dimension() == -1)  it2->set_vertex(0, vmap[it2->vertex(0)]);
   else {  // dimension() >= 0
-    for ( ; it2 != iterator_base_end(); ++it2) {
+    for ( ; it2 != face_iterator_base_end(); ++it2) {
       for (j = 0; j < dimension()+ 1; ++j) {
 	it2->set_vertex(j, vmap[it2->vertex(j)]);
 	it2->set_neighbor(j, fmap[it2->neighbor(j)]);
@@ -1371,7 +1411,8 @@ file_output( std::ostream& os, Vertex_handle v, bool skip_first) const
   if ( v != NULL) {
     V[v] = inum++;
     if( ! skip_first){
-    os << v->point();
+      // os << v->point();
+      os << *v ;
     if(is_ascii(os))  os << std::endl;
     }
   }
@@ -1380,7 +1421,8 @@ file_output( std::ostream& os, Vertex_handle v, bool skip_first) const
   for( Vertex_iterator vit= vertices_begin(); vit != vertices_end() ; ++vit) {
     if ( vit->handle() != v) {
 	V[vit->handle()] = inum++;
-	os << vit->point();
+	// os << vit->point();
+	os << *vit;
 	if(is_ascii(os)) os << std::endl;
     }
   }
@@ -1389,8 +1431,8 @@ file_output( std::ostream& os, Vertex_handle v, bool skip_first) const
   // vertices of the faces
   inum = 0;
   int dim = (dimension() == -1 ? 1 :  dimension() + 1);
-  for( Iterator_base ib = iterator_base_begin();
-       ib != iterator_base_end(); ++ib) {
+  for( Face_iterator ib = face_iterator_base_begin();
+       ib != face_iterator_base_end(); ++ib) {
     F[&(*ib)] = inum++;
     for(int j = 0; j < dim ; ++j){
       os << V[ib->vertex(j)];
@@ -1402,8 +1444,8 @@ file_output( std::ostream& os, Vertex_handle v, bool skip_first) const
   }
     
   // neighbor pointers of the  faces
-  for( Iterator_base it = iterator_base_begin();
-       it != iterator_base_end(); ++it) {
+  for( Face_iterator it = face_iterator_base_begin();
+       it != face_iterator_base_end(); ++it) {
     for(int j = 0; j < dimension()+1; ++j){
       os << F[&(*(it->neighbor(j)))];
       if(is_ascii(os)){
@@ -1446,10 +1488,11 @@ file_input( std::istream& is, bool skip_first)
     ++i;
   }
   for( ; i < n; ++i) {
-    typename Vertex_base::Point p;
-    is >> p;
+    // typename Vertex_base::Point p;
+    // is >> p;
     V[i] = create_vertex();
-    V[i]->set_point(p);
+    is >> *(V[i]);
+    //V[i]->set_point(p);
   }
   
   // Creation of the faces
@@ -1507,14 +1550,14 @@ vrml_output( std::ostream& os, Vertex_handle v, bool skip_infinite) const
   int inum = 0;
   if ( v != NULL) {
     vmap[v] = inum++;
-    if( ! skip_infinite)  os << "\t\t\t\t" << vit->point() << std::endl;
+    if( ! skip_infinite)  os << "\t\t\t\t" << *vit << std::endl;
   }
 
   //other vertices
   for( vit= vertices_begin(); vit != vertices_end() ; ++vit) {
     if ( vit->handle() != v) {
       vmap[vit->handle()] = inum++;
-      os << "\t\t\t\t" << vit->point() << std::endl;
+      os << "\t\t\t\t" << *vit << std::endl;
     }
   }
 

@@ -24,37 +24,29 @@
 #ifndef CGAL_TRIANGULATION_DS_VERTEX_2_H
 #define CGAL_TRIANGULATION_DS_VERTEX_2_H
 
+#include <CGAL/basic.h>
 #include <CGAL/Triangulation_short_names_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Tds>
+template <class Vb>
 class  Triangulation_ds_vertex_2 
-  : public Tds::Vertex_base,    
-    public Triangulation_cw_ccw_2
+  : public Vb 
 {
+  typedef typename Vb::Triangulation_data_structure Tds;
 public:
-  typedef typename Tds::Vertex_base        Vb;
   typedef typename Tds::Vertex             Vertex;
-  typedef typename Tds::Face               Face;
-  typedef typename Tds::Edge               Edge;
   typedef typename Tds::Vertex_handle      Vertex_handle;
   typedef typename Tds::Face_handle        Face_handle;
   typedef typename Tds::Vertex_circulator  Vertex_circulator;
   typedef typename Tds::Face_circulator    Face_circulator;
   typedef typename Tds::Edge_circulator    Edge_circulator;
-  //typedef typename Vb::Point               Point;
  
   //CREATORS
   Triangulation_ds_vertex_2() : Vb() {}
 
-  //SETTING
-  void set_face(Face_handle f)  { Vb::set_face(&*f);}
-
   //ACCESS
-  //Vertex_handle handle() const {return &*this;}
   Vertex_handle handle() {return const_cast<Vertex*>(this); }
-  Face_handle face() const {return static_cast<Face*>(Vb::face()) ;}
   int degree(); //should be const
 
   // the following should be const
@@ -100,9 +92,9 @@ degree() //const
 
 
     
-template <class Tds>
+template <class Vb>
 bool 
-Triangulation_ds_vertex_2<Tds> ::  
+Triangulation_ds_vertex_2<Vb> ::  
 is_valid(bool verbose, int level) 
 {
   bool result = Vb::is_valid(verbose, level);

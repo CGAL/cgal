@@ -33,8 +33,7 @@ CGAL_BEGIN_NAMESPACE
 
 template < class Gt, 
            class Tds = Triangulation_data_structure_2 <
-                       Triangulation_vertex_base_2<Gt>,
-		       Triangulation_face_base_2<Gt> > >
+                           Triangulation_vertex_base_2<Gt> > >
 class Delaunay_triangulation_2 : public Triangulation_2<Gt,Tds>
 {
 public:

@@ -43,9 +43,7 @@
 #include <CGAL/Triangulation_utils_2.h>
 
 #include <CGAL/Triangulation_data_structure_2.h>
-#include <CGAL/Triangulation_face_base_2.h>
 #include <CGAL/Triangulation_vertex_base_2.h>
-#include <CGAL/Triangulation_iterators_2.h>
 #include <CGAL/Triangulation_line_face_circulator_2.h>
 
 
@@ -60,24 +58,20 @@ template < class Gt, class Tds >  std::ostream& operator<<
 
 template < class Gt, 
            class Tds = Triangulation_data_structure_2 <
-                       Triangulation_vertex_base_2<Gt>,
-		       Triangulation_face_base_2<Gt> > >
+                             Triangulation_vertex_base_2<Gt> > >
 class Triangulation_2
   : public Triangulation_cw_ccw_2
 {
-public:
-  class Infinite_tester;
-  typedef Tds Triangulation_data_structure;
-  typedef Triangulation_2<Gt,Tds>  Self;
-
   friend std::istream& operator>> CGAL_NULL_TMPL_ARGS
                 (std::istream& is, Triangulation_2 &tr);
-  friend class Triangulation_finite_faces_iterator_2<Self>;
-  friend class Triangulation_finite_vertices_iterator_2<Self>;
+  //friend class Triangulation_finite_faces_iterator_2<Self>;
+  //friend class Triangulation_finite_vertices_iterator_2<Self>;
+  class Infinite_tester;
+  typedef Triangulation_2<Gt,Tds>             Self;
 
-
-
-  typedef Gt  Geom_traits;
+public:
+  typedef Tds                                 Triangulation_data_structure;
+  typedef Gt                                  Geom_traits;
   typedef typename Geom_traits::Point_2       Point;
   typedef typename Geom_traits::Segment_2     Segment;
   typedef typename Geom_traits::Triangle_2    Triangle;
@@ -99,12 +93,23 @@ public:
   typedef typename Tds::Edge_iterator          All_edges_iterator;
   typedef typename Tds::Vertex_iterator        All_vertices_iterator;
 
-  typedef Triangulation_finite_faces_iterator_2<Self>
-                                              Finite_faces_iterator;
-  typedef Filter_iterator<All_edges_iterator, Infinite_tester>
+  typedef Filter_iterator<All_faces_iterator, 
+                           Infinite_tester>
+                                               Finite_faces_iterator_base;
+  typedef Filter_iterator<All_vertices_iterator, 
+                           Infinite_tester>
+                                               Finite_vertices_iterator_base;
+  typedef Filter_iterator<All_edges_iterator, 
+                           Infinite_tester>
                                                Finite_edges_iterator;
-  typedef Triangulation_finite_vertices_iterator_2<Self>
+  typedef Triangulation_iterator_handle_adaptor
+                 <Finite_faces_iterator_base, 
+                  Face_handle>                 Finite_faces_iterator;
+  typedef Triangulation_iterator_handle_adaptor
+              <Finite_vertices_iterator_base,
+		 Vertex_handle>
                                                Finite_vertices_iterator;
+  
   //for backward compatibility
   typedef Finite_faces_iterator                Face_iterator;
   typedef Finite_edges_iterator                Edge_iterator;
@@ -122,7 +127,7 @@ public:
                            CGAL_CLIB_STD::ptrdiff_t,
                            std::bidirectional_iterator_tag>  Point_iterator;
 
-  typedef Point value_type; // to have a back_inserter
+  typedef Point                value_type; // to have a back_inserter
   typedef const value_type&    const_reference; 
   typedef value_type&          reference;
   
@@ -360,15 +365,14 @@ private:
   
 
  // This class is used to generate the Finite_*_iterators.
-public :
+private :
   friend class Infinite_tester;
   class Infinite_tester
   {
     const Triangulation_2 *t;
   public:
     Infinite_tester() {}
-    Infinite_tester(const Triangulation_2 *tr)
-	  : t(tr) {}
+    Infinite_tester(const Triangulation_2 *tr)	  : t(tr) {}
 
     bool operator()(const All_vertices_iterator & vit) const  {
 	  return t->is_infinite(vit->handle());
@@ -1723,7 +1727,9 @@ finite_faces_begin() const
 {
   if ( dimension() < 2 )
     return finite_faces_end();
-  return Finite_faces_iterator(this);
+  return filter_iterator( all_faces_begin(),
+			  all_faces_end(),
+			  Infinite_tester(this));
 } 
 
 template <class Gt, class Tds >
@@ -1731,7 +1737,10 @@ typename Triangulation_2<Gt, Tds>::Finite_faces_iterator
 Triangulation_2<Gt, Tds>::
 finite_faces_end() const
 {
-  return Finite_faces_iterator(this, 1);
+  return filter_iterator( all_faces_begin(),
+			  all_faces_end(),
+			  Infinite_tester(this),
+			  all_faces_end() );
 }
 
 template <class Gt, class Tds >
@@ -1741,7 +1750,9 @@ finite_vertices_begin() const
 {
   if ( number_of_vertices() <= 0 ) 
     return finite_vertices_end();
-  return Finite_vertices_iterator(this);
+  return filter_iterator(all_vertices_begin(), 
+			 all_vertices_end(),
+			 Infinite_tester(this));
 }
 
 template <class Gt, class Tds >
@@ -1749,7 +1760,10 @@ typename Triangulation_2<Gt, Tds>::Finite_vertices_iterator
 Triangulation_2<Gt, Tds>::
 finite_vertices_end() const
 {
-  return Finite_vertices_iterator(this,1);
+  return filter_iterator(all_vertices_begin(), 
+			 all_vertices_end(),
+			 Infinite_tester(this), 
+			 all_vertices_end());
 }
 
 template <class Gt, class Tds >

@@ -43,7 +43,7 @@ int main()
   std::cout << " this use double type coordinates " << std::endl;
   typedef CGAL::_Triangulation_test_traits                           Gt2;
   typedef CGAL::Triangulation_vertex_base_2<Gt2>                     Vb2;
-  typedef CGAL::Triangulation_face_base_2<Gt2>                       Fb2;
+  typedef CGAL::Triangulation_ds_face_base_2<>                       Fb2;
   typedef CGAL::Triangulation_data_structure_2<Vb2,Fb2>  Tds2;
   typedef CGAL::Triangulation_2<Gt2,Tds2>    Cls2;
   _test_cls_triangulation_short_2( Cls2() );

@@ -12,10 +12,11 @@
 // release_date  :
 //
 // file          : include/CGAL/Triangulation_hierarchy_2.h
-// revision      : 
-// revision_date : 
-// package       : Triangulation
+// revision      : $Revision$
+// revision_date : $Date$
+// package       : Triangulation_2
 // author(s)     : Olivier Devillers <Olivivier.Devillers@sophia.inria.fr>
+//                 Mariette Yvinec  <Mariette.Yvinec@sophia.inria.fr>
 //
 // coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
 //
@@ -24,46 +25,17 @@
 #ifndef CGAL_TRIANGULATION_HIERARCHY_2_H
 #define CGAL_TRIANGULATION_HIERARCHY_2_H
 
+#include <CGAL/basic.h>
+#include <CGAL/Triangulation_short_names_3.h>
 #include <CGAL/Random.h>
+#include <CGAL/Triangulation_hierarchy_vertex_base_2.h>
 #include <map>
 
 CGAL_BEGIN_NAMESPACE
 
-template < class Vbb>
-class Triangulation_hierarchy_vertex_base_2
- : public Vbb
-{
- public:
-  typedef Vbb V_Base;
-  typedef typename V_Base::Point   Point;
-
-
-  Triangulation_hierarchy_vertex_base_2()
-    : V_Base(), _up(0), _down(0)
-    {}
-  Triangulation_hierarchy_vertex_base_2(const Point & p, void* f)
-    : V_Base(p,f), _up(0), _down(0)
-    {}
-  Triangulation_hierarchy_vertex_base_2(const Point & p)
-    : V_Base(p), _up(0), _down(0)
-    {}
-
- public:  // for use in Triangulation_hierarchy only
-  //  friend class Triangulation_hierarchy_2;
-  void* up() {return _up;}
-  void* down() {return _down;}
-  void set_up(void *u) {_up=u;}
-  void set_down(void *d) {if (this) _down=d;}
-
-
- private:
-  void* _up;    // same vertex one level above
-  void* _down;  // same vertex one level below
-};
-
 // parameterization of the  hierarchy
 //const float Triangulation_hierarchy_2__ratio    = 30.0;
-const int Triangulation_hierarchy_2__ratio    = 30;
+const int Triangulation_hierarchy_2__ratio      = 30;
 const int   Triangulation_hierarchy_2__minsize  = 20;
 const int   Triangulation_hierarchy_2__maxlevel = 5;
 // maximal number of points is 30^5 = 24 millions !
@@ -78,9 +50,10 @@ class Triangulation_hierarchy_2
   typedef typename Tr_Base::Point              Point;
   typedef typename Tr_Base::Vertex_handle      Vertex_handle;
   typedef typename Tr_Base::Face_handle        Face_handle;
-  typedef typename Tr_Base::Vertex_iterator    Vertex_iterator;
   typedef typename Tr_Base::Vertex             Vertex;
   typedef typename Tr_Base::Locate_type        Locate_type;
+  typedef typename Tr_Base::Finite_vertices_iterator  Finite_vertices_iterator;
+  //typedef typename Tr_Base::Finite_faces_iterator     Finite_faces_iterator;
 
  private:
   // here is the stack of triangulations which form the hierarchy
@@ -138,9 +111,10 @@ public:
 
 private:
   void  locate_in_all(const Point& p,
-	    Locate_type& lt,
-	    int& li,
-	    Face_handle pos[Triangulation_hierarchy_2__maxlevel]) const;
+		      Locate_type& lt,
+		      int& li,
+		      Face_handle
+		      pos[Triangulation_hierarchy_2__maxlevel]) const;
   int random_level();
 };
 
@@ -187,7 +161,7 @@ void
 Triangulation_hierarchy_2<Tr>::   
 copy_triangulation(const Triangulation_hierarchy_2<Tr> &tr)
 {
-  std::map< const void*, void*, std::less<const void*> > V;
+  std::map<Vertex_handle, Vertex_handle > V;
   {
     for(int i=0;i<Triangulation_hierarchy_2__maxlevel;++i)
     hierarchy[i]->copy_triangulation(*tr.hierarchy[i]);
@@ -195,21 +169,21 @@ copy_triangulation(const Triangulation_hierarchy_2<Tr> &tr)
   //up and down have been copied in straightforward way
   // compute a map at lower level
   {
-    for( Vertex_iterator it=hierarchy[0]->vertices_begin(); 
-	 it != hierarchy[0]->vertices_end(); ++it) {
-      if (it->up()) V[ ((Vertex*)(it->up()))->down() ] = &(*it);
+    for( Finite_vertices_iterator it=hierarchy[0]->finite_vertices_begin(); 
+	 it != hierarchy[0]->finite_vertices_end(); ++it) {
+      if (it->up() != NULL) V[ it->up()->down() ] = it;
     }
   }
   {
     for(int i=1;i<Triangulation_hierarchy_2__maxlevel;++i) {
-      for( Vertex_iterator it=hierarchy[i]->vertices_begin(); 
-	   it != hierarchy[i]->vertices_end(); ++it) {
+      for( Finite_vertices_iterator it=hierarchy[i]->finite_vertices_begin(); 
+	   it != hierarchy[i]->finite_vertices_end(); ++it) {
 	// down pointer goes in original instead in copied triangulation
 	it->set_down(V[it->down()]);
 	// make reverse link
-	((Vertex*)(it->down()))->set_up( &(*it) );
+	it->down()->set_up(it);
 	// make map for next level
-	if (it->up()) V[ ((Vertex*)(it->up()))->down() ] = &(*it);
+	if (it->up()!= NULL ) V[ it->up()->down() ] = it;
       }
     }
   }
@@ -220,9 +194,6 @@ void
 Triangulation_hierarchy_2<Tr>:: 
 swap(Triangulation_hierarchy_2<Tr> &tr)
 {
-//   Tr_Base** h= hierarchy;
-//   hierarchy = tr.hierarchy;
-//   tr.hierarchy = h;
   Tr_Base* temp;
   Tr_Base::swap(tr);
   for(int i= 1; i<Triangulation_hierarchy_2__maxlevel; ++i){
@@ -259,20 +230,26 @@ is_valid(bool verbose, int level) const
 {
   bool result = true;
   int i;
-  Vertex_iterator it;
+  Finite_vertices_iterator it;
   //verify correctness of triangulation at all levels
   for(i=0;i<Triangulation_hierarchy_2__maxlevel;++i)
 	result = result && hierarchy[i]->is_valid(verbose,level);
   //verify that lower level has no down pointers
-  for( it = hierarchy[0]->vertices_begin(); 
-       it != hierarchy[0]->vertices_end(); ++it) 
-    result = result && ( it->down() == 0 );
-  //verify that other levels has down pointer and reciprocal link is fine
+  for( it = hierarchy[0]->finite_vertices_begin(); 
+       it != hierarchy[0]->finite_vertices_end(); ++it) 
+    result = result && ( it->down() == NULL );
+  //verify that other levels have down pointer and reciprocal link is fine
   for(i=1;i<Triangulation_hierarchy_2__maxlevel;++i)
-    for( it = hierarchy[i]->vertices_begin(); 
-	 it != hierarchy[i]->vertices_end(); ++it) 
+    for( it = hierarchy[i]->finite_vertices_begin(); 
+	 it != hierarchy[i]->finite_vertices_end(); ++it) 
       result = result && 
-	       ( ((Vertex*)((Vertex*)it->down())->up()) ==  &(*it) );
+	       ( &*(it->down()->up())  ==  &*(it) );
+  //verify that levels have up pointer and reciprocal link is fine
+  for(i=0;i<Triangulation_hierarchy_2__maxlevel-1;++i)
+    for( it = hierarchy[i]->finite_vertices_begin(); 
+	 it != hierarchy[i]->finite_vertices_end(); ++it) 
+      result = result && ( it->up() == NULL ||
+	        &*it == &*(it->up())->down() );
   return result;
 }
 
@@ -296,8 +273,8 @@ insert(const Point &p, Face_handle)
   int level  = 1;
   while (level <= vertex_level ){
     vertex=hierarchy[level]->Tr_Base::insert(p,positions[level]);
-    vertex->set_down((void *) &*previous);// link with level above
-    previous->set_up((void *) &*vertex);
+    vertex->set_down(previous);// link with level above
+    previous->set_up(vertex);
     previous=vertex;
     level++;
   }
@@ -328,8 +305,8 @@ insert(const Point& p,
     int level  = 1;
     while (level <= vertex_level ){
       vertex=hierarchy[level]->Tr_Base::insert(p,positions[level]);
-      vertex->set_down((void *) &*previous);// link with level above
-      previous->set_up((void *) &*vertex);
+      vertex->set_down(previous);// link with level above
+      previous->set_up(vertex);
       previous=vertex;
       level++;
     }
@@ -352,13 +329,13 @@ void
 Triangulation_hierarchy_2<Tr>::
 remove(Vertex_handle v )
 {
-  void * u=v->up();
+  Vertex_handle u=v->up();
   int l = 0 ;
   while(1){
     hierarchy[l++]->remove(v);
-    if (!u) break; 
+    if (u == NULL) break; 
     if(l>Triangulation_hierarchy_2__maxlevel) break;
-    v=(Vertex*)u; u=v->up();
+    v=u; u=v->up();
   }
 }
 
@@ -446,10 +423,10 @@ locate_in_all(const Point& p,
     if ( !  hierarchy[level]->is_infinite(position->vertex(2)))
       if ( closer( p, 
 		   position->vertex(2)->point(),
-		   nearest->point()) == SMALLER)
+		   nearest->point()) == SMALLER )
 	nearest = position->vertex(2);
     // go at the same vertex on level below
-    nearest = (Vertex*)( nearest->down() );
+    nearest  = nearest->down();
     position = nearest->face();                // incident face
     --level;
   }
