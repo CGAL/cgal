@@ -133,6 +133,7 @@ public:
 
   /*! curve_compare_at_x() compares the y-coordinate of two given curves at
    * the x-coordinate of a given point
+   * Preconditions: the point q is in the x range of the two curves.
    * \param cv1 the first curve
    * \param cv2 the second curve
    * \param q the point
@@ -145,10 +146,6 @@ public:
 				       const X_curve_2 & cv2, 
 				       const Point_2 & q) const
   {
-    if (!curve_is_in_x_range(cv1, q) || !curve_is_in_x_range(cv2, q)) {
-      std::cout << "compare_at_x = equal\n";
-      return EQUAL;
-    }
     return compare_y_at_x_2_object()(q, cv1, cv2);
   }
 
