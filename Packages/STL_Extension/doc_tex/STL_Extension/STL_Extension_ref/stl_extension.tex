@@ -1960,9 +1960,9 @@
 
 %% +--------------------------------------------------------+
 
-\begin{ccRefClass}{triple<T1, T2, T3>}
+\begin{ccRefClass}{Triple<T1, T2, T3>}
   
-  \ccDefinition The triple class is an extension of \ccc{std::pair}.
+  \ccDefinition The Triple class is an extension of \ccc{std::pair}.
   \ccRefName\ is a heterogeneous triple: it holds one object of type
   \ccc{T1}, one of type \ccc{T2}, and one of type \ccc{T3}.  A
   \ccRefName\ is much like a container, in that it "owns" its
@@ -1995,16 +1995,16 @@
   \ccCreation
   \ccCreationVariable{t}
   
-  \ccConstructor{triple();}{introduces a triple using the default
+  \ccConstructor{Triple();}{introduces a triple using the default
     constructor of the three elements.}
   
-  \ccConstructor{triple(T1 x, T2 y, T3 z);}{constructs a triple such
+  \ccConstructor{Triple(T1 x, T2 y, T3 z);}{constructs a triple such
     that \ccc{first} is constructed from \ccc{x}, \ccc{second} is
     constructed from \ccc{y}, and \ccc{third} is constructed from
     \ccc{z}.}
   
   \ccFunction{template <class T1, class T2, class T3> bool
-    operator<(triple<T1, T2, T3> x, triple<T1, T2, T3> y);} {The
+    operator<(Triple<T1, T2, T3> x, Triple<T1, T2, T3> y);} {The
     comparison operator. It uses lexicographic comparison: the return
     value is true if the first element of \ccc{x} is less than the
     first element of \ccc{y}, and false if the first element of
@@ -2018,24 +2018,24 @@
     define the comparison operator.}
   
   \ccFunction{template <class T1, class T2, class T3> bool
-    operator==(triple<T1, T2, T3> x, triple<T1, T2, T3> y);} {The
+    operator==(Triple<T1, T2, T3> x, Triple<T1, T2, T3> y);} {The
     equality operator. The return value is true if and only the first
     elements of \ccc{x} and \ccc{y} are equal, the second elements of
     \ccc{x} and \ccc{y} are equal, and the third elements of \ccc{x}
     and \ccc{y} are equal.  This operator may only be used if
     \ccc{T1}, \ccc{T2} and \ccc{T3} define the equality operator.}
   
-  \ccFunction{template <class T1, class T2, class T3> triple<T1, T2,
+  \ccFunction{template <class T1, class T2, class T3> Triple<T1, T2,
     T3> make_triple(T1 x, T2 y, T3 z);} {Equivalent to
-    \ccStyle{triple<T1, T2, T3>(x, y, z)}.}
+    \ccStyle{Triple<T1, T2, T3>(x, y, z)}.}
 
 \end{ccRefClass}
 
 %% +--------------------------------------------------------+
 
-\begin{ccRefClass}{quadruple<T1, T2, T3, T4>}
+\begin{ccRefClass}{Quadruple<T1, T2, T3, T4>}
   
-  \ccDefinition The quadruple class is an extension of
+  \ccDefinition The Quadruple class is an extension of
   \ccc{std::pair}.  \ccRefName\ is a heterogeneous quadruple: it holds
   one object of type \ccc{T1}, one of type \ccc{T2}, one of type
   \ccc{T3}, and one of type \ccc{T4}.  A \ccRefName\ is much like a
@@ -2073,17 +2073,17 @@
   \ccCreation
   \ccCreationVariable{t}
   
-  \ccConstructor{quadruple();} {introduces a quadruple using the
+  \ccConstructor{Quadruple();} {introduces a quadruple using the
     default constructor of the four elements.}
   
-  \ccConstructor{quadruple(T1 x, T2 y, T3 z, T4 w);} {constructs a
+  \ccConstructor{Quadruple(T1 x, T2 y, T3 z, T4 w);} {constructs a
     quadruple such that \ccc{first} is constructed from \ccc{x},
     \ccc{second} is constructed from \ccc{y}, \ccc{third} is
     constructed from \ccc{z}, and \ccc{fourth} is constructed from
     \ccc{w}.}
   
   \ccFunction{template <class T1, class T2, class T3, class T4> bool
-    operator<(quadruple<T1, T2, T3, T4> x, quadruple<T1, T2, T3, T4>
+    operator<(Quadruple<T1, T2, T3, T4> x, Quadruple<T1, T2, T3, T4>
     y);} {The comparison operator. It uses lexicographic comparison:
     the return value is true if the first element of \ccc{x} is less
     than the first element of \ccc{y}, and false if the first element
@@ -2100,7 +2100,7 @@
     \ccc{T2}, \ccc{T3}, and \ccc{T4} define the comparison operator.}
   
   \ccFunction{template <class T1, class T2, class T3, class T4> bool
-    operator==(quadruple<T1, T2, T3, T4> x, quadruple<T1, T2, T3, T4>
+    operator==(Quadruple<T1, T2, T3, T4> x, Quadruple<T1, T2, T3, T4>
     y);} {The equality operator. The return value is true if and only
     the first elements of \ccc{x} and \ccc{y} are equal, the second
     elements of \ccc{x} and \ccc{y} are equal, the third elements of
@@ -2110,8 +2110,8 @@
     operator.}
   
   \ccFunction{template <class T1, class T2, class T3, class T4>
-    quadruple<T1, T2, T3, T4> make_quadruple(T1 x, T2 y, T3 z, T4 w);}
-  {Equivalent to \ccStyle{quadruple<T1, T2, T3, T4>(x, y, z, w)}.}
+    Quadruple<T1, T2, T3, T4> make_quadruple(T1 x, T2 y, T3 z, T4 w);}
+  {Equivalent to \ccStyle{Quadruple<T1, T2, T3, T4>(x, y, z, w)}.}
 
 \end{ccRefClass}
 

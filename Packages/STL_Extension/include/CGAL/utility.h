@@ -23,7 +23,7 @@
 // maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
 // coordinator   : ETH
 //
-// STL like utilities (triple and such)
+// STL like utilities (Triple and such)
 // ============================================================================
 
 #ifndef CGAL_UTILITY_H
@@ -34,11 +34,11 @@
 CGAL_BEGIN_NAMESPACE
 
 //+---------------------------------------------------------------------+
-//| triple class                                                        |
+//| Triple class                                                        |
 //+---------------------------------------------------------------------+
 
 template <class T1, class T2, class T3>
-struct triple
+struct Triple
 {
   typedef T1 first_type;
   typedef T2 second_type;
@@ -48,23 +48,23 @@ struct triple
   T2 second;
   T3 third;
 
-  triple() {}
+  Triple() {}
 
-  triple(const T1& a, const T2& b, const T3& c)
+  Triple(const T1& a, const T2& b, const T3& c)
   : first(a), second(b), third(c)
   {}
 };
 
 template <class T1, class T2, class T3>
 inline
-triple<T1, T2, T3> make_triple(const T1& x, const T2& y, const T3& z)
+Triple<T1, T2, T3> make_triple(const T1& x, const T2& y, const T3& z)
 {
-  return triple<T1, T2, T3>(x, y, z);
+  return Triple<T1, T2, T3>(x, y, z);
 }
 
 template <class T1, class T2, class T3>
-inline bool operator==(const triple<T1, T2, T3>& x,
-                       const triple<T1, T2, T3>& y)
+inline bool operator==(const Triple<T1, T2, T3>& x,
+                       const Triple<T1, T2, T3>& y)
 {
   return ( (x.first == y.first) &&
            (x.second == y.second) &&
@@ -73,8 +73,8 @@ inline bool operator==(const triple<T1, T2, T3>& x,
 
 template <class T1, class T2, class T3>
 inline
-bool operator<(const triple<T1, T2, T3>& x,
-               const triple<T1, T2, T3>& y)
+bool operator<(const Triple<T1, T2, T3>& x,
+               const Triple<T1, T2, T3>& y)
 {
   return ( x.first < y.first ||
            ( (x.first == y.first) && (x.second < y.second) ) ||
@@ -82,11 +82,11 @@ bool operator<(const triple<T1, T2, T3>& x,
              (x.third < y.third) ) );
 }
 //+---------------------------------------------------------------------+
-//| quadruple class                                                     |
+//| Quadruple class                                                     |
 //+---------------------------------------------------------------------+
 
 template <class T1, class T2, class T3, class T4>
-struct quadruple
+struct Quadruple
 {
   typedef T1 first_type;
   typedef T2 second_type;
@@ -98,26 +98,26 @@ struct quadruple
   T3 third;
   T4 fourth;
 
-  quadruple() {}
+  Quadruple() {}
 
-  quadruple(const T1& a, const T2& b, const T3& c, const T4& d)
+  Quadruple(const T1& a, const T2& b, const T3& c, const T4& d)
   : first(a), second(b), third(c), fourth(d)
   {}
 };
 
 template <class T1, class T2, class T3, class T4>
 inline
-quadruple<T1, T2, T3, T4>
+Quadruple<T1, T2, T3, T4>
 make_quadruple(const T1& x, const T2& y, const T3& z, const T4& zz)
 {
-  return quadruple<T1, T2, T3, T4>(x, y, z, zz);
+  return Quadruple<T1, T2, T3, T4>(x, y, z, zz);
 }
 
 template <class T1, class T2, class T3, class T4>
 inline
 bool
-operator==(const quadruple<T1, T2, T3, T4>& x,
-           const quadruple<T1, T2, T3, T4>& y)
+operator==(const Quadruple<T1, T2, T3, T4>& x,
+           const Quadruple<T1, T2, T3, T4>& y)
 {
   return ( (x.first == y.first) &&
            (x.second == y.second) &&
@@ -128,8 +128,8 @@ operator==(const quadruple<T1, T2, T3, T4>& x,
 template <class T1, class T2, class T3, class T4>
 inline
 bool
-operator<(const quadruple<T1, T2, T3, T4>& x,
-          const quadruple<T1, T2, T3, T4>& y)
+operator<(const Quadruple<T1, T2, T3, T4>& x,
+          const Quadruple<T1, T2, T3, T4>& y)
 {
   return ( x.first < y.first ||
            ( (x.first == y.first) && (x.second < y.second) ) ||

@@ -8099,11 +8099,11 @@ void test_Oneset_iterator()
   *g = b;
   ++g;
 }
-void test_triple()
+void test_Triple()
 {
-  typedef CGAL::triple<int,double,bool> T1;
-  typedef CGAL::triple<T1,double,bool>  T2;
-  typedef CGAL::triple<T1,T2,bool>      T3;
+  typedef CGAL::Triple<int,double,bool> T1;
+  typedef CGAL::Triple<T1,double,bool>  T2;
+  typedef CGAL::Triple<T1,T2,bool>      T3;
 
   T1 x1;
   T2 x2;
@@ -8121,12 +8121,12 @@ void test_triple()
   CGAL_assertion(x2 == y2);
   if (x2 == y2) x3 = z3;
 }
-void test_quadruple()
+void test_Quadruple()
 {
-  typedef CGAL::quadruple<int,float,double,bool> T1;
-  typedef CGAL::quadruple<T1,float,double,bool>  T2;
-  typedef CGAL::quadruple<T1,T2,double,bool>     T3;
-  typedef CGAL::quadruple<T1,T2,T3,bool>         T4;
+  typedef CGAL::Quadruple<int,float,double,bool> T1;
+  typedef CGAL::Quadruple<T1,float,double,bool>  T2;
+  typedef CGAL::Quadruple<T1,T2,double,bool>     T3;
+  typedef CGAL::Quadruple<T1,T2,T3,bool>         T4;
 
   T1 x1;
   T2 x2;
@@ -8164,8 +8164,8 @@ int main() {
   test_Random_access_adaptor();
   test_Emptyset_iterator();
   test_Oneset_iterator();
-  test_triple();
-  test_quadruple();
+  test_Triple();
+  test_Quadruple();
   clean_global_data();
   return 0;
 }
