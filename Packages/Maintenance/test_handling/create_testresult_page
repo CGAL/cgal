@@ -141,7 +141,7 @@ EOF
     	    	$platform_num=0;
 	    	while ($platform_num < $platform_count) {
 		    ++$platform_num;
-		    print OUTPUT "<TD> <B> $platform_num</B></TD>\n";
+		    print OUTPUT "<TD ALIGN=center> <B> $platform_num</B></TD>\n";
 	    	}
 	    	print OUTPUT "\n</TR>\n";
 	    }
@@ -211,7 +211,7 @@ EOF
 <TABLE BORDER=0 CELLSPACING=2 CELLPADDING=0>
 EOF
     	if ($platform_count > 0) {
-    	    my $repeat_count = scalar(@test_directories)/$platform_count;
+    	    my $repeat_count = (1 + 1.1/16.5)*scalar(@test_directories)/($platform_count+0.25);
 	    while ($repeat_count >= 1) {
 	    	$repeat_count--;
 	    	print OUTPUT <<"EOF";
@@ -503,33 +503,39 @@ sub email_address_in_html_format($)
 	if (!defined($responsible)) {
 	    print STDERR "Undefined responsible person.\n";
 	    return "?";
-	} elsif ($responsible eq 'baesken') {
+	}
+	my $qualification='';
+	if ($responsible =~ /(.*?)-(.*)$/ ) {
+            $responsible=$1;
+	    $qualification = " ($2)";
+	}
+	if ($responsible eq 'baesken') {
 	    return 
 		'<A HREF="mailto:baesken@infsn2.informatik.uni-halle.de">'.
-		"Matthias Baesken</A>";
+		"Matthias Baesken</A>$qualification";
 	} elsif ($responsible eq 'spion') {
 	    return '<A HREF="mailto:Sylvain.Pion@sophia.inria.fr">'.
-		"Sylvain Pion</A>";
+		"Sylvain Pion</A>$qualification";
 	} elsif ($responsible eq 'frebufat') {
 	    return 
 		'<A HREF="mailto:Francois.Rebufat@sophia.inria.fr">'.
-		"Fran&ccedil;ois Rebufat</A>";
+		"Fran&ccedil;ois Rebufat</A>$qualification";
 	} elsif ($responsible eq 'geert') {
 	    return 
 		'<A HREF="mailto:geert@cs.uu.nl">'.
-		"Geert-Jan Giezeman</A>";
+		"Geert-Jan Giezeman</A>$qualification";
 	} elsif ($responsible eq 'dima') {
 	    return 
 		'<A HREF="mailto:dima@cs.uu.nl">'.
-		"Dima Pasechnik</A>";
+		"Dima Pasechnik</A>$qualification";
 	} elsif ($responsible eq 'hoffmann') {
 	    return 
 		'<A HREF="mailto:hoffmann@inf.ethz.ch">'.
-		"Michael Hoffmann</A>";
+		"Michael Hoffmann</A>$qualification";
 	} elsif ($responsible eq 'stschirr') {
 	    return 
 		'<A HREF="mailto:stschirr@mpi-sb.mpg.de">'.
-		"Stefan Schirra</A>";
+		"Stefan Schirra</A>$qualification";
 	} else {
 	    print STDERR "Unknown responsible person $responsible.\n";
 	    return "?";
