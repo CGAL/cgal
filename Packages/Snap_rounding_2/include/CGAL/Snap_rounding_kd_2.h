@@ -325,15 +325,31 @@ public:
 
     check_kd(kd_counter,number_of_trees,seg_list,directions);
     int ind = 0;
+
+#ifdef KD_DEBUG
+    int number_of_actual_kd_trees = 0;
+#endif
+
     for(NT angle = 0;angle < half_pi;angle += half_pi / number_of_trees) {
       if(kd_counter[ind] >= (double)number_of_segments /
 	                    (double)number_of_trees / 2.0) {
         kd = create_kd_tree(angle);
         kd_trees_list.push_back(kd);
+
+#ifdef KD_DEBUG
+        ++number_of_actual_kd_trees;
+#endif
+
       }
 
       ++ind;
     }
+
+#ifdef KD_DEBUG
+    std::cout << "Actual number of kd-trees created : " << 
+      number_of_actual_kd_trees << std::endl;
+#endif
+
   }
 
   Point_2 small_x_point(Point_2 p1,Point_2 p2)

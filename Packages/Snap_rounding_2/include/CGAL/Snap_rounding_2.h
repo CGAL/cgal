@@ -505,7 +505,6 @@ void Snap_rounding_2<Rep_,OutputContainer>::
 
     std::list<X_curve>  subcurves;
 
-
     // get intersection points (with endpoints)
     PointList mypointlist;
 
@@ -681,7 +680,6 @@ void snap_rounding_2(
   InputIterator begin,
   InputIterator end,
   OutputContainer& output_container,
-  //std::list<std::list<typename Rep_::Point_2> >& output_container,
   typename Rep_::FT pixel_size,
   bool do_isr = true,
   bool int_output = true,
@@ -690,6 +688,7 @@ void snap_rounding_2(
     std::list<Segment_data<Rep_> > seg_list;
     Multiple_kd_tree<Rep_,Hot_Pixel<Rep_> *> *mul_kd_tree;
 
+    output_container.clear();
     // copy segments list
     while(begin != end) {
       seg_list.push_back(Segment_data<Rep_>(begin->source(),

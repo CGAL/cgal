@@ -84,14 +84,14 @@ int main(int argc,char *argv[])
   read_data(argv,prec,seg_list);
 
   for(int i = 1;i < 11;++i) {
-    std::cout << " kd trees parameter is " << i << std::endl;
+    std::cout << "Input number of kd trees : " << i << std::endl;
     CGAL::Timer t;
     t.start();
     CGAL::snap_rounding_2<Sr_traits,std::list<Segment_2>::const_iterator,
       std::list<std::list<Point_2> > >
       (seg_list.begin(),seg_list.end(),output_list,prec,true,false,i);
     t.stop();
-    std::cout << "*** time : " << t.time() << "\n\n";
+    std::cout << "total time : " << t.time() << "\n\n";
   }
 
   delete(is_ptr);
