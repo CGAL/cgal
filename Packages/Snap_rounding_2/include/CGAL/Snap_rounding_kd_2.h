@@ -101,9 +101,11 @@ private:
   inline NT squere(NT x) {return(x * x);}
   inline NT min(NT x,NT y) {return((x < y) ? x : y);}
   inline NT max(NT x,NT y) {return((x < y) ? y : x);}
-  inline NT min(NT x1,NT x2,NT x3,NT x4,NT x5,NT x6) {return(min(min(min(x1,x2),
+  inline NT min(NT x1,NT x2,NT x3,NT x4,NT x5,NT x6) 
+       {return(min(min(min(x1,x2),
                 min(x3,x4)),min(x5,x6)));}
-  inline NT max(NT x1,NT x2,NT x3,NT x4,NT x5,NT x6) {return(max(max(max(x1,x2),
+  inline NT max(NT x1,NT x2,NT x3,NT x4,NT x5,NT x6) 
+       {return(max(max(max(x1,x2),
                 max(x3,x4)),max(x5,x6)));}
 
   int get_kd_num(std::pair<std::pair<NT,NT>,std::pair<NT,NT> > &seg,int n)
@@ -307,14 +309,20 @@ public:
     p = Point(x,y);
   }
 
-  void get_intersecting_points(list<SAVED_OBJECT> &result_list,Segment inp_s,NT unit_squere)
+  void get_intersecting_points(list<SAVED_OBJECT> &result_list,
+                               Segment inp_s,
+                               NT unit_squere)
   {
-    Segment s((inp_s.source().y() < inp_s.target().y()) ? inp_s.source() : inp_s.target(),
-              (inp_s.source().y() < inp_s.target().y()) ? inp_s.target() : inp_s.source());
-    NT x1 = s.source().x(),y1 = s.source().y(),x2 = s.target().x(),y2 = s.target().y();
+    Segment s((inp_s.source().y() < inp_s.target().y()) ?
+               inp_s.source() : inp_s.target(),
+              (inp_s.source().y() < inp_s.target().y()) ?
+               inp_s.target() : inp_s.source());
+    NT x1 = s.source().x(),y1 = s.source().y(),x2 =
+            s.target().x(),y2 = s.target().y();
 
     // determine right kd-tree to work on, depending on the segment's slope
-    double alpha_double = atan((y2.to_double() -y1.to_double())/(x2.to_double() - x1.to_double()));
+    double alpha_double = atan((y2.to_double() -y1.to_double()) /
+                               (x2.to_double() - x1.to_double()));
 
     if(alpha_double < 0)
       alpha_double += pi / 2.0;
@@ -326,7 +334,9 @@ public:
 
     typename list<std::pair<kd_tree *,NT> >::iterator iter,right_iter;
 
-    for(iter = kd_trees_list.begin();iter != kd_trees_list.end() && !found;++iter) {
+    for(iter = kd_trees_list.begin();
+        iter != kd_trees_list.end() && !found;
+        ++iter) {
       if(iter->second > alpha) {
         right_iter = iter;
         if(iter != kd_trees_list.begin()) {
@@ -348,7 +358,8 @@ public:
     list<my_point<NT,SAVED_OBJECT> > res;
 
     if(x1 < x2) {
-      // we use unit_squere instead of unit_squere / 2 in order to find tangency points which are not supported by kd-tree
+      // we use unit_squere instead of unit_squere / 2 in order to
+      // find tangency points which are not supported by kd-tree
       ms1 = Point(x1 - 0.6 * unit_squere,y1 - 0.6 * unit_squere);
       ms2 = Point(x1 - 0.6 * unit_squere,y1 + 0.6 * unit_squere);
       ms3 = Point(x1 + 0.6 * unit_squere,y1 - 0.6 * unit_squere);
@@ -356,7 +367,8 @@ public:
       ms5 = Point(x2 + 0.6 * unit_squere,y2 + 0.6 * unit_squere);
       ms6 = Point(x2 - 0.6 * unit_squere,y2 + 0.6 * unit_squere);
     } else {
-      // we use unit_squere instead of unit_squere / 2 in order to find tangency points which are not supported by kd-tree
+      // we use unit_squere instead of unit_squere / 2 in order to
+      // find tangency points which are not supported by kd-tree
       ms1 = Point(x1 + 0.6 * unit_squere,y1 - 0.6 * unit_squere);
       ms2 = Point(x1 - 0.6 * unit_squere,y1 - 0.6 * unit_squere);
       ms3 = Point(x1 + 0.6 * unit_squere,y1 + 0.6 * unit_squere);
@@ -373,8 +385,10 @@ public:
     rotate(ms6,right_iter->second);
 
     // query
-    p1 = Point(min(ms1.x(),ms2.x(),ms3.x(),ms4.x(),ms5.x(),ms6.x()),min(ms1.y(),ms2.y(),ms3.y(),ms4.y(),ms5.y(),ms6.y()));
-    p2 = Point(max(ms1.x(),ms2.x(),ms3.x(),ms4.x(),ms5.x(),ms6.x()),max(ms1.y(),ms2.y(),ms3.y(),ms4.y(),ms5.y(),ms6.y()));
+    p1 = Point(min(ms1.x(),ms2.x(),ms3.x(),ms4.x(),ms5.x(),ms6.x()),
+               min(ms1.y(),ms2.y(),ms3.y(),ms4.y(),ms5.y(),ms6.y()));
+    p2 = Point(max(ms1.x(),ms2.x(),ms3.x(),ms4.x(),ms5.x(),ms6.x()),
+               max(ms1.y(),ms2.y(),ms3.y(),ms4.y(),ms5.y(),ms6.y()));
     my_point<NT,SAVED_OBJECT> point1(p1); 
     my_point<NT,SAVED_OBJECT> point2(p2);
 
