@@ -23,141 +23,13 @@
 #ifndef CGAL_ARITHMETIC_FILTER_SVD_PREDICATES_FTC2_H
 #define CGAL_ARITHMETIC_FILTER_SVD_PREDICATES_FTC2_H
 
-#include <vector>
 
-#include <CGAL/Cartesian.h>
-//#include <CGAL/Interval_arithmetic.h>
-//#include <CGAL/Arithmetic_filter.h>
+#include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Filtered_exact.h>
-
-#include <CGAL/Point_2.h>
-#include <CGAL/Segment_2.h>
-#include <CGAL/Segment_Voronoi_diagram_site_2.h>
 
 #include <CGAL/predicates/Segment_Voronoi_diagram_predicates_ftC2.h>
 
 CGAL_BEGIN_NAMESPACE
-
-//----------------------------------------------------------------------------
-//----------------------------------------------------------------------------
-//----------------------------------------------------------------------------
-
-static unsigned int num_svd_predicate_failures = 0;
-
-//----------------------------------------------------------------------------
-#if 1
-template < template<class Kernel> class Predicate_t,
-	   class CT, class ET, bool Protected, class Cache,
-	   typename Return_t, 
-	   unsigned int Num_sites>
-Return_t
-svd_predicate_ftC2(const std::vector<
-		   Filtered_exact<CT,ET,Dynamic,Protected,Cache> >& v,
-		   const std::vector<char>& site_types)
-{
-  try {
-    Protect_FPU_rounding<Protected> Protection;
-
-    std::vector<Interval_nt_advanced> v_IT(v.size());
-
-    for (unsigned int i = 0; i < v.size(); i++) {
-      v_IT[i] = v[i].interval();
-    }
-    return svd_predicate_ftC2<Predicate_t,Return_t,CT,
-      Num_sites>(v_IT, site_types);
-  }
-  catch (Interval_nt_advanced::unsafe_comparison) {
-    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
-
-    num_svd_predicate_failures++;
-
-    std::vector<ET> v_ET(v.size());
-
-    for (unsigned int i = 0; i < v.size(); i++) {
-      v_ET[i] = v[i].exact();
-    }
-
-    return svd_predicate_ftC2<Predicate_t,Return_t,ET,
-      Num_sites>(v_ET, site_types);
-  }
-}
-
-//----------------------------------------------------------------------------
-
-template < template<class Kernel, class MTag> class Predicate_t,
-	   class CT, class ET, bool Protected, class Cache,
-	   typename Return_t,
-	   class Method_tag, unsigned int Num_sites>
-Return_t
-svd_predicate_ftC2(const std::vector<
-		   Filtered_exact<CT,ET,Dynamic,Protected,Cache> >& v,
-		   const std::vector<char>& site_types)
-{
-  try {
-    Protect_FPU_rounding<Protected> Protection;
-
-    std::vector<Interval_nt_advanced> v_IT(v.size());
-
-    for (unsigned int i = 0; i < v.size(); i++) {
-      v_IT[i] = v[i].interval();
-    }
-    return svd_predicate_ftC2<Predicate_t,Return_t,CT,Method_tag,
-      Num_sites>(v_IT, site_types);
-  }
-  catch (Interval_nt_advanced::unsafe_comparison) {
-    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
-
-    num_svd_predicate_failures++;
-
-    std::vector<ET> v_ET(v.size());
-
-    for (unsigned int i = 0; i < v.size(); i++) {
-      v_ET[i] = v[i].exact();
-    }
-
-    return svd_predicate_ftC2<Predicate_t,Return_t,ET,Method_tag,
-      Num_sites>(v_ET, site_types);
-  }
-}
-
-//----------------------------------------------------------------------------
-
-template < template<class Kernel, class MTag> class Predicate_t,
-	   class CT, class ET, bool Protected, class Cache,
-	   typename Return_t,
-	   class Method_tag, typename Data, unsigned int Num_sites>
-Return_t
-svd_predicate_ftC2(const std::vector<
-		   Filtered_exact<CT,ET,Dynamic,Protected,Cache> >& v,
-		   const std::vector<char>& site_types, Data data)
-{
-  try {
-    Protect_FPU_rounding<Protected> Protection;
-
-    std::vector<Interval_nt_advanced> v_IT(v.size());
-
-    for (unsigned int i = 0; i < v.size(); i++) {
-      v_IT[i] = v[i].interval();
-    }
-    return svd_predicate_ftC2<Predicate_t,Return_t,CT,Method_tag,Data,
-      Num_sites>(v_IT, site_types, data);
-  }
-  catch (Interval_nt_advanced::unsafe_comparison) {
-    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
-
-    num_svd_predicate_failures++;
-
-    std::vector<ET> v_ET(v.size());
-
-    for (unsigned int i = 0; i < v.size(); i++) {
-      v_ET[i] = v[i].exact();
-    }
-
-    return svd_predicate_ftC2<Predicate_t,Return_t,ET,Method_tag,Data,
-      Num_sites>(v_ET, site_types, data);
-  }
-}
-#endif
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
@@ -168,443 +40,478 @@ static unsigned int num_failures_side_of_bisector = 0;
 static unsigned int num_failures_vertex_conflict = 0;
 static unsigned int num_failures_finite_edge_conflict = 0;
 static unsigned int num_failures_infinite_edge_conflict = 0;
-static unsigned int num_failures_do_intersect = 0;
+static unsigned int num_failures_is_degenerate_edge = 0;
+static unsigned int num_failures_arrangement_type = 0;
 static unsigned int num_failures_are_parallel = 0;
 static unsigned int num_failures_oriented_side = 0;
 
 //----------------------------------------------------------------------------
-
-template < class CT, class ET, bool Protected, class Cache, class Method_tag >
-bool
-svd_are_same_points_ftC2(const std::vector< 
-			 Filtered_exact<CT,ET,Dynamic,Protected,Cache> >& v,
-			 char site_types[], unsigned int num_sites)
-{
-  try {
-    Protect_FPU_rounding<Protected> Protection;
-
-    std::vector<Interval_nt_advanced> v_IT(v.size());
-
-    for (unsigned int i = 0; i < v.size(); i++) {
-      v_IT[i] = v[i].interval();
-    }
-    return svd_are_same_points_ftC2(v_IT, site_types, num_sites);
-  }
-  catch (Interval_nt_advanced::unsafe_comparison) {
-    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
-
-    num_failures_are_same_points++;
-
-    std::vector<ET> v_ET(v.size());
-
-    for (unsigned int i = 0; i < v.size(); i++) {
-      v_ET[i] = v[i].exact();
-    }
-
-    return svd_are_same_points_ftC2(v_ET, site_types, num_sites);
-  }
-}
-
+//----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 
-template < class CT, class ET, bool Protected, class Cache, class Method_tag >
-inline
-Comparison_result
-svd_compare_distance_ftC2
-(const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& qx,
- const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& qy,
- const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& sx,
- const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& sy,
- const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& tx,
- const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& ty,
- const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& px,
- const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& py,
- Method_tag method_tag)
+template < class CT, class ET, bool Protected, class Cache, class ITag>
+class Svd_are_same_points_ftC2<
+  Filtered_exact<CT,ET,Dynamic,Protected,Cache>,
+  ITag>
 {
-  //  do_not_compile();
+private:
+  typedef Interval_nt_advanced                              IT;
+  typedef Filtered_exact<CT,ET,Dynamic,Protected,Cache>     FT;
 
-  try {
-    Protect_FPU_rounding<Protected> Protection;
+  typedef Svd_are_same_points_ftC2<IT,ITag>                 IT_Predicate;
+  typedef Svd_are_same_points_ftC2<ET,ITag>                 ET_Predicate;
 
-    Interval_nt_advanced qx_it = qx.interval();
-    Interval_nt_advanced qy_it = qy.interval();
-    Interval_nt_advanced sx_it = sx.interval();
-    Interval_nt_advanced sy_it = sy.interval();
-    Interval_nt_advanced tx_it = tx.interval();
-    Interval_nt_advanced ty_it = ty.interval();
-    Interval_nt_advanced px_it = px.interval();
-    Interval_nt_advanced py_it = py.interval();
 
-    return svd_compare_distance_ftC2(qx_it, qy_it, sx_it, sy_it,
-				     tx_it, ty_it, px_it, py_it,
-				     method_tag);
+public:
+  inline
+  bool operator()(const FT v[], const char site_types[]) const
+  {
+    try {
+      Protect_FPU_rounding<Protected> Protection;
+
+      IT v_IT[24];
+
+      for (unsigned int i = 0; i < 24; i++) {
+	v_IT[i] = v[i].interval();
+      }
+      return IT_Predicate()(v_IT, site_types);
+    }
+    catch (Interval_nt_advanced::unsafe_comparison) {
+      Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
+
+      num_failures_are_same_points++;
+
+      ET v_ET[24];
+
+      for (unsigned int i = 0; i < 24; i++) {
+	v_ET[i] = v[i].exact();
+      }
+
+      return ET_Predicate()(v_ET, site_types);
+    }
   }
-  catch (Interval_nt_advanced::unsafe_comparison) {
-    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
-
-    num_failures_side_of_bisector++;
-
-    //    std::cerr << "inside svd_compare_distanceC2 #1 after exception"
-    //    	      << std::endl;
-
-    ET qx_et = qx.exact();
-    ET qy_et = qy.exact();
-    ET sx_et = sx.exact();
-    ET sy_et = sy.exact();
-    ET tx_et = tx.exact();
-    ET ty_et = ty.exact();
-    ET px_et = px.exact();
-    ET py_et = py.exact();
-
-    return svd_compare_distance_ftC2(qx_et, qy_et, sx_et, sy_et,
-				     tx_et, ty_et, px_et, py_et,
-				     method_tag);
-
-  }
-}
-
-
-
-template < class CT, class ET, bool Protected, class Cache, class Method_tag >
-inline
-Comparison_result
-svd_compare_distance_ftC2
-(const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& qx,
- const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& qy,
- const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& s1x,
- const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& s1y,
- const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& t1x,
- const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& t1y,
- const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& s2x,
- const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& s2y,
- const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& t2x,
- const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& t2y,
- Method_tag method_tag)
-{
-  //  do_not_compile();
-
-  try {
-    Protect_FPU_rounding<Protected> Protection;
-
-    Interval_nt_advanced qx_it = qx.interval();
-    Interval_nt_advanced qy_it = qy.interval();
-    Interval_nt_advanced s1x_it = s1x.interval();
-    Interval_nt_advanced s1y_it = s1y.interval();
-    Interval_nt_advanced t1x_it = t1x.interval();
-    Interval_nt_advanced t1y_it = t1y.interval();
-    Interval_nt_advanced s2x_it = s2x.interval();
-    Interval_nt_advanced s2y_it = s2y.interval();
-    Interval_nt_advanced t2x_it = t2x.interval();
-    Interval_nt_advanced t2y_it = t2y.interval();
-
-    return svd_compare_distance_ftC2(qx_it, qy_it,
-				     s1x_it, s1y_it, t1x_it, t1y_it,
-				     s2x_it, s2y_it, t2x_it, t2y_it,
-				     method_tag);
-  }
-  catch (Interval_nt_advanced::unsafe_comparison) {
-    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
-
-    //    std::cerr << "inside svd_compare_distanceC2 #2 after exception"
-    //    	      << std::endl;
-
-    num_failures_side_of_bisector++;
-
-    ET qx_et = qx.exact();
-    ET qy_et = qy.exact();
-    ET s1x_et = s1x.exact();
-    ET s1y_et = s1y.exact();
-    ET t1x_et = t1x.exact();
-    ET t1y_et = t1y.exact();
-    ET s2x_et = s2x.exact();
-    ET s2y_et = s2y.exact();
-    ET t2x_et = t2x.exact();
-    ET t2y_et = t2y.exact();
-
-#if 0
-    std::cerr << "q: " << CGAL::to_double(qx_et) << " "
-	      << CGAL::to_double(qy_et) << std::endl;
-    std::cerr << "S1: " << CGAL::to_double(s1x_et) << " "
-	      << CGAL::to_double(s1y_et) << ", "
-	      << CGAL::to_double(t1x_et) << " "
-	      << CGAL::to_double(t1y_et) << std::endl;
-    std::cerr << "S2: " << CGAL::to_double(s2x_et) << " "
-	      << CGAL::to_double(s2y_et) << ", "
-	      << CGAL::to_double(t2x_et) << " "
-	      << CGAL::to_double(t2y_et) << std::endl;
-#endif
-
-    return svd_compare_distance_ftC2(qx_et, qy_et,
-				     s1x_et, s1y_et, t1x_et, t1y_et,
-				     s2x_et, s2y_et, t2x_et, t2y_et,
-				     method_tag);
-
-  }
-}
+};
 
 //----------------------------------------------------------------------------
 
-template < class CT, class ET, bool Protected, class Cache, class Method_tag >
-inline
-Sign
-svd_vertex_conflict_ftC2(const std::vector< 
-			 Filtered_exact<CT,ET,Dynamic,Protected,Cache> >& v,
-			 char site_types[], unsigned int num_sites,
-			 Method_tag method_tag)
+template < class CT, class ET, bool Protected, class Cache, class ITag>
+class Svd_orientation_ftC2<
+  Filtered_exact<CT,ET,Dynamic,Protected,Cache>,
+  ITag>
 {
-  try {
-    Protect_FPU_rounding<Protected> Protection;
+private:
+  typedef Interval_nt_advanced                              IT;
+  typedef Filtered_exact<CT,ET,Dynamic,Protected,Cache>     FT;
 
-    std::vector<Interval_nt_advanced> v_IT(v.size());
+  typedef Svd_orientation_ftC2<IT,ITag>                     IT_Predicate;
+  typedef Svd_orientation_ftC2<ET,ITag>                     ET_Predicate;
 
-    for (unsigned int i = 0; i < v.size(); i++) {
-      v_IT[i] = v[i].interval();
+
+public:
+  inline
+  Orientation operator()(const FT v[], const char site_types[]) const
+  {
+    try {
+      Protect_FPU_rounding<Protected> Protection;
+
+      IT v_IT[36];
+
+      for (unsigned int i = 0; i < 36; i++) {
+	v_IT[i] = v[i].interval();
+      }
+      return IT_Predicate()(v_IT, site_types);
     }
-    return svd_vertex_conflict_ftC2(v_IT, site_types, num_sites,
-				    method_tag);
-  }
-  catch (Interval_nt_advanced::unsafe_comparison) {
-    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
+    catch (Interval_nt_advanced::unsafe_comparison) {
+      Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
 
-    num_failures_vertex_conflict++;
+      num_failures_are_same_points++;
 
-    std::vector<ET> v_ET(v.size());
+      ET v_ET[36];
 
-    for (unsigned int i = 0; i < v.size(); i++) {
-      v_ET[i] = v[i].exact();
+      for (unsigned int i = 0; i < 36; i++) {
+	v_ET[i] = v[i].exact();
+      }
+
+      return ET_Predicate()(v_ET, site_types);
     }
-
-    return svd_vertex_conflict_ftC2(v_ET, site_types, num_sites,
-				    method_tag);
   }
-}
+};
 
+//----------------------------------------------------------------------------
+
+template < class CT, class ET, bool Protected, class Cache,
+	   class MTag, class ITag>
+class Svd_oriented_side_of_bisector_ftC2<
+  Filtered_exact<CT,ET,Dynamic,Protected,Cache>,
+  MTag,ITag>
+{
+private:
+  typedef Interval_nt_advanced                              IT;
+  typedef Filtered_exact<CT,ET,Dynamic,Protected,Cache>     FT;
+
+  typedef Svd_oriented_side_of_bisector_ftC2<IT,Sqrt_field_tag,ITag>
+  IT_Predicate;
+
+  typedef Svd_oriented_side_of_bisector_ftC2<ET,MTag,ITag>  ET_Predicate;
+
+public:
+  inline
+  Oriented_side operator()(const FT v[], const char site_types[]) const
+  {
+    try {
+      Protect_FPU_rounding<Protected> Protection;
+
+      IT v_IT[36];
+
+      for (unsigned int i = 0; i < 36; i++) {
+	v_IT[i] = v[i].interval();
+      }
+      return IT_Predicate()(v_IT, site_types);
+    }
+    catch (Interval_nt_advanced::unsafe_comparison) {
+      Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
+
+      num_failures_side_of_bisector++;
+
+      ET v_ET[36];
+
+      for (unsigned int i = 0; i < 36; i++) {
+	v_ET[i] = v[i].exact();
+      }
+
+      return ET_Predicate()(v_ET, site_types);
+    }
+  }
+};
+
+//----------------------------------------------------------------------------
+
+template < class CT, class ET, bool Protected, class Cache, class MTag,
+	   class ITag, int Num_sites>
+class Svd_vertex_conflict_ftC2<
+  Filtered_exact<CT,ET,Dynamic,Protected,Cache>,
+  MTag,ITag,Num_sites>
+{
+private:
+  typedef Interval_nt_advanced                              IT;
+  typedef Filtered_exact<CT,ET,Dynamic,Protected,Cache>     FT;
+
+  typedef Svd_vertex_conflict_ftC2<IT,Sqrt_field_tag,ITag,Num_sites>
+  IT_Predicate;
+
+  typedef Svd_vertex_conflict_ftC2<ET,MTag,ITag,Num_sites>  ET_Predicate;
+
+public:
+  inline
+  Sign operator()(const FT v[], const char site_types[]) const
+  {
+    try {
+      Protect_FPU_rounding<Protected> Protection;
+
+      IT v_IT[12 * Num_sites];
+
+      for (unsigned int i = 0; i < 12 * Num_sites; i++) {
+	v_IT[i] = v[i].interval();
+      }
+
+      return IT_Predicate()(v_IT, site_types);
+    }
+    catch (Interval_nt_advanced::unsafe_comparison) {
+      Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
+
+      num_failures_vertex_conflict++;
+
+      ET v_ET[12 * Num_sites];
+
+      for (unsigned int i = 0; i < 12 * Num_sites; i++) {
+	v_ET[i] = v[i].exact();
+      }
+
+      return ET_Predicate()(v_ET, site_types);
+    }
+  }
+};
 
 //----------------------------------------------------------------------------
 
 
-template < class CT, class ET, bool Protected, class Cache, class Method_tag >
-inline
-bool
-svd_finite_edge_conflict_ftC2(const std::vector< 
-			      Filtered_exact<CT,ET,Dynamic,
-			      Protected,Cache> >& v,
-			      Sign sgn, char site_types[],
-			      unsigned int num_sites,
-			      Method_tag method_tag)
+template < class CT, class ET, bool Protected, class Cache,
+	   class MTag, class ITag, int Num_sites>
+class Svd_finite_edge_conflict_ftC2<
+  Filtered_exact<CT,ET,Dynamic,Protected,Cache>,
+  MTag,ITag,Num_sites>
 {
-  try {
-    Protect_FPU_rounding<Protected> Protection;
+private:
+  typedef Interval_nt_advanced                              IT;
+  typedef Filtered_exact<CT,ET,Dynamic,Protected,Cache>     FT;
 
-    std::vector<Interval_nt_advanced> v_IT(v.size());
+  typedef Svd_finite_edge_conflict_ftC2<IT,Sqrt_field_tag,ITag,Num_sites>
+  IT_Predicate;
 
-    for (unsigned int i = 0; i < v.size(); i++) {
-      v_IT[i] = v[i].interval();
+  typedef Svd_finite_edge_conflict_ftC2<ET,MTag,ITag,Num_sites>  ET_Predicate;
+
+public:
+  inline
+  bool operator()(const FT v[],	Sign sgn, char site_types[]) const
+  {
+    try {
+      Protect_FPU_rounding<Protected> Protection;
+
+      IT v_IT[12 * Num_sites];
+
+      for (unsigned int i = 0; i < 12 * Num_sites; i++) {
+	v_IT[i] = v[i].interval();
+      }
+      return IT_Predicate()(v_IT, sgn, site_types);
     }
-    return svd_finite_edge_conflict_ftC2(v_IT, sgn, site_types,
-					 num_sites, method_tag);
-  }
-  catch (Interval_nt_advanced::unsafe_comparison) {
-    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
+    catch (Interval_nt_advanced::unsafe_comparison) {
+      Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
 
-    num_failures_finite_edge_conflict++;
+      num_failures_finite_edge_conflict++;
 
-    std::vector<ET> v_ET(v.size());
+      ET v_ET[12 * Num_sites];
 
-    for (unsigned int i = 0; i < v.size(); i++) {
-      v_ET[i] = v[i].exact();
+      for (unsigned int i = 0; i < 12 * Num_sites; i++) {
+	v_ET[i] = v[i].exact();
+      }
+
+      return ET_Predicate()(v_ET, sgn, site_types);
     }
-
-    return svd_finite_edge_conflict_ftC2(v_ET, sgn, site_types,
-					 num_sites, method_tag);
   }
-}
+};
 
 
 //----------------------------------------------------------------------------
 
 
-template < class CT, class ET, bool Protected, class Cache, class Method_tag >
-inline
-bool
-svd_infinite_edge_conflict_ftC2(const std::vector< 
-				Filtered_exact<CT,ET,Dynamic,
-				Protected,Cache> >& v,
-				Sign sgn, char site_types[],
-				unsigned int num_sites,
-				Method_tag method_tag)
+template <class CT, class ET, bool Protected, class Cache, class MTag,
+	  class ITag>
+class Svd_infinite_edge_conflict_ftC2<
+  Filtered_exact<CT,ET,Dynamic,Protected,Cache>,
+  MTag,ITag>
 {
-  try {
-    Protect_FPU_rounding<Protected> Protection;
+private:
+  typedef Interval_nt_advanced                              IT;
+  typedef Filtered_exact<CT,ET,Dynamic,Protected,Cache>     FT;
 
-    std::vector<Interval_nt_advanced> v_IT(v.size());
+  typedef Svd_infinite_edge_conflict_ftC2<IT,Sqrt_field_tag,ITag>
+  IT_Predicate;
 
-    for (unsigned int i = 0; i < v.size(); i++) {
-      v_IT[i] = v[i].interval();
+  typedef Svd_infinite_edge_conflict_ftC2<ET,MTag,ITag>     ET_Predicate;
+
+public:
+  inline
+  bool operator()(const FT v[], Sign sgn, const char site_types[]) const
+  {
+    try {
+      Protect_FPU_rounding<Protected> Protection;
+
+      IT v_IT[48];
+
+      for (unsigned int i = 0; i < 48; i++) {
+	v_IT[i] = v[i].interval();
+      }
+      return IT_Predicate()(v_IT, sgn, site_types);
     }
-    return svd_infinite_edge_conflict_ftC2(v_IT, sgn, site_types,
-					   num_sites, method_tag);
-  }
-  catch (Interval_nt_advanced::unsafe_comparison) {
-    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
+    catch (Interval_nt_advanced::unsafe_comparison) {
+      Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
 
-    num_failures_infinite_edge_conflict++;
+      num_failures_infinite_edge_conflict++;
 
-    std::vector<ET> v_ET(v.size());
+      ET v_ET[48];
 
-    for (unsigned int i = 0; i < v.size(); i++) {
-      v_ET[i] = v[i].exact();
+      for (unsigned int i = 0; i < 48; i++) {
+	v_ET[i] = v[i].exact();
+      }
+
+      return ET_Predicate()(v_ET, sgn, site_types);
     }
-
-    return svd_infinite_edge_conflict_ftC2(v_ET, sgn, site_types,
-					   num_sites, method_tag);
   }
-}
+};
 
 
 //----------------------------------------------------------------------------
 
-template < class CT, class ET, bool Protected, class Cache, class Method_tag >
-inline
-std::pair<int,int>
-svd_do_intersect_ftC2(const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& x1,
-		      const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& y1,
-		      const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& x2,
-		      const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& y2,
-		      const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& x3,
-		      const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& y3,
-		      const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& x4,
-		      const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& y4,
-		      Method_tag method_tag)
+template <class CT, class ET, bool Protected, class Cache, class MTag,
+	  class ITag>
+class Svd_is_degenerate_edge_ftC2<
+  Filtered_exact<CT,ET,Dynamic,Protected,Cache>,
+  MTag,ITag>
 {
-  //  do_not_compile();
+private:
+  typedef Interval_nt_advanced                              IT;
+  typedef Filtered_exact<CT,ET,Dynamic,Protected,Cache>     FT;
 
-  try {
-    Protect_FPU_rounding<Protected> Protection;
+  typedef Svd_is_degenerate_edge_ftC2<IT,Sqrt_field_tag,ITag>  IT_Predicate;
+  typedef Svd_is_degenerate_edge_ftC2<ET,MTag,ITag>            ET_Predicate;
 
-    Interval_nt_advanced x1_it = x1.interval();
-    Interval_nt_advanced y1_it = y1.interval();
-    Interval_nt_advanced x2_it = x2.interval();
-    Interval_nt_advanced y2_it = y2.interval();
-    Interval_nt_advanced x3_it = x3.interval();
-    Interval_nt_advanced y3_it = y3.interval();
-    Interval_nt_advanced x4_it = x4.interval();
-    Interval_nt_advanced y4_it = y4.interval();
+public:
+  inline
+  bool operator()(const FT v[], const char site_types[]) const 
+  {
+    try {
+      Protect_FPU_rounding<Protected> Protection;
 
-    return svd_do_intersect_C2(x1_it, y1_it, x2_it, y2_it,
-			       x3_it, y3_it, x4_it, y4_it,
-			       method_tag);
+      IT v_IT[48];
+
+      for (unsigned int i = 0; i < 48; i++) {
+	v_IT[i] = v[i].interval();
+      }
+      return IT_Predicate()(v_IT, site_types);
+    }
+    catch (Interval_nt_advanced::unsafe_comparison) {
+      Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
+
+      num_failures_is_degenerate_edge++;
+
+      ET v_ET[48];
+
+      for (unsigned int i = 0; i < 48; i++) {
+	v_ET[i] = v[i].exact();
+      }
+
+      return ET_Predicate()(v_ET, site_types);
+    }
   }
-  catch (Interval_nt_advanced::unsafe_comparison) {
-    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
-
-    num_failures_do_intersect++;
-
-    ET x1_et = x1.exact();
-    ET y1_et = y1.exact();
-    ET x2_et = x2.exact();
-    ET y2_et = y2.exact();
-    ET x3_et = x3.exact();
-    ET y3_et = y3.exact();
-    ET x4_et = x4.exact();
-    ET y4_et = y4.exact();
-
-    return svd_do_intersect_C2(x1_et, y1_et, x2_et, y2_et,
-			       x3_et, y3_et, x4_et, y4_et,
-			       method_tag);
-
-  }
-}
-
+};
 
 //----------------------------------------------------------------------------
 
-template < class CT, class ET, bool Protected, class Cache >
-inline
-bool
-svd_are_parallel_ftC2(const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& x1,
-		      const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& y1,
-		      const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& x2,
-		      const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& y2,
-		      const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& x3,
-		      const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& y3,
-		      const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& x4,
-		      const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& y4)
+template <class CT, class ET, bool Protected, class Cache, class MTag,
+	  class ITag>
+class Svd_arrangement_type_ftC2<
+  Filtered_exact<CT,ET,Dynamic,Protected,Cache>,
+  MTag,ITag>
 {
-  //  do_not_compile();
+private:
+  typedef Interval_nt_advanced                              IT;
+  typedef Filtered_exact<CT,ET,Dynamic,Protected,Cache>     FT;
 
-  try {
-    Protect_FPU_rounding<Protected> Protection;
+  typedef Svd_arrangement_type_ftC2<IT,Sqrt_field_tag,ITag>  IT_Predicate;
+  typedef Svd_arrangement_type_ftC2<ET,MTag,ITag>            ET_Predicate;
 
-    Interval_nt_advanced x1_it = x1.interval();
-    Interval_nt_advanced y1_it = y1.interval();
-    Interval_nt_advanced x2_it = x2.interval();
-    Interval_nt_advanced y2_it = y2.interval();
-    Interval_nt_advanced x3_it = x3.interval();
-    Interval_nt_advanced y3_it = y3.interval();
-    Interval_nt_advanced x4_it = x4.interval();
-    Interval_nt_advanced y4_it = y4.interval();
+public:
 
-    return svd_are_parallel_C2(x1_it, y1_it, x2_it, y2_it,
-			       x3_it, y3_it, x4_it, y4_it);
+  inline
+  std::pair<int,int>
+  operator()(const FT v[],  const char site_types[]) const
+  {
+    try {
+      Protect_FPU_rounding<Protected> Protection;
+
+      IT v_IT[24];
+
+      for (unsigned int i = 0; i < 24; i++) {
+	v_IT[i] = v[i].interval();
+      }
+      return IT_Predicate()(v_IT, site_types);
+    }
+    catch (Interval_nt_advanced::unsafe_comparison) {
+      Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
+
+      num_failures_arrangement_type++;
+
+      ET v_ET[24];
+
+      for (unsigned int i = 0; i < 24; i++) {
+	v_ET[i] = v[i].exact();
+      }
+
+      return ET_Predicate()(v_ET, site_types);
+    }
   }
-  catch (Interval_nt_advanced::unsafe_comparison) {
-    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
-
-    num_failures_are_parallel++;
-
-    ET x1_et = x1.exact();
-    ET y1_et = y1.exact();
-    ET x2_et = x2.exact();
-    ET y2_et = y2.exact();
-    ET x3_et = x3.exact();
-    ET y3_et = y3.exact();
-    ET x4_et = x4.exact();
-    ET y4_et = y4.exact();
-
-    return svd_are_parallel_C2(x1_et, y1_et, x2_et, y2_et,
-			       x3_et, y3_et, x4_et, y4_et);
-  }
-}
-
+};
 
 //----------------------------------------------------------------------------
 
-template < class CT, class ET, bool Protected, class Cache, class Method_tag >
-inline
-Sign
-svd_oriented_side_ftC2(const std::vector< 
-		       Filtered_exact<CT,ET,Dynamic,Protected,Cache> >& v,
-		       char site_types[], unsigned int num_sites,
-		       Method_tag method_tag)
+template <class CT, class ET, bool Protected, class Cache, class ITag>
+class Svd_are_parallel_ftC2<
+  Filtered_exact<CT,ET,Dynamic,Protected,Cache>,
+  ITag>
 {
-  try {
-    Protect_FPU_rounding<Protected> Protection;
+private:
+  typedef Interval_nt_advanced                              IT;
+  typedef Filtered_exact<CT,ET,Dynamic,Protected,Cache>     FT;
 
-    std::vector<Interval_nt_advanced> v_IT(v.size());
+  typedef Svd_are_parallel_ftC2<IT,ITag>                    IT_Predicate;
+  typedef Svd_are_parallel_ftC2<ET,ITag>                    ET_Predicate;
 
-    for (unsigned int i = 0; i < v.size(); i++) {
-      v_IT[i] = v[i].interval();
+public:
+  inline
+  bool operator()(const FT v[],	const char site_types[]) const
+  {
+    try {
+      Protect_FPU_rounding<Protected> Protection;
+
+      IT v_IT[24];
+
+      for (unsigned int i = 0; i < 24; i++) {
+	v_IT[i] = v[i].interval();
+      }
+      return IT_Predicate()(v_IT, site_types);
     }
-    return svd_oriented_side_ftC2(v_IT, site_types, num_sites,
-				  method_tag);
-  }
-  catch (Interval_nt_advanced::unsafe_comparison) {
-    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
+    catch (Interval_nt_advanced::unsafe_comparison) {
+      Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
 
-    num_failures_oriented_side++;
+      num_failures_are_parallel++;
 
-    std::vector<ET> v_ET(v.size());
+      ET v_ET[24];
 
-    for (unsigned int i = 0; i < v.size(); i++) {
-      v_ET[i] = v[i].exact();
+      for (unsigned int i = 0; i < 24; i++) {
+	v_ET[i] = v[i].exact();
+      }
+
+      return ET_Predicate()(v_ET, site_types);
     }
-
-    return svd_oriented_side_ftC2(v_ET, site_types, num_sites,
-				  method_tag);
   }
-}
+};
+
+//----------------------------------------------------------------------------
+
+template <class CT, class ET, bool Protected, class Cache, class MTag,
+	  class ITag>
+class Svd_oriented_side_ftC2<
+  Filtered_exact<CT,ET,Dynamic,Protected,Cache>,
+  MTag,ITag>
+{
+private:
+  typedef Interval_nt_advanced                              IT;
+  typedef Filtered_exact<CT,ET,Dynamic,Protected,Cache>     FT;
+
+  typedef Svd_oriented_side_ftC2<IT,Sqrt_field_tag,ITag>    IT_Predicate;
+  typedef Svd_oriented_side_ftC2<ET,MTag,ITag>              ET_Predicate;
+
+public:
+  inline
+  Oriented_side operator()(const FT v[], const char site_types[]) const
+  {
+    try {
+      Protect_FPU_rounding<Protected> Protection;
+
+      IT v_IT[60];
+
+      for (unsigned int i = 0; i < 60; i++) {
+	v_IT[i] = v[i].interval();
+      }
+      return IT_Predicate()(v_IT, site_types, mtag, itag);
+    }
+    catch (Interval_nt_advanced::unsafe_comparison) {
+      Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
+
+      num_failures_oriented_side++;
+
+      ET v_ET[60];
+
+      for (unsigned int i = 0; i < 60; i++) {
+	v_ET[i] = v[i].exact();
+      }
+
+      return ET_Predicate()(v_ET, site_types, mtag, itag);
+    }
+  }
+};
 
 //----------------------------------------------------------------------------
 

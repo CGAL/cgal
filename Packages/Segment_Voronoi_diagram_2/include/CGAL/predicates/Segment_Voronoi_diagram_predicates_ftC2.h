@@ -35,10 +35,141 @@ CGAL_BEGIN_NAMESPACE
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+template<class K, class ITag> class Svd_predicate_push_back_C2;
+
+
+template<class K>
+class Svd_predicate_push_back_C2<K,Tag_true>
+{
+private:
+  typedef typename K::Site_2     Site_2;
+  typedef typename K::Segment_2  Segment_2;
+  typedef typename K::FT         FT;
+
+public:
+  void operator()(const Site_2& t, FT v[], unsigned int& k,
+		  char site_types[], unsigned int& j)
+  {
+    unsigned int step(0);
+
+    if ( t.is_point() ) {
+      site_types[j] = 'p';
+      if ( t.is_exact() ) {
+	site_types[j+1] = 'e';
+	v[k] = t.point().x();
+	v[k+1] = t.point().y();
+	step = 2;
+      } else {
+	site_types[j+1] = 'i';
+	Segment_2 s1 = t.supporting_segment(0);
+	Segment_2 s2 = t.supporting_segment(1);
+	v[k] = s1.source().x();
+	v[k+1] = s1.source().y();
+	v[k+2] = s1.target().x();
+	v[k+3] = s1.target().y();
+	v[k+4] = s2.source().x();
+	v[k+5] = s2.source().y();
+	v[k+6] = s2.target().x();
+	v[k+7] = s2.target().y();
+	step = 8;
+      }
+    } else {
+      site_types[j] = 's';
+      if ( t.is_exact() ) {
+	site_types[j+1] = 'e';
+	v[k] = t.source().x();
+	v[k+1] = t.source().y();
+	v[k+2] = t.target().x();
+	v[k+3] = t.target().y();
+	step = 4;
+      } else {
+	Segment_2 supp = t.supporting_segment();
+	v[k] = supp.source().x();
+	v[k+1] = supp.source().y();
+	v[k+2] = supp.target().x();
+	v[k+3] = supp.target().y();
+
+	Segment_2 cs, cs2;
+	char stype;
+	if ( t.is_exact(0) ) {
+	  stype = '0';
+	  cs = t.crossing_segment(1);
+	} else if ( t.is_exact(1) ) {
+	  stype = '1';
+	  cs = t.crossing_segment(0);
+	} else {
+	  stype = 'i';
+	  cs = t.crossing_segment(0);
+	  cs2 = t.crossing_segment(1);
+	}
+
+	site_types[j+1] = stype;
+	v[k+4] = cs.source().x();
+	v[k+5] = cs.source().y();
+	v[k+6] = cs.target().x();
+	v[k+7] = cs.target().y();
+
+	step = 8;
+
+	if ( stype == 'i' ) {
+	  v[k+8] = cs2.source().x();
+	  v[k+9] = cs2.source().y();
+	  v[k+10] = cs2.target().x();
+	  v[k+11] = cs2.target().y();
+	  step = 12;
+	}
+      }
+    }
+
+    j += 2;
+    k += step;
+  }
+};
+
+
+template<class K>
+class Svd_predicate_push_back_C2<K,Tag_false>
+{
+private:
+  typedef typename K::Site_2     Site_2;
+  typedef typename K::Segment_2  Segment_2;
+  typedef typename K::FT         FT;
+
+public:
+  inline
+  void operator()(const Site_2& t, FT v[], unsigned int& k,
+		  char site_types[], unsigned int& j)
+  {
+    unsigned int step(0);
+
+    if ( t.is_point() ) {
+      site_types[j] = 'p';
+      site_types[j+1] = 'e';
+      v[k] = t.point().x();
+      v[k+1] = t.point().y();
+      step = 2;
+    } else {
+      site_types[j] = 's';
+      site_types[j+1] = 'e';
+      v[k] = t.source().x();
+      v[k+1] = t.source().y();
+      v[k+2] = t.target().x();
+      v[k+3] = t.target().y();
+      step = 4;
+    }
+
+    j += 2;
+    k += step;
+  }
+};
+
+
+
 template<class K>
 void svd_predicate_push_back_C2(const typename K::Site_2& t,
 				typename K::FT v[], unsigned int& k,
-				char site_types[], unsigned int& j)
+				char site_types[], unsigned int& j,
+				const Tag_true&)
 {
   unsigned int step(0);
 
@@ -115,11 +246,133 @@ void svd_predicate_push_back_C2(const typename K::Site_2& t,
   k += step;
 }
 
+template<class K>
+void svd_predicate_push_back_C2(const typename K::Site_2& t,
+				typename K::FT v[], unsigned int& k,
+				char site_types[], unsigned int& j,
+				const Tag_false&)
+{
+  unsigned int step(0);
+
+  if ( t.is_point() ) {
+    site_types[j] = 'p';
+    site_types[j+1] = 'e';
+    v[k] = t.point().x();
+    v[k+1] = t.point().y();
+    step = 2;
+  } else {
+    site_types[j] = 's';
+    site_types[j+1] = 'e';
+    v[k] = t.source().x();
+    v[k+1] = t.source().y();
+    v[k+2] = t.target().x();
+    v[k+3] = t.target().y();
+    step = 4;
+  }
+
+  j += 2;
+  k += step;
+}
+
+//--------------------------------------------------------------------------
+
+template<class K, class ITag> class Svd_get_site_C2;
+
+template<class K>
+class Svd_get_site_C2<K,Tag_true>
+{
+private:
+  typedef typename K::Point_2             Point_2;
+  typedef typename K::Segment_2           Segment_2;
+  typedef typename K::Site_2              Site_2;
+  typedef typename K::FT                  FT;
+
+public:
+  Site_2 operator()(const FT v[], unsigned int& k,
+		    const char site_types[], unsigned int& j)
+  {
+    Site_2 t;
+
+    unsigned int step(0);
+
+    if ( site_types[j] == 'p' ) {
+      if ( site_types[j+1] == 'e' ) {
+	Point_2 p(v[k], v[k+1]);
+	t = Site_2::construct_site_2(p);
+	step = 2;
+      } else {
+	Point_2 p1(v[k], v[k+1]), p2(v[k+2], v[k+3]);
+	Point_2 p3(v[k+4], v[k+5]), p4(v[k+6], v[k+7]);
+	t = Site_2::construct_site_2(p1, p2, p3, p4);
+	step = 8;
+      }
+    } else {
+      if ( site_types[j+1] == 'e' ) {
+	Point_2 p1(v[k], v[k+1]), p2(v[k+2], v[k+3]);
+	t = Site_2::construct_site_2(p1, p2);
+	step = 4;
+      } else {
+	if ( site_types[j+1] != 'i' ) {
+	  Point_2 p1(v[k], v[k+1]), p2(v[k+2], v[k+3]);
+	  Point_2 p3(v[k+4], v[k+5]), p4(v[k+6], v[k+7]);
+	  t = Site_2::construct_site_2(p1, p2, p3, p4,
+				       (site_types[j+1] == '0'));
+	  step = 8;
+	} else {
+	  Point_2 p1(v[k], v[k+1]), p2(v[k+2], v[k+3]);
+	  Point_2 p3(v[k+4], v[k+5]), p4(v[k+6], v[k+7]);
+	  Point_2 p5(v[k+8], v[k+9]), p6(v[k+10], v[k+11]);
+	  t = Site_2::construct_site_2(p1, p2, p3, p4, p5, p6);
+	  step = 12;
+	}
+      }
+    }
+
+    j += 2;
+    k += step;
+
+    return t;
+  }
+};
+
+template<class K>
+class Svd_get_site_C2<K,Tag_false>
+{
+private:
+  typedef typename K::Point_2             Point_2;
+  typedef typename K::Segment_2           Segment_2;
+  typedef typename K::Site_2              Site_2;
+  typedef typename K::FT                  FT;
+
+public:
+  Site_2 operator()(const FT v[], unsigned int& k,
+		    const char site_types[], unsigned int& j)
+  {
+    Site_2 t;
+
+    unsigned int step(0);
+
+    if ( site_types[j] == 'p' ) {
+      Point_2 p(v[k], v[k+1]);
+      t = Site_2::construct_site_2(p);
+      step = 2;
+    } else {
+      Point_2 p1(v[k], v[k+1]), p2(v[k+2], v[k+3]);
+      t = Site_2::construct_site_2(p1, p2);
+      step = 4;
+    }
+
+    j += 2;
+    k += step;
+
+    return t;
+  }
+};
 
 template<class K>
 typename K::Site_2
-get_site(const typename K::FT v[], unsigned int& k,
-	 const char site_types[], unsigned int& j)
+svd_get_site_C2(const typename K::FT v[], unsigned int& k,
+		const char site_types[], unsigned int& j, const Tag_true&)
 {
   typedef typename K::Point_2             Point_2;
   typedef typename K::Segment_2           Segment_2;
@@ -159,6 +412,35 @@ get_site(const typename K::FT v[], unsigned int& k,
 	step = 12;
       }
     }
+  }
+
+  j += 2;
+  k += step;
+
+  return t;
+}
+
+template<class K>
+typename K::Site_2
+svd_get_site_C2(const typename K::FT v[], unsigned int& k,
+		const char site_types[], unsigned int& j, const Tag_false&)
+{
+  typedef typename K::Point_2             Point_2;
+  typedef typename K::Segment_2           Segment_2;
+  typedef typename K::Site_2              Site_2;
+
+  Site_2 t;
+
+  unsigned int step(0);
+
+  if ( site_types[j] == 'p' ) {
+    Point_2 p(v[k], v[k+1]);
+    t = Site_2::construct_site_2(p);
+    step = 2;
+  } else {
+    Point_2 p1(v[k], v[k+1]), p2(v[k+2], v[k+3]);
+    t = Site_2::construct_site_2(p1, p2);
+    step = 4;
   }
 
   j += 2;
@@ -254,7 +536,7 @@ svd_predicate_ftC2(const FT v[], const char site_types[])
   Site_2 t[Num_sites];
 
   for (unsigned int i = 0, k = 0, j = 0; i < Num_sites; i++) {
-    t[i] = get_site<Kernel>(v, k, site_types, j);
+    t[i] = svd_get_site_C2<Kernel>(v, k, site_types, j, ITag());
   }
 
   Return_t result = Caller()(t);
@@ -283,7 +565,7 @@ svd_predicate_ftC2(const FT v[], const char site_types[])
   Site_2 t[Num_sites];
 
   for (unsigned int i = 0, k = 0, j = 0; i < Num_sites; i++) {
-    t[i] = get_site<Kernel>(v, k, site_types, j);
+    t[i] = svd_get_site_C2<Kernel>(v, k, site_types, j, ITag());
   }
 
   Return_t result = Caller()(t);
@@ -312,7 +594,7 @@ svd_predicate_ftC2(const FT v[], const char site_types[], Data data)
   Site_2 t[Num_sites];
 
   for (unsigned int i = 0, k = 0, j = 0; i < Num_sites; i++) {
-    t[i] = get_site<Kernel>(v, k, site_types, j);
+    t[i] = svd_get_site_C2<Kernel>(v, k, site_types, j, ITag());
   }
 
   Return_t result = Caller()(t, data);
@@ -320,85 +602,98 @@ svd_predicate_ftC2(const FT v[], const char site_types[], Data data)
   return result;
 }
 
+
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-template<template<class Kernel> class Predicate,
-	 typename Return_t, class K,
-	 unsigned int Num_sites>
-Return_t
-svd_predicate_C2(const typename K::Site_2 t[])
+
+template<class FT, class ITag>
+struct Svd_are_same_points_ftC2
 {
-  typedef typename K::FT                 FT;
-  typedef typename K::Intersections_tag  ITag;
 
-  FT v[Num_sites * 12];
-  char site_types[Num_sites * 2];
+  inline
+  bool operator()(const FT v[], const char site_types[]) const
+  {
+    typedef Simple_cartesian<FT>                 Rep;
+    typedef
+      CGAL::Segment_Voronoi_diagram_kernel_wrapper_2<Rep,ITag>  Kernel;
 
-  for (unsigned int i = 0, k = 0, j = 0; i < Num_sites; i++) {
-    svd_predicate_push_back_C2<K>(t[i], v, k, site_types, j);
+    typedef typename Kernel::Site_2                   Site_2;
+    typedef Svd_are_same_points_C2<Kernel>            Predicate;
+
+    must_be_filtered(FT());
+
+    Site_2 t[2];
+
+    for (unsigned int i = 0, k = 0, j = 0; i < 2; i++) {
+      t[i] = svd_get_site_C2<Kernel>(v, k, site_types, j, ITag());
+    }
+
+    return Predicate()(t[0], t[1]);
   }
-
-  return svd_predicate_ftC2<Predicate,Return_t,FT,
-    ITag,Num_sites>(v, site_types);
-}
-
-template<template<class Kernel, class MTag> class Predicate,
-	 typename Return_t, class K,
-	 class Method_tag, unsigned int Num_sites>
-Return_t
-svd_predicate_C2(const typename K::Site_2 t[])
-{
-  typedef typename K::FT                 FT;
-  typedef typename K::Intersections_tag  ITag;
-
-  FT v[Num_sites * 12];
-  char site_types[Num_sites * 2];
-
-  for (unsigned int i = 0, k = 0, j = 0; i < Num_sites; i++) {
-    svd_predicate_push_back_C2<K>(t[i], v, k, site_types, j);
-  }
-
-  return svd_predicate_ftC2<Predicate,Return_t,FT,
-    Method_tag,ITag,Num_sites>(v, site_types);
-}
-
-template<template<class Kernel, class MTag> class Predicate,
-	 typename Return_t, class K,
-	 class Method_tag, typename Data, unsigned int Num_sites>
-Return_t
-svd_predicate_C2(const typename K::Site_2 t[], Data data)
-{
-  typedef typename K::FT                 FT;
-  typedef typename K::Intersections_tag  ITag;
-
-  FT v[Num_sites * 12];
-  char site_types[Num_sites * 2];
-
-  for (unsigned int i = 0, k = 0, j = 0; i < Num_sites; i++) {
-    svd_predicate_push_back_C2<K>(t[i], v, k, site_types, j);
-  }
-
-  return svd_predicate_ftC2<Predicate,Return_t,FT,
-    Method_tag,ITag,Data,Num_sites>(v, site_types, data);
-}
-
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-
+};
 
 template<class K>
 inline
 bool svd_are_same_points_C2(const typename K::Site_2& p,
 			    const typename K::Site_2& q)
 {
-  typename K::Site_2 site_vec[] = {p, q};
-  return svd_predicate_C2<Svd_are_same_points_C2,bool,K,2>(site_vec);
+  typedef typename K::FT                  FT;
+  typedef typename K::Intersections_tag   ITag;
+
+  typedef Svd_are_same_points_ftC2<FT,ITag>   Predicate_ftC2;
+
+  typename K::Site_2 tt[] = {p, q};
+
+  ITag itag;
+
+  FT v[24];
+  char site_types[4];
+
+  for (unsigned int i = 0, k = 0, j = 0; i < 2; i++) {
+    svd_predicate_push_back_C2<K>(tt[i], v, k, site_types, j, itag);
+  }
+
+  return Predicate_ftC2()(v, site_types);
 }
 
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
+
+template<class FT, class ITag>
+struct Svd_orientation_ftC2
+{
+
+  inline
+  Orientation operator()(const FT v[], const char site_types[]) const
+  {
+    typedef Simple_cartesian<FT>                 Rep;
+    typedef
+      CGAL::Segment_Voronoi_diagram_kernel_wrapper_2<Rep,ITag>  Kernel;
+
+    typedef typename Kernel::Site_2                   Site_2;
+    typedef Svd_orientation_C2<Kernel>                Predicate;
+
+    must_be_filtered(FT());
+
+    Site_2 t[3];
+
+    for (unsigned int i = 0, k = 0, j = 0; i < 3; i++) {
+      t[i] = svd_get_site_C2<Kernel>(v, k, site_types, j, ITag());
+    }
+
+    return Predicate()(t[0], t[1], t[2]);
+  }
+};
+
 
 template<class K>
 inline
@@ -406,13 +701,56 @@ Orientation svd_orientation_C2(const typename K::Site_2& p,
 			       const typename K::Site_2& q,
 			       const typename K::Site_2& r)
 {
-  typename K::Site_2 site_vec[] = {p, q, r};
-  return svd_predicate_C2<Svd_orientation_C2,Orientation,K,3>(site_vec);
+  typedef typename K::FT                  FT;
+  typedef typename K::Intersections_tag   ITag;
+
+  typedef Svd_orientation_ftC2<FT,ITag>   Predicate_ftC2;
+
+  typename K::Site_2 tt[] = {p, q, r};
+
+  ITag itag;
+
+  FT v[36];
+  char site_types[6];
+
+
+  for (unsigned int i = 0, k = 0, j = 0; i < 3; i++) {
+    svd_predicate_push_back_C2<K>(tt[i], v, k, site_types, j, itag);
+  }
+
+  return Predicate_ftC2()(v, site_types);
 }
 
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
+
+
+template<class FT, class MTag, class ITag>
+struct Svd_oriented_side_of_bisector_ftC2
+{
+  inline
+  Oriented_side operator()(const FT v[], const char site_types[]) const
+  {
+    typedef Simple_cartesian<FT>                 Rep;
+    typedef
+      CGAL::Segment_Voronoi_diagram_kernel_wrapper_2<Rep,ITag>  Kernel;
+
+    typedef typename Kernel::Site_2                   Site_2;
+    typedef Svd_oriented_side_of_bisector_C2<Kernel,MTag>  Predicate;
+
+    must_be_filtered(FT());
+
+    Site_2 t[3];
+
+    for (unsigned int i = 0, k = 0, j = 0; i < 3; i++) {
+      t[i] = svd_get_site_C2<Kernel>(v, k, site_types, j, ITag());
+    }
+
+    return Predicate()(t[0], t[1], t[2]);
+  }
+};
+
 
 template<class K, class Method_tag>
 inline
@@ -420,15 +758,66 @@ Oriented_side
 svd_oriented_side_of_bisector_ftC2(const typename K::Site_2& p,
 				   const typename K::Site_2& q,
 				   const typename K::Site_2& t,
-				   Method_tag mtag)
+				   const Method_tag& mtag)
 {
-  typename K::Site_2 site_vec[] = {p, q, t};
-  return svd_predicate_C2<Svd_oriented_side_of_bisector_C2,
-    Oriented_side,K,Method_tag,3>(site_vec);
+  typedef typename K::FT                  FT;
+  typedef typename K::Intersections_tag   ITag;
+  typedef Method_tag                      MTag;
+
+  typedef Svd_oriented_side_of_bisector_ftC2<FT,MTag,ITag>  Predicate_ftC2;
+
+  typename K::Site_2 tt[] = {p, q, t};
+
+  ITag itag;
+
+  FT v[36];
+  char site_types[6];
+
+
+  for (unsigned int i = 0, k = 0, j = 0; i < 3; i++) {
+    svd_predicate_push_back_C2<K>(tt[i], v, k, site_types, j, itag);
+  }
+
+  return Predicate_ftC2()(v, site_types);
 }
 
 
 //--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+
+
+template<class FT, class MTag, class ITag, int Num_sites>
+struct Svd_vertex_conflict_ftC2
+{
+  inline
+  Sign
+  operator()(const FT v[], const char site_types[]) const
+    //	     const MTag& mtag, const ITag& itag)
+  {
+    typedef Simple_cartesian<FT>                 Rep;
+    typedef
+      CGAL::Segment_Voronoi_diagram_kernel_wrapper_2<Rep,ITag>  Kernel;
+
+    typedef typename Kernel::Site_2                   Site_2;
+    typedef Svd_incircle_2<Kernel,MTag>               Predicate;
+
+    typedef Svd_predicate_caller<Sign, Predicate, Num_sites> Caller;
+
+
+    must_be_filtered(FT());
+
+    Site_2 t[Num_sites];
+
+    for (unsigned int i = 0, k = 0, j = 0; i < Num_sites; i++) {
+      t[i] = svd_get_site_C2<Kernel>(v, k, site_types, j, ITag());
+    }
+
+    return Caller()(t);
+  }
+};
+
+
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
@@ -438,11 +827,27 @@ Sign
 svd_vertex_conflict_ftC2(const typename K::Site_2& p,
 			 const typename K::Site_2& q,
 			 const typename K::Site_2& t,
-			 Method_tag mtag)
+			 const Method_tag& mtag)
 {
-  typename K::Site_2 site_vec[] = {p, q, t};
-  return
-    svd_predicate_C2<Svd_incircle_2,Sign,K,Method_tag,3>(site_vec);
+  typedef typename K::FT                  FT;
+  typedef typename K::Intersections_tag   ITag;
+  typedef Method_tag                      MTag;
+
+  typedef Svd_vertex_conflict_ftC2<FT,MTag,ITag,3>   Predicate_ftC2;
+
+  typename K::Site_2 tt[] = {p, q, t};
+
+  ITag itag;
+
+  FT v[36];
+  char site_types[6];
+
+
+  for (unsigned int i = 0, k = 0, j = 0; i < 3; i++) {
+    svd_predicate_push_back_C2<K>(tt[i], v, k, site_types, j, itag);
+  }
+
+  return Predicate_ftC2()(v, site_types);
 }
 
 //--------------------------------------------------------------------------
@@ -454,14 +859,63 @@ svd_vertex_conflict_ftC2(const typename K::Site_2& p,
 			 const typename K::Site_2& q,
 			 const typename K::Site_2& r,
 			 const typename K::Site_2& t,
-			 Method_tag mtag)
+			 const Method_tag& mtag)
 {
-  typename K::Site_2 site_vec[] = {p, q, r, t};
-  return
-    svd_predicate_C2<Svd_incircle_2,Sign,K,Method_tag,4>(site_vec);
+  typedef typename K::FT                  FT;
+  typedef typename K::Intersections_tag   ITag;
+  typedef Method_tag                      MTag;
+
+  typename K::Site_2 tt[] = {p, q, r, t};
+
+  ITag itag;
+
+  FT v[48];
+  char site_types[8];
+
+
+  for (unsigned int i = 0, k = 0, j = 0; i < 4; i++) {
+    svd_predicate_push_back_C2<K>(tt[i], v, k, site_types, j, itag);
+  }
+
+  typedef Svd_vertex_conflict_ftC2<FT,MTag,ITag,4> VC;
+  return VC()(v, site_types);
 }
 
 //--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+
+
+template<class FT, class MTag, class ITag, int Num_sites>
+struct Svd_finite_edge_conflict_ftC2
+{
+
+  inline
+  bool operator()(const FT v[], Sign sgn, const char site_types[]) const
+  {
+    typedef Simple_cartesian<FT>                 Rep;
+    typedef
+      CGAL::Segment_Voronoi_diagram_kernel_wrapper_2<Rep,ITag>  Kernel;
+
+    typedef typename Kernel::Site_2                   Site_2;
+    typedef Svd_finite_edge_interior_2<Kernel,MTag>   Predicate;
+
+    typedef Svd_predicate_caller<bool, Predicate, Num_sites> Caller;
+
+
+    must_be_filtered(FT());
+
+    Site_2 t[Num_sites];
+
+    for (unsigned int i = 0, k = 0, j = 0; i < Num_sites; i++) {
+      t[i] = svd_get_site_C2<Kernel>(v, k, site_types, j, ITag());
+    }
+
+    return Caller()(t, sgn);
+  }
+};
+
+
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
@@ -473,9 +927,25 @@ svd_finite_edge_conflict_ftC2(const typename K::Site_2& p,
 			      const typename K::Site_2& t,
 			      Sign sgn, Method_tag mtag)
 {
-  typename K::Site_2 site_vec[] = {p, q, t};
-  return svd_predicate_C2<Svd_finite_edge_interior_2,bool,K,
-    Method_tag,Sign,3>(site_vec, sgn);
+  typedef typename K::FT                  FT;
+  typedef typename K::Intersections_tag   ITag;
+  typedef Method_tag                      MTag;
+
+  typedef Svd_finite_edge_conflict_ftC2<FT,MTag,ITag,3>  Predicate_ftC2;
+
+  typename K::Site_2 tt[] = {p, q, t};
+
+  ITag itag;
+
+  FT v[36];
+  char site_types[6];
+
+
+  for (unsigned int i = 0, k = 0, j = 0; i < 3; i++) {
+    svd_predicate_push_back_C2<K>(tt[i], v, k, site_types, j, itag);
+  }
+
+  return Predicate_ftC2()(v, sgn, site_types);
 }
 
 //--------------------------------------------------------------------------
@@ -489,9 +959,25 @@ svd_finite_edge_conflict_ftC2(const typename K::Site_2& p,
 			      const typename K::Site_2& t,
 			      Sign sgn, Method_tag mtag)
 {
-  typename K::Site_2 site_vec[] = {p, q, r, t};
-  return svd_predicate_C2<Svd_finite_edge_interior_2,bool,K,
-    Method_tag,Sign,4>(site_vec, sgn);
+  typedef typename K::FT                  FT;
+  typedef typename K::Intersections_tag   ITag;
+  typedef Method_tag                      MTag;
+
+  typedef Svd_finite_edge_conflict_ftC2<FT,MTag,ITag,4>  Predicate_ftC2;
+
+  typename K::Site_2 tt[] = {p, q, r, t};
+
+  ITag itag;
+
+  FT v[48];
+  char site_types[8];
+
+
+  for (unsigned int i = 0, k = 0, j = 0; i < 4; i++) {
+    svd_predicate_push_back_C2<K>(tt[i], v, k, site_types, j, itag);
+  }
+
+  return Predicate_ftC2()(v, sgn, site_types);
 }
 
 
@@ -507,14 +993,59 @@ svd_finite_edge_conflict_ftC2(const typename K::Site_2& p,
 			      const typename K::Site_2& t,
 			      Sign sgn, Method_tag mtag)
 {
-  typename K::Site_2 site_vec[] = {p, q, r, s, t};
-  return svd_predicate_C2<Svd_finite_edge_interior_2,bool,K,
-    Method_tag,Sign,5>(site_vec, sgn);
+  typedef typename K::FT                  FT;
+  typedef typename K::Intersections_tag   ITag;
+  typedef Method_tag                      MTag;
+
+  typedef Svd_finite_edge_conflict_ftC2<FT,MTag,ITag,5>  Predicate_ftC2;
+
+  typename K::Site_2 tt[] = {p, q, r, s, t};
+
+  ITag itag;
+
+  FT v[60];
+  char site_types[10];
+
+
+  for (unsigned int i = 0, k = 0, j = 0; i < 5; i++) {
+    svd_predicate_push_back_C2<K>(tt[i], v, k, site_types, j, itag);
+  }
+
+  return Predicate_ftC2()(v, sgn, site_types);
 }
 
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
+
+
+template<class FT, class MTag, class ITag>
+struct Svd_infinite_edge_conflict_ftC2
+{
+
+
+  inline
+  bool operator()(const FT v[], Sign sgn, const char site_types[]) const
+  {
+    typedef Simple_cartesian<FT>                 Rep;
+    typedef
+      CGAL::Segment_Voronoi_diagram_kernel_wrapper_2<Rep,ITag>  Kernel;
+
+    typedef typename Kernel::Site_2                    Site_2;
+    typedef Svd_infinite_edge_interior_2<Kernel,MTag>  Predicate;
+
+    must_be_filtered(FT());
+
+    Site_2 t[4];
+
+    for (unsigned int i = 0, k = 0, j = 0; i < 4; i++) {
+      t[i] = svd_get_site_C2<Kernel>(v, k, site_types, j, ITag());
+    }
+
+    return Predicate()(t[0], t[1], t[2], t[3], sgn);
+  }
+};
+
 
 template<class K, class Method_tag>
 inline
@@ -523,16 +1054,58 @@ svd_infinite_edge_conflict_ftC2(const typename K::Site_2& q,
 				const typename K::Site_2& r,
 				const typename K::Site_2& s,
 				const typename K::Site_2& t,
-				Sign sgn, Method_tag mtag)
+				Sign sgn, const Method_tag& mtag)
 {
-  typename K::Site_2 site_vec[] = {q, r, s, t};
-  return svd_predicate_C2<Svd_infinite_edge_interior_2,bool,K,
-    Method_tag,Sign,4>(site_vec, sgn);
+  typedef typename K::FT                  FT;
+  typedef typename K::Intersections_tag   ITag;
+  typedef Method_tag                      MTag;
+
+  typedef Svd_infinite_edge_conflict_ftC2<FT,MTag,ITag>  Predicate_ftC2;
+
+  typename K::Site_2 tt[] = {q, r, s, t};
+
+  ITag itag;
+
+  FT v[48];
+  char site_types[8];
+
+
+  for (unsigned int i = 0, k = 0, j = 0; i < 4; i++) {
+    svd_predicate_push_back_C2<K>(tt[i], v, k, site_types, j, itag);
+  }
+
+  return Predicate_ftC2()(v, sgn, site_types);
 }
 
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
+
+template<class FT, class MTag, class ITag>
+struct Svd_is_degenerate_edge_ftC2
+{
+
+  inline
+  bool operator()(const FT v[], const char site_types[]) const
+  {
+    typedef Simple_cartesian<FT>                 Rep;
+    typedef
+      CGAL::Segment_Voronoi_diagram_kernel_wrapper_2<Rep,ITag>  Kernel;
+
+    typedef typename Kernel::Site_2                   Site_2;
+    typedef Svd_is_degenerate_edge_C2<Kernel,MTag>    Predicate;
+
+    must_be_filtered(FT());
+
+    Site_2 t[4];
+
+    for (unsigned int i = 0, k = 0, j = 0; i < 4; i++) {
+      t[i] = svd_get_site_C2<Kernel>(v, k, site_types, j, ITag());
+    }
+
+    return Predicate()(t[0], t[1], t[2], t[3]);
+  }
+};
 
 template<class K, class Method_tag>
 inline
@@ -541,32 +1114,118 @@ svd_is_degenerate_edge_ftC2(const typename K::Site_2& p,
 			    const typename K::Site_2& q,
 			    const typename K::Site_2& r,
 			    const typename K::Site_2& t,
-			    Method_tag mtag)
+			    const Method_tag& mtag)
 {
-  typename K::Site_2 site_vec[] = {p, q, r, t};
-  return
-    svd_predicate_C2<Svd_is_degenerate_edge_C2,bool,K,Method_tag,4>(site_vec);
+  typedef typename K::FT                  FT;
+  typedef typename K::Intersections_tag   ITag;
+  typedef Method_tag                      MTag;
+
+  typedef Svd_is_degenerate_edge_ftC2<FT,MTag,ITag>   Predicate_ftC2;
+
+  typename K::Site_2 tt[] = {p, q, r, t};
+
+  ITag itag;
+
+  FT v[48];
+  char site_types[8];
+
+
+  for (unsigned int i = 0, k = 0, j = 0; i < 4; i++) {
+    svd_predicate_push_back_C2<K>(tt[i], v, k, site_types, j, itag);
+  }
+
+  return Predicate_ftC2()(v, site_types);
 }
 
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
+
+template<class FT, class MTag, class ITag>
+struct Svd_arrangement_type_ftC2
+{
+
+  inline
+  std::pair<int,int>
+  operator()(const FT v[], const char site_types[]) const
+  {
+    typedef Simple_cartesian<FT>                 Rep;
+    typedef
+      CGAL::Segment_Voronoi_diagram_kernel_wrapper_2<Rep,ITag>  Kernel;
+
+    typedef typename Kernel::Site_2                   Site_2;
+    typedef Svd_arrangement_type_C2<Kernel>           Predicate;
+
+    must_be_filtered(FT());
+
+    Site_2 t[2];
+
+    for (unsigned int i = 0, k = 0, j = 0; i < 2; i++) {
+      t[i] = svd_get_site_C2<Kernel>(v, k, site_types, j, ITag());
+    }
+
+    return Predicate()(t[0], t[1]);
+  }
+};
+
 
 template<class K, class Method_tag>
 inline
 std::pair<int,int>
 svd_arrangement_type_C2(const typename K::Site_2& p,
 			const typename K::Site_2& q,
-			Method_tag mtag)
+			const Method_tag& mtag)
 {
-  typename K::Site_2 site_vec[2] = {p, q};
-  return
-    svd_predicate_C2<Svd_arrangement_type_C2,std::pair<int,int>,K,2>(site_vec);
+  typedef typename K::FT                  FT;
+  typedef typename K::Intersections_tag   ITag;
+  typedef Method_tag                      MTag;
+
+  typedef Svd_arrangement_type_ftC2<FT,MTag,ITag>   Predicate_ftC2;
+
+  typename K::Site_2 tt[] = {p, q};
+
+  ITag itag;
+
+  FT v[24];
+  char site_types[4];
+
+  for (unsigned int i = 0, k = 0, j = 0; i < 2; i++) {
+    svd_predicate_push_back_C2<K>(tt[i], v, k, site_types, j, itag);
+  }
+
+  return Predicate_ftC2()(v, site_types);
 }
 
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
+
+template<class FT, class ITag>
+struct Svd_are_parallel_ftC2
+{
+
+  inline
+  bool operator()(const FT v[], const char site_types[]) const
+  {
+    typedef Simple_cartesian<FT>                 Rep;
+    typedef
+      CGAL::Segment_Voronoi_diagram_kernel_wrapper_2<Rep,ITag>  Kernel;
+
+    typedef typename Kernel::Site_2                   Site_2;
+    typedef Svd_are_parallel_C2<Kernel>               Predicate;
+
+    must_be_filtered(FT());
+
+    Site_2 t[2];
+
+    for (unsigned int i = 0, k = 0, j = 0; i < 2; i++) {
+      t[i] = svd_get_site_C2<Kernel>(v, k, site_types, j, ITag());
+    }
+
+    return Predicate()(t[0], t[1]);
+  }
+};
+
 
 template<class K>
 inline
@@ -574,46 +1233,55 @@ bool
 svd_are_parallel_C2(const typename K::Site_2& p,
 		    const typename K::Site_2& q)
 {
-#if 1
-  typename K::Site_2 site_vec[2] = {p, q};
-  return
-    svd_predicate_C2<Svd_are_parallel_C2,bool,K,2>(site_vec);
+  typedef typename K::FT                  FT;
+  typedef typename K::Intersections_tag   ITag;
 
-#else
-  typedef typename K::Segment_2  Segment_2;
+  typedef Svd_are_parallel_ftC2<FT,ITag>   Predicate_ftC2;
 
-  CGAL_precondition( p.is_segment() && q.is_segment() );
+  typename K::Site_2 tt[] = {p, q};
 
-  Segment_2 s1 = p.segment();
-  Segment_2 s2 = q.segment();
+  ITag itag;
 
-  return svd_are_parallel_ftC2(s1.source().x(),	s1.source().y(),
-			       s1.target().x(),	s1.target().y(),
-			       s2.source().x(),	s2.source().y(),
-			       s2.target().x(),	s2.target().y());
-#endif
+  FT v[24];
+  char site_types[4];
+
+
+  for (unsigned int i = 0, k = 0, j = 0; i < 2; i++) {
+    svd_predicate_push_back_C2<K>(tt[i], v, k, site_types, j, itag);
+  }
+
+  return Predicate_ftC2()(v, site_types);
 }
 
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
-template<class FT>
-inline
-bool
-svd_are_parallel_ftC2(const FT& x1, const FT& y1,
-		      const FT& x2, const FT& y2,
-		      const FT& x3, const FT& y3,
-		      const FT& x4, const FT& y4)
+template<class FT, class MTag, class ITag>
+struct Svd_oriented_side_ftC2
 {
-  must_be_filtered(FT());
 
-  FT det = det2x2_by_formula(x2 - x1, x4 - x3,
-			     y2 - y1, y4 - y3);
+  inline
+  Oriented_side operator()(const FT v[], const char site_types[]) const
+  {
+    typedef Simple_cartesian<FT>                 Rep;
+    typedef
+      CGAL::Segment_Voronoi_diagram_kernel_wrapper_2<Rep,ITag>  Kernel;
 
-  return ( CGAL::sign(det) == CGAL::ZERO );
-}
+    typedef typename Kernel::Site_2                   Site_2;
+    typedef Svd_oriented_side_C2<Kernel,MTag>         Predicate;
 
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+    must_be_filtered(FT());
+
+    Site_2 t[5];
+
+    for (unsigned int i = 0, k = 0, j = 0; i < 5; i++) {
+      t[i] = svd_get_site_C2<Kernel>(v, k, site_types, j, ITag());
+    }
+
+    return Predicate()(t[0], t[1], t[2], t[3], t[4]);
+  }
+};
 
 template<class K, class Method_tag>
 inline
@@ -623,11 +1291,27 @@ svd_oriented_side_ftC2(const typename K::Site_2& s1,
 		       const typename K::Site_2& s3,
 		       const typename K::Site_2& s,
 		       const typename K::Site_2& p,
-		       Method_tag mtag)
+		       const Method_tag& mtag)
 {
-  typename K::Site_2 site_vec[] = {s1, s2, s3, s, p};
-  return svd_predicate_C2<Svd_oriented_side_C2,Oriented_side,K,
-    Method_tag,5>(site_vec);
+  typedef typename K::FT                  FT;
+  typedef typename K::Intersections_tag   ITag;
+  typedef Method_tag                      MTag;
+
+  typedef Svd_oriented_side_ftC2<FT,MTag,ITag>   Predicate_ftC2;
+
+  typename K::Site_2 tt[] = {s1, s2, s3, s, p};
+
+  ITag itag;
+
+  FT v[60];
+  char site_types[10];
+
+
+  for (unsigned int i = 0, k = 0, j = 0; i < 5; i++) {
+    svd_predicate_push_back_C2<K>(tt[i], v, k, site_types, j, itag);
+  }
+
+  return Predicate_ftC2()(v, site_types);
 }
 
 //--------------------------------------------------------------------------

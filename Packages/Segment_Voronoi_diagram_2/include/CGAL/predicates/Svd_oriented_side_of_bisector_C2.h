@@ -311,10 +311,5 @@ public:
 
 CGAL_END_NAMESPACE
 
-#ifdef CGAL_ARITHMETIC_FILTER_H
-#ifndef CGAL_ARITHMETIC_FILTER_SVD_PREDICATES_FTC2_H
-#include <CGAL/Arithmetic_filter/predicates/svd_predicates_ftC2.h>
-#endif // CGAL_ARITHMETIC_FILTER_SVD_PREDICATES_FTC2_H
-#endif
 
 #endif // CGAL_SVD_ORIENTED_SIDE_OF_BISECTOR_C2_H

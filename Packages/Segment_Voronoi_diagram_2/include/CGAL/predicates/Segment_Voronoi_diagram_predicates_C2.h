@@ -20,8 +20,8 @@
 
 
 
-#ifndef CGAL_SEGMENT_VORONOI_DIAGRAM_PREDICATES_2_H
-#define CGAL_SEGMENT_VORONOI_DIAGRAM_PREDICATES_2_H
+#ifndef CGAL_SEGMENT_VORONOI_DIAGRAM_PREDICATES_C2_H
+#define CGAL_SEGMENT_VORONOI_DIAGRAM_PREDICATES_C2_H
 
 #include <CGAL/predicates/Segment_Voronoi_diagram_vertex_C2.h>
 #include <CGAL/predicates/Svd_compare_x_2.h>
@@ -38,4 +38,4 @@
 #include <CGAL/predicates/Svd_arrangement_type_C2.h>
 #include <CGAL/predicates/Svd_oriented_side_C2.h>
 
-#endif // CGAL_SEGMENT_VORONOI_DIAGRAM_PREDICATES_2_H
+#endif // CGAL_SEGMENT_VORONOI_DIAGRAM_PREDICATES_C2_H
