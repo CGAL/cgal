@@ -40,8 +40,6 @@ class SM_io_parser : public Decorator_
   typedef typename Decorator_traits::SHalfedge_around_svertex_circulator
                                      SHalfedge_around_svertex_circulator;
 
-  typedef typename Base::Constructor_parameter Constructor_parameter;
-
   std::istream& in; std::ostream& out;
   bool verbose;
   // a reference to the IO object
@@ -73,11 +71,11 @@ class SM_io_parser : public Decorator_
 
 public:
 /*{\Mcreation 3}*/
-SM_io_parser(std::istream& is, Constructor_parameter D);
+SM_io_parser(std::istream& is, const Base& D);
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname|
 to input |H| from |is|.}*/
 
-SM_io_parser(std::ostream& os, Constructor_parameter D);
+SM_io_parser(std::ostream& os, const Base& D);
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname|
 to output |H| to |os|.}*/
 
@@ -100,7 +98,7 @@ std::string index(SHalfloop_handle l) const
 std::string index(SFace_handle f) const 
 { return FI(f,verbose); }
 
-static void dump(Constructor_parameter D, std::ostream& os = std::cerr);
+static void dump(const Decorator_& D, std::ostream& os = std::cerr);
 /*{\Mstatic prints the plane map decorated by |D| to |os|.}*/
 
 }; // SM_io_parser<Decorator_>
@@ -108,14 +106,14 @@ static void dump(Constructor_parameter D, std::ostream& os = std::cerr);
 
 template <typename Decorator_>
 SM_io_parser<Decorator_>::
-SM_io_parser(std::istream& iin, Constructor_parameter H) :
+SM_io_parser(std::istream& iin, const Base& H) :
   Base(H), in(iin), out(std::cout), verbose(0), 
   vn(0), en(0), fn(0), ln(0)
 { clear(); }
 
 template <typename Decorator_>
 SM_io_parser<Decorator_>::
-SM_io_parser(std::ostream& iout, Constructor_parameter D) 
+SM_io_parser(std::ostream& iout, const Base& D) 
   : Base(D), in(std::cin), out(iout), 
   VI(svertices_begin(),svertices_end(),'v'),
   EI(shalfedges_begin(),shalfedges_end(),'e'),
@@ -437,7 +435,7 @@ void SM_io_parser<Decorator_>::print_faces() const
 }
 
 template <typename Decorator_>
-void SM_io_parser<Decorator_>::dump(const Constructor_parameter D, std::ostream& os)
+void SM_io_parser<Decorator_>::dump(const Decorator_& D, std::ostream& os)
 { SM_io_parser<Decorator_> Out(os,D);
   Out.print();
   Out.print_faces();
