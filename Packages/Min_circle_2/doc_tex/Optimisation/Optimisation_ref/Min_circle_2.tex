@@ -4,37 +4,78 @@
 % -----------------------------------------------------------------------------
 % file  : Library/spec/Min_circle_2.tex
 % author: Bernd Gärtner, Sven Schönherr (sven@inf.fu-berlin.de)
-% $Id$
+% -----------------------------------------------------------------------------
+% $Revision$
+% $Date$
 % =============================================================================
- 
-\begin{ccClassTemplate}{CGAL_Min_circle_2<R>}
+
+\begin{ccClassTemplate}{CGAL_Min_circle_2<I>}
 \ccSection{2D Smallest Enclosing Circle}
 
+% -----------------------------------------------------------------------------
 \ccDefinition
 
 An object of the class \ccClassTemplateName\ is the unique circle of
 smallest area enclosing a finite set of points in two-dimensional
 euclidean space $\E_2$. For a point set $P$ we denote by $mc(P)$ the
 smallest circle that contains all points of $P$. Note that $mc(P)$ can
-be degenerate, i.e.\ $mc(P)=$\ccTexHtml{$\emptyset$}{&Oslash;} if
-$P=$\ccTexHtml{$\emptyset$}{&Oslash;} and $mc(P)=\{p\}$ if $P=\{p\}$.
+be degenerate, i.e.\ $mc(P)=$\ccTexHtml{$\;\emptyset$}{&Oslash;} if
+$P=$\ccTexHtml{$\;\emptyset$}{&Oslash;} and $mc(P)=\{p\}$ if $P=\{p\}$.
 
-An inclusion-minimal subset $S$ of $P$ with $mc(S)=mc(P)$ is called
-a {\em support set}, the points in $S$ are the {\em support points}.
-A support set has size at most three, and all its points lie on the
-boundary of $mc(P)$.
-
-If $mc(P)$ has more than three points on the boundary,
-neither the support set nor its size are necessarily unique.
+An inclusion-minimal subset $S$ of $P$ with $mc(S)=mc(P)$ is called a
+{\em support set}, the points in $S$ are the {\em support points}.  A
+support set has size at most three, and all its points lie on the
+boundary of $mc(P)$. If $mc(P)$ has more than three points on the
+boundary, neither the support set nor its size are necessarily unique.
 
 The underlying algorithm can cope with all kinds of input, e.g.\
 $P$ may be empty or points may occur more than once. The algorithm
 computes a support set $S$ which remains fixed until the next insert
 operation.
 
-Correct results are in this release only guaranteed if the template
-parameter of the representation class $R$ is an exact number type. 
+\emph{Note:} In this release correct results are only guaranteed if
+exact arithmetic is used, see Section~\ref{sec:opt_I_Impl}.
 
+\ccInclude{CGAL/Min_circle_2.h}
+
+% -----------------------------------------------------------------------------
+\ccHeading{Interface}
+
+The template parameter \ccc{I} is the interface class for optimisation
+algorithms. It is a traits class that defines the interface between
+optimisation algorithms and the primitives they use. For example
+\ccc{I::Point} is a mapping on a point class. Think of it as 2D points
+in the Euclidean plane.
+
+\cgal\ provides a ready-made implementation for the interface class as
+described in Section~\ref{sec:opt_I_Impl}. Customizing own interface
+classes for optimisation algorithms can be done according to the
+requirements for interface classes listed in
+Section~\ref{sec:opt_I_Req}.
+
+% -----------------------------------------------------------------------------
+\ccTypes
+
+\ccSetThreeColumns{typedef I::Circle}{Circle;M}{}
+\ccPropagateThreeToTwoColumns
+
+\ccNestedType{I}{Interface type.}
+
+\ccTypedef{typedef I::Point  Point; }{Point  type.}
+%\ccTypedef{typedef I::Circle Circle;}{Circle type.}
+
+The following types denote iterators that allow to traverse all points
+and support points of the smallest enclosing circle, resp. The
+iterators are non-mutable and their value type is \ccc{Point}. The
+iterator category is given in parentheses.
+
+\ccSetTwoColumns{CGAL_Min_circle_2<I>:: Support_point_const_iterator}{}
+
+\ccNestedType{Point_const_iterator}{(bidirectional).}
+
+\ccNestedType{Support_point_const_iterator}{(random access).}
+
+% -----------------------------------------------------------------------------
 \ccCreation
 \ccCreationVariable{min_circle}
 
@@ -44,57 +85,80 @@ or three points as arguments. The latter methods can be useful for
 reconstructing $mc(P)$ from a given support set $S$ of $P$.
 
 \ccSetThreeColumns{CGAL_Bounded_side}{}{
-  returns \ccStyle{CGAL_ON_BOUNDED_SIDE}, \ccStyle{CGAL_ON_BOUNDARY},}
+  returns \ccc{CGAL_ON_BOUNDED_SIDE}, \ccc{CGAL_ON_BOUNDARY},}
 \ccPropagateThreeToTwoColumns
-
-\ccStyle{#include <CGAL/Min_circle_2.h>}
 
 \ccConstructor{ CGAL_Min_circle_2( );}{
         introduces a variable \ccVar\ of type \ccClassTemplateName.
         It is initialized to
         $mc($\ccTexHtml{$\emptyset$}{&Oslash;}$)$, the empty set.
-        \ccPostcond \ccStyle{\ccVar.is_empty()} = \ccStyle{true}.}
+        \ccPostcond \ccc{\ccVar.is_empty()} = \ccc{true}.}
 
 \ccHidden
-\ccConstructor{ CGAL_Min_circle_2( const CGAL_Min_circle_2<R>&);}{
+\ccConstructor{ CGAL_Min_circle_2( const CGAL_Min_circle_2<I>&);}{
         copy constructor.}
 
-\ccConstructor{ CGAL_Min_circle_2( const CGAL_Point_2<R>& p);}{
+\ccConstructor{ CGAL_Min_circle_2( Point const& p);}{
         introduces a variable \ccVar\ of type \ccClassTemplateName.
         It is initialized to $mc(\{p\})$, the set $\{p\}$.
-        \ccPostcond \ccStyle{\ccVar.is_degenerate()} = \ccStyle{true}.}
+        \ccPostcond \ccc{\ccVar.is_degenerate()} = \ccc{true}.}
 
-\ccConstructor{ CGAL_Min_circle_2( const CGAL_Point_2<R>& p1,
-                                   const CGAL_Point_2<R>& p2);}{
+\ccConstructor{ CGAL_Min_circle_2( Point const& p1,
+                                   Point const& p2);}{
         introduces a variable \ccVar\ of type \ccClassTemplateName.
         It is initialized to $mc(\{p1,p2\})$, the circle with diameter
         equal to the segment connecting $p1$ and $p2$.}
 
-\ccConstructor{ CGAL_Min_circle_2( const CGAL_Point_2<R>& p1,
-                                   const CGAL_Point_2<R>& p2,
-                                   const CGAL_Point_2<R>& p3);}{
+\ccConstructor{ CGAL_Min_circle_2( Point const& p1,
+                                   Point const& p2,
+                                   Point const& p3);}{
         introduces a variable \ccVar\ of type \ccClassTemplateName.
         It is initialized to $mc(\{p1,p2,p3\})$.}
 
-\ccConstructor{ CGAL_Min_circle_2( const CGAL_Point_2<R>* first,
-                                   const CGAL_Point_2<R>* last,
-                                   bool randomize = false);}{
+\ccUnchecked
+\ccConstructor{ template < class InputIterator >
+                CGAL_Min_circle_2( InputIterator first,
+                                   InputIterator last,
+                                   bool randomize = false,
+                                   CGAL_Random& random = CGAL_Random());}{
         introduces a variable \ccVar\ of type \ccClassTemplateName. It
         is initialized to $mc(P)$ with $P$ being the set of points in
-        the range [\ccStyle{first},\ccStyle{last}). If
-        \ccStyle{randomize} is \ccStyle{true}, a random permutation of
-        $P$ is computed in advance. Usually, this will not be
-        necessary, however, the algorithm's efficiency depends on the
-        order in which the points are processed, and a bad order might
-        lead to extremely poor performance (see example below).}
+        the range [\ccc{first},\ccc{last}). If \ccc{randomize} is
+        \ccc{true}, a random permutation of $P$ is computed in
+        advance, using the random numbers generator \ccc{random}.
+        Usually, this will not be necessary, however, the algorithm's
+        efficiency depends on the order in which the points are
+        processed, and a bad order might lead to extremely poor
+        performance (see example below).
+        \ccPrecond The value type of \ccc{first} and \ccc{last} is
+        \ccc{Point}.}
+
+\emph{Note:} Since most compilers do not support member templates yet,
+we provide specialized constructors instead. In the current release
+there are constructors for C arrays (using pointers as iterators) and
+for STL sequence containers \ccc{vector<Point>} and \ccc{list<Point>}.
 
 \ccHidden
-\ccMemberFunction{ CGAL_Min_circle_2<R>&
-                   operator = ( const CGAL_Min_circle_2<R>&);}{
+\ccConstructor{ CGAL_Min_circle_2( const Point* first,
+                                   const Point* last,
+                                   bool randomize = false,
+                                   CGAL_Random& random = CGAL_Random());}{
+        STL-like constructor for random access iterators.}
+
+\ccHidden
+\ccConstructor{ CGAL_Min_circle_2( list<Point>::const_iterator first,
+                                   list<Point>::const_iterator last,
+                                   bool randomize = false,
+                                   CGAL_Random& random = CGAL_Random());}{
+        STL-like constructor for sequence container list<Point>.}
+
+\ccHidden
+\ccMemberFunction{ CGAL_Min_circle_2<I>&
+                   operator = ( const CGAL_Min_circle_2<I>&);}{
         assignment operator.}
 
-
-\ccHeading{Access operations}
+% -----------------------------------------------------------------------------
+\ccAccessFunctions
 
 \ccMemberFunction{ int number_of_points( ) const;}{
         returns the number of points of \ccVar, i.e.\ $|P|$.}
@@ -102,116 +166,119 @@ reconstructing $mc(P)$ from a given support set $S$ of $P$.
 \ccMemberFunction{ int number_of_support_points( ) const;}{
         returns the number of support points of \ccVar, i.e.\ $|S|$.}
 
-\ccMemberFunction{ const CGAL_Point_2<R>& point( int i) const;}{
-        returns the \ccStyle{i}-th point of \ccVar. Between two insert
-        operations any call to \ccStyle{\ccVar.point(i)} with the same
-        \ccStyle{i} returns the same point.
-        \ccPrecond $0 \leq i <$ \ccStyle{\ccVar.number_of_points()}.}
+\ccMemberFunction{ Point_const_iterator  points_begin() const;}{
+        returns an iterator referring to the first point of \ccVar.}
 
-\ccMemberFunction{ const CGAL_Point_2<R>& support_point( int i) const;}{
-        returns the \ccStyle{i}-th support point of \ccVar. Between two
-        insert operations any call to \ccStyle{\ccVar.support_point(i)}
-        with the same \ccStyle{i} returns the same point.
-        \ccPrecond $0 \leq i <$ \ccStyle{\ccVar.number_of_support_points()}.}
+\ccMemberFunction{ Point_const_iterator  points_end() const;}{
+        returns the corresponding past-the-end iterator.}
 
-\ccMemberFunction{ const CGAL_Point_2<R>& operator [] ( int i) const;}{
-        returns \ccStyle{\ccVar.point(i)}.}
+\ccMemberFunction{ Support_point_const_iterator support_points_begin() const;}{
+        returns an iterator referring to the first support point of \ccVar.}
 
-\ccMemberFunction{ const CGAL_Circle_2<R>& circle( ) const;}{
-        returns an oriented circle with same center $c$ and same
-        squared radius $r$ as \ccVar\ and positive orientation.
-        \ccPrecond \ccStyle{\ccVar.is_empty()} = \ccStyle{false}.}
+\ccMemberFunction{ Support_point_const_iterator support_points_end() const;}{
+        returns the corresponding past-the-end iterator.}
+
+\ccMemberFunction{ Point const& support_point( int i) const;}{
+        returns the \ccc{i}-th support point of \ccVar. Between two
+        insert operations any call to \ccc{\ccVar.support_point(i)}
+        with the same \ccc{i} returns the same point.
+        \ccPrecond $0 \leq i <$ \ccc{\ccVar.number_of_support_points()}.}
+
+%\ccMemberFunction{ Circle const& circle( ) const;}{
+%        returns an oriented circle with same center $c$ and same
+%        squared radius $r$ as \ccVar\ and positive orientation.
+%        \ccPrecond \ccc{\ccVar.is_empty()} = \ccc{false}.}
 
 \ccMemberFunction{ CGAL_Bbox_2 bbox( ) const;}{
         returns a bounding box containing \ccVar.
-        \ccPrecond \ccStyle{\ccVar.is_empty()} = \ccStyle{false}.}
+        \ccPrecond \ccc{\ccVar.is_empty()} = \ccc{false}.}
 
+% -----------------------------------------------------------------------------
+\ccHeading{Predicates}
 
-\ccHeading{Update operations}
+%The following predicates imitate the corresponding ones of the class
+%\ccc{Circle}, with the exception of \ccc{is_empty()}
+%which is not present in \ccc{Circle}, because objects of
+%this class cannot be empty.
+
+By definition, an empty \ccClassTemplateName\ has no boundary and no
+bounded side, i.e.\ its unbounded side equals the whole plane $\E_2$.
+
+\ccMemberFunction{ CGAL_Bounded_side
+                   bounded_side( Point const& p) const;}{
+        returns \ccc{CGAL_ON_BOUNDED_SIDE},
+        \ccc{CGAL_ON_BOUNDARY}, or
+        \ccc{CGAL_ON_UNBOUNDED_SIDE} iff \ccc{p} lies inside,
+        on the boundary, or outside of \ccVar, resp.}
+
+\ccMemberFunction{ bool has_on_bounded_side( Point const& p) const;}{
+        returns \ccc{true}, iff \ccc{p} lies inside \ccVar.}
+
+\ccMemberFunction{ bool has_on_boundary( Point const& p) const;}{
+        returns \ccc{true}, iff \ccc{p} lies on the boundary
+        of \ccVar.}
+
+\ccMemberFunction{ bool
+                   has_on_unbounded_side( Point const& p) const;}{
+        returns \ccc{true}, iff \ccc{p} lies outside of \ccVar.}
+
+\ccMemberFunction{ bool is_empty( ) const;}{
+        returns \ccc{true}, iff \ccVar\ is empty (this implies
+        degeneracy).}
+
+\ccMemberFunction{ bool is_degenerate( ) const;}{
+        returns \ccc{true}, iff \ccVar\ is degenerate, i.e. if
+        \ccVar\ is empty or equal to a single point, equivalently if
+        the number of support points is less than 2.}
+
+% -----------------------------------------------------------------------------
+\ccHeading{Modifiers}
 
 New points can be added to an existing $\ccVar$, allowing to build
 $mc(P)$ incrementally, e.g.\ if $P$ is not known in advance. Compared
 to the direct creation of $mc(P)$, this is not much slower, because
 the construction method is incremental itself.
 
-\ccMemberFunction{ void insert( const CGAL_Point_2<R>& p);}{
-        inserts \ccStyle{p} in \ccVar\ and recomputes the smallest
+\ccMemberFunction{ void insert( Point const& p);}{
+        inserts \ccc{p} in \ccVar\ and recomputes the smallest
         enclosing circle.}
 
-\ccMemberFunction{ void reserve( int n);}{
-        reserves storage for at least \ccStyle{n} points in \ccVar. Although
-        this is in no case necessary, it may speed up memory allocation if 
-        the number of points to be inserted is known in advance.}
+% -----------------------------------------------------------------------------
+\ccHeading{Validity Check}
 
-\ccHeading{Check operation}
-
-\ccMemberFunction{ bool check( bool verbose = false) const;}{
-        checks \ccVar\ for consistency. It returns \ccStyle{true}, iff
+\ccMemberFunction{ bool is_valid( bool verbose = false,
+                                  int  level   = 0    ) const;}{
+        checks \ccVar\ for validity. It returns \ccc{true}, iff
         (a) \ccVar\ contains all points of its defining set $P$, (b)
         \ccVar\ is the smallest circle spanned by its support set $S$,
-        and (c) $S$ is minimal, i.e. no support point is redundant. If
-        \ccStyle{verbose} is \ccStyle{true}, error messages are
-        written to standard error stream.}
+        and (c) $S$ is minimal, i.e.\ no support point is redundant.
+        If \ccc{verbose} is \ccc{true}, error messages are written to
+        standard error stream. The second parameter \ccc{level} is not
+        used, we provide it only for consistency with interfaces of
+        other classes.}
 
-
-\ccHeading{Predicates}
-
-The following predicates imitate the corresponding ones of the class
-\ccStyle{CGAL_Circle_2<R>}, with the exception of \ccStyle{is_empty()}
-which is not present in \ccStyle{CGAL_Circle_2<R>}, because objects of
-this class cannot be empty. By definition, an empty
-\ccClassTemplateName\ has no boundary and no bounded side, i.e.\ its
-unbounded side equals the whole plane $\E_2$.
-
-\ccMemberFunction{ CGAL_Bounded_side
-                   bounded_side( const CGAL_Point_2<R>& p) const;}{
-        returns \ccStyle{CGAL_ON_BOUNDED_SIDE},
-        \ccStyle{CGAL_ON_BOUNDARY}, or
-        \ccStyle{CGAL_ON_UNBOUNDED_SIDE} iff \ccStyle{p} lies inside,
-        on the boundary, or outside of \ccVar, respectively.}
-
-\ccMemberFunction{ bool has_on_bounded_side( const CGAL_Point_2<R>& p) const;}{
-        returns \ccStyle{true}, iff \ccStyle{p} lies inside \ccVar.}
-
-\ccMemberFunction{ bool has_on_boundary( const CGAL_Point_2<R>& p) const;}{
-        returns \ccStyle{true}, iff \ccStyle{p} lies on the boundary
-        of \ccVar.}
-
-\ccMemberFunction{ bool
-                   has_on_unbounded_side( const CGAL_Point_2<R>& p) const;}{
-        returns \ccStyle{true}, iff \ccStyle{p} lies outside of \ccVar.}
-
-\ccMemberFunction{ bool is_empty( ) const;}{
-        returns \ccStyle{true}, iff \ccVar\ is empty (this implies
-        degeneracy).}
-
-\ccMemberFunction{ bool is_degenerate( ) const;}{
-        returns \ccStyle{true}, iff \ccVar\ is degenerate, i.e. if
-        \ccVar is empty or equal to a single point, equivalently if
-        the number of support points is less than 2.}
-
-
+% -----------------------------------------------------------------------------
 \ccImplementation
 
 We implement the algorithm of Welzl, with move-to-front
 heuristic~\cite{Welzl}. If randomization is chosen, the creation time
-is almost always linear in the number of points. Access operations and
+is almost always linear in the number of points. Access functions and
 predicates take constant time, inserting a point might take up to
 linear time, but substantially less than computing the new smallest
-enclosing circle from scratch. For the member function \ccStyle{reserve}
-see the container \ccStyle{vector} from STL~\cite{STL}.
+enclosing circle from scratch.
 
-We provide a specialization with homogeneous representation and
-numbertype \ccStyle{integer} that uses floating-point filter for the
-sign calculations in the predicates (see~\cite{MehlhornNaeher94}).
-This decreaes computation time by a factor of four compared to the
-generic implementation. If both \ccStyle{<CGAL/Integer.h>} and
-\ccStyle{<CGAL/Homogeneous.h>} are included before
-\ccStyle{CGAL/Min_circle_2.h>} then the specialization for
-\ccStyle{CGAL_Min_circle_2<CGAL_Homogeneous<integer>>} is used instead
-of the generic implementation.
+%We provide a specialization with homogeneous representation and
+%numbertype \ccc{integer} that uses floating-point filter for the sign
+%calculations in the predicates (see~\cite{MehlhornNaeher94}). This
+%decreaes computation time by a factor of four compared to the generic
+%implementation. If both \ccc{<CGAL/Integer.h>} and
+%\ccc{<CGAL/Homogeneous.h>} are included before
+%\ccc{<CGAL/Min_circle_2.h>} then the specialization for
+%\ccc{CGAL_Min_circle_2< CGAL_Optimisation_default_interface<
+%  CGAL_Homogeneous<integer> > >} is used instead of the generic
+%implementation.
 
-
+% -----------------------------------------------------------------------------
 \ccExample
 
 To illustrate the creation of \ccClassTemplateName\ and to show that
@@ -224,7 +291,7 @@ randomization can be useful in certain cases, we give an example.
 
     typedef  CGAL_Homogeneous<integer>  R;
     typedef  CGAL_Point_2<R>            Point;
-    typedef  CGAL_Min_circle_2<R>       Min_circle;
+    typedef  CGAL_Min_circle_2< CGAL_Optimisation_default_interface<R> > Min_circle;
 
     int     n = 1000;
     Point*  P = new Point[ n];
