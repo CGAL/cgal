@@ -370,6 +370,6 @@ struct Simple_cartesian
 
 CGAL_END_NAMESPACE
 
-#include <CGAL/iterator_traits_pointer_specs_for_cartesian_kernel.h>
+#include <CGAL/iterator_traits_pointer_specs_for_simple_cartesian_kernel.h>
 
 #endif // CGAL_SIMPLE_CARTESIAN_H
