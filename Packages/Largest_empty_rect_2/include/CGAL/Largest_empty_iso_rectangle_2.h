@@ -75,6 +75,8 @@ public:
   class Point_data;
   class Less_yx;
   class Less_xy;
+  class Less_xy_internal_point;
+  class Less_yx_internal_point;
   template < class Node>
   struct Proj_point;
 
@@ -162,7 +164,7 @@ public:
   //! Retrieve four points from the input that define the largest
   //! empty iso rectangle.
   Quadruple<Point_2, Point_2, Point_2, Point_2>
-  get_left_bottom_right_top()
+  get_left_bottom_right_top() const
   {
     if(x_sorted.size() == 4) {
       return(make_quadruple(bl_p.original, bl_p.original,
@@ -220,12 +222,6 @@ public:
 
     Internal_point(const Point_2 &p)
        : x_part(p), y_part(p), original(p) {}
-
-    /*Internal_point(const Point_2 &p, const Point_2 &q)
-      : x_part(p), y_part(q) {}*/
-
-    /*Internal_point(const Internal_point &p, const Internal_point &q)
-      : x_part(p.x_part), y_part(q.y_part) {}*/
   };
 
   class Point_data {
@@ -292,7 +288,6 @@ public:
 
     bool operator()(const Point_data *a, const Point_data *b) const
     {
-      //  return gt.less_yx_2_object()(a->p, b->p);
       Comparison_result c = traits().compare_y_2_object()
              (b->p.y_part, a->p.y_part);
       if(c == LARGER) {
@@ -303,7 +298,6 @@ public:
       return false;
     }
   };
-
 
   class Less_xy
   {
@@ -340,9 +334,65 @@ private:
      results hold. Otherwise there is a need to find the new largest
      empty rectangle..
   */
+
+  class Less_xy_internal_point
+  {
+  private:
+    Traits _gt;
+
+    const Traits & traits() const {return _gt;};
+
+  public:
+    Less_xy_internal_point(const Traits& t)
+      : _gt(t)
+    {}
+
+    bool operator()(const Point &a, const Point &b) const
+    {
+      Comparison_result c = traits().compare_x_2_object()
+             (b.x_part, a.x_part);
+      if(c == LARGER) {
+        return true;
+      } else if (c == EQUAL) {
+        return traits().less_y_2_object()(a.y_part, b.y_part); 
+      } 
+      return false;
+    }
+  };
+
+  class Less_yx_internal_point
+  {
+  private:
+    Traits _gt;
+
+    const Traits & traits() const {return _gt;};
+
+    Less_yx_internal_point(){}
+
+  public:
+    Less_yx_internal_point(const Traits& t)
+      : _gt(t)
+    {}
+
+    bool operator()(const Point &a, const Point &b) const
+    {
+      Comparison_result c = traits().compare_y_2_object()
+             (b.y_part, a.y_part);
+      if(c == LARGER) {
+        return true;
+      } else if (c == EQUAL) {
+        return traits().less_x_2_object()(a.x_part, b.x_part); 
+      } 
+      return false;
+    }
+  };
+
   bool cache_valid;
 
   Traits _gt;
+
+  Less_xy_internal_point less_xy_point;
+  Less_yx_internal_point less_yx_point;  
 
   /*! this class holds points' data as needed in the LER process.
    */
@@ -725,6 +775,8 @@ Largest_empty_iso_rectangle_2<T>::
 Largest_empty_iso_rectangle_2(
                const Largest_empty_iso_rectangle_2<T>& ler)
 : cache_valid(false), _gt(),
+  less_xy_point(traits()),
+  less_yx_point(traits()),
   x_sorted(Less_xy(traits())),
   y_sorted(Less_yx(traits()))
 {
@@ -837,9 +889,12 @@ Largest_empty_iso_rectangle_2<T>::check_for_larger(const Point& px0,
 
   // check if the rectangle represented by the parameters is larger 
   //than the current one
-  NT rect_size =
-    CGAL_NTS abs(px1.x_part.x() - px0.x_part.x()) * 
-      CGAL_NTS abs(py1.y_part.y() - py0.y_part.y());
+  Iso_rectangle_2 rec(less_xy_point(px0,px1) ? px0.x_part : px1.x_part,
+                      less_xy_point(px0,px1) ? px1.x_part : px0.x_part,
+                      less_yx_point(py0,py1) ? py0.y_part : py1.y_part,
+                      less_yx_point(py0,py1) ? py1.y_part : py0.y_part);
+  NT rect_size = rec.area();
+
   if(do_check && rect_size > largest_rect_size) {
     largest_rect_size = rect_size;
     left_p = px0;
@@ -1252,29 +1307,12 @@ Largest_empty_iso_rectangle_2<T>::get_largest_empty_iso_rectangle()
     return(get_bounding_box());
   }
   update();
-
-  return(Iso_rectangle_2(Point_2(left_p.x_part.x(), bottom_p.y_part.y()),
-			 Point_2(right_p.x_part.x(),top_p.y_part.y())));
+  return(Iso_rectangle_2(
+           less_xy_point(left_p.x_part,right_p.x_part) ? left_p.x_part : right_p.x_part,
+           less_xy_point(left_p.x_part,right_p.x_part) ? right_p.x_part : left_p.x_part,
+           less_yx_point(bottom_p.x_part,top_p.x_part) ? bottom_p.y_part : top_p.y_part,
+           less_yx_point(bottom_p.x_part,top_p.x_part) ? top_p.y_part : bottom_p.y_part));
 }
-
-/* Some applications might be more interested in the four points
- * that are from the input and that define the empty rectangle.
- */
-/*
-template<class T>
-Quadruple<typename Largest_empty_iso_rectangle_2<T>::Point,
-          typename Largest_empty_iso_rectangle_2<T>::Point,
-          typename Largest_empty_iso_rectangle_2<T>::Point,
-          typename Largest_empty_iso_rectangle_2<T>::Point>
-Largest_empty_iso_rectangle_2<T>::get_left_bottom_right_top()
-{
-  if(x_sorted.size() == 4) {
-    return(make_quadruple(bl_p, bl_p, tr_p, tr_p));
-  }
-  update();
-  return(make_quadruple(left_p, bottom_p, right_p, top_p));
-}
-*/
 
 template<class T>
 void
@@ -1298,6 +1336,8 @@ Largest_empty_iso_rectangle_2<T>::Largest_empty_iso_rectangle_2(
   : cache_valid(false), _gt(),
      x_sorted(Less_xy(traits())),
      y_sorted(Less_yx(traits())),
+     less_xy_point(traits()),
+     less_yx_point(traits()),
      bl_p(bl),
      tr_p(tr)
 {
@@ -1310,7 +1350,9 @@ template<class T>
 Largest_empty_iso_rectangle_2<T>::Largest_empty_iso_rectangle_2(
   const Iso_rectangle_2 &b)
   : cache_valid(false), _gt(),
-    x_sorted(Less_xy(traits())),
+     less_xy_point(traits()),
+     less_yx_point(traits()),
+     x_sorted(Less_xy(traits())),
      y_sorted(Less_yx(traits())),
      bl_p(b.min()),
      tr_p(b.max())
@@ -1323,7 +1365,9 @@ template<class T>
 Largest_empty_iso_rectangle_2<T>::Largest_empty_iso_rectangle_2()
   : cache_valid(false), _gt(),
     x_sorted(Less_xy(traits())),
-    y_sorted(Less_yx(traits()))
+    y_sorted(Less_yx(traits())),
+    less_xy_point(traits()),
+    less_yx_point(traits())
 {
   Point bl(0,0);
   Point tr(1,1);
