@@ -25,12 +25,8 @@
 #define CGAL_CONICCPA2_H
 
 // includes
-#ifndef CGAL_CONIC_MISC_H
-#  include <CGAL/Conic_misc.h>
-#endif
-#ifndef CGAL_OPTIMISATION_ASSERTIONS_H
-#  include <CGAL/Optimisation/assertions.h>
-#endif
+#include <CGAL/Conic_misc.h>
+#include <CGAL/kernel_assertions.h>
 
 CGAL_BEGIN_NAMESPACE
 

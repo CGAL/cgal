@@ -1,5 +1,9 @@
 Changes to package Conic_2
 
+18 February 2004 Radu Ursu
+- removed dependency with Optimisation package
+  I take the assertions from the kernel_assertions.h header file  
+
 Version 0.4 on 02-Feb-2004 [rursu]
 - fixed Conic_2.h for gcc 3.4
 
