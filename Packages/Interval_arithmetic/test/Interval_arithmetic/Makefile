@@ -30,11 +30,11 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = -I../../include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS) \
-	-O2 -W
+	-O2
 	# -DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS\
 	# -DNO_ASSERTIONS -DNO_PRECONDITIONS -DNO_POSTCONDITIONS \
 	# -W -O2 
-	# -mcpu=pentiumpro -march=pentiumpro
+	# -mcpu=pentiumpro -march=pentiumpro -mieee-fp
 	# -mcpu=ultrasparc -mtune=ultrasparc
 	# -B$(UTIL)/Binutils/$(UNAME)/bin/ \
 	# -fomit-frame-pointer
