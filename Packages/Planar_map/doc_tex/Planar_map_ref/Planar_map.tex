@@ -46,6 +46,8 @@ of the \ccRefName\ type hereafter.
   \ccNestedType{Traits}{traits class.}
   \ccGlue
   \ccNestedType{Dcel}{DCEL class.}
+  \ccGlue
+  \ccNestedType{Change_notification}{}
 
   \ccHtmlNoLinksFrom{
   The \ccc{Vertex}, \ccc{Halfedge} and \ccc{Face}
@@ -271,7 +273,8 @@ depends on the point location strategy used.
 
 \ccModifiers
 
-  \ccMethod{Halfedge_handle insert( const X_monotone_curve_2 & cv );} 
+  \ccMethod{Halfedge_handle insert(const X_monotone_curve_2 & cv,
+                                   Change_notification * en = NULL);} 
   {inserts the curve \ccc{cv} into the map. \ccc{insert()} returns 
    a handle to a new halfedge directed in the same way as the curve \ccc{cv}. 
    That is, the curve source and target points coincide with the points of the 
@@ -283,7 +286,8 @@ depends on the point location strategy used.
 
   \ccMethod{template <X_curve_iterator>
             Halfedge_handle insert(const X_curve_iterator & begin, 
-                                   const X_curve_iterator & end);}
+                                   const X_curve_iterator & end,
+				   Change_notification * en = NULL);}
   {iterates through a given range of curves, inserting the curves into the
    map. \ccc{begin} and \ccc{end} are input iterators that point to the first
    curve and past-the-end curve of the range respectively. \ccc{insert()} 
@@ -306,8 +310,9 @@ these functions with the naive point location strategy.
 %the time is spent in any case on the updating of the internal point location
 %structure). 
     
-  \ccMethod{Halfedge_handle insert_in_face_interior( const X_monotone_curve_2 & cv, 
-                                                     Face_handle f);}
+  \ccMethod{Halfedge_handle insert_in_face_interior(const X_monotone_curve_2 & cv, 
+                                                    Face_handle f,
+						    Change_notification * en = NULL);}
   {inserts the curve \ccc{cv} as a new inner component of the face \ccc{f}. 
    \ccc{insert_in_face_interior()} returns a handle to a new halfedge directed
    in the same way as \ccc{cv}.
@@ -317,7 +322,8 @@ these functions with the naive point location strategy.
   }
 
   \ccMethod{Halfedge_handle insert_from_vertex(const X_monotone_curve_2 & cv,
-                                               Vertex_handle v);}
+                                               Vertex_handle v,
+					       Change_notification * en = NULL);}
   {inserts the curve \ccc{cv} into the map. One endpoint of \ccc{cv}
   is the point of the given vertex \ccc{v}, that is already in the map.
    \ccc{insert_from_vertex} returns a handle to a new halfedge that has 
@@ -333,7 +339,8 @@ these functions with the naive point location strategy.
     
   \ccMethod{Halfedge_handle insert_at_vertices(const X_monotone_curve_2 & cv,
                                                Vertex_handle v1, 
-                                               Vertex_handle v2 );}
+                                               Vertex_handle v2,
+					       Change_notification * en = NULL);}
   {inserts the curve \ccc{cv} into the map. The two endpoints of \ccc{cv} are
    held by the two given vertices \ccc{v1} and \ccc{v2} respectively, that are
    already in the map.
@@ -348,7 +355,8 @@ these functions with the naive point location strategy.
   }
 
   \ccMethod{Halfedge_handle insert_from_vertex(const X_monotone_curve_2 & cv,
-                                               Halfedge_handle h);}
+                                               Halfedge_handle h,
+					       Change_notification * en = NULL);}
   {inserts the curve \ccc{cv} into the map. One endpoint of \ccc{cv} is the 
    point of the target vertex, \ccc{v}, of the given halfedge \ccc{h}.
    \ccc{insert_from_vertex} returns a handle to a new halfedge that has 
@@ -362,8 +370,8 @@ these functions with the naive point location strategy.
    \ccPrecond{the point of \ccc{v} coincides with one endpoint of \ccc{cv}. }
    \ccPrecond{no vertex of the map has a point that coincides with the other 
     endpoint of \ccc{cv}. }
-   \ccPrecond{\ccc{cv} is after the curve of \ccc{h} in the clockwise order of
-    curves around the common point of \ccc{v}. }
+   \ccPrecond{In the clockwise order of curves around the common point
+   of \ccc{v}, \ccc{cv} succeeds the curve of \ccc{h}.} 
    \ccPrecond{no curve of \ccc{pm} intersects \ccc{cv} in the
     interiors of the curve itself and \ccc{cv}. }
    \ccPrecond{\ccc{cv} is not equivalent to a point. }
@@ -371,7 +379,8 @@ these functions with the naive point location strategy.
     
   \ccMethod{Halfedge_handle insert_at_vertices(const X_monotone_curve_2 & cv,
                                                Halfedge_handle h1, 
-                                               Halfedge_handle h2 );}
+                                               Halfedge_handle h2,
+					       Change_notification * en = NULL);}
   {inserts the curve \ccc{cv} into the map. The two endpoints of \ccc{cv} are
    held by the two target vertices \ccc{v1} and \ccc{v2} of \ccc{h1} and
    \ccc{h2} respectively.
@@ -387,10 +396,10 @@ these functions with the naive point location strategy.
    \ccPrecond{\ccc{h1} and \ccc{h2} are halfedges of the map. }
    \ccPrecond{the points of \ccc{v1} and \ccc{v2} coincide with the two 
     endpoints of \ccc{cv} respectively. } 
-   \ccPrecond{\ccc{cv} is after the curve of \ccc{h1} in the clockwise order of
-    curves around the common point of \ccc{v1}. }
-   \ccPrecond{\ccc{cv} is after the curve of \ccc{h2} in the clockwise order of
-    curves around the common point of \ccc{v2}. }
+   \ccPrecond{In the clockwise order of curves around the common point
+   of \ccc{v1}, \ccc{cv} succeeds the curve of \ccc{h1}.} 
+   \ccPrecond{In the clockwise order of curves around the common point
+   of \ccc{v2}, \ccc{cv} succeeds the curve of \ccc{h2}.} 
    \ccPrecond{no curve of \ccc{pm} intersects \ccc{cv} in the
     interiors of the curve itself and \ccc{cv}. }
    \ccPrecond{\ccc{cv} is not equivalent to a point. }
@@ -398,12 +407,13 @@ these functions with the naive point location strategy.
 
 \end{ccAdvanced}              
 
-\ccMethod{Halfedge_handle split_edge (Halfedge_handle e, const X_monotone_curve_2 & c1, 
-                                      const X_monotone_curve_2 & c2);}
+\ccMethod{Halfedge_handle split_edge(Halfedge_handle e, const X_monotone_curve_2 & c1, 
+                                     const X_monotone_curve_2 & c2);}
 {splits the edge \ccStyle{e} into \ccStyle{e1} and  \ccStyle{e2} , and
    add a vertex in the splitting point. If the source point of \ccStyle{e}
-   is identical to the source of the curve \ccStyle{c1} then \ccStyle{c1}
-   will be assigned to \ccStyle{e1} and \ccStyle{c2} to \ccStyle{e2}. 
+   is identical to the source of the curve \ccStyle{c1} then
+   \ccStyle{c1} abd \ccStyle{c2} will be assigned to \ccStyle{e1} and
+   to \ccStyle{e2} respectively and to their respective twin halfedges. 
    Otherwise, the opposite will take place. The returned halfedge will
    be \ccStyle{e1} where \ccc{e2} is \ccc{e1->next_halfedge()}.
    \ccPrecond{the preconditions of 
@@ -420,8 +430,9 @@ these functions with the naive point location strategy.
 
 \ccMethod{Halfedge_handle merge_edge(Halfedge_handle e1, Halfedge_handle e2, 
                                      const X_monotone_curve_2 & cv);}
-{merges the edges \ccStyle{e1} and \ccStyle{e2} into one edge which will hold 
-   the curve \ccStyle{cv}. The return value is the halfedge with the same 
+{merges the edges represented by \ccStyle{e1} and \ccStyle{e2} into
+   a single edge. The resulting halfedge and its twin hold the curve
+   \ccStyle{cv}. The return value is the halfedge with the same
    source vertex that \ccc{e1} had and the same target \ccc{e2} had.
    \ccPrecond{the preconditions of 
       \ccStyle{Topological_map<Dcel>::merge_edge}.}

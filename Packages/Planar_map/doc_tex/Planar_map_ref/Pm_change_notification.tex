@@ -17,20 +17,14 @@
 
 \ccDefinition
    An instance of \ccRefName\ can be passed to the modification
-   methods of a planar map with intersections object. An insertion
-   of an intersecting curve to a planar map may add several
-   halfedges and modify several features of the map. The relevant
-   function of the change notification instance is called after
-   each such modification.
-
-\ccTypes
-\ccNestedType{Planar_map}{the planar map with intersections 
-                          in which the object is being used.}
-\ccNestedType{Traits}{the traits class of \ccc{Planar_map}.}
+   methods of a planar map object. An insertion of an intersecting
+   curve to a planar map may add several halfedges and modify several
+   features of the map. The relevant function of the change
+   notification instance is called after each such modification.
 
 \ccOperations
 
-\ccCreationVariable{pmwx_cn}
+\ccCreationVariable{pm_cn}
 
 \ccMethod{ void add_edge(const  Traits::X_curve& cv,
                          Planar_map::Halfedge_handle e,
@@ -43,11 +37,10 @@
   \ccc{overlap} is true iff the added halfedges overlap halfedges already in the
   map.}
 
-\ccMethod{ void split_edge(
-               Planar_map::Halfedge_handle orig_edge,
-               Planar_map::Halfedge_handle new_edge,
-              const  Traits::X_curve& c1,
-              const  Traits::X_curve& c2);}
+\ccMethod{ void split_edge(Planar_map::Halfedge_handle orig_edge,
+                           Planar_map::Halfedge_handle new_edge,
+                           const  Traits::X_curve& c1,
+                           const  Traits::X_curve& c2);}
   {called each time a pair of twin halfedges is split into two
   pairs. The split operation creates a new pair of twin halfedges
   (\ccc{new_edge} and its twin) and modifies the original
@@ -55,38 +48,23 @@
   \ccc{c1} and \ccc{c2} are the curves after the split.
   }
 
-\ccMethod{ void split_face(
-               Planar_map::Face_handle orig_face,
-               Planar_map::Face_handle new_face);}
+\ccMethod{void split_face(Planar_map::Face_handle orig_face,
+                          Planar_map::Face_handle new_face);}
   {called each time a face of the planar map is being split by
   the inserted curve into two faces: \ccc{orig_face} is the
   original face and \ccc{new_face} is the new face.
   }
 
-\ccMethod{ void add_hole(
-             Planar_map::Face_handle in_face,
-             Planar_map::Halfedge_handle new_hole);}
+\ccMethod{void add_hole(Planar_map::Face_handle in_face,
+                         Planar_map::Halfedge_handle new_hole);}
   {called each time a hole is added to a face \ccc{in_face}.
   \ccc{new_hole} is a halfedge on the new hole.
-  }
-
-\ccMethod{ bool have_support_curve();}
-  {returns true if \ccc{edge_support_curve} function can return the
-  supporting curve (used by the arrangement class).
-  }
-
-\ccMethod{ const  Traits::X_curve&
-  edge_support_curve( Planar_map::Halfedge_handle edge);}
-  {returns the supporting curve of a \ccc{edge}, if it exists
-  (used by the arrangement class).
   }
 
 \ccHasModels
 
   The package does not supply models of
-  \ccc{PlanarMapChangeNotification_2}. The
-  arrangement class has an internal implementation that is used for
-  the updating of its hierarchy structure.
+  \ccc{PlanarMapChangeNotification_2}.
 
 \end{ccRefConcept}
 

@@ -114,8 +114,8 @@ curve to be $x$-monotone.
          {compares the $y$-coordinate of $cv1$ and $cv2$ immediately to the
 	   right of the $x$-coordinate of $pnt$.
            \ccPrecond{$cv1$ and $cv2$ meet at $pnt$ $x$-coordinate.}
-           \ccPrecond{$cv1$ and $cv2$ are defined to the right of $pnt$'s
-             $x$-coordinate.}}
+           \ccPrecond{$cv1$ and $cv2$ are defined lexigoraphically to
+           the right of $pnt$'s $x$-coordinate.}}
     
 \ccMethod{Comparison_result
   curves_compare_y_at_x_left(const X_monotone_curve_2& cv1,
@@ -127,8 +127,8 @@ curve to be $x$-monotone.
 	   Recall, that the aggregate insertion is based on a sweep-line
 	   algorithm.
            \ccPrecond{$cv1$ and $cv2$ meet at $pnt$ $x$-coordinate.}
-           \ccPrecond{$cv1$ and $cv2$ are defined to the left of $pnt$'s
-             $x$-coordinate.}}
+           \ccPrecond{$cv1$ and $cv2$ are defined lexigoraphically to
+           the left of $pnt$'s $x$-coordinate.}}
     
 \ccMethod{Point_2 point_reflect_in_x_and_y(const Point_2& pt);}
          {returns the reflection of the point \ccStyle{pt} about the origin
@@ -147,12 +147,12 @@ curve to be $x$-monotone.
 	  \ccc{curves_compare_y_at_x_left()} is provided and the
 	  \ccc{Has_left_category} category is \ccc{Tag_true}.}
 
-\ccMethod{Comparison_result curve_compare_y_at_x(const Point_2& pnt,
-                                                 const X_monotone_curve_2& cv);}
+\ccMethod{Comparison_result curve_compare_y_at_x(const Point_2 & pnt,
+                                                 const X_monotone_curve_2 & cv);}
          {compares the $y$-coordinates of $pnt$ and the vertical projection of
-	   $pnt$ on $cv$. Returns \ccStyle{SMALLER} if $y(p) < cv(x(p))$;
-	   \ccStyle{LARGER} if $y(p) > cv(x(p))$;
-	   \ccStyle{EQUAL} otherwise (p is on the curve).
+	   $pnt$ on $cv$. Returns \ccStyle{SMALLER} if $y(pnt) < cv(x(pnt))$;
+	   \ccStyle{LARGER} if $y(pnt) > cv(x(pnt))$;
+	   \ccStyle{EQUAL} otherwise ($pnt$ is on the curve).
            \ccPrecond{$cv$ is defined at $pnt$'s $x$-coordinate.}}
 
 \ccMethod{bool curve_equal(const X_monotone_curve_2 & cv1,
