@@ -70,8 +70,8 @@ class Postscript_file_stream : public leda_ps_file
    { set_draw_bb(false); }
 
    void display() {}
-   void display(int x, int y) {}
-   int read_mouse(double& x, double& y) {return 1;}
+   void display(int, int) {}
+   int read_mouse(double& , double& ) {return 1;}
    leda_color set_fg_color(leda_color c) { return set_color(c); }
    void set_font(const leda_string& ls) { set_text_font(ls); }
    void change_rgb(const Color&);
@@ -109,7 +109,6 @@ inline
 void
 cgalize(Postscript_file_stream& w)
 {
-  w.set_node_width( 5);
   w.set_line_width( 1);
 }
 
@@ -117,10 +116,10 @@ cgalize(Postscript_file_stream& w)
 inline
 Postscript_file_stream*
 create_demo_postscript_file_stream( float w = 512.0, float h = 512.0,
-                                    const char* str = "CGAL",
+                                    const char* str = "CGAL_unnamed.ps",
                                     double x_extension = 1.0)
 {
-  Postscript_file_stream* Wptr = new Postscript_file_stream( w, h);
+  Postscript_file_stream* Wptr = new Postscript_file_stream( w, h, str);
   cgalize( *Wptr);
   double y_extension = x_extension * h / w;
   Wptr->init(-x_extension, x_extension, -y_extension);
@@ -130,11 +129,11 @@ create_demo_postscript_file_stream( float w = 512.0, float h = 512.0,
 
 inline
 Postscript_file_stream*
-create_and_display_demo_postscript_file_stream(float w = 512.0, float h = 512.0,
-                                               const char* str = "CGAL",
-                                               double x_extension = 1.0)
+create_and_display_demo_postscript_file_stream(float w = 512.0, 
+                    float h = 512.0, const char* str = "CGAL_unnamed.ps",
+                    double x_extension = 1.0)
 {
-  Postscript_file_stream* Wptr = new Postscript_file_stream( w, h);
+  Postscript_file_stream* Wptr = new Postscript_file_stream( w, h, str);
   cgalize( *Wptr);
   double y_extension = x_extension * h / w;
   Wptr->init(-x_extension, x_extension, -y_extension);
@@ -156,11 +155,7 @@ operator<<(Postscript_file_stream& w, const Point_2<R>& p)
 {
   double x = CGAL::to_double(p.x());
   double y = CGAL::to_double(p.y());
-  double width = w.get_node_width();
-  if (width < 2.0)
-      w.draw_point(x,y);
-  else
-      w.draw_filled_node(x,y);
+  w.draw_point(x,y);
 
   return w;
 }
@@ -178,11 +173,7 @@ operator>>(Postscript_file_stream& w, Point_2<R>& p)
       double y = l_p.ycoord();
       w << l_p;
       w.set_mode( save);
-      double width = w.get_node_width();
-      if (width < 2.0)
-          w.draw_point(x,y);
-      else
-          w.draw_filled_node(x,y);
+      w.draw_point(x,y);
 
       p = Point_2<R>( RT(x), RT(y));
   }
@@ -215,11 +206,7 @@ read_mouse_plus(Postscript_file_stream& w, Point_2<R>& p, int& button)
   typedef typename R::RT RT;
   double x, y;
   button = w.read_mouse(x,y);
-  double width = w.get_node_width();
-  if (width < 2.0)
-      w.draw_point(x,y);
-  else
-      w.draw_filled_node(x,y);
+  w.draw_point(x,y);
 
   p = Point_2<R>(RT(x), RT(y));
 }
