@@ -1,0 +1,54 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: sweep_to_produce_points_2.tex
+% +------------------------------------------------------------------------+
+% | 17.02.2002   Author
+% | Package: Sweep_line_2
+% | 
+\RCSdef{\RCSsweeptoproducepointsRev}{$Revision$}
+\RCSdefDate{\RCSsweeptoproducepointsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}[CGAL::]{sweep_to_produce_points_2}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+  
+The function \ccRefName\ generates the set of intersection points of a
+given set of input curves. It is also possible to ask the function to
+include the endpoints of the input curves within the output.
+
+\ccInclude{sweep_to_produce_points_2.h}
+
+\ccFunction{
+   template<class Curve_iterator, class Traits, class Container>
+   void 
+   sweep_to_produce_planar_map_points_2(
+   Curve_iterator curves_begin, 
+   Curve_iterator curves_end, 
+   Traits& traits, 
+   Container &subcurves);}
+   {Explanation will come here.}
+
+\ccRequirements
+
+\ccSeeAlso
+
+\ccc{Some_other_class},
+\ccc{some_other_function}.
+
+\ccImplementation
+  % Say how it was implemented
+  % See documentation of convex_hull_2
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
