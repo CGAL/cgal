@@ -195,7 +195,7 @@ partition_is_valid_2 (InputIterator point_first, InputIterator point_last,
    output_vertex_set.union_vertices(std::back_inserter(union_polygon));
 
 #ifdef CGAL_PARTITION_CHECK_DEBUG
-   std::list<Point_2>::iterator  poly_iterator;
+   typename std::list<Point_2>::iterator  poly_iterator;
    std::cout << "union polygon is " << std::endl;
    for (poly_iterator = union_polygon.begin(); 
         poly_iterator != union_polygon.end(); poly_iterator++)
