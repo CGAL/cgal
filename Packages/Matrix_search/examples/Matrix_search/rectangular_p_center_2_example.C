@@ -1,3 +1,5 @@
+#line 681 "pcenter.aw"
+#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -24,6 +26,8 @@
 // 2-4-Centering Axis-Parallel 2D-Rectangles - example program
 // ============================================================================
 
+#line 685 "pcenter.aw"
+#line 563 "pc_testprog.awi"
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/point_generators_2.h>
@@ -76,6 +80,8 @@ int main() {
 
   return 0;
 } 
+#line 686 "pcenter.aw"
+#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

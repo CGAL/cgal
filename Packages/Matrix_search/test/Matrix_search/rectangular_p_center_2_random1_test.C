@@ -1,3 +1,5 @@
+#line 663 "pcenter.aw"
+#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -24,6 +26,9 @@
 // 2-4-Centering Axis-Parallel 2D-Rectangles - test program
 // ============================================================================
 
+#line 667 "pcenter.aw"
+#line 714 "pc_testprog.awi"
+#line 621 "pc_testprog.awi"
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Vector_2.h>
@@ -33,6 +38,9 @@
 #include <CGAL/Random.h>
 #include <CGAL/Timer.h>
 #include <CGAL/algorithm.h>
+#ifdef CGAL_USE_LEDA
+#include <CGAL/leda_real.h>
+#endif // CGAL_USE_LEDA
 #include <vector>
 #include <functional>
 #include <algorithm>
@@ -60,11 +68,11 @@ using std::copy;
 using std::ostream_iterator;
 #endif // CGAL_PCENTER_NO_OUTPUT
 
+#ifdef CGAL_USE_LEDA
+typedef leda_real                          FT;
+#else
 typedef double                             FT;
-//#include <CGAL/Arithmetic_filter.h>
-//#include <CGAL/leda_real.h>
-//using CGAL::Filtered_exact;
-//typedef Filtered_exact< double, leda_real >  FT;
+#endif // CGAL_USE_LEDA
 
 typedef Cartesian< FT >                    R;
 typedef CGAL::Point_2< R >                 Point;
@@ -75,6 +83,7 @@ typedef PCont::iterator                    iterator;
 typedef Creator_uniform_2< FT, Point >     Creator;
 typedef Random_points_in_square_2< Point, Creator >
                                            Point_generator;
+#line 103 "pc_testprog.awi"
 #ifdef _MSC_VER
 // that compiler cannot even distinguish between global
 // and class scope, so ...
@@ -154,14 +163,13 @@ private:
 #ifdef _MSC_VER
 #undef Base
 #endif // _MSC_VER
+#line 676 "pc_testprog.awi"
 
 int
 main(int argc, char* argv[])
 {
 #ifndef CGAL_PCENTER_NO_OUTPUT
   CGAL::set_pretty_mode(cerr);
-  //ostream_iterator< Point > cerr_it_p(cerr, "\n");
-  //ostream_iterator< Square_2 > cerr_it_s(cerr, "\n");
 #endif // CGAL_PCENTER_NO_OUTPUT
 
   int number_of_points;
@@ -191,6 +199,7 @@ main(int argc, char* argv[])
 #ifndef CGAL_PCENTER_NO_OUTPUT
   cerr << "random seed is " << random_seed << endl;
 #endif // CGAL_PCENTER_NO_OUTPUT
+#line 715 "pc_testprog.awi"
   PCont input_points;
   CGAL::copy_n(Point_generator(1, rnd),
                 number_of_points,
@@ -213,26 +222,69 @@ main(int argc, char* argv[])
       p);
     t.stop();
 #ifndef CGAL_PCENTER_NO_OUTPUT
-    cerr << "[time: " << t.time() << " msec]" << endl;
+    cerr << "[time: " << t.time() << " sec]" << endl;
 #endif // CGAL_PCENTER_NO_OUTPUT
 
+#ifdef CGAL_USE_LEDA
+    #line 751 "pc_testprog.awi"
+    // check that all points are covered
     CGAL::Infinity_distance_2< R > dist;
+    #ifndef _MSC_VER
     for (iterator i = input_points.begin(); i != input_points.end(); ++i) {
+    #else
+    for (i = input_points.begin(); i != input_points.end(); ++i) {
+    #endif
       iterator j = centers.begin();
       do {
         if (dist(*i, *j) <= result / FT(2))
           break;
         if (++j == centers.end()) {
+    #ifndef _MSC_VER
           cerr << "Error: Point " << *i << " is not covered." << endl;
+    #else
+          cerr << "Error: A point is not covered." << endl;
+    #endif
           CGAL_assertion(j != centers.end());
         }
       } while (j != centers.end());
     }
+    
+    // check that there is at least one square with two points
+    // on opposite sides
+    CGAL::Signed_x_distance_2< R > xdist;
+    CGAL::Signed_y_distance_2< R > ydist;
+    bool boundary = false;
+    #ifndef _MSC_VER
+    for (iterator i = centers.begin(); i != centers.end(); ++i) {
+    #else
+    for (i = centers.begin(); i != centers.end(); ++i) {
+    #endif
+      int left = 0, right = 0, bottom = 0, top = 0;
+      for (iterator j = input_points.begin(); j != input_points.end(); ++j) {
+        if (xdist(*i, *j) == result / FT(2))
+          ++left;
+        if (xdist(*j, *i) == result / FT(2))
+          ++right;
+        if (ydist(*j, *i) == result / FT(2))
+          ++top;
+        if (ydist(*i, *j) == result / FT(2))
+          ++bottom;
+      }
+      if (left > 0 && right > 0 || top > 0 && bottom > 0)
+        boundary = true;
+    }
+    if (!boundary)
+      cerr << "Error: No square has two points on boundary." << endl;
+    CGAL_assertion(boundary);
+#line 742 "pc_testprog.awi"
+#endif // CGAL_USE_LEDA
 
   } // for (int p(2); p < 5; ++p)
 
   return 0;
 } 
+#line 668 "pcenter.aw"
+#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

@@ -8,6 +8,7 @@
 //---------------------------------------------------------------------
 
 DEMO: New User-Interface with different Generators.
+DEMO: Fixed a few things for VC++.
 ALL : Replaced selfmade timer by CGAL::Timer.
 DEMO: Prefixed leda_drawing_mode.
 DEMO: fixed for LEDA-3.8 (the point_set<I> data structure vanished)
@@ -16,10 +17,12 @@ ALL : added std:: in a number of places where it was missing
 ALL : use namespace std and CGAL
 ALL : use standard header files
 ALL : Initial revision
+DOCS: Uniform traits classes documented.
 ALL : added some return 0;
 ALL : MSVBC workaround for TYPENAME_BUGs.
 DOCS: fixed "cal" problem with html converter
 DOCS: fixed preconditions in replace_column (reported by Mariette).
+SRC : Completely new four-center implementation.
 SRC : Completely new four-cover implementation.
 SRC : Unified traits classes.
 SRC : Worked around some MSVC using-bugs.
