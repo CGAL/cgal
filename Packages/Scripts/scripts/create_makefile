@@ -85,12 +85,6 @@ create_makefile()
     base=`basename $file .C`
     create_makefile_entry $base
   done
-#  echo clean:
-#  printf    "	rm -f *\$(OBJ_EXT) "
-#  for file in `ls *.C` ; do
-#      printf "\\\\\n                   `basename $file .C`\$(EXE_EXT) "
-#  done
-#  printf    "\\\\\n                   core\n\n"
   printf "clean: "
   for file in `ls *.C` ; do
       printf "\\\\\n                   `basename $file .C`.clean "
@@ -100,6 +94,11 @@ create_makefile()
   echo
   echo    ".C\$(OBJ_EXT):"
   echo    "	\$(CGAL_CXX) \$(CXXFLAGS) \$(OBJ_OPT) \$<"
+  echo
+  echo
+  echo    ".C\$(EXE_EXT):"
+  echo    "	\$(CGAL_CXX) \$(CXXFLAGS) \$(OBJ_OPT) \$<"
+  echo "	\$(CGAL_CXX) \$(LIBPATH) \$(EXE_OPT)\$* \$*\$(OBJ_EXT) \$(LDFLAGS)"
   echo
 }
 
