@@ -55,7 +55,7 @@ namespace CGAL {
     widget(w)
   {
     setLabel("Qt_widget standard toolbar");
-    fill_toolbar(mw);
+    fill_toolbar(parent);
   };
   
   Qt_widget_standard_toolbar::
