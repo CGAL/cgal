@@ -1,5 +1,5 @@
 2.46 (07 May 2003) [lk]
-- Fixed degeneracy_test.C to use default parameter of polyhedron.
+- Fixed test, examples, and demos to use default parameter of polyhedron.
 
 2.45    (5 May 2003) [af]
 - VC6 cleanup

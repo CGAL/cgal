@@ -4,7 +4,6 @@
 #include <CGAL/Homogeneous.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/copy_n.h>
-#include <CGAL/Polyhedron_default_traits_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/convex_hull_incremental_3.h>
 #include <vector>
@@ -24,8 +23,7 @@ typedef CGAL::MP_Float RT;
 
 typedef CGAL::Homogeneous<RT>                  K;
 typedef K::Point_3                             Point_3;
-typedef CGAL::Polyhedron_default_traits_3<K>   PolyTraits;
-typedef CGAL::Polyhedron_3< PolyTraits >       Polyhedron;
+typedef CGAL::Polyhedron_3< K>                 Polyhedron;
 typedef CGAL::Creator_uniform_3<int, Point_3>  Creator;
 
 int main()
