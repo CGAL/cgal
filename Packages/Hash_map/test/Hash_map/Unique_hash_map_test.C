@@ -10,6 +10,8 @@ int main() {
     CGAL_TEST_START;
     list<int> L;
     L.push_back(1);
+    L.push_back(2);
+
     Iterator it1 = L.begin();
     CGAL::Unique_hash_map<Iterator,int> H1;
     CGAL::Unique_hash_map<Iterator,int> H2(-1);
@@ -24,11 +26,11 @@ int main() {
     CGAL_TEST(H1[it1]==0);
     CGAL_TEST(H2[it1]==2);
     Iterator it2 = L.end();
+    --it2;
     const CGAL::Unique_hash_map<Iterator,int>* pH = &H2;
     CGAL_TEST((*pH)[it2]==-2);
 
     H1.clear(-1);
-    L.push_back(2);
     L.push_back(3);
     L.push_back(4);
     L.push_back(5);
