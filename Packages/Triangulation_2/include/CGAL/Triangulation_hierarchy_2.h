@@ -33,18 +33,18 @@ template < class Vb>
 class Triangulation_hierarchy_vertex_base_2
  : public Vb
 {
-  typedef Vb Base;
-  typedef typename Base::Point                        Point;
+  typedef Vb V_Base;
+  typedef typename V_Base::Point                        Point;
 
  public:
   Triangulation_hierarchy_vertex_base_2()
-    : Base(), _up(0), _down(0)
+    : V_Base(), _up(0), _down(0)
     {}
   Triangulation_hierarchy_vertex_base_2(const Point & p, void* f)
-    : Base(p,f), _up(0), _down(0)
+    : V_Base(p,f), _up(0), _down(0)
     {}
   Triangulation_hierarchy_vertex_base_2(const Point & p)
-    : Base(p), _up(0), _down(0)
+    : V_Base(p), _up(0), _down(0)
     {}
 
  public:  // for use in Triangulation_hierarchy only
@@ -73,7 +73,7 @@ class Triangulation_hierarchy_2
  public:
   typedef typename Triangulation::Geom_traits  Geom_traits;
   typedef typename Geom_traits::Point_2             Point;
-  typedef Triangulation                        Base;
+  typedef Triangulation                        Tr_Base;
   typedef typename Base::Vertex_handle     Vertex_handle;
   typedef typename Base::Face_handle       Face_handle;
   typedef typename Base::Vertex_iterator   Vertex_iterator;
@@ -82,7 +82,7 @@ class Triangulation_hierarchy_2
 
  private:
   // here is the stack of triangulations which form the hierarchy
-  Base*   hierarchy[Triangulation_hierarchy_2__maxlevel];
+  Tr_Base*   hierarchy[Triangulation_hierarchy_2__maxlevel];
   Random random; // random generator
 
 public:
@@ -137,19 +137,19 @@ private:
 public:
   
   Vertex_handle insert(const Point  &p, Face_handle start){
-    return Base::insert(p,start);
+    return Tr_Base::insert(p,start);
   }
   Vertex_handle insert(const Point& p,
 		       Locate_type lt,
 		       Face_handle loc, int li ){
-    return Base::insert(p);
+    return Tr_Base::insert(p);
   }
 
   Face_handle  locate(const Point& p, 
 		      Locate_type& lt,
 		      int& li,
 		      Face_handle start) const{
-    return Base::locate(p, lt, li, start);
+    return Tr_Base::locate(p, lt, li, start);
   }
 
 };
@@ -159,11 +159,11 @@ public:
 template <class Triangulation >
 Triangulation_hierarchy_2<Triangulation>::
 Triangulation_hierarchy_2(const Geom_traits& traits)
-  : Base(traits), random((long)0)
+  : Tr_Base(traits), random((long)0)
 { 
   hierarchy[0] = this; 
   for(int i=1;i<Triangulation_hierarchy_2__maxlevel;++i)
-    hierarchy[i] = new Base();
+    hierarchy[i] = new Tr_Base();
 }
 
 
@@ -171,12 +171,12 @@ Triangulation_hierarchy_2(const Geom_traits& traits)
 template <class Triangulation>
 Triangulation_hierarchy_2<Triangulation>::
 Triangulation_hierarchy_2(const Triangulation_hierarchy_2<Triangulation> &tr)
-    : Base(), random((long)0)
+    : Tr_Base(), random((long)0)
 { 
   // create an empty triangulation to be able to delete it !
   hierarchy[0] = this; 
   for(int i=1;i<Triangulation_hierarchy_2__maxlevel;++i)
-    hierarchy[i] = new Base();
+    hierarchy[i] = new Tr_Base();
   copy_triangulation(tr);
 } 
  
@@ -225,11 +225,11 @@ void
 Triangulation_hierarchy_2<Triangulation>:: 
 swap(Triangulation_hierarchy_2<Triangulation> &tr)
 {
-//   Base** h= hierarchy;
+//   Tr_Base** h= hierarchy;
 //   hierarchy = tr.hierarchy;
 //   tr.hierarchy = h;
-  Base* temp;
-  Base::swap(tr);
+  Tr_Base* temp;
+  Tr_Base::swap(tr);
   for(int i= 1; i<Triangulation_hierarchy_2__maxlevel; ++i){
     temp = hierarchy[i];
     hierarchy[i] = tr.hierarchy[i];
