@@ -5,6 +5,7 @@
 - added function object classes Compute_area_2, Compute_squared_area_3,
   Compute_volume_3
 - Towards Simple_homogeneous : PointH2<FT,RT> => PointH2<R> and similar.
+- Move Data_accessorH2<> in its own file in the H2 package.
 
 3.20   (25 Jan 2001)
 - Added iterator_traits_pointer_specs_for_simple_cartesian_kernel.h

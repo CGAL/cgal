@@ -40,6 +40,7 @@
 #include <CGAL/SphereH3.h>
 #include <CGAL/SegmentH3.h>
 #include <CGAL/TetrahedronH3.h>
+#include <CGAL/Data_accessorH2.h>
 
 #include <CGAL/Quotient.h>
 
@@ -49,33 +50,6 @@
 #include <CGAL/Kernel/function_objects.h>
 
 CGAL_BEGIN_NAMESPACE
-
-template < class R >
-class Data_accessorH2
-{
-public:
-    typedef  typename R::FT FT;
-    typedef  typename R::RT RT;
-    typedef  PointH2<R>      Point;
-
-    RT  get_hx( Point const& p) const { return( p.hx()); }
-    RT  get_hy( Point const& p) const { return( p.hy()); }
-    RT  get_hw( Point const& p) const { return( p.hw()); }
-
-    void
-    get( Point const& p, RT& hx, RT& hy, RT& hw) const
-    {
-        hx = get_hx( p);
-        hy = get_hy( p);
-        hw = get_hw( p);
-    }
-
-    void
-    set( Point& p, RT const& hx, RT const& hy, RT const& hw) const
-    {
-        p = Point( hx, hy, hw);
-    }
-};
 
 template <class R_, class RT_, class FT_>
 class Homogeneous_base
