@@ -1,3 +1,7 @@
+Version 1.66 (21 June 01)
+- example and demo with modified vertex base
+- new remove documented
+
 Version 1.65 (20 June 01)
 - Simplify TDS test program to use an empty traits.
 

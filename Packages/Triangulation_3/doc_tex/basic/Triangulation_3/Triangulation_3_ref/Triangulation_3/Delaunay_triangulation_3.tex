@@ -116,7 +116,8 @@ proposes a vertex removal.
 {Removes the vertex \ccc{v} from the triangulation and returns
 \ccc{true}. It returns false if something went wrong, and in this case
 the triangulation is not modified; this should not happen, but may
-happen in denegerate cases if the arithmetic chosen is not good.
+happen in denegerate cases if the predicates are not exact (which can
+occur with a \cgal\ kernel if the arithmetic chosen is not good).
 \ccPrecond{\ccc{v} is a vertex of the triangulation and it is not the
 infinite vertex.}}
 

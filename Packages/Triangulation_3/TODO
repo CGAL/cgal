@@ -3,6 +3,7 @@ a negocier
 - mise a jour de la doc de Filtered_exact...
 
 penser a enlever -I../../include\ dans demo/Triangulation_3/makefile
+changer le nom du fichier include pour Filtered_exact dans exemples et demos
 
 General
 - mettre a jour les noms d'auteurs
