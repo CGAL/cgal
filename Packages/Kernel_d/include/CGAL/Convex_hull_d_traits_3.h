@@ -270,7 +270,7 @@ template <class R_> struct Convex_hull_d_traits_3
   Construct_hyperplane_d construct_hyperplane_d_object() const
   { return Construct_hyperplane_d(); }
 
-  typedef typename R::Intersect_2 Intersect_d;
+  typedef typename R::Intersect_3 Intersect_d;
   Intersect_d intersect_d_object() const 
   { return Intersect_d(); }
 
