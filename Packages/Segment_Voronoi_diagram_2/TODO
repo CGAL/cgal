@@ -1,6 +1,7 @@
-- clean-up the code of the filtered traits: make all predicates functors
-  in the "predicates" directory in separate files (most are already there,
-  but some are not)
+- gcc 2.95.3 has a problem with templte template parameters; as a result
+  the code for the non-filtered traits does not compile; workaround has
+  be written for the filtered traits but the problem with it is that some
+  types are not defined (e.g., Exact_traits, etc.)
 - add a method insert_point_no_search in the segment Voronoi diagram class
   that inserts a point without searching for the nearest neighbor;
   the assumption here is that the nearest neighbor given is already known
@@ -8,9 +9,7 @@
   rewritten so that it uses insert_point_no_search as a subroutine; the
   segment Voronoi diagram hierarchy needs this method when inserting a point:
   the nearest neighbors of the point at all levels are known...
-- remove the old code about the definitions of the predicates in the
-  filtered traits class
-- remove the site set_* methods from the spec; remove the macro USE_SET_METHODS
+- remove the site set_* methods from the spec
 - use the input sites container as the container where point handles are gotten
   from
 - remove the STORE_INPUT_SITES macro
@@ -18,8 +17,6 @@
   class has a bug: it does not handle the case where ff1 or ff2 are
   infinite faces.
 - make sure all types in the doc correspond to real types in the code
-- add the methods number_of_{input,output}_sites() in the
-  Segment_Voronoi_diagram_2 class.
 - add swap method in hierarchy; verify that the swap method in the segment
   Voronoi diagram class works correctly (does it swap the point container
   correctly?)
