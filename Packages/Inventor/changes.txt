@@ -1,4 +1,5 @@
 20 02 2004 Radu Ursu
+- added operator << for Alpha_shape_3 in VRML_2_ostream
 - added operator << for Sphere_3 in VRML_2_ostream
 - modified the VRML header in VRML_2_ostream
     added A1 material
