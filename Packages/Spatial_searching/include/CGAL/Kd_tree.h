@@ -221,9 +221,8 @@ template <class InputIterator>
  
   template <class OutputIterator, class FuzzyQueryItem>
 	OutputIterator search(OutputIterator it, const FuzzyQueryItem& q) {
-		Kd_tree_rectangle<GeomTraits>* b = new Kd_tree_rectangle<GeomTraits>(*bbox);
+		Kd_tree_rectangle<GeomTraits> b(*bbox);
 		tree_root->search(it,q,b);
-		delete b;
 		return it;
 	}
 

@@ -14,24 +14,24 @@ typedef CGAL::Random_points_in_square_2<Point> Random_points_iterator;
 typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator;
 typedef CGAL::Kd_tree_traits_point_2<R> TreeTraits;
 typedef CGAL::Euclidean_distance<TreeTraits> Distance;
-typedef CGAL::Fair<TreeTraits> Splitter;
-typedef CGAL::Orthogonal_k_neighbor_search<TreeTraits,Distance,Splitter> Neighbor_search;
+typedef CGAL::Fair<TreeTraits> Fair;
+typedef CGAL::Orthogonal_k_neighbor_search<TreeTraits,Distance,Fair> Neighbor_search;
 typedef Neighbor_search::Tree Tree;
 typedef std::list<Neighbor_search::Point_with_distance> Neighbors;
 
 int 
 main() {
-  
+
   const int N = 1000;
   
   // generator for random data points in the square ( (-1,-1), (1,1) ) 
   Random_points_iterator rpit( 1.0);
 
-  Splitter fair(5); // bucket size=5
+  Fair fair(5); // bucket size=5
   // Insert number_of_data_points in the tree
   Tree tree(N_Random_points_iterator(rpit,0),
 	    N_Random_points_iterator(N),
-	    splitter);
+	    fair);
 
   Point query(0,0);
   

@@ -15,9 +15,9 @@ typedef K::Point_d Point_d;
 typedef CGAL::Random_points_in_iso_box_d<Point_d>       Random_points_iterator;
 typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator;
 typedef CGAL::Kd_tree_traits_point_d<K> Traits;
-typedef CGAL::Orthogonal_incremental_neighbor_search<Traits> NN_priority_search;
-typedef NN_priority_search::iterator NN_iterator;
-typedef NN_priority_search::Tree Tree;
+typedef CGAL::Orthogonal_incremental_neighbor_search<Traits> NN_incremental_search;
+typedef NN_incremental_search::iterator NN_iterator;
+typedef NN_incremental_search::Tree Tree;
 
 // A functor that returns true, iff the x-coordinate of a dD point is not positive
 struct X_not_positive {
@@ -46,7 +46,7 @@ main() {
   double four[D] = { 0.5, 0.5, 0.5, 0.5 };
   Point_d query(D, four, four+D );
 
-  NN_priority_search NN(tree, query);
+  NN_incremental_search NN(tree, query);
 
   NN_positive_x_iterator it(NN.begin(), NN.end(), X_not_positive(), NN.begin());
   

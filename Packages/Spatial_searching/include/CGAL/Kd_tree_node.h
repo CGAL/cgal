@@ -20,25 +20,26 @@
 #ifndef CGAL_KD_TREE_NODE_H
 #define CGAL_KD_TREE_NODE_H
 
-#include <CGAL/Kd_tree_traits_point.h>
+
+#include <CGAL/Splitters.h>
 #include <CGAL/Compact_container.h>
 namespace CGAL {
 
-  template < class TreeTraits > 
+  template <class GeomTraits, class Splitter=Sliding_midpoint<GeomTraits>, class UseExtendedNode = Tag_true > 
   class Kd_tree;
 
-	template < class TreeTraits > 
+	template < class TreeTraits, class Splitter, class UseExtendedNode > 
 	class Kd_tree_node {
 
-	  friend class Kd_tree<TreeTraits>;
+	  friend class Kd_tree<TreeTraits,Splitter,UseExtendedNode>;
 
-	  typedef typename Kd_tree<TreeTraits>::Node_handle Node_handle;
+	  typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::Node_handle Node_handle;
 	enum Node_type {LEAF, INTERNAL, EXTENDED_INTERNAL};
 	typedef typename TreeTraits::Point Point;
 
 	typedef typename TreeTraits::NT NT;
-	typedef typename TreeTraits::Separator Separator;
-	typedef   typename Kd_tree<TreeTraits>::Point_iterator Point_iterator;
+	typedef typename Kd_tree<TreeTraits>::Separator Separator;
+	typedef typename Kd_tree<TreeTraits>::Point_iterator Point_iterator;
 
         private:
 
@@ -129,7 +130,7 @@ namespace CGAL {
 
         template <class OutputIterator, class FuzzyQueryItem>
 	OutputIterator search(OutputIterator it, const FuzzyQueryItem& q,
-			      Kd_tree_rectangle<TreeTraits>* b) {
+			      Kd_tree_rectangle<TreeTraits>& b) {
 		if (is_leaf()) { 
 			if (n>0) 
 			for (Point_iterator i=begin(); i != end(); i++) 
@@ -139,8 +140,8 @@ namespace CGAL {
 		else {
                         // after splitting b denotes the lower part of b
 			Kd_tree_rectangle<TreeTraits>* 
-			b_upper=b->split(sep.cutting_dimension(),
-					      sep.cutting_value());
+			b_upper=b.split(sep.cutting_dimension(),
+					sep.cutting_value());
                              
 			if (q.outer_range_is_contained_by(b)) 	
 			   it=lower_ch->tree_items(it);
@@ -148,11 +149,11 @@ namespace CGAL {
 		           if (q.inner_range_intersects(b)) 
 			   it=lower_ch->search(it,q,b);
 
-                        if  (q.outer_range_is_contained_by(b_upper))     
+                        if  (q.outer_range_is_contained_by(*b_upper))     
 			    it=upper_ch->tree_items(it);
 			else
-			    if (q.inner_range_intersects(b_upper)) 
-			    it=upper_ch->search(it,q,b_upper);
+			    if (q.inner_range_intersects(*b_upper)) 
+			    it=upper_ch->search(it,q,*b_upper);
 		        delete b_upper;
 		};
 	        return it;				
