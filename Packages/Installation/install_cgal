@@ -770,7 +770,7 @@ set_compiler_flags()
     EXE_EXT=""
     CGAL_LIBNAME="libCGAL.a"
     CGAL_QT_LIBNAME="libCGALQt.a"
-    CORE_LIBNAME="libCore.a"
+    CORE_LIBNAME="libcore++.a"
     CGAL_WIN_EXTRA_DIR=x11
     GMP_LIBNAME="libgmp.a"
     GMPXX_LIBNAME="libgmpxx.a"
@@ -805,7 +805,7 @@ set_compiler_flags()
 	    EXE_EXT=".exe"
 	    CGAL_LIBNAME="CGAL.lib"
 	    CGAL_QT_LIBNAME="CGALQt.lib"
-	    CORE_LIBNAME="libCore.lib"
+	    CORE_LIBNAME="libcore++.lib"
 	    CGAL_WIN_EXTRA_DIR=mswin
 	    GMP_LIBNAME="gmp.lib"
 	    GMPXX_LIBNAME="gmpxx.lib"
@@ -839,7 +839,7 @@ set_compiler_flags()
 	    EXE_EXT=".exe"
 	    CGAL_LIBNAME="CGAL.lib"
 	    CGAL_QT_LIBNAME="CGALQt.lib"
-	    CORE_LIBNAME="Core.lib"
+	    CORE_LIBNAME="core++.lib"
 	    CGAL_WIN_EXTRA_DIR=mswin
 	    GMP_LIBNAME="gmp.lib"
 	    GMPXX_LIBNAME="gmpxx.lib"
@@ -873,7 +873,7 @@ set_compiler_flags()
 	    EXE_EXT=".exe"
 	    CGAL_LIBNAME="CGAL.lib"
 	    CGAL_QT_LIBNAME="CGALQt.lib"
-	    CORE_LIBNAME="Core.lib"
+	    CORE_LIBNAME="core++.lib"
 	    CGAL_WIN_EXTRA_DIR=mswin
 	    GMP_LIBNAME="gmp.lib"
 	    GMPXX_LIBNAME="gmpxx.lib"
@@ -1589,7 +1589,7 @@ core_ldflags()
 	    libpath_option "`_where_is 'CORE_LIB_DIR'`"
 	    ${_printf} "%s" "`rpath_directive 'CORE_LIB_DIR'` "
 	fi
-	lib_option "Core"
+	lib_option "core++"
     fi
 }
 
@@ -2628,7 +2628,7 @@ check_CORE_LIB_DIR()
     if [ -n "${CORE_LIB_DIR}" ]; then
 	if [ ! -r ${CORE_LIB_DIR}/${CORE_LIBNAME} ]; then
 	    $1 "WARNING: CORE_LIB_DIR should contain "
-	    $1 "      libCore.a, libCore.lib, or Core.lib."
+	    $1 "      libcore++.a, libcore++.lib, or core++.lib."
 	else
 	    return 1
 	fi
