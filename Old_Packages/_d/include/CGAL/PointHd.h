@@ -25,9 +25,7 @@
 #ifndef CGAL_POINTHD_H
 #define CGAL_POINTHD_H
 
-#ifndef D_TUPLE_H
 #include <CGAL/d_tuple.h>
-#endif // D_TUPLE_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -92,15 +90,11 @@ const _d_tuple<RT>* PointHd<FT,RT>::ptr() const
 {
   return (_d_tuple<RT>*)PTR;
 }
+
 CGAL_END_NAMESPACE
 
-
-#ifndef CGAL_ORIGIN_H
 #include <CGAL/Origin.h>
-#endif // CGAL_ORIGIN_H
-#ifndef CGAL_NUMBER_UTILS_H
 #include <CGAL/number_utils.h>
-#endif // CGAL_NUMBER_UTILS_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -212,7 +206,7 @@ const RT*
 PointHd<FT,RT>::end() const
 { return ptr()->e + dimension() + 1; }
 
-#ifndef NO_OSTREAM_INSERT_POINTHD
+#ifndef CGAL_NO_OSTREAM_INSERT_POINTHD
 template < class FT, class RT >
 std::ostream&
 operator<<(std::ostream& os, const PointHd<FT,RT>& p)
@@ -238,15 +232,15 @@ operator<<(std::ostream& os, const PointHd<FT,RT>& p)
         return os;
     }
 }
-#endif // NO_OSTREAM_INSERT_POINTHD
+#endif // CGAL_NO_OSTREAM_INSERT_POINTHD
 
-#ifndef NO_ISTREAM_EXTRACT_POINTHD
+#ifndef CGAL_NO_ISTREAM_EXTRACT_POINTHD
 template < class FT, class RT >
 std::istream&
 operator>>(std::istream& is, PointHd<FT,RT> &p)
 {
     int d=0, i;
-    RT* e=0;
+    RT* e;
     switch(is.iword(IO::mode))
     {
       case IO::ASCII :
@@ -269,9 +263,8 @@ operator>>(std::istream& is, PointHd<FT,RT> &p)
     delete[] e;
     return is;
 }
+#endif // CGAL_NO_ISTREAM_EXTRACT_POINTHD
 
-#endif // NO_ISTREAM_EXTRACT_POINTHD
 CGAL_END_NAMESPACE
 
-
-#endif // POINTH_H
+#endif // CGAL_POINTHD_H

@@ -1,3 +1,7 @@
+2.6     (17 May 2001)
+- Remove PointSd.h
+- Fix BCC warning in PointHd.h
+
 2.5     (13 Feb 2001)
 - Take care of Simple_homogeneous<>.
 
