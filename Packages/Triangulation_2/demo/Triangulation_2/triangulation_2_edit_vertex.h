@@ -130,7 +130,7 @@ private:
       Locate_type lt;
       int li;
       Face_handle fh = dt->locate(Point(x,y), lt, li);
-      if(lt != 0){
+      if(lt != T::VERTEX){
 	current_v = dt->insert(Point(x, y), lt, fh, li);
 	do_not_remove = false;
       } else

@@ -3,6 +3,7 @@ constrained and regular triangulations with  tests and examples.
 
 Ver 7.96
 - added  tds() functions: const and non const access to the tds + test + doc
+- added demos using Qt_widget
 
 Ver 7.95 (2/07/06)
 - fixed expensive precondition in delete_face
