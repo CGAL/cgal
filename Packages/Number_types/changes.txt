@@ -1,3 +1,6 @@
+2 September 2004 Sylvain Pion & Menelaos Karavelas
+- number_type_basic.h : Replace #includes by declarations (for g++ 3.4).
+
 1 September 2004 Sylvain Pion
 - Add missing #include <CGAL/Quotient.h> in src/MP_Float.C.
 
