@@ -117,7 +117,7 @@ CGAL_CONFIG_PREFIX='CGAL_CFG_'
 
 # ---------------------------------------------
 # set to empty string, if you want to disable testsuite 
-CGAL_TESTSUITE='y'
+INTERNAL_RELEASE='y'
 
 # ---------------------------------------------
 # set to non-empty string, if MIPSPRO 64 compiler
@@ -198,6 +198,10 @@ CLN_LIB_DIR=''
 
 # did CLN tests succeed ('' - no, 'y' - yep)
 CLN_TEST_PASSED=''
+
+# indicate whether there is a "long name problem" on 
+# the current platform
+LONG_NAME_PROBLEM=''
 
 # ---------------------------------------------------------------------
 # internal variables
@@ -725,8 +729,6 @@ set_compiler_flags()
     WINDOW_DIR="/usr/lib/X11"
     XLIBS="-lX11"
     RUNTIME_LINKER_FLAG=''
-    LONG_NAME_PROBLEM_CXXFLAGS=
-    LONG_NAME_PROBLEM_LDFLAGS=
     PRINT_STACKTRACE_PROGRAM=
     WINDOWS_COMPILER=""
     SUFFIX_LIST=
@@ -770,7 +772,7 @@ set_compiler_flags()
 	    SEPARATE_LIBPATH="y"
             LIB_CREATION_COMMANDS="tlib @borland_lib_creation"
 	    ;;
-	*CL.EXE*|*cl.exe*)
+	*VC++*)
 	    #### settings Microsoft Visual C++ compiler 
 	    WINDOWS_COMPILER="y"
 	    ADDITIONAL_CXXFLAGS="-TP -GR -GX -Zm900 -nologo -DCGAL_LIMITED_ITERATOR_TRAITS_SUPPORT `include_dir_option ${CGAL_DIR}/stlport`"
@@ -843,8 +845,6 @@ set_compiler_flags()
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
 	    WINDOW_DIR="/usr/openwin/lib"
 	    RUNTIME_LINKER_FLAG="-R "
-	    LONG_NAME_PROBLEM_CXXFLAGS="-g"
-	    LONG_NAME_PROBLEM_LDFLAGS="-z nodefs -s"
 	    PRINT_STACKTRACE_PROGRAM="gdb"
 	    ;;
 	*Linux*g++*)
@@ -1190,6 +1190,7 @@ test_compiler_specifica()
     fi
 
     # test for other compiler features/bugs
+    LONG_NAME_PROBLEM=''
     for i in ${CGAL_TEST_CONF_DIR}/CGAL*.C; do
 	${_cat} ${i} > ${TMP_CXX_FILE}.C
 	${_printf} "%s%s\n" \
@@ -1225,6 +1226,8 @@ test_compiler_specifica()
 	elif [ "`${_basename} ${i}`" = "CGAL_CFG_CCTYPE_MACRO_BUG.C" ]; then
 	    # we have to generate the redirection header cctype
 	    create_replacement_header notest cctype "" ctype.h
+	elif [ "`${_basename} ${i}`" = "CGAL_CFG_NO_LONGNAME_PROBLEM.C" ]; then
+	    LONG_NAME_PROBLEM=y
 	fi
 	${_printf} "%s\n\n" \
 	    "#define ${CGAL_CONFIG_PREFIX}${_test_name} 1" \
@@ -2921,6 +2924,9 @@ retrieve_compiler_settings()
 	    fi
 	fi
     fi
+    if try_to_get_var_from_file LONG_NAME_PROBLEM "${_file}"; then
+	SETUP_COMPLETE=''
+    fi
 
     set_lib_compiled_flag
 }
@@ -2976,6 +2982,7 @@ store_compiler_settings()
     _store_install_config_variable CLN_LIB_DIR >>${_file}
     _store_install_config_variable CUSTOM_CXXFLAGS  >>${_file}
     _store_install_config_variable CUSTOM_LDFLAGS >>${_file}
+    _store_install_config_variable LONG_NAME_PROBLEM >>${_file}
     ${_printf} "\n%s\n" \
 	"/* EOF */" \
 	>>${_file}
@@ -3086,14 +3093,20 @@ _set_support()
 	*SUNPRO*) CGAL_SUPPORT_COMPILER='';;
 	*MIPSPRO*n32*) 
 	    case `compiler_version` in
-		7.2*) CGAL_SUPPORT_COMPILER='y';;
+		7.3*) CGAL_SUPPORT_COMPILER='y';;
 		*) CGAL_SUPPORT_COMPILER='';;
 	    esac
 	    ;;
 	*GNU*)
 	    case `compiler_version` in
-		2.8.1*) CGAL_SUPPORT_COMPILER='y';;
+		2.9*) CGAL_SUPPORT_COMPILER='y';;
 		egcs-2*) CGAL_SUPPORT_COMPILER='y';;
+		*) CGAL_SUPPORT_COMPILER='';;
+	    esac
+	    ;;
+	*CYGWIN*CL.EXE*|*CYGWIN*cl.exe*)
+	    case `compiler_version` in
+		12.00.8168*) CGAL_SUPPORT_COMPILER='y';;
 		*) CGAL_SUPPORT_COMPILER='';;
 	    esac
 	    ;;
@@ -3903,12 +3916,12 @@ write_compiler_flags()
   # LONG_NAME_PROBLEM_CXXFLAGS
   #
   print_as_shell_comment \
-    "*** to work around the long-name-problem" >> ${FILE}
-  print_as_shell_comment \
-    "*** on sparc_SunOS-5.5_g++-2.8.*/egcs-1.0.*" >> ${FILE}
-  ${_printf} "%s\n\n" \
-    "LONG_NAME_PROBLEM_CXXFLAGS = ${LONG_NAME_PROBLEM_CXXFLAGS}" \
-    >> ${FILE}
+    "*** to work around the long-name-problem with sun as/ld" >> ${FILE}
+  if [ -n "${LONG_NAME_PROBLEM}" ]; then
+    ${_printf} "%s\n\n" "LONG_NAME_PROBLEM_CXXFLAGS = -g" >> ${FILE}
+  else
+    ${_printf} "%s\n\n" "LONG_NAME_PROBLEM_CXXFLAGS =" >> ${FILE}
+  fi
 
   #
   # CGAL_CXXFLAGS
@@ -4082,12 +4095,13 @@ write_linker_flags()
   # LONG_NAME_PROBLEM_LDFLAGS
   #
   print_as_shell_comment \
-    "*** to work around the long-name-problem" >> ${FILE}
-  print_as_shell_comment \
-    "*** on sparc_SunOS-5.5_g++-2.8.*/egcs-1.0.*" >> ${FILE}
-  ${_printf} "%s\n\n" \
-    "LONG_NAME_PROBLEM_LDFLAGS = ${LONG_NAME_PROBLEM_LDFLAGS}" \
+    "*** to work around the long-name-problem with sun as/ld" >> ${FILE}
+  if [ -n "${LONG_NAME_PROBLEM}" ]; then
+    ${_printf} "%s\n\n" "LONG_NAME_PROBLEM_LDFLAGS = -z nodefs -s" \
     >> ${FILE}
+  else
+    ${_printf} "%s\n\n" "LONG_NAME_PROBLEM_LDFLAGS =" >> ${FILE}
+  fi
 
   #
   # CGAL_LIBPATH
@@ -4363,7 +4377,7 @@ generatemakefiles()
     "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
   done
 
-  if [ -n "${CGAL_TESTSUITE}" ]; then
+  if [ -n "${INTERNAL_RELEASE}" ]; then
     for FILE in `${_ls} ${CGAL_TEST_DIR}/*/makefile`; do
 	replace_line ${FILE} CGAL_MAKEFILE \
 	  "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
@@ -4381,7 +4395,11 @@ _do_compile()
 	${_rm} -f ${COMPILE_LOGFILE} 
     fi
     ${_rm} -f *${OBJ_EXT}
-    if make -k -f makefile_$1 >${COMPILE_LOGFILE} 2>&1; then
+    MAKE_OPTION="-k"
+    if [ -n "${INTERNAL_RELEASE}" ]; then
+	MAKE_OPTION="-i"
+    fi
+    if make ${MAKE_OPTION} -f makefile_$1 >${COMPILE_LOGFILE} 2>&1; then
 	log_print "Compilation of $1 ${_libname} succeeded."
 	${_printf} "%s\n" " done."
 	ANY_LIB_COMPILED='y'
@@ -4670,7 +4688,7 @@ main_menu()
 	print_line     "${_bold_on}<A>${_bold_off}  Run all setup tests (no cache)" 
 	print_empty_line 
 	print_line     "${_bold_on}<B>${_bold_off}  Build CGAL Libraries" 
-	if [ -n "${CGAL_TESTSUITE}" -a -n "${LIB_COMPILED}" ]; then
+	if [ -n "${INTERNAL_RELEASE}" -a -n "${LIB_COMPILED}" ]; then
 	    print_line     "${_bold_on}<S>${_bold_off}  Run CGAL testsuite" 
 	fi
 	if [ -f ${CGAL_DIR}/.upgrade-tag ]; then
@@ -4710,7 +4728,7 @@ main_menu()
 		flush_buffer
 		test_setup;;
 	    s|S)
-		if [ -n "${CGAL_TESTSUITE}" -a -n "${LIB_COMPILED}" ]; then
+		if [ -n "${INTERNAL_RELEASE}" -a -n "${LIB_COMPILED}" ]; then
 		    test_menu
 		fi
 		;;
