@@ -25,8 +25,10 @@
 #define CGAL_POINT_GENERATORS_D_H 1
 
 #include <CGAL/generators.h>
+#include <CGAL/iterator.h>
 #include <iterator>
 
+CGAL_BEGIN_NAMESPACE
 template < class P>
 class Random_points_in_iso_box_d : public Generator_base<P> 
 {
