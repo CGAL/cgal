@@ -11,13 +11,13 @@ friend class Translation_repC2<R>;
 friend class Rotation_repC2<R>;
 
 public:
-  typedef Aff_transformation_rep_baseC2<R> Base;
-  typedef typename Base::FT                FT;
-  typedef typename Base::RT                RT;
-  typedef typename Base::Point_2           Point_2;
-  typedef typename Base::Vector_2          Vector_2;
-  typedef typename Base::Direction_2       Direction_2;
-  typedef typename Base::Aff_transformation_2   Aff_transformation_2;
+  typedef Aff_transformation_rep_baseC2<R> Aff_t_base;
+  typedef typename Aff_t_base::FT                FT;
+  typedef typename Aff_t_base::RT                RT;
+  typedef typename Aff_t_base::Point_2           Point_2;
+  typedef typename Aff_t_base::Vector_2          Vector_2;
+  typedef typename Aff_t_base::Direction_2       Direction_2;
+  typedef typename Aff_t_base::Aff_transformation_2   Aff_transformation_2;
   typedef Aff_transformation_repC2<R>      Transformation;
   typedef Translation_repC2<R>             Translation;
   typedef Rotation_repC2<R>                Rotation;
@@ -48,7 +48,7 @@ public:
     return d;
   }
 
-  Aff_transformation_2 operator*(const Base &t)
+  Aff_transformation_2 operator*(const Aff_t_base &t)
   {
    return t.compose(*this);
   }

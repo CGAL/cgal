@@ -9,7 +9,7 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R >
 inline
-_Twotuple<typename R::FT>*
+_Twotuple<typename DirectionC2<R CGAL_CTAG>::FT>*
 DirectionC2<R CGAL_CTAG>::ptr() const
 {
   return (_Twotuple<FT>*)PTR;
@@ -38,8 +38,8 @@ DirectionC2(const typename DirectionC2<R CGAL_CTAG>::Vector_2 &v) :
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-DirectionC2<R CGAL_CTAG>::DirectionC2(const typename R::FT &x,
-                                      const typename R::FT &y)
+DirectionC2<R CGAL_CTAG>::DirectionC2(const typename DirectionC2<R CGAL_CTAG>::FT &x,
+                                      const typename DirectionC2<R CGAL_CTAG>::FT &y)
 {
   PTR = new _Twotuple<FT>(x, y);
 }
@@ -162,7 +162,7 @@ DirectionC2<R CGAL_CTAG>::operator-() const
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename R::FT
+typename DirectionC2<R CGAL_CTAG>::FT
 DirectionC2<R CGAL_CTAG>::delta(int i) const
 {
   CGAL_kernel_precondition( ( i == 0 ) || ( i == 1 ) );
@@ -172,7 +172,7 @@ DirectionC2<R CGAL_CTAG>::delta(int i) const
 
 template < class R >
 inline
-typename R::FT
+typename DirectionC2<R CGAL_CTAG>::FT
 DirectionC2<R CGAL_CTAG>::dx() const
 {
   return ptr()->e0;
@@ -180,7 +180,7 @@ DirectionC2<R CGAL_CTAG>::dx() const
 
 template < class R >
 inline
-typename R::FT
+typename DirectionC2<R CGAL_CTAG>::FT
 DirectionC2<R CGAL_CTAG>::dy() const
 {
   return ptr()->e1;
@@ -212,7 +212,7 @@ template < class R >
 std::istream
 &operator>>(std::istream &is, DirectionC2<R CGAL_CTAG> &p)
 {
-    typename R::FT x, y;
+    typename DirectionC2<R CGAL_CTAG>::FT x, y;
     switch(is.iword(IO::mode)) {
     case IO::ASCII :
         is >> x >> y;

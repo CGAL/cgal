@@ -1,3 +1,7 @@
+Version 3.2.6 (September 2 1999)
+- Changed all the typename R::FT into typename ClassC2<>::FT
+  for M$VC++
+
 Version 3.2.5 (September 2 1999)
 - corrected a few buggy FT in Aff_transformation_2<R>::member(FT)
   should have been typenamed R::FT

@@ -37,7 +37,7 @@ CircleC2<R CGAL_CTAG>::CircleC2(const CircleC2<R CGAL_CTAG> &t)
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 CircleC2<R CGAL_CTAG>::CircleC2(const CircleC2<R CGAL_CTAG>::Point_2 &center,
-                      const typename R::FT &squared_radius,
+                      const typename CircleC2<R CGAL_CTAG>::FT &squared_radius,
                       const Orientation &orient)
 {
   CGAL_kernel_precondition( ( squared_radius >= FT(0) ) &&

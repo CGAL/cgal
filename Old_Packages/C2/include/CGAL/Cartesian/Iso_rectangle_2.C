@@ -123,28 +123,28 @@ Iso_rectangleC2<R CGAL_CTAG>::max() const
 
 template < class R >
 inline
-typename R::FT Iso_rectangleC2<R CGAL_CTAG>::xmin() const
+typename Iso_rectangleC2<R CGAL_CTAG>::FT Iso_rectangleC2<R CGAL_CTAG>::xmin() const
 {
   return  min().x();
 }
 
 template < class R >
 inline
-typename R::FT Iso_rectangleC2<R CGAL_CTAG>::ymin() const
+typename Iso_rectangleC2<R CGAL_CTAG>::FT Iso_rectangleC2<R CGAL_CTAG>::ymin() const
 {
   return  min().y();
 }
 
 template < class R >
 inline
-typename R::FT Iso_rectangleC2<R CGAL_CTAG>::xmax() const
+typename Iso_rectangleC2<R CGAL_CTAG>::FT Iso_rectangleC2<R CGAL_CTAG>::xmax() const
 {
   return  max().x();
 }
 
 template < class R >
 inline
-typename R::FT Iso_rectangleC2<R CGAL_CTAG>::ymax() const
+typename Iso_rectangleC2<R CGAL_CTAG>::FT Iso_rectangleC2<R CGAL_CTAG>::ymax() const
 {
   return  max().y();
 }

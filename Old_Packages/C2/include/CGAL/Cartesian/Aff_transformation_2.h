@@ -82,7 +82,7 @@ public:
   typedef _R                               R;
   typedef typename R::FT                   FT;
   typedef typename R::RT                   RT;
-  typedef Aff_transformation_rep_baseC2<R> Base;
+  typedef Aff_transformation_rep_baseC2<R> Aff_t_base;
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef Aff_transformationC2<R,Cartesian_tag> Self;
   typedef typename R::Point_2              Point_2;
@@ -170,7 +170,7 @@ public:
   std::ostream &print(std::ostream &os) const;
 
 private:
-  Base* ptr() const { return  (Base*)PTR; }
+  Aff_t_base* ptr() const { return  (Aff_t_base*)PTR; }
 };
 
 CGAL_END_NAMESPACE

@@ -19,7 +19,7 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R >
 inline
-_Twotuple<typename R::FT>*
+_Twotuple<typename PointC2<R CGAL_CTAG>::FT>*
 PointC2<R CGAL_CTAG>::ptr() const
 {
   return (_Twotuple<FT>*)PTR;
@@ -53,9 +53,9 @@ PointC2<R CGAL_CTAG>::PointC2(const typename PointC2<R CGAL_CTAG>::Vector_2 &v)
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-PointC2<R CGAL_CTAG>::PointC2(const typename R::FT &hx,
-                    const typename R::FT &hy,
-                    const typename R::FT &hw)
+PointC2<R CGAL_CTAG>::PointC2(const typename PointC2<R CGAL_CTAG>::FT &hx,
+                    const typename PointC2<R CGAL_CTAG>::FT &hy,
+                    const typename PointC2<R CGAL_CTAG>::FT &hw)
 {
   if( hw != FT(1)) {
     PTR = new _Twotuple<FT>(hx/hw, hy/hw);
@@ -66,8 +66,8 @@ PointC2<R CGAL_CTAG>::PointC2(const typename R::FT &hx,
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-PointC2<R CGAL_CTAG>::PointC2(const typename R::FT &x,
-                              const typename R::FT &y)
+PointC2<R CGAL_CTAG>::PointC2(const typename PointC2<R CGAL_CTAG>::FT &x,
+                              const typename PointC2<R CGAL_CTAG>::FT &y)
 {
   PTR = new _Twotuple<FT>(x, y);
 }
@@ -105,20 +105,20 @@ inline
 int PointC2<R CGAL_CTAG>::id() const { return (int)PTR; }
 
 template < class R >
-inline typename R::FT PointC2<R CGAL_CTAG>::x()  const
+inline typename PointC2<R CGAL_CTAG>::FT PointC2<R CGAL_CTAG>::x()  const
 {
   return ptr()->e0;
 }
 
 template < class R >
-inline typename R::FT PointC2<R CGAL_CTAG>::y()  const
+inline typename PointC2<R CGAL_CTAG>::FT PointC2<R CGAL_CTAG>::y()  const
 {
   return  ptr()->e1 ;
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename R::FT
+typename PointC2<R CGAL_CTAG>::FT
 PointC2<R CGAL_CTAG>::cartesian(int i) const
 {
   CGAL_kernel_precondition( (i == 0) || (i == 1) );
@@ -127,7 +127,7 @@ PointC2<R CGAL_CTAG>::cartesian(int i) const
 
 template < class R >
 inline
-typename R::FT
+typename PointC2<R CGAL_CTAG>::FT
 PointC2<R CGAL_CTAG>::operator[](int i) const
 {
   return cartesian(i);
@@ -143,7 +143,7 @@ PointC2<R CGAL_CTAG>::dimension() const
 
 template < class R >
 inline
-typename R::FT
+typename PointC2<R CGAL_CTAG>::FT
 PointC2<R CGAL_CTAG>::hx()  const
 {
   return ptr()->e0;
@@ -151,7 +151,7 @@ PointC2<R CGAL_CTAG>::hx()  const
 
 template < class R >
 inline
-typename R::FT
+typename PointC2<R CGAL_CTAG>::FT
 PointC2<R CGAL_CTAG>::hy()  const
 {
   return ptr()->e1;
@@ -159,7 +159,7 @@ PointC2<R CGAL_CTAG>::hy()  const
 
 template < class R >
 inline
-typename R::FT
+typename PointC2<R CGAL_CTAG>::FT
 PointC2<R CGAL_CTAG>::hw()  const
 {
   return FT(1);
@@ -167,7 +167,7 @@ PointC2<R CGAL_CTAG>::hw()  const
 
 template < class R >
 inline
-typename R::FT
+typename PointC2<R CGAL_CTAG>::FT
 PointC2<R CGAL_CTAG>::homogeneous(int i) const
 {
   CGAL_kernel_precondition( (i>=0) && (i<=2) );
@@ -215,7 +215,7 @@ std::ostream &operator<<(std::ostream &os, const PointC2<R CGAL_CTAG> &p)
 template < class R >
 std::istream &operator>>(std::istream &is, PointC2<R CGAL_CTAG> &p)
 {
-    typename R::FT x, y;
+    typename PointC2<R CGAL_CTAG>::FT x, y;
     switch(is.iword(IO::mode)) {
     case IO::ASCII :
         is >> x >> y;

@@ -71,7 +71,7 @@ template < class R >
 CGAL_KERNEL_LARGE_INLINE
 typename Aff_transformation_repC2<R>::Aff_transformation_2
 Aff_transformation_repC2<R>::
-compose(const Aff_transformation_repC2 &t) const
+compose(const Aff_transformation_repC2<R> &t) const
   {
     return Aff_transformation_2(t.t11*t11 + t.t12*t21,
                                 t.t11*t12 + t.t12*t22,

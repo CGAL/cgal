@@ -16,7 +16,7 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R >
 inline
-_Threetuple<typename R::FT>*
+_Threetuple<typename LineC2<R CGAL_CTAG>::FT>*
 LineC2<R CGAL_CTAG>::ptr() const
 {
   return (_Threetuple<FT>*)PTR;
@@ -25,9 +25,9 @@ LineC2<R CGAL_CTAG>::ptr() const
 template < class R >
 CGAL_KERNEL_INLINE
 void
-LineC2<R CGAL_CTAG>::new_rep(const typename R::FT &a,
-                             const typename R::FT &b,
-			     const typename R::FT &c)
+LineC2<R CGAL_CTAG>::new_rep(const typename LineC2<R CGAL_CTAG>::FT &a,
+                             const typename LineC2<R CGAL_CTAG>::FT &b,
+			     const typename LineC2<R CGAL_CTAG>::FT &c)
 {
   PTR = new _Threetuple<FT> (a, b, c);
 }
@@ -65,9 +65,9 @@ LineC2<R CGAL_CTAG>::LineC2(const typename LineC2<R CGAL_CTAG>::Point_2 &p,
 
 template < class R >
 inline
-LineC2<R CGAL_CTAG>::LineC2(const typename R::FT &a,
-                            const typename R::FT &b,
-			    const typename R::FT &c)
+LineC2<R CGAL_CTAG>::LineC2(const typename LineC2<R CGAL_CTAG>::FT &a,
+                            const typename LineC2<R CGAL_CTAG>::FT &b,
+			    const typename LineC2<R CGAL_CTAG>::FT &c)
 {
   new_rep(a, b, c);
 }
@@ -135,42 +135,42 @@ int LineC2<R CGAL_CTAG>::id() const
 
 template < class R >
 inline
-typename R::FT LineC2<R CGAL_CTAG>::a() const
+typename LineC2<R CGAL_CTAG>::FT LineC2<R CGAL_CTAG>::a() const
 {
   return ptr()->e0;
 }
 
 template < class R >
 inline
-typename R::FT LineC2<R CGAL_CTAG>::b() const
+typename LineC2<R CGAL_CTAG>::FT LineC2<R CGAL_CTAG>::b() const
 {
   return ptr()->e1;
 }
 
 template < class R >
 inline
-typename R::FT LineC2<R CGAL_CTAG>::c() const
+typename LineC2<R CGAL_CTAG>::FT LineC2<R CGAL_CTAG>::c() const
 {
   return ptr()->e2;
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename R::FT
-LineC2<R CGAL_CTAG>::x_at_y(const typename R::FT &y) const
+typename LineC2<R CGAL_CTAG>::FT
+LineC2<R CGAL_CTAG>::x_at_y(const typename LineC2<R CGAL_CTAG>::FT &y) const
 {
   CGAL_kernel_precondition_msg( (a() != FT(0)),
-  "Line::x_at_y(const typename R::FT &y) is undefined for horizontal line" );
+  "Line::x_at_y(const typename LineC2<R CGAL_CTAG>::FT &y) is undefined for horizontal line" );
   return line_x_at_y(*this,y);
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename R::FT
-LineC2<R CGAL_CTAG>::y_at_x(const typename R::FT &x) const
+typename LineC2<R CGAL_CTAG>::FT
+LineC2<R CGAL_CTAG>::y_at_x(const typename LineC2<R CGAL_CTAG>::FT &x) const
 {
   CGAL_kernel_precondition_msg( (b() != FT(0)),
-  "Line::x_at_y(const typename R::FT &y) is undefined for vertical line");
+  "Line::x_at_y(const typename LineC2<R CGAL_CTAG>::FT &y) is undefined for vertical line");
   return line_y_at_x(*this,x);
 }
 
@@ -318,7 +318,7 @@ std::ostream &operator<<(std::ostream &os, const LineC2<R CGAL_CTAG> &l)
 template < class R >
 std::istream &operator>>(std::istream &is, LineC2<R CGAL_CTAG> &p)
 {
-    typename R::FT a, b, c;
+    typename LineC2<R CGAL_CTAG>::FT a, b, c;
     switch(is.iword(IO::mode)) {
     case IO::ASCII :
         is >> a >> b >> c;

@@ -142,7 +142,7 @@ SegmentC2<R CGAL_CTAG>::operator[](int i) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename R::FT
+typename SegmentC2<R CGAL_CTAG>::FT
 SegmentC2<R CGAL_CTAG>::squared_length() const
 {
   return squared_distance(source(), target());

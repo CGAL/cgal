@@ -63,13 +63,13 @@ class Aff_transformation_repC2
   : public Aff_transformation_rep_baseC2<R>
 {
 public:
-  typedef typename R::FT                        FT;
-  typedef typename R::RT                        RT;
-  typedef Aff_transformation_rep_baseC2<R>      Base;
-  typedef typename Base::Point_2                Point_2;
-  typedef typename Base::Vector_2               Vector_2;
-  typedef typename Base::Direction_2            Direction_2;
-  typedef typename Base::Aff_transformation_2   Aff_transformation_2;
+  typedef typename R::FT                              FT;
+  typedef typename R::RT                              RT;
+  typedef Aff_transformation_rep_baseC2<R>            Aff_t_base;
+  typedef typename Aff_t_base::Point_2                Point_2;
+  typedef typename Aff_t_base::Vector_2               Vector_2;
+  typedef typename Aff_t_base::Direction_2            Direction_2;
+  typedef typename Aff_t_base::Aff_transformation_2   Aff_transformation_2;
 
 friend class Translation_repC2<R>;
 friend class Rotation_repC2<R>;
