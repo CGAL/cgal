@@ -1,3 +1,6 @@
+25 March 2004 Radu Ursu
+- made doc work with the current manual tools implementation
+
 100.23 (09 February 2004) [rursu]
 - Updated headers in examples
 
