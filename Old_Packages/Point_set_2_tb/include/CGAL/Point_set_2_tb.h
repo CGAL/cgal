@@ -9,13 +9,13 @@
 // ----------------------------------------------------------------------
 //
 // release       : 
-// release_date  : 2000, December 15
+// release_date  : 
 //
 // file          : include/CGAL/Point_set_2_tb.h
-// package       : Point_set_2_tb (0.1)
+// package       : Point_set_2_tb (0.9)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 0.1
-// revision_date : 15 December 2000 
+// revision      : 0.9
+// revision_date : 27 March 2001 
 // author(s)     : Matthias Baesken
 //
 // coordinator   : Matthias Baesken, Trier  (<baesken@informatik.uni-trier.de>)
@@ -28,17 +28,8 @@
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <list>
 #include <queue>
-
-#if defined(USE_LEDA_CONTAINERS)
-#include <LEDA/map.h>
-#endif
-
-#if !defined(USE_LEDA_CONTAINERS)
 #include <map>
 #include <stack>
-#else
-#include <LEDA/p_queue.h>
-#endif
 
 #include <cmath>
 
@@ -47,7 +38,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#if !defined(USE_LEDA_CONTAINERS)
+
 // compare function objects for the priority queues used in nearest neighbor search
 template<class VP, class NT>
 class compare_vertices {
@@ -63,7 +54,7 @@ class compare_vertices {
     return (v1 > v2);
   }
 };
-#endif
+
 
 
 template<class Str, class Gt, class Tds>
@@ -72,61 +63,47 @@ class  Point_set_2_tb : public  Delaunay_triangulation_2<Gt,Tds>
 
 public:  
   typedef Gt Geom_traits;
-  typedef typename Geom_traits::Point_2 Point;
-  typedef typename Geom_traits::Ray_2 Ray;
-  typedef typename Geom_traits::Line_2 Line;
+  
+  typedef typename Geom_traits::Rep                         Rep;
+  typedef typename Geom_traits::Point_2                     Point;
+  typedef typename Geom_traits::Segment_2                   Segment;
+  
+  typedef typename Geom_traits::Orientation_2               Orientation_2;
+  typedef typename Geom_traits::Side_of_oriented_circle_2   Side_of_oriented_circle_2;
+  typedef typename Rep::Construct_circle_2                  Construct_circle_2; 
+  typedef typename Rep::Compute_squared_distance_2          Compute_squared_distance_2;
+  typedef typename Rep::FT                                  Numb_type;  // field number type ...
+                        
+  
+  typedef Triangulation_2<Gt,Tds>                           Triangulation;
+  typedef typename Triangulation::Locate_type               Locate_type;
+  typedef typename Triangulation::Face_handle               Face_handle;
+  typedef typename Triangulation::Vertex_handle             Vertex_handle;
+  typedef typename Triangulation::Edge                      Edge;
+  typedef typename Triangulation::Vertex                    Vertex;
+  typedef typename Triangulation::Face                      Face;
+  typedef typename Triangulation::Edge_circulator           Edge_circulator;
+  typedef typename Triangulation::Finite_edges_iterator     Finite_edges_iterator;
+  typedef typename Triangulation::Vertex_iterator           Vertex_iterator;
+  typedef typename Triangulation::Edge_iterator             Edge_iterator;
 
-  typedef Triangulation_2<Gt,Tds>                       Triangulation;
-  typedef typename Triangulation::Locate_type           Locate_type;
-  typedef typename Triangulation::Face_handle           Face_handle;
-  typedef typename Triangulation::Vertex_handle         Vertex_handle;
-  typedef typename Triangulation::Edge                  Edge;
-  typedef typename Triangulation::Vertex                Vertex;
-  typedef typename Triangulation::Face                  Face;
-  typedef typename Triangulation::Edge_circulator       Edge_circulator;
-  typedef typename Triangulation::Finite_edges_iterator Finite_edges_iterator;
-  typedef typename Triangulation::Vertex_iterator       Vertex_iterator;
-  typedef typename Triangulation::Edge_iterator         Edge_iterator;
-
-  typedef typename Str::FT       Numb_type;
+  // now the types from Str
   typedef typename Str::Circle   Circle;
-  typedef typename Str::Segment  Segment;
 
-  //functionality on these types...
-  typedef typename Str::Compare_xy_2                Comparepoints; 
-  typedef typename Str::Compare_dist_2              Comparedist;   
-  typedef typename Str::Orientation                 Orientation_2;   
-  typedef typename Str::Side_of_oriented_circle_2   Sideofcircle;
-  typedef typename Str::Side_of_halfspace_2         Sideofhalfspace;
-  typedef typename Str::Segment_has_on_2            Segmentcontains;
-  typedef typename Str::Squared_distance            Sqrdist;          
-  typedef typename Str::Squared_distance_to_line    Linesqrdist;      
+  typedef typename Str::Compare_dist_2              Comparedist;             
   typedef typename Str::Circle_bounded_side_2       Circleptori;
   typedef typename Str::Circle_center_2             Circlecenter;     
   
-  //constructors...
-  typedef typename Str::Construct_circle_2          Createcircle_3p;  
-  typedef typename Str::Construct_segment_2         Createsegment_2p;  
-  typedef typename Str::Construct_line_2            Createline_2p;     
-  
-   Str               traits;
-
-   Comparepoints    tr_comparepoints;
-   Comparedist      tr_comparedist;
-   Orientation_2    tr_orientation;  
-   Sideofcircle     tr_so_circle;   
-   Sideofhalfspace  tr_so_hp;        
-   Segmentcontains  tr_seg_contains; 
-   Sqrdist          tr_sqrdist;      
-   Linesqrdist      tr_linesqrdist; 
-   Circleptori      tr_circleptori;
-   Circlecenter     tr_circlecenter; 
+   Str                           traits;
+   Comparedist                   tr_comparedist;
+   Orientation_2                 tr_orientation;  
+   Side_of_oriented_circle_2     tr_so_circle;    
+   Compute_squared_distance_2    tr_sqrdist;      
+   Circleptori                   tr_circleptori;
+   Circlecenter                  tr_circlecenter; 
    
-   //constructors...
-   Createcircle_3p  tr_createcircle_3p;
-   Createsegment_2p tr_createsegment_2p;
-   Createline_2p    tr_createline_2p;
-
+   //constructions...
+   Construct_circle_2            tr_createcircle_3p;
 
    Point_set_2_tb()
    { 
@@ -318,7 +295,7 @@ public:
     }
 
     std::list<Vertex_handle> res_list;
-    nearest_neighbors(vh, k, res_list);
+    nearest_neighbors_list(vh, k, res_list);
    
     if ( !old_node ) 
     { 
@@ -326,7 +303,7 @@ public:
      remove(vh);
     }
     
-    std::list<Vertex_handle>::const_iterator it = res_list.begin();
+    std::list<Vertex_handle>::iterator it = res_list.begin();
     
     for (; it != res_list.end(); it++) { *res= *it; res++; }
 
@@ -344,10 +321,16 @@ public:
    }
    
    std::list<Vertex_handle> res_list;
-   nearest_neighbors(v, k, res_list); 
+   nearest_neighbors_list(v, k, res_list); 
+   
+   std::list<Vertex_handle>::iterator it = res_list.begin();
+    
+   for (; it != res_list.end(); it++) { *res= *it; res++; }
+
+   return res;     
   }
 
-  void nearest_neighbors(Vertex_handle v, int k, std::list<Vertex_handle>& res) 
+  void nearest_neighbors_list(Vertex_handle v, int k, std::list<Vertex_handle>& res) 
   {  
      int n = number_of_vertices();
    
@@ -359,35 +342,21 @@ public:
      // "unmark" the vertices ...
      init_dfs();
 
-#if defined(USE_LEDA_CONTAINERS)  
-     leda_p_queue<Numb_type,Vertex*> PQ;
-#else
+
      std::map<Vertex*,Numb_type, std::less<Vertex*> > priority_number; // here we save the priorities ...
      compare_vertices<Vertex*,Numb_type> comp(& priority_number);      // comparison object ...
-     priority_queue<Vertex*, std::vector<Vertex*>, CGAL::compare_vertices<Vertex*,Numb_type> > PQ(comp);
-#endif
- 
-#if defined(USE_LEDA_CONTAINERS) 
-     PQ.insert(0,v.ptr()); 
-#else
+     std::priority_queue<Vertex*, std::vector<Vertex*>, CGAL::compare_vertices<Vertex*,Numb_type> > PQ(comp);
+
      priority_number[v.ptr()] = 0;
      PQ.push(v.ptr());
-#endif
      
      mark_vertex(v);
-  
-     
+      
      while ( k > 0 )
      { 
-#if defined(USE_LEDA_CONTAINERS)
-       pq_item it = PQ.find_min();
-       Vertex* w = PQ.inf(it); 
-       PQ.del_item(it);
-#else
        // find minimum from PQ ...
        Vertex* w = PQ.top(); PQ.pop();
        priority_number.erase(w); // and clean entry in priority map
-#endif
    
        res.push_back(w->handle()); k--; 
 
@@ -401,12 +370,8 @@ public:
 	 
          if ( (!is_marked(act)) && (! is_infinite(act->handle())) )
          { 
-#if defined(USE_LEDA_CONTAINERS)
-	     PQ.insert(tr_sqrdist(p,act->point()), act);
-#else
              priority_number[act] = tr_sqrdist(p,act->point());
-             PQ.push(act);	     
-#endif  
+             PQ.push(act);	      
              mark_vertex(act->handle());
          }	   
 	             
@@ -420,29 +385,21 @@ public:
   // dfs
   // for marking nodes in search procedures
   int cur_mark;
-  
-#if defined(USE_LEDA_CONTAINERS)  
-  leda_map<Vertex*,int> mark;
-#else  
-  std::map<Vertex*,int, std::less<Vertex*> > mark;
-  
+   
+  std::map<Vertex*,int, std::less<Vertex*> > mark;  
   typedef typename std::map<Vertex*,int, std::less<Vertex*> >::iterator map_iterator;
-#endif
+
   
   void init_vertex_marks()
   {
      cur_mark = 0;
-#if defined(USE_LEDA_CONTAINERS)     
-     mark.clear(); 
-#else
      mark.erase(mark.begin(), mark.end());
-#endif
   }
   
   void init_dfs()
   {
      cur_mark++; 
-     if (cur_mark == MAXINT) init_vertex_marks();
+     if (cur_mark == INT_MAX) init_vertex_marks();
   }
   
   void mark_vertex(Vertex_handle vh)
@@ -456,13 +413,9 @@ public:
   {
     Vertex* v = vh.ptr();
     
-#if defined(USE_LEDA_CONTAINERS)    
-    if (! mark.defined(v)) return false;
-#else
     map_iterator mit = mark.find(v);   
     if (mit == mark.end()) return false;
-#endif
-    
+
     return (mark[v] == cur_mark);
   }
   
@@ -557,7 +510,7 @@ public:
    template<class OutputIterator>
    OutputIterator range_search(const Point& a1, const Point& b1, const Point& c1,const Point&
    d1,OutputIterator res)
-   // a1 lower left, b1 lower right , c1 upper right
+   // a1 upper left, b1 lower left , c1 lower right
    {
      //Point b(c.xcoord(),a.ycoord());
      //Point d(a.xcoord(),c.ycoord());
@@ -583,12 +536,6 @@ public:
      }
      return res;     
    }
-
-   // minimum spanning tree removed ...
-   //template<class OutputIterator>
-   //OutputIterator minimum_spanning_tree(OutputIterator result) const
-   
-   
  
    bool     IS_NON_DIAGRAM_DART(Edge e) const
    { 
