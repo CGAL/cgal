@@ -64,7 +64,7 @@ public:
   typedef typename R::FT Coord_type;
   typedef typename Triangulation_euclidean_traits_2<R>::Point Point;
 
-  typedef Compute_squared_radius_2<Coord_type, Point> 
+  typedef CGAL::Compute_squared_radius_2<Coord_type, Point> 
   Compute_squared_radius_2;
   typedef typename R::Side_of_bounded_circle_2 Side_of_bounded_circle_2;
   

@@ -1193,7 +1193,7 @@ Alpha_shape_2<Dt>::get_alpha_shape_edges
 //-------------------------------------------------------------------------
 
 template < class Dt >
-Alpha_shape_2<Dt>::Classification_type  
+typename Alpha_shape_2<Dt>::Classification_type  
 Alpha_shape_2<Dt>::classify(const Face_handle& f, const int& i, 
 			    const Coord_type& alpha) const
 {
@@ -1232,7 +1232,7 @@ Alpha_shape_2<Dt>::classify(const Face_handle& f, const int& i,
 //-------------------------------------------------------------------------
 
 template < class Dt >
-Alpha_shape_2<Dt>::Classification_type  
+typename Alpha_shape_2<Dt>::Classification_type  
 Alpha_shape_2<Dt>::classify(const Vertex_handle& v,
 			    const Coord_type& alpha) const 
 {
@@ -1315,7 +1315,7 @@ Alpha_shape_2<Dt>::traverse(const Face_handle& pFace,
 //-------------------------------------------------------------------------
 
 template < class Dt >
-Alpha_shape_2<Dt>::Alpha_iterator
+typename Alpha_shape_2<Dt>::Alpha_iterator
 Alpha_shape_2<Dt>::find_optimal_alpha(const int& nb_components) 
 {
   // find the minimum alpha that satisfies the properties
@@ -1375,7 +1375,7 @@ Alpha_shape_2<Dt>::find_optimal_alpha(const int& nb_components)
 //-------------------------------------------------------------------------
 
 template < class Dt >
-Alpha_shape_2<Dt>::Coord_type 
+typename Alpha_shape_2<Dt>::Coord_type 
 Alpha_shape_2<Dt>::find_alpha_solid() const 
 {
   // compute the minumum alpha such that all data points 

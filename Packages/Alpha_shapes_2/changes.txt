@@ -1,3 +1,7 @@
+version 11.8:
+- Fixes for SunPro.
+- Remove useless non standard <strstream>.
+
 version 11.7:
 - little bug fix between documentation and source.
 
