@@ -103,6 +103,7 @@ typedef CGALi::Call_opposite_to_get<Ray_2>      Construct_opposite_ray_2;
 typedef CGALi::Call_opposite_to_get<Line_2>     Construct_opposite_line_2;
 typedef CGALi::Call_opposite_to_get<Triangle_2> Construct_opposite_triangle_2;
 typedef CGALi::Call_opposite_to_get<Circle_2>   Construct_opposite_circle_2;
+typedef CGALi::v_Opposite<Vector_2>             Construct_opposite_vector_2;
 typedef CGALi::Assign                           Assign_2;
 typedef CGALi::Call_transform                   Transform_2;
 typedef CGALi::Intersect                        Intersect_2;
@@ -116,6 +117,8 @@ CGAL_Kernel_obj(Construct_opposite_triangle_2,
 	        construct_opposite_triangle_2_object)
 CGAL_Kernel_obj(Construct_opposite_circle_2,
 	        construct_opposite_circle_2_object)
+CGAL_Kernel_obj(Construct_opposite_vector_2,
+	        construct_opposite_vector_2_object)
 CGAL_Kernel_obj(Assign_2, assign_2_object)
 CGAL_Kernel_obj(Transform_2, transform_2_object)
 CGAL_Kernel_obj(Intersect_2, intersect_2_object)
@@ -295,6 +298,7 @@ typedef CGALi::Call_opposite_to_get<Segment_3> Construct_opposite_segment_3;
 typedef CGALi::Call_opposite_to_get<Ray_3>     Construct_opposite_ray_3;
 typedef CGALi::Call_opposite_to_get<Line_3>    Construct_opposite_line_3;
 typedef CGALi::Call_opposite_to_get<Plane_3>   Construct_opposite_plane_3;
+typedef CGALi::v_Opposite<Vector_3>            Construct_opposite_vector_3;
 typedef CGALi::Call_supporting_plane_to_get<Plane_3>   
                                                Construct_supporting_plane_3;
 typedef CGALi::Call_transform                  Transform_3;
@@ -332,6 +336,7 @@ CGAL_Kernel_obj(Construct_opposite_segment_3,
 CGAL_Kernel_obj(Construct_opposite_ray_3, construct_opposite_ray_3_object)
 CGAL_Kernel_obj(Construct_opposite_line_3, construct_opposite_line_3_object)
 CGAL_Kernel_obj(Construct_opposite_plane_3, construct_opposite_plane_3_object)
+CGAL_Kernel_obj(Construct_opposite_vector_3, construct_opposite_vector_3_object)
 CGAL_Kernel_obj(Construct_supporting_plane_3,
 	        construct_supporting_plane_3_object)
 CGAL_Kernel_obj(Transform_3, transform_3_object)

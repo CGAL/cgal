@@ -293,6 +293,17 @@ class pl_Bisector
 };
 
 template <class Vector>
+class v_Opposite
+{
+   public: 
+     typedef Vector        result_type;
+   
+   Vector
+   operator()(const Vector& v) const
+   { return -v; }
+};
+
+template <class Vector>
 class v_Cross_product
 {
   public:
