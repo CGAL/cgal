@@ -25,7 +25,7 @@ LCPPINCS+= -I$(BASEDIR)/../../../Benchmark/include
 LCPPINCS+= -I$(BASEDIR)/../../../Arrangement/include
 LCPPINCS+= -I$(BASEDIR)/../../../Trapezoidal_decomposition/include
 LCPPINCS+= -I$(BASEDIR)/../../../Sweep_line_2/include
-LCPPINCS+= -I$(BASEDIR)/../../../../src/LEDA_KERNEL/include
+LCPPINCS+= -I$(BASEDIR)/../../../Leda_rat_kernel/include
 LCPPINCS+= $(CGALINCS)
 
 include $(ROOT)/include/make/cgalrul.mak
