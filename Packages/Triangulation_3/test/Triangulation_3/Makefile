@@ -7,7 +7,6 @@
 # pour purify, virer LEDA
 #CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-I/make/makefile_sparc_SunOS-5.6_g++-2.95.3_LEDA
 #CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.7_g++-2.95.1_LEDA
-CGAL_MAKEFILE = /0/prisme/teillaud/CGAL-2.3-I-74/make/makefile_i686_Linux-2.2.14_g++-2.95.3_LEDA
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#

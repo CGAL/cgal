@@ -1,5 +1,5 @@
-Version 1.67 (?? June 01)
-- bug in demo and example .color fixed
+Version 1.67 (25 June 01)
+- bug in demo and example _color fixed
 - dual functions cleaned
 - useless blind_demo removed
 - cleanup
