@@ -82,8 +82,13 @@ public:
     s[0] = t(p1);
     s[1] = t(p2);
 
-    if (CGAL_NTS compare(s[0], s[1]) == LARGER)
+    if (CGAL_NTS compare(s[0], s[1]) == LARGER) {
+#if defined(__GNUC__) && (__GNUC__ < 3)
+      swap< FT >(s[0], s[1]);
+#else
       std::swap< FT >(s[0], s[1]);
+#endif
+    }
 
     p.clear();
 
