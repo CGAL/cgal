@@ -70,6 +70,7 @@ void bench()
   std::cout << (int) result << "\t" << t.time()-dt << std::endl;
 }
 
+#ifndef CGAL_CFG_MATCHING_BUG_2
 namespace CGAL {
 template <class NT>
 NT
@@ -78,14 +79,15 @@ my_abs (const NT &n)
   return CGAL_NTS abs(n);
 }
 } // namespace CGAL
+#endif
 
 // The program code is 100% generic/templated, as usual.
 int test()
 {
   NT px, py, la, lb, lc;
   NT a (1);
-  a = CGAL::my_abs(a);
 #ifndef CGAL_CFG_MATCHING_BUG_2
+  a = CGAL::my_abs(a);
 #ifdef CGAL_USE_GMP
   CGAL::Filtered_exact< CGAL::Quotient<CGAL::Gmpz>, CGAL::Quotient<CGAL::Gmpz> > qq (3,5);
   std::cout << (int) CGAL::compare_y_at_xC2(qq,qq,qq,qq,qq);
