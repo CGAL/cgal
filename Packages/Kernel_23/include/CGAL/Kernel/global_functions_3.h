@@ -100,6 +100,23 @@ midpoint(const Point_3<K> &p, const Point_3<K> &q)
   return CGALi::midpoint(p, q, K());
 }
 
+template <class K >
+inline
+typename K::Vector_3
+orthogonal_vector(const Point_3<K>& p, const Point_3<K>& q, const Point_3<K>& r)
+{
+  return CGALi::orthogonal_vector(p, q, r, K());
+}
+
+
+template <class K >
+inline
+typename K::Vector_3
+orthogonal_vector(const Plane_3<K>& p)
+{
+  return CGALi::orthogonal_vector(p, K());
+}
+
 // FIXME TODO : what to do with teh operators ?
 template < class K >
 inline

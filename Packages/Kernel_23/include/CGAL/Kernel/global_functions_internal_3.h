@@ -104,6 +104,24 @@ midpoint(const typename CGAL_WRAP(K)::Point_3 &p,
   return k.construct_midpoint_3_object()(p, q);
 }
 
+template < class K >
+inline
+typename K::Vector_3
+orthogonal_vector(const typename CGAL_WRAP(K)::Point_3 &p,
+		  const typename CGAL_WRAP(K)::Point_3 &q,
+		  const typename CGAL_WRAP(K)::Point_3 &r, const K &k)
+{
+  return k.construct_orthogonal_vector_3_object()(p, q, r);
+}
+
+template < class K >
+inline
+typename K::Vector_3
+orthogonal_vector(const typename CGAL_WRAP(K)::Plane_3 &p, const K &k)
+{
+  return k.construct_orthogonal_vector_3_object()(p);
+}
+
 template <typename K>
 inline
 bool

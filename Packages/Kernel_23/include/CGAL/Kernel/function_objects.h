@@ -738,20 +738,6 @@ namespace CommonKernelFunctors {
   };
 
   template <typename K>
-  class Construct_orthogonal_vector_3
-  {
-    typedef typename K::Vector_3    Vector_3;
-    typedef typename K::Plane_3     Plane_3;
-  public:
-    typedef Vector_3         result_type;
-    typedef Arity_tag< 1 >   Arity;
-
-    Vector_3
-    operator()( const Plane_3& p ) const
-    { return p.orthogonal_vector(); }
-  };
-
-  template <typename K>
   class Construct_perpendicular_direction_2
   {
     typedef typename K::Direction_2   Direction_2;

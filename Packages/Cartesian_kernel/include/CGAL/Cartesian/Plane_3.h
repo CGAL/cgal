@@ -178,7 +178,7 @@ inline
 typename PlaneC3<R>::Vector_3
 PlaneC3<R>::orthogonal_vector() const
 {
-  return Vector_3(a(), b(), c());
+  return R().construct_orthogonal_vector_3_object()(*this);
 }
 
 template < class R >

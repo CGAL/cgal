@@ -1,3 +1,6 @@
+ 8 Mar 2003 Andreas Fabri
+- Added functor and function for constructing orthogilnal vector of three points
+
 29 Feb 2004 Sylvain Pion
 - Move cross_product() to the new scheme.
 

@@ -1266,6 +1266,40 @@ namespace CartesianKernelFunctors {
   };
 
   template <typename K>
+  class Construct_orthogonal_vector_3
+  {
+    typedef K::FT FT;
+    typedef typename K::Point_3     Point_3;
+    typedef typename K::Vector_3    Vector_3;
+    typedef typename K::Plane_3     Plane_3;
+  public:
+    typedef Vector_3         result_type;
+    typedef Arity_tag< 1 >   Arity;
+
+    Vector_3
+    operator()( const Plane_3& p ) const
+    { return Vector_3(p.a(), p.b(), p.c()); }
+
+    Vector_3
+    operator()( const Point_3& p, const Point_3& q, const Point_3& r ) const
+    { 
+      FT rpx = p.x()-r.x();
+      FT rpy = p.y()-r.y();
+      FT rpz = p.z()-r.z();
+      FT rqx = q.x()-r.x();
+      FT rqy = q.y()-r.y();
+      FT rqz = q.z()-r.z();
+      // Cross product rp * rq
+      FT vx = rpy*rqz - rqy*rpz;
+      FT vy = rpz*rqx - rqz*rpx;
+      FT vz = rpx*rqy - rqx*rpy;
+      typename K::Construct_vector_3 construct_vector;
+      
+      return construct_vector(vx, vy, vz); 
+    }
+  };
+
+  template <typename K>
   class Construct_scaled_vector_2
   {
     typedef typename K::FT         FT;

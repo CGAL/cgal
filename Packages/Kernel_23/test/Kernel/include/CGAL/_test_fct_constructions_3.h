@@ -28,6 +28,8 @@ _test_fct_constructions_3(const R&)
 {
   typedef typename R::RT             RT;
   typedef typename R::Point_3        Point;
+  typedef typename R::Segment_3      Segment;
+  typedef typename R::Plane_3        Plane;
   typedef typename R::Vector_3       Vector;
   typedef typename R::Triangle_3     Triangle;
   typedef typename R::Tetrahedron_3  Tetrahedron;
@@ -73,6 +75,17 @@ _test_fct_constructions_3(const R&)
   Point p_11 = p + Vector(RT0, RT1, RT1);
   assert( CGAL::centroid( p111, p010, p101, p000) == p);
   assert( CGAL::centroid( p111, p_11, p011 ) == p_11);
+
+  // orthogonal_vector
+  Point p0(RT0, RT0, RT0), px1(RT1, RT0, RT0), py1(RT0, RT1, RT0);
+  Vector vz1(RT0, RT0, RT1);
+  Vector orth = orthogonal_vector(p0, px1, py1);
+  assert( (vz1 * orth) > 0 );
+  assert( parallel(Segment(p0, p0+orth), Segment(p0, p0+vz1)) );
+
+  orth = orthogonal_vector(Plane(p0, px1, py1));
+  assert( (vz1 * orth) > 0 );
+  assert( parallel(Segment(p0, p0+orth), Segment(p0, p0+vz1)) );
 
   // projection onto a plane
 

@@ -1475,6 +1475,7 @@ public:
 template <typename K>
 class Construct_orthogonal_vector_3
 {
+    typedef typename K::Point_3     Point_3;
     typedef typename K::Vector_3    Vector_3;
     typedef typename K::Plane_3     Plane_3;
 public:
@@ -1483,6 +1484,10 @@ public:
 
     Vector_3
     operator()( const Plane_3&) const
+    { return Vector_3(); }
+
+    Vector_3
+    operator()( const Point_3&, const Point_3&, const Point_3&) const
     { return Vector_3(); }
 };
 

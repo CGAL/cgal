@@ -248,6 +248,7 @@ test_new_3(const R& rep)
   typename R::Construct_orthogonal_vector_3 construct_orthogonal_vector
         = rep.construct_orthogonal_vector_3_object();
   Vector_3 tmp3b = construct_orthogonal_vector(h7);
+  tmp3b =  construct_orthogonal_vector(p2, p3, p4);
 
   typename R::Construct_base_vector_3 construct_base_vector
         = rep.construct_base_vector_3_object();
