@@ -148,13 +148,13 @@ public:
 
 // CONSTRUCTORS
   CGAL_Triangulation()
-    : _gt(), _tds()
+    : _tds(), _gt()
   {
     init_tds();
   }
 
   CGAL_Triangulation(const GT & gt) 
-    : _gt(gt), _tds()
+    : _tds(), _gt(gt)
   {
     init_tds();
   }
@@ -169,7 +169,7 @@ public:
 		     const Point & p1,
 		     const Point & p2,
 		     const Point & p3)
-    : _gt(), _tds()
+    : _tds(), _gt()
     {
       init_tds();
       insert_outside_affine_hull(p0);
@@ -1019,6 +1019,8 @@ public:
 	    {
 	      // returns the finite cell sharing the finite facet of cit
 	      Cell_handle n = cit->neighbor(cit->index(infinite));
+	      cerr << cit->vertex(li)->point() << endl
+		   << cit->vertex(lj)->point() << endl;
 	      li = n->index(cit->vertex(li));
 	      lj = n->index(cit->vertex(lj));
 	      return n;
@@ -1820,13 +1822,13 @@ public:
 	    case CGAL_ON_BOUNDARY:
 	      {
 		// lt == VERTEX OR EDGE ok
-		i = ( i_f == 0 ) ? ((i+1)&3) :
-		  ( i_f == 1 ) ? ((i+2)&3) :
-		  ((i+3)&3);
+		i = ( i_f == 0 ) ? ((inf+1)&3) :
+		  ( i_f == 1 ) ? ((inf+2)&3) :
+		  ((inf+3)&3);
 		if ( lt == EDGE ) {
-		  j = (j_f == 0 ) ? ((i+1)&3) :
-		    ( j_f == 1 ) ? ((i+2)&3) :
-		    ((i+3)&3);
+		  j = (j_f == 0 ) ? ((inf+1)&3) :
+		    ( j_f == 1 ) ? ((inf+2)&3) :
+		    ((inf+3)&3);
 		}
 		return CGAL_ON_BOUNDARY;
 	      }
