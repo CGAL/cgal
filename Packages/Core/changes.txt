@@ -1,3 +1,6 @@
+07 May 2004 Andreas Fabri
+Added $(RANLIB) $(CGAL_CORE_LIB) in makefile_Core (for Darwin, reported by Menelaos)
+
 Version 0.20 (09 February 2004) [rursu]
 - Updated headers in examples
 
