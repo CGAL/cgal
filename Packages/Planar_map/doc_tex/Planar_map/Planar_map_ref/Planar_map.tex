@@ -316,11 +316,14 @@ these functions with the naive point location strategy.
        \ccPrecond{\ccc{cv} is not equivalent to a point. }}
     
     \ccMethod{Halfedge_handle insert_in_face_interior( const X_curve &
-       cv, Face_handle f);}{inserts \ccStyle{cv} as a new inner component of
-       \ccStyle{f}.  \ccPrecond{ \ccStyle{cv} is contained completely
-          in the interior of \ccStyle{f} (no vertex of \ccStyle{cv}
-          meets any vertex on the map).} 
-       \ccPrecond{\ccc{cv} is not equivalent to a point. }}
+       cv, Face_handle f);}
+       {inserts \ccStyle{cv} as a new inner component of \ccc{f}. The
+       returned halfedge shares the same direction as the curve
+       \ccc{cv}. \ccPrecond{ \ccStyle{cv} is contained completely in
+       the interior of \ccStyle{f} (no vertex of \ccStyle{cv} meets
+       any vertex on the map).}  \ccPrecond{\ccc{cv} is not equivalent
+       to a point. }}
+
 \end{ccAdvanced}              
 
 \ccMethod{Halfedge_handle split_edge (
