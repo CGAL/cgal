@@ -43,6 +43,11 @@ Versions
 2.1 (30 Apr 99)
   few compiler problems, few minors corrections in documentation.
 
+2.2 ( 7 May 1999)
+  remove warnings in test suite
+
+
+
 CONTENTS:
 
 description.txt

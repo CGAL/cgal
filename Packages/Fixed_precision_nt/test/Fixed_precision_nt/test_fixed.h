@@ -191,7 +191,10 @@ int main(int argc, char* argv[])
 #endif
 
 
-  CGAL::Fixed_precision_nt f1(1),f2(2),f3(3),f4(4),fi(2*MAX);
+  CGAL::Fixed_precision_nt f1(1),f2(2),f3(3),f4(4);
+  //  CGAL::Fixed_precision_nt fi(2*MAX); // overflow causes warning
+  //  in test suite, thus this line is removed
+
   cout << "Verifying basic arithemtic on Fixed_precision_nt     "<<endl;
   test_result &= (f1+f2==f3);
   test_result &= (f4/f2==f2);
@@ -323,17 +326,17 @@ int main(int argc, char* argv[])
   CGAL::Fixed_precision_nt::perturb_incircle();
   test_result &= CGAL::Fixed_precision_nt::is_perturbed_incircle();
   (void) test_sphere2(cocirc,cocircN,p,z,n);
-  test_result &= ((z=cocirccolinN)&&(n+z+p==cocircN));
+  test_result &= ((z==cocirccolinN)&&(n+z+p==cocircN));
   cout << ((test_result) ? " OK " : "        FAILED --------") << endl;
   test_all &= test_result; test_result = true;
 
 
-// waiting for predicates_on_ftC3.h
-  //  cout <<"Verifying 3D orientation test on "<<N<<" random tests"<<endl;
-  //  test_result &= test_orient3(Rnd3,N,p,z,n);
-  //  cout << "Verifying insphere test on "<<N<<" random tests"<<endl;
-  //  test_result &= test_sphere3(Rnd3,N,p,z,n);
-
+  cout <<"Verifying 3D orientation test on "<<N<<" random tests"<<endl;
+  test_result &= test_orient3(Rnd3,N,p,z,n);
+  cout << "Verifying insphere test on "<<N<<" random tests"<<endl;
+  test_result &= test_sphere3(Rnd3,N,p,z,n);
+  CGAL::Fixed_precision_nt::perturb_insphere();
+  cout << ((test_result) ? " OK " : "        FAILED --------") << endl;
 
   cout <<endl<<endl
        << ((test_all) ? "test succeeds" 
