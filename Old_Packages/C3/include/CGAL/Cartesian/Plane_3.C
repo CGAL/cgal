@@ -13,7 +13,7 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R >
 inline
-_Fourtuple<typename R::FT>*
+_Fourtuple<typename PlaneC3<R CGAL_CTAG>::FT>*
 PlaneC3<R CGAL_CTAG>::ptr() const
 {
     return (_Fourtuple<FT>*)PTR;
@@ -23,8 +23,8 @@ template < class R >
 inline
 void
 PlaneC3<R CGAL_CTAG>::
-new_rep(const typename R::FT &a, const typename R::FT &b,
-        const typename R::FT &c, const typename R::FT &d)
+new_rep(const typename PlaneC3<R CGAL_CTAG>::FT &a, const typename PlaneC3<R CGAL_CTAG>::FT &b,
+        const typename PlaneC3<R CGAL_CTAG>::FT &c, const typename PlaneC3<R CGAL_CTAG>::FT &d)
 {
   PTR = new _Fourtuple<FT>(a, b, c, d);
 }
@@ -89,10 +89,10 @@ PlaneC3(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p,
 template < class R >
 inline
 PlaneC3<R CGAL_CTAG>::
-PlaneC3(const typename R::FT &a,
-        const typename R::FT &b,
-        const typename R::FT &c,
-        const typename R::FT &d)
+PlaneC3(const typename PlaneC3<R CGAL_CTAG>::FT &a,
+        const typename PlaneC3<R CGAL_CTAG>::FT &b,
+        const typename PlaneC3<R CGAL_CTAG>::FT &c,
+        const typename PlaneC3<R CGAL_CTAG>::FT &d)
 {
   new_rep(a, b, c, d);
 }
@@ -162,28 +162,28 @@ long PlaneC3<R CGAL_CTAG>::id() const
 
 template < class R >
 inline
-typename R::FT PlaneC3<R CGAL_CTAG>::a() const
+typename PlaneC3<R CGAL_CTAG>::FT PlaneC3<R CGAL_CTAG>::a() const
 {
   return ptr()->e0;
 }
 
 template < class R >
 inline
-typename R::FT PlaneC3<R CGAL_CTAG>::b() const
+typename PlaneC3<R CGAL_CTAG>::FT PlaneC3<R CGAL_CTAG>::b() const
 {
   return ptr()->e1;
 }
 
 template < class R >
 inline
-typename R::FT PlaneC3<R CGAL_CTAG>::c() const
+typename PlaneC3<R CGAL_CTAG>::FT PlaneC3<R CGAL_CTAG>::c() const
 {
   return ptr()->e2;
 }
 
 template < class R >
 inline
-typename R::FT PlaneC3<R CGAL_CTAG>::d() const
+typename PlaneC3<R CGAL_CTAG>::FT PlaneC3<R CGAL_CTAG>::d() const
 {
   return ptr()->e3;
 }
@@ -409,7 +409,7 @@ std::ostream &operator<<(std::ostream &os, const PlaneC3<R CGAL_CTAG> &p)
 template < class R >
 std::istream &operator>>(std::istream &is, PlaneC3<R CGAL_CTAG> &p)
 {
-    typename R::FT a, b, c, d;
+    typename PlaneC3<R CGAL_CTAG>::FT a, b, c, d;
     switch(is.iword(IO::mode)) {
     case IO::ASCII :
         is >> a >> b >> c >> d;

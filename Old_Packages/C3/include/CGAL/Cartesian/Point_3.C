@@ -19,7 +19,7 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R >
 inline
-_Threetuple<typename R::FT>*
+_Threetuple<typename PointC3<R CGAL_CTAG>::FT>*
 PointC3<R CGAL_CTAG>::ptr() const
 {
   return (_Threetuple<FT>*)PTR;
@@ -28,7 +28,7 @@ PointC3<R CGAL_CTAG>::ptr() const
 template < class R >
 PointC3<R CGAL_CTAG>::PointC3()
 {
-  PTR = new _Threetuple<typename R::FT>(FT(0), FT(0), FT(0));
+  PTR = new _Threetuple<typename PointC3<R CGAL_CTAG>::FT>(FT(0), FT(0), FT(0));
 }
 
 template < class R >
@@ -44,17 +44,17 @@ PointC3<R CGAL_CTAG>::PointC3(const PointC3<R CGAL_CTAG> &p) :
 }
 
 template < class R >
-PointC3<R CGAL_CTAG>::PointC3(const typename R::FT &x,
-                              const typename R::FT &y,
-			      const typename R::FT &z)
+PointC3<R CGAL_CTAG>::PointC3(const typename PointC3<R CGAL_CTAG>::FT &x,
+                              const typename PointC3<R CGAL_CTAG>::FT &y,
+			      const typename PointC3<R CGAL_CTAG>::FT &z)
 {
   PTR = new _Threetuple<FT>(x, y, z);
 }
 
 template < class R >
-PointC3<R CGAL_CTAG>::PointC3(const typename R::FT &x,
-                              const typename R::FT &y,
-			      const typename R::FT &z,
+PointC3<R CGAL_CTAG>::PointC3(const typename PointC3<R CGAL_CTAG>::FT &x,
+                              const typename PointC3<R CGAL_CTAG>::FT &y,
+			      const typename PointC3<R CGAL_CTAG>::FT &z,
 			      const FT &w)
 {
   if (w != FT(1))
@@ -107,7 +107,7 @@ PointC3<R CGAL_CTAG>::id() const
 
 template < class R >
 inline
-typename R::FT
+typename PointC3<R CGAL_CTAG>::FT
 PointC3<R CGAL_CTAG>::x()  const
 {
   return ptr()->e0;
@@ -116,7 +116,7 @@ PointC3<R CGAL_CTAG>::x()  const
 
 template < class R >
 inline
-typename R::FT
+typename PointC3<R CGAL_CTAG>::FT
 PointC3<R CGAL_CTAG>::y()  const
 {
   return  ptr()->e1;
@@ -125,7 +125,7 @@ PointC3<R CGAL_CTAG>::y()  const
 
 template < class R >
 inline
-typename R::FT
+typename PointC3<R CGAL_CTAG>::FT
 PointC3<R CGAL_CTAG>::z()  const
 {
   return  ptr()->e2;
@@ -143,7 +143,7 @@ PointC3<R CGAL_CTAG>::dimension() const
 
 template < class R >
 inline
-typename R::FT
+typename PointC3<R CGAL_CTAG>::FT
 PointC3<R CGAL_CTAG>::cartesian(int i) const
 {
   CGAL_kernel_precondition( (i>=0) && (i<=2) );
@@ -154,7 +154,7 @@ PointC3<R CGAL_CTAG>::cartesian(int i) const
 
 template < class R >
 inline
-typename R::FT
+typename PointC3<R CGAL_CTAG>::FT
 PointC3<R CGAL_CTAG>::operator[](int i) const
 {
   return cartesian(i);
@@ -163,7 +163,7 @@ PointC3<R CGAL_CTAG>::operator[](int i) const
 
 template < class R >
 inline
-typename R::FT
+typename PointC3<R CGAL_CTAG>::FT
 PointC3<R CGAL_CTAG>::hx()  const
 {
   return ptr()->e0;
@@ -172,7 +172,7 @@ PointC3<R CGAL_CTAG>::hx()  const
 
 template < class R >
 inline
-typename R::FT
+typename PointC3<R CGAL_CTAG>::FT
 PointC3<R CGAL_CTAG>::hy()  const
 {
   return ptr()->e1;
@@ -181,7 +181,7 @@ PointC3<R CGAL_CTAG>::hy()  const
 
 template < class R >
 inline
-typename R::FT
+typename PointC3<R CGAL_CTAG>::FT
 PointC3<R CGAL_CTAG>::hz()  const
 {
   return ptr()->e2;
@@ -190,14 +190,14 @@ PointC3<R CGAL_CTAG>::hz()  const
 
 template < class R >
 inline
-typename R::FT
+typename PointC3<R CGAL_CTAG>::FT
 PointC3<R CGAL_CTAG>::hw()  const
 {
   return FT(1);
 }
 
 template < class R >
-typename R::FT
+typename PointC3<R CGAL_CTAG>::FT
 PointC3<R CGAL_CTAG>::homogeneous(int i) const
 {
   CGAL_kernel_precondition((i>=0) && (i<=3));
@@ -248,7 +248,7 @@ std::ostream &operator<<(std::ostream &os, const PointC3<R CGAL_CTAG> &p)
 template < class R >
 std::istream &operator>>(std::istream &is, PointC3<R CGAL_CTAG> &p)
 {
-    typename R::FT x, y, z;
+    typename PointC3<R CGAL_CTAG>::FT x, y, z;
     switch(is.iword(IO::mode)) {
     case IO::ASCII :
         is >> x >> y >> z;

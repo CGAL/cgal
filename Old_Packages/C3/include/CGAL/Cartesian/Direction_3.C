@@ -9,7 +9,7 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R >
 inline
-_Threetuple<typename R::FT>*
+_Threetuple<typename DirectionC3<R CGAL_CTAG>::FT>*
 DirectionC3<R CGAL_CTAG>::ptr() const
 {
   return (_Threetuple<FT>*)PTR;
@@ -34,11 +34,11 @@ DirectionC3(const typename DirectionC3<R CGAL_CTAG>::Vector_3 &v)
 
 template < class R >
 DirectionC3<R CGAL_CTAG>::
-DirectionC3(const typename R::FT &x,
-            const typename R::FT &y,
-            const typename R::FT &z)
+DirectionC3(const typename DirectionC3<R CGAL_CTAG>::FT &x,
+            const typename DirectionC3<R CGAL_CTAG>::FT &y,
+            const typename DirectionC3<R CGAL_CTAG>::FT &z)
 {
-  PTR = new _Threetuple<typename R::FT>(x, y, z);
+  PTR = new _Threetuple<typename DirectionC3<R CGAL_CTAG>::FT>(x, y, z);
 }
 
 
@@ -105,7 +105,7 @@ DirectionC3<R CGAL_CTAG>::operator-() const
 
 
 template < class R >
-typename R::FT 
+typename DirectionC3<R CGAL_CTAG>::FT 
 DirectionC3<R CGAL_CTAG>::delta(int i) const
 {
   CGAL_kernel_precondition( i >= 0 && i <= 2 );
@@ -115,7 +115,7 @@ DirectionC3<R CGAL_CTAG>::delta(int i) const
 
 template < class R >
 inline
-typename R::FT
+typename DirectionC3<R CGAL_CTAG>::FT
 DirectionC3<R CGAL_CTAG>::dx() const
 {
   return ptr()->e0;
@@ -123,7 +123,7 @@ DirectionC3<R CGAL_CTAG>::dx() const
 
 template < class R >
 inline
-typename R::FT
+typename DirectionC3<R CGAL_CTAG>::FT
 DirectionC3<R CGAL_CTAG>::dy() const
 {
   return ptr()->e1;
@@ -132,7 +132,7 @@ DirectionC3<R CGAL_CTAG>::dy() const
 
 template < class R >
 inline
-typename R::FT
+typename DirectionC3<R CGAL_CTAG>::FT
 DirectionC3<R CGAL_CTAG>::dz() const
 {
   return ptr()->e2;
@@ -140,7 +140,7 @@ DirectionC3<R CGAL_CTAG>::dz() const
 
 template < class R >
 inline
-typename R::FT
+typename DirectionC3<R CGAL_CTAG>::FT
 DirectionC3<R CGAL_CTAG>::hdx() const
 {
   return ptr()->e0;
@@ -149,7 +149,7 @@ DirectionC3<R CGAL_CTAG>::hdx() const
 
 template < class R >
 inline
-typename R::FT
+typename DirectionC3<R CGAL_CTAG>::FT
 DirectionC3<R CGAL_CTAG>::hdy() const
 {
   return ptr()->e1;
@@ -157,7 +157,7 @@ DirectionC3<R CGAL_CTAG>::hdy() const
 
 template < class R >
 inline
-typename R::FT
+typename DirectionC3<R CGAL_CTAG>::FT
 DirectionC3<R CGAL_CTAG>::hdz() const
 {
   return ptr()->e2;
@@ -165,7 +165,7 @@ DirectionC3<R CGAL_CTAG>::hdz() const
 
 template < class R >
 inline
-typename R::FT
+typename DirectionC3<R CGAL_CTAG>::FT
 DirectionC3<R CGAL_CTAG>::hw() const
 {
   return FT(1);
@@ -195,7 +195,7 @@ std::ostream &operator<<(std::ostream &os, const DirectionC3<R CGAL_CTAG> &d)
 template < class R >
 std::istream &operator>>(std::istream &is, DirectionC3<R CGAL_CTAG> &p)
 {
-    typename R::FT x, y, z;
+    typename DirectionC3<R CGAL_CTAG>::FT x, y, z;
     switch(is.iword(IO::mode)) {
     case IO::ASCII :
         is >> x >> y >> z;

@@ -23,7 +23,10 @@
 
 #ifndef CGAL__TEST_MF_PLANE_3_TO_2D_C
 #define CGAL__TEST_MF_PLANE_3_TO_2D_C
+
 #include <CGAL/_test_mf_plane_3_to_2d.h>
+#include <CGAL/Cartesian_2.h>
+#include <CGAL/intersection_2.h>
 
 template <class R>
 bool

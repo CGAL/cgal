@@ -22,10 +22,7 @@
 
 
 #include <CGAL/Plane_3.h>
-#include <CGAL/Segment_2.h>
 #include <CGAL/Segment_3.h>
-#include <CGAL/intersection_2.h>
-
 
 template <class R> bool _test_mf_plane_3_to_2d( const R&);
 

@@ -12,7 +12,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class R >
-inline _Threetuple<typename R::FT>*
+inline _Threetuple<typename VectorC3<R CGAL_CTAG>::FT>*
 VectorC3<R CGAL_CTAG>::ptr() const
 {
   return (_Threetuple<FT>*)PTR;
@@ -39,19 +39,19 @@ VectorC3(const Null_vector  &)
 
 template < class R >
 VectorC3<R CGAL_CTAG>::
-VectorC3(const typename R::FT &x,
-         const typename R::FT &y,
-         const typename R::FT &z)
+VectorC3(const typename VectorC3<R CGAL_CTAG>::FT &x,
+         const typename VectorC3<R CGAL_CTAG>::FT &y,
+         const typename VectorC3<R CGAL_CTAG>::FT &z)
 {
   PTR = new _Threetuple<FT>(x, y, z);
 }
 
 template < class R >
 VectorC3<R CGAL_CTAG>::
-VectorC3(const typename R::FT &x,
-         const typename R::FT &y,
-         const typename R::FT &z,
-         const typename R::FT &w)
+VectorC3(const typename VectorC3<R CGAL_CTAG>::FT &x,
+         const typename VectorC3<R CGAL_CTAG>::FT &y,
+         const typename VectorC3<R CGAL_CTAG>::FT &z,
+         const typename VectorC3<R CGAL_CTAG>::FT &w)
 {
   if (w != FT(1))
     PTR = new _Threetuple<FT>(x/w, y/w, z/w);
@@ -120,7 +120,7 @@ long VectorC3<R CGAL_CTAG>::id() const
 }
 template < class R >
 inline
-typename R::FT
+typename VectorC3<R CGAL_CTAG>::FT
 VectorC3<R CGAL_CTAG>::x()  const
 {
   return ptr()->e0;
@@ -128,7 +128,7 @@ VectorC3<R CGAL_CTAG>::x()  const
 
 template < class R >
 inline
-typename R::FT
+typename VectorC3<R CGAL_CTAG>::FT
 VectorC3<R CGAL_CTAG>::y()  const
 {
   return  ptr()->e1;
@@ -136,7 +136,7 @@ VectorC3<R CGAL_CTAG>::y()  const
 
 template < class R >
 inline
-typename R::FT
+typename VectorC3<R CGAL_CTAG>::FT
 VectorC3<R CGAL_CTAG>::z()  const
 {
   return  ptr()->e2;
@@ -144,7 +144,7 @@ VectorC3<R CGAL_CTAG>::z()  const
 
 template < class R >
 inline
-typename R::FT
+typename VectorC3<R CGAL_CTAG>::FT
 VectorC3<R CGAL_CTAG>::cartesian(int i) const
 {
   CGAL_kernel_precondition( (i>=0) && (i<3) );
@@ -154,7 +154,7 @@ VectorC3<R CGAL_CTAG>::cartesian(int i) const
 
 template < class R >
 inline
-typename R::FT
+typename VectorC3<R CGAL_CTAG>::FT
 VectorC3<R CGAL_CTAG>::operator[](int i) const
 {
   return cartesian(i);
@@ -170,7 +170,7 @@ VectorC3<R CGAL_CTAG>::dimension() const
 
 template < class R >
 inline
-typename R::FT
+typename VectorC3<R CGAL_CTAG>::FT
 VectorC3<R CGAL_CTAG>::hx()  const
 {
   return ptr()->e0;
@@ -178,7 +178,7 @@ VectorC3<R CGAL_CTAG>::hx()  const
 
 template < class R >
 inline
-typename R::FT
+typename VectorC3<R CGAL_CTAG>::FT
 VectorC3<R CGAL_CTAG>::hy()  const
 {
   return ptr()->e1;
@@ -186,21 +186,21 @@ VectorC3<R CGAL_CTAG>::hy()  const
 
 template < class R >
 inline
-typename R::FT
+typename VectorC3<R CGAL_CTAG>::FT
 VectorC3<R CGAL_CTAG>::hz()  const
 {
   return ptr()->e2;
 }
 
 template < class R >
-typename R::FT
+typename VectorC3<R CGAL_CTAG>::FT
 VectorC3<R CGAL_CTAG>::hw()  const
 {
   return FT(1);
 }
 
 template < class R >
-typename R::FT
+typename VectorC3<R CGAL_CTAG>::FT
 VectorC3<R CGAL_CTAG>::homogeneous(int i) const
 {
   return (i==3) ? FT(1) : cartesian(i);
@@ -232,7 +232,7 @@ VectorC3<R CGAL_CTAG> VectorC3<R CGAL_CTAG>::operator-() const
 
 template < class R >
 inline
-typename R::FT
+typename VectorC3<R CGAL_CTAG>::FT
 VectorC3<R CGAL_CTAG>::operator*(const VectorC3<R CGAL_CTAG> &w) const
 {
   return x() * w.x() + y() * w.y() + z() * w.z() ;
@@ -241,7 +241,7 @@ VectorC3<R CGAL_CTAG>::operator*(const VectorC3<R CGAL_CTAG> &w) const
 template < class R >
 inline
 VectorC3<R CGAL_CTAG>
-VectorC3<R CGAL_CTAG>::operator/(const typename R::FT &c) const
+VectorC3<R CGAL_CTAG>::operator/(const typename VectorC3<R CGAL_CTAG>::FT &c) const
 {
   return VectorC3<R CGAL_CTAG>( x()/c, y()/c, z()/c) ;
 }
@@ -286,7 +286,7 @@ std::ostream &operator<<(std::ostream &os, const VectorC3<R CGAL_CTAG> &v)
 template < class R >
 std::istream &operator>>(std::istream &is, VectorC3<R CGAL_CTAG> &p)
 {
-    typename R::FT x, y, z;
+    typename VectorC3<R CGAL_CTAG>::FT x, y, z;
     switch(is.iword(IO::mode)) {
     case IO::ASCII :
         is >> x >> y >> z;

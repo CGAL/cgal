@@ -32,7 +32,7 @@ template < class R >
 CGAL_KERNEL_CTOR_INLINE
 SphereC3<R CGAL_CTAG>::
 SphereC3(const typename SphereC3<R CGAL_CTAG>::Point_3 &center,
-         const typename R::FT &squared_radius,
+         const typename SphereC3<R CGAL_CTAG>::FT &squared_radius,
          const Orientation &orient = COUNTERCLOCKWISE)
 {
   CGAL_kernel_precondition( ( squared_radius >= FT(0) ) &&
@@ -146,7 +146,7 @@ SphereC3<R CGAL_CTAG>::center() const
 
 template < class R >
 inline
-typename R::FT
+typename SphereC3<R CGAL_CTAG>::FT
 SphereC3<R CGAL_CTAG>::squared_radius() const
 {
  return ptr()->squared_radius;

@@ -52,12 +52,12 @@ public:
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
   typedef Aff_transformation_repC3<R>           Self;
-  typedef Aff_transformation_rep_baseC3<R>      Base;
-  typedef typename Base::Point_3                Point_3;
-  typedef typename Base::Vector_3               Vector_3;
-  typedef typename Base::Direction_3            Direction_3;
-  typedef typename Base::Plane_3                Plane_3;
-  typedef typename Base::Aff_transformation_3   Aff_transformation_3;
+  typedef Aff_transformation_rep_baseC3<R>      Aff_t_base_3;
+  typedef typename Aff_t_base_3::Point_3                Point_3;
+  typedef typename Aff_t_base_3::Vector_3               Vector_3;
+  typedef typename Aff_t_base_3::Direction_3            Direction_3;
+  typedef typename Aff_t_base_3::Plane_3                Plane_3;
+  typedef typename Aff_t_base_3::Aff_transformation_3   Aff_transformation_3;
 
 friend Aff_transformation_3
        _general_transformation_composition CGAL_NULL_TMPL_ARGS

@@ -46,7 +46,7 @@ Aff_transformationC3(const Translation,
 template < class R >
 Aff_transformationC3<R CGAL_CTAG>::
 Aff_transformationC3(const Scaling,
-                     const typename R::FT &s, const typename R::FT &w)
+                     const typename Aff_transformationC3<R CGAL_CTAG>::FT &s, const typename Aff_transformationC3<R CGAL_CTAG>::FT &w)
 {
   if (w != FT(1))
     PTR = new Scaling_repC3<R>(s/w);
@@ -58,13 +58,13 @@ Aff_transformationC3(const Scaling,
 template < class R >
 Aff_transformationC3<R CGAL_CTAG>::
 Aff_transformationC3(
-  const typename R::FT& m11, const typename R::FT& m12,
-  const typename R::FT& m13, const typename R::FT& m14,
-  const typename R::FT& m21, const typename R::FT& m22,
-  const typename R::FT& m23, const typename R::FT& m24,
-  const typename R::FT& m31, const typename R::FT& m32,
-  const typename R::FT& m33, const typename R::FT& m34,
-  const typename R::FT &w)
+  const typename Aff_transformationC3<R CGAL_CTAG>::FT& m11, const typename Aff_transformationC3<R CGAL_CTAG>::FT& m12,
+  const typename Aff_transformationC3<R CGAL_CTAG>::FT& m13, const typename Aff_transformationC3<R CGAL_CTAG>::FT& m14,
+  const typename Aff_transformationC3<R CGAL_CTAG>::FT& m21, const typename Aff_transformationC3<R CGAL_CTAG>::FT& m22,
+  const typename Aff_transformationC3<R CGAL_CTAG>::FT& m23, const typename Aff_transformationC3<R CGAL_CTAG>::FT& m24,
+  const typename Aff_transformationC3<R CGAL_CTAG>::FT& m31, const typename Aff_transformationC3<R CGAL_CTAG>::FT& m32,
+  const typename Aff_transformationC3<R CGAL_CTAG>::FT& m33, const typename Aff_transformationC3<R CGAL_CTAG>::FT& m34,
+  const typename Aff_transformationC3<R CGAL_CTAG>::FT &w)
 {
   if (w != FT(1))
     PTR = new Aff_transformation_repC3<R>(m11/w, m12/w, m13/w, m14/w,
@@ -78,10 +78,10 @@ Aff_transformationC3(
 
 template < class R >
 Aff_transformationC3<R CGAL_CTAG>::Aff_transformationC3(
-  const typename R::FT& m11, const typename R::FT& m12, const typename R::FT& m13,
-  const typename R::FT& m21, const typename R::FT& m22, const typename R::FT& m23,
-  const typename R::FT& m31, const typename R::FT& m32, const typename R::FT& m33,
-  const typename R::FT &w)
+  const typename Aff_transformationC3<R CGAL_CTAG>::FT& m11, const typename Aff_transformationC3<R CGAL_CTAG>::FT& m12, const typename Aff_transformationC3<R CGAL_CTAG>::FT& m13,
+  const typename Aff_transformationC3<R CGAL_CTAG>::FT& m21, const typename Aff_transformationC3<R CGAL_CTAG>::FT& m22, const typename Aff_transformationC3<R CGAL_CTAG>::FT& m23,
+  const typename Aff_transformationC3<R CGAL_CTAG>::FT& m31, const typename Aff_transformationC3<R CGAL_CTAG>::FT& m32, const typename Aff_transformationC3<R CGAL_CTAG>::FT& m33,
+  const typename Aff_transformationC3<R CGAL_CTAG>::FT &w)
 {
   if (w != FT(1))
     PTR = new Aff_transformation_repC3<R>(m11/w, m12/w, m13/w,
