@@ -21,7 +21,6 @@
 #ifndef CGAL_QT_WIDGET_GET_SIMPLE_POLYGON_H
 #define CGAL_QT_WIDGET_GET_SIMPLE_POLYGON_H
 
-
 #include <CGAL/IO/Qt_widget_layer.h>
 #include <CGAL/Segment_2_Segment_2_intersection.h>  
 #include <list>
@@ -47,12 +46,12 @@ public:
     {
       ECI  it;
       widget->lock();
-	RasterOp old_rasterop=widget->rasterOp();
-	widget->get_painter().setRasterOp(XorROP);
-	*widget << CGAL::GREEN;
-	for(it = poly.edges_begin(); it != --poly.edges_end(); it++)
-	  *widget << *it;
-	widget->setRasterOp(old_rasterop);
+      RasterOp old_rasterop=widget->rasterOp();
+      widget->get_painter().setRasterOp(XorROP);
+      *widget << CGAL::GREEN;
+      for(it = poly.edges_begin(); it != --poly.edges_end(); it++)
+        *widget << *it;
+      widget->setRasterOp(old_rasterop);
       widget->unlock();
     }
     return;
