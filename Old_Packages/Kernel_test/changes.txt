@@ -1,4 +1,4 @@
-3.52  (? Nov 2002)
+3.52  (5 Nov 2002)
 - Merge test programs to speed up and uniformize the test-suite.
 
 3.51  (9 Oct 2002)
