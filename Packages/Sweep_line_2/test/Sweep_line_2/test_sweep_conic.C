@@ -1,4 +1,14 @@
 #include <CGAL/basic.h>
+
+#if !defined(CGAL_USE_LEDA)
+#include <iostream>
+int main()
+{
+  std::cout << "LEDA is not installed. Test aborted!" << std::endl;
+  return 0;
+}
+#else
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/leda_real.h>
 
@@ -378,4 +388,4 @@ int main (int argc, char** argv)
   return 0;  
 }
 
-
+#endif
