@@ -171,8 +171,8 @@ In the default constructor the seed is set using the system time.
     Random( )
     {
         // get system's microseconds
-        std::timeval tv;
-        std::gettimeofday( &tv, NULL);
+        timeval tv;
+        gettimeofday( &tv, NULL);
         unsigned long  ms = tv.tv_sec*1000000+tv.tv_usec;
 
         // initialize random numbers generator
@@ -211,7 +211,7 @@ The result is converted to a number in the given range.
     Random::
     get_bool( )
     {
-        return( CGAL_static_cast( bool, ( std::erand48( _state) >= 0.5)));
+        return( CGAL_static_cast( bool, ( erand48( _state) >= 0.5)));
     }
 
     inline
@@ -220,7 +220,7 @@ The result is converted to a number in the given range.
     get_int( int lower, int upper)
     {
         return( lower + CGAL_static_cast( int,
-            CGAL_static_cast( double, upper-lower) * std::erand48( _state)));
+            CGAL_static_cast( double, upper-lower) * erand48( _state)));
     }
 
     inline
@@ -228,7 +228,7 @@ The result is converted to a number in the given range.
     Random::
     get_double( double lower, double upper)
     {
-        return( lower + ( upper-lower) * std::erand48( _state));
+        return( lower + ( upper-lower) * erand48( _state));
     }
 
     inline
@@ -428,6 +428,10 @@ numbers.
     #ifndef CGAL_PROTECT_CTIME
     #  include <ctime>
     #  define CGAL_PROTECT_CTIME
+    #endif
+    #ifndef CGAL_PROTECT_SYS_TIME_H
+    #  include <sys/time.h>
+    #  define CGAL_PROTECT_SYS_TIME_H
     #endif
 
     @<namespace begin>("CGAL")
