@@ -263,7 +263,8 @@ An object \ccVar\ is valid, iff
 %                                  int  level   = 0    ) const;}{
 \ccMemberFunction{ bool is_valid() const;}{ returns \ccc{true}, iff
   \ccVar\ is valid.  When \ccc{FT} is inexact, this routine always
-  returns \ccc{true}.}
+  returns \ccc{true}.  If \ccVar\ is not up-to-date, \ccc{update()} is
+  called before performing the validity check.}
 
 % -----------------------------------------------------------------------------
 \ccHeading{Miscellaneous}

@@ -107,12 +107,10 @@ namespace CGAL_MINIBALL_NAMESPACE {
               // also at runtime, we instantiate it here.
   
   private: // for internal consisteny checks:
-    #ifdef CGAL_MINIBALL_DEBUG
     // The following variable is true if and only if the miniball
-    // has been computed of all inserted balls, i.e. iff no ball has been
-    // insert()'ed so far, or update() or set() has been called.
+    // has been computed of all inserted balls, i.e. iff every checked-in
+    // ball has been respected in the miniball computation.
     bool is_up_to_date;
-    #endif
   
   public: // iterators:
     typedef const Result *Coordinate_iterator; // coordinate iterator
@@ -143,7 +141,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     inline Min_sphere_of_spheres_d(InputIterator begin,InputIterator end,
                                    const Traits& traits = Traits()) :
       t(traits), e(0), ss(t) {
-      CGAL_MINIBALL_DO_DEBUG(is_up_to_date = false);
+      is_up_to_date = false;
       CGAL_MINIBALL_ASSERT(is_neg(ss.radius(),ss.disc()));
       insert(begin,end);            // todo. better way?
     }
@@ -223,7 +221,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
   Min_sphere_of_spheres_d<Traits>::
     Min_sphere_of_spheres_d(const Traits& traits) :
     t(traits), e(0), ss(t) {
-    CGAL_MINIBALL_DO_DEBUG(is_up_to_date = true);
+    is_up_to_date = true;
     CGAL_MINIBALL_ASSERT(is_neg(ss.radius(),ss.disc())); // makes sure
                // that initially no ball is enclosed (cf. contains()).
   }
@@ -237,7 +235,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
   void Min_sphere_of_spheres_d<Traits>::insert(const Sphere& b) {
     CGAL_MINIBALL_ASSERT(t.radius(b) >= FT(0));
     l.push_back(&b);
-    CGAL_MINIBALL_DO_DEBUG(is_up_to_date = false);
+    is_up_to_date = false;
   }
 
   template<class Traits>
@@ -245,12 +243,13 @@ namespace CGAL_MINIBALL_NAMESPACE {
     l.clear();
     ss.reset();
     e = 0;
-    CGAL_MINIBALL_DO_DEBUG(is_up_to_date = true);
+    is_up_to_date = true;
   }
 
   template<class Traits>
   bool Min_sphere_of_spheres_d<Traits>::is_empty() const {
-    CGAL_MINIBALL_ASSERT(is_up_to_date);
+    if (!is_up_to_date)
+      update();
     return is_neg(ss.radius(),ss.disc());
   }
 
@@ -278,26 +277,29 @@ namespace CGAL_MINIBALL_NAMESPACE {
   template<class Traits>
   inline void Min_sphere_of_spheres_d<Traits>::update() {
     update(Algorithm());
-    CGAL_MINIBALL_DO_DEBUG(is_up_to_date = true);
+    is_up_to_date = true;
   }
 
   template<class Traits>
   inline bool Min_sphere_of_spheres_d<Traits>::is_valid() const {
-    CGAL_MINIBALL_ASSERT(is_up_to_date);
+    if (!is_up_to_date)
+      update();
     return is_valid(Is_exact());
   }
 
   template<class Traits>
   inline typename Min_sphere_of_spheres_d<Traits>::Support_iterator
     Min_sphere_of_spheres_d<Traits>::support_begin() const {
-    CGAL_MINIBALL_ASSERT(is_up_to_date);
+    if (!is_up_to_date)
+      update();
     return Support_iterator(l.begin());
   }
 
   template<class Traits>
   inline typename Min_sphere_of_spheres_d<Traits>::Support_iterator
     Min_sphere_of_spheres_d<Traits>::support_end() const {
-    CGAL_MINIBALL_ASSERT(is_up_to_date);
+    if (!is_up_to_date)
+      update();
     return Support_iterator(l.begin()+e);
   }
 
