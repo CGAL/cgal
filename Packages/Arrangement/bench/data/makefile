@@ -11,6 +11,7 @@ FILES+= benchCompareSweep.xml
 FILES+= benchCompareSweepConics.xml
 FILES+= benchPmwx.xml   # all conf. {onebig_100, random_100}
 FILES+= benchPmwxND.xml # non degenerate
-FILES+= benchRandomPmwx.xml
+# FILES+= benchRandomPmwx.xml
+FILES+= benchPmwxPL.xml
 INSTALLDIR =$(ROOT)/bench/data
 include $(MAKEINCDIR)/files.mak
