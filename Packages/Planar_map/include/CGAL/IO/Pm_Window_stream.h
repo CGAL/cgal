@@ -40,6 +40,8 @@
 #include  <CGAL/IO/draw_pm.h>
 #endif
 
+#include <CGAL/IO/Window_stream.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class Dcel,class Traits>
