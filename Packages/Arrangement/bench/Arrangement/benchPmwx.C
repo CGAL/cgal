@@ -158,7 +158,7 @@ enum MaxFilesNumber {
 #include <CGAL/IO/Pm_Postscript_file_stream.h>
 #endif
 
-#include <CGAL/Pm_trapezoid_dag_point_location.h>
+#include <CGAL/Pm_trapezoid_ric_point_location.h>
 #include <CGAL/Pm_walk_along_line_point_location.h>
 #include <CGAL/Pm_naive_point_location.h>
 #include <CGAL/Pm_dummy_point_location.h>
@@ -314,7 +314,7 @@ typedef Planar_map::Locate_type                         Locate_type;
 typedef Planar_map::Halfedge_iterator                   Pm_Halfedge_iterator;
 
 // Point location strategies:
-typedef CGAL::Pm_trapezoid_dag_point_location<Pm>       Trap_point_location;
+typedef CGAL::Pm_trapezoid_ric_point_location<Pm>       Trap_point_location;
 typedef CGAL::Pm_naive_point_location<Pm>               Naive_point_location;
 typedef CGAL::Pm_walk_along_line_point_location<Pm>     Walk_point_location;
 typedef CGAL::Pm_dummy_point_location<Pm>               Dummy_point_location;
@@ -717,6 +717,25 @@ public:
     Pm_Halfedge_iterator e;
     Point_list::const_iterator i;
 
+//     if (m_verbose) {
+//       std::cout << "inside op:" << std::endl; 
+//       std::cout << "m_pm.number_of_halfedges = " 
+// 		<< m_pm.number_of_halfedges() << std::endl ;
+//       std::cout << "m_pm.number_of_vertices  = " 
+// 		<< m_pm.number_of_vertices() << std::endl ;
+//       std::cout << "m_pm.number_of_faces     = " 
+// 		<< m_pm.number_of_faces() << std::endl; 
+// 	//print output
+// 	if (lt==Planar_map::UNBOUNDED_FACE) std::cout << "Unbounded face" << std::endl;
+// 	else if (lt==Planar_map::FACE) std::cout << "Face that is left of " 
+// 	 << e->source()->point()  <<" towards "<< e->target()->point() << std::endl;
+// 	else if (lt==Planar_map::EDGE) std::cout << "Edge :" 
+// 	 << e->source()->point()  <<" towards "<< e->target()->point() << std::endl;
+// 	else if (lt==Planar_map::VERTEX) std::cout << "vertex: "
+// 				  << e->target()->point() << std::endl;
+// 	else std::cout << "Unknown locate type" << std::endl;
+//     }
+    
     //iterator on all the points got from the input, 
     //go over each one and locate it in the pm .
     for (i = m_point_list.begin(); i != m_point_list.end(); i++) 
