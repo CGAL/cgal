@@ -1,5 +1,10 @@
 Changes done to the `Min_ellipse_2' package.
 
+Version 3.3 on 12-Oct-1999
+- default argument for 'randomize' removed on M$-VC++.
+- removed 'CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(...)' from examples.
+- clean-up (g++-2.7.2 workaround removed).
+
 Version 3.2.11 on 07-Oct-1999
 - removed 'CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(...)' for kernel types.
 - inequality operator added to '...adapter[CH]2__Ellipse'.
