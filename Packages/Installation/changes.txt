@@ -7,10 +7,12 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: Added ws2_32.lib to XLIBS for msvc.
 ALL : Added/Corrected LONG_NAME_PROBLEM_LDFLAGS for Irix.
 GLOB: Added flags for Solaris / KCC.
 GLOB: Fixed problem in _real_options.
 ALL : Updated CGAL_VERSION to 2.2.
+DOCS: Changed CGAL_NO_LEDA_HANDLE passus.
 
 //---------------------------------------------------------------------
 //	 CGAL-2.1
