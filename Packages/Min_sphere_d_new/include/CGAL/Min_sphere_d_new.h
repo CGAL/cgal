@@ -566,7 +566,7 @@ operator << ( std::ostream& os,
 {
     CGAL_USING_NAMESPACE_STD
 
-    typedef  Min_sphere_d<Traits_>::Point  Point;
+    typedef  typename Min_sphere_d<Traits_>::Point  Point;
     typedef  ostream_iterator<Point>       Os_it;
     typedef  typename Traits_::ET          ET;
     typedef  ostream_iterator<ET>          Et_it;
@@ -632,7 +632,7 @@ operator >> ( std::istream& is, CGAL::Min_sphere_d<Traits_>& min_sphere)
 
       case CGAL::IO::ASCII:
       case CGAL::IO::BINARY:
-        typedef  CGAL::Min_sphere_d<Traits_>::Point  Point;
+        typedef  typename CGAL::Min_sphere_d<Traits_>::Point  Point;
         typedef  istream_iterator<Point>             Is_it;
         min_sphere.set( Is_it( is), Is_it());
         break;

@@ -1656,7 +1656,7 @@ QP_solver<Rep_>::
         }
 
 template < class Rep_ >
-const QP_solver<Rep_>::Pricing_strategy&
+const typename QP_solver<Rep_>::Pricing_strategy&
 QP_solver<Rep_>::
     pricing_strategy() const { return *strategyP; }
     

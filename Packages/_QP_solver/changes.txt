@@ -1,5 +1,8 @@
 Changes done to the `_QP_solver' package
 
+Version 0.9.4 on 5-Feb-2002
+- GCC 3.1 fixes.
+
 Version 0.9.3 on 16-Jul-2001
 - fixed warning of unused parameter in 'Basis_inverse::init(...)'
 

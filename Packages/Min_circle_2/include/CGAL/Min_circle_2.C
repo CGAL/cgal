@@ -25,6 +25,8 @@
 // implementation: 2D Smallest Enclosing Circle
 // ============================================================================
 
+#include <iterator>
+
 CGAL_BEGIN_NAMESPACE
 
 // Class implementation (continued)
@@ -38,7 +40,7 @@ operator << ( std::ostream& os,
 {
     CGAL_USING_NAMESPACE_STD
 
-    typedef  Min_circle_2<Traits_>::Point  Point;
+    typedef  typename Min_circle_2<Traits_>::Point  Point;
     typedef  ostream_iterator<Point>       Os_it;
 
     switch ( CGAL::get_mode( os)) {
@@ -95,7 +97,7 @@ operator >> ( std::istream& is, CGAL::Min_circle_2<Traits_>& min_circle)
 
       case CGAL::IO::ASCII:
       case CGAL::IO::BINARY:
-        typedef  CGAL::Min_circle_2<Traits_>::Point  Point;
+        typedef  typename CGAL::Min_circle_2<Traits_>::Point  Point;
         typedef  istream_iterator<Point>            Is_it;
         min_circle.clear();
         min_circle.insert( Is_it( is), Is_it());

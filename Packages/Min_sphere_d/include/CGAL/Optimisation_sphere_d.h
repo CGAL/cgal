@@ -108,11 +108,11 @@ class Optimisation_sphere_d;
 
     public:
 
-        Optimisation_sphere_d& get_sphere (Cartesian_tag t)
+        Optimisation_sphere_d& get_sphere (Cartesian_tag)
         {return *this;}
 
         const Optimisation_sphere_d&
-          get_sphere (Cartesian_tag t) const
+          get_sphere (Cartesian_tag) const
         {return *this;}
 
         Optimisation_sphere_d (const Traits& t = Traits())

@@ -365,7 +365,7 @@ transition( )
 
 // numerator of current solution
 template < class Rep_ >
-QP_solver<Rep_>::ET
+typename QP_solver<Rep_>::ET
 QP_solver<Rep_>::
 solution_numerator( ) const
 {
@@ -411,7 +411,7 @@ solution_numerator( ) const
 
 // variables of dual LP
 template < class Rep_ >
-QP_solver<Rep_>::ET
+typename QP_solver<Rep_>::ET
 QP_solver<Rep_>::
 dual_variable( int i) const
 {

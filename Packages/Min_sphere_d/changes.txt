@@ -109,3 +109,6 @@ Changes from 2.25:
 
 Changes from 2.26:
    - Susan moved Optimisation_ref directory up one level
+
+Changes from 2.28:
+   - GCC 3.1 fixes.

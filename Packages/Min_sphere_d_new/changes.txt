@@ -1,5 +1,8 @@
 Changes done to the `Min_sphere_d_new' package
 
+Version 0.12.2 on 5-Feb-2002
+- GCC 3.1 fixes.
+
 Version 0.12.1 on 16-Jul-2001
 - renamed concept 'Optimisation_d_traits' to 'OptimisationDTraits'
 

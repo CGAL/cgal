@@ -25,6 +25,8 @@
 // implementation: dD Smallest Enclosing Sphere
 // ============================================================================
 
+#include <iterator>
+
 CGAL_BEGIN_NAMESPACE
 
 // Class implementation (continued)

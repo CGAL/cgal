@@ -30,6 +30,7 @@
 // includes
 #include <CGAL/Optimisation/basic.h>
 #include <vector>
+#include <iterator>
 #include <CGAL/IO/Verbose_ostream.h>
 
 

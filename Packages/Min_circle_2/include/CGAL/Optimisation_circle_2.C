@@ -70,8 +70,8 @@ template < class K_ >
 std::istream&
 operator >> ( std::istream& is, CGAL::Optimisation_circle_2<K_>& c)
 {
-    typedef  CGAL::Optimisation_circle_2<K_>::Point     Point;
-    typedef  CGAL::Optimisation_circle_2<K_>::Distance  Distance;
+    typedef  typename CGAL::Optimisation_circle_2<K_>::Point     Point;
+    typedef  typename CGAL::Optimisation_circle_2<K_>::Distance  Distance;
 
     switch ( CGAL::get_mode( is)) {
 
