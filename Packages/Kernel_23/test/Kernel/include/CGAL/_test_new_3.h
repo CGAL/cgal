@@ -225,6 +225,10 @@ test_new_3(const R& rep)
         = rep.construct_circumcenter_3_object();
           tmp4 = construct_circumcenter(p2,p3,p4,p5);
 
+  typename R::Construct_cross_product_vector_3 construct_cross_product
+        = rep.construct_cross_product_vector_3_object();
+  Vector_3 tmp9 = construct_cross_product(v3,v4);
+
   typename R::Construct_opposite_segment_3 construct_opposite_segment
         = rep.construct_opposite_segment_3_object();
   Segment_3 tmp5 = construct_opposite_segment(s2);

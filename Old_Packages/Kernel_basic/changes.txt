@@ -1,3 +1,9 @@
+3.25   (?? Feb 2001)
+- Added Construct_cross_product_vector_3, with corresponding template class
+  v_Cross_product<>.
+- iterator_traits_pointer_specs_for_simple_cartesian_kernel.h fixes
+  (PointCd is the same as in Cartesian).
+
 3.24   (20 Feb 2001)
 - Fix result_type of p_Orientation<>.
 

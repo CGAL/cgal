@@ -1,3 +1,6 @@
+3.11   (?? Feb 2001)
+- Added test for Construct_cross_product_vector_3.
+
  3.11   (19 Feb 2001)
 
 - resubmit with test/KernelSimpleHomogeneous.

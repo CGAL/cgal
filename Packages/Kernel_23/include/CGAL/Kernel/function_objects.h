@@ -250,6 +250,17 @@ class pl_Bisector
     operator()(const Point& p, const Point& q) const { return bisector(p,q); }
 };
 
+template <class Vector>
+class v_Cross_product
+{
+  public:
+    typedef Vector          result_type;
+
+    Vector
+    operator()(const Vector& v, const Vector& w) const
+    { return cross_product(v, w); }
+};
+
 class Intersect
 {
   public:
@@ -363,7 +374,6 @@ class Coplanar_orientation
     { return coplanar_orientation(p,q,r,v); }
 };
 
-
 class Side_of_oriented_circle
 {
   public:
@@ -385,6 +395,7 @@ class Side_of_bounded_circle
     operator()(const T& p, const T& q, const T& r, const T& t) const
     { return side_of_bounded_circle(p,q,r,t); }
 };
+
 class Side_of_oriented_sphere
 {
   public:
@@ -406,6 +417,7 @@ class Side_of_bounded_sphere
     operator()(const T& p, const T& q, const T& r, const T& s, const T& t) const
     { return side_of_bounded_sphere(p,q,r,s,t); }
 };
+
 class Call_is_horizontal
 {
   public:
@@ -504,6 +516,7 @@ class Call_oriented_side
     operator()( const Cls& c, const Arg& a) const
     { return c.oriented_side(a); }
 };
+
 class Less_x
 {
   public:
@@ -635,6 +648,7 @@ class Equal_xyz
     operator()( const T1& a1, const T2& a2) const
     { return equal_xyz(a1,a2); }
 };
+
 class Compare_x
 {
   public:
@@ -770,7 +784,6 @@ class Compare_distance_to_point
     T  p;
 };
 
-
 class Are_ordered_along_line
 {
   public:
@@ -814,6 +827,7 @@ class Collinear_are_strictly_ordered_along_line
     operator()(const T& p, const T& q, const T& r) const
     { return collinear_are_strictly_ordered_along_line(p,q,r); }
 };
+
 class Call_transform
 {
  public:
@@ -822,6 +836,7 @@ class Call_transform
     operator()( const ArgumentType& a, const Transformation& t)
     { return a.transform(t); }
 };
+
 template <class ReturnType>
 class Call_source_to_get
 {
@@ -939,8 +954,6 @@ class Call_collinear_has_on
     operator()( const Cls& c, const A1& a1) const
     { return c.collinear_has_on(a1); }
 };
-
-
 
 } // end namespace CGALi
 CGAL_END_NAMESPACE
