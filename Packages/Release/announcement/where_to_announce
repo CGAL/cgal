@@ -5,27 +5,24 @@ cgal-discuss-l@postino.mpi-sb.mpg.de
 cgal-announce-l@postino.mpi-sb.mpg.de
 compgeom-announce@research.bell-labs.com
 general-topics@SolidModeling.org     (did not work for 3.0)
-
+mesh@sandia.gov
 
 newsgroups:
 
 ( Better send as small cross-post blocks,
   otherwise it gets filtered out somewhere... )
 
-sci.engr,
-sci.image.processing,
-sci.math
-sci.math.num-analysis
+sci.engr, sci.image.processing, sci.math, sci.math.num-analysis
 
 comp.graphics.algorithms,
 comp.graphics.visualization,
-comp.graphics.animation,
-comp.graphics.api.opengl
+comp.graphics.animation, comp.graphics.api.opengl
 
 comp.programming,
 comp.robotics.misc,
 
+comp.infosystems.gis
+
 Moderated newsgroups:
 
-comp.simulation,
-comp.robotics.research
+comp.simulation, comp.robotics.research
