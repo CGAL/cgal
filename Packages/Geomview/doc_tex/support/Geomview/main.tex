@@ -228,6 +228,13 @@ calls with the same \ccc{s} value, it will return a string which is \ccc{s}
 appended with the numbers 0, then 1, then 2...  Note that all counters are
 reset when \ccc{clear}() is called.}
 
+\ccMethod{bool set_wired(bool b);} 
+{Sets wired mode.  In wired mode, some structures output only there edges,
+ not there surfaces.
+ Returns the previous value. By default, wired mode is off.}
+
+\ccMethod{bool get_wired();}
+{Returns \ccc{true} iff wired mode is on.}
 
 
 \newpage
@@ -274,14 +281,6 @@ stream is in ascii mode.}
 \ccMethod{bool get_raw();}
 {Returns \ccc{true} iff raw mode is on.}
 
-\ccMethod{bool set_wired(bool b);} 
-{Sets wired mode.  In wired mode, some structures output only there edges,
- not there surfaces.
- Returns the previous value. By default, wired mode is off.}
-
-\ccMethod{bool get_wired();}
-{Returns \ccc{true} iff wired mode is on.}
-
 \ccMethod{bool set_echo(bool b);} 
 {Sets echo mode.  In echo mode, when you select a point in Geomview, the point
  is actually sent back to Geomview.
@@ -303,10 +302,6 @@ stream is in ascii mode.}
 {Returns \ccc{true} iff \ccVar\ is in ascii mode.}
 
 \end{ccAdvanced}
-
-%\ccExample
-%\begin{cprog}
-%\end{cprog} 
 
 \ccImplementation
 
