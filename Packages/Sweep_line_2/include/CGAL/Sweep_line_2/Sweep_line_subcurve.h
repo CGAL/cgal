@@ -89,19 +89,19 @@ public:
   /*!
     @return a reference to the curve 
   */
-  const X_monotone_curve_2 &getCurve() const { 
+  const X_monotone_curve_2 &get_curve() const { 
     return m_curve;
   }
 
   /*! @return  the pointer to the reference point */
-  const Point_2 *getReferencePoint() const { 
+  const Point_2 *get_reference_point() const { 
     return m_referencePoint;
   }
 
   /*! 
     @return a reference to the rightmost intersection point 
   */
-  const Point_2 &getLastPoint()  const { 
+  const Point_2 &get_last_point()  const { 
     return m_lastPoint; 
   }
 
@@ -109,124 +109,124 @@ public:
     Updates the rightmost intersection point.
     @param point a reference to the point
    */
-  void setLastPoint(const Point_2 &point) { 
+  void set_last_point(const Point_2 &point) { 
     m_lastPoint = point; 
   }
 
   /*!
     @return a reference to the last intersecing curve so far
   */
-  const X_monotone_curve_2 &getLastCurve() const { 
+  const X_monotone_curve_2 &get_last_curve() const { 
     return m_lastCurve; 
   }
   /*! 
     updates the last intersecting curve so far.
     @param cv a reference to the curve
   */
-  void setLastCurve(const X_monotone_curve_2 &cv) { 
+  void set_last_curve(const X_monotone_curve_2 &cv) { 
     m_lastCurve = cv; 
   }
 
-  const X_monotone_curve_2 &getLastSubCurve() const { 
+  const X_monotone_curve_2 &get_last_subcurve() const { 
     return m_lastSubCurve; 
   }
-  void setLastSubCurve(const X_monotone_curve_2 &cv) { 
+  void set_last_subcurve(const X_monotone_curve_2 &cv) { 
     m_lastSubCurve = cv; 
   }
 
 
-  bool isSourceLeftToTarget() const { 
+  bool is_source_left_to_target() const { 
     return m_isRightSide; 
   }
 
-  bool isSource(const Point_2 &p) { 
+  bool is_source(const Point_2 &p) { 
     return m_traits->point_equal(p, m_source);
   }
 
-  bool isTarget(const Point_2 &p) { 
+  bool is_target(const Point_2 &p) { 
     return m_traits->point_equal(p, m_target);
   }
 
   /*! returns true if the specified point is the source or the target
       of the curve. Returns false otherwise.
   */
-  bool isEndPoint(const Point_2 &p) { 
-    return isTarget(p) || isSource(p);
+  bool is_end_point(const Point_2 &p) { 
+    return is_target(p) || is_source(p);
   }
 
   /*! returns true if the last point is an end point and the specified
       point is an end point. Otherwise returns false;
   */
-  bool isUnsplitCurve(const Point_2 &p) {
-    if ( isEndPoint(p) && isEndPoint(m_lastPoint) )
+  bool is_unsplit_curve(const Point_2 &p) {
+    if ( is_end_point(p) && is_end_point(m_lastPoint) )
       return true;
     return false;
   }
 
-  const Point_2 &getSource() const {
+  const Point_2 &get_source() const {
     return m_source;
   }
 
-  const Point_2 &getTarget() const {
+  const Point_2 &get_target() const {
     return m_target;
   }
 
-  bool isLeftEnd(const Point_2 &p) {
-    if ( isSourceLeftToTarget() && isSource(p) )
+  bool is_left_end(const Point_2 &p) {
+    if ( is_source_left_to_target() && is_source(p) )
       return true;
-    if ( !isSourceLeftToTarget() && isTarget(p) )
-      return true;
-    return false;
-  }
-
-  bool isRightEnd(const Point_2 &p) {
-    if ( isSourceLeftToTarget() && isTarget(p) )
-      return true;
-    if ( !isSourceLeftToTarget() && isSource(p) )
+    if ( !is_source_left_to_target() && is_target(p) )
       return true;
     return false;
   }
 
-  bool isBottomEnd(const Point_2 &p) {
-    CGAL_assertion(m_traits->curve_is_vertical(m_curve)==true);
-    return isLeftEnd(p);
+  bool is_right_end(const Point_2 &p) {
+    if ( is_source_left_to_target() && is_target(p) )
+      return true;
+    if ( !is_source_left_to_target() && is_source(p) )
+      return true;
+    return false;
   }
 
-  bool isTopEnd(const Point_2 &p) {
+  bool is_bottom_end(const Point_2 &p) {
     CGAL_assertion(m_traits->curve_is_vertical(m_curve)==true);
-    return isRightEnd(p);
+    return is_left_end(p);
   }
 
-  const Point_2 &getRightEnd() const {
-    if ( isSourceLeftToTarget() )
+  bool is_top_end(const Point_2 &p) {
+    CGAL_assertion(m_traits->curve_is_vertical(m_curve)==true);
+    return is_right_end(p);
+  }
+
+  const Point_2 &get_right_end() const {
+    if ( is_source_left_to_target() )
       return m_target;
     return m_source;
   }
 
-  const Point_2 &getLeftEnd() const {
-    if ( isSourceLeftToTarget() )
+  const Point_2 &get_left_end() const {
+    if ( is_source_left_to_target() )
       return m_source;
     return m_target;
   }
 
-  const Point_2 &getTopEnd() const {
+  const Point_2 &get_top_end() const {
     CGAL_assertion(m_traits->curve_is_vertical(m_curve)==true);
-    return getRightEnd();
+    return get_right_end();
   }
 
-  const Point_2 &getBottomEnd() const {
+  const Point_2 &get_bottom_end() const {
     CGAL_assertion(m_traits->curve_is_vertical(m_curve)==true);
-    return getLeftEnd();
+    return get_left_end();
   }
 
   // returns true if the point is in the range of the curve and is not
   // one of its ends
-  bool isPointInRange(const Point_2 &p)
+  bool is_point_in_range(const Point_2 &p)
   {
     if (! m_traits->point_in_x_range(m_curve, p) ||
 	m_traits->curve_compare_y_at_x(p, m_curve) != EQUAL)
       return false;
-    if ( isEndPoint(p) )
+    if ( is_end_point(p) )
       return false;
     return true;
   }

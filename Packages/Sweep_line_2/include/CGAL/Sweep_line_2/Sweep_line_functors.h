@@ -78,10 +78,10 @@ public:
   bool compare_at(const Subcurve* c1, const Subcurve* c2)  const 
   {
 #if 1  // this may ot work with conics. Need to verify
-    const Point_2 *p = c1->getReferencePoint();
+    const Point_2 *p = c1->get_reference_point();
     Comparison_result r = 
-      m_compare_param->m_traits->curves_compare_y_at_x(c1->getCurve(), 
-    				   c2->getCurve(), 
+      m_compare_param->m_traits->curves_compare_y_at_x(c1->get_curve(), 
+    				   c2->get_curve(), 
     				   *p);
     if ( r == SMALLER) {
       return true;
@@ -89,7 +89,7 @@ public:
     return false;
 #else
     if (m_compare_param->m_traits->curve_compare_y_at_x(c1->getLeftEnd(),
-                                                        c2->getCurve()) ==
+                                                        c2->get_curve()) ==
         SMALLER)
       return true;
     return false;
@@ -99,20 +99,20 @@ public:
   bool compare_right(const Subcurve* c1, const Subcurve* c2)  const 
   {
 
-    const Point_2 *p = c1->getReferencePoint();
+    const Point_2 *p = c1->get_reference_point();
 #if 0
     std::cout << "\t\tComparing between:" << *p << "\n"
-	      << "\t\t  " << c1->getCurve() << "\n"
-	      << "\t\t  " << c2->getCurve() << "\n";
+	      << "\t\t  " << c1->get_curve() << "\n"
+	      << "\t\t  " << c2->get_curve() << "\n";
 #endif
     
-    const X_monotone_curve_2 &cv1 = c1->getCurve();
-    const X_monotone_curve_2 &cv2 = c2->getCurve();
+    const X_monotone_curve_2 &cv1 = c1->get_curve();
+    const X_monotone_curve_2 &cv2 = c2->get_curve();
     Traits *t = m_compare_param->m_traits;
     if ( t->curve_is_vertical(cv1) )
     {
-      if (t->point_in_x_range(cv2, c1->getSource()) &&
-	  t->curve_compare_y_at_x(c1->getTopEnd(), cv2) == SMALLER )
+      if (t->point_in_x_range(cv2, c1->get_source()) &&
+	  t->curve_compare_y_at_x(c1->get_top_end(), cv2) == SMALLER )
       {
 	return true;
       }
@@ -120,8 +120,8 @@ public:
     }
     if ( t->curve_is_vertical(cv2))
     {
-      if (t->point_in_x_range(cv1, c2->getSource()) &&
-	  t->curve_compare_y_at_x(c2->getBottomEnd(), cv1) == LARGER)
+      if (t->point_in_x_range(cv1, c2->get_source()) &&
+	  t->curve_compare_y_at_x(c2->get_bottom_end(), cv1) == LARGER)
       {
 	return true;
       }
@@ -129,13 +129,13 @@ public:
     }
 
     // non of the curves is vertical... 
-    Comparison_result r =  t->curves_compare_y_at_x (c1->getCurve(), 
-						  c2->getCurve(), 
+    Comparison_result r =  t->curves_compare_y_at_x (c1->get_curve(), 
+						  c2->get_curve(), 
 						  *p);
 
     if (r == EQUAL)
-      r = t->curves_compare_y_at_x_right(c1->getCurve(), 
-					     c2->getCurve(), 
+      r = t->curves_compare_y_at_x_right(c1->get_curve(), 
+					     c2->get_curve(), 
 					     *p);
     if ( r == SMALLER) {
       return true;

@@ -104,9 +104,9 @@ public:
    *  target of the curve.
    *  @param curve  a pointer to the curve.
    */
-  void addCurve(SubCurve *scurve)
+  void add_curve(SubCurve *scurve)
   {
-    const X_monotone_curve_2 &curve = scurve->getCurve();
+    const X_monotone_curve_2 &curve = scurve->get_curve();
     const Point_2 &source = m_traits->curve_source(curve);
     const Point_2 &target = m_traits->curve_target(curve);
     
@@ -121,9 +121,9 @@ public:
 	rel = &(target);
       
       if ( m_traits->compare_x(m_point, *rel) == LARGER ) {
-	addCurveToLeft(scurve, m_rightmostPointToLeft, true);
+	add_curve_to_left(scurve, m_rightmostPointToLeft, true);
       } else {
-	addCurveToRight(scurve);
+	add_curve_to_right(scurve);
       }
     }
   }
@@ -142,26 +142,26 @@ public:
    * TODO - check to see in which cases the curve is re-inserted with 
    *        a different ordering. Probably in case of conics.
    */
-  void addCurveToLeft(SubCurve *curve, const Point_2 &ref, 
+  void add_curve_to_left(SubCurve *curve, const Point_2 &ref, 
 		      bool isInitStage=false) 
   {
     if ( isInitStage )
     {
       if ( !m_isInitialized ) 
       {
-	if ( curve->isSourceLeftToTarget()) {
-	  m_rightmostPointToLeft = curve->getSource();
+	if ( curve->is_source_left_to_target()) {
+	  m_rightmostPointToLeft = curve->get_source();
 	}
 	else{
-	  m_rightmostPointToLeft = curve->getTarget();
+	  m_rightmostPointToLeft = curve->get_target();
 	}
 	m_isInitialized = true;
 
       } else {
-	UpdateRightmostPoint(curve);
+	update_rightmost_point(curve);
       }
 
-    } else if ( !curve->isEndPoint(m_point) ) {
+    } else if ( !curve->is_end_point(m_point) ) {
       m_isInternalIntersectionPoint = true;
     }
 
@@ -173,7 +173,7 @@ public:
     }
 
     SubCurveIter iter = m_leftCurves->begin();
-    const X_monotone_curve_2 &cv = curve->getCurve();
+    const X_monotone_curve_2 &cv = curve->get_curve();
     
     // look for the curve, and if exists, erase it.
     while ( iter != m_leftCurves->end() ) {
@@ -190,21 +190,21 @@ public:
 
     while ( iter != m_leftCurves->end() )
     {
-      if ( m_traits->point_in_x_range((*iter)->getCurve(), ref))
+      if ( m_traits->point_in_x_range((*iter)->get_curve(), ref))
       {
-        res = m_traits->curves_compare_y_at_x (cv, (*iter)->getCurve(), 
+        res = m_traits->curves_compare_y_at_x (cv, (*iter)->get_curve(), 
 					    ref );
 	if (res == EQUAL)
-	  res = m_traits->curves_compare_y_at_x_right(cv, (*iter)->getCurve(), 
+	  res = m_traits->curves_compare_y_at_x_right(cv, (*iter)->get_curve(), 
 						   ref );
       }
       else
       {
-        res = m_traits->curves_compare_y_at_x (cv, (*iter)->getCurve(), 
-					    (*iter)->getLeftEnd());
+        res = m_traits->curves_compare_y_at_x (cv, (*iter)->get_curve(), 
+					    (*iter)->get_left_end());
 	if (res == EQUAL)
-	  res = m_traits->curves_compare_y_at_x_right(cv, (*iter)->getCurve(), 
-						   (*iter)->getLeftEnd());
+	  res = m_traits->curves_compare_y_at_x_right(cv, (*iter)->get_curve(), 
+						   (*iter)->get_left_end());
       }
 
       if ( res != LARGER )
@@ -221,9 +221,9 @@ public:
       if ( iter == m_leftCurves->end())
 	break;
 
-      res = m_traits->curves_compare_y_at_x (cv, (*iter)->getCurve(), ref);
+      res = m_traits->curves_compare_y_at_x (cv, (*iter)->get_curve(), ref);
       if (res == EQUAL)
-	res = m_traits->curves_compare_y_at_x_right(cv, (*iter)->getCurve(), ref);
+	res = m_traits->curves_compare_y_at_x_right(cv, (*iter)->get_curve(), ref);
     }
     
     // insert the curve. If the curve is already in the list, it is not added
@@ -236,9 +236,9 @@ public:
    *  values to the right of the event.
    *  @param curve  a pointer to the curve.
    */
-  void addCurveToRight(SubCurve *curve) 
+  void add_curve_to_right(SubCurve *curve) 
   {
-    if ( !curve->isEndPoint(m_point) )
+    if ( !curve->is_end_point(m_point) )
       m_isInternalIntersectionPoint = true;
 
     if (m_rightCurves->empty()) {
@@ -249,12 +249,12 @@ public:
 
     SubCurveIter iter = m_rightCurves->begin();
     Comparison_result res;
-    while (((res = m_traits->curves_compare_y_at_x (curve->getCurve(),
-						(*iter)->getCurve(), 
+    while (((res = m_traits->curves_compare_y_at_x (curve->get_curve(),
+						(*iter)->get_curve(), 
 						 m_point)) == LARGER) ||
 	   (res == EQUAL &&
-	    (res = m_traits->curves_compare_y_at_x_right(curve->getCurve(),
-						      (*iter)->getCurve(), 
+	    (res = m_traits->curves_compare_y_at_x_right(curve->get_curve(),
+						      (*iter)->get_curve(), 
 						      m_point)) == LARGER))
     {
       ++iter;
@@ -273,12 +273,12 @@ public:
 	return;
       }
 
-      res = m_traits->curves_compare_y_at_x (curve->getCurve(),
-					  (*iter)->getCurve(), 
+      res = m_traits->curves_compare_y_at_x (curve->get_curve(),
+					  (*iter)->get_curve(), 
 					  m_point);
       if (res == EQUAL)
-	res = m_traits->curves_compare_y_at_x_right(curve->getCurve(),
-						 (*iter)->getCurve(), 
+	res = m_traits->curves_compare_y_at_x_right(curve->get_curve(),
+						 (*iter)->get_curve(), 
 						 m_point);
     }
     
@@ -290,47 +290,47 @@ public:
   
 
   /*! Returns an iterator to the first curve to the left of the event */
-  SubCurveIter leftCurvesBegin() {
+  SubCurveIter left_curves_begin() {
     return m_leftCurves->begin();
   }
 
   /*! Returns an iterator to the one past the last curve to the left 
       of the event */
-  SubCurveIter leftCurvesEnd() {
+  SubCurveIter left_curves_end() {
     return m_leftCurves->end();
   }
 
   /*! Returns an iterator to the first curve to the right of the event */
-  SubCurveIter rightCurvesBegin() {
+  SubCurveIter right_curves_begin() {
     return m_rightCurves->begin();
   }
 
   /*! Returns an iterator to the one past the last curve to the right 
       of the event */
-   SubCurveIter rightCurvesEnd() {
+  SubCurveIter right_curves_end() {
     return m_rightCurves->end();
   }
 
   /*! Returns the number of intersecting curves that are defined
       to the right of the event point. */
-  int getNumRightCurves() {
+  int get_num_right_curves() {
     return m_rightCurves->size();
   }
 
   /*! Returns the number of intersecting curves that are defined
       to the left of the event point. */
-  int getNumLeftCurves() {
+  int get_num_left_curves() {
     return m_leftCurves->size();
   }
 
   /*! Returns true if at least one intersecting curve is defined to 
       the left of the point. */
-  bool hasLeftCurves() {
+  bool has_left_curves() {
     return !m_leftCurves->empty();
   }
 
   /*! Returns the actual point of the event */
-  const Point_2 &getPoint() {
+  const Point_2 &get_point() {
     return m_point;
   }
 
@@ -338,7 +338,7 @@ public:
     @return returns true if at least one of the curves passign 
     through the event is vertical.
   */
-  bool doesContainVerticalCurve() const {
+  bool does_contain_vertical_curve() const {
     return !m_verticalCurves.empty();
   }
 
@@ -346,7 +346,7 @@ public:
   /*! eturns the list of vertical curves passing through the event point.
     @return a reference to the list of curves.
   */
-  VerticalCurveList &getVerticalCurves() {
+  VerticalCurveList &get_vertical_curves() {
     return m_verticalCurves;
   }
 
@@ -362,7 +362,7 @@ public:
    *  of the list.
    *  TODO - replace the datastructure to a set
    */
-  void addVerticalCurveXPoint(const Point_2 &p, bool requireSort=false) 
+  void add_vertical_curve_x_point(const Point_2 &p, bool requireSort=false) 
   {
     if ( m_verticalCurveXPoints.empty() ) 
     {
@@ -400,13 +400,13 @@ public:
    * will be empty.
    * @return a reference to the list of points.
    */
-  VerticalXPointList &getVerticalXPointList() {
+  VerticalXPointList &get_vertical_x_point_list() {
     return m_verticalCurveXPoints;
   }
 
   /*! Mark the event as an intersection point at an interior of a curve.
    */
-  void markInternalIntersectionPoint() {
+  void mark_internal_intersection_point() {
     m_isInternalIntersectionPoint = true;
   }
 
@@ -415,14 +415,14 @@ public:
     interior of at least one of the curves passing throuogh the event 
     point.
    */
-  bool isInternalIntersectionPoint() const {
+  bool is_internal_intersection_point() const {
     return m_isInternalIntersectionPoint;
   }
 
   /*! 
     @return true if the any two curves in the event overlap, false otherwise.
   */
-  bool doesContainOverlap() const {
+  bool does_contain_overlap() const {
     return m_containsOverlap;
   }
 
@@ -439,20 +439,20 @@ protected:
    * Precondition: the event is either the source or destination of the curve.
    * @param curve a pointer to a new curve added to the event.
    */
-  void UpdateRightmostPoint(SubCurve *curve)
+  void update_rightmost_point(SubCurve *curve)
   {
-    if ( curve->isSourceLeftToTarget())
+    if ( curve->is_source_left_to_target())
     {
-      if ( curve->isTarget(m_point) )
-	if ( m_traits->compare_x(curve->getSource(), 
+      if ( curve->is_target(m_point) )
+	if ( m_traits->compare_x(curve->get_source(), 
 				 m_rightmostPointToLeft) == LARGER )
-	  m_rightmostPointToLeft = curve->getSource();
+	  m_rightmostPointToLeft = curve->get_source();
     } else
     {
-      if ( curve->isSource(m_point) )
-	if ( m_traits->compare_x(curve->getTarget(), 
+      if ( curve->is_source(m_point) )
+	if ( m_traits->compare_x(curve->get_target(), 
 				 m_rightmostPointToLeft) == LARGER )
-	  m_rightmostPointToLeft = curve->getTarget();
+	  m_rightmostPointToLeft = curve->get_target();
     }
   }
 
