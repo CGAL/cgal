@@ -102,6 +102,7 @@ public:
   {
     
     Face_handle fh = ct.locate(p);
+    if(fh==0) return;
     std::set<Face_handle> component; 
     std::list<Face_handle> st; 
     //std::list<Vertex_handle> stv; 
@@ -147,8 +148,10 @@ public:
   void load_file(QString name)
   {
     std::ifstream is(name);
-    lc.clear();
+    if(!is) return;
 
+    lc.clear();
+    
     int n;
     is >> n;
     qDebug("Reading %d constraints", n);
@@ -157,7 +160,6 @@ public:
       is >> p >> q;
       lc.push_back(std::make_pair(p,q));
     }
-
     ct=lc;
     assert(ct.is_valid());
     redrawWin();
