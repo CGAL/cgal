@@ -535,8 +535,8 @@ sub main()
     $VERSIONS_WEBPAGE="versions.inc";
     rename $TEMPPAGE, $WWWPAGE;
     rename $TEMPPAGE2, $VERSIONS_WEBPAGE;
-    chmod 0664, $VERSIONS_WEBPAGE;
-    chmod 0664, $WWWPAGE;
+    chmod 0644, $VERSIONS_WEBPAGE;
+    chmod 0644, $WWWPAGE;
     unlink "index.shtml";
     symlink $WWWPAGE, "index.shtml";
 }
