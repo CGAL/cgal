@@ -30,6 +30,8 @@
 
 #include <CGAL/basic.h>
 
+#include <CGAL/Cartesian.h>
+
 #include <CGAL/Point_3.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Triangle_3.h>
