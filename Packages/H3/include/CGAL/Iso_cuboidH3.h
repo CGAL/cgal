@@ -192,6 +192,7 @@ inline
 FT
 Iso_cuboidH3<FT,RT>::zmax() const
 { return  FT( max().hz() ) / FT( max().hw() ); }
+
 template < class FT, class RT >
 CGAL_KERNEL_LARGE_INLINE
 PointH3<FT,RT>
@@ -200,12 +201,18 @@ Iso_cuboidH3<FT,RT>::vertex(int i) const
   switch (i%8)
   {
     case 0: return min();
-    case 1: return PointH3<FT,RT>( max().hx(), min().hy(), min().hz(), min().hw() );
-    case 2: return PointH3<FT,RT>( max().hx(), max().hy(), min().hz(), min().hw() );
-    case 3: return PointH3<FT,RT>( min().hx(), max().hy(), min().hz(), min().hw() );
-    case 4: return PointH3<FT,RT>( min().hx(), max().hy(), max().hz(), min().hw() );
-    case 5: return PointH3<FT,RT>( min().hx(), min().hy(), max().hz(), min().hw() );
-    case 6: return PointH3<FT,RT>( max().hx(), min().hy(), max().hz(), min().hw() );
+    case 1: return PointH3<FT,RT>( max().hx(), min().hy(),
+		                   min().hz(), min().hw() );
+    case 2: return PointH3<FT,RT>( max().hx(), max().hy(),
+		                   min().hz(), min().hw() );
+    case 3: return PointH3<FT,RT>( min().hx(), max().hy(),
+		                   min().hz(), min().hw() );
+    case 4: return PointH3<FT,RT>( min().hx(), max().hy(),
+		                   max().hz(), min().hw() );
+    case 5: return PointH3<FT,RT>( min().hx(), min().hy(),
+		                   max().hz(), min().hw() );
+    case 6: return PointH3<FT,RT>( max().hx(), min().hy(),
+		                   max().hz(), min().hw() );
     case 7: return max();
   }
   return PointH3<FT,RT>();

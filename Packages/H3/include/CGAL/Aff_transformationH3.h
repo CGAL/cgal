@@ -103,10 +103,10 @@ public:
 
   Aff_transformation_repH3();
   Aff_transformation_repH3(
-                    const RT& m00, const RT& m01, const RT& m02, const RT& m03,
-                    const RT& m10, const RT& m11, const RT& m12, const RT& m13,
-                    const RT& m20, const RT& m21, const RT& m22, const RT& m23,
-                                                                 const RT& m33);
+                 const RT& m00, const RT& m01, const RT& m02, const RT& m03,
+                 const RT& m10, const RT& m11, const RT& m12, const RT& m13,
+                 const RT& m20, const RT& m21, const RT& m22, const RT& m23,
+                                                              const RT& m33);
   virtual  ~Aff_transformation_repH3() {}
 
   virtual  PointH3<FT,RT>
@@ -147,8 +147,7 @@ friend
 Aff_transformationH3<FT,RT>
 _general_transformation_composition CGAL_NULL_TMPL_ARGS (
                            Aff_transformation_repH3<FT,RT> l,
-                           Aff_transformation_repH3<FT,RT> r
-                                                             );
+                           Aff_transformation_repH3<FT,RT> r);
 
 friend
 std::ostream &

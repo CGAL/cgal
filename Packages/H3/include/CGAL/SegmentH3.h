@@ -225,7 +225,8 @@ std::ostream &operator<<(std::ostream &os, const SegmentH3<FT,RT> &s)
       case IO::BINARY :
           return os << s.source() << s.target();
       default:
-          return os << "SegmentH3(" << s.source() <<  ", " << s.target() << ")";
+          return os << "SegmentH3(" << s.source()
+	            <<  ", " << s.target() << ")";
   }
 }
 #endif // NO_OSTREAM_INSERT_SEGMENTH3
@@ -275,6 +276,7 @@ SegmentH3<FT,RT>::collinear_has_on(const PointH3<FT,RT> p) const
           )
         );
 }
+
 template < class FT, class RT >
 CGAL_KERNEL_INLINE
 bool
@@ -283,15 +285,13 @@ SegmentH3<FT,RT>::operator==(const SegmentH3<FT,RT>& s) const
   return ( (start() == s.start() )
          &&(end()   == s.end()   ) );
 }
+
 template < class FT, class RT >
 inline
 bool
 SegmentH3<FT,RT>::operator!=(const SegmentH3<FT,RT>& s) const
 { return ( !operator==(s) ); }
 
-
-
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_SEGMENTH3_H
