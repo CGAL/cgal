@@ -1,6 +1,9 @@
 Polyhedron_IO Package: Release changes:
 ---------------------------------------------------------------------
 
+3.18 (22 September 2003)
+- new headers
+
 3.17 (21 July 2003)
 	- fixed bug in examples/Polyhedron_IO/off2stl.C [rursu]
 	- Replaced #define OUT/IN with CGAL_OUT/CGAL_IN to avoid nameclash (mingw/g++) [af]

@@ -1,5 +1,8 @@
 CHANGES to the Geomview package.
 
+Ver 3.39 (22 September 2003)
+- new headers.
+
 Ver 3.38 (12 April 2003)
 - Replace <strstream> by <sstream>.
 

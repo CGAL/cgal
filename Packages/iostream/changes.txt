@@ -1,3 +1,6 @@
+Version 2.17 (22 September 2003)
+- new headers
+
 Version 2.16 (29 April 2002)
 - split of user and reference manuals
 

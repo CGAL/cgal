@@ -1,5 +1,8 @@
 Changes done to the `Optimisation_basic' package
 
+Version 3.8.15 on 22-Sep-2003
+- new headers
+
 Version 3.8.14 on 26-Mar-2002
 - Use Construct_point_(2/3) instead of the ones from Kernel.
 
