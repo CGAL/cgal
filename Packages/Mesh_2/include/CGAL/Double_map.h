@@ -18,27 +18,26 @@ public:
   typedef _Direct_order Direct_order;
   typedef _Reverse_order Reverse_order;
   
-  typedef std::map <Key, Data, Direct_order> Direct_map;
-  typedef std::multimap <Data, Key, Reverse_order> Reverse_multi_map;
+  typedef std::map <Key, Data, Direct_order> Direct_func;
+  typedef std::multimap <Data, Key, Reverse_order> Reverse_func;
 
   typedef std::pair<Key, Data> Direct_entry;
   typedef std::pair<Data, Key> Reverse_entry;
 
-  typedef typename Direct_map::size_type size_type;
+  typedef typename Direct_func::size_type size_type;
 
-  typedef typename Reverse_multi_map::iterator reverse_iterator;
-  typedef typename Direct_map::iterator direct_iterator;
+  typedef typename Reverse_func::iterator reverse_iterator;
+  typedef typename Direct_func::iterator direct_iterator;
   typedef reverse_iterator iterator;
 
 private:
   // Private members
-  Direct_map direct_func;
-  Reverse_multi_map reverse_func;
+  Direct_func direct_func;
+  Reverse_func reverse_func;
 
 public :
   // The default constructor
   Double_map () {}
-
 
   // Queries
   bool empty() const
