@@ -1,3 +1,6 @@
+28 September 2004 Andreas Fabri
+- install_cgal: Added -Op to the ADDITIONAL_CXXFLAGS  in order to enable better floating-point precision
+
 26 September 2004 Sylvain Pion
 - install_cgal : get rid of the options --leda-sys-incl and --leda-sys-lib.
   If users have LEDA installed in system dirs, then they can simply not
