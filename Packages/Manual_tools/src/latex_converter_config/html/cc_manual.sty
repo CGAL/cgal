@@ -573,7 +573,13 @@
     \gdef{\lciIfHtmlClassNotInline}{\lcFalse}%
     \gdef{\lciIfHtmlClassToc}{\lcFalse}%
     \lciRefDeclOpenFilenameX{#GXC3_#GXC1#GC2}{\lciHtmlSuffix}{\ccRefName}%
-    \lciIfHtmlClassLinks{\ccHtmlCrossLink{#GXC4#GXC1#GC2}}{}% 
+    \lciIfHtmlClassLinks{%
+      \ccHtmlCrossLink{#GXC4#GXC1#GC2}%
+      \lciIfEmpty{#XC4}{}{%
+        % cross link names also without the global (CGAL) prefix
+        \ccHtmlCrossLink{#GXC1#GC2}%
+      }%
+    }{}% 
     \ccIndexRefName{#1}{\ccc{#2}}{#3}%
     \gdef{\lciIfHtmlClassLinks}{\lcFalse}%
     \gdef{\lciIfHtmlClassIndex}{\lcFalse}%
