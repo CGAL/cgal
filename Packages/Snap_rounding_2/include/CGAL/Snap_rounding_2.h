@@ -47,6 +47,10 @@
 #include <CGAL/leda_real.h>
 #include <CGAL/Snap_rounding_kd_2.h>
 
+#include <CGAL/utility.h>
+#include <CGAL/Iterator_project.h>
+#include <CGAL/function_objects.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template<class Rep_>
@@ -60,6 +64,8 @@ typedef CGAL::Point_2<Rep>                  Point_2;
 private:
  Point_2 p;
  Point_2 q;
+
+ Rep_   _gt;
 
 public:
   Segment_data();
@@ -305,36 +311,33 @@ inline void Segment_data<Rep_>::set_data(NT inp_x1,NT inp_y1,NT inp_x2,
 template<class Rep_>
 bool Segment_data<Rep_>::equal(Segment_2 s)
 {
-  return(
-	 s.source().x() == p.x() &
-	 s.source().y() == p.y() &
-	 s.target().x() == q.x() &
-	 s.target().y() == q.y());
+  return(s.source() == p && s.target() == q);
 }
 
 template<class Rep_>
 void Segment_data<Rep_>::determine_direction()
 {
-  NT x1 = p.x(),y1 = p.y(),x2 = q.x(),y2 = q.y();
+  Comparison_result cx = _gt.compare_x_2_object()(p,q);
+  Comparison_result cy = _gt.compare_y_2_object()(p,q);
 
-  if(x1 < x2) {
-    if(y1 < y2)
+  if(cx == SMALLER) {
+   if(cy == SMALLER)
       Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::UP_RIGHT);
-    else if(y1 == y2)
+    else if(cy == EQUAL)
       Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::RIGHT);
     else
       Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::DOWN_RIGHT);
-  } else if(x1 == x2) {
-    if(y1 < y2)
+  } else if(cx == EQUAL) {
+    if(cy == SMALLER)
       Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::UP);
-    else if(y1 == y2)
+    else if(cy == EQUAL)
       Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::POINT_SEG);
     else
       Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::DOWN);
   } else {
-    if(y1 < y2)
+    if(cy == SMALLER)
       Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::UP_LEFT);
-    else if(y1 == y2)
+    else if(cy == EQUAL)
       Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::LEFT);
     else
       Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::DOWN_LEFT);
@@ -827,7 +830,7 @@ bool Snap_rounding_2<Rep_>::insert(Segment_2 seg)
   {
     need_sr = true;
     seg_list.push_back(Segment_data<Rep_>(
-			 seg.source(),
+					  seg.source(),
                          seg.target()));
 
     seg_2_list.push_back(seg);
