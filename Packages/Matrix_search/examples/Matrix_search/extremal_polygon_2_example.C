@@ -78,6 +78,7 @@ int main() {
     back_inserter( k_gon));
   cout << "Maximum area " << k << "-gon:\n" << k_gon << endl;
 
+  return 0;
 } 
 // ----------------------------------------------------------------------------
 // ** EOF

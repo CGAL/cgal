@@ -78,7 +78,7 @@ monotone_matrix_search(
   #ifdef CGAL_MON_SEARCH_TRACE
   cerr << "construct new matrix" << endl;
   #endif
-  Matrix* M_new( M.extract_all_even_rows());
+  Matrix* M_new = M.extract_all_even_rows();
   CGAL_optimisation_assertion(
     M_new->number_of_columns() == M.number_of_columns());
   CGAL_optimisation_assertion(
@@ -106,7 +106,7 @@ monotone_matrix_search(
   
   // table to store the reduction permutation:
   // (incl. sentinel)
-  int* reduction_table( new int[ M_new->number_of_rows() + 1]);
+  int* reduction_table = new int[ M_new->number_of_rows() + 1];
   
   if ( M_new->number_of_rows() < M_new->number_of_columns()) {
     // set sentinel:
@@ -152,7 +152,7 @@ monotone_matrix_search(
   
   // table to store the rmax values of M_new:
   // (incl. sentinel)
-  int* t_new( new int[M_new->number_of_rows() + 1]);
+  int* t_new = new int[M_new->number_of_rows() + 1];
   t_new[M_new->number_of_rows()] = M_new->number_of_columns();
   
   #ifdef CGAL_MON_SEARCH_TRACE

@@ -1,3 +1,4 @@
+# Created by the script create_makefile
 # This is the makefile for compiling a CGAL application.
 
 #---------------------------------------------------------------------#
@@ -14,17 +15,22 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
            $(TESTSUITE_CXXFLAGS) \
+           $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
-           -g
+           $(DEBUG_OPT)
 
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
 
+LIBPATH = \
+          $(TESTSUITE_LIBPATH) \
+          $(CGAL_LIBPATH)
+
 LDFLAGS = \
           $(TESTSUITE_LDFLAGS) \
-           $(LONG_NAME_PROBLEM_LDFLAGS) \
+          $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
 #---------------------------------------------------------------------#
@@ -38,34 +44,32 @@ all:            \
                 rectangular_p_center_2_random2_test \
                 sorted_matrix_search_test 
 
-all_furthest_neighbors_2_test: all_furthest_neighbors_2_test.o
-	$(CGAL_CXX) -o all_furthest_neighbors_2_test all_furthest_neighbors_2_test.o $(LDFLAGS)
+all_furthest_neighbors_2_test$(EXE_EXT): all_furthest_neighbors_2_test$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)all_furthest_neighbors_2_test all_furthest_neighbors_2_test$(OBJ_EXT) $(LDFLAGS)
 
-extremal_polygon_2_test: extremal_polygon_2_test.o
-	$(CGAL_CXX) -o extremal_polygon_2_test extremal_polygon_2_test.o $(LDFLAGS)
+extremal_polygon_2_test$(EXE_EXT): extremal_polygon_2_test$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)extremal_polygon_2_test extremal_polygon_2_test$(OBJ_EXT) $(LDFLAGS)
 
-rectangular_p_center_2_random1_test: rectangular_p_center_2_random1_test.o
-	$(CGAL_CXX) -o rectangular_p_center_2_random1_test rectangular_p_center_2_random1_test.o $(LDFLAGS)
+rectangular_p_center_2_random1_test$(EXE_EXT): rectangular_p_center_2_random1_test$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)rectangular_p_center_2_random1_test rectangular_p_center_2_random1_test$(OBJ_EXT) $(LDFLAGS)
 
-rectangular_p_center_2_random2_test: rectangular_p_center_2_random2_test.o
-	$(CGAL_CXX) -o rectangular_p_center_2_random2_test rectangular_p_center_2_random2_test.o $(LDFLAGS)
+rectangular_p_center_2_random2_test$(EXE_EXT): rectangular_p_center_2_random2_test$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)rectangular_p_center_2_random2_test rectangular_p_center_2_random2_test$(OBJ_EXT) $(LDFLAGS)
 
-sorted_matrix_search_test: sorted_matrix_search_test.o
-	$(CGAL_CXX) -o sorted_matrix_search_test sorted_matrix_search_test.o $(LDFLAGS)
+sorted_matrix_search_test$(EXE_EXT): sorted_matrix_search_test$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)sorted_matrix_search_test sorted_matrix_search_test$(OBJ_EXT) $(LDFLAGS)
 
-clean:
-	rm -f *.o \
-                   all_furthest_neighbors_2_test \
-                   extremal_polygon_2_test \
-                   rectangular_p_center_2_random1_test \
-                   rectangular_p_center_2_random2_test \
-                   sorted_matrix_search_test \
-                   core
+clean: \
+                   all_furthest_neighbors_2_test.clean \
+                   extremal_polygon_2_test.clean \
+                   rectangular_p_center_2_random1_test.clean \
+                   rectangular_p_center_2_random2_test.clean \
+                   sorted_matrix_search_test.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C.o:
-	$(CGAL_CXX) $(CXXFLAGS) -c $<
+.C$(OBJ_EXT):
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 

@@ -222,6 +222,8 @@ main( int argc, char* argv[])
          << "\nresult was " << u << "\ntrivial algorithm gives "
          << brute_force << endl;
   #endif
+
+  return 0;
 }
 // ----------------------------------------------------------------------------
 // ** EOF

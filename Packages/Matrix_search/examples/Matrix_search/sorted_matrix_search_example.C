@@ -80,6 +80,7 @@ int main() {
   cout << "upper bound for " << bound << " is "
        << upper_bound << endl;
 
+  return 0;
 } 
 // ----------------------------------------------------------------------------
 // ** EOF

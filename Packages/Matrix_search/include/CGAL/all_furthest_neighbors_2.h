@@ -129,11 +129,14 @@ all_furthest_neighbors( RandomAccessIC points_begin,
                         const Traits& t,
                         std::random_access_iterator_tag)
 {
-  typedef All_furthest_neighbor_matrix<
-    typename Traits::Distance,
-    RandomAccessIC
-    >
+#ifndef CGAL_CFG_TYPENAME_BUG
+  typedef All_furthest_neighbor_matrix< typename Traits::Distance,
+                                        RandomAccessIC >
   Afn_matrix;
+#else
+  typedef All_furthest_neighbor_matrix< Traits::Distance, RandomAccessIC >
+    Afn_matrix;
+#endif // CGAL_CFG_TYPENAME_BUG
 
   // check preconditions:
   int number_of_points(
@@ -179,11 +182,14 @@ all_furthest_neighbors( RandomAccessIC points_begin,
   using std::modulus;
 #endif
 
-  typedef All_furthest_neighbor_matrix<
-    typename Traits::Distance,
-    RandomAccessIC
-    >
+#ifndef CGAL_CFG_TYPENAME_BUG
+  typedef All_furthest_neighbor_matrix< typename Traits::Distance,
+                                        RandomAccessIC >
   Afn_matrix;
+#else
+  typedef All_furthest_neighbor_matrix< Traits::Distance, RandomAccessIC >
+    Afn_matrix;
+#endif // CGAL_CFG_TYPENAME_BUG
 
  // check preconditions:
   int number_of_points(

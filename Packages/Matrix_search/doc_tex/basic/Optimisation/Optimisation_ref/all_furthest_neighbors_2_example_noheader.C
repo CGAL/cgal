@@ -36,4 +36,6 @@ main()
     p.vertices_end(),
     Oiterator( cout));
   cout << endl;
+
+  return 0;
 } 

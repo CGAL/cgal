@@ -40,4 +40,5 @@ int main() {
     back_inserter( k_gon));
   cout << "Maximum perimeter " << k << "-gon:\n" << k_gon << endl;
 
+  return 0;
 } 

@@ -86,6 +86,7 @@ int main() {
   copy(centers.begin(), centers.end(), cout_ip);
   cout << "\n\n" << p << "-radius = " << p_radius << endl;
 
+  return 0;
 } 
 // ----------------------------------------------------------------------------
 // ** EOF
