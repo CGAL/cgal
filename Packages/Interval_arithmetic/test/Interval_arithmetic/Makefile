@@ -15,7 +15,8 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = -I../../include \
            $(TESTSUITE_CXXFLAGS) \
            $(CGAL_CXXFLAGS) \
-           -g -Wall -O # -fprofile-arcs -ftest-coverage
+	   -Wall -O6 -mcpu=ultrasparc # -fprofile-arcs -ftest-coverage
+           #-O2 -xtarget=ultra2
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -29,13 +30,19 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: tst1 tst2 
+all: tst1 tst2 tst3 tst4
 	./tst1
 	./tst2
+	./tst3
+	./tst4
 
 tst1.o: tst1.C include/tst_generic.C
 
 tst2.o: tst2.C include/tst_generic.C
+
+tst3.o: tst3.C include/bench_generic.C
+
+tst4.o: tst4.C include/bench_generic.C
 
 tst1: tst1.o
 	$(CGAL_CXX) -o tst1 tst1.o $(LDFLAGS)
@@ -43,8 +50,14 @@ tst1: tst1.o
 tst2: tst2.o
 	$(CGAL_CXX) -o tst2 tst2.o $(LDFLAGS)
 
+tst3: tst3.o
+	$(CGAL_CXX) -o tst3 tst3.o $(LDFLAGS)
+
+tst4: tst4.o
+	$(CGAL_CXX) -o tst4 tst4.o $(LDFLAGS)
+
 clean:
-	rm -f *.o *.bb *.bbg *.da *.gcov core tst1 tst2
+	rm -f *.o *.bb *.bbg *.da *.gcov core tst?
 
 #---------------------------------------------------------------------#
 #                    suffix rules
