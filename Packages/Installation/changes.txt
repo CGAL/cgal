@@ -6,7 +6,7 @@
 //---------------------------------------------------------------------
 //	actual revision
 //---------------------------------------------------------------------
-
+GLOB: Removed linkage against Core
 GLOB: added licensing information about Qt widget stuff
 GLOB: removed stlport from README
 GLOB: updated for release 2.4
