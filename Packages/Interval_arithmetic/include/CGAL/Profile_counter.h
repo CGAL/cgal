@@ -48,6 +48,12 @@ private:
     const char *s;
 };
 
+#ifdef CGAL_PROFILE
+#  define CGAL_PROFILER(X, Y) static CGAL::Profile_counter X(Y); ++X;
+#else
+#  define CGAL_PROFILER(X, Y)
+#endif
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_PROFILE_COUNTER_H
