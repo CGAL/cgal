@@ -29,10 +29,10 @@ void print_test()
 {
   for (int i=-2; i<3; i++)
     std::cout << MPI(i) << "   ";
-  std::cout << endl;
+  std::cout << std::endl;
   for (int i=-2; i<3; i++)
     std::cout << MPI(i+65536) << "      ";
-  std::cout << endl;
+  std::cout << std::endl;
 }
 
 int main()
