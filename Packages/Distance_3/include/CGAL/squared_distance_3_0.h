@@ -201,10 +201,8 @@ squared_distance_to_line(const typename CGAL_WRAP(K)::Vector_3 & dir,
 template <class K>
 inline 
 typename K::FT
-squared_distance(
-    const Point_3<K> & pt1,
-    const Point_3<K> & pt2,
-    const K& k)
+squared_distance(const Point_3<K> & pt1,
+		 const Point_3<K> & pt2)
 {
   return CGALi::squared_distance(pt1,pt2, K());
 }
@@ -223,9 +221,8 @@ squared_distance_to_plane(const Vector_3<K> & normal,
 template <class K>
 inline
 typename K::FT
-squared_distance_to_line(
-    const Vector_3<K> & dir,
-    const Vector_3<K> & diff)
+squared_distance_to_line(const Vector_3<K> & dir,
+			 const Vector_3<K> & diff)
 {
   return CGALi::squared_distance_to_line(dir, diff, K());
 }
