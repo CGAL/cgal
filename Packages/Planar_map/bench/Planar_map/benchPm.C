@@ -174,9 +174,9 @@ public:
   void clean() { m_curveList.clear(); }
   void sync(){}
 
-  void setFormat(FormatId fmt) { m_format = fmt; }
-  void setFilename(const char * filename) { m_filename = filename; }
-  void setVerbose(const bool verbose) { m_verbose = verbose; }
+  void set_format(FormatId fmt) { m_format = fmt; }
+  void set_file_name(const char * filename) { m_filename = filename; }
+  void set_verbose(const bool verbose) { m_verbose = verbose; }
 
 protected:
   const char * m_filename;
@@ -323,23 +323,24 @@ typedef CGAL::Bench<Walk_dis_pm>                Walk_dis_pm_bench;
 
 /*
  */
-template <class Bench_inst, class Bench_user>
-void runBench(Bench_inst & benchInst, Bench_user & benchUser,
+template <class Bench_inst, class Benchable>
+void runBench(Bench_inst & benchInst, Benchable & benchUser,
               const char * fullname, FormatId format,
               int samples, int iterations, bool verbose)
 {
     // Bench_inst benchInst(name, seconds, false);
-    // Bench_user & benchUser = benchInst.getBenchUser();
-  benchUser.setFormat(format);
-  benchUser.setFilename(fullname);
-  benchUser.setVerbose(verbose);
+    // Benchable & benchUser = benchInst.get_benchable();
+  benchUser.set_format(format);
+  benchUser.set_file_name(fullname);
+  benchUser.set_verbose(verbose);
 
-  if (samples > 0) benchInst.setSamples(samples);
-  else if (iterations > 0) benchInst.setIterations(iterations);
+  if (samples > 0) benchInst.set_samples(samples);
+  else if (iterations > 0) benchInst.set_iterations(iterations);
 
   benchInst();
 
-  if (verbose) std::cout << "(" << benchInst.getSamples() << ") " << std::endl;
+  if (verbose) std::cout << "(" << benchInst.get_samples() << ") "
+                         << std::endl;
 }
 
 /*
@@ -351,20 +352,20 @@ int main(int argc, char * argv[])
   if (rc > 0) return 0;
   if (rc < 0) return rc;
   
-  bool verbose = parseArgs.getVerbose();
-  unsigned int typeMask = parseArgs.getTypeMask();
-  unsigned int strategyMask = parseArgs.getStrategyMask();
-  FormatId format = parseArgs.getInputFormat();
-  int samples = parseArgs.getSamples();
-  int iterations = parseArgs.getIterations();
-  int seconds = parseArgs.getSeconds();
-  bool printHeader = parseArgs.getPrintHeader();
-  int nameLength = parseArgs.getNameLength();
-  const char * filename = parseArgs.getFilename();
-  const char * fullname = parseArgs.getFullname();
+  bool verbose = parseArgs.get_verbose();
+  unsigned int typeMask = parseArgs.get_type_mask();
+  unsigned int strategyMask = parseArgs.get_strategy_mask();
+  FormatId format = parseArgs.get_input_format();
+  int samples = parseArgs.get_samples();
+  int iterations = parseArgs.get_iterations();
+  int seconds = parseArgs.get_seconds();
+  bool printHeader = parseArgs.get_print_header();
+  int nameLength = parseArgs.get_name_length();
+  const char * filename = parseArgs.get_file_name();
+  const char * fullname = parseArgs.get_full_name();
   
-  CGAL::Bench_base::setNameLength(nameLength);
-  if (printHeader) CGAL::Bench_base::printHeader();
+  CGAL::Bench_base::set_name_length(nameLength);
+  if (printHeader) CGAL::Bench_base::print_header();
   
   // Construct Incrementaly
   TypeId typeId = CGAL::Bench_parse_args::TYPE_INCREMENT;
@@ -373,11 +374,11 @@ int main(int argc, char * argv[])
     StrategyId strategyId = CGAL::Bench_parse_args::STRATEGY_TRAPEZOIDAL;
     if (strategyMask & (0x1 << strategyId)) {
       std::string name =
-          std::string(parseArgs.getTypeName(typeId)) + " " +
-          std::string(parseArgs.getStrategyName(strategyId)) + " " +
+          std::string(parseArgs.get_type_name(typeId)) + " " +
+          std::string(parseArgs.get_strategy_name(strategyId)) + " " +
           "PM " + PM_TYPE + " (" + std::string(filename) + ")";
       Trap_inc_pm_bench benchInst(name, seconds, false);
-      Trap_inc_pm & benchUser = benchInst.getBenchUser();
+      Trap_inc_pm & benchUser = benchInst.get_benchable();
       runBench<Trap_inc_pm_bench,Trap_inc_pm>(benchInst, benchUser,
                                               fullname, format,
                                               samples, iterations, verbose);
@@ -387,11 +388,11 @@ int main(int argc, char * argv[])
     strategyId = CGAL::Bench_parse_args::STRATEGY_NAIVE;
     if (strategyMask & (0x1 << strategyId)) {
       std::string name =
-          std::string(parseArgs.getTypeName(typeId)) + " " +
-          std::string(parseArgs.getStrategyName(strategyId)) + " " +
+          std::string(parseArgs.get_type_name(typeId)) + " " +
+          std::string(parseArgs.get_strategy_name(strategyId)) + " " +
           "PM " + PM_TYPE + " (" + std::string(filename) + ")";
       Naive_inc_pm_bench benchInst(name, seconds, false);
-      Naive_inc_pm & benchUser = benchInst.getBenchUser();
+      Naive_inc_pm & benchUser = benchInst.get_benchable();
       runBench<Naive_inc_pm_bench,Naive_inc_pm>(benchInst, benchUser,
                                                 fullname, format,
                                                 samples, iterations, verbose);
@@ -401,11 +402,11 @@ int main(int argc, char * argv[])
     strategyId = CGAL::Bench_parse_args::STRATEGY_WALK;
     if (strategyMask & (0x1 << strategyId)) {
       std::string name =
-          std::string(parseArgs.getTypeName(typeId)) + " " +
-          std::string(parseArgs.getStrategyName(strategyId)) + " " +
+          std::string(parseArgs.get_type_name(typeId)) + " " +
+          std::string(parseArgs.get_strategy_name(strategyId)) + " " +
           "PM " + PM_TYPE + " (" + std::string(filename) + ")";
       Walk_inc_pm_bench benchInst(name, seconds, false);
-      Walk_inc_pm & benchUser = benchInst.getBenchUser();
+      Walk_inc_pm & benchUser = benchInst.get_benchable();
       runBench<Walk_inc_pm_bench,Walk_inc_pm>(benchInst, benchUser,
                                               fullname, format,
                                               samples, iterations, verbose);
@@ -419,11 +420,11 @@ int main(int argc, char * argv[])
     StrategyId strategyId = CGAL::Bench_parse_args::STRATEGY_TRAPEZOIDAL;
     if (strategyMask & (0x1 << strategyId)) {
       std::string name =
-          std::string(parseArgs.getTypeName(typeId)) + " " +
-          std::string(parseArgs.getStrategyName(strategyId)) + " " +
+          std::string(parseArgs.get_type_name(typeId)) + " " +
+          std::string(parseArgs.get_strategy_name(strategyId)) + " " +
           "PM " + PM_TYPE + " (" + std::string(filename) + ")";
       Trap_agg_pm_bench benchInst(name, seconds, false);
-      Trap_agg_pm & benchUser = benchInst.getBenchUser();
+      Trap_agg_pm & benchUser = benchInst.get_benchable();
       runBench<Trap_agg_pm_bench,Trap_agg_pm>(benchInst, benchUser,
                                               fullname, format,
                                               samples, iterations, verbose);
@@ -433,11 +434,11 @@ int main(int argc, char * argv[])
     strategyId = CGAL::Bench_parse_args::STRATEGY_NAIVE;
     if (strategyMask & (0x1 << strategyId)) {
       std::string name =
-          std::string(parseArgs.getTypeName(typeId)) + " " +
-          std::string(parseArgs.getStrategyName(strategyId)) + " " +
+          std::string(parseArgs.get_type_name(typeId)) + " " +
+          std::string(parseArgs.get_strategy_name(strategyId)) + " " +
           "PM " + PM_TYPE + " (" + std::string(filename) + ")";
       Naive_agg_pm_bench benchInst(name, seconds, false);
-      Naive_agg_pm & benchUser = benchInst.getBenchUser();
+      Naive_agg_pm & benchUser = benchInst.get_benchable();
       runBench<Naive_agg_pm_bench,Naive_agg_pm>(benchInst, benchUser,
                                                 fullname, format,
                                                 samples, iterations, verbose);
@@ -447,11 +448,11 @@ int main(int argc, char * argv[])
     strategyId = CGAL::Bench_parse_args::STRATEGY_WALK;
     if (strategyMask & (0x1 << strategyId)) {
       std::string name =
-          std::string(parseArgs.getTypeName(typeId)) + " " +
-          std::string(parseArgs.getStrategyName(strategyId)) + " " +
+          std::string(parseArgs.get_type_name(typeId)) + " " +
+          std::string(parseArgs.get_strategy_name(strategyId)) + " " +
           "PM " + PM_TYPE + " (" + std::string(filename) + ")";
       Walk_agg_pm_bench benchInst(name, seconds, false);
-      Walk_agg_pm & benchUser = benchInst.getBenchUser();
+      Walk_agg_pm & benchUser = benchInst.get_benchable();
       runBench<Walk_agg_pm_bench,Walk_agg_pm>(benchInst, benchUser,
                                               fullname, format,
                                               samples, iterations, verbose);
@@ -465,11 +466,11 @@ int main(int argc, char * argv[])
     StrategyId strategyId = CGAL::Bench_parse_args::STRATEGY_TRAPEZOIDAL;
     if (strategyMask & (0x1 << strategyId)) {
       std::string name =
-          std::string(parseArgs.getTypeName(typeId)) + " " +
-          std::string(parseArgs.getStrategyName(strategyId)) + " " +
+          std::string(parseArgs.get_type_name(typeId)) + " " +
+          std::string(parseArgs.get_strategy_name(strategyId)) + " " +
           "PM " + PM_TYPE + " (" + std::string(filename) + ")";
       Trap_dis_pm_bench benchInst(name, seconds, false);
-      Trap_dis_pm & benchUser = benchInst.getBenchUser();
+      Trap_dis_pm & benchUser = benchInst.get_benchable();
       runBench<Trap_dis_pm_bench,Trap_dis_pm>(benchInst, benchUser,
                                               fullname, format,
                                               samples, iterations, verbose);
@@ -479,11 +480,11 @@ int main(int argc, char * argv[])
     strategyId = CGAL::Bench_parse_args::STRATEGY_NAIVE;
     if (strategyMask & (0x1 << strategyId)) {
       std::string name =
-          std::string(parseArgs.getTypeName(typeId)) + " " +
-          std::string(parseArgs.getStrategyName(strategyId)) + " " +
+          std::string(parseArgs.get_type_name(typeId)) + " " +
+          std::string(parseArgs.get_strategy_name(strategyId)) + " " +
           "PM " + PM_TYPE + " (" + std::string(filename) + ")";
       Naive_dis_pm_bench benchInst(name, seconds, false);
-      Naive_dis_pm & benchUser = benchInst.getBenchUser();
+      Naive_dis_pm & benchUser = benchInst.get_benchable();
       runBench<Naive_dis_pm_bench,Naive_dis_pm>(benchInst, benchUser,
                                                 fullname, format,
                                                 samples, iterations, verbose);
@@ -493,11 +494,11 @@ int main(int argc, char * argv[])
     strategyId = CGAL::Bench_parse_args::STRATEGY_WALK;
     if (strategyMask & (0x1 << strategyId)) {
       std::string name =
-          std::string(parseArgs.getTypeName(typeId)) + " " +
-          std::string(parseArgs.getStrategyName(strategyId)) + " " +
+          std::string(parseArgs.get_type_name(typeId)) + " " +
+          std::string(parseArgs.get_strategy_name(strategyId)) + " " +
           "PM " + PM_TYPE + " (" + std::string(filename) + ")";
       Walk_dis_pm_bench benchInst(name, seconds, false);
-      Walk_dis_pm & benchUser = benchInst.getBenchUser();
+      Walk_dis_pm & benchUser = benchInst.get_benchable();
       runBench<Walk_dis_pm_bench,Walk_dis_pm>(benchInst, benchUser,
                                               fullname, format,
                                               samples, iterations, verbose);
