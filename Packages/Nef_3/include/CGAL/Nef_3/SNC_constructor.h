@@ -1196,6 +1196,7 @@ create_edge_facet_overlay( typename SNC_::Halfedge_handle e,
     SFace_handle sf;
     Sphere_circle c(plane(f));
 
+    SHalfedge_handle next_edge;
     SHalfedge_around_svertex_const_circulator ec(E.out_edges(e)), ee(ec);
     CGAL_For_all(ec,ee) {
       Sphere_segment seg(E.point(E.source(ec)), 
@@ -1209,7 +1210,11 @@ create_edge_facet_overlay( typename SNC_::Halfedge_handle e,
       TRACEN("new svertex 3 " << normalized(sp));
       D.mark(sv) = BOP(E.mark(ec), mark(f));
       se1 = D.new_edge_pair(v1, sv);
-      se2 = D.new_edge_pair(sv, v2);
+      if(next_edge == SHalfedge_handle())
+	se2 = D.new_edge_pair(sv, v2); 
+      else
+	se2 = D.new_edge_pair(sv, next_edge, -1);
+      next_edge = twin(se2);
       D.mark(se1) = BOP(E.mark(ec), mark(volume(faces_p)));
       D.mark(se2) = BOP(E.mark(ec), mark(volume(twin(faces_p))));
       mark_of_right_sface[se1] = E.mark(E.face(ec));
@@ -1867,6 +1872,9 @@ link_shalfedges_to_facet_cycles() const
     CGAL_nef3_assertion( Dt.circle(cet) == D.circle(ce).opposite() ); 
     CGAL_nef3_assertion( twin(Dt.source(cet)) == D.source(ce)); 
     CGAL_For_all(ce,cee) { 
+      TRACEN("circles " << Dt.circle(cet) << "   " << D.circle(ce) << 
+	     " sources " << Dt.point(Dt.target(cet)) << 
+	     "   " << D.point(D.target(ce)));
       CGAL_nef3_assertion( Dt.circle(cet) == D.circle(ce).opposite() ); 
       CGAL_nef3_assertion( twin(Dt.source(cet)) == D.source(ce)); 
       CGAL_nef3_assertion(ce->tmp_mark()==cet->tmp_mark());
