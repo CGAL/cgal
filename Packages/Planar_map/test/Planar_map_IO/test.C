@@ -111,8 +111,8 @@ private:
   
   int num_polylines;
 
-  Point_list all_points_list;
-  Point_list test_point_list;
+  Point_list m_all_points_list;
+  Point_list m_test_point_list;
   std::list<Planar_map::Locate_type> exp_type_list;
   
   unsigned expected_num_vertices,
@@ -321,8 +321,8 @@ private:
     x = get_next_num(file); y = get_next_num(file);
     Point_2 p2(x,y);
     
-    all_points_list.push_back(p1);
-    all_points_list.push_back(p2);
+    m_all_points_list.push_back(p1);
+    m_all_points_list.push_back(p2);
     
     if (reverse_order)
       segment = X_curve_2(p1,p2);
@@ -361,7 +361,7 @@ private:
       polyline.push_back(*plit);
     }
     
-    all_points_list.splice(all_points_list.end(), point_list); 
+    m_all_points_list.splice(m_all_points_list.end(), point_list); 
     return polyline;
   }
 
@@ -427,7 +427,7 @@ private:
       x = get_next_num(file); y = get_next_num(file);
       std::cout << x << "," << y << std::endl;
       Point_2 s(x,y);
-      test_point_list.push_back(s);
+      m_test_point_list.push_back(s);
 	
       exp_type = get_next_int(file);
       exp_type_list.push_back( (Planar_map::Locate_type) exp_type);
@@ -482,7 +482,7 @@ public:
     CGAL_assertion(pm.is_valid());
             
     // Check that vertices read are indeed in the arrangement
-    check_that_vertices_are_in_arrangement(pm, all_points_list);
+    check_that_vertices_are_in_arrangement(pm, m_all_points_list);
 
     // count overlaps
     //actual_num_overlaps = count_overlaps(arr); 
@@ -491,10 +491,10 @@ public:
       
     CGAL_assertion (pm.number_of_vertices()  == expected_num_vertices);
     // verify that test points are as located in the arrangemet as expected
-    points_in_expected_place(pm, test_point_list, exp_type_list);
+    points_in_expected_place(pm, m_test_point_list, exp_type_list);
     CGAL_assertion (pm.number_of_halfedges() == expected_num_edges * 2);
     CGAL_assertion (pm.number_of_faces()     == expected_num_faces);
-    //CGAL_assertion (actual_num_overlaps       == expected_num_overlaps);
+    //CGAL_assertion (actual_num_overlaps      == expected_num_overlaps);
   }
 };
 
