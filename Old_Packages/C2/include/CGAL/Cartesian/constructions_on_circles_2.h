@@ -23,8 +23,8 @@
 // ============================================================================
 
 
-#ifndef CGAL_CARTESIAN_CONSTRUCTIONS_ON_CIRCLES2_H
-#define CGAL_CARTESIAN_CONSTRUCTIONS_ON_CIRCLES2_H
+#ifndef CGAL_CARTESIAN_CONSTRUCTIONS_ON_CIRCLES_2_H
+#define CGAL_CARTESIAN_CONSTRUCTIONS_ON_CIRCLES_2_H
 
 #include <utility>
 

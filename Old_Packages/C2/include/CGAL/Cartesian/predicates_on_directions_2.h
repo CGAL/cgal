@@ -22,8 +22,8 @@
 // ======================================================================
 
 
-#ifndef CGAL_PREDICATES_ON_DIRECTIONSH2_H
-#define CGAL_PREDICATES_ON_DIRECTIONSH2_H
+#ifndef CGAL_CARTESIAN_PREDICATES_ON_DIRECTIONS_2_H
+#define CGAL_CARTESIAN_PREDICATES_ON_DIRECTIONS_2_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -48,4 +48,4 @@ compare_angle_with_x_axis(const DirectionC2<R CGAL_CTAG>& d1,
 CGAL_END_NAMESPACE
 
 
-#endif // CGAL_PREDICATES_ON_DIRECTIONSH2_H
+#endif // CGAL_CARTESIAN_PREDICATES_ON_DIRECTIONS_2_H

@@ -1,6 +1,8 @@
-Version 3.3.8 (October ?? 1999)
+Version 3.3.8 (October 28 1999)
 - Don't filter compare_lexicographically_xyC2() [Sylvain].
 - Changed //CGAL_NO_FILTER_BEGIN&END to per predicate /*CGAL_NO_FILTER*/ [Syl].
+- Corrected protect macro clash in predicates_on_directions
+- removed some protect macros for file normally not included twice
 
 Version 3.3.7 (October 7 1999)
 - Various predicates and constructions cleanups and speedups [Sylvain].

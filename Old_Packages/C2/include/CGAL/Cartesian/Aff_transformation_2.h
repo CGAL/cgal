@@ -46,21 +46,10 @@ template < class R > class Scaling_repC2;
 
 CGAL_END_NAMESPACE
 
-#ifndef CGAL_CARTESIAN_AFF_TRANSFORMATION_REP_2_H
 #include <CGAL/Cartesian/Aff_transformation_rep_2.h>
-#endif
-
-#ifndef CGAL_CARTESIAN_TRANSLATION_REP_2_H
 #include <CGAL/Cartesian/Translation_rep_2.h>
-#endif
-
-#ifndef CGAL_CARTESIAN_ROTATION_REP_2_H
 #include <CGAL/Cartesian/Rotation_rep_2.h>
-#endif
-
-#ifndef CGAL_CARTESIAN_SCALING_REP_2_H
 #include <CGAL/Cartesian/Scaling_rep_2.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
