@@ -30,6 +30,7 @@ following types are required:
 
 \ccNestedType{Segment_2}{A segment type}
 \ccNestedType{Ray_2}{A ray type}
+\ccNestedType{Object_2}{A general object type that can be either a point or a segment}
 \ccNestedType{Construct_segment_2}{Function object type that provides
 \ccc{Segment_2 operator()(Point_2 p, Point_2 q)}, which constructs and
 returns the segment defined by the points $p$ and $q$.}
@@ -50,6 +51,16 @@ returns \ccStyle{true}, iff the three points are collinear and
 \ccStyle{q} lies strictly between \ccStyle{p}
 and \ccStyle{r}.  Note that \ccc{false} should be returned if
 \ccStyle{q==p} or \ccStyle{q==r}.}
+
+\ccNestedType{Intersect_2}{Function object type that provides
+\ccc{Object_2 operator()(Segment_2 s1, Segment_2 s2)} that returns
+the intersection of two segments (which may be either a segment or
+a point).}
+
+\ccNestedType{Assign_2}{Function object type that provides
+\ccc{bool operator()(Segment_2 s1, Object_2 o)} that returns 
+\ccc{true} if \ccc{o} is a segment and assigns the value of \ccc{o}
+to \ccc{s1}; returns \ccc{false} otherwise.}
 
 \ccCreationVariable{traits}  %% choose variable name
 \ccCreation

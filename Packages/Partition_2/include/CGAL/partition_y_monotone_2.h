@@ -301,16 +301,21 @@ void partition_y_mono_handle_merge_vertex(BidirectionalCirculator c,
    // 5.  helper(e_j) = v_i
 }
 
-template <class BidirectionalCirculator>
-bool partition_y_mono_interior_to_right(BidirectionalCirculator c)
+template <class BidirectionalCirculator, class Traits>
+bool partition_y_mono_interior_to_right(BidirectionalCirculator c,
+                                        const Traits& traits)
 {
+   typename Traits::Compare_y_2 compare_y_2 = traits.compare_y_2_object();
+
    BidirectionalCirculator previous = c; previous--;
 
-   if ((*previous).y() > (*c).y()) return true;
+   Comparison_result cmp_y = compare_y_2(*previous, *c);
+   if (cmp_y == LARGER) return true;
 
    BidirectionalCirculator next = c; next++;
 
-   if ((*previous).y() == (*c).y() && (*next).y() < (*c).y()) return true;
+   if (cmp_y == EQUAL && compare_y_2(*next, *c) == SMALLER) return true;
+
    return false;
 }
 
@@ -331,7 +336,7 @@ void partition_y_mono_handle_regular_vertex(BidirectionalCirculator c,
    BidirectionalCirculator previous = c;
    previous--;
 
-   if (partition_y_mono_interior_to_right(c))  
+   if (partition_y_mono_interior_to_right(c, traits))  
    {
       it = tree.find(previous);
       CGAL_assertion( it != tree.end() );

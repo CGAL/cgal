@@ -69,6 +69,9 @@ class Partition_traits_2  : public Partition_traits_2_base<Kernel_>
                                             Collinear_are_ordered_along_line_2;
     typedef typename Kernel::Are_strictly_ordered_along_line_2
                                             Are_strictly_ordered_along_line_2;
+    typedef typename Kernel::Intersect_2                Intersect_2;
+    typedef typename Kernel::Assign_2                   Assign_2;
+    typedef typename Kernel::Object_2                   Object_2;
 
     // needed by approx_convex (for constrained triangulation)
     // and optimal convex (for vis. graph)
@@ -113,6 +116,14 @@ class Partition_traits_2  : public Partition_traits_2_base<Kernel_>
     Is_y_monotone_2
     is_y_monotone_2_object(const Self& traits) const
     {  return Is_y_monotone_2(traits); }
+
+    Intersect_2
+    intersect_2_object() const
+    {  return Intersect_2(); }
+
+    Assign_2
+    assign_2_object() const
+    {  return Assign_2(); }
 };
 
 }

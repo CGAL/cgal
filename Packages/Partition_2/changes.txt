@@ -1,3 +1,7 @@
+1.32 (24 Apr 2002)
+  - removed more .x() and .y() accesses and global function calls and updated
+    the traits requirements accordingly
+
 1.31 (18 Apr 2002)
   - removed some .x() and .y() accesses
 

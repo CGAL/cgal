@@ -238,8 +238,7 @@ Vertex_visibility_graph_2<Traits>::left_turn_to_parent(
 {
    if (tree.parent_is_p_infinity(q)) 
    {
-      return ((*p).x() < (*q).x())  ||
-              ((*p).x() == (*q).x() && (*p).y() < (*q).y());
+      return (less_xy_2(*p, *q));
    }
    else if (orientation_2(*p, *q, *(*q).parent()) == COLLINEAR &&
             (collinear_ordered_2(*p, *q, *(*q).parent()) ||
@@ -535,9 +534,9 @@ void Vertex_visibility_graph_2<Traits>::update_visibility(
       Segment_2 i_seg;
       Point_2 i_point;
          
-      Object next_result = intersection(next_seg, ray);
+      Object_2 next_result = intersect_2(next_seg, ray);
          
-      if (assign(i_point, next_result)) 
+      if (assign_2(i_point, next_result)) 
       {
          if (collinear_ordered_2((*p_it).first, (*q_it).first, i_point))
          {
@@ -555,7 +554,7 @@ void Vertex_visibility_graph_2<Traits>::update_visibility(
          }
 #endif 
       }
-      else if (assign(i_seg, next_result))
+      else if (assign_2(i_seg, next_result))
       {
          if (collinear_ordered_2((*p_it).first,(*q_it).first,i_seg.source()) &&
              collinear_ordered_2((*p_it).first,(*q_it).first,i_seg.target()))

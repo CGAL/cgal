@@ -47,6 +47,7 @@ class Indirect_edge_compare
      typedef typename Traits::Compare_x_at_y_2   Compare_x_at_y_2;
      typedef typename Traits::Is_horizontal_2    Is_horizontal_2;
      typedef typename Traits::Line_2             Line_2;
+     typedef typename Traits::Point_2            Point_2;
 
      Indirect_edge_compare() : 
           _compare_y_2(Traits().compare_y_2_object()),
@@ -57,7 +58,7 @@ class Indirect_edge_compare
      { }
      
      // determines if the edge (edge_vtx_1, edge_vtx_1++) has a larger
-     // x value than vertex.x() at y-value vertex.y()
+     // x value than vertex.x at y-value vertex.y
      bool
      larger_x_at_vertex_y(ForwardCirculator edge_vtx_1, 
                           ForwardCirculator vertex) const
@@ -114,21 +115,32 @@ class Indirect_edge_compare
           if (_is_horizontal_2(l_p)) 
           {
               Line_2  l_q = _construct_line_2(*q, *after_q);
-              if (_is_horizontal_2(l_q))  // shouldn't ever happen, since these
-              {                         // can't both be in sweep structure at
-                                        // the same time
-                 return std::max((*p).x(), (*after_p).x()) > 
-                        std::max((*q).x(), (*after_q).x());
+
+              if (_is_horizontal_2(l_q))  
+              {                         
+                 Point_2 p_max;
+                 Point_2 q_max;
+                 if (_compare_x_2(*p, *after_p) == SMALLER)
+                    p_max = *after_p;
+                 else
+                    p_max = *p;
+                 if (_compare_x_2(*q, *after_q) == SMALLER)
+                    q_max = *after_q;
+                 else
+                    q_max = *q;
+                 return (_compare_x_2(p_max, q_max) == LARGER);
               }
               else  // p and after_p must both be on same side of l_q
               {
-                 return (*p).x() > l_q.x_at_y((*p).y());
+                 return (_compare_x_at_y_2(*p, l_q) == LARGER);
               }
           }
           else  
           {
-             bool q_larger_x = l_p.x_at_y((*q).y()) > (*q).x();
-             bool after_q_larger_x = l_p.x_at_y((*after_q).y())>(*after_q).x();
+             bool q_larger_x = _compare_x_at_y_2(*q, l_p) == SMALLER;
+             bool after_q_larger_x = 
+                              _compare_x_at_y_2(*after_q, l_p) == SMALLER;
+
              if (q_larger_x == after_q_larger_x)
                 return q_larger_x;
              else   // one smaller and one larger
@@ -137,19 +149,11 @@ class Indirect_edge_compare
                 Line_2 l_q = _construct_line_2(*q, *after_q); 
                 if (_is_horizontal_2(l_q))     // p is not horizontal
                 {
-                   return (*q).x() > l_p.x_at_y((*q).y());
+                   return _compare_x_at_y_2((*q), l_p) == LARGER;
                 }
                 else 
                 {
-                  bool p_larger_x = l_q.x_at_y((*p).y()) > (*p).x();
-/*
-                  bool after_p_larger_x = 
-                       l_q.x_at_y((*after_p).y()) > (*after_p).x();
-     
-                  CGAL_assertion (p_larger_x == after_p_larger_x);
-*/
-     
-                  return !p_larger_x;
+                  return _compare_x_at_y_2((*p), l_q) != SMALLER;
                 }
              }
           }   
