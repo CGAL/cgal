@@ -73,10 +73,12 @@ public:
   Object dual(const Finite_edges_iterator& ei) const;
  
   //INSERTION-REMOVAL
-  Vertex_handle  insert(const Point  &p, Face_handle f = Face_handle() );
-  Vertex_handle  push_back(const Point &p);
-  Vertex_handle  insert(const Point  &p, Locate_type& lt,
-			Face_handle f = Face_handle() );
+  Vertex_handle  insert(const Point  &p, Face_handle start = Face_handle() );
+  Vertex_handle insert(const Point& p,
+		       Locate_type lt,
+		       Face_handle loc, int li );
+  Vertex_handle push_back(const Point &p);
+
   void  remove(Vertex_handle v );
   
 
@@ -342,18 +344,18 @@ dual(const Finite_edges_iterator& ei) const
   
 template < class Gt, class Tds >
 inline
-//Triangulation_2<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_2<Gt,Tds>::
-insert(const Point  &p,  Face_handle f)
+insert(const Point  &p,  Face_handle start)
 {
   Locate_type lt;
-  return insert(p,lt,f);
+  int li;
+  Face_handle loc = locate (p, lt, li, start);
+  return insert(p, lt, loc, li);
 }
   
 template < class Gt, class Tds >
 inline
-//Triangulation_2<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_2<Gt,Tds>::
 push_back(const Point &p)
@@ -363,14 +365,11 @@ push_back(const Point &p)
   
 template < class Gt, class Tds >
 inline
-//Triangulation_2<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_2<Gt,Tds>::
-insert(const Point  &p,
-       Locate_type& lt,
-       Face_handle f)
+insert(const Point  &p, Locate_type lt, Face_handle loc, int li)
 {
-  Vertex_handle v = Triangulation_2<Gt,Tds>::insert(p,lt,f);
+  Vertex_handle v = Triangulation_2<Gt,Tds>::insert(p,lt,loc,li);
   restore_Delaunay(v);
   return(v);
 }

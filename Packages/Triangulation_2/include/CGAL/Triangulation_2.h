@@ -178,11 +178,10 @@ public:
   Vertex_handle insert_in_face(const Point& p, Face_handle f);
   Vertex_handle insert_outside_convex_hull(const Point& p, Face_handle f);
   Vertex_handle insert_outside_affine_hull(const Point& p);
+  Vertex_handle insert(const Point &p, Face_handle start = Face_handle() );
   Vertex_handle insert(const Point& p,
-		       Locate_type& lt,
-		       Face_handle f = Face_handle() );
-  Vertex_handle insert(const Point &p,
-		       Face_handle f = Face_handle() );
+		       Locate_type lt,
+		       Face_handle loc, int li );
   Vertex_handle push_back(const Point &p);
  
   void remove_degree_3(Vertex_handle  v, Face_handle f = Face_handle());
@@ -837,27 +836,42 @@ insert_outside_affine_hull(const Point& p)
   v->set_point(p);
   return v;
 }
+
+template <class Gt, class Tds >
+Triangulation_2<Gt,Tds>::Vertex_handle
+Triangulation_2<Gt,Tds>::
+insert(const Point &p, Face_handle start)
+{
+  Locate_type lt;
+  int li;
+  Face_handle loc = locate (p, lt, li, start);
+  return insert(p, lt, loc, li);
+}
+
  
 template <class Gt, class Tds >
 Triangulation_2<Gt,Tds>::Vertex_handle
 Triangulation_2<Gt,Tds>::
-insert(const Point& p, Locate_type& lt, Face_handle f)
+insert(const Point& p, Locate_type lt, Face_handle loc, int li)
+  // insert a point p, whose localisation is known (lt, f, i)
 {
   if(number_of_vertices() == 0) {
-    lt = OUTSIDE_AFFINE_HULL;
+    //lt = OUTSIDE_AFFINE_HULL;
     return(insert_first(p));
   }
   if(number_of_vertices() == 1) {
-    if (geom_traits().compare(p,finite_vertex()->point()) ) {
-      lt = VERTEX;
-      return finite_vertex();
-    }
-    lt = OUTSIDE_AFFINE_HULL;
-    return(insert_second(p));
+    // if (geom_traits().compare(p,finite_vertex()->point()) ) {
+//       lt = VERTEX;
+//       return finite_vertex();
+//     }
+//     lt = OUTSIDE_AFFINE_HULL;
+//     return(insert_second(p));
+    if (lt = VERTEX) return finite_vertex();
+    else return(insert_second(p));
   }
 
-  int li;
-  Face_handle loc = locate(p, lt, li, f);
+  // int li;
+//   Face_handle loc = locate(p, lt, li, f);
   switch(lt) {
   case FACE:
     return insert_in_face(p,loc);
@@ -879,22 +893,13 @@ insert(const Point& p, Locate_type& lt, Face_handle f)
   return Vertex_handle();
 }
 
-template <class Gt, class Tds >
-Triangulation_2<Gt,Tds>::Vertex_handle
-Triangulation_2<Gt,Tds>::
-insert(const Point &p, Face_handle f)
-{
-  Locate_type lt;
-  return insert(p, lt, f);
-}
 
 template <class Gt, class Tds >
 Triangulation_2<Gt,Tds>::Vertex_handle
 Triangulation_2<Gt,Tds>::
 push_back(const Point &p)
 {
-  Locate_type lt;
-  return insert(p, lt, NULL);
+  return insert(p);
 }
 
 template <class Gt, class Tds >

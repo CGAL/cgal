@@ -112,8 +112,9 @@ insert_in_constrained_edge(const Point& a, Face_handle f, int i)
       c1=f->vertex(ccw(i)); //endpoint of the constraint
       c2=f->vertex(cw(i)); // endpoint of the constraint
 
-      Vertex_handle va = static_cast<Vertex*>(_tds.insert_in_edge(&(*f), i));
-      va->set_point(a);
+      //Vertex_handle va = static_cast<Vertex*>(_tds.insert_in_edge(&(*f), i));
+      //va->set_point(a);
+      Vertex_handle va = insert_in_edge(a,f,i);
 
       // updates the constraints
       if (dimension()==1) {

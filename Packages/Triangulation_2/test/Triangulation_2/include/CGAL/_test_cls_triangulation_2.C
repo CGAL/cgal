@@ -105,7 +105,7 @@ _test_cls_triangulation_2( const Triangulation & )
   int qx=-1, qy=2;
   Locate_type lt;
   int li;
-  Face_handle    f;
+  Face_handle    f, loc;
 
 
   std::list<Point> l; l.push_back(p0);
@@ -246,21 +246,18 @@ _test_cls_triangulation_2( const Triangulation & )
   Cls T2_3;
   Vertex_handle v2_3_1 = T2_3.insert(p1);
   Vertex_handle v2_3_2 = T2_3.insert(p2);
-  Vertex_handle v2_3_3 = T2_3.insert(p3, lt);
-  assert( lt == Cls::EDGE );
-  Vertex_handle v2_3_8 = T2_3.insert(p8, lt);
-  assert( lt == Cls::OUTSIDE_CONVEX_HULL );
+  Vertex_handle v2_3_3 = T2_3.insert(p3);
+  Vertex_handle v2_3_8 = T2_3.insert(p8);
   Vertex_handle v2_3_9 = T2_3.insert(p9);
   assert( T2_3.dimension() == 1 );
   Vertex_handle v2_3_4 = T2_3.insert(p4);
   assert( T2_3.dimension() == 2 );
   Vertex_handle v2_3_6 = T2_3.insert(p6, T2_3.finite_faces_begin());
-  Vertex_handle v2_3_0 = T2_3.insert(p0, lt, ++T2_3.finite_faces_begin());
-  assert( lt == Cls::OUTSIDE_CONVEX_HULL );
+  Vertex_handle v2_3_0 = T2_3.insert(p0, ++T2_3.finite_faces_begin());
   Vertex_handle v2_3_5 = T2_3.insert(p5);
   Vertex_handle v2_3_7 = T2_3.insert(p7);
-  Vertex_handle v2_3_10 = T2_3.insert(p10, lt, 
-				      ++(++(T2_3.finite_faces_begin())));
+  loc = T2_3.locate(p10,lt,li);
+  Vertex_handle v2_3_10 = T2_3.insert(p10, lt, loc, li);
   assert( lt == Cls::FACE );
   assert( T2_3.dimension() == 2 );
   assert( T2_3.number_of_vertices() == 11 );
@@ -268,8 +265,7 @@ _test_cls_triangulation_2( const Triangulation & )
   assert( T2_3.is_valid() );
   
   // make sure inserting on a previous point does not insert it again
-  assert( T2_3.insert(p10, lt) == v2_3_10 );
-  assert( lt == Cls::VERTEX );
+  assert( T2_3.insert(p10) == v2_3_10 );
   assert( T2_3.number_of_vertices() == 11 );
 
   // make sure push_back exists and does the same thing as insert
