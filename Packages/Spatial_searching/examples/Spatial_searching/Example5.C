@@ -22,10 +22,6 @@
 #include <CGAL/Random.h>
 #include <CGAL/Timer.h>
 
-//#undef assert
-//#define assert
-
-#pragma hdrstop
 
 
 

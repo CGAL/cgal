@@ -24,13 +24,6 @@
 #include <CGAL/Random.h>
 #include <CGAL/Timer.h>
 
-//#undef assert
-//#define assert
-
-#pragma hdrstop
-
-
-
 #include <CGAL/point_generators_2.h>
 #include <CGAL/algorithm.h>
 
