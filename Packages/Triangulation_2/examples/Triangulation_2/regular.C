@@ -17,12 +17,13 @@ typedef Regular_triangulation_2<Gt, Tds> Regular_triangulation;
 int main()
 {
    Regular_triangulation rt;
+   std::ifstream in("data/regular.cin");
 
    Gt::Weighted_point wp;
-   while(std::cin >> wp){
+   while(in >> wp){
      std::cout << wp << std::endl;
      rt.insert(wp);
    }
    rt.is_valid();
-   return 1;	
+   return 0;	
 }

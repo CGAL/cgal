@@ -5,6 +5,7 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
+CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.7_g++-2.95.1_LEDA
 include $(CGAL_MAKEFILE)
 
 
@@ -15,7 +16,8 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = -I../../include\
 	$(CGAL_CXXFLAGS)\
-	$(LONG_NAME_PROBLEM_CXXFLAGS)
+	$(LONG_NAME_PROBLEM_CXXFLAGS)\
+	-g
 
 
 #---------------------------------------------------------------------#

@@ -31,5 +31,5 @@ int main() {
       std::cout << vc->point() << std::endl;
     }while(++vc != done);
   }
-  return 1;
+  return 0;
 }

@@ -22,6 +22,6 @@ int main()
     while(std::cin >> p){
       dt.insert(p);
     }
-    return 1;
+    return 0;
 }
 
