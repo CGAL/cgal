@@ -707,17 +707,16 @@ Triangulation_2<Gt,Tds>::Vertex_handle
 Triangulation_2<Gt,Tds>::
 insert_outside_convex_hull_1(const Point& p, Face_handle f)
 {
-  int i = f->index(infinite_vertex());
-  Face_handle  n = f->neighbor(i);
-  int in = n->index(f);
-  CGAL_triangulation_precondition( ! is_infinite(n));
-  CGAL_triangulation_precondition(
-	 geom_traits().orientation( n->vertex(in)->point(),
-				    n->vertex(1-in)->point(),
-				    p) == COLLINEAR &&
-	 collinear_between( n->vertex(in)->point(),
-			    n->vertex(1-in)->point(),
-			    p) );
+  CGAL_triangulation_precondition( is_infinite(f) && dimension()==1);
+  CGAL_triangulation_precondition(  
+    geom_traits().orientation(
+	     f->opposite_vertex(f->index(infinite_vertex()))->point(),
+	     f->vertex(1- f->index(infinite_vertex()))->point(),
+	     p) == COLLINEAR &&
+    collinear_between( 
+	     f->opposite_vertex(f->index(infinite_vertex()))->point(),
+	     f->vertex(1- f->index(infinite_vertex()))->point(),
+	     p) );
    Vertex_handle v=static_cast<Vertex*>(_tds.insert_in_edge( &(*f), 2));
    v->set_point(p);
    return v;
