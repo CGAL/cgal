@@ -88,20 +88,24 @@ using CGAL::squared_distance;
 
 #include <LEDA/list.h>
 
+#if defined(LEDA_NAMESPACE)
+using namespace leda;
+#endif
+
 //typedef CGAL::Cartesian< double >                      R;
 typedef CGAL::Cartesian< leda_real >                   R;
 typedef R::Point_2                                     Point_2;
 typedef R::Line_2                                      Line_2;
 typedef Polygon_traits_2< R >                          P_traits;
-typedef vector< Point_2 >                              Container;
+typedef std::vector< Point_2 >                         Container;
 typedef CGAL::Polygon_2< P_traits, Container >         Polygon_2;
 typedef Creator_uniform_2< double, Point_2 >           Creator;
 typedef Random_points_in_square_2< Point_2, Creator >  Point_generator;
 
 struct Minimum_rectangle_2 :
-public geowin_update< CGALPointlist, list< leda_polygon > > {
+public geowin_update< CGALPointlist, std::list< leda_polygon > > {
   void
-  update(const CGALPointlist& ipts, list<leda_polygon>& poly)
+  update(const CGALPointlist& ipts, std::list<leda_polygon>& poly)
   {
     poly.clear();
 
@@ -159,9 +163,9 @@ public geowin_update< CGALPointlist, list< leda_polygon > > {
   } // update(pts, poly)
 };
 struct Minimum_parallelogram_2 :
-public geowin_update< CGALPointlist, list< leda_polygon > > {
+public geowin_update< CGALPointlist, std::list< leda_polygon > > {
   void
-  update(const CGALPointlist& ipts, list<leda_polygon>& poly)
+  update(const CGALPointlist& ipts, std::list<leda_polygon>& poly)
   {
     poly.clear();
 
@@ -219,9 +223,9 @@ public geowin_update< CGALPointlist, list< leda_polygon > > {
   } // update(pts, poly)
 };
 struct Minimum_strip_2 :
-public geowin_update< CGALPointlist, list< leda_line > > {
+public geowin_update< CGALPointlist, std::list< leda_line > > {
   void
-  update(const CGALPointlist& ipts, list<leda_line>& lines)
+  update(const CGALPointlist& ipts, std::list<leda_line>& lines)
   {
     lines.clear();
 

@@ -31,6 +31,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Optimisation/assertions.h>
+#include <CGAL/functional.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Direction_2.h>
 #include <CGAL/Polygon_2.h>
@@ -112,22 +113,11 @@ struct Min_quadrilateral_default_traits_2 {
   // Predicates
   typedef typename R::Equal_2                Equal_2;
   // std::equal_to< Point_2 >                Equal_2;
-  typedef typename R::Less_x_2               Less_x_2;
-  typedef typename R::Less_y_2               Less_y_2;
-      struct Greater_x_2
-      : public CGAL_STD::binary_function< Point_2, Point_2, bool >
-      {
-        bool
-        operator()(const Point_2& p, const Point_2& q) const
-        { return p.x() > q.x(); }
-      };
-  struct Greater_y_2
-  : public CGAL_STD::binary_function< Point_2, Point_2, bool >
-  {
-    bool
-    operator()(const Point_2& p, const Point_2& q) const
-    { return p.y() > q.y(); }
-  };
+  typedef typename R::Less_xy_2              Less_xy_2;
+  typedef typename R::Less_yx_2              Less_yx_2;
+  typedef typename Swap<Less_xy_2,1>::Type   Greater_xy_2;
+  typedef typename Swap<Less_yx_2,1>::Type   Greater_yx_2;
+
   struct Right_of_implicit_line_2
   {
     bool
@@ -181,6 +171,11 @@ struct Min_quadrilateral_default_traits_2 {
     operator()(const Rectangle_2& p, const Rectangle_2& q) const
     {
       typename R::Rep_tag tag;
+      #if defined(__sun) && defined(__SUNPRO_CC)
+          // to avoid a warning "tag has not yet been assigned a value"
+          typedef typename R::Rep_tag Rep_tag;
+          tag = Rep_tag();
+      #endif // SUNPRO
       return area_numerator(p, tag) * area_denominator(q, tag) <
         area_denominator(p, tag) * area_numerator(q, tag);
     }
@@ -225,6 +220,11 @@ struct Min_quadrilateral_default_traits_2 {
     operator()(const Parallelogram_2& p, const Parallelogram_2& q) const
     {
       typename R::Rep_tag tag;
+      #if defined(__sun) && defined(__SUNPRO_CC)
+          // to avoid a warning "tag has not yet been assigned a value"
+          typedef typename R::Rep_tag Rep_tag;
+          tag = Rep_tag();
+      #endif // SUNPRO
       return area_numerator(p, tag) * area_denominator(q, tag) <
         area_denominator(p, tag) * area_numerator(q, tag);
     }
@@ -262,6 +262,11 @@ struct Min_quadrilateral_default_traits_2 {
     operator()(const Strip_2& p, const Strip_2& q) const
     {
       typename R::Rep_tag tag;
+      #if defined(__sun) && defined(__SUNPRO_CC)
+          // to avoid a warning "tag has not yet been assigned a value"
+          typedef typename R::Rep_tag Rep_tag;
+          tag = Rep_tag();
+      #endif // SUNPRO
       return width_numerator(p, tag) * width_denominator(q, tag) <
         width_denominator(p, tag) * width_numerator(q, tag);
     }
@@ -397,10 +402,8 @@ struct Min_quadrilateral_default_traits_2 {
   } 
 
   Equal_2     equal_2_object()     const { return Equal_2(); }
-  Less_x_2    less_x_2_object()    const { return Less_x_2(); }
-  Less_y_2    less_y_2_object()    const { return Less_y_2(); }
-  Greater_x_2 greater_x_2_object() const { return Greater_x_2(); }
-  Greater_y_2 greater_y_2_object() const { return Greater_y_2(); }
+  Less_xy_2    less_xy_2_object()    const { return Less_xy_2(); }
+  Less_yx_2    less_yx_2_object()    const { return Less_yx_2(); }
   
   Right_of_implicit_line_2 right_of_implicit_line_2_object() const
   { return Right_of_implicit_line_2(); }
@@ -432,6 +435,12 @@ struct Min_quadrilateral_default_traits_2 {
   
   Construct_strip_2 construct_strip_2_object() const
   { return Construct_strip_2(); }
+
+  Greater_xy_2 greater_xy_2_object() const
+  { return swap_1(less_xy_2_object()); }
+  Greater_yx_2 greater_yx_2_object() const
+  { return swap_1(less_yx_2_object()); }
+
 };
 
 

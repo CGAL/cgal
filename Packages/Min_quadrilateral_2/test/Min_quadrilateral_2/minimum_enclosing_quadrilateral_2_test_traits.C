@@ -26,6 +26,7 @@
 // Test Program: Computing minimum enclosing quadrilaterals
 // ============================================================================
 
+#define CGAL_OPTIMISATION_NO_PRECONDITIONS
 #include <CGAL/min_quadrilateral_2.h>
 #include <CGAL/predicates/kernel_ftC2.h>
 #include <functional>
@@ -47,29 +48,29 @@ private:
     bool operator()(const Point_2& p, const Point_2& q) const
     { return p.xc == q.xc && p.yc == q.yc; }
   };
-  struct Less_x_2
+  struct Less_xy_2
   : public std::binary_function< Point_2, Point_2, bool >
   {
     bool operator()(const Point_2& p, const Point_2& q) const
-    { return p.xc < q.xc; }
+    { return p.xc < q.xc || p.xc == q.xc && p.yc < q.yc; }
   };
-  struct Less_y_2
+  struct Less_yx_2
   : public std::binary_function< Point_2, Point_2, bool >
   {
     bool operator()(const Point_2& p, const Point_2& q) const
-    { return p.yc < q.yc; }
+    { return p.yc < q.yc || p.yc == q.yc && p.xc < q.xc; }
   };
-  struct Greater_x_2
+  struct Greater_xy_2
   : public std::binary_function< Point_2, Point_2, bool >
   {
     bool operator()(const Point_2& p, const Point_2& q) const
-    { return p.xc > q.xc; }
+    { return p.xc > q.xc || p.xc == q.xc && p.yc > q.yc; }
   };
-  struct Greater_y_2
+  struct Greater_yx_2
   : public std::binary_function< Point_2, Point_2, bool >
   {
     bool operator()(const Point_2& p, const Point_2& q) const
-    { return p.yc > q.yc; }
+    { return p.yc > q.yc || p.yc == q.yc && p.xc > q.xc; }
   };
   struct Right_of_implicit_line_2 {
     bool operator()(const Point_2& p,
@@ -223,10 +224,8 @@ public:
     return o;
   }
   Equal_2     equal_2_object()     const { return Equal_2(); }
-  Less_x_2    less_x_2_object()    const { return Less_x_2(); }
-  Less_y_2    less_y_2_object()    const { return Less_y_2(); }
-  Greater_x_2 greater_x_2_object() const { return Greater_x_2(); }
-  Greater_y_2 greater_y_2_object() const { return Greater_y_2(); }
+  Less_xy_2    less_xy_2_object()    const { return Less_xy_2(); }
+  Less_yx_2    less_yx_2_object()    const { return Less_yx_2(); }
   
   Right_of_implicit_line_2 right_of_implicit_line_2_object() const
   { return Right_of_implicit_line_2(); }
@@ -258,6 +257,10 @@ public:
   
   Construct_strip_2 construct_strip_2_object() const
   { return Construct_strip_2(); }
+
+  Greater_xy_2 greater_xy_2_object() const { return Greater_xy_2(); }
+  Greater_yx_2 greater_yx_2_object() const { return Greater_yx_2(); }
+
   friend class Data;
 };
 
