@@ -30,7 +30,7 @@
 #ifndef __SGI_STL_INTERNAL_FUNCTION_H
 #define __SGI_STL_INTERNAL_FUNCTION_H
 
-#include <CGAL/functional_base.h>
+#include <cgal_functional_base.h>
 
 __STL_BEGIN_NAMESPACE
 
