@@ -30,6 +30,10 @@
 
 #include <utility>
 
+#ifdef CGAL_USE_GMPXX
+#include <CGAL/gmpxx.h>
+#endif
+
 #define CORE_LEVEL 4
 #include <CORE/CORE.h>
 
