@@ -47,6 +47,9 @@ of Snap Rounding which makes the a vertex and a non-incident edge well separated
 However, the guaranteed quality of the approximation in Iterated Snap Rounding
 degrades.
 
+The traits used here must support arbitrary-precision number type as this is a
+basic requirement of Snap Rounding.
+
 %\begin{ccRefClass}{Isr<NT>}
 
 \subsection*{Definition}
@@ -75,9 +78,16 @@ grid just as defined by the Snap Rounding algorithm. Note that the number type o
 the representation remains {\ccc NT}. Otherwise, the plane is tiled
 with unit pixels with size {\ccc pixel\_size} and each vertice of the output is
 represented by the coordinates of the cenetr of the hot pixel that contains it.
+The sixth parameter is desribed below.
+}
+
+\ccPrecond{\ccc{pixel_size} must have a positive value.}
+\ccPrecond{\ccc{number_of_kd_trees} must be a positive integer.}
+
+\begin{ccAdvanced}
 The sixth parameter denotes the number of KD trees to use (see \cite{isr-2002} for details).
 The default, $1$, is ussually the best one to use.
-}
+\end{ccAdvanced}
 
 %\end{ccRefClass}
 

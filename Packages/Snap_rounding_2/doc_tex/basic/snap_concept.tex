@@ -26,9 +26,12 @@ this class and some function object types for the required
 predicates on those primitives.
 
 The Snap Rounding traits we provide is templated by another traits.
-This traits must provide number type (\ccc{FT}), \ccc{Point_2}, \ccc{Segment_2} and \ccc{Iso_rectangle_2}.
-Another requirement is that FT must have the method \ccc{to_double()} which converts
-the value of a variable of type FT to the built-in number type double.
+This traits must provide an arbitrary-precision number type (\ccc{FT}), \ccc{Point_2},
+\ccc{Segment_2} and \ccc{Iso_rectangle_2}. Another requirement is that FT must have
+the method \ccc{to_double()} which converts the value of a variable of type FT to
+the built-in number type \ccc{double}. The assumption is that although the Snap Rounding
+algorithm requires exact computation, the \ccc{double} number type should be sufficient
+for representing the output such that no overflows occur.
 
 \ccTypes
 \ccNestedType{Point_2}{The point type.}
@@ -54,17 +57,21 @@ according to the
 $y$-ordering of points \ccc{p} and \ccc{q}.}
 \ccGlue
 
-\ccNestedType{Snap_2}{The snap operation as defined
-in \cite{isr-2002}. It rounds a point to a center of a pixel (unit square)
-in the grid used by the Snap Rounding algorithm. Must have the syntax
+\ccNestedType{Snap_2}{Rounds a point to a center of a pixel (unit square)
+in the grid used by the Snap Rounding algorithm. Note that no conversion
+to an integer grid is done yet. Must have the syntax
 \ccc{void operator()(Point_2 p,NT pixel_size,NT &x,NT &y)} where $p$ is the
 input point, \ccc{pixel_size} is the size of the pixel of the grid,
 and $x$ and $y$ are the $x$ and $y$-coordinates of the rounded point
 respectively.}
 
-\ccNestedType{Integer_grid_point_2}{return the conversion of a point
-from an arbitrary-precision representation into an integer one as
-described in \cite{isr-2002}. 
+\ccNestedType{Integer_grid_point_2}{Convert coordinates
+from an arbitrary-precision representation into an integer one 
+in which pixels' center are counted by integers. For instance,
+if a point has the coordinates $(3.7,5.3)$ and the pixel
+size is $1$, then the new point will have the coordinates of $(7,10)$.
+Note, however, that the number type remains the same here, although
+integers are represented.
 Must have the syntax \ccc{Point_2 operator()(Point_2 p,NT pixel_size)}
 where $p$ is the converted point and \ccc{pixel_size} is the size of the pixel of the grid.
 }
