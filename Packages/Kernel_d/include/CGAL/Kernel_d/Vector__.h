@@ -40,6 +40,7 @@
 #include <new>
 #include <iostream>
 #include <vector>
+#include <iterator>
 
 namespace CGALLA {
 

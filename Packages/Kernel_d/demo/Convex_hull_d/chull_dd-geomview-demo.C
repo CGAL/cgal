@@ -10,6 +10,8 @@
 #include <iostream>
 #include <string>
 
+#if !defined(__BORLANDC__) && !defined(_MSC_VER)
+
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
 typedef leda_integer RT;
@@ -85,3 +87,12 @@ int main(int argc, char* argv[]) {
   return 0;
 }
 
+#else
+
+int main()
+{
+  std::cout << "Geomview is not supported on MS windows.\n";
+  return 0;
+}
+
+#endif

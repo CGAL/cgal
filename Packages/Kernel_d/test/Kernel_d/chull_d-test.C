@@ -36,6 +36,7 @@ int main()
     typedef Convex_hull_d::Vertex_handle Vertex_handle;
 
     Convex_hull_d T1(2);  
+    const Convex_hull_d* pT1 = &T1;
     Point p1(0,0,1);
     Point p2(1,0,1);
     Point p3(0,1,1);
@@ -87,6 +88,25 @@ int main()
     CGAL_TEST(T1.number_of_simplices()==0);
     std::vector<Point> V = make_vector(p1,p2,p3,p4);
     T1.initialize(V.begin(),V.end());
+    Convex_hull_d::Facet_iterator fit;
+    int fnum(0);
+    for (fit = T1.facets_begin(); fit != T1.facets_end(); ++fnum, ++fit) *fit;
+    CGAL_TEST(fnum==4);
+
+    Convex_hull_d::Hull_vertex_iterator hvit;
+    int vnum(0);
+    for (hvit = T1.hull_vertices_begin(); 
+         hvit != T1.hull_vertices_end(); ++vnum, ++hvit) *hvit; 
+    CGAL_TEST(vnum==4);
+
+    Convex_hull_d::Facet_const_iterator fcit; 
+    for (fcit = pT1->facets_begin(); fcit != pT1->facets_end(); ++fcit) *fcit;
+    Convex_hull_d::Hull_vertex_const_iterator hvcit; 
+    for (hvcit = pT1->hull_vertices_begin(); 
+         hvcit != pT1->hull_vertices_end(); ++hvcit) *hvcit;
+    Convex_hull_d::Hull_point_const_iterator hpcit; 
+    for (hpcit = pT1->hull_points_begin(); 
+         hpcit != pT1->hull_points_end(); ++hpcit) *hpcit;
   }
 
 
