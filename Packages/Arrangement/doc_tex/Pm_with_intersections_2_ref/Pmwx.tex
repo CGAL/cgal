@@ -65,6 +65,17 @@
 	 target point of \ccStyle{cv}.
 	 \ccPrecond{\ccc{cv} is not equivalent to a point.}}
 
+  \ccMethod{template <X_curve_iterator>
+            Halfedge_handle insert(const X_curve_iterator & begin, 
+                                   const X_curve_iterator & end,
+				   Pmwx_change_notification *en = NULL);}
+  {iterates through a given range of curves, inserting the curves into the
+   map. \ccc{begin} and \ccc{end} are input iterators that point to the first
+   curve and past-the-end curve of the range respectively. \ccc{insert()} 
+   returns a handle to a new halfedge directed in the same way as the last 
+   curve in the range.
+   \ccPrecond{no curve in the given range is equivalent to a point.}}
+
 \ccMethod{Halfedge_handle insert_from_vertex(const X_monotone_curve_2& cv,
                                              Vertex_handle src,
                                          Pmwx_change_notification *en = NULL);}
