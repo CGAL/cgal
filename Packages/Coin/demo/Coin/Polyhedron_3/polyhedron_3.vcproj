@@ -20,7 +20,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/GR /Zm900"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(CGALIROOT)/include/CGAL/config/msvc7&quot;;&quot;$(CGALIROOT)/include&quot;;c:/coin/.net.ml/include;c:/qt/3.1.0.NET.ML/include;D:\CgalCVS\Coin\include"
+				AdditionalIncludeDirectories="&quot;$(CGALIROOT)/include/CGAL/config/msvc7&quot;;&quot;$(CGALIROOT)/include&quot;;&quot;$(COINDIR)/include&quot;;&quot;$(QTDIR)/include&quot;;../../../include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;SOQT_NOT_DLL;COIN_NOT_DLL"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="c:\qt\3.1.0.NET.ML\lib\qtmain.lib c:\qt\3.1.0.NET.ML\lib\qt.lib c:/coin/.net.ml/lib/coin1.lib c:/coin/.net.ml/lib/soqt2.lib user32.lib ole32.lib imm32.lib comdlg32.lib gdi32.lib  opengl32.lib wsock32.lib $(CGALIROOT)/lib/msvc7/cgal.lib $(CGALIROOT)/lib/msvc7/gmp.lib "
+				AdditionalOptions="$(QTDIR)\lib\qtmain.lib $(QTDIR)\lib\qt.lib $(COINDIR)/lib/coin1.lib $(COINDIR)/lib/soqt2.lib user32.lib ole32.lib imm32.lib comdlg32.lib gdi32.lib  opengl32.lib wsock32.lib $(CGALIROOT)/lib/msvc7/cgal.lib $(CGALIROOT)/lib/msvc7/gmp.lib "
 				OutputFile="$(OutDir)/polyhedron_3.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="LIBC"
@@ -69,10 +69,10 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
-				AdditionalIncludeDirectories="&quot;$(CGALIROOT)/include/CGAL/config/msvc7&quot;;&quot;$(CGALIROOT)/include&quot;;c:/coin/.net.ml/include;c:/qt/3.1.0.NET.ML/include;D:\CgalCVS\Coin\include"
+				AdditionalIncludeDirectories="&quot;$(CGALIROOT)/include/CGAL/config/msvc7&quot;;&quot;$(CGALIROOT)/include&quot;;&quot;$(COINDIR)/include&quot;;&quot;$(QTDIR)/include&quot;;../../../include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;SOQT_NOT_DLL;COIN_NOT_DLL"
 				StringPooling="TRUE"
-				RuntimeLibrary="4"
+				RuntimeLibrary="5"
 				EnableFunctionLevelLinking="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -82,7 +82,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="c:\qt\3.1.0.NET.ML\lib\qtmain.lib c:\qt\3.1.0.NET.ML\lib\qt.lib c:/coin/.net.ml/lib/coin1.lib c:/coin/.net.ml/lib/soqt2.lib user32.lib ole32.lib imm32.lib  gdi32.lib  opengl32.lib wsock32.lib $(CGALIROOT)/lib/msvc7/cgal.lib $(CGALIROOT)/lib/msvc7/gmp.lib "
+				AdditionalOptions="$(QTDIR)\lib\qtmain.lib $(QTDIR)\lib\qt.lib $(COINDIR)/lib/coin1.lib $(COINDIR)/lib/soqt2.lib user32.lib ole32.lib imm32.lib  gdi32.lib  opengl32.lib wsock32.lib $(CGALIROOT)/lib/msvc7/cgal.lib $(CGALIROOT)/lib/msvc7/gmp.lib "
 				OutputFile="$(OutDir)/polyhedron_3.exe"
 				LinkIncremental="1"
 				IgnoreDefaultLibraryNames=""
