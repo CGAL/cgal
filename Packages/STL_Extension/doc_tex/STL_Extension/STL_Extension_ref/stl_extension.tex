@@ -754,17 +754,22 @@ arguments (one argument is already captured with \ccc{Creator_1}):
 % +=========================================================================+
 \label{sectionComposeFunctionClasses}
 
-Although not mentioned in the ANSI draft(CD2), most STL
-implementations provide two global functions for composing function
-objects, \ccStyle{compose1} and \ccStyle{compose2}, defined in
-function.h. Since for both the resulting function is unary, one can
-only construct unary function objects in this way. This seems to be
-quite a limitation, since many (also STL) algorithms can be
-parameterized with binary (e.g. comparison) functions.
+Although they are not in the standard, some STL implementations (such
+as SGI) provide two global functions for composing function objects,
+\ccStyle{compose1} and \ccStyle{compose2}. Since for both the
+resulting function is unary, one can only construct unary function
+objects in this way. This seems to be quite a limitation, since many
+algorithms are to be parameterized with binary (e.g. comparison)
+functions.
 
-In analogy to STL \ccStyle{compose1/2} we define two functions,
-\ccStyle{compose1_2} and \ccStyle{compose2_2}, that can be
-used to construct a binary function object via composition.
+We overcome these problems by defining our own composition functions
+in \cgal. Also the naming is slightly different to easily distinguish
+our implementation from eventually existing others:
+\ccStyle{composei_j} where \ccStyle{i}, \ccStyle{j} are either \ccc{1}
+or \ccc{2}.  \ccStyle{j} denotes the arity of the resulting function,
+\ccStyle{i} the arity of the outermost function in the composition.
+E.g. \ccStyle{compose2_1} takes three functions \ccc{f}, \ccc{g} and
+\ccc{h} and computes \ccc{x}~$\rightarrow$~\ccc{f(g(x),h(x))}.
 
 % +-----------------------------------------------------------------+
 \begin{ccClass}{AdaptableUnaryFunction}
@@ -854,6 +859,27 @@ used to construct a binary function object via composition.
 \end{ccClass}
 
 % +-----------------------------------------------------------------+
+\subsection{Composing Unary into Unary Functions}
+
+\ccInclude{CGAL/function_objects.h}
+
+\ccSetTwoColumns{Composition}{}
+\ccGlobalFunction{template < class Operation1, class Operation2 >
+  Composition compose1_1( const Operation1& op1, const
+  Operation2& op2);}{}
+\ccTagDefaults
+\ccStyle{Operation1} and \ccStyle{Operation2} have to be adaptable
+unary functions, and \ccStyle{Operation2::result_type} convertible to
+\ccStyle{Operation1::argument_type}. Then \ccStyle{compose1_1} returns
+an adaptable unary function object \ccStyle{c} (of some complicated
+type \ccStyle{Composition}) such that
+
+\ccHtmlNoIndex\ccGlobalFunction{Operation1::result_type c( const
+  Operation2::first_argument_type& x);}{is equal to
+  \ccStyle{Operation1()( Operation2()( x)).}}  \ccTagDefaults
+
+
+% +-----------------------------------------------------------------+
 \subsection{Composing Binary into Unary Functions}
 
 \ccInclude{CGAL/function_objects.h}
@@ -885,6 +911,26 @@ complicated type \ccStyle{Composition}) such that
 \ccInclude{CGAL/function_objects.h}
 
 \ccSetTwoColumns{Composition}{}
+\ccGlobalFunction{template < class Operation1, class Operation2, class
+  Operation3 > Composition compose2_1( const Operation1& op1,
+  const Operation2& op2, const Operation3& op3);}{}
+\ccTagDefaults
+
+\ccStyle{Operation1} must be an adaptable binary function,
+\ccStyle{Operation2} and \ccStyle{Operation3} must be adaptable unary
+functions, \ccStyle{Operation2::result_type} must be convertible to
+\ccStyle{Operation1::first_argument_type} and to
+\ccStyle{Operation3::argument_type} and
+\ccc{Operation3::}\ccc{result_type} must be convertible to
+\ccStyle{Operation1::second_argument_type}. Then \ccStyle{compose2_1}
+returns an adaptable unary function object \ccStyle{c} (of some
+complicated type \ccStyle{Composition}) such that
+
+\ccHtmlNoIndex\ccGlobalFunction{Operation1::result_type c( const
+  Operation2::first_argument_type& x);}{is equal to
+  \ccStyle{Operation1()(Operation2()(x), Operation3()(x)).}}
+\ccTagDefaults
+
 \ccGlobalFunction{template < class Operation1, class Operation2, class
   Operation3 > Composition compose2_2( const Operation1& op1,
   const Operation2& op2, const Operation3& op3);}{}
