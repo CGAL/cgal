@@ -1,0 +1,48 @@
+
+
+Demo programs for boolean operations in CGAL:          (December 1997, RISC)
+---------------------------------------------
+(Wolfgang Freiseisen, email:wfreisei@risc.uni-linz.ac.at)
+
+
+Simple test with ASCII-Output:
+==============================
+
+  b-ops-2D-example-1.C       ... example program of the specification
+  BooleanOperations_demo.C   ... like BooleanOperations_example.C in the example directory,
+                                 but with output to stdout
+  Howto_Intersection_demo.C  ... like Howto_Intersection_example.C in the example directory,
+                                 but with output to stdout
+  tutorial_example.C         ... example from the CGAL Tutorial (author: Remco Veltkamp)
+
+
+Tests of boolean operations with exact arithmetic:
+==================================================
+  test_bops.C                ... simple test program with output to stdout
+  test_bops_wout.C           ... simple test program with graphical output
+                                 (left mouse button: next operation,
+                                  right mousebutton: redraw)
+  test_bops_cin.C            ... simple test program with input from stdin
+                                 (e.g. test_bops_cin < data/t00 )
+  test_bops_cin_wout.C       ... like test_bops_wout.C, but with input from stdin
+
+
+Tests of boolean operations with floating-point arithmetic:
+===========================================================
+  test_float_bops_wout.C     ... similar to test_bops_wout.C 
+  test_float_bops_cin.C      ... similar to test_bops_cin.C
+  test_float_bops_cin_wout.C ... similar to test_bops_cin_wout.C 
+
+
+Tests of used algorithms by boolean operations:
+===============================================
+  test_bops_V2E.C            ... test vertex-to-edge representation
+  test_min_sqr.C             ... test minimal square distance for doubles
+
+Misc:
+=====
+  data/                      ... data files for programs requiring input from stdin
+  include/                   ... additional include files
+  makefile                   ... according makefile
+
+
