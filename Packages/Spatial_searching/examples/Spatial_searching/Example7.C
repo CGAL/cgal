@@ -146,8 +146,8 @@ NT The_squared_distance(const Point& P, const Point& Q) {
   int bucket_size=1;
   NT eps=0.0;
 
-  const int data_point_number=  10000;
-  const int query_point_number= 10000;
+  const int data_point_number=  100;
+  const int query_point_number= 100;
 
   std::cout << " bucket_size="
   << bucket_size << " eps=" << eps << std::endl;
@@ -171,7 +171,7 @@ NT The_squared_distance(const Point& P, const Point& Q) {
     
   
   Vector query_points;
-  query_points.reserve(10000);
+  query_points.reserve(query_point_number);
 
   // Create 10000 query points within the same cube.
   CGAL::copy_n( g, query_point_number, std::back_inserter(query_points));

@@ -42,11 +42,12 @@ typedef typename Tree_traits::NT NT;
 typedef Item** Item_iterator;
 typedef std::pair<Item*,NT> Item_with_distance;
 
-private:
+// private:
 
 typedef Binary_node<Tree_traits> Node;
 typedef Binary_search_tree<Tree_traits> Tree;
 
+private:
 
 int number_of_neighbours_computed;
 

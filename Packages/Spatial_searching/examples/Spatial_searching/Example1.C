@@ -137,8 +137,8 @@ NT The_squared_distance(const Point& P, const Point& Q) {
 
   CGAL::Timer t;
   int dim=3;
-  int point_number=10000;
-  int query_point_number=10000; 
+  int point_number=100;
+  int query_point_number=100; 
   int bucket_size=1;
   NT eps=0.0;
 
@@ -148,8 +148,8 @@ NT The_squared_distance(const Point& P, const Point& Q) {
 				    << " bucket_size="
   << bucket_size << " eps=" << eps << std::endl;
 
-  // generate 10000 data points
-  // Prepare a vector for 10000 points.
+  // generate data points
+  // Prepare a vector.
     
   // Vector data_points;
   // data_points.reserve(point_number);
@@ -157,18 +157,17 @@ NT The_squared_distance(const Point& P, const Point& Q) {
   typedef std::list<Point> point_list;
   point_list data_points;
   
-  // Create 10000 points within a cube.
+  // Create points within a cube.
   CGAL::Random_points_in_cube_3<Point,Creator> g( 1.0);
   CGAL::copy_n( g, point_number, std::back_inserter(data_points));
 
-  // generate 10000 data points
-  // Prepare a vector for 10000 points.
+  
     
   
   Vector query_points;
-  query_points.reserve(10000);
+  query_points.reserve(point_number);
 
-  // Create 10000 query points within the same cube.
+  // Create query points within the same cube.
   CGAL::copy_n( g, query_point_number, std::back_inserter(query_points));
 
   t.reset(); t.start();
@@ -269,11 +268,11 @@ NT The_squared_distance(const Point& P, const Point& Q) {
 int main() {
   test_benchmark_nearest_neighbour_L2();
 
-  
+  /*
   double dummy;
   std::cout << "Enter input to stop: \n" ;
   std::cin >> dummy;
-  
+  */
   
   return 0;
 };

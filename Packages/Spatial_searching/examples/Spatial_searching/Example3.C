@@ -41,8 +41,8 @@ NNN_Iterator;
 
   CGAL::Timer t;
   int dim=3;
-  int point_number=10000;
-  int query_point_number=2000;
+  int point_number=100;
+  int query_point_number=100;
   int bucket_size=10;
   NT eps=0.0;
   double the_power=1.3;
@@ -72,7 +72,7 @@ NNN_Iterator;
     
   
   Vector query_points;
-  query_points.reserve(2000);
+  query_points.reserve(query_point_number);
 
   // Create 2000 query points within the same cube.
   CGAL::copy_n( g, query_point_number, 

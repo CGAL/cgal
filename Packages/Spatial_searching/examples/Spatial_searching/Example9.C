@@ -215,8 +215,8 @@ NT The_squared_distance(const Point& P, const Point& Q) {
 
   
 
-  const int data_point_number=  1000000;
-  const int query_point_number= 10000;
+  const int data_point_number=  100;
+  const int query_point_number= 100;
 
   std::cout << " bucket_size="
   << bucket_size << " eps=" << eps << std::endl;
