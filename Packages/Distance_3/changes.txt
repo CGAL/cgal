@@ -1,3 +1,9 @@
+2.14
+- Added missing #include <CGAL/Vector_3.h>
+
+2.13
+- New license headers
+
 2.12 (14 September 2003)
 - bug fix in include/CGAL/squared_distance_3_0.h
 

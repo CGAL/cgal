@@ -16,24 +16,18 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Geert-Jan Giezeman
+// Author(s)     : Geert-Jan Giezeman, Andreas Fabri
 
 
 #ifndef CGAL_DISTANCE_3_2_H
 #define CGAL_DISTANCE_3_2_H
 
+#include <CGAL/squared_distance_3_0.h>
+
 #include <CGAL/Segment_3.h>
 #include <CGAL/Line_3.h>
 #include <CGAL/Ray_3.h>
 #include <CGAL/Plane_3.h>
-
-
-#include <CGAL/utils.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/Plane_3.h>
-#include <CGAL/enum.h>
-#include <CGAL/wmult.h>
-#include <CGAL/squared_distance_3_0.h>
 
 CGAL_BEGIN_NAMESPACE
 
