@@ -1,4 +1,7 @@
 13 August 2004 Sylvain Pion
+- Doc : fix typos "ForwardIteartor".
+
+13 August 2004 Sylvain Pion
 - Doc : fix typo in #include <CGAL/ch_akl_toussaint.h>.
 
 04 May 2004 Andreas Fabri
