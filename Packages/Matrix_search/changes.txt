@@ -1,6 +1,10 @@
 //=====================================================================
 //	Revision History for package Matrix_search
 //=====================================================================
+
+19 December 2004 Andreas Fabri
+- Updated file headers in the demos
+
 05 October 2004 Andreas Fabri
 - A workaround to Transform_iterator: Added typedef std::_Unchecked_iterator_tag _Checked_iterator_category; for VC8. 
   Strange that no other iterator complains about this "feature" missing  
