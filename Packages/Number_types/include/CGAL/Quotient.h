@@ -754,12 +754,12 @@ to_double(const Quotient<NT>& q)   /* TODO */
   if (q.num == 0 )
     return 0;
 
-  double nd = CGAL::to_double( q.num );
+  double nd = CGAL_NTS to_double( q.num );
 
   if (q.den == 1 )
     return nd;
 
-  double dd = CGAL::to_double( q.den );
+  double dd = CGAL_NTS to_double( q.den );
 
   if ( is_finite( q.den ) && is_finite( q.num ) )
     return nd/dd;
@@ -767,12 +767,12 @@ to_double(const Quotient<NT>& q)   /* TODO */
   if ( CGAL_NTS abs(q.num) > CGAL_NTS abs(q.den) )
   {
       NT  nt_div = q.num / q.den;
-      double divd = CGAL::to_double(nt_div);
+      double divd = CGAL_NTS to_double(nt_div);
       if ( divd >= CGAL_CLIB_STD::ldexp(1.0,53) )
       { return divd; }
   }
   if ( CGAL_NTS abs(q.num) < CGAL_NTS abs(q.den) )
-  { return 1.0 / CGAL::to_double( NT(1) / q ); }
+  { return 1.0 / CGAL_NTS to_double( NT(1) / q ); }
 
   return nd/dd;
 }
