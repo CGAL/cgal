@@ -7,6 +7,7 @@
 // #define TESTED_TYPE CGAL_Interval_nt_advanced // For tst3.C
 // #define TESTED_TYPE CGAL_Interval_nt          // For tst4.C
 
+#define CGAL_IA_NO_EXCEPTION
 #define CGAL_IA_NO_WARNINGS
 #define CGAL_NO_PRECONDITIONS
 #include <CGAL/Timer.h>
