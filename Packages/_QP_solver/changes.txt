@@ -1,5 +1,10 @@
 Changes done to the `_QP_solver' package
 
+Version 0.9.21 on 9-Dec-2003
+- Fix Number_type_traits<Double>.
+
+============================== CGAL 3.0 =============================
+
 Version 0.9.20 on 6-Oct-2003
 - Submit again.
 
