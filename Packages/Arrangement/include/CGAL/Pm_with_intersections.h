@@ -27,7 +27,7 @@
 #include <CGAL/Pm_walk_along_line_point_location.h>
 #include <CGAL/Planar_map_2/Pm_change_notification.h>
 
-#include <CGAL/Sweep_line_2/Pmwx_aggregate_insert_impl.h>
+#include <CGAL/Sweep_line_2/Pmwx_aggregate_insert_tight.h>
 #include <CGAL/Sweep_line_2/Pmwx_aggregate_insert.h>
 
 
@@ -1219,7 +1219,7 @@ public:
 				const X_curve_2_iterator & end,
 				Change_notification * en = NULL)
   {
-    typedef Pmwx_aggregate_insert_impl<X_curve_2_iterator, Traits, 
+    typedef Pmwx_aggregate_insert_tight<X_curve_2_iterator, Traits, 
                                   Self ,Change_notification> Pmwx_agg_insert;
     Pmwx_agg_insert p(traits);
     p.insert_curves(begin, end, *this, en);
