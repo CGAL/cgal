@@ -24,7 +24,9 @@
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 
-#define CGAL_NO_DEPRECATED_CODE
+#ifndef CGAL_NO_DEPRECATED_CODE
+#  define CGAL_NO_DEPRECATED_CODE
+#endif
 #define CGAL_CONCEPT_ARCHETYPE_PROVIDE_CONSTRUCTORS
 
 #include <CGAL/Kernel_archetype.h>

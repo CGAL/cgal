@@ -20,6 +20,7 @@ CXXFLAGS = \
            -I../../../Cartesian_kernel/include \
            -I../../../Number_types/include \
            -I../../../Distance_2/include \
+           -I../../../Intersections_2/include \
            -I../../../Interval_arithmetic/include \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
