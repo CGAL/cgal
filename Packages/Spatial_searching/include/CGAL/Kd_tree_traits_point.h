@@ -62,7 +62,6 @@ namespace CGAL {
 			     NT aspect_ratio=NT(3), 
 			     bool use_extended_nodes=true) {
 		the_bucket_size = bucket_size;
-		
 		the_aspect_ratio = aspect_ratio;
 		use_extended_nodes_option = use_extended_nodes;
 	}

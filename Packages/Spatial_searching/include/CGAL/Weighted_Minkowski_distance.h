@@ -69,9 +69,15 @@ namespace CGAL {
     { 
        Item P;
        The_dimension=P.dimension();  The_weights = new Weight_vector(The_dimension);
-	 for (unsigned int i = 0; i < The_dimension; ++i) (*The_weights)[i]=NT(1);
+       for (unsigned int i = 0; i < The_dimension; ++i) (*The_weights)[i]=NT(1);
+       assert(The_dimension>0);
     }
 
+    Weighted_Minkowski_distance(const int d) : The_dimension(d) 
+    {
+       The_weights = new Weight_vector(The_dimension);
+       for (unsigned int i = 0; i < The_dimension; ++i) (*The_weights)[i]=NT(1);
+    }
 
     //copy constructor
     Weighted_Minkowski_distance(const Weighted_Minkowski_distance& wmd) :

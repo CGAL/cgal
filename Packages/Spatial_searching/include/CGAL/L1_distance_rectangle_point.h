@@ -8,15 +8,15 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       :
-// release_date  :
+// release       : $CGAL_Revision: CGAL-2.5-I-99 $
+// release_date  : $CGAL_Date: 2003/05/23 $
 //
 // file          : include/CGAL/L1_distance_rectangle_point.h
-// package       : ASPAS
+// package       : ASPAS (3.12)
+// maintainer    : Hans Tangelder <hanst@cs.uu.nl>
 // revision      : 2.4 
 // revision_date : 2002/16/08 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
-// maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
 // coordinator   : Utrecht University
 //
 // ======================================================================
@@ -51,9 +51,17 @@ namespace CGAL {
 
     
     // default constructor
-    L1_distance_rectangle_point() : The_dimension(2) {}
+    L1_distance_rectangle_point() {
+		Item P;
+		The_dimension=P.dimension();
+		assert(The_dimension>0);
+    }
     
     L1_distance_rectangle_point(const int d) : The_dimension(d) {}
+
+    //copy constructor
+    L1_distance_rectangle_point(const L1_distance_rectangle_point& d) : 
+    The_dimension(d.The_dimension) {}
 
     ~L1_distance_rectangle_point() {
     };

@@ -14,7 +14,6 @@ typedef R::Point_d Point;
 typedef Point::R::FT NT;
 
 typedef CGAL::Iso_rectangle_d<R> Rectangle;
-typedef CGAL::Plane_separator<NT> Separator;
 typedef CGAL::Kd_tree_traits_point<Point> Traits;
 
 typedef CGAL::Fuzzy_sphere_d<Point> Sphere;

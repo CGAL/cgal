@@ -46,7 +46,10 @@ namespace CGAL {
     	Euclidean_distance() {
 		Item P;
 		The_dimension=P.dimension();
+		assert(The_dimension>0);
     	}
+
+        Euclidean_distance(const int d) : The_dimension(d) {}
 
 	~Euclidean_distance() {}
 
@@ -97,7 +100,7 @@ namespace CGAL {
 	}
 
   inline NT inverse_of_transformed_distance(NT d) const {
-		return sqrt(d);
+		return CGAL::sqrt(d);
 	}
 
   }; // class Euclidean_distance

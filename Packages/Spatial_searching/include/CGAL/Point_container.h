@@ -359,8 +359,8 @@ template <class Item_, class Value>
 
 
       NT median(const int split_coord) {
-
-      #ifdef CGAL_CFG_RWSTD_NO_MEMBER_TEMPLATES
+      
+    #ifdef CGAL_CFG_RWSTD_NO_MEMBER_TEMPLATES
         Point_vector p_vector;
     	std::copy(p_list.begin(), p_list.end(), std::back_inserter(p_vector));
     	std::sort(p_vector.begin(),p_vector.end(),comp_coord_val<Item,int>(split_coord));

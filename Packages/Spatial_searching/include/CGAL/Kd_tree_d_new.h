@@ -12,7 +12,7 @@
 // release_date  : $CGAL_Date: 2003/05/23 $
 //
 // file          : include/CGAL/Kd_tree_d_new.h
-// package       : ASPAS (3.12) 
+// package       : ASPAS (3.12)
 // maintainer    : Hans Tangelder <hanst@cs.uu.nl>
 // revision      : 2.4 
 // revision_date : 2003/02/01 
@@ -38,7 +38,7 @@ namespace CGAL {
 
   typedef typename Traits::Iso_box_d Box;
   typedef typename Traits::Item Item;
- 
+  typedef list<Item> Item_list; 
 
   Kd_tree<Traits>* t;
 
@@ -48,7 +48,7 @@ namespace CGAL {
 
   Kdtree_d(int k = 2) {}
 
-  void build(list<Item> &l) {
+  void build(Item_list &l) {
 	t = new Kd_tree<Traits>(l.begin(), l.end());}
 
   void delete_all() {delete t;}

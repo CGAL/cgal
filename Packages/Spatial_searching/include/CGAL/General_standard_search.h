@@ -79,9 +79,10 @@ Distance* distance_instance;
 		if (actual_k<max_k) return true;
 		else 
 		    if (search_nearest) return 
-		    ( distance < l.rbegin()->second * multiplication_factor); 
-		    else return ( multiplication_factor * distance > 
-				   l.begin()->second);
+		    ( distance * multiplication_factor < l.rbegin()->second);
+		    else return ( distance >
+		    		  l.begin()->second * multiplication_factor);
+		    
 	};
 
 	inline void insert(Item* I, NT dist) {
@@ -111,7 +112,7 @@ Distance* distance_instance;
 	public:
 
 	template<class OutputIterator>  
-	OutputIterator  the_k_neighbours(OutputIterator res)
+	OutputIterator  the_k_neighbors(OutputIterator res)
 	{   
 		typename NN_list::iterator it=l.begin(); 
 		for (; it != l.end(); it++) { *res= *it; res++; }
@@ -145,7 +146,7 @@ Distance* distance_instance;
         number_of_items_visited=0;
        
         
-        compute_neighbours_general(tree.root(), tree.bounding_box());
+        compute_neighbors_general(tree.root(), tree.bounding_box());
 
     }
 
@@ -169,7 +170,7 @@ Distance* distance_instance;
     private:
    
 
-    void compute_neighbours_general(Node_handle N, Kd_tree_rectangle<NT>* r) {
+    void compute_neighbors_general(Node_handle N, Kd_tree_rectangle<NT>* r) {
 		
                 if (!(N->is_leaf())) {
                         number_of_internal_nodes_visited++;
@@ -192,11 +193,12 @@ Distance* distance_instance;
                         	distance_instance -> 
 				min_distance_to_queryitem(*query_object, 
 							  *r_lower);
-
+				
                         	distance_to_upper_half = 
                         	distance_instance -> 
 				min_distance_to_queryitem(*query_object, 
 							  *r_upper);
+			
 
 			} 
 			else
@@ -213,7 +215,7 @@ Distance* distance_instance;
 							  *r_upper);
 
 			}
-
+ 
 			if ( (( search_nearest) && 
 			     (distance_to_lower_half < distance_to_upper_half)) 
 			     ||
@@ -221,14 +223,14 @@ Distance* distance_instance;
 			     (distance_to_lower_half >= 
 			      distance_to_upper_half))  )
 			{
-			   compute_neighbours_general(N->lower(), r_lower);
+			   compute_neighbors_general(N->lower(), r_lower);
 			   if (branch(distance_to_upper_half)) 
-			   compute_neighbours_general (N->upper(), r_upper);
+			   compute_neighbors_general (N->upper(), r_upper);
 			}  
 			else
-			{	compute_neighbours_general(N->upper(), r_upper);
+			{	compute_neighbors_general(N->upper(), r_upper);
 				if (branch(distance_to_lower_half)) 
-				compute_neighbours_general (N->lower(), 
+				compute_neighbors_general (N->lower(), 
 							    r_lower);
 			}
 
