@@ -16,7 +16,7 @@ using namespace CGAL;
 // #define DEBUG(a) a;
 #define DEBUG(a)
 
-typedef TESTED_TYPE IA;
+typedef TESTED_TYPE IA_nt;
 
 // This test program computes the coordinates of a sequence of points drawing
 // a spiral.  It tests, using Interval Arithmetic, whether we fall back on an
@@ -25,13 +25,13 @@ typedef TESTED_TYPE IA;
 int spiral_test()
 {
   int i=0;
-  IA x_i (1), y_i (0), x_ip1, y_ip1, length;
+  IA_nt x_i (1), y_i (0), x_ip1, y_ip1, length;
 
   // try {
   while (++i < 500)
   {
-    x_ip1 = x_i - y_i/sqrt((IA)i);
-    y_ip1 = y_i + x_i/sqrt((IA)i);
+    x_ip1 = x_i - y_i/sqrt((IA_nt)i);
+    y_ip1 = y_i + x_i/sqrt((IA_nt)i);
     x_i = x_ip1;
     y_i = y_ip1;
     length = x_i*x_i + y_i*y_i;
@@ -41,7 +41,7 @@ int spiral_test()
       break;
   };
   // }
-  // catch (IA::unsafe_comparison) { }
+  // catch (IA_nt::unsafe_comparison) { }
 
   return (i == 396);
 }
@@ -53,11 +53,11 @@ int spiral_test()
 int square_root_test()
 {
   int i=0;
-  IA a (0.5, 1.5);
+  IA_nt a (0.5, 1.5);
 
   while (++i < 500)
   {
-    IA b = sqrt(a);
+    IA_nt b = sqrt(a);
     DEBUG( cout << a-1 << endl; )
     if ( b.is_same(a) )
       break;
@@ -81,13 +81,13 @@ int square_root_test()
 int overflow_test()
 {
   int i=0;
-  IA a (2), b(2.1);
-  IA c (-2,2), d(-2.1,2.1);
+  IA_nt a (2), b(2.1);
+  IA_nt c (-2,2), d(-2.1,2.1);
 
   DEBUG( cout << "+infinity = " << HUGE_VAL; )
-  DEBUG( cout << "  maxdouble = " << IA::max_double << endl; )
-  DEBUG( cout << "largest = " << IA::largest << endl; )
-  DEBUG( cout << "smallest = " << IA::smallest << endl; )
+  DEBUG( cout << "  maxdouble = " << IA_nt::max_double << endl; )
+  DEBUG( cout << "largest = " << IA_nt::largest << endl; )
+  DEBUG( cout << "smallest = " << IA_nt::smallest << endl; )
   while (++i < 20)
   {
     a *= a;
@@ -98,10 +98,10 @@ int overflow_test()
     // DEBUG( cout << a << endl; )
   }
 
-  return a.is_same(IA(IA::max_double, HUGE_VAL)) &&
-         b.is_same(IA(IA::max_double, HUGE_VAL)) &&
-         c.is_same(IA::largest) &&
-         d.is_same(IA::largest);
+  return a.is_same(IA_nt(IA_nt::max_double, HUGE_VAL)) &&
+         b.is_same(IA_nt(IA_nt::max_double, HUGE_VAL)) &&
+         c.is_same(IA_nt::largest) &&
+         d.is_same(IA_nt::largest);
 }
 
 
@@ -113,9 +113,9 @@ int overflow_test()
 int underflow_test()
 {
   int i=0;
-  IA a (0.5), b(-0.5,0.5);
+  IA_nt a (0.5), b(-0.5,0.5);
 
-  DEBUG( cout << IA::min_double << endl;)
+  DEBUG( cout << IA_nt::min_double << endl;)
   while (++i < 20)
   {
     a *= a;
@@ -123,7 +123,7 @@ int underflow_test()
     DEBUG( cout << a << b << endl; )
   }
 
-  return a.is_same(IA(0, IA::min_double)) && b.is_same(IA::smallest);
+  return a.is_same(IA_nt(0, IA_nt::min_double)) && b.is_same(IA_nt::smallest);
 }
 
 
@@ -132,16 +132,16 @@ int underflow_test()
 
 int division_test()
 {
-  IA a (1), b(0);
-  IA c = a/b;
-  IA d = IA(-1,1)/-2+1; // aka (0.5,1.5);
-  IA e (-d);
+  IA_nt a (1), b(0);
+  IA_nt c = a/b;
+  IA_nt d = IA_nt(-1,1)/-2+1; // aka (0.5,1.5);
+  IA_nt e (-d);
   int i=0;
 
   while (++i < 100)
   {
-    b = ((IA)1/d + d)/4 + 0.5;
-    a = ((IA)-1/e -e*1)/-4 - 0.5; // make it complicated to test more cases.
+    b = (1/d + d)/4 + 0.5;
+    a = (-1/e -e*1)/-4 - 0.5; // make it complicated to test more cases.
     DEBUG( cout << d << e << endl; )
     if ( b.is_same(d) && a.is_same(e) )
       break;
@@ -151,7 +151,7 @@ int division_test()
   DEBUG( cout << d << e << i << endl; )
   DEBUG( cout << d-1 << e+1 << endl; )
 
-  return c.is_same(IA::largest) && (i == 54);
+  return c.is_same(IA_nt::largest) && (i == 54);
 }
 
 
@@ -159,9 +159,9 @@ int division_test()
 
 int multiplication_test()
 {
-  const IA a (-2,-1), b (-1,1);
-  const IA d (-2,2), e (1,2), f (-2,-1);
-  IA c, g, h, i, j;
+  const IA_nt a (-2,-1), b (-1,1);
+  const IA_nt d (-2,2), e (1,2), f (-2,-1);
+  IA_nt c, g, h, i, j;
   c = a * b;
   g = d * e;
   h = d * f;
@@ -177,8 +177,8 @@ int multiplication_test()
 int utility_test()
 {
   bool tmpflag, flag = true;
-  const IA a(-1,1), b(-1,0), c(0,0), d(0,1), e(1,2), f(-2,-1), g(1);
-  IA h = (IA)1/c;
+  const IA_nt a(-1,1), b(-1,0), c(0,0), d(0,1), e(1,2), f(-2,-1), g(1);
+  IA_nt h = 1/c;
 
   tmpflag = (sign(c) == ZERO) &&
             (sign(e) == POSITIVE) &&
@@ -186,9 +186,9 @@ int utility_test()
   DEBUG( cout << "Sign test :\t" << tmpflag << endl; )
   flag = flag && tmpflag;
 
-  tmpflag = abs(a).is_same(IA(0,1)) && abs(b).is_same(IA(0,1)) &&
-            abs(c).is_same(IA(0,0)) && abs(d).is_same(IA(0,1)) &&
-            abs(e).is_same(IA(1,2)) && abs(f).is_same(IA(1,2)) &&
+  tmpflag = abs(a).is_same(IA_nt(0,1)) && abs(b).is_same(IA_nt(0,1)) &&
+            abs(c).is_same(IA_nt(0,0)) && abs(d).is_same(IA_nt(0,1)) &&
+            abs(e).is_same(IA_nt(1,2)) && abs(f).is_same(IA_nt(1,2)) &&
             abs(g).is_same(g) ;
   DEBUG( cout << "abs test :\t" << tmpflag << endl; )
   flag = flag && tmpflag;
@@ -201,11 +201,11 @@ int utility_test()
   DEBUG( cout << "is_finite test :\t" << tmpflag << endl; )
   flag = flag && tmpflag;
 
-  tmpflag = max(a,d).is_same(IA(0,1));
+  tmpflag = max(a,d).is_same(IA_nt(0,1));
   DEBUG( cout << "max test :\t" << tmpflag << endl; )
   flag = flag && tmpflag;
 
-  tmpflag = min(a,b).is_same(IA(-1,0));
+  tmpflag = min(a,b).is_same(IA_nt(-1,0));
   DEBUG( cout << "max test :\t" << tmpflag << endl; )
   flag = flag && tmpflag;
 
@@ -244,10 +244,10 @@ int main()
   b = b*a;
   b = b*a;
   b = b*a;
-  IA c = 2.1;
+  IA_nt c = 2.1;
   c *= c; c *= c; c *= c; c *= c; c *= c; c *= c; c *= c; c *= c;
   c *= c; c *= c; c *= c; c *= c; c *= c; c *= c; c *= c; c *= c;
-  IA d = 2.0;
+  IA_nt d = 2.0;
   d += d; d += d; d += d; d += d; d += d; d += d; d += d; d += d;
   d += d; d += d; d += d; d += d; d += d; d += d; d += d; d += d;
   d += d; d += d; d += d; d += d; d += d; d += d; d += d; d += d;
@@ -271,7 +271,7 @@ cout << is_finite(d.upper_bound()) << is_valid(d.upper_bound())<<endl;
 #endif
 
   cout << "Printing test:" << endl;
-  cout << (IA)-.7 << endl << (IA)7/10 << endl << (IA)1/0 << endl;
+  cout << (IA_nt)-.7 << endl << (IA_nt)7/10 << endl << (IA_nt)1/0 << endl;
 
   cout << "Do square_root_test()   \t";
   tmpflag = square_root_test();
@@ -315,7 +315,7 @@ cout << is_finite(d.upper_bound()) << is_valid(d.upper_bound())<<endl;
   cout << (int) tmpflag << endl;
   flag = tmpflag && flag;
 
-  cout << (int) (0.0 < IA(1)) << endl;
+  cout << (int) (0.0 < IA_nt(1)) << endl;
 
 #ifdef ADVANCED
   FPU_set_rounding_to_nearest();

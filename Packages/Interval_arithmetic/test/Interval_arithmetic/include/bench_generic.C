@@ -16,7 +16,7 @@
 
 using namespace CGAL;
 
-typedef TESTED_TYPE IA;
+typedef TESTED_TYPE IA_nt;
 
 // Some simple operators benchmarks.
 
@@ -27,10 +27,10 @@ void bench()
   Timer t;
   double dt;
   const double dd = 1.0000001;
-  const IA a(0.12);
-  // const IA b(2.1);
-  const IA b(IA(21)/10);
-  IA c(1), d(-5.0/3), e(-6.0/7), f(7.0/9);
+  const IA_nt a(0.12);
+  // const IA_nt b(2.1);
+  const IA_nt b(IA_nt(21)/10);
+  IA_nt c(1), d(-5.0/3), e(-6.0/7), f(7.0/9);
 
 // egcs-1.1 + -O + not advanced n'affiche pas pareil....
 // De même que le snapshot du 19 octobre...  inquiétant.
@@ -145,12 +145,12 @@ int main()
   cout.precision(20);
   bench();
 
-  IA a=1, b=2;
+  IA_nt a=1, b=2;
   (int) sign(a);
   (int) compare(a,b);
 #if 0
   // It's nice if it crashed, because c is not initialized.
-  IA c;
+  IA_nt c;
   a = c+c;
   cout << c << a << endl;
 #endif
