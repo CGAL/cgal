@@ -135,14 +135,14 @@ public:
   // because it is a candidate for an ear.
   void mark_edge(int i, Face_handle h) {
     Face_handle n = neighbor(i);
-    if (&*n < this) {
+    if (n < handle()) {
       n->mark_halfedge(n->index(handle()));
       unmark_halfedge(i);
       h->move_after_this(n);
     } else {
       n->unmark_halfedge(n->index(handle()));
       mark_halfedge(i);
-      if (&*h != this)
+      if (h != handle())
 	h->move_after_this(handle());
     }      
   }
@@ -352,7 +352,10 @@ Delaunay_remove_tds_3_2(const std::vector<Facet> & boundhole)
 
     Face_iterator fit2 = faces_begin();
     Face_handle_3_2 first = fit2, f = fit2;
-    
+    for(int i = 0; i < 3; i++) {
+	// we mark an edge only on one side
+	f->set_edge(i, f < f->neighbor(i));
+      }
     for(++fit2; fit2 != faces_end(); ++fit2) {
       f->set_n(fit2);
       fit2->set_p(f);
