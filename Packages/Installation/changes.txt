@@ -8,6 +8,8 @@
 //---------------------------------------------------------------------
 
 GLOB: Updated makefile.
+GLOB: Removed #include <cassert> from test_leda.
+GLOB: Search only in OLD_CGAL_DIR/lib for gmp libs in --upgrade.
 GLOB: Introduced variable GMP_LIBNAME (-> libgmp.a || gmp.lib).
 GLOB: Check for LEDA_STD_HEADERS on windows compilers.
 GLOB: Now also binary distribution of libgmp for cygwin/g++.
