@@ -19,12 +19,12 @@ CXXFLAGS = \
 	   -DCGAL_CFG_NO_ADVANCED_KERNEL -I../NewKernel/include \
 	   -I../../../C2/include \
 	   -I../../../Cartesian_basic/include \
-	   -I $(CGAL)/test/NewKernel/include \
            -I../../include \
            $(CGAL_CXXFLAGS) \
            $(EXTRA_FLAGS) -Wall -W
 
 
+#	   -I $(CGAL)/test/NewKernel/include \
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
