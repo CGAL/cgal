@@ -56,6 +56,8 @@ main ()
     // Check read(print()) = id().
     ok = (p == pp) && (q == qq) && (r == rr) && (qI == qqII);
 
+    ok = ok && CGAL::is_valid(p) && CGAL::is_valid(r);
+
     return (ok) ? 0 : -1;
 }
 #endif // CGAL_USE_CLN
