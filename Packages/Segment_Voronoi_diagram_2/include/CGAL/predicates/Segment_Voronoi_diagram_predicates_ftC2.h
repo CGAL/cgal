@@ -250,7 +250,7 @@ svd_vertex_conflict_ftC2(const typename K::Site_2 t[],
 			 unsigned int num_sites, Method_tag mtag)
 {
   typedef typename K::FT   FT;
-  char site_types[num_sites];
+  char site_types[4];
 
   std::vector<FT> v;
 
@@ -321,7 +321,7 @@ svd_vertex_conflict_ftC2(const std::vector<FT>& v,
   typedef Svd_incircle_2<Kernel,Method_tag>    Incircle;
 
 
-  Site_2* t = new Site_2[num_sites];
+  Site_2* t = new Site_2[4];
 
   for (unsigned int i = 0, k = 0; i < num_sites; i++) {
     if ( site_types[i] == 'p' ) {
@@ -361,7 +361,7 @@ svd_finite_edge_conflict_ftC2(const typename K::Site_2 t[],
 			      Method_tag mtag)
 {
   typedef typename K::FT   FT;
-  char site_types[num_sites];
+  char site_types[5];
 
   std::vector<FT> v;
 
@@ -451,7 +451,7 @@ svd_finite_edge_conflict_ftC2(const std::vector<FT>& v, Sign sgn,
   typedef Svd_finite_edge_interior_2<Kernel,Method_tag>  Edge_interior_test;
 
 
-  Site_2* t = new Site_2[num_sites];
+  Site_2* t = new Site_2[5];
 
   for (unsigned int i = 0, k = 0; i < num_sites; i++) {
     if ( site_types[i] == 'p' ) {
@@ -492,7 +492,7 @@ svd_infinite_edge_conflict_ftC2(const typename K::Site_2 t[],
 				Method_tag mtag)
 {
   typedef typename K::FT   FT;
-  char site_types[num_sites];
+  char site_types[4];
 
   std::vector<FT> v;
 
@@ -584,7 +584,7 @@ svd_is_degenerate_edge_ftC2(const typename K::Site_2 t[],
 			    unsigned int num_sites, Method_tag mtag)
 {
   typedef typename K::FT   FT;
-  char site_types[num_sites];
+  char site_types[4];
 
   std::vector<FT> v;
 
@@ -642,7 +642,7 @@ svd_is_degenerate_edge_ftC2(const std::vector<FT>& v,
     Svd_is_degenerate_edge_test_2<Kernel,Method_tag> Is_degenerate_edge;
 
 
-  Site_2* t = new Site_2[num_sites];
+  Site_2* t = new Site_2[4];
 
   for (unsigned int i = 0, k = 0; i < num_sites; i++) {
     if ( site_types[i] == 'p' ) {
