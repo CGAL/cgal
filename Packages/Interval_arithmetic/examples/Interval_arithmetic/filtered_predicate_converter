@@ -18,15 +18,15 @@ use vars qw($opt_p $opt_h $opt_d $opt_v $opt_l); # Suppress warnings
 require 'getopt.pl';
 
 # Global variables
-%known_ret_types=("bool", 1);	# Known allowed return types (completed in main)
+%known_ret_types=("bool", 1);	# Known allowed return types (see main())
 @predicates=(			# list of predicates, with the built-ins.
 # CGAL::, template_type, inline, ret_type, fct_name, #eps, body, new_body, args
     [ "", "NT", "CGAL_KERNEL_INLINE", "Sign", "lexicographical_sign", 1, "",
       "", "x", "y" ],
-    [ "", "NT", "inline", "Comparison_result", "compare", 1, "", "", "a", "b" ],
+    [ "", "NT", "inline", "Comparison_result", "compare", 1, "", "", "a", "b"],
     [ "", "NT", "inline", "Sign", "sign", 1, "", "", "x"] );
 # Note: we don't actually care about a few fields ($body...) for these.
-$num_built_in_predicates=$#predicates+1;	# Number of built-in predicates.
+$num_built_in_predicates=$#predicates+1;     # Number of built-in predicates.
 $pred_list_re="sign|compare|lexicographical_sign";
 
 # We _must_ manipulate the fields of @predicate using these constants:
@@ -114,7 +114,8 @@ sub print_CGAL_header {
 # Print dynamic versions
 sub print_dynamic {
   my ($adv, $CGAL, $t, $inline, $ret_type, $fct_name, $e, $b, $n, @args)=@_;
-  my $type = "const ${CGAL}Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, $adv, CGAL_IA_CACHE>";
+  my $type = "const ${CGAL}Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,"
+             ." $adv, CGAL_IA_CACHE>";
   my $args_call  = join ",", map "\n    $type &$_", @args;
   my $args_inter = join ",", map "\n\t\t$_.interval()", @args;
   my $args_exact = join ",", map "\n\t\t$_.exact()", @args;
@@ -218,17 +219,22 @@ sub print_predicate_struct {
 
 # Print static versions
 sub print_static {
-  my ($adv, $CGAL, $t, $inline, $ret_type, $fct_name, $eps, $b, $new_body, @args)=@_;
+  my ($adv, $CGAL, $t, $inline, $ret_type, $fct_name, $eps, $b, $new_body,
+      @args)=@_;
 
   my $predicate_class_name = "Static_Filtered_$fct_name\_".($#args+1);
-  my $type = "const ${CGAL}Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, $adv, CGAL_IA_CACHE>";
+  my $type = "const ${CGAL}Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static,"
+            ." $adv, CGAL_IA_CACHE>";
   my $args_call     = join ",", map "\n    $type &$_", @args;
   my $args_dbl      = join ",", map "\n\t\t$_.dbl()", @args;
   my $args_exact    = join ",", map "\n\t\t$_.exact()", @args;
-  my $args_epsilons = join ",", map "\n\t\t$predicate_class_name\::_epsilon_$_", 0..$eps-1;
+  my $args_epsilons = join ",",
+     map "\n\t\t$predicate_class_name\::_epsilon_$_", 0..$eps-1;
   my $args_error    = "\n\t\tStatic_filter_error(SAF_bound)," x ($#args+1);
-  my $bounds_check  = join " ||", map "\n\tfabs($_.to_double()) > SAF_bound", @args;
-  my $compute_new_bound = join "", map "\n    NEW_bound = std::max(NEW_bound, fabs($_.to_double()));", @args;
+  my $bounds_check  = join " ||",
+     map "\n\tfabs($_.to_double()) > SAF_bound", @args;
+  my $compute_new_bound = join "",
+     map "\n    NEW_bound = std::max(NEW_bound, fabs($_.to_double()));", @args;
 
   print FO
 "#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -385,15 +391,18 @@ sub match_calls_in_body {
     my $p;
     foreach ( @predicates ) {
       $p = $_;
-      last if (scalar(@$p)-$args_pos == $num_args) && (@$p[$fct_name_pos] eq $predicate_name);
+      last if (scalar(@$p)-$args_pos == $num_args) &&
+              (@$p[$fct_name_pos] eq $predicate_name);
     }
     if (not $p) {
-      warning("We matched \"$predicate_name\" with an unknown number of arguments");
+      warning("We matched \"$predicate_name\" with an unknown number of"
+              ." arguments");
     };
 
     # We replace $predicate_name by
     # Static_Filtered_$predicate_name_#args::update_epsilon.
-    $new_body .= "$`$1Static_Filtered_$2_$num_args\::update_epsilon$before,\n\t\tepsilon_";
+    $new_body .= "$`$1Static_Filtered_$2_$num_args\::update_epsilon$before,"
+                ."\n\t\tepsilon_";
 
     # We add the epsilon arguments to the call in $new_body.
     $new_body.= join ",\n\t\tepsilon_", map $num_eps+$_, 0..@$p[$eps_pos]-1;
@@ -425,7 +434,8 @@ sub parse_dependancy_files {
 
 # Main program
 sub main {
-  for ("Sign","Comparison_result","Orientation","Oriented_side","Bounded_side"){
+  for ("Sign","Comparison_result","Orientation","Oriented_side","Bounded_side")
+  {
     $known_ret_types{$_}=1;
     $known_ret_types{"CGAL::$_"}=1;
   }
