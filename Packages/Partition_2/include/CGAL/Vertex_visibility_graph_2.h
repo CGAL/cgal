@@ -165,7 +165,7 @@ public:
    template <class ForwardIterator>
    void build(ForwardIterator first, ForwardIterator beyond)
    {
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
+#ifdef CGAL_CFG_RWSTD_NO_MEMBER_TEMPLATES
       Polygon         polygon;
 
       for(ForwardIterator fit = first; fit != beyond; fit++){
