@@ -1,7 +1,8 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-Ver 4.81 ()
+Ver 4.81 (19/01/01)
+- changed makefile for submission with CVS tag
 - added missing function void insert(Vertex_handle va, Vertex_handle vb)
   in Constrained_Delaunay_triangulation_2.h
 - regenerate triangulation_assertions.h to avoid old style casts.

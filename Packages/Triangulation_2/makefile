@@ -60,7 +60,7 @@ $(PACKAGE).tar.gz:
 	--exclude=CVS --exclude=wrapper.* --exclude=Makefile* \
 	--exclude=Makefilevc \
 	--exclude=TODO --exclude=run_testsuite --exclude=error.txt \
-	version description.txt changes.txt \
+	maintainer version description.txt changes.txt \
 	include doc_tex doc_ps test examples demo
 
 Submit: clean $(PACKAGE).tar.gz
