@@ -291,4 +291,44 @@ should be ``''.
 \index{autotest_cgal script@{\tt autotest\_cgal} script|)}
 
 
+
+\section{{\tt create\_internal\_module}}
+\label{sec:create_internal_module}
+\index{create_internal_module script@{\tt create\_internal\_module} script|(}
+\ccIndexSubitem{test suite}{internal release}
+
+The perl script {\tt create\_internal\_module} is used to generate independent
+ modules from CGAL packages. This script was adapted from the script {\tt 
+create\_internal\_release} that is used to build CGAL internal releases.
+It generates modules from CGAL CVS packages.
+
+To see a short list of possible parameters you may want to set, just run the 
+script with no arguments.   
+
+You must have the packages you want to include in the module in one directory. 
+You must create one file {\tt modules} that contains the packages list that 
+will go into the module itself.
+
+Here is an example of using the script:
+\begin{verbatim}
+$ ./create_internal_module -a /cygdrive/d/CGALCVS -p modules 
+-r Triangulation_module -s /cygdrive/d/CGALCVS/Scripts/scripts/
+\end{verbatim}
+
+
+The {\tt -a} parameter is used to specify the directory that contains the packages. The {\tt -p} parameter is used to specify the file containing the packages list. The parameter {\tt -r} is used to specify the module name. For the moment, the module name is also the module version and will go in the version.h and version.tex as the CGAL\_VERSION macro. This will be probably changed in the future.  The {\tt -s} parameter is used to specify the directory containing the scripts create\_makefile, and all the other scripts that CGAL made public for users. This is not the package Scripts, but the scripts directory in the Scripts package.  
+
+You must have {\tt wininst} package in the same directory with {\tt Scripts} package because the script is looking for C2vcproj script used to generate the projects in examples for VC++.
+
+The script also generates the makefiles in examples, which was done also by the mother script {\tt create\_internal\_release}. This is done only if there is no makefile called {\tt makefile} in the directory. 
+The script behavior concerning the {\tt src} dir of the module is as follows: 
+
+  - when there is a src dir in the module it generates the makefile\_lib file that is the makefile to build the CGAL library (only for the C files in the src dir).     
+
+  - when there is no src directory it simply does nothing.
+
+For the moment the script does not produce the tar.gz version of the module, this will be done in the future if it will be required.
+  
+
+
 \ccIndexMainItemEnd{tools}
