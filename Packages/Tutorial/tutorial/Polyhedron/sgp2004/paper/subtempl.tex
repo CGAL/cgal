@@ -165,8 +165,12 @@ pb.end_surface();
 Our subdivision solution, decoupling the geometry rules from the
 refinement, grants users flexible control of the stencils.
 Variants of the subdivisions can be devised by simply mixing
-and matching the refinement hosts and geometry policies. Since
-\cgalpoly\ supports mesh of non-unioform configurations 
+and matching the refinement hosts and geometry policies.
+A combinatory subdivision set is provided withn our subdivision
+solution. It includes the Catmull-Clark subdivision, Doo-Sabin 
+subdivision, Loop subdivision, Quad-Triangle subdivision and
+$\sqrt{3}$ subdivision. Since
+\cgalpoly\ supports mesh of non-uniform configurations 
 (in contrast to the quad-tree or patch-based 
 implementation), chain of different refinements
 is naturally supported.
@@ -182,7 +186,8 @@ to assist the \tr . This generality make our solution
 naturally fit in a modeling pipeline or a multipass modeling 
 environment. In some applications, efficiency is more
 important than flexibility. An efficient implementation
-of $\sqrt{3}$ based on \cgalpoly\ is introduced in next section.
+of $\sqrt{3}$ based on \cgalpoly\ is introduced in next 
+section.
 
 %TODO: since the writing memory is not overlapped, multi-threaded
 %supporting is easily done.
