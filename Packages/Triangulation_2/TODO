@@ -1,4 +1,4 @@
-
+- ajouter dans la doc du line face circulator, la precondition p!= q
 - documenter Constrained_triangulation_plus_2
 - tester Constrained_triangulation_plus_2 avec le Tag exact
 - Constrained_triangulation_plus_2 and ConstrainT_hierchy_2
