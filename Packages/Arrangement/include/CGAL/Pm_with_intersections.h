@@ -47,6 +47,7 @@ class Planar_map_with_intersections_2 : public Planar_map_
 {
 public:
   typedef Planar_map_                                       Planar_map;
+  typedef Planar_map_with_intersections_2<Planar_map>       Self;
   typedef typename Planar_map::Traits                       Traits;
   typedef typename Planar_map::Traits_wrap                  Pm_traits_wrap;
   typedef Planar_map_with_intersections_traits_wrap<Traits> Pmwx_traits_wrap;
@@ -64,34 +65,42 @@ public:
   
   Planar_map_with_intersections_2() 
     : Planar_map(new Pmwx_traits_wrap,
-		 new Pm_walk_along_line_point_location<Planar_map>, NULL)
+		 new Pm_walk_along_line_point_location<Planar_map>, NULL),
+      pmwx_use_delete_traits(true), 
+      pmwx_use_delete_pl(true)
   { 
     pmwx_traits = (Pmwx_traits_wrap*)traits;
-    use_delete_pmwx_traits = true;
   }    
 	
   Planar_map_with_intersections_2(Pm_point_location_base<Planar_map> *pl_ptr) 
-    : Planar_map(new Pmwx_traits_wrap, pl_ptr, NULL)
+    : Planar_map(new Pmwx_traits_wrap, pl_ptr, NULL),
+      pmwx_use_delete_traits(true), 
+      pmwx_use_delete_pl(false)
   {
     pmwx_traits = (Pmwx_traits_wrap*)traits;
-    use_delete_pmwx_traits = true;
   }
 
   Planar_map_with_intersections_2(const Traits& tr_, 
 				  Pm_point_location_base<Planar_map> *pl_ptr) 
-    : Planar_map(new Pmwx_traits_wrap(tr_), pl_ptr, NULL)
+    : Planar_map(new Pmwx_traits_wrap(tr_), pl_ptr, NULL),
+      pmwx_use_delete_traits(true), 
+      pmwx_use_delete_pl(false)
   {
     pmwx_traits = (Pmwx_traits_wrap*)traits;
-    use_delete_pmwx_traits = true;
   }
 
   Planar_map_with_intersections_2(Pmwx_traits_wrap *tr_ptr,
 				  Pm_point_location_base<Planar_map> *pl_ptr) 
-    : Planar_map(tr_ptr, pl_ptr, NULL)
+    : Planar_map(tr_ptr, pl_ptr, NULL),
+      pmwx_use_delete_traits(false), 
+      pmwx_use_delete_pl(false)
   {
     pmwx_traits = (Pmwx_traits_wrap*)traits;
-    use_delete_pmwx_traits = false;
   }
+
+  // Copy Constructor
+  // ----------------
+  Planar_map_with_intersections_2(const Self & rhs);
 
   // Destructor
   //-----------
@@ -1097,15 +1106,30 @@ public:
   // ------------
 protected:
   Pmwx_traits_wrap *pmwx_traits;
-  bool use_delete_pmwx_traits;
+  bool pmwx_use_delete_traits;
+  bool pmwx_use_delete_pl;
 };
+
+//-----------------------------------------------------------------------------
+template<class Pm>
+Planar_map_with_intersections_2<Pm>::
+Planar_map_with_intersections_2(const Self & rhs)
+  : Planar_map(rhs),
+    pmwx_use_delete_traits(false),pmwx_use_delete_pl(false)
+{
+  pmwx_traits = (Pmwx_traits_wrap*)traits;
+}
 
 //-----------------------------------------------------------------------------
 template<class Pm>
 Planar_map_with_intersections_2<Pm>::~Planar_map_with_intersections_2()
 {
-  if( use_delete_pmwx_traits )
-    delete pmwx_traits;
+  if (pmwx_use_delete_traits){
+    delete traits;
+  }
+  if (pmwx_use_delete_pl){
+    delete pl;
+  }
 }
 
 //-----------------------------------------------------------------------------
