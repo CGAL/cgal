@@ -28,21 +28,28 @@
 
 CGAL_BEGIN_NAMESPACE
 
+// #define REFLECT
+
 // ----------------------------------------------------------------------------
 // Arrangement traits for conic arcs.
 //
 
-template <class _NT>
-class Arr_conic_traits 
+template <class Kernel_>
+class Arr_conic_traits_2 
 {
  public:
-  typedef Lazy_intersection_tag      Intersection_category;
-  
-  typedef _NT                        NT;
+  typedef Kernel_                       Kernel;
+  typedef typename Kernel::FT           NT;
 
+#if defined(REFLECT)
+  typedef Lazy_intersection_tag Intersection_category;
+#else
+  typedef Efficient_intersection_tag Intersection_category;
+#endif
+    
   // The difference between Curve_2 and X_curve_2 is semantical only,
   // NOT syntactical.
-  typedef Conic_arc_2<NT>            Curve_2;
+  typedef Conic_arc_2<Kernel>        Curve_2;
   typedef Curve_2                    X_curve_2;
  
   // Using typename to please compiler (e.g., CC with IRIX64 on mips)
@@ -76,7 +83,7 @@ class Arr_conic_traits
  public:
 
   // Constructor.
-  Arr_conic_traits()
+  Arr_conic_traits_2()
   {}
 
   ////////// Planar Map methods: //////////
@@ -805,16 +812,17 @@ class Arr_conic_traits
   {
     NT   x = CGAL::to_double(p.x()) - 1;
     return (Point_2(x , p.y(),
-		  Point_2::User_defined));
+                    Point_2::User_defined));
   }
 
   Point_2 point_to_right (const Point_2& p) const
   {
     NT   x = CGAL::to_double(p.x()) + 1;
     return (Point_2(x , p.y(),
-		  Point_2::User_defined));
+                    Point_2::User_defined));
   }
 
+#if defined(REFLECT)
   // Reflect a point in y.
   Point_2 point_reflect_in_y (const Point_2& p) const
   {
@@ -838,7 +846,8 @@ class Arr_conic_traits
   {
     return (curve.reflect_in_x_and_y());
   }
-
+#endif
+    
   ////////// Arrangement methods: //////////
 
   // Change the orientation of the curve (swap the source and the target).
