@@ -859,6 +859,14 @@ is_bad(Face_handle f)
 {
   FT quality = circumradius_to_shortest_edge_ratio(f);
     if((quality >1) || (quality < 0.5))
+      //set_a:(>1.0 || <0.4)
+      //set_b:(>1.0 || <0.5)
+      //set_c:(>1.1 || <0.5)
+      //set_d:(>1.1 || <0.4)
+      //set_e:(>0.9 || <0.5)
+      //set_f:(>0.9 || <0.4)//~NOK
+      //set_g:(>0.8 || <0.4)//NOK
+      //set_h:(>0.8 || <0.5)
       {
 	return TRUE;
       }
