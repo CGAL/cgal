@@ -1,3 +1,6 @@
+20 December 2004 Sylvain Pion
+- Add quotes to <img src="..."> in the doc, ortherwise images are not copied.
+
 19 December 2004 Sylvain Pion
 - -DNDEBUG fixes.
 
