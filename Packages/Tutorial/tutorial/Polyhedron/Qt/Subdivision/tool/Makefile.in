@@ -435,7 +435,7 @@ distclean-tags:
 	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 #>- DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 #>+ 4
-KDE_DIST=parser_obj.h subdivision.vcproj quad-triangle.h subdivision.sln builder.h enriched_polyhedron.h ScalarMap.h sqrt3.h dump_eps.h tool 
+KDE_DIST=parser_obj.h subdivision.vcproj quad-triangle.h subdivision.sln builder.h enriched_polyhedron.h ScalarMap.h sqrt3.h dump_eps.h 
 
 DISTFILES= $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST) $(KDE_DIST)
 
