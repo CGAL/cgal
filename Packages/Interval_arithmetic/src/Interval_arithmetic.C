@@ -61,7 +61,7 @@ operator>> (std::istream & is, Interval_nt_advanced & I)
 
 void force_ieee_double_precision()
 {
-#ifdef __i386__
+#if defined __i386__ || defined _MSC_VER || defined __BORLANDC__
     FPU_set_cw(FPU_cw_near);
 #endif
 }
