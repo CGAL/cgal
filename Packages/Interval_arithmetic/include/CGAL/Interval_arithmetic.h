@@ -340,14 +340,9 @@ inline
 bool
 is_valid (const Interval_nt<Protected> & d)
 {
-#if defined _MSC_VER || defined __sgi || defined __BORLANDC__ || defined __PGI
   return CGAL::is_valid(d.inf()) && 
-    CGAL::is_valid(d.sup()) && 
-    d.inf() <= d.sup();
-#else
-  // The 2 first is_valid() are implicitely done by the 3rd test ;-)
-  return d.inf() <= d.sup();
-#endif
+         CGAL::is_valid(d.sup()) && 
+         d.inf() <= d.sup();
 }
 
 template <bool Protected>

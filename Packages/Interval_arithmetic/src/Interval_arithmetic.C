@@ -64,11 +64,11 @@ struct Borland_workaround
 static Borland_workaround Borland_workaround_object;
 #endif // __BORLANDC__
 
-#ifdef __PGI
-// PGI cannot cope with denormalized values at compile time.
-// Hence we have to generate CGAL_IA_MIN_DOUBLE at run time.
+#ifdef CGAL_CFG_DENORMALS_COMPILE_BUG
+// For compilers which bug on denormalized values at compile time.
+// We generate CGAL_IA_MIN_DOUBLE at run time.
 namespace {
-double pgcc_init_min_double()
+double init_min_double()
 {
     double d = 1;
     double e = 1;
@@ -81,7 +81,7 @@ double pgcc_init_min_double()
 } // anonymous namespace
 
 namespace CGALi {
-double minimin = pgcc_init_min_double();
+double minimin = init_min_double();
 }
 #endif
 

@@ -1,3 +1,8 @@
+18 Apr 2004 Sylvain Pion
+- Remove explicit compilers tests :
+  - use CGAL_CFG_DENORMALS_COMPILE_BUG instead.
+  - is_valid() : no need to optimize unportably.
+
 13 Apr 2004 Menelaos Karavelas
 - Made changes suggested by Sylvain for icc; namely, replaced occurences
   of HUGE_VAL by std::numeric_limits<double>::infinity()

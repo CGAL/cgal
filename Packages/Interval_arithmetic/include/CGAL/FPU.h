@@ -63,9 +63,9 @@ extern "C" {
 // Some useful constants
 
 #if defined CGAL_CFG_NO_LIMITS
-#  if defined __PGI
-     // PGCC crashes when dealing with denormalized values at compile time.
-     // So we have to generate it at run time.
+#  if defined CGAL_CFG_DENORMALS_COMPILE_BUG
+     // For compilers crashing when dealing with denormalized values.
+     // So we have to generate it at run time instead.
 #    define CGAL_IA_MIN_DOUBLE (CGAL::CGALi::minimin)
 #  else
 #    define CGAL_IA_MIN_DOUBLE (5e-324)
@@ -79,7 +79,7 @@ extern "C" {
 
 CGAL_BEGIN_NAMESPACE
 
-#ifdef __PGI
+#ifdef CGAL_CFG_DENORMALS_COMPILE_BUG
 namespace CGALi {
 extern double minimin;
 }
