@@ -206,8 +206,10 @@ public:
   Equal_2 equal_2_object() const { return Equal_2(); }
   Compare_x_2 compare_x_2_object() const { return Compare_x_2(); }
   Compare_y_2 compare_y_2_object() const { return Compare_y_2(); }
-  Construct_vertex_2 construct_vertex_2_object() const { return Construct_vertex_2(); }
-  Compare_y_at_x_2 compare_y_at_x_2_object() const { return Compare_y_at_x_2(); }
+  Construct_vertex_2 construct_vertex_2_object() const
+    { return Construct_vertex_2(); }
+  Compare_y_at_x_2 compare_y_at_x_2_object() const
+    { return Compare_y_at_x_2(); }
   Less_x_2 less_x_2_object() const { return Less_x_2(); }
   Compare_slope_2 compare_slope_2_object() const { return Compare_slope_2(); }
 };
