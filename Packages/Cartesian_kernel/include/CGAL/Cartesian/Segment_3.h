@@ -154,7 +154,7 @@ inline
 const typename SegmentC3<R>::Point_3 &
 SegmentC3<R>::point(int i) const
 {
-  return (i%2 == 0) ? source() : target();
+  return vertex(i);
 }
 
 template < class R >
