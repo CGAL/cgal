@@ -56,6 +56,8 @@ public:
   PointH3<FT,RT> vertex(int i) const;
   PointH3<FT,RT> operator[](int i) const;
 
+  FT       squared_area() const;
+
   Bbox_3   bbox() const;
 
 };
@@ -109,11 +111,23 @@ TriangleH3<FT,RT>::vertex(int i) const
   }
   // return PointH3<FT,RT>();
 }
+
 template < class FT, class RT >
 inline
 PointH3<FT,RT>
 TriangleH3<FT,RT>::operator[](int i) const
 { return vertex(i); }
+
+template < class FT, class RT >
+CGAL_KERNEL_MEDIUM_INLINE
+FT
+TriangleH3<FT,RT>::squared_area() const
+{ 
+   VectorH3<FT,RT> v1 = vertex(1) - vertex(0);
+   VectorH3<FT,RT> v2 = vertex(2) - vertex(0);
+   VectorH3<FT,RT> v3 = cross_product(v1, v2);
+   return (v3 * v3)/FT(4); 
+}
 
 template < class FT, class RT >
 CGAL_KERNEL_INLINE

@@ -70,6 +70,8 @@ public:
   bool           operator==(const TetrahedronH3<FT,RT> &t) const;
   bool           operator!=(const TetrahedronH3<FT,RT> &t) const;
   Bbox_3         bbox() const;
+  FT             volume() const;
+
   TetrahedronH3<FT,RT>
                  transform(const Aff_transformationH3<FT,RT> &t) const;
   Orientation    orientation() const;
@@ -102,7 +104,6 @@ TetrahedronH3<FT,RT>::TetrahedronH3(const PointH3<FT,RT> &p,
 {}
 
 
-
 template < class FT, class RT >
 CGAL_KERNEL_INLINE
 bool
@@ -127,12 +128,12 @@ TetrahedronH3<FT,RT>::operator==(const TetrahedronH3<FT,RT> &t) const
   return V1 == V2;
 }
 
-
 template < class FT, class RT >
 inline
 bool
 TetrahedronH3<FT,RT>::operator!=(const TetrahedronH3<FT,RT> &t) const
 { return !(*this == t); }
+
 template < class FT, class RT >
 CGAL_KERNEL_INLINE
 PointH3<FT,RT>
@@ -317,15 +318,42 @@ TetrahedronH3<FT,RT>::bbox() const
 }
 
 template < class FT, class RT >
+CGAL_KERNEL_MEDIUM_INLINE
+FT
+TetrahedronH3<FT,RT>::volume() const
+{
+  VectorH3<FT,RT> vec1 = vertex(1) - vertex(0);
+  VectorH3<FT,RT> vec2 = vertex(2) - vertex(0);
+  VectorH3<FT,RT> vec3 = vertex(3) - vertex(0);
+
+  // first compute (vec1.hw * vec2.hw * vec3.hw * det(vec1, vec2, vec3))
+  // then divide by (6 * vec1.hw * vec2.hw * vec3.hw)
+  FT w123 = vec1.hw() * vec2.hw() * vec3.hw();
+  FT hx1 =  vec1.hx();
+  FT hy1 =  vec1.hy();
+  FT hz1 =  vec1.hz();
+  FT hx2 =  vec2.hx();
+  FT hy2 =  vec2.hy();
+  FT hz2 =  vec2.hz();
+  FT hx3 =  vec3.hx();
+  FT hy3 =  vec3.hy();
+  FT hz3 =  vec3.hz();
+
+  return (  (hx1 * (hy2 * hz3 - hy3 * hz2))
+          - (hy1 * (hx2 * hz3 - hx3 * hz2))
+          + (hz1 * (hx2 * hy3 - hx3 * hy2)))/ (FT(6) * w123);
+}
+
+template < class FT, class RT >
 inline
 TetrahedronH3<FT,RT>
 TetrahedronH3<FT,RT>::
 transform(const Aff_transformationH3<FT,RT> &t) const
 {
   return TetrahedronH3<FT,RT>(t.transform(vertex(0)),
-                                   t.transform(vertex(1)),
-                                   t.transform(vertex(2)),
-                                   t.transform(vertex(3)));
+                              t.transform(vertex(1)),
+                              t.transform(vertex(2)),
+                              t.transform(vertex(3)));
 }
 
 

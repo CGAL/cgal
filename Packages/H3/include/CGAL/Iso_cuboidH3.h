@@ -56,8 +56,7 @@ public:
   bool      has_on_bounded_side(const PointH3<FT,RT>& p) const;
   bool      has_on_unbounded_side(const PointH3<FT,RT>& p) const;
   bool      is_degenerate() const;
-  Bbox_2
-            bbox() const;
+  Bbox_2    bbox() const;
   FT        xmin() const;
   FT        ymin() const;
   FT        zmin() const;
@@ -65,6 +64,7 @@ public:
   FT        ymax() const;
   FT        zmax() const;
 
+  FT        volume() const;
 
 };
 
@@ -194,6 +194,12 @@ Iso_cuboidH3<FT,RT>::zmax() const
 { return  FT( max().hz() ) / FT( max().hw() ); }
 
 template < class FT, class RT >
+inline
+FT
+Iso_cuboidH3<FT,RT>::volume() const
+{ return  (xmax() - xmin()) * (ymax() - ymin()) * (zmax() - zmin()); }
+
+template < class FT, class RT >
 CGAL_KERNEL_LARGE_INLINE
 PointH3<FT,RT>
 Iso_cuboidH3<FT,RT>::vertex(int i) const
@@ -223,6 +229,7 @@ inline
 PointH3<FT,RT>
 Iso_cuboidH3<FT,RT>::operator[](int i) const
 { return vertex(i); }
+
 
 template < class FT, class RT >
 CGAL_KERNEL_MEDIUM_INLINE
