@@ -9,8 +9,12 @@
 \cgalColumnLayout
 
 \begin{ccRefFunction}{monotone_matrix_search}
+  \ccIndexMainItem[t]{monotone matrix search}
+  \ccIndexSubitem[t]{searching}{in monotone matrices}
+  \ccIndexSubitem[t]{matrix}{monotone}
+  \ccIndexSubitem[t]{matrix}{searching}
+
   \begin{ccAdvanced}
-    
     \ccDefinition The function \ccRefName\ computes the maxima for all
     rows of a totally monotone matrix.
     
@@ -81,7 +85,7 @@
     \end{enumerate}
     
     \ccSeeAlso
-    \ccRefIdfierPage{Monotone_matrix_search_traits}\\
+    \ccRefConceptPage{Monotone_matrix_search_traits}\\
     \ccRefIdfierPage{CGAL::all_furthest_neighbors_2}\\
     \ccRefIdfierPage{CGAL::maximum_area_inscribed_k_gon_2}\\
     \ccRefIdfierPage{CGAL::maximum_perimeter_inscribed_k_gon_2}\\
@@ -107,8 +111,8 @@
     \ccInclude{CGAL/Dynamic_matrix.h}
     
     \ccIsModel
-    \ccRefIdfierPage{Monotone_matrix_search_traits}\\
-    \ccRefIdfierPage{Basic_matrix}
+    \ccRefConceptPage{Monotone_matrix_search_traits}\\
+    \ccRefConceptPage{Basic_matrix}
 
     \ccCreation
     
@@ -146,8 +150,8 @@
     
     \ccSeeAlso
     \ccRefIdfierPage{CGAL::monotone_matrix_search}\\
-    \ccRefIdfierPage{Monotone_matrix_search_traits}\\
-    \ccRefIdfierPage{Basic_matrix}
+    \ccRefConceptPage{Monotone_matrix_search_traits}\\
+    \ccRefConceptPage{Basic_matrix}
 
     \ccImplementation All operations take constant time except for
     \ccc{extract_all_even_rows} which needs time linear in the number
@@ -247,8 +251,8 @@
     \ccRefIdfierPage{CGAL::Dynamic_matrix<M>}
 
     \ccSeeAlso
-    \ccRefIdfierPage{Monotone_matrix_search_traits}\\
-    \ccRefIdfierPage{Sorted_matrix_search_traits}
+    \ccRefConceptPage{Monotone_matrix_search_traits}\\
+    \ccRefConceptPage{Sorted_matrix_search_traits}
     
   \end{ccAdvanced}
 \end{ccRefConcept}
