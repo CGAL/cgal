@@ -233,6 +233,7 @@ inline
 io_Operator
 io_tag(const Quotient<NumberType>&)
 { return io_Operator(); }
+
 template <class NumberType>
 inline
 NumberType
@@ -244,6 +245,7 @@ inline
 NumberType
 Quotient<NumberType>::denominator() const
 { return den; }
+
 template <class NumberType>
 CGAL_KERNEL_INLINE
 Quotient<NumberType>
@@ -354,6 +356,7 @@ operator/(const Quotient<NumberType>& x, const NumberType& y)
   Quotient<NumberType> z = x;
   return z /= y;
 }
+
 template <class NumberType>
 CGAL_KERNEL_INLINE
 NumberType

@@ -264,11 +264,16 @@ class Quotient
   
   Quotient() : num( NT(0) ), den( NT(1) ) {}
 
-  Quotient(const NT& n) : num(n), den( NT(1) ) {}
+  // If the following template ctor works, then we can probably get rid of the
+  // entire Quotient<int> specialization, and this will make
+  // Quotient<>(double) to work without the need to specialize
+  // Quotient<double>.
+  template <class T>
+  Quotient(const T& n) : num(n), den( NT(1) ) {}
 
-  Quotient(int i) : num(NT(i)), den( NT(1) ) {}
+  // Quotient(const NT& n) : num(n), den( NT(1) ) {}
 
-  Quotient(double d) : num(NT(d)), den( NT(1) ) {}
+  // Quotient(int i) : num(NT(i)), den( NT(1) ) {}
 
   Quotient(const NT& n, const NT& d) : num(n), den(d)
   { CGAL_kernel_precondition( d!= NT(0) ); }

@@ -1,3 +1,6 @@
+4.19     (6 June 01)
+- Replace Quotient<>(double) by a template ctor.
+
 4.18     (5 June 01)
 - Remove src/Double.C and src/Float.C.
 - Delete references to CGAL_NO_NTS_NAMESPACE.
