@@ -1,6 +1,9 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
 
+0.9.61 (12 April 2002)
+   replaced Hash_map with Unique_hash_map
+
 0.9.60 (11 April 2002)
    removed instance of non-const macro that caused ambiguities for
    Borland.

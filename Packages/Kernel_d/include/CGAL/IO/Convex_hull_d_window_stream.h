@@ -31,7 +31,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/LEDA_basic.h>
 #include <CGAL/Convex_hull_d.h>
-#include <CGAL/Hash_map.h>
+#include <CGAL/Unique_hash_map.h>
 #include <CGAL/IO/Regular_complex_d_window_stream.h>
 
 
@@ -95,7 +95,7 @@ void d3_surface_map(const Convex_hull_d<R>& C,
   if (C.dimension() != 3) 
     CGAL_assertion_msg(0,"d3_surface_map: dim must be 3");
   if (C.current_dimension() < 3) {
-    Hash_map<Vertex_handle,leda_node> node_for(nil);
+    Unique_hash_map<Vertex_handle,leda_node> node_for(nil);
     Vertex_handle v; Simplex_handle s;
     forall_rc_vertices(v,C) {
       node_for[v] = G.new_node(C.associated_point(v));
@@ -189,7 +189,7 @@ void d3_surface_map(const Convex_hull_d<R>& C,
 
   Facet_handle f; 
   Vertex_handle v;
-  Hash_map<Vertex_handle,leda_node> node_for(nil);
+  Unique_hash_map<Vertex_handle,leda_node> node_for(nil);
   int facet_num = 0;
 
   std::list<Facet_handle> Surface = C.all_facets();
