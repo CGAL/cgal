@@ -1,0 +1,1 @@
+abstract 2d kernel parameterized by rep class R

@@ -1,0 +1,48 @@
+#! /bin/sh
+
+# This is a script for the CGAL test suite. Such a script must obey
+# the following rules:
+#
+# - the name of the script is cgal_test
+# - for every target two one line messages are written to the file 'error.txt'
+#     the first one indicates if the compilation was successful
+#     the second one indicates if the execution was successful
+#   if one of the two was not successful, the line should start with 'ERROR:'
+# - running the script should not require any user interaction
+# - the script should clean up object files and executables
+
+ERRORFILE=error.txt
+
+#---------------------------------------------------------------------#
+#                    compile
+#---------------------------------------------------------------------#
+
+compile()
+{
+  if eval 'make CGAL_MAKEFILE=$CGAL_MAKEFILE \
+           TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS" \
+           TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS" all' >compiler_output 2>&1 ; then
+    echo "   succesful compilation " >> $ERRORFILE
+    cat compiler_output
+  else
+    echo "   ERROR:    compilation " >> $ERRORFILE
+    eval 'make -k CGAL_MAKEFILE=$CGAL_MAKEFILE \
+           TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS" \
+           TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS" all'
+  fi
+  rm compiler_output
+  eval "2>&1 make CGAL_MAKEFILE=$CGAL_MAKEFILE clean > /dev/null "
+}
+
+#---------------------------------------------------------------------#
+#                    remove the previous error file
+#---------------------------------------------------------------------#
+
+rm -f $ERRORFILE
+touch $ERRORFILE
+
+#---------------------------------------------------------------------#
+#                    compile and run the tests
+#---------------------------------------------------------------------#
+
+    compile

@@ -1,0 +1,18 @@
+\begin{ccRefFunction}{homogeneous_to_cartesian}
+\ccTexHtml{\ccSetThreeColumns{Point_2< Homogeneous<RT> > }{}{\hspace*{8.5cm}}}{}
+
+\ccInclude{CGAL/cartesian_homogeneous_conversion.h}
+
+\ccFunction{Point_2< Cartesian<FT> >
+homogeneous_to_cartesian(const Point_2< Homogeneous<FT> >& hp);}
+        {converts 2d point \ccStyle{hp} with homogeneous representation  
+         into a 2d point with Cartesian representation with the same
+         number type.}
+
+\ccFunction{Point_3< Cartesian<FT> >
+homogeneous_to_cartesian(const Point_3< Homogeneous<FT> >& hp);}
+        {converts 3d point \ccStyle{hp} with homogeneous representation  
+         into a 3d point with Cartesian representation with the same
+         number type.}
+\end{ccRefFunction}
+

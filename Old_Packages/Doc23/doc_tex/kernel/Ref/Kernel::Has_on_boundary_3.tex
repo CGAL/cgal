@@ -1,0 +1,14 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::Has_on_boundary_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{bool operator()(const Kernel::Plane_3&h,
+                                  const Kernel::Point_3&p);}
+{returns true iff $p$ lies on $h$ ($h$ is considered a halfspace).}
+
+\ccMemberFunction{bool operator()(const Kernel::Tetrahedron_3&t,
+                                  const Kernel::Point_3&p);}
+{returns true iff $p$ lies on the boundary of $t$.}
+
+\end{ccRefFunctionObjectConcept}

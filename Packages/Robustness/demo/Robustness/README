@@ -1,0 +1,232 @@
+// ============================================================================
+//
+// Copyright (c) 1999 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+// 
+// release       :
+// release_date  :
+// 
+// source        : readme.fw
+// file          : demo/Robustness/README
+// revision      : 1.5
+// revision_date : 20 Sep 2000 
+// author(s)     : Stefan Schirra
+//
+// maintainer    : Stefan Schirra <Stefan.Schirra@mpi-sb.mpg.de> 
+//
+// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// ============================================================================
+ 
+
+This directory contains some example programs that
+illustrate robustness and precision issues in CGAL.
+The demos use LEDA, so LEDA must be installed to run the
+examples:
+
+intersection_points_on_segment_2
+triangulation_of_intersection_points_2
+hull_of_intersection_points_2
+
+
+
+
+***********************************************************
+        intersection_points_on_segment_2:
+***********************************************************
+
+In this program, two groups of segments with endpoints on
+two horizontal and vertical lines resp. are generated at
+random. Then for all pairs of segments with one segments
+from the first group and one segments from the second group
+their intersection point is computed and checked to lie on
+the intersectiong segments. Of course, with real geometry
+an intersection point of two segments lies on these
+segments. With floating-point arithmetic this "axiom" often
+does not hold anymore.
+
+The program does the intersection and checking step for
+different CGAL kernels and reports a success statistics
+for each of them. They all operate on the same input data.
+The standard CGAL intersection routine is used to compute
+the intersection point, the checking uses the has_on()
+member function of CGAL segments, see also the reference
+manual. The program visualizes problematic intersection
+points. Whenever the has_on() fails for both segments, the
+point is drawn in red. If exactly one of the two has_on()
+test fails, the intersection point is drawn in orange.
+
+The kernels used are the Cartesian and the homogeneous
+CGAL kernels, both instantiated with float and double.
+The statistics shows that it pays off to have kernels with
+different coordinate representation. For our example, where
+all segments have integral endpoints with absolute value
+less than 100 000 , the homogeneous kernel is almost 100%
+correct; the checks fail only rarely, whereas with the other
+kernels they fail very often. The homogeneous kernel is
+superior in this context, because it avoids division
+operation. On the other hand, it is slower, because it does
+more basic arithmetic operations.
+
+The success of the CGAL::Homogeneous<double> depends on the
+size (number of bits) of the coordinates of the segment
+endpoints. For smaller coordinates CGAL::Homogeneous<double>
+would even guarantee corrcet results, while for larger
+absolute coordinates, the results would be worse.
+As CGAL::Homogeneous<float> versus CGAL::Cartesian<float>
+shows, for larger absolute coordinates, the results with
+CGAL::Homogeneous<double> might be even worse than the
+results with CGAL::Cartesian<double>.
+
+-----------------------------------------------------------
+To quit, click into the window outside the drawing areas.
+-----------------------------------------------------------
+You can pass a number to intersection_points_on_segment_2,
+which specifies the number of segments generated in a
+group. Be aware that the number of intersection points and
+hence the running time is quadratic in the number of
+segments. The default number of segments is 50.
+-----------------------------------------------------------
+***********************************************************
+
+
+
+
+***********************************************************
+        orientation_2:
+***********************************************************
+
+n points with double coordinates are generated at random,
+once uniformly distributed in a square and once uniformly
+distributed on a segment. n^3 orientation tests are made
+using the CGAL::orientation predicate from Cartesian<double>.
+In the first setting, almost always all orientation tests
+give the correct result. This is the basic observation
+for the use of floating-point filters: Often (how often
+depends on the type of predicates that are used) floating-
+point computation gives the correct results. Only if there
+are degeneracies or near-degeneracies, the float based
+computation fails. The random points on a segment are not
+really degenerate. Since the coordinate type is double,
+they are only almost on a segment. In this near-degenerate
+configuration, a significant portion of the orientation
+tests fails.
+
+-----------------------------------------------------------
+To quit, click into the window outside the drawing areas.
+-----------------------------------------------------------
+You can pass a number to orientation_2, which specifies the
+number of points generated in a group. Be aware that the
+running time is cubic (!) in the number of points. The
+default number of points is 30 (-> 27000 tests).
+-----------------------------------------------------------
+***********************************************************
+
+
+
+
+***********************************************************
+        orientation_IA_2:
+***********************************************************
+
+Same as orientation_2, but the orientation test computation
+is now done with interval arithmetic (CGAL::Interval_nt).
+The interval arithmetic throws an exception, if intervals to
+be compared do overlap. We count, how often interval
+arithmetic can reliably determine the orientation. Only the
+near degenerate cases cause problems.
+
+-----------------------------------------------------------
+To quit, click into the window outside the drawing areas.
+-----------------------------------------------------------
+You can pass a number to orientation_IA_2, which specifies
+the number of points generated in a group. Be aware that the
+running time is cubic (!) in the number of points. The
+default number of points is 30 (-> 27000 tests).
+-----------------------------------------------------------
+***********************************************************
+
+
+
+
+***********************************************************
+        triangulation_of_intersection_points_2:
+***********************************************************
+
+In this examples, segments are generated at random (random
+endpoints in a square) and their intersection points are
+computed. Then the Delaunay triangulation of this set of
+points is constructed, using different kernels: First,
+Cartesian<leda_real>, next Cartesian<Filtered_exact<double,
+leda_real>>, and finally Cartesian<double>.
+
+Computation with Cartesian<leda_real> gives a correct
+Delaunay triangulation, but it takes some time due to the
+constructed degeneracies in the point set.
+
+Computation with Cartesian<Filtered_exact<double,leda_real>>
+does not give the correct triangulation, but it causes no
+robustness problems. The first step, computation of
+intersection points, is still subject to rounding errors.
+The second step, computation of the Delaunay triangulation
+of the points computed in the first step, is done exactly!
+Since some collinearities might get lost in the first step,
+the number of triangles might differ from the triangulation
+of the correct intersection points.
+
+Cartesian<double> often causes serious problems. Both steps
+are subject to rounding errors. Inconsistent results due
+to rounding errors then cause violation of invariants and
+the CGAL algorithm complains about this. If such a violation
+of invariants, pre- or postconditions arises, the error
+message is printed in red in the window.
+
+See also hull_of_intersection_points_2.
+
+-----------------------------------------------------------
+To quit, click into the drawing area.
+-----------------------------------------------------------
+***********************************************************
+
+
+
+
+***********************************************************
+        hull_of_intersection_points_2:
+***********************************************************
+
+In this examples, segments are generated at random (random
+endpoints in a square) and their intersection points are
+computed. Then the convex hull of these intersection points
+is computed. The extreme points computed with double
+arithmetic and the Cartesian kernel, are shown in blue,
+edges of the hull that are not supported by an input segment
+are shown in blue. With CGAL::Cartesian<double>, sometimes
+intersection points are classified as extreme although they
+are not. Such points are encircled by a red circle (you may
+have to try a few times before this happens). It is easy to
+verify visually that such an point incorrectly classified
+as extreme point, is not extreme. Let's call the point P.
+For one of the segments intersecting in P, let's call it S,
+there is for each of two endpoints of S an extreme (blue)
+points on it that is closer to the endpoint then P. Hence P
+cannot be extreme. The detection of points incorrectly
+classified as extreme points uses Cartesian<leda_real>.
+
+This precision problem is caused by rounding-errors in the
+intersection point computation and the orientation tests.
+These rounding-errors destroy collinearity of the
+intersection points on a segment.
+
+See also triangulation_of_intersection_points_2.
+
+-----------------------------------------------------------
+To quit, click into the drawing area.
+-----------------------------------------------------------
+***********************************************************
+
+

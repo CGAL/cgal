@@ -1,0 +1,22 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::Construct_direction_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+
+\ccHidden \ccMemberFunction{Kernel::Direction_3 operator()();}
+             {introduces an uninitialized direction .}
+
+\ccHidden \ccMemberFunction{Kernel::Direction_3 operator()(const Kernel::Direction_3 &d);}
+ 	    {copy constructor.}
+
+\ccMemberFunction{Kernel::Direction_3 operator()(const Kernel::Vector_3 &v);}
+	    {introduces a direction  initialised with the 
+	     direction of vector $v$.}
+
+\ccMemberFunction{Kernel::Direction_3 operator()(const Kernel::RT &x, const Kernel::RT &y, const Kernel::RT &z);}
+            {introduces a direction  initialised with the direction 
+	     from the origin to the point with Cartesian coordinates $(x, y, z)$.}
+
+
+\end{ccRefFunctionObjectConcept}

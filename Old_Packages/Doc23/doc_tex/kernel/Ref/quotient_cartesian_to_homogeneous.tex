@@ -1,0 +1,18 @@
+\begin{ccRefFunction}{quotient_cartesian_to_homogeneous}
+\ccInclude{CGAL/cartesian_to_homogeneous_conversion.h}
+
+\ccFunction{Point_2< Homogeneous<RT> >
+quotient_cartesian_to_homogeneous(
+  const Point_2< Cartesian< Quotient<RT> > >& cp);}
+        {converts 2d point \ccStyle{cp} with Cartesian representation  
+         with number type \ccStyle{Quotient<RT>} into a 2d point 
+         with homogeneous representation with number type \ccStyle{RT}.}
+
+\ccFunction{Point_3< Homogeneous<RT> >
+quotient_cartesian_to_homogeneous(
+  const Point_3< Cartesian< Quotient<RT> > >& cp);}
+        {converts 3d point \ccStyle{cp} with Cartesian representation  
+         with number type \ccStyle{Quotient<RT>} into a 3d point 
+         with homogeneous representation with number type \ccStyle{RT}.}
+\end{ccRefFunction}
+

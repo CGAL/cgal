@@ -1,0 +1,14 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::Has_on_unbounded_side_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{bool operator()(const Kernel::Iso_cuboid_3&i,
+                                  const Kernel::Point_3&p);}
+{returns true iff $p$ lies on the unbounded side of $i$.}
+
+\ccMemberFunction{bool operator()(const Kernel::Tetrahedron&t,
+                                  const Kernel::Point_3&p);}
+{returns true iff $p$ lies on the unbounded side of $t$.}
+
+\end{ccRefFunctionObjectConcept}

@@ -1,0 +1,21 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::Coplanar_orientation_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Orientation operator()(const Kernel::Point_2&p, 
+                                         const Kernel::Point_2&q, 
+                                         const Kernel::Point_2&r, 
+                                         const Kernel::Point_2&s);}
+         {Let $P$ be the plane defined by the points \ccc{p}, \ccc{q},
+          and \ccc{r}. Note that the order defines the orientation of
+          $P$. The function computes the orientation of points \ccc{p}, 
+          \ccc{q}, and \ccc{s} in $P$: Iff \ccc{p}, \ccc{q}, \ccc{s} are
+          collinear, \ccc{COLLINEAR} is returned. Iff $P$ and the plane 
+          defined by \ccc{p}, \ccc{q}, and \ccc{s} have the same orientation, 
+          \ccc{POSITIVE} is returned; otherwise \ccc{NEGATIVE} is returned.  
+          \ccPrecond \ccc{p}, \ccc{q}, \ccc{r}, and \ccc{s} are coplanar and
+          \ccc{p}, \ccc{q}, and \ccc{r} are not collinear.}
+
+\end{ccRefFunctionObjectConcept}
+

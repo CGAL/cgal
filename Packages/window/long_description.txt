@@ -1,0 +1,47 @@
+Replacement for Window_stream.h
+
+CGAL_Window_stream is not longer a subclass of leda_window, but now only a typedef
+to leda_window (corresponding to a decision made at the Saarbrücken meeting).
+This has several (more than we thought, I guess) consequences.
+
+1.  A user has to call leda_window::display() yourself; 
+    so far, this call was hidden in the init function of CGAL_Window_stream;
+2.  There is no initialization with a CGAL_Bbox_2 any longer :)
+3.  The last button pressed is not maintained anymore!
+    There is a small workaround to get backwards compatibility in terms of
+    functionality. We have a function  void
+    CGAL_read_mouse_plus(leda_window& w, CGAL_Point_2<R>& p, int& button);
+    It can be used to replace a    w << p; /*...*/ int b = w.last_button_pressed(); 
+    code sequence by    int k; CGAL_read_mouse_plus( w, p, k); /*...*/ int b = k; 
+4.  There is no class CGAL_Window_stream anymore; Thus all forward declarations 
+    for class CGAL_Window_stream are an error now (e.g. in Optimisation_ellipse_2.h)
+    Include <CGAL/IO/forward_decl_window_stream.h> instead.
+    BTW, ostream and istream will become typedefs in the C++-Standard as well 
+    => same problem with forward declarations of `classes' [io]stream .
+5.  There is also a function to `cgalize' the LEDA window: CGAL_cgalize( leda_window&);
+    It sets some defaults (frame label, icon label, node width, ...).
+6.  The input functions now expect that you click with the left mouse button! If you
+    click with the right button, the leda_window is set in a mode converting to false; 
+    This is done to have input sequences easily terminated. See Lutz's mail on May, 29.
+7.  By default, input functions for window streams draw the object that is put 
+    into the stream. There are non-drawing equivalents: 
+    leda_window& CGAL_read( leda_window&, CGAL_...); 6. applies to these functions, too.
+    BTW, in LEDA, window input operations don't draw the object.
+8.  Finally, the drawing of points has been modified. Instead of crosses, 
+    points are now drawn as LEDA nodes, using the current node width. 
+    Via the leda_window::set_node_width() you can influence the size of a point 
+    to be drawn.  
+    Remark: Redrawing points with the backround color does not erase them anymore, 
+            since they have a black border now!
+
+
+Files:
+description.txt (this file)
+changes.txt
+version
+include/CGAL/IO/Window_stream.h
+include/CGAL/IO/leda_window.h
+include/CGAL/IO/forward_decl_window_stream.h
+include/CGAL/IO/esprit_logo.xpm
+demo/Window_stream/makefile
+demo/Window_stream/window_input.C

@@ -1,0 +1,37 @@
+\begin{ccRefFunction}{operator-}
+\ccTexHtml{\ccSetThreeColumns{Vector_2<R>X }{}{\hspace*{8.0cm}}}{}
+
+\ccInclude{CGAL/Point_2.h}
+\ccInclude{CGAL/Vector_2.h}
+
+\ccFunction{Vector_2<R> operator-(const Point_2<R> &p,
+                                  const Point_2<R> &q);}
+       {returns the difference vector between \ccStyle{q} and \ccStyle{p}. 
+        You can substitute \ccc{ORIGIN} for either \ccc{p} or \ccc{q}
+        ,but not for both.}
+
+\ccFunction{Point_2<R> operator-(const Point_2<R> &p,
+                                 const Vector_2<R> &v);}
+       {returns the point obtained by translating \ccStyle{p} by the 
+        vector -\ccStyle{v}.}
+
+\ccInclude{CGAL/Point_3.h}
+\ccInclude{CGAL/Vector_3.h}
+
+\ccFunction{Vector_3<R> operator-(const Point_3<R> &p,
+                                  const Point_3<R> &q);}
+       {returns the difference vector between \ccStyle{q} and \ccStyle{p}.
+        You can substitute \ccc{ORIGIN} for either $p$
+	or $q$, but not both.}
+
+\ccFunction{Point_3<R> operator-(const Point_3<R> &p,
+                                 const Vector_3<R> &v);}
+       {returns a point obtained by translating \ccStyle{p} by the 
+        vector $-$\ccStyle{v}.}
+
+\ccSeeAlso
+
+\ccc{Point_2<R>}, \ccc{Point_3<R>}, \ccc{Vector_2<R>}, \ccc{Vector_3<R>}
+
+\end{ccRefFunction}
+

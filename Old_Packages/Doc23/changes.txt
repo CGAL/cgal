@@ -1,0 +1,28 @@
+2.7     (26 Sep 2000)
+
+- links for Cartesian and intersection suppressed in many places (certainly 
+  not all where necessary)
+- orientation and opposite are not linked anymore
+- spacing for Kernel fixed (uses \ccAdditionalRefSkip length - thanks to Susan)
+- operators now show up in the postscript version again with Vector/Point (don't 
+  know the exact reason for this problem related to operator Layout
+
+2.6     (07 Sep 2000)
+
+- circumcenter page fixed
+- ray (Ray_2<R>, Ray_3<R>) .... A segment (Segment_2<R>, Segment_3<R>)
+  in kernel_geometry.tex
+
+2.5     (17 Aug 2000)
+
+- ccCreationVariable set to fo for Kernel::FunctionObjects
+- ccSeeAlso added in a number of places
+- rational_rotation_approximation documented
+- dimension fixes in 3D functionality: _2 replaced by _3 
+  (copy and paste errors)
+- html does not work for operator*  !!!??? no fix yet!
+
+2.4     (10 Aug 2000)
+
+- converted to RefManual
+

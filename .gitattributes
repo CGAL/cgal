@@ -1,4 +1,15 @@
 * text=auto !eol
+Old_Packages/Doc23/doc_tex/kernel/IsoCuboid.gif svneol=native#unset
+Old_Packages/Doc23/doc_tex/kernel/arrlinthree.gif svneol=native#unset
+Old_Packages/Doc23/doc_tex/kernel/arrlintwo.gif svneol=native#unset
+Old_Packages/Doc23/doc_tex/kernel/arrthree.gif svneol=native#unset
+Old_Packages/Doc23/doc_tex/kernel/arrthree2.gif svneol=native#unset
+Old_Packages/Doc23/doc_tex/kernel/arrtwo.gif svneol=native#unset
+Old_Packages/Doc23/doc_tex/kernel/arrtwo2.gif svneol=native#unset
+Old_Packages/Doc23/doc_tex/kernel/compare1.gif svneol=native#unset
+Old_Packages/Doc23/doc_tex/kernel/compare2.gif svneol=native#unset
+Old_Packages/Doc23/doc_tex/kernel/transvecthree.gif svneol=native#unset
+Old_Packages/Doc23/doc_tex/kernel/transvectwo.gif svneol=native#unset
 Old_Packages/Stl_port/stlport/bug/algorithm svneol=native#unset
 Old_Packages/Stl_port/stlport/bug/bitset svneol=native#unset
 Old_Packages/Stl_port/stlport/bug/cassert svneol=native#unset
@@ -277,6 +288,20 @@ Packages/Installation/doc_tex/installation/Fig/c-simp.ipe -text
 Packages/Installation/doc_tex/installation/Fig/g-simp.ipe -text
 Packages/Installation/doc_tex/installation/Fig/l-simp.ipe -text
 Packages/Interval_arithmetic/src/Interval_arithmetic/workaround_4_ms.obj -text svneol=unset#unset
+Packages/Kernel_23/doc_tex/kernel/IsoCuboid.eps -text
+Packages/Kernel_23/doc_tex/kernel/IsoCuboid.gif -text svneol=unset#unset
+Packages/Kernel_23/doc_tex/kernel/arrlinthree.gif -text svneol=unset#unset
+Packages/Kernel_23/doc_tex/kernel/arrlintwo.gif -text svneol=unset#unset
+Packages/Kernel_23/doc_tex/kernel/arrthree.gif -text svneol=unset#unset
+Packages/Kernel_23/doc_tex/kernel/arrthree2.gif -text svneol=unset#unset
+Packages/Kernel_23/doc_tex/kernel/arrtwo.gif -text svneol=unset#unset
+Packages/Kernel_23/doc_tex/kernel/arrtwo2.gif -text svneol=unset#unset
+Packages/Kernel_23/doc_tex/kernel/compare1.gif -text svneol=unset#unset
+Packages/Kernel_23/doc_tex/kernel/compare1.ipe -text
+Packages/Kernel_23/doc_tex/kernel/compare2.gif -text svneol=unset#unset
+Packages/Kernel_23/doc_tex/kernel/compare2.ipe -text
+Packages/Kernel_23/doc_tex/kernel/transvecthree.gif -text svneol=unset#unset
+Packages/Kernel_23/doc_tex/kernel/transvectwo.gif -text svneol=unset#unset
 Packages/Manual_tools/src/mstring.doc -text
 Packages/Matrix_search/doc_tex/Optimisation/Optimisation_ref/MatrixSearch_pcenter1.gif svneol=native#unset
 Packages/Matrix_search/doc_tex/Optimisation/Optimisation_ref/MatrixSearch_pcenter2.gif svneol=native#unset

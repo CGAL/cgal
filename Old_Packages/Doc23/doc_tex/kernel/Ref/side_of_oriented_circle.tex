@@ -1,0 +1,16 @@
+\begin{ccRefFunction}{side_of_oriented_circle}
+\ccInclude{CGAL/predicates_on_points_2.h}
+
+\ccFunction{Oriented_side side_of_oriented_circle(
+	                           const Point_2<R> &p, 
+	                           const Point_2<R> &q,
+                                   const Point_2<R> &r, 
+                                   const Point_2<R> &test);}
+         {returns the relative position of point \ccStyle{test}
+          to the oriented circle defined by $p$, $q$ and $r$.
+	  The order of the points $p$, $q$ and $r$ is important,
+	  since it determines the orientation of the implicitly
+          constructed circle.
+          \ccPrecond \ccStyle{p, q} and \ccStyle{r} are not collinear.}
+\end{ccRefFunction}
+

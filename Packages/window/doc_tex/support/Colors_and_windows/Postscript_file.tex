@@ -1,0 +1,134 @@
+\ccSetThreeColumns{Postscript_file_stream}{}{\hspace*{8.5cm}}
+\ccSetTwoColumns{}{\hspace*{8.5cm}}
+
+\medskip
+\begin{ccClass} {Postscript_file_stream}
+\ccSection{PostScript File Stream}
+
+Note: For the functionality described in this section you need \leda.
+
+\ccDefinition 
+An object of type \ccClassName\ provides graphical output in PostScript.
+\ccClassName\ is derived from the \leda\ class \ccStyle{ps_file}.
+Therefore, the functionality of \ccStyle{ps_file} is available on \ccClassName\ as well.
+In addition, the class \ccClassName\ provides input and output 
+operators for the classes which are defined in the \cgal\ kernel.
+The interface of \ccClassName s is very similar to the interface of \ccStyle{leda_window}s. 
+To increase similarity, some functions have been added with respect to \ccStyle{ps_file}.
+\begin{ccTexOnly}
+For further information on \ccStyle{ps_file}, we refer to \cite{mnsu-lum}.
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+For further information on <i>ps_file</i>, we refer to the 
+<A HREF="http://www.mpi-sb.mpg.de/LEDA/MANUAL/MANUAL.html">LEDA manual</A>.
+\end{ccHtmlOnly}
+
+\ccInclude{CGAL/IO/Postscript_file_stream.h}
+
+\ccCreation
+\ccCreationVariable{PS}
+
+\ccConstructor{Postscript_file_stream();}
+{creates a postscript file stream. The name of the output file is
+\ccc{CGAL_unnamed.ps} .}
+
+\ccConstructor{Postscript_file_stream(const char* filename);}
+{creates a postscript file stream. The name of the output file is
+\ccc{filename} .}
+
+\ccConstructor{Postscript_file_stream(float w, float h);}
+{creates a postscript file stream that draws the output to a box
+of physical size \ccStyle{width/40} $\times$ \ccStyle{height/40} cm.
+The name of the output file is \ccc{CGAL_unnamed.ps} .}
+
+\ccConstructor{Postscript_file_stream(float w, float h, const char* filename);}
+{creates a postscript file stream that draws the output to a box
+of physical size \ccStyle{width/40} $\times$ \ccStyle{height/40} cm.
+The name of the output file is \ccc{filename} .}
+
+
+\ccOperations
+The drawing region of a postscript file stream is initialized by a part of the 
+object space by
+
+\ccMethod{void init(double x0, double x1, double y0); }
+%{sets $xmin$ to $x_0$, $xmax$ to $x_1$, and $ymin$ to $y_0$, 
+%             the scaling factor $scaling$ to $w / (xmax-xmin)$, and 
+%             $ymax$ to $ymin + h \cdot scaling$. Here $w$ and $h$ are the
+%             width and height of the drawing section in pixels. }
+{initializes the  part of the object space that is mapped to the physical
+drawing box to [\ccc{x0},\ccc{x1}] $\times$ [\ccc{y0},\ccc{y0} + 
+\ccc{height}$*$\ccc{width}/(\ccc{x1}-\ccc{x0})], where \ccc{width} and \ccc{height} 
+are the width and the height of the drawing box in cm.}
+
+The following functions have been added to give \ccClassName\ the same interface
+as \ccc{Window_stream} to allow easily replacement of \ccc{Window_stream} by
+\ccClassName. 
+
+\ccMethod{void display();}
+{does nothing}
+
+\ccMethod{void display(int x, int y);}
+{does nothing}
+
+\ccMethod{int read_mouse(double& x, double& y);}
+{returns 1}
+
+\ccMethod{leda_color set_fg_color(leda_color c);}
+{class \ccc{set_color(c).}}
+
+See the \ccAnchor{http://www.mpi-sb.mpg.de/LEDA/MANUAL/MANUAL.html}{LEDA Manual}
+\cite{mnsu-lum} for further operations on \ccc{ps_file}.
+
+\def\ccTagRmEigenClassName{\ccFalse}
+\ccHeading{Output Operators}
+
+\ccSetThreeColumns{Postscript_file_stream& }{}{\hspace*{8.5cm}}
+
+The output operator is defined for all geometric classes in the two-dimensional
+\cgal\ kernel.
+
+\ccFunction{Postscript_file_stream& operator<<(Postscript_file_stream& PS, const Class& c);}
+       {inserts object \ccStyle{c} into the stream \ccVar.}
+
+\ccFunction{Postscript_file_stream& operator<<(Postscript_file_stream& PS, const Color& c);}
+       {changes the foreground color for the next objects that
+        will be inserted into \ccVar.}
+
+\ccFunction{void cgalize(Postscript_file_stream& ps);}
+{sets a few default values for drawing to ps. In particular, node width is
+set to 5 and line width to 1.}
+
+There are no input operators of course.
+
+\ccExample
+
+It is important that the postscript file stream header file gets included
+{\em after} the inclusion of the header files of geometric classes
+that get inserted to the postscript stream file.
+
+\begin{cprog}
+
+#include <CGAL/Cartesian.h>
+#include <CGAL/Segment_2.h>
+#include <CGAL/IO/Postscript_file_stream.h>
+
+typedef CGAL::Point_2< CGAL::Cartesian<double> >     Point;
+typedef CGAL::Segment_2< CGAL::Cartesian<double> >   Segment;
+
+int main()
+{
+    Point p(0,1), q(2,2);
+    Segment s(p,q);
+
+    CGAL::Postscript_file_stream PS(100,100);
+    PS.init(0,10,0);
+    CGAL::cgalize( PS);
+    PS.display();
+
+    PS << CGAL::RED << s << CGAL::BLACK << p << q ;
+    return 0;
+}
+\end{cprog} 
+
+\end{ccClass} 

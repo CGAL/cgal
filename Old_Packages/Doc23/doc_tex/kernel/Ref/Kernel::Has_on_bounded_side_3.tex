@@ -1,0 +1,14 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::Has_on_bounded_side_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{bool operator()(const Kernel::Iso_cuboid_3&i,
+                                  const Kernel::Point_3&p);}
+{returns true iff $p$ lies on the bounded side of $i$.}
+
+\ccMemberFunction{bool operator()(const Kernel::Tetrahedron_3&t,
+                                  const Kernel::Point_3&p);}
+{returns true iff $p$ lies on the bounded side of $t$.}
+
+\end{ccRefFunctionObjectConcept}
