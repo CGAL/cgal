@@ -69,9 +69,11 @@ public:
     STRATEGY_TRAPEZOIDAL = 0,
     STRATEGY_NAIVE,
     STRATEGY_WALK,
+    STRATEGY_DUMMY,
     STRATEGY_T,
     STRATEGY_N,
-    STRATEGY_W
+    STRATEGY_W,
+    STRATEGY_D
   };
     
   /*!
@@ -351,6 +353,9 @@ private:
         case STRATEGY_WALK:
         case STRATEGY_W:
           m_strategyMask = 0x1 << STRATEGY_WALK; return 0;
+        case STRATEGY_DUMMY:
+        case STRATEGY_D:
+          m_strategyMask = 0x1 << STRATEGY_DUMMY; return 0;
       }
     }
     std::cerr << "Unrecognized Bench Name option '" << optarg << "'!"
