@@ -48,7 +48,7 @@ void sort_triangle_by_lexicographically_smaller_vertex
 template <typename Triangle_3>
 struct Compare_triangle_3 {
   typedef typename Triangle_3::R Kernel;
-  bool operator()( const Triangle_3& t1, const Triangle_3& t2) {
+  bool operator()( const Triangle_3& t1, const Triangle_3& t2) const {
     int v1[3], v2[3];
     sort_triangle_by_lexicographically_smaller_vertex
       ( t1, v1[0], v1[1], v1[2]);
