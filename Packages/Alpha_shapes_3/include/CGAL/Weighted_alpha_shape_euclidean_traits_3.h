@@ -20,8 +20,8 @@
 #ifndef CGAL_WEIGHTED_ALPHA_SHAPE_EUCLIDEAN_TRAITS_3_H
 #define CGAL_WEIGHTED_ALPHA_SHAPE_EUCLIDEAN_TRAITS_3_H 
 
-#include <CGAL/constructions/squared_radius_smallest_orthogonalsphere_ftC3.h>
-#include <CGAL/predicates/in_smallest_orthogonalsphere_ftC3.h>
+#include <CGAL/constructions/squared_radius_smallest_orthogonal_sphere_ftC3.h>
+#include <CGAL/predicates/in_smallest_orthogonal_sphere_ftC3.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -29,7 +29,7 @@ CGAL_BEGIN_NAMESPACE
 //------------------ Function Objects----------------------------------
 
 template < class K >
-class Compute_squared_radius_orthogonalsphere_3
+class Compute_squared_radius_orthogonal_sphere_3
 {
 public:
 
@@ -57,7 +57,7 @@ public:
     FT sy(s.point().y());
     FT sz(s.point().z());
     FT sw(s.weight());
-    FT res = squared_radius_orthogonalsphereC3(px, py, pz, pw,
+    FT res = squared_radius_orthogonal_sphereC3(px, py, pz, pw,
 					       qx, qy, qz, qw,
 					       rx, ry, rz, rw,
 					       sx, sy, sz, sw);
@@ -79,7 +79,7 @@ public:
     FT rz(r.point().z());
     FT rw(r.weight()); 
     
-    FT res = squared_radius_smallest_orthogonalsphereC3(px, py, pz, pw,
+    FT res = squared_radius_smallest_orthogonal_sphereC3(px, py, pz, pw,
 							qx, qy, qz, qw,
 							rx, ry, rz, rw); 
     return max (FT(0), res );
@@ -96,7 +96,7 @@ public:
     FT qz(q.point().z());
     FT qw(q.weight());
 
-    FT res = squared_radius_smallest_orthogonalsphereC3(px, py, pz, pw,
+    FT res = squared_radius_smallest_orthogonal_sphereC3(px, py, pz, pw,
 						    qx, qy, qz, qw);
     return max (FT(0), res);
     }
@@ -105,7 +105,7 @@ public:
 //-------------------------------------------------------------------
 
 template < class K >
-class Side_of_bounded_orthogonalsphere_3
+class Side_of_bounded_orthogonal_sphere_3
 {
 public:
   typedef typename K::Point Point;
@@ -134,7 +134,7 @@ public:
     FT tz(t.point().z());
     FT tw(t.weight());
     
-    return in_smallest_orthogonalsphereC3(px, py, pz, pw,
+    return in_smallest_orthogonal_sphereC3(px, py, pz, pw,
 					  qx, qy, qz, qw,
 					  rx, ry, rz, rw,
 					  tx, ty, tz, tw);
@@ -155,7 +155,7 @@ public:
     FT ry(r.point().y());
     FT rz(r.point().z());
     FT rw(r.weight());
-     return in_smallest_orthogonalsphereC3(px, py, pz, pw,
+     return in_smallest_orthogonal_sphereC3(px, py, pz, pw,
 					   qx, qy, qz, qw,
 					   rx, ry, rz, rw);
   }
@@ -181,24 +181,24 @@ public:
   typedef Weighted_point Point_3;
   typedef Weighted_point Point;
 
-  typedef CGAL::Compute_squared_radius_orthogonalsphere_3<Self> 
-    Compute_squared_radius_orthogonalsphere_3;
-  typedef CGAL::Side_of_bounded_orthogonalsphere_3<Self> 
-    Side_of_bounded_orthogonalsphere_3;
+  typedef CGAL::Compute_squared_radius_orthogonal_sphere_3<Self> 
+    Compute_squared_radius_orthogonal_sphere_3;
+  typedef CGAL::Side_of_bounded_orthogonal_sphere_3<Self> 
+    Side_of_bounded_orthogonal_sphere_3;
 
   //---------------------------------------------------------------------
 
-  Compute_squared_radius_orthogonalsphere_3 
+  Compute_squared_radius_orthogonal_sphere_3 
   compute_squared_radius_3_object() const
     {
-      return Compute_squared_radius_orthogonalsphere_3();
+      return Compute_squared_radius_orthogonal_sphere_3();
     }
   //---------------------------------------------------------------------
 
-  Side_of_bounded_orthogonalsphere_3 
+  Side_of_bounded_orthogonal_sphere_3 
   side_of_bounded_sphere_3_object() const
     {
-      return Side_of_bounded_orthogonalsphere_3();
+      return Side_of_bounded_orthogonal_sphere_3();
     }
 };
 
