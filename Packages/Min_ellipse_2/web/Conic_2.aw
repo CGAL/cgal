@@ -1911,11 +1911,11 @@ zero, we know that the non-convex side is empty, see subsection
     {
         switch (o) {
         case CGAL_POSITIVE:
-            return (CGAL_Convex_side)(-CGAL_sign (evaluate (p)));
-        case CGAL_NEGATIVE:
             return (CGAL_Convex_side)( CGAL_sign (evaluate (p)));
+        case CGAL_NEGATIVE:
+            return (CGAL_Convex_side)(-CGAL_sign (evaluate (p)));
         case CGAL_ZERO:
-            return (CGAL_Convex_side)(-CGAL_sign (CGAL_abs (evaluate(p))));
+            return (CGAL_Convex_side)( CGAL_sign (CGAL_abs (evaluate(p))));
         }
         // keeps g++ happy
         return( CGAL_Convex_side( 0));
@@ -1938,11 +1938,11 @@ zero, we know that the non-convex side is empty, see subsection
     {
         switch (o) {
         case CGAL_POSITIVE:
-            return (CGAL_Convex_side)(-CGAL_sign (evaluate (p)));
-        case CGAL_NEGATIVE:
             return (CGAL_Convex_side)( CGAL_sign (evaluate (p)));
+        case CGAL_NEGATIVE:
+            return (CGAL_Convex_side)(-CGAL_sign (evaluate (p)));
         case CGAL_ZERO:
-            return (CGAL_Convex_side)(-CGAL_sign (CGAL_abs (evaluate(p))));
+            return (CGAL_Convex_side)( CGAL_sign (CGAL_abs (evaluate(p))));
         }
         // keeps g++ happy
         return( CGAL_Convex_side( 0));

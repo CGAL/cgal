@@ -278,11 +278,11 @@ section, so we do not comment on it here.
 
 @macro <Min_circle_2 public interface> = @begin
     // types
-    typedef           _Traits                      Traits;
-    typedef typename  _Traits::Point               Point;
-    typedef typename  _Traits::Circle              Circle;
-    typedef typename  list<Point>::const_iterator  Point_iterator;
-    typedef           const Point *                Support_point_iterator;
+    typedef           _Traits                           Traits;
+    typedef typename  _Traits::Point                    Point;
+    typedef typename  _Traits::Circle                   Circle;
+    typedef           std::list<Point>::const_iterator  Point_iterator;
+    typedef           const Point *                     Support_point_iterator;
 
     /**************************************************************************
     WORKAROUND: The GNU compiler (g++ 2.7.2[.x]) does not accept types
@@ -296,13 +296,13 @@ section, so we do not comment on it here.
                        bool          randomize = false,
                        CGAL_Random&  random    = CGAL_random,
                        const Traits& traits    = Traits());
-    CGAL_Min_circle_2( list<Point>::const_iterator first,
-                       list<Point>::const_iterator last,
+    CGAL_Min_circle_2( std::list<Point>::const_iterator first,
+                       std::list<Point>::const_iterator last,
                        bool          randomize = false,
                        CGAL_Random&  random    = CGAL_random,
                        const Traits& traits    = Traits());
-    CGAL_Min_circle_2( istream_iterator<Point,ptrdiff_t> first,
-                       istream_iterator<Point,ptrdiff_t> last,
+    CGAL_Min_circle_2( std::istream_iterator<Point,std::ptrdiff_t> first,
+                       std::istream_iterator<Point,std::ptrdiff_t> last,
                        bool          randomize = false,
                        CGAL_Random&  random    = CGAL_random,
                        const Traits& traits    = Traits())
@@ -345,10 +345,10 @@ section, so we do not comment on it here.
     void  insert( const Point& p);
     void  insert( const Point* first,
                   const Point* last );
-    void  insert( list<Point>::const_iterator first,
-                  list<Point>::const_iterator last );
-    void  insert( istream_iterator<Point,ptrdiff_t> first,
-                  istream_iterator<Point,ptrdiff_t> last );
+    void  insert( std::list<Point>::const_iterator first,
+                  std::list<Point>::const_iterator last );
+    void  insert( std::istream_iterator<Point,std::ptrdiff_t> first,
+                  std::istream_iterator<Point,std::ptrdiff_t> last );
     void  clear( );
 
     // validity check
@@ -373,7 +373,7 @@ bring points to the front of the list in constant time. We use the
 sequence container \ccc{list} from STL~\cite{sl-stl-95}.
 
 @macro <Min_circle_2 private data members> += @begin
-    list<Point>  points;                        // doubly linked list of points
+    std::list<Point>  points;                   // doubly linked list of points
 @end
 
 The support set $S$ of at most three support points is stored in an
@@ -432,18 +432,19 @@ $mc(P)=mc(P,\emptyset)$.
         // allocate support points' array
         support_points = new Point[ 3];
 
-        // range not empty?
+        // range of points not empty?
         if ( first != last) {
 
             // store points
             if ( randomize) {
 
                 // shuffle points at random
-                vector<Point> v( first, last);
-                random_shuffle( v.begin(), v.end(), random);
-                copy( v.begin(), v.end(), back_inserter( points)); }
+                std::vector<Point> v( first, last);
+                std::random_shuffle( v.begin(), v.end(), random);
+                std::copy( v.begin(), v.end(),
+			   std::back_inserter( points)); }
             else
-                copy( first, last, back_inserter( points)); }
+                std::copy( first, last, std::back_inserter( points)); }
 
         // compute mc
         mc( points.end(), 0);
@@ -462,79 +463,82 @@ $mc(P)=mc(P,\emptyset)$.
         // allocate support points' array
         support_points = new Point[ 3];
 
-        // range not empty?
-        if ( ( last-first) > 0) {
-
-            // store points
-            if ( randomize) {
-
-                // shuffle points at random
-                vector<Point> v( first, last);
-                random_shuffle( v.begin(), v.end(), random);
-                copy( v.begin(), v.end(), back_inserter( points)); }
-            else
-                copy( first, last, back_inserter( points)); }
-
-        // compute mc
-        mc( points.end(), 0);
-    }
-
-    // STL-like constructor for list<Point>
-    CGAL_Min_circle_2( list<Point>::const_iterator first,
-                       list<Point>::const_iterator last,
-                       bool          randomize = false,
-                       CGAL_Random&  random    = CGAL_random,
-                       const Traits& traits    = Traits())
-        : tco( traits)
-    {
-        // allocate support points' array
-        support_points = new Point[ 3];
-
-        // compute number of points
-        list<Point>::size_type n = 0;
-        CGAL__distance( first, last, n);
-        if ( n > 0) {
-
-            // store points
-            if ( randomize) {
-
-                // shuffle points at random
-                vector<Point> v;
-                v.reserve( n);
-                copy( first, last, back_inserter( v));
-                random_shuffle( v.begin(), v.end(), random);
-                copy( v.begin(), v.end(), back_inserter( points)); }
-            else
-                copy( first, last, back_inserter( points)); }
-
-        // compute mc
-        mc( points.end(), 0);
-    }
-
-    // STL-like constructor for stream iterator istream_iterator<Point>
-    CGAL_Min_circle_2( istream_iterator<Point,ptrdiff_t>  first,
-                       istream_iterator<Point,ptrdiff_t>  last,
-                       bool          randomize = false,
-                       CGAL_Random&  random    = CGAL_random,
-                       const Traits& traits    = Traits())
-        : tco( traits)
-    {
-        // allocate support points' array
-        support_points = new Point[ 3];
-
-        // range not empty?
+        // range of points not empty?
         if ( first != last) {
 
             // store points
             if ( randomize) {
 
                 // shuffle points at random
-                vector<Point> v;
-                copy( first, last, back_inserter( v));
-                random_shuffle( v.begin(), v.end(), random);
-                copy( v.begin(), v.end(), back_inserter( points)); }
+                std::vector<Point> v( first, last);
+                std::random_shuffle( v.begin(), v.end(), random);
+                std::copy( v.begin(), v.end(),
+			   std::back_inserter( points)); }
             else
-                copy( first, last, back_inserter( points)); }
+                std::copy( first, last, std::back_inserter( points)); }
+
+        // compute mc
+        mc( points.end(), 0);
+    }
+
+    // STL-like constructor for list<Point>
+    CGAL_Min_circle_2( std::list<Point>::const_iterator first,
+                       std::list<Point>::const_iterator last,
+                       bool          randomize = false,
+                       CGAL_Random&  random    = CGAL_random,
+                       const Traits& traits    = Traits())
+        : tco( traits)
+    {
+        // allocate support points' array
+        support_points = new Point[ 3];
+
+        // range of points not empty?
+        if ( first != last) {
+
+            // store points
+            if ( randomize) {
+
+                // shuffle points at random
+	        std::list<Point>::size_type n = 0;
+        	distance( first, last, n);
+                std::vector<Point> v;
+                v.reserve( n);
+                std::copy( first, last, std::back_inserter( v));
+                std::random_shuffle( v.begin(), v.end(), random);
+                std::copy( v.begin(), v.end(),
+			   std::back_inserter( points)); }
+            else
+                std::copy( first, last, std::back_inserter( points)); }
+
+        // compute mc
+        mc( points.end(), 0);
+    }
+
+    // STL-like constructor for stream iterator istream_iterator<Point>
+    CGAL_Min_circle_2( istream_iterator<Point,std::ptrdiff_t>  first,
+                       istream_iterator<Point,std::ptrdiff_t>  last,
+                       bool          randomize = false,
+                       CGAL_Random&  random    = CGAL_random,
+                       const Traits& traits    = Traits())
+        : tco( traits)
+    {
+        // allocate support points' array
+        support_points = new Point[ 3];
+
+        // range of points not empty?
+        if ( first != last) {
+
+            // store points
+            if ( randomize) {
+
+                // shuffle points at random
+                std::vector<Point> v;
+                std::copy( first, last, std::back_inserter( v));
+                std::random_shuffle( v.begin(), v.end(), random);
+                std::copy( v.begin(), v.end(),
+			   std::back_inserter( points)); }
+            else
+                std::copy( first, last, std::back_inserter( points)); }
 
         // compute mc
         mc( points.end(), 0);
@@ -848,8 +852,8 @@ each point \ccc{p} in the range $[\mbox{\ccc{first}},\mbox{\ccc{last}})$.
 
     inline
     void
-    insert( list<Point>::const_iterator first,
-            list<Point>::const_iterator last )
+    insert( std::list<Point>::const_iterator first,
+            std::list<Point>::const_iterator last )
     {
         for ( ; first != last; ++first)
             insert( *first);
@@ -857,8 +861,8 @@ each point \ccc{p} in the range $[\mbox{\ccc{first}},\mbox{\ccc{last}})$.
 
     inline
     void
-    insert( istream_iterator<Point,ptrdiff_t>  first,
-            istream_iterator<Point,ptrdiff_t>  last )
+    insert( std::istream_iterator<Point,std::ptrdiff_t>  first,
+            std::istream_iterator<Point,std::ptrdiff_t>  last )
     {
         for ( ; first != last; ++first)
             insert( *first);
@@ -1091,16 +1095,19 @@ traits class object.
 
 @macro <Min_circle_2 I/O operators declaration> = @begin
     template < class _Traits >
-    ostream& operator << ( ostream& os, const CGAL_Min_circle_2<_Traits>& mc);
+    std::ostream&
+    operator << ( std::ostream& os, const CGAL_Min_circle_2<_Traits>& mc);
 
     template < class _Traits >
-    istream& operator >> ( istream& is, CGAL_Min_circle_2<_Traits>      & mc);
+    std::istream&
+    operator >> ( std::istream& is,       CGAL_Min_circle_2<_Traits>& mc);
 @end
 
 @macro <Min_circle_2 I/O operators> = @begin
     template < class _Traits >
-    ostream&
-    operator << ( ostream& os, const CGAL_Min_circle_2<_Traits>& min_circle)
+    std::ostream&
+    operator << ( std::ostream& os,
+		  const CGAL_Min_circle_2<_Traits>& min_circle)
     {
         typedef typename  CGAL_Min_circle_2<_Traits>::Point  Point;
 
@@ -1112,27 +1119,27 @@ traits class object.
                << ", |S| = " << min_circle.number_of_support_points() << endl;
             os << "  P = {" << endl;
             os << "    ";
-            copy( min_circle.points_begin(), min_circle.points_end(),
-                  ostream_iterator<Point>( os, ",\n    "));
+            std::copy( min_circle.points_begin(), min_circle.points_end(),
+                       std::ostream_iterator<Point>( os, ",\n    "));
             os << "}" << endl;
             os << "  S = {" << endl;
             os << "    ";
-            copy( min_circle.support_points_begin(),
-                  min_circle.support_points_end(),
-                  ostream_iterator<Point>( os, ",\n    "));
+            std::copy( min_circle.support_points_begin(),
+                       min_circle.support_points_end(),
+                       std::ostream_iterator<Point>( os, ",\n    "));
             os << "}" << endl;
             os << "  circle = " << min_circle.circle() << endl;
             os << ")" << endl;
             break;
 
           case CGAL_IO::ASCII:
-            copy( min_circle.points_begin(), min_circle.points_end(),
-                  ostream_iterator<Point>( os, "\n"));
+            std::copy( min_circle.points_begin(), min_circle.points_end(),
+                       std::ostream_iterator<Point>( os, "\n"));
             break;
 
           case CGAL_IO::BINARY:
-            copy( min_circle.points_begin(), min_circle.points_end(),
-                  ostream_iterator<Point>( os));
+            std::copy( min_circle.points_begin(), min_circle.points_end(),
+                       std::ostream_iterator<Point>( os));
             break;
 
           default:
@@ -1144,8 +1151,8 @@ traits class object.
     }
 
     template < class Traits >
-    istream&
-    operator >> ( istream& is, CGAL_Min_circle_2<Traits>& min_circle)
+    std::istream&
+    operator >> ( std::istream& is, CGAL_Min_circle_2<Traits>& min_circle)
     {
         switch ( CGAL_get_mode( is)) {
 
@@ -1156,8 +1163,8 @@ traits class object.
 
           case CGAL_IO::ASCII:
           case CGAL_IO::BINARY:
-            typedef typename  CGAL_Min_circle_2<Traits>::Point   Point;
-            typedef           istream_iterator<Point,ptrdiff_t>  Is_it;
+            typedef typename  CGAL_Min_circle_2<Traits>::Point        Point;
+            typedef      std::istream_iterator<Point,std::ptrdiff_t>  Is_it;
             min_circle.clear();
             min_circle.insert( Is_it( is), Is_it());
             break;
@@ -1250,7 +1257,7 @@ pseudo-code above.
         if ( n_sp == 3) return;
 
         // test first n points
-        list<Point>::iterator  point_iter( points.begin());
+        std::list<Point>::iterator  point_iter( points.begin());
         for ( ; last != point_iter; ) {
             const Point& p( *point_iter);
 
@@ -1478,7 +1485,7 @@ emptiness and degeneracy, resp.
     bounded_side( const Point& p) const
     {
         return( CGAL_Bounded_side(
-            CGAL_sign( CGAL_squared_distance( p, _center) - _squared_radius)));
+            CGAL_sign( _squared_radius - CGAL_squared_distance( p, _center))));
     }
 
     inline
@@ -1532,8 +1539,8 @@ emptiness and degeneracy, resp.
 
 @macro <Optimisation_circle_2 I/O operators> = @begin
     template < class _R >
-    ostream&
-    operator << ( ostream& os, const CGAL_Optimisation_circle_2<_R>& c)
+    std::ostream&
+    operator << ( std::ostream& os, const CGAL_Optimisation_circle_2<_R>& c)
     {
         switch ( CGAL_get_mode( os)) {
 
@@ -1561,8 +1568,8 @@ emptiness and degeneracy, resp.
     }
 
     template < class _R >
-    istream&
-    operator >> ( istream& is, CGAL_Optimisation_circle_2<_R>& c)
+    std::istream&
+    operator >> ( std::istream& is, CGAL_Optimisation_circle_2<_R>& c)
     {
         typedef typename  CGAL_Optimisation_circle_2<_R>::Point     Point;
         typedef typename  CGAL_Optimisation_circle_2<_R>::Distance  Distance;
@@ -1776,13 +1783,14 @@ it is declared \ccc{friend}.
 
 @macro <Min_circle_2_adapterC2 nested type `Circle'> = @begin
     template < class _PT, class _DA >
-    ostream&
-    operator << ( ostream&,
+    std::ostream&
+    operator << ( std::ostream&,
 	          const CGAL__Min_circle_2_adapterC2__Circle<_PT,_DA>&);
 
     template < class _PT, class _DA >
-    istream&
-    operator >> ( istream&, CGAL__Min_circle_2_adapterC2__Circle<_PT,_DA>&);
+    std::istream&
+    operator >> ( std::istream&,
+		  CGAL__Min_circle_2_adapterC2__Circle<_PT,_DA>&);
 
     template < class _PT, class _DA >
     class CGAL__Min_circle_2_adapterC2__Circle {
@@ -1810,10 +1818,10 @@ it is declared \ccc{friend}.
             return( dx*dx + dy*dy);
         }
 
-        friend  ostream&  operator << CGAL_NULL_TMPL_ARGS ( ostream&,
+        friend  std::ostream&  operator << CGAL_NULL_TMPL_ARGS ( std::ostream&,
 	    const CGAL__Min_circle_2_adapterC2__Circle<_PT,_DA>&);
 
-        friend  istream&  operator >> CGAL_NULL_TMPL_ARGS ( istream&,
+        friend  std::istream&  operator >> CGAL_NULL_TMPL_ARGS ( std::istream&,
 	    CGAL__Min_circle_2_adapterC2__Circle<_PT,_DA>&);
 
       public:
@@ -1888,7 +1896,7 @@ it is declared \ccc{friend}.
             FT  py;
             dao.get( p, px, py);
             return( CGAL_Bounded_side( 
-                CGAL_sign( sqr_dist( px, py, center_x, center_y) - sqr_rad)));
+                CGAL_sign( sqr_rad - sqr_dist( px, py, center_x, center_y))));
         }
 
         bool
@@ -1957,9 +1965,9 @@ it is declared \ccc{friend}.
 
     // I/O
     template < class _PT, class _DA >
-    ostream&
-    operator << ( ostream& os,
-	const CGAL__Min_circle_2_adapterC2__Circle<_PT,_DA>& c)
+    std::ostream&
+    operator << ( std::ostream& os,
+	          const CGAL__Min_circle_2_adapterC2__Circle<_PT,_DA>& c)
     {
 	switch ( CGAL_get_mode( os)) {
 
@@ -1989,8 +1997,8 @@ it is declared \ccc{friend}.
     }
 
     template < class _PT, class _DA >
-    istream&
-    operator >> ( istream& is,
+    std::istream&
+    operator >> ( std::istream& is,
 		  CGAL__Min_circle_2_adapterC2__Circle<_PT,_DA>& c)
     {
 	switch ( CGAL_get_mode( is)) {
@@ -2118,13 +2126,14 @@ it is declared \ccc{friend}.
 
 @macro <Min_circle_2_adapterH2 nested type `Circle'> = @begin
     template < class _PT, class _DA >
-    ostream&
-    operator << ( ostream&,
+    std::ostream&
+    operator << ( std::ostream&,
 		  const CGAL__Min_circle_2_adapterH2__Circle<_PT,_DA>&);
 
     template < class _PT, class _DA >
-    istream&
-    operator >> ( istream&, CGAL__Min_circle_2_adapterH2__Circle<_PT,_DA>&);
+    std::istream&
+    operator >> ( std::istream&,
+		  CGAL__Min_circle_2_adapterH2__Circle<_PT,_DA>&);
 
     template < class _PT, class _DA >
     class CGAL__Min_circle_2_adapterH2__Circle {
@@ -2156,10 +2165,10 @@ it is declared \ccc{friend}.
             return( FT( dhx*dhx + dhy*dhy, dhw*dhw));
         }
 
-	friend  ostream&  operator << CGAL_NULL_TMPL_ARGS ( ostream&,
+	friend  std::ostream&  operator << CGAL_NULL_TMPL_ARGS ( std::ostream&,
 	    const CGAL__Min_circle_2_adapterH2__Circle<_PT,_DA>&);
 
-        friend  istream&  operator >> CGAL_NULL_TMPL_ARGS ( istream&,
+        friend  std::istream&  operator >> CGAL_NULL_TMPL_ARGS ( std::istream&,
 	    CGAL__Min_circle_2_adapterH2__Circle<_PT,_DA>&);
 
       public:
@@ -2252,10 +2261,9 @@ it is declared \ccc{friend}.
             RT  phy;
             RT  phw;
             dao.get( p, phx, phy, phw);
-            return( CGAL_Bounded_side(
-                        CGAL_sign( sqr_dist( phx, phy, phw,
-                                             center_hx, center_hy, center_hw)
-                                   - sqr_rad)));
+            return( CGAL_Bounded_side( CGAL_sign(
+		sqr_rad - sqr_dist( phx, phy, phw,
+                                    center_hx, center_hy, center_hw))));
         }
 
         bool
@@ -2330,8 +2338,8 @@ it is declared \ccc{friend}.
 
     // I/O
     template < class _PT, class _DA >
-    ostream&
-    operator << ( ostream& os,
+    std::ostream&
+    operator << ( std::ostream& os,
 		  const CGAL__Min_circle_2_adapterH2__Circle<_PT,_DA>& c)
     {
 	switch ( CGAL_get_mode( os)) {
@@ -2367,8 +2375,8 @@ it is declared \ccc{friend}.
     }
 
     template < class _PT, class _DA >
-    istream&
-    operator >> ( istream& is,
+    std::istream&
+    operator >> ( std::istream& is,
 		  CGAL__Min_circle_2_adapterH2__Circle<_PT,_DA>& c)
     {
 	switch ( CGAL_get_mode( is)) {
@@ -2418,9 +2426,13 @@ homogeneous representation with number type \ccc{CGAL_Gmpz}.
     #include <CGAL/Min_circle_2_adapterC2.h>
     #include <CGAL/Min_circle_2_adapterH2.h>
     #include <CGAL/IO/Verbose_ostream.h>
-    #include <assert.h>
-    #include <string.h>
-    #include <fstream.h>
+    #include <cassert>
+    #include <cstring>
+    #include <fstream>
+
+    using std::ofstream;
+    using std::ifstream;
+    using std::cerr;
 
     #ifdef CGAL_USE_LEDA_FOR_OPTIMISATION_TEST
     #  include <CGAL/leda_integer.h>
@@ -2694,15 +2706,15 @@ representation) and corresponding data accessors.
         }
 
         friend
-        ostream&
-        operator << ( ostream& os, const MyPointC2& p)
+        std::ostream&
+        operator << ( std::ostream& os, const MyPointC2& p)
         {
             return( os << p._x << ' ' << p._y);
         }
 
         friend
-        istream&
-        operator >> ( istream& is, MyPointC2& p)
+        std::istream&
+        operator >> ( std::istream& is, MyPointC2& p)
         {
             return( is >> p._x >> p._y);
         }
@@ -2755,15 +2767,15 @@ representation) and corresponding data accessors.
         }
 
         friend
-        ostream&
-        operator << ( ostream& os, const MyPointH2& p)
+        std::ostream&
+        operator << ( std::ostream& os, const MyPointH2& p)
         {
             return( os << p._hx << ' ' << p._hy << ' ' << p._hw);
         }
 
         friend
-        istream&
-        operator >> ( istream& is, MyPointH2& p)
+        std::istream&
+        operator >> ( std::istream& is, MyPointH2& p)
         {
             return( is >> p._hx >> p._hy >> p._hw);
         }
@@ -2827,9 +2839,9 @@ end of each file.
         // read points from file
         verr << endl << "input file: `" << argv[ 1] << "'" << flush;
 
-        list<Point>  points;
-        int          n, x, y;
-        ifstream     in( argv[ 1]);
+        std::list<Point>  points;
+        int               n, x, y;
+        ifstream          in( argv[ 1]);
         in >> n;
         assert( in);
         for ( int i = 0; i < n; ++i) {
@@ -2884,21 +2896,21 @@ end of each file.
     #ifndef CGAL_OPTIMISATION_BASIC_H
     #  include <CGAL/optimisation_basic.h>
     #endif
-    #ifndef CGAL_PROTECT_LIST_H
-    #  include <list.h>
-    #  define CGAL_PROTECT_LIST_H
+    #ifndef CGAL_PROTECT_LIST
+    #  include <list>
+    #  define CGAL_PROTECT_LIST
     #endif
-    #ifndef CGAL_PROTECT_VECTOR_H
-    #  include <vector.h>
-    #  define CGAL_PROTECT_VECTOR_H
+    #ifndef CGAL_PROTECT_VECTOR
+    #  include <vector>
+    #  define CGAL_PROTECT_VECTOR
     #endif
-    #ifndef CGAL_PROTECT_ALGO_H
-    #  include <algo.h>
-    #  define CGAL_PROTECT_ALGO_H
+    #ifndef CGAL_PROTECT_ALGORITHM
+    #  include <algorithm>
+    #  define CGAL_PROTECT_ALGORITHM
     #endif
-    #ifndef CGAL_PROTECT_IOSTREAM_H
-    #  include <iostream.h>
-    #  define CGAL_PROTECT_IOSTREAM_H
+    #ifndef CGAL_PROTECT_IOSTREAM
+    #  include <iostream>
+    #  define CGAL_PROTECT_IOSTREAM
     #endif
 
     @<Min_circle_2 interface>

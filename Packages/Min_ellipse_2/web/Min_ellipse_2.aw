@@ -276,11 +276,11 @@ section, so we do not comment on it here.
 
 @macro <Min_ellipse_2 public interface> = @begin
     // types
-    typedef           _Traits                      Traits;
-    typedef typename  _Traits::Point               Point;
-    typedef typename  _Traits::Ellipse             Ellipse;
-    typedef typename  list<Point>::const_iterator  Point_iterator;
-    typedef           const Point *                Support_point_iterator;
+    typedef           _Traits                           Traits;
+    typedef typename  _Traits::Point                    Point;
+    typedef typename  _Traits::Ellipse                  Ellipse;
+    typedef typename  std::list<Point>::const_iterator  Point_iterator;
+    typedef           const Point *                     Support_point_iterator;
 
     /**************************************************************************
     WORKAROUND: The GNU compiler (g++ 2.7.2[.*]) does not accept types
@@ -294,13 +294,13 @@ section, so we do not comment on it here.
                         bool          randomize = false,
                         CGAL_Random&  random    = CGAL_random,
                         const Traits& traits    = Traits());
-    CGAL_Min_ellipse_2( list<Point>::const_iterator first,
-                        list<Point>::const_iterator last,
+    CGAL_Min_ellipse_2( std::list<Point>::const_iterator first,
+                        std::list<Point>::const_iterator last,
                         bool          randomize = false,
                         CGAL_Random&  random    = CGAL_random,
                         const Traits& traits    = Traits());
-    CGAL_Min_ellipse_2( istream_iterator<Point,ptrdiff_t> first,
-                        istream_iterator<Point,ptrdiff_t> last,
+    CGAL_Min_ellipse_2( std::istream_iterator<Point,std::ptrdiff_t> first,
+                        std::istream_iterator<Point,std::ptrdiff_t> last,
                         bool          randomize = false,
                         CGAL_Random&  random    = CGAL_random,
                         const Traits& traits    = Traits())
@@ -343,10 +343,10 @@ section, so we do not comment on it here.
     void  insert( const Point& p);
     void  insert( const Point* first,
                   const Point* last );
-    void  insert( list<Point>::const_iterator first,
-                  list<Point>::const_iterator last );
-    void  insert( istream_iterator<Point,ptrdiff_t> first,
-                  istream_iterator<Point,ptrdiff_t> last );
+    void  insert( std::list<Point>::const_iterator first,
+                  std::list<Point>::const_iterator last );
+    void  insert( std::istream_iterator<Point,std::ptrdiff_t> first,
+                  std::istream_iterator<Point,std::ptrdiff_t> last );
     void  clear( );
 
     // validity check
@@ -371,7 +371,7 @@ bring points to the front of the list in constant time. We use the
 sequence container \ccc{list} from STL~\cite{sl-stl-95}.
 
 @macro <Min_ellipse_2 private data members> += @begin
-    list<Point>  points;                        // doubly linked list of points
+    std::list<Point>  points;                   // doubly linked list of points
 @end
 
 The support set $S$ of at most five support points is stored in an
@@ -430,18 +430,19 @@ $me(P)=me(P,\emptyset)$.
         // allocate support points' array
         support_points = new Point[ 5];
 
-        // range not empty?
+        // range of points not empty?
         if ( first != last) {
 
             // store points
             if ( randomize) {
 
                 // shuffle points at random
-                vector<Point> v( first, last);
-                random_shuffle( v.begin(), v.end(), random);
-                copy( v.begin(), v.end(), back_inserter( points)); }
+                std::vector<Point> v( first, last);
+                std::random_shuffle( v.begin(), v.end(), random);
+                std::copy( v.begin(), v.end(),
+			   std::back_inserter( points)); }
             else
-                copy( first, last, back_inserter( points)); }
+                std::copy( first, last, std::back_inserter( points)); }
 
         // compute me
         me( points.end(), 0);
@@ -460,79 +461,82 @@ $me(P)=me(P,\emptyset)$.
         // allocate support points' array
         support_points = new Point[ 5];
 
-        // range not empty?
-        if ( ( last-first) > 0) {
-
-            // store points
-            if ( randomize) {
-
-                // shuffle points at random
-                vector<Point> v( first, last);
-                random_shuffle( v.begin(), v.end(), random);
-                copy( v.begin(), v.end(), back_inserter( points)); }
-            else
-                copy( first, last, back_inserter( points)); }
-
-        // compute me
-        me( points.end(), 0);
-    }
-
-    // STL-like constructor for list<Point>
-    CGAL_Min_ellipse_2( list<Point>::const_iterator first,
-                        list<Point>::const_iterator last,
-                        bool          randomize = false,
-                        CGAL_Random&  random    = CGAL_random,
-                        const Traits& traits    = Traits())
-        : tco( traits)
-    {
-        // allocate support points' array
-        support_points = new Point[ 5];
-
-        // compute number of points
-        list<Point>::size_type n = 0;
-        CGAL__distance( first, last, n);
-        if ( n > 0) {
-
-            // store points
-            if ( randomize) {
-
-                // shuffle points at random
-                vector<Point> v;
-                v.reserve( n);
-                copy( first, last, back_inserter( v));
-                random_shuffle( v.begin(), v.end(), random);
-                copy( v.begin(), v.end(), back_inserter( points)); }
-            else
-                copy( first, last, back_inserter( points)); }
-
-        // compute me
-        me( points.end(), 0);
-    }
-
-    // STL-like constructor for stream iterator istream_iterator<Point>
-    CGAL_Min_ellipse_2( istream_iterator<Point,ptrdiff_t>  first,
-                        istream_iterator<Point,ptrdiff_t>  last,
-                        bool          randomize = false,
-                        CGAL_Random&  random    = CGAL_random,
-                        const Traits& traits    = Traits())
-        : tco( traits)
-    {
-        // allocate support points' array
-        support_points = new Point[ 5];
-
-        // range not empty?
+        // range of points not empty?
         if ( first != last) {
 
             // store points
             if ( randomize) {
 
                 // shuffle points at random
-                vector<Point> v;
-                copy( first, last, back_inserter( v));
-                random_shuffle( v.begin(), v.end(), random);
-                copy( v.begin(), v.end(), back_inserter( points)); }
+                std::vector<Point> v( first, last);
+                std::random_shuffle( v.begin(), v.end(), random);
+                std::copy( v.begin(), v.end(),
+			   std::back_inserter( points)); }
             else
-                copy( first, last, back_inserter( points)); }
+                std::copy( first, last, std::back_inserter( points)); }
+
+        // compute me
+        me( points.end(), 0);
+    }
+
+    // STL-like constructor for list<Point>
+    CGAL_Min_ellipse_2( std::list<Point>::const_iterator first,
+                        std::list<Point>::const_iterator last,
+                        bool          randomize = false,
+                        CGAL_Random&  random    = CGAL_random,
+                        const Traits& traits    = Traits())
+        : tco( traits)
+    {
+        // allocate support points' array
+        support_points = new Point[ 5];
+
+        // range of points not empty?
+        if ( first != last) {
+
+            // store points
+            if ( randomize) {
+
+                // shuffle points at random
+	        std::list<Point>::size_type n = 0;
+        	distance( first, last, n);
+                std::vector<Point> v;
+                v.reserve( n);
+                std::copy( first, last, std::back_inserter( v));
+                std::random_shuffle( v.begin(), v.end(), random);
+                std::copy( v.begin(), v.end(),
+			   std::back_inserter( points)); }
+            else
+                std::copy( first, last, std::back_inserter( points)); }
+
+        // compute me
+        me( points.end(), 0);
+    }
+
+    // STL-like constructor for stream iterator istream_iterator<Point>
+    CGAL_Min_ellipse_2( std::istream_iterator<Point,std::ptrdiff_t>  first,
+                        std::istream_iterator<Point,std::ptrdiff_t>  last,
+                        bool          randomize = false,
+                        CGAL_Random&  random    = CGAL_random,
+                        const Traits& traits    = Traits())
+        : tco( traits)
+    {
+        // allocate support points' array
+        support_points = new Point[ 5];
+
+        // range of points not empty?
+        if ( first != last) {
+
+            // store points
+            if ( randomize) {
+
+                // shuffle points at random
+                std::vector<Point> v;
+                std::copy( first, last, std::back_inserter( v));
+                std::random_shuffle( v.begin(), v.end(), random);
+                std::copy( v.begin(), v.end(),
+			   std::back_inserter( points)); }
+            else
+                std::copy( first, last, std::back_inserter( points)); }
 
         // compute me
         me( points.end(), 0);
@@ -598,6 +602,8 @@ For $|S|=0$, we get the default constructor, building $me(\emptyset)$.
 
         // compute me
         me( points.end(), 0);
+
+        CGAL_optimisation_postcondition( is_degenerate());
     }
 
     // constructor for three points
@@ -891,8 +897,8 @@ each point \ccc{p} in the range $[\mbox{\ccc{first}},\mbox{\ccc{last}})$.
 
     inline
     void
-    insert( list<Point>::const_iterator first,
-            list<Point>::const_iterator last )
+    insert( std::list<Point>::const_iterator first,
+            std::list<Point>::const_iterator last )
     {
         for ( ; first != last; ++first)
             insert( *first);
@@ -900,8 +906,8 @@ each point \ccc{p} in the range $[\mbox{\ccc{first}},\mbox{\ccc{last}})$.
 
     inline
     void
-    insert( istream_iterator<Point,ptrdiff_t>  first,
-            istream_iterator<Point,ptrdiff_t>  last )
+    insert( std::istream_iterator<Point,std::ptrdiff_t>  first,
+            std::istream_iterator<Point,std::ptrdiff_t>  last )
     {
         for ( ; first != last; ++first)
             insert( *first);
@@ -1017,16 +1023,19 @@ traits class object.
 
 @macro <Min_ellipse_2 I/O operators declaration> = @begin
     template < class _Traits >
-    ostream& operator << ( ostream& os, const CGAL_Min_ellipse_2<_Traits>& me);
+    std::ostream&
+    operator << ( std::ostream& os, const CGAL_Min_ellipse_2<_Traits>& me);
 
     template < class _Traits >
-    istream& operator >> ( istream& is, CGAL_Min_ellipse_2<_Traits>      & me);
+    std::istream&
+    operator >> ( std::istream& is,       CGAL_Min_ellipse_2<_Traits>& me);
 @end
 
 @macro <Min_ellipse_2 I/O operators> = @begin
     template < class _Traits >
-    ostream&
-    operator << ( ostream& os, const CGAL_Min_ellipse_2<_Traits>& min_ellipse)
+    std::ostream&
+    operator << ( std::ostream& os,
+		  const CGAL_Min_ellipse_2<_Traits>& min_ellipse)
     {
         typedef typename  CGAL_Min_ellipse_2<_Traits>::Point  Point;
 
@@ -1038,27 +1047,27 @@ traits class object.
                << ", |S| = " << min_ellipse.number_of_support_points() << endl;
             os << "  P = {" << endl;
             os << "    ";
-            copy( min_ellipse.points_begin(), min_ellipse.points_end(),
-                  ostream_iterator<Point>( os, ",\n    "));
+            std::copy( min_ellipse.points_begin(), min_ellipse.points_end(),
+                       std::ostream_iterator<Point>( os, ",\n    "));
             os << "}" << endl;
             os << "  S = {" << endl;
             os << "    ";
-            copy( min_ellipse.support_points_begin(),
-                  min_ellipse.support_points_end(),
-                  ostream_iterator<Point>( os, ",\n    "));
+            std::copy( min_ellipse.support_points_begin(),
+                       min_ellipse.support_points_end(),
+                       std::ostream_iterator<Point>( os, ",\n    "));
             os << "}" << endl;
             os << "  ellipse = " << min_ellipse.ellipse() << endl;
             os << ")" << endl;
             break;
 
           case CGAL_IO::ASCII:
-            copy( min_ellipse.points_begin(), min_ellipse.points_end(),
-                  ostream_iterator<Point>( os, "\n"));
+            std::copy( min_ellipse.points_begin(), min_ellipse.points_end(),
+                       std::ostream_iterator<Point>( os, "\n"));
             break;
 
           case CGAL_IO::BINARY:
-            copy( min_ellipse.points_begin(), min_ellipse.points_end(),
-                  ostream_iterator<Point>( os));
+            std::copy( min_ellipse.points_begin(), min_ellipse.points_end(),
+                       std::ostream_iterator<Point>( os));
             break;
 
           default:
@@ -1070,8 +1079,8 @@ traits class object.
     }
 
     template < class Traits >
-    istream&
-    operator >> ( istream& is, CGAL_Min_ellipse_2<Traits>& min_ellipse)
+    std::istream&
+    operator >> ( std::istream& is, CGAL_Min_ellipse_2<Traits>& min_ellipse)
     {
         switch ( CGAL_get_mode( is)) {
 
@@ -1082,8 +1091,8 @@ traits class object.
 
           case CGAL_IO::ASCII:
           case CGAL_IO::BINARY:
-            typedef typename  CGAL_Min_ellipse_2<Traits>::Point  Point;
-            typedef           istream_iterator<Point,ptrdiff_t>  Is_it;
+            typedef typename  CGAL_Min_ellipse_2<Traits>::Point       Point;
+            typedef      std::istream_iterator<Point,std::ptrdiff_t>  Is_it;
             min_ellipse.clear();
             min_ellipse.insert( Is_it( is), Is_it());
             break;
@@ -1109,7 +1118,7 @@ traits class object.
     operator << ( CGAL_Window_stream &ws,
                   const CGAL_Min_ellipse_2<R>& min_ellipse)
     {
-        typedef  typename CGAL_Min_ellipse_2<R>::Point_iterator  Point_iterator;
+        typedef typename CGAL_Min_ellipse_2<R>::Point_iterator  Point_iterator;
 
         Point_iterator  first( min_ellipse.points_begin());
         Point_iterator  last ( min_ellipse.points_end());
@@ -1188,7 +1197,7 @@ pseudo-code above.
         if ( n_sp == 5) return;
 
         // test first n points
-        list<Point>::iterator  point_iter( points.begin());
+        std::list<Point>::iterator  point_iter( points.begin());
         for ( ; last != point_iter; ) {
             const Point& p( *point_iter);
 
@@ -1219,8 +1228,8 @@ First, we declare the class template \ccc{CGAL_Optimisation_ellipse_2},
     template < class _R >
     class CGAL_Optimisation_ellipse_2;
 
-    class ostream;
-    class istream;
+    class std::ostream;
+    class std::istream;
 @end
 
 \emph{Workaround:} The GNU compiler (g++ 2.7.2[.?]) does not accept types
@@ -1233,10 +1242,10 @@ The class interface looks as follows.
 @macro <Optimisation_ellipse_2 interface> = @begin
     template < class _R >
     class CGAL_Optimisation_ellipse_2 {
-        friend  ostream&  operator << CGAL_NULL_TMPL_ARGS (
-            ostream&, const CGAL_Optimisation_ellipse_2<_R>&);
-        friend  istream&  operator >> CGAL_NULL_TMPL_ARGS (
-            istream&, CGAL_Optimisation_ellipse_2<_R> &);
+        friend  std::ostream&  operator << CGAL_NULL_TMPL_ARGS (
+            std::ostream&, const CGAL_Optimisation_ellipse_2<_R>&);
+        friend  std::istream&  operator >> CGAL_NULL_TMPL_ARGS (
+            std::istream&, CGAL_Optimisation_ellipse_2<_R> &);
         friend  CGAL_Window_stream& operator << CGAL_NULL_TMPL_ARGS (
             CGAL_Window_stream&, const CGAL_Optimisation_ellipse_2<_R>&);
       public:
@@ -1279,8 +1288,8 @@ section, so we do not comment on it here.
 @macro <Optimisation_ellipse_2 public interface> = @begin
     // types
     typedef           _R               R;
-    typedef           typename _R::RT  RT;
-    typedef           typename _R::FT  FT;
+    typedef  typename _R::RT           RT;
+    typedef  typename _R::FT           FT;
     typedef           CGAL_Point_2<R>  Point;
     typedef           CGAL_Conic_2<R>  Conic;
 
@@ -1293,7 +1302,7 @@ section, so we do not comment on it here.
     // creation
     void  set( );
     void  set( const Point& p);
-    void  set( const Point& p, const Point& q);
+    void  set( const Point& p,  const Point& q);
     void  set( const Point& p1, const Point& p2, const Point& p3);
     void  set( const Point& p1, const Point& p2,
                const Point& p3, const Point& p4);
@@ -1329,7 +1338,7 @@ boundary points, stored in \ccc{n_boundary_points}.
 @end
 
 In the degenerate cases with zero to two boundary points, the given
-points are stored directly in \ccc{boundary_point1} and
+points, if any, are stored directly in \ccc{boundary_point1} and
 \ccc{boundary_point2}, resp.
 
 @macro <Optimisation_ellipse_2 private data members> += @begin
@@ -1364,8 +1373,8 @@ through the given points. \emph{Note:} The set function taking five
 boundary points only uses the fifth point from its input together with
 the two internally represented conics to compute the ellipse. The
 algorithm in Section~\ref{sec:algo} guarantees that this set function
-is only called an ellipse that already have the first four points as
-its boundary points.
+is only called if the current ellipse already has the first four
+points as its boundary points.
 
 @macro <Optimisation_ellipse_2 set functions> = @begin
     inline
@@ -1540,7 +1549,7 @@ one.
                 c.analyse();
                 return( c.convex_side( p)); }
             else {
-                int tau_star = -c.vol_derivative( dr, ds, dt, du, dv, dw);
+                int tau_star = c.vol_derivative( dr, ds, dt, du, dv, dw);
                 return( CGAL_Bounded_side( CGAL_sign( tau_star))); } }
           default:
             CGAL_optimisation_assertion( ( n_boundary_points >= 0) &&
@@ -1590,12 +1599,12 @@ one.
 
 @macro <Optimisation_ellipse_2 I/O operators declaration> = @begin
     template < class _R >
-    ostream&
-    operator << ( ostream&, const CGAL_Optimisation_ellipse_2<_R>&);
+    std::ostream&
+    operator << ( std::ostream&, const CGAL_Optimisation_ellipse_2<_R>&);
 
     template < class _R >
-    istream&
-    operator >> ( istream&, CGAL_Optimisation_ellipse_2<_R>&);
+    std::istream&
+    operator >> ( std::istream&, CGAL_Optimisation_ellipse_2<_R>&);
 
     template < class _R >
     CGAL_Window_stream&
@@ -1604,8 +1613,8 @@ one.
 
 @macro <Optimisation_ellipse_2 I/O operators> = @begin
     template < class _R >
-    ostream&
-    operator << ( ostream& os, const CGAL_Optimisation_ellipse_2<_R>& e)
+    std::ostream&
+    operator << ( std::ostream& os, const CGAL_Optimisation_ellipse_2<_R>& e)
     {
         const char* const  empty       = "";
         const char* const  pretty_head = "CGAL_Optimisation_ellipse_2( ";
@@ -1658,8 +1667,8 @@ one.
     }
 
     template < class _R >
-    istream&
-    operator >> ( istream& is, CGAL_Optimisation_ellipse_2<_R>& e)
+    std::istream&
+    operator >> ( std::istream& is, CGAL_Optimisation_ellipse_2<_R>& e)
     {
         switch ( CGAL_get_mode( is)) {
 
@@ -1886,11 +1895,11 @@ it is declared \ccc{friend}.
 
 @macro <Min_ellipse_2_adapterC2 nested type `Ellipse'> = @begin
     template < class _PT, class _DA >
-    ostream&  operator << ( ostream& os,
+    std::ostream&  operator << ( std::ostream& os,
 	const CGAL__Min_ellipse_2_adapterC2__Ellipse<_PT,_DA>& c);
 
     template < class _PT, class _DA >
-    istream&  operator >> ( istream& is,
+    std::istream&  operator >> ( std::istream& is,
 	CGAL__Min_ellipse_2_adapterC2__Ellipse<_PT,_DA>& c);
 
     template < class _PT, class _DA >
@@ -1910,10 +1919,12 @@ it is declared \ccc{friend}.
         CT   conic1, conic2;                    // two conics
         FT   dr, ds, dt, du, dv, dw;            // the gradient vector
 
-        friend  ostream&  operator << CGAL_NULL_TMPL_ARGS ( ostream& os,
+        friend
+	std::ostream&  operator << CGAL_NULL_TMPL_ARGS ( std::ostream& os,
 	    const CGAL__Min_ellipse_2_adapterC2__Ellipse<_PT,_DA>& c);
 
-        friend  istream&  operator >> CGAL_NULL_TMPL_ARGS ( istream& is,
+        friend
+	std::istream&  operator >> CGAL_NULL_TMPL_ARGS ( std::istream& is,
 	    CGAL__Min_ellipse_2_adapterC2__Ellipse<_PT,_DA>& c);
 
       public:
@@ -2004,7 +2015,7 @@ it is declared \ccc{friend}.
                     c.analyse();
                     return( c.convex_side( p)); }
                 else {
-                    int tau_star = -c.vol_derivative( dr, ds, dt, du, dv, dw);
+                    int tau_star = c.vol_derivative( dr, ds, dt, du, dv, dw);
                     return( CGAL_Bounded_side( CGAL_sign( tau_star))); } }
               default:
                 CGAL_optimisation_assertion( ( n_boundary_points >= 0) &&
@@ -2080,8 +2091,8 @@ it is declared \ccc{friend}.
 
     // I/O
     template < class _PT, class _DA >
-    ostream&
-    operator << ( ostream& os,
+    std::ostream&
+    operator << ( std::ostream& os,
 		  const CGAL__Min_ellipse_2_adapterC2__Ellipse<_PT,_DA>& e)
     {
 	const char* const  empty       = "";
@@ -2136,8 +2147,8 @@ it is declared \ccc{friend}.
     }
 
     template < class _PT, class _DA >
-    istream&
-    operator >> ( istream& is,
+    std::istream&
+    operator >> ( std::istream& is,
 		  CGAL__Min_ellipse_2_adapterC2__Ellipse<_PT,_DA>& e)
     {
 	switch ( CGAL_get_mode( is)) {
@@ -2278,13 +2289,14 @@ it is declared \ccc{friend}.
 
 @macro <Min_ellipse_2_adapterH2 nested type `Ellipse'> = @begin
     template < class _PT, class _DA >
-    ostream&
-    operator << ( ostream&,
+    std::ostream&
+    operator << ( std::ostream&,
                   const CGAL__Min_ellipse_2_adapterH2__Ellipse<_PT,_DA>&);
 
     template < class _PT, class _DA >
-    istream&
-    operator >> ( istream&, CGAL__Min_ellipse_2_adapterH2__Ellipse<_PT,_DA>&);
+    std::istream&
+    operator >> ( std::istream&,
+		  CGAL__Min_ellipse_2_adapterH2__Ellipse<_PT,_DA>&);
 
     template < class _PT, class _DA >
     class CGAL__Min_ellipse_2_adapterH2__Ellipse {
@@ -2303,10 +2315,10 @@ it is declared \ccc{friend}.
         CT   conic1, conic2;                    // two conics
         RT   dr, ds, dt, du, dv, dw;            // the gradient vector
 
-	friend  ostream&  operator << CGAL_NULL_TMPL_ARGS ( ostream&,
+	friend  std::ostream&  operator << CGAL_NULL_TMPL_ARGS ( std::ostream&,
 	    const CGAL__Min_ellipse_2_adapterH2__Ellipse<_PT,_DA>&);
 
-        friend  istream&  operator >> CGAL_NULL_TMPL_ARGS ( istream&,
+        friend  std::istream&  operator >> CGAL_NULL_TMPL_ARGS ( std::istream&,
 	    CGAL__Min_ellipse_2_adapterH2__Ellipse<_PT,_DA>&);
 
       public:
@@ -2397,7 +2409,7 @@ it is declared \ccc{friend}.
                     c.analyse();
                     return( c.convex_side( p)); }
                 else {
-                    int tau_star = -c.vol_derivative( dr, ds, dt, du, dv, dw);
+                    int tau_star = c.vol_derivative( dr, ds, dt, du, dv, dw);
                     return( CGAL_Bounded_side( CGAL_sign( tau_star))); } }
               default:
                 CGAL_optimisation_assertion( ( n_boundary_points >= 0) &&
@@ -2472,8 +2484,8 @@ it is declared \ccc{friend}.
 
     // I/O
     template < class _PT, class _DA >
-    ostream&
-    operator << ( ostream& os,
+    std::ostream&
+    operator << ( std::ostream& os,
 		  const CGAL__Min_ellipse_2_adapterH2__Ellipse<_PT,_DA>& e)
     {
 	const char* const  empty       = "";
@@ -2528,8 +2540,8 @@ it is declared \ccc{friend}.
     }
 
     template < class _PT, class _DA >
-    istream&
-    operator >> ( istream& is,
+    std::istream&
+    operator >> ( std::istream& is,
 		  CGAL__Min_ellipse_2_adapterH2__Ellipse<_PT,_DA>& e)
     {
 	switch ( CGAL_get_mode( is)) {
@@ -2592,9 +2604,13 @@ number type \ccc{CGAL_Gmpz} or \ccc{integer}.
     #include <CGAL/Min_ellipse_2_adapterC2.h>
     #include <CGAL/Min_ellipse_2_adapterH2.h>
     #include <CGAL/IO/Verbose_ostream.h>
-    #include <assert.h>
-    #include <string.h>
-    #include <fstream.h>
+    #include <cassert>
+    #include <cstring>
+    #include <fstream>
+
+    using std::ofstream;
+    using std::ifstream;
+    using std::cerr;
 
     #ifdef CGAL_USE_LEDA_FOR_OPTIMISATION_TEST
     #  include <CGAL/leda_integer.h>
@@ -2895,15 +2911,15 @@ representation) and corresponding data accessors.
         }
 
         friend
-        ostream&
-        operator << ( ostream& os, const MyPointC2& p)
+        std::ostream&
+        operator << ( std::ostream& os, const MyPointC2& p)
         {
             return( os << p._x << ' ' << p._y);
         }
 
         friend
-        istream&
-        operator >> ( istream& is, MyPointC2& p)
+        std::istream&
+        operator >> ( std::istream& is, MyPointC2& p)
         {
             return( is >> p._x >> p._y);
         }
@@ -2956,15 +2972,15 @@ representation) and corresponding data accessors.
         }
 
         friend
-        ostream&
-        operator << ( ostream& os, const MyPointH2& p)
+        std::ostream&
+        operator << ( std::ostream& os, const MyPointH2& p)
         {
             return( os << p._hx << ' ' << p._hy << ' ' << p._hw);
         }
 
         friend
-        istream&
-        operator >> ( istream& is, MyPointH2& p)
+        std::istream&
+        operator >> ( std::istream& is, MyPointH2& p)
         {
             return( is >> p._hx >> p._hy >> p._hw);
         }
@@ -3028,7 +3044,7 @@ end of each file.
         // read points from file
         verr << endl << "input file: `" << argv[ 1] << "'" << flush;
 
-        list<Point>  points;
+        std::list<Point>  points;
         int          n, x, y;
         ifstream     in( argv[ 1]);
         in >> n;
@@ -3085,21 +3101,21 @@ end of each file.
     #ifndef CGAL_OPTIMISATION_BASIC_H
     #  include <CGAL/optimisation_basic.h>
     #endif
-    #ifndef CGAL_PROTECT_LIST_H
-    #  include <list.h>
-    #  define CGAL_PROTECT_LIST_H
+    #ifndef CGAL_PROTECT_LIST
+    #  include <list>
+    #  define CGAL_PROTECT_LIST
     #endif
-    #ifndef CGAL_PROTECT_VECTOR_H
-    #  include <vector.h>
-    #  define CGAL_PROTECT_VECTOR_H
+    #ifndef CGAL_PROTECT_VECTOR
+    #  include <vector>
+    #  define CGAL_PROTECT_VECTOR
     #endif
-    #ifndef CGAL_PROTECT_ALGO_H
-    #  include <algo.h>
-    #  define CGAL_PROTECT_ALGO_H
+    #ifndef CGAL_PROTECT_ALGORITHM
+    #  include <algorithm>
+    #  define CGAL_PROTECT_ALGORITHM
     #endif
-    #ifndef CGAL_PROTECT_IOSTREAM_H
-    #  include <iostream.h>
-    #  define CGAL_PROTECT_IOSTREAM_H
+    #ifndef CGAL_PROTECT_IOSTREAM
+    #  include <iostream>
+    #  define CGAL_PROTECT_IOSTREAM
     #endif
 
     @<Min_ellipse_2 interface>
