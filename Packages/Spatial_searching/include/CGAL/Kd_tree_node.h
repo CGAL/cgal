@@ -20,7 +20,7 @@
 // coordinator   : Utrecht University
 //
 // ======================================================================
-
+ 
 #ifndef CGAL_KD_TREE_NODE_H
 #define CGAL_KD_TREE_NODE_H
 

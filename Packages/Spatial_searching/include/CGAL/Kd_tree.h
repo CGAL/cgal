@@ -54,7 +54,7 @@ public:
   Kd_tree(input_iterator first, input_iterator beyond,
 	    Traits t = Traits()) : tr(t) {
     assert(first != beyond);
-    int dim = first->dimension();
+    int dim = first->dimension(); 
     
     std::copy(first, beyond, std::back_inserter(pts));
     
