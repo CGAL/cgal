@@ -160,7 +160,7 @@ line_project_pointC2(const FT &la, const FT &lb, const FT &lc,
 		     const FT &px, const FT &py,
 		     FT &x, FT &y)
 {
-#if 1
+#if 1 // FIXME
   // Original old version
   if (CGAL_NTS is_zero(la)) // horizontal line
   {
