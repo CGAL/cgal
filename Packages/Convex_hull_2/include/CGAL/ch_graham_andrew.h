@@ -97,7 +97,7 @@ ch_graham_andrew( InputIterator  first,
                        OutputIterator result,
                        const Traits&  ch_traits );
 /*{\Mfuncl 
-same as |convex_hull_points_2(first,last,result)|.\\
+same as |convex_hull_2(first,last,result)|.\\
 {\sc traits}: uses |Traits::Point_2|, |Traits::Leftturn_2|
 and |Traits::Less_xy_2|.
 }*/
@@ -168,7 +168,7 @@ ch_graham_andrew( InputIterator  first,
                        OutputIterator result )
 { return ch__graham_andrew( first, last, result, ch_value_type(first) ); }
 /*{\Mfuncl 
-same as |convex_hull_points_2(first,last,result)|.
+same as |convex_hull_2(first,last,result)|.
 }*/
 
 #endif // CGAL_POINT_2_H

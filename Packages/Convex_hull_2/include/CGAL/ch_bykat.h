@@ -60,7 +60,7 @@ ch_bykat(InputIterator first, InputIterator last,
              OutputIterator  result,
              const Traits& ch_traits);
 /*{\Mfuncl 
-same as |convex_hull_points_2(first,last,result)|.\\
+same as |convex_hull_2(first,last,result)|.\\
 {\sc traits}: uses |Traits::Point_2|, |Traits::Less_signed_distance_to_line_2|,
 |Traits::Left_of_line_2|, and |Traits::Less_xy_2|.
 }*/
@@ -93,7 +93,7 @@ ch_bykat(InputIterator first, InputIterator last, OutputIterator  result)
   return ch__bykat( first, last, result, ch_value_type(first) );
 }
 /*{\Mfuncl 
-same as |convex_hull_points_2(first,last,result)|.
+same as |convex_hull_2(first,last,result)|.
 }*/
 
 template <class InputIterator, class OutputIterator, class R>
@@ -117,7 +117,7 @@ ch_bykat_with_threshold(InputIterator first, InputIterator last,
                                    ch_value_type(first) );
 }
 /*{\Mfuncl 
-same as |convex_hull_points_2(first,last,result)|.
+same as |convex_hull_2(first,last,result)|.
 }*/
 #endif // CGAL_POINT_2_H
 CGAL_END_NAMESPACE

@@ -110,6 +110,19 @@ convex_hull_points_2(InputIterator first, InputIterator last,
                     std::iterator_category(first) );
 #endif // CGAL_CFG_NO_ITERATOR_TRAITS
 }
+template <class InputIterator, class OutputIterator, class Traits>
+inline
+OutputIterator
+convex_hull_2(InputIterator first, InputIterator last,
+              OutputIterator  result, const Traits& ch_traits)
+{
+  return __convex_hull_points_2(first, last, result, ch_traits,
+#ifndef CGAL_CFG_NO_ITERATOR_TRAITS
+                    std::iterator_traits<InputIterator>::iterator_category() );
+#else
+                    std::iterator_category(first) );
+#endif // CGAL_CFG_NO_ITERATOR_TRAITS
+}
 /*{\Mfuncl generates the counterclockwise sequence of extreme points
 of the points in the range [|first|,|last|). The resulting sequence
 is placed starting at position |result|, and the past-the-end iterator

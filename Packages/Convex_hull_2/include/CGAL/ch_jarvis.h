@@ -90,7 +90,7 @@ ch_jarvis(ForwardIterator first, ForwardIterator last,
                OutputIterator  result,
                const Traits& ch_traits);
 /*{\Mfuncl
-same as |convex_hull_points_2(first,last,result)|.\\
+same as |convex_hull_2(first,last,result)|.\\
 {\sc traits}: uses |Traits::Point_2|, |Traits::Less_rotate_ccw_2|, and
 |Traits::Less_xy_2|.
 }*/
@@ -150,7 +150,7 @@ ch_jarvis(ForwardIterator first, ForwardIterator last,
                OutputIterator  result)
 { return ch__jarvis( first, last, result, ch_value_type(first) ); }
 /*{\Mfuncl
-same as |convex_hull_points_2(first,last,result)|.
+same as |convex_hull_2(first,last,result)|.
 }*/
 
 

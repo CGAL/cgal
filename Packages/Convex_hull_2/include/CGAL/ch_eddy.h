@@ -59,7 +59,7 @@ ch_eddy(InputIterator first, InputIterator last,
              OutputIterator  result,
              const Traits& ch_traits);
 /*{\Mfuncl 
-same as |convex_hull_points_2(first,last,result)|.\\
+same as |convex_hull_2(first,last,result)|.\\
 {\sc traits}: uses |Traits::Point_2|, |Traits::Less_signed_distance_to_line_2|,
 |Traits::Left_of_line_2|, and |Traits::Less_xy_2|.
 }*/
@@ -87,7 +87,7 @@ ch_eddy(InputIterator first, InputIterator last, OutputIterator  result)
   return ch__eddy( first, last, result, ch_value_type(first) );
 }
 /*{\Mfuncl 
-same as |convex_hull_points_2(first,last,result)|.
+same as |convex_hull_2(first,last,result)|.
 }*/
 
 #endif // CGAL_POINT_2_H
