@@ -22,9 +22,7 @@ The class \ccRefName\ expects a model of a \ccc{geometric traits
 class} as its first template argument and a model of a \ccc{triangulation data
 structure} as its second argument. 
 
-The second argument is optional,
-since a default parameter is proposed by \cgal. This default parameter
-is
+The second argument has a default value, which is
 \ccc{Triangulation_data_structure_3< Triangulation_vertex_base_3<TriangulationTraits_3>,Triangulation_cell_base_3<TriangulationTraits_3> 
 >}. 
 
@@ -125,7 +123,7 @@ OUTSIDE_AFFINE_HULL};}
 \ccThree{Triangulation_3<>}{Facet }{}
 
 \ccConstructor{Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>
-(const TriangulationTraits_3 & traits );}
+(const TriangulationTraits_3 & traits = TriangulationTraits_3());}
 {Introduces a triangulation \ccVar\ having only one vertex which is the
 infinite vertex.} 
 
@@ -150,8 +148,8 @@ deleted.}
 
 \ccMethod{Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>
 	operator=(const Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3> & tr);}
-{The triangulation \ccc{tr} is duplicated, and modifying one copy after the 
-duplication does not modify the other copy.}
+{The triangulation \ccc{tr} is duplicated, and modifying the copy after the 
+duplication does not modify the original.}
 
 \ccMethod{void copy_triangulation
 		(const Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3> & tr);}
@@ -720,8 +718,8 @@ hole, which is star-shaped wrt \ccc{p}}.}
 The triangulation class provides several iterators and circulators
 that allow one to traverse it (completely or partially).
 
-\ccHeading{Face, Edge and Vertex Iterators}
-\ccThree{Facet_circulator}{t.finite_facets_begin()toto}{}
+\ccHeading{Cell, Face, Edge and Vertex Iterators}
+\ccThree{Finite_vertices_iterator}{t.finite_vertices_begin()x}{}
 
 The following iterators allow the user to visit cells,
 facets, edges and vertices of the
@@ -799,7 +797,8 @@ ones). Returns \ccc{cells_end()} when
 \ccMethod{Point_iterator points_end() const;}
 {Past-the-end iterator}
 
-\ccHeading{Cell and facet circulators}
+\ccHeading{Cell and Facet Circulators}
+\ccThree{Facet_circulator}{t.incident_facets(Edge e)x}{}
 
 The following circulators respectively visit all cells or all facets
 incident to a given edge. They are non-mutable and bidirectional. They
@@ -897,7 +896,7 @@ These methods are mainly a debugging help for the users of advanced features.
 
 \ccHeading{I/O}
 
-\cgal\ proposes an interface to Geomview for a 3D-triangulation. 
+\cgal\ provides an interface to Geomview for a 3D-triangulation. 
 See the chapter on Geomview in the Support Library manual.
 % Cross referencing to other manuals is not (yet) possible
 %See Chapter~\ref{ChapterGeomview}. 
@@ -925,8 +924,8 @@ cells.
 
 \ccSeeAlso
 
-\ccc{CGAL::Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>::Vertex},\\
-\ccc{CGAL::Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>::Cell}.
+\ccc{TriangulationDataStructure_3::Vertex},\\
+\ccc{TriangulationDataStructure_3::Cell}.
 
 %\ccExample
 

@@ -258,17 +258,13 @@ the software design in this case.
 \end{ccHtmlOnly}
 \end{figure} 
 
-In the bottom layer, the \cgal\ base classes store elementary
+In the bottom layer, the base classes store elementary
 geometric information.  These classes are parameterized by a geometric
-traits class providing all the geometric types. A vertex has a pointer
-to a cell, and a cell has four pointers to vertices and four pointers to cells.
-These pointers are of type \ccc{void*}.
+traits class providing all the geometric types. A vertex stores a cell handle,
+and a cell stores four vertex handles and four cell handles.
 
 The middle layer class stores the triangulation data structure, which
-is purely combinatorial. A vertex of the triangulation data structure
-has a pointer to a cell of the triangulation data structure, and a
-cell has four pointers to vertices. These pointers are \emph{handles}.
-The triangulation data structure provides
+is purely combinatorial.  The triangulation data structure provides
 operations such as insertion of a new vertex in a given cell, on a
 $1$ or $2$-face. It also allows one, if the dimension of the triangulation
 is smaller than $3$, to insert a vertex so that the dimension of the

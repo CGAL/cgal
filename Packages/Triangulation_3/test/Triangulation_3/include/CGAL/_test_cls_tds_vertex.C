@@ -15,7 +15,7 @@
 // file          : include/CGAL/_test_cls_tds_vertex.C
 // revision      : 
 // revision_date : 
-// author(s)     : Rebufat Francois (Francois.Rebufat@sophia.inria.fr)
+// author(s)     : Rebufat Francois
 //
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
@@ -26,14 +26,11 @@ template <class Vertex>
 void
 _test_vertex_tds_3(const Vertex &)
 {
-  typedef typename Vertex::Point             Point;
-  typedef typename Vertex::Cell              Cell;
+  typedef typename Vertex::Triangulation_data_structure::Cell   Cell;
 
   // Build object 
   Cell c1;
-  Point p;
   Vertex v1;
-  v1.set_point(p);
   v1.set_cell(&c1);
   assert(&*v1.cell()==&c1);
   c1.set_vertex(0,&v1);

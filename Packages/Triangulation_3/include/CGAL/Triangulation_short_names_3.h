@@ -28,6 +28,9 @@
 
 #define Triangulation_data_structure_3              TDS3
 
+#define Triangulation_ds_vertex_base_3              TDS_vb3
+#define Triangulation_ds_cell_base_3                TDS_cb3
+
 #define Triangulation_ds_vertex_3                   TDS_v3
 #define Triangulation_ds_cell_3                     TDS_c3
 

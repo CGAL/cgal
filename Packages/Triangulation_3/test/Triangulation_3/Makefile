@@ -65,23 +65,23 @@ all: test_triangulation_tds \
 	./test_regular_3 
 #        -B$(UTIL)/Binutils/$(UNAME)/bin/ \
 
-test_triangulation_tds: test_triangulation_tds.o 
-	$(CGAL_CXX)  -o test_triangulation_tds test_triangulation_tds.o $(LDFLAGS)
+test_triangulation_tds: test_triangulation_tds$(OBJ_EXT)  
+	$(CGAL_CXX)  -o test_triangulation_tds test_triangulation_tds$(OBJ_EXT)  $(LDFLAGS)
 
-test_triangulation_3: test_triangulation_3.o 
-	$(CGAL_CXX) -o test_triangulation_3 test_triangulation_3.o $(LDFLAGS)
+test_triangulation_3: test_triangulation_3$(OBJ_EXT)  
+	$(CGAL_CXX) -o test_triangulation_3 test_triangulation_3$(OBJ_EXT)  $(LDFLAGS)
 
-test_delaunay_3: test_delaunay_3.o 
-	$(CGAL_CXX) -o test_delaunay_3 test_delaunay_3.o $(LDFLAGS)
+test_delaunay_3: test_delaunay_3$(OBJ_EXT)  
+	$(CGAL_CXX) -o test_delaunay_3 test_delaunay_3$(OBJ_EXT)  $(LDFLAGS)
 
-test_delaunay_hierarchy_3: test_delaunay_hierarchy_3.o 
-	$(CGAL_CXX) -o test_delaunay_hierarchy_3 test_delaunay_hierarchy_3.o $(LDFLAGS)
+test_delaunay_hierarchy_3: test_delaunay_hierarchy_3$(OBJ_EXT)  
+	$(CGAL_CXX) -o test_delaunay_hierarchy_3 test_delaunay_hierarchy_3$(OBJ_EXT)  $(LDFLAGS)
 
-test_regular_3: test_regular_3.o 
-	$(CGAL_CXX) -o test_regular_3 test_regular_3.o $(LDFLAGS)
+test_regular_3: test_regular_3$(OBJ_EXT)  
+	$(CGAL_CXX) -o test_regular_3 test_regular_3$(OBJ_EXT)  $(LDFLAGS)
 
 clean:
-	- rm -f *.o test_triangulation_3 \
+	- rm -f *$(OBJ_EXT)  test_triangulation_3 \
 	            test_triangulation_tds test_delaunay_3 \
 		    test_delaunay_hierarchy_3 test_regular_3 \
 	            Program* Error* Compiler* error* Test*_triangulation_IO_3 \
@@ -91,5 +91,5 @@ clean:
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C.o:
+.C$(OBJ_EXT) :
 	$(CGAL_CXX)  $(CXXFLAGS) -c $<

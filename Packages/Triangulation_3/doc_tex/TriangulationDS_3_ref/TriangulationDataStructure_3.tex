@@ -71,7 +71,7 @@ A class that satisfies the requirements for a triangulation data structure
 class must provide the following types and operations. 
 
 \ccTypes
-\ccThree{typedef Triple <Cell_handle, int, int>}{Facet }{}
+\ccThree{typedef Triple <Cell_handle, int, int>}{Facet; }{}
 \ccThreeToTwo
 
 \ccNestedType{Vertex}{Vertex type}
@@ -87,7 +87,7 @@ Requirements for \ccc{Vertex} and \ccc{Cell} are described in
 edge of cell \ccc{c} whose vertices indices are \ccc{i} and
 \ccc{j}. (See Section~\ref{TDS3-sec-intro}.)}
 \ccGlue
-\ccTypedef{typedef pair<Cell_handle, int>  Facet;}{\ccc{(c,i)} is the facet
+\ccTypedef{typedef std::pair<Cell_handle, int>  Facet;}{\ccc{(c,i)} is the facet
 of \ccc{c} opposite to the vertex of index \ccc{i}. (See
 Section~\ref{TDS3-sec-intro}.)} 
 
@@ -122,7 +122,7 @@ the user can pass them directly as arguments to the functions.
 
 \ccCreation
 \ccCreationVariable{tds}  %% choose variable name
-\ccThree{TriangulationDataStructure_3<Tvb,Tcb>();}{tds.set_number}{}
+\ccThree{TriangulationDataStructure_3;}{tds.set_number}{}
 \ccThreeToTwo
 
 \ccConstructor{TriangulationDataStructure_3();}
@@ -136,7 +136,7 @@ the user can pass them directly as arguments to the functions.
 
 The previous two methods are equivalent.
 
-\ccThree{Vertex_handle_}{tds.insert_in_facet()}{}
+\ccThree{Vertex_handle_}{tds.insert_in_facet()xxxxx}{}
 
 \ccMethod{void swap(TriangulationDataStructure_3 & tds1);} 
 {Swaps \ccVar\ and \ccc{tds1}. There is no copy of cells and vertices,
@@ -595,7 +595,7 @@ for faces of maximal dimension instead of cells.
 
 \ccHasModels
 
-\ccc{CGAL::Triangulation_data_structure_3<TriangulationVertexBase_3,TriangulationCellBase_3>}.
+\ccc{CGAL::Triangulation_data_structure_3<TriangulationDSVertexBase_3,TriangulationDSCellBase_3>}.
 
 \ccSeeAlso
 

@@ -46,17 +46,16 @@ int main()
 
 typedef CGAL::Filtered_kernel<CGAL::Simple_cartesian<double> > K;
 
-typedef CGAL::Triangulation_vertex_base_3<K>            Vb;
+typedef CGAL::Triangulation_vertex_base_3<K>             Vb;
 typedef CGAL::Triangulation_hierarchy_vertex_base_3<Vb>  Vbh;
-typedef CGAL::Triangulation_cell_base_3<void>            Cb;
-typedef CGAL::Triangulation_data_structure_3<Vbh,Cb>     Tds;
-typedef CGAL::Delaunay_triangulation_3<K,Tds>           Dt;
+typedef CGAL::Triangulation_data_structure_3<Vbh>        Tds;
+typedef CGAL::Delaunay_triangulation_3<K,Tds>            Dt;
 typedef CGAL::Triangulation_hierarchy_3<Dt>              Dh;
 
 typedef Dh::Vertex_iterator Vertex_iterator;
-typedef Dh::Vertex_handle Vertex_handle;
-typedef Dh::Cell_handle Cell_handle;
-typedef K::Point_3 Point;
+typedef Dh::Vertex_handle   Vertex_handle;
+typedef Dh::Cell_handle     Cell_handle;
+typedef Dh::Point           Point;
 
 ////////////////////// 
 // VISU GEOMVIEW

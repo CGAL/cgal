@@ -36,7 +36,7 @@ CGAL_BEGIN_NAMESPACE
 template < class Gt, 
            class Tds = Triangulation_data_structure_3 <
                                    Triangulation_vertex_base_3<Gt>,
-                                   Triangulation_cell_base_3<void> > >
+                                   Triangulation_cell_base_3<Gt> > >
 class Regular_triangulation_3
   : public Triangulation_3<Gt,Tds>
 {

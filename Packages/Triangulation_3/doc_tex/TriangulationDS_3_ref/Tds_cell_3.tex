@@ -19,9 +19,9 @@
 \ccDefinition
   
 The concept \ccRefName\ stores
-four pointers to its four vertices and four pointers to its four
-neighbors. The vertices are indexed 0, 1, 2, and 3 in positive order.
-The neighbor indexed $i$ lies opposite to vertex \ccc{i}.
+four \ccc{Vertex_handle}s to its four vertices and four \ccc{Cell_handle}s
+to its four neighbors. The vertices are indexed 0, 1, 2, and 3 in positive
+order.  The neighbor indexed $i$ lies opposite to vertex \ccc{i}.
 
 In degenerate dimensions, cells are used to store faces of maximal
 dimension: in dimension~2, each cell represents only one
@@ -30,17 +30,23 @@ dimension~1, each cell represents one edge $(0,1)$. (See also
 Section~\ref{TDS3-sec-intro}.) 
 
 \ccTypes
-\ccThree{typedef TriangulationDataStructure_3::Vertex}{Facet }{}
+\ccThree{typedef TriangulationDataStructure_3::Vertex_handle}{Facet }{}
 \ccThreeToTwo
-The class \ccClassName\ defines the following types.
+The class \ccRefName\ defines the following types.
 
+\ccTypedef{typedef TriangulationDataStructure_3 Triangulation_data_structure;}{}
+\ccGlue
 \ccTypedef{typedef TriangulationDataStructure_3::Vertex Vertex;}{}
 \ccGlue
 \ccTypedef{typedef TriangulationDataStructure_3::Cell Cell;}{}
+\ccGlue
+\ccTypedef{typedef TriangulationDataStructure_3::Vertex_handle Vertex_handle;}{}
+\ccGlue
+\ccTypedef{typedef TriangulationDataStructure_3::Cell_handle Cell_handle;}{}
 
 \ccCreation
 \ccCreationVariable{c}  %% choose variable name
-\ccThree{Vertex_handle}{c.set_vertices(Vertex_handle v));}{}
+\ccThree{Vertex_handle}{c.set_vertices(Vertex_handle v)xxxxxxx;}{}
 
 In order to obtain new cells or destruct unused cells, the user must call the
 \ccc{create_cell()} and \ccc{delete_cell()} methods of the triangulation data
@@ -114,6 +120,8 @@ computes its index \ccc{i} in \ccVar.}
 {Sets the neighbors pointers.}
 
 \ccHeading{Checking}
+\ccThree{Vertex_handle}{c.set_vertices(v);}{}
+
 \ccMethod{bool is_valid(int dim=3, bool verbose = false) const;}
 {\ccc{dim} is the dimension of the triangulation, with default
 value~3.\\

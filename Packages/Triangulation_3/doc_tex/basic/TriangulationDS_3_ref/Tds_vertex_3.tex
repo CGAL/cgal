@@ -18,7 +18,8 @@
 
 \ccDefinition
   
-The concept \ccRefName\ represents the vertex class of a 3D-triangulation data structure. It must define
+The concept \ccRefName\ represents the vertex class of a 3D-triangulation
+data structure. It must define
 the types and operations listed in this section. Some of these
 requirements are of geometric nature, they are \textit{optional}
 when using the triangulation data structure class alone. They become
@@ -26,17 +27,26 @@ compulsory when the triangulation data structure is used as a layer
 for the geometric triangulation class. (See Section~\ref{TDS3-sec-design}.)
 
 \ccTypes
-\ccThree{typedef TriangulationDataStructure_3::Vertex}{Facet }{}
+\ccThree{typedef TriangulationDataStructure_3::}{Facet }{}
 \ccThreeToTwo
 \ccNestedType{Point}{\textit{Optional for the triangulation data
 structure alone.}} 
 
-The class \ccClassName\ defines types that are the same as some of the 
-types defined by the triangulation data structure class \ccc{TriangulationDataStructure}.
+The class \ccRefName\ defines types that are the same as some of the 
+types defined by the triangulation data structure class
+\ccc{TriangulationDataStructure}.
 
+\ccThree{typedef TriangulationDataStructure_3::Vertex_handle}{Facet }{}
+
+\ccTypedef{typedef TriangulationDataStructure_3 Triangulation_data_structure;}{}
+\ccGlue
 \ccTypedef{typedef TriangulationDataStructure_3::Vertex Vertex;}{}
 \ccGlue
 \ccTypedef{typedef TriangulationDataStructure_3::Cell Cell;}{}
+\ccGlue
+\ccTypedef{typedef TriangulationDataStructure_3::Vertex_handle Vertex_handle;}{}
+\ccGlue
+\ccTypedef{typedef TriangulationDataStructure_3::Cell_handle Cell_handle;}{}
 
 \ccCreation
 \ccCreationVariable{v}  %% choose variable name
@@ -66,7 +76,7 @@ triangulation data structure.
 {Sets the point to \ccc{p}. {\textit{Optional for the
 triangulation data structure alone.}}}
 
-\begin{ccAdvanced}
+%\begin{ccAdvanced}
 \ccHeading{Checking}
 
 \ccMethod{bool is_valid(bool verbose = false) const;}
@@ -74,11 +84,7 @@ triangulation data structure alone.}}}
 has this vertex. The validity of the base vertex is also checked.\\
 When \ccc{verbose} is set to \ccc{true}, messages are printed to give
 a precise indication on the kind of invalidity encountered.}
-\end{ccAdvanced}
-
-%\ccHasModels
-
-%\ccc{CGAL::Triangulation_data_structure_3<Triangulation_vb_3,Triangulation_cb_3>::Vertex}.
+%\end{ccAdvanced}
 
 \ccSeeAlso
 

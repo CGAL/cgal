@@ -32,9 +32,6 @@ template class CGAL::Triangulation_3<K>;
 
 int main()
 {
-  // Using vertex_base_pointer induces a memory leak (not a bug, but the test
-  // program is not adapted), so we use the normal vertex.
-  // typedef CGAL::Triangulation_vertex_base_pointer_3<K>        Vb;
   typedef CGAL::Triangulation_3<K>                               Cls3;
 
   _test_cls_triangulation_3( Cls3() );

@@ -32,9 +32,7 @@
 #include <vector>
 
 #include <CGAL/Triangulation_short_names_3.h>
-#include <CGAL/Triangulation_utils_3.h>
 #include <CGAL/Triangulation_3.h>
-
 #include <CGAL/Delaunay_remove_tds_3.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -44,7 +42,7 @@ template < class Tr > class Natural_neighbors_3;
 template < class Gt, 
            class Tds = Triangulation_data_structure_3 <
                                    Triangulation_vertex_base_3<Gt>,
-                                   Triangulation_cell_base_3<void> > >
+                                   Triangulation_cell_base_3<Gt> > >
 class Delaunay_triangulation_3 : public Triangulation_3<Gt,Tds>
 {
   friend std::istream& operator >> CGAL_NULL_TMPL_ARGS
@@ -1158,7 +1156,7 @@ fill_hole_3D_ear(const std::vector<Facet> & boundhole)
     k++;
     if(k == 3) {
       // The faces form a circular list. With f->n() we go to the next face.
-      f = (Face_3_2*) f->n();
+      f = f->n();
       CGAL_assertion_msg(f != last_op, "Unable to find an ear");
       k = 0;
     }
@@ -1254,10 +1252,10 @@ fill_hole_3D_ear(const std::vector<Facet> & boundhole)
       // The adjacent edges may be a concavity
       // that is they are candidates for an ear
       // In the list of faces they get moved behind f
-      f->mark_edge(cw(ni), &*f);
-      f->mark_edge(ccw(ni), &*f);
-      n->mark_edge(cw(fi), &*f);
-      n->mark_edge(ccw(fi), &*f);
+      f->mark_edge(cw(ni), f);
+      f->mark_edge(ccw(ni), f);
+      n->mark_edge(cw(fi), f);
+      n->mark_edge(ccw(fi), f);
 
       f->set_info(Facet(ch,2));
       n->set_info(Facet(ch,1));

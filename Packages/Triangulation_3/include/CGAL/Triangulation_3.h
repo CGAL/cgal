@@ -54,7 +54,7 @@ template < class GT, class Tds > std::istream& operator>>
 template < class GT, 
            class Tds = Triangulation_data_structure_3 <
                                    Triangulation_vertex_base_3<GT>,
-                                   Triangulation_cell_base_3<void> > >
+                                   Triangulation_cell_base_3<GT> > >
 class Triangulation_3
   :public Triangulation_utils_3
 {

@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Triangulation_data_structure_3<TriangulationVertexBase_3,TriangulationCellBase_3>}  %% add template arg's if necessary
+\begin{ccRefClass}{Triangulation_data_structure_3<TriangulationDSVertexBase_3,TriangulationDSCellBase_3>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -21,9 +21,12 @@ The class \ccRefName\ stores a 3D-triangulation data structure
 and provides the optional
 geometric functionalities to be used as a parameter for a 
 3D-geometric triangulation (see Chapter~\ref{chapter-Triangulation3}). 
-It is templated by base classes for vertices and cells.
-\lcTex{(See \ccRefPage{TriangulationVertexBase_3} 
-and \ccRefPage{TriangulationCellBase_3}.)}
+
+It is parameterized by base classes for vertices and cells, which have the
+default values \ccc{Triangulation_ds_vertex_base_3<>} and
+\ccc{Triangulation_ds_cell_base_3<>} respectively.
+\lcTex{(See \ccRefPage{TriangulationDSVertexBase_3} 
+and \ccRefPage{TriangulationDSCellBase_3}.)}
 
 \ccIsModel
 
@@ -38,10 +41,10 @@ indices of vertices and neighbors of cells.
 
 \ccSeeAlso
 
-%\ccc{CGAL::Triangulation_data_structure_3<TriangulationVertexBase_3,TriangulationCellBase_3>::Vertex},\\
-%\ccc{CGAL::Triangulation_data_structure_3<TriangulationVertexBase_3,TriangulationCellBase_3>::Cell},\\
-\ccc{TriangulationVertexBase_3},\\
-\ccc{TriangulationCellBase_3}.
+\ccc{Triangulation_ds_vertex_base_3<>},\\
+\ccc{Triangulation_ds_cell_base_3<>},\\
+\ccc{TriangulationDSVertexBase_3},\\
+\ccc{TriangulationDSCellBase_3}.
 
 %% \ccExample
 

@@ -27,46 +27,34 @@
 #include <CGAL/basic.h>
 
 #include <map>
-#include <CGAL/Triangulation_face_base_2.h>
+#include <CGAL/Triangulation_ds_face_base_2.h>
+#include <CGAL/Triangulation_ds_vertex_base_2.h>
 #include <CGAL/Triangulation_data_structure_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template <class I>
+// Should this be documented as a Triangulation_ds_vertex_base_with_info_2 ?
+template < class I, class Vb = Triangulation_ds_vertex_base_2<> >
 class Delaunay_remove_tds_vertex_3_2
+  : public Vb
 {
-public :
-  Delaunay_remove_tds_vertex_3_2() 
-    : _f(NULL) {}
-
-  void* face() const {
-      return _f;
-  }
-
-  void set_face(void* f) {
-    _f = f;
-  }
-
-  bool is_valid(bool /* verbose */ = false, int /* level */ = 0) const {
-      return true;
-  }
-
-  void set_info(I i) { 
-    _info = i;
-  }
-
-  I info() const {
-    return _info;
-  }
-
-private:
   I _info;
-  void * _f;
+public :
+
+  template < typename TDS2 >
+  struct Rebind_TDS {
+    typedef typename Vb::template Rebind_TDS<TDS2>::Other   Vb2;
+    typedef Delaunay_remove_tds_vertex_3_2<I, Vb2>          Other;
+  };
+
+  void set_info(const I &i) { _info = i; }
+
+  const I & info() const { return _info; }
 };
 
 
 /* We derive the face class, because we need additional pointers to 
-   a successor and precessor.
+   a successor and predecessor.
  
    We want to change the order to avoid looking at faces too often.
    When we make an operation (flip of an edge / removal of a vertex)
@@ -76,34 +64,46 @@ private:
    are traversed to reach them.
 */
 
-template < class I >
+template < class I, class Fb = Triangulation_ds_face_base_2<> >
 class Delaunay_remove_tds_face_3_2
-  : public Triangulation_face_base_2<void>
+  : public Fb
 {
 public:
-  void set_info(I i) { 
-    inf = i;
-  }
 
-  I info() const { 
-    return inf;
-  }
+  typedef typename Fb::Triangulation_data_structure::Face_handle Face_handle;
+
+  template < typename TDS2 >
+  struct Rebind_TDS {
+    typedef typename Fb::template Rebind_TDS<TDS2>::Other  Fb2;
+    typedef Delaunay_remove_tds_face_3_2<I, Fb2>           Other;
+  };
+
+  void set_info(const I &i) { inf = i; }
+
+  const I& info() const { return inf; }
 
   // Handling the doubly connected list of faces
   // These functions should not be public, but private
   // and the tds should be declared friend. 
 
   // Returns the sucessor
-  Delaunay_remove_tds_face_3_2* n() const {return _n;}
+  Face_handle n() const {return _n;}
 
   // Returns the predecessor
-  Delaunay_remove_tds_face_3_2* p() const {return _p;}
+  Face_handle p() const {return _p;}
 
-  void set_p(Delaunay_remove_tds_face_3_2* f) {_p = f;};
+  void set_p(Face_handle f) {_p = f;}
 
-  void set_n(Delaunay_remove_tds_face_3_2* f) {_n = f;};
+  void set_n(Face_handle f) {_n = f;}
 
 private:
+  // Dirty, so we should avoid it in another way.
+  Face_handle handle() const {
+    typedef typename Fb::Triangulation_data_structure::Face Face;
+    // Cast to the derived class.
+    return static_cast<const Face *>(this)->handle();
+  }
+
   // Remove this face from the list
   void remove_from_list() {
     // Q: Can't we be sure that there is always a predecessor
@@ -111,20 +111,19 @@ private:
     // remove the final tetrahedron, that is we have to 
     // check whether that one still performs the
     // Surface::remove_vertex_3() method
-    if(_p)
+    if(&*_p)
       _p->set_n(_n);
 
-    if(_n)
+    if(&*_n)
       _n->set_p(_p);
   }
 
 public:
   // Remove neighbor cw(i) and ccw(i) from the list
   void remove_neighbors_from_list(int i) {
-    Delaunay_remove_tds_face_3_2 * n = 
-      (Delaunay_remove_tds_face_3_2*)neighbor(Triangulation_utils_3::cw(i));
+    Face_handle n = neighbor(Triangulation_utils_3::cw(i));
     n->remove_from_list();
-    n = (Delaunay_remove_tds_face_3_2*)neighbor(Triangulation_utils_3::ccw(i));
+    n = neighbor(Triangulation_utils_3::ccw(i));
     n->remove_from_list();
   }
 
@@ -134,35 +133,32 @@ public:
   //
   // Additionally, this face is then moved right behind face h,
   // because it is a candidate for an ear.
-  void mark_edge(int i, Delaunay_remove_tds_face_3_2* h) {
-    Delaunay_remove_tds_face_3_2 *n = 
-      (Delaunay_remove_tds_face_3_2*)neighbor(i);
-    if(n < this) {
-      n->mark_halfedge(n->face_index(this));
+  void mark_edge(int i, Face_handle h) {
+    Face_handle n = neighbor(i);
+    if (&*n < this) {
+      n->mark_halfedge(n->index(this->handle()));
       unmark_halfedge(i);
       h->move_after_this(n);
     } else {
-      n->unmark_halfedge(n->face_index(this));
+      n->unmark_halfedge(n->index(this->handle()));
       mark_halfedge(i);
-      if(h != this)
-	h->move_after_this(this);
+      if (&*h != this)
+	h->move_after_this(this->handle());
     }      
   }
 
   // unmarks the two halfedges
   void unmark_edge(int i) {
-    Delaunay_remove_tds_face_3_2 *n = 
-      (Delaunay_remove_tds_face_3_2*)neighbor(i);
-
+    Face_handle n = neighbor(i);
     unmark_halfedge(i);
-    int fi = n->face_index(this);
+    int fi = n->index(this->handle());
     n->unmark_halfedge(fi);
   }
 
   // marks all edges adjacent to the face
   void mark_adjacent_edges() {
     for(int i = 0; i < 3; i++)
-      mark_edge(i, this);
+      mark_edge(i, this->handle());
   }
 
   bool is_halfedge_marked(int i) const {
@@ -175,20 +171,20 @@ public:
 
 private:
   // Move face f after this.
-  void move_after_this(Delaunay_remove_tds_face_3_2* f) {
+  void move_after_this(Face_handle f) {
     if (_n == f)
       return;
 
-    Delaunay_remove_tds_face_3_2 *p = f->p();
-    Delaunay_remove_tds_face_3_2 *n = f->n();
+    Face_handle p = f->p();
+    Face_handle n = f->n();
     p->set_n(n);
     n->set_p(p);
-    
+
     n = _n;
     _n = f;
     f->set_n(n);
     n->set_p(f);
-    f->set_p(this);
+    f->set_p(this->handle());
   }
 
   void unmark_halfedge(int i) {
@@ -200,20 +196,8 @@ private:
   }
 
   I inf;
-  Delaunay_remove_tds_face_3_2 *_p, *_n;
+  Face_handle _p, _n;
   bool _edge[3];
-};
-
-
-// The compare function is needed to find opposite edges. In fact it sorts a
-// tuple by the first and second component. Maybe this is of general interest.
-template < class H>
-class Delaunay_remove_tds_halfedge_compare_3_2 {
-public:
-  bool operator()(const H & x, const H & y) const {
-    return ( x.first < y.first || 
-	     ( (x.first == y.first) && (x.second < y.second)) );
-  }
 };
 
 
@@ -234,32 +218,27 @@ public:
 private:
   typedef Triangulation_data_structure_2< 
             Delaunay_remove_tds_vertex_3_2<typename T::Vertex_handle>,
-            Delaunay_remove_tds_face_3_2<typename T::Facet> > TDSUL2;
+            Delaunay_remove_tds_face_3_2<typename T::Facet> > TDS_2;
 
 public:
-  typedef typename TDSUL2::Face_iterator Face_iterator;
-  typedef typename TDSUL2::Face          Face_3_2;
-  typedef typename TDSUL2::Vertex_handle Vertex_handle_3_2;
-  typedef typename TDSUL2::Face_handle   Face_handle_3_2;
+  typedef typename TDS_2::Face_iterator Face_iterator;
+  typedef typename TDS_2::Face          Face_3_2;
+  typedef typename TDS_2::Vertex_handle Vertex_handle_3_2;
+  typedef typename TDS_2::Face_handle   Face_handle_3_2;
 
 private:
 
-  // Some compilers get lost by too many templates,
-  // so we don't use Quadruple, we define a nested class.
-
-  // typedef Quadruple<Vertex_handle_3_2, Vertex_handle_3_2,
-  //                   Face_handle_3_2, int> Halfedge;
-
   struct Halfedge
+    : public std::pair<Vertex_handle_3_2, Vertex_handle_3_2>
   {
-    Vertex_handle_3_2  first;
-    Vertex_handle_3_2  second;
+    typedef std::pair<Vertex_handle_3_2, Vertex_handle_3_2>   Pair;
+
     Face_handle_3_2    third;
     int                fourth;
 
     Halfedge(Vertex_handle_3_2 a, Vertex_handle_3_2 b,
 	     Face_handle_3_2 c, int d)
-      : first(a), second(b), third(c), fourth(d) {}
+      : Pair(a, b), third(c), fourth(d) {}
   };
 
 public:
@@ -339,8 +318,7 @@ public:
       }
     }
 
-    std::sort(halfedges.begin(), halfedges.end(), 
-	      Delaunay_remove_tds_halfedge_compare_3_2<Halfedge>());
+    std::sort(halfedges.begin(), halfedges.end());
 
     // The halfedges that are opposite to each other are neighbors
     // in the sorted list. 
@@ -362,17 +340,17 @@ public:
     Face_handle_3_2 f = &dummy;
 
     for( Face_iterator fit2 = faces_begin(); fit2 != faces_end(); ++fit2) {
-      f->set_n(&*fit2);
-      fit2->set_p(&*f);
+      f->set_n(fit2);
+      fit2->set_p(f);
       f = fit2;
       for(int i = 0; i < 3; i++) {
 	// we mark an edge only on one side
-	f->set_edge(i, (f < (f->neighbor(i))));
+	f->set_edge(i, f < f->neighbor(i));
       }
     }
     // f points to the last face
     f->set_n(dummy.n());
-    dummy.n()->set_p(&*f);
+    dummy.n()->set_p(f);
   }
 
   void remove_degree_3(Vertex_handle_3_2 v, Face_handle_3_2 f) 
@@ -382,7 +360,7 @@ public:
     // we first remove it from the list we maintain.
     f->remove_neighbors_from_list(i);
     // we are ready to call the method of the base class
-    TDSUL2::remove_degree_3(v,f);
+    TDS_2::remove_degree_3(v,f);
   }
 };
 

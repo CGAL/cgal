@@ -19,7 +19,7 @@
 %// coordinator   : INRIA Sophia Antipolis (Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>)
 %//
 %//============================================================================
-\chapter{3D Triangulation}
+\chapter{3D Triangulations}
 \label{chapter-Triangulation3}
 
 \vspace*{-1cm}
@@ -174,12 +174,12 @@ the geometric validity. This class is parameterized by two classes:
 specify the type of points to use as well as the elementary
 operations on them (predicates,\ldots). The concept of such a class is
 introduced in Section~\ref{Triangulation3-sec-Traits}\lcTex{ and described in 
-\ccRefPage{TriangulationTraits_3}} and the homogeneous and Cartesian
+\ccRefPage{TriangulationTraits_3}}.  The homogeneous and Cartesian
 kernels of \cgal\ are models for this concept
 (see also \ccc{CGAL::Regular_triangulation_euclidean_traits_3<R,Weight>}\lcTex{
 (\ccRefPage{CGAL::Regular_triangulation_euclidean_traits_3<R,Weight>})} 
 for the Regular triangulation).
-\item {} the \textbf{triangulation data structure} class of the middle level, 
+\item {} the \textbf{triangulation data structure} class, 
 described in Chapter~\ref{chapter-TDS3}.
 \end{itemize}	
 
@@ -226,9 +226,9 @@ They supply the user with all the functionalities described for the concepts
 So, any of them can be used as a traits class for
 \ccc{Triangulation_3<TriangulationTraits_3, TriangulationDataStructure_3>},
 \ccc{Delaunay_triangulation_3<DelaunayTriangulationTraits_3, TriangulationDataStructure_3>}
-and for the parameter \ccc{Tr} of \ccc{TriangulationHierarchy_3<Tr>}.
+and for the parameter \ccc{Tr} of \ccc{Triangulation_hierarchy_3<Tr>}.
 
-To be used as the traits class for the regular triangulation provided
+In order to be used as the traits class for the regular triangulation provided
 by \cgal, a class must provide definitions for the \textit{power tests}.
 (See Section~\ref{Triangulation3-sec-class-Regulartriangulation}.)
 \ccc{Regular_triangulation_euclidean_traits_3<R,Weight>} is a traits class 
@@ -252,9 +252,9 @@ The second template parameter of the basic triangulation class
 data structure class.  This class can be seen as a container for the
 cells and vertices maintaining incidence and adjacency relations (see
 Chapter~\ref{chapter-TDS3}).  A model of this triangulation data
-structure is \ccc{Triangulation_data_structure_3<TriangulationVertexBase_3,
-TriangulationCellBase_3>}\lcTex{ 
-(\ccRefPage{CGAL::Triangulation_data_structure_3<TriangulationVertexBase_3,TriangulationCellBase_3>})}.
+structure is \ccc{Triangulation_data_structure_3<TriangulationDSVertexBase_3,
+TriangulationDSCellBase_3>}\lcTex{ 
+(\ccRefPage{CGAL::Triangulation_data_structure_3<TriangulationDSVertexBase_3,TriangulationDSCellBase_3>})}.
 
 A default parameter is defined in all the triangulation classes, so, it 
 need not be specified by the user. 
@@ -296,7 +296,7 @@ insertions and vertex removal.
 
 The user is advised to use the class
 \ccc{Triangulation_hierarchy_3<Tr>} in order to benefit from an
-increased efficiency. 
+increased efficiency for large data sets. 
 
 \section{Triangulation hierarchy} 
 
@@ -306,9 +306,9 @@ location queries. Thus, it allows fast construction of the
 triangulation. As proved in~\cite{d-iirdt-98}, this structure has an
 optimal behaviour when it is built for Delaunay triangulations.
 However it can be used as well for other triangulations and the
-\ccRefName\ class is templated by a parameter, which is to be
-instantiated by one of the \cgal\ triangulation classes.  It offers
-the same functionalities as the \ccc{Tr} parameter class. 
+class \ccc{Triangulation_hierarchy_3<Tr>} is templated by a parameter,
+which is to be instantiated by one of the \cgal\ triangulation classes.
+It offers the same functionalities as the \ccc{Tr} parameter class. 
 
 Note that, since the algorithms that are provided are randomized, the
 running time of constructing a triangulation with a hierarchy may be

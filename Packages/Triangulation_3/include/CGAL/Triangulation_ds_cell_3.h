@@ -32,9 +32,9 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class Tds >
+template < class Cb >
 class Triangulation_ds_cell_3
-  : public Tds::Cell_base
+  : public Cb
 {
     static int ccw(int i)
     {
@@ -46,12 +46,11 @@ class Triangulation_ds_cell_3
       return Triangulation_utils_3::cw(i);
     } 
 
-  typedef typename Tds::Cell_base Cb;
+  typedef typename Cb::Triangulation_data_structure Tds;
 
+public:
   typedef typename Tds::Vertex_handle  Vertex_handle;
   typedef typename Tds::Cell_handle    Cell_handle;
-public:
-
   typedef typename Tds::Vertex         Vertex;
   typedef typename Tds::Cell           Cell;
 
@@ -59,74 +58,6 @@ public:
     : Cb()
   {
       set_in_conflict_flag(0);
-  }
-
-  // SETTING
-
-  void set_vertex(int i, const Vertex_handle v)
-  {
-    Cb::set_vertex(i, &*v);
-  }
-
-  void set_neighbor(int i, const Cell_handle n)
-  {
-    Cb::set_neighbor(i, &*n);
-  }
-
-  void set_vertices(const Vertex_handle v0, const Vertex_handle v1,
-	            const Vertex_handle v2, const Vertex_handle v3)
-  {
-    Cb::set_vertices(&*v0, &*v1, &*v2, &*v3);
-  }
-
-  void set_neighbors(const Cell_handle n0, const Cell_handle n1,
-	             const Cell_handle n2, const Cell_handle n3)
-  {
-    Cb::set_neighbors(&*n0, &*n1, &*n2, &*n3);
-  }
-
-  // VERTEX ACCESS
-
-  Vertex_handle vertex(int i) const
-  {
-    return (Vertex *) (Cb::vertex(i));
-  } 
-
-  bool has_vertex(const Vertex_handle v) const
-  {
-    return Cb::has_vertex(&*v);
-  }
-    
-  bool has_vertex(const Vertex_handle v, int & i) const
-  {
-    return Cb::has_vertex(&*v,i);
-  }
-    
-  int index(const Vertex_handle v) const
-  {
-    return Cb::vertex_index(&*v);
-  }
-
-  // NEIGHBOR ACCESS
-
-  Cell_handle neighbor(int i) const
-  {
-    return (Cell *) Cb::neighbor(i);
-  }
-    
-  bool has_neighbor(const Cell_handle n) const
-  {
-    return Cb::has_neighbor(&*n);
-  }
-    
-  bool has_neighbor(const Cell_handle n, int & i) const
-  {
-    return Cb::has_neighbor(&*n, i);
-  }
-
-  int index(const Cell_handle n) const
-  {
-    return Cb::cell_index(&*n);
   }
 
   int mirror_index(int i) const
@@ -169,10 +100,9 @@ private:
   }
 };
 
-template <class Tds>
+template < class Cb >
 bool
-Triangulation_ds_cell_3<Tds>::is_valid
-(int dim, bool verbose, int level) const
+Triangulation_ds_cell_3<Cb>::is_valid(int dim, bool verbose, int level) const
 {
     if ( ! Cb::is_valid(verbose,level) )
 	return false;

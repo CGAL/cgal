@@ -1,6 +1,4 @@
 // Triangulation_3/example_tds.C
-#include <CGAL/Triangulation_cell_base_3.h>
-#include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/Triangulation_data_structure_3.h>
 
 #include <iostream>
@@ -8,19 +6,7 @@
 #include <cassert>
 #include <vector>
 
-// We define a minimal traits class, because the Point_3 type is needed in
-// order to instantiate Triangulation_vertex_base_3<>.
-
-class empty_traits {
-public:
-  class Point_3 {};
-};
-typedef empty_traits K;
-
-typedef CGAL::Triangulation_vertex_base_3<K>       Vb;
-typedef CGAL::Triangulation_cell_base_3<K>         Cb;
-
-typedef CGAL::Triangulation_data_structure_3<Vb,Cb> Tds;
+typedef CGAL::Triangulation_data_structure_3<>      Tds;
 
 typedef Tds::Cell_handle                            Cell_handle;
 typedef Tds::Vertex_handle                          Vertex_handle;
@@ -40,9 +26,8 @@ int main()
   assert( T.dimension() == -1 );
   assert( T.is_valid() );
 
-  int i;
   // each of the following insertions of vertices increases the dimension
-  for ( i=1; i<5; i++ ) {
+  for ( int i=1; i<5; i++ ) {
     PV[i] = T.insert_increase_dimension(PV[0]);
     assert( T.number_of_vertices() == i+1 );
     assert( T.dimension() == i-1 );

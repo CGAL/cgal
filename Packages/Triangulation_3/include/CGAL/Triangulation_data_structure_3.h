@@ -46,6 +46,9 @@
 
 #include <CGAL/DS_Container.h>
 
+#include <CGAL/Triangulation_ds_cell_base_3.h>
+#include <CGAL/Triangulation_ds_vertex_base_3.h>
+
 #include <CGAL/Triangulation_ds_cell_3.h>
 #include <CGAL/Triangulation_ds_vertex_3.h>
 
@@ -54,18 +57,28 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Vb, class Cb>
+// TODO : noms : Vb != Vertex_base : clarifier.
+
+template < class Vb = Triangulation_ds_vertex_base_3<>,
+           class Cb = Triangulation_ds_cell_base_3<> >
 class Triangulation_data_structure_3
   : public Triangulation_utils_3
 {
+  typedef Triangulation_data_structure_3<Vb,Cb>         Tds;
+
+  typedef typename Vb::template Rebind_TDS<Tds>::Other  Vertex_base;
+  typedef typename Cb::template Rebind_TDS<Tds>::Other  Cell_base;
+
+  friend class Triangulation_ds_facet_iterator_3<Tds>;
+  friend class Triangulation_ds_edge_iterator_3<Tds>;
+
+  friend class Triangulation_ds_cell_circulator_3<Tds>;
+  friend class Triangulation_ds_facet_circulator_3<Tds>;
+
 public:
 
-  typedef Triangulation_data_structure_3<Vb,Cb>    Tds;
-  typedef Vb                                       Vertex_base;
-  typedef Cb                                       Cell_base;
-
-  typedef Triangulation_ds_vertex_3<Tds>           Vertex;
-  typedef Triangulation_ds_cell_3<Tds>             Cell;
+  typedef Triangulation_ds_vertex_3<Vertex_base>   Vertex;
+  typedef Triangulation_ds_cell_3<Cell_base>       Cell;
 
   typedef CGAL_TRIVIAL_COMPARABLE_ITERATOR_CHECKER_POINTER(Cell)  Cell_handle;
   typedef CGAL_TRIVIAL_COMPARABLE_ITERATOR_CHECKER_POINTER(Vertex)
@@ -74,16 +87,13 @@ public:
   typedef std::pair<Cell_handle, int>              Facet;
   typedef Triple<Cell_handle, int, int>            Edge;
 
-  friend class Triangulation_ds_facet_iterator_3<Tds>;
-  friend class Triangulation_ds_edge_iterator_3<Tds>;
-
-  friend class Triangulation_ds_cell_circulator_3<Tds>;
-  friend class Triangulation_ds_facet_circulator_3<Tds>;
-
+private:
   typedef DS_Container<Cell>                       Cell_container;
   typedef DS_Container<Vertex>                     Vertex_container;
   typedef typename Cell_container::iterator        Cell_Iterator_base;
   typedef typename Vertex_container::iterator      Vertex_Iterator_base;
+
+public:
   typedef Triangulation_iterator_handle_adaptor_3<Cell_Iterator_base,
                                    Cell_handle>    Cell_iterator;
   typedef Triangulation_iterator_handle_adaptor_3<Vertex_Iterator_base,
@@ -94,9 +104,11 @@ public:
   typedef Triangulation_ds_cell_circulator_3<Tds>  Cell_circulator;
   typedef Triangulation_ds_facet_circulator_3<Tds> Facet_circulator;
 
+//private:
   // In 2D only :
   typedef Triangulation_ds_face_circulator_3<Tds>  Face_circulator;
 
+public:
   Triangulation_data_structure_3() 
     : _dimension(-2)
   {}
@@ -113,9 +125,12 @@ public:
 
   Tds & operator= (const Tds & tds)
   {
-    copy_tds(tds);
+    if (&tds != this) {
+      Tds tmp(tds);
+      swap(tmp);
+    }
     return *this;
-  }  
+  }
 
   int number_of_vertices() const { return vertex_container().size(); }
 
@@ -245,7 +260,8 @@ public:
   void read_cells(std::istream& is, std::map< int, Vertex_handle > &V,
 			   int & m, std::map< int, Cell_handle > &C );
   // not documented
-  void print_cells(std::ostream& os, std::map<Vertex_handle, int> &V ) const;
+  void print_cells(std::ostream& os,
+                   const std::map<Vertex_handle, int> &V ) const;
 
   // ACCESS FUNCTIONS
 
@@ -1428,18 +1444,15 @@ read_cells(std::istream& is, std::map< int, Vertex_handle > &V,
 template < class Vb, class Cb>
 void
 Triangulation_data_structure_3<Vb,Cb>::
-print_cells(std::ostream& os, std::map<Vertex_handle, int> &V ) const
+print_cells(std::ostream& os, const std::map<Vertex_handle, int> &V ) const
 {
   std::map<Cell_handle, int > C;
-
   int i = 0;
-  int j;
-  int m;
   
   switch ( dimension() ) {
   case 3:
     {
-      m = number_of_cells();
+      int m = number_of_cells();
       os << m;
       if(is_ascii(os))
 	  os << std::endl;
@@ -1448,8 +1461,8 @@ print_cells(std::ostream& os, std::map<Vertex_handle, int> &V ) const
       Cell_iterator it;
       for(it = cells_begin(); it != cells_end(); ++it) {
 	C[&(*it)] = i++;
-	for(j = 0; j < 4; j++){
-	  os << V[it->vertex(j)];
+	for(int j = 0; j < 4; j++){
+	  os << V.find(it->vertex(j))->second;
 	  if(is_ascii(os)) {
 	    if ( j==3 )
 	      os << std::endl;
@@ -1462,7 +1475,7 @@ print_cells(std::ostream& os, std::map<Vertex_handle, int> &V ) const
       
       // write the neighbors
       for(it = cells_begin(); it != cells_end(); ++it) {
-	for (j = 0; j < 4; j++) {
+	for (int j = 0; j < 4; j++) {
 	  os << C[it->neighbor(j)];
 	  if(is_ascii(os)){
 	    if(j==3)
@@ -1476,7 +1489,7 @@ print_cells(std::ostream& os, std::map<Vertex_handle, int> &V ) const
     }
   case 2:
     {
-      m = number_of_facets();
+      int m = number_of_facets();
       os << m;
       if(is_ascii(os))
 	  os << std::endl;
@@ -1485,8 +1498,8 @@ print_cells(std::ostream& os, std::map<Vertex_handle, int> &V ) const
       Facet_iterator it;
       for(it = facets_begin(); it != facets_end(); ++it) {
 	C[(*it).first] = i++;
-	for(j = 0; j < 3; j++){
-	  os << V[(*it).first->vertex(j)];
+	for(int j = 0; j < 3; j++){
+	  os << V.find((*it).first->vertex(j))->second;
 	  if(is_ascii(os)) {
 	    if ( j==2 )
 	      os << std::endl;
@@ -1499,7 +1512,7 @@ print_cells(std::ostream& os, std::map<Vertex_handle, int> &V ) const
       
       // write the neighbors
       for(it = facets_begin(); it != facets_end(); ++it) {
-	for (j = 0; j < 3; j++) {
+	for (int j = 0; j < 3; j++) {
 	  os << C[(*it).first->neighbor(j)];
 	  if(is_ascii(os)){
 	    if(j==2)
@@ -1513,7 +1526,7 @@ print_cells(std::ostream& os, std::map<Vertex_handle, int> &V ) const
     }
   case 1:
     {
-      m = number_of_edges();
+      int m = number_of_edges();
       os << m;
       if(is_ascii(os))
 	  os << std::endl;
@@ -1522,8 +1535,8 @@ print_cells(std::ostream& os, std::map<Vertex_handle, int> &V ) const
       Edge_iterator it;
       for(it = edges_begin(); it != edges_end(); ++it) {
 	C[(*it).first] = i++;
-	for(j = 0; j < 2; j++){
-	  os << V[(*it).first->vertex(j)];
+	for(int j = 0; j < 2; j++){
+	  os << V.find((*it).first->vertex(j))->second;
 	  if(is_ascii(os)) {
 	    if ( j==1 )
 	      os << std::endl;
@@ -1536,7 +1549,7 @@ print_cells(std::ostream& os, std::map<Vertex_handle, int> &V ) const
       
       // write the neighbors
       for(it = edges_begin(); it != edges_end(); ++it) {
-	for (j = 0; j < 2; j++) {
+	for (int j = 0; j < 2; j++) {
 	  os << C[(*it).first->neighbor(j)];
 	  if(is_ascii(os)){
 	    if(j==1)

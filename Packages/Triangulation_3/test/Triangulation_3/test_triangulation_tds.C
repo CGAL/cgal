@@ -21,24 +21,18 @@
 // ============================================================================
 
 #include <CGAL/Triangulation_data_structure_3.h>
-#include <CGAL/Triangulation_cell_base_3.h>
-#include <CGAL/Triangulation_vertex_base_3.h>
 
 #include <CGAL/_test_cls_tds_3.C>
 
-class empty_traits
-{
-public:
-  class Point_3 {};
-};
-
-typedef empty_traits                                              traits;
-typedef CGAL::Triangulation_vertex_base_3<traits>                 Vb;
-typedef CGAL::Triangulation_cell_base_3<void>                     Cb;
-typedef CGAL::Triangulation_data_structure_3<Vb,Cb>               Tds;
+typedef CGAL::Triangulation_data_structure_3<>               Tds;
 
 // Explicit instantiation :
-template class CGAL::Triangulation_data_structure_3<Vb,Cb>;
+// template class CGAL::Triangulation_data_structure_3<>;
+// SunPRO requires putting all default arguments here.
+template class CGAL::Triangulation_data_structure_3<
+                     CGAL::Triangulation_ds_vertex_base_3<>,
+                     CGAL::Triangulation_ds_cell_base_3<> >;
+
 
 int main()
 {

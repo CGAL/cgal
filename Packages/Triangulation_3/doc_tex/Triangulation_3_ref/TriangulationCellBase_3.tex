@@ -1,0 +1,46 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: TriangulationCellBase_3.tex
+% +------------------------------------------------------------------------+
+% | 29.3.2000   Monique Teillaud
+% | Package: Triangulation3
+% | 
+\RCSdef{\RCSTriangulationcbRev}{$Revision$}
+\RCSdefDate{\RCSTriangulationcbDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{TriangulationCellBase_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+
+The cell base required by the geometric triangulations does not store any
+geometric information, so only the requirements of the triangulation data
+structure apply.  However, we provide this concept for symetry with the
+vertex case.
+
+\ccRefines{\ccc{TriangulationDSCellBase_3}}
+
+\ccHasModels
+
+\ccc{CGAL::Triangulation_cell_base_3<TriangulationTraits_3,TriangulationDSCellBase_3>}.
+
+\ccSeeAlso
+
+\ccc{TriangulationVertexBase_3}
+
+%% \ccExample
+
+%% \ccIncludeExampleCode{examples/Triangulation3/Triangulation_cb_3_prog.C}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

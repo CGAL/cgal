@@ -1,3 +1,29 @@
+Version 1.139 (08 May 03)
+- Merge from the new-design-branch.
+
+Version 1.138 (07 May 03)
+- Remove Vertexand Cell types in the Vb and Cb classes.
+- A few doc updates.
+
+Version 1.137 (05 May 03)
+- Rename rebind/other to Rebind_TDS/Other.
+- Remove Triangulation_vertex_base_pointer.
+- Improve documentation.
+- Update for Triangulation_2 new design.
+
+Version 1.136 (20 Feb 03)
+- Borland workarounds.
+
+Version 1.135 (18 Feb 03)
+- Make SunPro happy with the hierarchy by removing a const...
+
+Version 1.134 (18 Feb 03)
+- Add concept checking for rebind<>, so that the user gets less surprise...
+
+Version 1.133 (18 Feb 03)
+- Attempt of a new design of the handles using a rebind<> like mecanism.
+  Submission from the new-design-branch CVS branch.
+
 Version 1.132 (6 Feb 03)
 - VC7 fixes from Radu.
 

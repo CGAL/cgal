@@ -21,7 +21,7 @@ typedef Triangulation::Cell_handle    Cell_handle;
 typedef Triangulation::Vertex_handle  Vertex_handle;
 typedef Triangulation::Locate_type    Locate_type;
 
-typedef K::Point_3                    Point;
+typedef Triangulation::Point          Point;
 
 int main()
 {
