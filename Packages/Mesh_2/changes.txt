@@ -1,3 +1,6 @@
+30 August 2004 Laurent Rineau
+- New specifications.
+
 17 August 2004 Laurent Rineau
 - Use namespace CGAL instead of CGAL_NAMESPACE_BEGIN/END.
 - Insertion in an edge now reinstert the two sub-constraints, instead of

@@ -19,9 +19,9 @@ a model of the concept \ccc{ConformingDelaunayTriangulationTraits_2}.
 
 The constructor of the class \ccRefName\ takes a reference to a \ccc{CDT}
 as an argument. A call to the method \ccc{make_conforming_Delaunay()}
-(resp.  \ccc{make_conforming_Gabriel()}) will refine this contrained
-Delaunay triangulation into a conforming Delaunay (resp. conforming
-Gabriel) triangulation. note that if, during the life of the \ccRefName\ 
+or \ccc{make_conforming_Gabriel()}) will refine this contrained
+Delaunay triangulation into a conforming Delaunay or conforming
+Gabriel triangulation. Note that if, during the life of the \ccRefName\ 
 object, the triangulation is externally modified, any further call to its
 member methods may crash. Considere reconstructing a new \ccRefName\ object
 if the triangulation has been modified.
@@ -65,7 +65,7 @@ of edges.
 
 \ccMethod{ bool is_conforming_Gabriel(); }
 { Returns \ccc{true} iff all constrained edges have the Gabriel property:
-  there circumsphere is empty. }
+  their circumsphere is empty. }
 
 \begin{ccAdvanced}
 
@@ -74,7 +74,7 @@ of edges.
 The \ccRefName{} class allows, for debugging or demos, to play the
 conforming algorithm step by step, using the following methods. They
 exist in two versions, depending on whether you want the triangulation to
-be conforming Delaunay or conforming Gabriel. Any call to a
+be conforming Delaunay or conforming Gabriel, respectively. Any call to a
 \ccc{step_by_step_conforming_XX} function requires a previous call to
 the corresponding of \ccc{init_XX}.
 

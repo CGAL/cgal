@@ -16,7 +16,7 @@ $\alpha_{min}$ on the minimum angle in the triangle:
 so $B=\sqrt{2}$ corresponds to  $\alpha_{min} \ge 20.7$ degrees.
 
 This traits class defines also a size criteria: all segments of all
-triangles must be smaller than a bound $S$.
+triangles must be shorter than a bound $S$.
 
 \ccInclude{CGAL/Delaunay_mesh_size_criteria_2.h}
 
@@ -27,9 +27,9 @@ triangles must be smaller than a bound $S$.
 \ccCreation
 \ccConstructor{Delaunay_mesh_size_criteria_2()}{Default
   constructor. $B=\sqrt{2}$. No bound on size}
-\ccConstructor{Delaunay_mesh_size_criteria_2(double b = 0.125, double s =
+\ccConstructor{Delaunay_mesh_size_criteria_2(double b = 0.125, double S =
   0)}{Construct a traits class with bound $B=\sqrt{\frac{1}{4
-      b}}$. If s $\neq 0$, the size bound is s. If s $= 0$, there is
+      b}}$. If $S \neq 0$, the size bound is $S$. If $S = 0$, there is
   no bound on size. }
 
 \end{ccRefClass}

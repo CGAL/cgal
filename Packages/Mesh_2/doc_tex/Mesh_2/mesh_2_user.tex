@@ -5,8 +5,8 @@
 
 This package implements Shewchuk's algorithm to construct conforming
 triangulations and 2D meshes.  Conforming triangulations will be
-described in the section~\ref{sec:Mesh_2_conforming_triangulation} and
-meshes in the section~\ref{sec:Mesh_2_meshes}.
+described in the Section~\ref{sec:Mesh_2_conforming_triangulation} and
+meshes in the Section~\ref{sec:Mesh_2_meshes}.
 
 \section{Conforming Triangulations}
 \label{sec:Mesh_2_conforming_triangulation}
@@ -18,7 +18,7 @@ A triangulation is a \emph{Delaunay triangulation} is the circumscribing
 circle of any facet of the triangulation contains no data point in its
 interior.
 
-An edge is said to be a \emph{Delaunay edge} if it is subscribe in an empty
+An edge is said to be a \emph{Delaunay edge} if it is inscribed in an empty
 circle (containing no data point in its interior). It is said to be a
 \emph{Gabriel edge} if its diametral circle is empty.
 
@@ -62,8 +62,8 @@ It has to be a model of the concept
 The constrained Delaunay triangulation \ccc{t} is passed by reference
 and is refined into a conforming Delaunay triangulation or a
 conforming Gabriel triangulation by adding vertices, that is, the
-triangulation is modified. If you want to keep the original
-triangulation, please make a copy of it.
+triangulation is modified. In order to keep the original
+triangulation, the user has to make a copy of it.
 
 The advanced user can also use the class
 \ccc{Conforming_Delaunay_triangulation_maker_2<CDT>} to refine a
@@ -90,31 +90,31 @@ printed.
 \subsection{Definition}
 \label{sec:Mesh_2_meshes_definition}
 
-A mesh is a partition of a given domain into simplices, whose shapes
+A mesh is a partition of a given domain into simplices whose shapes
 and sizes satisfy several criteria.
 
 The domain to be meshed is bounded and can include internal constraints
 that have to be respected.  Such a domain is defined by a \emph{planar
-  straight line graph}, PSLG for short, and a set of seed points.
+  straight line graph}, {\sc Pslg} for short, and a set of seed points.
 
-A PSLG is a plane embeded one dimensional simplicial complex, that
-is a set of vertices and segments such that : \\
+A {\sc Pslg} is a plane embedded one dimensional simplicial complex, that
+is a set of vertices and segments such that: \\
 - the endpoints of any segment in the set are vertices of the set, \\
 - two segments in the set are either disjoint or share a vertex of the 
 set. \\
-The segments of the PSLG described the boundaries and the internal
+The segments of the {\sc Pslg} describe the boundaries and the internal
 constraints of the domain.
 
-\subsection{Meshing domain}
+\subsection{Meshing Domain}
 \label{sec:Mesh_2_meshin_domain}
 
-The PSLG, represented here by the constrained edges, divides the plane into several connected components.  The domain
+The {\sc Pslg}, represented here by the constrained edges, divides the plane into several connected components.  The domain
 is usually defined as the union all of the bounded connected components
 including no seed points, meaning that seeds defines \emph{holes} is the
 domain.  Alternatively, the seed points can be used to mark the connected
 components which are inside the domain.
 
-The domain has to be bounded. Therefore the unbounded component will not be
+The domain has to be bounded. Therefore, the unbounded component will not be
 part of it, whatever is the set of seed points. By default, if the set of
 seeds is empty, the domain to be meshed is the union of the bounded
 components. Note that the constrained edges have to bound the domain to be
@@ -141,18 +141,18 @@ circumcircle. The size bound can be varying over the domain. For example,
 the size criterion could impose a small size for the triangles intersecting
 a given plane.
 
-Both types of criteria are defined
-in a nested type \ccc{Is_bad} of the geometric traits class.
+Both types of criteria are defined in an object \ccc{criteria} passed as
+parameter of the meshing functions.
 
 \subsection{The Meshing Algorithm}
 
-The input to a meshing problem is a PSLG, a set of seeds
+The input to a meshing problem is a {\sc Pslg}, a set of seeds
 describing the domain to be meshed and a set of size and shape
 criteria.  The algorithm implemented in this package starts with a
-constrained Delaunay triangulation of the input PSLG and produces a
+constrained Delaunay triangulation of the input {\sc Pslg} and produces a
 mesh using the Delaunay refinement method.
 
-If all angles between incident segments of the input PSLG
+If all angles between incident segments of the input {\sc Pslg}
 are greater than $60$~degrees, and if the bound on the
 circumradius/edge ratio is greater than $\sqrt{2}$
 the algorithm is guaranteed to end up with a mesh
@@ -167,7 +167,7 @@ cannot be meshed with angles even smaller than the small input angles.
 Note that if the domain is a polygonal region, the resulting mesh will
 satisfy size and shape criteria except for the small input angles.
 Note also that, though it is not guaranteed, the algorithm may succeed
-in achieving meshes with a lower angle bound greater than
+in producing meshes with a lower angle bound greater than
 $20.7$~degrees.
 
 \subsection{Building Meshes}
@@ -194,7 +194,7 @@ adding the geometric criteria that the triangles have to satisfy.
   bound on the maximum edge length.
 \end{itemize}
 
-And object of type \ccc{Delaunay_mesher_2<CDT>} is constructed from a
+Any object of type \ccc{Delaunay_mesher_2<CDT>} is constructed from a
 reference to a \ccc{CDT} and and has several member functions to define the
 domain that have to be meshed and mesh the \ccc{CDT}. See examples and the
 reference manual for details. Note that the \ccc{CDT} should not be
