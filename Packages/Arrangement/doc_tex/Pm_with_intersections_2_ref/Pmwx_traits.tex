@@ -52,22 +52,6 @@ The following methods that have a curve parameter of type
 \ccc{X_monotone_curve_2} have the implicit precondition that requires the
 curve to be $x$-monotone.
 
-\ccMethod{template<class OutputIterator>
-          OutputIterator make_x_monotone(const Curve_2& cv,
-                                         OutputIterator res);}
-	 {cuts \ccc{cv} into $x$-monotone subcurves and stores them in a
-	   sequence starting at \ccc{res}. The order in which they are stored
-	   defines their order in the hierarchy tree. Returns past-the-end
-	   iterator of the sequence.}
-
-\ccMethod{template<class OutputIterator>
-          OutputIterator make_x_monotone(const Curve_2& cv,
-                                         OutputIterator res);}
-	 {cuts \ccc{cv} into $x$-monotone subcurves and stores them in a
-	 sequence starting at \ccc{res}. The order in which they are stored
-	 defines their order in the hierarchy tree. Returns past-the-end
-	 iterator of the sequence.}
-
 \ccMethod{bool curves_overlap(const X_monotone_curve_2& cv1,
                               const X_monotone_curve_2& cv2);}
          {returns \ccc{true} if \ccc{cv1} and \ccc{cv2} overlap
@@ -76,6 +60,14 @@ curve to be $x$-monotone.
 
 %construction function
 %---------------------   
+
+\ccMethod{template<class OutputIterator>
+          OutputIterator make_x_monotone(const Curve_2& cv,
+                                         OutputIterator res);}
+	 {cuts \ccc{cv} into $x$-monotone subcurves and stores them in a
+	   sequence starting at \ccc{res}. The order in which they are stored
+	   defines their order in the hierarchy tree. Returns past-the-end
+	   iterator of the sequence.}
 
 \ccMethod{void curve_split(const X_monotone_curve_2& cv,
                            X_monotone_curve_2& c1, X_monotone_curve_2& c2,
@@ -137,10 +129,12 @@ The following classes are models of the
 \ccc{ArrangementTraits_2} concept that is a refinment of the \ccRefName\
 concept. 
 
-  \ccc{Arr_segment_exact_traits<R>}\\
-  \ccc{Arr_leda_segment_exact_traits}\\
-  \ccc{Arr_circles_real_traits<NT>}\\
-  \ccc{Arr_polyline_traits<R, Container>}
+  \ccc{Arr_segment_traits_2<Kernel>}\\
+  \ccc{Arr_segment_cached_traits_2<Kernel>}\\
+  \ccc{Arr_leda_segment_traits_2<Kernel>}\\
+  \ccc{Arr_polyline_traits<Kernel, Container>} \\
+  \ccc{Arr_leda_polyline_traits<Kernel, Container>} \\
+  \ccc{Arr_conic_traits_2<Kernel>}
 
 \end{ccRefConcept}
 
