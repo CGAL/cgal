@@ -1,4 +1,7 @@
-
+Version 1.156 (17 June 03)
+- Added alternative implementation of Delaunay_triangulation_3::remove(Vertex_handle)
+  which is now the default
+- Added testsuite to cover new and old remove
 - Fixed bug in Delaunay_remove_tds_3.h introduced with Version 1.153
 - VC7 workaround in make_hole_3D_ear.
 
