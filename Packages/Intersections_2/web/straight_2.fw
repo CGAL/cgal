@@ -326,7 +326,5 @@ MPI, Saarbruecken@)
 
 @<2D Straight declaration@>
 
-} // close namespace CGAL
-
 #endif
 @}
