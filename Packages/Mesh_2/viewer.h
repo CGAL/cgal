@@ -14,7 +14,8 @@
 //#include <iostream>
 //#include <math.h>
 #include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Filtered_kernel.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Segment_2.h>
 // // #include <CGAL/Triangulation_euclidean_traits_2.h>
@@ -64,15 +65,20 @@ class TrFrame : public QMainWindow {
 
 #ifdef CGAL_MESH_H
 
-typedef CGAL::Cartesian<double> K;
+#include <CGAL/intersections.h>
+
+typedef CGAL::Simple_cartesian<double>  K1;
+typedef CGAL::Filtered_kernel<K1>       Kernel;
+struct K : public Kernel {}; 
+
 typedef K::Point_2 Point;
 typedef K::Line_2 Line;
 
-typedef CGAL::Triangulation_vertex_base_2<K>         Vb;
-typedef CGAL::Constrained_triangulation_face_base_2<K>           Fb;
-typedef CGAL::Triangulation_data_structure_using_list_2<Vb, Fb> Tds;
+typedef CGAL::Triangulation_vertex_base_2<K> Vb;
+typedef CGAL::Constrained_triangulation_face_base_2<K> Fb;
+typedef CGAL::Triangulation_data_structure_2<Vb, Fb> Tds;
 
-typedef Mesh<K, Tds> Msh;
+typedef CGAL::Mesh<K, Tds> Msh;
 
 class TrViewer : public QWidget {
   Q_OBJECT
@@ -82,7 +88,7 @@ class TrViewer : public QWidget {
   list<Point> points;
   list<Line> lines;
   Msh *mesh;
-  bool auto_mesh;
+  //  bool auto_mesh;
   TrFrame *frame;
   void paintEvent(QPaintEvent *pe);
   void mouseMoveEvent(QMouseEvent *me);
@@ -93,7 +99,7 @@ class TrViewer : public QWidget {
   void keyPressEvent(QKeyEvent *ke);
  public slots:
   void onMesh();
-  void toggleAutoMesh(bool);
+  //  void toggleAutoMesh(bool);
  public:
   friend class TrFrame;
 };

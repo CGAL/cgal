@@ -33,9 +33,9 @@ TrFrame::TrFrame() :
   QPushButton *pbMesh = new QPushButton("Mesh", toolBar);
   connect(pbMesh, SIGNAL(clicked()), trv, SLOT(onMesh()));
   //pbMesh->setFixedSize(100, 32);
-  QPushButton *pbAutoMesh = new QPushButton("Auto Mesh", toolBar);
-  connect(pbAutoMesh, SIGNAL(toggled(bool)), trv, SLOT(toggleAutoMesh(bool)));
-  pbAutoMesh->setToggleButton(true);
+//   QPushButton *pbAutoMesh = new QPushButton("Auto Mesh", toolBar);
+//   connect(pbAutoMesh, SIGNAL(toggled(bool)), trv, SLOT(toggleAutoMesh(bool)));
+//   pbAutoMesh->setToggleButton(true);
   addToolBar(toolBar, "Controls");
   
   QToolBar *tbTrProps = new QToolBar(this);
@@ -103,6 +103,7 @@ void TrFrame::onChangeSizes() {
 
 void TrFrame::mesh() {
   trv->onMesh();
+  update();
 }
 
 void TrFrame::setStatus(int x, int y) {
@@ -115,7 +116,7 @@ void TrFrame::setStatus(int x, int y) {
 }
 
 TrViewer::TrViewer(TrFrame *f, QWidget *parent) : 
-  QWidget(parent), auto_mesh(false)
+  QWidget(parent)//, auto_mesh(false)
 {
   frame = f;
   mesh= new Msh();
@@ -249,9 +250,10 @@ void TrViewer::mouseReleaseEvent(QMouseEvent *me) {
       Msh::Point p2(endx, endy); //mesh->insert(p2);
       mesh->insert(p1, p2);
     }
-    if(auto_mesh)
-      mesh->refine_mesh();
     update();
+    /*    if(auto_mesh)
+	  mesh->refine_mesh();*/
+    //    update();
   }
 }
 
@@ -266,14 +268,15 @@ void TrViewer::keyPressEvent(QKeyEvent *ke) {
 void TrViewer::onMesh(){
   try {
     mesh->refine_mesh();
+    update();
   } catch(...) {
     cerr<<"CGAL threw an exception"<<endl;
   }
 }
 
-void TrViewer::toggleAutoMesh(bool b) {
-  auto_mesh=b;
-}
+// void TrViewer::toggleAutoMesh(bool b) {
+//   auto_mesh=b;
+// }
 
 // moc_source_file: viewer.h
 #include "viewer.moc"
