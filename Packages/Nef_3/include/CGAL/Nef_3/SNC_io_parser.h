@@ -365,7 +365,6 @@ class sort_sfaces : public SNC_decorator<T> {
     moreLeft<Base> ml((Base) *this);
     Vector_3 plus(1,0,0);
 
-    CGAL_assertion_code(SVertex_handle sv);
     SFace_cycle_iterator fc;
   
     TRACEN("  sface 1");

@@ -127,6 +127,7 @@ class SNC_point_locator_by_spatial_subdivision :
   typedef typename SNC_decorator::Decorator_traits Decorator_traits;
   typedef typename Decorator_traits::SM_decorator SM_decorator;
   typedef CGAL::SNC_intersection<SNC_structure> SNC_intersection;
+  typedef typename SNC_decorator::SM_point_locator SM_point_locator;
   typedef typename SNC_decorator::Kernel Kernel;
 
 public:
@@ -152,6 +153,8 @@ public:
   typedef typename Decorator_traits::Vertex_handle Vertex_handle;
   typedef typename Decorator_traits::Halfedge_handle Halfedge_handle;
   typedef typename Decorator_traits::Halffacet_handle Halffacet_handle;
+  typedef typename Decorator_traits::SHalfedge_handle SHalfedge_handle;
+  typedef typename Decorator_traits::SFace_handle SFace_handle;
   typedef typename Decorator_traits::Vertex_iterator Vertex_iterator;
   typedef typename Decorator_traits::Halfedge_iterator Halfedge_iterator;
   typedef typename Decorator_traits::Halffacet_iterator Halffacet_iterator;
@@ -341,7 +344,6 @@ public:
   }
 
   virtual Object_handle locate( const Point_3& p) const {
-
     if(Infi_box::extended_kernel()) {
     TIMER(pl_t.start());
     CGAL_assertion( initialized);
@@ -357,8 +359,7 @@ public:
     while( !found && o != candidates.end()) {
       if( CGAL::assign( v, *o)) {
         if ( p == point(v)) {
-          _TRACEN("found on vertex "<<point(v));
-          result = Object_handle(v);
+          _TRACEN("found on vertex "<<point(v))          result = Object_handle(v);
           found = true;
         }
       }
@@ -400,7 +401,6 @@ public:
     return result;
 
   } else {   // standard kernel
-
     CGAL_assertion( initialized);
     _TRACEN( "locate "<<p);
     typename SNC_structure::FT min_distance;
@@ -415,7 +415,7 @@ public:
 
     if(candidates.empty())
       return Base(*this).volumes_begin();
-
+   
     CGAL::assign(v,*o);
     CGAL_assertion(CGAL::assign(v,*o));
     if(p==point(v))
@@ -440,11 +440,13 @@ public:
     Segment_3 s(p,point(v));
     Point_3 ip;
 
+    Object_list_iterator ox(o);
     for(;o!=candidates.end();++o) {
       if( CGAL::assign( e, *o)) {
+	Segment_3 ss(e->source()->point(),e->twin()->source()->point());
 	TRACEN("test edge " << e->source()->point() << "->" << e->twin()->source()->point());
-        if (is.does_contain_internally(Segment_3(e->source()->point(),e->twin()->source()->point()), p) ) {
-          _TRACEN("found on edge "<<Segment_3(e->source()->point(),e->twin()->source()->point()));
+        if(is.does_contain_internally(ss, p) ) {
+          _TRACEN("found on edge "<< ss);
           return Object_handle(e);
         }
       } else if( CGAL::assign( f, *o)) {
@@ -454,7 +456,7 @@ public:
           return Object_handle(f);
         }
         if( is.does_intersect_internally(s,f,ip)) {	
-          s = Segment_3(p, ip);
+          s = Segment_3(p, normalized(ip));
 	  result = Object_handle(f);
         }
       } else CGAL_assertion_msg(false, "wrong handle type");
@@ -462,12 +464,30 @@ public:
 
     if( CGAL::assign( v, result)) {
       _TRACEN("vertex hit, obtaining volume...");
-      f = get_visible_facet( v, Ray_3(p, point(v)));
+      SM_point_locator L(&*v);
+      Object_handle so = L.locate(s.source()-s.target());
+      SFace_handle sf;
+      if(CGAL::assign(sf,so))
+        return sf->volume();
+      SHalfedge_handle se;
+      CGAL_assertion(CGAL::assign(se,so));
+      TRACEN("intersect segment " << s << " with edges");
+      for(;ox!=candidates.end();++ox) {
+	if(!CGAL::assign(e,*ox)) continue;
+	TRACEN("test edge " << e->source()->point() << "->" << e->twin()->source()->point());
+	if(is.does_intersect_internally(s,Segment_3(e->source()->point(),e->twin()->source()->point()),ip)) {
+	  s = Segment_3(p, normalized(ip));
+	  result = Object_handle(e);
+        }
+      }
+      CGAL_assertion(CGAL::assign(e,result));
+      CGAL::assign(e,result);
+      f = get_visible_facet(e, Ray_3(p, s.target()));	
       if( f != Halffacet_handle())
-        return volume(f);
+	return f->incident_volume();
       SM_decorator SD(&*v); // now, the vertex has no incident facets
       CGAL_assertion( SD.number_of_sfaces() == 1);
-      return volume(SD.sfaces_begin());
+      return volume(SD.sfaces_begin());      
     } else if( CGAL::assign( f, result)) {
       _TRACEN("facet hit, obtaining volume...");
       if(f->plane().oriented_side(p) == ON_NEGATIVE_SIDE)
@@ -668,7 +688,7 @@ private:
       _TRACEN("vertex hit, obtaining volume...");
       f_below = get_visible_facet( v, ray);
       if( f_below != Halffacet_handle())
-        return volume(f_below);
+        return f_below->incident_volume();
       SM_decorator SD(&*v); // now, the vertex has no incident facets
       CGAL_assertion( SD.number_of_sfaces() == 1);
       return volume(SD.sfaces_begin());
@@ -677,7 +697,7 @@ private:
       _TRACEN("edge hit, obtaining volume...");
       f_below = get_visible_facet( e, ray);
       if( f_below != Halffacet_handle())
-        return volume(f_below);
+        return f_below->incident_volume();
       CGAL_assertion_code(SM_decorator SD(&*source(e))); // now, the edge has no incident facets
       CGAL_assertion(SD.is_isolated(e));
       return volume(sface(e));
@@ -686,7 +706,7 @@ private:
       _TRACEN("facet hit, obtaining volume...");
       f_below = get_visible_facet(f, ray);
       CGAL_assertion( f_below != Halffacet_handle());
-      return volume(f_below);
+      return f_below_incident_volume();
     }
     return Base(*this).volumes_begin(); // TODO: Comment this hack!
   }

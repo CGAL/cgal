@@ -531,6 +531,13 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 
     SFace_handle sf;
     if(!CGAL::assign(sf,o)) {
+      SHalfedge_handle se;
+      if(CGAL::assign(se,o))
+	std::cerr << "on sedge " << PH(se) 
+		  << " on facet " << se->facet()->plane() << std::endl;
+      SVertex_handle sv;
+      if(CGAL::assign(sv,o))
+	std::cerr << "on svertex " << sv->point() << std::endl; 
       CGAL_assertion_msg( 0, "it is not possible to decide which one is a visible facet (if any)");
       return Halffacet_handle();
     }
@@ -1033,6 +1040,10 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     timer_binary_operation.start();
 #endif 
 
+#ifdef CGAL_NEF3_TIMER_SPHERE_SWEEPS
+    timer_sphere_sweeps.reset();
+#endif
+
     Unique_hash_map<Vertex_const_handle, bool> ignore(false);
     Vertex_const_iterator v0;
 
@@ -1061,6 +1072,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       TRACEN("Locating point " << p0);
 
 #ifdef CGAL_NEF3_TIMER_POINT_LOCATION
+      timer_point_location.reset();
       number_of_point_location_queries++;
       timer_point_location.start();
 #endif 
@@ -1070,6 +1082,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 #endif 
     
 #if defined(CGAL_NEF3_TIMER_OVERLAY)
+      timer_overlay.reset();
       timer_overlay.start();
 #endif
       if( CGAL::assign( v, o)) {

@@ -1222,9 +1222,8 @@ public:
       //    progress++;
       Sphere_circle c(circle(e));
       Plane_3 h = c.plane_through(point(vertex(e)));
-      SM_decorator SD(&*vertex(e));
-      TRACEN("\n" << point(target(SD.source(e))) <<" - "<< point(vertex(e)) <<" - "<< 
-	     point(target(SD.target(e))) << 
+      TRACEN("\n" << point(target(e->source())) <<" - "<< point(vertex(e)) <<" - "<< 
+	     point(target(e->twin()->source())) << 
 	     " has plane " << h << " has circle " << circle(e) << 
 	     " has signum " << sign_of(h));
       if ( sign_of(h)<0 ) continue;
