@@ -134,7 +134,7 @@ protected:
   
   void init_tds()
     {
-      infinite = (Vertex*) _tds.insert_outside_affine_hull(Vertex(Point(500,500,500)));
+      infinite = (Vertex*) _tds.insert_increase_dimension(Vertex(Point(500,500,500)));
       // forces the compiler to instanciate debug :
       handle2pointer( infinite ); 
       handle2pointer( Cell_handle() );
@@ -148,10 +148,10 @@ protected:
     : _tds(), _gt()
     {
       init_tds();
-      insert_outside_affine_hull(p0);
-      insert_outside_affine_hull(p1);
-      insert_outside_affine_hull(p2);
-      insert_outside_affine_hull(p3);
+      insert_increase_dimension(p0);
+      insert_increase_dimension(p1);
+      insert_increase_dimension(p2);
+      insert_increase_dimension(p3);
     } 
 
 public:
@@ -1925,7 +1925,7 @@ public:
     case CELL:
       return insert_in_cell(p, c);
     case OUTSIDE_CONVEX_HULL:
-      return insert_outside_convex_hull(p, c, li, lj);
+      return insert_outside_convex_hull(p, c);
     case OUTSIDE_AFFINE_HULL:
       return insert_outside_affine_hull(p);
     }
@@ -1949,7 +1949,7 @@ public:
     case CELL:
       return insert_in_cell(p, c);
     case OUTSIDE_CONVEX_HULL:
-      return insert_outside_convex_hull(p, c, li, lj);
+      return insert_outside_convex_hull(p, c);
     case OUTSIDE_AFFINE_HULL:
       return insert_outside_affine_hull(p);
     }
@@ -2021,8 +2021,9 @@ public:
   insert_in_cell(const Point & p, Cell_handle c)
   {
     CGAL_triangulation_precondition( dimension() == 3 );
-    Locate_type lt;
-    int i,j;
+    CGAL_triangulation_precondition_code
+      ( Locate_type lt;
+	int i; int j; )
     CGAL_triangulation_precondition
       ( side_of_tetrahedron( p, 
 			     c->vertex(0)->point(),
@@ -2053,8 +2054,9 @@ public:
       CGAL_triangulation_assertion( false );
       // return ?
     }
-    Locate_type lt;
-    int li,lj; 
+    CGAL_triangulation_precondition_code
+      ( Locate_type lt;
+	int li; int lj; )
     CGAL_triangulation_precondition
       ( (geom_traits().orientation( p, 
 			   c->vertex((i+1)&3)->point(),
@@ -2088,8 +2090,9 @@ public:
 	  ( ( i == 0 || i == 1 || i == 2 || i == 3 ) &&
 	    ( j == 0 || j == 1 || j == 2 || j == 3 ) );
 	CGAL_triangulation_precondition( ! is_infinite(c,i,j) );
-	Locate_type lt;
-	int li;
+	CGAL_triangulation_precondition_code
+	  ( Locate_type lt;
+	    int li; )
 	CGAL_triangulation_precondition
 	  ( geom_traits().collinear( c->vertex(i)->point(),
 				     p,
@@ -2108,8 +2111,9 @@ public:
 	  ( ( i == 0 || i == 1 || i == 2 ) &&
 	    ( j == 0 || j == 1 || j == 2 ) );
 	CGAL_triangulation_precondition( ! is_infinite(c,i,j) );
-	Locate_type lt;
-	int li;
+	CGAL_triangulation_precondition_code
+	  ( Locate_type lt;
+	    int li; )
 	CGAL_triangulation_precondition
 	  ( geom_traits().collinear( c->vertex(i)->point(),
 				     p,
@@ -2126,8 +2130,9 @@ public:
       {
 	CGAL_triangulation_precondition( ( i == 0 || i == 1 ) &&
 					 ( j == 0 || j == 1 ) );
-	int li;
-	Locate_type lt;
+	CGAL_triangulation_precondition_code
+	  ( int li;
+	    Locate_type lt; )
 	CGAL_triangulation_precondition( side_of_edge(p,c,lt,li)
 					 == ON_BOUNDED_SIDE );
 	break;
@@ -2147,8 +2152,8 @@ public:
   }
   
   Vertex_handle
-  insert_outside_convex_hull(const Point & p, Cell_handle c, 
-			     int li, int lj=0)
+  insert_outside_convex_hull(const Point & p, Cell_handle c)
+    //			     int li, int lj=0)
     // c is an infinite cell containing p
     // whose facet li lies on the convex hull boundary
     // and separates p from the triangulation (in dimension 3)
@@ -2371,8 +2376,9 @@ public:
     switch ( dimension() ) {
     case 1:
       {
-	Cell_handle c = infinite_cell();
-	Cell_handle n = c->neighbor(c->index(infinite_vertex()));
+	CGAL_triangulation_precondition_code
+	  ( Cell_handle c = infinite_cell();
+	    Cell_handle n = c->neighbor(c->index(infinite_vertex())); )
 	CGAL_triangulation_precondition
 	  ( ! geom_traits().collinear(p,
 			     n->vertex(0)->point(),
@@ -2402,9 +2408,9 @@ public:
       break;
     }
 
-    return( (Vertex*) _tds.insert_outside_affine_hull( Vertex(p), 
-							&(*infinite_vertex()), 
-							reorient));
+    return( (Vertex*) _tds.insert_increase_dimension( Vertex(p), 
+						      &(*infinite_vertex()), 
+						      reorient));
   }
 
 

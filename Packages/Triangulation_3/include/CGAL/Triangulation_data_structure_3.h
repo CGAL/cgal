@@ -109,7 +109,7 @@ public:
   Triangulation_data_structure_3(const Vertex & v)
     : _dimension(-2), _number_of_vertices(0), _list_of_cells()
   {
-    insert_outside_affine_hull(v);
+    insert_increase_dimension(v);
     //    CGAL_triangulation_postcondition( is_valid() );
   }
 
@@ -612,7 +612,7 @@ public:
   }// end insert_in_edge
 
 
-  Vertex * insert_outside_affine_hull(const Vertex & w, // new vertex
+  Vertex * insert_increase_dimension(const Vertex & w, // new vertex
 				  Vertex* star = NULL,
 				  bool reorient = false) 
     // star = vertex from which we triangulate the facet of the incremented dimension
@@ -868,7 +868,7 @@ public:
     }// end switch
     
     return v;
-  } // end insert_outside_affine_hull
+  } // end insert_increase_dimension
 
   // for Delaunay :
   void star_region( set<void*, less<void*> > & region, Vertex* v,
