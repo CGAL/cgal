@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
   CGAL::Drawable_triangulation_3<Delaunay_3> dtr(tr,CGAL::PURPLE);
   W.add_drawable(&dtr,1);
  W.main_loop();
-
+ return 0;
 }
 
 	  

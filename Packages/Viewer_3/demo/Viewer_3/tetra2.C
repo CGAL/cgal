@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
     c=change(c);
   }
  W.main_loop();
-
+ return 0;
 }
 
 	  
