@@ -523,6 +523,13 @@ namespace CGALi {
     CC_iterator(const iterator &it)
     : p(&*it) {}
 
+    // Same for assignment operator (otherwise MipsPro warns)
+    CC_iterator & operator=(const iterator &it)
+    {
+      p = it.p;
+      return *this;
+    }
+
   private:
 
     pointer p;
