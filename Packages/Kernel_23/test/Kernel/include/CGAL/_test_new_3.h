@@ -673,6 +673,7 @@ test_new_3(const R& rep)
   use(tmp8a); use(tmp8b); use(tmp3); use(tmp3a);
   use(tmp9); use(tmp14a); use(tmp5); use(tmp6);
   use(tmp7); use(tmp71); use(sp1a); use(tmp72);
+  use(tmp12a); use(tmp12b);
 
   return true;
 }
