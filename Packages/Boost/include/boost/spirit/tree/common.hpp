@@ -18,6 +18,7 @@
 #if defined(BOOST_SPIRIT_DEBUG) && \
     (BOOST_SPIRIT_DEBUG_FLAGS_NODES & BOOST_SPIRIT_DEBUG_FLAGS_TREES)
 #include <iostream>
+#include <boost/spirit/debug/debug_node.hpp>
 #endif
 
 namespace boost { namespace spirit {
@@ -200,10 +201,10 @@ inline std::ostream&
 operator<<(std::ostream& o, node_iter_data<IteratorT, ValueT> const& n)
 {
     o << "(id = " << n.id() << " text = \"";
-    typedef
-        typename boost::detail::iterator_traits<IteratorT>::value_type
+    typedef typename node_iter_data<IteratorT, ValueT>::const_iterator_t
         iterator_t;
-    std::copy(n.begin(), n.end(), std::ostream_iterator<iterator_t>(o));
+    for (iterator_t it = n.begin(); it != n.end(); ++it)
+        impl::token_printer(o, *it);
     o << "\" is_root = " << n.is_root()
         << " value = " << n.value() << ")";
     return o;
@@ -323,10 +324,10 @@ inline std::ostream&
 operator<<(std::ostream& o, node_val_data<IteratorT, ValueT> const& n)
 {
     o << "(id = " << n.id() << " text = \"";
-    typedef
-        typename boost::detail::iterator_traits<IteratorT>::value_type
+    typedef typename node_val_data<IteratorT, ValueT>::const_iterator_t
         iterator_t;
-    std::copy(n.begin(), n.end(), std::ostream_iterator<iterator_t>(o));
+    for (iterator_t it = n.begin(); it != n.end(); ++it)
+        impl::token_printer(o, *it);
     o << "\" is_root = " << n.is_root()
         << " value = " << n.value() << ")";
     return o;
@@ -641,7 +642,7 @@ template <
     typename NodeFactoryT,
     typename TreePolicyT
 >
-struct common_tree_match_policy
+struct common_tree_match_policy : public match_policy
 {
     template <typename T>
     struct result { typedef tree_match<IteratorT, NodeFactoryT, T> type; };
@@ -664,11 +665,13 @@ struct common_tree_match_policy
     {
 #if defined(BOOST_SPIRIT_DEBUG) && \
     (BOOST_SPIRIT_DEBUG_FLAGS_NODES & BOOST_SPIRIT_DEBUG_FLAGS_TREES)
-        BOOST_SPIRIT_DEBUG_OUT << "create_node.  creating node"
-            " text: \"";
+
+        BOOST_SPIRIT_DEBUG_OUT << ">>> create_node(begin) <<<\n" 
+            "creating node text: \"";
         for (Iterator1T it = first; it != last; ++it)
-            BOOST_SPIRIT_DEBUG_OUT << *it;
-        BOOST_SPIRIT_DEBUG_OUT << "\"" << std::endl;
+            impl::token_printer(BOOST_SPIRIT_DEBUG_OUT, *it);
+        BOOST_SPIRIT_DEBUG_OUT << "\"\n";
+        BOOST_SPIRIT_DEBUG_OUT << ">>> create_node(end) <<<\n"; 
 #endif
         return tree_match<IteratorT, NodeFactoryT, AttrT>(length, val,
             tree_policy_t::create_node(length, first, last, true));
@@ -677,6 +680,14 @@ struct common_tree_match_policy
     template <typename Match1T, typename Match2T>
     static void concat_match(Match1T& a, Match2T const& b)
     {
+#if defined(BOOST_SPIRIT_DEBUG) && \
+    (BOOST_SPIRIT_DEBUG_FLAGS & BOOST_SPIRIT_DEBUG_FLAGS_TREES)
+
+        BOOST_SPIRIT_DEBUG_OUT << ">>> concat_match(begin) <<<\n";
+        BOOST_SPIRIT_DEBUG_OUT << "tree a:\n" << a << "\n";
+        BOOST_SPIRIT_DEBUG_OUT << "tree b:\n" << b << "\n";
+        BOOST_SPIRIT_DEBUG_OUT << ">>> concat_match(end) <<<\n";
+#endif
         BOOST_SPIRIT_ASSERT(a && b);
         if (a.length() == 0)
         {
@@ -699,7 +710,25 @@ struct common_tree_match_policy
         IteratorT2 const&   first,
         IteratorT2 const&   last) const
     {
+        if (!m) return;
+        
+#if defined(BOOST_SPIRIT_DEBUG) && \
+    (BOOST_SPIRIT_DEBUG_FLAGS & BOOST_SPIRIT_DEBUG_FLAGS_TREES)
+
+        BOOST_SPIRIT_DEBUG_OUT << ">>> group_match(begin) <<<\n"
+            "new node(" << id << ") \"";
+        for (IteratorT2 it = first; it != last; ++it)
+            impl::token_printer(BOOST_SPIRIT_DEBUG_OUT, *it);
+        BOOST_SPIRIT_DEBUG_OUT << "\"\n";
+        BOOST_SPIRIT_DEBUG_OUT << "new child tree (before grouping):\n" << m << "\n";
+
         tree_policy_t::group_match(m, id, first, last);
+
+        BOOST_SPIRIT_DEBUG_OUT << "new child tree (after grouping):\n" << m << "\n";
+        BOOST_SPIRIT_DEBUG_OUT << ">>> group_match(end) <<<\n";
+#else
+        tree_policy_t::group_match(m, id, first, last);
+#endif
     }
 };
 
@@ -763,7 +792,7 @@ struct no_tree_gen_node_parser
             action_policy_t
         > policies_t;
 
-        return this->subject().parse(scanner.change_policies(policies_t()));
+        return this->subject().parse(scanner.change_policies(policies_t(scanner)));
     }
 };
 

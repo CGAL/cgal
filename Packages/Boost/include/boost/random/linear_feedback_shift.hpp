@@ -1,14 +1,9 @@
 /* boost random/tausworthe.hpp header file
  *
  * Copyright Jens Maurer 2002
- * Permission to use, copy, modify, sell, and distribute this software
- * is hereby granted without fee provided that the above copyright notice
- * appears in all copies and that both that copyright notice and this
- * permission notice appear in supporting documentation,
- *
- * Jens Maurer makes no representations about the suitability of this
- * software for any purpose. It is provided "as is" without express or
- * implied warranty.
+ * Distributed under the Boost Software License, Version 1.0. (See
+ * accompanying file LICENSE_1_0.txt or copy at
+ * http://www.boost.org/LICENSE_1_0.txt)
  *
  * See http://www.boost.org for most recent version including documentation.
  *
@@ -22,6 +17,7 @@
 #include <iostream>
 #include <cassert>
 #include <stdexcept>
+#include <boost/config.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/limits.hpp>
 
@@ -41,8 +37,8 @@ public:
   BOOST_STATIC_CONSTANT(int, exponent2 = q);
   BOOST_STATIC_CONSTANT(int, step_size = s);
 
-  result_type min() const { return 0; }
-  result_type max() const { return wordmask; }
+  result_type min BOOST_PREVENT_MACRO_SUBSTITUTION () const { return 0; }
+  result_type max BOOST_PREVENT_MACRO_SUBSTITUTION () const { return wordmask; }
 
   // MSVC 6 and possibly others crash when encountering complicated integral
   // constant expressions.  Avoid the checks for now.
@@ -80,7 +76,7 @@ public:
     seed(first, last);
   }
 
-  void seed(UIntType s0) { assert(s0 >= (1 << (w-k))); value = s0; }
+  void seed(UIntType s0 = 341) { assert(s0 >= (1 << (w-k))); value = s0; }
   template<class It> void seed(It& first, It last)
   {
     if(first == last)

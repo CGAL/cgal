@@ -1,14 +1,9 @@
 /* boost random/linear_congruential.hpp header file
  *
  * Copyright Jens Maurer 2000-2001
- * Permission to use, copy, modify, sell, and distribute this software
- * is hereby granted without fee provided that the above copyright notice
- * appears in all copies and that both that copyright notice and this
- * permission notice appear in supporting documentation,
- *
- * Jens Maurer makes no representations about the suitability of this
- * software for any purpose. It is provided "as is" without express or
- * implied warranty.
+ * Distributed under the Boost Software License, Version 1.0. (See
+ * accompanying file LICENSE_1_0.txt or copy at
+ * http://www.boost.org/LICENSE_1_0.txt)
  *
  * See http://www.boost.org for most recent version including documentation.
  *
@@ -88,8 +83,8 @@ public:
     _x = (_modulus ? (value % _modulus) : value);
   }
 
-  result_type min() const { return c == 0 ? 1 : 0; }
-  result_type max() const { return modulus-1; }
+  result_type min BOOST_PREVENT_MACRO_SUBSTITUTION () const { return c == 0 ? 1 : 0; }
+  result_type max BOOST_PREVENT_MACRO_SUBSTITUTION () const { return modulus-1; }
 
   IntType operator()()
   {
@@ -209,18 +204,18 @@ public:
 #else
   enum { has_fixed_range = false };
 #endif
-  int32_t min() const { return 0; }
-  int32_t max() const { return std::numeric_limits<int32_t>::max(); }
+  int32_t min BOOST_PREVENT_MACRO_SUBSTITUTION () const { return 0; }
+  int32_t max BOOST_PREVENT_MACRO_SUBSTITUTION () const { return std::numeric_limits<int32_t>::max BOOST_PREVENT_MACRO_SUBSTITUTION (); }
   
   explicit rand48(int32_t x0 = 1) : lcf(cnv(x0)) { }
   explicit rand48(uint64_t x0) : lcf(x0) { }
   template<class It> rand48(It& first, It last) : lcf(first, last) { }
   // compiler-generated copy ctor and assignment operator are fine
-  void seed(int32_t x0) { lcf.seed(cnv(x0)); }
+  void seed(int32_t x0 = 1) { lcf.seed(cnv(x0)); }
   void seed(uint64_t x0) { lcf.seed(x0); }
   template<class It> void seed(It& first, It last) { lcf.seed(first,last); }
 
-  int32_t operator()() { return lcf() >> 17; }
+  int32_t operator()() { return static_cast<int32_t>(lcf() >> 17); }
   // by experiment from lrand48()
   static bool validation(int32_t x) { return x == 1993516219; }
 

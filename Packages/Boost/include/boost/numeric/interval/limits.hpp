@@ -1,17 +1,11 @@
 /* Boost interval/limits.hpp template implementation file
  *
- * Copyright Jens Maurer 2000
- * Copyright Hervé Brönnimann, Guillaume Melquiond, Sylvain Pion 2002-2003
- * Permission to use, copy, modify, sell, and distribute this software
- * is hereby granted without fee provided that the above copyright notice
- * appears in all copies and that both that copyright notice and this
- * permission notice appear in supporting documentation.
+ * Copyright 2000 Jens Maurer
+ * Copyright 2002-2003 Hervé Brönnimann, Guillaume Melquiond, Sylvain Pion
  *
- * None of the above authors nor Polytechnic University make any
- * representation about the suitability of this software for any
- * purpose. It is provided "as is" without express or implied warranty.
- *
- * $Id$
+ * Distributed under the Boost Software License, Version 1.0.
+ * (See accompanying file LICENSE_1_0.txt or
+ * copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 
 #ifndef BOOST_NUMERIC_INTERVAL_LIMITS_HPP
@@ -33,8 +27,8 @@ private:
   typedef boost::numeric::interval<T, Policies> I;
   typedef numeric_limits<T> bl;
 public:
-  static I min() throw() { return I(bl::min(), bl::min()); }
-  static I max() throw() { return I(bl::max(), bl::max()); }
+  static I min BOOST_PREVENT_MACRO_SUBSTITUTION () throw() { return I((bl::min)(), (bl::min)()); }
+  static I max BOOST_PREVENT_MACRO_SUBSTITUTION () throw() { return I((bl::max)(), (bl::max)()); }
   static I epsilon() throw() { return I(bl::epsilon(), bl::epsilon()); }
 
   BOOST_STATIC_CONSTANT(float_round_style, round_style = round_indeterminate);

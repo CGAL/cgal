@@ -39,6 +39,16 @@ namespace gregorian {
     return date_time::parse_date<date>(s, date_time::ymd_order_dmy);
   }
   
+  //! From iso type date string where with order year-month-day eg: 20020125
+  inline date from_undelimited_string(std::string s) {
+    return date_time::parse_undelimited_date<date>(s);
+  }
+
+  //! From iso type date string where with order year-month-day eg: 20020125
+  inline date date_from_iso_string(const std::string& s) {
+    return date_time::parse_undelimited_date<date>(s);
+  }
+
 #if !(defined(BOOST_NO_STD_ITERATOR_TRAITS))
   //! Stream should hold a date in the form of: 2002-1-25. Month number, abbrev, or name are accepted
   /* Arguments passed in by-value for convertability of char[] 
@@ -51,40 +61,25 @@ namespace gregorian {
       return date(not_a_date_time);
     }
     typedef typename std::iterator_traits<iterator_type>::value_type value_type;
-    std::string s = date_time::from_stream_type(beg, end, value_type());
-    return date_time::parse_date<date>(s);
+    return  date_time::from_stream_type<date>(beg, end, value_type());
   }
 #endif //BOOST_NO_STD_ITERATOR_TRAITS
-
-  //! From iso type date string where with order year-month-day eg: 20020125
-  inline date from_undelimited_string(std::string s) {
-    return date_time::parse_undelimited_date<date>(s);
+  
+#if (defined(_MSC_VER) && (_MSC_VER <= 1200))
+    // This function cannot be compiled with MSVC 6.0 due to internal compiler shorcomings
+#else
+  //! Function to parse a date_period from a string (eg: [2003-Oct-31/2003-Dec-25])
+  inline date_period date_period_from_string(const std::string& s){
+    return date_time::from_simple_string_type<date,char>(s);
   }
+#if !defined(BOOST_NO_STD_WSTRING)
+  //! Function to parse a date_period from a wstring (eg: [2003-Oct-31/2003-Dec-25])
+  inline date_period date_period_from_wstring(const std::wstring& s){
+    return date_time::from_simple_string_type<date,wchar_t>(s);
+  }
+#endif // BOOST_NO_STD_WSTRING
+#endif // _MSC_VER <= 1200
 
 } } //namespace gregorian
 
-  
-    
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #endif
-

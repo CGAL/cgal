@@ -1,4 +1,4 @@
-// Copyright (C) 2001 Jeremy Siek, Doug Gregor, Brian Osman
+// Copyright (C) 2001 Jeremy Siek, Douglas Gregor, Brian Osman
 //
 // Permission to copy, use, sell and distribute this software is granted
 // provided this copyright notice appears in all copies.
@@ -15,6 +15,7 @@
 #include <vector>
 #include <iterator>
 #include <algorithm>
+#include <boost/config.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/utility.hpp>
 #include <boost/detail/algorithm.hpp>
@@ -106,13 +107,13 @@ namespace boost {
           : G1(G1), dfs_num(dfs_num) { }
         bool operator()(const edge1_t& e1, const edge1_t& e2) const {
           using namespace std;
-          vertex1_t u1 = dfs_num[source(e1,G1)], v1 = dfs_num[target(e1,G1)];
-          vertex1_t u2 = dfs_num[source(e2,G1)], v2 = dfs_num[target(e2,G1)];
-          int m1 = max(u1, v1);
-          int m2 = max(u2, v2);
+          int u1 = dfs_num[source(e1,G1)], v1 = dfs_num[target(e1,G1)];
+          int u2 = dfs_num[source(e2,G1)], v2 = dfs_num[target(e2,G1)];
+          int m1 = (max)(u1, v1);
+          int m2 = (max)(u2, v2);
           // lexicographical comparison 
-          return make_pair(m1, make_pair(u1, v1))
-            < make_pair(m2, make_pair(u2, v2));
+          return std::make_pair(m1, std::make_pair(u1, v1))
+            < std::make_pair(m2, std::make_pair(u2, v2));
         }
         const Graph1& G1;
         DFSNumMap dfs_num;
@@ -239,7 +240,8 @@ namespace boost {
                 f[j] = v;
                 in_S[v] = true;
                 num_edges_on_k = 1;
-                int next_k = std::max(dfs_num_k, std::max(dfs_num[i], dfs_num[j]));
+                BOOST_USING_STD_MAX();
+                int next_k = max BOOST_PREVENT_MACRO_SUBSTITUTION(dfs_num_k, max BOOST_PREVENT_MACRO_SUBSTITUTION(dfs_num[i], dfs_num[j]));
                 if (match(next(iter), next_k))
                   return true;
                 in_S[v] = false;
@@ -294,7 +296,7 @@ namespace boost {
         + get(m_in_degree_map, v);
     }
     // The largest possible vertex invariant number
-    size_type max() const { 
+    size_type max BOOST_PREVENT_MACRO_SUBSTITUTION () const { 
       return num_vertices(m_g) * num_vertices(m_g) + num_vertices(m_g);
     }
   private:
@@ -390,7 +392,7 @@ namespace boost {
       return isomorphism(G1, G2, f,
                          choose_param(get_param(params, vertex_invariant1_t()), invariant1),
                          choose_param(get_param(params, vertex_invariant2_t()), invariant2),
-                         choose_param(get_param(params, vertex_max_invariant_t()), invariant2.max()),
+                         choose_param(get_param(params, vertex_max_invariant_t()), (invariant2.max)()),
                          index_map1, index_map2
                          );  
     }  

@@ -1,16 +1,10 @@
 /* Boost interval/detail/test_input.hpp file
  *
- * Copyright Hervé Brönnimann, Guillaume Melquiond, Sylvain Pion 2002
- * Permission to use, copy, modify, sell, and distribute this software
- * is hereby granted without fee provided that the above copyright notice
- * appears in all copies and that both that copyright notice and this
- * permission notice appear in supporting documentation,
+ * Copyright 2002 Hervé Brönnimann, Guillaume Melquiond, Sylvain Pion
  *
- * None of the above authors nor Polytechnic University make any
- * representation about the suitability of this software for any
- * purpose. It is provided "as is" without express or implied warranty.
- *
- * $Id$
+ * Distributed under the Boost Software License, Version 1.0.
+ * (See accompanying file LICENSE_1_0.txt or
+ * copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 
 #ifndef BOOST_NUMERIC_INTERVAL_DETAIL_TEST_INPUT_HPP
@@ -21,16 +15,20 @@
 namespace boost {
 namespace numeric {
 namespace interval_lib {
+namespace user {
+
+template<class T> inline
+bool is_zero(T const &v) { return v == static_cast<T>(0); }
+
+template<class T> inline
+bool is_neg (T const &v) { return v <  static_cast<T>(0); }
+
+template<class T> inline
+bool is_pos (T const &v) { return v >  static_cast<T>(0); }
+
+} // namespace user
+
 namespace detail {
-
-template<class T> inline
-bool is_neg(const T& x) { return x < static_cast<T>(0); }
-
-template<class T> inline
-bool is_zero(const T& x) { return x == static_cast<T>(0); }
-
-template<class T> inline
-bool is_pos(const T& x) { return x > static_cast<T>(0); }
 
 template<class T, class Policies> inline
 bool test_input(const interval<T, Policies>& x) {

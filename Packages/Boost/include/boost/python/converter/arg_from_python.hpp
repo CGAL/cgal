@@ -1,8 +1,7 @@
-// Copyright David Abrahams 2002. Permission to copy, use,
-// modify, sell and distribute this software is granted provided this
-// copyright notice appears in all copies. This software is provided
-// "as is" without express or implied warranty, and with no claim as
-// to its suitability for any purpose.
+// Copyright David Abrahams 2002.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 #ifndef ARG_FROM_PYTHON_DWA2002127_HPP
 # define ARG_FROM_PYTHON_DWA2002127_HPP
 
@@ -158,15 +157,15 @@ struct select_arg_from_python
     
     BOOST_STATIC_CONSTANT(
         bool, ptr_cref
-            = boost::python::detail::is_reference_to_pointer<T>::value
-            && boost::python::detail::is_reference_to_const<T>::value
-            && !boost::python::detail::is_reference_to_volatile<T>::value);
+            = indirect_traits::is_reference_to_pointer<T>::value
+            && indirect_traits::is_reference_to_const<T>::value
+            && !indirect_traits::is_reference_to_volatile<T>::value);
 
     
     BOOST_STATIC_CONSTANT(
         bool, ref =
-            boost::python::detail::is_reference_to_non_const<T>::value
-        || boost::python::detail::is_reference_to_volatile<T>::value);
+            indirect_traits::is_reference_to_non_const<T>::value
+        || indirect_traits::is_reference_to_volatile<T>::value);
 
     BOOST_STATIC_CONSTANT(
         bool, back_ref =

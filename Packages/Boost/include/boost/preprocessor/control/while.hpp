@@ -2,10 +2,9 @@
 #  * Housemarque Oy
 #  * http://www.housemarque.com
 #  *
-#  * Permission to copy, use, modify, sell and distribute this software is
-#  * granted provided this copyright notice appears in all copies. This
-#  * software is provided "as is" without express or implied warranty, and
-#  * with no claim as to its suitability for any purpose.
+#  * Distributed under the Boost Software License, Version 1.0. (See
+#  * accompanying file LICENSE_1_0.txt or copy at
+#  * http://www.boost.org/LICENSE_1_0.txt)
 #  */
 #
 # /* Revised by Paul Mensonides (2002) */
@@ -43,6 +42,8 @@
 #    include <boost/preprocessor/control/detail/edg/while.hpp>
 # elif BOOST_PP_CONFIG_FLAGS() & BOOST_PP_CONFIG_MSVC()
 #    include <boost/preprocessor/control/detail/msvc/while.hpp>
+# elif BOOST_PP_CONFIG_FLAGS() & BOOST_PP_CONFIG_DMC()
+#    include <boost/preprocessor/control/detail/dmc/while.hpp>
 # else
 #    include <boost/preprocessor/control/detail/while.hpp>
 # endif

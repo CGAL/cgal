@@ -2,14 +2,9 @@
 
 // Copyright (C) 1999, 2000 Jaakko Järvi (jaakko.jarvi@cs.utu.fi)
 //
-// Permission to copy, use, sell and distribute this software is granted
-// provided this copyright notice appears in all copies.
-// Permission to modify the code and to distribute modified code is granted
-// provided this copyright notice appears in all copies, and a notice
-// that the code was modified is included with the copyright notice.
-//
-// This software is provided "as is" without express or implied warranty,
-// and with no claim as to its suitability for any purpose.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 
 // For more information, see http://www.boost.org
 
@@ -18,7 +13,7 @@
 // Fixed return types for get_head/get_tail
 // ( and other bugs ) per suggestion of Jens Maurer
 // simplified element type accessors + bug fix  (Jeremy Siek)
-// Several changes/additions according to suggestions by Doug Gregor,
+// Several changes/additions according to suggestions by Douglas Gregor,
 // William Kempf, Vesa Karvonen, John Max Skaller, Ed Brey, Beman Dawes,
 // David Abrahams.
 
@@ -42,6 +37,8 @@
 
 #include "boost/type_traits/cv_traits.hpp"
 #include "boost/type_traits/function_traits.hpp"
+
+#include "boost/detail/workaround.hpp" // needed for BOOST_WORKAROUND
 
 namespace boost {
 namespace tuples {
@@ -97,12 +94,22 @@ struct get_class {
   template<class RET, class HT, class TT >
   inline static RET get(const cons<HT, TT>& t)
   {
+#if BOOST_WORKAROUND(__IBMCPP__,==600)
+    // vacpp 6.0 is not very consistent regarding the member template keyword
+    // Here it generates an error when the template keyword is used.
+    return get_class<N-1>::get<RET>(t.tail);
+#else
     return get_class<N-1>::BOOST_NESTED_TEMPLATE get<RET>(t.tail);
+#endif
   }
   template<class RET, class HT, class TT >
   inline static RET get(cons<HT, TT>& t)
   {
+#if BOOST_WORKAROUND(__IBMCPP__,==600)
+    return get_class<N-1>::get<RET>(t.tail);
+#else
     return get_class<N-1>::BOOST_NESTED_TEMPLATE get<RET>(t.tail);
+#endif
   }
 };
 
@@ -128,6 +135,8 @@ struct get_class<0> {
 // Nth element ot T, first element is at index 0
 // -------------------------------------------------------
 
+#ifndef BOOST_NO_CV_SPECIALIZATIONS
+
 template<int N, class T>
 struct element
 {
@@ -149,13 +158,68 @@ private:
   typedef typename T::tail_type Next;
   typedef typename element<N-1, Next>::type unqualified_type;
 public:
+#if BOOST_WORKAROUND(__BORLANDC__,<0x600)
+  typedef const unqualified_type type;
+#else
   typedef typename boost::add_const<unqualified_type>::type type;
+#endif
+
 };
 template<class T>
 struct element<0,const T>
 {
+#if BOOST_WORKAROUND(__BORLANDC__,<0x600)
+  typedef const typename T::head_type type;
+#else
   typedef typename boost::add_const<typename T::head_type>::type type;
+#endif
 };
+
+#else // def BOOST_NO_CV_SPECIALIZATIONS
+
+namespace detail {
+
+template<int N, class T, bool IsConst>
+struct element_impl
+{
+private:
+  typedef typename T::tail_type Next;
+public:
+  typedef typename element_impl<N-1, Next, IsConst>::type type;
+};
+
+template<int N, class T>
+struct element_impl<N, T, true /* IsConst */>
+{
+private:
+  typedef typename T::tail_type Next;
+public:
+  typedef const typename element_impl<N-1, Next, true>::type type;
+};
+
+template<class T>
+struct element_impl<0, T, false /* IsConst */>
+{
+  typedef typename T::head_type type;
+};
+
+template<class T>
+struct element_impl<0, T, true /* IsConst */>
+{
+  typedef const typename T::head_type type;
+};
+
+} // end of namespace detail
+
+
+template<int N, class T>
+struct element: 
+  public detail::element_impl<N, T, ::boost::is_const<T>::value>
+{
+};
+
+#endif
+
 
 // -get function templates -----------------------------------------------
 // Usage: get<N>(aTuple)
@@ -194,11 +258,17 @@ inline typename access_traits<
                   typename element<N, cons<HT, TT> >::type
                 >::non_const_type
 get(cons<HT, TT>& c BOOST_APPEND_EXPLICIT_TEMPLATE_NON_TYPE(int, N)) {
+#if BOOST_WORKAROUND(__IBMCPP__,==600 )
+  return detail::get_class<N>::
+#else
   return detail::get_class<N>::BOOST_NESTED_TEMPLATE
+#endif
          get<
            typename access_traits<
              typename element<N, cons<HT, TT> >::type
-           >::non_const_type>(c);
+           >::non_const_type,
+           HT,TT
+         >(c);
 }
 
 // get function for const cons-lists, returns a const reference to
@@ -209,11 +279,17 @@ inline typename access_traits<
                   typename element<N, cons<HT, TT> >::type
                 >::const_type
 get(const cons<HT, TT>& c BOOST_APPEND_EXPLICIT_TEMPLATE_NON_TYPE(int, N)) {
+#if BOOST_WORKAROUND(__IBMCPP__,==600)
+  return detail::get_class<N>::
+#else
   return detail::get_class<N>::BOOST_NESTED_TEMPLATE
+#endif
          get<
            typename access_traits<
              typename element<N, cons<HT, TT> >::type
-         >::const_type>(c);
+           >::const_type,
+           HT,TT
+         >(c);
 }
 
 // -- the cons template  --------------------------------------------------

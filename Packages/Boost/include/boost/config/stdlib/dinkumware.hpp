@@ -29,7 +29,7 @@
 #     define BOOST_NO_STD_ALLOCATOR
 #  endif
 #  define BOOST_HAS_PARTIAL_STD_ALLOCATOR
-#  if (defined(_MSC_VER) && (_MSC_VER < 1300)) && !defined(__BORLANDC__)
+#  if defined(BOOST_MSVC) && (BOOST_MSVC < 1300)
       // if this lib version is set up for vc6 then there is no std::use_facet:
 #     define BOOST_NO_STD_USE_FACET
 #     define BOOST_HAS_TWO_ARG_USE_FACET
@@ -61,6 +61,15 @@
 #  endif
 #endif
 
+//
+// std extension namespace is stdext for vc7.1 and later, 
+// the same applies to other compilers that sit on top
+// of vc7.1 (Intel and Comeau):
+//
+#if defined(_MSC_VER) && (_MSC_VER >= 1310) && !defined(__BORLANDC__)
+#  define BOOST_STD_EXTENSION_NAMESPACE stdext
+#endif
+
 
 #if (defined(_MSC_VER) && (_MSC_VER <= 1300) && !defined(__BORLANDC__)) || !defined(_CPPLIB_VER) || (_CPPLIB_VER < 306)
    // if we're using a dinkum lib that's
@@ -69,7 +78,7 @@
 #  define BOOST_NO_STD_ITERATOR_TRAITS
 #endif
 
-#if defined(__ICL) && defined(_CPPLIB_VER) && (_CPPLIB_VER <= 310)
+#if defined(__ICL) && (__ICL < 800) && defined(_CPPLIB_VER) && (_CPPLIB_VER <= 310)
 // Intel C++ chokes over any non-trivial use of <locale>
 // this may be an overly restrictive define, but regex fails without it:
 #  define BOOST_NO_STD_LOCALE
@@ -86,6 +95,7 @@
 #else
 #  define BOOST_STDLIB "Dinkumware standard library version 1.x"
 #endif
+
 
 
 

@@ -1,8 +1,7 @@
-// Copyright David Abrahams 2001. Permission to copy, use,
-// modify, sell and distribute this software is granted provided this
-// copyright notice appears in all copies. This software is provided
-// "as is" without express or implied warranty, and with no claim as
-// to its suitability for any purpose.
+// Copyright David Abrahams 2001.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 #ifndef CLASS_DWA20011214_HPP
 # define CLASS_DWA20011214_HPP
 
@@ -32,7 +31,7 @@ struct BOOST_PYTHON_DECL class_base : python::api::object
 
     // Implementation detail. Hiding this in the private section would
     // require use of template friend declarations.
-    void enable_pickling(bool getstate_manages_dict);
+    void enable_pickling_(bool getstate_manages_dict);
 
  protected:
     void add_property(char const* name, object const& fget);
@@ -57,8 +56,6 @@ struct BOOST_PYTHON_DECL class_base : python::api::object
     //  setattr(self, staticmethod(getattr(self, method_name)))
     void make_method_static(const char *method_name);
 };
-
-BOOST_PYTHON_DECL void copy_class_object(type_info const& src, type_info const& dst);
 
 }}} // namespace boost::python::objects
 

@@ -343,7 +343,7 @@ template <class R, class T BOOST_PP_COMMA_IF(i) BOOST_PP_ENUM_PARAMS(i,class T)>
 struct is_mem_fun_pointer_impl<R (T::*)(BOOST_PP_ENUM_PARAMS(i,T)) > { BOOST_STATIC_CONSTANT(bool, value = true); };
 
 // Metrowerks and Visual Age think this creates ambiguities
-//: #if !((defined(__MWERKS__) && __MWERKS__ < 0x3000) || (defined(__IBMCPP__) && __IBMCPP__ <= 600))
+/// #if !((defined(__MWERKS__) && __MWERKS__ < 0x3000) || (defined(__IBMCPP__) && __IBMCPP__ <= 600))
 template <class R, class T BOOST_PP_COMMA_IF(i) BOOST_PP_ENUM_PARAMS(i,class T)>
 struct is_mem_fun_pointer_impl<R (T::*)(BOOST_PP_ENUM_PARAMS(i,T)) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
 
@@ -352,7 +352,7 @@ struct is_mem_fun_pointer_impl<R (T::*)(BOOST_PP_ENUM_PARAMS(i,T)) volatile > { 
 
 template <class R, class T BOOST_PP_COMMA_IF(i) BOOST_PP_ENUM_PARAMS(i,class T)>
 struct is_mem_fun_pointer_impl<R (T::*)(BOOST_PP_ENUM_PARAMS(i,T)) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-//: #endif
+/// #endif
 
 
 #undef i

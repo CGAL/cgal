@@ -1,14 +1,20 @@
-// preprocessed version of 'boost/mpl/aux_/fold_impl.hpp' header
-// see the original for copyright information
 
-namespace boost {
-namespace mpl {
-namespace aux {
+// Copyright Aleksey Gurtovoy 2000-2004
+//
+// Distributed under the Boost Software License, Version 1.0. 
+// (See accompanying file LICENSE_1_0.txt or copy at 
+// http://www.boost.org/LICENSE_1_0.txt)
+//
 
-// forward declaration
+// Preprocessed version of "boost/mpl/aux_/fold_impl.hpp" header
+// -- DO NOT modify by hand!
+
+namespace boost { namespace mpl { namespace aux {
+
+/// forward declaration
 
 template<
-      long N
+      int N
     , typename First
     , typename Last
     , typename State
@@ -40,8 +46,8 @@ struct fold_impl< 1,First,Last,State,ForwardOp >
 {
     typedef First iter0;
     typedef State state0;
-    typedef typename ForwardOp::template apply<state0, typename iter0::type>::type state1;
-    typedef typename iter0::next iter1;
+    typedef typename apply2< ForwardOp, state0, typename deref<iter0>::type >::type state1;
+    typedef typename mpl::next<iter0>::type iter1;
     
 
     typedef state1 state;
@@ -58,10 +64,10 @@ struct fold_impl< 2,First,Last,State,ForwardOp >
 {
     typedef First iter0;
     typedef State state0;
-    typedef typename ForwardOp::template apply<state0, typename iter0::type>::type state1;
-    typedef typename iter0::next iter1;
-    typedef typename ForwardOp::template apply<state1, typename iter1::type>::type state2;
-    typedef typename iter1::next iter2;
+    typedef typename apply2< ForwardOp, state0, typename deref<iter0>::type >::type state1;
+    typedef typename mpl::next<iter0>::type iter1;
+    typedef typename apply2< ForwardOp, state1, typename deref<iter1>::type >::type state2;
+    typedef typename mpl::next<iter1>::type iter2;
     
 
     typedef state2 state;
@@ -78,12 +84,12 @@ struct fold_impl< 3,First,Last,State,ForwardOp >
 {
     typedef First iter0;
     typedef State state0;
-    typedef typename ForwardOp::template apply<state0, typename iter0::type>::type state1;
-    typedef typename iter0::next iter1;
-    typedef typename ForwardOp::template apply<state1, typename iter1::type>::type state2;
-    typedef typename iter1::next iter2;
-    typedef typename ForwardOp::template apply<state2, typename iter2::type>::type state3;
-    typedef typename iter2::next iter3;
+    typedef typename apply2< ForwardOp, state0, typename deref<iter0>::type >::type state1;
+    typedef typename mpl::next<iter0>::type iter1;
+    typedef typename apply2< ForwardOp, state1, typename deref<iter1>::type >::type state2;
+    typedef typename mpl::next<iter1>::type iter2;
+    typedef typename apply2< ForwardOp, state2, typename deref<iter2>::type >::type state3;
+    typedef typename mpl::next<iter2>::type iter3;
     
 
     typedef state3 state;
@@ -100,14 +106,14 @@ struct fold_impl< 4,First,Last,State,ForwardOp >
 {
     typedef First iter0;
     typedef State state0;
-    typedef typename ForwardOp::template apply<state0, typename iter0::type>::type state1;
-    typedef typename iter0::next iter1;
-    typedef typename ForwardOp::template apply<state1, typename iter1::type>::type state2;
-    typedef typename iter1::next iter2;
-    typedef typename ForwardOp::template apply<state2, typename iter2::type>::type state3;
-    typedef typename iter2::next iter3;
-    typedef typename ForwardOp::template apply<state3, typename iter3::type>::type state4;
-    typedef typename iter3::next iter4;
+    typedef typename apply2< ForwardOp, state0, typename deref<iter0>::type >::type state1;
+    typedef typename mpl::next<iter0>::type iter1;
+    typedef typename apply2< ForwardOp, state1, typename deref<iter1>::type >::type state2;
+    typedef typename mpl::next<iter1>::type iter2;
+    typedef typename apply2< ForwardOp, state2, typename deref<iter2>::type >::type state3;
+    typedef typename mpl::next<iter2>::type iter3;
+    typedef typename apply2< ForwardOp, state3, typename deref<iter3>::type >::type state4;
+    typedef typename mpl::next<iter3>::type iter4;
     
 
     typedef state4 state;
@@ -115,7 +121,7 @@ struct fold_impl< 4,First,Last,State,ForwardOp >
 };
 
 template<
-      long N
+      int N
     , typename First
     , typename Last
     , typename State
@@ -152,10 +158,9 @@ template<
 struct fold_impl< -1,First,Last,State,ForwardOp >
     : fold_impl<
           -1
-        , typename First::next
+        , typename mpl::next<First>::type
         , Last
-        
-        ,typename ForwardOp::template apply<State, typename First::type>::type
+        , typename apply2<ForwardOp,State, typename deref<First>::type>::type
         , ForwardOp
         >
 {
@@ -172,6 +177,4 @@ struct fold_impl< -1,Last,Last,State,ForwardOp >
     typedef Last iterator;
 };
 
-} // namespace aux
-} // namespace mpl
-} // namespace boost
+}}}

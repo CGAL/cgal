@@ -37,59 +37,218 @@ namespace boost { namespace numeric { namespace ublas {
 #else
         // GCC 3.1, oops?!
         return norm_inf (e1 - e2) < BOOST_UBLAS_TYPE_CHECK_EPSILON *
-               std::max (real_type (std::max (real_type (norm_inf (e1)), real_type (norm_inf (e2)))),
+               (std::max) (real_type ((std::max) (real_type (norm_inf (e1)), real_type (norm_inf (e2)))),
                          real_type (BOOST_UBLAS_TYPE_CHECK_MIN));
 #endif
     }
 
-    // Restart for sparse (proxy) assignments
-    template<class E>
-    BOOST_UBLAS_INLINE
-    void restart (const matrix_expression<E> &e, typename E::size_type index1, typename E::size_type index2,
-                  typename E::const_iterator1 &it1e, typename E::const_iterator1 &it1e_end,
-                  typename E::const_iterator2 &it2e, typename E::const_iterator2 &it2e_end, row_major_tag) {
-        it1e = e ().find1 (0, index1, 0);
-        it1e_end = e ().find1 (0, e ().size1 (), 0);
-        it2e = e ().find2 (1, index1, index2);
-        it2e_end = e ().find2 (1, index1, e ().size2 ());
-        if (it2e != it2e_end && it2e.index2 () == index2)
-            ++ it2e;
-    }
-    template<class E>
-    BOOST_UBLAS_INLINE
-    void restart (const matrix_expression<E> &e, typename E::size_type index1, typename E::size_type index2,
-                  typename E::const_iterator2 &it2e, typename E::const_iterator2 &it2e_end,
-                  typename E::const_iterator1 &it1e, typename E::const_iterator1 &it1e_end, column_major_tag) {
-        it2e = e ().find2 (0, 0, index2);
-        it2e_end = e ().find2 (0, 0, e ().size2 ());
-        it1e = e ().find1 (1, index1, index2);
-        it1e_end = e ().find1 (1, e ().size1 (), index2);
-        if (it1e != it1e_end && it1e.index1 () == index1)
+
+    template<class M, class E, class F>
+    // This function seems to be big. So we do not let the compiler inline it.
+    // BOOST_UBLAS_INLINE
+    void make_conformant (M &m, const matrix_expression<E> &e, row_major_tag, F) {
+        BOOST_UBLAS_CHECK (m.size1 () == e ().size1 (), bad_size ());
+        BOOST_UBLAS_CHECK (m.size2 () == e ().size2 (), bad_size ());
+        typedef F functor_type;
+        typedef typename M::size_type size_type;
+        typedef typename M::difference_type difference_type;
+        typedef typename M::value_type value_type;
+        // FIXME unbounded_array with push_back maybe better
+        std::vector<std::pair<size_type, size_type> > index;
+        typename M::iterator1 it1 (m.begin1 ());
+        typename M::iterator1 it1_end (m.end1 ());
+        typename E::const_iterator1 it1e (e ().begin1 ());
+        typename E::const_iterator1 it1e_end (e ().end1 ());
+        while (it1 != it1_end && it1e != it1e_end) {
+            difference_type compare = it1.index1 () - it1e.index1 ();
+            if (compare == 0) {
+#ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
+                typename M::iterator2 it2 (it1.begin ());
+                typename M::iterator2 it2_end (it1.end ());
+                typename E::const_iterator2 it2e (it1e.begin ());
+                typename E::const_iterator2 it2e_end (it1e.end ());
+#else
+                typename M::iterator2 it2 (begin (it1, iterator1_tag ()));
+                typename M::iterator2 it2_end (end (it1, iterator1_tag ()));
+                typename E::const_iterator2 it2e (begin (it1e, iterator1_tag ()));
+                typename E::const_iterator2 it2e_end (end (it1e, iterator1_tag ()));
+#endif
+                if (it2 != it2_end && it2e != it2e_end) {
+                    size_type it2_index = it2.index2 (), it2e_index = it2e.index2 ();
+                    while (true) {
+                        difference_type compare = it2_index - it2e_index;
+                        if (compare == 0) {
+                            ++ it2, ++ it2e;
+                            if (it2 != it2_end && it2e != it2e_end) {
+                                it2_index = it2.index2 ();
+                                it2e_index = it2e.index2 ();
+                            } else
+                                break;
+                        } else if (compare < 0) {
+                            increment (it2, it2_end, - compare);
+                            if (it2 != it2_end)
+                                it2_index = it2.index2 ();
+                            else
+                                break;
+                        } else if (compare > 0) {
+                            if (functor_type::other (it2e.index1 (), it2e.index2 ()))
+                                if (*it2e != value_type (0))
+                                    index.push_back (std::pair<size_type, size_type> (it2e.index1 (), it2e.index2 ()));
+                            ++ it2e;
+                            if (it2e != it2e_end)
+                                it2e_index = it2e.index2 ();
+                            else
+                                break;
+                        }
+                    }
+                }
+                while (it2e != it2e_end) {
+                    if (functor_type::other (it2e.index1 (), it2e.index2 ()))
+                        if (*it2e != value_type (0))
+                            index.push_back (std::pair<size_type, size_type> (it2e.index1 (), it2e.index2 ()));
+                    ++ it2e;
+                }
+                ++ it1, ++ it1e;
+            } else if (compare < 0) {
+                increment (it1, it1_end, - compare);
+            } else if (compare > 0) {
+#ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
+                typename E::const_iterator2 it2e (it1e.begin ());
+                typename E::const_iterator2 it2e_end (it1e.end ());
+#else
+                typename E::const_iterator2 it2e (begin (it1e, iterator1_tag ()));
+                typename E::const_iterator2 it2e_end (end (it1e, iterator1_tag ()));
+#endif
+                while (it2e != it2e_end) {
+                    if (functor_type::other (it2e.index1 (), it2e.index2 ()))
+                        if (*it2e != value_type (0))
+                            index.push_back (std::pair<size_type, size_type> (it2e.index1 (), it2e.index2 ()));
+                    ++ it2e;
+                }
+                ++ it1e;
+            }
+        }
+        while (it1e != it1e_end) {
+#ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
+            typename E::const_iterator2 it2e (it1e.begin ());
+            typename E::const_iterator2 it2e_end (it1e.end ());
+#else
+            typename E::const_iterator2 it2e (begin (it1e, iterator1_tag ()));
+            typename E::const_iterator2 it2e_end (end (it1e, iterator1_tag ()));
+#endif
+            while (it2e != it2e_end) {
+                if (functor_type::other (it2e.index1 (), it2e.index2 ()))
+                    if (*it2e != value_type (0))
+                        index.push_back (std::pair<size_type, size_type> (it2e.index1 (), it2e.index2 ()));
+                ++ it2e;
+            }
             ++ it1e;
+        }
+        for (size_type k = 0; k < index.size (); ++ k)
+            m (index [k].first, index [k].second) = value_type (0);
     }
-    template<class E>
-    BOOST_UBLAS_INLINE
-    void restart (matrix_expression<E> &e, typename E::size_type index1, typename E::size_type index2,
-                  typename E::iterator1 &it1e, typename E::iterator1 &it1e_end,
-                  typename E::iterator2 &it2e, typename E::iterator2 &it2e_end, row_major_tag) {
-        it1e = e ().find1 (0, index1, 0);
-        it1e_end = e ().find1 (0, e ().size1 (), 0);
-        it2e = e ().find2 (1, index1, index2);
-        it2e_end = e ().find2 (1, index1, e ().size2 ());
-        if (it2e != it2e_end && it2e.index2 () == index2)
+    template<class M, class E, class F>
+    // This function seems to be big. So we do not let the compiler inline it.
+    // BOOST_UBLAS_INLINE
+    void make_conformant (M &m, const matrix_expression<E> &e, column_major_tag, F) {
+        BOOST_UBLAS_CHECK (m.size1 () == e ().size1 (), bad_size ());
+        BOOST_UBLAS_CHECK (m.size2 () == e ().size2 (), bad_size ());
+        typedef F functor_type;
+        typedef typename M::size_type size_type;
+        typedef typename M::difference_type difference_type;
+        typedef typename M::value_type value_type;
+        std::vector<std::pair<size_type, size_type> > index;
+        typename M::iterator2 it2 (m.begin2 ());
+        typename M::iterator2 it2_end (m.end2 ());
+        typename E::const_iterator2 it2e (e ().begin2 ());
+        typename E::const_iterator2 it2e_end (e ().end2 ());
+        while (it2 != it2_end && it2e != it2e_end) {
+            difference_type compare = it2.index2 () - it2e.index2 ();
+            if (compare == 0) {
+#ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
+                typename M::iterator1 it1 (it2.begin ());
+                typename M::iterator1 it1_end (it2.end ());
+                typename E::const_iterator1 it1e (it2e.begin ());
+                typename E::const_iterator1 it1e_end (it2e.end ());
+#else
+                typename M::iterator1 it1 (begin (it2, iterator2_tag ()));
+                typename M::iterator1 it1_end (end (it2, iterator2_tag ()));
+                typename E::const_iterator1 it1e (begin (it2e, iterator2_tag ()));
+                typename E::const_iterator1 it1e_end (end (it2e, iterator2_tag ()));
+#endif
+                if (it1 != it1_end && it1e != it1e_end) {
+                    size_type it1_index = it1.index1 (), it1e_index = it1e.index1 ();
+                    while (true) {
+                        difference_type compare = it1_index - it1e_index;
+                        if (compare == 0) {
+                            ++ it1, ++ it1e;
+                            if (it1 != it1_end && it1e != it1e_end) {
+                                it1_index = it1.index1 ();
+                                it1e_index = it1e.index1 ();
+                            } else
+                                break;
+                        } else if (compare < 0) {
+                            increment (it1, it1_end, - compare);
+                            if (it1 != it1_end)
+                                it1_index = it1.index1 ();
+                            else
+                                break;
+                        } else if (compare > 0) {
+                            if (functor_type::other (it1e.index1 (), it1e.index2 ()))
+                                if (*it1e != value_type (0))
+                                    index.push_back (std::pair<size_type, size_type> (it1e.index1 (), it1e.index2 ()));
+                            ++ it1e;
+                            if (it1e != it1e_end)
+                                it1e_index = it1e.index1 ();
+                            else
+                                break;
+                        }
+                    }
+                }
+                while (it1e != it1e_end) {
+                    if (functor_type::other (it1e.index1 (), it1e.index2 ()))
+                        if (*it1e != value_type (0))
+                            index.push_back (std::pair<size_type, size_type> (it1e.index1 (), it1e.index2 ()));
+                    ++ it1e;
+                }
+                ++ it2, ++ it2e;
+            } else if (compare < 0) {
+                increment (it2, it2_end, - compare);
+            } else if (compare > 0) {
+#ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
+                typename E::const_iterator1 it1e (it2e.begin ());
+                typename E::const_iterator1 it1e_end (it2e.end ());
+#else
+                typename E::const_iterator1 it1e (begin (it2e, iterator2_tag ()));
+                typename E::const_iterator1 it1e_end (end (it2e, iterator2_tag ()));
+#endif
+                while (it1e != it1e_end) {
+                    if (functor_type::other (it1e.index1 (), it1e.index2 ()))
+                        if (*it1e != value_type (0))
+                            index.push_back (std::pair<size_type, size_type> (it1e.index1 (), it1e.index2 ()));
+                    ++ it1e;
+                }
+                ++ it2e;
+            }
+        }
+        while (it2e != it2e_end) {
+#ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
+            typename E::const_iterator1 it1e (it2e.begin ());
+            typename E::const_iterator1 it1e_end (it2e.end ());
+#else
+            typename E::const_iterator1 it1e (begin (it2e, iterator2_tag ()));
+            typename E::const_iterator1 it1e_end (end (it2e, iterator2_tag ()));
+#endif
+            while (it1e != it1e_end) {
+                if (functor_type::other (it1e.index1 (), it1e.index2 ()))
+                    if (*it1e != value_type (0))
+                        index.push_back (std::pair<size_type, size_type> (it1e.index1 (), it1e.index2 ()));
+                ++ it1e;
+            }
             ++ it2e;
-    }
-    template<class E>
-    BOOST_UBLAS_INLINE
-    void restart (matrix_expression<E> &e, typename E::size_type index1, typename E::size_type index2,
-                  typename E::iterator2 &it2e, typename E::iterator2 &it2e_end,
-                  typename E::iterator1 &it1e, typename E::iterator1 &it1e_end, column_major_tag) {
-        it2e = e ().find2 (0, 0, index2);
-        it2e_end = e ().find2 (0, 0, e ().size2 ());
-        it1e = e ().find1 (1, index1, index2);
-        it1e_end = e ().find1 (1, e ().size1 (), index2);
-        if (it1e != it1e_end && it1e.index1 () == index1)
-            ++ it1e;
+        }
+        for (size_type k = 0; k < index.size (); ++ k)
+            m (index [k].first, index [k].second) = value_type (0);
     }
 
     // Iterating row major case
@@ -113,9 +272,9 @@ namespace boost { namespace numeric { namespace ublas {
             difference_type temp_size2 (size2);
 #ifndef BOOST_UBLAS_USE_DUFF_DEVICE
             while (-- temp_size2 >= 0)
-                functor_type () (*it2, t), ++ it2;
+                functor_type::apply (*it2, t), ++ it2;
 #else
-            DD (temp_size2, 4, r, (functor_type () (*it2, t), ++ it2));
+            DD (temp_size2, 4, r, (functor_type::apply (*it2, t), ++ it2));
 #endif
             ++ it1;
         }
@@ -141,9 +300,9 @@ namespace boost { namespace numeric { namespace ublas {
             difference_type temp_size1 (size1);
 #ifndef BOOST_UBLAS_USE_DUFF_DEVICE
             while (-- temp_size1 >= 0)
-                functor_type () (*it1, t), ++ it1;
+                functor_type::apply (*it1, t), ++ it1;
 #else
-            DD (temp_size1, 4, r, (functor_type () (*it1, t), ++ it1));
+            DD (temp_size1, 4, r, (functor_type::apply (*it1, t), ++ it1));
 #endif
             ++ it2;
         }
@@ -154,16 +313,16 @@ namespace boost { namespace numeric { namespace ublas {
     // BOOST_UBLAS_INLINE
     void indexing_matrix_assign_scalar (F, M &m, const T &t, row_major_tag) {
         typedef F functor_type;
-        typedef typename M::difference_type difference_type;
-        difference_type size1 (m.size1 ());
-        difference_type size2 (m.size2 ());
-        for (difference_type i = 0; i < size1; ++ i) {
+        typedef typename M::size_type size_type;
+        size_type size1 (m.size1 ());
+        size_type size2 (m.size2 ());
+        for (size_type i = 0; i < size1; ++ i) {
 #ifndef BOOST_UBLAS_USE_DUFF_DEVICE
-            for (difference_type j = 0; j < size2; ++ j)
-                functor_type () (m (i, j), t);
+            for (size_type j = 0; j < size2; ++ j)
+                functor_type::apply (m (i, j), t);
 #else
-            difference_type j (0);
-            DD (size2, 4, r, (functor_type () (m (i, j), t), ++ j));
+            size_type j (0);
+            DD (size2, 4, r, (functor_type::apply (m (i, j), t), ++ j));
 #endif
         }
     }
@@ -173,16 +332,16 @@ namespace boost { namespace numeric { namespace ublas {
     // BOOST_UBLAS_INLINE
     void indexing_matrix_assign_scalar (F, M &m, const T &t, column_major_tag) {
         typedef F functor_type;
-        typedef typename M::difference_type difference_type;
-        difference_type size2 (m.size2 ());
-        difference_type size1 (m.size1 ());
-        for (difference_type j = 0; j < size2; ++ j)
+        typedef typename M::size_type size_type;
+        size_type size2 (m.size2 ());
+        size_type size1 (m.size1 ());
+        for (size_type j = 0; j < size2; ++ j) {
 #ifndef BOOST_UBLAS_USE_DUFF_DEVICE
-            for (difference_type i = 0; i < size1; ++ i) {
-                functor_type () (m (i, j), t);
+            for (size_type i = 0; i < size1; ++ i)
+                functor_type::apply (m (i, j), t);
 #else
-            difference_type i (0);
-            DD (size1, 4, r, (functor_type () (m (i, j), t), ++ i));
+            size_type i (0);
+            DD (size1, 4, r, (functor_type::apply (m (i, j), t), ++ i));
 #endif
         }
     }
@@ -199,9 +358,9 @@ namespace boost { namespace numeric { namespace ublas {
 #elif BOOST_UBLAS_USE_ITERATING
         iterating_matrix_assign_scalar (functor_type (), m, t, orientation_category ());
 #else
-        typedef typename M::difference_type difference_type;
-        difference_type size1 (m.size1 ());
-        difference_type size2 (m.size2 ());
+        typedef typename M::size_type size_type;
+        size_type size1 (m.size1 ());
+        size_type size2 (m.size2 ());
         if (size1 >= BOOST_UBLAS_ITERATOR_THRESHOLD &&
             size2 >= BOOST_UBLAS_ITERATOR_THRESHOLD)
             iterating_matrix_assign_scalar (functor_type (), m, t, orientation_category ());
@@ -227,7 +386,7 @@ namespace boost { namespace numeric { namespace ublas {
             difference_type size2 (end (it1, iterator1_tag ()) - it2);
 #endif
             while (-- size2 >= 0)
-                functor_type () (*it2, t), ++ it2;
+                functor_type::apply (*it2, t), ++ it2;
             ++ it1;
         }
     }
@@ -249,7 +408,7 @@ namespace boost { namespace numeric { namespace ublas {
             difference_type size1 (end (it2, iterator2_tag ()) - it1);
 #endif
             while (-- size1 >= 0)
-                functor_type () (*it1, t), ++ it1;
+                functor_type::apply (*it1, t), ++ it1;
             ++ it2;
         }
     }
@@ -270,7 +429,7 @@ namespace boost { namespace numeric { namespace ublas {
             typename M::iterator2 it2_end (end (it1, iterator1_tag ()));
 #endif
             while (it2 != it2_end)
-                functor_type () (*it2, t), ++ it2;
+                functor_type::apply (*it2, t), ++ it2;
             ++ it1;
         }
     }
@@ -291,7 +450,7 @@ namespace boost { namespace numeric { namespace ublas {
             typename M::iterator1 it1_end (end (it2, iterator2_tag ()));
 #endif
             while (it1 != it1_end)
-                functor_type () (*it1, t), ++ it1;
+                functor_type::apply (*it1, t), ++ it1;
             ++ it2;
         }
     }
@@ -402,9 +561,9 @@ namespace boost { namespace numeric { namespace ublas {
             difference_type temp_size2 (size2);
 #ifndef BOOST_UBLAS_USE_DUFF_DEVICE
             while (-- temp_size2 >= 0)
-                functor_type () (*it2, *it2e), ++ it2, ++ it2e;
+                functor_type::apply (*it2, *it2e), ++ it2, ++ it2e;
 #else
-            DD (temp_size2, 2, r, (functor_type () (*it2, *it2e), ++ it2, ++ it2e));
+            DD (temp_size2, 2, r, (functor_type::apply (*it2, *it2e), ++ it2, ++ it2e));
 #endif
             ++ it1, ++ it1e;
         }
@@ -435,9 +594,9 @@ namespace boost { namespace numeric { namespace ublas {
             difference_type temp_size1 (size1);
 #ifndef BOOST_UBLAS_USE_DUFF_DEVICE
             while (-- temp_size1 >= 0)
-                functor_type () (*it1, *it1e), ++ it1, ++ it1e;
+                functor_type::apply (*it1, *it1e), ++ it1, ++ it1e;
 #else
-            DD (temp_size1, 2, r, (functor_type () (*it1, *it1e), ++ it1, ++ it1e));
+            DD (temp_size1, 2, r, (functor_type::apply (*it1, *it1e), ++ it1, ++ it1e));
 #endif
             ++ it2, ++ it2e;
         }
@@ -448,16 +607,16 @@ namespace boost { namespace numeric { namespace ublas {
     // BOOST_UBLAS_INLINE
     void indexing_matrix_assign (F, M &m, const matrix_expression<E> &e, row_major_tag) {
         typedef F functor_type;
-        typedef typename M::difference_type difference_type;
-        difference_type size1 (BOOST_UBLAS_SAME (m.size1 (), e ().size1 ()));
-        difference_type size2 (BOOST_UBLAS_SAME (m.size2 (), e ().size2 ()));
-        for (difference_type i = 0; i < size1; ++ i) {
+        typedef typename M::size_type size_type;
+        size_type size1 (BOOST_UBLAS_SAME (m.size1 (), e ().size1 ()));
+        size_type size2 (BOOST_UBLAS_SAME (m.size2 (), e ().size2 ()));
+        for (size_type i = 0; i < size1; ++ i) {
 #ifndef BOOST_UBLAS_USE_DUFF_DEVICE
-            for (difference_type j = 0; j < size2; ++ j)
-                functor_type () (m (i, j), e () (i, j));
+            for (size_type j = 0; j < size2; ++ j)
+                functor_type::apply (m (i, j), e () (i, j));
 #else
-            difference_type j (0);
-            DD (size2, 2, r, (functor_type () (m (i, j), e () (i, j)), ++ j));
+            size_type j (0);
+            DD (size2, 2, r, (functor_type::apply (m (i, j), e () (i, j)), ++ j));
 #endif
         }
     }
@@ -467,16 +626,16 @@ namespace boost { namespace numeric { namespace ublas {
     // BOOST_UBLAS_INLINE
     void indexing_matrix_assign (F, M &m, const matrix_expression<E> &e, column_major_tag) {
         typedef F functor_type;
-        typedef typename M::difference_type difference_type;
-        difference_type size2 (BOOST_UBLAS_SAME (m.size2 (), e ().size2 ()));
-        difference_type size1 (BOOST_UBLAS_SAME (m.size1 (), e ().size1 ()));
-        for (difference_type j = 0; j < size2; ++ j)
+        typedef typename M::size_type size_type;
+        size_type size2 (BOOST_UBLAS_SAME (m.size2 (), e ().size2 ()));
+        size_type size1 (BOOST_UBLAS_SAME (m.size1 (), e ().size1 ()));
+        for (size_type j = 0; j < size2; ++ j) {
 #ifndef BOOST_UBLAS_USE_DUFF_DEVICE
-            for (difference_type i = 0; i < size1; ++ i) {
-                functor_type () (m (i, j), e () (i, j));
+            for (size_type i = 0; i < size1; ++ i)
+                functor_type::apply (m (i, j), e () (i, j));
 #else
-            difference_type i (0);
-            DD (size1, 2, r, (functor_type () (m (i, j), e () (i, j)), ++ i));
+            size_type i (0);
+            DD (size1, 2, r, (functor_type::apply (m (i, j), e () (i, j)), ++ i));
 #endif
         }
     }
@@ -485,7 +644,7 @@ namespace boost { namespace numeric { namespace ublas {
     template<class F, class M, class E, class C>
     // This function seems to be big. So we do not let the compiler inline it.
     // BOOST_UBLAS_INLINE
-    void matrix_assign (F, M &m, const matrix_expression<E> &e, full, dense_proxy_tag, C) {
+    void matrix_assign (F, full, M &m, const matrix_expression<E> &e, dense_proxy_tag, C) {
         typedef F functor_type;
         typedef C orientation_category;
 #ifdef BOOST_UBLAS_USE_INDEXING
@@ -494,8 +653,8 @@ namespace boost { namespace numeric { namespace ublas {
         iterating_matrix_assign (functor_type (), m, e, orientation_category ());
 #else
         typedef typename M::difference_type difference_type;
-        difference_type size1 (BOOST_UBLAS_SAME (m.size1 (), e ().size1 ()));
-        difference_type size2 (BOOST_UBLAS_SAME (m.size2 (), e ().size2 ()));
+        size_type size1 (BOOST_UBLAS_SAME (m.size1 (), e ().size1 ()));
+        size_type size2 (BOOST_UBLAS_SAME (m.size2 (), e ().size2 ()));
         if (size1 >= BOOST_UBLAS_ITERATOR_THRESHOLD &&
             size2 >= BOOST_UBLAS_ITERATOR_THRESHOLD)
             iterating_matrix_assign (functor_type (), m, e, orientation_category ());
@@ -504,23 +663,23 @@ namespace boost { namespace numeric { namespace ublas {
 #endif
     }
     // Packed (proxy) row major case
-    template<class F1, class M, class E, class F2>
+    template<class F1, class F2, class M, class E>
     // This function seems to be big. So we do not let the compiler inline it.
     // BOOST_UBLAS_INLINE
-    void matrix_assign (F1, M &m, const matrix_expression<E> &e, F2, packed_proxy_tag, row_major_tag) {
+    void matrix_assign (F1, F2, M &m, const matrix_expression<E> &e, packed_proxy_tag, row_major_tag) {
         BOOST_UBLAS_CHECK (m.size1 () == e ().size1 (), bad_size ());
         BOOST_UBLAS_CHECK (m.size2 () == e ().size2 (), bad_size ());
         typedef F1 functor1_type;
         typedef F2 functor2_type;
         typedef typename M::difference_type difference_type;
         typedef typename M::value_type value_type;
-#ifdef BOOST_UBLAS_TYPE_CHECK
+#if BOOST_UBLAS_TYPE_CHECK
         matrix<value_type, row_major> cm (m.size1 (), m.size2 ());
 #ifndef BOOST_UBLAS_NO_ELEMENT_PROXIES
         indexing_matrix_assign (scalar_assign<typename matrix<value_type, row_major>::reference, value_type> (), cm, m, row_major_tag ());
         indexing_matrix_assign (functor1_type::template make_debug_functor<typename matrix<value_type, row_major>::reference, value_type> (), cm, e, row_major_tag ());
 #else
-        indexing_matrix_assign (scalar_assign<value_type, value_type> (), cm, m, row_major_tag ());
+        indexing_matrix_assign (scalar_assign<value_type&, value_type> (), cm, m, row_major_tag ());
         indexing_matrix_assign (functor1_type (), cm, e, row_major_tag ());
 #endif
 #endif
@@ -534,13 +693,13 @@ namespace boost { namespace numeric { namespace ublas {
         if (it1_size > 0 && it1e_size > 0)
             diff1 = it1.index1 () - it1e.index1 ();
         if (diff1 != 0) {
-            difference_type size1 = std::min (diff1, it1e_size);
+            difference_type size1 = (std::min) (diff1, it1e_size);
             if (size1 > 0) {
                 it1e += size1;
                 it1e_size -= size1;
                 diff1 -= size1;
             }
-            size1 = std::min (- diff1, it1_size);
+            size1 = (std::min) (- diff1, it1_size);
             if (size1 > 0) {
                 it1_size -= size1;
                 if (boost::is_same<BOOST_UBLAS_TYPENAME functor1_type::assign_category, assign_tag>::value) {
@@ -554,7 +713,7 @@ namespace boost { namespace numeric { namespace ublas {
 #endif
                         difference_type size2 (it2_end - it2);
                         while (-- size2 >= 0)
-                            functor1_type () (*it2, value_type ()), ++ it2;
+                            functor1_type::apply (*it2, value_type (0)), ++ it2;
                         ++ it1;
                     }
                 } else {
@@ -563,7 +722,7 @@ namespace boost { namespace numeric { namespace ublas {
                 diff1 += size1;
             }
         }
-        difference_type size1 (std::min (it1_size, it1e_size));
+        difference_type size1 ((std::min) (it1_size, it1e_size));
         it1_size -= size1;
         it1e_size -= size1;
         while (-- size1 >= 0) {
@@ -583,33 +742,33 @@ namespace boost { namespace numeric { namespace ublas {
             difference_type diff2 (0);
             if (it2_size > 0 && it2e_size > 0) {
                 diff2 = it2.index2 () - it2e.index2 ();
-                difference_type size2 = std::min (diff2, it2e_size);
+                difference_type size2 = (std::min) (diff2, it2e_size);
                 if (size2 > 0) {
                     it2e += size2;
                     it2e_size -= size2;
                     diff2 -= size2;
                 }
-                size2 = std::min (- diff2, it2_size);
+                size2 = (std::min) (- diff2, it2_size);
                 if (size2 > 0) {
                     it2_size -= size2;
                     if (boost::is_same<BOOST_UBLAS_TYPENAME functor1_type::assign_category, assign_tag>::value) {
                         while (-- size2 >= 0)
-                            functor1_type () (*it2, value_type ()), ++ it2;
+                            functor1_type::apply (*it2, value_type (0)), ++ it2;
                     } else {
                         it2 += size2;
                     }
                     diff2 += size2;
                 }
             }
-            difference_type size2 (std::min (it2_size, it2e_size));
+            difference_type size2 ((std::min) (it2_size, it2e_size));
             it2_size -= size2;
             it2e_size -= size2;
             while (-- size2 >= 0)
-                functor1_type () (*it2, *it2e), ++ it2, ++ it2e;
+                functor1_type::apply (*it2, *it2e), ++ it2, ++ it2e;
             size2 = it2_size;
             if (boost::is_same<BOOST_UBLAS_TYPENAME functor1_type::assign_category, assign_tag>::value) {
                 while (-- size2 >= 0)
-                    functor1_type () (*it2, value_type ()), ++ it2;
+                    functor1_type::apply (*it2, value_type (0)), ++ it2;
             } else {
                 it2 += size2;
             }
@@ -627,35 +786,35 @@ namespace boost { namespace numeric { namespace ublas {
 #endif
                 difference_type size2 (it2_end - it2);
                 while (-- size2 >= 0)
-                    functor1_type () (*it2, value_type ()), ++ it2;
+                    functor1_type::apply (*it2, value_type (0)), ++ it2;
                 ++ it1;
             }
         } else {
             it1 += size1;
         }
-#ifdef BOOST_UBLAS_TYPE_CHECK
-        if (! disable_type_check)
+#if BOOST_UBLAS_TYPE_CHECK
+        if (! disable_type_check<bool>::value)
             BOOST_UBLAS_CHECK (equals (m, cm), external_logic ());
 #endif
     }
     // Packed (proxy) column major case
-    template<class F1, class M, class E, class F2>
+    template<class F1, class F2, class M, class E>
     // This function seems to be big. So we do not let the compiler inline it.
     // BOOST_UBLAS_INLINE
-    void matrix_assign (F1, M &m, const matrix_expression<E> &e, F2, packed_proxy_tag, column_major_tag) {
+    void matrix_assign (F1, F2, M &m, const matrix_expression<E> &e, packed_proxy_tag, column_major_tag) {
         BOOST_UBLAS_CHECK (m.size2 () == e ().size2 (), bad_size ());
         BOOST_UBLAS_CHECK (m.size1 () == e ().size1 (), bad_size ());
         typedef F1 functor1_type;
         typedef F2 functor2_type;
         typedef typename M::difference_type difference_type;
         typedef typename M::value_type value_type;
-#ifdef BOOST_UBLAS_TYPE_CHECK
+#if BOOST_UBLAS_TYPE_CHECK
         matrix<value_type, column_major> cm (m.size1 (), m.size2 ());
 #ifndef BOOST_UBLAS_NO_ELEMENT_PROXIES
         indexing_matrix_assign (scalar_assign<typename matrix<value_type, column_major>::reference, value_type> (), cm, m, column_major_tag ());
         indexing_matrix_assign (functor1_type::template make_debug_functor<typename matrix<value_type, column_major>::reference, value_type> (), cm, e, column_major_tag ());
 #else
-        indexing_matrix_assign (scalar_assign<value_type, value_type> (), cm, m, column_major_tag ());
+        indexing_matrix_assign (scalar_assign<value_type&, value_type> (), cm, m, column_major_tag ());
         indexing_matrix_assign (functor1_type (), cm, e, column_major_tag ());
 #endif
 #endif
@@ -669,13 +828,13 @@ namespace boost { namespace numeric { namespace ublas {
         if (it2_size > 0 && it2e_size > 0)
             diff2 = it2.index2 () - it2e.index2 ();
         if (diff2 != 0) {
-            difference_type size2 = std::min (diff2, it2e_size);
+            difference_type size2 = (std::min) (diff2, it2e_size);
             if (size2 > 0) {
                 it2e += size2;
                 it2e_size -= size2;
                 diff2 -= size2;
             }
-            size2 = std::min (- diff2, it2_size);
+            size2 = (std::min) (- diff2, it2_size);
             if (size2 > 0) {
                 it2_size -= size2;
                 if (boost::is_same<BOOST_UBLAS_TYPENAME functor1_type::assign_category, assign_tag>::value) {
@@ -689,7 +848,7 @@ namespace boost { namespace numeric { namespace ublas {
 #endif
                         difference_type size1 (it1_end - it1);
                         while (-- size1 >= 0)
-                            functor1_type () (*it1, value_type ()), ++ it1;
+                            functor1_type::apply (*it1, value_type (0)), ++ it1;
                         ++ it2;
                     }
                 } else {
@@ -698,7 +857,7 @@ namespace boost { namespace numeric { namespace ublas {
                 diff2 += size2;
             }
         }
-        difference_type size2 (std::min (it2_size, it2e_size));
+        difference_type size2 ((std::min) (it2_size, it2e_size));
         it2_size -= size2;
         it2e_size -= size2;
         while (-- size2 >= 0) {
@@ -718,33 +877,33 @@ namespace boost { namespace numeric { namespace ublas {
             difference_type diff1 (0);
             if (it1_size > 0 && it1e_size > 0) {
                 diff1 = it1.index1 () - it1e.index1 ();
-                difference_type size1 = std::min (diff1, it1e_size);
+                difference_type size1 = (std::min) (diff1, it1e_size);
                 if (size1 > 0) {
                     it1e += size1;
                     it1e_size -= size1;
                     diff1 -= size1;
                 }
-                size1 = std::min (- diff1, it1_size);
+                size1 = (std::min) (- diff1, it1_size);
                 if (size1 > 0) {
                     it1_size -= size1;
                     if (boost::is_same<BOOST_UBLAS_TYPENAME functor1_type::assign_category, assign_tag>::value) {
                         while (-- size1 >= 0)
-                            functor1_type () (*it1, value_type ()), ++ it1;
+                            functor1_type::apply (*it1, value_type (0)), ++ it1;
                     } else {
                         it1 += size1;
                     }
                     diff1 += size1;
                 }
             }
-            difference_type size1 (std::min (it1_size, it1e_size));
+            difference_type size1 ((std::min) (it1_size, it1e_size));
             it1_size -= size1;
             it1e_size -= size1;
             while (-- size1 >= 0)
-                functor1_type () (*it1, *it1e), ++ it1, ++ it1e;
+                functor1_type::apply (*it1, *it1e), ++ it1, ++ it1e;
             size1 = it1_size;
             if (boost::is_same<BOOST_UBLAS_TYPENAME functor1_type::assign_category, assign_tag>::value) {
                 while (-- size1 >= 0)
-                    functor1_type () (*it1, value_type ()), ++ it1;
+                    functor1_type::apply (*it1, value_type (0)), ++ it1;
             } else {
                 it1 += size1;
             }
@@ -762,35 +921,27 @@ namespace boost { namespace numeric { namespace ublas {
 #endif
                 difference_type size1 (it1_end - it1);
                 while (-- size1 >= 0)
-                    functor1_type () (*it1, value_type ()), ++ it1;
+                    functor1_type::apply (*it1, value_type (0)), ++ it1;
                 ++ it2;
             }
         } else {
             it2 += size2;
         }
-#ifdef BOOST_UBLAS_TYPE_CHECK
-        if (! disable_type_check)
+#if BOOST_UBLAS_TYPE_CHECK
+        if (! disable_type_check<bool>::value)
             BOOST_UBLAS_CHECK (equals (m, cm), external_logic ());
 #endif
     }
     // Sparse row major case
-    template<class F, class M, class E>
+    template<class VT, class M, class E>
     // This function seems to be big. So we do not let the compiler inline it.
     // BOOST_UBLAS_INLINE
-    void matrix_assign (F, M &m, const matrix_expression<E> &e, full, sparse_tag, row_major_tag) {
+    void matrix_assign (scalar_assign<BOOST_UBLAS_TYPENAME M::reference, VT>, full, M &m, const matrix_expression<E> &e, sparse_tag, row_major_tag) {
         BOOST_UBLAS_CHECK (m.size1 () == e ().size1 (), bad_size ());
         BOOST_UBLAS_CHECK (m.size2 () == e ().size2 (), bad_size ());
-        typedef F functor_type;
         typedef typename M::value_type value_type;
-#ifdef BOOST_UBLAS_TYPE_CHECK
-        matrix<value_type, row_major> cm (m.size1 (), m.size2 ());
-#ifndef BOOST_UBLAS_NO_ELEMENT_PROXIES
-        indexing_matrix_assign (scalar_assign<typename matrix<value_type, row_major>::reference, value_type> (), cm, m, row_major_tag ());
-        indexing_matrix_assign (functor_type::template make_debug_functor<typename matrix<value_type, row_major>::reference, value_type> (), cm, e, row_major_tag ());
-#else
-        indexing_matrix_assign (scalar_assign<value_type, value_type> (), cm, m, row_major_tag ());
-        indexing_matrix_assign (functor_type (), cm, e, row_major_tag ());
-#endif
+#if BOOST_UBLAS_TYPE_CHECK
+        // DEPRECATED Sparse type has no numeric constraints
 #endif
         m.clear ();
         typename E::const_iterator1 it1e (e ().begin1 ());
@@ -805,35 +956,23 @@ namespace boost { namespace numeric { namespace ublas {
 #endif
             while (it2e != it2e_end) {
                 value_type t (*it2e);
-                if (t != value_type ())
+                if (t != value_type (0))
                     m.insert (it2e.index1 (), it2e.index2 (), t);
                 ++ it2e;
             }
             ++ it1e;
         }
-#ifdef BOOST_UBLAS_TYPE_CHECK
-        if (! disable_type_check)
-            BOOST_UBLAS_CHECK (equals (m, cm), external_logic ());
-#endif
     }
     // Sparse column major case
-    template<class F, class M, class E>
+    template<class VT, class M, class E>
     // This function seems to be big. So we do not let the compiler inline it.
     // BOOST_UBLAS_INLINE
-    void matrix_assign (F, M &m, const matrix_expression<E> &e, full, sparse_tag, column_major_tag) {
+    void matrix_assign (scalar_assign<BOOST_UBLAS_TYPENAME M::reference, VT>, full, M &m, const matrix_expression<E> &e, sparse_tag, column_major_tag) {
         BOOST_UBLAS_CHECK (m.size1 () == e ().size1 (), bad_size ());
         BOOST_UBLAS_CHECK (m.size2 () == e ().size2 (), bad_size ());
-        typedef F functor_type;
         typedef typename M::value_type value_type;
-#ifdef BOOST_UBLAS_TYPE_CHECK
-        matrix<value_type, column_major> cm (m.size1 (), m.size2 ());
-#ifndef BOOST_UBLAS_NO_ELEMENT_PROXIES
-        indexing_matrix_assign (scalar_assign<typename matrix<value_type, column_major>::reference, value_type> (), cm, m, column_major_tag ());
-        indexing_matrix_assign (functor_type::template make_debug_functor<typename matrix<value_type, column_major>::reference, value_type> (), cm, e, column_major_tag ());
-#else
-        indexing_matrix_assign (scalar_assign<value_type, value_type> (), cm, m, column_major_tag ());
-        indexing_matrix_assign (functor_type (), cm, e, column_major_tag ());
-#endif
+#if BOOST_UBLAS_TYPE_CHECK
+        // DEPRECATED Sparse type has no numeric constraints
 #endif
         m.clear ();
         typename E::const_iterator2 it2e (e ().begin2 ());
@@ -848,44 +987,44 @@ namespace boost { namespace numeric { namespace ublas {
 #endif
             while (it1e != it1e_end) {
                 value_type t (*it1e);
-                if (t != value_type ())
+                if (t != value_type (0))
                     m.insert (it1e.index1 (), it1e.index2 (), t);
                 ++ it1e;
             }
             ++ it2e;
         }
-#ifdef BOOST_UBLAS_TYPE_CHECK
-        if (! disable_type_check)
-            BOOST_UBLAS_CHECK (equals (m, cm), external_logic ());
-#endif
     }
     // Sparse proxy row major case
-    template<class F1, class M, class E, class F2>
+    template<class F1, class F2, class M, class E>
     // This function seems to be big. So we do not let the compiler inline it.
     // BOOST_UBLAS_INLINE
-    void matrix_assign (F1, M &m, const matrix_expression<E> &e, F2, sparse_proxy_tag, row_major_tag) {
+    void matrix_assign (F1, F2, M &m, const matrix_expression<E> &e, sparse_proxy_tag, row_major_tag) {
         BOOST_UBLAS_CHECK (m.size1 () == e ().size1 (), bad_size ());
         BOOST_UBLAS_CHECK (m.size2 () == e ().size2 (), bad_size ());
         typedef F1 functor1_type;
         typedef F2 functor2_type;
         typedef typename M::size_type size_type;
+        typedef typename M::difference_type difference_type;
         typedef typename M::value_type value_type;
-#ifdef BOOST_UBLAS_TYPE_CHECK
+#if BOOST_UBLAS_TYPE_CHECK
         matrix<value_type, row_major> cm (m.size1 (), m.size2 ());
 #ifndef BOOST_UBLAS_NO_ELEMENT_PROXIES
         indexing_matrix_assign (scalar_assign<typename matrix<value_type, row_major>::reference, value_type> (), cm, m, row_major_tag ());
         indexing_matrix_assign (functor1_type::template make_debug_functor<typename matrix<value_type, row_major>::reference, value_type> (), cm, e, row_major_tag ());
 #else
-        indexing_matrix_assign (scalar_assign<value_type, value_type> (), cm, m, row_major_tag ());
+        indexing_matrix_assign (scalar_assign<value_type&, value_type> (), cm, m, row_major_tag ());
         indexing_matrix_assign (functor1_type (), cm, e, row_major_tag ());
 #endif
+#endif
+#ifdef BOOST_UBLAS_NON_CONFORMANT_PROXIES
+        make_conformant (m, e, row_major_tag (), functor2_type ());
 #endif
         typename M::iterator1 it1 (m.begin1 ());
         typename M::iterator1 it1_end (m.end1 ());
         typename E::const_iterator1 it1e (e ().begin1 ());
         typename E::const_iterator1 it1e_end (e ().end1 ());
         while (it1 != it1_end && it1e != it1e_end) {
-            int compare = it1.index1 () - it1e.index1 ();
+            difference_type compare = it1.index1 () - it1e.index1 ();
             if (compare == 0) {
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
                 typename M::iterator2 it2 (it1.begin ());
@@ -898,64 +1037,40 @@ namespace boost { namespace numeric { namespace ublas {
                 typename E::const_iterator2 it2e (begin (it1e, iterator1_tag ()));
                 typename E::const_iterator2 it2e_end (end (it1e, iterator1_tag ()));
 #endif
-                while (it2 != it2_end && it2e != it2e_end) {
-                    int compare = it2.index2 () - it2e.index2 ();
-                    if (compare == 0) {
-                        functor1_type () (*it2, *it2e);
-                        ++ it2, ++ it2e;
-                    } else if (compare < 0) {
-                        functor1_type () (*it2, value_type ());
-                        ++ it2;
-                    } else if (compare > 0) {
-#ifdef BOOST_UBLAS_NON_CONFORMANT_PROXIES
-                        // Sparse proxies don't need to be conformant.
-                        // Thanks to Michael Stevens for suggesting this.
-                        size_type index1 (it2e.index1 ()), index2 (it2e.index2 ());
-                        if (functor2_type::other (index1, index2)) {
-                            // FIX: reduce fill in.
-                            // functor1_type () (m (index1, index2), e () (index1, index2));
-                            value_type t (*it2e);
-                            if (t != value_type ()) {
-                                functor1_type () (m (index1, index2), t);
-                                restart (m, index1, index2, it1, it1_end, it2, it2_end, row_major_tag ());
-                                // The proxies could reference the same container.
-                                restart (e, index1, index2, it1e, it1e_end, it2e, it2e_end, row_major_tag ());
-                            } else {
-                                ++ it2e;
-                            }
-                        } else {
-                            ++ it2e;
+                if (it2 != it2_end && it2e != it2e_end) {
+                    size_type it2_index = it2.index2 (), it2e_index = it2e.index2 ();
+                    while (true) {
+                        difference_type compare = it2_index - it2e_index;
+                        if (compare == 0) {
+                            functor1_type::apply (*it2, *it2e);
+                            ++ it2, ++ it2e;
+                            if (it2 != it2_end && it2e != it2e_end) {
+                                it2_index = it2.index2 ();
+                                it2e_index = it2e.index2 ();
+                            } else
+                                break;
+                        } else if (compare < 0) {
+                            if (boost::is_same<BOOST_UBLAS_TYPENAME functor1_type::assign_category, assign_tag>::value) {
+                                functor1_type::apply (*it2, value_type (0));
+                                ++ it2;
+                            } else
+                                increment (it2, it2_end, - compare);
+                            if (it2 != it2_end)
+                                it2_index = it2.index2 ();
+                            else
+                                break;
+                        } else if (compare > 0) {
+                            increment (it2e, it2e_end, compare);
+                            if (it2e != it2e_end)
+                                it2e_index = it2e.index2 ();
+                            else
+                                break;
                         }
-#else
-                        ++ it2e;
-#endif
                     }
                 }
-#ifdef BOOST_UBLAS_NON_CONFORMANT_PROXIES
-                while (it2e != it2e_end) {
-                    // Sparse proxies don't need to be conformant.
-                    // Thanks to Michael Stevens for suggesting this.
-                    size_type index1 (it2e.index1 ()), index2 (it2e.index2 ());
-                    if (functor2_type::other (index1, index2)) {
-                        // FIX: reduce fill in.
-                        // functor1_type () (m (index1, index2), e () (index1, index2));
-                        value_type t (*it2e);
-                        if (t != value_type ()) {
-                            functor1_type () (m (index1, index2), t);
-                            // The proxies could reference the same container.
-                            restart (e, index1, index2, it1e, it1e_end, it2e, it2e_end, row_major_tag ());
-                            restart (m, index1, index2, it1, it1_end, it2, it2_end, row_major_tag ());
-                        } else {
-                            ++ it2e;
-                        }
-                    } else {
-                        ++ it2e;
-                    }
-                }
-#endif
                 if (boost::is_same<BOOST_UBLAS_TYPENAME functor1_type::assign_category, assign_tag>::value) {
                     while (it2 != it2_end) {
-                        functor1_type () (*it2, value_type ());
+                        functor1_type::apply (*it2, value_type (0));
                         ++ it2;
                     }
                 } else {
@@ -963,91 +1078,26 @@ namespace boost { namespace numeric { namespace ublas {
                 }
                 ++ it1, ++ it1e;
             } else if (compare < 0) {
-#ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
-                typename M::iterator2 it2 (it1.begin ());
-                typename M::iterator2 it2_end (it1.end ());
-#else
-                typename M::iterator2 it2 (begin (it1, iterator1_tag ()));
-                typename M::iterator2 it2_end (end (it1, iterator1_tag ()));
-#endif
                 if (boost::is_same<BOOST_UBLAS_TYPENAME functor1_type::assign_category, assign_tag>::value) {
+#ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
+                    typename M::iterator2 it2 (it1.begin ());
+                    typename M::iterator2 it2_end (it1.end ());
+#else
+                    typename M::iterator2 it2 (begin (it1, iterator1_tag ()));
+                    typename M::iterator2 it2_end (end (it1, iterator1_tag ()));
+#endif
                     while (it2 != it2_end) {
-                        functor1_type () (*it2, value_type ());
+                        functor1_type::apply (*it2, value_type (0));
                         ++ it2;
                     }
+                    ++ it1;
                 } else {
-                    it2 = it2_end;
+                    increment (it1, it1_end, - compare);
                 }
-                ++ it1;
             } else if (compare > 0) {
-#ifdef BOOST_UBLAS_NON_CONFORMANT_PROXIES
-                typename M::iterator2 it2;
-                typename M::iterator2 it2_end;
-#ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
-                typename E::const_iterator2 it2e (it1e.begin ());
-                typename E::const_iterator2 it2e_end (it1e.end ());
-#else
-                typename E::const_iterator2 it2e (begin (it1e, iterator1_tag ()));
-                typename E::const_iterator2 it2e_end (end (it1e, iterator1_tag ()));
-#endif
-                while (it2e != it2e_end) {
-                    // Sparse proxies don't need to be conformant.
-                    // Thanks to Michael Stevens for suggesting this.
-                    size_type index1 (it2e.index1 ()), index2 (it2e.index2 ());
-                    if (functor2_type::other (index1, index2)) {
-                        // FIX: reduce fill in.
-                        // functor1_type () (m (index1, index2), e () (index1, index2));
-                        value_type t (*it2e);
-                        if (t != value_type ()) {
-                            functor1_type () (m (index1, index2), t);
-                            // The proxies could reference the same container.
-                            restart (e, index1, index2, it1e, it1e_end, it2e, it2e_end, row_major_tag ());
-                            restart (m, index1, index2, it1, it1_end, it2, it2_end, row_major_tag ());
-                        } else {
-                            ++ it2e;
-                        }
-                    } else {
-                        ++ it2e;
-                    }
-                }
-#endif
-                ++ it1e;
+                increment (it1e, it1e_end, compare);
             }
         }
-#ifdef BOOST_UBLAS_NON_CONFORMANT_PROXIES
-        while (it1e != it1e_end) {
-            typename M::iterator2 it2;
-            typename M::iterator2 it2_end;
-#ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
-            typename E::const_iterator2 it2e (it1e.begin ());
-            typename E::const_iterator2 it2e_end (it1e.end ());
-#else
-            typename E::const_iterator2 it2e (begin (it1e, iterator1_tag ()));
-            typename E::const_iterator2 it2e_end (end (it1e, iterator1_tag ()));
-#endif
-            while (it2e != it2e_end) {
-                // Sparse proxies don't need to be conformant.
-                // Thanks to Michael Stevens for suggesting this.
-                size_type index1 (it2e.index1 ()), index2 (it2e.index2 ());
-                if (functor2_type::other (index1, index2)) {
-                    // FIX: reduce fill in.
-                    // functor1_type () (m (index1, index2), e () (index1, index2));
-                    value_type t (*it2e);
-                    if (t != value_type ()) {
-                        functor1_type () (m (index1, index2), t);
-                        // The proxies could reference the same container.
-                        restart (e, index1, index2, it1e, it1e_end, it2e, it2e_end, row_major_tag ());
-                        restart (m, index1, index2, it1, it1_end, it2, it2_end, row_major_tag ());
-                    } else {
-                        ++ it2e;
-                    }
-                } else {
-                    ++ it2e;
-                }
-            }
-            ++ it1e;
-        }
-#endif
         if (boost::is_same<BOOST_UBLAS_TYPENAME functor1_type::assign_category, assign_tag>::value) {
             while (it1 != it1_end) {
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
@@ -1058,7 +1108,7 @@ namespace boost { namespace numeric { namespace ublas {
                 typename M::iterator2 it2_end (end (it1, iterator1_tag ()));
 #endif
                 while (it2 != it2_end) {
-                    functor1_type () (*it2, value_type ());
+                    functor1_type::apply (*it2, value_type (0));
                     ++ it2;
                 }
                 ++ it1;
@@ -1066,38 +1116,42 @@ namespace boost { namespace numeric { namespace ublas {
         } else {
             it1 = it1_end;
         }
-#ifdef BOOST_UBLAS_TYPE_CHECK
-        if (! disable_type_check)
+#if BOOST_UBLAS_TYPE_CHECK
+        if (! disable_type_check<bool>::value)
             BOOST_UBLAS_CHECK (equals (m, cm), external_logic ());
 #endif
     }
     // Sparse proxy column major case
-    template<class F1, class M, class E, class F2>
+    template<class F1, class F2, class M, class E>
     // This function seems to be big. So we do not let the compiler inline it.
     // BOOST_UBLAS_INLINE
-    void matrix_assign (F1, M &m, const matrix_expression<E> &e, F2, sparse_proxy_tag, column_major_tag) {
+    void matrix_assign (F1, F2, M &m, const matrix_expression<E> &e, sparse_proxy_tag, column_major_tag) {
         BOOST_UBLAS_CHECK (m.size1 () == e ().size1 (), bad_size ());
         BOOST_UBLAS_CHECK (m.size2 () == e ().size2 (), bad_size ());
         typedef F1 functor1_type;
         typedef F2 functor2_type;
         typedef typename M::size_type size_type;
+        typedef typename M::difference_type difference_type;
         typedef typename M::value_type value_type;
-#ifdef BOOST_UBLAS_TYPE_CHECK
+#if BOOST_UBLAS_TYPE_CHECK
         matrix<value_type, column_major> cm (m.size1 (), m.size2 ());
 #ifndef BOOST_UBLAS_NO_ELEMENT_PROXIES
         indexing_matrix_assign (scalar_assign<typename matrix<value_type, column_major>::reference, value_type> (), cm, m, column_major_tag ());
         indexing_matrix_assign (functor1_type::template make_debug_functor<typename matrix<value_type, column_major>::reference, value_type> (), cm, e, column_major_tag ());
 #else
-        indexing_matrix_assign (scalar_assign<value_type, value_type> (), cm, m, column_major_tag ());
+        indexing_matrix_assign (scalar_assign<value_type&, value_type> (), cm, m, column_major_tag ());
         indexing_matrix_assign (functor1_type (), cm, e, column_major_tag ());
 #endif
+#endif
+#ifdef BOOST_UBLAS_NON_CONFORMANT_PROXIES
+        make_conformant (m, e, column_major_tag (), functor2_type ());
 #endif
         typename M::iterator2 it2 (m.begin2 ());
         typename M::iterator2 it2_end (m.end2 ());
         typename E::const_iterator2 it2e (e ().begin2 ());
         typename E::const_iterator2 it2e_end (e ().end2 ());
         while (it2 != it2_end && it2e != it2e_end) {
-            int compare = it2.index2 () - it2e.index2 ();
+            difference_type compare = it2.index2 () - it2e.index2 ();
             if (compare == 0) {
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
                 typename M::iterator1 it1 (it2.begin ());
@@ -1110,64 +1164,40 @@ namespace boost { namespace numeric { namespace ublas {
                 typename E::const_iterator1 it1e (begin (it2e, iterator2_tag ()));
                 typename E::const_iterator1 it1e_end (end (it2e, iterator2_tag ()));
 #endif
-                while (it1 != it1_end && it1e != it1e_end) {
-                    int compare = it1.index1 () - it1e.index1 ();
-                    if (compare == 0) {
-                        functor1_type () (*it1, *it1e);
-                        ++ it1, ++ it1e;
-                    } else if (compare < 0) {
-                        functor1_type () (*it1, value_type ());
-                        ++ it1;
-                    } else if (compare > 0) {
-#ifdef BOOST_UBLAS_NON_CONFORMANT_PROXIES
-                        // Sparse proxies don't need to be conformant.
-                        // Thanks to Michael Stevens for suggesting this.
-                        size_type index1 (it1e.index1 ()), index2 (it1e.index2 ());
-                        if (functor2_type::other (index1, index2)) {
-                            // FIX: reduce fill in.
-                            // functor1_type () (m (index1, index2), e () (index1, index2));
-                            value_type t (*it1e);
-                            if (t != value_type ()) {
-                                functor1_type () (m (index1, index2), t);
-                                restart (m, index1, index2, it2, it2_end, it1, it1_end, column_major_tag ());
-                                // The proxies could reference the same container.
-                                restart (e, index1, index2, it2e, it2e_end, it1e, it1e_end, column_major_tag ());
-                            } else {
-                                ++ it1e;
-                            }
-                        } else {
-                            ++ it1e;
+                if (it1 != it1_end && it1e != it1e_end) {
+                    size_type it1_index = it1.index1 (), it1e_index = it1e.index1 ();
+                    while (true) {
+                        difference_type compare = it1_index - it1e_index;
+                        if (compare == 0) {
+                            functor1_type::apply (*it1, *it1e);
+                            ++ it1, ++ it1e;
+                            if (it1 != it1_end && it1e != it1e_end) {
+                                it1_index = it1.index1 ();
+                                it1e_index = it1e.index1 ();
+                            } else
+                                break;
+                        } else if (compare < 0) {
+                            if (boost::is_same<BOOST_UBLAS_TYPENAME functor1_type::assign_category, assign_tag>::value) {
+                                functor1_type::apply (*it1, value_type (0));
+                                ++ it1;
+                            } else
+                                increment (it1, it1_end, - compare);
+                            if (it1 != it1_end)
+                                it1_index = it1.index1 ();
+                            else
+                                break;
+                        } else if (compare > 0) {
+                            increment (it1e, it1e_end, compare);
+                            if (it1e != it1e_end)
+                                it1e_index = it1e.index1 ();
+                            else
+                                break;
                         }
-#else
-                        ++ it1e;
-#endif
                     }
                 }
-#ifdef BOOST_UBLAS_NON_CONFORMANT_PROXIES
-                while (it1e != it1e_end) {
-                    // Sparse proxies don't need to be conformant.
-                    // Thanks to Michael Stevens for suggesting this.
-                    size_type index1 (it1e.index1 ()), index2 (it1e.index2 ());
-                    if (functor2_type::other (index1, index2)) {
-                        // FIX: reduce fill in.
-                        // functor1_type () (m (index1, index2), e () (index1, index2));
-                        value_type t (*it1e);
-                        if (t != value_type ()) {
-                            functor1_type () (m (index1, index2), t);
-                            // The proxies could reference the same container.
-                            restart (e, index1, index2, it2e, it2e_end, it1e, it1e_end, column_major_tag ());
-                            restart (m, index1, index2, it2, it2_end, it1, it1_end, column_major_tag ());
-                        } else {
-                            ++ it1e;
-                        }
-                    } else {
-                        ++ it1e;
-                    }
-                }
-#endif
                 if (boost::is_same<BOOST_UBLAS_TYPENAME functor1_type::assign_category, assign_tag>::value) {
                     while (it1 != it1_end) {
-                        functor1_type () (*it1, value_type ());
+                        functor1_type::apply (*it1, value_type (0));
                         ++ it1;
                     }
                 } else {
@@ -1175,91 +1205,26 @@ namespace boost { namespace numeric { namespace ublas {
                 }
                 ++ it2, ++ it2e;
             } else if (compare < 0) {
-#ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
-                typename M::iterator1 it1 (it2.begin ());
-                typename M::iterator1 it1_end (it2.end ());
-#else
-                typename M::iterator1 it1 (begin (it2, iterator2_tag ()));
-                typename M::iterator1 it1_end (end (it2, iterator2_tag ()));
-#endif
                 if (boost::is_same<BOOST_UBLAS_TYPENAME functor1_type::assign_category, assign_tag>::value) {
+#ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
+                    typename M::iterator1 it1 (it2.begin ());
+                    typename M::iterator1 it1_end (it2.end ());
+#else
+                    typename M::iterator1 it1 (begin (it2, iterator2_tag ()));
+                    typename M::iterator1 it1_end (end (it2, iterator2_tag ()));
+#endif
                     while (it1 != it1_end) {
-                        functor1_type () (*it1, value_type ());
+                        functor1_type::apply (*it1, value_type (0));
                         ++ it1;
                     }
+                    ++ it2;
                 } else {
-                    it1 = it1_end;
+                    increment (it2, it2_end, - compare);
                 }
-                ++ it2;
             } else if (compare > 0) {
-#ifdef BOOST_UBLAS_NON_CONFORMANT_PROXIES
-                typename M::iterator1 it1;
-                typename M::iterator1 it1_end;
-#ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
-                typename E::const_iterator1 it1e (it2e.begin ());
-                typename E::const_iterator1 it1e_end (it2e.end ());
-#else
-                typename E::const_iterator1 it1e (begin (it2e, iterator2_tag ()));
-                typename E::const_iterator1 it1e_end (end (it2e, iterator2_tag ()));
-#endif
-                while (it1e != it1e_end) {
-                    // Sparse proxies don't need to be conformant.
-                    // Thanks to Michael Stevens for suggesting this.
-                    size_type index1 (it1e.index1 ()), index2 (it1e.index2 ());
-                    if (functor2_type::other (index1, index2)) {
-                        // FIX: reduce fill in.
-                        // functor1_type () (m (index1, index2), e () (index1, index2));
-                        value_type t (*it1e);
-                        if (t != value_type ()) {
-                            functor1_type () (m (index1, index2), t);
-                            // The proxies could reference the same container.
-                            restart (e, index1, index2, it2e, it2e_end, it1e, it1e_end, column_major_tag ());
-                            restart (m, index1, index2, it2, it2_end, it1, it1_end, column_major_tag ());
-                        } else {
-                            ++ it1e;
-                        }
-                    } else {
-                        ++ it1e;
-                    }
-                }
-#endif
-                ++ it2e;
+                increment (it2e, it2e_end, compare);
             }
         }
-#ifdef BOOST_UBLAS_NON_CONFORMANT_PROXIES
-        while (it2e != it2e_end) {
-            typename M::iterator1 it1;
-            typename M::iterator1 it1_end;
-#ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
-            typename E::const_iterator1 it1e (it2e.begin ());
-            typename E::const_iterator1 it1e_end (it2e.end ());
-#else
-            typename E::const_iterator1 it1e (begin (it2e, iterator2_tag ()));
-            typename E::const_iterator1 it1e_end (end (it2e, iterator2_tag ()));
-#endif
-            while (it1e != it1e_end) {
-                // Sparse proxies don't need to be conformant.
-                // Thanks to Michael Stevens for suggesting this.
-                size_type index1 (it1e.index1 ()), index2 (it1e.index2 ());
-                if (functor2_type::other (index1, index2)) {
-                    // FIX: reduce fill in.
-                    // functor1_type () (m (index1, index2), e () (index1, index2));
-                    value_type t (*it1e);
-                    if (t != value_type ()) {
-                        functor1_type () (m (index1, index2), t);
-                        // The proxies could reference the same container.
-                        restart (e, index1, index2, it2e, it2e_end, it1e, it1e_end, column_major_tag ());
-                        restart (m, index1, index2, it2, it2_end, it1, it1_end, column_major_tag ());
-                    } else {
-                        ++ it1e;
-                    }
-                } else {
-                    ++ it1e;
-                }
-            }
-            ++ it2e;
-        }
-#endif
         if (boost::is_same<BOOST_UBLAS_TYPENAME functor1_type::assign_category, assign_tag>::value) {
             while (it2 != it2_end) {
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
@@ -1270,7 +1235,7 @@ namespace boost { namespace numeric { namespace ublas {
                 typename M::iterator1 it1_end (end (it2, iterator2_tag ()));
 #endif
                 while (it1 != it1_end) {
-                    functor1_type () (*it1, value_type ());
+                    functor1_type::apply (*it1, value_type (0));
                     ++ it1;
                 }
                 ++ it2;
@@ -1278,8 +1243,8 @@ namespace boost { namespace numeric { namespace ublas {
         } else {
             it2 = it2_end;
         }
-#ifdef BOOST_UBLAS_TYPE_CHECK
-        if (! disable_type_check)
+#if BOOST_UBLAS_TYPE_CHECK
+        if (! disable_type_check<bool>::value)
             BOOST_UBLAS_CHECK (equals (m, cm), external_logic ());
 #endif
     }
@@ -1293,28 +1258,26 @@ namespace boost { namespace numeric { namespace ublas {
                                               BOOST_UBLAS_TYPENAME F::assign_category,
                                               BOOST_UBLAS_TYPENAME E::const_iterator1::iterator_category,
                                               BOOST_UBLAS_TYPENAME E::const_iterator2::iterator_category>::storage_category storage_category;
-        // FIXME: can't we improve the dispatch here?
-        // typedef typename M::orientation_category orientation_category;
-        typedef typename boost::mpl::if_c<boost::is_same<BOOST_UBLAS_TYPENAME E::orientation_category, unknown_orientation_tag>::value,
+        // give preference to expressions orientation if known
+        typedef typename boost::mpl::if_<boost::is_same<BOOST_UBLAS_TYPENAME E::orientation_category, unknown_orientation_tag>,
                                           BOOST_UBLAS_TYPENAME M::orientation_category ,
                                           BOOST_UBLAS_TYPENAME E::orientation_category >::type orientation_category;
-        matrix_assign (functor_type (), m, e, full (), storage_category (), orientation_category ());
+        matrix_assign (functor_type (), full (), m, e, storage_category (), orientation_category ());
     }
-    template<class F1, class M, class E, class F2>
+    template<class F1, class F2, class M, class E>
     BOOST_UBLAS_INLINE
-    void matrix_assign (F1, M &m, const matrix_expression<E> &e, F2) {
+    void matrix_assign (F1, F2, M &m, const matrix_expression<E> &e) {
         typedef F1 functor1_type;
         typedef F2 functor2_type;
         typedef typename matrix_assign_traits<BOOST_UBLAS_TYPENAME M::storage_category,
                                               BOOST_UBLAS_TYPENAME F1::assign_category,
                                               BOOST_UBLAS_TYPENAME E::const_iterator1::iterator_category,
                                               BOOST_UBLAS_TYPENAME E::const_iterator2::iterator_category>::storage_category storage_category;
-        // FIXME: can't we improve the dispatch here?
-        // typedef typename M::orientation_category orientation_category;
-        typedef typename boost::mpl::if_c<boost::is_same<BOOST_UBLAS_TYPENAME E::orientation_category, unknown_orientation_tag>::value,
+        // give preference to expressions orientation if known
+        typedef typename boost::mpl::if_<boost::is_same<BOOST_UBLAS_TYPENAME E::orientation_category, unknown_orientation_tag>,
                                           BOOST_UBLAS_TYPENAME M::orientation_category ,
                                           BOOST_UBLAS_TYPENAME E::orientation_category >::type orientation_category;
-        matrix_assign (functor1_type (), m, e, functor2_type (), storage_category (), orientation_category ());
+        matrix_assign (functor1_type (), functor2_type (), m, e, storage_category (), orientation_category ());
     }
 
     template<class LS, class RI1, class RI2>
@@ -1336,7 +1299,7 @@ namespace boost { namespace numeric { namespace ublas {
     template<class F, class M, class E>
     // This function seems to be big. So we do not let the compiler inline it.
     // BOOST_UBLAS_INLINE
-    void matrix_swap (F, M &m, matrix_expression<E> &e, full, dense_proxy_tag, row_major_tag) {
+    void matrix_swap (F, full, M &m, matrix_expression<E> &e, dense_proxy_tag, row_major_tag) {
         typedef F functor_type;
         typedef typename M::size_type size_type;
         typedef typename M::difference_type difference_type;
@@ -1354,7 +1317,7 @@ namespace boost { namespace numeric { namespace ublas {
             difference_type size2 (BOOST_UBLAS_SAME (m.size2 (), size_type (end (it1e, iterator1_tag ()) - it2e)));
 #endif
             while (-- size2 >= 0)
-                functor_type () (*it2, *it2e), ++ it2, ++ it2e;
+                functor_type::apply (*it2, *it2e), ++ it2, ++ it2e;
             ++ it1, ++ it1e;
         }
     }
@@ -1362,7 +1325,7 @@ namespace boost { namespace numeric { namespace ublas {
     template<class F, class M, class E>
     // This function seems to be big. So we do not let the compiler inline it.
     // BOOST_UBLAS_INLINE
-    void matrix_swap (F, M &m, matrix_expression<E> &e, full, dense_proxy_tag, column_major_tag) {
+    void matrix_swap (F, full, M &m, matrix_expression<E> &e, dense_proxy_tag, column_major_tag) {
         typedef F functor_type;
         typedef typename M::size_type size_type;
         typedef typename M::difference_type difference_type;
@@ -1380,15 +1343,15 @@ namespace boost { namespace numeric { namespace ublas {
             difference_type size1 (BOOST_UBLAS_SAME (m.size1 (), size_type (end (it2e, iterator2_tag ()) - it1e)));
 #endif
             while (-- size1 >= 0)
-                functor_type () (*it1, *it1e), ++ it1, ++ it1e;
+                functor_type::apply (*it1, *it1e), ++ it1, ++ it1e;
             ++ it2, ++ it2e;
         }
     }
     // Packed (proxy) row major case
-    template<class F1, class M, class E, class F2>
+    template<class F1, class F2, class M, class E>
     // This function seems to be big. So we do not let the compiler inline it.
     // BOOST_UBLAS_INLINE
-    void matrix_swap (F1, M &m, matrix_expression<E> &e, F2, packed_proxy_tag, row_major_tag) {
+    void matrix_swap (F1, F2, M &m, matrix_expression<E> &e, packed_proxy_tag, row_major_tag) {
         typedef F1 functor1_type;
         typedef F2 functor2_type;
         typedef typename M::size_type size_type;
@@ -1407,15 +1370,15 @@ namespace boost { namespace numeric { namespace ublas {
             difference_type size2 (BOOST_UBLAS_SAME (end (it1, iterator1_tag ()) - it2, end (it1e, iterator1_tag ()) - it2e));
 #endif
             while (-- size2 >= 0)
-                functor1_type () (*it2, *it2e), ++ it2, ++ it2e;
+                functor1_type::apply (*it2, *it2e), ++ it2, ++ it2e;
             ++ it1, ++ it1e;
         }
     }
     // Packed (proxy) column major case
-    template<class F1, class M, class E, class F2>
+    template<class F1, class F2, class M, class E>
     // This function seems to be big. So we do not let the compiler inline it.
     // BOOST_UBLAS_INLINE
-    void matrix_swap (F1, M &m, matrix_expression<E> &e, F2, packed_proxy_tag, column_major_tag) {
+    void matrix_swap (F1, F2, M &m, matrix_expression<E> &e, packed_proxy_tag, column_major_tag) {
         typedef F1 functor1_type;
         typedef F2 functor2_type;
         typedef typename M::size_type size_type;
@@ -1434,27 +1397,32 @@ namespace boost { namespace numeric { namespace ublas {
             difference_type size1 (BOOST_UBLAS_SAME (end (it2, iterator2_tag ()) - it1, end (it2e, iterator2_tag ()) - it1e));
 #endif
             while (-- size1 >= 0)
-                functor1_type () (*it1, *it1e), ++ it1, ++ it1e;
+                functor1_type::apply (*it1, *it1e), ++ it1, ++ it1e;
             ++ it2, ++ it2e;
         }
     }
     // Sparse (proxy) row major case
-    template<class F1, class M, class E, class F2>
+    template<class F1, class F2, class M, class E>
     // This function seems to be big. So we do not let the compiler inline it.
     // BOOST_UBLAS_INLINE
-    void matrix_swap (F1, M &m, matrix_expression<E> &e, F2, sparse_proxy_tag, row_major_tag) {
+    void matrix_swap (F1, F2, M &m, matrix_expression<E> &e, sparse_proxy_tag, row_major_tag) {
         BOOST_UBLAS_CHECK (m.size1 () == e ().size1 (), bad_size ());
         BOOST_UBLAS_CHECK (m.size2 () == e ().size2 (), bad_size ());
         typedef F1 functor1_type;
         typedef F2 functor2_type;
         typedef typename M::size_type size_type;
+        typedef typename M::difference_type difference_type;
         typedef typename M::value_type value_type;
+#ifdef BOOST_UBLAS_NON_CONFORMANT_PROXIES
+        make_conformant (m, e, row_major_tag (), functor2_type ());
+        make_conformant (e (), m, row_major_tag (), functor2_type ());
+#endif
         typename M::iterator1 it1 (m.begin1 ());
         typename M::iterator1 it1_end (m.end1 ());
         typename E::iterator1 it1e (e ().begin1 ());
         typename E::iterator1 it1e_end (e ().end1 ());
         while (it1 != it1_end && it1e != it1e_end) {
-            int compare = it1.index1 () - it1e.index1 ();
+            difference_type compare = it1.index1 () - it1e.index1 ();
             if (compare == 0) {
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
                 typename M::iterator2 it2 (it1.begin ());
@@ -1467,174 +1435,74 @@ namespace boost { namespace numeric { namespace ublas {
                 typename E::iterator2 it2e (begin (it1e, iterator1_tag ()));
                 typename E::iterator2 it2e_end (end (it1e, iterator1_tag ()));
 #endif
-                while (it2 != it2_end && it2e != it2e_end) {
-                    int compare = it2.index2 () - it2e.index2 ();
-                    if (compare == 0) {
-                        functor1_type () (*it2, *it2e);
-                        ++ it2, ++ it2e;
-                    } else if (compare < 0) {
-#ifdef BOOST_UBLAS_NON_CONFORMANT_PROXIES
-                        // Sparse proxies don't need to be conformant.
-                        // Thanks to Michael Stevens for suggesting this.
-                        size_type index1 (it2.index1 ()), index2 (it2.index2 ());
-                        if (functor2_type::other (index1, index2)) {
-                            // FIX: reduce fill in.
-                            // functor1_type () (m (index1, index2), e () (index1, index2));
-                            value_type t (*it2);
-                            if (t != value_type ()) {
-                                functor1_type () (m (index1, index2), e () (index1, index2));
-                                restart (e, index1, index2, it1e, it1e_end, it2e, it2e_end, row_major_tag ());
-                                // The proxies could reference the same container.
-                                restart (m, index1, index2, it1, it1_end, it2, it2_end, row_major_tag ());
-                            } else {
-                                ++ it2;
-                            }
-                        } else {
-                            ++ it2;
+                if (it2 != it2_end && it2e != it2e_end) {
+                    size_type it2_index = it2.index2 (), it2e_index = it2e.index2 ();
+                    while (true) {
+                        difference_type compare = it2_index - it2e_index;
+                        if (compare == 0) {
+                            functor1_type::apply (*it2, *it2e);
+                            ++ it2, ++ it2e;
+                            if (it2 != it2_end && it2e != it2e_end) {
+                                it2_index = it2.index2 ();
+                                it2e_index = it2e.index2 ();
+                            } else
+                                break;
+                        } else if (compare < 0) {
+                            increment (it2, it2_end, - compare);
+                            if (it2 != it2_end)
+                                it2_index = it2.index2 ();
+                            else
+                                break;
+                        } else if (compare > 0) {
+                            increment (it2e, it2e_end, compare);
+                            if (it2e != it2e_end)
+                                it2e_index = it2e.index2 ();
+                            else
+                                break;
                         }
-#else
-                        ++ it2;
-#endif
-                    } else if (compare > 0) {
-#ifdef BOOST_UBLAS_NON_CONFORMANT_PROXIES
-                        // Sparse proxies don't need to be conformant.
-                        // Thanks to Michael Stevens for suggesting this.
-                        size_type index1 (it2e.index1 ()), index2 (it2e.index2 ());
-                        if (functor2_type::other (index1, index2)) {
-                            // FIX: reduce fill in.
-                            // functor1_type () (m (index1, index2), e () (index1, index2));
-                            value_type t (*it2e);
-                            if (t != value_type ()) {
-                                functor1_type () (m (index1, index2), e () (index1, index2));
-                                restart (m, index1, index2, it1, it1_end, it2, it2_end, row_major_tag ());
-                                // The proxies could reference the same container.
-                                restart (e, index1, index2, it1e, it1e_end, it2e, it2e_end, row_major_tag ());
-                            } else {
-                                ++ it2e;
-                            }
-                        } else {
-                            ++ it2e;
-                        }
-#else
-                        ++ it2e;
-#endif
                     }
                 }
-#ifdef BOOST_UBLAS_NON_CONFORMANT_PROXIES
-                while (it2e != it2e_end) {
-                    // Sparse proxies don't need to be conformant.
-                    // Thanks to Michael Stevens for suggesting this.
-                    size_type index1 (it2e.index1 ()), index2 (it2e.index2 ());
-                    if (functor2_type::other (index1, index2)) {
-                        // FIX: reduce fill in.
-                        // functor1_type () (m (index1, index2), e () (index1, index2));
-                        value_type t (*it2e);
-                        if (t != value_type ()) {
-                            functor1_type () (m (index1, index2), e () (index1, index2));
-                            // The proxies could reference the same container.
-                            restart (e, index1, index2, it1e, it1e_end, it2e, it2e_end, row_major_tag ());
-                            restart (m, index1, index2, it1, it1_end, it2, it2_end, row_major_tag ());
-                        } else {
-                            ++ it2e;
-                        }
-                    } else {
-                        ++ it2e;
-                    }
-                }
-                while (it2 != it2_end) {
-                    // Sparse proxies don't need to be conformant.
-                    // Thanks to Michael Stevens for suggesting this.
-                    size_type index1 (it2.index1 ()), index2 (it2.index2 ());
-                    if (functor2_type::other (index1, index2)) {
-                        // FIX: reduce fill in.
-                        // functor1_type () (m (index1, index2), e () (index1, index2));
-                        value_type t (*it2);
-                        if (t != value_type ()) {
-                            functor1_type () (m (index1, index2), e () (index1, index2));
-                            // The proxies could reference the same container.
-                            restart (m, index1, index2, it1, it1_end, it2, it2_end, row_major_tag ());
-                            restart (e, index1, index2, it1e, it1e_end, it2e, it2e_end, row_major_tag ());
-                        } else {
-                            ++ it2;
-                        }
-                    } else {
-                        ++ it2;
-                    }
-                }
+#if BOOST_UBLAS_TYPE_CHECK
+                increment (it2e, it2e_end);
+                increment (it2, it2_end);
 #endif
                 ++ it1, ++ it1e;
             } else if (compare < 0) {
-#ifdef BOOST_UBLAS_NON_CONFORMANT_PROXIES
+#if BOOST_UBLAS_TYPE_CHECK
+                while (it1.index1 () < it1e.index1 ()) {
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
-                typename M::iterator2 it2 (it1.begin ());
-                typename M::iterator2 it2_end (it1.end ());
+                    typename M::iterator2 it2 (it1.begin ());
+                    typename M::iterator2 it2_end (it1.end ());
 #else
-                typename M::iterator2 it2 (begin (it1, iterator1_tag ()));
-                typename M::iterator2 it2_end (end (it1, iterator1_tag ()));
+                    typename M::iterator2 it2 (begin (it1, iterator1_tag ()));
+                    typename M::iterator2 it2_end (end (it1, iterator1_tag ()));
 #endif
-                typename E::iterator2 it2e;
-                typename E::iterator2 it2e_end;
-                while (it2 != it2_end) {
-                    // Sparse proxies don't need to be conformant.
-                    // Thanks to Michael Stevens for suggesting this.
-                    size_type index1 (it2.index1 ()), index2 (it2.index2 ());
-                    if (functor2_type::other (index1, index2)) {
-                        // FIX: reduce fill in.
-                        // functor1_type () (m (index1, index2), e () (index1, index2));
-                        value_type t (*it2);
-                        if (t != value_type ()) {
-                            functor1_type () (m (index1, index2), e () (index1, index2));
-                            // The proxies could reference the same container.
-                            restart (m, index1, index2, it1, it1_end, it2, it2_end, row_major_tag ());
-                            restart (e, index1, index2, it1e, it1e_end, it2e, it2e_end, row_major_tag ());
-                        } else {
-                            ++ it2;
-                        }
-                    } else {
-                        ++ it2;
-                    }
+                    increment (it2, it2_end);
+                    ++ it1;
                 }
+#else
+                increment (it1, it1_end, - compare);
 #endif
-                ++ it1;
             } else if (compare > 0) {
-#ifdef BOOST_UBLAS_NON_CONFORMANT_PROXIES
-                typename M::iterator2 it2;
-                typename M::iterator2 it2_end;
+#if BOOST_UBLAS_TYPE_CHECK
+                while (it1e.index1 () < it1.index1 ()) {
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
-                typename E::iterator2 it2e (it1e.begin ());
-                typename E::iterator2 it2e_end (it1e.end ());
+                    typename E::iterator2 it2e (it1e.begin ());
+                    typename E::iterator2 it2e_end (it1e.end ());
 #else
-                typename E::iterator2 it2e (begin (it1e, iterator1_tag ()));
-                typename E::iterator2 it2e_end (end (it1e, iterator1_tag ()));
+                    typename E::iterator2 it2e (begin (it1e, iterator1_tag ()));
+                    typename E::iterator2 it2e_end (end (it1e, iterator1_tag ()));
 #endif
-                while (it2e != it2e_end) {
-                    // Sparse proxies don't need to be conformant.
-                    // Thanks to Michael Stevens for suggesting this.
-                    size_type index1 (it2e.index1 ()), index2 (it2e.index2 ());
-                    if (functor2_type::other (index1, index2)) {
-                        // FIX: reduce fill in.
-                        // functor1_type () (m (index1, index2), e () (index1, index2));
-                        value_type t (*it2e);
-                        if (t != value_type ()) {
-                            functor1_type () (m (index1, index2), e () (index1, index2));
-                            // The proxies could reference the same container.
-                            restart (e, index1, index2, it1e, it1e_end, it2e, it2e_end, row_major_tag ());
-                            restart (m, index1, index2, it1, it1_end, it2, it2_end, row_major_tag ());
-                        } else {
-                            ++ it2e;
-                        }
-                    } else {
-                        ++ it2e;
-                    }
+                    increment (it2e, it2e_end);
+                    ++ it1e;
                 }
+#else
+                increment (it1e, it1e_end, compare);
 #endif
-                ++ it1e;
             }
         }
-#ifdef BOOST_UBLAS_NON_CONFORMANT_PROXIES
+#if BOOST_UBLAS_TYPE_CHECK
         while (it1e != it1e_end) {
-            typename M::iterator2 it2;
-            typename M::iterator2 it2_end;
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
             typename E::iterator2 it2e (it1e.begin ());
             typename E::iterator2 it2e_end (it1e.end ());
@@ -1642,26 +1510,7 @@ namespace boost { namespace numeric { namespace ublas {
             typename E::iterator2 it2e (begin (it1e, iterator1_tag ()));
             typename E::iterator2 it2e_end (end (it1e, iterator1_tag ()));
 #endif
-            while (it2e != it2e_end) {
-                // Sparse proxies don't need to be conformant.
-                // Thanks to Michael Stevens for suggesting this.
-                size_type index1 (it2e.index1 ()), index2 (it2e.index2 ());
-                if (functor2_type::other (index1, index2)) {
-                    // FIX: reduce fill in.
-                    // functor1_type () (m (index1, index2), e () (index1, index2));
-                    value_type t (*it2e);
-                    if (t != value_type ()) {
-                        functor1_type () (m (index1, index2), e () (index1, index2));
-                        // The proxies could reference the same container.
-                        restart (e, index1, index2, it1e, it1e_end, it2e, it2e_end, row_major_tag ());
-                        restart (m, index1, index2, it1, it1_end, it2, it2_end, row_major_tag ());
-                    } else {
-                        ++ it2e;
-                    }
-                } else {
-                    ++ it2e;
-                }
-            }
+            increment (it2e, it2e_end);
             ++ it1e;
         }
         while (it1 != it1_end) {
@@ -1672,48 +1521,33 @@ namespace boost { namespace numeric { namespace ublas {
             typename M::iterator2 it2 (begin (it1, iterator1_tag ()));
             typename M::iterator2 it2_end (end (it1, iterator1_tag ()));
 #endif
-            typename E::iterator2 it2e;
-            typename E::iterator2 it2e_end;
-            while (it2 != it2_end) {
-                // Sparse proxies don't need to be conformant.
-                // Thanks to Michael Stevens for suggesting this.
-                size_type index1 (it2.index1 ()), index2 (it2.index2 ());
-                if (functor2_type::other (index1, index2)) {
-                    functor1_type () (m (index1, index2), e () (index1, index2));
-                    // The proxies could reference the same container.
-                    value_type t (*it2);
-                    if (t != value_type ()) {
-                        functor1_type () (m (index1, index2), e () (index1, index2));
-                        restart (m, index1, index2, it1, it1_end, it2, it2_end, row_major_tag ());
-                        restart (e, index1, index2, it1e, it1e_end, it2e, it2e_end, row_major_tag ());
-                    } else {
-                        ++ it2;
-                    }
-                } else {
-                    ++ it2;
-                }
-            }
+            increment (it2, it2_end);
             ++ it1;
         }
 #endif
     }
     // Sparse (proxy) column major case
-    template<class F1, class M, class E, class F2>
+    template<class F1, class F2, class M, class E>
     // This function seems to be big. So we do not let the compiler inline it.
     // BOOST_UBLAS_INLINE
-    void matrix_swap (F1, M &m, matrix_expression<E> &e, F2, sparse_proxy_tag, column_major_tag) {
+    void matrix_swap (F1, F2, M &m, matrix_expression<E> &e, sparse_proxy_tag, column_major_tag) {
         BOOST_UBLAS_CHECK (m.size1 () == e ().size1 (), bad_size ());
         BOOST_UBLAS_CHECK (m.size2 () == e ().size2 (), bad_size ());
         typedef F1 functor1_type;
         typedef F2 functor2_type;
         typedef typename M::size_type size_type;
+        typedef typename M::difference_type difference_type;
         typedef typename M::value_type value_type;
+#ifdef BOOST_UBLAS_NON_CONFORMANT_PROXIES
+        make_conformant (m, e, column_major_tag (), functor2_type ());
+        make_conformant (e (), m, column_major_tag (), functor2_type ());
+#endif
         typename M::iterator2 it2 (m.begin2 ());
         typename M::iterator2 it2_end (m.end2 ());
         typename E::iterator2 it2e (e ().begin2 ());
         typename E::iterator2 it2e_end (e ().end2 ());
         while (it2 != it2_end && it2e != it2e_end) {
-            int compare = it2.index2 () - it2e.index2 ();
+            difference_type compare = it2.index2 () - it2e.index2 ();
             if (compare == 0) {
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
                 typename M::iterator1 it1 (it2.begin ());
@@ -1726,175 +1560,74 @@ namespace boost { namespace numeric { namespace ublas {
                 typename E::iterator1 it1e (begin (it2e, iterator2_tag ()));
                 typename E::iterator1 it1e_end (end (it2e, iterator2_tag ()));
 #endif
-                while (it1 != it1_end && it1e != it1e_end) {
-                    int compare = it1.index1 () - it1e.index1 ();
-                    if (compare == 0) {
-                        functor1_type () (*it1, *it1e);
-                        ++ it1, ++ it1e;
-                    } else if (compare < 0) {
-#ifdef BOOST_UBLAS_NON_CONFORMANT_PROXIES
-                        // Sparse proxies don't need to be conformant.
-                        // Thanks to Michael Stevens for suggesting this.
-                        size_type index1 (it1.index1 ()), index2 (it1.index2 ());
-                        if (functor2_type::other (index1, index2)) {
-                            // FIX: reduce fill in.
-                            // functor1_type () (m (index1, index2), e () (index1, index2));
-                            // The proxies could reference the same container.
-                            value_type t (*it1);
-                            if (t != value_type ()) {
-                                functor1_type () (m (index1, index2), e () (index1, index2));
-                                restart (e, index1, index2, it2e, it2e_end, it1e, it1e_end, column_major_tag ());
-                                // The proxies could reference the same container.
-                                restart (m, index1, index2, it2, it2_end, it1, it1_end, column_major_tag ());
-                            } else {
-                                ++ it1;
-                            }
-                        } else {
-                            ++ it1;
+                if (it1 != it1_end && it1e != it1e_end) {
+                    size_type it1_index = it1.index1 (), it1e_index = it1e.index1 ();
+                    while (true) {
+                        difference_type compare = it1_index - it1e_index;
+                        if (compare == 0) {
+                            functor1_type::apply (*it1, *it1e);
+                            ++ it1, ++ it1e;
+                            if (it1 != it1_end && it1e != it1e_end) {
+                                it1_index = it1.index1 ();
+                                it1e_index = it1e.index1 ();
+                            } else
+                                break;
+                        }  else if (compare < 0) {
+                            increment (it1, it1_end, - compare);
+                            if (it1 != it1_end)
+                                it1_index = it1.index1 ();
+                            else
+                                break;
+                        } else if (compare > 0) {
+                            increment (it1e, it1e_end, compare);
+                            if (it1e != it1e_end)
+                                it1e_index = it1e.index1 ();
+                            else
+                                break;
                         }
-#else
-                        ++ it1;
-#endif
-                    } else if (compare > 0) {
-#ifdef BOOST_UBLAS_NON_CONFORMANT_PROXIES
-                        // Sparse proxies don't need to be conformant.
-                        // Thanks to Michael Stevens for suggesting this.
-                        size_type index1 (it1e.index1 ()), index2 (it1e.index2 ());
-                        if (functor2_type::other (index1, index2)) {
-                            // FIX: reduce fill in.
-                            // functor1_type () (m (index1, index2), e () (index1, index2));
-                            value_type t (*it1e);
-                            if (t != value_type ()) {
-                                functor1_type () (m (index1, index2), e () (index1, index2));
-                                restart (m, index1, index2, it2, it2_end, it1, it1_end, column_major_tag ());
-                                // The proxies could reference the same container.
-                                restart (e, index1, index2, it2e, it2e_end, it1e, it1e_end, column_major_tag ());
-                            } else {
-                                ++ it1e;
-                            }
-                        } else {
-                            ++ it1e;
-                        }
-#else
-                        ++ it1e;
-#endif
                     }
                 }
-#ifdef BOOST_UBLAS_NON_CONFORMANT_PROXIES
-                while (it1e != it1e_end) {
-                    // Sparse proxies don't need to be conformant.
-                    // Thanks to Michael Stevens for suggesting this.
-                    size_type index1 (it1e.index1 ()), index2 (it1e.index2 ());
-                    if (functor2_type::other (index1, index2)) {
-                        // FIX: reduce fill in.
-                        // functor1_type () (m (index1, index2), e () (index1, index2));
-                        value_type t (*it1e);
-                        if (t != value_type ()) {
-                            functor1_type () (m (index1, index2), e () (index1, index2));
-                            // The proxies could reference the same container.
-                            restart (e, index1, index2, it2e, it2e_end, it1e, it1e_end, column_major_tag ());
-                            restart (m, index1, index2, it2, it2_end, it1, it1_end, column_major_tag ());
-                        } else {
-                            ++ it1e;
-                        }
-                    } else {
-                        ++ it1e;
-                    }
-                }
-                while (it1 != it1_end) {
-                    // Sparse proxies don't need to be conformant.
-                    // Thanks to Michael Stevens for suggesting this.
-                    size_type index1 (it1.index1 ()), index2 (it1.index2 ());
-                    if (functor2_type::other (index1, index2)) {
-                        // FIX: reduce fill in.
-                        // functor1_type () (m (index1, index2), e () (index1, index2));
-                        value_type t (*it1);
-                        if (t != value_type ()) {
-                            functor1_type () (m (index1, index2), e () (index1, index2));
-                            // The proxies could reference the same container.
-                            restart (m, index1, index2, it2, it2_end, it1, it1_end, column_major_tag ());
-                            restart (e, index1, index2, it2e, it2e_end, it1e, it1e_end, column_major_tag ());
-                        } else {
-                            ++ it1;
-                        }
-                    } else {
-                        ++ it1;
-                    }
-                }
+#if BOOST_UBLAS_TYPE_CHECK
+                increment (it1e, it1e_end);
+                increment (it1, it1_end);
 #endif
                 ++ it2, ++ it2e;
             } else if (compare < 0) {
-#ifdef BOOST_UBLAS_NON_CONFORMANT_PROXIES
+#if BOOST_UBLAS_TYPE_CHECK
+                while (it2.index2 () < it2e.index2 ()) {
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
-                typename M::iterator1 it1 (it2.begin ());
-                typename M::iterator1 it1_end (it2.end ());
+                    typename M::iterator1 it1 (it2.begin ());
+                    typename M::iterator1 it1_end (it2.end ());
 #else
-                typename M::iterator1 it1 (begin (it2, iterator2_tag ()));
-                typename M::iterator1 it1_end (end (it2, iterator2_tag ()));
+                    typename M::iterator1 it1 (begin (it2, iterator2_tag ()));
+                    typename M::iterator1 it1_end (end (it2, iterator2_tag ()));
 #endif
-                typename E::iterator1 it1e;
-                typename E::iterator1 it1e_end;
-                while (it1 != it1_end) {
-                    // Sparse proxies don't need to be conformant.
-                    // Thanks to Michael Stevens for suggesting this.
-                    size_type index1 (it1.index1 ()), index2 (it1.index2 ());
-                    if (functor2_type::other (index1, index2)) {
-                        // FIX: reduce fill in.
-                        // functor1_type () (m (index1, index2), e () (index1, index2));
-                        value_type t (*it1);
-                        if (t != value_type ()) {
-                            functor1_type () (m (index1, index2), e () (index1, index2));
-                            // The proxies could reference the same container.
-                            restart (m, index1, index2, it2, it2_end, it1, it1_end, column_major_tag ());
-                            restart (e, index1, index2, it2e, it2e_end, it1e, it1e_end, column_major_tag ());
-                        } else {
-                            ++ it1;
-                        }
-                    } else {
-                        ++ it1;
-                    }
+                    increment (it1, it1_end);
+                    ++ it2;
                 }
+#else
+                increment (it2, it2_end, - compare);
 #endif
-                ++ it2;
             } else if (compare > 0) {
-#ifdef BOOST_UBLAS_NON_CONFORMANT_PROXIES
-                typename M::iterator1 it1;
-                typename M::iterator1 it1_end;
+#if BOOST_UBLAS_TYPE_CHECK
+                while (it2e.index2 () < it2.index2 ()) {
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
-                typename E::iterator1 it1e (it2e.begin ());
-                typename E::iterator1 it1e_end (it2e.end ());
+                    typename E::iterator1 it1e (it2e.begin ());
+                    typename E::iterator1 it1e_end (it2e.end ());
 #else
-                typename E::iterator1 it1e (begin (it2e, iterator2_tag ()));
-                typename E::iterator1 it1e_end (end (it2e, iterator2_tag ()));
+                    typename E::iterator1 it1e (begin (it2e, iterator2_tag ()));
+                    typename E::iterator1 it1e_end (end (it2e, iterator2_tag ()));
 #endif
-                while (it1e != it1e_end) {
-                    // Sparse proxies don't need to be conformant.
-                    // Thanks to Michael Stevens for suggesting this.
-                    size_type index1 (it1e.index1 ()), index2 (it1e.index2 ());
-                    if (functor2_type::other (index1, index2)) {
-                        // FIX: reduce fill in.
-                        // functor1_type () (m (index1, index2), e () (index1, index2));
-                        value_type t (*it1e);
-                        if (t != value_type ()) {
-                            functor1_type () (m (index1, index2), e () (index1, index2));
-                            // The proxies could reference the same container.
-                            restart (e, index1, index2, it2e, it2e_end, it1e, it1e_end, column_major_tag ());
-                            restart (m, index1, index2, it2, it2_end, it1, it1_end, column_major_tag ());
-                        } else {
-                            ++ it1e;
-                        }
-                    } else {
-                        ++ it1e;
-                    }
+                    increment (it1e, it1e_end);
+                    ++ it2e;
                 }
+#else
+                increment (it2e, it2e_end, compare);
 #endif
-                ++ it2e;
             }
         }
-#ifdef BOOST_UBLAS_NON_CONFORMANT_PROXIES
+#if BOOST_UBLAS_TYPE_CHECK
         while (it2e != it2e_end) {
-            typename M::iterator1 it1;
-            typename M::iterator1 it1_end;
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
             typename E::iterator1 it1e (it2e.begin ());
             typename E::iterator1 it1e_end (it2e.end ());
@@ -1902,26 +1635,7 @@ namespace boost { namespace numeric { namespace ublas {
             typename E::iterator1 it1e (begin (it2e, iterator2_tag ()));
             typename E::iterator1 it1e_end (end (it2e, iterator2_tag ()));
 #endif
-            while (it1e != it1e_end) {
-                // Sparse proxies don't need to be conformant.
-                // Thanks to Michael Stevens for suggesting this.
-                size_type index1 (it1e.index1 ()), index2 (it1e.index2 ());
-                if (functor2_type::other (index1, index2)) {
-                    // FIX: reduce fill in.
-                    // functor1_type () (m (index1, index2), e () (index1, index2));
-                    value_type t (*it1e);
-                    if (t != value_type ()) {
-                        functor1_type () (m (index1, index2), e () (index1, index2));
-                        // The proxies could reference the same container.
-                        restart (e, index1, index2, it2e, it2e_end, it1e, it1e_end, column_major_tag ());
-                        restart (m, index1, index2, it2, it2_end, it1, it1_end, column_major_tag ());
-                    } else {
-                        ++ it1e;
-                    }
-                } else {
-                    ++ it1e;
-                }
-            }
+            increment (it1e, it1e_end);
             ++ it2e;
         }
         while (it2 != it2_end) {
@@ -1932,28 +1646,7 @@ namespace boost { namespace numeric { namespace ublas {
             typename M::iterator1 it1 (begin (it2, iterator2_tag ()));
             typename M::iterator1 it1_end (end (it2, iterator2_tag ()));
 #endif
-            typename E::iterator1 it1e;
-            typename E::iterator1 it1e_end;
-            while (it1 != it1_end) {
-                // Sparse proxies don't need to be conformant.
-                // Thanks to Michael Stevens for suggesting this.
-                size_type index1 (it1.index1 ()), index2 (it1.index2 ());
-                if (functor2_type::other (index1, index2)) {
-                    // FIX: reduce fill in.
-                    // functor1_type () (m (index1, index2), e () (index1, index2));
-                    // The proxies could reference the same container.
-                    value_type t (*it1);
-                    if (t != value_type ()) {
-                        functor1_type () (m (index1, index2), e () (index1, index2));
-                        restart (m, index1, index2, it2, it2_end, it1, it1_end, column_major_tag ());
-                        restart (e, index1, index2, it2e, it2e_end, it1e, it1e_end, column_major_tag ());
-                    } else {
-                        ++ it1;
-                    }
-                } else {
-                    ++ it1;
-                }
-            }
+            increment (it1, it1_end);
             ++ it2;
         }
 #endif
@@ -1970,11 +1663,11 @@ namespace boost { namespace numeric { namespace ublas {
         // FIXME: can't we improve the dispatch here?
         // typedef typename E::orientation_category orientation_category;
         typedef typename M::orientation_category orientation_category;
-        matrix_swap (functor_type (), m, e, full (), storage_category (), orientation_category ());
+        matrix_swap (functor_type (), full (), m, e, storage_category (), orientation_category ());
     }
-    template<class F1, class M, class E, class F2>
+    template<class F1, class F2, class M, class E>
     BOOST_UBLAS_INLINE
-    void matrix_swap (F1, M &m, matrix_expression<E> &e, F2) {
+    void matrix_swap (F1, F2, M &m, matrix_expression<E> &e) {
         typedef F1 functor1_type;
         typedef F2 functor2_type;
         typedef typename matrix_swap_traits<BOOST_UBLAS_TYPENAME M::storage_category,
@@ -1983,29 +1676,9 @@ namespace boost { namespace numeric { namespace ublas {
         // FIXME: can't we improve the dispatch here?
         // typedef typename E::orientation_category orientation_category;
         typedef typename M::orientation_category orientation_category;
-        matrix_swap (functor1_type (), m, e, functor2_type (), storage_category (), orientation_category ());
+        matrix_swap (functor1_type (), functor2_type (), m, e, storage_category (), orientation_category ());
     }
 
 }}}
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

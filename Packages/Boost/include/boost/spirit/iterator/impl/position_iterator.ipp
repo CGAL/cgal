@@ -91,14 +91,7 @@ private:
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-//  Uses the newer iterator_adaptor version (should be released with
-//  Boost V1.31.0)
-//
-///////////////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////////
-//
-//  position_iterator_generator
+//  position_iterator_base_generator
 //
 //  Metafunction to generate the iterator type using boost::iterator_adaptors,
 //  hiding all the metaprogramming thunking code in it. It is used
@@ -106,7 +99,7 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////////////
 template <typename MainIterT, typename ForwardIterT, typename PositionT>
-struct position_iterator_generator
+struct position_iterator_base_generator
 {
 private:
     typedef boost::detail::iterator_traits<ForwardIterT> traits;

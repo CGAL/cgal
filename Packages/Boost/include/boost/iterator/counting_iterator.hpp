@@ -1,8 +1,7 @@
-// Copyright David Abrahams 2003. Permission to copy, use,
-// modify, sell and distribute this software is granted provided this
-// copyright notice appears in all copies. This software is provided
-// "as is" without express or implied warranty, and with no claim as
-// to its suitability for any purpose.
+// Copyright David Abrahams 2003.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 #ifndef COUNTING_ITERATOR_DWA200348_HPP
 # define COUNTING_ITERATOR_DWA200348_HPP
 
@@ -11,7 +10,7 @@
 # include <boost/mpl/bool.hpp>
 # include <boost/mpl/if.hpp>
 # include <boost/mpl/identity.hpp>
-# include <boost/mpl/apply_if.hpp>
+# include <boost/mpl/eval_if.hpp>
 
 namespace boost {
 
@@ -58,11 +57,11 @@ namespace detail
 
 #  if defined(BOOST_HAS_LONG_LONG)
   template <>
-  struct is_numeric<long long>
+  struct is_numeric< ::boost::long_long_type>
     : mpl::true_ {};
   
   template <>
-  struct is_numeric<unsigned long long>
+  struct is_numeric< ::boost::ulong_long_type>
     : mpl::true_ {};
 #  endif
 
@@ -84,7 +83,7 @@ namespace detail
   {
       typedef typename detail::ia_dflt_help<
           CategoryOrTraversal
-        , mpl::apply_if<
+        , mpl::eval_if<
               is_numeric<Incrementable>
             , mpl::identity<random_access_traversal_tag>
             , iterator_traversal<Incrementable>
@@ -93,7 +92,7 @@ namespace detail
       
       typedef typename detail::ia_dflt_help<
           Difference
-        , mpl::apply_if<
+        , mpl::eval_if<
               is_numeric<Incrementable>
             , numeric_difference<Incrementable>
             , iterator_difference<Incrementable>

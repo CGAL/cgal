@@ -5,7 +5,7 @@
  * Use, modification and distribution is subject to the 
  * Boost Software License, Version 1.0. (See accompanying
  * file LICENSE-1.0 or http://www.boost.org/LICENSE-1.0)
- * Author: Jeff Garland 
+ * Author: Jeff Garland, Bart Garst
  * $Date$
  */
 
@@ -83,6 +83,40 @@ namespace boost {
           return is_not_in_dst;
         }
         return ambiguous;
+      }
+
+      //! Calculates if the given local time is dst or not
+      /*! Determines if the time is really in DST or not.  Also checks for 
+       *  invalid and ambiguous.
+       *  @param current_day The day to check for dst
+       *  @param time_of_day Time offset within the day to check 
+       *  @param dst_start_day  Starting day of dst for the given locality
+       *  @param dst_start_offset Time offset within day for dst boundary
+       *  @param dst_end_day    Ending day of dst for the given locality
+       *  @param dst_end_offset Time offset within day given in dst for dst boundary
+       *  @param dst_length lenght of dst adjusment
+       *  @retval The time is either ambiguous, invalid, in dst, or not in dst
+       */
+      static time_is_dst_result 
+      local_is_dst(const date_type& current_day,
+                   const time_duration_type& time_of_day,
+                   const date_type& dst_start_day,
+                   const time_duration_type& dst_start_offset,
+                   const date_type& dst_end_day,
+                   const time_duration_type& dst_end_offset,
+                   const time_duration_type& dst_length_minutes)
+      {
+        unsigned int start_minutes = 
+          dst_start_offset.hours() * 60 + dst_start_offset.minutes();
+        unsigned int end_minutes = 
+          dst_end_offset.hours() * 60 + dst_end_offset.minutes();
+        long length_minutes =  
+          dst_length_minutes.hours() * 60 + dst_length_minutes.minutes();
+
+        return local_is_dst(current_day, time_of_day,
+                            dst_start_day, start_minutes,
+                            dst_end_day, end_minutes,
+                            length_minutes);
       }
 
       //! Calculates if the given local time is dst or not

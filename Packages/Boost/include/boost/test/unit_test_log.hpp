@@ -1,7 +1,7 @@
-//  (C) Copyright Gennadiy Rozental 2001-2003.
-//  Use, modification, and distribution are subject to the 
-//  Boost Software License, Version 1.0. (See accompanying file 
-//  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//  (C) Copyright Gennadiy Rozental 2001-2004.
+//  Distributed under the Boost Software License, Version 1.0.
+//  (See accompanying file LICENSE_1_0.txt or copy at 
+//  http://www.boost.org/LICENSE_1_0.txt)
 
 //  See http://www.boost.org/libs/test for the library home page.
 //
@@ -14,8 +14,8 @@
 //  completely hidden with pimple idiom
 // ***************************************************************************
 
-#ifndef BOOST_UNIT_TEST_LOG_HPP
-#define BOOST_UNIT_TEST_LOG_HPP
+#ifndef BOOST_UNIT_TEST_LOG_HPP_071894GER
+#define BOOST_UNIT_TEST_LOG_HPP_071894GER
 
 // Boost.Test
 #include <boost/test/detail/unit_test_config.hpp>
@@ -27,17 +27,15 @@
 #include <iosfwd>   // for std::ostream&
 #include <string>   // for std::string&; in fact need only forward declaration
 
-#ifdef BOOST_MSVC
-# pragma warning(push)
-# pragma warning(disable: 4512) // assignment operator could not be generated
-#endif
+#include <boost/test/detail/suppress_warnings.hpp>
 
 namespace boost {
 
-namespace unit_test_framework {
+namespace unit_test {
 
 //  each log level includes all subsequent higher loging levels
 enum            log_level {
+    invalid_log_level        = -1,
     log_successful_tests     = 0,
     log_test_suites          = 1,
     log_messages             = 2,
@@ -110,21 +108,21 @@ struct line {
 };
 
 struct file {
-    explicit    file( c_string_literal fn_ ) : m_file_name( fn_ ) {}
+    explicit    file( const_string fn_ ) : m_file_name( fn_ ) {}
 
-    c_string_literal m_file_name;
+    const_string m_file_name;
 };
 
 struct checkpoint {
-    explicit    checkpoint( std::string const& message_ ) : m_message( message_ ) {}
+    explicit    checkpoint( const_string message_ ) : m_message( message_ ) {}
 
-    std::string const& m_message;
+    const_string m_message;
 };
 
 struct log_exception {
-    explicit    log_exception( c_string_literal what_ ) : m_what( what_ ) {}
+    explicit    log_exception( const_string what_ ) : m_what( what_ ) {}
 
-    c_string_literal     m_what;
+    const_string m_what;
 };
 
 struct log_progress {
@@ -153,8 +151,8 @@ public:
     // log configuration methods
     void            set_log_stream( std::ostream& str_ );
     void            set_log_threshold_level( log_level lev_ );
-    void            set_log_threshold_level_by_name( std::string const& lev_ );
-    void            set_log_format( std::string const& of );
+    void            set_log_threshold_level_by_name( const_string lev_ );
+    void            set_log_format( const_string of );
     void            set_log_formatter( unit_test_log_formatter* the_formatter );
     void            clear_checkpoint();
 
@@ -172,8 +170,7 @@ public:
     // print value_ methods
     unit_test_log&  operator<<( log_progress const& );
     unit_test_log&  operator<<( log_exception const& );
-    unit_test_log&  operator<<( c_string_literal value_ );
-    unit_test_log&  operator<<( std::string const& value_ );
+    unit_test_log&  operator<<( const_string value_ );
 
 private:
     // formatters interface
@@ -190,14 +187,14 @@ private:
 }; // unit_test_log
 
 // helper macros
-#define BOOST_UT_LOG_BEGIN( file_name, line_num, loglevel )                             \
-    boost::unit_test_framework::unit_test_log::instance()                               \
-                                     << boost::unit_test_framework::begin()             \
-                                     << boost::unit_test_framework::level( loglevel )   \
-                                     << boost::unit_test_framework::file( file_name )   \
-                                     << boost::unit_test_framework::line( line_num ) << \
+#define BOOST_UT_LOG_BEGIN( file_name, line_num, loglevel )                     \
+    boost::unit_test::unit_test_log::instance()                                 \
+                                     << boost::unit_test::begin()               \
+                                     << boost::unit_test::level( loglevel )     \
+                                     << boost::unit_test::file( file_name )     \
+                                     << boost::unit_test::line( line_num ) <<   \
 /**/
-#define BOOST_UT_LOG_END             << boost::unit_test_framework::end();
+#define BOOST_UT_LOG_END             << boost::unit_test::end();
 
 // ************************************************************************** //
 // **************            test_case_scope_tracker           ************** //
@@ -212,27 +209,37 @@ private:
     test_case const&    m_tc;
 };
 
-} // namespace unit_test_framework
+} // namespace unit_test
 
 } // namespace boost
 
-#ifdef BOOST_MSVC
-# pragma warning(default: 4512) // assignment operator could not be generated
-# pragma warning(pop)
-#endif
+#include <boost/test/detail/enable_warnings.hpp>
 
 // ***************************************************************************
 //  Revision History :
 //  
 //  $Log$
-//  Revision 1.1  2004/05/23 10:51:36  spion
-//  Initial revision
+//  Revision 1.1.1.2  2004/11/20 10:52:16  spion
+//  Import of Boost v. 1.32.0
+//
+//  Revision 1.24  2004/07/19 12:15:45  rogeeff
+//  guard rename
+//  warning suppress reworked
+//
+//  Revision 1.23  2004/05/21 06:19:35  rogeeff
+//  licence update
+//
+//  Revision 1.22  2004/05/13 09:06:48  rogeeff
+//  added fixed_mapping
+//
+//  Revision 1.21  2004/05/11 11:00:51  rogeeff
+//  basic_cstring introduced and used everywhere
+//  class properties reworked
 //
 //  Revision 1.20  2003/12/01 00:41:56  rogeeff
 //  prerelease cleaning
 //
-
 // ***************************************************************************
 
-#endif // BOOST_UNIT_TEST_LOG_HPP
+#endif // BOOST_UNIT_TEST_LOG_HPP_071894GER
 

@@ -6,13 +6,9 @@
 // Copyright (c) 2002-2003
 // Eric Friedman, Itay Maman
 //
-// Permission to use, copy, modify, distribute and sell this software
-// and its documentation for any purpose is hereby granted without fee, 
-// provided that the above copyright notice appears in all copies and 
-// that both the copyright notice and this permission notice appear in 
-// supporting documentation. No representations are made about the 
-// suitability of this software for any purpose. It is provided "as is" 
-// without express or implied warranty.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 
 #ifndef BOOST_VARIANT_VARIANT_HPP
 #define BOOST_VARIANT_VARIANT_HPP
@@ -54,7 +50,7 @@
 #include "boost/variant/recursive_wrapper_fwd.hpp"
 #include "boost/variant/static_visitor.hpp"
 
-#include "boost/mpl/apply_if.hpp"
+#include "boost/mpl/eval_if.hpp"
 #include "boost/mpl/begin_end.hpp"
 #include "boost/mpl/bool.hpp"
 #include "boost/mpl/empty.hpp"
@@ -69,6 +65,7 @@
 #include "boost/mpl/logical.hpp"
 #include "boost/mpl/max_element.hpp"
 #include "boost/mpl/next.hpp"
+#include "boost/mpl/deref.hpp"
 #include "boost/mpl/pair.hpp"
 #include "boost/mpl/protect.hpp"
 #include "boost/mpl/push_front.hpp"
@@ -76,6 +73,7 @@
 #include "boost/mpl/size_t.hpp"
 #include "boost/mpl/sizeof.hpp"
 #include "boost/mpl/transform.hpp"
+#include "boost/mpl/assert.hpp"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Implementation Macros:
@@ -85,13 +83,13 @@
 //
 // BOOST_VARIANT_MINIMIZE_SIZE
 //   When #defined, implementation employs all known means to minimize the
-//   size of variant objects. However, often unsuccessful due to alignment
+//   size of variant obje   cts. However, often unsuccessful due to alignment
 //   issues, and potentially harmful to runtime speed, so not enabled by
 //   default. (TODO: Investigate further.)
 
 #if defined(BOOST_VARIANT_MINIMIZE_SIZE)
 #   include <climits> // for SCHAR_MAX
-#   include "boost/mpl/apply_if.hpp"
+#   include "boost/mpl/eval_if.hpp"
 #   include "boost/mpl/equal_to.hpp"
 #   include "boost/mpl/identity.hpp"
 #   include "boost/mpl/int.hpp"
@@ -116,13 +114,14 @@ struct max_value
 {
 private: // helpers, for metafunction result (below)
 
-    typedef typename mpl::max_element<
-          typename mpl::transform<Sequence, F>::type
+    typedef typename mpl::transform1<Sequence, F>::type transformed_;
+    typedef typename mpl::max_element<transformed_
+          
         >::type max_it;
 
 public: // metafunction result
 
-    typedef typename BOOST_MPL_AUX_DEREF_WNKD(max_it)
+    typedef typename mpl::deref<max_it>::type
         type;
 
 };
@@ -145,7 +144,7 @@ struct find_fallback_type_pred
     struct apply
     {
     private:
-        typedef typename BOOST_MPL_AUX_DEREF_WNKD(Iterator) t_;
+        typedef typename mpl::deref<Iterator>::type t_;
 
     public:
         typedef mpl::not_< has_nothrow_constructor<t_> > type;
@@ -183,7 +182,7 @@ private: // helpers, for metafunction result (below)
 public: // metafunction result
 
     // [...and return the results of the search:]
-    typedef typename mpl::apply_if<
+    typedef typename mpl::eval_if<
           is_same< second_result_it,end_it >
         , mpl::if_<
               is_same< first_result_it,end_it >
@@ -195,7 +194,7 @@ public: // metafunction result
 
 };
 
-#if defined(BOOST_MPL_MSVC_60_ETI_BUG)
+#if defined(BOOST_MPL_CFG_MSVC_60_ETI_BUG)
 
 template<>
 struct find_fallback_type<int>
@@ -203,7 +202,7 @@ struct find_fallback_type<int>
     typedef mpl::pair< no_fallback_type,no_fallback_type > type;
 };
 
-#endif // BOOST_MPL_MSVC_60_ETI_BUG workaround
+#endif // BOOST_MPL_CFG_MSVC_60_ETI_BUG workaround
 
 ///////////////////////////////////////////////////////////////////////////////
 // (detail) metafunction make_storage
@@ -217,7 +216,7 @@ struct make_storage
 {
 private: // helpers, for metafunction result (below)
 
-    typedef typename mpl::apply_if<
+    typedef typename mpl::eval_if<
           NeverUsesBackupFlag
         , mpl::identity< Types >
         , mpl::push_front<
@@ -265,7 +264,7 @@ public: // metafunction result
 
 };
 
-#if defined(BOOST_MPL_MSVC_60_ETI_BUG)
+#if defined(BOOST_MPL_CFG_MSVC_60_ETI_BUG)
 
 template<>
 struct make_storage<int,int>
@@ -273,7 +272,7 @@ struct make_storage<int,int>
     typedef int type;
 };
 
-#endif // BOOST_MPL_MSVC_60_ETI_BUG workaround
+#endif // BOOST_MPL_CFG_MSVC_60_ETI_BUG workaround
 
 ///////////////////////////////////////////////////////////////////////////////
 // (detail) class destroyer
@@ -916,7 +915,7 @@ private: // helpers, for typedefs (below)
     {
     };
 
-    typedef typename mpl::apply_if<
+    typedef typename mpl::eval_if<
           is_recursive_
         , T0_
         , mpl::identity< T0_ >
@@ -931,7 +930,7 @@ private: // helpers, for typedefs (below)
 
 private: // helpers, for typedefs (below)
 
-    typedef typename mpl::apply_if<
+    typedef typename mpl::eval_if<
           is_sequence_based_
         , unwrapped_T0_ // over_sequence<...>::type
         , detail::variant::make_variant_list<
@@ -944,7 +943,7 @@ private: // helpers, for typedefs (below)
           ::boost::mpl::not_< mpl::empty<specified_types> >::value
         ));
 
-    typedef typename mpl::apply_if<
+    typedef typename mpl::eval_if<
           is_recursive_
         , mpl::transform<
               specified_types
@@ -980,7 +979,7 @@ private: // helpers, for typedefs (below)
     typedef unwrapped_T0_ T0;
 
     #define BOOST_VARIANT_AUX_ENABLE_RECURSIVE_TYPEDEFS(z,N,_) \
-        typedef typename mpl::apply_if< \
+        typedef typename mpl::eval_if< \
               is_recursive_ \
             , detail::variant::enable_recursive< \
                   BOOST_PP_CAT(T,N) \
@@ -1045,11 +1044,7 @@ private: // static precondition assertions
     // NOTE TO USER :
     // variant< type-sequence > syntax is not supported on this compiler!
     //
-#   if !BOOST_WORKAROUND(BOOST_MSVC, <= 1200)
-    BOOST_STATIC_ASSERT( ::boost::mpl::not_<is_sequence_based_>::value );
-#   else
-    BOOST_STATIC_ASSERT( !is_sequence_based_::value );
-#   endif
+    BOOST_MPL_ASSERT_NOT(( is_sequence_based_ ));
 
 #endif // BOOST_VARIANT_NO_TYPE_SEQUENCE_SUPPORT workaround
 
@@ -1095,7 +1090,7 @@ private: // helpers, for representation (below)
 
     // [if O1_size available, then attempt which_t size optimization...]
     // [select signed char if fewer than SCHAR_MAX types, else signed int:]
-    typedef typename mpl::apply_if<
+    typedef typename mpl::eval_if<
           mpl::equal_to< mpl::O1_size<internal_types>, mpl::long_<-1> >
         , mpl::identity< int >
         , mpl::if_<

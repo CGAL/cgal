@@ -2,20 +2,17 @@
 
 // Copyright (C) 1999, 2000 Jaakko Järvi (jaakko.jarvi@cs.utu.fi)
 //
-// Permission to copy, use, sell and distribute this software is granted
-// provided this copyright notice appears in all copies. 
-// Permission to modify the code and to distribute modified code is granted
-// provided this copyright notice appears in all copies, and a notice 
-// that the code was modified is included with the copyright notice.
-//
-// This software is provided "as is" without express or implied warranty, 
-// and with no claim as to its suitability for any purpose.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 //
 // For more information, see www.boost.org
 
 
 #ifndef BOOST_LAMBDA_RETURN_TYPE_TRAITS_HPP
 #define BOOST_LAMBDA_RETURN_TYPE_TRAITS_HPP
+
+#include "boost/mpl/has_xxx.hpp"
 
 #include <cstddef> // needed for the ptrdiff_t
 
@@ -239,6 +236,25 @@ struct return_type_N<function_action<I, Ret>, Args> {
   typedef Ret type;
 };
 
+// ::result_type support
+
+namespace detail
+{
+
+BOOST_MPL_HAS_XXX_TRAIT_DEF(result_type)
+
+template<class F> struct get_result_type
+{
+  typedef typename F::result_type type;
+};
+
+template<class F, class A> struct get_sig
+{
+  typedef typename function_adaptor<F>::template sig<A>::type type;
+};
+
+} // namespace detail
+
   // Ret is detail::unspecified, so try to deduce return type
 template<int I, class Args> 
 struct return_type_N<function_action<I, detail::unspecified>, Args > { 
@@ -251,7 +267,11 @@ struct return_type_N<function_action<I, detail::unspecified>, Args > {
 public: 
   // pass the function to function_adaptor, and get the return type from 
   // that
-  typedef typename function_adaptor<plain_Func>::template sig<Args>::type type;
+  typedef typename detail::IF<
+    detail::has_result_type<plain_Func>::value,
+    detail::get_result_type<plain_Func>,
+    detail::get_sig<plain_Func, Args>
+  >::RET::type type;
 };
 
 

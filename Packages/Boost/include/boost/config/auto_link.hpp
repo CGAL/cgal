@@ -81,7 +81,7 @@ BOOST_LIB_VERSION:    The Boost version, in the form x_y, for Boost version x.y.
 //
 // Only include what follows for known and supported compilers:
 //
-#if (defined(BOOST_MSVC) && defined(_MSC_EXTENSIONS)) \
+#if defined(BOOST_MSVC) \
     || defined(__BORLANDC__) \
     || (defined(__MWERKS__) && defined(_WIN32) && (__MWERKS__ >= 0x3000)) \
     || (defined(__ICL) && defined(_MSC_EXTENSIONS) && (_MSC_VER >= 1200))
@@ -115,10 +115,15 @@ BOOST_LIB_VERSION:    The Boost version, in the form x_y, for Boost version x.y.
    // vc7:
 #  define BOOST_LIB_TOOLSET "vc7"
 
-#elif defined(BOOST_MSVC) && (BOOST_MSVC >= 1310)
+#elif defined(BOOST_MSVC) && (BOOST_MSVC == 1310)
 
    // vc71:
 #  define BOOST_LIB_TOOLSET "vc71"
+
+#elif defined(BOOST_MSVC) && (BOOST_MSVC >= 1400)
+
+   // vc80:
+#  define BOOST_LIB_TOOLSET "vc80"
 
 #elif defined(__BORLANDC__)
 

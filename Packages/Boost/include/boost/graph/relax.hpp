@@ -47,7 +47,7 @@ namespace boost {
 
       T operator()(const T& a, const T& b) const {
         using namespace std;
-        T inf = numeric_limits<T>::max();
+        T inf = (numeric_limits<T>::max)();
         if (b > 0 && my_abs(inf - a) < b)
           return inf;
         return a + b;

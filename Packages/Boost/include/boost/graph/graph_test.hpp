@@ -64,7 +64,6 @@ namespace boost {
       edge_t e;
     };
     struct ignore_edges {
-      ignore_edges() { }
       ignore_edges(vertex_t s, vertex_t t, const Graph& g) 
         : s(s), t(t), g(g) { }
       bool operator()(edge_t x) const { 
@@ -338,7 +337,7 @@ namespace boost {
 
     template <typename PropVal, typename PropertyTag>
     void test_readable_vertex_property_graph
-      (const std::vector<PropVal>& vertex_prop, PropertyTag, Graph& g)
+      (const std::vector<PropVal>& vertex_prop, PropertyTag, const Graph& g)
     {
       typedef typename property_map<Graph, PropertyTag>::const_type const_Map;
       const_Map pmap = get(PropertyTag(), g);
@@ -352,7 +351,7 @@ namespace boost {
          ++bgl_first_9) {
       //BGL_FORALL_VERTICES_T(v, g, Graph) {
         typename property_traits<const_Map>::value_type 
-          pval1 = get(pmap, x), pval2 = get(PropertyTag(), g, x);
+          pval1 = get(pmap, v), pval2 = get(PropertyTag(), g, v);
         BOOST_TEST(pval1 == pval2);
         BOOST_TEST(pval1 == *i++);
       }
@@ -372,16 +371,16 @@ namespace boost {
          bgl_first_9 != bgl_last_9 ? (v = *bgl_first_9, true) : false;
          ++bgl_first_9)
       //      BGL_FORALL_VERTICES_T(v, g, Graph)
-        put(pmap, x, *i++);
+        put(pmap, v, *i++);
 
       test_readable_vertex_property_graph(vertex_prop, tag, g);
 
       BGL_FORALL_VERTICES_T(v, g, Graph)
-        put(pmap, x, vertex_prop[0]);
+        put(pmap, v, vertex_prop[0]);
       
       typename std::vector<PropVal>::const_iterator j = vertex_prop.begin();
       BGL_FORALL_VERTICES_T(v, g, Graph)
-        put(PropertyTag(), g, x, *j++);
+        put(PropertyTag(), g, v, *j++);
       
       test_readable_vertex_property_graph(vertex_prop, tag, g);      
     }

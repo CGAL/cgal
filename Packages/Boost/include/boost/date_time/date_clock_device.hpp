@@ -16,7 +16,7 @@ namespace boost {
 namespace date_time {
 
   //! A clock providing day level services based on C time_t capabilities
-  /*! This clock uses Posix interfaces as its implemenation and hence
+  /*! This clock uses Posix interfaces as its implementation and hence
    *  uses the timezone settings of the operating system.  Incorrect
    *  user settings will result in incorrect results for the calls
    *  to local_day.

@@ -1,46 +1,76 @@
-//-----------------------------------------------------------------------------
-// boost mpl/list/aux_/iterator.hpp header file
-// See http://www.boost.org for updates, documentation, and revision history.
-//-----------------------------------------------------------------------------
-//
-// Copyright (c) 2000-02
-// Aleksey Gurtovoy
-//
-// Permission to use, copy, modify, distribute and sell this software
-// and its documentation for any purpose is hereby granted without fee, 
-// provided that the above copyright notice appears in all copies and 
-// that both the copyright notice and this permission notice appear in 
-// supporting documentation. No representations are made about the 
-// suitability of this software for any purpose. It is provided "as is" 
-// without express or implied warranty.
 
 #ifndef BOOST_MPL_LIST_AUX_ITERATOR_HPP_INCLUDED
 #define BOOST_MPL_LIST_AUX_ITERATOR_HPP_INCLUDED
 
-#include "boost/mpl/iterator_tag.hpp"
-#include "boost/mpl/list/aux_/node.hpp"
-#include "boost/mpl/aux_/lambda_spec.hpp"
+// Copyright Aleksey Gurtovoy 2000-2004
+//
+// Distributed under the Boost Software License, Version 1.0. 
+// (See accompanying file LICENSE_1_0.txt or copy at 
+// http://www.boost.org/LICENSE_1_0.txt)
+//
+// See http://www.boost.org/libs/mpl for documentation.
 
-namespace boost {
-namespace mpl {
+// $Source$
+// $Date$
+// $Revision$
+
+#include <boost/mpl/iterator_tags.hpp>
+#include <boost/mpl/next_prior.hpp>
+#include <boost/mpl/deref.hpp>
+#include <boost/mpl/list/aux_/item.hpp>
+#include <boost/mpl/aux_/na.hpp>
+#include <boost/mpl/aux_/lambda_spec.hpp>
+#include <boost/mpl/aux_/config/ctps.hpp>
+
+namespace boost { namespace mpl {
+
+#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
 
 template< typename Node >
-struct list_iterator
+struct l_iter
 {
+    typedef aux::l_iter_tag tag;
+    typedef forward_iterator_tag category;
+};
+
+template< typename Node >
+struct deref< l_iter<Node> >
+{
+    typedef typename Node::item type;
+};
+
+template< typename Node >
+struct next< l_iter<Node> >
+{
+    typedef l_iter< typename Node::next > type;
+};
+
+#else // BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
+
+template< typename Node >
+struct l_iter
+{
+    typedef aux::l_iter_tag tag;
     typedef forward_iterator_tag category;
     typedef typename Node::item type;
-    typedef list_iterator<typename Node::next> next;
+    typedef l_iter< typename mpl::next<Node>::type > next;
 };
 
-template<>
-struct list_iterator<null_node>
+#endif
+
+
+template<> struct l_iter<l_end>
 {
+    typedef aux::l_iter_tag tag;
     typedef forward_iterator_tag category;
+#if defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
+    typedef na type;
+    typedef l_iter next;
+#endif
 };
 
-BOOST_MPL_AUX_PASS_THROUGH_LAMBDA_SPEC(1,list_iterator)
+BOOST_MPL_AUX_PASS_THROUGH_LAMBDA_SPEC(1, l_iter)
 
-} // namespace mpl
-} // namespace boost
+}}
 
 #endif // BOOST_MPL_LIST_AUX_ITERATOR_HPP_INCLUDED

@@ -127,7 +127,7 @@ private:
 //      This is a helper for generating a correct list_parser<> from
 //      auxiliary parameters. There are the following types supported as
 //      parameters yet: parsers, single characters and strings (see
-//      as_parser<> in parser_type.hpp).
+//      as_parser<> in meta/as_parser.hpp).
 //
 //      The list_parser_gen by itself can be used for parsing comma separated
 //      lists without item formatting:
@@ -232,7 +232,8 @@ struct list_parser_gen :
     list_parser<
         typename as_parser<ItemT>::type,
         typename as_parser<DelimT>::type,
-        typename as_parser<EndT>::type
+        typename as_parser<EndT>::type,
+        typename as_parser<ItemT>::type::parser_category_t
     >
     operator()(
         ItemT const &item_, DelimT const &delim_, EndT const &end_) const

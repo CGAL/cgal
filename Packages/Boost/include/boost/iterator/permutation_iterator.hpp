@@ -1,10 +1,9 @@
 // (C) Copyright Toon Knapen    2001.
 // (C) Copyright David Abrahams 2003.
 // (C) Copyright Roland Richter 2003.
-// Permission to copy, use, modify, sell and distribute this software
-// is granted provided this copyright notice appears in all copies.
-// This software is provided "as is" without express or implied
-// warranty, and with no claim as to its suitability for any purpose.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 
 #ifndef BOOST_PERMUTATION_ITERATOR_HPP
 #define BOOST_PERMUTATION_ITERATOR_HPP

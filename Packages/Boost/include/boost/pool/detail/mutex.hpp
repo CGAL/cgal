@@ -1,14 +1,15 @@
 // Copyright (C) 2000 Stephen Cleary
 //
-// This file can be redistributed and/or modified under the terms found
-//  in "copyright.html"
-// This software and its documentation is provided "as is" without express or
-//  implied warranty, and with no claim as to its suitability for any purpose.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 //
 // See http://www.boost.org for updates, documentation, and revision history.
 
 #ifndef BOOST_POOL_MUTEX_HPP
 #define BOOST_POOL_MUTEX_HPP
+
+#include <boost/config.hpp>  // for workarounds
 
 // Extremely Light-Weight wrapper classes for OS thread synchronization
 
@@ -22,7 +23,7 @@
   // No multithreading -> make locks into no-ops
   #define BOOST_MUTEX_HELPER BOOST_MUTEX_HELPER_NONE
 #else
-  #ifdef __WIN32__
+  #ifdef BOOST_WINDOWS
     #define BOOST_MUTEX_HELPER BOOST_MUTEX_HELPER_WIN32
   #else
     #include <unistd.h>
@@ -37,7 +38,7 @@
 #endif
 
 
-#ifdef __WIN32__
+#ifdef BOOST_WINDOWS
   #include <windows.h>
 #endif
 #ifdef _POSIX_THREADS
@@ -49,7 +50,7 @@ namespace boost {
 namespace details {
 namespace pool {
 
-#ifdef __WIN32__
+#ifdef BOOST_WINDOWS
 
 class win32_mutex
 {
@@ -73,7 +74,7 @@ class win32_mutex
     { LeaveCriticalSection(&mtx); }
 };
 
-#endif // defined(__WIN32__)
+#endif // defined(BOOST_WINDOWS)
 
 #ifdef _POSIX_THREADS
 

@@ -17,48 +17,47 @@
 #ifndef BOOST_UBLAS_FWD_H
 #define BOOST_UBLAS_FWD_H
 
-namespace boost {
 
-    // Borrowed from Dave Abraham's noncopyable.
-    // I believe this should be part of utility.hpp one day...
-    class nonassignable {
-    protected:
-        nonassignable(){}
-        ~nonassignable(){}
-    private:  // emphasize the following members are private
-        const nonassignable& operator=( const nonassignable& );
-    }; // nonassignable
-
-}
-
-// Forward declarations
 namespace boost { namespace numeric { namespace ublas {
 
-    struct concrete_tag {};
-    struct abstract_tag {};
-
-    template<class T>
+    // Storage types
+    template<class T, class ALLOC = std::allocator<T> >
     class unbounded_array;
 
-    class range;
-    class slice;
+    template<class T, std::size_t N, class ALLOC = std::allocator<T> >
+    class bounded_array;
+
+    template <class I = std::size_t, class D = std::ptrdiff_t>
+    class basic_range;
+    template <class I = std::size_t, class D = std::ptrdiff_t>
+    class basic_slice;
+    typedef basic_range<> range;
+    typedef basic_slice<> slice;
     template<class A = unbounded_array<std::size_t> >
     class indirect_array;
 
-    template<class I, class T>
+    template<class I, class T, class ALLOC = std::allocator<std::pair<const I, T> > >
+    class map_std;
+    template<class I, class T, class ALLOC = std::allocator<std::pair<I, T> > >
     class map_array;
+
+    // Expression types
+    struct scalar_tag {};
+    
+    template<class E>
+    class vector_expression;
 
     struct vector_tag {};
 
     template<class E>
-    struct vector_expression;
+    class vector_expression;
     template<class E>
     class vector_reference;
 
     struct matrix_tag {};
 
     template<class E>
-    struct matrix_expression;
+    class matrix_expression;
     template<class E>
     class matrix_reference;
 
@@ -87,19 +86,18 @@ namespace boost { namespace numeric { namespace ublas {
 
     template<class T>
     class unit_vector;
-
+    template<class T>
+    class zero_vector;
     template<class T>
     class scalar_vector;
 
     template<class T, std::size_t N>
     class c_vector;
 
-    template<class T, class A = map_array<std::size_t, T> >
+    template<class T, class A = map_std<std::size_t, T> >
     class sparse_vector;
-
     template<class T, std::size_t IB = 0, class IA = unbounded_array<std::size_t>, class TA = unbounded_array<T> >
     class compressed_vector;
-
     template<class T, std::size_t IB = 0, class IA = unbounded_array<std::size_t>, class TA = unbounded_array<T> >
     class coordinate_vector;
 
@@ -118,7 +116,8 @@ namespace boost { namespace numeric { namespace ublas {
 
     template<class T>
     class identity_matrix;
-
+    template<class T>
+    class zero_matrix;
     template<class T>
     class scalar_matrix;
 
@@ -147,80 +146,32 @@ namespace boost { namespace numeric { namespace ublas {
 
     template<class T, class F1 = lower, class F2 = row_major, class A = unbounded_array<T> >
     class triangular_matrix;
-
     template<class M, class F = lower>
     class triangular_adaptor;
 
     template<class T, class F1 = lower, class F2 = row_major, class A = unbounded_array<T> >
     class symmetric_matrix;
-
     template<class M, class F = lower>
     class symmetric_adaptor;
 
     template<class T, class F1 = lower, class F2 = row_major, class A = unbounded_array<T> >
     class hermitian_matrix;
-
     template<class M, class F = lower>
     class hermitian_adaptor;
 
-    template<class T, class F = row_major, class A = map_array<std::size_t, T> >
+    template<class T, class F = row_major, class A = map_std<std::size_t, T> >
     class sparse_matrix;
-
-    template<class T, class F = row_major, class A = map_array<std::size_t, map_array<std::size_t, T> > >
+    template<class T, class F = row_major, class A = map_std<std::size_t, map_std<std::size_t, T> > >
     class sparse_vector_of_sparse_vector;
-
     template<class T, class F = row_major, std::size_t IB = 0, class IA = unbounded_array<std::size_t>, class TA = unbounded_array<T> >
     class compressed_matrix;
-
     template<class T, class F = row_major, std::size_t IB = 0, class IA = unbounded_array<std::size_t>, class TA = unbounded_array<T> >
     class coordinate_matrix;
 
-    // Some syntactic sugar. I'd like to drop it ;-)
-    template<class V>
-    typename V::size_type num_elements (const V &v) {
-        return v.size ();
-    }
-    template<class M>
-    typename M::size_type num_rows (const M &m) {
-        return m.size1 ();
-    }
-    template<class M>
-    typename M::size_type num_columns (const M &m) {
-        return m.size2 ();
-    }
-    template<class MV>
-    typename MV::size_type num_non_zeros (const MV &mv) {
-        return mv.non_zeros ();
-    }
+    // Evaluation tags
+    struct concrete_tag {};
+    struct abstract_tag {};
 
 }}}
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

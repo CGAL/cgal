@@ -1,14 +1,9 @@
 /* boost random/variate_generator.hpp header file
  *
  * Copyright Jens Maurer 2002
- * Permission to use, copy, modify, sell, and distribute this software
- * is hereby granted without fee provided that the above copyright notice
- * appears in all copies and that both that copyright notice and this
- * permission notice appear in supporting documentation,
- *
- * Jens Maurer makes no representations about the suitability of this
- * software for any purpose. It is provided "as is" without express or
- * implied warranty.
+ * Distributed under the Boost Software License, Version 1.0. (See
+ * accompanying file LICENSE_1_0.txt or copy at
+ * http://www.boost.org/LICENSE_1_0.txt)
  *
  * See http://www.boost.org for most recent version including documentation.
  *
@@ -112,8 +107,8 @@ public:
   distribution_type& distribution() { return _dist; }
   const distribution_type& distribution() const { return _dist; }
 
-  result_type min() const { return distribution().min(); }
-  result_type max() const { return distribution().max(); }
+  result_type min BOOST_PREVENT_MACRO_SUBSTITUTION () const { return (distribution().min)(); }
+  result_type max BOOST_PREVENT_MACRO_SUBSTITUTION () const { return (distribution().max)(); }
 
 private:
 #if BOOST_WORKAROUND(__BORLANDC__, <= 0x564)

@@ -6,13 +6,9 @@
 // Copyright (c) 2002-2003
 // Eric Friedman, Itay Maman
 //
-// Permission to use, copy, modify, distribute and sell this software
-// and its documentation for any purpose is hereby granted without fee, 
-// provided that the above copyright notice appears in all copies and 
-// that both the copyright notice and this permission notice appear in 
-// supporting documentation. No representations are made about the 
-// suitability of this software for any purpose. It is provided "as is" 
-// without express or implied warranty.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 
 #ifndef BOOST_VARIANT_DETAIL_INITIALIZER_HPP
 #define BOOST_VARIANT_DETAIL_INITIALIZER_HPP
@@ -26,11 +22,11 @@
 #include "boost/variant/recursive_wrapper_fwd.hpp"
 
 #if !defined(BOOST_NO_USING_DECLARATION_OVERLOADS_FROM_TYPENAME_BASE)
-#   include "boost/mpl/aux_/deref_wknd.hpp"
 #   include "boost/mpl/aux_/value_wknd.hpp"
 #   include "boost/mpl/int.hpp"
 #   include "boost/mpl/iter_fold.hpp"
 #   include "boost/mpl/next.hpp"
+#   include "boost/mpl/deref.hpp"
 #   include "boost/mpl/pair.hpp"
 #   include "boost/mpl/protect.hpp"
 #else
@@ -79,7 +75,7 @@ struct make_initializer_node
         {
         private: // helpers, for static functions (below)
 
-            typedef typename BOOST_MPL_AUX_DEREF_WNKD(Iterator)
+            typedef typename mpl::deref<Iterator>::type
                 recursive_enabled_T;
             typedef typename unwrap_recursive<recursive_enabled_T>::type
                 public_T;
@@ -187,7 +183,7 @@ public: // static functions
 
 };
 
-#   if defined(BOOST_MPL_MSVC_60_ETI_BUG)
+#   if defined(BOOST_MPL_CFG_MSVC_60_ETI_BUG)
 
 #if !defined(BOOST_VARIANT_AUX_ECHO)
 #   define BOOST_VARIANT_AUX_ECHO(z,N,token) token
@@ -201,7 +197,7 @@ struct preprocessor_list_initializer<
 {
 };
 
-#   endif // BOOST_MPL_MSVC_60_ETI_BUG workaround
+#   endif // BOOST_MPL_CFG_MSVC_60_ETI_BUG workaround
 
 #endif // BOOST_NO_USING_DECLARATION_OVERLOADS_FROM_TYPENAME_BASE workaround
 

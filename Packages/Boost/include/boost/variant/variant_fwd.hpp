@@ -6,13 +6,9 @@
 // Copyright (c) 2003
 // Eric Friedman, Itay Maman
 //
-// Permission to use, copy, modify, distribute and sell this software
-// and its documentation for any purpose is hereby granted without fee, 
-// provided that the above copyright notice appears in all copies and 
-// that both the copyright notice and this permission notice appear in 
-// supporting documentation. No representations are made about the 
-// suitability of this software for any purpose. It is provided "as is" 
-// without express or implied warranty.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 
 #ifndef BOOST_VARIANT_VARIANT_FWD_HPP
 #define BOOST_VARIANT_VARIANT_FWD_HPP
@@ -21,7 +17,8 @@
 
 #include "boost/blank_fwd.hpp"
 #include "boost/mpl/arg.hpp"
-#include "boost/mpl/void.hpp"
+#include "boost/mpl/limits/arity.hpp"
+#include "boost/mpl/aux_/na.hpp"
 #include "boost/preprocessor/cat.hpp"
 #include "boost/preprocessor/enum.hpp"
 #include "boost/preprocessor/enum_params.hpp"
@@ -83,7 +80,7 @@
 //
 #include "boost/mpl/limits/arity.hpp"
 #define BOOST_VARIANT_RECURSIVE_VARIANT_MAX_ARITY \
-    BOOST_MPL_METAFUNCTION_MAX_ARITY
+    BOOST_MPL_LIMIT_METAFUNCTION_ARITY
 
 ///////////////////////////////////////////////////////////////////////////////
 // macro BOOST_VARIANT_ENUM_PARAMS
@@ -131,7 +128,7 @@ struct convert_void
 template <>
 struct convert_void< void_ >
 {
-    typedef mpl::void_ type;
+    typedef mpl::na type;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -146,7 +143,7 @@ struct convert_void< void_ >
 // (detail) tags voidNN -- NN defined on [0, BOOST_VARIANT_LIMIT_TYPES)
 //
 // Defines void types that are each unique and specializations of
-// convert_void that yields mpl::void_ for each voidNN type.
+// convert_void that yields mpl::na for each voidNN type.
 //
 
 #define BOOST_VARIANT_DETAIL_DEFINE_VOID_N(z,N,_)          \
@@ -155,7 +152,7 @@ struct convert_void< void_ >
     template <>                                            \
     struct convert_void< BOOST_PP_CAT(void,N) >            \
     {                                                      \
-        typedef mpl::void_ type;                           \
+        typedef mpl::na type;                              \
     };                                                     \
     /**/
 

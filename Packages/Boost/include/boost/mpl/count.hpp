@@ -2,42 +2,38 @@
 #ifndef BOOST_MPL_COUNT_HPP_INCLUDED
 #define BOOST_MPL_COUNT_HPP_INCLUDED
 
-// + file: boost/mpl/count.hpp
-// + last modified: 05/nov/03
-
-// Copyright Aleksey Gurtovoy 2000-03
+// Copyright Aleksey Gurtovoy 2000-2004
 //
-// Use, modification and distribution are subject to the Boost Software 
-// License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy 
-// at http://www.boost.org/LICENSE_1_0.txt)
+// Distributed under the Boost Software License, Version 1.0. 
+// (See accompanying file LICENSE_1_0.txt or copy at 
+// http://www.boost.org/LICENSE_1_0.txt)
 //
 // See http://www.boost.org/libs/mpl for documentation.
 
-#include "boost/mpl/count_fwd.hpp"
-#include "boost/mpl/aux_/count_impl.hpp"
-#include "boost/mpl/aux_/sequence_tag.hpp"
-#include "boost/mpl/aux_/void_spec.hpp"
-#include "boost/mpl/aux_/lambda_support.hpp"
+// $Source$
+// $Date$
+// $Revision$
 
-namespace boost {
-namespace mpl {
+#include <boost/mpl/count_fwd.hpp>
+#include <boost/mpl/sequence_tag.hpp>
+#include <boost/mpl/aux_/count_impl.hpp>
+#include <boost/mpl/aux_/na_spec.hpp>
+#include <boost/mpl/aux_/lambda_support.hpp>
 
-BOOST_MPL_AUX_AGLORITHM_NAMESPACE_BEGIN
+namespace boost { namespace mpl {
 
 template<
-      typename BOOST_MPL_AUX_VOID_SPEC_PARAM(Sequence)
-    , typename BOOST_MPL_AUX_VOID_SPEC_PARAM(T)
+      typename BOOST_MPL_AUX_NA_PARAM(Sequence)
+    , typename BOOST_MPL_AUX_NA_PARAM(T)
     >
 struct count
-    : count_impl< typename BOOST_MPL_AUX_SEQUENCE_TAG(Sequence) >
+    : count_impl< typename sequence_tag<Sequence>::type >
         ::template apply<Sequence,T>
 {
     BOOST_MPL_AUX_LAMBDA_SUPPORT(2,count,(Sequence,T))
 };
 
-BOOST_MPL_AUX_AGLORITHM_NAMESPACE_END
-
-BOOST_MPL_AUX_ALGORITHM_VOID_SPEC(2, count)
+BOOST_MPL_AUX_NA_SPEC(2, count)
 
 }}
 

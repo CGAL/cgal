@@ -1,8 +1,15 @@
-// preprocessed version of 'boost/mpl/list/list50.hpp' header
-// see the original for copyright information
 
-namespace boost {
-namespace mpl {
+// Copyright Aleksey Gurtovoy 2000-2004
+//
+// Distributed under the Boost Software License, Version 1.0. 
+// (See accompanying file LICENSE_1_0.txt or copy at 
+// http://www.boost.org/LICENSE_1_0.txt)
+//
+
+// Preprocessed version of "boost/mpl/list/list50.hpp" header
+// -- DO NOT modify by hand!
+
+namespace boost { namespace mpl {
 
 template<
       typename T0, typename T1, typename T2, typename T3, typename T4
@@ -16,8 +23,8 @@ template<
     , typename T40
     >
 struct list41
-    : list_node<
-          integral_c< long,41 >
+    : l_item<
+          long_<41>
         , T0
         , list40< T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T20,T21,T22,T23,T24,T25,T26,T27,T28,T29,T30,T31,T32,T33,T34,T35,T36,T37,T38,T39,T40 >
         >
@@ -37,8 +44,8 @@ template<
     , typename T40, typename T41
     >
 struct list42
-    : list_node<
-          integral_c< long,42 >
+    : l_item<
+          long_<42>
         , T0
         , list41< T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T20,T21,T22,T23,T24,T25,T26,T27,T28,T29,T30,T31,T32,T33,T34,T35,T36,T37,T38,T39,T40,T41 >
         >
@@ -58,8 +65,8 @@ template<
     , typename T40, typename T41, typename T42
     >
 struct list43
-    : list_node<
-          integral_c< long,43 >
+    : l_item<
+          long_<43>
         , T0
         , list42< T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T20,T21,T22,T23,T24,T25,T26,T27,T28,T29,T30,T31,T32,T33,T34,T35,T36,T37,T38,T39,T40,T41,T42 >
         >
@@ -79,8 +86,8 @@ template<
     , typename T40, typename T41, typename T42, typename T43
     >
 struct list44
-    : list_node<
-          integral_c< long,44 >
+    : l_item<
+          long_<44>
         , T0
         , list43< T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T20,T21,T22,T23,T24,T25,T26,T27,T28,T29,T30,T31,T32,T33,T34,T35,T36,T37,T38,T39,T40,T41,T42,T43 >
         >
@@ -100,8 +107,8 @@ template<
     , typename T40, typename T41, typename T42, typename T43, typename T44
     >
 struct list45
-    : list_node<
-          integral_c< long,45 >
+    : l_item<
+          long_<45>
         , T0
         , list44< T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T20,T21,T22,T23,T24,T25,T26,T27,T28,T29,T30,T31,T32,T33,T34,T35,T36,T37,T38,T39,T40,T41,T42,T43,T44 >
         >
@@ -122,8 +129,8 @@ template<
     , typename T45
     >
 struct list46
-    : list_node<
-          integral_c< long,46 >
+    : l_item<
+          long_<46>
         , T0
         , list45< T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T20,T21,T22,T23,T24,T25,T26,T27,T28,T29,T30,T31,T32,T33,T34,T35,T36,T37,T38,T39,T40,T41,T42,T43,T44,T45 >
         >
@@ -144,8 +151,8 @@ template<
     , typename T45, typename T46
     >
 struct list47
-    : list_node<
-          integral_c< long,47 >
+    : l_item<
+          long_<47>
         , T0
         , list46< T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T20,T21,T22,T23,T24,T25,T26,T27,T28,T29,T30,T31,T32,T33,T34,T35,T36,T37,T38,T39,T40,T41,T42,T43,T44,T45,T46 >
         >
@@ -166,8 +173,8 @@ template<
     , typename T45, typename T46, typename T47
     >
 struct list48
-    : list_node<
-          integral_c< long,48 >
+    : l_item<
+          long_<48>
         , T0
         , list47< T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T20,T21,T22,T23,T24,T25,T26,T27,T28,T29,T30,T31,T32,T33,T34,T35,T36,T37,T38,T39,T40,T41,T42,T43,T44,T45,T46,T47 >
         >
@@ -188,8 +195,8 @@ template<
     , typename T45, typename T46, typename T47, typename T48
     >
 struct list49
-    : list_node<
-          integral_c< long,49 >
+    : l_item<
+          long_<49>
         , T0
         , list48< T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T20,T21,T22,T23,T24,T25,T26,T27,T28,T29,T30,T31,T32,T33,T34,T35,T36,T37,T38,T39,T40,T41,T42,T43,T44,T45,T46,T47,T48 >
         >
@@ -210,8 +217,8 @@ template<
     , typename T45, typename T46, typename T47, typename T48, typename T49
     >
 struct list50
-    : list_node<
-          integral_c< long,50 >
+    : l_item<
+          long_<50>
         , T0
         , list49< T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T20,T21,T22,T23,T24,T25,T26,T27,T28,T29,T30,T31,T32,T33,T34,T35,T36,T37,T38,T39,T40,T41,T42,T43,T44,T45,T46,T47,T48,T49 >
         >
@@ -219,6 +226,4 @@ struct list50
     typedef list50 type;
 };
 
-} // namespace mpl
-} // namespace boost
-
+}}

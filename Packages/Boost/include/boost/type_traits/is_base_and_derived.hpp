@@ -25,7 +25,9 @@ namespace detail {
 
 #if !BOOST_WORKAROUND(__BORLANDC__, <= 0x570) \
  && !BOOST_WORKAROUND(__SUNPRO_CC , BOOST_TESTED_AT(0x540)) \
- && !BOOST_WORKAROUND(__EDG_VERSION__, <= 243)
+ && !BOOST_WORKAROUND(__EDG_VERSION__, <= 243) \
+ && !BOOST_WORKAROUND(__DMC__, BOOST_TESTED_AT(0x840))
+
                              // The EDG version number is a lower estimate.
                              // It is not currently known which EDG version
                              // exactly fixes the problem.
@@ -56,18 +58,18 @@ UDC - User-defined conversion
 A user-defined conversion sequence consists of an SC, followed by an UDC,
 followed by another SC. Either SC may be the identity conversion.
 
-When passing the default-constructed Host object to the overloaded check()
+When passing the default-constructed Host object to the overloaded check_sig()
 functions (initialization 8.5/14/4/3), we have several viable implicit
 conversion sequences:
 
-For "static no_type check(B const volatile *, int)" we have the conversion
+For "static no_type check_sig(B const volatile *, int)" we have the conversion
 sequences:
 
 C -> C const (SC - Qualification Adjustment) -> B const volatile* (UDC)
 C -> D const volatile* (UDC) -> B1 const volatile* / B2 const volatile* ->
      B const volatile* (SC - Conversion)
 
-For "static yes_type check(D const volatile *, T)" we have the conversion
+For "static yes_type check_sig(D const volatile *, T)" we have the conversion
 sequence:
 
 C -> D const volatile* (UDC)
@@ -91,12 +93,12 @@ eliminated before it could possibly cause ambiguity or access violation.
 If D is not derived from B, it has to choose between C -> C const -> B const
 volatile* for the first function, and C -> D const volatile* for the second
 function, which are just as good (both requires a UDC, 13.3.3.2), had it not
-been for the fact that "static no_type check(B const volatile *, int)" is
+been for the fact that "static no_type check_sig(B const volatile *, int)" is
 not templated, which makes C -> C const -> B const volatile* the best choice
 (13.3.3/1/4), resulting in "no".
 
 Also, if Host::operator B const volatile* hadn't been const, the two
-conversion sequences for "static no_type check(B const volatile *, int)", in
+conversion sequences for "static no_type check_sig(B const volatile *, int)", in
 the case where D is derived from B, would have been ambiguous.
 
 See also
@@ -109,8 +111,8 @@ template <typename B, typename D>
 struct bd_helper
 {
     template <typename T>
-    static type_traits::yes_type check(D const volatile *, T);
-    static type_traits::no_type  check(B const volatile *, int);
+    static type_traits::yes_type check_sig(D const volatile *, T);
+    static type_traits::no_type  check_sig(B const volatile *, int);
 };
 
 template<typename B, typename D>
@@ -123,7 +125,7 @@ struct is_base_and_derived_impl2
     };
 
     BOOST_STATIC_CONSTANT(bool, value =
-        sizeof(bd_helper<B,D>::check(Host(), 0)) == sizeof(type_traits::yes_type));
+        sizeof(bd_helper<B,D>::check_sig(Host(), 0)) == sizeof(type_traits::yes_type));
 };
 
 #else

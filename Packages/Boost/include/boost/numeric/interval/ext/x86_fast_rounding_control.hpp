@@ -1,16 +1,17 @@
 /* Boost interval/detail/x86gcc_rounding_control.hpp file
  *
- * Copyright Hervé Brönnimann, Guillaume Melquiond, Sylvain Pion 2002
- * Permission to use, copy, modify, sell, and distribute this software
- * is hereby granted without fee provided that the above copyright notice
- * appears in all copies and that both that copyright notice and this
- * permission notice appear in supporting documentation,
+ * This header provides a rounding control policy
+ * that avoids flushing results to memory. In
+ * order for this optimization to be reliable, it
+ * should be used only when no underflow or
+ * overflow would happen without it. Indeed, only
+ * values in range are correctly rounded.
  *
- * None of the above authors nor Polytechnic University make any
- * representation about the suitability of this software for any
- * purpose. It is provided "as is" without express or implied warranty.
+ * Copyright 2002 Hervé Brönnimann, Guillaume Melquiond, Sylvain Pion
  *
- * $Id$
+ * Distributed under the Boost Software License, Version 1.0.
+ * (See accompanying file LICENSE_1_0.txt or
+ * copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 
 #ifndef BOOST_NUMERIC_INTERVAL_EXT_X86_FAST_ROUNDING_CONTROL_HPP

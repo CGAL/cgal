@@ -213,7 +213,7 @@ public:
    {
       difference_type dist = boost::re_detail::distance(a,b);
       states *= states;
-      difference_type lim = std::numeric_limits<difference_type>::max() - 1000 - states;
+      difference_type lim = (std::numeric_limits<difference_type>::max)() - 1000 - states;
       if(dist > (difference_type)(lim / states))
          max_state_count = lim;
       else

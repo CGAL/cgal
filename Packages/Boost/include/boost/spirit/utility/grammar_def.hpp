@@ -11,7 +11,7 @@
 #define BOOST_SPIRIT_GRAMMAR_DEF_HPP
 
 #include <boost/mpl/if.hpp>
-#include <boost/mpl/apply_if.hpp>
+#include <boost/mpl/eval_if.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/preprocessor/arithmetic/inc.hpp>
 #include <boost/preprocessor/arithmetic/dec.hpp>
@@ -135,7 +135,7 @@ namespace impl {
         static void
         do_(TupleT &t)
         {
-            typedef typename boost::mpl::apply_if_c<
+            typedef typename boost::mpl::eval_if_c<
                         (N < TupleT::length),
                         phoenix::tuple_element<N, TupleT>,
                         phoenix_nil_type

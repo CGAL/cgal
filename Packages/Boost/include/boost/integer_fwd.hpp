@@ -1,10 +1,8 @@
 //  Boost integer_fwd.hpp header file  ---------------------------------------//
 
-//  (C) Copyright boost.org 2001.  Permission to copy, use, modify, sell
-//  and distribute this software is granted provided this copyright
-//  notice appears in all copies.  This software is provided "as is" without
-//  express or implied warranty, and with no claim as to its suitability for
-//  any purpose.
+//  (C) Copyright Dave Abrahams and Daryle Walker 2001. Distributed under the Boost
+//  Software License, Version 1.0. (See accompanying file
+//  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 //  See http://www.boost.org/libs/integer for documentation.
 
@@ -69,10 +67,10 @@ template <  >
 
 #ifdef ULLONG_MAX
 template <  >
-    class integer_traits< long long >;
+    class integer_traits<  ::boost::long_long_type>;
 
 template <  >
-    class integer_traits< unsigned long long >;
+    class integer_traits<  ::boost::ulong_long_type >;
 #endif
 
 

@@ -55,23 +55,22 @@ inline unsigned int regex_grep(Predicate foo,
          return count; // we've reached the end, don't try and find an extra null match.
       if(m.length() == 0)
       {
+         if(m[0].second == last)
+            return count;
          // we found a NULL-match, now try to find
          // a non-NULL one at the same position:
-         BidiIterator last_end(m[0].second);
-         if(last_end == last)
-            return count;
+         match_results<BidiIterator, match_allocator_type> m2(m);
          matcher.setf(match_not_null | match_continuous);
          if(matcher.find())
          {
             ++count;
-            last_end = m[0].second;
             if(0 == foo(m))
                return count;
          }
          else
          {
             // reset match back to where it was:
-            m.set_second(last_end);
+            m = m2;
          }
          matcher.unsetf((match_not_null | match_continuous) & ~flags);
       }

@@ -33,7 +33,7 @@
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
-namespace boost { namespace spirit { 
+namespace boost { namespace spirit {
 
 ///////////////////////////////////////////////////////////////////////////////
 namespace fileiter_impl {
@@ -46,7 +46,7 @@ using namespace std;
 //
 //  Base class that implements iteration through a file using standard C
 //  stream library (fopen and friends). This class and the following are
-//  the base components on which the iterator is built (through the 
+//  the base components on which the iterator is built (through the
 //  iterator adaptor library).
 //
 //  The opened file stream (FILE) is held with a shared_ptr<>, whose
@@ -64,7 +64,7 @@ public:
     std_file_iterator()
     {}
 
-    explicit std_file_iterator(std::string fileName) 
+    explicit std_file_iterator(std::string fileName)
     {
         FILE* f = fopen(fileName.c_str(), "rb");
 
@@ -83,8 +83,8 @@ public:
     { *this = iter; }
 
     std_file_iterator& operator=(const std_file_iterator& iter)
-    { 
-        m_file = iter.m_file; 
+    {
+        m_file = iter.m_file;
         m_curChar = iter.m_curChar;
         m_eof = iter.m_eof;
         m_pos = iter.m_pos;
@@ -95,7 +95,7 @@ public:
     // Nasty bug in Comeau up to 4.3.0.1, we need explicit boolean context
     //  for shared_ptr to evaluate correctly
     operator bool() const
-    { return m_file ? true : false; }  
+    { return m_file ? true : false; }
 
     bool operator==(const std_file_iterator& iter) const
     {
@@ -179,12 +179,12 @@ public:
 
     explicit mmap_file_iterator(std::string fileName)
     {
-        HANDLE hFile = ::CreateFile(
-            fileName.c_str(), 
-            GENERIC_READ, 
-            FILE_SHARE_READ, 
-            NULL, 
-            OPEN_EXISTING, 
+        HANDLE hFile = ::CreateFileA(
+            fileName.c_str(),
+            GENERIC_READ,
+            FILE_SHARE_READ,
+            NULL,
+            OPEN_EXISTING,
             FILE_FLAG_SEQUENTIAL_SCAN,
             NULL
         );
@@ -203,7 +203,7 @@ public:
             0, 0,
             NULL
         );
- 
+
         if (hMap == NULL)
         {
             ::CloseHandle(hFile);
@@ -227,13 +227,13 @@ public:
         // We can close the hMap handle now because Windows holds internally
         //  a reference to it since there is a view mapped.
         ::CloseHandle(hMap);
-        
+
         // It seems like we can close the file handle as well (because
-        //  a reference is hold by the filemap object). 
+        //  a reference is hold by the filemap object).
         ::CloseHandle(hFile);
 
         // Store the handles inside the shared_ptr (with the custom destructors)
-        m_mem.reset(static_cast<CharT*>(pMem), ::UnmapViewOfFile); 
+        m_mem.reset(static_cast<CharT*>(pMem), ::UnmapViewOfFile);
 
         // Start of the file
         m_curChar = m_mem.get();
@@ -247,7 +247,7 @@ public:
         m_curChar = iter.m_curChar;
         m_mem = iter.m_mem;
         m_filesize = iter.m_filesize;
-        
+
         return *this;
     }
 
@@ -276,7 +276,7 @@ public:
 
     void seek_end(void)
     {
-        m_curChar = m_mem.get() + 
+        m_curChar = m_mem.get() +
             (m_filesize / sizeof(CharT));
     }
 
@@ -286,7 +286,7 @@ private:
 #else
     typedef void handle_t;
 #endif
-    
+
     boost::shared_ptr<CharT> m_mem;
     std::size_t m_filesize;
     CharT* m_curChar;
@@ -425,7 +425,7 @@ public:
     }
 
 private:
-    
+
     boost::shared_ptr<mapping> m_mem;
     CharT const* m_curChar;
 };
@@ -436,7 +436,7 @@ private:
 } /* namespace boost::spirit::fileiter_impl */
 
 template <typename CharT, typename BaseIteratorT>
-file_iterator<CharT,BaseIteratorT> 
+file_iterator<CharT,BaseIteratorT>
 file_iterator<CharT,BaseIteratorT>::make_end(void)
 {
     file_iterator iter(*this);
@@ -445,7 +445,7 @@ file_iterator<CharT,BaseIteratorT>::make_end(void)
 }
 
 template <typename CharT, typename BaseIteratorT>
-file_iterator<CharT,BaseIteratorT>& 
+file_iterator<CharT,BaseIteratorT>&
 file_iterator<CharT,BaseIteratorT>::operator=(const base_t& iter)
 {
     base_t::operator=(iter);

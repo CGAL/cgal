@@ -1,8 +1,7 @@
-// Copyright David Abrahams 2002. Permission to copy, use,
-// modify, sell and distribute this software is granted provided this
-// copyright notice appears in all copies. This software is provided
-// "as is" without express or implied warranty, and with no claim as
-// to its suitability for any purpose.
+// Copyright David Abrahams 2002.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 #ifndef WITH_CUSTODIAN_AND_WARD_DWA2002131_HPP
 # define WITH_CUSTODIAN_AND_WARD_DWA2002131_HPP
 
@@ -84,7 +83,7 @@ struct with_custodian_and_ward_postcall : BasePolicy_
     template <class ArgumentPackage>
     static PyObject* postcall(ArgumentPackage const& args_, PyObject* result)
     {
-        unsigned arity_ = detail::arity(args_);
+        std::size_t arity_ = detail::arity(args_);
         if ( custodian > arity_ || ward > arity_ )
         {
             PyErr_SetString(

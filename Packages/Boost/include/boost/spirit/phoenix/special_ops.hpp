@@ -1,5 +1,5 @@
 /*=============================================================================
-    Phoenix v1.2
+    Phoenix V1.2.1
     Copyright (c) 2001-2002 Joel de Guzman
 
     Use, modification and distribution is subject to the Boost Software
@@ -49,7 +49,7 @@ namespace phoenix
 ///////////////////////////////////////////////////////////////////////////////
 //
 //  The following specializations take into account the C++ standard
-//  library components. There are a couple of issues that has to be
+//  library components. There are a couple of issues that have to be
 //  dealt with to enable lazy operator overloads for the standard
 //  library classes.
 //
@@ -87,16 +87,16 @@ template <typename T> struct rank<PHOENIX_STD::complex<T> >
         #define PHOENIX_ISTREAM PHOENIX_STD::_IO_istream_withassign
     #endif
 #else
-    #if (defined(__ICL) && defined(_STLPORT_VERSION))
-        #define PHOENIX_ISTREAM istream_withassign
-    #else
+//    #if (defined(__ICL) && defined(_STLPORT_VERSION))
+//        #define PHOENIX_ISTREAM istream_withassign
+//    #else
         #define PHOENIX_ISTREAM PHOENIX_STD::istream
-    #endif
+//    #endif
 #endif
 
 //////////////////////////////////
-#if defined(__GNUC__) && (__GNUC__ < 3) \
-    || (defined(__ICL) && defined(_STLPORT_VERSION))
+#if defined(__GNUC__) && (__GNUC__ < 3)
+//    || (defined(__ICL) && defined(_STLPORT_VERSION))
 template <typename T1>
 struct binary_operator<shift_r_op, PHOENIX_ISTREAM, T1>
 {
@@ -139,16 +139,16 @@ operator>>(PHOENIX_ISTREAM& _0, actor<BaseT> const& _1)
         #define PHOENIX_OSTREAM PHOENIX_STD::_IO_ostream_withassign
     #endif
 #else
-    #if (defined(__ICL) && defined(_STLPORT_VERSION))
-        #define PHOENIX_OSTREAM ostream_withassign
-    #else
+//    #if (defined(__ICL) && defined(_STLPORT_VERSION))
+//        #define PHOENIX_OSTREAM ostream_withassign
+//    #else
         #define PHOENIX_OSTREAM PHOENIX_STD::ostream
-    #endif
+//    #endif
 #endif
 
 //////////////////////////////////
-#if defined(__GNUC__) && (__GNUC__ < 3) \
-    || (defined(__ICL) && defined(_STLPORT_VERSION))
+#if defined(__GNUC__) && (__GNUC__ < 3)
+//    || (defined(__ICL) && defined(_STLPORT_VERSION))
 template <typename T1>
 struct binary_operator<shift_l_op, PHOENIX_OSTREAM, T1>
 {
@@ -229,8 +229,8 @@ operator<<(PHOENIX_STD::PHOENIX_SSTREAM& _0, actor<BaseT> const& _1)
 //      I/O manipulator specializations
 //
 ///////////////////////////////////////////////////////////////////////////////
-#if (!defined(__GNUC__) || (__GNUC__ > 2)) \
-    && !(defined(__ICL) && defined(_STLPORT_VERSION))
+#if (!defined(__GNUC__) || (__GNUC__ > 2))
+//    && !(defined(__ICL) && defined(_STLPORT_VERSION))
 
 typedef PHOENIX_STD::ios_base&  (*iomanip_t)(PHOENIX_STD::ios_base&);
 typedef PHOENIX_STD::istream&   (*imanip_t)(PHOENIX_STD::istream&);

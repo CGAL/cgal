@@ -1,8 +1,8 @@
-//  (C) Copyright Gennadiy Rozental 2001-2003.
+//  (C) Copyright Gennadiy Rozental 2001-2004.
 //  (C) Copyright Ullrich Koethe 2001.
-//  Use, modification, and distribution are subject to the 
-//  Boost Software License, Version 1.0. (See accompanying file 
-//  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//  Distributed under the Boost Software License, Version 1.0.
+//  (See accompanying file LICENSE_1_0.txt or copy at 
+//  http://www.boost.org/LICENSE_1_0.txt)
 
 //  See http://www.boost.org/libs/test for the library home page.
 //
@@ -14,8 +14,8 @@
 //  for them.
 // ***************************************************************************
 
-#ifndef BOOST_UNIT_TEST_SUITE_HPP
-#define BOOST_UNIT_TEST_SUITE_HPP
+#ifndef BOOST_UNIT_TEST_SUITE_HPP_071894GER
+#define BOOST_UNIT_TEST_SUITE_HPP_071894GER
 
 // Boost.Test
 #include <boost/test/detail/unit_test_monitor.hpp>
@@ -31,19 +31,19 @@
 //____________________________________________________________________________//
 
 #define BOOST_TEST_CASE( function ) \
-boost::unit_test_framework::create_test_case((function), #function )
+boost::unit_test::create_test_case((function), #function )
 #define BOOST_CLASS_TEST_CASE( function, tc_instance ) \
-boost::unit_test_framework::create_test_case((function), #function, tc_instance )
+boost::unit_test::create_test_case((function), #function, tc_instance )
 #define BOOST_PARAM_TEST_CASE( function, begin, end ) \
-boost::unit_test_framework::create_test_case((function), #function, (begin), (end) )
+boost::unit_test::create_test_case((function), #function, (begin), (end) )
 #define BOOST_PARAM_CLASS_TEST_CASE( function, tc_instance, begin, end ) \
-boost::unit_test_framework::create_test_case((function), #function, tc_instance, (begin), (end) )
+boost::unit_test::create_test_case((function), #function, tc_instance, (begin), (end) )
 #define BOOST_TEST_SUITE( testsuite_name ) \
-( new boost::unit_test_framework::test_suite( testsuite_name ) )
+( new boost::unit_test::test_suite( testsuite_name ) )
 
 namespace boost {
 
-namespace unit_test_framework {
+namespace unit_test {
 
 // ************************************************************************** //
 // **************                   test_case                  ************** //
@@ -51,7 +51,7 @@ namespace unit_test_framework {
 
 class test_case {
 public:
-    typedef detail::unit_test_monitor::error_level error_level_type;
+    typedef ut_detail::unit_test_monitor::error_level error_level_type;
 
     // post creation configuration
     void                depends_on( test_case const* rhs );
@@ -69,21 +69,21 @@ public:
     bool                has_passed() const;
 
     // public properties
-    BOOST_READONLY_PROPERTY( int, 2, (test_case,test_suite) )
+    BOOST_READONLY_PROPERTY( int, (test_case)(test_suite) )
                         p_timeout;                  // timeout for the excecution monitor
-    BOOST_READONLY_PROPERTY( unit_test_counter, 1, (test_suite) )
+    BOOST_READONLY_PROPERTY( unit_test_counter, (test_suite) )
                         p_expected_failures;        // number of assertions that are expected to fail in this test case
-    BOOST_READONLY_PROPERTY( bool, 0, () )
+    readonly_property<bool>
                         p_type;                     // true = test case, false - test suite
-    BOOST_READONLY_PROPERTY( std::string, 0, () )
+    readonly_property<std::string>
                         p_name;                     // name for this test case
 
 
 protected:
     // protected properties
-    BOOST_READONLY_PROPERTY( bool, 2, (test_case,test_suite) )
+    BOOST_READONLY_PROPERTY( bool, (test_case)(test_suite) )
                         p_compound_stage;           // used to properly manage progress report
-    BOOST_READWRITE_PROPERTY( unit_test_counter )
+    readwrite_property<unit_test_counter>
                         p_stages_amount;            // number of stages this test consist of; stage could be another test case
                                                     // like with test_suite, another parameterized test for parameterized_test_case
                                                     // or 1 stage that reflect single test_case behaviour
@@ -92,7 +92,7 @@ protected:
     void                curr_stage_is_compound();
 
     // Constructor
-    explicit            test_case( std::string const&   name_,
+    explicit            test_case( const_string         name_,
                                    bool                 type_,
                                    unit_test_counter    stages_amount_,
                                    bool                 monitor_run_    = true );
@@ -110,7 +110,7 @@ private:
 
 //____________________________________________________________________________//
 
-extern detail::unit_test_monitor the_monitor;
+extern ut_detail::unit_test_monitor the_monitor;
 
 template<typename Exception, typename ExceptionTranslator>
 void
@@ -130,7 +130,7 @@ public:
     typedef void  (*function_type)();
 
     // Constructor
-    function_test_case( function_type f_, std::string const& name_ )
+    function_test_case( function_type f_, const_string name_ )
     : test_case( name_, true, 1 ), m_function( f_ ) {}
 
 protected:
@@ -152,7 +152,7 @@ public:
     typedef void  (UserTestCase::*function_type)();
 
     // Constructor
-    class_test_case( function_type f_, std::string const& name_, boost::shared_ptr<UserTestCase> const& user_test_case_ )
+    class_test_case( function_type f_, const_string name_, boost::shared_ptr<UserTestCase> const& user_test_case_ )
     : test_case( name_, true, 1 ), m_user_test_case( user_test_case_ ), m_function( f_ ) 
     {}
 
@@ -183,12 +183,12 @@ public:
     typedef void  (*function_type)( ParameterType );
 
     // Constructor
-    parametrized_function_test_case( function_type f_, std::string const& name_,
+    parametrized_function_test_case( function_type f_, const_string name_,
                                      ParamIterator const& par_begin_, ParamIterator const& par_end_ )
     : test_case( name_, true, 0 ), m_first_parameter( par_begin_ ), m_last_parameter( par_end_ ), m_function( f_ )
     {
        // the typecasts are here to keep Borland C++ Builder 5 happy, for other compilers they have no effect:
-       p_stages_amount.set( detail::distance( (ParamIterator)par_begin_, (ParamIterator)par_end_ ) );
+       p_stages_amount.set( ut_detail::distance( (ParamIterator)par_begin_, (ParamIterator)par_end_ ) );
     }
 
     // test case implementation
@@ -214,13 +214,13 @@ public:
     typedef void  (UserTestCase::*function_type)( ParameterType );
 
     // Constructor
-    parametrized_class_test_case( function_type f_, std::string const& name_, boost::shared_ptr<UserTestCase>const & user_test_case_,
+    parametrized_class_test_case( function_type f_, const_string name_, boost::shared_ptr<UserTestCase>const & user_test_case_,
                                   ParamIterator const& par_begin_, ParamIterator const& par_end_ )
     : test_case( name_, true, 0 ), m_first_parameter( par_begin_ ), m_last_parameter( par_end_ ),
       m_user_test_case( user_test_case_ ), m_function( f_ )
     {
        // the typecasts are here to keep Borland C++ Builder 5 happy, for other compilers they have no effect:
-       p_stages_amount.set( detail::distance( (ParamIterator)par_begin_, (ParamIterator)par_end_ ) );
+       p_stages_amount.set( ut_detail::distance( (ParamIterator)par_begin_, (ParamIterator)par_end_ ) );
     }
 
     // test case implementation
@@ -245,7 +245,7 @@ private:
 class test_suite : public test_case {
 public:
     // Constructor
-    explicit test_suite( std::string const& name_ = "Master" );
+    explicit test_suite( const_string name_ = "Master" );
 
     // Destructor
     virtual             ~test_suite();
@@ -270,18 +270,18 @@ private:
 // **************               object generators              ************** //
 // ************************************************************************** //
 
-namespace detail {
+namespace ut_detail {
 
 std::string const& normalize_test_case_name( std::string& name_ );
 
-} // namespace detail
+} // namespace ut_detail
 
 //____________________________________________________________________________//
 
 inline test_case*
 create_test_case( void (*fct_)(), std::string name_ )
 {
-    return new function_test_case( fct_, detail::normalize_test_case_name( name_ ) );
+    return new function_test_case( fct_, ut_detail::normalize_test_case_name( name_ ) );
 }
 
 //____________________________________________________________________________//
@@ -290,7 +290,7 @@ template<class UserTestCase>
 inline test_case*
 create_test_case( void (UserTestCase::*fct_)(), std::string name_, boost::shared_ptr<UserTestCase> const& user_test_case_ )
 {
-    return new class_test_case<UserTestCase>( fct_, detail::normalize_test_case_name( name_ ), user_test_case_ );
+    return new class_test_case<UserTestCase>( fct_, ut_detail::normalize_test_case_name( name_ ), user_test_case_ );
 }
 
 //____________________________________________________________________________//
@@ -300,7 +300,7 @@ inline test_case*
 create_test_case( void (*fct_)( ParamType ), std::string name_, ParamIterator const& par_begin_, ParamIterator const& par_end_ )
 {
     return new parametrized_function_test_case<ParamIterator,ParamType>(
-        fct_, detail::normalize_test_case_name( name_ ), par_begin_, par_end_ );
+        fct_, ut_detail::normalize_test_case_name( name_ ), par_begin_, par_end_ );
 }
 
 //____________________________________________________________________________//
@@ -311,12 +311,12 @@ create_test_case( void (UserTestCase::*fct_)( ParamType ), std::string name_, bo
                   ParamIterator const& par_begin_, ParamIterator const& par_end_ )
 {
     return new parametrized_class_test_case<UserTestCase,ParamIterator,ParamType>(
-        fct_, detail::normalize_test_case_name( name_ ), user_test_case_, par_begin_, par_end_ );
+        fct_, ut_detail::normalize_test_case_name( name_ ), user_test_case_, par_begin_, par_end_ );
 }
 
 //____________________________________________________________________________//
 
-} // unit_test_framework
+} // unit_test
 
 } // namespace boost
 
@@ -324,14 +324,32 @@ create_test_case( void (UserTestCase::*fct_)( ParamType ), std::string name_, bo
 //  Revision History :
 //  
 //  $Log$
-//  Revision 1.1  2004/05/23 10:51:38  spion
-//  Initial revision
+//  Revision 1.1.1.2  2004/11/20 10:52:17  spion
+//  Import of Boost v. 1.32.0
+//
+//  Revision 1.24  2004/07/19 12:16:41  rogeeff
+//  guard rename
+//
+//  Revision 1.23  2004/06/07 07:33:49  rogeeff
+//  detail namespace renamed
+//
+//  Revision 1.22  2004/06/05 10:59:58  rogeeff
+//  proper IBM VA port
+//
+//  Revision 1.21  2004/06/03 10:38:32  tknapen
+//  port to vacpp version 6
+//
+//  Revision 1.20  2004/05/21 06:19:35  rogeeff
+//  licence update
+//
+//  Revision 1.19  2004/05/11 11:00:51  rogeeff
+//  basic_cstring introduced and used everywhere
+//  class properties reworked
 //
 //  Revision 1.18  2003/12/01 00:41:56  rogeeff
 //  prerelease cleaning
 //
-
 // ***************************************************************************
 
-#endif // BOOST_UNIT_TEST_SUITE_HPP
+#endif // BOOST_UNIT_TEST_SUITE_HPP_071894GER
 

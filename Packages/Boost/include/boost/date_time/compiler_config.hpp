@@ -1,9 +1,8 @@
 #ifndef DATE_TIME_COMPILER_CONFIG_HPP___
 #define DATE_TIME_COMPILER_CONFIG_HPP___
 
-/* Copyright (c) 2002,2003 CrystalClear Software, Inc.
- * Use, modification and distribution is subject to the 
- * Boost Software License, Version 1.0. (See accompanying
+/* Copyright (c) 2002-2004 CrystalClear Software, Inc.
+ * Subject to the Boost Software License, Version 1.0. (See accompanying
  * file LICENSE-1.0 or http://www.boost.org/LICENSE-1.0)
  * Author: Jeff Garland, Bart Garst
  * $Date$
@@ -15,15 +14,23 @@
 
 //Set up a configuration parameter for platforms that have 
 //GetTimeOfDay
-#ifdef BOOST_HAS_GETTIMEOFDAY
-#define BOOST_DATE_TIME_HAS_GETTIMEOFDAY_HIGH_PRECISION_CLOCK
+#if defined(BOOST_HAS_GETTIMEOFDAY) || defined(BOOST_HAS_FTIME)
+#define BOOST_DATE_TIME_HAS_HIGH_PRECISION_CLOCK
 #endif
 
+// To Force no default constructors for date & ptime, un-comment following
+//#define DATE_TIME_NO_DEFAULT_CONSTRUCTOR
+
+// Include extensions to date_duration - comment out to remove this feature
+#define BOOST_DATE_TIME_OPTIONAL_GREGORIAN_TYPES
+// these extensions are known to cause problems with gcc295
+#if defined(__GNUC__) && (__GNUC__ < 3)
+#undef BOOST_DATE_TIME_OPTIONAL_GREGORIAN_TYPES
+#endif
 
 #if (defined(BOOST_NO_INCLASS_MEMBER_INITIALIZATION) || (defined(__BORLANDC__)))
 #define BOOST_DATE_TIME_NO_MEMBER_INIT
 #endif
-
 
 // include these types before we try to re-define them
 #include "boost/cstdint.hpp"
@@ -48,6 +55,18 @@ namespace std {
   using stlport::ctype;
   using stlport::use_facet;
 }
+#endif
+
+// workaround for errors associated with output for date classes 
+// modifications and input streaming for time classes. 
+// Compilers affected are:
+// gcc295, msvc (neither with STLPort), any borland
+// 
+#if (((defined(__GNUC__) && (__GNUC__ < 3)) || \
+      (defined(_MSC_VER) && (_MSC_VER <= 1200)) ) && \
+      !defined(_STLP_OWN_IOSTREAMS) ) || \
+       defined(__BORLANDC__)
+#define BOOST_DATE_TIME_INCLUDE_LIMITED_HEADERS
 #endif
 
 /* The following handles the definition of the necessary macros

@@ -3,8 +3,8 @@
  * Copyright (c) 1998-2002
  * Dr John Maddock
  *
- * Use, modification and distribution are subject to the 
- * Boost Software License, Version 1.0. (See accompanying file 
+ * Use, modification and distribution are subject to the
+ * Boost Software License, Version 1.0. (See accompanying file
  * LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  *
  */
@@ -36,17 +36,110 @@ class match_results;
 
 namespace re_detail{
 
-template <class O, class I>
-O BOOST_REGEX_CALL re_copy_out(O out, I first, I last)
+// make_upper and make_lower should ideally be implemented in regex_traits
+#if defined(_WIN32) && !defined(BOOST_REGEX_NO_W32)
+
+//
+// VC6 needs to link to user32.lib, as do all compilers that
+// claim to be VC6/7 compatible:
+//
+#if defined(_MSC_VER) && !defined(__BORLANDC__)
+#pragma comment(lib, "user32.lib")
+#endif
+
+inline wchar_t make_upper(wchar_t c)
+{
+   return LOWORD(::CharUpperW(reinterpret_cast<wchar_t*>(static_cast<unsigned short>(c))));
+}
+
+inline char make_upper(char c)
+{
+   return static_cast<char>(LOWORD(::CharUpperA(reinterpret_cast<char*>(static_cast<unsigned short>(c)))));
+}
+
+inline wchar_t make_lower(wchar_t c)
+{
+   return LOWORD(::CharLowerW(reinterpret_cast<wchar_t*>(static_cast<unsigned short>(c))));
+}
+
+inline char make_lower(char c)
+{
+   return static_cast<char>(LOWORD(::CharLowerA(reinterpret_cast<char*>(static_cast<unsigned short>(c)))));
+}
+
+#else
+
+// TODO: make this traits class sensitive:
+#ifndef BOOST_NO_WREGEX
+inline wchar_t make_upper(wchar_t c)
+{
+   return (std::towupper)(c); 
+}
+
+inline wchar_t make_lower(wchar_t c)
+{
+   return (std::towlower)(c);
+}
+#endif
+inline char make_upper(char c)
+{
+   return static_cast<char>((std::toupper)(c)); 
+}
+
+inline char make_lower(char c)
+{
+   return static_cast<char>((std::tolower)(c)); 
+}
+
+#endif //defined(_WIN32) && !defined(BOOST_REGEX_NO_W32)
+
+typedef enum {
+   case_nochange,
+   case_oneupper,
+   case_onelower,
+   case_allupper,
+   case_alllower
+} case_flags_type;
+
+// traits_type is unused, but provided to make it possible to use it for case conversion
+template <class O, class charT, class traits_type>
+void BOOST_REGEX_CALL output_char(O& out, charT c, traits_type& /*t*/, case_flags_type& f)
+{
+   switch (f) {
+      case case_oneupper:
+         f = case_nochange;
+         // drop through
+      case case_allupper:
+         *out = make_upper(c);
+         break;
+      case case_onelower:
+         f = case_nochange;
+         // drop through
+      case case_alllower:
+         *out = make_lower(c);
+         break;
+      default:
+         *out = c;
+         break;
+   }
+}
+
+template <class O, class I, class traits_type>
+O BOOST_REGEX_CALL re_copy_out(O out, I first, I last, traits_type& t, case_flags_type& f)
 {
    while(first != last)
    {
-      *out = *first;
+      if (f != case_nochange)
+         output_char(out, *first, t, f);
+      else
+         *out = *first;
+
       ++out;
       ++first;
    }
    return out;
 }
+
 
 template <class charT, class traits_type>
 void BOOST_REGEX_CALL re_skip_format(const charT*& fmt, const traits_type& traits_inst)
@@ -134,10 +227,11 @@ namespace{
 // _reg_format_aux does the actual work:
 //
 template <class OutputIterator, class Iterator, class Allocator, class charT, class traits_type>
-OutputIterator BOOST_REGEX_CALL _reg_format_aux(OutputIterator out, 
-                          const match_results<Iterator, Allocator>& m, 
+OutputIterator BOOST_REGEX_CALL _reg_format_aux(OutputIterator out,
+                          const match_results<Iterator, Allocator>& m,
                           const charT*& fmt,
-                          match_flag_type flags, const traits_type& traits_inst)
+                          match_flag_type flags, const traits_type& traits_inst,
+                          case_flags_type& case_flags)
 {
 #ifdef __BORLANDC__
 #pragma option push -w-8037
@@ -171,11 +265,13 @@ OutputIterator BOOST_REGEX_CALL _reg_format_aux(OutputIterator out,
          switch(traits_inst.syntax_type((traits_size_type)(traits_uchar_type)(*fmt)))
          {
          case traits_type::syntax_start_buffer:
-            oi_assign(&out, re_copy_out(out, Iterator(m[-1].first), Iterator(m[-1].second)));
+            oi_assign(&out, re_copy_out(out, Iterator(m[-1].first), Iterator(m[-1].second),
+                        traits_inst, case_flags));
             ++fmt;
             continue;
          case traits_type::syntax_end_buffer:
-            oi_assign(&out, re_copy_out(out, Iterator(m[-2].first), Iterator(m[-2].second)));
+            oi_assign(&out, re_copy_out(out, Iterator(m[-2].first), Iterator(m[-2].second),
+                        traits_inst, case_flags));
             ++fmt;
             continue;
          case traits_type::syntax_digit:
@@ -183,14 +279,16 @@ OutputIterator BOOST_REGEX_CALL _reg_format_aux(OutputIterator out,
 expand_sub:
             unsigned int index = traits_inst.toi(fmt, fmt_end, 10);
             if(index < m.size())
-               oi_assign(&out, re_copy_out(out, Iterator(m[index].first), Iterator(m[index].second)));
+               oi_assign(&out, re_copy_out(out, Iterator(m[index].first), Iterator(m[index].second),
+                        traits_inst, case_flags));
             continue;
          }
          }
          // anything else:
          if(*fmt == '&')
          {
-            oi_assign(&out, re_copy_out(out, Iterator(m[0].first), Iterator(m[0].second)));
+            oi_assign(&out, re_copy_out(out, Iterator(m[0].first), Iterator(m[0].second),
+                        traits_inst, case_flags));
             ++fmt;
          }
          else
@@ -327,6 +425,32 @@ expand_sub:
             else
                c = (charT)traits_inst.toi(fmt, fmt_end, -8);
             break;
+
+         case traits_type::syntax_u:
+            ++fmt;
+            if(flags & format_sed) break;
+            case_flags = case_oneupper;
+            continue;
+         case traits_type::syntax_l:
+            ++fmt;
+            if(flags & format_sed) break;
+            case_flags = case_onelower;
+            continue;
+         case traits_type::syntax_U:
+            ++fmt;
+            if(flags & format_sed) break;
+            case_flags = case_allupper;
+            continue;
+         case traits_type::syntax_L:
+            ++fmt;
+            if(flags & format_sed) break;
+            case_flags = case_alllower;
+            continue;
+         case traits_type::syntax_E:
+            ++fmt;
+            if(flags & format_sed) break;
+            case_flags = case_nochange;
+            continue;
          default:
             //c = *fmt;
             ++fmt;
@@ -346,7 +470,7 @@ expand_sub:
          else
          {
             ++fmt;  // recurse
-            oi_assign(&out, _reg_format_aux(out, m, fmt, flags, traits_inst));
+            oi_assign(&out, _reg_format_aux(out, m, fmt, flags, traits_inst, case_flags));
             continue;
          }
       case traits_type::syntax_close_bracket:
@@ -395,7 +519,7 @@ expand_sub:
             unsigned int id = traits_inst.toi(fmt, fmt_end, 10);
             if(m[id].matched)
             {
-               oi_assign(&out, _reg_format_aux(out, m, fmt, flags | regex_constants::format_is_if, traits_inst));
+               oi_assign(&out, _reg_format_aux(out, m, fmt, flags | regex_constants::format_is_if, traits_inst, case_flags));
                if(traits_inst.syntax_type((traits_size_type)(traits_uchar_type)(*(fmt-1))) == traits_type::syntax_colon)
                   re_skip_format(fmt, traits_inst);
             }
@@ -403,7 +527,7 @@ expand_sub:
             {
                re_skip_format(fmt, traits_inst);
                if(traits_inst.syntax_type((traits_size_type)(traits_uchar_type)(*(fmt-1))) == traits_type::syntax_colon)
-                  oi_assign(&out, _reg_format_aux(out, m, fmt, flags | regex_constants::format_is_if, traits_inst));
+                  oi_assign(&out, _reg_format_aux(out, m, fmt, flags | regex_constants::format_is_if, traits_inst, case_flags));
             }
             return out;
          }
@@ -412,11 +536,13 @@ expand_sub:
 default_opt:
          if((flags & format_sed) && (*fmt == '&'))
          {
-            oi_assign(&out, re_copy_out(out, Iterator(m[0].first), Iterator(m[0].second)));
+            oi_assign(&out, re_copy_out(out, Iterator(m[0].first), Iterator(m[0].second),
+                     traits_inst, case_flags));
             ++fmt;
             continue;
          }
-         *out = *fmt;
+
+         output_char(out, *fmt, traits_inst, case_flags);
          ++out;
          ++fmt;
       }
@@ -437,14 +563,20 @@ class string_out_iterator
 {
    S* out;
 public:
+   typedef typename S::difference_type difference_type;
+   typedef typename S::value_type value_type;
+   typedef typename S::pointer pointer;
+   typedef typename S::reference reference;
+   typedef          std::output_iterator_tag iterator_category;
+
    string_out_iterator(S& s) : out(&s) {}
    string_out_iterator& operator++() { return *this; }
    string_out_iterator& operator++(int) { return *this; }
    string_out_iterator& operator*() { return *this; }
-   string_out_iterator& operator=(typename S::value_type v) 
-   { 
-      out->append(1, v); 
-      return *this; 
+   string_out_iterator& operator=(typename S::value_type v)
+   {
+      out->append(1, v);
+      return *this;
    }
 };
 
@@ -467,9 +599,17 @@ public:
    bool BOOST_REGEX_CALL operator()(const boost::match_results<Iterator, alloc_type>& m)
    {
       const charT* f = fmt;
+      case_flags_type cf = case_nochange;
       if(0 == (flags & format_no_copy))
-         oi_assign(out, re_copy_out(*out, Iterator(m[-1].first), Iterator(m[-1].second)));
-      oi_assign(out, _reg_format_aux(*out, m, f, flags, *pt));
+      {
+         oi_assign(out, re_copy_out(
+                     *out, 
+                     Iterator(m[-1].first), 
+                     Iterator(m[-1].second),
+                     *pt, 
+                     cf));
+      }
+      oi_assign(out, _reg_format_aux(*out, m, f, flags, *pt, cf));
       *last = m[-2].first;
       return flags & format_first_only ? false : true;
    }
@@ -485,7 +625,9 @@ OutputIterator regex_format(OutputIterator out,
                          )
 {
    regex_traits<charT> t;
-   return re_detail::_reg_format_aux(out, m, fmt, flags, t);
+
+   re_detail::case_flags_type cf = re_detail::case_nochange;
+   return re_detail::_reg_format_aux(out, m, fmt, flags, t, cf);
 }
 
 template <class OutputIterator, class Iterator, class Allocator, class charT>
@@ -497,12 +639,14 @@ OutputIterator regex_format(OutputIterator out,
 {
    regex_traits<charT> t;
    const charT* start = fmt.c_str();
-   return re_detail::_reg_format_aux(out, m, start, flags, t);
-}  
+
+   re_detail::case_flags_type cf = re_detail::case_nochange;
+   return re_detail::_reg_format_aux(out, m, start, flags, t, cf);
+}
 
 template <class Iterator, class Allocator, class charT>
-std::basic_string<charT> regex_format(const match_results<Iterator, Allocator>& m, 
-                                      const charT* fmt, 
+std::basic_string<charT> regex_format(const match_results<Iterator, Allocator>& m,
+                                      const charT* fmt,
                                       match_flag_type flags = format_all)
 {
    std::basic_string<charT> result;
@@ -512,8 +656,8 @@ std::basic_string<charT> regex_format(const match_results<Iterator, Allocator>& 
 }
 
 template <class Iterator, class Allocator, class charT>
-std::basic_string<charT> regex_format(const match_results<Iterator, Allocator>& m, 
-                                      const std::basic_string<charT>& fmt, 
+std::basic_string<charT> regex_format(const match_results<Iterator, Allocator>& m,
+                                      const std::basic_string<charT>& fmt,
                                       match_flag_type flags = format_all)
 {
    std::basic_string<charT> result;

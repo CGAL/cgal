@@ -64,7 +64,7 @@ namespace boost {
         // did not use default argument here to avoid internal compiler error
         // in g++.
         stack(Iterator _data)
-          : data(_data), current(-std::numeric_limits<value_type>::max()) {}
+          : data(_data), current(-(std::numeric_limits<value_type>::max)()) {}
         
         void pop() {
           assert(! empty());
@@ -75,7 +75,7 @@ namespace boost {
           current = v;
         }
         bool empty() {
-          return current == -std::numeric_limits<value_type>::max(); 
+          return current == -(std::numeric_limits<value_type>::max)(); 
         }
         value_type& top() { return current; }
       private:
@@ -109,11 +109,11 @@ namespace boost {
       typedef typename std::vector<value_type>::size_type size_type;
       
       static value_type done() 
-      { return std::numeric_limits<value_type>::max()/2; }
+      { return (std::numeric_limits<value_type>::max)()/2; }
     public:
       Marker(size_type _num, VertexIndexMap index_map) 
-        : tag(1 - std::numeric_limits<value_type>::max()),
-          data(_num, - std::numeric_limits<value_type>::max()),
+        : tag(1 - (std::numeric_limits<value_type>::max)()),
+          data(_num, - (std::numeric_limits<value_type>::max)()),
           id(index_map) {}
       
       void mark_done(Vertex node) { data[id[node]] = done(); }
@@ -135,10 +135,10 @@ namespace boost {
         const size_type num = data.size();
         ++tag;
         if ( tag >= done() ) {
-          tag = 1 - std::numeric_limits<value_type>::max();
+          tag = 1 - (std::numeric_limits<value_type>::max)();
           for (size_type i = 0; i < num; ++i)
             if ( data[i] < done() ) 
-              data[i] = - std::numeric_limits<value_type>::max();
+              data[i] = - (std::numeric_limits<value_type>::max)();
         }
       }
       
@@ -148,11 +148,11 @@ namespace boost {
         multiple_tag = tag + mdeg0; 
         
         if ( multiple_tag >= done() ) {
-          tag = 1-std::numeric_limits<value_type>::max();
+          tag = 1-(std::numeric_limits<value_type>::max)();
           
           for (size_type i=0; i<num; i++)
             if ( data[i] < done() ) 
-              data[i] = -std::numeric_limits<value_type>::max();
+              data[i] = -(std::numeric_limits<value_type>::max)();
           
           multiple_tag = tag + mdeg0; 
         }

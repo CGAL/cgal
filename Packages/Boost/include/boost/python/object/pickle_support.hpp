@@ -1,8 +1,7 @@
 //  (C) Copyright R.W. Grosse-Kunstleve 2002.
-//  Permission to copy, use, modify, sell and distribute this software
-//  is granted provided this copyright notice appears in all copies. This
-//  software is provided "as is" without express or implied warranty, and
-//  with no claim as to its suitability for any purpose.
+//  Distributed under the Boost Software License, Version 1.0. (See
+//  accompanying file LICENSE_1_0.txt or copy at
+//  http://www.boost.org/LICENSE_1_0.txt)
 #ifndef BOOST_PYTHON_OBJECT_PICKLE_SUPPORT_RWGK20020603_HPP
 # define BOOST_PYTHON_OBJECT_PICKLE_SUPPORT_RWGK20020603_HPP
 
@@ -59,7 +58,7 @@ namespace detail {
       inaccessible* (*setstate_fn)(),
       bool)
     {
-      cl.enable_pickling(false);
+      cl.enable_pickling_(false);
       cl.def("__getinitargs__", getinitargs_fn);
     }
 
@@ -75,7 +74,7 @@ namespace detail {
       void (*setstate_fn)(Tsetstate, Ttuple),
       bool getstate_manages_dict)
     {
-      cl.enable_pickling(getstate_manages_dict);
+      cl.enable_pickling_(getstate_manages_dict);
       cl.def("__getstate__", getstate_fn);
       cl.def("__setstate__", setstate_fn);
     }
@@ -93,7 +92,7 @@ namespace detail {
       void (*setstate_fn)(Tsetstate, Ttuple),
       bool getstate_manages_dict)
     {
-      cl.enable_pickling(getstate_manages_dict);
+      cl.enable_pickling_(getstate_manages_dict);
       cl.def("__getinitargs__", getinitargs_fn);
       cl.def("__getstate__", getstate_fn);
       cl.def("__setstate__", setstate_fn);

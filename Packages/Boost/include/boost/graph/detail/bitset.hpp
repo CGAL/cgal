@@ -22,6 +22,7 @@
 #include <stdexcept>
 #include <algorithm>
 #include <string>
+#include <boost/config.hpp>
 #include <boost/pending/ct_if.hpp>
 #include <boost/graph/detail/bitset_adaptor.hpp>
 
@@ -146,7 +147,7 @@ namespace boost {
 
       void init_from_ulong(unsigned long val) {
         reset();
-        const size_type n = std::min(sizeof(unsigned long) * CHAR_BIT,
+        const size_type n = (std::min)(sizeof(unsigned long) * CHAR_BIT,
                                      WordTraits::word_size * num_words());
         for(size_type i = 0; i < n; ++i, val >>= 1)
           if ( val & 0x1 )
@@ -282,7 +283,7 @@ namespace boost {
                               size_type pos, size_type n)
       {
         reset();
-        const size_type nbits = std::min(size(), min(n, s.size() - pos));
+        const size_type nbits = (std::min)(size(), (std::min)(n, s.size() - pos));
         for (size_type i = 0; i < nbits; ++i) {
           switch(s[pos + nbits - i - 1]) {
           case '0':

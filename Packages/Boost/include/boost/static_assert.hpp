@@ -23,6 +23,11 @@
 #define BOOST_BUGGY_INTEGRAL_CONSTANT_EXPRESSIONS
 #endif
 
+#if defined(__GNUC__) && (__GNUC__ == 3) && ((__GNUC_MINOR__ == 3) || (__GNUC_MINOR__ == 4))
+// gcc 3.3 and 3.4 don't produce good error messages with the default version:
+#  define BOOST_SA_GCC_WORKAROUND
+#endif
+
 namespace boost{
 
 // HP aCC cannot deal with missing names for template value parameters
@@ -72,7 +77,7 @@ template<int x> struct static_assert_test{};
    typedef ::boost::static_assert_test<\
       sizeof(::boost::STATIC_ASSERTION_FAILURE< (bool)( B ) >)>\
          BOOST_JOIN(boost_static_assert_typedef_, __COUNTER__)
-#elif defined(BOOST_INTEL_CXX_VERSION)
+#elif defined(BOOST_INTEL_CXX_VERSION) || defined(BOOST_SA_GCC_WORKAROUND)
 // agurt 15/sep/02: a special care is needed to force Intel C++ issue an error 
 // instead of warning in case of failure
 # define BOOST_STATIC_ASSERT( B ) \

@@ -1,9 +1,8 @@
 // Copyright (C) 2000, 2001 Stephen Cleary
 //
-// This file can be redistributed and/or modified under the terms found
-//  in "copyright.html"
-// This software and its documentation is provided "as is" without express or
-//  implied warranty, and with no claim as to its suitability for any purpose.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 //
 // See http://www.boost.org for updates, documentation, and revision history.
 
@@ -74,7 +73,7 @@ class pool_allocator
     static const_pointer address(const_reference s)
     { return &s; }
     static size_type max_size()
-    { return std::numeric_limits<size_type>::max(); }
+    { return (std::numeric_limits<size_type>::max)(); }
     static void construct(const pointer ptr, const value_type & t)
     { new (ptr) T(t); }
     static void destroy(const pointer ptr)
@@ -157,7 +156,7 @@ class fast_pool_allocator
     static const_pointer address(const_reference s)
     { return &s; }
     static size_type max_size()
-    { return std::numeric_limits<size_type>::max(); }
+    { return (std::numeric_limits<size_type>::max)(); }
     void construct(const pointer ptr, const value_type & t)
     { new (ptr) T(t); }
     void destroy(const pointer ptr)

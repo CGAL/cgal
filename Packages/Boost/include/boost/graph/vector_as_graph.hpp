@@ -42,6 +42,7 @@
 #include <boost/iterator.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/pending/integer_range.hpp>
+#include <algorithm>
 
 /*
   This module implements the VertexListGraph concept using a
@@ -242,7 +243,7 @@ namespace boost {
   remove_edge(typename EdgeList::value_type u, typename EdgeList::value_type v,
               std::vector<EdgeList, Allocator>& g)
   {
-    typename EdgeList::iterator i = remove(g[u].begin(), g[u].end(), v);
+    typename EdgeList::iterator i = std::remove(g[u].begin(), g[u].end(), v);
     if (i != g[u].end())
       g[u].erase(i, g[u].end());
   }
@@ -256,7 +257,7 @@ namespace boost {
     u = e.first;
     v = e.second;
     // FIXME: edge type does not fully specify the edge to be deleted
-    typename EdgeList::iterator i = remove(g[u].begin(), g[u].end(), v);
+    typename EdgeList::iterator i = std::remove(g[u].begin(), g[u].end(), v);
     if (i != g[u].end())
       g[u].erase(i, g[u].end());
   }

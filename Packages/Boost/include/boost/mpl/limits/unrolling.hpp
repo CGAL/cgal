@@ -1,24 +1,21 @@
-//-----------------------------------------------------------------------------
-// boost mpl/limits/unrolling.hpp header file
-// See http://www.boost.org for updates, documentation, and revision history.
-//-----------------------------------------------------------------------------
-//
-// Copyright (c) 2001-02
-// Aleksey Gurtovoy
-//
-// Permission to use, copy, modify, distribute and sell this software
-// and its documentation for any purpose is hereby granted without fee, 
-// provided that the above copyright notice appears in all copies and 
-// that both the copyright notice and this permission notice appear in 
-// supporting documentation. No representations are made about the 
-// suitability of this software for any purpose. It is provided "as is" 
-// without express or implied warranty.
 
 #ifndef BOOST_MPL_LIMITS_UNROLLING_HPP_INCLUDED
 #define BOOST_MPL_LIMITS_UNROLLING_HPP_INCLUDED
 
-#if !defined(BOOST_MPL_UNROLLING_LIMIT)
-#   define BOOST_MPL_UNROLLING_LIMIT 4
+// Copyright Aleksey Gurtovoy 2000-2004
+//
+// Distributed under the Boost Software License, Version 1.0. 
+// (See accompanying file LICENSE_1_0.txt or copy at 
+// http://www.boost.org/LICENSE_1_0.txt)
+//
+// See http://www.boost.org/libs/mpl for documentation.
+
+// $Source$
+// $Date$
+// $Revision$
+
+#if !defined(BOOST_MPL_LIMIT_UNROLLING)
+#   define BOOST_MPL_LIMIT_UNROLLING 4
 #endif
 
 #endif // BOOST_MPL_LIMITS_UNROLLING_HPP_INCLUDED

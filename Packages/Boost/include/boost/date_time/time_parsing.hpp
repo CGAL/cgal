@@ -18,6 +18,20 @@
 namespace boost {
 namespace date_time {
 
+  //! computes exponential math like 2^8 => 256, only works with positive integers
+  //Not general purpose, but needed b/c std::pow is not available 
+  //everywehere. Hasn't been tested with negatives and zeros
+  template<class int_type>
+  inline
+  int_type power(int_type base, int_type exponent)
+  {
+    int_type result = 1;
+    for(int i = 0; i < exponent; ++i){
+      result *= base;
+    }
+    return result;
+  }
+  
   //! Creates a time_duration object from a delimited string
   /*! Expected format for string is "[-]h[h][:mm][:ss][.fff]".
    * A negative duration will be created if the first character in
@@ -55,9 +69,23 @@ namespace date_time {
         //operator>> thus meaning lexical_cast will fail to compile.
 #if (defined(BOOST_MSVC) && (_MSC_VER <= 1200))  // 1200 == VC++ 6.0
         fs = _atoi64(beg->c_str());
+        // msvc wouldn't compile 'time_duration::num_fractional_digits()' 
+        // (required template argument list) as a workaround a temp 
+        // time_duration object was used
+        time_duration td(hour,min,sec,fs);
+        int precision = td.num_fractional_digits();
 #else
         fs = boost::lexical_cast<boost::int64_t>(*beg);
+        int precision = time_duration::num_fractional_digits();
 #endif
+        int digits = beg->length();
+        if(digits < precision){
+          // leading zeros get dropped from the string, 
+          // "1:01:01.1" would yield .000001 instead of .100000
+          // the power() compensates for the missing decimal places
+          fs *= power(10, precision - digits); 
+        }
+        
         break;
       }
       }//switch

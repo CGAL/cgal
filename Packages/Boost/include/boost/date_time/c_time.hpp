@@ -5,7 +5,7 @@
  * Use, modification and distribution is subject to the 
  * Boost Software License, Version 1.0. (See accompanying
  * file LICENSE-1.0 or http://www.boost.org/LICENSE-1.0)
- * Author: Jeff Garland 
+ * Author: Jeff Garland, Bart Garst 
  * $Date$
  */
 
@@ -28,5 +28,8 @@ namespace std { using ::time_t; using ::time; using ::localtime;
 #include <sys/time.h>
 #endif
 
-
+#ifdef BOOST_HAS_FTIME
+#include <time.h>
 #endif
+
+#endif // DATE_TIME_C_TIME_HPP___

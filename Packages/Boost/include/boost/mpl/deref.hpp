@@ -1,48 +1,41 @@
-//-----------------------------------------------------------------------------
-// boost mpl/deref.hpp header file
-// See http://www.boost.org for updates, documentation, and revision history.
-//-----------------------------------------------------------------------------
-//
-// Copyright (c) 2002-03
-// Aleksey Gurtovoy
-//
-// Permission to use, copy, modify, distribute and sell this software
-// and its documentation for any purpose is hereby granted without fee, 
-// provided that the above copyright notice appears in all copies and 
-// that both the copyright notice and this permission notice appear in 
-// supporting documentation. No representations are made about the 
-// suitability of this software for any purpose. It is provided "as is" 
-// without express or implied warranty.
 
 #ifndef BOOST_MPL_DEREF_HPP_INCLUDED
 #define BOOST_MPL_DEREF_HPP_INCLUDED
 
-#include "boost/mpl/aux_/void_spec.hpp"
-#include "boost/mpl/aux_/lambda_support.hpp"
-#include "boost/mpl/aux_/config/eti.hpp"
+// Copyright Aleksey Gurtovoy 2002-2004
+//
+// Distributed under the Boost Software License, Version 1.0. 
+// (See accompanying file LICENSE_1_0.txt or copy at 
+// http://www.boost.org/LICENSE_1_0.txt)
+//
+// See http://www.boost.org/libs/mpl for documentation.
 
-namespace boost {
-namespace mpl {
+// $Source$
+// $Date$
+// $Revision$
+
+#include <boost/mpl/aux_/msvc_type.hpp>
+#include <boost/mpl/aux_/na_spec.hpp>
+#include <boost/mpl/aux_/lambda_support.hpp>
+#include <boost/mpl/aux_/config/eti.hpp>
+
+namespace boost { namespace mpl {
 
 template<
-      typename BOOST_MPL_AUX_VOID_SPEC_PARAM(Iterator)
+      typename BOOST_MPL_AUX_NA_PARAM(Iterator)
     >
 struct deref
 {
+#if !defined(BOOST_MPL_CFG_MSVC_70_ETI_BUG)
     typedef typename Iterator::type type;
+#else
+    typedef typename aux::msvc_type<Iterator>::type type;
+#endif
     BOOST_MPL_AUX_LAMBDA_SUPPORT(1,deref,(Iterator))
 };
 
-#if defined(BOOST_MPL_MSVC_ETI_BUG)
-template<> struct deref<int>
-{
-    typedef int type;
-};
-#endif
+BOOST_MPL_AUX_NA_SPEC(1, deref)
 
-BOOST_MPL_AUX_VOID_SPEC(1, deref)
-
-} // namespace mpl
-} // namespace boost
+}}
 
 #endif // BOOST_MPL_DEREF_HPP_INCLUDED

@@ -14,14 +14,11 @@
 
 #include "boost/config/compiler/common_edg.hpp"
 
-#if (__COMO_VERSION__ <= 4245) || !defined(BOOST_STRICT_CONFIG)
+#if (__COMO_VERSION__ <= 4245)
 
-#  ifdef _WIN32
-#     define BOOST_NO_SWPRINTF
-#  endif
+#  define BOOST_FUNCTION_SCOPE_USING_DECLARATION_BREAKS_ADL
 
 #  if defined(_MSC_VER) && _MSC_VER <= 1300
-#     define BOOST_NO_STDC_NAMESPACE
 #     if _MSC_VER > 100
          // only set this in non-strict mode:
 #        define BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP

@@ -5,7 +5,7 @@
  * Use, modification and distribution is subject to the
  * Boost Software License, Version 1.0. (See accompanying
  * file LICENSE-1.0 or http://www.boost.org/LICENSE-1.0)
- * Author: Jeff Garland
+ * Author: Jeff Garland, Bart Garst
  * $Date$
  */
 
@@ -56,7 +56,8 @@ namespace date_time {
         }
         case month_as_integer:
         {
-          os << std::setw(2) << std::setfill('0') << month.as_number();
+          charT fill_char = '0';
+          os << std::setw(2) << std::setfill(fill_char) << month.as_number();
           break;
         }
 
@@ -104,7 +105,7 @@ namespace date_time {
   {
   public:
     typedef typename ymd_type::month_type month_type;
-    typedef ostream_month_formatter<facet_type> month_formatter_type;
+    typedef ostream_month_formatter<facet_type, charT> month_formatter_type;
     typedef std::basic_ostream<charT> ostream_type;
     typedef std::basic_string<charT> foo_type;
 
@@ -132,6 +133,7 @@ namespace date_time {
                         const facet_type& f)
     {
       std::ostreambuf_iterator<charT> oitr(os);
+      charT fill_char = '0';
       switch (f.date_order()) {
         case ymd_order_iso: {
           os << ymd.year;
@@ -142,7 +144,7 @@ namespace date_time {
           if (f.has_date_sep_chars()) {
             f.day_sep_char(oitr);
           }
-          os  << std::setw(2) << std::setfill('0')
+          os  << std::setw(2) << std::setfill(fill_char)
               << ymd.day;
           break;
         }
@@ -151,7 +153,7 @@ namespace date_time {
           if (f.has_date_sep_chars()) {
           f.day_sep_char(oitr);
           }
-          os  << std::setw(2) << std::setfill('0')
+          os  << std::setw(2) << std::setfill(fill_char)
             << ymd.day;
           if (f.has_date_sep_chars()) {
             f.month_sep_char(oitr);
@@ -160,7 +162,7 @@ namespace date_time {
           break;
         }
         case ymd_order_dmy: {
-          os  << std::setw(2) << std::setfill('0')
+          os  << std::setw(2) << std::setfill(fill_char)
               << ymd.day;
           if (f.has_date_sep_chars()) {
             f.day_sep_char(oitr);

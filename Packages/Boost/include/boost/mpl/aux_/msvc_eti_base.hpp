@@ -1,32 +1,32 @@
-//-----------------------------------------------------------------------------
-// boost mpl/aux_/msvc_msvc_eti_base.hpp header file
-// See http://www.boost.org for updates, documentation, and revision history.
-//-----------------------------------------------------------------------------
-//
-// Copyright (c) 2001-03
-// Aleksey Gurtovoy
-//
-// Permission to use, copy, modify, distribute and sell this software
-// and its documentation for any purpose is hereby granted without fee, 
-// provided that the above copyright notice appears in all copies and 
-// that both the copyright notice and this permission notice appear in 
-// supporting documentation. No representations are made about the 
-// suitability of this software for any purpose. It is provided "as is" 
-// without express or implied warranty.
 
 #ifndef BOOST_MPL_AUX_MSVC_ETI_BASE_HPP_INCLUDED
 #define BOOST_MPL_AUX_MSVC_ETI_BASE_HPP_INCLUDED
 
-#include "boost/mpl/aux_/config/eti.hpp"
-#include "boost/mpl/aux_/is_msvc_eti_arg.hpp"
+// Copyright Aleksey Gurtovoy 2001-2004
+//
+// Distributed under the Boost Software License, Version 1.0. 
+// (See accompanying file LICENSE_1_0.txt or copy at 
+// http://www.boost.org/LICENSE_1_0.txt)
+//
+// See http://www.boost.org/libs/mpl for documentation.
+
+// $Source$
+// $Date$
+// $Revision$
+
+#include <boost/mpl/aux_/is_msvc_eti_arg.hpp>
+#include <boost/mpl/aux_/config/eti.hpp>
+#include <boost/mpl/aux_/config/gcc.hpp>
+#include <boost/mpl/aux_/config/workaround.hpp>
 
 namespace boost { namespace mpl { namespace aux {
 
-#if defined(BOOST_MPL_MSVC_ETI_BUG)
+#if defined(BOOST_MPL_CFG_MSVC_70_ETI_BUG)
 
 template< bool > struct msvc_eti_base_impl
 {
     template< typename T > struct result_
+        : T
     {
         typedef T type;
     };
@@ -37,6 +37,10 @@ template<> struct msvc_eti_base_impl<true>
     template< typename T > struct result_
     {
         typedef result_ type;
+        typedef result_ first;
+        typedef result_ second;
+        typedef result_ tag;
+        enum { value = 0 };
     };
 };
 
@@ -46,15 +50,28 @@ template< typename T > struct msvc_eti_base
 {
 };
 
-#else
+#else // !BOOST_MPL_CFG_MSVC_70_ETI_BUG
 
 template< typename T > struct msvc_eti_base
+    : T
 {
+#if BOOST_WORKAROUND(BOOST_MPL_CFG_GCC, BOOST_TESTED_AT(0x0304))
+    msvc_eti_base();
+#endif
     typedef T type;
 };
 
-#endif // BOOST_MPL_MSVC_ETI_BUG
+#endif 
 
-}}} // namespace boost::mpl::aux
+template<> struct msvc_eti_base<int>
+{
+    typedef msvc_eti_base type;
+    typedef msvc_eti_base first;
+    typedef msvc_eti_base second;
+    typedef msvc_eti_base tag;
+    enum { value = 0 };
+};
+
+}}}
 
 #endif // BOOST_MPL_AUX_MSVC_ETI_BASE_HPP_INCLUDED

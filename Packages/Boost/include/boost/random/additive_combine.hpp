@@ -1,14 +1,9 @@
 /* boost random/additive_combine.hpp header file
  *
  * Copyright Jens Maurer 2000-2001
- * Permission to use, copy, modify, sell, and distribute this software
- * is hereby granted without fee provided that the above copyright notice
- * appears in all copies and that both that copyright notice and this
- * permission notice appear in supporting documentation,
- *
- * Jens Maurer makes no representations about the suitability of this
- * software for any purpose. It is provided "as is" without express or
- * implied warranty.
+ * Distributed under the Boost Software License, Version 1.0. (See
+ * accompanying file LICENSE_1_0.txt or copy at
+ * http://www.boost.org/LICENSE_1_0.txt)
  *
  * See http://www.boost.org for most recent version including documentation.
  *
@@ -22,6 +17,7 @@
 #define BOOST_RANDOM_ADDITIVE_COMBINE_HPP
 
 #include <iostream>
+#include <algorithm> // for std::min and std::max
 #include <boost/config.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/random/linear_congruential.hpp>
@@ -50,8 +46,8 @@ public:
 #else
   enum { has_fixed_range = false };
 #endif
-  result_type min() const { return 1; }
-  result_type max() const { return _mlcg1.max()-1; }
+  result_type min BOOST_PREVENT_MACRO_SUBSTITUTION () const { return 1; }
+  result_type max BOOST_PREVENT_MACRO_SUBSTITUTION () const { return (_mlcg1.max)()-1; }
 
   additive_combine() : _mlcg1(), _mlcg2() { }
   additive_combine(typename MLCG1::result_type seed1, 
@@ -59,6 +55,12 @@ public:
     : _mlcg1(seed1), _mlcg2(seed2) { }
   template<class It> additive_combine(It& first, It last)
     : _mlcg1(first, last), _mlcg2(first, last) { }
+
+  void seed()
+  {
+    _mlcg1.seed();
+    _mlcg2.seed();
+  }
 
   void seed(typename MLCG1::result_type seed1,
             typename MLCG2::result_type seed2)

@@ -5,7 +5,7 @@
  * Use, modification and distribution is subject to the 
  * Boost Software License, Version 1.0. (See accompanying
  * file LICENSE-1.0 or http://www.boost.org/LICENSE-1.0)
- * Author: Jeff Garland 
+ * Author: Jeff Garland, Bart Garst 
  * $Date$
  */
 
@@ -17,6 +17,7 @@
 #include "boost/date_time/special_defs.hpp"
 #include "boost/date_time/date_defs.hpp"
 #include "boost/date_time/parse_format_base.hpp"
+#include "boost/lexical_cast.hpp"
 #include <locale>
 
 
@@ -105,14 +106,16 @@ namespace date_time {
       virtual void do_put_month_short(iter_type& oitr, month_enum moy) const
       {
         month_type gm(moy);
-        put_string(oitr, gm.as_short_string());
+        charT c = '\0';
+        put_string(oitr, gm.as_short_string(c));
       }
       //! Default facet implementation uses month_type defaults
       virtual void do_put_month_long(iter_type& oitr, 
                                      month_enum moy) const
       {
         month_type gm(moy);
-        put_string(oitr, gm.as_long_string());
+        charT c = '\0';
+        put_string(oitr, gm.as_long_string(c));
       }
       //! Default facet implementation for special value types
       virtual void do_put_special_value(iter_type& oitr, special_value_enum sv) const
@@ -120,26 +123,29 @@ namespace date_time {
         switch (sv) {
           case not_a_date_time: 
           { 
-            put_string(oitr, "not-a-date-time");
+            string_type s(boost::lexical_cast<string_type>("not-a-date-time"));
+            put_string(oitr, s);
             break;
           }
           case pos_infin: 
           { 
-            put_string(oitr, "+infinity");
+            string_type s(boost::lexical_cast<string_type>("+infinity"));
+            put_string(oitr, s);
             break;
           }
           case neg_infin: 
           { 
-            put_string(oitr, "-infinity");
+            string_type s(boost::lexical_cast<string_type>("-infinity"));
+            put_string(oitr, s);
             break;
           }
           default: {} //quiet compilers that want all cases covered here (eg: gcc 3.1)
         }
       }
-      virtual void do_put_weekday_short(iter_type& oitr, weekday_enum wd) const
+      virtual void do_put_weekday_short(iter_type&, weekday_enum) const
       {
       }
-      virtual void do_put_weekday_long(iter_type& oitr, weekday_enum wd) const
+      virtual void do_put_weekday_long(iter_type&, weekday_enum) const
       {
       }
       virtual bool do_has_date_sep_chars() const
@@ -148,17 +154,20 @@ namespace date_time {
       }
       virtual void do_year_sep_char(iter_type& oitr) const
       {
-        put_string(oitr, "-");
+        string_type s(boost::lexical_cast<string_type>("-"));
+        put_string(oitr, s);
       }
       //! char between year-month
       virtual void do_month_sep_char(iter_type& oitr) const
       {
-        put_string(oitr, "-");
+        string_type s(boost::lexical_cast<string_type>("-"));
+        put_string(oitr, s);
       }
       //! Char to separate month-day
       virtual void do_day_sep_char(iter_type& oitr) const
       {
-        put_string(oitr, "-");
+        string_type s(boost::lexical_cast<string_type>("-"));
+        put_string(oitr, s);
       }
       //! Default for date order 
       virtual ymd_order_spec do_date_order() const
@@ -170,10 +179,17 @@ namespace date_time {
       {
         return month_as_short_string;
       }
-      void put_string(iter_type& oi, const char* const s) const
+      void put_string(iter_type& oi, const charT* const s) const
       {
-        string_type s1(s);
+        string_type s1(boost::lexical_cast<string_type>(s));
         typename string_type::iterator si,end;
+        for (si=s1.begin(), end=s1.end(); si!=end; si++, oi++) {
+          *oi = *si;
+        }
+      }
+      void put_string(iter_type& oi, const string_type& s1) const
+      {
+        typename string_type::const_iterator si,end;
         for (si=s1.begin(), end=s1.end(); si!=end; si++, oi++) {
           *oi = *si;
         }
@@ -191,12 +207,12 @@ namespace date_time {
     class all_date_names_put : public date_names_put<Config, charT, OutputIterator>
     {
     public:
-      all_date_names_put(const char* const month_short_names[],
-                         const char* const month_long_names[],
-                         const char* const special_value_names[],
-                         const char* const weekday_short_names[],
-                         const char* const weekday_long_names[],
-                         char separator_char = '-',
+      all_date_names_put(const charT* const month_short_names[],
+                         const charT* const month_long_names[],
+                         const charT* const special_value_names[],
+                         const charT* const weekday_short_names[],
+                         const charT* const weekday_long_names[],
+                         charT separator_char = '-',
                          ymd_order_spec order_spec = ymd_order_iso,
                          month_format_spec month_format = month_as_short_string) :
         month_short_names_(month_short_names),
@@ -215,6 +231,27 @@ namespace date_time {
       typedef typename Config::month_enum month_enum;
       typedef typename Config::weekday_enum weekday_enum;
       typedef typename Config::special_value_enum special_value_enum;
+
+      const charT* const* get_short_month_names() const 
+      {
+        return month_short_names_;
+      }
+      const charT* const* get_long_month_names() const 
+      {
+        return month_long_names_;
+      }
+      const charT* const* get_special_value_names() const 
+      {
+        return special_value_names_;
+      }
+      const charT* const* get_short_weekday_names()const  
+      {
+        return weekday_short_names_;
+      }
+      const charT* const* get_long_weekday_names()const 
+      {
+        return weekday_long_names_;
+      }
 
     protected:
       //! Generic facet that takes array of chars
@@ -262,12 +299,12 @@ namespace date_time {
       }
 
     private:
-      const char* const* month_short_names_;
-      const char* const* month_long_names_;
-      const char* const* special_value_names_;
-      const char* const* weekday_short_names_;
-      const char* const* weekday_long_names_;
-      char separator_char_[2];
+      const charT* const* month_short_names_;
+      const charT* const* month_long_names_;
+      const charT* const* special_value_names_;
+      const charT* const* weekday_short_names_;
+      const charT* const* weekday_long_names_;
+      charT separator_char_[2];
       ymd_order_spec order_spec_;
       month_format_spec month_format_spec_;      
     };

@@ -1,10 +1,9 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// Copyright David Abrahams 2002, Joel de Guzman, 2002. Permission to copy,
-// use, modify, sell and distribute this software is granted provided this
-// copyright notice appears in all copies. This software is provided "as is"
-// without express or implied warranty, and with no claim as to its
-// suitability for any purpose.
+// Copyright David Abrahams 2002, Joel de Guzman, 2002.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 //
 ///////////////////////////////////////////////////////////////////////////////
 #ifndef DEFAULTS_GEN_JDG20020807_HPP
@@ -26,7 +25,7 @@
 #include <boost/config.hpp>
 #include <boost/mpl/begin_end.hpp>
 #include <boost/mpl/next.hpp>
-#include <boost/mpl/apply.hpp>
+#include <boost/mpl/deref.hpp>
 #include <cstddef>
 
 namespace boost { namespace python {
@@ -120,7 +119,7 @@ namespace detail
 #define BOOST_PYTHON_TYPEDEF_GEN(z, index, data)                                \
     typedef typename ::boost::mpl::next<BOOST_PP_CAT(iter, index)>::type        \
         BOOST_PP_CAT(iter, BOOST_PP_INC(index));                                \
-    typedef typename ::boost::mpl::apply0<BOOST_PP_CAT(iter, index)>::type      \
+    typedef typename ::boost::mpl::deref<BOOST_PP_CAT(iter, index)>::type       \
         BOOST_PP_CAT(T, index);
 
 #define BOOST_PYTHON_FUNC_WRAPPER_GEN(z, index, data)                   \
@@ -146,7 +145,7 @@ namespace detail
         struct gen                                                              \
         {                                                                       \
             typedef typename ::boost::mpl::begin<SigT>::type rt_iter;           \
-            typedef typename ::boost::mpl::apply0<rt_iter>::type RT;            \
+            typedef typename ::boost::mpl::deref<rt_iter>::type RT;             \
             typedef typename ::boost::mpl::next<rt_iter>::type iter0;           \
                                                                                 \
             BOOST_PP_REPEAT_2ND(                                                \
@@ -185,10 +184,10 @@ namespace detail
         struct gen                                                              \
         {                                                                       \
             typedef typename ::boost::mpl::begin<SigT>::type rt_iter;           \
-            typedef typename ::boost::mpl::apply0<rt_iter>::type RT;            \
+            typedef typename ::boost::mpl::deref<rt_iter>::type RT;             \
                                                                                 \
             typedef typename ::boost::mpl::next<rt_iter>::type class_iter;      \
-            typedef typename ::boost::mpl::apply0<class_iter>::type ClassT;     \
+            typedef typename ::boost::mpl::deref<class_iter>::type ClassT;      \
             typedef typename ::boost::mpl::next<class_iter>::type iter0;        \
                                                                                 \
             BOOST_PP_REPEAT_2ND(                                                \

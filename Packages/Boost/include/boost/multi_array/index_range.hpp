@@ -150,10 +150,10 @@ namespace multi_array {
 
   private:
     static index from_start()
-      { return std::numeric_limits<index>::min(); }
+      { return (std::numeric_limits<index>::min)(); }
 
     static index to_end()
-      { return std::numeric_limits<index>::max(); }
+      { return (std::numeric_limits<index>::max)(); }
   public:
     index start_, finish_, stride_;
     bool degenerate_;

@@ -15,8 +15,6 @@
 
 // Using the Mac OS X system BSD-style C library.
 
-#  define BOOST_NO_CTYPE_FUNCTIONS
-#  define BOOST_NO_CWCHAR
 #  ifndef BOOST_HAS_UNISTD_H
 #    define BOOST_HAS_UNISTD_H
 #  endif

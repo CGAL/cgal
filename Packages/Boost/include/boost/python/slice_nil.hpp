@@ -1,23 +1,24 @@
-// Copyright David Abrahams 2002. Permission to copy, use,
-// modify, sell and distribute this software is granted provided this
-// copyright notice appears in all copies. This software is provided
-// "as is" without express or implied warranty, and with no claim as
-// to its suitability for any purpose.
+// Copyright David Abrahams 2002.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 #ifndef SLICE_NIL_DWA2002620_HPP
 # define SLICE_NIL_DWA2002620_HPP
 
 # include <boost/python/detail/prefix.hpp>
+# include <boost/python/object_core.hpp>
 
 namespace boost { namespace python { namespace api {
 
-class object;
-
-enum slice_nil
+class slice_nil : public object
 {
-# ifndef _ // Watch out for GNU gettext users, who #define _(x)
-      _
-# endif 
+ public:
+    slice_nil() : object() {}
 };
+
+# ifndef _ // Watch out for GNU gettext users, who #define _(x)
+static const slice_nil _ = slice_nil();
+# endif 
 
 template <class T>
 struct slice_bound

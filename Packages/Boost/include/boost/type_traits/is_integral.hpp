@@ -35,6 +35,9 @@ BOOST_TT_AUX_BOOL_TRAIT_CV_SPEC1(is_integral,bool,true)
 BOOST_TT_AUX_BOOL_TRAIT_CV_SPEC1(is_integral,char,true)
 
 #ifndef BOOST_NO_INTRINSIC_WCHAR_T
+// If the following line fails to compile and you're using the Intel
+// compiler, see http://lists.boost.org/MailArchives/boost-users/msg06567.php,
+// and define BOOST_NO_INTRINSIC_WCHAR_T on the command line.
 BOOST_TT_AUX_BOOL_TRAIT_CV_SPEC1(is_integral,wchar_t,true)
 #endif
 
@@ -54,8 +57,8 @@ BOOST_TT_AUX_BOOL_TRAIT_CV_SPEC1(is_integral,__int64,true)
 #endif
 
 # if defined(BOOST_HAS_LONG_LONG)
-BOOST_TT_AUX_BOOL_TRAIT_CV_SPEC1(is_integral,unsigned long long,true)
-BOOST_TT_AUX_BOOL_TRAIT_CV_SPEC1(is_integral,long long,true)
+BOOST_TT_AUX_BOOL_TRAIT_CV_SPEC1(is_integral, ::boost::ulong_long_type,true)
+BOOST_TT_AUX_BOOL_TRAIT_CV_SPEC1(is_integral, ::boost::long_long_type,true)
 #elif defined(BOOST_HAS_MS_INT64)
 BOOST_TT_AUX_BOOL_TRAIT_CV_SPEC1(is_integral,unsigned __int64,true)
 BOOST_TT_AUX_BOOL_TRAIT_CV_SPEC1(is_integral,__int64,true)

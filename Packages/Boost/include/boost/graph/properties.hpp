@@ -30,6 +30,7 @@
 #include <boost/pending/property.hpp>
 #include <boost/property_map.hpp>
 #include <boost/graph/graph_traits.hpp>
+#include <boost/type_traits/is_convertible.hpp>
 
 namespace boost {
 
@@ -108,10 +109,16 @@ namespace boost {
   BOOST_DEF_PROPERTY(vertex, finish_time);
   BOOST_DEF_PROPERTY(vertex, predecessor);
   BOOST_DEF_PROPERTY(vertex, rank);
+  BOOST_DEF_PROPERTY(vertex, centrality);
   BOOST_DEF_PROPERTY(edge, reverse);
   BOOST_DEF_PROPERTY(edge, capacity);
   BOOST_DEF_PROPERTY(edge, residual_capacity);
+  BOOST_DEF_PROPERTY(edge, centrality);
   BOOST_DEF_PROPERTY(graph, visitor);
+
+  // These tags are used for property bundles
+  BOOST_DEF_PROPERTY(vertex, bundle);
+  BOOST_DEF_PROPERTY(edge, bundle);
 
 #undef BOOST_DEF_PROPERTY
 
@@ -326,6 +333,51 @@ namespace boost {
   {
     return make_iterator_vertex_map(c.begin());
   }
+
+#if defined (BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
+#  define BOOST_GRAPH_NO_BUNDLED_PROPERTIES
+#endif
+
+#ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
+  template<typename Graph, typename Descriptor, typename Bundle, typename T>
+  struct bundle_property_map
+    : put_get_helper<T&, bundle_property_map<Graph, Descriptor, Bundle, T> >
+  {
+    typedef Descriptor key_type;
+    typedef T value_type;
+    typedef T& reference;
+    typedef lvalue_property_map_tag category;
+
+    bundle_property_map(Graph* g, T Bundle::* pm) : g(g), pm(pm) {}
+
+    reference operator[](key_type k) const { return (*g)[k].*pm; }
+  private:
+    Graph* g;
+    T Bundle::* pm;
+  };
+
+  namespace detail {
+    template<typename VertexBundle, typename EdgeBundle, typename Bundle>
+      struct is_vertex_bundle : is_convertible<Bundle*, VertexBundle*> {};
+  }
+  
+  template <typename Graph, typename T, typename Bundle>
+  struct property_map<Graph, T Bundle::*>  
+  {
+  private:
+    typedef graph_traits<Graph> traits;
+    typedef typename Graph::vertex_bundled vertex_bundled;
+    typedef typename Graph::edge_bundled edge_bundled;
+    typedef typename ct_if<(detail::is_vertex_bundle<vertex_bundled, edge_bundled, Bundle>::value),
+                       typename traits::vertex_descriptor,
+                       typename traits::edge_descriptor>::type
+      descriptor;
+    
+  public:
+    typedef bundle_property_map<Graph, descriptor, Bundle, T> type;
+    typedef bundle_property_map<const Graph, descriptor, Bundle, const T> const_type;
+  };
+#endif
 
 } // namespace boost
 

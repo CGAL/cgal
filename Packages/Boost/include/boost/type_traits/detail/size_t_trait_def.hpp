@@ -1,20 +1,19 @@
-//-----------------------------------------------------------------------------
-// boost/type_traits/detail/size_t_trait_def.hpp header file
-// See http://www.boost.org for updates, documentation, and revision history.
-//-----------------------------------------------------------------------------
-//
-// Copyright (c) 2002
-// Aleksey Gurtovoy
-//
-// Use, modification and distribution are subject to the Boost Software License,
-// Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt).
 
-// no include guards, the header is intended for multiple inclusion!
+// NO INCLUDE GUARDS, THE HEADER IS INTENDED FOR MULTIPLE INCLUSION
 
-#include "boost/type_traits/detail/template_arity_spec.hpp"
-#include "boost/mpl/size_t.hpp"
-#include "boost/mpl/aux_/lambda_support.hpp"
+// Copyright Aleksey Gurtovoy 2002-2004
+//
+// Distributed under the Boost Software License, Version 1.0. 
+// (See accompanying file LICENSE_1_0.txt or copy at 
+// http://www.boost.org/LICENSE_1_0.txt)
+
+// $Source$
+// $Date$
+// $Revision$
+
+#include <boost/type_traits/detail/template_arity_spec.hpp>
+#include <boost/mpl/size_t.hpp>
+#include <boost/mpl/aux_/lambda_support.hpp>
 
 #include <cstddef>
 

@@ -151,32 +151,24 @@ namespace date_time {
   };
 
   //! Functor to iterate by a year adjusting for leap years
-  /*!
-   *@throws bad_day if date value is invalid (eg: feb 29) 
-   */
   template<class date_type>
   class year_functor 
   {
   public:
-    typedef typename date_type::year_type year_type;
+    //typedef typename date_type::year_type year_type;
     typedef typename date_type::duration_type duration_type;
-    year_functor(int f) : f_(f) {}
+    year_functor(int f) : _mf(f * 12) {}
     duration_type get_offset(const date_type& d) const 
     {
-      year_type y = static_cast<unsigned short>(d.year()+f_);
-      date_type new_date(y, d.month(), d.day());
-      return new_date-d;
+      return _mf.get_offset(d);
     }
     duration_type get_neg_offset(const date_type& d) const 
     {
-      year_type y = static_cast<unsigned short>(d.year()-f_);
-      date_type new_date(y, d.month(), d.day());
-      return new_date-d;
+      return _mf.get_neg_offset(d);
     }
   private:
-    int f_;
+    month_functor<date_type> _mf;
   };
-  
 
   
 } }//namespace date_time

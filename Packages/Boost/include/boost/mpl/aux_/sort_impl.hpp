@@ -1,110 +1,121 @@
-//-----------------------------------------------------------------------------
-// boost mpl/aux_/sort_impl.hpp header file
-// See http://www.boost.org for updates, documentation, and revision history.
-//-----------------------------------------------------------------------------
-//
-// Copyright (c) 2002-2003
-// Eric Friedman
-//
-// Permission to use, copy, modify, distribute and sell this software
-// and its documentation for any purpose is hereby granted without fee, 
-// provided that the above copyright notice appears in all copies and 
-// that both the copyright notice and this permission notice appear in 
-// supporting documentation. No representations are made about the 
-// suitability of this software for any purpose. It is provided "as is" 
-// without express or implied warranty.
 
 #ifndef BOOST_MPL_AUX_SORT_IMPL_HPP_INCLUDED
 #define BOOST_MPL_AUX_SORT_IMPL_HPP_INCLUDED
 
-#include "boost/mpl/aux_/select1st_wknd.hpp"
-#include "boost/mpl/aux_/select2nd_wknd.hpp"
-#include "boost/mpl/apply.hpp"
-#include "boost/mpl/apply_if.hpp"
-#include "boost/mpl/copy_backward.hpp"
-#include "boost/mpl/empty.hpp"
-#include "boost/mpl/front.hpp"
-#include "boost/mpl/identity.hpp"
-#include "boost/mpl/partition.hpp"
-#include "boost/mpl/pop_front.hpp"
-#include "boost/mpl/push_front.hpp"
-#include "boost/mpl/aux_/traits_lambda_spec.hpp"
+// Copyright Eric Friedman 2002-2003
+//
+// Distributed under the Boost Software License, Version 1.0. 
+// (See accompanying file LICENSE_1_0.txt or copy at 
+// http://www.boost.org/LICENSE_1_0.txt)
+//
+// See http://www.boost.org/libs/mpl for documentation.
 
-namespace boost {
-namespace mpl {
+// $Source$
+// $Date$
+// $Revision$
 
-namespace aux {
+#include <boost/mpl/partition.hpp>
+#include <boost/mpl/copy.hpp>
+#include <boost/mpl/vector.hpp>
+#include <boost/mpl/back_inserter.hpp>
+#include <boost/mpl/front_inserter.hpp>
+#include <boost/mpl/iterator_range.hpp>
+#include <boost/mpl/joint_view.hpp>
+#include <boost/mpl/single_view.hpp>
+#include <boost/mpl/begin_end.hpp>
+#include <boost/mpl/empty.hpp>
+#include <boost/mpl/deref.hpp>
+#include <boost/mpl/eval_if.hpp>
+#include <boost/mpl/apply.hpp>
+#include <boost/mpl/identity.hpp>
+#include <boost/mpl/less.hpp>
+#include <boost/mpl/aux_/na.hpp>
 
-template < typename Sequence, typename Predicate > struct quick_sort;
+namespace boost { namespace mpl { namespace aux {
 
-template <typename Predicate, typename Pivot>
+template< typename Seq, typename Pred >
+struct quick_sort;
+
+// agurt, 10/nov/04: for the sake of deficeint compilers 
+template< typename Pred, typename Pivot >
 struct quick_sort_pred
 {
-    template <typename T>
-    struct apply
+    template< typename T > struct apply
     {
-        typedef typename apply2< Predicate, T, Pivot >::type
-            type;
+        typedef typename apply2<Pred,T,Pivot>::type type;
     };
 };
 
-template <typename Sequence, typename Predicate>
+template< 
+      typename Seq
+    , typename Pred
+    >
 struct quick_sort_impl
 {
-private:
-
-    typedef typename front<Sequence>::type pivot_;
-    typedef typename pop_front<Sequence>::type seq_;
-
+    typedef typename begin<Seq>::type pivot;
     typedef typename partition<
-          seq_
-        , protect< quick_sort_pred<Predicate,pivot_> >
+          iterator_range< 
+              typename next<pivot>::type
+            , typename end<Seq>::type
+            >
+        , protect< aux::quick_sort_pred< Pred, typename deref<pivot>::type > >
+        , back_inserter< vector<> >
+        , back_inserter< vector<> >
         >::type partitioned;
 
-    typedef typename quick_sort<
-          typename BOOST_MPL_AUX_SELECT1ST_WKND(partitioned), Predicate
-        >::type first_part;
-    typedef typename quick_sort<
-          typename BOOST_MPL_AUX_SELECT2ND_WKND(partitioned), Predicate
-        >::type second_part;
+    typedef typename quick_sort< typename partitioned::first, Pred >::type part1;
+    typedef typename quick_sort< typename partitioned::second, Pred >::type part2;
 
-public:
-
-    typedef typename copy_backward<
-          first_part
-        , typename push_front< second_part,pivot_ >::type
-        , push_front<_,_>
-        >::type type;
-
+    typedef joint_view< 
+              joint_view< part1, single_view< typename deref<pivot>::type > >
+            , part2
+            > type;
 };
 
-template <typename Sequence, typename Predicate>
+template< 
+      typename Seq
+    , typename Pred
+    >
 struct quick_sort
-    : apply_if<
-          empty<Sequence>
-        , identity< Sequence >
-        , quick_sort_impl< Sequence,Predicate >
+    : eval_if<
+          empty<Seq>
+        , identity<Seq>
+        , quick_sort_impl<Seq,Pred>
         >
 {
 };
 
-} // namespace aux
 
-template< typename Tag >
-struct sort_traits
+template <
+      typename Sequence
+    , typename Pred
+    , typename In
+    >
+struct sort_impl
 {
-    template< typename Sequence, typename Predicate >
-    struct algorithm
-    {
-        typedef typename aux::quick_sort<
-              Sequence, Predicate
-            >::type type;
-    };
+    typedef typename quick_sort< 
+          Sequence
+        , typename if_na<Pred,less<> >::type
+        >::type result_;
+        
+    typedef typename copy<result_,In>::type type;
 };
 
-BOOST_MPL_ALGORITM_TRAITS_LAMBDA_SPEC(2,sort_traits)
+template <
+      typename Sequence
+    , typename Pred
+    , typename In
+    >
+struct reverse_sort_impl
+{
+    typedef typename quick_sort< 
+          Sequence
+        , typename if_na<Pred,less<> >::type
+        >::type result_;
+        
+    typedef typename reverse_copy<result_,In>::type type;
+};
 
-} // namespace mpl
-} // namespace boost
+}}}
 
 #endif // BOOST_MPL_AUX_SORT_IMPL_HPP_INCLUDED

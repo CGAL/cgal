@@ -1,8 +1,7 @@
-// (C) Copyright Jeremy Siek 2001. Permission to copy, use, modify,
-// sell and distribute this software is granted provided this
-// copyright notice appears in all copies. This software is provided
-// "as is" without express or implied warranty, and with no claim as
-// to its suitability for any purpose.
+// (C) Copyright Jeremy Siek 2001.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 
 // Revision History:
 
@@ -26,7 +25,9 @@ namespace boost {
     typedef void                pointer;
     typedef void                reference;
 
-    explicit function_output_iterator(const UnaryFunction& f = UnaryFunction())
+    explicit function_output_iterator() {}
+
+    explicit function_output_iterator(const UnaryFunction& f)
       : m_f(f) {}
 
     struct output_proxy {

@@ -11,6 +11,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 #include <boost/spirit/symbols/impl/tst.ipp>
+#include <boost/detail/workaround.hpp>
 
 // MSVC: void warning about the use of 'this' pointer in constructors
 #if defined(BOOST_MSVC)
@@ -36,7 +37,12 @@ inline symbols<T, CharT, SetT>::symbols()
 template <typename T, typename CharT, typename SetT>
 symbols<T, CharT, SetT>::symbols(symbols const& other)
 : SetT(other)
+// Tru64 CXX seems to be confused by the explicit call of the default
+// constructor and generates wrong code which invalidates the just contructed
+// first base class in the line above.
+#if !BOOST_WORKAROUND(__DECCXX_VER, BOOST_TESTED_AT(60590041))
 , parser<symbols<T, CharT, SetT> >()
+#endif
 , add(*this)
 {
 }
@@ -85,13 +91,15 @@ template <typename T, typename CharT, typename SetT>
 inline T*
 add(symbols<T, CharT, SetT>& table, CharT const* sym, T const& data)
 {
+    CharT const* first = sym;
     CharT const* last = sym;
     while (*last)
         last++;
-    scanner<CharT const *> scan(sym, last);
-    if (table.find(scan))
+    scanner<CharT const *> scan(first, last);
+    if (table.find(scan) && scan.at_end())
         return 0;               // symbol already contained in symbol table
     table.add(sym, last, data);
+    first = sym;
     return table.find(scan);    // refind the inserted symbol
 }
 

@@ -18,10 +18,10 @@
 
 #ifndef BOOST_REGEX_CONFIG_HPP
 #define BOOST_REGEX_CONFIG_HPP
-//
-// Borland C++ Fix/error check
-// this has to go *before* we include any std lib headers:
-//
+/*
+ Borland C++ Fix/error check
+ this has to go *before* we include any std lib headers:
+*/
 #if defined(__BORLANDC__)
 #  include <boost/regex/config/borland.hpp>
 #endif
@@ -52,7 +52,7 @@
 #  include <vector>
 #  include <boost/config.hpp>
 #  include <boost/cstdint.hpp>
-#  include <boost/detail/allocator.hpp>
+#  include <boost/regex/config/allocator.hpp>
 #  include <boost/regex/config/cstring.hpp>
 #  include <boost/throw_exception.hpp>
 #  include <boost/scoped_ptr.hpp>
@@ -60,11 +60,11 @@
 #     include <locale>
 #  endif
 #else
-   //
-   // C build,
-   // don't include <boost/config.hpp> because that may
-   // do C++ specific things in future...
-   //
+   /*
+   * C build,
+   * don't include <boost/config.hpp> because that may
+   * do C++ specific things in future...
+   */
 #  include <stdlib.h>
 #  include <stddef.h>
 #  ifdef _MSC_VER
@@ -81,24 +81,24 @@
 /* Obsolete macro, use BOOST_VERSION instead: */
 #define BOOST_RE_VERSION 320
 
-// fix:
+/* fix: */
 #if defined(_UNICODE) && !defined(UNICODE)
 #define UNICODE
 #endif
 
-//
-// If there isn't good enough wide character support then there will
-// be no wide character regular expressions:
-//
+/*
+* If there isn't good enough wide character support then there will
+* be no wide character regular expressions:
+*/
 #if (defined(BOOST_NO_CWCHAR) || defined(BOOST_NO_CWCTYPE) || defined(BOOST_NO_STD_WSTRING))
 #  if !defined(BOOST_NO_WREGEX)
 #     define BOOST_NO_WREGEX
 #  endif
 #else
 #  if defined(__sgi) && (defined(__SGI_STL_PORT) || defined(_STLPORT_VERSION))
-      // STLPort on IRIX is misconfigured: <cwctype> does not compile
-      // as a temporary fix include <wctype.h> instead and prevent inclusion
-      // of STLPort version of <cwctype>
+      /* STLPort on IRIX is misconfigured: <cwctype> does not compile
+      * as a temporary fix include <wctype.h> instead and prevent inclusion
+      * of STLPort version of <cwctype> */
 #     include <wctype.h>
 #     define __STLPORT_CWCTYPE
 #     define _STLP_CWCTYPE
@@ -110,34 +110,34 @@
 
 #endif
 
-//
-// If Win32 support has been disabled for boost in general, then
-// it is for regex in particular:
-//
+/*
+* If Win32 support has been disabled for boost in general, then
+* it is for regex in particular:
+*/
 #if defined(BOOST_DISABLE_WIN32) && !defined(BOOST_REGEX_NO_W32)
 #  define BOOST_REGEX_NO_W32
 #endif
 
-// some versions of gcc can't merge template instances:
+/* some versions of gcc can't merge template instances: */
 #if defined(__CYGWIN__)
 #  define BOOST_REGEX_NO_TEMPLATE_SWITCH_MERGE
 #endif
 
-// fix problems with bool as a macro,
-// this probably doesn't affect any current compilers:
+/* fix problems with bool as a macro,
+* this probably doesn't affect any current compilers: */
 #if defined(bool) || defined(true) || defined(false)
 #  define BOOST_REGEX_NO_BOOL
 #endif
 
-// We don't make our templates external if the compiler
-// can't handle it:
+/* We don't make our templates external if the compiler
+ can't handle it: */
 #if (defined(BOOST_NO_MEMBER_FUNCTION_SPECIALIZATIONS) || defined(__HP_aCC) || defined(__MWERKS__) || defined(__COMO__) || defined(BOOST_INTEL))\
    && !defined(BOOST_MSVC) && !defined(__BORLANDC__)
 #  define BOOST_REGEX_NO_EXTERNAL_TEMPLATES
 #endif
 
-// disable our own file-iterators and mapfiles if we can't
-// support them:
+/* disable our own file-iterators and mapfiles if we can't
+ support them: */
 #if !defined(BOOST_HAS_DIRENT_H) && !(defined(_WIN32) && !defined(BOOST_REGEX_NO_W32))
 #  define BOOST_REGEX_NO_FILEITER
 #endif
@@ -169,9 +169,9 @@ using std::distance;
 #  endif
 #  define BOOST_REGEX_MAKE_BOOL(x) static_cast<bool>(x)
 #endif
-#endif // __cplusplus
+#endif /* __cplusplus */
 
-// backwards compatibitity:
+/* backwards compatibitity: */
 #if defined(BOOST_RE_NO_LIB)
 #  define BOOST_REGEX_NO_LIB
 #endif
@@ -223,7 +223,7 @@ namespace boost{ typedef wchar_t regex_wchar_type; }
 #  define BOOST_REGEX_DECL
 #endif
 
-#if (defined(BOOST_MSVC) || defined(__BORLANDC__)) && !defined(BOOST_REGEX_NO_LIB) && !defined(BOOST_REGEX_SOURCE) && !defined(BOOST_ALL_NO_LIB) && defined(__cplusplus)
+#if !defined(BOOST_REGEX_NO_LIB) && !defined(BOOST_REGEX_SOURCE) && !defined(BOOST_ALL_NO_LIB) && defined(__cplusplus)
 #  define BOOST_LIB_NAME boost_regex
 #  if defined(BOOST_REGEX_DYN_LINK) || defined(BOOST_ALL_DYN_LINK)
 #     define BOOST_DYN_LINK
@@ -267,7 +267,7 @@ namespace boost{ typedef wchar_t regex_wchar_type; }
  *
  ****************************************************************************/
 
-// backwards compatibility:
+/* backwards compatibility: */
 #ifdef BOOST_RE_LOCALE_C
 #  define BOOST_REGEX_USE_C_LOCALE
 #endif
@@ -276,11 +276,11 @@ namespace boost{ typedef wchar_t regex_wchar_type; }
 #  define BOOST_REGEX_USE_CPP_LOCALE
 #endif
 
-// Win32 defaults to native Win32 locale:
+/* Win32 defaults to native Win32 locale: */
 #if defined(_WIN32) && !defined(BOOST_REGEX_USE_WIN32_LOCALE) && !defined(BOOST_REGEX_USE_C_LOCALE) && !defined(BOOST_REGEX_USE_CPP_LOCALE) && !defined(BOOST_REGEX_NO_W32)
 #  define BOOST_REGEX_USE_WIN32_LOCALE
 #endif
-// otherwise use C locale:
+/* otherwise use C locale: */
 #if !defined(BOOST_REGEX_USE_WIN32_LOCALE) && !defined(BOOST_REGEX_USE_C_LOCALE) && !defined(BOOST_REGEX_USE_CPP_LOCALE)
 #  define BOOST_REGEX_USE_C_LOCALE
 #endif
@@ -311,10 +311,10 @@ namespace boost{ typedef wchar_t regex_wchar_type; }
  ****************************************************************************/
 
 #ifdef BOOST_NO_EXCEPTIONS
-//
-// If there are no exceptions then we must report critical-errors
-// the only way we know how; by terminating.
-//
+/*
+*  If there are no exceptions then we must report critical-errors
+*  the only way we know how; by terminating.
+*/
 #  define BOOST_REGEX_NOEH_ASSERT(x)\
 if(0 == (x))\
 {\
@@ -324,10 +324,10 @@ if(0 == (x))\
    boost::throw_exception(e);\
 }
 #else
-//
-// With exceptions then error handling is taken care of and
-// there is no need for these checks:
-//
+/*
+*  With exceptions then error handling is taken care of and
+*  there is no need for these checks:
+*/
 #  define BOOST_REGEX_NOEH_ASSERT(x)
 #endif
 
@@ -523,7 +523,7 @@ namespace std{
 #     if !defined(BOOST_NO_STD_LOCALE) && !defined (__STL_NO_NATIVE_MBSTATE_T) && !defined(_STLP_NO_NATIVE_MBSTATE_T)
    using ::mbstate_t;
 #     endif
-#  endif // BOOST_NO_WREGEX
+#  endif /* BOOST_NO_WREGEX */
    using ::fseek;
    using ::fread;
    using ::ftell;

@@ -25,6 +25,15 @@
 #  define BOOST_NO_CV_VOID_SPECIALIZATIONS
 #  define BOOST_NO_LIMITS_COMPILE_TIME_CONSTANTS
 #  define BOOST_NO_DEDUCED_TYPENAME
+// workaround for missing WCHAR_MAX/WCHAR_MIN:
+#include <climits>
+#include <cwchar>
+#ifndef WCHAR_MAX
+#  define WCHAR_MAX 0xffff
+#endif
+#ifndef WCHAR_MIN
+#  define WCHAR_MIN 0
+#endif
 #endif
 
 #if (__BORLANDC__ <= 0x564)
@@ -40,6 +49,7 @@
 #  define BOOST_BCB_PARTIAL_SPECIALIZATION_BUG
 #  define BOOST_NO_TEMPLATE_TEMPLATES
 #  define BOOST_NO_USING_DECLARATION_OVERLOADS_FROM_TYPENAME_BASE
+#  define BOOST_NO_MEMBER_TEMPLATE_FRIENDS
    // we shouldn't really need this - but too many things choke
    // without it, this needs more investigation:
 #  define BOOST_NO_LIMITS_COMPILE_TIME_CONSTANTS

@@ -1,7 +1,7 @@
-//  (C) Copyright David Abrahams 2000. Permission to copy, use, modify, sell and
-//  distribute this software is granted provided this copyright notice appears
-//  in all copies. This software is provided "as is" without express or implied
-//  warranty, and with no claim as to its suitability for any purpose.
+//  (C) Copyright David Abrahams 2000.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 //
 //  The author gratefully acknowleges the support of Dragon Systems, Inc., in
 //  producing this work.
@@ -46,7 +46,7 @@
 // The STLport puts all of the standard 'C' library names in std (as far as the
 // user is concerned), but without it you need a fix if you're using MSVC or
 // Intel C++
-# if defined(BOOST_MSVC_STD_ITERATOR)
+# if defined(BOOST_NO_STDC_NAMESPACE)
 #  define BOOST_CSTD_
 # else
 #  define BOOST_CSTD_ std
@@ -65,23 +65,30 @@
 #  define BOOST_PYTHON_DYNAMIC_LIB
 #endif
 
-#if defined(__MWERKS__) \
-  || (defined(__DECCXX_VER) && __DECCXX_VER <= 60590002) \
-  || (defined(__sgi) && defined(_COMPILER_VERSION) && _COMPILER_VERSION <= 730)
-# define BOOST_PYTHON_NO_TEMPLATE_EXPORT
-#endif
+#if defined(BOOST_PYTHON_DYNAMIC_LIB)
 
-#if defined(BOOST_PYTHON_DYNAMIC_LIB) && (defined(_WIN32) || defined(__CYGWIN__))
-#  if defined(BOOST_PYTHON_SOURCE)
-#     define BOOST_PYTHON_DECL __declspec(dllexport)
-#     define BOOST_PYTHON_BUILD_DLL
-#  else
-#     define BOOST_PYTHON_DECL __declspec(dllimport)
-#  endif
+#  if !defined(_WIN32) && !defined(__CYGWIN__)                  \
+    && defined(__GNUC__) && __GNUC__ >= 3 && __GNUC_MINOR__ >=5 \
+    && !defined(BOOST_PYTHON_GCC_SYMBOL_VISIBILITY)
+#    define BOOST_PYTHON_USE_GCC_SYMBOL_VISIBILITY
+#  endif 
 
-// MinGW, at least, has some problems exporting template instantiations
-#  if defined(__GNUC__) && __GNUC__ < 3 && !defined(__CYGWIN__)
-#   define BOOST_PYTHON_NO_TEMPLATE_EXPORT
+#  if defined(BOOST_PYTHON_USE_GCC_SYMBOL_VISIBILITY)
+#     if defined(BOOST_PYTHON_SOURCE)
+#        define BOOST_PYTHON_DECL __attribute__ ((visibility("default")))
+#        define BOOST_PYTHON_BUILD_DLL
+#     else
+#        define BOOST_PYTHON_DECL
+#     endif
+#     define BOOST_PYTHON_DECL_FORWARD
+#     define BOOST_PYTHON_DECL_EXCEPTION __attribute__ ((visibility("default")))
+#  elif (defined(_WIN32) || defined(__CYGWIN__))
+#     if defined(BOOST_PYTHON_SOURCE)
+#        define BOOST_PYTHON_DECL __declspec(dllexport)
+#        define BOOST_PYTHON_BUILD_DLL
+#     else
+#        define BOOST_PYTHON_DECL __declspec(dllimport)
+#     endif
 #  endif
 
 #endif
@@ -90,17 +97,15 @@
 #  define BOOST_PYTHON_DECL
 #endif
 
-#ifndef BOOST_PYTHON_EXPORT
-# define BOOST_PYTHON_EXPORT extern
-#endif 
-
-#if !defined(BOOST_PYTHON_NO_TEMPLATE_EXPORT)
-# define BOOST_PYTHON_EXPORT_CLASS_TEMPLATE(instantiation) BOOST_PYTHON_EXPORT template class BOOST_PYTHON_DECL instantiation
-#else
-# define BOOST_PYTHON_EXPORT_CLASS_TEMPLATE(instantiation) struct ThIsTyPeNeVeRuSeD
+#ifndef BOOST_PYTHON_DECL_FORWARD
+#  define BOOST_PYTHON_DECL_FORWARD BOOST_PYTHON_DECL
 #endif
 
-#if (defined(__DECCXX_VER) && __DECCXX_VER <= 60590031)
+#ifndef BOOST_PYTHON_DECL_EXCEPTION
+#  define BOOST_PYTHON_DECL_EXCEPTION BOOST_PYTHON_DECL
+#endif
+
+#if (defined(__DECCXX_VER) && __DECCXX_VER <= 60590041)
 // Replace broken Tru64/cxx offsetof macro
 # define BOOST_PYTHON_OFFSETOF(s_name, s_member) \
         ((size_t)__INTADDR__(&(((s_name *)0)->s_member)))

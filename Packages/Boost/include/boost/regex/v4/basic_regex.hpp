@@ -218,7 +218,7 @@ public:
    int BOOST_REGEX_CALL compare(const reg_expression&) const;
    bool BOOST_REGEX_CALL operator==(const reg_expression& e)const
    { return compare(e) == 0; }
-   bool operator != (const basic_regex<charT, traits, Allocator>& e)
+   bool operator != (const reg_expression& e)
    { return compare(e) != 0; }
    bool BOOST_REGEX_CALL operator<(const reg_expression& e)const
    { return compare(e) < 0; }

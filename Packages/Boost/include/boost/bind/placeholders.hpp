@@ -12,10 +12,9 @@
 //
 //  Copyright (c) 2002 Peter Dimov and Multi Media Ltd.
 //
-//  Permission to copy, use, modify, sell and distribute this software
-//  is granted provided this copyright notice appears in all copies.
-//  This software is provided "as is" without express or implied
-//  warranty, and with no claim as to its suitability for any purpose.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 //
 //  See http://www.boost.org/libs/bind/bind.html for documentation.
 //
@@ -38,7 +37,7 @@ static inline boost::arg<7> _7() { return boost::arg<7>(); }
 static inline boost::arg<8> _8() { return boost::arg<8>(); }
 static inline boost::arg<9> _9() { return boost::arg<9>(); }
 
-#elif (defined(BOOST_MSVC) && BOOST_MSVC <= 1300) || (defined(__DECCXX_VER) && __DECCXX_VER <= 60590031) || defined(__MWERKS__)
+#elif defined(BOOST_MSVC) || (defined(__DECCXX_VER) && __DECCXX_VER <= 60590031) || defined(__MWERKS__)
 
 static boost::arg<1> _1;
 static boost::arg<2> _2;

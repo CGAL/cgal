@@ -1,11 +1,9 @@
 // (C) Copyright David Abrahams 2002.
 // (C) Copyright Jeremy Siek    2002.
 // (C) Copyright Thomas Witt    2002.
-// Permission to copy, use, modify,
-// sell and distribute this software is granted provided this
-// copyright notice appears in all copies. This software is provided
-// "as is" without express or implied warranty, and with no claim as
-// to its suitability for any purpose.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 #ifndef BOOST_ITERATOR_ADAPTOR_23022003THW_HPP
 #define BOOST_ITERATOR_ADAPTOR_23022003THW_HPP
 
@@ -20,8 +18,6 @@
 #include <boost/mpl/and.hpp>
 #include <boost/mpl/not.hpp>
 #include <boost/mpl/or.hpp>
-
-#include <boost/python/detail/is_xxx.hpp>
 
 #include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/is_convertible.hpp>
@@ -104,7 +100,22 @@ namespace boost
   // false positives for user/library defined iterator types. See comments
   // on operator implementation for consequences.
   //
-#  if defined(BOOST_NO_IS_CONVERTIBLE) || defined(BOOST_NO_SFINAE)
+#  if BOOST_WORKAROUND(BOOST_MSVC, <= 1300)
+  
+  template<typename From, typename To>
+  struct enable_if_convertible
+  {
+     typedef typename mpl::if_<
+         mpl::or_<
+             is_same<From,To>
+           , is_convertible<From, To>
+         >
+      , detail::enable_type
+      , int&
+     >::type type;
+  };
+  
+#  elif defined(BOOST_NO_IS_CONVERTIBLE) || defined(BOOST_NO_SFINAE)
   
   template <class From, class To>
   struct enable_if_convertible
@@ -148,7 +159,7 @@ namespace boost
     // DefaultNullaryFn, otherwise return T.
     template <class T, class DefaultNullaryFn>
     struct ia_dflt_help
-      : mpl::apply_if<
+      : mpl::eval_if<
             is_same<T, use_default>
           , DefaultNullaryFn
           , mpl::identity<T>
@@ -174,7 +185,7 @@ namespace boost
 # ifdef BOOST_ITERATOR_REF_CONSTNESS_KILLS_WRITABILITY
           , typename detail::ia_dflt_help<
                 Value
-              , mpl::apply_if<
+              , mpl::eval_if<
                     is_same<Reference,use_default>
                   , iterator_value<Base>
                   , remove_reference<Reference>
@@ -193,7 +204,7 @@ namespace boost
 
           , typename detail::ia_dflt_help<
                 Reference
-              , mpl::apply_if<
+              , mpl::eval_if<
                     is_same<Value,use_default>
                   , iterator_reference<Base>
                   , add_reference<Value>
@@ -206,7 +217,13 @@ namespace boost
         >
         type;
     };
-    template <class T> int static_assert_convertible_to(T);
+  
+    // workaround for aC++ CR JAGaf33512
+    template <class Tr1, class Tr2>
+    inline void iterator_adaptor_assert_traversal ()
+    {
+      BOOST_STATIC_ASSERT((is_convertible<Tr1, Tr2>::value));
+    }
   }
   
   //
@@ -249,10 +266,10 @@ namespace boost
   {
       friend class iterator_core_access;
 
+   protected:
       typedef typename detail::iterator_adaptor_base<
           Derived, Base, Value, Traversal, Reference, Difference
       >::type super_t;
-
    public:
       iterator_adaptor() {}
 
@@ -265,6 +282,9 @@ namespace boost
         { return m_iterator; }
 
    protected:
+      // for convenience in derived classes
+      typedef iterator_adaptor<Derived,Base,Value,Traversal,Reference,Difference> iterator_adaptor_;
+      
       //
       // lvalue access to the Base object for Derived
       //
@@ -301,8 +321,7 @@ namespace boost
       >::type my_traversal;
 
 # define BOOST_ITERATOR_ADAPTOR_ASSERT_TRAVERSAL(cat) \
-      typedef int assertion[sizeof(detail::static_assert_convertible_to<cat>(my_traversal()))];
-//      BOOST_STATIC_ASSERT((is_convertible<my_traversal,cat>::value));
+      detail::iterator_adaptor_assert_traversal<my_traversal, cat>();
 
       void advance(typename super_t::difference_type n)
       {

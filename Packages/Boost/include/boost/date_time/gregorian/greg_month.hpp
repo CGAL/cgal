@@ -69,8 +69,33 @@ namespace gregorian {
     month_enum as_enum() const {return static_cast<month_enum>(value_);}
     const char* as_short_string() const;
     const char* as_long_string()  const;
+#ifndef BOOST_NO_STD_WSTRING
+    const wchar_t* as_short_wstring() const;
+    const wchar_t* as_long_wstring()  const;
+#endif // BOOST_NO_STD_WSTRING
     //! Shared pointer to a map of Month strings (Names & Abbrev) & numbers
     static month_map_ptr_type get_month_map_ptr();
+
+    /* parameterized as_*_string functions are intended to be called
+     * from a template function: "... as_short_string(charT c='\0');" */
+    const char* as_short_string(char) const
+    {
+      return as_short_string();
+    }
+    const char* as_long_string(char) const
+    {
+      return as_long_string();
+    }
+#ifndef BOOST_NO_STD_WSTRING
+    const wchar_t* as_short_string(wchar_t) const
+    {
+      return as_short_wstring();
+    }
+    const wchar_t* as_long_string(wchar_t) const
+    {
+      return as_long_wstring();
+    }
+#endif // BOOST_NO_STD_WSTRING
   };
 
 } } //namespace gregorian

@@ -1,8 +1,7 @@
-// (C) Copyright Jeremy Siek 2002. Permission to copy, use, modify,
-// sell and distribute this software is granted provided this
-// copyright notice appears in all copies. This software is provided
-// "as is" without express or implied warranty, and with no claim as
-// to its suitability for any purpose.
+// (C) Copyright Jeremy Siek 2002.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 
 #ifndef BOOST_ITERATOR_CATEGORIES_HPP
 # define BOOST_ITERATOR_CATEGORIES_HPP
@@ -13,7 +12,7 @@
 
 # include <boost/detail/workaround.hpp>
 
-# include <boost/mpl/apply_if.hpp>
+# include <boost/mpl/eval_if.hpp>
 # include <boost/mpl/identity.hpp>
 # include <boost/mpl/placeholders.hpp>
 # include <boost/mpl/aux_/lambda_support.hpp>
@@ -27,19 +26,43 @@ namespace boost {
 //
 // Traversal Categories
 //
-struct incrementable_traversal_tag {};
+
+struct no_traversal_tag {};
+
+struct incrementable_traversal_tag 
+  : no_traversal_tag
+{
+//     incrementable_traversal_tag() {}
+//     incrementable_traversal_tag(std::output_iterator_tag const&) {};
+};
   
 struct single_pass_traversal_tag
-  : incrementable_traversal_tag {};
+  : incrementable_traversal_tag
+{
+//     single_pass_traversal_tag() {}
+//     single_pass_traversal_tag(std::input_iterator_tag const&) {};
+};
   
 struct forward_traversal_tag
-  : single_pass_traversal_tag {};
+  : single_pass_traversal_tag
+{
+//     forward_traversal_tag() {}
+//     forward_traversal_tag(std::forward_iterator_tag const&) {};
+};
   
 struct bidirectional_traversal_tag
-  : forward_traversal_tag {};
+  : forward_traversal_tag
+{
+//     bidirectional_traversal_tag() {};
+//     bidirectional_traversal_tag(std::bidirectional_iterator_tag const&) {};
+};
   
 struct random_access_traversal_tag
-  : bidirectional_traversal_tag {};
+  : bidirectional_traversal_tag
+{
+//     random_access_traversal_tag() {};
+//     random_access_traversal_tag(std::random_access_iterator_tag const&) {};
+};
 
 namespace detail
 {  
@@ -51,19 +74,19 @@ namespace detail
   //
   template <class Cat>
   struct old_category_to_traversal
-    : mpl::apply_if<
+    : mpl::eval_if<
           is_convertible<Cat,std::random_access_iterator_tag>
         , mpl::identity<random_access_traversal_tag>
-        , mpl::apply_if<
+        , mpl::eval_if<
               is_convertible<Cat,std::bidirectional_iterator_tag>
             , mpl::identity<bidirectional_traversal_tag>
-            , mpl::apply_if<
+            , mpl::eval_if<
                   is_convertible<Cat,std::forward_iterator_tag>
                 , mpl::identity<forward_traversal_tag>
-                , mpl::apply_if<
+                , mpl::eval_if<
                       is_convertible<Cat,std::input_iterator_tag>
                     , mpl::identity<single_pass_traversal_tag>
-                    , mpl::apply_if<
+                    , mpl::eval_if<
                           is_convertible<Cat,std::output_iterator_tag>
                         , mpl::identity<incrementable_traversal_tag>
                         , void
@@ -84,19 +107,19 @@ namespace detail
 
   template <class Traversal>
   struct pure_traversal_tag
-    : mpl::apply_if<
+    : mpl::eval_if<
           is_convertible<Traversal,random_access_traversal_tag>
         , mpl::identity<random_access_traversal_tag>
-        , mpl::apply_if<
+        , mpl::eval_if<
               is_convertible<Traversal,bidirectional_traversal_tag>
             , mpl::identity<bidirectional_traversal_tag>
-            , mpl::apply_if<
+            , mpl::eval_if<
                   is_convertible<Traversal,forward_traversal_tag>
                 , mpl::identity<forward_traversal_tag>
-                , mpl::apply_if<
+                , mpl::eval_if<
                       is_convertible<Traversal,single_pass_traversal_tag>
                     , mpl::identity<single_pass_traversal_tag>
-                    , mpl::apply_if<
+                    , mpl::eval_if<
                           is_convertible<Traversal,incrementable_traversal_tag>
                         , mpl::identity<incrementable_traversal_tag>
                         , void
@@ -124,7 +147,7 @@ namespace detail
 //
 template <class Cat>
 struct iterator_category_to_traversal
-  : mpl::apply_if< // if already convertible to a traversal tag, we're done.
+  : mpl::eval_if< // if already convertible to a traversal tag, we're done.
         is_convertible<Cat,incrementable_traversal_tag>
       , mpl::identity<Cat>
       , detail::old_category_to_traversal<Cat>
@@ -139,7 +162,7 @@ struct iterator_traversal
     >
 {};
 
-# ifdef BOOST_MPL_NO_FULL_LAMBDA_SUPPORT
+# ifdef BOOST_MPL_CFG_NO_FULL_LAMBDA_SUPPORT
 // Hack because BOOST_MPL_AUX_LAMBDA_SUPPORT doesn't seem to work
 // out well.  Instantiating the nested apply template also
 // requires instantiating iterator_traits on the

@@ -1,8 +1,7 @@
-// Copyright David Abrahams 2003. Permission to copy, use,
-// modify, sell and distribute this software is granted provided this
-// copyright notice appears in all copies. This software is provided
-// "as is" without express or implied warranty, and with no claim as
-// to its suitability for any purpose.
+// Copyright David Abrahams 2003.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 #ifndef PURE_VIRTUAL_DWA2003810_HPP
 # define PURE_VIRTUAL_DWA2003810_HPP
 
@@ -71,7 +70,7 @@ namespace detail
         : m_pmf(pmf)
       {}
       
-#if !BOOST_WORKAROUND(__EDG_VERSION__, <= 238)
+#if !BOOST_WORKAROUND(__EDG_VERSION__, <= 245)
    private:
 #endif
       friend class def_visitor_access;
@@ -91,7 +90,7 @@ namespace detail
             , options.policies()
           );
 
-          typedef BOOST_DEDUCED_TYPENAME C_::select_holder::held_type held_t;
+          typedef BOOST_DEDUCED_TYPENAME C_::metadata::held_type held_type;
           
           // Add the default implementation which raises the exception
           c.def(
@@ -99,7 +98,7 @@ namespace detail
             , make_function(
                   detail::nullary_function_adaptor<void(*)()>(pure_virtual_called)
                 , default_call_policies()
-                , detail::error_signature<held_t>(detail::get_signature(m_pmf))
+                , detail::error_signature<held_type>(detail::get_signature(m_pmf))
               )
           );
       }

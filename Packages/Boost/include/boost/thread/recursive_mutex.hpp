@@ -12,17 +12,16 @@
 #ifndef BOOST_RECURSIVE_MUTEX_WEK070601_HPP
 #define BOOST_RECURSIVE_MUTEX_WEK070601_HPP
 
-#include <boost/config.hpp>
-// insist on threading support being available:
-#include <boost/config/requires_threads.hpp>
+#include <boost/thread/detail/config.hpp>
 
 #include <boost/utility.hpp>
 #include <boost/thread/detail/lock.hpp>
-#include <boost/thread/detail/config.hpp>
 
 #if defined(BOOST_HAS_PTHREADS)
 #   include <pthread.h>
-#elif defined(BOOST_HAS_MPTASKS)
+#endif
+
+#if defined(BOOST_HAS_MPTASKS)
 #   include "scoped_critical_region.hpp"
 #endif
 
@@ -30,7 +29,8 @@ namespace boost {
 
 struct xtime;
 
-class BOOST_THREAD_DECL recursive_mutex : private noncopyable
+class BOOST_THREAD_DECL recursive_mutex
+    : private noncopyable
 {
 public:
     friend class detail::thread::lock_ops<recursive_mutex>;
@@ -57,6 +57,7 @@ private:
 
 #if defined(BOOST_HAS_WINTHREADS)
     void* m_mutex;
+    bool m_critical_section;
     unsigned long m_count;
 #elif defined(BOOST_HAS_PTHREADS)
     pthread_mutex_t m_mutex;
@@ -73,7 +74,8 @@ private:
 #endif
 };
 
-class BOOST_THREAD_DECL recursive_try_mutex : private noncopyable
+class BOOST_THREAD_DECL recursive_try_mutex
+    : private noncopyable
 {
 public:
     friend class detail::thread::lock_ops<recursive_try_mutex>;
@@ -103,6 +105,7 @@ private:
 
 #if defined(BOOST_HAS_WINTHREADS)
     void* m_mutex;
+    bool m_critical_section;
     unsigned long m_count;
 #elif defined(BOOST_HAS_PTHREADS)
     pthread_mutex_t m_mutex;
@@ -119,7 +122,8 @@ private:
 #endif
 };
 
-class BOOST_THREAD_DECL recursive_timed_mutex : private noncopyable
+class BOOST_THREAD_DECL recursive_timed_mutex
+    : private noncopyable
 {
 public:
     friend class detail::thread::lock_ops<recursive_timed_mutex>;
@@ -168,12 +172,11 @@ private:
 
 } // namespace boost
 
+#endif // BOOST_RECURSIVE_MUTEX_WEK070601_HPP
+
 // Change Log:
 //    8 Feb 01  WEKEMPF Initial version.
 //    1 Jun 01  WEKEMPF Modified to use xtime for time outs.  Factored out
 //                      to three classes, mutex, try_mutex and timed_mutex.
 //   11 Jun 01  WEKEMPF Modified to use PTHREAD_MUTEX_RECURSIVE if available.
 //    3 Jan 03  WEKEMPF Modified for DLL implementation.
-
-
-#endif // BOOST_RECURSIVE_MUTEX_WEK070601_HPP

@@ -50,23 +50,6 @@ struct traverse_post_order_env {
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-#if defined(BOOST_MSVC) && (BOOST_MSVC <= 1300)
-
-BOOST_SPIRIT_DEPENDENT_TEMPLATE_WRAPPER3(
-    traverse_post_order_return_category_wrapper, result);
-
-template <typename MetaT, typename ParserT, typename EnvT>
-struct traverse_post_order_return {
-
-    typedef typename ParserT::parser_category_t parser_category_t;
-    typedef impl::traverse_post_order_return_category<parser_category_t> return_t;
-
-    typedef typename impl::traverse_post_order_return_category_wrapper<return_t>
-        ::template result_<MetaT, ParserT, EnvT>::type type;
-};
-
-#else
-
 template <typename MetaT, typename ParserT, typename EnvT>
 struct traverse_post_order_return {
 
@@ -74,8 +57,6 @@ struct traverse_post_order_return {
     typedef typename impl::traverse_post_order_return_category<parser_category_t>
         ::template result<MetaT, ParserT, EnvT>::type type;
 };
-
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -88,131 +69,9 @@ struct traverse_post_order_return {
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-#if defined(BOOST_MSVC) && (BOOST_MSVC <= 1300)
-
-BOOST_SPIRIT_DEPENDENT_TEMPLATE_WRAPPER2(
-    parser_traversal_plain_result_wrapper, plain_result);
-
 template <typename MetaT, typename ParserT, typename EnvT>
 struct parser_traversal_plain_result {
 
-    // actual resulting parser type
-    typedef typename impl::parser_traversal_plain_result_wrapper<MetaT>
-        ::template result_<ParserT, EnvT>::type nexttype;
-    typedef typename impl::parser_traversal_plain_result_wrapper<MetaT>
-        ::template result_<ParserT, EnvT>::type type;
-};
-
-///////////////////////////////////////////////////////////////////////////////
-BOOST_SPIRIT_DEPENDENT_TEMPLATE_WRAPPER3(
-    parser_traversal_unary_result_wrapper, unary_result);
-
-template <typename MetaT, typename UnaryT, typename SubjectT, typename EnvT>
-struct parser_traversal_unary_result {
-
-    BOOST_STATIC_CONSTANT(int, inclevel = (EnvT::level+1));
-    BOOST_STATIC_CONSTANT(int, decnode = (EnvT::node-1));
-
-    // traversal environment and parser return type for the subject parser
-    typedef traverse_post_order_env<
-                inclevel, decnode, EnvT::index, EnvT::lastleft
-            >
-        subject_env_t;
-    typedef typename traverse_post_order_return<
-                MetaT, SubjectT, subject_env_t
-            >::type
-        subject_t;
-
-    // actual traversal environment and resulting parser type
-    typedef typename impl::parser_traversal_unary_result_wrapper<MetaT>
-        ::template result_<UnaryT, subject_t, EnvT>::type nexttype;
-    typedef typename impl::parser_traversal_unary_result_wrapper<MetaT>
-        ::template result_<UnaryT, SubjectT, EnvT>::type type;
-};
-
-///////////////////////////////////////////////////////////////////////////////
-BOOST_SPIRIT_DEPENDENT_TEMPLATE_WRAPPER3(
-    parser_traversal_action_result_wrapper, action_result);
-
-template <typename MetaT, typename ActionT, typename SubjectT, typename EnvT>
-struct parser_traversal_action_result {
-
-    BOOST_STATIC_CONSTANT(int, inclevel = (EnvT::level+1));
-    BOOST_STATIC_CONSTANT(int, decnode = (EnvT::node-1));
-
-    // traversal environment and parser return type for the subject parser
-    typedef traverse_post_order_env<
-                inclevel, decnode, EnvT::index, EnvT::lastleft
-            >
-        subject_env_t;
-    typedef typename traverse_post_order_return<
-                MetaT, SubjectT, subject_env_t
-            >::type
-        subject_t;
-
-    // actual traversal environment and resulting parser type
-    typedef typename impl::parser_traversal_action_result_wrapper<MetaT>
-        ::template result_<ActionT, subject_t, EnvT>::type nexttype;
-    typedef typename impl::parser_traversal_action_result_wrapper<MetaT>
-        ::template result_<ActionT, SubjectT, EnvT>::type type;
-};
-
-///////////////////////////////////////////////////////////////////////////////
-BOOST_SPIRIT_DEPENDENT_TEMPLATE_WRAPPER4(
-    parser_traversal_binary_result_wrapper, binary_result);
-
-template <
-    typename MetaT, typename ParserT, typename LeftT,
-    typename RightT, typename EnvT
->
-struct parser_traversal_binary_result {
-
-    BOOST_STATIC_CONSTANT(int,
-        thisnum = (node_count<ParserT>::value + EnvT::lastleft-1));
-    BOOST_STATIC_CONSTANT(int,
-        leftnum = (node_count<LeftT>::value + EnvT::lastleft-1));
-    BOOST_STATIC_CONSTANT(int, rightnum = (thisnum-1));
-    BOOST_STATIC_CONSTANT(int,
-        leafnum = (leaf_count<LeftT>::value + EnvT::index));
-    BOOST_STATIC_CONSTANT(int, inclevel = (EnvT::level+1));
-    BOOST_STATIC_CONSTANT(int, lastleft = (leftnum+1));
-
-    // left traversal environment and resulting parser type
-    typedef traverse_post_order_env<
-                inclevel, leftnum, EnvT::index, EnvT::lastleft
-            > left_sub_env_t;
-    typedef typename traverse_post_order_return<
-                MetaT, LeftT, left_sub_env_t
-            >::type
-        left_t;
-
-    // right traversal environment and resulting parser type
-    typedef traverse_post_order_env<
-                inclevel, rightnum, leafnum, lastleft
-            > right_sub_env_t;
-    typedef typename traverse_post_order_return<
-                MetaT, RightT, right_sub_env_t
-            >::type
-        right_t;
-
-    // actual traversal environment and resulting parser type
-    typedef traverse_post_order_env<
-                EnvT::level, thisnum, EnvT::index, EnvT::lastleft
-            > return_env_t;
-    typedef typename impl::parser_traversal_binary_result_wrapper<MetaT>
-        ::template result_<ParserT, left_t, right_t, return_env_t>::type nexttype;
-
-    typedef typename impl::parser_traversal_binary_result_wrapper<MetaT>
-        ::template result_<ParserT, left_t, right_t, EnvT>::type type;
-};
-
-#else
-
-///////////////////////////////////////////////////////////////////////////////
-template <typename MetaT, typename ParserT, typename EnvT>
-struct parser_traversal_plain_result {
-
-    typedef typename MetaT::template plain_result<ParserT, EnvT>::type nexttype;
     typedef typename MetaT::template plain_result<ParserT, EnvT>::type type;
 };
 
@@ -220,18 +79,6 @@ struct parser_traversal_plain_result {
 template <typename MetaT, typename UnaryT, typename SubjectT, typename EnvT>
 struct parser_traversal_unary_result {
 
-    // traversal environment and parser return type for the subject parser
-    typedef traverse_post_order_env<
-                (EnvT::level+1), (EnvT::node-1), (EnvT::index), (EnvT::lastleft)
-            >
-        subject_env_t;
-    typedef typename traverse_post_order_return<
-                MetaT, SubjectT, subject_env_t
-            >::type
-        subject_t;
-
-    typedef typename MetaT
-        ::template unary_result<UnaryT, subject_t, EnvT>::type nexttype;
     typedef typename MetaT
         ::template unary_result<UnaryT, SubjectT, EnvT>::type type;
 };
@@ -240,18 +87,6 @@ struct parser_traversal_unary_result {
 template <typename MetaT, typename ActionT, typename SubjectT, typename EnvT>
 struct parser_traversal_action_result {
 
-    // traversal environment and parser return type for the subject parser
-    typedef traverse_post_order_env<
-                (EnvT::level+1), (EnvT::node-1), (EnvT::index), (EnvT::lastleft)
-            >
-        subject_env_t;
-    typedef typename traverse_post_order_return<
-                MetaT, SubjectT, subject_env_t
-            >::type
-        subject_t;
-
-    typedef typename MetaT
-        ::template action_result<ActionT, subject_t, EnvT>::type nexttype;
     typedef typename MetaT
         ::template action_result<ActionT, SubjectT, EnvT>::type type;
 };
@@ -290,22 +125,11 @@ struct parser_traversal_binary_result {
             >::type
         right_t;
 
-    // actual traversal environment and resulting parser type
-    typedef traverse_post_order_env<
-                (EnvT::level), (self_t::thisnum), (EnvT::index), (EnvT::lastleft)
-            > return_env_t;
-    typedef typename MetaT::template binary_result<
-                BinaryT, left_t, right_t, return_env_t
-            >::type
-        nexttype;
-
     typedef typename MetaT::template binary_result<
                 BinaryT, left_t, right_t, EnvT
             >::type
         type;
 };
-
-#endif // defined(BOOST_MSVC) && (BOOST_MSVC <= 1300)
 
 ///////////////////////////////////////////////////////////////////////////////
 namespace impl
@@ -406,7 +230,7 @@ namespace impl
 
         template <typename MetaT, typename ParserT, typename EnvT>
         static
-        typename parser_traversal_plain_result<MetaT, ParserT, EnvT>::nexttype
+        typename parser_traversal_plain_result<MetaT, ParserT, EnvT>::type
         generate(MetaT const &meta_, ParserT const &parser_, EnvT const &env)
         {
             return meta_.generate_plain(parser_, env);
@@ -430,8 +254,12 @@ namespace impl
         template <typename MetaT, typename ParserT, typename EnvT>
         static
         typename parser_traversal_unary_result<
-            MetaT, ParserT, typename ParserT::subject_t, EnvT
-        >::nexttype
+            MetaT, ParserT, 
+            typename traverse_post_order_return<
+                MetaT, typename ParserT::subject_t, EnvT
+            >::type,
+            EnvT
+        >::type
         generate(MetaT const &meta_, ParserT const &unary_, EnvT const &env)
         {
             typedef typename ParserT::subject_t             subject_t;
@@ -467,8 +295,12 @@ namespace impl
         template <typename MetaT, typename ParserT, typename EnvT>
         static
         typename parser_traversal_action_result<
-            MetaT, ParserT, typename ParserT::subject_t, EnvT
-        >::nexttype
+            MetaT, ParserT, 
+            typename traverse_post_order_return<
+                MetaT, typename ParserT::subject_t, EnvT
+            >::type,
+            EnvT
+        >::type
         generate(MetaT const &meta_, ParserT const &action_, EnvT const &env)
         {
             typedef typename ParserT::subject_t             subject_t;
@@ -505,9 +337,15 @@ namespace impl
         template <typename MetaT, typename ParserT, typename EnvT>
         static
         typename parser_traversal_binary_result<
-            MetaT, ParserT, typename ParserT::left_t,
-            typename ParserT::right_t, EnvT
-        >::nexttype
+            MetaT, ParserT, 
+            typename traverse_post_order_return<
+                MetaT, typename ParserT::left_t, EnvT
+            >::type,
+            typename traverse_post_order_return<
+                MetaT, typename ParserT::right_t, EnvT
+            >::type,
+            EnvT
+        >::type
         generate(MetaT const &meta_, ParserT const &binary_, EnvT const& /*env*/)
         {
             typedef typename ParserT::left_t                left_t;

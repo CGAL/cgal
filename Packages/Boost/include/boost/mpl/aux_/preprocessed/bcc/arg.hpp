@@ -1,13 +1,21 @@
-// preprocessed version of 'boost/mpl/arg.hpp' header
-// see the original for copyright information
 
-namespace boost {
-namespace mpl {
+// Copyright Peter Dimov 2001-2002
+// Copyright Aleksey Gurtovoy 2001-2004
+//
+// Distributed under the Boost Software License, Version 1.0. 
+// (See accompanying file LICENSE_1_0.txt or copy at 
+// http://www.boost.org/LICENSE_1_0.txt)
+//
 
-template<> struct arg<-1>
+// Preprocessed version of "boost/mpl/arg.hpp" header
+// -- DO NOT modify by hand!
+
+BOOST_MPL_AUX_ADL_BARRIER_NAMESPACE_OPEN
+template<> struct arg< -1 >
 {
-    static int const value = -1;
-    BOOST_MPL_AUX_ARG_TYPEDEF(void_, tag)
+    BOOST_STATIC_CONSTANT(int, value  = -1);
+    BOOST_MPL_AUX_ARG_TYPEDEF(na, tag)
+    BOOST_MPL_AUX_ARG_TYPEDEF(na, type)
 
     template<
           typename U1, typename U2, typename U3, typename U4, typename U5
@@ -15,14 +23,16 @@ template<> struct arg<-1>
     struct apply
     {
         typedef U1 type;
+        BOOST_MPL_AUX_ASSERT_NOT_NA(type);
     };
 };
 
 template<> struct arg<1>
 {
-    static int const value = 1;
+    BOOST_STATIC_CONSTANT(int, value  = 1);
     typedef arg<2> next;
-    BOOST_MPL_AUX_ARG_TYPEDEF(void_, tag)
+    BOOST_MPL_AUX_ARG_TYPEDEF(na, tag)
+    BOOST_MPL_AUX_ARG_TYPEDEF(na, type)
 
     template<
           typename U1, typename U2, typename U3, typename U4, typename U5
@@ -30,14 +40,16 @@ template<> struct arg<1>
     struct apply
     {
         typedef U1 type;
+        BOOST_MPL_AUX_ASSERT_NOT_NA(type);
     };
 };
 
 template<> struct arg<2>
 {
-    static int const value = 2;
+    BOOST_STATIC_CONSTANT(int, value  = 2);
     typedef arg<3> next;
-    BOOST_MPL_AUX_ARG_TYPEDEF(void_, tag)
+    BOOST_MPL_AUX_ARG_TYPEDEF(na, tag)
+    BOOST_MPL_AUX_ARG_TYPEDEF(na, type)
 
     template<
           typename U1, typename U2, typename U3, typename U4, typename U5
@@ -45,14 +57,16 @@ template<> struct arg<2>
     struct apply
     {
         typedef U2 type;
+        BOOST_MPL_AUX_ASSERT_NOT_NA(type);
     };
 };
 
 template<> struct arg<3>
 {
-    static int const value = 3;
+    BOOST_STATIC_CONSTANT(int, value  = 3);
     typedef arg<4> next;
-    BOOST_MPL_AUX_ARG_TYPEDEF(void_, tag)
+    BOOST_MPL_AUX_ARG_TYPEDEF(na, tag)
+    BOOST_MPL_AUX_ARG_TYPEDEF(na, type)
 
     template<
           typename U1, typename U2, typename U3, typename U4, typename U5
@@ -60,14 +74,16 @@ template<> struct arg<3>
     struct apply
     {
         typedef U3 type;
+        BOOST_MPL_AUX_ASSERT_NOT_NA(type);
     };
 };
 
 template<> struct arg<4>
 {
-    static int const value = 4;
+    BOOST_STATIC_CONSTANT(int, value  = 4);
     typedef arg<5> next;
-    BOOST_MPL_AUX_ARG_TYPEDEF(void_, tag)
+    BOOST_MPL_AUX_ARG_TYPEDEF(na, tag)
+    BOOST_MPL_AUX_ARG_TYPEDEF(na, type)
 
     template<
           typename U1, typename U2, typename U3, typename U4, typename U5
@@ -75,14 +91,16 @@ template<> struct arg<4>
     struct apply
     {
         typedef U4 type;
+        BOOST_MPL_AUX_ASSERT_NOT_NA(type);
     };
 };
 
 template<> struct arg<5>
 {
-    static int const value = 5;
+    BOOST_STATIC_CONSTANT(int, value  = 5);
     typedef arg<6> next;
-    BOOST_MPL_AUX_ARG_TYPEDEF(void_, tag)
+    BOOST_MPL_AUX_ARG_TYPEDEF(na, tag)
+    BOOST_MPL_AUX_ARG_TYPEDEF(na, type)
 
     template<
           typename U1, typename U2, typename U3, typename U4, typename U5
@@ -90,11 +108,10 @@ template<> struct arg<5>
     struct apply
     {
         typedef U5 type;
+        BOOST_MPL_AUX_ASSERT_NOT_NA(type);
     };
 };
 
-BOOST_MPL_AUX_NONTYPE_ARITY_SPEC(1, int, arg)
+BOOST_MPL_AUX_NONTYPE_ARITY_SPEC(1,int, arg)
 
-} // namespace mpl
-} // namespace boost
-
+BOOST_MPL_AUX_ADL_BARRIER_NAMESPACE_CLOSE

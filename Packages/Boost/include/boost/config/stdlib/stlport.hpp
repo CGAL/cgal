@@ -83,6 +83,19 @@
 #endif
 
 //
+// If STLport thinks there is no wchar_t at all, then we have to disable
+// the support for the relevant specilazations of std:: templates.
+//
+#if !defined(_STLP_HAS_WCHAR_T) && !defined(_STLP_WCHAR_T_IS_USHORT)
+#  ifndef  BOOST_NO_STD_WSTRING
+#     define BOOST_NO_STD_WSTRING
+#  endif
+#  ifndef  BOOST_NO_STD_WSTREAMBUF
+#     define BOOST_NO_STD_WSTREAMBUF
+#  endif
+#endif
+
+//
 // We always have SGI style hash_set, hash_map, and slist:
 //
 #define BOOST_HAS_HASH
@@ -150,6 +163,16 @@ namespace std{ using _STLP_VENDOR_CSTD::strcmp; using _STLP_VENDOR_CSTD::strcpy;
 #endif
 
 //
+// If STLport for some reason was configured so that it thinks that wchar_t
+// is not an intrinsic type, then we have to disable the support for it as
+// well (we would be missing required specializations otherwise).
+//
+#if !defined( _STLP_HAS_WCHAR_T) || defined(_STLP_WCHAR_T_IS_USHORT)
+#  undef  BOOST_NO_INTRINSIC_WCHAR_T
+#  define BOOST_NO_INTRINSIC_WCHAR_T
+#endif
+
+//
 // Borland ships a version of STLport with C++ Builder 6 that lacks
 // hashtables and the like:
 //
@@ -157,6 +180,15 @@ namespace std{ using _STLP_VENDOR_CSTD::strcmp; using _STLP_VENDOR_CSTD::strcpy;
 #  undef BOOST_HAS_HASH
 #endif
 
+//
+// gcc-2.95.3/STLPort does not like the using declarations we use to get ADL with std::min/max
+//
+#if defined(__GNUC__) && (__GNUC__ < 3)
+#  include <algorithm> // for std::min and std::max
+#  define BOOST_USING_STD_MIN() ((void)0)
+#  define BOOST_USING_STD_MAX() ((void)0)
+namespace boost { using std::min; using std::max; }
+#endif
 
 #define BOOST_STDLIB "STLPort standard library version " BOOST_STRINGIZE(__SGI_STL_PORT)
 

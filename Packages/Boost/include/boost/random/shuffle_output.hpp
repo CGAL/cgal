@@ -1,14 +1,9 @@
 /* boost random/shuffle_output.hpp header file
  *
  * Copyright Jens Maurer 2000-2001
- * Permission to use, copy, modify, sell, and distribute this software
- * is hereby granted without fee provided that the above copyright notice
- * appears in all copies and that both that copyright notice and this
- * permission notice appear in supporting documentation,
- *
- * Jens Maurer makes no representations about the suitability of this
- * software for any purpose. It is provided "as is" without express or
- * implied warranty.
+ * Distributed under the Boost Software License, Version 1.0. (See
+ * accompanying file LICENSE_1_0.txt or copy at
+ * http://www.boost.org/LICENSE_1_0.txt)
  *
  * See http://www.boost.org for most recent version including documentation.
  *
@@ -61,6 +56,7 @@ public:
   explicit shuffle_output(const base_type & rng) : _rng(rng) { init(); }
   template<class It> shuffle_output(It& first, It last)
     : _rng(first, last) { init(); }
+  void seed() { _rng.seed(); init(); }
   template<class T>
   void seed(T s) { _rng.seed(s); init(); }
   template<class It> void seed(It& first, It last)
@@ -74,16 +70,16 @@ public:
   result_type operator()() {
     // calculating the range every time may seem wasteful.  However, this
     // makes the information locally available for the optimizer.
-    result_type range = max()-min()+1;
-    int j = k*(y-min())/range;
+    result_type range = (max)()-(min)()+1;
+    int j = k*(y-(min)())/range;
     // assert(0 <= j && j < k);
     y = v[j];
     v[j] = _rng();
     return y;
   }
 
-  result_type min() const { return _rng.min(); }
-  result_type max() const { return _rng.max(); }
+  result_type min BOOST_PREVENT_MACRO_SUBSTITUTION () const { return (_rng.min)(); }
+  result_type max BOOST_PREVENT_MACRO_SUBSTITUTION () const { return (_rng.max)(); }
   static bool validation(result_type x) { return val == x; }
 
 #ifndef BOOST_NO_OPERATORS_IN_NAMESPACE
@@ -127,7 +123,7 @@ private:
 #ifndef BOOST_NO_LIMITS_COMPILE_TIME_CONSTANTS
     BOOST_STATIC_ASSERT(std::numeric_limits<result_type>::is_integer);
 #endif
-    result_type range = max()-min();
+    result_type range = (max)()-(min)();
     assert(range > 0);      // otherwise there would be little choice
     if(static_cast<unsigned long>(k * range) < 
        static_cast<unsigned long>(range))  // not a sufficient condition

@@ -1,14 +1,9 @@
 /* boost integer_traits.hpp header file
  *
  * Copyright Jens Maurer 2000
- * Permission to use, copy, modify, sell, and distribute this software
- * is hereby granted without fee provided that the above copyright notice
- * appears in all copies and that both that copyright notice and this
- * permission notice appear in supporting documentation,
- *
- * Jens Maurer makes no representations about the suitability of this
- * software for any purpose. It is provided "as is" without express or
- * implied warranty.
+ * Distributed under the Boost Software License, Version 1.0. (See
+ * accompanying file LICENSE_1_0.txt or copy at
+ * http://www.boost.org/LICENSE_1_0.txt)
  *
  * $Id$
  *
@@ -159,53 +154,70 @@ class integer_traits<unsigned long>
 #if defined(ULLONG_MAX) && defined(BOOST_HAS_LONG_LONG)
 
 template<>
-class integer_traits<long long>
-  : public std::numeric_limits<long long>,
-    public detail::integer_traits_base<long long, LLONG_MIN, LLONG_MAX>
+class integer_traits< ::boost::long_long_type>
+  : public std::numeric_limits< ::boost::long_long_type>,
+    public detail::integer_traits_base< ::boost::long_long_type, LLONG_MIN, LLONG_MAX>
 { };
 
 template<>
-class integer_traits<unsigned long long>
-  : public std::numeric_limits<unsigned long long>,
-    public detail::integer_traits_base<unsigned long long, 0, ULLONG_MAX>
+class integer_traits< ::boost::ulong_long_type>
+  : public std::numeric_limits< ::boost::ulong_long_type>,
+    public detail::integer_traits_base< ::boost::ulong_long_type, 0, ULLONG_MAX>
 { };
 
 #elif defined(ULONG_LONG_MAX) && defined(BOOST_HAS_LONG_LONG)
 
 template<>
-class integer_traits<long long>  : public std::numeric_limits<long long>,    public detail::integer_traits_base<long long, LONG_LONG_MIN, LONG_LONG_MAX>{ };
+class integer_traits< ::boost::long_long_type>  : public std::numeric_limits< ::boost::long_long_type>,    public detail::integer_traits_base< ::boost::long_long_type, LONG_LONG_MIN, LONG_LONG_MAX>{ };
 template<>
-class integer_traits<unsigned long long>
-  : public std::numeric_limits<unsigned long long>,
-    public detail::integer_traits_base<unsigned long long, 0, ULONG_LONG_MAX>
+class integer_traits< ::boost::ulong_long_type>
+  : public std::numeric_limits< ::boost::ulong_long_type>,
+    public detail::integer_traits_base< ::boost::ulong_long_type, 0, ULONG_LONG_MAX>
 { };
 
 #elif defined(ULONGLONG_MAX) && defined(BOOST_HAS_LONG_LONG)
 
 template<>
-class integer_traits<long long>
-  : public std::numeric_limits<long long>,
-    public detail::integer_traits_base<long long, LONGLONG_MIN, LONGLONG_MAX>
+class integer_traits< ::boost::long_long_type>
+  : public std::numeric_limits< ::boost::long_long_type>,
+    public detail::integer_traits_base< ::boost::long_long_type, LONGLONG_MIN, LONGLONG_MAX>
 { };
 
 template<>
-class integer_traits<unsigned long long>
-  : public std::numeric_limits<unsigned long long>,
-    public detail::integer_traits_base<unsigned long long, 0, ULONGLONG_MAX>
+class integer_traits< ::boost::ulong_long_type>
+  : public std::numeric_limits< ::boost::ulong_long_type>,
+    public detail::integer_traits_base< ::boost::ulong_long_type, 0, ULONGLONG_MAX>
 { };
 
 #elif defined(_LLONG_MAX) && defined(_C2) && defined(BOOST_HAS_LONG_LONG)
 
 template<>
-class integer_traits<long long>
-  : public std::numeric_limits<long long>,
-    public detail::integer_traits_base<long long, -_LLONG_MAX - _C2, _LLONG_MAX>
+class integer_traits< ::boost::long_long_type>
+  : public std::numeric_limits< ::boost::long_long_type>,
+    public detail::integer_traits_base< ::boost::long_long_type, -_LLONG_MAX - _C2, _LLONG_MAX>
 { };
 
 template<>
-class integer_traits<unsigned long long>
-  : public std::numeric_limits<unsigned long long>,
-    public detail::integer_traits_base<unsigned long long, 0, _ULLONG_MAX>
+class integer_traits< ::boost::ulong_long_type>
+  : public std::numeric_limits< ::boost::ulong_long_type>,
+    public detail::integer_traits_base< ::boost::ulong_long_type, 0, _ULLONG_MAX>
+{ };
+
+#elif defined(BOOST_HAS_LONG_LONG)
+//
+// we have long long but no constants, this happens for example with gcc in -ansi mode,
+// we'll just have to work out the values for ourselves (assumes 2's compliment representation):
+//
+template<>
+class integer_traits< ::boost::long_long_type>
+  : public std::numeric_limits< ::boost::long_long_type>,
+    public detail::integer_traits_base< ::boost::long_long_type, (1LL << (sizeof(::boost::long_long_type) - 1)), ~(1LL << (sizeof(::boost::long_long_type) - 1))>
+{ };
+
+template<>
+class integer_traits< ::boost::ulong_long_type>
+  : public std::numeric_limits< ::boost::ulong_long_type>,
+    public detail::integer_traits_base< ::boost::ulong_long_type, 0, ~0uLL>
 { };
 
 #endif

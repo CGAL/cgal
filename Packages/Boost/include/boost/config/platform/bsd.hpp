@@ -46,7 +46,9 @@
 //
 // The BSD <ctype.h> has macros only, no functions:
 //
-#define BOOST_NO_CTYPE_FUNCTIONS
+#if !defined(__OpenBSD__)
+#  define BOOST_NO_CTYPE_FUNCTIONS
+#endif
 
 //
 // thread API's not auto detected:

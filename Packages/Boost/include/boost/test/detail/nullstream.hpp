@@ -1,8 +1,8 @@
 //  (C) Copyright Gennadiy Rozental 2002-2003.
 //  (C) Copyright Daryle Walker 2000-2001. 
-//  Use, modification, and distribution are subject to the 
-//  Boost Software License, Version 1.0. (See accompanying file 
-//  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//  Distributed under the Boost Software License, Version 1.0.
+//  (See accompanying file LICENSE_1_0.txt or copy at 
+//  http://www.boost.org/LICENSE_1_0.txt)
 
 //  See http://www.boost.org/libs/test for the library home page.
 //
@@ -13,8 +13,8 @@
 //  Description : simulate /dev/null stream
 // ***************************************************************************
 
-#ifndef BOOST_NULLSTREAM_HPP
-#define BOOST_NULLSTREAM_HPP
+#ifndef BOOST_NULLSTREAM_HPP_071894GER
+#define BOOST_NULLSTREAM_HPP_071894GER
 
 #include <ostream>    // for std::basic_ostream
 #include <streambuf>  // for std::basic_streambuf
@@ -84,13 +84,18 @@ typedef basic_onullstream<wchar_t>  wonullstream;
 //  Revision History :
 //  
 //  $Log$
-//  Revision 1.1  2004/05/23 10:51:38  spion
-//  Initial revision
+//  Revision 1.1.1.2  2004/11/20 10:52:19  spion
+//  Import of Boost v. 1.32.0
+//
+//  Revision 1.9  2004/07/19 12:21:08  rogeeff
+//  guard rename
+//
+//  Revision 1.8  2004/05/21 06:19:35  rogeeff
+//  licence update
 //
 //  Revision 1.7  2003/12/01 00:41:56  rogeeff
 //  prerelease cleaning
 //
-
 // ***************************************************************************
 
-#endif  // BOOST_NULLSTREAM_HPP
+#endif  // BOOST_NULLSTREAM_HPP_071894GER

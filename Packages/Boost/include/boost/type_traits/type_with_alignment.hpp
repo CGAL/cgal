@@ -43,7 +43,7 @@ typedef int (alignment_dummy::*member_function_ptr)();
 #ifdef BOOST_HAS_LONG_LONG
 #define BOOST_TT_ALIGNMENT_BASE_TYPES BOOST_PP_TUPLE_TO_LIST( \
         12, ( \
-        char, short, int, long, long long, float, double, long double \
+        char, short, int, long,  ::boost::long_long_type, float, double, long double \
         , void*, function_ptr, member_ptr, member_function_ptr))
 #else
 #define BOOST_TT_ALIGNMENT_BASE_TYPES BOOST_PP_TUPLE_TO_LIST( \
@@ -52,7 +52,7 @@ typedef int (alignment_dummy::*member_function_ptr)();
         , void*, function_ptr, member_ptr, member_function_ptr))
 #endif
 
-#define BOOST_TT_HAS_ONE_T(D,Data,T) boost::detail::has_one_T<T>
+#define BOOST_TT_HAS_ONE_T(D,Data,T) boost::detail::has_one_T< T >
 
 #define BOOST_TT_ALIGNMENT_STRUCT_TYPES                         \
         BOOST_PP_LIST_TRANSFORM(BOOST_TT_HAS_ONE_T,             \
@@ -158,7 +158,7 @@ union max_align
 #undef BOOST_TT_CHOOSE_MIN_ALIGNMENT
 #undef BOOST_TT_CHOOSE_T
 
-template<int TAlign, int Align>
+template<std::size_t TAlign, std::size_t Align>
 struct is_aligned
 {
     BOOST_STATIC_CONSTANT(bool,
@@ -189,7 +189,7 @@ struct is_pod< ::boost::detail::lower_alignment<Align> >
 
 // This alignment method originally due to Brian Parker, implemented by David
 // Abrahams, and then ported here by Doug Gregor.
-template <int Align>
+template <std::size_t Align>
 class type_with_alignment
 {
     typedef detail::lower_alignment<Align> t1;

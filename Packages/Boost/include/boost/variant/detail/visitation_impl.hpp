@@ -6,19 +6,14 @@
 // Copyright (c) 2003
 // Eric Friedman
 //
-// Permission to use, copy, modify, distribute and sell this software
-// and its documentation for any purpose is hereby granted without fee, 
-// provided that the above copyright notice appears in all copies and 
-// that both the copyright notice and this permission notice appear in 
-// supporting documentation. No representations are made about the 
-// suitability of this software for any purpose. It is provided "as is" 
-// without express or implied warranty.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 
 #ifndef BOOST_VARIANT_DETAIL_VISITATION_IMPL_HPP
 #define BOOST_VARIANT_DETAIL_VISITATION_IMPL_HPP
 
 #include "boost/config.hpp"
-#include "boost/mpl/aux_/deref_wknd.hpp"
 
 #include "boost/variant/detail/backup_holder.hpp"
 #include "boost/variant/detail/cast_storage.hpp"
@@ -26,11 +21,12 @@
 #include "boost/variant/detail/generic_result_type.hpp"
 
 #include "boost/assert.hpp"
-#include "boost/mpl/apply_if.hpp"
+#include "boost/mpl/eval_if.hpp"
 #include "boost/mpl/bool.hpp"
 #include "boost/mpl/identity.hpp"
 #include "boost/mpl/int.hpp"
 #include "boost/mpl/next.hpp"
+#include "boost/mpl/deref.hpp"
 #include "boost/mpl/or.hpp"
 #include "boost/preprocessor/cat.hpp"
 #include "boost/preprocessor/inc.hpp"
@@ -72,7 +68,7 @@ struct apply_visitor_unrolled {};
 template <typename Iter, typename LastIter>
 struct visitation_impl_step
 {
-    typedef typename BOOST_MPL_AUX_DEREF_WNKD(Iter) type;
+    typedef typename mpl::deref<Iter>::type type;
 
     typedef typename mpl::next<Iter>::type next_iter;
     typedef visitation_impl_step<
@@ -92,13 +88,13 @@ struct visitation_impl_step< LastIter,LastIter >
 template <typename Iter, typename LastIter>
 struct visitation_impl_step
 {
-    typedef typename mpl::apply_if<
+    typedef typename mpl::eval_if<
           is_same<Iter, LastIter>
         , mpl::identity<apply_visitor_unrolled>
         , Iter
         >::type type;
 
-    typedef typename mpl::apply_if<
+    typedef typename mpl::eval_if<
           is_same<type, apply_visitor_unrolled> //is_same<Iter, LastIter>
         , mpl::identity<LastIter>
         , mpl::next<Iter>

@@ -11,7 +11,9 @@
 
 #include "boost/date_time/gregorian/gregorian_types.hpp"
 #include "boost/date_time/date_formatting_locales.hpp" // sets BOOST_DATE_TIME_NO_LOCALE
+#include "boost/date_time/gregorian/parsers.hpp"
 #include <string>
+#include <exception>
 
 //This file is basically commented out if locales are not supported
 #ifndef BOOST_DATE_TIME_NO_LOCALE
@@ -19,7 +21,7 @@
 
 namespace boost {
 namespace gregorian {
-
+  
   //! Configuration of the output facet template
   struct greg_facet_config
   {
@@ -31,7 +33,7 @@ namespace gregorian {
 
   //! Create the base facet type for gregorian::date
   typedef boost::date_time::date_names_put<greg_facet_config> greg_base_facet;
-  
+
   //! ostream operator for gregorian::date
   /*! Uses the date facet to determine various output parameters including:
    *  - string values for the month (eg: Jan, Feb, Mar) (default: English)
@@ -44,7 +46,8 @@ namespace gregorian {
   std::basic_ostream<charT, traits>&
   operator<<(std::basic_ostream<charT, traits>& os, const date& d)
   {
-    typedef boost::date_time::ostream_date_formatter<date, greg_base_facet, charT> greg_ostream_formatter;
+    typedef boost::date_time::date_names_put<greg_facet_config, charT> facet_def;
+    typedef boost::date_time::ostream_date_formatter<date, facet_def, charT> greg_ostream_formatter;
     greg_ostream_formatter::date_put(d, os);
     return os;
   }
@@ -59,15 +62,17 @@ namespace gregorian {
   std::basic_ostream<charT, traits>&
   operator<<(std::basic_ostream<charT, traits>& os, const greg_month& m)
   {
-    typedef boost::date_time::ostream_month_formatter<greg_base_facet, charT> greg_month_formatter;
+    typedef boost::date_time::date_names_put<greg_facet_config, charT> facet_def;
+    typedef boost::date_time::ostream_month_formatter<facet_def, charT> greg_month_formatter;
     std::locale locale = os.getloc();
-    if (std::has_facet<greg_base_facet>(locale)) {
-      const greg_base_facet& f = std::use_facet<greg_base_facet>(locale);
+    if (std::has_facet<facet_def>(locale)) {
+      const facet_def& f = std::use_facet<facet_def>(locale);
       greg_month_formatter::format_month(m, os, f);
 
     }
     else { //default to numeric
-      os  << std::setw(2) << std::setfill('0') << m.as_number();
+      charT fill_char = '0';
+      os  << std::setw(2) << std::setfill(fill_char) << m.as_number();
     }
 
     return os;
@@ -83,10 +88,11 @@ namespace gregorian {
   std::basic_ostream<charT, traits>&
   operator<<(std::basic_ostream<charT, traits>& os, const greg_weekday& wd)
   {
-    typedef boost::date_time::ostream_weekday_formatter<greg_weekday, greg_base_facet, charT> greg_weekday_formatter;
+    typedef boost::date_time::date_names_put<greg_facet_config, charT> facet_def;
+    typedef boost::date_time::ostream_weekday_formatter<greg_weekday, facet_def, charT> greg_weekday_formatter;
     std::locale locale = os.getloc();
-    if (std::has_facet<greg_base_facet>(locale)) {
-      const greg_base_facet& f = std::use_facet<greg_base_facet>(locale);
+    if (std::has_facet<facet_def>(locale)) {
+      const facet_def& f = std::use_facet<facet_def>(locale);
       greg_weekday_formatter::format_weekday(wd.as_enum(), os, f, true);
     }
     else { //default to short English string eg: Sun, Mon, Tue, Wed...
@@ -192,6 +198,145 @@ namespace gregorian {
   {
     os << fkb.day_of_week() << " before"; 
     return os;
+  }
+
+  /**************** Input Streaming ******************/
+  
+#if !defined(BOOST_NO_STD_ITERATOR_TRAITS)
+  //! operator>> for gregorian::date
+  template<class charT>
+  inline 
+  std::basic_istream<charT>& operator>>(std::basic_istream<charT>& is, date& d)
+  {
+    std::istream_iterator<std::basic_string<charT>, charT> beg(is), eos;
+    
+    typedef boost::date_time::all_date_names_put<greg_facet_config, charT> facet_def;
+    d = from_stream(beg, eos);
+    return is;
+  }
+#endif // BOOST_NO_STD_ITERATOR_TRAITS
+
+  //! operator>> for gregorian::date_duration
+  template<class charT>
+  inline
+  std::basic_istream<charT>& operator>>(std::basic_istream<charT>& is, 
+                                        date_duration& dd)
+  {
+    long v;
+    is >> v;
+    dd = date_duration(v);
+    return is;
+  }
+
+  //! operator>> for gregorian::date_period
+  template<class charT>
+  inline
+  std::basic_istream<charT>& operator>>(std::basic_istream<charT>& is,
+                                        date_period& dp)
+  {
+    std::basic_string<charT> s;
+    is >> s;
+    dp = date_time::from_simple_string_type<date>(s);
+    return is;
+  }
+
+  //! generates a locale with the set of gregorian name-strings of type char*
+  BOOST_DATE_TIME_DECL std::locale generate_locale(std::locale& loc, char type);
+
+  //! Returns a pointer to a facet with a default set of names (English)
+  /* Necessary in the event an exception is thrown from op>> for 
+   * weekday or month. See comments in those functions for more info */
+  BOOST_DATE_TIME_DECL boost::date_time::all_date_names_put<greg_facet_config, char>* create_facet_def(char type);
+
+#ifndef BOOST_NO_STD_WSTRING
+  //! generates a locale with the set of gregorian name-strings of type wchar_t*
+  BOOST_DATE_TIME_DECL std::locale generate_locale(std::locale& loc, wchar_t type);
+  //! Returns a pointer to a facet with a default set of names (English)
+  /* Necessary in the event an exception is thrown from op>> for 
+   * weekday or month. See comments in those functions for more info */
+  BOOST_DATE_TIME_DECL boost::date_time::all_date_names_put<greg_facet_config, wchar_t>* create_facet_def(wchar_t type);
+#endif // BOOST_NO_STD_WSTRING
+
+  //! operator>> for gregorian::greg_month - throws exception if invalid month given
+  template<class charT>
+  inline
+  std::basic_istream<charT>& operator>>(std::basic_istream<charT>& is,greg_month& m) 
+  {
+    typedef boost::date_time::all_date_names_put<greg_facet_config, charT> facet_def;
+
+    std::basic_string<charT> s;
+    is >> s;
+    
+    if(!std::has_facet<facet_def>(is.getloc())) {
+      std::locale loc = is.getloc();
+      charT a = '\0';
+      is.imbue(generate_locale(loc, a));
+    }
+
+    short num = 0;
+
+    try{
+      const facet_def& f = std::use_facet<facet_def>(is.getloc());
+      num = date_time::find_match(f.get_short_month_names(), 
+                                  f.get_long_month_names(), 
+                                  greg_month::max(), s); 
+    }
+    /* bad_cast will be thrown if the desired facet is not accessible
+     * so we can generate the facet. This has the drawback of using english
+     * names as a default. */
+    catch(std::bad_cast bc){
+      std::cout << "Month exception caught" << std::endl;
+      charT a = '\0';
+      const facet_def* f = create_facet_def(a);
+      num = date_time::find_match(f->get_short_month_names(), 
+                                  f->get_long_month_names(), 
+                                  greg_month::max(), s); 
+      delete(f);
+    }
+   
+    m = greg_month(num +1); // months numbered 1-12
+
+    return is;
+  }
+
+  //! operator>> for gregorian::greg_weekday  - throws exception if invalid weekday given
+  template<class charT>
+  inline
+  std::basic_istream<charT>& operator>>(std::basic_istream<charT>& is,greg_weekday& wd) 
+  {
+    typedef boost::date_time::all_date_names_put<greg_facet_config, charT> facet_def;
+
+    std::basic_string<charT> s;
+    is >> s;
+
+    if(!std::has_facet<facet_def>(is.getloc())) {
+      std::locale loc = is.getloc();
+      charT a = '\0';
+      is.imbue(generate_locale(loc, a));
+    }
+
+    short num = 0;
+    try{
+      const facet_def& f = std::use_facet<facet_def>(is.getloc());
+      num = date_time::find_match(f.get_short_weekday_names(), 
+                                  f.get_long_weekday_names(), 
+                                  greg_weekday::max(), s); 
+    }
+    /* bad_cast will be thrown if the desired facet is not accessible
+     * so we can generate the facet. This has the drawback of using english
+     * names as a default. */
+    catch(std::bad_cast bc){
+      //std::cout << "Weekday exception caught" << std::endl;
+      charT a = '\0';
+      const facet_def* f = create_facet_def(a);
+      num = date_time::find_match(f->get_short_weekday_names(), 
+                                  f->get_long_weekday_names(), 
+                                  greg_weekday::max(), s); 
+      delete(f);
+    }
+   
+    wd = greg_weekday(num); // weekdays numbered 0-6
+    return is;
   }
 
 } } //namespace gregorian

@@ -1,6 +1,6 @@
 // Boost.Function library
 
-//  Copyright Doug Gregor 2001-2003. Use, modification and
+//  Copyright Douglas Gregor 2001-2003. Use, modification and
 //  distribution is subject to the Boost Software License, Version
 //  1.0. (See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt)
@@ -307,6 +307,9 @@ namespace boost {
 
     ~BOOST_FUNCTION_FUNCTION() { clear(); }
 
+#if BOOST_WORKAROUND(BOOST_MSVC, <= 1200)
+    // MSVC 6.0 and prior require all definitions to be inline, but
+    // these definitions can become very costly.
     result_type operator()(BOOST_FUNCTION_PARMS) const
     {
       if (this->empty())
@@ -322,6 +325,9 @@ namespace boost {
       return result;
 #endif // BOOST_NO_VOID_RETURNS
     }
+#else
+    result_type operator()(BOOST_FUNCTION_PARMS) const;
+#endif
 
     // The distinction between when to use BOOST_FUNCTION_FUNCTION and
     // when to use self_type is obnoxious. MSVC cannot handle self_type as
@@ -438,9 +444,9 @@ namespace boost {
                            R BOOST_FUNCTION_COMMA
                            BOOST_FUNCTION_TEMPLATE_ARGS
                          >::type
-          invoker_type;
+          actual_invoker_type;
 
-        invoker = &invoker_type::invoke;
+        invoker = &actual_invoker_type::invoke;
         this->manager =
           &detail::function::functor_manager<FunctionPtr, Allocator>::manage;
         this->functor =
@@ -471,16 +477,16 @@ namespace boost {
                                        R BOOST_FUNCTION_COMMA
                                        BOOST_FUNCTION_TEMPLATE_ARGS
                                      >::type
-          invoker_type;
+          actual_invoker_type;
 
-        invoker = &invoker_type::invoke;
+        invoker = &actual_invoker_type::invoke;
         this->manager = &detail::function::functor_manager<
                                     FunctionObj, Allocator>::manage;
 #ifndef BOOST_NO_STD_ALLOCATOR
         typedef typename Allocator::template rebind<FunctionObj>::other
-          allocator_type;
-        typedef typename allocator_type::pointer pointer_type;
-        allocator_type allocator;
+          rebound_allocator_type;
+        typedef typename rebound_allocator_type::pointer pointer_type;
+        rebound_allocator_type allocator;
         pointer_type copy = allocator.allocate(1);
         allocator.construct(copy, f);
 
@@ -505,10 +511,10 @@ namespace boost {
                                        R BOOST_FUNCTION_COMMA
                                        BOOST_FUNCTION_TEMPLATE_ARGS
                                      >::type
-          invoker_type;
+          actual_invoker_type;
 
-        invoker = &invoker_type::invoke;
-        this->manager = &detail::function::trivial_manager;
+        invoker = &actual_invoker_type::invoke;
+        this->manager = &detail::function::trivial_manager<FunctionObj>::get;
         this->functor =
           this->manager(
             detail::function::make_any_pointer(
@@ -527,9 +533,9 @@ namespace boost {
                        R BOOST_FUNCTION_COMMA
                        BOOST_FUNCTION_TEMPLATE_ARGS
                      >::type
-          invoker_type;
-      invoker = &invoker_type::invoke;
-      this->manager = &detail::function::trivial_manager;
+          actual_invoker_type;
+      invoker = &actual_invoker_type::invoke;
+      this->manager = &detail::function::trivial_manager<FunctionObj>::get;
       this->functor = detail::function::make_any_pointer(this);
     }
 
@@ -555,6 +561,54 @@ namespace boost {
   {
     f1.swap(f2);
   }
+
+#if !BOOST_WORKAROUND(BOOST_MSVC, <= 1200)
+  template<typename R BOOST_FUNCTION_COMMA BOOST_FUNCTION_TEMPLATE_PARMS,
+           typename Allocator>
+  typename BOOST_FUNCTION_FUNCTION<
+      R BOOST_FUNCTION_COMMA BOOST_FUNCTION_TEMPLATE_ARGS, 
+      Allocator>::result_type
+   BOOST_FUNCTION_FUNCTION<R BOOST_FUNCTION_COMMA BOOST_FUNCTION_TEMPLATE_ARGS,
+
+                           Allocator>
+  ::operator()(BOOST_FUNCTION_PARMS) const
+  {
+      if (this->empty())
+        boost::throw_exception(bad_function_call());
+
+      internal_result_type result = invoker(this->functor
+                                            BOOST_FUNCTION_COMMA
+                                            BOOST_FUNCTION_ARGS);
+
+#  ifndef BOOST_NO_VOID_RETURNS
+      return static_cast<result_type>(result);
+#  else
+      return result;
+#  endif // BOOST_NO_VOID_RETURNS
+    }
+#endif
+
+// Poison comparisons between boost::function objects of the same type.
+template<typename R BOOST_FUNCTION_COMMA BOOST_FUNCTION_TEMPLATE_PARMS ,
+         typename Allocator>
+  void operator==(const BOOST_FUNCTION_FUNCTION<
+                          R BOOST_FUNCTION_COMMA
+                          BOOST_FUNCTION_TEMPLATE_ARGS ,
+                          Allocator>&,
+                  const BOOST_FUNCTION_FUNCTION<
+                          R BOOST_FUNCTION_COMMA
+                          BOOST_FUNCTION_TEMPLATE_ARGS ,
+                  Allocator>&);
+template<typename R BOOST_FUNCTION_COMMA BOOST_FUNCTION_TEMPLATE_PARMS ,
+         typename Allocator>
+  void operator!=(const BOOST_FUNCTION_FUNCTION<
+                          R BOOST_FUNCTION_COMMA
+                          BOOST_FUNCTION_TEMPLATE_ARGS ,
+                          Allocator>&,
+                  const BOOST_FUNCTION_FUNCTION<
+                          R BOOST_FUNCTION_COMMA
+                          BOOST_FUNCTION_TEMPLATE_ARGS ,
+                  Allocator>&);
 
 #if !defined(BOOST_FUNCTION_NO_FUNCTION_TYPE_SYNTAX)
 

@@ -2,10 +2,9 @@
 #  * Housemarque Oy
 #  * http://www.housemarque.com
 #  *
-#  * Permission to copy, use, modify, sell and distribute this software is
-#  * granted provided this copyright notice appears in all copies. This
-#  * software is provided "as is" without express or implied warranty, and
-#  * with no claim as to its suitability for any purpose.
+#  * Distributed under the Boost Software License, Version 1.0. (See
+#  * accompanying file LICENSE_1_0.txt or copy at
+#  * http://www.boost.org/LICENSE_1_0.txt)
 #  */
 #
 # /* Revised by Paul Mensonides (2002) */
@@ -37,7 +36,11 @@
 #    define BOOST_PP_LIST_FILTER_O_I(d, im, elem) BOOST_PP_LIST_FILTER_O_D(d, im, elem)
 # endif
 #
-# define BOOST_PP_LIST_FILTER_O_D(d, pred, data, res, elem) (pred, data, BOOST_PP_IF(pred(d, data, elem), (elem, res), res))
+# if ~BOOST_PP_CONFIG_FLAGS() & BOOST_PP_CONFIG_DMC()
+#    define BOOST_PP_LIST_FILTER_O_D(d, pred, data, res, elem) (pred, data, BOOST_PP_IF(pred(d, data, elem), (elem, res), res))
+# else
+#    define BOOST_PP_LIST_FILTER_O_D(d, pred, data, res, elem) (pred, data, BOOST_PP_IF(pred##(d, data, elem), (elem, res), res))
+# endif
 #
 # /* BOOST_PP_LIST_FILTER_D */
 #

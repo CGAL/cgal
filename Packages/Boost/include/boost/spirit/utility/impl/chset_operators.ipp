@@ -79,11 +79,11 @@ inline chset<CharT>
 operator&(chset<CharT> const& a, range<CharT> const& b)
 {
     chset<CharT> a_(a);
-    if(b.first != std::numeric_limits<CharT>::min()) {
-        a_.clear(range<CharT>(std::numeric_limits<CharT>::min(), b.first - 1));
+    if(b.first != (std::numeric_limits<CharT>::min)()) {
+        a_.clear(range<CharT>((std::numeric_limits<CharT>::min)(), b.first - 1));
     }
-    if(b.last != std::numeric_limits<CharT>::max()) {
-        a_.clear(range<CharT>(b.last + 1, std::numeric_limits<CharT>::max()));
+    if(b.last != (std::numeric_limits<CharT>::max)()) {
+        a_.clear(range<CharT>(b.last + 1, (std::numeric_limits<CharT>::max)()));
     }
     return a_;
 }
@@ -122,11 +122,11 @@ inline chset<CharT>
 operator&(range<CharT> const& a, chset<CharT> const& b)
 {
     chset<CharT> b_(b);
-    if(a.first != std::numeric_limits<CharT>::min()) {
-        b_.clear(range<CharT>(std::numeric_limits<CharT>::min(), a.first - 1));
+    if(a.first != (std::numeric_limits<CharT>::min)()) {
+        b_.clear(range<CharT>((std::numeric_limits<CharT>::min)(), a.first - 1));
     }
-    if(a.last != std::numeric_limits<CharT>::max()) {
-        b_.clear(range<CharT>(a.last + 1, std::numeric_limits<CharT>::max()));
+    if(a.last != (std::numeric_limits<CharT>::max)()) {
+        b_.clear(range<CharT>(a.last + 1, (std::numeric_limits<CharT>::max)()));
     }
     return b_;
 }
@@ -509,8 +509,8 @@ namespace impl {
     full()
     {
         static boost::spirit::range<CharT> full_(
-            std::numeric_limits<CharT>::min(),
-            std::numeric_limits<CharT>::max());
+            (std::numeric_limits<CharT>::min)(),
+            (std::numeric_limits<CharT>::max)());
         return full_;
     }
 

@@ -146,7 +146,7 @@ template <
     typename SelfT = nil_t
 >
 class position_iterator
-:   public iterator_::impl::position_iterator_generator<
+:   public iterator_::impl::position_iterator_base_generator<
         SelfT,
         ForwardIteratorT,
         PositionT
@@ -156,12 +156,12 @@ class position_iterator
 private:
 
     typedef position_policy<PositionT> position_policy_t;
-    typedef typename iterator_::impl::position_iterator_generator<
+    typedef typename iterator_::impl::position_iterator_base_generator<
             SelfT,
             ForwardIteratorT,
             PositionT
         >::type base_t;
-    typedef typename iterator_::impl::position_iterator_generator<
+    typedef typename iterator_::impl::position_iterator_base_generator<
             SelfT,
             ForwardIteratorT,
             PositionT

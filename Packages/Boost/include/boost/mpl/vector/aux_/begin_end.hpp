@@ -1,61 +1,49 @@
-//-----------------------------------------------------------------------------
-// boost mpl/vector/aux_/begin_end.hpp header file
-// See http://www.boost.org for updates, documentation, and revision history.
-//-----------------------------------------------------------------------------
-//
-// Copyright (c) 2000-02
-// Aleksey Gurtovoy
-//
-// Permission to use, copy, modify, distribute and sell this software
-// and its documentation for any purpose is hereby granted without fee, 
-// provided that the above copyright notice appears in all copies and 
-// that both the copyright notice and this permission notice appear in 
-// supporting documentation. No representations are made about the 
-// suitability of this software for any purpose. It is provided "as is" 
-// without express or implied warranty.
 
 #ifndef BOOST_MPL_VECTOR_AUX_BEGIN_END_HPP_INCLUDED
 #define BOOST_MPL_VECTOR_AUX_BEGIN_END_HPP_INCLUDED
 
-#include "boost/mpl/aux_/config/vector.hpp"
+// Copyright Aleksey Gurtovoy 2000-2004
+//
+// Distributed under the Boost Software License, Version 1.0. 
+// (See accompanying file LICENSE_1_0.txt or copy at 
+// http://www.boost.org/LICENSE_1_0.txt)
+//
+// See http://www.boost.org/libs/mpl for documentation.
 
-#if defined(BOOST_MPL_TYPEOF_BASED_VECTOR_IMPL)
+// $Source$
+// $Date$
+// $Revision$
 
-#   include "boost/mpl/begin_end_fwd.hpp"
-#   include "boost/mpl/integral_c.hpp"
-#   include "boost/mpl/vector/aux_/iterator.hpp"
-#   include "boost/mpl/vector/aux_/tag.hpp"
+#include <boost/mpl/aux_/config/typeof.hpp>
 
-namespace boost {
-namespace mpl {
+#if defined(BOOST_MPL_CFG_TYPEOF_BASED_SEQUENCES)
+
+#   include <boost/mpl/begin_end_fwd.hpp>
+#   include <boost/mpl/vector/aux_/iterator.hpp>
+#   include <boost/mpl/vector/aux_/tag.hpp>
+
+namespace boost { namespace mpl {
 
 template<>
-struct begin_traits< aux::vector_tag >
+struct begin_impl< aux::vector_tag >
 {
-    template< typename Vector > struct algorithm
+    template< typename Vector > struct apply
     {
-        typedef vector_iterator<
-              Vector
-            , integral_c<long,0>
-            > type;
+        typedef v_iter<Vector,0> type;
     };
 };
 
 template<>
-struct end_traits< aux::vector_tag >
+struct end_impl< aux::vector_tag >
 {
-    template< typename Vector > struct algorithm
+    template< typename Vector > struct apply
     {
-        typedef vector_iterator<
-              Vector
-            , typename Vector::size
-            > type;
+        typedef v_iter<Vector,Vector::size::value> type;
     };
 };
 
-} // namespace mpl
-} // namespace boost
+}}
 
-#endif // BOOST_MPL_TYPEOF_BASED_VECTOR_IMPL
+#endif // BOOST_MPL_CFG_TYPEOF_BASED_SEQUENCES
 
 #endif // BOOST_MPL_VECTOR_AUX_BEGIN_END_HPP_INCLUDED

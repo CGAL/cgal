@@ -28,6 +28,8 @@
 
 #include <boost/config.hpp>
 #include <vector>
+#include <algorithm> // for std::min and std::max
+#include <boost/config.hpp>
 #include <boost/pending/queue.hpp>
 #include <boost/property_map.hpp>
 #include <boost/graph/graph_traits.hpp>
@@ -65,10 +67,11 @@ namespace boost {
       typedef typename property_traits<ResCapMap>::value_type FlowValue;
 
       // find minimum residual capacity along the augmenting path
-      FlowValue delta = std::numeric_limits<FlowValue>::max();
+      FlowValue delta = (std::numeric_limits<FlowValue>::max)();
       e = p[sink];
       do {
-        delta = std::min(delta, residual_capacity[e]);
+        BOOST_USING_STD_MIN();
+        delta = min BOOST_PREVENT_MACRO_SUBSTITUTION(delta, residual_capacity[e]);
         u = source(e, g);
         e = p[u];
       } while (u != src);

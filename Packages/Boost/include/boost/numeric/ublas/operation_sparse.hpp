@@ -36,8 +36,10 @@ namespace boost { namespace numeric { namespace ublas {
         typedef typename M::value_type value_type;
 
         vector<value_type> temporary (e2 ().size2 ());
-#ifdef BOOST_UBLAS_TYPE_CHECK
+#if BOOST_UBLAS_TYPE_CHECK
         matrix<value_type, row_major> cm (m.size1 (), m.size2 ());
+        typedef typename type_traits<value_type>::real_type real_type;
+        real_type merrorbound (norm_1 (m) + norm_1 (e1) * norm_1 (e2));
         indexing_matrix_assign (scalar_assign<typename matrix<value_type, row_major>::reference, value_type> (), cm, prod (e1, e2), row_major_tag ());
 #endif
         typename expression1_type::const_iterator1 it1 (e1 ().begin1 ());
@@ -60,27 +62,27 @@ namespace boost { namespace numeric { namespace ublas {
                 while (itr != itr_end) {
                     size_type j (itr.index ());
                     temporary (j) += *it2 * *itr;
-                    jb = std::min (jb, j);
-                    je = std::max (je, j);
+                    jb = (std::min) (jb, j);
+                    je = (std::max) (je, j);
                     ++ itr;
                 }
                 ++ it2;
             }
             for (size_type j = jb; j < je + 1; ++ j) {
-                if (temporary (j) != value_type ()) {
+                if (temporary (j) != value_type (0)) {
                     // FIXME: we'll need to extend the container interface!
                     // m.push_back (it1.index1 (), j, temporary (j));
                     // FIXME: What to do with adaptors?
                     // m.insert (it1.index1 (), j, temporary (j));
                     if (f.other (it1.index1 (), j))
                         m (it1.index1 (), j) = temporary (j);
-                    temporary (j) = value_type ();
+                    temporary (j) = value_type (0);
                 }
             }
             ++ it1;
         }
-#ifdef BOOST_UBLAS_TYPE_CHECK
-        BOOST_UBLAS_CHECK (equals (m, cm), internal_logic ());
+#if BOOST_UBLAS_TYPE_CHECK
+        BOOST_UBLAS_CHECK (norm_1 (m - cm) <= 2 * std::numeric_limits<real_type>::epsilon () * merrorbound, internal_logic ());
 #endif
         return m;
     }
@@ -99,8 +101,10 @@ namespace boost { namespace numeric { namespace ublas {
         typedef typename M::value_type value_type;
 
         vector<value_type> temporary (e1 ().size1 ());
-#ifdef BOOST_UBLAS_TYPE_CHECK
+#if BOOST_UBLAS_TYPE_CHECK
         matrix<value_type, column_major> cm (m.size1 (), m.size2 ());
+        typedef typename type_traits<value_type>::real_type real_type;
+        real_type merrorbound (norm_1 (m) + norm_1 (e1) * norm_1 (e2));
         indexing_matrix_assign (scalar_assign<typename matrix<value_type, column_major>::reference, value_type> (), cm, prod (e1, e2), column_major_tag ());
 #endif
         typename expression2_type::const_iterator2 it2 (e2 ().begin2 ());
@@ -123,27 +127,27 @@ namespace boost { namespace numeric { namespace ublas {
                 while (itc != itc_end) {
                     size_type i (itc.index ());
                     temporary (i) += *it1 * *itc;
-                    ib = std::min (ib, i);
-                    ie = std::max (ie, i);
+                    ib = (std::min) (ib, i);
+                    ie = (std::max) (ie, i);
                     ++ itc;
                 }
                 ++ it1;
             }
             for (size_type i = ib; i < ie + 1; ++ i) {
-                if (temporary (i) != value_type ()) {
+                if (temporary (i) != value_type (0)) {
                     // FIXME: we'll need to extend the container interface!
                     // m.push_back (i, it2.index2 (), temporary (i));
                     // FIXME: What to do with adaptors?
                     // m.insert (i, it2.index2 (), temporary (i));
                     if (f.other (i, it2.index2 ()))
                         m (i, it2.index2 ()) = temporary (i);
-                    temporary (i) = value_type ();
+                    temporary (i) = value_type (0);
                 }
             }
             ++ it2;
         }
-#ifdef BOOST_UBLAS_TYPE_CHECK
-        BOOST_UBLAS_CHECK (equals (m, cm), internal_logic ());
+#if BOOST_UBLAS_TYPE_CHECK
+        BOOST_UBLAS_CHECK (norm_1 (m - cm) <= 2 * std::numeric_limits<real_type>::epsilon () * merrorbound, internal_logic ());
 #endif
         return m;
     }
@@ -204,5 +208,3 @@ namespace boost { namespace numeric { namespace ublas {
 }}}
 
 #endif
-
-

@@ -45,7 +45,7 @@ namespace boost {
   struct vertex_max_invariant_t { };
   struct orig_to_copy_t { };
   struct root_vertex_t { };
-  
+
   namespace detail {
     template <class T>
     struct wrap_ref {
@@ -114,6 +114,20 @@ namespace boost {
     bgl_named_params<Vertex, root_vertex_t, self>
     root_vertex(const Vertex& r) const {
       typedef bgl_named_params<Vertex, root_vertex_t, self> Params;
+      return Params(r, *this);
+    }
+
+    template <typename EdgeCentralityMap>
+    bgl_named_params<EdgeCentralityMap, edge_centrality_t, self>
+    edge_centrality_map(const EdgeCentralityMap& r) const {
+      typedef bgl_named_params<EdgeCentralityMap, edge_centrality_t, self> Params;
+      return Params(r, *this);
+    }
+
+    template <typename CentralityMap>
+    bgl_named_params<CentralityMap, vertex_centrality_t, self>
+    centrality_map(const CentralityMap& r) const {
+      typedef bgl_named_params<CentralityMap, vertex_centrality_t, self> Params;
       return Params(r, *this);
     }
 
@@ -318,6 +332,20 @@ namespace boost {
   bgl_named_params<Vertex, root_vertex_t>
   root_vertex(const Vertex& r) {
     typedef bgl_named_params<Vertex, root_vertex_t> Params;
+    return Params(r);
+  }
+
+  template <typename EdgeCentralityMap>
+  bgl_named_params<EdgeCentralityMap, edge_centrality_t>
+  edge_centrality_map(const EdgeCentralityMap& r) {
+    typedef bgl_named_params<EdgeCentralityMap, edge_centrality_t> Params;
+    return Params(r);
+  }
+
+  template <typename CentralityMap>
+  bgl_named_params<CentralityMap, vertex_centrality_t>
+  centrality_map(const CentralityMap& r) {
+    typedef bgl_named_params<CentralityMap, vertex_centrality_t> Params;
     return Params(r);
   }
 

@@ -2,10 +2,9 @@
 #  * Housemarque Oy
 #  * http://www.housemarque.com
 #  *
-#  * Permission to copy, use, modify, sell and distribute this software is
-#  * granted provided this copyright notice appears in all copies. This
-#  * software is provided "as is" without express or implied warranty, and
-#  * with no claim as to its suitability for any purpose.
+#  * Distributed under the Boost Software License, Version 1.0. (See
+#  * accompanying file LICENSE_1_0.txt or copy at
+#  * http://www.boost.org/LICENSE_1_0.txt)
 #  */
 #
 # /* Revised by Paul Mensonides (2002) */
@@ -17,7 +16,7 @@
 #
 # include <boost/preprocessor/config/config.hpp>
 #
-# if ~BOOST_PP_CONFIG_FLAGS() & BOOST_PP_CONFIG_MWCC()
+# if ~BOOST_PP_CONFIG_FLAGS() & BOOST_PP_CONFIG_MWCC() && ~BOOST_PP_CONFIG_FLAGS() & BOOST_PP_CONFIG_DMC()
 #    define BOOST_PP_EXPAND(x) BOOST_PP_EXPAND_I(x)
 # else
 #    define BOOST_PP_EXPAND(x) BOOST_PP_EXPAND_OO((x))

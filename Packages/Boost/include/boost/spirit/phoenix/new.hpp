@@ -1,5 +1,5 @@
 /*=============================================================================
-    Phoenix v1.2
+    Phoenix V1.2.1
     Copyright (c) 2001-2003 Joel de Guzman
     Copyright (c) 2001-2003 Hartmut Kaiser
     Copyright (c) 2003 Vaclav Vesely

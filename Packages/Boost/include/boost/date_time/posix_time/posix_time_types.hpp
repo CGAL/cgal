@@ -10,6 +10,9 @@
 #include "boost/date_time/time_clock.hpp"
 #include "boost/date_time/microsec_time_clock.hpp"
 #include "boost/date_time/posix_time/ptime.hpp"
+#if defined(BOOST_DATE_TIME_OPTIONAL_GREGORIAN_TYPES)
+#include "boost/date_time/posix_time/date_duration_operators.hpp"
+#endif
 #include "boost/date_time/posix_time/posix_time_duration.hpp"
 #include "boost/date_time/posix_time/posix_time_system.hpp"
 #include "boost/date_time/posix_time/time_period.hpp"
@@ -30,7 +33,7 @@ namespace posix_time {
    */
   typedef date_time::second_clock<ptime::date_type, ptime> second_clock;
 
-#ifdef BOOST_DATE_TIME_HAS_GETTIMEOFDAY_HIGH_PRECISION_CLOCK
+#ifdef BOOST_DATE_TIME_HAS_HIGH_PRECISION_CLOCK
   //! A time clock that has a resolution of one microsecond
   /*! \ingroup time_basics
    */

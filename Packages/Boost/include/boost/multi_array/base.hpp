@@ -25,7 +25,7 @@
 #include "boost/multi_array/storage_order.hpp"
 #include "boost/multi_array/types.hpp"
 #include "boost/config.hpp"
-#include "boost/mpl/apply_if.hpp"
+#include "boost/mpl/eval_if.hpp"
 #include "boost/mpl/if.hpp"
 #include "boost/mpl/size_t.hpp"
 #include "boost/mpl/aux_/msvc_eti_base.hpp"
@@ -195,7 +195,7 @@ struct value_accessor_generator {
     BOOST_STATIC_CONSTANT(std::size_t, dimensionality = NumDims::value);
     
   typedef typename
-  mpl::apply_if_c<(dimensionality == 1),
+  mpl::eval_if_c<(dimensionality == 1),
                   choose_value_accessor_one<T>,
                   choose_value_accessor_n<T,dimensionality>
   >::type type;

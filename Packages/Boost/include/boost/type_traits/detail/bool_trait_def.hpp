@@ -1,25 +1,24 @@
-//-----------------------------------------------------------------------------
-// boost/type_traits/detail/bool_trait_def.hpp header file
-// See http://www.boost.org for updates, documentation, and revision history.
-//-----------------------------------------------------------------------------
-//
-// Copyright (c) 2002
-// Aleksey Gurtovoy
-//
-// Use, modification and distribution are subject to the Boost Software License,
-// Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt).
 
-// no include guards, the header is intended for multiple inclusion!
+// NO INCLUDE GUARDS, THE HEADER IS INTENDED FOR MULTIPLE INCLUSION
 
-#include "boost/type_traits/detail/template_arity_spec.hpp"
-#include "boost/mpl/bool.hpp"
-#include "boost/mpl/aux_/lambda_support.hpp"
-#include "boost/config.hpp"
+// Copyright Aleksey Gurtovoy 2002-2004
+//
+// Distributed under the Boost Software License, Version 1.0. 
+// (See accompanying file LICENSE_1_0.txt or copy at 
+// http://www.boost.org/LICENSE_1_0.txt)
+
+// $Source$
+// $Date$
+// $Revision$
+
+#include <boost/type_traits/detail/template_arity_spec.hpp>
+#include <boost/mpl/bool.hpp>
+#include <boost/mpl/aux_/lambda_support.hpp>
+#include <boost/config.hpp>
 
 #if defined(__SUNPRO_CC)
 #   define BOOST_TT_AUX_BOOL_TRAIT_VALUE_DECL(C) \
-    typedef mpl::bool_< C > type; \
+    typedef BOOST_MPL_AUX_ADL_BARRIER_NAMESPACE::bool_< C > type; \
     enum { value = type::value }; \
     /**/
 #   define BOOST_TT_AUX_BOOL_C_BASE(C)
@@ -27,7 +26,7 @@
 #elif defined(BOOST_MSVC) && BOOST_MSVC <= 1200
 
 #   define BOOST_TT_AUX_BOOL_TRAIT_VALUE_DECL(C) \
-    typedef mpl::bool_< C > base_; \
+    typedef BOOST_MPL_AUX_ADL_BARRIER_NAMESPACE::bool_< C > base_; \
     using base_::value; \
     /**/
 
@@ -38,7 +37,7 @@
 #endif
 
 #ifndef BOOST_TT_AUX_BOOL_C_BASE
-#   define BOOST_TT_AUX_BOOL_C_BASE(C) : mpl::bool_< C >
+#   define BOOST_TT_AUX_BOOL_C_BASE(C) : BOOST_MPL_AUX_ADL_BARRIER_NAMESPACE::bool_< C >
 #endif 
 
 
@@ -167,7 +166,7 @@ namespace boost{
 
 template <class T, T val>
 struct integral_constant
-: public mpl::integral_c<T,val> {};
+: public BOOST_MPL_AUX_ADL_BARRIER_NAMESPACE::integral_c<T,val> {};
 
 
 template<> struct integral_constant< bool, true > \
@@ -184,8 +183,8 @@ template<> struct integral_constant< bool, false > \
 };
 
 namespace pending {
-typedef mpl::true_ true_type;
-typedef mpl::false_ false_type;
+typedef BOOST_MPL_AUX_ADL_BARRIER_NAMESPACE::true_ true_type;
+typedef BOOST_MPL_AUX_ADL_BARRIER_NAMESPACE::false_ false_type;
 }
 
 }

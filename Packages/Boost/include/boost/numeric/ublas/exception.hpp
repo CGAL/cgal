@@ -17,193 +17,225 @@
 #ifndef BOOST_UBLAS_EXCEPTION_H
 #define BOOST_UBLAS_EXCEPTION_H
 
-#include <cstdlib>
-#include <exception>
+#if ! defined (BOOST_NO_EXCEPTIONS) && ! defined (BOOST_UBLAS_NO_EXCEPTIONS)
 #include <stdexcept>
+#else
+#include <cstdlib>
+#endif
+#ifndef BOOST_UBLAS_NO_STD_CERR
 #include <iostream>
+#endif
 
 #include <boost/numeric/ublas/config.hpp>
 
 namespace boost { namespace numeric { namespace ublas {
 
-    struct divide_by_zero:
+    struct divide_by_zero
+#if ! defined (BOOST_NO_EXCEPTIONS) && ! defined (BOOST_UBLAS_NO_EXCEPTIONS)
         // Inherit from standard exceptions as requested during review.
-        // public std::exception {
-        public std::runtime_error {
-        BOOST_UBLAS_EXPLICIT
-        divide_by_zero (const std::string &s = "exception: divide by zero"):
+        : public std::runtime_error {
+        explicit
+        divide_by_zero (const char *s = "divide by zero") :
             std::runtime_error (s) {}
-        // virtual const char *what () const throw () {
-        //     return "exception: divide by zero";
-        // }
-        virtual void raise () {
-#if ! defined (BOOST_NO_EXCEPTIONS) && defined (BOOST_UBLAS_USE_EXCEPTIONS)
+        void raise () {
             throw *this;
+        }
 #else
+    {
+        explicit
+        divide_by_zero (const char *s = 0)
+            {}
+        void raise () {
 #ifdef BOOST_NO_STDC_NAMESPACE
             ::abort ();
 #else
             std::abort ();
 #endif
-#endif
         }
+#endif
     };
-    struct internal_logic:
+
+    struct internal_logic
+#if ! defined (BOOST_NO_EXCEPTIONS) && ! defined (BOOST_UBLAS_NO_EXCEPTIONS)
         // Inherit from standard exceptions as requested during review.
-        // public std::exception {
-        public std::logic_error {
-        BOOST_UBLAS_EXPLICIT
-        internal_logic (const std::string &s = "exception: internal logic"):
+        : public std::logic_error {
+        explicit
+        internal_logic (const char *s = "internal logic") :
             std::logic_error (s) {}
-        // virtual const char *what () const throw () {
-        //     return "exception: internal logic";
-        // }
-        virtual void raise () {
-#if ! defined (BOOST_NO_EXCEPTIONS) && defined (BOOST_UBLAS_USE_EXCEPTIONS)
+        void raise () {
             throw *this;
+        }
 #else
+    {
+        explicit
+        internal_logic (const char *s = 0)
+            {}
+        void raise () {
 #ifdef BOOST_NO_STDC_NAMESPACE
             ::abort ();
 #else
             std::abort ();
 #endif
-#endif
         }
+#endif
     };
-    struct external_logic:
+
+    struct external_logic
+#if ! defined (BOOST_NO_EXCEPTIONS) && ! defined (BOOST_UBLAS_NO_EXCEPTIONS)
         // Inherit from standard exceptions as requested during review.
-        // public std::exception {
-        public std::logic_error {
-        BOOST_UBLAS_EXPLICIT
-        external_logic (const std::string &s = "exception: external logic"):
+        : public std::logic_error {
+        explicit
+        external_logic (const char *s = "external logic") :
             std::logic_error (s) {}
         // virtual const char *what () const throw () {
         //     return "exception: external logic";
         // }
-        virtual void raise () {
-#if ! defined (BOOST_NO_EXCEPTIONS) && defined (BOOST_UBLAS_USE_EXCEPTIONS)
+        void raise () {
             throw *this;
+        }
 #else
+    {
+        explicit
+        external_logic (const char *s = 0)
+            {}
+        void raise () {
 #ifdef BOOST_NO_STDC_NAMESPACE
             ::abort ();
 #else
             std::abort ();
 #endif
-#endif
         }
-    };
-    struct bad_argument:
-        // Inherit from standard exceptions as requested during review.
-        // public std::exception {
-        public std::invalid_argument {
-        BOOST_UBLAS_EXPLICIT
-        bad_argument (const std::string &s = "exception: bad argument"):
-            std::invalid_argument (s) {}
-        // virtual const char *what () const throw () {
-        //     return "exception: bad argument";
-        // }
-        virtual void raise () {
-#if ! defined (BOOST_NO_EXCEPTIONS) && defined (BOOST_UBLAS_USE_EXCEPTIONS)
-            throw *this;
-#else
-#ifdef BOOST_NO_STDC_NAMESPACE
-            ::abort ();
-#else
-            std::abort ();
 #endif
-#endif
-        }
-    };
-    struct bad_size:
-        // Inherit from standard exceptions as requested during review.
-        // public std::exception {
-        public std::domain_error {
-        BOOST_UBLAS_EXPLICIT
-        bad_size (const std::string &s = "exception: bad size"):
-            std::domain_error (s) {}
-        // virtual const char *what () const throw () {
-        //     return "exception: bad size";
-        // }
-        virtual void raise () {
-#if ! defined (BOOST_NO_EXCEPTIONS) && defined (BOOST_UBLAS_USE_EXCEPTIONS)
-            throw *this;
-#else
-#ifdef BOOST_NO_STDC_NAMESPACE
-            ::abort ();
-#else
-            std::abort ();
-#endif
-#endif
-        }
-    };
-    struct bad_index:
-        // Inherit from standard exceptions as requested during review.
-        // public std::exception {
-        public std::out_of_range {
-        BOOST_UBLAS_EXPLICIT
-        bad_index (const std::string &s = "exception: bad index"):
-            std::out_of_range (s) {}
-        // virtual const char *what () const throw () {
-        //     return "exception: bad index";
-        // }
-        virtual void raise () {
-#if ! defined (BOOST_NO_EXCEPTIONS) && defined (BOOST_UBLAS_USE_EXCEPTIONS)
-            throw *this;
-#else
-#ifdef BOOST_NO_STDC_NAMESPACE
-            ::abort ();
-#else
-            std::abort ();
-#endif
-#endif
-        }
-    };
-    struct singular:
-        // Inherit from standard exceptions as requested during review.
-        // public std::exception {
-        public std::runtime_error {
-        BOOST_UBLAS_EXPLICIT
-        singular (const std::string &s = "exception: singular"):
-            std::runtime_error (s) {}
-        // virtual const char *what () const throw () {
-        //     return "exception: singular";
-        // }
-        virtual void raise () {
-#if ! defined (BOOST_NO_EXCEPTIONS) && defined (BOOST_UBLAS_USE_EXCEPTIONS)
-            throw *this;
-#else
-#ifdef BOOST_NO_STDC_NAMESPACE
-            ::abort ();
-#else
-            std::abort ();
-#endif
-#endif
-        }
-    };
-    struct non_real:
-        // Inherit from standard exceptions as requested during review.
-        // public std::exception {
-        public std::domain_error {
-        BOOST_UBLAS_EXPLICIT
-        non_real (const std::string &s = "exception: non real"):
-            std::domain_error (s) {}
-        // virtual const char *what () const throw () {
-        //     return "exception: non real";
-        // }
-        virtual void raise () {
-#if ! defined (BOOST_NO_EXCEPTIONS) && defined (BOOST_UBLAS_USE_EXCEPTIONS)
-            throw *this;
-#else
-#ifdef BOOST_NO_STDC_NAMESPACE
-            ::abort ();
-#else
-            std::abort ();
-#endif
-#endif
-        }
     };
 
-#ifdef BOOST_UBLAS_BOUNDS_CHECK
+    struct bad_argument
+#if ! defined (BOOST_NO_EXCEPTIONS) && ! defined (BOOST_UBLAS_NO_EXCEPTIONS)
+        // Inherit from standard exceptions as requested during review.
+        : public std::invalid_argument {
+        explicit
+        bad_argument (const char *s = "bad argument") :
+            std::invalid_argument (s) {}
+        void raise () {
+            throw *this;
+        }
+#else
+    {
+        explicit
+        bad_argument (const char *s = 0)
+            {}
+        void raise () {
+            throw *this;
+#ifdef BOOST_NO_STDC_NAMESPACE
+            ::abort ();
+#else
+            std::abort ();
+#endif
+        }
+#endif
+    };
+
+    struct bad_size
+#if ! defined (BOOST_NO_EXCEPTIONS) && ! defined (BOOST_UBLAS_NO_EXCEPTIONS)
+        // Inherit from standard exceptions as requested during review.
+        : public std::domain_error {
+        explicit
+        bad_size (const char *s = "bad size") :
+            std::domain_error (s) {}
+        void raise () {
+            throw *this;
+        }
+#else
+    {
+        explicit
+        bad_size (const char *s = 0)
+            {}
+        void raise () {
+#ifdef BOOST_NO_STDC_NAMESPACE
+            ::abort ();
+#else
+            std::abort ();
+#endif
+        }
+#endif
+    };
+
+    struct bad_index
+#if ! defined (BOOST_NO_EXCEPTIONS) && ! defined (BOOST_UBLAS_NO_EXCEPTIONS)
+        // Inherit from standard exceptions as requested during review.
+        : public std::out_of_range {
+        explicit
+        bad_index (const char *s = "bad index") :
+            std::out_of_range (s) {}
+        void raise () {
+            throw *this;
+        }
+#else
+    {
+        explicit
+        bad_index (const char *s = 0)
+            {}
+        void raise () {
+#ifdef BOOST_NO_STDC_NAMESPACE
+            ::abort ();
+#else
+            std::abort ();
+#endif
+        }
+#endif
+    };
+
+    struct singular
+#if ! defined (BOOST_NO_EXCEPTIONS) && ! defined (BOOST_UBLAS_NO_EXCEPTIONS)
+        // Inherit from standard exceptions as requested during review.
+        : public std::runtime_error {
+        explicit
+        singular (const char *s = "singular") :
+            std::runtime_error (s) {}
+        void raise () {
+            throw *this;
+        }
+#else
+    {
+        explicit
+        singular (const char *s = 0)
+            {}
+        void raise () {
+            throw *this;
+#ifdef BOOST_NO_STDC_NAMESPACE
+            ::abort ();
+#else
+            std::abort ();
+#endif
+        }
+#endif
+    };
+
+    struct non_real
+#if ! defined (BOOST_NO_EXCEPTIONS) && ! defined (BOOST_UBLAS_NO_EXCEPTIONS)
+        // Inherit from standard exceptions as requested during review.
+        : public std::domain_error {
+        explicit
+        non_real (const char *s = "exception: non real") :
+            std::domain_error (s) {}
+        void raise () {
+            throw *this;
+        }
+#else
+     {
+        explicit
+        non_real (const char *s = 0)
+            {}
+        void raise () {
+#ifdef BOOST_NO_STDC_NAMESPACE
+            ::abort ();
+#else
+            std::abort ();
+#endif
+        }
+#endif
+    };
+
+#if BOOST_UBLAS_CHECK_ENABLE
 // FIXME: for performance reasons we better use macros
 //    template<class E>
 //    BOOST_UBLAS_INLINE
@@ -257,9 +289,3 @@ namespace boost { namespace numeric { namespace ublas {
 }}}
 
 #endif
-
-
-
-
-
-

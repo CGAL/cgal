@@ -6,10 +6,9 @@
 //
 //  Copyright (c) 2002 Peter Dimov and Multi Media Ltd.
 //
-//  Permission to copy, use, modify, sell and distribute this software
-//  is granted provided this copyright notice appears in all copies.
-//  This software is provided "as is" without express or implied
-//  warranty, and with no claim as to its suitability for any purpose.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 //
 
 namespace boost
@@ -17,10 +16,6 @@ namespace boost
 
 namespace _bi
 {
-
-template<class F> void instantiate(F)
-{
-}
 
 template<class R, class F> class af0
 {
@@ -33,6 +28,11 @@ public:
     }
 
     result_type operator()()
+    {
+        return f_();
+    }
+
+    result_type operator()() const
     {
         return f_();
     }
@@ -55,6 +55,11 @@ public:
     }
 
     result_type operator()(A1 a1)
+    {
+        return f_(a1);
+    }
+
+    result_type operator()(A1 a1) const
     {
         return f_(a1);
     }
@@ -83,6 +88,11 @@ public:
         return f_(a1, a2);
     }
 
+    result_type operator()(A1 a1, A2 a2) const
+    {
+        return f_(a1, a2);
+    }
+
 private:
 
     F f_;
@@ -102,6 +112,11 @@ public:
     }
 
     result_type operator()(A1 a1, A2 a2, A3 a3)
+    {
+        return f_(a1, a2, a3);
+    }
+
+    result_type operator()(A1 a1, A2 a2, A3 a3) const
     {
         return f_(a1, a2, a3);
     }
@@ -130,6 +145,11 @@ public:
         return f_(a1, a2, a3, a4);
     }
 
+    result_type operator()(A1 a1, A2 a2, A3 a3, A4 a4) const
+    {
+        return f_(a1, a2, a3, a4);
+    }
+
 private:
 
     F f_;
@@ -139,31 +159,26 @@ private:
 
 template<class R, class F> _bi::af0<R, F> make_adaptable(F f)
 {
-    _bi::instantiate( &_bi::af0<R, F>::operator() ); // for early error detection
     return _bi::af0<R, F>(f);
 }
 
 template<class R, class A1, class F> _bi::af1<R, A1, F> make_adaptable(F f)
 {
-    instantiate( &_bi::af1<R, A1, F>::operator() );
     return _bi::af1<R, A1, F>(f);
 }
 
 template<class R, class A1, class A2, class F> _bi::af2<R, A1, A2, F> make_adaptable(F f)
 {
-    instantiate( &_bi::af2<R, A1, A2, F>::operator() );
     return _bi::af2<R, A1, A2, F>(f);
 }
 
 template<class R, class A1, class A2, class A3, class F> _bi::af3<R, A1, A2, A3, F> make_adaptable(F f)
 {
-    instantiate( &_bi::af3<R, A1, A2, A3, F>::operator() );
     return _bi::af3<R, A1, A2, A3, F>(f);
 }
 
 template<class R, class A1, class A2, class A3, class A4, class F> _bi::af4<R, A1, A2, A3, A4, F> make_adaptable(F f)
 {
-    instantiate( &_bi::af4<R, A1, A2, A3, A4, F>::operator() );
     return _bi::af4<R, A1, A2, A3, A4, F>(f);
 }
 

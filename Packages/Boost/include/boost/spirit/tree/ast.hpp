@@ -110,8 +110,8 @@ struct ast_tree_policy :
             container_t;
         typedef typename container_t::iterator cont_iterator_t;
         typedef typename NodeFactoryT::template factory<iterator_t> factory_t;
-        // only one node, so don't make a new level
-        if (m.trees.size() == 1)
+
+        if (m.trees.size() == 1)  // only one node, so don't make a new level
         {
             // set rule_id's.  There may have been multiple nodes created.
             // Because of root_node[] they may be left-most children of the top
@@ -129,7 +129,9 @@ struct ast_tree_policy :
         else
         {
             match_t newmatch(m.length(),
-                factory_t::create_node(first, last, false));
+                m.trees.empty() ? 
+                    factory_t::empty_node() : 
+                    factory_t::create_node(first, last, false));
 
             std::swap(newmatch.trees.begin()->children, m.trees);
             // set this node and all it's unset children's rule_id
@@ -194,7 +196,7 @@ struct gen_ast_node_parser
             action_policy_t
         > policies_t;
 
-        return this->subject().parse(scan.change_policies(policies_t()));
+        return this->subject().parse(scan.change_policies(policies_t(scan)));
     }
 };
 

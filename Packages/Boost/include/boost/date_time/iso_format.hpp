@@ -15,6 +15,7 @@ namespace boost {
 namespace date_time {
 
 //! Class to provide common iso formatting spec
+template<class charT>
 class iso_format_base {
 public:
   //! Describe month format -- its an integer in iso format
@@ -24,85 +25,85 @@ public:
   }
 
   //! String used printed is date is invalid
-  static const char* not_a_date()
-  {       //20010102
+  static const charT* not_a_date()
+  {     
     return "not-a-date-time";
   }
   //! String used to for positive infinity value
-  static const char* pos_infinity()
+  static const charT* pos_infinity()
   {
     return "+infinity";
   }
   //! String used to for positive infinity value
-  static const char* neg_infinity()
+  static const charT* neg_infinity()
   {
     return "-infinity";
   }
 
   //! ISO char for a year -- used in durations
-  static char year_sep_char()
+  static charT year_sep_char()
   {
     return 'Y';
   }
   //! ISO char for a month
-  static char month_sep_char()
+  static charT month_sep_char()
   {
     return '-';
   }
   //! ISO char for a day
-  static char day_sep_char()
+  static charT day_sep_char()
   {
     return '-';
   }
   //! char for minute
-  static char hour_sep_char()
+  static charT hour_sep_char()
   {
     return ':';
   }
   //! char for minute
-  static char minute_sep_char()
+  static charT minute_sep_char()
   {
     return ':';
   }
   //! char for second
-  static char second_sep_char()
+  static charT second_sep_char()
   {
     return ':';
   }
   //! ISO char for a period
-  static char period_start_char()
+  static charT period_start_char()
   {
     return 'P';
   }
   //! Used in time in mixed strings to set start of time
-  static char time_start_char()
+  static charT time_start_char()
   {
     return 'T';
   }
 
   //! Used in mixed strings to identify start of a week number
-  static char week_start_char()
+  static charT week_start_char()
   {
     return 'W';
   }
 
   //! Separators for periods
-  static char period_sep_char()
+  static charT period_sep_char()
   {
     return '/';
   }
   //! Separator for hh:mm:ss
-  static char time_sep_char()
+  static charT time_sep_char()
   {
     return ':';
   }
   //! Preferred Separator for hh:mm:ss,decimal_fraction
-  static char fractional_time_sep_char()
+  static charT fractional_time_sep_char()
   {
     return ',';
   }
 
-  static bool is_component_sep(char sep)
+  static bool is_component_sep(charT sep)
   {
     switch(sep) {
     case 'H':
@@ -117,7 +118,7 @@ public:
     }
   }
 
-  static bool is_fractional_time_sep(char sep)
+  static bool is_fractional_time_sep(charT sep)
   {
     switch(sep) {
     case ',':
@@ -125,7 +126,7 @@ public:
     default: return false;
     }
   }
-  static bool is_timezone_sep(char sep)
+  static bool is_timezone_sep(charT sep)
   {
     switch(sep) {
     case '+':
@@ -133,16 +134,147 @@ public:
     default: return false;
     }
   }
-  static char element_sep_char()
+  static charT element_sep_char()
   {
     return '-';
   }
 
 };
 
+#ifndef BOOST_NO_STD_WSTRING
+
+//! Class to provide common iso formatting spec
+template<>
+class iso_format_base<wchar_t> {
+public:
+  //! Describe month format -- its an integer in iso format
+  static month_format_spec month_format()
+  {
+    return month_as_integer;
+  }
+
+  //! String used printed is date is invalid
+  static const wchar_t* not_a_date()
+  {      
+    return L"not-a-date-time";
+  }
+  //! String used to for positive infinity value
+  static const wchar_t* pos_infinity()
+  {
+    return L"+infinity";
+  }
+  //! String used to for positive infinity value
+  static const wchar_t* neg_infinity()
+  {
+    return L"-infinity";
+  }
+
+  //! ISO char for a year -- used in durations
+  static wchar_t year_sep_char()
+  {
+    return 'Y';
+  }
+  //! ISO char for a month
+  static wchar_t month_sep_char()
+  {
+    return '-';
+  }
+  //! ISO char for a day
+  static wchar_t day_sep_char()
+  {
+    return '-';
+  }
+  //! char for minute
+  static wchar_t hour_sep_char()
+  {
+    return ':';
+  }
+  //! char for minute
+  static wchar_t minute_sep_char()
+  {
+    return ':';
+  }
+  //! char for second
+  static wchar_t second_sep_char()
+  {
+    return ':';
+  }
+  //! ISO char for a period
+  static wchar_t period_start_char()
+  {
+    return 'P';
+  }
+  //! Used in time in mixed strings to set start of time
+  static wchar_t time_start_char()
+  {
+    return 'T';
+  }
+
+  //! Used in mixed strings to identify start of a week number
+  static wchar_t week_start_char()
+  {
+    return 'W';
+  }
+
+  //! Separators for periods
+  static wchar_t period_sep_char()
+  {
+    return '/';
+  }
+  //! Separator for hh:mm:ss
+  static wchar_t time_sep_char()
+  {
+    return ':';
+  }
+  //! Preferred Separator for hh:mm:ss,decimal_fraction
+  static wchar_t fractional_time_sep_char()
+  {
+    return ',';
+  }
+
+  static bool is_component_sep(wchar_t sep)
+  {
+    switch(sep) {
+    case 'H':
+    case 'M':
+    case 'S':
+    case 'W':
+    case 'T':
+    case 'Y':
+    case 'D':return true;
+    default:
+      return false;
+    }
+  }
+
+  static bool is_fractional_time_sep(wchar_t sep)
+  {
+    switch(sep) {
+    case ',':
+    case '.': return true;
+    default: return false;
+    }
+  }
+  static bool is_timezone_sep(wchar_t sep)
+  {
+    switch(sep) {
+    case '+':
+    case '-': return true;
+    default: return false;
+    }
+  }
+  static wchar_t element_sep_char()
+  {
+    return '-';
+  }
+
+};
+
+#endif // BOOST_NO_STD_WSTRING
 
 //! Format description for iso normal YYYYMMDD
-class iso_format : public iso_format_base {
+template<class charT>
+class iso_format : public iso_format_base<charT> {
 public:
   //! The ios standard format doesn't use char separators
   static bool has_date_sep_chars()
@@ -152,7 +284,8 @@ public:
 };
 
 //! Extended format uses seperators YYYY-MM-DD
-class iso_extended_format : public iso_format_base {
+template<class charT>
+class iso_extended_format : public iso_format_base<charT> {
 public:
   //! Extended format needs char separators
   static bool has_date_sep_chars()

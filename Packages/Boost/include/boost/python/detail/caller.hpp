@@ -1,10 +1,9 @@
 #if !defined(BOOST_PP_IS_ITERATING)
 
-// Copyright David Abrahams 2002. Permission to copy, use,
-// modify, sell and distribute this software is granted provided this
-// copyright notice appears in all copies. This software is provided
-// "as is" without express or implied warranty, and with no claim as
-// to its suitability for any purpose.
+// Copyright David Abrahams 2002.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 
 # ifndef CALLER_DWA20021121_HPP
 #  define CALLER_DWA20021121_HPP
@@ -33,11 +32,12 @@
 #  include <boost/type_traits/is_convertible.hpp>
 
 #  include <boost/mpl/apply.hpp>
-#  include <boost/mpl/apply_if.hpp>
+#  include <boost/mpl/eval_if.hpp>
 #  include <boost/mpl/identity.hpp>
 #  include <boost/mpl/size.hpp>
 #  include <boost/mpl/at.hpp>
 #  include <boost/mpl/int.hpp>
+#  include <boost/mpl/next.hpp>
 
 namespace boost { namespace python { namespace detail { 
 
@@ -62,7 +62,7 @@ typedef int void_result_to_python;
 // converting the result to python.
 template <class Policies, class Result>
 struct select_result_converter
-  : mpl::apply_if<
+  : mpl::eval_if<
         is_same<Result,void>
       , mpl::identity<void_result_to_python>
       , mpl::apply1<typename Policies::result_converter,Result>
@@ -82,7 +82,7 @@ inline ResultConverter create_result_converter(
     
 template <class ArgPackage, class ResultConverter>
 inline ResultConverter create_result_converter(
-    ArgPackage const& args_
+    ArgPackage const&
   , ResultConverter*
   , ...
 )
@@ -96,10 +96,10 @@ template <class F, class CallPolicies, class Sig>
 struct caller;
 
 #  define BOOST_PYTHON_NEXT(init,name,n)                                                        \
-     typedef BOOST_PP_IF(n,typename BOOST_PP_CAT(name,BOOST_PP_DEC(n)) ::next, init) name##n;
+    typedef BOOST_PP_IF(n,typename mpl::next< BOOST_PP_CAT(name,BOOST_PP_DEC(n)) >::type, init) name##n;
 
 #  define BOOST_PYTHON_ARG_CONVERTER(n)                                         \
-     BOOST_PYTHON_NEXT(typename first::next, arg_iter,n)                        \
+     BOOST_PYTHON_NEXT(typename mpl::next<first>::type, arg_iter,n)             \
      typedef arg_from_python<BOOST_DEDUCED_TYPENAME arg_iter##n::type> c_t##n;  \
      c_t##n c##n(get(mpl::int_<n>(), inner_args));                              \
      if (!c##n.convertible())                                                   \

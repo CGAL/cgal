@@ -1,33 +1,30 @@
-//-----------------------------------------------------------------------------
-// boost mpl/aux_/preprocessor/ext_params.hpp header file
-// See http://www.boost.org for updates, documentation, and revision history.
-//-----------------------------------------------------------------------------
-//
-// Copyright (c) 2000-02
-// Aleksey Gurtovoy
-//
-// Permission to use, copy, modify, distribute and sell this software
-// and its documentation for any purpose is hereby granted without fee, 
-// provided that the above copyright notice appears in all copies and 
-// that both the copyright notice and this permission notice appear in 
-// supporting documentation. No representations are made about the 
-// suitability of this software for any purpose. It is provided "as is" 
-// without express or implied warranty.
 
 #ifndef BOOST_MPL_AUX_PREPROCESSOR_EXT_PARAMS_HPP_INCLUDED
 #define BOOST_MPL_AUX_PREPROCESSOR_EXT_PARAMS_HPP_INCLUDED
 
-#include "boost/mpl/aux_/config/preprocessor.hpp"
+// Copyright Aleksey Gurtovoy 2000-2004
+//
+// Distributed under the Boost Software License, Version 1.0. 
+// (See accompanying file LICENSE_1_0.txt or copy at 
+// http://www.boost.org/LICENSE_1_0.txt)
+//
+// See http://www.boost.org/libs/mpl for documentation.
 
-// BOOST_MPL_PP_EXT_PARAMS(1,1,T): <nothing>
-// BOOST_MPL_PP_EXT_PARAMS(1,2,T): T1
-// BOOST_MPL_PP_EXT_PARAMS(1,3,T): T1, T2
-// BOOST_MPL_PP_EXT_PARAMS(1,n,T): T1, T2, .., Tn-1
+// $Source$
+// $Date$
+// $Revision$
 
-#if !defined(BOOST_MPL_NO_OWN_PP_PRIMITIVES)
+#include <boost/mpl/aux_/config/preprocessor.hpp>
 
-#   include "boost/mpl/aux_/preprocessor/filter_params.hpp"
-#   include "boost/mpl/aux_/preprocessor/sub.hpp"
+// BOOST_MPL_PP_EXT_PARAMS(2,2,T): <nothing>
+// BOOST_MPL_PP_EXT_PARAMS(2,3,T): T2
+// BOOST_MPL_PP_EXT_PARAMS(2,4,T): T2, T3
+// BOOST_MPL_PP_EXT_PARAMS(2,n,T): T2, T3, .., Tn-1
+
+#if !defined(BOOST_MPL_CFG_NO_OWN_PP_PRIMITIVES)
+
+#   include <boost/mpl/aux_/preprocessor/filter_params.hpp>
+#   include <boost/mpl/aux_/preprocessor/sub.hpp>
 
 #   define BOOST_MPL_PP_EXT_PARAMS(i,j,p) \
     BOOST_MPL_PP_EXT_PARAMS_DELAY_1(i,BOOST_MPL_PP_SUB(j,i),p) \
@@ -53,12 +50,12 @@
 
 #else
 
-#   include "boost/preprocessor/arithmetic/add.hpp"
-#   include "boost/preprocessor/arithmetic/sub.hpp"
-#   include "boost/preprocessor/comma_if.hpp"
-#   include "boost/preprocessor/repeat.hpp"
-#   include "boost/preprocessor/tuple/elem.hpp"
-#   include "boost/preprocessor/cat.hpp"
+#   include <boost/preprocessor/arithmetic/add.hpp>
+#   include <boost/preprocessor/arithmetic/sub.hpp>
+#   include <boost/preprocessor/comma_if.hpp>
+#   include <boost/preprocessor/repeat.hpp>
+#   include <boost/preprocessor/tuple/elem.hpp>
+#   include <boost/preprocessor/cat.hpp>
 
 #   define BOOST_MPL_PP_AUX_EXT_PARAM_FUNC(unused, i, op) \
     BOOST_PP_COMMA_IF(i) \
@@ -69,13 +66,13 @@
     /**/
 
 #   define BOOST_MPL_PP_EXT_PARAMS(i, j, param) \
-    BOOST_PP_REPEAT_1( \
+    BOOST_PP_REPEAT( \
           BOOST_PP_SUB_D(1,j,i) \
         , BOOST_MPL_PP_AUX_EXT_PARAM_FUNC \
         , (i,param) \
         ) \
     /**/
 
-#endif // BOOST_MPL_NO_OWN_PP_PRIMITIVES
+#endif
 
 #endif // BOOST_MPL_AUX_PREPROCESSOR_EXT_PARAMS_HPP_INCLUDED

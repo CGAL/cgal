@@ -28,6 +28,32 @@
 
 namespace boost { namespace numeric { namespace ublas {
 
+    namespace detail {
+        using namespace boost::numeric::ublas;
+
+        // Matrix resizing algorithm
+        template <class F, class M>
+        BOOST_UBLAS_INLINE
+        void matrix_resize_preserve (M& m, M& temporary, BOOST_UBLAS_TYPENAME M::size_type size1, BOOST_UBLAS_TYPENAME M::size_type size2) {
+            typedef F functor_type;
+            typedef typename M::size_type size_type;
+            // Common elements to preserve
+            const size_type size1_min = (std::min) (size1, m.size1_);
+            const size_type size2_min = (std::min) (size2, m.size2_);
+            // Order loop for i-major and j-minor sizes
+            const size_type i_size = functor_type::size1 (size1_min, size2_min);
+            const size_type j_size = functor_type::size2 (size1_min, size2_min);
+            for (size_type i = 0; i != i_size; ++i) {    // indexing copy over major
+                for (size_type j = 0; j != j_size; ++j) {
+                    temporary.data () [functor_type::element (functor_type::element1(i,i_size, j,j_size), size1, functor_type::element2(i,i_size, j,j_size), size2)] =
+                        m.data() [functor_type::element (functor_type::element1(i,i_size, j,j_size), m.size1_, functor_type::element2(i,i_size, j,j_size), m.size2_)];
+                }
+            }
+            assign_temporary (temporary);
+        }
+    }
+
+
     // Array based matrix class
     template<class T, class F, class A>
     class matrix:
@@ -36,44 +62,41 @@ namespace boost { namespace numeric { namespace ublas {
 #ifndef BOOST_UBLAS_NO_PROXY_SHORTCUTS
         BOOST_UBLAS_USING matrix_expression<matrix<T, F, A> >::operator ();
 #endif
-        typedef concrete_tag simd_category;
-        typedef std::size_t size_type;
-        typedef std::ptrdiff_t difference_type;
+        typedef typename A::size_type size_type;
+        typedef typename A::difference_type difference_type;
         typedef T value_type;
-        // typedef const T &const_reference;
-        typedef typename type_traits<T>::const_reference const_reference;
+        typedef const T &const_reference;
         typedef T &reference;
-        typedef const T *const_pointer;
+        typedef A array_type;
+    private:
         typedef T *pointer;
         typedef F functor_type;
-        typedef A array_type;
-        typedef const A const_array_type;
-        typedef const matrix<T, F, A> const_self_type;
         typedef matrix<T, F, A> self_type;
+    public:
 #ifndef BOOST_UBLAS_CT_REFERENCE_BASE_TYPEDEFS
-        typedef const matrix_const_reference<const_self_type> const_closure_type;
+        typedef const matrix_const_reference<const self_type> const_closure_type;
 #else
-        typedef const matrix_reference<const_self_type> const_closure_type;
+        typedef const matrix_reference<const self_type> const_closure_type;
 #endif
         typedef matrix_reference<self_type> closure_type;
-        typedef typename A::const_iterator const_iterator_type;
-        typedef typename A::iterator iterator_type;
+        typedef vector<T, A> vector_temporary_type;
+        typedef self_type matrix_temporary_type;
         typedef dense_tag storage_category;
         // This could be better for performance,
         // typedef typename unknown_orientation_tag orientation_category;
         // but others depend on the orientation information...
         typedef typename functor_type::orientation_category orientation_category;
+        typedef concrete_tag simd_category;
 
         // Construction and destruction
         BOOST_UBLAS_INLINE
         matrix ():
             matrix_expression<self_type> (),
-            size1_ (0), size2_ (0), data_ (0) {}
+            size1_ (0), size2_ (0), data_ () {}
         BOOST_UBLAS_INLINE
         matrix (size_type size1, size_type size2):
             matrix_expression<self_type> (),
-            size1_ (size1), size2_ (size2), data_ (0) {
-            resize (size1, size2);
+            size1_ (size1), size2_ (size2), data_ (functor_type::storage_size (size1, size2)) {
         }
         BOOST_UBLAS_INLINE
         matrix (size_type size1, size_type size2, const array_type &data):
@@ -87,12 +110,7 @@ namespace boost { namespace numeric { namespace ublas {
         BOOST_UBLAS_INLINE
         matrix (const matrix_expression<AE> &ae):
             matrix_expression<self_type> (),
-            size1_ (ae ().size1 ()), size2_ (ae ().size2 ()), data_ (0) {
-#ifndef BOOST_UBLAS_TYPE_CHECK
-            resize (ae ().size1 (), ae ().size2 (), false);
-#else
-            resize (ae ().size1 (), ae ().size2 (), true);
-#endif
+            size1_ (ae ().size1 ()), size2_ (ae ().size2 ()), data_ (functor_type::storage_size (size1_, size2_)) {
             matrix_assign (scalar_assign<reference, BOOST_UBLAS_TYPENAME AE::value_type> (), *this, ae);
         }
 
@@ -106,7 +124,7 @@ namespace boost { namespace numeric { namespace ublas {
             return size2_;
         }
         BOOST_UBLAS_INLINE
-        const_array_type &data () const {
+        const array_type &data () const {
             return data_;
         }
         BOOST_UBLAS_INLINE
@@ -117,9 +135,29 @@ namespace boost { namespace numeric { namespace ublas {
         // Resizing
         BOOST_UBLAS_INLINE
         void resize (size_type size1, size_type size2, bool preserve = true) {
-            size1_ = size1;
-            size2_ = size2;
-            detail::resize (data (), size1 * size2, preserve);
+            if (preserve) {
+                self_type temporary (size1, size2);
+                // FIXME use matrix_resize_preserve on conformant compilers
+                // detail::matrix_resize_reserve<functor_type> (*this, temporary, size1, size2);
+                // Common elements to preserve
+                const size_type size1_min = (std::min) (size1, size1_);
+                const size_type size2_min = (std::min) (size2, size2_);
+                // Order loop for i-major and j-minor sizes
+                const size_type i_size = functor_type::size1 (size1_min, size2_min);
+                const size_type j_size = functor_type::size2 (size1_min, size2_min);
+                for (size_type i = 0; i != i_size; ++i) {    // indexing copy over major
+                    for (size_type j = 0; j != j_size; ++j) {
+                        temporary.data () [functor_type::element (functor_type::element1(i,i_size, j,j_size), size1, functor_type::element2(i,i_size, j,j_size), size2)] =
+                            data() [functor_type::element (functor_type::element1(i,i_size, j,j_size), size1_, functor_type::element2(i,i_size, j,j_size), size2_)];
+                    }
+                }
+                assign_temporary (temporary);
+            }
+            else {
+                data ().resize (functor_type::storage_size (size1, size2));
+                size1_ = size1;
+                size2_ = size2;
+            }
         }
 
         // Element access
@@ -135,14 +173,20 @@ namespace boost { namespace numeric { namespace ublas {
         // Assignment
         BOOST_UBLAS_INLINE
         matrix &operator = (const matrix &m) {
-            // Precondition for container relaxed as requested during review.
-            // BOOST_UBLAS_CHECK (size1_ == m.size1_, bad_size ());
-            // BOOST_UBLAS_CHECK (size2_ == m.size2_, bad_size ());
             size1_ = m.size1_;
             size2_ = m.size2_;
             data () = m.data ();
             return *this;
         }
+#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
+        template<class A2, class F2>          // Generic matrix assignment without temporary
+        BOOST_UBLAS_INLINE
+        matrix &operator = (const matrix<T, A2, F2> &m) {
+            resize (m.size1 (), m.size2 ());
+            assign (m);
+            return *this;
+        }
+#endif
         BOOST_UBLAS_INLINE
         matrix &assign_temporary (matrix &m) {
             swap (m);
@@ -151,19 +195,8 @@ namespace boost { namespace numeric { namespace ublas {
         template<class AE>
         BOOST_UBLAS_INLINE
         matrix &operator = (const matrix_expression<AE> &ae) {
-#ifdef BOOST_UBLAS_MUTABLE_TEMPORARY
-            return assign_temporary (self_type (ae));
-#else
             // return assign (self_type (ae));
             self_type temporary (ae);
-            return assign_temporary (temporary);
-#endif
-        }
-        template<class AE>
-        BOOST_UBLAS_INLINE
-        matrix &reset (const matrix_expression<AE> &ae) {
-            self_type temporary (ae);
-            resize (temporary.size1 (), temporary.size2 (), false);
             return assign_temporary (temporary);
         }
         template<class AE>
@@ -175,13 +208,9 @@ namespace boost { namespace numeric { namespace ublas {
         template<class AE>
         BOOST_UBLAS_INLINE
         matrix& operator += (const matrix_expression<AE> &ae) {
-#ifdef BOOST_UBLAS_MUTABLE_TEMPORARY
-            return assign_temporary (self_type (*this + ae));
-#else
             // return assign (self_type (*this + ae));
             self_type temporary (*this + ae);
             return assign_temporary (temporary);
-#endif
         }
         template<class AE>
         BOOST_UBLAS_INLINE
@@ -192,13 +221,9 @@ namespace boost { namespace numeric { namespace ublas {
         template<class AE>
         BOOST_UBLAS_INLINE
         matrix& operator -= (const matrix_expression<AE> &ae) {
-#ifdef BOOST_UBLAS_MUTABLE_TEMPORARY
-            return assign_temporary (self_type (*this - ae));
-#else
             // return assign (self_type (*this - ae));
             self_type temporary (*this - ae);
             return assign_temporary (temporary);
-#endif
         }
         template<class AE>
         BOOST_UBLAS_INLINE
@@ -222,12 +247,7 @@ namespace boost { namespace numeric { namespace ublas {
         // Swapping
         BOOST_UBLAS_INLINE
         void swap (matrix &m) {
-            // Too unusual semantic.
-            // BOOST_UBLAS_CHECK (this != &m, external_logic ());
             if (this != &m) {
-                // Precondition for container relaxed as requested during review.
-                // BOOST_UBLAS_CHECK (size1_ == m.size1_, bad_size ());
-                // BOOST_UBLAS_CHECK (size2_ == m.size2_, bad_size ());
                 std::swap (size1_, m.size1_);
                 std::swap (size2_, m.size2_);
                 data ().swap (m.data ());
@@ -245,21 +265,28 @@ namespace boost { namespace numeric { namespace ublas {
         // Thanks to Kresimir Fresl for spotting this.
         BOOST_UBLAS_INLINE
         void insert (size_type i, size_type j, const_reference t) {
-            BOOST_UBLAS_CHECK (data () [functor_type::element (i, size1_, j, size2_)] == value_type (), bad_index ());
+            BOOST_UBLAS_CHECK (data () [functor_type::element (i, size1_, j, size2_)] == value_type (0), bad_index ());
             // data ().insert (data ().begin () + functor_type::element (i, size1_, j, size2_), t);
             data () [functor_type::element (i, size1_, j, size2_)] = t;
         }
         BOOST_UBLAS_INLINE
         void erase (size_type i, size_type j) {
             // data ().erase (data ().begin () + functor_type::element (i, size1_, j, size2_));
-            data () [functor_type::element (i, size1_, j, size2_)] = value_type ();
+            data () [functor_type::element (i, size1_, j, size2_)] = value_type (0);
         }
         BOOST_UBLAS_INLINE
         void clear () {
             // data ().clear ();
-            std::fill (data ().begin (), data ().end (), value_type ());
+            std::fill (data ().begin (), data ().end (), value_type (0));
         }
 
+        // Iterator types
+    private:
+        // Use the storage array iterator
+        typedef typename A::const_iterator const_iterator_type;
+        typedef typename A::iterator iterator_type;
+
+    public:
 #ifdef BOOST_UBLAS_USE_INDEXED_ITERATOR
         typedef indexed_iterator1<self_type, dense_random_access_iterator_tag> iterator1;
         typedef indexed_iterator2<self_type, dense_random_access_iterator_tag> iterator2;
@@ -317,7 +344,6 @@ namespace boost { namespace numeric { namespace ublas {
 #endif
         }
 
-        // Iterators simply are pointers.
 
 #ifndef BOOST_UBLAS_USE_INDEXED_ITERATOR
         class const_iterator1:
@@ -329,10 +355,10 @@ namespace boost { namespace numeric { namespace ublas {
 #ifdef BOOST_MSVC_STD_ITERATOR
             typedef const_reference reference;
 #else
-            typedef typename matrix::difference_type difference_type;
             typedef typename matrix::value_type value_type;
+            typedef typename matrix::difference_type difference_type;
             typedef typename matrix::const_reference reference;
-            typedef typename matrix::const_pointer pointer;
+            typedef const typename matrix::pointer pointer;
 #endif
             typedef const_iterator2 dual_iterator_type;
             typedef const_reverse_iterator2 dual_reverse_iterator_type;
@@ -377,7 +403,7 @@ namespace boost { namespace numeric { namespace ublas {
 
             // Dereference
             BOOST_UBLAS_INLINE
-            reference operator * () const {
+            const_reference operator * () const {
                 BOOST_UBLAS_CHECK (index1 () < (*this) ().size1 (), bad_index ());
                 BOOST_UBLAS_CHECK (index2 () < (*this) ().size2 (), bad_index ());
                 return *it_;
@@ -472,8 +498,8 @@ namespace boost { namespace numeric { namespace ublas {
         public:
             typedef dense_random_access_iterator_tag iterator_category;
 #ifndef BOOST_MSVC_STD_ITERATOR
-            typedef typename matrix::difference_type difference_type;
             typedef typename matrix::value_type value_type;
+            typedef typename matrix::difference_type difference_type;
             typedef typename matrix::reference reference;
             typedef typename matrix::pointer pointer;
 #endif
@@ -614,10 +640,10 @@ namespace boost { namespace numeric { namespace ublas {
 #ifdef BOOST_MSVC_STD_ITERATOR
             typedef const_reference reference;
 #else
-            typedef typename matrix::difference_type difference_type;
             typedef typename matrix::value_type value_type;
+            typedef typename matrix::difference_type difference_type;
             typedef typename matrix::const_reference reference;
-            typedef typename matrix::const_pointer pointer;
+            typedef const typename matrix::pointer pointer;
 #endif
             typedef const_iterator1 dual_iterator_type;
             typedef const_reverse_iterator1 dual_reverse_iterator_type;
@@ -662,7 +688,7 @@ namespace boost { namespace numeric { namespace ublas {
 
             // Dereference
             BOOST_UBLAS_INLINE
-            reference operator * () const {
+            const_reference operator * () const {
                 BOOST_UBLAS_CHECK (index1 () < (*this) ().size1 (), bad_index ());
                 BOOST_UBLAS_CHECK (index2 () < (*this) ().size2 (), bad_index ());
                 return *it_;
@@ -757,8 +783,8 @@ namespace boost { namespace numeric { namespace ublas {
         public:
             typedef dense_random_access_iterator_tag iterator_category;
 #ifndef BOOST_MSVC_STD_ITERATOR
-            typedef typename matrix::difference_type difference_type;
             typedef typename matrix::value_type value_type;
+            typedef typename matrix::difference_type difference_type;
             typedef typename matrix::reference reference;
             typedef typename matrix::pointer pointer;
 #endif
@@ -937,21 +963,27 @@ namespace boost { namespace numeric { namespace ublas {
     template<class T, std::size_t M, std::size_t N, class F>
     class bounded_matrix:
         public matrix<T, F, bounded_array<T, M * N> > {
-    public:
-#ifndef BOOST_UBLAS_NO_DERIVED_HELPERS
-        BOOST_UBLAS_USING matrix<T, F, bounded_array<T, M * N> >::operator =;
-#endif
-        BOOST_STATIC_CONSTANT (std::size_t, max_size1 = M);
-        BOOST_STATIC_CONSTANT (std::size_t, max_size2 = N);
+
         typedef matrix<T, F, bounded_array<T, M * N> > matrix_type;
+    public:
+        typedef typename matrix_type::size_type size_type;
+        BOOST_STATIC_CONSTANT (size_type, max_size1 = M);
+        BOOST_STATIC_CONSTANT (size_type, max_size2 = N);
 
         // Construction and destruction
         BOOST_UBLAS_INLINE
         bounded_matrix ():
             matrix_type (M, N) {}
         BOOST_UBLAS_INLINE
-        bounded_matrix (std::size_t size1, std::size_t size2):
+        bounded_matrix (size_type size1, size_type size2):
             matrix_type (size1, size2) {}
+        BOOST_UBLAS_INLINE
+        bounded_matrix (const bounded_matrix &m):
+            matrix_type (m) {}
+        template<class A2>              // Allow matrix<T,bounded_array<M,N> > construction
+        BOOST_UBLAS_INLINE
+        bounded_matrix (const matrix<T, A2, F> &m):
+            matrix_type (m) {}
         template<class AE>
         BOOST_UBLAS_INLINE
         bounded_matrix (const matrix_expression<AE> &ae):
@@ -965,6 +997,20 @@ namespace boost { namespace numeric { namespace ublas {
             matrix_type::operator = (m);
             return *this;
         }
+#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
+        template<class A2, class F2>        // Generic matrix assignment
+        BOOST_UBLAS_INLINE
+        bounded_matrix &operator = (const matrix<T, A2, F2> &m) {
+            matrix_type::operator = (m);
+            return *this;
+        }
+#endif
+        template<class AE>
+        BOOST_UBLAS_INLINE
+        bounded_matrix &operator = (const matrix_expression<AE> &ae) {
+            matrix_type::operator = (ae);
+            return *this;
+        }
     };
 
     // Array based matrix class
@@ -975,35 +1021,31 @@ namespace boost { namespace numeric { namespace ublas {
 #ifndef BOOST_UBLAS_NO_PROXY_SHORTCUTS
         BOOST_UBLAS_USING matrix_expression<vector_of_vector<T, F, A> >::operator ();
 #endif
-        typedef concrete_tag simd_category;
-        typedef std::size_t size_type;
-        typedef std::ptrdiff_t difference_type;
+        typedef typename A::size_type size_type;
+        typedef typename A::difference_type difference_type;
         typedef T value_type;
-        // typedef const T &const_reference;
-        typedef typename type_traits<T>::const_reference const_reference;
+        typedef const T &const_reference;
         typedef T &reference;
-        typedef const T *const_pointer;
+        typedef A array_type;
+    private:
         typedef T *pointer;
         typedef F functor_type;
-        typedef A array_type;
-        typedef const A const_array_type;
-        typedef const vector_of_vector<T, F, A> const_self_type;
         typedef vector_of_vector<T, F, A> self_type;
+    public:
 #ifndef BOOST_UBLAS_CT_REFERENCE_BASE_TYPEDEFS
-        typedef const matrix_const_reference<const_self_type> const_closure_type;
+        typedef const matrix_const_reference<const self_type> const_closure_type;
 #else
-        typedef const matrix_reference<const_self_type> const_closure_type;
+        typedef const matrix_reference<const self_type> const_closure_type;
 #endif
         typedef matrix_reference<self_type> closure_type;
-        typedef typename A::const_iterator vector_const_iterator_type;
-        typedef typename A::iterator vector_iterator_type;
-        typedef typename A::value_type::const_iterator const_iterator_type;
-        typedef typename A::value_type::iterator iterator_type;
+        typedef vector<T, typename A::value_type> vector_temporary_type;
+        typedef self_type matrix_temporary_type;
         typedef dense_tag storage_category;
         // This could be better for performance,
         // typedef typename unknown_orientation_tag orientation_category;
         // but others depend on the orientation information...
         typedef typename functor_type::orientation_category orientation_category;
+        typedef concrete_tag simd_category;
 
         // Construction and destruction
         BOOST_UBLAS_INLINE
@@ -1014,7 +1056,7 @@ namespace boost { namespace numeric { namespace ublas {
         vector_of_vector (size_type size1, size_type size2):
             matrix_expression<self_type> (),
             size1_ (size1), size2_ (size2), data_ (1) {
-            resize (size1, size2);
+            resize (size1, size2, true);
         }
         BOOST_UBLAS_INLINE
         vector_of_vector (const vector_of_vector &m):
@@ -1024,8 +1066,9 @@ namespace boost { namespace numeric { namespace ublas {
         BOOST_UBLAS_INLINE
         vector_of_vector (const matrix_expression<AE> &ae):
             matrix_expression<self_type> (),
-            size1_ (ae ().size1 ()), size2_ (ae ().size2 ()), data_ (1) {
-            resize (ae ().size1 (), ae ().size2 (), false);
+            size1_ (ae ().size1 ()), size2_ (ae ().size2 ()), data_ (functor_type::size1 (size1_, size2_) + 1) {
+            for (size_type k = 0; k < functor_type::size1 (size1_, size2_); ++ k)
+                data ()[k].resize (functor_type::size2 (size1_, size2_));
             matrix_assign (scalar_assign<reference, BOOST_UBLAS_TYPENAME AE::value_type> (), *this, ae);
         }
 
@@ -1039,7 +1082,7 @@ namespace boost { namespace numeric { namespace ublas {
             return size2_;
         }
         BOOST_UBLAS_INLINE
-        const_array_type &data () const {
+        const array_type &data () const {
             return data_;
         }
         BOOST_UBLAS_INLINE
@@ -1052,9 +1095,16 @@ namespace boost { namespace numeric { namespace ublas {
         void resize (size_type size1, size_type size2, bool preserve = true) {
             size1_ = size1;
             size2_ = size2;
-            detail::resize (data (), functor_type::size1 (size1, size2) + 1, preserve);
-            for (size_type k = 0; k < functor_type::size1 (size1, size2); ++ k)
-                detail::resize (data () [k], functor_type::size2 (size1, size2), preserve);
+            if (preserve)
+                data ().resize (functor_type::size1 (size1, size2) + 1, BOOST_UBLAS_TYPENAME array_type::value_type ());
+            else
+                data ().resize (functor_type::size1 (size1, size2) + 1);
+            for (size_type k = 0; k < functor_type::size1 (size1, size2); ++ k) {
+                if (preserve)
+                    data () [k].resize (functor_type::size2 (size1, size2), value_type ());
+                else
+                    data () [k].resize (functor_type::size2 (size1, size2));
+            }
         }
 
         // Element access
@@ -1070,9 +1120,6 @@ namespace boost { namespace numeric { namespace ublas {
         // Assignment
         BOOST_UBLAS_INLINE
         vector_of_vector &operator = (const vector_of_vector &m) {
-            // Precondition for container relaxed as requested during review.
-            // BOOST_UBLAS_CHECK (size1_ == m.size1_, bad_size ());
-            // BOOST_UBLAS_CHECK (size2_ == m.size2_, bad_size ());
             size1_ = m.size1_;
             size2_ = m.size2_;
             data () = m.data ();
@@ -1086,19 +1133,8 @@ namespace boost { namespace numeric { namespace ublas {
         template<class AE>
         BOOST_UBLAS_INLINE
         vector_of_vector &operator = (const matrix_expression<AE> &ae) { 
-#ifdef BOOST_UBLAS_MUTABLE_TEMPORARY
-            return assign_temporary (self_type (ae));
-#else
             // return assign (self_type (ae));
             self_type temporary (ae);
-            return assign_temporary (temporary);
-#endif
-        }
-        template<class AE>
-        BOOST_UBLAS_INLINE
-        vector_of_vector &reset (const matrix_expression<AE> &ae) { 
-            self_type temporary (ae);
-            resize (temporary.size1 (), temporary.size2 (), false);
             return assign_temporary (temporary);
         }
         template<class AE>
@@ -1110,13 +1146,9 @@ namespace boost { namespace numeric { namespace ublas {
         template<class AE>
         BOOST_UBLAS_INLINE
         vector_of_vector& operator += (const matrix_expression<AE> &ae) {
-#ifdef BOOST_UBLAS_MUTABLE_TEMPORARY
-            return assign_temporary (self_type (*this + ae));
-#else
             // return assign (self_type (*this + ae));
             self_type temporary (*this + ae);
             return assign_temporary (temporary);
-#endif
         }
         template<class AE>
         BOOST_UBLAS_INLINE
@@ -1127,13 +1159,9 @@ namespace boost { namespace numeric { namespace ublas {
         template<class AE>
         BOOST_UBLAS_INLINE
         vector_of_vector& operator -= (const matrix_expression<AE> &ae) {
-#ifdef BOOST_UBLAS_MUTABLE_TEMPORARY
-            return assign_temporary (self_type (*this - ae));
-#else
             // return assign (self_type (*this - ae));
             self_type temporary (*this - ae);
             return assign_temporary (temporary);
-#endif
         }
         template<class AE>
         BOOST_UBLAS_INLINE
@@ -1157,12 +1185,7 @@ namespace boost { namespace numeric { namespace ublas {
         // Swapping
         BOOST_UBLAS_INLINE
         void swap (vector_of_vector &m) {
-            // Too unusual semantic.
-            // BOOST_UBLAS_CHECK (this != &m, external_logic ());
             if (this != &m) {
-                // Precondition for container relaxed as requested during review.
-                // BOOST_UBLAS_CHECK (size1_ == m.size1_, bad_size ());
-                // BOOST_UBLAS_CHECK (size2_ == m.size2_, bad_size ());
                 std::swap (size1_, m.size1_);
                 std::swap (size2_, m.size2_);
                 data ().swap (m.data ());
@@ -1180,20 +1203,28 @@ namespace boost { namespace numeric { namespace ublas {
         // Thanks to Kresimir Fresl for spotting this.
         BOOST_UBLAS_INLINE
         void insert (size_type i, size_type j, const_reference t) {
-            BOOST_UBLAS_CHECK (data () [functor_type::element1 (i, size1_, j, size2_)] [functor_type::element2 (i, size1_, j, size2_)] == value_type (), bad_index ());
+            BOOST_UBLAS_CHECK (data () [functor_type::element1 (i, size1_, j, size2_)] [functor_type::element2 (i, size1_, j, size2_)] == value_type (0), bad_index ());
             data () [functor_type::element1 (i, size1_, j, size2_)] [functor_type::element2 (i, size1_, j, size2_)] = t; 
         }
         BOOST_UBLAS_INLINE
         void erase (size_type i, size_type j) {
-            data () [functor_type::element1 (i, size1_, j, size2_)] [functor_type::element2 (i, size1_, j, size2_)] = value_type (); 
+            data () [functor_type::element1 (i, size1_, j, size2_)] [functor_type::element2 (i, size1_, j, size2_)] = value_type (0); 
         }
         BOOST_UBLAS_INLINE
         void clear () {
             for (size_type k = 0; k < functor_type::size1 (size1_, size2_); ++ k)
                 // data () [k].clear ();
-                std::fill (data () [k].begin (), data () [k].end (), value_type ());
+                std::fill (data () [k].begin (), data () [k].end (), value_type (0));
         }
 
+        // Iterator types
+    private:
+        // Use the vector iterator
+        typedef typename A::const_iterator vector_const_iterator_type;
+        typedef typename A::iterator vector_iterator_type;
+        typedef typename A::value_type::const_iterator const_iterator_type;
+        typedef typename A::value_type::iterator iterator_type;
+    public:
 #ifdef BOOST_UBLAS_USE_INDEXED_ITERATOR
         typedef indexed_iterator1<self_type, dense_random_access_iterator_tag> iterator1;
         typedef indexed_iterator2<self_type, dense_random_access_iterator_tag> iterator2;
@@ -1251,7 +1282,6 @@ namespace boost { namespace numeric { namespace ublas {
 #endif
         }
 
-        // Iterators simply are pointers.
 
 #ifndef BOOST_UBLAS_USE_INDEXED_ITERATOR
         class const_iterator1:
@@ -1263,10 +1293,10 @@ namespace boost { namespace numeric { namespace ublas {
 #ifdef BOOST_MSVC_STD_ITERATOR
             typedef const_reference reference;
 #else
-            typedef typename vector_of_vector::difference_type difference_type;
             typedef typename vector_of_vector::value_type value_type;
+            typedef typename vector_of_vector::difference_type difference_type;
             typedef typename vector_of_vector::const_reference reference;
-            typedef typename vector_of_vector::const_reference pointer;
+            typedef const typename vector_of_vector::pointer pointer;
 #endif
             typedef const_iterator2 dual_iterator_type;
             typedef const_reverse_iterator2 dual_reverse_iterator_type;
@@ -1326,7 +1356,7 @@ namespace boost { namespace numeric { namespace ublas {
 
             // Dereference
             BOOST_UBLAS_INLINE
-            reference operator * () const {
+            const_reference operator * () const {
                 BOOST_UBLAS_CHECK (index1 () < (*this) ().size1 (), bad_index ());
                 BOOST_UBLAS_CHECK (index2 () < (*this) ().size2 (), bad_index ());
                 return *it_;
@@ -1423,8 +1453,8 @@ namespace boost { namespace numeric { namespace ublas {
         public:
             typedef dense_random_access_iterator_tag iterator_category;
 #ifndef BOOST_MSVC_STD_ITERATOR
-            typedef typename vector_of_vector::difference_type difference_type;
             typedef typename vector_of_vector::value_type value_type;
+            typedef typename vector_of_vector::difference_type difference_type;
             typedef typename vector_of_vector::reference reference;
             typedef typename vector_of_vector::pointer pointer;
 #endif
@@ -1582,10 +1612,10 @@ namespace boost { namespace numeric { namespace ublas {
 #ifdef BOOST_MSVC_STD_ITERATOR
             typedef const_reference reference;
 #else
-            typedef typename vector_of_vector::difference_type difference_type;
             typedef typename vector_of_vector::value_type value_type;
+            typedef typename vector_of_vector::difference_type difference_type;
             typedef typename vector_of_vector::const_reference reference;
-            typedef typename vector_of_vector::const_pointer pointer;
+            typedef const typename vector_of_vector::pointer pointer;
 #endif
             typedef const_iterator1 dual_iterator_type;
             typedef const_reverse_iterator1 dual_reverse_iterator_type;
@@ -1645,7 +1675,7 @@ namespace boost { namespace numeric { namespace ublas {
 
             // Dereference
             BOOST_UBLAS_INLINE
-            reference operator * () const {
+            const_reference operator * () const {
                 BOOST_UBLAS_CHECK (index1 () < (*this) ().size1 (), bad_index ());
                 BOOST_UBLAS_CHECK (index2 () < (*this) ().size2 (), bad_index ());
                 return *it_;
@@ -1742,8 +1772,8 @@ namespace boost { namespace numeric { namespace ublas {
         public:
             typedef dense_random_access_iterator_tag iterator_category;
 #ifndef BOOST_MSVC_STD_ITERATOR
-            typedef typename vector_of_vector::difference_type difference_type;
             typedef typename vector_of_vector::value_type value_type;
+            typedef typename vector_of_vector::difference_type difference_type;
             typedef typename vector_of_vector::reference reference;
             typedef typename vector_of_vector::pointer pointer;
 #endif
@@ -1946,20 +1976,18 @@ namespace boost { namespace numeric { namespace ublas {
         typedef std::size_t size_type;
         typedef std::ptrdiff_t difference_type;
         typedef T value_type;
-        // typedef const T &const_reference;
-        typedef typename type_traits<T>::const_reference const_reference;
+        typedef const T &const_reference;
         typedef T &reference;
+    private:
         typedef const T *const_pointer;
-        typedef T *pointer;
-        typedef const identity_matrix<T> const_self_type;
         typedef identity_matrix<T> self_type;
+    public:
 #ifndef BOOST_UBLAS_CT_REFERENCE_BASE_TYPEDEFS
-        typedef const matrix_const_reference<const_self_type> const_closure_type;
+        typedef const matrix_const_reference<const self_type> const_closure_type;
 #else
-        typedef const matrix_reference<const_self_type> const_closure_type;
+        typedef const matrix_reference<const self_type> const_closure_type;
 #endif
         typedef matrix_reference<self_type> closure_type;
-        typedef size_type const_iterator_type;
         typedef packed_tag storage_category;
         typedef unknown_orientation_tag orientation_category;
 
@@ -2006,15 +2034,15 @@ namespace boost { namespace numeric { namespace ublas {
         // Element access
         BOOST_UBLAS_INLINE
         const_reference operator () (size_type i, size_type j) const {
-            return i == j ? one_ : zero_;
+            if (i == j)
+                return one_;
+            else
+                return zero_;
         }
 
         // Assignment
         BOOST_UBLAS_INLINE
         identity_matrix &operator = (const identity_matrix &m) {
-            // Precondition for container relaxed as requested during review.
-            BOOST_UBLAS_CHECK (size1_ == m.size1_, bad_size ());
-            BOOST_UBLAS_CHECK (size2_ == m.size2_, bad_size ());
             size1_ = m.size1_;
             size2_ = m.size2_;
             return *this;
@@ -2028,12 +2056,7 @@ namespace boost { namespace numeric { namespace ublas {
         // Swapping
         BOOST_UBLAS_INLINE
         void swap (identity_matrix &m) {
-            // Too unusual semantic.
-            // BOOST_UBLAS_CHECK (this != &m, external_logic ());
             if (this != &m) {
-                // Precondition for container relaxed as requested during review.
-                // BOOST_UBLAS_CHECK (size1_ == m.size1_, bad_size ());
-                // BOOST_UBLAS_CHECK (size2_ == m.size2_, bad_size ());
                 std::swap (size1_, m.size1_);
                 std::swap (size2_, m.size2_);
             }
@@ -2045,6 +2068,12 @@ namespace boost { namespace numeric { namespace ublas {
         }
 #endif
 
+        // Iterator types
+    private:
+        // Use an index
+        typedef size_type const_iterator_type;
+
+    public:
 #ifdef BOOST_UBLAS_USE_INDEXED_ITERATOR
         typedef indexed_const_iterator1<self_type, packed_random_access_iterator_tag> iterator1;
         typedef indexed_const_iterator2<self_type, packed_random_access_iterator_tag> iterator2;
@@ -2066,21 +2095,20 @@ namespace boost { namespace numeric { namespace ublas {
         BOOST_UBLAS_INLINE
         const_iterator1 find1 (int rank, size_type i, size_type j) const {
             if (rank == 1) {
-                i = std::max (i, j);
-                i = std::min (i, j + 1);
+                i = (std::max) (i, j);
+                i = (std::min) (i, j + 1);
             }
             return const_iterator1 (*this, i, j);
         }
         BOOST_UBLAS_INLINE
         const_iterator2 find2 (int rank, size_type i, size_type j) const {
             if (rank == 1) {
-                j = std::max (j, i);
-                j = std::min (j, i + 1);
+                j = (std::max) (j, i);
+                j = (std::min) (j, i + 1);
             }
             return const_iterator2 (*this, i, j);
         }
 
-        // Iterators simply are indices.
 
 #ifndef BOOST_UBLAS_USE_INDEXED_ITERATOR
         class const_iterator1:
@@ -2092,8 +2120,8 @@ namespace boost { namespace numeric { namespace ublas {
 #ifdef BOOST_MSVC_STD_ITERATOR
             typedef const_reference reference;
 #else
-            typedef typename identity_matrix::difference_type difference_type;
             typedef typename identity_matrix::value_type value_type;
+            typedef typename identity_matrix::difference_type difference_type;
             typedef typename identity_matrix::const_reference reference;
             typedef typename identity_matrix::const_pointer pointer;
 #endif
@@ -2138,7 +2166,7 @@ namespace boost { namespace numeric { namespace ublas {
 
             // Dereference
             BOOST_UBLAS_INLINE
-            reference operator * () const {
+            const_reference operator * () const {
                 BOOST_UBLAS_CHECK (index1 () < (*this) ().size1 (), bad_index ());
                 BOOST_UBLAS_CHECK (index2 () < (*this) ().size2 (), bad_index ());
                 return (*this) () (index1 (), index2 ());
@@ -2237,8 +2265,8 @@ namespace boost { namespace numeric { namespace ublas {
 #ifdef BOOST_MSVC_STD_ITERATOR
             typedef const_reference reference;
 #else
-            typedef typename identity_matrix::difference_type difference_type;
             typedef typename identity_matrix::value_type value_type;
+            typedef typename identity_matrix::difference_type difference_type;
             typedef typename identity_matrix::const_reference reference;
             typedef typename identity_matrix::const_pointer pointer;
 #endif
@@ -2283,7 +2311,7 @@ namespace boost { namespace numeric { namespace ublas {
 
             // Dereference
             BOOST_UBLAS_INLINE
-            reference operator * () const {
+            const_reference operator * () const {
                 BOOST_UBLAS_CHECK (index1 () < (*this) ().size1 (), bad_index ());
                 BOOST_UBLAS_CHECK (index2 () < (*this) ().size2 (), bad_index ());
                 return (*this) () (index1 (), index2 ());
@@ -2395,16 +2423,22 @@ namespace boost { namespace numeric { namespace ublas {
     private:
         size_type size1_;
         size_type size2_;
-        static value_type zero_;
-        static value_type one_;
+        static const value_type zero_;
+        static const value_type one_;
     };
 
     template<class T>
-    typename identity_matrix<T>::value_type identity_matrix<T>::zero_ =
-        identity_matrix<T>::value_type ();
+    const typename identity_matrix<T>::value_type identity_matrix<T>::zero_
+#ifdef BOOST_UBLAS_STATIC_OLD_INIT
+        = BOOST_UBLAS_TYPENAME identity_matrix<T>::value_type
+#endif
+        (0);
     template<class T>
-    typename identity_matrix<T>::value_type identity_matrix<T>::one_ =
-        identity_matrix<T>::value_type (1);
+    const typename identity_matrix<T>::value_type identity_matrix<T>::one_
+#ifdef BOOST_UBLAS_STATIC_OLD_INIT
+        = BOOST_UBLAS_TYPENAME identity_matrix<T>::value_type
+#endif
+        (1);
 
     // Zero matrix class
     template<class T>
@@ -2417,20 +2451,18 @@ namespace boost { namespace numeric { namespace ublas {
         typedef std::size_t size_type;
         typedef std::ptrdiff_t difference_type;
         typedef T value_type;
-        // typedef const T &const_reference;
-        typedef typename type_traits<T>::const_reference const_reference;
+        typedef const T &const_reference;
         typedef T &reference;
+    private:
         typedef const T *const_pointer;
-        typedef T *pointer;
-        typedef const zero_matrix<T> const_self_type;
         typedef zero_matrix<T> self_type;
+    public:
 #ifndef BOOST_UBLAS_CT_REFERENCE_BASE_TYPEDEFS
-        typedef const matrix_const_reference<const_self_type> const_closure_type;
+        typedef const matrix_const_reference<const self_type> const_closure_type;
 #else
-        typedef const matrix_reference<const_self_type> const_closure_type;
+        typedef const matrix_reference<const self_type> const_closure_type;
 #endif
         typedef matrix_reference<self_type> closure_type;
-        typedef size_type const_iterator_type;
         typedef sparse_tag storage_category;
         typedef unknown_orientation_tag orientation_category;
 
@@ -2483,9 +2515,6 @@ namespace boost { namespace numeric { namespace ublas {
         // Assignment
         BOOST_UBLAS_INLINE
         zero_matrix &operator = (const zero_matrix &m) {
-            // Precondition for container relaxed as requested during review.
-            // BOOST_UBLAS_CHECK (size1_ == m.size1_, bad_size ());
-            // BOOST_UBLAS_CHECK (size2_ == m.size2_, bad_size ());
             size1_ = m.size1_;
             size2_ = m.size2_;
             return *this;
@@ -2499,12 +2528,7 @@ namespace boost { namespace numeric { namespace ublas {
         // Swapping
         BOOST_UBLAS_INLINE
         void swap (zero_matrix &m) {
-            // Too unusual semantic.
-            // BOOST_UBLAS_CHECK (this != &m, external_logic ());
             if (this != &m) {
-                // Precondition for container relaxed as requested during review.
-                // BOOST_UBLAS_CHECK (size1_ == m.size1_, bad_size ());
-                // BOOST_UBLAS_CHECK (size2_ == m.size2_, bad_size ());
                 std::swap (size1_, m.size1_);
                 std::swap (size2_, m.size2_);
             }
@@ -2516,6 +2540,11 @@ namespace boost { namespace numeric { namespace ublas {
         }
 #endif
 
+        // Iterator types
+    private:
+        // Use an index
+        typedef size_type const_iterator_type;
+    public:
 #ifdef BOOST_UBLAS_USE_INDEXED_ITERATOR
         typedef indexed_const_iterator1<self_type, sparse_bidirectional_iterator_tag> iterator1;
         typedef indexed_const_iterator2<self_type, sparse_bidirectional_iterator_tag> iterator2;
@@ -2547,7 +2576,6 @@ namespace boost { namespace numeric { namespace ublas {
             return const_iterator2 (*this, i, j);
         }
 
-        // Iterators simply are indices.
 
 #ifndef BOOST_UBLAS_USE_INDEXED_ITERATOR
         class const_iterator1:
@@ -2559,8 +2587,8 @@ namespace boost { namespace numeric { namespace ublas {
 #ifdef BOOST_MSVC_STD_ITERATOR
             typedef const_reference reference;
 #else
-            typedef typename zero_matrix::difference_type difference_type;
             typedef typename zero_matrix::value_type value_type;
+            typedef typename zero_matrix::difference_type difference_type;
             typedef typename zero_matrix::const_reference reference;
             typedef typename zero_matrix::const_pointer pointer;
 #endif
@@ -2605,7 +2633,7 @@ namespace boost { namespace numeric { namespace ublas {
 
             // Dereference
             BOOST_UBLAS_INLINE
-            reference operator * () const {
+            const_reference operator * () const {
                 BOOST_UBLAS_CHECK (index1 () < (*this) ().size1 (), bad_index ());
                 BOOST_UBLAS_CHECK (index2 () < (*this) ().size2 (), bad_index ());
                 return (*this) () (index1 (), index2 ());
@@ -2698,8 +2726,8 @@ namespace boost { namespace numeric { namespace ublas {
 #ifdef BOOST_MSVC_STD_ITERATOR
             typedef const_reference reference;
 #else
-            typedef typename zero_matrix::difference_type difference_type;
             typedef typename zero_matrix::value_type value_type;
+            typedef typename zero_matrix::difference_type difference_type;
             typedef typename zero_matrix::const_reference reference;
             typedef typename zero_matrix::const_pointer pointer;
 #endif
@@ -2744,7 +2772,7 @@ namespace boost { namespace numeric { namespace ublas {
 
             // Dereference
             BOOST_UBLAS_INLINE
-            reference operator * () const {
+            const_reference operator * () const {
                 BOOST_UBLAS_CHECK (index1 () < (*this) ().size1 (), bad_index ());
                 BOOST_UBLAS_CHECK (index2 () < (*this) ().size2 (), bad_index ());
                 return (*this) () (index1 (), index2 ());
@@ -2856,12 +2884,15 @@ namespace boost { namespace numeric { namespace ublas {
     private:
         size_type size1_;
         size_type size2_;
-        static value_type zero_;
+        static const value_type zero_;
     };
 
     template<class T>
-    typename zero_matrix<T>::value_type zero_matrix<T>::zero_ =
-        zero_matrix<T>::value_type ();
+    const typename zero_matrix<T>::value_type zero_matrix<T>::zero_
+#ifdef BOOST_UBLAS_STATIC_OLD_INIT
+        = BOOST_UBLAS_TYPENAME zero_matrix<T>::value_type
+#endif
+        (0);
 
     // Scalar matrix class
     template<class T>
@@ -2874,19 +2905,17 @@ namespace boost { namespace numeric { namespace ublas {
         typedef std::size_t size_type;
         typedef std::ptrdiff_t difference_type;
         typedef T value_type;
-        // typedef const T &const_reference;
-        typedef typename type_traits<T>::const_reference const_reference;
+        typedef const T &const_reference;
         typedef T &reference;
+    private:
         typedef const T *const_pointer;
-        typedef T *pointer;
-        typedef const scalar_matrix<T> const_self_type;
         typedef scalar_matrix<T> self_type;
+    public:
 #ifndef BOOST_UBLAS_CT_REFERENCE_BASE_TYPEDEFS
-        typedef const matrix_const_reference<const_self_type> const_closure_type;
+        typedef const matrix_const_reference<const self_type> const_closure_type;
 #else
-        typedef const matrix_reference<const_self_type> const_closure_type;
+        typedef const matrix_reference<const self_type> const_closure_type;
 #endif
-        typedef size_type const_iterator_type;
         typedef dense_tag storage_category;
         typedef unknown_orientation_tag orientation_category;
 
@@ -2896,7 +2925,7 @@ namespace boost { namespace numeric { namespace ublas {
             matrix_expression<self_type> (),
             size1_ (0), size2_ (0), value_ () {}
         BOOST_UBLAS_INLINE
-        scalar_matrix (size_type size1, size_type size2, const value_type &value):
+        scalar_matrix (size_type size1, size_type size2, const value_type &value = value_type(1)):
             matrix_expression<self_type> (),
             size1_ (size1), size2_ (size2), value_ (value) {}
         BOOST_UBLAS_INLINE
@@ -2930,9 +2959,6 @@ namespace boost { namespace numeric { namespace ublas {
         // Assignment
         BOOST_UBLAS_INLINE
         scalar_matrix &operator = (const scalar_matrix &m) {
-            // Precondition for container relaxed as requested during review.
-            // BOOST_UBLAS_CHECK (size1_ == m.size1_, bad_size ());
-            // BOOST_UBLAS_CHECK (size2_ == m.size2_, bad_size ());
             size1_ = m.size1_;
             size2_ = m.size2_;
             value_ = m.value_;
@@ -2947,12 +2973,7 @@ namespace boost { namespace numeric { namespace ublas {
         // Swapping
         BOOST_UBLAS_INLINE
         void swap (scalar_matrix &m) {
-            // Too unusual semantic.
-            // BOOST_UBLAS_CHECK (this != &m, external_logic ());
             if (this != &m) {
-                // Precondition for container relaxed as requested during review.
-                // BOOST_UBLAS_CHECK (size1_ == m.size1_, bad_size ());
-                // BOOST_UBLAS_CHECK (size2_ == m.size2_, bad_size ());
                 std::swap (size1_, m.size1_);
                 std::swap (size2_, m.size2_);
                 std::swap (value_, m.value_);
@@ -2965,6 +2986,12 @@ namespace boost { namespace numeric { namespace ublas {
         }
 #endif
 
+        // Iterator types
+    private:
+        // Use an index
+        typedef size_type const_iterator_type;
+
+    public:
 #ifdef BOOST_UBLAS_USE_INDEXED_ITERATOR
         typedef indexed_const_iterator1<self_type, dense_random_access_iterator_tag> iterator1;
         typedef indexed_const_iterator2<self_type, dense_random_access_iterator_tag> iterator2;
@@ -2992,7 +3019,6 @@ namespace boost { namespace numeric { namespace ublas {
             return const_iterator2 (*this, i, j);
         }   
 
-        // Iterators simply are indices.
 
 #ifndef BOOST_UBLAS_USE_INDEXED_ITERATOR
         class const_iterator1:
@@ -3004,8 +3030,8 @@ namespace boost { namespace numeric { namespace ublas {
 #ifdef BOOST_MSVC_STD_ITERATOR
             typedef const_reference reference;
 #else
-            typedef typename scalar_matrix::difference_type difference_type;
             typedef typename scalar_matrix::value_type value_type;
+            typedef typename scalar_matrix::difference_type difference_type;
             typedef typename scalar_matrix::const_reference reference;
             typedef typename scalar_matrix::const_pointer pointer;
 #endif
@@ -3050,7 +3076,7 @@ namespace boost { namespace numeric { namespace ublas {
 
             // Dereference
             BOOST_UBLAS_INLINE
-            reference operator * () const {
+            const_reference operator * () const {
                 BOOST_UBLAS_CHECK (index1 () < (*this) ().size1 (), bad_index ());
                 BOOST_UBLAS_CHECK (index2 () < (*this) ().size2 (), bad_index ());
                 return (*this) () (index1 (), index2 ());
@@ -3149,8 +3175,8 @@ namespace boost { namespace numeric { namespace ublas {
 #ifdef BOOST_MSVC_STD_ITERATOR
             typedef const_reference reference;
 #else
-            typedef typename scalar_matrix::difference_type difference_type;
             typedef typename scalar_matrix::value_type value_type;
+            typedef typename scalar_matrix::difference_type difference_type;
             typedef typename scalar_matrix::const_reference reference;
             typedef typename scalar_matrix::const_pointer pointer;
 #endif
@@ -3195,7 +3221,7 @@ namespace boost { namespace numeric { namespace ublas {
 
             // Dereference
             BOOST_UBLAS_INLINE
-            reference operator * () const {
+            const_reference operator * () const {
                 BOOST_UBLAS_CHECK (index1 () < (*this) ().size1 (), bad_index ());
                 BOOST_UBLAS_CHECK (index2 () < (*this) ().size2 (), bad_index ());
                 return (*this) () (index1 (), index2 ());
@@ -3318,54 +3344,50 @@ namespace boost { namespace numeric { namespace ublas {
 #ifndef BOOST_UBLAS_NO_PROXY_SHORTCUTS
         BOOST_UBLAS_USING matrix_expression<c_matrix<T, N, M> >::operator ();
 #endif
-        typedef concrete_tag simd_category;
         typedef std::size_t size_type;
         typedef std::ptrdiff_t difference_type;
         typedef T value_type;
-        // typedef const T &const_reference;
-        typedef typename type_traits<T>::const_reference const_reference;
+        typedef const T &const_reference;
         typedef T &reference;
         typedef const T *const_pointer;
         typedef T *pointer;
-        typedef const c_matrix<T, N, M> const_self_type;
+    private:
         typedef c_matrix<T, N, M> self_type;
+    public:
 #ifndef BOOST_UBLAS_CT_REFERENCE_BASE_TYPEDEFS
-        typedef const matrix_const_reference<const_self_type> const_closure_type;
+        typedef const matrix_const_reference<const self_type> const_closure_type;
 #else
-        typedef const matrix_reference<const_self_type> const_closure_type;
+        typedef const matrix_reference<const self_type> const_closure_type;
 #endif
         typedef matrix_reference<self_type> closure_type;
-        typedef const T *const_iterator_type;
-        typedef T *iterator_type;
+        typedef c_vector<T, N * M> vector_temporary_type;     // vector able to store all elements of c_matrix
+        typedef self_type matrix_temporary_type;
         typedef dense_tag storage_category;
         // This could be better for performance,
         // typedef typename unknown_orientation_tag orientation_category;
         // but others depend on the orientation information...
         typedef row_major_tag orientation_category;
+        typedef concrete_tag simd_category;
 
         // Construction and destruction
         BOOST_UBLAS_INLINE
         c_matrix ():
             size1_ (N), size2_ (M) /* , data_ () */ {
             for (size_type i = 0; i < size1_; ++ i)
-                std::fill (data_ [i], data_ [i] + size2_, value_type ());
+                std::fill (data_ [i], data_ [i] + size2_, value_type (0));
         }
         BOOST_UBLAS_INLINE
         c_matrix (size_type size1, size_type size2):
             size1_ (size1), size2_ (size2) /* , data_ () */ {
             if (size1_ > N || size2_ > M)
-                // Raising exceptions abstracted as requested during review.
-                // throw std::bad_alloc ();
                 bad_size ().raise ();
             for (size_type i = 0; i < size1_; ++ i)
-                std::fill (data_ [i], data_ [i] + size2_, value_type ());
+                std::fill (data_ [i], data_ [i] + size2_, value_type (0));
         }
         BOOST_UBLAS_INLINE
         c_matrix (const c_matrix &m):
             size1_ (m.size1_), size2_ (m.size2_) /* , data_ () */ {
             if (size1_ > N || size2_ > M)
-                // Raising exceptions abstracted as requested during review.
-                // throw std::bad_alloc ();
                 bad_size ().raise ();
             *this = m;
         }
@@ -3374,8 +3396,6 @@ namespace boost { namespace numeric { namespace ublas {
         c_matrix (const matrix_expression<AE> &ae):
             size1_ (ae ().size1 ()), size2_ (ae ().size2 ()) /* , data_ () */ {
             if (size1_ > N || size2_ > M)
-                // Raising exceptions abstracted as requested during review.
-                // throw std::bad_alloc ();
                 bad_size ().raise ();
             matrix_assign (scalar_assign<reference, BOOST_UBLAS_TYPENAME AE::value_type> (), *this, ae);
         }
@@ -3402,12 +3422,23 @@ namespace boost { namespace numeric { namespace ublas {
         BOOST_UBLAS_INLINE
         void resize (size_type size1, size_type size2, bool preserve = true) {
             if (size1 > N || size2 > M)
-                // Raising exceptions abstracted as requested during review.
-                // throw std::bad_alloc ();
                 bad_size ().raise ();
-            // The content of the array is intentionally not copied.
-            size1_ = size1;
-            size2_ = size2;
+            if (preserve) {
+                self_type temporary (size1, size2);
+                // Common elements to preserve
+                const size_type size1_min = (std::min) (size1, size1_);
+                const size_type size2_min = (std::min) (size2, size2_);
+                for (size_type i = 0; i != size1_min; ++i) {    // indexing copy over major
+                    for (size_type j = 0; j != size2_min; ++j) {
+                        temporary.data_[i][j] = data_[i][j];
+                    }
+                }
+                assign_temporary (temporary);
+            }
+            else {
+                size1_ = size1;
+                size2_ = size2;
+            }
         }
 
         // Element access
@@ -3427,9 +3458,6 @@ namespace boost { namespace numeric { namespace ublas {
         // Assignment
         BOOST_UBLAS_INLINE
         c_matrix &operator = (const c_matrix &m) {
-            // Precondition for container relaxed as requested during review.
-            // BOOST_UBLAS_CHECK (size1_ == m.size1_, bad_size ());
-            // BOOST_UBLAS_CHECK (size2_ == m.size2_, bad_size ());
             size1_ = m.size1_;
             size2_ = m.size2_;
             for (size_type i = 0; i < m.size1_; ++ i)
@@ -3444,19 +3472,8 @@ namespace boost { namespace numeric { namespace ublas {
         template<class AE>
         BOOST_UBLAS_INLINE
         c_matrix &operator = (const matrix_expression<AE> &ae) { 
-#ifdef BOOST_UBLAS_MUTABLE_TEMPORARY
-            return assign_temporary (self_type (ae));
-#else
             // return assign (self_type (ae));
             self_type temporary (ae);
-            return assign_temporary (temporary);
-#endif
-        }
-        template<class AE>
-        BOOST_UBLAS_INLINE
-        c_matrix &reset (const matrix_expression<AE> &ae) {
-            self_type temporary (ae);
-            resize (temporary.size1 (), temporary.size2 (), false);
             return assign_temporary (temporary);
         }
         template<class AE>
@@ -3468,13 +3485,9 @@ namespace boost { namespace numeric { namespace ublas {
         template<class AE>
         BOOST_UBLAS_INLINE
         c_matrix& operator += (const matrix_expression<AE> &ae) {
-#ifdef BOOST_UBLAS_MUTABLE_TEMPORARY
-            return assign_temporary (self_type (*this + ae));
-#else
             // return assign (self_type (*this + ae));
             self_type temporary (*this + ae);
             return assign_temporary (temporary);
-#endif
         }
         template<class AE>
         BOOST_UBLAS_INLINE
@@ -3485,13 +3498,9 @@ namespace boost { namespace numeric { namespace ublas {
         template<class AE>
         BOOST_UBLAS_INLINE
         c_matrix& operator -= (const matrix_expression<AE> &ae) {
-#ifdef BOOST_UBLAS_MUTABLE_TEMPORARY
-            return assign_temporary (self_type (*this - ae));
-#else
             // return assign (self_type (*this - ae));
             self_type temporary (*this - ae);
             return assign_temporary (temporary);
-#endif
         }
         template<class AE>
         BOOST_UBLAS_INLINE
@@ -3515,8 +3524,6 @@ namespace boost { namespace numeric { namespace ublas {
         // Swapping
         BOOST_UBLAS_INLINE
         void swap (c_matrix &m) {
-            // Too unusual semantic.
-            // BOOST_UBLAS_CHECK (this != &m, external_logic ());
             if (this != &m) {
                 BOOST_UBLAS_CHECK (size1_ == m.size1_, bad_size ());
                 BOOST_UBLAS_CHECK (size2_ == m.size2_, bad_size ());
@@ -3538,21 +3545,28 @@ namespace boost { namespace numeric { namespace ublas {
         void insert (size_type i, size_type j, const_reference t) {
             BOOST_UBLAS_CHECK (i < size1_, bad_index ());
             BOOST_UBLAS_CHECK (j < size2_, bad_index ());
-            BOOST_UBLAS_CHECK (data_ [i] [j] == value_type (), bad_index ());
+            BOOST_UBLAS_CHECK (data_ [i] [j] == value_type (0), bad_index ());
             data_ [i] [j] = t;
         }
         BOOST_UBLAS_INLINE
         void erase (size_type i, size_type j) {
             BOOST_UBLAS_CHECK (i < size1_, bad_index ());
             BOOST_UBLAS_CHECK (j < size2_, bad_index ());
-            data_ [i] [j] = value_type ();
+            data_ [i] [j] = value_type (0);
         }
         BOOST_UBLAS_INLINE
         void clear () {
             for (size_type i = 0; i < size1_; ++ i)
-                std::fill (data_ [i], data_ [i] + size2_, value_type ());
+                std::fill (data_ [i], data_ [i] + size2_, value_type (0));
         }
 
+        // Iterator types
+    private:
+        // Use pointers for iterator
+        typedef const_pointer const_iterator_type;
+        typedef pointer iterator_type;
+
+    public:
 #ifdef BOOST_UBLAS_USE_INDEXED_ITERATOR
         typedef indexed_iterator1<self_type, dense_random_access_iterator_tag> iterator1;
         typedef indexed_iterator2<self_type, dense_random_access_iterator_tag> iterator2;
@@ -3610,7 +3624,6 @@ namespace boost { namespace numeric { namespace ublas {
 #endif
         }
 
-        // Iterators simply are pointers.
 
 #ifndef BOOST_UBLAS_USE_INDEXED_ITERATOR
         class const_iterator1:
@@ -3670,7 +3683,7 @@ namespace boost { namespace numeric { namespace ublas {
 
             // Dereference
             BOOST_UBLAS_INLINE
-            reference operator * () const {
+            const_reference operator * () const {
                 BOOST_UBLAS_CHECK (index1 () < (*this) ().size1 (), bad_index ());
                 BOOST_UBLAS_CHECK (index2 () < (*this) ().size2 (), bad_index ());
                 return *it_;
@@ -3955,7 +3968,7 @@ namespace boost { namespace numeric { namespace ublas {
 
             // Dereference
             BOOST_UBLAS_INLINE
-            reference operator * () const {
+            const_reference operator * () const {
                 BOOST_UBLAS_CHECK (index1 () < (*this) ().size1 (), bad_index ());
                 BOOST_UBLAS_CHECK (index2 () < (*this) ().size2 (), bad_index ());
                 return *it_;
@@ -4229,23 +4242,3 @@ namespace boost { namespace numeric { namespace ublas {
 }}}
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

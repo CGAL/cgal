@@ -40,7 +40,7 @@ struct is_polymorphic_imp1
       // for some reason this messes up VC++ when T has virtual bases,
       // probably likewise for compilers that use the same ABI:
       struct unique{};
-      virtual void foo(unique*);
+      virtual void unique_name_to_boost5487629(unique*);
 #  endif
       char padding[256];
    };

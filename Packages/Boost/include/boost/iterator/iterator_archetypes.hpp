@@ -1,8 +1,7 @@
-// (C) Copyright Jeremy Siek 2002. Permission to copy, use, modify,
-// sell and distribute this software is granted provided this
-// copyright notice appears in all copies. This software is provided
-// "as is" without express or implied warranty, and with no claim as
-// to its suitability for any purpose.
+// (C) Copyright Jeremy Siek 2002.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 
 #ifndef BOOST_ITERATOR_ARCHETYPES_HPP
 #define BOOST_ITERATOR_ARCHETYPES_HPP
@@ -26,7 +25,7 @@
 #include <boost/mpl/int.hpp>
 #include <boost/mpl/equal_to.hpp>
 #include <boost/mpl/if.hpp>
-#include <boost/mpl/apply_if.hpp>
+#include <boost/mpl/eval_if.hpp>
 #include <boost/mpl/and.hpp>
 #include <boost/mpl/identity.hpp>
 
@@ -121,9 +120,9 @@ namespace detail
   template <class Value, class AccessCategory, class TraversalCategory>
   struct operator_brackets
     : mpl::aux::msvc_eti_base<
-          typename mpl::apply_if<
+          typename mpl::eval_if<
               is_convertible<TraversalCategory, random_access_traversal_tag>
-            , mpl::apply_if<
+            , mpl::eval_if<
                   iterator_archetypes::has_access<
                       AccessCategory
                     , iterator_archetypes::writable_iterator_t
@@ -418,7 +417,7 @@ namespace detail
       
       typedef typename detail::facade_iterator_category<
           TraversalCategory
-        , typename mpl::apply_if<
+        , typename mpl::eval_if<
               iterator_archetypes::has_access<
                   AccessCategory, iterator_archetypes::writable_iterator_t
               >

@@ -47,7 +47,7 @@ namespace boost {
       typedef graph_traits<Graph> Traits;
       typename Traits::vertex_descriptor p;
       typedef typename Traits::degree_size_type size_type;
-      size_type delta = std::numeric_limits<size_type>::max();
+      size_type delta = (std::numeric_limits<size_type>::max)();
 
       typename Traits::vertex_iterator i, iend;
       for (tie(i, iend) = vertices(g); i != iend; ++i)

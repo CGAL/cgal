@@ -1,6 +1,6 @@
 // Boost.Signals library
 
-// Copyright Doug Gregor 2001-2003. Use, modification and
+// Copyright Douglas Gregor 2001-2004. Use, modification and
 // distribution is subject to the Boost Software License, Version
 // 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -38,6 +38,12 @@ namespace boost {
           { return obj == other.obj && data == other.data; }
         bool operator<(const bound_object& other) const
           { return obj < other.obj; }
+
+        // To support intel 80 compiler, 2004/03/18 (Mark Rodgers)
+        bool operator!=(const bound_object& other) const
+        { return !(*this==other); }
+        bool operator>(const bound_object& other) const
+        { return !(*this < other); }
       };
 
       // Describes the connection between a signal and the objects that are
@@ -70,18 +76,23 @@ namespace boost {
       bool connected() const { return con.get() && con->signal_disconnect; }
 
       // Comparison of connections
-      inline bool operator==(const connection& other) const;
-      inline bool operator<(const connection& other) const;
+      bool operator==(const connection& other) const;
+      bool operator<(const connection& other) const;
 
       // Connection assignment
       connection& operator=(const connection& other) ;
 
       // Swap connections
-      inline void swap(connection& other);
+      void swap(connection& other);
 
     public: // TBD: CHANGE THIS
       // Set whether this connection object is controlling or not
-      void set_controlling() { controlling_connection = true; }
+      void set_controlling(bool control = true) 
+      { controlling_connection = control; }
+
+      shared_ptr<BOOST_SIGNALS_NAMESPACE::detail::basic_connection>
+      get_connection() const 
+      { return con; }
 
     private:
       friend class detail::signal_base_impl;
@@ -123,104 +134,6 @@ namespace boost {
       bool released;
     };
 
-    inline connection::connection(const connection& other) :
-      con(other.con), controlling_connection(other.controlling_connection)
-    {
-    }
-
-    inline connection::~connection()
-    {
-      if (controlling_connection) {
-        disconnect();
-      }
-    }
-
-    inline void
-    connection::reset(BOOST_SIGNALS_NAMESPACE::detail::basic_connection* new_con)
-    {
-      con.reset(new_con);
-    }
-
-    inline bool connection::operator==(const connection& other) const
-    {
-      return con.get() == other.con.get();
-    }
-
-    inline bool connection::operator<(const connection& other) const
-    {
-      return con.get() < other.con.get();
-    }
-
-    inline connection& connection::operator=(const connection& other)
-    {
-      connection(other).swap(*this);
-      return *this;
-    }
-
-    inline void connection::swap(connection& other)
-    {
-      this->con.swap(other.con);
-      std::swap(this->controlling_connection, other.controlling_connection);
-    }
-
-    inline void swap(connection& c1, connection& c2)
-    {
-      c1.swap(c2);
-    }
-
-    inline scoped_connection::scoped_connection(const connection& other) :
-      connection(other),
-      released(false)
-    {
-    }
-
-    inline
-    scoped_connection::scoped_connection(const scoped_connection& other) :
-      connection(other),
-      released(other.released)
-    {
-    }
-
-    inline scoped_connection::~scoped_connection()
-    {
-      if (!released) {
-        this->disconnect();
-      }
-    }
-
-    inline connection scoped_connection::release()
-    {
-      released = true;
-      return *this;
-    }
-
-    inline void scoped_connection::swap(scoped_connection& other)
-    {
-      this->connection::swap(other);
-      bool other_released = other.released;
-      other.released = this->released;
-      this->released = other_released;
-    }
-
-    inline void swap(scoped_connection& c1, scoped_connection& c2)
-    {
-      c1.swap(c2);
-    }
-
-    inline scoped_connection&
-    scoped_connection::operator=(const connection& other)
-    {
-      scoped_connection(other).swap(*this);
-      return *this;
-    }
-
-    inline scoped_connection&
-    scoped_connection::operator=(const scoped_connection& other)
-    {
-      scoped_connection(other).swap(*this);
-      return *this;
-    }
-
     namespace detail {
       struct connection_slot_pair {
         connection first;
@@ -240,12 +153,12 @@ namespace boost {
 
       // Determines if the underlying connection is disconnected
       struct is_disconnected {
-        typedef std::pair<const any, connection_slot_pair> argument_type;
+        typedef connection_slot_pair argument_type;
         typedef bool result_type;
 
         inline bool operator()(const argument_type& c) const
         {
-          return !c.second.first.connected();
+          return !c.first.connected();
         }
       };
 

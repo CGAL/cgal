@@ -1,8 +1,8 @@
-//  (C) Copyright Gennadiy Rozental 2001-2003.
+//  (C) Copyright Gennadiy Rozental 2001-2004.
 //  (C) Copyright Beman Dawes 2001.
-//  Use, modification, and distribution are subject to the 
-//  Boost Software License, Version 1.0. (See accompanying file 
-//  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//  Distributed under the Boost Software License, Version 1.0.
+//  (See accompanying file LICENSE_1_0.txt or copy at 
+//  http://www.boost.org/LICENSE_1_0.txt)
 
 //  See http://www.boost.org/libs/test for the library home page.
 //
@@ -29,8 +29,8 @@
 //  design presented here.
 // ***************************************************************************
 
-#ifndef BOOST_EXECUTION_MONITOR_HPP
-#define BOOST_EXECUTION_MONITOR_HPP
+#ifndef BOOST_EXECUTION_MONITOR_HPP_071894GER
+#define BOOST_EXECUTION_MONITOR_HPP_071894GER
 
 // BOOST TEST
 #include <boost/test/detail/unit_test_config.hpp>
@@ -38,6 +38,7 @@
 // BOOST
 #include <boost/scoped_ptr.hpp>
 #include <boost/type.hpp>
+#include <boost/cstdlib.hpp>
 
 namespace boost {
 
@@ -67,7 +68,7 @@ protected:
     boost::scoped_ptr<translate_exception_base> m_next;
 };
 
-}
+} // namespace detail
 
 // ************************************************************************** //
 // **************              execution_exception             ************** //
@@ -76,7 +77,7 @@ protected:
 //  design rationale: fear of being out (or nearly out) of memory.
     
 class execution_exception {
-    typedef unit_test_framework::c_string_literal c_string_literal;
+    typedef boost::unit_test::const_string const_string;
 public:
     enum error_code {
         //  These values are sometimes used as program return codes.
@@ -107,17 +108,17 @@ public:
     };
     
     // Constructor
-    execution_exception( error_code ec_, c_string_literal what_msg_ ) // max length 256 inc '\0'
+    execution_exception( error_code ec_, const_string what_msg_ ) // max length 256 inc '\0'
     : m_error_code( ec_ ), m_what( what_msg_ ) {}
 
     // access methods
-    error_code          code() const { return m_error_code; }
-    c_string_literal    what() const { return m_what; }
+    error_code      code() const { return m_error_code; }
+    const_string    what() const { return m_what; }
 
 private:
     // Data members
-    error_code          m_error_code;
-    c_string_literal    m_what;
+    error_code      m_error_code;
+    const_string    m_what;
 }; // execution_exception
 
 // ************************************************************************** //
@@ -184,7 +185,7 @@ public:
         catch( Exception const& e )
         {
             m_translator( e );
-            return true;
+            return boost::exit_exception_failure;
         }
     }
 
@@ -209,14 +210,25 @@ execution_monitor::register_exception_translator( ExceptionTranslator const& tr,
 //  Revision History :
 //  
 //  $Log$
-//  Revision 1.1  2004/05/23 10:51:33  spion
-//  Initial revision
+//  Revision 1.1.1.2  2004/11/20 10:52:13  spion
+//  Import of Boost v. 1.32.0
+//
+//  Revision 1.18  2004/07/19 12:13:25  rogeeff
+//  guard rename
+//
+//  Revision 1.17  2004/06/07 07:33:49  rogeeff
+//  detail namespace renamed
+//
+//  Revision 1.16  2004/05/21 06:19:35  rogeeff
+//  licence update
+//
+//  Revision 1.15  2004/05/11 11:00:34  rogeeff
+//  basic_cstring introduced and used everywhere
+//  class properties reworked
 //
 //  Revision 1.14  2003/12/01 00:41:56  rogeeff
 //  prerelease cleaning
 //
-
 // ***************************************************************************
 
 #endif
-

@@ -1,6 +1,7 @@
 //=======================================================================
 // Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
-// Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek
+// Copyright 2004 The Trustees of Indiana University.
+// Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek, Douglas Gregor
 //
 // This file is part of the Boost Graph Library
 //
@@ -26,7 +27,7 @@
 #define BOOST_GRAPH_LEDA_HPP
 
 #include <boost/config.hpp>
-#include <boost/iterator_adaptors.hpp>
+#include <boost/iterator/iterator_facade.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
 
@@ -46,100 +47,6 @@
 
 // Warning: this implementation is in alpha and has not been tested
 
-namespace boost {
-  
-  struct leda_out_edge_iterator_policies
-  {
-    static void initialize(leda_edge& ) { }
-
-    template <typename Iter>
-    static void increment(Iter& i)
-    { i.base() = Succ_Adj_Edge(i.base(), 0); }
-
-    template <typename Iter>
-    static void decrement(Iter& i)
-    { i.base() = Pred_Adj_Edge(i.base(), 0); }
-
-    template <typename Iter>
-    static leda_edge dereference(const Iter& i)
-    { return i.base(); }
-
-    template <typename Iter>
-    static bool equal(const Iter& x, const Iter& y)
-    { return x.base() == y.base(); }
-  };
-
-  struct leda_in_edge_iterator_policies
-  {
-    static void initialize(leda_edge& ) { }
-
-    template <typename Iter>
-    static void increment(Iter& i)
-    { i.base() = Succ_Adj_Edge(i.base(), 1); }
-
-    template <typename Iter>
-    static void decrement(Iter& i)
-    { i.bae() = Pred_Adj_Edge(i.base(), 1); }
-
-    template <typename Iter>
-    static leda_edge dereference(const Iter& i)
-    { return i.base(); }
-
-    template <typename Iter>
-    static bool equal(const Iter& x, const Iter& y)
-    { return x.base() == y.base(); }
-  };
-
-  struct leda_adjacency_iterator_policies
-  {
-    static void initialize(leda_edge& ) { }
-
-    template <typename Iter>
-    static void increment(Iter& i)
-    { i.base() = Succ_Adj_Edge(i.base(), 0); }
-
-    template <typename Iter>
-    static void decrement(Iter& i)
-    { i.base() = Pred_Adj_Edge(i.base(), 0); }
-
-    template <typename Iter>
-    static leda_node dereference(const Iter& i)
-    { return ::target(i.base()); }
-
-    template <typename Iter>
-    static bool equal(const Iter& x, const Iter& y)
-    { return x.base() == y.base(); }
-  };
-
-  template <class LedaGraph>
-  struct leda_vertex_iterator_policies
-  {
-    leda_vertex_iterator_policies() { }
-    leda_vertex_iterator_policies(const LedaGraph* g) : m_g(g) { }
-
-    void initialize(leda_node& v) const { }
-
-    template <typename Iter>
-    void increment(Iter& i) const
-    { i.base() = m_g->succ_node(i.base()); }
-
-    template <typename Iter>
-    void decrement(Iter& i) const
-    { i.base() = m_g->pred_node(i.base()); }
-
-    template <typename Iter>
-    leda_node dereference(const Iter& i) const
-    { return i.base(); }
-
-    template <typename Iter>
-    static bool equal(const Iter& x, const Iter& y)
-    { return x.base() == y.base(); }
-
-    const LedaGraph* m_g;
-  };
-
-} // namespace boost
-
 #if !defined BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
 namespace boost {
 
@@ -149,37 +56,108 @@ namespace boost {
     public virtual vertex_list_graph_tag { };
 
   template <class vtype, class etype>
-  struct graph_traits< GRAPH<vtype,etype> > {
+  struct graph_traits< leda::GRAPH<vtype,etype> > {
     typedef leda_node vertex_descriptor;
     typedef leda_edge edge_descriptor;
 
-    typedef boost::iterator_adaptor<leda_edge,
-      boost::leda_adjacency_iterator_policies, 
-      leda_node, leda_node, const leda_node*,
-      boost::multi_pass_input_iterator_tag,
-      std::ptrdiff_t
-    > adjacency_iterator;
+    class adjacency_iterator 
+      : public iterator_facade<adjacency_iterator,
+                               leda_node,
+                               bidirectional_traversal_tag,
+                               leda_node,
+                               const leda_node*>
+    {
+    public:
+      explicit adjacency_iterator(leda_edge edge = 0) : base(edge) {}
 
-    typedef boost::iterator_adaptor<leda_edge,
-      boost::leda_out_edge_iterator_policies,
-      leda_edge, const leda_edge&, const leda_edge*,
-      std::forward_iterator_tag,
-      std::ptrdiff_t
-    > out_edge_iterator;
+    private:
+      leda_node dereference() const { return leda::target(base); }
 
-    typedef boost::iterator_adaptor<leda_edge,
-      boost::leda_in_edge_iterator_policies, 
-      leda_edge, const leda_edge&, const leda_edge*,
-      std::forward_iterator_tag,
-      std::ptrdiff_t
-    > in_edge_iterator;
+      bool equal(const adjacency_iterator& other) const
+      { return base == other.base; }
 
-    typedef boost::iterator_adaptor<leda_node,
-      boost::leda_vertex_iterator_policies< GRAPH<vtype,etype> >, 
-      leda_node, leda_node, const leda_node*,
-      boost::multi_pass_input_iterator_tag,
-      std::ptrdiff_t
-    > vertex_iterator;
+      void increment() { base = Succ_Adj_Edge(base, 0); }
+      void decrement() { base = Pred_Adj_Edge(base, 0); }
+
+      leda_edge base;
+
+      friend class iterator_core_access;
+    };
+      
+    class out_edge_iterator 
+      : public iterator_facade<out_edge_iterator,
+                               leda_edge,
+                               bidirectional_traversal_tag,
+                               const leda_edge&,
+                               const leda_edge*>
+    {
+    public:
+      explicit out_edge_iterator(leda_edge edge = 0) : base(edge) {}
+
+    private:
+      const leda_edge& dereference() const { return base; }
+
+      bool equal(const out_edge_iterator& other) const
+      { return base == other.base; }
+
+      void increment() { base = Succ_Adj_Edge(base, 0); }
+      void decrement() { base = Pred_Adj_Edge(base, 0); }
+
+      leda_edge base;
+
+      friend class iterator_core_access;
+    };
+      
+    class in_edge_iterator 
+      : public iterator_facade<in_edge_iterator,
+                               leda_edge,
+                               bidirectional_traversal_tag,
+                               const leda_edge&,
+                               const leda_edge*>
+    {
+    public:
+      explicit in_edge_iterator(leda_edge edge = 0) : base(edge) {}
+
+    private:
+      const leda_edge& dereference() const { return base; }
+
+      bool equal(const in_edge_iterator& other) const
+      { return base == other.base; }
+
+      void increment() { base = Succ_Adj_Edge(base, 1); }
+      void decrement() { base = Pred_Adj_Edge(base, 1); }
+
+      leda_edge base;
+
+      friend class iterator_core_access;
+    };
+
+    class vertex_iterator 
+      : public iterator_facade<vertex_iterator,
+                               leda_node,
+                               bidirectional_traversal_tag,
+                               const leda_node&,
+                               const leda_node*>
+    {
+    public:
+      vertex_iterator(leda_node node = 0, 
+                      const leda::GRAPH<vtype, etype>* g = 0)
+        : base(node), g(g) {}
+
+    private:
+      const leda_node& dereference() const { return base; }
+
+      bool equal(const vertex_iterator& other) const
+      { return base == other.base; }
+
+      void increment() { base = g->succ_node(base); }
+      void decrement() { base = g->pred_node(base); }
+
+      leda_node base;
+      const leda::GRAPH<vtype, etype>* g;
+
+      friend class iterator_core_access;
+    };
 
     typedef directed_tag directed_category;
     typedef allow_parallel_edge_tag edge_parallel_category; // not sure here
@@ -190,12 +168,12 @@ namespace boost {
   };
 
   template <class vtype, class etype>
-  struct vertex_property< GRAPH<vtype,etype> > {
+  struct vertex_property< leda::GRAPH<vtype,etype> > {
     typedef vtype type;
   };
 
   template <class vtype, class etype>
-  struct edge_property< GRAPH<vtype,etype> > {
+  struct edge_property< leda::GRAPH<vtype,etype> > {
     typedef etype type;
   };
 
@@ -205,28 +183,28 @@ namespace boost {
 namespace boost {
 
   template <class vtype, class etype>
-  typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor
-  source(typename graph_traits< GRAPH<vtype,etype> >::edge_descriptor e,
-         const GRAPH<vtype,etype>& g)
+  typename graph_traits< leda::GRAPH<vtype,etype> >::vertex_descriptor
+  source(typename graph_traits< leda::GRAPH<vtype,etype> >::edge_descriptor e,
+         const leda::GRAPH<vtype,etype>& g)
   {
     return source(e);
   }
 
   template <class vtype, class etype>
-  typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor
-  target(typename graph_traits< GRAPH<vtype,etype> >::edge_descriptor e,
-         const GRAPH<vtype,etype>& g)
+  typename graph_traits< leda::GRAPH<vtype,etype> >::vertex_descriptor
+  target(typename graph_traits< leda::GRAPH<vtype,etype> >::edge_descriptor e,
+         const leda::GRAPH<vtype,etype>& g)
   {
     return target(e);
   }
 
   template <class vtype, class etype>
   inline std::pair<
-    typename graph_traits< GRAPH<vtype,etype> >::vertex_iterator,
-    typename graph_traits< GRAPH<vtype,etype> >::vertex_iterator >  
-  vertices(const GRAPH<vtype,etype>& g)
+    typename graph_traits< leda::GRAPH<vtype,etype> >::vertex_iterator,
+    typename graph_traits< leda::GRAPH<vtype,etype> >::vertex_iterator >  
+  vertices(const leda::GRAPH<vtype,etype>& g)
   {
-    typedef typename graph_traits< GRAPH<vtype,etype> >::vertex_iterator
+    typedef typename graph_traits< leda::GRAPH<vtype,etype> >::vertex_iterator
       Iter;
     return std::make_pair( Iter(g.first_node(),&g), Iter(0,&g) );
   }
@@ -235,94 +213,94 @@ namespace boost {
 
   template <class vtype, class etype>
   inline std::pair<
-    typename graph_traits< GRAPH<vtype,etype> >::out_edge_iterator,
-    typename graph_traits< GRAPH<vtype,etype> >::out_edge_iterator >  
+    typename graph_traits< leda::GRAPH<vtype,etype> >::out_edge_iterator,
+    typename graph_traits< leda::GRAPH<vtype,etype> >::out_edge_iterator >  
   out_edges(
-    typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor u, 
-    const GRAPH<vtype,etype>& g)
+    typename graph_traits< leda::GRAPH<vtype,etype> >::vertex_descriptor u, 
+    const leda::GRAPH<vtype,etype>& g)
   {
-    typedef typename graph_traits< GRAPH<vtype,etype> >
+    typedef typename graph_traits< leda::GRAPH<vtype,etype> >
       ::out_edge_iterator Iter;
     return std::make_pair( Iter(First_Adj_Edge(u,0)), Iter(0) );
   }
 
   template <class vtype, class etype>
   inline std::pair<
-    typename graph_traits< GRAPH<vtype,etype> >::in_edge_iterator,
-    typename graph_traits< GRAPH<vtype,etype> >::in_edge_iterator >  
+    typename graph_traits< leda::GRAPH<vtype,etype> >::in_edge_iterator,
+    typename graph_traits< leda::GRAPH<vtype,etype> >::in_edge_iterator >  
   in_edges(
-    typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor u, 
-    const GRAPH<vtype,etype>& g)
+    typename graph_traits< leda::GRAPH<vtype,etype> >::vertex_descriptor u, 
+    const leda::GRAPH<vtype,etype>& g)
   {
-    typedef typename graph_traits< GRAPH<vtype,etype> >
+    typedef typename graph_traits< leda::GRAPH<vtype,etype> >
       ::in_edge_iterator Iter;
     return std::make_pair( Iter(First_Adj_Edge(u,1)), Iter(0) );
   }
 
   template <class vtype, class etype>
   inline std::pair<
-    typename graph_traits< GRAPH<vtype,etype> >::adjacency_iterator,
-    typename graph_traits< GRAPH<vtype,etype> >::adjacency_iterator >  
+    typename graph_traits< leda::GRAPH<vtype,etype> >::adjacency_iterator,
+    typename graph_traits< leda::GRAPH<vtype,etype> >::adjacency_iterator >  
   adjacent_vertices(
-    typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor u, 
-    const GRAPH<vtype,etype>& g)
+    typename graph_traits< leda::GRAPH<vtype,etype> >::vertex_descriptor u, 
+    const leda::GRAPH<vtype,etype>& g)
   {
-    typedef typename graph_traits< GRAPH<vtype,etype> >
+    typedef typename graph_traits< leda::GRAPH<vtype,etype> >
       ::adjacency_iterator Iter;
     return std::make_pair( Iter(First_Adj_Edge(u,0)), Iter(0) );
   }
 
   template <class vtype, class etype>
-  typename graph_traits< GRAPH<vtype,etype> >::vertices_size_type
-  num_vertices(const GRAPH<vtype,etype>& g)
+  typename graph_traits< leda::GRAPH<vtype,etype> >::vertices_size_type
+  num_vertices(const leda::GRAPH<vtype,etype>& g)
   {
     return g.number_of_nodes();
   }  
 
   template <class vtype, class etype>
-  typename graph_traits< GRAPH<vtype,etype> >::edges_size_type
-  num_edges(const GRAPH<vtype,etype>& g)
+  typename graph_traits< leda::GRAPH<vtype,etype> >::edges_size_type
+  num_edges(const leda::GRAPH<vtype,etype>& g)
   {
     return g.number_of_edges();
   }  
 
   template <class vtype, class etype>
-  typename graph_traits< GRAPH<vtype,etype> >::degree_size_type
+  typename graph_traits< leda::GRAPH<vtype,etype> >::degree_size_type
   out_degree(
-    typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor u, 
-    const GRAPH<vtype,etype>&)
+    typename graph_traits< leda::GRAPH<vtype,etype> >::vertex_descriptor u, 
+    const leda::GRAPH<vtype,etype>&)
   {
     return outdeg(u);
   }
 
   template <class vtype, class etype>
-  typename graph_traits< GRAPH<vtype,etype> >::degree_size_type
+  typename graph_traits< leda::GRAPH<vtype,etype> >::degree_size_type
   in_degree(
-    typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor u, 
-    const GRAPH<vtype,etype>&)
+    typename graph_traits< leda::GRAPH<vtype,etype> >::vertex_descriptor u, 
+    const leda::GRAPH<vtype,etype>&)
   {
     return indeg(u);
   }
 
   template <class vtype, class etype>
-  typename graph_traits< GRAPH<vtype,etype> >::degree_size_type
+  typename graph_traits< leda::GRAPH<vtype,etype> >::degree_size_type
   degree(
-    typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor u, 
-    const GRAPH<vtype,etype>&)
+    typename graph_traits< leda::GRAPH<vtype,etype> >::vertex_descriptor u, 
+    const leda::GRAPH<vtype,etype>&)
   {
     return outdeg(u) + indeg(u);
   }
   
   template <class vtype, class etype>
-  typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor
-  add_vertex(GRAPH<vtype,etype>& g)
+  typename graph_traits< leda::GRAPH<vtype,etype> >::vertex_descriptor
+  add_vertex(leda::GRAPH<vtype,etype>& g)
   {
     return g.new_node();
   }
 
   template <class vtype, class etype>
-  typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor
-  add_vertex(const vtype& vp, GRAPH<vtype,etype>& g)
+  typename graph_traits< leda::GRAPH<vtype,etype> >::vertex_descriptor
+  add_vertex(const vtype& vp, leda::GRAPH<vtype,etype>& g)
   {
     return g.new_node(vp);
   }
@@ -331,41 +309,41 @@ namespace boost {
   // need to write an implementation
   template <class vtype, class etype>
   void clear_vertex(
-    typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor u,
-    GRAPH<vtype,etype>& g)
+    typename graph_traits< leda::GRAPH<vtype,etype> >::vertex_descriptor u,
+    leda::GRAPH<vtype,etype>& g)
   {
     g.del_node(u);
   }
 
   template <class vtype, class etype>
   void remove_vertex(
-    typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor u,
-    GRAPH<vtype,etype>& g)
+    typename graph_traits< leda::GRAPH<vtype,etype> >::vertex_descriptor u,
+    leda::GRAPH<vtype,etype>& g)
   {
     g.del_node(u);
   }
 
   template <class vtype, class etype>
   std::pair<
-    typename graph_traits< GRAPH<vtype,etype> >::edge_descriptor,
+    typename graph_traits< leda::GRAPH<vtype,etype> >::edge_descriptor,
     bool>
   add_edge(
-    typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor u,
-    typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor v,
-    GRAPH<vtype,etype>& g)
+    typename graph_traits< leda::GRAPH<vtype,etype> >::vertex_descriptor u,
+    typename graph_traits< leda::GRAPH<vtype,etype> >::vertex_descriptor v,
+    leda::GRAPH<vtype,etype>& g)
   {
     return std::make_pair(g.new_edge(u, v), true);
   }
 
   template <class vtype, class etype>
   std::pair<
-    typename graph_traits< GRAPH<vtype,etype> >::edge_descriptor,
+    typename graph_traits< leda::GRAPH<vtype,etype> >::edge_descriptor,
     bool>
   add_edge(
-    typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor u,
-    typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor v,
+    typename graph_traits< leda::GRAPH<vtype,etype> >::vertex_descriptor u,
+    typename graph_traits< leda::GRAPH<vtype,etype> >::vertex_descriptor v,
     const etype& et, 
-    GRAPH<vtype,etype>& g)
+    leda::GRAPH<vtype,etype>& g)
   {
     return std::make_pair(g.new_edge(u, v, et), true);
   }
@@ -373,11 +351,11 @@ namespace boost {
   template <class vtype, class etype>
   void
   remove_edge(
-    typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor u,
-    typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor v,
-    GRAPH<vtype,etype>& g)
+    typename graph_traits< leda::GRAPH<vtype,etype> >::vertex_descriptor u,
+    typename graph_traits< leda::GRAPH<vtype,etype> >::vertex_descriptor v,
+    leda::GRAPH<vtype,etype>& g)
   {
-    typename graph_traits< GRAPH<vtype,etype> >::out_edge_iterator 
+    typename graph_traits< leda::GRAPH<vtype,etype> >::out_edge_iterator 
       i,iend;
     for (boost::tie(i,iend) = out_edges(u,g); i != iend; ++i)
       if (target(*i,g) == v)
@@ -387,8 +365,8 @@ namespace boost {
   template <class vtype, class etype>
   void
   remove_edge(
-    typename graph_traits< GRAPH<vtype,etype> >::edge_descriptor e,
-    GRAPH<vtype,etype>& g)
+    typename graph_traits< leda::GRAPH<vtype,etype> >::edge_descriptor e,
+    leda::GRAPH<vtype,etype>& g)
   {
     g.del_edge(e);
   }
@@ -410,12 +388,12 @@ namespace boost {
   };
   template <class vtype, class etype>
   inline leda_graph_id_map
-  get(vertex_index_t, const GRAPH<vtype, etype>& g) {
+  get(vertex_index_t, const leda::GRAPH<vtype, etype>& g) {
     return leda_graph_id_map();
   }
   template <class vtype, class etype>
   inline leda_graph_id_map
-  get(edge_index_t, const GRAPH<vtype, etype>& g) {
+  get(edge_index_t, const leda::GRAPH<vtype, etype>& g) {
     return leda_graph_id_map();
   }
 
@@ -461,22 +439,22 @@ namespace boost {
   struct leda_property_map<vertex_all_t> {
     template <class vtype, class etype>
     struct bind_ {
-      typedef leda_graph_data_map<vtype, vtype&, GRAPH<vtype, etype>*> type;
+      typedef leda_graph_data_map<vtype, vtype&, leda::GRAPH<vtype, etype>*> type;
       typedef leda_graph_data_map<vtype, const vtype&, 
-        const GRAPH<vtype, etype>*> const_type;
+        const leda::GRAPH<vtype, etype>*> const_type;
     };
   };  
   template <class vtype, class etype >
-  inline typename property_map< GRAPH<vtype, etype>, vertex_all_t>::type
-  get(vertex_all_t, GRAPH<vtype, etype>& g) {
-    typedef typename property_map< GRAPH<vtype, etype>, vertex_all_t>::type 
+  inline typename property_map< leda::GRAPH<vtype, etype>, vertex_all_t>::type
+  get(vertex_all_t, leda::GRAPH<vtype, etype>& g) {
+    typedef typename property_map< leda::GRAPH<vtype, etype>, vertex_all_t>::type 
       pmap_type;
     return pmap_type(&g);
   }
   template <class vtype, class etype >
-  inline typename property_map< GRAPH<vtype, etype>, vertex_all_t>::const_type
-  get(vertex_all_t, const GRAPH<vtype, etype>& g) {
-    typedef typename property_map< GRAPH<vtype, etype>, 
+  inline typename property_map< leda::GRAPH<vtype, etype>, vertex_all_t>::const_type
+  get(vertex_all_t, const leda::GRAPH<vtype, etype>& g) {
+    typedef typename property_map< leda::GRAPH<vtype, etype>, 
       vertex_all_t>::const_type pmap_type;
     return pmap_type(&g);
   }
@@ -485,22 +463,22 @@ namespace boost {
   struct leda_property_map<edge_all_t> {
     template <class vtype, class etype>
     struct bind_ {
-      typedef leda_graph_data_map<etype, etype&, GRAPH<vtype, etype>*> type;
+      typedef leda_graph_data_map<etype, etype&, leda::GRAPH<vtype, etype>*> type;
       typedef leda_graph_data_map<etype, const etype&, 
-        const GRAPH<vtype, etype>*> const_type;
+        const leda::GRAPH<vtype, etype>*> const_type;
     };
   };
   template <class vtype, class etype >
-  inline typename property_map< GRAPH<vtype, etype>, edge_all_t>::type
-  get(edge_all_t, GRAPH<vtype, etype>& g) {
-    typedef typename property_map< GRAPH<vtype, etype>, edge_all_t>::type 
+  inline typename property_map< leda::GRAPH<vtype, etype>, edge_all_t>::type
+  get(edge_all_t, leda::GRAPH<vtype, etype>& g) {
+    typedef typename property_map< leda::GRAPH<vtype, etype>, edge_all_t>::type 
       pmap_type;
     return pmap_type(&g);
   }
   template <class vtype, class etype >
-  inline typename property_map< GRAPH<vtype, etype>, edge_all_t>::const_type
-  get(edge_all_t, const GRAPH<vtype, etype>& g) {
-    typedef typename property_map< GRAPH<vtype, etype>, 
+  inline typename property_map< leda::GRAPH<vtype, etype>, edge_all_t>::const_type
+  get(edge_all_t, const leda::GRAPH<vtype, etype>& g) {
+    typedef typename property_map< leda::GRAPH<vtype, etype>, 
       edge_all_t>::const_type pmap_type;
     return pmap_type(&g);
   }
@@ -555,7 +533,7 @@ namespace boost {
 
   // g++ 'enumeral_type' in template unification not implemented workaround
   template <class vtype, class etype, class Tag>
-  struct property_map<GRAPH<vtype, etype>, Tag> {
+  struct property_map<leda::GRAPH<vtype, etype>, Tag> {
     typedef typename 
       leda_property_map<Tag>::template bind_<vtype, etype> map_gen;
     typedef typename map_gen::type type;
@@ -565,18 +543,18 @@ namespace boost {
   template <class vtype, class etype, class PropertyTag, class Key>
   inline
   typename boost::property_traits<
-    typename boost::property_map<GRAPH<vtype, etype>,PropertyTag>::const_type
+    typename boost::property_map<leda::GRAPH<vtype, etype>,PropertyTag>::const_type
   >::value_type
-  get(PropertyTag p, const GRAPH<vtype, etype>& g, const Key& key) {
+  get(PropertyTag p, const leda::GRAPH<vtype, etype>& g, const Key& key) {
     return get(get(p, g), key);
   }
   
   template <class vtype, class etype, class PropertyTag, class Key,class Value>
   inline void
-  put(PropertyTag p, GRAPH<vtype, etype>& g, 
+  put(PropertyTag p, leda::GRAPH<vtype, etype>& g, 
       const Key& key, const Value& value)
   {
-    typedef typename property_map<GRAPH<vtype, etype>, PropertyTag>::type Map;
+    typedef typename property_map<leda::GRAPH<vtype, etype>, PropertyTag>::type Map;
     Map pmap = get(p, g);
     put(pmap, key, value);
   }

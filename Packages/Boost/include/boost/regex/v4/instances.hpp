@@ -57,7 +57,7 @@ template class BOOST_REGEX_DECL reg_expression< BOOST_REGEX_CHAR_T >;
 #  include BOOST_ABI_SUFFIX
 #endif
 
-#elif defined(BOOST_MSVC) || defined(__GNUC__)
+#elif (defined(BOOST_MSVC) && defined(_MSC_EXTENSIONS)) || defined(__GNUC__)
 
 #  ifndef BOOST_REGEX_INSTANTIATE
 #     define template extern template

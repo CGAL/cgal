@@ -266,7 +266,7 @@ namespace boost {
     }
     typename graph_traits<Graph>::edge_iterator ei, edge_end;
     for(tie(ei, edge_end) = edges(g); ei != edge_end; ++ei) {
-      out << source(*ei, g) << Traits::delimiter() << target(*ei, g) << " ";
+      out << get(vertex_index, source(*ei, g)) << Traits::delimiter() << get(vertex_index, target(*ei, g)) << " ";
       epw(out, *ei); //print edge attributes
       out << ";" << std::endl;
     }

@@ -30,7 +30,9 @@
 
 #if defined(__MSL__) && (__MSL__ >= 0x5000)
 #  define BOOST_HAS_STDINT_H
-#  define BOOST_HAS_UNISTD_H
+#  if !defined(__PALMOS_TRAPS__)
+#    define BOOST_HAS_UNISTD_H
+#  endif
    // boilerplate code:
 #  include <boost/config/posix_features.hpp>
 #endif

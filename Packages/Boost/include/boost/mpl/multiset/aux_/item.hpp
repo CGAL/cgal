@@ -2,36 +2,34 @@
 #ifndef BOOST_MPL_MULTISET_AUX_ITEM_HPP_INCLUDED
 #define BOOST_MPL_MULTISET_AUX_ITEM_HPP_INCLUDED
 
-// + file: boost/mpl/multiset/aux_/item.hpp
-// + last modified: 05/nov/03
-
-// Copyright Aleksey Gurtovoy 2003
+// Copyright Aleksey Gurtovoy 2003-2004
 //
-// Use, modification and distribution are subject to the Boost Software 
-// License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy 
-// at http://www.boost.org/LICENSE_1_0.txt)
+// Distributed under the Boost Software License, Version 1.0. 
+// (See accompanying file LICENSE_1_0.txt or copy at 
+// http://www.boost.org/LICENSE_1_0.txt)
 //
 // See http://www.boost.org/libs/mpl for documentation.
 
-#include "boost/mpl/multiset/aux_/tag.hpp"
-#include "boost/mpl/int.hpp"
-#include "boost/mpl/aux_/type_wrapper.hpp"
-#include "boost/mpl/aux_/yes_no.hpp"
-#include "boost/mpl/aux_/value_wknd.hpp"
-#include "boost/mpl/aux_/static_cast.hpp"
-#include "boost/mpl/aux_/config/workaround.hpp"
-#include "boost/mpl/aux_/config/msvc.hpp"
+// $Source$
+// $Date$
+// $Revision$
+
+#include <boost/mpl/multiset/aux_/tag.hpp>
+#include <boost/mpl/int.hpp>
+#include <boost/mpl/aux_/type_wrapper.hpp>
+#include <boost/mpl/aux_/yes_no.hpp>
+#include <boost/mpl/aux_/value_wknd.hpp>
+#include <boost/mpl/aux_/static_cast.hpp>
+#include <boost/mpl/aux_/config/arrays.hpp>
+#include <boost/mpl/aux_/config/msvc.hpp>
+#include <boost/mpl/aux_/config/workaround.hpp>
 
 #if BOOST_WORKAROUND(BOOST_MSVC, <= 1300)
-#   include "boost/mpl/apply_if.hpp"
-#   include "boost/mpl/next.hpp"
-#   include "boost/type_traits/is_same.hpp"
+#   include <boost/mpl/eval_if.hpp>
+#   include <boost/mpl/next.hpp>
+#   include <boost/type_traits/is_same.hpp>
 #endif
 
-#if    BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x561)) \
-    || BOOST_WORKAROUND(BOOST_MSVC, == 1300)
-#   define BOOST_MPL_CFG_NO_DEPENDENT_ARRAY_TYPES
-#endif
 
 namespace boost { namespace mpl {
 
@@ -46,7 +44,7 @@ struct ms_item
     {
         enum { msvc70_wknd_ = sizeof(Base::key_count(BOOST_MPL_AUX_STATIC_CAST(U*,0))) };
         typedef int_< msvc70_wknd_ > count_;
-        typedef typename apply_if< is_same<T,U>, next<count_>, count_ >::type c_;
+        typedef typename eval_if< is_same<T,U>, next<count_>, count_ >::type c_;
 #if defined(BOOST_MPL_CFG_NO_DEPENDENT_ARRAY_TYPES)
         typedef typename aux::weighted_tag<BOOST_MPL_AUX_MSVC_VALUE_WKND(c_)::value>::type type;
 #else
@@ -59,7 +57,7 @@ struct ms_item
         typedef U (* u_)();
         enum { msvc70_wknd_ = sizeof(Base::ref_key_count(BOOST_MPL_AUX_STATIC_CAST(u_,0))) }; 
         typedef int_< msvc70_wknd_ > count_;
-        typedef typename apply_if< is_same<T,U>, next<count_>, count_ >::type c_;
+        typedef typename eval_if< is_same<T,U>, next<count_>, count_ >::type c_;
 #if defined(BOOST_MPL_CFG_NO_DEPENDENT_ARRAY_TYPES)
         typedef typename aux::weighted_tag<BOOST_MPL_AUX_MSVC_VALUE_WKND(c_)::value>::type type;
 #else
@@ -111,6 +109,6 @@ struct ms_item
 
 #endif // BOOST_WORKAROUND(BOOST_MSVC, <= 1300)
 
-}} // namespace boost::mpl
+}}
 
 #endif // BOOST_MPL_MULTISET_AUX_ITEM_HPP_INCLUDED

@@ -1,123 +1,118 @@
-//-----------------------------------------------------------------------------
-// boost mpl/aux_/single_element_iter.hpp header file
-// See http://www.boost.org for updates, documentation, and revision history.
-//-----------------------------------------------------------------------------
-//
-// Copyright (c) 2000-02
-// Aleksey Gurtovoy
-//
-// Permission to use, copy, modify, distribute and sell this software
-// and its documentation for any purpose is hereby granted without fee, 
-// provided that the above copyright notice appears in all copies and 
-// that both the copyright notice and this permission notice appear in 
-// supporting documentation. No representations are made about the 
-// suitability of this software for any purpose. It is provided "as is" 
-// without express or implied warranty.
 
 #ifndef BOOST_MPL_AUX_SINGLE_ELEMENT_ITER_HPP_INCLUDED
 #define BOOST_MPL_AUX_SINGLE_ELEMENT_ITER_HPP_INCLUDED
 
-#include "boost/mpl/iterator_tag.hpp"
-#include "boost/mpl/plus.hpp"
-#include "boost/mpl/minus.hpp"
-#include "boost/mpl/int.hpp"
-#include "boost/mpl/aux_/value_wknd.hpp"
-#include "boost/mpl/aux_/iterator_names.hpp"
-#include "boost/mpl/aux_/lambda_spec.hpp"
-#include "boost/mpl/aux_/config/ctps.hpp"
-#include "boost/mpl/aux_/config/nttp.hpp"
+// Copyright Aleksey Gurtovoy 2000-2004
+//
+// Distributed under the Boost Software License, Version 1.0. 
+// (See accompanying file LICENSE_1_0.txt or copy at 
+// http://www.boost.org/LICENSE_1_0.txt)
+//
+// See http://www.boost.org/libs/mpl for documentation.
+
+// $Source$
+// $Date$
+// $Revision$
+
+#include <boost/mpl/iterator_tags.hpp>
+#include <boost/mpl/advance_fwd.hpp>
+#include <boost/mpl/distance_fwd.hpp>
+#include <boost/mpl/next_prior.hpp>
+#include <boost/mpl/deref.hpp>
+#include <boost/mpl/int.hpp>
+#include <boost/mpl/aux_/nttp_decl.hpp>
+#include <boost/mpl/aux_/value_wknd.hpp>
+#include <boost/mpl/aux_/config/ctps.hpp>
 
 namespace boost { namespace mpl { 
 
-namespace aux {
-
-template< typename T, int N >
-struct single_element_iter;
-
-// random access support
-template< typename T, BOOST_MPL_AUX_NTTP_DECL(int, N) >
-struct single_iter_base
-{
-    typedef ra_iter_tag_ category;
-    typedef int_<N> position;
-
-    template< typename D >
-    struct BOOST_MPL_AUX_ITERATOR_ADVANCE
-    {
-        typedef plus< int_<N>,D > n_;
-        typedef single_element_iter<
-              T
-            , BOOST_MPL_AUX_VALUE_WKND(n_)::value
-            > type;
-    };
-
-    template< typename U >
-    struct BOOST_MPL_AUX_ITERATOR_DISTANCE
-    {
-        typedef typename minus<
-              typename U::position
-            , int_<N>
-            >::type type;
-    };
-};
-
 #if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
 
+namespace aux {
+
+template< typename T, BOOST_MPL_AUX_NTTP_DECL(int, is_last_) >
+struct sel_iter;
+
 template< typename T >
-struct single_element_iter<T,0>
-    : single_iter_base<T,0>
+struct sel_iter<T,0>
 {
-    typedef single_element_iter<T,1> next;
+    typedef random_access_iterator_tag category;
+    typedef sel_iter<T,1> next;
     typedef T type;
 };
 
 template< typename T >
-struct single_element_iter<T,1>
-    : single_iter_base<T,1>
+struct sel_iter<T,1>
 {
-    typedef single_element_iter<T,0> prior;
+    typedef random_access_iterator_tag category;
+    typedef sel_iter<T,0> prior;
+};
+
+} // namespace aux
+
+template< typename T, BOOST_MPL_AUX_NTTP_DECL(int, is_last_), typename Distance >
+struct advance< aux::sel_iter<T,is_last_>,Distance>
+{
+    typedef aux::sel_iter<
+          T
+        , ( is_last_ + BOOST_MPL_AUX_NESTED_VALUE_WKND(int, Distance) )
+        > type;
+};
+
+template< 
+      typename T
+    , BOOST_MPL_AUX_NTTP_DECL(int, l1)
+    , BOOST_MPL_AUX_NTTP_DECL(int, l2) 
+    >
+struct distance< aux::sel_iter<T,l1>, aux::sel_iter<T,l2> >
+    : int_<( l2 - l1 )>
+{
 };
 
 #else
 
-template< BOOST_MPL_AUX_NTTP_DECL(int, N) > struct single_iter_impl
+namespace aux {
+
+struct sel_iter_tag;
+
+template< typename T, BOOST_MPL_AUX_NTTP_DECL(int, is_last_) >
+struct sel_iter
 {
-    template< typename T > struct result_;
+    enum { pos_ = is_last_ };
+    typedef aux::sel_iter_tag tag;
+    typedef random_access_iterator_tag category;
+
+    typedef sel_iter<T,(is_last_ + 1)> next;
+    typedef sel_iter<T,(is_last_ - 1)> prior;
+    typedef T type;
 };
 
-template<>
-struct single_iter_impl<0>
+} // namespace aux
+
+template<> struct advance_impl<aux::sel_iter_tag>
 {
-    template< typename T > struct result_
-        : single_iter_base<T,0>
+    template< typename Iterator, typename N > struct apply
     {
-        typedef single_element_iter<T,1> next;
-        typedef T type;
+        enum { pos_ = Iterator::pos_, n_ = N::value };
+        typedef aux::sel_iter<
+              typename Iterator::type
+            , (pos_ + n_)
+            > type;
     };
 };
 
-template<>
-struct single_iter_impl<1>
+template<> struct distance_impl<aux::sel_iter_tag>
 {
-    template< typename T > struct result_
-        : single_iter_base<T,1>
+    template< typename Iter1, typename Iter2 > struct apply
     {
-        typedef single_element_iter<T,0> prior;
+        enum { pos1_ = Iter1::pos_, pos2_ = Iter2::pos_ };
+        typedef int_<( pos2_ - pos1_ )> type;
+        BOOST_STATIC_CONSTANT(int, value = ( pos2_ - pos1_ ));
     };
-};
-
-template< typename T, BOOST_MPL_AUX_NTTP_DECL(int, N) >
-struct single_element_iter
-    : single_iter_impl<N>::template result_<T>
-{
 };
 
 #endif // BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
 
-} // namespace aux
-
-//BOOST_MPL_AUX_PASS_THROUGH_LAMBDA_SPEC(1, aux::single_element_iter)
-
-}} // namespace boost::mpl
+}}
 
 #endif // BOOST_MPL_AUX_SINGLE_ELEMENT_ITER_HPP_INCLUDED

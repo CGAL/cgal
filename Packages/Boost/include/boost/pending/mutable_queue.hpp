@@ -78,7 +78,7 @@ namespace boost {
     template <class InputIterator>
     mutable_queue(InputIterator first, InputIterator last, 
                   const Comp& x, const ID& _id) 
-      : index_array(last-first), c(first, last), comp(x), id(_id)
+      : index_array(last-first), comp(x), id(_id)
     {
       while( first != last ) {
         push(*first);

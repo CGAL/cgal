@@ -1,37 +1,34 @@
-//-----------------------------------------------------------------------------
-// boost mpl/vector/aux_/O1_size.hpp header file
-// See http://www.boost.org for updates, documentation, and revision history.
-//-----------------------------------------------------------------------------
-//
-// Copyright (c) 2000-02
-// Aleksey Gurtovoy
-//
-// Permission to use, copy, modify, distribute and sell this software
-// and its documentation for any purpose is hereby granted without fee, 
-// provided that the above copyright notice appears in all copies and 
-// that both the copyright notice and this permission notice appear in 
-// supporting documentation. No representations are made about the 
-// suitability of this software for any purpose. It is provided "as is" 
-// without express or implied warranty.
 
 #ifndef BOOST_MPL_VECTOR_AUX_O1_SIZE_HPP_INCLUDED
 #define BOOST_MPL_VECTOR_AUX_O1_SIZE_HPP_INCLUDED
 
-#include "boost/mpl/O1_size_fwd.hpp"
-#include "boost/mpl/integral_c.hpp"
-#include "boost/mpl/vector/aux_/tag.hpp"
-#include "boost/mpl/aux_/config/vector.hpp"
-#include "boost/config.hpp"
+// Copyright Aleksey Gurtovoy 2000-2004
+//
+// Distributed under the Boost Software License, Version 1.0. 
+// (See accompanying file LICENSE_1_0.txt or copy at 
+// http://www.boost.org/LICENSE_1_0.txt)
+//
+// See http://www.boost.org/libs/mpl for documentation.
 
-namespace boost {
-namespace mpl {
+// $Source$
+// $Date$
+// $Revision$
 
-#if defined(BOOST_MPL_TYPEOF_BASED_VECTOR_IMPL)
+#include <boost/mpl/O1_size_fwd.hpp>
+#include <boost/mpl/minus.hpp>
+#include <boost/mpl/long.hpp>
+#include <boost/mpl/vector/aux_/tag.hpp>
+#include <boost/mpl/aux_/config/typeof.hpp>
+#include <boost/mpl/aux_/config/ctps.hpp>
+
+namespace boost { namespace mpl {
+
+#if defined(BOOST_MPL_CFG_TYPEOF_BASED_SEQUENCES)
 
 template<>
-struct O1_size_traits< aux::vector_tag >
+struct O1_size_impl< aux::vector_tag >
 {
-    template< typename Vector > struct algorithm
+    template< typename Vector > struct apply
         : Vector::size
     {
     };
@@ -42,19 +39,18 @@ struct O1_size_traits< aux::vector_tag >
 #if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
 
 template< long N >
-struct O1_size_traits< aux::vector_tag<N> >
+struct O1_size_impl< aux::vector_tag<N> >
 {
-    template< typename Vector > struct algorithm
-        : integral_c<long,N>
+    template< typename Vector > struct apply
+        : mpl::long_<N>
     {
     };
 };
 
 #endif // BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
 
-#endif // BOOST_MPL_TYPEOF_BASED_VECTOR_IMPL
+#endif // BOOST_MPL_CFG_TYPEOF_BASED_SEQUENCES
 
-} // namespace mpl
-} // namespace boost
+}}
 
 #endif // BOOST_MPL_VECTOR_AUX_O1_SIZE_HPP_INCLUDED

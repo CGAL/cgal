@@ -38,34 +38,34 @@ namespace impl {
     struct token_printer_aux_for_chars
     {
         template<typename CharT>
-        static void print(CharT c)
+        static void print(std::ostream& o, CharT c)
         {
             if (c == static_cast<CharT>('\a'))
-                BOOST_SPIRIT_DEBUG_OUT << "\\a";
+                o << "\\a";
 
             else if (c == static_cast<CharT>('\b'))
-                BOOST_SPIRIT_DEBUG_OUT << "\\b";
+                o << "\\b";
 
             else if (c == static_cast<CharT>('\f'))
-                BOOST_SPIRIT_DEBUG_OUT << "\\f";
+                o << "\\f";
 
             else if (c == static_cast<CharT>('\n'))
-                BOOST_SPIRIT_DEBUG_OUT << "\\n";
+                o << "\\n";
 
             else if (c == static_cast<CharT>('\r'))
-                BOOST_SPIRIT_DEBUG_OUT << "\\r";
+                o << "\\r";
 
             else if (c == static_cast<CharT>('\t'))
-                BOOST_SPIRIT_DEBUG_OUT << "\\t";
+                o << "\\t";
 
             else if (c == static_cast<CharT>('\v'))
-                BOOST_SPIRIT_DEBUG_OUT << "\\v";
+                o << "\\v";
 
             else if (iscntrl_(c))
-                BOOST_SPIRIT_DEBUG_OUT << "\\" << static_cast<int>(c);
+                o << "\\" << static_cast<int>(c);
 
             else
-                BOOST_SPIRIT_DEBUG_OUT << static_cast<char>(c);
+                o << static_cast<char>(c);
         }
     };
 
@@ -73,9 +73,9 @@ namespace impl {
     struct token_printer_aux_for_other_types
     {
         template<typename CharT>
-        static void print(CharT c)
+        static void print(std::ostream& o, CharT c)
         {
-            BOOST_SPIRIT_DEBUG_OUT << c;
+            o << c;
         }
     };
 
@@ -92,15 +92,15 @@ namespace impl {
     };
 
     template<typename CharT>
-    inline void token_printer(CharT c)
+    inline void token_printer(std::ostream& o, CharT c)
     {
     #if !defined(BOOST_SPIRIT_DEBUG_TOKEN_PRINTER)
 
-        token_printer_aux<CharT>::print(c);
+        token_printer_aux<CharT>::print(o, c);
 
     #else
 
-        BOOST_SPIRIT_DEBUG_TOKEN_PRINTER(BOOST_SPIRIT_DEBUG_OUT, c);
+        BOOST_SPIRIT_DEBUG_TOKEN_PRINTER(o, c);
 
     #endif
     }
@@ -136,7 +136,7 @@ namespace impl {
                 if (iter == ilast)
                     break;
 
-                token_printer(*iter);
+                token_printer(BOOST_SPIRIT_DEBUG_OUT, *iter);
                 ++iter;
             }
             BOOST_SPIRIT_DEBUG_OUT << "\"\n";

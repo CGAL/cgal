@@ -164,14 +164,14 @@ chset_p(unsigned long ch)
 
 #ifdef BOOST_HAS_LONG_LONG
 //////////////////////////////////
-inline chset<long long>
-chset_p(long long ch)
-{ return chset<long long>(ch); }
+inline chset< ::boost::long_long_type>
+chset_p( ::boost::long_long_type ch)
+{ return chset< ::boost::long_long_type>(ch); }
 
 //////////////////////////////////
-inline chset<unsigned long long>
-chset_p(unsigned long long ch)
-{ return chset<unsigned long long>(ch); }
+inline chset< ::boost::ulong_long_type>
+chset_p( ::boost::ulong_long_type ch)
+{ return chset< ::boost::ulong_long_type>(ch); }
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////

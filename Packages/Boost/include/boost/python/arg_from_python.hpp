@@ -1,22 +1,39 @@
-// Copyright David Abrahams 2002. Permission to copy, use,
-// modify, sell and distribute this software is granted provided this
-// copyright notice appears in all copies. This software is provided
-// "as is" without express or implied warranty, and with no claim as
-// to its suitability for any purpose.
+// Copyright David Abrahams 2002.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 #ifndef ARG_FROM_PYTHON_DWA2002128_HPP
 # define ARG_FROM_PYTHON_DWA2002128_HPP
 
 # include <boost/python/detail/prefix.hpp>
 # include <boost/python/converter/arg_from_python.hpp>
-# include <boost/python/detail/indirect_traits.hpp>
+# if BOOST_WORKAROUND(BOOST_MSVC, BOOST_TESTED_AT(1400)) \
+    || BOOST_WORKAROUND(BOOST_INTEL_WIN, BOOST_TESTED_AT(800))
+# include <boost/type_traits/remove_cv.hpp>
+#endif
 
 namespace boost { namespace python { 
 
 template <class T>
 struct arg_from_python
-    : converter::select_arg_from_python<T>::type
+    : converter::select_arg_from_python<
+# if BOOST_WORKAROUND(BOOST_MSVC, BOOST_TESTED_AT(1400)) \
+    || BOOST_WORKAROUND(BOOST_INTEL_WIN, BOOST_TESTED_AT(800))
+          typename boost::remove_cv<T>::type
+# else
+          T
+# endif 
+      >::type
 {
-    typedef typename converter::select_arg_from_python<T>::type base;
+    typedef typename converter::select_arg_from_python<
+# if BOOST_WORKAROUND(BOOST_MSVC, BOOST_TESTED_AT(1400)) \
+    || BOOST_WORKAROUND(BOOST_INTEL_WIN, BOOST_TESTED_AT(800))
+          typename boost::remove_cv<T>::type
+# else
+          T
+# endif 
+        >::type base;
+    
     arg_from_python(PyObject*);
 };
 

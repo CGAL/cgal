@@ -1,18 +1,3 @@
-//-----------------------------------------------------------------------------
-// boost mpl/aux_/template_arity.hpp header file
-// See http://www.boost.org for updates, documentation, and revision history.
-//-----------------------------------------------------------------------------
-//
-// Copyright (c) 2001-02
-// Aleksey Gurtovoy
-//
-// Permission to use, copy, modify, distribute and sell this software
-// and its documentation for any purpose is hereby granted without fee, 
-// provided that the above copyright notice appears in all copies and 
-// that both the copyright notice and this permission notice appear in 
-// supporting documentation. No representations are made about the 
-// suitability of this software for any purpose. It is provided "as is" 
-// without express or implied warranty.
 
 #if !defined(BOOST_PP_IS_ITERATING)
 
@@ -21,44 +6,60 @@
 #ifndef BOOST_MPL_AUX_TEMPLATE_ARITY_HPP_INCLUDED
 #define BOOST_MPL_AUX_TEMPLATE_ARITY_HPP_INCLUDED
 
-#include "boost/mpl/aux_/config/ttp.hpp"
-#include "boost/mpl/aux_/config/lambda.hpp"
+// Copyright Aleksey Gurtovoy 2001-2004
+//
+// Distributed under the Boost Software License, Version 1.0. 
+// (See accompanying file LICENSE_1_0.txt or copy at 
+// http://www.boost.org/LICENSE_1_0.txt)
+//
+// See http://www.boost.org/libs/mpl for documentation.
+
+// $Source$
+// $Date$
+// $Revision$
+
+#include <boost/mpl/aux_/config/ttp.hpp>
+#include <boost/mpl/aux_/config/lambda.hpp>
 
 #if !defined(BOOST_MPL_PREPROCESSING_MODE)
-#   include "boost/mpl/aux_/template_arity_fwd.hpp"
-#   if !defined(BOOST_MPL_NO_FULL_LAMBDA_SUPPORT)
-#   if defined(BOOST_EXTENDED_TEMPLATE_PARAMETERS_MATCHING)
-#       include "boost/mpl/aux_/type_wrapper.hpp"
+#   include <boost/mpl/aux_/template_arity_fwd.hpp>
+#   include <boost/mpl/int.hpp>
+#   if !defined(BOOST_MPL_CFG_NO_FULL_LAMBDA_SUPPORT)
+#   if defined(BOOST_MPL_CFG_EXTENDED_TEMPLATE_PARAMETERS_MATCHING)
+#       include <boost/mpl/aux_/type_wrapper.hpp>
 #   endif
 #   else
-#       include "boost/mpl/aux_/has_rebind.hpp"
+#       include <boost/mpl/aux_/has_rebind.hpp>
 #   endif
 #endif
 
-#include "boost/mpl/aux_/config/use_preprocessed.hpp"
+#include <boost/mpl/aux_/config/static_constant.hpp>
+#include <boost/mpl/aux_/config/use_preprocessed.hpp>
 
-#if !defined(BOOST_MPL_NO_PREPROCESSED_HEADERS) \
- && !defined(BOOST_MPL_PREPROCESSING_MODE)
+#if !defined(BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS) \
+    && !defined(BOOST_MPL_PREPROCESSING_MODE)
 
 #   define BOOST_MPL_PREPROCESSED_HEADER template_arity.hpp
-#   include "boost/mpl/aux_/include_preprocessed.hpp"
+#   include <boost/mpl/aux_/include_preprocessed.hpp>
 
 #else
 
-#   if !defined(BOOST_MPL_NO_FULL_LAMBDA_SUPPORT)
-#   if defined(BOOST_EXTENDED_TEMPLATE_PARAMETERS_MATCHING)
+#   if !defined(BOOST_MPL_CFG_NO_FULL_LAMBDA_SUPPORT)
+#   if defined(BOOST_MPL_CFG_EXTENDED_TEMPLATE_PARAMETERS_MATCHING)
 
-#   include "boost/mpl/limits/arity.hpp"
-#   include "boost/mpl/aux_/config/nttp.hpp"
-#   include "boost/mpl/aux_/preprocessor/range.hpp"
-#   include "boost/mpl/aux_/preprocessor/repeat.hpp"
-#   include "boost/mpl/aux_/preprocessor/params.hpp"
+#   include <boost/mpl/limits/arity.hpp>
+#   include <boost/mpl/aux_/preprocessor/range.hpp>
+#   include <boost/mpl/aux_/preprocessor/repeat.hpp>
+#   include <boost/mpl/aux_/preprocessor/params.hpp>
+#   include <boost/mpl/aux_/nttp_decl.hpp>
 
-#   include "boost/preprocessor/seq/fold_left.hpp"
-#   include "boost/preprocessor/comma_if.hpp"
-#   include "boost/preprocessor/iterate.hpp"
-#   include "boost/preprocessor/inc.hpp"
-#   include "boost/preprocessor/cat.hpp"
+#   include <boost/preprocessor/seq/fold_left.hpp>
+#   include <boost/preprocessor/comma_if.hpp>
+#   include <boost/preprocessor/iterate.hpp>
+#   include <boost/preprocessor/inc.hpp>
+#   include <boost/preprocessor/cat.hpp>
+
+#   define AUX778076_ARITY BOOST_PP_INC(BOOST_MPL_LIMIT_METAFUNCTION_ARITY)
 
 namespace boost { namespace mpl { namespace aux {
 
@@ -67,34 +68,31 @@ template< BOOST_MPL_AUX_NTTP_DECL(int, N) > struct arity_tag
     typedef char (&type)[N + 1];
 };
 
-#define AUX_MAX_ARITY_OP(unused, state, i) \
-    ( BOOST_PP_CAT(C,i) > 0 ? BOOST_PP_CAT(C,i) : state ) \
+#   define AUX778076_MAX_ARITY_OP(unused, state, i_) \
+    ( BOOST_PP_CAT(C,i_) > 0 ? BOOST_PP_CAT(C,i_) : state ) \
 /**/
 
 template<
-      BOOST_MPL_PP_PARAMS(
-          BOOST_MPL_METAFUNCTION_MAX_ARITY
-        , BOOST_MPL_AUX_NTTP_DECL(int, C)
-        )
+      BOOST_MPL_PP_PARAMS(AUX778076_ARITY, BOOST_MPL_AUX_NTTP_DECL(int, C))
     >
 struct max_arity
 {
     BOOST_STATIC_CONSTANT(int, value = 
           BOOST_PP_SEQ_FOLD_LEFT(
-              AUX_MAX_ARITY_OP
+              AUX778076_MAX_ARITY_OP
             , -1
-            , BOOST_MPL_PP_RANGE(1, BOOST_MPL_METAFUNCTION_MAX_ARITY)
+            , BOOST_MPL_PP_RANGE(1, AUX778076_ARITY)
             )
         );
 };
 
-#undef AUX_MAX_ARITY_OP
+#   undef AUX778076_MAX_ARITY_OP
 
-arity_tag<0> arity_helper(...);
+arity_tag<0>::type arity_helper(...);
 
-#define BOOST_PP_ITERATION_LIMITS (1, BOOST_MPL_METAFUNCTION_MAX_ARITY)
-#define BOOST_PP_FILENAME_1 "boost/mpl/aux_/template_arity.hpp"
-#include BOOST_PP_ITERATE()
+#   define BOOST_PP_ITERATION_LIMITS (1, AUX778076_ARITY)
+#   define BOOST_PP_FILENAME_1 <boost/mpl/aux_/template_arity.hpp>
+#   include BOOST_PP_ITERATE()
 
 template< typename F, BOOST_MPL_AUX_NTTP_DECL(int, N) >
 struct template_arity_impl
@@ -104,8 +102,8 @@ struct template_arity_impl
         );
 };
 
-#define AUX_TEMPLATE_ARITY_IMPL_INVOCATION(unused, i, F) \
-    BOOST_PP_COMMA_IF(i) template_arity_impl<F,BOOST_PP_INC(i)>::value \
+#   define AUX778076_TEMPLATE_ARITY_IMPL_INVOCATION(unused, i_, F) \
+    BOOST_PP_COMMA_IF(i_) template_arity_impl<F,BOOST_PP_INC(i_)>::value \
 /**/
 
 template< typename F >
@@ -113,23 +111,25 @@ struct template_arity
 {
     BOOST_STATIC_CONSTANT(int, value = (
           max_arity< BOOST_MPL_PP_REPEAT(
-              BOOST_MPL_METAFUNCTION_MAX_ARITY
-            , AUX_TEMPLATE_ARITY_IMPL_INVOCATION
+              AUX778076_ARITY
+            , AUX778076_TEMPLATE_ARITY_IMPL_INVOCATION
             , F
             ) >::value
         ));
+        
+    typedef mpl::int_<value> type;
 };
 
-#undef AUX_TEMPLATE_ARITY_IMPL_INVOCATION
+#   undef AUX778076_TEMPLATE_ARITY_IMPL_INVOCATION
 
-}}} // namespace boost::mpl::aux
+#   undef AUX778076_ARITY
 
-#   endif // BOOST_EXTENDED_TEMPLATE_PARAMETERS_MATCHING
-#   else // BOOST_MPL_NO_FULL_LAMBDA_SUPPORT
+}}}
 
-#   include "boost/mpl/aux_/config/eti.hpp"
-#   include "boost/mpl/aux_/config/static_constant.hpp"
-#   include "boost/mpl/aux_/config/workaround.hpp"
+#   endif // BOOST_MPL_CFG_EXTENDED_TEMPLATE_PARAMETERS_MATCHING
+#   else // BOOST_MPL_CFG_NO_FULL_LAMBDA_SUPPORT
+
+#   include <boost/mpl/aux_/config/eti.hpp>
 
 namespace boost { namespace mpl { namespace aux {
 
@@ -137,8 +137,8 @@ template< bool >
 struct template_arity_impl
 {
     template< typename F > struct result_
+        : mpl::int_<-1>
     {
-        BOOST_STATIC_CONSTANT(int, value = -1);
     };
 };
 
@@ -146,12 +146,8 @@ template<>
 struct template_arity_impl<true>
 {
     template< typename F > struct result_
+        : F::arity
     {
-#if defined(__BORLANDC__) && (__BORLANDC__ >= 0x561 && !defined(BOOST_STRICT_CONFIG))
-        enum { value = F::arity };
-#else
-        BOOST_STATIC_CONSTANT(int, value = F::arity);
-#endif
     };
 };
 
@@ -162,32 +158,32 @@ struct template_arity
 {
 };
 
-#if defined(BOOST_MPL_MSVC_ETI_BUG)
+#if defined(BOOST_MPL_CFG_MSVC_ETI_BUG)
 template<>
 struct template_arity<int>
+    : mpl::int_<-1>
 {
-    BOOST_STATIC_CONSTANT(int, value = -1);
 };
 #endif
 
-}}} // namespace boost::mpl::aux
+}}}
 
-#   endif // BOOST_MPL_NO_FULL_LAMBDA_SUPPORT
+#   endif // BOOST_MPL_CFG_NO_FULL_LAMBDA_SUPPORT
 
-#endif // BOOST_MPL_USE_PREPROCESSED_HEADERS
+#endif // BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
 #endif // BOOST_MPL_AUX_TEMPLATE_ARITY_HPP_INCLUDED
 
 ///// iteration
 
 #else
-#define i BOOST_PP_FRAME_ITERATION(1)
+#define i_ BOOST_PP_FRAME_ITERATION(1)
 
 template<
-      template< BOOST_MPL_PP_PARAMS(i, typename P) > class F
-    , BOOST_MPL_PP_PARAMS(i, typename T)
+      template< BOOST_MPL_PP_PARAMS(i_, typename P) > class F
+    , BOOST_MPL_PP_PARAMS(i_, typename T)
     >
-typename arity_tag<i>::type
-arity_helper(type_wrapper< F<BOOST_MPL_PP_PARAMS(i, T)> >, arity_tag<i>);
+typename arity_tag<i_>::type
+arity_helper(type_wrapper< F<BOOST_MPL_PP_PARAMS(i_, T)> >, arity_tag<i_>);
 
-#undef i
+#undef i_
 #endif // BOOST_PP_IS_ITERATING

@@ -10,6 +10,7 @@
 #define BOOST_SPIRIT_PARSER_HPP
 
 #include <boost/config.hpp>
+#include <boost/type_traits.hpp>
 #include <boost/spirit/core/scanner/scanner.hpp>
 #include <boost/spirit/core/nil.hpp>
 
@@ -56,7 +57,8 @@ namespace boost { namespace spirit
     template <typename ParserT, typename ScannerT>
     struct parser_result
     {
-        typedef typename ParserT::template result<ScannerT>::type type;
+        typedef typename boost::remove_reference<ParserT>::type parser_type;
+        typedef typename parser_type::template result<ScannerT>::type type;
     };
 
     ///////////////////////////////////////////////////////////////////////////

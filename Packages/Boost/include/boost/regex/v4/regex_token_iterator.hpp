@@ -23,7 +23,8 @@
 #include <boost/detail/workaround.hpp>
 #if (BOOST_WORKAROUND(__BORLANDC__, >= 0x560) && BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x570)))\
       || BOOST_WORKAROUND(BOOST_MSVC, < 1300) \
-      || BOOST_WORKAROUND(__MWERKS__, BOOST_TESTED_AT(0x3003))
+      || BOOST_WORKAROUND(__MWERKS__, BOOST_TESTED_AT(0x3003)) \
+      || BOOST_WORKAROUND(__HP_aCC, BOOST_TESTED_AT(55500))
 //
 // Borland C++ Builder 6, and Visual C++ 6,
 // can't cope with the array template constructor
@@ -51,11 +52,7 @@ template <class BidirectionalIterator,
 class regex_token_iterator_implementation 
 {
    typedef basic_regex<charT, traits, Allocator> regex_type;
-#if 1
    typedef sub_match<BidirectionalIterator>      value_type;
-#else
-   typedef std::basic_string<charT>              value_type;
-#endif
 
    match_results<BidirectionalIterator> what;   // current match
    BidirectionalIterator                end;    // end of search area
@@ -69,10 +66,11 @@ public:
    regex_token_iterator_implementation(const regex_type* p, BidirectionalIterator last, int sub, match_flag_type f)
       : end(last), pre(p), flags(f){ subs.push_back(sub); }
    regex_token_iterator_implementation(const regex_type* p, BidirectionalIterator last, const std::vector<int>& v, match_flag_type f)
-      : end(last), pre(p), subs(v), flags(f){}
+      : end(last), pre(p), flags(f), subs(v){}
 #if (BOOST_WORKAROUND(__BORLANDC__, >= 0x560) && BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x570)))\
       || BOOST_WORKAROUND(BOOST_MSVC, < 1300) \
-      || BOOST_WORKAROUND(__MWERKS__, BOOST_TESTED_AT(0x3003))
+      || BOOST_WORKAROUND(__MWERKS__, BOOST_TESTED_AT(0x3003)) \
+      || BOOST_WORKAROUND(__HP_aCC, BOOST_TESTED_AT(55500))
    template <class T>
    regex_token_iterator_implementation(const regex_type* p, BidirectionalIterator last, const T& submatches, match_flag_type f)
       : end(last), pre(p), flags(f)
@@ -163,6 +161,14 @@ template <class BidirectionalIterator,
           class traits = regex_traits<charT>,
           class Allocator = BOOST_DEFAULT_ALLOCATOR(charT) >
 class regex_token_iterator 
+#ifndef BOOST_NO_STD_ITERATOR
+   : public std::iterator<
+         std::forward_iterator_tag, 
+         sub_match<BidirectionalIterator>,
+         typename re_detail::regex_iterator_traits<BidirectionalIterator>::difference_type,
+         const sub_match<BidirectionalIterator>*,
+         const sub_match<BidirectionalIterator>& >         
+#endif
 {
 private:
    typedef regex_token_iterator_implementation<BidirectionalIterator, charT, traits, Allocator> impl;
@@ -193,7 +199,8 @@ public:
    }
 #if (BOOST_WORKAROUND(__BORLANDC__, >= 0x560) && BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x570)))\
       || BOOST_WORKAROUND(BOOST_MSVC, < 1300) \
-      || BOOST_WORKAROUND(__MWERKS__, BOOST_TESTED_AT(0x3003))
+      || BOOST_WORKAROUND(__MWERKS__, BOOST_TESTED_AT(0x3003)) \
+      || BOOST_WORKAROUND(__HP_aCC, BOOST_TESTED_AT(55500))
    template <class T>
    regex_token_iterator(BidirectionalIterator a, BidirectionalIterator b, const regex_type& re,
                         const T& submatches, match_flag_type m = match_default)

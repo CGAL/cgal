@@ -23,10 +23,7 @@ namespace boost
   namespace filesystem
   {
 
-//  create_directories (contributed by Vladimir Prus)  -----------------------//
-
-
-    BOOST_FILESYSTEM_DECL void create_directories(const path& ph);
+    BOOST_FILESYSTEM_DECL bool create_directories(const path& ph);
 
     BOOST_FILESYSTEM_DECL std::string extension(const path& ph);
 

@@ -165,10 +165,10 @@ typedef enum
 } // namespace
 #endif
 
+#if defined(__cplusplus)
 //
 // C++ high level wrapper goes here:
 //
-#if defined(__cplusplus)
 #include <string>
 #include <vector>
 namespace boost{
@@ -252,8 +252,11 @@ public:
    std::string What(int i = 0)const;
    std::string operator[](int i)const { return What(i); }
 
-   static const unsigned int npos;
-
+#ifdef __MINGW32__
+   static const std::size_t npos = ~0u;
+#else
+   static const std::size_t npos;
+#endif
    friend struct re_detail::pred1;
    friend struct re_detail::pred2;
    friend struct re_detail::pred3;
@@ -268,7 +271,7 @@ public:
 
 #endif
 
-#endif // include guard
+#endif /* include guard */
 
 
 

@@ -12,6 +12,7 @@
 
 #include <string>
 #include "boost/date_time/compiler_config.hpp"
+#include "boost/date_time/special_defs.hpp"
 
 namespace boost {
 namespace date_time {
@@ -41,6 +42,33 @@ namespace date_time {
    public:
     typedef date_time::wrapping_int<int_type, ticks_per_day> wrap_int_type;
 #endif
+
+    static time_rep_type get_time_rep(special_values sv)
+    {
+      switch (sv) {
+      case not_a_date_time:
+        return time_rep_type(date_type(not_a_date_time),
+                             time_duration_type(not_a_date_time));
+      case pos_infin:
+        return time_rep_type(date_type(pos_infin), 
+                             time_duration_type(pos_infin));
+      case neg_infin:
+        return time_rep_type(date_type(neg_infin), 
+                             time_duration_type(neg_infin));
+      case max_date_time: {
+        time_duration_type td = time_duration_type(24,0,0,0) - time_duration_type(0,0,0,1);
+        return time_rep_type(date_type(max_date_time), td);
+      }
+      case min_date_time:
+        return time_rep_type(date_type(min_date_time), time_duration_type(0,0,0,0));
+
+      default:
+        return time_rep_type(date_type(not_a_date_time),
+                             time_duration_type(not_a_date_time));
+        
+      }
+
+    }
 
     static time_rep_type get_time_rep(const date_type& day,
                                       const time_duration_type& tod,

@@ -83,7 +83,7 @@ namespace boost {
     //    with KCC, the nested stack class is having access problems
     //    despite the friend decl.
     static size_type invalid_value() {
-      return std::numeric_limits<size_type>::max();
+      return (std::numeric_limits<size_type>::max)();
     }
     
     typedef typename std::vector<size_type>::iterator Iter;

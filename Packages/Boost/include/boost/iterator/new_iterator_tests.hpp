@@ -1,6 +1,17 @@
 #ifndef BOOST_NEW_ITERATOR_TESTS_HPP
 # define BOOST_NEW_ITERATOR_TESTS_HPP
 
+//
+// Copyright (c) David Abrahams 2001.
+// Copyright (c) Jeremy Siek 2001-2003.
+// Copyright (c) Thomas Witt 2002.
+//
+// Use, modification and distribution is subject to the
+// Boost Software License, Version 1.0.
+// (See accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
+//
+
 // This is meant to be the beginnings of a comprehensive, generic
 // test suite for STL concepts such as iterators and containers.
 //
@@ -28,8 +39,37 @@
 # include <boost/iterator/is_lvalue_iterator.hpp>
 
 # include <boost/iterator/detail/config_def.hpp>
+# include <boost/detail/is_incrementable.hpp>
 
 namespace boost {
+
+
+// Do separate tests for *i++ so we can treat, e.g., smart pointers,
+// as readable and/or writable iterators.
+template <class Iterator, class T>
+void readable_iterator_traversal_test(Iterator i1, T v, mpl::true_)
+{
+    T v2(*i1++);
+    assert(v == v2);
+}
+
+template <class Iterator, class T>
+void readable_iterator_traversal_test(const Iterator i1, T v, mpl::false_)
+{}
+
+template <class Iterator, class T>
+void writable_iterator_traversal_test(Iterator i1, T v, mpl::true_)
+{
+    ++i1;  // we just wrote into that position
+    *i1++ = v;
+    Iterator x(i1++);
+    (void)x;
+}
+
+template <class Iterator, class T>
+void writable_iterator_traversal_test(const Iterator i1, T v, mpl::false_)
+{}
+
 
 // Preconditions: *i == v
 template <class Iterator, class T>
@@ -45,6 +85,8 @@ void readable_iterator_test(const Iterator i1, T v)
   assert(v2 == v);
 
 # if !BOOST_WORKAROUND(__MWERKS__, <= 0x2407)
+  readable_iterator_traversal_test(i1, v, detail::is_postfix_incrementable<Iterator>());
+      
   // I think we don't really need this as it checks the same things as
   // the above code.
   BOOST_STATIC_ASSERT(is_readable_iterator<Iterator>::value);
@@ -52,10 +94,18 @@ void readable_iterator_test(const Iterator i1, T v)
 }
 
 template <class Iterator, class T>
-void writable_iterator_test(Iterator i, T v)
+void writable_iterator_test(Iterator i, T v, T v2)
 {
   Iterator i2(i); // Copy Constructible
   *i2 = v;
+
+# if !BOOST_WORKAROUND(__MWERKS__, <= 0x2407)
+  writable_iterator_traversal_test(
+      i, v2, mpl::and_<
+          detail::is_incrementable<Iterator>
+        , detail::is_postfix_incrementable<Iterator>
+      >());
+# endif 
 }
 
 template <class Iterator>

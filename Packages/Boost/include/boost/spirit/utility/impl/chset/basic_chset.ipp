@@ -67,8 +67,8 @@ basic_chset<CharT>::inverse()
 {
     basic_chset inv;
     inv.set(
-        std::numeric_limits<CharT>::min(),
-        std::numeric_limits<CharT>::max()
+        (std::numeric_limits<CharT>::min)(),
+        (std::numeric_limits<CharT>::max)()
     );
     inv -= *this;
     swap(inv);
@@ -98,8 +98,8 @@ basic_chset<CharT>::operator&=(basic_chset<CharT> const& x)
 {
     basic_chset inv;
     inv.set(
-        std::numeric_limits<CharT>::min(),
-        std::numeric_limits<CharT>::max()
+        (std::numeric_limits<CharT>::min)(),
+        (std::numeric_limits<CharT>::max)()
     );
     inv -= x;
     *this -= inv;

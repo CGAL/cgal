@@ -1,14 +1,9 @@
 /* boost random/uniform_int.hpp header file
  *
  * Copyright Jens Maurer 2000-2001
- * Permission to use, copy, modify, sell, and distribute this software
- * is hereby granted without fee provided that the above copyright notice
- * appears in all copies and that both that copyright notice and this
- * permission notice appear in supporting documentation,
- *
- * Jens Maurer makes no representations about the suitability of this
- * software for any purpose. It is provided "as is" without express or
- * implied warranty.
+ * Distributed under the Boost Software License, Version 1.0. (See
+ * accompanying file LICENSE_1_0.txt or copy at
+ * http://www.boost.org/LICENSE_1_0.txt)
  *
  * See http://www.boost.org for most recent version including documentation.
  *
@@ -55,8 +50,8 @@ public:
     init();
   }
 
-  result_type min() const { return _min; }
-  result_type max() const { return _max; }
+  result_type min BOOST_PREVENT_MACRO_SUBSTITUTION () const { return _min; }
+  result_type max BOOST_PREVENT_MACRO_SUBSTITUTION () const { return _max; }
   void reset() { }
   
   // can't have member function templates out-of-line due to MSVC bugs
@@ -64,8 +59,8 @@ public:
   result_type operator()(Engine& eng)
   {
     typedef typename Engine::result_type base_result;
-    base_result bmin = eng.min();
-    base_result brange = eng.max() - eng.min();
+    base_result bmin = (eng.min)();
+    base_result brange = (eng.max)() - (eng.min)();
 
     if(_range == 0) {
       return _min;    
@@ -79,7 +74,7 @@ public:
         // concatenate several invocations of the base RNG
         // take extra care to avoid overflows
         result_type limit;
-        if(_range == std::numeric_limits<result_type>::max()) {
+        if(_range == (std::numeric_limits<result_type>::max)()) {
           limit = _range/(result_type(brange)+1);
           if(_range % result_type(brange)+1 == result_type(brange))
             ++limit;

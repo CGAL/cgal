@@ -12,15 +12,11 @@
 #ifndef BOOST_CONDITION_WEK070601_HPP
 #define BOOST_CONDITION_WEK070601_HPP
 
-#include <boost/config.hpp>
-
-// insist on threading support being available:
-#include <boost/config/requires_threads.hpp>
+#include <boost/thread/detail/config.hpp>
 
 #include <boost/thread/exceptions.hpp>
 #include <boost/utility.hpp>
 #include <boost/thread/detail/lock.hpp>
-#include <boost/thread/detail/config.hpp>
 
 #if defined(BOOST_HAS_PTHREADS)
 #   include <pthread.h>

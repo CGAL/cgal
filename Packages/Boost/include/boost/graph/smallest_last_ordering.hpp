@@ -35,6 +35,7 @@
  */
 #include <vector>
 #include <algorithm>
+#include <boost/config.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/pending/bucket_sorter.hpp>
 
@@ -107,7 +108,8 @@ namespace boost {
           //It is possible minimum degree goes down
           //Here we keep tracking it.
           put(degree, *v, get(degree, *v) - 1); 
-          minimum_degree = std::min(minimum_degree, get(degree, *v)); 
+          BOOST_USING_STD_MIN();
+          minimum_degree = min BOOST_PREVENT_MACRO_SUBSTITUTION(minimum_degree, get(degree, *v)); 
           
           //update the position of *v in the bucket sorter
           degree_buckets.update(*v);

@@ -74,7 +74,7 @@ namespace boost {
     std::less<W> compare;
     detail::_project2nd<W,W> combine;
     dijkstra_shortest_paths(g, s, predecessor, distance, weight, index_map,
-                            compare, combine, std::numeric_limits<W>::max(), 0,
+                            compare, combine, (std::numeric_limits<W>::max)(), 0,
                             vis);
   }
 

@@ -19,14 +19,28 @@ namespace boost { namespace detail {
 // This namespace ensures that ADL doesn't mess things up.
 namespace is_incrementable_
 {
+  // a type returned from operator++ when no increment is found in the
+  // type's own namespace
   struct tag {};
-
+  
   // any soaks up implicit conversions and makes the following
-  // operator++ less-preferred than any other such operator which
+  // operator++ less-preferred than any other such operator that
   // might be found via ADL.
   struct any { template <class T> any(T const&); };
-  tag operator++(any const&);
 
+  // This is a last-resort operator++ for when none other is found
+  tag operator++(any const&);
+  tag operator++(any const&,int);
+
+# if BOOST_WORKAROUND(__MWERKS__, BOOST_TESTED_AT(0x3202)) \
+    || BOOST_WORKAROUND(BOOST_MSVC, <= 1300)
+#  define BOOST_comma(a,b) (a)
+# else 
+  // In case an operator++ is found that returns void, we'll use ++x,0
+  tag operator,(tag,int);  
+#  define BOOST_comma(a,b) (a,b)
+# endif 
+  
   // two check overloads help us identify which operator++ was picked
   char (& check(tag) )[2];
   
@@ -35,36 +49,41 @@ namespace is_incrementable_
   
 
   template <class T>
-  struct
-# if BOOST_WORKAROUND(BOOST_MSVC, <= 1300)
-  impl
-# else 
-  is_incrementable
-# endif 
+  struct impl
   {
       static typename remove_cv<T>::type& x;
 
       BOOST_STATIC_CONSTANT(
           bool
-        , value = sizeof(is_incrementable_::check(++x)) == 1
+        , value = sizeof(is_incrementable_::check(BOOST_comma(++x,0))) == 1
       );
+  };
 
-      typedef mpl::bool_<(
-# if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
-                             ::boost::detail::is_incrementable_::is_incrementable<T>::
-# endif 
-                             value)> type;
+  template <class T>
+  struct postfix_impl
+  {
+      static typename remove_cv<T>::type& x;
+
+      BOOST_STATIC_CONSTANT(
+          bool
+        , value = sizeof(is_incrementable_::check(BOOST_comma(x++,0))) == 1
+      );
   };
 }
 
-# if BOOST_WORKAROUND(BOOST_MSVC, <= 1300)
+# undef BOOST_comma
+
 template <class T>
-struct is_incrementable : is_incrementable_::impl<T>
+struct is_incrementable
+  : mpl::bool_< ::boost::detail::is_incrementable_::impl<T>::value>
 {
 };
-# else
-using is_incrementable_::is_incrementable;
-# endif 
+
+template <class T>
+struct is_postfix_incrementable
+  : mpl::bool_< ::boost::detail::is_incrementable_::postfix_impl<T>::value>
+{
+};
 
 }} // namespace boost::detail
 

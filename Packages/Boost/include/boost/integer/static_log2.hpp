@@ -1,141 +1,132 @@
-//  Boost integer/static_log2.hpp header file  -------------------------------//
+// -------------- Boost static_log2.hpp header file  ----------------------- //
+//
+//                 Copyright (C) 2001 Daryle Walker.
+//                 Copyright (C) 2003 Vesa Karvonen.
+//                 Copyright (C) 2003 Gennaro Prota.
+//
+//     Distributed under the Boost Software License, Version 1.0.
+//        (See accompanying file LICENSE_1_0.txt or copy at
+//              http://www.boost.org/LICENSE_1_0.txt)
+//
+//         ---------------------------------------------------
+//       See http://www.boost.org/libs/integer for documentation.
+// ------------------------------------------------------------------------- //
 
-//  (C) Copyright Daryle Walker 2001.  Permission to copy, use, modify, sell and
-//  distribute this software is granted provided this copyright notice appears 
-//  in all copies.  This software is provided "as is" without express or
-//  implied warranty, and with no claim as to its suitability for any purpose. 
-
-//  See http://www.boost.org for updates, documentation, and revision history. 
 
 #ifndef BOOST_INTEGER_STATIC_LOG2_HPP
 #define BOOST_INTEGER_STATIC_LOG2_HPP
 
-#include <boost/integer_fwd.hpp>  // self include
+#include "boost/config.hpp" // for BOOST_STATIC_CONSTANT
 
-#include <boost/config.hpp>  // for BOOST_STATIC_CONSTANT, etc.
-#include <boost/limits.hpp>  // for std::numeric_limits
+namespace boost {
 
-#ifdef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
-#include <boost/pending/ct_if.hpp>  // for boost::ct_if<>
-#endif
+ namespace detail {
 
+     namespace static_log2_impl {
 
-namespace boost
-{
+     // choose_initial_n<>
+     //
+     // Recursively doubles its integer argument, until it
+     // becomes >= of the "width" (C99, 6.2.6.2p4) of
+     // static_log2_argument_type.
+     //
+     // Used to get the maximum power of two less then the width.
+     //
+     // Example: if on your platform argument_type has 48 value
+     //          bits it yields n=32.
+     //
+     // It's easy to prove that, starting from such a value
+     // of n, the core algorithm works correctly for any width
+     // of static_log2_argument_type and that recursion always
+     // terminates with x = 1 and n = 0 (see the algorithm's
+     // invariant).
 
-
-//  Implementation details  --------------------------------------------------//
-
-namespace detail
-{
-
-// Forward declarations
-template < unsigned long Val, int Place = 0, int Index
- = std::numeric_limits<unsigned long>::digits >
-    struct static_log2_helper_t;
-
-#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
-
-template < unsigned long Val, int Place >
-    struct static_log2_helper_t< Val, Place, 1 >;
-
-#else
-
-template < int Place >
-    struct static_log2_helper_final_step;
-
-template < unsigned long Val, int Place = 0, int Index
- = std::numeric_limits<unsigned long>::digits >
-    struct static_log2_helper_nopts_t;
-
-#endif
-
-// Recursively build the logarithm by examining the upper bits
-template < unsigned long Val, int Place, int Index >
-struct static_log2_helper_t
-{
-private:
-    BOOST_STATIC_CONSTANT( int, half_place = Index / 2 );
-    BOOST_STATIC_CONSTANT( unsigned long, lower_mask = (1ul << half_place)
-     - 1ul );
-    BOOST_STATIC_CONSTANT( unsigned long, upper_mask = ~lower_mask );
-    BOOST_STATIC_CONSTANT( bool, do_shift = (Val & upper_mask) != 0ul );
-
-    BOOST_STATIC_CONSTANT( unsigned long, new_val = do_shift ? (Val
-     >> half_place) : Val );
-    BOOST_STATIC_CONSTANT( int, new_place = do_shift ? (Place + half_place)
-     : Place );
-    BOOST_STATIC_CONSTANT( int, new_index = Index - half_place );
-
-#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
-    typedef static_log2_helper_t<new_val, new_place, new_index>  next_step_type;
-#else
-    typedef static_log2_helper_nopts_t<new_val, new_place, new_index>  next_step_type;
-#endif
-
-public:
-    BOOST_STATIC_CONSTANT( int, value = next_step_type::value );
-
-};  // boost::detail::static_log2_helper_t
-
-// Non-recursive case
-#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
-
-template < unsigned long Val, int Place >
-struct static_log2_helper_t< Val, Place, 1 >
-{
-public:
-    BOOST_STATIC_CONSTANT( int, value = Place );
-
-};  // boost::detail::static_log2_helper_t
-
-#else
-
-template < int Place >
-struct static_log2_helper_final_step
-{
-public:
-    BOOST_STATIC_CONSTANT( int, value = Place );
-
-};  // boost::detail::static_log2_helper_final_step
-
-template < unsigned long Val, int Place, int Index >
-struct static_log2_helper_nopts_t
-{
-private:
-    typedef static_log2_helper_t<Val, Place, Index>  recursive_step_type;
-    typedef static_log2_helper_final_step<Place>     final_step_type;
-
-    typedef typename ct_if<( Index != 1 ), recursive_step_type,
-     final_step_type>::type  next_step_type;
-
-public:
-    BOOST_STATIC_CONSTANT( int, value = next_step_type::value );
-
-};  // boost::detail::static_log2_helper_nopts_t
-
-#endif
-
-}  // namespace detail
+     typedef unsigned long argument_type;
+     typedef          int  result_type;
 
 
-//  Compile-time log-base-2 evaluator class declaration  ---------------------//
+     template <result_type n>
+     struct choose_initial_n {
 
-template < unsigned long Value >
-struct static_log2
-{
-    BOOST_STATIC_CONSTANT( int, value
-     = detail::static_log2_helper_t<Value>::value );
-};
+         enum { c = (argument_type(1) << n << n) != 0 };
+         BOOST_STATIC_CONSTANT(
+             result_type,
+             value = !c*n + choose_initial_n<2*c*n>::value
+         );
 
-template < >
-struct static_log2< 0ul >
-{
-    // The logarithm of zero is undefined.
-};
+     };
 
-
-}  // namespace boost
+     template <>
+     struct choose_initial_n<0> {
+         BOOST_STATIC_CONSTANT(result_type, value = 0);
+     };
 
 
-#endif  // BOOST_INTEGER_STATIC_LOG2_HPP
+
+     // start computing from n_zero - must be a power of two
+     const result_type n_zero = 16;
+     const result_type initial_n = choose_initial_n<n_zero>::value;
+
+     // static_log2_impl<>
+     //
+     // * Invariant:
+     //                 2n
+     //  1 <= x && x < 2    at the start of each recursion
+     //                     (see also choose_initial_n<>)
+     //
+     // * Type requirements:
+     //
+     //   argument_type maybe any unsigned type with at least n_zero + 1
+     //   value bits. (Note: If larger types will be standardized -e.g.
+     //   unsigned long long- then the argument_type typedef can be
+     //   changed without affecting the rest of the code.)
+     //
+
+     template <argument_type x, result_type n = initial_n>
+     struct static_log2_impl {
+
+         enum { c = (x >> n) > 0 }; // x >= 2**n ?
+         BOOST_STATIC_CONSTANT(
+             result_type,
+             value = c*n + (static_log2_impl< (x>>c*n), n/2 >::value)
+         );
+
+     };
+
+     template <>
+     struct static_log2_impl<1, 0> {
+        BOOST_STATIC_CONSTANT(result_type, value = 0);
+     };
+
+     }
+ } // detail
+
+
+
+ // --------------------------------------
+ // static_log2<x>
+ // ----------------------------------------
+
+ typedef detail::static_log2_impl::argument_type static_log2_argument_type;
+ typedef detail::static_log2_impl::result_type   static_log2_result_type;
+
+
+ template <static_log2_argument_type x>
+ struct static_log2 {
+
+     BOOST_STATIC_CONSTANT(
+         static_log2_result_type,
+         value = detail::static_log2_impl::static_log2_impl<x>::value
+     );
+
+ };
+
+
+ template <>
+ struct static_log2<0> { };
+
+}
+
+
+
+#endif // include guard

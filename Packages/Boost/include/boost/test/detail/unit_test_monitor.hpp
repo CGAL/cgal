@@ -1,7 +1,7 @@
-//  (C) Copyright Gennadiy Rozental 2001-2003.
-//  Use, modification, and distribution are subject to the 
-//  Boost Software License, Version 1.0. (See accompanying file 
-//  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//  (C) Copyright Gennadiy Rozental 2001-2004.
+//  Distributed under the Boost Software License, Version 1.0.
+//  (See accompanying file LICENSE_1_0.txt or copy at 
+//  http://www.boost.org/LICENSE_1_0.txt)
 
 //  See http://www.boost.org/libs/test for the library home page.
 //
@@ -13,24 +13,20 @@
 //  test cases. Translates executioin exception into error level
 // ***************************************************************************
 
-#ifndef BOOST_UNIT_TEST_MONITOR_HPP
-#define BOOST_UNIT_TEST_MONITOR_HPP
+#ifndef BOOST_UNIT_TEST_MONITOR_HPP_071894GER
+#define BOOST_UNIT_TEST_MONITOR_HPP_071894GER
 
 #include <boost/test/execution_monitor.hpp>
 
-#ifdef BOOST_MSVC
-# pragma warning(push)
-# pragma warning(disable: 4511) // copy constructor could not be generated
-# pragma warning(disable: 4512) // assignment operator could not be generated
-#endif
+#include <boost/test/detail/suppress_warnings.hpp>
 
 namespace boost {
 
-namespace unit_test_framework {
+namespace unit_test {
 
 class test_case;
 
-namespace detail {
+namespace ut_detail {
 
 // ************************************************************************** //
 // **************               unit_test_monitor              ************** //
@@ -68,29 +64,38 @@ private:
     static bool         s_catch_system_errors;
 }; // unit_test_monitor
 
-} // namespace detail
+} // namespace ut_detail
 
-} // namespace unit_test_framework
+} // namespace unit_test
 
 } // namespace boost
 
-#ifdef BOOST_MSVC
-# pragma warning(default: 4511) // copy constructor could not be generated
-# pragma warning(default: 4512) // assignment operator could not be generated
-# pragma warning(pop)
-#endif
+#include <boost/test/detail/enable_warnings.hpp>
 
 // ***************************************************************************
 //  Revision History :
 //  
 //  $Log$
-//  Revision 1.1  2004/05/23 10:51:39  spion
-//  Initial revision
+//  Revision 1.1.1.2  2004/11/20 10:52:20  spion
+//  Import of Boost v. 1.32.0
+//
+//  Revision 1.17  2004/07/19 12:24:01  rogeeff
+//  guard rename
+//  suppress warnings reworked
+//
+//  Revision 1.16  2004/06/07 07:33:49  rogeeff
+//  detail namespace renamed
+//
+//  Revision 1.15  2004/05/21 06:19:35  rogeeff
+//  licence update
+//
+//  Revision 1.14  2004/05/11 11:00:53  rogeeff
+//  basic_cstring introduced and used everywhere
+//  class properties reworked
 //
 //  Revision 1.13  2003/12/01 00:41:56  rogeeff
 //  prerelease cleaning
 //
-
 // ***************************************************************************
 
-#endif // BOOST_UNIT_TEST_MONITOR_HPP
+#endif // BOOST_UNIT_TEST_MONITOR_HPP_071894GER

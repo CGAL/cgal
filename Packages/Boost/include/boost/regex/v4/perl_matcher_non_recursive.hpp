@@ -38,7 +38,13 @@ inline void inplace_destroy(T* p)
 
 struct saved_state
 {
-   unsigned int id;
+   union{
+      unsigned int id;
+      // these ensure that this struct gets the same alignment as derived structs:
+      void* padding1;
+      std::size_t padding2;
+      std::ptrdiff_t padding3;
+   };
    saved_state(unsigned i) : id(i) {}
 };
 
@@ -546,7 +552,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_dot_repeat
       return match_dot_repeat_slow();
 
    const re_repeat* rep = static_cast<const re_repeat*>(pstate);
-   unsigned count = std::min(static_cast<unsigned>(re_detail::distance(position, last)), static_cast<unsigned>(rep->greedy ? rep->max : rep->min));
+   unsigned count = (std::min)(static_cast<unsigned>(re_detail::distance(position, last)), static_cast<unsigned>(rep->greedy ? rep->max : rep->min));
    if(rep->min > count)
       return false;  // not enough text left to match
    std::advance(position, count);
@@ -593,7 +599,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_char_repea
    if(::boost::is_random_access_iterator<BidiIterator>::value)
    {
       BidiIterator end = position;
-      std::advance(end, std::min((unsigned)re_detail::distance(position, last), desired));
+      std::advance(end, (std::min)((unsigned)re_detail::distance(position, last), desired));
       BidiIterator origin(position);
       while((position != end) && (traits_inst.translate(*position, icase) == what))
       {
@@ -660,7 +666,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_set_repeat
    if(::boost::is_random_access_iterator<BidiIterator>::value)
    {
       BidiIterator end = position;
-      std::advance(end, std::min((unsigned)re_detail::distance(position, last), desired));
+      std::advance(end, (std::min)((unsigned)re_detail::distance(position, last), desired));
       BidiIterator origin(position);
       while((position != end) && map[(traits_uchar_type)traits_inst.translate(*position, icase)])
       {
@@ -727,7 +733,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_long_set_r
    if(::boost::is_random_access_iterator<BidiIterator>::value)
    {
       BidiIterator end = position;
-      std::advance(end, std::min((unsigned)re_detail::distance(position, last), desired));
+      std::advance(end, (std::min)((unsigned)re_detail::distance(position, last), desired));
       BidiIterator origin(position);
       while((position != end) && (position != re_is_set_member(position, last, set, re)))
       {
@@ -927,8 +933,8 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::unwind_greedy_si
 
    const re_repeat* rep = pmp->rep;
    unsigned count = pmp->count;
-   assert(rep->next.p);
-   assert(rep->alt.p);
+   assert(rep->next.p != 0);
+   assert(rep->alt.p != 0);
 
    count -= rep->min;
    
@@ -977,8 +983,8 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::unwind_slow_dot_
    const re_repeat* rep = pmp->rep;
    unsigned count = pmp->count;
    assert(rep->type == syntax_element_dot_rep);
-   assert(rep->next.p);
-   assert(rep->alt.p);
+   assert(rep->next.p != 0);
+   assert(rep->alt.p != 0);
    assert(rep->next.p->type == syntax_element_wild);
 
    assert(count < rep->max);
@@ -1095,8 +1101,8 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::unwind_char_repe
    position = pmp->last_position;
 
    assert(rep->type == syntax_element_char_rep);
-   assert(rep->next.p);
-   assert(rep->alt.p);
+   assert(rep->next.p != 0);
+   assert(rep->alt.p != 0);
    assert(rep->next.p->type == syntax_element_literal);
    assert(count < rep->max);
 
@@ -1159,8 +1165,8 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::unwind_short_set
    position = pmp->last_position;
 
    assert(rep->type == syntax_element_short_set_rep);
-   assert(rep->next.p);
-   assert(rep->alt.p);
+   assert(rep->next.p != 0);
+   assert(rep->alt.p != 0);
    assert(rep->next.p->type == syntax_element_set);
    assert(count < rep->max);
    
@@ -1223,8 +1229,8 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::unwind_long_set_
    position = pmp->last_position;
 
    assert(rep->type == syntax_element_long_set_rep);
-   assert(rep->next.p);
-   assert(rep->alt.p);
+   assert(rep->next.p != 0);
+   assert(rep->alt.p != 0);
    assert(rep->next.p->type == syntax_element_long_set);
    assert(position != last);
    assert(count < rep->max);

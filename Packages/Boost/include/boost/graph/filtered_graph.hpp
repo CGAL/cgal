@@ -208,8 +208,8 @@ namespace boost {
     > edge_iterator;
     typedef typename Traits::edges_size_type           edges_size_type;
 
-    typedef typename edge_property_type<Graph>::type   edge_property_type;
-    typedef typename vertex_property_type<Graph>::type vertex_property_type;
+    typedef typename ::boost::edge_property_type<Graph>::type   edge_property_type;
+    typedef typename ::boost::vertex_property_type<Graph>::type vertex_property_type;
     typedef filtered_graph_tag graph_tag;
 
     //private:

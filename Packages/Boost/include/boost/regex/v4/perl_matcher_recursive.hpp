@@ -400,7 +400,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_dot_repeat
    // start by working out how much we can skip:
    //
    const re_repeat* rep = static_cast<const re_repeat*>(pstate);
-   unsigned count = std::min(static_cast<unsigned>(re_detail::distance(position, last)), (rep->greedy ? rep->max : rep->min));
+   unsigned count = (std::min)(static_cast<unsigned>(re_detail::distance(position, last)), (rep->greedy ? rep->max : rep->min));
    if(rep->min > count)
       return false;  // not enough text left to match
    std::advance(position, count);
@@ -458,7 +458,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_char_repea
    if(::boost::is_random_access_iterator<BidiIterator>::value)
    {
       BidiIterator end = position;
-      std::advance(end, std::min((unsigned)re_detail::distance(position, last), desired));
+      std::advance(end, (std::min)((unsigned)re_detail::distance(position, last), desired));
       BidiIterator origin(position);
       while((position != end) && (traits_inst.translate(*position, icase) == what))
       {
@@ -507,8 +507,16 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_char_repea
          return false;
       if(position == last)
          return false;
-      position = ++save_pos;
-      ++count;
+      position = save_pos;
+      if(traits_inst.translate(*position, icase) == what)
+      {
+         ++position;
+         ++count;
+      }
+      else
+      {
+         return false;
+      }
    }while(true);
 #ifdef __BORLANDC__
 #pragma option pop
@@ -538,7 +546,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_set_repeat
    if(::boost::is_random_access_iterator<BidiIterator>::value)
    {
       BidiIterator end = position;
-      std::advance(end, std::min((unsigned)re_detail::distance(position, last), desired));
+      std::advance(end, (std::min)((unsigned)re_detail::distance(position, last), desired));
       BidiIterator origin(position);
       while((position != end) && map[(traits_uchar_type)traits_inst.translate(*position, icase)])
       {
@@ -587,8 +595,16 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_set_repeat
          return false;
       if(position == last)
          return false;
-      position = ++save_pos;
-      ++count;
+      position = save_pos;
+      if(map[(traits_uchar_type)traits_inst.translate(*position, icase)])
+      {
+         ++position;
+         ++count;
+      }
+      else
+      {
+         return false;
+      }
    }while(true);
 #ifdef __BORLANDC__
 #pragma option pop
@@ -618,7 +634,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_long_set_r
    if(::boost::is_random_access_iterator<BidiIterator>::value)
    {
       BidiIterator end = position;
-      std::advance(end, std::min((unsigned)re_detail::distance(position, last), desired));
+      std::advance(end, (std::min)((unsigned)re_detail::distance(position, last), desired));
       BidiIterator origin(position);
       while((position != end) && (position != re_is_set_member(position, last, set, re)))
       {
@@ -667,8 +683,16 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_long_set_r
          return false;
       if(position == last)
          return false;
-      position = ++save_pos;
-      ++count;
+      position = save_pos;
+      if(position != re_is_set_member(position, last, set, re))
+      {
+         ++position;
+         ++count;
+      }
+      else
+      {
+         return false;
+      }
    }while(true);
 #ifdef __BORLANDC__
 #pragma option pop

@@ -60,7 +60,7 @@ namespace boost {
       void discover_vertex(typename graph_traits<Graph>::vertex_descriptor v,
                            const Graph&) {
         put(root, v, v);
-        put(comp, v, std::numeric_limits<comp_type>::max());
+        put(comp, v, (std::numeric_limits<comp_type>::max)());
         put(discover_time, v, dfs_time++);
         s.push(v);
       }
@@ -71,7 +71,7 @@ namespace boost {
         typename graph_traits<Graph>::out_edge_iterator ei, ei_end;
         for (tie(ei, ei_end) = out_edges(v, g); ei != ei_end; ++ei) {
           w = target(*ei, g);
-          if (get(comp, w) == std::numeric_limits<comp_type>::max())
+          if (get(comp, w) == (std::numeric_limits<comp_type>::max)())
             put(root, v, this->min_discover_time(get(root,v), get(root,w)));
         }
         if (get(root, v) == v) {

@@ -1,16 +1,14 @@
-// -*- C++ -*-
-//  Boost general library 'format'   ---------------------------
-//  See http://www.boost.org for updates, documentation, and revision history.
-
-//  (C) Samuel Krempp 2001
-//  Permission to copy, use, modify, sell and
-//  distribute this software is granted provided this copyright notice appears
-//  in all copies. This software is provided "as is" without express or implied
-//  warranty, and with no claim as to its suitability for any purpose.
-
-
 // ----------------------------------------------------------------------------
 // format.hpp :  primary header
+// ----------------------------------------------------------------------------
+
+//  Copyright Samuel Krempp 2003. Use, modification, and distribution are
+//  subject to the Boost Software License, Version 1.0. (See accompanying
+//  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+//  See http://www.boost.org/libs/format for library home page
+
+
 // ----------------------------------------------------------------------------
 
 #ifndef BOOST_FORMAT_HPP
@@ -19,11 +17,14 @@
 #include <vector>
 #include <string>
 #include <boost/detail/workaround.hpp>
-#include <boost/format/detail/config_macros.hpp>
+#include <boost/config.hpp>
 
 #ifndef BOOST_NO_STD_LOCALE
 #include <locale>
 #endif
+
+// ***   Compatibility framework
+#include <boost/format/detail/compat_workarounds.hpp>
 
 #ifdef BOOST_NO_LOCALE_ISIDIGIT
 #include <cctype>  // we'll use the non-locale  <cctype>'s std::isdigit(int)

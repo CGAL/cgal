@@ -1,10 +1,9 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// Copyright David Abrahams 2002, Joel de Guzman, 2002. Permission to copy,
-// use, modify, sell and distribute this software is granted provided this
-// copyright notice appears in all copies. This software is provided "as is"
-// without express or implied warranty, and with no claim as to its
-// suitability for any purpose.
+// Copyright David Abrahams 2002, Joel de Guzman, 2002.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 //
 ///////////////////////////////////////////////////////////////////////////////
 #ifndef INIT_JDG20020820_HPP
@@ -18,7 +17,7 @@
 #include <boost/python/def_visitor.hpp>
 
 #include <boost/mpl/if.hpp>
-#include <boost/mpl/apply_if.hpp>
+#include <boost/mpl/eval_if.hpp>
 #include <boost/mpl/size.hpp>
 #include <boost/mpl/iterator_range.hpp>
 #include <boost/mpl/empty.hpp>
@@ -270,20 +269,20 @@ class init : public init_base<init<BOOST_PYTHON_OVERLOAD_ARGS> >
     typedef detail::type_list<BOOST_PYTHON_OVERLOAD_ARGS> signature_;
 
     typedef detail::is_optional<
-        typename mpl::apply_if<
+        typename mpl::eval_if<
             mpl::empty<signature_>
           , mpl::false_
           , mpl::back<signature_>
         >::type
     > back_is_optional;
     
-    typedef typename mpl::apply_if<
+    typedef typename mpl::eval_if<
         back_is_optional
       , mpl::back<signature_>
       , mpl::vector0<>
     >::type optional_args;
 
-    typedef typename mpl::apply_if<
+    typedef typename mpl::eval_if<
         back_is_optional
       , mpl::if_<
             mpl::empty<optional_args>
@@ -328,17 +327,15 @@ namespace detail
       , detail::keyword_range const& keywords_
       )
   {
-      typedef typename ClassT::select_holder selector_t;
-
       cl.def(
-            "__init__",
-            detail::make_keyword_range_constructor<Signature,NArgs>(
-                policies
-                , keywords_
-                , selector_t::get()
-                )
-            , doc
-            );
+          "__init__"
+        , detail::make_keyword_range_constructor<Signature,NArgs>(
+              policies
+            , keywords_
+            , (typename ClassT::metadata::holder*)0
+          )
+        , doc
+      );
   }
 
   ///////////////////////////////////////////////////////////////////////////////

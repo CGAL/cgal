@@ -18,6 +18,7 @@
 #include <boost/filesystem/path.hpp>  // includes <boost/filesystem/config.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/iterator.hpp>
+#include <boost/cstdint.hpp>
 
 #include <string>
 #include <ctime>
@@ -52,12 +53,14 @@ namespace boost
     inline bool is_empty( const path & ph ) { return _is_empty( ph ); }
 #   endif
 
+    BOOST_FILESYSTEM_DECL bool equivalent( const path & ph1, const path & ph2 );
+    BOOST_FILESYSTEM_DECL boost::intmax_t file_size( const path & ph );
     BOOST_FILESYSTEM_DECL std::time_t last_write_time( const path & ph );
     BOOST_FILESYSTEM_DECL void last_write_time( const path & ph, const std::time_t new_time );
 
 //  operations  --------------------------------------------------------------//
 
-    BOOST_FILESYSTEM_DECL void create_directory( const path & directory_ph );
+    BOOST_FILESYSTEM_DECL bool create_directory( const path & directory_ph );
 
     BOOST_FILESYSTEM_DECL bool remove( const path & ph );
     BOOST_FILESYSTEM_DECL unsigned long remove_all( const path & ph );
@@ -73,6 +76,14 @@ namespace boost
 
     BOOST_FILESYSTEM_DECL path system_complete( const path & ph );
     BOOST_FILESYSTEM_DECL path complete( const path & ph, const path & base = initial_path() );
+
+//  test helper  -------------------------------------------------------------//
+
+    // not part of the documented interface because false positives are possible;
+    // there is no law that says that an OS that has large stat.st_size
+    // actually supports large file sizes.
+    BOOST_FILESYSTEM_DECL bool possible_large_file_size_support();
+
 
 //  directory_iterator helpers  ----------------------------------------------//
 //    forwarding functions avoid need for BOOST_FILESYSTEM_DECL for class

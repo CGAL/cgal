@@ -76,7 +76,7 @@
       // in issue 4, version 2 (_XOPEN_VERSION > 500).
 #     if defined(_XOPEN_VERSION) && (_XOPEN_VERSION+0 >= 500)
 #        define BOOST_HAS_GETTIMEOFDAY
-#        if defined(_XOPEN_SOURCE) && (_XOPEN_SOURCE >= 500)
+#        if defined(_XOPEN_SOURCE) && (_XOPEN_SOURCE+0 >= 500)
 #           define BOOST_HAS_PTHREAD_MUTEXATTR_SETTYPE
 #        endif
 #     endif

@@ -1,5 +1,5 @@
 /*=============================================================================
-    Phoenix v1.2
+    Phoenix V1.2.1
     Copyright (c) 2001-2002 Joel de Guzman
 
     Use, modification and distribution is subject to the Boost Software
@@ -8,6 +8,10 @@
 ==============================================================================*/
 #ifndef PHOENIX_TUPLES_HPP
 #define PHOENIX_TUPLES_HPP
+
+#if defined(BOOST_MSVC) && (BOOST_MSVC <= 1300)
+#error "Sorry, Phoenix does not support VC6 and VC7. Please upgrade to at least VC7.1"
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 //

@@ -332,6 +332,15 @@ namespace boost { namespace spirit {
                 convert(alt);
         }
 
+        //'generate' for binary composite
+        template <typename A, typename B>
+        static
+        longest_alternative<A, B>
+        generate(A const &left, B const &right)
+        {
+            return longest_alternative<A, B>(left, right);
+        }
+
         template <typename A, typename B>
         typename impl::to_longest_alternative<alternative<A, B> >::result_t
         operator[](alternative<A, B> const& alt) const
@@ -374,7 +383,7 @@ namespace boost { namespace spirit {
 
             if (l || r)
             {
-                if (l.length() < r.length())
+                if (l.length() < r.length() && l || !r)
                 {
                     scan.first = save;
                     return l;
@@ -403,6 +412,15 @@ namespace boost { namespace spirit {
         {
             return impl::to_shortest_alternative<alternative<A, B> >::
                 convert(alt);
+        }
+
+        //'generate' for binary composite
+        template <typename A, typename B>
+        static
+        shortest_alternative<A, B>
+        generate(A const &left, B const &right)
+        {
+            return shortest_alternative<A, B>(left, right);
         }
 
         template <typename A, typename B>
@@ -449,7 +467,7 @@ namespace boost { namespace spirit {
         {
             typedef typename parser_result<self_t, ScannerT>::type result_t;
             result_t hit = this->subject().parse(scan);
-            if (hit.value() < min_)
+            if (hit.has_valid_attribute() && hit.value() < min_)
                 return scan.no_match();
             return hit;
         }
@@ -509,7 +527,7 @@ namespace boost { namespace spirit {
         {
             typedef typename parser_result<self_t, ScannerT>::type result_t;
             result_t hit = this->subject().parse(scan);
-            if (hit.value() > max_)
+            if (hit.has_valid_attribute() && hit.value() > max_)
                 return scan.no_match();
             return hit;
         }
@@ -571,8 +589,9 @@ namespace boost { namespace spirit {
         {
             typedef typename parser_result<self_t, ScannerT>::type result_t;
             result_t hit = this->subject().parse(scan);
-            if (hit.value() < min_ || hit.value() > max_)
-                return scan.no_match();
+            if (hit.has_valid_attribute() &&
+                (hit.value() < min_ || hit.value() > max_))
+                    return scan.no_match();
             return hit;
         }
 

@@ -10,6 +10,7 @@
  */
 
 
+#include "boost/config.hpp"
 #include "boost/limits.hpp" //work around compilers without limits
 #include "boost/date_time/special_defs.hpp"
 #include "boost/date_time/locale_config.hpp"
@@ -46,23 +47,23 @@ public:
   }
   static const int_adapter  pos_infinity()
   {
-    return ::std::numeric_limits<int_type>::max();
+    return (::std::numeric_limits<int_type>::max)();
   }
   static const int_adapter  neg_infinity()
   {
-    return ::std::numeric_limits<int_type>::min();
+    return (::std::numeric_limits<int_type>::min)();
   }
   static const int_adapter  not_a_number()
   {
-    return ::std::numeric_limits<int_type>::max()-1;
+    return (::std::numeric_limits<int_type>::max)()-1;
   }
-  static  int_adapter max()
+  static  int_adapter max BOOST_PREVENT_MACRO_SUBSTITUTION ()
   {
-    return ::std::numeric_limits<int_type>::max()-2;
+    return (::std::numeric_limits<int_type>::max)()-2;
   }
-  static  int_adapter min()
+  static  int_adapter min BOOST_PREVENT_MACRO_SUBSTITUTION ()
   {
-    return ::std::numeric_limits<int_type>::min()+1;
+    return (::std::numeric_limits<int_type>::min)()+1;
   }
   static int_adapter from_special(special_values sv)
   {
@@ -70,8 +71,8 @@ public:
     case not_a_date_time: return not_a_number();
     case neg_infin:       return neg_infinity();
     case pos_infin:       return pos_infinity();
-    case max_date_time:   return max();
-    case min_date_time:   return min();
+    case max_date_time:   return (max)();
+    case min_date_time:   return (min)();
     default:              return not_a_number();
     }
   }
@@ -104,7 +105,7 @@ public:
   //-3 leaves room for representations of infinity and not a date
   static  int_type maxcount()
   {
-    return ::std::numeric_limits<int_type>::max()-3;
+    return (::std::numeric_limits<int_type>::max)()-3;
   }
   bool is_infinity() const
   {

@@ -3,6 +3,7 @@
 //  (C) Copyright Peter Dimov 2001. 
 //  (C) Copyright David Abrahams 2001 - 2002. 
 //  (C) Copyright Beman Dawes 2001 - 2003. 
+//  (C) Copyright Stefan Slapeta 2004. 
 //  Use, modification and distribution are subject to the 
 //  Boost Software License, Version 1.0. (See accompanying file 
 //  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -36,7 +37,7 @@
 #     define BOOST_NO_SFINAE
 #    endif
 
-#   if(__MWERKS__ <= 0x3202)  // 9.2
+#   if(__MWERKS__ <= 0x3204)  // 9.3
 #     define BOOST_NO_MEMBER_TEMPLATE_FRIENDS
 #    endif
 
@@ -63,6 +64,8 @@
 #     define BOOST_COMPILER_VERSION 9.1
 #   elif __MWERKS__ == 0x3202
 #     define BOOST_COMPILER_VERSION 9.2
+#   elif __MWERKS__ == 0x3204
+#     define BOOST_COMPILER_VERSION 9.3
 #   else
 #     define BOOST_COMPILER_VERSION __MWERKS__
 #   endif
@@ -80,7 +83,7 @@
 #endif
 //
 // last known and checked version:
-#if (__MWERKS__ > 0x3202)
+#if (__MWERKS__ > 0x3204)
 #  if defined(BOOST_ASSERT_CONFIG)
 #     error "Unknown compiler version - please run the configure tests and report the results"
 #  endif

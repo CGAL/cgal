@@ -54,7 +54,7 @@ perl_matcher<BidiIterator, Allocator, traits, Allocator2>::perl_matcher(BidiIter
    estimate_max_state_count(static_cast<category*>(0));
    if(!(m_match_flags & (match_perl|match_posix)))
    {
-      if(re.flags() & regex_constants::perlex)
+      if((re.flags() & regex_constants::perlex) || (re.flags() & regex_constants::literal))
          m_match_flags |= match_perl;
       else
          m_match_flags |= match_posix;
@@ -78,11 +78,11 @@ void perl_matcher<BidiIterator, Allocator, traits, Allocator2>::estimate_max_sta
    difference_type dist = boost::re_detail::distance(base, last);
    traits_size_type states = static_cast<traits_size_type>(re.size());
    states *= states;
-   difference_type lim = std::numeric_limits<difference_type>::max() - 1000 - states;
+   difference_type lim = (std::numeric_limits<difference_type>::max)() - 100000 - states;
    if(dist > (difference_type)(lim / states))
       max_state_count = lim;
    else
-      max_state_count = 1000 + states * dist;
+      max_state_count = 100000 + states * dist;
 }
 template <class BidiIterator, class Allocator, class traits, class Allocator2>
 void perl_matcher<BidiIterator, Allocator, traits, Allocator2>::estimate_max_state_count(void*)
@@ -205,10 +205,10 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::find_imp()
    else
    {
       // start again:
-      search_base = position = (*m_presult)[0].second;
+      search_base = position = m_result[0].second;
       // If last match was null and match_not_null was not set then increment
       // our start position, otherwise we go into an infinite loop:
-      if(((m_match_flags & match_not_null) == 0) && (m_presult->length() == 0))
+      if(((m_match_flags & match_not_null) == 0) && (m_result.length() == 0))
       {
          if(position == last)
             return false;

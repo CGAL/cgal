@@ -1,28 +1,22 @@
 
-// -*- C++ -*-
-//  Boost general library 'format'   ---------------------------
-//  See http://www.boost.org for updates, documentation, and revision history.
+// ----------------------------------------------------------------------------
+// group.hpp :  encapsulates a group of manipulators along with an argument
+// ----------------------------------------------------------------------------
 
-//  (C) Samuel Krempp 2001
-//                  krempp@crans.ens-cachan.fr
-//  Permission to copy, use, modify, sell and
-//  distribute this software is granted provided this copyright notice appears
-//  in all copies. This software is provided "as is" without express or implied
-//  warranty, and with no claim as to its suitability for any purpose.
+//  Copyright Samuel Krempp 2003. Use, modification, and distribution are
+//  subject to the Boost Software License, Version 1.0. (See accompanying
+//  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-// ideas taken from Rüdiger Loos's format class
-// and Karl Nelson's ofstream
+//  See http://www.boost.org/libs/format for library home page
 
 // ----------------------------------------------------------------------------
 
-// group.hpp :  encapsulates a group of manipulators along with an argument
-//                      
+                      
 // group_head : cut the last element of a group out.
 // (is overloaded below on each type of group)
 
 // group_last : returns the last element of a group
 // (is overloaded below on each type of group)
-
 // ----------------------------------------------------------------------------
 
 
@@ -671,7 +665,7 @@ detail::group1< detail::group10<T1,T2,T3,T4,T5,T6,T7,T8,T9, Var&> >
 }
 
 
-#endif  //end- #ifndef BOOST_NO_OVERLOAD_FOR_NON_CONST
+#endif  // - BOOST_NO_OVERLOAD_FOR_NON_CONST
 
 
 } // namespace io

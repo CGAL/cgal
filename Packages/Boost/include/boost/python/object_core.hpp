@@ -1,8 +1,7 @@
-// Copyright David Abrahams 2002. Permission to copy, use,
-// modify, sell and distribute this software is granted provided this
-// copyright notice appears in all copies. This software is provided
-// "as is" without express or implied warranty, and with no claim as
-// to its suitability for any purpose.
+// Copyright David Abrahams 2002.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 #ifndef OBJECT_CORE_DWA2002615_HPP
 # define OBJECT_CORE_DWA2002615_HPP
 
@@ -13,7 +12,6 @@
 # include <boost/python/call.hpp>
 # include <boost/python/handle_fwd.hpp>
 # include <boost/python/errors.hpp>
-# include <boost/python/slice_nil.hpp>
 # include <boost/python/refcount.hpp>
 # include <boost/python/detail/preprocessor.hpp>
 # include <boost/python/tag.hpp>
@@ -40,6 +38,8 @@
 #  include <boost/type_traits/add_pointer.hpp>
 # endif
 
+# include <boost/mpl/if.hpp>
+
 namespace boost { namespace python { 
 
 namespace converter
@@ -63,6 +63,7 @@ namespace api
   struct item_policies;
   struct const_slice_policies;
   struct slice_policies;
+  class slice_nil;
 
   typedef proxy<const_attribute_policies> const_object_attribute;
   typedef proxy<attribute_policies> object_attribute;
@@ -176,6 +177,7 @@ namespace api
 # endif
       
    private: // def visitation for adding callable objects as class methods
+      
       template <class ClassT, class DocStringT>
       void visit(ClassT& cl, char const* name, python::detail::def_helper<DocStringT> const& helper) const
       {
@@ -183,7 +185,7 @@ namespace api
           // the callable object is already wrapped.
           BOOST_STATIC_ASSERT(
               (is_same<char const*,DocStringT>::value
-               || detail::is_string_literal<DocStringT>::value));
+               || detail::is_string_literal<DocStringT const>::value));
         
           objects::add_to_namespace(cl, name, this->derived_visitor(), helper.doc());
       }
@@ -296,7 +298,14 @@ namespace api
       
       // explicit conversion from any C++ object to Python
       template <class T>
-      explicit object(T const& x)
+      explicit object(
+          T const& x
+# if BOOST_WORKAROUND(BOOST_MSVC, == 1200)
+          // use some SFINAE to un-confuse MSVC about its
+          // copy-initialization ambiguity claim.
+        , typename mpl::if_<is_proxy<T>,int&,int>::type* = 0
+# endif 
+      )
         : object_base(object_base_initializer(x))
       {
       }
@@ -470,5 +479,7 @@ inline PyObject* get_managed_object(object const& x, tag_t)
 }
 
 }} // namespace boost::python
+
+# include <boost/python/slice_nil.hpp>
 
 #endif // OBJECT_CORE_DWA2002615_HPP

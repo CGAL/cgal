@@ -2,31 +2,31 @@
 #ifndef BOOST_MPL_INTEGRAL_C_FWD_HPP_INCLUDED
 #define BOOST_MPL_INTEGRAL_C_FWD_HPP_INCLUDED
 
-// + file: boost/mpl/integral_c_fwd.hpp
-// + last modified: 08/mar/03
-
-// Copyright (c) 2000-03
-// Aleksey Gurtovoy
+// Copyright Aleksey Gurtovoy 2000-2004
 //
-// Permission to use, copy, modify, distribute and sell this software
-// and its documentation for any purpose is hereby granted without fee, 
-// provided that the above copyright notice appears in all copies and 
-// that both the copyright notice and this permission notice appear in 
-// supporting documentation. No representations are made about the 
-// suitability of this software for any purpose. It is provided "as is" 
-// without express or implied warranty.
+// Distributed under the Boost Software License, Version 1.0. 
+// (See accompanying file LICENSE_1_0.txt or copy at 
+// http://www.boost.org/LICENSE_1_0.txt)
 //
 // See http://www.boost.org/libs/mpl for documentation.
 
-#include "boost/mpl/aux_/config/workaround.hpp"
+// $Source$
+// $Date$
+// $Revision$
 
-namespace boost { namespace mpl {
+#include <boost/mpl/aux_/config/workaround.hpp>
+#include <boost/mpl/aux_/adl_barrier.hpp>
+
+BOOST_MPL_AUX_ADL_BARRIER_NAMESPACE_OPEN
+
 #if BOOST_WORKAROUND(__HP_aCC, BOOST_TESTED_AT(53800))
 // the type of non-type template arguments may not depend on template arguments
 template< typename T, long N > struct integral_c;
 #else
 template< typename T, T N > struct integral_c;
 #endif
-}}
+
+BOOST_MPL_AUX_ADL_BARRIER_NAMESPACE_CLOSE
+BOOST_MPL_AUX_ADL_BARRIER_DECL(integral_c)
 
 #endif // BOOST_MPL_INTEGRAL_C_FWD_HPP_INCLUDED

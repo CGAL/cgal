@@ -11,13 +11,9 @@
 // Copyright (c) 2003
 // Eric Friedman
 //
-// Permission to use, copy, modify, distribute and sell this software
-// and its documentation for any purpose is hereby granted without fee, 
-// provided that the above copyright notice appears in all copies and 
-// that both the copyright notice and this permission notice appear in 
-// supporting documentation. No representations are made about the 
-// suitability of this software for any purpose. It is provided "as is" 
-// without express or implied warranty.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 
 #ifndef BOOST_VARIANT_DETAIL_SUBSTITUTE_HPP
 #define BOOST_VARIANT_DETAIL_SUBSTITUTE_HPP
@@ -29,6 +25,7 @@
 #include "boost/mpl/aux_/preprocessor/params.hpp"
 #include "boost/mpl/aux_/preprocessor/repeat.hpp"
 #include "boost/mpl/int_fwd.hpp"
+#include "boost/mpl/limits/arity.hpp"
 #include "boost/preprocessor/cat.hpp"
 #include "boost/preprocessor/empty.hpp"
 #include "boost/preprocessor/arithmetic/inc.hpp"
@@ -138,7 +135,7 @@ struct substitute<
     BOOST_VARIANT_AUX_SUBSTITUTE_TYPEDEF_IMPL( BOOST_PP_INC(N) ) \
     /**/
 
-#define BOOST_PP_ITERATION_LIMITS (0,BOOST_MPL_METAFUNCTION_MAX_ARITY)
+#define BOOST_PP_ITERATION_LIMITS (0,BOOST_MPL_LIMIT_METAFUNCTION_ARITY)
 #define BOOST_PP_FILENAME_1 "boost/variant/detail/substitute.hpp"
 #include BOOST_PP_ITERATE()
 

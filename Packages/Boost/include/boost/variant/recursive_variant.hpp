@@ -6,13 +6,9 @@
 // Copyright (c) 2003
 // Eric Friedman
 //
-// Permission to use, copy, modify, distribute and sell this software
-// and its documentation for any purpose is hereby granted without fee, 
-// provided that the above copyright notice appears in all copies and 
-// that both the copyright notice and this permission notice appear in 
-// supporting documentation. No representations are made about the 
-// suitability of this software for any purpose. It is provided "as is" 
-// without express or implied warranty.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 
 #ifndef BOOST_VARIANT_RECURSIVE_VARIANT_HPP
 #define BOOST_VARIANT_RECURSIVE_VARIANT_HPP
@@ -26,7 +22,7 @@
 #include "boost/mpl/aux_/lambda_arity_param.hpp"
 
 #if !defined(BOOST_VARIANT_NO_TYPE_SEQUENCE_SUPPORT)
-#   include "boost/mpl/apply_if.hpp"
+#   include "boost/mpl/eval_if.hpp"
 #   include "boost/mpl/identity.hpp"
 #   include "boost/mpl/protect.hpp"
 #   include "boost/mpl/transform.hpp"
@@ -89,7 +85,7 @@ struct substitute<
 
 private: // helpers, for metafunction result (below)
 
-    typedef typename mpl::apply_if<
+    typedef typename mpl::eval_if<
           ::boost::detail::variant::is_over_sequence<T0>
         , mpl::identity< T0 >
         , make_variant_list< BOOST_VARIANT_ENUM_PARAMS(T) >

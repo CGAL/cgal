@@ -721,6 +721,13 @@ re_detail::re_syntax_base* BOOST_REGEX_CALL reg_expression<charT, traits, Alloca
    re_detail::jstack<traits_string_type, Allocator> ranges(64, data.allocator());
    re_detail::jstack<boost::uint_fast32_t, Allocator> classes(64, data.allocator());
    re_detail::jstack<traits_string_type, Allocator> equivalents(64, data.allocator());
+   if(_flags & regbase::icase)
+   {
+      if((cls == traits_type::char_class_upper) || (cls == traits_type::char_class_lower))
+      {
+         cls = traits_type::char_class_alpha;
+      }
+   }
    classes.push(cls);
    if(dat)
    {
@@ -1066,7 +1073,7 @@ re_detail::re_syntax_base* BOOST_REGEX_CALL reg_expression<charT, traits, Alloca
       ++csingles;
       const traits_string_type& s = singles.peek();
       std::size_t len = (s.size() + 1) * sizeof(charT);
-      if(len > sizeof(charT))
+      if(len > sizeof(charT) * 2)
          singleton = false;
       std::memcpy(reinterpret_cast<charT*>(data.extend(len)), s.c_str(), len);
       singles.pop();
@@ -1350,6 +1357,7 @@ unsigned int BOOST_REGEX_CALL reg_expression<charT, traits, Allocator>::set_expr
    data.clear();
    _flags = f;
    fail(REG_NOERROR);  // clear any error
+   _leading_len = 0; // set this to non-zero if there are any backrefs, we'll refer to it later...
 
    if(arg_first >= arg_last)
    {
@@ -1427,7 +1435,8 @@ unsigned int BOOST_REGEX_CALL reg_expression<charT, traits, Allocator>::set_expr
             {
             case traits_type::syntax_colon:
                static_cast<re_detail::re_brace*>(dat)->index = 0;
-               --marks;
+               if((_flags & nosubs) == 0)
+                  --marks;
                markid.pop();
                markid.push(0);
                ++ptr;
@@ -1437,7 +1446,8 @@ unsigned int BOOST_REGEX_CALL reg_expression<charT, traits, Allocator>::set_expr
                markid.pop();
                markid.push(-1);
                common_forward_assert:
-               --marks;
+               if((_flags & nosubs) == 0)
+                  --marks;
                ++ptr;
                // extend:
                dat = add_simple(dat, re_detail::syntax_element_jump, re_detail::re_jump_size);
@@ -1462,7 +1472,8 @@ unsigned int BOOST_REGEX_CALL reg_expression<charT, traits, Allocator>::set_expr
             case traits_type::syntax_hash:
                // comment just skip it:
                static_cast<re_detail::re_brace*>(dat)->index = 0;
-               --marks;
+               if((_flags & nosubs) == 0)
+                  --marks;
                markid.pop();
                mark.pop();
                do{
@@ -1600,6 +1611,7 @@ unsigned int BOOST_REGEX_CALL reg_expression<charT, traits, Allocator>::set_expr
                dat = add_simple(dat, re_detail::syntax_element_backref, sizeof(re_detail::re_brace));
                static_cast<re_detail::re_brace*>(dat)->index = i;
                ++ptr;
+               _leading_len = 1;
                continue;
             }
             break;
@@ -2088,6 +2100,8 @@ template <class charT, class traits, class Allocator>
 unsigned int BOOST_REGEX_CALL reg_expression<charT, traits, Allocator>::fixup_leading_rep(re_detail::re_syntax_base* dat, re_detail::re_syntax_base* arg_end)
 {
    unsigned int len = 0;
+   if((_restart_type >= restart_word) || (_restart_type <= restart_continue))
+      return 0;
    bool leading_lit = arg_end ? false : true;
    while(dat != arg_end)
    {
@@ -2141,7 +2155,7 @@ unsigned int BOOST_REGEX_CALL reg_expression<charT, traits, Allocator>::fixup_le
       case re_detail::syntax_element_char_rep:
       case re_detail::syntax_element_short_set_rep: 
       case re_detail::syntax_element_long_set_rep:
-         if((len == 0) && (1 == fixup_leading_rep(dat->next.p, static_cast<re_detail::re_repeat*>(dat)->alt.p) ))
+         if((len == 0) && (_leading_len == 0) && (1 == fixup_leading_rep(dat->next.p, static_cast<re_detail::re_repeat*>(dat)->alt.p) ))
          {
             static_cast<re_detail::re_repeat*>(dat)->leading = leading_lit;
             return len;

@@ -41,7 +41,7 @@ namespace boost {
   // This is a bit more convenient than std::numeric_limits because
   // you don't have to explicitly provide type T.
   template <class T>
-  inline T numeric_limits_max(T) { return std::numeric_limits<T>::max(); }
+  inline T numeric_limits_max(T) { return (std::numeric_limits<T>::max)(); }
 
   //========================================================================
   // Event Tags

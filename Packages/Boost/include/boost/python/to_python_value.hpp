@@ -1,8 +1,7 @@
-// Copyright David Abrahams 2002. Permission to copy, use,
-// modify, sell and distribute this software is granted provided this
-// copyright notice appears in all copies. This software is provided
-// "as is" without express or implied warranty, and with no claim as
-// to its suitability for any purpose.
+// Copyright David Abrahams 2002.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 #ifndef TO_PYTHON_VALUE_DWA200221_HPP
 # define TO_PYTHON_VALUE_DWA200221_HPP
 
@@ -19,6 +18,7 @@
 # include <boost/python/converter/shared_ptr_to_python.hpp>
 
 # include <boost/python/detail/value_is_shared_ptr.hpp>
+# include <boost/python/detail/value_arg.hpp>
 
 # include <boost/type_traits/transform_traits.hpp>
 
@@ -32,9 +32,7 @@ namespace detail
   template <class T>
   struct object_manager_to_python_value
   {
-      typedef typename add_reference<
-          typename add_const<T>::type
-      >::type argument_type;
+      typedef typename value_arg<T>::type argument_type;
     
       PyObject* operator()(argument_type) const;
 
@@ -48,9 +46,7 @@ namespace detail
   template <class T>
   struct registry_to_python_value
   {
-      typedef typename add_reference<
-          typename add_const<T>::type
-      >::type argument_type;
+      typedef typename value_arg<T>::type argument_type;
     
       PyObject* operator()(argument_type) const;
 
@@ -63,9 +59,7 @@ namespace detail
   template <class T>
   struct shared_ptr_to_python_value
   {
-      typedef typename add_reference<
-          typename add_const<T>::type
-      >::type argument_type;
+      typedef typename value_arg<T>::type argument_type;
     
       PyObject* operator()(argument_type) const;
 

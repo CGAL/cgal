@@ -1,8 +1,7 @@
-// Copyright David Abrahams 2002. Permission to copy, use,
-// modify, sell and distribute this software is granted provided this
-// copyright notice appears in all copies. This software is provided
-// "as is" without express or implied warranty, and with no claim as
-// to its suitability for any purpose.
+// Copyright David Abrahams 2002.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 #ifndef DECORATED_TYPE_ID_DWA2002517_HPP
 # define DECORATED_TYPE_ID_DWA2002517_HPP
 
@@ -38,9 +37,9 @@ inline decorated_type_info decorated_type_id(boost::type<T>* = 0)
     return decorated_type_info(
         type_id<T>()
         , decorated_type_info::decoration(
-            (is_const<T>::value || python::detail::is_reference_to_const<T>::value
+            (is_const<T>::value || indirect_traits::is_reference_to_const<T>::value
              ? decorated_type_info::const_ : 0)
-            | (is_volatile<T>::value || python::detail::is_reference_to_volatile<T>::value
+            | (is_volatile<T>::value || indirect_traits::is_reference_to_volatile<T>::value
                ? decorated_type_info::volatile_ : 0)
             | (is_reference<T>::value ? decorated_type_info::reference : 0)
             )

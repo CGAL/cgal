@@ -2,36 +2,66 @@
 #ifndef BOOST_MPL_SET_AUX_SET0_HPP_INCLUDED
 #define BOOST_MPL_SET_AUX_SET0_HPP_INCLUDED
 
-// + file: boost/mpl/aux_/set0.hpp
-// + last modified: 03/may/03
-
-// Copyright (c) 2002-03
-// David Abrahams, Aleksey Gurtovoy
+// Copyright Aleksey Gurtovoy 2003-2004
+// Copyright David Abrahams 2003-2004
 //
-// Permission to use, copy, modify, distribute and sell this software
-// and its documentation for any purpose is hereby granted without fee, 
-// provided that the above copyright notice appears in all copies and 
-// that both the copyright notice and this permission notice appear in 
-// supporting documentation. No representations are made about the 
-// suitability of this software for any purpose. It is provided "as is" 
-// without express or implied warranty.
+// Distributed under the Boost Software License, Version 1.0. 
+// (See accompanying file LICENSE_1_0.txt or copy at 
+// http://www.boost.org/LICENSE_1_0.txt)
 //
 // See http://www.boost.org/libs/mpl for documentation.
 
-#include "boost/mpl/void_fwd.hpp"
-#include "boost/mpl/set/aux_/tag.hpp"
-#include "boost/mpl/aux_/config/static_constant.hpp"
+// $Source$
+// $Date$
+// $Revision$
 
-namespace boost {
-namespace mpl {
+#include <boost/mpl/long.hpp>
+#include <boost/mpl/void.hpp>
+#include <boost/mpl/aux_/na.hpp>
+#include <boost/mpl/set/aux_/tag.hpp>
+#include <boost/mpl/aux_/yes_no.hpp>
+#include <boost/mpl/aux_/overload_names.hpp>
+#include <boost/mpl/aux_/config/operators.hpp>
 
-template< int p_ = 0 > struct set0
+#include <boost/preprocessor/cat.hpp>
+
+namespace boost { namespace mpl {
+
+#if defined(BOOST_MPL_CFG_USE_OPERATORS_OVERLOADING)
+
+#   define BOOST_MPL_AUX_SET0_OVERLOAD(R, f, X, T) \
+    friend R BOOST_PP_CAT(BOOST_MPL_AUX_OVERLOAD_,f)(X const&, T) \
+/**/
+
+#   define BOOST_MPL_AUX_SET_OVERLOAD(R, f, X, T) \
+    BOOST_MPL_AUX_SET0_OVERLOAD(R, f, X, T) \
+/**/
+
+#else
+
+#   define BOOST_MPL_AUX_SET0_OVERLOAD(R, f, X, T) \
+    static R BOOST_PP_CAT(BOOST_MPL_AUX_OVERLOAD_,f)(X const&, T) \
+/**/
+
+#   define BOOST_MPL_AUX_SET_OVERLOAD(R, f, X, T) \
+    BOOST_MPL_AUX_SET0_OVERLOAD(R, f, X, T); \
+    using Base::BOOST_PP_CAT(BOOST_MPL_AUX_OVERLOAD_,f) \
+/**/
+
+#endif
+
+
+template< typename Dummy = na > struct set0
 {
     typedef aux::set_tag    tag;
-    typedef void_           last_masked;
-    typedef void_           item;
+    typedef void_           last_masked_;
+    typedef void_           item_type_;
+    typedef item_type_      type;
+    typedef long_<0>        size;
+    typedef long_<1>        order;
 
-    BOOST_STATIC_CONSTANT(long, order = 0);
+    BOOST_MPL_AUX_SET0_OVERLOAD( aux::no_tag, ORDER_BY_KEY, set0<>, void const volatile* );
+    BOOST_MPL_AUX_SET0_OVERLOAD( aux::yes_tag, IS_MASKED, set0<>, void const volatile* );
 };
 
 }}

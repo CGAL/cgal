@@ -12,10 +12,6 @@
 #ifndef BOOST_ONCE_WEK080101_HPP
 #define BOOST_ONCE_WEK080101_HPP
 
-#include <boost/config.hpp>
-// insist on threading support being available:
-#include <boost/config/requires_threads.hpp>
-
 #include <boost/thread/detail/config.hpp>
 
 #if defined(BOOST_HAS_PTHREADS)

@@ -1,25 +1,31 @@
-// preprocessed version of 'boost/mpl/aux_/fold_impl.hpp' header
-// see the original for copyright information
 
-namespace boost {
-namespace mpl {
-namespace aux {
+// Copyright Aleksey Gurtovoy 2000-2004
+//
+// Distributed under the Boost Software License, Version 1.0. 
+// (See accompanying file LICENSE_1_0.txt or copy at 
+// http://www.boost.org/LICENSE_1_0.txt)
+//
 
-// forward declaration
+// Preprocessed version of "boost/mpl/aux_/fold_impl.hpp" header
+// -- DO NOT modify by hand!
+
+namespace boost { namespace mpl { namespace aux {
+
+/// forward declaration
+
 template<
-      nttp_long N
+      int N
     , typename First
     , typename Last
     , typename State
     , typename ForwardOp
-    > 
+    >
 struct fold_impl;
 
-template< nttp_long N >
+template< int N >
 struct fold_chunk;
 
-template<>
-struct fold_chunk<0>
+template<> struct fold_chunk<0>
 {
     template<
           typename First
@@ -35,8 +41,8 @@ struct fold_chunk<0>
         typedef iter0 iterator;
     };
 
-    // ETI workaround
-    template<> struct result_<int, int, int, int>
+    /// ETI workaround
+    template<> struct result_< int,int,int,int >
     {
         typedef int state;
         typedef int iterator;
@@ -44,8 +50,7 @@ struct fold_chunk<0>
 
 };
 
-template<>
-struct fold_chunk<1>
+template<> struct fold_chunk<1>
 {
     template<
           typename First
@@ -57,16 +62,16 @@ struct fold_chunk<1>
     {
         typedef First iter0;
         typedef State state0;
-        typedef typename apply2<ForwardOp, state0, typename iter0::type>::type state1;
-        typedef typename iter0::next iter1;
+        typedef typename apply2< ForwardOp, state0, typename deref<iter0>::type >::type state1;
+        typedef typename mpl::next<iter0>::type iter1;
         
 
         typedef state1 state;
         typedef iter1 iterator;
     };
 
-    // ETI workaround
-    template<> struct result_<int, int, int, int>
+    /// ETI workaround
+    template<> struct result_< int,int,int,int >
     {
         typedef int state;
         typedef int iterator;
@@ -74,8 +79,7 @@ struct fold_chunk<1>
 
 };
 
-template<>
-struct fold_chunk<2>
+template<> struct fold_chunk<2>
 {
     template<
           typename First
@@ -87,18 +91,18 @@ struct fold_chunk<2>
     {
         typedef First iter0;
         typedef State state0;
-        typedef typename apply2<ForwardOp, state0, typename iter0::type>::type state1;
-        typedef typename iter0::next iter1;
-        typedef typename apply2<ForwardOp, state1, typename iter1::type>::type state2;
-        typedef typename iter1::next iter2;
+        typedef typename apply2< ForwardOp, state0, typename deref<iter0>::type >::type state1;
+        typedef typename mpl::next<iter0>::type iter1;
+        typedef typename apply2< ForwardOp, state1, typename deref<iter1>::type >::type state2;
+        typedef typename mpl::next<iter1>::type iter2;
         
 
         typedef state2 state;
         typedef iter2 iterator;
     };
 
-    // ETI workaround
-    template<> struct result_<int, int, int, int>
+    /// ETI workaround
+    template<> struct result_< int,int,int,int >
     {
         typedef int state;
         typedef int iterator;
@@ -106,8 +110,7 @@ struct fold_chunk<2>
 
 };
 
-template<>
-struct fold_chunk<3>
+template<> struct fold_chunk<3>
 {
     template<
           typename First
@@ -119,20 +122,20 @@ struct fold_chunk<3>
     {
         typedef First iter0;
         typedef State state0;
-        typedef typename apply2<ForwardOp, state0, typename iter0::type>::type state1;
-        typedef typename iter0::next iter1;
-        typedef typename apply2<ForwardOp, state1, typename iter1::type>::type state2;
-        typedef typename iter1::next iter2;
-        typedef typename apply2<ForwardOp, state2, typename iter2::type>::type state3;
-        typedef typename iter2::next iter3;
+        typedef typename apply2< ForwardOp, state0, typename deref<iter0>::type >::type state1;
+        typedef typename mpl::next<iter0>::type iter1;
+        typedef typename apply2< ForwardOp, state1, typename deref<iter1>::type >::type state2;
+        typedef typename mpl::next<iter1>::type iter2;
+        typedef typename apply2< ForwardOp, state2, typename deref<iter2>::type >::type state3;
+        typedef typename mpl::next<iter2>::type iter3;
         
 
         typedef state3 state;
         typedef iter3 iterator;
     };
 
-    // ETI workaround
-    template<> struct result_<int, int, int, int>
+    /// ETI workaround
+    template<> struct result_< int,int,int,int >
     {
         typedef int state;
         typedef int iterator;
@@ -140,8 +143,7 @@ struct fold_chunk<3>
 
 };
 
-template<>
-struct fold_chunk<4>
+template<> struct fold_chunk<4>
 {
     template<
           typename First
@@ -153,22 +155,22 @@ struct fold_chunk<4>
     {
         typedef First iter0;
         typedef State state0;
-        typedef typename apply2<ForwardOp, state0, typename iter0::type>::type state1;
-        typedef typename iter0::next iter1;
-        typedef typename apply2<ForwardOp, state1, typename iter1::type>::type state2;
-        typedef typename iter1::next iter2;
-        typedef typename apply2<ForwardOp, state2, typename iter2::type>::type state3;
-        typedef typename iter2::next iter3;
-        typedef typename apply2<ForwardOp, state3, typename iter3::type>::type state4;
-        typedef typename iter3::next iter4;
+        typedef typename apply2< ForwardOp, state0, typename deref<iter0>::type >::type state1;
+        typedef typename mpl::next<iter0>::type iter1;
+        typedef typename apply2< ForwardOp, state1, typename deref<iter1>::type >::type state2;
+        typedef typename mpl::next<iter1>::type iter2;
+        typedef typename apply2< ForwardOp, state2, typename deref<iter2>::type >::type state3;
+        typedef typename mpl::next<iter2>::type iter3;
+        typedef typename apply2< ForwardOp, state3, typename deref<iter3>::type >::type state4;
+        typedef typename mpl::next<iter3>::type iter4;
         
 
         typedef state4 state;
         typedef iter4 iterator;
     };
 
-    // ETI workaround
-    template<> struct result_<int, int, int, int>
+    /// ETI workaround
+    template<> struct result_< int,int,int,int >
     {
         typedef int state;
         typedef int iterator;
@@ -176,7 +178,7 @@ struct fold_chunk<4>
 
 };
 
-template< nttp_long N > 
+template< int N >
 struct fold_chunk
 {
     template<
@@ -184,7 +186,7 @@ struct fold_chunk
         , typename Last
         , typename State
         , typename ForwardOp
-        > 
+        >
     struct result_
     {
         typedef fold_impl<
@@ -213,7 +215,7 @@ template<
     , typename Last
     , typename State
     , typename ForwardOp
-    > 
+    >
 struct fold_step;
 
 template<
@@ -226,7 +228,7 @@ struct fold_null_step
     typedef State state;
 };
 
-template<> 
+template<>
 struct fold_chunk< -1 >
 {
     template<
@@ -234,7 +236,7 @@ struct fold_chunk< -1 >
         , typename Last
         , typename State
         , typename ForwardOp
-        > 
+        >
     struct result_
     {
         typedef typename if_<
@@ -247,8 +249,8 @@ struct fold_chunk< -1 >
         typedef typename res_::iterator iterator;
     };
 
-    // ETI workaround
-    template<> struct result_<int, int, int, int>
+    /// ETI workaround
+    template<> struct result_< int,int,int,int >
     {
         typedef int state;
         typedef int iterator;
@@ -261,13 +263,13 @@ template<
     , typename Last
     , typename State
     , typename ForwardOp
-    > 
+    >
 struct fold_step
 {
     typedef fold_chunk< -1 >::template result_<
-          typename First::next
+          typename mpl::next<First>::type
         , Last
-        , typename apply2<ForwardOp, State, typename First::type>::type
+        , typename apply2<ForwardOp,State, typename deref<First>::type>::type
         , ForwardOp
         > chunk_;
 
@@ -276,19 +278,16 @@ struct fold_step
 };
 
 template<
-      nttp_long N
+      int N
     , typename First
     , typename Last
     , typename State
     , typename ForwardOp
-    > 
+    >
 struct fold_impl
     : fold_chunk<N>
         ::template result_< First,Last,State,ForwardOp >
 {
 };
 
-} // namespace aux
-} // namespace mpl
-} // namespace boost
-
+}}}

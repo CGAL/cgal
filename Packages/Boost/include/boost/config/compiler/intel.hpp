@@ -29,12 +29,18 @@
 #define BOOST_COMPILER "Intel C++ version " BOOST_STRINGIZE(BOOST_INTEL_CXX_VERSION)
 #define BOOST_INTEL BOOST_INTEL_CXX_VERSION
 
+#if defined(_WIN32) || defined(_WIN64)
+#  define BOOST_INTEL_WIN BOOST_INTEL
+#else
+#  define BOOST_INTEL_LINUX BOOST_INTEL
+#endif
+
 #if (BOOST_INTEL_CXX_VERSION <= 500) && defined(_MSC_VER)
 #  define BOOST_NO_EXPLICIT_FUNCTION_TEMPLATE_ARGUMENTS
 #  define BOOST_NO_TEMPLATE_TEMPLATES
 #endif
 
-#if (BOOST_INTEL_CXX_VERSION <= 600) || !defined(BOOST_STRICT_CONFIG)
+#if (BOOST_INTEL_CXX_VERSION <= 600)
 
 #  if defined(_MSC_VER) && (_MSC_VER <= 1300) // added check for <= VC 7 (Peter Dimov)
 
@@ -61,16 +67,47 @@
 
 #endif
 
+#if (BOOST_INTEL_CXX_VERSION <= 710) && defined(_WIN32)
+#  define BOOST_NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
+#endif
+
 // See http://aspn.activestate.com/ASPN/Mail/Message/boost/1614864
-#if BOOST_INTEL_CXX_VERSION < 700
+#if BOOST_INTEL_CXX_VERSION < 600
 #  define BOOST_NO_INTRINSIC_WCHAR_T
 #else
-// _WCHAR_T_DEFINED is the Win32 spelling
-// _WCHAR_T is the Linux spelling
-#  if !defined(_WCHAR_T_DEFINED) && !defined(_WCHAR_T)
+// We should test the macro _WCHAR_T_DEFINED to check if the compiler
+// supports wchar_t natively. *BUT* there is a problem here: the standard
+// headers define this macro if they typedef wchar_t. Anyway, we're lucky
+// because they define it without a value, while Intel C++ defines it
+// to 1. So we can check its value to see if the macro was defined natively 
+// or not. 
+// Under UNIX, the situation is exactly the same, but the macro _WCHAR_T 
+// is used instead.
+#  if ((_WCHAR_T_DEFINED + 0) == 0) && ((_WCHAR_T + 0) == 0)
 #    define BOOST_NO_INTRINSIC_WCHAR_T
 #  endif
 #endif
+
+//
+// Verify that we have actually got BOOST_NO_INTRINSIC_WCHAR_T
+// set correctly, if we don't do this now, we will get errors later
+// in type_traits code among other things, getting this correct
+// for the Intel compiler is actually remarkably fragile and tricky:
+//
+#if defined(BOOST_NO_INTRINSIC_WCHAR_T)
+#include <cwchar>
+template< typename T > struct assert_no_intrinsic_wchar_t;
+template<> struct assert_no_intrinsic_wchar_t<wchar_t> { typedef void type; };
+// if you see an error here then you need to unset BOOST_NO_INTRINSIC_WCHAR_T
+// where it is defined above:
+typedef assert_no_intrinsic_wchar_t<unsigned short>::type assert_no_intrinsic_wchar_t_;
+#else
+template< typename T > struct assert_intrinsic_wchar_t;
+template<> struct assert_intrinsic_wchar_t<wchar_t> {};
+// if you see an error here then define BOOST_NO_INTRINSIC_WCHAR_T on the command line:
+template<> struct assert_intrinsic_wchar_t<unsigned short> {};
+#endif
+
 
 #if (BOOST_INTEL_CXX_VERSION <= 800) || !defined(BOOST_STRICT_CONFIG)
 #  define BOOST_FUNCTION_SCOPE_USING_DECLARATION_BREAKS_ADL
@@ -100,7 +137,7 @@
 #endif
 //
 // last known and checked version:
-#if (BOOST_INTEL_CXX_VERSION > 800)
+#if (BOOST_INTEL_CXX_VERSION > 810)
 #  if defined(BOOST_ASSERT_CONFIG)
 #     error "Unknown compiler version - please run the configure tests and report the results"
 #  elif defined(_MSC_VER)

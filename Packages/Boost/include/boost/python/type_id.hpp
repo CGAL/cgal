@@ -1,8 +1,7 @@
-// Copyright David Abrahams 2002. Permission to copy, use,
-// modify, sell and distribute this software is granted provided this
-// copyright notice appears in all copies. This software is provided
-// "as is" without express or implied warranty, and with no claim as
-// to its suitability for any purpose.
+// Copyright David Abrahams 2002.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 #ifndef TYPE_ID_DWA2002517_HPP
 # define TYPE_ID_DWA2002517_HPP
 
@@ -31,7 +30,8 @@ namespace boost { namespace python {
 // yet clear what the best default strategy is.
 # if (defined(__GNUC__) && __GNUC__ >= 3) \
  || defined(_AIX) \
- || (   defined(__sgi) && defined(__host_mips))
+ || (   defined(__sgi) && defined(__host_mips)) \
+ || (defined(linux) && defined(__INTEL_COMPILER) && defined(__ICC))
 #  define BOOST_PYTHON_TYPE_ID_NAME
 # endif 
 

@@ -67,7 +67,8 @@ namespace boost
       filesystem_error(
         const std::string & who,
         const path & path1,
-        const std::string & message ); // assumed to be error_code::other_error
+        const std::string & message,
+        error_code ec = other_error );
 
       filesystem_error(
         const std::string & who,

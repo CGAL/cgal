@@ -47,6 +47,9 @@ namespace boost { namespace spirit { namespace utility { namespace impl {
 
         bool operator()(range<CharT> const& x, const CharT y) const
         { return x.first < y; }
+        
+        bool operator()(const CharT x, range<CharT> const& y) const
+        { return x < y.first; }
     };
 
     //////////////////////////////////

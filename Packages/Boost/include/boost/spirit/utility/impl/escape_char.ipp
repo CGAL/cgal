@@ -67,7 +67,7 @@ namespace impl {
                             {
                                 char_t hex = 0;
                                 char_t const lim =
-                                    std::numeric_limits<char_t>::max() >> 4;
+                                    (std::numeric_limits<char_t>::max)() >> 4;
 
                                 ++scan.first;
                                 while (scan.first != scan.last)
@@ -106,7 +106,7 @@ namespace impl {
                             {
                                 char_t oct = 0;
                                 char_t const lim =
-                                    std::numeric_limits<char_t>::max() >> 3;
+                                    (std::numeric_limits<char_t>::max)() >> 3;
                                 while (scan.first != scan.last)
                                 {
                                     char_t c = *scan.first;
@@ -190,11 +190,11 @@ namespace impl {
                 parser_t;
 
             static parser_t p =
-                ( (anychar_p - CharT('\\'))
-                | (CharT('\\') >>
+                ( (anychar_p - chlit<CharT>(CharT('\\')))
+                | (chlit<CharT>(CharT('\\')) >>
                     (  oct_parser_t()
-                     | as_lower_d[CharT('x')] >> hex_parser_t()
-                     | (anychar_p - as_lower_d[CharT('x')] - oct_parser_t())
+                     | as_lower_d[chlit<CharT>(CharT('x'))] >> hex_parser_t()
+                     | (anychar_p - as_lower_d[chlit<CharT>(CharT('x'))] - oct_parser_t())
                     )
                 ));
 

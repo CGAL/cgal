@@ -301,7 +301,9 @@ namespace boost {
     public:
       typedef Property property_type;
       inline stored_edge_iter() { }
-      inline stored_edge_iter(Vertex v, Iter i = Iter(), void* = 0)
+      inline stored_edge_iter(Vertex v)
+        : stored_edge<Vertex>(v) { }
+      inline stored_edge_iter(Vertex v, Iter i, void* = 0)
         : stored_edge<Vertex>(v), m_iter(i) { }
       inline Property& get_property() { return m_iter->get_property(); }
       inline const Property& get_property() const { 
@@ -485,7 +487,6 @@ namespace boost {
     // Directed Graph Helper Class
 
     struct adj_list_dir_traversal_tag :
-      public virtual adjacency_matrix_tag,
       public virtual vertex_list_graph_tag,
       public virtual incidence_graph_tag,
       public virtual adjacency_graph_tag,
@@ -767,6 +768,24 @@ namespace boost {
       }
     };
 
+    // Had to make these non-members to avoid accidental instantiation
+    // on SGI MIPSpro C++
+    template <class C>
+    inline typename C::InEdgeList& 
+    in_edge_list(undirected_graph_helper<C>&, 
+                 typename C::vertex_descriptor v)
+    {
+      typename C::stored_vertex* sv = (typename C::stored_vertex*)v;
+      return sv->m_out_edges;
+    }
+    template <class C>
+    inline const typename C::InEdgeList& 
+    in_edge_list(const undirected_graph_helper<C>&,
+                 typename C::vertex_descriptor v) {
+      typename C::stored_vertex* sv = (typename C::stored_vertex*)v;
+      return sv->m_out_edges;
+    }
+
     // O(E/V)
     template <class EdgeOrIter, class Config>
     inline void
@@ -964,6 +983,24 @@ namespace boost {
       typedef bidir_adj_list_traversal_tag traversal_category;
     };
 
+    // Had to make these non-members to avoid accidental instantiation
+    // on SGI MIPSpro C++
+    template <class C>
+    inline typename C::InEdgeList& 
+    in_edge_list(bidirectional_graph_helper<C>&, 
+                 typename C::vertex_descriptor v)
+    {
+      typename C::stored_vertex* sv = (typename C::stored_vertex*)v;
+      return sv->m_in_edges;
+    }
+    template <class C>
+    inline const typename C::InEdgeList& 
+    in_edge_list(const bidirectional_graph_helper<C>&,
+                 typename C::vertex_descriptor v) {
+      typename C::stored_vertex* sv = (typename C::stored_vertex*)v;
+      return sv->m_in_edges;
+    }
+
     template <class Predicate, class Config>
     inline void
     remove_edge_if(Predicate pred, bidirectional_graph_helper<Config>& g_)
@@ -1018,14 +1055,34 @@ namespace boost {
     {
       // Placement of these overloaded remove_edge() functions
       // inside the class avoids a VC++ bug.
-      
+
+      // O(E/V) or O(log(E/V))
       void
-      remove_edge(typename Config::edge_descriptor e);
+      remove_edge(typename Config::edge_descriptor e)
+      {
+        typedef typename Config::graph_type graph_type;
+        typedef typename Config::out_edge_iterator out_edge_iterator;
+        graph_type& g = static_cast<graph_type&>(*this);
+        std::pair<out_edge_iterator, out_edge_iterator> rng = 
+          edge_range(source(e, g), target(e, g), g);
+        rng.first = std::find(rng.first, rng.second, e);
+        if (rng.first != rng.second)
+          remove_edge(rng.first);
+      }
 
       inline void
       remove_edge(typename Config::out_edge_iterator iter)
       {
-        this->remove_edge(*iter);
+        typedef typename Config::graph_type graph_type;
+        graph_type& g = static_cast<graph_type&>(*this);
+        typename Config::edge_descriptor e = *iter;
+        typename Config::OutEdgeList& oel = g.out_edge_list(source(e, g));
+        typename Config::InEdgeList& iel = in_edge_list(g, target(e, g));
+        typedef typename Config::OutEdgeList::value_type::property_type PType;
+        PType& p = *(PType*)e.get_property();
+        detail::remove_directed_edge_dispatch(*iter, iel, p);
+        g.m_edges.erase(iter.base()->get_iter());
+        oel.erase(iter.base());
       }
     };
 
@@ -1044,15 +1101,6 @@ namespace boost {
       detail::erase_from_incidence_list(in_edge_list(g, v), u, Cat());
     }
 
-    // O(E/V) or O(log(E/V))
-    template <class Config>
-    inline void
-    bidirectional_graph_helper_with_property<Config>::remove_edge(typename Config::edge_descriptor e)
-    {
-      typedef typename Config::graph_type graph_type;
-      graph_type& g = static_cast<graph_type&>(*this);
-      boost::remove_edge(source(e, g), target(e, g), *this);
-    }
     // O(E/V) or O(log(E/V))
     template <class EdgeOrIter, class Config>
     inline void
@@ -1433,7 +1481,11 @@ namespace boost {
       typedef typename Config::out_edge_iterator out_edge_iterator;
       typename Config::OutEdgeList& el = g.out_edge_list(u);
       typename Config::OutEdgeList::iterator first, last;
-      tie(first, last) = std::equal_range(el.begin(), el.end(), StoredEdge(v));
+      typename Config::EdgeContainer fake_edge_container;
+      tie(first, last) = 
+        std::equal_range(el.begin(), el.end(), 
+                         StoredEdge(v, fake_edge_container.end(),
+                                    &fake_edge_container));
       return std::make_pair(out_edge_iterator(first, u),
                             out_edge_iterator(last, u));
     }
@@ -1667,24 +1719,6 @@ namespace boost {
       typename Config::EdgeContainer m_edges;
       StoredVertexList m_vertices;
     };
-    // Had to make these non-members to avoid accidental instantiation
-    // on SGI MIPSpro C++
-    template <class D, class C, class B>
-    inline typename C::InEdgeList& 
-    in_edge_list(adj_list_impl<D,C,B>&, 
-                 typename C::vertex_descriptor v)
-    {
-      typename C::stored_vertex* sv = (typename C::stored_vertex*)v;
-      return sv->m_in_edges;
-    }
-    template <class D, class C, class B>
-    inline const typename C::InEdgeList& 
-    in_edge_list(const adj_list_impl<D,C,B>&,
-                 typename C::vertex_descriptor v) {
-      typename C::stored_vertex* sv = (typename C::stored_vertex*)v;
-      return sv->m_in_edges;
-    }
-
 
     // O(1)
     template <class Derived, class Config, class Base>
@@ -1857,7 +1891,7 @@ namespace boost {
 
       static vertex_descriptor null_vertex()
       {
-        return std::numeric_limits<vertex_descriptor>::max();
+        return (std::numeric_limits<vertex_descriptor>::max)();
       }
       
       inline vec_adj_list_impl() { }
@@ -1985,7 +2019,8 @@ namespace boost {
              const typename Config::edge_property_type& p,
              vec_adj_list_impl<Graph, Config, Base>& g_)
     {
-      typename Config::vertex_descriptor x = std::max(u, v);
+      BOOST_USING_STD_MAX();
+      typename Config::vertex_descriptor x = max BOOST_PREVENT_MACRO_SUBSTITUTION(u, v);
       if (x >= num_vertices(g_))
         g_.m_vertices.resize(x + 1);
       adj_list_helper<Config, Base>& g = g_;

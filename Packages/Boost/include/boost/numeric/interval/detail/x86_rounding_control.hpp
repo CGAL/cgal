@@ -1,17 +1,11 @@
 /* Boost interval/detail/x86_rounding_control.hpp file
  *
- * Copyright Jens Maurer 2000
- * Copyright Hervé Brönnimann, Guillaume Melquiond, Sylvain Pion 2002
- * Permission to use, copy, modify, sell, and distribute this software
- * is hereby granted without fee provided that the above copyright notice
- * appears in all copies and that both that copyright notice and this
- * permission notice appear in supporting documentation,
+ * Copyright 2000 Jens Maurer
+ * Copyright 2002 Hervé Brönnimann, Guillaume Melquiond, Sylvain Pion
  *
- * None of the above authors nor Polytechnic University make any
- * representation about the suitability of this software for any
- * purpose. It is provided "as is" without express or implied warranty.
- *
- * $Id$
+ * Distributed under the Boost Software License, Version 1.0.
+ * (See accompanying file LICENSE_1_0.txt or
+ * copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 
 #ifndef BOOST_NUMERIC_INTERVAL_DETAIL_X86_ROUNDING_CONTROL_HPP
@@ -79,11 +73,31 @@ struct rounding_control<double>: detail::x86_rounding_control
   { volatile double r_ = r; return r_; }
 };
 
+namespace detail {
+
+template<bool>
+struct x86_rounding_control_long_double;
+
 template<>
-struct rounding_control<long double>: detail::x86_rounding_control
+struct x86_rounding_control_long_double<false>: x86_rounding_control
 {
-  static const long double& force_rounding(const long double& r) { return r; }
+  static long double force_rounding(long double const &r)
+  { volatile long double r_ = r; return r_; }
 };
+
+template<>
+struct x86_rounding_control_long_double<true>: x86_rounding_control
+{
+  static long double const &force_rounding(long double const &r)
+  { return r; }
+};
+
+} // namespace detail
+
+template<>
+struct rounding_control<long double>:
+  detail::x86_rounding_control_long_double< (sizeof(long double) >= 10) >
+{};
 
 } // namespace interval_lib
 } // namespace numeric

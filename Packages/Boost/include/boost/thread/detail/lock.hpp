@@ -1,4 +1,4 @@
-// Copyright (C) 2001
+// Copyright (C) 2001-2003
 // William E. Kempf
 //
 // Permission to use, copy, modify, distribute and sell this software
@@ -11,6 +11,8 @@
 
 #ifndef BOOST_XLOCK_WEK070601_HPP
 #define BOOST_XLOCK_WEK070601_HPP
+
+#include <boost/thread/detail/config.hpp>
 
 #include <boost/utility.hpp>
 #include <boost/thread/exceptions.hpp>
@@ -172,6 +174,11 @@ public:
         lock_ops<TimedMutex>::lock(m_mutex);
         m_locked = true;
     }
+    bool try_lock()
+    {
+        if (m_locked) throw lock_error();
+        return (m_locked = lock_ops<TimedMutex>::trylock(m_mutex));
+    }
     bool timed_lock(const xtime& xt)
     {
         if (m_locked) throw lock_error();
@@ -198,10 +205,10 @@ private:
 } // namespace detail
 } // namespace boost
 
+#endif // BOOST_XLOCK_WEK070601_HPP
+
 // Change Log:
 //    8 Feb 01  WEKEMPF Initial version.
 //   22 May 01  WEKEMPF Modified to use xtime for time outs.
-//   30 Jul 01  WEKEMPF Moved lock types into boost::detail::thread. Renamed some types.
-//                      Added locked() methods.
-
-#endif // BOOST_XLOCK_WEK070601_HPP
+//   30 Jul 01  WEKEMPF Moved lock types into boost::detail::thread. Renamed
+//                      some types. Added locked() methods.

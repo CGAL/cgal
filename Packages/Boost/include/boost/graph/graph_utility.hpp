@@ -28,7 +28,7 @@
 #define BOOST_GRAPH_UTILITY_HPP
 
 #include <stdlib.h>
-#include <iosfwd>
+#include <iostream>
 #include <algorithm>
 #include <assert.h>
 #include <boost/config.hpp>

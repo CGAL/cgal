@@ -24,6 +24,7 @@
 #include "boost/type_traits/has_trivial_constructor.hpp"
 #include "boost/type_traits/has_trivial_copy.hpp"
 #include "boost/type_traits/has_trivial_destructor.hpp"
+#include "boost/type_traits/is_abstract.hpp"
 #include "boost/type_traits/is_arithmetic.hpp"
 #include "boost/type_traits/is_array.hpp"
 #include "boost/type_traits/is_base_and_derived.hpp"

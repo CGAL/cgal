@@ -1,9 +1,8 @@
 // Copyright (C) 2000, 2001 Stephen Cleary
 //
-// This file can be redistributed and/or modified under the terms found
-//  in "copyright.html"
-// This software and its documentation is provided "as is" without express or
-//  implied warranty, and with no claim as to its suitability for any purpose.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 //
 // See http://www.boost.org for updates, documentation, and revision history.
 
@@ -497,7 +496,8 @@ void * pool<UserAllocator>::ordered_malloc(const size_type n)
     return ret;
 
   // Not enougn memory in our storages; make a new storage,
-  next_size = std::max(next_size, num_chunks);
+  BOOST_USING_STD_MAX();
+  next_size = max BOOST_PREVENT_MACRO_SUBSTITUTION(next_size, num_chunks);
   const size_type POD_size = next_size * partition_size +
       details::pool::ct_lcm<sizeof(size_type), sizeof(void *)>::value + sizeof(size_type);
   char * const ptr = UserAllocator::malloc(POD_size);

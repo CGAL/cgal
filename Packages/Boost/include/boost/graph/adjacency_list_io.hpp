@@ -30,6 +30,7 @@
 #include <iostream>
 #include <vector>
 #include <boost/graph/adjacency_list.hpp>
+#include <cctype>
 
 // Method read to parse an adjacency list from an input stream. Examples:
 // cin >> read( G );

@@ -1,8 +1,7 @@
-// Copyright David Abrahams 2002. Permission to copy, use,
-// modify, sell and distribute this software is granted provided this
-// copyright notice appears in all copies. This software is provided
-// "as is" without express or implied warranty, and with no claim as
-// to its suitability for any purpose.
+// Copyright David Abrahams 2002.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 #ifndef DATA_MEMBERS_DWA2002328_HPP
 # define DATA_MEMBERS_DWA2002328_HPP
 
@@ -19,6 +18,7 @@
 
 # include <boost/python/detail/indirect_traits.hpp>
 # include <boost/python/detail/not_specified.hpp>
+# include <boost/python/detail/value_arg.hpp>
 
 # include <boost/type_traits/add_const.hpp>
 # include <boost/type_traits/add_reference.hpp>
@@ -28,7 +28,7 @@
 #  include <boost/type_traits/remove_cv.hpp>
 # endif 
 
-# include <boost/mpl/apply_if.hpp>
+# include <boost/mpl/eval_if.hpp>
 # include <boost/mpl/if.hpp>
 # include <boost/mpl/vector/vector10.hpp>
 
@@ -51,10 +51,6 @@ namespace detail
   template <class Data, class Class>
   struct member
   {
-   private:
-      typedef typename add_const<Data>::type data_const;
-      typedef typename add_reference<data_const>::type data_cref;
-      
    public:      
       member(Data Class::*which) : m_which(which) {}
       
@@ -63,7 +59,7 @@ namespace detail
           return c.*m_which;
       }
 
-      void operator()(Class& c, data_cref d) const
+      void operator()(Class& c, typename value_arg<Data>::type d) const
       {
           c.*m_which = d;
       }
@@ -76,10 +72,6 @@ namespace detail
   template <class Data>
   struct datum
   {
-   private:
-      typedef typename add_const<Data>::type data_const;
-      typedef typename add_reference<data_const>::type data_cref;
-      
    public:      
       datum(Data *which) : m_which(which) {}
       
@@ -88,7 +80,7 @@ namespace detail
           return *m_which;
       }
 
-      void operator()(data_cref d) const
+      void operator()(typename value_arg<Data>::type d) const
       {
           *m_which = d;
       }
@@ -112,11 +104,11 @@ namespace detail
       : mpl::and_<
           mpl::bool_<
               to_python_value<
-                  typename add_reference<typename add_const<T>::type>::type
+                  typename value_arg<T>::type
               >::uses_registry
           >
-        , is_reference_to_class<
-              typename add_reference<typename add_const<T>::type>::type
+        , indirect_traits::is_reference_to_class<
+              typename value_arg<T>::type
           >
        >
   {

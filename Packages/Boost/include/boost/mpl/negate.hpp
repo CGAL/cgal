@@ -2,50 +2,80 @@
 #ifndef BOOST_MPL_NEGATE_HPP_INCLUDED
 #define BOOST_MPL_NEGATE_HPP_INCLUDED
 
-// + file: boost/mpl/negate.hpp
-// + last modified: 25/feb/03
-
-// Copyright (c) 2000-03
-// Aleksey Gurtovoy
+// Copyright Aleksey Gurtovoy 2000-2004
 //
-// Permission to use, copy, modify, distribute and sell this software
-// and its documentation for any purpose is hereby granted without fee, 
-// provided that the above copyright notice appears in all copies and 
-// that both the copyright notice and this permission notice appear in 
-// supporting documentation. No representations are made about the 
-// suitability of this software for any purpose. It is provided "as is" 
-// without express or implied warranty.
+// Distributed under the Boost Software License, Version 1.0. 
+// (See accompanying file LICENSE_1_0.txt or copy at 
+// http://www.boost.org/LICENSE_1_0.txt)
 //
 // See http://www.boost.org/libs/mpl for documentation.
 
-#include "boost/mpl/integral_c.hpp"
-#include "boost/mpl/aux_/typeof.hpp"
-#include "boost/mpl/aux_/void_spec.hpp"
-#include "boost/mpl/aux_/lambda_support.hpp"
-#include "boost/config.hpp"
+// $Source$
+// $Date$
+// $Revision$
 
-namespace boost {
-namespace mpl {
+#include <boost/mpl/integral_c.hpp>
+#include <boost/mpl/aux_/msvc_eti_base.hpp>
+#include <boost/mpl/aux_/na_spec.hpp>
+#include <boost/mpl/aux_/lambda_support.hpp>
+#include <boost/mpl/aux_/config/eti.hpp>
+#include <boost/mpl/aux_/config/integral.hpp>
+#include <boost/mpl/aux_/config/static_constant.hpp>
 
-template<
-      typename BOOST_MPL_AUX_VOID_SPEC_PARAM(T)
-    >
-struct negate
+namespace boost { namespace mpl {
+
+template< typename Tag > struct negate_impl;
+
+template< typename T > struct negate_tag
 {
-    typedef BOOST_MPL_AUX_TYPEOF(T,T::value) value_type;
-    BOOST_STATIC_CONSTANT(value_type, value = (-T::value));
-#if !defined(__BORLANDC__)
-    typedef integral_c<value_type, value> type;
-#else
-    typedef integral_c<value_type, (-T::value)> type;
-#endif
-
-    BOOST_MPL_AUX_LAMBDA_SUPPORT(1, negate, (T))
+    typedef typename T::tag type;
 };
 
-BOOST_MPL_AUX_VOID_SPEC(1,negate)
+template<
+      typename BOOST_MPL_AUX_NA_PARAM(N)
+    >
+struct negate
+#if !defined(BOOST_MPL_CFG_MSVC_ETI_BUG)
+    : negate_impl<
+          typename negate_tag<N>::type
+        >::template apply<N>::type
+#else
+    : aux::msvc_eti_base< typename apply_wrap1<
+          negate_impl< typename negate_tag<N>::type >
+        , N
+        >::type >::type
+#endif
+{
+    BOOST_MPL_AUX_LAMBDA_SUPPORT(1, negate, (N))
+};
 
-} // namespace mpl
-} // namespace boost 
+BOOST_MPL_AUX_NA_SPEC(1, negate)
+
+
+#if defined(BOOST_MPL_CFG_NO_NESTED_VALUE_ARITHMETIC)
+namespace aux {
+template< typename T, T n > struct negate_wknd
+{
+    BOOST_STATIC_CONSTANT(T, value = -n);
+    typedef integral_c<T,value> type;
+};
+}
+#endif
+
+template<>
+struct negate_impl<integral_c_tag>
+{
+#if defined(BOOST_MPL_CFG_NO_NESTED_VALUE_ARITHMETIC)
+    template< typename N > struct apply
+        : aux::negate_wknd< typename N::value_type, N::value >
+#else
+    template< typename N > struct apply
+        : integral_c< typename N::value_type, (-N::value) >
+#endif    
+    {
+    };
+};
+
+}}
 
 #endif // BOOST_MPL_NEGATE_HPP_INCLUDED

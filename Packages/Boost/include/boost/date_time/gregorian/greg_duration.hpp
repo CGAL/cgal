@@ -10,6 +10,9 @@
  */
 
 #include "boost/date_time/date_duration.hpp"
+#if defined(BOOST_DATE_TIME_OPTIONAL_GREGORIAN_TYPES)
+#include "boost/date_time/date_duration_types.hpp"
+#endif
 #include "boost/date_time/int_adapter.hpp"
 
 

@@ -1,8 +1,7 @@
-// Copyright David Abrahams 2002. Permission to copy, use,
-// modify, sell and distribute this software is granted provided this
-// copyright notice appears in all copies. This software is provided
-// "as is" without express or implied warranty, and with no claim as
-// to its suitability for any purpose.
+// Copyright David Abrahams 2002.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 #ifndef BUILTIN_CONVERTERS_DWA2002124_HPP
 # define BUILTIN_CONVERTERS_DWA2002124_HPP
 # include <boost/python/detail/prefix.hpp>
@@ -87,13 +86,17 @@ namespace detail
     BOOST_PYTHON_TO_PYTHON_BY_VALUE(                                    \
         unsigned T                                                      \
         , static_cast<unsigned long>(x) > static_cast<unsigned long>(   \
-                std::numeric_limits<long>::max())                       \
+                (std::numeric_limits<long>::max)())                     \
         ? ::PyLong_FromUnsignedLong(x)                                  \
         : ::PyInt_FromLong(x))
 
 // Bool is not signed.
+#if PY_VERSION_HEX >= 0x02030000
+BOOST_PYTHON_TO_PYTHON_BY_VALUE(bool, ::PyBool_FromLong(x))
+#else
 BOOST_PYTHON_TO_PYTHON_BY_VALUE(bool, ::PyInt_FromLong(x))
-
+#endif
+  
 // note: handles signed char and unsigned char, but not char (see below)
 BOOST_PYTHON_TO_INT(char)
 

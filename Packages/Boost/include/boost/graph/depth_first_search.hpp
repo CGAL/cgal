@@ -129,7 +129,7 @@ namespace boost {
       vis.discover_vertex(u, g);
       tie(ei, ei_end) = out_edges(u, g);
       // Variable is needed to workaround a borland bug.
-      TF& fn(static_cast<TF&>(func));
+      TF& fn = static_cast<TF&>(func);
       if (fn(u, g)) {
           // If this vertex terminates the search, we push empty range
           stack.push_back(std::make_pair(u, std::make_pair(ei_end, ei_end)));
@@ -191,7 +191,7 @@ namespace boost {
 
       typedef typename unwrap_reference<TerminatorFunc>::type TF;
       // Variable is needed to workaround a borland bug.
-      TF& fn(static_cast<TF&>(func));
+      TF& fn = static_cast<TF&>(func);
       if (!fn(u, g))
         for (tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
           Vertex v = target(*ei, g);           vis.examine_edge(*ei, g);

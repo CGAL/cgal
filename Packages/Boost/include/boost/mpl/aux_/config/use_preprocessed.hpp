@@ -1,22 +1,19 @@
-//-----------------------------------------------------------------------------
-// boost mpl/aux_/config/use_preprocessed.hpp header file
-// See http://www.boost.org for updates, documentation, and revision history.
-//-----------------------------------------------------------------------------
-//
-// Copyright (c) 2002
-// Aleksey Gurtovoy
-//
-// Permission to use, copy, modify, distribute and sell this software
-// and its documentation for any purpose is hereby granted without fee, 
-// provided that the above copyright notice appears in all copies and 
-// that both the copyright notice and this permission notice appear in 
-// supporting documentation. No representations are made about the 
-// suitability of this software for any purpose. It is provided "as is" 
-// without express or implied warranty.
 
 #ifndef BOOST_MPL_AUX_CONFIG_USE_PREPROCESSED_HPP_INCLUDED
 #define BOOST_MPL_AUX_CONFIG_USE_PREPROCESSED_HPP_INCLUDED
 
-//#define BOOST_MPL_NO_PREPROCESSED_HEADERS
+// Copyright Aleksey Gurtovoy 2000-2004
+//
+// Distributed under the Boost Software License, Version 1.0. 
+// (See accompanying file LICENSE_1_0.txt or copy at 
+// http://www.boost.org/LICENSE_1_0.txt)
+//
+// See http://www.boost.org/libs/mpl for documentation.
+
+// $Source$
+// $Date$
+// $Revision$
+
+// #define BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
 
 #endif // BOOST_MPL_AUX_CONFIG_USE_PREPROCESSED_HPP_INCLUDED

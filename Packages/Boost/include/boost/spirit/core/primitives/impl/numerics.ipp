@@ -68,15 +68,15 @@ namespace boost { namespace spirit {
         struct radix_traits<2>
         {
             template<typename CharT>
-            static bool is_valid(CharT ch) 
-            { 
-                return ('0' == ch || '1' == ch); 
+            static bool is_valid(CharT ch)
+            {
+                return ('0' == ch || '1' == ch);
             }
 
             template<typename CharT>
-            static int digit(CharT ch) 
-            { 
-                return ch - '0'; 
+            static int digit(CharT ch)
+            {
+                return ch - '0';
             }
         };
 
@@ -85,15 +85,15 @@ namespace boost { namespace spirit {
         struct radix_traits<8>
         {
             template<typename CharT>
-            static bool is_valid(CharT ch) 
-            { 
-                return ('0' <= ch && ch <= '7'); 
+            static bool is_valid(CharT ch)
+            {
+                return ('0' <= ch && ch <= '7');
             }
 
             template<typename CharT>
-            static int digit(CharT ch) 
-            { 
-                return ch - '0'; 
+            static int digit(CharT ch)
+            {
+                return ch - '0';
             }
         };
 
@@ -102,15 +102,15 @@ namespace boost { namespace spirit {
         struct radix_traits<10>
         {
             template<typename CharT>
-            static bool is_valid(CharT ch) 
-            { 
-                return impl::isdigit_(ch); 
+            static bool is_valid(CharT ch)
+            {
+                return impl::isdigit_(ch);
             }
 
             template<typename CharT>
-            static int digit(CharT ch) 
-            { 
-                return ch - '0'; 
+            static int digit(CharT ch)
+            {
+                return ch - '0';
             }
         };
 
@@ -119,9 +119,9 @@ namespace boost { namespace spirit {
         struct radix_traits<16>
         {
             template<typename CharT>
-            static bool is_valid(CharT ch) 
-            { 
-                return impl::isxdigit_(ch); 
+            static bool is_valid(CharT ch)
+            {
+                return impl::isxdigit_(ch);
             }
 
             template<typename CharT>
@@ -135,7 +135,7 @@ namespace boost { namespace spirit {
 
         ///////////////////////////////////////////////////////////////////////
         //
-        //      Helper templates for encapsulation of radix specific 
+        //      Helper templates for encapsulation of radix specific
         //      conversion of an input string to an integral value.
         //
         //      main entry point:
@@ -145,18 +145,18 @@ namespace boost { namespace spirit {
         //
         //          The template parameter Radix represents the radix of the
         //          number contained in the parsed string. The template
-        //          parameter MinDigits specifies the minimum digits to 
-        //          accept. The template parameter MaxDigits specifies the 
-        //          maximum digits to parse. A -1 value for MaxDigits will  
-        //          make it parse an arbitrarilly large number as long as the 
-        //          numeric type can hold it. Accumulate is either 
-        //          positive_accumulate<Radix> (default) for parsing positive 
+        //          parameter MinDigits specifies the minimum digits to
+        //          accept. The template parameter MaxDigits specifies the
+        //          maximum digits to parse. A -1 value for MaxDigits will
+        //          make it parse an arbitrarilly large number as long as the
+        //          numeric type can hold it. Accumulate is either
+        //          positive_accumulate<Radix> (default) for parsing positive
         //          numbers or negative_accumulate<Radix> otherwise.
         //
-        //          scan.first and scan.last are iterators as usual (i.e. 
-        //          first is mutable and is moved forward when a match is 
-        //          found), n is a variable that holds the number (passed by 
-        //          reference). The number of parsed characters is added to 
+        //          scan.first and scan.last are iterators as usual (i.e.
+        //          first is mutable and is moved forward when a match is
+        //          found), n is a variable that holds the number (passed by
+        //          reference). The number of parsed characters is added to
         //          count (also passed by reference)
         //
         //      NOTE:
@@ -166,7 +166,7 @@ namespace boost { namespace spirit {
         //              operation wraps a value from its maximum to its
         //              minimum (or vice-versa). For example, overflow
         //              occurs when the result of the expression n * x is
-        //              less than n (assuming n is positive and x is 
+        //              less than n (assuming n is positive and x is
         //              greater than 1).
         //
         //      BEWARE:
@@ -181,14 +181,14 @@ namespace boost { namespace spirit {
 
             template <typename T>
             static bool check(T const& n, T const& prev)
-            { 
-                return n < prev; 
+            {
+                return n < prev;
             }
 
             template <typename T, typename CharT>
             static void add(T& n, CharT ch)
-            { 
-                n += radix_traits<Radix>::digit(ch); 
+            {
+                n += radix_traits<Radix>::digit(ch);
             }
         };
 
@@ -199,14 +199,14 @@ namespace boost { namespace spirit {
 
             template <typename T>
             static bool check(T const& n, T const& prev)
-            { 
-                return n > prev; 
+            {
+                return n > prev;
             }
 
             template <typename T, typename CharT>
             static void add(T& n, CharT ch)
-            { 
-                n -= radix_traits<Radix>::digit(ch); 
+            {
+                n -= radix_traits<Radix>::digit(ch);
             }
         };
 
@@ -302,9 +302,9 @@ namespace boost { namespace spirit {
             static bool
             f(ScannerT& scan, T& n, std::size_t& count)
             {
-                return extract_int_<(MaxDigits >= 0)>::template
-                    apply<Radix, MinDigits, MaxDigits, Accumulate>::
-                        f(scan, n, count);
+                typedef typename extract_int_<(MaxDigits >= 0)>::template
+                    apply<Radix, MinDigits, MaxDigits, Accumulate> extractor;
+                return extractor::f(scan, n, count);
             }
         };
 

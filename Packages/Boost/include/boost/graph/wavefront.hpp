@@ -28,11 +28,13 @@
 #ifndef BOOST_GRAPH_WAVEFRONT_HPP
 #define BOOST_GRAPH_WAVEFRONT_HPP
 
+#include <boost/config.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/detail/numeric_traits.hpp>
 #include <boost/graph/bandwidth.hpp>
 #include <cmath>
 #include <vector>
+#include <algorithm> // for std::min and std::max
 
 namespace boost {
 
@@ -85,10 +87,11 @@ namespace boost {
   typename graph_traits<Graph>::vertices_size_type
   max_wavefront(const Graph& g, VertexIndexMap index)
   {
+    BOOST_USING_STD_MAX();
     typename graph_traits<Graph>::vertices_size_type b = 0;
     typename graph_traits<Graph>::vertex_iterator i, end;
     for (tie(i, end) = vertices(g); i != end; ++i)
-      b = std::max(b, ith_wavefront(*i, g, index));
+      b = max BOOST_PREVENT_MACRO_SUBSTITUTION(b, ith_wavefront(*i, g, index));
     return b;
   }
 

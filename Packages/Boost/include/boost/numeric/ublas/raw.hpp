@@ -15,10 +15,10 @@
 #ifndef BOOST_UBLAS_RAW_H
 #define BOOST_UBLAS_RAW_H
 
-namespace boost { namespace numeric { namespace ublas {
+namespace boost { namespace numeric { namespace ublas { namespace raw {
 
 // MSVC 6.0 gets confused by the forward declarations.
-#ifndef BOOST_MSVC
+#if !(defined(BOOST_MSVC) && BOOST_MSVC <= 1300)
 
     template < typename V >
     BOOST_UBLAS_INLINE
@@ -111,42 +111,42 @@ namespace boost { namespace numeric { namespace ublas {
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
     template < typename MV >
     BOOST_UBLAS_INLINE
-    typename MV::const_pointer data( const MV &mv ) ;
+    typename MV::array_type::array_type::const_pointer data( const MV &mv ) ;
 #endif
     // We need data_const() mostly due to MSVC 6.0.
     // But how shall we write portable code otherwise?
     template < typename MV >
     BOOST_UBLAS_INLINE
-    typename MV::const_pointer data_const( const MV &mv ) ;
+    typename MV::array_type::array_type::const_pointer data_const( const MV &mv ) ;
     template < typename MV >
     BOOST_UBLAS_INLINE
-    typename MV::pointer data( MV &mv ) ;
+    typename MV::array_type::pointer data( MV &mv ) ;
 
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::const_pointer data( const vector_reference<V> &v ) ;
+    typename V::array_type::array_type::const_pointer data( const vector_reference<V> &v ) ;
 #endif
     // We need data_const() mostly due to MSVC 6.0.
     // But how shall we write portable code otherwise?
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::const_pointer data_const( const vector_reference<V> &v ) ;
+    typename V::array_type::array_type::const_pointer data_const( const vector_reference<V> &v ) ;
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::pointer data( vector_reference<V> &v ) ;
+    typename V::array_type::pointer data( vector_reference<V> &v ) ;
 
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
     template < typename T, std::size_t N >
     BOOST_UBLAS_INLINE
-    typename c_vector<T, N>::const_pointer data( const c_vector<T, N> &v ) ;
+    typename c_vector<T, N>::array_type::array_type::const_pointer data( const c_vector<T, N> &v ) ;
 #endif
-#ifndef BOOST_MSVC
-    // We need data_const() mostly due to MSVC 6.0.
+#if !(defined(BOOST_MSVC) && BOOST_MSVC <= 1300)
+    // We need data_const() mostly due to MSVC
     // But how shall we write portable code otherwise?
     template < typename T, std::size_t N >
     BOOST_UBLAS_INLINE
-    typename c_vector<T, N>::const_pointer data_const( const c_vector<T, N> &v ) ;
+    typename c_vector<T, N>::array_type::array_type::const_pointer data_const( const c_vector<T, N> &v ) ;
     template < typename T, std::size_t N >
     BOOST_UBLAS_INLINE
     typename c_vector<T, N>::pointer data( c_vector<T, N> &v ) ;
@@ -155,51 +155,51 @@ namespace boost { namespace numeric { namespace ublas {
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::const_pointer data( const vector_range<V> &v ) ;
+    typename V::array_type::array_type::const_pointer data( const vector_range<V> &v ) ;
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::const_pointer data( const vector_slice<V> &v ) ;
+    typename V::array_type::array_type::const_pointer data( const vector_slice<V> &v ) ;
 #endif
     // We need data_const() mostly due to MSVC 6.0.
     // But how shall we write portable code otherwise?
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::const_pointer data_const( const vector_range<V> &v ) ;
+    typename V::array_type::array_type::const_pointer data_const( const vector_range<V> &v ) ;
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::const_pointer data_const( const vector_slice<V> &v ) ;
+    typename V::array_type::array_type::const_pointer data_const( const vector_slice<V> &v ) ;
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::pointer data( vector_range<V> &v ) ;
+    typename V::array_type::pointer data( vector_range<V> &v ) ;
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::pointer data( vector_slice<V> &v ) ;
+    typename V::array_type::pointer data( vector_slice<V> &v ) ;
 
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer data( const matrix_reference<M> &m ) ;
+    typename M::array_type::array_type::const_pointer data( const matrix_reference<M> &m ) ;
 #endif
     // We need data_const() mostly due to MSVC 6.0.
     // But how shall we write portable code otherwise?
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer data_const( const matrix_reference<M> &m ) ;
+    typename M::array_type::array_type::const_pointer data_const( const matrix_reference<M> &m ) ;
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::pointer data( matrix_reference<M> &m ) ;
+    typename M::array_type::pointer data( matrix_reference<M> &m ) ;
 
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
     template < typename T, std::size_t M, std::size_t N >
     BOOST_UBLAS_INLINE
-    typename c_matrix<T, M, N>::const_pointer data( const c_matrix<T, M, N> &m ) ;
+    typename c_matrix<T, M, N>::array_type::array_type::const_pointer data( const c_matrix<T, M, N> &m ) ;
 #endif
-#ifndef BOOST_MSVC
-    // We need data_const() mostly due to MSVC 6.0.
+#if !(defined(BOOST_MSVC) && BOOST_MSVC <= 1300)
+    // We need data_const() mostly due to MSVC
     // But how shall we write portable code otherwise?
     template < typename T, std::size_t M, std::size_t N >
     BOOST_UBLAS_INLINE
-    typename c_matrix<T, M, N>::const_pointer data_const( const c_matrix<T, M, N> &m ) ;
+    typename c_matrix<T, M, N>::array_type::array_type::const_pointer data_const( const c_matrix<T, M, N> &m ) ;
     template < typename T, std::size_t M, std::size_t N >
     BOOST_UBLAS_INLINE
     typename c_matrix<T, M, N>::pointer data( c_matrix<T, M, N> &m ) ;
@@ -208,88 +208,88 @@ namespace boost { namespace numeric { namespace ublas {
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer data( const matrix_row<M> &v ) ;
+    typename M::array_type::array_type::const_pointer data( const matrix_row<M> &v ) ;
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer data( const matrix_column<M> &v ) ;
+    typename M::array_type::array_type::const_pointer data( const matrix_column<M> &v ) ;
 #endif
     // We need data_const() mostly due to MSVC 6.0.
     // But how shall we write portable code otherwise?
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer data_const( const matrix_row<M> &v ) ;
+    typename M::array_type::array_type::const_pointer data_const( const matrix_row<M> &v ) ;
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer data_const( const matrix_column<M> &v ) ;
+    typename M::array_type::array_type::const_pointer data_const( const matrix_column<M> &v ) ;
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::pointer data( matrix_row<M> &v ) ;
+    typename M::array_type::pointer data( matrix_row<M> &v ) ;
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::pointer data( matrix_column<M> &v ) ;
+    typename M::array_type::pointer data( matrix_column<M> &v ) ;
 
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer data( const matrix_range<M> &m ) ;
+    typename M::array_type::array_type::const_pointer data( const matrix_range<M> &m ) ;
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer data( const matrix_slice<M> &m ) ;
+    typename M::array_type::array_type::const_pointer data( const matrix_slice<M> &m ) ;
 #endif
     // We need data_const() mostly due to MSVC 6.0.
     // But how shall we write portable code otherwise?
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer data_const( const matrix_range<M> &m ) ;
+    typename M::array_type::array_type::const_pointer data_const( const matrix_range<M> &m ) ;
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer data_const( const matrix_slice<M> &m ) ;
+    typename M::array_type::array_type::const_pointer data_const( const matrix_slice<M> &m ) ;
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::pointer data( matrix_range<M> &m ) ;
+    typename M::array_type::pointer data( matrix_range<M> &m ) ;
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::pointer data( matrix_slice<M> &m ) ;
+    typename M::array_type::pointer data( matrix_slice<M> &m ) ;
 
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
     template < typename MV >
     BOOST_UBLAS_INLINE
-    typename MV::const_pointer base( const MV &mv ) ;
+    typename MV::array_type::array_type::const_pointer base( const MV &mv ) ;
 #endif
     // We need base_const() mostly due to MSVC 6.0.
     // But how shall we write portable code otherwise?
     template < typename MV >
     BOOST_UBLAS_INLINE
-    typename MV::const_pointer base_const( const MV &mv ) ;
+    typename MV::array_type::array_type::const_pointer base_const( const MV &mv ) ;
     template < typename MV >
     BOOST_UBLAS_INLINE
-    typename MV::pointer base( MV &mv ) ;
+    typename MV::array_type::pointer base( MV &mv ) ;
 
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::const_pointer base( const vector_reference<V> &v ) ;
+    typename V::array_type::array_type::const_pointer base( const vector_reference<V> &v ) ;
 #endif
     // We need base_const() mostly due to MSVC 6.0.
     // But how shall we write portable code otherwise?
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::const_pointer base_const( const vector_reference<V> &v ) ;
+    typename V::array_type::array_type::const_pointer base_const( const vector_reference<V> &v ) ;
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::pointer base( vector_reference<V> &v ) ;
+    typename V::array_type::pointer base( vector_reference<V> &v ) ;
 
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
     template < typename T, std::size_t N >
     BOOST_UBLAS_INLINE
-    typename c_vector<T, N>::const_pointer base( const c_vector<T, N> &v ) ;
+    typename c_vector<T, N>::array_type::array_type::const_pointer base( const c_vector<T, N> &v ) ;
 #endif
-#ifndef BOOST_MSVC
-    // We need base_const() mostly due to MSVC 6.0.
+#if !(defined(BOOST_MSVC) && BOOST_MSVC <= 1300)
+    // We need base_const() mostly due to MSVC
     // But how shall we write portable code otherwise?
     template < typename T, std::size_t N >
     BOOST_UBLAS_INLINE
-    typename c_vector<T, N>::const_pointer base_const( const c_vector<T, N> &v ) ;
+    typename c_vector<T, N>::array_type::array_type::const_pointer base_const( const c_vector<T, N> &v ) ;
     template < typename T, std::size_t N >
     BOOST_UBLAS_INLINE
     typename c_vector<T, N>::pointer base( c_vector<T, N> &v ) ;
@@ -298,51 +298,51 @@ namespace boost { namespace numeric { namespace ublas {
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::const_pointer base( const vector_range<V> &v ) ;
+    typename V::array_type::array_type::const_pointer base( const vector_range<V> &v ) ;
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::const_pointer base( const vector_slice<V> &v ) ;
+    typename V::array_type::array_type::const_pointer base( const vector_slice<V> &v ) ;
 #endif
     // We need base_const() mostly due to MSVC 6.0.
     // But how shall we write portable code otherwise?
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::const_pointer base_const( const vector_range<V> &v ) ;
+    typename V::array_type::array_type::const_pointer base_const( const vector_range<V> &v ) ;
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::const_pointer base_const( const vector_slice<V> &v ) ;
+    typename V::array_type::array_type::const_pointer base_const( const vector_slice<V> &v ) ;
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::pointer base( vector_range<V> &v ) ;
+    typename V::array_type::pointer base( vector_range<V> &v ) ;
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::pointer base( vector_slice<V> &v ) ;
+    typename V::array_type::pointer base( vector_slice<V> &v ) ;
 
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer base( const matrix_reference<M> &m ) ;
+    typename M::array_type::array_type::const_pointer base( const matrix_reference<M> &m ) ;
 #endif
     // We need base_const() mostly due to MSVC 6.0.
     // But how shall we write portable code otherwise?
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer base_const( const matrix_reference<M> &m ) ;
+    typename M::array_type::array_type::const_pointer base_const( const matrix_reference<M> &m ) ;
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::pointer base( matrix_reference<M> &m ) ;
+    typename M::array_type::pointer base( matrix_reference<M> &m ) ;
 
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
     template < typename T, std::size_t M, std::size_t N >
     BOOST_UBLAS_INLINE
-    typename c_matrix<T, M, N>::const_pointer base( const c_matrix<T, M, N> &m ) ;
+    typename c_matrix<T, M, N>::array_type::array_type::const_pointer base( const c_matrix<T, M, N> &m ) ;
 #endif
-#ifndef BOOST_MSVC
-    // We need base_const() mostly due to MSVC 6.0.
+#if !(defined(BOOST_MSVC) && BOOST_MSVC <= 1300)
+    // We need base_const() mostly due to MSVC
     // But how shall we write portable code otherwise?
     template < typename T, std::size_t M, std::size_t N >
     BOOST_UBLAS_INLINE
-    typename c_matrix<T, M, N>::const_pointer base_const( const c_matrix<T, M, N> &m ) ;
+    typename c_matrix<T, M, N>::array_type::array_type::const_pointer base_const( const c_matrix<T, M, N> &m ) ;
     template < typename T, std::size_t M, std::size_t N >
     BOOST_UBLAS_INLINE
     typename c_matrix<T, M, N>::pointer base( c_matrix<T, M, N> &m ) ;
@@ -351,48 +351,48 @@ namespace boost { namespace numeric { namespace ublas {
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer base( const matrix_row<M> &v ) ;
+    typename M::array_type::array_type::const_pointer base( const matrix_row<M> &v ) ;
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer base( const matrix_column<M> &v ) ;
+    typename M::array_type::array_type::const_pointer base( const matrix_column<M> &v ) ;
 #endif
     // We need base_const() mostly due to MSVC 6.0.
     // But how shall we write portable code otherwise?
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer base_const( const matrix_row<M> &v ) ;
+    typename M::array_type::array_type::const_pointer base_const( const matrix_row<M> &v ) ;
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer base_const( const matrix_column<M> &v ) ;
+    typename M::array_type::array_type::const_pointer base_const( const matrix_column<M> &v ) ;
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::pointer base( matrix_row<M> &v ) ;
+    typename M::array_type::pointer base( matrix_row<M> &v ) ;
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::pointer base( matrix_column<M> &v ) ;
+    typename M::array_type::pointer base( matrix_column<M> &v ) ;
 
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer base( const matrix_range<M> &m ) ;
+    typename M::array_type::array_type::const_pointer base( const matrix_range<M> &m ) ;
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer base( const matrix_slice<M> &m ) ;
+    typename M::array_type::array_type::const_pointer base( const matrix_slice<M> &m ) ;
 #endif
     // We need base_const() mostly due to MSVC 6.0.
     // But how shall we write portable code otherwise?
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer base_const( const matrix_range<M> &m ) ;
+    typename M::array_type::array_type::const_pointer base_const( const matrix_range<M> &m ) ;
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer base_const( const matrix_slice<M> &m ) ;
+    typename M::array_type::array_type::const_pointer base_const( const matrix_slice<M> &m ) ;
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::pointer base( matrix_range<M> &m ) ;
+    typename M::array_type::pointer base( matrix_range<M> &m ) ;
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::pointer base( matrix_slice<M> &m ) ;
+    typename M::array_type::pointer base( matrix_slice<M> &m ) ;
 
     template < typename MV >
     BOOST_UBLAS_INLINE
@@ -566,7 +566,7 @@ namespace boost { namespace numeric { namespace ublas {
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
     template < typename MV >
     BOOST_UBLAS_INLINE
-    typename MV::const_pointer data( const MV &mv ) {
+    typename MV::array_type::array_type::array_type::const_pointer data( const MV &mv ) {
         return &mv.data().begin()[0] ;
     }
 #endif
@@ -574,19 +574,19 @@ namespace boost { namespace numeric { namespace ublas {
     // But how shall we write portable code otherwise?
     template < typename MV >
     BOOST_UBLAS_INLINE
-    typename MV::const_pointer data_const( const MV &mv ) {
+    typename MV::array_type::array_type::const_pointer data_const( const MV &mv ) {
         return &mv.data().begin()[0] ;
     }
     template < typename MV >
     BOOST_UBLAS_INLINE
-    typename MV::pointer data( MV &mv ) {
+    typename MV::array_type::pointer data( MV &mv ) {
         return &mv.data().begin()[0] ;
     }
 
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::const_pointer data( const vector_reference<V> &v ) {
+    typename V::array_type::array_type::const_pointer data( const vector_reference<V> &v ) {
         return data( v.expression () ) ;
     }
 #endif
@@ -594,28 +594,28 @@ namespace boost { namespace numeric { namespace ublas {
     // But how shall we write portable code otherwise?
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::const_pointer data_const( const vector_reference<V> &v ) {
+    typename V::array_type::array_type::const_pointer data_const( const vector_reference<V> &v ) {
         return data_const( v.expression () ) ;
     }
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::pointer data( vector_reference<V> &v ) {
+    typename V::array_type::pointer data( vector_reference<V> &v ) {
         return data( v.expression () ) ;
     }
 
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
     template < typename T, std::size_t N >
     BOOST_UBLAS_INLINE
-    typename c_vector<T, N>::const_pointer data( const c_vector<T, N> &v ) {
+    typename c_vector<T, N>::array_type::array_type::const_pointer data( const c_vector<T, N> &v ) {
         return v.data() ;
     }
 #endif
-#ifndef BOOST_MSVC
-    // We need data_const() mostly due to MSVC 6.0.
+#if !(defined(BOOST_MSVC) && BOOST_MSVC <= 1300)
+    // We need data_const() mostly due to MSVC
     // But how shall we write portable code otherwise?
     template < typename T, std::size_t N >
     BOOST_UBLAS_INLINE
-    typename c_vector<T, N>::const_pointer data_const( const c_vector<T, N> &v ) {
+    typename c_vector<T, N>::array_type::array_type::const_pointer data_const( const c_vector<T, N> &v ) {
         return v.data() ;
     }
     template < typename T, std::size_t N >
@@ -628,12 +628,12 @@ namespace boost { namespace numeric { namespace ublas {
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::const_pointer data( const vector_range<V> &v ) {
+    typename V::array_type::array_type::const_pointer data( const vector_range<V> &v ) {
         return data( v.data() ) + v.start() * stride (v.data() ) ;
     }
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::const_pointer data( const vector_slice<V> &v ) {
+    typename V::array_type::array_type::const_pointer data( const vector_slice<V> &v ) {
         return data( v.data() ) + v.start() * stride (v.data() ) ;
     }
 #endif
@@ -641,29 +641,29 @@ namespace boost { namespace numeric { namespace ublas {
     // But how shall we write portable code otherwise?
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::const_pointer data_const( const vector_range<V> &v ) {
+    typename V::array_type::array_type::const_pointer data_const( const vector_range<V> &v ) {
         return data_const( v.data() ) + v.start() * stride (v.data() ) ;
     }
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::const_pointer data_const( const vector_slice<V> &v ) {
+    typename V::array_type::const_pointer data_const( const vector_slice<V> &v ) {
         return data_const( v.data() ) + v.start() * stride (v.data() ) ;
     }
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::pointer data( vector_range<V> &v ) {
+    typename V::array_type::pointer data( vector_range<V> &v ) {
         return data( v.data() ) + v.start() * stride (v.data() ) ;
     }
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::pointer data( vector_slice<V> &v ) {
+    typename V::array_type::pointer data( vector_slice<V> &v ) {
         return data( v.data() ) + v.start() * stride (v.data() ) ;
     }
 
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer data( const matrix_reference<M> &m ) {
+    typename M::array_type::const_pointer data( const matrix_reference<M> &m ) {
         return data( m.expression () ) ;
     }
 #endif
@@ -671,28 +671,28 @@ namespace boost { namespace numeric { namespace ublas {
     // But how shall we write portable code otherwise?
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer data_const( const matrix_reference<M> &m ) {
+    typename M::array_type::const_pointer data_const( const matrix_reference<M> &m ) {
         return data_const( m.expression () ) ;
     }
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::pointer data( matrix_reference<M> &m ) {
+    typename M::array_type::pointer data( matrix_reference<M> &m ) {
         return data( m.expression () ) ;
     }
 
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
     template < typename T, std::size_t M, std::size_t N >
     BOOST_UBLAS_INLINE
-    typename c_matrix<T, M, N>::const_pointer data( const c_matrix<T, M, N> &m ) {
+    typename c_matrix<T, M, N>::array_type::const_pointer data( const c_matrix<T, M, N> &m ) {
         return m.data() ;
     }
 #endif
-#ifndef BOOST_MSVC
-    // We need data_const() mostly due to MSVC 6.0.
+#if !(defined(BOOST_MSVC) && BOOST_MSVC <= 1300)
+    // We need data_const() mostly due to MSVC
     // But how shall we write portable code otherwise?
     template < typename T, std::size_t M, std::size_t N >
     BOOST_UBLAS_INLINE
-    typename c_matrix<T, M, N>::const_pointer data_const( const c_matrix<T, M, N> &m ) {
+    typename c_matrix<T, M, N>::array_type::const_pointer data_const( const c_matrix<T, M, N> &m ) {
         return m.data() ;
     }
     template < typename T, std::size_t M, std::size_t N >
@@ -705,12 +705,12 @@ namespace boost { namespace numeric { namespace ublas {
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer data( const matrix_row<M> &v ) {
+    typename M::array_type::const_pointer data( const matrix_row<M> &v ) {
         return data( v.data() ) + v.index() * stride1( v.data() ) ;
     }
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer data( const matrix_column<M> &v ) {
+    typename M::array_type::const_pointer data( const matrix_column<M> &v ) {
         return data( v.data() ) + v.index() * stride2( v.data() ) ;
     }
 #endif
@@ -718,34 +718,34 @@ namespace boost { namespace numeric { namespace ublas {
     // But how shall we write portable code otherwise?
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer data_const( const matrix_row<M> &v ) {
+    typename M::array_type::const_pointer data_const( const matrix_row<M> &v ) {
         return data_const( v.data() ) + v.index() * stride1( v.data() ) ;
     }
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer data_const( const matrix_column<M> &v ) {
+    typename M::array_type::const_pointer data_const( const matrix_column<M> &v ) {
         return data_const( v.data() ) + v.index() * stride2( v.data() ) ;
     }
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::pointer data( matrix_row<M> &v ) {
+    typename M::array_type::pointer data( matrix_row<M> &v ) {
         return data( v.data() ) + v.index() * stride1( v.data() ) ;
     }
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::pointer data( matrix_column<M> &v ) {
+    typename M::array_type::pointer data( matrix_column<M> &v ) {
         return data( v.data() ) + v.index() * stride2( v.data() ) ;
     }
 
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer data( const matrix_range<M> &m ) {
+    typename M::array_type::const_pointer data( const matrix_range<M> &m ) {
         return data( m.data() ) + m.start1() * stride1( m.data () ) + m.start2() * stride2( m.data () ) ;
     }
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer data( const matrix_slice<M> &m ) {
+    typename M::array_type::const_pointer data( const matrix_slice<M> &m ) {
         return data( m.data() ) + m.start1() * stride1( m.data () ) + m.start2() * stride2( m.data () ) ;
     }
 #endif
@@ -753,29 +753,29 @@ namespace boost { namespace numeric { namespace ublas {
     // But how shall we write portable code otherwise?
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer data_const( const matrix_range<M> &m ) {
+    typename M::array_type::const_pointer data_const( const matrix_range<M> &m ) {
         return data_const( m.data() ) + m.start1() * stride1( m.data () ) + m.start2() * stride2( m.data () ) ;
     }
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer data_const( const matrix_slice<M> &m ) {
+    typename M::array_type::const_pointer data_const( const matrix_slice<M> &m ) {
         return data_const( m.data() ) + m.start1() * stride1( m.data () ) + m.start2() * stride2( m.data () ) ;
     }
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::pointer data( matrix_range<M> &m ) {
+    typename M::array_type::pointer data( matrix_range<M> &m ) {
         return data( m.data() ) + m.start1() * stride1( m.data () ) + m.start2() * stride2( m.data () ) ;
     }
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::pointer data( matrix_slice<M> &m ) {
+    typename M::array_type::pointer data( matrix_slice<M> &m ) {
         return data( m.data() ) + m.start1() * stride1( m.data () ) + m.start2() * stride2( m.data () ) ;
     }
 
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
     template < typename MV >
     BOOST_UBLAS_INLINE
-    typename MV::const_pointer base( const MV &mv ) {
+    typename MV::array_type::const_pointer base( const MV &mv ) {
         return &mv.data().begin()[0] ;
     }
 #endif
@@ -783,19 +783,19 @@ namespace boost { namespace numeric { namespace ublas {
     // But how shall we write portable code otherwise?
     template < typename MV >
     BOOST_UBLAS_INLINE
-    typename MV::const_pointer base_const( const MV &mv ) {
+    typename MV::array_type::const_pointer base_const( const MV &mv ) {
         return &mv.data().begin()[0] ;
     }
     template < typename MV >
     BOOST_UBLAS_INLINE
-    typename MV::pointer base( MV &mv ) {
+    typename MV::array_type::pointer base( MV &mv ) {
         return &mv.data().begin()[0] ;
     }
 
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::const_pointer base( const vector_reference<V> &v ) {
+    typename V::array_type::const_pointer base( const vector_reference<V> &v ) {
         return base( v.expression () ) ;
     }
 #endif
@@ -803,28 +803,28 @@ namespace boost { namespace numeric { namespace ublas {
     // But how shall we write portable code otherwise?
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::const_pointer base_const( const vector_reference<V> &v ) {
+    typename V::array_type::const_pointer base_const( const vector_reference<V> &v ) {
         return base_const( v.expression () ) ;
     }
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::pointer base( vector_reference<V> &v ) {
+    typename V::array_type::pointer base( vector_reference<V> &v ) {
         return base( v.expression () ) ;
     }
 
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
     template < typename T, std::size_t N >
     BOOST_UBLAS_INLINE
-    typename c_vector<T, N>::const_pointer base( const c_vector<T, N> &v ) {
+    typename c_vector<T, N>::array_type::const_pointer base( const c_vector<T, N> &v ) {
         return v.data() ;
     }
 #endif
-#ifndef BOOST_MSVC
-    // We need base_const() mostly due to MSVC 6.0.
+#if !(defined(BOOST_MSVC) && BOOST_MSVC <= 1300)
+    // We need base_const() mostly due to MSVC
     // But how shall we write portable code otherwise?
     template < typename T, std::size_t N >
     BOOST_UBLAS_INLINE
-    typename c_vector<T, N>::const_pointer base_const( const c_vector<T, N> &v ) {
+    typename c_vector<T, N>::array_type::const_pointer base_const( const c_vector<T, N> &v ) {
         return v.data() ;
     }
     template < typename T, std::size_t N >
@@ -837,12 +837,12 @@ namespace boost { namespace numeric { namespace ublas {
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::const_pointer base( const vector_range<V> &v ) {
+    typename V::array_type::const_pointer base( const vector_range<V> &v ) {
         return base( v.data() ) ;
     }
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::const_pointer base( const vector_slice<V> &v ) {
+    typename V::array_type::const_pointer base( const vector_slice<V> &v ) {
         return base( v.data() ) ;
     }
 #endif
@@ -850,29 +850,29 @@ namespace boost { namespace numeric { namespace ublas {
     // But how shall we write portable code otherwise?
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::const_pointer base_const( const vector_range<V> &v ) {
+    typename V::array_type::const_pointer base_const( const vector_range<V> &v ) {
         return base_const( v.data() ) ;
     }
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::const_pointer base_const( const vector_slice<V> &v ) {
+    typename V::array_type::const_pointer base_const( const vector_slice<V> &v ) {
         return base_const( v.data() ) ;
     }
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::pointer base( vector_range<V> &v ) {
+    typename V::array_type::pointer base( vector_range<V> &v ) {
         return base( v.data() ) ;
     }
     template < typename V >
     BOOST_UBLAS_INLINE
-    typename V::pointer base( vector_slice<V> &v ) {
+    typename V::array_type::pointer base( vector_slice<V> &v ) {
         return base( v.data() ) ;
     }
 
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer base( const matrix_reference<M> &m ) {
+    typename M::array_type::const_pointer base( const matrix_reference<M> &m ) {
         return base( m.expression () ) ;
     }
 #endif
@@ -880,28 +880,28 @@ namespace boost { namespace numeric { namespace ublas {
     // But how shall we write portable code otherwise?
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer base_const( const matrix_reference<M> &m ) {
+    typename M::array_type::const_pointer base_const( const matrix_reference<M> &m ) {
         return base_const( m.expression () ) ;
     }
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::pointer base( matrix_reference<M> &m ) {
+    typename M::array_type::pointer base( matrix_reference<M> &m ) {
         return base( m.expression () ) ;
     }
 
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
     template < typename T, std::size_t M, std::size_t N >
     BOOST_UBLAS_INLINE
-    typename c_matrix<T, M, N>::const_pointer base( const c_matrix<T, M, N> &m ) {
+    typename c_matrix<T, M, N>::array_type::const_pointer base( const c_matrix<T, M, N> &m ) {
         return m.data() ;
     }
 #endif
-#ifndef BOOST_MSVC
-    // We need base_const() mostly due to MSVC 6.0.
+#if !(defined(BOOST_MSVC) && BOOST_MSVC <= 1300)
+    // We need base_const() mostly due to MSVC
     // But how shall we write portable code otherwise?
     template < typename T, std::size_t M, std::size_t N >
     BOOST_UBLAS_INLINE
-    typename c_matrix<T, M, N>::const_pointer base_const( const c_matrix<T, M, N> &m ) {
+    typename c_matrix<T, M, N>::array_type::const_pointer base_const( const c_matrix<T, M, N> &m ) {
         return m.data() ;
     }
     template < typename T, std::size_t M, std::size_t N >
@@ -914,12 +914,12 @@ namespace boost { namespace numeric { namespace ublas {
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer base( const matrix_row<M> &v ) {
+    typename M::array_type::const_pointer base( const matrix_row<M> &v ) {
         return base( v.data() ) ;
     }
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer base( const matrix_column<M> &v ) {
+    typename M::array_type::const_pointer base( const matrix_column<M> &v ) {
         return base( v.data() ) ;
     }
 #endif
@@ -927,34 +927,34 @@ namespace boost { namespace numeric { namespace ublas {
     // But how shall we write portable code otherwise?
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer base_const( const matrix_row<M> &v ) {
+    typename M::array_type::const_pointer base_const( const matrix_row<M> &v ) {
         return base_const( v.data() ) ;
     }
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer base_const( const matrix_column<M> &v ) {
+    typename M::array_type::const_pointer base_const( const matrix_column<M> &v ) {
         return base_const( v.data() ) ;
     }
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::pointer base( matrix_row<M> &v ) {
+    typename M::array_type::pointer base( matrix_row<M> &v ) {
         return base( v.data() ) ;
     }
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::pointer base( matrix_column<M> &v ) {
+    typename M::array_type::pointer base( matrix_column<M> &v ) {
         return base( v.data() ) ;
     }
 
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer base( const matrix_range<M> &m ) {
+    typename M::array_type::const_pointer base( const matrix_range<M> &m ) {
         return base( m.data() ) ;
     }
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer base( const matrix_slice<M> &m ) {
+    typename M::array_type::const_pointer base( const matrix_slice<M> &m ) {
         return base( m.data() ) ;
     }
 #endif
@@ -962,22 +962,22 @@ namespace boost { namespace numeric { namespace ublas {
     // But how shall we write portable code otherwise?
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer base_const( const matrix_range<M> &m ) {
+    typename M::array_type::const_pointer base_const( const matrix_range<M> &m ) {
         return base_const( m.data() ) ;
     }
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::const_pointer base_const( const matrix_slice<M> &m ) {
+    typename M::array_type::const_pointer base_const( const matrix_slice<M> &m ) {
         return base_const( m.data() ) ;
     }
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::pointer base( matrix_range<M> &m ) {
+    typename M::array_type::pointer base( matrix_range<M> &m ) {
         return base( m.data() ) ;
     }
     template < typename M >
     BOOST_UBLAS_INLINE
-    typename M::pointer base( matrix_slice<M> &m ) {
+    typename M::array_type::pointer base( matrix_slice<M> &m ) {
         return base( m.data() ) ;
     }
 
@@ -1020,6 +1020,6 @@ namespace boost { namespace numeric { namespace ublas {
         return m.start1() * stride1( m.data () ) + m.start2() * stride2( m.data () ) ;
     }
 
-}}}
+}}}}
 
 #endif

@@ -1,7 +1,7 @@
 
-// Copyright (C) 2000 John Maddock (john@johnmaddock.co.uk)
-// Copyright (C) 2000 Jeremy Siek (jsiek@lsc.nd.edu)
-// Copyright (C) 1999, 2000 Jaakko J„rvi (jaakko.jarvi@cs.utu.fi)
+// Copyright 2000 John Maddock (john@johnmaddock.co.uk)
+// Copyright 2000 Jeremy Siek (jsiek@lsc.nd.edu)
+// Copyright 1999, 2000 Jaakko J„rvi (jaakko.jarvi@cs.utu.fi)
 //
 //  Use, modification and distribution are subject to the Boost Software License,
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -156,6 +156,32 @@ struct is_convertible_basic_impl
         );
 };
 
+#elif defined(__DMC__)
+
+struct any_conversion
+{
+    template <typename T> any_conversion(const volatile T&);
+    // we need this constructor to catch references to functions
+    // (which can not be cv-qualified):
+    template <typename T> any_conversion(T&);
+};
+
+template <typename From, typename To>
+struct is_convertible_basic_impl
+{
+    // Using '...' doesn't always work on Digital Mars. This version seems to.
+    template <class T>
+    static ::boost::type_traits::no_type BOOST_TT_DECL _m_check(any_conversion,  float, T);
+    static ::boost::type_traits::yes_type BOOST_TT_DECL _m_check(To, int, int);
+    static From _m_from;
+
+    // Static constants sometime cause the conversion of _m_from to To to be
+    // called. This doesn't happen with an enum.
+    enum { value =
+        sizeof( _m_check(_m_from, 0, 0) ) == sizeof(::boost::type_traits::yes_type)
+        };
+};
+
 #else
 
 //
@@ -176,7 +202,21 @@ struct is_convertible_basic_impl
 
 #endif // is_convertible_impl
 
-#if !defined(__BORLANDC__) || __BORLANDC__ > 0x551
+#if defined(__DMC__)
+// As before, a static constant sometimes causes errors on Digital Mars.
+template <typename From, typename To>
+struct is_convertible_impl
+{
+    typedef typename add_reference<From>::type ref_type;
+    enum { value =
+        ::boost::type_traits::ice_and<
+            ::boost::detail::is_convertible_basic_impl<ref_type, To>::value,
+            ::boost::type_traits::ice_not<
+                ::boost::is_array<To>::value
+            >::value,
+        >::value };
+};
+#elif !defined(__BORLANDC__) || __BORLANDC__ > 0x551
 template <typename From, typename To>
 struct is_convertible_impl
 {
@@ -260,7 +300,8 @@ BOOST_TT_AUX_BOOL_TRAIT_DEF2(is_convertible,From,To,(::boost::detail::is_convert
     TT_AUX_IS_CONVERTIBLE_SPEC_2(F,short) \
     TT_AUX_IS_CONVERTIBLE_SPEC_2(F,int) \
     TT_AUX_IS_CONVERTIBLE_SPEC_2(F,long) \
-    TT_AUX_IS_CONVERTIBLE_SPEC_2(F,long long) \
+    TT_AUX_IS_CONVERTIBLE_SPEC(F,::boost::long_long_type)  \
+    TT_AUX_IS_CONVERTIBLE_SPEC(F,::boost::ulong_long_type) \
     /**/
 
 #   define TT_AUX_IS_CONVERTIBLE_FROM_FLOAT_CV_SPEC(F) \

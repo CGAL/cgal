@@ -1,6 +1,6 @@
 // Boost.Signals library
 
-// Copyright Doug Gregor 2001-2003. Use, modification and
+// Copyright Douglas Gregor 2001-2004. Use, modification and
 // distribution is subject to the Boost Software License, Version
 // 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -189,7 +189,7 @@ namespace BOOST_SIGNALS_NAMESPACE {
 } // end namespace boost
 
 #ifdef BOOST_HAS_ABI_HEADERS
-#  include BOOST_ABI_PREFIX
+#  include BOOST_ABI_SUFFIX
 #endif
 
 #endif // BOOST_SIGNALS_TRACKABLE_HPP

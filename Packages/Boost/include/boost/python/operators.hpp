@@ -1,8 +1,7 @@
-// Copyright David Abrahams 2002. Permission to copy, use,
-// modify, sell and distribute this software is granted provided this
-// copyright notice appears in all copies. This software is provided
-// "as is" without express or implied warranty, and with no claim as
-// to its suitability for any purpose.
+// Copyright David Abrahams 2002.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 #ifndef OPERATORS_DWA2002530_HPP
 # define OPERATORS_DWA2002530_HPP
 
@@ -14,7 +13,7 @@
 # include <boost/python/detail/not_specified.hpp>
 # include <boost/python/back_reference.hpp>
 # include <boost/mpl/if.hpp>
-# include <boost/mpl/apply_if.hpp>
+# include <boost/mpl/eval_if.hpp>
 # include <boost/python/self.hpp>
 # include <boost/python/other.hpp>
 # include <boost/lexical_cast.hpp>
@@ -129,7 +128,7 @@ namespace detail
       template <class ClassT>
       void visit(ClassT& cl) const
       {
-          typedef typename mpl::apply_if<
+          typedef typename mpl::eval_if<
               is_same<L,self_t>
             , mpl::if_<
                   is_same<R,self_t>

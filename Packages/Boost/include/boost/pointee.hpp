@@ -12,7 +12,7 @@
 # include <boost/type_traits/add_const.hpp>
 # include <boost/type_traits/remove_cv.hpp>
 # include <boost/mpl/if.hpp>
-# include <boost/mpl/apply_if.hpp>
+# include <boost/mpl/eval_if.hpp>
 
 namespace boost { 
 
@@ -55,7 +55,7 @@ namespace detail
 
 template <class P>
 struct pointee
-  : mpl::apply_if<
+  : mpl::eval_if<
         detail::is_incrementable<P>
       , detail::iterator_pointee<P>
       , detail::smart_ptr_pointee<P>

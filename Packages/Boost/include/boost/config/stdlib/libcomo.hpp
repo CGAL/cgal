@@ -24,6 +24,15 @@
 #  define BOOST_NO_STD_WSTREAMBUF
 #endif
 
+#if (__LIBCOMO_VERSION__ <= 31) && defined(_WIN32)
+#define BOOST_NO_SWPRINTF
+#endif
+
+#if __LIBCOMO_VERSION__ >= 31
+#  define BOOST_HAS_HASH
+#  define BOOST_HAS_SLIST
+#endif
+
 //
 // Intrinsic type_traits support.
 // The SGI STL has it's own __type_traits class, which

@@ -1,45 +1,41 @@
-//-----------------------------------------------------------------------------
-// boost mpl/aux_/insert_impl.hpp header file
-// See http://www.boost.org for updates, documentation, and revision history.
-//-----------------------------------------------------------------------------
-//
-// Copyright (c) 2000-02
-// Aleksey Gurtovoy
-//
-// Permission to use, copy, modify, distribute and sell this software
-// and its documentation for any purpose is hereby granted without fee, 
-// provided that the above copyright notice appears in all copies and 
-// that both the copyright notice and this permission notice appear in 
-// supporting documentation. No representations are made about the 
-// suitability of this software for any purpose. It is provided "as is" 
-// without express or implied warranty.
 
 #ifndef BOOST_MPL_INSERT_IMPL_HPP_INCLUDED
 #define BOOST_MPL_INSERT_IMPL_HPP_INCLUDED
 
-#include "boost/mpl/copy_backward.hpp"
-#include "boost/mpl/iterator_range.hpp"
-#include "boost/mpl/clear.hpp"
-#include "boost/mpl/push_front.hpp"
-#include "boost/mpl/aux_/void_spec.hpp"
-#include "boost/mpl/aux_/traits_lambda_spec.hpp"
-#include "boost/type_traits/is_same.hpp"
+// Copyright Aleksey Gurtovoy 2000-2004
+//
+// Distributed under the Boost Software License, Version 1.0. 
+// (See accompanying file LICENSE_1_0.txt or copy at 
+// http://www.boost.org/LICENSE_1_0.txt)
+//
+// See http://www.boost.org/libs/mpl for documentation.
 
-namespace boost {
-namespace mpl {
+// $Source$
+// $Date$
+// $Revision$
+
+#include <boost/mpl/reverse_fold.hpp>
+#include <boost/mpl/iterator_range.hpp>
+#include <boost/mpl/clear.hpp>
+#include <boost/mpl/push_front.hpp>
+#include <boost/mpl/aux_/na_spec.hpp>
+#include <boost/mpl/aux_/traits_lambda_spec.hpp>
+#include <boost/type_traits/is_same.hpp>
+
+namespace boost { namespace mpl {
 
 // default implementation; conrete sequences might override it by 
-// specializing either the |insert_traits| or the primary |insert| template
+// specializing either the 'insert_impl' or the primary 'insert' template
 
 template< typename Tag >
-struct insert_traits
+struct insert_impl
 {
     template<
           typename Sequence
         , typename Pos
         , typename T
         >
-    struct algorithm
+    struct apply
     {
         typedef iterator_range<
               typename begin<Sequence>::type
@@ -51,13 +47,13 @@ struct insert_traits
             , typename end<Sequence>::type
             > second_half_;
 
-        typedef typename copy_backward<
+        typedef typename reverse_fold<
               second_half_
             , typename clear<Sequence>::type
             , push_front<_,_>
             >::type half_sequence_;
 
-        typedef typename copy_backward<
+        typedef typename reverse_fold<
               first_half_
             , typename push_front<half_sequence_,T>::type
             , push_front<_,_>
@@ -65,9 +61,8 @@ struct insert_traits
     };
 };
 
-BOOST_MPL_ALGORITM_TRAITS_LAMBDA_SPEC(3,insert_traits)
+BOOST_MPL_ALGORITM_TRAITS_LAMBDA_SPEC(3,insert_impl)
 
-} // namespace mpl
-} // namespace boost
+}}
 
 #endif // BOOST_MPL_INSERT_IMPL_HPP_INCLUDED

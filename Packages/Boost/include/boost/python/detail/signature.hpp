@@ -1,10 +1,9 @@
 #if !defined(BOOST_PP_IS_ITERATING)
 
-// Copyright David Abrahams 2002. Permission to copy, use,
-// modify, sell and distribute this software is granted provided this
-// copyright notice appears in all copies. This software is provided
-// "as is" without express or implied warranty, and with no claim as
-// to its suitability for any purpose.
+// Copyright David Abrahams 2002.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 
 # ifndef SIGNATURE_DWA20021121_HPP
 #  define SIGNATURE_DWA20021121_HPP
@@ -72,7 +71,7 @@ struct signature_arity<N>
 # define BOOST_PP_LOCAL_MACRO(i)                                                            \
      {                                                                                      \
          type_id<BOOST_DEDUCED_TYPENAME mpl::at_c<Sig,i>::type>().name()                    \
-       , is_reference_to_non_const<BOOST_DEDUCED_TYPENAME mpl::at_c<Sig,i>::type>::value    \
+         , indirect_traits::is_reference_to_non_const<BOOST_DEDUCED_TYPENAME mpl::at_c<Sig,i>::type>::value \
      },
                 
 # define BOOST_PP_LOCAL_LIMITS (0, N)

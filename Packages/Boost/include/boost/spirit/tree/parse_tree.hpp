@@ -133,7 +133,7 @@ struct gen_pt_node_parser
             action_policy_t
         > policies_t;
 
-        return this->subject().parse(scan.change_policies(policies_t()));
+        return this->subject().parse(scan.change_policies(policies_t(scan)));
     }
 };
 

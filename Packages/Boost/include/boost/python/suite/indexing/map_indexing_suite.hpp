@@ -1,8 +1,7 @@
 //  (C) Copyright Joel de Guzman 2003.
-//  Permission to copy, use, modify, sell and distribute this software
-//  is granted provided this copyright notice appears in all copies. This
-//  software is provided "as is" without express or implied warranty, and
-//  with no claim as to its suitability for any purpose.
+//  Distributed under the Boost Software License, Version 1.0. (See
+//  accompanying file LICENSE_1_0.txt or copy at
+//  http://www.boost.org/LICENSE_1_0.txt)
 
 #ifndef MAP_INDEXING_SUITE_JDG20038_HPP
 # define MAP_INDEXING_SUITE_JDG20038_HPP
@@ -13,20 +12,20 @@
 # include <boost/python/tuple.hpp>
 
 namespace boost { namespace python {
-            
+
     // Forward declaration
     template <class Container, bool NoProxy, class DerivedPolicies>
     class map_indexing_suite;
-    
+
     namespace detail
     {
         template <class Container, bool NoProxy>
-        class final_map_derived_policies 
-            : public map_indexing_suite<Container, 
+        class final_map_derived_policies
+            : public map_indexing_suite<Container,
                 NoProxy, final_map_derived_policies<Container, NoProxy> > {};
     }
 
-    // The map_indexing_suite class is a predefined indexing_suite derived 
+    // The map_indexing_suite class is a predefined indexing_suite derived
     // class for wrapping std::vector (and std::vector like) classes. It provides
     // all the policies required by the indexing_suite (see indexing_suite).
     // Example usage:
@@ -43,11 +42,11 @@ namespace boost { namespace python {
     // disabled by supplying *true* in the NoProxy template parameter.
     //
     template <
-        class Container, 
+        class Container,
         bool NoProxy = false,
-        class DerivedPolicies 
+        class DerivedPolicies
             = detail::final_map_derived_policies<Container, NoProxy> >
-    class map_indexing_suite 
+    class map_indexing_suite
         : public indexing_suite<
             Container
           , DerivedPolicies
@@ -57,9 +56,9 @@ namespace boost { namespace python {
           , typename Container::key_type
           , typename Container::key_type
         >
-    {      
+    {
     public:
-    
+
         typedef typename Container::value_type value_type;
         typedef typename Container::value_type::second_type data_type;
         typedef typename Container::key_type key_type;
@@ -68,12 +67,14 @@ namespace boost { namespace python {
         typedef typename Container::difference_type difference_type;
 
         template <class Class>
-        static void 
+        static void
         extension_def(Class& cl)
         {
             //  Wrap the map's element (value_type)
             std::string elem_name = "map_indexing_suite_";
-            elem_name += cl.ptr()->ob_type->tp_name; // the class name
+            object class_name(cl.attr("__name__"));
+            extract<std::string> class_name_extractor(class_name);
+            elem_name += class_name_extractor();
             elem_name += "_entry";
 
             typedef typename mpl::if_<
@@ -81,21 +82,21 @@ namespace boost { namespace python {
               , return_internal_reference<>
               , default_call_policies
             >::type get_data_return_policy;
-           
+
             class_<value_type>(elem_name.c_str())
                 .def("__repr__", &DerivedPolicies::print_elem)
                 .def("data", &DerivedPolicies::get_data, get_data_return_policy())
                 .def("key", &DerivedPolicies::get_key)
             ;
         }
-        
+
         static object
         print_elem(typename Container::value_type const& e)
         {
-            return "(%s, %s)" % make_tuple(e.first, e.second);
+            return "(%s, %s)" % python::make_tuple(e.first, e.second);
         }
 
-        static 
+        static
         typename mpl::if_<
             is_class<data_type>
           , data_type&
@@ -112,9 +113,9 @@ namespace boost { namespace python {
             return e.first;
         }
 
-        static data_type& 
+        static data_type&
         get_item(Container& container, index_type i_)
-        { 
+        {
             typename Container::iterator i = container.find(i_);
             if (i == container.end())
             {
@@ -124,39 +125,39 @@ namespace boost { namespace python {
             return i->second;
         }
 
-        static void 
+        static void
         set_item(Container& container, index_type i, data_type const& v)
-        { 
+        {
             container[i] = v;
         }
 
-        static void 
+        static void
         delete_item(Container& container, index_type i)
-        { 
+        {
             container.erase(i);
         }
-       
+
         static size_t
         size(Container& container)
         {
             return container.size();
         }
-        
+
         static bool
         contains(Container& container, key_type const& key)
         {
             return container.find(key) != container.end();
         }
-        
-        static bool 
+
+        static bool
         compare_index(Container& container, index_type a, index_type b)
         {
             return container.key_comp()(a, b);
         }
-                
+
         static index_type
         convert_index(Container& container, PyObject* i_)
-        { 
+        {
             extract<key_type const&> i(i_);
             if (i.check())
             {
@@ -174,7 +175,7 @@ namespace boost { namespace python {
             return index_type();
         }
     };
-       
-}} // namespace boost::python 
+
+}} // namespace boost::python
 
 #endif // MAP_INDEXING_SUITE_JDG20038_HPP

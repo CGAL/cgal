@@ -75,24 +75,35 @@ namespace boost
   struct inv_adjacency_iterator
     : iterator_adaptor<
           inv_adjacency_iterator<Graph,Vertex,InEdgeIter,Difference>
-        , Vertex
+        , InEdgeIter
         , Vertex
         , use_default
-        , use_default
+        , Vertex
         , Difference
       >
     {
+      typedef iterator_adaptor<
+                  inv_adjacency_iterator<Graph,Vertex,InEdgeIter,Difference>
+                , InEdgeIter
+                , Vertex
+                , use_default
+                , Vertex
+                , Difference
+              > super_t;
+
       inline inv_adjacency_iterator() { }
-      inline inv_adjacency_iterator(Graph* g) : m_g(g) { }
+      inline inv_adjacency_iterator(InEdgeIter const& i, const Graph* g) : super_t(i), m_g(g) { }
 
       inline Vertex
       dereference() const
         { return source(*this->base(), *m_g); }
 
-      Graph* m_g;
+      const Graph* m_g;
     };
 
-  template <class Graph, class Vertex, class InEdgeIter>
+  template <class Graph,
+            class Vertex = typename graph_traits<Graph>::vertex_descriptor,
+            class InEdgeIter = typename graph_traits<Graph>::in_edge_iterator>
   class inv_adjacency_iterator_generator {
     typedef typename boost::detail::iterator_traits<InEdgeIter>
       ::difference_type difference_type;

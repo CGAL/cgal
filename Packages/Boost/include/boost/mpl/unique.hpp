@@ -1,97 +1,85 @@
-//-----------------------------------------------------------------------------
-// boost mpl/unique.hpp header file
-// See http://www.boost.org for updates, documentation, and revision history.
-//-----------------------------------------------------------------------------
-//
-// Copyright (c) 2000-02
-// Aleksey Gurtovoy and John R. Bandela
-//
-// Permission to use, copy, modify, distribute and sell this software
-// and its documentation for any purpose is hereby granted without fee, 
-// provided that the above copyright notice appears in all copies and 
-// that both the copyright notice and this permission notice appear in 
-// supporting documentation. No representations are made about the 
-// suitability of this software for any purpose. It is provided "as is" 
-// without express or implied warranty.
 
 #ifndef BOOST_MPL_UNIQUE_HPP_INCLUDED
 #define BOOST_MPL_UNIQUE_HPP_INCLUDED
 
-#include "boost/mpl/fold_backward.hpp"
-#include "boost/mpl/push_front.hpp"
-#include "boost/mpl/clear.hpp"
-#include "boost/mpl/front.hpp"
-#include "boost/mpl/identity.hpp"
-#include "boost/mpl/pair.hpp"
-#include "boost/mpl/select1st.hpp"
-#include "boost/mpl/lambda.hpp"
-#include "boost/mpl/apply_if.hpp"
-#include "boost/mpl/apply.hpp"
-#include "boost/mpl/void.hpp"
-#include "boost/mpl/aux_/void_spec.hpp"
-#include "boost/mpl/aux_/lambda_spec.hpp"
-#include "boost/mpl/aux_/config/eti.hpp"
-#include "boost/type_traits/is_same.hpp"
+// Copyright Aleksey Gurtovoy 2000-2004
+// Copyright John R. Bandela 2000-2002
+//
+// Distributed under the Boost Software License, Version 1.0. 
+// (See accompanying file LICENSE_1_0.txt or copy at 
+// http://www.boost.org/LICENSE_1_0.txt)
+//
+// See http://www.boost.org/libs/mpl for documentation.
 
-namespace boost {
-namespace mpl {
+// $Source$
+// $Date$
+// $Revision$
+
+#include <boost/mpl/fold.hpp>
+#include <boost/mpl/reverse_fold.hpp>
+#include <boost/mpl/eval_if.hpp>
+#include <boost/mpl/and.hpp>
+#include <boost/mpl/identity.hpp>
+#include <boost/mpl/pair.hpp>
+#include <boost/mpl/apply.hpp>
+#include <boost/mpl/aux_/inserter_algorithm.hpp>
+#include <boost/mpl/aux_/na.hpp>
+#include <boost/mpl/aux_/na_spec.hpp>
+#include <boost/mpl/aux_/lambda_spec.hpp>
+
+namespace boost { namespace mpl {
 
 namespace aux {
 
-template< typename Predicate >
+template< typename Predicate, typename Operation >
 struct unique_op
 {
     template< typename Pair, typename T > struct apply
     {
         typedef typename Pair::first seq_;
         typedef typename Pair::second prior_;
-        typedef typename apply_if<
-              typename apply2<Predicate,prior_,T>::type
+        typedef typename eval_if<
+              and_< is_not_na<prior_>, apply2<Predicate,prior_,T> >
             , identity<seq_>
-            , push_front<seq_,T>
+            , apply2<Operation,seq_,T>
             >::type new_seq_;
 
         typedef pair<new_seq_,T> type;
     };
 };
 
-} // namespace aux
-
-BOOST_MPL_AUX_PASS_THROUGH_LAMBDA_SPEC(1,aux::unique_op)
-
-BOOST_MPL_AUX_AGLORITHM_NAMESPACE_BEGIN
-
 template<
-      typename BOOST_MPL_AUX_VOID_SPEC_PARAM(Sequence)
-    , typename Predicate = is_same<_,_>
+      typename Sequence
+    , typename Predicate
+    , typename Inserter
     >
-struct unique
-{
- private:
-    struct none_;
-    typedef typename lambda<Predicate>::type pred_;
-    typedef typename clear<Sequence>::type result_;
-    typedef typename fold_backward<
+struct unique_impl
+    : first< typename fold<
           Sequence
-        , pair<result_,none_>
-        , aux::unique_op<pred_>
-        >::type fold_result_;
-
- public:
-#if defined(BOOST_MPL_MSVC_60_ETI_BUG)
-    // MSVC6.5 forces us to use 'select1st<fold_result_>::type' instead of 
-    // simple 'fold_result_::first' here
-    typedef typename select1st<fold_result_>::type type;
-#else
-    typedef typename fold_result_::first type;
-#endif
+        , pair< typename Inserter::state,na >
+        , protect< aux::unique_op<Predicate,typename Inserter::operation> >
+        >::type >
+{
 };
 
-BOOST_MPL_AUX_AGLORITHM_NAMESPACE_END
+template<
+      typename Sequence
+    , typename Predicate
+    , typename Inserter
+    >
+struct reverse_unique_impl
+    : first< typename reverse_fold<
+          Sequence
+        , pair< typename Inserter::state,na >
+        , protect< aux::unique_op<Predicate,typename Inserter::operation> >
+        >::type >
+{
+};
 
-BOOST_MPL_AUX_ALGORITHM_VOID_SPEC(1, unique)
+} // namespace aux
 
-} // namespace mpl
-} // namespace boost
+BOOST_MPL_AUX_INSERTER_ALGORITHM_DEF(3, unique)
+
+}}
 
 #endif // BOOST_MPL_UNIQUE_HPP_INCLUDED

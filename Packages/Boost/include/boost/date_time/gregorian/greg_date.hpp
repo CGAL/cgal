@@ -44,6 +44,12 @@ namespace gregorian {
     typedef gregorian_calendar::date_rep_type date_rep_type;
     typedef gregorian_calendar::date_int_type date_int_type;
     typedef date_duration  duration_type;
+#if !defined(DATE_TIME_NO_DEFAULT_CONSTRUCTOR)
+    //! Default constructor constructs with not_a_date_time
+    date():
+      date_time::date<date, gregorian_calendar, date_duration>(date_rep_type::from_special(not_a_date_time))
+    {}
+#endif // DATE_TIME_NO_DEFAULT_CONSTRUCTOR
     //! Main constructor with year, month, day
     date(year_type y, month_type m, day_type d) 
       : date_time::date<date, gregorian_calendar, date_duration>(y, m, d)
@@ -67,7 +73,17 @@ namespace gregorian {
     //! Constructor for infinities, not a date, max and min date
     explicit date(special_values sv):
       date_time::date<date, gregorian_calendar, date_duration>(date_rep_type::from_special(sv))
-    {}
+    {
+      if (sv == min_date_time)
+      {
+        *this = date(1400, 1, 1);
+      }
+      if (sv == max_date_time)
+      {
+        *this = date(9999, 12, 31);
+      }
+
+    }
     //!Return the Julian Day number for the date.
     date_int_type julian_day() const
     {
@@ -97,6 +113,13 @@ namespace gregorian {
     date_int_type day_number() const
     {
       return days_;
+    }
+    //! Return the last day of the current month
+    date end_of_month() const
+    {
+      ymd_type ymd = year_month_day(); 
+      short eom_day =  gregorian_calendar::end_of_month_day(ymd.year, ymd.month);
+      return date(ymd.year, ymd.month, eom_day);
     }
 
    private:

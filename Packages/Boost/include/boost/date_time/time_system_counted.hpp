@@ -124,6 +124,34 @@ namespace date_time {
       unused_var(dst);
       return time_rep_type(day, tod);
     }
+
+    static time_rep_type get_time_rep(special_values sv)
+    {
+      switch (sv) {
+      case not_a_date_time:
+        return time_rep_type(date_type(not_a_date_time),
+                             time_duration_type(not_a_date_time));
+      case pos_infin:
+        return time_rep_type(date_type(pos_infin), 
+                             time_duration_type(pos_infin));
+      case neg_infin:
+        return time_rep_type(date_type(neg_infin), 
+                             time_duration_type(neg_infin));
+      case max_date_time: {
+        time_duration_type td = time_duration_type(24,0,0,0) - time_duration_type(0,0,0,1);
+        return time_rep_type(date_type(max_date_time), td);
+      }
+      case min_date_time:
+        return time_rep_type(date_type(min_date_time), time_duration_type(0,0,0,0));
+
+      default:
+        return time_rep_type(date_type(not_a_date_time),
+                             time_duration_type(not_a_date_time));
+        
+      }
+
+    }
+
     static date_type get_date(const time_rep_type& val)
     {
       return val.date();

@@ -1,43 +1,38 @@
-//-----------------------------------------------------------------------------
-// boost mpl/single_view.hpp header file
-// See http://www.boost.org for updates, documentation, and revision history.
-//-----------------------------------------------------------------------------
-//
-// Copyright (c) 2000-02
-// Aleksey Gurtovoy
-//
-// Permission to use, copy, modify, distribute and sell this software
-// and its documentation for any purpose is hereby granted without fee, 
-// provided that the above copyright notice appears in all copies and 
-// that both the copyright notice and this permission notice appear in 
-// supporting documentation. No representations are made about the 
-// suitability of this software for any purpose. It is provided "as is" 
-// without express or implied warranty.
 
 #ifndef BOOST_MPL_SINGLE_VIEW_HPP_INCLUDED
 #define BOOST_MPL_SINGLE_VIEW_HPP_INCLUDED
 
-#include "boost/mpl/aux_/single_element_iter.hpp"
-#include "boost/mpl/iterator_range.hpp"
-#include "boost/mpl/aux_/void_spec.hpp"
+// Copyright Aleksey Gurtovoy 2000-2004
+//
+// Distributed under the Boost Software License, Version 1.0. 
+// (See accompanying file LICENSE_1_0.txt or copy at 
+// http://www.boost.org/LICENSE_1_0.txt)
+//
+// See http://www.boost.org/libs/mpl for documentation.
 
-namespace boost {
-namespace mpl {
+// $Source$
+// $Date$
+// $Revision$
+
+#include <boost/mpl/aux_/single_element_iter.hpp>
+#include <boost/mpl/iterator_range.hpp>
+#include <boost/mpl/aux_/na_spec.hpp>
+
+namespace boost { namespace mpl {
 
 template<
-      typename BOOST_MPL_AUX_VOID_SPEC_PARAM(T)
+      typename BOOST_MPL_AUX_NA_PARAM(T)
     >
 struct single_view
     : iterator_range<
-          aux::single_element_iter<T,0>
-        , aux::single_element_iter<T,1>
+          aux::sel_iter<T,0>
+        , aux::sel_iter<T,1>
         >
 {
 };
 
-BOOST_MPL_AUX_VOID_SPEC(1, single_view)
+BOOST_MPL_AUX_NA_SPEC_NO_ETI(1, single_view)
 
-} // namespace mpl
-} // namespace boost
+}}
 
 #endif // BOOST_MPL_SINGLE_VIEW_HPP_INCLUDED

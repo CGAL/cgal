@@ -1,17 +1,11 @@
 /* Boost interval/detail/bugs.hpp file
  *
- * Copyright Jens Maurer 2000
- * Copyright Hervé Brönnimann, Guillaume Melquiond, Sylvain Pion 2002
- * Permission to use, copy, modify, sell, and distribute this software
- * is hereby granted without fee provided that the above copyright notice
- * appears in all copies and that both that copyright notice and this
- * permission notice appear in supporting documentation,
+ * Copyright 2000 Jens Maurer
+ * Copyright 2002 Hervé Brönnimann, Guillaume Melquiond, Sylvain Pion
  *
- * None of the above authors nor Polytechnic University make any
- * representation about the suitability of this software for any
- * purpose. It is provided "as is" without express or implied warranty.
- *
- * $Id$
+ * Distributed under the Boost Software License, Version 1.0.
+ * (See accompanying file LICENSE_1_0.txt or
+ * copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 
 #ifndef BOOST_NUMERIC_INTERVAL_DETAIL_BUGS
@@ -19,7 +13,7 @@
 
 #include <boost/config.hpp>
 
-#if defined(__GLIBC__) && !defined(__GLIBCPP__) && (defined(__USE_MISC) || defined(__USE_XOPEN_EXTENDED) || defined(__USE_ISOC99)) && !defined(__ICC)
+#if defined(__GLIBC__) && (defined(__USE_MISC) || defined(__USE_XOPEN_EXTENDED) || defined(__USE_ISOC99)) && !defined(__ICC)
 #  define BOOST_HAS_INV_HYPERBOLIC
 #endif
 
@@ -30,10 +24,12 @@
 #  endif
 #else
 #  define BOOST_NUMERIC_INTERVAL_using_math(a) using std::a
-#  if defined(__GNUC__) && (__GNUC__ == 3) && (__GNUC_MINOR__ == 4)
+#  if defined(BOOST_HAS_INV_HYPERBOLIC)
+#    if defined(__GLIBCPP__) || defined(__GLIBCXX__)
 #    define BOOST_NUMERIC_INTERVAL_using_ahyp(a) using ::a
-#  elif defined(BOOST_HAS_INV_HYPERBOLIC)
+#    else
 #    define BOOST_NUMERIC_INTERVAL_using_ahyp(a) using std::a
+#  endif
 #  endif
 #endif
 
@@ -74,13 +70,8 @@ namespace numeric {
 # undef BOOST_NUMERIC_INTERVAL_using_math
 # define BOOST_NUMERIC_INTERVAL_using_max(a)
 # define BOOST_NUMERIC_INTERVAL_using_math(a)
-# ifdef BOOST_HAS_INV_HYPERBOLIC
-  using std::asinh;
-  using std::acosh;
-  using std::atanh;
 # undef BOOST_NUMERIC_INTERVAL_using_ahyp
 # define BOOST_NUMERIC_INTERVAL_using_ahyp(a)
-# endif
 } // namespace numeric
 } // namespace boost
 #endif

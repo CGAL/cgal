@@ -12,13 +12,10 @@
 #ifndef BOOST_MUTEX_WEK070601_HPP
 #define BOOST_MUTEX_WEK070601_HPP
 
-#include <boost/config.hpp>
-// insist on threading support being available:
-#include <boost/config/requires_threads.hpp>
+#include <boost/thread/detail/config.hpp>
 
 #include <boost/utility.hpp>
 #include <boost/thread/detail/lock.hpp>
-#include <boost/thread/detail/config.hpp>
 
 #if defined(BOOST_HAS_PTHREADS)
 #   include <pthread.h>
@@ -32,7 +29,8 @@ namespace boost {
 
 struct xtime;
 
-class BOOST_THREAD_DECL mutex : private noncopyable
+class BOOST_THREAD_DECL mutex
+    : private noncopyable
 {
 public:
     friend class detail::thread::lock_ops<mutex>;
@@ -62,6 +60,7 @@ private:
 
 #if defined(BOOST_HAS_WINTHREADS)
     void* m_mutex;
+    bool m_critical_section;
 #elif defined(BOOST_HAS_PTHREADS)
     pthread_mutex_t m_mutex;
 #elif defined(BOOST_HAS_MPTASKS)
@@ -70,7 +69,8 @@ private:
 #endif
 };
 
-class BOOST_THREAD_DECL try_mutex : private noncopyable
+class BOOST_THREAD_DECL try_mutex
+    : private noncopyable
 {
 public:
     friend class detail::thread::lock_ops<try_mutex>;
@@ -102,6 +102,7 @@ private:
 
 #if defined(BOOST_HAS_WINTHREADS)
     void* m_mutex;
+    bool m_critical_section;
 #elif defined(BOOST_HAS_PTHREADS)
     pthread_mutex_t m_mutex;
 #elif defined(BOOST_HAS_MPTASKS)
@@ -110,7 +111,8 @@ private:
 #endif
 };
 
-class BOOST_THREAD_DECL timed_mutex : private noncopyable
+class BOOST_THREAD_DECL timed_mutex
+    : private noncopyable
 {
 public:
     friend class detail::thread::lock_ops<timed_mutex>;

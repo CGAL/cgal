@@ -1,22 +1,17 @@
 /* Boost interval/checking.hpp template implementation file
  *
- * Copyright Hervé Brönnimann, Guillaume Melquiond, Sylvain Pion 2002
- * Permission to use, copy, modify, sell, and distribute this software
- * is hereby granted without fee provided that the above copyright notice
- * appears in all copies and that both that copyright notice and this
- * permission notice appear in supporting documentation,
+ * Copyright 2002 Hervé Brönnimann, Guillaume Melquiond, Sylvain Pion
  *
- * None of the above authors nor Polytechnic University make any
- * representation about the suitability of this software for any
- * purpose. It is provided "as is" without express or implied warranty.
- *
- * $Id$
+ * Distributed under the Boost Software License, Version 1.0.
+ * (See accompanying file LICENSE_1_0.txt or
+ * copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 
 #ifndef BOOST_NUMERIC_INTERVAL_CHECKING_HPP
 #define BOOST_NUMERIC_INTERVAL_CHECKING_HPP
 
 #include <stdexcept>
+#include <string>
 #include <cassert>
 #include <boost/limits.hpp>
 
@@ -43,10 +38,15 @@ struct exception_invalid_number
 template<class T>
 struct checking_base
 {
-  static T inf()
+  static T pos_inf()
   {
     assert(std::numeric_limits<T>::has_infinity);
     return std::numeric_limits<T>::infinity();
+  }
+  static T neg_inf()
+  {
+    assert(std::numeric_limits<T>::has_infinity);
+    return -std::numeric_limits<T>::infinity();
   }
   static T nan()
   {
@@ -122,12 +122,6 @@ template<class T>
 struct checking_strict:
   checking_no_nan<T, checking_no_empty<T> >
 {};
-
-namespace detail {
-
-template <class T> inline bool is_nan(const T& x) { return x != x; }
-
-} // namespace detail
 
 } // namespace interval_lib
 } // namespace numeric

@@ -1,6 +1,6 @@
 //  Boost io_fwd.hpp header file  --------------------------------------------//
 
-//  Copyright 2002 Boost.org.  Use, modification, and distribution are subject
+//  Copyright 2002 Daryle Walker.  Use, modification, and distribution are subject
 //  to the Boost Software License, Version 1.0.  (See accompanying file
 //  LICENSE_1_0.txt or a copy at <http://www.boost.org/LICENSE_1_0.txt>.)
 

@@ -12,10 +12,9 @@
 //
 //  Copyright (c) 2001, 2002, 2003 Peter Dimov and Multi Media Ltd.
 //
-//  Permission to copy, use, modify, sell and distribute this software
-//  is granted provided this copyright notice appears in all copies.
-//  This software is provided "as is" without express or implied
-//  warranty, and with no claim as to its suitability for any purpose.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 //
 
 #include <boost/config.hpp>
@@ -395,9 +394,13 @@ public:
     shared_count & operator= (shared_count const & r) // nothrow
     {
         sp_counted_base * tmp = r.pi_;
-        if(tmp != 0) tmp->add_ref_copy();
-        if(pi_ != 0) pi_->release();
-        pi_ = tmp;
+
+        if(tmp != pi_)
+        {
+            if(tmp != 0) tmp->add_ref_copy();
+            if(pi_ != 0) pi_->release();
+            pi_ = tmp;
+        }
 
         return *this;
     }

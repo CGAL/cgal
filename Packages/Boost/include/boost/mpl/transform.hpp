@@ -1,158 +1,145 @@
-//-----------------------------------------------------------------------------
-// boost mpl/transform.hpp header file
-// See http://www.boost.org for updates, documentation, and revision history.
-//-----------------------------------------------------------------------------
-//
-// Copyright (c) 2000-03
-// Dave Abrahams, Aleksey Gurtovoy
-//
-// Permission to use, copy, modify, distribute and sell this software
-// and its documentation for any purpose is hereby granted without fee, 
-// provided that the above copyright notice appears in all copies and 
-// that both the copyright notice and this permission notice appear in 
-// supporting documentation. No representations are made about the 
-// suitability of this software for any purpose. It is provided "as is" 
-// without express or implied warranty.
 
 #ifndef BOOST_MPL_TRANSFORM_HPP_INCLUDED
 #define BOOST_MPL_TRANSFORM_HPP_INCLUDED
 
-#include "boost/mpl/fold_backward.hpp"
-#include "boost/mpl/push_front.hpp"
-#include "boost/mpl/clear.hpp"
-#include "boost/mpl/lambda.hpp"
-#include "boost/mpl/apply.hpp"
-#include "boost/mpl/pair.hpp"
-#include "boost/mpl/protect.hpp"
-#include "boost/mpl/iterator_tag.hpp"
-#include "boost/mpl/apply_if.hpp"
-#include "boost/mpl/aux_/common_name_wknd.hpp"
-#include "boost/mpl/aux_/void_spec.hpp"
-#include "boost/type_traits/is_same.hpp"
+// Copyright Aleksey Gurtovoy 2000-2004
+// Copyright David Abrahams 2003-2004
+//
+// Distributed under the Boost Software License, Version 1.0. 
+// (See accompanying file LICENSE_1_0.txt or copy at 
+// http://www.boost.org/LICENSE_1_0.txt)
+//
+// See http://www.boost.org/libs/mpl for documentation.
 
-namespace boost {
-namespace mpl {
+// $Source$
+// $Date$
+// $Revision$
 
-BOOST_MPL_AUX_COMMON_NAME_WKND(transform)
+#include <boost/mpl/fold.hpp>
+#include <boost/mpl/reverse_fold.hpp>
+#include <boost/mpl/pair_view.hpp>
+#include <boost/mpl/is_sequence.hpp>
+#include <boost/mpl/if.hpp>
+#include <boost/mpl/lambda.hpp>
+#include <boost/mpl/bind.hpp>
+#include <boost/mpl/or.hpp>
+#include <boost/mpl/not.hpp>
+#include <boost/mpl/aux_/na.hpp>
+#include <boost/mpl/aux_/inserter_algorithm.hpp>
 
-namespace aux {
+namespace boost { namespace mpl {
 
-template< typename Op >
-struct transform_op
-{
-    template< typename Sequence, typename T > struct apply
-    {
-        typedef typename push_front<
-              Sequence
-            , typename apply1<Op,T>::type
-            >::type type;
-    };
-};
+namespace aux { 
 
-template< typename Op >
-struct transform2_op
-{
-    template< typename Sequence, typename T > struct apply
-    {
-        typedef typename push_front<
-              Sequence
-            , typename apply2<
-                    Op
-                  , typename T::first
-                  , typename T::second
-                  >::type
-            >::type type;
-    };
-};
-
-template< typename I1, typename I2 >
-struct pair_iterator
-{
-    typedef input_iter_tag_ category;
-    typedef pair<typename I1::type, typename I2::type> type;
-    typedef pair_iterator<typename I1::next, typename I2::next> next;
-};
-
-template<
-      typename Seq1, typename Seq2
+template< 
+      typename Seq
+    , typename Op
+    , typename In
     >
-struct pair_view
+struct transform1_impl
+    : fold< 
+          Seq
+        , typename In::state
+        , bind2< typename lambda< typename In::operation >::type
+            , _1
+            , bind1< typename lambda<Op>::type, _2>
+            > 
+        >
 {
- public:
-    typedef nested_begin_end_tag tag;
-    typedef pair_iterator<
-        typename mpl::begin<Seq1>::type
-      , typename mpl::begin<Seq2>::type
-    > begin;
+};
+
+template< 
+      typename Seq
+    , typename Op
+    , typename In
+    >
+struct reverse_transform1_impl
+    : reverse_fold< 
+          Seq
+        , typename In::state
+        , bind2< typename lambda< typename In::operation >::type
+            , _1
+            , bind1< typename lambda<Op>::type, _2>
+            > 
+        >
+{
+};
+
+template< 
+      typename Seq1
+    , typename Seq2
+    , typename Op
+    , typename In
+    >
+struct transform2_impl
+    : fold< 
+          pair_view<Seq1,Seq2>
+        , typename In::state
+        , bind2< typename lambda< typename In::operation >::type
+            , _1
+            , bind2<
+                  typename lambda<Op>::type
+                , bind1<first<>,_2>
+                , bind1<second<>,_2>
+                >
+            > 
+        >
+{
+};
+
+template< 
+      typename Seq1
+    , typename Seq2
+    , typename Op
+    , typename In
+    >
+struct reverse_transform2_impl
+    : reverse_fold< 
+          pair_view<Seq1,Seq2>
+        , typename In::state
+        , bind2< typename lambda< typename In::operation >::type
+            , _1
+            , bind2< typename lambda< Op >::type
+                , bind1<first<>,_2>
+                , bind1<second<>,_2>
+                >
+            > 
+        >
+{
+};
+
+} // namespace aux 
+
+BOOST_MPL_AUX_INSERTER_ALGORITHM_DEF(3, transform1)                    
+BOOST_MPL_AUX_INSERTER_ALGORITHM_DEF(4, transform2)
     
-    typedef pair_iterator<
-        typename mpl::end<Seq1>::type
-      , typename mpl::end<Seq2>::type
-    > end;
-};
+#define AUX778076_TRANSFORM_DEF(name)                                   \
+template<                                                               \
+      typename BOOST_MPL_AUX_NA_PARAM(Seq1)                             \
+    , typename BOOST_MPL_AUX_NA_PARAM(Seq2OrOperation)                  \
+    , typename BOOST_MPL_AUX_NA_PARAM(OperationOrInserter)              \
+    , typename BOOST_MPL_AUX_NA_PARAM(Inserter)                         \
+    >                                                                   \
+struct name                                                             \
+    : if_<                                                              \
+          or_<                                                          \
+              is_na<OperationOrInserter>                                \
+            , is_lambda_expression< Seq2OrOperation >                   \
+            , not_< is_sequence<Seq2OrOperation> >                      \
+            >                                                           \
+        , name##1<Seq1,Seq2OrOperation,OperationOrInserter>             \
+        , name##2<Seq1,Seq2OrOperation,OperationOrInserter,Inserter>    \
+        >::type                                                         \
+{                                                                       \
+};                                                                      \
+BOOST_MPL_AUX_NA_SPEC(4, name)                                          \
+/**/
 
-} // namespace aux
+AUX778076_TRANSFORM_DEF(transform)
+AUX778076_TRANSFORM_DEF(reverse_transform)
 
-BOOST_MPL_AUX_AGLORITHM_NAMESPACE_BEGIN
+#undef AUX778076_TRANSFORM_DEF
 
-template<
-      typename BOOST_MPL_AUX_VOID_SPEC_PARAM(Sequence)
-    , typename BOOST_MPL_AUX_VOID_SPEC_PARAM(Operation)
-    >
-struct transform1
-{
- private:
-    typedef typename lambda<Operation>::type op_;
-    typedef typename clear<Sequence>::type result_;
-
- public:
-    typedef typename fold_backward<
-          Sequence
-        , result_
-        , protect< aux::transform_op<op_> >
-        >::type type;
-};
-
-template<
-      typename BOOST_MPL_AUX_VOID_SPEC_PARAM(Seq1)
-    , typename BOOST_MPL_AUX_VOID_SPEC_PARAM(Seq2)
-    , typename BOOST_MPL_AUX_VOID_SPEC_PARAM(Operation)
-    >
-struct transform2
-{
- private:
-    typedef typename lambda<Operation>::type op_;
-    typedef typename clear<Seq1>::type result_;
-
- public:
-    typedef typename fold_backward<
-          aux::pair_view<Seq1,Seq2>
-        , result_
-        , protect< aux::transform2_op<op_> >
-        >::type type;
-};
-
-template<
-      typename BOOST_MPL_AUX_VOID_SPEC_PARAM(Seq1)
-    , typename BOOST_MPL_AUX_VOID_SPEC_PARAM(Seq2OrOperation)
-    , typename BOOST_MPL_AUX_VOID_SPEC_PARAM(Operation)
-    >
-struct transform
-  : apply_if<
-        is_same<Operation,void_>
-      , transform1<Seq1,Seq2OrOperation>
-      , transform2<Seq1,Seq2OrOperation,Operation>
-    >
-{
-};
-
-BOOST_MPL_AUX_AGLORITHM_NAMESPACE_END
-
-BOOST_MPL_AUX_ALGORITHM_VOID_SPEC(2, transform1)
-BOOST_MPL_AUX_ALGORITHM_VOID_SPEC(3, transform2)
-BOOST_MPL_AUX_ALGORITHM_VOID_SPEC(3, transform)
-
-} // namespace mpl
-} // namespace boost
+}}
 
 #endif // BOOST_MPL_TRANSFORM_HPP_INCLUDED

@@ -1,8 +1,7 @@
 //  (C) Copyright Joel de Guzman 2003.
-//  Permission to copy, use, modify, sell and distribute this software
-//  is granted provided this copyright notice appears in all copies. This
-//  software is provided "as is" without express or implied warranty, and
-//  with no claim as to its suitability for any purpose.
+//  Distributed under the Boost Software License, Version 1.0. (See
+//  accompanying file LICENSE_1_0.txt or copy at
+//  http://www.boost.org/LICENSE_1_0.txt)
 
 #ifndef VECTOR_INDEXING_SUITE_JDG20036_HPP
 # define VECTOR_INDEXING_SUITE_JDG20036_HPP
@@ -81,6 +80,8 @@ namespace boost { namespace python {
         static object 
         get_slice(Container& container, index_type from, index_type to)
         { 
+            if (from > to)
+                return object(Container());
             return object(Container(container.begin()+from, container.begin()+to));
         }
 
@@ -94,8 +95,13 @@ namespace boost { namespace python {
         set_slice(Container& container, index_type from, 
             index_type to, data_type const& v)
         { 
-            container.erase(container.begin()+from, container.begin()+to);
-            container.insert(container.begin()+from, v);
+            if (from > to) {
+                return;
+            }
+            else {
+                container.erase(container.begin()+from, container.begin()+to);
+                container.insert(container.begin()+from, v);
+            }
         }
 
         template <class Iter>
@@ -103,8 +109,13 @@ namespace boost { namespace python {
         set_slice(Container& container, index_type from, 
             index_type to, Iter first, Iter last)
         { 
-            container.erase(container.begin()+from, container.begin()+to);
-            container.insert(container.begin()+from, first, last);
+            if (from > to) {
+                container.insert(container.begin()+from, first, last);
+            }
+            else {
+                container.erase(container.begin()+from, container.begin()+to);
+                container.insert(container.begin()+from, first, last);
+            }
         }
 
         static void 
@@ -116,6 +127,10 @@ namespace boost { namespace python {
         static void 
         delete_slice(Container& container, index_type from, index_type to)
         { 
+            if (from > to) {
+                // A null-op.
+                return;
+            }
             container.erase(container.begin()+from, container.begin()+to);
         }
         

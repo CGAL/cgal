@@ -77,11 +77,11 @@ namespace utility { namespace impl {
     void chset_negated_set(boost::shared_ptr<basic_chset<CharT> > &ptr, chlit<CharT> const &ch,
             FakeT)
     {
-        if(ch.ch != std::numeric_limits<CharT>::min()) {
-            ptr->set(std::numeric_limits<CharT>::min(), ch.ch - 1);
+        if(ch.ch != (std::numeric_limits<CharT>::min)()) {
+            ptr->set((std::numeric_limits<CharT>::min)(), ch.ch - 1);
         }
-        if(ch.ch != std::numeric_limits<CharT>::max()) {
-            ptr->set(ch.ch + 1, std::numeric_limits<CharT>::max());
+        if(ch.ch != (std::numeric_limits<CharT>::max)()) {
+            ptr->set(ch.ch + 1, (std::numeric_limits<CharT>::max)());
         }
     }
     
@@ -89,11 +89,11 @@ namespace utility { namespace impl {
     void chset_negated_set(boost::shared_ptr<basic_chset<CharT> > &ptr,
             spirit::range<CharT> const &rng, FakeT)
     {
-        if(rng.first != std::numeric_limits<CharT>::min()) {
-            ptr->set(std::numeric_limits<CharT>::min(), rng.first - 1);
+        if(rng.first != (std::numeric_limits<CharT>::min)()) {
+            ptr->set((std::numeric_limits<CharT>::min)(), rng.first - 1);
         }
-        if(rng.last != std::numeric_limits<CharT>::max()) {
-            ptr->set(rng.last + 1, std::numeric_limits<CharT>::max());
+        if(rng.last != (std::numeric_limits<CharT>::max)()) {
+            ptr->set(rng.last + 1, (std::numeric_limits<CharT>::max)());
         }
     }
 
@@ -121,8 +121,8 @@ inline chset<CharT>::chset(anychar_parser /*arg*/)
 : ptr(new basic_chset<CharT>())
 {
     ptr->set(
-        std::numeric_limits<CharT>::min(),
-        std::numeric_limits<CharT>::max()
+        (std::numeric_limits<CharT>::min)(),
+        (std::numeric_limits<CharT>::max)()
     );
 }
 
@@ -184,8 +184,8 @@ chset<CharT>::operator=(anychar_parser rhs)
 {
     utility::impl::detach_clear(ptr);
     ptr->set(
-        std::numeric_limits<CharT>::min(),
-        std::numeric_limits<CharT>::max()
+        (std::numeric_limits<CharT>::min)(),
+        (std::numeric_limits<CharT>::max)()
     );
     return *this;
 }
@@ -254,11 +254,11 @@ chset<CharT>::set(negated_char_parser<chlit<CharT> > const& arg_)
 {
     utility::impl::detach(ptr);
     
-    if(arg_.positive.ch != std::numeric_limits<CharT>::min()) {
-        ptr->set(std::numeric_limits<CharT>::min(), arg_.positive.ch - 1);
+    if(arg_.positive.ch != (std::numeric_limits<CharT>::min)()) {
+        ptr->set((std::numeric_limits<CharT>::min)(), arg_.positive.ch - 1);
     }
-    if(arg_.positive.ch != std::numeric_limits<CharT>::max()) {
-        ptr->set(arg_.positive.ch + 1, std::numeric_limits<CharT>::max());
+    if(arg_.positive.ch != (std::numeric_limits<CharT>::max)()) {
+        ptr->set(arg_.positive.ch + 1, (std::numeric_limits<CharT>::max)());
     }
 }
 
@@ -268,11 +268,11 @@ chset<CharT>::set(negated_char_parser<range<CharT> > const& arg_)
 {
     utility::impl::detach(ptr);
     
-    if(arg_.positive.first != std::numeric_limits<CharT>::min()) {
-        ptr->set(std::numeric_limits<CharT>::min(), arg_.positive.first - 1);
+    if(arg_.positive.first != (std::numeric_limits<CharT>::min)()) {
+        ptr->set((std::numeric_limits<CharT>::min)(), arg_.positive.first - 1);
     }
-    if(arg_.positive.last != std::numeric_limits<CharT>::max()) {
-        ptr->set(arg_.positive.last + 1, std::numeric_limits<CharT>::max());
+    if(arg_.positive.last != (std::numeric_limits<CharT>::max)()) {
+        ptr->set(arg_.positive.last + 1, (std::numeric_limits<CharT>::max)());
     }
 }
 
@@ -292,11 +292,11 @@ chset<CharT>::clear(negated_char_parser<range<CharT> > const& arg_)
 {
     utility::impl::detach(ptr);
 
-    if(arg_.positive.first != std::numeric_limits<CharT>::min()) {
-        ptr->clear(std::numeric_limits<CharT>::min(), arg_.positive.first - 1);
+    if(arg_.positive.first != (std::numeric_limits<CharT>::min)()) {
+        ptr->clear((std::numeric_limits<CharT>::min)(), arg_.positive.first - 1);
     }
-    if(arg_.positive.last != std::numeric_limits<CharT>::max()) {
-        ptr->clear(arg_.positive.last + 1, std::numeric_limits<CharT>::max());
+    if(arg_.positive.last != (std::numeric_limits<CharT>::max)()) {
+        ptr->clear(arg_.positive.last + 1, (std::numeric_limits<CharT>::max)());
     }
 }
 

@@ -15,5 +15,6 @@
 // versions check:
 // Nothing to do here?
 
+#  define BOOST_FUNCTION_SCOPE_USING_DECLARATION_BREAKS_ADL
 
 

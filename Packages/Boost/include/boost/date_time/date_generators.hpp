@@ -384,7 +384,67 @@ namespace date_time {
     day_of_week_type dow_;
   };
   
-  
+  //! Calculates the number of days until the next weekday
+  /*! Calculates the number of days until the next weekday.
+   * If the date given falls on a Sunday and the given weekday 
+   * is Tuesday the result will be 2 days */
+  template<typename date_type, class weekday_type>
+  inline
+  typename date_type::duration_type days_until_weekday(const date_type& d, const weekday_type& wd)
+  {
+    typedef typename date_type::duration_type duration_type;
+    duration_type wks(0);
+    duration_type dd(wd.as_number() - d.day_of_week().as_number());
+    if(dd.is_negative()){
+      wks = duration_type(7);
+    }
+    return dd + wks;
+  }
+
+  //! Calculates the number of days since the previous weekday
+  /*! Calculates the number of days since the previous weekday
+   * If the date given falls on a Sunday and the given weekday 
+   * is Tuesday the result will be 5 days. The answer will be a positive 
+   * number because Tuesday is 5 days before Sunday, not -5 days before. */
+  template<typename date_type, class weekday_type>
+  inline
+  typename date_type::duration_type days_before_weekday(const date_type& d, const weekday_type& wd)
+  {
+    typedef typename date_type::duration_type duration_type;
+    duration_type wks(0);
+    duration_type dd(wd.as_number() - d.day_of_week().as_number());
+    if(dd.days() > 0){
+      wks = duration_type(7);
+    }
+    // we want a number of days, not an offset. The value returned must
+    // be zero or larger.
+    return (-dd + wks);
+  }
+
+  //! Generates a date object representing the date of the following weekday from the given date
+  /*! Generates a date object representing the date of the following 
+   * weekday from the given date. If the date given is 2004-May-9 
+   * (a Sunday) and the given weekday is Tuesday then the resulting date 
+   * will be 2004-May-11. */
+  template<class date_type, class weekday_type>
+  inline
+  date_type next_weekday(const date_type& d, const weekday_type& wd)
+  {
+    return d + days_until_weekday(d, wd);
+  }
+
+  //! Generates a date object representing the date of the previous weekday from the given date
+  /*! Generates a date object representing the date of the previous 
+   * weekday from the given date. If the date given is 2004-May-9 
+   * (a Sunday) and the given weekday is Tuesday then the resulting date 
+   * will be 2004-May-4. */
+  template<class date_type, class weekday_type>
+  inline
+  date_type previous_weekday(const date_type& d, const weekday_type& wd)
+  {
+    return d - days_before_weekday(d, wd);
+  }
+
 } } //namespace date_time
 
 

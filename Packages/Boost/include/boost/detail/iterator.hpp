@@ -1,8 +1,7 @@
-// (C) Copyright David Abrahams 2002. Permission to copy, use, modify,
-// sell and distribute this software is granted provided this
-// copyright notice appears in all copies. This software is provided
-// "as is" without express or implied warranty, and with no claim as
-// to its suitability for any purpose.
+// (C) Copyright David Abrahams 2002.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 
 // Boost versions of
 //
@@ -145,7 +144,7 @@ struct iterator_traits<T const*>
 # endif
 
 # include <boost/mpl/if.hpp>
-# include <boost/mpl/aux_/has_xxx.hpp>
+# include <boost/mpl/has_xxx.hpp>
 # include <cstddef>
 
 // should be the last #include
@@ -267,7 +266,7 @@ template <class T> struct pointer_iterator_traits;
 template <class T>
 struct pointer_iterator_traits<T*>
 {
-    typedef remove_const<T>::type value_type;
+    typedef typename remove_const<T>::type value_type;
     typedef T* pointer;
     typedef T& reference;
     typedef std::random_access_iterator_tag iterator_category;
@@ -335,8 +334,8 @@ struct msvc_stdlib_mutable_traits
     : std::iterator_traits<Iterator>
 {
     typedef typename std::iterator_traits<Iterator>::distance_type difference_type;
-    typedef value_type* pointer;
-    typedef value_type& reference;
+    typedef typename std::iterator_traits<Iterator>::value_type* pointer;
+    typedef typename std::iterator_traits<Iterator>::value_type& reference;
 };
 
 template <class Iterator>
@@ -344,8 +343,8 @@ struct msvc_stdlib_const_traits
     : std::iterator_traits<Iterator>
 {
     typedef typename std::iterator_traits<Iterator>::distance_type difference_type;
-    typedef const value_type* pointer;
-    typedef const value_type& reference;
+    typedef const typename std::iterator_traits<Iterator>::value_type* pointer;
+    typedef const typename std::iterator_traits<Iterator>::value_type& reference;
 };
 
 #   ifdef BOOST_BAD_OUTPUT_ITERATOR_SPECIALIZATION

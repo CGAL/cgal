@@ -52,16 +52,20 @@ namespace boost { namespace spirit {
         typename parser_result <self_t, ScannerT>::type
         parse (ScannerT const & scan) const
         {
-            typename parser_result<self_t, ScannerT>::type hit(0);
+            typedef typename parser_result<self_t, ScannerT>::type result_t;
+            result_t hit = scan.empty_match();
             std::size_t n = m_exact;
 
             for (std::size_t i = 0; i < n; ++i)
             {
-                typename parser_result<self_t, ScannerT>::type next
-                    = this->subject().parse(scan);
-                if (!next)
+                if (result_t next = this->subject().parse(scan))
+                {
+                    scan.concat_match(hit, next);
+                }
+                else
+                {
                     return scan.no_match();
-                hit.concat(next);
+                }
             }
 
             return hit;
@@ -114,7 +118,8 @@ namespace boost { namespace spirit {
         parse(ScannerT const & scan) const
         {
             BOOST_SPIRIT_ASSERT(m_min <= m_max);
-            typename parser_result<self_t, ScannerT>::type hit(0);
+            typedef typename parser_result<self_t, ScannerT>::type result_t;
+            result_t hit = scan.empty_match();
 
             std::size_t n1 = m_min;
             std::size_t n2 = m_max;
@@ -122,9 +127,8 @@ namespace boost { namespace spirit {
             for (std::size_t i = 0; i < n2; ++i)
             {
                 typename ScannerT::iterator_t save = scan.first;
-                typename parser_result<self_t, ScannerT>::type next
-                    = this->subject().parse(scan);
-
+                result_t next = this->subject().parse(scan);
+ 
                 if (!next)
                 {
                     if (i >= n1)
@@ -138,7 +142,7 @@ namespace boost { namespace spirit {
                     }
                 }
 
-                hit.concat(next);
+                scan.concat_match(hit, next);
             }
 
             return hit;
@@ -200,14 +204,14 @@ namespace boost { namespace spirit {
         typename parser_result <self_t, ScannerT>::type
         parse(ScannerT const & scan) const
         {
-            typename parser_result<self_t, ScannerT>::type hit(0);
+            typedef typename parser_result<self_t, ScannerT>::type result_t;
+            result_t hit = scan.empty_match();
             std::size_t n = m_min;
 
             for (std::size_t i = 0; ; ++i)
             {
                 typename ScannerT::iterator_t save = scan.first;
-                typename parser_result<self_t, ScannerT>::type next
-                    = this->subject().parse(scan);
+                result_t next = this->subject().parse(scan);
 
                 if (!next)
                 {
@@ -222,7 +226,7 @@ namespace boost { namespace spirit {
                     }
                 }
 
-                hit.concat(next);
+                scan.concat_match(hit, next);
             }
 
             return hit;

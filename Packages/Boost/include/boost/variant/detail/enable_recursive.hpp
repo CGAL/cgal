@@ -6,13 +6,9 @@
 // Copyright (c) 2003
 // Eric Friedman
 //
-// Permission to use, copy, modify, distribute and sell this software
-// and its documentation for any purpose is hereby granted without fee, 
-// provided that the above copyright notice appears in all copies and 
-// that both the copyright notice and this permission notice appear in 
-// supporting documentation. No representations are made about the 
-// suitability of this software for any purpose. It is provided "as is" 
-// without express or implied warranty.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 
 #ifndef BOOST_VARIANT_DETAIL_ENABLE_RECURSIVE_HPP
 #define BOOST_VARIANT_DETAIL_ENABLE_RECURSIVE_HPP
@@ -22,7 +18,7 @@
 
 #if !defined(BOOST_VARIANT_NO_FULL_RECURSIVE_VARIANT_SUPPORT)
 #   include "boost/mpl/apply.hpp"
-#   include "boost/mpl/apply_if.hpp"
+#   include "boost/mpl/eval_if.hpp"
 #   include "boost/mpl/lambda.hpp"
 #endif
 
@@ -63,7 +59,7 @@ private:
         >::type le_;
 
 public:
-    typedef typename mpl::apply_if<
+    typedef typename mpl::eval_if<
           is_same< le_, mpl::identity<T> >
         , le_ // identity<T>
         , mpl::apply1<le_, U1>

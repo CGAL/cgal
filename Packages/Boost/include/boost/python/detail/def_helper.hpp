@@ -1,8 +1,7 @@
-// Copyright David Abrahams 2002. Permission to copy, use,
-// modify, sell and distribute this software is granted provided this
-// copyright notice appears in all copies. This software is provided
-// "as is" without express or implied warranty, and with no claim as
-// to its suitability for any purpose.
+// Copyright David Abrahams 2002.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 #ifndef DEF_HELPER_DWA200287_HPP
 # define DEF_HELPER_DWA200287_HPP
 
@@ -101,8 +100,8 @@ namespace detail
         Tuple
         , mpl::not_<
            mpl::or_<
-              is_reference_to_class<mpl::_1>
-              , is_reference_to_member_function_pointer<mpl::_1 >
+               indirect_traits::is_reference_to_class<mpl::_1>
+             , indirect_traits::is_reference_to_member_function_pointer<mpl::_1 >
            >
         >
      >
@@ -121,8 +120,8 @@ namespace detail
           Tuple
           , mpl::and_<
              mpl::not_<is_same<not_specified const&,mpl::_1> >
-               , is_reference_to_class<mpl::_1 >
-               , mpl::not_<is_reference_to_keywords<mpl::_1 > >
+              , indirect_traits::is_reference_to_class<mpl::_1 >
+              , mpl::not_<is_reference_to_keywords<mpl::_1 > >
           >
         >
   {
@@ -132,7 +131,7 @@ namespace detail
   struct default_implementation_extract
       : tuple_extract<
           Tuple
-          , is_reference_to_member_function_pointer<mpl::_1 >
+          , indirect_traits::is_reference_to_member_function_pointer<mpl::_1 >
           >
   {
   };

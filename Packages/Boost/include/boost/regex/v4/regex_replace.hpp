@@ -39,7 +39,7 @@ OutputIterator regex_replace(OutputIterator out,
    Iterator l = first;
    re_detail::merge_out_predicate<OutputIterator, Iterator, charT, Allocator, traits> oi(out, l, fmt, flags, e.get_traits());
    regex_grep(oi, first, last, e, flags);
-   return (flags & format_no_copy) ? out : re_detail::re_copy_out(out, l, last);
+   return (flags & format_no_copy) ? out : std::copy(l, last, out);
 }
 
 template <class OutputIterator, class Iterator, class traits, class Allocator, class charT>

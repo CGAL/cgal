@@ -2,75 +2,82 @@
 #ifndef BOOST_MPL_REMOVE_IF_HPP_INCLUDED
 #define BOOST_MPL_REMOVE_IF_HPP_INCLUDED
 
-// + file: boost/mpl/remove_if.hpp
-// + last modified: 10/mar/03
-
-// Copyright (c) 2000-03
-// Aleksey Gurtovoy
+// Copyright Aleksey Gurtovoy 2000-2004
+// Copyright David Abrahams 2003-2004
 //
-// Permission to use, copy, modify, distribute and sell this software
-// and its documentation for any purpose is hereby granted without fee, 
-// provided that the above copyright notice appears in all copies and 
-// that both the copyright notice and this permission notice appear in 
-// supporting documentation. No representations are made about the 
-// suitability of this software for any purpose. It is provided "as is" 
-// without express or implied warranty.
+// Distributed under the Boost Software License, Version 1.0. 
+// (See accompanying file LICENSE_1_0.txt or copy at 
+// http://www.boost.org/LICENSE_1_0.txt)
 //
 // See http://www.boost.org/libs/mpl for documentation.
 
-#include "boost/mpl/fold_backward.hpp"
-#include "boost/mpl/clear.hpp"
-#include "boost/mpl/apply_if.hpp"
-#include "boost/mpl/push_front.hpp"
-#include "boost/mpl/identity.hpp"
-#include "boost/mpl/protect.hpp"
-#include "boost/mpl/lambda.hpp"
-#include "boost/mpl/apply.hpp"
-#include "boost/mpl/aux_/void_spec.hpp"
+// $Source$
+// $Date$
+// $Revision$
 
-namespace boost {
-namespace mpl {
+#include <boost/mpl/fold.hpp>
+#include <boost/mpl/reverse_fold.hpp>
+#include <boost/mpl/eval_if.hpp>
+#include <boost/mpl/identity.hpp>
+#include <boost/mpl/protect.hpp>
+#include <boost/mpl/lambda.hpp>
+#include <boost/mpl/apply.hpp>
+#include <boost/mpl/aux_/inserter_algorithm.hpp>
+
+namespace boost { namespace mpl {
 
 namespace aux {
 
-template< typename Pred > struct remove_if_helper
+template< typename Pred, typename InsertOp > struct remove_if_helper
 {
     template< typename Sequence, typename U > struct apply
     {
-        typedef typename apply_if<
+        typedef typename eval_if<
               typename apply1<Pred,U>::type
             , identity<Sequence>
-            , push_front<Sequence,U>
+            , apply2<InsertOp,Sequence,U>
             >::type type;
     };
 };
 
-} // namespace aux
-
-BOOST_MPL_AUX_AGLORITHM_NAMESPACE_BEGIN
-
 template<
-      typename BOOST_MPL_AUX_VOID_SPEC_PARAM(Sequence)
-    , typename BOOST_MPL_AUX_VOID_SPEC_PARAM(Predicate)
+      typename Sequence
+    , typename Predicate
+    , typename Inserter
     >
-struct remove_if
-{
- private:
-    typedef typename lambda<Predicate>::type pred_;
- 
- public:
-    typedef typename fold_backward<
+struct remove_if_impl
+    : fold<
           Sequence
-        , typename clear<Sequence>::type
-        , protect< aux::remove_if_helper<pred_> >
-        >::type type;
+        , typename Inserter::state
+        , protect< aux::remove_if_helper<
+              typename lambda<Predicate>::type
+            , typename Inserter::operation
+            > >
+        >
+{
 };
 
-BOOST_MPL_AUX_AGLORITHM_NAMESPACE_END
+template<
+      typename Sequence
+    , typename Predicate
+    , typename Inserter
+    >
+struct reverse_remove_if_impl
+    : reverse_fold<
+          Sequence
+        , typename Inserter::state
+        , protect< aux::remove_if_helper<
+              typename lambda<Predicate>::type
+            , typename Inserter::operation
+            > >
+        >
+{
+};
 
-BOOST_MPL_AUX_ALGORITHM_VOID_SPEC(2, remove_if)
+} // namespace aux
 
-} // namespace mpl
-} // namespace boost
+BOOST_MPL_AUX_INSERTER_ALGORITHM_DEF(3, remove_if)
+
+}}
 
 #endif // BOOST_MPL_REMOVE_IF_HPP_INCLUDED

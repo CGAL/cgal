@@ -31,6 +31,7 @@
 #include <vector>
 #include <list>
 #include <iosfwd>
+#include <algorithm> // for std::min and std::max
 
 #include <boost/pending/queue.hpp>
 #include <boost/limits.hpp>
@@ -105,9 +106,11 @@ namespace boost {
       typedef typename std::list<vertex_descriptor>::iterator list_iterator;
 
       void add_to_active_list(vertex_descriptor u, Layer& layer) {
+        BOOST_USING_STD_MIN();
+        BOOST_USING_STD_MAX();
         layer.active_vertices.push_front(u);
-        max_active = std::max(distance[u], max_active);
-        min_active = std::min(distance[u], min_active);
+        max_active = max BOOST_PREVENT_MACRO_SUBSTITUTION(distance[u], max_active);
+        min_active = min BOOST_PREVENT_MACRO_SUBSTITUTION(distance[u], min_active);
         layer_list_ptr[u] = layer.active_vertices.begin();
       }
       void remove_from_active_list(vertex_descriptor u) {
@@ -171,11 +174,11 @@ namespace boost {
         for (tie(a_iter, a_end) = out_edges(src, g); a_iter != a_end; ++a_iter)
           if (target(*a_iter, g) != src)
             test_excess += residual_capacity[*a_iter];
-        if (test_excess > std::numeric_limits<FlowValue>::max())
+        if (test_excess > (std::numeric_limits<FlowValue>::max)())
           overflow_detected = true;
 
         if (overflow_detected)
-          excess_flow[src] = std::numeric_limits<FlowValue>::max();
+          excess_flow[src] = (std::numeric_limits<FlowValue>::max)();
         else {
           excess_flow[src] = 0;
           for (tie(a_iter, a_end) = out_edges(src, g); 
@@ -220,6 +223,7 @@ namespace boost {
       // Goldberg's implementation abused "distance" for the coloring.
       void global_distance_update()
       {
+        BOOST_USING_STD_MAX();
         ++update_count;
         vertex_iterator u_iter, u_end;
         for (tie(u_iter,u_end) = vertices(g); u_iter != u_end; ++u_iter) {
@@ -252,7 +256,7 @@ namespace boost {
               distance[v] = d_v;
               color[v] = ColorTraits::gray();
               current[v] = out_edges(v, g).first;
-              max_distance = std::max(d_v, max_distance);
+              max_distance = max BOOST_PREVENT_MACRO_SUBSTITUTION(d_v, max_distance);
 
               if (excess_flow[v] > 0)
                 add_to_active_list(v, layers[d_v]);
@@ -319,8 +323,9 @@ namespace boost {
           u = source(u_v, g),
           v = target(u_v, g);
         
+        BOOST_USING_STD_MIN();
         FlowValue flow_delta
-          = std::min(excess_flow[u], residual_capacity[u_v]);
+          = min BOOST_PREVENT_MACRO_SUBSTITUTION(excess_flow[u], residual_capacity[u_v]);
 
         residual_capacity[u_v] -= flow_delta;
         residual_capacity[reverse_edge[u_v]] += flow_delta;
@@ -338,6 +343,7 @@ namespace boost {
       //
       distance_size_type relabel_distance(vertex_descriptor u)
       {
+        BOOST_USING_STD_MAX();
         ++relabel_count;
         work_since_last_update += beta();
 
@@ -360,7 +366,7 @@ namespace boost {
         if (min_distance < n) {
           distance[u] = min_distance;     // this is the main action
           current[u] = min_edge_iter;
-          max_distance = std::max(min_distance, max_distance);
+          max_distance = max BOOST_PREVENT_MACRO_SUBSTITUTION(min_distance, max_distance);
         }
         return min_distance;
       } // relabel_distance()
@@ -477,7 +483,8 @@ namespace boost {
                     // find minimum flow on the cycle
                     FlowValue delta = residual_capacity[a];
                     while (1) {
-                      delta = std::min(delta, residual_capacity[*current[v]]);
+                      BOOST_USING_STD_MIN();
+                      delta = min BOOST_PREVENT_MACRO_SUBSTITUTION(delta, residual_capacity[*current[v]]);
                       if (v == u)
                         break;
                       else
@@ -572,7 +579,7 @@ namespace boost {
             edge_descriptor a = *ai;
             if (capacity[a] > 0)
               if ((residual_capacity[a] + residual_capacity[reverse_edge[a]]
-                   != capacity[a])
+                   != capacity[a] + capacity[reverse_edge[a]])
                   || (residual_capacity[a] < 0)
                   || (residual_capacity[reverse_edge[a]] < 0))
               return false;

@@ -18,8 +18,9 @@
 #include <exception>    // for std::exception
 #include <boost/limits.hpp>
 #include <boost/iterator.hpp>
-#include "fixed_size_queue.hpp"
+
 #include <boost/spirit/core/assert.hpp> // for BOOST_SPIRIT_ASSERT
+#include <boost/spirit/iterator/fixed_size_queue.hpp>
 #include <boost/detail/iterator.hpp> // for boost::detail::iterator_traits
 
 namespace boost { namespace spirit {
@@ -485,10 +486,22 @@ class input_iterator
 template <typename InputT>
 class inner
 {
-    public:
         typedef
             typename boost::detail::iterator_traits<InputT>::value_type
-            value_type;
+            result_type;
+
+        struct Data {
+            Data(InputT const &input_) 
+            :   input(input_), was_initialized(false)
+            {}
+            
+            InputT input;
+            result_type curtok;
+            bool was_initialized;
+        };
+
+    public:
+        typedef result_type value_type;
         typedef
             typename boost::detail::iterator_traits<InputT>::difference_type
             difference_type;
@@ -501,26 +514,26 @@ class inner
 
     protected:
         inner()
-            : input(new InputT)
+            : data(0)
         {}
 
         inner(InputT x)
-            : input(new InputT(x))
+            : data(new Data(x))
         {}
 
         inner(inner const& x)
-            : input(x.input)
+            : data(x.data)
         {}
 
         void destroy()
         {
-          delete input;
-          input = 0;
+            delete data;
+            data = 0;
         }
 
         bool same_input(inner const& x) const
         {
-            return input == x.input;
+            return data == x.data;
         }
 
         typedef
@@ -528,27 +541,39 @@ class inner
             value_t;
         void swap(inner& x)
         {
-            impl::mp_swap(input, x.input);
+            impl::mp_swap(data, x.data);
+        }
+
+        void ensure_initialized() const
+        {
+            if (data && !data->was_initialized) {
+                data->curtok = *data->input;      // get the first token
+                data->was_initialized = true;
+            }
         }
 
     public:
         reference get_input() const
         {
-            return **input;
+            BOOST_SPIRIT_ASSERT(0 != data);
+            ensure_initialized();
+            return data->curtok;
         }
 
         void advance_input()
         {
-            ++*input;
+            BOOST_SPIRIT_ASSERT(0 != data);
+            data->was_initialized = false;        // should get the next token
+            ++data->input;
         }
 
         bool input_at_eof() const
         {
-            return *input == InputT();
+            return !data || data->input == InputT();
         }
 
     private:
-        InputT* input;
+        Data *data;
 };
 
 };
@@ -1087,11 +1112,14 @@ multi_pass<InputT, InputPolicy, OwnershipPolicy, CheckingPolicy, StoragePolicy>:
 operator==(const multi_pass<InputT, InputPolicy, OwnershipPolicy, CheckingPolicy,
         StoragePolicy>& y) const
 {
-    if (is_eof() && y.is_eof())
+    bool is_eof_ = SP::is_eof(*this);
+    bool y_is_eof_ = SP::is_eof(y);
+    
+    if (is_eof_ && y_is_eof_)
     {
         return true;  // both are EOF
     }
-    else if (is_eof() ^ y.is_eof())
+    else if (is_eof_ ^ y_is_eof_)
     {
         return false; // one is EOF, one isn't
     }

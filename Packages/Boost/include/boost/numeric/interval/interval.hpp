@@ -1,22 +1,17 @@
 /* Boost interval/interval.hpp header file
  *
- * Copyright Hervé Brönnimann, Guillaume Melquiond, Sylvain Pion 2002-2003
- * Permission to use, copy, modify, sell, and distribute this software
- * is hereby granted without fee provided that the above copyright notice
- * appears in all copies and that both that copyright notice and this
- * permission notice appear in supporting documentation,
+ * Copyright 2002-2003 Hervé Brönnimann, Guillaume Melquiond, Sylvain Pion
  *
- * None of the above authors nor Polytechnic University make any
- * representation about the suitability of this software for any
- * purpose. It is provided "as is" without express or implied warranty.
- *
- * $Id$
+ * Distributed under the Boost Software License, Version 1.0.
+ * (See accompanying file LICENSE_1_0.txt or
+ * copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 
 #ifndef BOOST_NUMERIC_INTERVAL_INTERVAL_HPP
 #define BOOST_NUMERIC_INTERVAL_INTERVAL_HPP
 
 #include <stdexcept>
+#include <string>
 #include <boost/numeric/interval/detail/interval_prototype.hpp>
 
 namespace boost {
@@ -49,21 +44,21 @@ public:
   typedef T base_type;
   typedef Policies traits_type;
 
-  interval(const T& v = static_cast<T>(0));
-  interval(const T& l, const T& u);
+  interval();
+  interval(T const &v);
+  template<class T1> interval(T1 const &v);
+  interval(T const &l, T const &u);
+  template<class T1, class T2> interval(T1 const &l, T2 const &u);
+  interval(interval<T, Policies> const &r);
+  template<class Policies1> interval(interval<T, Policies1> const &r);
+  template<class T1, class Policies1> interval(interval<T1, Policies1> const &r);
 
-  // The following needs to be defined in the class body for VC++.
-  template<class Policies2>
-  interval(const interval<T, Policies2>& r)
-    : low(r.lower()), up(r.upper())
-  {
-    typedef typename Policies2::checking checking2;
-    if (checking2::is_empty(low, up)) set_empty();
-  }
-
-  // compiler-generated copy constructor and assignment operator are fine
-
-  interval& operator=(const T& x);
+  interval &operator=(T const &v);
+  template<class T1> interval &operator=(T1 const &v);
+  interval &operator=(interval<T, Policies> const &r);
+  template<class Policies1> interval &operator=(interval<T, Policies1> const &r);
+  template<class T1, class Policies1> interval &operator=(interval<T1, Policies1> const &r);
+ 
   void assign(const T& l, const T& u);
 
   static interval empty();
@@ -137,23 +132,119 @@ private:
 };
 
 template<class T, class Policies> inline
-interval<T, Policies>::interval(const T& v): low(v), up(v)
+interval<T, Policies>::interval():
+  low(static_cast<T>(0)), up(static_cast<T>(0))
+{}
+
+template<class T, class Policies> inline
+interval<T, Policies>::interval(T const &v): low(v), up(v)
 {
   if (checking::is_nan(v)) set_empty();
 }
 
+template<class T, class Policies> template<class T1> inline
+interval<T, Policies>::interval(T1 const &v)
+{
+  if (checking::is_nan(v)) set_empty();
+  else {
+    rounding rnd;
+    low = rnd.conv_down(v);
+    up  = rnd.conv_up  (v);
+  }
+}
+
+template<class T, class Policies> template<class T1, class T2> inline
+interval<T, Policies>::interval(T1 const &l, T2 const &u)
+{
+  if (checking::is_nan(l) || checking::is_nan(u) || !(l <= u)) set_empty();
+  else {
+    rounding rnd;
+    low = rnd.conv_down(l);
+    up  = rnd.conv_up  (u);
+  }
+}
+
 template<class T, class Policies> inline
-interval<T, Policies>::interval(const T& l, const T& u): low(l), up(u)
+interval<T, Policies>::interval(T const &l, T const &u): low(l), up(u)
 {
   if (checking::is_nan(l) || checking::is_nan(u) || !(l <= u))
     set_empty();
 }
 
+
 template<class T, class Policies> inline
-interval<T, Policies>& interval<T, Policies>::operator=(const T& x)
+interval<T, Policies>::interval(interval<T, Policies> const &r): low(r.lower()), up(r.upper())
+{}
+
+template<class T, class Policies> template<class Policies1> inline
+interval<T, Policies>::interval(interval<T, Policies1> const &r): low(r.lower()), up(r.upper())
 {
-  if (checking::is_nan(x)) set_empty();
-  else low = up = x;
+  typedef typename Policies1::checking checking1;
+  if (checking1::is_empty(r.lower(), r.upper())) set_empty();
+}
+
+template<class T, class Policies> template<class T1, class Policies1> inline
+interval<T, Policies>::interval(interval<T1, Policies1> const &r)
+{
+  typedef typename Policies1::checking checking1;
+  if (checking1::is_empty(r.lower(), r.upper())) set_empty();
+  else {
+    rounding rnd;
+    low = rnd.conv_down(r.lower());
+    up  = rnd.conv_up  (r.upper());
+  }
+}
+
+template<class T, class Policies> inline
+interval<T, Policies> &interval<T, Policies>::operator=(T const &v)
+{
+  if (checking::is_nan(v)) set_empty();
+  else low = up = v;
+  return *this;
+}
+
+template<class T, class Policies> template<class T1> inline
+interval<T, Policies> &interval<T, Policies>::operator=(T1 const &v)
+{
+  if (checking::is_nan(v)) set_empty();
+  else {
+    rounding rnd;
+    low = rnd.conv_down(v);
+    up  = rnd.conv_up  (v);
+  }
+  return *this;
+}
+
+template<class T, class Policies> inline
+interval<T, Policies> &interval<T, Policies>::operator=(interval<T, Policies> const &r)
+{
+  low = r.lower();
+  up  = r.upper();
+  return *this;
+}
+
+template<class T, class Policies> template<class Policies1> inline
+interval<T, Policies> &interval<T, Policies>::operator=(interval<T, Policies1> const &r)
+{
+  typedef typename Policies1::checking checking1;
+  if (checking1::is_empty(r.lower(), r.upper())) set_empty();
+  else {
+    low = r.lower();
+    up  = r.upper();
+  }
+  return *this;
+}
+
+template<class T, class Policies> template<class T1, class Policies1> inline
+interval<T, Policies> &interval<T, Policies>::operator=(interval<T1, Policies1> const &r)
+{
+  typedef typename Policies1::checking checking1;
+  if (checking1::is_empty(r.lower(), r.upper())) set_empty();
+  else {
+    rounding rnd;
+    low = rnd.conv_down(r.lower());
+    up  = rnd.conv_up  (r.upper());
+  }
   return *this;
 }
 
@@ -182,9 +273,8 @@ void interval<T, Policies>::set_empty()
 template<class T, class Policies> inline
 void interval<T, Policies>::set_whole()
 {
-  const T& inf = checking::inf();
-  low = -inf;
-  up  =  inf;
+  low = checking::neg_inf();
+  up  = checking::pos_inf();
 }
 
 template<class T, class Policies> inline
@@ -211,8 +301,7 @@ interval<T, Policies> interval<T, Policies>::empty()
 template<class T, class Policies> inline
 interval<T, Policies> interval<T, Policies>::whole()
 {
-  const T& inf = checking::inf();
-  return interval<T, Policies>(-inf, inf, true);
+  return interval<T, Policies>(checking::neg_inf(), checking::pos_inf(), true);
 }
 
 template<class T, class Policies> inline

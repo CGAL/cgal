@@ -1,46 +1,41 @@
-//-----------------------------------------------------------------------------
-// boost mpl/aux_/front_impl.hpp header file
-// See http://www.boost.org for updates, documentation, and revision history.
-//-----------------------------------------------------------------------------
-//
-// Copyright (c) 2000-02
-// Aleksey Gurtovoy
-//
-// Permission to use, copy, modify, distribute and sell this software
-// and its documentation for any purpose is hereby granted without fee, 
-// provided that the above copyright notice appears in all copies and 
-// that both the copyright notice and this permission notice appear in 
-// supporting documentation. No representations are made about the 
-// suitability of this software for any purpose. It is provided "as is" 
-// without express or implied warranty.
 
 #ifndef BOOST_MPL_AUX_FRONT_IMPL_HPP_INCLUDED
 #define BOOST_MPL_AUX_FRONT_IMPL_HPP_INCLUDED
 
-#include "boost/mpl/front_fwd.hpp"
-#include "boost/mpl/begin_end.hpp"
-#include "boost/mpl/aux_/deref_wknd.hpp"
-#include "boost/mpl/aux_/traits_lambda_spec.hpp"
+// Copyright Aleksey Gurtovoy 2000-2004
+//
+// Distributed under the Boost Software License, Version 1.0. 
+// (See accompanying file LICENSE_1_0.txt or copy at 
+// http://www.boost.org/LICENSE_1_0.txt)
+//
+// See http://www.boost.org/libs/mpl for documentation.
 
-namespace boost {
-namespace mpl {
+// $Source$
+// $Date$
+// $Revision$
+
+#include <boost/mpl/front_fwd.hpp>
+#include <boost/mpl/begin_end.hpp>
+#include <boost/mpl/deref.hpp>
+#include <boost/mpl/aux_/traits_lambda_spec.hpp>
+
+namespace boost { namespace mpl {
 
 // default implementation; conrete sequences might override it by 
-// specializing either the |front_traits| or the primary |front| template
+// specializing either the 'front_impl' or the primary 'front' template
 
 template< typename Tag >
-struct front_traits
+struct front_impl
 {
-    template< typename Sequence > struct algorithm
+    template< typename Sequence > struct apply
     {
         typedef typename begin<Sequence>::type iter_;
-        typedef typename BOOST_MPL_AUX_DEREF_WNKD(iter_) type;
+        typedef typename deref<iter_>::type type;
     };
 };
 
-BOOST_MPL_ALGORITM_TRAITS_LAMBDA_SPEC(1,front_traits)
+BOOST_MPL_ALGORITM_TRAITS_LAMBDA_SPEC(1,front_impl)
 
-} // namespace mpl
-} // namespace boost
+}}
 
 #endif // BOOST_MPL_AUX_FRONT_IMPL_HPP_INCLUDED

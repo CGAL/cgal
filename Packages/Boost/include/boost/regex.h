@@ -21,10 +21,10 @@
 
 #include <boost/cregex.hpp>
 
-//
-// add using declarations to bring POSIX API functions into
-// global scope, only if this is C++ (and not C).
-//
+/*
+*  add using declarations to bring POSIX API functions into
+* global scope, only if this is C++ (and not C).
+*/
 #ifdef __cplusplus
 
 using boost::regoff_t;
@@ -91,9 +91,9 @@ using boost::REG_E_MEMORY;
 using boost::REG_E_UNKNOWN;
 using boost::reg_errcode_t;
 
-#endif // __cplusplus
+#endif /* __cplusplus */
 
-#endif // BOOST_RE_REGEX_H
+#endif /* BOOST_RE_REGEX_H */
 
 
 

@@ -23,7 +23,7 @@
 #ifndef BOOST_REGEX_CONFIG_HPP
 #include <boost/config.hpp>
 #endif
-#include <boost/detail/allocator.hpp>
+#include <boost/regex/config/allocator.hpp>
 
 //
 // define BOOST_REGEX_NO_FWD if this

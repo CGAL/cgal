@@ -28,6 +28,19 @@
 #define BOOST_GRAPH_DETAIL_ADJ_LIST_EDGE_ITERATOR_HPP
 
 #include <iterator>
+#include <utility>
+#include <boost/detail/workaround.hpp>
+
+#if BOOST_WORKAROUND( __IBMCPP__, <= 600 )
+#  define BOOST_GRAPH_NO_OPTIONAL
+#endif
+
+#ifdef BOOST_GRAPH_NO_OPTIONAL
+#  define BOOST_GRAPH_MEMBER .
+#else 
+#  define BOOST_GRAPH_MEMBER ->
+#  include <boost/optional.hpp>
+#endif // ndef BOOST_GRAPH_NO_OPTIONAL
 
 namespace boost {
 
@@ -48,7 +61,7 @@ namespace boost {
 
       inline adj_list_edge_iterator(const self& x) 
       : vBegin(x.vBegin), vCurr(x.vCurr), vEnd(x.vEnd),
-        eCurr(x.eCurr), eEnd(x.eEnd), m_g(x.m_g) { }
+        edges(x.edges), m_g(x.m_g) { }
 
       template <class G>
       inline adj_list_edge_iterator(VertexIterator b, 
@@ -60,7 +73,7 @@ namespace boost {
           while ( vCurr != vEnd && out_degree(*vCurr, *m_g) == 0 )
             ++vCurr;
           if ( vCurr != vEnd )
-            tie(eCurr, eEnd) = out_edges(*vCurr, *m_g);
+            edges = out_edges(*vCurr, *m_g);
         }
       }
 
@@ -69,13 +82,14 @@ namespace boost {
         For undirected graphs, one edge go through twice.
       */
       inline self& operator++() {
-        ++eCurr;
-        if ( eCurr == eEnd ) {
+        ++edges BOOST_GRAPH_MEMBER first;
+        if (edges BOOST_GRAPH_MEMBER first == edges BOOST_GRAPH_MEMBER second) 
+        {
           ++vCurr;
           while ( vCurr != vEnd && out_degree(*vCurr, *m_g) == 0 )
             ++vCurr;
           if ( vCurr != vEnd )
-            tie(eCurr, eEnd) = out_edges(*vCurr, *m_g);
+            edges = out_edges(*vCurr, *m_g);
         }
         return *this;
       }
@@ -84,24 +98,36 @@ namespace boost {
         ++(*this);
         return tmp;
       }
-      inline value_type operator*() const { return *eCurr; } 
+      inline value_type operator*() const 
+      { return *edges BOOST_GRAPH_MEMBER first; } 
       inline bool operator==(const self& x) const {
-        return vCurr == x.vCurr && (vCurr == vEnd || eCurr == x.eCurr);
+        return vCurr == x.vCurr 
+          && (vCurr == vEnd 
+              || edges BOOST_GRAPH_MEMBER first == x.edges BOOST_GRAPH_MEMBER first);
       }
       inline bool operator!=(const self& x) const {
-        return vCurr != x.vCurr || (vCurr != vEnd && eCurr != x.eCurr);
+        return vCurr != x.vCurr 
+          || (vCurr != vEnd 
+              && edges BOOST_GRAPH_MEMBER first != x.edges BOOST_GRAPH_MEMBER first);
       }
     protected:
       VertexIterator vBegin;
       VertexIterator vCurr;
       VertexIterator vEnd;
-      OutEdgeIterator eCurr;
-      OutEdgeIterator eEnd;
+
+#ifdef BOOST_GRAPH_NO_OPTIONAL
+      std::pair<OutEdgeIterator, OutEdgeIterator> edges;
+#else
+      boost::optional<std::pair<OutEdgeIterator, OutEdgeIterator> >
+        edges;
+#endif // ndef BOOST_GRAPH_NO_OPTIONAL
       const Graph* m_g;
     };
 
   } // namespace detail
 
 }
+
+#undef BOOST_GRAPH_MEMBER
 
 #endif // BOOST_GRAPH_DETAIL_ADJ_LIST_EDGE_ITERATOR_HPP

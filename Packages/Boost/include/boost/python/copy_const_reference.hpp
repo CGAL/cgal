@@ -1,8 +1,7 @@
-// Copyright David Abrahams 2002. Permission to copy, use,
-// modify, sell and distribute this software is granted provided this
-// copyright notice appears in all copies. This software is provided
-// "as is" without express or implied warranty, and with no claim as
-// to its suitability for any purpose.
+// Copyright David Abrahams 2002.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 #ifndef COPY_CONST_REFERENCE_DWA2002131_HPP
 # define COPY_CONST_REFERENCE_DWA2002131_HPP
 
@@ -31,9 +30,9 @@ struct copy_const_reference
     struct apply
     {
         typedef typename mpl::if_c<
-            detail::is_reference_to_const<T>::value
-            , to_python_value<T>
-            , detail::copy_const_reference_expects_a_const_reference_return_type<T>
+            indirect_traits::is_reference_to_const<T>::value
+          , to_python_value<T>
+          , detail::copy_const_reference_expects_a_const_reference_return_type<T>
         >::type type;
     };
 };

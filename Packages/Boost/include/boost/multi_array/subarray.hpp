@@ -194,44 +194,6 @@ private:
   const_sub_array& operator=(const const_sub_array&);
 };
 
-#ifdef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
-//
-// Compilers that don't support partial ordering may need help to
-// disambiguate multi_array's templated constructors.  Even vc6/7 are
-// capable of some limited SFINAE, so we take the most-general version
-// out of the overload set with disable_non_sub_array.
-//
-template <typename T, std::size_t NumDims, typename TPtr>
-char is_sub_array_help(const_sub_array<T,NumDims,TPtr>&);
-
-char ( &is_sub_array_help(...) )[2];
-
-template <class T>
-struct is_sub_array
-{
-    static T x;
-    BOOST_STATIC_CONSTANT(bool, value = sizeof((is_sub_array_help)(x)) == 1);
-};
-
-template <bool sub_array = false>
-struct disable_non_sub_array_impl
-{
-    // forming a pointer to a reference triggers SFINAE
-    typedef int& type; 
-};
-
-template <>
-struct disable_non_sub_array_impl<true>
-{
-    typedef int type;
-};
-
-template <class T>
-struct disable_non_sub_array
-{
-    typedef typename disable_non_sub_array_impl<is_sub_array<T>::value>::type type;
-};
-#endif
 
 //
 // sub_array

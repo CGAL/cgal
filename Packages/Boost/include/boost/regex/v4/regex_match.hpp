@@ -142,12 +142,12 @@ inline bool regex_match(const std::string& s,
                         const regex& e, 
                         match_flag_type flags = match_default)
 {
-   match_results<std::string::const_iterator, regex::allocator_type> m;
+   match_results<std::string::const_iterator> m;
    return regex_match(s.begin(), s.end(), m, e, flags);
 }
 #if !defined(BOOST_NO_WREGEX)
 inline bool regex_match(const std::basic_string<wchar_t>& s, 
-                        match_results<std::basic_string<wchar_t>::const_iterator, wregex::allocator_type>& m,
+                        wsmatch& m,
                         const wregex& e, 
                         match_flag_type flags = match_default)
 {
@@ -157,7 +157,7 @@ inline bool regex_match(const std::basic_string<wchar_t>& s,
                         const wregex& e, 
                         match_flag_type flags = match_default)
 {
-   match_results<std::basic_string<wchar_t>::const_iterator, wregex::allocator_type> m;
+   match_results<std::basic_string<wchar_t>::const_iterator> m;
    return regex_match(s.begin(), s.end(), m, e, flags);
 }
 #endif
