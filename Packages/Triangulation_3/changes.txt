@@ -1,6 +1,11 @@
 31 August 2004 Monique Teillaud
 - minor doc fixes (display authors)
 
+30 August 2004 Christophe Delage
+- added remove() to Regular_triangulation_3 (doesn't work in 2D, yet.)
+- added Triangulation_cell_base_with_hidden_points_3.h so that
+  Regular_triangulation_3 can remember (and reinsert) hidden points.
+
 26 August 2004 Monique Teillaud
 - fixed pdf figures forgotten yesterday...
 

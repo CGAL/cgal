@@ -119,6 +119,13 @@ before the insertions (it may be negative due to hidden points).
 \ccPrecond{The \ccc{value_type} of \ccc{first} and \ccc{last} is
 \ccc{Point}.}}
 
+\ccHeading{Removal}
+
+\ccMethod{void remove(Vertex_handle v);}
+{Removes the vertex \ccc{v} from the triangulation.
+If the cells used by the triangulation manage hidden points, the points
+that are not hidden anymore are re-inserted.}
+
 \ccHeading{Queries}
 \ccThree{Bounded_side}{rt.side of powerxx}{}
 
