@@ -5261,7 +5261,6 @@ write_linker_flags()
     LIBS="${LIBS} `leda_lib_option P``leda_lib_option G``leda_lib_option L`"
     GEOWLIBS="${WLIBS} `leda_lib_option GeoW``leda_lib_option D3``leda_lib_option W``leda_lib_option P``leda_lib_option G``leda_lib_option L` ${XLIBS}"
     WLIBS="${WLIBS} `leda_lib_option W``leda_lib_option P``leda_lib_option G``leda_lib_option L` ${XLIBS}"
-    QLIBS="${QLIBS} `leda_lib_option W``leda_lib_option P``leda_lib_option G``leda_lib_option L` ${XLIBS}"
   else
     # no LEDA --> use libCGALWin
     WLIBS="${WLIBS} `lib_option CGALWin` ${XLIBS}"
@@ -5292,6 +5291,11 @@ write_linker_flags()
     GEOWLIBS="${GEOWLIBS} `lib_option cln`"
     WLIBS="${WLIBS} `lib_option cln`"
   fi
+
+  LIBS="${LIBS} `math_ldflags`"
+  GEOWLIBS="${GEOWLIBS} `math_ldflags`"
+  WLIBS="${WLIBS} `math_ldflags`"
+
   if [ -n "${QT_SUPPORT}" ] ; then
     if [ -n "${NEED_EXTRA_QT_LDIR}" ]; then
 	if [ -n "${WINDOWS_COMPILER}" ]; then
@@ -5301,17 +5305,13 @@ write_linker_flags()
 	fi
 	RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:\$(QT_LIB_DIR)"
     fi
-    if [ -z "${WINDOWS_COMPILER}" ]; then
+    # QLIBS = LIBS + special qt libs
+    if [ -n "${WINDOWS_COMPILER}" ]; then
 	QLIBS="${LIBS} `lib_option qtmain` `lib_option qt-mt230nc`"
     else
 	QLIBS="${LIBS} `lib_option qt` `lib_option CGALQt`"
     fi
   fi
-
-  LIBS="${LIBS} `math_ldflags`"
-  GEOWLIBS="${GEOWLIBS} `math_ldflags`"
-  WLIBS="${WLIBS} `math_ldflags`"
-  QLIBS="${QLIBS} `math_ldflags`"
 
   #
   # LONG_NAME_PROBLEM_LDFLAGS
@@ -6373,6 +6373,7 @@ done
 if [ -n "${QT_SUPPORT}" -a -z "${QT_ADVANCED_MODE}" -a -z "${QT_DIR}" ]; then
     if [ -n "${QTDIR}" ]; then
 	QT_DIR=${QTDIR}
+	qt_dir_has_changed
 	write_buffer "remark: QT_DIR has been set to \$QTDIR (${QTDIR})"
     else
 	write_buffer "WARNING: --QT_DIR not set whereas Qt support enable.\n"
