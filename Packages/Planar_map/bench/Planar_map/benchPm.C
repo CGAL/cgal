@@ -19,6 +19,12 @@
 #include <CGAL/IO/Window_stream.h>
 #include <CGAL/IO/Planar_map_iostream.h>
 #include "CGAL/bench.h"
+
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
 #include <iostream>
 #include <fstream>
 #include <list>
@@ -43,6 +49,7 @@ typedef CGAL::Planar_map_2<Dcel,Traits>                 Planar_map;
 typedef Traits::Point_2                                 Point;
 typedef Traits::X_curve_2                               Curve;
 typedef std::list<Curve>                                CurveList;
+typedef std::list<std::string>                          Dirs;
 
 static
 #if (defined _MSC_VER)
@@ -258,6 +265,33 @@ static void printHelp(void)
   -v\t\ttoggle verbosity (default no)\n", progName);
 }
 
+/*!
+ */
+class Dir_search {
+public:
+  Dir_search() {}
+  Dir_search(const char * dir) { add(dir); }
+  void add(const char * dir) { m_dirs.push_back(dir); }
+  void add(const std::string & dir) { m_dirs.push_back(dir); }
+  bool find(const char * filename, std::string & fullname)
+  {
+    Dirs::const_iterator di;
+    struct stat buf;
+    for (di = m_dirs.begin(); di != m_dirs.end(); di++) {
+      fullname = (*di);
+      fullname.append("/");
+      fullname.append(std::string(filename));
+      int rc = stat(fullname.c_str(), &buf);
+      if (rc < 0 || S_ISDIR(buf.st_mode)) continue;
+      if (rc == 0) return true;
+    }
+    return false;
+  }
+
+private:
+  Dirs m_dirs;
+};
+
 /*
  */
 int main(int argc, char * argv[])
@@ -267,7 +301,11 @@ int main(int argc, char * argv[])
 
   bool verbose = false;
   int benchId = -1;
-  
+
+  Dir_search dirs(".");
+  const char * root = getenv("ROOT");
+  if (root) dirs.add(std::string(root) + "/data/Segments_2");
+      
 #if (defined _MSC_VER)
   int samples = 10;
 #else
@@ -308,24 +346,28 @@ int main(int argc, char * argv[])
     std::cerr << "Data file missing!" << std::endl;
     return -1;
   }
-  const char * filename = argv[optind];
 
+  const char * filename = argv[optind];
+  std::string fullname;
+  if (!dirs.find(filename, fullname)) {
+    std::cerr << "Cannot find file " << filename << "!" << std::endl;
+    return -1;
+  }
+      
   // Construct
   ConstructPmBench benchConstruct((std::string(BenchOpts[BENCH_CONSTRUCT]) +
-                                  std::string(" PM (") +
-                                  std::string(filename) + std::string(")")),
+                                  " PM (" + std::string(filename) + ")"),
                                   seconds, true);
   Construct_Pm & construct_pm = benchConstruct.getBenchUser();
-  construct_pm.setFilename(filename);
+  construct_pm.setFilename(fullname.c_str());
   construct_pm.setVerbose(verbose);
 
   // Construct and Display
   DisplayPmBench benchDisplay((std::string(BenchOpts[BENCH_DISPLAY]) +
-                              std::string(" PM (") +
-                              std::string(filename) + std::string(")")),
+                               " PM (" + std::string(filename) + ")"),
                               seconds, false);
   Display_Pm & display_pm = benchDisplay.getBenchUser();
-  display_pm.setFilename(filename);
+  display_pm.setFilename(fullname.c_str());
   display_pm.setVerbose(verbose);
 
   if (samples > 0) {
