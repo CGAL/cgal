@@ -9,7 +9,7 @@
 // ----------------------------------------------------------------------------
 //
 // release       :
-// date          :
+// release_date  :
 //
 // file          : include/CGAL/IO/VRML_2_ostream.h
 // source        : $RCSfile$
