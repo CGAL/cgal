@@ -69,7 +69,7 @@ struct Interval_nt_advanced
   static unsigned number_of_failures;	// Counts the number of failures.
 
 protected:
-  double inf, sup;	// "inf" stores the lower bound, "sup" the upper.
+  double _inf, _sup;	// "_inf" stores the lower bound, "_sup" the upper.
 
 private:
   int overlap_action() const
@@ -102,25 +102,25 @@ public:
   // The constructors.
   Interval_nt_advanced()
 #ifndef CGAL_NO_ASSERTIONS
-      : inf(1), sup(-1) // Buggy interval to detect use before definition.
+      : _inf(1), _sup(-1) // Buggy interval to detect use before definition.
 #endif
       {}
 
   Interval_nt_advanced(const double d)
-      : inf(d), sup(d) {}
+      : _inf(d), _sup(d) {}
 
   Interval_nt_advanced(const double i, const double s)
-      : inf(i), sup(s)
+      : _inf(i), _sup(s)
       { CGAL_assertion_msg(i<=s," Variable used before being initialized ?"); }
 
 #if 1
   // The copy constructors/assignment: useless.
   // The default ones are ok, but these are faster...
   Interval_nt_advanced(const IA & d)
-      : inf(d.inf), sup(d.sup) {}
+      : _inf(d._inf), _sup(d._sup) {}
 
   IA & operator=(const IA & d)
-  { inf = d.inf; sup = d.sup; return *this; }
+  { _inf = d._inf; _sup = d._sup; return *this; }
 #endif
 
   // The operators.
@@ -129,7 +129,7 @@ public:
 #ifdef CGAL_IA_DEBUG
       CGAL_assertion(FPU_get_cw() == FPU_cw_up);
 #endif
-      return IA (-(-inf - d.inf), sup + d.sup);
+      return IA (-(-_inf - d._inf), _sup + d._sup);
   }
   // { return IA  (d) += *this; }
 
@@ -138,14 +138,14 @@ public:
 #ifdef CGAL_IA_DEBUG
       CGAL_assertion(FPU_get_cw() == FPU_cw_up);
 #endif
-      return IA (-(d.sup - inf), sup - d.inf);
+      return IA (-(d._sup - _inf), _sup - d._inf);
   }
 
   // Those 2 ones could be made not inlined.
   IA  operator*	(const IA & d) const;
   IA  operator/	(const IA & d) const;
 
-  IA  operator-() const { return IA (-sup, -inf); }
+  IA  operator-() const { return IA (-_sup, -_inf); }
 
   IA & operator+= (const IA & d);
   IA & operator-= (const IA & d);
@@ -153,29 +153,29 @@ public:
   IA & operator/= (const IA & d);
 
   // For speed...
-  IA  operator+ (const double d) const { return IA(-(-inf-d), sup+d); };
-  IA  operator- (const double d) const { return IA(-(d-inf), sup-d); };
+  IA  operator+ (const double d) const { return IA(-(-_inf-d), _sup+d); };
+  IA  operator- (const double d) const { return IA(-(d-_inf), _sup-d); };
   IA  operator* (const double d) const;
   IA  operator/ (const double d) const;
 
   bool operator< (const IA & d) const
   {
-    if (sup  < d.inf) return true;
-    if (inf >= d.sup) return false;
+    if (_sup  < d._inf) return true;
+    if (_inf >= d._sup) return false;
     return overlap_action();
   }
 
   bool operator<= (const IA & d) const
   {
-    if (sup <= d.inf) return true;
-    if (inf >  d.sup) return false;
+    if (_sup <= d._inf) return true;
+    if (_inf >  d._sup) return false;
     return overlap_action();
   }
   
   bool operator== (const IA & d) const
   {
-    if ((d.inf >  sup) || (d.sup  < inf)) return false;
-    if ((d.inf == sup) && (d.sup == inf)) return true;
+    if ((d._inf >  _sup) || (d._sup  < _inf)) return false;
+    if ((d._inf == _sup) && (d._sup == _inf)) return true;
     return overlap_action();
   }
 
@@ -184,22 +184,24 @@ public:
   bool operator!= (const IA & d) const { return !(d == *this); }
 
   bool is_same (const IA & d) const
-  { return (inf == d.inf) && (sup == d.sup); }
+  { return (_inf == d._inf) && (_sup == d._sup); }
 
-  bool is_point() const { return (sup == inf); }
+  bool is_point() const { return (_sup == _inf); }
 
   bool overlap (const IA & d) const
-  { return !((d.inf > sup) || (d.sup < inf)); }
+  { return !((d._inf > _sup) || (d._sup < _inf)); }
 
-  double lower_bound() const { return inf; }
-  double upper_bound() const { return sup; }
+  double lower_bound() const { return _inf; }
+  double upper_bound() const { return _sup; }
+  double inf() const { return _inf; }
+  double sup() const { return _sup; }
 
   // The (join, union, ||) operator.
   IA operator|| (const IA & d) const
-  { return IA(std::min(inf,d.inf), std::max(sup,d.sup)); }
+  { return IA(std::min(_inf,d._inf), std::max(_sup,d._sup)); }
   // The (meet, intersection, &&) operator.  Valid if intervals overlap.
   IA operator&& (const IA & d) const
-  { return IA(std::max(inf,d.inf), std::min(sup,d.sup)); }
+  { return IA(std::max(_inf,d._inf), std::min(_sup,d._sup)); }
 };
 
 inline
@@ -209,45 +211,45 @@ Interval_nt_advanced::operator* (const Interval_nt_advanced & d) const
 #ifdef CGAL_IA_DEBUG
       CGAL_assertion(FPU_get_cw() == FPU_cw_up);
 #endif
-  if (inf>=0)					// this>=0
+  if (_inf>=0)					// this>=0
   {
-      // d>=0     [inf*d.inf; sup*d.sup]
-      // d<=0     [sup*d.inf; inf*d.sup]
-      // d~=0     [sup*d.inf; sup*d.sup]
-    double a = inf, b = sup;
-    if (d.inf < 0)
+      // d>=0     [_inf*d._inf; _sup*d._sup]
+      // d<=0     [_sup*d._inf; _inf*d._sup]
+      // d~=0     [_sup*d._inf; _sup*d._sup]
+    double a = _inf, b = _sup;
+    if (d._inf < 0)
     {
 	a=b;
-	if (d.sup < 0)
-	    b=inf;
+	if (d._sup < 0)
+	    b=_inf;
     }
-    return IA (-(a*-d.inf), b*d.sup);
+    return IA (-(a*-d._inf), b*d._sup);
   }
-  else if (sup<=0)				// this<=0
+  else if (_sup<=0)				// this<=0
   {
-      // d>=0     [inf*d.sup; sup*d.inf]
-      // d<=0     [sup*d.sup; inf*d.inf]
-      // d~=0     [inf*d.sup; inf*d.inf]
-    double a = sup, b = inf;
-    if (d.inf < 0)
+      // d>=0     [_inf*d._sup; _sup*d._inf]
+      // d<=0     [_sup*d._sup; _inf*d._inf]
+      // d~=0     [_inf*d._sup; _inf*d._inf]
+    double a = _sup, b = _inf;
+    if (d._inf < 0)
     {
 	a=b;
-	if (d.sup < 0)
-	    b=sup;
+	if (d._sup < 0)
+	    b=_sup;
     }
-    return IA (-(b*-d.sup), a*d.inf);
+    return IA (-(b*-d._sup), a*d._inf);
   }
-  else						// 0 \in [inf;sup]
+  else						// 0 \in [_inf;_sup]
   {
-    if (d.inf>=0)				// d>=0
-      return IA (-((-inf)*d.sup), sup*d.sup);
-    if (d.sup<=0)				// d<=0
-      return IA (-(sup*-d.inf), inf*d.inf);
+    if (d._inf>=0)				// d>=0
+      return IA (-((-_inf)*d._sup), _sup*d._sup);
+    if (d._sup<=0)				// d<=0
+      return IA (-(_sup*-d._inf), _inf*d._inf);
         					// 0 \in d
-    double tmp1 = (-inf)*d.sup;
-    double tmp2 = sup*-d.inf;
-    double tmp3 = inf*d.inf;
-    double tmp4 = sup*d.sup;
+    double tmp1 = (-_inf)*d._sup;
+    double tmp2 = _sup*-d._inf;
+    double tmp3 = _inf*d._inf;
+    double tmp4 = _sup*d._sup;
     return IA (-std::max(tmp1,tmp2), std::max(tmp3,tmp4));
   };
 }
@@ -259,7 +261,7 @@ Interval_nt_advanced::operator* (const double d) const
 #ifdef CGAL_IA_DEBUG
       CGAL_assertion(FPU_get_cw() == FPU_cw_up);
 #endif
-  return (d>=0) ? IA (-(d*-inf), d*sup) : IA (-(d*-sup), d*inf);
+  return (d>=0) ? IA (-(d*-_inf), d*_sup) : IA (-(d*-_sup), d*_inf);
 }
 
 inline
@@ -269,8 +271,8 @@ Interval_nt_advanced::operator/ (const double d) const
 #ifdef CGAL_IA_DEBUG
       CGAL_assertion(FPU_get_cw() == FPU_cw_up);
 #endif
-  if (d>0) return IA (-((-inf)/d), sup/d);
-  if (d<0) return IA (-((-sup)/d), inf/d);
+  if (d>0) return IA (-((-_inf)/d), _sup/d);
+  if (d<0) return IA (-((-_sup)/d), _inf/d);
   return CGAL_IA_LARGEST;
 }
 
@@ -312,7 +314,7 @@ operator+ (const double d, const Interval_nt_advanced & t)
 inline
 Interval_nt_advanced
 operator- (const double d, const Interval_nt_advanced & t)
-{ return Interval_nt_advanced(-(t.sup-d), d-t.inf); }
+{ return Interval_nt_advanced(-(t._sup-d), d-t._inf); }
 // { return -(t-d); }
 
 inline
@@ -325,11 +327,11 @@ Interval_nt_advanced
 operator/ (const double t, const Interval_nt_advanced & d)
 {
   typedef Interval_nt_advanced IA;
-  if ( (d.inf<=0) && (d.sup>=0) ) // d~0
+  if ( (d._inf<=0) && (d._sup>=0) ) // d~0
       return CGAL_IA_LARGEST;
 
-  return (t>=0) ? IA(-(t/-d.sup), t/d.inf)
-                : IA(-(t/-d.inf), t/d.sup);
+  return (t>=0) ? IA(-(t/-d._sup), t/d._inf)
+                : IA(-(t/-d._inf), t/d._sup);
 }
 
 inline
@@ -339,37 +341,37 @@ Interval_nt_advanced::operator/ (const Interval_nt_advanced & d) const
 #ifdef CGAL_IA_DEBUG
       CGAL_assertion(FPU_get_cw() == FPU_cw_up);
 #endif
-  if (d.inf>0)				// d>0
+  if (d._inf>0)				// d>0
   {
-      // this>=0	[inf/d.sup; sup/d.inf]
-      // this<=0	[inf/d.inf; sup/d.sup]
-      // this~=0	[inf/d.inf; sup/d.inf]
-    double a = d.sup, b = d.inf;
-    if (inf<0)
+      // this>=0	[_inf/d._sup; _sup/d._inf]
+      // this<=0	[_inf/d._inf; _sup/d._sup]
+      // this~=0	[_inf/d._inf; _sup/d._inf]
+    double a = d._sup, b = d._inf;
+    if (_inf<0)
     {
 	a=b;
-	if (sup<0)
-	    b=d.sup;
+	if (_sup<0)
+	    b=d._sup;
     };
-    return IA(-((-inf)/a), sup/b);
+    return IA(-((-_inf)/a), _sup/b);
   }
-  else if (d.sup<0)			// d<0
+  else if (d._sup<0)			// d<0
   {
-      // this>=0	[sup/d.sup; inf/d.inf]
-      // this<=0	[sup/d.inf; inf/d.sup]
-      // this~=0	[sup/d.sup; inf/d.sup]
-    double a = d.sup, b = d.inf;
-    if (inf<0)
+      // this>=0	[_sup/d._sup; _inf/d._inf]
+      // this<=0	[_sup/d._inf; _inf/d._sup]
+      // this~=0	[_sup/d._sup; _inf/d._sup]
+    double a = d._sup, b = d._inf;
+    if (_inf<0)
     {
 	b=a;
-	if (sup<0)
-	    b=d.inf;
+	if (_sup<0)
+	    b=d._inf;
     };
-    return IA(-((-sup)/a), inf/b);
+    return IA(-((-_sup)/a), _inf/b);
   }
   else					// d~0
     return CGAL_IA_LARGEST; // IA (-HUGE_VAL, HUGE_VAL);
-	   // We could do slightly better -> [0;HUGE_VAL] when d.sup==0,
+	   // We could do slightly better -> [0;HUGE_VAL] when d._sup==0,
 	   // but is this worth ?
 }
 
@@ -402,9 +404,9 @@ sqrt (const Interval_nt_advanced & d)
   // sqrt([+a,+b]) => [sqrt(+a);sqrt(+b)]
   // sqrt([-a,+b]) => [0;sqrt(+b)] => assumes roundoff error.
   // sqrt([-a,-b]) => [0;sqrt(-b)] => assumes user bug (unspecified result).
-  tmp.inf = (d.inf>0) ? std::sqrt(d.inf) : 0;
+  tmp._inf = (d._inf>0) ? std::sqrt(d._inf) : 0;
   FPU_set_cw(FPU_cw_up);
-  tmp.sup = std::sqrt(d.sup);
+  tmp._sup = std::sqrt(d._sup);
   return tmp;
 }
 
@@ -414,40 +416,40 @@ square (const Interval_nt_advanced & d)
 {
     // The first one is slightly slower, but produces shorter code.
 #if 0
-  double a = (-d.inf)*fabs(d.inf);
-  double b = d.sup*fabs(d.sup);
-  if (d.inf >= 0) return Interval_nt_advanced(-a,b);
-  if (d.sup <= 0) return Interval_nt_advanced(-b,a);
+  double a = (-d._inf)*fabs(d._inf);
+  double b = d._sup*fabs(d._sup);
+  if (d._inf >= 0) return Interval_nt_advanced(-a,b);
+  if (d._sup <= 0) return Interval_nt_advanced(-b,a);
   return Interval_nt_advanced(0, std::max(a,b));
 #else
-  if (d.inf>=0) return Interval_nt_advanced(-(d.inf*-d.inf), d.sup*d.sup);
-  if (d.sup<=0) return Interval_nt_advanced(-(d.sup*-d.sup), d.inf*d.inf);
-  return Interval_nt_advanced(0.0, square(std::max(-d.inf, d.sup)));
+  if (d._inf>=0) return Interval_nt_advanced(-(d._inf*-d._inf), d._sup*d._sup);
+  if (d._sup<=0) return Interval_nt_advanced(-(d._sup*-d._sup), d._inf*d._inf);
+  return Interval_nt_advanced(0.0, square(std::max(-d._inf, d._sup)));
 #endif
 }
 
 inline
 double
 to_double (const Interval_nt_advanced & d)
-{ return (d.sup+d.inf)*.5; }
+{ return (d._sup+d._inf)*.5; }
 
 inline
 bool
 is_valid (const Interval_nt_advanced & d)
-{ return is_valid(d.inf) && is_valid(d.sup) && (d.inf <= d.sup); }
+{ return is_valid(d._inf) && is_valid(d._sup) && (d._inf <= d._sup); }
 
 inline
 bool
 is_finite (const Interval_nt_advanced & d)
-{ return is_finite(d.inf) && is_finite(d.sup); }
+{ return is_finite(d._inf) && is_finite(d._sup); }
 
 inline
 Sign
 sign (const Interval_nt_advanced & d)
 {
-  if (d.inf > 0) return POSITIVE;
-  if (d.sup < 0) return NEGATIVE;
-  if (d.inf == d.sup) return ZERO;
+  if (d._inf > 0) return POSITIVE;
+  if (d._sup < 0) return NEGATIVE;
+  if (d._inf == d._sup) return ZERO;
   return Sign (d.overlap_action());
 }
 
@@ -455,9 +457,9 @@ inline
 Comparison_result
 compare (const Interval_nt_advanced & d, const Interval_nt_advanced & e)
 {
-  if (d.inf > e.sup) return LARGER;
-  if (e.inf > d.sup) return SMALLER;
-  if ( (e.inf == d.sup) && (d.inf == e.sup) ) return EQUAL;
+  if (d._inf > e._sup) return LARGER;
+  if (e._inf > d._sup) return SMALLER;
+  if ( (e._inf == d._sup) && (d._inf == e._sup) ) return EQUAL;
   return Comparison_result (d.overlap_action());
 }
 
@@ -465,29 +467,29 @@ inline
 Interval_nt_advanced
 abs (const Interval_nt_advanced & d)
 {
-  if (d.inf >= 0) return d;
-  if (d.sup <= 0) return -d;
-  return Interval_nt_advanced(0, std::max(-d.inf,d.sup));
+  if (d._inf >= 0) return d;
+  if (d._sup <= 0) return -d;
+  return Interval_nt_advanced(0, std::max(-d._inf,d._sup));
 }
 
 inline
 Interval_nt_advanced
 min (const Interval_nt_advanced & d, const Interval_nt_advanced & e)
 {
-  return Interval_nt_advanced(std::min(d.inf, e.inf), std::min(d.sup, e.sup));
+  return Interval_nt_advanced(std::min(d._inf, e._inf), std::min(d._sup, e._sup));
 }
 
 inline
 Interval_nt_advanced
 max (const Interval_nt_advanced & d, const Interval_nt_advanced & e)
 {
-  return Interval_nt_advanced(std::max(d.inf, e.inf), std::max(d.sup, e.sup));
+  return Interval_nt_advanced(std::max(d._inf, e._inf), std::max(d._sup, e._sup));
 }
 
 inline
 std::ostream &
 operator<< (std::ostream & os, const Interval_nt_advanced & d)
-{ return os << "[" << d.lower_bound() << ";" << d.upper_bound() << "]"; }
+{ return os << "[" << d.inf() << ";" << d.sup() << "]"; }
 
 inline
 std::istream &
@@ -541,7 +543,7 @@ struct Interval_nt : public Interval_nt_advanced
 
   // This particular one needs to be redefined, a pitty...
   IA operator-() const 
-  { return IA(-sup, -inf); }
+  { return IA(-_sup, -_inf); }
 
   // The member functions that have to be protected against rounding mode.
   IA operator+(const IA & d) const ;
@@ -578,8 +580,8 @@ CGAL_NAMED_RETURN_VALUE_OPT_1
   FPU_CW_t backup = FPU_get_cw();
   FPU_set_cw(FPU_cw_up);
   CGAL_NAMED_RETURN_VALUE_OPT_2
-  tmp.inf = -(-inf - d.inf);
-  tmp.sup = sup + d.sup;
+  tmp._inf = -(-_inf - d._inf);
+  tmp._sup = _sup + d._sup;
   FPU_set_cw(backup);
   CGAL_NAMED_RETURN_VALUE_OPT_3
 }
@@ -592,8 +594,8 @@ CGAL_NAMED_RETURN_VALUE_OPT_1
   FPU_CW_t backup = FPU_get_cw();
   FPU_set_cw(FPU_cw_up);
   CGAL_NAMED_RETURN_VALUE_OPT_2
-  tmp.inf = -(d.sup - inf);
-  tmp.sup = sup - d.inf;
+  tmp._inf = -(d._sup - _inf);
+  tmp._sup = _sup - d._inf;
   FPU_set_cw(backup);
   CGAL_NAMED_RETURN_VALUE_OPT_3
 }
@@ -618,11 +620,11 @@ CGAL_NAMED_RETURN_VALUE_OPT_1
   FPU_set_cw(FPU_cw_up);
   CGAL_NAMED_RETURN_VALUE_OPT_2
   if (d>=0) {
-      tmp.inf = - (inf*-d);
-      tmp.sup = sup*d;
+      tmp._inf = - (_inf*-d);
+      tmp._sup = _sup*d;
   } else {
-      tmp.inf = - (sup*-d);
-      tmp.sup = inf*d;
+      tmp._inf = - (_sup*-d);
+      tmp._sup = _inf*d;
   }
   FPU_set_cw(backup);
   CGAL_NAMED_RETURN_VALUE_OPT_3
