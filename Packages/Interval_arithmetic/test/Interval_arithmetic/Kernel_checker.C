@@ -1,6 +1,13 @@
 
 // Test program for the kernel checker.
 
+// Some short names
+#define Cartesian CA
+#define Cartesian_converter CC
+#define Kernel_checker KC
+
+#include <CGAL/Cartesian.h>
+
 // Workaround for buggy compilers.
 #ifdef CGAL_CFG_MATCHING_BUG_2
 #  define CGAL_IA_CT double
@@ -9,12 +16,6 @@
 #  define CGAL_IA_CACHE No_Filter_Cache
 #endif
 
-// Some short names
-#define Cartesian CA
-#define Cartesian_converter CC
-#define Kernel_checker KC
-
-#include <CGAL/Cartesian.h>
 #include <CGAL/Kernel_checker.h>
 #include <CGAL/Cartesian_converter.h>
 

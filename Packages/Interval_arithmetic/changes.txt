@@ -1,5 +1,9 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.107 on 16 July 2001
+- Don't test exact square roots without LEDA...
+- VC++ Fix for Kernel_checker test program.
+
 Version 4.106 on 12 July 2001
 - Test-suite tweeks.
 
