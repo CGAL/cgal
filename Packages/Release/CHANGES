@@ -1,3 +1,227 @@
+
+
+----------------------------- Release 3.1 ----------------------------------
+
+Version 3.1 differs from version 3.0 in the platforms that are supported and
+in functionality.  There have also been a number of bug fixes for this release.
+
+
+Additional supported platforms:
+ *  MS Visual C++, version 7.3. and 8.0
+ *  Intel 8.0
+ *  SunPro CC versions 5.4 and 5.5 on Solaris
+ *  GNU g++ versions 3.4 on Linux, Solaris, Irix, cygwin, FreeBSD, and MacOS X
+ *  Darwin (MacOS X) and IA64/Linux support.
+
+
+The following platforms are no longer supported:
+ * MS Visual C++, version 7.0
+
+
+
+The following functionality has been added or changed:
+
+1 All
+ *  The  CORE 1.7 library (http://www.cs.nyu.edu/exact/core) for exact real arithmetic (http://www.cs.nyu.edu/exact/core).
+ *  Updated  GMP  to 4.1.3 (http://www.swox.com/GMP)
+ * Added MPFR, a library for multiple-precision floating-point computations with exact rounding (http://www.mpfr.org")
+ * Added Boost 1.31.0 (http://www.boost.org".
+
+
+2 Installation
+ *  new option --disable-shared to omit building libCGAL.so.
+
+
+3Manuals
+ *  Merged all major manuals in one multi-part manual, which provides
+    now cross-links between the CGAL Kernel, the CGAL Basic Library,
+    and the CGAL Support Library HTML manuals.
+ *  Improved layout.
+
+
+4Kernels
+ *  Improved efficiency of filtered kernels.
+ * More predicates and constructions. 
+
+
+5 Basic Library
+
+
+5.1  2D Segment Voronoi Diagram (new package)
+
+A data structure for Voronoi diagrams of segments in the plane under
+the Euclidean metric. The Voronoi edges are arcs of straight lines and
+parabolas. The algorithm provided in this package is incremental.
+
+
+
+5.2  2D Conforming Triangulations and Meshes (new package)
+
+An implementation of Shewchuk's algorithm to construct conforming
+triangulations and 2D meshes.
+
+
+
+5.3  3D Boolean Operations on  Nef Polyhedra(new package)
+
+A new class (Nef_polyhedron_3) representing 3D Nef polyhedra, a
+boundary representation for cell-complexes bounded by halfspaces that
+supports boolean operations and topological operations in full
+generality including unbounded cells, mixed dimensional cells (e.g.,
+isolated vertices and antennas). Nef polyhedra distinguish between
+open and closed sets and can represent non-manifold geometry.
+
+
+5.4  2D and Surface Function Interpolation (new package)
+
+This package implements different methods for scattered data
+interpolation: Given measures of a function on a set of discrete data
+points, the task is to interpolate this function on an arbitrary query
+point. The package further offers functions for natural neighbor
+interpolation.
+
+
+5.5  Planar Nef polyhedra embedded on the sphere (new package)
+
+A new class (Nef_polyhedron_S2) designed and supported mainly to
+represent sphere neighborhoods around vertices of the three-
+dimensional Nef polyhedra.
+
+
+5.6  dD Box_intersection_d (new package)
+
+A new efficient algorithm for finding all intersecting pairs for large
+numbers of iso-oriented boxes, i.e., typically these will be bounding
+boxes of more complicated geometries. Useful for (self-) intersection
+tests of surfaces etc.
+
+
+5.7  2D Snap Rounding (new package)
+
+Snap Rounding is a well known method for converting
+arbitrary-precision arrangements of segments into a fixed-precision
+representation. In the study of robust geometric computing, it can be
+classified as a finite precision approximation technique. Iterated
+Snap Roundingis a modification of Snap Rounding in which each vertex
+is at least half-the-width-of-a-pixel away from any non-incident
+edge. This package supports both methods.
+
+
+5.8  3D Triangulations
+
+ *  Triangulation_3: added operator==(),vremoved push_back() and copy_triangulation().
+ *  Delaunay_3 : added nearest_vertex(), move_point(), vertices_in_conflict().
+ *  Regular_3 : added vertex removal, the ability to keep or drop hidden vertices, 
+                filtered traits class, and nearest_power_vertex(). 
+
+
+
+5.9  Planar_map and Arrangement_2
+
+
+ * The interface of the two traits functions that compute the
+   intersection of two given curves changed. The functions
+   nearest_intersection_to_right() and nearest_intersection_to_left()
+   return an object of type CGAL::Object that represents either an
+   empty intersection, a point, or an overlapping subcurve.
+
+ * Requirements to define two binary tags were added to the traits
+    concept of the Planar_map as follows:
+    * Has_left_category - indicates whether the functions
+      curves_compare_y_at_x_left() and nearest_intersection_to_left()
+      are implemented in the traits model.
+
+    * Has_reflect_category - indicates whether the functions
+      point_reflect_in_x_and_y() and curve_reflect_in_x_and_y() are
+      implemented in the traits model. They can be used as an
+      alternative to the two function in the previous item.
+
+ * A new constructor of the Segment_cached_2 type that represents a
+   segment in the Arr_segment_cached_traits_2 traits class was
+   introduced. The new constructor accepts the segment endpoints as
+   well as the coefficients of the underlying line.
+
+ * A new version of the conic-arc traits, based on CORE version 1.7
+   was introduced. This new traits class makes use of CORE's rootOf()
+   operator to compute the intersection points in the arrangement,
+   making its code much simpler and more elegant than the previous
+   version. In addition, new constructors for conic arcs are
+   provided. The new traits class usually performs about 30% faster
+   than the version included in CGAL 3.0
+
+ * The traits class that handles continuous piecewise linear curves,
+   namely Arr_polyline_traits_2, was rewritten. The new class is
+   parametrized with a traits class that handles segments, say
+   Segment_traits. The polyline curve defined within the
+   Arr_polyline_traits_2 class is implemented as a vector of segments
+   of type Segment_traits::Curve_2.
+
+ * A meta traits class, namely Arr_curve_data_traits_2, that extends
+   the curve type of the planar-map with arbitrary additional data was
+   introduced. It should be instantiated with a regular traits-class
+   and a class that contains all extraneous data associated with a
+   curve.
+
+ * The class that represents the trapezoidal-decomposition point
+   location strategy was renamed to Pm_trapezoid_ric_point_location.
+
+ * The Arrangement demo was rewritten. It covers many more features,
+   has a much better graphical user interface, and comes with online
+   documentation.
+
+ * Few bugs in the sweep-line module related to overlapping vertical
+segments were fixed. This module is used by the aggregate insert
+method that inserts a collection of curves at once.
+
+
+5.10  Triangulation_2
+
+ *  added a filtered trait class
+ *  added split and join operations in the triangulation data structure class
+
+
+5.11  Alpha_shapes_3
+
+ * major changes in the implementation of the class Alpha_shapes_3.h.
+ * New implementation results in a true GENERAL mode Allowing null and
+ * negative alpha-values. It also fixed the edges classification bug
+ * and introduces a classification of vertices.
+
+
+5.11  Min_ellipse_2
+
+  *  made access to approximate double representation public
+  *  fixed bugs in conversion to double representation
+  *  added is_circle() method
+  *  minor performance improvements
+
+
+5.12  Min_sphere_of_spheres_d:
+
+ *  The models
+    Min_sphere_of_spheres_d_traits_2<K,FT,UseSqrt,Algorithm>, 
+    Min_sphere_of_spheres_d_traits_3<K,FT,UseSqrt,Algorithm>, and 
+    Min_sphere_of_spheres_d_traits_d<K,FT,Dim,UseSqrt,Algorithm>
+    of concept MinSphereOfSpheresTraits now represent a sphere
+    as a std::pair<Point,Radius> (and not any more as a
+    CGAL::Weighted_point<Point,Weight>)
+ *  Internal code cleanup; in particular, implementation details
+  don't pollute the namespace CGAL anymore
+
+
+
+5.13  Polyhedron_3
+
+ *  New Tutorial on CGAL Polyhedron for Subdivision Algorithms  with
+    interactive demo viewer in source code available.
+    (http://www.cgal.org/Tutorials/Polyhedron)
+          
+ *  Added example program for efficient self-intersection test.
+ *  Added small helper functions, such as vertex_degree, facet_degree,
+    edge_flip, and is_closed.
+
+
+
 ----------------------------- Release 3.0.1 ----------------------------------
 This is a bug-fix release.
 No new features have been added in 3.0.1.  Here is the list of bug-fixes.
