@@ -99,6 +99,11 @@ public:
   bool is_point_on_cell( const Point_3& p, const typename Objects_around_segment::Iterator& target) const {
     return is_point_on_cell( p, target.get_node(), root);
   }
+  void transform(const Aff_transformation_3& t) {
+    if(root != 0)
+      root->transform(t);
+  }
+
   class Objects_around_segment 
   {
     class Iterator;
@@ -247,6 +252,7 @@ typedef typename Traits::Vector_3 Vector_3;
 typedef typename Traits::Direction_3 Direction_3;
 typedef typename Traits::Plane_3 Plane_3;
 typedef typename Traits::Triangle_3 Triangle_3;
+typedef typename Traits::Aff_transformation_3 Aff_transformation_3;
 
 typedef typename Traits::Bounding_box_3 Bounding_box_3;
 typedef typename Traits::Side_of_plane Side_of_plane;
@@ -277,7 +283,7 @@ Node* build_kdtree( const Object_list& O, Depth depth, Node* parent=0, int non_e
   Plane_3 partition_plane = construct_splitting_plane( O, depth);
   TRACEN("build_kdtree: plane: "<<partition_plane<<partition_plane.point());
   Object_list O1, O2;
-  bool splitted = classify_objects( O, partition_plane,
+  bool splitted = classify_objects( O, partition_plane, depth,
                                     std::back_inserter(O1), 
                                     std::back_inserter(O2));
   if( !splitted) {
@@ -331,19 +337,21 @@ Having the partition plane, it is neccesary first to decide if the plane actuall
 
 <<definition of the k3 tree construction methods>>=
 template <typename OutputIterator>
-bool classify_objects( const Object_list& O, Plane_3 partition_plane,
+bool classify_objects( const Object_list& O, Plane_3 partition_plane, int depth,
                         OutputIterator o1, OutputIterator o2) {
   size_t on_oriented_boundary = 0;
   typename Object_list::const_iterator o;
+  
+  Side_of_plane sop(depth%3);
   for( o = O.begin(); o != O.end(); ++o) {
-    Oriented_side side = traits.side_of_plane_object()( partition_plane, *o);
+    Oriented_side side = sop( partition_plane, *o);
     if( side == ON_NEGATIVE_SIDE || side == ON_ORIENTED_BOUNDARY) {
       *o1 = *o;
-      o1++;
+      ++o1;
     }
     if( side == ON_POSITIVE_SIDE || side == ON_ORIENTED_BOUNDARY) {
       *o2 = *o;
-      o2++;
+      ++o2;
     }
     if( side == ON_ORIENTED_BOUNDARY)
       on_oriented_boundary++;
@@ -418,6 +426,12 @@ public:
   const Node* right() const { return right_node; }
   const Plane_3& plane() const { return splitting_plane; }
   const Object_list& objects() const { return object_list; }
+
+  void transform(const Aff_transformation_3& t) {
+    if(left_node != 0) left_node->transform(t);
+    if(right_node != 0) right_node->transform(t);
+    if(splitting_plane != Plane_3()) splitting_plane = splitting_plane.transform(t);	
+  }
   <<definition of the node display method>>
   <<definition of the node destructor>>
 private:
@@ -693,7 +707,6 @@ std::string dump_object_list( const Object_list& O, int level = 0) {
     Vertex_handle v;
     Halfedge_handle e;
     Halffacet_handle f;
-    Halffacet_triangle_handle t;
     if( assign( v, *o)) {
       if( level) os << D.point(v) << std::endl;
       v_count++;
@@ -706,11 +719,14 @@ std::string dump_object_list( const Object_list& O, int level = 0) {
       if( level) os << "facet" << std::endl;
       f_count++;
     }
-    else if( assign( t, *o)) {
-      if( level) os << "triangle" << std::endl;
-      t_count++;
+    else {
+      Halffacet_triangle_handle t;
+      if( assign( t, *o)) {
+        if( level) os << "triangle" << std::endl;
+        t_count++;
+      }	
+      else CGAL_assertion_msg( 0, "wrong handle");
     }
-    else CGAL_assertion_msg( 0, "wrong handle");
   }
   os << v_count << "v " << e_count << "e " << f_count << "f " << t_count << "t ";
   return os.str();
@@ -753,7 +769,6 @@ for( typename Objects_around_segment::Iterator oar = objects.begin();
     Vertex_handle v;
     Halfedge_handle e;
     Halffacet_handle f;
-    Halffacet_triangle_handle t;
     if( assign( v, *o)) {
       if( !v_mark[v]) {
         O.push_back(*o);
@@ -772,15 +787,18 @@ for( typename Objects_around_segment::Iterator oar = objects.begin();
         f_mark[f] = true;
       }
     }
-    else if( assign( t, *o)) {
-      Triangle_3 tr = t.get_triangle();
-      if( !t_mark[tr]) {
-	O.push_back(*o);
-	t_mark[tr] = true;
+    else {
+      Halffacet_triangle_handle t;
+      if( assign( t, *o)) {
+        Triangle_3 tr = t.get_triangle();
+        if( !t_mark[tr]) {
+	  O.push_back(*o);
+	  t_mark[tr] = true;
+        }
       }
+      else
+        CGAL_assertion_msg( 0, "wrong handle");
     }
-    else
-      CGAL_assertion_msg( 0, "wrong handle");
   }
 }
 
@@ -866,15 +884,63 @@ public:
   typedef typename Kernel::Segment_3 Segment_3;
   typedef typename Kernel::Plane_3 Plane_3;
   typedef typename Kernel::Triangle_3 Triangle_3;
-  
-  virtual Oriented_side operator()( const Plane_3& pl, Object_handle o) const;
-  virtual Oriented_side operator()( const Plane_3& pl, Vertex_handle v) const;
-  virtual Oriented_side operator()( const Plane_3& pl, Halfedge_handle e) const;
-  virtual Oriented_side operator()( const Plane_3& pl, Halffacet_handle f) const;
-  virtual Oriented_side operator()( const Plane_3& pl, Halffacet_triangle_handle f) const;
+  typedef typename Kernel::Vector_3 Vector_3;  
+  typedef typename Kernel::FT  FT;
+  typedef typename Kernel::RT  RT;
+
+  virtual Oriented_side operator()( const Plane_3& pl, Object_handle o);
+  virtual Oriented_side operator()( const Plane_3& pl, Vertex_handle v);
+  virtual Oriented_side operator()( const Plane_3& pl, Halfedge_handle e);
+  virtual Oriented_side operator()( const Plane_3& pl, Halffacet_handle f);
+  virtual Oriented_side operator()( const Plane_3& pl, Halffacet_triangle_handle f);
+
+  Oriented_side
+  Side_of_plane<SNCstructure>::oriented_side(const Plane_3& pl, const Point_3& pnt) {
+
+    RT s;
+    switch(swtch) {
+    case 0 : s = (pnt.x()+pl.d()).numerator(); break;
+    case 1 : s = (pnt.y()+pl.d()).numerator(); break;
+    case 2 : s = (pnt.z()+pl.d()).numerator(); break;
+    default:
+        int i=0;	
+	Vector_3 o(pl.orthogonal_vector());
+    	if(o.hx() == FT(0)) i+=4;
+    	if(o.hy() == FT(0)) i+=2;
+    	if(o.hz() == FT(0)) i+=1;
+
+    	switch(i) { 
+    	case 3 : if(o.hx() == FT(1)) 
+               	   s = (pnt.x()+pl.d()).numerator();
+             	 else 
+               	   return pl.oriented_side(pnt);
+	     	 break;
+    	case 5 : if(o.hy() == FT(1)) 
+                   s = (pnt.y()+pl.d()).numerator();
+                 else 
+                   return pl.oriented_side(pnt);
+	         break;
+    	case 6 : if(o.hz() == FT(1)) 
+                   s = (pnt.z()+pl.d()).numerator();
+                 else 
+                   return pl.oriented_side(pnt);
+	         break;
+        default: return pl.oriented_side(pnt);
+        }    
+    }
+
+    if(s>0)
+      return ON_POSITIVE_SIDE;
+    if(s<0)
+    return ON_NEGATIVE_SIDE;
+    return ON_ORIENTED_BOUNDARY;
+  }
 
   typedef typename SNCstructure::SNC_decorator SNC_decorator;
   SNC_decorator D;
+  Unique_hash_map<Vertex_handle, Oriented_side> OnSideMap;
+  int swtch;
+  Side_of_plane(int depth = -1) : swtch(depth) {}
 };
 
 template <class SNCstructure>
@@ -937,6 +1003,7 @@ public:
   typedef typename Kernel::Direction_3 Direction_3;
   typedef typename Kernel::Plane_3 Plane_3;
   typedef typename Kernel::Triangle_3 Triangle_3;
+  typedef typename Kernel::Aff_transformation_3 Aff_transformation_3;
 
   typedef typename Kernel::RT RT;
   typedef typename Kernel::FT FT;
@@ -962,29 +1029,33 @@ public:
 template <class SNCstructure>
 Oriented_side 
 Side_of_plane<SNCstructure>::operator()
-  ( const Plane_3& pl, Object_handle o) const {
+  ( const Plane_3& pl, Object_handle o) {
   Vertex_handle v;
   Halfedge_handle e;
   Halffacet_handle f;
-  Halffacet_triangle_handle t;
   if( assign( v, o))
     return (*this)( pl, v);
   else if( assign( e, o))
     return (*this)( pl, e);
   else if( assign( f, o))
     return (*this)( pl, f);
-  else if( assign( t, o))
-    return (*this)( pl, t);
-  else
-    CGAL_assertion_msg( 0, "wrong handle");
+  else {
+    Halffacet_triangle_handle t;
+    if( assign( t, o))
+      return (*this)( pl, t);
+    else
+      CGAL_assertion_msg( 0, "wrong handle");
+  }
   return Oriented_side(); // never reached
 }
 
 template <class SNCstructure>
 Oriented_side 
 Side_of_plane<SNCstructure>::operator()
-( const Plane_3& pl, Vertex_handle v) const {
-  return pl.oriented_side(D.point(v));
+( const Plane_3& pl, Vertex_handle v) {
+  if(!OnSideMap.is_defined(v))
+    OnSideMap[v] = oriented_side(pl, D.point(v));
+  return OnSideMap[v];
 }
 
 /* 
@@ -997,10 +1068,13 @@ Side_of_plane<SNCstructure>::operator()
 template <class SNCstructure>
 Oriented_side 
 Side_of_plane<SNCstructure>::operator()
-( const Plane_3& pl, Halfedge_handle e) const {
-  Segment_3 s(D.segment(e));
-  Oriented_side src_side = pl.oriented_side(s.source());
-  Oriented_side tgt_side = pl.oriented_side(s.target());
+( const Plane_3& pl, Halfedge_handle e) {
+  if(!OnSideMap.is_defined(D.source(e)))
+    OnSideMap[D.source(e)] = oriented_side(pl, D.point(D.source(e)));  
+  if(!OnSideMap.is_defined(D.target(e)))
+    OnSideMap[D.target(e)] = oriented_side(pl, D.point(D.target(e)));  
+  Oriented_side src_side = OnSideMap[D.source(e)];
+  Oriented_side tgt_side = OnSideMap[D.target(e)];
   if( src_side == tgt_side)
     return src_side;
   if( src_side == ON_ORIENTED_BOUNDARY)
@@ -1013,7 +1087,7 @@ Side_of_plane<SNCstructure>::operator()
 template <typename SNCstructure>
 Oriented_side
 Side_of_plane<SNCstructure>::operator()
-( const Plane_3& pl, Halffacet_triangle_handle t) const {
+( const Plane_3& pl, Halffacet_triangle_handle t) {
   bool on_positive_side = false, on_negative_side = false;
   Triangle_3 tr(t.get_triangle());
   for( int i = 0; i < 3; ++i) {
@@ -1049,7 +1123,7 @@ Side_of_plane<SNCstructure>::operator()
 template <class SNCstructure>
 Oriented_side 
 Side_of_plane<SNCstructure>::operator()
-  ( const Plane_3& pl, Halffacet_handle f) const {
+  ( const Plane_3& pl, Halffacet_handle f) {
     CGAL_nef3_assertion( std::distance( f->facet_cycles_begin(), f->facet_cycles_end()) > 0);
   Halffacet_cycle_iterator fc(f->facet_cycles_begin());
   SHalfedge_handle e;
@@ -1059,7 +1133,9 @@ Side_of_plane<SNCstructure>::operator()
   //CGAL_assertion( iterator_distance( sc, send) >= 3); // TODO: facet with 2 vertices was found, is it possible?
   Oriented_side facet_side;
   do {
-    facet_side = pl.oriented_side(D.point(D.vertex(sc)));
+    if(!OnSideMap.is_defined(D.vertex(sc)))
+      OnSideMap[D.vertex(sc)] = oriented_side(pl, D.point(D.vertex(sc)));  
+    facet_side = OnSideMap[D.vertex(sc)];
     ++sc;
   }
   while( facet_side == ON_ORIENTED_BOUNDARY && sc != send);
@@ -1067,7 +1143,9 @@ Side_of_plane<SNCstructure>::operator()
     return ON_ORIENTED_BOUNDARY;
   CGAL_assertion( facet_side != ON_ORIENTED_BOUNDARY);
   while( sc != send) {
-    Oriented_side point_side = pl.oriented_side(D.point(D.vertex(sc)));
+    if(!OnSideMap.is_defined(D.vertex(sc)))
+      OnSideMap[D.vertex(sc)] = oriented_side(pl, D.point(D.vertex(sc)));  
+    Oriented_side point_side = OnSideMap[D.vertex(sc)];
     ++sc;
     if( point_side == ON_ORIENTED_BOUNDARY)
       continue;
@@ -1099,17 +1177,19 @@ Objects_bbox<SNCstructure>::operator()
   Vertex_handle v;
   Halfedge_handle e;
   Halffacet_handle f;
-  Halffacet_triangle_handle t;
   if( assign( v, o))
     return operator()(v);
   else if( assign( e, o))
     return operator()(e);
   else if( assign( f, o))
     return operator()(f);
-  else if( assign( t, o))
-    return operator()(t);
-  else
-    CGAL_assertion_msg( 0, "wrong handle");
+  else {
+    Halffacet_triangle_handle t;
+    if( assign( t, o))
+      return operator()(t);
+    else
+      CGAL_assertion_msg( 0, "wrong handle");
+  }
   return Bounding_box_3(); // never reached
 }
 
