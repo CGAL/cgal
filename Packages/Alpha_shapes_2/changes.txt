@@ -1,3 +1,8 @@
+version 11.17 [af]
+- added two missing std:: before ptr_diff
+version 11.17 [af]
+- resubmitted from Unix as PC cygwin does not distinguish makefile/Makefile
+
 version 11.16: [af]
 - Changed a private member to mutable as it is used for caching for iterators.
 - Declared at the same time some begin()/end() functions const, as they are.
