@@ -368,7 +368,6 @@ Regular_triangulation_2<Gt,Tds>::Point
 Regular_triangulation_2<Gt,Tds>::
 dual (Face_handle f) const
 {
-  CGAL_triangulation_precondition (dimension()==2);
   return weighted_circumcenter(f);
 }
 
@@ -378,7 +377,7 @@ Regular_triangulation_2<Gt,Tds>::Point
 Regular_triangulation_2<Gt,Tds>::
 weighted_circumcenter(Face_handle f) const
 {
-  CGAL_triangulation_precondition (dimension()==2);
+  CGAL_triangulation_precondition (dimension()==2 || !is_infinite(f));
   return weighted_circumcenter(f->vertex(0)->point(),
 			       f->vertex(1)->point(),
 			       f->vertex(2)->point());
