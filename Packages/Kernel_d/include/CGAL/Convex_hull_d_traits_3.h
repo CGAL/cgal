@@ -60,8 +60,21 @@ template <class R_> struct Convex_hull_d_traits_3
   struct Orientation_d {
     template <class I>
     Orientation operator()(I s, I e) {
-      std::vector<Point_d> A(s,e);
-      CGAL_assertion(A.size()==4);
+      Point_d A[4];
+      CGAL_assertion(s != e);
+      A[0] = *s;
+      ++s;
+      CGAL_assertion(s != e);
+      A[1] = *s;
+      ++s;
+      CGAL_assertion(s != e);
+      A[2] = *s;
+      ++s;
+      CGAL_assertion(s != e);
+      A[3] = *s;
+      ++s;
+      CGAL_assertion(s == e);
+	
       return orientation(A[0],A[1],A[2],A[3]);
     }
   };
@@ -72,19 +85,33 @@ template <class R_> struct Convex_hull_d_traits_3
     template <class I>
     bool operator()(I s, I e)
     { 
-      std::vector<Point_d> A(s,e);
-      int a = A.size();
-      if (a > 4)
-        return false;
-      if (a == 4) 
-        return !coplanar( A[0], A[1], A[2], A[3] );
-      if (a == 3) 
-        return !collinear( A[0], A[1], A[2] );
-      if (a == 2)
-        return (A[0] != A[1] );  
-      return true;
+      Point_d A[4];
+      CGAL_assertion(s != e);
+      A[0] = *s;
+      ++s;
+      if(s == e){
+	return true;
+      }
+      A[1] = *s;
+      ++s;
+      if (s == e){
+	return A[0] != A[1];
+      }
+      A[2] = *s;
+      ++s;
+      if (s == e){
+	return ! collinear( A[0], A[1], A[2] );
+      }
+      A[3] = *s;
+      ++s;
+      if (s == e){
+	return !coplanar( A[0], A[1], A[2], A[3] );
+      } else {
+	return false;
+      }
     }
   };
+
   Affinely_independent_d affinely_independent_d_object() const
   { return Affinely_independent_d(); }
 
@@ -92,24 +119,36 @@ template <class R_> struct Convex_hull_d_traits_3
     template <class I>
     bool operator()(I s, I e, const Point_d& p)
     { 
-      std::vector<Point_d> A(s,e);
-      int a = A.size();
-      CGAL_assertion( a <= 4 );
-      if (a == 4) {
-        typename R_::Tetrahedron_3 t( A[0], A[1], A[2], A[3] );
-        return !t.has_on_unbounded_side(p);
-      } else if (a == 3) {
-        typename R_::Triangle_3 t( A[0], A[1], A[2] );
-        return t.has_on(p);
-      } else if (a == 2) {
+      Point_d A[4];
+      CGAL_assertion(s != e);
+      A[0] = *s;
+      ++s;
+      if(s == e){
+	return A[0] == p;
+      }
+      A[1] = *s;
+      ++s;
+      if (s == e){
         typename R_::Segment_3 s( A[0], A[1] );
         return s.has_on(p);
-      } else if (a == 1) {
-        return ( A[0] == p);
+      }
+      A[2] = *s;
+      ++s;
+      if (s == e){
+        typename R_::Triangle_3 t( A[0], A[1], A[2] );
+        return t.has_on(p);
+      }
+      A[3] = *s;
+      ++s;
+      if (s == e){
+        typename R_::Tetrahedron_3 t( A[0], A[1], A[2], A[3] );
+        return !t.has_on_unbounded_side(p);
+      } else {
+	return false;  // should be unreachable !
       } 
-      return false; // should be unreachable !
     }
   };
+
   Contained_in_simplex_d contained_in_simplex_d_object() const
   { return Contained_in_simplex_d(); }
  
@@ -117,16 +156,24 @@ template <class R_> struct Convex_hull_d_traits_3
     template <class I>
     bool operator()(I s, I e, const Point_d& p)
     { 
-      std::vector<Point_d> A(s,e);
-      int a = A.size();
       Affinely_independent_d affinely_independent;
       CGAL_assertion( affinely_independent(s,e) );
-      if (a == 3)
+      Point_d A[3];
+      A[0] = *s;
+      ++s;
+      if(s == e){
+	return  p == A[0];
+      }
+      A[1] = *s;
+      ++s;
+      if (s == e){
+	return collinear( p, A[0], A[1] );
+      }
+      A[2] = *s;
+      ++s;
+      if (s == e){
         return coplanar( p, A[0], A[1], A[2] );
-      if (a == 2)
-        return collinear( p, A[0], A[1] );
-      if (a == 1)
-        return ( p == A[0] );
+      }
       return false;
     }
   };
@@ -177,19 +224,28 @@ template <class R_> struct Convex_hull_d_traits_3
     Hyperplane_d operator()(I s, I e, const Point_d& p, 
                             Oriented_side side)
     { 
-      std::vector<Point_d> A(s,e);
-      int a = A.size(); CGAL_assertion( a <= 3 );
       Hyperplane_d pl;
-      if (a == 3) {
-        pl = Hyperplane_d( A[0], A[1], A[2] );
-      }
-      if (a == 2) {
-        typename R_::Point_3 hp =
-              A[0] + cross_product( p - A[0], A[1] - A[0] );
-        pl = Hyperplane_d( A[0], A[1], hp );
-      }
-      if (a == 1) {
-        pl = Hyperplane_d( A[0], A[0] - p);
+      Point_d A[3];
+      A[0] = *s;
+      ++s;
+      if(s == e){
+	pl = Hyperplane_d( A[0], A[0] - p);
+      } else { 
+	A[1] = *s;
+	++s;
+	if(s == e){
+	  typename R_::Point_3 hp =
+	    A[0] + cross_product( p - A[0], A[1] - A[0] );
+	  pl = Hyperplane_d( A[0], A[1], hp );
+	} else {
+	  A[2] = *s;
+	  ++s;
+	  if(s == e){
+	    pl = Hyperplane_d( A[0], A[1], A[2] );
+	  } else {
+	    CGAL_assertion(false);
+	  }
+	}
       }
       if (side != 0) {
         if ( pl.oriented_side(p) !=  side ) { pl = pl.opposite(); }
