@@ -50,14 +50,19 @@ struct CGAL_Filtering
   CT value;
 
   CGAL_Filtering () {}
+  CGAL_Filtering (const CGAL_Filtering<CT,ET> & fil)
+      : value(fil.value)  {}
   template <class NT>
-  CGAL_Filtering (const NT nt)		: value(nt)  {}
-  // CGAL_Filtering (const double d)	: value(d)  {}
-  // CGAL_Filtering (const CT ct)		: value(ct) {}
+  CGAL_Filtering (const NT & nt) : value(nt)  {}
+  // CGAL_Filtering (const double & d)	: value(d)  {}
+  // CGAL_Filtering (const CT & ct)	: value(ct) {}
 
   typedef CGAL_Filtering<CT,ET> Fil;
 
-  Fil  operator-()                const { return Fil(-value); }
+  // Check Stroustrup if it's ok for assignment/ctors.
+  Fil& operator= (const Fil& fil) { value = fil.value; return *this; }
+
+  Fil  operator- ()               const { return Fil(-value); }
   bool operator< (const Fil& fil) const { return value <  fil.value; }
   bool operator> (const Fil& fil) const { return value >  fil.value; }
   bool operator<=(const Fil& fil) const { return value <= fil.value; }
@@ -152,9 +157,13 @@ inline istream &operator>>(istream &is, const CGAL_Filtering<CT,ET>& d)
 // It's bad to provide such a default, because it can be an inexact cast:
 // ex: CGAL_Gmpz accepts it, but it's false !!!
 
-template <class ET>
-inline ET CGAL_to_exact_type (const double & d)
-{ return ET(d); }
+template <class ET, class CT>
+inline ET CGAL_to_exact_type (const CT & ct)
+{ return ET(ct); }
+
+// template <class ET>
+// inline ET CGAL_to_exact_type (const double & d)
+// { return ET(d); }
 
 // When CT == ET.
 template <class ET>
