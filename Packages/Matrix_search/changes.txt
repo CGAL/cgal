@@ -2,6 +2,10 @@
 //	Revision History for package Matrix_search
 //=====================================================================
 
+1.63 07/09/2003 rursu:
+        - demo use new help class Qt_help_window instead of HelpWindow
+        - demo use new icon demoicon
+
 1.62 30/07/2003 rursu:
 	- fixed demo makefile for FreeBsd
 

@@ -52,10 +52,11 @@ int main(int, char*)
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_Polygon_2.h>
-#include "Qt_widget_toolbar.h"
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
-#include <CGAL/IO/Qt_widget_helpwindow.h>
+#include <CGAL/IO/Qt_help_window.h>
 #include <CGAL/IO/Qt_widget_layer.h>
+#include "Qt_widget_toolbar.h"
+#include <CGAL/IO/pixmaps/demoicon.xpm>
 
 #include <qplatinumstyle.h>
 #include <qapplication.h>
@@ -69,7 +70,6 @@ int main(int, char*)
 #include <qtoolbar.h>
 #include <qfiledialog.h>
 #include <qtimer.h>
-
 
 #include <iostream>
 #include <vector>
@@ -92,7 +92,7 @@ const QString my_title_string("Rectangular p-center Demo with"
 
 //global flags and variables
 int current_state;
-std::list<Point>	  list_of_points;
+std::list<Point>          list_of_points;
 std::vector<Point>        centers;
 Coord_type                result;
 
@@ -102,21 +102,19 @@ public:
 	
   Qt_layer_show_ch(){};
 
-
   void draw()
   {
     widget->lock();
 
       //VERTICES
-      *widget << CGAL::PointSize(6);
+      *widget << CGAL::PointSize(3);
       *widget << CGAL::GREEN;
       std::list<Point>::iterator itp = list_of_points.begin();
       while(itp!=list_of_points.end())
-	*widget << (*itp++);
+        *widget << (*itp++);
       if(list_of_points.size()>2)
         *widget << CGAL::bounding_box_2(list_of_points.begin(), 
 				      list_of_points.end());
-
 
       centers.clear();
       if(list_of_points.size() > 3)
@@ -130,15 +128,12 @@ public:
       Coord_type r = result / Coord_type(2);
       while(vitp!=centers.end()){
         *widget << CGAL::RED;
-	*widget << (*vitp);
-	*widget << CGAL::WHITE;
+        *widget << (*vitp);
+        *widget << CGAL::WHITE;
         *widget << Square_2(Point((*vitp).x() - r, (*vitp).y() - r),
                    Point((*vitp).x() + r, (*vitp).y() + r));
-	vitp++;
+        vitp++;
       }
-
-
-
     widget->unlock();
   };	
   
@@ -246,7 +241,7 @@ private slots:
   void howto(){
     QString home;
     home = "help/rindex.html";
-    HelpWindow *help = new HelpWindow(home, ".", 0, "help viewer");
+    Qt_help_window *help = new Qt_help_window(home, ".", 0, "help viewer");
     help->resize(400, 400);
     help->setCaption("Demo HowTo");
     help->show();
@@ -306,6 +301,8 @@ main(int argc, char **argv)
   app.setMainWidget(&widget);
   widget.setCaption(my_title_string);
   widget.setMouseTracking(TRUE);
+  QPixmap cgal_icon = QPixmap((const char**)demoicon_xpm);
+  widget.setIcon(cgal_icon);
   widget.show();
   current_state = -1;
   return app.exec();
