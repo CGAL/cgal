@@ -102,7 +102,7 @@ public:
   Self        opposite() const;
   Self        transform(const Aff_transformation_2 &t) const
   {
-    return SegmentC2(t.transform(source()), t.transform(target()));
+    return Self(t.transform(source()), t.transform(target()));
   }
 
   bool        is_degenerate() const;
