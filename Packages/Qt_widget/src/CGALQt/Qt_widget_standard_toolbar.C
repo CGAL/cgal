@@ -50,11 +50,12 @@ namespace CGAL {
 
 #if QT_VERSION < 300
   // for Qt 2.3 and before
-  maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
+  maintoolbar = new QToolBar("Qt_widget standard toolbar", mw, QMainWindow::Top, TRUE, "std_toolbar");
 #else
   // from Qt 3.0
-  maintoolbar = new QToolBar(mw, "Tools");
-  mw->addDockWindow (maintoolbar, "tools", DockTop, TRUE );
+  maintoolbar = new QToolBar(mw, "std_toolbar");
+  mw->addDockWindow (maintoolbar, "Qt_widget standard toolbar",
+		     DockTop, TRUE );
 #endif
 		
   but[0] = new QToolButton(maintoolbar, "notool");
