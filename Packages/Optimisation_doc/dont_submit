@@ -1,0 +1,4 @@
+.cvsignore
+Makefile*
+web
+package
