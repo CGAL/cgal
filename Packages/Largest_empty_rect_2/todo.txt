@@ -1,6 +1,6 @@
 - Remove the polygon stuff
 - add default constructor + init method, copy constructor, assignment
-- Remove these 0.000001 constants
+- Remove these 0.000001 constants - done(e.p)
 - Check if the lengthy name problem is still an issue
 - Why does the Delete function object not compile???
 - Do we also want to offer functions left(), right(), top(), bottom() ???
@@ -8,9 +8,10 @@
   * They are enumerated with begin(), end()
   * They can delimit a rectangle
   although they are not known to  the user.
-  Can we identify the additional points via their Point_data pointer??
-- Shouldn't we check wether inserted points are inside the initial bounding box?
+  Can we identify the additional points via their Point_data pointer?? - done (e.p)
+- Shouldn't we check wether inserted points are inside the initial bounding box? - done (e.p)
 - Find a better name for method get_bounding_box.
 - Shall we sto tre the iso-rectangle passed in the constructor
   in order to return the one that was passed to the constructor
   instead of a new one
+- Add ++ andd -- operators
