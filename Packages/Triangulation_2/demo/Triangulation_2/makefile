@@ -179,7 +179,9 @@ constrained$(EXE_EXT): constrained$(OBJ_EXT)
 
 
 
-clean: 	delaunay_triangulation_2.clean \
+clean: 	 \
+	constrained.clean \
+	delaunay_triangulation_2.clean \
 	delaunay_triangulation_2_toolbar_layers.clean \
 	delaunay_triangulation_2_toolbar.clean \
 	triangulation_2_edit_vertex.clean \

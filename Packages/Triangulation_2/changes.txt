@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+02 August 2004 Mariette Yvinec
+- fixed clean of demo/Triangulation_2/makefile
+
 24 July 2004 Sylvain Pion
 - Fix warnings when no assertions.
 
