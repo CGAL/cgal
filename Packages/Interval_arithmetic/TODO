@@ -1,6 +1,27 @@
+- CLN: finish the wrapper(s) [and add the converters]. (+doc)
+- Real/Expr: idem.
+- Implanter les optimisations suivantes compatibles IEEE 754 dans egcs:
+  - (-a)*(-b) => a*b  (idem pour /)
+  - (-a)>0    => a<0
+  - (-a)+b    => b-a ...
+  - (-a)*b    => -(a*b) ssi -ffast-math
+  - bug à fixer: cf get_rounding_mode(), où "volatile" est nécessaire.
+
 Concerning the code itself:
 
+- -ffast-math (essayer la test/bench-suite, et lire la doc, c'est compatible?)
+- Avoir un flag dynamic (static member) qui dit si exception ou pas, voire un
+  function pointer pour overlap_action() ?
+  Et modifier le comportement dans les fonctions save/restore ?
 - FPU: Finir les 2 fonctions "save" et "restore" pour protéger le FPCR.
+  Save/Restore -> dans une variable locale => plutôt un get/set.
+- essayer de mettre a et b "register", et voir le changement de l'assembly.
+- sign_det_2x2() optimisé pour l'IA.
+- Overload orientation_2() to be filtered for Interval_nt (and bench
+  Triangulation).
+- converter (long longs), (long doubles)...  au moins documenter que c'est pas
+  supporté pour le moment.  Hint: (double) +/- 1ulp.
+- Faire un testfile pour vérifier que la version assembleur est supportée.
 - Permettre de cacher (NT tag ?) les conversions en intervalles.
   C'est pas un cache, mais un stockage forcé, et il faut l'updater
   si la value est modifiée...
@@ -14,13 +35,14 @@ Concerning the code itself:
   needs the rounding to do the conversion ?
   Remark: the fast case is for the builtin types, so others (that care of the
   rounding mode) can be slowed down...
-- CLN: finish the wrapper(s) [and add the converters].
 - Include a counter of failures of the filter.
   (in the code produced by the script -> static member of Filtered_exact<> ?)
 ? SUN: Add "-Wa,-xarch=v8plus" to fix the following "error":
   /usr/ccs/bin/as: "/var/tmp/ccBHnU0T.s", line 861: warning: 3 instructions
   required between ldfsr and next FBfcc; nops inserted
 - MipsPro: Essayer de faire marcher (ask Michael).
+- Looker BIAS s'il utiliser l'assembleur pour Borland/MipsPro/SunPro/Visual...
+  Visiblement, BIAS, c'est très nacze.
 
 Concerning the script:
 
@@ -53,8 +75,11 @@ Concerning the doc:
   on by default, but is needed on IRIX 5.3 and its buggy assembler.  Will be
   the default solution till I have some machine language code.
   Or better, add a flag to the install procedure ?
-? document is_same().
-? add a pointer to my MISC'99 paper to appear.
+- documenter qu'on peut utiliser l'IA pour représenter des données avec
+  tolérance, mais que pour le moment, aucun modèle rigoureux n'est implanté
+  dans CGAL pour gérer ça.  De même BBox == Point<Cartesian<IA> >.
+- document is_same(), .is_point() (same as IA == IA), ||, &&, .overlap().
+- add a pointer to my MISC'99 paper.
 ? when a "implementor's doc" will be available, shift the IA specific stuff in
   it ?
 
@@ -62,5 +87,6 @@ Concerning the test-suite:
 
 - test new converter functions ?  [use flag -DCGAL_IA_DEBUG]
 - test NaNs (and Infs?).  Comparisons with these should throw the exception...
+  Et vérifier s'ils sont bien propagés correctement (par min/max, ou même *).
 - try to fix the x86 bug.  Currently, it hides the problem for the test-suite
   to work.

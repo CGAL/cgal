@@ -1,11 +1,14 @@
 Changes done to the Interval Arithmetic package.
 
-Version 2.8 on ?? 1999
+Version 3.0 on 11 March 1999
+- Namespace CGAL.
 - Introduced .exact() and .interval() member functions to the filtered type.
 - Removed SunPro comments in the doc.
-- Introduced namespace CGAL.
 - Support standard headers.
-- More operators(double) supported.
+- More operators (intervals with doubles) supported.
+- Union and intersection on intervals (operators || and &&).
+- Quotient<RT> supported by the filtering stuff.
+- function "convert_to<>()" replaced by "struct converter::do_it()".
 
 Version 2.7 on 22 December 1998
 - Hopefully the last fixes for the 1.2 release.
