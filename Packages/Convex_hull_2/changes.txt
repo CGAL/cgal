@@ -1,3 +1,7 @@
+3.7    (28 May 2001)
+- moved a demo program from the examples directory
+- added README for demo programs
+
 3.6    (24 May 2001)
 - shortened lines over 80 characters
 - fixed paths to example code in doc.
