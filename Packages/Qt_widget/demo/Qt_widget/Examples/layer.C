@@ -12,6 +12,7 @@
 typedef CGAL::Cartesian<double>             Rep;
 typedef CGAL::Point_2<Rep>                  Point;
 typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
+typedef CGAL::Qt_widget						Qt_widget;
 
 Delaunay dt;
 
@@ -21,7 +22,7 @@ class My_Layer : public CGAL::Qt_widget_layer{
   }
 };
 
-class My_Window : public CGAL::Qt_widget {
+class My_Window : public Qt_widget {
   Q_OBJECT
 public:
   My_Window(int x, int y){
