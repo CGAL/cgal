@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-my ($major,$minor) = (0,0);
+my ($major,$minor) = (2,4);
 #my $release_date_option = "-d '2000, January 11'";
 my $release_date_option = "";
 

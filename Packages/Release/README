@@ -44,10 +44,10 @@ For the manuals:
       6.  For the HTML version in CGAL-M.m/doc_html (NOT in the Manual
           directory), do the following bit of editing:
              remove the navigation links to bibliography, index and title;
-             remove the files title.html and manual_index.html.
+             remove the files title.html and manual_index.html, to_html.log.
 
 Package the code:
-      1.  In directory CGAL-M.m do
+      1.  In directory <release_dir> do
              find CGAL-M.m -exec touch 01221530 {} \;
            in order to touch all files (Here the date/time  Jan 22, 15:30 was 
            used as an example)
@@ -84,5 +84,5 @@ Install everything:
       4.  install the new web pages
 
 Then finally ...
-      4.  announce the release (see announcement directory)
+      5.  announce the release (see announcement directory)
 

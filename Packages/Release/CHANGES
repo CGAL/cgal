@@ -1,7 +1,162 @@
 
+----------------------------- Release 2.4 ------------------------------------
+Version 2.4 differs from version 2.3 in the platforms that are supported and
+in functionality.  There have also been a number of bug fixes for this release.
+
+Additional supported platforms:
+   Microsoft Visual C++, version 7.
+   SunPro 5.3 (with patch 111685-05) 
+   g++ 3.1 
+
+The following functionality has been added or changed:
+
+Kernels:   
+
+   Point_d has been removed from the 2D and 3D kernels.  This type is 
+   now available from the d-dimensional kernel only.
+
+Basic Library:
+
+  2D Polygon Partition
+    - Traits requirements for optimal partitioning have been changed slightly.
+
+  2D Sweep line 
+    - A new package that implements a sweep-line algorithm to compute
+      arrangements of curves for different families of curves, which are 
+      not necessarily line segments  (e.g., it also works for circular arcs).
+      The resulting output can be the list of vertex points, the resulting 
+      subcurves or a planar map.
+
+  2D Planar Maps and Arrangements
+
+    - New quicker insertion functions of Planar_map_2 for cases where more
+      precomputed information is available regarding the position of 
+      the inserted curve in the map.
+
+    - New query function for planar maps that determines whether a given
+      point is within a given face of the planar map.
+
+    - New iterator over edges of planar maps in addition to the existing
+      iterator over halfedges.
+   
+    - New copy constructor and assignment operator for arrangements.
+
+  Polyhedral Surface
+    - new design introduced with release 2.3 now supported by VC7 compiler
+
+    - Extended functionality of Polyhedron_incremental_builder:
+      absolute indexing allows one to add new surfaces to existing ones.
+
+  2D Triangulation
+
+    - There is a new triangulation data structure replacing the two
+      previous ones. This new data structure is coherent with the 3d
+      triangulation data structure and offer the advantages of both 
+      previous ones. Backward compatibility is ensured and this change
+      is transparent for the user of triangulation classes.
+    - Constrained and Delaunay constrained triangulations are now able
+      to handle intersecting input constraints. 
+      The behavior of constrained triangulations with repect to
+      intersection of input constraints can be customized using
+      an intersection tag.
+    - A new class Constrained_triangulation_plus offers a constrained 
+      hierarchy on top of a constrained triangulations. This additionnal 
+      data structure describes the subdivision of the original constraints  
+      into edges of the triangulations.
+ 
+ 
+  3D Triangulation
+    - Running time improved by a better and more compact management of 
+      memory allocation
+
+    - Various improvements and small functionalities added:
+
+        - Triangulation_3<GT,Tds>::triangle() returns a triangle oriented 
+          towards the outside of the cell c for facet (c,i)
+        - New function insert(Point, Locate_type, Cell_handle, int, int) 
+          which avoids the location step.
+        - New function to get access to cells in conflict in a Delaunay 
+          insertion : find_conflicts() and insert_in_hole()
+        - New function TDS::delete_cells(begin, end).
+        - New functions : degree(v), reorient(), remove_decrease_dimension(),
+          remove_from_simplex().
+
+    - Changes of interface:
+
+        - vertices and cells are the same for the triangulation data 
+          structure and the geometric triangulation
+        - the triangulation data structure uses Vertex_handle (resp 
+          Cell_handle) instead of Vertex* (resp Cell*).
+        - incident_cells() and incident_vertices() are templated by output 
+          iterators
+        - changes in the iterators and circulators interface:
+           - Iterators and circulators are convertible to handles 
+             automatically, no need to call "->handle()" anymore.
+           - Vertex_iterator split into All_vertices_iterator and
+             Finite_vertices_iterator (and similar for cells...).
+           - TDS::Edge/Facet iterators now support operator->.
+
+  2D Search structures
+    - additional range search operations taking a predicate functor
+
+Support Library:
+
+   Qt_widget
+     - We have added a new class for visualization of 2D CGAL objects.
+       It is derived from Trolltech's Qt class QWidget.  This code is
+       distributed under a dual QPL and commercial license.
+     - Some demos were developed for the following packages: 2D Alpha shapes,
+       2D Convex Hull, Largest empty 2D rectangle, Maximum k-gon, 
+       Minimum ellipse,  Minimum 2D quadrilateral, 2D polygon partitioning 
+       2D regular and constrained triangulation.
+     - Tutorials are available to help users get used to Qt_widget.
+
+  Timer
+    - Fixed Timer class (for user process time) to have no wrap-around
+      anymore on Posix-compliant systems.
+
+The following functionality is no longer supported:
+
+  - Planar maps of infinite curves (the so-called planar map bounding-box).
+
+
+Bugs in the following packages have been fixed:
+   3D Convex hull, 2D Polygon partition, simple polygon generator, 
+   2D intersections
+
+Also, attempts have been made to assure compatability with upcoming LEDA
+releases that introduce the leda namespace.
+  
+Known problems:
+
+  - 2D Nef Polyhedra contains a memory leak.  Memory problems are also
+    the likely cause of occasional run-time errors on some platforms.
+  - The d-dimensional convex hull computation produces run-time errors on
+    some platforms because of memory management bugs.
+  - The new Halfedge Data Structure design introduced with release 2.3
+    does not work on VC6.  See the release notes in the manual for more 
+    information.
+
+  - The following deficiencies relate to planar maps, planar maps of
+    intersecting curves (pmwx), arrangements and sweep line.
+
+    - On KCC, Borland and SunPro we guarantee neither compilation nor 
+      correct execution for all of the packages above.
+    - On VC6 and VC7 we guarantee neither compilation nor correct
+      execution of the sweep line package.
+    - On CC (on Irix 6.5) the trapezoidal decomposition point location
+      strategy is problematic when used with planar maps, pmwx, or
+      arrangements (mind that this is the default for planar maps).
+    - On CC (on Irix 6.5) sweep line with polyline traits does not compile
+      (mind that the so-called leda polyline traits does compile).
+    - On g++ (on Irix 6.5) the segment-circle (Arr_segment_circle_traits_2)
+      traits does not compile for either of the above packages.
+  
+
+   
 ----------------------------- Release 2.3 ------------------------------------
 
-Version 2.3 differs from version 2.3 in the platforms that are supported and
+Version 2.3 differs from version 2.2 in the platforms that are supported and
 in functionality.
 
 Additional supported platforms:

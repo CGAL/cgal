@@ -67,10 +67,8 @@ sub print_license()
 //   notice appears in all copies of the software and related documentation. 
 //
 // Commercial licenses
-// - A commercial license is available through Algorithmic Solutions
-//   (http://www.algorithmic-solutions.com). 
-// - Commercial users may apply for an evaluation license by writing to
-//   (Andreas.Fabri@geometryfactory.com). 
+// - Please check the CGAL web site http://www.cgal.org/index2.html for 
+//   availability
 //
 // The CGAL Consortium consists of Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
@@ -81,7 +79,46 @@ sub print_license()
 END_OF_LICENSE
 }
 
+sub print_qt_license()
+{
+    print TEMPFILE <<'END_OF_QT_LICENSE';
 
+// Copyright (c) 2002 ENS de Paris
+//
+// This software and related documentation are part of the Computational
+// Geometry Algorithms Library (CGAL).
+// This software and documentation are provided "as-is" and without warranty
+// of any kind. In no event shall the CGAL Consortium be liable for any
+// damage of any kind. 
+//
+// The Qt widget we provide for CGAL is distributed under the QPL,
+// which is Trolltech's open source license. For more information see 
+//     http://www.trolltech.com/developer/licensing/qpl.html
+//
+// The CGAL Consortium consists of Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
+// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
+// (Germany), Max-Planck-Institute Saarbrucken (Germany), RISC Linz (Austria),
+// and Tel-Aviv University (Israel).
+//
+END_OF_QT_LICENSE
+}
+
+sub print_demo_license()
+{
+    print TEMPFILE <<'END_OF_DEMO_LICENSE';
+
+// This software and related documentation are part of the Computational
+// Geometry Algorithms Library (CGAL).
+// This software and documentation are provided "as-is" and without warranty
+// of any kind. In no event shall the CGAL Consortium be liable for any
+// damage of any kind. 
+//
+// This file is part of an example program for CGAL.  This example
+// program may be used, distributed and modified without limitation.
+
+END_OF_DEMO_LICENSE
+}
 #----------------------------------------------------------------#
 #                     check_and_update_2                         #
 #----------------------------------------------------------------#
@@ -112,7 +149,15 @@ sub check_and_update_2($$$)
 	return 0;
     }
     print TEMPFILE $_;
-    print_license;
+    if ($filename =~ m<.*include/CGAL/IO/Qt_widget.*|.*src/CGALQt.*>) {
+       print_qt_license;
+    }
+    elsif ($filename =~ m<.*demo/.*.(C.h)|.*/examples/.*.(C|h)>) {
+       print_demo_license;
+    }
+    else {
+       print_license;
+    }
     while ( <SOURCE_FILE> ) {
 	if (m|^\s*//\s*-{10,}\s*$|) {
 	    $header_position = 3;
