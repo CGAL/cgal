@@ -44,8 +44,11 @@ icons$(EXE_EXT): icons$(OBJ_EXT)
 mesh_demo.moc:  mesh_demo.C
 	$(QT_MOC) -o mesh_demo.moc $<
 
-mesh_demo$(OBJ_EXT): mesh_demo.moc ../../include/CGAL/Mesh_2.h \
-	../../include/CGAL/Mesh_default_traits_2.h
+mesh_demo$(OBJ_EXT): mesh_demo.moc \
+	../../include/CGAL/Mesh_2.h \
+	../../include/CGAL/Mesh_default_traits_2.h \
+	../../include/CGAL/Mesh_size_traits_2.h \
+	../../include/CGAL/Mesh_local_size_traits_2.h
 
 mesh_demo$(EXE_EXT): mesh_demo$(OBJ_EXT) icons$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)mesh_demo \

@@ -19,10 +19,10 @@ int main(int, char*)
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
-//#include <CGAL/Triangulation_euclidean_traits_2.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Mesh_2.h>
-#include <CGAL/Mesh_default_traits_2.h>
+#include <CGAL/Mesh_local_size_traits_2.h>
+#include <CGAL/Mesh_size_traits_2.h>
 #include <CGAL/Mesh_face_base_2.h>
 
 #include <CGAL/point_generators_2.h>
@@ -59,6 +59,7 @@ int main(int, char*)
 #include <qlabel.h>
 #include <qlineedit.h>
 #include <qtimer.h>
+#include <qcursor.h>
 
 typedef CGAL::Simple_cartesian<double>  K1;
 typedef CGAL::Filtered_kernel<K1>       Kernel;
@@ -68,7 +69,7 @@ typedef K::FT                           FT;
 typedef CGAL::Triangulation_vertex_base_2<K> Vb;
 typedef CGAL::Mesh_face_base_2<K> Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb, Fb> Tds;
-typedef CGAL::Mesh_default_traits_2<K> Meshtraits;
+typedef CGAL::Mesh_local_size_traits_2<K> Meshtraits;
 typedef CGAL::Constrained_Delaunay_triangulation_2<Meshtraits, Tds,
   CGAL::Exact_predicates_tag> Tr;
 
@@ -109,6 +110,30 @@ public:
     widget->setFillColor(old_fill_color);
     widget->setLineWidth(old_line_width);
   }
+};
+
+class Follow_mouse : public CGAL::Qt_widget_layer
+{
+  QCursor oldcursor;
+public:
+  void mouseMoveEvent(QMouseEvent *e)
+  {
+    FT x=static_cast<FT>(widget->x_real(e->x()));
+    FT y=static_cast<FT>(widget->y_real(e->y()));
+
+    widget->new_object(make_object(Point(x, y)));
+  }
+
+  void activating()
+  {	
+    oldcursor = widget->cursor();
+    widget->setCursor(crossCursor);
+  };
+  
+  void deactivating()
+  {
+    widget->setCursor(oldcursor);
+  };
 };
 
 namespace {
@@ -191,6 +216,10 @@ public:
       get_seed = new CGAL::Qt_widget_get_point<K>();
       widget->attach(get_seed);
       get_seed->deactivate();
+
+      follow_mouse = new Follow_mouse();
+      widget->attach(follow_mouse);
+      follow_mouse->deactivate();
 
       connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),
 	      this, SLOT(get_cgal_object(CGAL::Object)));
@@ -378,10 +407,16 @@ public:
       pmMesh->insertItem("&Quit", qApp, SLOT(closeAllWindows()),
 			 CTRL+Key_Q );
 
-      QPopupMenu *pmCriteria = new QPopupMenu(this);
+      pmCriteria = new QPopupMenu(this);
+      pmCriteria->setCheckable(true);
       menuBar()->insertItem("&Criteria", pmCriteria);
-      pmCriteria->insertItem("Set &bound", this, SLOT(setBound()),
+      pmCriteria->insertItem("Set &bound...", this, SLOT(setBound()),
 			     CTRL+Key_B );
+      pmCriteria->insertItem("Set &size bound...", this, SLOT(setSizeBound()),
+			     CTRL+Key_S );
+      menu_id = pmCriteria->insertItem("Size criteria only under &mouse",
+				       this, SLOT(setLocal()),
+				       CTRL+Key_L );
 
       widget->set_window(-500.,500.,-500.,500.);
       widget->setMouseTracking(TRUE);
@@ -418,7 +453,30 @@ public slots:
 	    mesh.mark_facets(seeds.begin(), seeds.end());
 	  }
 	else
-	  mesh.insert(p);
+	  if(follow_mouse->is_active())
+	    {
+	      typedef Mesh::Face_handle Face_handle;
+	      std::list<Face_handle> l;
+
+	      Face_handle fh = mesh.locate(p);
+	      traits.set_point(p);
+	      if( (fh!=NULL) )
+		{
+		  std::cerr << "Face handle not null.\n";
+		  const Point&
+		    a = fh->vertex(0)->point(),
+		    b = fh->vertex(1)->point(),
+		    c = fh->vertex(2)->point();
+		  
+		  if(traits.is_bad_object().operator()(a, b, c))
+		    l.push_back(fh);
+		}
+	      mesh.set_geom_traits(traits, l.begin(), l.end());
+	      while( mesh.refine_step() );
+	      widget->redraw();
+	    }
+	  else
+	    mesh.insert(p);
       else
 	if (CGAL::assign(poly,obj))
 	  for(Polygon::Edge_const_iterator it=poly.edges_begin();
@@ -578,17 +636,41 @@ public slots:
       mesh.set_geom_traits(traits);
     }
 
+  void setSizeBound() 
+    {
+      double bound = QInputDialog::getDouble( "Set bound",
+					      "Please enter a new bound",
+					      mesh.geom_traits().size_bound());
+      traits.set_size_bound(bound);
+      mesh.set_geom_traits(traits);
+    }
+
+  void setLocal()
+    {
+      traits.set_local_size(!mesh.geom_traits().is_local_size());
+      pmCriteria->setItemChecked(menu_id, traits.is_local_size());
+      mesh.set_geom_traits(traits);
+      if(traits.is_local_size())
+	follow_mouse->activate();
+      else
+	follow_mouse->deactivate();
+    }
+
 private:
+  bool is_mesh_initialized;
   Meshtraits traits;
   Mesh mesh;
-  bool is_mesh_initialized;
 
   Seeds seeds;
+
+  QPopupMenu *pmCriteria;
+  int menu_id;
 
   CGAL::Qt_widget* widget;
   CGAL::Qt_widget_get_point<K>* get_point;
   CGAL::Qt_widget_get_point<K>* get_seed;
   CGAL::Qt_widget_get_polygon<Polygon>* get_polygon;
+  Follow_mouse* follow_mouse;
 
   CGAL::Qt_layer_show_points<Mesh>* show_points;
   CGAL::Qt_layer_show_points<Seeds>* show_seeds;

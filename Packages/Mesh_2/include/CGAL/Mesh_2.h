@@ -268,7 +268,28 @@ public:
   void process_one_face();
   bool refine_step();
 
+  // Set the geom_traits and recalculate the list of bad faces
   void set_geom_traits(const Geom_traits& gt);
+
+  // Set the geom_traits and add the sequence [begin, end[ to the list
+  // of bad faces.
+  // It is a iterator of Face_Handle
+  template <class It>
+  void set_geom_traits(const Geom_traits& gt,
+		       It begin, It end)
+  {
+    _gt = gt;
+    for(It pfit=begin; pfit!=end; ++pfit)
+      {
+	const Vertex_handle&
+	  va = (*pfit)->vertex(0),
+	  vb = (*pfit)->vertex(1),
+	  vc = (*pfit)->vertex(2);
+	Bad_faces.insert(std::make_pair(aspect_ratio(*pfit),
+				    Threevertices(va,vb,vc)));
+      }
+  }
+
   //CHECK
   bool is_encroached(const Vertex_handle va, 
 		     const Vertex_handle vb,

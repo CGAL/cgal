@@ -1,3 +1,6 @@
+#ifndef CGAL_MESH_DEFAULT_TRAITS_2_H
+#define CGAL_MESH_DEFAULT_TRAITS_2_H
+
 namespace CGAL {
 
 template <class K>
@@ -26,15 +29,15 @@ public:
     bool operator()(const Point_2& a,
 		    const Point_2& b,
 		    const Point_2& c) const
-      {
-	Compute_squared_minimum_sine_2 squared_sine = 
-	  Traits().compute_squared_minimum_sine_2_object();
-	  
-	if( squared_sine(a,b,c) >= B )
-	  return false;
-	else
-	  return true;
-      };
+    {
+      Compute_squared_minimum_sine_2 squared_sine = 
+	Traits().compute_squared_minimum_sine_2_object();
+      
+      if( squared_sine(a,b,c) >= B )
+	return false;
+      else
+	return true;
+    };
   };
 
   Is_bad is_bad_object() const
@@ -88,3 +91,5 @@ public:
 };
 
 }; // end namespace CGAL
+
+#endif
