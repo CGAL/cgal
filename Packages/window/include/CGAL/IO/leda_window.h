@@ -69,7 +69,7 @@ cgalize(leda_window& w)
   w.set_frame_label("CGAL-2.3");
   w.set_icon_label("CGAL");
   w.set_line_width( 2);
-  w.set_icon_pixrect( w.create_pixrect( esprit_logo));
+  w.set_icon_pixrect( w.create_pixrect(cgal_logo));
 }
 
 inline
