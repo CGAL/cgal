@@ -1,3 +1,6 @@
+22 October 2004  Sylvain Pion
+- Fix traits doc.
+
 Version 1.47 (09 February 2004) [rursu]
 - Updated headers in examples
 

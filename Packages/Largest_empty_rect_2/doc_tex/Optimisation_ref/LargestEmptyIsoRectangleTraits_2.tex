@@ -32,7 +32,7 @@ predicates on those primitives.
 \ccGlue
 \ccNestedType{Iso_rectangle_2}{The iso rectangle  type.}
 
-\ccNestedType{Compare_x_2_object}{Predicate object. Must provide
+\ccNestedType{Compare_x_2}{Predicate object. Must provide
 the operator
 \ccc{Comparison_result operator()(Point_2 p, Point_2 q)}
 which returns 
@@ -40,7 +40,7 @@ which returns
  according ding to the
 $x$-ordering of points \ccc{p} and \ccc{q}.}
 \ccGlue
-\ccNestedType{Compare_y_2_object}{Predicate object. Must provide
+\ccNestedType{Compare_y_2}{Predicate object. Must provide
 the operator
 \ccc{Comparison_result operator()(Point_2 p, Point_2 q)}
 which returns
@@ -48,13 +48,13 @@ which returns
 according to the
 $y$-ordering of points \ccc{p} and \ccc{q}.}
 \ccGlue
-\ccNestedType{Less_x_2_object}{Predicate object. Must provide
+\ccNestedType{Less_x_2}{Predicate object. Must provide
 the operator
 \ccc{bool operator()(Point_2 p, Point_2 q)}
 which returns
 whether \ccc{p} is less than \ccc{q} according to their $x$-ordering.}
 \ccGlue
-\ccNestedType{Less_y_2_object}{Predicate object. Must provide
+\ccNestedType{Less_y_2}{Predicate object. Must provide
 the operator
 \ccc{bool operator()(Point_2 p, Point_2 q)}
 which returns
@@ -81,13 +81,13 @@ and constructor objects.
 
 \ccThree{Construct_segment_2}{gt.compare_x(Point p0, Point p1)x}{}
 
-\ccMethod{Comparison_x_2 compare_x_2_object();}{}                               
+\ccMethod{Compare_x_2 compare_x_2_object();}{}                               
 \ccGlue
-\ccMethod{Comparison_y_2 compare_y_2_object();}{}
+\ccMethod{Compare_y_2 compare_y_2_object();}{}
 \ccGlue
-\ccMethod{bool less_x_2_object();}{}
+\ccMethod{Less_x_2 less_x_2_object();}{}
 \ccGlue
-\ccMethod{bool less_y_2_object();}{}
+\ccMethod{Less_y_2 less_y_2_object();}{}
 
 \ccHasModels
 \ccc{CGAL::Cartesian<R>} \\
