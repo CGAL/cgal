@@ -96,10 +96,22 @@ public:
    * \todo replace indirect use compare_x() with compare_x_2()
    */
   Comparison_result compare_x(const Point_2 & p1, const Point_2 & p2) const
-  { return compare_x_2_object()(p1, p2); }
+  {
+    return compare_x_2_object()(p1, p2);
+  }
 
-  Comparison_result compare_y(const Point_2 & p0, const Point_2 & p1) const {
-    return CGAL::compare_y(p0,p1);
+  /*! compare_xy() compares the two given points by x, then by y
+   * \param p1 the first point
+   * \param p2 the second point
+   * \return LARGER if x(p1) > x(p2) or if x(p1) = x(p2) and y(p1) > y(p2); 
+   *         SMALLER if x(p1) < x(p2) or if x(p1) = x(p2) and y(p1) < y(p2); 
+   *         or else EQUAL
+   *
+   * \todo replace indirect use compare_xy() with compare_xy_2()
+   */
+  Comparison_result compare_xy(const Point_2 & p1, const Point_2 & p2) const
+  {
+    return compare_xy_2_object()(p1, p2);;
   }
 
   /*! curve_is_vertical
@@ -207,6 +219,8 @@ public:
     else {
       // check if they are right endpoints (and compare to the one from 
       // the left) otherwise -
+      // 
+      //! \todo This is incorrect! we should probably return EQUAL.
       return (CGAL::compare_y_at_x(point_to_left(p),l1,l2)); 
     }
   } 
@@ -266,6 +280,7 @@ public:
       
       //debug
       { 
+	//! \todo This is incorrect! we should probably return EQUAL.
 	CGAL_assertion(curve_compare_at_x(cv1,cv2,p) == EQUAL);
 	return (CGAL::compare_y_at_x(point_to_right(p),l1,l2)); 
       }
@@ -279,13 +294,14 @@ public:
     if (!curve_is_in_x_range(cv, p))
       return CURVE_NOT_IN_RANGE;
     if (curve_is_vertical(cv)) {
-      if (compare_y(curve_source(cv),p)*compare_y(curve_target(cv),p)<=0)
+      if (CGAL::compare_y(curve_source(cv),p)*
+	  CGAL::compare_y(curve_target(cv),p)<=0)
         return ON_CURVE;
-      if (compare_y(curve_source(cv),p)==LARGER)
+      if (CGAL::compare_y(curve_source(cv),p)==LARGER)
 	//bug fix (2/11)
 	//return ABOVE_CURVE;
 	return UNDER_CURVE;
-      if (compare_y(curve_source(cv),p)==SMALLER)
+      if (CGAL::compare_y(curve_source(cv),p)==SMALLER)
 	//return UNDER_CURVE;
 	return ABOVE_CURVE;
     }
@@ -344,8 +360,6 @@ public:
     
     int or0=orientation(p0,p,px);
     int or1=orientation(p1,p,px);
-    // Bug Fix, Shai, Jan, 8, 2001
-    // 'or' is a keyword in C++, changed to 'orient'
     int orient=or0*or1;
     
     if (orient < 0) { //one is a left_turn the other right_turn
@@ -979,6 +993,7 @@ public:
   // PRIVATE
 private:
 
+  //! \todo Remove the point_to_left() and point_to_right() functions.
   Point_2 point_to_left(const Point_2& p) const {
     return p+Vector_2(-1,0);;
   }

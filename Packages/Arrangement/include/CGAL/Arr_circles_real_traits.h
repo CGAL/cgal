@@ -82,8 +82,8 @@ public:
   bool is_x_monotone() const {
     if (s==t) 
       return false;  //closed circle
-    int point_position=CGAL::compare_y(s,c.center()) * 
-      CGAL::compare_y(t,c.center());
+    int point_position = (CGAL_NTS compare(s.y(),c.center().y())) * 
+                         (CGAL_NTS compare(t.y(),c.center().y()));
     if (point_position < 0)
       return false; //one above and one below
     if  (orientation(s,c.center(),t)!=(c.orientation()) )
@@ -165,10 +165,16 @@ public:
 
 
   Comparison_result compare_x(const Point_2& p0, const Point_2& p1) const {
-    return compare_value(p0.x(),p1.x());
+    return _compare_value(p0.x(),p1.x());
   }
-  Comparison_result compare_y(const Point_2& p0, const Point_2& p1) const {
-    return compare_value(p0.y(),p1.y());
+
+  Comparison_result compare_xy(const Point_2& p0, const Point_2& p1) const {
+    Comparison_result x_res = _compare_value(p0.x(),p1.x());
+    
+    if (x_res != EQUAL)
+      return (x_res);
+    
+    return _compare_value(p0.y(),p1.y());
   }
 
   //no vertical segments :
@@ -192,7 +198,7 @@ public:
     Point_2 p1=curve_calc_point(cv1,p);
     Point_2 p2=curve_calc_point(cv2,p);
 
-    return compare_y(p1,p2);
+    return _compare_value(p1.y(),p2.y());
   }
 
 
@@ -234,16 +240,16 @@ public:
     Vector d1=derivative_vec(cv1,q);
     Vector d2=derivative_vec(cv2,q);
 
-    if ((compare_value(d1[0],0)==EQUAL)||
-        (compare_value(d2[0],0)==EQUAL) ) { //one or both are infinite
+    if ((_compare_value(d1[0],0)==EQUAL)||
+        (_compare_value(d2[0],0)==EQUAL) ) { //one or both are infinite
       if (CGAL_NTS is_negative(d1[1]*d2[1])) {
-        return compare_value(d1[1],d2[1]) ;
+        return _compare_value(d1[1],d2[1]) ;
       }
       else {
-        if (compare_value(d1[0],0)!=EQUAL) //d2 is vertical
-          return compare_value(0,d2[1]);
-        if (compare_value(d2[0],0)!=EQUAL) //d1 is vertical
-          return compare_value(d1[1],0);
+        if (_compare_value(d1[0],0)!=EQUAL) //d2 is vertical
+          return _compare_value(0,d2[1]);
+        if (_compare_value(d2[0],0)!=EQUAL) //d1 is vertical
+          return _compare_value(d1[1],0);
 
         //otherwise both are vertical
         //and they share a tangent at q
@@ -253,19 +259,19 @@ public:
           //curves are on lower part of circle (if d2 has greater value then
           //it is below d1 and return LARGER)
           return 
-            compare_value(d2[0]*d2[0]+d2[1]*d2[1], d1[0]*d1[0]+d1[1]*d1[1]);
+            _compare_value(d2[0]*d2[0]+d2[1]*d2[1], d1[0]*d1[0]+d1[1]*d1[1]);
         }      
         else { //upper part of circle(if d1 has greater value then
           //it is above d2 and return LARGER)
           return
-            compare_value(d1[0]*d1[0]+d1[1]*d1[1], d2[0]*d2[0]+d2[1]*d2[1]);
+            _compare_value(d1[0]*d1[0]+d1[1]*d1[1], d2[0]*d2[0]+d2[1]*d2[1]);
         }
       }
     }
 
     //in any other case both derivatives are finite and to the left of q
-    //    return compare_value(derivative(cv2,q), derivative(cv1,q));
-    Comparison_result ccr=compare_value(d2[1]/d2[0], d1[1]/d1[0] );
+    //    return _compare_value(derivative(cv2,q), derivative(cv1,q));
+    Comparison_result ccr=_compare_value(d2[1]/d2[0], d1[1]/d1[0] );
 
     if (ccr!=EQUAL)
       return ccr;
@@ -289,12 +295,12 @@ public:
 	//curves are on lower part of circle (if |d2| has greater value then
 	//it is below d1 and return LARGER)
 	return 
-	  compare_value(d2[0]*d2[0]+d2[1]*d2[1], d1[0]*d1[0]+d1[1]*d1[1]);
+	  _compare_value(d2[0]*d2[0]+d2[1]*d2[1], d1[0]*d1[0]+d1[1]*d1[1]);
       }      
       else { //upper part of circle(if |d1| has greater value then
 	//it is above d2 and return LARGER)
 	return
-	  compare_value(d1[0]*d1[0]+d1[1]*d1[1], d2[0]*d2[0]+d2[1]*d2[1]);
+	  _compare_value(d1[0]*d1[0]+d1[1]*d1[1], d2[0]*d2[0]+d2[1]*d2[1]);
       }
 
     }
@@ -341,16 +347,16 @@ public:
     Vector d1=derivative_vec(cv1,q);
     Vector d2=derivative_vec(cv2,q);
 
-    if ((compare_value(d1[0],0)==EQUAL)||
-        (compare_value(d2[0],0)==EQUAL) ) { //one or both are vertical
+    if ((_compare_value(d1[0],0)==EQUAL)||
+        (_compare_value(d2[0],0)==EQUAL) ) { //one or both are vertical
       if (CGAL_NTS is_negative(d1[1]*d2[1]) ) {
-        return compare_value(d1[1],d2[1]) ;
+        return _compare_value(d1[1],d2[1]) ;
       }
       else {
-        if (compare_value(d1[0],0)!=EQUAL) //d2 is vertical
-          return compare_value(0,d2[1]);
-        if (compare_value(d2[0],0)!=EQUAL ) //d1 is vertical
-          return compare_value(d1[1],0);
+        if (_compare_value(d1[0],0)!=EQUAL) //d2 is vertical
+          return _compare_value(0,d2[1]);
+        if (_compare_value(d2[0],0)!=EQUAL ) //d1 is vertical
+          return _compare_value(d1[1],0);
         
         //otherwise they share a tangent at q
         //compare the norm of tangent vector (==second derivative)
@@ -358,20 +364,20 @@ public:
           //curves are on lower part of circle (if |d2| has greater value then
           //it is below d1 and return LARGER)
           return 
-            compare_value(d2[0]*d2[0]+d2[1]*d2[1], d1[0]*d1[0]+d1[1]*d1[1]);
+            _compare_value(d2[0]*d2[0]+d2[1]*d2[1], d1[0]*d1[0]+d1[1]*d1[1]);
         }      
         else { //upper part of circle(if |d1| has greater value then
           //it is above d2 and return LARGER)
           return
-            compare_value(d1[0]*d1[0]+d1[1]*d1[1], d2[0]*d2[0]+d2[1]*d2[1]);
+            _compare_value(d1[0]*d1[0]+d1[1]*d1[1], d2[0]*d2[0]+d2[1]*d2[1]);
         }
 
       }
     }
 
     //in other case both derivatives are finite and to the right of q
-    //return compare_value(derivative(cv1,q), derivative(cv2,q));
-    Comparison_result ccr=compare_value(d1[1]/d1[0], d2[1]/d2[0] );
+    //return _compare_value(derivative(cv1,q), derivative(cv2,q));
+    Comparison_result ccr=_compare_value(d1[1]/d1[0], d2[1]/d2[0] );
     if (ccr!=EQUAL)
       return ccr;
     else {
@@ -394,12 +400,12 @@ public:
 	//curves are on lower part of circle (if |d2| has greater value then
 	//it is below d1 and return LARGER)
 	return 
-	  compare_value(d2[0]*d2[0]+d2[1]*d2[1], d1[0]*d1[0]+d1[1]*d1[1]);
+	  _compare_value(d2[0]*d2[0]+d2[1]*d2[1], d1[0]*d1[0]+d1[1]*d1[1]);
       }      
       else { //upper part of circle(if |d1| has greater value then
 	//it is above d2 and return LARGER)
 	return
-	  compare_value(d1[0]*d1[0]+d1[1]*d1[1], d2[0]*d2[0]+d2[1]*d2[1]);
+	  _compare_value(d1[0]*d1[0]+d1[1]*d1[1], d2[0]*d2[0]+d2[1]*d2[1]);
       }
 
     }
@@ -412,7 +418,7 @@ public:
 
     if (!curve_is_in_x_range(cv, p))
       return CURVE_NOT_IN_RANGE;
-    int res = compare_y(p, curve_calc_point(cv, p));
+    int res = _compare_value(p.y(), curve_calc_point(cv, p).y());
     if (res == SMALLER)
       return UNDER_CURVE;
     if (res == LARGER)
@@ -496,7 +502,7 @@ public:
     return (is_same( cv1.s,cv2.s) && is_same( cv1.t,cv2.t) &&
             ( cv1.c.orientation()==cv2.c.orientation()) &&
             is_same( cv1.c.center(), cv2.c.center()) &&
-            compare_value( cv1.c.squared_radius(),
+            _compare_value( cv1.c.squared_radius(),
 			   cv2.c.squared_radius()) == EQUAL);
   }
 
@@ -586,9 +592,9 @@ public:
       // there are TWO split points.
 
       // First, we check in which scenario we are
-      if ( compare_y(src, center) == LARGER ) {
+      if ( _compare_value(src.y(), center.y()) == LARGER ) {
 	left_cut_is_first = true;
-	if ( compare_y(trg, center) == LARGER ) {
+	if ( _compare_value(trg.y(), center.y()) == LARGER ) {
 	  // s is in II, t is in I
 	  two_cuts = true;
 	}
@@ -598,7 +604,7 @@ public:
       }
       else {
 	// source is lower then center
-	if ( compare_y(trg, center) == SMALLER ) {
+	if ( _compare_value(trg.y(), center.y()) == SMALLER ) {
 	  // s is in IV, t is in III
 	  two_cuts = true;
 	}
@@ -703,7 +709,7 @@ public:
 
     //two arcs from the same circle
     if ( is_same(c1.c.center(),c2.c.center()) &&
-         compare_value(c1.c.squared_radius(),c2.c.squared_radius())==EQUAL ) {
+         _compare_value(c1.c.squared_radius(),c2.c.squared_radius())==EQUAL ) {
       if ((is_same(c1.s,c2.s)&&(compare_x(c1.s,pt)==LARGER))||
           (is_same(c1.t,c2.t)&&(compare_x(c1.t,pt)==LARGER))||
           (is_same(c1.s,c2.t)&&(compare_x(c1.s,pt)==LARGER))||
@@ -785,7 +791,7 @@ public:
 
     //case where the arcs are from the same circle
     if ( is_same(c1.c.center(),c2.c.center()) &&
-         compare_value(c1.c.squared_radius(),c2.c.squared_radius())==EQUAL ) {
+         _compare_value(c1.c.squared_radius(),c2.c.squared_radius())==EQUAL ) {
       //can intersect only at endpoints       
       Point_2 rightmost1,leftmost1;
       if (compare_x(c1.s,c1.t)==LARGER) {
@@ -924,7 +930,7 @@ public:
 
     //case where the arcs are from the same circle (otherwise return false)
     if ( is_same(c1.c.center(),c2.c.center()) &&
-         compare_value(c1.c.squared_radius(),c2.c.squared_radius())==EQUAL ) {
+         _compare_value(c1.c.squared_radius(),c2.c.squared_radius())==EQUAL ) {
 
       bool c1_is_on_lower=(compare_x(c1.s,c1.t) * c1.c.orientation() < 0);
       bool c2_is_on_lower=(compare_x(c2.s,c2.t) * c2.c.orientation() < 0);
@@ -965,7 +971,7 @@ public:
   ////////////////////////////////////////////////////////////////////
   // PRIVATE FUNCS
 private:
-  Comparison_result  compare_value (const NT& a, const NT& b) const {
+  Comparison_result  _compare_value (const NT& a, const NT& b) const {
     return CGAL_NTS compare(a,b);
   }
 
@@ -988,13 +994,13 @@ private:
 
     Point_2 p1;
     if (compare_x(cv.s,cv.t) * cv.c.orientation() < 0) { //lower part of circle
-      if (compare_y(lst1_first,lst1_last) == LARGER)
+      if (_compare_value(lst1_first.y(),lst1_last.y()) == LARGER)
         p1=lst1_last;
       else
         p1=lst1_first;
     }      
     else { //upper part of circle
-      if (compare_y(lst1_first,lst1_last) == LARGER)
+      if (_compare_value(lst1_first.y(),lst1_last.y()) == LARGER)
         p1=lst1_first;
       else
         p1=lst1_last;
@@ -1014,8 +1020,7 @@ private:
 
   bool is_same(const Point_2 &p1, const Point_2 &p2) const
   {
-    return (compare_x(p1, p2) == EQUAL) &&
-      (compare_y(p1, p2) == EQUAL);
+    return (compare_xy(p1, p2) == EQUAL);
   }
 
 
@@ -1031,9 +1036,9 @@ private:
     NT ra=CGAL::sqrt(ca.squared_radius());
     NT rb=CGAL::sqrt(cb.squared_radius());
     
-    if ( (compare_value(l, ra+rb) == LARGER) ||
-         (compare_value(ra, l+rb) == LARGER) ||
-         (compare_value(rb, l+ra) == LARGER) )
+    if ( (_compare_value(l, ra+rb) == LARGER) ||
+         (_compare_value(ra, l+rb) == LARGER) ||
+         (_compare_value(rb, l+ra) == LARGER) )
       return false;
 
     //x is the distance on the segment-of-centers from ca.center()
@@ -1057,126 +1062,6 @@ private:
   }
 
 };
-
-
-
-
-///////////////////////////////////////////////////////////////
-// auxilary output functions
-
-
-/*
-  //#define CGAL_ARR_IDDO_DEBUG
-  #ifdef CGAL_ARR_IDDO_DEBUG
-  //debug - specialization of output for reals, to make points more readable
-  //(otherwise I get these lon..g reals in printouts)
-  template<class NT> 
-  inline ::std::ostream& operator<<(::std::ostream& o, 
-  const Point_2_2<Cartesian<NT> >& p)
-  {
-  double x = CGAL::to_double(p.x());
-  double y = CGAL::to_double(p.y());
-  o << " (" << x << "," << y << ") " ;
-  return o;
-  }
-  #endif
-
-
-
-  #ifndef CGAL_ARR_IDDO_DEBUG
-//a simple version of the windowstream operator (sufficient for X_curve_2)
-template <class NT>
-//friend
-Window_stream& operator<<(Window_stream& os,
-  const typename Arr_circles_real_traits<NT>::Curve_2 &cv)
-{
-//This is not good enough - it assumes s and t have different x coord, 
-//but for x-monotone arcs it is sufficient (and that's all I need).
-//runs faster than above
-double px= CGAL::to_double((cv.source().x()+cv.target().x())/2);
-double R2= CGAL::to_double(cv.circle().squared_radius());
-double sqr = CGAL::sqrt(R2 - 
-(CGAL::to_double(px-cv.circle().center().x())*
-CGAL::to_double(px-cv.circle().center().x())));
-  
-double py;
-//under part
-if ((cv.source().x()-cv.target().x()) * cv.circle().orientation() < 0) 
-  py= CGAL::to_double(cv.circle().center().y())-sqr;
-else
-py= CGAL::to_double(cv.circle().center().y())+sqr;
-  
-  
-os.draw_arc(leda_point(CGAL::to_double(cv.source().x()),
-			     CGAL::to_double(cv.source().y())),
-			     leda_point(px,py),
-			     leda_point(CGAL::to_double(cv.target().x()),
-					CGAL::to_double(cv.target().y())));
-  
-return os;
-}
-
-#else 
-//CGAL_ARR_IDDO_DEBUG defined - use the complicated version for general Curves
-template <class NT>
-Window_stream& operator<<(Window_stream& os,
-  const Arr_circles_real_traits<NT>::Curve_2 &cv)
-{
-  double px,py; //middle point coordinates
-  double R2= CGAL::to_double(cv.circle().squared_radius());
-
-  //checking for X-monotone case
-  //the folowing is equivelent to "if (curve is x-monotone)"
-  if (cv.is_x_monotone()) {
-    px= CGAL::to_double((cv.source().x()+cv.target().x()))/2;
-    double sqr = CGAL::sqrt(R2 - 
-			    (CGAL::to_double(px-cv.circle().center().x())*
-			     CGAL::to_double(px-cv.circle().center().x())));
-    if (CGAL_NTS sign(cv.source().x()-cv.target().x()) * 
-	cv.circle().orientation() < 0) //under part
-      py= CGAL::to_double(cv.circle().center().y())-sqr;
-    else
-      py= CGAL::to_double(cv.circle().center().y())+sqr;
-  }
-  else { //if not x-monotone the above is not good enough
-    if (cv.source()==cv.target()) { //closed circle
-      return os << cv.circle() ;
-    }
-        
-    py=CGAL::to_double(cv.circle().center().y());          
-    if (CGAL::compare_y(cv.source(),cv.circle().center())*
-	cv.circle().orientation() >0) {
-      //either s is under center and orient is cw or
-      //s is above and orient is ccw
-      px=CGAL::to_double(cv.circle().center().x())-CGAL::sqrt(R2);
-    }
-    else
-      if (CGAL::compare_y(cv.source(),cv.circle().center())*
-	  cv.circle().orientation() < 0) {
-	//either s is under center and orient is ccw or
-	//s is above and orient is cw
-	px=CGAL::to_double(cv.circle().center().x())+CGAL::sqrt(R2);
-      }
-      else 
-	{ //s is one of the endpoints of the circle choos other endpoint
-	  if (CGAL::compare_x(cv.source(),cv.circle().center())==SMALLER)
-	    px=CGAL::to_double(cv.circle().center().x())+CGAL::sqrt(R2);
-	  else
-	    px=CGAL::to_double(cv.circle().center().x())-CGAL::sqrt(R2);
-	}
-  }
-
-  os.draw_arc(leda_point(CGAL::to_double(cv.source().x()),
-			 CGAL::to_double(cv.source().y())),
-	      leda_point(px,py),
-	      leda_point(CGAL::to_double(cv.target().x()),
-			 CGAL::to_double(cv.target().y())));
-
-
-  return os;
-}
-#endif //CGAL_ARR_IDDO_DEBUG
-*/
 
 CGAL_END_NAMESPACE
 

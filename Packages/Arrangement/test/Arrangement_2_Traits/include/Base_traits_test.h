@@ -175,7 +175,7 @@ perform_test( std::ifstream& is )
     std::istringstream strLine(stringvalues, std::istringstream::in);
     strLine.getline( buff, 128, ' ' );
     std::string strCommand( buff );
-    if( strCommand == "compare_x" || strCommand == "compare_y" ) {
+    if( strCommand == "compare_x" || strCommand == "compare_xy" ) {
       test_result &= compare_x_y_wrapper( strLine, strCommand );
     }
     else if( strCommand == "curve_is_vertical" ) {
@@ -234,7 +234,7 @@ perform_test( std::ifstream& is )
 /*!
  * input case:
  * compare_x n1, n2, RESULT or
- * compare_y n1 n2 RESULT, where
+ * compare_xy n1 n2 RESULT, where
  * n1, n2 - points indeces in all_points_vec
  * RESULT - expected result, enum{LARGER, SMALLER, EQUAL} type
  */
@@ -253,8 +253,9 @@ compare_x_y_wrapper( std::istringstream& strLine, std::string& strCommand )
     return print_was_successful_or_not( exp_answer, real_answer );
   }
   else{
-    real_answer = tr.compare_y(all_points_vec[index1], all_points_vec[index2]);
-    std::cout << "Test: compare_y( " << all_points_vec[index1] 
+    real_answer = tr.compare_xy
+      (all_points_vec[index1], all_points_vec[index2]);
+    std::cout << "Test: compare_xy( " << all_points_vec[index1] 
          <<", "<< all_points_vec[index2] << " ) ? " << exp_answer << std::endl;
     return print_was_successful_or_not( exp_answer, real_answer );
   }

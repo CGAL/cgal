@@ -74,14 +74,20 @@ class Arr_segment_circle_traits
 
   ////////// Planar Map methods: //////////
 
-  // Compare the co-ordinates of two given points.
+  // Compare the x co-ordinates of two given points.
   Comparison_result compare_x(const Point_2 & p0, const Point_2 & p1) const
   {
     return _compare_value(p0.x(),p1.x());
   }
 
-  Comparison_result compare_y(const Point_2 & p0, const Point_2 & p1) const
+  // Compare the two points lexicographically (by x, then by y).
+  Comparison_result compare_xy(const Point_2 & p0, const Point_2 & p1) const
   {
+    Comparison_result x_res = _compare_value(p0.x(),p1.x());
+
+    if (x_res != EQUAL)
+      return (x_res);
+
     return _compare_value(p0.y(),p1.y());
   }
 
@@ -132,7 +138,7 @@ class Arr_segment_circle_traits
 	return (EQUAL);
 
       n1 = 2;
-      if (compare_y (curve1.source(), curve1.target()) == SMALLER)
+      if (_compare_y (curve1.source(), curve1.target()) == SMALLER)
       {
 	ps1[0] = curve1.source();
 	ps1[1] = curve1.target();
@@ -162,7 +168,7 @@ class Arr_segment_circle_traits
 	return (EQUAL);
       
       n2 = 2;
-      if (compare_y (curve2.source(), curve2.target()) == SMALLER)
+      if (_compare_y (curve2.source(), curve2.target()) == SMALLER)
       {
 	ps2[0] = curve2.source();
 	ps2[1] = curve2.target();
@@ -185,16 +191,16 @@ class Arr_segment_circle_traits
     if (n1 == 2)
     {
       // Check if the vertical segment contains ps2[0].
-      if (compare_y (ps1[0], ps2[0]) != LARGER && 
-	  compare_y (ps1[1], ps2[0]) != SMALLER)
+      if (_compare_y (ps1[0], ps2[0]) != LARGER && 
+	  _compare_y (ps1[1], ps2[0]) != SMALLER)
       {
 	return (EQUAL);
       }
 
       if (n2 == 2)
       {
-	if (compare_y (ps1[0], ps2[1]) != LARGER && 
-	    compare_y (ps1[1], ps2[1]) != SMALLER)
+	if (_compare_y (ps1[0], ps2[1]) != LARGER && 
+	    _compare_y (ps1[1], ps2[1]) != SMALLER)
 	{
 	  return (EQUAL);
 	}
@@ -203,15 +209,15 @@ class Arr_segment_circle_traits
     else if (n2 == 2)
     {
       // Check if the vertical segment contains ps1[0].
-      if (compare_y (ps2[0], ps1[0]) != LARGER && 
-	  compare_y (ps2[1], ps1[0]) != SMALLER)
+      if (_compare_y (ps2[0], ps1[0]) != LARGER && 
+	  _compare_y (ps2[1], ps1[0]) != SMALLER)
       {
 	return (EQUAL);
       }
     }
 
     // Compare the y co-ordinates of the two points.
-    return (compare_y (ps1[0], ps2[0]));
+    return (_compare_y (ps1[0], ps2[0]));
   }
 
   // Decide wether curve1 is above, below or equal to curve2 immediately to
@@ -264,7 +270,7 @@ class Arr_segment_circle_traits
     // Only then compare the y co-ordinates of the two points.
     CGAL_assertion(n1 == 1 && n2 == 1);
 
-    Comparison_result result = compare_y (ps1[0], ps2[0]);
+    Comparison_result result = _compare_y (ps1[0], ps2[0]);
 
     // In case the two curves do not intersect at the x co-ordinate of p,
     // just return the comparison result at p (since both curves are
@@ -384,7 +390,7 @@ class Arr_segment_circle_traits
     }
 
     // Compare the y-coordinates of the two extreme points.
-    Comparison_result extr_result = compare_y (p_extr1, p_extr2);
+    Comparison_result extr_result = _compare_y (p_extr1, p_extr2);
 
     if (extr_result != EQUAL)
       return (extr_result);
@@ -401,7 +407,7 @@ class Arr_segment_circle_traits
     CGAL_assertion(n_hpts == 1);
     p_mid2 = hpts[0];
 
-    Comparison_result mid_result = compare_y (p_mid1, p_mid2);
+    Comparison_result mid_result = _compare_y (p_mid1, p_mid2);
 
     if (mid_result != EQUAL)
       return (mid_result);
@@ -465,7 +471,7 @@ class Arr_segment_circle_traits
     // Only then compare the y co-ordinates of the two points.
     CGAL_assertion(n1 == 1 && n2 == 1);
 
-    Comparison_result result = compare_y (ps1[0], ps2[0]);
+    Comparison_result result = _compare_y (ps1[0], ps2[0]);
 
     // In case the two curves do not intersect at the x co-ordinate of p,
     // just return the comparison result at p (since both curves are
@@ -585,7 +591,7 @@ class Arr_segment_circle_traits
     }
 
     // Compare the y-coordinates of the two extreme points.
-    Comparison_result extr_result = compare_y (p_extr1, p_extr2);
+    Comparison_result extr_result = _compare_y (p_extr1, p_extr2);
 
     if (extr_result != EQUAL)
       return (extr_result);
@@ -602,7 +608,7 @@ class Arr_segment_circle_traits
     CGAL_assertion(n_hpts == 1);
     p_mid2 = hpts[0];
 
-    Comparison_result mid_result = compare_y (p_mid1, p_mid2);
+    Comparison_result mid_result = _compare_y (p_mid1, p_mid2);
 
     if (mid_result != EQUAL)
       return (mid_result);
@@ -628,13 +634,13 @@ class Arr_segment_circle_traits
       if (compare_x (curve.source(), p) != EQUAL)
 	return (CURVE_NOT_IN_RANGE);
 
-      if (compare_y (curve.source(), p) == SMALLER &&
-	  compare_y (curve.target(), p) == SMALLER)
+      if (_compare_y (curve.source(), p) == SMALLER &&
+	  _compare_y (curve.target(), p) == SMALLER)
       {
 	return (ABOVE_CURVE);
       }
-      else if (compare_y (curve.source(), p) == LARGER &&
-	       compare_y (curve.target(), p) == LARGER)
+      else if (_compare_y (curve.source(), p) == LARGER &&
+	       _compare_y (curve.target(), p) == LARGER)
       {
 	return (UNDER_CURVE);
       }
@@ -661,7 +667,7 @@ class Arr_segment_circle_traits
     else
     {
      // Compare p with the a point of the curve with the same x co-ordinate.
-      int result = compare_y (p, ps[0]);
+      int result = _compare_y (p, ps[0]);
 
       if (result == SMALLER)
 	return (UNDER_CURVE);
@@ -733,11 +739,11 @@ class Arr_segment_circle_traits
     // vertical segment, and -1 / 1 if it is a vertical segment going up / down
     // resp.
     int cv1_vertical = (cv1.is_vertical_segment()) ?
-      (compare_y(cv1.target(), p) == LARGER ? 1 : -1) : 0;
+      (_compare_y(cv1.target(), p) == LARGER ? 1 : -1) : 0;
     int cv2_vertical = (cv2.is_vertical_segment()) ?
-      (compare_y(cv2.target(), p) == LARGER ? 1 : -1) : 0;
+      (_compare_y(cv2.target(), p) == LARGER ? 1 : -1) : 0;
     int cvx_vertical = (cvx.is_vertical_segment()) ?
-      (compare_y(cvx.target(), p) == LARGER ? 1 : -1) : 0;
+      (_compare_y(cvx.target(), p) == LARGER ? 1 : -1) : 0;
 
     if (cv1_vertical != 0)
     {
@@ -1326,10 +1332,11 @@ class Arr_segment_circle_traits
     return (curve1.overlaps (curve2, ovlp_arcs) > 0);
   }
 
-  /*! \todo replace indirect use point_is_same() with equal_2()
-   */
+  // Check if the two points are the same.
   bool point_is_same(const Point_2 & p1, const Point_2 & p2) const
-  { return ((compare_x(p1, p2) == EQUAL) && (compare_y(p1, p2) == EQUAL)); }
+  { 
+    return (compare_xy(p1, p2) == EQUAL);
+  }
   
 private:
 
@@ -1339,6 +1346,12 @@ private:
   Comparison_result _compare_value (const NT& a, const NT& b) const
   {
     return CGAL::compare(a,b);
+  }
+
+  // Compare the y coordinates of the two points.
+  Comparison_result _compare_y(const Point_2 & p0, const Point_2 & p1) const
+  {
+    return _compare_value(p0.y(),p1.y());
   }
 
   // Split the given curve into two sub-curves at the given point.

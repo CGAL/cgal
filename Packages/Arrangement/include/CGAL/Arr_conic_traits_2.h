@@ -94,8 +94,13 @@ class Arr_conic_traits_2
     return (p0.compare_x(p1));
   }
 
-  Comparison_result compare_y(const Point_2& p0, const Point_2& p1) const
+  Comparison_result compare_xy(const Point_2& p0, const Point_2& p1) const
   {
+    Comparison_result  x_res = p0.compare_x(p1);
+    
+    if (x_res != EQUAL)
+      return (x_res);
+
     return (p0.compare_y(p1));
   }
 
@@ -151,7 +156,7 @@ class Arr_conic_traits_2
 	// Both the source and target of the curve has the same x co-ordinate
 	// as p. Make sure that ps1[0] has a smaller y value than ps1[1].
 	n1 = 2;
-	if (compare_y (curve1.source(), curve1.target()) == SMALLER)
+	if (_compare_y (curve1.source(), curve1.target()) == SMALLER)
 	{
 	  ps1[0] = curve1.source();
 	  ps1[1] = curve1.target();
@@ -191,7 +196,7 @@ class Arr_conic_traits_2
 	// Both the source and target of the curve has the same x co-ordinate
 	// as p. Make sure that ps2[0] has a smaller y value than ps2[1].
 	n2 = 2;
-	if (compare_y (curve2.source(), curve2.target()) == SMALLER)
+	if (_compare_y (curve2.source(), curve2.target()) == SMALLER)
 	{
 	  ps2[0] = curve2.source();
 	  ps2[1] = curve2.target();
@@ -218,16 +223,16 @@ class Arr_conic_traits_2
     if (n1 == 2)
     {
       // Check if the vertical segment curve1 contains ps2[0] or ps2[1].
-      if (compare_y (ps1[0], ps2[0]) != LARGER && 
-	  compare_y (ps1[1], ps2[0]) != SMALLER)
+      if (_compare_y (ps1[0], ps2[0]) != LARGER && 
+	  _compare_y (ps1[1], ps2[0]) != SMALLER)
       {
 	return (EQUAL);
       }
 
       if (n2 == 2)
       {
-	if (compare_y (ps1[0], ps2[1]) != LARGER && 
-	    compare_y (ps1[1], ps2[1]) != SMALLER)
+	if (_compare_y (ps1[0], ps2[1]) != LARGER && 
+	    _compare_y (ps1[1], ps2[1]) != SMALLER)
 	{
 	  return (EQUAL);
 	}
@@ -236,8 +241,8 @@ class Arr_conic_traits_2
     else if (n2 == 2)
     {
       // Check if the vertical segment curve2 contains ps1[0].
-      if (compare_y (ps2[0], ps1[0]) != LARGER && 
-	  compare_y (ps2[1], ps1[0]) != SMALLER)
+      if (_compare_y (ps2[0], ps1[0]) != LARGER && 
+	  _compare_y (ps2[1], ps1[0]) != SMALLER)
       {
 	return (EQUAL);
       }
@@ -246,7 +251,7 @@ class Arr_conic_traits_2
     // None of the curves is a vertical segments and both have exactly
     // one point with the given x co-ordinate:
     // Compare the y co-ordinates of these two points.
-    return (compare_y (ps1[0], ps2[0]));
+    return (_compare_y (ps1[0], ps2[0]));
   }
 
   // Decide wether curve1 is above, below or equal to curve2 immediately to
@@ -315,7 +320,7 @@ class Arr_conic_traits_2
     // Only then compare the y co-ordinates of the two points.
     CGAL_assertion(n1 == 1 && n2 == 1);
 
-    Comparison_result result = compare_y (ps1[0], ps2[0]);
+    Comparison_result result = _compare_y (ps1[0], ps2[0]);
 
     // In case the two curves do not intersect at the x co-ordinate of p,
     // just return the comparison result at p (since both curves are
@@ -393,7 +398,7 @@ class Arr_conic_traits_2
     // Only then compare the y co-ordinates of the two points.
     CGAL_assertion(n1 == 1 && n2 == 1);
 
-    Comparison_result result = compare_y (ps1[0], ps2[0]);
+    Comparison_result result = _compare_y (ps1[0], ps2[0]);
 
     // In case the two curves do not intersect at the x co-ordinate of p,
     // just return the comparison result at p (since both curves are
@@ -419,13 +424,13 @@ class Arr_conic_traits_2
 
       // In case p has the same x c-ordinate of the vertical segment, compare
       // it to the segment endpoints to determine its position.
-      if (compare_y (curve.source(), p) == SMALLER &&
-	  compare_y (curve.target(), p) == SMALLER)
+      if (_compare_y (curve.source(), p) == SMALLER &&
+	  _compare_y (curve.target(), p) == SMALLER)
       {
 	return (ABOVE_CURVE);
       }
-      else if (compare_y (curve.source(), p) == LARGER &&
-	       compare_y (curve.target(), p) == LARGER)
+      else if (_compare_y (curve.source(), p) == LARGER &&
+	       _compare_y (curve.target(), p) == LARGER)
       {
 	return (UNDER_CURVE);
       }
@@ -457,7 +462,7 @@ class Arr_conic_traits_2
     CGAL_assertion(n == 1);
 
     // Compare p with the a point of the curve with the same x co-ordinate.
-    int result = compare_y (p, ps[0]);
+    int result = _compare_y (p, ps[0]);
 
     if (result == SMALLER)
       return (UNDER_CURVE);
@@ -547,11 +552,11 @@ class Arr_conic_traits_2
     // vertical segment, and -1 / 1 if it is a vertical segment going up / down
     // resp.
     int c1_vertical = (c1.is_vertical_segment()) ?
-      (compare_y(*p1_P, p) == LARGER ? 1 : -1) : 0;
+      (_compare_y(*p1_P, p) == LARGER ? 1 : -1) : 0;
     int c2_vertical = (c2.is_vertical_segment()) ?
-      (compare_y(*p2_P, p) == LARGER ? 1 : -1) : 0;
+      (_compare_y(*p2_P, p) == LARGER ? 1 : -1) : 0;
     int curve_vertical = (curve.is_vertical_segment()) ?
-      (compare_y(*pv_P, p) == LARGER ? 1 : -1) : 0;
+      (_compare_y(*pv_P, p) == LARGER ? 1 : -1) : 0;
 
     if (c1_vertical != 0)
     {
@@ -1385,6 +1390,12 @@ class Arr_conic_traits_2
  private:
 
   ////////// Private auxiliary methods: //////////
+
+  // Compare two points by their y coordinate:
+  Comparison_result _compare_y(const Point_2& p0, const Point_2& p1) const
+  {
+    return (p0.compare_y(p1));
+  }
 
   // Split the given curve into two sub-curves at the given point.
   // Since this is a private function, there are no preconditions.

@@ -15,6 +15,11 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
 	   -Iinclude \
+           -I../../include \
+           -I../../../Planar_map/include \
+	   -I../../../Sweep_line_2/include \
+	   -I../../../Trapezoidal_decomposition/include \
+	   -I../../../Leda_rat_kernel/include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
@@ -63,17 +68,17 @@ Segment_arr_from_mouse$(EXE_EXT): Segment_arr_from_mouse$(OBJ_EXT)
 
 Polygon_intersection_demo$(EXE_EXT): Polygon_intersection_demo$(OBJ_EXT)  Polygon_intersection$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Polygon_intersection_demo Polygon_intersection_demo$(OBJ_EXT)  Polygon_intersection$(OBJ_EXT) $(LDFLAGS)
-   
+
 clean: \
                    Circle_arr_from_file.clean \
                    Polyline_arr_from_file.clean \
                    Polyline_arr_from_mouse.clean \
                    Seg_circ_arr_from_file.clean \
                    Segment_arr_from_file.clean \
-                   Segment_arr_from_mouse.clean \
                    Polygon_intersection.clean \
+                   Segment_arr_from_mouse.clean \
                    Polygon_intersection_demo.clean
-  
+
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#

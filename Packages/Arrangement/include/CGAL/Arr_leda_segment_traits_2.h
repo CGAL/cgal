@@ -222,13 +222,6 @@ public:
     return !(xcv.is_trivial());
   }
 
-
-  Comparison_result compare_xy(const Point_2 & p, const Point_2 & q) const
-  {
-    Comparison_result c = compare_x(p,q);
-    return (c != EQUAL) ? c : compare_y(p,q);
-  }
-
   // returns values in p1 and p2 only if return_intersection is true
   // if (xsect_type | CGAL_XT_SINGLE_POINT) then only p1 is returned
   bool intersection_base(const X_curve_2 & c1, const X_curve_2 & c2,

@@ -85,16 +85,21 @@ public:
                                );
   }
     
-  Comparison_result compare_y(const Point_2& p0, const Point_2& p1) const {
-    return (Comparison_result)(
-
+  Comparison_result compare_xy(const Point_2& p0, const Point_2& p1) const {
+    int res;
 #if (__LEDA__ >= 380)
                                // full specification is required for msvc:
-                               Self::Point_2::cmp_y(p0,p1)
+			       res = Self::Point_2::cmp_x(p0,p1);
+
+			       if (res == 0)
+			         res = Self::Point_2::cmp_y(p0,p1);
 #else // backward compatability to LEDA
-                               compare(p0.ycoord(),p1.ycoord())
+                               res = compare(p0.xcoord(),p1.xcoord());
+
+			       if (res == 0)
+				 compare(p0.ycoord(),p1.ycoord());
 #endif
-                               );
+    return (Comparison_result)(res);
   }
 
   //on X_curve only - not Curve!
@@ -254,7 +259,6 @@ public:
       //right) otherwise -
       { 
         CGAL_assertion(curve_compare_at_x(cv1,cv2,p) == EQUAL);
-        //return (CGAL::compare_y_at_x(point_to_right(p),l1,l2)); 
         
         if (compare_x(l1.source(),l1.target())==LARGER)
           l1=l1.reversal();
@@ -276,14 +280,14 @@ public:
     if (!curve_is_in_x_range(cv, p))
       return CURVE_NOT_IN_RANGE;
     if (curve_is_vertical(cv)) {
-      if (compare_y(curve_source(cv),p)*compare_y(curve_target(cv),p)<=0)
+      if (_compare_y(curve_source(cv),p)*_compare_y(curve_target(cv),p)<=0)
         return ON_CURVE;
-      if (compare_y(curve_source(cv),p)==LARGER)
+      if (_compare_y(curve_source(cv),p)==LARGER)
         //bug fix (2/11)
         //return ABOVE_CURVE;
         return UNDER_CURVE;
 
-      if (compare_y(curve_source(cv),p)==SMALLER)
+      if (_compare_y(curve_source(cv),p)==SMALLER)
         //return UNDER_CURVE;
         return ABOVE_CURVE;
     }
@@ -984,10 +988,21 @@ public:
   /////////////////////////////////////////////////////////////////
 private:
 
+  Comparison_result _compare_y(const Point_2& p0, const Point_2& p1) const {
+    return (Comparison_result)(
+
+#if (__LEDA__ >= 380)
+                               // full specification is required for msvc:
+                               Self::Point_2::cmp_y(p0,p1)
+#else // backward compatability to LEDA
+                               compare(p0.ycoord(),p1.ycoord())
+#endif
+                               );
+  }
+
   bool is_same(const Point_2 &p1, const Point_2 &p2) const
   {
-    return (compare_x(p1, p2) == EQUAL) &&
-      (compare_y(p1, p2) == EQUAL);
+    return (compare_xy(p1, p2) == EQUAL);
   }
 
   Point_2 point_to_left(const Point_2& p) const {
