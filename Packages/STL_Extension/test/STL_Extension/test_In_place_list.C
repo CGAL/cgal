@@ -1,6 +1,9 @@
+#line 4157 "stl_extension.aw"
+
+#line 20 "cgal_header.awi"
 // ============================================================================
 //
-// Copyright (c) 1997 The CGAL Consortium
+// Copyright (c) 1997, 1998, 1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -13,17 +16,20 @@
 //
 // file          : test_In_place_list.C
 // chapter       : $CGAL_Chapter: STL Extensions for CGAL $
-// package       : $CGAL_Package: STL_Extension 2.7 (28 Jul 1999) $
+// package       : $CGAL_Package: STL_Extension $
 // source        : stl_extension.fw
+#line 37 "cgal_header.awi"
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
+// author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
+//                 Lutz Kettner <kettner@inf.ethz.ch>
 //
 // coordinator   : INRIA, Sophia Antipolis
 //
 // Stl_Extensions: In place list.
 // ============================================================================
 
+#line 4161 "stl_extension.aw"
 
 #ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
@@ -54,6 +60,7 @@
 #include <CGAL/In_place_list.h>
 #endif // CGAL_IN_PLACE_LIST_H
 
+#line 24 "iterator_test.awi"
 // Global data structures.
 std::list<int>   L;
 std::vector<int> V;
@@ -192,701 +199,734 @@ int test_value_type( double*)              { return 3;}
 int test_distance_type( std::ptrdiff_t*)   { return 1;}
 int test_distance_type( char*)             { return 2;}
 int test_distance_type( double*)           { return 3;}
+#line 4192 "stl_extension.aw"
 
 using namespace CGAL;
 
+#line 994 "stl_extension.aw"
 struct item : public In_place_list_base<item> {
-    int key;
-    item() {}
-    item( int i) : key(i) {}
-    item( const item& i)
-        : In_place_list_base<item>(i), key(i.key) {}
-    bool operator== (const item& i) const { return key == i.key;}
-    bool operator!= (const item& i) const { return key != i.key;}
-    bool operator== (int i) const         { return key == i;}
-    bool operator!= (int i) const         { return key != i;}
-    bool operator<  (const item& i) const { return key < i.key;}
+  int key;
+  item() {}
+  item( int i) : key(i) {}
+  item( const item& i)
+  : In_place_list_base<item>(i), key(i.key) {}
+  bool operator== (const item& i) const { return key == i.key;}
+  bool operator!= (const item& i) const { return key != i.key;}
+  bool operator== (int i) const         { return key == i;}
+  bool operator!= (int i) const         { return key != i;}
+  bool operator<  (const item& i) const { return key < i.key;}
 };
 int test_value_type( item*)           { return 1;}
 
 void test_In_place_list() {
-    {
-        typedef In_place_list<item,false> List;
-        typedef List::iterator            Iterator;
-        typedef List::const_iterator      Const_iterator;
-        typedef List::size_type           Size;
-        List l1;
-        CGAL_assertion( l1.empty());
-        CGAL_assertion( l1.size() == 0);
-        CGAL_assertion( l1.max_size() == Size(-1));
-        CGAL_assertion( l1 == l1);
-        CGAL_assertion( l1.begin() == l1.end());
-        List l2(l1);
-        CGAL_assertion( l1 == l2);
-        CGAL_assertion( l2.begin() == l2.end());
-        List l;
-        l.push_back( *new item(1));
-        l.push_back( *new item(2));
-        l.push_back( *new item(3));
-        l.push_back( *new item(4));
-        l.push_back( *new item(5));
-        l1 = l;
-        CGAL_assertion( ! l1.empty());
-        CGAL_assertion( l1.size() == 5);
-        CGAL_assertion( l1 == l);
-        CGAL_assertion( l1 != l2);
-        Iterator begin = l.begin();
-        Iterator end   = l.end();
-        Assert_bidirectional_category(begin);
-        Assert_bidirectional_category(end);
-        { // Open own scope to hide local variables.
-            // Check generally correct parameter properties.
-            CGAL::Assert_circulator_or_iterator(begin);
-            CGAL::Assert_circulator_or_iterator(end);
-            CGAL::Assert_is_at_least_forward_category(begin);
-            CGAL::Assert_is_at_least_forward_category(end);
-            CGAL_assertion(1==test_value_type(std::value_type(begin)));
-            CGAL_assertion(1==test_value_type(std::value_type(end)));
-            CGAL_assertion(1==test_distance_type(std::distance_type(begin)));
-            CGAL_assertion(1==test_distance_type(std::distance_type(end)));
-        
-            // Default constructor.
-            Iterator z = Iterator();
-            CGAL::Assert_circulator_or_iterator(z);
-            // Copy constructor.
-            Iterator i = begin;
-        
-            // Check general support for circulators and iterators.
-            CGAL_assertion( CGAL::is_empty_range( z, z));
-            CGAL_assertion( ! CGAL::is_empty_range( i, end));
-        
-            int su = 0;
-            int k  = 1;
-            // Check general loop, pre-increment, dereference.
-            if (! CGAL::is_empty_range( i, end)) {   // superfluous
-                do {
-                    CGAL_assertion( k == (*i).key);
-                    su += (*i).key;
-                    ++k;
-                    Iterator j = ++i;
-                    CGAL_assertion(  i ==  j);
-                    if ( i != end) {
-                        CGAL_assertion( (*i).key == (*j).key);
-                    }
-                } while (i != end);  // Inequality and equality checked.
-            }
-            CGAL_assertion( i == end);  // Equality checked.
-            CGAL_assertion( su == 15);
-        
-            // Assignment.
-            i = begin;
-            su = 0;
-            k  = 1;
-            // Loop with post increment.
-            if (! CGAL::is_empty_range( i, end)) {   // superfluous
-                do {
-                    CGAL_assertion( k == (*i).key);
-                    su += (*i).key;
-                    ++k;
-                    Iterator j = i++;
-                    CGAL_assertion(  i !=  j);
-                    if ( i != end) {
-                        CGAL_assertion( (*i).key == (*j).key + 1);
-                    }
-                } while (i != end);
-            }
-            CGAL_assertion( i == end);
-            CGAL_assertion( su == 15);
-        }
-        { // Open own scope to hide local variables.
-            // Change three elements and check post-/pre-increment.
-            Iterator i = begin;
-            (*i++).key = 4;
-            CGAL_assertion( 4 == (*begin).key);
-            CGAL_assertion( 2 == (*i).key);
-            (*i++).key = 3;
-            CGAL_assertion( 3 == (*i).key);
-            (*++i).key = 7;
-            CGAL_assertion( 7 == (*i).key);
-        
-            // Check the setting and reset these elements
-            // to their original values.
-            i = begin;
-            CGAL_assertion( 4 == (*i).key);
-            (*i).key = 1;
-            i++;
-            CGAL_assertion( 3 == (*i).key);
-            (*i++).key = 2;
-            CGAL_assertion( 3 == (*i).key);
-            i++;
-            CGAL_assertion( 7 == (*i).key);
-            (*i).key = 4;
-        
-            // Check the resetting.
-            i = begin;
-            int k = 1;
+  {
+    typedef In_place_list<item,false> List;
+    typedef List::iterator            Iterator;
+    typedef List::const_iterator      Const_iterator;
+    typedef List::size_type           Size;
+    List l1;
+    CGAL_assertion( l1.empty());
+    CGAL_assertion( l1.size() == 0);
+    CGAL_assertion( l1.max_size() == Size(-1));
+    CGAL_assertion( l1 == l1);
+    CGAL_assertion( l1.begin() == l1.end());
+    List l2(l1);
+    CGAL_assertion( l1 == l2);
+    CGAL_assertion( l2.begin() == l2.end());
+    List l;
+    l.push_back( *new item(1));
+    l.push_back( *new item(2));
+    l.push_back( *new item(3));
+    l.push_back( *new item(4));
+    l.push_back( *new item(5));
+    l1 = l;
+    CGAL_assertion( ! l1.empty());
+    CGAL_assertion( l1.size() == 5);
+    CGAL_assertion( l1 == l);
+    CGAL_assertion( l1 != l2);
+    Iterator begin = l.begin();
+    Iterator end   = l.end();
+    Assert_bidirectional_category(begin);
+    Assert_bidirectional_category(end);
+    #line 312 "iterator_test.awi"
+    #line 235 "iterator_test.awi"
+    #line 173 "iterator_test.awi"
+    { // Open own scope to hide local variables.
+        // Check generally correct parameter properties.
+        CGAL::Assert_circulator_or_iterator(begin);
+        CGAL::Assert_circulator_or_iterator(end);
+        CGAL::Assert_is_at_least_forward_category(begin);
+        CGAL::Assert_is_at_least_forward_category(end);
+        CGAL_assertion(1==test_value_type(std::value_type(begin)));
+        CGAL_assertion(1==test_value_type(std::value_type(end)));
+        CGAL_assertion(1==test_distance_type(std::distance_type(begin)));
+        CGAL_assertion(1==test_distance_type(std::distance_type(end)));
+    
+        // Default constructor.
+        Iterator z = Iterator();
+        CGAL::Assert_circulator_or_iterator(z);
+        // Copy constructor.
+        Iterator i = begin;
+    
+        // Check general support for circulators and iterators.
+        CGAL_assertion( CGAL::is_empty_range( z, z));
+        CGAL_assertion( ! CGAL::is_empty_range( i, end));
+    
+        int su = 0;
+        int k  = 1;
+        // Check general loop, pre-increment, dereference.
+        if (! CGAL::is_empty_range( i, end)) {   // superfluous
             do {
                 CGAL_assertion( k == (*i).key);
-                ++i;
+                su += (*i).key;
                 ++k;
+                Iterator j = ++i;
+                CGAL_assertion(  i ==  j);
+                if ( i != end) {
+                    CGAL_assertion( (*i).key == (*j).key);
+                }
+            } while (i != end);  // Inequality and equality checked.
+        }
+        CGAL_assertion( i == end);  // Equality checked.
+        CGAL_assertion( su == 15);
+    
+        // Assignment.
+        i = begin;
+        su = 0;
+        k  = 1;
+        // Loop with post increment.
+        if (! CGAL::is_empty_range( i, end)) {   // superfluous
+            do {
+                CGAL_assertion( k == (*i).key);
+                su += (*i).key;
+                ++k;
+                Iterator j = i++;
+                CGAL_assertion(  i !=  j);
+                if ( i != end) {
+                    CGAL_assertion( (*i).key == (*j).key + 1);
+                }
             } while (i != end);
         }
-        { // Open own scope to hide local variables.
-            // Check generally correct parameter properties.
-            CGAL::Assert_circulator_or_iterator(begin);
-            CGAL::Assert_circulator_or_iterator(end);
-            CGAL::Assert_is_at_least_forward_category(begin);
-            CGAL::Assert_is_at_least_forward_category(end);
-            CGAL_assertion(1==test_value_type(std::value_type(begin)));
-            CGAL_assertion(1==test_value_type(std::value_type(end)));
-            CGAL_assertion(1==test_distance_type(std::distance_type(begin)));
-            CGAL_assertion(1==test_distance_type(std::distance_type(end)));
-        
-            // Default constructor.
-            Iterator z = Iterator();
-            CGAL::Assert_circulator_or_iterator(z);
-            // Copy constructor.
-            Iterator i = begin;
-        
-            // Check general support for circulators and iterators.
-            CGAL_assertion( CGAL::is_empty_range( z, z));
-            CGAL_assertion( ! CGAL::is_empty_range( i, end));
-        
-            int su = 0;
-            int k  = 1;
-            // Check general loop, pre-increment, dereference.
-            if (! CGAL::is_empty_range( i, end)) {   // superfluous
-                do {
-                    CGAL_assertion( k == (*i).key);
-                    su += (*i).key;
-                    ++k;
-                    Iterator j = ++i;
-                    CGAL_assertion(  i ==  j);
-                    if ( i != end) {
-                        CGAL_assertion( (*i).key == (*j).key);
-                    }
-                } while (i != end);  // Inequality and equality checked.
-            }
-            CGAL_assertion( i == end);  // Equality checked.
-            CGAL_assertion( su == 15);
-        
-            // Assignment.
-            i = begin;
-            su = 0;
-            k  = 1;
-            // Loop with post increment.
-            if (! CGAL::is_empty_range( i, end)) {   // superfluous
-                do {
-                    CGAL_assertion( k == (*i).key);
-                    su += (*i).key;
-                    ++k;
-                    Iterator j = i++;
-                    CGAL_assertion(  i !=  j);
-                    if ( i != end) {
-                        CGAL_assertion( (*i).key == (*j).key + 1);
-                    }
-                } while (i != end);
-            }
-            CGAL_assertion( i == end);
-            CGAL_assertion( su == 15);
-        }
-        { // Open own scope to hide local variables.
-            CGAL::Assert_is_at_least_bidirectional_category(begin);
-            CGAL::Assert_is_at_least_bidirectional_category(end);
-            // Loop backwards and pre-decrement.
-            Iterator i = end;
-            int su = 0;
-            int k  = 5;
-            do {
-                Iterator j = --i;
-                CGAL_assertion(  i ==  j);
-                CGAL_assertion( (*i).key == (*j).key);
-                CGAL_assertion( k == (*i).key);
-                su += (*i).key;
-                --k;
-            } while (i != begin);
-            CGAL_assertion( i == begin);
-            CGAL_assertion( su == 15);
-        
-            // Assignment.
-            i = end;
-            su = 0;
-            k  = 5;
-            // Loop with post-decrement.
-            do {
-                Iterator j = i--;
-                CGAL_assertion(  i !=  j);
-                if ( j != end) {
-                    CGAL_assertion( (*i).key == (*j).key - 1);
-                }
-                CGAL_assertion( k == (*i).key);
-                su += (*i).key;
-                --k;
-            } while (i != begin);
-            CGAL_assertion( i == begin);
-            CGAL_assertion( su == 15);
-        }
-        CGAL::Assert_iterator( begin);
-        CGAL::Assert_iterator( end);
-
-        List l4 = l;
-        const List& l3 = l4;
-        Const_iterator c_begin = l3.begin();
-        Const_iterator c_end   = l3.end();
-        Assert_bidirectional_category(c_begin);
-        Assert_bidirectional_category(c_end);
-        { // Open own scope to hide local variables.
-            // Check generally correct parameter properties.
-            CGAL::Assert_circulator_or_iterator(c_begin);
-            CGAL::Assert_circulator_or_iterator(c_end);
-            CGAL::Assert_is_at_least_forward_category(c_begin);
-            CGAL::Assert_is_at_least_forward_category(c_end);
-            CGAL_assertion(1==test_value_type(std::value_type(c_begin)));
-            CGAL_assertion(1==test_value_type(std::value_type(c_end)));
-            CGAL_assertion(1==test_distance_type(std::distance_type(c_begin)));
-            CGAL_assertion(1==test_distance_type(std::distance_type(c_end)));
-        
-            // Default constructor.
-            Const_iterator z = Const_iterator();
-            CGAL::Assert_circulator_or_iterator(z);
-            // Copy constructor.
-            Const_iterator i = c_begin;
-        
-            // Check general support for circulators and iterators.
-            CGAL_assertion( CGAL::is_empty_range( z, z));
-            CGAL_assertion( ! CGAL::is_empty_range( i, c_end));
-        
-            int su = 0;
-            int k  = 1;
-            // Check general loop, pre-increment, dereference.
-            if (! CGAL::is_empty_range( i, c_end)) {   // superfluous
-                do {
-                    CGAL_assertion( k == (*i).key);
-                    su += (*i).key;
-                    ++k;
-                    Const_iterator j = ++i;
-                    CGAL_assertion(  i ==  j);
-                    if ( i != c_end) {
-                        CGAL_assertion( (*i).key == (*j).key);
-                    }
-                } while (i != c_end);  // Inequality and equality checked.
-            }
-            CGAL_assertion( i == c_end);  // Equality checked.
-            CGAL_assertion( su == 15);
-        
-            // Assignment.
-            i = c_begin;
-            su = 0;
-            k  = 1;
-            // Loop with post increment.
-            if (! CGAL::is_empty_range( i, c_end)) {   // superfluous
-                do {
-                    CGAL_assertion( k == (*i).key);
-                    su += (*i).key;
-                    ++k;
-                    Const_iterator j = i++;
-                    CGAL_assertion(  i !=  j);
-                    if ( i != c_end) {
-                        CGAL_assertion( (*i).key == (*j).key + 1);
-                    }
-                } while (i != c_end);
-            }
-            CGAL_assertion( i == c_end);
-            CGAL_assertion( su == 15);
-        }
-        { // Open own scope to hide local variables.
-            CGAL::Assert_is_at_least_bidirectional_category(c_begin);
-            CGAL::Assert_is_at_least_bidirectional_category(c_end);
-            // Loop backwards and pre-decrement.
-            Const_iterator i = c_end;
-            int su = 0;
-            int k  = 5;
-            do {
-                Const_iterator j = --i;
-                CGAL_assertion(  i ==  j);
-                CGAL_assertion( (*i).key == (*j).key);
-                CGAL_assertion( k == (*i).key);
-                su += (*i).key;
-                --k;
-            } while (i != c_begin);
-            CGAL_assertion( i == c_begin);
-            CGAL_assertion( su == 15);
-        
-            // Assignment.
-            i = c_end;
-            su = 0;
-            k  = 5;
-            // Loop with post-decrement.
-            do {
-                Const_iterator j = i--;
-                CGAL_assertion(  i !=  j);
-                if ( j != c_end) {
-                    CGAL_assertion( (*i).key == (*j).key - 1);
-                }
-                CGAL_assertion( k == (*i).key);
-                su += (*i).key;
-                --k;
-            } while (i != c_begin);
-            CGAL_assertion( i == c_begin);
-            CGAL_assertion( su == 15);
-        }
-        CGAL::Assert_iterator( c_begin);
-        CGAL::Assert_iterator( c_end);
-
-        l.destroy();
-        l1.destroy();
-        l2.destroy();
-        l4.destroy();
-    }{
-        typedef In_place_list<item,true> List;
-        typedef List::iterator       Iterator;
-        typedef List::const_iterator Const_iterator;
-        typedef List::size_type      Size;
-        List l1;
-        CGAL_assertion( l1.empty());
-        CGAL_assertion( l1.size() == 0);
-        CGAL_assertion( l1.max_size() == Size(-1));
-        CGAL_assertion( l1 == l1);
-        CGAL_assertion( l1.begin() == l1.end());
-        List l2(l1);
-        CGAL_assertion( l1 == l2);
-        CGAL_assertion( l2.begin() == l2.end());
-        List l;
-        l.push_back( *new item(1));
-        l.push_back( *new item(2));
-        l.push_back( *new item(3));
-        l.push_back( *new item(4));
-        l.push_back( *new item(5));
-        l1 = l;
-        CGAL_assertion( ! l1.empty());
-        CGAL_assertion( l1.size() == 5);
-        CGAL_assertion( l1 == l);
-        CGAL_assertion( l1 != l2);
-        Iterator begin = l.begin();
-        Iterator end   = l.end();
-        Assert_bidirectional_category(begin);
-        Assert_bidirectional_category(end);
-        { // Open own scope to hide local variables.
-            // Check generally correct parameter properties.
-            CGAL::Assert_circulator_or_iterator(begin);
-            CGAL::Assert_circulator_or_iterator(end);
-            CGAL::Assert_is_at_least_forward_category(begin);
-            CGAL::Assert_is_at_least_forward_category(end);
-            CGAL_assertion(1==test_value_type(std::value_type(begin)));
-            CGAL_assertion(1==test_value_type(std::value_type(end)));
-            CGAL_assertion(1==test_distance_type(std::distance_type(begin)));
-            CGAL_assertion(1==test_distance_type(std::distance_type(end)));
-        
-            // Default constructor.
-            Iterator z = Iterator();
-            CGAL::Assert_circulator_or_iterator(z);
-            // Copy constructor.
-            Iterator i = begin;
-        
-            // Check general support for circulators and iterators.
-            CGAL_assertion( CGAL::is_empty_range( z, z));
-            CGAL_assertion( ! CGAL::is_empty_range( i, end));
-        
-            int su = 0;
-            int k  = 1;
-            // Check general loop, pre-increment, dereference.
-            if (! CGAL::is_empty_range( i, end)) {   // superfluous
-                do {
-                    CGAL_assertion( k == (*i).key);
-                    su += (*i).key;
-                    ++k;
-                    Iterator j = ++i;
-                    CGAL_assertion(  i ==  j);
-                    if ( i != end) {
-                        CGAL_assertion( (*i).key == (*j).key);
-                    }
-                } while (i != end);  // Inequality and equality checked.
-            }
-            CGAL_assertion( i == end);  // Equality checked.
-            CGAL_assertion( su == 15);
-        
-            // Assignment.
-            i = begin;
-            su = 0;
-            k  = 1;
-            // Loop with post increment.
-            if (! CGAL::is_empty_range( i, end)) {   // superfluous
-                do {
-                    CGAL_assertion( k == (*i).key);
-                    su += (*i).key;
-                    ++k;
-                    Iterator j = i++;
-                    CGAL_assertion(  i !=  j);
-                    if ( i != end) {
-                        CGAL_assertion( (*i).key == (*j).key + 1);
-                    }
-                } while (i != end);
-            }
-            CGAL_assertion( i == end);
-            CGAL_assertion( su == 15);
-        }
-        { // Open own scope to hide local variables.
-            // Change three elements and check post-/pre-increment.
-            Iterator i = begin;
-            (*i++).key = 4;
-            CGAL_assertion( 4 == (*begin).key);
-            CGAL_assertion( 2 == (*i).key);
-            (*i++).key = 3;
-            CGAL_assertion( 3 == (*i).key);
-            (*++i).key = 7;
-            CGAL_assertion( 7 == (*i).key);
-        
-            // Check the setting and reset these elements
-            // to their original values.
-            i = begin;
-            CGAL_assertion( 4 == (*i).key);
-            (*i).key = 1;
-            i++;
-            CGAL_assertion( 3 == (*i).key);
-            (*i++).key = 2;
-            CGAL_assertion( 3 == (*i).key);
-            i++;
-            CGAL_assertion( 7 == (*i).key);
-            (*i).key = 4;
-        
-            // Check the resetting.
-            i = begin;
-            int k = 1;
-            do {
-                CGAL_assertion( k == (*i).key);
-                ++i;
-                ++k;
-            } while (i != end);
-        }
-        { // Open own scope to hide local variables.
-            // Check generally correct parameter properties.
-            CGAL::Assert_circulator_or_iterator(begin);
-            CGAL::Assert_circulator_or_iterator(end);
-            CGAL::Assert_is_at_least_forward_category(begin);
-            CGAL::Assert_is_at_least_forward_category(end);
-            CGAL_assertion(1==test_value_type(std::value_type(begin)));
-            CGAL_assertion(1==test_value_type(std::value_type(end)));
-            CGAL_assertion(1==test_distance_type(std::distance_type(begin)));
-            CGAL_assertion(1==test_distance_type(std::distance_type(end)));
-        
-            // Default constructor.
-            Iterator z = Iterator();
-            CGAL::Assert_circulator_or_iterator(z);
-            // Copy constructor.
-            Iterator i = begin;
-        
-            // Check general support for circulators and iterators.
-            CGAL_assertion( CGAL::is_empty_range( z, z));
-            CGAL_assertion( ! CGAL::is_empty_range( i, end));
-        
-            int su = 0;
-            int k  = 1;
-            // Check general loop, pre-increment, dereference.
-            if (! CGAL::is_empty_range( i, end)) {   // superfluous
-                do {
-                    CGAL_assertion( k == (*i).key);
-                    su += (*i).key;
-                    ++k;
-                    Iterator j = ++i;
-                    CGAL_assertion(  i ==  j);
-                    if ( i != end) {
-                        CGAL_assertion( (*i).key == (*j).key);
-                    }
-                } while (i != end);  // Inequality and equality checked.
-            }
-            CGAL_assertion( i == end);  // Equality checked.
-            CGAL_assertion( su == 15);
-        
-            // Assignment.
-            i = begin;
-            su = 0;
-            k  = 1;
-            // Loop with post increment.
-            if (! CGAL::is_empty_range( i, end)) {   // superfluous
-                do {
-                    CGAL_assertion( k == (*i).key);
-                    su += (*i).key;
-                    ++k;
-                    Iterator j = i++;
-                    CGAL_assertion(  i !=  j);
-                    if ( i != end) {
-                        CGAL_assertion( (*i).key == (*j).key + 1);
-                    }
-                } while (i != end);
-            }
-            CGAL_assertion( i == end);
-            CGAL_assertion( su == 15);
-        }
-        { // Open own scope to hide local variables.
-            CGAL::Assert_is_at_least_bidirectional_category(begin);
-            CGAL::Assert_is_at_least_bidirectional_category(end);
-            // Loop backwards and pre-decrement.
-            Iterator i = end;
-            int su = 0;
-            int k  = 5;
-            do {
-                Iterator j = --i;
-                CGAL_assertion(  i ==  j);
-                CGAL_assertion( (*i).key == (*j).key);
-                CGAL_assertion( k == (*i).key);
-                su += (*i).key;
-                --k;
-            } while (i != begin);
-            CGAL_assertion( i == begin);
-            CGAL_assertion( su == 15);
-        
-            // Assignment.
-            i = end;
-            su = 0;
-            k  = 5;
-            // Loop with post-decrement.
-            do {
-                Iterator j = i--;
-                CGAL_assertion(  i !=  j);
-                if ( j != end) {
-                    CGAL_assertion( (*i).key == (*j).key - 1);
-                }
-                CGAL_assertion( k == (*i).key);
-                su += (*i).key;
-                --k;
-            } while (i != begin);
-            CGAL_assertion( i == begin);
-            CGAL_assertion( su == 15);
-        }
-        CGAL::Assert_iterator( begin);
-        CGAL::Assert_iterator( end);
-
-        const List l3( l);
-        Const_iterator c_begin = l3.begin();
-        Const_iterator c_end   = l3.end();
-        Assert_bidirectional_category(c_begin);
-        Assert_bidirectional_category(c_end);
-        { // Open own scope to hide local variables.
-            // Check generally correct parameter properties.
-            CGAL::Assert_circulator_or_iterator(c_begin);
-            CGAL::Assert_circulator_or_iterator(c_end);
-            CGAL::Assert_is_at_least_forward_category(c_begin);
-            CGAL::Assert_is_at_least_forward_category(c_end);
-            CGAL_assertion(1==test_value_type(std::value_type(c_begin)));
-            CGAL_assertion(1==test_value_type(std::value_type(c_end)));
-            CGAL_assertion(1==test_distance_type(std::distance_type(c_begin)));
-            CGAL_assertion(1==test_distance_type(std::distance_type(c_end)));
-        
-            // Default constructor.
-            Const_iterator z = Const_iterator();
-            CGAL::Assert_circulator_or_iterator(z);
-            // Copy constructor.
-            Const_iterator i = c_begin;
-        
-            // Check general support for circulators and iterators.
-            CGAL_assertion( CGAL::is_empty_range( z, z));
-            CGAL_assertion( ! CGAL::is_empty_range( i, c_end));
-        
-            int su = 0;
-            int k  = 1;
-            // Check general loop, pre-increment, dereference.
-            if (! CGAL::is_empty_range( i, c_end)) {   // superfluous
-                do {
-                    CGAL_assertion( k == (*i).key);
-                    su += (*i).key;
-                    ++k;
-                    Const_iterator j = ++i;
-                    CGAL_assertion(  i ==  j);
-                    if ( i != c_end) {
-                        CGAL_assertion( (*i).key == (*j).key);
-                    }
-                } while (i != c_end);  // Inequality and equality checked.
-            }
-            CGAL_assertion( i == c_end);  // Equality checked.
-            CGAL_assertion( su == 15);
-        
-            // Assignment.
-            i = c_begin;
-            su = 0;
-            k  = 1;
-            // Loop with post increment.
-            if (! CGAL::is_empty_range( i, c_end)) {   // superfluous
-                do {
-                    CGAL_assertion( k == (*i).key);
-                    su += (*i).key;
-                    ++k;
-                    Const_iterator j = i++;
-                    CGAL_assertion(  i !=  j);
-                    if ( i != c_end) {
-                        CGAL_assertion( (*i).key == (*j).key + 1);
-                    }
-                } while (i != c_end);
-            }
-            CGAL_assertion( i == c_end);
-            CGAL_assertion( su == 15);
-        }
-        { // Open own scope to hide local variables.
-            CGAL::Assert_is_at_least_bidirectional_category(c_begin);
-            CGAL::Assert_is_at_least_bidirectional_category(c_end);
-            // Loop backwards and pre-decrement.
-            Const_iterator i = c_end;
-            int su = 0;
-            int k  = 5;
-            do {
-                Const_iterator j = --i;
-                CGAL_assertion(  i ==  j);
-                CGAL_assertion( (*i).key == (*j).key);
-                CGAL_assertion( k == (*i).key);
-                su += (*i).key;
-                --k;
-            } while (i != c_begin);
-            CGAL_assertion( i == c_begin);
-            CGAL_assertion( su == 15);
-        
-            // Assignment.
-            i = c_end;
-            su = 0;
-            k  = 5;
-            // Loop with post-decrement.
-            do {
-                Const_iterator j = i--;
-                CGAL_assertion(  i !=  j);
-                if ( j != c_end) {
-                    CGAL_assertion( (*i).key == (*j).key - 1);
-                }
-                CGAL_assertion( k == (*i).key);
-                su += (*i).key;
-                --k;
-            } while (i != c_begin);
-            CGAL_assertion( i == c_begin);
-            CGAL_assertion( su == 15);
-        }
-        CGAL::Assert_iterator( c_begin);
-        CGAL::Assert_iterator( c_end);
-    }{
-        // in_list_prog.C
-        typedef In_place_list<item,true> List;
-        typedef List::iterator       Iterator;
-        List  l;
-        item* p = new item(1);
-        l.push_back( *p);
-        l.push_back( *new item(2));
-        l.push_front( *new item(3));
-        l.push_front( *new item(4));
-        l.push_front( *new item(2));
-        Iterator i = l.begin();
-        ++i;
-        l.insert(i,*new item(5));
-        l.insert(p,*new item(5));
-        int a[7] = {2,5,4,3,5,1,2};
-        CGAL_assertion( std::equal( l.begin(), l.end(), a));
-        l.sort();
-        l.unique();
-        int b[5] = {1,2,3,4,5};
-        CGAL_assertion( l.size() == 5);
-        CGAL_assertion( std::equal( l.begin(), l.end(), b));
+        CGAL_assertion( i == end);
+        CGAL_assertion( su == 15);
     }
+    { // Open own scope to hide local variables.
+        // Change three elements and check post-/pre-increment.
+        Iterator i = begin;
+        (*i++).key = 4;
+        CGAL_assertion( 4 == (*begin).key);
+        CGAL_assertion( 2 == (*i).key);
+        (*i++).key = 3;
+        CGAL_assertion( 3 == (*i).key);
+        (*++i).key = 7;
+        CGAL_assertion( 7 == (*i).key);
+    
+        // Check the setting and reset these elements
+        // to their original values.
+        i = begin;
+        CGAL_assertion( 4 == (*i).key);
+        (*i).key = 1;
+        i++;
+        CGAL_assertion( 3 == (*i).key);
+        (*i++).key = 2;
+        CGAL_assertion( 3 == (*i).key);
+        i++;
+        CGAL_assertion( 7 == (*i).key);
+        (*i).key = 4;
+    
+        // Check the resetting.
+        i = begin;
+        int k = 1;
+        do {
+            CGAL_assertion( k == (*i).key);
+            ++i;
+            ++k;
+        } while (i != end);
+    }
+    #line 272 "iterator_test.awi"
+    #line 173 "iterator_test.awi"
+    { // Open own scope to hide local variables.
+        // Check generally correct parameter properties.
+        CGAL::Assert_circulator_or_iterator(begin);
+        CGAL::Assert_circulator_or_iterator(end);
+        CGAL::Assert_is_at_least_forward_category(begin);
+        CGAL::Assert_is_at_least_forward_category(end);
+        CGAL_assertion(1==test_value_type(std::value_type(begin)));
+        CGAL_assertion(1==test_value_type(std::value_type(end)));
+        CGAL_assertion(1==test_distance_type(std::distance_type(begin)));
+        CGAL_assertion(1==test_distance_type(std::distance_type(end)));
+    
+        // Default constructor.
+        Iterator z = Iterator();
+        CGAL::Assert_circulator_or_iterator(z);
+        // Copy constructor.
+        Iterator i = begin;
+    
+        // Check general support for circulators and iterators.
+        CGAL_assertion( CGAL::is_empty_range( z, z));
+        CGAL_assertion( ! CGAL::is_empty_range( i, end));
+    
+        int su = 0;
+        int k  = 1;
+        // Check general loop, pre-increment, dereference.
+        if (! CGAL::is_empty_range( i, end)) {   // superfluous
+            do {
+                CGAL_assertion( k == (*i).key);
+                su += (*i).key;
+                ++k;
+                Iterator j = ++i;
+                CGAL_assertion(  i ==  j);
+                if ( i != end) {
+                    CGAL_assertion( (*i).key == (*j).key);
+                }
+            } while (i != end);  // Inequality and equality checked.
+        }
+        CGAL_assertion( i == end);  // Equality checked.
+        CGAL_assertion( su == 15);
+    
+        // Assignment.
+        i = begin;
+        su = 0;
+        k  = 1;
+        // Loop with post increment.
+        if (! CGAL::is_empty_range( i, end)) {   // superfluous
+            do {
+                CGAL_assertion( k == (*i).key);
+                su += (*i).key;
+                ++k;
+                Iterator j = i++;
+                CGAL_assertion(  i !=  j);
+                if ( i != end) {
+                    CGAL_assertion( (*i).key == (*j).key + 1);
+                }
+            } while (i != end);
+        }
+        CGAL_assertion( i == end);
+        CGAL_assertion( su == 15);
+    }
+    { // Open own scope to hide local variables.
+        CGAL::Assert_is_at_least_bidirectional_category(begin);
+        CGAL::Assert_is_at_least_bidirectional_category(end);
+        // Loop backwards and pre-decrement.
+        Iterator i = end;
+        int su = 0;
+        int k  = 5;
+        do {
+            Iterator j = --i;
+            CGAL_assertion(  i ==  j);
+            CGAL_assertion( (*i).key == (*j).key);
+            CGAL_assertion( k == (*i).key);
+            su += (*i).key;
+            --k;
+        } while (i != begin);
+        CGAL_assertion( i == begin);
+        CGAL_assertion( su == 15);
+    
+        // Assignment.
+        i = end;
+        su = 0;
+        k  = 5;
+        // Loop with post-decrement.
+        do {
+            Iterator j = i--;
+            CGAL_assertion(  i !=  j);
+            if ( j != end) {
+                CGAL_assertion( (*i).key == (*j).key - 1);
+            }
+            CGAL_assertion( k == (*i).key);
+            su += (*i).key;
+            --k;
+        } while (i != begin);
+        CGAL_assertion( i == begin);
+        CGAL_assertion( su == 15);
+    }
+#line 1040 "stl_extension.aw"
+    #line 484 "iterator_test.awi"
+    #line 479 "iterator_test.awi"
+    CGAL::Assert_iterator( begin);
+    CGAL::Assert_iterator( end);
+#line 1042 "stl_extension.aw"
+
+    List l4 = l;
+    const List& l3 = l4;
+    Const_iterator c_begin = l3.begin();
+    Const_iterator c_end   = l3.end();
+    Assert_bidirectional_category(c_begin);
+    Assert_bidirectional_category(c_end);
+    #line 272 "iterator_test.awi"
+    #line 173 "iterator_test.awi"
+    { // Open own scope to hide local variables.
+        // Check generally correct parameter properties.
+        CGAL::Assert_circulator_or_iterator(c_begin);
+        CGAL::Assert_circulator_or_iterator(c_end);
+        CGAL::Assert_is_at_least_forward_category(c_begin);
+        CGAL::Assert_is_at_least_forward_category(c_end);
+        CGAL_assertion(1==test_value_type(std::value_type(c_begin)));
+        CGAL_assertion(1==test_value_type(std::value_type(c_end)));
+        CGAL_assertion(1==test_distance_type(std::distance_type(c_begin)));
+        CGAL_assertion(1==test_distance_type(std::distance_type(c_end)));
+    
+        // Default constructor.
+        Const_iterator z = Const_iterator();
+        CGAL::Assert_circulator_or_iterator(z);
+        // Copy constructor.
+        Const_iterator i = c_begin;
+    
+        // Check general support for circulators and iterators.
+        CGAL_assertion( CGAL::is_empty_range( z, z));
+        CGAL_assertion( ! CGAL::is_empty_range( i, c_end));
+    
+        int su = 0;
+        int k  = 1;
+        // Check general loop, pre-increment, dereference.
+        if (! CGAL::is_empty_range( i, c_end)) {   // superfluous
+            do {
+                CGAL_assertion( k == (*i).key);
+                su += (*i).key;
+                ++k;
+                Const_iterator j = ++i;
+                CGAL_assertion(  i ==  j);
+                if ( i != c_end) {
+                    CGAL_assertion( (*i).key == (*j).key);
+                }
+            } while (i != c_end);  // Inequality and equality checked.
+        }
+        CGAL_assertion( i == c_end);  // Equality checked.
+        CGAL_assertion( su == 15);
+    
+        // Assignment.
+        i = c_begin;
+        su = 0;
+        k  = 1;
+        // Loop with post increment.
+        if (! CGAL::is_empty_range( i, c_end)) {   // superfluous
+            do {
+                CGAL_assertion( k == (*i).key);
+                su += (*i).key;
+                ++k;
+                Const_iterator j = i++;
+                CGAL_assertion(  i !=  j);
+                if ( i != c_end) {
+                    CGAL_assertion( (*i).key == (*j).key + 1);
+                }
+            } while (i != c_end);
+        }
+        CGAL_assertion( i == c_end);
+        CGAL_assertion( su == 15);
+    }
+    { // Open own scope to hide local variables.
+        CGAL::Assert_is_at_least_bidirectional_category(c_begin);
+        CGAL::Assert_is_at_least_bidirectional_category(c_end);
+        // Loop backwards and pre-decrement.
+        Const_iterator i = c_end;
+        int su = 0;
+        int k  = 5;
+        do {
+            Const_iterator j = --i;
+            CGAL_assertion(  i ==  j);
+            CGAL_assertion( (*i).key == (*j).key);
+            CGAL_assertion( k == (*i).key);
+            su += (*i).key;
+            --k;
+        } while (i != c_begin);
+        CGAL_assertion( i == c_begin);
+        CGAL_assertion( su == 15);
+    
+        // Assignment.
+        i = c_end;
+        su = 0;
+        k  = 5;
+        // Loop with post-decrement.
+        do {
+            Const_iterator j = i--;
+            CGAL_assertion(  i !=  j);
+            if ( j != c_end) {
+                CGAL_assertion( (*i).key == (*j).key - 1);
+            }
+            CGAL_assertion( k == (*i).key);
+            su += (*i).key;
+            --k;
+        } while (i != c_begin);
+        CGAL_assertion( i == c_begin);
+        CGAL_assertion( su == 15);
+    }
+#line 1051 "stl_extension.aw"
+    #line 484 "iterator_test.awi"
+    #line 479 "iterator_test.awi"
+    CGAL::Assert_iterator( c_begin);
+    CGAL::Assert_iterator( c_end);
+#line 1053 "stl_extension.aw"
+
+    l.destroy();
+    l1.destroy();
+    l2.destroy();
+    l4.destroy();
+  }{
+    typedef In_place_list<item,true> List;
+    typedef List::iterator       Iterator;
+    typedef List::const_iterator Const_iterator;
+    typedef List::size_type      Size;
+    List l1;
+    CGAL_assertion( l1.empty());
+    CGAL_assertion( l1.size() == 0);
+    CGAL_assertion( l1.max_size() == Size(-1));
+    CGAL_assertion( l1 == l1);
+    CGAL_assertion( l1.begin() == l1.end());
+    List l2(l1);
+    CGAL_assertion( l1 == l2);
+    CGAL_assertion( l2.begin() == l2.end());
+    List l;
+    l.push_back( *new item(1));
+    l.push_back( *new item(2));
+    l.push_back( *new item(3));
+    l.push_back( *new item(4));
+    l.push_back( *new item(5));
+    l1 = l;
+    CGAL_assertion( ! l1.empty());
+    CGAL_assertion( l1.size() == 5);
+    CGAL_assertion( l1 == l);
+    CGAL_assertion( l1 != l2);
+    Iterator begin = l.begin();
+    Iterator end   = l.end();
+    Assert_bidirectional_category(begin);
+    Assert_bidirectional_category(end);
+    #line 312 "iterator_test.awi"
+    #line 235 "iterator_test.awi"
+    #line 173 "iterator_test.awi"
+    { // Open own scope to hide local variables.
+        // Check generally correct parameter properties.
+        CGAL::Assert_circulator_or_iterator(begin);
+        CGAL::Assert_circulator_or_iterator(end);
+        CGAL::Assert_is_at_least_forward_category(begin);
+        CGAL::Assert_is_at_least_forward_category(end);
+        CGAL_assertion(1==test_value_type(std::value_type(begin)));
+        CGAL_assertion(1==test_value_type(std::value_type(end)));
+        CGAL_assertion(1==test_distance_type(std::distance_type(begin)));
+        CGAL_assertion(1==test_distance_type(std::distance_type(end)));
+    
+        // Default constructor.
+        Iterator z = Iterator();
+        CGAL::Assert_circulator_or_iterator(z);
+        // Copy constructor.
+        Iterator i = begin;
+    
+        // Check general support for circulators and iterators.
+        CGAL_assertion( CGAL::is_empty_range( z, z));
+        CGAL_assertion( ! CGAL::is_empty_range( i, end));
+    
+        int su = 0;
+        int k  = 1;
+        // Check general loop, pre-increment, dereference.
+        if (! CGAL::is_empty_range( i, end)) {   // superfluous
+            do {
+                CGAL_assertion( k == (*i).key);
+                su += (*i).key;
+                ++k;
+                Iterator j = ++i;
+                CGAL_assertion(  i ==  j);
+                if ( i != end) {
+                    CGAL_assertion( (*i).key == (*j).key);
+                }
+            } while (i != end);  // Inequality and equality checked.
+        }
+        CGAL_assertion( i == end);  // Equality checked.
+        CGAL_assertion( su == 15);
+    
+        // Assignment.
+        i = begin;
+        su = 0;
+        k  = 1;
+        // Loop with post increment.
+        if (! CGAL::is_empty_range( i, end)) {   // superfluous
+            do {
+                CGAL_assertion( k == (*i).key);
+                su += (*i).key;
+                ++k;
+                Iterator j = i++;
+                CGAL_assertion(  i !=  j);
+                if ( i != end) {
+                    CGAL_assertion( (*i).key == (*j).key + 1);
+                }
+            } while (i != end);
+        }
+        CGAL_assertion( i == end);
+        CGAL_assertion( su == 15);
+    }
+    { // Open own scope to hide local variables.
+        // Change three elements and check post-/pre-increment.
+        Iterator i = begin;
+        (*i++).key = 4;
+        CGAL_assertion( 4 == (*begin).key);
+        CGAL_assertion( 2 == (*i).key);
+        (*i++).key = 3;
+        CGAL_assertion( 3 == (*i).key);
+        (*++i).key = 7;
+        CGAL_assertion( 7 == (*i).key);
+    
+        // Check the setting and reset these elements
+        // to their original values.
+        i = begin;
+        CGAL_assertion( 4 == (*i).key);
+        (*i).key = 1;
+        i++;
+        CGAL_assertion( 3 == (*i).key);
+        (*i++).key = 2;
+        CGAL_assertion( 3 == (*i).key);
+        i++;
+        CGAL_assertion( 7 == (*i).key);
+        (*i).key = 4;
+    
+        // Check the resetting.
+        i = begin;
+        int k = 1;
+        do {
+            CGAL_assertion( k == (*i).key);
+            ++i;
+            ++k;
+        } while (i != end);
+    }
+    #line 272 "iterator_test.awi"
+    #line 173 "iterator_test.awi"
+    { // Open own scope to hide local variables.
+        // Check generally correct parameter properties.
+        CGAL::Assert_circulator_or_iterator(begin);
+        CGAL::Assert_circulator_or_iterator(end);
+        CGAL::Assert_is_at_least_forward_category(begin);
+        CGAL::Assert_is_at_least_forward_category(end);
+        CGAL_assertion(1==test_value_type(std::value_type(begin)));
+        CGAL_assertion(1==test_value_type(std::value_type(end)));
+        CGAL_assertion(1==test_distance_type(std::distance_type(begin)));
+        CGAL_assertion(1==test_distance_type(std::distance_type(end)));
+    
+        // Default constructor.
+        Iterator z = Iterator();
+        CGAL::Assert_circulator_or_iterator(z);
+        // Copy constructor.
+        Iterator i = begin;
+    
+        // Check general support for circulators and iterators.
+        CGAL_assertion( CGAL::is_empty_range( z, z));
+        CGAL_assertion( ! CGAL::is_empty_range( i, end));
+    
+        int su = 0;
+        int k  = 1;
+        // Check general loop, pre-increment, dereference.
+        if (! CGAL::is_empty_range( i, end)) {   // superfluous
+            do {
+                CGAL_assertion( k == (*i).key);
+                su += (*i).key;
+                ++k;
+                Iterator j = ++i;
+                CGAL_assertion(  i ==  j);
+                if ( i != end) {
+                    CGAL_assertion( (*i).key == (*j).key);
+                }
+            } while (i != end);  // Inequality and equality checked.
+        }
+        CGAL_assertion( i == end);  // Equality checked.
+        CGAL_assertion( su == 15);
+    
+        // Assignment.
+        i = begin;
+        su = 0;
+        k  = 1;
+        // Loop with post increment.
+        if (! CGAL::is_empty_range( i, end)) {   // superfluous
+            do {
+                CGAL_assertion( k == (*i).key);
+                su += (*i).key;
+                ++k;
+                Iterator j = i++;
+                CGAL_assertion(  i !=  j);
+                if ( i != end) {
+                    CGAL_assertion( (*i).key == (*j).key + 1);
+                }
+            } while (i != end);
+        }
+        CGAL_assertion( i == end);
+        CGAL_assertion( su == 15);
+    }
+    { // Open own scope to hide local variables.
+        CGAL::Assert_is_at_least_bidirectional_category(begin);
+        CGAL::Assert_is_at_least_bidirectional_category(end);
+        // Loop backwards and pre-decrement.
+        Iterator i = end;
+        int su = 0;
+        int k  = 5;
+        do {
+            Iterator j = --i;
+            CGAL_assertion(  i ==  j);
+            CGAL_assertion( (*i).key == (*j).key);
+            CGAL_assertion( k == (*i).key);
+            su += (*i).key;
+            --k;
+        } while (i != begin);
+        CGAL_assertion( i == begin);
+        CGAL_assertion( su == 15);
+    
+        // Assignment.
+        i = end;
+        su = 0;
+        k  = 5;
+        // Loop with post-decrement.
+        do {
+            Iterator j = i--;
+            CGAL_assertion(  i !=  j);
+            if ( j != end) {
+                CGAL_assertion( (*i).key == (*j).key - 1);
+            }
+            CGAL_assertion( k == (*i).key);
+            su += (*i).key;
+            --k;
+        } while (i != begin);
+        CGAL_assertion( i == begin);
+        CGAL_assertion( su == 15);
+    }
+#line 1089 "stl_extension.aw"
+    #line 484 "iterator_test.awi"
+    #line 479 "iterator_test.awi"
+    CGAL::Assert_iterator( begin);
+    CGAL::Assert_iterator( end);
+#line 1091 "stl_extension.aw"
+
+    const List l3( l);
+    Const_iterator c_begin = l3.begin();
+    Const_iterator c_end   = l3.end();
+    Assert_bidirectional_category(c_begin);
+    Assert_bidirectional_category(c_end);
+    #line 272 "iterator_test.awi"
+    #line 173 "iterator_test.awi"
+    { // Open own scope to hide local variables.
+        // Check generally correct parameter properties.
+        CGAL::Assert_circulator_or_iterator(c_begin);
+        CGAL::Assert_circulator_or_iterator(c_end);
+        CGAL::Assert_is_at_least_forward_category(c_begin);
+        CGAL::Assert_is_at_least_forward_category(c_end);
+        CGAL_assertion(1==test_value_type(std::value_type(c_begin)));
+        CGAL_assertion(1==test_value_type(std::value_type(c_end)));
+        CGAL_assertion(1==test_distance_type(std::distance_type(c_begin)));
+        CGAL_assertion(1==test_distance_type(std::distance_type(c_end)));
+    
+        // Default constructor.
+        Const_iterator z = Const_iterator();
+        CGAL::Assert_circulator_or_iterator(z);
+        // Copy constructor.
+        Const_iterator i = c_begin;
+    
+        // Check general support for circulators and iterators.
+        CGAL_assertion( CGAL::is_empty_range( z, z));
+        CGAL_assertion( ! CGAL::is_empty_range( i, c_end));
+    
+        int su = 0;
+        int k  = 1;
+        // Check general loop, pre-increment, dereference.
+        if (! CGAL::is_empty_range( i, c_end)) {   // superfluous
+            do {
+                CGAL_assertion( k == (*i).key);
+                su += (*i).key;
+                ++k;
+                Const_iterator j = ++i;
+                CGAL_assertion(  i ==  j);
+                if ( i != c_end) {
+                    CGAL_assertion( (*i).key == (*j).key);
+                }
+            } while (i != c_end);  // Inequality and equality checked.
+        }
+        CGAL_assertion( i == c_end);  // Equality checked.
+        CGAL_assertion( su == 15);
+    
+        // Assignment.
+        i = c_begin;
+        su = 0;
+        k  = 1;
+        // Loop with post increment.
+        if (! CGAL::is_empty_range( i, c_end)) {   // superfluous
+            do {
+                CGAL_assertion( k == (*i).key);
+                su += (*i).key;
+                ++k;
+                Const_iterator j = i++;
+                CGAL_assertion(  i !=  j);
+                if ( i != c_end) {
+                    CGAL_assertion( (*i).key == (*j).key + 1);
+                }
+            } while (i != c_end);
+        }
+        CGAL_assertion( i == c_end);
+        CGAL_assertion( su == 15);
+    }
+    { // Open own scope to hide local variables.
+        CGAL::Assert_is_at_least_bidirectional_category(c_begin);
+        CGAL::Assert_is_at_least_bidirectional_category(c_end);
+        // Loop backwards and pre-decrement.
+        Const_iterator i = c_end;
+        int su = 0;
+        int k  = 5;
+        do {
+            Const_iterator j = --i;
+            CGAL_assertion(  i ==  j);
+            CGAL_assertion( (*i).key == (*j).key);
+            CGAL_assertion( k == (*i).key);
+            su += (*i).key;
+            --k;
+        } while (i != c_begin);
+        CGAL_assertion( i == c_begin);
+        CGAL_assertion( su == 15);
+    
+        // Assignment.
+        i = c_end;
+        su = 0;
+        k  = 5;
+        // Loop with post-decrement.
+        do {
+            Const_iterator j = i--;
+            CGAL_assertion(  i !=  j);
+            if ( j != c_end) {
+                CGAL_assertion( (*i).key == (*j).key - 1);
+            }
+            CGAL_assertion( k == (*i).key);
+            su += (*i).key;
+            --k;
+        } while (i != c_begin);
+        CGAL_assertion( i == c_begin);
+        CGAL_assertion( su == 15);
+    }
+#line 1099 "stl_extension.aw"
+    #line 484 "iterator_test.awi"
+    #line 479 "iterator_test.awi"
+    CGAL::Assert_iterator( c_begin);
+    CGAL::Assert_iterator( c_end);
+#line 1101 "stl_extension.aw"
+  }{
+    // in_list_prog.C
+    typedef In_place_list<item,true> List;
+    typedef List::iterator       Iterator;
+    List  l;
+    item* p = new item(1);
+    l.push_back( *p);
+    l.push_back( *new item(2));
+    l.push_front( *new item(3));
+    l.push_front( *new item(4));
+    l.push_front( *new item(2));
+    Iterator i = l.begin();
+    ++i;
+    l.insert(i,*new item(5));
+    l.insert(p,*new item(5));
+    int a[7] = {2,5,4,3,5,1,2};
+    CGAL_assertion( std::equal( l.begin(), l.end(), a));
+    l.sort();
+    l.unique();
+    int b[5] = {1,2,3,4,5};
+    CGAL_assertion( l.size() == 5);
+    CGAL_assertion( std::equal( l.begin(), l.end(), b));
+  }
 }
+#line 4196 "stl_extension.aw"
 
 int main() {
-    init_global_data();
-    test_In_place_list();
-    clean_global_data();
-    return 0;
+  init_global_data();
+  test_In_place_list();
+  clean_global_data();
+  return 0;
 }
 // EOF //

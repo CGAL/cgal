@@ -1,9 +1,13 @@
 // in_place_list_prog.C                 
 // -------------------------------
+#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
+#endif // CGAL_BASIC_H
 #include <cassert>
 #include <algorithm>
+#ifndef CGAL_IN_PLACE_LIST_H
 #include <CGAL/In_place_list.h>
+#endif // CGAL_IN_PLACE_LIST_H
 
 using CGAL::In_place_list_base;
 
