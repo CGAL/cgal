@@ -126,7 +126,6 @@ public:
     //    CGAL_triangulation_postcondition( is_valid() );
   }
 
-  inline
   Triangulation_data_structure_3(const Tds & tds)
     : _number_of_vertices(0), _list_of_cells()
     // _number_of_vertices is set to 0 so that clear() in copy_tds() works
@@ -143,7 +142,6 @@ public:
   
   // ASSIGNEMENT
 
-  inline
   Tds & operator= (const Tds & tds)
   {
     copy_tds(tds);
@@ -152,13 +150,10 @@ public:
     
   // ACCESS FUNCTIONS
 
-  inline 
   int number_of_vertices() const {return _number_of_vertices;}
   
-  inline 
   int dimension() const {return _dimension;}
 
-  inline 
   int number_of_cells() const 
     { 
       if ( dimension() < 3 ) return 0;
@@ -172,7 +167,6 @@ public:
       return i;
     }
   
-  inline 
   int number_of_facets() const
     {
       if ( dimension() < 2 ) return 0;
@@ -186,7 +180,6 @@ public:
       return i;
     }
 
-  inline 
   int number_of_edges() const
     {
       if ( dimension() < 1 ) return 0;
@@ -206,13 +199,10 @@ public:
   // SETTING
   // to be protected ?
 
-  inline 
   void set_number_of_vertices(int n) { _number_of_vertices = n; }
 
-  inline 
   void set_dimension(int n) { _dimension = n; }
 
-  inline 
   Cell * create_cell() 
     { 
       Cell* c = new Cell();
@@ -220,7 +210,6 @@ public:
       return c; 
     }
 
-  inline 
   Cell* create_cell( Cell* c )
     {
       Cell* cnew = new Cell(c);
@@ -228,7 +217,6 @@ public:
       return cnew; 
     }
   
-  inline 
   Cell* create_cell( Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3)
     {
       Cell* cnew = new Cell(v0,v1,v2,v3);
@@ -236,7 +224,6 @@ public:
       return cnew; 
     }
 
-  inline 
   Cell* create_cell( Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3,
 		     Cell* n0, Cell* n1, Cell* n2, Cell* n3)
     {
@@ -247,7 +234,6 @@ public:
 
   // not documented
   // only used by copy_tds in the TDS class
-  inline 
   Cell* create_cell( Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3,
 		     const Cell & old_cell )
     {
@@ -256,7 +242,6 @@ public:
       return cnew; 
     }
 
-  inline 
   void add_cell( Cell* c ) 
     {
       CGAL_triangulation_precondition( c != NULL );
@@ -266,7 +251,6 @@ public:
       c->_previous_cell = past_end_cell();
     }
 
-  inline 
   void delete_cell( Cell* c ) 
     { 
       CGAL_triangulation_expensive_precondition_code
@@ -589,11 +573,9 @@ private:
   
   // ACCESS FUNCTIONS
 
-  inline
   Cell & list_of_cells() 
     {return _list_of_cells;}
   
-  inline 
   Cell* past_end_cell() const 
     {
       Tds* ncthis = (Tds *)this;

@@ -157,12 +157,12 @@ public:
       return tmp;
     }
         
-  inline Cell & operator*() const
+  Cell & operator*() const
     {
       return *pos;
     }
     
-  inline Cell* operator->() const
+  Cell* operator->() const
     {
       return pos;
     }
@@ -275,13 +275,13 @@ public:
       return !(*this == fi);
     }
     
-  inline Vertex & operator*() const
+  Vertex & operator*() const
     {
       // case pos == NULL should not be accessed, there is no vertex
       return *(pos->vertex(index));
     }
     
-  inline Vertex* operator->() const
+  Vertex* operator->() const
     {
       // case pos == NULL should not be accessed, there is no vertex
       return pos->vertex(index);

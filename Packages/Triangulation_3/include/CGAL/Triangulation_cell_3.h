@@ -55,17 +55,14 @@ public:
   typedef Triangulation_vertex_handle_3<Gt,Tds> Vertex_handle;
   typedef Triangulation_cell_handle_3<Gt,Tds> Cell_handle;
 
-  inline
   Triangulation_cell_3()
     : Ctds()
   { }
 
-//   inline
 //   Triangulation_cell_3(Tds& tds)
 //     : Ctds(tds)
 //   { }
 
-  inline
   Triangulation_cell_3(Vertex_handle v0,
 		       Vertex_handle v1,
 		       Vertex_handle v2,
@@ -73,7 +70,6 @@ public:
     : Ctds(&(*v0), &(*v1), &(*v2), &(*v3))
   {}
     
-  inline
   Triangulation_cell_3(Vertex_handle v0,
 		       Vertex_handle v1,
 		       Vertex_handle v2,
@@ -87,60 +83,58 @@ public:
   {}
 
   // Vertex access functions
-  inline Vertex_handle vertex(int i) const
+  Vertex_handle vertex(int i) const
   {
     return  ((Vertex *)(Ctds::vertex(i)));
   }
     
-  inline bool has_vertex(const Vertex_handle & v) const
+  bool has_vertex(const Vertex_handle & v) const
   {
     return (Ctds::has_vertex( & (*v)) );
   }
     
-  inline bool has_vertex(const Vertex_handle & v, int & i) const
+  bool has_vertex(const Vertex_handle & v, int & i) const
   {
     return Ctds::has_vertex( &(*v), i);
   }
 
-  inline int index(const Vertex_handle & v) const
+  int index(const Vertex_handle & v) const
   {
     return Ctds::index( &(*v));
   }
 
   //ACCESS FUNCTIONS
-  inline
   Cell_handle neighbor(int i) const
   {
     return (Triangulation_cell_3 *)(Ctds::neighbor(i));
   }
 
-  inline int index(Cell_handle c) const
+  int index(Cell_handle c) const
   {
     return Ctds::index( &(*c));
   }
 
-  inline Vertex_handle mirror_vertex(int i) const
+  Vertex_handle mirror_vertex(int i) const
     {
       return Ctds::mirror_vertex(i);
     }
 
-  inline 
   int mirror_index(int i) const
     {
       return Ctds::mirror_index(i);
     }
   
-  inline bool has_neighbor(Cell_handle c) const
+  bool has_neighbor(Cell_handle c) const
   {
     return Ctds::has_neighbor( &(*c));
   }
 
-  inline bool has_neighbor(Cell_handle c, int & i) const
+  bool has_neighbor(Cell_handle c, int & i) const
   {
     return Ctds::has_neighbor( &(*c), i);
   }
  
-  inline Cell_handle handle() const
+  Cell_handle handle() const
   {
     return Cell_handle(this);
   }
@@ -182,7 +176,7 @@ public:
     Ctds::set_neighbor(i, &(*n));
   }
 
-//   inline bool is_valid(bool verbose = false, int level = 0) const
+//   bool is_valid(bool verbose = false, int level = 0) const
 //   {
 //     return Ctds::is_valid(verbose,level);
 //   }

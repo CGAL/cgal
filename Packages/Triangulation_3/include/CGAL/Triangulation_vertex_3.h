@@ -75,57 +75,56 @@ public:
     :  Vtds(&(*c))
   {}
 
-  inline void set_cell(Cell_handle c)
+  void set_cell(Cell_handle c)
   {
     Vtds::set_cell(&(*c));
   }
     
-  inline void set_point(const Point & p)
+  void set_point(const Point & p)
   {
     Vtds::set_point(p);
   }
     
-  inline Cell_handle cell() const
+  Cell_handle cell() const
   {
     return (Cell *) Vtds::cell();
   }
         
-  inline Vertex_handle handle() const
+  Vertex_handle handle() const
   {
     return Vertex_handle(this);
   }
 
-  inline bool is_valid(bool verbose = false, int level = 0) const
+  bool is_valid(bool verbose = false, int level = 0) const
   {
     return Vtds::is_valid(verbose,level);
   }
-//   inline Vertex_circulator incident_vertices()
+//   Vertex_circulator incident_vertices()
 //   {
 //     return Vertex_circulator(handle(), cell());
 //   }
 
-//   inline Vertex_circulator incident_vertices(const Cell_handle& c)
+//   Vertex_circulator incident_vertices(const Cell_handle& c)
 //   {
 //     return Vertex_circulator(handle(), c);
 //   } 
 
-//   inline 
 //   Cell_circulator incident_cells()
 //   {
 //     return Cell_circulator(handle(), cell());
 //   }
     
-//   inline Cell_circulator incident_cells(const Cell_handle& c)
+//   Cell_circulator incident_cells(const Cell_handle& c)
 //   {
 //     return Cell_circulator(handle(), c);
 //   }
     
-//   inline Edge_circulator incident_edges()
+//   Edge_circulator incident_edges()
 //   {
 //     return Edge_circulator(handle(), cell());
 //   }
  
-//   inline Edge_circulator incident_edges(const Cell_handle& c)
+//   Edge_circulator incident_edges(const Cell_handle& c)
 //   {
 //     return Edge_circulator(handle(), c);
 //   }

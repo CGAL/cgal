@@ -59,28 +59,25 @@ public:
   
   typedef Triangulation_vertex_iterator_3<Gt,Tds>      Vertex_iterator;
   
-  inline 
   Triangulation_vertex_handle_3()
     : Ptr(NULL)
   {}
 
-  inline  
   Triangulation_vertex_handle_3(const Vertex* v)
     : Ptr((Vertex*)v)
     {}
 
-  inline  
   Triangulation_vertex_handle_3(const Vertex_iterator & vit)
     : Ptr(&(*vit))
     {}
   
-  inline Vertex_handle & operator=(const Vertex* & v)
+  Vertex_handle & operator=(const Vertex* & v)
   {
     ptr() = const_cast<Vertex*>(v) ;
     return *this;
   }
     
-  inline Vertex_handle & operator=(const Vertex_handle & v)
+  Vertex_handle & operator=(const Vertex_handle & v)
   {
     ptr() = v.ptr();
     return *this;
@@ -107,33 +104,29 @@ public:
   typedef Triangulation_cell_iterator_3<Gt,Tds> Cell_iterator;
   typedef Triangulation_cell_circulator_3<Gt,Tds> Cell_circulator;
   
-  inline 
   Triangulation_cell_handle_3()
     : Ptr(NULL)
   {}
 
-  inline  
   Triangulation_cell_handle_3(const Cell* c)
     : Ptr((Cell*)c)
   {}
 
-  inline  
   Triangulation_cell_handle_3(const Cell_iterator & cit)
     : Ptr(&(*cit))
   {}
   
-  inline  
   Triangulation_cell_handle_3(const Cell_circulator & ccir)
     : Ptr(&(*ccir))
   {}
 
-  inline Cell_handle & operator=(const Cell* & c)
+  Cell_handle & operator=(const Cell* & c)
   {
     ptr() = const_cast<Cell*>(c) ;
     return *this;
   }
     
-  inline Cell_handle & operator=(const Cell_handle & c)
+  Cell_handle & operator=(const Cell_handle & c)
   {
     ptr() = c.ptr();
     return *this;

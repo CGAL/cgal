@@ -186,12 +186,12 @@ public:
     return tmp;
   }
 
-  inline Cell& operator*() const
+  Cell& operator*() const
   {
     return *pos;
   }
 
-  inline Cell* operator->() const
+  Cell* operator->() const
   {
     return pos;
   }
@@ -419,14 +419,14 @@ public:
     return tmp;
   }
 
-  inline Facet operator*() const
+  Facet operator*() const
   {
     return std::make_pair(pos,
 			  next_around_edge( pos->index(_c->vertex(_s)),
 					 pos->index(_c->vertex(_t)) ) );
   }
 
-//   inline Facet* operator->() const
+//   Facet* operator->() const
 //   {
 //     return pos;
 //   }

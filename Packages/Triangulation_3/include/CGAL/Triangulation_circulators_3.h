@@ -141,12 +141,12 @@ public:
     return tmp;
   }
 
-  inline Cell & operator*() const
+  Cell & operator*() const
   {
     return (Cell &)(*_cb);
   }
 
-  inline Cell* operator->() const
+  Cell* operator->() const
   {
     return (Cell*)( &(*_cb) );
   }
@@ -278,7 +278,7 @@ public:
     return tmp;
   }
 
-  inline Facet operator*() const
+  Facet operator*() const
   {
     return std::make_pair( Cell_handle( (Cell *) ((*_cb).first) ),
 			   (*_cb).second  ) ;

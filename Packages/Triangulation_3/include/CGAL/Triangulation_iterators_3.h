@@ -180,12 +180,12 @@ public:
     return tmp;
   }
         
-  inline Cell & operator*() const
+  Cell & operator*() const
   {
     return (Cell &)(*_ib);
   }
 
-  inline Cell* operator->() const
+  Cell* operator->() const
   {
     return (Cell*)( &(*_ib) );
   }
@@ -316,12 +316,12 @@ public:
     return tmp;
   }
 
-  inline Vertex & operator*() const
+  Vertex & operator*() const
   {
     return (Vertex &)(*_ib);
   }
 
-  inline Vertex* operator->() const
+  Vertex* operator->() const
   {
     return   (Vertex*)( &(*_ib) );
   }
@@ -461,7 +461,7 @@ public:
     return tmp;
   }
         
-  inline Edge operator*() const
+  Edge operator*() const
   {
     Cell_handle ch = (Cell *)( (*_ib).first );
     return make_triple( ch, (*_ib).second, (*_ib).third );
@@ -600,7 +600,7 @@ public:
     return tmp;
   }
         
-  inline Facet operator*() const
+  Facet operator*() const
   {
     Cell_handle ch = (Cell *)( (*_ib).first );
     return std::make_pair( ch, (*_ib).second );

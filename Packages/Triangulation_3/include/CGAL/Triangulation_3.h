@@ -269,15 +269,12 @@ public:
     }
 
   //ACCESS FUNCTIONS
-  inline 
   const GT & geom_traits() const 
     { return _gt;}
   
-  inline
   const Tds & tds() const 
     { return _tds;}
   
-  //  inline
   int dimension() const 
     { return _tds.dimension();}
 
@@ -293,17 +290,14 @@ public:
  
   int number_of_edges() const;
   
-  inline
   int number_of_vertices() const // number of finite vertices
     {return _tds.number_of_vertices()-1;}
 
-  inline
   Vertex_handle infinite_vertex() const
     {
       return infinite;
     }
    
-  inline
   Cell_handle infinite_cell() const
     {
       //    CGAL_triangulation_precondition(infinite_vertex()->cell()->
@@ -315,7 +309,6 @@ public:
   void set_number_of_vertices(int n) 
     { _tds.set_number_of_vertices(n+1); }
    
-  inline
   void add_cell( Cell_handle c ) { _tds.add_cell( &(*c) ); }
 
   // GEOMETRIC ACCESS FUNCTIONS
@@ -413,7 +406,7 @@ public:
 
   Cell_handle locate(const Point & p) const;
 
-  inline Cell_handle
+  Cell_handle
   locate(const Point & p, Cell_handle start) const
     {
       Locate_type lt;
@@ -860,7 +853,6 @@ private:
 			 Cell_handle c,
 			 int dummy_for_windows = 0) const;
 protected:
-  inline
   Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1,
 			  Vertex_handle v2, Vertex_handle v3,
 			  Cell_handle c0, Cell_handle c1,
@@ -1681,6 +1673,7 @@ locate(const Point & p) const
 }
 
 template < class GT, class Tds >
+inline
 Triangulation_3<GT,Tds>::Cell_handle
 Triangulation_3<GT,Tds>::
 locate(const Point & p,
