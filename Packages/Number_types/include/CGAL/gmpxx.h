@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 2002 The CGAL Consortium
+// Copyright (c) 2002,2003 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -134,60 +134,56 @@ to_interval (const mpq_class & q)
   return  quot.pair();
 }
 
+// These are necessary due to expression-templates.
+template < typename T, typename U >
+inline
+::__gmp_expr<T, T>
+abs(const ::__gmp_expr<T, U>& x) { return ::abs(x); }
 
-namespace NTS {
-  // These are necessary due to expression-templates.
-  template < typename T, typename U >
-  inline
-  ::__gmp_expr<T, T>
-  abs(const ::__gmp_expr<T, U>& x) { return ::abs(x); }
+template < typename T, typename U >
+inline
+::__gmp_expr<T, T>
+square(const ::__gmp_expr<T, U>& x) { return x*x; }
 
-  template < typename T, typename U >
-  inline
-  ::__gmp_expr<T, T>
-  square(const ::__gmp_expr<T, U>& x) { return x*x; }
+template < typename T, typename U >
+inline
+Sign
+sign(const ::__gmp_expr<T, U> & e)
+{ return (Sign) ::sgn(e); }
 
-  template < typename T, typename U >
-  inline
-  Sign
-  sign(const ::__gmp_expr<T, U> & e)
-  { return (Sign) ::sgn(e); }
-
-  template < typename T, typename U1, typename U2 >
-  inline
-  Comparison_result
-  compare(const ::__gmp_expr<T, U1> & e1,
-          const ::__gmp_expr<T, U2> & e2)
-  {
-    // cmp returns any int value, not just -1/0/1...
-    return (Comparison_result) CGAL_NTS sign(::cmp(e1, e2));
-  }
-
-  template < typename T, typename U >
-  inline
-  bool
-  is_zero(const ::__gmp_expr<T, U> & e)
-  { return ::sgn(e) == 0; }
-
-  template < typename T, typename U >
-  inline
-  bool
-  is_one(const ::__gmp_expr<T, U> & e)
-  { return e == 1; }
-
-  template < typename T, typename U >
-  inline
-  bool
-  is_positive(const ::__gmp_expr<T, U> & e)
-  { return ::sgn(e) > 0; }
-
-  template < typename T, typename U >
-  inline
-  bool
-  is_negative(const ::__gmp_expr<T, U> & e)
-  { return ::sgn(e) < 0; }
-
+template < typename T, typename U1, typename U2 >
+inline
+Comparison_result
+compare(const ::__gmp_expr<T, U1> & e1,
+        const ::__gmp_expr<T, U2> & e2)
+{
+  // cmp returns any int value, not just -1/0/1...
+  return (Comparison_result) CGAL_NTS sign(::cmp(e1, e2));
 }
+
+template < typename T, typename U >
+inline
+bool
+is_zero(const ::__gmp_expr<T, U> & e)
+{ return ::sgn(e) == 0; }
+
+template < typename T, typename U >
+inline
+bool
+is_one(const ::__gmp_expr<T, U> & e)
+{ return e == 1; }
+
+template < typename T, typename U >
+inline
+bool
+is_positive(const ::__gmp_expr<T, U> & e)
+{ return ::sgn(e) > 0; }
+
+template < typename T, typename U >
+inline
+bool
+is_negative(const ::__gmp_expr<T, U> & e)
+{ return ::sgn(e) < 0; }
 
 #if 0
 // Unfinished stuff for mpf_class.

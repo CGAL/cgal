@@ -96,15 +96,6 @@ to_interval (const leda_real & z)
   return ina.pair();
 }
 
-namespace NTS {
-  inline
-  leda_real
-  sqrt( const leda_real& n)
-  { 
-    return CGAL_LEDA_SCOPE::sqrt(n);
-  }
-}
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_LEDA_REAL_H

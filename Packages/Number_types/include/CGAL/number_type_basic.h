@@ -27,7 +27,9 @@
 
 #define CGAL_PI 3.14159265358979323846
 
-#define CGAL_NTS CGAL::NTS::
+// CGAL_NTS is deprecated, and should be replaced by CGAL::
+#define CGAL_NTS CGAL::
+// #define CGAL_NTS CGAL::NTS::
 
 #if ((__GNUC__ == 2) && (__GNUC_MINOR__ == 95))
 #include <cmath>
@@ -39,38 +41,36 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#if !defined CGAL_CFG_RETURN_TYPE_BUG
+#ifndef CGAL_CFG_RETURN_TYPE_BUG
 
 using std::min;
 using std::max;
 
 #else
 
+// We have to redefine them to change the return type from const NT& to NT.
+
 template <class NT>
 inline
 NT
-// const NT&
 min(const NT& x, const NT& y)
 { return (y < x) ? y : x; }
 
 template <class NT, class Comp>
 inline
 NT
-// const NT&
 min(const NT& x, const NT& y, const Comp& c)
 { return c(x, y) ? x : y; }
 
 template <class NT>
 inline
 NT
-// const NT&
 max(const NT& x, const NT& y)
 { return (x < y) ? y : x; }
 
 template <class NT, class Comp>
 inline
 NT
-// const NT&
 max(const NT& x, const NT& y, const Comp& c)
 { return c(x, y) ? y : x; }
 

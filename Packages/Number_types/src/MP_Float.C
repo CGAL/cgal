@@ -90,9 +90,8 @@ MP_Float::MP_Float(double d)
     CGAL_expensive_assertion(CGAL::to_double(*this) == bak);
 }
 
-// I should be able to define the non-inline overloading, but KCC complains.
 Comparison_result
-compare_noinline (const MP_Float & a, const MP_Float & b)
+compare (const MP_Float & a, const MP_Float & b)
 {
   if (a.is_zero())
     return (Comparison_result) - b.sign();

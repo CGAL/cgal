@@ -102,17 +102,25 @@ io_Operator
 io_tag(unsigned int)
 { return io_Operator(); }
 
-namespace NTS {
-  inline unsigned int is_negative(unsigned int) { return false; }
+inline
+unsigned int
+is_negative(unsigned int)
+{ return false; }
   
-  inline Sign sign(unsigned int i) 
-    { return is_positive(i) ? POSITIVE : ZERO; }
+inline
+Sign
+sign(unsigned int i) 
+{ return is_positive(i) ? POSITIVE : ZERO; }
   
-  inline unsigned int is_positive(unsigned int i)
-    { return i != 0; }
+inline
+unsigned int
+is_positive(unsigned int i)
+{ return i != 0; }
 
-  inline unsigned int abs(unsigned int i) { return i; }
-} // namespace NTS
+inline
+unsigned int
+abs(unsigned int i)
+{ return i; }
 
 // long
 
@@ -180,18 +188,25 @@ io_Operator
 io_tag(unsigned long int)
 { return io_Operator(); }
 
-namespace NTS {
-  inline unsigned long int is_negative(unsigned long int) 
-    { return false; }
+inline
+unsigned long int
+is_negative(unsigned long int) 
+{ return false; }
   
-  inline Sign sign(unsigned long int i) 
-    { return is_positive(i) ? POSITIVE : ZERO; }
+inline
+Sign
+sign(unsigned long int i) 
+{ return is_positive(i) ? POSITIVE : ZERO; }
   
-  inline unsigned long int is_positive(unsigned long int i)
-    { return i != 0; }
+inline
+unsigned long int
+is_positive(unsigned long int i)
+{ return i != 0; }
 
-  inline unsigned long int abs(unsigned long int i) { return i; }
-} // namespace NTS
+inline
+unsigned long int
+abs(unsigned long int i)
+{ return i; }
 
 // short
 
@@ -266,19 +281,24 @@ io_Operator
 io_tag(unsigned short int)
 { return io_Operator(); }
 
-namespace NTS {
-  inline unsigned short int is_negative(unsigned short int) 
-    { return false; }
+inline
+unsigned short int
+is_negative(unsigned short int) 
+{ return false; }
   
-  inline Sign sign(unsigned short int i) 
-    { return is_positive(i) ? POSITIVE : ZERO; }
+inline
+Sign
+sign(unsigned short int i) 
+{ return is_positive(i) ? POSITIVE : ZERO; }
   
-  inline unsigned short int is_positive(unsigned short int i)
-    { return i != 0; }
+inline
+unsigned short int
+is_positive(unsigned short int i)
+{ return i != 0; }
 
-  inline unsigned short int abs(unsigned short int i) { return i; }
-} // namespace NTS
-
+inline
+unsigned short int abs(unsigned short int i)
+{ return i; }
 
 // Note : "long long" support is in <CGAL/long_long.h>
 

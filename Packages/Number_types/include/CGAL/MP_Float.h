@@ -43,7 +43,7 @@
 // - IOs
 
 // TODO :
-// - Documentation.
+// - Write a generic wrapper that adds an exponent to be used by MP integers.
 // - Karatsuba (or other) ?  Would be fun to implement at least.
 // - Division, sqrt... : different options :
 //   - nothing
@@ -61,16 +61,7 @@ MP_Float operator*(const MP_Float &a, const MP_Float &b);
 MP_Float operator/(const MP_Float &a, const MP_Float &b);
 
 Comparison_result
-compare_noinline (const MP_Float & a, const MP_Float & b);
-
-namespace NTS {
-inline
-Comparison_result
-compare (const MP_Float & a, const MP_Float & b)
-{
-  return compare_noinline (a, b);
-}
-}
+compare (const MP_Float & a, const MP_Float & b);
 
 class MP_Float
 {
@@ -219,10 +210,6 @@ inline
 bool operator!=(const MP_Float &a, const MP_Float &b)
 { return ! (a == b); }
 
-MP_Float square(const MP_Float&);
-
-namespace NTS {
-
 inline
 Sign
 sign (const MP_Float &a)
@@ -230,14 +217,8 @@ sign (const MP_Float &a)
   return a.sign();
 }
 
-inline
 MP_Float
-square(const MP_Float &f)
-{
-  return CGAL::square(f);
-}
-
-} // namespace NTS
+square(const MP_Float&);
 
 MP_Float
 sqrt(const MP_Float &d);

@@ -611,15 +611,6 @@ to_interval (const Gmpz & z)
   return approx.pair();
 }
 
-namespace NTS {
-  inline
-  Gmpz
-  gcd( const Gmpz& n1, const Gmpz& n2)
-  { 
-    return CGAL::gcd(n1, n2);
-  }
-}
-
 inline
 double to_double(const Quotient<Gmpz>& quot)
 {
@@ -636,8 +627,8 @@ double to_double(const Quotient<Gmpz>& quot)
   mpq_clear(mpQ);
   return ret;
 }
-CGAL_END_NAMESPACE
 
+CGAL_END_NAMESPACE
 
 #if defined( _MSC_VER ) && ( _MSC_VER == 1300 )
   CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(CGAL::Gmpz);
@@ -645,4 +636,5 @@ CGAL_END_NAMESPACE
   CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(CGAL::Quotient<CGAL::Gmpz>);
   CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(CGAL::Quotient<CGAL::Gmpz>*);
 #endif 
+
 #endif // CGAL_GMPZ_H

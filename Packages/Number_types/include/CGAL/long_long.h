@@ -84,18 +84,25 @@ bool
 is_valid(unsigned long long int)
 { return true; }
 
-namespace NTS {
-inline unsigned long long is_negative(unsigned long long i)
+inline
+unsigned long long
+is_negative(unsigned long long i)
 { return false; }
 
-inline Sign sign(unsigned long long i)
+inline
+Sign
+sign(unsigned long long i)
 { return is_positive(i) ? POSITIVE : ZERO; }
 
-inline unsigned long long is_positive(unsigned long long i)
+inline
+unsigned long long
+is_positive(unsigned long long i)
 { return i != 0; }
 
-inline unsigned long long abs(unsigned long long i) { return i; }
-} // namespace NTS
+inline
+unsigned long long
+abs(unsigned long long i)
+{ return i; }
 
 inline
 std::pair<double,double>

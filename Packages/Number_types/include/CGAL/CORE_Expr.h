@@ -66,8 +66,6 @@ io_Operator
 io_tag(const CORE::Expr &)
 { return io_Operator(); }
 
-namespace NTS {
-
 inline
 Sign
 sign(const CORE::Expr& e)
@@ -86,8 +84,6 @@ sqrt(const CORE::Expr& e)
 { 
   return CORE::sqrt(e);
 }
-
-} // namespace NTS
 
 // Should not be inline, but, well...
 inline

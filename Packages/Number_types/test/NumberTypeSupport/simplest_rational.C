@@ -24,7 +24,7 @@ template <class Q>
 void test_it()
 {
   Q q = CGAL::simplest_rational_in_interval<Q>(-0.1, 0.1);
-  assert(CGAL::NTS::is_zero(q));
+  assert(CGAL::is_zero(q));
 
   double l = 3.1415, h = 3.1416;
   q = CGAL::simplest_rational_in_interval<Q>(l, h);

@@ -30,8 +30,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace NTS {
-
 template <class NT>
 inline
 bool
@@ -71,18 +69,6 @@ abs(const NT& x)
     return -x;
   return x;
 }
-
-template <class NT>
-inline
-const NT&
-min(const NT& x, const NT& y)
-{ return (y < x) ? y : x; }
-
-template <class NT>
-inline
-const NT&
-max(const NT& x, const NT& y)
-{ return (x < y) ? y : x; }
 
 template <class NT1, class NT2>
 CGAL_KERNEL_INLINE
@@ -142,81 +128,7 @@ gcd( const NT& n1, const NT& n2)
   return x;
 }
 
-} // namespace NTS
-
-template <class NT>
-inline
-bool
-is_zero(const NT& x)
-{
-  bool is_zero_is_obsolete__qualify_call_by_CGAL_NTS;
-  return CGAL_NTS is_zero(x);
-}
-
-template <class NT>
-inline
-bool
-is_one(const NT& x)
-{
-  bool is_one_is_obsolete__qualify_call_by_CGAL_NTS;
-  return CGAL_NTS is_one(x);
-}
-
-template <class NT>
-inline
-bool
-is_negative(const NT& x)
-{
-  bool is_negative_is_obsolete__qualify_call_by_CGAL_NTS;
-  return CGAL_NTS is_negative(x);
-}
-
-template <class NT>
-inline
-bool
-is_positive(const NT& x)
-{
-  bool is_positive_is_obsolete__qualify_call_by_CGAL_NTS;
-  return CGAL_NTS is_positive(x);
-}
-
-template <class NT>
-inline
-Sign
-sign(const NT& x)
-{
-  bool sign_is_obsolete__qualify_call_by_CGAL_NTS;
-  return CGAL_NTS sign(x);
-}
-
-template <class NT>
-inline
-NT
-abs(const NT& x)
-{
-  bool abs_is_obsolete__qualify_call_by_CGAL_NTS;
-  return CGAL_NTS abs(x);
-}
-
 // for min and max see <CGAL/number_type_basic.h>
-
-template <class NT1, class NT2>
-inline
-Comparison_result
-compare(const NT1& n1, const NT2& n2)
-{
-  bool compare_is_obsolete__qualify_call_by_CGAL_NTS;
-  return CGAL_NTS compare(n1, n2);
-}
-
-template <class NT>
-inline
-NT
-square( const NT& n)
-{
-  bool square_is_obsolete__qualify_call_by_CGAL_NTS;
-  return CGAL_NTS square(n);
-}
 
 CGAL_END_NAMESPACE
 

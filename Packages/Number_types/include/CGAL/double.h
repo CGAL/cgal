@@ -159,8 +159,6 @@ io_Operator
 io_tag(double)
 { return io_Operator(); }
 
-namespace NTS {
-
 // GCC is faster with std::fabs().
 #ifdef __GNUG__
 inline
@@ -168,8 +166,6 @@ double
 abs(const double& d)
 { return CGAL_CLIB_STD::fabs(d); }
 #endif
-
-} // namespace NTS
 
 CGAL_END_NAMESPACE
 
