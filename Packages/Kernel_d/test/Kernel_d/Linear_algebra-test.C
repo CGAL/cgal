@@ -153,7 +153,7 @@ int main(int argc, char* argv[])
       CGAL_TEST(det == pot);
       CGAL_TEST(LA::verify_determinant(C, det, L, U, q, c));
       CGAL_TEST(det == LA::determinant(C));
-      CGAL_TEST(sign(det) == LA::sign_of_determinant(C));
+      CGAL_TEST(CGAL_NTS sign(det) == LA::sign_of_determinant(C));
       if (IOTEST) CGAL_IO_TEST(A,C);
       /* a random linear solver task: */
       Vector b(mat_dim),x(mat_dim),e; 
@@ -341,7 +341,7 @@ int main(int argc, char* argv[])
       CGAL_TEST(det == pot);
       CGAL_TEST(LA::verify_determinant(C, det, L, U, q, c));
       CGAL_TEST(det == LA::determinant(C));
-      CGAL_TEST(sign(det) == LA::sign_of_determinant(C));
+      CGAL_TEST(CGAL_NTS sign(det) == LA::sign_of_determinant(C));
       if (IOTEST) CGAL_IO_TEST(A,C);
       /* a random linear solver task: */
       Vector b(mat_dim),x(mat_dim),e; 

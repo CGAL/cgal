@@ -424,7 +424,6 @@ OutputIterator operator()(ForwardIterator first, ForwardIterator last,
 { TUPLE_DIM_CHECK(first,last,linear_base);
   int k = std::distance(first,last); // k vectors
   int d = first->dimension();
-  FT denom; 
   typename LA::Matrix M(d,k); 
   for (int j = 0; j < k; ++first, ++j)
     for (int i = 0; i < d; i++)

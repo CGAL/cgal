@@ -129,7 +129,7 @@ void d2_map(const Regular_complex_d<R>& RC, GRAPH<leda_point,int>& G)
           G.new_edge(vi,vk);
         } 
 
-        if (RC.opposite_simplex(scur,jcur) == nil) {
+        if (RC.opposite_simplex(scur,jcur) == Simplex_handle()) {
           /* we also need to walk in the other direction */
  
           efirst = G.new_edge(efirst,vj,0,LEDA::before);  // 0 is etype

@@ -150,7 +150,7 @@ int main()
 
     CGAL_TEST(p1.cartesian(0)==(NT)1);
     CGAL_TEST(p1[1]==(NT)0);
-    CGAL_TEST(p1.homogeneous(0)==(RT)1);
+    CGAL_TEST(p1.homogeneous(0)==Kernel::RT(1));
     CGAL_TEST( (p1 - CGAL::ORIGIN) == e1);
     CGAL_TEST(CGAL::squared_distance(Point(1,1,1,1),p0)==NT(3));
 
@@ -641,7 +641,7 @@ int main()
 
     CGAL_TEST(p1.cartesian(0)==(NT)1);
     CGAL_TEST(p1[1]==(NT)0);
-    CGAL_TEST(p1.homogeneous(0)==(RT)1);
+    CGAL_TEST(p1.homogeneous(0)==Kernel::RT(1));
     CGAL_TEST( (p1 - CGAL::ORIGIN) == e1);
     CGAL_TEST(CGAL::squared_distance(Point(1,1,1,1),p0)==NT(3));
 

@@ -598,7 +598,7 @@ void Regular_complex_d<R>::check_topology() const
 
   forall_rc_simplices(s,*this) {
     for(i = 0; i <= dcur; i++) {
-      if ((t = opposite_simplex(s,i)) != nil) { 
+      if ((t = opposite_simplex(s,i)) != Simplex_const_handle()) { 
         int l = index_of_opposite_vertex(s,i); 
         if (s != opposite_simplex(t,l) || 
             i != index_of_opposite_vertex(t,l))
@@ -627,8 +627,8 @@ void Regular_complex_d<R>::check_topology_and_geometry() const
   check_topology();
   Vertex_const_handle v;
   forall_rc_vertices(v,*this) {
-    if ( v == nil || associated_point(v).identical(
-                       Regular_complex_d<R>::nil_point) )
+    if ( v == Vertex_const_handle() || 
+         associated_point(v).identical(Regular_complex_d<R>::nil_point) )
       CGAL_assertion_msg(0,"check_topology_and_geometry: \
       vertex with nil_point or no associated point.");
   }
