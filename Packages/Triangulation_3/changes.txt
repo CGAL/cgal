@@ -1,4 +1,4 @@
-Version 1.56 (?? May 01)
+Version 1.56 (1  June 01)
 - Document the hierarchy.
 - Use MP_Float.
 - Hierarchy traits now uses Compare_distance_3.
