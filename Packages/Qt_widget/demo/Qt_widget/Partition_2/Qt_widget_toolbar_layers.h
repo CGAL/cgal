@@ -58,23 +58,18 @@ public:
   ~Layers_toolbar();
   QToolBar* toolbar(){return maintoolbar;};
 
-signals:
-  void new_object(CGAL::Object);
-		
-private slots:
-  void redraw_win(int);
 private:
-  QToolBar		  *maintoolbar;
+  QToolBar      *maintoolbar;
   QToolButton		*but[10];
-  Qt_widget		  *widget;
+  Qt_widget     *widget;
   QMainWindow		*window;
-  QButtonGroup  *button_group;
+  QButtonGroup	*button_group;
   int			nr_of_buttons;
 
-  CGAL::Qt_layer_mouse_coordinates		          *showMC;
+  CGAL::Qt_layer_mouse_coordinates              *showMC;
   CGAL::Qt_layer_show_polygon <Polygon>		      *showP;
   CGAL::Qt_layer_show_greene_approx <Polygon >	*showGA;
-  CGAL::Qt_layer_show_ymonotone <Polygon>	      *showYM;
+  CGAL::Qt_layer_show_ymonotone <Polygon>       *showYM;
   CGAL::Qt_layer_show_optimal_convex <Polygon>	*showOC;
   CGAL::Qt_layer_show_polygon_points <Polygon>	*showPP;
 

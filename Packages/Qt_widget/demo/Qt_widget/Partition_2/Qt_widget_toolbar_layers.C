@@ -86,8 +86,8 @@ namespace CGAL {
     button_group = new QButtonGroup(0, "nonexclusive");
     
     for(int i =0; i<nr_of_buttons; i++){
-	    but[i]->setToggleButton(true);
-	    but[i]->toggle();
+      but[i]->setToggleButton(true);
+      but[i]->toggle();
       button_group->insert(but[i]);
     }
     but[2]->toggle();
@@ -106,7 +106,7 @@ namespace CGAL {
     connect(but[5], SIGNAL(stateChanged(int)),
         showPP, SLOT(stateChanged(int)));
     connect(button_group, SIGNAL(clicked(int)),
-          this, SLOT(redraw_win(int)));
+          widget, SLOT(redraw()));
   }	
 
   Layers_toolbar::~Layers_toolbar()
@@ -120,10 +120,6 @@ namespace CGAL {
     delete button_group;
   };
 
-  void Layers_toolbar::redraw_win(int i){
-    widget->redraw();
-  }
-  
 }//end namespace
 
 #include "Qt_widget_toolbar_layers.moc"

@@ -65,16 +65,28 @@ namespace CGAL {
     but[4]->setPixmap(QPixmap( (const char**)min_rectangle_xpm ));
 
     nr_of_buttons = 5;
-	
+    button_group = new QButtonGroup(0, "nonexclusive");	
     for(int i =0; i<nr_of_buttons; i++)
     {
 	but[i]->setToggleButton(TRUE);
 	but[i]->toggle();
+	button_group->insert(but[i]);
     }
+    connect(but[0], SIGNAL(stateChanged(int)), 
+      showMC, SLOT(stateChanged(int)));
+    connect(but[1], SIGNAL(stateChanged(int)),
+      showP, SLOT(stateChanged(int)));
+    connect(but[2], SIGNAL(stateChanged(int)), 
+      showPL, SLOT(stateChanged(int)));
+    connect(but[3], SIGNAL(stateChanged(int)), 
+      showLS, SLOT(stateChanged(int)));
+    connect(but[4], SIGNAL(stateChanged(int)), 
+      showR, SLOT(stateChanged(int)));
+
+    connect(button_group, SIGNAL(clicked(int)),
+      widget, SLOT(redraw()));
+    
   }//end constructor
-  	
-
-
 
 }//end namespace
 

@@ -51,40 +51,35 @@ class Layers_toolbar : public QObject
 {
 	Q_OBJECT
 public:
-	Layers_toolbar(Qt_widget *w, QMainWindow *mw, Delaunay *t);
-	~Layers_toolbar()
-	{
-		delete showT;
-		delete showV;
-		delete showP;
-		delete showNV;
-		delete showMC;
-	};
-	QToolBar*	toolbar(){return maintoolbar;};
+  Layers_toolbar(Qt_widget *w, QMainWindow *mw, Delaunay *t);
+  ~Layers_toolbar()
+  {
+    delete showT;
+    delete showV;
+    delete showP;
+    delete showNV;
+    delete showMC;
+  };
+  QToolBar*	toolbar(){return maintoolbar;};
 
 signals:
-	void new_object(CGAL::Object);
+  void new_object(CGAL::Object);
 	
-private slots:
-  void redraw_win(int);
-
 private:
-	QToolBar		  *maintoolbar;
-	QToolButton		*but[10];
-	Qt_widget		  *widget;
-	QMainWindow		*window;
-	Delaunay		  *dt;
+  QToolBar	*maintoolbar;
+  QToolButton	*but[10];
+  Qt_widget	*widget;
+  QMainWindow	*window;
+  Delaunay	*dt;
   QButtonGroup  *button_group;
 
+  int	  nr_of_buttons;
 	
-	int			nr_of_buttons;
-	
-
-	CGAL::Qt_layer_show_triangulation < Delaunay >	*showT;
-	CGAL::Qt_layer_show_voronoi < Delaunay >		*showV;
-	CGAL::Qt_layer_show_points < Delaunay >		*showP;
-	CGAL::Qt_layer_nearest_vertex < Delaunay >	*showNV;
-	CGAL::Qt_layer_mouse_coordinates			*showMC;
+  CGAL::Qt_layer_show_triangulation < Delaunay >  *showT;
+  CGAL::Qt_layer_show_voronoi < Delaunay >	  *showV;
+  CGAL::Qt_layer_show_points < Delaunay >	  *showP;
+  CGAL::Qt_layer_nearest_vertex < Delaunay >	  *showNV;
+  CGAL::Qt_layer_mouse_coordinates		  *showMC;
 };//end class
 
 };//end namespace

@@ -147,7 +147,7 @@ public:
   void new_object(CGAL::Object obj) { emit(new_cgal_object(obj)); };
   
   //layers
-  virtual void redraw();
+  
   void attach(Qt_widget_layer *layer);
   
   
@@ -164,6 +164,7 @@ signals:
 					//attached tool constructed an object
 public slots:
   void print_to_ps();
+  virtual void redraw();
 protected:
   void paintEvent(QPaintEvent *e);
   void resizeEvent(QResizeEvent *e);

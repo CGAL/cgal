@@ -33,6 +33,7 @@
 #include <qtoolbutton.h>
 #include <qtoolbar.h>
 #include <qstatusbar.h>
+#include <qbuttongroup.h>
 
 typedef double Coord_type;
 typedef CGAL::Cartesian<Coord_type>  Rp;
@@ -54,14 +55,13 @@ public:
     delete showR;
   };
   QToolBar*	toolbar(){return maintoolbar;};
-	
-private slots:
   
 private:
   QToolBar		*maintoolbar;
   QToolButton		*but[10];
   Qt_widget		*widget;
   QMainWindow		*window;
+  QButtonGroup		*button_group;
   int			nr_of_buttons;
 	
   CGAL::Qt_layer_mouse_coordinates  *showMC;

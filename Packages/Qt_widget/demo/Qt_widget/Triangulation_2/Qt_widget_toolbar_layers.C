@@ -77,7 +77,7 @@ namespace CGAL {
     }
     but[2]->toggle();
     connect(button_group, SIGNAL(clicked(int)),
-          this, SLOT(redraw_win(int)));
+          widget, SLOT(redraw()));
     
     connect(but[0], SIGNAL(stateChanged(int)),
         showT, SLOT(stateChanged(int)));
@@ -93,10 +93,6 @@ namespace CGAL {
 
 
   }
-  void Layers_toolbar::redraw_win(int i){
-    widget->redraw();
-  }
-
   
 }//end namespace
 
