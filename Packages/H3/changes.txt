@@ -1,3 +1,6 @@
+2.60 (30 May 2003)
+- Fix infinite recursion in RayH3 (is_degenerate() <-> to_vector()).
+
 2.59 (11 May 2003)
 - Add missing functor for Plane_3(Point_3, Vector_3).
 - In order to get rid of Direction_3 at some point, I have added :

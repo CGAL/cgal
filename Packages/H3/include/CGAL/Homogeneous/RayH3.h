@@ -96,7 +96,6 @@ inline
 const typename RayH3<R>::Vector_3 &
 RayH3<R>::to_vector() const
 {
-  CGAL_kernel_precondition( !is_degenerate() );
   return Ptr()->second;
 }
 
