@@ -1,0 +1,490 @@
+% ----------------------------------------
+% new commands needed in the new mechamism
+% 03.08.1995   Berlin   Lutz Kettner
+% $Revision$
+% $Date$
+% ----------------------------------------
+
+% \tracingmacros=1
+\newcount\spaceflag
+
+% These macros allow the characterwise parsing of an argument, where normally
+% the spaces are ignored.
+% Here, the first macro can be applied to the rest of the argument and 
+% will return 1 in the \spaceflag iff the rest starts with a space.
+% The second macro will produce a space "\ " iff the rest starts with a space.
+% The space of the rest will be skipped automatically in the next round.
+\def\testSpace #1{%
+    \def\qparams{#1}\ifx\qparams\empty\spaceflag=0 
+        \else\compareSpace{#1}#1\end\fi}
+\def\compareSpace #1#2#3\end{%
+    \def\xxparams{#1}\def\xxxparams{#2#3}\ifx\xxparams\xxxparams\spaceflag=0
+        \else\spaceflag=1 \fi}
+\def\testAndCopySpace #1{%
+    \compareAndCopySpace{#1}#1\end}
+\def\compareAndCopySpace #1#2#3\end{%
+    \def\xxparams{#1}\def\xxxparams{#2#3}\ifx\xxparams\xxxparams\else\ \fi}
+
+\newenvironment{class}[1]{%
+                   \gdef\pureclassname{#1}%
+                   \gdef\puretemplatename{#1}%
+                   \gdef\pureparameters{}%
+                   \gdef\classname{\hbox{{\em \CCprintTokens #1 ;\/}}}%
+                   \gdef\classtemplatename{\hbox{{\em \CCprintTokens #1 ;}}}%
+                   }{}
+
+\newenvironment{classtemplate}[2]{%
+                   \gdef\pureclassname{#1}%
+                   \gdef\puretemplatename{#1<#2>}%
+                   \gdef\pureparameters{#2}%
+                   \gdef\classname{\hbox{{\em \CCprintSingleToken #1;\/}}}%
+                   \gdef\classtemplatename{\hbox{{\em \CCprintTokens #1 ;}%
+                           \/{\tt <}{\em #2}\/{\tt >}}}%
+                   }{}
+
+\def\CCsection #1{%
+                   \section[#1 (\protect\CCprintSingleToken \pureclassname;)]%
+                           {#1 (\classname)}
+                   \label{#1}}
+
+\def\creationvariable #1{\creation #1}
+\def\threecolumns #1 #2 {\typewidth=#1  % compare to setopdims
+                   \callwidth=#2
+                   \descriptwidth=\textwidth
+                   \advance\descriptwidth-\typewidth
+                   \advance\descriptwidth-\callwidth
+                   \advance\descriptwidth-0.5cm
+                   \callwidthl=\textwidth 
+                   \advance\callwidthl-\typewidth
+                   \advance\callwidthl-0.5cm
+                   }
+
+
+% Print a character of a C++ declaration. Special handling of _<>&.
+\def\CCprintChar #1{%
+                   \if_#1\_%
+                   \else\if<#1\/{\tt <}%
+                   \else\if>#1\/{\tt >}%
+                   \else\if&#1\/{\tt \&}%
+                   \else #1%
+                   \fi\fi\fi\fi}
+
+% Print a single C++ token (without spaces inbetween). Skip leading spaces.
+% The token has to be delimited by a ";".
+\def\CCprintSingleToken #1#2;{%
+                   \CCprintChar #1%
+                   \def\xparams{#2}%
+                   \def\xbody{\CCprintSingleToken #2;}%
+                   \ifx\xparams\empty\let\xnext=\relax
+                   \else\let\xnext=\xbody\fi
+                   \xnext}
+
+% Print C++ tokens (separated with spaces). Skip leading spaces.
+% The tokens have to be delimited by " ;".
+\def\CCprintTokens #1#2 #3;{%
+                   \CCprintSingleToken #1#2;%
+                   \def\params{#3}\ifx\params\empty%
+                   \else\ \CCprintTokens #3;%
+                   \fi}
+
+% Print one parameter in C++ style (including spaces).
+\def\CCstyle #1{{\em \CCprintTokens #1 ;\/}}
+
+% Print a C++ parameter list (separated with commatas). The output formats
+% with a space in front of the parameter text.
+%   o  The first parameter accumulates the so far parsed first parameter.
+%   o  The second parameter contains the current nesting level. Start with 0.
+%   o  The third parameter contains the next character.
+%   o  The fourth parameter contains the rest.
+% The parsing process iterates characterwise.
+% The parameter list has to be terminated with ";".
+\newcount\nestinglevel
+\def\CCprintParamList #1#2#3#4;{%
+                   \def\xxparams{#4}%
+                   \nestinglevel=#2%
+%                   \edef\spaceflag{\testSpace{#4}}%
+                   \testSpace{#4}%
+                   \if<#3\advance\nestinglevel by1\fi
+                   \if>#3\advance\nestinglevel by-1\fi
+                   \if,#3%
+                       \ifnum\nestinglevel=0%
+                           \CCprintTokens #1 ;,\ %
+                           \def\xxbody{\CCprintParamList{}{0}#4;}%
+                       \else\ifnum\nestinglevel<0%
+                           \def\errhelp{Look for unbalanced angles in 
+                           template types in the C++ parameter list.}%
+                           \errmessage{Unbalanced angles detected.}%
+                           \def\xxbody{\CCprintParamList{}{0}#4;}%
+                       \else% comma within template parameter detected
+                           \ifnum\spaceflag=1
+                               \def\xxbody{\CCprintParamList
+                                   {#1#3 }{\nestinglevel}#4;}%
+                           \else
+                               \def\xxbody{\CCprintParamList
+                                   {#1#3}{\nestinglevel}#4;}%
+                           \fi
+                       \fi
+                       \fi
+                   \else\ifx\xxparams\empty%
+                       \ifnum\nestinglevel=0%
+                           \CCprintTokens #1#3 ;%
+                       \else\def\errhelp{Look for unbalanced angles in 
+                           template types in the C++ parameter list.}%
+                           \errmessage{Unbalanced angles detected.}%
+                       \fi
+                       \def\xxbody{\CCprintParamList{}{0}#4;}%
+                   \else
+                       \ifnum\spaceflag=1
+                           \def\xxbody{\CCprintParamList
+                               {#1#3 }{\nestinglevel}#4;}%
+                       \else
+                           \def\xxbody{\CCprintParamList
+                               {#1#3}{\nestinglevel}#4;}%
+                       \fi
+                   \fi
+                   \fi
+                   \ifx\xxparams\empty\let\xxnext=\relax
+                   \else\let\xxnext=\xxbody\fi
+                   \xxnext}
+
+
+\def\constructorcall #1(#2)#3 \par {%
+                   \def\params{#2}\ifx\params\empty%
+                   \mbox{\classtemplatename\ \ \var;}%
+                   \else\mbox{\classtemplatename
+                       \ \ \var{\em (\CCprintParamList{}{0}#2;);}}%
+                   \fi\par }
+\def\constructor #1 #2 {%
+                       \constructorcall #1 \par
+                       \hspace*{1cm}\hfill
+                       \parbox[t]{\createtextwidth}{\sloppy #2}\par
+                       \bigskip
+                       }
+
+% The first argument accumulates the type until only one token 
+% without separating spaces remains (i.e. the method name).
+\def\extracttype #1#2 #3;{\def\params{#3}%
+                       \ifx\params\empty \CCprintTokens #1 ;%
+                       \else\extracttype{#1\ #2}#3;\fi}
+
+% strip leading tokens until only one token
+% without separating spaces remains (i.e. the method name).
+\def\extractname #1 #2;{\def\params{#2}%
+                       \ifx\params\empty \CCprintSingleToken #1;%
+                       \else\extractname #2;\fi}
+
+\def\methodcall #1 #2(#3)#4; #5; {%
+                       \parbox[t]{\typewidth}{\sloppy 
+                           {\em \extracttype {#1}#2 ;}}
+                       \setbox0=\hbox{\mbox{
+                               #5{\em \extractname #2 ;%
+                               (\def\params{#3}\ifx\params\empty\else%
+                                   \CCprintParamList{}{0}#3;\fi)}    
+                           }}
+                       \ifdim\wd0>\callwidth 
+                            \parbox[t]{\callwidthl}{\box0}\hfill\par
+                            \hspace*{1cm}\hfill
+                       \else\parbox[t]{\callwidth}{\box0}\hfill
+                       \fi}
+\def\method #1 #2     {\smallskip
+                       \methodcall #1; \var.;
+                       \parbox[t]{\descriptwidth}{\sloppy #2}\hfill\par
+                       \smallskip}
+
+\def\function #1 #2   {\smallskip
+                       \methodcall #1; ;
+                       \parbox[t]{\descriptwidth}{\sloppy #2}\hfill\par
+                       \smallskip}
+
+
+
+% ----------------------------------------
+% Original LEDA Manual macros
+% ----------------------------------------
+%\hoffset=-0.5truemm
+%\voffset=0.5truecm
+
+%\hsize=16truecm
+%\vsize=23.5truecm
+
+%\hsize=13.3truecm
+%\vsize=19.8truecm
+
+\baselineskip 14pt
+\spaceskip  .4em plus .25em minus .25em
+\xspaceskip .65em
+\parskip 11pt plus 1pt minus 1pt
+\parindent 0pt
+
+
+\def\manual{\footnotesize}
+
+\def\3{\ss{}}
+
+\def\boxit#1{\vbox{\hrule\hbox{\vrule\kern3pt\vbox{#1}\kern3pt\vrule}\hrule}}
+
+\def\abs {|}
+
+\def\co{\hbox{\tt //\ }}
+\def\'{\hbox{\tt "}}
+\def\<{\hbox{\tt <}}
+\def\>{\hbox{\tt >}}
+\def\CC{C\raise.08ex\hbox{\tt ++\ }}
+\def\CCC{C\raise.08ex\hbox{\tt ++}}
+\def\gg{g\hbox{\tt ++\ }}
+\def\nat{\hbox{\rm\vrule\kern-0.045em N}}
+\def\real{\hbox{\rm\vrule\kern-0.035em R}}
+\def\tildeop{\tilde{}}
+\def\'{^\prime}
+\def\+{$+$}
+
+
+\newdimen\typewidth
+\typewidth=2.5cm
+
+\newdimen\callwidth
+\callwidth=4.5cm
+
+\newdimen\callwidthl
+\callwidthl=\textwidth 
+\advance\callwidthl -\typewidth
+\advance\callwidthl -0.5cm
+
+\newdimen\createwidth
+\createwidth=\textwidth
+\advance\createwidth -1cm
+
+\newdimen\createtextwidth
+\createtextwidth=\textwidth
+\advance\createtextwidth -3cm
+
+\newdimen\descriptwidth
+\descriptwidth=\textwidth
+\advance\descriptwidth -\typewidth
+\advance\descriptwidth -\callwidth
+\advance\descriptwidth -0.5cm
+
+\def\setopdims #1 #2   {\typewidth=#1cm
+                        \callwidth=#2cm
+                        \descriptwidth=\textwidth
+                        \advance\descriptwidth-\typewidth
+                        \advance\descriptwidth-\callwidth
+                        \advance\descriptwidth-0.5cm
+                        \callwidthl=\textwidth 
+                        \advance\callwidthl-\typewidth
+                        \advance\callwidthl-0.5cm
+                        }
+
+\def\manpage #1 #2 #3 {\section{#3 (#1)} \label{#3}%
+                       \def\params{#2}\ifx\params\empty%
+                       \gdef\name{\hbox{$#1$}}%
+                       \else\gdef\name{\hbox{$#1${\tt <}$#2${\tt >}}}%
+                       \fi }
+ 
+ 
+\def\definition       {\bigskip\pagebreak[1]
+                       {\bf 1. Definition}
+                       \par\nopagebreak }
+
+
+
+\def\creation #1      {\gdef\var {$#1$}
+                       \bigskip\pagebreak[1]
+                       {\bf 2. Creation}
+                       \par\nopagebreak }
+
+
+
+\def\operations #1 #2 {\bigskip\pagebreak[1]
+                       {\bf 3. Operations}
+                       \setopdims #1 #2
+                       \par\nopagebreak }
+
+
+
+\def\implementation   {\bigskip\pagebreak[1]
+                       {\bf 4. Implementation}
+                       \par\nopagebreak }
+
+
+
+\def\example          {\bigskip\pagebreak[1]
+                       {\bf 5. Example}
+                       \par\nopagebreak }
+
+
+
+\def\create #1 #2     { \mbox{\name\ \ \var$#1$;}\par
+                       \hspace*{1cm}\hfill
+                       \parbox[t]{\createtextwidth}{\sloppy #2}\par
+                       \bigskip }
+
+
+
+\def\op #1 #2 #3 #4    {\smallskip
+                       \parbox[t]{\typewidth}{\sloppy $#1$}
+                       \parbox[t]{\callwidth}{\sloppy \var.#2$#3$}\hfill
+                       \parbox[t]{\descriptwidth}{\sloppy #4}\hfill\par
+                       \smallskip}
+
+\def\opl #1 #2 #3 #4   {\smallskip
+                       \parbox[t]{\typewidth}{\sloppy $#1$}
+                       \parbox[t]{\callwidthl}{\sloppy \var.#2$#3$}\hfill\par
+                       \hspace*{1cm}\hfill
+                       \parbox[t]{\descriptwidth}{\sloppy #4}\hfill\par
+                       \smallskip}
+
+\def\func #1 #2 #3 #4  {\smallskip
+                       \parbox[t]{\typewidth}{\sloppy $#1$}
+                       \parbox[t]{\callwidth}{\sloppy #2$#3$}\hfill
+                       \parbox[t]{\descriptwidth}{\sloppy #4}\hfill\par
+                       \smallskip}
+
+\def\funcl #1 #2 #3 #4 {\smallskip
+                       \parbox[t]{\typewidth}{\sloppy $#1$}
+                       \parbox[t]{\callwidthl}{\sloppy #2$#3$}\hfill\par
+                       \hspace*{1cm}\hfill
+                       \parbox[t]{\descriptwidth}{\sloppy #4}\hfill\par
+                       \smallskip}
+
+
+%binary operator function
+\def\binopfunc #1 #2 #3{\smallskip
+                       \parbox[t]{\typewidth}{\sloppy $#1$}
+                       \parbox[t]{\callwidthl}{\sloppy $#2$}\hfill\par
+                       \hspace*{1cm}\hfill
+                       \parbox[t]{\descriptwidth}{\sloppy #3}\hfill\par
+                       \smallskip}
+
+
+
+
+%binary operator
+\def\binop #1 #2 #3 #4 {\smallskip
+                        \parbox[t]{\typewidth}{\sloppy $#1$}
+                        \parbox[t]{\callwidth}{\sloppy \var\ \ $#2\ \ #3$}\hfill
+                        \parbox[t]{\descriptwidth}{\sloppy #4}\hfill\par
+                        \smallskip}
+
+
+%unary operator
+\def\unop #1 #2 #3    {\smallskip
+                        \parbox[t]{\typewidth}{\sloppy $#1$}
+                        \parbox[t]{\callwidth}{\sloppy $#2$\ \var}\hfill
+                        \parbox[t]{\descriptwidth}{\sloppy \sloppy #3}\hfill\par
+                        \smallskip}
+
+\def\postunop #1 #2 #3 {\smallskip
+                        \parbox[t]{\typewidth}{\sloppy $#1$}
+                        \parbox[t]{\callwidth}{\sloppy \var\ $#2$}\hfill
+                        \parbox[t]{\descriptwidth}{\sloppy \sloppy #3}\hfill\par
+                        \smallskip}
+
+
+%operator[]
+\def\arrop #1 #2 #3    {\smallskip
+                        \parbox[t]{\typewidth}{\sloppy $#1$}
+                        \parbox[t]{\callwidth}{\sloppy \var\ $[#2]$}\hfill
+                        \parbox[t]{\descriptwidth}{\sloppy #3}\hfill\par
+                        \smallskip}
+
+
+%%operator()
+\def\funop #1 #2 #3    {\smallskip
+                        \parbox[t]{\typewidth}{\sloppy $#1$}
+                        \parbox[t]{\callwidth}{\sloppy \var\ $(#2)$}\hfill
+                        \parbox[t]{\descriptwidth}{\sloppy #3}\hfill\par
+                        \smallskip}
+
+
+%stream operator
+\def\strop #1 #2 #3 #4 {\smallskip
+                        \parbox[t]{\typewidth}{\sloppy $#1$}
+                        \parbox[t]{\callwidth}{\sloppy $#3\ \ #2$\ \ \var}\hfill
+                        \parbox[t]{\descriptwidth}{\sloppy #4}\hfill\par
+                        \smallskip}
+
+
+
+\let\Mpage             \manpage
+\let\Manpage           \manpage
+\let\Mdefinition       \definition
+\let\Mcreation         \creation
+
+\let\Moperations       \operations
+\let\Mimplementation   \implementation
+\let\Mexample          \example
+
+\let\Mcreate           \create
+
+\let\Mop               \footnotesize
+\let\Mopl              \footnotesize
+\let\Mfunc             \footnotesize
+\let\Mbinop            \footnotesize
+\let\Marrop            \footnotesize
+\let\Mfunop            \footnotesize
+\let\Munop             \footnotesize
+\let\Mstrop            \footnotesize
+
+
+\def\precond {{\it Precondition}: }
+
+
+\def\If       {{\bf if} }
+\def\Fi       {{\bf fi} }
+\def\Then     {{\bf then} }
+\def\Else     {{\bf else} }
+\def\Do       {{\bf do} }
+\def\Od       {{\bf od} }
+\def\For      {{\bf for} }
+\def\While    {{\bf while} }
+\def\Return   {{\bf return} }
+\def\Break    {{\bf return} }
+\def\Continue {{\bf continue} }
+\def\Case     {{\bf case} }
+\def\Switch   {{\bf switch} }
+\def\Class    {{\bf class} }
+\def\Struct   {{\bf struct} }
+\def\Public   {{\bf public} }
+\def\Friend   {{\bf friend} }
+\def\Typedef  {{\bf typedef} }
+
+\def\n {\backslash n}
+
+\def\Item #1  {\hbox{{\tt <}$#1${\tt >}\ }}
+
+
+% LEDA macros:
+
+\def\Forall         {{\bf forall} }
+\def\Forallnodes    {{\bf forall\_nodes} }
+\def\Foralledges    {{\bf forall\_edges} }
+\def\Foralladjnodes {{\bf forall\_adj\_nodes} }
+\def\Foralladjedges {{\bf forall\_adj\_edges} }
+
+
+% verbatim
+
+\font\ttbig= cmtt10 scaled \magstephalf
+
+\chardef\other=12
+\def\ttverbatim {
+\parskip 5pt
+\catcode`\&=\other \catcode`\{=\other \catcode`\}=\other
+%\catcode'\\=\other 
+\catcode`\$=\other \catcode`\&=\other
+\catcode`\#=\other \catcode`\%=\other \catcode`\~=\other
+\catcode`\_=\other \catcode`\^=\other
+\obeyspaces \obeylines}
+
+% usage:
+%
+%\begingroup
+% \ttbig
+% {\obeyspaces\gdef {\ }}
+% \ttverbatim
+%
+% ...
+%
+%\endgroup
+
