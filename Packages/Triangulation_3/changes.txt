@@ -1,3 +1,6 @@
+Version 1.161 (7 July 03)
+- bug fix in is_valid() for Delaunay and Regular
+
 Version 1.160 (2 July 03)
 - VC++ workaround.
 - Fix warnings introduced by last change.
