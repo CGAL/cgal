@@ -80,7 +80,8 @@ class Polygon_traits_2_aux : public _R
       // (for efficiency reasons)
     }
 
-    FT determinant_2(const Point_2& p, const Point_2& q, const Point_2& r) const
+    FT determinant_2(const Point_2& p,
+                     const Point_2& q, const Point_2& r) const
     {
       return cross_product_2(p-q, p-r);
     }

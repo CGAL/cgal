@@ -339,7 +339,7 @@ class Polygon_2 {
 
     bool is_simple() const
     { if (!is_cached(CF_SIMPLE)) {
-         m_simple = is_simple_2(d_container.begin(), d_container.end(), traits);
+         m_simple = is_simple_2(d_container.begin(),d_container.end(), traits);
 	 mark_cached(CF_SIMPLE);
       }
       return m_simple;
@@ -347,7 +347,7 @@ class Polygon_2 {
 
     bool is_convex() const
     { if (!is_cached(CF_CONVEX)) {
-         m_convex = is_convex_2(d_container.begin(), d_container.end(), traits);
+         m_convex = is_convex_2(d_container.begin(),d_container.end(), traits);
 	 mark_cached(CF_CONVEX);
       }
       return m_convex;
@@ -577,7 +577,8 @@ template <class Traits_P, class Container_P>
 std::istream &operator>>(std::istream &is, Polygon_2<Traits_P,Container_P>& p);
 
 template <class Traits_P, class Container_P>
-std::ostream &operator<<(std::ostream &os, const Polygon_2<Traits_P,Container_P>& p);
+std::ostream
+&operator<<(std::ostream &os, const Polygon_2<Traits_P,Container_P>& p);
 
 //-----------------------------------------------------------------------//
 //                         implementation

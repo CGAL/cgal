@@ -48,17 +48,17 @@
 
   We represent the tree by a std::set. This is not a perfect fit for the
   operations described above. In particular, the fact that we search with a
-  VERTEX, while the set contains EDGES, is not directly supported. The insertion
-  of edges is also complicated by the fact that we need to insert two edges
-  starting at the same vertex. The order in which they are inserted in the tree
-  does matter, because the edges go in separate directions. Because of this the
-  set needs a special associated comparison function. Every edge has a flag
-  'is_in_tree', which is true for the edges in the tree but false for the edges
-  when they are inserted. The comparison function treats the latter type of edge
-  as a vertex. Another flag, is_left_to_right, tells which of the two vertices
-  to take. The problem of the coinciding vertices is solved by the convention
-  that the highest edges is always inserted first. The comparison function uses
-  this fact.
+  VERTEX, while the set contains EDGES, is not directly supported. The
+  insertion of edges is also complicated by the fact that we need to insert
+  two edges starting at the same vertex. The order in which they are inserted
+  in the tree does matter, because the edges go in separate directions.
+  Because of this the set needs a special associated comparison function.
+  Every edge has a flag 'is_in_tree', which is true for the edges in the tree
+  but false for the edges when they are inserted. The comparison function
+  treats the latter type of edge as a vertex. Another flag, is_left_to_right,
+  tells which of the two vertices to take. The problem of the coinciding
+  vertices is solved by the convention that the highest edges is always
+  inserted first. The comparison function uses this fact.
 
   Vertex indices of the polygon play a double role. The number v can be used to
   identify vertex v or the edge from vertex v to vertex v+1.
@@ -108,8 +108,8 @@ class Less_segments {
 
 template <class ForwardIterator, class PolygonTraits>
 struct Edge_data {
-    typedef std::set<Vertex_index,Less_segments<ForwardIterator,PolygonTraits> >
-            Tree;
+    typedef std::set<Vertex_index,
+            Less_segments<ForwardIterator,PolygonTraits> > Tree;
     Edge_data() : is_in_tree(false) {}
     typename Tree::iterator tree_it; // The iterator of the edge in the tree.
                                      // Needed for cross reference. If edge j
@@ -123,11 +123,11 @@ struct Edge_data {
 template <class ForwardIterator, class PolygonTraits>
 class Vertex_data {
 public:
-    typedef std::set<Vertex_index,Less_segments<ForwardIterator,PolygonTraits> >
-	            Tree;
+    typedef std::set<Vertex_index,
+                    Less_segments<ForwardIterator,PolygonTraits> > Tree;
 
     typedef typename PolygonTraits::Point_2 Point_2;
-    Vertex_data(ForwardIterator begin, ForwardIterator end, PolygonTraits pgnt);
+    Vertex_data(ForwardIterator begin, ForwardIterator end,PolygonTraits pgnt);
 //    ForwardIterator points_start;
     std::vector<ForwardIterator> iterators;
     std::vector<Vertex_order> m_order_of;
@@ -225,7 +225,8 @@ operator()(Vertex_index i, Vertex_index j)
 
 template <class ForwardIterator, class PolygonTraits>
 Vertex_data<ForwardIterator, PolygonTraits>::
-Vertex_data(ForwardIterator begin, ForwardIterator end, PolygonTraits pgn_traits)
+Vertex_data(ForwardIterator begin, ForwardIterator end,
+            PolygonTraits pgn_traits)
 : // points_start(begin),
   orientation_2(pgn_traits.orientation_2_object()),
   less_xy_2(pgn_traits.less_xy_2_object())

@@ -109,7 +109,8 @@ std::istream &operator>>(std::istream &is, Polygon_2<Traits_P,Container_P>& p)
 //-----------------------------------------------------------------------//
 
 template <class Traits_P, class Container_P>
-std::ostream &operator<<(std::ostream &os, const Polygon_2<Traits_P,Container_P>& p)
+std::ostream
+&operator<<(std::ostream &os, const Polygon_2<Traits_P,Container_P>& p)
 {
   typename Polygon_2<Traits_P,Container_P>::Vertex_const_iterator i;
 
