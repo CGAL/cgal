@@ -1,17 +1,22 @@
+//-----------------------------------------------------------------------//
+// Changes in 1.16
+
+Corrected headers and shortened lines that were longer than 80 characters.
+
+
+//-----------------------------------------------------------------------//
 // Changes in 1.15
 
 Disabled use of namespaces in SGI Mips 7.2.1 compiler.
 
 //-----------------------------------------------------------------------//
 //           Changes from 1.13 to 1.14:
-//-----------------------------------------------------------------------//
 
 Updated include/CGAL/config.h to define away the mutable keyword
 when appropriate.
 
 //-----------------------------------------------------------------------//
 //           Changes from 1.12 to 1.13:
-//-----------------------------------------------------------------------//
 
 Added
 -> CGAL_CFG_INCOMPLETE_TYPE_BUG_5.C
@@ -20,7 +25,6 @@ Added
 
 //-----------------------------------------------------------------------//
 //           Changes from 1.11 to 1.12:
-//-----------------------------------------------------------------------//
 
 Updated header for files
 -> include/CGAL/workaround_casts.h
