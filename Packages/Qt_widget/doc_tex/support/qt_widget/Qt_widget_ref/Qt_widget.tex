@@ -40,7 +40,7 @@ which case occurs when locating a point in the triangulation.
 \ccOperations
 \ccSetThreeColumns{const_iterator}{container.begin() const;}{}
 
-%scales
+%SCALES
 \ccHeading{Scaling}
 
 \ccStyle{Qt_widget} provides a scale system. You can use scales for your objects as 
@@ -62,8 +62,8 @@ with given coordinates. This method should be called before \ccc{show()} from
 \ccMethod{void set_center(double x, double y);}{Set the center of the widget to
  \ccStyle{(x, y)}.}
 
-%\ccHeading{Painter}
-%painter
+%PAINTER
+\ccHeading{Painter}
 \ccMethod{void clear();}{Clear the screen. The properties remain the same 
 after calling this member function.}
 \ccMethod{void lock();}{Locks the widget, keeping the widget away from being 
@@ -77,8 +77,8 @@ number of \ccc{unlock()} calls.}
 unlocked. This mean that redraw() is called if and only if the widget is 
 unlocked.}
 
-%properties
-%\ccHeading{Properties}
+%PROPERTIES
+\ccHeading{Properties}
 \ccMethod{void setColor(Qcolor c);}{Set the current pen color of the widget to 
 be c.}
 \ccMethod{void setBackgroundColor(QColor c);}{Set the current background color 
@@ -93,7 +93,7 @@ widget to be c.}
  widget to s. PointStyle is a enumeration declared in \ccc{Qt_widget}.}
 \ccMethod{void setRasterOp(RasterOp r);}{Set the current raster operation.}
 
-%tools
+%TOOLS
 \ccHeading{Tools}
 \ccMethod{void attach(Qt_widget_tool& tool);}{Attaches a tool to the widget. If another
 tool is already attached this ges detached first.}
@@ -106,7 +106,13 @@ tool is already attached this ges detached first.}
 \ccHeading{Views}
 \ccMethod{void attach(Qt_widget_view* s);}{Add the view s in the list of 
 views.The last added will be on top of the screen.}
-\ccMethod{void detach(Qt_widget_view* s);}{Remove the view s from the list.}
+\ccMethod{void detach(Qt_widget_view* s);}{Remove the view s from the list. 
+s it's a pointer to an existing view.}
+\ccMethod{void activate(Qt_widget_view* s);}{Activate a view. s it's a 
+pointer to an existing attached view.}
+\ccMethod{void deactivate(Qt_widget_view* s);}{Deactivate a view. When you'll
+deactivate a view, that view will keep the order in the list of views. s it's
+a pointer to an existing attached view.}
 \ccMethod{void redraw();}{If you derive from \ccc{Qt_widget} you have to 
 overload this function and put your code for drawing here if you don't use 
 \ccc{views}. Redraw the views situated in the list. Before 
@@ -120,7 +126,7 @@ by the tools that create \cgal\ objects. It then emits the signal
 \ccc{connect}.}
 
 \ccAccessFunctions
-%Properties
+%PROPERTIES
 %\ccHeading{Properties}
 \ccMethod{QColor color() const;}{Returns the current pen color. The color 
 returned is a Qt class.}
@@ -141,7 +147,7 @@ the objects. The color returned is a Qt class.}
 \ccMethod{RasterOp rasterOp();}{Return the current raster operation.}
 
 
-%Coordinates
+%COORDINATES
 %\ccHeading{Coordinates}
 \ccMethod{double x_min() const;}{Returns the left \ccc{x} coordinate  of the widget.}
 \ccMethod{double y_min() const;}{Returns the lower\ccc{y} coordinate  of the widget.}
@@ -149,7 +155,7 @@ the objects. The color returned is a Qt class.}
 \ccMethod{double y_max() const;}{Returns the upper\ccc{y} coordinate of the widget.}
 
 \begin{ccAdvanced}
-%Painter
+%PAINTER
 \ccHeading{Painter and Pixmap}
 
 In order that views can draw on the drawing area of a widget, they have to access
