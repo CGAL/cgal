@@ -53,20 +53,10 @@
 #include <CGAL/IO/Window_stream.h>
 #endif
 
+#include <CGAL/less_partial.h>
+
 //-------------------------------------------------------------------
 CGAL_BEGIN_NAMESPACE
-//-------------------------------------------------------------------
-
-template < class T >
-struct less_partial 
-{
-  bool operator()(const T& a,
-		  const T& b) 
-    {
-      return (a.first < b.first);
-    }
-};
-
 //-------------------------------------------------------------------
 
 template < class Gt, class Tds >
@@ -94,7 +84,7 @@ private:
 #ifndef STL_HASH_TABLES
   typedef long Key;
 #else
-  // std::hash_map seem only to work with build-in functions
+  // hash_map seem only to work with build-in functions
   // thus cast to long TBC
   typedef long Key;
 #endif
@@ -178,8 +168,8 @@ public:
   // polygon. Its regularized version is formed by the set of
   // regular edges and their vertices
 
+  //--------------------- private VARIABLES -----------------------
 
-  // private VARIABLES
 private:
 
   // only finite edges and faces are inserted into the maps 

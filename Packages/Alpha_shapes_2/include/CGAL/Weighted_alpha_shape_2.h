@@ -54,20 +54,10 @@
 #include <CGAL/IO/Window_stream.h>
 #endif
 
+#include <CGAL/less_partial.h>
+
 //-------------------------------------------------------------------
 CGAL_BEGIN_NAMESPACE
-//-------------------------------------------------------------------
-
-template < class T >
-struct less_partial 
-{
-  bool operator()(const T& a,
-		  const T& b) 
-    {
-      return (a.first < b.first);
-    }
-};
-
 //-------------------------------------------------------------------
 
 template < class Gt, class Tds >
@@ -1838,7 +1828,7 @@ Weighted_alpha_shape_2<Gt,Tds>::find_optimal_alpha(int nb_components)
 	{
 
 	  first = middle + 1;
-	  len = len - half -1; 
+	  len = len - half - 1; 
 	} 
       else
 	{ // number_solid_components(*middle) <= nb_components
@@ -1846,8 +1836,10 @@ Weighted_alpha_shape_2<Gt,Tds>::find_optimal_alpha(int nb_components)
 	  len = half;
 	}
     }
-
-  return first;
+  if ((first+1) < alpha_end())
+    return (first+1);
+  else
+    return first;
 }  	
 
 //-----------------------------------------------------------------------
