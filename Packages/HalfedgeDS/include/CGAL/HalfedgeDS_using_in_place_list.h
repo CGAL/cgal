@@ -254,7 +254,7 @@ public:
 	// goal is halfedges = hds.halfedges, but we have pairs here
 	Halfedge_const_iterator i = hds.halfedges_begin();
 	for ( ; i != hds.halfedges_end(); ++ ++ i) {
-	    edges_push_back(i);
+	    edges_push_back( *i);
 	}
         pointer_update( hds);
     }
@@ -264,9 +264,10 @@ public:
             erase_all();
             vertices            = hds.vertices;
 	    // goal is halfedges = hds.halfedges, but we have pairs here
+	    halfedges = Halfedge_list();
 	    Halfedge_const_iterator i = hds.halfedges_begin();
 	    for ( ; i != hds.halfedges_end(); ++ ++ i) {
-		edges_push_back(i);
+		edges_push_back( *i);
 	    }
             faces               = hds.faces;
             nb_border_halfedges = hds.nb_border_halfedges;
@@ -545,7 +546,8 @@ pointer_update( const CGAL__HDS_IP_List<p_Traits,p_Items>& hds) {
     HalfedgeDS_items_decorator<Self> D;
     for ( Halfedge_iterator h = halfedges_begin(); h != halfedges_end(); ++h) {
         h->HBase::set_next( h_map[ h->next()]);
-        h->HBase_base::set_opposite( h_map[ h->opposite()]);
+	// Superfluous and false: opposite pointer get set upon creation
+        // h->HBase_base::set_opposite( h_map[ h->opposite()]);
         if ( check_tag( Supports_halfedge_prev()))
             D.set_prev( h, h_map[ D.get_prev(h)]);
         if ( check_tag( Supports_halfedge_vertex())) {
