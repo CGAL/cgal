@@ -1556,6 +1556,7 @@ Packages/Segment_Voronoi_diagram_2/demo/Segment_Voronoi_diagram_2/fileopen.xpm -
 Packages/Segment_Voronoi_diagram_2/demo/Segment_Voronoi_diagram_2/fileprint.xpm -text
 Packages/Segment_Voronoi_diagram_2/demo/Segment_Voronoi_diagram_2/filesave.xpm -text
 Packages/Segment_Voronoi_diagram_2/doc_tex/Segment_Voronoi_diagram_2_ref/join_split.gif svneol=native#unset
+Packages/Segment_Voronoi_diagram_2/doc_tex/Segment_Voronoi_diagram_2_ref/join_split.png svneol=native#unset
 Packages/Snap_rounding_2/demo/Snap_rounding_2/snap_rounding_2.vcproj -text
 Packages/Snap_rounding_2/doc_tex/Snap_rounding_2/isr_vs_sr.gif -text svneol=unset#unset
 Packages/Snap_rounding_2/doc_tex/Snap_rounding_2/isr_vs_sr.ps -text
