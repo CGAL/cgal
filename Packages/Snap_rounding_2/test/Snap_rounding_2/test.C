@@ -140,7 +140,7 @@ int main(int argc,char *argv[])
   print_out(s3);
 
   std::cout << "\nchanging number of kd-trees\n";
-  s3.change_number_of_kd_trees(2);
+  s3.set_number_of_kd_trees(2);
   print_out(s3);
 
   std::cout << "\ntesting cctor\n";
@@ -155,7 +155,7 @@ int main(int argc,char *argv[])
   // testing changing of pixel size
   std::cout << "\ntesting changing of pixel size\n";
   Snap_rounding_2 s6(seg_list.begin(),seg_list.end(),prec,true,false,3);
-  s6.change_pixel_size(0.5);
+  s6.set_pixel_size(0.5);
   print_out(s6);
 
   return(0);

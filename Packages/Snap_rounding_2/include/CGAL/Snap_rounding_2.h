@@ -227,11 +227,11 @@ public:
   //! Remove all segments  .           .
   void clear();
 
-  //! Change the number of kd-trees used for segment-hot pixel queries.
-  bool change_number_of_kd_trees(int inp_number_of_kd_trees);
+  //! set the number of kd-trees used for segment-hot pixel queries.
+  bool set_number_of_kd_trees(unsigned int inp_number_of_kd_trees);
 
-  //! Change the pixel size
-  bool change_pixel_size(NT inp_pixel_size);
+  //! set the pixel size
+  bool set_pixel_size(NT inp_pixel_size);
 
   /*! Determine whether to apply Iterated Snap Rounding (ISR)
       or Snap Rounding (SR).
@@ -968,8 +968,8 @@ void Snap_rounding_2<Rep_>::clear()
   }
 
 template<class Rep_>
-bool Snap_rounding_2<Rep_>::change_number_of_kd_trees(
-          int inp_number_of_kd_trees)
+bool Snap_rounding_2<Rep_>::set_number_of_kd_trees(
+          unsigned int inp_number_of_kd_trees)
   {
     if(inp_number_of_kd_trees > 0) {
       number_of_kd_trees = inp_number_of_kd_trees;
@@ -980,7 +980,7 @@ bool Snap_rounding_2<Rep_>::change_number_of_kd_trees(
   }
 
 template<class Rep_>
-bool Snap_rounding_2<Rep_>::change_pixel_size(NT inp_pixel_size)
+bool Snap_rounding_2<Rep_>::set_pixel_size(NT inp_pixel_size)
   {
     if(inp_pixel_size > 0) {
       pixel_size = inp_pixel_size;
