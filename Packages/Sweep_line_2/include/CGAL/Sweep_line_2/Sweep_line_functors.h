@@ -152,7 +152,9 @@ public:
     if ( r == LARGER ) {
       return false;
     }
-    return false;
+
+    // r = EQUAL
+    return ( c1->getId() < c2->getId() );
   }
 
   void setReference(Point_2 point) {

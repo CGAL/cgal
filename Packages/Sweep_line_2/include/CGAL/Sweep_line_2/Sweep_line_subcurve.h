@@ -40,8 +40,13 @@ public:
   typedef typename Traits::Curve_2 Curve_2;
   typedef typename Traits::X_curve_2 X_curve_2;
 
-  Sweep_line_subcurve(X_curve_2 &curve, Point_2 *reference, 
+  Sweep_line_subcurve(int id, X_curve_2 &curve, Point_2 *reference, 
 		      SweepLineTraits_2 *traits);
+
+
+  int getId() const {
+    return m_id;
+  }
 
   /*!
     @return a reference to the curve 
@@ -49,11 +54,6 @@ public:
   const X_curve_2 &getCurve() const { 
     return m_curve;
   }
-
-  
-  //void setCurve(X_curve_2 &curve) {
-  //m_curve = curve;
-  //}
 
   /*! @return  the pointer to the reference point */
   const Point_2 *getReferencePoint() const { 
@@ -96,6 +96,7 @@ public:
   bool isSource(const Point_2 &p) { 
     return m_traits->point_is_same(p, m_source);
   }
+
   bool isTarget(const Point_2 &p) { 
     return m_traits->point_is_same(p, m_target);
   }
@@ -172,11 +173,24 @@ public:
     return getLeftEnd();
   }
 
+  // returns true if the point is in the range of the curve and is not
+  // one of its ends
+  bool isPointInRange(const Point_2 &p)
+  {
+    if ( m_traits->curve_get_point_status(m_curve, p) != Traits::ON_CURVE )
+      return false;
+    if ( isEndPoint(p) )
+      return false;
+    return true;
+  }
+
 #ifndef NDEBUG
   void Print() const;
 #endif
 
 private:
+
+  int m_id;
 
   /*! a pointer to the traits object */
   Traits *m_traits;
@@ -206,16 +220,12 @@ private:
   /*! the target of the curve */
   Point_2 m_target;
 
-public:
-#ifndef NDEBUG
-  int id;
-#endif
 };
 
 template<class SweepLineTraits_2>
 inline Sweep_line_subcurve<SweepLineTraits_2>::
-Sweep_line_subcurve(X_curve_2 &curve, Point_2 *reference, 
-		    SweepLineTraits_2 *traits)  : m_traits(traits)
+Sweep_line_subcurve(int id, X_curve_2 &curve, Point_2 *reference, 
+		    SweepLineTraits_2 *traits)  : m_id(id), m_traits(traits)
 {
   m_curve = curve;
   m_referencePoint = reference;
@@ -254,7 +264,7 @@ void
 Sweep_line_subcurve<SweepLineTraits_2>::
 Print() const
 {
-  std::cout << "Curve " << id << "  (" << m_curve << ") "
+  std::cout << "Curve " << m_id << "  (" << m_curve << ") "
 	    << "last P = (" << m_lastPoint << ")" << std::endl;
   
 }
