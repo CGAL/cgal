@@ -49,20 +49,8 @@ public:
   const Point_3& q() const { return q_; }
   const Point_3& r() const { return r_; }
 
-  
-  Vector_3
-  orthogonal_vector() const
-  {
-    FT a, b, c, d;
-    
-    plane_from_pointsC3(p_.x(), p_.y(), p_.z(),
-			      q_.x(), q_.y(), q_.z(),
-			      r_.x(), r_.y(), r_.z(),
-			      a, b, c, d);
-    return Vector_3(a, b, c);
-  }
-
 };
+
 template <class K>
 class Point_triple_has_on_positive_side_3 {
 
@@ -76,7 +64,7 @@ public:
       return ( o(pl.p(), pl.q(), pl.r(), p) == CGAL::POSITIVE );
     }
 };
-template <class K>
+template <class K, class OldK>
 class Point_triple_construct_orthogonal_vector_3 
 {
 public:
@@ -86,7 +74,9 @@ public:
   
   Vector_3 operator()(const Plane_3& plane) const
   {
-    return plane.orthogonal_vector();
+    typename OldK::Construct_orthogonal_vector_3 
+      construct_orthogonal_vector_3;
+    return construct_orthogonal_vector_3(plane.p(), plane.q(), plane.r());
   }
 };
 
@@ -193,7 +183,7 @@ class Convex_hull_traits_3
   typedef typename R::Construct_vector_3         Construct_vector_3;
   typedef typename R::Construct_triangle_3       Construct_triangle_3;
   typedef typename R::Construct_centroid_3       Construct_centroid_3;
-  typedef Point_triple_construct_orthogonal_vector_3<Self>
+  typedef Point_triple_construct_orthogonal_vector_3<Self, R>
                                                  Construct_orthogonal_vector_3;
 
   typedef typename R::Orientation_3              Orientation_3;
