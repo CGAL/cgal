@@ -568,7 +568,7 @@ to_double(const Quotient<NumberType>& q)   /* TODO */
   {
       NumberType  nt_div = q.num / q.den;
       double divd = CGAL::to_double(nt_div);
-      if ( divd >= ldexp(1.0,53) )
+      if ( divd >= CGAL_CLIB_STD::ldexp(1.0,53) )
       { return divd; }
   }
   if ( CGAL_NTS abs(q.num) < CGAL_NTS abs(q.den) )
