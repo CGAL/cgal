@@ -27,11 +27,13 @@
 #include <list>
 
 #include <CGAL/leda_integer.h>
+#include <CGAL/Arr_segment_cached_traits_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template<class base_rep>
-class Snap_rounding_traits : public base_rep {
+class Snap_rounding_traits :
+    public CGAL::Arr_segment_cached_traits_2<base_rep> {
 
 typedef typename base_rep::FT                    NT;
 typedef typename base_rep::Point_2               Point_2;

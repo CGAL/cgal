@@ -36,7 +36,6 @@
 #include <CGAL/point_generators_2.h>
 #include <CGAL/intersection_2.h>
 #include <CGAL/Sweep_line_2.h>
-#include <CGAL/Arr_segment_cached_traits_2.h>
 #include <list>
 #include <set>
 #include <CGAL/leda_real.h>
@@ -139,11 +138,10 @@ struct hot_pixel_dir_cmp
 template<class Rep_>
 class Snap_rounding_2 {
 
-typedef CGAL::Arr_segment_cached_traits_2<Rep_ >     Traits;
 typedef Rep_                                         Rep;
 typedef typename Rep::FT                             NT;
-typedef typename Traits::X_curve                     X_curve;
-typedef typename Traits::Curve                       Curve;
+typedef typename Rep::X_curve                     X_curve;
+typedef typename Rep::Curve                       Curve;
 typedef std::list<X_curve>                           CurveContainer;
 typedef typename CurveContainer::iterator            CurveContainerIter;
 
@@ -507,7 +505,7 @@ void Snap_rounding_2<Rep_>::find_hot_pixels_and_create_kd_trees(
     // get intersection points (with endpoints)
     PointList mypointlist;
 
-    Sweep_line_2<CurveContainerIter, Traits> sl;
+    Sweep_line_2<CurveContainerIter,Rep> sl;
     sl.get_intersection_points(segments.begin(), segments.end(),
                              std::back_inserter(mypointlist));
 
