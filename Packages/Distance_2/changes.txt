@@ -1,3 +1,6 @@
+2.5.6 (25 February 2003)
+- Generalize wmult() to work with Filtered_kernel<> and more.
+
 2.5.5 (30 October 2002)
 - fixed one thing in .fw file that was only altered in generated file
 
