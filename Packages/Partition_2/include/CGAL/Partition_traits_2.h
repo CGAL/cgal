@@ -63,7 +63,7 @@ class Partition_traits_2  : public Partition_traits_2_base<R_>
     typedef typename R::Is_horizontal_2                 Is_horizontal_2;
 
     // needed by visibility graph and thus by optimal convex
-    typedef R::Ray_2                                    Ray_2; 
+    typedef typename R::Ray_2                           Ray_2; 
     typedef typename R::Collinear_are_ordered_along_line_2
                                             Collinear_are_ordered_along_line_2;
     typedef typename R::Are_strictly_ordered_along_line_2

@@ -186,8 +186,8 @@ public:
        // order), and this is what you need when you construct the union 
        // polygon.
        if (size() > 2)
-        std::sort(begin(), end(), 
-              CW_indirect_edge_info_compare<Vertex_iterator,Traits>(vertex_it));
+         sort(
+            CW_indirect_edge_info_compare<Vertex_iterator,Traits>(vertex_it));
 
 #ifdef CGAL_PARTITION_CHECK_DEBUG
        std::cout << "after sort: edges for " << *vertex_it  << std::endl;
@@ -393,7 +393,7 @@ public:
           // order), and this is what you need to begin the construction 
           // of the union polygon.
           if ((*m_it).second.size() > 2)
-           std::sort((*m_it).second.begin(), (*m_it).second.end(), 
+           (*m_it).second.sort(
              CW_indirect_edge_info_compare<Vertex_iterator,Traits>(
                                                                (*m_it).first));
           // find the previous vertex in this vertex's list

@@ -30,8 +30,8 @@
 #define  CGAL_ROTATION_TREE_H
 
 #include <vector>
-#include <CGAL/ch_utils.h>
 #include <CGAL/Rotation_tree_node_2.h>
+#include <CGAL/functional.h>
 
 namespace CGAL {
 
@@ -51,13 +51,11 @@ public:
    {
       typedef typename Traits::R                               R;
       typedef typename Traits::R::FT                           FT;
-      typedef typename Traits::Less_xy_2                       Less_xy_2;
-      typedef ch_Binary_predicate_reversor<Point_2, Less_xy_2> Greater_xy_2;
    
       for (ForwardIterator it = first; it != beyond; it++)
          push_back(*it);
    
-      std::sort(begin(), end(), Greater_xy_2(Traits().less_xy_2_object()));
+      std::sort(begin(), end(), swap_1(Traits().less_xy_2_object()));
       std::unique(begin(), end());
    
       // b is the point with the largest x coordinate

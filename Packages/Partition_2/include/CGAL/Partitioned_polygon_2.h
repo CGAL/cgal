@@ -32,7 +32,6 @@
 #include <list>
 #include <vector>
 #include <CGAL/circulator.h>
-#include <CGAL/Turn_reverser.h>
 
 namespace CGAL {
 
@@ -112,19 +111,17 @@ public:
    typedef Circulator_from_iterator<Iterator>           Circulator;
    typedef typename Traits::Polygon_2                   Subpolygon_2;
    typedef typename Traits::Point_2                     Point_2;
-   typedef typename Traits::Leftturn_2                  Leftturn_2;
-   typedef Turn_reverser<Point_2, Leftturn_2>           Rightturn_2;
+   typedef typename Traits::Leftturn_2                  Left_turn_2;
    typedef std::list<Circulator>                        Diagonal_list;
    typedef typename Diagonal_list::iterator             Diagonal_iterator;
 
 
-   Partitioned_polygon_2() : 
-       _rightturn(Rightturn_2(Traits().leftturn_2_object()))
+   Partitioned_polygon_2() : _left_turn(Traits().leftturn_2_object())
    { }
 
    template <class InputIterator>
    Partitioned_polygon_2(InputIterator first, InputIterator beyond) :  
-       _rightturn(Rightturn_2(Traits().leftturn_2_object()))
+       _left_turn(Traits().leftturn_2_object())
    {
       for (; first != beyond; first++) {
          push_back(Vertex(*first));
@@ -282,7 +279,8 @@ private:
       else
          next = *next_d_it;
    
-      return _rightturn(*prev, *vertex_ref, *next);
+//      return _rightturn(*prev, *vertex_ref, *next);
+      return _left_turn(*vertex_ref, *prev, *next);
    }
 
    bool diagonal_is_necessary(Circulator diag_ref1, Circulator diag_ref2) 
@@ -291,7 +289,7 @@ private:
                cuts_reflex_angle(diag_ref2, diag_ref1));
    }
 
-   Rightturn_2 _rightturn;
+   Left_turn_2 _left_turn;
 };
 
 template <class Traits_>
@@ -353,7 +351,7 @@ class Partition_vertex : public Traits_::Point_2
     // and remove any duplicate diagonals
     void sort_diagonals(const Circulator& prev, const Circulator& next) 
     {
-       std::sort(diag_endpoint_refs.begin(), diag_endpoint_refs.end(),
+       diag_endpoint_refs.sort(
                 Indirect_CW_diag_compare<Circulator,Traits>(*this, prev, next));
        diag_endpoint_refs.unique();
        current_diag = diag_endpoint_refs.begin();

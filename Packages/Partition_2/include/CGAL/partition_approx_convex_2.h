@@ -51,17 +51,17 @@ bool partition_appx_cvx_is_edge_through_interior(const Point_2& before_s,
 {
    // determine if the edge goes through the interior of the polygon or not
    typedef typename Traits::Leftturn_2   Leftturn_2;
-   Leftturn_2 leftturn = traits.leftturn_2_object();
-   Turn_reverser<Point_2, Leftturn_2> rightturn(leftturn);
-   if (rightturn(before_s, source, after_s)) // concave angle
+   Leftturn_2 left_turn = traits.leftturn_2_object();
+   Turn_reverser<Point_2, Leftturn_2> right_turn(left_turn);
+   if (right_turn(before_s, source, after_s)) // concave angle
    {
-     if (rightturn(before_s, source, target) &&
-         rightturn(target, source, after_s))
+     if (right_turn(before_s, source, target) &&
+         right_turn(target, source, after_s))
        return false;
    }
    else // left turn or straight
-     if (rightturn(before_s, source, target) ||
-         rightturn(target, source, after_s))
+     if (right_turn(before_s, source, target) ||
+         right_turn(target, source, after_s))
        return false;
    return true;
 }
@@ -84,7 +84,6 @@ bool partition_appx_cvx_cuts_nonconvex_angle( Edge_circulator e_circ,
              << std::endl;
 #endif
 
-//   Circulator next_ccw_pt_ref, prev_ccw_pt_ref;
    typename Triangulation::Point next_ccw_pt_ref, prev_ccw_pt_ref;
 
    // the next and previous edges in the ccw ordering of edges around v_ref
@@ -123,9 +122,9 @@ bool partition_appx_cvx_cuts_nonconvex_angle( Edge_circulator e_circ,
 
    typedef typename Traits::Leftturn_2    Leftturn_2;
    typedef typename Traits::Point_2     Point_2;
-   Leftturn_2 leftturn = traits.leftturn_2_object();
-   Turn_reverser<Point_2, Leftturn_2>  rightturn(leftturn);
-   return rightturn(*next_ccw_pt_ref, *v_ref, *prev_ccw_pt_ref); 
+   Leftturn_2 left_turn = traits.leftturn_2_object();
+   Turn_reverser<Point_2, Leftturn_2>  right_turn(left_turn);
+   return right_turn(*next_ccw_pt_ref, *v_ref, *prev_ccw_pt_ref); 
 }
 
 

@@ -29,8 +29,6 @@
 #ifndef CGAL_INDIRECT_NOT_LESS_YX_2_H
 #define CGAL_INDIRECT_NOT_LESS_YX_2_H
 
-#include <CGAL/ch_utils.h>
-
 namespace CGAL {
 
 template <class Traits>
