@@ -7,15 +7,14 @@
 // intended for general use.
 //
 // ----------------------------------------------------------------------
-// release       : 
-// release_date  : 2000, August 03
+// release       : $CGAL_Revision: CGAL-2.5-I-50 $
+// release_date  : $CGAL_Date: 2002/12/10 $
 //
-// file          : ch_graham_andrew.C
-// package       : Convex_hull (3.3)
-// maintainer    : Stefan Schirra <stschirr@mpi-sb.mpg.de>
-// source        : convex_hull_2.lw
-// revision      : 3.3
-// revision_date : 03 Aug 2000
+// file          : include/CGAL/ch_graham_andrew.C
+// package       : Convex_hull_2 (3.4.1)
+// maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
 // coordinator   : MPI, Saarbruecken
@@ -135,9 +134,13 @@ ch__ref_graham_andrew_scan( BidirectionalIterator first,
                                  OutputIterator&       result,
                                  const Traits&         ch_traits)
 {
-  typedef  typename Traits::Less_xy_2   Less_xy;
-  typedef  typename Traits::Point_2     Point_2;
+  typedef  typename Traits::Less_xy_2    Less_xy;
+  typedef  typename Traits::Point_2      Point_2;
   typedef  typename Traits::Left_turn_2  Left_turn;
+  typedef  typename Traits::Equal_2      Equal_2;
+  
+  Left_turn    left_turn    = ch_traits.left_turn_2_object();
+  Equal_2      equal_points = ch_traits.equal_2_object();
 
   std::vector< BidirectionalIterator >    S;
   BidirectionalIterator              alpha;
@@ -147,11 +150,9 @@ ch__ref_graham_andrew_scan( BidirectionalIterator first,
   CGAL_ch_precondition( successor(first) != last );
 
   --last;
-  CGAL_ch_precondition( *first != *last );
+  CGAL_ch_precondition(! equal_points(*first,*last) );
   S.push_back( last  );
   S.push_back( first );
-  Left_turn    left_turn = ch_traits.left_turn_2_object();
-
 
   iter = first;
   do
@@ -206,12 +207,15 @@ ch_graham_andrew( InputIterator  first,
   typedef  typename Traits::Less_xy_2   Less_xy;
   typedef  typename Traits::Point_2     Point_2;
   typedef  typename Traits::Left_turn_2  Left_turn;
+  typedef  typename Traits::Equal_2      Equal_2;  
+  
+  Equal_2      equal_points = ch_traits.equal_2_object();  
 
   if (first == last) return result;
   std::vector< Point_2 >  V;
   std::copy( first, last, std::back_inserter(V) );
   std::sort( V.begin(), V.end(), ch_traits.less_xy_2_object() );
-  if ( *(V.begin()) == *(V.rbegin()) )
+  if (equal_points( *(V.begin()), *(V.rbegin())) )
   {
       *result = *(V.begin());  ++result;
       return result;
@@ -251,15 +255,18 @@ ch_lower_hull_scan( InputIterator  first,
                          OutputIterator result,
                          const Traits&  ch_traits)
 {
-  typedef  typename Traits::Less_xy_2   Less_xy;
-  typedef  typename Traits::Point_2     Point_2;
+  typedef  typename Traits::Less_xy_2    Less_xy;
+  typedef  typename Traits::Point_2      Point_2;
   typedef  typename Traits::Left_turn_2  Left_turn;
+  typedef  typename Traits::Equal_2      Equal_2;  
+  
+  Equal_2      equal_points = ch_traits.equal_2_object();    
 
   if (first == last) return result;
   std::vector< Point_2 >  V;
   std::copy( first, last, std::back_inserter(V) );
   std::sort( V.begin(), V.end(), ch_traits.less_xy_2_object() );
-  if ( *(V.begin()) == *(V.rbegin()) )
+  if (equal_points( *(V.begin()), *(V.rbegin())) )
   {
       *result = *(V.begin());  ++result;
       return result;
@@ -286,15 +293,18 @@ ch_upper_hull_scan( InputIterator  first,
                          OutputIterator result,
                          const Traits&  ch_traits)
 {
-  typedef  typename Traits::Less_xy_2   Less_xy;
-  typedef  typename Traits::Point_2     Point_2;
+  typedef  typename Traits::Less_xy_2    Less_xy;
+  typedef  typename Traits::Point_2      Point_2;
   typedef  typename Traits::Left_turn_2  Left_turn;
+  typedef  typename Traits::Equal_2      Equal_2;  
+  
+  Equal_2      equal_points = ch_traits.equal_2_object();     
 
   if (first == last) return result;
   std::vector< Point_2 >  V;
   std::copy( first, last, std::back_inserter(V) );
   std::sort( V.begin(), V.end(), ch_traits.less_xy_2_object() );
-  if ( *(V.begin()) == *(V.rbegin()) )
+  if (equal_points( *(V.begin()), *(V.rbegin())) )
   { return result; }
   #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
     || defined(NDEBUG)

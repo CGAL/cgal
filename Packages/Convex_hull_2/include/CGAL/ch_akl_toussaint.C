@@ -7,14 +7,14 @@
 // intended for general use.
 //
 // ----------------------------------------------------------------------
-// release       : 
-// release_date  : 2000, August 03
+// release       : $CGAL_Revision: CGAL-2.5-I-50 $
+// release_date  : $CGAL_Date: 2002/12/10 $
 //
-// file          : ch_akl_toussaint.C
-// package       : Convex_hull (3.3)
-// maintainer    : Susan Hert
-// revision      : 3.3
-// revision_date : 03 Aug 2000
+// file          : include/CGAL/ch_akl_toussaint.C
+// package       : Convex_hull_2 (3.4.1)
+// maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
+// revision      : $Revision$
+// revision_date : $Date$ 
 // author(s)     : Stefan Schirra
 //
 // coordinator   : MPI, Saarbruecken
@@ -46,17 +46,21 @@ ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
                  const Traits&   ch_traits)
 {
   typedef  typename Traits::Point_2                    Point_2;    
-  typedef  typename Traits::Left_turn_2                 Left_of_line;
+  typedef  typename Traits::Left_turn_2                Left_of_line;
+  // added 
+  typedef  typename Traits::Equal_2                    Equal_2;
+  
+  Left_of_line  left_turn        = ch_traits.left_turn_2_object();
+  Equal_2       equal_points     = ch_traits.equal_2_object();  
 
   if (first == last) return result;
   ForwardIterator n, s, e, w;
   ch_nswe_point( first, last, n, s, w, e, ch_traits);
-  if ( *n == *s )
+  if (equal_points(*n, *s) )
   {
       *result = *w;  ++result;
       return result;
   }
-
 
   std::vector< Point_2 > region1;
   std::vector< Point_2 > region2;
@@ -70,8 +74,6 @@ ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
   region2.push_back( *s);
   region3.push_back( *e);
   region4.push_back( *n);
-
-  Left_of_line  left_turn = ch_traits.left_turn_2_object();
 
   CGAL_ch_postcondition_code( ForwardIterator save_first = first; )
 
@@ -104,25 +106,25 @@ ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
   std::sort( successor(region4.begin() ), region4.end(), 
              swap_1(ch_traits.less_xy_2_object()) );
 
-  if ( *w != *s )
+  if (! equal_points(*w,*s) )
   {
       region1.push_back( *s );
       ch__ref_graham_andrew_scan( region1.begin(), region1.end(), 
                                        res, ch_traits);
   }
-  if ( *s != *e )
+  if (! equal_points(*s,*e) )
   {
       region2.push_back( *e );
       ch__ref_graham_andrew_scan( region2.begin(), region2.end(),
                                        res, ch_traits);
   }
-  if ( *e != *n )
+  if (! equal_points(*e,*n) )
   {
       region3.push_back( *n );
       ch__ref_graham_andrew_scan( region3.begin(), region3.end(),
                                        res, ch_traits);
   }
-  if ( *n != *w )
+  if (! equal_points(*n,*w) )
   {
       region4.push_back( *w );
       ch__ref_graham_andrew_scan( region4.begin(), region4.end(),

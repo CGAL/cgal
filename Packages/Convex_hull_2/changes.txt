@@ -1,3 +1,7 @@
+3.4.1 (29 Jan 2003)
+- replaced the usage of == and != by Equal_2 kernel functor
+  in all 2d convex hull implementations
+
 3.4 (14 Jan 2003)
 - Equal_2 typedef added to the various traits classes
   to do: document it and use it in the implementations 

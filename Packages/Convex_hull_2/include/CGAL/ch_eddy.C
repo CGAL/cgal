@@ -11,11 +11,10 @@
 // release_date  : 2000, August 03
 //
 // file          : ch_eddy.C
-// package       : Convex_hull (3.3)
-// maintainer    : Stefan Schirra <stschirr@mpi-sb.mpg.de>
-// source        : convex_hull_2.lw
-// revision      : 3.3
-// revision_date : 03 Aug 2000
+// package       : Convex_hull_2 (3.4.1)
+// maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
 // coordinator   : MPI, Saarbruecken
@@ -48,10 +47,11 @@ ch__recursive_eddy(List& L,
                         const Traits& ch_traits)
 {
   typedef  typename Traits::Point_2                         Point_2;    
-  typedef  typename Traits::Left_turn_2                      Left_turn_2;
+  typedef  typename Traits::Left_turn_2                     Left_turn_2;
   typedef  typename Traits::Less_signed_distance_to_line_2  Less_dist;
 
-  Left_turn_2 left_turn = ch_traits.left_turn_2_object();
+  Left_turn_2 left_turn    = ch_traits.left_turn_2_object();
+  
   CGAL_ch_precondition( \
     std::find_if(a_it, b_it, \
             bind_1(bind_1(left_turn, *b_it), *a_it)) \
@@ -89,7 +89,11 @@ ch_eddy(InputIterator first, InputIterator last,
              const Traits& ch_traits)
 {
   typedef  typename Traits::Point_2                         Point_2;    
-  typedef  typename Traits::Left_turn_2                      Left_turn_2;
+  typedef  typename Traits::Left_turn_2                     Left_turn_2;
+  typedef  typename Traits::Equal_2                         Equal_2;   
+
+  Left_turn_2 left_turn    = ch_traits.left_turn_2_object();  
+  Equal_2     equal_points = ch_traits.equal_2_object();   
 
   if (first == last) return result;
   std::list< Point_2 >   L;
@@ -100,7 +104,7 @@ ch_eddy(InputIterator first, InputIterator last,
   ch_we_point(L.begin(), L.end(), w, e, ch_traits);
   Point_2 wp = *w;
   Point_2 ep = *e;
-  if ( wp == ep )
+  if (equal_points(wp,ep) )
   {
       *result = wp;  ++result;
       return result;
@@ -108,7 +112,7 @@ ch_eddy(InputIterator first, InputIterator last,
 
   L.erase(w);
   L.erase(e);
-  Left_turn_2 left_turn = ch_traits.left_turn_2_object();
+  
   e = std::partition(L.begin(), L.end(), 
                      bind_1(bind_1(left_turn, ep), wp) );
   L.push_front(wp);

@@ -11,11 +11,10 @@
 // release_date  : 2000, August 03
 //
 // file          : ch_jarvis.C
-// package       : Convex_hull (3.3)
-// maintainer    : Stefan Schirra <stschirr@mpi-sb.mpg.de>
-// source        : convex_hull_2.lw
-// revision      : 3.3
-// revision_date : 03 Aug 2000
+// package       : Convex_hull_2 (3.4.1)
+// maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
 // coordinator   : MPI, Saarbruecken
@@ -51,8 +50,12 @@ ch_jarvis_march(ForwardIterator first, ForwardIterator last,
                 const Traits& ch_traits)
 {
   if (first == last) return result;
-  typedef   typename Traits::Less_rotate_ccw_2       Less_rotate_ccw;
+  typedef   typename Traits::Less_rotate_ccw_2     Less_rotate_ccw;
   typedef   typename Traits::Point_2               Point_2;
+  typedef   typename Traits::Equal_2               Equal_2; 
+  
+  Equal_2     equal_points = ch_traits.equal_2_object();     
+  
   #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
     || defined(NDEBUG)
   OutputIterator  res(result);
@@ -73,7 +76,7 @@ ch_jarvis_march(ForwardIterator first, ForwardIterator last,
 
   ForwardIterator it = std::min_element( first, last, 
                                          bind_1(rotation_predicate, start_p) );
-  while ( *it != stop_p )
+  while (! equal_points(*it, stop_p) )
   {
       CGAL_ch_exactness_assertion( \
           *it != previous_point );

@@ -11,11 +11,10 @@
 // release_date  : 2000, August 03
 //
 // file          : ch_bykat.C
-// package       : Convex_hull (3.3)
-// maintainer    : Stefan Schirra <stschirr@mpi-sb.mpg.de>
-// source        : convex_hull_2.lw
-// revision      : 3.3
-// revision_date : 03 Aug 2000
+// package       : Convex_hull_2 (3.4.1)
+// maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
+// revision      : $Revision$
+// revision_date : $Date$ 
 // author(s)     : Stefan Schirra
 //
 // coordinator   : MPI, Saarbruecken
@@ -49,8 +48,13 @@ ch_bykat(InputIterator first, InputIterator last,
               const Traits& ch_traits)
 {
   typedef typename Traits::Point_2                         Point_2;
-  typedef typename Traits::Left_turn_2                      Left_turn_2;
+  typedef typename Traits::Left_turn_2                     Left_turn_2;
   typedef typename Traits::Less_signed_distance_to_line_2  Less_dist;
+  typedef typename Traits::Equal_2                         Equal_2; 
+  
+  Left_turn_2 left_turn    = ch_traits.left_turn_2_object();
+  Less_dist   less_dist    = ch_traits.less_signed_distance_to_line_2_object();
+  Equal_2     equal_points = ch_traits.equal_2_object();         
 
   if (first == last) return result;
 
@@ -72,7 +76,7 @@ ch_bykat(InputIterator first, InputIterator last,
   ch_we_point(P.begin(), P.end(), l, r, ch_traits);
   a = *l;
   b = *r;
-  if ( a == b) 
+  if (equal_points(a,b)) 
   {
       *result = a;  ++result;
       return result;
@@ -85,12 +89,10 @@ ch_bykat(InputIterator first, InputIterator last,
   #endif // no postconditions ...
   H.push_back( a );
   L.push_back( P.begin() );
-  Left_turn_2 left_turn = ch_traits.left_turn_2_object();
   R.push_back( l = std::partition( P.begin(), P.end(), 
                                    bind_1(bind_1(left_turn,a),b) ) );
   r = std::partition( l, P.end(), bind_1(bind_1(left_turn,b),a) );
   
-  Less_dist less_dist = ch_traits.less_signed_distance_to_line_2_object();
   for (;;)
   {
       if ( l != r)
@@ -143,6 +145,9 @@ ch_bykat_with_threshold(InputIterator   first, InputIterator last,
                                                  Less_dist;
   typedef typename std::vector< Point_2 >::iterator   
                                                  PointIterator;
+  typedef typename Traits::Equal_2                         Equal_2; 
+  
+  Equal_2     equal_points = ch_traits.equal_2_object();         
 
   if (first == last) return result;
 
@@ -167,7 +172,7 @@ ch_bykat_with_threshold(InputIterator   first, InputIterator last,
   ch_we_point(Pbegin, Pend, l, r, ch_traits);
   a = *l;
   b = *r;
-  if ( a == b) 
+  if (equal_points(a,b)) 
   {
       *result = a;  ++result;
       return result;

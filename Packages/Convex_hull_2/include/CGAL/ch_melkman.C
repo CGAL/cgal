@@ -12,12 +12,11 @@
 // release       : 
 // release_date  : 2000, August 03
 // 
-// source        : melkman.fw
 // file          : ch_melkman.C
-// package       : Convex_hull (3.3)
-// maintainer    : Stefan Schirra <stschirr@mpi-sb.mpg.de>
-// revision      : 3.3
-// revision_date : 03 Aug 2000 
+// package       : Convex_hull (3.4.1)
+// maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
+// revision      : $Revision$
+// revision_date : $Date$ 
 // author(s)     : Stefan Schirra
 //
 //
@@ -49,7 +48,11 @@ ch_melkman( InputIterator first, InputIterator last,
 {
   typedef typename Traits::Point_2      Point;
   typedef typename Traits::Segment_2    Segment;
+  typedef typename Traits::Equal_2      Equal_2;   
+  
   typename Traits::Left_turn_2 left_turn  = ch_traits.left_turn_2_object();
+  Equal_2  equal_points = ch_traits.equal_2_object();
+  
   CGAL_ch_assertion_code( \
   typename Traits::Less_xy_2 less       = ch_traits.less_xy_2_object(); )
   
@@ -66,7 +69,7 @@ ch_melkman( InputIterator first, InputIterator last,
   if (++first == last)                        // 2 elements
   {
     *result = p; ++result;
-    if ( p != q)
+    if (! equal_points(p,q))
     { *result = q; ++result; }
     return result;
   }
