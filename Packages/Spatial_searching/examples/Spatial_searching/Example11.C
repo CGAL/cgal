@@ -1,5 +1,6 @@
 #include <CGAL/basic.h>
-#include <CGAL/Cartesian_d.h>  
+#include <CGAL/Cartesian.h>
+#include <CGAL/Iso_cuboid_3.h>  
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Kd_tree_traits_point.h>
 #include <CGAL/Splitting_rules.h>
@@ -11,13 +12,14 @@
 #include <iostream>
 #include <fstream>
 
-typedef CGAL::Cartesian_d<double> R;
-typedef R::Point_d Point;
+typedef CGAL::Cartesian<double> R;
+typedef R::Point_3 Point;
 
 typedef CGAL::Plane_separator<double> Separator;
 typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
 
-typedef CGAL::Iso_rectangle_d<R> box;	
+typedef CGAL::Iso_cuboid_3<R> box;	
+
 
 int main() {
 
@@ -39,7 +41,7 @@ int main() {
   for (int i1=0; i1<data_point_number; i1++) { 
 	    double v[dim];
 		for (int i2=0; i2<dim; i2++) v[i2]=Rnd.get_double(-1.0,1.0);
-        Point Random_point(dim,v,v+dim);
+        Point Random_point(v[0],v[1],v[2]);
         data_points.push_front(Random_point);
   }
   
@@ -83,8 +85,8 @@ int main() {
         q[i2]=  0.7;
   }
   
-  Point P(dim,p,p+dim);
-  Point Q(dim,q,q+dim);
+  Point P(p[0],p[1],p[2]);
+  Point Q(q[0],q[1],q[2]);
   box r(P,Q);
 
   // Searching the box r

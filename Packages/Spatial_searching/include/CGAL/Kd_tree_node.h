@@ -183,9 +183,9 @@ namespace CGAL {
 		}
 	}
 
-        template <class OutputIterator, class R>
+        template <class OutputIterator, class Rectangle>
 	void tree_items_in_rectangle(OutputIterator& it, 
-	Iso_rectangle_d<R>& r, Kd_tree_rectangle<NT>* b, NT eps) {
+	Rectangle& r, Kd_tree_rectangle<NT>* b, NT eps) {
             	if (is_leaf()) { 
 			if (n>0) 
 			for (Item_iterator i=begin(); i != end(); i++) 
