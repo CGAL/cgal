@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding = "Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="7.00"
+	Name="terrain_constrained"
+	ProjectGUID="{C9EC805D-A989-4E73-BDC0-2D5571F86066}"
+	Keyword="Win32Proj">
+	<Platforms>
+		<Platform
+			Name="Win32"/>
+	</Platforms>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="Debug"
+			IntermediateDirectory="Debug"
+			ConfigurationType="1"
+			CharacterSet="2">
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalOptions="/GR /Zm900"
+				Optimization="0"
+				AdditionalIncludeDirectories="&quot;$(CGALIROOT)/include/CGAL/config/msvc7&quot;;&quot;$(CGALIROOT)/include&quot;;&quot;$(COINDIR)/include&quot;;&quot;$(QTDIR)/include&quot;;../../../include"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;SOQT_NOT_DLL;COIN_NOT_DLL"
+				MinimalRebuild="TRUE"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="5"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="TRUE"
+				DebugInformationFormat="4"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalOptions="$(QTDIR)\lib\qtmain.lib $(QTDIR)\lib\qt.lib 
+$(COINDIR)/lib/coin1.lib $(COINDIR)/lib/soqt2.lib 
+$(CGALIROOT)/lib/msvc7/ML/cgal.lib $(CGALIROOT)/lib/msvc7/ML/CGALQt.lib
+$(CGALIROOT)/lib/msvc7/gmp.lib
+user32.lib ole32.lib imm32.lib comdlg32.lib gdi32.lib  opengl32.lib wsock32.lib"
+				OutputFile="$(OutDir)/terrain_constrained.exe"
+				LinkIncremental="2"
+				GenerateDebugInformation="TRUE"
+				ProgramDatabaseFile="$(OutDir)/terrain_constrained.pdb"
+				SubSystem="1"
+				TargetMachine="1"/>
+			<Tool
+				Name="VCMIDLTool"/>
+			<Tool
+				Name="VCPostBuildEventTool"/>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="$(QTDIR)/bin/moc.exe -o terrain.moc terrain.cpp"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="Release"
+			IntermediateDirectory="Release"
+			ConfigurationType="1"
+			CharacterSet="2">
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalOptions="/GR /Zm900"
+				Optimization="2"
+				InlineFunctionExpansion="1"
+				OmitFramePointers="TRUE"
+				AdditionalIncludeDirectories="&quot;$(CGALIROOT)/include/CGAL/config/msvc7&quot;;&quot;$(CGALIROOT)/include&quot;;&quot;$(COINDIR)/include&quot;;&quot;$(QTDIR)/include&quot;;../../../include"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;SOQT_NOT_DLL;COIN_NOT_DLL"
+				StringPooling="TRUE"
+				RuntimeLibrary="4"
+				EnableFunctionLevelLinking="TRUE"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="TRUE"
+				DebugInformationFormat="3"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalOptions="$(QTDIR)\lib\qtmain.lib $(QTDIR)\lib\qt.lib 
+$(COINDIR)/lib/coin1.lib $(COINDIR)/lib/soqt2.lib 
+$(CGALIROOT)/lib/msvc7/ML/cgal.lib $(CGALIROOT)/lib/msvc7/ML/CGALQt.lib
+$(CGALIROOT)/lib/msvc7/gmp.lib
+user32.lib ole32.lib imm32.lib comdlg32.lib gdi32.lib  opengl32.lib wsock32.lib"
+				OutputFile="$(OutDir)/terrain_constrained.exe"
+				LinkIncremental="1"
+				GenerateDebugInformation="TRUE"
+				SubSystem="1"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				TargetMachine="1"/>
+			<Tool
+				Name="VCMIDLTool"/>
+			<Tool
+				Name="VCPostBuildEventTool"/>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="$(QTDIR)/bin/moc.exe -o terrain.moc terrain.cpp"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+	</Configurations>
+	<Files>
+		<Filter
+			Name="Source Files"
+			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm">
+			<File
+				RelativePath="fbm.c">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						CompileAs="2"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						CompileAs="2"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="terrain.cpp">
+			</File>
+		</Filter>
+		<Filter
+			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl;inc">
+			<File
+				RelativePath="cgal_types.h">
+			</File>
+			<File
+				RelativePath="fbm.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="Resource Files"
+			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
+		</Filter>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>
