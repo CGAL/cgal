@@ -132,9 +132,9 @@ protected:
   typedef typename Nef_rep::Overlayer       Overlayer;
   typedef typename Nef_rep::Locator         Locator;
 
-  friend std::ostream& operator<< CGAL_NULL_TMPL_ARGS
+  friend std::ostream& operator<< <>
       (std::ostream& os, const Nef_polyhedron_S2<K>& NP);
-  friend std::istream& operator>> CGAL_NULL_TMPL_ARGS
+  friend std::istream& operator>> <>
       (std::istream& is, Nef_polyhedron_S2<K>& NP);
 
   typedef typename Decorator::Vertex_handle         Vertex_handle;

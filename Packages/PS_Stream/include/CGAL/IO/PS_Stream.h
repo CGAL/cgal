@@ -49,8 +49,7 @@ class PS_Stream;
 
 template <class T>
 class PS_Manipulator {
-  friend PS_Stream& operator<< CGAL_NULL_TMPL_ARGS (PS_Stream& ,
-                                    const PS_Manipulator<T> &);
+  friend PS_Stream& operator<< <> (PS_Stream& , const PS_Manipulator<T> &);
 public:
   PS_Manipulator(PS_Stream& (PS_Stream::*f)(T),T v):
     _PS_func(f), param(v) {}
