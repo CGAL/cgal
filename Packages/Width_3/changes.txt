@@ -1,3 +1,7 @@
+1.11 (13 Jul 2001)
+- fixed Width_3 to remove erroneous assertion
+- added missing function call to simple_test
+
 1.10 (12 Jul 2001)
 
 - Revised tests to work for both designs of polyhedral surfaces.
