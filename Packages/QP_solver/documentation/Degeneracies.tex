@@ -21,6 +21,10 @@
 
 \newcommand{\pmu}[2]{\ensuremath{p_{\mu_{j}}^{(#1)}(\varepsilon, #2)}}
 \newcommand{\px}[3]{\ensuremath{p_{x_{#1}}^{(#2)}(\varepsilon, #3)}}
+\newcommand{\xe}[1]{\ensuremath{x_{#1}(\varepsilon)}}
+\newcommand{\cab}[3]{\ensuremath{\mathcal{A}_{>}(#1, #2, #3)}}
+\newcommand{\can}[3]{\ensuremath{\mathcal{A}_{<}(#1, #2, #3)}}
+
 
 \newtheorem{lemma}{Lemma}
 \newtheorem{assumption}{Assumption}
@@ -34,6 +38,7 @@
 \begin{document}
 \maketitle
 \section{Row rank and column rank assumption}
+\marginpar{variable index issue: section adapted}
 The QP-solver so far assumes nondegeneracy of the quadratic program to
 solve~\cite{Sven}, page 19. For ease of reference we will restate the
 nondegeneracy assumptions, that is given the QP,
@@ -41,10 +46,10 @@ nondegeneracy assumptions, that is given the QP,
 \begin{eqnarray}
 \label{def:QP}
 (QP)\quad minimize&  c^{T}x + x^{T} D x      	&  \nonumber \\
-s.t.	 & \sum_{j=1}^{n}a_{ij}x_{j} = b_{i}	& i \in E  \nonumber \\
-	 & \sum_{j=1}^{n}a_{ij}x_{j} \leq b_{i} & i \in I^{\leq} \\
-	 & \sum_{j=1}^{n}a_{ij}x_{j} \geq b_{i} & i \in I^{\geq}  \nonumber \\
- 	 & x_{j} \geq 0				& j \in \{1 \ldots n \}
+s.t.	 & \sum_{j=0}^{n-1}a_{ij}x_{j} = b_{i}	& i \in E  \nonumber \\
+	 & \sum_{j=0}^{n-1}a_{ij}x_{j} \leq b_{i} & i \in I^{\leq} \\
+	 & \sum_{j=0}^{n-1}a_{ij}x_{j} \geq b_{i} & i \in I^{\geq}  \nonumber \\
+ 	 & x_{j} \geq 0				& j \in \{0 \ldots n-1 \}
 	 \nonumber
 \end{eqnarray}
 %\end{equation}
@@ -57,17 +62,18 @@ Nondegeneracy
 \begin{enumerate}
 \item $Rank\left( A \right) = m$
 \item The subsystem $A_{G}x_{G} = b$ has only solutions for sets $G \subseteq
-\left[ n \right]$ with $\left|G \right| \geq m$.
+\{0 \ldots n-1\}$ with $\left|G \right| \geq m$.
 \end{enumerate}
 \end{assumption}
 must be met. In the following we will show how these
 assumptions can be dropped. To this end we will first describe how the auxiliary
 problem is set up. 
 \section{The auxiliary problem}
+\marginpar{variable index issue: section adapted}
 The auxiliary problem is constructed by augmenting the constraint matrix $A$
 with columns corresponding to slack and artificial variables. The slack columns
 are added in the standard way. For each of the equality constraints 
-$\sum_{j=1}^{n} {a_{i j}x_{j}} = b_{i}, i \in E$ the original matrix $A$
+$\sum_{j=0}^{n-1} {a_{i j}x_{j}} = b_{i}, i \in E$ the original matrix $A$
 is augmented by an artificial column
 \begin{equation} \label{def:art_col}
  \tilde{a} =  \left\{
@@ -98,7 +104,7 @@ $\tilde{A}$ the original constraint matrix $A$ augmented in the above way
 the auxiliary problem may be expressed as
 \begin{eqnarray*}
  \mbox{minimize} &  \tilde{c}^{T}x      & 	  \\
-	s.t.	 & \tilde{A}x = b_{i}	& i \in \{1 \ldots m \}      \\
+	s.t.	 & \tilde{A}x = b_{i}	& i \in \{0 \ldots m-1 \}      \\
 		 & x_{j} \geq 0	  	& j \in O \cup S \cup art  
 \end{eqnarray*}
 where
@@ -114,9 +120,10 @@ For later use we introduce the bijection $\sigma$ defined as
 \begin{equation}
 \sigma: S \cup art \setminus \{\tilde{a}^{s}\} \rightarrow I \cup E
 \end{equation}
-which maps the slack and artificial variables to their inequality and equality
-constraints. 
+which maps the index sets of slack and artificial variables to
+the index sets of their inequality and equality constraints. 
 \subsection{Initialization of the auxiliary problem}
+\marginpar{variable index issue: subsection adapted}
 Since only constraints which are satisfied with equality determine the values of
 the basic variables with respect to a given basis only the equality constraints
 as well as the currently active inequality constraints are
@@ -150,23 +157,28 @@ origin, that is
 \[
   \left| b_{i_{0}} \right| \geq  \left|b_{i}\right|, \quad i \in I_{inf}
 \]
-then $B_{O}$, $B_{S}$ are initialized
-as
-\begin{eqnarray}
-  \label{def:B_O_init}
-  B_{O}^{0} & := & art  \\
-  \label{def:B_S_init}
-  B_{S}^{0} & := & \sigma^{-1} \left( I \right)  \setminus
-  \{ \sigma^{-1} \left( i_{0} \right) \}
-\end{eqnarray}
-and the initial set of basic and nonbasic constraints $S_{B}$ and $S_{N}$ as
-\begin{eqnarray}
-  \label{def:S_B_init}
-  S_{B}^{0} & := & I \setminus \{ i_{0}  \} \\
-  \label{def:S_N_init}
-  S_{N}^{0} & := & \{ i_{0} \} 
-\end{eqnarray}
+then $B_{O}$, $B_{S}$ and the initial set of basic and nonbasic constraints
+$S_{B}$ and $S_{N}$are initialized as
+\begin{equation}
+\begin{array}{ccccccc}
+  \label{def:headings_init_io}
+B_{O}^{(0)} &:=& art && B_{S}^{(0)} &:=& S \setminus
+  \{\sigma^{-1}\left(i_{0}\right)\} \\
+S_{B}^{(0)} &:=& I \setminus \{i_{0}\} && S_{N}^{(0)} & := & \{ i_{0} \} 
+\end{array}
+\end{equation}
+If on the other hand, $I_{inf}=\emptyset$ then $B_{O}$, $B_{S}$, $S_{B}$ and
+$S_{N}$ are initialized as
+\begin{equation}
+\begin{array}{ccccccc}
+\label{def:headings_init_fo}
+B_{O}^{(0)} &:=& art && B_{S}^{(0)} &:=& S \\
+S_{B}^{(0)} &:=&I && S_{N}^{(0)}&:=& \emptyset
+\end{array}
+\end{equation}
+where $art$ does not contain a special artificial variable.
 \subsection{Expelling artificial variables from the Basis}
+\marginpar{variable index issue: subsection adapted}
 At the end of phase I some artificial variables may remain in the basis.
 In that case, if the original problem is to be feasible, the basis has to be
 degenerate.
@@ -186,9 +198,11 @@ the basis we show first that this can always be achieved.
 For the sake of notational convenience we assume here that the index set of the
 artificial variables $art\setminus \{\tilde{a}^{s}\}$ is defined as
 $art\setminus \{\tilde{a}^{s}\}=\{l+1 \ldots l+\left|E\right| \}$,
-$l \geq n$ and that the basic artificial variable $x_{i}$ appears in the
-basis heading $B_{O}$ at position $i-l$. 
+$l \geq n-1$ and that the basic artificial variable $x_{i+l}$ appears in the
+basis heading $B_{O}$ at position $i$. 
 \subsubsection{The special artificial variable}
+\marginpar{variable index issue: subsubsection adapted}
+\label{sec:spec_art_unpert}
 Suppose the special artificial variable is the $k$-th entry in the basis
 heading $B$. Then 
 \[ 
@@ -212,6 +226,7 @@ $r_{i} \neq 0$, which in turn implies that condition
 $j = \sigma^{-1} \left( i \right)$.
 
 \subsubsection{Pivoting the artificial variables out of the basis}
+\marginpar{variable index issue: subsubsection adapted}
 The procedure described in~\cite{Chvatal} is outlined in
 algorithm~(\ref{alg:expel_art_var}). We avoid iterating
 over sets that change during the computation, we only use member tests on such
@@ -220,15 +235,15 @@ updates the reduced basis inverse $\check{A}_{B}^{-1}$ with the entering
 variable $x_{j}$ and leaving variable $x_{i}$ and updates the basis heading
 accordingly. The procedure claims that every solution of 
 \begin{equation}
-\sum_{j=1}^{n}a_{ij}x_{j}=b_{i} \quad i \in E
+\sum_{j=0}^{n-1}a_{ij}x_{j}=b_{i} \quad i \in E
 \end{equation}
 is also a solution of
 \begin{equation}
-\sum_{j=1}^{n}a_{ij}x_{j}=b_{i} \quad i \in E \setminus J
+\sum_{j=0}^{n-1}a_{ij}x_{j}=b_{i} \quad i \in E \setminus J
 \end{equation}
 the proof of which we omit here.
 \begin{algorithm}
-\caption{Expel artificial variables from basis}
+\caption{Expel basic artificial variables from basis}
 \label{alg:expel_art_var}
 \begin{algorithmic}[0]
 \ForAll{$i \in art$}
@@ -248,17 +263,19 @@ the proof of which we omit here.
 \end{algorithm}
 \subsubsection{Removing the remaining artificial variables and their
 constraints}
-\marginpar{art vars and their constr removed this way will never be eligible
-again}
+\marginpar{no variable index issue}
+Let $B^{(k)}$ and $N^{(k)}$ denote the set of indices of basic and nonbasic
+variables at the end of Algorithm~(\ref{alg:expel_art_var}).
 Since for the remaining basic artificial variables $x_{i}$,
-$i \in B_{O} \cap art$
+$i \in B_{O}^{(k)} \cap art$
 \begin{equation}
-e_{i}^{T}\check{A}_{B}^{-1}\tilde{A}_{N} = 0 
+e_{i}^{T}\check{A}_{B^{(k)}}^{-1}\tilde{A}_{N^{(k)}} = 0 
 \end{equation}
 holds,
 we may, according to the procedure described in~\cite{Chvatal}, remove
 the artificial variable $x_{i}$ together with its constraint
-$A_{\sigma(i), \bullet}$ without changing the set of feasible solutions.
+$\tilde{A}_{\sigma(i), \bullet}$ without changing the set of feasible
+solutions.
 This can be achieved by applying a slightly modified update
 of type U8, defined in Section~6.3.2 in~\cite{Sven}. An $U8(j,i)$ update is a
 LP-update and replaces an original variable $x_{i}$, $i \in B_{O}$ in the basis
@@ -277,20 +294,23 @@ for our purposes.
 Of course the update of the basis headings needs appropriate modification
 in this case, that is, $B_{O}^{\prime}:=B_{O} \setminus \{i\}$ and
 $E^{\prime}:=E \setminus \{ \sigma(i)\}$, if $\check{A}_{B^{\prime}}$ denotes
-the basis matrix after the update.
+the basis matrix after the update. 
 
 \subsubsection{Dropping the row rank assumption}
-\marginpar{express in terms of precondition}
+\marginpar{no variable index issue}
 Due to performance reasons alluded to in the last subsection above the feature
-of removing redundant equalities is provided only with the compile time tag
-\texttt{Has\_no\_inequalities} set to true. So if the constraint matrix $A$ has
-only equality constraints, $I=\emptyset$ in Definition~(\ref{def:QP}) and the
-constraint matrix is suspected not to have full rank one can use the
-compile time tag \texttt{Has\_no\_inequalities} set to true at the price of
-some small performance penalty. If on the other hand the compile time tag is
-set to false in this case the solver aborts in case $Rank(A)<m$.  
+of removing redundant equalities is provided only if the compile time tag
+\texttt{Has\_no\_inequalities} has type \texttt{Tag\_false}.
+So if the constraint matrix $A$ has
+only equality constraints, $I=\emptyset$ in Definition~(\ref{def:QP}), and the
+constraint matrix is suspected not to have full rank one can define the
+compile time tag \texttt{Has\_no\_inequalities} to be of type
+\texttt{Tag\_false} at the price of
+some small performance penalty. If on the other hand the compile time tag has
+type \texttt{Tag\_true}, in that case the solver aborts in case of $Rank(A)<m$.  
 
 \section{The lexicographic method}
+\marginpar{variable index issue subsubsection adapted}
 In order to being able to drop the second condition of
 Assumption~(\ref{ass:nondegeneracy}) we use a variation of the lexicographic
 method. Since the standard lexicographic method enlarges the feasible region
@@ -303,20 +323,20 @@ perturbed problem infeasible, since the pivots here are no longer degenerate.
 
 Instead of altering the explicit constraints we enlarge the feasible region by
 perturbing the implicit constraints from $x_{j} \geq 0$ to $x_{j} \geq
--\varepsilon^{j}$ in Definition~(\ref{def:QP}) with $0 < \varepsilon < 1$, such
-that the perturbed problem is defined as
+-\varepsilon^{j +1}$ in Definition~(\ref{def:QP}) with $0 < \varepsilon < 1$,
+such that the perturbed problem is defined as
 \begin{eqnarray}
 \label{def:QP_eps}
 (QP_{\varepsilon})\quad minimize&  c^{T}x + x^{T} D x   & \nonumber \\
-s.t.	 & \sum_{j=1}^{n}a_{ij}x_{j} = b_{i}	& i \in E \nonumber \\
-	 & \sum_{j=1}^{n}a_{ij}x_{j} \leq b_{i} & i \in I^{\leq} \\
-	 & \sum_{j=1}^{n}a_{ij}x_{j} \geq b_{i} & i \in I^{\geq} \nonumber \\
+s.t.	 & \sum_{j=0}^{n-1}a_{ij}x_{j} = b_{i}	& i \in E \nonumber \\
+	 & \sum_{j=0}^{n-1}a_{ij}x_{j} \leq b_{i} & i \in I^{\leq} \\
+	 & \sum_{j=0}^{n-1}a_{ij}x_{j} \geq b_{i} & i \in I^{\geq} \nonumber \\
 	 & x \geq \epsilon				& \nonumber  
 \end{eqnarray}
 if we define $\epsilon$ as
 \begin{equation}
 \label{def:epsilon}
-\epsilon_{j}:= -\varepsilon^{j}, \quad j \in \{1 \dots n \}
+\epsilon_{j}:= -\varepsilon^{j+1}, \quad j \in \{0 \dots n-1 \}
 \end{equation}
 All the entities whose definitions differ for the perturbed and
 unperturbed problem  will be denoted as functions of $\varepsilon$,
@@ -328,56 +348,56 @@ lexicographically in ascending order of the exponents of $\varepsilon$. As
 a consequence degenerate bases are no longer possible and therefore cycling is
 avoided.   
 
-As will be shown later this variant of the lexicographic method has the
-additional
-advantage that artificial variables,  in case the original problem is feasible,
-will only remain in the optimal basis of the
-auxiliary problem, if they can be
-removed together with their constraint, thus
-pivoting artificial variables out of the basis is never neccessary.
+For later use we define the leading coefficient of a polynomial 
+$p(\varepsilon)=\sum_{k=0}^{l}p_{k}\varepsilon^{k}$
+\begin{equation}
+\label{def:lead_coeff}
+l_{c}(p(\varepsilon)):=\min_{0 \leq k \leq l:p_{k} \neq 0}k 
+\end{equation}
   
 \subsection{The auxiliary problem for the lexicographic method}
+\marginpar{variable index issue subsection adapted}
 The slack columns are added in the standard way.
-Similar to Definition~\ref{def:art_col}, for each equality constraint the constraint
-matrix $A$ is augmented by an artificial column
+Similar to Definition~\ref{def:art_col}, for each equality constraint the
+constraint matrix $A$ is augmented by an artificial column
 \[
- \tilde{a} =  \left\{
-	        \begin{array}{ll}
-  		  -e_{i} &
-		    \mbox{if $l_{c}\left(
-		      b_{i} + \sum_{j=1}^{n}a_{ij}\varepsilon^{j}\right)< 0$}\\
-		   e_{i}  & \mbox{otherwise}
-	        \end{array}
- 	       \right.
+ \tilde{a} =\left\{
+	      \begin{array}{ll}
+  		-e_{i} &
+		 \mbox{if $l_{c}\left(
+		  b_{i} + \sum_{j=0}^{n-1}a_{ij}\varepsilon^{j+1}\right)< 0$}\\
+		  e_{i}  & \mbox{otherwise}
+	      \end{array}
+ 	     \right.
 \]
 If the set of inequality constraints with infeasible origin
 \[
   I_{Inf}:=\{i \in I^{\leq}\left|\right. l_{c}\left(b_{i} +
-    \sum_{j=1}^{n}a_{ij}\varepsilon^{j}\right) < 0\} \cup
+    \sum_{j=0}^{n-1}a_{ij}\varepsilon^{j+1}\right) < 0\} \cup
     \{i \in I^{\geq}\left|\right. l_{c}\left(b_{i} +
-    \sum_{j=1}^{n}a_{ij}\varepsilon^{j}\right) > 0\}
+    \sum_{j=0}^{n-1}a_{ij}\varepsilon^{j+1}\right) > 0\}
 \]
 is nonempty, the original constraint matrix is likewise augmented by a special
 artificial column $\tilde{a}_{i}^{s}$ defined as
-\[
-  \tilde{a}^{s}_{i} =  \left\{
-	                 \begin{array}{ll}
-  		           -1 & \mbox{if $i \in I^{\leq},
-			    l_{c}\left(b_{i} +
-			     \sum_{j=1}^{n}a_{ij}\varepsilon^{j}\right) < 0$}\\
-		            1 & \mbox{if $i \in I^{\geq},
-			    l_{c}\left(b_{i} +
-			      \sum_{j=1}^{n}a_{ij}\varepsilon^{j}\right)> 0$}\\
-		            0 & \mbox{otherwise}
-	                 \end{array}
- 	               \right.
-\]
+\begin{equation}
+\tilde{a}^{s}_{i} =\left\{
+	             \begin{array}{ll}
+  		       -1 & \mbox{if $i \in I^{\leq},
+			l_{c}\left(b_{i} +
+			 \sum_{j=0}^{n-1}a_{ij}\varepsilon^{j+1}\right) < 0$}\\
+		        1 & \mbox{if $i \in I^{\geq},
+			l_{c}\left(b_{i} +
+			  \sum_{j=0}^{n-1}a_{ij}\varepsilon^{j+1}\right)> 0$}\\
+		        0 & \mbox{otherwise}
+	             \end{array}
+ 	           \right.
+\end{equation}
 The auxiliary problem is then defined as
 \begin{eqnarray}
 \label{def:aux_prob}
  \mbox{minimize} &  \tilde{c}^{T}x(\varepsilon)   & 	  \nonumber \\
-	s.t.	 & \tilde{A}x(\varepsilon) = b_{i} & i \in \{1 \ldots m \}   \\
-		 & x_{j}(\varepsilon) \geq -\varepsilon^{j} &
+	s.t.	 & \tilde{A}x(\varepsilon) = b_{i} & i \in \{0\ldots m-1\}  \\
+		 & x_{j}(\varepsilon) \geq -\varepsilon^{j+1} &
 		   j \in O \cup S \cup art \nonumber 
 \end{eqnarray}
 with $\tilde{c}$ defined as in Definition~\ref{def:aux_c} and the additional
@@ -386,18 +406,26 @@ requirement that
 \label{req:order_eps}
 \max_{i \in O \cup S}i < \min_{i \in art}i
 \end{equation} 
-holds.
+holds. Furthermore we require that the index $ind(\tilde{a}^{s})$ is
+the largest one with respect to slack and artificial variables
+\begin{equation}
+\label{req:order_eps_spec_art}
+\max_{i \in S \cup art \setminus \{\tilde{a}^{s} \}}i < ind(\tilde{a}^{s})
+\end{equation} 
+\marginpar{may the mapping $\sigma: S \rightarrow I$ still be arbitrary?}
+
 \subsection{Initialization of the auxiliary problem for the lexicographic
 method}
-The auxiliary problem is initialized as before, that is $B_{O}^{0}$ and
-$B_{S}^{0}$ are defined as in Definitions~(\ref{def:B_O_init}),
-(\ref{def:B_S_init}) and $S_{B}^{0}$ and $S_{N}^{0}$ are defined as in
-Definitions~(\ref{def:S_B_init}),(\ref{def:S_N_init}), the only difference being
+\marginpar{variable index issue subsection adapted}
+The auxiliary problem is initialized as before, that is $B_{O}^{(0)}$
+$B_{S}^{(0)}$, $S_{B}^{(0)}$ and $S_{N}^{(0)}$ are defined as in
+Definitions~(\ref{def:headings_init_io}) and~(\ref{def:headings_init_fo}),
+depending on feasibility of the origin, the only difference being
 the fact that the most infeasible origin $i_{0} \in I_{Inf}$ defined as
 \begin{equation*}
-  \left|b_{i_{0}} + \sum_{j=1}^{n}a_{i_{0}j}\varepsilon^{j} \right|
+  \left|b_{i_{0}} + \sum_{j=0}^{n-1}a_{i_{0}j}\varepsilon^{j+1} \right|
     >
-    \left|b_{i} + \sum_{j=1}^{n}a_{ij}\varepsilon^{j} \right|
+    \left|b_{i} + \sum_{j=0}^{n-1}a_{ij}\varepsilon^{j+1} \right|
     \quad i \in I_{inf},
 \end{equation*}
 is now unique.
@@ -405,45 +433,47 @@ is now unique.
 \subsection{Resolving ties in phaseI}
 \label{sec:Res_ties_phaseI}
 \subsubsection{LP-case}
+\marginpar{variable index issue subsubsection adapted}
 Let $B$ be the current basis and $j \in N$ be the entering variable
 and define $\hat{N}:= N \setminus\{j\}$ and
-$q:= A_{B}^{-1}\tilde{A}_{\bullet,j}$.
+$q:= \tilde{A}_{B}^{-1}\tilde{A}_{\bullet,j}$.
 Let $i_{1}, i_{2} \in B$ be
 involved in a tie in the unperturbed problem, that is
 \begin{equation*}
   \min_{i \in B: q_{x_{i}} > 0}
-  \frac{\left(A_{B}^{-1}b\right)_{x_{i}}}{q_{x_{i}}}
+  \frac{\left(\tilde{A}_{B}^{-1}b\right)_{x_{i}}}{q_{x_{i}}}
   =
-  \frac{\left(A_{B}^{-1}b\right)_{x_{i_{1}}}}{q_{x_{i_{1}}}}
+  \frac{\left(\tilde{A}_{B}^{-1}b\right)_{x_{i_{1}}}}{q_{x_{i_{1}}}}
   =
-  \frac{\left(A_{B}^{-1}b\right)_{x_{i_{2}}}}{q_{x_{i_{2}}}}
+  \frac{\left(\tilde{A}_{B}^{-1}b\right)_{x_{i_{2}}}}{q_{x_{i_{2}}}}
 \end{equation*}
 by Definition~(\ref{def:aux_prob}),  we then have to compare
 polynomials in $\varepsilon$ of the following form in the perturbed problem
 \begin{eqnarray}
 \tilde{p}_{x_{i}}^{(L)}\left(\varepsilon, B\right) & := &
-  \frac{\varepsilon^{i}
-  - \left(A_{B}^{-1}\tilde{A}_{N}\right)_{x_{i}}
+  \frac{\varepsilon^{i+1}
+  - \left(\tilde{A}_{B}^{-1}\tilde{A}_{N}\right)_{x_{i}}
   \epsilon_{N}}{q_{x_{i}}} \nonumber \\
 \label{def:p_x_i_tilde}
  & = &
-  \frac{\varepsilon^{i}
-  - \left(A_{B}^{-1}\tilde{A}_{\hat{N}}\right)_{x_{i}}
+  \frac{\varepsilon^{i+1}
+  - \left(\tilde{A}_{B}^{-1}\tilde{A}_{\hat{N}}\right)_{x_{i}}
   \epsilon_{\hat{N}}}{q_{x_{i}}}
-  + \varepsilon^{j}
+  + \varepsilon^{j+1}
 \end{eqnarray}
 Note, that always either $\tilde{p}_{x_{i_{1}}}^{(L)}
 \left(\varepsilon, B\right) <
 \tilde{p}_{x_{i_{2}}}^{(L)}\left(\varepsilon, B\right)$ or
 $\tilde{p}_{x_{i_{1}}}^{(L)}\left(\varepsilon, B\right) >
 \tilde{p}_{x_{i_{2}}}^{(L)}\left(\varepsilon, B\right)$, even if
-$x_{i_{1}}(\varepsilon) = x_{i_{2}}(\varepsilon)$,
-since the terms $\frac{\varepsilon^{i_{1}}}{q_{x_{i_{1}}}}$ and
-$\frac{\varepsilon^{i_{2}}}{q_{x_{i_{1}}}}$ are unique to
+$\xe{i_{1}} = \xe{i_{2}}$,
+since the terms $\frac{\varepsilon^{i_{1}+1}}{q_{x_{i_{1}}}}$ and
+$\frac{\varepsilon^{i_{2}+1}}{q_{x_{i_{1}}}}$ are unique to
 $\tilde{p}_{x_{i_{1}}}^{(L)}\left(\varepsilon, B\right)$ and
 $\tilde{p}_{x_{i_{2}}}^{(L)}\left(\varepsilon, B\right)$. 
 
 \subsubsection{QP-case}
+\marginpar{variable index issue subsubsection adapted}
 In preparation of phaseII the QP-case in phaseI uses the QP-machinery for $D=0$.
 The basis $M_{B}$ in phaseI is, given the basis heading
 $\left[C \cup S_{B}, B_{O} \cup B_{S} \right]$,
@@ -467,9 +497,9 @@ M_{B}
 \quad
 M_{B}:=
 \left(\begin{array}{c|c}
-        0 & A_{B} \\
+        0 & \tilde{A}_{B} \\
 	\hline
-	A_{B}^{T} & 0 
+	\tilde{A}_{B}^{T} & 0 
        \end{array}
 \right)
 \end{equation}
@@ -478,9 +508,9 @@ such that $M_{B}^{-1}$ is defined as
 \label{def:M_B_inv_phaseI}
 M_{B}^{-1}:=
 \left(\begin{array}{c|c}
-        0 & {A_{B}^{-1}}^{T} \\
+        0 & \left(\tilde{A}_{B}^{-1}\right)^{T} \\
 	\hline
-	A_{B}^{-1} & 0
+	\tilde{A}_{B}^{-1} & 0
        \end{array}
 \right)
 \end{equation}
@@ -500,7 +530,7 @@ q:= M_{B}^{-1}
 \left(\begin{array}{c}
         0 \\
 	\hline
-	A_{B}^{-1}\tilde{A}_{\bullet, j}
+	\tilde{A}_{B}^{-1}\tilde{A}_{\bullet, j}
        \end{array}
 \right)
 \end{equation}
@@ -548,7 +578,7 @@ in $\varepsilon$ of the following form in the perturbed problem
 \label{def:p_x_i_tilde_Q_1}
 \tilde{p}_{x_{i}}^{(Q)}\left(\varepsilon, B\right) :=
 \frac{
- \varepsilon^{i}
+ \varepsilon^{i+1}
  -\left(M_{B}^{-1}
    \left(\begin{array}{c}
            \tilde{A}_{N} \\
@@ -565,52 +595,41 @@ which is, using Definitions~(\ref{def:M_B_inv_phaseI}) and
 Definition~(\ref{def:p_x_i_tilde}),
 but for some shift in the indexing function.
 
-\subsubsection{The maximum number of coefficient comparisons needed for the tie
-resolution in phaseI}
-Note, that due to the uniqueness of the terms
-$\frac{\varepsilon^{i}}{q_{x_{i}}}$ to
-$p_{x_{i}}^{(L)}(\varepsilon, B)$ and
-$p_{x_{i}}^{(Q)}(\varepsilon, B)$
-we need at most compare coefficients of
-powers of $\varepsilon$ with exponent up to
-\begin{equation}
-\label{def:u_T}
-u_{T}(B):=\max_{i \in B_{T}} i
-\end{equation}
-if $B_{T} \subseteq B$ denotes the set of basic variables involved in a tie.
-Therefore, the maximum number of coefficient comparisons needed is given by
-\begin{equation}
-r_{1}:=\left|\{1 \ldots u_{T}(B)\} \cap N\right|
-\end{equation} 
  
 \subsection{Transition to phaseII}
+For the sake of notational convenience we assume here that the index set of the
+artificial variables $art\setminus \{\tilde{a}^{s}\}$ is defined as
+$art\setminus \{\tilde{a}^{s}\}=\{l+1 \ldots l+\left|E\right| \}$,
+$l \geq n-1$ and that the basic artificial variable $x_{i+l}$ appears in the
+basis heading $B$ at position $i$.
 \subsubsection{Expelling artificial variables from the basis}
-\marginpar{variable index issue: subsubsection not yet adapted}
-Let $N_{0}:=N \cup \{0\}$ denote the set of nonbasic variables extended by zero
-with $\tilde{A}_{\bullet, 0}:=b$. Define 
+\marginpar{variable index issue: subsubsection adapted}
+Let $N_{-1}:=N \cup \{-1\}$ denote the set of nonbasic variables extended
+by $-1$ with $\tilde{A}_{\bullet, -1}:=b$. Define for $i \in B \cap art$
 \begin{eqnarray*}
-  l_{B}\left(i\right):=\min_{j \in Z_{i}} j & \text{where}&
-  Z_{i}:=\{ j \in N_{0} \left| \right.
-  \left(\tilde{A}_{B}^{-1}\tilde{A}_{\bullet,j}\right)_{i} \neq 0 \}
-\end{eqnarray*}  
+  l_{B}\left(i\right):=\min_{j \in R_{i}} j & \text{where}&
+  R_{i}:=\{ j \in N_{-1} \left| \right.
+  \left(\tilde{A}_{B}^{-1}\tilde{A}_{\bullet, j}\right)_{i-l} \neq 0 \}
+\end{eqnarray*}
+\marginpar{Definition restricted to basic artificials only}  
 \begin{lemma}
+\label{lem:art_BxN_zero}
 Let $x_{B}(\varepsilon)$ be the optimal solution of the auxiliary problem and
 $B \cap art \neq \emptyset$. Then for $i \in B \cap art$ either
-$l_{B}\left(i\right) = 0$ or $l_{B}\left(i\right) > 0$,
-$(\tilde{A}_{B}^{-1}\tilde{A}_{\bullet ,j})_{i} = 0$
+$l_{B}\left(i\right) = -1$ or $l_{B}\left(i\right) \geq 0$,
+$(\tilde{A}_{B}^{-1}\tilde{A}_{\bullet,j})_{i-l} = 0$
 for $j \in N \setminus art$.
 \end{lemma}
 \begin{proof}
-We only consider $l_{B}\left(i\right) > 0$ for all $i \in B \cap art$, for
-$l_{B}\left(i\right) = 0$ for some $i \in B \cap art$ implies infeasibility of
+We only consider $l_{B}\left(i\right) \geq 0$ for all $i \in B \cap art$, for
+$l_{B}\left(i\right) = -1$ for some $i \in B \cap art$ implies infeasibility of
 the unperturbed problem. 
 Since $x_{B}(\varepsilon) = \tilde{A}_{B}^{-1}b - \tilde{A}_{B}^{-1}
 \tilde{A}_{N}\epsilon_{N}$
-and the implicit constraints are $x_{j}(\varepsilon) \geq -\varepsilon^{j}$
+and the implicit constraints are $x_{j}(\varepsilon) \geq -\varepsilon^{j+1}$
 for variable $x_{j}(\varepsilon)$, feasibility requires
 for some variable $i \in B \cap art$ either $l_{B}\left(i\right) < i$,
-$(\tilde{A}_{B}^{-1}\tilde{A}_{\bullet, l_{B}\left(i\right)})_{i} >
-0$ or
+$(\tilde{A}_{B}^{-1}\tilde{A}_{\bullet, l_{B}\left(i\right)})_{i-l} > 0$ or
 $l_{B}\left(i\right) > i$. Let
 \begin{equation*}
   \ell:= \min_{i \in B \cap art} l_{B}\left(i\right),
@@ -624,52 +643,141 @@ $\tilde{c}_{\ell} \geq
 since $\tilde{c}_{\ell}=0$ for 
 $\ell \in N \setminus art$.
 So $\ell \in N \cap art$, which by requirement~(\ref{req:order_eps}) implies
-$(\tilde{A}_{B}^{-1}\tilde{A}_{\bullet, j})_{i}=0$, for
+$(\tilde{A}_{B}^{-1}\tilde{A}_{\bullet, j})_{i-l}=0$, for
 $i \in B \cap art$ and $j \in N \setminus art$. 
 \end{proof}
 
+\subsubsection{The special artificial variable}
+Suppose $ind(\tilde{a}^{s}) \in B_{O}$ in the optimal solution of the auxiliary
+problem.
+For the special artificial variable in the perturbed case the same remarks
+apply as in the unperturbed case, that is, by
+Section~(\ref{sec:spec_art_unpert}) there exists
+$j \in S \setminus B_{S}$ such that 
+\begin{equation*}
+\left(A_{B}^{-1}\tilde{A}_{\bullet,j}\right)_{k} \neq 0
+\end{equation*} 
+holds, if $\tilde{a}^{s}$ appears in $k$-th position in the basis heading
+$B$. By Lemma~(\ref{lem:art_BxN_zero}) on the other hand we have
+\begin{equation*}
+\left(A_{B}^{-1}\tilde{A}_{\bullet,j}\right)_{k} = 0
+\end{equation*} 
+so $ind(\tilde{a}^{s}) \in N$.
+
 \subsubsection{Removing nonbasic artificial variables}
 \marginpar{variable index issue: subsubsection adapted}
-In order to remove a nonbasic artificial variable $x_{j}(\varepsilon)$ we
+In order to remove a nonbasic artificial variable \xe{j}, $j \in N \cap art$, we
 have to increase its value from its current value $-\varepsilon^{j+1}$ to zero,
 without the basic variables becoming infeasible.
-Since
+Since by feasibility
 \begin{equation*} 
-\frac{
-  \left(
-    \tilde{A}_{B}^{-1}b-\tilde{A}_{B}^{-1}\tilde{A}_{N}\epsilon_{N}
-  \right)_{i}
-  + \varepsilon^{i+1}
-}
+\frac{\xe{i}+ \varepsilon^{i+1}}
 {\left(\tilde{A}_{B}^{-1}\tilde{A}_{N}\right)_{i, j}}
 > 
 \varepsilon^{j+1},
-\quad \text{for} \quad \left(\tilde{A}_{B}^{-1}\tilde{A}_{N}\right)_{i, j} >0
+\quad \text{with} \quad \left(\tilde{A}_{B}^{-1}\tilde{A}_{N}\right)_{i, j} >0,
+%\quad i \in B, \quad j \in N, \quad i <j
 \end{equation*}
 holds for any $i \in B$ and $j \in N$ with $i < j$,
 by the requirement~(\ref{req:order_eps}) this increment is always possible
-with respect to basic variables $x_{i}(\varepsilon)$ with
+with respect to basic variables \xe{i} with
 $i \in B \setminus art$, thus, the only variables
 that may become infeasible while increasing the value of some
-$x_{j}(\varepsilon)$ with $j \in N \cap art$ are the basic artificial variables
-$x_{i}(\varepsilon)$ with $i \in B \cap art$, $j<i$ and
-$(\tilde{A}_{B}^{-1}\tilde{A})_{i,j} >0$. So given a basis, if we define
-\begin{equation}
-l:=\min_{j \in N \cap art}j, \quad u:=\max_{i \in B \cap art}i
-\end{equation}
-then $x_{i}$ with $\{i \in B \cap art\left|\right. i < l\}$ remain feasible for
+\xe{j} with $j \in N \cap art$ are the basic artificial variables
+\xe{i} with $i \in B \cap art$, $j<i$ and
+$(\tilde{A}_{B}^{-1}\tilde{A})_{i,j} >0$. So given a basis $B$, if we define
+\begin{eqnarray}
+l(N,art):=\min_{j \in N \cap art}j
+&&
+u(B, art):=\max_{i \in B \cap art}i
+\end{eqnarray}
+and
+\begin{eqnarray}
+\can{B}{N}{art}
+&:=&
+\{j \in N \cap art\left|\right. j < u(B, art)\} \\
+\cab{B}{N}{art}
+&:=&
+\{i \in B \cap art\left|\right. i > l(N, art)\}
+\end{eqnarray}
+then \xe{i} with $i \in B \cap art \setminus \cab{B}{N}{art}$
+remain feasible for
 any increase $\varepsilon^{j+1}$ for $x_{j}(\varepsilon)$ with
-$j \in N \cap art$ and $x_{j}$ with $\{j \in N \cap art\left|\right. j > u\}$
+$j \in N \cap art$ and \xe{j} with
+$j \in N \cap art \setminus \can{B}{N}{art}$
 may be increased to zero without rendering any basic variable
-$x_{i}$ with $i \in B \cap art$ infeasible. Thus critical regarding
+\xe{i} with $i \in B \cap art$ infeasible. Thus critical regarding
 feasibility are increases by $\varepsilon^{j+1}$ of nonbasic variables
-$x_{j}(\varepsilon)$ with $j \in art_{N}^{\leq u}$, where
-$art_{N}^{\leq u}:= \{j \in N \cap art\left|\right. j \leq u\}$
-with respect to basic variables $x_{i}(\varepsilon)$ with
-$i \in art_{B}^{\geq l}$, where
-$art_{B}^{\geq l}:=\{j \in B \cap art: j \geq l\}$.
-\subsubsection{Removing basic artificial variables}
+\xe{j} with $j \in \can{B}{N}{art}$
+with respect to basic variables \xe{i} with
+$i \in \cab{B}{N}{art}$.
 
+Therefore we can increase the values of the variables \xe{j},
+$j \in N \cap art \setminus \can{B}{N}{art}$,
+from $-\varepsilon^{j+1}$ to zero and remove them without the basic feasible
+solution \xe{B} becoming infeasible.
+Let $B^{(0)}, N^{(0)}, art^{(0)}$ with $B=B^{(0)}$ denote the set of
+basic, nonbasic and artificial variables after this step.
+Consider the submatrix
+$(\tilde{A}_{B^{(0)}}^{-1}\tilde{A}_{N^{(0)}})_
+{\cab{B^{(0)}}{N^{(0)}}{art^{(0)}}, \can{B^{(0)}}{N^{(0)}}{art^{(0)}}}$
+and let $j_{1}$ denote the element of \can{B^{(0)}}{N^{(0)}}{art^{(0)}}
+with smallest index, 
+by feasibility for $i \in \cab{B^{(0)}}{N^{(0)}}{art^{(0)}}$ we have either
+\begin{equation}
+(\tilde{A}_{B^{(0)}}^{-1}A_{N^{(0)}})_{i,j_{1}}=0 \quad i \in
+  \cab{B^{(0)}}{N^{(0)}}{art^{(0)}}
+\end{equation} 
+or there exist $i \in \cab{B^{(0)}}{N^{(0)}}{art^{(0)}}$ with
+\begin{equation}
+(\tilde{A}_{B^{(0)}}^{-1}A_{N^{(0)}})_{i,j_{1}}>0
+\end{equation}
+thus either we can increase the value of \xe{j_{1}} to zero and remove the
+artificial variable \xe{j_{1}} or we can do a pivot with \xe{j_{1}} entering
+and some \xe{i_{k}} with $i_{k} \in \cab{B^{(0)}}{N^{(0)}}{art^{(0)}}$ leaving.
+Note, that in both cases
+\begin{equation}
+l(N^{(0)}, art^{(0)}) < l(N^{(1)}, art^{(1)})
+\quad
+u(B^{(0)}, art^{(0)}) \geq u(B^{(1)}, art^{(1)})
+\end{equation}
+holds, if $B^{(1)}, N^{(1)}, art^{(1)}$ denotes the set of basic, nonbasic and
+artificial variables after the step.
+We continue doing so until $u(B^{(k)}, art^{(k)}) < l(N^{(k)}, art^{(k)})$ for
+some $k$. We can then increase \xe{j} from $-\varepsilon^{j+1}$ to zero for
+$j \in N^{(k)} \cap art^{(k)}$ and remove it with $\xe{B^{(k)}}$ remaining
+feasible.
+If the basic feasible solution \xe{B^{(k+1)}} obtained in this way is optimal,
+we proceed with the removal of basic artificial variables described in the next
+subsubsection. In case the basic feasible solution is no longer optimal
+we optimize again, some basic
+artificial variables may be nonbasic in the optimal solution
+\xe{B^{(k+1)^{\prime}}} such that they cannot be removed without
+rendering \xe{B^{(k+1)^{\prime}}} infeasible, that is  
+\begin{equation}
+\emptyset
+\subset
+\can{B^{(k+1)^{\prime}}}{N^{(k+1)^{\prime}}}{art^{(k+1)^{\prime}}}
+\end{equation}
+such that we repeat the procedure described above until we obtain
+an optimal basic feasible solution $\xe{B}$ such that
+$\can{B}{N}{art}=\emptyset$.
+    
+\subsubsection{Removing basic artificial variables}
+\marginpar{variable index issue: subsubsection adapted}
+Let $B^{(k+1)}, N^{(k+1)}$ and $art^{(k+1)}$ with $B^{(k)}=B^{(k+1)}$
+denote the set of basic, nonbasic and artificial variables after the last step
+of the previous subsubsection.
+Because of Lemma~(\ref{lem:art_BxN_zero})
+the basic feasible solution \xe{B^{(k+1)}} then
+has \xe{i}=0 for $i \in B^{(k+1)} \cap art^{(k+1)}$, or put differently
+\begin{equation}
+\left(\tilde{A}_{B^{(k+1)}}^{-1}\tilde{A}_{N^{(k+1)}}\right)_{i,j}=0,
+\quad i \in B^{(k+1)} \cap art^{(k+1)}, j \in N^{(k+1)}
+\end{equation}
+holds, such that we can apply the same procedure that removes
+the artificial variables \xe{i}, $i \in B^{(k+1)} \cap art^{(k+1)}$ together
+with their constraints $\sigma(i) \in E$ in the unperturbed case. 
 \subsection{The lexicographic method in phaseII}
 Since the nonbasic variables are no longer zero, the objective function as well as
 the values of the basic variables are no longer independent of the nonbasic
@@ -1243,18 +1351,6 @@ The term $\frac{\varepsilon^{i}}{q_{x_{i}}}$ is again unique to
 \px{i}{Q_{1}}{B}, such that the tie can always
 be resolved.
 
-\subsubsection{The maximum number of coefficient comparisons needed for the tie
-resolution in Ratio Test Step 1}
-The Definition~(\ref{def:p_mu_j_Q_1}) of
-\pmu{Q_{1}}{B} shows that the coefficient of
-$\varepsilon^{k}$ for $k \in B$ is zero, such that the maximum number of
-comparisons needed in phaseI, $r_{1}$, also applies here, regardless whether we
-have to consider $\mu_{j}(0, t)$ becoming zero or not. Thus
-\begin{equation}
-r_{2}^{(Q_{1})}:= r_{1} = \left|\{1 \ldots u_{T}(B)\} \cap N \right|
-\end{equation}
-holds, if $u_{T}(B)$ is defined as in Definition~(\ref{def:u_T}) and $B_{T}$ is the
-set of basic variables involved in the tie in the unperturbed problem.
 
 \subsubsection{Ratio Test Step 2}
 Let $B$ be the set of basic variables after the last iteration of 
