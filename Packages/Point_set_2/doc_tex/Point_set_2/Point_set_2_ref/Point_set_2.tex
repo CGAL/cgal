@@ -2,7 +2,7 @@
 %---------------------------------------------
 % Point_set_2 data type
 %---------------------------------------------
-\begin{ccRefClass}{Point_set_2<T,Gt,Tds>}
+\begin{ccRefClass}{Point_set_2<Gt,Tds>}
 
 \ccDefinition
 
@@ -13,9 +13,8 @@ of its vertex set. The class \ccRefName\ is inherited from the CGAL Delaunay tri
 and provides additional nearest neighbor query operations and range searching operations.
 
 The \ccRefName\ class of \cgal\ depends on template parameters standing for the
-geometric traits classes used by the point set (T), by the Delaunay triangulation (Gt)
+geometric traits classes used by the point set and by the Delaunay triangulation (Gt)
 and for the triangulation data structure (Tds). 
-For the details of Gt and Tds see the chapter on 2d Triangulations of the CGAL manual.
 
 
 \ccCreationVariable{PS}
@@ -25,13 +24,12 @@ For the details of Gt and Tds see the chapter on 2d Triangulations of the CGAL m
 
 
 \ccTypes
-\ccThree{typedef Traits::Point Point;}{the point type}{}
+\ccThree{typedef Gt::Point_2 Point;}{the point type}{}
 \ccThreeToTwo
-\ccTypedef{typedef Gt::Rep Rep;}{the representation type}{}
 \ccTypedef{typedef Gt::Point_2 Point;}{the point type}{}
 \ccTypedef{typedef Gt::Segment_2 Segment;}{the segment type}
-\ccTypedef{typedef T::Circle Circle;}{the circle type}
-\ccTypedef{typedef Rep::FT Numb_type;}{the field type of the representation class}
+\ccTypedef{typedef Gt::Circle_2 Circle;}{the circle type}
+\ccTypedef{typedef Gt::FT Numb_type;}{the representation field number type.}
 \ccNestedType{Triangulation::Vertex}{the vertex type of the underlying triangulation.}
 \ccNestedType{Triangulation::Edge}{the edge type of the underlying triangulation.}
 \ccNestedType{Triangulation::Vertex_handle }{handles to vertices.}
