@@ -787,7 +787,7 @@ set_compiler_flags()
 	    CGAL_SHARED_LIB_CXXFLAGS=
 	    CGAL_SHARED_LIB_CREATE=
 	    WINDOW_DIR=
-	    XLIBS="user32.lib gdi32.lib comdlg32.lib shell32.lib advapi32.lib"
+	    XLIBS="ws2_32.lib user32.lib gdi32.lib comdlg32.lib shell32.lib advapi32.lib"
 	    SUFFIX_LIST=".obj .exe"
 	    OBJ_EXT=".obj"
 	    LIB_SUFFIX=".lib"
