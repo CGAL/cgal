@@ -184,10 +184,6 @@ perform_test( std::ifstream& is )
              strCommand == "curve_target" ) {
       test_result &= curve_src_trg_wrapper( strLine, strCommand );
     }
-    else if( strCommand == "point_to_left"  ||
-             strCommand == "point_to_right" ) {
-      test_result &= point_to_lr_wrapper( strLine, strCommand );
-    }
     else if( strCommand == "is_x_monotone" ) {
       test_result &= is_x_monotone_wrapper( strLine );
     }
@@ -495,52 +491,6 @@ curve_src_trg_wrapper( std::istrstream& strLine, std::string& strCommand )
     real_answer = tr.curve_target( all_curves_vec[index1] );
   }
   return print_was_successful_or_not( exp_answer, real_answer );
-}
-
-/*!
- * input case:
- * point_to_left  n1
- * point_to_right n1
- * n1 - point index in all_points_vec
- * Does NOT take any expected result
- */
-template< class Traits_class, class Number_type >
-bool Base_traits_test< Traits_class, Number_type >::
-point_to_lr_wrapper( std::istrstream& strLine, std::string& strCommand )
-{
-  int index;
-  
-  strLine >> index;
-  if( strCommand == "point_to_left" ) {
-    std::cout << "Test: point_to_left( " << all_points_vec[index] << " )"
-              << std::endl;
-    Point answer = tr.point_to_left( all_points_vec[index] );
-    if( tr.compare_x( answer, all_points_vec[index] ) == CGAL::SMALLER ) {
-      std::cout << "Was successful" << std::endl;
-      return true;
-    }
-    else{
-      std::cout << "Was NOT successful" << std::endl;
-      std::cout << "Generated point is NOT to the left of the original."
-                << std::endl;
-      return false;
-    }
-  }
-  else{
-    std::cout << "Test: point_to_right( " << all_points_vec[index] << " )"
-              << std::endl;
-    Point answer = tr.point_to_right( all_points_vec[index] );
-    if( tr.compare_x( answer, all_points_vec[index] ) == CGAL::LARGER ) {
-      std::cout << "Was successful" << std::endl;
-      return true;
-    }
-    else{
-      std::cout << "Was NOT successful" << std::endl;
-      std::cout << "Generated point is NOT to the right of the original."
-                << std::endl;
-      return false;
-    }
-  }
 }
 
 /*!
