@@ -15,11 +15,10 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
         -I../../include \
-        -I../../../C2/include \
-        -I../../../C3/include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS) \
-	-g -Wall -W
+	-Op 
+	# -g -Wall -W
 	# -O2 -Wall -W
 	# -fpermissive
 	# -DCGAL_IA_STOP_CONSTANT_PROPAGATION \
@@ -40,7 +39,9 @@ CXXFLAGS = \
 #                    linker flags
 #---------------------------------------------------------------------#
 
-LDFLAGS = Interval_arithmetic.o \
+# LDFLAGS = Interval_arithmetic$(OBJ_EXT)
+
+LDFLAGS =  \
           $(TESTSUITE_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
@@ -48,36 +49,35 @@ LDFLAGS = Interval_arithmetic.o \
 #                    target entries
 #---------------------------------------------------------------------#
 
-.PRECIOUS: %.o
+.PRECIOUS: %$(OBJ_EXT)
 .SUFFIXES: .test
 .PHONY: %.test test
 
-% : %.C
+%$(EXE_EXT) : %.C
 
-%.o : %.C
+%$(OBJ_EXT) : %.C
 	$(CGAL_CXX) $(CXXFLAGS) -c $<
 
 %.s : %.C
 	$(CGAL_CXX) $(CXXFLAGS) -S $<
 
-% : %.o
-	$(CGAL_CXX) $+ $(LDFLAGS) -o $@
+%$(EXE_EXT) : %$(OBJ_EXT)
+	$(CGAL_CXX) $(EXE_OPT)$@ $+ $(LDFLAGS)
 	./$@
 
-%.test : %
+%.test : %$(EXE_EXT)
 	./$<
 
-EXE_EXT  =
-OBJ_EXT  = .o
 SOURCES  := $(wildcard  *.C)
 OBJECTS  := $(SOURCES:.C=$(OBJ_EXT))
 PROGRAMS := $(SOURCES:.C=$(EXE_EXT))
 TEST_RUN := $(SOURCES:.C=.test)
 
-all: ../../src/Interval_arithmetic.o $(PROGRAMS)
-# all: $(PROGRAMS)
+# all: ../../src/Interval_arithmetic$(OBJ_EXT) $(PROGRAMS)
+all: $(PROGRAMS)
 
 test: $(TEST_RUN)
 
 clean:
-	rm -f *$(OBJ_EXT) $(PROGRAMS) *.bb *.bbg *.da *.gcov core *.rpo .pure
+	rm -f *.o $(PROGRAMS) *.bb *.bbg *.da *.gcov core *.rpo .pure
+	rm -f *.obj *.exe
