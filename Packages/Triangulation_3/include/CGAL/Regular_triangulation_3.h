@@ -30,7 +30,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class Gt, 
+template < class Gt,
            class Tds = Triangulation_data_structure_3 <
                                    Triangulation_vertex_base_3<Gt>,
                                    Triangulation_cell_base_3<Gt> > >
@@ -72,8 +72,8 @@ public:
   // copy constructor duplicates vertices and cells
   Regular_triangulation_3(const Regular_triangulation_3 & rt)
       : Tr_Base(rt)
-  { 
-      CGAL_triangulation_postcondition( is_valid() );  
+  {
+      CGAL_triangulation_postcondition( is_valid() );
   }
 
   template < typename InputIterator >
@@ -83,7 +83,7 @@ public:
   {
       insert(first, last);
   }
- 
+
   template < class InputIterator >
   int
   insert(InputIterator first, InputIterator last)
@@ -262,7 +262,7 @@ side_of_power_sphere( Cell_handle c, const Weighted_point &p) const
 {
   CGAL_triangulation_precondition( dimension() == 3 );
   int i3;
-  if ( ! c->has_vertex( infinite_vertex(), i3 ) ) {  
+  if ( ! c->has_vertex( infinite_vertex(), i3 ) ) {
     return Bounded_side( power_test (c->vertex(0)->point(),
 				     c->vertex(1)->point(),
 				     c->vertex(2)->point(),
@@ -305,7 +305,7 @@ side_of_power_circle( Cell_handle c, int i, const Weighted_point &p) const
     CGAL_triangulation_precondition( i == 3 );
     // the triangulation is supposed to be valid, ie the facet
     // with vertices 0 1 2 in this order is positively oriented
-    if ( ! c->has_vertex( infinite_vertex(), i3 ) ) 
+    if ( ! c->has_vertex( infinite_vertex(), i3 ) )
       return Bounded_side( power_test(c->vertex(0)->point(),
 				      c->vertex(1)->point(),
 				      c->vertex(2)->point(), p) );
@@ -327,7 +327,7 @@ side_of_power_circle( Cell_handle c, int i, const Weighted_point &p) const
   CGAL_triangulation_precondition( (i >= 0) && (i < 4) );
   if ( ( ! c->has_vertex(infinite_vertex(),i3) ) || ( i3 != i ) ) {
     // finite facet
-    // initialization of i0 i1 i2, vertices of the facet positively 
+    // initialization of i0 i1 i2, vertices of the facet positively
     // oriented (if the triangulation is valid)
     int i0 = (i>0) ? 0 : 1;
     int i1 = (i>1) ? 1 : 2;
@@ -351,7 +351,7 @@ side_of_power_circle( Cell_handle c, int i, const Weighted_point &p) const
   // then the code is duplicated from 2d case
   if ( o != ZERO )
       return Bounded_side( -o );
-  // because p is in f iff 
+  // because p is in f iff
   // it is not on the same side of v1v2 as c->vertex(i)
   // case when p collinear with v1v2 :
   return Bounded_side( power_test( v1->point(), v2->point(), p ) );
@@ -363,7 +363,7 @@ Regular_triangulation_3<Gt,Tds>::
 side_of_power_segment( Cell_handle c, const Weighted_point &p) const
 {
   CGAL_triangulation_precondition( dimension() == 1 );
-  if ( ! is_infinite(c,0,1) ) 
+  if ( ! is_infinite(c,0,1) )
     return Bounded_side( power_test( c->vertex(0)->point(),
 				     c->vertex(1)->point(), p ) );
   Locate_type lt; int i;
@@ -380,7 +380,7 @@ side_of_power_segment( Cell_handle c, const Weighted_point &p) const
 template < class Gt, class Tds >
 typename Regular_triangulation_3<Gt,Tds>::Vertex_handle
 Regular_triangulation_3<Gt,Tds>::
-insert(const Weighted_point & p, Cell_handle start) 
+insert(const Weighted_point & p, Cell_handle start)
 {
     Locate_type lt;
     int li, lj;
@@ -394,7 +394,7 @@ Regular_triangulation_3<Gt,Tds>::
 insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
 {
   switch (dimension()) {
-  case 3: 
+  case 3:
     {
       // TODO :
       // In case the point is completely equal (including weight), then we need
@@ -528,7 +528,7 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
             CGAL_assertion(li == 0);
             c->vertex(li)->set_point(p); // replace by heavier point
         }
-        else 
+        else
             return Tr_Base::insert(p, c);
     }
   default :
@@ -539,9 +539,9 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
 }
 
 template < class Gt, class Tds >
-bool 
+bool
 Regular_triangulation_3<Gt,Tds>::
-is_valid(bool verbose, int level) const 
+is_valid(bool verbose, int level) const
 {
   if ( ! Tr_Base::is_valid(verbose,level) ) {
     if (verbose)
@@ -559,8 +559,8 @@ is_valid(bool verbose, int level) const
 	for (int i=0; i<4; i++ ) {
 	  if ( !is_infinite
 	       (it->neighbor(i)->vertex(it->neighbor(i)->index(it))) ) {
-	    if ( side_of_power_sphere 
-		 (it, 
+	    if ( side_of_power_sphere
+		 (it,
 		  it->neighbor(i)->vertex(it->neighbor(i)->index(it))->point())
 		  == ON_BOUNDED_SIDE ) {
 	      if (verbose)
@@ -582,7 +582,7 @@ is_valid(bool verbose, int level) const
 	  if( !is_infinite
 	      ((*it).first->neighbor(i)->vertex( (((*it).first)->neighbor(i))
 						 ->index((*it).first))) ) {
-	    if ( side_of_power_circle 
+	    if ( side_of_power_circle
 		 ( (*it).first, 3,
 		   (*it).first->neighbor(i)->
 		   vertex( (((*it).first)->neighbor(i))
