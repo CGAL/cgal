@@ -1,5 +1,12 @@
 % to be written by pierre
 
+% pierre: I think the section is currently either way too long,
+% or too short if one wants enough details to implement.
+% Andy, you might want to put just the two first blocks
+% without giving more details since one wants to emphasis on
+% the generic one
+
+
 The quad-triangle subdivision scheme was introduced by
 Levin~\cite{l-pg-03}, then Stam and Loop~\cite{qts}. It applies to
 polygon meshes and basically features Loop subdivision on triangles
@@ -14,13 +21,13 @@ subdivided model is only composed of triangles and quads.
 \end{figure}
 
 One solution for implementing quad-triangle scheme is to use an
-auxiliary class that supports the incremental construction of
-polyhedral surfaces, the \italic{incremental builder}. The incremental
-construction starts with a list of all point coordinates and concludes
-with a list of all facet polygons given by a sequence of vertex
-indices.  Beside being of interest for constructing polyhedral
-surfaces from indexed file formats, the incremental builder can be
-used from any other data structures, namely from an input mesh.\\
+auxiliary modifier class that supports the incremental construction of
+polyhedral surfaces. The incremental construction starts with a list
+of all point coordinates and concludes with a list of all facet
+polygons given by a sequence of vertex indices.  Beside being of
+interest for constructing polyhedral surfaces from indexed file
+formats, the incremental builder can be used from any other data
+structures, namely from an input mesh.\\
 
 The vertex, face and halfedge class primitives of the Polyhedron are
 initially enriched with an integer tag. The incremental builder first
@@ -29,6 +36,6 @@ their incident primitives to deduce the positions of the new vertices
 from the geometry rules. The integer tags keep track of the index of
 the new vertices in the input mesh, allowing a straigtforward assembly
 of all indexed triangles, resp. quads as the Loop, resp. barycentric
-subdivision refinement rules are applied for each facet of the input
+subdivision refinement rules are applied for all facets of the input
 model.
 

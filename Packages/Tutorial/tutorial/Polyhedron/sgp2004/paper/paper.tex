@@ -107,32 +107,25 @@
 
 The Computational Geometry Algorithms Library CGAL is an efficient
 modern C++ library following the generic programming paradigm. CGAL
-provides the notion of a geometric kernel (a complete set of simple
-geometric entities as well as predications) and a set of data
-structures and algorithms for geometric computing. In particular, it
-contains a flexible data structure for meshes, the Polyhedron, which
-design is presented in this paper. The flexibility of the CGAL
-Polyhedron data structure is moreover evaluated through the
-implementation of several algorithms.  Following the C++ Standard
-Template Library (STL) -- where data structures and algorithms are
-decoupled -- we first implement a generic subdivision algorithm acting
-on the CGAL Polyhedron. A high level of flexibility is obtained by the
-possibility to specify as a template parameter the subdivision rules
-themselves, which greatly facilitates the implementation of a new
-subdivision scheme.  Remeshing techniques implemented with a
-combination of Polyhedron and Delaunay triangulation are then shown to
-demonstrate the versatility of the unified framework provided by CGAL.
-Last, several additional functionalities such as minimum enclosing
-ball, convex hull, self intersection and boolean operations are
-demonstrated on large meshes.  Extensible algorithm models based on
-the robust and efficient mesh data structure and components provided
-by CGAL are aimed at speeding up the research, and therefore benefit
-the geometry processing community.
+contains a flexible data structure for meshes in graphics, the
+Polyhedron. The software designs are presented for the Polyhedron in
+this paper. The flexibility of the Polyhedron is moreover evaluated
+through the implementation of several geometry algorithms.  We first
+implement a subdivision solution based on the generality of the
+Polyhedron. The solution, decoupling the geometry rules from the
+refinement, grants users the flexible control of the geometry rules.
+Remeshing techniques based on a combination of Polyhedron and Delaunay
+triangulation then demonstrate the versatility of the unified
+framework provided by CGAL.  Last, several additional functionalities
+such as minimum enclosing ball, convex hull, self intersection and
+boolean operations are demonstrated on large meshes.  Extensible
+algorithm models based on the robust and efficient Polyhedron and
+geometry components provided by CGAL are aimed at speeding up the
+research, and therefore benefit the geometry processing community.
 
-  \begin{classification} % according to http://www.acm.org/class/1998/
-    \CCScat{I.3.5}{Computer Graphics}{Computational Geometry 
-                                      and Object Modeling}
-  \end{classification}
+\begin{classification} % according to http://www.acm.org/class/1998/
+\CCScat{I.3.5}{Computer Graphics}{Computational Geometry and Object Modeling}
+\end{classification}
 
 \end{abstract}
 
@@ -179,10 +172,10 @@ the geometry processing community.
 %\label{sec:subtempl}
 \input subtempl
 
-% APPLICATION DEMO
+% Remeshing
 % ------------------------------------------------------------------------
-%\section{Application demo}
-%\input demo
+\section{Remeshing}
+\input remeshing
 
 \section{Conclusions}
 \input conclusion
