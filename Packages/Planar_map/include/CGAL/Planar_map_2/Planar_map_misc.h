@@ -8,11 +8,12 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : 
-// release_date  : 1999, October 13
+// release       : $CGAL_Revision: CGAL-2.4-I-55 $
+// release_date  : $CGAL_Date: 2002/02/15 $
 //
 // file          : include/CGAL/Planar_map_2/Planar_map_misc.h
-// package       : pm (4.08)
+// package       : Planar_map (5.84)
+// maintainer    : Eyal Flato <flato@math.tau.ac.il>
 // source        :
 // revision      :
 // revision_date :
@@ -299,6 +300,14 @@ public:
       curve_is_source_unbounded(cv)||
       curve_is_target_unbounded(cv);
   }
+
+  Comparison_result
+  compare_xy(const Point &p, const Point &q)
+  {
+    Comparison_result c = compare_x(p,q);
+    return (c != EQUAL) ? c : compare_y(p,q);
+  }
+
 };
 
 
