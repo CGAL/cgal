@@ -67,7 +67,6 @@ if [ $# -ne 0 ] ; then
     compile_and_run $file
   done
 else
-  compile_and_run points
   compile_and_run voronoi
   compile_and_run colored_face
   compile_and_run triangulation_prog1
@@ -75,5 +74,7 @@ else
   compile_and_run regular
   compile_and_run constrained
   compile_and_run constrained_plus
+  compile_and_run hierarchy
+  compile_and_run constrained_hierarchy_plus
 fi
 

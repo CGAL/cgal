@@ -232,9 +232,13 @@ is_valid(bool verbose, int level) const
   int i;
   Finite_vertices_iterator it;
   //verify correctness of triangulation at all levels
-  for(i=0;i<Triangulation_hierarchy_2__maxlevel;++i)
-	result = result && hierarchy[i]->is_valid(verbose,level);
-  //verify that lower level has no down pointers
+  for(i=0;i<Triangulation_hierarchy_2__maxlevel;++i) {
+    if(verbose) // pirnt  number of vertices at each level
+      std::cout << "number_of_vertices " 
+		<<  hierarchy[i]->number_of_vertices() << std::endl;
+    result = result && hierarchy[i]->is_valid(verbose,level);
+  }
+    //verify that lower level has no down pointers
   for( it = hierarchy[0]->finite_vertices_begin(); 
        it != hierarchy[0]->finite_vertices_end(); ++it) 
     result = result && ( it->down() == NULL );

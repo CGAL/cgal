@@ -1,8 +1,8 @@
-// file : examples/Triangulation_2/colored_face.C
+// file : examples/Triangulation_2/adding_handles.C
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Triangulation_2.h>
 
-/* A facet with a color member variable. */
+/* A facet with an additionnal handle */
 template < class Gt, class Vb = CGAL::Triangulation_vertex_base_2<Gt> >
 class My_vertex_base 
   : public  Vb

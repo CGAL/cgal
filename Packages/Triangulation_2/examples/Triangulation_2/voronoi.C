@@ -8,12 +8,13 @@ struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
 
 typedef CGAL::Delaunay_triangulation_2<K>  Triangulation;
 typedef Triangulation::Edge_iterator  Edge_iterator;
+typedef Triangulation::Point          Point;
 
 int main( )
 {
   std::ifstream in("data/voronoi.cin");
-  std::istream_iterator<Gt::Point_2> begin(in);
-  std::istream_iterator<Gt::Point_2> end;
+  std::istream_iterator<Point> begin(in);
+  std::istream_iterator<Point> end;
   Triangulation T;
   T.insert(begin, end);
 

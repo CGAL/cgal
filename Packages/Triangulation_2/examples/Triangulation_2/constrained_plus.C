@@ -1,4 +1,4 @@
-// file examples/Triangulation_2/constrained_plus.C
+// file examples/Triangulation_2/constrained_hierarchy_plus.C
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/intersections.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -18,11 +18,9 @@ int
 main( )
 {
   CDTplus cdt;
-  std::cerr << "Inserting a grid of constraints " << std::endl;
-  std::cerr << "Inserting five horizontal constraints  " << std::endl;
+  std::cout  << "Inserting a grid 5 x 5 of constraints " << std::endl;
   for (int i = 1; i < 6; ++i) 
     cdt.insert_constraint( Point(0,i), Point(6,i));
-  std::cerr << "Inserting five vertical constraints   " << std::endl;
   for (int j = 1; j < 6; ++j) 
     cdt.insert_constraint( Point(j,0), Point(j,6));
   
@@ -31,7 +29,7 @@ main( )
   for (CDTplus::Subconstraint_iterator scit = cdt.subconstraints_begin();
        scit != cdt.subconstraints_end();
        ++scit)  ++count;
-  std::cerr << "The number of resulting constrained edges is  ";
-  std::cerr <<  count << std::endl;
+  std::cout << "The number of resulting constrained edges is  "
+	    <<  count << std::endl;
   return 0;
 }

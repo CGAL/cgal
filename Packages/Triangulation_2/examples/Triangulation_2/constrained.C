@@ -15,11 +15,9 @@ int
 main( )
 {
   CDT cdt;
-  std::cerr << "Inserting a grid of constraints " << std::endl;
-  std::cerr << "Inserting five horizontal constraints  " << std::endl;
+  std::cout << "Inserting a grid of 5x5 constraints " << std::endl;
   for (int i = 1; i < 6; ++i) 
     cdt.insert_constraint( Point(0,i), Point(6,i));
-  std::cerr << "Inserting five vertical constraints   " << std::endl;
   for (int j = 1; j < 6; ++j) 
     cdt.insert_constraint( Point(j,0), Point(j,6));
   
@@ -29,8 +27,8 @@ main( )
        eit != cdt.finite_edges_end();
        ++eit)
     if (cdt.is_constrained(*eit)) ++count;
-  std::cerr << "The number of resulting constrained edges is  ";
-  std::cerr <<  count << std::endl;
+  std::cout << "The number of resulting constrained edges is  ";
+  std::cout <<  count << std::endl;
   return 0;
 }
   

@@ -43,6 +43,14 @@ constrained_plus
 Same has above, but the  constrained Delaunay triangulation
 uses an exact number types and a constraint hierachy.
 
+hierarchy
+A standard use of a  triangulation hierarchy
+to enhance the efficiency
+of a Delaunay triangulation.
+The program output the number of vertices
+at the different levels of the hierarchy
 
-
-
+hierarchy_plus
+The program shows how to use
+a triangulation hierachy in conjonction with a Constrained 
+triangulation plus.
