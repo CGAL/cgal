@@ -120,9 +120,9 @@ int test()
   CGAL::Filtered_exact< CGAL::Quotient<int>, leda_rational> ii (3,2);
   CGAL::Filtered_exact< CGAL::Quotient<leda_integer>, CGAL::Quotient<leda_integer> > jj (4,5);
 
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
-  Interval_nt nt = jj.interval();
-  FPU_set_cw(backup);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_and_set_cw(CGAL::FPU_cw_up);
+  CGAL::Interval_nt nt = jj.interval();
+  CGAL::FPU_set_cw(backup);
 
   std::cout << nt << std::endl;
 #endif // CGAL_USE_LEDA
