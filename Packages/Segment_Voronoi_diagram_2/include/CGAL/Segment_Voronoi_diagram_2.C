@@ -357,7 +357,7 @@ insert_point2(const Storage_site_2& ss, const Site_2& t,
 
   // find the first conflict
 
-#ifndef NDEBUG
+#ifndef CGAL_NO_ASSERTIONS
   // verify that there are no intersections...
   Vertex_circulator vc = vnearest->incident_vertices();
   Vertex_circulator vc_start = vc;
@@ -462,7 +462,7 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
 {
   CGAL_precondition( v->is_segment() );
 
-#ifndef NDEBUG
+#ifndef CGAL_NO_ASSERTIONS
   {
     // count number of adjacent infinite faces
     Face_circulator fc = incident_faces(v);
@@ -1758,6 +1758,19 @@ copy(Segment_Voronoi_diagram_2& other)
   pc_ = other.pc_;
   isc_ = other.isc_;
 
+  CGAL_assertion( pc_.size() == other.pc_.size() );
+  CGAL_assertion( isc_.size() == other.isc_.size() );
+
+#ifndef CGAL_NO_ASSERTIONS
+  {
+    Point_handle it_other = other.pc_.begin();
+    Point_handle it_this = pc_.begin();
+    for (; it_other != other.pc_.end(); ++it_other, ++it_this) {
+      CGAL_assertion( *it_other == *it_this );
+    }
+  }
+#endif
+
   // then copy the diagram
   DG::operator=(other);
 
@@ -1770,7 +1783,7 @@ copy(Segment_Voronoi_diagram_2& other)
   Point_handle it_other = other.pc_.begin();
   Point_handle it_this = pc_.begin();
   for (; it_other != other.pc_.end(); ++it_other, ++it_this) {
-    hm[it_other] = it_this;
+    hm.insert( Point_handle_pair(it_other, it_this) );
   }
 
   // then update the storage sites for each vertex
@@ -1782,7 +1795,7 @@ copy(Segment_Voronoi_diagram_2& other)
 	 vit_this++) {
     Storage_site_2 ss_other = vit_other->storage_site();
 
-#ifndef NDEBUG
+#ifndef CGAL_NO_ASSERTIONS
     Storage_site_2 ss_this = vit_this->storage_site();
     if ( ss_other.is_segment() ) {
       CGAL_assertion( ss_this.is_segment() );

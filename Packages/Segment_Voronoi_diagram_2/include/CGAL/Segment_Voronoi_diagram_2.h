@@ -209,7 +209,9 @@ protected:
       return &(*x) < &(*y);
     }
   };
-  
+
+  typedef std::pair<Point_handle,Point_handle>   Point_handle_pair;
+
   typedef std::map<Point_handle,Point_handle,Point_handle_less_than>
   Handle_map;
 
