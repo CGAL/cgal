@@ -18,7 +18,7 @@
 // revision_date : $Date$
 // author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 //
-// coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
+// coordinator   :
 //
 // ======================================================================
 
@@ -79,14 +79,16 @@ public:
   typedef R                                             Rep;
   typedef MTag                                          Method_tag;
   typedef typename Kernel::Point_2                      Point_2;
-  typedef typename Kernel::Site_2            Site_2;
+  typedef typename Kernel::Site_2                       Site_2;
   //
   typedef typename Kernel::Line_2                       Line_2;
   typedef typename Kernel::Ray_2                        Ray_2;
   typedef typename Kernel::Segment_2                    Segment_2;
   typedef typename Kernel::Object_2                     Object_2;
+
 private:
-  typedef typename Kernel::RT                           Weight;
+  typedef typename Site_2::FT                           Weight;
+
 public:
   typedef CGAL::Parabola_segment_2<Point_2,Weight,Line_2>
   /*                                                 */ Parabola_segment_2;

@@ -11,8 +11,8 @@
 // release       : 
 // release_date  : 
 //
-// file          : include/CGAL/predicates/check_filter.h
-// package       : Apollonius_graph_2
+// file          : include/CGAL/IO/Null_output_stream.h
+// package       : IO
 // source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
@@ -23,25 +23,26 @@
 // ======================================================================
 
 
+#ifndef CGAL_NULL_OUTPUT_STREAM_H
+#define CGAL_NULL_OUTPUT_STREAM_H
 
-#ifndef CGAL_CHECK_FILTER_H
-#define CGAL_CHECK_FILTER_H
+#include <CGAL/basic.h>
 
-#undef CGAL_IA_NEW_FILTERS
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
-template < class T>
-void must_be_filtered(const T&)
-{}
 
-#if defined CGAL_ARITHMETIC_FILTER_H
-template < class CT, class ET, class Type, bool Protection, class Cache>
-void must_be_filtered(const Filtered_exact<CT, ET, Type, Protection,
-		      Cache> &)
-{ dont_compile(); }
-#endif
+struct Null_output_stream {};
 
+
+template<class T>
+Null_output_stream&
+operator<<(Null_output_stream& nos, const T&)
+{
+  return nos;
 }
 
-#endif
+
+CGAL_END_NAMESPACE
+
+#endif // CGAL_NULL_OUTPUT_STREAM_H

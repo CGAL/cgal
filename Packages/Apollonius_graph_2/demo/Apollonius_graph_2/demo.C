@@ -27,7 +27,7 @@ AG_2 ag;
 // conversion functions
 //************************************
 inline Apollonius_site_2
-to_weighted_point(const Circle_2 &c)
+to_site(const Circle_2 &c)
 {
   double r = CGAL_NTS sqrt(CGAL_NTS to_double(c.squared_radius()));
   return  Apollonius_site_2(c.center(), Rep::RT(r));
@@ -160,7 +160,7 @@ private slots:
     Circle_2 c;
     Point_2 p;
     if ( CGAL::assign(c, obj) ) {
-      Apollonius_site_2 wp = to_weighted_point(c);
+      Apollonius_site_2 wp = to_site(c);
       ag.insert(wp);
     } else if ( CGAL::assign(p, obj) ) {
       Apollonius_site_2 wp(p, Weight(0));

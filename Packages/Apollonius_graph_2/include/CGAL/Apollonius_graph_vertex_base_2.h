@@ -18,7 +18,7 @@
 // revision_date : $Date$
 // author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 //
-// coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
+// coordinator   :
 //
 // ======================================================================
 
@@ -97,8 +97,7 @@ public:
   //---------
   Apollonius_graph_vertex_base_2() : Vb() {}
   Apollonius_graph_vertex_base_2(const Site_2& p) : Vb(), _p(p) {}
-  Apollonius_graph_vertex_base_2(const Site_2& p,
-				 Face_handle f)
+  Apollonius_graph_vertex_base_2(const Site_2& p, Face_handle f)
     : Vb(f), _p(p) {}
 
   ~Apollonius_graph_vertex_base_2()
@@ -109,7 +108,8 @@ public:
 
   // ACCESS METHODS
   //---------------
-  Site_2 point() const { return _p; }
+  const Site_2& site() const { return _p; }
+  Site_2& site() { return _p; }
 
   Face_handle face() const { return Vb::face(); }
 
@@ -128,7 +128,7 @@ public:
 public:
   // SETTING AND UNSETTING
   //----------------------
-  void set_point(const Site_2& p) { _p = p; }
+  void set_site(const Site_2& p) { _p = p; }
 
 
   void add_hidden_site(const Site_2& p)

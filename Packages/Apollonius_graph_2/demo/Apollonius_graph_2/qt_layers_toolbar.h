@@ -34,53 +34,47 @@ public:
 
     showVD = new Voronoi_diagram_layer<AG_2>(ag);
     showDG = new Delaunay_graph_layer<AG_2>(ag);
-    showNT = new Non_hidden_weighted_points_layer<AG_2>(ag);
-    showTR = new Hidden_weighted_points_layer<AG_2>(ag);
-    showNC = new Non_hidden_centers_layer<AG_2>(ag);
-    showTC = new Hidden_centers_layer<AG_2>(ag);
-    showMC = new CGAL::Qt_layer_mouse_coordinates(*mw);
+    showNT = new Visible_sites_layer<AG_2>(ag);
+    showTR = new Hidden_sites_layer<AG_2>(ag);
 
     // set the widget
     widget = w;
     window = mw;
     window->statusBar();
 
-    widget->attach(showTC);
     widget->attach(showTR);
     widget->attach(showDG);
     widget->attach(showVD);
     widget->attach(showNT);
-    widget->attach(showNC);
-    widget->attach(showMC);
 
     maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
 
-    but[0] = new QToolButton(QPixmap( (const char**)points_xpm ),
+    but[0] = new QToolButton(QPixmap( (const char**)points_small_xpm ),
 			     "Show weighted points", 
 			     0, 
 			     this, 
-			     SLOT(show_weighted_points()), 
+			     SLOT(show_sites()), 
 			     maintoolbar, 
 			     "Show weighted points");
 
-    but[1] = new QToolButton(QPixmap( (const char**)voronoi_xpm ),
+    but[1] = new QToolButton(QPixmap( (const char**)voronoi_small_xpm ),
 			     "Show Voronoi diagram", 
 			     0, 
 			     this, 
-			     SLOT(show_voronoi()), 
+			     SLOT(show_apollonius_diagram()), 
 			     maintoolbar, 
 			     "Show Voronoi_diagram");
 
     
-    but[2] = new QToolButton(QPixmap( (const char**)triangulation_xpm ),
+    but[2] = new QToolButton(QPixmap( (const char**)triangulation_small_xpm ),
 			     "Show Delaunay graph", 
 			     0, 
 			     this, 
-			     SLOT(show_delaunay()), 
+			     SLOT(show_apollonius_graph()), 
 			     maintoolbar, 
 			     "Show Delaunay graph");
 
-    but[3] = new QToolButton(QPixmap( (const char**)point_xpm ),
+    but[3] = new QToolButton(QPixmap( (const char**)point_small_xpm ),
 			     "Insert point", 
 			     0, 
 			     this, 
@@ -88,7 +82,7 @@ public:
 			     maintoolbar, 
 			     "Insert point");
 
-    but[4] = new QToolButton(QPixmap( (const char**)circle_xpm ),
+    but[4] = new QToolButton(QPixmap( (const char**)circle_small_xpm ),
 			     "Insert circle", 
 			     0, 
 			     this, 
@@ -113,17 +107,9 @@ public:
 			     maintoolbar, 
 			     "Remove weighted point");
 #endif
-    but[6] = new QToolButton(maintoolbar, "mouse coordinates");
-    but[6]->setPixmap(QPixmap( (const char**)mouse_coord_xpm ));
-    but[6]->setTextLabel("Show Mouse Coordinates");
-
-    connect(but[6], SIGNAL(stateChanged(int)),
-	    showMC, SLOT(stateChanged(int)));
-
-    showMC->deactivate();
     showDG->deactivate();
 
-    nr_of_buttons = 7;
+    nr_of_buttons = 6;
     for(int i = 0; i < nr_of_buttons; i++){
       but[i]->setToggleButton(TRUE);
     }
@@ -134,7 +120,6 @@ public:
     //    but[3]->toggle();
     but[4]->toggle();
     //    but[5]->toggle();
-    //    but[6]->toggle();
   }
 
   ~Layers_toolbar() {
@@ -142,9 +127,6 @@ public:
     delete showDG;
     delete showTR;
     delete showNT;
-    delete showNC;
-    delete showTC;
-    delete showMC;
   }
 
   inline QToolBar* toolbar() { return maintoolbar; };
@@ -155,39 +137,18 @@ signals:
   void inputModeChanged(bool);
 		
 private slots:
-  void show_centers() {
-    if ( but[0]->isOn() ) {
-      //      widget->activate(showNC);
-      //      widget->activate(showTC);
-      showNC->activate();
-      showTC->activate();
-    } else {
-      //      widget->deactivate(showNC);
-      //      widget->deactivate(showTC);
-      showNC->deactivate();
-      showTC->deactivate();
-    }
-    widget->redraw();
-  }
-
-  void show_weighted_points() {
+  void show_sites() {
     if ( but[0]->isOn() ) {
       showNT->activate();
       showTR->activate();
-
-      showNC->activate();
-      showTC->activate();
     } else {
       showNT->deactivate();
       showTR->deactivate();
-
-      showNC->deactivate();
-      showTC->deactivate();
     }
     widget->redraw();
   }
 
-  void show_voronoi() {
+  void show_apollonius_diagram() {
     if ( but[1]->isOn() ) {
       showVD->activate();
     } else {
@@ -196,7 +157,7 @@ private slots:
     widget->redraw();
   }
 
-  void show_delaunay() {
+  void show_apollonius_graph() {
     if ( but[2]->isOn() ) {
       //      widget->activate(showDG);
       showDG->activate();
@@ -240,11 +201,8 @@ private:
 
   Voronoi_diagram_layer<AG_2>             *showVD;
   Delaunay_graph_layer<AG_2>              *showDG;
-  Non_hidden_weighted_points_layer<AG_2>  *showNT;
-  Hidden_weighted_points_layer<AG_2>      *showTR;
-  Non_hidden_centers_layer<AG_2>          *showNC;
-  Hidden_centers_layer<AG_2>              *showTC;
-  CGAL::Qt_layer_mouse_coordinates        *showMC;
+  Visible_sites_layer<AG_2>               *showNT;
+  Hidden_sites_layer<AG_2>                *showTR;
 
 };//end class
 

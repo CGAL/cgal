@@ -18,7 +18,7 @@
 // revision_date : $Date$
 // author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 //
-// coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
+// coordinator   :
 //
 // ======================================================================
 

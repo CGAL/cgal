@@ -33,59 +33,44 @@ public:
 };
 
 template< class T >
-class Non_hidden_weighted_points_layer : public CGAL::Qt_widget_layer {
+class Visible_sites_layer : public CGAL::Qt_widget_layer {
 private:
   T& ag;
 
 public:
-  Non_hidden_weighted_points_layer(T& ag) : ag(ag) {}
+  Visible_sites_layer(T& ag) : ag(ag) {}
 
   void draw(){
     *widget << CGAL::RED;
-    ag.draw_non_hidden_weighted_points(*widget);
+
+    typename T::Visible_sites_iterator it;
+    for (it = ag.visible_sites_begin();
+	 it != ag.visible_sites_end(); it++) {
+      *widget << to_circle(*it);
+      *widget << it->point();
+    }
   }
 };
 
 template< class T >
-class Hidden_weighted_points_layer : public CGAL::Qt_widget_layer {
+class Hidden_sites_layer : public CGAL::Qt_widget_layer {
 private:
   T& ag;
 
 public:
-  Hidden_weighted_points_layer(T& ag) : ag(ag) {}
+  Hidden_sites_layer(T& ag) : ag(ag) {}
 
   void draw(){
     *widget << CGAL::Color(64,64,64);
-    ag.draw_hidden_weighted_points(*widget);
+
+    typename T::Hidden_sites_iterator it;
+    for (it = ag.hidden_sites_begin();
+	 it != ag.hidden_sites_end(); it++) {
+      *widget << to_circle(*it);
+      *widget << it->point();
+    }
   }
 };
 
-template< class T >
-class Non_hidden_centers_layer : public CGAL::Qt_widget_layer {
-private:
-  T& ag;
-
-public:
-  Non_hidden_centers_layer(T& ag) : ag(ag) {}
-
-  void draw(){
-    *widget << CGAL::RED;
-    ag.draw_non_hidden_weighted_point_centers(*widget);
-  }
-};
-
-template< class T >
-class Hidden_centers_layer : public CGAL::Qt_widget_layer {
-private:
-  T& ag;
-
-public:
-  Hidden_centers_layer(T& ag) : ag(ag) {}
-
-  void draw(){
-    *widget << CGAL::Color(64,64,64);
-    ag.draw_hidden_weighted_point_centers(*widget);
-  }
-};
 
 #endif // QT_LAYERS_H

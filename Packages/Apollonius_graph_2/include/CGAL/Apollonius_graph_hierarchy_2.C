@@ -18,7 +18,7 @@
 // revision_date : $Date$
 // author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 //
-// coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
+// coordinator   :
 //
 // ======================================================================
 
@@ -209,7 +209,7 @@ insert(const Site_2 &p)
   CGAL_assertion( vnear[0] != NULL );
 
   // check if it is hidden
-  Site_2 wp_nearest = vnear[0]->point();
+  Site_2 wp_nearest = vnear[0]->site();
   if ( is_hidden(wp_nearest, p) ) {
     vnear[0]->add_hidden_site(p);
     return Vertex_handle(NULL);

@@ -18,7 +18,7 @@
 // revision_date : $Date$
 // author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 //
-// coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
+// coordinator   :
 //
 // ======================================================================
 
@@ -85,13 +85,10 @@ public:
   typedef typename Ag_base::All_edges_iterator    All_edges_iterator;
   typedef typename Ag_base::Finite_edges_iterator Finite_edges_iterator;
 
-  //  typedef Finite_vertices_iterator   Vertex_iterator;
-  //  typedef Finite_faces_iterator      Face_iterator;
-  //  typedef Finite_edges_iterator      Edge_iterator;
+  typedef typename Ag_base::Sites_iterator         Sites_iterator;
+  typedef typename Ag_base::Visible_sites_iterator Visible_sites_iterator;
+  typedef typename Ag_base::Hidden_sites_iterator  Hidden_sites_iterator;
 
-protected:
-  // some local types
-  typedef typename Ag_base::Vertex       Vertex;
 
 public:
   // CREATION

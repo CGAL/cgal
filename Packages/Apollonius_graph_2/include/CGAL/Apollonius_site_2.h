@@ -18,7 +18,7 @@
 // revision_date : $Date$
 // author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 //
-// coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
+// coordinator   :
 //
 // ======================================================================
 
@@ -31,26 +31,24 @@ CGAL_BEGIN_NAMESPACE
 
 
 template < class K >
-class Apollonius_site_2 //: public K::Point_2
+class Apollonius_site_2
 {
 public:
   typedef K                       Kernel;
   typedef typename K::Point_2     Point_2;
   typedef Apollonius_site_2<K>    Self;
   typedef typename K::RT          RT;
+  typedef typename K::FT          FT;
+  typedef FT                      Weight;
 
 public:
-  //  Apollonius_site_2(const Point_2& p = Point_2(), const RT& w = RT(0))
-  //    : Point_2(p), _w(w) {}
-
-  Apollonius_site_2(const Point_2& p = Point_2(), const RT& w = RT(0))
+  Apollonius_site_2(const Point_2& p = Point_2(),
+		    const Weight& w = Weight(0))
     : _p(p), _w(w) {}
 
   
-
-  //  Point_2 point() const { return (*this); }
-  Point_2 point() const { return _p; }
-  RT      weight() const { return _w; }
+  const Point_2& point() const { return _p; }
+  const Weight&  weight() const { return _w; }
   RT      x() const { return _p.x(); }
   RT      y() const { return _p.y(); }
 
@@ -61,7 +59,7 @@ public:
 
 private:
   Point_2 _p;
-  RT  _w;
+  Weight  _w;
 
 };
 

@@ -18,7 +18,7 @@
 // revision_date : $Date$
 // author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 //
-// coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
+// coordinator   :
 //
 // ======================================================================
 
@@ -69,7 +69,7 @@ is_valid(bool verbose, int level) const
     if ( f->vertex(e.second) == v ) { continue; }
     if ( !is_infinite(v) ) {
       result = result &&
-	( incircle(f, v->point()) != NEGATIVE );
+	( incircle(f, v->site()) != NEGATIVE );
       //    CGAL_triangulation_assertion(result);
     }
     Edge sym_e = sym_edge(e);
@@ -77,7 +77,7 @@ is_valid(bool verbose, int level) const
     v = f->mirror_vertex(sym_e.second);
     if ( !is_infinite(v) ) {
       result = result &&
-	( incircle(f, v->point()) != NEGATIVE );
+	( incircle(f, v->site()) != NEGATIVE );
       //    CGAL_triangulation_assertion(result);
     }
   }
@@ -108,9 +108,9 @@ Apollonius_graph_2<Gt,Agds>::
 circumcenter(const Face_handle& f) const
 {
   CGAL_triangulation_precondition (dimension()==2 || !is_infinite(f));
-  return circumcenter(f->vertex(0)->point(),
-		      f->vertex(1)->point(),
-		      f->vertex(2)->point());
+  return circumcenter(f->vertex(0)->site(),
+		      f->vertex(1)->site(),
+		      f->vertex(2)->site());
 }
 
 template< class Gt, class Agds >
@@ -132,9 +132,9 @@ Apollonius_graph_2<Gt,Agds>::
 circumcircle(const Face_handle& f) const
 {
   CGAL_triangulation_precondition (dimension()==2 || !is_infinite(f));
-  return circumcircle(f->vertex(0)->point(),
-		      f->vertex(1)->point(),
-		      f->vertex(2)->point());
+  return circumcircle(f->vertex(0)->site(),
+		      f->vertex(1)->site(),
+		      f->vertex(2)->site());
 }
 
 template< class Gt, class Agds >
@@ -163,11 +163,11 @@ circumcircle(const Site_2& p0, const Site_2& p1) const
 // dual
 template< class Gt, class Agds >
 inline
-typename Apollonius_graph_2<Gt,Agds>::Point_2
+typename Gt::Object_2
 Apollonius_graph_2<Gt,Agds>::
 dual(const Face_handle& f) const
 {
-  return circumcenter(f);
+  return circumcircle(f);
 }
 
 
@@ -180,8 +180,8 @@ dual(const Edge e) const
   CGAL_triangulation_precondition( !is_infinite(e) );
 
   if ( dimension() == 1 ) {
-    Site_2 p = (e.first)->vertex(cw(e.second))->point();
-    Site_2 q = (e.first)->vertex(ccw(e.second))->point();
+    Site_2 p = (e.first)->vertex(cw(e.second))->site();
+    Site_2 q = (e.first)->vertex(ccw(e.second))->site();
 
     return geom_traits().construct_Apollonius_bisector_2_object()(p,q);
   }
@@ -190,10 +190,10 @@ dual(const Edge e) const
   // none of the two adjacent faces is infinite
   if( (!is_infinite(e.first)) &&
       (!is_infinite(e.first->neighbor(e.second))) ) {
-    Site_2 p = (e.first)->vertex( ccw(e.second) )->point();
-    Site_2 q = (e.first)->vertex(  cw(e.second) )->point();
-    Site_2 r = (e.first)->vertex(     e.second  )->point();
-    Site_2 s = (e.first)->mirror_vertex(e.second)->point();
+    Site_2 p = (e.first)->vertex( ccw(e.second) )->site();
+    Site_2 q = (e.first)->vertex(  cw(e.second) )->site();
+    Site_2 r = (e.first)->vertex(     e.second  )->site();
+    Site_2 s = (e.first)->mirror_vertex(e.second)->site();
     return
       geom_traits().construct_Apollonius_bisector_segment_2_object()(p,q,r,s);
   }
@@ -201,8 +201,8 @@ dual(const Edge e) const
   // both of the adjacent faces are infinite
   if ( is_infinite(e.first) &&
        is_infinite(e.first->neighbor(e.second)) )  {
-    Site_2 p = (e.first)->vertex(cw(e.second))->point();
-    Site_2 q = (e.first)->vertex(ccw(e.second))->point();
+    Site_2 p = (e.first)->vertex(cw(e.second))->site();
+    Site_2 q = (e.first)->vertex(ccw(e.second))->site();
     return geom_traits().construct_Apollonius_bisector_2_object()(p,q);
   }
 
@@ -224,9 +224,9 @@ dual(const Edge e) const
   if ( is_infinite( e.first->vertex(e.second) )  ) {
     ee = sym_edge(e);
   }
-  Site_2 p = ee.first->vertex( ccw(ee.second) )->point();
-  Site_2 q = ee.first->vertex(  cw(ee.second) )->point();
-  Site_2 r = ee.first->vertex(     ee.second  )->point();
+  Site_2 p = ee.first->vertex( ccw(ee.second) )->site();
+  Site_2 q = ee.first->vertex(  cw(ee.second) )->site();
+  Site_2 r = ee.first->vertex(     ee.second  )->site();
 
   return geom_traits().construct_Apollonius_bisector_ray_2_object()(p,q,r);
 }
@@ -251,16 +251,16 @@ primal(const Edge e) const
     if ( is_infinite(e) ) {
       Ray ray;
       if (  is_infinite( e.first->vertex(cw(e.second)) )  ) {
-	Site_2 p = e.first->vertex( ccw(e.second) )->point();
-	Site_2 r = e.first->vertex( e.second )->point();
-	Site_2 s = e.first->mirror_vertex( e.second )->point();
+	Site_2 p = e.first->vertex( ccw(e.second) )->site();
+	Site_2 r = e.first->vertex( e.second )->site();
+	Site_2 s = e.first->mirror_vertex( e.second )->site();
 	ray = geom_traits().construct_Apollonius_primal_ray_2_object()(p,r,s);
       } else {
 	CGAL_triangulation_assertion
 	  (   is_infinite( e.first->vertex(ccw(e.second)) )   );
-	Site_2 q = e.first->vertex( cw(e.second) )->point();
-	Site_2 r = e.first->vertex( e.second )->point();
-	Site_2 s = e.first->mirror_vertex( e.second )->point();
+	Site_2 q = e.first->vertex( cw(e.second) )->site();
+	Site_2 r = e.first->vertex( e.second )->site();
+	Site_2 s = e.first->mirror_vertex( e.second )->site();
 	ray = geom_traits().construct_Apollonius_primal_ray_2_object()(q,s,r);
       }
       return make_object(ray);
@@ -268,8 +268,8 @@ primal(const Edge e) const
   }
 
   if ( dimension() == 1 ) {
-    Site_2 p = (e.first)->vertex(cw(e.second))->point();
-    Site_2 q = (e.first)->vertex(ccw(e.second))->point();
+    Site_2 p = (e.first)->vertex(cw(e.second))->site();
+    Site_2 q = (e.first)->vertex(ccw(e.second))->site();
     Segment seg =
       geom_traits().construct_Apollonius_primal_segment_2_object()(p, q);
     return make_object(seg);
@@ -279,10 +279,10 @@ primal(const Edge e) const
   // dimension == 2
   if( (!is_infinite(e.first)) &&
       (!is_infinite(e.first->neighbor(e.second))) ) {
-    Site_2 p = (e.first)->vertex( ccw(e.second) )->point();
-    Site_2 q = (e.first)->vertex(  cw(e.second) )->point();
-    Site_2 r = (e.first)->vertex(     e.second  )->point();
-    Site_2 s = (e.first)->mirror_vertex(e.second)->point();
+    Site_2 p = (e.first)->vertex( ccw(e.second) )->site();
+    Site_2 q = (e.first)->vertex(  cw(e.second) )->site();
+    Site_2 r = (e.first)->vertex(     e.second  )->site();
+    Site_2 s = (e.first)->mirror_vertex(e.second)->site();
     return
       geom_traits().construct_Apollonius_primal_segment_2_object()(p,q,r,s);
   }
@@ -290,8 +290,8 @@ primal(const Edge e) const
   // both of the adjacent faces are infinite
   if ( is_infinite(e.first) &&
        is_infinite(e.first->neighbor(e.second)) )  {
-    Site_2 p = (e.first)->vertex(cw(e.second))->point();
-    Site_2 q = (e.first)->vertex(ccw(e.second))->point();
+    Site_2 p = (e.first)->vertex(cw(e.second))->site();
+    Site_2 q = (e.first)->vertex(ccw(e.second))->site();
     Segment seg =
       geom_traits().construct_Apollonius_primal_segment_2_object()(p,q);
     return make_object(seg);
@@ -302,9 +302,9 @@ primal(const Edge e) const
   if ( is_infinite(e.first) ) {
     ee = sym_edge(e);
   }
-  Site_2 p = (ee.first)->vertex( ccw(ee.second) )->point();
-  Site_2 q = (ee.first)->vertex(  cw(ee.second) )->point();
-  Site_2 r = (ee.first)->vertex(     ee.second  )->point();
+  Site_2 p = (ee.first)->vertex( ccw(ee.second) )->site();
+  Site_2 q = (ee.first)->vertex(  cw(ee.second) )->site();
+  Site_2 r = (ee.first)->vertex(     ee.second  )->site();
   Parabola_segment ps =
     geom_traits().construct_Apollonius_primal_segment_2_object()(p,q,r);
   return make_object(ps);
@@ -347,7 +347,7 @@ insert_in_face(Face_handle& f, const Site_2& p)
 {
   Vertex_handle v = static_cast<Vertex*>(this->_tds.insert_in_face( &(*f) ));
 
-  v->set_point(p);
+  v->set_site(p);
   return v;
 }
 
@@ -380,7 +380,7 @@ insert_degree_2(Edge e, const Site_2& p)
 {
   Vertex_handle v = insert_degree_2(e);
 
-  v->set_point(p);
+  v->set_site(p);
   return v;
 }
 
@@ -429,7 +429,7 @@ insert_first(const Site_2& p)
 {
   CGAL_triangulation_precondition(number_of_vertices() == 0);
   Vertex_handle v = this->_tds.insert_second();
-  v->set_point(p);
+  v->set_site(p);
   return v;
   //  return Delaunay_graph::insert_first(p);
 }
@@ -442,17 +442,17 @@ insert_second(const Site_2& p)
   CGAL_triangulation_precondition( number_of_vertices() == 1 );
   Vertex_handle vnew;
   Vertex_handle v(finite_vertices_begin());
-  if ( is_hidden(v->point(), p) ) {
+  if ( is_hidden(v->site(), p) ) {
     v->add_hidden_site(p);
     vnew = Vertex_handle(NULL);  
-  } else if ( is_hidden(p, v->point()) ) {
-    v->add_hidden_site(v->point());
-    v->set_point(p);
+  } else if ( is_hidden(p, v->site()) ) {
+    v->add_hidden_site(v->site());
+    v->set_site(p);
     vnew = v;
   } else {
     CGAL_triangulation_precondition(number_of_vertices() == 1);
     vnew = this->_tds.insert_dim_up(infinite_vertex(), true);
-    vnew->set_point(p);
+    vnew->set_site(p);
     //    vnew = Delaunay_graph::insert_second(p);
   }
 
@@ -469,42 +469,42 @@ insert_third(const Site_2& p)
   Vertex_handle v1(vertices_begin());
   Vertex_handle v2(++vertices_begin());
 
-  if ( is_hidden(v1->point(), p) ) {
+  if ( is_hidden(v1->site(), p) ) {
     v1->add_hidden_site(p);
     return Vertex_handle(NULL);
   }
-  if ( is_hidden(v2->point(), p) ) {
+  if ( is_hidden(v2->site(), p) ) {
     v2->add_hidden_site(p);
     return Vertex_handle(NULL);
   }
 
-  bool t1 = is_hidden(p, v1->point());
-  bool t2 = is_hidden(p, v2->point());
+  bool t1 = is_hidden(p, v1->site());
+  bool t2 = is_hidden(p, v2->site());
 
   if ( t1 && !t2 ) {
-    v1->add_hidden_site(v1->point());
-    v1->set_point(p);
+    v1->add_hidden_site(v1->site());
+    v1->set_site(p);
     return v1;
   } else if ( !t1 && t2 ) {
-    v2->add_hidden_site(v2->point());
-    v2->set_point(p);
+    v2->add_hidden_site(v2->site());
+    v2->set_site(p);
     return v2;
   } else if ( t1 && t2 ) {
-    v1->add_hidden_site(v1->point());
-    v1->add_hidden_site(v2->point());
-    v1->set_point(p);
+    v1->add_hidden_site(v1->site());
+    v1->add_hidden_site(v2->site());
+    v1->set_site(p);
     remove_second(v2);
     return v1;
   }
 
   Vertex_handle v = this->_tds.insert_dim_up(infinite_vertex());
-  v->set_point(p);
+  v->set_site(p);
 
   Face_handle f(finite_faces_begin());
 
-  Point_2 p1 = f->vertex(0)->point().point();
-  Point_2 p2 = f->vertex(1)->point().point();
-  Point_2 p3 = f->vertex(2)->point().point();
+  Point_2 p1 = f->vertex(0)->site().point();
+  Point_2 p2 = f->vertex(1)->site().point();
+  Point_2 p3 = f->vertex(2)->site().point();
 
   Orientation o =
     geom_traits().orientation_2_object()(p1, p2, p3);
@@ -517,11 +517,11 @@ insert_third(const Site_2& p)
   }
 
   Conflict_type ct =
-    finite_edge_conflict_type_degenerated(v1->point(), v2->point(), p);
+    finite_edge_conflict_type_degenerated(v1->site(), v2->site(), p);
 
   if ( ct == NO_CONFLICT ) {
     Oriented_side os =
-      side_of_bisector(v1->point(), v2->point(), p.point());
+      side_of_bisector(v1->site(), v2->site(), p.point());
 
     CGAL_assertion( os != ON_ORIENTED_BOUNDARY );
     Vertex_handle vv = ( os == ON_NEGATIVE_SIDE ) ? v1 : v2;
@@ -562,7 +562,7 @@ insert_third(const Site_2& p)
 
 
     Conflict_type ct1 =
-      finite_edge_conflict_type_degenerated(v1->point(), p, v2->point());
+      finite_edge_conflict_type_degenerated(v1->site(), p, v2->site());
 
     Edge_circulator ec;
     ec = ( ct1 == INTERIOR ) ? incident_edges(v2) : incident_edges(v1);
@@ -618,7 +618,7 @@ insert(const Site_2& p, Vertex_handle vnear)
 
 
   // check if it is hidden
-  Site_2 wp_nearest = vnearest->point();
+  Site_2 wp_nearest = vnearest->site();
   if ( is_hidden(wp_nearest, p) ) {
     vnearest->add_hidden_site(p);
     return Vertex_handle(NULL);
@@ -670,9 +670,6 @@ insert(const Site_2& p, Vertex_handle vnear)
   Face_map fm;
   Vertex_map vm;
 
-  //  Vertex_handle v = _tds.create_vertex();
-  //  v->set_point(p);
-
   // MK:: NEED TO WRITE A FUNCTION CALLED find_conflict_region WHICH
   // IS GIVEN A STARTING FACE, A LIST, A FACE MAP, A VERTEX MAP AND A
   // LIST OF FLIPPED EDGES AND WHAT IS DOES IS INITIALIZE THE CONFLICT 
@@ -703,9 +700,9 @@ find_conflict_region_remove(const Vertex_handle& v,
 			    Vertex_map& vm,
 			    std::vector<Vh_triple*>* fe)
 {
-  Site_2 p = v->point();
+  Site_2 p = v->site();
   // check if it is hidden
-  Site_2 wp_nearest = vnearest->point();
+  Site_2 wp_nearest = vnearest->site();
   if ( is_hidden(wp_nearest, p) ) {
     vnearest->add_hidden_site(p);
     return;
@@ -759,7 +756,7 @@ find_conflict_region_remove(const Vertex_handle& v,
   }
 
   initialize_conflict_region(start_f, l);
-  expand_conflict_region(start_f, v->point(), l, fm, vm, fe);
+  expand_conflict_region(start_f, v->site(), l, fm, vm, fe);
 }
 
 template< class Gt, class Agds >
@@ -783,7 +780,7 @@ check_edge_for_hidden_sites(const Face_handle& f, int i,
 
   Vertex_handle v1 = f->vertex(ccw(i));
   if ( vm.find(v1) == vm.end() ) {
-    if ( !is_infinite(v1) && is_hidden(p, v1->point()) ) {
+    if ( !is_infinite(v1) && is_hidden(p, v1->site()) ) {
       vm[v1] = true;
       found = true;
     }
@@ -793,7 +790,7 @@ check_edge_for_hidden_sites(const Face_handle& f, int i,
 
   Vertex_handle v2 = f->vertex(cw(i));
   if ( vm.find(v2) == vm.end() ) {
-    if ( !is_infinite(v2) && is_hidden(p, v2->point()) ) {
+    if ( !is_infinite(v2) && is_hidden(p, v2->site()) ) {
       vm[v2] = true;
       found = true;
     }
@@ -1041,7 +1038,7 @@ retriangulate_conflict_region(const Site_2& p,	List& l,
     for (vmit = vm.begin(); vmit != vm.end(); ++vmit) {
       Vertex_handle vhidden = (*vmit).first;
 
-      wp_list.push_back(vhidden->point());
+      wp_list.push_back(vhidden->site());
       typename Vertex::Hidden_sites_iterator it;
       for (it = vhidden->hidden_sites_begin();
 	   it != vhidden->hidden_sites_end(); ++it) {
@@ -1056,7 +1053,7 @@ retriangulate_conflict_region(const Site_2& p,	List& l,
     // 3. add a new vertex
     Vertex_handle v = insert_first(p);
 
-    // 4. add all old sites to the hidden weighted point list of the
+    // 4. add all old sites to the hidden site list of the
     // new site
     Site_list_iterator wpit;
     for (wpit = wp_list.begin(); wpit != wp_list.end(); ++wpit) {
@@ -1071,7 +1068,7 @@ retriangulate_conflict_region(const Site_2& p,	List& l,
     for (vmit = vm.begin(); vmit != vm.end(); ++vmit) {
       Vertex_handle vhidden = (*vmit).first;
 
-      wp_list.push_back(vhidden->point());
+      wp_list.push_back(vhidden->site());
       typename Vertex::Hidden_sites_iterator it;
       for (it = vhidden->hidden_sites_begin();
 	   it != vhidden->hidden_sites_end(); ++it) {
@@ -1089,7 +1086,7 @@ retriangulate_conflict_region(const Site_2& p,	List& l,
       ++vit;
     } while ( vm.find(non_hidden) != vm.end() );
 
-    Site_2 p1 = non_hidden->point();
+    Site_2 p1 = non_hidden->site();
     Site_list wp_list1;
     typename Vertex::Hidden_sites_iterator it;
     for (it = non_hidden->hidden_sites_begin();
@@ -1119,14 +1116,14 @@ retriangulate_conflict_region(const Site_2& p,	List& l,
   }
 
   Vertex_handle v = this->_tds.create_vertex();
-  v->set_point(p);
+  v->set_site(p);
 
-  // 1. move all the hidden weighted points to the new one
+  // 1. move all the hidden sites to the new one
   typename Vertex_map::iterator vmit;
   for (vmit = vm.begin(); vmit != vm.end(); ++vmit) {
     Vertex_handle vhidden = (*vmit).first;
     move_hidden_sites(vhidden, v);
-    v->add_hidden_site(vhidden->point());
+    v->add_hidden_site(vhidden->site());
   }
 
   CGAL_precondition( number_of_vertices() - vm.size() >= 2 );
@@ -1228,8 +1225,8 @@ nearest_neighbor(const Point_2& p,
     for (; vit != finite_vertices_end(); ++vit) {
       Vertex_handle v1(vit);
       if ( v1 != vclosest /*&& !is_infinite(v1)*/ ) {
-	Site_2 p1 = vclosest->point();
-	Site_2 p2 = v1->point();
+	Site_2 p1 = vclosest->site();
+	Site_2 p2 = v1->site();
 	if ( side_of_bisector(p1, p2, p) == ON_NEGATIVE_SIDE ) {
 	  vclosest = v1;
 	}
@@ -1240,13 +1237,13 @@ nearest_neighbor(const Point_2& p,
 
   do {
     vclosest = v;
-    Site_2 p1 = v->point();
+    Site_2 p1 = v->site();
     Vertex_circulator vc_start = incident_vertices(v);
     Vertex_circulator vc = vc_start;
     do {
       if ( !is_infinite(vc) ) {
 	Vertex_handle v1(vc);
-	Site_2 p2 = v1->point();
+	Site_2 p2 = v1->site();
 	if ( side_of_bisector(p1, p2, p) == ON_NEGATIVE_SIDE ) {
 	  v = v1;
 	  break;
@@ -1314,9 +1311,9 @@ Apollonius_graph_2<Gt,Agds>::
 incircle(const Face_handle& f, const Site_2& q) const
 {
   if ( !is_infinite(f) ) {
-    return incircle(f->vertex(0)->point(),
-		    f->vertex(1)->point(),
-		    f->vertex(2)->point(), q);
+    return incircle(f->vertex(0)->site(),
+		    f->vertex(1)->site(),
+		    f->vertex(2)->site(), q);
   }
 
   int inf_i(-1); // to avoid compiler warning
@@ -1326,8 +1323,8 @@ incircle(const Face_handle& f, const Site_2& q) const
       break;
     }
   }
-  return incircle( f->vertex( ccw(inf_i) )->point(),
-		   f->vertex(  cw(inf_i) )->point(), q );
+  return incircle( f->vertex( ccw(inf_i) )->site(),
+		   f->vertex(  cw(inf_i) )->site(), q );
 }
 
 
@@ -1341,7 +1338,7 @@ incircle(const Vertex_handle& v0, const Vertex_handle& v1,
   CGAL_precondition( !is_infinite(v0) && !is_infinite(v1)
 		     && !is_infinite(v) );
 
-  return incircle( v0->point(), v1->point(), v->point());
+  return incircle( v0->site(), v1->site(), v->site());
 }
 
 template< class Gt, class Agds >
@@ -1355,22 +1352,22 @@ incircle(const Vertex_handle& v0, const Vertex_handle& v1,
 
   if ( !is_infinite(v0) && !is_infinite(v1) &&
        !is_infinite(v2) ) {
-    return incircle(v0->point(), v1->point(),
-		    v2->point(), v->point());
+    return incircle(v0->site(), v1->site(),
+		    v2->site(), v->site());
   }
 
   if ( is_infinite(v0) ) {
     CGAL_precondition( !is_infinite(v1) && !is_infinite(v2) );
-    return incircle( v1->point(), v2->point(), v->point());
+    return incircle( v1->site(), v2->site(), v->site());
   }
   if ( is_infinite(v1) ) {
     CGAL_precondition( !is_infinite(v0) && !is_infinite(v2) );
-    return incircle( v2->point(), v0->point(), v->point());
+    return incircle( v2->site(), v0->site(), v->site());
   }
 
   CGAL_assertion( is_infinite(v2) );
   CGAL_precondition( !is_infinite(v0) && !is_infinite(v1) );
-  return incircle( v0->point(), v1->point(), v->point());
+  return incircle( v0->site(), v1->site(), v->site());
 }
 
 
@@ -1399,10 +1396,10 @@ finite_edge_interior(const Face_handle& f, int i,
 {
   CGAL_precondition( !is_infinite(f) &&
 		     !is_infinite(f->neighbor(i)) );
-  return finite_edge_interior( f->vertex( ccw(i) )->point(),
-			       f->vertex(  cw(i) )->point(),
-			       f->vertex(     i  )->point(),
-			       f->mirror_vertex(i)->point(), p, b);
+  return finite_edge_interior( f->vertex( ccw(i) )->site(),
+			       f->vertex(  cw(i) )->site(),
+			       f->vertex(     i  )->site(),
+			       f->mirror_vertex(i)->site(), p, b);
 }
 
 template< class Gt, class Agds >
@@ -1418,9 +1415,9 @@ finite_edge_interior(const Vertex_handle& v1,
   CGAL_precondition( !is_infinite(v1) && !is_infinite(v2) &&
 		     !is_infinite(v3) && !is_infinite(v4) &&
 		     !is_infinite(v) );
-  return finite_edge_interior( v1->point(), v2->point(),
-			       v3->point(), v4->point(),
-			       v->point(), b);
+  return finite_edge_interior( v1->site(), v2->site(),
+			       v3->site(), v4->site(),
+			       v->site(), b);
 }
 
 template< class Gt, class Agds >
@@ -1472,14 +1469,14 @@ finite_edge_interior_degenerated(const Face_handle& f, int i,
 
   CGAL_precondition( is_infinite( f->mirror_vertex(i) ) );
 
-  Site_2 p1 = f->vertex( ccw(i) )->point();
-  Site_2 p2 = f->vertex(  cw(i) )->point();
+  Site_2 p1 = f->vertex( ccw(i) )->site();
+  Site_2 p2 = f->vertex(  cw(i) )->site();
 
   if ( is_infinite(f->vertex(i)) ) {
     return finite_edge_interior_degenerated(p1, p2, p, b);
   }
 
-  Site_2 p3 = f->vertex(i)->point();
+  Site_2 p3 = f->vertex(i)->site();
   return finite_edge_interior_degenerated(p1, p2, p3, p, b);
 }
 
@@ -1504,15 +1501,15 @@ finite_edge_interior_degenerated(const Vertex_handle& v1,
 
   CGAL_precondition( is_infinite( v4 ) );
 
-  Site_2 p1 = v1->point();
-  Site_2 p2 = v2->point();
-  Site_2 p = v->point();
+  Site_2 p1 = v1->site();
+  Site_2 p2 = v2->site();
+  Site_2 p = v->site();
 
   if ( is_infinite(v3) ) {
     return finite_edge_interior_degenerated(p1, p2, p, b);
   }
 
-  Site_2 p3 = v3->point();
+  Site_2 p3 = v3->site();
   return finite_edge_interior_degenerated(p1, p2, p3, p, b);
 }
 
@@ -1546,9 +1543,9 @@ infinite_edge_interior(const Face_handle& f, int i,
 
   CGAL_precondition( is_infinite( f->vertex(ccw(i)) ) );
 
-  Site_2 p2 = f->vertex(  cw(i) )->point();
-  Site_2 p3 = f->vertex(     i  )->point();
-  Site_2 p4 = f->mirror_vertex(i)->point();
+  Site_2 p2 = f->vertex(  cw(i) )->site();
+  Site_2 p3 = f->vertex(     i  )->site();
+  Site_2 p4 = f->mirror_vertex(i)->site();
 
   return infinite_edge_interior(p2, p3, p4, p, b);
 }
@@ -1574,10 +1571,10 @@ infinite_edge_interior(const Vertex_handle& v1,
 
   CGAL_precondition( is_infinite( v1 ) );
 
-  Site_2 p2 = v2->point();
-  Site_2 p3 = v3->point();
-  Site_2 p4 = v4->point();
-  Site_2 p = v->point();
+  Site_2 p2 = v2->site();
+  Site_2 p3 = v3->site();
+  Site_2 p4 = v4->site();
+  Site_2 p = v->site();
 
   return infinite_edge_interior(p2, p3, p4, p, b);
 }
@@ -1813,7 +1810,7 @@ remove_degree_d_vertex(Vertex_handle v)
       vh_small = ag_small.infinite_vertex();
       vmap[vh_small] = vh_large;
     } else { 
-      vh_small = ag_small.insert(vc->point());
+      vh_small = ag_small.insert(vc->site());
       if ( &(*vh_small) != NULL ) {
 	vmap[vh_small] = vh_large;
       }
@@ -1838,7 +1835,7 @@ remove_degree_d_vertex(Vertex_handle v)
   }
 
 
-  Vertex_handle vn = ag_small.nearest_neighbor(v->point().point());
+  Vertex_handle vn = ag_small.nearest_neighbor(v->site().point());
 
   assert( vn != NULL );
 

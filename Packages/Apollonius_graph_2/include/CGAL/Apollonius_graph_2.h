@@ -18,7 +18,7 @@
 // revision_date : $Date$
 // author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 //
-// coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
+// coordinator   :
 //
 // ======================================================================
 
@@ -31,13 +31,11 @@
 #include <map>
 
 #include <CGAL/Triangulation_2.h>
-//#include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Apollonius_graph_data_structure_2.h>
 #include <CGAL/Apollonius_graph_face_base_2.h>
 #include <CGAL/Apollonius_graph_vertex_base_2.h>
 
 #include <CGAL/in_place_edge_list.h>
-//#include <CGAL/sorted_vertex_triple.h>
 #include <CGAL/Apollonius_graph_euclidean_traits_wrapper_2.h>
 
 
@@ -48,12 +46,12 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class Node, class Type >
-struct Project_site {
+template < class Node >
+struct Project_site_2 {
   typedef Node                   argument_type;
-  typedef Type                   Site;
+  typedef typename Node::Site_2  Site;
   typedef Site                   result_type;
-  Site&       operator()( Node& x)       const { return x.site(); }
+  Site&       operator()( Node& x) const { return x.site(); }
   const Site& operator()( const Node& x) const { return x.site(); }
 };
 
@@ -99,14 +97,10 @@ public:
 
   // Auxiliary iterators for convenience
   // do not use default template argument to please VC++
-  typedef Project_site<Vertex,Site_2>                        Proj_site;
+  typedef Project_site_2<Vertex>                               Proj_site;
   typedef Iterator_project<Finite_vertices_iterator, 
-                           Proj_site,
-	                   const Site_2&, 
-                           const Site_2*,
-                           CGAL_CLIB_STD::ptrdiff_t,
-                           std::bidirectional_iterator_tag> 
-  /*                                         */ Visible_sites_iterator;
+                           Proj_site>
+  /*                                           */ Visible_sites_iterator;
 
   typedef
   Apollonius_graph_vertex_base_nested_iterator_traits<
@@ -115,10 +109,10 @@ public:
 
   typedef Nested_iterator<Finite_vertices_iterator,
 			  Hidden_sites_nested_iterator_traits>
-  /*                                          */ Hidden_sites_iterator;
+  /*                                            */ Hidden_sites_iterator;
 
   typedef Concatenate_iterator<Visible_sites_iterator,
-			       Hidden_sites_iterator>   Sites_iterator;
+			       Hidden_sites_iterator>     Sites_iterator;
 
   typedef Site_2               value_type; // to have a back_inserter
   typedef const value_type&    const_reference; 
@@ -133,7 +127,7 @@ protected:
   typedef typename Agds::Vertex            Vertex;
 
   // point lists
-  typedef std::vector<Site_2>   Site_list;
+  typedef std::vector<Site_2>              Site_list;
   typedef typename Site_list::iterator     Site_list_iterator;
 
   typedef std::map<Face_handle,bool>           Face_map;
@@ -152,7 +146,7 @@ protected:
 		 RIGHT_VERTEX, BOTH_VERTICES, ENTIRE_EDGE }
   Conflict_type;
 
-  static inline Conflict_type opposite(const Conflict_type& ct) {
+  static Conflict_type opposite(const Conflict_type& ct) {
     if ( ct == RIGHT_VERTEX ) { return LEFT_VERTEX; }
     if ( ct == LEFT_VERTEX ) { return RIGHT_VERTEX; }
     return ct;
@@ -251,53 +245,84 @@ public:
 public:
   // TRAVERSAL OF THE APOLLONIUS GRAPH
   //----------------------------------
-  inline Finite_faces_iterator finite_faces_begin() const {
+  Finite_faces_iterator finite_faces_begin() const {
     return DG::finite_faces_begin();
   }
 
-  inline Finite_faces_iterator finite_faces_end() const {
+  Finite_faces_iterator finite_faces_end() const {
     return DG::finite_faces_end();
   }
 
-  inline Finite_vertices_iterator finite_vertices_begin() const {
+  Finite_vertices_iterator finite_vertices_begin() const {
     return DG::finite_vertices_begin();
   }
 
-  inline Finite_vertices_iterator finite_vertices_end() const {
+  Finite_vertices_iterator finite_vertices_end() const {
     return DG::finite_vertices_end();
   }
 
-  inline Finite_edges_iterator finite_edges_begin() const {
+  Finite_edges_iterator finite_edges_begin() const {
     return DG::finite_edges_begin();    
   }
-  inline Finite_edges_iterator finite_edges_end() const {
+  Finite_edges_iterator finite_edges_end() const {
     return DG::finite_edges_end();    
   }
 
-  //  Point_iterator points_begin() const;
-  //  Point_iterator points_end() const;
 
-  inline All_faces_iterator all_faces_begin() const {
+  Sites_iterator sites_begin() const {
+    return Sites_iterator(visible_sites_end(),
+			  hidden_sites_begin(),
+			  visible_sites_begin());
+  }
+
+  Sites_iterator sites_end() const {
+    return Sites_iterator(visible_sites_end(),
+			  hidden_sites_begin(),
+			  hidden_sites_end(),0);
+  }
+
+  Visible_sites_iterator visible_sites_begin() const {
+    return Visible_sites_iterator(finite_vertices_begin());
+  }
+
+  Visible_sites_iterator visible_sites_end() const {
+    return Visible_sites_iterator(finite_vertices_end());
+  }
+
+  Hidden_sites_iterator hidden_sites_begin() const {
+    return Hidden_sites_iterator(finite_vertices_begin(),
+				 finite_vertices_end(),
+				 finite_vertices_begin());
+  }
+
+  Hidden_sites_iterator hidden_sites_end() const {
+    return Hidden_sites_iterator(finite_vertices_begin(),
+				 finite_vertices_end(),
+				 finite_vertices_end());
+  }
+
+
+  All_faces_iterator all_faces_begin() const {
     return DG::all_faces_begin();
   }
 
-  inline All_faces_iterator all_faces_end() const {
+  All_faces_iterator all_faces_end() const {
     return DG::all_faces_end();
   }
 
-  inline All_vertices_iterator all_vertices_begin() const {
+  All_vertices_iterator all_vertices_begin() const {
     return DG::all_vertices_begin();
   }
 
-  inline All_vertices_iterator all_vertices_end() const {
+  All_vertices_iterator all_vertices_end() const {
     return DG::all_vertices_end();
   }
 
-  inline All_edges_iterator all_edges_begin() const {
+  All_edges_iterator all_edges_begin() const {
     return DG::all_edges_begin();
   }
 
-  inline All_edges_iterator all_edges_end() const {
+  All_edges_iterator all_edges_end() const {
     return DG::all_edges_end();
   }
 
@@ -390,7 +415,9 @@ public:
 public:
   // ACCESS TO THE DUAL
   //-------------------
-  Point_2  dual(const Face_handle& f) const;
+  typename Gt::Object_2 dual(const Face_handle& f) const;
+
+private:
   typename Gt::Object_2 dual(const Edge e) const;
 
   typename Gt::Object_2 dual(const Edge_circulator& ec) const {
@@ -402,112 +429,8 @@ public:
   }
 
 public:
-
-
   // I/O
   //----
-  template < class Stream >
-  Stream& write_non_hidden_weighted_points(Stream& str) const
-  {
-    str << number_of_vertices() << std::endl;
-
-    Finite_vertices_iterator vit = finite_vertices_begin();
-    for (; vit != finite_vertices_end(); ++vit) {
-      Site_2 wp = vit->point();
-      str << wp << std::endl;
-    }
-    return str;
-  }
-
-  template < class Stream >
-  Stream& write_all_weighted_points(Stream& str) const
-  {
-    int n_total = number_of_vertices() + number_of_hidden_vertices();
-
-    str << n_total << std::endl;
-
-    Finite_vertices_iterator vit = finite_vertices_begin();
-    for (; vit != finite_vertices_end(); ++vit) {
-      Site_2 wp = vit->point();
-      str << wp << std::endl;
-      // now write the hidden vertices
-      if ( true /*Vertex::StoreHidden*/ ) {
-	typename Vertex::Hidden_sites_iterator wpit;
-	for (wpit = vit->hidden_sites_begin();
-	     wpit != vit->hidden_sites_end(); ++wpit) {
-	  str << (*wpit) << std::endl;
-	}
-      }
-    }
-    return str;
-  }
-
-  template < class Stream >
-  Stream& draw_hidden_weighted_points(Stream &str) const
-  {
-    if ( /*!Vertex::StoreHidden*/ false ) { return str; }
-
-    Finite_vertices_iterator vit = finite_vertices_begin();
-
-    for (; vit != finite_vertices_end(); ++vit) {
-      if ( vit->number_of_hidden_sites() > 0 ) {
-	typename Vertex::Hidden_sites_iterator wpit;
-	for (wpit = vit->hidden_sites_begin();
-	     wpit != vit->hidden_sites_end(); ++wpit) {
-	  Site_2 wp = *wpit;
-	  typename Gt::Rep::Circle_2 c(wp.point(),
-				       CGAL_NTS square(wp.weight()));
-	  str << c;
-	}
-      }
-    }
-    return str;
-  }
-
-  template < class Stream >
-  Stream& draw_hidden_weighted_point_centers(Stream &str) const
-  {
-    if ( /*!Vertex::StoreHidden*/ false ) { return str; }
-
-    Finite_vertices_iterator vit = finite_vertices_begin();
-
-    for (; vit != finite_vertices_end(); ++vit) {
-      if ( vit->number_of_hidden_sites() > 0 ) {
-	typename Vertex::Hidden_sites_iterator wpit;
-	for (wpit = vit->hidden_sites_begin();
-	     wpit != vit->hidden_sites_end(); ++wpit) {
-	  Site_2 wp = *wpit;
-	  str << wp.point();
-	}
-      }
-    }
-    return str;
-  }
-
-  template < class Stream >
-  Stream& draw_non_hidden_weighted_points(Stream &str) const
-  {
-    Finite_vertices_iterator vit = finite_vertices_begin();
-    for (; vit != finite_vertices_end(); ++vit) {
-      Site_2 wp = vit->point();
-      typename Gt::Rep::Circle_2 c(wp.point(),
-				   CGAL_NTS square(wp.weight()));
-      str << c;
-    }
-    return str;
-  }
-
-  template < class Stream >
-  Stream& draw_non_hidden_weighted_point_centers(Stream &str) const
-  {
-    Finite_vertices_iterator vit = finite_vertices_begin();
-    for (; vit != finite_vertices_end(); ++vit) {
-      Site_2 wp = vit->point();
-      str << wp.point();
-    }
-    return str;
-  }
-
   template< class Stream >
   inline
   Stream& draw_primal(Stream &str) const
@@ -517,8 +440,8 @@ public:
     } else if ( number_of_vertices() == 2 ) {
       Vertex_handle v1(finite_vertices_begin());
       Vertex_handle v2(++finite_vertices_begin());
-      Site_2 p1 = v1->point();
-      Site_2 p2 = v2->point();
+      Site_2 p1 = v1->site();
+      Site_2 p2 = v2->site();
       typename Geom_traits::Segment_2 seg =
 	geom_traits().construct_Apollonius_primal_segment_2_object()(p1,p2);
       typename Geom_traits::Ray_2 ray1 =
@@ -560,6 +483,7 @@ public:
     return str;
   }
 
+protected:
   template < class Stream > 
   Stream& draw_dual_weighted_points(Stream &str) const
   {
@@ -568,14 +492,14 @@ public:
       Face_handle f(fit);
       if ( is_infinite(f) ) {
 	if (  is_infinite(f->vertex(0))  ) {
-	  str << circumcircle( f->vertex(1)->point(),
-			       f->vertex(2)->point() );
+	  str << circumcircle( f->vertex(1)->site(),
+			       f->vertex(2)->site() );
 	} else if (  is_infinite(f->vertex(1))  ){
-	  str << circumcircle( f->vertex(2)->point(),
-			       f->vertex(0)->point() );
+	  str << circumcircle( f->vertex(2)->site(),
+			       f->vertex(0)->site() );
 	} else {
-	  str << circumcircle( f->vertex(0)->point(),
-			       f->vertex(1)->point() );	  
+	  str << circumcircle( f->vertex(0)->site(),
+			       f->vertex(1)->site() );	  
 	}
       } else {
 	Site_2 wp = circumcircle(f);
@@ -615,7 +539,6 @@ public:
   typename Gt::Object_2 primal(const Finite_edges_iterator& ei) const {
     return primal(*ei);
   }
-
 
 protected:
   // wrappers for the geometric predicates
@@ -744,8 +667,8 @@ protected:
     CGAL_precondition( !is_infinite(v1) && !is_infinite(v2) &&
 		       !is_infinite(v3) && !is_infinite(v4) );
 
-    return is_degenerate_edge(v1->point(), v2->point(),
-			      v3->point(), v4->point());
+    return is_degenerate_edge(v1->site(), v2->site(),
+			      v3->site(), v4->site());
   }
 
   inline bool is_degenerate_edge(const Face_handle& f, int i) const {

@@ -12,6 +12,7 @@
 #include <CGAL/Apollonius_graph_hierarchy_2.h>
 #include <CGAL/Apollonius_graph_euclidean_traits_2.h>
 
+#include "IO/Null_output_stream.h"
 
 
 CGAL_BEGIN_NAMESPACE
@@ -433,6 +434,15 @@ bool test_algo_generic(InputStream& is)
   typedef typename Apollonius_graph::Finite_edges_iterator
     Finite_edges_iterator;
 
+  typedef typename Apollonius_graph::Sites_iterator Sites_iterator;
+  typedef typename Apollonius_graph::Visible_sites_iterator
+    Visible_sites_iterator;
+  typedef typename Apollonius_graph::Hidden_sites_iterator
+    Hidden_sites_iterator;
+
+
+  Null_output_stream   nos;
+
   // testing creation/constructors
   //--------------------------------------------------------------------
 
@@ -462,7 +472,7 @@ bool test_algo_generic(InputStream& is)
   Vertex_handle v1 = ag.infinite_vertex();
   Vertex_handle v2 = ag.finite_vertex();
 
-  // testing traversal
+  // testing traversal - iterators
   //--------------------------------------------------------------------
 
   // finite faces, edges and vertices
@@ -508,6 +518,35 @@ bool test_algo_generic(InputStream& is)
     
   CGAL_assertion( 2 * n_aedges == 3 * n_afaces );
   CGAL_assertion( n_avertices - n_aedges + n_afaces == 2 );
+
+  // site iterators
+  int n_sites(0), n_hidden_sites(0), n_visible_sites(0);
+
+  for (Sites_iterator sit = ag.sites_begin();
+       sit != ag.sites_end(); sit++) {
+    n_sites++;
+    nos << *sit;
+    nos << sit->point();
+  }
+
+  for (Hidden_sites_iterator sit = ag.hidden_sites_begin();
+       sit != ag.hidden_sites_end(); sit++) {
+    n_hidden_sites++;
+    nos << *sit;
+    nos << sit->point();
+  }
+
+  for (Visible_sites_iterator sit = ag.visible_sites_begin();
+       sit != ag.visible_sites_end(); sit++) {
+    n_visible_sites++;
+    nos << *sit;
+    nos << sit->point();
+  }
+
+  CGAL_assertion( n_sites == n_visible_sites + n_hidden_sites );
+
+  // testing traversal - circulators
+  //--------------------------------------------------------------------
 
   // vertex circulators
   for (avit = ag.all_vertices_begin();
@@ -662,9 +701,9 @@ bool test_algo_generic(InputStream& is)
   CGAL_assertion( ag.is_valid() );
   for (fvit = ag.finite_vertices_begin();
        fvit != ag.finite_vertices_end(); ++fvit) {
-    Site_2 wp = fvit->point();
+    Site_2 wp = fvit->site();
     Vertex_handle nn = ag.nearest_neighbor(wp.point());
-    CGAL_assertion( wp == nn->point() );
+    CGAL_assertion( wp == nn->site() );
   }
 
   // testing swap
@@ -696,6 +735,7 @@ bool test_hierarchy_algo(InputStream& is)
 
   return test_algo_generic<Apollonius_graph_hierarchy,InputStream>(is);
 }
+
 
 
 CGAL_END_NAMESPACE

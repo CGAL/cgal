@@ -62,9 +62,9 @@ typedef
 CGAL::Apollonius_graph_euclidean_traits_2<Rep,CGAL::Ring_tag>  Gt;
 
 typedef Gt::Point_2                           Point_2;
-typedef Rep::Circle_2                         Circle_2;
+typedef Gt::Kernel::Circle_2                  Circle_2;
 typedef Gt::Site_2                            Apollonius_site_2;
-typedef Gt::Kernel::RT                        Weight;
+typedef Gt::Site_2::Weight                    Weight;
 
 //typedef CGAL::Apollonius_graph_2<Gt> AG_2;
 typedef CGAL::Apollonius_graph_hierarchy_2<Gt> AG_2;
