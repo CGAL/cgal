@@ -1,3 +1,6 @@
+5 August 2004:  Menelaos Karavelas
+- added initial revision for the user manual
+
 4 August 2004:  Menelaos Karavelas
 - fixed references in reference manual
 - fixed problem with .eps extensions in the .tex files
