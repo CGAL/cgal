@@ -80,14 +80,14 @@ public:
     }
 
   template<class InputIterator>
-  Constrained_Delaunay_triangulation_2(InputIterator first,
+  Constrained_Delaunay_triangulation_2(InputIterator it,
 				       InputIterator last,
 				       const Geom_traits& gt=Geom_traits() )
     : Ctr(gt) 
     {
-      while(first != last){
-	insert((*first).first, (*first).second);
-	first++;
+      while(it != last){
+	insert((*it).first, (*it).second);
+	it++;
       }
       CGAL_triangulation_postcondition( is_valid() );
     }
