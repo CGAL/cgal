@@ -1,7 +1,9 @@
 Changes done to the Interval Arithmetic package.
 
-Version 4.61 on ?? December 2000
+Version 4.61 on 4 January 2001
 - New class MP_Integer that implements multiprecision exact integers.
+- Fixes to Lazy_exact_nt<>.
+- Filter_predicate.h prototype.
 
 Version 4.60 on 13 December 2000
 - Fix additional files.
