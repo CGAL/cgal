@@ -1565,7 +1565,7 @@ arithmetic.
 
     // test variant 2 (needs GMP)
     #ifdef CGAL_USE_GMP
-    # include <_QP_solver/Double.h>
+    # include <CGAL/_QP_solver/Double.h>
       typedef  CGAL::Cartesian< int >                                R_2;
       typedef  CGAL::Min_sphere_d_traits_@1<R_2,GMP::Double,double>   Traits_2;
     # define TEST_VARIANT_2 \
@@ -1684,6 +1684,8 @@ can be enabled by giving a number between 0 and 3 at the command line.
 @end
 
 @macro <Min_sphere_d test: main>(2) many = @begin
+    CGAL_USING_NAMESPACE_STD
+    
     @<Min_sphere_d test: command line argument>
     
     @<Min_sphere_d test: test variant>(1,@1,@2)
@@ -1694,6 +1696,8 @@ can be enabled by giving a number between 0 and 3 at the command line.
 @end
 
 @macro <Min_sphere_d test: main (dD)> = @begin
+    CGAL_USING_NAMESPACE_STD
+    
     @<Min_sphere_d test: command line argument>
     
     @<Min_sphere_d test: test variant (dD)>(1)
