@@ -324,7 +324,7 @@ private:
 	
 };
 
-#include "triangulationdemo.moc"
+#include "triangulation_2.moc"
 
 
 int
