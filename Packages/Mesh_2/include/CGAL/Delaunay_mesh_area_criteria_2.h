@@ -110,10 +110,10 @@ public:
       q.second = area;
 
       if( min_sine < this->B ) return true;
-      if( this->SB == 0 ) return false;
-      return ( area > this->SB );
+      if( this->squared_size_bound == 0 ) return false;
+      return ( area > this->squared_size_bound );
     };
-  };
+  }; // end class Is_bad
 
   Is_bad is_bad_object() const
   { return Is_bad(this->bound(), area_bound()); }

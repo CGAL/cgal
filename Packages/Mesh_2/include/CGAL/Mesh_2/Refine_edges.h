@@ -47,7 +47,6 @@ namespace Mesh_2 {
   public:
     typedef Tr Triangulation;
     typedef typename Tr::Point Point;
-    typedef typename Tr::Vertex_handle Vertex_handle;
     typedef typename Tr::Face_handle Face_handle;
     typedef typename Tr::Edge Edge;
     typedef typename Tr::Vertex_handle Vertex_handle;
