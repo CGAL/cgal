@@ -250,6 +250,12 @@ template <class pNT> class Polynomial :
   typedef CGAL::Tag_false Has_sqrt;
   typedef CGAL::Tag_true  Has_division;
  
+  typedef CGAL::Tag_false Has_exact_division;
+  typedef CGAL::Tag_false Has_exact_sqrt;
+  typedef typename Number_type_traits<NT>::Has_exact_ring_operations
+  Has_exact_ring_operations;
+
+
   typedef Handle_for< Polynomial_rep<NT> > Base;
   typedef Polynomial_rep<NT> Rep;
   typedef typename Rep::Vector    Vector;
@@ -591,6 +597,10 @@ class Polynomial<int> :
   typedef CGAL::Tag_false Has_sqrt;
   typedef CGAL::Tag_true  Has_division;
 
+  typedef CGAL::Tag_false Has_exact_ring_operations;
+  typedef CGAL::Tag_false Has_exact_division;
+  typedef CGAL::Tag_false Has_exact_sqrt;
+
   typedef Handle_for< Polynomial_rep<int> > Base;
   typedef Polynomial_rep<int> Rep;
   typedef  Rep::Vector    Vector;
@@ -897,6 +907,10 @@ determines the sign for the limit process $x \rightarrow \infty$.
   typedef Number_type_traits<NT>::Has_gcd Has_gcd;
   typedef CGAL::Tag_false Has_sqrt;
   typedef CGAL::Tag_true  Has_division;
+
+  typedef CGAL::Tag_false Has_exact_ring_operations;
+  typedef CGAL::Tag_false Has_exact_division;
+  typedef CGAL::Tag_false Has_exact_sqrt;
 
   typedef Handle_for< Polynomial_rep<double> > Base;
   typedef Polynomial_rep<double> Rep;
