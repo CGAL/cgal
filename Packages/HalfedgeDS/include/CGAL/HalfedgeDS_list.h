@@ -35,60 +35,60 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class Vertex_base>
+template < class VertexBase>
 class HalfedgeDS_in_place_list_vertex
-    : public Vertex_base, public In_place_list_base<
-                      HalfedgeDS_in_place_list_vertex< Vertex_base> > {
+    : public VertexBase, public In_place_list_base<
+                      HalfedgeDS_in_place_list_vertex< VertexBase> > {
 public:
-    typedef HalfedgeDS_in_place_list_vertex< Vertex_base> Self;
-    typedef typename Vertex_base::Vertex_handle       Vertex_handle;
-    typedef typename Vertex_base::Vertex_const_handle Vertex_const_handle;
+    typedef HalfedgeDS_in_place_list_vertex< VertexBase> Self;
+    typedef typename VertexBase::Vertex_handle       Vertex_handle;
+    typedef typename VertexBase::Vertex_const_handle Vertex_const_handle;
     HalfedgeDS_in_place_list_vertex() {}
-    HalfedgeDS_in_place_list_vertex( const Vertex_base& v)   // down cast
-        : Vertex_base(v) {}
+    HalfedgeDS_in_place_list_vertex( const VertexBase& v)   // down cast
+        : VertexBase(v) {}
     Self& operator=( const Self& v) {
         // This self written assignment avoids that assigning vertices will
         // overwrite the list linking of the target vertex.
-        *((Vertex_base*)this) = ((const Vertex_base&)v);
+        *((VertexBase*)this) = ((const VertexBase&)v);
         return *this;
     }
 };
 
-template < class Halfedge_base>
+template < class HalfedgeBase>
 class HalfedgeDS_in_place_list_halfedge
-    : public Halfedge_base, public In_place_list_base<
-                  HalfedgeDS_in_place_list_halfedge< Halfedge_base> > {
+    : public HalfedgeBase, public In_place_list_base<
+                  HalfedgeDS_in_place_list_halfedge< HalfedgeBase> > {
 public:
-    typedef HalfedgeDS_in_place_list_halfedge< Halfedge_base> Self;
-    typedef typename Halfedge_base::Halfedge_handle       Halfedge_handle;
-    typedef typename Halfedge_base::Halfedge_const_handle
+    typedef HalfedgeDS_in_place_list_halfedge< HalfedgeBase> Self;
+    typedef typename HalfedgeBase::Halfedge_handle       Halfedge_handle;
+    typedef typename HalfedgeBase::Halfedge_const_handle
                                                     Halfedge_const_handle;
     HalfedgeDS_in_place_list_halfedge() {}                   // down cast
-    HalfedgeDS_in_place_list_halfedge( const Halfedge_base& h)
-        : Halfedge_base(h) {}
+    HalfedgeDS_in_place_list_halfedge( const HalfedgeBase& h)
+        : HalfedgeBase(h) {}
     Self& operator=( const Self& h) {
         // This self written assignment avoids that assigning halfedges will
         // overwrite the list linking of the target halfedge.
-        *((Halfedge_base*)this) = ((const Halfedge_base&)h);
+        *((HalfedgeBase*)this) = ((const HalfedgeBase&)h);
         return *this;
     }
 };
 
-template < class Face_base>
+template < class FaceBase>
 class HalfedgeDS_in_place_list_face
-    : public Face_base, public In_place_list_base<
-                            HalfedgeDS_in_place_list_face< Face_base> > {
+    : public FaceBase, public In_place_list_base<
+                            HalfedgeDS_in_place_list_face< FaceBase> > {
 public:
-    typedef HalfedgeDS_in_place_list_face< Face_base>  Self;
-    typedef typename Face_base::Face_handle       Face_handle;
-    typedef typename Face_base::Face_const_handle Face_const_handle;
+    typedef HalfedgeDS_in_place_list_face< FaceBase>  Self;
+    typedef typename FaceBase::Face_handle       Face_handle;
+    typedef typename FaceBase::Face_const_handle Face_const_handle;
     HalfedgeDS_in_place_list_face() {}                   // down cast
-    HalfedgeDS_in_place_list_face( const Face_base& f) : Face_base(f) {}
+    HalfedgeDS_in_place_list_face( const FaceBase& f) : FaceBase(f) {}
     Self& operator=( const Self& f) {
         // This self written assignment avoids that assigning faces will
         // overwrite the list linking of the target face.
-        *((Face_base*)this) = ((const Face_base&)f);
-        // this->Face_base::operator=(f); // does not compile on SGI
+        *((FaceBase*)this) = ((const FaceBase&)f);
+        // this->FaceBase::operator=(f); // does not compile on SGI
         return *this;
     }
 };

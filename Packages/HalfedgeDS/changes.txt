@@ -1,6 +1,11 @@
 HalfedgeDS Package: Release changes:
 ---------------------------------------------------------------------
 
+3.18 (16 Jul 2001)
+
+     - Changed template parameter name in HalfedgeDS_in_place_list_vertex,
+       etc., to make SGI CC happy.
+
 3.17 (16 Jul 2001)
 
      - Added #include <cstddef> whereever std::size_t is used.
