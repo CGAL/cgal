@@ -12,7 +12,7 @@
 
 #include <iostream>
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_3.h>
 #include <CGAL/Binary_search_tree.h>
 #include <CGAL/Kd_tree_traits_point.h>
@@ -23,8 +23,7 @@
 #include <CGAL/algorithm.h>
 // #include <CGAL/squared_distance_3.h>
 
-
-typedef CGAL::Cartesian<double> R;
+typedef CGAL::Simple_cartesian<double> R;
 typedef R::Point_3 Point;
 typedef CGAL::Creator_uniform_3<double,Point> Creator;
 typedef std::vector<Point> Vector;
@@ -51,7 +50,7 @@ NT The_squared_distance(Point P, Point Q) {
   CGAL::Timer t;
   int dim=3;
   int point_number=10000;
-  int query_point_number=2000; 
+  int query_point_number=10000; 
   int bucket_size=1;
   NT eps=0.0;
 
@@ -102,11 +101,18 @@ NT The_squared_distance(Point P, Point Q) {
   std::vector<Traits::Item_with_distance> 
   nearest_neighbours(query_point_number);
 
+  // CGAL::Timer t1;
+  // CGAL::Timer t2;
   t.reset(); t.start();
+  // t1.reset(); t2.reset();
   for (int i=0; i < query_point_number; i++) {
     // one time iterator
+    // t1.start();t2.start();
     NNN_Iterator NNN_Iterator1(d,query_points[i],0.0);
+	// t1.stop();
+	// t2.start();
     nearest_neighbours[i]=*NNN_Iterator1;
+	// t2.stop();
   };
   t.stop();
    
@@ -114,6 +120,14 @@ NT The_squared_distance(Point P, Point Q) {
   std::cout << "computed" << std::endl
   << query_point_number << " queries in time " << t.time() <<
   " seconds using ASPAS" << std::endl;
+
+  /*
+  std::cout << "computed " << t1.time() <<
+  " seconds using time t1" << std::endl;
+
+  std::cout << "computed " << t2.time() <<
+  " seconds using time t1+t2" << std::endl;
+  */
 
   // brute force approach
 
@@ -166,11 +180,13 @@ NT The_squared_distance(Point P, Point Q) {
 
 int main() {
   test_benchmark_nearest_neighbour_L2();
-   /*
+
+  
   double dummy;
   std::cout << "Enter input to stop: \n" ;
   std::cin >> dummy;
-  */
+  
+  
   return 0;
 };
 

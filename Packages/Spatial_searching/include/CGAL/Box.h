@@ -41,9 +41,11 @@ namespace CGAL {
     T *upper;
     set_bounds(int d, T *l, T *u) : dim(d), lower(l), upper(u) {}
     void operator() (Point& p) {
+		T h;
 		for (int i = 0; i < dim; ++i) {
-			if (p[i] < lower[i]) lower[i] = p[i];
- 			if (p[i] > upper[i]) upper[i] = p[i];
+			h=p[i]; 
+			if (h < lower[i]) lower[i] = h;
+ 			if (h > upper[i]) upper[i] = h;
 		}
     }
   };
@@ -61,9 +63,11 @@ namespace CGAL {
     set_bounds_from_pointer(int d, T *l, T *u) :
 	dim(d), lower(l), upper(u) {}
     void operator() (P p) {
+		T h;
 		for (int i = 0; i < dim; ++i) {
-			if ((*p)[i] < lower[i]) lower[i] = (*p)[i];
-			if ((*p)[i] > upper[i]) upper[i] = (*p)[i];
+			h=(*p)[i];
+			if (h < lower[i]) lower[i] = h;
+			if (h > upper[i]) upper[i] = h;
 		}
     }
   };
@@ -145,7 +149,7 @@ namespace CGAL {
 	  // initialize with values of first point
 	  for (int i=0; i < dim; ++i)
 	  {
-	    lower_[i]=(*begin)[i]; upper_[i]=(*begin)[i];
+	    lower_[i]=(*begin)[i]; upper_[i]=lower_[i];
 	  }
 	  begin++;
       typedef typename std::iterator_traits<PointIter>::value_type P;
@@ -165,7 +169,7 @@ namespace CGAL {
           // initialize with values of first point
 	      for (int i=0; i < dim; ++i)
 		  {
-	        lower_[i]= (*(*begin))[i]; upper_[i]=(*(*begin))[i];
+	        lower_[i]= (*(*begin))[i]; upper_[i]=lower_[i];
 		  }
 	      begin++;
           typedef typename 
@@ -245,18 +249,23 @@ namespace CGAL {
 
   template <class NT, class Point> bool belongs(const Point& p, 
 					      const Box<NT>& b) {
-    for (int i = 0; i < b.dimension(); ++i)
-      if (p[i] < b.lower(i) || p[i] > b.upper(i)) return 0;
+    NT h;
+    for (int i = 0; i < b.dimension(); ++i) {
+        h=p[i];
+        if (h < b.lower(i) || h > b.upper(i)) return 0;
+    }
     return 1;
   }
 
   template <class NT, class Point> 
   NT Min_squared_distance_l2_to_box(const Point& p,
 					      const Box<NT>& b) {
-	NT distance(0.0);
+    NT distance(0.0);
+    NT h;
     for (int i = 0; i < b.dimension(); ++i) {
-      if (p[i] < b.lower(i)) distance += (b.lower(i)-p[i])*(b.lower(i)-p[i]);
-	  if (p[i] > b.upper(i)) distance += (p[i]-b.upper(i))*(p[i]-b.upper(i));
+      h=p[i];
+      if (h < b.lower(i)) distance += (b.lower(i)-h)*(b.lower(i)-h);
+	  if (h > b.upper(i)) distance += (h-b.upper(i))*(h-b.upper(i));
 	}
     return distance;
   }
@@ -264,12 +273,14 @@ namespace CGAL {
   template <class NT, class Point> 
   NT Max_squared_distance_l2_to_box(const Point& p,
 					      const Box<NT>& b) {
-	NT distance(0.0);
+    NT distance(0.0);
+    NT h;
     for (int i = 0; i < b.dimension(); ++i) {
-      if (p[i] >= (b.lower(i)+b.upper(i))/2.0) 
-		  distance += (p[i]-b.lower(i))*(p[i]-b.lower(i)); 
+      h=p[i];
+      if (h >= (b.lower(i)+b.upper(i))/2.0) 
+		  distance += (h-b.lower(i))*(h-b.lower(i)); 
 	  else
-		  distance += (b.upper(i)-p[i])*(b.upper(i)-p[i]);
+		  distance += (b.upper(i)-h)*(b.upper(i)-h);
 	}
     return distance;
   }
@@ -277,10 +288,12 @@ namespace CGAL {
   template <class NT, class Point> 
   NT Min_distance_linf_to_box(const Point& p,
 					      const Box<NT>& b) {
-	NT distance(0.0);
+    NT distance(0.0);
+    NT h;
     for (int i = 0; i < b.dimension(); ++i) {
-      if (b.lower(i) - p[i] > distance)  distance = b.lower(i)-p[i];
-	  if (p[i] - b.upper(i) > distance)  distance = p[i]-b.upper(i);
+      h=p[i];
+      if (b.lower(i) - h > distance)  distance = b.lower(i)-h;
+	  if (h - b.upper(i) > distance)  distance = h-b.upper(i);
 	}
     return distance;
   }
@@ -288,12 +301,14 @@ namespace CGAL {
   template <class NT, class Point> 
   NT Max_distance_linf_to_box(const Point& p,
 					      const Box<NT>& b) {
-	NT distance(0.0);
+    NT distance(0.0);
+    NT h;
     for (int i = 0; i < b.dimension(); ++i) {
-      if (p[i] >= (b.lower(i)+b.upper(i))/2.0) 
-		  if (p[i] - b.lower(i) > distance)  distance = p[i]-b.lower(i); 
+      h=p[i];
+      if (h >= (b.lower(i)+b.upper(i))/2.0) 
+		  if (h - b.lower(i) > distance)  distance = h-b.lower(i); 
 	  else
-		  if (b.upper(i) - p[i] > distance)  distance = b.upper(i)-p[i];
+		  if (b.upper(i) - h > distance)  distance = b.upper(i)-h;
 	}
     return distance;
   }
