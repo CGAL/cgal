@@ -62,6 +62,10 @@ public:
 
   typedef typename Gt::Weighted_point              Weighted_point;
   typedef typename Gt::Bare_point                  Bare_point;
+  typedef typename Gt::Segment_3     Segment;
+  typedef typename Gt::Triangle_3    Triangle;
+  typedef typename Gt::Tetrahedron_3 Tetrahedron;
+  typedef typename Gt::Object_3      Object;
 
   Regular_triangulation_3(const Gt & gt = Gt())
     : Tr_Base(gt)
@@ -123,6 +127,30 @@ public:
   Vertex_handle
   nearest_power_vertex(const Bare_point& p, Cell_handle c =
 		       Cell_handle()) const;
+
+  Bare_point dual(Cell_handle c) const;
+
+//   Object dual(const Facet & f) const
+//     { return dual( f.first, f.second ); }
+//   Object dual(Cell_handle c, int i) const;
+
+  template < class Stream> 		
+  Stream& draw_dual(Stream & os)
+    {
+      typedef typename Gt::Line_3        Line;
+      typedef typename Gt::Ray_3         Ray;
+      Finite_facets_iterator fit = finite_facets_begin();
+      for (; fit != finite_facets_end(); ++fit) {
+	Object o = dual(*fit);
+	Bare_point p;
+	Ray r;
+	Segment s;
+	if (CGAL::assign(p,o)) os << p;
+	if (CGAL::assign(s,o)) os << s;
+	if (CGAL::assign(r,o)) os << r; 
+      }
+      return os;
+    }
   
   bool is_valid(bool verbose = false, int level = 0) const;
 
@@ -134,6 +162,16 @@ private:
   {
     return 
       geom_traits().compare_power_distance_3_object()(p, q, r) == SMALLER;
+  }
+
+  Bare_point
+  construct_weighted_circumcenter(const Bare_point &p, 
+				  const Bare_point &q, 
+				  const Bare_point &r, 
+				  const Bare_point &s) const
+  {
+     return 
+       geom_traits().construct_weighted_circumcenter_3_object()(p,q,r,s);
   }
 
   Vertex_handle
@@ -335,6 +373,19 @@ nearest_power_vertex(const Bare_point& p, Cell_handle start) const
 	nearest = tmp;
     }
     return nearest;
+}
+
+template < class Gt, class Tds >
+typename Regular_triangulation_3<Gt,Tds>::Bare_point
+Regular_triangulation_3<Gt,Tds>::
+dual(Cell_handle c) const
+{
+  CGAL_triangulation_precondition(dimension()==3);
+  CGAL_triangulation_precondition( ! is_infinite(c) );
+  return construct_weighted_circumcenter( c->vertex(0)->point(),
+					  c->vertex(1)->point(),
+					  c->vertex(2)->point(),
+					  c->vertex(3)->point() );
 }
 
 

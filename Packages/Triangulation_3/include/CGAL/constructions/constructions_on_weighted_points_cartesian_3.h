@@ -104,7 +104,7 @@ squared_radius_smallest_orthogonal_sphereC3(
   FT dpx = px-rx;
   FT dpy = py-ry;
   FT dpz = pz-rz;
-  FT dp = CGAL_NTS square(dpx)+CGAL_NTS square(dpy)+CGAL_NTS square(dpz);
+  FT dp = CGAL_NTS square(dpx)+CGAL_NTS square(dpy)+CGAL_NTS  square(dpz);
   FT dpp = dp-pw+rw;
   FT dqx = qx-rx;
   FT dqy = qy-ry;

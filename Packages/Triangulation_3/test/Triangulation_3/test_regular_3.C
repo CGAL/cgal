@@ -47,6 +47,7 @@ int main()
   typedef Cls::Vertex_handle                             Vertex_handle;
 
   typedef std::list<Weighted_point>                        list_point;
+  typedef Cls::Finite_cells_iterator                 Finite_cells_iterator;
 
   // temporary version
 
@@ -352,6 +353,16 @@ int main()
   assert(T3.nearest_power_vertex(query) == v8);
   assert(T3.nearest_power_vertex(Weighted_point(query,1.0)) == v8 );
   assert(T3.nearest_power_vertex_in_cell(query ,v8->cell()) == v8); 
+  
+  // test dual
+  std::cout << " test dual member functions" << std::endl;
+  Finite_cells_iterator fcit = T3.finite_cells_begin();
+  for( ; fcit != T3.finite_cells_end(); ++fcit) {
+    Point cc = T3.dual(fcit);
+    Vertex_handle ncc = T3.nearest_power_vertex(cc);
+    assert(fcit->has_vertex(ncc));
+  }
+
   std::cout << " quit " << std::endl;
   return 0;
 }

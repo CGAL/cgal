@@ -28,6 +28,8 @@
 
 #include <CGAL/predicates/Regular_triangulation_ftC3.h>
 #include <CGAL/predicates/Regular_triangulation_rtH3.h>
+#include <CGAL/predicates/predicates_on_weighted_points_cartesian_3.h>
+#include <CGAL/constructions/constructions_on_weighted_points_cartesian_3.h>
 
 CGAL_BEGIN_NAMESPACE 
 
@@ -84,6 +86,33 @@ public:
     }
 };
 
+
+template< class K, class Weight = typename K::RT >
+class Construct_weighted_circumcenter_3
+{
+public:
+  typedef typename K::Point_3                        Bare_point;
+  typedef CGAL::Weighted_point<Bare_point, Weight>   Weighted_point;
+  typedef typename K::FT                             FT;
+
+  Bare_point operator() ( const Weighted_point p,
+			  const Weighted_point q,
+			  const Weighted_point r,
+			  const Weighted_point s) 
+    {
+      FT x, y, z;
+      weighted_circumcenterC3(p.x(), p.y(), p.z(), p.weight(),
+			      q.x(), q.y(), q.z(), q.weight(),
+			      r.x(), r.y(), r.z(), r.weight(),
+			      s.x(), s.y(), s.z(), s.weight(),
+			      x,y,z);
+      return Bare_point(x,y,z);
+    }
+};
+
+
+
+
 template < class K, class Weight = typename K::RT >
 class Regular_triangulation_euclidean_traits_3
   : public K
@@ -100,13 +129,20 @@ public:
 
   typedef CGAL::Power_test_3<Bare_point, Weight> Power_test_3;
   typedef CGAL::Compare_power_distance_3<Bare_point, Weight>  
-                                                 Compare_power_distance_3;
+                                         Compare_power_distance_3;
+  typedef CGAL::Construct_weighted_circumcenter_3<K,Weight>
+                                 Construct_weighted_circumcenter_3;       
   
   Power_test_3   power_test_3_object() const {
     return Power_test_3();}
 
   Compare_power_distance_3 compare_power_distance_3_object() const {
     return Compare_power_distance_3();}
+
+  Construct_weighted_circumcenter_3 
+  construct_weighted_circumcenter_3_object() const {
+    return Construct_weighted_circumcenter_3();
+  }
 
 };
 
@@ -187,23 +223,7 @@ compare_power_distance_3 (const pt &p,
 				   r.x(), r.y(), r.z(), FT(r.weight()));
 }     
 
-template < class FT >
-Comparison_result
-compare_power_distanceC3(
-		  const FT &px, const FT &py, const FT &pz, 
-		  const FT &qx, const FT &qy, const FT &qz, const FT &qw,
-		  const FT &rx, const FT &ry, const FT &rz, const FT &rw)
-{
- FT dqx = qx - px;
- FT dqy = qy - py;
- FT dqz = qz - pz;
- FT drx = rx - px;
- FT dry = ry - py;
- FT drz = rz - pz;
-   return Comparison_result(CGAL_NTS sign (
-      (dqx*dqx + dqy*dqy + dqz*dqz - qw )
-    - (drx*drx + dry*dry + drz*drz - rw ) ));
-}
+
 
 // Homogeneous versions.
 template < class pt, class Weight >

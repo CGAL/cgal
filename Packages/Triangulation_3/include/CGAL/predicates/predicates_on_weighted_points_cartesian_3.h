@@ -28,6 +28,24 @@
 CGAL_BEGIN_NAMESPACE
 //-------------------------------------------------------------------
 
+template < class FT >
+Comparison_result
+compare_power_distanceC3(
+		  const FT &px, const FT &py, const FT &pz, 
+		  const FT &qx, const FT &qy, const FT &qz, const FT &qw,
+		  const FT &rx, const FT &ry, const FT &rz, const FT &rw)
+{
+ FT dqx = qx - px;
+ FT dqy = qy - py;
+ FT dqz = qz - pz;
+ FT drx = rx - px;
+ FT dry = ry - py;
+ FT drz = rz - pz;
+   return Comparison_result(CGAL_NTS sign (
+      (dqx*dqx + dqy*dqy + dqz*dqz - qw )
+    - (drx*drx + dry*dry + drz*drz - rw ) ));
+}
+
 template< class FT >
 CGAL_MEDIUM_INLINE
 Bounded_side
