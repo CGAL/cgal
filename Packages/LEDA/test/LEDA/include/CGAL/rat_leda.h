@@ -34,7 +34,8 @@ CGAL_BEGIN_NAMESPACE
 
 
 class use_rat_leda_kernel;
-CGAL_TEMPLATE_NULL class Point_2<use_rat_leda_kernel>;
+template <>
+class Point_2<use_rat_leda_kernel>;
 
 class use_rat_leda_kernel : public Homogeneous_base< use_rat_leda_kernel, leda_integer, leda_rational>
 {
@@ -52,7 +53,7 @@ class use_rat_leda_kernel : public Homogeneous_base< use_rat_leda_kernel, leda_i
 };
 
 
-CGAL_TEMPLATE_NULL
+template <>
 class Point_2<use_rat_leda_kernel> : public leda_rat_point
 {
   public:

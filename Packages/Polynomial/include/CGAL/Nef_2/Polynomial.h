@@ -48,9 +48,9 @@ template <class NT> class Polynomial_rep;
 // CLASS TEMPLATE NT: 
 template <class NT> class Polynomial;
 // CLASS TEMPLATE int: 
-CGAL_TEMPLATE_NULL class Polynomial<int> ;
+template <> class Polynomial<int> ;
 // CLASS TEMPLATE double: 
-CGAL_TEMPLATE_NULL class Polynomial<double> ;
+template <> class Polynomial<double> ;
 // SPECIALIZE_CLASS(NT,int double) END
 
 
@@ -569,7 +569,8 @@ operation on two instances of the ring type.}*/
 
 /*{\Xanpage{Polynomial}{int}{Polynomials in one variable}{p}}*/
 
-CGAL_TEMPLATE_NULL class Polynomial<int> : 
+template <>
+class Polynomial<int> : 
   public Handle_for< Polynomial_rep<int> >
 {
 /*{\Xdefinition An instance |\Mvar| of the data type |\Mname| represents
@@ -873,7 +874,8 @@ operation on two instances of the ring type.}*/
 
 /*{\Xanpage{Polynomial}{double}{Polynomials in one variable}{p}}*/
 
-CGAL_TEMPLATE_NULL class Polynomial<double> : 
+template <>
+class Polynomial<double> : 
   public Handle_for< Polynomial_rep<double> >
 {
 /*{\Xdefinition An instance |\Mvar| of the data type |\Mname| represents
