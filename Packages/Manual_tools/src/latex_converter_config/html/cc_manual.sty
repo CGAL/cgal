@@ -530,11 +530,11 @@
 %% Args: ccRefPureGlobalScope, ccRefName (which should include any local scope)
 \newcommand{\ccRefSectionX}[2]{%
     %%\section*{\lcAsciiToHtml{#XC1#XC2#XC3}}
-    \section*{\lciIf{\ccNewRefManualStyle}{}{%
+    \label{ccRef_#XC1#XC2}\section*{\lciIf{\ccNewRefManualStyle}{}{%
       \lciIf{\ccIsFunctionObjectClass}{Function Object Class }{%
       \lciIf{\ccIsFunctionObjectConcept}{Function Object Concept }{%
       \ccRefCategory~}}}%
-      \ccc{#XC1#XC2}}\label{ccRef_#XC1#XC2}}
+      \ccc{#XC1#XC2}}}
 
 %% #1 == ccCategory
 %% #2 == ccRefName
