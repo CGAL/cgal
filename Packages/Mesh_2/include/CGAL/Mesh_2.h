@@ -22,36 +22,36 @@ CGAL_BEGIN_NAMESPACE
 // auxiliary classes
 // # TODO: use this Filtred_iterator usable by Filtred_container, so
 // that it erase bad elements. It will need a pointer to the container.
-template <class In, class Pred>
-class Filtred_iterator_from_container : public In
-{
-  Pred test;
-  In _end;
-public:
-  typedef Pred Predicate;
-  typedef In InputIterator;
-  typedef Filtred_iterator_from_container<In,Pred> Self;
+// template <class In, class Pred>
+// class Filtred_iterator_from_container : public In
+// {
+//   Pred test;
+//   In _end;
+// public:
+//   typedef Pred Predicate;
+//   typedef In InputIterator;
+//   typedef Filtred_iterator_from_container<In,Pred> Self;
 
-  Filtred_iterator_from_container(In current, In end, Pred p=Pred())
-    : test(p), _end(end) 
-    {
-      while(!(*this==_end) & !test(*this))
-	this->In::operator++();
-    };
+//   Filtred_iterator_from_container(In current, In end, Pred p=Pred())
+//     : test(p), _end(end) 
+//     {
+//       while(!(*this==_end) & !test(*this))
+// 	this->In::operator++();
+//     };
 
-  Self& operator++() {
-    do {
-      this->In::operator++();
-    } while(!(*this==_end) & !test(*(*this)));
-    return *this;
-  }
+//   Self& operator++() {
+//     do {
+//       this->In::operator++();
+//     } while(!(*this==_end) & !test(*(*this)));
+//     return *this;
+//   }
 
-  Self  operator++(int) {
-    Self tmp = *this;
-    ++*this;
-    return tmp;
-  }
-};
+//   Self  operator++(int) {
+//     Self tmp = *this;
+//     ++*this;
+//     return tmp;
+//   }
+// };
 
 
 // Tr is a Delaunay constrained triangulation (with intersections or not)
@@ -126,13 +126,13 @@ private:
   typedef typename Geom_traits::Is_bad Is_bad;
 
   struct Cluster {
-    bool is_reduced ;
+    bool reduced ;
 
     // smallest_angle gives the two vertices defining the
     // smallest angle in the cluster
     std::pair<Vertex_handle, Vertex_handle> smallest_angle;
 
-    FT rmin; // WARNING: rmin has no meaning if is_reduced=false!!!
+    FT rmin; // WARNING: rmin has no meaning if reduced=false!!!
     Squared_length minimum_squared_length;
 
     // the following map tells what segments are in the cluster and
@@ -140,27 +140,27 @@ private:
     typedef std::map<Vertex_handle, bool> Vertices_map;
     Vertices_map vertices;
 
-    inline bool reduced() const {
-      return is_reduced;
+    inline bool is_reduced() const {
+      return reduced;
     }
 
-    inline bool reduced(const Vertex_handle v) {
+    inline bool is_reduced(const Vertex_handle v) {
       return vertices[v];
     }
   };
 
-  class Is_this_edge_constrained {
+  class Is_edge_constrained {
     Self* _m;
     Vertex_handle _v;
   public:
-    Is_this_edge_constrained(Self* m, Vertex_handle v)
+    Is_edge_constrained(Self* m, Vertex_handle v)
       : _m(m), _v(v) {}
 
-    Is_this_edge_constrained(const Is_this_edge_constrained& other)
+    Is_edge_constrained(const Is_edge_constrained& other)
       : _m(other._m), _v(other._v) {}
 
-    Is_this_edge_constrained& 
-    operator=(const Is_this_edge_constrained& other)
+    Is_edge_constrained& 
+    operator=(const Is_edge_constrained& other)
       {
 	_m = other._m;
 	_v = other._v;
@@ -179,7 +179,7 @@ private:
   };
 
   typedef Filtred_circulator<Vertex_circulator,
-    Is_this_edge_constrained> Constrained_vertex_circulator;
+    Is_edge_constrained> Constrained_vertex_circulator;
 
   // Bad_faces: list of bad finite faces
   // warning: some faces could be recycled during insertion in the
@@ -202,7 +202,7 @@ private:
       }
   };
 
-  const Is_really_bad test_is_bad;
+  const Is_really_bad is_really_bad;
   typedef std::multimap<double, Threevertices> 
                                               Bad_faces_container_primal_type;
   CGAL::Filtred_container<Bad_faces_container_primal_type, 
@@ -224,13 +224,13 @@ private:
       }
   };
 
-  const Is_really_a_contrained_edge test_is_encroached;
+  const Is_really_a_contrained_edge is_really_a_contrained_edge;
   typedef std::list<Constrained_edge> List_of_constraints;
   CGAL::Filtred_container<List_of_constraints,
     Is_really_a_contrained_edge>       c_edge_queue;
 
-  typedef std::multimap<Vertex_handle, Cluster> Cluster_map_type;
-  Cluster_map_type cluster_map;
+  typedef std::multimap<Vertex_handle, Cluster> Cluster_map;
+  Cluster_map cluster_map;
   // each vertex can have several clusters
 
 #ifdef CGAL_MESH_2_USE_TIMERS
@@ -287,6 +287,7 @@ public:
   template <class Seed_it>
   void mark_facets(Seed_it begin, Seed_it end, bool mark=false)
     {
+      if (dimension()<2) return;
       if(begin!=end)
 	{
 	  for(All_faces_iterator it=all_faces_begin();
@@ -349,12 +350,14 @@ public:
 
   // constructors
   Mesh_2(const Geom_traits& gt = Geom_traits()) : Tr(gt),
-    test_is_bad(*this), Bad_faces(test_is_bad),
-    test_is_encroached(*this), c_edge_queue(test_is_encroached) {};
+    is_really_bad(*this), Bad_faces(is_really_bad),
+    is_really_a_contrained_edge(*this),
+    c_edge_queue(is_really_a_contrained_edge) {};
 
   Mesh_2(List_constraints& lc, const Geom_traits& gt = Geom_traits())
-    : Tr(gt), test_is_bad(*this), Bad_faces(test_is_bad),
-    test_is_encroached(*this), c_edge_queue(test_is_encroached)
+    : Tr(gt), is_really_bad(*this), Bad_faces(is_really_bad),
+    is_really_a_contrained_edge(*this),
+      c_edge_queue(is_really_a_contrained_edge)
     {
       typename List_constraints::iterator lcit = lc.begin();
       for( ; lcit != lc.end(); ++lcit)
@@ -366,9 +369,9 @@ public:
   
   template <class InputIterator>
   Mesh_2(InputIterator first, InputIterator last, const Geom_traits&
-       gt = Geom_traits()) : Tr(gt), test_is_bad(*this),
-	 Bad_faces(test_is_bad), test_is_encroached(*this), 
-	 c_edge_queue(test_is_encroached)
+       gt = Geom_traits()) : Tr(gt), is_really_bad(*this),
+	 Bad_faces(is_really_bad), is_really_a_contrained_edge(*this), 
+	 c_edge_queue(is_really_a_contrained_edge)
     {
       while(first != last){
 	insert((*first).first, (*first).second);
@@ -403,8 +406,6 @@ private:
   void update_cluster(Cluster& c, Vertex_handle va, Vertex_handle vb,
 		      Vertex_handle vm, bool reduction = true);
 
-
-  inline Edge edge_between(Vertex_handle va, Vertex_handle vb);
 
   bool is_small_angle(const Point& pleft,
 		      const Point& pmiddle, 
@@ -442,7 +443,7 @@ template <class Tr>
 bool Mesh_2<Tr>::
 get_cluster(Vertex_handle va, Vertex_handle vb, Cluster &c, bool erase)
 {
-  typedef Cluster_map_type::iterator Iterator;
+  typedef Cluster_map::iterator Iterator;
   typedef std::pair<Iterator, Iterator> Range;
   Range range = cluster_map.equal_range(va);
   for(Iterator it = range.first; it != range.second; it++)
@@ -734,7 +735,7 @@ refine_face(const Face_handle f)
 // encroaches [va,vb] and let rg be the length of the shortest edge
 // of T. If rmin >= rg, then split the edge.
 
-	      if( !c.reduced() || 
+	      if( !c.is_reduced() || 
 		  c.rmin >= shortest_edge_squared_length(f) )
 		{
 		  c_edge_queue.push_back(Constrained_edge(va,vb));
@@ -767,6 +768,7 @@ refine_face(const Face_handle f)
 }
 
 // # used by refine_face
+// WARNING, TODO: use star_hole
 template <class Tr>
 inline
 void Mesh_2<Tr>::
@@ -797,7 +799,7 @@ template <class Tr>
 void Mesh_2<Tr>::
 create_clusters_of_vertex(Vertex_handle v)
 {
-  Is_this_edge_constrained test(this, v);
+  Is_edge_constrained test(this, v);
   Constrained_vertex_circulator begin(incident_vertices(v),test);
   // This circulator represents all constrained edges around the
   // vertex v. An edge [v,v'] is represented by the vertex v'.
@@ -852,9 +854,9 @@ construct_cluster(Vertex_handle v,
 {
   if(c.vertices.empty())
     {
-      c.is_reduced = false;
+      c.reduced = false;
       // c.rmin is not initialized because
-      // is_reduced=false!
+      // reduced=false!
       c.minimum_squared_length = 
 	squared_distance(v->point(), begin->point());
       Constrained_vertex_circulator second(begin);
@@ -922,7 +924,7 @@ cut_cluster_edge(Vertex_handle va, Vertex_handle vb, Cluster& c)
 
   Vertex_handle vc;
 
-  if(c.reduced(vb))
+  if(c.is_reduced(vb))
     {
       Face_handle fh;
       int i;
@@ -1096,16 +1098,16 @@ update_cluster(Cluster& c, Vertex_handle va,Vertex_handle vb,
   if(l<c.minimum_squared_length)
     c.minimum_squared_length = l;
 
-  if(!c.reduced())
+  if(!c.is_reduced())
     {
       typename Cluster::Vertices_map::iterator it = c.vertices.begin();
-      while(it!=c.vertices.end() && c.reduced(it->first))
+      while(it!=c.vertices.end() && c.is_reduced(it->first))
 	++it; // TODO: use std::find and an object class
       if(it==c.vertices.end())
-	c.is_reduced = true;
+	c.reduced = true;
     }
 
-  if(c.reduced())
+  if(c.is_reduced())
     c.rmin = squared_distance(c.smallest_angle.first->point(),
 			      c.smallest_angle.second->point())/FT(4);
   cluster_map.insert(std::make_pair(va,c));
