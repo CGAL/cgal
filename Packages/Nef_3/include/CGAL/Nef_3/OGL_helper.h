@@ -551,7 +551,7 @@ namespace OGL {
 	  SHalfedge_const_handle h = fc;
 	  SHalfedge_around_facet_const_circulator hc(h), he(hc);
 	  CGAL_For_all(hc,he){ // all vertex coordinates in facet cycle
-	    Point_3 sp = hc->source()->point();
+	    Point_3 sp = hc->source()->source()->point();
 	    //	      TRACEN(" ");TRACEN("facet" << sp);
 	    g.push_back_vertex(double_point(sp));
 	  }
