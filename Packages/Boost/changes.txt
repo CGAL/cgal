@@ -1,2 +1,5 @@
+25 May 2004 Sylvain Pion
+- Add LICENSE.BSL.
+
 23 May 2004 Sylvain Pion
 - Initial import of Boost 1.31.0.
