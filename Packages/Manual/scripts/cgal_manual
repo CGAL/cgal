@@ -80,19 +80,24 @@
 # 
 # - 1. CGAL Internal Release
 # 
-#     The style and bibliography files are in ./Manual/.
+#     The style and bibliography files are in ./Manual/. Nothing needs to 
+#     be done, since style files and bibliography files are prefixed 
+#     with the relative ./Manual/ path.
 # 
 # - 2. Individual CGAL Packages + CGAL Package 'Manual'
 # 
 #     The style and bibliography files are in ../../Manual/doc_tex/Manual/.
+#     The search paths get the ../../Manual/doc_tex/ path prepended.
 # 
 # - 3. All other environments
 # 
 #     The style and bibliography files need to be installed properly
 #     from the CVS package Manual, such that the tools can find them, for
 #     example through the search paths defined in the environment variables 
-#     TEXINPUTS, BIBINPUTS, and LATEX_CONV_INPUTS.
-# 
+#     TEXINPUTS, BIBINPUTS, and LATEX_CONV_INPUTS. Recall that the style
+#     and bibliography files are prefixed with './Manual/', so the
+#     Manual subdirectory needs to be found in the search paths.
+#
 # This script properly adds entries in TEXINPUTS, BIBINPUTS, and 
 # LATEX_CONV_INPUTS so that bib and style files are found. It also 
 # adds ../examples:../demo to access the example source codes.
@@ -431,6 +436,23 @@ is_in_list() {
 }
 
 #---------------------------------------------------------------------#
+# find_in_search_path <name> <search-path>
+#     - searches for <name> in all directories listed in the
+#       colon separated <search-path> starting at ${CurrentDir}
+#     - Echos the first path that contains <name>, otherwise nothing.
+#---------------------------------------------------------------------#
+
+find_in_search_path() {
+    search_paths="`echo $2 | sed 's/:/ /g'`"
+    for p in ${search_paths} ; do
+        if [[ "$p" != "" && -r ${CurrentDir}/$p/$1 ]]; then
+            echo -n $p
+            return
+        fi
+    done
+}
+
+#---------------------------------------------------------------------#
 # create_wrapper <rootname> [<package-ref-name>]
 #     - Writes LaTeX wrapper file <rootname>.tex for CGAL package
 #     - CGAL package has name <rootname>, an optional second argument
@@ -447,7 +469,7 @@ create_wrapper() {
 % +------------------------------------------------------------------------+
 
 \documentclass{book}
-\usepackage{cgal_manual}
+\usepackage{Manual/cgal_manual}
 
 \makeindex
 EOF
@@ -482,7 +504,7 @@ EOF
     cat <<EOF
 }
 \bibliographystyle{alpha}
-\bibliography{cgal_manual,geom}
+\bibliography{Manual/cgal_manual,Manual/geom}
 
 \printindex
 
@@ -1226,7 +1248,7 @@ EOF
         # send email notification
         if [ "${TestSuiteResultEmail}" != "" ]; then
             # Use this line on Sun Solaris systems
-            # printf "Subject: New manual test results ${Target}\n\n\n${TestSuiteResultUrl}/${Target}\n" | ${Sendmail} ${TestSuiteResultEmail}
+            # printf "Subject: [automatic] New manual test results ${Target}\n\n\n${TestSuiteResultUrl}/${Target}\n" | ${Sendmail} ${TestSuiteResultEmail}
             # use this line on Linux systems
             printf "\n${TestSuiteResultUrl}/${Target}\n" | ${Sendmail} -s "[automatic] New manual test results ${Target}" ${TestSuiteResultEmail}            
         fi
@@ -1312,27 +1334,33 @@ fi
 
 # Prepare TEXINPUTS and LATEX_CONV_INPUTS
 if [ -r Manual/cgal_manual.sty ]; then # case 1: internal release
-  export TEXINPUTS=".:Manual:../examples:../demo:${TEXINPUTS}"
-  export LATEX_CONV_INPUTS=".:Manual:../examples:../demo:${LATEX_CONV_INPUTS}"
+  export TEXINPUTS=".:../examples:../demo:${TEXINPUTS}"
+  export LATEX_CONV_INPUTS=".:../examples:../demo:${LATEX_CONV_INPUTS}"
 elif [ -r ../../Manual/doc_tex/Manual/cgal_manual.sty ]; then # case 2: package
-  export TEXINPUTS=".:../../Manual/doc_tex/Manual:../examples:../demo:${TEXINPUTS}"
-  export LATEX_CONV_INPUTS=".:../../Manual/doc_tex/Manual:../examples:../demo:${LATEX_CONV_INPUTS}"
+  export TEXINPUTS=".:../../Manual/doc_tex:../examples:../demo:${TEXINPUTS}"
+  export LATEX_CONV_INPUTS=".:../../Manual/doc_tex:../examples:../demo:${LATEX_CONV_INPUTS}"
 else
   export TEXINPUTS=".:../examples:../demo:${TEXINPUTS}"
   export LATEX_CONV_INPUTS=".:../examples:../demo:${LATEX_CONV_INPUTS}"
   # case 3: all others, need to be checked if it is already in searchpath
-  echo "${WarnColor}WARNING${ResetColor}: Could not find cgal_manual.sty. I continue assuming it's in TEXINPUTS," 1>&2
-  echo "${WarnColor}WARNING${ResetColor}: and in LATEX_CONV_INPUTS." 1>&2
+  if [ "`find_in_search_path Manual/cgal_manual.sty ${TEXINPUTS}`" == "" ]; then
+      echo "${ErrorColor}ERROR${ResetColor}: Could not find Manual/cgal_manual.sty in "'$TEXINPUTS'" search path." 1>&2
+  fi
+  if [ "`find_in_search_path Manual/cgal_manual.sty ${LATEX_CONV_INPUTS}`" == "" ]; then
+      echo "${ErrorColor}ERROR${ResetColor}: Could not find Manual/cgal_manual.sty in "'$LATEX_CONV_INPUTS'" search path." 1>&2
+  fi
 fi
 
 # Prepare BIBINPUTS
 if [ -r Manual/cgal_manual.bib ]; then # case 1: internal release
-  export BIBINPUTS="Manual:${BIBINPUTS}"
+  export BIBINPUTS=".:${BIBINPUTS}"
 elif [ -r ../../Manual/doc_tex/Manual/cgal_manual.bib ]; then # case 2: package
-  export BIBINPUTS="../../Manual/doc_tex/Manual:${BIBINPUTS}"
+  export BIBINPUTS="../../Manual/doc_tex:${BIBINPUTS}"
 else
   # case 3: all others, need to be checked if it is already in searchpath
-  echo "${WarnColor}WARNING${ResetColor}: Could not find cgal_manual.bib. I continue assuming it's in BIBINPUTS." 1>&2
+  if [ "`find_in_search_path Manual/cgal_manual.bib ${BIBINPUTS}`" == "" ]; then
+      echo "${ErrorColor}ERROR${ResetColor}: Could not find Manual/cgal_manual.bib in "'$BIBINPUTS'" search path." 1>&2
+  fi
 fi
 
 GlobalReturnStatus=0
