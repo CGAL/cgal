@@ -64,6 +64,11 @@ void bench()
   cout << c << "\tsqrt\t" << t.time()-dt << endl;
 
   dt = t.time(); t.start();
+  for (int i=0; i<loops; i++) { c = b; }
+  t.stop();
+  cout << c << "\t=\t" << t.time()-dt << endl;
+
+  dt = t.time(); t.start();
   for (int i=0; i<loops; i++) { c = c * dd; }
   t.stop();
   cout << c << "\tia*dbl\t" << t.time()-dt << endl;
