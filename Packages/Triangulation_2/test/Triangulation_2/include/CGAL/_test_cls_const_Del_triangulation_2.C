@@ -71,17 +71,17 @@ _test_cls_const_Del_triangulation(const Triangulation &)
   std:: cout << "    find conflicts" << std::endl;
   std::list<Face_handle> conflicts;
   std::list<Edge>  hole_bd;
-  assert(T2.find_conflicts(Point(1,1,2), back_inserter(conflicts)));
+  assert(T2.find_conflicts(Point(1,1,2), std::back_inserter(conflicts)));
   conflicts.clear();	 
   assert(T2.find_conflicts(Point(1,1,2), 
-			   back_inserter(conflicts),
-			   back_inserter(hole_bd)));
+			   std::back_inserter(conflicts),
+			   std::back_inserter(hole_bd)));
   assert(hole_bd.size() == conflicts.size() + 2);
   conflicts.clear();
   hole_bd.clear();
-  assert(T2.find_conflicts(Point(0,1,2), back_inserter(conflicts)));
+  assert(T2.find_conflicts(Point(0,1,2), std::back_inserter(conflicts)));
   assert(T2.boundary_of_conflict_zone(Point(0,1,2), 
-				       back_inserter(hole_bd)));
+				       std::back_inserter(hole_bd)));
   assert(hole_bd.size() == conflicts.size() + 2);
   conflicts.clear();
   unsigned int nch = hole_bd.size();
@@ -89,9 +89,9 @@ _test_cls_const_Del_triangulation(const Triangulation &)
   T2.find_conflicts(Point(0,1,2), hole_bd);
   assert(hole_bd.size() == nch);
   hole_bd.clear();
-  assert(!T2.find_conflicts(Point(0,0,1), back_inserter(conflicts)));
+  assert(!T2.find_conflicts(Point(0,0,1), std::back_inserter(conflicts)));
   conflicts.clear();
-  assert(T2.find_conflicts(Point(-1,-1,1), back_inserter(conflicts)));
+  assert(T2.find_conflicts(Point(-1,-1,1),std:: back_inserter(conflicts)));
   conflicts.clear();
    
 }

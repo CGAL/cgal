@@ -164,6 +164,7 @@ public:
       return number_of_vertices() - n;
     }
 
+  //
   template <class Out_it1, class Out_it2> 
   bool 
   find_conflicts (const Point  &p, 
@@ -258,7 +259,7 @@ find_conflicts(const Point  &p,
 	       std::list<Face_handle>& conflicts,
 	       Face_handle start ) const
 {
-  return find_conflicts(p, back_inserter(conflicts), start);
+  return find_conflicts(p, std::back_inserter(conflicts), start);
 }
 
 template < class Gt, class Tds >

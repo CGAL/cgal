@@ -469,7 +469,7 @@ find_conflicts(Point p, std::list<Edge>& le, Face_handle hint) const
   // sets in le the counterclocwise list of the edges of the boundary of the 
   // union of the faces in conflict with p
   // an edge is represented by the incident face that is not in conflict with p
-  boundary_of_conflict_zone(p, back_inserter(le), hint);
+  boundary_of_conflict_zone(p, std::back_inserter(le), hint);
 }
   
 template < class Gt, class Tds >  
