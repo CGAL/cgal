@@ -1,3 +1,7 @@
+4 October 2004:  Menelaos Karavelas
+- removed "\ccInclude{iostream}" from Apollonius_site_2.tex in the reference
+  manual; it was causing the manual tools to post a warning
+
 10 September 2004:  Menelaos Karavelas
 - test.h: fixed typo that was creating an error in Microsoft and
   Intel compilers.
