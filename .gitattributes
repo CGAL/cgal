@@ -1393,8 +1393,6 @@ Packages/Nef_3/demo/Nef_3/cube.off -text
 Packages/Nef_3/doc_tex/Nef_3/fig/closeup.eps -text svneol=unset#unset
 Packages/Nef_3/doc_tex/Nef_3/fig/closeup.gif -text svneol=unset#unset
 Packages/Nef_3/doc_tex/Nef_3/fig/closeup.pdf -text svneol=unset#unset
-Packages/Nef_3/doc_tex/Nef_3/fig/complex2.gif svneol=native#unset
-Packages/Nef_3/doc_tex/Nef_3/fig/complex2.pdf svneol=native#unset
 Packages/Nef_3/doc_tex/Nef_3/fig/nef_example.eps -text
 Packages/Nef_3/doc_tex/Nef_3/fig/nef_example.gif -text svneol=unset#unset
 Packages/Nef_3/doc_tex/Nef_3/fig/nef_example.pdf -text svneol=unset#unset
