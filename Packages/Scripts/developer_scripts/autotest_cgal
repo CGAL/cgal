@@ -117,8 +117,8 @@ CGAL_COLLECT_TEST=collect_cgal_testresults
 # What is the name of your gmp library?
 # (on windows probably gmp.lib)
 #GMPLIB=gmp.lib
-# otherwise libgmp.a
-GMPLIB=libgmp.a
+# otherwise libgmp.*
+GMPLIB="libgmp.*"
 
 # dir to put the test results into (for downloading)
 # and the corresponding URL
