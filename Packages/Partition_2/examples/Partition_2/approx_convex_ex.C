@@ -10,8 +10,8 @@
 #include <CGAL/random_polygon_2.h>
 #include <list>
 
-typedef CGAL::Cartesian<double>                           R;
-typedef CGAL::Partition_traits_2<R>                       Traits;
+typedef CGAL::Cartesian<double>                           K;
+typedef CGAL::Partition_traits_2<K>                       Traits;
 typedef Traits::Point_2                                   Point_2;
 typedef Traits::Polygon_2                                 Polygon_2;
 typedef Polygon_2::Vertex_iterator                        Vertex_iterator;

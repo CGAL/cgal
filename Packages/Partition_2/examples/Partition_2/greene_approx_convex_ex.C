@@ -7,10 +7,11 @@
 #include <CGAL/partition_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/random_polygon_2.h>
+#include <CGAL/MP_Float.h>
 #include <list>
 
-typedef CGAL::Cartesian<double>                           R;
-typedef CGAL::Partition_traits_2<R>                       Traits;
+typedef CGAL::Cartesian<CGAL::MP_Float>                   K;
+typedef CGAL::Partition_traits_2<K>                       Traits;
 typedef Traits::Point_2                                   Point_2;
 typedef Traits::Polygon_2                                 Polygon_2;
 typedef Polygon_2::Vertex_iterator                        Vertex_iterator;
