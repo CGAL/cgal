@@ -14,9 +14,8 @@
 \ccDefinition
   
 The function \ccRefName\ generates the counterclockwise sequence of extreme
-points from a given set of input points using the algorithm of Akl and
-Toussaint \cite{at-fcha-78} that requires $O(n \log n)$ time for $n$ input
-points.  
+points from a given set of input points.
+
 
 \ccInclude{CGAL/ch_akl_toussiant.h}
 
@@ -36,9 +35,8 @@ points.
             \ccc{result}.}
 
 
-The default traits class \ccc{Default_traits} is the \cgal\
-\ccc{Kernel_traits_2} class,
-with the representation type determined by \ccc{ForwardIteartor::value_type}.
+The default traits class \ccc{Default_traits} is the kernel in which the
+type \ccc{ForwardIteartor::value_type} is defined.
 
 \ccHeading{Requirements}
 \begin{enumerate}
@@ -67,6 +65,12 @@ with the representation type determined by \ccc{ForwardIteartor::value_type}.
 \ccRefIdfierPage{CGAL::ch_jarvis} \\
 \ccRefIdfierPage{CGAL::ch_melkman} \\
 \ccRefIdfierPage{CGAL::convex_hull_2} 
+
+\ccImplementation
+
+This function uses the algorithm of Akl and
+Toussaint \cite{at-fcha-78} that requires $O(n \log n)$ time for $n$ input
+points.  
 
 \ccIndexSubitemEnd{convex hull, 2D}{Akl-Toussaint algorithm}
 \end{ccRefFunction}

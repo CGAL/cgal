@@ -15,9 +15,8 @@
   
 The function \ccRefName\ generates the counterclockwise sequence of extreme
 points from a given set of input points that are not left of the line defined
-by the first and last points in this sequence.  The function uses Andrew's 
-variant of the Graham scan algorithm \cite{a-aeach-79} . This algorithm 
-requires $O(n \log n)$ time in the worst case for $n$ input points.  
+by the first and last points in this sequence.  
+
 
 \ccInclude{CGAL/ch_graham_andrew.h}
 
@@ -41,9 +40,8 @@ requires $O(n \log n)$ time in the worst case for $n$ input points.
             [\ccc{first},\ccc{beyond}) define a counterclockwise polygon, 
             for which the Graham-Sklansky-procedure \cite{s-mcrm-72} works.}
 
-The default traits class \ccc{Default_traits} is the \cgal\
-\ccc{Kernel_traits_2} class,%\ccIndexTraitsClassDefault{ch_graham_andrew_scan}
-with the representation type determined by \ccc{BidirectionalIterator::value_type}.
+The default traits class \ccc{Default_traits} is the kernel in which the
+type \ccc{BidirectionalIterator::value_type} is defined.
 
 
 \ccHeading{Requirements}
@@ -67,6 +65,12 @@ with the representation type determined by \ccc{BidirectionalIterator::value_typ
 \ccRefIdfierPage{CGAL::ch_graham_andrew} \\
 \ccRefIdfierPage{CGAL::lower_hull_points_2} \\
 \ccRefIdfierPage{CGAL::upper_hull_points_2} 
+
+\ccImplementation
+
+The function uses Andrew's 
+variant of the Graham scan algorithm \cite{a-aeach-79} . This algorithm 
+requires $O(n \log n)$ time in the worst case for $n$ input points.  
 
 \ccExample
 

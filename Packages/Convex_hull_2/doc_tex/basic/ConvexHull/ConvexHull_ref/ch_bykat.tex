@@ -14,10 +14,8 @@
 \ccDefinition
   
 The function \ccRefName\ generates the counterclockwise sequence of extreme
-points from a given set of input points using the non-recursive varitaion of
-Eddy's algorithm \cite{e-nchap-77} described in \cite{b-chfsp-78}.
-This algorithm requires $O(n h)$ time 
-in the worst case for $n$ input points with $h$ extreme points.  
+points from a given set of input points.
+
 
 \ccInclude{CGAL/ch_bykat.h}
 
@@ -37,9 +35,8 @@ in the worst case for $n$ input points with $h$ extreme points.
             The source range [\ccc{first},\ccc{beyond}) does not contain
             \ccc{result}.}
 
-The default traits class \ccc{Default_traits} is the \cgal\
-\ccc{Kernel_traits_2} class,
-with the representation type determined by \ccc{ForwardIteartor::value_type}.
+The default traits class \ccc{Default_traits} is the kernel in which the
+type \ccc{ForwardIteartor::value_type} is defined.
 
 
 \ccHeading{Requirements}
@@ -67,6 +64,12 @@ with the representation type determined by \ccc{ForwardIteartor::value_type}.
 \ccRefIdfierPage{CGAL::ch_jarvis} \\
 \ccRefIdfierPage{CGAL::ch_melkman} \\
 \ccRefIdfierPage{CGAL::convex_hull_2} 
+
+\ccImplementation
+This function implements the non-recursive varitaion of
+Eddy's algorithm \cite{e-nchap-77} described in \cite{b-chfsp-78}.
+This algorithm requires $O(n h)$ time 
+in the worst case for $n$ input points with $h$ extreme points.  
 
 \ccIndexSubitemEnd{convex hull, 2D}{Bykat algorithm}
 \end{ccRefFunction}

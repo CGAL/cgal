@@ -13,9 +13,7 @@
 \ccDefinition
   
 The function \ccRefName\ generates the counterclockwise sequence of extreme
-points on the upper hull of a given set of input points using Andrew's
-variant of Graham's scan algorithm \cite{a-aeach-79,m-mdscg-84}.  The algorithm
-has worst-case running time of  $O(n \log n)$ for $n$ input points.
+points on the upper hull of a given set of input points.
 
 \ccInclude{CGAL/convex_hull_2.h}
 
@@ -38,9 +36,8 @@ has worst-case running time of  $O(n \log n)$ for $n$ input points.
             \ccc{result}.}
 
 
-The default traits class \ccc{Default_traits} is the \cgal\ 
-\ccc{Kernel_traits_2} class,
-with the representation type determined by \ccc{InputIterator::value_type}.
+The default traits class \ccc{Default_traits} is the kernel in which the
+type \ccc{InputIterator::value_type} is defined.
 
 The different treatment by \ccc{CGAL::lower_hull_points_2} of the case that 
 all points are equal ensures that concatenation of lower and upper hull 
@@ -68,6 +65,12 @@ points gives the sequence of extreme points.
 \ccRefIdfierPage{CGAL::ch_graham_andrew} \\
 \ccRefIdfierPage{CGAL::ch_graham_andrew_scan} \\
 \ccRefIdfierPage{CGAL::lower_hull_points_2} 
+
+\ccImplementation
+
+This function uses Andrew's
+variant of Graham's scan algorithm \cite{a-aeach-79,m-mdscg-84}.  The algorithm
+has worst-case running time of  $O(n \log n)$ for $n$ input points.
 
 \ccIndexMainItemEnd{upper hull, 2D}
 \end{ccRefFunction}

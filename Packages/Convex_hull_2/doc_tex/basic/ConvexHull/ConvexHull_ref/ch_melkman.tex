@@ -15,9 +15,6 @@
   
 The function \ccRefName\ computes the counterclockwise sequence of
 extreme points of a sequence of points that forms a simple polyline or polygon.
-It uses an implementation of Melkman's algorithm \cite{m-olcch-87}. Running
-time of this is linear.
-
 
 \ccInclude{CGAL/ch_melkman.C}
 
@@ -36,9 +33,8 @@ time of this is linear.
             to a simple polyline. 
             [\ccc{first},\ccc{beyond}) does not contain \ccc{result}}.
 
-The default traits class \ccc{Default_traits} is the \cgal\ 
-\ccc{Kernel_traits_2} class,%\ccIndexTraitsClassDefault{ch_melkman}
-with the representation type determined by \ccc{InputIterator::value_type}.
+The default traits class \ccc{Default_traits} is the kernel in which the
+type \ccc{InputIterator::value_type} is defined.
 
 
 \ccHeading{Requirements}
@@ -65,6 +61,11 @@ with the representation type determined by \ccc{InputIterator::value_type}.
 \ccRefIdfierPage{CGAL::ch_jarvis} \\
 \ccRefIdfierPage{CGAL::ch_melkman} \\
 \ccRefIdfierPage{CGAL::convex_hull_2} 
+
+\ccImplementation
+
+It uses an implementation of Melkman's algorithm \cite{m-olcch-87}. Running
+time of this is linear.
 
 \ccIndexSubitemEnd{convex hull, 2D}{of polyline or polygon}
 \ccIndexSubitemEnd{convex hull, 2D}{Melkman algorithm}

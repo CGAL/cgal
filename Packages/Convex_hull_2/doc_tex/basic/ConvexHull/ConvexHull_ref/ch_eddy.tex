@@ -14,13 +14,8 @@
 \ccDefinition
   
 The function \ccRefName\ generates the counterclockwise sequence of extreme
-points from a given set of input points using Eddy's algorithm 
-\cite{e-nchap-77}.  This is the two-dimensional version of the quickhull
-algorithm \cite{bdh-qach-96}%
-\ccIndexMainItem{quickhull, 2D}
-\ccIndexSubitem{convex hull, 2D}{quickhull}. 
-This algorithm requires $O(n h)$ time 
-in the worst case for $n$ input points with $h$ extreme points.  
+points from a given set of input points.
+
 
 \ccInclude{CGAL/ch_eddy.h}
 
@@ -40,9 +35,8 @@ in the worst case for $n$ input points with $h$ extreme points.
             The source range [\ccc{first},\ccc{beyond}) does not contain
             \ccc{result}.}
 
-The default traits class \ccc{Default_traits} is the \cgal\
-\ccc{Kernel_traits_2} class,%\ccIndexTraitsClassDefault{ch_eddy}
-with the representation type determined by \ccc{ForwardIteartor::value_type}.
+The default traits class \ccc{Default_traits} is the kernel in which the
+type \ccc{ForwardIteartor::value_type} is defined.
 
 
 \ccHeading{Requirements}
@@ -70,6 +64,16 @@ with the representation type determined by \ccc{ForwardIteartor::value_type}.
 \ccRefIdfierPage{CGAL::ch_jarvis} \\
 \ccRefIdfierPage{CGAL::ch_melkman} \\
 \ccRefIdfierPage{CGAL::convex_hull_2} 
+
+\ccImplementation
+
+This function implements Eddy's algorithm 
+\cite{e-nchap-77}, which  is the two-dimensional version of the quickhull
+algorithm \cite{bdh-qach-96}%
+\ccIndexMainItem{quickhull, 2D}
+\ccIndexSubitem{convex hull, 2D}{quickhull}. 
+This algorithm requires $O(n h)$ time 
+in the worst case for $n$ input points with $h$ extreme points.  
 
 \ccIndexSubitemEnd{convex hull, 2D}{Eddy algorithm}
 \end{ccRefFunction}

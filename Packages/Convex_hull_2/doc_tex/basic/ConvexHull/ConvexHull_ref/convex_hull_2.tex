@@ -13,13 +13,7 @@
 \ccDefinition
   
 The function \ccRefName\ generates the counterclockwise sequence of extreme
-points from a given set of input points.  One of two algorithms is used,
-depending on the type of iterator used to specify the input points.  For
-input iterators, the algorithm used is that of Bykat \cite{b-chfsp-78}, which 
-has a worst-case running time of $O(n h)$, where $n$ is the number of input 
-points and $h$ is the number of extreme points.  For all other types of 
-iterators, the $O(n \log n)$ algorithm of of Akl and Toussaint 
-\cite{at-fcha-78} is used.
+points from a given set of input points.  
 
 \ccInclude{CGAL/convex_hull_2.h}
 
@@ -67,6 +61,17 @@ the type \ccc{InputIterator::value_type} is defined.
 \ccRefIdfierPage{CGAL::ch_graham_andrew} \\
 \ccRefIdfierPage{CGAL::ch_jarvis} \\
 \ccRefIdfierPage{CGAL::ch_melkman} 
+
+\ccImplementation
+
+One of two algorithms is used,
+depending on the type of iterator used to specify the input points.  For
+input iterators, the algorithm used is that of Bykat \cite{b-chfsp-78}, which 
+has a worst-case running time of $O(n h)$, where $n$ is the number of input 
+points and $h$ is the number of extreme points.  For all other types of 
+iterators, the $O(n \log n)$ algorithm of of Akl and Toussaint 
+\cite{at-fcha-78} is used.
+
 
 \ccExample
 In the following example we use the \stl-compliant interface of

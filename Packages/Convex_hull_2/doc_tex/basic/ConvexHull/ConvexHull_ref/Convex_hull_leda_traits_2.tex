@@ -28,7 +28,7 @@ may not be robust when using this traits class.
 
 \ccTypes
 \ccAutoIndexingOff
-\ccSetThreeColumns{typedef CGAL::Less_signed_distance_to_line_2 }{Less_signed_distance_to_line_2}{}
+\ccSetThreeColumns{typedef CGAL::p_Less_dist_to_line_2p<Point_2> }{Less_signed_distance_to_line_2}{}
 \ccThreeToTwo
 
 \ccTypedef{typedef leda_point             Point_2;}{}
@@ -50,7 +50,7 @@ may not be robust when using this traits class.
 \ccCreation
 \ccCreationVariable{traits}  %% choose variable name
 
-\ccConstructor{Convex_hull_leda_traits_2();}{default constructor.}
+\ccConstructor{Convex_hull_leda_traits_2(Convex_hull_leda_traits_2& t);}{copy constructor.}
 
 \ccOperations
 

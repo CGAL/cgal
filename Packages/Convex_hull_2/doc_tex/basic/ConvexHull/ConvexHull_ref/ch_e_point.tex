@@ -27,9 +27,8 @@ of input points with maximal $x$ coordinate.
             \ccc{e} is an iterator in the range such that \ccc{*e} $\ge_{xy}$
             \ccc{*it} for all iterators \ccc{it} in the range. }
 
-The default traits class \ccc{Default_traits} is the \cgal\ 
-\ccc{Kernel_traits_2} class,
-with the representation type determined by \ccc{ForwardIteartor::value_type}.
+The default traits class \ccc{Default_traits} is the kernel in which the
+type \ccc{ForwardIteartor::value_type} is defined.
 
 \ccHeading{Requirements}
 \ccc{Traits} defines a type \ccc{Traits::Less_xy_2} as described in 
