@@ -49,6 +49,7 @@ public:
   typedef typename Ct::Edge          Edge;
   typedef typename Ct::Finite_faces_iterator Finite_faces_iterator;
   typedef typename Ct::Face_circulator       Face_circulator;
+  typedef typename Ct::Locate_type           Locate_type;
  
   typedef typename Ct::List_edges List_edges;  
   typedef typename Ct::List_faces List_faces;
