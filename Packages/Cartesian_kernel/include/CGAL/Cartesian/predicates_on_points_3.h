@@ -276,6 +276,29 @@ coplanar_orientation(const PointC3<R CGAL_CTAG> &p,
                                        v.x(), v.y(), v.z());
 }
 
+template < class R >
+inline
+Orientation
+coplanar_side_of_oriented_circle(const PointC3<R CGAL_CTAG> &p,
+                                 const PointC3<R CGAL_CTAG> &q,
+                                 const PointC3<R CGAL_CTAG> &r,
+                                 const PointC3<R CGAL_CTAG> &t,
+                                 const VectorC3<R CGAL_CTAG> &v)
+{
+  // p,q,r,t are supposed to be in a plane perpendicular to v.
+  // v determines an orientation of this plane
+  // returns the equivalent of side_of_oriented_circle(p,q,r,t) in this plane
+  CGAL_kernel_exactness_precondition( v != Null_vector );
+  CGAL_kernel_exactness_precondition( (p-q)*v == R::FT(0) );
+  CGAL_kernel_exactness_precondition( (p-r)*v == R::FT(0) );
+  CGAL_kernel_exactness_precondition( (p-t)*v == R::FT(0) );
+  return coplanar_side_of_oriented_circleC3(p.x(), p.y(), p.z(),
+                                            q.x(), q.y(), q.z(),
+                                            r.x(), r.y(), r.z(),
+                                            t.x(), t.y(), t.z(),
+                                            v.x(), v.y(), v.z());
+}
+
 template < class R>
 inline
 bool

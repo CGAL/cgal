@@ -27,6 +27,7 @@ Version 6.0 (?? ????? 00)
 - New predicates :
   - coplanar_orientation(p, q, r, v) (3d)
   - side_of_bounded_circle(p, q, t)  (2d)
+  - coplanar_side_of_oriented_circle(p, q, r, t, v) (3d)
 
 --- CGAL 2.2 is out ---
 
