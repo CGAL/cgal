@@ -160,7 +160,6 @@ public:
     if (res.is_empty()) return (false);
 
     // Intersection is a point
-    Point_2 ip;
     if (assign(p1,res)) {
       // the intersection is a point:
       if (compare_xy_2_object()(p1, pt) == LARGER) {
@@ -242,7 +241,6 @@ public:
     if (res.is_empty()) return (false);
 
     // Intersection is a point
-    Point_2 ip;
     if (assign(p1,res)) {
       // the intersection is a point:
       if (compare_xy_2_object()(p1, pt) == SMALLER) {
