@@ -107,8 +107,9 @@ public:
 	}
     };
 
-  void leaveEvent(QEvent)
+  void leaveEvent(QEvent e)
     {
+      Qt_widget_layer::leaveEvent(e);
       if (tr->dimension()<1) return;      
       if(do_erase)
 	draw_circle(old_face);
