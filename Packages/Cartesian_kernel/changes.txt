@@ -1,3 +1,6 @@
+Version 6.98 (17 September 2003)
+- Changed CartesianCoordinateConstIterator to CartesianConstIterator
+
 Version 6.97 (8 September 2003) 
 - bug fix in Segment_2.h
 
