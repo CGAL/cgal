@@ -34,7 +34,6 @@
 #include <qtoolbutton.h>
 #include <qiconset.h>
 #include <qfile.h>
-#include <qtextstream.h>
 #include <qstylesheet.h>
 #include <qmessagebox.h>
 #include <qfiledialog.h>
