@@ -77,7 +77,19 @@ extern "C" {
 
 CGAL_BEGIN_NAMESPACE
 
+#define CGAL_IA_FORCE_TO_DOUBLE(x) (x)
+
 #ifdef __i386__
+
+// This is compulsory to have this to force the Intel processor to output a
+// real double, and not Intel's doubles, because even when precision is
+// explicitely set to "double", the exponent still has 15 bits, and it bugs
+// when some values are in this range.
+// The other possible workaround is to use intervals of "long doubles"
+// directly, but I think it would be much slower.
+#undef CGAL_IA_FORCE_TO_DOUBLE
+#define CGAL_IA_FORCE_TO_DOUBLE(x) ( { volatile double ____x = (x); ____x; } )
+
 #ifdef CGAL_IA_USE_ASSEMBLY
 #define CGAL_IA_SETFPCW(CW) asm volatile ("fldcw %0" : :"m" (CW))
 #define CGAL_IA_GETFPCW(CW) asm volatile ("fstcw %0" : "=m" (CW))
