@@ -696,7 +696,7 @@ class Squared_distance_to_ray {
     { }
     typename K::FT operator()(typename K::Point_2 const &pt) const
     {
-        K::Vector_2 diff = pt-ray_source;
+        typename K::Vector_2 diff = pt-ray_source;
         if (! CGALi::is_acute_angle(ray_dir,diff, K()) )
             return (typename K::FT)(diff*diff);
         return supline_dist(pt);
@@ -745,7 +745,7 @@ class Squared_distance_to_segment {
     {
         typedef typename K::RT RT;
         // assert that the segment is valid (non zero length).
-        K::Vector_2 diff = pt-seg_source;
+        typename K::Vector_2 diff = pt-seg_source;
         RT d = CGALi::wdot(diff,segvec, K());
         if (d <= (RT)0)
             return (typename K::FT)(diff*diff);
