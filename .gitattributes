@@ -1466,6 +1466,7 @@ Packages/Qt_widget/include/CGAL/IO/pixmaps/min_rectangle.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/mouse_coord.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/movepoint.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/nearest_vertex.xpm -text
+Packages/Qt_widget/include/CGAL/IO/pixmaps/notool.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/optimal_convex.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/point.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/points.xpm -text
