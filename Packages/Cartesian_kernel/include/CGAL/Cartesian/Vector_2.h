@@ -34,8 +34,11 @@ class VectorC2
 {
   typedef typename R_::FT                   FT;
   typedef typename R_::Point_2              Point_2;
-  typedef typename R_::Direction_2          Direction_2;
   typedef typename R_::Vector_2             Vector_2;
+  typedef typename R_::Segment_2            Segment_2;
+  typedef typename R_::Ray_2                Ray_2;
+  typedef typename R_::Line_2               Line_2;
+  typedef typename R_::Direction_2          Direction_2;
   typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
   typedef Twotuple<FT>	                           Rep;
@@ -54,8 +57,14 @@ public:
   VectorC2(const Point_2 &a, const Point_2 &b)
   { *this = R().construct_vector_2_object()(a, b); }
 
-  VectorC2(const Direction_2 &d)
-    : base(d.dx(), d.dy()) {}
+  VectorC2(const Segment_2 &s)
+  { *this = R().construct_vector_2_object()(s); }
+
+  VectorC2(const Ray_2 &r)
+  { *this = R().construct_vector_2_object()(r); }
+
+  VectorC2(const Line_2 &l)
+  { *this = R().construct_vector_2_object()(l); }
 
   VectorC2(const FT &x, const FT &y)
     : base(x, y) {}

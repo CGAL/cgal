@@ -1,4 +1,7 @@
 19 Feb 2004 Sylvain Pion
+- Remove meaningless constructor Vector_2(Direction_2).
+
+19 Feb 2004 Sylvain Pion
 - Internal *C[23] classes do not publicly derive from the Handle stuff,
   but private data member instead.
 
