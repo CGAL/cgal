@@ -54,6 +54,11 @@ to_double(const leda_bigfloat & b)
 #endif // CGAL_CFG_NO_NAMESPACE
 
 inline
+leda_bigfloat
+sqrt(const leda_bigfloat & b)
+{ return CGAL_LEDA_SCOPE::sqrt(b); }
+
+inline
 bool
 is_finite(const leda_bigfloat & b)
 { return !( CGAL_LEDA_SCOPE::isInf(b) || CGAL_LEDA_SCOPE::isNaN(b) ); }

@@ -1,3 +1,6 @@
+15 September 2004 Sylvain Pion
+- Add sqrt() for leda_integer and leda_bigfloat.
+
 10 September 2004 Andreas Fabri
 - yet another change in operator>>(iostrem&, Gmpz) as it still failed with VC7.1
 

@@ -53,6 +53,11 @@ to_double(const leda_integer & i)
 #endif
 
 inline
+leda_integer
+sqrt(const leda_integer & i)
+{ return CGAL_LEDA_SCOPE::sqrt(i); }
+
+inline
 bool
 is_finite(const leda_integer &)
 { return true; }
