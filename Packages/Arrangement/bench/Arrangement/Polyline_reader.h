@@ -29,9 +29,11 @@ public:
 
     int num_polylines, num_segments;
     int ix, iy;
-    int xmin = 0, xmax = 0, ymin = 0, ymax = 0;
     std::vector<Point_2> points;
     int i, j;
+#if defined(USE_LEDA_KERNEL) || defined(USE_MY_KERNEL)
+    int xmin = 0, xmax = 0, ymin = 0, ymax = 0;
+#endif
 
     file >> num_polylines;
     for (i = 0; i < num_polylines; i++) 
@@ -43,17 +45,14 @@ public:
         file >> ix >> iy;
 
 #if defined(USE_LEDA_KERNEL) || defined(USE_MY_KERNEL)
-        if (j == 0)
-        {
+        if (j == 0) {
           xmin = xmax = ix;
           ymin = ymax = iy;
-        }
-        else
-        {
-          xmin = (ix < xmin) ? ix : xmin;
-          xmax = (ix > xmax) ? ix : xmax;
-          ymin = (iy < ymin) ? iy : ymin;
-          ymax = (iy > ymax) ? iy : ymax;
+        } else {
+          if (ix < xmin) cmin = ix;
+          if (ix > xmax) xmax = ix;
+          if (iy < ymin) ymin = iy;
+          if (iy > ymax) ymax = iy;
         }
 #endif
         points.push_back (Point_2(NT(ix),NT(iy)));
