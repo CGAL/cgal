@@ -1,3 +1,6 @@
+2.8.14  (19 Sep 2001)
+- replace a remaining esprit_logo by cgal_logo
+
 2.8.13  (19 Sep 2001)
 - changed from use of esprit_logo to cgal_logo
 
