@@ -1,3 +1,6 @@
+Version 4.137 on 24 March 2002
+- relocate \ccCreationVar above constructors
+
 Version 4.136 on 24 March 2002
 - typo fix
 

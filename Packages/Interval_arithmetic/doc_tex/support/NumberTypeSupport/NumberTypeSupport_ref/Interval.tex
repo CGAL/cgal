@@ -52,6 +52,7 @@ an interval that does not contain zero, then you can safely determine its sign.
 \ccIsModel
 FieldNumberType
 
+\ccCreationVariable{I}
 \ccCreation
 
 \ccConstructor{Interval_nt(double d);}
@@ -69,7 +70,6 @@ All functions required by a class to be considered as a {\cgal} number type
 sometimes with a particular semantic which is described below.  There are also
 a few additional functions.
 
-\ccCreationVariable{I}
 
 \ccMethod{Interval_nt operator/(Interval_nt J);} {returns
 [$-\infty$;$+\infty$] when the denominator contains 0.}
