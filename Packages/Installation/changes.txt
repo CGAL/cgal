@@ -17,6 +17,8 @@ ALL : Added/Corrected LONG_NAME_PROBLEM_LDFLAGS for Irix.
 GLOB: Added flags for Solaris / KCC.
 GLOB: Fixed problem in _real_options.
 ALL : Updated CGAL_VERSION to 2.2.
+DOCS: updated.
+DOCS: Added remark, that CLN R1.0.3+ is required.
 DOCS: Changed CGAL_NO_LEDA_HANDLE passus.
 
 //---------------------------------------------------------------------
