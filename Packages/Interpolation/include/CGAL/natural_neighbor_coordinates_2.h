@@ -36,11 +36,11 @@ CGAL_BEGIN_NAMESPACE
 template < class OutputIterator>
 struct Project_vertex_output_iterator
 {
-  //this class converts an output_iterator with value type
+  // this class wraps the OutputIterator with value type
   // std::pair<Vertex_handle,T>
-  // to an OutputIterator (with value type std::pair<Point, T>)
-  // Conditions: OutputIterator has value type std::pair<Point, T>
-  //      Vertex_pair.first has the function ->point()
+  // into an output iterator with value type std::pair<Point, T>
+  // Conditions: OutputIterator has value type std::pair<Vertex_handle, T>
+  //      and Vertex_handle has a function ->point()
   //      with return type const Point&
 
   OutputIterator _base;
