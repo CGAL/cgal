@@ -156,8 +156,9 @@ public:
 template <class ForwardIterator, class PolygonTraits>
 class Vertex_data : public Vertex_data_base<ForwardIterator, PolygonTraits> {
 public:
-    typedef Less_segments<Vertex_data>                       Less_segs;
-    typedef std::set<Vertex_index, Less_segs>                Tree;
+    typedef Vertex_data Self;  // Indirection needed by Borland compiler
+    typedef Less_segments<Self> Less_segs;
+    typedef std::set<Vertex_index, Less_segs> Tree;
     typedef Vertex_data_base<ForwardIterator, PolygonTraits> Base_class;
 
     std::vector<Edge_data<Less_segs> > edges;

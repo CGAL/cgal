@@ -1,3 +1,6 @@
+4.6.1 (13 December 2001)
++ Small change to please Borland compiler
+
 4.6 (6 December 2001)
 + Added check for identity in assignment and equality operators.
 
