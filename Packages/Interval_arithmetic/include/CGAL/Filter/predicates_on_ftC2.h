@@ -35,6 +35,10 @@
 #include <CGAL/determinant.h>
 #endif // CGAL_DETERMINANT_H
 
+#ifndef CGAL_BASIC_CONSTRUCTIONS_FTC2_H
+#include <CGAL/basic_constructions_ftC2.h>
+#endif
+
 template < class CT, class ET >
 // CGAL_KERNEL_LARGE_INLINE
 CGAL_Comparison_result
@@ -139,7 +143,7 @@ template < class CT, class ET >
 // CGAL_KERNEL_LARGE_INLINE
 CGAL_Comparison_result
 CGAL_compare_y_at_xC2(const CGAL_Filtering<CT,ET> &px,
-	const CGAL_Filtering<CT,ET>&py,
+	const CGAL_Filtering<CT,ET> &py,
 	                      const CGAL_Filtering<CT,ET> &la,
 	const CGAL_Filtering<CT,ET> &lb,
 	const CGAL_Filtering<CT,ET> &lc)
@@ -916,6 +920,10 @@ CGAL_has_smaller_signed_dist_to_lineC2(const CGAL_Filtering<CT,ET> &px,
   }
   return result;
 }
+
+#ifdef CGAL_FILTER_H
+#include <CGAL/Filter/predicates_on_ftC2.h>
+#endif
 
 
 #endif  // CGAL_FILTER_PREDICATES_ON_FTC2_H
