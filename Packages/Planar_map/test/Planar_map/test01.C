@@ -8,12 +8,7 @@
 #ifndef VOID_TEST
 #include <CGAL/Pm_default_dcel.h>
 
-#if TESTR == 1
-#include <CGAL/Pm_straight_traits.h>
-#include <CGAL/IO/Straight_2_stream.h>
-#else
 #include <CGAL/Pm_segment_traits_2.h>
-#endif
 
 // Point Location Strategy - STRATEGY
 // ----------------------------------
@@ -66,12 +61,7 @@ int main(int argc, char *argv[])
   while (n--) {
     inputt x1, y1, x2, y2;
     std::cin >> x1 >> y1 >> x2 >> y2;
-    Halfedge_handle hh =
-#if TESTR == 1
-      Pm.insert(X_curve_2(Segment_2(Point_2(x1,y1),Point_2(x2,y2))));
-#else
-      Pm.insert(X_curve_2(Point_2(x1,y1),Point_2(x2,y2)));
-#endif
+    Halfedge_handle hh = Pm.insert(X_curve_2(Point_2(x1,y1),Point_2(x2,y2)));
     std::cout << "Inserted (" << hh->curve() << ")"<< std::endl;
   }
   assert(Pm.is_valid());

@@ -25,7 +25,7 @@
 typedef CGAL::Pm_default_dcel<Traits>           Dcel;
 typedef CGAL::Planar_map_2<Dcel,Traits>         Planar_map;
 typedef Traits::Point_2                         Point_2;
-typedef Traits::X_curve                         X_curve_2;
+typedef Traits::X_curve_2                       X_curve_2;
 typedef Traits::X_bounded_curve                 Segment;
 typedef Traits::X_target_unbounded_curve        Ray;
 typedef Traits::X_unbounded_curve               Line;

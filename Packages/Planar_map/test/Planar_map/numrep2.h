@@ -1,7 +1,8 @@
 #if TESTR == 1
 
 typedef double testnt;
-typedef CGAL::Cartesian<testnt> TestR;
+typedef CGAL::Simple_Cartesian<testnt>          Simple_TestR;
+typedef CGAL::Filtered_kernel<Cartesian_TestR>  TestR;
 typedef TestR::RT inputt;
 
 #endif
@@ -65,15 +66,7 @@ typedef TestR::RT inputt;
 #endif
 
 #if BBOX == 1
-#if TESTR == 1
-typedef CGAL::Pm_straight_traits<TestR>         Traits;
-typedef Traits::X_bounded_curve                 Segment_2;
-#else
 typedef CGAL::Pm_segment_traits_2<TestR>        Traits;
-#endif
 #else
 typedef CGAL::Pm_straight_traits_2<TestR>       Traits;
 #endif
-
-
-

@@ -8,12 +8,7 @@
 #ifndef VOID_TEST
 #include <CGAL/Pm_default_dcel.h>
 
-#if TESTR == 1
-#include <CGAL/Pm_straight_traits.h>
-#include <CGAL/IO/Straight_2_stream.h>
-#else
 #include <CGAL/Pm_segment_traits_2.h>
-#endif
 
 #if STRATEGY == 2
 #include <CGAL/Pm_naive_point_location.h>
@@ -56,12 +51,7 @@ int main(int argc, char *argv[])
   while (n--) {
     inputt x1, y1, x2, y2;
     std::cin >> x1 >> y1 >> x2 >> y2;
-    Halfedge_handle h =
-#if TESTR == 1
-      Pm.insert(X_curve_2(Segment_2(Point_2(x1,y1),Point_2(x2,y2))));
-#else
-      Pm.insert(X_curve_2(Point_2(x1,y1),Point_2(x2,y2)));
-#endif
+    Halfedge_handle h = Pm.insert(X_curve_2(Point_2(x1,y1),Point_2(x2,y2)));
     std::cout << "Inserted (" << h->curve() << ")" << std::endl;
   }
 
@@ -80,14 +70,9 @@ int main(int argc, char *argv[])
   std::cout << "\nsplitting edge " << (Pm.halfedges_begin())->curve();
   std::cout << " ... " ; 
 
-  Halfedge_handle h =
-#if TESTR == 1
-      Pm.split_edge(Pm.halfedges_begin(), X_curve_2(Segment_2(s, mid_point)),
-                    X_curve_2(Segment_2(mid_point, t)));
-#else
-      Pm.split_edge(Pm.halfedges_begin(), X_curve_2(s, mid_point),
-                    X_curve_2(mid_point, t));
-#endif
+  Halfedge_handle h = Pm.split_edge(Pm.halfedges_begin(),
+                                    X_curve_2(s, mid_point),
+                                    X_curve_2(mid_point, t));
   assert(Pm.is_valid());
   std::cout << "map valid" << std::endl;
 

@@ -2,7 +2,7 @@
 
 // TESTR 
 //   - odd: Cartesian, even: Homogeneous
-//   - 1   : double (Not checked, uses unexisting Pm_segment_epsilon_traits)
+//   - 1   : Simple Cartesian, Filtered Kernel, double
 //   - 2   : leda_integer
 //   - 3/4 : Gmpz
 //   - 5/6 : leda_rational
@@ -18,7 +18,11 @@
 #endif
 
 // Including headers for testing
-#if TESTR == 1 || TESTR == 3 || TESTR == 5 || TESTR == 7 
+#if TESTR == 1
+#include <CGAL/Simple_Cartesian.h>
+#include <CGAL/Filtered_kernel.h>
+#endif
+#if TESTR == 3 || TESTR == 5 || TESTR == 7 
 #include <CGAL/Cartesian.h>
 #endif
 #if TESTR == 2 || TESTR == 4 || TESTR == 6 || TESTR == 8
