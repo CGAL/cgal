@@ -490,6 +490,9 @@ the second color to \ccc{c2}.}
 
 \ccMethod{virtual void add_point(double x, double y, double
 z);}{Virtual function to add a point to an object.}
+
+\ccMethod{virtual void to_ps(PS_Stream_3 &ps);}{Virtual function to
+send the scene to the postscript stream.}
 \end{ccClass}
 
 \subsection{Predifined drawable objects}
@@ -618,8 +621,15 @@ provide \ccc{tr[i]} for accessing vertices and \ccc{x()},  \ccc{y()},
 \end{ccClassTemplate}
 
 \begin{ccClassTemplate}{Drawable_tetrahedron_3<tetrahedron3>}
-\ccConstructor{Drawable_tetrahedron_3(const tetrahedron3& tri, Color c, Style
+\ccConstructor{Drawable_tetrahedron_3(const tetrahedron3& tet, Color c, Style
 sty=FILL, Size s=2, Precision prec=0);}{The type \ccc{tetrahedron3} must
+provide  \ccc{tr[i]} for accessing vertices and  \ccc{x()},
+\ccc{y()},  \ccc{z()} access functions for coordinates of each vertex.}
+\end{ccClassTemplate}
+
+\begin{ccClassTemplate}{Drawable_triangulation_3<triangulation3>}
+\ccConstructor{Drawable_triangulation_3(const triangulation3& tri,
+Color c1, Color c2, Style sty=FILL, Size s=2, Precision prec=0);}{The type \ccc{triangulation3} must
 provide  \ccc{tr[i]} for accessing vertices and  \ccc{x()},
 \ccc{y()},  \ccc{z()} access functions for coordinates of each vertex.}
 \end{ccClassTemplate}
@@ -628,7 +638,7 @@ provide  \ccc{tr[i]} for accessing vertices and  \ccc{x()},
 
 The file \ccc{facet\_object.h} implements a special kind of drawable object : 
 a generic implementation for 3-dimensional object that can be
-represented with facets (triangulations, polyhedral surfaces,...). A
+represented with facets (triangulations, polyhedral surfaces,...).
 special menu is defined in the viewer window to interact with these
 kind of objects, essentially, by offering several predefined way to
 display them. 

@@ -11,6 +11,10 @@ typedef CGAL::Cartesian<double> rep_t;
 typedef CGAL::Point_3<rep_t> point_t;
 typedef CGAL::Tetrahedron_3<rep_t> tetra;
 
+typedef CGAL::Triangle_3<rep_t> triangle;
+typedef CGAL::Line_3<rep_t> line;
+typedef CGAL::Segment_3<rep_t> segment;
+
 
 typedef CGAL::Triangulation_geom_traits_3<rep_t>  traits_3;
 typedef CGAL::Triangulation_vertex_base_3<traits_3>     Vb ;
@@ -57,15 +61,8 @@ tetra schrink(tetra tet)
 
 int main(int argc, char *argv[]) 
 {
-  int ex_array[6];
-  ex_array[0] = -140;
-  ex_array[1] = 500;
-  ex_array[2] = -350;
-  ex_array[3] = 400;
-  ex_array[4] = -250;
-  ex_array[5] = 300;
 
-  CGAL::Viewer_3 W(ex_array, 6);
+  CGAL::Viewer_3 W(-200, 600, -400, 400, -250, 300);
 
   Delaunay_3 tr;
   
@@ -91,8 +88,12 @@ int main(int argc, char *argv[])
     i++;
     c=change(c);
   }
+  
+
  W.main_loop();
  return 0;
+
+
 }
 
 	  

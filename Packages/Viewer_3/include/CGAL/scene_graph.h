@@ -32,7 +32,7 @@ class Scene_graph
   double scene_center[3];
   double* world_rot;
   double* world_trans;
-  
+
   
   
   void erase(group_list &v, int n)
@@ -45,6 +45,7 @@ class Scene_graph
     }
   
 public:
+
   
   typedef group_list::iterator iterator;
   

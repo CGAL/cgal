@@ -25,6 +25,8 @@
 //#ifndef DRAWABLE
 #include <CGAL/draw_CGAL_Objects.h>
 //#endif
+
+
 CGAL_BEGIN_NAMESPACE
 class Scene_group
 {
@@ -35,30 +37,28 @@ protected:
   double scene_center[3];
   double g_translation[16];
   double g_rotation[16];
-  
+
 private:
 
-void erase(std::vector<bool> &v, int n)
+  void erase(std::vector<bool> &v, int n)
     {
       std::vector<bool>::iterator it=v.begin();      
       for (int i=0; i<n; i++)
         it++;
-       v.erase(it);
+      v.erase(it);
     }
 
-void erase(std::vector<Drawable_object*> &v, int n)
+  void erase(std::vector<Drawable_object*> &v, int n)
     {
       std::vector<Drawable_object*>::iterator it=v.begin();  
       int i;    
       for (i=0; i<n; i++)
         it++;
+      delete v[n];
       v.erase(it);
     }
 
-
 public:
-
-  
 
   typedef std::vector<Drawable_object*>::iterator iterator;
 
@@ -84,7 +84,13 @@ void set_identity()
       g_rotation[15]=1 ;
     }
 
-  //  ~Scene_group() { cerr << "destructor" << endl;  delete g_trans;}
+   ~Scene_group() { 
+     int iii = LD.size();
+     while (iii > 0) {
+       delete LD[iii];
+       iii--;
+     }
+   }
 
 
    Scene_group() : LD(), visible()
@@ -108,7 +114,7 @@ void set_identity()
     }
 
   Scene_group(Drawable_object* d)
-  : LD(), visible()
+    : LD(), visible()
     {
       LD.push_back(d);
       is_visible=true;
@@ -125,19 +131,19 @@ void set_identity()
 
   void draw_group()
     {
-	for (int i = 0; i< (int) LD.size() ; i++) 
-	    LD[i]->draw();
+      for (int i = 0; i< (int) LD.size() ; i++) {
+	LD[i]->draw();
+      }
     }
-
   //##### POSTSCRIPT : donner la bonne signature!!!!!!!!
 
   // Parcours le groupe et envoie chaque objet dans le ps_stream.
-//   void group_to_ps(Post_script_stream &ps)
-//     {
-// 	for (int i = 0; i< (int) LD.size() ; i++) 
-// 	    LD[i]->to_ps(ps);
-//     }
 
+  void group_to_ps(PS_Stream_3 &ps)
+    {
+      for (int i = 0; i< (int) LD.size() ; i++) 
+	LD[i]->to_ps(ps);
+    }
 
 
 
@@ -145,16 +151,18 @@ void set_identity()
   void draw_visible()
     {
       for (int i = 0; i< (int) LD.size() ; i++) 
-	if (visible[i])
-	    LD[i]->draw();
+	if (visible[i]) {
+	  LD[i]->draw();
+	}
     }
 
 
  void draw_invisible()
     {
       for (int i = 0; i< (int) LD.size() ; i++) 
-	if (!visible[i])
-	    LD[i]->draw();
+	if (!visible[i]) {
+	  LD[i]->draw();
+	}
     }
 
 

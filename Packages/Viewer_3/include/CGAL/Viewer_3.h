@@ -20,6 +20,7 @@
 //                 (Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>)
 //
 // ============================================================================
+
 #include <CGAL/GL_win.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_3.h>
@@ -205,12 +206,9 @@ void main_loop();
 
 void set_style_in_selection(Style);
 
-
-/*
-Viewer_3() : scale(500), group(1){init_window();obj_color1=RED; obj_color2=BLACK;obj_size=10 ; obj_precision = 20 ; obj_style = FILL;}
-*/
 Viewer_3() : group(1){
-  scale = (int*) malloc(6*sizeof(int));
+
+  scale = new int[6];
   scale[0] = scale[2] = scale[4] = 0; 
   scale[1] = scale[3] = scale[5] = 500; 
   init_window();obj_color1=RED; obj_color2=BLACK;obj_size=10 ;
@@ -218,16 +216,13 @@ Viewer_3() : group(1){
 }
 
 ~Viewer_3(){
-  free(scale);
+  delete scale;
+  for (int i = scene->size(); i > 0; i--)
+    canvas->reset_group(((char*) scene->data(i))[0]);
 }
 
-/*
-Viewer_3(GLsizei s) :
-  scale(s) , group(1)  {init_window(); obj_color1=RED;obj_color2=BLACK; obj_size=10 ;
-  obj_precision = 20 ; obj_style = FILL; default_impl=custom_win ;}
-*/
 Viewer_3(GLsizei s) : group(1)  {
-  scale = (int*) malloc(6*sizeof(int));
+  scale = new int[6];
   scale[0] = scale[2] = scale[4] = 0;
   scale[1] = scale[3] = scale[5] = s; 
   init_window(); obj_color1=RED;obj_color2=BLACK; obj_size=10 ;
@@ -235,7 +230,7 @@ Viewer_3(GLsizei s) : group(1)  {
 }
 
 Viewer_3(GLsizei x_max, GLsizei y_max, GLsizei z_max) : group(1)  {
-  scale = (int*) malloc(6*sizeof(int));
+  scale = new int[6];
   scale[0] = scale[2] = scale[4] = 0;
   scale[1] = x_max; 
   scale[3] = y_max; 
@@ -246,41 +241,13 @@ Viewer_3(GLsizei x_max, GLsizei y_max, GLsizei z_max) : group(1)  {
 
 Viewer_3(GLsizei x_min, GLsizei x_max, GLsizei y_min, 
 	 GLsizei y_max, GLsizei z_min, GLsizei z_max) : group(1)  {
-  scale = (int*) malloc(6*sizeof(int));
+  scale = new int[6];
   scale[0] = x_min; scale[1] = x_max; 
   scale[2] = y_min; scale[3] = y_max; 
   scale[4] = z_min; scale[5] = z_max; 
   init_window(); obj_color1=RED;obj_color2=BLACK; obj_size=10 ;
   obj_precision = 20 ; obj_style = FILL; default_impl=custom_win ;
 }
-
-Viewer_3(GLsizei *s, int size_of_s) : group(1)  {
-  scale = (GLsizei*) malloc(6*sizeof(GLsizei));
-  for (int i = 0; i < 6; i++) scale[i] = 0;
-
-  switch(size_of_s) {
-  case 1:
-    scale[1] = scale[3] = scale[5] = s[0];
-    break;
-  case 3:
-    scale[1] = s[0]; scale[3] = s[1]; scale[5] = s[2];
-    break;
-  case 6:
-    { // scoping for MSVC
-    for (int ii = 0; ii < 6; ii++)
-      scale[ii] = s[ii];
-    }
-    break;
-  default:
-    std::cerr << "Viewer_3(s, length) wrong size of array" << std::endl;
-    exit(0);
-  }
-
-  init_window(); obj_color1=RED;obj_color2=BLACK; obj_size=10 ;
-  obj_precision = 20 ; obj_style = FILL; default_impl=custom_win ;
-}
-
-
 
 
 
@@ -945,7 +912,7 @@ void Viewer_3::delete_group(int gr)
      scene->deselect();
      while ( (l<=scene->size()) && (((char*) scene->data(l))[0] == gr)){
         scene->select(l);
-        l++;
+	l++;
      }
      delete_selection();
   }
@@ -1492,31 +1459,26 @@ GL_win* Viewer_3::get_window()
 
 void Viewer_3::main_loop()
 {
-   form->show();
-   canvas->show();
-   while(Fl::wait()) {
-     Fl_Widget *obj = Fl::readqueue();
-     if (obj == close_but) break;
-     if (obj == exit_but) {
+  form->show();
+  canvas->show();
+  while(Fl::wait()) {
+    Fl_Widget *obj = Fl::readqueue();
+    if (obj == close_but) break;
+    if (obj == exit_but) {
 #ifdef USE_THREAD
-       sendSignal();
+      sendSignal();
 #endif
-     }
-     //
-     if (obj == canvas) {
-       scene->select(canvas->get_group());
-       scene->callback(scene_cb, (void*) this); }
-     //
-     if (obj == reset_but) reset();
-     if (obj == ortho_but) orthogonal_view();
-     if (obj == persp_but) perspective_view();
-     if (obj == angle_sld) {canvas->set_angle(angle_sld->value());
-     canvas->reshape();canvas->redraw();}
-     if (obj == deep_sld) {canvas->set_deep(deep_sld->value());
-     canvas->reshape();canvas->redraw();}
-     if (group_but->value()==3) 
-       while( (Fl::wait(1.0)) && (boucle)) 
-	 canvas->redraw();
+    }
+    if (obj == reset_but) reset();
+    if (obj == ortho_but) orthogonal_view();
+    if (obj == persp_but) perspective_view();
+    if (obj == angle_sld) {canvas->set_angle(angle_sld->value());
+    canvas->reshape();canvas->redraw();}
+    if (obj == deep_sld) {canvas->set_deep(deep_sld->value());
+    canvas->reshape();canvas->redraw();}
+    if (group_but->value()==3) 
+      while( (Fl::wait(1.0)) && (boucle)) 
+	canvas->redraw();
 	
      
    }

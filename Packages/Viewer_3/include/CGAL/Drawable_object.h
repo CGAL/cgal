@@ -21,6 +21,19 @@
 //
 // ============================================================================
 
+#ifndef DRAWABLE_OBJECT_H
+#define DRAWABLE_OBJECT_H
+
+#include "PS_Stream_3.C"
+
+typedef CGAL::Cartesian<double> D;
+typedef CGAL::Bbox_3 PS_BBox3;
+typedef CGAL::Direction_3< D > Direction;
+typedef CGAL::Point_3< D > Point3;
+typedef CGAL::Point_2< D > Point2;
+typedef CGAL::Plane_3< D > Plane3;typedef CGAL::Direction_3< D > Direction;
+typedef CGAL::Line_3< D > Line3;
+
 
 #include <CGAL/basic.h>
 #include <CGAL/IO/Color.h>
@@ -87,16 +100,17 @@ public:
       lind=0;
     }
 
+  void set_color1(Color c) {set_colors(c, col2);}
+  void set_color2(Color c) {set_colors(color, c);}
 
-
-  void set_color1(Color c) {color=c;}
-  void set_color2(Color c) {col2=c;}
   virtual void add_point(double x, double y, double z) {}
 
-  //POUR le postscript : mettre la bonne signature
-  //  virtual void to_ps(Ps_stream &ps){}
+  virtual void to_ps(PS_Stream_3 &ps){
+  }
 
 
 };
 
 CGAL_END_NAMESPACE
+
+#endif

@@ -21,22 +21,25 @@
 //
 // ============================================================================
 #include <CGAL/Cartesian.h>
+#include <CGAL/Aff_transformation_3.h>
 #ifndef V_UTILS
 #include <CGAL/v_utils.h>
 #endif 
 #ifndef DRAWABLE 
 #include <CGAL/Drawable_object.h>
 #endif
+
+#ifndef DRAW_CGAL_OBJECTS_H
+#define DRAW_CGAL_OBJECTS_H
+
+
+typedef CGAL::Cartesian <double > CT;
+typedef CGAL::Aff_transformation_3 < CT> Transformation;
+
 // style for drawing objects
 // enum Style {FILL=1, WIRE, RAW, FOS1, FOS2, FOS3, FOS4, FOS5};
 
 CGAL_BEGIN_NAMESPACE
-
-// Pour le post-script : ecrire pour chaque objet une fonction to_ps()
-// exemple donne dans Drawable_point_3
-
-
-
 
 
 //#### DRAWABLE POINT #######
@@ -116,10 +119,26 @@ public:
       }
     }
 
-  // void to_ps(Ps_stream &ps)
-  // {
-  //  ps << pt;
-  //}
+  void to_ps(PS_Stream_3 &ps)
+    {
+       CGAL::FILLING fill;
+
+      switch(style) {
+      default:
+	fill = CGAL::NORMAL_FILL;
+	break;
+      case 2:
+	fill = CGAL::WIRED_CULLBACK_FACING;
+	break;
+      }
+
+      ps.set_current_filling(fill);
+      ps.set_border_color(col2);
+      ps.set_fill_color(color);
+
+     ps << pt;
+    }
+
 
 };
 
@@ -189,6 +208,25 @@ public:
       }
     }
   
+  void to_ps(PS_Stream_3 &ps)
+    {
+      CGAL::FILLING fill;
+
+      switch(style) {
+      default:
+	fill = CGAL::NORMAL_FILL;
+	break;
+      case 2:
+	fill = CGAL::WIRED_CULLBACK_FACING;
+	break;
+      }
+
+      ps.set_current_filling(fill);
+      ps.set_border_color(col2);
+      ps.set_fill_color(color);
+
+      ps << seg;
+    }
 
 };
 
@@ -270,6 +308,29 @@ public:
       LP.push_back(Point(x,y,z));
       set_center();
     }
+
+  void to_ps(PS_Stream_3 &ps)
+    {
+      typename std::list<Point>::iterator it;
+      CGAL::FILLING fill;
+
+      switch(style) {
+      default:
+	fill = CGAL::NORMAL_FILL;
+	break;
+      case 2:
+	fill = CGAL::WIRED_CULLBACK_FACING;
+	break;
+      }
+
+      ps.set_current_filling(fill);
+      ps.set_border_color(col2);
+      ps.set_fill_color(color);
+
+      for (it=LP.begin();it!=LP.end();it++) {
+	ps << (*it);
+      }
+    }
 };
 
 
@@ -301,27 +362,48 @@ public:
       o_center[2]=to_double((trg[0].z()+trg[1].z()+trg[2].z()))/3;
     }
 
-void draw()
-{
-  if(lind)
-    glCallList(lind);
-  else {
-    lind = glGenLists(1);
-    glNewList(lind,GL_COMPILE_AND_EXECUTE);
-    glLineWidth(size);
-    set_color(color);
-    if (style==WIRE) 
-      glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-    else
-      glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+  void draw()
+    {
+      if(lind)
+	glCallList(lind);
+      else {
+	lind = glGenLists(1);
+	glNewList(lind,GL_COMPILE_AND_EXECUTE);
+	glLineWidth(size);
+	set_color(color);
+	if (style==WIRE) 
+	  glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+	else
+	  glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
     if ((style==WIRE) || (style==RAW))
       draw_triangle(to_double(trg[0].x()),to_double(trg[0].y()),to_double(trg[0].z()),to_double(trg[1].x()),to_double(trg[1].y()),to_double(trg[1].z()),to_double(trg[2].x()),to_double(trg[2].y()),to_double(trg[2].z()));
-
+    
     else
       draw_triangle_nice(to_double(trg[0].x()),to_double(trg[0].y()),to_double(trg[0].z()),to_double(trg[1].x()),to_double(trg[1].y()),to_double(trg[1].z()),to_double(trg[2].x()),to_double(trg[2].y()),to_double(trg[2].z()));
     glEndList();
-  }
-}
+      }
+    }
+
+  void to_ps(PS_Stream_3 &ps)
+    {
+      CGAL::FILLING fill;
+
+      switch(style) {
+      default:
+	fill = CGAL::NORMAL_FILL;
+	break;
+      case 2:
+	fill = CGAL::WIRED_CULLBACK_FACING;
+	break;
+      }
+
+      ps.set_current_filling(fill);
+      ps.set_border_color(col2);
+      ps.set_fill_color(color);
+
+      ps << trg;
+    }
+  
 };
 
 template<class tetrahedron>
@@ -329,120 +411,140 @@ class Drawable_tetrahedron_3: public  Drawable_object
 {
 private:
   tetrahedron tr;
-
+  
 public:
-
+  
   Drawable_tetrahedron_3(){type="Tetrahedron";}
   Drawable_tetrahedron_3(const tetrahedron &tet,Color c, Style
 			 sty=FILL, Size s=5, Precision prec=15)
-
+    
     {
       tr=tet;
       color = c; size=s;
       set_center();lind=0;type="Tetrahedron";style=sty;precision=prec;
     }
-
+  
   void set_center()
     {
       o_center[0]=to_double((tr[0].x()+tr[1].x()+tr[2].x()+tr[3].x())/3); 
       o_center[1]=to_double((tr[0].y()+tr[1].y()+tr[2].y()+tr[3].y())/3); 
       o_center[2]=to_double((tr[0].z()+tr[1].z()+tr[2].z()+tr[3].z())/3); 
     }
-
-void draw()
-  {
-  if(lind)
-    glCallList(lind);
-  else {
-   lind = glGenLists(1);
-
-   glNewList(lind,GL_COMPILE_AND_EXECUTE);
-     glLineWidth(size);
-     set_color(color);
-     if (style==RAW) {
-       glBegin(GL_LINES);
-       	 glVertex3d(to_double(tr[0].x()),to_double(tr[0].y()),to_double(tr[0].z()));
-       	 glVertex3d(to_double(tr[1].x()),to_double(tr[1].y()),to_double(tr[1].z()));
-	 glVertex3d(to_double(tr[0].x()),to_double(tr[0].y()),to_double(tr[0].z()));
-	 glVertex3d(to_double(tr[3].x()),to_double(tr[3].y()),to_double(tr[3].z()));
-       	 glVertex3d(to_double(tr[0].x()),to_double(tr[0].y()),to_double(tr[0].z()));
-       	 glVertex3d(to_double(tr[2].x()),to_double(tr[2].y()),to_double(tr[2].z()));
-       	 glVertex3d(to_double(tr[1].x()),to_double(tr[1].y()),to_double(tr[1].z()));
-       	 glVertex3d(to_double(tr[2].x()),to_double(tr[2].y()),to_double(tr[2].z()));
-       	 glVertex3d(to_double(tr[1].x()),to_double(tr[1].y()),to_double(tr[1].z()));
-       	 glVertex3d(to_double(tr[3].x()),to_double(tr[3].y()),to_double(tr[3].z()));
-       	 glVertex3d(to_double(tr[2].x()),to_double(tr[2].y()),to_double(tr[2].z()));
-       	 glVertex3d(to_double(tr[3].x()),to_double(tr[3].y()),to_double(tr[3].z()));
-
-       glEnd();
-     }
-     else if (style==WIRE){
-       draw_tube(to_double(tr[0].x()),to_double(tr[0].y()),
-		 to_double(tr[0].z()),to_double(tr[1].x()),
-		 to_double(tr[1].y()),to_double(tr[1].z()),size,
-		 precision);
-
-       draw_tube(to_double(tr[0].x()),to_double(tr[0].y()),
-		 to_double(tr[0].z()),to_double(tr[2].x()),
-		 to_double(tr[2].y()),to_double(tr[2].z()),size,
-		 precision);
-       draw_tube(to_double(tr[0].x()),to_double(tr[0].y()),
-		 to_double(tr[0].z()),to_double(tr[3].x()),
-		 to_double(tr[3].y()),to_double(tr[3].z()),size,
-		 precision);
-       draw_tube(to_double(tr[1].x()),to_double(tr[1].y()),
-		 to_double(tr[1].z()),to_double(tr[2].x()),
-		 to_double(tr[2].y()),to_double(tr[2].z()),size,
-		 precision);
-       draw_tube(to_double(tr[1].x()),to_double(tr[1].y()),
-		 to_double(tr[1].z()),to_double(tr[3].x()),
-		 to_double(tr[3].y()),to_double(tr[3].z()),size,
-		 precision);
-       draw_tube(to_double(tr[2].x()),to_double(tr[2].y()),
-		 to_double(tr[2].z()),to_double(tr[3].x()),
-		 to_double(tr[3].y()),to_double(tr[3].z()),size,
-		 precision);
-
-       draw_sphere(to_double(tr[0].x()),to_double(tr[0].y()),
-		 to_double(tr[0].z()),size+1, precision);
-       draw_sphere(to_double(tr[1].x()),to_double(tr[1].y()),
-		 to_double(tr[1].z()),size+1, precision);
-       draw_sphere(to_double(tr[2].x()),to_double(tr[2].y()),
-		 to_double(tr[2].z()),size+1, precision);
-       draw_sphere(to_double(tr[3].x()),to_double(tr[3].y()),
-		 to_double(tr[3].z()),size+1, precision);
-
-       
-     }
-     else {
-       draw_triangle(to_double(tr[0].x()), to_double(tr[0].y()),
-		     to_double(tr[0].z()), to_double(tr[1].x()),
-		     to_double(tr[1].y()), to_double(tr[1].z()),
-		     to_double(tr[2].x()), to_double(tr[2].y()),
-		     to_double(tr[2].z()));
-       draw_triangle(to_double(tr[0].x()), to_double(tr[0].y()),
-		     to_double(tr[0].z()), to_double(tr[1].x()),
-		     to_double(tr[1].y()), to_double(tr[1].z()),
-		     to_double(tr[3].x()), to_double(tr[3].y()),
-		     to_double(tr[3].z()));
-       draw_triangle(to_double(tr[0].x()), to_double(tr[0].y()),
-		     to_double(tr[0].z()), to_double(tr[3].x()),
-		     to_double(tr[3].y()), to_double(tr[3].z()),
-		     to_double(tr[2].x()), to_double(tr[2].y()),
-		     to_double(tr[2].z()));
-       draw_triangle(to_double(tr[1].x()), to_double(tr[1].y()),
-		     to_double(tr[1].z()), to_double(tr[2].x()),
-		     to_double(tr[2].y()), to_double(tr[2].z()),
-		     to_double(tr[3].x()), to_double(tr[3].y()),
-		     to_double(tr[3].z()));
-
-
-     }
-
-   glEndList();
   
-  }
-  }
+  void draw()
+    {
+      if(lind)
+	glCallList(lind);
+      else {
+	lind = glGenLists(1);
+	
+	glNewList(lind,GL_COMPILE_AND_EXECUTE);
+	glLineWidth(size);
+	set_color(color);
+	if (style==RAW) {
+	  glBegin(GL_LINES);
+	  glVertex3d(to_double(tr[0].x()),to_double(tr[0].y()),to_double(tr[0].z()));
+	  glVertex3d(to_double(tr[1].x()),to_double(tr[1].y()),to_double(tr[1].z()));
+	  glVertex3d(to_double(tr[0].x()),to_double(tr[0].y()),to_double(tr[0].z()));
+	  glVertex3d(to_double(tr[3].x()),to_double(tr[3].y()),to_double(tr[3].z()));
+	  glVertex3d(to_double(tr[0].x()),to_double(tr[0].y()),to_double(tr[0].z()));
+	  glVertex3d(to_double(tr[2].x()),to_double(tr[2].y()),to_double(tr[2].z()));
+	  glVertex3d(to_double(tr[1].x()),to_double(tr[1].y()),to_double(tr[1].z()));
+	  glVertex3d(to_double(tr[2].x()),to_double(tr[2].y()),to_double(tr[2].z()));
+	  glVertex3d(to_double(tr[1].x()),to_double(tr[1].y()),to_double(tr[1].z()));
+	  glVertex3d(to_double(tr[3].x()),to_double(tr[3].y()),to_double(tr[3].z()));
+	  glVertex3d(to_double(tr[2].x()),to_double(tr[2].y()),to_double(tr[2].z()));
+	  glVertex3d(to_double(tr[3].x()),to_double(tr[3].y()),to_double(tr[3].z()));
+	  
+	  glEnd();
+	}
+	else if (style==WIRE){
+	  draw_tube(to_double(tr[0].x()),to_double(tr[0].y()),
+		    to_double(tr[0].z()),to_double(tr[1].x()),
+		    to_double(tr[1].y()),to_double(tr[1].z()),size,
+		    precision);
+	  
+	  draw_tube(to_double(tr[0].x()),to_double(tr[0].y()),
+		    to_double(tr[0].z()),to_double(tr[2].x()),
+		    to_double(tr[2].y()),to_double(tr[2].z()),size,
+		    precision);
+	  draw_tube(to_double(tr[0].x()),to_double(tr[0].y()),
+		    to_double(tr[0].z()),to_double(tr[3].x()),
+		    to_double(tr[3].y()),to_double(tr[3].z()),size,
+		    precision);
+	  draw_tube(to_double(tr[1].x()),to_double(tr[1].y()),
+		    to_double(tr[1].z()),to_double(tr[2].x()),
+		    to_double(tr[2].y()),to_double(tr[2].z()),size,
+		    precision);
+	  draw_tube(to_double(tr[1].x()),to_double(tr[1].y()),
+		    to_double(tr[1].z()),to_double(tr[3].x()),
+		    to_double(tr[3].y()),to_double(tr[3].z()),size,
+		    precision);
+	  draw_tube(to_double(tr[2].x()),to_double(tr[2].y()),
+		    to_double(tr[2].z()),to_double(tr[3].x()),
+		    to_double(tr[3].y()),to_double(tr[3].z()),size,
+		    precision);
+	  
+	  draw_sphere(to_double(tr[0].x()),to_double(tr[0].y()),
+		      to_double(tr[0].z()),size+1, precision);
+	  draw_sphere(to_double(tr[1].x()),to_double(tr[1].y()),
+		      to_double(tr[1].z()),size+1, precision);
+	  draw_sphere(to_double(tr[2].x()),to_double(tr[2].y()),
+		      to_double(tr[2].z()),size+1, precision);
+	  draw_sphere(to_double(tr[3].x()),to_double(tr[3].y()),
+		      to_double(tr[3].z()),size+1, precision);
+	  
+	  
+	}
+	else {
+	  draw_triangle(to_double(tr[0].x()), to_double(tr[0].y()),
+			to_double(tr[0].z()), to_double(tr[1].x()),
+			to_double(tr[1].y()), to_double(tr[1].z()),
+			to_double(tr[2].x()), to_double(tr[2].y()),
+			to_double(tr[2].z()));
+	  draw_triangle(to_double(tr[0].x()), to_double(tr[0].y()),
+			to_double(tr[0].z()), to_double(tr[1].x()),
+			to_double(tr[1].y()), to_double(tr[1].z()),
+			to_double(tr[3].x()), to_double(tr[3].y()),
+			to_double(tr[3].z()));
+	  draw_triangle(to_double(tr[0].x()), to_double(tr[0].y()),
+			to_double(tr[0].z()), to_double(tr[3].x()),
+			to_double(tr[3].y()), to_double(tr[3].z()),
+			to_double(tr[2].x()), to_double(tr[2].y()),
+			to_double(tr[2].z()));
+	  draw_triangle(to_double(tr[1].x()), to_double(tr[1].y()),
+			to_double(tr[1].z()), to_double(tr[2].x()),
+			to_double(tr[2].y()), to_double(tr[2].z()),
+			to_double(tr[3].x()), to_double(tr[3].y()),
+			to_double(tr[3].z()));
+	  
+	  
+	}
+
+	glEndList();
+	
+      }
+    }
+  
+  void to_ps(PS_Stream_3 &ps)
+    {
+      CGAL::FILLING fill;
+
+      switch(style) {
+      default:
+	fill = CGAL::NORMAL_FILL;
+	break;
+      case 2:
+	fill = CGAL::WIRED_CULLBACK_FACING;
+	break;
+      }
+
+      ps.set_current_filling(fill);
+      ps.set_border_color(col2);
+      ps.set_fill_color(color);
+
+      ps << tr;
+    }
 };
 
 
@@ -511,6 +613,28 @@ void draw()
    glEndList();
   }
   }
+
+  
+  void to_ps(PS_Stream_3 &ps)
+    {
+      CGAL::FILLING fill;
+
+      switch(style) {
+      default:
+	fill = CGAL::NORMAL_FILL;
+	break;
+      case 2:
+	fill = CGAL::WIRED_CULLBACK_FACING;
+	break;
+      }
+
+      ps.set_current_filling(fill);
+      ps.set_border_color(col2);
+      ps.set_fill_color(color);
+
+      ps << l;
+    }
+
 };
 
 
@@ -575,8 +699,173 @@ void draw()
    glEndList();
   }
   }
+  
+  void to_ps(PS_Stream_3 &ps)
+    {
+      CGAL::FILLING fill;
+
+      switch(style) {
+      default:
+	fill = CGAL::NORMAL_FILL;
+	break;
+      case 2:
+	fill = CGAL::WIRED_CULLBACK_FACING;
+	break;
+      }
+
+      ps.set_current_filling(fill);
+      ps.set_border_color(col2);
+      ps.set_fill_color(color);
+
+      ps << r;
+    }
+
 };
 
+
+
+// triangulation 2D avec des points 3D
+template<class triangulation_3>
+class Drawable_triangulation_3: public  CGAL::Drawable_object
+{
+private:
+  triangulation_3 tr;
+  
+public:  
+  
+  Drawable_triangulation_3(){type="Triangulation_3";}
+  
+  
+  Drawable_triangulation_3(const triangulation_3 &tet,Color c1, Color
+			   c2=BLACK, Style sty=WIRE, Size s=3, Precision prec=10)
+    
+    {
+      tr=tet;
+      color = c1; col2 = c2; size=s;
+      set_center();lind=0;type="Triangulation_3";style=sty;precision=prec;
+    }
+  
+  void set_center()
+    {
+      
+      typename triangulation_3::Vertex_iterator vit;
+      o_center[0]=0;o_center[1]=0;o_center[2]=0;
+      for (vit=tr.finite_vertices_begin() ; vit != tr.vertices_end(); vit++) {
+	o_center[0]= o_center[0] + to_double(vit->point().x());
+	o_center[1]= o_center[1] +  to_double(vit->point().y());
+	o_center[2]= o_center[2] +  to_double(vit->point().z());
+      }
+      o_center[0] = o_center[0]/tr.number_of_vertices();
+      o_center[1] = o_center[1]/tr.number_of_vertices();
+      o_center[2] = o_center[2]/tr.number_of_vertices();
+    }
+  
+  void draw()
+    {
+      if(lind)
+	glCallList(lind);
+      else {
+	lind = glGenLists(1);
+	int no;
+	typedef typename triangulation_3::Edge_iterator Edge_iterator;
+	typedef typename triangulation_3::Vertex_handle Vertex_handle;
+	typedef typename triangulation_3::Face_handle Face_handle;
+	Vertex_handle v1, v2;
+	Face_handle f;
+	Edge_iterator it = tr.finite_edges_begin();
+	Edge_iterator   beyond = tr.edges_end();
+	
+	glNewList(lind,GL_COMPILE_AND_EXECUTE);
+        if (style==WIRE) {
+	  set_color(color);
+	  for ( ;it != beyond; ++it) {
+	    f = (*it).first;
+	    no = (*it).second;
+	    v1 = f->vertex(f->ccw(no));
+	    v2 = f->vertex(f->cw(no));
+	    draw_tube(to_double(v1->point().x()),to_double(v1->point().y()),to_double(v1->point().z()),to_double(v2->point().x()),to_double(v2->point().y()),to_double(v2->point().z()),size, precision);
+	  }
+	}
+	else {
+	  typename triangulation_3::Face_iterator fit;
+	  set_color(color);
+
+	  switch(style) {
+	  case 1:
+	    glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+	    break;
+	  case 2:
+	    glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+	    break;
+	  case 3:
+	    glPolygonMode(GL_FRONT_AND_BACK,GL_POINT);
+	    break;
+	  default:
+	    glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+	  }
+
+	  std::vector<float> vp1(3), vp2(3), vp3(3);
+	  for (fit=tr.finite_faces_begin(); fit!=tr.finite_faces_end();fit++) {
+	    vp1[0] =to_double(fit->vertex(0)->point().x());
+	    vp1[1] =to_double(fit->vertex(0)->point().y());
+	    vp1[2] =to_double(fit->vertex(0)->point().z());
+	    vp2[0] =to_double(fit->vertex(1)->point().x());
+	    vp2[1] =to_double(fit->vertex(1)->point().y());
+	    vp2[2] =to_double(fit->vertex(1)->point().z());
+	    vp3[0] =to_double(fit->vertex(2)->point().x());
+	    vp3[1] =to_double(fit->vertex(2)->point().y());
+	    vp3[2] =to_double(fit->vertex(2)->point().z());
+	    draw_triangle(vp1[0],vp1[1],vp1[2]-1,vp2[0],vp2[1],vp2[2]-1,vp3[0],vp3[1],vp3[2]-1);
+	  }
+	  
+	  it = tr.finite_edges_begin();
+	  set_color(col2);
+	  glLineWidth(2);
+	  glBegin(GL_LINES);
+	  for ( ;it != beyond; ++it) {
+	    f = (*it).first;
+	    no = (*it).second;
+	    v1 = f->vertex(f->ccw(no));
+	    v2 = f->vertex(f->cw(no));
+	    glVertex3f(to_double(v1->point().x()),to_double(v1->point().y()),to_double(v1->point().z()));
+	    glVertex3f(to_double(v2->point().x()),to_double(v2->point().y()),to_double(v2->point().z()));
+	  }
+	  glEnd();
+	}
+	glEndList();
+      }
+    }
+
+ void add_point(double x, double y ,double z)
+    {
+      glDeleteLists(lind,1);
+      lind=0;
+      typedef typename triangulation_3::Point Point;
+      tr.insert(Point(x,y,z));
+      set_center();
+    }
+
+  void to_ps(PS_Stream_3 &ps)
+    {
+      CGAL::FILLING fill;
+
+      switch(style) {
+      default:
+	fill = CGAL::NORMAL_FILL;
+	break;
+      case 2:
+	fill = CGAL::WIRED_CULLBACK_FACING;
+	break;
+      }
+
+      ps.set_current_filling(fill);
+      ps.set_border_color(col2);
+      ps.set_fill_color(color);
+
+      ps.add_triangulation(tr);
+
+    }
+};
 
 
 
@@ -978,7 +1267,17 @@ Drawable_triangulation_2(const triangulation_2 &tet,Color c, Color c2, Style
       tr.insert(Point(x,y));
       set_center();
     }
+  
+  void to_ps(PS_Stream_3 &ps)
+    {
+      ps.add_triangulation(tr);
+    }
+
+
 };
 
 
+
 CGAL_END_NAMESPACE
+
+#endif

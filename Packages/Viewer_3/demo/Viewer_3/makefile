@@ -1,41 +1,54 @@
+# This is the makefile for compiling a CGAL application.
 
+#---------------------------------------------------------------------#
+#                    include platform specific settings
+#---------------------------------------------------------------------#
+# Choose the right include file from the <cgalroot>/make directory.
 
-FLTK_DIR = ${UTIL}/FLTK/SunOS/fltk-1.0.6
-#GL_DIR = /0/prisme_util/MESA/SunOS/Mesa-3.0/include/
-# GL_DIR = /usr/local/mesa
-CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-last/make/makefile_sparc_SunOS-5.6_g++-2.95.2_LEDA
-
+#CGAL_MAKEFILE=$(UTIL)/CGAL/CGAL-I/make/makefile_sparc_SunOS-5.6_g++-2.95.2_LEDA
+CGAL_MAKEFILE = $(UTIL)/CGAL/CGAL-2.2/make/makefile_sparc_SunOS-5.6_g++-2.95.2_LEDA
+#makefile_sparc_SunOS-5.6_eg++-egcs-2.91.66_LEDA
+#makefile_sparc_SunOS-5.6_eg++-egcs-2.91.66_LEDA
+#makefile_i686_Linux-2.2.14_g++-2.95.2_LEDA
+#makefile_sparc_SunOS-5.6_g++-2.95.2_LEDA
+#makefile_sparc_SunOS-5.6_g++-2.95.2_LEDA
 
 include $(CGAL_MAKEFILE)
 
-
-
-#---------------------------------------------------------------------#
+FLTK_DIR = ${UTIL}/FLTK/SunOS/fltk-1.0.6
+# ---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#
+# rajouter CGAL_LOCAL_CXXFLAGS si on veut les packages de Local
 
 CHECKS_OFF = -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS \
 	    -DCGAL_NO_ASSERTIONS -DCGAL_NO_WARNINGS
 
+CXXFLAGS =  \
+	-I../../include \
+	-I../../../Postscript/include/CGAL/IO \
+	-I../../../Postscript/src/ \
+	-I../include/CGAL/IO \
+	-I../include \
+	-I../src/ \
+	-I${FLTK_DIR} \
+	-I/usr/X11R6/include/ \
+	-B$(UTIL)/Binutils/$(UNAME)/bin/ \
+	-B$(GCC_EXEC_PREFIX) $(LONG_NAME_PROBLEM_CXXFLAGS) \
+	$(CGAL_CXXFLAGS) $(CHECKS_OFF) -DUSE_THREAD
 
-CXXFLAGS = -g  \
-	   -I${FLTK_DIR} \
-           -I../../include \
-	   -I/usr/X11R6/include/ \
-	   -B$(UTIL)/Binutils/SunOS/bin/ \
-	   -B$(GCC_EXEC_PREFIX) $(LONG_NAME_PROBLEM_CXXFLAGS) \
-	   $(CGAL_CXXFLAGS) $(CHECKS_OFF) -DUSE_THREAD
 
-#-I${GL_DIR}/include \
+#---------------------------------------------------------------------#
+#                    linker flags
+#---------------------------------------------------------------------#
 
-LDFLAGS =  $(CGAL_LDFLAGS) -L$(FLTK_DIR)/lib -L/usr/lib/X11 \
-		-R$(FLTK_DIR)/lib -R/usr/lib/X11 \
-	 	-lfltk -lXext -lX11 -lGL -lGLU
+VIEWER3_LDFLAGS = \
+	$(CGAL_WINDOW_LDFLAGS) \
+	 -L$(FLTK_DIR)/lib -L/usr/lib/X11 \
+	-R$(FLTK_DIR)/lib -R/usr/lib/X11 -Wl \
+	 -lfltk -lXext -lX11 -lGL -lGLU -lpthread
 
-#-lMesaGL -lMesaGLU
 
-#-L$(GL_DIR)/lib 
-#-R$(GL_DIR)/lib 
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
@@ -44,15 +57,13 @@ LDFLAGS =  $(CGAL_LDFLAGS) -L$(FLTK_DIR)/lib -L/usr/lib/X11 \
 demo: demo.o 
 	$(CGAL_CXX) -o $@ $(OFILES) demo.o -lpthread $(LDFLAGS)
 
+
 facet_obj: facet_obj.o
 	$(CGAL_CXX) -o $@ $(OFILES) facet_obj.o -lpthread $(LDFLAGS)
 
 
 tetra1: tetra1.o
 	$(CGAL_CXX) -o $@ $(OFILES) tetra1.o -lpthread $(LDFLAGS)
-
-tetra1bis: tetra1bis.o
-	$(CGAL_CXX) -o $@ $(OFILES) tetra1bis.o -lpthread $(LDFLAGS)
 
 tetra2: tetra2.o
 	$(CGAL_CXX) -o $@ $(OFILES) tetra2.o -lpthread $(LDFLAGS)
