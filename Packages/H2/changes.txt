@@ -1,3 +1,6 @@
+2.89 (2 June 2003) [af]
+- bbox() now uses to_interval for PointH2 and CircleH2
+
 2.88 (30 May 2003)
 - Workaround "using namespace" for VC++ 7.0.
 
