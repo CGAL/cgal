@@ -25,54 +25,124 @@
 #ifndef CGAL_WEIGHTED_ALPHA_SHAPE_EUCLIDEAN_TRAITS_3_H
 #define CGAL_WEIGHTED_ALPHA_SHAPE_EUCLIDEAN_TRAITS_3_H 
 
-#include <CGAL/squared_radius_smallest_orthogonalsphereC3.h>
-#include <CGAL/in_smallest_orthogonalsphereC3.h>
+#include <CGAL/constructions/squared_radius_smallest_orthogonalsphere_ftC3.h>
+#include <CGAL/predicates/in_smallest_orthogonalsphere_ftC3.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
 //------------------ Function Objects----------------------------------
 
-template < class return_type, class T >
+template < class K >
 class Compute_squared_radius_orthogonalsphere_3
 {
 public:
 
-  typedef return_type result_type;
+  typedef typename K::Point Point;
+  typedef typename K::FT FT;
+  typedef typename K::FT return_type;
+  typedef Arity_tag< 4 >   Arity;
 
-  result_type operator()(const T& p, const T& q, const T& r, const T& s) const
-    { 
-      return max (return_type(0),
-	          CGAL::squared_radius_orthogonalsphere(p, q, r, s));
+  return_type operator()(const Point& p, const Point& q, 
+			 const Point& r, const Point& s) const
+  {   
+    FT px(p.point().x());
+    FT py(p.point().y());
+    FT pz(p.point().z());
+    FT pw(p.weight());
+    FT qx(q.point().x());
+    FT qy(q.point().y());
+    FT qz(q.point().z());
+    FT qw(q.weight());
+    FT rx(r.point().x());
+    FT ry(r.point().y()); 
+    FT rz(r.point().z());
+    FT rw(r.weight()); 
+    FT sx(s.point().x());
+    FT sy(s.point().y());
+    FT sz(s.point().z());
+    FT sw(s.weight());
+    FT res = squared_radius_orthogonalsphereC3(px, py, pz, pw,
+					       qx, qy, qz, qw,
+					       rx, ry, rz, rw,
+					       sx, sy, sz, sw);
+      return max (FT(0), res);
     }
 
-  result_type operator()(const T& p, const T& q, const T& r) const
-    { 
-      return max (return_type(0),
-	          CGAL::squared_radius_smallest_orthogonalsphere(p, q, r));
-    }
+  return_type operator()(const Point& p, const Point& q, const Point& r) const
+  {  
+    FT px(p.point().x());
+    FT py(p.point().y());
+    FT pz(p.point().z());
+    FT pw(p.weight());
+    FT qx(q.point().x());
+    FT qy(q.point().y());
+    FT qz(q.point().z());
+    FT qw(q.weight());
+    FT rx(r.point().x());
+    FT ry(r.point().y()); 
+    FT rz(r.point().z());
+    FT rw(r.weight()); 
+    
+    FT res = squared_radius_smallest_orthogonalsphereC3(px, py, pz, pw,
+							qx, qy, qz, qw,
+							rx, ry, rz, rw); 
+    return max (FT(0), res );
+  }
 
-  result_type operator()(const T& p, const T& q) const
-    { 
-      return max (return_type(0),
-	          CGAL::squared_radius_smallest_orthogonalsphere(p, q));
+  return_type operator()(const Point& p, const Point& q) const
+  {   
+    FT px(p.point().x());
+    FT py(p.point().y());
+    FT pz(p.point().z());
+    FT pw(p.weight());
+    FT qx(q.point().x());
+    FT qy(q.point().y());
+    FT qz(q.point().z());
+    FT qw(q.weight());
+
+    res = squared_radius_smallest_orthogonalsphereC3(px, py, pz, pw,
+						    qx, qy, qz, qw);
+    return max (FT(0), res);
     }
 };
 
 //-------------------------------------------------------------------
 
-template < class T >
+template < class K >
 class Side_of_bounded_orthogonalsphere_3
 {
 public:
-
+  typedef typename K::Point Point;
+  typedef typename K::FT FT;
   typedef Bounded_side result_type;
+  typedef Arity_tag< 4 >   Arity;
 
   result_type
-  operator()(const T& p, const T& q, const T& r, const T& test) const
-    {
-      return CGAL::in_smallest_orthogonalsphere(p, q, r, test);
-    }
+  operator()(const Point& p, const Point& q, const Point& r, const Point& t) const
+  {  
+    FT px(p.point().x());
+    FT py(p.point().y());
+    FT pz(p.point().z());
+    FT pw(p.weight());
+    FT qx(q.point().x());
+    FT qy(q.point().y());
+    FT qz(q.point().z());
+    FT qw(q.weight());
+    FT rx(r.point().x());
+    FT ry(r.point().y());
+    FT rz(r.point().z());
+    FT rw(r.weight());
+    FT tx(t.point().x());
+    FT ty(t.point().y());
+    FT tz(t.point().z());
+    FT tw(t.weight());
+    
+    return in_smallest_orthogonalsphereC3(px, py, pz, pw,
+					  qx, qy, qz, qw,
+					  rx, ry, rz, rw,
+					  tx, ty, tz, tw);
+  }
 };
   
 //------------------ Traits class -------------------------------------
@@ -83,6 +153,7 @@ Regular_triangulation_euclidean_traits_3<R>
 {
 public:
  
+  typedef Weighted_alpha_shape_euclidean_traits_3<R> Self;
   typedef R Rep;
   typedef typename R::FT Coord_type;
 
@@ -93,9 +164,9 @@ public:
   typedef Weighted_point Point_3;
   typedef Weighted_point Point;
 
-  typedef CGAL::Compute_squared_radius_orthogonalsphere_3<Coord_type, Point> 
+  typedef CGAL::Compute_squared_radius_orthogonalsphere_3<Self> 
     Compute_squared_radius_orthogonalsphere_3;
-  typedef CGAL::Side_of_bounded_orthogonalsphere_3<Point> 
+  typedef CGAL::Side_of_bounded_orthogonalsphere_3<Self> 
     Side_of_bounded_orthogonalsphere_3;
 
   //---------------------------------------------------------------------
