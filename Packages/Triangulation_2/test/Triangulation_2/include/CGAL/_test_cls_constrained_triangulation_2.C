@@ -23,7 +23,7 @@
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
 
-
+#include <list.h>
 #include <CGAL/_test_cls_triangulation_2.C>
 
 template <class Triangulation>
@@ -71,7 +71,8 @@ CGAL__test_cls_constrained_triangulation(const Triangulation &)
   assert( T0_2.dimension() == 0 );
   assert( T0_2.number_of_vertices() == 1 );
   assert( T0_2.is_valid() );
-  l.clear();
+  //l.clear();
+  l.erase(l.begin(),l.end());
 
   // Build dummy triangulations, 1-dimensional
 
@@ -84,14 +85,16 @@ CGAL__test_cls_constrained_triangulation(const Triangulation &)
   assert( T1_1.number_of_vertices() == 20 );
   assert( T1_1.is_valid() );
   
-  l.clear();
+  //l.clear();
+  l.erase(l.begin(),l.end());
   for (m=0; m<19; m++)
       l.push_back(Constraint(Point(3*m, 2*m),Point(3*(m+1),2*(m+1)) ));
   Cls T1_2(l);
   assert( T1_2.dimension() == 1 );
   assert( T1_2.number_of_vertices() == 20);
   assert( T1_2.is_valid() );
-  l.clear();
+  //l.clear();
+  l.erase(l.begin(),l.end());
 
   // Build triangulations, 2-dimensional
 
@@ -104,7 +107,8 @@ CGAL__test_cls_constrained_triangulation(const Triangulation &)
   assert( T2_1.number_of_vertices() == 5);
   assert( T2_1.is_valid() );
   
-  l.clear();
+  //l.clear();
+  l.erase(l.begin(),l.end());
 
   Point lpt[20] = {
   Point(0,0), Point(1,0), Point(2,0), Point(3,0),Point(4,0),

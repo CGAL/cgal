@@ -3,7 +3,7 @@
 
 
 // Define shorter names to please linker (g++/egcs)
-   #define CGAL_Triangulation_test_point CFAL_Ttp
+   #define CGAL_Triangulation_test_point CGAL_Ttp
    #define CGAL_Triangulation_test_segment CGAL_Tts
    #define CGAL_Triangulation_test_line CGAL_Ttl
    #define CGAL_Triangulation_test_direction CGAL_Ttd

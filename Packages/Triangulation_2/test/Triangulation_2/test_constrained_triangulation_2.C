@@ -21,7 +21,6 @@
 // ============================================================================
 
 
-
 #include <CGAL/_test_types.h>
 
 #include <CGAL/Triangulation_vertex_base_2.h>
@@ -39,8 +38,8 @@ int main()
 
   typedef CGAL__Triangulation_test_traits                       Gt;
   typedef CGAL_Triangulation_vertex_base_2<Gt>                  Vb;
-  typedef CGAL_Constrained_triangulation_face_base_2<Gt>        Fb;
-  typedef CGAL_Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
+  typedef CGAL_Constrained_triangulation_face_base_2<Gt>        CFb;
+  typedef CGAL_Triangulation_default_data_structure_2<Gt,Vb,CFb> Tds;
   typedef CGAL_Constrained_triangulation_2<Gt,Tds>              CCls;
 
   CGAL__test_cls_constrained_triangulation(CCls());
