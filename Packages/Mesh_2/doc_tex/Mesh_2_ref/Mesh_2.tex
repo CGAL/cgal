@@ -1,11 +1,34 @@
 \begin{ccRefClass}{Mesh_2<Tr>}
 
 The class \ccRefName\ is the main class of this package. It derives
-from its template parameter \ccc{Tr}, that has to be a \cgal\
+from its template parameter \ccc{Tr}, that has to be a \cgal\ 
 constrained Delaunay triangulation (CDT). This CDT is also the type of
 the input of the meshing process. The geometric traits class of
-\ccc{Tr} has to be a model of the concept \ccc{MeshTraits_2}. \textbf{DE QUOI
-HERITE CE MODEL?}
+\ccc{Tr} has to be a model of the concept \ccc{MeshTraits_2} and also
+to the usual model of the geometric traits class of triangulations
+\ccc{Tr}. This traits class provides not only constructors and
+predicates needed by the mesh algorithm, but also defines the geometric 
+constraints on the triangles of the mesh. The meshing procedure is not 
+sure to finish if predicates are inexact.
+
+A \ccRefName\ object is constructed from a \ccc{Tr}
+CDT. This CDT has to be segment bounded so that it can be
+meshed.. This can be achieved by inserting a bounding box in the
+CDT. The \ccRefName\ constructor will then compute a mesh of the CDT
+by refining triangles that are in the inner of the CDT. Triangles that 
+are connected to the infinite point will not be refined. If the CDT is 
+not segment bounded, no triangle at all will be refined.
+
+Constructors can also have extra parameters that correspond to a list
+of points, named \textit{seeds}. They define segment bounded zones
+that will not be refined. In all case, the zone of the infinite point
+will never be refined.
+
+Once a \ccRefName\ object has been constructed, no points nor segments
+can be inserted in it. The only authorized operations are usual
+``read-only'' access methods of the class \ccc{Tr} and the setting of
+a new geometric traits class, that defines stronger geometric
+constraints. In the latter case, the mesh will be refined.
 
 \ccInclude{CGAL/Mesh_2.h}
 
@@ -28,9 +51,31 @@ HERITE CE MODEL?}
 {Introduces an empty mesh \ccVar.}
 \ccConstructor{Mesh_2(Tr& t, const Geom_traits& gt = Geom_traits());}
 {Construct a mesh from a triangulation \ccc{t} of type \ccc{Tr}.}
-\ccConstructor{template <class Seed_it> 
+\ccConstructor{template <class SeedInputIterator> 
   Mesh_2(Triangulation& t, Seed_it begin, Seed_it end, 
          const Geom_traits& gt = Geom_traits(), bool mark = false);}
-{}
+{Construct a mesh from a triangulation \ccc{t} and define zones that
+  will be refined (if mark=true) or not refined (if
+  mark=false). The sequence [begin. end] is the set of seeds defining
+  the zones.
+  \ccPrecond The \ccc{value_type} of \ccc{begin} and \ccc{end}
+  is \ccc{Point_2}.}
+
+\ccOperations
+
+\ccMethod{ void set_geom_traits(Geom_traits gt);}
+{ Assign \ccc{gt} to the geometric traits object and refine the mesh
+  according the new geometric constraints.}
+
+\ccMethod{template <class FaceHandleInputIterator>
+  void set_geom_traits(Geom_traits gt, FaceHandleInputIterator begin,
+  FaceHandleInputIterator end);}
+{ This overloaded version of the previous method permits to set the
+  list of bad triangles directly, from the sequence [begin, end], so
+  that the algorithm will not scan the whole set of triangles to find
+  bad ones. To use if there is a non-naive way to find bad triangles.
+  \ccPrecond The \ccc{value_type} of \ccc{begin} and \ccc{end} is
+  \ccc{Face_handle}.}
+
 
 \end{ccRefClass}

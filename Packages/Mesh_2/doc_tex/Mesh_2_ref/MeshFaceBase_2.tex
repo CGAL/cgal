@@ -1,0 +1,24 @@
+\begin{ccRefConcept}{MeshFaceBase_2}
+
+\ccDefinition
+The concept \ccRefName\ is an extension of the concept
+\ccc{TriangulationFaceBase_2}. Its aim is just to add a marker to
+faces, to tell if the corresponding triangle is in a segment bounded
+zone that must be refined.
+
+\ccRefines
+\ccc{TriangulationFaceBase_2}
+
+\ccCreationVariable{f} 
+
+\ccAccessFunctions
+
+\ccMethod{ bool is_marked() const;}{ returns true if this face can be
+  destroyed or false if it should be ignored.}
+\ccMethod{ void set_marked(const bool b);}{ set if this face can
+  be refined or not.}
+
+\ccHasModels
+\ccc{Mesh_face_base_2<Traits>}
+
+\end{ccRefConcept}

@@ -10,15 +10,42 @@ Domains that can be meshed are \emph{planar straight line graphes}
 (PSLG), which are sets of of vertices and segments such that all
 endpoints of every segments are in the set and that segments intersect
 only at end-points. Such a domain can represented by a \cgal\ 
-constrained triangulation, whose constraints segment are the segment of the
-domain.
+constrained triangulation, whose constrained segment are the segments
+of the domain.
 
 The mesh class depends on one template parameter. It stands for a
-\cgal\ constrained Delaunay triangulation which represents the PSLG
-and becomes the base class. Its geometric traits class should not only
-provide geometric objects and predicates for the triangulation, as
-usual, but also define the geometric constraints that the triangles
+\cgal\ constrained Delaunay triangulation (CDT) which represents the
+PSLG and becomes the base class. Its geometric traits class should not
+only provide geometric objects and predicates for the triangulation,
+as usual, but also define the geometric constraints that the triangles
 have to satisfy.
 
 The algorithm used to compute the mesh is the \emph{Delaunay
-refinement}~\cite{s-mgdsa-00}.
+  refinement}~\cite{s-mgdsa-00}. After having conformed the CDT,
+triangles that do not satisfy geometric constraints will be destroyed
+by inserting their circumcenters in the CDT. At all time, the algorithm
+insures that segments of the CDT have Gabriel property: their diametral
+circles do not contain any point.
+
+The shape constraint on triangles should be that the circumradius is
+lower than a bound $B$ times the shortest edge of the triangle. This is
+equivalent to say that the minimum angle of the triangle is greater
+than $\arcsin{\frac{1}{2B}}$. If not angles are smaller than $\theta$,
+then no angles are greater than $\pi - \theta$. Unfortunalty, the
+algorithm will terminate at all time only if $B \ge \sqrt{2}$. This
+package cannot, for the moment, insure that angles of meshes are
+greater than $20.7$~degres. The size constraint can be any constraint
+that tends to prefere small triangles. Both types of constraints are
+defined in a nested type \ccc{Is_bad} of the geometric traits class.
+
+\subsection*{Concepts}
+\ccRefConceptPage{MeshTraits_2}\\
+\ccRefConceptPage{MeshFaceBase_2}
+
+\subsection*{Classes}
+\ccRefIdfierPage{CGAL::Mesh_2<Tr>}\\
+\ccRefIdfierPage{CGAL::Mesh_face_base_2<Traits>}\\
+\ccRefIdfierPage{CGAL::Mesh_default_traits_2<K>}\\
+\ccRefIdfierPage{CGAL::Mesh_size_traits_2<K>}
+
+\lcHtml{\subsection*{Links to the Reference Sections}}

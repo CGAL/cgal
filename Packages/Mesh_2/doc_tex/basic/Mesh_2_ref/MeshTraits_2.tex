@@ -2,38 +2,73 @@
 
 \ccDefinition
 
-In addition of the requirements of the concept \textbf{QUEL\_MODEL\_ ?},
-the concept \ccRefName\ has to provide a numeric field type \ccc{FT},
-a type \ccc{Vector_2} and several constructors on \ccc{Vector_2} and
+In addition of the requirements of the concept
+\ccc{DelaunayTriangulationTraits_2}, the concept \ccRefName\ has to
+provide a numeric field type \ccc{FT}, an enumeration \ccc{Angle}, a
+type \ccc{Vector_2} and several constructors on \ccc{Vector_2} and
 \ccc{Point_2}, a predicate on angles \ccc{Angle_2}, and two special
 predicates \ccc{Compute_squared_minimum_sine}, and \ccc{Is_bad}.
 
 \ccRefines
 
-\ccc{ConstrainedDelaunayTriangulationTraits_2}
+\ccc{DelaunayTriangulationTraits_2}
 
 \ccTypes
 
-\ccNestedType{FT}{The field type.}
-\ccNestedType{Vector_2}{The vector type.}
-\ccNestedType{Construct_vector_2}{Constructor object. Must provide the 
-  operator \ccc{Vector_2 operator()(Point a, Point b)} that computes
-  the vector $b-a$.}
-\ccNestedType{Constructor_scaled_vector_2}{Constructor object. Must
+\ccNestedType{FT}{The field type.}  \ccNestedType{Vector_2}{The vector
+  type.}
+\ccNestedType{Construct_vector_2}{Constructor object. Must
+  provide the operator \ccc{Vector_2 operator()(Point a, Point b)}
+  that computes the vector $b-a$.}
+\ccNestedType{Construct_scaled_vector_2}{Constructor object. Must
   provide the operator \ccc{Vector_2 operator()(Vector_2 v, FT scale)}
-  that computes the vector $scale \cdot \mathbf{v}$}
-\ccNestedType{Constructor_midpoint_2}{Constructor object. Must provide 
-  the operator \ccc{Point operator()(Point a, Point b)} that computes
-  the middle point of the segment $ab$.}
+  that computes the vector $scale \cdot \mathbf{v}$.}
+\ccNestedType{Construct_translated_point_2}{Construct object. Must
+  provide the operator \ccc{Point_2 operator()(Point_2 p, Vector_2 v)}
+  that computes the point $p + \mathbf{v}$.}
+\ccNestedType{Construct_midpoint_2}{Constructor object. Must provide
+  the operator \ccc{Point_2 operator()(Point_2 a, Point_2 b)} that
+  computes the middle point of the segment $ab$.}
+\ccEnum{enum Angle { OBTUSE, RIGHT, ACUTE};}{Enumeration needed by the
+  following type}
+\ccNestedType{Angle_2}{Predicate object. Must provide the operator
+  \ccc{Angle operator()(Point_2 p, Point_2 q, Point_2 r)} that OBTUSE,
+  RIGHT or ACUTE depending on the angle formed by the three points p,
+  q, r (q being the vertex of the angle).}
+\ccNestedType{Compute_squared_minimum_sine_2}{Constructor object. Must 
+  provide the operator \ccc{double operator()(Point_2 a, Point_2 b,
+    Point_2 c)} that computes the squared minimum sine of the triangle 
+  formed by the three points a, b, c.}
+\ccNestedType{Is_bad}{Predicate object. Must provide the operator
+  \ccc{bool operator()(Point_2 a, Point_2 b, Point_2 c)} with tells if 
+  the triangle formed by by the three points a, b, c satisfies the
+  wanted criteria for mesh triangles.}
 
 \ccCreation
-\ccc{ccCreationVariable}{traits}
+\ccCreationVariable{traits}
 
 \ccConstructor{MeshTraits_2();}{default constructor.}
 \ccGlue
 \ccConstructor{MeshTraits_2(const MeshTraits_2& traits2);}
 {Copy constructor.}
+\ccGlue
+\ccMethod{MeshTraits_2 operator=(MeshTraits_2 traits2);}{Assignment
+  operator.}
 
+\ccHeading{Access to predicate and constructor objects}
 
+\ccMethod{Construct_vector_2 construct_vector_2_object();}{}
+\ccMethod{Construct_scaled_vector_2 construct_scaled_vector_2_object();}{}
+\ccMethod{Construct_translated_point_2
+  construct_translated_point_2_object();}{}
+\ccMethod{Constructor_midpoint_2 construct_midpoint_2_object();}{}
+\ccMethod{Angle_2 angle_2_object();}{}
+\ccMethod{Compute_squared_minimum_sine_2
+  compute_squared_minimum_sine_2_object();}{}
+\ccMethod{Is_bad is_bad_object();}{}
+
+\ccHasModels
+\ccc{Mesh_default_traits_2}\\
+\ccc{Mesh_size_traits_2}
 
 \end{ccRefConcept}
