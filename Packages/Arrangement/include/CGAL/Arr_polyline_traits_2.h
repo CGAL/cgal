@@ -156,10 +156,6 @@ public:
                                                const X_monotone_curve_2& cv2, 
                                                const Point_2& q) const 
   {
-    // The two curves must not be vertical.
-    CGAL_precondition(! curve_is_vertical(cv1));
-    CGAL_precondition(! curve_is_vertical(cv2));
-
     // Get the indices of the segments in cv1 and cv2 containing q and
     // defined to its left.
     int    i1 = _locate_point_side (cv1, q, false);
@@ -187,10 +183,6 @@ public:
 						const X_monotone_curve_2& cv2, 
 						const Point_2& q) const 
   {
-    // The two curves must not be vertical.
-    CGAL_precondition(! curve_is_vertical(cv1));
-    CGAL_precondition(! curve_is_vertical(cv2));
-
     // Get the indices of the segments in cv1 and cv2 containing q and
     // defined to its right.
     int    i1 = _locate_point_side (cv1, q, true);
@@ -711,17 +703,17 @@ private:
 
     if (i < 0)
       return (-1);
-
+   
     // If we seek an end-point to the right of q, q must be smaller than it.
     // If we seek an end-point to its left, q must be larger.
     const Comparison_result  cres = (to_right) ? SMALLER : LARGER;
 
     // Check whether x(q) is the x coordinate of an end-point of cv.
-    if (seg_traits.compare_x (q, seg_traits.curve_source(cv[i])) == EQUAL)
+    if (seg_traits.compare_xy (q, seg_traits.curve_source(cv[i])) == EQUAL)
     {
       // If x(q) is at cv[i]'s source and its target is to the right (or left) 
       // of q, then cv[i] is defined to the right (or left) of q. 
-      if (seg_traits.compare_x (q, 
+      if (seg_traits.compare_xy (q,   // VERTICAL!!!
 				seg_traits.curve_target(cv[i])) == cres)
       {
 	return (i);
@@ -740,11 +732,11 @@ private:
 	return (-1);
       }
     }
-    else if (seg_traits.compare_x (q, seg_traits.curve_target(cv[i])) == EQUAL)
+    else if (seg_traits.compare_xy (q, seg_traits.curve_target(cv[i])) == EQUAL)
     {
       // If x(q) is at cv[i]'s target and its source is to the right (or left) 
       // of q, then cv[i] is defined to the right (or left) of q. 
-      if (seg_traits.compare_x (q, 
+      if (seg_traits.compare_xy (q, 
 				seg_traits.curve_source(cv[i])) == cres)
       {
 	return (i);
