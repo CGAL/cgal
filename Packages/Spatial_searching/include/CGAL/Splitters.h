@@ -53,7 +53,7 @@ public:
   };
 
 
-template <class SearchTraits, class Container_=Point_container<SearchTraits>, 
+  template <class SearchTraits,
           class Separator_=Plane_separator<typename SearchTraits::FT>  >
 class Median_of_max_spread 
   : public Splitter_base<typename SearchTraits::FT> 
@@ -62,7 +62,7 @@ class Median_of_max_spread
   typedef Splitter_base<typename SearchTraits::FT> Base;
 public:
   typedef typename SearchTraits::FT FT;
-  typedef Container_ Container;
+  typedef Point_container<SearchTraits> Container;
   typedef Separator_ Separator;
  
   Median_of_max_spread()
@@ -82,7 +82,7 @@ public:
   }
 };
 
-template <class SearchTraits, class Container_=Point_container<SearchTraits>,
+template <class SearchTraits,
 	  class Separator_=Plane_separator<typename SearchTraits::FT>  > 
 class Fair
   : public Splitter_base<typename SearchTraits::FT> {
@@ -90,7 +90,7 @@ class Fair
   typedef Splitter_base<typename SearchTraits::FT> Base;
 public:
   typedef typename SearchTraits::FT FT;
-  typedef Container_ Container;
+  typedef Point_container<SearchTraits> Container;
   typedef Separator_ Separator;
 
   Fair()
@@ -113,7 +113,7 @@ public:
   }
 };
 
-template <class SearchTraits,  class Container_=Point_container<SearchTraits>,
+template <class SearchTraits,
 	  class Separator_=Plane_separator<typename SearchTraits::FT>  >
 class Sliding_fair
   : public Splitter_base<typename SearchTraits::FT> {
@@ -122,7 +122,7 @@ class Sliding_fair
 
 public:
   typedef typename SearchTraits::FT FT;
-  typedef Container_ Container;
+  typedef Point_container<SearchTraits> Container;
   typedef Separator_ Separator;
 
   Sliding_fair()
@@ -148,7 +148,7 @@ public:
 };
 
 
-template <class SearchTraits,  class Container_=Point_container<SearchTraits>,
+template <class SearchTraits,
 	  class Separator_=Plane_separator<typename SearchTraits::FT>  >
 class Sliding_midpoint
   : public Splitter_base<typename SearchTraits::FT> {
@@ -157,7 +157,7 @@ class Sliding_midpoint
 
 public:
   typedef typename SearchTraits::FT FT;
-  typedef Container_ Container;
+  typedef Point_container<SearchTraits> Container;
   typedef Separator_ Separator;
 
   Sliding_midpoint()
@@ -187,7 +187,7 @@ public:
   }
 };
 
-template <class SearchTraits,  class Container_=Point_container<SearchTraits>,
+template <class SearchTraits,
 	  class Separator_=Plane_separator<typename SearchTraits::FT>  >
 class Median_of_rectangle
   : public Splitter_base<typename SearchTraits::FT> {
@@ -196,7 +196,7 @@ class Median_of_rectangle
 
 public:
   typedef typename SearchTraits::FT FT;
-  typedef Container_ Container;
+  typedef Point_container<SearchTraits> Container;
   typedef Separator_ Separator;
 
 
@@ -217,7 +217,7 @@ public:
   }
 };
 
-template <class SearchTraits,  class Container_=Point_container<SearchTraits>,
+template <class SearchTraits,
 	  class Separator_=Plane_separator<typename SearchTraits::FT>  >
 class Midpoint_of_max_spread
   : public Splitter_base<typename SearchTraits::FT> {
@@ -226,7 +226,7 @@ class Midpoint_of_max_spread
 
 public:
   typedef typename SearchTraits::FT FT;
-  typedef Container_ Container;
+  typedef Point_container<SearchTraits> Container;
   typedef Separator_ Separator;
 
 
@@ -247,7 +247,7 @@ public:
   }
 };
 
-template <class SearchTraits, class Container_=Point_container<SearchTraits>,
+template <class SearchTraits,
 	  class Separator_=Plane_separator<typename SearchTraits::FT>  >
 class Midpoint_of_rectangle
   : public Splitter_base<typename SearchTraits::FT> {
@@ -255,7 +255,7 @@ class Midpoint_of_rectangle
   typedef Splitter_base<typename SearchTraits::FT> Base;
 public:
   typedef typename SearchTraits::FT FT;
-  typedef Container_ Container;
+  typedef Point_container<SearchTraits> Container;
   typedef Separator_ Separator;
 
 
