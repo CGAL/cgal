@@ -1434,7 +1434,8 @@ stack_flip(Vertex_handle v, Faces_around_stack &faces_around)
 
   // now dimension() == 2
   //test the regularity of edge (f,i)
-  if( power_test(n, v->point()) == ON_NEGATIVE_SIDE)
+  //if( power_test(n, v->point()) == ON_NEGATIVE_SIDE)
+  if( power_test(n, v->point()) != ON_POSITIVE_SIDE)
     return;
     
   if(is_infinite(f,i))

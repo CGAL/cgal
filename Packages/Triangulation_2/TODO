@@ -1,4 +1,4 @@
-- suppress Filter_iterator_with_handle.h
+
 - check the behavior of regular triangulations on 
   degenerate cases
 - change the return of get_conflicts and find_conflict to
@@ -18,9 +18,7 @@
         bool = false if none is found
  - bencher Delaunay_2 avec un insert utilisant
   find_conflict + star_hole
-- in Regular triangulation : fix the cae when the user insert 
-  several  weighted points with the same coordinates and different
-  weights,
+
 
 - suppress function set_number_of_vertices(int )
 - Regular_triangulation_2 : remplacer degenerate_power_test_2(p,q,r)

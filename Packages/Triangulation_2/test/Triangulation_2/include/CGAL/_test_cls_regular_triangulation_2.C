@@ -502,10 +502,8 @@ _test_cls_regular_triangulation_2( const Triangulation & )
   fc--;
   ++fc;
   --fc;
-  //Point pp(0,0.5,1);
   Bare_point pp(0,1,2);
   loc = T2_3.locate(pp,lt,li);
-  // assert(lt==Cls::VERTEX); no longer true, I've changed the triangulation
   fc= T2_3.line_walk(pp,p10,loc);
   fc2=fc;
   assert(fc==fc2);
@@ -517,8 +515,8 @@ _test_cls_regular_triangulation_2( const Triangulation & )
   Cls T2_8;
      T2_8.insert(Bare_point(0,0,1));
      T2_8.insert(Bare_point(1,0,1));
-     T2_8.insert(Bare_point(1,1,1));
      T2_8.insert(Bare_point(0,1,1));
+     T2_8.insert(Bare_point(1,1,1));
   int n=0;
   do {fc2++ ; n = n+1;} while (fc2 != fc);
   assert(T2_8.number_of_vertices()>=2);
@@ -531,8 +529,10 @@ _test_cls_regular_triangulation_2( const Triangulation & )
   assert(n==4);
   // the two point are vertices of the triangulation.
   Cls TT;
-  TT.insert(Bare_point(0,0)); TT.insert(Bare_point(1,0));
-  TT.insert(Bare_point(0,1)); TT.insert(Bare_point(1,1));
+  TT.insert(Bare_point(0,0)); 
+  TT.insert(Bare_point(1,0));
+  TT.insert(Bare_point(1,1));
+  TT.insert(Bare_point(0,1));
   assert(TT.dimension()==2);
   assert(TT.is_valid(verbose));
   assert(TT.number_of_vertices()==4);
