@@ -69,7 +69,7 @@ The following program displays a random simple polygon with up to 50
 vertices, where the vertex coordinates are drawn uniformly from the 
 unit square centered at the origin.
 
-\ccIncludeVerbatim{random_poly.C}
+\ccIncludeExampleCode{Generator/random_poly_manual_demo.C}
 
 \begin{ccAdvanced}
 \ccAutoIndexingOff
@@ -89,17 +89,23 @@ order to qualify as a traits class for \ccc{random_polygon_2}.
 \ccNestedType{Point_2}{The point type of the polygon.}
 \ccNestedType{Vector_2}{The vector type that can be constructed from the
                         difference of two objects of type \ccc{Point_2}.}
-\ccNestedType{Less_yx} 
+\ccNestedType{Orientation_2}{orientation type}
+\ccNestedType{Less_xy_2}
        {Binary predicate object type comparing \ccc{Point_2}s lexicographically.
         It must provide \ccc{bool operator()(Point_2 p, Point_2 q)} that 
-        returns \ccc{true} iff $p <_{yx} q$.
-        We have $p<_{yx}q$, iff $p_y < q_y$ or $p_y = q_y$ and $p_x < q_x$,
+        returns \ccc{true} iff $p <_{xy} q$.
+        We have $p<_{xy}q$, iff $p_x < q_x$ or $p_x = q_x$ and $p_y < q_y$,
         where $p_x$ and $p_y$ denote the $x$ and $y$ coordinates of point $p$,
         resp.
        }
+\ccNestedType{Less_yx_2} 
+       {Same as \ccc{Less_xy_2} with the roles of $x$ and $y$ reversed.}
                         
 
 \ccOperations
+
+\ccMemberFunction{ Less_xy_2 less_xy_2_object();}{}
+\ccMemberFunction{ Orienation_2 orientation_2_object();}{}
 
 \ccMemberFunction{
     Comparison_result compare_x(const Point_2 &p, const Point_2 &q) const;
