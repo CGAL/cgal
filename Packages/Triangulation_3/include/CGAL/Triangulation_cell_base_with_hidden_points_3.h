@@ -1,4 +1,4 @@
-// Copyright (c) 1999  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2004  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -26,7 +26,7 @@ CGAL_BEGIN_NAMESPACE
 
 template < typename GT,
            typename Cb = Triangulation_cell_base_3<GT>,
-           typename C = std::list<typename GT::Point_3> >
+           typename C = std::list<typename GT::Weighted_point_3> >
 class Triangulation_cell_base_with_hidden_points_3
   : public Cb
 {
@@ -36,7 +36,7 @@ public:
   typedef typename Cb::Cell_handle                     Cell_handle;
 
   typedef GT                                           Geom_traits;
-  typedef typename Geom_traits::Point_3                Point;
+  typedef typename Geom_traits::Weighted_point_3       Point;
 
   typedef C                                            Point_container;
   typedef typename Point_container::iterator           Point_iterator;
@@ -51,14 +51,20 @@ public:
   Triangulation_cell_base_with_hidden_points_3()
     : Cb() {}
 
-  Triangulation_cell_base_with_hidden_points_3(const Vertex_handle& v0, const Vertex_handle& v1,
-					       const Vertex_handle& v2, const Vertex_handle& v3)
+  Triangulation_cell_base_with_hidden_points_3(const Vertex_handle& v0,
+                                               const Vertex_handle& v1,
+					       const Vertex_handle& v2,
+                                               const Vertex_handle& v3)
     : Cb(v0, v1, v2, v3) {}
 
-  Triangulation_cell_base_with_hidden_points_3(const Vertex_handle& v0, const Vertex_handle& v1,
-					       const Vertex_handle& v2, const Vertex_handle& v3,
-					       const Cell_handle&   n0, const Cell_handle&   n1,
-					       const Cell_handle&   n2, const Cell_handle&   n3)
+  Triangulation_cell_base_with_hidden_points_3(const Vertex_handle& v0,
+                                               const Vertex_handle& v1,
+					       const Vertex_handle& v2,
+                                               const Vertex_handle& v3,
+					       const Cell_handle&   n0,
+                                               const Cell_handle&   n1,
+					       const Cell_handle&   n2,
+                                               const Cell_handle&   n3)
     : Cb(v0, v1, v2, v3, n0, n1, n2, n3) {}
 
   Point_iterator hidden_points_begin() { return _hidden.begin(); }
@@ -73,27 +79,6 @@ public:
 private:
   Point_container _hidden;
 };
-
-// The following should be useless.
-#if 0
-template < class GT, class Cb >
-inline
-std::istream&
-operator>>(std::istream &is, Triangulation_cell_base_3<GT, Cb> &c)
-  // non combinatorial information. Default = nothing
-{
-  return is >> static_cast<Cb&>(c);
-}
-
-template < class GT, class Cb >
-inline
-std::ostream&
-operator<<(std::ostream &os, const Triangulation_cell_base_3<GT, Cb> &c)
-  // non combinatorial information. Default = nothing
-{
-  return os << static_cast<const Cb&>(c);
-}
-#endif
 
 CGAL_END_NAMESPACE
 
