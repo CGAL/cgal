@@ -1285,7 +1285,7 @@ bool  build_dcel (Scanner& scanner) {
     // }
   }
   
-  for (unsigned i = 0; i < scanner.number_of_halfedges(); i++, i++){
+  for (i = 0; i < scanner.number_of_halfedges(); i++, i++){
     D_halfedge *nh = NULL;
     void  *nv1, *nv2;
     std::size_t index1, index2;
@@ -1365,7 +1365,7 @@ bool  build_dcel (Scanner& scanner) {
   }
   
   // read in all facets
-  for (unsigned i = 0; i < scanner.number_of_faces(); i++) {
+  for (i = 0; i < scanner.number_of_faces(); i++) {
     //std::size_t  num_of_holes, num_halfedges_on_outer_ccb;
     
     //std::cout<<"Reading Face no " <<i<<std::endl;
