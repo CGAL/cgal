@@ -97,9 +97,8 @@ public:
     this->addToolBar(vtoolbar->toolbar(), Top, FALSE);
 
     *widget << CGAL::BackgroundColor (CGAL::BLACK);
-    resize(w,h);
-  
-    widget->show();
+    resize(w,h);  
+    widget->set_window(-1, 1, -1, 1);
     widget->setMouseTracking(true);
 	
     //connect the widget to the main function that receives the objects
@@ -114,17 +113,12 @@ private:
   void something_changed(){current_state++;};
   
 public slots:
-
-  void set_window(double xmin, double xmax, double ymin, double ymax)
-  {
-    widget->set_window(xmin, xmax, ymin, ymax);
-  }
   void new_instance()
   {
     widget->lock();
     widget->clear();
-    widget->set_window(-1.1, 1.1, -1.1, 1.1); 
-	// set the Visible Area to the Interval
+    // set the Visible Area to the Interval
+    widget->set_window(-1.1, 1.1, -1.1, 1.1);
     widget->unlock();
   }
 
@@ -133,7 +127,7 @@ private slots:
   void gen_poly(){
     widget->clear_history();
     widget->set_window(-1.1, 1.1, -1.1, 1.1);
-	// set the Visible Area to the Interval
+    // set the Visible Area to the Interval
     polygon.erase(polygon.vertices_begin(), polygon.vertices_end());
     CGAL::random_polygon_2(100,
 			   std::back_inserter(polygon),
@@ -167,8 +161,9 @@ private slots:
   void new_window(){
     MyWindow *ed = new MyWindow(500, 500);
     ed->setCaption("View");
+    ed->widget->clear_history();
+    ed->widget->set_window(-1.1, 1.1, -1.1, 1.1);
     ed->show();
-    ed->set_window(-1.1, 1.1, -1.1, 1.1);
     something_changed();
   }
 
@@ -230,9 +225,6 @@ main(int argc, char **argv)
   widget.setCaption(my_title_string);
   widget.setMouseTracking(TRUE);
   widget.show();
-  widget.set_window(-1, 1, -1, 1);
-  // because Qt send resizeEvent only on show.
-  
   return app.exec();
   return 1;
 }

@@ -365,8 +365,7 @@ main(int argc, char **argv)
   app.setMainWidget(&W);
   W.setCaption(my_title_string);
   W.setMouseTracking(TRUE);
-  W.show();
-  // because Qt send resizeEvent only on show.
+  W.show();  
   W.init_coordinates();  
   current_state = -1;
   return app.exec();

@@ -472,7 +472,6 @@ main(int argc, char **argv)
   win.setCaption(my_title_string);
   win.setMouseTracking(TRUE);
   win.show();
-  // because Qt send resizeEvent only on show.
   win.init_coordinates();
   current_state = -1;
   return app.exec();

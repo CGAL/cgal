@@ -185,8 +185,7 @@ public:
     *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::GRAY);
   
     resize(w,h);
-    widget->show();
-
+    widget->set_window(-1, 1, -1, 1);
     widget->setMouseTracking(TRUE);
 	
     //connect the widget to the main function that receives the objects
@@ -207,10 +206,6 @@ private:
   void something_changed(){current_state++;};
   
 public slots:
-  void set_window(double xmin, double xmax, double ymin, double ymax)
-  {
-    widget->set_window(xmin, xmax, ymin, ymax);
-  }
   void new_instance()
   {
     widget->lock();
@@ -247,8 +242,9 @@ private slots:
   void new_window(){
     MyWindow *ed = new MyWindow(500, 500);
     ed->setCaption("Layer");
+    ed->widget->clear_history();
+    ed->widget->set_window(-1.1, 1.1, -1.1, 1.1);
     ed->show();
-    ed->set_window(-1.1, 1.1, -1.1, 1.1);
     something_changed();
   }
 
@@ -297,8 +293,6 @@ main(int argc, char **argv)
   widget.setCaption(my_title_string);
   widget.setMouseTracking(TRUE);
   widget.show();
-  // because Qt send resizeEvent only on show.
-  widget.set_window(-1, 1, -1, 1);
   current_state = -1;
   return app.exec();
 }

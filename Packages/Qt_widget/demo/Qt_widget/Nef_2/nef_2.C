@@ -279,6 +279,7 @@ public:
     widget->show();
 
     resize(w, h + 100);
+    widget->set_window(-1, 1, -1, 1);
     widget->setMouseTracking(TRUE);
 	
     //connect the widget to the main function that receives the objects
@@ -299,17 +300,13 @@ public:
 
 
 public slots:
-  void  sl_set_window(double xmin, double xmax, double ymin, double ymax)
-  {
-    widget->set_window(xmin, xmax, ymin, ymax);
-  }
   void  sl_new_instance()
   {
     widget->lock();
     widget->set_window(-1.1, 1.1, -1.1, 1.1); 
 			// set the Visible Area to the Interval
-	Nef_polyhedron N_temp(Nef_polyhedron::EMPTY);
-	Nef_visible = N_temp;
+    Nef_polyhedron N_temp(Nef_polyhedron::EMPTY);
+    Nef_visible = N_temp;
     widget->unlock();
     something_changed();
   }
@@ -374,7 +371,7 @@ public slots:
       strcat(tnr, "gon");
       insert_in_list(Nt, tnr);
       list1->setSelected(list1->count()-1, true);
-      sl_set_window(poly.bbox().xmin(), poly.bbox().xmax(), poly.bbox().ymin(), poly.bbox().ymax());
+      widget->set_window(poly.bbox().xmin(), poly.bbox().xmax(), poly.bbox().ymin(), poly.bbox().ymax());
       something_changed();
   }
 private slots:
@@ -470,8 +467,9 @@ private slots:
   void  sl_new_window(){
     MyWindow *ed = new MyWindow(500, 500);
     ed->setCaption("Layer");
+    ed->widget->clear_history();
+    ed->widget->sl_set_window(-1.1, 1.1, -1.1, 1.1);
     ed->show();
-    ed->sl_set_window(-1.1, 1.1, -1.1, 1.1);
     something_changed();
   }
 
@@ -694,8 +692,6 @@ main(int argc, char **argv)
   widget.setCaption(my_title_string);
   widget.setMouseTracking(TRUE);
   widget.show();
-  // because Qt send resizeEvent only on show.
-  widget.sl_set_window(-1, 1, -1, 1);
   current_state = -1;
   return app.exec();
 }
