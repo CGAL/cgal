@@ -25,7 +25,6 @@ int main() {
   Tree tree(points.begin(), points.end());
 
   Point query(0.0, 0.0, 0.0);
-  Distance tr_dist;
 
   // search K nearest neighbours
   K_neighbor_search search(tree, query, K);
