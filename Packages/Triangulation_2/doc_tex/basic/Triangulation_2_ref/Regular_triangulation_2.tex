@@ -147,7 +147,7 @@ of \ccc{RegularTriangulationVertexBase_2}.
 instantiation for the \ccc{Tds} parameter by the class
 \ccc{CGAL::Triangulation_data_structure_2 <
                        CGAL::Reugular_triangulation_vertex_base_2<Traits>,
-		       CGAL::Regular_Triangulation_face_base_2<Traits> >}.
+                       CGAL::Regular_Triangulation_face_base_2<Traits> >}.
  
 \ccInheritsFrom
 \ccc{Triangulation_2<Traits,Tds>}
@@ -197,8 +197,8 @@ for the place to start the location process of point \ccc{p}.}
 
 
 \ccMethod{Vertex_handle insert(const Weighted_point &p,
-	 	       Locate_type  lt,
-		       Face_handle loc, int li );}
+                       Locate_type  lt,
+                       Face_handle loc, int li );}
 {insert a weighted point \ccc{p} whose bare-point is assumed to be
 located in  \ccc{lt,loc,li}.}
 
@@ -216,6 +216,91 @@ located in  \ccc{lt,loc,li}.}
 
 \ccMethod{void   remove(Vertex_handle v);}
 {removes the vertex from the triangulation.}
+
+\ccHeading{Queries}
+
+\ccMethod{template <class OutputItFaces, class OutputItBoundaryEdges,
+  class OutputItHiddenVertices>
+  CGAL::Triple<OutputItFaces,OutputItBoundaryEdges,OutputItHiddenVertices>
+  get_conflicts_and_boundary_and_hidden_vertices(const Weighted_point
+  &p, OutputItFaces fit, OutputItBoundaryEdges eit,
+  OutputItHiddenVertices vit, Face_handle start) const;} {
+  \ccc{OutputItFaces} is an output iterator with \ccc{Face_handle} as
+  value type.  \ccc{OutputItBoundaryEdges} stands for an output
+  iterator with \ccc{Edge} as value type.
+  \ccc{OutputItHiddenVertices} is an output iterator with
+  \ccc{Vertex_handle} as value type.  This member function outputs in
+  the container pointed to by \ccc{fit} the faces which are in
+  conflict with point \ccc{p} i. e. the faces whose power circles
+  have negative power wrt.\ \ccc{p}.  It outputs in the container
+  pointed to by \ccc{eit} the boundary of the zone in conflict
+  with \ccc{p}.  It inserts the vertices that would be hidden by \ccc{p} 
+  into the container pointed to by \ccc{vit}.  The boundary edges of
+  the conflict zone are ouput in counter-clockwise order and each edge
+  is described through its incident face which is not in conflict with
+  \ccc{p}.  The function returns in a CGAL::Triple the resulting output
+  iterators.}
+
+\ccMethod{template <class OutputItFaces, class OutputItBoundaryEdges>
+  std::pair<OutputItFaces,OutputItBoundaryEdges>
+  get_conflicts_and_boundary(const Weighted_point
+  &p, OutputItFaces fit, OutputItBoundaryEdges eit, Face_handle start) const;} 
+{
+  same as above except that only the faces in conflict with \ccc{p} and 
+  the boundary edges of the conflict zone 
+  are output via the corresponding output iterators. The function returns 
+  in a std::pair the resulting output iterators.}
+
+ \ccMethod{template <class OutputItFaces, 
+  class OutputItHiddenVertices>
+  std::pair<OutputItFaces,OutputItHiddenVertices>
+  get_conflicts_and_hidden_vertices(const Weighted_point
+  &p, OutputItFaces fit, OutputItHiddenVertices vit, Face_handle start) const;}
+{
+  same as above except that only the faces in conflict with \ccc{p} and 
+  the vertices that would be hidden by \ccc{p}
+  are output via the corresponding output iterators. The function returns 
+  in a std::pair the resulting output iterators.}
+
+\ccMethod{template <class OutputItBoundaryEdges, class OutputItHiddenVertices>
+  std::pair<OutputItBoundaryEdges,OutputItHiddenVertices>
+  get_boundary_of_conflicts_and_hidden_vertices(const Weighted_point
+  &p, OutputItBoundaryEdges eit,
+  OutputItHiddenVertices vit, Face_handle start) const;} 
+{ same as above except that only the the vertices that would be hidden
+  by \ccc{p} and the boundary of the zone in conflict with \ccc{p} are
+  output via the corresponding output iterators. The boundary edges of
+  the conflict zone are ouput in counterclockwise order and each edge
+  is described through the incident face which is not in conflict with
+  \ccc{p}. The function returns in a std::pair the resulting output
+  iterators.}
+
+\ccMethod{template <class OutputItFaces> 
+          OutputItFaces
+          get_conflicts (const Point  &p, 
+                         OutputItFaces fit, 
+                         Face_handle start) const;}
+{same as above except that only the faces in conflict with \ccc{p}
+are output. The function returns the resulting output iterator.}
+
+\ccMethod{template <class OutputItBoundaryEdges>
+          OutputItBoundaryEdges
+          get_boundary_of_conflicts(const Point  &p, 
+                                    OutputItBoundaryEdges eit,
+                                    Face_handle start) const;}
+{ same as above except that only the boundary edges
+of the conflict zone are ouput in counterclockwise order
+where each edge is described  through the incident face
+which is not in conflict with \ccc{p}.
+The function returns the resulting output iterator.}
+
+\ccMethod{template <class OutputItHiddenVertices> 
+          OutputItHiddenVertices
+          get_hidden_vertices(const Point  &p, 
+          OutputItHiddenVertices vit, 
+          Face_handle start) const;}
+        {same as above except that only the vertices that would be hidden by  \ccc{p}
+          are output. The function returns the resulting output iterator.}
 
 \ccHeading{Access functions}
 \ccThree{Hidden_vertices_iterator}{t.finite_vertices_begin()x}{}
