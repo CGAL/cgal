@@ -113,22 +113,22 @@ int  QPE_partial_filtered_pricing<Rep_,NT_,ET2NT_>::
 pricing( )
 {
     // initialize filtered computation
-    init_NT();
+    this->init_NT();
 
     // loop over all active non-basic variables
     CGAL_qpe_debug {
-	vout() << "active variables:" << std::endl;
+	this->vout() << "active variables:" << std::endl;
     }
 
     Index_const_iterator  it, min_it;
-    NT                            mu, min_mu = nt0;
-    for ( it = active_set_begin(); it != active_set_end(); ++it) {
+    NT                            mu, min_mu = this->nt0;
+    for ( it = this->active_set_begin(); it != this->active_set_end(); ++it) {
 
 	// compute mu_j
 	mu = mu_j_NT( *it);
 
 	CGAL_qpe_debug {
-	    vout() << "  mu_" << *it << " [NT]: " << mu << std::endl;
+	    this->vout() << "  mu_" << *it << " [NT]: " << mu << std::endl;
 	}
 
 	// new minimum?
@@ -136,43 +136,44 @@ pricing( )
     }
 
     // exact check of entering variable
-    if ( min_mu < nt0) {
-	if ( mu_j( *min_it) >= et0) {
+    if ( min_mu < this->nt0) {
+	if ( mu_j( *min_it) >= this->et0) {
 
 	    // exact check failed!
 	    CGAL_qpe_debug {
-		vout() << "--> exact check of entering variable failed!"
+		this->vout() << "--> exact check of entering variable failed!"
 		       << std::endl;
 	    }
 
 	    // reject entering variable
-	    min_mu = nt0;
+	    min_mu = this->nt0;
 	}
     } else {
 	CGAL_qpe_debug {
-	    vout() << "--> no entering variable found yet" << std::endl;
+	    this->vout() << "--> no entering variable found yet" << std::endl;
 	}
     }
 
     // no entering variable found so far?
-    if ( ( min_mu == nt0) && ( inactive_set_begin() < inactive_set_end())) {
+    if ( ( min_mu == this->nt0) &&
+         ( this->inactive_set_begin() < this->inactive_set_end())) {
 
 	// loop over all inactive non-basic variables
 	CGAL_qpe_debug {
-	    vout() << "inactive variables:" << std::endl;
+	    this->vout() << "inactive variables:" << std::endl;
 	}
 	Index_const_iterator  active_it;
-	for ( it = inactive_set_begin(); it != inactive_set_end(); ++it) {
+	for ( it = this->inactive_set_begin(); it != this->inactive_set_end(); ++it) {
 
 	    // compute mu_j
 	    mu = mu_j_NT( *it);
 
 	    CGAL_qpe_debug {
-		vout() << "  mu_" << *it << " [NT]: " << mu << std::endl;
+		this->vout() << "  mu_" << *it << " [NT]: " << mu << std::endl;
 	    }
 
 	    // candidate for entering?
-	    if ( mu < nt0) {
+	    if ( mu < this->nt0) {
 
 		// make variable active
 		active_it = it;
@@ -184,33 +185,33 @@ pricing( )
 	}
 
 	// exact check of entering variable
-	if ( min_mu < nt0) {
-	    if ( mu_j( *min_it) >= et0) {
+	if ( min_mu < this->nt0) {
+	    if ( mu_j( *min_it) >= this->et0) {
 
 		// exact check failed!
 		CGAL_qpe_debug {
-		    vout() << "--> exact check of entering variable failed!"
+		    this->vout() << "--> exact check of entering variable failed!"
 			   << std::endl;
 		}
 
 		// reject entering variable
-		min_mu = nt0;
+		min_mu = this->nt0;
 	    }
 	} else {
 	    CGAL_qpe_debug {
-		vout() << "--> still no entering variable found" << std::endl;
+		this->vout() << "--> still no entering variable found" << std::endl;
 	    }
 	}
     }
 
     // certify non-existance of entering variable, if necessary
-    if ( min_mu == nt0) {
+    if ( min_mu == this->nt0) {
 
 	// update row and column maxima
-	update_maxima();
+	this->update_maxima();
 
 	// loop over all non-basic variables again
-	for ( it = active_set_begin(); it != inactive_set_end(); ++it) {
+	for ( it = this->active_set_begin(); it != this->inactive_set_end(); ++it) {
 
 	    // certify 'mu_j >= 0'
 	    if ( ! certify_mu_j_NT( *it)) {
@@ -221,10 +222,10 @@ pricing( )
 	    }
 	}
     }
-    vout() << std::endl;
+    this->vout() << std::endl;
 
     // return index of entering variable, if any
-    if ( min_mu < nt0) {
+    if ( min_mu < this->nt0) {
 	int  j = *min_it;
 	entering_basis( min_it);
 	return j;
