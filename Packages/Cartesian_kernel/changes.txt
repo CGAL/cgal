@@ -1,3 +1,6 @@
+Version 6.22 (?? June 2001)
+- Deprecated has_on_boundary for Plane_3
+
 Version 6.21 (21 June 2001)
 - Add constructors for Direction.
 

@@ -85,8 +85,10 @@ class PlaneH3
     Oriented_side  oriented_side(const PointH3<R> &p) const;
     bool           has_on(const PointH3<R> &p) const;
     bool           has_on(const LineH3<R> &p) const;
+#ifndef CGAL_NO_DEPRECATED_CODE
     bool           has_on_boundary(const PointH3<R> &p) const;
     bool           has_on_boundary(const LineH3<R> &p) const;
+#endif // CGAL_NO_DEPRECATED_CODE
     bool           has_on_positive_side(const PointH3<R>&l) const;
     bool           has_on_negative_side(const PointH3<R>&l) const;
 
@@ -459,23 +461,17 @@ PlaneH3<R>::has_on_negative_side( const PointH3<R>& p) const
  return (a()*p.hx() + b()*p.hy() + c()*p.hz() + d()*p.hw() < RT(0) );
 }
 
+
 template < class R >
 bool
-PlaneH3<R>::has_on_boundary( const PointH3<R>& p) const
+PlaneH3<R>::has_on( const PointH3<R>& p) const
 {
  return (a()*p.hx() + b()*p.hy() + c()*p.hz() + d()*p.hw() == RT(0) );
 }
 
 template < class R >
 bool
-PlaneH3<R>::has_on( const PointH3<R>& p) const
-{
- return has_on_boundary(p);
-}
-
-template < class R >
-bool
-PlaneH3<R>::has_on_boundary( const LineH3<R>& l) const
+PlaneH3<R>::has_on( const LineH3<R>& l) const
 {
  PointH3<R>   p   = l.point();
  VectorH3<R>  ld  = l.direction().to_vector();
@@ -485,12 +481,21 @@ PlaneH3<R>::has_on_boundary( const LineH3<R>& l) const
          &&( ld.hx()*ov.hx() + ld.hy()*ov.hy() + ld.hz()*ov.hz() == RT(0) ) );
 }
 
+#ifndef CGAL_NO_DEPRECATED_CODE
 template < class R >
 bool
-PlaneH3<R>::has_on( const LineH3<R>& l) const
+PlaneH3<R>::has_on_boundary( const PointH3<R>& p) const
 {
- return has_on_boundary(l);
+ return has_on(p);
 }
+
+template < class R >
+bool
+PlaneH3<R>::has_on_boundary( const LineH3<R>& l) const
+{
+ return has_on(l);
+}
+#endif
 
 template < class R >
 Oriented_side

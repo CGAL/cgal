@@ -1,3 +1,6 @@
+2.33   (?? June 2001)
+- deprecated has_on_boundary for Plane_3
+
 2.32   (21 June 2001)
 - New constructors for DirectionH3.
 
