@@ -94,7 +94,8 @@ Straight_2_(Line_2<R> const &line)
     support_ = line;
     Vector_2<R> const &dir = support_.direction().to_vector();
     main_dir_ = (abs(dir.x()) > abs(dir.y()) ) ? 0 : 1;
-    dir_sign_ = CGAL::sign(support_.direction().to_vector().cartesian(main_dir_));
+    dir_sign_ =
+        CGAL::sign(support_.direction().to_vector().cartesian(main_dir_));
     bound_state_ = BOTH_UNBOUNDED;
 }
 
@@ -118,7 +119,8 @@ Straight_2_(Ray_2<R> const &ray)
     Vector_2<R> const &dir = ray.direction().to_vector();
 //    main_dir_ = (abs(dir.hx()) > abs(dir.hy()) ) ? 0 : 1;
     main_dir_ = (abs(dir.x()) > abs(dir.y()) ) ? 0 : 1;
-    dir_sign_ = CGAL::sign(support_.direction().to_vector().cartesian(main_dir_));
+    dir_sign_ =
+        CGAL::sign(support_.direction().to_vector().cartesian(main_dir_));
     bound_state_ = MAX_UNBOUNDED;
     min_ = ray.start();
 }
@@ -134,7 +136,8 @@ Straight_2_(Ray_2<R> const &ray_,bool cooriented)
     Vector_2<R> const &dir = ray.direction().to_vector();
 //    main_dir_ = (abs(dir.hx()) > abs(dir.hy()) ) ? 0 : 1;
     main_dir_ = (abs(dir.x()) > abs(dir.y()) ) ? 0 : 1;
-    dir_sign_ = CGAL::sign(support_.direction().to_vector().cartesian(main_dir_));
+    dir_sign_ =
+        CGAL::sign(support_.direction().to_vector().cartesian(main_dir_));
     if (cooriented)
         {
             bound_state_ = MAX_UNBOUNDED;
@@ -154,7 +157,8 @@ Straight_2_(Segment_2<R> const &seg)
     support_ = seg.supporting_line();
     Vector_2<R> const &dir = support_.direction().to_vector();
     main_dir_ = (abs(dir.x()) > abs(dir.y()) ) ? 0 : 1;
-    dir_sign_ = CGAL::sign(support_.direction().to_vector().cartesian(main_dir_));
+    dir_sign_ =
+        CGAL::sign(support_.direction().to_vector().cartesian(main_dir_));
     bound_state_ = NO_UNBOUNDED;
     min_ = seg.start();
     max_ = seg.end();
