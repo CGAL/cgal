@@ -112,6 +112,7 @@ template <class LessSegments>
 struct Edge_data {
     typedef std::set<Vertex_index, LessSegments> Tree;
     Edge_data() : is_in_tree(false) {}
+    Edge_data(typename Tree::iterator it) : tree_it(it), is_in_tree(false) {}
     typename Tree::iterator tree_it; // The iterator of the edge in the tree.
                                      // Needed for cross reference. If edge j
 				     // is in the tree: *edges[j].tree_it == j
@@ -174,6 +175,7 @@ public:
     Vertex_data(ForwardIterator begin, ForwardIterator end,
                 const PolygonTraits& pgnt);
 
+    void init(Tree *tree);
     void left_and_right_index(Vertex_index &left, Vertex_index &right,
             Vertex_index edge);
     Vertex_index left_index(Vertex_index edge)
@@ -285,9 +287,14 @@ template <class ForwardIterator, class PolygonTraits>
 Vertex_data<ForwardIterator, PolygonTraits>::
 Vertex_data(ForwardIterator begin, ForwardIterator end,
             const PolygonTraits& pgn_traits)
-: Base_class(begin, end, pgn_traits)
+  : Base_class(begin, end, pgn_traits) {}
+
+template <class ForwardIterator, class PolygonTraits>
+void Vertex_data<ForwardIterator, PolygonTraits>::init(Tree *tree)
 {
-    edges.insert(edges.end(), this->m_size, Edge_data<Less_segs>());
+    // The initialization cannot be done in the constructor,
+    // otherwise we copy singular valued iterators.
+    edges.insert(edges.end(), this->m_size, Edge_data<Less_segs>(tree->end()));
 }
 
 
@@ -472,6 +479,7 @@ bool is_simple_polygon(Iterator points_begin, Iterator points_end,
                      i_polygon::Less_segments<Vertex_data> >       Tree;
     Vertex_data   vertex_data(points_begin, points_end, polygon_traits);
     Tree tree(&vertex_data);
+    vertex_data.init(&tree);
     vertex_data.sweep(&tree);
     return vertex_data.is_simple_result;
 }

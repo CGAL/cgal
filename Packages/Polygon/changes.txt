@@ -1,3 +1,8 @@
+25 September 2004 Sylvain Pion
+- _GLIBCXX_DEBUG fixes : avoid copying default construted iterators,
+  by splitting Vertex_data's constructor in an init function which has
+  access to Tree's end() iterator, instead of the default constructed one.
+
 4 September 2004 Menelaos Karavelas
 - re-wrote author names in copyright notices using 7-bit characters
 

@@ -113,6 +113,7 @@ public:
 
     Vertex_data(ForwardIterator begin, ForwardIterator end,
                 const PolygonTraits& pgnt);
+    void init(Tree *tree);
     void left_and_right_index(Vertex_index &left, Vertex_index &right,
             Vertex_index edge);
     Vertex_index left_index(Vertex_index edge)
@@ -216,9 +217,14 @@ template <class ForwardIterator, class PolygonTraits>
 Vertex_data<ForwardIterator, PolygonTraits>::
 Vertex_data(ForwardIterator begin, ForwardIterator end,
             const PolygonTraits& pgn_traits)
-: Base_class(begin, end, pgn_traits)
+  : Base_class(begin, end, pgn_traits) {}
+
+template <class ForwardIterator, class PolygonTraits>
+void Vertex_data<ForwardIterator, PolygonTraits>::init(Tree *tree)
 {
-    edges.insert(edges.end(), this->m_size, Edge_data());
+    // The initialization cannot be done in the constructor,
+    // otherwise we copy singular valued iterators.
+    edges.insert(edges.end(), this->m_size, Edge_data(tree->end()));
 }
 
 template <class ForwardIterator, class PolygonTraits>
@@ -509,6 +515,7 @@ check_simple_polygon(Iterator points_begin, Iterator points_end,
     i_generator_polygon::Vertex_data<ForwardIterator, PolygonTraits>
         vertex_data(points_begin, points_end, polygon_traits);
     Tree tree(&vertex_data);
+    vertex_data.init(&tree);
     vertex_data.sweep(&tree);
     std::pair<int,int> result;
     if (vertex_data.is_simple_result) {
