@@ -26,7 +26,7 @@
 
 #include <CGAL/basic.h>
 
-#include <strstream> // deprecated
+#include <sstream>
 #include <csignal>
 #include <cerrno>
 #include <cstring>
@@ -236,9 +236,9 @@ Geomview_stream::operator<<(int i)
         trace(i);
     } else {
         // transform the int in a character sequence and put whitespace around
-        std::ostrstream str;
+        std::ostringstream str;
         str << i << ' ' << std::ends;
-        *this << str.str();
+        *this << str.str().c_str();
     }
 
     return *this;
@@ -256,9 +256,9 @@ Geomview_stream::operator<<(unsigned int i)
         trace(i);
     } else {
         // transform the int in a character sequence and put whitespace around
-        std::ostrstream str;
+        std::ostringstream str;
         str << i << ' ' << std::ends;
-        *this << str.str();
+        *this << str.str().c_str();
     }
 
     return *this;
@@ -287,9 +287,9 @@ Geomview_stream::operator<<(double d)
         trace(f);
     } else {
         // 'copy' the float in a string and append a blank
-        std::ostrstream str;
+        std::ostringstream str;
         str << f << ' ' << std::ends;
-        *this << str.str();
+        *this << str.str().c_str();
     }
     return *this;
 }
@@ -536,8 +536,7 @@ void
 Geomview_stream::parse_point(const char* pickpoint,
 		     double &x, double &y, double &z, double &w)
 {
-    // std::stringstream ss;
-    std::strstream ss;
+    std::stringstream ss;
     ss << pickpoint << std::ends;
 
     char parenthesis;
@@ -547,7 +546,7 @@ Geomview_stream::parse_point(const char* pickpoint,
 std::string
 Geomview_stream::get_new_id(const std::string & s)
 {
-    std::ostrstream str;
+    std::ostringstream str;
     str << s << id[s]++ << std::ends;
     return str.str();
 }

@@ -1,7 +1,11 @@
 CHANGES to the Geomview package.
 
+Ver 3.38 (12 April 2003)
+- Replace <strstream> by <sstream>.
+
 Ver 3.37 (14 January 2003)
-- Workaronund for MINGW compiler. The Geomview_stream.C file should not be compiled on Windows OS. 
+- Workaronund for MINGW compiler.
+  Geomview_stream.C should not be compiled on Windows. 
 
 Ver 3.36 (8 January 2003)
 - Workaround for SunPRO.
