@@ -21,7 +21,7 @@
 #include "config.h"
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/Polyhedron_default_traits_3.h>
+#include <CGAL/Polyhedron_old/Polyhedron_default_traits_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 

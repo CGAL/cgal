@@ -353,7 +353,7 @@ void CMeshView::OnPaint()
 		{
 			// enable polygon offset
 			glEnable(GL_POLYGON_OFFSET_FILL);
-			glPolygonOffset(1.0f,1.0f);
+			glPolygonOffset(3.0f,1.0f);
 		}
 
 		// draw the mesh 
