@@ -13,6 +13,8 @@
    #define CGAL_Triangulation_euclidean_traits_xz_3 CGAL_Etxz3
    #define CGAL_Triangulation_euclidean_traits_yz_3 CGAL_Etyz3
 
+   #define CGAL_Constrained_triangulation_face_base_2  CGAL_Ctrfb
+
 // #define CGAL_Triangulation_vertex_2 CGAL_Trv
 // #define CGAL_Triangulation_face_2 CGAL_Trf
 // #define CGAL_Triangulation_vertex_handle_2 CGAL_Trvh
