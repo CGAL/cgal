@@ -45,56 +45,75 @@ class SNC_const_decorator {
 
 public:
 #define USING(t) typedef typename SNC_structure_::t t
-  USING(Vertex_const_iterator);
-  USING(Vertex_const_handle);
-  USING(Halfedge_const_iterator);
-  USING(Halfedge_const_handle);
-  USING(Halffacet_const_iterator); 
-  USING(Halffacet_handle);
-  USING(Halffacet_const_handle);
-  USING(Volume_const_iterator);
-  USING(Volume_handle);
-  USING(Volume_const_handle);
-  USING(SVertex_handle);
-  USING(SVertex_const_handle);
-  USING(SHalfedge);
-  USING(SHalfedge_iterator);
-  USING(SHalfedge_handle);
-  USING(SHalfedge_const_handle);
-  USING(SHalfloop_iterator);
-  USING(SHalfloop_handle);
-  USING(SHalfloop_const_handle);
-  USING(SFace_iterator);  
-  USING(SFace_handle);
-  USING(SFace_const_handle);
-  USING(SHalfedge_const_iterator); 
+  //USING(SHalfedge);
   USING(Object_handle);
   USING(SObject_handle);
+  USING(Object_iterator);
+
+  USING(Vertex);
+  USING(Halfedge);
+  USING(Halffacet);
+  USING(Volume);
+  USING(SVertex);
+  USING(SHalfedge);
+  USING(SHalfloop);
+  USING(SFace);
+
+  USING(Vertex_const_handle);
+  USING(Halfedge_const_handle);
+  USING(Halffacet_const_handle);
+  USING(Volume_handle);
+  USING(Volume_const_handle);
+  USING(SVertex_const_handle);
+  USING(SHalfedge_const_handle);
+  USING(SHalfloop_const_handle);
+  USING(SFace_const_handle);
+
+  USING(SVertex_handle);
+  USING(SHalfedge_handle);
+  USING(SHalfloop_handle);
+
+  USING(Vertex_const_iterator);
+  USING(Halfedge_const_iterator);
+  USING(Halffacet_const_iterator); 
+  USING(Volume_const_iterator);
+  USING(SVertex_const_iterator);
+  USING(SHalfedge_const_iterator);
+  USING(SHalfloop_const_iterator);
+  USING(SFace_const_iterator);
+
   USING(SHalfedge_around_facet_const_circulator);
-  USING(SHalfedge_around_facet_circulator);
   USING(SFace_cycle_const_iterator);
-  USING(Halffacet_cycle_iterator);
   USING(Halffacet_cycle_const_iterator);
-  USING(Shell_entry_iterator);
   USING(Shell_entry_const_iterator);
+
   USING(Kernel);
   USING(FT);
   USING(RT);
+
   USING(Point_3);
-  USING(Plane_3);
   USING(Segment_3);
+  USING(Ray_3);
   USING(Line_3);
+  USING(Plane_3);
   USING(Vector_3);
+  USING(Direction_3);
+
+  USING(Sphere_kernel);
   USING(Sphere_point);
   USING(Sphere_segment);
   USING(Sphere_circle);
-  USING(Mark);
+  USING(Sphere_direction);
+
   USING(Size_type);
+  USING(Mark);
   USING(Infi_box);
+  USING(Aff_transformation_3);
 #undef USING
 
 #define DECUSING(t) typedef typename SM_const_decorator::t t
   DECUSING(SHalfedge_around_svertex_const_circulator);
+  DECUSING(SHalfedge_around_sface_const_circulator);
 #undef DECUSING
 
  public:
@@ -103,7 +122,7 @@ public:
   SNC_const_decorator() : sncp_(0) {}
   SNC_const_decorator(const SNC_structure& W) : sncp_(&W) {}
   const SNC_structure* sncp() const { return sncp_; }
-
+  
   Vertex_const_handle vertex( Halfedge_const_handle e) const
   { return e->center_vertex_; }
   Halfedge_const_handle twin( Halfedge_const_handle e) const
@@ -181,7 +200,6 @@ public:
   // attributes::
   const Point_3& point(Vertex_const_handle v) const
   { return v->point(); }
-
   Sphere_point tmp_point(Halfedge_const_handle e) const
   { return e->tmp_point(); }
   Sphere_point calc_point(Halfedge_const_handle e) const
@@ -278,7 +296,8 @@ visit_shell_objects(SFace_const_handle f, Visitor& V) const
       V.visit(f); // report facet
       Halffacet_cycle_const_iterator fc;
       CGAL_nef3_forall_facet_cycles_of(fc,f) {
-        SHalfedge_handle e; SHalfloop_handle l;
+        SHalfedge_handle e;
+	SHalfloop_handle l;
         if ( assign(e,fc) ) {
 	  SHalfedge_const_handle she;
           SHalfedge_around_facet_const_circulator ec(e),ee(e);
@@ -312,7 +331,9 @@ visit_shell_objects(SFace_const_handle f, Visitor& V) const
       */
       SFace_cycle_const_iterator fc;
       CGAL_nef3_forall_sface_cycles_of(fc,sf) {
-        SVertex_handle v; SHalfedge_handle e; SHalfloop_handle l;
+        SVertex_handle v;
+	SHalfedge_handle e;
+	SHalfloop_handle l;
         if ( assign(e,fc) ) {
 	  SHalfedge_around_sface_const_circulator ec(e),ee(e);
           CGAL_For_all(ec,ee) { 
