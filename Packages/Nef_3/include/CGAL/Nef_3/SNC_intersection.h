@@ -51,7 +51,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
   typedef SNC_structure_                     SNC_structure;
   typedef SNC_intersection<SNC_structure>    Self;
   typedef SNC_const_decorator<SNC_structure> Base;
-  typedef SNC_const_decorator<SNC_structure> SNC_const_decorator;
+  //  typedef SNC_const_decorator<SNC_structure> SNC_const_decorator;
 
   typedef typename SNC_structure::SHalfedge               SHalfedge;
   typedef typename SNC_structure::Halfedge_handle         Halfedge_handle;
@@ -94,7 +94,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
 
   bool does_contain_on_boundary( Halffacet_const_handle f, const Point_3& p) const {
     typedef Project_halfedge_point
-      < SHalfedge, const Point_3, SNC_const_decorator> Project;
+      < SHalfedge, const Point_3, Base> Project;
     typedef Circulator_project
       < SHalfedge_around_facet_circulator, Project, 
       const Point_3&, const Point_3*> Circulator;
@@ -293,7 +293,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
   Bounded_side locate_point_in_halffacet( const Point_3& p, 
 					  Halffacet_const_handle f) const {
     typedef Project_halfedge_point
-      < SHalfedge, const Point_3, SNC_const_decorator> Project;
+      < SHalfedge, const Point_3, Base> Project;
     typedef Circulator_project
       < SHalfedge_around_facet_circulator, Project, 
       const Point_3&, const Point_3*> Circulator;

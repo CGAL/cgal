@@ -1133,7 +1133,6 @@ protected:
 
   /*{\Mtypes 3}*/
     
-    typedef typename Nef_rep::SM_const_decorator       SM_const_decorator;
     typedef CGAL::SNC_SM_explorer<SM_const_decorator>  SM_explorer;
 
     SM_explorer SMexplorer(Vertex_const_handle v) const { 
