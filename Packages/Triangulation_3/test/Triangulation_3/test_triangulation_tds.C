@@ -15,16 +15,14 @@
 // file          : test_triangulation_tds.C
 // revision      : 
 // revision_date : 
-// author(s)     : Francois Rebufat (Francois.Rebufat@sophia.inria.fr)
+// author(s)     : Francois Rebufat
 //
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
 
-#include <CGAL/basic.h>
-
+#include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_3.h>
-#include <CGAL/Triangulation_data_structure_3.h>
 
 #include <CGAL/_test_cls_tds_3.C>
 

@@ -15,12 +15,11 @@
 // file          : test_triangulation_3.C
 // revision      : 
 // revision_date : 
-// author(s)     : Francois Rebufat (Francois.Rebufat@sophia.inria.fr)
+// author(s)     : Francois Rebufat
 //
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
 
-#include <CGAL/basic.h>
 #include <CGAL/Triangulation_3.h>
 
 #include <CGAL/_test_types.h>
@@ -30,11 +29,10 @@ bool del = false;
 
 int main()
 {
-  typedef Test_rep_cartesian                                        traits;
   // Using vertex_base_pointer induces a memory leak (not a bug, but the test
   // program is not adapted), so we use the normal vertex.
-  // typedef CGAL::Triangulation_vertex_base_pointer_3<traits>        Vb;
-  typedef CGAL::Triangulation_3<traits>                         Cls3;
+  // typedef CGAL::Triangulation_vertex_base_pointer_3<K>        Vb;
+  typedef CGAL::Triangulation_3<K>                               Cls3;
 
   _test_cls_triangulation_3( Cls3() );
 

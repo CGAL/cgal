@@ -39,7 +39,7 @@ int main()
 {
   std::cout << " with CGAL::Regular_triangulation_euclidean_traits_3: " << std::endl;
 
-  typedef CGAL::Regular_triangulation_euclidean_traits_3<Test_rep_cartesian> traits;
+  typedef CGAL::Regular_triangulation_euclidean_traits_3<K> traits;
 
   typedef CGAL::Regular_triangulation_3<traits>                 Cls;
 

@@ -14,7 +14,7 @@
 // file          : include/CGAL/_test_types.h
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Francois Rebufat (Francois.Rebufat@sophia.inria.fr)
+// author(s)     : Francois Rebufat
 //
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
@@ -24,7 +24,8 @@
 
 #define Simple_cartesian Sc
 
-#include <CGAL/basic.h>
+#include <CGAL/Simple_cartesian.h>
+
 #include <iostream>
 #include <cassert>
 
@@ -39,8 +40,8 @@ typedef leda_integer my_NT;
 typedef CGAL::MP_Float my_NT;
 #endif
 
-#include <CGAL/Simple_cartesian.h>
-
-typedef CGAL::Simple_cartesian<my_NT> Test_rep_cartesian;
+// Try to shorten symbol names (for VC++)
+// typedef CGAL::Simple_cartesian<my_NT> K;
+struct K : public CGAL::Simple_cartesian<my_NT> {};
 
 #endif

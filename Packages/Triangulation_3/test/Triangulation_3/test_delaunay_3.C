@@ -15,12 +15,10 @@
 // file          : test_triangulation_3.C
 // revision      : 
 // revision_date : 
-// author(s)     : Francois Rebufat (Francois.Rebufat@sophia.inria.fr)
+// author(s)     : Francois Rebufat
 //
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
-
-#include <CGAL/basic.h>
 
 #include <CGAL/Delaunay_triangulation_3.h>
 
@@ -31,8 +29,7 @@ bool del=true;
 
 int main()
 {
-  typedef Test_rep_cartesian                                        traits;
-  typedef CGAL::Delaunay_triangulation_3<traits>                Cls;
+  typedef CGAL::Delaunay_triangulation_3<K>  Cls;
 
   _test_cls_delaunay_3( Cls() );
 

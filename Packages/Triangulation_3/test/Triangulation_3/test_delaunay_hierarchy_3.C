@@ -19,26 +19,21 @@
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
 
-#include <CGAL/basic.h>
-
-#include <CGAL/_test_types.h>
-
-#include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_hierarchy_3.h>
 
+#include <CGAL/_test_types.h>
 #include <CGAL/_test_cls_delaunay_3.C>
 
 bool del=true;
 
 int main()
 {
-  typedef Test_rep_cartesian                               Gt;
-  typedef CGAL::Triangulation_vertex_base_3<Gt>            Vbb;
+  typedef CGAL::Triangulation_vertex_base_3<K>             Vbb;
   typedef CGAL::Triangulation_hierarchy_vertex_base_3<Vbb> Vb;
   typedef CGAL::Triangulation_cell_base_3<void>            Cb;
   typedef CGAL::Triangulation_data_structure_3<Vb,Cb>      Tds;
-  typedef CGAL::Delaunay_triangulation_3<Gt,Tds>           Dt;
+  typedef CGAL::Delaunay_triangulation_3<K,Tds>            Dt;
   typedef CGAL::Triangulation_hierarchy_3<Dt>              Dh;
 
   _test_cls_delaunay_3( Dh() );
