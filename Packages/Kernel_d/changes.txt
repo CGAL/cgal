@@ -1,6 +1,9 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
 
+0.103 (22 October 2003)
+- changed license header
+
 0.103 (17 October 2003)
 - remove buggy typename (spotted by MipsPro).
 
