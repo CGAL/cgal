@@ -9,13 +9,24 @@
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
 # QTDIR = ENTER_YOUR_QT_DIRECTORY
+
+ifndef MOC
+ifdef QTDIR
 MOC=$(QTDIR)/bin/moc
+else
+MOC=moc
+endif
+endif
 
 #---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#
 
+ifdef QTDIR
 CGAL_QT_CXXFLAGS = -I$(QTDIR)/include -DCGAL_USE_QT
+else
+CGAL_QT_CXXFLAGS = -DCGAL_USE_QT
+endif
 
 CXXFLAGS = -I../../include/ \
            $(CGAL_CXXFLAGS) \
@@ -30,7 +41,11 @@ CXXFLAGS = -I../../include/ \
 LIBPATH = \
           $(CGAL_LIBPATH)
 
+ifdef QTDIR
 CGAL_QT_LDFLAGS = -L$(QTDIR)/lib -lqt
+else
+CGAL_QT_LDFLAGS = -lqt
+endif
 
 LDFLAGS = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
@@ -62,7 +77,7 @@ test$(EXE_EXT): test$(OBJ_EXT)
 clean: \
                    constrained.clean \
                    test.clean 
-	rm constrained.moc
+	rm -f constrained.moc
 
 #---------------------------------------------------------------------#
 #                    suffix rules
