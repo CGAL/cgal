@@ -154,8 +154,8 @@ protected:
       if ( is_shared() )
       {
         pointer tmp_ptr = allocator.allocate(1);
-        new (&(tmp_ptr->_t)) T(*ptr_);
-        tmp_ptr_->count = 1;
+        new (&(tmp_ptr->t)) T(ptr_->t);
+        tmp_ptr->count = 1;
         --(ptr_->count);
         ptr_ = tmp_ptr;
       }

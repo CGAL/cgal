@@ -1,3 +1,6 @@
+1.60 (25 August 2003)
+- Fix bug in Handle_for::copy_on_write (used by Polynomial).
+
 1.59 (14 August 2003)
 - Handle_for<> cleanups.
 
