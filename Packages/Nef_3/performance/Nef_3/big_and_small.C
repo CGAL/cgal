@@ -94,8 +94,8 @@ void transform_big(Nef_polyhedron& N,int n, int s) {
       z_max = vi->point().hz()/vi->point().hw();
   }
 
-  x_min-=(x_min<=0?1:2);
-  y_min-=(y_min<=0?1:2);
+  x_min-=(x_min<=0?0:1);
+  y_min-=(y_min<=0?0:1);
   z_max+=(z_max<=0?1:0);
   
   N.transform(Aff_transformation_3(CGAL::TRANSLATION, Vector_3(-x_min,-y_min,-z_max)));

@@ -53,7 +53,10 @@ all:            \
 	        two_tetrahedra_fields$(EXE_EXT) \
 	       	tetrahedra_and_grid$(EXE_EXT) \
                 big_and_small$(EXE_EXT) \
-                quadratic$(EXE_EXT)
+                quadratic$(EXE_EXT) \
+                convert_to_sat$(EXE_EXT) \
+                tetrahedra_as_sat$(EXE_EXT) \
+                grid_as_sat$(EXE_EXT)
 
 union_of_rotated_cylinders$(EXE_EXT): union_of_rotated_cylinders$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)union_of_rotated_cylinders union_of_rotated_cylinders$(OBJ_EXT) $(LDFLAGS)
@@ -65,13 +68,22 @@ big_and_small$(EXE_EXT): big_and_small$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)big_and_small big_and_small$(OBJ_EXT) $(LDFLAGS)
 quadratic$(EXE_EXT): quadratic$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)quadratic quadratic$(OBJ_EXT) $(LDFLAGS)
+convert_to_sat$(EXE_EXT): convert_to_sat$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)convert_to_sat convert_to_sat$(OBJ_EXT) $(LDFLAGS)
+tetrahedra_as_sat$(EXE_EXT): tetrahedra_as_sat$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)tetrahedra_as_sat tetrahedra_as_sat$(OBJ_EXT) $(LDFLAGS)
+grid_as_sat$(EXE_EXT): grid_as_sat$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)grid_as_sat grid_as_sat$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
                    union_of_rotated_cylinders.clean \
 	           two_tetrahedra_fields.clean \
 	           tetrahedra_and_grid.clean \
 	           big_and_small.clean \
-	           quadratic.clean
+	           quadratic.clean \
+	           convert_to_sat.clean \
+	           tetrahedra_as_sat.clean \
+	           grid_as_sat.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
