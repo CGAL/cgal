@@ -2,10 +2,7 @@
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/IO/Color.h>
-#include <CGAL/Triangulation_euclidean_traits_2.h>
-#include <CGAL/Triangulation_default_data_structure_2.h>
 #include <CGAL/Triangulation_2.h>
-
 
 /* A facet with a color member variable. */
 template < class Gt >
@@ -21,28 +18,29 @@ public:
     CGAL::Triangulation_face_base_2<Gt>(v0,v1,v2,n0,n1,n2) {}
 };
 
-typedef CGAL::Cartesian<double> Rp;
-typedef CGAL::Triangulation_euclidean_traits_2<Rp> Gt;
+typedef CGAL::Cartesian<double> Gt;
 typedef CGAL::Triangulation_vertex_base_2<Gt> Vb;
 typedef My_face_base<Gt> Fb;
-typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb > Tds;
+typedef CGAL::Triangulation_data_structure_using_list_2<Vb,Fb > Tds;
 typedef CGAL::Triangulation_2<Gt,Tds> Triangulation;
+
 typedef Triangulation::Face_handle Face_handle;
 typedef Triangulation::Face_iterator Face_iterator;
-typedef Triangulation::Vertex_handle Vertex_handle;
-typedef Rp::Point_2  Point;
+typedef Gt::Point_2  Point;
 
 int main() {
   Triangulation t;
-  Point p;
-   
-  while (std::cin >> p){
-    t.insert(p);
-  }
+  t.insert(Point(0,1));
+  t.insert(Point(0,0));
+  t.insert(Point(2,0));
+  t.insert(Point(2,2));
+ 
   Face_iterator fc = t.faces_begin();
-  while (fc != t.faces_end()) {
-    fc->color = CGAL::BLUE;
-    ++fc;
-  }
+  for( ; fc != t.faces_end(); ++fc)  fc->color = CGAL::BLUE;
+
+  Point p(0.5,0.5);
+  Face_handle fh = t.locate(p);
+  fh->color = CGAL::RED;
+
   return 0;
 }

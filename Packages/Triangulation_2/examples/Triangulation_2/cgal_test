@@ -18,8 +18,7 @@ ERRORFILE=error.txt
 #---------------------------------------------------------------------#
 
 compile_and_run()
-{
-  echo "Compiling $1 ... "
+{ echo "Compiling $1 ... "
   if eval 'make CGAL_MAKEFILE=$CGAL_MAKEFILE \
            TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS" \
            TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS" $1' ; then

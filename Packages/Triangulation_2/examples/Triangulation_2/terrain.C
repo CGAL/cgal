@@ -7,19 +7,18 @@
 
 typedef CGAL::Homogeneous<CGAL::Gmpz>  Rp;
 typedef CGAL::Triangulation_euclidean_traits_xy_3<Rp>  Gt;
-typedef CGAL::Triangulation_vertex_base_2<Gt> Vb;
-typedef CGAL::Triangulation_face_base_2<Gt> Fb;
-typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb > Tds;
-typedef CGAL::Delaunay_triangulation_2<Gt, Tds> Delaunay;
+typedef CGAL::Delaunay_triangulation_2<Gt> Delaunay;
+
+typedef Rp::Point_3   Point;
 
 int main()
 {
-    Delaunay dt;
+  std::ifstream in("data/terrain.cin");
+  std::istream_iterator<Point> begin(in);
+  std::istream_iterator<Point> end;
 
-    Rp::Point_3  p;
-    while(std::cin >> p){
-      dt.insert(p);
-    }
-    return 0;
+  Delaunay dt;
+  dt.insert(begin, end);
+  return 0;
 }
 
