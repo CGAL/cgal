@@ -231,7 +231,7 @@ private:
   bool _has_tool;
   bool _has_standard_tool;
   Qt_widget_tool	    *current_tool;
-  Qt_widget_tool   *current_standard_tool;
+  Qt_widget_tool	    *temp_pointer;
 
   //for layers
   std::list<Qt_widget_layer*>	qt_layers;

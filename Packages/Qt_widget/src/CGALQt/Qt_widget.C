@@ -31,7 +31,7 @@ namespace CGAL {
 Qt_widget::Qt_widget(QWidget *parent, const char *name) :
   QWidget(parent, name),  Locked(0), _pointSize(4),
   _pointStyle(DISC), _has_tool(false), _has_standard_tool(false),
-  current_tool(0), current_standard_tool(0)
+  current_tool(0), temp_pointer(0)
 {
   setCaption("CGAL::Qt_widget");
 
@@ -50,6 +50,7 @@ Qt_widget::Qt_widget(QWidget *parent, const char *name) :
   paint.begin(&pixmap);
 
   // set properties
+  paint.setRasterOp(CopyROP);
   setBackgroundColor(Qt::white);
   paint.setPen(QPen(Qt::black,2));
 
@@ -136,9 +137,7 @@ void Qt_widget::paintEvent(QPaintEvent *e)
 void Qt_widget::mousePressEvent(QMouseEvent *e)
 {
   emit(mousePressed(e));
-  if (has_standard_tool())
-    current_standard_tool->mousePressEvent(e);
-  if (has_tool() && !has_standard_tool())
+  if (has_tool() || has_standard_tool())
     current_tool->mousePressEvent(e);
   std::list<togglelayer>::iterator it;
   for(it = qt_toggle_layers.begin(); it!= qt_toggle_layers.end(); it++)
@@ -149,9 +148,7 @@ void Qt_widget::mousePressEvent(QMouseEvent *e)
 void Qt_widget::mouseReleaseEvent(QMouseEvent *e)
 {
   emit(mouseReleased(e));
-  if (has_standard_tool())
-    current_standard_tool->mouseReleaseEvent(e);
-  if (has_tool() && !has_standard_tool())
+  if (has_tool() || has_standard_tool())
     current_tool->mouseReleaseEvent(e);
   std::list<togglelayer>::iterator it;
   for(it = qt_toggle_layers.begin(); it!= qt_toggle_layers.end(); it++)
@@ -162,9 +159,7 @@ void Qt_widget::mouseReleaseEvent(QMouseEvent *e)
 void Qt_widget::mouseMoveEvent(QMouseEvent *e)
 {
   emit(mouseMoved(e));
-  if (has_standard_tool())
-    current_standard_tool->mouseMoveEvent(e);
-  if (has_tool() && !has_standard_tool())
+  if (has_tool() || has_standard_tool())
     current_tool->mouseMoveEvent(e);
   std::list<togglelayer>::iterator it;
   for(it = qt_toggle_layers.begin(); it!= qt_toggle_layers.end(); it++)
@@ -174,9 +169,7 @@ void Qt_widget::mouseMoveEvent(QMouseEvent *e)
 
 void Qt_widget::wheelEvent(QMouseEvent *e)
 {
-  if (has_standard_tool())
-    current_standard_tool->wheelEvent(e);
-  if (has_tool() && !has_standard_tool())
+  if (has_tool() || has_standard_tool())
     current_tool->wheelEvent(e);
   std::list<togglelayer>::iterator it;
   for(it = qt_toggle_layers.begin(); it!= qt_toggle_layers.end(); it++)
@@ -186,9 +179,7 @@ void Qt_widget::wheelEvent(QMouseEvent *e)
 
 void Qt_widget::mouseDoubleClickEvent(QMouseEvent *e)
 {
-  if (has_standard_tool())
-    current_standard_tool->mouseDoubleClickEvent(e);
-  if (has_tool() && !has_standard_tool())
+  if (has_tool() || has_standard_tool())
     current_tool->mouseDoubleClickEvent(e);
   std::list<togglelayer>::iterator it;
   for(it = qt_toggle_layers.begin(); it!= qt_toggle_layers.end(); it++)
@@ -198,9 +189,7 @@ void Qt_widget::mouseDoubleClickEvent(QMouseEvent *e)
 
 void Qt_widget::keyPressEvent(QKeyEvent *e)
 {
-  if (has_standard_tool())
-    current_standard_tool->keyPressEvent(e);
-  if (has_tool() && !has_standard_tool())
+  if (has_tool() || has_standard_tool())
     current_tool->keyPressEvent(e);
   std::list<togglelayer>::iterator it;
   for(it = qt_toggle_layers.begin(); it!= qt_toggle_layers.end(); it++)
@@ -210,9 +199,7 @@ void Qt_widget::keyPressEvent(QKeyEvent *e)
 
 void Qt_widget::keyReleaseEvent(QKeyEvent *e)
 {
-  if (has_standard_tool())
-    current_standard_tool->keyReleaseEvent(e);
-  if (has_tool() && !has_standard_tool())
+  if (has_tool() || has_standard_tool())
     current_tool->keyReleaseEvent(e);
   std::list<togglelayer>::iterator it;
   for(it = qt_toggle_layers.begin(); it!= qt_toggle_layers.end(); it++)
@@ -222,9 +209,7 @@ void Qt_widget::keyReleaseEvent(QKeyEvent *e)
 
 void Qt_widget::enterEvent(QEvent *e)
 {
-  if (has_standard_tool())
-    current_standard_tool->enterEvent(e);
-  if (has_tool() && !has_standard_tool())
+  if (has_tool() || has_standard_tool())
     current_tool->enterEvent(e);
   std::list<togglelayer>::iterator it;
   for(it = qt_toggle_layers.begin(); it!= qt_toggle_layers.end(); it++)
@@ -234,9 +219,7 @@ void Qt_widget::enterEvent(QEvent *e)
 
 void Qt_widget::leaveEvent(QEvent *e)
 {
-  if (has_standard_tool())
-    current_standard_tool->leaveEvent(e);
-  if (has_tool() && !has_standard_tool())
+  if (has_tool() || has_standard_tool())
     current_tool->leaveEvent(e);
   std::list<togglelayer>::iterator it;
   for(it = qt_toggle_layers.begin(); it!= qt_toggle_layers.end(); it++)
@@ -363,23 +346,25 @@ Qt_widget& operator<<(Qt_widget& w, const Bbox_2& r)
 *********************************************/
 void Qt_widget::attach_standard(Qt_widget_tool* tool) {
   if (has_standard_tool()) {
-    current_standard_tool->detach();
+    current_tool->detach();
     emit(detached_standard_tool());
   }
-  current_standard_tool=tool;
+  temp_pointer = current_tool;
+  current_tool = tool;
   _has_standard_tool=true;
-  current_standard_tool->attach(this);
+  current_tool->attach(this);
 }
 
 void Qt_widget::attach(Qt_widget_tool* tool) {
+  if (has_standard_tool()) {
+    current_tool->detach();
+    emit(detached_standard_tool());
+    _has_standard_tool=false;
+    current_tool = temp_pointer;
+  }
   if (has_tool()) {
     current_tool->detach();
     emit(detached_tool());
-  }
-  if (has_standard_tool()) {
-    current_standard_tool->detach();
-    emit(detached_standard_tool());
-    _has_standard_tool=false;
   }
   current_tool=tool;
   _has_tool=true;
@@ -388,16 +373,18 @@ void Qt_widget::attach(Qt_widget_tool* tool) {
 void Qt_widget::detach_current_standard_tool()
 {
   if (has_standard_tool())
-    current_standard_tool->detach();
-  _has_standard_tool = FALSE;
+    current_tool->detach();
+  if(has_tool())
+    current_tool = temp_pointer;
+  _has_standard_tool = false;
 };
 void Qt_widget::detach_current_tool()
 {
   if (has_tool()) {
     current_tool->detach();
-    emit(detached_tool());
+    //emit(detached_tool());
   }
-  _has_tool = FALSE;
+  _has_tool = false;
 };
 
 
@@ -417,10 +404,10 @@ void Qt_widget::redraw()
 	  (*it).layer->draw(*this);
       
       unlock();
-      if (has_standard_tool())
-	current_standard_tool->widget_repainted();
-      if (has_tool())
+      if (has_tool() || has_standard_tool())
 	current_tool->widget_repainted();
+      if (has_tool() && has_standard_tool())
+	temp_pointer->widget_repainted();
     }
   emit(custom_redraw());
   };
