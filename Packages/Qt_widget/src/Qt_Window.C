@@ -202,7 +202,7 @@ void Qt_widget::clear() {
   painter().eraseRect(rect());
 }
 
-Qt_widget& operator<<(Qt_widget& w, const CGAL::Bbox_2& r)
+Qt_widget& operator<<(Qt_widget& w, const Bbox_2& r)
 {
   int
     xmin = w.x_pixel(r.xmin()),
