@@ -1,5 +1,8 @@
-$(CGALROOT)/INSTALL.win32
-This file describes how to install CGAL on MS Windows for VC++ 6 and 7
+$(CGALROOT)/INSTALL.win32 for CGAL-3.0
+
+This file describes how to install CGAL-3.0 on MS Windows for VC++ .NET 
+and VC++ .NET 2003
+
 For installation on Unix and on Cygwin, please see INSTALL.
 
 The documentation of CGAL is available in various formats (HTML, PostScript,
@@ -7,57 +10,48 @@ PDF). It is not bundled with the software but can be downloaded separately.
 
 For more information about CGAL, see the URL http://www.cgal.org/.
 
-To install CGAL, you should:
-  - download the compressed archive file from the CGAL web site www.cgal.org
-  - Unpack and run setup.exe
-  - The setup will go through some steps, at the end you will have CGAL-2.4 
-    installed:
-	1) The License Agreement
-	2) The Destination Folder (we call it CGALROOT)
-	3) Add the CGALROOT environment variable
-	4) Install the CGAL files
-	5) Reboot the System if you are running on Win95/98/Millenium
 
-To uninstall CGAL you should go to Start->Control Panel->Add/Remove Programms, 
-Uninstall CGAL-2.4 or you go to Start->Programms->CGAL-2.4->Uninstall.
+Installation
+Download the Windows binary from the CGAL Download section. Run it and make 
+sure you carefully read the instructions from each installation step.
 
-NOTE
-We no longer provide a batch file for Windows platform to create the CGAL library,
-but only the install_cgal script that runs under cygwin, and the Project files for VC6/7
-If you are a Borland compiler user, please install CGAL using cygwin.
 
 GMP
-Some examples and demos need gmp. In order to use it you have to copy gmp.dll from
-CGALROOT/auxiliary/wingmp/gmp-4.0.1/gmp.dll to your path.
+Some examples and demos need gmp. In order to use it you have to copy gmp.dll 
+from CGALROOT/auxiliary/wingmp/gmp-4.1.2/gmp.dll to your path.
+If you had CGAL-2.4 installed you have to overwrite the old gmp.dll file, 
+because it came from a different version of gmp, that was gmp-4.0.1.
      
 Building the library
-The CGAL.lib is located in CGALROOT/lib/msvc6/CGAL.lib. It is buit using
-the MLd compiler option. If you want to rebuild the CGAL.lib you should go
-into the CGALROOT/src directory and open cgallib.dsp/cgallib.vcproj for 
-Msvc6/Msvc7. Then you build the opened project. The CGAL.lib from the lib 
-directory will be overwritten.
+The CGAL.lib is located in CGALROOT/lib/msvc7/CGAL.lib. It is buit using
+the ML compiler option. If you want to rebuild the CGAL.lib you should go
+into the CGALROOT/src directory and open cgallib.vcproj using VC++ .NET or 
+VC++ .NET 2003. Go to "Build" menubar and press on "Rebuild Solution". The 
+CGAL library will be created in CGALROOT/lib/msvc7/ as CGAL.lib.
 
 Building the examples
-In CGALROOT/examples there are directories for every example. In each 
-directory you will find two more directories called Vc6 and Vc7. In this
-directories are the projects for the example files. To build an example 
-you should open one of those projects and build it.
-You have to specify the right working directory if you want to run the examples 
-within the IDE. For the porjects that are shiped with CGAL, the Working Directory
-should be « ../ ».
+You can find the examples in CGALROOT/examples directory. Each 
+directory contains a new directory called Vc7. Those directories contain 
+projects for the example files. To build an example you should open one of 
+those projects and build it. You have to specify the right working directory 
+if you want to run the examples within the IDE. For the projects that are 
+shiped with CGAL, the Working Directory should be "../".
 
 Building the demos
-In CGALROOT/demo there are directories for every CGAL demo. Each demo 
-directory contain two other directories called Vc6 and Vc7 containing the
-projects for the demo files. To build a demo you should open one of those
-projects and build it.
-The demos from Qt_widget directory need Qt installed. The projects contain the 
-libraries from the non-commercial version of Qt-2.3. You should modify that 
-depending on your version of Qt. You can modify that in Project/Settings/Link.
-
+The demos come in CGALROOT/demo directory. Each demo directory contains the 
+VC++ .NET project files. To build one demo you should open one of those files.
+The demos need Qt installed. The projects are configured for commercial users.
+The libraries that are used are qt.lib and qtmain.lib, and you should change 
+manually those settings if you have a different version of Qt or you have 
+built Qt with thread support. All the demos use also the CGALQt.lib that 
+represents the Qt_widget library also wrote and distributed by CGAL.
 
 Running the examples and demos.
 The corresponding executable(s) then can be run as usual, from the
 command prompt, or via Explorer.
 
 
+NOTE for VC++ .NET 2003 users
+This product can convert the old VC++ .NET project files. CGAL provides only 
+project files for VC++ .NET because you should convert them without problems 
+using the new product. The other way around is not possible.
