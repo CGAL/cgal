@@ -281,24 +281,27 @@ public:
                                                const X_monotone_curve_2 & cv2, 
                                                const Point_2 & q) const 
   {
-    // The two curves must not be vertical.
-    CGAL_precondition(! cv1.is_vert);
-    CGAL_precondition(! cv2.is_vert);
-
     // The two curve must be defined at q and also to its left.
-    CGAL_precondition_code(
-	Less_x_2 less_x = less_x_2_object();
-	);
+    CGAL_precondition_code(Compare_xy_2 cmp_xy = compare_xy_2_object(););
 
-    CGAL_precondition (less_x(cv1.ps, q) || less_x(cv1.pt, q));
-    CGAL_precondition (!(less_x(cv1.ps, q) && less_x(cv1.pt, q)));
+    CGAL_precondition((cmp_xy(cv1.ps, q) == SMALLER) ||
+                      (cmp_xy(cv1.pt, q) == SMALLER));
+    CGAL_precondition((cmp_xy(cv1.ps, q) != SMALLER) ||
+                      (cmp_xy(cv1.pt, q) != SMALLER));
     
-    CGAL_precondition (less_x(cv2.ps, q) || less_x(cv2.pt, q));
-    CGAL_precondition (!(less_x(cv2.ps, q) && less_x(cv2.pt, q)));
+    CGAL_precondition((cmp_xy(cv2.ps, q) == SMALLER) ||
+                      (cmp_xy(cv2.pt, q) == SMALLER));
+    CGAL_precondition((cmp_xy(cv2.ps, q) != SMALLER) ||
+                      (cmp_xy(cv2.pt, q) != SMALLER));
     
     // Notice q is a placeholder for the x coordinate of the two segments.
     // That is, if we compare them at x(q) the result should be EQUAL.
-    CGAL_precondition(compare_y_at_x_2_object()(q,cv1.line,cv2.line) == EQUAL);
+    CGAL_precondition((is_vertical_2_object()(cv1.line) &&
+                       has_on_2_object()(cv1.line, q)) ||
+                      (is_vertical_2_object()(cv2.line) &&
+                       has_on_2_object()(cv2.line, q)) ||
+                      (compare_y_at_x_2_object()(q, cv1.line, cv2.line) ==
+                       EQUAL));
     
     // Compare the slopes of the two segments to determine thir relative
     // position immediately to the left of q.
@@ -322,22 +325,27 @@ public:
                               const X_monotone_curve_2 & cv2, 
                               const Point_2 & q) const 
   {
-    // The two curves must not be vertical.
-    CGAL_precondition(! cv1.is_vert);
-    CGAL_precondition(! cv2.is_vert);
-
     // The two curve must be defined at q and also to its right.
-    CGAL_precondition_code(Less_x_2 less_x = less_x_2_object(););
+    CGAL_precondition_code(Compare_xy_2 cmp_xy = compare_xy_2_object(););
 
-    CGAL_precondition (less_x(q, cv1.ps) || less_x(q, cv1.pt));
-    CGAL_precondition (!(less_x(q, cv1.ps) && less_x(q, cv1.pt)));
+    CGAL_precondition((cmp_xy(q, cv1.ps) == SMALLER) ||
+                      (cmp_xy(q, cv1.pt) == SMALLER));
+    CGAL_precondition((cmp_xy(q, cv1.ps) != SMALLER) ||
+                      (cmp_xy(q, cv1.pt) != SMALLER));
     
-    CGAL_precondition (less_x(q, cv2.ps) || less_x(q, cv2.pt));
-    CGAL_precondition (!(less_x(q, cv2.ps) && less_x(q, cv2.pt)));
+    CGAL_precondition((cmp_xy(q, cv2.ps) == SMALLER) ||
+                      (cmp_xy(q, cv2.pt) == SMALLER));
+    CGAL_precondition((cmp_xy(q, cv2.ps) != SMALLER) ||
+                      (cmp_xy(q, cv2.pt) != SMALLER));
 
     // Notice q is a placeholder for the x coordinate of the two segments.
     // That is, if we compare them at x(q) the result should be EQUAL.
-    CGAL_precondition(compare_y_at_x_2_object()(q,cv1.line,cv2.line) == EQUAL);
+    CGAL_precondition((is_vertical_2_object()(cv1.line) &&
+                       has_on_2_object()(cv1.line, q)) ||
+                      (is_vertical_2_object()(cv2.line) &&
+                       has_on_2_object()(cv2.line, q)) ||
+                      (compare_y_at_x_2_object()(q, cv1.line, cv2.line) ==
+                       EQUAL));
     
     // Compare the slopes of the two segments to determine thir relative
     // position immediately to the right of q.

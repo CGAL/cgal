@@ -55,6 +55,7 @@ public:
 protected:
   // Functors:
   typedef typename Kernel::Compare_x_2          Compare_x_2;
+  typedef typename Kernel::Compare_xy_2         Compare_xy_2;
   typedef typename Kernel::Is_vertical_2        Is_vertical_2;
   typedef typename Kernel::Construct_vertex_2   Construct_vertex_2;
   typedef typename Kernel::Less_x_2             Less_x_2;
@@ -153,29 +154,32 @@ public:
                                                const X_monotone_curve_2 & cv2, 
                                                const Point_2 & q) const 
   {
-    // The two curves must not be vertical.
-    CGAL_precondition(! curve_is_vertical(cv1));
-    CGAL_precondition(! curve_is_vertical(cv2));
-
     // The two curve must be defined at q and also to its left.
     CGAL_precondition_code(
         Construct_vertex_2 construct_vertex = construct_vertex_2_object();
-	Less_x_2 less_x = less_x_2_object();
+	Compare_xy_2 cmp_xy = compare_xy_2_object();
 	const Point_2 & source1 = construct_vertex(cv1, 0);
 	const Point_2 & target1 = construct_vertex(cv1, 1);
 	const Point_2 & source2 = construct_vertex(cv2, 0);
 	const Point_2 & target2 = construct_vertex(cv2, 1);
+        const Is_vertical_2 is_vertical = is_vertical_2_object();
 	);
 
-    CGAL_precondition (less_x(source1, q) || less_x(target1, q));
-    CGAL_precondition (!(less_x(source1, q) && less_x(target1, q)));
+    CGAL_precondition((cmp_xy(source1, q) == SMALLER) ||
+                      (cmp_xy(target1, q) == SMALLER));
+    CGAL_precondition((cmp_xy(source1, q) != SMALLER) ||
+                      (cmp_xy(target1, q) != SMALLER));
     
-    CGAL_precondition (less_x(source2, q) || less_x(target2, q));
-    CGAL_precondition (!(less_x(source2, q) && less_x(target2, q)));
+    CGAL_precondition((cmp_xy(source2, q) == SMALLER) ||
+                      (cmp_xy(target2, q) == SMALLER));
+    CGAL_precondition((cmp_xy(source2, q) != SMALLER) ||
+                      (cmp_xy(target2, q) != SMALLER));
     
     // Since the curves are continuous, if they are not equal at q, the same
     // result also applies to q's left.
-    CGAL_precondition (compare_y_at_x_2_object()(q, cv1, cv2) == EQUAL);
+    CGAL_precondition((is_vertical(cv1) && has_on_2_object()(cv1, q)) ||
+                      (is_vertical(cv2) && has_on_2_object()(cv2, q)) ||
+                      (compare_y_at_x_2_object()(q, cv1, cv2) == EQUAL));
     
     // <cv2> and <cv1> meet at a point with the same x-coordinate as q
     // compare their derivatives.
@@ -213,29 +217,33 @@ public:
                                                 const X_monotone_curve_2 & cv2,
                                                 const Point_2 & q) const
   {
-    // The two curves must not be vertical.
-    CGAL_precondition(! curve_is_vertical(cv1));
-    CGAL_precondition(! curve_is_vertical(cv2));
-
     // The two curve must be defined at q and also to its right.
     CGAL_precondition_code(
         Construct_vertex_2 construct_vertex = construct_vertex_2_object();
-	Less_x_2 less_x = less_x_2_object();
+	Compare_xy_2 cmp_xy = compare_xy_2_object();
 	const Point_2 & source1 = construct_vertex(cv1, 0);
 	const Point_2 & target1 = construct_vertex(cv1, 1);
 	const Point_2 & source2 = construct_vertex(cv2, 0);
 	const Point_2 & target2 = construct_vertex(cv2, 1);
 	);
 
-    CGAL_precondition (less_x(q, source1) || less_x(q, target1));
-    CGAL_precondition (!(less_x(q, source1) && less_x(q, target1)));
+    CGAL_precondition((cmp_xy(q, source1) == SMALLER)||
+                      (cmp_xy(q, target1) == SMALLER));
+    CGAL_precondition((cmp_xy(q, source1) != SMALLER) |
+                      (cmp_xy(q, target1) != SMALLER));
     
-    CGAL_precondition (less_x(q, source2) || less_x(q, target2));
-    CGAL_precondition (!(less_x(q, source2) && less_x(q, target2)));
+    CGAL_precondition((cmp_xy(q, source2) == SMALLER) ||
+                      (cmp_xy(q, target2) == SMALLER));
+    CGAL_precondition((cmp_xy(q, source2) != SMALLER) ||
+                      (cmp_xy(q, target2) != SMALLER));
     
     // Since the curves are continuous, if they are not equal at q, the same
     // result also applies to q's left.
-    CGAL_precondition (curves_compare_y_at_x(cv1, cv2, q) == EQUAL);     
+    CGAL_precondition((is_vertical_2_object()(cv1) &&
+                       has_on_2_object()(cv1, q)) ||
+                      (is_vertical_2_object()(cv2) &&
+                       has_on_2_object()(cv2, q)) ||
+                      (compare_y_at_x_2_object()(q, cv1, cv2) == EQUAL));
     
     // <cv1> and <cv2> meet at a point with the same x-coordinate as q
     // compare their derivatives
