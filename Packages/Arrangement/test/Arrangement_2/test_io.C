@@ -125,33 +125,33 @@ int main(int argc, char* argv[])
 #include <string>
 
 #if CGAL_ARR_TEST_TRAITS==CGAL_SEGMENT_TRAITS 
-  typedef CGAL::Quotient<int>                  NT;
-  typedef CGAL::Cartesian<NT>                  R;
-  typedef CGAL::Arr_segment_exact_traits<R>    Traits;
+  typedef CGAL::Quotient<int>                           NT;
+  typedef CGAL::Cartesian<NT>                           R;
+  typedef CGAL::Arr_segment_exact_traits<R>             Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
-  typedef leda_rational                        NT;
-  typedef CGAL::Arr_leda_segment_exact_traits  Traits;
+  typedef leda_rational                                 NT;
+  typedef CGAL::Arr_leda_segment_exact_traits<NT>       Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
-  typedef CGAL::Quotient<int>                  NT;
-  typedef CGAL::Cartesian<NT>                  R;
-  typedef CGAL::Arr_polyline_traits<R>         Traits;
+  typedef CGAL::Quotient<int>                           NT;
+  typedef CGAL::Cartesian<NT>                           R;
+  typedef CGAL::Arr_polyline_traits<R>                  Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
-  typedef leda_rational                        NT;
-  typedef CGAL::Arr_leda_polyline_traits<>     Traits;
+  typedef leda_rational                                 NT;
+  typedef CGAL::Arr_leda_polyline_traits<NT>            Traits;
 
 #endif
 
-typedef Traits::Point                        Point;
-typedef Traits::X_curve                      X_curve;
-typedef Traits::Curve                        Curve;
-typedef CGAL::Arr_base_node<X_curve>         Base_node;
-typedef CGAL::Arr_2_default_dcel<Traits>     Dcel;
+typedef Traits::Point_2                                 Point;
+typedef Traits::X_curve_2                               X_curve;
+typedef Traits::Curve_2                                 Curve;
+typedef CGAL::Arr_base_node<X_curve>                    Base_node;
+typedef CGAL::Arr_2_default_dcel<Traits>                Dcel;
 
-typedef CGAL::Arrangement_2<Dcel,Traits,Base_node > Arr_2;
-typedef Arr_2::Planar_map                           Planar_map;
+typedef CGAL::Arrangement_2<Dcel,Traits,Base_node >     Arr_2;
+typedef Arr_2::Planar_map                               Planar_map;
  
 // Defining IO operators for polyline curves.
 #if (CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS || CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS)
