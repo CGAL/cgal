@@ -538,7 +538,7 @@ insert_dim_up(Vertex *w = NULL, bool orient)
       }
       
       std::list<Face *>  to_delete;
-      std::list<Face *>::iterator lfit = faces_list.begin();
+      typename std::list<Face *>::iterator lfit = faces_list.begin();
       int i = dimension(); // maximun non NULL index in faces 
       Face *f, *g;
 
@@ -682,7 +682,7 @@ remove_dim_down(Vertex* v)
       else { to_downgrade.push_back(&(*ib));}
     }
 
-    std::list<Face*>::iterator lfit = to_downgrade.begin();
+    typename std::list<Face*>::iterator lfit = to_downgrade.begin();
     int j;
     for( ; lfit !=  to_downgrade.end() ; ++lfit) {
       f = *lfit; j = f->index(v);
@@ -1092,11 +1092,11 @@ clear()
     Faces.push_front(&(*ib));
   }
   
-  for(std::list<Face*>::iterator lfit=Faces.begin();
+  for(typename std::list<Face*>::iterator lfit=Faces.begin();
       lfit != Faces.end(); ++lfit) {
     delete_face(*lfit);
   }
-  for( std::list<Vertex*>::iterator lvit=Vertices.begin();
+  for( typename std::list<Vertex*>::iterator lvit=Vertices.begin();
        lvit != Vertices.end(); ++lvit) {
     delete *lvit;
   }
