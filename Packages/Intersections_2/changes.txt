@@ -1,4 +1,9 @@
 -----
+* 2.5.1 *
++ Removed a number of unneccessary break statements in
+  Segment_2_Segment_2_intersection.h
+
+-----
 * 2.5 *
 + Altered implementation of do_intersect for segment segment case.
   This version is much faster (factor 20 to 30 with Cartesian<double>)
