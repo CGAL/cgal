@@ -56,12 +56,23 @@ in the grid used by the Snap Rounding algorithm. Must have the syntax
 input point, \ccc{pixel_size} is the size of the pixel of the grid,
 and $x$ and $y$ are the $x$ and $y$-coordinates of the rounded point
 respectively.}
-\ccGlue
 
-\ccNestedType{segment_direction}{Returns the slope of a segment.
+\ccNestedType{segment_direction}{Returns the slope of a segment
+as described in CITE.
 Must have the syntax \ccc{double segment_direction(Segment_2 s)}
 where $s$ is the input segment.}
-\ccGlue
+
+\ccNestedType{rotate_point}{Rotate a point by a given angle.
+Must have the syntax \ccc{Point_2 rotate_point(Point_2 p,NT angle)}
+where $p$ is the point to rotate and angle is the rotation magnitude
+in radians.}
+
+\ccNestedType{get_bounding_of_min_sum}{Get the bounding box
+of the minkowski sum of a segment and a unit pixel as described in CITE.
+Must have the syntax \ccc{Iso_rectangle_2 get_bounding_of_min_sum(
+Segment_2 s,NT unit_squere,NT angle)}
+where $s$ is the segment, $unit_square$ is the edge size of the pixel
+and $angle$ is the slope of the segment.}
 
 \ccCreation
 \ccCreationVariable{traits}  %% choose variable name
@@ -70,11 +81,11 @@ Only a default constructor, copy constructor
 Note that further constructors
 can be provided. 
 
-\ccConstructor{LargestEmptyIsoRectangleTraits_2();}{Default constructor.}
+\ccConstructor{SnapRoundingTraits_2();}{Default constructor.}
 \ccGlue
-\ccConstructor{LargestEmptyIsoRectangleTraits_2(LargestEmptyIsoRectangleTraits_2);}
+\ccConstructor{SnapRoundingTraits_2(SnapRoundingTraits_2);}
 {Copy constructor}
-\ccMethod{LargestEmptyIsoRectangleTraits_2 operator=(LargestEmptyIsoRectangleTraits_2 gtr);}
+\ccMethod{SnapRoundingTraits_2 operator=(SnapRoundingTraits_2 gtr);}
 {Assignment operator.}
 
 \ccHeading{Predicate functions}
@@ -102,7 +113,7 @@ and constructor objects.
 \ccc{CGAL::Homogeneous<R>}
 
 \ccSeeAlso
-\ccc{CGAL::Largest_empty_iso_rectangle_2<Traits>}
+\ccc{CGAL::Snap_rounding_2<Traits>}
 
 
 

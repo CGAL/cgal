@@ -26,12 +26,10 @@
 Snap rounding is a well known method for converting
 arbitrary-precision arrangements of segments into a fixed-precision
 representation. It is classified as a finite precision approximation 
-technique. This package makes Snap Rounding of line segments in $\reals_2$.
-Iterated Snap Rounding is a modification of Snap Rounding. In
-Iterated Snap Rounding,
-each vertex is at leat half-the-width-of-a-pixel away from any non-incident
-edge.
-This package provides both Iterated Snap Rounding and Snap Rounding.
+technique. Iterated Snap Rounding is a modification of Snap Rounding in
+which each vertex is at leat half-the-width-of-a-pixel away from any
+non-incident edge.
+This package provides supports both methods.
 
 \begin{figure}
 \begin{center}
@@ -60,14 +58,13 @@ replaced by the polygonal chain through the centers of the hot pixels
 met by $e$, in the same order as they are met by $e$. 
 Figure~\ref{fig:sr1} demonstrates a snap rounding output. 
 
-Since in a snap-rounded arrangement, the distance between a vertex and
+In a snap-rounded arrangement, the distance between a vertex and
 a non-incident edge can be extremely small compared with the width of a
-pixel in the grid used for rounding, this package provides, beside the
-usual Snap Rounding, a modification of it, named Iterated Snap Rounding,
-which makes the a vertex and a non-incident edge well separated. However,
-the guaranteed quality of the approximation in Iterated Snap Rounding
-degrades. 
-Figure~\ref{fig:isr_vs_sr} demonstrates the differences between Iterated
+pixel in the grid used for rounding. Iterated Snap Rounding is a modification
+of Snap Rounding which makes the a vertex and a non-incident edge well separated
+(the distance between each is at least half-the-width-of-a-pixel).
+However, the guaranteed quality of the approximation in Iterated Snap Rounding
+degrades. Figure~\ref{fig:isr_vs_sr} demonstrates the differences between Iterated
 Snap Rounding and Snap Rounding.
 
 \begin{figure}
