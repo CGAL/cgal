@@ -28,6 +28,9 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/IO/Color.h>
 
+// #include <CGAL/Iso_rectangle_2.h>
+// #include <CGAL/intersections.h>
+
 #include <map>
 #include <string>
 #include <strstream> // deprecated
@@ -176,11 +179,17 @@ public:
 	return str.str();
     }
 
+    const Bbox_3 & get_bbox()
+    {
+	return bb;
+    }
+
 private:
     void setup_geomview(const char *machine, const char *login);
     void frame(const Bbox_3 &bbox);
     void pickplane(const Bbox_3 &bbox);
 
+    Bbox_3 bb;
     Color vertex_color, edge_color, face_color;
     bool wired_flag;  // decides if we draw surfaces or edges.
     bool echo_flag;   // decides if we echo the point we get back to Geomview.
@@ -396,9 +405,6 @@ operator<<(Geomview_stream &gv, const Sphere_3<R> &S)
 }
 #endif
 
-// Ray and Line drawing should be done by intersecting them with the BBox
-// of the Geomview_stream.  But for now we take the easy approach.
-
 #if defined CGAL_RAY_2_H && \
    !defined CGAL_GV_OUT_RAY_2_H
 #define CGAL_GV_OUT_RAY_2_H
@@ -406,21 +412,17 @@ template < class R >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Ray_2<R> &r)
 {
-    typename R::Segment_2 s(r.source(), r.point(1));
-    gv << s;
-    return gv;
-}
-#endif
-
-#if defined CGAL_RAY_3_H && \
-   !defined CGAL_GV_OUT_RAY_3_H
-#define CGAL_GV_OUT_RAY_3_H
-template < class R >
-Geomview_stream&
-operator<<(Geomview_stream &gv, const Ray_3<R> &r)
-{
-    typename R::Segment_3 s(r.source(), r.point(1));
-    gv << s;
+    // Note: it won't work if double is not convertible to an RT...
+    const Bbox_3 & bb = gv.get_bbox();
+    Object result = intersection(Iso_rectangle_2<R>(
+		                    Point_2<R>(bb.xmin(), bb.ymin()),
+		                    Point_2<R>(bb.xmax(), bb.ymax())), r);
+    Point_2<R> ipoint;
+    Segment_2<R> iseg;
+    if (assign(ipoint, result))
+	gv << ipoint;
+    else if (assign(iseg, result))
+	gv << iseg;
     return gv;
 }
 #endif
@@ -432,7 +434,32 @@ template < class R >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Line_2<R> &r)
 {
-    typename R::Segment_2 s(r.point(-1), r.point(1));
+    // Note: it won't work if double is not convertible to an RT...
+    const Bbox_3 & bb = gv.get_bbox();
+    Object result = intersection(Iso_rectangle_2<R>(
+		                    Point_2<R>(bb.xmin(), bb.ymin()),
+		                    Point_2<R>(bb.xmax(), bb.ymax())), r);
+    Point_2<R> ipoint;
+    Segment_2<R> iseg;
+    if (assign(ipoint, result))
+	gv << ipoint;
+    else if (assign(iseg, result))
+	gv << iseg;
+    return gv;
+}
+#endif
+
+// Ray and Line drawing should be done by intersecting them with the BBox
+// of the Geomview_stream.  But for now we take the easy approach.
+
+#if defined CGAL_RAY_3_H && \
+   !defined CGAL_GV_OUT_RAY_3_H
+#define CGAL_GV_OUT_RAY_3_H
+template < class R >
+Geomview_stream&
+operator<<(Geomview_stream &gv, const Ray_3<R> &r)
+{
+    typename R::Segment_3 s(r.source(), r.point(1));
     gv << s;
     return gv;
 }
