@@ -159,11 +159,6 @@ public:
     Objects_along_ray objects = candidate_provider->objects_along_ray(ray);
     Objects_along_ray_iterator objects_iterator = objects.begin();
     while( !hit && objects_iterator != objects.end()) {
-    // granados: a very large object could intersect the current the ray
-    // but the intersection point can lay outside of the cell, so it seems
-    // to be neccesary to test all the objects in the cells intersected by 
-    // the ray.  However, I don't think that the problem resides there...
-    //while( objects_iterator != objects.end()) {
       Object_list candidates = *objects_iterator;
       Object_list_iterator o;
       CGAL_for_each( o, candidates) {
@@ -187,6 +182,9 @@ public:
           if( is.does_intersect_internally( ray, segment(e), q)) {
             _TRACEN("ray intersects edge on "<<q);
             _TRACEN("actual intersection? "<<hit<<" on "<<end_of_seg);
+	    _TRACEN("is the intersection point on the current cell? "<<candidate_provider->is_point_on_cell( q, objects_iterator));
+	    if( !candidate_provider->is_point_on_cell( q, objects_iterator)) // TODO: hide the node
+		continue;
             if( !hit || 
 		has_smaller_distance_to_point( ray.source(), q, end_of_seg)) {
 	      end_of_seg = q; 
@@ -202,6 +200,9 @@ public:
           if( is.does_intersect_internally( ray, f, q) ) {
 	    _TRACEN("ray intersects facet on "<<q);
             _TRACEN("actual intersection? "<<hit<<" on "<<end_of_seg);
+	    _TRACEN("is the intersection point on the current cell? "<<candidate_provider->is_point_on_cell( q, objects_iterator));
+	    if( !candidate_provider->is_point_on_cell( q, objects_iterator))
+		continue;
             if( !hit || 
 		has_smaller_distance_to_point( ray.source(), q, end_of_seg)) {
 	      end_of_seg = q;
@@ -215,7 +216,7 @@ public:
           CGAL_nef3_assertion_msg( 0, "wrong handle");
       }
       if(!hit)
-      ++objects_iterator;
+	++objects_iterator;
     }
     return result;
   }

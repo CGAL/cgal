@@ -373,13 +373,13 @@ void SNC_io_parser<EW>::print() const
     print_edge(*e);
 
   if (verbose) 
-  out << "/* Facet: index { fclist, ivlist, mark, plane } */\n";
+  out << "/* Facet: index { twin, fclist, ivlist, volume | plane } mark */\n";
   typename std::list<Halffacet_iterator>::const_iterator f;
   for(f=FL.begin();f!=FL.end();f++)
     print_facet(*f);
 
   if (verbose) 
-  out << "/* Volume: index { shlist, mark } */\n";
+  out << "/* Volume: index { shlist } mark  */\n";
   typename std::list<Volume_iterator>::const_iterator c;
   for(c=CL.begin();c!=CL.end();c++)
     print_volume(*c);

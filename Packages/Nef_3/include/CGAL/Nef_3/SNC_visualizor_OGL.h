@@ -38,13 +38,21 @@
 #undef _DEBUG
 #define _DEBUG 53
 #include <CGAL/Nef_3/debug.h>
-
+/*
 #define CGAL_NEF3_MARKED_VERTEX_COLOR 221,221,255
 #define CGAL_NEF3_UNMARKED_VERTEX_COLOR 180,180,214
 #define CGAL_NEF3_MARKED_EDGE_COLOR 221,221,255
 #define CGAL_NEF3_UNMARKED_EDGE_COLOR 180,180,214
 #define CGAL_NEF3_MARKED_FACET_COLOR 221,255,255
 #define CGAL_NEF3_UNMARKED_FACET_COLOR 154,188,188
+*/
+#define CGAL_NEF3_MARKED_VERTEX_COLOR 183,232,92
+#define CGAL_NEF3_MARKED_EDGE_COLOR 171,216,86
+#define CGAL_NEF3_MARKED_FACET_COLOR  157,203,81
+
+#define CGAL_NEF3_UNMARKED_VERTEX_COLOR 255,246,124
+#define CGAL_NEF3_UNMARKED_EDGE_COLOR 255,236,94
+#define CGAL_NEF3_UNMARKED_FACET_COLOR 249,215,44
 
 CGAL_BEGIN_NAMESPACE
 namespace OGL {
@@ -286,8 +294,8 @@ namespace OGL {
     { TRACEN("drawing vertex "<<*v);
       CGAL::Color cf(CGAL_NEF3_MARKED_VERTEX_COLOR), 
 	ct(CGAL_NEF3_UNMARKED_VERTEX_COLOR); // more blue-ish
-      CGAL::Color c = v->mark() ? ct : cf;
-      glPointSize(10);
+      CGAL::Color c = v->mark() ? cf : ct;
+      glPointSize(4);
       glColor3ub(c.red(), c.green(), c.blue());
       glBegin(GL_POINTS);
       glVertex3d(v->x(),v->y(),v->z());
@@ -299,8 +307,8 @@ namespace OGL {
       Double_point p = e->source(), q = e->target();
       CGAL::Color cf(CGAL_NEF3_MARKED_EDGE_COLOR), 
 	ct(CGAL_NEF3_UNMARKED_EDGE_COLOR); // more blue-ish
-      CGAL::Color c = e->mark() ? ct : cf;
-      glLineWidth(5);
+      CGAL::Color c = e->mark() ? cf : ct;
+      glLineWidth(2);
       glColor3ub(c.red(),c.green(),c.blue());
       glBegin(GL_LINE_STRIP);
       glVertex3d(p.x(), p.y(), p.z());
@@ -325,7 +333,7 @@ namespace OGL {
       DFacet::Coord_const_iterator cit;
       CGAL::Color cf(CGAL_NEF3_MARKED_FACET_COLOR),
 	ct(CGAL_NEF3_UNMARKED_FACET_COLOR); // more blue-ish
-      CGAL::Color c = (f->mark() ? ct : cf);
+      CGAL::Color c = (f->mark() ? cf : ct);
       glColor3ub(c.red(),c.green(),c.blue());
       gluTessBeginPolygon(tess_,f->normal());
       TRACEN(" ");
@@ -428,9 +436,9 @@ namespace OGL {
                     -(bbox().ymax() + bbox().ymin()) / 2.0,
                     -(bbox().zmax() + bbox().zmin()) / 2.0);
       if ( surface_ ) {
-	glEnable(GL_LIGHTING); 
+	//glEnable(GL_LIGHTING); 
 	glCallList(object_list_+2); // facets
-	glDisable(GL_LIGHTING);
+	//glDisable(GL_LIGHTING);
       }
       // move edges and vertices a bit towards the view-point, 
       // i.e., 1/100th of the unit vector in camera space
@@ -644,7 +652,7 @@ static void init()
   glLoadIdentity();
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-
+/*
   GLfloat light_diffuse[] =  { 0.5, 0.5, 0.5, 0.7 };    // white diffuse light 
   GLfloat light_position[] = { -4.0, -4.0, 10.0, 0.0 }; // infinite location
  
@@ -665,15 +673,16 @@ static void init()
   glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, mat_shininess );
   glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, mat_emission);
 
+  glColorMaterial(GL_FRONT_AND_BACK,GL_DIFFUSE);
+  glEnable(GL_COLOR_MATERIAL);
+*/
+
   glDepthFunc( GL_LEQUAL);
   glShadeModel( GL_FLAT);
-  glEnable(GL_AUTO_NORMAL);
+  //glEnable(GL_AUTO_NORMAL);
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_POINT_SMOOTH);
   glEnable(GL_NORMALIZE);
-
-  glColorMaterial(GL_FRONT_AND_BACK,GL_DIFFUSE);
-  glEnable(GL_COLOR_MATERIAL);
 }
 
 static void enter_leave(int state)

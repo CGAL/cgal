@@ -40,7 +40,6 @@ template <typename K, typename M> class SNC_items;
 template <typename I> class SNC_structure;
 template <typename R> class SNC_decorator;
 template <typename R> class SNC_const_decorator;
-template <typename R> class SNC_constructor;
 template <typename R> class SNC_io_parser;
 template <typename R> class SNC_SM_decorator;
 template <typename R> class SNC_SM_base_decorator;
@@ -80,7 +79,6 @@ public:
     friend class SNC_decorator<Refs>;
     friend class SNC_const_decorator<Refs>;
     friend class SNC_io_parser<Refs>;
-    friend class SNC_constructor<Refs>;
     friend class SNC_SM_decorator<Refs>;
     friend class SNC_SM_base_decorator<Refs>;
     friend class SNC_SM_const_decorator<Refs>;
@@ -371,7 +369,6 @@ public:
     friend class SNC_decorator<Refs>;
     friend class SNC_const_decorator<Refs>;
     friend class SNC_io_parser<Refs>;
-    friend class SNC_constructor<Refs>;
     friend class SNC_SM_decorator<Refs>;
     friend class SNC_SM_base_decorator<Refs>;
     friend class SNC_SM_const_decorator<Refs>;
@@ -478,7 +475,6 @@ public:
     friend class SNC_decorator<Refs>;
     friend class SNC_const_decorator<Refs>;
     friend class SNC_io_parser<Refs>;
-    friend class SNC_constructor<Refs>;
     friend class SNC_SM_decorator<Refs>;
     friend class SNC_SM_base_decorator<Refs>;
     friend class SNC_SM_const_decorator<Refs>;
@@ -590,7 +586,6 @@ public:
     friend class SNC_decorator<Refs>;
     friend class SNC_const_decorator<Refs>;
     friend class SNC_io_parser<Refs>;
-    friend class SNC_constructor<Refs>;
     friend class SNC_SM_decorator<Refs>;
     friend class SNC_SM_base_decorator<Refs>;
     friend class SNC_SM_const_decorator<Refs>;
@@ -673,7 +668,6 @@ public:
     friend class SNC_decorator<Refs>;
     friend class SNC_const_decorator<Refs>;
     friend class SNC_io_parser<Refs>;
-    friend class SNC_constructor<Refs>;
     friend class SNC_SM_decorator<Refs>;
     friend class SNC_SM_base_decorator<Refs>;
     friend class SNC_SM_const_decorator<Refs>;
@@ -808,7 +802,6 @@ public:
     friend class SNC_decorator<Refs>;
     friend class SNC_const_decorator<Refs>;
     friend class SNC_io_parser<Refs>;
-    friend class SNC_constructor<Refs>;
     friend class SNC_SM_decorator<Refs>;
     friend class SNC_SM_base_decorator<Refs>;
     friend class SNC_SM_const_decorator<Refs>;
@@ -902,7 +895,6 @@ public:
     friend class SNC_decorator<Refs>;
     friend class SNC_const_decorator<Refs>;
     friend class SNC_io_parser<Refs>;
-    friend class SNC_constructor<Refs>;
     friend class SNC_SM_decorator<Refs>;
     friend class SNC_SM_base_decorator<Refs>;
     friend class SNC_SM_const_decorator<Refs>;

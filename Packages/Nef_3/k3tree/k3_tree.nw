@@ -45,7 +45,7 @@ public:
   K3_tree( const Object_list& objects) {
     <<compute the maximum depth of the subdivision>>
     <<compute the bounding box of the input objects>>
-    root = build_kdtree( 0, objects, 0);
+    root = build_kdtree( objects, 0);
   }
   const Object_list& objects_around_point( const Point_3& p) const {
     return locate( p, root);
@@ -58,72 +58,14 @@ public:
     <<get all objects on the cells intersected by s>>
     return O;
   }
-/*
-  class Objects_along_ray 
-  {
-    class Iterator;
-    friend class Iterator;
-  private:
-    Node *root_node;
-    Ray_3 ray;
-  public:
-    Objects_along_ray( const K3_tree& k, const Ray_3& r) : 
-      root_node(k.root), ray(r) {
-      CGAL_assertion( ray.direction() == Direction_3( -1, 0, 0));
-      TRACEN("Objects_along_ray: input ray: "<<ray);
-    }
-    Iterator begin() const {
-      return Iterator( root_node, ray);
-    }
-    Iterator end() const {
-      return Iterator();
-    }
-    class Iterator
-    {
-      typedef Iterator Self;
-      typedef std::pair< const Node*, Ray_3> Candidate;
-    private:
-      std::deque<Candidate> S;
-      const Node* node;
-      Traits traits;
-      CGAL_assertion_code( Ray_3 old_ray);
-      CGAL_assertion_code( bool first_ray);
-    public:
-      Iterator() : node(0) {}
-      Iterator( const Node* root, const Ray_3& ray) {
-        CGAL_assertion_code( first_ray = true);
-        S.push_front( Candidate( root, ray));
-        ++(*this); // place the interator in the first intersected cell
-      }
-      Iterator( const Self& i) : S(i.S), node(i.node) {}
-      const Object_list& operator*() const { 
-        CGAL_assertion( node != 0);
-        return node->objects();
-      }
-      Self& operator++() {
-        <<find next intersected cell>>
-        return *this;
-      }
-      bool operator==(const Self& i) const { 
-        return (node == i.node); 
-      }
-      bool operator!=(const Self& i) const { 
-        return !(*this == i); 
-      }
-      const Node* get_node() const { 
-        CGAL_assertion( node != 0);
-        return node;
-      }
-    private:
-      <<definition of ray shooting iteration methods>>
-    };
-  };
-*/
+  bool is_point_on_cell( const Point_3& p, const typename Objects_around_segment::Iterator& target) const {
+    return is_point_on_cell( p, target.get_node(), root);
+  }
   class Objects_around_segment 
   {
     class Iterator;
-    friend class Iterator;
   protected:
+    Traits traits;
     Node *root_node;
     Segment_3 segment;
     bool initialized;
@@ -149,6 +91,7 @@ public:
     }
     class Iterator
     {
+      friend class K3_tree;
       typedef Iterator Self;
       typedef std::pair< const Node*, Segment_3> Candidate;
     protected:
@@ -179,11 +122,11 @@ public:
       bool operator!=(const Self& i) const { 
         return !(*this == i); 
       }
+    private:
       const Node* get_node() const { 
         CGAL_assertion( node != 0);
         return node;
       }
-    private:
       <<definition of segment intersection iteration methods>>
     };
   };
@@ -194,9 +137,14 @@ public:
     Objects_along_ray( const K3_tree& k, const Ray_3& r) {
       TRACEN("Objects_along_ray: input ray: "<<r);
       CGAL_assertion( r.direction() == Direction_3( -1, 0, 0));
-      Point_3 p = r.source();
-      Point_3 q = Kernel::epoint( -1*p.hw()[0], 0, 0, p.hy()[0], 0, p.hz()[0], p.hw()[0]);
-      //Point_3 q = Infi_box::target_for_ray_shoot_on_minus_x_direction(r.source());
+      Point_3 p = r.source(), q;
+      Point_3 pt_on_minus_x_plane( Kernel::epoint(-1,0,0,0,0,0,1));
+      Plane_3 pl_on_minus_x( pt_on_minus_x_plane, Direction_3( -1, 0, 0));
+      Object o = traits.intersect_object()( pl_on_minus_x, r);
+      if( !assign( q, o) || pl_on_minus_x.has_on(r.source()))
+	q = r.source() + Vector_3( -1, 0, 0);
+      else
+	q = normalized(q);
       Base::initialize( k, Segment_3( p, q));
     }
   };
@@ -255,6 +203,7 @@ typedef typename Traits::Point_3 Point_3;
 typedef typename Traits::Segment_3 Segment_3;
 typedef typename Traits::Ray_3 Ray_3;
 
+typedef typename Traits::Vector_3 Vector_3;
 typedef typename Traits::Direction_3 Direction_3;
 typedef typename Traits::Plane_3 Plane_3;
 
@@ -275,7 +224,7 @@ During the construction of a Kd-tree, the space is consecutively divided into tw
 
 <<definition of the k3 tree construction methods>>=
 template <typename Depth>
-Node* build_kdtree( Node* parent, const Object_list& O, Depth depth) {
+Node* build_kdtree( const Object_list& O, Depth depth, Node* parent=0, int non_efective_splits=0) {
   CGAL_precondition( depth >= 0);
   CGAL_precondition( O.size() > 0);
   TRACEN( "build_kdtree: "<<O.size()<<" objects, "<<"depth "<<depth);
@@ -294,10 +243,20 @@ Node* build_kdtree( Node* parent, const Object_list& O, Depth depth) {
     TRACEN("build_kdtree: splitting plane not found");
     return new Node( parent, 0, 0, Plane_3(), O);
   }
+  CGAL_assertion( O1.size() <= O.size() && O2.size() <= O.size());
   CGAL_assertion( O1.size() + O2.size() >= O.size());
+  bool non_efective_split = ((O1.size() == O.size()) || (O2.size() == O.size()));
+  if( non_efective_split)
+    non_efective_splits++;
+  else
+    non_efective_splits = 0;
+  if( non_efective_splits > 2) {
+    TRACEN("build_kdtree: non efective splits reached maximum");
+    return new Node( parent, 0, 0, Plane_3(), O);
+  }
   Node *node = new Node( parent, 0, 0, partition_plane, Object_list());
-  node->left_node = build_kdtree( node, O1, depth + 1);
-  node->right_node = build_kdtree( node, O2, depth + 1);
+  node->left_node = build_kdtree( O1, depth + 1, node, non_efective_splits);
+  node->right_node = build_kdtree( O2, depth + 1, node, non_efective_splits);
   return node;
 }
 
@@ -333,7 +292,7 @@ Having the partition plane, it is neccesary first to decide if the plane actuall
 template <typename OutputIterator>
 bool classify_objects( const Object_list& O, Plane_3 partition_plane,
                         OutputIterator o1, OutputIterator o2) {
-  size_t on_oriented_boundary = 0, on_positive_side = 0, on_negative_side = 0;
+  size_t on_oriented_boundary = 0;
   typename Object_list::const_iterator o;
   for( o = O.begin(); o != O.end(); ++o) {
     Oriented_side side = traits.side_of_plane_object()( partition_plane, *o);
@@ -347,13 +306,8 @@ bool classify_objects( const Object_list& O, Plane_3 partition_plane,
     }
     if( side == ON_ORIENTED_BOUNDARY)
       on_oriented_boundary++;
-    if( side == ON_NEGATIVE_SIDE)
-      on_negative_side++;
-    if( side == ON_POSITIVE_SIDE)
-      on_positive_side++;
   }
-  //return (on_oriented_boundary != O.size());
-  return (on_negative_side != 0 && on_positive_side != 0 && on_oriented_boundary != O.size());
+  return (on_oriented_boundary != O.size());
 }
 
 @
@@ -512,19 +466,38 @@ Everything that as a beginning also has an end, and now we define the destructor
 In a kd tree, the point location process consists in a traversal of the tree structure, recursing on each node with the left or right child node depending on the side of the plane where the point is located, and reporting the objects contained on the leaf when one it is reached.  When the point lies on a partition plane, only one of the child nodes has to be visited or reported since all the objects intersecting the partition plane are stored in both incident nodes.  The choose of which node to visit in such cases is arbritary.
 
 <<definition of the point location methods>>=
-const Object_list& locate( const Point_3& p, const Node* node) const {
+const Node *locate_cell_containing( const Point_3& p, const Node* node) const {
   CGAL_precondition( node != 0);
   if( node->is_leaf())
-    return node->objects();
+    return node;
   else {
     Oriented_side side = node->plane().oriented_side(p);
     if( side == ON_NEGATIVE_SIDE || side == ON_ORIENTED_BOUNDARY)
-      return locate( p, node->left());
+      return locate_cell_containing( p, node->left());
     else { // side == ON_POSITIVE_SIDE 
       CGAL_nef3_assertion( side == ON_POSITIVE_SIDE);
-      return locate( p, node->right());
+      return locate_cell_containing( p, node->right());
     }
   }
+}
+
+const Object_list& locate( const Point_3& p, const Node* node) const {
+  CGAL_precondition( node != 0);
+  return locate_cell_containing( p, node)->objects();
+}
+
+bool is_point_on_cell( const Point_3& p, const Node* target, const Node* current) const {
+  CGAL_precondition( target != 0 && current != 0);
+  if( current->is_leaf())
+    return (current == target); 
+  Oriented_side side = current->plane().oriented_side(p);
+  if( side == ON_NEGATIVE_SIDE)
+    return is_point_on_cell( p, target, current->left());
+  else if( side == ON_POSITIVE_SIDE)
+    return is_point_on_cell( p, target, current->right());
+  CGAL_assertion( side == ON_ORIENTED_BOUNDARY);
+  return (is_point_on_cell( p, target, current->left()) ||
+	  is_point_on_cell( p, target, current->right()));
 }
 
 @ 
@@ -894,8 +867,9 @@ public:
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Segment_3 Segment_3;
   typedef typename Kernel::Ray_3 Ray_3;
-  typedef typename Kernel::Plane_3 Plane_3;
+  typedef typename Kernel::Vector_3 Vector_3;
   typedef typename Kernel::Direction_3 Direction_3;
+  typedef typename Kernel::Plane_3 Plane_3;
 
   typedef typename Kernel::RT RT;
   typedef typename Kernel::FT FT;

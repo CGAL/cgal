@@ -73,11 +73,10 @@ struct Facet_plane_3 {
 };
 
 
-template <class Polyhedron_, class SNC_structure, class SNC_constructor>
+template <class Polyhedron_, class SNC_structure, class SM_point_locator>
 void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
 {
   typedef Polyhedron_                                Polyhedron;
-  typedef typename SNC_constructor::SM_overlayer     SM_overlayer;
   typedef typename SNC_structure::SNC_decorator      SNC_decorator;
   typedef typename SNC_structure::SM_decorator       SM_decorator;
   typedef typename SNC_structure::Vertex_handle      Vertex_handle;
@@ -88,15 +87,19 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
   typedef typename SNC_structure::Sphere_point       Sphere_point;
   typedef typename SNC_structure::Sphere_segment     Sphere_segment;
   typedef typename SNC_structure::Sphere_circle      Sphere_circle;
-  typedef typename SNC_constructor::SM_point_locator SM_point_locator;
                                   
   TRACEN("  calculating facet's planes...");
   std::transform( P.facets_begin(), P.facets_end(),
 		  P.planes_begin(), Facet_plane_3());
   SNC_decorator D(S);
+
+  Progress_indicator_cout progress
+    ( P.size_of_vertices(),
+      "polyhedron_3_to_nef_3: constructing local view of vertices...");
     
   typename Polyhedron::Vertex_iterator pvi;
   for( pvi = P.vertices_begin(); pvi != P.vertices_end(); ++pvi ) {
+    progress++;
     typename Polyhedron::Vertex pv = *pvi;
     Vertex_handle nv = S.new_vertex();
     D.point(nv) = pv.point();

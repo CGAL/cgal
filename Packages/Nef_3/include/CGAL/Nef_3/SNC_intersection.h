@@ -72,7 +72,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
 
  public:
 
-  //SNC_intersection() : Base() {}
+  SNC_intersection() : Base() {}
   SNC_intersection(const SNC_structure& W) : Base(W) {}
 
   bool does_contain_internally(const Segment_3& s, const Point_3& p) const {
