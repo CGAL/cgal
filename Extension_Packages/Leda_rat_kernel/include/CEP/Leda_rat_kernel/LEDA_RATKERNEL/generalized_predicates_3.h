@@ -37,12 +37,21 @@ class Predicate_leda_d3_rat_angle {
 public:
   typedef Arity_tag< 3 > Arity;
   typedef CGAL::Angle    result_type;
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_point;
+#endif   
   
-  // we just return the sign of the dot product ...
+  // we return the sign of the dot product ...
   
   CGAL::Angle operator()(const Point_3& p1,const Point_3& p2,
                          const Point_3& p3)
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const Point_3&,const Point_3&,const Point_3&> \
+       (Predicate_leda_d3_rat_angle::ev_leda_d3_rat_point, p1, p2, p3);
+#endif
+
     // get vectors from p2-p1 and from p2-p3
     Vector_3 v1 = p1-p2;
     Vector_3 v2 = p3-p2;
@@ -54,6 +63,10 @@ public:
     return CGAL::OBTUSE;
   }
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event  Predicate_leda_d3_rat_angle<K>::ev_leda_d3_rat_point;
+#endif
 
 template<class K>
 class Predicate_leda_d3_rat_equal {
@@ -74,18 +87,41 @@ public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
 
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_point;
+  static CGAL::event ev_leda_d3_rat_segment;
+  static CGAL::event ev_leda_rat_vector;
+  static CGAL::event ev_leda_rat_direction;
+  static CGAL::event ev_leda_d3_rat_line;
+  static CGAL::event ev_leda_d3_rat_ray;
+  static CGAL::event ev_leda_d3_rat_plane;
+  static CGAL::event ev_leda_d3_rat_triangle;
+  static CGAL::event ev_leda_d3_rat_simplex;
+  static CGAL::event ev_leda_d3_rat_iso_cuboid;
+  static CGAL::event ev_leda_d3_rat_sphere;
+#endif    
+
   bool operator()(const Point_3& p1, const Point_3& p2) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const Point_3&,const Point_3&>(Predicate_leda_d3_rat_equal::ev_leda_d3_rat_point, p1, p2);
+#endif
     return ( p1 == p2 );
   }
 
   bool operator()(const Vector_3& v1, const Vector_3& v2) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const Vector_3&,const Vector_3&>(Predicate_leda_d3_rat_equal::ev_leda_rat_vector, v1, v2);
+#endif
     return ( v1 == v2 );
   }
   
   bool operator()(const Direction_3& d1, const Direction_3& d2) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const Direction_3&,const Direction_3&>(Predicate_leda_d3_rat_equal::ev_leda_rat_direction, d1, d2);
+#endif
     Vector_3 v1 = d1.get_vector();
     Vector_3 v2 = d2.get_vector();
     
@@ -125,6 +161,10 @@ public:
   
   bool operator()(const Line_3& l1, const Line_3& l2) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const Line_3&,const Line_3&>(Predicate_leda_d3_rat_equal::ev_leda_d3_rat_line, l1, l2);
+#endif
+
 #if (__LEDA__ <= 420)
     if (! ((Line_3&)l1 == (Line_3&)l2)) return false;
 #else  
@@ -143,11 +183,17 @@ public:
   
   bool operator()(const Plane_3& p1, const Plane_3& p2) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const Plane_3&,const Plane_3&>(Predicate_leda_d3_rat_equal::ev_leda_d3_rat_plane, p1, p2);
+#endif
     return (p1 == p2);
   }
   
   bool operator()(const Ray_3& r1, const Ray_3& r2) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const Ray_3&,const Ray_3&>(Predicate_leda_d3_rat_equal::ev_leda_d3_rat_ray, r1, r2);
+#endif
     if (r1.point1() != r2.point1()) return false;
     
     // compare directions ...
@@ -162,6 +208,9 @@ public:
 
   bool operator()(const Segment_3& s1, const Segment_3& s2) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const Segment_3&,const Segment_3&>(Predicate_leda_d3_rat_equal::ev_leda_d3_rat_segment, s1, s2);
+#endif
     return (s1 == s2);
   }  
 
@@ -169,11 +218,19 @@ public:
   bool operator()(const LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere& s1,
                   const LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere& s2) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere&,const LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere&> \
+             (Predicate_leda_d3_rat_equal::ev_leda_d3_rat_sphere, s1, s2);
+#endif
     return (s1 == s2);
   }
 #else
   bool operator()(const leda_d3_rat_sphere& s1, const leda_d3_rat_sphere& s2) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const leda_d3_rat_sphere&,const leda_d3_rat_sphere&> \
+             (Predicate_leda_d3_rat_equal::ev_leda_d3_rat_sphere, s1, s2);
+#endif
     if (s1.is_degenerate() && s2.is_degenerate()) return true;
     Point_3 a1 = s1.point1();
     Point_3 a2 = s1.point2();
@@ -187,6 +244,11 @@ public:
 
   bool operator()(const Triangle_3& t1, const Triangle_3& t2) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const Triangle_3&,const Triangle_3&> \
+             (Predicate_leda_d3_rat_equal::ev_leda_d3_rat_triangle, t1, t2);
+#endif
+
 #if (__LEDA__ <= 420)
     return ((Triangle_3&)t1 == (Triangle_3&)t2);
 #else  
@@ -197,12 +259,20 @@ public:
   bool operator()(const Tetrahedron_3& s1,
                   const Tetrahedron_3& s2) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const Tetrahedron_3&,const Tetrahedron_3&> \
+             (Predicate_leda_d3_rat_equal::ev_leda_d3_rat_simplex, s1, s2);
+#endif
     return (s1 == s2);
   }   
   
   bool operator()(const Iso_cuboid_3& ic1,
                   const Iso_cuboid_3& ic2) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const Iso_cuboid_3&,const Iso_cuboid_3&> \
+             (Predicate_leda_d3_rat_equal::ev_leda_d3_rat_iso_cuboid, ic1, ic2);
+#endif
      Point_3 lower_left1 = ic1.vertex(0);
      Point_3 lower_left2 = ic2.vertex(0);    
      Point_3 upper_right1 = ic1.vertex(7);
@@ -214,6 +284,22 @@ public:
    
 };
 
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event Predicate_leda_d3_rat_equal<K>::ev_leda_d3_rat_point;
+template<class K> CGAL::event Predicate_leda_d3_rat_equal<K>::ev_leda_d3_rat_segment;
+template<class K> CGAL::event Predicate_leda_d3_rat_equal<K>::ev_leda_rat_vector;
+template<class K> CGAL::event Predicate_leda_d3_rat_equal<K>::ev_leda_rat_direction;
+template<class K> CGAL::event Predicate_leda_d3_rat_equal<K>::ev_leda_d3_rat_line;
+template<class K> CGAL::event Predicate_leda_d3_rat_equal<K>::ev_leda_d3_rat_ray;
+template<class K> CGAL::event Predicate_leda_d3_rat_equal<K>::ev_leda_d3_rat_plane;
+template<class K> CGAL::event Predicate_leda_d3_rat_equal<K>::ev_leda_d3_rat_triangle;
+template<class K> CGAL::event Predicate_leda_d3_rat_equal<K>::ev_leda_d3_rat_simplex;
+template<class K> CGAL::event Predicate_leda_d3_rat_equal<K>::ev_leda_d3_rat_iso_cuboid;
+template<class K> CGAL::event Predicate_leda_d3_rat_equal<K>::ev_leda_d3_rat_sphere;
+#endif    
+
+
+
 template<class K>
 class Predicate_leda_d3_rat_equal_x {
 
@@ -224,13 +310,25 @@ public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
 
-   bool operator()(const Point_3& p1, const Point_3& p2) const
-   {
-     if (LEDA_NAMESPACE_NAME::identical(p1,p2)) return true;
-     if (__My_Point_3::cmp_x(p1,p2) == 0) return true;
-     return false;
-   }
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_point;  
+#endif
+
+  bool operator()(const Point_3& p1, const Point_3& p2) const
+  {
+#if defined(CGAL_GEOMETRY_EVENTS)
+    CGAL::occur<const Point_3&,const Point_3&>(Predicate_leda_d3_rat_equal_x::ev_leda_d3_rat_point, p1, p2);
+#endif   
+    if (LEDA_NAMESPACE_NAME::identical(p1,p2)) return true;
+    if (__My_Point_3::cmp_x(p1,p2) == 0) return true;
+    return false;
+  }
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event  Predicate_leda_d3_rat_equal_x<K>::ev_leda_d3_rat_point;
+#endif
+
 
 template<class K>
 class Predicate_leda_d3_rat_equal_y {
@@ -242,31 +340,54 @@ public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
 
-   bool operator()(const Point_3& p1, const Point_3& p2) const
-   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_point;  
+#endif
+
+  bool operator()(const Point_3& p1, const Point_3& p2) const
+  {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Point_3&,const Point_3&>(Predicate_leda_d3_rat_equal_y::ev_leda_d3_rat_point, p1, p2);
+#endif 
      if (LEDA_NAMESPACE_NAME::identical(p1,p2)) return true;   
      if (__My_Point_3::cmp_y(p1,p2) == 0) return true;
      return false;
-   }
+  }
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event  Predicate_leda_d3_rat_equal_y<K>::ev_leda_d3_rat_point;
+#endif
+
 
 template<class K>
 class Predicate_leda_d3_rat_equal_z {
 
   typedef typename K::Point_3      Point_3;
   typedef typename K::Point_3      __My_Point_3;  
-
 public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
 
-   bool operator()(const Point_3& p1, const Point_3& p2) const
-   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_point;  
+#endif
+
+  bool operator()(const Point_3& p1, const Point_3& p2) const
+  {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Point_3&,const Point_3&>(Predicate_leda_d3_rat_equal_z::ev_leda_d3_rat_point, p1, p2);
+#endif 
      if (LEDA_NAMESPACE_NAME::identical(p1,p2)) return true;   
      if (__My_Point_3::cmp_z(p1,p2) == 0) return true;
      return false;
-   }
+  }
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event  Predicate_leda_d3_rat_equal_z<K>::ev_leda_d3_rat_point;
+#endif
+
 
 template<class K>
 class Predicate_leda_d3_rat_equal_xy {
@@ -278,13 +399,25 @@ public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
 
-   bool operator()(const Point_3& p1, const Point_3& p2) const
-   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_point;  
+#endif
+
+  bool operator()(const Point_3& p1, const Point_3& p2) const
+  {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Point_3&,const Point_3&>(Predicate_leda_d3_rat_equal_xy::ev_leda_d3_rat_point, p1, p2);
+#endif 
      if (LEDA_NAMESPACE_NAME::identical(p1,p2)) return true;   
      if (__My_Point_3::cmp_x(p1,p2) == 0 && __My_Point_3::cmp_y(p1,p2) == 0) return true;
      return false;
-   }
+  }
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event  Predicate_leda_d3_rat_equal_xy<K>::ev_leda_d3_rat_point;
+#endif
+
 
 template<class K>
 class Predicate_leda_d3_rat_equal_xyz {
@@ -296,13 +429,25 @@ public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
 
-   bool operator()(const Point_3& p1, const Point_3& p2) const
-   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_point;  
+#endif
+
+  bool operator()(const Point_3& p1, const Point_3& p2) const
+  {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Point_3&,const Point_3&>(Predicate_leda_d3_rat_equal_xyz::ev_leda_d3_rat_point, p1, p2);
+#endif 
      if (LEDA_NAMESPACE_NAME::identical(p1,p2)) return true;   
      if (__My_Point_3::cmp_xyz(p1,p2) == 0) return true;
      return false;
-   }
+  }
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event  Predicate_leda_d3_rat_equal_xyz<K>::ev_leda_d3_rat_point;
+#endif
+
 
 template<class K>
 class Predicate_leda_d3_rat_less_x {
@@ -314,12 +459,23 @@ public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
 
-   bool operator()(const Point_3& p1, const Point_3& p2) const
-   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_point;  
+#endif
+
+  bool operator()(const Point_3& p1, const Point_3& p2) const
+  {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Point_3&,const Point_3&>(Predicate_leda_d3_rat_less_x::ev_leda_d3_rat_point, p1, p2);
+#endif 
      if (__My_Point_3::cmp_x(p1,p2) == -1) return true;
      return false;
-   }
+  }
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event  Predicate_leda_d3_rat_less_x<K>::ev_leda_d3_rat_point;
+#endif
 
 template<class K>
 class Predicate_leda_d3_rat_less_y {
@@ -331,12 +487,24 @@ public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
 
-   bool operator()(const Point_3& p1, const Point_3& p2) const
-   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_point;  
+#endif
+
+  bool operator()(const Point_3& p1, const Point_3& p2) const
+  {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Point_3&,const Point_3&>(Predicate_leda_d3_rat_less_y::ev_leda_d3_rat_point, p1, p2);
+#endif
      if (__My_Point_3::cmp_y(p1,p2) == -1) return true;
      return false;
-   }
+  }
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event  Predicate_leda_d3_rat_less_y<K>::ev_leda_d3_rat_point;
+#endif
+
 
 template<class K>
 class Predicate_leda_d3_rat_less_z {
@@ -348,12 +516,24 @@ public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
 
-   bool operator()(const Point_3& p1, const Point_3& p2) const
-   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_point;  
+#endif
+
+  bool operator()(const Point_3& p1, const Point_3& p2) const
+  {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Point_3&,const Point_3&>(Predicate_leda_d3_rat_less_z::ev_leda_d3_rat_point, p1, p2);
+#endif
      if (__My_Point_3::cmp_z(p1,p2) == -1) return true;
      return false;
-   }
+  }
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event  Predicate_leda_d3_rat_less_z<K>::ev_leda_d3_rat_point;
+#endif
+
 
 template<class K>
 class Predicate_leda_d3_rat_less_xy {
@@ -365,8 +545,15 @@ public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
 
-   bool operator()(const Point_3& p1, const Point_3& p2) const
-   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_point;  
+#endif
+
+  bool operator()(const Point_3& p1, const Point_3& p2) const
+  {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Point_3&,const Point_3&>(Predicate_leda_d3_rat_less_xy::ev_leda_d3_rat_point, p1, p2);
+#endif
      int cmx = __My_Point_3::cmp_x(p1,p2);
      
      if (cmx == -1) return true;
@@ -374,8 +561,13 @@ public:
       if (cmx==0 && __My_Point_3::cmp_y(p1,p2) == -1) return true;
      }
      return false;
-   }
+  }
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event  Predicate_leda_d3_rat_less_xy<K>::ev_leda_d3_rat_point;
+#endif
+
 
 template<class K>
 class Predicate_leda_d3_rat_less_xyz {
@@ -387,12 +579,24 @@ public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
 
-   bool operator()(const Point_3& p1, const Point_3& p2) const
-   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_point;  
+#endif
+
+  bool operator()(const Point_3& p1, const Point_3& p2) const
+  {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Point_3&,const Point_3&>(Predicate_leda_d3_rat_less_xyz::ev_leda_d3_rat_point, p1, p2);
+#endif
      if (__My_Point_3::cmp_xyz(p1,p2) == -1) return true;
      return false;   
-   }
+  }
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event  Predicate_leda_d3_rat_less_xyz<K>::ev_leda_d3_rat_point;
+#endif
+
 
 template<class K>
 class Predicate_leda_d3_rat_compare_x {
@@ -404,11 +608,22 @@ public:
   typedef Arity_tag< 2 > Arity;
   typedef Comparison_result       result_type;
 
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_point;  
+#endif
+
   Comparison_result operator()(const Point_3& p1, const Point_3& p2) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Point_3&,const Point_3&>(Predicate_leda_d3_rat_compare_x::ev_leda_d3_rat_point, p1, p2);
+#endif
      return ( (Comparison_result) __My_Point_3::cmp_x(p1,p2));     
   }
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event  Predicate_leda_d3_rat_compare_x<K>::ev_leda_d3_rat_point;
+#endif
 
 template<class K>
 class Predicate_leda_d3_rat_compare_y {
@@ -420,11 +635,22 @@ public:
   typedef Arity_tag< 2 > Arity;
   typedef Comparison_result       result_type;
 
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_point;  
+#endif
+
   Comparison_result operator()(const Point_3& p1, const Point_3& p2) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Point_3&,const Point_3&>(Predicate_leda_d3_rat_compare_y::ev_leda_d3_rat_point, p1, p2);
+#endif
      return ( (Comparison_result) __My_Point_3::cmp_y(p1,p2));     
   }
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event  Predicate_leda_d3_rat_compare_y<K>::ev_leda_d3_rat_point;
+#endif
 
 template<class K>
 class Predicate_leda_d3_rat_compare_z {
@@ -436,11 +662,22 @@ public:
   typedef Arity_tag< 2 > Arity;
   typedef Comparison_result       result_type;
 
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_point;  
+#endif
+
   Comparison_result operator()(const Point_3& p1, const Point_3& p2) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Point_3&,const Point_3&>(Predicate_leda_d3_rat_compare_z::ev_leda_d3_rat_point, p1, p2);
+#endif
      return ( (Comparison_result) __My_Point_3::cmp_z(p1,p2));     
   }
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event  Predicate_leda_d3_rat_compare_z<K>::ev_leda_d3_rat_point;
+#endif
 
 template<class K>
 class Predicate_leda_d3_rat_compare_xy {
@@ -452,8 +689,15 @@ public:
   typedef Arity_tag< 2 > Arity;
   typedef Comparison_result       result_type;
 
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_point;  
+#endif
+
   Comparison_result operator()(const Point_3& p1, const Point_3& p2) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Point_3&,const Point_3&>(Predicate_leda_d3_rat_compare_xy::ev_leda_d3_rat_point, p1, p2);
+#endif
      int cmx = __My_Point_3::cmp_x(p1,p2);    
      if (cmx != 0) return  ((Comparison_result) cmx);
      int cmy = __My_Point_3::cmp_y(p1,p2);
@@ -461,6 +705,10 @@ public:
      return ( (Comparison_result) cmy);     
   }
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event  Predicate_leda_d3_rat_compare_xy<K>::ev_leda_d3_rat_point;
+#endif
 
 template<class K>
 class Predicate_leda_d3_rat_compare_xyz {
@@ -472,11 +720,22 @@ public:
   typedef Arity_tag< 2 > Arity;
   typedef Comparison_result       result_type;
 
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_point;  
+#endif
+
   Comparison_result operator()(const Point_3& p1, const Point_3& p2) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Point_3&,const Point_3&>(Predicate_leda_d3_rat_compare_xyz::ev_leda_d3_rat_point, p1, p2);
+#endif
      return ( (Comparison_result) __My_Point_3::cmp_xyz(p1,p2));     
   }
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event  Predicate_leda_d3_rat_compare_xyz<K>::ev_leda_d3_rat_point;
+#endif
 
 
 // filter this later ...
@@ -492,10 +751,18 @@ public:
   typedef Arity_tag< 3 > Arity;
   typedef bool       result_type;
 
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_plane_point_point;  
+#endif
+
   bool operator()(const Plane_3& pl,
                   const Point_3& p1, 
 	          const Point_3& p2) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Plane_3&,const Point_3&,const Point_3&> \
+           (Predicate_leda_d3_rat_less_signed_distance_to_plane::ev_leda_d3_rat_plane_point_point, pl, p1, p2);
+#endif
      int ori1 = pl.side_of(p1);
      int ori2 = pl.side_of(p2);
   
@@ -504,6 +771,10 @@ public:
      return (d1 < d2);
   }   
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event Predicate_leda_d3_rat_less_signed_distance_to_plane<K>::ev_leda_d3_rat_plane_point_point;
+#endif
 
 
 template<class K>
@@ -515,15 +786,27 @@ public:
   typedef Arity_tag< 3 > Arity;
   typedef bool       result_type;
 
-   bool operator()(const Point_3& p1, const Point_3& p2,
-                   const Point_3& p3) const
-   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_point;  
+#endif
+
+  bool operator()(const Point_3& p1, const Point_3& p2,
+                  const Point_3& p3) const
+  {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Point_3&,const Point_3&,const Point_3&> \
+           (Predicate_leda_d3_rat_less_distance_to_point::ev_leda_d3_rat_point, p1, p2, p3);
+#endif
      int res = LEDA_NAMESPACE_NAME::cmp_distances(p1,p2,p1,p3);
      
      if (res==-1) return true;
      return false;
-   }
+  }
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event Predicate_leda_d3_rat_less_distance_to_point<K>::ev_leda_d3_rat_point;
+#endif
 
 template<class K>
 class Predicate_leda_d3_rat_compare_distance {
@@ -534,12 +817,24 @@ public:
   typedef Arity_tag< 3 > Arity;
   typedef Comparison_result       result_type;
 
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_point;  
+#endif
+
   Comparison_result operator()(const Point_3& p1, const Point_3& p2,
                                const Point_3& p3) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Point_3&,const Point_3&,const Point_3&> \
+           (Predicate_leda_d3_rat_compare_distance::ev_leda_d3_rat_point, p1, p2, p3);
+#endif
      return ( (Comparison_result) LEDA_NAMESPACE_NAME::cmp_distances(p1,p2,p1,p3));     
   }  
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event Predicate_leda_d3_rat_compare_distance<K>::ev_leda_d3_rat_point;
+#endif
 
 template<class K>
 class Predicate_leda_d3_rat_collinear {
@@ -550,12 +845,24 @@ public:
   typedef Arity_tag< 3 > Arity;
   typedef bool       result_type;
 
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_point;
+#endif
+
    bool operator()(const Point_3& p1, const Point_3& p2,
                    const Point_3& p3) const
    {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const Point_3&,const Point_3&,const Point_3&> \
+       (Predicate_leda_d3_rat_collinear::ev_leda_d3_rat_point, p1, p2, p3);
+#endif 
       return LEDA_NAMESPACE_NAME::collinear(p1,p2,p3);
    }
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event Predicate_leda_d3_rat_collinear<K>::ev_leda_d3_rat_point;
+#endif
 
 template<class K>
 class Predicate_leda_d3_rat_coplanar {
@@ -566,12 +873,24 @@ public:
   typedef Arity_tag< 4 > Arity;
   typedef bool       result_type;
 
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_point;
+#endif
+
    bool operator()(const Point_3& p1, const Point_3& p2,
                    const Point_3& p3, const Point_3& p4) const
    {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const Point_3&,const Point_3&,const Point_3&,const Point_3&> \
+       (Predicate_leda_d3_rat_coplanar::ev_leda_d3_rat_point, p1, p2, p3, p4);
+#endif 
       return LEDA_NAMESPACE_NAME::coplanar(p1,p2,p3,p4);   
    }
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event Predicate_leda_d3_rat_coplanar<K>::ev_leda_d3_rat_point;
+#endif
 
 template<class K>
 class Predicate_leda_d3_rat_orientation {
@@ -582,12 +901,24 @@ public:
   typedef Arity_tag< 4 > Arity;
   typedef Orientation       result_type;
 
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_point;
+#endif
+
   Orientation operator()(const Point_3& p1, const Point_3& p2, 
                          const Point_3& p3, const Point_3& p4) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const Point_3&,const Point_3&,const Point_3&,const Point_3&> \
+       (Predicate_leda_d3_rat_orientation::ev_leda_d3_rat_point, p1, p2, p3, p4);
+#endif 
      return (Orientation) LEDA_NAMESPACE_NAME::orientation(p1,p2,p3,p4);
   }
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event Predicate_leda_d3_rat_orientation<K>::ev_leda_d3_rat_point;
+#endif
 
 template<class K>
 class Predicate_leda_d3_rat_coplanar_orientation {
@@ -599,9 +930,18 @@ public:
   typedef Orientation       result_type;
   typedef Arity_tag< 3 >          Arity;
 
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_point_point_point;
+  static CGAL::event ev_leda_d3_rat_point_point_point_point;
+#endif
+
   Orientation operator()(const Point_3& p1, const Point_3& p2, 
                          const Point_3& p3) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const Point_3&,const Point_3&,const Point_3&> \
+       (Predicate_leda_d3_rat_coplanar_orientation::ev_leda_d3_rat_point_point_point, p1, p2, p3);
+#endif 
      if (LEDA_NAMESPACE_NAME::collinear(p1,p2,p3)) return CGAL::COLLINEAR;
      
      // return 2d orientation ...
@@ -618,6 +958,10 @@ public:
   Orientation operator()(const Point_3& p1, const Point_3& p2, 
                          const Point_3& p3, const Point_3& p4) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const Point_3&,const Point_3&,const Point_3&, const Point_3&> \
+       (Predicate_leda_d3_rat_coplanar_orientation::ev_leda_d3_rat_point_point_point_point, p1, p2, p3, p4);
+#endif 
      // Preconditions:
      CGAL_precondition(! LEDA_NAMESPACE_NAME::collinear(p1,p2,p3));
      CGAL_precondition(LEDA_NAMESPACE_NAME::coplanar(p1,p2,p3,p4));
@@ -645,6 +989,11 @@ public:
   }
 };
 
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event Predicate_leda_d3_rat_coplanar_orientation<K>::ev_leda_d3_rat_point_point_point;
+template<class K> CGAL::event Predicate_leda_d3_rat_coplanar_orientation<K>::ev_leda_d3_rat_point_point_point_point;
+#endif
+
 template<class K>
 class Predicate_leda_d3_rat_coplanar_side_of_bounded_circle {
 
@@ -654,9 +1003,17 @@ public:
   typedef Arity_tag< 4 > Arity;
   typedef Bounded_side       result_type;
 
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_point;
+#endif
+
   Bounded_side operator()(const Point_3& p1, const Point_3& p2, 
                           const Point_3& p3, const Point_3& test) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const Point_3&,const Point_3&,const Point_3&, const Point_3&> \
+       (Predicate_leda_d3_rat_coplanar_side_of_bounded_circle::ev_leda_d3_rat_point, p1, p2, p3, test);
+#endif
     // Preconditions:
     CGAL_precondition(! LEDA_NAMESPACE_NAME::collinear(p1,p2,p3));
     CGAL_precondition(LEDA_NAMESPACE_NAME::coplanar(p1,p2,p3,test));
@@ -678,6 +1035,10 @@ public:
   }
 };
 
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event Predicate_leda_d3_rat_coplanar_side_of_bounded_circle<K>::ev_leda_d3_rat_point;
+#endif
+
 template<class K>
 class Predicate_leda_d3_rat_side_of_oriented_sphere {
 
@@ -687,13 +1048,25 @@ public:
   typedef Arity_tag< 5 >  Arity;
   typedef Oriented_side   result_type;
 
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_point;
+#endif
+
   Oriented_side operator()(const Point_3& p1, const Point_3& p2, 
                            const Point_3& p3, const Point_3& p4,
 			   const Point_3& test) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Point_3&,const Point_3&,const Point_3&,const Point_3&,const Point_3&> \
+           (Predicate_leda_d3_rat_side_of_oriented_sphere::ev_leda_d3_rat_point, p1, p2, p3, p4, test);
+#endif
      return (Oriented_side) LEDA_NAMESPACE_NAME::side_of_sphere(p1,p2,p3,p4,test);
   }
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event Predicate_leda_d3_rat_side_of_oriented_sphere<K>::ev_leda_d3_rat_point;
+#endif
 
 template<class K>
 class Predicate_leda_d3_rat_side_of_bounded_sphere {
@@ -704,10 +1077,20 @@ public:
   typedef Bounded_side       result_type;
   typedef Arity_tag< 5 >     Arity;
 
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_point_point_point_point;
+  static CGAL::event ev_leda_d3_rat_point_point_point;
+  static CGAL::event ev_leda_d3_rat_point_point_point_point_point;
+#endif
+
   Bounded_side operator()(const Point_3& p1, const Point_3& p2, 
                           const Point_3& p3, const Point_3& p4,
 			  const Point_3& test) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Point_3&,const Point_3&,const Point_3&, const Point_3&, const Point_3&> \
+       (Predicate_leda_d3_rat_side_of_bounded_sphere::ev_leda_d3_rat_point_point_point_point_point, p1, p2, p3, p4, test);
+#endif
      int res = LEDA_NAMESPACE_NAME::region_of_sphere(p1,p2,p3,p4,test);
      if (res==0) return CGAL::ON_BOUNDARY;
      if (res==-1) return CGAL::ON_UNBOUNDED_SIDE;
@@ -718,6 +1101,10 @@ public:
   Bounded_side operator()(const Point_3& p1, const Point_3& p2, 
                           const Point_3& p3, const Point_3& test) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Point_3&,const Point_3&,const Point_3&, const Point_3&> \
+       (Predicate_leda_d3_rat_side_of_bounded_sphere::ev_leda_d3_rat_point_point_point_point, p1, p2, p3, test);
+#endif
      Point_3 m = leda_support::construct_circle_center_3(p1,p2,p3);
      int res = LEDA_NAMESPACE_NAME::cmp_distances(m,p1,m,test);
      if (res==0) return CGAL::ON_BOUNDARY;
@@ -728,6 +1115,10 @@ public:
   Bounded_side operator()(const Point_3& p1, const Point_3& p2, 
                           const Point_3& test) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Point_3&,const Point_3&,const Point_3&> \
+       (Predicate_leda_d3_rat_side_of_bounded_sphere::ev_leda_d3_rat_point_point_point, p1, p2, test);
+#endif
      // compute midpoint of sphere with diameter p1p2; then compare distances
      // we could filter this later ...
      Point_3 m = LEDA_NAMESPACE_NAME::midpoint(p1,p2);
@@ -736,12 +1127,17 @@ public:
      if (res==-1) return CGAL::ON_UNBOUNDED_SIDE;
      return CGAL::ON_BOUNDED_SIDE;
   } 
-
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event Predicate_leda_d3_rat_side_of_bounded_sphere<K>::ev_leda_d3_rat_point_point_point;
+template<class K> CGAL::event Predicate_leda_d3_rat_side_of_bounded_sphere<K>::ev_leda_d3_rat_point_point_point_point;
+template<class K> 
+CGAL::event Predicate_leda_d3_rat_side_of_bounded_sphere<K>::ev_leda_d3_rat_point_point_point_point_point;
+#endif
 
 template<class K>
 class Predicate_leda_d3_rat_is_degenerate {
-
   typedef typename K::Line_3       Line_3;
   typedef typename K::Plane_3      Plane_3; 
   typedef typename K::Ray_3        Ray_3;
@@ -755,19 +1151,43 @@ public:
   typedef Arity_tag< 1 > Arity;
   typedef bool       result_type;
 
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_line;
+  static CGAL::event ev_leda_d3_rat_plane; 
+  static CGAL::event ev_leda_d3_rat_ray;
+  static CGAL::event ev_leda_d3_rat_triangle;
+  static CGAL::event ev_leda_d3_rat_simplex;
+  static CGAL::event ev_leda_d3_rat_segment;
+  static CGAL::event ev_leda_d3_rat_iso_cuboid;
+  static CGAL::event ev_leda_d3_rat_sphere;               
+#endif  
+
   bool operator()(const Iso_cuboid_3& c) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const Iso_cuboid_3&> \
+       (Predicate_leda_d3_rat_is_degenerate::ev_leda_d3_rat_iso_cuboid, c);
+#endif
     // are the vertices collinear ???
     return LEDA_NAMESPACE_NAME::collinear(c.vertex(0),c.vertex(5),c.vertex(7));
   }
   
   bool operator()(const Line_3& l) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const Iso_cuboid_3&> \
+       (Predicate_leda_d3_rat_is_degenerate::ev_leda_d3_rat_line, l);
+#endif
     return (l.point1() == l.point2());
   }
   
   bool operator()(const Plane_3& pl) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const Plane_3&> \
+       (Predicate_leda_d3_rat_is_degenerate::ev_leda_d3_rat_plane, pl);
+#endif
+
 #if (__LEDA__ >= 440)      
     return ((pl.A() == 0) && (pl.B() == 0) && (pl.C() == 0));
 #else
@@ -778,36 +1198,71 @@ public:
   
   bool operator()(const Ray_3& r) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const Ray_3&> \
+       (Predicate_leda_d3_rat_is_degenerate::ev_leda_d3_rat_ray, r);
+#endif
     return (r.point1() == r.point2());
   }    
   
   bool operator()(const Segment_3& seg) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const Segment_3&> \
+       (Predicate_leda_d3_rat_is_degenerate::ev_leda_d3_rat_segment, seg);
+#endif
     return (seg.source() == seg.target());
   }
 
 #if defined(CGAL_COMPATIBLE_SPHERES)
   bool operator()(const LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere& sp) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere&> \
+       (Predicate_leda_d3_rat_is_degenerate::ev_leda_d3_rat_sphere, sp);
+#endif
     return (sp.squared_radius() == 0);
   }
 #else  
   bool operator()(const leda_d3_rat_sphere& sp) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const leda_d3_rat_sphere&> \
+       (Predicate_leda_d3_rat_is_degenerate::ev_leda_d3_rat_sphere, sp);
+#endif
     return (sp.is_degenerate());
   }
 #endif  
   
   bool operator()(const Tetrahedron_3& s) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const Tetrahedron_3&> \
+       (Predicate_leda_d3_rat_is_degenerate::ev_leda_d3_rat_simplex, s);
+#endif
     return s.is_degenerate();
   }
   
   bool operator()(const Triangle_3& t) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const Triangle_3&> \
+       (Predicate_leda_d3_rat_is_degenerate::ev_leda_d3_rat_triangle, t);
+#endif
     return t.is_degenerate();  
   }            
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event Predicate_leda_d3_rat_is_degenerate<K>::ev_leda_d3_rat_line;
+template<class K> CGAL::event Predicate_leda_d3_rat_is_degenerate<K>::ev_leda_d3_rat_plane; 
+template<class K> CGAL::event Predicate_leda_d3_rat_is_degenerate<K>::ev_leda_d3_rat_ray;
+template<class K> CGAL::event Predicate_leda_d3_rat_is_degenerate<K>::ev_leda_d3_rat_triangle;
+template<class K> CGAL::event Predicate_leda_d3_rat_is_degenerate<K>::ev_leda_d3_rat_simplex;
+template<class K> CGAL::event Predicate_leda_d3_rat_is_degenerate<K>::ev_leda_d3_rat_segment;
+template<class K> CGAL::event Predicate_leda_d3_rat_is_degenerate<K>::ev_leda_d3_rat_iso_cuboid;
+template<class K> CGAL::event Predicate_leda_d3_rat_is_degenerate<K>::ev_leda_d3_rat_sphere;               
+#endif  
 
 template<class K>
 class Predicate_leda_d3_rat_has_on {
@@ -823,28 +1278,56 @@ public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
 
-   bool operator()(const Line_3& l, const Point_3& p) const
-   {
-     return l.contains(p);
-   }
-   
-   bool operator()(const Ray_3& r, const Point_3& p) const
-   {
-     return r.contains(p);
-   }   
-   
-   bool operator()(const Segment_3& s, const Point_3& p) const
-   {
-     return s.contains(p);  
-   }     
-   
-   bool operator()(const Plane_3& pl, const Point_3& p) const
-   {
-     return pl.contains(p);  
-   }     
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_line_point;
+  static CGAL::event ev_leda_d3_rat_plane_point; 
+  static CGAL::event ev_leda_d3_rat_ray_point;
+  static CGAL::event ev_leda_d3_rat_triangle_point;
+  static CGAL::event ev_leda_d3_rat_segment_point;             
+#endif  
 
-   bool operator()(const Triangle_3& t, const Point_3& p) const
-   {
+  bool operator()(const Line_3& l, const Point_3& p) const
+  {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const Line_3&,const Point_3&> \
+       (Predicate_leda_d3_rat_has_on::ev_leda_d3_rat_line_point, l, p);
+#endif
+     return l.contains(p);
+  }
+   
+  bool operator()(const Ray_3& r, const Point_3& p) const
+  {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const Ray_3&,const Point_3&> \
+       (Predicate_leda_d3_rat_has_on::ev_leda_d3_rat_ray_point, r, p);
+#endif
+     return r.contains(p);
+  }   
+   
+  bool operator()(const Segment_3& s, const Point_3& p) const
+  {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const Segment_3&,const Point_3&> \
+       (Predicate_leda_d3_rat_has_on::ev_leda_d3_rat_segment_point, s, p);
+#endif
+     return s.contains(p);  
+  }     
+   
+  bool operator()(const Plane_3& pl, const Point_3& p) const
+  {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const Plane_3&,const Point_3&> \
+       (Predicate_leda_d3_rat_has_on::ev_leda_d3_rat_plane_point, pl, p);
+#endif
+     return pl.contains(p);  
+  }     
+
+  bool operator()(const Triangle_3& t, const Point_3& p) const
+  {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const Triangle_3&,const Point_3&> \
+       (Predicate_leda_d3_rat_has_on::ev_leda_d3_rat_triangle_point, t, p);
+#endif
      // coplanar ?
      Point_3 p1 = t.point1();
      Point_3 p2 = t.point2();
@@ -891,8 +1374,16 @@ public:
      LEDA_NAMESPACE_NAME::region_kind rk = tp.region_of(pp);
      if (rk == LEDA_NAMESPACE_NAME::UNBOUNDED_REGION) return false;
      return true;               
-   }   
+  }   
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event Predicate_leda_d3_rat_has_on<K>::ev_leda_d3_rat_line_point;
+template<class K> CGAL::event Predicate_leda_d3_rat_has_on<K>::ev_leda_d3_rat_plane_point; 
+template<class K> CGAL::event Predicate_leda_d3_rat_has_on<K>::ev_leda_d3_rat_ray_point;
+template<class K> CGAL::event Predicate_leda_d3_rat_has_on<K>::ev_leda_d3_rat_triangle_point;
+template<class K> CGAL::event Predicate_leda_d3_rat_has_on<K>::ev_leda_d3_rat_segment_point;             
+#endif  
 
 template<class K>
 class Predicate_leda_d3_rat_has_on_bounded_side {
@@ -908,9 +1399,19 @@ public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
 
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_simplex_point;
+  static CGAL::event ev_leda_d3_rat_iso_cuboid_point;
+  static CGAL::event ev_leda_d3_rat_sphere_point;               
+#endif  
+
 #if defined(CGAL_COMPATIBLE_SPHERES)
   bool operator()(const LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere& s, const Point_3& p) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere&, const Point_3&> \
+       (Predicate_leda_d3_rat_has_on_bounded_side::ev_leda_d3_rat_sphere_point, s, p);
+#endif
      Point_3 center = s.center();
      FT sq      = s.squared_radius();
      FT d       = center.sqr_dist(p);
@@ -922,12 +1423,20 @@ public:
 #else
    bool operator()(const leda_d3_rat_sphere& s, const Point_3& p) const
    {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const leda_d3_rat_sphere&, const Point_3&> \
+       (Predicate_leda_d3_rat_has_on_bounded_side::ev_leda_d3_rat_sphere_point, s, p);
+#endif
      return s.inside(p);
    }
 #endif   
 
    bool operator()(const Tetrahedron_3& s, const Point_3& p) const
    {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const Tetrahedron_3&, const Point_3&> \
+       (Predicate_leda_d3_rat_has_on_bounded_side::ev_leda_d3_rat_simplex_point, s, p);
+#endif
      // inside returns true if p is inside or on s ...
      
      bool inside = s.in_simplex(p);
@@ -947,6 +1456,10 @@ public:
    
    bool operator()(const Iso_cuboid_3& ic, const Point_3& p) const
    {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const Iso_cuboid_3&, const Point_3&> \
+       (Predicate_leda_d3_rat_has_on_bounded_side::ev_leda_d3_rat_iso_cuboid_point, ic, p);
+#endif
      Point_3 min = ic.vertex(0);
      Point_3 max = ic.vertex(7);
      
@@ -958,6 +1471,12 @@ public:
      return true;     
    }      
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event Predicate_leda_d3_rat_has_on_bounded_side<K>::ev_leda_d3_rat_simplex_point;
+template<class K> CGAL::event Predicate_leda_d3_rat_has_on_bounded_side<K>::ev_leda_d3_rat_iso_cuboid_point; 
+template<class K> CGAL::event Predicate_leda_d3_rat_has_on_bounded_side<K>::ev_leda_d3_rat_sphere_point;
+#endif
 
 template<class K>
 class Predicate_leda_d3_rat_has_on_unbounded_side {
@@ -973,26 +1492,43 @@ public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
 
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_simplex_point;
+  static CGAL::event ev_leda_d3_rat_iso_cuboid_point;
+  static CGAL::event ev_leda_d3_rat_sphere_point;               
+#endif  
+
 #if defined(CGAL_COMPATIBLE_SPHERES)
   bool operator()(const LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere& s, const Point_3& p) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere&, const Point_3&> \
+       (Predicate_leda_d3_rat_has_on_unbounded_side::ev_leda_d3_rat_sphere_point, s, p);
+#endif
      Point_3 center = s.center();
      FT sq      = s.squared_radius();
      FT d       = center.sqr_dist(p);
      
      if (d > sq) return true;
-     return false;
-      
+     return false;      
   }
 #else
    bool operator()(const leda_d3_rat_sphere& s, const Point_3& p) const
    {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const leda_d3_rat_sphere&, const Point_3&> \
+       (Predicate_leda_d3_rat_has_on_unbounded_side::ev_leda_d3_rat_sphere_point, s, p);
+#endif
      return s.outside(p);
    }
 #endif
 
    bool operator()(const Tetrahedron_3& s, const Point_3& p) const
    {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const Tetrahedron_3&, const Point_3&> \
+       (Predicate_leda_d3_rat_has_on_unbounded_side::ev_leda_d3_rat_simplex_point, s, p);
+#endif
      bool inside = s.in_simplex(p);
      if (inside) return false;
      
@@ -1010,6 +1546,10 @@ public:
    
    bool operator()(const Iso_cuboid_3& ic, const Point_3& p) const
    {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const Iso_cuboid_3&, const Point_3&> \
+       (Predicate_leda_d3_rat_has_on_unbounded_side::ev_leda_d3_rat_iso_cuboid_point, ic, p);
+#endif
      Point_3 min = ic.vertex(0);
      Point_3 max = ic.vertex(7);
      
@@ -1021,6 +1561,12 @@ public:
      return false;     
    }      
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event Predicate_leda_d3_rat_has_on_unbounded_side<K>::ev_leda_d3_rat_simplex_point;
+template<class K> CGAL::event Predicate_leda_d3_rat_has_on_unbounded_side<K>::ev_leda_d3_rat_iso_cuboid_point; 
+template<class K> CGAL::event Predicate_leda_d3_rat_has_on_unbounded_side<K>::ev_leda_d3_rat_sphere_point;
+#endif
 
 template<class K>
 class Predicate_leda_d3_rat_has_on_boundary {
@@ -1036,16 +1582,31 @@ class Predicate_leda_d3_rat_has_on_boundary {
 public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_plane_point;
+  static CGAL::event ev_leda_d3_rat_simplex_point;
+  static CGAL::event ev_leda_d3_rat_iso_cuboid_point;
+  static CGAL::event ev_leda_d3_rat_sphere_point;               
+#endif  
   
   // undocumented
   bool operator()(const Plane_3& pl, const Point_3& p) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+      CGAL::occur<const Plane_3&, const Point_3&> \
+       (Predicate_leda_d3_rat_has_on_boundary::ev_leda_d3_rat_plane_point, pl, p);
+#endif
       return pl.contains(p);
   }  
 
 #if defined(CGAL_COMPATIBLE_SPHERES)
   bool operator()(const LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere& s, const Point_3& p) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere&, const Point_3&> \
+       (Predicate_leda_d3_rat_has_on_boundary::ev_leda_d3_rat_sphere_point, s, p);
+#endif
      Point_3 center = s.center();
      FT sq      = s.squared_radius();
      FT d       = center.sqr_dist(p);
@@ -1057,12 +1618,20 @@ public:
 #else
    bool operator()(const leda_d3_rat_sphere& s, const Point_3& p) const
    {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const leda_d3_rat_sphere&, const Point_3&> \
+       (Predicate_leda_d3_rat_has_on_boundary::ev_leda_d3_rat_sphere_point, s, p);
+#endif
      return s.contains(p);
    }
 #endif
 
    bool operator()(const Tetrahedron_3& s, const Point_3& p) const
    {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Tetrahedron_3&, const Point_3&> \
+       (Predicate_leda_d3_rat_has_on_boundary::ev_leda_d3_rat_simplex_point, s, p);
+#endif
      // s.inside returns true if p is in or on the simplex !!!!
      bool inside = s.in_simplex(p);
      if (! inside) return false;
@@ -1081,6 +1650,10 @@ public:
    
    bool operator()(const Iso_cuboid_3& ic, const Point_3& p) const
    {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Iso_cuboid_3&, const Point_3&> \
+       (Predicate_leda_d3_rat_has_on_boundary::ev_leda_d3_rat_iso_cuboid_point, ic, p);
+#endif
      Point_3 min = ic.vertex(0);
      Point_3 max = ic.vertex(7);
      
@@ -1108,6 +1681,13 @@ public:
    }      
 };
 
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event Predicate_leda_d3_rat_has_on_boundary<K>::ev_leda_d3_rat_plane_point;
+template<class K> CGAL::event Predicate_leda_d3_rat_has_on_boundary<K>::ev_leda_d3_rat_simplex_point;
+template<class K> CGAL::event Predicate_leda_d3_rat_has_on_boundary<K>::ev_leda_d3_rat_iso_cuboid_point; 
+template<class K> CGAL::event Predicate_leda_d3_rat_has_on_boundary<K>::ev_leda_d3_rat_sphere_point;
+#endif
+
 template<class K>
 class Predicate_leda_d3_rat_has_on_positive_side {
 
@@ -1120,16 +1700,30 @@ public:
   typedef Arity_tag< 2 > Arity;
   typedef bool           result_type;
 
-   bool operator()(const Plane_3& pl, const Point_3& p) const
-   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_plane_point;
+  static CGAL::event ev_leda_d3_rat_simplex_point;
+  static CGAL::event ev_leda_d3_rat_sphere_point;               
+#endif  
+
+  bool operator()(const Plane_3& pl, const Point_3& p) const
+  {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Plane_3&, const Point_3&> \
+       (Predicate_leda_d3_rat_has_on_positive_side::ev_leda_d3_rat_plane_point, pl, p);
+#endif
      int res = pl.side_of(p);
      if (res == 1) return true;
      return false;
-   }
+  }
 
 #if defined(CGAL_COMPATIBLE_SPHERES)
   bool operator()(const LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere& s, const Point_3& p) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere&, const Point_3&> \
+       (Predicate_leda_d3_rat_has_on_positive_side::ev_leda_d3_rat_sphere_point, s, p);
+#endif
      Point_3 center = s.center();
      CGAL::Orientation ori = s.orientation();  
      FT sq      = s.squared_radius();
@@ -1147,6 +1741,10 @@ public:
 #else
    bool operator()(const leda_d3_rat_sphere& s, const Point_3& p) const
    {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const leda_d3_rat_sphere&, const Point_3&> \
+       (Predicate_leda_d3_rat_has_on_positive_side::ev_leda_d3_rat_sphere_point, s, p);
+#endif
      int res = LEDA_NAMESPACE_NAME::side_of_sphere(s.point1(),s.point2(),s.point3(),s.point4() ,p);
      if (res == 1) return true;
      return false;
@@ -1157,6 +1755,10 @@ public:
 
    bool operator()(const Tetrahedron_3& s, const Point_3& p) const
    {
+#if defined(CGAL_GEOMETRY_EVENTS)
+       CGAL::occur<const Tetrahedron_3&, const Point_3&> \
+        (Predicate_leda_d3_rat_has_on_positive_side::ev_leda_d3_rat_simplex_point, s, p);
+#endif
        // orientation * bounded side
        int ori = LEDA_NAMESPACE_NAME::orientation(s.point1(), s.point2(), s.point3(), s.point4());
        
@@ -1173,6 +1775,13 @@ public:
    
 };
 
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event Predicate_leda_d3_rat_has_on_positive_side<K>::ev_leda_d3_rat_simplex_point;
+template<class K> CGAL::event Predicate_leda_d3_rat_has_on_positive_side<K>::ev_leda_d3_rat_plane_point; 
+template<class K> CGAL::event Predicate_leda_d3_rat_has_on_positive_side<K>::ev_leda_d3_rat_sphere_point;
+#endif
+
+
 template<class K>
 class Predicate_leda_d3_rat_has_on_negative_side {
 
@@ -1185,16 +1794,30 @@ public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
 
-   bool operator()(const Plane_3& pl, const Point_3& p) const
-   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_plane_point;
+  static CGAL::event ev_leda_d3_rat_simplex_point;
+  static CGAL::event ev_leda_d3_rat_sphere_point;               
+#endif  
+
+  bool operator()(const Plane_3& pl, const Point_3& p) const
+  {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Plane_3&, const Point_3&> \
+       (Predicate_leda_d3_rat_has_on_negative_side::ev_leda_d3_rat_plane_point, pl, p);
+#endif
      int res = pl.side_of(p);
      if (res == -1) return true;
      return false;
-   }
+  }
 
 #if defined(CGAL_COMPATIBLE_SPHERES)
   bool operator()(const LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere& s, const Point_3& p) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere&, const Point_3&> \
+       (Predicate_leda_d3_rat_has_on_negative_side::ev_leda_d3_rat_sphere_point, s, p);
+#endif
      Point_3 center = s.center();
      CGAL::Orientation ori = s.orientation();  
      FT sq      = s.squared_radius();
@@ -1212,6 +1835,10 @@ public:
 #else
    bool operator()(const leda_d3_rat_sphere& s, const Point_3& p) const
    {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const leda_d3_rat_sphere&, const Point_3&> \
+       (Predicate_leda_d3_rat_has_on_negative_side::ev_leda_d3_rat_sphere_point, s, p);
+#endif
      int res = LEDA_NAMESPACE_NAME::side_of_sphere(s.point1(),s.point2(),s.point3(),s.point4() ,p);
      if (res == -1) return true;
      return false;
@@ -1222,6 +1849,10 @@ public:
 
    bool operator()(const Tetrahedron_3& s, const Point_3& p) const
    {
+#if defined(CGAL_GEOMETRY_EVENTS)
+       CGAL::occur<const Tetrahedron_3&, const Point_3&> \
+        (Predicate_leda_d3_rat_has_on_negative_side::ev_leda_d3_rat_simplex_point, s, p);
+#endif
        // orientation * bounded side
        int ori = LEDA_NAMESPACE_NAME::orientation(s.point1(), s.point2(), s.point3(), s.point4());
        
@@ -1238,6 +1869,12 @@ public:
    
 };
 
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event Predicate_leda_d3_rat_has_on_negative_side<K>::ev_leda_d3_rat_simplex_point;
+template<class K> CGAL::event Predicate_leda_d3_rat_has_on_negative_side<K>::ev_leda_d3_rat_plane_point; 
+template<class K> CGAL::event Predicate_leda_d3_rat_has_on_negative_side<K>::ev_leda_d3_rat_sphere_point;
+#endif
+
 template<class K>
 class Predicate_leda_d3_rat_oriented_side {
 
@@ -1250,15 +1887,29 @@ public:
   typedef Arity_tag< 2 > Arity;
   typedef Oriented_side       result_type;
 
-   Oriented_side operator()(const Plane_3& pl, const Point_3& p) const
-   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_plane_point;
+  static CGAL::event ev_leda_d3_rat_simplex_point;
+  static CGAL::event ev_leda_d3_rat_sphere_point;               
+#endif  
+
+  Oriented_side operator()(const Plane_3& pl, const Point_3& p) const
+  {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Plane_3&, const Point_3&> \
+       (Predicate_leda_d3_rat_oriented_side::ev_leda_d3_rat_plane_point, pl, p);
+#endif
      return (Oriented_side) (pl.side_of(p));
-   }
+  }
 
 #if defined(CGAL_COMPATIBLE_SPHERES)
   CGAL::Oriented_side operator()(const LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere& s,
                                  const Point_3& p) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere&, const Point_3&> \
+       (Predicate_leda_d3_rat_oriented_side::ev_leda_d3_rat_sphere_point, s, p);
+#endif
      Point_3 center = s.center();
      CGAL::Orientation ori = s.orientation();  
      FT sq      = s.squared_radius();
@@ -1279,6 +1930,10 @@ public:
 #else   
    Oriented_side operator()(const leda_d3_rat_sphere& s, const Point_3& p) const
    {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const leda_d3_rat_sphere&, const Point_3&> \
+       (Predicate_leda_d3_rat_oriented_side::ev_leda_d3_rat_sphere_point, s, p);
+#endif
      Point_3 p1 = s.point1();
      Point_3 p2 = s.point2();
      Point_3 p3 = s.point3();
@@ -1292,6 +1947,10 @@ public:
  
    Oriented_side operator()(const Tetrahedron_3& s, const Point_3& p) const
    {
+#if defined(CGAL_GEOMETRY_EVENTS)
+       CGAL::occur<const Tetrahedron_3&, const Point_3&> \
+        (Predicate_leda_d3_rat_oriented_side::ev_leda_d3_rat_simplex_point, s, p);
+#endif
        // orientation * bounded side
        int ori = LEDA_NAMESPACE_NAME::orientation(s.point1(), s.point2(), s.point3(), s.point4());
        
@@ -1307,6 +1966,12 @@ public:
   
 };
 
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event Predicate_leda_d3_rat_oriented_side<K>::ev_leda_d3_rat_simplex_point;
+template<class K> CGAL::event Predicate_leda_d3_rat_oriented_side<K>::ev_leda_d3_rat_plane_point; 
+template<class K> CGAL::event Predicate_leda_d3_rat_oriented_side<K>::ev_leda_d3_rat_sphere_point;
+#endif
+
 template<class K>
 class Predicate_leda_d3_rat_bounded_side {
 
@@ -1321,9 +1986,19 @@ public:
   typedef Arity_tag< 2 > Arity;
   typedef Bounded_side   result_type;
 
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_iso_cuboid_point;
+  static CGAL::event ev_leda_d3_rat_simplex_point;
+  static CGAL::event ev_leda_d3_rat_sphere_point;               
+#endif  
+
 #if defined(CGAL_COMPATIBLE_SPHERES)
   Bounded_side operator()(const LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere& s, const Point_3& p) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere&, const Point_3&> \
+       (Predicate_leda_d3_rat_bounded_side::ev_leda_d3_rat_sphere_point, s, p);
+#endif
      Point_3 center = s.center();
      FT sq      = s.squared_radius();
      FT d       = center.sqr_dist(p);
@@ -1335,6 +2010,10 @@ public:
 #else
    Bounded_side operator()(const leda_d3_rat_sphere& s, const Point_3& test) const
    {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const leda_d3_rat_sphere&, const Point_3&> \
+       (Predicate_leda_d3_rat_bounded_side::ev_leda_d3_rat_sphere_point, s, p);
+#endif
      Point_3 p1 = s.point1();
      Point_3 p2 = s.point2();     
      Point_3 p3 = s.point3();
@@ -1349,6 +2028,10 @@ public:
   
    Bounded_side operator()(const Tetrahedron_3& s, const Point_3& p) const
    {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Tetrahedron_3&, const Point_3&> \
+       (Predicate_leda_d3_rat_bounded_side::ev_leda_d3_rat_simplex_point, s, p);
+#endif
      // inside returns true if p is inside or on s ...
      
      bool inside = s.in_simplex(p);
@@ -1368,6 +2051,10 @@ public:
    
    Bounded_side operator()(const Iso_cuboid_3& ic, const Point_3& p) const
    {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Iso_cuboid_3&, const Point_3&> \
+       (Predicate_leda_d3_rat_bounded_side::ev_leda_d3_rat_iso_cuboid_point, ic, p);
+#endif
      Point_3 min = ic.vertex(0);
      Point_3 max = ic.vertex(7);
      
@@ -1396,6 +2083,12 @@ public:
      
 };
 
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event Predicate_leda_d3_rat_bounded_side<K>::ev_leda_d3_rat_simplex_point;
+template<class K> CGAL::event Predicate_leda_d3_rat_bounded_side<K>::ev_leda_d3_rat_iso_cuboid_point; 
+template<class K> CGAL::event Predicate_leda_d3_rat_bounded_side<K>::ev_leda_d3_rat_sphere_point;
+#endif
+
 template<class K>
 class Predicate_leda_d3_rat_are_ordered_along_line {
 
@@ -1406,9 +2099,23 @@ public:
   typedef Arity_tag< 3 > Arity;
   typedef bool       result_type;
 
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_point;        
+#endif  
+
   bool operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
-  { return Segment_3(p,r).contains(q); }
+  {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Point_3&, const Point_3&, const Point_3&> \
+       (Predicate_leda_d3_rat_are_ordered_along_line::ev_leda_d3_rat_point, p, q, r);
+#endif 
+     return Segment_3(p,r).contains(q); 
+  }
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event Predicate_leda_d3_rat_are_ordered_along_line<K>::ev_leda_d3_rat_point;
+#endif
 
 template<class K>
 class Predicate_leda_d3_rat_are_strictly_ordered_along_line {
@@ -1420,11 +2127,23 @@ public:
   typedef Arity_tag< 3 > Arity;
   typedef bool       result_type;
 
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_point;        
+#endif  
+
   bool operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
   {
-      return (Segment_3(p,r).contains(q) && ( q != p ) && ( q != r ));   
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Point_3&, const Point_3&, const Point_3&> \
+       (Predicate_leda_d3_rat_are_strictly_ordered_along_line::ev_leda_d3_rat_point, p, q, r);
+#endif 
+     return (Segment_3(p,r).contains(q) && ( q != p ) && ( q != r ));   
   }
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event Predicate_leda_d3_rat_are_strictly_ordered_along_line<K>::ev_leda_d3_rat_point;
+#endif
 
 // these two predicates could probably be optimized further ....
 // (because the collinearity check in contains is not necessary -
@@ -1440,11 +2159,23 @@ public:
   typedef Arity_tag< 3 > Arity;
   typedef bool       result_type;
 
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_point;        
+#endif  
+
   bool operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
   {
-      return Segment_3(p,r).contains(q);  
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Point_3&, const Point_3&, const Point_3&> \
+       (Predicate_leda_d3_rat_collinear_are_ordered_along_line::ev_leda_d3_rat_point, p, q, r);
+#endif 
+     return Segment_3(p,r).contains(q);  
   }
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event Predicate_leda_d3_rat_collinear_are_ordered_along_line<K>::ev_leda_d3_rat_point;
+#endif
 
 template<class K>
 class Predicate_leda_d3_rat_collinear_are_strictly_ordered_along_line {
@@ -1456,11 +2187,23 @@ public:
   typedef Arity_tag< 3 > Arity;
   typedef bool       result_type;
 
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_point;        
+#endif  
+
   bool operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
   {
-      return (Segment_3(p,r).contains(q) && ( q != p ) && ( q != r ));   
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Point_3&, const Point_3&, const Point_3&> \
+       (Predicate_leda_d3_rat_collinear_are_strictly_ordered_along_line::ev_leda_d3_rat_point, p, q, r);
+#endif
+     return (Segment_3(p,r).contains(q) && ( q != p ) && ( q != r ));   
   }
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event Predicate_leda_d3_rat_collinear_are_strictly_ordered_along_line<K>::ev_leda_d3_rat_point;
+#endif
 
 template<class K>
 class Predicate_leda_d3_rat_do_intersect {
@@ -1476,10 +2219,24 @@ public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
 
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_plane_plane; 
+  static CGAL::event ev_leda_d3_rat_plane_line;   
+  static CGAL::event ev_leda_d3_rat_line_plane; 
+  static CGAL::event ev_leda_d3_rat_plane_ray;  
+  static CGAL::event ev_leda_d3_rat_ray_plane;   
+  static CGAL::event ev_leda_d3_rat_plane_segment;
+  static CGAL::event ev_leda_d3_rat_segment_plane;          
+#endif  
+
 // intersection tests with 3d plane ...
 
   bool operator()(const Plane_3& pl, const Plane_3& pl2) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Plane_3&, const Plane_3&> \
+       (Predicate_leda_d3_rat_do_intersect::ev_leda_d3_rat_plane_plane, pl, pl2);
+#endif
      if (pl.parallel(pl2)) return false;
      
      // non-parallel planes always intersect ...
@@ -1488,6 +2245,10 @@ public:
   
   bool operator()(const Plane_3& pl, const Line_3& l) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+    CGAL::occur<const Plane_3&, const Line_3&> \
+       (Predicate_leda_d3_rat_do_intersect::ev_leda_d3_rat_plane_line, pl, l);
+#endif
     Point_3 p1 = l.point1();
     Point_3 p2 = l.point2();
   
@@ -1509,11 +2270,19 @@ public:
   
   bool operator()(const Line_3& l, const Plane_3& pl) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Line_3&, const Plane_3&> \
+       (Predicate_leda_d3_rat_do_intersect::ev_leda_d3_rat_line_plane, l, pl);
+#endif
      return this->operator()(pl, l);
   }  
 
   bool operator()(const Plane_3& pl, const Ray_3& r) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+    CGAL::occur<const Plane_3&, const Ray_3&> \
+       (Predicate_leda_d3_rat_do_intersect::ev_leda_d3_rat_plane_ray, pl, r);
+#endif
     Point_3 p1 = r.point1(); // source
     Point_3 p2 = r.point2(); // target
   
@@ -1533,11 +2302,19 @@ public:
 
   bool operator()(const Ray_3& r, const Plane_3& pl) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Ray_3&, const Plane_3&> \
+       (Predicate_leda_d3_rat_do_intersect::ev_leda_d3_rat_ray_plane, r, pl);
+#endif
      return this->operator()(pl, r);  
   }  
 
   bool operator()(const Plane_3& pl, const Segment_3& s) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+    CGAL::occur<const Plane_3&, const Segment_3&> \
+       (Predicate_leda_d3_rat_do_intersect::ev_leda_d3_rat_plane_segment, pl, s);
+#endif
     int s1 = pl.side_of(s.source());
     int s2 = pl.side_of(s.target());
     
@@ -1548,10 +2325,24 @@ public:
   
   bool operator()(const Segment_3& s, const Plane_3& pl) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+     CGAL::occur<const Segment_3&, const Plane_3&> \
+       (Predicate_leda_d3_rat_do_intersect::ev_leda_d3_rat_segment_plane, s, pl);
+#endif
      return this->operator()(pl, s);    
   }  
   
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event Predicate_leda_d3_rat_do_intersect<K>::ev_leda_d3_rat_plane_plane; 
+template<class K> CGAL::event Predicate_leda_d3_rat_do_intersect<K>::ev_leda_d3_rat_plane_line;   
+template<class K> CGAL::event Predicate_leda_d3_rat_do_intersect<K>::ev_leda_d3_rat_line_plane; 
+template<class K> CGAL::event Predicate_leda_d3_rat_do_intersect<K>::ev_leda_d3_rat_plane_ray;  
+template<class K> CGAL::event Predicate_leda_d3_rat_do_intersect<K>::ev_leda_d3_rat_ray_plane;   
+template<class K> CGAL::event Predicate_leda_d3_rat_do_intersect<K>::ev_leda_d3_rat_plane_segment;
+template<class K> CGAL::event Predicate_leda_d3_rat_do_intersect<K>::ev_leda_d3_rat_segment_plane;          
+#endif  
 
 
 CGAL_END_NAMESPACE

@@ -435,6 +435,10 @@ public:
   typedef Arity_tag< 2 > Arity;
   typedef Segment_3       result_type;
 
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_point;
+#endif 
+
   Segment_3 operator()() const
   {
     Segment_3 s;
@@ -443,19 +447,31 @@ public:
 
   Segment_3 operator()(const Point_3& p, const Point_3& q) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+    CGAL::occur<const Point_3&, const Point_3&> \
+      (Construct_leda_d3_rat_segment::ev_leda_d3_rat_point, p, q);
+#endif   
     return Segment_3(p,q);
   }
 };
 
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event Construct_leda_d3_rat_segment<K>::ev_leda_d3_rat_point;
+#endif 
+
+
 template<class K>
 class Construct_leda_d3_rat_triangle {
-
   typedef typename K::Point_3     Point_3;
   typedef typename K::Triangle_3  Triangle_3;  
 
 public:
   typedef Arity_tag< 3 > Arity;
   typedef Triangle_3       result_type;
+  
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_point;
+#endif   
 
   Triangle_3 operator()() const
   {
@@ -465,9 +481,18 @@ public:
 
   Triangle_3 operator()(const Point_3& p1, const Point_3& p2, const Point_3& p3) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+    CGAL::occur<const Point_3&, const Point_3&, const Point_3&> \
+      (Construct_leda_d3_rat_triangle::ev_leda_d3_rat_point, p1, p2, p3);
+#endif   
     return Triangle_3(p1,p2,p3);
   }
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event Construct_leda_d3_rat_triangle<K>::ev_leda_d3_rat_point;
+#endif 
+
 
 template<class K>
 class Construct_leda_d3_rat_simplex {
@@ -478,6 +503,10 @@ class Construct_leda_d3_rat_simplex {
 public:
   typedef Arity_tag< 4 > Arity;
   typedef Tetrahedron_3       result_type;
+  
+#if defined(CGAL_GEOMETRY_EVENTS)
+  static CGAL::event ev_leda_d3_rat_point;
+#endif   
 
   Tetrahedron_3 operator()() const
   {
@@ -488,9 +517,17 @@ public:
   Tetrahedron_3 operator()(const Point_3& p1, const Point_3& p2,
                            const Point_3& p3, const Point_3& p4) const
   {
+#if defined(CGAL_GEOMETRY_EVENTS)
+    CGAL::occur<const Point_3&, const Point_3&, const Point_3&, const Point_3&> \
+      (Construct_leda_d3_rat_simplex::ev_leda_d3_rat_point, p1, p2, p3, p4);
+#endif    
     return Tetrahedron_3(p1,p2,p3,p4);
   }
 };
+
+#if defined(CGAL_GEOMETRY_EVENTS)
+template<class K> CGAL::event Construct_leda_d3_rat_simplex<K>::ev_leda_d3_rat_point;
+#endif 
 
 class Construct_leda_d3_rat_object {
 public:
