@@ -85,7 +85,7 @@ class CGAL_Triangulation_3
   friend CGAL_Triangulation_cell_circulator_3<GT,Tds>;
 
 public:
-  typedef CGAL_Triangulation_3<GT,Tds> Triangulation_3;
+  //  typedef CGAL_Triangulation_3<GT,Tds> Triangulation;
 
   typedef typename GT::Point Point;
   typedef typename GT::Segment Segment;
@@ -110,6 +110,8 @@ public:
   typedef CGAL_Triangulation_edge_iterator_3<GT,Tds>   Edge_iterator;
   typedef CGAL_Triangulation_vertex_iterator_3<GT,Tds> Vertex_iterator;
 
+  typedef CGAL_Triangulation_cell_circulator_3<GT,Tds>      Cell_circulator;
+
   enum Locate_type {
     VERTEX=0, 
     EDGE, //1
@@ -123,14 +125,6 @@ private:
   GT  _gt;
   Vertex_handle infinite; //infinite vertex
   
-//   void set_finite_vertex(const Vertex_handle&  v)
-//   {
-//   }
-
-//   void set_infinite_vertex(const Vertex_handle & v)
-//   {
-//   }
-
   void init_tds()
     {
       infinite = new Vertex(Point(500,500,500)); // ?? debug
@@ -140,6 +134,20 @@ private:
       CGAL_debug( Cell_handle() );
     }
   
+  // debug
+  CGAL_Triangulation_3(const Point & p0,
+		       const Point & p1, 
+		       const Point & p2,
+		       const Point & p3)
+    : _tds(), _gt()
+    {
+      init_tds();
+      insert_outside_affine_hull(p0);
+      insert_outside_affine_hull(p1);
+      insert_outside_affine_hull(p2);
+      insert_outside_affine_hull(p3);
+    } 
+
 public:
 
   // CONSTRUCTORS
@@ -162,26 +170,6 @@ public:
     infinite = (Vertex *) _tds.copy_tds(tr._tds, &(*(tr.infinite)) );
   }
 
-  // debug
-  CGAL_Triangulation_3(const Point & p0,
-		       const Point & p1,
-		       const Point & p2,
-		       const Point & p3)
-    : _tds(), _gt()
-    {
-      init_tds();
-      insert_outside_affine_hull(p0);
-      insert_outside_affine_hull(p1);
-      insert_outside_affine_hull(p2);
-      insert_outside_affine_hull(p3);
-    }
-
-//   CGAL_Triangulation_3(Tds Triangulation_data_structure_3, const GT & gt=GT())
-//     : _tds(),_gt(gt)
-//   {
-//     _tds.swap(Triangulation_data_structure_3);
-//   }
-
   // DESTRUCTOR
 
   ~CGAL_Triangulation_3()
@@ -195,6 +183,38 @@ public:
     _tds.clear();
     init_tds();
    }
+
+  CGAL_Triangulation_3 & operator=(const CGAL_Triangulation_3 & tr)
+  {
+    clear();
+    infinite.Delete();
+    infinite = (Vertex *) _tds.copy_tds( tr._tds, &*tr.infinite );
+    _gt = tr._gt;
+    return *this;
+  }
+
+  // HELPING FUNCTIONS
+   
+  void copy_triangulation(const CGAL_Triangulation_3<GT,Tds> & tr)
+  {
+    clear();
+    infinite.Delete();
+    _gt = tr._gt;
+    infinite = (Vertex *) _tds.copy_tds( tr._tds, &*tr.infinite );
+  }
+
+  void swap(CGAL_Triangulation_3 &tr)
+  {
+    GT t = geom_traits();
+    _gt = tr.geom_traits();
+    tr._gt = t; 
+
+    Vertex* inf = infinite_vertex();
+    infinite = tr.infinite_vertex();
+    tr.infinite = inf;
+
+    _tds.swap(tr._tds);
+  }
 
  //ACCESS FUNCTIONS
   inline 
@@ -227,80 +247,13 @@ public:
     return infinite_vertex()->cell();
   }
 
-  
    // ASSIGNMENT
   void set_number_of_vertices(int n) 
     { _tds.set_number_of_vertices(n+1); }
 
-  CGAL_Triangulation_3 & operator=(const CGAL_Triangulation_3 & tr)
-  {
-    clear();
-    infinite.Delete();
-    infinite = (Vertex *) _tds.copy_tds( tr._tds, &*tr.infinite );
-    _gt = tr._gt;
-    return *this;
-  }
-
-  // HELPING FUNCTIONS
-   
-  void copy_triangulation(const CGAL_Triangulation_3 & tr)
-  {
-    clear();
-    infinite.Delete();
-    _gt = tr._gt;
-    infinite = (Vertex *) _tds.copy_tds( tr._tds, &*tr.infinite );
-  }
-
-  void swap(CGAL_Triangulation_3 &tr)
-  {
-    GT t = geom_traits();
-    _gt = tr.geom_traits();
-    tr._gt = t; 
-
-    Vertex* inf = infinite_vertex();
-    infinite = tr.infinite_vertex();
-    tr.infinite = inf;
-
-    _tds.swap(tr._tds);
-  }
-
-  // CHECKING
-  bool is_valid(bool verbose = false, int level = 0) const
-  {
-    if ( ! _tds.is_valid(verbose,level) ) {
-      if (verbose) { cerr << "invalid data structure" << endl; }
-      CGAL_triangulation_assertion(false); return false;
-    }
-    
-    if ( infinite_vertex == NULL ) {
-      if (verbose) { cerr << "no infinite vertex" << endl; }
-      CGAL_triangulation_assertion(false); return false;
-    }
-
-    if (dimension() == 3 ) {
-      Cell_iterator it;
-      for ( it = finite_cells_begin(); it != cells_end(); ++it ) {
-	if ( geom_traits().orientation(it->vertex(0)->point(),
-			      it->vertex(1)->point(),
-			      it->vertex(2)->point(),
-			      it->vertex(3)->point()) != CGAL_LEFTTURN ) {
-	  if (verbose) { cerr << "badly oriented cell " 
-			      << it->vertex(0)->point() << ", " 
-			      << it->vertex(1)->point() << ", " 
-			      << it->vertex(2)->point() << ", " 
-			      << it->vertex(3)->point() << ", " 
-			      << endl; }
-	  CGAL_triangulation_assertion(false); return false;
-	}
-      }
-    }
-    if (verbose) { cerr << "valid triangulation" << endl;}
-    return true;
-  }
-
  // GEOMETRIC ACCESS FUNCTIONS
   
-  Tetrahedron tetrahedron(const Cell_handle & c) const
+  Tetrahedron tetrahedron(const Cell_handle c) const
   {
     CGAL_triangulation_precondition( dimension() == 3 );
     CGAL_triangulation_precondition( ! is_infinite(c) );
@@ -310,7 +263,7 @@ public:
 		       c->vertex(3)->point());
   }
 
-  Triangle triangle(const Cell_handle & c, int i) const
+  Triangle triangle(const Cell_handle c, int i) const
   { 
     switch ( dimension() ) {
     case 3:
@@ -364,7 +317,7 @@ public:
     return triangle(f.first, f.second);
   }
 
-  Segment segment(const Cell_handle & c, int i, int j) const
+  Segment segment(const Cell_handle c, int i, int j) const
   {
     CGAL_triangulation_precondition( i != j );
     switch ( dimension() ) {
@@ -396,7 +349,7 @@ public:
     return Segment( c->vertex(i)->point(), c->vertex(j)->point() );
   }
 
-  Segment segment(Edge e) const
+  Segment segment(const Edge & e) const
   {
     return segment(e.first,e.second,e.third);
   }
@@ -412,18 +365,19 @@ public:
 //   }
 
   // TEST IF INFINITE FEATURES
-
-  bool is_infinite(const Cell_handle & c) const 
-    {
-      CGAL_triangulation_precondition( dimension() == 3 );
-      return c->has_vertex(infinite_vertex());
-    }
-
-  bool is_infinite(const Vertex_handle & v) const 
+  inline
+  bool is_infinite(const Vertex_handle v) const 
     {
       return v == infinite_vertex();
     }
 
+  inline
+  bool is_infinite(const Cell_handle c) const 
+    {
+      CGAL_triangulation_precondition( dimension() == 3 );
+      return c->has_vertex(infinite_vertex());
+    }
+  
   bool is_infinite(const Cell_handle c, int i) const 
     {
       switch ( dimension() ) {
@@ -466,7 +420,7 @@ public:
       return false;
     }
 
-  bool is_infinite(Facet f) const 
+  bool is_infinite(const Facet & f) const 
     {
       return is_infinite(f.first,f.second);
     }
@@ -503,7 +457,7 @@ public:
 	       is_infinite( c->vertex(j) ) );
     }
 
-  bool is_infinite(Edge e) const
+  bool is_infinite(const Edge & e) const
     {
       return is_infinite(e.first,e.second,e.third);
     }
@@ -517,6 +471,40 @@ public:
 //     {
 //       return is_infinite(*ei);
 //     }
+
+  // CHECKING
+  bool is_valid(bool verbose = false, int level = 0) const
+  {
+    if ( ! _tds.is_valid(verbose,level) ) {
+      if (verbose) { cerr << "invalid data structure" << endl; }
+      CGAL_triangulation_assertion(false); return false;
+    }
+    
+    if ( infinite_vertex == NULL ) {
+      if (verbose) { cerr << "no infinite vertex" << endl; }
+      CGAL_triangulation_assertion(false); return false;
+    }
+
+    if (dimension() == 3 ) {
+      Cell_iterator it;
+      for ( it = finite_cells_begin(); it != cells_end(); ++it ) {
+	if ( geom_traits().orientation(it->vertex(0)->point(),
+			      it->vertex(1)->point(),
+			      it->vertex(2)->point(),
+			      it->vertex(3)->point()) != CGAL_LEFTTURN ) {
+	  if (verbose) { cerr << "badly oriented cell " 
+			      << it->vertex(0)->point() << ", " 
+			      << it->vertex(1)->point() << ", " 
+			      << it->vertex(2)->point() << ", " 
+			      << it->vertex(3)->point() << ", " 
+			      << endl; }
+	  CGAL_triangulation_assertion(false); return false;
+	}
+      }
+    }
+    if (verbose) { cerr << "valid triangulation" << endl;}
+    return true;
+  }
 
   //INSERTION 
 
@@ -585,7 +573,7 @@ public:
   Vertex_handle
   insert_in_edge(const Point & p, Cell_handle c, int i, int j)
   {
-    CGAL_triangulation_precondition( ! (i == j) );
+    CGAL_triangulation_precondition( i != j );
     switch ( dimension() ) {
     case 3:
       {
@@ -631,6 +619,10 @@ public:
       {
 	CGAL_triangulation_precondition( ( i == 0 || i == 1 ) &&
 					 ( j == 0 || j == 1 ) );
+	int li;
+	Locate_type lt;
+	CGAL_triangulation_precondition( side_of_edge(p,c,0,1,lt,li)
+					 == CGAL_ON_BOUNDED_SIDE );
 	break;
       }
     default:
@@ -651,9 +643,9 @@ public:
   Vertex_handle
   insert_outside_convex_hull(const Point & p, Cell_handle c, 
 			     int li, int lj=0)
-    // c is a cell (finite or not) containing p
+    // c is an infinite cell containing p
     // whose facet li lies on the convex hull boundary
-    // and separates p from the triangulation
+    // and separates p from the triangulation (in dimension 3)
     // p is strictly outside the convex hull
     // in dimension 2, edge li,lj separates p from the triangulation
     // in dimension 1, vertex li separates p from the triangulation
@@ -662,7 +654,9 @@ public:
     //    CGAL_triangulation_precondition( ! c->has_vertex(infinite_vertex()) );
     // not a precondition any more in this version
     CGAL_triangulation_precondition( dimension() > 0 );
-
+    CGAL_triangulation_precondition( c->has_vertex(infinite) );
+    // the precondition that p is in c is tested in each of the
+    // insertion methods called from this method 
     switch ( dimension() ) {
     case 1:
       {
@@ -920,6 +914,29 @@ public:
     else {
       start = NULL;
     }
+    c = locate( p, start, lt, li, lj);
+    switch (lt) {
+    case VERTEX:
+      return c->vertex(li);
+    case EDGE:
+      return insert_in_edge(p, c, li, lj);
+    case FACET:
+      return insert_in_facet(p, c, li);
+    case CELL:
+      return insert_in_cell(p, c);
+    case OUTSIDE_CONVEX_HULL:
+      return insert_outside_convex_hull(p, c, li, lj);
+    case OUTSIDE_AFFINE_HULL:
+      return insert_outside_affine_hull(p);
+    }
+    // cannot happen, only to avoid warning with eg++
+    return insert_in_edge(p, c, li, lj);
+  }
+  Vertex_handle insert(const Point & p, Cell_handle start)
+  {
+    Locate_type lt;
+    int li, lj;
+    Cell_handle c;
     c = locate( p, start, lt, li, lj);
     switch (lt) {
     case VERTEX:
@@ -1607,12 +1624,14 @@ public:
   //TRAVERSING : ITERATORS AND CIRCULATORS
   Cell_iterator finite_cells_begin() const
   {
+    if ( dimension() < 3 ) return cells_end();
     CGAL_Triangulation_3<GT, Tds>* ncthis 
       = (CGAL_Triangulation_3<GT, Tds> *)this;
     return Cell_iterator(ncthis, false); // false means "without infinite cells"
   }
   Cell_iterator all_cells_begin() const
   {
+    if ( dimension() < 3 ) return cells_end();
     CGAL_Triangulation_3<GT, Tds>* ncthis 
       = (CGAL_Triangulation_3<GT, Tds> *)this;
     return Cell_iterator(ncthis, true); // true means "with infinite cells"
@@ -1626,12 +1645,14 @@ public:
 
   Vertex_iterator finite_vertices_begin() const
   {
+    if ( dimension() < 0 ) return vertices_end();
     CGAL_Triangulation_3<GT, Tds>* ncthis 
       = (CGAL_Triangulation_3<GT, Tds>*)this;
     return Vertex_iterator(ncthis, false);
   }
   Vertex_iterator all_vertices_begin() const
   {
+    if ( dimension() < 0 ) return vertices_end();
     CGAL_Triangulation_3<GT, Tds>* ncthis 
       = (CGAL_Triangulation_3<GT, Tds>*)this;
     return Vertex_iterator(ncthis, true);
@@ -1645,12 +1666,14 @@ public:
 
   Edge_iterator finite_edges_begin() const
   {
+    if ( dimension() < 1 ) return edges_end();
     CGAL_Triangulation_3<GT, Tds>* ncthis 
       = (CGAL_Triangulation_3<GT, Tds>*)this;
     return Edge_iterator(ncthis, false);
   }
   Edge_iterator all_edges_begin() const
   {
+    if ( dimension() < 1 ) return edges_end();
     CGAL_Triangulation_3<GT, Tds>* ncthis 
       = (CGAL_Triangulation_3<GT, Tds>*)this;
     return Edge_iterator(ncthis, true);
@@ -1664,12 +1687,14 @@ public:
 
   Facet_iterator finite_facets_begin() const
   {
+    if ( dimension() < 2 ) return facets_end();
     CGAL_Triangulation_3<GT, Tds>* ncthis 
       = (CGAL_Triangulation_3<GT, Tds>*)this;
     return Facet_iterator(ncthis, false);
   }
   Facet_iterator all_facets_begin() const
   {
+    if ( dimension() < 2 ) return facets_end();
     CGAL_Triangulation_3<GT, Tds>* ncthis 
       = (CGAL_Triangulation_3<GT, Tds>*)this;
     return Facet_iterator(ncthis, true);
