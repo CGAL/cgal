@@ -359,7 +359,7 @@ private:
 };
 
 template < class Gt, class Tds >
-Delaunay_triangulation_3<Gt,Tds>::Vertex_handle
+typename Delaunay_triangulation_3<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_3<Gt,Tds>::
 insert(const Point & p, Cell_handle start, Vertex_handle v)
 {
@@ -761,7 +761,7 @@ side_of_circle(Cell_handle c, int i, const Point & p) const
 }
 
 template < class Gt, class Tds >
-Delaunay_triangulation_3<Gt,Tds>::Vertex_handle
+typename Delaunay_triangulation_3<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_3<Gt,Tds>::
 nearest_vertex_in_cell(const Point& p, Cell_handle c) const
 // Returns the finite vertex of the cell c which is the closest to p.
@@ -778,7 +778,7 @@ nearest_vertex_in_cell(const Point& p, Cell_handle c) const
 }
 
 template < class Gt, class Tds >
-Delaunay_triangulation_3<Gt,Tds>::Point
+typename Delaunay_triangulation_3<Gt,Tds>::Point
 Delaunay_triangulation_3<Gt,Tds>::
 dual(Cell_handle c) const
 {
@@ -792,7 +792,7 @@ dual(Cell_handle c) const
 
 
 template < class Gt, class Tds >
-Delaunay_triangulation_3<Gt,Tds>::Object
+typename Delaunay_triangulation_3<Gt,Tds>::Object
 Delaunay_triangulation_3<Gt,Tds>::
 dual(Cell_handle c, int i) const
 {

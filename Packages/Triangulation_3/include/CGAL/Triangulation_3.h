@@ -1042,7 +1042,7 @@ number_of_edges() const
 }
 
 template < class GT, class Tds >
-Triangulation_3<GT,Tds>::Triangle
+typename Triangulation_3<GT,Tds>::Triangle
 Triangulation_3<GT,Tds>::
 triangle(const Cell_handle c, int i) const
 { 
@@ -1056,7 +1056,7 @@ triangle(const Cell_handle c, int i) const
 }
 
 template < class GT, class Tds >
-Triangulation_3<GT,Tds>::Segment
+typename Triangulation_3<GT,Tds>::Segment
 Triangulation_3<GT,Tds>::
 segment(const Cell_handle c, int i, int j) const
 {
@@ -1230,7 +1230,7 @@ are_equal(const Facet & f, Cell_handle n, int j) const
 }
 
 template < class GT, class Tds >
-Triangulation_3<GT,Tds>::Cell_handle
+typename Triangulation_3<GT,Tds>::Cell_handle
 Triangulation_3<GT,Tds>::
 locate(const Point & p, Locate_type & lt, int & li, int & lj,
        Cell_handle start ) const
@@ -2150,7 +2150,7 @@ flip_flippable( Cell_handle c, int i, int j )
 }
 
 template < class GT, class Tds >
-Triangulation_3<GT,Tds>::Vertex_handle
+typename Triangulation_3<GT,Tds>::Vertex_handle
 Triangulation_3<GT,Tds>::
 insert(const Point & p, Cell_handle start, Vertex_handle v)
 {
@@ -2175,7 +2175,7 @@ insert(const Point & p, Cell_handle start, Vertex_handle v)
 }
 
 template < class GT, class Tds >
-Triangulation_3<GT,Tds>::Vertex_handle
+typename Triangulation_3<GT,Tds>::Vertex_handle
 Triangulation_3<GT,Tds>::
 insert_in_cell(const Point & p, Cell_handle c, Vertex_handle v)
 {
@@ -2198,7 +2198,7 @@ insert_in_cell(const Point & p, Cell_handle c, Vertex_handle v)
 
 template < class GT, class Tds >
 inline
-Triangulation_3<GT,Tds>::Vertex_handle
+typename Triangulation_3<GT,Tds>::Vertex_handle
 Triangulation_3<GT,Tds>::
 insert_in_facet(const Point & p, Cell_handle c, int i, Vertex_handle v)
 {
@@ -2225,7 +2225,7 @@ insert_in_facet(const Point & p, Cell_handle c, int i, Vertex_handle v)
 }
 
 template < class GT, class Tds >
-Triangulation_3<GT,Tds>::Vertex_handle
+typename Triangulation_3<GT,Tds>::Vertex_handle
 Triangulation_3<GT,Tds>::
 insert_in_edge(const Point & p, Cell_handle c, int i, int j, Vertex_handle v)
 {
@@ -2264,7 +2264,7 @@ insert_in_edge(const Point & p, Cell_handle c, int i, int j, Vertex_handle v)
 }
 
 template < class GT, class Tds >
-Triangulation_3<GT,Tds>::Vertex_handle
+typename Triangulation_3<GT,Tds>::Vertex_handle
 Triangulation_3<GT,Tds>::
 insert_outside_convex_hull(const Point & p, Cell_handle c, Vertex_handle v)
   // c is an infinite cell containing p
@@ -2301,7 +2301,7 @@ insert_outside_convex_hull(const Point & p, Cell_handle c, Vertex_handle v)
 }
 
 template < class GT, class Tds >
-Triangulation_3<GT,Tds>::Vertex_handle
+typename Triangulation_3<GT,Tds>::Vertex_handle
 Triangulation_3<GT,Tds>::
 insert_outside_affine_hull(const Point & p, Vertex_handle v)
 {

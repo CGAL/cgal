@@ -259,7 +259,7 @@ is_valid(bool verbose, int level) const
 }
   
 template <class Tr>
-Triangulation_hierarchy_3<Tr>::Vertex_handle
+typename Triangulation_hierarchy_3<Tr>::Vertex_handle
 Triangulation_hierarchy_3<Tr>::
 insert(const Point &p)
 {
@@ -305,7 +305,7 @@ remove(Vertex_handle v)
 
 template <class Tr>
 inline
-Triangulation_hierarchy_3<Tr>::Cell_handle 
+typename Triangulation_hierarchy_3<Tr>::Cell_handle 
 Triangulation_hierarchy_3<Tr>::
 locate(const Point& p, Locate_type& lt, int& li, int& lj) const
 {
@@ -316,7 +316,7 @@ locate(const Point& p, Locate_type& lt, int& li, int& lj) const
 
 template <class Tr>
 inline
-Triangulation_hierarchy_3<Tr>::Cell_handle 
+typename Triangulation_hierarchy_3<Tr>::Cell_handle 
 Triangulation_hierarchy_3<Tr>::
 locate(const Point& p) const
 {

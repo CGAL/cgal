@@ -628,7 +628,7 @@ private:
 };
 
 template <class Vb, class Cb >
-Triangulation_data_structure_3<Vb,Cb>::Cell_handle
+typename Triangulation_data_structure_3<Vb,Cb>::Cell_handle
 Triangulation_data_structure_3<Vb,Cb>::
 create_star_3(Vertex_handle v, Cell_handle c, int li,
 	      int prev_ind2)
@@ -687,7 +687,7 @@ create_star_3(Vertex_handle v, Cell_handle c, int li,
 }
 
 template <class Vb, class Cb >
-Triangulation_data_structure_3<Vb,Cb>::Cell_handle
+typename Triangulation_data_structure_3<Vb,Cb>::Cell_handle
 Triangulation_data_structure_3<Vb,Cb>::
 create_star_2(Vertex_handle v, Cell_handle c, int li )
 {
