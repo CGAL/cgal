@@ -11,7 +11,7 @@
 #define Pm_vertex_base                  PVB
 #define Pm_face_base                    PFB
 #define Planar_map_2                    PMp
-#define _Nonconst_traits                NT
+// #define _Nonconst_traits                NT
 #define Td_traits                       TT
 #define Pm_segment_traits_2             PST
 #define Planar_map_traits_wrap          PMTW
@@ -20,7 +20,7 @@
 #define Td_X_trapezoid                  TXT
 #define Interval_nt                     IN
 #define PL_X_curve_plus                 PXCP
-#define bidirectional_iterator_tag      BIT
+// #define bidirectional_iterator_tag      BIT
 #define Forward_circulator_tag          FCT
 
 #define remove_in_face_interior         RIFI
