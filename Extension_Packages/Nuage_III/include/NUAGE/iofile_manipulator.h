@@ -955,7 +955,7 @@ dump_in_file_vrml2_selected_facets(char* foutput, const Triangulation_3& A,
   }
   _vh_number = count; // needed for the statistics
   os << " ]\n"
-    "}\n"\
+    "}\n"
     "solid FALSE\n"
     "coordIndex [\n";
 
@@ -1046,8 +1046,8 @@ dump_in_file_vrml2_selected_facets(char* foutput, const Triangulation_3& A,
     }
   */
 
-  os << "Shape {\n"\
-    "geometry PointSet {\n"\
+  os << "Shape {\n"
+    "geometry PointSet {\n"
     "coord Coordinate { point [\n";
 
   for(std::list<Point>::iterator pit = removed_points.begin(); pit != removed_points.end(); pit++){
@@ -1058,7 +1058,7 @@ os << "] } }\n"
 	  "  material Material {\n"
 	  "    emissiveColor 1 0.1  0\n"
 	  "  }\n"
-	 "}\n"\
+	 "}\n"
       "} # Shape\n";
   os << "] # children\n"
     "} # Group\n";
