@@ -7,7 +7,7 @@ WWW_CGAL=$(WWW)/CGAL/DR:/Members
 WWW_dir=$(WWW_CGAL)/Triangulation_2
 TMP_file=/tmp/submit-mail
 CGAL_MAKEFILE=$(UTIL)/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.18_g++-2.95.3_LEDA
-TEXINPUTS=.:../../../examples:/0/prisme_util/latex:/u/procyon/0/prisme/yvinec/tex/inputs:
+TEXINPUTS=.:../../../examples:/0/prisme_util/latex:/0/prisme/yvinec/tex/inputs:
 LATEX_CONV_INPUTS=.:../../../examples:/u/procyon/0/prisme/yvinec/Cgal/Triangulation_2/examples:
 
 package: 

@@ -85,6 +85,7 @@ public:
 //   Constrained_triangulation_plus_2(
   //  const Constrained_triangulation_plus_2& ct)
 //     : Constrained_triangulation(ct) {}
+  // destructeur aussi a revoir
 
   Constrained_triangulation_plus_2(List_constraints& lc, 
 				   const Geom_traits& gt=Geom_traits())

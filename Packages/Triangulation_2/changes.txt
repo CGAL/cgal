@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 6.10
+- changed const Face_handle& en Face_handle in /Triangulation_2.h
+
 Ver 6.09 (1/02/02)
 - still typenames in Constraint_hierarchy_2.h
   and Constrained_triangulation_plus_2.h

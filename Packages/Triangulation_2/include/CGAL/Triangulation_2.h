@@ -172,9 +172,9 @@ public:
  
 
   // TEST INFINITE FEATURES AND OTHER FEATURES
-  bool is_infinite(const Face_handle& f) const;
-  bool is_infinite(const Vertex_handle& v) const; 
-  bool is_infinite(const Face_handle& f, int i) const;
+  bool is_infinite(Face_handle f) const;
+  bool is_infinite(Vertex_handle v) const; 
+  bool is_infinite(Face_handle f, int i) const;
   bool is_infinite(const Edge& e) const;
   bool is_infinite(const Edge_circulator& ec) const;
   bool is_infinite(const All_edges_iterator& ei) const;
@@ -189,8 +189,8 @@ public:
        Face_handle &fr) const;
 
  // GEOMETRIC FEATURES AND CONSTRUCTION
-  Triangle triangle(const Face_handle& f) const;
-  Segment segment(const Face_handle& f, int i) const;
+  Triangle triangle(Face_handle f) const;
+  Segment segment(Face_handle f, int i) const;
   Segment segment(const Edge& e) const;
   Segment segment(const Edge_circulator& ec) const;
   Segment segment(const All_edges_iterator& ei) const;
@@ -228,10 +228,10 @@ public:
   Face_handle
   march_locate_1D(const Point& t, Locate_type& lt, int& li) const ;
   Face_handle
-  march_locate_2D(const Face_handle& start,
-                    const Point& t,
-                    Locate_type& lt,
-                    int& li) const;
+  march_locate_2D(Face_handle start,
+		  const Point& t,
+		  Locate_type& lt,
+		  int& li) const;
   Face_handle
   locate(const Point& p,
 	 Locate_type& lt,
@@ -298,7 +298,7 @@ public:
 	      const Point &p2, const Point &p) const;
     
  Oriented_side
- oriented_side(const Face_handle& f, const Point &p) const;
+ oriented_side(Face_handle f, const Point &p) const;
 
  Oriented_side
  side_of_oriented_circle(Face_handle f, const Point & p) const; 
@@ -574,7 +574,7 @@ is_valid(bool verbose, int level) const
 template <class Gt, class Tds >
 inline bool
 Triangulation_2<Gt, Tds>::
-is_infinite(const Face_handle& f) const 
+is_infinite(Face_handle f) const 
 {
   return f->has_vertex(infinite_vertex());
 }
@@ -583,7 +583,7 @@ is_infinite(const Face_handle& f) const
 template <class Gt, class Tds >
 inline bool
 Triangulation_2<Gt, Tds>::
-is_infinite(const Vertex_handle& v) const 
+is_infinite(Vertex_handle v) const 
 {
   return v == infinite_vertex();
 }
@@ -591,7 +591,7 @@ is_infinite(const Vertex_handle& v) const
 template <class Gt, class Tds >
 inline bool
 Triangulation_2<Gt, Tds>::
-is_infinite(const Face_handle& f, int i) const 
+is_infinite(Face_handle f, int i) const 
 {
   return is_infinite(f->vertex(ccw(i))) ||
          is_infinite(f->vertex(cw(i)));
@@ -708,7 +708,7 @@ is_face(Vertex_handle v1,
 template <class Gt, class Tds >
 typename Triangulation_2<Gt, Tds>::Triangle
 Triangulation_2<Gt, Tds>::
-triangle(const Face_handle& f) const
+triangle(Face_handle f) const
 {
   CGAL_triangulation_precondition( ! is_infinite(f) );
   typename Gt::Construct_triangle_2 
@@ -721,7 +721,7 @@ triangle(const Face_handle& f) const
 template <class Gt, class Tds >
 typename Triangulation_2<Gt, Tds>::Segment
 Triangulation_2<Gt, Tds>::
-segment(const Face_handle& f, int i) const
+segment(Face_handle f, int i) const
 {
   CGAL_triangulation_precondition( ! is_infinite(f,i));
   typename Gt::Construct_segment_2 
@@ -1553,7 +1553,7 @@ march_locate_1D(const Point& t,
 template <class Gt, class Tds >    
 typename Triangulation_2<Gt, Tds>::Face_handle
 Triangulation_2<Gt, Tds>::
-march_locate_2D(const Face_handle& start,
+march_locate_2D(Face_handle start,
 		const Point& t,
 		Locate_type& lt,
 		int& li) const
@@ -1613,109 +1613,6 @@ march_locate_2D(const Face_handle& start,
   return lfc;
 }    
       
-//   bool collinear_convex_hull_edge= false;
-//   Face_handle collinear_fh;
-//   int collinear_ih;
-//   Line_face_circulator lfc(start->vertex(0), this, t);
-//   if (lfc == 0) {
-//     // point t lies outside or on the convex hull
-//     Face_circulator fc = start->vertex(0).begin();
-//     while(!is_infinite(fc)) fc++;
-//     int i = fc->index(infinite_vertex());
-//     Orientation ori = orientation(t,
-// 				  fc->vertex(ccw(i))->point(),
-// 				  fc->vertex(ccw(i))->point());
-//     if (ori= RIGHTTURN) {
-//       fc++;
-//       i = fc->index(infinite_vertex());
-//       ori = orientation(t,
-// 			fc->vertex(ccw(i))->point(),
-// 			fc->vertex(ccw(i))->point());
-//     }
-//     //ori is now LEFTTURN or COLLINEAR
-//     CGAL_Triangulation_assertion( ori == LEFTTURN || ori == COLLINEAR );
-//     if (ori == LEFTTURN) {
-//       lt = OUTSIDE_CONVEX_HULL;
-//       li = i;
-//       return fc;
-//     }
-//     else { 
-//       // segment [start->vertex(0)t] is collinear to a convex hull
-//       //edge
-//       collinear_convex_hull_edge = true;
-//       collinear_fh = fc;
-//       collinear_ih = i;
-//     }
-//   }
-
-//   if (lfc.collinear_outside() {
-//     collinear_convex_hull_edge = true;
-//     collinear_fh = lfc->neighbor(ccw(i));
-//     collinear_ih = collinear_fh->index(infinite_vertex());
-//   }
-	
-//   if(collinear_convex_hull_edge) {
-//     // point t lies outside or on the convex hull
-//     // we walk on the hull to decide
-//     Face_circulator fc =
-//       incident_vertex()->incident_faces(collinear_fh);
-//     Point p,q;
-//     int ic;
-//     do {
-//       ic = fc->index(infinite_vertex());
-//       r = fc->vertex(ccw(ic))->point();
-//       q = fc->vertex(cw(ic))->point();
-//       fc = fc++;
-//       ic = fc->index(infinite_vertex());
-//       p = fc->vertex(cw(ic))->point();
-//     } while(orientation(p, q, r) == COLLINEAR);
-//     if (orientation(p, q, t) == LEFTTURN){
-//       	lt = OUTSIDE_CONVEX_HULL;
-// 	li = ic;
-// 	return fc ;
-//     }
-    
-//     fc--;
-//     ic = fc->index(infinite_vertex());
-//     p = fc->vertex(cw(ic))->point();
-//     q = fc->vertex(ccw(ic))->point();
-//     if(xy_equal(t,p)){
-//       lt = VERTEX;
-//       li = cw(ic);
-//       return lfc;
-//     }
-//     Orientation pqt;
-//     while(1) {
-//       if(xy_equal(t,q)){
-// 	lt = VERTEX;
-// 	li = ccw(i);
-// 	return f;
-//       }
-//       pqt = orientation(p,q,t);
-//       if (pqt == COLLINEAR && collinear_between(p, t, q)){
-// 	lt = EDGE;
-// 	li = ic;
-// 	return fc;
-//       }
-//       if (pqt == RIGHTTURN){
-// 	lt = OUTSIDE_CONVEX_HULL;
-// 	li = ic;
-// 	return fc ;
-//       }
-	   	       
-//       // go to the next face
-//       fc--;
-//       ic = fc->index(infinite_vertex());
-//       p = q;
-//       q = fc->vertex(ccw(i))->point();
-//     }
-//   }
-
-//   while(! lfc.locate(t, lt, li) ){
-//     ++lfc;
-//   }
-//   return lfc;
-//}
 
     
 template <class Gt, class Tds >
@@ -2009,7 +1906,7 @@ bounded_side(const Point &p0, const Point &p1,
 template <class Gt, class Tds >
 Oriented_side
 Triangulation_2<Gt, Tds>::
-oriented_side(const Face_handle& f, const Point &p) const
+oriented_side(Face_handle f, const Point &p) const
 {
   CGAL_triangulation_precondition ( dimension()==2); 
   return oriented_side(f->vertex(0)->point(),
