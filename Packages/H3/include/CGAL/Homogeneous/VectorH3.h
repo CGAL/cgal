@@ -222,51 +222,6 @@ VectorH3<R>::operator/(const typename VectorH3<R>::FT& f) const
 { return typename R::Vector_3(hx()*f.denominator(), hy()*f.denominator(),
 		              hz()*f.denominator(), hw()*f.numerator() ); }
 
-template <class R>
-inline
-typename R::Point_3
-operator+(const Origin& , const VectorH3<R>& v)
-{ return typename R::Point_3(v.hx(), v.hy(), v.hz(), v.hw()); }
-
-template <class R>
-inline
-typename R::Point_3
-operator-(const Origin& , const VectorH3<R>& v)
-{ return typename R::Point_3(-v.hx(), -v.hy(), -v.hz(), v.hw()); }
-
-template <class R>
-inline
-typename R::Vector_3
-operator-(const PointH3<R>& p, const Origin& )
-{ return typename R::Vector_3(p.hx(), p.hy(), p.hz(), p.hw()); }
-
-template <class R>
-inline
-typename R::Vector_3
-operator-(const Origin& , const PointH3<R>& p)
-{ return typename R::Vector_3(-p.hx(), -p.hy(), -p.hz(), p.hw()); }
-
-template <class R>
-CGAL_KERNEL_INLINE
-typename R::Point_3
-operator+(const PointH3<R>& p, const VectorH3<R>& v)
-{
-  return typename R::Point_3(p.hx()*v.hw() + v.hx()*p.hw(),
-                             p.hy()*v.hw() + v.hy()*p.hw(),
-                             p.hz()*v.hw() + v.hz()*p.hw(),
-                             p.hw()*v.hw() );
-}
-
-template <class R>
-CGAL_KERNEL_INLINE
-typename R::Point_3
-operator-(const PointH3<R>& p, const VectorH3<R>& v)
-{
-  return typename R::Point_3(p.hx()*v.hw() - v.hx()*p.hw(),
-                             p.hy()*v.hw() - v.hy()*p.hw(),
-                             p.hz()*v.hw() - v.hz()*p.hw(),
-                             p.hw()*v.hw() );
-}
 
 template < class R >
 inline

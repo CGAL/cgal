@@ -1,3 +1,6 @@
+19 May 200 Andreas Fabri
+- The global_operators from VectorH3.h are turned into function objects
+
 13 Mar 2004 Sylvain Pion
 - Move centroid() to the new scheme.
 
