@@ -23,7 +23,6 @@
 #define CGAL_CARTESIAN_LINE_2_H
 
 #include <CGAL/Cartesian/redefine_names_2.h>
-#include <CGAL/Cartesian/predicates_on_lines_2.h>
 
 CGAL_BEGIN_NAMESPACE
 

@@ -1,3 +1,6 @@
+Version 6.31 (? October 2001)
+- Remove cartesian_classes.h.
+
 Version 6.30 (3 October 2001)
 - typedefs cleanup.  Now the only public typedef of kernel classes is R.
 

@@ -1,3 +1,6 @@
+3.26 (?? ????????? 2001)
+- Remove cartesian_classes.h.
+
 3.25 (24 September 2001)
 - Bboxes don't use ref counting anymore.
 

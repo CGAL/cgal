@@ -27,12 +27,13 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/basic_classes.h>
-#include <CGAL/cartesian_classes.h>
 #include <CGAL/user_classes.h>
 #include <CGAL/Cartesian_dynamic_d.h>
 
 #include <CGAL/Twotuple.h>
 #include <CGAL/Threetuple.h>
+
+template < class PT, class DA > class ConicCPA2;
 
 #include <CGAL/Cartesian/Point_2.h>
 #include <CGAL/Cartesian/Vector_2.h>

@@ -24,11 +24,13 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/basic_classes.h>
-#include <CGAL/cartesian_classes.h>
 #include <CGAL/user_classes.h>
 
 #define CGAL_REP_CLASS_DEFINED
 #define CGAL_CARTESIAN_CLASS_DEFINED
+
+// TODO: we revert to the old class PointCd
+#include <CGAL/PointCd.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -49,13 +51,6 @@ struct Cartesian_base_dynamic_d
     typedef PointCd<FT>                          Point_d;
 #endif // CGAL_CFG_NO_ADVANCED_KERNEL
 };
-
-CGAL_END_NAMESPACE
-
-// TODO: we revert to the old class PointCd
-#include <CGAL/PointCd.h>
-
-CGAL_BEGIN_NAMESPACE
 
 // This class is a restricted dD geometric kernel
 // It is useful only if you do not need the 3D kernel

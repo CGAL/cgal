@@ -1,3 +1,6 @@
+3.24 (?? ????????? 2001)
+- Remove cartesian_classes.h.
+
 3.23 (27 September 2001)
 - Remove MipsPro warnings.
 

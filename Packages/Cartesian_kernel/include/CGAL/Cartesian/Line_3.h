@@ -24,7 +24,6 @@
 
 #include <CGAL/Cartesian/redefine_names_3.h>
 #include <CGAL/Cartesian/Line_rep_3.h>
-#include <CGAL/Cartesian/point_constructions_3.h>
 
 CGAL_BEGIN_NAMESPACE
 

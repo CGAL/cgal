@@ -26,7 +26,6 @@
 
 #ifdef CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
 #include <CGAL/user_classes.h>
-#include <CGAL/cartesian_classes.h>
 
 #define CGAL_ITERATOR_TRAITS_POINTER_SPEC_2SC(NT)                                              \
 __STL_BEGIN_NAMESPACE                                                             \

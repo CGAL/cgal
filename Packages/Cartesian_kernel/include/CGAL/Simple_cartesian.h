@@ -27,7 +27,6 @@
 #define CGAL_CARTESIAN_CLASS_DEFINED
 
 #include <CGAL/basic.h>
-#include <CGAL/cartesian_classes.h>
 #include <CGAL/Cartesian_dynamic_d.h>
 
 #include <CGAL/Twotuple.h>
@@ -39,6 +38,8 @@
   // We include them (they are common to Cartesian and Homogeneous)
 #include <CGAL/user_classes.h>
 #endif // CGAL_CFG_NO_ADVANCED_KERNEL
+
+template < class PT, class DA > class ConicCPA2;
 
 #include <CGAL/Cartesian/Point_2.h>
 #include <CGAL/Cartesian/Vector_2.h>

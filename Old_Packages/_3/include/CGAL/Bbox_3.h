@@ -24,7 +24,6 @@
 #define CGAL_BBOX_3_H
 
 #include <CGAL/basic.h>
-#include <CGAL/cartesian_classes.h>
 #include <CGAL/Sixtuple.h>
 #include <CGAL/Simple_Handle_for.h>
 
