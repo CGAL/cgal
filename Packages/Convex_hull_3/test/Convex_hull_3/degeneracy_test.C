@@ -21,7 +21,6 @@
  
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/Polyhedron_default_traits_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/ch_assertions.h>
 #include <CGAL/convex_hull_3.h>
@@ -29,10 +28,9 @@
 #include <fstream>
 
 typedef double                                     NumberType;
-typedef CGAL::Cartesian<NumberType>                R;
-typedef CGAL::Polyhedron_default_traits_3<R>       PolyTraits;
-typedef CGAL::Polyhedron_3<PolyTraits>             Polyhedron;
-typedef CGAL::Point_3<R>                           Point_3;
+typedef CGAL::Cartesian<NumberType>                Kernel;
+typedef CGAL::Polyhedron_3<Kernel>                 Polyhedron;
+typedef Kernel::Point_3                            Point_3;
 
 int main()
 {
