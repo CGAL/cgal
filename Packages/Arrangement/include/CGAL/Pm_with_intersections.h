@@ -33,6 +33,9 @@
 #define CGAL_DEFINE_COUNT_OP_TIMES_OBJECT
 #endif
 
+#include <CGAL/sweep_to_construct_planar_map_2.h>
+
+
 CGAL_BEGIN_NAMESPACE
 
 template<class Planar_map_>
@@ -1192,6 +1195,16 @@ public:
                                                 traits->curve_target( c)));
     Vertex_handle src, tgt;
     return insert_intersecting_curve(c, src, tgt, false, en);
+  }
+
+  // inserts a given curve container into the map.
+  template <class X_curve_2_iterator>
+  Halfedge_iterator insert(const X_curve_2_iterator & begin,
+                           const X_curve_2_iterator & end,
+                           Change_notification * en = NULL)
+  {
+    sweep_to_construct_planar_map_2(begin, end, *traits, *this);
+    return halfedges_begin();
   }
 
   // Non intersecting insert methods:
