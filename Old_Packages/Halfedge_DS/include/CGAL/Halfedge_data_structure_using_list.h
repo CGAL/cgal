@@ -268,12 +268,17 @@ public:
 
     Halfedge_data_structure_using_list( const Self& hds)
     :  vertices( hds.vertices),
-       halfedges( hds.halfedges),
+       //halfedges( hds.halfedges): need copying pairs instead
        facets( hds.facets),
        nb_border_halfedges( hds.nb_border_halfedges),
        nb_border_edges( hds.nb_border_edges),
        border_halfedges( hds.border_halfedges)
     {
+	// goal is halfedges = hds.halfedges, but we have pairs here
+	Halfedge_const_iterator i = hds.halfedges.begin();
+	for ( ; i != hds.halfedges.end(); ++ ++ i) {
+	    new_edge( & * i);
+	}
         pointer_update( hds);
     }
 
@@ -281,7 +286,11 @@ public:
         if ( this != &hds) {
             delete_all();
             vertices            = hds.vertices;
-            halfedges           = hds.halfedges;
+            // goal is halfedges = hds.halfedges, but we have pairs here
+	    Halfedge_const_iterator i = hds.halfedges.begin();
+	    for ( ; i != hds.halfedges.end(); ++ ++ i) {
+		new_edge( & * i);
+	    }
             facets              = hds.facets;
             nb_border_halfedges = hds.nb_border_halfedges;
             nb_border_edges     = hds.nb_border_edges;
@@ -566,7 +575,7 @@ pointer_update( const Halfedge_data_structure_using_list<V,H,F>& hds) {
     Halfedge_data_structure_decorator<Self> D;
     for ( Halfedge_iterator h = halfedges.begin(); h != halfedges.end(); ++h) {
         h->set_next( h_map[ h->next()]);
-        h->H::set_opposite( h_map[ h->opposite()]);
+        //h->H::set_opposite( h_map[ h->opposite()]);
         if ( check_tag( Supports_halfedge_prev()))
             D.set_prev( &*h, h_map[ D.get_prev(&*h)]);
         if ( check_tag( Supports_halfedge_vertex())) {
