@@ -44,7 +44,14 @@ class Arr_conic_traits_2
 #else
   typedef Tag_false                       Has_left_category;
 #endif
-    
+
+   // #define HAS_REFLECT
+#if !defined(HAS_REFLECT)
+  typedef Tag_false                       Has_reflect_category;
+#else
+  typedef Tag_true                        Has_reflect_category;
+#endif   
+
   // The difference between Curve_2 and X_monotone_curve_2 is semantical only,
   // NOT syntactical.
   typedef Conic_arc_2<Kernel>        Curve_2;

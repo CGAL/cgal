@@ -65,6 +65,7 @@ public:
   typedef Pm_segment_traits_2<Kernel>           Base;
 
   typedef typename Base::Has_left_category      Has_left_category;
+  typedef typename Base::Has_reflect_category   Has_reflect_category;
     
   typedef typename Base::Point_2                Point_2;
   typedef typename Base::X_monotone_curve_2     X_monotone_curve_2;

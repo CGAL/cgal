@@ -41,6 +41,7 @@ public:
   typedef Kernel_                         Kernel;
 
   typedef Tag_true                        Has_left_category;
+  typedef Tag_false                       Has_reflect_category;
 
   /*!
    * Representation of a segement with cached data.

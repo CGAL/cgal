@@ -31,7 +31,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class Kernel_>
-class Pm_segment_traits_2 : public Kernel_
+class Pm_segment_traits_2 : public Kernel_190
 {
   class My_x_curve_2{
   public:
@@ -187,7 +187,7 @@ public:
     
     // Since the curves are continuous, if they are not equal at q, the same
     // result also applies to q's left.
-    CGAL_precondition (compare_y_at_x_2_object()(q, cv1.seg, cv2.seg) == EQUAL);
+    CGAL_precondition (compare_y_at_x_2_object()(q, cv1.seg, cv2.seg)==EQUAL);
     
     // <cv2> and <cv1> meet at a point with the same x-coordinate as q
     // compare their derivatives.
