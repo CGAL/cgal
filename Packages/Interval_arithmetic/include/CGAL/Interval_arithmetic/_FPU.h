@@ -42,7 +42,10 @@
 #if (	!defined(__i386__)  && \
 	!defined(__sparc__) && \
 	!defined(__alpha__) && \
-	!defined(__mips__) )
+	!defined(__mips__)  && \
+	!defined(__sgi)     && \
+	!defined(_MSC_VER) \
+	)
 #error "Architecture not supported."
 #endif
 
@@ -146,6 +149,33 @@ enum {
 };
 #endif
 #endif // __alpha__
+
+#ifdef _MSC_VER
+enum float_round_style {
+  round_indeterminate = -1,
+  round_toward_zero = 0,
+  round_to_nearest = 1,
+  round_toward_infinity = 2,
+  round_toward_neg_infinity = 3
+};
+typedef unsigned int FPU_CW_t;
+enum {
+  FPU_cw_zero = round_toward_zero,
+  FPU_cw_near = round_to_nearest,
+  FPU_cw_up   = round_toward_infinity,
+  FPU_cw_down = round_toward_neg_infinity
+};
+/*
+ * The enumeration describes the various methods that an implementation can
+ * choose for rounding a floating-point value to an integer value:
+ * 
+ * round_indeterminate -- rounding method cannot be determined
+ * round_toward_zero -- round toward zero
+ * round_to_nearest -- round to nearest integer
+ * round_toward_infinity -- round away from zero
+ * round_toward_neg_infinity -- round to more negative integer
+ */
+#endif //_MSC_VER
 
 
 // Main functions: FPU_get_cw() and FPU_set_cw();
