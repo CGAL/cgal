@@ -41,6 +41,9 @@
 
 \newcommand{\mc}{\texttt{mc}}
 
+\newcommand{\linebreakByHand}{\ccTexHtml{\\}{}}
+\newcommand{\SaveSpaceByHand}[2]{\ccTexHtml{#1}{#2}}
+
 @! ============================================================================
 @! Title
 @! ============================================================================
@@ -2217,13 +2220,22 @@ homogeneous representation with number type \ccc{CGAL_Gmpz}.
     #include <assert.h>
     #include <fstream.h>
 
-    typedef  CGAL_Gmpz                           Rt;
-    typedef  CGAL_Quotient< CGAL_Gmpz >          Ft;
+    #ifdef CGAL_USE_LEDA
+    #  include <CGAL/Integer.h>
+    #  include <LEDA/REDEFINE_NAMES.h>
+       typedef  integer				Rt;
+       typedef  CGAL_Quotient< integer >	Ft;
+    #  include <LEDA/UNDEFINE_NAMES.h>
+    #else
+    #  include <CGAL/Gmpz.h>
+       typedef  CGAL_Gmpz			Rt;
+       typedef  CGAL_Quotient< CGAL_Gmpz >	Ft;
+    #endif
 
-    typedef  CGAL_Cartesian< Ft >                RepC;
-    typedef  CGAL_Homogeneous< Rt >              RepH;
-    typedef  CGAL_Optimisation_traits_2< RepC >  TraitsC;
-    typedef  CGAL_Optimisation_traits_2< RepH >  TraitsH;
+    typedef  CGAL_Cartesian< Ft >		 RepC;
+    typedef  CGAL_Homogeneous< Rt >		 RepH;
+    typedef  CGAL_Optimisation_traits_2< RepC >	 TraitsC;
+    typedef  CGAL_Optimisation_traits_2< RepH >	 TraitsH;
 @end
 
 The command line option \ccc{-verbose} enables verbose output.
@@ -2648,8 +2660,8 @@ end of each file.
 
 \subsection{Min\_circle\_2.h}
 
-@file <include/Optimisation/CGAL/Min_circle_2.h> = @begin
-    @<Min_circle_2 header>("include/Optimisation/CGAL/Min_circle_2.h")
+@file <include/CGAL/Optimisation/CGAL/Min_circle_2.h> = @begin
+    @<Min_circle_2 header>("include/CGAL/Optimisation/CGAL/Min_circle_2.h")
 
     #ifndef CGAL_MIN_CIRCLE_2_H
     #define CGAL_MIN_CIRCLE_2_H
@@ -2683,7 +2695,7 @@ end of each file.
     // ---
     @<Min_circle_2 I/O operators declaration>
 
-    #ifdef CGAL_INCLUDE_TEMPLATE_CODE
+    #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
     #  include <CGAL/Min_circle_2.C>
     #endif
 
@@ -2698,8 +2710,8 @@ end of each file.
 
 \subsection{Min\_circle\_2.C}
 
-@file <include/Optimisation/CGAL/Min_circle_2.C> = @begin
-    @<Min_circle_2 header>("include/Optimisation/CGAL/Min_circle_2.C")
+@file <include/CGAL/Optimisation/CGAL/Min_circle_2.C> = @begin
+    @<Min_circle_2 header>("include/CGAL/Optimisation/CGAL/Min_circle_2.C")
 
     // Class implementation (continued)
     // ================================
@@ -2716,8 +2728,8 @@ end of each file.
 
 \subsection{Optimisation\_circle\_2.h}
 
-@file <include/Optimisation/CGAL/Optimisation_circle_2.h> = @begin
-    @<Optimisation_circle_2 header>("include/Optimisation/CGAL/Optimisation_circle_2.h")
+@file <include/CGAL/Optimisation/CGAL/Optimisation_circle_2.h> = @begin
+    @<Optimisation_circle_2 header>("include/CGAL/Optimisation/CGAL/Optimisation_circle_2.h")
 
     #ifndef CGAL_OPTIMISATION_CIRCLE_2_H
     #define CGAL_OPTIMISATION_CIRCLE_2_H
@@ -2747,7 +2759,7 @@ end of each file.
     // ---
     @<Optimisation_circle_2 I/O operators declaration>
 
-    #ifdef CGAL_INCLUDE_TEMPLATE_CODE
+    #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
     #  include <CGAL/Optimisation_circle_2.C>
     #endif
 
@@ -2762,8 +2774,8 @@ end of each file.
 
 \subsection{Optimisation\_circle\_2.C}
 
-@file <include/Optimisation/CGAL/Optimisation_circle_2.C> = @begin
-    @<Optimisation_circle_2 header>("include/Optimisation/CGAL/Optimisation_circle_2.C")
+@file <include/CGAL/Optimisation/CGAL/Optimisation_circle_2.C> = @begin
+    @<Optimisation_circle_2 header>("include/CGAL/Optimisation/CGAL/Optimisation_circle_2.C")
 
     // Class implementation (continued)
     // ================================
@@ -2785,8 +2797,8 @@ end of each file.
 
 \subsection{Min\_circle\_2\_adapterC2.h}
 
-@file <include/Optimisation/CGAL/Min_circle_2_adapterC2.h> = @begin
-    @<Min_circle_2 header>("include/Optimisation/CGAL/Min_circle_2_adapterC2.h")
+@file <include/CGAL/Optimisation/CGAL/Min_circle_2_adapterC2.h> = @begin
+    @<Min_circle_2 header>("include/CGAL/Optimisation/CGAL/Min_circle_2_adapterC2.h")
 
     #ifndef CGAL_MIN_CIRCLE_2_ADAPTERC2_H
     #define CGAL_MIN_CIRCLE_2_ADAPTERC2_H
@@ -2821,8 +2833,8 @@ end of each file.
 
 \subsection{Min\_circle\_2\_adapterH2.h}
 
-@file <include/Optimisation/CGAL/Min_circle_2_adapterH2.h> = @begin
-    @<Min_circle_2 header>("include/Optimisation/CGAL/Min_circle_2_adapterH2.h")
+@file <include/CGAL/Optimisation/CGAL/Min_circle_2_adapterH2.h> = @begin
+    @<Min_circle_2 header>("include/CGAL/Optimisation/CGAL/Min_circle_2_adapterH2.h")
 
     #ifndef CGAL_MIN_CIRCLE_2_ADAPTERH2_H
     #define CGAL_MIN_CIRCLE_2_ADAPTERH2_H
@@ -2901,14 +2913,18 @@ end of each file.
 @macro <Min_circle_2 header>(1) many = @begin
     @<file header>("2D Smallest Enclosing Circle",@1,
                    "Optimisation/Min_circle_2",
-                   "Bernd Gärtner, Sven Schönherr",
+                   "Sven Schönherr <sven@@inf.fu-berlin.de>",
+                   "Bernd Gärtner",
+		   "ETH Zurich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
                    "$Revision$","$Date$")
 @end
 
 @macro <Optimisation_circle_2 header>(1) many = @begin
     @<file header>("2D Optimisation Circle",@1,
-                   "Optimisation/Optimisation_circle_2",
-                   "Bernd Gärtner, Sven Schönherr",
+                   "Optimisation/Min_circle_2",
+                   "Sven Schönherr <sven@@inf.fu-berlin.de>",
+                   "Bernd Gärtner",
+		   "ETH Zurich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
                    "$Revision$","$Date$")
 @end
 
