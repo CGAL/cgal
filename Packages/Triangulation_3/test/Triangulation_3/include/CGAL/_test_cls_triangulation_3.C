@@ -648,8 +648,7 @@ _test_cls_triangulation_3(const Triangulation &)
 
   Vertex_iterator vit;
   Vertex_handle w;
-  for
-    (vit=T3_1.finite_vertices_begin();vit!=T3_1.vertices_end();vit++)
+  for (vit=T3_1.finite_vertices_begin();vit!=T3_1.vertices_end();vit++)
     assert(T3_1.is_vertex(vit->point(), w));
          
        // geometric functions
