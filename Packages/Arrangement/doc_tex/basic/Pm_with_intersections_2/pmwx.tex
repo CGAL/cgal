@@ -92,7 +92,13 @@ planar map with intersections. Furthermore, overlapping curves are
 supported. If two curves overlap the traits intersection function returns
 the two endpoints of the common part.
 
-
+\paragraph{Sweep line:}
+As mentioned in Chapter ~\ref{I1_ChapterPlanarMap}), 
+inserting interior intersecting curves, overlap or non $x$-monotone to \ccc{Planar map} 
+is available due to the sweep line algorithm.
+When using the sweep line technique it is also possible to report only 
+the resulting subcurves induced by the input curves.
+The sweep line algorithm will use the traits classes defined for \ccc{Planar Maps with Intersections}. 
 
 %******************************************************************************
 
@@ -123,6 +129,21 @@ Edges of the planar map:
 \end{verbatim}
 
 
+\subsubsection{Example of Sweep line}
+\label{ssec:example1}
+The following example demonstrates the usage of the \ccc {Sweep line} algorithm.
+It constructs a planar map out of four segments --- $(0,0)-(1,1)$ , $(0,1)-(1,0)$ , 
+$(0,0)-(1,0)$ and $(0,1)-(1,1)$ , two of them are intersecting in their interior.
+The resulting planar map will contain all the disjoint interior sub segments obtained 
+by the calculation of the \ccc {Sweep line} algorithm. For clearness, we printed all the 
+halfedges of the resulting planar map to the standard output using the I/O functions for \ccc{Planar map}.
+
+\ccIncludeExampleCode{Sweep_line/example1.C}
+
+The output of the program looks like this:
+
+\ccIncludeExampleCode{Sweep_line/example1.cout}
 
 
 % EOF ------------------------------------------------------------------------80
+

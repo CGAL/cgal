@@ -43,45 +43,25 @@ Chapter~\ref{I1_ChapterArrangement}).
 
 \subsection*{Sweep line}
 %-------------------------------------------------
-As mentioned at chapter ~\ref{I1_ChapterPlanarMap} inserting curves which are interior intersect, 
-overlap or non x-monotone to \ccStyle {Planar map} is supported by a \ccc {Sweep line} algorithm. However, 
-the \ccStyle{Sweep line} is a part of \ccStyle {Planar Map with Intersections} since 
-the traits we use here are taken from that package, due to calcluations as finding 
-intersections, overlapping and x-monotony. 
-The \ccc{Sweep line} algorithm is templated with the subdivision it updates and hence we can use 
-any subdivision containing insertion functions defined as in \ccc{Planar map}, particularly 
-we can use \ccStyle {Planar Map with Intersections} as our subdivision. This may be usefull for cases 
-in which sweeping curves can be used, but then inserting intersecting curves each at a time is needed.
-
-
-\subsubsection{Example of Sweep line}
-\label{ssec:example1}
-The following example demonstrates the usage of the \ccc {Sweep line} algorithm.
-It constructs a planar map out of four segments --- $(0,0)-(1,1)$ , $(0,1)-(1,0)$ , 
-$(0,0)-(1,0)$ and $(0,1)-(1,1)$ , two of them are intersecting in their interior.
-The resulting planar map will contain all the disjoint interior sub segments obtained 
-by the calculation of the \ccc {Sweep line} algorithm. For clearness, we wrote the resulting 
-planar map to the standard output using the I/O functions for \ccc{Planar map}.
-
-\ccIncludeExampleCode{Sweep_line/example1.C}
-
-The output of the program looks like this:
-
-\ccIncludeExampleCode{Sweep_line/example1.cout}
-
-\label{ssec:example2}
-The following example is also a demonstration of the usage of the \ccc {Sweep line} algorithm. 
-In this example we shall present the usage when inserting the resulting disjoint interior 
-subcurves to a container. 
-The input segments are just like before, and the result we are interested with is only 
-reporting the sub segments obtained by the \ccc{Sweep line} algorithm.
-
-\ccIncludeExampleCode{Sweep_line/example3.C}
-
-And the output of the program looks like this:
-
-\ccIncludeExampleCode{Sweep_line/example3.cout}
-
+The \ccc{Planar Map With Intersections} contains a sweep lines algorithm. 
+Given a collection of intersecting (possibly overlapping or non $x$-monotone)
+curves the algorithm calculates the intersection points. As a result, the
+collection of pairwise interior disjoint subcurves can be produced, or,
+alternatively, a subdivion is being built. 
+This subdivion can be either of the type \ccc{Planar Map With Intersections} or of the 
+type \ccc{Planar map}.However, the \ccStyle{Sweep line} is a part of 
+\ccStyle {Planar Map With Intersections} package since 
+the traits used here are those defined in that package, due to calcluations as finding 
+intersections, overlapping and $x$-monotony. 
+Using sweep line technique, and building a \ccc{Planar Map With Intersections} is most 
+usefull when users have a primar list of curves, 
+but inserting intersecting curves each at a time will be needed afterward.
+ 
+See the sweep line functions reference pages for implementation details.  
+\ccc{sweep_to_construct_planar_map}\lcTex{
+  (\ccRefPage{CGAL::sweep_to_construct_planar_map})},
+ \ccc{sweep_to_produce_planar_map_subcurves}\lcTex{
+  (\ccRefPage{CGAL::sweep_to_produce_planar_map_subcurves})},
 
 
 \begin{ccAdvanced}
