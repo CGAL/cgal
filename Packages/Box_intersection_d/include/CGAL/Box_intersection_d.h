@@ -18,8 +18,10 @@ void box_intersection_d( RandomAccessIter p_begin, RandomAccessIter p_end,
                          Box_intersection_d::Topology
                                      topology = Box_intersection_d::CLOSED )
 {
-    typedef typename RandomAccessIter::value_type Box_type;
-    typedef Box_intersection_d::Box_traits_d< Box_type > Box_traits;
+    typedef typename std::iterator_traits<RandomAccessIter>::value_type
+            Box_type;
+    typedef Box_intersection_d::Box_traits_d< Box_type >
+            Box_traits;
 
     box_intersection_d(p_begin, p_end, i_begin, i_end,
                        callback, Box_traits(), cutoff, setting);
@@ -37,13 +39,13 @@ void box_intersection_d(RandomAccessIter p_begin, RandomAccessIter p_end,
                                      topology = Box_intersection_d::CLOSED)
 {
     if (topology == Box_intersection_d::CLOSED ) {
-        typedef Box_intersection_d::Box_predicate_traits_d<
-                                                     BoxTraits, true > Traits;
+        typedef Box_intersection_d::Box_predicate_traits_d< BoxTraits, true >
+                Traits;
         box_intersection_d_custom(p_begin, p_end, i_begin, i_end, callback,
                                   Traits(), cutoff, setting);
     } else {
-        typedef Box_intersection_d::Box_predicate_traits_d<
-                                                     BoxTraits, false > Traits;
+        typedef Box_intersection_d::Box_predicate_traits_d< BoxTraits, false >
+                Traits;
         box_intersection_d_custom(p_begin, p_end, i_begin, i_end, callback,
                                   Traits(), cutoff, setting);
     }
