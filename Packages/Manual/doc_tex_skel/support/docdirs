@@ -3,15 +3,10 @@ Preface
 Introduction
 NumberTypeSupport
 STL_Extension
-Hash_map
-Union_find
-Handle
-Circulator
-Modifier
+Handles_and_Circs
 Generator
-Timer
+Miscellany
 IOstream
-Stream_support
 Colors_and_windows
 GeoWin
 Geomview
