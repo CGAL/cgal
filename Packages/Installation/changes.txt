@@ -2,6 +2,13 @@
 //	Revision History for package Installation
 //=====================================================================
 
+9 August 2004 Sylvain Pion
+- Update supported compilers list :
+    remove SunPRO 5.3 and 5.4,
+    update MipsPro from 7.3 to 7.4,
+    remove g++ 3.0 and 3.1 (keep 2.95.3) and add 3.4,
+    add MacOS X.
+
 22 July 2004 Sylvain Pion
 - Remove -Xlinker before -shared for Linux/g++.
 
