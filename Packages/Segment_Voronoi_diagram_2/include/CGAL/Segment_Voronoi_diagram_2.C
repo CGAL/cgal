@@ -529,9 +529,17 @@ do_intersect(const Site_2& t, Vertex_handle v) const
 
   if ( !t.is_segment() || !v->is_segment() ) { return false; }
 
+#if 0
+#if 1
+  if ( same_segments(t, v->site()) ) {
+    return true;
+  }
+#else
   if ( !intersection_flag ) {
     return same_segments(t, v->site());
   }
+#endif
+#endif
 
   if ( do_intersect(t, v->site()) ) {
     //	print_error_message();
@@ -806,7 +814,6 @@ insert_segment(const Site_2& t, Vertex_handle vnear,
   if ( number_of_vertices() == 0 ) {
     Vertex_handle v0 = insert_first( t.source() );
     Vertex_handle v1 = insert_second( t.target() );
-    Segment_2 s = t.segment();
     return insert_third(v0, v1);
   } else {
     Vertex_handle v0, v1;
@@ -1124,7 +1131,7 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
     //    ss3.set_segment(ss.supporting_segment_handle(),
     //		    ssitev.supporting_segment_handle(), true);
     ss3.set_segment(ss.point_handle(0), ss.point_handle(1),
-		    ssitev.point_handle(1), ssitev.point_handle(1), true);
+		    ssitev.point_handle(0), ssitev.point_handle(1), true);
   } else {
     s3.set_segment(t.point(0), t.point(1),
 		   t.point(2), t.point(3),

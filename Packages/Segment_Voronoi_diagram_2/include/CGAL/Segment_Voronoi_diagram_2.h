@@ -86,7 +86,7 @@ namespace CGALi {
 
 
 
-template<class Gt, class PC, class DS, class LTag >
+template<class Gt, class STag, class PC, class DS, class LTag >
 class Segment_Voronoi_diagram_hierarchy_2;
 
 	 //	   typename PC = Point_container<typename Gt::Point_2>,
@@ -103,15 +103,9 @@ class Segment_Voronoi_diagram_2
   : private Triangulation_2<
           Segment_Voronoi_diagram_traits_wrapper_2<Gt>, DS >
 {
-  friend class Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>;
-protected:
-  bool intersection_flag;
+  friend class Segment_Voronoi_diagram_hierarchy_2<Gt,Tag_true,PC,DS,LTag>;
+  friend class Segment_Voronoi_diagram_hierarchy_2<Gt,Tag_false,PC,DS,LTag>;
 
-public:
-  void set_intersection_flag(bool b)
-  {
-    intersection_flag = b;
-  }
 private:
   static const char point_descriptor;
   static const char segment_descriptor;
@@ -173,7 +167,6 @@ public:
   typedef Gt                                     Geom_traits;
   typedef typename Gt::Site_2                    Site_2;
   typedef typename Gt::Point_2                   Point_2;
-  typedef typename Gt::Segment_2                 Segment_2;
 
   typedef typename DG::Edge                      Edge;
   typedef typename DG::Vertex_handle             Vertex_handle;
@@ -228,19 +221,18 @@ protected:
 public:
   // CREATION
   //---------
-  Segment_Voronoi_diagram_2(const Gt& gt=Gt())
-    : DG(gt), intersection_flag(true) {}
+  Segment_Voronoi_diagram_2(const Gt& gt=Gt()) : DG(gt) {}
 
   template< class Input_iterator >
   Segment_Voronoi_diagram_2(Input_iterator first, Input_iterator beyond,
 			    const Gt& gt=Gt())
-    : DG(gt), intersection_flag(true)
+    : DG(gt)
   {
     insert(first, beyond);
   }
 
   Segment_Voronoi_diagram_2(const Segment_Voronoi_diagram_2 &svd)
-    : DG(svd), intersection_flag(true)
+    : DG(svd)
   {
     CGAL_postcondition( is_valid() );
   }
@@ -249,7 +241,6 @@ public:
   operator=(const Segment_Voronoi_diagram_2& svd)
   {
     DG::operator=(svd);
-    intersection_flag = svd.intersection_flag;
     return (*this);
   }
 
@@ -384,11 +375,11 @@ public:
   // INSERTION
   //----------
   template<class Input_iterator>
-  size_type insert(Input_iterator first, Input_iterator beyond)
-  {
+  size_type insert(Input_iterator first, Input_iterator beyond) {
     return insert_with_tag(first, beyond, Tag_false());
   }
 
+protected:
   template<class Input_iterator>
   size_type insert_with_tag(Input_iterator first,
 			    Input_iterator beyond,
@@ -417,8 +408,7 @@ public:
     return n_after - n_before;
   }
 
-
-
+public:
   template<class Input_iterator, class True_false_tag>
   size_type insert(Input_iterator first, Input_iterator beyond,
 		   True_false_tag tag)
