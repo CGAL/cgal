@@ -1,4 +1,7 @@
 5 March 2005 Sylvain Pion
+- create_new_release : implement new numbering scheme of CGAL_VERSION_NR.
+
+5 March 2005 Sylvain Pion
 - create_makefile and create_cgal_test : sort files to make cleaner diffs.
 
 28 December 2004 Sylvain Pion

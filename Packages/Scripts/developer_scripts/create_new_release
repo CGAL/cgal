@@ -1,23 +1,39 @@
 #!/bin/sh
 #
-# Creating a new CGAL internal release.
+# Creating a new CGAL internal/public release.
 #
-# Radu Ursu, Sylvain Pion, 2004.
+# Radu Ursu, Sylvain Pion, 2004, 2005.
 
 # TODO :
+# - The public release case should pass the info to create_internal_release.
 # - Merge [some parts] into ./create_internal_release ?
 # - What is still missing is to do a checkout of the whole thing
 #   so that the Name: CVS keyword is updated in each file.
 #   But I'm more and more wondering if we really want that...
+# - There should be command line options to set public/internal,
+#   and the major/minor/bugfix/version_file release numbers.
 
-PATH=$PATH:/usr/local/bin
+# Set the following to "y" in case of public release.
+IS_PUBLIC_RELEASE="n"
 
+# Set the major/minor/bugfix release numbers
+MAJOR_NUMBER="3"   # 2 digits max
+MINOR_NUMBER="2"   # 2 digits max
+BUGFIX_NUMBER="0"  # 1 digit  max
+
+# The internal release number is extracted/updated from this file :
+VERSION_FILE="version_number"
+
+# Where to put the resulting tarball and where to send the announce.
 HTML_DIR="/net/servers/www-sop/geometrica/CGAL/Members/Releases"
 URL="https://www-sop.inria.fr/geometrica/CGAL/Members/Releases"
-LOGFILEBASE="create_release.log"
-BASENAME="CGAL-3.2-I-"
 MAILTO="cgal-develop-l@postino.mpi-sb.mpg.de"
 
+LOGFILEBASE="create_release.log"
+#TMPDIR="/tmp"
+TMPDIR="${HOME}/CGAL/internal_release_making"
+
+PATH=$PATH:/usr/local/bin
 TAR=/usr/bin/gnu/tar
 GZIP=/usr/bin/gnu/gzip
 DIFF=/usr/bin/diff
@@ -25,22 +41,32 @@ DIFF=/usr/bin/diff
 CVS_TAG=""
 #CVS_TAG="-A"
 
-#TMPDIR="/tmp"
-TMPDIR="${HOME}/CGAL/internal_release_making"
-
 cd ${TMPDIR} || return
-if [ -r "version_number" ]; then
-    for i in `cat version_number`
-    do
-        i=$(( $i + 1 ))
-    done
-    rm -rf version_number
-    printf "%d\n" "${i}" >> version_number
-    release_name="${BASENAME}${i}"
+if [ -r $VERSION_FILE ]; then
+    # The internal release number is considered only in non-public mode.
+    if [ $IS_PUBLIC == "n" ]; then
+        i=$(( `cat $VERSION_FILE` + 1 ))
+        rm -rf $VERSION_FILE
+        printf "%d\n" "${i}" >> $VERSION_FILE
+        INTERNAL_STRING="-I-${i}"
+        internal_nr=`printf "%4s" "${i}" | sed "y/ /0/"`
+    else
+        INTERNAL_STRING=""
+        internal_nr="1000"
+    fi
+    # Do not show the bugfix number if it is 0.
+    if [ $BUGFIX_NUMBER == "0" ]; then 
+        BUGFIX_STRING=".$BUGFIX_NUMBER"
+    else
+        BUGFIX_STRING=""
+    fi
+    release_name="CGAL-${MAJOR_NUMBER}.${MINOR_NUMBER}${BUGFIX_STRING}${INTERNAL_STRING}"
     LOGFILE="`pwd`/${LOGFILEBASE}.${release_name}"
     echo "${release_name}" >> ${LOGFILE} 2>&1
-    rel=`printf "%3s" "${i}" | sed "y/ /0/"`
-    release_number="1003001${rel}"
+    major_nr=`printf "%2s" "${MAJOR_NUMBER}" | sed "y/ /0/"`
+    minor_nr=`printf "%2s" "${MINOR_NUMBER}" | sed "y/ /0/"`
+    bugfix_nr=`printf "%1s" "${BUGFIX_NUMBER}" | sed "y/ /0/"`
+    release_number="1${major_nr}${minor_nr}${bugfix_nr}${internal_nr}"
     echo "${release_number}" >> ${LOGFILE} 2>&1
     cd All
     cvs -q update -P ${CVS_TAG} >> ${LOGFILE} 2>&1
@@ -84,4 +110,3 @@ EOF
     ./create_modules -u n -c n -r ${release_name} -n ${release_number} -d "${TMPDIR}/All" -i "${HTML_DIR}" >> ${LOGFILE} 2>&1
 
 fi
-
