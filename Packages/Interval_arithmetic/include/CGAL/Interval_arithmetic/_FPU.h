@@ -42,15 +42,24 @@
 #define __i386
 #endif
 
-#if (!defined(__i386)&&!defined(__sparc)&&!defined(__alpha)&&!defined(__mips))
+#if (	!defined(__i386)  && \
+	!defined(__sparc) && \
+	!defined(__alpha) && \
+	!defined(__mips) \
+	)
 #error "Architecture not recognized."
 #endif
 
-// The test-suite bugs for Mips.  Maybe an old egcs bug.
-// #if ( (defined(__i386) || defined(__sparc) || defined(__alpha) || \
-	//defined(__mips)) && defined(__GNUC__))
-#if ( defined(__GNUC__) && 
-    (defined(__i386) || defined(__sparc) || defined(__alpha) ) )
+
+// The test-suite fails for Mips.  Maybe an egcs-1.0.3 bug (1.1 is ok !):
+// /usr/tmp/cca004Mh.s: Assembler messages:
+// /usr/tmp/cca004Mh.s:6396: Error: ERROR: Illegal operands `ctc1'
+// /usr/tmp/cca004Mh.s:6439: Error: ERROR: Illegal operands `ctc1'
+// /usr/tmp/cca004Mh.s:6482: Error: ERROR: Illegal operands `ctc1'
+// *** Error code 1 (bu21)
+
+#if ( defined(__GNUC__) && \
+    ( defined(__i386) || defined(__sparc) || defined(__alpha) ) )
 #define __USE_ASSEMBLY
 #endif
 
