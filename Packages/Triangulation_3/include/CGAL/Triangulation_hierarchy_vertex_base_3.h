@@ -55,7 +55,7 @@ public:
   Vertex_handle up()   const { return _up; }
   Vertex_handle down() const { return _down; }
   void set_up(Vertex_handle u)   { _up=u; }
-  void set_down(Vertex_handle d) { if (this) _down=d; }
+  void set_down(Vertex_handle d) { _down=d; }
 
 private:
   Vertex_handle _up;    // same vertex one level above

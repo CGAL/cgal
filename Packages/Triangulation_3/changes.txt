@@ -1,10 +1,13 @@
-9 August 2004 Mariette
+13 August 2004 Sylvain Pion
+- T_hierarchy_vertex_base : remove useless and dubious "if (this)".
+
+9 August 2004 Mariette Yvinec
 - added Weighted_tag in   in  Delaunay_triangulation_3 
   and Regular_triangulation_3
 - remove trivial function is_Gabriel(Vertex_handle v) from
    Delaunay_triangulation_3
 
-5 August 2004 Mariette
+5 August 2004 Mariette Yvinec
 - added member function : bool is_Gabriel(Vertex_handle v)
  in  Delaunay_triangulation_3 and Regular_triangulation_3
 
