@@ -114,11 +114,11 @@ useful for reconstructing $me(P)$ from a given support set $S$ of $P$.
         \ccPrecond The value type of \ccc{first} and \ccc{last}
         is \ccc{Point}.}
 
-\emph{Note:} Since most compilers do not support template member functions
-yet, we provide specialized constructors instead. In the current release
-there are constructors for C arrays (using pointers as iterators), for the
-\stl\ sequence containers \ccc{vector<Point>} and \ccc{list<Point>} and for
-the \stl\ input stream iterator \ccc{istream_iterator<Point>}.
+\emph{Note:} In case a compiler does not support member templates yet,
+we provide specialized constructors instead. In the current release
+there are constructors for C arrays (using pointers as iterators), for
+the \stl\ sequence containers \ccc{vector<Point>} and \ccc{list<Point>}
+and for the \stl\ input stream iterator \ccc{istream_iterator<Point>}.
 
 \ccHidden
 \ccConstructor{ CGAL_Min_ellipse_2( const Point*   first,
@@ -294,11 +294,11 @@ the construction method is incremental itself.
         \ccPrecond  The value type of \ccc{first} and \ccc{last} is
         \ccc{Point}.}
 
-\emph{Note:} Since most compilers do not support template member functions
-yet, we provide specialized \ccc{insert} functions instead. In the current
-release there are \ccc{insert} functions for C arrays (using pointers as
-iterators), for the \stl\ sequence containers \ccc{vector<Point>} and
-\ccc{list<Point>} and for the \stl\ input stream iterator
+\emph{Note:} In case a compiler does not support member templates yet,
+we provide specialized \ccc{insert} functions instead. In the current
+release there are \ccc{insert} functions for C arrays (using pointers
+as iterators), for the \stl\ sequence containers \ccc{vector<Point>}
+and \ccc{list<Point>} and for the \stl\ input stream iterator
 \ccc{istream_iterator<Point>}.
 
 \ccHidden

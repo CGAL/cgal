@@ -393,22 +393,55 @@ appearing in the pseudocode for $\me(P,B)$, see Section~\ref{sec:algo}.
 We provide several different constructors, which can be put into two
 groups. The constructors in the first group, i.e. the more important
 ones, build the smallest enclosing ellipse $me(P)$ from a point set $P$,
-given by a begin iterator and a past-the-end iterator. Usually this
-would be done by a single template member function, but since most
-compilers do not support this yet, we provide specialized constructors
-for C~arrays (using pointers as iterators), for STL sequence containers
+given by a begin iterator and a past-the-end iterator. Usually this is
+implemented as a single member template, but in case a compiler does not
+support member templates yet, we provide specialized constructors for
+C~arrays (using pointers as iterators), for STL sequence containers
 \ccc{vector<Point>} and \ccc{list<Point>} and for the STL input stream
-iterator \ccc{istream_iterator<Point>}.  Actually, the constructors for
-a C~array and a \ccc{vector<point>} are the same, since the random
-access iterator of \ccc{vector<Point>} is implemented as \ccc{Point*}.
+iterator \ccc{istream_iterator<Point>}. Actually, the constructors for a
+C~array and a \ccc{vector<point>} are the same, since the random access
+iterator of \ccc{vector<Point>} is implemented as \ccc{Point*}.
 
-All three constructors of the first group copy the points into the
-internal list \ccc{points}. If randomization is demanded, the points
-are copied to a vector and shuffled at random, before being copied to
-\ccc{points}. Finally the private member function $me$ is called to
-compute $me(P)=me(P,\emptyset)$.
+All constructors of the first group copy the points into the internal
+list \ccc{points}. If randomization is demanded, the points are copied
+to a vector and shuffled at random, before being copied to \ccc{points}.
+Finally the private member function $me$ is called to compute
+$me(P)=me(P,\emptyset)$.
 
 @macro <Min_ellipse_2 constructors> += @begin
+#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
+
+    // STL-like constructor (member template)
+    template < class InputIterator >
+    CGAL_Min_ellipse_2( InputIterator first,
+                        InputIterator last,
+                        bool          randomize = false,
+                        CGAL_Random&  random    = CGAL_random,
+                        const Traits& traits    = Traits())
+        : tco( traits)
+    {
+        // allocate support points' array
+        support_points = new Point[ 5];
+
+        // range not empty?
+        if ( first != last) {
+
+            // store points
+            if ( randomize) {
+
+                // shuffle points at random
+                vector<Point> v( first, last);
+                random_shuffle( v.begin(), v.end(), random);
+                copy( v.begin(), v.end(), back_inserter( points)); }
+            else
+                copy( first, last, back_inserter( points)); }
+
+        // compute mc
+        me( points.end(), 0);
+    }
+    
+#else
+
     // STL-like constructor for C array and vector<Point>
     CGAL_Min_ellipse_2( const Point*  first,
                         const Point*  last,
@@ -469,7 +502,7 @@ compute $me(P)=me(P,\emptyset)$.
         me( points.end(), 0);
     }
 
-    // STL-like constructor for input stream iterator istream_iterator<Point>
+    // STL-like constructor for stream iterator istream_iterator<Point>
     CGAL_Min_ellipse_2( istream_iterator<Point,ptrdiff_t>  first,
                         istream_iterator<Point,ptrdiff_t>  last,
                         bool          randomize = false,
@@ -498,6 +531,7 @@ compute $me(P)=me(P,\emptyset)$.
         me( points.end(), 0);
     }
 
+#endif // CGAL_CFG_NO_MEMBER_TEMPLATES
 @end
 
 The remaining constructors are actually specializations of the previous
@@ -815,19 +849,31 @@ Section~\ref{sec:algo}.
     }
 @end
 
-Inserting a range of points would usually be done by a single template
-member function, but since most compilers do not support this yet, we
-provide specialized \ccc{insert} functions for C~arrays (using pointers
-as iterators), for STL sequence containers \ccc{vector<Point>} and
-\ccc{list<Point>} and for the STL input stream iterator
-\ccc{istream_iterator<Point>}. Actually, the \ccc{insert} function for
-a C~array and a \ccc{vector<point>} are the same, since the random
-access iterator of \ccc{vector<Point>} is implemented as \ccc{Point*}.
+Inserting a range of points is done by a single member template. In case
+a compiler does not support this yet, we provide specialized \ccc{insert}
+functions for C~arrays (using pointers as iterators), for STL sequence
+containers \ccc{vector<Point>} and \ccc{list<Point>} and for the STL
+input stream iterator \ccc{istream_iterator<Point>}.  Actually, the
+\ccc{insert} function for a C~array and a \ccc{vector<point>} are the
+same, since the random access iterator of \ccc{vector<Point>} is
+implemented as \ccc{Point*}.
 
-The following \ccc{insert} functions perform for each point \ccc{p} in
-the range $[\mbox{\ccc{first}},\mbox{\ccc{last}})$ a call \ccc{insert(p)}.
+The following \ccc{insert} functions perform a call \ccc{insert(p)} for
+each point \ccc{p} in the range $[\mbox{\ccc{first}},\mbox{\ccc{last}})$.
 
 @macro <Min_ellipse_2 modifiers> += @begin
+#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
+
+    template < class InputIterator > inline
+    void
+    insert( InputIterator first, InputIterator last)
+    {
+        for ( ; first != last; ++first)
+            insert( *first);
+    }
+
+#else
+
     inline
     void
     insert( const Point* first, const Point* last)
@@ -853,6 +899,8 @@ the range $[\mbox{\ccc{first}},\mbox{\ccc{last}})$ a call \ccc{insert(p)}.
         for ( ; first != last; ++first)
             insert( *first);
     }
+
+#endif // CGAL_CFG_NO_MEMBER_TEMPLATES
 @end
 
 The member function \ccc{clear} deletes all points from a
