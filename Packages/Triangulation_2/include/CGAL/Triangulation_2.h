@@ -866,7 +866,7 @@ insert(const Point& p, Locate_type lt, Face_handle loc, int li)
 //     }
 //     lt = OUTSIDE_AFFINE_HULL;
 //     return(insert_second(p));
-    if (lt = VERTEX) return finite_vertex();
+    if (lt == VERTEX) return finite_vertex();
     else return(insert_second(p));
   }
 
