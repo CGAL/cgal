@@ -466,10 +466,11 @@ operator>>(std::istream& is, Gmpq &z)
   Gmpz n, d;
   is >> n;
   is >> c;
-  CGAL_assertion(c == '/');
+  CGAL_assertion(!is || c == '/');
   is >> d;
-  z = Gmpq(n,d);
-  
+  if (is)
+    z = Gmpq(n,d);
+
   return is;
 }
 

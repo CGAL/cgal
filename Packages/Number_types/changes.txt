@@ -1,3 +1,6 @@
+4.121 (27 October 2003)
+- Fix Gmpq's operator>> in case of end of stream.
+
 4.120 (22 October 2003) [af]
 - new headers
 
