@@ -4,8 +4,8 @@
 
 26 Feb 2004 Radu Ursu
 - install_cgal takes the CGAL_VERSION from include/CGAL/version.h 
-    removed get_cgal_version from install_cgal, the CGAL_VERSION is 
-    determined directly at the first step
+    moved get_cgal_version call before all the cgal_install_header calls
+    this way the version is displayed from the beginning
 
 17 Feb 2004 Sylvain Pion
 - Remove mentions about obsolete workarounds in installation.tex

@@ -34,7 +34,7 @@
 # CGAL specific:
 
 # ---------------------------------------------
-CGAL_VERSION="`awk '/#define CGAL_VERSION / {print $3}' include/CGAL/version.h`"
+CGAL_VERSION="version_to_be_determined"
 # ---------------------------------------------
 CGAL_INSTALL_CGAL="`basename ${0}`"
 # ---------------------------------------------
@@ -534,6 +534,18 @@ initial_check()
     done
 }
 
+# fetch CGAL version id from ${CGAL_INCL_DIR}/CGAL/version.h
+# and compiler-testsuite version id
+# from ${CGAL_TEST_CONF_DIR}/CGAL_CFG_NO_TMPL_IN_TMPL_PARAM.C
+get_cgal_version()
+{
+    # this file is assumed to contain one line matching "CGAL_VERSION "
+    # where the third field describes the CGAL version
+    FILE="${CGAL_INCL_DIR}/CGAL/version.h"
+    _check_read ${FILE}
+    CGAL_VERSION="`${_awk} '/#define CGAL_VERSION / {print $3}'  ${FILE}`"
+    log_print "CGAL version is ${CGAL_VERSION}."
+}
 
 # initialize the logfiles
 init_logfiles()
@@ -7120,6 +7132,7 @@ fi
 
 case ${_WHAT_TO_DO} in
     *non-interactive*)
+        get_cgal_version
 	cgal_install_header
 	${_printf} "%s\n" "running non interactive mode ..."
 	INSTALL_INTERACTIVE=''
@@ -7181,6 +7194,7 @@ case ${_WHAT_TO_DO} in
 	    "--------------------------------------------------------"
 	;;
     *upgrade*)
+        get_cgal_version 
 	cgal_install_header
 	${_printf} "%s" "starting ${_WHAT_TO_DO} -"
 	startup_interactive
@@ -7189,6 +7203,7 @@ case ${_WHAT_TO_DO} in
 	finish_interactive
 	;;
     *interactive*)
+        get_cgal_version
 	cgal_install_header
 	# start interactive part
 	${_printf} "%s" "starting interactive mode -"
@@ -7217,6 +7232,7 @@ case ${_WHAT_TO_DO} in
 	${_printf} "\n"
 	;;
     *build-all*)
+        get_cgal_version
 	cgal_install_header
 	${_printf} "%s" "starting ${_WHAT_TO_DO} -"
 	startup_interactive
@@ -7224,6 +7240,7 @@ case ${_WHAT_TO_DO} in
 	finish_interactive
 	;;
     *build*)
+        get_cgal_version
 	cgal_install_header
 	${_printf} "%s" "starting ${_WHAT_TO_DO} -"
 	startup_interactive
@@ -7231,10 +7248,12 @@ case ${_WHAT_TO_DO} in
 	finish_interactive
 	;;
     *help*)
+        get_cgal_version
 	cgal_install_header
 	print_usage_information
 	;;
     *)
+        get_cgal_version
 	cgal_install_header
 	print_general_information
 	;;
