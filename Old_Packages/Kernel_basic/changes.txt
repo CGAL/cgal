@@ -1,3 +1,6 @@
+3.58   (3 October 2001)
+- [Simple_]Handle_for<> protection cleanup, non-const Ptr() added.
+
 3.57   (12 September 2001)
 - Fixes for SunPro.
 

@@ -29,23 +29,20 @@ class Simple_Handle_for
 {
 public:
 
-    typedef Stored element_type;
+    Simple_Handle_for()
+    {}
 
     Simple_Handle_for(const Stored& rc)
 	: _s(rc) {}
 
-    Simple_Handle_for()
-    {}
+protected:
+    typedef Stored element_type;
 
     void
     initialize_with(const Stored& rc)
     {
       _s = rc;
     }
-
-    void
-    copy_on_write()
-    {}
 
     long int
     id() const
@@ -58,7 +55,14 @@ public:
     const Stored * Ptr() const
     { return &_s; }
 
+    Stored * Ptr()
+    { return &_s; }
+
 private:
+    void
+    copy_on_write()
+    {}
+
     Stored _s;
 };
 

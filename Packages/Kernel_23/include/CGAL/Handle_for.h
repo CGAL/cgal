@@ -62,8 +62,6 @@ class Handle_for
 {
   public:
 
-    typedef RefCounted element_type;
-
     Handle_for(const RefCounted& rc)
     {
       ptr = allocator.allocate(1);
@@ -105,12 +103,35 @@ class Handle_for
       return *this;
     }
 
+protected:
+    typedef RefCounted element_type;
+
     void
     initialize_with( const RefCounted& rc)
     {
       allocator.construct(ptr, rc);
     }
 
+    bool
+    identical( const Handle_for& h) const
+    { return ptr == h.ptr; }
+
+    long int
+    id() const
+    { return reinterpret_cast<long int>(&*ptr); }
+
+    typename Allocator::const_pointer
+    Ptr() const
+    { return ptr; }
+
+    typename Allocator::pointer
+    Ptr()
+    {
+	copy_on_write();
+	return ptr;
+    }
+
+// private:
     void
     copy_on_write()
     {
@@ -123,19 +144,6 @@ class Handle_for
       }
     }
 
-    bool
-    identical( const Handle_for& h) const
-    { return ptr == h.ptr; }
-
-    long int
-    id() const
-    { return reinterpret_cast<long int>( &(*ptr)); }
-
-    const typename Allocator::pointer
-    Ptr() const
-    { return ptr; }
-
-  protected:
     static Allocator allocator;
     typename Allocator::pointer      ptr;
 };
