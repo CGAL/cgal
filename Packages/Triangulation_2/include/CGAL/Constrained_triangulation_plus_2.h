@@ -181,7 +181,15 @@ public:
   //template member functions
 public:
   template < class InputIterator >
-  int insert(InputIterator first, InputIterator last)
+#ifdef _MSC_VER
+  #if _MSC_VER>1200
+   int insert(InputIterator first, InputIterator last, int i = 0)
+  #else
+   int insert(InputIterator first, InputIterator last) 
+  #endif
+#else
+   int insert(InputIterator first, InputIterator last) 
+#endif
     {
       int n = number_of_vertices();
       while(first != last){

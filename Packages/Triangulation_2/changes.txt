@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+ver 7.21
+- again a fix for VC7
+
 Ver 7.20
 - add special_insert_in_edge() for Delaunay_constrained_triangulations
 - fixes for VC7
