@@ -1,0 +1,40 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_segment_cached_traits.tex (Arrangement)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: arr (Arrangement_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+% +========================================================================+
+%  Arr_segment_cached_traits_2<Kernel>
+% +========================================================================+
+
+\begin{ccRefClass}{Arr_segment_cached_traits_2<Kernel>}
+
+\ccDefinition
+   The class \ccRefName\ is
+   a traits class that uses the CGAL Kernel, that is, types and predicates.
+   The representation type \ccc{R} is recommended to be an
+   exact type such as \ccc{Cartesian<leda_rational>} or
+   \ccc{Homogeneous<Gmpz>} or any other
+   exact type, although other inexact representations can be used at
+   the user's own risk.
+
+\ccInclude{CGAL/Arr_segment_cached_traits_2.h}
+
+\ccIsModel
+    \ccc{ArrangementTraits_2} \lcTex{(\ccRefPage{ArrangementTraits_2}).}
+
+
+\end{ccRefClass} % Arr_segment_cached_traits_2<Kernel>
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

@@ -36,8 +36,9 @@ copy constructor, and assignment operator.
 
 \ccNestedType{Curve_2}{A type that holds a general curve in the plane.
   Its endpoints must be of type \ccc{Point_2}.
-  Curves of type either \ccc{X_monotone_curve_2} or \ccc{Curve_2} can be
-  inserted into a \ccc{Planar_map_with_intersections_2<Dcel,Traits>} object.}
+  Curves of type \ccc{Curve_2} can be inserted into a 
+  \ccc{Planar_map_with_intersections_2<Dcel,Traits>} object and are 
+  automatically split into \ccc{X_monotone_curve_2} objects.}
 
 \ccCreationVariable{pmwx_traits}
 
@@ -55,8 +56,8 @@ curve to be $x$-monotone.
 \ccMethod{bool curves_overlap(const X_monotone_curve_2& cv1,
                               const X_monotone_curve_2& cv2);}
          {returns \ccc{true} if \ccc{cv1} and \ccc{cv2} overlap
-          in a one-dimensional subcurve (i.e., non countable and non infinite
-	  number of points), \ccc{false}. otherwise.}
+          in a one-dimensional subcurve (i.e. at an infinite and uncountable 
+          number of points), \ccc{false}. otherwise.}
 
 %construction function
 %---------------------   
@@ -65,9 +66,10 @@ curve to be $x$-monotone.
           OutputIterator make_x_monotone(const Curve_2& cv,
                                          OutputIterator res);}
 	 {cuts \ccc{cv} into $x$-monotone subcurves and stores them in a
-	   sequence starting at \ccc{res}. The order in which they are stored
-	   defines their order in the hierarchy tree. Returns past-the-end
-	   iterator of the sequence.}
+	  sequence starting at \ccc{res}. The order in which they are stored
+	  defines their order in the hierarchy tree. Returns past-the-end
+	  iterator of the sequence. The value type of the output iterators
+          must be \ccc{X_monotone_curve_2}.}
 
 \ccMethod{void curve_split(const X_monotone_curve_2& cv,
                            X_monotone_curve_2& c1, X_monotone_curve_2& c2,
@@ -75,16 +77,20 @@ curve to be $x$-monotone.
          {splits $cv$ at \ccc{split_pt} into two curves, and assigns them to
            \ccc{c1} and \ccc{c2} respectively.
            \ccPrecond{\ccc{split_pt} is on \ccc{cv} but is not one of its
-	     endpoint.}}
+	     endpoints.}}
 
 \ccMethod{bool nearest_intersection_to_right(const X_monotone_curve_2& c1,
                                              const X_monotone_curve_2& c2,
                                              const Point_2& pt,
                                              Point_2& p1, Point_2& p2);}
 	 {finds the nearest intersection point (or points) of \ccc{c1} and
-	   \ccc{c2} lexicographically to the right of \ccc{pt} not including
-	   \ccc{pt} itself, (with one exception explained below).
-	   If the intersection of \ccc{c1} and \ccc{c2} is an
+	  \ccc{c2} lexicographically to the right of \ccc{pt} and not 
+          including \ccc{pt} itself (with one exception explained below):
+           \begin{itemize}
+           \item If the intersection of the two curves is a point to the
+	   right of \ccc{pt}, it is returned through both \ccc{p1} and 
+           \ccc{p2}.
+	   \item If the intersection of \ccc{c1} and \ccc{c2} is an
 	   \ccc{X_monotone_curve_2}, that is, they overlap at infinitely many
 	   points, then if the right endpoint and the left endpoint of the
 	   overlapping subcurve are strictly to the right of \ccc{pt}, they are
@@ -92,19 +98,22 @@ curve to be $x$-monotone.
 	   respectively. If \ccc{pt} is between the overlapping-subcurve
 	   endpoints, or \ccc{pt} is its left endpoint, \ccc{pt} and the right
 	   endpoint of the subcurve are returned through \ccc{p1} and \ccc{p2}
-	   respectively. If the intersection of the two curves is a point to the
-	   right of \ccc{pt}, it is returned through \ccc{p1} and \ccc{p2}.
-	   Returns \ccc{true} if \ccc{c1} and \ccc{c2} do intersect to the right
-	   of \ccc{pt}, \ccc{false} otherwise.}
+	   respectively.
+	   \end{itemize}
+	  Returns \ccc{true} if \ccc{c1} and \ccc{c2} do intersect to the 
+          right of \ccc{pt}, \ccc{false} otherwise.}
 
 \ccMethod{bool nearest_intersection_to_left(const X_monotone_curve& c1,
                                             const X_monotone_curve& c2,
                                             const Point_2& pt,
                                             Point_2& p1, Point_2& p2);}
 	 {finds the nearest intersection point (or points) of \ccc{c1} and
-	   \ccc{c2} lexicographically to the left of \ccc{pt} not including
-	   \ccc{pt} itself, (with one exception explained below).
-	   If the intersection of \ccc{c1} and \ccc{c2} is an
+	  \ccc{c2} lexicographically to the left of \ccc{pt} and not including
+	  \ccc{pt} itself (with one exception explained below).
+           \begin{itemize}
+           \item If the intersection of the two curves is a point to the
+	   left of \ccc{pt}, it is returned through both \ccc{p1} and \ccc{p2}.
+	   \item If the intersection of \ccc{c1} and \ccc{c2} is an
 	   \ccc{X_monotone_curve_2}, that is, they overlap at infinitely many
 	   points, then if the left endpoint and the left endpoint of the
 	   overlapping subcurve are strictly to the left of \ccc{pt}, they are
@@ -112,28 +121,20 @@ curve to be $x$-monotone.
 	   respectively. If \ccc{pt} is between the overlapping-subcurve
 	   endpoints, or \ccc{pt} is its left endpoint, \ccc{pt} and the left
 	   endpoint of the subcurve are returned through \ccc{p1} and \ccc{p2}
-	   respectively. If the intersection of the two curves is a point to the
-	   left of \ccc{pt}, it is returned through \ccc{p1} and \ccc{p2}.
-	   Returns \ccc{true} if \ccc{c1} and \ccc{c2} do intersect to the left
-	   of \ccc{pt}, \ccc{false} otherwise. This constructor is not
-	   required for the aggregate insertion of curves into the planar map.
-	   Recall, that the aggregate insertion is based on a sweep-line
-	   algorithm.}
+	   respectively.
+           \end{itemize}
+	  Returns \ccc{true} if \ccc{c1} and \ccc{c2} do intersect to the left
+	  of \ccc{pt}, \ccc{false} otherwise. \newline
+          This function is not required for the aggregate insertion of curves 
+          into the planar map.}
 
 \ccHasModels
-%  The package does not supply specific implementations of the planar
-%  map with intersections traits concept. However, since the
-%  \ccc{Arrangement Traits} concept is a refinment of the \ccRefName\
-%  concept, all of the models of the former are models of the latter.
-The following classes are models of the 
-\ccc{ArrangementTraits_2} concept that is a refinment of the \ccRefName\
-concept. 
+The following classes are actually models of the \ccc{ArrangementTraits_2} 
+concept, that is a refinment of the \ccRefName\ concept. 
 
   \ccc{Arr_segment_traits_2<Kernel>}\\
   \ccc{Arr_segment_cached_traits_2<Kernel>}\\
-  \ccc{Arr_leda_segment_traits_2<Kernel>}\\
   \ccc{Arr_polyline_traits<Kernel, Container>} \\
-  \ccc{Arr_leda_polyline_traits<Kernel, Container>} \\
   \ccc{Arr_conic_traits_2<Kernel>}
 
 \end{ccRefConcept}

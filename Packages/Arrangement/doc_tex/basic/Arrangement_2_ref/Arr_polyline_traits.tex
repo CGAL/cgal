@@ -13,7 +13,7 @@
 % +========================================================================+
 %  Arr_polyline_traits<NT>
 % +========================================================================+
-\begin{ccRefClass}{Arr_polyline_traits<R, Container>}
+\begin{ccRefClass}{Arr_polyline_traits_2<Kernel, Container>}
 
 \ccDefinition
     The class \ccRefName\ is a traits class for polyline curves.  The
@@ -24,13 +24,13 @@
     \ccc{Container} corresponds to the container type for holding the
     polyline curve points. It must be a model of the \ccc{Reversible
     Container} concept and it must be templated with
-    \ccc{Point_2<R>}. \ccc{Container} has a default value which is
-    \ccc{std::vector<Point_2<R> >}. The first point in the container
+    \ccc{Point_2_2<Kernel>}. \ccc{Container} has a default value which is
+    \ccc{std::vector<Point_2_2<Kernel> >}. The first point in the container
     is considered as the source point of the polyline while the last
     point is considered the target one.
 
 %See example ***SHOW WHERE.
-\ccInclude{CGAL/Arr_polyline_traits.h}
+\ccInclude{CGAL/Arr_polyline_traits_2.h}
 
 \ccIsModel
     \ccc{ArrangementTraits_2} \lcTex{(\ccRefPage{ArrangementTraits_2}).}

@@ -30,7 +30,7 @@
 \ccInheritsFrom
     \ccStyle{CGAL::Planar_map_2<Dcel,Traits>}
 
-    Note that the modifying insertion-functions override the
+    Note that the modifying insertion functions override the
     inherited functions. The insertion functions of \ccRefName\ handle
     general curves, including non-$x$-monotone curves, pairwise overlapping,
     or pairwise intersecting curves, and are slower than their counterparts
@@ -38,7 +38,6 @@
     $X$-monotone curves that are pairwise disjoint in their interiors can be
     inserted efficiently through a subset of insertion functions listed below.
     These functions begin with the prefix \ccc{non_intersecting}.
-%\comment{iddo: need to be virtual in planar map}.
 
 \ccTypes
 
@@ -69,29 +68,12 @@
             Halfedge_handle insert(const X_curve_iterator & begin, 
                                    const X_curve_iterator & end,
 				   Pmwx_change_notification *en = NULL);}
-  {iterates through a given range of curves, inserting the curves into the
-   map. \ccc{begin} and \ccc{end} are input iterators that point to the first
-   curve and past-the-end curve of the range respectively. \ccc{insert()} 
-   returns a handle to a new halfedge directed in the same way as the last 
-   curve in the range.
+  {inserts the given range of curves into the map in an aggregated manner,
+   using the sweep-line algorithm. \ccc{begin} and \ccc{end} are input 
+   iterators that point to the first curve and past-the-end curve of the range
+   respectively. \ccc{insert()} returns a handle to a new halfedge directed 
+   in the same way as the last curve in the range.
    \ccPrecond{no curve in the given range is equivalent to a point.}}
-
-\ccMethod{Halfedge_handle insert_from_vertex(const X_monotone_curve_2& cv,
-                                             Vertex_handle src,
-                                         Pmwx_change_notification *en = NULL);}
-         {inserts  the $x$-monotone curve \ccStyle{cv}, for
-	 which the source vertex, \ccStyle{src}, is already in the
-	 arrangement.
-	 Returns the last inserted halfedge whose target points to the
-	 target point of \ccStyle{cv}.
-	 This function is more efficient than the \ccc{insert} function,
-	 since it does not invoke a point location query for the
-	 endpoint \ccc{src}. Therefore,
-	 whenever possible, it is recommended to use this one rather
-	 than \ccc{insert}.
-	 \ccPrecond{\ccc{src} holds a point which is the same as \ccc{cv's}
-	 source.}
-	 \ccPrecond{\ccc{cv} is not equivalent to a point.}}
 
 \begin{ccAdvanced}
 
@@ -99,9 +81,9 @@
 
 The following functions do not check for intersections. They simply
 call the \ccc{Planar_map_2} corresponding insert functions. Therefore,
-they are more efficient than their counterpart insert-functions.
-{\em see also} \ref{PM_sec:pm} for details including the full list of
-preconditions.
+they are more efficient than their counterpart insert-functions. but should
+be used with care ({\em see also} \ref{PM_sec:pm} for details including the 
+full list of preconditions).
 
 \ccMethod{Halfedge_handle
           non_intersecting_insert(const X_monotone_curve_2 & cv,
@@ -122,12 +104,14 @@ preconditions.
   the first curve and past-the-end curve of the range
   respectively. \ccc{non_intersecting_insert()} returns a handle to a
   new halfedge directed in the same way as the last curve in the range.
-  \ccPrecond{the curves of the map do not intersect the curves in the
-  given range in the interiors of the curves respectively.}}
+  \ccPrecond{the curves of the map do not intersect the any of the curves in 
+  the given range in its interior, and all curves in the range are disjoint
+  in their interior.}}
 
 \ccMethod{Halfedge_handle
-        non_intersecting_insert_in_face_interior(const X_monotone_curve_2 & cv, 
-                                                 Face_handle f,
+        non_intersecting_insert_in_face_interior
+                                            (const X_monotone_curve_2 & cv, 
+                                             Face_handle f,
                                              Change_notification * en = NULL);}
   {inserts the curve \ccc{cv} as a new inner component of the face
   \ccc{f}. \ccc{non_intersecting_insert_in_face_interior()} returns a
@@ -170,7 +154,7 @@ preconditions.
 
 \ccMethod{Halfedge_handle
         non_intersecting_insert_from_vertex(const X_monotone_curve_2 & cv, 
-                                            Vertex_handle v1,
+                                            Vertex_handle v,
                                             Change_notification * en = NULL);}
   {inserts the curve \ccc{cv} into the map. One endpoint of \ccc{cv}
   is the point of the given vertex \ccc{v}, that is already in the
