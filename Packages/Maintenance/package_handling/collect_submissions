@@ -31,7 +31,7 @@ my $LOCKCMD="/sw/bin/lockfile";
 my $LOGFILE="$Data_directory/collect_submissions.log";
 
 # 
-my $seconds_between_invocations=600;
+my $seconds_between_invocations=300;
 my $max_tries_between_warning= int 21600/$seconds_between_invocations;
 
 $ENV{PATH}='/sbin:/usr/sbin:/usr/bsd:/bin:/usr/bin';
