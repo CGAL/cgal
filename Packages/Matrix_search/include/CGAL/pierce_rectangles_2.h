@@ -224,10 +224,16 @@ struct Staircases : public Loc_domain< Traits_ > {
 
   template < class InputIC >
   Staircases(InputIC b, InputIC e, Traits t)
-  : Base(b, e, t), sorted(pts),
+  : Base(b, e, t),
+    sorted(pts),
     xgy(t.signed_x_distance_2_object()(maxx, minx) >
         t.signed_y_distance_2_object()(maxy, miny))
   {
+#if defined(__sun) && defined(__SUNPRO_CC)
+    // I get linker errors otherweise,  the call from above
+    // does not seem to suffice :-(
+    { Base bb(e, e, t); }
+#endif // defined(__sun) && defined(__SUNPRO_CC)
 #ifndef CGAL_CFG_NO_NAMESPACE
     using std::sort;
     using std::find_if;
@@ -1032,7 +1038,6 @@ struct Four_covering_algorithm {
 CGAL_END_NAMESPACE
 
 #endif // ! (CGAL_PIERCE_RECTANGLES_2_H)
-
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

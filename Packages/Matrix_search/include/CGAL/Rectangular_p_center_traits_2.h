@@ -51,7 +51,7 @@ protected:
 };
 
 template < class R >
-struct Signed_x_distance_2
+struct I_Signed_x_distance_2
 : public CGAL_STD::binary_function<
   Point_2< R >, Point_2< R >, typename R::FT >
 {
@@ -61,7 +61,7 @@ struct Signed_x_distance_2
   { return q1.x() - q2.x(); }
 };
 template < class R >
-struct Signed_y_distance_2
+struct I_Signed_y_distance_2
 : public CGAL_STD::binary_function<
   Point_2< R >, Point_2< R >, typename R::FT >
 {
@@ -71,7 +71,7 @@ struct Signed_y_distance_2
   { return q1.y() - q2.y(); }
 };
 template < class R >
-struct Infinity_distance_2
+struct I_Infinity_distance_2
 : public CGAL_STD::binary_function<
   Point_2< R >, Point_2< R >, typename R::FT >
 {
@@ -83,7 +83,7 @@ struct Infinity_distance_2
   }
 };
 template < class R >
-struct Signed_infinity_distance_2
+struct I_Signed_infinity_distance_2
 : public CGAL_STD::binary_function<
   Point_2< R >, Point_2< R >, typename R::FT >
 {
@@ -93,7 +93,7 @@ struct Signed_infinity_distance_2
   { return max(q1.x() - q2.x(), q1.y() - q2.y()); }
 };
 template < class R >
-struct Construct_point_2_above_right_implicit_point_2 {
+struct I_Construct_point_2_above_right_implicit_point_2 {
   // (p, q, r) |--> (p.x() + r, q.y() + r)
   typedef typename R::FT                     FT;
   typedef Point_2< Cartesian< FT > >         P;
@@ -104,7 +104,7 @@ struct Construct_point_2_above_right_implicit_point_2 {
 };
 
 template < class R >
-struct Construct_point_2_above_left_implicit_point_2 {
+struct I_Construct_point_2_above_left_implicit_point_2 {
   // (p, q, r) |--> (p.x() - r, q.y() + r)
   typedef typename R::FT                     FT;
   typedef Point_2< Cartesian< FT > >         P;
@@ -115,7 +115,7 @@ struct Construct_point_2_above_left_implicit_point_2 {
 };
 
 template < class R >
-struct Construct_point_2_below_left_implicit_point_2 {
+struct I_Construct_point_2_below_left_implicit_point_2 {
   // (p, q, r) |--> (p.x() - r, q.y() - r)
   typedef typename R::FT                     FT;
   typedef Point_2< Cartesian< FT > >         P;
@@ -126,7 +126,7 @@ struct Construct_point_2_below_left_implicit_point_2 {
 };
 
 template < class R >
-struct Construct_point_2_below_right_implicit_point_2 {
+struct I_Construct_point_2_below_right_implicit_point_2 {
   // (p, q, r) |--> (p.x() + r, q.y() - r)
   typedef typename R::FT                     FT;
   typedef Point_2< Cartesian< FT > >         P;
@@ -163,19 +163,19 @@ struct Rectangular_p_center_default_traits_2 : public R
   typedef typename R::Construct_vertex_2        Construct_vertex_2;
 
   // additions
-  typedef Signed_x_distance_2< R >  Signed_x_distance_2;
-  typedef Signed_y_distance_2< R >  Signed_y_distance_2;
+  typedef I_Signed_x_distance_2< R >  Signed_x_distance_2;
+  typedef I_Signed_y_distance_2< R >  Signed_y_distance_2;
 
-  typedef Infinity_distance_2< R >           Infinity_distance_2;
-  typedef Signed_infinity_distance_2< R >    Signed_infinity_distance_2;
+  typedef I_Infinity_distance_2< R >           Infinity_distance_2;
+  typedef I_Signed_infinity_distance_2< R >    Signed_infinity_distance_2;
 
-  typedef Construct_point_2_above_right_implicit_point_2< R >
+  typedef I_Construct_point_2_above_right_implicit_point_2< R >
     Construct_point_2_above_right_implicit_point_2;
-  typedef Construct_point_2_above_left_implicit_point_2< R >
+  typedef I_Construct_point_2_above_left_implicit_point_2< R >
     Construct_point_2_above_left_implicit_point_2;
-  typedef Construct_point_2_below_right_implicit_point_2< R >
+  typedef I_Construct_point_2_below_right_implicit_point_2< R >
     Construct_point_2_below_right_implicit_point_2;
-  typedef Construct_point_2_below_left_implicit_point_2< R >
+  typedef I_Construct_point_2_below_left_implicit_point_2< R >
     Construct_point_2_below_left_implicit_point_2;
 
   // get object methods:
@@ -261,8 +261,7 @@ protected:
 }; // Rectangular_p_center_matrix_search_traits_2< ... >
 
 template < class ForwardIterator, class Traits >
-Iso_rectangle_2<
-  typename std::iterator_traits< ForwardIterator >::value_type::R >
+typename Traits::Iso_rectangle_2
 bounding_box_2(ForwardIterator f, ForwardIterator l, const Traits& t)
 // PRE: f != l.
 {
@@ -306,6 +305,20 @@ bounding_box_2(ForwardIterator f, ForwardIterator l)
   Traits t;
   return bounding_box_2(f, l, t);
 } // bounding_box_2(f, l)
+#ifdef CGAL_CFG_MATCHING_BUG_3
+template < class ForwardIterator >
+inline typename
+std::iterator_traits< ForwardIterator* >::value_type::R::Iso_rectangle_2
+bounding_box_2(ForwardIterator* f, ForwardIterator* l)
+// PRE: f != l.
+{
+  CGAL_precondition(f != l);
+  typedef typename std::iterator_traits< ForwardIterator* >::value_type::R R;
+  typedef Rectangular_p_center_default_traits_2< R > Traits;
+  Traits t;
+  return bounding_box_2(f, l, t);
+} // bounding_box_2(f, l)
+#endif // CGAL_CFG_MATCHING_BUG_3
 template < class Rectangle, class Traits >
 inline Rectangle
 construct_bounding_box_union_2(const Rectangle& r1,
@@ -352,7 +365,6 @@ CGAL_END_NAMESPACE
 
 
 #endif // ! (CGAL_RECTANGULAR_P_CENTER_TRAITS_2_H)
-
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

@@ -74,7 +74,6 @@ sorted_matrix_search_traits_adaptor(FeasibilityTest f, const Matrix&)
 CGAL_END_NAMESPACE
 
 #endif // ! (CGAL_SORTED_MATRIX_SEARCH_TRAITS_ADAPTOR_H)
-
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

@@ -87,8 +87,7 @@ public:
 #undef Base
 #endif // _MSC_VER
 
-#if !defined(CGAL_CFG_NO_ITERATOR_TRAITS) && \
-!defined(CGAL_CFG_MATCHING_BUG_2)
+#if !defined(CGAL_CFG_NO_ITERATOR_TRAITS) && !defined(CGAL_CFG_MATCHING_BUG_2)
 
 CGAL_END_NAMESPACE
 #include <iterator>
@@ -238,7 +237,6 @@ all_furthest_neighbors( RandomAccessIC points_begin,
 CGAL_END_NAMESPACE
 
 #endif // ! (CGAL_ALL_FURTHEST_NEIGHBORS_2_H)
-
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

@@ -415,7 +415,6 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
 CGAL_END_NAMESPACE
 
 #endif // ! (CGAL_SORTED_MATRIX_SEARCH_H)
-
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------
