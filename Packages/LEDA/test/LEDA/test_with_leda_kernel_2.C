@@ -27,7 +27,7 @@
 #include <CGAL/rat_leda.h>
 #include <CGAL/rat_leda_in_CGAL_2.h>
 #include <CGAL/predicates_on_points_rat_leda_2.h>
-#include "../Kernel/include/CGAL/_test_fct_point_2.C"
+#include "../Kernel/include/CGAL/_test_fct_point_2.h"
 
 int
 main()
