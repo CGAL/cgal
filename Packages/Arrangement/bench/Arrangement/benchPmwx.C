@@ -282,6 +282,7 @@ typedef ECG::Conic_arc_traits<Curved_k>                 Traits;
 #if BENCH_PM == PLANAR_MAP
 typedef CGAL::Pm_default_dcel<Traits>                   Dcel;
 typedef CGAL::Planar_map_2<Dcel,Traits>                 Planar_map;
+typedef Planar_map                                      Pm;
 #define PLANAR_MAP_TYPE "Pm"
 #elif BENCH_PM == PLANAR_MAP_WITH_INTERSECTIONS
 typedef CGAL::Pm_default_dcel<Traits>                   Dcel;
@@ -291,6 +292,7 @@ typedef CGAL::Planar_map_with_intersections_2<Pm>       Planar_map;
 #elif BENCH_PM == ARRANGEMENT
 typedef CGAL::Arr_2_default_dcel<Traits>                Dcel;
 typedef CGAL::Arrangement_2<Dcel,Traits>                Planar_map;
+typedef Planar_map::Planar_map                          Pm;
 #define PLANAR_MAP_TYPE "Arr"
 #endif
 
@@ -302,12 +304,12 @@ typedef Planar_map::Locate_type                         Locate_type;
 typedef Planar_map::Halfedge_iterator                   Pm_Halfedge_iterator;
 
 // Point location strategies:
-typedef CGAL::Pm_trapezoid_dag_point_location<Planar_map>   Trap_point_location;
-typedef CGAL::Pm_naive_point_location<Planar_map>           Naive_point_location;
-typedef CGAL::Pm_walk_along_line_point_location<Planar_map> Walk_point_location;
-typedef CGAL::Pm_dummy_point_location<Planar_map>           Dummy_point_location;
-typedef CGAL::Pm_triangle_point_location<Planar_map>        Triangle_point_location;
-typedef CGAL::Pm_simple_point_location<Planar_map>          Simple_point_location;
+typedef CGAL::Pm_trapezoid_dag_point_location<Pm>       Trap_point_location;
+typedef CGAL::Pm_naive_point_location<Pm>               Naive_point_location;
+typedef CGAL::Pm_walk_along_line_point_location<Pm>     Walk_point_location;
+typedef CGAL::Pm_dummy_point_location<Pm>               Dummy_point_location;
+typedef CGAL::Pm_triangle_point_location<Pm>            Triangle_point_location;
+typedef CGAL::Pm_simple_point_location<Pm>              Simple_point_location;
 
 typedef CGAL::Bench_parse_args::TypeId                  Type_id;
 typedef CGAL::Bench_parse_args::StrategyId              Strategy_id;
