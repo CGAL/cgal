@@ -68,9 +68,9 @@ class Filtered_exact
   IA give_interval (const No_Filter_Cache &) const
   {
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
-    return convert_to<Interval_nt_advanced>(value);
+    return convert_to<Interval_nt_advanced>(_value);
 #else
-    return convert_from_to(Interval_nt_advanced(), value);
+    return convert_from_to(Interval_nt_advanced(), _value);
 #endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
   }
 
@@ -79,56 +79,57 @@ class Filtered_exact
   void compute_cache (IA &inter) const
   { inter = give_interval (No_Filter_Cache()); }
 
-  void update_cache() { compute_cache (cache); }
+  void update_cache() { compute_cache (_cache); }
 
-  Cache_t cache;
-  CT value;
+  CT _value;
+  Cache_t _cache;
 
 public:
 
   Filtered_exact () {}
+  Filtered_exact (const Fil & fil)
+      : _value(fil._value), _cache(fil._cache)  { }
   template <class NT>
   Filtered_exact (const NT & nt)
-      : value(nt)  { update_cache(); }
+      : _value(nt)  { update_cache(); }
   template <class NT>
   Filtered_exact (const NT & num, const NT & den) // For Quotient<>.
-      : value(num, den)   { update_cache(); }
-  Filtered_exact (const Filtered_exact<CT,ET,Cache_t> & fil)
-      : value(fil.value)  { update_cache(); }
+      : _value(num, den)   { update_cache(); }
 
-  // The two conversion functions.
-  IA interval() const { return give_interval(cache); }
+  // The access functions.
+  CT value()	const { return _value; }
+  IA interval() const { return give_interval(_cache); }
   ET exact()    const
   {
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
-    return convert_to<ET>(value);
+    return convert_to<ET>(_value);
 #else
-    return convert_from_to(ET(), value);
+    return convert_from_to(ET(), _value);
 #endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
   }
 
-  Fil  operator- ()               const { return Fil(-value); }
-  bool operator< (const Fil& fil) const { return value <  fil.value; }
-  bool operator> (const Fil& fil) const { return value >  fil.value; }
-  bool operator<=(const Fil& fil) const { return value <= fil.value; }
-  bool operator>=(const Fil& fil) const { return value >= fil.value; }
-  bool operator==(const Fil& fil) const { return value == fil.value; }
-  bool operator!=(const Fil& fil) const { return value != fil.value; }
+  Fil  operator- ()               const { return Fil(-_value); }
+  bool operator< (const Fil& fil) const { return _value <  fil._value; }
+  bool operator> (const Fil& fil) const { return _value >  fil._value; }
+  bool operator<=(const Fil& fil) const { return _value <= fil._value; }
+  bool operator>=(const Fil& fil) const { return _value >= fil._value; }
+  bool operator==(const Fil& fil) const { return _value == fil._value; }
+  bool operator!=(const Fil& fil) const { return _value != fil._value; }
 
 #ifndef CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
-  Fil operator+(const Fil& fil) const { return Fil(value + fil.value); }
-  Fil operator-(const Fil& fil) const { return Fil(value - fil.value); }
-  Fil operator*(const Fil& fil) const { return Fil(value * fil.value); }
-  Fil operator/(const Fil& fil) const { return Fil(value / fil.value); }
+  Fil operator+(const Fil& fil) const { return Fil(_value + fil._value); }
+  Fil operator-(const Fil& fil) const { return Fil(_value - fil._value); }
+  Fil operator*(const Fil& fil) const { return Fil(_value * fil._value); }
+  Fil operator/(const Fil& fil) const { return Fil(_value / fil._value); }
 
   Fil& operator+=(const Fil& fil)
-    { value += fil.value; update_cache(); return *this; }
+    { _value += fil._value; update_cache(); return *this; }
   Fil& operator-=(const Fil& fil)
-    { value -= fil.value; update_cache(); return *this; }
+    { _value -= fil._value; update_cache(); return *this; }
   Fil& operator*=(const Fil& fil)
-    { value *= fil.value; update_cache(); return *this; }
+    { _value *= fil._value; update_cache(); return *this; }
   Fil& operator/=(const Fil& fil)
-    { value /= fil.value; update_cache(); return *this; }
+    { _value /= fil._value; update_cache(); return *this; }
 #endif // CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
 };
 
@@ -142,89 +143,89 @@ template <class CT, class ET, class Cache_t>
 inline
 Filtered_exact<CT,ET,Cache_t>
 sqrt (const Filtered_exact<CT,ET,Cache_t>& fil)
-{ return sqrt(fil.value); }
+{ return sqrt(fil.value()); }
 
 template <class CT, class ET, class Cache_t>
 inline
 Filtered_exact<CT,ET,Cache_t>
 square (const Filtered_exact<CT,ET,Cache_t>& fil)
-{ return square(fil.value); }
+{ return square(fil.value()); }
 #endif // CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
 
 template <class CT, class ET, class Cache_t>
 inline
 bool
 is_valid (const Filtered_exact<CT,ET,Cache_t>& fil)
-{ return is_valid(fil.value); }
+{ return is_valid(fil.value()); }
 
 template <class CT, class ET, class Cache_t>
 inline
 bool
 is_finite (const Filtered_exact<CT,ET,Cache_t>& fil)
-{ return is_finite(fil.value); }
+{ return is_finite(fil.value()); }
 
 template <class CT, class ET, class Cache_t>
 inline
 double
 to_double (const Filtered_exact<CT,ET,Cache_t>& fil)
-{ return CGAL::to_double(fil.value); }
+{ return CGAL::to_double(fil.value()); }
 
 template <class CT, class ET, class Cache_t>
 inline
 Sign
 sign (const Filtered_exact<CT,ET,Cache_t>& fil)
-{ return CGAL::sign(fil.value); }
+{ return CGAL::sign(fil.value()); }
 
 template <class CT, class ET, class Cache_t>
 inline
 Comparison_result
 compare (const Filtered_exact<CT,ET,Cache_t>& fil,
 	 const Filtered_exact<CT,ET,Cache_t>& fil2)
-{ return CGAL::compare(fil.value, fil2.value); }
+{ return CGAL::compare(fil.value(), fil2.value()); }
 
 template <class CT, class ET, class Cache_t>
 inline
 Filtered_exact<CT,ET,Cache_t>
 abs (const Filtered_exact<CT,ET,Cache_t>& fil)
-{ return abs(fil.value); }
+{ return abs(fil.value()); }
 
 template <class CT, class ET, class Cache_t>
 inline
 Filtered_exact<CT,ET,Cache_t>
 min (const Filtered_exact<CT,ET,Cache_t>& fil,
      const Filtered_exact<CT,ET,Cache_t>& fil2)
-{ return min(fil.value, fil2.value); }
+{ return min(fil.value(), fil2.value()); }
 
 template <class CT, class ET, class Cache_t>
 inline
 Filtered_exact<CT,ET,Cache_t>
 max (const Filtered_exact<CT,ET,Cache_t>& fil,
      const Filtered_exact<CT,ET,Cache_t>& fil2)
-{ return max(fil.value, fil2.value); }
+{ return max(fil.value(), fil2.value()); }
 
 template <class CT, class ET, class Cache_t>
 inline
 io_Operator
 io_tag (const Filtered_exact<CT,ET,Cache_t> &fil)
-{ return io_tag(fil.value); }
+{ return io_tag(fil.value()); }
 
 template <class CT, class ET, class Cache_t>
 inline
 Number_tag
 number_type_tag (const Filtered_exact<CT,ET,Cache_t> &fil)
-{ return number_type_tag(fil.value); }
+{ return number_type_tag(fil.value()); }
 
 template <class CT, class ET, class Cache_t>
 inline
 std::ostream &
 operator<< (std::ostream& os, const Filtered_exact<CT,ET,Cache_t>& d)
-{ return os << d.value; }
+{ return os << d.value(); }
 
 template <class CT, class ET, class Cache_t>
 inline
 std::istream &
 operator>> (std::istream &is, Filtered_exact<CT,ET,Cache_t>& d)
-{ return is >> d.value; }
+{ return is >> d.value(); }
 
 CGAL_END_NAMESPACE
 
