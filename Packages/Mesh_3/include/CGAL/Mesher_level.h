@@ -186,7 +186,8 @@ public:
   }
 
   /** Actions after having inserted the point.
-      \param vh is the vertex handle of the inserted point. */
+      \param vh is the vertex handle of the inserted point,
+      \param visitor is the visitor.*/
   template <class Mesh_visitor>
   void after_insertion(Vertex_handle vh, Mesh_visitor visitor)
   {
