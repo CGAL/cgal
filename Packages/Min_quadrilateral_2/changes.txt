@@ -7,6 +7,12 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+DEMO: Do not compute min_strip for < 2 and min_quad for < 3 points.
+
+//---------------------------------------------------------------------
+//	 CGAL-2.2
+//---------------------------------------------------------------------
+
 ALL : Fixed file headers.
 ALL : minimum_enclosing_* -> min_*
 DOCS: Changed to new manual style.
