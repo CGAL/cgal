@@ -1397,7 +1397,8 @@ calblockintro   ([\{][\\](cal))|([\\]mathcal[\{])
 [\\]((maketitle)|(tableofcontents))/{noletter}            {}
 [\\]((begin)|(end))[\{]document[\}]                       {}
 <INITIAL,MMODE,NestingMode>[\\]((tiny)|(scriptsize)|(footnotesize)|(small)|(normalsize)|(large)|(Large))/{noletter}                      {}
-[\\]noindent/{noletter}                                   {}
+<INITIAL,MMODE,NestingMode>[\\]noindent/{noletter}        {}
+<INITIAL,MMODE,NestingMode>[\\]etalchar/{noletter}        {}
 
 
 [\\]newsavebox{w}[\{]          |
