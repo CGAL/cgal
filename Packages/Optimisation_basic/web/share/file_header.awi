@@ -2,7 +2,7 @@
 @! The CGAL Library
 @! Implementation: macros for file headers
 @! ----------------------------------------------------------------------------
-@! file  : web/file_header.awi
+@! file  : web/share/file_header.awi
 @! author: Sven Schönherr <sven@inf.ethz.ch>
 @! ----------------------------------------------------------------------------
 @! $Revision$

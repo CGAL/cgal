@@ -2,7 +2,7 @@
 @! The CGAL Library
 @! Implementation: macros for namespaces
 @! ----------------------------------------------------------------------------
-@! file  : web/namespace.awi
+@! file  : web/share/namespace.awi
 @! author: Sven Schönherr <sven@inf.ethz.ch>
 @! ----------------------------------------------------------------------------
 @! $Revision$
