@@ -1007,7 +1007,9 @@ public:
 
       Sign sign_E6 = CGAL_NTS sign(F3);
 
-      if ( sign_E5 == ZERO ) { return sign_E1_plus_E3_P * sign_E6; }
+      if ( sign_E5 == ZERO ) {
+	return Sign(sign_E1_plus_E3_P * sign_E6);
+      }
       if ( sign_E5 == sign_E6 ) {
 	return Sign(sign_E1_plus_E3_P * sign_E5);
       }
