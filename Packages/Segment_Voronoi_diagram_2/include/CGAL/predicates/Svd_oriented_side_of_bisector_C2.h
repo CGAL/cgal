@@ -305,11 +305,18 @@ public:
 	     const Site_2& q) const
   {
 #if 0
-    std::cout << "inside oriented side of bisector top "
-	      << "level operator()" << std::endl;
-    std::cout << "t1: " << t1 << std::endl;
-    std::cout << "t2: " << t2 << std::endl;
-    std::cout << "q: " << q << std::endl;
+    RT x = q.point().x();
+    Object o = make_object(x);
+    Gmpq qx;
+    if ( assign(qx, o) ) {
+      std::cout << "+++++++++++++++++++++++++++++++++++++" << std::endl;
+      std::cout << "inside oriented side of bisector top "
+		<< "level operator()" << std::endl;
+      std::cout << "t1: " << t1 << std::endl;
+      std::cout << "t2: " << t2 << std::endl;
+      std::cout << "q: " << q << std::endl;
+      std::cout << "-------------------------------------" << std::endl;
+    }
 #endif
     CGAL_precondition( q.is_point() );
     return compare_distances(t1, t2, q);

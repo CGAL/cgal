@@ -46,6 +46,61 @@ private:
 private:
   Are_same_points_C2  are_same;
 
+  bool same_segments(const Site_2& p, const Site_2& q) const
+  {
+    CGAL_precondition( p.is_segment() && q.is_segment() );
+
+    return
+      ( are_same(p.source_site(), q.source_site()) &&
+        are_same(p.target_site(), q.target_site()) ) ||
+      ( are_same(p.source_site(), q.target_site()) &&
+        are_same(p.target_site(), q.source_site()) );
+  }
+
+  bool is_on_common_support(const Site_2& s1, const Site_2& s2,
+			    const Point_2& p) const
+  {
+    CGAL_precondition( !s1.is_exact() && !s2.is_exact() );
+
+    if (  same_segments(s1.supporting_site(0),
+			s2.supporting_site(0)) ||
+	  same_segments(s1.supporting_site(0),
+			s2.supporting_site(1))  ) {
+      Site_2 support = s1.supporting_site(0);
+      return (  are_same(support.source_site(), p) ||
+		are_same(support.target_site(), p)  );
+    } else if (  same_segments(s1.supporting_site(1),
+			       s2.supporting_site(1)) ||
+		 same_segments(s1.supporting_site(1),
+			       s2.supporting_site(0))  ) {
+      Site_2 support = s1.supporting_site(1);
+      return (  are_same(support.source_site(), p) ||
+		are_same(support.target_site(), p)  );      
+    }
+    return false;
+  }
+
+  bool have_common_support(const Site_2& p, const Site_2& q) const
+  {
+    CGAL_precondition( !p.is_exact() && !q.is_exact() );
+
+    return
+      same_segments(p.supporting_site(0), q.supporting_site(0)) ||
+      same_segments(p.supporting_site(0), q.supporting_site(1)) ||
+      same_segments(p.supporting_site(1), q.supporting_site(1)) ||
+      same_segments(p.supporting_site(1), q.supporting_site(0));
+  }
+
+  bool have_common_support(const Site_2& s, const Point_2& p1,
+			   const Point_2& p2) const
+  {
+    CGAL_precondition( !s.is_exact() );
+
+    Site_2 t(p1, p2);
+    return ( same_segments(s.supporting_site(0), t) ||
+	     same_segments(s.supporting_site(1), t) );
+  }
+
 private:
   Sign incircle_p(const Site_2& p, const Site_2& q,
 		  const Site_2& t) const
@@ -53,14 +108,72 @@ private:
     CGAL_precondition( t.is_point() );
 
     if ( p.is_point() && q.is_point() ) {
+
+      Orientation o;
+
+      // do some geometric filtering...
+      bool p_exact = p.is_exact();
+      bool q_exact = q.is_exact();
+      bool t_exact = t.is_exact();
+      bool filtered = false;
+      // the following if-statement does the gometric filtering...
+      // maybe it is not so important since this will only be
+      // activated if a lot of intersection points appear on the
+      // convex hull
+      if ( !p_exact || !q_exact || !t_exact ) {
+	if ( !p_exact && !q_exact && !t_exact ) {
+	  if ( have_common_support(p, q) &&
+	       have_common_support(q, t) ) {
+	    o = COLLINEAR;
+	    filtered = true;
+	  }
+	} else if ( !p_exact && !q_exact && t_exact ) {
+	  if ( is_on_common_support(p, q, t.point()) ) {
+	    o = COLLINEAR;
+	    filtered = true;
+	  }
+	} else if ( !p_exact && q_exact && !t_exact ) {
+	  if ( is_on_common_support(p, t, q.point()) ) {
+	    o = COLLINEAR;
+	    filtered = true;
+	  }
+	} else if ( p_exact && !q_exact && !t_exact ) {
+	  if ( is_on_common_support(t, q, p.point()) ) {
+	    o = COLLINEAR;
+	    filtered = true;
+	  }
+	} else if ( !p_exact && q_exact && t_exact ) {
+	  if ( have_common_support(p, q.point(), t.point()) ) {
+	    o = COLLINEAR;
+	    filtered = true;
+	  }
+	} else if ( p_exact && !q_exact && t_exact ) {
+	  if ( have_common_support(q, p.point(), t.point()) ) {
+	    o = COLLINEAR;
+	    filtered = true;
+	  }
+	} else if ( p_exact && q_exact && !t_exact ) {
+	  if ( have_common_support(t, p.point(), q.point()) ) {
+	    o = COLLINEAR;
+	    filtered = true;
+	  }
+	}
+      }
+
       Point_2 pp = p.point(), qp = q.point(), tp = t.point();
 
-      Orientation o = orientation(pp, qp, tp);
+      if ( !filtered ) {
+	// MK::ERROR: here I should call a kernel object, not a
+	// function...
+	o = orientation(pp, qp, tp);
+      }
 
       if ( o != COLLINEAR ) {
 	return (o == LEFT_TURN) ? POSITIVE : NEGATIVE;
       }
 
+      // MK::ERROR: change the following code to use the compare_x_2
+      // and compare_y_2 stuff...
       RT dtpx = pp.x() - tp.x();
       RT dtpy = pp.y() - tp.y();
       RT dtqx = qp.x() - tp.x();
@@ -211,12 +324,22 @@ public:
 		  const Site_2& r, const Site_2& t) const
   {
 #if 0
-    std::cout << "inside vertex conflict top "
-	      << "level operator()" << std::endl;
-    std::cout << "p: " << p << std::endl;
-    std::cout << "q: " << q << std::endl;
-    std::cout << "r: " << r << std::endl;
-    std::cout << "t: " << t << std::endl;
+    if ( p.is_point() && q.is_point() &&
+	 r.is_point() && t.is_point() ) {
+      RT x = p.point().x();
+      Object o = make_object(x);
+      Gmpq qx;
+      if ( assign(qx, o) ) {
+	std::cout << "+++++++++++++++++++++++++++++++++++++" << std::endl;
+	std::cout << "inside vertex conflict top "
+		  << "level operator()" << std::endl;
+	std::cout << "p: " << p << " exact? " << p.is_exact() << std::endl;
+	std::cout << "q: " << q << " exact? " << q.is_exact() << std::endl;
+	std::cout << "r: " << r << " exact? " << r.is_exact() << std::endl;
+	std::cout << "t: " << t << " exact? " << t.is_exact() << std::endl;
+	std::cout << "-------------------------------------" <<	std::endl;
+      }
+    }
 #endif
 
     Voronoi_vertex_2 v(p, q, r);
@@ -230,6 +353,23 @@ public:
   Sign operator()(const Site_2& p, const Site_2& q,
 		  const Site_2& t) const
   {
+#if 0
+    if ( p.is_point() && q.is_point() && t.is_point() ) {
+      RT x = p.point().x();
+      Object o = make_object(x);
+      Gmpq qx;
+      if ( assign(qx, o) ) {
+	std::cout << "+++++++++++++++++++++++++++++++++++++" << std::endl;
+	std::cout << "inside vertex conflict top "
+		  << "level operator()" << std::endl;
+	std::cout << "p: " << p << " exact? " << p.is_exact() << std::endl;
+	std::cout << "q: " << q << " exact? " << q.is_exact() << std::endl;
+	std::cout << "t: " << t << " exact? " << t.is_exact() << std::endl;
+	std::cout << "-------------------------------------" << std::endl;
+      }
+    }
+#endif
+
     CGAL_assertion( !(p.is_segment() && q.is_segment()) );
 
     if ( p.is_point() && q.is_segment() ) {
