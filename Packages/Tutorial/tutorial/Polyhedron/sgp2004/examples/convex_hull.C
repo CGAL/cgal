@@ -1,16 +1,16 @@
 // file: examples/convex_hull.C
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/convex_hull_3.h>
+#include <CGAL/Width_default_traits_3.h>
+#include <CGAL/Width_3.h>
 #include <CGAL/Timer.h>
 #include <iostream>
 #include <algorithm>
 #include <vector>
-
-#include <CGAL/Min_sphere_d.h>
-#include <CGAL/Optimisation_d_traits_3.h>
 
 
 using std::cerr;
@@ -23,23 +23,34 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel  Kernel;
 typedef Kernel::Vector_3                                     Vector;
 typedef Kernel::Point_3                                      Point;
 typedef CGAL::Polyhedron_3<Kernel>                           Polyhedron;
+typedef Polyhedron::Point_const_iterator                     Point_iterator;
 
-typedef Polyhedron::Vertex                                   Vertex;
-typedef Polyhedron::Vertex_iterator                          Vertex_iterator;
-typedef Polyhedron::Halfedge_handle                          Halfedge_handle;
-typedef Polyhedron::Edge_iterator                            Edge_iterator;
-typedef Polyhedron::Facet_iterator                           Facet_iterator;
-typedef Polyhedron::Halfedge_around_vertex_const_circulator  HV_circulator;
-typedef Polyhedron::Halfedge_around_facet_circulator         HF_circulator;
+typedef CGAL::Exact_predicates_exact_constructions_kernel    EKernel;
+typedef CGAL::Polyhedron_3<EKernel>                          EPolyhedron;
+typedef EKernel::Point_3                                     EPoint;
+typedef CGAL::Width_default_traits_3<EKernel>                Width_traits;
+typedef CGAL::Width_3<Width_traits>                          Width;
 
-typedef CGAL::Optimisation_d_traits_3<Kernel>                Traits;
-typedef CGAL::Min_sphere_d<Traits>                           Min_sphere;
 
 void convex_hull( const Polyhedron& P, Polyhedron& Q) {
     CGAL::convex_hull_3( P.points_begin(), P.points_end(), Q);
     cerr << "#vertices  : " << Q.size_of_vertices() << endl;
     cerr << "#facets    : " << Q.size_of_facets() << endl;
     cerr << "#edges     : " << (Q.size_of_halfedges() / 2) << endl;
+}
+
+void width( const Polyhedron& P) {
+    std::vector< EPoint> epoints;
+    for ( Point_iterator i = P.points_begin(); i != P.points_end(); ++i)
+        epoints.push_back( EPoint( CGAL::to_double( i->x()),
+                                   CGAL::to_double( i->y()),
+                                   CGAL::to_double( i->z())));
+    Width width( epoints.begin(), epoints.end());
+    Width::RT num, denum;
+    width.get_squared_width( num,denum);
+    cerr << "width      : " << ( sqrt( CGAL::to_double( num) / 
+                                       CGAL::to_double( denum))) << endl;
+    cerr << "direction  : " << width.get_build_direction() << endl;
 }
 
 int main() {
@@ -60,5 +71,11 @@ int main() {
     cerr << "Saving OFF file ... " << endl;
     cout << Q;
     cerr << "Saving OFF file    : " << user_time.time() << " seconds." << endl;
+
+    user_time.reset();
+    cerr << "Width ... " << endl;
+    width( Q);
+    cerr << "Width              : " << user_time.time() << " seconds." << endl;
+
     return 0;
 }
