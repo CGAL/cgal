@@ -59,7 +59,7 @@ MP_Float::MP_Float(double d)
     // This is subtle, because ints are not symetric against 0.
 
     // First, find the exponent.
-    exp = 1 - limbs_per_double;
+    exp = 1 - (int) limbs_per_double;
     while (d < trunc_min || d > trunc_max) {
       exp++;
       d *= 1.0/base;
