@@ -1,6 +1,10 @@
 HalfedgeDS Package: Release changes:
 ---------------------------------------------------------------------
 
+3.21 (6 Aug 2001)
+     - Susan moved the missing *.gif and fig/*.ips from doc_tex/basic/HalfedgeDS
+       to doc_tex/basic/HalfedgeDS_ref directory
+
 3.20 (31 Jul 2001)
      - Susan moved doc_tex/*_ref directories up one level
 
