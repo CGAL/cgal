@@ -6,7 +6,7 @@
 //#include <CGAL/Filtered_exact.h>
 //typedef CGAL::Filtered_exact<double,CGAL::Gmpq> NT;
 
-#define USE_FILTERED_TRAITS 0
+#define USE_FILTERED_TRAITS 1
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polygon_2.h>
