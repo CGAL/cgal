@@ -188,7 +188,7 @@ public:
   // the following trivial is_valid allows
   // the user of derived cell base classes 
   // to add their own purpose checking
-  bool is_valid(bool verbose = false, int level = 0) const
+  bool is_valid(bool , int ) const
     {return true;}
 
 
@@ -199,7 +199,7 @@ private:
 
 template < class GT >
 std::istream& operator >>
-(std::istream& is, Triangulation_cell_base_3<GT> & c)
+(std::istream& is, Triangulation_cell_base_3<GT> & )
   // non combinatorial information. Default = nothing
 {
   return is;
@@ -207,7 +207,7 @@ std::istream& operator >>
 
 template < class GT >
 std::ostream& operator<<
-(std::ostream& os, const Triangulation_cell_base_3<GT> & c)
+(std::ostream& os, const Triangulation_cell_base_3<GT> & )
   // non combinatorial information. Default = nothing
 {
   // ADD THE FOLLOWING WHEN ADDING INFORMATION : 

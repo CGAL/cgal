@@ -343,7 +343,7 @@ public:
   // c will be deleted
 private:
   // common to flip and filp_flippable
-  void flip_really(Cell* c, int i, int j, int next, 
+  void flip_really(Cell* c, int i, int j,// int next, 
 		   Cell* c1, Vertex* v1, int i1, int j1, int next1,
 		   Cell* c2, Vertex* v2, int i2, int j2, int next2,
 		   Vertex* v3);
@@ -729,7 +729,8 @@ std::ostream& operator<<
   }
   CGAL_triangulation_assertion( i == n );
 
-  print_cells(os, tds, n, V);
+  //  print_cells(os, tds, n, V);
+  print_cells(os, tds, V);
 
   return os;
 }
@@ -1050,7 +1051,9 @@ flip( Cell* c, int i, int j )
   if ( is_cell(v1,v2,v3,c->vertex(i)) ) return false;
   if ( is_cell(v1,v2,v3,c->vertex(j)) ) return false;
 
-  flip_really(c,i,j,next,c1,v1,i1,j1,next1,c2,v2,i2,j2,next2,v3);
+  //  flip_really(c,i,j,next,c1,v1,i1,j1,next1,c2,v2,i2,j2,next2,v3);
+  flip_really(c,i,j,c1,v1,i1,j1,next1,c2,v2,i2,j2,next2,v3);
+
   return true;
 }
 
@@ -1112,13 +1115,14 @@ flip_flippable( Cell* c, int i, int j )
   CGAL_triangulation_expensive_precondition
     ( ! is_cell(v1,v2,v3,c->vertex(j)) );
 
-  flip_really(c,i,j,next,c1,v1,i1,j1,next1,c2,v2,i2,j2,next2,v3);
+  //  flip_really(c,i,j,next,c1,v1,i1,j1,next1,c2,v2,i2,j2,next2,v3);
+  flip_really(c,i,j,c1,v1,i1,j1,next1,c2,v2,i2,j2,next2,v3);
 }
 
 template < class Vb, class Cb>
 inline void
 Triangulation_data_structure_3<Vb,Cb>::
-flip_really( Cell* c, int i, int j, int next, 
+flip_really( Cell* c, int i, int j,// int next, 
 	     Cell* c1, Vertex* v1, int i1, int j1, int next1,
 	     Cell* c2, Vertex* v2, int i2, int j2, int next2,
 	     Vertex* v3 )
@@ -1279,7 +1283,7 @@ template < class Vb, class Cb>
 std::ostream& 
 print_cells(std::ostream& os, 
 	    const Triangulation_data_structure_3<Vb,Cb>  &tds,
-	    int n,
+	    //	    int n,
 	    std::map< void*, int, std::less<void*> > &V )
 {
   typedef Triangulation_data_structure_3<Vb,Cb> Tds;

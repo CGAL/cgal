@@ -55,11 +55,11 @@ public:
   Triangulation_geom_traits_3()
     {}
 
-  Triangulation_geom_traits_3(const Triangulation_geom_traits_3 & gt)
+  Triangulation_geom_traits_3(const Triangulation_geom_traits_3 & )
      {}
 
   Triangulation_geom_traits_3 & 
-  operator=(const Triangulation_geom_traits_3 & gt)
+  operator=(const Triangulation_geom_traits_3 & )
     {return *this;}
 
   // PREDICATES ON POINTS

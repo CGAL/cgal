@@ -82,7 +82,6 @@ public:
     : Triangulation_3<Gt,Tds>(tr)
     { CGAL_triangulation_postcondition( is_valid() );  }
   
-#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
   template < class InputIterator >
   int
   insert(InputIterator first, InputIterator last)
@@ -94,58 +93,6 @@ public:
     }
     return number_of_vertices() - n;
   }
-#else
-#if defined(LIST_H) || defined(__SGI_STL_LIST_H)
-  int
-  insert(std::list<Point>::const_iterator first,
-         std::list<Point>::const_iterator last)
-  {
-    int n = number_of_vertices();
-    while(first != last){
-      insert(*first);
-      ++first;
-    }
-    return number_of_vertices() - n;
-  }
-#endif // LIST_H
-#if defined(VECTOR_H) || defined(__SGI_STL_VECTOR_H)
-  int
-  insert(std::vector<Point>::const_iterator first,
-         std::vector<Point>::const_iterator last)
-  {
-    int n = number_of_vertices();
-    while(first != last){
-      insert(*first);
-      ++first;
-    }
-    return number_of_vertices() - n;
-  }
-#endif // VECTOR_H
-#ifdef ITERATOR_H
-  int
-  insert(istream_iterator<Point, ptrdiff_t> first,
-         istream_iterator<Point, ptrdiff_t> last)
-  {
-    int n = number_of_vertices();
-    while(first != last){
-      insert(*first);
-      ++first;
-    }
-    return number_of_vertices() - n;
-  }
-#endif // ITERATOR_H
-  
-  int insert(Point* first,
-	     Point* last)
-  {
-    int n = number_of_vertices();
-    while(first != last){
-      insert(*first);
-      ++first;
-    }
-    return number_of_vertices() - n;
-  }
-#endif // TEMPLATE_MEMBER_FUNCTIONS
 
   Vertex_handle insert(const Point & p );
 

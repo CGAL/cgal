@@ -507,7 +507,6 @@ public:
 
   Vertex_handle insert(const Point & p, Cell_handle start);
 
-#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
   template < class InputIterator >
   int insert(InputIterator first, InputIterator last)
     {
@@ -518,54 +517,6 @@ public:
       }
       return number_of_vertices() - n;
     }
-#else
-#if defined(LIST_H) || defined(__SGI_STL_LIST_H)
-  int insert(std::list<Point>::const_iterator first,
-	     std::list<Point>::const_iterator last)
-    {
-      int n = number_of_vertices();
-      while(first != last){
-	insert(*first);
-	++first;
-      }
-      return number_of_vertices() - n;
-    }
-#endif // LIST_H
-#if defined(VECTOR_H) || defined(__SGI_STL_VECTOR_H)
-  int insert(std::vector<Point>::const_iterator first,
-	     std::vector<Point>::const_iterator last)
-    {
-      int n = number_of_vertices();
-      while(first != last){
-	insert(*first);
-	++first;
-      }
-      return number_of_vertices() - n;
-    }
-#endif // VECTOR_H
-#ifdef ITERATOR_H
-  int insert(istream_iterator<Point, ptrdiff_t> first,
-	     istream_iterator<Point, ptrdiff_t> last)
-    {
-      int n = number_of_vertices();
-      while(first != last){
-	insert(*first);
-	++first;
-      }
-      return number_of_vertices() - n;
-    }
-#endif // ITERATOR_H
-  int insert(Point* first,
-	     Point* last)
-    {
-      int n = number_of_vertices();
-      while(first != last){
-	insert(*first);
-	++first;
-      }
-      return number_of_vertices() - n;
-    }
-#endif // TEMPLATE_MEMBER_FUNCTIONS
 
   Vertex_handle
   insert_in_cell(const Point & p, Cell_handle c);
@@ -1014,7 +965,8 @@ operator<< (std::ostream& os, const Triangulation_3<GT, Tds> &tr)
   }
 
   // asks the tds for the combinatorial information 
-  print_cells(os, tr.tds(), n+1, V);
+  //  print_cells(os, tr.tds(), n+1, V);
+  print_cells(os, tr.tds(), V);
   
   //   // write the cells
   //   i = 0;
@@ -3275,7 +3227,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
 template < class GT, class Tds >
 bool
 Triangulation_3<GT,Tds>::
-is_valid_finite(Cell_handle c, bool verbose, int level) const
+is_valid_finite(Cell_handle c, bool verbose, int) const
 {
   switch ( dimension() ) {
   case 3:

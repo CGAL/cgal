@@ -83,7 +83,7 @@ public:
   // the following trivial is_valid allows
   // the user of derived cell base classes 
   // to add their own purpose checking
-  bool is_valid(bool verbose = false, int level = 0) const
+  bool is_valid(bool, int ) const
   { 
     //return true; 
     return( cell() != NULL );

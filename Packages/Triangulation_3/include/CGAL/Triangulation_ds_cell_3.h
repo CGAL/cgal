@@ -245,12 +245,12 @@ private:
 //     this->_previous_cell = tds.past_end_cell();
 //   }
 
-  void error_orient( Cell * n, int i) const
+  void error_orient( Cell * , int ) const
   {
     std::cerr << " pb orientation with neighbor " << std::endl;
   }
 
-  void error_neighbor( Cell* n, int i, int in ) const
+  void error_neighbor( Cell* , int , int ) const
   {
     std::cerr << "neighbor of c has not c as neighbor" << std::endl;
   }
