@@ -23,17 +23,11 @@
 
 
 #ifndef CGAL_IO_BINARY_FILE_IO_H
-#define CGAL_IO_BINARY_FILE_IO_H 1
-#ifndef CGAL_BASIC_H
+#define CGAL_IO_BINARY_FILE_IO_H
+
 #include <CGAL/basic.h>
-#endif
-#ifndef CGAL_KNOWN_BIT_SIZE_INTEGERS_H
 #include <CGAL/known_bit_size_integers.h>
-#endif
-#ifndef CGAL_PROTECT_IOSTREAM
 #include <iostream>
-#define CGAL_PROTECT_IOSTREAM
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -57,22 +51,40 @@ I_Binary_read_float32(std::istream& in, float& f) {
 
 inline void
 I_swap_to_big_endian( UInteger32& u) {
-    (void)u;
+    (void) u;
 #ifdef CGAL_LITTLE_ENDIAN
-u = ((u >> 24) | (u << 24) | ((u >> 8) & 0xff00) | ((u << 8) & 0xff0000));
+    u = ((u >> 24) | (u << 24) | ((u >> 8) & 0xff00) | ((u << 8) & 0xff0000));
 #endif
 }
 
 inline void
 I_swap_to_big_endian( Integer32& i) {
-    UInteger32& u = (UInteger32&)i;
-    I_swap_to_big_endian( u);
+    // We need to use a union instead of the 2 lines below,
+    // otherwise we get aliasing issues.
+    // UInteger32& u = (UInteger32&)i;
+    // I_swap_to_big_endian( u);
+    union {
+      Integer32  in;
+      UInteger32 ui;
+    } u;
+    u.in = i;
+    I_swap_to_big_endian(u.ui);
+    i = u.in;
 }
 
 inline void
 I_swap_to_big_endian( float& f) {
-    UInteger32& u = (UInteger32&)f;
-    I_swap_to_big_endian( u);
+    // We need to use a union instead of the 2 lines below,
+    // otherwise we get aliasing issues.
+    // UInteger32& u = (UInteger32&)f;
+    // I_swap_to_big_endian( u);
+    union {
+      UInteger32 ui;
+      float      fl;
+    } u;
+    u.fl = f;
+    I_swap_to_big_endian(u.ui);
+    f = u.fl;
 }
 
 inline void
@@ -98,5 +110,5 @@ I_Binary_read_big_endian_float32(std::istream& in, float& f) {
 }
 
 CGAL_END_NAMESPACE
-#endif // CGAL_IO_BINARY_FILE_IO_H //
-// EOF //
+
+#endif // CGAL_IO_BINARY_FILE_IO_H

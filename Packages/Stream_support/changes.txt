@@ -1,3 +1,6 @@
+22 November 2004 Sylvain Pion
+- Fix aliasing bug in IO/binary_file_io.h (affecting Geomview_stream).
+
 2.27 (18 Jan 2004)
 - Remove obsolete *ITERATOR_TRAITS_POINTER_SPEC* workarounds.
 
