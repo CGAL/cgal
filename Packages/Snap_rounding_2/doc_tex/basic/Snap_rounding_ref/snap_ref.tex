@@ -20,11 +20,10 @@
 Snap rounding is a well known method for converting
 arbitrary-precision arrangements of segments into a fixed-precision
 representation. It is classified as a finite precision approximation 
-technique. This package makes Snap Rounding of line segments in $\reals_2$.
-It is based on the paper 'Snap Rounding Revisited' which provides a modification
-to Snap Rounding named Iterated Snap Rounding. This package provides both
-Iterated Snap Rounding and the usual Snap Rounding which is a private case.
-For details we refer you to the article.\\ \\
+technique. Iterated Snap Rounding is a modification of Snap Rounding in
+which each vertex is at leat half-the-width-of-a-pixel away from any
+non-incident edge.
+This package provides supports both methods.
 
 Given a finite collection $\S$ of segments in the plane, the
 arrangement of $\S$ denoted $\A(\S)$ is the subdivision of the plane
@@ -40,11 +39,13 @@ by the center of the hot pixel containing it and each edge $e$ is
 replaced by the polygonal chain through the centers of the hot pixels
 met by $e$, in the same order as they are met by $e$.
 
-Since in a snap-rounded arrangement, the distance between a vertex and
+In a snap-rounded arrangement, the distance between a vertex and
 a non-incident edge can be extremely small compared with the width of a
-pixel in the grid used for rounding, this package provides, beside the
-usual Snap Rounding, a modification of it, named Iterated Snap Rounding,
-which makes the a vertex and a non-incident edge well separated.
+pixel in the grid used for rounding. Iterated Snap Rounding is a modification
+of Snap Rounding which makes the a vertex and a non-incident edge well separated
+(the distance between each is at least half-the-width-of-a-pixel).
+However, the guaranteed quality of the approximation in Iterated Snap Rounding
+degrades.
 
 %\begin{ccRefClass}{Isr<NT>}
 
@@ -53,11 +54,11 @@ which makes the a vertex and a non-incident edge well separated.
 
 \ccTypedef{typedef typename std::list<Segment_2> Segments_container;}{The segments container.}
 \ccTypedef{typedef typename std::list<std::list<CGAL::Point_2<Rep> > > Polylines_container;}{The polylines output container}
-\ccTypedef{typedef Segments_container::const_iterator Segment_const_iterator;}{a constant iterator of segments.}
-\ccTypedef{typedef Segments_container::const_iterator Segment_iterator;}{an iterator of segments.}
-\ccTypedef{typedef Polylines_container::const_iterator Polyline_const_iterator;}{a constant iterator of polylines output.}
-\ccTypedef{typedef Segments_container::const_iterator Segment_iterator;}{an iterator of segments.}
-\ccTypedef{typedef typename std::list<CGAL::Point_2<Rep> > Points_container;}{A polyline points container.}
+\ccTypedef{typedef typename std::list<CGAL::Point_2<Rep> > Points_container;}{The polyline points container.}
+\ccTypedef{typedef Segments_container::const_iterator Segment_const_iterator;}{A constant iterator of segments.}
+\ccTypedef{typedef Segments_container::const_iterator Segment_iterator;}{An iterator of segments.}
+\ccTypedef{typedef Polylines_container::const_iterator Polyline_const_iterator;}{A constant iterator of polylines output.}
+\ccTypedef{typedef Segments_container::const_iterator Segment_iterator;}{An iterator of segments.}
 
 \ccParameters
 The template declaration of the \ccc{Snap_rounding_2} function has one parameter:
@@ -65,16 +66,16 @@ The template declaration of the \ccc{Snap_rounding_2} function has one parameter
 \ccCreation
     \ccCreationVariable{Snap_rounding_2}
 
-\ccConstructor{snap_rounding(typename std::list<Segment_2>::const_iterator first,typename std::list<Segment_2>::const_iterator beyond,NT precision,bool inp_do_isr = true,int 
-inp_number_of_kd_trees = 5);}{
-The first two parameters denote the first and after-the-last iterators of a list of Segment\_2 which are the input of {\em Isr}.
-The third parameter denotes the precision of the Isr. The forth parameter determines whether to do an Iterated Snap Rounding
-or a Snap Rounding. The forth parameter denotes the number of KD trees to use (see [Snap Rounding Revisited] for more details on
-this issue).
+\ccConstructor{snap_rounding(typename std::list<Segment_2>::const_iterator first,typename std::list<Segment_2>::const_iterator beyond,NT pixel_size,bool do_isr = true,int 
+inp_number_of_kd_trees = 1);}{
+The first two parameters denote the first and after-the-last iterators of a list of Segment\_2 which are the input of Snap Rounding.
+The third parameter denotes the pixel size. The forth parameter determines whether to apply Iterated Snap Rounding
+or Snap Rounding. The forth parameter denotes the number of KD trees to use (see cite ISR for details). The default,
+$1$, is ussually the best one to use.
 }
 
-\ccConstructor{snap_rounding(NT precision,bool inp_do_isr = true,int 
-inp_number_of_kd_trees = 5);}{
+\ccConstructor{snap_rounding(NT pixel_size,bool do_isr = true,int 
+inp_number_of_kd_trees = 1);}{
 The same as the constructor above but here the instance is initialized with no segments.
 }
 
@@ -138,22 +139,21 @@ Returns a constant iterator to the after-the-last of the output of the input seg
 Returns false iff \ccc{s} is not in the segment set. }
 
 \ccMethod{void clear();}
-{Removes all segments of \ccVar.}
+{Removes all segments.}
 
 \ccHeading{Parameter Updates}
-
-\ccMethod{bool change_number_of_kd_trees(int number_of_kd_trees);}
-{Change the number of kd-trees used for segment-hot pixel queries.
-Return false if the number is not valid (e.g. negative). }
-
-\ccMethod{bool change_pixel_size(NT pixel_size);}
-{Change the pixel size of the tiling.
-Return false if the size is not valid (e.g. negative). }
 
 \ccMethod{void do_isr(bool b);}
 {Determine whether to apply Iterated Snap Rounding (when \ccc{b} is true),
 or Snap Rounding (when \ccc{b} is false).}
 
+\ccMethod{bool change_pixel_size(NT pixel_size);}
+{Change the pixel size.
+Return false if the size is not valid (e.g. negative). }
+
+\ccMethod{bool change_number_of_kd_trees(int number_of_kd_trees);}
+{Change the number of kd-trees used for segment-hot pixel queries.
+Return false if the number is not valid (e.g. negative). }
 
 %\end{ccRefClass}
 

@@ -125,7 +125,7 @@ struct hot_pixel_dir_cmp
 template<class Rep_>
 class Snap_rounding_2 {
 
-typedef CGAL::Arr_segment_traits_2<Rep_ >            Traits;
+  typedef CGAL::Arr_segment_traits_2<Rep_ >            Traits;// !!!! remove
 typedef Rep_                                         Rep;
 typedef typename Rep::FT                             NT;
 typedef typename Traits::X_curve                     X_curve;
@@ -139,6 +139,9 @@ public:
   friend class hot_pixel_dir_cmp<Rep>;spolylines_end
 
   typedef CGAL::Segment_2<Rep> Segment_2;
+
+  //  typedef typename Rep::Segment_2 Segment_2;!!!! change everywhere
+
   typedef CGAL::Point_2<Rep> Point_2;
   typedef std::list<Point_2> PointList;
   typedef typename std::list<std::list<CGAL::Point_2<Rep> > >
@@ -232,7 +235,7 @@ private:
   // to be done (at the beginning, after insertion, etc) 
   bool need_sr;
 
-  static const int default_number_of_kd_trees = 5;
+  static const int default_number_of_kd_trees = 1;
 
   std::set<Hot_Pixel<Rep> *,hot_pixel_auclidian_cmp<Rep> > hp_set;
   NT pixel_size,min_x,max_x,min_y,max_y;
@@ -399,7 +402,7 @@ bool Hot_Pixel<Rep_>::intersect_left(Segment_2 &seg) const
     Point_2 p;
     Segment_2 s;
 
-    result = CGAL::intersection(seg,*left_seg);
+    result = CGAL::intersection(seg,*left_seg);//!!!! change: create instance and call its intersection
 
     if(CGAL::assign(p,result)) {
       NT tmp = y + pixel_size / 2.0;
