@@ -34,21 +34,29 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Point_3>
+template <class R>
 class Construct_centroid_3
 {
  public:
-  Point_3 operator()(const Point_3& p, const Point_3& q, const Point_3& r,
-                  const Point_3& s)
-  { return Point_3((p.hx() + q.hx() + r.hx() + s.hx())/4,
-                   (p.hy() + q.hy() + r.hy() + s.hy())/4,
-                   (p.hz() + q.hz() + r.hz() + s.hz())/4);
+  Point_3 operator()(const typename R::Point_3& p, 
+                     const typename R::Point_3& q, 
+                     const typename R::Point_3& r,
+                     const typename R::Point_3& s)
+  { 
+    typedef typename R::FT  FT;
+    return Point_3((p.hx() + q.hx() + r.hx() + s.hx())/FT(4),
+                   (p.hy() + q.hy() + r.hy() + s.hy())/FT(4),
+                   (p.hz() + q.hz() + r.hz() + s.hz())/FT(4));
   }
 
-  Point_3 operator()(const Point_3& p, const Point_3& q, const Point_3& r)
-  { return Point_3((p.hx() + q.hx() + r.hx())/3,
-                   (p.hy() + q.hy() + r.hy())/3,
-                   (p.hz() + q.hz() + r.hz())/3);
+  Point_3 operator()(const typename R::Point_3& p, 
+                     const typename R::Point_3& q, 
+                     const typename R::Point_3& r)
+  { 
+    typedef typename R::FT  FT;
+    return Point_3((p.hx() + q.hx() + r.hx())/FT(3),
+                   (p.hy() + q.hy() + r.hy())/FT(3),
+                   (p.hz() + q.hz() + r.hz())/FT(3));
   }
 };
 
