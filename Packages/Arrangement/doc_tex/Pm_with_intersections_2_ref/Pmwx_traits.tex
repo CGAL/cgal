@@ -81,52 +81,35 @@ curve to be $x$-monotone.
 
 \ccMethod{bool nearest_intersection_to_right(const X_monotone_curve_2& c1,
                                              const X_monotone_curve_2& c2,
-                                             const Point_2& pt,
-                                             Point_2& p1, Point_2& p2);}
-	 {finds the nearest intersection point (or points) of \ccc{c1} and
-	  \ccc{c2} lexicographically to the right of \ccc{pt} and not 
-          including \ccc{pt} itself (with one exception explained below):
-           \begin{itemize}
-           \item If the intersection of the two curves is a point to the
-	   right of \ccc{pt}, it is returned through both \ccc{p1} and 
-           \ccc{p2}.
-	   \item If the intersection of \ccc{c1} and \ccc{c2} is an
-	   \ccc{X_monotone_curve_2}, that is, they overlap at infinitely many
-	   points, then if the right endpoint and the left endpoint of the
-	   overlapping subcurve are strictly to the right of \ccc{pt}, they are
-	   returned through the two point references \ccc{p1} and \ccc{p2}
-	   respectively. If \ccc{pt} is between the overlapping-subcurve
-	   endpoints, or \ccc{pt} is its left endpoint, \ccc{pt} and the right
-	   endpoint of the subcurve are returned through \ccc{p1} and \ccc{p2}
-	   respectively.
-	   \end{itemize}
-	  Returns \ccc{true} if \ccc{c1} and \ccc{c2} do intersect to the 
-          right of \ccc{pt}, \ccc{false} otherwise.}
+                                             const Point_2& pt);}
+	 {finds the nearest intersection of \ccc{c1} and
+	  \ccc{c2} lexicographically to the right of a reference point
+	  \ccc{pt}, and returns an object that represents the intersection if
+	  exists, or an empty object otherwise.
+          Nearest is defined as the lexicographically nearest point, not
+	  including the reference point itself. If the intersection of the
+	  two curves is an \ccc{X_monotone_curve_2}, that is, there is an
+	  overlapping subcurve, that contains the reference point in its
+	  $x$-range, it returns an \ccc{X_monotone_curve_2} whose interior is
+	  strictly to the right of the reference point (that is, whose
+	  left endpoint is the projection of the reference point onto the 
+	  overlapping subcurve).}
 
 \ccMethod{bool nearest_intersection_to_left(const X_monotone_curve& c1,
                                             const X_monotone_curve& c2,
-                                            const Point_2& pt,
-                                            Point_2& p1, Point_2& p2);}
-	 {finds the nearest intersection point (or points) of \ccc{c1} and
-	  \ccc{c2} lexicographically to the left of \ccc{pt} and not including
-	  \ccc{pt} itself (with one exception explained below).
-           \begin{itemize}
-           \item If the intersection of the two curves is a point to the
-	   left of \ccc{pt}, it is returned through both \ccc{p1} and \ccc{p2}.
-	   \item If the intersection of \ccc{c1} and \ccc{c2} is an
-	   \ccc{X_monotone_curve_2}, that is, they overlap at infinitely many
-	   points, then if the left endpoint and the left endpoint of the
-	   overlapping subcurve are strictly to the left of \ccc{pt}, they are
-	   returned through the two point references \ccc{p1} and \ccc{p2}
-	   respectively. If \ccc{pt} is between the overlapping-subcurve
-	   endpoints, or \ccc{pt} is its left endpoint, \ccc{pt} and the left
-	   endpoint of the subcurve are returned through \ccc{p1} and \ccc{p2}
-	   respectively.
-           \end{itemize}
-	  Returns \ccc{true} if \ccc{c1} and \ccc{c2} do intersect to the left
-	  of \ccc{pt}, \ccc{false} otherwise. \newline
-          This function is not required for the aggregate insertion of curves 
-          into the planar map.}
+                                            const Point_2& pt);}
+	 {finds the nearest intersection of \ccc{c1} and
+	  \ccc{c2} lexicographically to the left of a reference point
+	  \ccc{pt}, and returns an object that represents the intersection if
+	  exists, or an empty object otherwise.
+          Nearest is defined as the lexicographically nearest point, not
+	  including the reference point itself. If the intersection of the
+	  two curves is an \ccc{X_monotone_curve_2}, that is, there is an
+	  overlapping subcurve, that contains the reference point in its
+	  $x$-range, it returns an \ccc{X_monotone_curve_2} whose interior is
+	  strictly to the left of the reference point (that is, whose
+	  right endpoint is the projection of the reference point onto the 
+	  overlapping subcurve).}
 
 \ccHasModels
 The following classes are actually models of the \ccc{ArrangementTraits_2} 
