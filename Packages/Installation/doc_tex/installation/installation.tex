@@ -30,10 +30,10 @@
 \newcommand{\bcc}[1]{\textsc{Borland}~\texttt{C++}~{\rm #1}}
 
 %% macro for Microsoft Visual C++
-\newcommand{\msvc}[1]{\textsc{Microsoft}~Visual~\texttt{C++}~{\rm #1}}
+\newcommand{\msvc}[1]{\textsc{MS}~Visual~\texttt{C++}~{\rm #1}}
 
 %% macro for Microsoft Windows
-\newcommand{\mswin}{\textsc{Microsoft}~Windows}
+\newcommand{\mswin}{\textsc{MS}~Windows}
 
 %% macro for CGAL release number
 %% \newcommand{\cgalrelease}{2.1}
@@ -103,13 +103,14 @@ systems:
     \mipsprocc\ 7.3 (n32)    & IRIX 6.5\\\hline
     \Gcc{2.95} (and later)   & 
       IRIX 6.5 / Solaris 2.6 / Linux 2.x / 
-      \mswin\ 95/98/NT4\footnote{with Cygwin $\beta$20.1}\\\hline
+      \mswin\ 95/98/NT4\footnotemark[6]\\\hline
     \egcs{1.1.2} (and later) & 
       IRIX 6.5 / Solaris 2.6 / Linux 2.x / 
-      \mswin\ 95/98/NT4\footnote{with Cygwin $\beta$20.1}\\\hline
+      \mswin\ 95/98/NT4\footnotemark[6]\\\hline
     \msvc{6.0}               & \mswin\ 95/98/NT4\\\hline
   \end{tabular}
 \end{center}
+\footnotetext[6]{with Cygwin $\beta$20.1}
 
 There are plans to provide full support for \bcc{5.4} in the future,
 but there is no such support at the moment. The \sunprocc{4.2}
@@ -180,7 +181,8 @@ contains the following subdirectories:
     \textbf{directory} & \textbf{contents}\\\hline\hline
     \texttt{auxiliary} & packages that can optionally be used with \cgal\\\hline
     \texttt{config}    & configuration files for install script\\\hline
-    \texttt{demo}      & demo programs (some of them need \leda)\\\hline
+    \texttt{demo}      & demo programs (some of them need \leda, geomview, 
+                         OpenGL or other third-party products)\\\hline
     \texttt{doc\_html} & documentation (HTML)\\\hline
     \texttt{doc\_pdf}  & documentation (PDF)\\\hline
     \texttt{doc\_ps}   & documentation (Postscript)\\\hline
@@ -243,7 +245,7 @@ screen indicating progress.
 starting interactive mode - one moment, please
 ......
 
-  Choosing compiler GNU egcs-2.95
+  Choosing compiler GNU gcc-2.95
   Testing for STL ... ok.
   ...
   <tests for several compiler features>
@@ -272,7 +274,7 @@ A menu similar to the following will appear on your screen.
   **              -------------------------------               **
   **                                                            **
   **   OS:                  sparc_SunOS-5.6                     **
-  **   Compiler:            GNU egcs-2.95                       **
+  **   Compiler:            GNU gcc-2.95                        **
   **   LEDA:                not supported.                      **
   **   GMP:                 not supported.                      **
   **   CLN:                 not supported.                      **
@@ -336,7 +338,7 @@ from compiler or linker).
   ****************************************************************
 
   OS:           sparc_SunOS-5.6
-  COMPILER:     GNU egcs-2.95
+  COMPILER:     GNU gcc-2.95
   LEDA:         not supported
   GMP:          not supported
   CLN:          not supported
@@ -358,9 +360,10 @@ CLN support (go to the \leda, GMP, CLN menu resp.) or simply quit
 the install script by typing ``\texttt{q}''. When leaving the
 script, you get a list of successful builds during the session.
 
-Now it would be a good idea to print and read the document
-\texttt{getting\_started.ps} that can be found in the \texttt{doc\_ps}
-directory.
+Now it would be a good idea to print and read the document ``Getting
+Started with \cgal'' that can be found in various formats in the
+\texttt{doc\_html}, \texttt{doc\_pdf} and \texttt{doc\_ps}
+directories.
 
 \section{The interactive mode}\label{sec:interactive-mode}
 
@@ -377,14 +380,14 @@ into the \cgal\ installation \textit{main menu} (see page
 
 From the main menu you can reach a number of different sub-menus, of
 which the most important maybe is the \textit{compiler menu}. This is
-where you can choose the compiler you want to work with and setup
-custom compiler or linker options.  The compiler menu is described in
-section \ref{sec:compiler-menu}.
+where you can choose the compiler you want to work with and set custom
+compiler or linker options.  The compiler menu is described in section
+\ref{sec:compiler-menu}.
 
-If you want to use \leda, \gnu\ GMP or CLN with \cgal, you will have
-to go to the \textit{leda menu} described in section
-\ref{sec:leda-menu} resp.  to the \textit{gmp menu} described in
-section \ref{sec:gmp-menu}.
+If you want to use \leda, GMP or CLN with \cgal, you will have to go
+to the \textit{leda menu}, \textit{gmp menu} or \textit{cln menu}.
+These are described in section \ref{sec:leda-menu},
+\ref{sec:gmp-menu}, \ref{sec:cln-menu}, respectively.
 
 Finally you can build the \cgal\ libraries by typing \texttt{b}.
 However, it is recommended to run the \textit{setup test} which is
@@ -418,8 +421,8 @@ temporary files during interactive installation. Most of them are
 removed after use, but some are not, since it might be helpful to keep
 some information about the last run.  You can keep or delete them as
 you like, as they are not needed anymore once the script terminated.
-It follows a list of these files (all are plain ASCII and reside in
-\cgaldir).
+A list of these files (all are plain ASCII and reside in \cgaldir)
+follows.
 \begin{center}
   \renewcommand{\arraystretch}{1.3}
   \gdef\lcTabularBorder{2}
@@ -434,7 +437,7 @@ It follows a list of these files (all are plain ASCII and reside in
 
 \subsection{The Compiler Menu}\label{sec:compiler-menu}
 
-Here is the place to setup the compiler specific options, such as the
+Here is the place to set the compiler specific options, such as the
 compiler to use (if more than one has been detected) and custom
 compiler or linker flags.\bigskip
 
@@ -459,7 +462,7 @@ compiler or linker flags.\bigskip
 
 \subsection{The \leda\ Menu}\label{sec:leda-menu}
 
-This is the place to setup \leda\ specific options, if you plan to use
+This is the place to set \leda\ specific options, if you plan to use
 \leda\ together with \cgal\ (see also section \ref{sec:leda}). In
 order to enable \leda\ support in \cgal, \leda\ has to be installed on
 your system.
@@ -496,11 +499,11 @@ option to set these directories differently.\bigskip
 
 \subsection{The GMP Menu}\label{sec:gmp-menu}
 
-This menu is to setup GMP (\gnu\ Muptiple Precision Library) specific
+This menu is to set GMP (\gnu\ Muptiple Precision Library) specific
 options, if you plan to use GMP together with \cgal . In the {\tt
   auxiliary} directory you can find a GMP distribution, if you do not
 already have it installed on your system. This menu contains an option
-to install GMP in you \cgal\ directory tree\footnote{This option is
+to install GMP in your \cgal\ directory tree\footnote{This option is
   not present on \mswin.}, but of course you can also install it
 independently from \cgal .
 
@@ -535,13 +538,12 @@ option to set these directories differently.\bigskip
 
 \subsection{The CLN Menu}\label{sec:cln-menu}
 
-This menu is to setup CLN (Class Library for Numbers) specific
-options, if you plan to use CLN together with \cgal . In the {\tt
-  auxiliary} directory you can find a CLN distribution, if you do not
-already have it installed on your system. Note that in order to enable
-CLN support in \cgal, CLN has to be installed on your system first.
-Unlike for GMP, there is no option to install CLN from the \cgal\ 
-installation script. For information on CLN, please refer to 
+This menu is to set CLN (Class Library for Numbers) specific
+options, if you plan to use CLN together with \cgal . Note that in
+order to enable CLN support in \cgal, CLN has to be installed on your
+system first.  Unlike for GMP, there is no option to install CLN from
+the \cgal\ installation script. For information on CLN, please refer
+to
 \begin{quote}
   \clnpage
 \end{quote}
@@ -619,7 +621,7 @@ Finally the current setup is summarized, system specific directories
 for makefiles and libraries are created (if they did not exist before)
 and a new include makefile is written into the makefile directory. If
 there already exists a makefile for the current OS/compiler
-combination, it is backuped and you should get a corresponding
+combination, it is backed up and you should get a corresponding
 message.
 
 To compile the \cgal\ libraries go now to the \texttt{src} directory.
@@ -840,14 +842,17 @@ This section describes how to use \cgal\ and \leda\ simultaneously.
 \item There are support functions defined for the \leda\ number types
   \texttt{big\_float}, \texttt{integer}, \texttt{rational} and
   \texttt{real} (see the files \texttt{<CGAL/leda\_*>}).
+\item For all two-dimensional geometric objects there are input/output
+  operators from/to a \texttt{leda\_window}.
 \item \cgal\ defines the following \leda-related compiler flags:
 \begin{itemize}
 \item When \leda\ is used, the flags \texttt{CGAL\_USE\_LEDA} and
   \texttt{LEDA\_PREFIX} will be set.
-\item When \leda\ is used, the \leda\ memory management (\leda\ handles) will be
-used for geometric primitives in \cgal. This can be turned of by setting the flag
-\texttt{CGAL\_NO\_LEDA\_HANDLE}. In that case \cgal\ memory management will
-be used (see \texttt{<CGAL/Handle.h>}).
+\item When \leda\ is used, the \leda\ memory management (\leda\ 
+  handles) will be used for geometric primitives in \cgal. This can be
+  turned of by setting the flag \texttt{CGAL\_NO\_LEDA\_HANDLE}. In
+  that case \cgal\ memory management will be used (see
+  \texttt{<CGAL/Handle.h>}).
 \end{itemize}
 \end{enumerate}
 
@@ -1070,7 +1075,8 @@ Alternatively, you can type
 \section{Installation on Cygwin}\label{sec:cygwin}
 
 Cygwin is a free Unix-like environment for MS-Windows, distributed by
-Cygnus Solutions, see \path~http://sourceware.cygnus.com/cygwin/~
+Cygnus Solutions, see \path~http://sourceware.cygnus.com/cygwin/~ For
+our tests we have used version $\beta$-20.1.
 
 It consists of a port of a large number of GNU tools, such as bash,
 make, gcc (egcs), gas, file utilities, etc, as well as tools ensuring
