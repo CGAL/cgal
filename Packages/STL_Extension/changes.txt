@@ -7,6 +7,7 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+ALL : Changed Iterator_project as Lutz suggested.
 ALL : Added merge and sort parameterized with a StrictWeakOrdering to in-place
 ALL :  list.
 
