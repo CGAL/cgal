@@ -38,12 +38,18 @@ class tetrahedron_generator {
 
     for(int i=0; i<4; ++i) {
       Point_3 p(*P++);
+      if(i==0 && p.x() > 0)
+	p = p + Vector_3(-s/2,0,0);
+      if(i==1 && p.x() < 0) 
+	p = p + Vector_3(s/2,0,0);      
       transform(p,sx,sy,sz);
       ps[i] = p;
     }
       
     while(ps[0]==ps[1]) {
       ps[1] = *P++;
+      if(ps[1].x() < 0) 
+	ps[1] = ps[1] + Vector_3(s/2,0,0);  
       transform(ps[1],sx,sy,sz);
     }
       
