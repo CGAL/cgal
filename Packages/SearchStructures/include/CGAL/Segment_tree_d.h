@@ -282,7 +282,7 @@ protected:
   inline  
   A enclosing_query( C_Window const &win,
 		     A result,
-				         		      link_type v)
+		     link_type v)
    {
      if(is_less_equal(interface.get_right_win(win), (*v).left_key) 
 	|| is_less_equal((*v).right_key,interface.get_left_win(win)))
@@ -342,7 +342,7 @@ protected:
   inline 
   A window_query( C_Window const &win,
 		  A result,
-						   link_type& v)
+		  link_type& v)
    {
      if(is_less_equal(interface.get_right_win(win), (*v).left_key) || 
 	is_less_equal((*v).right_key,interface.get_left_win(win)))
@@ -505,7 +505,10 @@ public:
 
     A count = first;
     int n=0;
-    std::vector<Key> keys(2*count_elements__C(first, last));
+    int c1 = count_elements__C(first, last);
+    int c2 = std::distance(first, last);
+    assert(c1 == c2);
+    std::vector<Key> keys(2*c1);
     while(count!=last)
     {
       if (interface.comp(interface.get_left(*count),
@@ -517,7 +520,7 @@ public:
       else
       {
 	CGAL_Tree_warning_msg(interface.comp(interface.get_left(*count),
-						 interface.get_right(*count)), 
+					     interface.get_right(*count)), 
 				  "invalid segment ignored");
       }
       count++;
@@ -547,10 +550,9 @@ public:
     link_type prevchild;
     link_type leftmostlink = TREE_BASE_NULL;
 
-    int *start = new int(0);
+    int start = 0;
     build_segment_tree(num-1, leftchild, rightchild, prevchild, 
-		      leftmostlink, *start, num-1, keys2);
-    delete start;
+		      leftmostlink, start, num-1, keys2);
 
     header = new segment_tree_node_t();
     header->right_link = rightchild;
@@ -645,9 +647,10 @@ public:
   #endif
 
 #ifdef ostreamiterator
-  std::ostream_iterator< C_Data>  enclosing_query( C_Window const &win, 
-                             std::ostream_iterator< C_Data> out,
-                             typename tbt::oit *dummy=0){
+  std::ostream_iterator< C_Data>  
+  enclosing_query( C_Window const &win, 
+		   std::ostream_iterator< C_Data> out,
+		   typename tbt::oit *dummy=0){
     return enclosing_query_impl(win,out);
   }
 #endif
@@ -658,7 +661,7 @@ public:
   template <class A>
   inline
   A enclosing_query_impl( C_Window const &win, 
-		     A result,typename tbt::lbit * =0)
+			  A result, typename tbt::lbit * =0)
   {
     if(is_less_equal(interface.get_right_win(win), 
 		     interface.get_left_win(win)))

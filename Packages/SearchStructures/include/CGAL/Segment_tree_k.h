@@ -58,61 +58,59 @@ public:
   typedef typename C_Traits_1::high_1 high_1;
   typedef typename C_Traits_1::compare_1 compare_1;
 
-  typedef tree_interval_traits<Interval, Interval, 
-  Key_1,  low_1, high_1, low_1, 
-  high_1, compare_1> I1; 
+  typedef tree_interval_traits<Interval, Interval, Key_1,  
+                               low_1, high_1, low_1, 
+                               high_1, compare_1> I1; 
 
 
   typedef tree_anchor<Interval, Interval> Tree_anchor_type;
-  Tree_anchor_type *Tree_anchor;
+  Tree_anchor_type *anchor;
 
   typedef Segment_tree_d<Interval, Interval, I1> Segment_tree_1_type;
-  Segment_tree_1_type * CSegment_tree_1;
+  Segment_tree_1_type * segment_tree_1;
 
 
   Segment_tree_1()
-    : Tree_anchor(new Tree_anchor_type), CSegment_tree_1(new Segment_tree_1_type(*Tree_anchor))
+    : anchor(new Tree_anchor_type), segment_tree_1(new Segment_tree_1_type(*anchor))
   {}
   
   template <class T>
   Segment_tree_1(T& first, 
-		   T& last)  {
-   Tree_anchor = new Tree_anchor_type;
-   CSegment_tree_1 = new Segment_tree_1_type(*Tree_anchor);
-   (*CSegment_tree_1).make_tree(first,last);
+		 T& last) 
+    : anchor(new Tree_anchor_type), segment_tree_1(new Segment_tree_1_type(*anchor))
+ {
+   segment_tree_1->make_tree(first,last);
   }
 
   template <class T>
   bool make_tree(T& first, 
 		 T& last)
   {
-    delete CSegment_tree_1;
-    delete Tree_anchor;
-    Tree_anchor = new Tree_anchor_type;
-    CSegment_tree_1 = new Segment_tree_1_type(*Tree_anchor);
-    return (*CSegment_tree_1).make_tree(first,last);
+    delete segment_tree_1;
+    delete anchor;
+    anchor = new Tree_anchor_type;
+    segment_tree_1 = new Segment_tree_1_type(*anchor);
+    return segment_tree_1->make_tree(first,last);
   }
 
   template <class T>  
-  T  window_query(Interval const &win, T result)
+  T  window_query(Interval const &win, const T& result)
   {
-    return (*CSegment_tree_1).window_query(win, result);
+    return segment_tree_1->window_query(win, result);
   }
 
   template <class T>  
-  T  enclosing_query(Interval const &win, T result)
+  T  enclosing_query(Interval const &win, const T& result)
   {
-    return (*CSegment_tree_1).enclosing_query(win, result);
+    return segment_tree_1->enclosing_query(win, result);
   }
 
   ~Segment_tree_1()
   {
-    if (CSegment_tree_1!=0)
-      delete CSegment_tree_1;
-    CSegment_tree_1=0;
-    if (Tree_anchor!=0)
-      delete Tree_anchor;
-    Tree_anchor=0;
+    if (segment_tree_1!=0)
+      delete segment_tree_1;
+    if (anchor!=0)
+      delete anchor;
   }
 };
 
@@ -142,74 +140,72 @@ public:
   typedef typename std::list<Interval>::iterator l_iterator;
   typedef typename std::vector<Interval>::iterator v_iterator;
 
-  typedef tree_interval_traits<Interval, Interval, 
-  Key_1,  low_1,  high_1, 
-  low_1,  high_1, compare_1> I1; 
+  typedef tree_interval_traits<Interval, Interval, Key_1,  
+                               low_1,  high_1, 
+                               low_1,  high_1, compare_1> I1; 
 
-  typedef tree_interval_traits<Interval, Interval, 
-  Key_2,  low_2,  high_2, 
-  low_2,  high_2, compare_2> I2; 
+  typedef tree_interval_traits<Interval, Interval, Key_2,  
+                               low_2,  high_2, 
+                               low_2,  high_2, compare_2> I2; 
 
   typedef tree_anchor<Interval, Interval> Tree_anchor_type;
-  Tree_anchor_type *Tree_anchor;
+  Tree_anchor_type *anchor;
 
   typedef Segment_tree_d<Interval, Interval, I2> Segment_tree_1_type;
-  Segment_tree_1_type * CSegment_tree_1;
+  Segment_tree_1_type * segment_tree_1;
 
   typedef Segment_tree_d<Interval, Interval, I1> Segment_tree_2_type;
-  Segment_tree_2_type *CSegment_tree_2;
+  Segment_tree_2_type *segment_tree_2;
 
   Segment_tree_2()
-  {
-    Tree_anchor = new Tree_anchor_type;
-    CSegment_tree_1 = new Segment_tree_1_type(*Tree_anchor);
-    CSegment_tree_2 = new Segment_tree_2_type(*CSegment_tree_1);
-  }
+    : anchor( new Tree_anchor_type),
+      segment_tree_1(new Segment_tree_1_type(*anchor)),
+      segment_tree_2(new Segment_tree_2_type(*segment_tree_1))
+  {}
+
   template <class T>
   Segment_tree_2(T& first, 
-		 T& last)  {
-   Tree_anchor = new Tree_anchor_type;
-   CSegment_tree_1 = new Segment_tree_1_type(*Tree_anchor);
-   CSegment_tree_2 = new Segment_tree_2_type(*CSegment_tree_1);
-   (*CSegment_tree_2).make_tree(first,last);
+		 T& last)
+    : anchor( new Tree_anchor_type),
+      segment_tree_1(new Segment_tree_1_type(*anchor)),
+      segment_tree_2(new Segment_tree_2_type(*segment_tree_1))  
+  {
+    segment_tree_2->make_tree(first,last);
   }
 
   template <class T>
   bool make_tree(T& first, 
 		 T& last)
   {
-    delete CSegment_tree_2;
-    delete CSegment_tree_1;
-    delete Tree_anchor;
-    Tree_anchor = new Tree_anchor_type;
-    CSegment_tree_1 = new Segment_tree_1_type(*Tree_anchor);
-    CSegment_tree_2 = new Segment_tree_2_type(*CSegment_tree_1);
-    return (*CSegment_tree_2).make_tree(first,last);
+    delete segment_tree_2;
+    delete segment_tree_1;
+    delete anchor;
+    anchor = new Tree_anchor_type;
+    segment_tree_1 = new Segment_tree_1_type(*anchor);
+    segment_tree_2 = new Segment_tree_2_type(*segment_tree_1);
+    return segment_tree_2->make_tree(first,last);
   }
   
   template <class T>
-  T  window_query(Interval const &win, T result)
+  T  window_query(Interval const &win, const T& result)
   {
-    return (*CSegment_tree_2).window_query(win, result);
+    return segment_tree_2->window_query(win, result);
   }
 
   template <class T>
-  T enclosing_query(Interval const &win, T result)
+  T enclosing_query(Interval const &win, const T& result)
   {
-    return (*CSegment_tree_2).enclosing_query(win, result);
+    return segment_tree_2->enclosing_query(win, result);
   }
 
   ~Segment_tree_2()
   {
-    if (CSegment_tree_2!=0)
-      delete CSegment_tree_2;
-    CSegment_tree_2=0;
-    if (CSegment_tree_1!=0)
-      delete CSegment_tree_1;
-    CSegment_tree_1=0;
-    if (Tree_anchor!=0)
-      delete Tree_anchor;
-    Tree_anchor=0;
+    if (segment_tree_2!=0)
+      delete segment_tree_2;
+    if (segment_tree_1!=0)
+      delete segment_tree_1;
+    if (anchor!=0)
+      delete anchor;
   }
 };
 
@@ -243,90 +239,84 @@ public:
   typedef typename std::list<Interval>::iterator l_iterator;
   typedef typename std::vector<Interval>::iterator v_iterator;
 
-  typedef tree_interval_traits<Interval, Interval,
-  Key_1,  low_1, high_1, 
-  low_1, high_1,  compare_1> I1; 
+  typedef tree_interval_traits<Interval, Interval, Key_1,  
+                               low_1, high_1, low_1, high_1,  compare_1> I1; 
 
-  typedef tree_interval_traits<Interval, Interval, 
-  Key_2,  low_2, high_2, 
-  low_2, high_2,  compare_2> I2;
+  typedef tree_interval_traits<Interval, Interval, Key_2,  
+                               low_2, high_2, low_2, high_2,  compare_2> I2;
 
 
-  typedef tree_interval_traits<Interval, Interval, 
-  Key_3, low_3, high_3, 
-  low_3, high_3,  compare_3> I3;
+  typedef tree_interval_traits<Interval, Interval, Key_3, 
+                               low_3, high_3, low_3, high_3,  compare_3> I3;
 
 
   typedef tree_anchor<Interval, Interval> Tree_anchor_type;
-  Tree_anchor_type *Tree_anchor;
+  Tree_anchor_type *anchor;
 
   typedef Segment_tree_d<Interval, Interval, I3> Segment_tree_1_type;
-  Segment_tree_1_type * CSegment_tree_1;
+  Segment_tree_1_type * segment_tree_1;
 
   typedef Segment_tree_d<Interval, Interval, I2> Segment_tree_2_type;
-  Segment_tree_2_type *CSegment_tree_2;
+  Segment_tree_2_type *segment_tree_2;
 
   typedef Segment_tree_d<Interval, Interval, I1> Segment_tree_3_type;
-  Segment_tree_3_type *CSegment_tree_3;
+  Segment_tree_3_type *segment_tree_3;
 
   Segment_tree_3()
-  {
-    Tree_anchor = new Tree_anchor_type;
-    CSegment_tree_1 = new Segment_tree_1_type(*Tree_anchor);
-    CSegment_tree_2 = new Segment_tree_2_type(*CSegment_tree_1);
-    CSegment_tree_3 = new Segment_tree_3_type(*CSegment_tree_2);
-  }
+    : anchor(new Tree_anchor_type),
+      segment_tree_1(new Segment_tree_1_type(*anchor)),
+      segment_tree_2(new Segment_tree_2_type(*segment_tree_1)),
+      segment_tree_3(new Segment_tree_3_type(*segment_tree_2))
+  {}
+
   template <class T>
   Segment_tree_3(T& first, 
-		 T& last)  {
-   Tree_anchor = new Tree_anchor_type;
-   CSegment_tree_1 = new Segment_tree_1_type(*Tree_anchor);
-   CSegment_tree_2 = new Segment_tree_2_type(*CSegment_tree_1);
-   CSegment_tree_3 = new Segment_tree_3_type(*CSegment_tree_2);
-   (*CSegment_tree_3).make_tree(first,last);
+		 T& last)
+    : anchor(new Tree_anchor_type),
+      segment_tree_1(new Segment_tree_1_type(*anchor)),
+      segment_tree_2(new Segment_tree_2_type(*segment_tree_1)),
+      segment_tree_3(new Segment_tree_3_type(*segment_tree_2))
+  {
+    segment_tree_3->make_tree(first,last);
   }
 
   template <class T>
   bool make_tree(T& first, 
 		 T& last)
   {
-    delete CSegment_tree_3;
-    delete CSegment_tree_2;
-    delete CSegment_tree_1;
-    delete Tree_anchor;
-    Tree_anchor = new Tree_anchor_type;
-    CSegment_tree_1 = new Segment_tree_1_type(*Tree_anchor);
-    CSegment_tree_2 = new Segment_tree_2_type(*CSegment_tree_1);
-    CSegment_tree_3 = new Segment_tree_3_type(*CSegment_tree_2);
-    return (*CSegment_tree_3).make_tree(first,last);
+    delete segment_tree_3;
+    delete segment_tree_2;
+    delete segment_tree_1;
+    delete anchor;
+    anchor = new Tree_anchor_type;
+    segment_tree_1 = new Segment_tree_1_type(*anchor);
+    segment_tree_2 = new Segment_tree_2_type(*segment_tree_1);
+    segment_tree_3 = new Segment_tree_3_type(*segment_tree_2);
+    return segment_tree_3->make_tree(first,last);
   }
 
   template <class T>  
-  T window_query(Interval const &win, T result)
+  T window_query(Interval const &win, const T& result)
   {
-    return (*CSegment_tree_3).window_query(win, result);
+    return (*segment_tree_3).window_query(win, result);
   }
 
   template <class T>  
-  T  enclosing_query(Interval const &win,T result)
+  T  enclosing_query(Interval const &win, const T& result)
   {
-    return (*CSegment_tree_3).enclosing_query(win, result);
+    return (*segment_tree_3).enclosing_query(win, result);
   }
 
   ~Segment_tree_3()
   {
-    if (CSegment_tree_3!=0)
-      delete CSegment_tree_3;
-    CSegment_tree_3=0;
-    if (CSegment_tree_2!=0)
-      delete CSegment_tree_2;
-    CSegment_tree_2=0;
-    if (CSegment_tree_1!=0)
-      delete CSegment_tree_1;
-    CSegment_tree_1=0;
-    if (Tree_anchor!=0)
-      delete Tree_anchor;
-    Tree_anchor=0;
+    if (segment_tree_3!=0)
+      delete segment_tree_3;
+    if (segment_tree_2!=0)
+      delete segment_tree_2;
+    if (segment_tree_1!=0)
+      delete segment_tree_1;
+    if (anchor!=0)
+      delete anchor;
   }
 };
 
@@ -365,106 +355,99 @@ public:
   typedef typename std::list<Interval>::iterator l_iterator;
   typedef typename std::vector<Interval>::iterator v_iterator;
 
-  typedef tree_interval_traits<Interval, Interval, 
-  Key_1, low_1,  high_1, low_1,
-  high_1,  compare_1> I1;
+  typedef tree_interval_traits<Interval, Interval, Key_1, 
+                               low_1, high_1, low_1, high_1, compare_1> I1;
 
-  typedef tree_interval_traits<Interval, Interval, 
-  Key_2, low_2,  high_2,  low_2,
-  high_2,  compare_2> I2; 
+  typedef tree_interval_traits<Interval, Interval, Key_2,  
+                               low_2, high_2, low_2, high_2, compare_2> I2; 
 
+  typedef tree_interval_traits<Interval, Interval, Key_3, 
+                               low_3, high_3, low_3, high_3, compare_3> I3; 
 
-  typedef tree_interval_traits<Interval, Interval, 
-  Key_3, low_3,  high_3,  low_3,
-  high_3,  compare_3> I3; 
-
-
-  typedef tree_interval_traits<Interval, Interval, 
-  Key_4,   low_4,  high_4,  low_4,
-  high_4,  compare_4> I4; 
+  typedef tree_interval_traits<Interval, Interval, Key_4,  
+                               low_4, high_4, low_4, high_4, compare_4> I4; 
 
 
   typedef tree_anchor<Interval, Interval> Tree_anchor_type;
-  Tree_anchor_type *Tree_anchor;
+  Tree_anchor_type *anchor;
 
   typedef Segment_tree_d<Interval, Interval, I4> Segment_tree_1_type;
-  Segment_tree_1_type * CSegment_tree_1;
+  Segment_tree_1_type * segment_tree_1;
 
   typedef Segment_tree_d<Interval, Interval, I3> Segment_tree_2_type;
-  Segment_tree_2_type *CSegment_tree_2;
+  Segment_tree_2_type *segment_tree_2;
 
   typedef Segment_tree_d<Interval, Interval, I2> Segment_tree_3_type;
-  Segment_tree_3_type *CSegment_tree_3;
+  Segment_tree_3_type *segment_tree_3;
 
   typedef Segment_tree_d<Interval, Interval, I1> Segment_tree_4_type;
-  Segment_tree_4_type *CSegment_tree_4;
+  Segment_tree_4_type *segment_tree_4;
 
   Segment_tree_4()
-  {
-    Tree_anchor = new Tree_anchor_type;
-    CSegment_tree_1 = new Segment_tree_1_type(*Tree_anchor);
-    CSegment_tree_2 = new Segment_tree_2_type(*CSegment_tree_1);
-    CSegment_tree_3 = new Segment_tree_3_type(*CSegment_tree_2);
-    CSegment_tree_4 = new Segment_tree_4_type(*CSegment_tree_3);
-  }
+    : anchor(new Tree_anchor_type),
+      segment_tree_1(new Segment_tree_1_type(*anchor)),
+      segment_tree_2(new Segment_tree_2_type(*segment_tree_1)),
+      segment_tree_3(new Segment_tree_3_type(*segment_tree_2)),
+      segment_tree_4(new Segment_tree_4_type(*segment_tree_3))
+  {}
 
   template <class T>
   Segment_tree_4(T& first, 
-		 T& last)  {
-   Tree_anchor = new Tree_anchor_type;
-   CSegment_tree_1 = new Segment_tree_1_type(*Tree_anchor);
-   CSegment_tree_2 = new Segment_tree_2_type(*CSegment_tree_1);
-   CSegment_tree_3 = new Segment_tree_3_type(*CSegment_tree_2);
-   CSegment_tree_4 = new Segment_tree_4_type(*CSegment_tree_3);
-   (*CSegment_tree_4).make_tree(first,last);
+		 T& last)
+    : anchor(new Tree_anchor_type),
+      segment_tree_1(new Segment_tree_1_type(*anchor)),
+      segment_tree_2(new Segment_tree_2_type(*segment_tree_1)),
+      segment_tree_3(new Segment_tree_3_type(*segment_tree_2)),
+      segment_tree_4(new Segment_tree_4_type(*segment_tree_3))
+  {
+   segment_tree_4->make_tree(first,last);
   }
 
   template <class T>
   bool make_tree(T& first, 
 		 T& last)
   {
-    delete CSegment_tree_4;
-    delete CSegment_tree_3;
-    delete CSegment_tree_2;
-    delete CSegment_tree_1;
-    delete Tree_anchor;
-    Tree_anchor = new Tree_anchor_type;
-    CSegment_tree_1 = new Segment_tree_1_type(*Tree_anchor);
-    CSegment_tree_2 = new Segment_tree_2_type(*CSegment_tree_1);
-    CSegment_tree_3 = new Segment_tree_3_type(*CSegment_tree_2);
-    CSegment_tree_4 = new Segment_tree_4_type(*CSegment_tree_3);
-    return (*CSegment_tree_4).make_tree(first,last);
+    delete segment_tree_4;
+    delete segment_tree_3;
+    delete segment_tree_2;
+    delete segment_tree_1;
+    delete anchor;
+    anchor = new Tree_anchor_type;
+    segment_tree_1 = new Segment_tree_1_type(*anchor);
+    segment_tree_2 = new Segment_tree_2_type(*segment_tree_1);
+    segment_tree_3 = new Segment_tree_3_type(*segment_tree_2);
+    segment_tree_4 = new Segment_tree_4_type(*segment_tree_3);
+    return segment_tree_4->make_tree(first,last);
   }
 
   template <class T>
-  T window_query(Interval const &win, T result)
+  T window_query(Interval const &win, const T& result)
   {
-    return (*CSegment_tree_4).window_query(win, result);
+    return (*segment_tree_4).window_query(win, result);
   }
 
   template <class T>
-  T  enclosing_query(Interval const &win,T result)
+  T  enclosing_query(Interval const &win, const T& result)
   {
-    return (*CSegment_tree_4).enclosing_query(win, result);
+    return (*segment_tree_4).enclosing_query(win, result);
   }
 
   ~Segment_tree_4()
   {
-    if (CSegment_tree_4!=0)
-      delete CSegment_tree_4;
-    CSegment_tree_4=0;
-    if (CSegment_tree_3!=0)
-      delete CSegment_tree_3;
-    CSegment_tree_3=0;
-    if (CSegment_tree_2!=0)
-      delete CSegment_tree_2;
-    CSegment_tree_2=0;
-    if (CSegment_tree_1!=0)
-      delete CSegment_tree_1;
-    CSegment_tree_1=0;
-    if (Tree_anchor!=0)
-      delete Tree_anchor;
-    Tree_anchor=0;
+    if (segment_tree_4!=0)
+      delete segment_tree_4;
+
+    if (segment_tree_3!=0)
+      delete segment_tree_3;
+
+    if (segment_tree_2!=0)
+      delete segment_tree_2;
+
+    if (segment_tree_1!=0)
+      delete segment_tree_1;
+
+    if (anchor!=0)
+      delete anchor;
   }
 };
 CGAL_END_NAMESPACE

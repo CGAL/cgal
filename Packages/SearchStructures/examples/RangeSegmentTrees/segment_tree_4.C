@@ -108,7 +108,7 @@ int main()
 	 << (*j).second.key_3 << " , " <<  (*j).second.key_4 << std::endl;
     j++;
   }
-  if(Segment_tree_4.CSegment_tree_4->is_valid())
+  if(Segment_tree_4.segment_tree_4->is_valid())
     std::cerr << "Tree  is valid\n";
   else
     std::cerr << "Tree is not valid\n";

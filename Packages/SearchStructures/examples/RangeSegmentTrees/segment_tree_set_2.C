@@ -113,7 +113,7 @@ int main()
 	 << (*j).first.y() << "-" << (*j).second.y() << std::endl; 
     j++;
   }
-  if(Segment_tree_2.CSegment_tree_2->is_valid())
+  if(Segment_tree_2.segment_tree_2->is_valid())
     std::cerr << "Tree is valid\n";
   else
     std::cerr << "Tree is not valid\n";

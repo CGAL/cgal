@@ -121,24 +121,14 @@ protected:
   typedef range_tree_node<C_Data,C_Window,C_Interface> *link_type;
 
   static link_type& left(link_type x) { 
-  //  link_type left(link_type x) { 
-    //    if ((*x).left_link!=0) 
-      return CGAL__static_cast(link_type&, (*x).left_link);
-    // return (*x).left_link;
-      //return 0;
+    return CGAL__static_cast(link_type&, (*x).left_link);
   }
   static link_type& right(link_type x) {
-    // if ((*x).right_link!=0) 
-      return CGAL__static_cast(link_type&, (*x).right_link);   
-    //  return (*x).right_link;
-      // return 0; 
+    return CGAL__static_cast(link_type&, (*x).right_link);   
   }
 
   static link_type& parent(link_type x) {
-    //if ((*x).parent_link!=0) 
-      return CGAL__static_cast(link_type&, (*x).parent_link);
-    // return (*x).parent_link;
-      //return 0;
+    return CGAL__static_cast(link_type&, (*x).parent_link);
   }
 
   link_type header;
@@ -172,15 +162,15 @@ protected:
     {
       return sublayer_tree->is_inside(win,object);
     }
-    else
-      return false;
+
+    return false;
   }
 
 
   // merge sort algorithms that takes O(n) time if the sequence to
   // be sorted consists of two sorted subsequences.
   template <class T>
-  void dynamic_merge(T& first, T& last)
+  void dynamic_merge(const T& first, const T& last) // af: was not const
   {
     T prev, current=first;
     T current_first, current_middle, current_last;
@@ -463,6 +453,8 @@ public:
       return false;
 
     int n = count_elements__C( first, last );
+    int n2 = std::distance(first, last);
+    assert(n == n2);
     if(n==0)
     {
       is_build = false;
@@ -546,7 +538,7 @@ public:
 	    if(T->is_anchor())
 	      report_subtree(w,result);
 	    else
-	      (*T).window_query(win, result);
+	      T->window_query(win, result);
 	  }
 	  else
 	    if(is_inside(win,w->object))
@@ -571,7 +563,7 @@ public:
 	    if(T->is_anchor())
 	      report_subtree(left(v),result);
 	    else
-	      (*T).window_query(win, result);
+	      T->window_query(win, result);
 	  }
 	  else
 	  {

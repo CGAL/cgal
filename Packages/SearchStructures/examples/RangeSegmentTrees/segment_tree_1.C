@@ -37,6 +37,7 @@
 // release_date  : 1999, January 18
 //
 // file          : src/examples/RangeSegmentTrees/segment_tree_1.C
+
 // source        : src/examples/RangeSegmentTrees/segment_tree_1.C
 // revision      : $Revision$
 // revision_date : $Date$/
@@ -103,7 +104,7 @@ int main()
     std::cerr << (*j).first << "-" << (*j).second << std::endl;
     j++;
   }
-  if(segment_tree_1.CSegment_tree_1->is_valid())
+  if(segment_tree_1.segment_tree_1->is_valid())
     std::cerr << "Tree is valid\n";
   else
     std::cerr << "Tree is not valid\n";

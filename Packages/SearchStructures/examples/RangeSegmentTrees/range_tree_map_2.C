@@ -109,7 +109,7 @@ int main()
 	 << (*current).second << std::endl;
     current++;
   }
-  if(Range_tree_2.CRange_tree_2->is_valid())
+  if(Range_tree_2.range_tree_2->is_valid())
     std::cerr << "Tree is valid\n";
   else
     std::cerr << "Tree is not valid\n";

@@ -110,7 +110,7 @@ int main()
 	 << (*j).second.z() << std::endl; 
     j++;
   }
-  if(Segment_tree_3.CSegment_tree_3->is_valid())
+  if(Segment_tree_3.segment_tree_3->is_valid())
     std::cerr << "Tree is valid\n";
   else
     std::cerr << "Tree is not valid\n";
