@@ -276,9 +276,6 @@ public:
   void set_number_of_vertices(int n) 
     { _tds.set_number_of_vertices(n+1); }
    
-  void add_cell( Cell_handle c ) 
-    { _tds.add_cell( &(*c) ); }
-
   // GEOMETRIC ACCESS FUNCTIONS
   
   Tetrahedron tetrahedron(const Cell_handle c) const
