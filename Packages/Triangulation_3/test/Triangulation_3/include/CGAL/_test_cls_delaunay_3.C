@@ -496,8 +496,8 @@ _test_cls_delaunay_3(const Triangulation &)
 	    for (typename Cls::Finite_vertices_iterator
 	         fvit = T3_13.finite_vertices_begin();
 		 fvit != T3_13.finite_vertices_end(); ++fvit)
-	      assert(squared_distance(p, v->point()) <=
-		     squared_distance(p, fvit->point()));
+	      assert(CGAL::squared_distance(p, v->point()) <=
+		     CGAL::squared_distance(p, fvit->point()));
 	  }
   }
 

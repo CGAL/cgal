@@ -1,3 +1,6 @@
+Version 1.182 (28 November 03)
+- Add missing CGAL:: in the test-suite.
+
 Version 1.181 (28 November 03)
 - Add Delaunay_3::find_conflicts() version without the output iterator
   for the internal facets, which is not always useful.  [bugzilla #128]
