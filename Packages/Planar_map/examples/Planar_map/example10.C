@@ -21,12 +21,12 @@ class Pm_my_vertex : public Pm_vertex_base<Pt>
 public:
   Pm_my_vertex() : Pm_vertex_base<Pt>(){}
 
-  void  set_color(const string& c) { color = c;}
+  void  set_color(const std::string& c) { color = c;}
   
-  string get_color() const { return color;}
+  std::string get_color() const { return color;}
   
 private:
-  string color;
+  std::string color;
 };
 
 // building new dcel with my vertex base.
