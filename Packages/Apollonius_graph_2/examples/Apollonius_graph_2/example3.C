@@ -19,7 +19,7 @@ typedef CGAL::Simple_cartesian<double> Rep;
 #include <CGAL/Apollonius_graph_data_structure_2.h>
 #include <CGAL/Apollonius_graph_vertex_base_2.h>
 #include <CGAL/Apollonius_graph_face_base_2.h>
-#include <CGAL/Apollonius_graph_traits_2.h>
+#include <CGAL/Apollonius_graph_filtered_traits_2.h>
 
 // typedef for the traits; the filtered traits class is used
 typedef CGAL::Apollonius_graph_filtered_traits_2<Rep> Traits;

@@ -21,7 +21,7 @@ typedef CGAL::Simple_cartesian<CGAL::MP_Float> EK;
 // typedefs for the traits and the algorithm
 
 #include <CGAL/Apollonius_graph_hierarchy_2.h>
-#include <CGAL/Apollonius_graph_traits_2.h>
+#include <CGAL/Apollonius_graph_filtered_traits_2.h>
 
 
 // Type definition for the traits class.
