@@ -1,7 +1,8 @@
 
 To create a new version of the manual, you must at least do the following 
 editing:
- in wrapper.tex and pdf_wrapper.tex change the line 
+ in wrapper.tex, pdf_wrapper.tex, ext_wrapper.tex, and ext_pdf_wrapper.tex 
+ change the line 
     \newcommand{\dmanualrelease}{2.0}
  to correspond to the current release number
 
@@ -21,3 +22,7 @@ Then, if necessary, edit the makefile to change the installation directory
 and install the manual using:
   make install_internal
   make install_external
+
+For internal release, change release num in 
+   web_pages/Members/DManual/doc_panel.html
+(should probably be a part of this package, but...)
