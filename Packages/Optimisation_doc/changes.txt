@@ -1,5 +1,9 @@
 Changes done to the `Optimisation_doc' package
 
+Version 0.6 on 13-Sep-2000
+- `bad' introduction added in user manual.
+- changed referencing of concepts.
+
 Version 0.5.1 on 12-Sep-2000
 - added `cgal.bib'.
 
