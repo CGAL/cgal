@@ -1,3 +1,6 @@
+2.8.16  (21 Sep 2001)
+- added header to cgal_logo.h 
+
 2.8.15  (21 Sep 2001)
 - moved cgal_logo to src so it will be included in the library
 

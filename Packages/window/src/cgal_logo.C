@@ -20,7 +20,7 @@
 // coordinator   : MPI, Saarbruecken 
 // ============================================================================
 /* XPM */
-#if defined(__LEDA__) && (__LEDA__ > 400)
+#if !defined(__LEDA__) || (__LEDA__ > 400)
 const char * cgal_logo[] = {
 #else
 char * cgal_logo[] = {
