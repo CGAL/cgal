@@ -208,19 +208,20 @@ of the widget.}
 The coordinates of the screen are maped to a certain interval that you 
 can choose  with \ccc{set_window} member function. The scale of the
 objects you can visualize is computed and maintained the same for both 
-axes to keep the aspect ratio of the objects. If you are not using
-\ccc{gmp} you should use \ccc{x_real} or \ccc{y_real} to get the real
-world coordinates, represented as a double, for your screen
-coordinates. If you are using \ccc{gmp} you can use the other verions
-of these two functions: \ccc{x_real_rational} and
-\ccc{y_real_rational}, with \ccc{Gmpq} return type. You may need it
-when you work with rationals. The double from the other function could 
-be more complex and can make you loose speed.
+axes to keep the aspect ratio of the objects. You should use
+\ccc{x_real} or \ccc{y_real} to get the real world coordinates,
+represented as a double, for your screen coordinates. If you are using
+\ccc{gmp} you can use this functions with \ccc{Gmpq} as second
+parameter. You may need it when you work with rationals. The double
+from the other function could be more complex and can make you loose
+speed in computations. Computing with rational coordinates directly
+could increase the speed, rather than computing with complex double
+coordinates.
 
-\ccMethod{void x_real(int x, FT ) const;}{Returns the \ccc{x} real world
-coordinate of the \ccc{Qt_widget}.}
-\ccMethod{void y_real(int y, FT ) const;}{Returns the \ccc{y} real world
-coordinate of the \ccc{Qt_widget}.}
+\ccFunction{template<class FT> void x_real(int x, FT&) const;}{Returns
+the \ccc{x} real world coordinate of the \ccc{Qt_widget}.}
+\ccFunction{template<class FT> void y_real(int y, FT& )
+const;}{Returns the \ccc{y} real world coordinate of the \ccc{Qt_widget}.}
 \end{ccAdvanced}
 
 \begin{ccAdvanced}
