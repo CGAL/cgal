@@ -789,6 +789,8 @@ public:
      CGAL::occur<const Point_2&,const Segment_2&,const Segment_2&> \
          (Predicate_leda_rat_compare_y_at_x_2::ev_leda_rat_point_segment_segment,q, cv1, cv2);
 #endif    
+
+      //std::cout << q << " " << cv1 << " " << cv2 << "\n";
     
       // precondition ???
       if ((!curve_is_in_x_range(cv1, q)) || (!curve_is_in_x_range(cv2, q))) return EQUAL;
@@ -891,10 +893,31 @@ public:
      CGAL::occur<const Point_2&,const Line_2&,const Line_2&> \
          (Predicate_leda_rat_compare_y_at_x_2::ev_leda_rat_point_line_line, p, l1, l2);
 #endif    
+
+/*
+    // cmp_segments_at_xcoord is buggy in LEDA
     Segment_2 s1 = l1.seg();
     Segment_2 s2 = l2.seg();
-    
+    //std::cout << LEDA_NAMESPACE_NAME::cmp_segments_at_xcoord(s1,s2,p) << "\n";    
     return ( (Comparison_result) LEDA_NAMESPACE_NAME::cmp_segments_at_xcoord(s1,s2,p));
+*/
+      Segment_2 cv1_ = l1.seg();
+      Segment_2 cv2_ = l2.seg();
+      if (__My_Point_2::cmp_xy(cv1_.source(), cv1_.target()) > 0)
+        cv1_ = cv1_.reversal();
+      if (__My_Point_2::cmp_xy(cv2_.source(), cv2_.target()) > 0)
+        cv2_ = cv2_.reversal();
+  		
+      //  vertical curves are forbidden ...
+                    
+      int res = LEDA_NAMESPACE_NAME::cmp_segments_at_xcoord(cv1_, cv2_, p);
+      
+      //std::cout << cv1_ << " " << cv2_ << "\n";
+      //std::cout << p << "\n";
+      //std::cout << res << "\n";
+      
+      return ((res < 0) ? CGAL::SMALLER : ((res > 0) ? CGAL::LARGER : CGAL::EQUAL));
+
   }
   
   Comparison_result operator()(const Line_2& l1, const Line_2& l2, const Line_2& l3) const

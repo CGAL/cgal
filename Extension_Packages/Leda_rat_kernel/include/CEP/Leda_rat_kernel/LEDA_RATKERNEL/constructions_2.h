@@ -660,7 +660,14 @@ public:
       (Construct_leda_rat_rectangle::ev_leda_rat_point, p1, p2);
 #endif   
    return Iso_rectangle_2(p1,p2);
-  }     
+  } 
+  
+  // new
+  Iso_rectangle_2 operator()(const Point_2& xmin, const Point_2& xmax,
+                             const Point_2& ymin, const Point_2& ymax)
+  {
+   return Iso_rectangle_2(xmin.xcoord(),ymin.ycoord(),  xmax.xcoord(),ymax.ycoord());
+  }   
 };
 
 #if defined(CGAL_GEOMETRY_EVENTS)

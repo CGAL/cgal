@@ -252,6 +252,13 @@ public:
   {
      return Iso_cuboid_3(p,q);
   }
+  
+  Iso_cuboid_3 operator()(const Point_3& pxmin, const Point_3& pxmax,
+                          const Point_3& pymin, const Point_3& pymax,
+			  const Point_3& pzmin, const Point_3& pzmax)
+  {
+     return Iso_cuboid_3(pxmin,pxmax,pymin,pymax,pzmin,pzmax);
+  }
 };
 
 template<class K>

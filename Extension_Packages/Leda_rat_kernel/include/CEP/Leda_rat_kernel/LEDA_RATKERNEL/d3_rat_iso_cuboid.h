@@ -86,6 +86,46 @@ public:
      id = id_counter++;
      mutex_id_counter.unlock();
    }
+   
+   d3_rat_iso_cuboid_rep(const leda_d3_rat_point& pxmin, const leda_d3_rat_point& pxmax,
+                         const leda_d3_rat_point& pymin, const leda_d3_rat_point& pymax,
+			 const leda_d3_rat_point& pzmin, const leda_d3_rat_point& pzmax)
+   {
+     leda_d3_rat_point pmin(pxmin.xcoord(),pymin.ycoord(),pzmin.xcoord());
+     leda_d3_rat_point pmax(pxmax.xcoord(),pymax.ycoord(),pzmax.xcoord());
+     
+     // normalize the two points ...
+     integer g1 = gcd(gcd(gcd(pmin.X(),pmin.Y()),pmin.Z()),pmin.W());
+  
+     pmin =  leda_d3_rat_point(pmin.X()/g1, pmin.Y()/g1 ,pmin.Z()/g1,pmin.W()/g1);  
+     
+     integer g2 = gcd(gcd(gcd(pmax.X(),pmax.Y()),pmax.Z()),pmax.W());
+     
+     pmax =  leda_d3_rat_point(pmax.X()/g2, pmax.Y()/g2 ,pmax.Z()/g2,pmax.W()/g2);  
+     
+     // compute coords
+     leda_integer w1 = pmin.W();
+     leda_integer w2 = pmax.W();
+     w = w1 * w2;
+     xmin = pmin.X() * w2;
+     ymin = pmin.Y() * w2;
+     zmin = pmin.Z() * w2;
+     xmax = pmax.X() * w1;
+     ymax = pmax.Y() * w1;
+     zmax = pmax.Z() * w1;      
+
+     xmin_d = xmin.to_double();
+     xmax_d = xmax.to_double();
+     ymin_d = ymin.to_double();
+     ymax_d = ymax.to_double();
+     zmin_d = zmin.to_double();
+     zmax_d = zmax.to_double();
+     w_d    = w.to_double(); 
+   
+     mutex_id_counter.lock();
+     id = id_counter++;
+     mutex_id_counter.unlock();   
+   }   
 
    d3_rat_iso_cuboid_rep(const leda_d3_rat_point& p1, const leda_d3_rat_point& p2)
    {
@@ -168,6 +208,14 @@ of type |\Mname|. }*/
   d3_rat_iso_cuboid(const leda_d3_rat_point& p,const leda_d3_rat_point& q)
 /*{\Mcreate introduces a variable |\Mvar| of type |\Mname| with diagonal opposite vertices |p| and |q|. }*/  
   { PTR = new d3_rat_iso_cuboid_rep(p,q); }
+  
+  d3_rat_iso_cuboid(const leda_d3_rat_point& left,const leda_d3_rat_point& right,
+                    const leda_d3_rat_point& bottom, const leda_d3_rat_point& top,
+		    const leda_d3_rat_point& min_z, const leda_d3_rat_point& max_z)
+/*{\Mcreate introduces a variable |\Mvar| of type |\Mname|. |left| defines the minimal x-coordinate of |\Mvar|,
+|right| defines the maximal x-coordinate, |bottom| defines the minimal y-coordinate, |top| defines the maximal y-coordinate,
+|min_z| defines the minimal z-coordinate and |max_z| defines the maximal z-coordinate of |\Mvar|. }*/  
+  { PTR = new d3_rat_iso_cuboid_rep(left,right,bottom,top,min_z,max_z); }  
   
   d3_rat_iso_cuboid(const d3_rat_iso_cuboid& c) : __HANDLE_BASE_TYPE(c) {}
   ~d3_rat_iso_cuboid() {}
