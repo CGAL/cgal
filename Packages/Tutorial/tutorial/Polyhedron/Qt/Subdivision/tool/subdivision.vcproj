@@ -18,6 +18,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/Zm900"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\mkspecs\win32-msvc&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;CGAL_USE_QT;NOMINMAX;CGAL_USE_POLYHEDRON_DESIGN_TWO"
@@ -33,7 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="$(CGALROOT)/lib/msvc7/ML/CGAL.lib $(QTDIR)/lib/qt.lib $(QTDIR)/lib/qtmain.lib
+				AdditionalOptions="$(CGALROOT)/lib/msvc7/CGAL.lib $(QTDIR)/lib/qt.lib $(QTDIR)/lib/qtmain.lib
 wsock32.lib winmm.lib imm32.lib opengl32.lib glu32.lib"
 				OutputFile="$(OutDir)/subdivision.exe"
 				LinkIncremental="2"
@@ -64,6 +65,8 @@ wsock32.lib winmm.lib imm32.lib opengl32.lib glu32.lib"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/Zm900
+"
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
@@ -81,7 +84,7 @@ wsock32.lib winmm.lib imm32.lib opengl32.lib glu32.lib"
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="$(CGALROOT)/lib/msvc7/ML/CGAL.lib $(QTDIR)/lib/qt.lib $(QTDIR)/lib/qtmain.lib
+				AdditionalOptions="$(CGALROOT)/lib/msvc7/CGAL.lib $(QTDIR)/lib/qt.lib $(QTDIR)/lib/qtmain.lib
 wsock32.lib winmm.lib imm32.lib opengl32.lib glu32.lib"
 				OutputFile="$(OutDir)/subdivision.exe"
 				LinkIncremental="1"
