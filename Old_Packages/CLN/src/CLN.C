@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 1999 The CGAL Consortium
+// Copyright (c) 1999-2000 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -27,12 +27,13 @@
 #include <CGAL/Quotient.h>
 #include <CGAL/CLN/cl_integer.h>
 #include <cl_output.h> // for cl_default_print_flags
+#include <cl_rational.h>
+#include <cl_rational_io.h>
 
 CGAL_BEGIN_NAMESPACE
 
 // It's a workaround for a bug that happens on Solaris 2.6 with gcc 2.95,
-// and libcln.so (not .a).
-// It doesn't happen on Linux with gcc 2.95.
+// and libcln.so (not .a).  It doesn't happen on Linux with gcc 2.95.
 
 // Namely, the default base for printing should be 10, but it's not
 // initialized as it should for some reason...
@@ -53,61 +54,15 @@ static workaround_4_CLN workaroung_4_CLN_object;
 // And there's no easy way to stop him parsing before "/" like for
 // the generic Quotient<>.
 
-// There are 2 possibilities:
-// - Parse the thing by hand...  (current solution)
-// - Read it as cl_RA, and convert to Quotient<cl_I>, but this is currently
-//   not possible since the access functions to numerator and denominator
-//   are not public (it's fixed in the 1.0.2 release of CLN).
+// So we read it as cl_RA, and convert to Quotient<cl_I>.
+// Note that this requires CLN >= 1.0.2.
 
 std::istream&
 operator>> (std::istream& in, Quotient<cl_I>& z)
 {
-#if 1
-  // Dirty.  Copied from Gmpz.h and Quotient.C.
-  bool negative = false;
-  char c;
-  cl_I num = 0, den = 1;
-
-  while (in.get(c) && isspace(c));
-
-  if (c == '-')
-  {
-        negative = true;
-        while (in.get(c) && isspace(c));
-  }
-  if (isdigit(c))
-  {
-        num = c - '0';
-        while (in.get(c) && isdigit(c))
-            num = 10*num + (c-'0');
-  }
-  if (in)
-        in.putback(c);
-
-  if (negative)
-        num = -num;
-
-  // Now we try to see if there's a '/'.
-  while (in.get(c) && isspace(c));
-  if (( in ) && ( c == '/'))
-  {
-      while (in.get(c) && isspace(c));
-      CGAL_kernel_assertion( in );
-      in.putback(c);
-      in >> den;
-  }
-  else
-  {
-      in.putback(c);
-      if ( in.eof() ) in.clear();
-  }
-
-  z = Quotient<cl_I>(num, den);
-#else
   cl_RA q;
   in >> q;
   z = Quotient<cl_I> (numerator(q), denominator(q));
-#endif
   return in;
 }
 
