@@ -177,7 +177,7 @@ sub epsilon_function {
   # We just typedef the original template type at the beginning of the body.
   $_ = $body;
   s/{/{\n  typedef $new_t $t;\n/s;
-  s/\n/\n  /msg;
+  s/\n/\n  /msg;  # Indent
   s/update_epsilon/$fct_name/msg;
   return "static $ret_type $fct_name($args_call,$eps_call)$_";
 }
@@ -274,12 +274,10 @@ re_adjust:
   }
   catch (${CGAL}Restricted_double::unsafe_comparison)
   {
-    // It failed, we re-adjust once.
-    if (!re_adjusted) {
+    if (!re_adjusted) {  // It failed, we re-adjust once.
       re_adjusted = true;
       goto re_adjust;
     }
-    // This scheme definitely fails => exact computation (filtered_exact<> ?).
     return $fct_name($args_exact);
   }";
   }
@@ -319,7 +317,7 @@ sub parse_input_code {
   # Note that the following are buggy if they appear in strings (cf Perl FAQ).
   s#//.*##mg;      # Remove C++ "//" comments
   s#/\*.*?\*/##sg; # Remove C "/**/" comments
-  while (/(CGAL_BEGIN_NAMESPACE|CGAL_END_NAMESPACE|template\s*\<.*?\>)/sm) {
+  while (/(CGAL_(?:BEGIN|END)_NAMESPACE|template\s*\<.*?\>)/sm) {
     if ($1 eq "CGAL_BEGIN_NAMESPACE") { $CGAL=""; $_=$'; }
     elsif ($1 eq "CGAL_END_NAMESPACE") { $CGAL="CGAL::"; $_=$'; }
     else {
@@ -398,9 +396,8 @@ sub match_calls_in_body {
     $new_body .= "$`$1Static_Filtered_$2_$num_args\::update_epsilon$before,\n\t\tepsilon_";
 
     # We add the epsilon arguments to the call in $new_body.
-    my $old_num_eps = $num_eps;
+    $new_body.= join ",\n\t\tepsilon_", map $num_eps+$_, 0..@$p[$eps_pos]-1;
     $num_eps += @$p[$eps_pos];
-    $new_body.= join(",\n\t\tepsilon_", $old_num_eps..$num_eps-1);
     $_ = $after;
   }
 
