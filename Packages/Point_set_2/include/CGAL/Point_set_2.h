@@ -38,7 +38,8 @@
 CGAL_BEGIN_NAMESPACE
 
 
-// compare function objects for the priority queues used in nearest neighbor search
+// compare function objects for the priority queues 
+// used in nearest neighbor search
 template<class VP, class NT,class MAP_TYPE>
 class compare_vertices {
  public:
@@ -172,7 +173,9 @@ public:
        act = vc;
  
        if (! is_infinite(act)) {
-        if ( tr_comparedist(p,act->point(), min_v->point()) == SMALLER ) min_v = act;
+        if ( tr_comparedist(p,act->point(), min_v->point()) == SMALLER ) {
+	  min_v = act;
+	}
        }   
            
        vc++;
@@ -240,7 +243,9 @@ public:
   }
 
 
-  void nearest_neighbors_list(Vertex_handle v, int k, std::list<Vertex_handle>& res) 
+  void nearest_neighbors_list(Vertex_handle v, 
+			      int k, 
+			      std::list<Vertex_handle>& res) 
   {  
      int n = number_of_vertices();
    
@@ -253,7 +258,8 @@ public:
      init_dfs();
 
      MAP_TYPE                                        priority_number;              // here we save the priorities ...
-     compare_vertices<Vertex_handle,Numb_type,MAP_TYPE>    comp(& priority_number);      // comparison object ...
+     compare_vertices<Vertex_handle,Numb_type,MAP_TYPE>    
+       comp(& priority_number);      // comparison object ...
      std::priority_queue<Vertex_handle, std::vector<Vertex_handle>, CGAL::compare_vertices<Vertex_handle,Numb_type,MAP_TYPE> > PQ(comp);
 
      priority_number[& (*v)] = 0;
