@@ -13,7 +13,7 @@
 //
 // file          : include/CGAL/Segment_tree_d.h
 // package       : SearchStructures (2.54)
-// maintainer    : Philipp Kramer <kramer@inf.ethz.ch>
+// maintainer    : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 // source        : include/CGAL/Segment_tree_d.h
 // revision      : $Revision$
 // revision_date : $Date$
@@ -65,16 +65,20 @@ public:
   friend class Segment_tree_d< C_Data,  C_Window,  C_Interface>;
   
   Segment_tree_node()
-    : Tree_node_base(TREE_BASE_NULL, TREE_BASE_NULL), sublayer(0)
+    : Tree_node_base(), sublayer(0)
+  {}
+
+  Segment_tree_node(const Key& p_left_key,
+		    const Key& p_right_key)
+    : Tree_node_base(), left_key(p_left_key), right_key(p_right_key), sublayer(0)
   {}
 
   Segment_tree_node(Segment_tree_node * p_left,
 		    Segment_tree_node * p_right,
-		    const Key p_left_key,
-		    const Key p_right_key)
+		    const Key& p_left_key,
+		    const Key& p_right_key)
     : Tree_node_base(p_left,p_right), left_key(p_left_key), right_key(p_right_key), sublayer(0)
   {}
-
   
   ~Segment_tree_node(){
     objects.clear();
@@ -96,13 +100,15 @@ public:
   typedef Tree_base<C_Data, C_Window> tbt;
 protected:
   Tree_base<C_Data, C_Window> *sublayer_tree; 
-  
+
   // type of a vertex
   // struct Segment_tree_node;
   
   friend class Segment_tree_node<C_Data,C_Window,C_Interface>;
   typedef Segment_tree_node<C_Data,C_Window,C_Interface> Segment_tree_node_t;
   typedef Segment_tree_node<C_Data,C_Window,C_Interface> *link_type;
+  
+  static std::allocator<Segment_tree_node_t> alloc;
   
   C_Interface interface;
   bool is_built;
@@ -154,7 +160,7 @@ protected:
     if ((is_less_equal(interface.get_left(element), v->left_key) && 
 	 is_less_equal(v->right_key, interface.get_right(element)))
 	|| left(v)==TREE_BASE_NULL)
-      v->objects.insert(v->objects.end(), element);
+      v->objects.push_back( element);
     else
      {
        if (!is_less_equal((*left(v)).right_key, interface.get_left(element)))
@@ -183,12 +189,34 @@ protected:
        v->sublayer = g;
        if (!v->sublayer->is_anchor())
        {
-	 sub_first = v->objects.begin();
-	 sub_last = v->objects.end();
-	 v->objects.erase(sub_first, sub_last);
+	 v->objects.clear();
        }
      }
    }
+
+  link_type  new_Segment_tree_node_t(link_type l, link_type r, const Key& kl, const Key& kr)
+  {
+    Segment_tree_node_t node(l,r,kl,kr);
+    Segment_tree_node_t* node_ptr = alloc.allocate(1);
+    alloc.construct(node_ptr, node);
+    return node_ptr;
+  }
+
+  link_type  new_Segment_tree_node_t(const Key& kl, const Key& kr)
+  {
+    Segment_tree_node_t node(kl,kr);
+    Segment_tree_node_t* node_ptr = alloc.allocate(1);
+    alloc.construct(node_ptr, node);
+    return node_ptr;
+  }
+
+  link_type  new_Segment_tree_node_t()
+  {
+    Segment_tree_node_t node;
+    Segment_tree_node_t* node_ptr = alloc.allocate(1);
+    alloc.construct(node_ptr, node);
+    return node_ptr;
+  }
 
   // the skeleton of the segment tree is constructed here.
    void build_segment_tree(int n, link_type& leftchild, link_type& rightchild,
@@ -199,21 +227,21 @@ protected:
      if (n==2)
      {
        link_type vright;
-       link_type vleft = new Segment_tree_node_t
-	 (TREE_BASE_NULL, TREE_BASE_NULL, keys[index], keys[index+1]);
+       link_type vleft = new_Segment_tree_node_t
+	 (keys[index], keys[index+1]);
        index++;
        if(index+1>last)
        {
-         vright = new Segment_tree_node_t
-	   (TREE_BASE_NULL, TREE_BASE_NULL, keys[index], keys[index]);
+         vright = new_Segment_tree_node_t
+	   (keys[index], keys[index]);
        }
        else
        {
-	 vright = new Segment_tree_node_t
-	   (TREE_BASE_NULL, TREE_BASE_NULL, keys[index], keys[index+1]);
+	 vright = new_Segment_tree_node_t
+	   (keys[index], keys[index+1]);
        }
        index++;
-       link_type vparent = new Segment_tree_node_t
+       link_type vparent = new_Segment_tree_node_t
 	 (vleft, vright, vleft->left_key, vright->right_key);
 
        vleft->parent_link = vparent;
@@ -230,12 +258,12 @@ protected:
        {
 	 link_type vright;
 	 if(index+1 > last){
-	   vright = new Segment_tree_node_t
-	     (TREE_BASE_NULL, TREE_BASE_NULL, keys[index], keys[index]);
+	   vright = new_Segment_tree_node_t
+	     (keys[index], keys[index]);
 	 }
 	 else{
-	   vright = new Segment_tree_node_t
-	     (TREE_BASE_NULL, TREE_BASE_NULL, keys[index], keys[index+1]);
+	   vright = new_Segment_tree_node_t
+	     (keys[index], keys[index+1]);
 	 }
 	 index++;
 
@@ -247,7 +275,7 @@ protected:
 	 // recursiv call for the construction. the interval is devided.
 	 build_segment_tree(n - (int)n/2, leftchild, rightchild, 
 			 prevchild, leftmostlink, index, last, keys);
-	 link_type vparent = new Segment_tree_node_t
+	 link_type vparent = new_Segment_tree_node_t
 	   (prevchild, TREE_BASE_NULL, prevchild->left_key, prevchild->left_key);
 	 prevchild->parent_link   = vparent;
 	 build_segment_tree((int)n/2, leftchild, rightchild, 
@@ -266,9 +294,14 @@ protected:
       delete_tree(left(v));
       delete_tree(right(v));
     }
-    delete v;
+    delete_node(v);
   }	    
 
+  void delete_node(Segment_tree_node_t* node_ptr)
+  {
+    alloc.destroy(node_ptr);
+    alloc.deallocate(node_ptr,1);
+  }
 
   // all elements that contain win are inserted into result
   template <class A>
@@ -416,7 +449,7 @@ protected:
     if(! v->objects.empty())
     {
 //      true falls das Object das Segment enthaelt, 
-//	  der parent aber das Segmetn nicht enthaelt.
+//	  der parent aber das Segment nicht enthaelt.
       typename std::list< C_Data>::iterator j=v->objects.begin();
       link_type parent_of_v = parent(v);
       while (j!= v->objects.end())
@@ -457,7 +490,7 @@ public:
     if(v!=TREE_BASE_NULL)
       delete_tree(v);
     if (header!=0)  
-      delete header;
+      delete_node(header);
     if(sublayer_tree!=0)
       delete sublayer_tree;
   }
@@ -544,7 +577,7 @@ public:
     build_segment_tree(num-1, leftchild, rightchild, prevchild, 
 		      leftmostlink, start, num-1, keys2);
 
-    header = new Segment_tree_node_t();
+    header = new_Segment_tree_node_t();
     header->right_link = rightchild;
     header->parent_link = prevchild;
     prevchild->parent_link = prevchild;
