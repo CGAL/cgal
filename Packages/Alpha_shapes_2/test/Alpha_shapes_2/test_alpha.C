@@ -7,7 +7,7 @@ correspondant a l'Alpha Shape.
 
 
 
-#include <CGAL/basic.h>
+#include <CGAL/Cartesian.h>
 #include <cstdio>
 #include <cstring>
 #include <iostream>
@@ -42,15 +42,15 @@ typedef double coord_type;
 #endif//CGAL_USE_GMP
 #endif//CGAL_USE_LEDA
 
-typedef CGAL::Cartesian<coord_type>  CRep;
+typedef CGAL::Cartesian<coord_type>  K;
 
-typedef CGAL::Point_2<CRep>  Point;
-typedef CGAL::Segment_2<CRep>  Segment;
-typedef CGAL::Ray_2<CRep>  Ray;
-typedef CGAL::Line_2<CRep>  Line;
-typedef CGAL::Triangle_2<CRep>  Triangle;
+typedef K::Point_2  Point;
+typedef K::Segment_2  Segment;
+typedef K::Ray_2  Ray;
+typedef K::Line_2  Line;
+typedef K::Triangle_2  Triangle;
 
-typedef CGAL::Alpha_shape_euclidean_traits_2<CRep> Gt;
+typedef CGAL::Alpha_shape_euclidean_traits_2<K> Gt;
 
 typedef CGAL::Alpha_shape_vertex_base_2<Gt> Vb;
 
@@ -86,7 +86,7 @@ typedef Alpha_shape_2::Alpha_shape_edges_iterator alpha_edges_iterator;
 //---------------------------------------------------------------------
 
 std::vector<Gt::Segment>
-Construct_Alpha_shape(const std::list<Point> &V_p,
+construct_alpha_shape(const std::list<Point> &V_p,
 		      const Coord_type &Alpha,
 		      bool mode)
   // Generate Alpha Shape
@@ -163,6 +163,6 @@ int main()
   std::list<Point> L;
   file_input(L);
   std::vector<Gt::Segment> V =
-    Construct_Alpha_shape(L,Coord_type(10000),Alpha_shape_2::GENERAL);
+    construct_alpha_shape(L,Coord_type(10000),Alpha_shape_2::GENERAL);
   return 0;
 }
