@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: CGAL-2.3-I-44 $
 // release_date  : $CGAL_Date: 2001/03/09 $
 //
-// file          : include/CGAL/Sweep_line_base_2.h
+// file          : include/CGAL/Sweep_line_tight_2.h
 // package       : arr (1.87)
 // maintainer    : Tali Zvi <talizvi@post.tau.ac.il>
 // source        : 
@@ -66,7 +66,7 @@ CGAL_BEGIN_NAMESPACE
 
 
 /*!
-  Sweep_line_base_2 is a class that implements the sweep line algorithm
+  Sweep_line_tight_2 is a class that implements the sweep line algorithm
   based on the algorithm of Bentley and Ottmann.
   It extends the algorithm to support not only segments but polylines and 
   general curves as well.
@@ -100,7 +100,7 @@ CGAL_BEGIN_NAMESPACE
 
 template <class CurveInputIterator,  class SweepLineTraits_2,
           class SweepEvent, class CurveWrap>
-class Sweep_line_base_2
+class Sweep_line_tight_2
 {
 public:
   typedef SweepLineTraits_2 Traits;
@@ -141,10 +141,10 @@ public:
   class  SweepLineGetPoints {};
   class  SweepLineGetInterCurveList {};
 
-  Sweep_line_base_2() : m_traits(new Traits()), m_traitsOwner(true) {}
-  Sweep_line_base_2(Traits *t) : m_traits(t), m_traitsOwner(false) {}
+  Sweep_line_tight_2() : m_traits(new Traits()), m_traitsOwner(true) {}
+  Sweep_line_tight_2(Traits *t) : m_traits(t), m_traitsOwner(false) {}
 
-  ~Sweep_line_base_2();
+  ~Sweep_line_tight_2();
 
   /*!
    *  Given a container of curves, this function returns a list of curves
@@ -872,8 +872,8 @@ protected:
 
 template <class CurveInputIterator,  class SweepLineTraits_2,
          class SweepEvent, class CurveWrap>
-Sweep_line_base_2<CurveInputIterator,SweepLineTraits_2,SweepEvent,CurveWrap>::
-~Sweep_line_base_2() 
+Sweep_line_tight_2<CurveInputIterator,SweepLineTraits_2,SweepEvent,CurveWrap>::
+~Sweep_line_tight_2() 
 {
   if ( m_traitsOwner ) delete m_traits;
 
@@ -903,7 +903,7 @@ Sweep_line_base_2<CurveInputIterator,SweepLineTraits_2,SweepEvent,CurveWrap>::
 template <class CurveInputIterator,  class SweepLineTraits_2,
          class SweepEvent, class CurveWrap>
 inline void 
-Sweep_line_base_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
+Sweep_line_tight_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
 Init(CurveInputIterator begin, CurveInputIterator end)
 {
   PointLess pred(m_traits);
@@ -950,7 +950,7 @@ Init(CurveInputIterator begin, CurveInputIterator end)
 template <class CurveInputIterator,  class SweepLineTraits_2,
          class SweepEvent, class CurveWrap>
 inline void 
-Sweep_line_base_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
+Sweep_line_tight_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
 InitCurve(X_curve_2 &curve)
 {
   const Point_2 &source = m_traits->curve_source(curve);
@@ -1006,7 +1006,7 @@ InitCurve(X_curve_2 &curve)
 template <class CurveInputIterator,  class SweepLineTraits_2,
          class SweepEvent, class CurveWrap>
 inline void 
-Sweep_line_base_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
+Sweep_line_tight_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
 FirstPass()
 {
   if ( m_statusLine->size() == 0 )
@@ -1083,7 +1083,7 @@ FirstPass()
 template <class CurveInputIterator,  class SweepLineTraits_2,
          class SweepEvent, class CurveWrap>
 inline void 
-Sweep_line_base_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
+Sweep_line_tight_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
 HandleVerticalCurveBottom(SweepLineGetSubCurves &tag)
 {
   SL_DEBUG(std::cout<<"\nHandleVerticalCurveBottom... ("
@@ -1203,7 +1203,7 @@ HandleVerticalCurveBottom(SweepLineGetSubCurves &tag)
 template <class CurveInputIterator,  class SweepLineTraits_2,
          class SweepEvent, class CurveWrap>
 inline void 
-Sweep_line_base_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
+Sweep_line_tight_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
 HandleVerticalCurveBottom(SweepLineGetPoints &tag)
 {
   SL_DEBUG(std::cout<<"HandleVerticalCurveBottom... ";)
@@ -1320,7 +1320,7 @@ HandleVerticalCurveBottom(SweepLineGetPoints &tag)
 template <class CurveInputIterator,  class SweepLineTraits_2,
          class SweepEvent, class CurveWrap>
 inline void 
-Sweep_line_base_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
+Sweep_line_tight_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
 HandleVerticalOverlapCurves()
 {
   SL_DEBUG(std::cout<<"\nHandleVerticalOverlapCurves... (" 
@@ -1379,7 +1379,7 @@ HandleVerticalOverlapCurves()
 template <class CurveInputIterator,  class SweepLineTraits_2,
          class SweepEvent, class CurveWrap>
 inline void 
-Sweep_line_base_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
+Sweep_line_tight_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
 HandleRightCurves()
 {
   SL_DEBUG(std::cout << "Handling right curves (" ;)
@@ -1540,7 +1540,7 @@ HandleRightCurves()
 template <class CurveInputIterator, class SweepLineTraits_2,
          class SweepEvent, class CurveWrap>
 inline void
-Sweep_line_base_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
+Sweep_line_tight_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
 IntersectCurveGroup(Subcurve *c1, SubCurveList &mylist)
 {
   SL_DEBUG(std::cout << "Intersecting with " << mylist.size() << " curves\n";)
@@ -1566,7 +1566,7 @@ IntersectCurveGroup(Subcurve *c1, SubCurveList &mylist)
 template <class CurveInputIterator, class SweepLineTraits_2,
          class SweepEvent, class CurveWrap>
 inline bool 
-Sweep_line_base_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
+Sweep_line_tight_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
 Intersect(Subcurve *c1, Subcurve *c2)
 {
   SL_DEBUG(std::cout << "Looking for intersection between:\n\t";)
@@ -1652,7 +1652,7 @@ Intersect(Subcurve *c1, Subcurve *c2)
 template <class CurveInputIterator,  class SweepLineTraits_2,
          class SweepEvent, class CurveWrap>
 inline bool
-Sweep_line_base_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
+Sweep_line_tight_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
 isInternalXPoint(const Point_2 &p)
 {
   EventListIter itt = m_miniq.begin();
@@ -1686,7 +1686,7 @@ isInternalXPoint(const Point_2 &p)
  */template <class CurveInputIterator,  class SweepLineTraits_2,
          class SweepEvent, class CurveWrap>
 inline bool
-Sweep_line_base_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
+Sweep_line_tight_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
 HandleVerticalCurveXAtEnd(Subcurve *vcurve, Subcurve *curve, 
 			  Event *topEndEvent, SweepLineGetSubCurves tag)
 {
@@ -1736,7 +1736,7 @@ HandleVerticalCurveXAtEnd(Subcurve *vcurve, Subcurve *curve,
 template <class CurveInputIterator,  class SweepLineTraits_2,
          class SweepEvent, class CurveWrap>
 inline bool
-Sweep_line_base_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
+Sweep_line_tight_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
 HandleVerticalCurveXAtEnd(Subcurve *vcurve, Subcurve *curve, 
 			  Event *topEndEvent, SweepLineGetPoints tag)
 {
@@ -1766,7 +1766,7 @@ HandleVerticalCurveXAtEnd(Subcurve *vcurve, Subcurve *curve,
 template <class CurveInputIterator,  class SweepLineTraits_2,
          class SweepEvent, class CurveWrap>
 inline bool
-Sweep_line_base_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
+Sweep_line_tight_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
 DoCurvesOverlap(Subcurve *c1, Subcurve *c2)
 {
   if ( m_traits->curve_compare_at_x_right(c1->getCurve(),
@@ -1783,7 +1783,7 @@ DoCurvesOverlap(Subcurve *c1, Subcurve *c2)
 template <class CurveInputIterator,  class SweepLineTraits_2,
          class SweepEvent, class CurveWrap>
 inline bool
-Sweep_line_base_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
+Sweep_line_tight_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
 SimilarCurves(const X_curve_2 &a, const X_curve_2 &b)
 {
   if ( m_traits->curve_is_same(a, b))
@@ -1796,7 +1796,7 @@ SimilarCurves(const X_curve_2 &a, const X_curve_2 &b)
 template <class CurveInputIterator,  class SweepLineTraits_2,
           class SweepEvent, class CurveWrap>
 inline bool
-Sweep_line_base_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
+Sweep_line_tight_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
 VerticalSubCurveExists(const X_curve_2 &a)
 {
   for ( std::list<X_curve_2>::iterator iter = m_verticalSubCurves.begin() ;
@@ -1818,7 +1818,7 @@ VerticalSubCurveExists(const X_curve_2 &a)
 template <class CurveInputIterator,  class SweepLineTraits_2,
          class SweepEvent, class CurveWrap>
 inline void 
-Sweep_line_base_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
+Sweep_line_tight_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
 PrintEventQueue()
 {
   SL_DEBUG(std::cout << std::endl << "Event queue: " << std::endl;)
@@ -1836,7 +1836,7 @@ PrintEventQueue()
 template <class CurveInputIterator,  class SweepLineTraits_2,
           class SweepEvent, class CurveWrap>
 inline void 
-Sweep_line_base_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
+Sweep_line_tight_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
 PrintSubCurves()
 {
   SL_DEBUG(std::cout << std::endl << "Sub curves: " << std::endl;)
@@ -1851,7 +1851,7 @@ PrintSubCurves()
 template <class CurveInputIterator,  class SweepLineTraits_2,
          class SweepEvent, class CurveWrap>
 inline void 
-Sweep_line_base_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
+Sweep_line_tight_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
 PrintStatusLine()
 {
   if ( m_statusLine->size() == 0) {
@@ -1872,7 +1872,7 @@ PrintStatusLine()
 template <class CurveInputIterator,  class SweepLineTraits_2,
          class SweepEvent, class CurveWrap>
 inline void 
-Sweep_line_base_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
+Sweep_line_tight_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
 PrintVerticals()
 {
   if ( m_verticals.size() == 0) {
