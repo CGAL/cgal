@@ -4,6 +4,17 @@
 
 
 //---------------------------------------------------------------------
+//	revision 2.9
+//---------------------------------------------------------------------
+
+DOCS: now joind into stl_extension.tex.
+DOCS: Initial revision
+DOCS: Lutz's version
+DOCS: Joined with compose.tex.
+SRC : Removed obsolete workaround flags.
+ALL : Removed line directives.
+
+//---------------------------------------------------------------------
 //	revision 2.8
 //---------------------------------------------------------------------
 
