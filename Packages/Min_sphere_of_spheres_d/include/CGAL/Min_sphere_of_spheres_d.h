@@ -268,7 +268,8 @@ namespace CGAL_MINIBALL_NAMESPACE {
   inline void Min_sphere_of_spheres_d<Traits>::update() {
     // set up the vector l containing pointers to the balls in S:
     CGAL_MINIBALL_ASSERT(l.size() == 0);
-    for (typename std::vector<Sphere>::const_iterator it = S.begin(); it != S.end(); ++it)
+    for (typename std::vector<Sphere>::const_iterator it = S.begin();
+	 it != S.end(); ++it)
       l.push_back(&(*it));
     
     // compute the miniball:
