@@ -53,16 +53,7 @@ class Layers_toolbar : public QObject
   Q_OBJECT
 public:
   Layers_toolbar(Qt_widget *w, QMainWindow *mw, Polygon *p);
-  ~Layers_toolbar()
-  {
-	//delete showMC;
-	//delete showP;
-	//delete showGA;
-	//delete showYM;
-	//delete showOC;
-	//delete showPP;
-    delete maintoolbar;
-  };
+  ~Layers_toolbar();
   QToolBar* toolbar(){return maintoolbar;};
 
 signals:

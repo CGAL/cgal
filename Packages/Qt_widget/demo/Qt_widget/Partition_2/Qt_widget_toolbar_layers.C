@@ -123,6 +123,17 @@ namespace CGAL {
     }
 			    
   }	
+
+  Layers_toolbar::~Layers_toolbar()
+  {
+    delete showMC;
+    delete showP;
+    delete showGA;
+    delete showYM;
+    delete showOC;
+    delete showPP;
+  };
+
   void Layers_toolbar::show_coordinates()
   {
     if (but[0]->isOn())
