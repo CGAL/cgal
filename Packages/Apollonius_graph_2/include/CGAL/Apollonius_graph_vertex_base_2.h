@@ -28,6 +28,9 @@
 #define CGAL_APOLLONIUS_GRAPH_VERTEX_BASE_2_H
 
 #include <list>
+
+#include <CGAL/Apollonius_graph_short_names_2.h>
+
 #include <CGAL/Triangulation_vertex_base_2.h>
 #include <CGAL/triangulation_assertions.h>
 

@@ -30,6 +30,8 @@
 #include <vector>
 #include <map>
 
+#include <CGAL/Apollonius_graph_short_names_2.h>
+
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Apollonius_graph_data_structure_2.h>
 #include <CGAL/Apollonius_graph_face_base_2.h>
@@ -168,10 +170,11 @@ public:
   typedef Site_2               value_type; // to have a back_inserter
   typedef const value_type&    const_reference; 
   typedef value_type&          reference;
-private:
-  typedef struct   Vertex_iterator {};
-  typedef struct   Face_iterator {};
-  typedef struct   Edge_iterator {};
+
+public:
+  struct   Vertex_iterator {};
+  struct   Face_iterator {};
+  struct   Edge_iterator {};
 
 protected:
   // some more local types

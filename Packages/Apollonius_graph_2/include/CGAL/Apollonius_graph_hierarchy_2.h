@@ -27,8 +27,11 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_HIERARCHY_2_H
 #define CGAL_APOLLONIUS_GRAPH_HIERARCHY_2_H
 
-#include <CGAL/Random.h>
 #include <map>
+
+#include <CGAL/Apollonius_graph_short_names_2.h>
+
+#include <CGAL/Random.h>
 
 #include <CGAL/Apollonius_graph_2.h>
 #include <CGAL/Apollonius_graph_data_structure_2.h>

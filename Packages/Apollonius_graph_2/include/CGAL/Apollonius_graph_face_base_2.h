@@ -27,6 +27,10 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_FACE_BASE_2_H
 #define CGAL_APOLLONIUS_GRAPH_FACE_BASE_2_H
 
+
+#include <CGAL/Apollonius_graph_short_names_2.h>
+
+
 #include <CGAL/Triangulation_ds_face_base_2.h>
 #include <CGAL/triangulation_assertions.h>
 
