@@ -1,5 +1,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Kd_tree.h>
+#include <CGAL/point_generators_2.h>
+#include <CGAL/Orthogonal_standard_search.h>
 
 #include <vector>
 #include <iostream>
