@@ -1,0 +1,25 @@
+This is TeX, Version 3.141 (C version d) (format=latex 97.10.9)  8 JAN 1998 16:37
+**install.tex
+(install.tex
+LaTeX2e <1997/06/01>
+Babel <v3.6h> and hyphenation patterns for english, dutch, loaded.
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.16 T
+      his document describes how to install \cgal\ on your system.  Besides
+? x
+ 
+Here is how much of TeX's memory you used:
+ 14 strings out of 10905
+ 213 string characters out of 72839
+ 42627 words of memory out of 262141
+ 2991 multiletter control sequences out of 9500
+ 3640 words of font info for 14 fonts, out of 100000 for 255
+ 14 hyphenation exceptions out of 607
+ 5i,0n,4p,86b,14s stack positions out of 300i,40n,60p,3000b,4000s
+No pages of output.

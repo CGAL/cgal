@@ -1,0 +1,1 @@
+Contains the installation script (with documentation) and some files that are necessary for the installation.
