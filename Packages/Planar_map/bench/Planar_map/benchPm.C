@@ -281,7 +281,7 @@ public:
    */
   void clean()
   {
-    Basic_pm::init();
+    Basic_pm::clean();
     delete m_window;
   }
   
