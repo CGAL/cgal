@@ -1,3 +1,8 @@
+1.6.1 (13 Aug 2002)
+- changes in geowin_support.h :
+  conversion function templates moved into CGAL namespace
+  polygon is now able to work with non-CGAL points
+
 1.6 (29 July 2002)
 - some demos changed
 - code cleanup (some VC 6 /KCC stuff removed)
