@@ -43,10 +43,10 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class Aff_transformationC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
-  : public Handle
+  : public R_::Aff_transformation_handle_3
 {
 #ifdef CGAL_CFG_NO_ADVANCED_KERNEL
-  friend class PlaneC3<R_ CGAL_CTAG>; // why ?
+  friend class PlaneC3<R_ CGAL_CTAG>; // FIXME: why ?
 #endif
 
 public:

@@ -24,7 +24,6 @@
 
 #include <cmath>
 #include <CGAL/Cartesian/redefine_names_2.h>
-#include <CGAL/Handle.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -46,7 +45,7 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class Aff_transformationC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
-  : public Handle
+  : public R_::Aff_transformation_handle_2
 {
 public:
   typedef R_                               R;

@@ -192,6 +192,7 @@ struct Cartesian_base
     typedef CGAL::Handle_for<Circle_ref_2>		Circle_handle_2;
     typedef CGAL::Handle_for<Triangle_ref_2>		Triangle_handle_2;
     typedef CGAL::Handle_for<Iso_rectangle_ref_2>	Iso_rectangle_handle_2;
+    typedef CGAL::Handle                           Aff_transformation_handle_2;
 
     typedef CGAL::Handle_for<Point_ref_3>		Point_handle_3;
     typedef CGAL::Handle_for<Vector_ref_3>		Vector_handle_3;
@@ -204,6 +205,7 @@ struct Cartesian_base
     typedef CGAL::Handle_for<Triangle_ref_3>		Triangle_handle_3;
     typedef CGAL::Handle_for<Tetrahedron_ref_3>		Tetrahedron_handle_3;
     typedef CGAL::Handle_for<Iso_cuboid_ref_3>	        Iso_cuboid_handle_3;
+    typedef CGAL::Handle                           Aff_transformation_handle_3;
 };
 
 
