@@ -66,11 +66,11 @@ class SM_io_parser : public Decorator_
 
 public:
 /*{\Mcreation 3}*/
-SM_io_parser(istream& is, const Base& D);
+SM_io_parser(std::istream& is, const Base& D);
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname|
 to input |H| from |is|.}*/
 
-SM_io_parser(ostream& os, const Base& D);
+SM_io_parser(std::ostream& os, const Base& D);
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname|
 to output |H| to |os|.}*/
 
@@ -101,7 +101,7 @@ static void dump(const Decorator_& D, std::ostream& os = cerr);
 
 template <typename Decorator_>
 SM_io_parser<Decorator_>::
-SM_io_parser(istream& iin, const Decorator_& H) :
+SM_io_parser(std::istream& iin, const Decorator_& H) :
   Base(H), in(iin), out(std::cout), verbose(0), 
   vn(0), en(0), fn(0), ln(0)
 { clear(); }

@@ -55,7 +55,7 @@ int main()
   L.push_back(s2);
   L.push_back(s3);
   SCircle pos_xy(0,0,1);
-  partition( pos_xy, L.begin(), L.end(), Lp);
+  CGAL::partition( pos_xy, L.begin(), L.end(), Lp);
   for (it = Lp.begin(); it != Lp.end(); ++it) {
     std::cout << *it << std::endl;
   }

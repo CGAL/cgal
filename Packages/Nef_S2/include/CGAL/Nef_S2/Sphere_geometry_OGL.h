@@ -769,7 +769,7 @@ void init()
   glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mat_diffuse );
   glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular );
   glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, mat_shininess );
-//#define SCREENSHOTS
+#define SCREENSHOTS
 #ifdef SCREENSHOTS
   GLfloat mat_emission[] = { 0.1, 0.1, 0.2, 0.0 };
   glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);

@@ -1,1 +1,1 @@
-Nef polyhedra in the plane
+Nef polyhedra in the sphere surface

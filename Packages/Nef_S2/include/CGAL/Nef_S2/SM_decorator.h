@@ -298,7 +298,7 @@ Face_handle new_face() const
 
 void delete_vertex_only(Vertex_handle v) const
 /*{\Mop deletes |v| without any connectivity update.}*/
-{ return psm_->delete_vertex(v); }
+{ psm_->delete_vertex(v); }
 
 void delete_edge_pair_only(Halfedge_handle e) const
 /*{\Mop deletes |e| and its twin without any connectivity update.}*/
@@ -310,7 +310,7 @@ void delete_halfedge_only(Halfedge_handle e) const
 
 void delete_face_only(Face_handle f) const
 /*{\Mop deletes |f| without any connectivity update.}*/
-{ return psm_->delete_face(f); }
+{ psm_->delete_face(f); }
 
 void delete_loop_only() const
 /*{\Mop deletes the loop and its twin without any connectivity update.}*/ 
