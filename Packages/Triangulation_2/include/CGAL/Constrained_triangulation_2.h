@@ -86,9 +86,9 @@ public:
   }
 
   // INSERTION
-  Vertex_handle insert_in_constrained_edge(const Point& a, 
-					   Face_handle f, 
-					   int i);
+  // Vertex_handle insert_in_constrained_edge(const Point& a, 
+// 					   Face_handle f, 
+// 					   int i);
   Vertex_handle insert(Point a);
   void insert(Point a, Point b);
   void insert(const Vertex_handle & va, const Vertex_handle & vb);
@@ -129,7 +129,7 @@ protected:
   void update_constraints_incident(Vertex_handle va, 
 				   Vertex_handle c1,
 				   Vertex_handle c2);
-  void update_constraints_incident(Vertex_handle va);
+  void clear_constraints_incident(Vertex_handle va);
   void update_constraints_opposite(Vertex_handle va);
   void update_constraints(const std::list<Edge> &hole);
 
@@ -138,63 +138,63 @@ protected:
 };
     
 
-template < class Gt, class Tds >
-Constrained_triangulation_2<Gt,Tds>::Vertex_handle
-Constrained_triangulation_2<Gt,Tds>::
-insert_in_constrained_edge(const Point& a, Face_handle f, int i)
-  // inserts in a constrianed  edge (f,i)=c1c2
-  // c1c2 is cut into two new constrained edges c1a and ac2
-  // the status (constrained or not) of the 4 edges incident to a
-  // is set 
-{
-  Vertex_handle c1,c2;
-  Face_handle ff, n;
-  int cwi, ccwi, indf, indn;
+// template < class Gt, class Tds >
+// Constrained_triangulation_2<Gt,Tds>::Vertex_handle
+// Constrained_triangulation_2<Gt,Tds>::
+// insert_in_constrained_edge(const Point& a, Face_handle f, int i)
+//   // inserts in a constrianed  edge (f,i)=c1c2
+//   // c1c2 is cut into two new constrained edges c1a and ac2
+//   // the status (constrained or not) of the 4 edges incident to a
+//   // is set 
+// {
+//   Vertex_handle c1,c2;
+//   Face_handle ff, n;
+//   int cwi, ccwi, indf, indn;
 
-      c1=f->vertex(ccw(i)); //endpoint of the constraint
-      c2=f->vertex(cw(i)); // endpoint of the constraint
+//       c1=f->vertex(ccw(i)); //endpoint of the constraint
+//       c2=f->vertex(cw(i)); // endpoint of the constraint
 
-      //Vertex_handle va = static_cast<Vertex*>(_tds.insert_in_edge(&(*f), i));
-      //va->set_point(a);
-      Vertex_handle va = insert_in_edge(a,f,i);
+//       //Vertex_handle va = static_cast<Vertex*>(_tds.insert_in_edge(&(*f), i));
+//       //va->set_point(a);
+//       Vertex_handle va = insert_in_edge(a,f,i);
 
-      // updates the constraints
-      if (dimension()==1) {
-	Edge_circulator ec=va->incident_edges(), done(ec);
-	do {
-	  ((*ec).first)->set_constraint(2,true);
-	}while (++ec != done);
-	return va;
-      }
+//       // updates the constraints
+//       if (dimension()==1) {
+// 	Edge_circulator ec=va->incident_edges(), done(ec);
+// 	do {
+// 	  ((*ec).first)->set_constraint(2,true);
+// 	}while (++ec != done);
+// 	return va;
+//       }
 	
-      //dimension() ==2
-      Face_circulator fc=va->incident_faces(), done(fc);  
-      CGAL_triangulation_assertion(fc != 0);
-      do {
-	ff= fc->handle();
-	indf = ff->index(va);
-	cwi=cw(indf);
-	ccwi=ccw(indf);
-  	n = ff->neighbor(indf); 
-	indn=ff->mirror_index(indf);
- 	if (n->is_constrained(indn)) { 
- 	  ff->set_constraint(indf,true);
- 	} 
- 	else { 
- 	  ff->set_constraint(indf,false);  
-	}
-	if ((ff->vertex(cwi) == c1)||(ff->vertex(cwi) == c2)) {
-	  ff->set_constraint(ccwi,true);
-	  ff->set_constraint(cwi,false);
-	}	
-	else {
-	  ff->set_constraint(ccwi,false);
-	  ff->set_constraint(cwi,true);
-	}
-	++fc;
-      } while (fc != done);
-      return va;
-}
+//       //dimension() ==2
+//       Face_circulator fc=va->incident_faces(), done(fc);  
+//       CGAL_triangulation_assertion(fc != 0);
+//       do {
+// 	ff= fc->handle();
+// 	indf = ff->index(va);
+// 	cwi=cw(indf);
+// 	ccwi=ccw(indf);
+//   	n = ff->neighbor(indf); 
+// 	indn=ff->mirror_index(indf);
+//  	if (n->is_constrained(indn)) { 
+//  	  ff->set_constraint(indf,true);
+//  	} 
+//  	else { 
+//  	  ff->set_constraint(indf,false);  
+// 	}
+// 	if ((ff->vertex(cwi) == c1)||(ff->vertex(cwi) == c2)) {
+// 	  ff->set_constraint(ccwi,true);
+// 	  ff->set_constraint(cwi,false);
+// 	}	
+// 	else {
+// 	  ff->set_constraint(ccwi,false);
+// 	  ff->set_constraint(cwi,true);
+// 	}
+// 	++fc;
+//       } while (fc != done);
+//       return va;
+// }
 
 
 template < class Gt, class Tds >
@@ -221,7 +221,7 @@ insert(Point a)
   
   va = Triangulation::insert(a,lt,loc,li);
   if (insert_in_constrained_edge) update_constraints_incident(va, c1,c2);
-  else update_constraints_incident(va);
+  else if(lt != VERTEX) clear_constraints_incident(va);
   if (dimension() == 2) update_constraints_opposite(va);
   return va;
 }
@@ -267,8 +267,8 @@ update_constraints_incident(Vertex_handle va,
 template < class Gt, class Tds >
 void
 Constrained_triangulation_2<Gt,Tds>::
-update_constraints_incident(Vertex_handle va)
-// updates status of edges incident to a
+clear_constraints_incident(Vertex_handle va)
+// make the edges incident to a newly created vertex unconstrained
 {
  Edge_circulator ec=va->incident_edges(), done(ec);
  Face_handle f;

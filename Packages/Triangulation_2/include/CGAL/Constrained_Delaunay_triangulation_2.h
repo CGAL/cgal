@@ -102,9 +102,11 @@ public:
   
   // INSERTION-REMOVAL
   Vertex_handle insert(const Point & a);
+  Vertex_handle special_insert_in_edge(const Point & a, Face_handle f, int i);
   void insert(const Point & a, const Point & b);
   void insert(Vertex_handle va, Vertex_handle & vb);
-  void insert(Vertex_handle va, Vertex_handle vb, Face_handle & fr, int & i);
+  void insert(Vertex_handle va, Vertex_handle vb, Face_handle & fr,
+	      int & i);
   void remove(Vertex_handle v);
 
   // CHECK
@@ -364,6 +366,41 @@ insert(const Point & a)
   return va;
 }
 
+
+template < class Gt, class Tds >  
+inline 
+Constrained_Delaunay_triangulation_2<Gt, Tds>::Vertex_handle 
+Constrained_Delaunay_triangulation_2<Gt, Tds>::
+special_insert_in_edge(const Point & a, Face_handle f, int i)
+  // insert  point p in edge(f,i)
+  // update constrained status
+  // and restore Delaunay constrained property
+  // this function is intended to be use by refine
+{
+  Vertex_handle va;
+  Vertex_handle c1,c2;
+  c1 = f->vertex(cw(i));  //endpoint of edge
+  c2 = f->vertex(ccw(i)); //endpoint of edge
+
+  // CGAL_triangulation_precondition(
+  //   geom_traits().orientation(c1->point(), a, c2->point()) == COLLINEAR &&
+  //   collinear_between(c1->point(), p, c2->point()));
+
+  // inserting a bypassing the precondition of
+  // va = Triangulation::insert_in_edge(a,f,i);
+  // because midpoint is not exact
+  // TO BE DISCUSSED
+  va = static_cast<Vertex*> (_tds.insert_in_edge(&(*f), i));
+  va->set_point(a);
+
+  if (f->is_constrained(i)) update_constraints_incident(va, c1,c2);
+  else clear_constraints_incident(va);
+  if (dimension() == 2) update_constraints_opposite(va);
+  flip_around(va); 
+  return va;
+}
+
+
 template < class Gt, class Tds >  
 inline void 
 Constrained_Delaunay_triangulation_2<Gt, Tds>::
@@ -512,7 +549,7 @@ is_bad(Face_handle  f,  double lmax, double lmin, double angmin)
      // returns true if f is bounded and its aspect ratio < 1
      // to be defined in a traits class
 {
-  double as;
+  //double as;
   Point p,q,r;
 
   if (is_infinite(f)) {
@@ -604,9 +641,9 @@ template < class Gt, class Tds >
 Constrained_Delaunay_triangulation_2<Gt, Tds>::Vertex_handle
 Constrained_Delaunay_triangulation_2<Gt, Tds>::
 refine_edge(Face_handle & f, int & i,
-			      List_edges & list_of_non_gabriel_constraints,
-			      List_faces & set_of_bad_faces,
-			  double lmax, double lmin, double angmin)
+	    List_edges & list_of_non_gabriel_constraints,
+	    List_faces & set_of_bad_faces,
+	    double lmax, double lmin, double angmin)
      // inserts the midpoint of edge ab and updates the sets of non Gabriel 
      // constraints and of bad triangles
      // returns the vertex v whose point is the midpoint of ab
@@ -621,9 +658,7 @@ refine_edge(Face_handle & f, int & i,
   va = f->vertex(cw(i)); // endpoint of the constraint
   vb = f->vertex(ccw(i)); // the other endpoint
   midpoint_of_e = va->point() + (vb->point() - va->point())/2.0;
-  v = insert_in_edge(midpoint_of_e, f,i);
-  // v= new Vertex(midpoint_of_e); 
-  // insert_in_edge(v, f,i);
+  v = special_insert_in_edge(midpoint_of_e, f,i);
   
   // updates list_of_non_gabriel_constraints 
   //  fv = v->incident_faces(); // distinct from f ???
@@ -807,6 +842,7 @@ refine(List_edges & list_of_constraints,
   // refine all bad triangles
 
    while (!(set_of_bad_faces.empty())) {
+     std::cerr << set_of_bad_faces.size() << std::endl;
      f=set_of_bad_faces.front();
      set_of_bad_faces.pop_front();
      if (is_bad(f, lmax, lmin, angmin)) {
