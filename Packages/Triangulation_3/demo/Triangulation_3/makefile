@@ -11,14 +11,26 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = -I../../include \
-       $(CGAL_CXXFLAGS) -g
+CXXFLAGS = \
+           $(TESTSUITE_CXXFLAGS) \
+           $(EXTRA_FLAGS) \
+           -Iinclude \
+           $(CGAL_CXXFLAGS) \
+           $(LONG_NAME_PROBLEM_CXXFLAGS) \
+           $(DEBUG_OPT)
 
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
 
-LDFLAGS = $(CGAL_LDFLAGS)
+LIBPATH = \
+          $(TESTSUITE_LIBPATH) \
+          $(CGAL_LIBPATH)
+
+LDFLAGS = \
+          $(TESTSUITE_LDFLAGS) \
+          $(LONG_NAME_PROBLEM_LDFLAGS) \
+          $(CGAL_LDFLAGS)
 
 #---------------------------------------------------------------------#
 #                    target entries
@@ -26,18 +38,19 @@ LDFLAGS = $(CGAL_LDFLAGS)
 
 all: demo blind_demo
 
-demo: demo.o 
-	$(CGAL_CXX) -o demo demo.o $(LDFLAGS)
+demo$(EXE_EXT): demo$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo demo$(OBJ_EXT) $(LDFLAGS)
 
-blind_demo: blind_demo.o 
-	$(CGAL_CXX) -o blind_demo blind_demo.o $(LDFLAGS)
+blind_demo$(EXE_EXT): blind_demo$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)blind_demo blind_demo$(OBJ_EXT) $(LDFLAGS)
 
 clean:
-	rm -f *.o demo blind_demo data/output core
+	rm -f data/output core\
+	demo.clean blind_demo.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#
 
 .C.o:
-	$(CGAL_CXX) $(CXXFLAGS) -c $<
+	$(CGAL_CXX) $(CXXFLAGS)  $(OBJ_OPT) $<
