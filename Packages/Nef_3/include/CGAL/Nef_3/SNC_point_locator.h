@@ -1,192 +1,454 @@
-// Copyright (c) 1997-2002  Max-Planck-Institute Saarbruecken (Germany).
-// All rights reserved.
-//
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $Source$
-// $Revision$ $Date$
-// $Name$
-//
-// Author(s)     : Michael Seel    <seel@mpi-sb.mpg.de>
-//                 Miguel Granados <granados@mpi-sb.mpg.de>
-//                 Susan Hert      <hert@mpi-sb.mpg.de>
-//                 Lutz Kettner    <kettner@mpi-sb.mpg.de>
-//#ifndef CGAL_SNC_POINT_LOCATOR_H
-#ifdef  CGAL_NEF3_DEPRECATED_CLASS
-#error funcionality now provided by SNC_ray_shoter.h 
-#define CGAL_SNC_POINT_LOCATOR_H
+#line 7 "point_locator.nw"
+#ifndef SNC_POINT_LOCATOR_H
+#define SNC_POINT_LOCATOR_H
 
 #include <CGAL/basic.h>
-#include <CGAL/intersection_3.h>
-#include <CGAL/predicates_on_points_3.h>
-#include <CGAL/Unique_hash_map.h>
 #include <CGAL/Nef_3/SNC_decorator.h>
-#include <CGAL/Nef_3/SNC_constructor.h>
-#include <CGAL/Nef_3/SNC_FM_decorator.h>
 #include <CGAL/Nef_3/SNC_SM_point_locator.h>
+#include <CGAL/Nef_3/SNC_intersection.h>
+#include <CGAL/Nef_3/SNC_ray_shooter.h>
+#include <CGAL/Nef_3/SNC_k3_tree_traits.h>
+#include <CGAL/K3_tree.h>
+#include <CGAL/Unique_hash_map.h>
+
+#undef _DEBUG
+#define _DEBUG 509
+#include <CGAL/Nef_3/debug.h>
+
+#undef _TRACEN
+#define _TRACEN(msg) TRACEN( "SNC_point_locator: " << msg);
+
+#define CGAL_for_each( i, C) for( i = C.begin(); i != C.end(); ++i)
+// TODO: find out the CGAL replacement for this macro and remove it
 
 CGAL_BEGIN_NAMESPACE
 
-template <typename SNC_>
-class SNC_point_locator : public SNC_decorator<SNC_>
-{ 
+template <typename SNC_structure>
+class SNC_point_locator
+{
+  class Intersection_call_back;
+  typedef SNC_point_locator<SNC_structure> Self;
+  typedef typename SNC_structure::Object_handle Object_handle;
+  typedef typename SNC_structure::Vertex_handle Vertex_handle;
+  typedef typename SNC_structure::Halfedge_handle Halfedge_handle;
+  typedef typename SNC_structure::Halffacet_handle Halffacet_handle;
+  typedef typename SNC_structure::Point_3 Point_3;
+  typedef typename SNC_structure::Segment_3 Segment_3;
+  typedef typename SNC_structure::Ray_3 Ray_3;
 public:
-  typedef SNC_                             SNC_structure;
-  typedef SNC_point_locator<SNC_>          Self;
-  typedef CGAL::SNC_decorator<SNC_>        Base;
-  typedef CGAL::SNC_constructor<SNC_>      SNC_constructor;
-  typedef CGAL::SNC_FM_decorator<SNC_>     FM_decorator;
-  typedef CGAL::SNC_SM_decorator<SNC_>     SM_decorator;
-  typedef CGAL::SNC_SM_point_locator<SNC_> SM_point_locator;
+  virtual Object_handle locate(const Point_3& p) const = 0;
+  virtual Object_handle shoot(const Ray_3& s) const = 0;
+  virtual void intersect_with_edges( Halfedge_handle edge,
+                                     const Intersection_call_back& call_back) 
+    const = 0;
+  virtual void intersect_with_facets( Halfedge_handle edge,
+                                      const Intersection_call_back& call_back)
+    const = 0;
+  class Intersection_call_back 
+  {
+  public:
+    virtual void operator()( Halfedge_handle edge, Object_handle object, 
+                             const Point_3& intersection_point) const = 0;
+  };
+  virtual void initialize(SNC_structure* W) = 0;
+  virtual Self* clone() const = 0;
+  //virtual Self* copy() const = 0;
+  virtual bool update( Unique_hash_map<Vertex_handle, bool>& V, 
+                       Unique_hash_map<Halfedge_handle, bool>& E, 
+                       Unique_hash_map<Halffacet_handle, bool>& F) = 0;
+  virtual ~SNC_point_locator() {};
+};
 
-#define USING(t) typedef typename Base::t t
-  USING(Vertex_iterator);   USING(Vertex_handle);
-  USING(Halfedge_iterator); USING(Halfedge_handle);
-  USING(Halffacet_iterator);    USING(Halffacet_handle);
-  USING(Volume_iterator);   USING(Volume_handle);
-  USING(SVertex_iterator);   USING(SVertex_handle);
-  USING(SHalfedge_iterator); USING(SHalfedge_handle);
-  USING(SHalfloop_iterator); USING(SHalfloop_handle);
-  USING(SFace_iterator);     USING(SFace_handle);
+template <typename SNC_structure>
+class SNC_point_locator_by_spatial_subdivision : 
+  public SNC_point_locator<SNC_structure>,
+  public SNC_decorator<SNC_structure>
+{ 
+  typedef SNC_decorator<SNC_structure> Base;
+  typedef SNC_point_locator<SNC_structure> SNC_point_locator;
+  typedef SNC_decorator<SNC_structure> SNC_decorator;
+  typedef SNC_point_locator_by_spatial_subdivision<SNC_structure> Self;
+  typedef SNC_SM_decorator<SNC_structure> SM_decorator;
+  typedef SNC_intersection<SNC_structure> SNC_intersection;
+
+  typedef typename CGAL::SNC_k3_tree_traits<SNC_structure> K3_tree_traits;
+  typedef typename CGAL::K3_tree<K3_tree_traits> K3_tree;
+  typedef K3_tree SNC_candidate_provider;
+
+  typedef typename SNC_candidate_provider::Object_list Object_list;
+  typedef typename Object_list::iterator Object_list_iterator;
+  typedef typename SNC_candidate_provider::Objects_along_ray Objects_along_ray;
+  typedef typename Objects_along_ray::Iterator Objects_along_ray_iterator;
+
+  #define USING(t) typedef typename SNC_structure::t t
   USING(Object_handle);
-  USING(SObject_handle);
-  USING(SFace_cycle_iterator);
-  USING(Halffacet_cycle_iterator);
-  USING(Shell_entry_iterator);
-  USING(SHalfedge_around_facet_circulator);
+  USING(Vertex_handle);
+  USING(Halfedge_handle);
+  USING(Halffacet_handle);
+  USING(Volume_handle);
+  USING(Vertex_iterator);
+  USING(Halfedge_iterator);
+  USING(Halffacet_iterator);
   USING(Point_3);
   USING(Segment_3);
-  USING(Plane_3);
-  USING(Vector_3);
-  USING(Line_3);
-  USING(Sphere_point);
-  USING(Sphere_segment);
-  USING(Sphere_circle);
-  USING(Mark);
-#undef USING
-  typedef void* GenPtr;
+  USING(Ray_3);
+  USING(Direction_3);
+  #undef USING
 
-  SNC_point_locator(SNC_structure& W) : Base(W) {}
+  bool initialized;
 
-  typename SNC_::Object_handle locate(const Point_3& p) const;
-  typename SNC_::Halffacet_handle get_facet_below(const Vertex_handle& vi) 
-    const;
-  
-  void shorten(Segment_3& s, const Point_3& p) const
-  { s = Segment_3(s.source(),p); }
-
-  bool contains_internally(const Segment_3& s, const Point_3& p) const
-  { CGAL_nef3_assertion(s.has_on(p));
-    CGAL::Comparison_result r1 = compare_xyz(s.source(),p); 
-    CGAL::Comparison_result r2 = compare_xyz(s.target(),p); 
-    return (r1 == opposite(r2));
+public:
+  SNC_point_locator_by_spatial_subdivision() : initialized(false) {}
+  virtual void initialize(SNC_structure* W) {
+    CGAL_assertion( W != NULL);
+    Base::initialize(W);
+    initialized = true;
+    Object_list objects;
+    Vertex_iterator v;
+    Halfedge_iterator e;
+    Halffacet_iterator f;
+    CGAL_nef3_forall_vertices( v, *sncp()) 
+      objects.push_back(Object_handle(Vertex_handle(v)));
+    CGAL_nef3_forall_edges( e, *sncp())
+      objects.push_back(Object_handle(Halfedge_handle(e)));
+    CGAL_nef3_forall_facets( f, *sncp())
+      objects.push_back(Object_handle(Halffacet_handle(f)));
+    candidate_provider = new SNC_candidate_provider(objects);
+    _TRACEN(*candidate_provider);
   }
 
-  bool do_intersect(const Segment_3& s,
-		    Halfedge_handle e,
-		    Point_3& p) const
-  { CGAL::Object o = CGAL::intersection(Line_3(s),Line_3(segment(e))); 
-    if ( !CGAL::assign(p,o) ) return false;
-    CGAL::Oriented_side os1 = h.oriented_side(s.source());
-    CGAL::Oriented_side os2 = h.oriented_side(s.target());
-    return (os1 == CGAL::opposite(os2));
+  virtual Self* clone() const { 
+    return new Self; 
+  }
+  /*
+  virtual Self* copy() const { 
+    CGAL_assertion( initialized);
+    Self *pl_copy = new Self;
+    pl_copy->initialize(sncp());
+    return pl_copy; 
+  }
+  */
+  virtual bool update( Unique_hash_map<Vertex_handle, bool>& V, 
+                       Unique_hash_map<Halfedge_handle, bool>& E, 
+                       Unique_hash_map<Halffacet_handle, bool>& F) {
+    CGAL_assertion( initialized);
+    _TRACEN( *candidate_provider);
+    bool updated = candidate_provider->update( V, E, F);
+    _TRACEN( *candidate_provider);
+    return updated;
+  }
+  virtual ~SNC_point_locator_by_spatial_subdivision() {
+    CGAL_assertion( initialized);
+    delete candidate_provider;
   }
 
-  bool do_intersect(const Segment_3& s,
-		    Halffacet_handle f,
-		    Point_3& p) const
-  { Plane_3 h(plane(f));
-    CGAL::Object o = CGAL::intersection(h, Line_3(s));
-    if ( !CGAL::assign(p,o) ) return false;
-    CGAL::Oriented_side os1 = h.oriented_side(s.source());
-    CGAL::Oriented_side os2 = h.oriented_side(s.target());
-    return (os1 == CGAL::opposite(os2));
+  virtual Object_handle shoot(const Ray_3& ray) const {
+    CGAL_assertion( initialized);
+    _TRACEN( "shooting: "<<ray);
+    Object_handle result;
+    Vertex_handle v;
+    Halfedge_handle e;
+    Halffacet_handle f;
+    bool hit = false;
+    Point_3 end_of_seg;
+    Objects_along_ray objects = candidate_provider->objects_along_ray(ray);
+    Objects_along_ray_iterator objects_iterator = objects.begin();
+    while( !hit && objects_iterator != objects.end()) {
+      Object_list candidates = *objects_iterator;
+      Object_list_iterator o;
+      CGAL_for_each( o, candidates) {
+        if( assign( v, *o)) {
+	  _TRACEN("trying vertex on "<<point(v));
+          if( ray.source() != point(v) && ray.has_on(point(v))) {
+	    _TRACEN("the ray intersects the point");
+	    _TRACEN("actual intersection? "<<hit<<" on "<<end_of_seg);
+            if( hit && 
+                !Segment_3( ray.source(), end_of_seg).has_on(point(v)))
+              continue;
+            end_of_seg = point(v);
+            result = Object_handle(v);
+            hit = true;
+            _TRACEN("the vertex becomes the new hit object");
+          }
+        }
+        else if( assign( e, *o)) {
+          Point_3 q;
+	  _TRACEN("trying edge on "<<segment(e));
+          if( is.does_intersect_internally( ray, segment(e), q)) {
+            _TRACEN("ray intersects edge on "<<q);
+            _TRACEN("actual intersection? "<<hit<<" on "<<end_of_seg);
+	    _TRACEN("is the intersection point on the current cell? "<<candidate_provider->is_point_on_cell( q, objects_iterator));
+	    if( !candidate_provider->is_point_on_cell( q, objects_iterator)) // TODO: hide the node
+		continue;
+            if( !hit || 
+		has_smaller_distance_to_point( ray.source(), q, end_of_seg)) {
+	      end_of_seg = q; 
+	      result = Object_handle(e);
+	      hit = true;
+	      _TRACEN("the edge becomes the new hit object");
+	    }
+          }
+        }
+        else if( assign( f, *o)) {
+          Point_3 q;
+	  _TRACEN("trying facet with on plane "<<plane(f)<<" with point on "<<plane(f).point());
+          if( is.does_intersect_internally( ray, f, q) ) {
+	    _TRACEN("ray intersects facet on "<<q);
+            _TRACEN("actual intersection? "<<hit<<" on "<<end_of_seg);
+	    _TRACEN("is the intersection point on the current cell? "<<candidate_provider->is_point_on_cell( q, objects_iterator));
+	    if( !candidate_provider->is_point_on_cell( q, objects_iterator))
+		continue;
+            if( !hit || 
+		has_smaller_distance_to_point( ray.source(), q, end_of_seg)) {
+	      end_of_seg = q;
+	      result = Object_handle(f);
+	      hit = true; 
+	      _TRACEN("the facet becomes the new hit object");
+	    }
+          }
+        }
+        else
+          CGAL_nef3_assertion_msg( 0, "wrong handle");
+      }
+      if(!hit)
+	++objects_iterator;
+    }
+    return result;
   }
 
+  virtual Object_handle locate( const Point_3& p) const {
+    CGAL_assertion( initialized);
+    _TRACEN( "locate "<<p);
+    Vertex_handle v;
+    Halfedge_handle e;
+    Halffacet_handle f;
+    Object_list candidates = candidate_provider->objects_around_point(p);
+    Object_list_iterator o;
+    CGAL_for_each( o, candidates) {
+      if( assign( v, *o)) {
+        if ( p == point(v)) {
+          _TRACEN("found on vertex"<<point(v));
+          return Object_handle(v);
+        }
+      }
+      else if( assign( e, *o)) {
+        if ( is.does_contain_internally( segment(e), p) ) {
+          _TRACEN("found on edge"<<segment(e));
+          return Object_handle(e);
+        }
+      }
+      else if( assign( f, *o)) {
+        if ( is.does_contain_internally( f, p) ) {
+          _TRACEN("found on facet...");
+          return Object_handle(f);
+        }
+      }
+    }
+    _TRACEN("point not found in 2-skeleton");
 
-}; // SNC_point_locator<SNC_>
+    // TODO: here, the vertex to choose should be contained in the same cell 
+    // where the query point is located, or, if there is not vertex on the 
+    // cell, then the volume containing the cell should be available in the 
+    // tree structure and so immediately reported
+    _TRACEN("shooting ray to determine the volume");
+    Ray_3 r( p, Direction_3( -1, 0, 0));
+    return Object_handle(determine_volume(r));
+  }
 
+  virtual void intersect_with_edges( Halfedge_handle e0,
+    const typename SNC_point_locator::Intersection_call_back& call_back) const {
+    CGAL_assertion( initialized);
+    _TRACEN( "intersecting edge: "<<&*e0<<' '<<segment(e0));
+    Segment_3 s(segment(e0));
+    Vertex_handle v;
+    Halfedge_handle e;
+    Halffacet_handle f;
+    Object_list_iterator o;
+    Object_list objects = candidate_provider->objects_around_segment(s);
+    CGAL_for_each( o, objects) {
+      if( assign( v, *o)) {
+        /* do nothing */
+      }
+      else if( assign( e, *o)) {
+        Point_3 q;
+        if( is.does_intersect_internally( s, segment(e), q)) {
+          q = normalized(q);
+          call_back( e0, Object_handle(e), q);
+          _TRACEN("edge intersects edge "<<' '<<&*e<<segment(e)<<" on "<<q);
+        }
+      }
+      else if( assign( f, *o)) {
+        /* do nothing */
+      }
+      else
+        CGAL_nef3_assertion_msg( 0, "wrong handle");
+    }
+  }
 
+  void intersect_with_facets( Halfedge_handle e0, 
+    const typename SNC_point_locator::Intersection_call_back& call_back) const {
+    CGAL_assertion( initialized);
+    _TRACEN( "intersecting edge: "<<segment(e0));
+    Segment_3 s(segment(e0));
+    Vertex_handle v;
+    Halfedge_handle e;
+    Halffacet_handle f;
+    Object_list_iterator o;
+    Object_list objects = candidate_provider->objects_around_segment(s);
+    CGAL_for_each( o, objects) {
+      if( assign( v, *o)) {
+        /* do nothing */
+      }
+      else if( assign( e, *o)) {
+        /* do nothing */
+      }
+      else if( assign( f, *o)) {
+        Point_3 q;
+        if( is.does_intersect_internally( s, f, q) ) {
+          q = normalized(q);
+          call_back( e0, Object_handle(f), q);
+          _TRACEN("edge intersects facet on plane "<<plane(f)<<" on "<<q);
+        }
+      }
+      else
+        CGAL_nef3_assertion_msg( 0, "wrong handle");
+    }
+  }
 
-template <typename SNC_>
-typename SNC_::Object_handle
-SNC_point_locator<SNC_>::locate(const Point_3& p) const
+private:
+  Volume_handle determine_volume( const Ray_3& ray) const {
+    Halffacet_handle f_below;
+    Object_handle o = shoot(ray);
+    Vertex_handle v;
+    Halfedge_handle e;
+    Halffacet_handle f;
+    if( assign( v, o)) {
+      _TRACEN("vertex hit, obtaining volume...");
+      f_below = get_visible_facet( v, ray);
+      if( f_below != Halffacet_handle())
+        return volume(f_below);
+      SM_decorator SD(v); // now, the vertex has no incident facets
+      CGAL_nef3_assertion( SD.number_of_sfaces() == 1);
+      return volume(SD.sfaces_begin());
+    }
+    else if( assign( e, o)) {
+      _TRACEN("edge hit, obtaining volume...");
+      f_below = get_visible_facet( e, ray);
+      if( f_below != Halffacet_handle())
+        return volume(f_below);
+      SM_decorator SD(source(e)); // now, the edge has no incident facets
+      CGAL_nef3_assertion(SD.is_isolated(e));
+      return volume(sface(e));
+    }
+    else if( assign( f, o)) {
+      _TRACEN("facet hit, obtaining volume...");
+      f_below = get_visible_facet(f, ray);
+      CGAL_nef3_assertion( f_below != Halffacet_handle());
+      return volume(f_below);
+    }
+    return Base(*this).volumes_begin(); // TODO: Comment this hack!
+  }
+
+private:
+  SNC_candidate_provider* candidate_provider;
+  SNC_intersection is;
+};
+
+template <typename SNC_structure>
+class SNC_point_locator_naive : 
+  public SNC_ray_shooter<SNC_structure>, 
+  public SNC_point_locator<SNC_structure>
 {
-  if ( number_of_vertices() == 0 ) return Object_handle();
-  // now not empty:
+  typedef SNC_ray_shooter<SNC_structure> Base;
+  typedef SNC_point_locator_naive<SNC_structure> Self;
+  typedef SNC_point_locator<SNC_structure> SNC_point_locator;
+  typedef SNC_intersection<SNC_structure> SNC_intersection;
+  typedef typename SNC_structure::Object_handle Object_handle;
+  typedef typename SNC_structure::Point_3 Point_3;
+  typedef typename SNC_structure::Segment_3 Segment_3;
+  typedef typename SNC_structure::Ray_3 Ray_3;
+  typedef typename SNC_structure::Vertex_handle Vertex_handle;
+  typedef typename SNC_structure::Halfedge_handle Halfedge_handle;
+  typedef typename SNC_structure::Halffacet_handle Halffacet_handle;
+  typedef typename SNC_structure::Vertex_iterator Vertex_iterator;
+  typedef typename SNC_structure::Halfedge_iterator Halfedge_iterator;
+  typedef typename SNC_structure::Halffacet_iterator Halffacet_iterator;
 
-  Vertex_iterator v;
-  CGAL_nef3_forall_vertices(v,*sncp()) 
-    if ( p == point(v) ) return Object_handle(v);
+  bool initialized;
 
-  Halfedge_iterator e;
-  CGAL_nef3_forall_edges(e,*sncp()) 
-    if ( segment(e).constains(p) ) return Object_handle(e);
-
-  Halffacet_iterator f;
-  CGAL_nef3_forall_halffacets(f,*sncp()) { // nur ufacets
-    FM_decorator D(f);
-    if ( D.facet_contains(p) ) return Object_handle(f);
-  }
-  // now not contained in any boundary object:
-
-  Segment_3 s(p, point(vertices_begin())), so(s.opposite());
-  Object_handle closest(vertices_begin());
-  CGAL_nef3_forall_vertices(v,*sncp())
-    if ( s.has_on(point(v)) ) 
-    { shorten(s,point(v)); closest=Object_handle(v); }
-  CGAL_nef3_forall_edges(e,*sncp()) {
-    Point_3 q;
-    if ( do_intersect(s,e,q) ) 
-    { shorten(s,q); closest=Object_handle(e); }
-  }
-  CGAL_nef3_forall_halffacets(f,*sncp()) {
-    Point_3 q;
-    if ( do_intersect(s,f,q) )
-    { shorten(s,q); closest=Object_handle(f); }
+public:
+  SNC_point_locator_naive() : initialized(false) {}
+  virtual void initialize(SNC_structure* W) { 
+    CGAL_assertion( W != NULL);
+    Base::initialize(W); 
+    initialized = true;
   }
 
-  // now closest holds the closest boundary object that
-  // contains the point s.target() :
+  virtual Self* clone() const { 
+    return new Self; 
+  }
+  /*
+  virtual Self* copy() const { 
+    CGAL_assertion( initialized);
+    Self *pl_copy = new Self;
+    pl_copy->initialize(sncp());
+    return pl_copy; 
+  }
+  */
+  virtual bool update( Unique_hash_map<Vertex_handle, bool>& V, 
+                       Unique_hash_map<Halfedge_handle, bool>& E, 
+                       Unique_hash_map<Halffacet_handle, bool>& F) {
+    CGAL_assertion( initialized);
+    return false;
+  }
 
-  if ( CGAL::assign(v,closest) ) {
-    SM_point_locator L(v);
-    Sphere_point pl(so.direction());
-    SObject_handle o = L.locate(pl);
-    SFace_handle f;  
-    if ( !CGAL::assign(f,o) ) CGAL_nef3_assertion_msg(0,"Must be sface.");
-    /* v is the closest object and therefore the view towards p must
-       be an sface */
-    return Object_handle(volume(f));
-  } else if ( CGAL::assign(e,closest) ) {
-    SNC_constructor C(*sncp());
-    Vertex_handle v_tmp = C.create_from_edge(e,s.target());
-    SM_point_locator L(v_tmp);
-    Sphere_point pl(so.direction());
-    SObject_handle o = L.locate(pl);
-    SFace_handle f;  
-    if ( !CGAL::assign(f,o) ) CGAL_nef3_assertion_msg(0,"Must be sface.");
-    /* e is the closest object and therefore the view towards p must
-       be an sface */
-    return Object_handle(volume(f));
-  } else if ( CGAL::assign(f,closest) ) {
-    // sideness correction necessary:
-    if ( plane(f).has_on_negative_side(p) ) f = twin(f);
-    CGAL_nef3_assertion( plane(f).has_on_positive_side(p) );
-    return Object_handle(volume(f));
-  } else CGAL_nef3_assertion_msg(0,"damn generic handles.");
-  return Object_handle(); // never reached
-}
+  virtual ~SNC_point_locator_naive() {}
+
+  Object_handle locate(const Point_3& p) const {
+    CGAL_assertion( initialized);
+    return Base::locate(p);
+  }
+  Object_handle shoot(const Ray_3& r) const {
+    CGAL_assertion( initialized);
+    return Base::shoot(r);
+  }
+
+  void intersect_with_edges( Halfedge_handle e0, 
+    const typename SNC_point_locator::Intersection_call_back& call_back) const {
+    CGAL_assertion( initialized);
+    TRACEN( "intersecting edge: "<<segment(e0));
+    SNC_intersection is(*sncp());
+    Segment_3 s(segment(e0));
+    Halfedge_iterator e;
+    CGAL_nef3_forall_edges( e, *sncp()) {
+      Point_3 q;
+      if( is.does_intersect_internally( s, segment(e), q)) {
+        q = normalized(q);
+        TRACEN("edge intersects edge "<<segment(e)<<" on "<<q);
+        call_back( e0, Object_handle(e), q);
+      }
+    }
+  }
+
+  void intersect_with_facets( Halfedge_handle e0, 
+    const typename SNC_point_locator::Intersection_call_back& call_back) const {
+    CGAL_assertion( initialized);
+    TRACEN( "intersecting edge: "<<segment(e0));
+    SNC_intersection is(*sncp());
+    Segment_3 s(segment(e0));
+    Halffacet_iterator f;
+    CGAL_nef3_forall_facets( f, *sncp()) {
+      Point_3 q;
+      if( is.does_intersect_internally( s, f, q) ) {
+        q = normalized(q);
+        TRACEN("edge intersects facet on plane "<<plane(f)<<" on "<<q);
+        call_back( e0, Object_handle(f), q);
+      }
+    }
+  }
+};
 
 CGAL_END_NAMESPACE
 
-//#endif //CGAL_SNC_POINT_LOCATOR_H
-#endif //CGAL_NEF3_DEPRECATED_CLASS
+#endif // SNC_POINT_LOCATOR_H
+
