@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Orthogonal_priority_search<TreeTraits,OrthogonalDistance,SpatialTree>}  %% add template arg's if necessary
+\begin{ccRefClass}{Orthogonal_priority_search<TreeTraits, OrthogonalDistance, SpatialTree>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -26,14 +26,15 @@ built with extended nodes.
 
 \ccParameters
 
-Expects for the parameter \ccc{TreeTraits} an implementation of the concept TreeTraits,
-for example \ccc{CGAL::Kd_tree_traits<Point,Splitter>}.
-Expects for the parameter \ccc{Distance} an implementation of the
-concept OrthogonalDistance. \ccc{Distance} has default argument 
+Expects for the first template argument an implementation of the concept \ccc{TreeTraits},
+for example \ccc{CGAL::Kd_tree_traits<Point, Splitter>}.
+Expects for the second template argument an implementation of the
+concept OrthogonalDistance, for example \ccc{CGAL::Euclidean_distance<TreeTraits::Point>}.
+The second template argument has default value
 \ccc{CGAL::Euclidean_distance<TreeTraits::Point>}.
-
-Expects for the parameter \ccc{SpatialTree} an implementation of the concept SpatialTree.
-\ccc{SpatialTree} has default argument \ccc{CGAL::Kd_tree<TreeTraits>}.
+Expects for third template argument an implementation of the concept SpatialTree,
+for example \ccc{CGAL::Kd_tree<TreeTraits>},
+The third template argument has default value \ccc{CGAL::Kd_tree<TreeTraits>}.
 
 \ccTypes
 
@@ -45,6 +46,7 @@ Expects for the parameter \ccc{SpatialTree} an implementation of the concept Spa
 \ccCreation
 \ccCreationVariable{s}  %% choose variable name
 
+\def\ccLongParamLayout{\ccTrue}
 \ccConstructor{Orthogonal_priority_search(Tree tree, QueryItem q, OrthogonalDistance d=OrthogonalDistance(), NT Eps=NT(0.0),
 bool Search_nearest=true);}
 {Constructor for incremental neighbor searching of the query item \ccc{q}
@@ -68,7 +70,7 @@ Inserts statistics of the search process into the output stream \ccc{s}.
 
 \ccSeeAlso
 
-\ccc{CGAL::General_priority_search<TreeTraits,GeneralDistance,QueryItem,SpatialTree>}.
+\ccc{CGAL::General_priority_search<TreeTraits, GeneralDistance, QueryItem, SpatialTree>}.
 
 \end{ccRefClass}
 

@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Manhattan_distance_rectangle_point<QueryItem,SpatialPoint>}  %% add template arg's if necessary
+\begin{ccRefClass}{Manhattan_distance_rectangle_point<QueryItem, SpatialPoint>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -29,11 +29,14 @@ and a $d$-dimensional iso-rectangle defined as a $k$-$d$ tree rectangle.
 
 \ccParameters
 
-Expects for the parameter \ccc{QueryItem}
-\ccc{item} an implementation of iso-rectangles
-for example \ccc{CGAL::Iso_box_d<R>}.
-Expects for the parameter \ccc{SpatialPoint} an implementation
-of a $d$-dimensional point, for example \ccc{CGAL::Point_d<R>}.
+Expects for the first template argument an implementation 
+for $d$-dimensional spheres of the concept \ccc{QueryItem},
+for example \ccc{CGAL::Sphere_d<Kernel>}.
+Expects for the second template argument
+an implementation for
+$d$-dimensional points of
+the concept \ccc{SpatialPoint}, 
+for example \ccc{CGAL::Point_d<Kernel>}.
 
 \ccIsModel
 

@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{General_priority_search<TreeTraits,Distance,QueryItem,SpatialTree>}  %% add template arg's if necessary
+\begin{ccRefClass}{General_priority_search<TreeTraits, GeneralDistance, QueryItem, SpatialTree>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -26,18 +26,22 @@ built with extended nodes.
 
 \ccParameters
 
-Expects for the parameter \ccc{TreeTraits} an implementation of the concept TreeTraits,
-for example \ccc{CGAL::Kd_tree_traits<Point,Splitter>}.
-Expects for the parameter \ccc{Distance} an implementation of the
-concept GeneralDistance. \ccc{Distance} has default argument 
+Expects for the first template argument an implementation of the concept \ccc{TreeTraits},
+for example \ccc{CGAL::Kd_tree_traits<Point, Splitter>}.
+Expects for the second template argument an implementation of the
+concept GeneralDistance, for example \ccc{CGAL::Euclidean_distance<TreeTraits::Point>}.
+The second template argument has default argument 
 \ccc{CGAL::Euclidean_distance<TreeTraits::Point>}.
-Expects for the parameter \ccc{QueryItem}  an implementation of
-of a $d$-dimensional point, for example \ccc{CGAL::Point_d<Kernel>}
-or an implementation of a spatial object, for
+Expects for the third template argument an implementation of the concept
+\ccc{QueryItem}
+by a $d$-dimensional point, for example \ccc{CGAL::Point_d<Kernel>}
+or by a spatial object, for
 example \ccc{CGAL::Iso_box_d<Kernel>} implementing iso-rectangles.
-\ccc{QueryItem} has default argement \ccc{TreeTraits::Point}.
-Expects for the parameter \ccc{SpatialTree} an implementation of the concept SpatialTree.
-\ccc{SpatialTree} has default argument \ccc{CGAL::Kd_tree<TreeTraits>}.
+The third template argument has default value \ccc{TreeTraits::Point}.
+Expects for fourth template argument an implementation of the concept SpatialTree,
+for example \ccc{CGAL::Kd_tree<TreeTraits>},
+The fourth template argument has default value \ccc{CGAL::Kd_tree<TreeTraits>}.
+
 
 \ccTypes
 
@@ -46,10 +50,14 @@ Expects for the parameter \ccc{SpatialTree} an implementation of the concept Spa
 \ccTypedef{std::pair<Point*,NT> Point_with_distance;}{Pair of point and distance.}
 \ccNestedType{iterator}{Input iterator for searching approximate neighbors.}
 
+\newpage
+
 \ccCreation
 \ccCreationVariable{s}  %% choose variable name
 
-\ccConstructor{General_priority_search(Tree tree, QueryItem q, Distance d=Distance(), NT Eps=NT(0.0),
+
+\def\ccLongParamLayout{\ccTrue}
+\ccConstructor{General_priority_search(Tree tree, QueryItem q, GeneralDistance d=GeneralDistance(), NT Eps=NT(0.0),
 bool Search_nearest=true);}
 {Constructor for incremental neighbor searching of the query item \ccc{q}
 in the points stored \ccc{tree} using a distance
@@ -73,7 +81,7 @@ Inserts statistics of the search process into the output stream \ccc{s}.
 
 \ccSeeAlso
 
-\ccc{CGAL::Orthogonal_priority_search<TreeTraits,Distance,SpatialTree>}.
+\ccc{CGAL::Orthogonal_priority_search<TreeTraits, OrthogonalDistance, SpatialTree>}.
 
 
 \end{ccRefClass}

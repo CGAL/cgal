@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Kd_tree_traits_point<SpatialPoint,Splitter>}  %% add template arg's if necessary
+\begin{ccRefClass}{Kd_tree_traits_point<SpatialPoint, Splitter>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -32,11 +32,14 @@ TreeTraits.
 
 \ccParameters
 
-Expects for the parameter \ccc{SpatialPoint} an implementation of a $d$-dimensional point, \\
-for example \ccc{CGAL::Point_d<R>}.
-Expects for the parameter \ccc{Splitter} an implementation of a splitter, for
-example \ccc{CGAL::Sliding_midpoint<SpatialPoint,PointContainer,Separator>}.
-Splitter has default argument \ccc{CGAL::Sliding_midpoint<SpatialPoint>}.
+Expects for the first template argument
+an implementation for
+$d$-dimensional points of
+the concept \ccc{SpatialPoint}, 
+for example \ccc{CGAL::Point_d<Kernel>}.
+Expects for the second template argument an implementation of the concept {Splitter}, 
+for example \ccc{CGAL::Sliding_midpoint<SpatialPoint,PointContainer,Separator>}.
+The second template argument has default value \ccc{CGAL::Sliding_midpoint<SpatialPoint>}.
 
 \ccTypes
 

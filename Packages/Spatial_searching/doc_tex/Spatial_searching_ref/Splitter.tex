@@ -24,7 +24,7 @@ The concept \ccRefName\ defines the requirements for a function object class imp
 
 \ccNestedType{NT;}{Number type.}
 \ccNestedType{Container;}{Point container.}
-\ccNestedType{Separator;}{Separator.} 
+\ccNestedType{\ccHtmlNoLinksFrom{Separator};}{\ccHtmlNoLinksFrom{Separator}.} 
 
 \ccCreationVariable{s}  %% choose variable name
 
@@ -32,7 +32,7 @@ The concept \ccRefName\ defines the requirements for a function object class imp
 \ccOperations
 
 \ccMethod{
-void operator()(Separator& s, PointContainer& c0, PointContainer& c1, NT Aspect_ratio=NT(3));} 
+void operator()(\ccHtmlNoLinksFrom{Separator}& s, PointContainer& c0, PointContainer& c1, NT Aspect_ratio=NT(3));} 
 {Modifies the separator $s$, 
 and splits \ccc{c0} into \ccc{c0} and \ccc{c1},
 using the splitting dimension and the splitting value of the modified separator.
@@ -40,13 +40,13 @@ using the splitting dimension and the splitting value of the modified separator.
 }
 \ccHasModels
 
-\ccc{CGAL::Fair<SpatialPoint,PointContainer,Separator>}, \\
-\ccc{CGAL::Median_of_rectangle<SpatialPoint,PointContainer,Separator>}, \\
-\ccc{CGAL::Median_of_max_spread<SpatialPoint,PointContainer,Separator>}, \\
-\ccc{CGAL::Midpoint_of_rectangle<SpatialPoint,PointContainer,Separator>}, \\
-\ccc{CGAL::Midpoint_of_max_spread<SpatialPoint,PointContainer,Separator>}, \\
-\ccc{CGAL::Sliding_fair<SpatialPoint,PointContainer,Separator>}, \\
-\ccc{CGAL::Sliding_midpoint<SpatialPoint,PointContainer,Separator>.}
+\ccc{CGAL::Fair<SpatialPoint, PointContainer, Separator>}, \\
+\ccc{CGAL::Median_of_rectangle<SpatialPoint, PointContainer, Separator>}, \\
+\ccc{CGAL::Median_of_max_spread<SpatialPoint, PointContainer, Separator>}, \\
+\ccc{CGAL::Midpoint_of_rectangle<SpatialPoint, PointContainer, Separator>}, \\
+\ccc{CGAL::Midpoint_of_max_spread<SpatialPoint, PointContainer, Separator>}, \\
+\ccc{CGAL::Sliding_fair<SpatialPoint, PointContainer, Separator>}, \\
+\ccc{CGAL::Sliding_midpoint<SpatialPoint, PointContainer, Separator>.}
 
 \ccSeeAlso
 

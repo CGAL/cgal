@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Fuzzy_iso_box_d<SpatialPoint,IsoBox_d>}  %% add template arg's if necessary
+\begin{ccRefClass}{Fuzzy_iso_box_d<SpatialPoint, IsoBox_d>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -26,11 +26,14 @@ as inner approximation a box eroded by a $d$-dim square of size $\epsilon$.
 \ccInclude{CGAL/Fuzzy_iso_box_d.h}
 
 \ccParameters
-Expects for the parameter \ccc{SpatialPoint} an implementation of a $d$-dimensional point,\\
-for example \ccc{CGAL::Point_d<R>}.
-Expects for the parameter \ccc{IsoBox_d} an implementation of a $d$-dimensional iso box,
-for example \ccc{CGAL::Iso_rectangle_2<R>}, \ccc{CGAL::Iso_cuboid_3<R>}, or
-\ccc{CGAL::Iso_box_d<R>}.
+Expects for the first template argument
+an implementation for $d$-dimensional points
+of the concept \ccc{SpatialPoint},
+for example \ccc{CGAL::Point_d<Kernel>}.
+
+Expects for the second template argument parameter \ccc{IsoBox_d} an implementation for a $d$-dimensional iso box
+of the concept \ccc{IsoBox_d},
+for example \ccc{CGAL::Iso_box_d<Kernel>}.
  
 \ccIsModel
 
@@ -42,7 +45,6 @@ FuzzyQueryItem
 
 \ccCreation
 \ccCreationVariable{b}  %% choose variable name
-
 
 \ccConstructor{Fuzzy_iso_box_d(SpatialPoint p, SpatialPoint q, NT epsilon=NT(0));}{Constructs a fuzzy iso box
 specified by the minimal iso box containing $p$ and $q$ and fuzziness value \ccc{epsilon}.}
@@ -62,9 +64,6 @@ associated with a node of a tree.}
 \ccSeeAlso
 
 FuzzyQueryItem.
-
-
-
 
 \end{ccRefClass}
 

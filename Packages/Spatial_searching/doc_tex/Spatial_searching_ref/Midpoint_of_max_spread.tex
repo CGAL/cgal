@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefFunctionObjectClass}{Midpoint_of_max_spread<SpatialPoint,PointContainer,Separator>}  %% add template arg's if necessary
+\begin{ccRefFunctionObjectClass}{Midpoint_of_max_spread<SpatialPoint, PointContainer, Separator>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -21,15 +21,15 @@ Implements the {\bf midpoint of max spread} splitting rule.
 
 \ccParameters
 
-Expects for the parameter \ccc{SpatialPoint} an implementation of a $d$-dimensional point,
-for example \ccc{CGAL::Point_d<R>}. Expects for the parameter \ccc{PointContainer} an implementation
-of a point container for example \ccc{CGAL::Point_container<SpatialPoint>}.
-Expects for the parameter \ccc{Separator} an implementation of a $d$-1 dimensional 
-separating plane for example \ccc{CGAL::Plane_separator<NT>}.
-
-\ccc{Container} has default argument \ccc{CGAL::Point_container<SpatialPoint>}.
-\ccc{Separator} has default argument \ccc{CGAL::Plane_separator<Kernel_traits<SpatialPoint>::Kernel::FT>}. 
-
+Expects for the first template argument an implementation for
+$d$-dimensional points of
+the concept \ccc{SpatialPoint}, 
+for example \ccc{CGAL::Point_d<Kernel>}. Expects for the second argument an implementation
+for a point container of the concept \ccc{PointContainer}, for example \ccc{CGAL::Point_container<SpatialPoint>}.
+Expects for the third template argument an implementation of a $d$-1 dimensional 
+separating plane of the concept \ccc{Separator}, for example \ccc{CGAL::Plane_separator<NT>}.
+The second template argument has default value \ccc{CGAL::Point_container<SpatialPoint>}.
+The third template argument has default value \ccc{CGAL::Plane_separator<Kernel_traits<SpatialPoint>::Kernel::FT>}. 
 
 \ccInclude{CGAL/Splitters.h}
 
@@ -41,14 +41,14 @@ Splitter
 
 \ccTypedef{Kernel_traits<SpatialPoint>::Kernel::FT NT;}{Number type.} 
 \ccTypedef{PointContainer Container;}{Point container.}
-\ccTypedef{Separator Separator;}{Separator.}
+\ccTypedef{Separator Separator;}{\ccHtmlNoLinksFrom{Separator}.}
 
 \ccCreationVariable{s}  %% choose variable name
 
 \ccOperations
 
 \ccMethod{
-void operator()(Separator& s, Container& c0, Container& c1);} 
+void operator()(\ccHtmlNoLinksFrom{Separator}& s, Container& c0, Container& c1, NT Aspect_ratio=NT(3));} 
 {Modifies the separator $s$ by the {\bf midpoint of max spread} splitting rule, 
 and splits \ccc{c0} into \ccc{c0} and \ccc{c1},
 using the splitting dimension and the splitting value of the modified separator.

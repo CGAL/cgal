@@ -11,15 +11,15 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Euclidean_distance_sphere_point<QueryItem,SpatialPoint>}  %% add template arg's if necessary
+\begin{ccRefClass}{Euclidean_distance_sphere_point<QueryItem, SpatialPoint>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
 \ccDefinition
   
-The class \ccRefName\ provides an implementation of \\
-the GeneralDistance concept
+The class \ccRefName\ provides an implementation of 
+the \ccc{GeneralDistance} concept
 for the Euclidean distance ($l_2$ metric) between a $d$-dimensional sphere and a point and 
 the Euclidean distance between a $d$-dimensional sphere
 and a $d$-dimensional iso-rectangle defined as a $k$-$d$ tree rectangle.
@@ -28,11 +28,14 @@ and a $d$-dimensional iso-rectangle defined as a $k$-$d$ tree rectangle.
 
 \ccParameters
 
-Expects for the parameter \ccc{QueryItem}
-an implementation of $d$-dimensional spheres
-for example \ccc{CGAL::sphere_d<R>}.
-Expects for the parameter \ccc{SpatialPoint} an implementation
-of a $d$-dimensional point, for example \ccc{CGAL::Point_d<R>}.
+Expects for the first template argument an implementation 
+for $d$-dimensional spheres of the concept \ccc{QueryItem},
+for example \ccc{CGAL::Sphere_d<Kernel>}.
+Expects for the second template argument
+an implementation for
+$d$-dimensional points of
+the concept \ccc{SpatialPoint}, 
+for example \ccc{CGAL::Point_d<Kernel>}.
 
 \ccIsModel
 

@@ -21,9 +21,10 @@ The class \ccRefName\ defines a $k$-$d$ tree.
 
 \ccInclude{CGAL/Kd_tree.h}
 
-\ccOperations
+\ccParameters
 
-Expects for the parameter \ccc{TreeTraits} an implementation of a tree traits class
+Expects for the template argument an implementation for a tree traits class
+of the concept \ccc{TreeTraits},
 for example \ccc{CGAL::Kd_tree_traits_point<Point,Splitter>}.
 
 \ccTypes

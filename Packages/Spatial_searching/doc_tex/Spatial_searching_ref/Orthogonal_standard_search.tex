@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Orthogonal_standard_search<TreeTraits,Distance,SpatialTree>}  %% add template arg's if necessary
+\begin{ccRefClass}{Orthogonal_standard_search<TreeTraits, OrthogonalDistance, SpatialTree>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -26,14 +26,15 @@ class. It is required that tree is built with extended nodes.
 
 \ccParameters
 
-Expects for the parameter \ccc{TreeTraits} an implementation of the concept TreeTraits,
-for example \ccc{CGAL::Kd_tree_traits<Point,Splitter>}.
-Expects for the parameter \ccc{Distance} an implementation of the
-concept OrthogonalDistance. \ccc{Distance} has default argument 
+Expects for the first template argument an implementation of the concept \ccc{TreeTraits},
+for example \ccc{CGAL::Kd_tree_traits<Point, Splitter>}.
+Expects for the second template argument an implementation of the
+concept OrthogonalDistance, for example \ccc{CGAL::Euclidean_distance<TreeTraits::Point>}.
+The second template argument has default value
 \ccc{CGAL::Euclidean_distance<TreeTraits::Point>}.
-Expects for the parameter \ccc{Tree} an implementation of the concept Tree.
-\ccc{Tree} has default argument \ccc{CGAL::Kd_tree<TreeTraits>}.
-
+Expects for third template argument an implementation of the concept SpatialTree,
+for example \ccc{CGAL::Kd_tree<TreeTraits>},
+The third template argument has default value \ccc{CGAL::Kd_tree<TreeTraits>}.
 
 \ccTypes
 
@@ -45,7 +46,8 @@ Expects for the parameter \ccc{Tree} an implementation of the concept Tree.
 
 \ccOperations
 
-\ccConstructor{Orthogonal_standard_search(Tree tree, QueryItem q, Distance d=Distance(), int k=1, NT Eps=NT(0.0),
+\def\ccLongParamLayout{\ccTrue}
+\ccConstructor{Orthogonal_standard_search(Tree tree, QueryItem q, OrthogonalDistance d=OrthogonalDistance(), int k=1, NT Eps=NT(0.0),
 bool Search_nearest=true);}
 {Constructor for searching approximately $k$ neighbors of the query item \ccc{q} 
 in the points stored in \ccc{tree} using 
@@ -66,7 +68,7 @@ Inserts statistics of the search process into the output stream \ccc{s}.
 
 \ccSeeAlso
 
-\ccc{CGAL::General_standard_search<TreeTraits, Distance, QueryItem, Tree>}.
+\ccc{CGAL::General_standard_search<TreeTraits, GeneralDistance, QueryItem, Tree>}.
 
 \end{ccRefClass}
 
