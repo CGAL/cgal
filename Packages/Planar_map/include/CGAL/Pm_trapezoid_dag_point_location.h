@@ -88,8 +88,8 @@ public:
   typedef const Planar_map* const_Planar_map_ptr;
   typedef Pm_point_location_base<Planar_map_> Base;
   typedef Pm_trapezoid_dag_point_location<Planar_map> Self;
-  typedef const Self& const_Self_ref;
-  typedef const Self* const_Self_ptr;
+  typedef const Self & const_Self_ref;
+  typedef const Self * const_Self_ptr;
   typedef typename Planar_map::Traits Pm_traits;
   typedef typename Planar_map::Traits_wrap Pm_traits_wrap;
   typedef typename Planar_map::Locate_type Locate_type;
@@ -119,17 +119,20 @@ protected:
   typedef Planar_map PM;
   
 public:
-  Pm_trapezoid_dag_point_location(bool rebuild=true) : 
+  Pm_trapezoid_dag_point_location(bool rebuild = true) : 
     pm(NULL),
     traits(NULL)
   {
     td.set_needs_update(rebuild);
   }
+
   Pm_trapezoid_dag_point_location(const_Self_ref pl) : 
     td(*pl.get_trapezoidal_decomposition())
-    {
-      init(*pl.get_planar_map(), *pl.get_traits());
-    }
+  {
+    const_Planar_map_ptr pm = pl.get_planar_map();
+    init(* ((Planar_map *) pm), *pl.get_traits());
+  }
+
   ~Pm_trapezoid_dag_point_location() 
   {
     if (traits) delete traits;
@@ -250,7 +253,7 @@ public:
     return pm=pm_;
   }
 
-  void init(const Planar_map& pmp, const Pm_traits& tr) 
+  void init(Planar_map & pmp, const Pm_traits & tr) 
   {
     CGAL_precondition_msg(pm == NULL,
     "Point location instance should be uninitialized "

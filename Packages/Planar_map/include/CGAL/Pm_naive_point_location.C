@@ -72,7 +72,7 @@ Pm_naive_point_location<Planar_map>::locate(const Point & p,
     return h; //return halfedges_end()
 
   //- returns a halfedge on an inner ccb of the unbounded face
-  typename Planar_map::Holes_const_iterator hot =
+  typename Planar_map::Holes_iterator hot =
     pm->unbounded_face()->holes_begin();
   return (*hot);
 }

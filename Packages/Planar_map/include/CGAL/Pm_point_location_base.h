@@ -54,18 +54,18 @@ public:
                                         Halfedge_handle_iterator;
   typedef typename Planar_map::Face_handle Face_handle;
   typedef typename Planar_map::Face_const_handle Face_const_handle;
-  typedef typename Traits::Point Point;
-  typedef typename Traits::X_curve X_curve;
+  typedef typename Traits::Point_2                      Point;
+  typedef typename Traits::X_monotone_curve_2           X_curve;
 //  typedef typename Traits::X_curve_iterator X_curve_iterator;
   typedef Pm_bounding_box_base<Planar_map> Bounding_box;
   typedef typename Bounding_box::Token Token;
   
   Pm_point_location_base() {}
   
-  virtual void init(const Planar_map& pmp, const Traits& tr) = 0;
+  virtual void init(Planar_map & pmp, const Traits & tr) = 0;
   virtual ~Pm_point_location_base() {}
   
-  virtual void insert(Halfedge_handle h,const X_curve& cv) = 0;  
+  virtual void insert(Halfedge_handle h,const X_curve & cv) = 0;  
   //h is the handle in which the curveis heald in the pm.
   
   

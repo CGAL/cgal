@@ -78,7 +78,7 @@ public:
     pm(0),
     traits(0) {}
   
-  void init(const Planar_map & pmp, const Traits & tr) 
+  void init(Planar_map & pmp, const Traits & tr) 
   {
     CGAL_precondition_msg(pm == NULL,
     "Point location instance should be uninitialized "
@@ -206,9 +206,11 @@ public:
 
 protected:
   inline const Bounding_box * get_bounding_box() const 
-  {return pm->get_bounding_box();}
+  {
+    return pm->get_bounding_box();
+  }
 
-  const Planar_map * pm;
+  Planar_map * pm;
   const Traits_wrap * traits;
 };
   

@@ -65,7 +65,7 @@ public:
   Pm_simple_point_location(Planar_map* _pm,Traits_wrap* _traits) : 
     Pm_point_location_base<Planar_map>(),traits(_traits),pm(_pm) {}
 	
-  void init(const Planar_map& pmp, const Traits& tr) 
+  void init(Planar_map & pmp, const Traits& tr) 
   {
     pm = &pmp;
     traits = (Traits_wrap*)(&tr);
@@ -95,14 +95,14 @@ public:
     // find whether p is on a vertex
     typename Planar_map::Vertex_const_iterator vit;
     for (vit=pm->vertices_begin(); vit!=pm->vertices_end(); ++vit) 
+    {
+      if (traits->point_equal(p,vit->point()) ) 
       {
-	if (traits->point_equal(p,vit->point()) ) 
-	  {
-	    lt = Planar_map::VERTEX; 
-	    Halfedge_const_handle h(vit->incident_halfedges());	
-	    return h;
-	  }
+        lt = Planar_map::VERTEX; 
+        Halfedge_const_handle h(vit->incident_halfedges());	
+        return h;
       }
+    }
 		
     Halfedges_const_list relevant_halfedges;
     find_relevant_halfedges(p, relevant_halfedges);
@@ -110,14 +110,14 @@ public:
     // find whether p is on a halfedge
     typename Halfedges_const_list::const_iterator hit;
     for (hit=relevant_halfedges.begin(); hit!=relevant_halfedges.end(); ++hit) 
+    {
+      if (traits->point_in_x_range((*hit)->curve(),p) &&
+          traits->curve_compare_y_at_x(p, (*hit)->curve()) == EQUAL) 
       {
-	if (traits->point_in_x_range((*hit)->curve(),p) &&
-	    traits->curve_compare_y_at_x(p, (*hit)->curve()) == EQUAL) 
-	  {
-	    lt = Planar_map::EDGE; 
-	    return *hit;
-	  }
+        lt = Planar_map::EDGE; 
+        return *hit;
       }
+    }
 		
     lt = Planar_map::UNBOUNDED_FACE;
     Locate_type temp;
@@ -126,30 +126,30 @@ public:
     h = vertical_ray_shoot(p, temp, true, relevant_halfedges);
 		
     if( temp != Planar_map::UNBOUNDED_FACE ) 
-      {
-	if (temp == Planar_map::VERTEX) {  
-                       //since h points at the vertex and is the first 
-	  h=h->twin(); //halfedge after the ray clockwise! then the  face
-	               //is to its _right_ (maybe the specs will change in 
-	               //the future) 
-	}        
+    {
+      if (temp == Planar_map::VERTEX) {  
+        //since h points at the vertex and is the first 
+        h=h->twin(); //halfedge after the ray clockwise! then the  face
+        //is to its _right_ (maybe the specs will change in 
+        //the future) 
+      }        
 			
-	if ( !(h->face()->is_unbounded()) ) 
-	  lt=Planar_map::FACE;
-	return h;
-      }
+      if ( !(h->face()->is_unbounded()) ) 
+        lt=Planar_map::FACE;
+      return h;
+    }
     else //==the vertical ray shoot returned the halfedges_end() iterator.
-      {
-	if (pm->unbounded_face()->holes_begin() == 
-	    pm->unbounded_face()->holes_end() ) //an empty map
-	  return h; //return halfedges_end()
-	else {
-	  //- returns a halfedge on an inner ccb of the unbounded face
-	  typename Planar_map::Holes_const_iterator hot = 
-	    pm->unbounded_face()->holes_begin();
-	  return (*hot);
-	}
+    {
+      if (pm->unbounded_face()->holes_begin() == 
+          pm->unbounded_face()->holes_end() ) //an empty map
+        return h; //return halfedges_end()
+      else {
+        //- returns a halfedge on an inner ccb of the unbounded face
+        typename Planar_map::Holes_iterator hot = 
+          pm->unbounded_face()->holes_begin();
+        return (*hot);
       }
+    }
   }
 	
   Halfedge_handle locate(const Point& p, Locate_type& lt)
@@ -481,11 +481,11 @@ protected:
 #endif
 	
 protected:
-  typedef const Self* const_Self_ptr;
+  typedef const Self * const_Self_ptr;
 	
 protected:
-  const Planar_map* pm;
-  const Traits_wrap* traits;
+  Planar_map * pm;
+  const Traits_wrap * traits;
 };
 
 CGAL_END_NAMESPACE

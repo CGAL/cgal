@@ -65,7 +65,7 @@ public:
   Pm_naive_point_location(Planar_map * _pm,Traits_wrap * _traits) : 
     Pm_point_location_base<Planar_map>(), traits(_traits), pm(_pm) {}
 
-  inline void init(const Planar_map & pmp, const Traits & tr) 
+  inline void init(Planar_map & pmp, const Traits & tr) 
   {
     CGAL_precondition_msg(pm == NULL,
     "Point location instance should be uninitialized "
@@ -117,7 +117,7 @@ protected:
   typedef const Self * const_Self_ptr;
   
 protected:
-  const Planar_map * pm;
+  Planar_map * pm;
   const Traits_wrap * traits;
 };
 
