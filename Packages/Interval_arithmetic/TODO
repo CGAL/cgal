@@ -1,124 +1,90 @@
-- Real/Expr: ?  See also http://www.cs.nyu.edu/exact/core/.
-- Implanter les optimisations suivantes compatibles IEEE 754 dans egcs:
-  - (-a)*(-b) => a*b  (idem pour /)
-  - (-a)>0    => a<0
-  - (-a)+b    => b-a ...
-  - (-a)*b    => -(a*b) ssi -ffast-math
-  - bug à fixer: cf get_empiric_rounding_mode(), où "volatile" est nécessaire.
-- Comment intégrer ces foutus pré-calculs ?  Faire un draft de propal.
-- Implanter la propal pour modular ?
-  Ça devra se faire un jour anyway, de porter le code au C++...
-- Voir si on pourrait faire un filtre "static adaptatif" avec le NT d'Olivier
-  qui calcule la borne d'erreur, et mes scripts (voir si y'a pas trop de
-  branches, etc...).
-
 Concerning the new stuff:
-- New Cartesian predicates must also be in CGAL-I for the whole thing to work
-  properly (NO_FILTER_SECTION).
-- A __NO_FILTER attribute would be better ?  These are needed (like built-ins)
-  for the new adaptative stuff.
-- Integrate into Filtered_Exact<>.
-- Offer static filtering facilities.
-- What to do with branches...  Treat those predicates by hand ?
-  Or automatically with some guidance ?
-  CollinearC3 is the only example, but it would be nice to have a way to
-  detect it at compile-time.
-  The user could provide _in place_ the alternative epsilon version...
-- Long term: match operator< and co ?
+-------------------------
+- What to do with branches (collinearC3() and power_test()):
+  - The epsilon computation type should return ZERO/EQUAL as default.
+    This way, collinearC3() works.
+  - The user can provide the epsilon variant inside the source code, delimited
+    by special symbols /*CGAL_FILTER_BODY ... */.  That's the solution for CGAL.
+  - Checks that the epsilons have been updated (which will not prove that
+    it's correct, but is better than nothing).
+- New Cartesian predicates must also be in CGAL-I for the whole thing to work.
+- /*DEGREE=2*/ attribute to the arguments ?
+- /*CGAL_NO_FILTER*/ attribute instead of //CGAL_FILTER(BEGIN|END) ?
+- Long term: match operator<(a,b) and co ?
 - # of bounds  : one per predicate, or one per argument ?  give choice.
 - # of epsilons: one per predicate, or one set per sub-predicate ?  choice.
-- Check the compiler optimizes the epsilon computation
+- Check that the compiler optimizes the epsilon computation
   (use __attribute__((const)) for Static_filter_error operators) ?
-- Note that there a conflict right now between the $new_protect_macro...
-- Document the script (before I forget what's inside...)
+- As Fred pointed out: the scheme is not thread safe.
+- Remove the assertions in the original code.
+- In case there are loops, we must take the max() of the epsilons.
+  This should not happen often, imho...  Wait and see.
+- Move static_infos in src/.
+- Have a ::number_of_failure for the static filters too.
+- Optimize Restricted_double, conditionnaly #define it to "double" ?
+- Replace:
+  NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
+  by:
+  if (NEW_bound < fabs(px.to_double())) NEW_bound = fabs(px.to_double());
+  or even, using a .bound() member function:
+  if (NEW_bound < px.bound()) NEW_bound = px.bound();
+- Member function access for generical type should be (?):
+  .dbl_approx()
+  .bound()      (basically a bound on: fabs(.dbl_approx()))
+  .error()
 
 Concerning the code itself:
-
-- Offer the possibility to push out of the predicates the rounding mode
-  changes, and then add checks (rounding==up) there.
-- Use "Self" in all my classes to denote the class name as typedef.
-- There's a next_after(double) required by IEEE.  It would be nicer for the
-  conversion functions, compared to +min_double...
-- Write include/CGAL/predicates/README to say what I want.
-  avec un main.h que je sources depuis Arithmetic_filter.h...
-- Investigate sqrt() bug on CygWin (no idea... does it call a buggy lib fct ?)
-- Concerning in_smallest_orthogonalcircle_ftC2.h, it needs some #include at
-  the end for the overloading (when it's more mature), same thing for
-  Arithmetic_filter.h (could this be automated ?).  Same thing for Regular T3D.
-- Est-ce que les spécialisations doivent être sous CVS ?
+---------------------------
+- Get rid of convert_to() ?  This is a mess for nothing (benchmark first).
+  Target convert_from_to (const Target, const Source) is fine.
+  It could maybe be made better this way:
+    void convert_from_to(Target &, const Source &) ?
+  Suggest that to Stefan for misc.h ?
+- Handle new predicates/kernel_ftC?.h files.
+? GYGWIN square_root_test() bug: it disappears with -O2.  It's a bug in the
+  non-inline version of std::sqrt().  Hopefully it is fixed in CygWin 2.95.
+- Essayer "attribute(noreturn)" pour overlap_action().
+- Handle in_smallest_orthogonalcircle_ftC2.h correctly (needs an include)
 - Essayer de bencher avec -fbranch-probabilities ?  Ça pourrait être pas mal.
-- Expertiser le bench de Stefan.
-- Interval_nt doesn't need to be fast => no inline => libCGAL ?
+- Expertiser le bench de Stefan... à la prochaine version.
 - Drop the class Interval_nt ?  It's 230 lines for nothing...
   Or have a boolean template parameter, instead or the derivation ?
 - Filter_Cache: Faire des benchs, et une test-suite qui soit raisonnable.
   Hum, rajouter un booléen pour calculer le cache seulement sur demande ?
   (ça évite de le faire inutilement pour les variables intermédiaires,
   mais ça prend un chouia plus de place... mais en comparaison du reste...)
-  Utiliser plutôt Tag_true/Tag_false si possible.
-- sign_det_2x2() optimisé pour l'IA (+ bench de triangulation).
-  (ça a l'air bien chiant, plutôt décrire vaguement dans la thèse, et
-  implanter les filtres "statiques adaptatifs").
-- Workarounds (pour MipsPro [et M$VC]):
-  - specializations partielles: vérifier que c'est bien le bon CGAL_CFG_..
-                                que j'utilise.
-				NB: si on linke 2 .o comme ça => multiple def...
-  - The convert_to workaround could be enabled even for all compilers ?
-    It would simplify the code, but:  slow down ?  still work for Quotient ?
-- Vérifier que EGCS optimise les expressions x*IA(1), IA(1)*x, x*IA(0), etc...
-  C'est apparemment loin d'être le cas.  Il inline, mais laisse les tests...
-  Il n'a pas l'air de propager les constantes à travers IA(1), même s'il
-  inline !!!
-- Avoir un flag dynamic (static member) qui dit si exception ou pas, voire un
-  function pointer pour overlap_action() ?
-  Et modifier le comportement dans les fonctions save/restore ?
-- converter (long longs), (long doubles)...  au moins documenter que c'est pas
-  supporté pour le moment.  Hint: (double) +/- 1ulp.
-? Currently, some types (leda_*, GMP) need the rounding to nearest for doing
-  the conversion to Interval.  That's bad because double doesn't, and is the
-  case that must be optimized.  Maybe have a Tag for each NT saying if/how it
-  needs the rounding to do the conversion ?
-  Remark: the fast case is for the builtin types, so others (that care of the
-  rounding mode) can be slowed down...
 ? SUN: Add "-Wa,-xarch=v8plus" to fix the following "error":
   /usr/ccs/bin/as: "/var/tmp/ccBHnU0T.s", line 861: warning: 3 instructions
   required between ldfsr and next FBfcc; nops inserted
-- Sparc 64 support (Solaris 2.7 only for the moment): cf glibc-2.1.1
-- In the future: see the C++ Standard numeric_limits<>, section 18.2.
+? See the C++ Standard numeric_limits<>, section 18.2.
+? convert_to à faire pour: long double, long long (CGAL..._64), CLN.
+- Use friend functions for operator+(IA,IA), because this way, there's no need
+  for a special version for double...
+- Mark the cache as "mutable" ?
+- Have a look at the "function-try-blocks" ?
 
 Concerning the script:
-
-- Have command line options:
-  "--static-filter" for the new filter scheme.
-  "--only-marked-functions" to process only stuff inside CGAL_FILTER_BEGIN/END.
-    (similar to expcomp)
-- Produire un fichier avec juste les déclarations, et un autre avec les
-  définitions, ça aidera à faire une library séparée de trucs précompilés.
-- Parser des declarations sans definition ?
+----------------------
+- Produce separate files for declarations and definitions (=> libCGAL).
+- Make it output a test file for each predicate ?
 
 Concerning the doc:
-
-- Dans la doc html de CGAL-2.0, mes enums sont répertoriés 2 fois dans
-  l'index, sûrement un bug de cc_manual compliance de ma part.
-  de même plus loin, ma fct to_double(Ia) n'est pas pareille que les autres.
-- RV: "documenter le mécanisme pour les prédicats? Il me semblerait utile de
-  rajouter une section d'introduction ou bien à la fin du chapitre, pour
-  expliquer comment utiliser les filtres. Peut-être une référence à ton
-  chapitre sur l'arithmétique d'intervalles..."
+-------------------
+- In the 2.0 HTML doc, my enums are indexed twice.
+  probably a cc_manual compliance bug from me.
+  Idem, my fct to_double(Ia) is not the same as the others...
 - add a pointer to my MISC'99 paper.
-- document overlap_action(), when it is made customisable.
-- Passer au nouveau format de doc.
+- Use the new doc format.
 - Document CGAL_IA_STOP_CONSTANT_PROPAGATION ?
-- Document the script !!!
+- DOCUMENT the script.
+- DOCUMENT the new static stuff !!!
+- Update the status of the compilers (MipsPro 7.3 and Visual/Borland).
 
 Concerning the test-suite:
-
-- CGAL_IA_DEBUG ne marche pas sur sparc (FPU_get_cw ne rend pas ce qu'il
-  faut...).
-- Refaire un petit coup de GCOV, pour voir où ça en est.
-- test-suite: rajouter un test simple qui vérifie que les exceptions marchent.
-- Faire une test-suite un peu plus extensive des filtres.  En particulier les
-  types templatés, etc...
-- test new converter functions ?  [use flag -DCGAL_IA_DEBUG]
+--------------------------
+- Check it with GCOV again before the next public release.
+- Add a simple test to check that exceptions do work indeed.
+- Make a more extensive test-suite for the filtered predicates.
+  The script could output information to test them generically somehow.
 - test NaNs (and Infs?).  Comparisons with these should throw the exception...
-  Et vérifier s'ils sont bien propagés correctement (par min/max, ou même *).
+  Check that they are correctly propagated (by min(), max(), even operator*...)
