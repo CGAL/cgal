@@ -38,7 +38,7 @@ struct converter<Interval_nt_advanced,leda_rational>
     CGAL_assertion(FPU_get_cw() == FPU_cw_up);
 #endif
     FPU_set_cw(FPU_cw_near);
-    double approx = to_double(z);
+    double approx = CGAL::to_double(z);
     FPU_set_cw(FPU_cw_up);
 
     Interval_nt_advanced result = approx + CGAL_IA_SMALLEST;

@@ -34,7 +34,7 @@ struct converter<Interval_nt_advanced,leda_real>
     CGAL_assertion(FPU_get_cw() == FPU_cw_up);
 #endif
     FPU_set_cw(FPU_cw_near);
-    double approx = to_double(z);
+    double approx = CGAL::to_double(z);
     double rel_error = z.get_double_error();
     FPU_set_cw(FPU_cw_up);
     Interval_nt_advanced result = approx
