@@ -1,3 +1,7 @@
+4.18 (07/09/2003) [rursu]
++ demo use now the new help class Qt_help_window instead of HelpWindow
++ demo use the new icon demoicon
+
 4.17 (28/06/2003) [rursu]
 + fixed demo/Polygon/makefile for FreeBSD
 
