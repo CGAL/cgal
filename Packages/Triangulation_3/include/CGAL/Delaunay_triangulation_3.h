@@ -446,36 +446,45 @@ side_of_circle(Cell_handle c, int i, const Point & p) const
 					  v2->point(), 
 					  n->vertex(n->index(c))->point(),
 					  p );
-    switch (o) {
-    case POSITIVE:
-      // p lies on the same side of v1v2 as vn, so not in f
-      {
-	return ON_UNBOUNDED_SIDE;
-      }
-    case NEGATIVE:
-      // p lies in f
-      { 
-	return ON_BOUNDED_SIDE;
-      }
-    case ZERO:
-      // p collinear with v1v2
-      {
-	int i_e;
-	Locate_type lt;
-// 	Bounded_side side = 
-// 	  side_of_segment( p,
-// 			   v1->point(), v2->point(),
-// 			   lt, i_e );
-	if ( side_of_segment( p,
-			      v1->point(), v2->point(),
-			      lt, i_e ) == ON_UNBOUNDED_SIDE )
-	  // p lies on the line defined by the finite edge, but
-	  // not in edge v1v2
-	  return ON_UNBOUNDED_SIDE;
-	// else p lies in edge v1v2 (including v1 or v2)
-	return ON_BOUNDARY;
-      }
-    }// switch o
+    if ( o != ZERO ) return Bounded_side( -o );
+    // because p is in f iff
+    // is does not lie on the same side of v1v2 as vn
+    int i_e;
+    Locate_type lt;
+    // case when p collinear with v1v2
+    return side_of_segment( p,
+			    v1->point(), v2->point(),
+			    lt, i_e );
+//     switch (o) {
+//     case POSITIVE:
+//       // p lies on the same side of v1v2 as vn, so not in f
+//       {
+// 	return ON_UNBOUNDED_SIDE;
+//       }
+//     case NEGATIVE:
+//       // p lies in f
+//       { 
+// 	return ON_BOUNDED_SIDE;
+//       }
+//     case ZERO:
+//       // p collinear with v1v2
+//       {
+// 	int i_e;
+// 	Locate_type lt;
+// // 	Bounded_side side = 
+// // 	  side_of_segment( p,
+// // 			   v1->point(), v2->point(),
+// // 			   lt, i_e );
+// 	if ( side_of_segment( p,
+// 			      v1->point(), v2->point(),
+// 			      lt, i_e ) == ON_UNBOUNDED_SIDE )
+// 	  // p lies on the line defined by the finite edge, but
+// 	  // not in edge v1v2
+// 	  return ON_UNBOUNDED_SIDE;
+// 	// else p lies in edge v1v2 (including v1 or v2)
+// 	return ON_BOUNDARY;
+//       }
+//     }// switch o
   }// dim 2
 
   // else dimension == 3
@@ -519,38 +528,47 @@ side_of_circle(Cell_handle c, int i, const Point & p) const
 					c->vertex(i)->point(),
 					p );
   // then the code is duplicated from 2d case
-  switch (o) {
-  case POSITIVE:
-    // p lies on the same side of v1v2 as c->vertex(i), so not in f
-    {
-      return ON_UNBOUNDED_SIDE;
-    }
-  case NEGATIVE:
-    // p lies in f
-    { 
-      return ON_BOUNDED_SIDE;
-    }
-  case ZERO:
-    // p collinear with v1v2
-    {
-      int i_e;
-      Locate_type lt;
-//       Bounded_side side = 
-// 	side_of_segment( p,
-// 			 v1->point(), v2->point(),
-// 			 lt, i_e );
-      if ( side_of_segment( p,
-			    v1->point(), v2->point(),
-			    lt, i_e ) == ON_UNBOUNDED_SIDE )
-	// p lies on the line defined by the finite edge, but
-	// not in edge v1v2
-	return ON_UNBOUNDED_SIDE;
-      // else p lies in edge v1v2 (including v1 or v2)
-      return ON_BOUNDARY;
-    }
-  }// switch o
-  // end infinite facet
-  return ON_BOUNDARY; // to avoid warning with egcs
+  if ( o != ZERO ) return Bounded_side( -o );
+  // because p is in f iff 
+  // it is not on the same side of v1v2 as c->vertex(i)
+  int i_e;
+  Locate_type lt;
+  // case when p collinear with v1v2
+  return side_of_segment( p,
+			  v1->point(), v2->point(),
+			  lt, i_e );
+//   switch (o) {
+//   case POSITIVE:
+//     // p lies on the same side of v1v2 as c->vertex(i), so not in f
+//     {
+//       return ON_UNBOUNDED_SIDE;
+//     }
+//   case NEGATIVE:
+//     // p lies in f
+//     { 
+//       return ON_BOUNDED_SIDE;
+//     }
+//   case ZERO:
+//     // p collinear with v1v2
+//     {
+//       int i_e;
+//       Locate_type lt;
+// //       Bounded_side side = 
+// // 	side_of_segment( p,
+// // 			 v1->point(), v2->point(),
+// // 			 lt, i_e );
+//       if ( side_of_segment( p,
+// 			    v1->point(), v2->point(),
+// 			    lt, i_e ) == ON_UNBOUNDED_SIDE )
+// 	// p lies on the line defined by the finite edge, but
+// 	// not in edge v1v2
+// 	return ON_UNBOUNDED_SIDE;
+//       // else p lies in edge v1v2 (including v1 or v2)
+//       return ON_BOUNDARY;
+//     }
+//   }// switch o
+//   // end infinite facet
+//   return ON_BOUNDARY; // to avoid warning with egcs
 }// side_of_circle
 
 template < class Gt, class Tds >
