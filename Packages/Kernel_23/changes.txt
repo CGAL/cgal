@@ -1,3 +1,6 @@
+1.38 (2 June 2003)
+- Doc : Constructable -> Constructible.
+
 1.37 (30 May 2003)
 - Fix another test-suite typo in previous change.
 
