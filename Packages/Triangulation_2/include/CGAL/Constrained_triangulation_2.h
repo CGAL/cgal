@@ -29,6 +29,9 @@ public:
 
   CGAL_Constrained_triangulation_2(const Gt& gt) : Triangulation(gt) { }
 
+  CGAL_Constrained_triangulation_2(const  CGAL_Constrained_triangulation_2 & ct)
+    : Triangulation(ct) {}
+
   CGAL_Constrained_triangulation_2(const Vertex_handle&  v, const Gt& gt) 
     : Triangulation(v,gt) {}
 
