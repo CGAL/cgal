@@ -188,25 +188,25 @@ class Polygon_2_const_edge_circulator {
     }
 #endif
 
-/*
-    // the global function distance_type can only be defined as a friend
-    // function within the class due to compiler problems with g++
-    friend difference_type
-    distance_type(
-      const Polygon_2_const_edge_circulator<_Traits,_Container>&)
-    {
-      return difference_type();
-    }
-
-    friend
-    Segment_2* value_type(
-      const Polygon_2_const_edge_circulator<_Traits,_Container>&)
-    {
-      return (Segment_2*)(0);
-    }
-*/
 
 };
+
+/*
+template <class _Traits, class _Container>
+typename _Container::difference_type
+distance_type(
+  const Polygon_2_const_edge_circulator<_Traits,_Container>&)
+{
+  return typename _Container::difference_type();
+}
+
+template <class _Traits, class _Container>
+typename _Traits::Segment_2*
+value_type(const Polygon_2_const_edge_circulator<_Traits,_Container>&)
+{
+  return (typename _Traits::Segment_2*)(0);
+}
+*/
 
 //-----------------------------------------------------------------------//
 //                          implementation
