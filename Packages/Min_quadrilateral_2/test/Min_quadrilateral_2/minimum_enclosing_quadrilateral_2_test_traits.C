@@ -29,56 +29,66 @@
 #define CGAL_OPTIMISATION_NO_PRECONDITIONS
 #include <CGAL/min_quadrilateral_2.h>
 #include <CGAL/predicates/kernel_ftC2.h>
+#include <CGAL/constructions/kernel_ftC2.h>
 #include <functional>
 #include <vector>
 #include <iterator>
 
 struct MyTraits {
   struct Point_2      { double xc, yc; };
+  struct Vector_2     { double xx, yy; };
   struct Direction_2  { double xd, yd; };
-  struct Line_2       { Point_2 p; Direction_2 d; };
+  struct Line_2       { double aa, bb, cc; };
   struct Rectangle_2  { Point_2 pp1, pp2, pp3, pp4; Direction_2 dd; };
   struct Parallelogram_2 {
     Point_2 pp1, pp2, pp3, pp4;
     Direction_2 dd1, dd2;
   };
   struct Strip_2      { Point_2 pp1, pp2; Direction_2 dd; };
-//private:
-  struct Equal_2 : public std::binary_function< Point_2, Point_2, bool > {
-    typedef CGAL::Arity_tag< 2 > Arity;
+  struct Equal_2
+  : public std::binary_function<Point_2,Point_2,bool>
+  {
+    typedef CGAL::Arity_tag<2> Arity;
     bool operator()(const Point_2& p, const Point_2& q) const
     { return p.xc == q.xc && p.yc == q.yc; }
   };
   struct Less_xy_2
-  : public std::binary_function< Point_2, Point_2, bool >
+  : public std::binary_function<Point_2,Point_2,bool>
   {
-    typedef CGAL::Arity_tag< 2 > Arity;
+    typedef CGAL::Arity_tag<2> Arity;
     bool operator()(const Point_2& p, const Point_2& q) const
     { return p.xc < q.xc || p.xc == q.xc && p.yc < q.yc; }
   };
   struct Less_yx_2
-  : public std::binary_function< Point_2, Point_2, bool >
+  : public std::binary_function<Point_2,Point_2,bool>
   {
-    typedef CGAL::Arity_tag< 2 > Arity;
+    typedef CGAL::Arity_tag<2> Arity;
     bool operator()(const Point_2& p, const Point_2& q) const
     { return p.yc < q.yc || p.yc == q.yc && p.xc < q.xc; }
   };
-  struct Right_of_implicit_line_2 {
-    typedef CGAL::Arity_tag< 3 > Arity;
-    bool operator()(const Point_2& p,
-                    const Point_2& q, const Direction_2& d) const
-    { return d.xd * (q.yc - p.yc) < d.yd * (q.xc - p.xc); }
+  struct Has_on_negative_side_2
+  : public std::binary_function<Line_2,Point_2,bool>
+  {
+    typedef CGAL::Arity_tag<2> Arity;
+    bool operator()(const Line_2& l, const Point_2& p) const {
+      return
+      CGAL::side_of_oriented_lineC2(l.aa, l.bb, l.cc, p.xc, p.yc)
+      ==
+      CGAL::ON_NEGATIVE_SIDE;
+    }
   };
-  struct Less_rotate_ccw_2 {
-    typedef CGAL::Arity_tag< 2 > Arity;
-    bool operator()(const Direction_2& d, const Direction_2& e) const
-    { return CGAL::SMALLER ==
-      CGAL::compare_angle_with_x_axisC2(d.xd, d.yd, e.xd, e.yd); }
+  struct Compare_angle_with_x_axis_2
+  : public std::binary_function<Direction_2,Direction_2,bool>
+  {
+    typedef CGAL::Arity_tag<2> Arity;
+    CGAL::Comparison_result
+    operator()(const Direction_2& d, const Direction_2& e) const
+    { return CGAL::compare_angle_with_x_axisC2(d.xd, d.yd, e.xd, e.yd); }
   };
   struct Area_less_rectangle_2
-  : public std::binary_function< Rectangle_2, Rectangle_2, bool >
+  : public std::binary_function<Rectangle_2,Rectangle_2,bool>
   {
-    typedef CGAL::Arity_tag< 2 > Arity;
+    typedef CGAL::Arity_tag<2> Arity;
     bool operator()(const Rectangle_2& d, const Rectangle_2& e) const
     {
       return
@@ -95,9 +105,9 @@ struct MyTraits {
     }
   };
   struct Area_less_parallelogram_2
-  : public std::binary_function< Parallelogram_2, Parallelogram_2, bool >
+  : public std::binary_function<Parallelogram_2,Parallelogram_2,bool>
   {
-    typedef CGAL::Arity_tag< 2 > Arity;
+    typedef CGAL::Arity_tag<2> Arity;
     bool operator()(const Parallelogram_2& d,
                     const Parallelogram_2& e) const
     {
@@ -115,9 +125,9 @@ struct MyTraits {
     }
   };
   struct Width_less_strip_2
-  : public std::binary_function< Strip_2, Strip_2, bool >
+  : public std::binary_function<Strip_2,Strip_2,bool>
   {
-    typedef CGAL::Arity_tag< 2 > Arity;
+    typedef CGAL::Arity_tag<2> Arity;
     bool operator()(const Strip_2& d, const Strip_2& e) const
     {
       return
@@ -127,38 +137,81 @@ struct MyTraits {
         (CGAL_NTS square(d.dd.xd) + CGAL_NTS square(d.dd.yd));
     }
   };
-  struct Rotate_direction_by_multiple_of_pi_2
-  : public std::binary_function< Direction_2, int, Direction_2 >
+  struct Construct_vector_2
+  : public std::binary_function<Point_2,Point_2,Vector_2>
   {
-    Direction_2 operator()(const Direction_2& d, int i) const
+    typedef CGAL::Arity_tag<2> Arity;
+    Vector_2 operator()(const Point_2& p, const Point_2& q) const
     {
-      Direction_2 n;
-      if (i == 0)
-        return d;
-      if (i == 1) {
-        n.xd = d.yd;
-        n.yd = -d.xd;
-        return n;
+      Vector_2 v;
+      v.xx = q.xc - p.xc;
+      v.yy = q.yc - p.yc;
+      return v;
+    }
+  };
+  struct Construct_vector_from_direction_2
+  : public std::unary_function<Direction_2,Vector_2>
+  {
+    typedef CGAL::Arity_tag<1> Arity;
+    Vector_2 operator()(const Direction_2& d) const
+    {
+      Vector_2 v;
+      v.xx = d.xd;
+      v.yy = d.yd;
+      return v;
+    }
+  };
+  struct Construct_perpendicular_vector_2
+  : public std::binary_function<Vector_2,CGAL::Orientation,Vector_2>
+  {
+    typedef CGAL::Arity_tag<2> Arity;
+    Vector_2 operator()(const Vector_2& v, CGAL::Orientation o) const
+    {
+      Vector_2 vm;
+      if (o == CGAL::CLOCKWISE) {
+        vm.xx = v.yy;
+        vm.yy = -v.xx;
+      } else {
+        vm.xx = -v.yy;
+        vm.yy = v.xx;
       }
-      if (i == 2) {
-        n.xd = -d.xd;
-        n.yd = -d.yd;
-        return n;
-      }
-      n.xd = -d.yd;
-      n.yd = d.xd;
-      return n;
+      return vm;
     }
   };
   struct Construct_direction_2
-  : public std::binary_function< Point_2, Point_2, Direction_2 >
+  : public std::unary_function<Vector_2,Direction_2>
   {
-    Direction_2 operator()(const Point_2& p, const Point_2& q) const
+    typedef CGAL::Arity_tag<1> Arity;
+    Direction_2 operator()(const Vector_2& v) const
     {
-      Direction_2 n;
-      n.xd = q.xc - p.xc;
-      n.yd = q.yc - p.yc;
-      return n;
+      Direction_2 d;
+      d.xd = v.xx;
+      d.yd = v.yy;
+      return d;
+    }
+  };
+  struct Construct_opposite_direction_2
+  : public std::unary_function<Direction_2,Direction_2>
+  {
+    typedef CGAL::Arity_tag<1> Arity;
+    Direction_2 operator()(const Direction_2& d) const
+    {
+      Direction_2 dm;
+      dm.xd = -d.xd;
+      dm.yd = -d.yd;
+      return dm;
+    }
+  };
+  struct Construct_line_2
+  : public std::binary_function<Point_2,Direction_2,Line_2>
+  {
+    typedef CGAL::Arity_tag<2> Arity;
+    Line_2 operator()(const Point_2& p, const Direction_2& d) const
+    {
+      Line_2 l;
+      CGAL::line_from_point_directionC2(p.xc, p.yc, d.xd, d.yd,
+                                        l.aa, l.bb, l.cc);
+      return l;
     }
   };
   struct Construct_rectangle_2 {
@@ -196,7 +249,6 @@ struct MyTraits {
       return n;
     }
   };
-//public:
   template < class OutputIterator >
   OutputIterator
   copy_rectangle_vertices_2(const Rectangle_2&, OutputIterator o) const
@@ -219,15 +271,15 @@ struct MyTraits {
     // no output, this is just a test
     return o;
   }
-  Equal_2     equal_2_object()     const { return Equal_2(); }
-  Less_xy_2    less_xy_2_object()    const { return Less_xy_2(); }
-  Less_yx_2    less_yx_2_object()    const { return Less_yx_2(); }
+  Equal_2      equal_2_object()   const { return Equal_2(); }
+  Less_xy_2    less_xy_2_object() const { return Less_xy_2(); }
+  Less_yx_2    less_yx_2_object() const { return Less_yx_2(); }
   
-  Right_of_implicit_line_2 right_of_implicit_line_2_object() const
-  { return Right_of_implicit_line_2(); }
+  Has_on_negative_side_2 has_on_negative_side_2_object() const
+  { return Has_on_negative_side_2(); }
   
-  Less_rotate_ccw_2 less_rotate_ccw_2_object() const
-  { return Less_rotate_ccw_2(); }
+  Compare_angle_with_x_axis_2 compare_angle_with_x_axis_2_object() const
+  { return Compare_angle_with_x_axis_2(); }
   
   Area_less_rectangle_2 area_less_rectangle_2_object() const
   { return Area_less_rectangle_2(); }
@@ -238,12 +290,26 @@ struct MyTraits {
   Width_less_strip_2 width_less_strip_2_object() const
   { return Width_less_strip_2(); }
   
+  Construct_vector_2 construct_vector_2_object() const
+  { return Construct_vector_2(); }
+  
+  Construct_vector_from_direction_2
+  construct_vector_from_direction_2_object() const
+  { return Construct_vector_from_direction_2(); }
+  
+  Construct_perpendicular_vector_2
+  construct_perpendicular_vector_2_object() const
+  { return Construct_perpendicular_vector_2(); }
+  
   Construct_direction_2 construct_direction_2_object() const
   { return Construct_direction_2(); }
   
-  Rotate_direction_by_multiple_of_pi_2
-  rotate_direction_by_multiple_of_pi_2_object() const
-  { return Rotate_direction_by_multiple_of_pi_2(); }
+  Construct_opposite_direction_2
+  construct_opposite_direction_2_object() const
+  { return Construct_opposite_direction_2(); }
+  
+  Construct_line_2 construct_line_2_object() const
+  { return Construct_line_2(); }
   
   Construct_rectangle_2 construct_rectangle_2_object() const
   { return Construct_rectangle_2(); }

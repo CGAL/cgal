@@ -35,103 +35,99 @@
 #include <CGAL/Direction_2.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/intersections.h>
+#include <CGAL/utility.h>
+#include <CGAL/functional.h>
 #include <vector>
 
 CGAL_BEGIN_NAMESPACE
 
-template < class R >
-struct Min_rectangle_2 {
-  typedef typename R::Point_2     Point_2;
-  typedef typename R::Direction_2 Direction_2;
+namespace Optimisation {
+  template < class Kernel_ >
+  struct Min_rectangle_2 {
+    typedef Kernel_                       Kernel;
+    typedef typename Kernel::Point_2      Point_2;
+    typedef typename Kernel::Direction_2  Direction_2;
 
-  Min_rectangle_2(const Point_2& q1,
-                  const Direction_2& e,
-                  const Point_2& q2,
-                  const Point_2& q3,
-                  const Point_2& q4)
-  : p1(q1), p2(q2), p3(q3), p4(q4), d(e)
-  {}
+    Min_rectangle_2(const Point_2& q1,
+                    const Direction_2& e,
+                    const Point_2& q2,
+                    const Point_2& q3,
+                    const Point_2& q4)
+    : p1(q1), p2(q2), p3(q3), p4(q4), d(e)
+    {}
 
-  Point_2 p1, p2, p3, p4;
-  Direction_2 d;
-};
+    Point_2 p1, p2, p3, p4;
+    Direction_2 d;
+  };
 
-template < class R >
-struct Min_parallelogram_2 {
-  typedef typename R::Point_2     Point_2;
-  typedef typename R::Direction_2 Direction_2;
+  template < class Kernel_ >
+  struct Min_parallelogram_2 {
+    typedef Kernel_                       Kernel;
+    typedef typename Kernel::Point_2      Point_2;
+    typedef typename Kernel::Direction_2  Direction_2;
 
-  Min_parallelogram_2(const Point_2& q1, const Direction_2& e1,
-                      const Point_2& q2, const Direction_2& e2,
-                      const Point_2& q3, const Point_2& q4)
-  : p1(q1), p2(q2), p3(q3), p4(q4), d1(e1), d2(e2)
-  {}
+    Min_parallelogram_2(const Point_2& q1, const Direction_2& e1,
+                        const Point_2& q2, const Direction_2& e2,
+                        const Point_2& q3, const Point_2& q4)
+    : p1(q1), p2(q2), p3(q3), p4(q4), d1(e1), d2(e2)
+    {}
 
-  Point_2 p1, p2, p3, p4;
-  Direction_2 d1, d2;
-};
+    Point_2 p1, p2, p3, p4;
+    Direction_2 d1, d2;
+  };
 
-template < class R >
-std::ostream& operator<<(std::ostream& o, const Min_parallelogram_2< R >& p)
-{
-  if (p.d1 == p.d2)
-    o << "Dirs equal!\n";
-  return o << "Para(\t" << p.p1 << ",\n"
-           << p.d1 << ",\n"
-           << p.p2 << ",\n"
-           << p.d2 << ",\n"
-           << p.p3 << ",\n"
-           << p.p4 << ")";
-}
+  template < class Kernel >
+  std::ostream& operator<<(std::ostream& o,
+                           const Min_parallelogram_2<Kernel>& p)
+  {
+    if (p.d1 == p.d2)
+      o << "Dirs equal!\n";
+    return o << "Para(\t" << p.p1 << ",\n"
+             << p.d1 << ",\n"
+             << p.p2 << ",\n"
+             << p.d2 << ",\n"
+             << p.p3 << ",\n"
+             << p.p4 << ")";
+  }
+} // namespace Optimisation 
 
-template < class R >
-struct Min_strip_2 {
-  typedef typename R::Point_2     Point_2;
-  typedef typename R::Direction_2 Direction_2;
-
-  Min_strip_2(const Point_2& q1, const Direction_2& e, const Point_2& q2)
-  : p1(q1), p2(q2), d(e)
-  {}
-
-  Point_2 p1, p2;
-  Direction_2 d;
-};
-
-template < class R_ >
+template < class K_ >
 struct Min_quadrilateral_default_traits_2 {
-  // Types
-  typedef R_                                 R;
-  typedef typename R::RT                     RT;
-  typedef typename R::Point_2                Point_2;
-  typedef typename R::Direction_2            Direction_2;
-  typedef typename R::Line_2                 Line_2;
-  typedef Min_rectangle_2< R >               Rectangle_2;
-  typedef Min_parallelogram_2< R >           Parallelogram_2;
-  typedef Min_strip_2< R >                   Strip_2;
+  // types inherited from Kernel
+  typedef K_                                       Kernel;
+  typedef typename Kernel::RT                      RT;
+  typedef typename Kernel::Point_2                 Point_2;
+  typedef typename Kernel::Vector_2                Vector_2;
+  typedef typename Kernel::Direction_2             Direction_2;
+  typedef typename Kernel::Line_2                  Line_2;
 
-  // Predicates
-  typedef typename R::Equal_2                Equal_2;
-  // std::equal_to< Point_2 >                Equal_2;
-  typedef typename R::Less_xy_2              Less_xy_2;
-  typedef typename R::Less_yx_2              Less_yx_2;
+  // predicates and constructions inherited from Kernel
+  typedef typename Kernel::Equal_2                 Equal_2;
+  typedef typename Kernel::Less_xy_2               Less_xy_2;
+  typedef typename Kernel::Less_yx_2               Less_yx_2;
+  typedef typename Kernel::Has_on_negative_side_2  Has_on_negative_side_2;
+  typedef typename Kernel::Compare_angle_with_x_axis_2
+    Compare_angle_with_x_axis_2;
+  typedef typename Kernel::Construct_vector_2      Construct_vector_2;
+  typedef typename Kernel::Construct_direction_2   Construct_direction_2;
+  typedef typename Kernel::Construct_line_2        Construct_line_2;
+  typedef typename Kernel::Construct_perpendicular_vector_2
+    Construct_perpendicular_vector_2;
+  typedef typename Kernel::Construct_opposite_direction_2
+    Construct_opposite_direction_2;
 
-  struct Right_of_implicit_line_2
-  {
-    bool
-    operator()(const Point_2& p,
-               const Point_2& q, const Direction_2& d) const
-    {
-      typedef CGAL::Line_2< R >  Line_2;
-      return Line_2(q, d).has_on_negative_side(p);
-    }
-  };
-  struct Less_rotate_ccw_2
-  : public CGAL_STD::binary_function< Direction_2, Direction_2, bool >
-  {
-    bool
-    operator()(const Direction_2& d, const Direction_2& e) const
-    { return d.dy() * e.dx() < d.dx() * e.dy(); }
-  };
+protected:
+  // used internally
+  Construct_line_2              line;
+  typename Kernel::Intersect_2  isec;
+
+public:
+  // new types
+  typedef Optimisation::Min_rectangle_2<Kernel>      Rectangle_2;
+  typedef Optimisation::Min_parallelogram_2<Kernel>  Parallelogram_2;
+  typedef Triple<Point_2,Direction_2,Point_2>        Strip_2;
+
+  // new predicates
   struct Area_less_rectangle_2
   : public CGAL_STD::binary_function< Rectangle_2, Rectangle_2, bool >
   {
@@ -167,14 +163,14 @@ struct Min_quadrilateral_default_traits_2 {
     bool
     operator()(const Rectangle_2& p, const Rectangle_2& q) const
     {
-      typename R::Rep_tag tag;
+      typename Kernel::Rep_tag tag;
       #if defined(__sun) && defined(__SUNPRO_CC)
           // to avoid a warning "tag has not yet been assigned a value"
-          typedef typename R::Rep_tag Rep_tag;
+          typedef typename Kernel::Rep_tag Rep_tag;
           tag = Rep_tag();
       #endif // SUNPRO
       return area_numerator(p, tag) * area_denominator(q, tag) <
-        area_denominator(p, tag) * area_numerator(q, tag);
+             area_denominator(p, tag) * area_numerator(q, tag);
     }
   };
   struct Area_less_parallelogram_2
@@ -216,14 +212,14 @@ struct Min_quadrilateral_default_traits_2 {
     bool
     operator()(const Parallelogram_2& p, const Parallelogram_2& q) const
     {
-      typename R::Rep_tag tag;
+      typename Kernel::Rep_tag tag;
       #if defined(__sun) && defined(__SUNPRO_CC)
           // to avoid a warning "tag has not yet been assigned a value"
-          typedef typename R::Rep_tag Rep_tag;
+          typedef typename Kernel::Rep_tag Rep_tag;
           tag = Rep_tag();
       #endif // SUNPRO
       return area_numerator(p, tag) * area_denominator(q, tag) <
-        area_denominator(p, tag) * area_numerator(q, tag);
+             area_denominator(p, tag) * area_numerator(q, tag);
     }
   };
   struct Width_less_strip_2
@@ -233,70 +229,49 @@ struct Min_quadrilateral_default_traits_2 {
     width_numerator(const Strip_2& r, Cartesian_tag) const
     {
       return
-        r.d.dx() * (r.p2.y() - r.p1.y()) +
-        r.d.dy() * (r.p1.x() - r.p2.x());
+        r.second.dx() * (r.third.y() - r.first.y()) +
+        r.second.dy() * (r.first.x() - r.third.x());
     }
     
     RT
     width_denominator(const Strip_2& r, Cartesian_tag) const
-    { return CGAL_NTS square(r.d.dx()) + CGAL_NTS square(r.d.dy()); }
+    { return CGAL_NTS square(r.second.dx()) + CGAL_NTS square(r.second.dy()); }
     
     RT
     width_numerator(const Strip_2& r, Homogeneous_tag) const
     {
       return
-        r.d.dx() * (r.p2.hy() * r.p1.hw() - r.p1.hy() * r.p2.hw()) +
-        r.d.dy() * (r.p1.hx() * r.p2.hw() - r.p2.hx() * r.p1.hw());
+        r.second.dx() *
+          (r.third.hy() * r.first.hw() - r.first.hy() * r.third.hw()) +
+        r.second.dy() *
+          (r.first.hx() * r.third.hw() - r.third.hx() * r.first.hw());
     }
     
     RT
     width_denominator(const Strip_2& r, Homogeneous_tag) const {
-      return r.p1.hw() * r.p2.hw() *
-        (CGAL_NTS square(r.d.dx()) + CGAL_NTS square(r.d.dy()));
+      return r.first.hw() * r.third.hw() *
+        (CGAL_NTS square(r.second.dx()) + CGAL_NTS square(r.second.dy()));
     }
   
     bool
     operator()(const Strip_2& p, const Strip_2& q) const
     {
-      typename R::Rep_tag tag;
+      typename Kernel::Rep_tag tag;
       #if defined(__sun) && defined(__SUNPRO_CC)
           // to avoid a warning "tag has not yet been assigned a value"
-          typedef typename R::Rep_tag Rep_tag;
+          typedef typename Kernel::Rep_tag Rep_tag;
           tag = Rep_tag();
       #endif // SUNPRO
       return width_numerator(p, tag) * width_denominator(q, tag) <
-        width_denominator(p, tag) * width_numerator(q, tag);
+             width_denominator(p, tag) * width_numerator(q, tag);
     }
   };
 
-  // Constructions
-  struct Construct_direction_2
-  : public CGAL_STD::binary_function< Point_2, Point_2, Direction_2 >
+  // new constructions
+  struct Construct_vector_from_direction_2
+  : public CGAL_STD::unary_function<Direction_2,Vector_2>
   {
-    Direction_2
-    operator()(const Point_2& p, const Point_2& q) const
-    { return (q - p).direction(); }
-  };
-  struct Rotate_direction_by_multiple_of_pi_2
-  : public CGAL_STD::binary_function< Direction_2, int, Direction_2 >
-  {
-    Direction_2
-    operator()(const Direction_2& d, int i) const
-    {
-      typedef typename R::Vector_2 Vector_2;
-      CGAL_precondition(i >= 0 && i < 4);
-      if (i == 0)
-        return d;
-      if (i == 1)
-        return Direction_2(Vector_2(d.to_vector().hy(),
-                                    -d.to_vector().hx(),
-                                    d.to_vector().hw()));
-      if (i == 2)
-        return -d;
-      return Direction_2(Vector_2(-d.to_vector().hy(),
-                                  d.to_vector().hx(),
-                                  d.to_vector().hw()));
-    }
+    Vector_2 operator()(const Direction_2& d) const { return d.vector(); }
   };
   struct Construct_rectangle_2
   {
@@ -317,7 +292,10 @@ struct Min_quadrilateral_default_traits_2 {
         r.p1,
         r.d,
         r.p2,
-        rotate_direction_by_multiple_of_pi_2_object()(r.d, 1),
+        construct_direction_2_object()(
+          construct_perpendicular_vector_2_object()(
+            construct_vector_from_direction_2_object()(r.d),
+            CLOCKWISE)),
         r.p3,
         r.p4),
         o);
@@ -338,13 +316,18 @@ struct Min_quadrilateral_default_traits_2 {
   copy_parallelogram_vertices_2(
     const Parallelogram_2& r, OutputIterator o) const
   {
-    typedef typename R::Line_2  Line_2;
     Point_2 tmp;
     Line_2  tmpl;
     Object  tmpo;
   
-    tmpo = intersection(Line_2(r.p1, r.d1), Line_2(r.p2, r.d2));
+    tmpo = isec(line(r.p1, r.d1), line(r.p2, r.d2));
     if (assign(tmp, tmpo)) {
+  #ifdef CGAL_TRACE
+      if (!line(r.p1, r.d1).has_on(tmp) ||
+          !line(r.p2, r.d2).has_on(tmp))
+        std::cerr << "ERROR!" << std::endl;
+      else std::cerr << "---   OK1" << std::endl;
+  #endif // CGAL_TRACE
       *o++ = tmp;
     } else {
       CGAL_optimisation_assertion_code(bool test1 =)
@@ -352,8 +335,14 @@ struct Min_quadrilateral_default_traits_2 {
       CGAL_optimisation_assertion(test1);
       *o++ = r.p1;
     }
-    tmpo = intersection(Line_2(r.p3, r.d1), Line_2(r.p2, r.d2));
+    tmpo = isec(line(r.p3, r.d1), line(r.p2, r.d2));
     if (assign(tmp, tmpo)) {
+  #ifdef CGAL_TRACE
+      if (!line(r.p3, r.d1).has_on(tmp) ||
+          !line(r.p2, r.d2).has_on(tmp))
+        std::cerr << "ERROR!" << std::endl;
+      else std::cerr << "---   OK2" << std::endl;
+  #endif // CGAL_TRACE
       *o++ = tmp;
     } else {
       CGAL_optimisation_assertion_code(bool test1 =)
@@ -361,8 +350,14 @@ struct Min_quadrilateral_default_traits_2 {
       CGAL_optimisation_assertion(test1);
       *o++ = r.p2;
     }
-    tmpo = intersection(Line_2(r.p3, r.d1), Line_2(r.p4, r.d2));
+    tmpo = isec(line(r.p3, r.d1), line(r.p4, r.d2));
     if (assign(tmp, tmpo)) {
+  #ifdef CGAL_TRACE
+      if (!line(r.p3, r.d1).has_on(tmp) ||
+          !line(r.p4, r.d2).has_on(tmp))
+        std::cerr << "ERROR!" << std::endl;
+      else std::cerr << "---   OK3" << std::endl;
+  #endif // CGAL_TRACE
       *o++ = tmp;
     } else {
       CGAL_optimisation_assertion_code(bool test1 =)
@@ -370,8 +365,14 @@ struct Min_quadrilateral_default_traits_2 {
       CGAL_optimisation_assertion(test1);
       *o++ = r.p3;
     }
-    tmpo = intersection(Line_2(r.p1, r.d1), Line_2(r.p4, r.d2));
+    tmpo = isec(line(r.p1, r.d1), line(r.p4, r.d2));
     if (assign(tmp, tmpo)) {
+  #ifdef CGAL_TRACE
+      if (!line(r.p1, r.d1).has_on(tmp) ||
+          !line(r.p4, r.d2).has_on(tmp))
+        std::cerr << "ERROR!" << std::endl;
+      else std::cerr << "---   OK4" << std::endl;
+  #endif // CGAL_TRACE
       *o++ = tmp;
     } else {
       CGAL_optimisation_assertion_code(bool test1 =)
@@ -393,20 +394,20 @@ struct Min_quadrilateral_default_traits_2 {
   OutputIterator
   copy_strip_lines_2(const Strip_2& r, OutputIterator o) const
   {
-    *o++ = Line_2(r.p1, r.d);
-    *o++ = Line_2(r.p2, r.d);
+    *o++ = line(r.first, r.second);
+    *o++ = line(r.third, r.second);
     return o;
   } 
 
-  Equal_2     equal_2_object()     const { return Equal_2(); }
-  Less_xy_2    less_xy_2_object()    const { return Less_xy_2(); }
-  Less_yx_2    less_yx_2_object()    const { return Less_yx_2(); }
+  Equal_2      equal_2_object()   const { return Equal_2(); }
+  Less_xy_2    less_xy_2_object() const { return Less_xy_2(); }
+  Less_yx_2    less_yx_2_object() const { return Less_yx_2(); }
   
-  Right_of_implicit_line_2 right_of_implicit_line_2_object() const
-  { return Right_of_implicit_line_2(); }
+  Has_on_negative_side_2 has_on_negative_side_2_object() const
+  { return Has_on_negative_side_2(); }
   
-  Less_rotate_ccw_2 less_rotate_ccw_2_object() const
-  { return Less_rotate_ccw_2(); }
+  Compare_angle_with_x_axis_2 compare_angle_with_x_axis_2_object() const
+  { return Compare_angle_with_x_axis_2(); }
   
   Area_less_rectangle_2 area_less_rectangle_2_object() const
   { return Area_less_rectangle_2(); }
@@ -417,12 +418,26 @@ struct Min_quadrilateral_default_traits_2 {
   Width_less_strip_2 width_less_strip_2_object() const
   { return Width_less_strip_2(); }
   
+  Construct_vector_2 construct_vector_2_object() const
+  { return Construct_vector_2(); }
+  
+  Construct_vector_from_direction_2
+  construct_vector_from_direction_2_object() const
+  { return Construct_vector_from_direction_2(); }
+  
+  Construct_perpendicular_vector_2
+  construct_perpendicular_vector_2_object() const
+  { return Construct_perpendicular_vector_2(); }
+  
   Construct_direction_2 construct_direction_2_object() const
   { return Construct_direction_2(); }
   
-  Rotate_direction_by_multiple_of_pi_2
-  rotate_direction_by_multiple_of_pi_2_object() const
-  { return Rotate_direction_by_multiple_of_pi_2(); }
+  Construct_opposite_direction_2
+  construct_opposite_direction_2_object() const
+  { return Construct_opposite_direction_2(); }
+  
+  Construct_line_2 construct_line_2_object() const
+  { return Construct_line_2(); }
   
   Construct_rectangle_2 construct_rectangle_2_object() const
   { return Construct_rectangle_2(); }
@@ -434,7 +449,6 @@ struct Min_quadrilateral_default_traits_2 {
   { return Construct_strip_2(); }
 
 };
-
 
 CGAL_END_NAMESPACE
 
