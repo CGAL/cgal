@@ -65,7 +65,7 @@ public:
     typedef NT_         NT;
     typedef std::size_t Id_type;
 
-    Box_d() { init(); }
+    Box_d() {}
     Box_d(bool complete) { init(complete); }
     Box_d(NT l[N], NT h[N]) {
         std::copy( l, l + N, lo );
@@ -99,7 +99,7 @@ public:
     typedef double      NT;
     typedef std::size_t Id_type;
 
-    Box_d() { init(); }
+    Box_d() {}
     Box_d(bool complete) { init(complete); }
     Box_d(NT l[2], NT h[2]) : bbx(l[0], l[1], h[0], h[1]) {}
     Box_d( const Bbox_2& b) : bbx( b) {}
@@ -138,7 +138,7 @@ public:
     typedef double      NT;
     typedef std::size_t Id_type;
 
-    Box_d() { init(); }
+    Box_d() {}
     Box_d(bool complete) { init(complete); }
     Box_d(NT l[3], NT h[3]) : bbx(l[0], l[1], l[2], h[0], h[1], h[2]) {}
     Box_d( const Bbox_3& b) : bbx( b) {}
