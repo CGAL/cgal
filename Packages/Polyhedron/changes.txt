@@ -1,6 +1,11 @@
 Polyhedron Package: Release changes:
 ---------------------------------------------------------------------
 
+3.24 (21 Mar 2002)
+
+     - Moved member functions defined outside of the Polyhedron_3 class
+       back into class body for MSC7.
+
 3.23 (20 Mar 2002)
 
      - added empty() member function to Polyhedron_3.
