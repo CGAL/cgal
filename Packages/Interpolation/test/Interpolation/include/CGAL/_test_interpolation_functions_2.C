@@ -44,13 +44,13 @@ bool test_norm(ForwardIterator first, ForwardIterator beyond,
 	       typename std::iterator_traits<ForwardIterator>::
 	       value_type::second_type norm)
 {
-   typename
-     std::iterator_traits<ForwardIterator>::value_type::second_type 
-     sum(0);
+  typename
+    std::iterator_traits<ForwardIterator>::value_type::second_type 
+    sum(0);
    for(; first !=beyond; first++)
      sum+= first->second;
    
-  return(norm==sum); 
+   return(norm==sum); 
 }
 template < class ForwardIterator > 
 bool test_barycenter(ForwardIterator first, ForwardIterator beyond,
@@ -59,18 +59,78 @@ bool test_barycenter(ForwardIterator first, ForwardIterator beyond,
 		     norm ,
 		     const typename
 		     std::iterator_traits<ForwardIterator>::
-		     value_type::first_type& p)
+		     value_type::first_type& p, const typename 
+		     std::iterator_traits<ForwardIterator>::
+		     value_type::second_type&
+		     tolerance)
 {
   typedef typename
     std::iterator_traits<ForwardIterator>::value_type::first_type Point;
   Point b(CGAL::ORIGIN);
   for(; first !=beyond; first++)
     b = b+ (first->second/norm) * (first->first - CGAL::ORIGIN);
-
-  return(p==b); 
+  return (CGAL::squared_distance(p,b) <= tolerance);
 }
 
 /////////////////////////////////////////////////////////////////
+// Accessory function testing functions that require sqrt().
+// Doesn't instantiate anything if RT doesn't support sqrt().
+template < class ForwardIterator, class Functor, class GradFunctor,
+  class Gt>
+bool
+_test_sibson_c1_interpolation_sqrt(ForwardIterator first, ForwardIterator beyond,  
+				   const typename
+				   std::iterator_traits<ForwardIterator>
+				   ::value_type::second_type&
+				   norm, const typename
+				   std::iterator_traits<ForwardIterator>
+				   ::value_type::first_type& p,
+				   Functor f, GradFunctor grad_f,
+				   const Gt& geom_traits, 
+				   const typename 
+				   std::iterator_traits<ForwardIterator>
+				   ::value_type::second_type& tolerance,  
+				   const typename 
+				   std::iterator_traits<ForwardIterator>
+				   ::value_type::second_type& exact_value, 
+				   CGAL::Tag_false)
+{
+  bool UNTESTED_STUFF_BECAUSE_SQRT_IS_NOT_SUPPORTED;
+  std::cout << std::endl
+            << "WARNING : FT doesn't support sqrt(),"
+    " hence sibson_c1_interpolation is not tested." << std::endl;
+  return true;
+}
+
+template < class ForwardIterator, class Functor, class GradFunctor,
+  class Gt>
+bool
+_test_sibson_c1_interpolation_sqrt(ForwardIterator first, ForwardIterator beyond,  
+				   const typename
+				   std::iterator_traits<ForwardIterator>
+				   ::value_type::second_type&
+				   norm, const typename
+				   std::iterator_traits<ForwardIterator>::value_type
+				   ::first_type& p,
+				   Functor f, GradFunctor grad_f,
+				   const Gt& geom_traits,
+				   const typename std::iterator_traits<ForwardIterator>
+				   ::value_type::second_type&
+				   tolerance,  
+				   const typename std::iterator_traits<ForwardIterator>
+				   ::value_type::second_type& exact_value,
+				   CGAL::Tag_true)
+{
+
+  typename Functor::result_type res =  
+    CGAL::sibson_c1_interpolation(first, beyond,
+				  norm,p,f,
+				  grad_f, geom_traits);
+  return(res.second && 
+	 (CGAL_NTS abs(res.first-exact_value)<= tolerance));
+}
+
+//////////////////////////////////////////////////////////////////
 template < class ForwardIterator, class Functor, class GradFunctor,
   class Gt>
 bool test_interpolation(ForwardIterator first, ForwardIterator beyond,  
@@ -81,7 +141,10 @@ bool test_interpolation(ForwardIterator first, ForwardIterator beyond,
 			std::iterator_traits<ForwardIterator>::value_type
 			::first_type& p,
 			Functor f, GradFunctor grad_f,
-			const Gt& geom_traits, const int& i)
+			const Gt& geom_traits, 
+			const int& i, 
+			const typename std::iterator_traits<ForwardIterator>
+			::value_type::second_type& tolerance)
 {
   typedef typename Functor::result_type::first_type Value_type;
   assert(f(p).second);
@@ -89,43 +152,50 @@ bool test_interpolation(ForwardIterator first, ForwardIterator beyond,
   
   if(i==0){
     Value_type val =  CGAL::linear_interpolation(first, beyond, norm,f);
-    assert(val == exact_value);
+    assert(CGAL_NTS abs(val-exact_value)<= tolerance);
   }
   
   typename Functor::result_type
     res =  CGAL::quadratic_interpolation(first, beyond, norm,p,f,
 					 grad_f, geom_traits);
-  assert(res.second && res.first == exact_value);
+  assert(res.second && (CGAL_NTS abs(res.first-exact_value)<=tolerance));
   
   if(i<2){
+    //without sqrt:
     res =  CGAL::sibson_c1_interpolation_square(first, beyond,
 						norm,p,f,
-						  grad_f, geom_traits);
-    assert(res.second && res.first == exact_value);
+						grad_f, geom_traits);
+    assert(res.second && (CGAL_NTS abs(res.first-exact_value)<= tolerance));
+    
+    //with sqrt:
+    assert(_test_sibson_c1_interpolation_sqrt(first, beyond,
+					      norm,p,f, grad_f, 
+					      geom_traits, tolerance, exact_value,
+					      typename CGAL::
+					      Number_type_traits<Value_type>::Has_sqrt())); 
   }
-  
   res =  CGAL::farin_c1_interpolation(first, beyond, norm,p,f,grad_f, 
 				      geom_traits);
-  assert(res.second && res.first == exact_value);
-  
+  assert(res.second);
+  assert(CGAL_NTS abs(res.first-exact_value)<= tolerance);
   return true;
 }
-
-
-
 /////////////////////////////////////////////
 
 template <class Triangul>
 void
-_test_interpolation_functions_2_delaunay( const Triangul & )
+_test_interpolation_functions_2_delaunay( const Triangul &, const
+					  typename
+					  Triangul::Geom_traits::FT& 
+					  tolerance)
 {
   
   Triangul T;
-
+  
   int n=20, m=20; 
   double r = 3;
   double max_value = 5;
-  
+   
   typedef typename Triangul::Geom_traits          Gt;
   typedef CGAL::Interpolation_traits_2<Gt>        Traits;
 
@@ -140,7 +210,6 @@ _test_interpolation_functions_2_delaunay( const Triangul & )
   typedef std::map<Point, Vector, typename Gt::Less_xy_2 >      
     Point_vector_map;
   
- 
   std::cout << "NN2: Testing random points." << std::endl; 
   //test random points in a square of length r:
   std::vector<Point> points;
@@ -220,21 +289,23 @@ _test_interpolation_functions_2_delaunay( const Triangul & )
     
     assert(norm>0);  
     assert(test_norm( coords.begin(), coords.end(),norm));
-    assert(test_barycenter( coords.begin(), coords.end(),norm, points[j]));
+    
+
+    assert(test_barycenter( coords.begin(), coords.end(),norm,
+			    points[j], tolerance));
     
     for(int i=0; i<3; i++)
       assert(test_interpolation(coords.begin(), coords.end(),norm,points[j], 
        				CGAL::DataAccess< Point_value_map >(values[i]),
        				CGAL::DataAccess< Point_vector_map >
 				(gradients[i]), 
-       				Traits(),i));
+       				Traits(), i, tolerance ));
     coords.clear();
   }
-  //std::cout << "NN_coords_2: barycentric prop.+ ";
-  //std::cout << " interpolation on RANDOM POINTS." << std::endl;
   
-
   //TESTING THE GRADIENT APPRXIMATION METHOD:
+  std::cout << "Testing gradient estimation method on random points."
+	    <<std::endl;
   typedef CGAL::Interpolation_gradient_fitting_traits_2<Gt> GradTraits;
   Point_vector_map approx_gradients[2];
   CGAL::sibson_gradient_fitting_nn_2(T,std::inserter(approx_gradients[0],
@@ -242,28 +313,31 @@ _test_interpolation_functions_2_delaunay( const Triangul & )
 				     CGAL::DataAccess<Point_value_map>(values[0]), 
 				     GradTraits());
   CGAL::sibson_gradient_fitting_nn_2(T,std::inserter(approx_gradients[1],
-						    approx_gradients[1].begin()),
-				    CGAL::DataAccess<Point_value_map>(values[1]), 
-				    GradTraits());  
+						     approx_gradients[1].begin()),
+				     CGAL::DataAccess<Point_value_map>(values[1]), 
+				     GradTraits());  
   for(int j=0; j<n; j++){
     std::pair<Vector, bool> res = 
       CGAL::DataAccess<Point_vector_map>(approx_gradients[0])(points[j]);
     if(res.second){
-      assert(res.first ==  
+      
+      //if it is the exact computation kernel: test the equality:
+      assert(tolerance > Coord_type(0) || res.first ==  
 	     CGAL::DataAccess<Point_vector_map>(gradients[0])(points[j]).first);
       res = 
 	CGAL::DataAccess<Point_vector_map>(approx_gradients[1])(points[j]);
       //if one exists->the other must also exist 
       assert(res.second);
-      assert(res.first ==  
+      
+
+      assert(tolerance > Coord_type(0) || res.first ==  
 	     CGAL::DataAccess<Point_vector_map>(gradients[1])(points[j]).first);
     }else
       assert(!CGAL::DataAccess<Point_vector_map>(approx_gradients[1])
 	     (points[j]).second);
   }
-  std::cout << " Tested gradient estimation method on random points."
-	    <<std::endl;
 
+  
   //TESTING A POINT == A DATA POINT:
   norm = 
     CGAL::natural_neighbor_coordinates_2(T,points[n/2],std::back_inserter
@@ -280,12 +354,9 @@ _test_interpolation_functions_2_delaunay( const Triangul & )
 			      CGAL::DataAccess< Point_value_map >(values[i]),
 			      CGAL::DataAccess< Point_vector_map >
 			      (gradients[i]), 
-			      Traits(),i));
+			      Traits(),i, tolerance));
   coords.clear();
-  //done.
-  //std::cout << "NN_coords_2: barycentric prop.+";
-  //std::cout << "interpolation on VERTEX." << std::endl;
-
+  
   //FURTHER TESTS FOR NATURAL NEIGHBOR COORDINATES 2:
   //TESTING A POINT on an EDGE of the triangulation:
   Face_handle fh = T.finite_faces_begin();
@@ -298,7 +369,7 @@ _test_interpolation_functions_2_delaunay( const Triangul & )
   norm = 
     CGAL::natural_neighbor_coordinates_2(T, p,std::back_inserter(coords)).second;
   assert(test_norm( coords.begin(), coords.end(),norm));
-  assert(test_barycenter( coords.begin(), coords.end(),norm,p));
+  assert(test_barycenter( coords.begin(), coords.end(),norm,p, tolerance));
   coords.clear();
   //END OF TEST WITH EDGE
 
@@ -332,7 +403,7 @@ _test_interpolation_functions_2_delaunay( const Triangul & )
   ci= coords.begin();
   for(; ci!= coords.end(); ci++)
     assert(ci->second == Coord_type(0.25));
-  assert(test_barycenter( coords.begin(), coords.end(),norm, Point(0,0)));
+  assert(test_barycenter( coords.begin(), coords.end(),norm, Point(0,0), tolerance));
   coords.clear();
   
   //add the middle point of the grid
@@ -355,10 +426,8 @@ _test_interpolation_functions_2_delaunay( const Triangul & )
   norm = 
     CGAL::natural_neighbor_coordinates_2(T2,p,
 					 std::back_inserter(coords)).second;
-  assert(test_barycenter( coords.begin(), coords.end(),norm, p));
+  assert(test_barycenter( coords.begin(), coords.end(),norm, p, tolerance));
   coords.clear();
-
- 
 }
 //end of file
 
