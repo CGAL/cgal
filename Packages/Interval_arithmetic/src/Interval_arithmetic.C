@@ -42,4 +42,11 @@ operator>> (std::istream & is, Interval_nt_advanced & I)
     return is;
 }
 
+void force_ieee_double_precision()
+{
+#ifdef __i386__
+    FPU_set_cw(FPU_cw_near);
+#endif // __i386__
+}
+
 CGAL_END_NAMESPACE
