@@ -34,7 +34,7 @@ if ( $tarname =~ m/^(CGAL-\d+\.\d+-I-\d+)-/ ) {
 }
 
 chdir $unpack_dir or die;
-if  (system("w3mir", $result_url) != 0) {
+if  (system("$scriptsdir/get_cgal_html", $result_url) != 0) {
 die "Could not get URL $result_url\n";
 }
 system("gunzip", "${tarname}.gz")== 0 or die "Could not gunzip ${tarname}.gz\n";
