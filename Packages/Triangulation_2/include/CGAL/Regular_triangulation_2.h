@@ -935,8 +935,8 @@ stack_flip_4_2(Face_handle f, int i, int j, Faces_around_stack & faces_around)
     _tds.flip( &(*f), i); //not using flip because the vertex j is flat.
     update_hidden_points_2_2(f,fn);
     Face_handle h1 = ( f->has_vertex(vq) ? fn : f);
-    remove_degree_3(vq,g);
     hide_vertex(h1, vq->point());
+    remove_degree_3(vq,g);
     faces_around.push_front(g);
     faces_around.push_front(h1);    
 }
