@@ -126,6 +126,8 @@ collinearC3(
   }
 }
 
+#ifdef CGAL_IA_NEW_FILTERS
+
 struct Static_Filtered_collinearC3_9
 {
   static double _bound;
@@ -351,6 +353,8 @@ collinearC3(
   }
 }
 
+#endif // CGAL_IA_NEW_FILTERS
+
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #else
@@ -468,6 +472,8 @@ orientationC3(
     return result;
   }
 }
+
+#ifdef CGAL_IA_NEW_FILTERS
 
 struct Static_Filtered_orientationC3_12
 {
@@ -701,6 +707,8 @@ orientationC3(
   }
 }
 
+#endif // CGAL_IA_NEW_FILTERS
+
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #else
@@ -782,6 +790,8 @@ equal_directionC3(
     return result;
   }
 }
+
+#ifdef CGAL_IA_NEW_FILTERS
 
 struct Static_Filtered_equal_directionC3_6
 {
@@ -1003,6 +1013,8 @@ equal_directionC3(
   }
 }
 
+#endif // CGAL_IA_NEW_FILTERS
+
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #else
@@ -1090,6 +1102,8 @@ side_of_oriented_planeC3(
     return result;
   }
 }
+
+#ifdef CGAL_IA_NEW_FILTERS
 
 struct Static_Filtered_side_of_oriented_planeC3_7
 {
@@ -1264,6 +1278,8 @@ side_of_oriented_planeC3(
   }
 }
 
+#endif // CGAL_IA_NEW_FILTERS
+
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #else
@@ -1399,6 +1415,8 @@ side_of_oriented_sphereC3(
     return result;
   }
 }
+
+#ifdef CGAL_IA_NEW_FILTERS
 
 struct Static_Filtered_side_of_oriented_sphereC3_15
 {
@@ -1699,6 +1717,8 @@ side_of_oriented_sphereC3(
   }
 }
 
+#endif // CGAL_IA_NEW_FILTERS
+
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #else
@@ -1834,6 +1854,8 @@ side_of_bounded_sphereC3(
     return result;
   }
 }
+
+#ifdef CGAL_IA_NEW_FILTERS
 
 struct Static_Filtered_side_of_bounded_sphereC3_15
 {
@@ -2120,6 +2142,8 @@ side_of_bounded_sphereC3(
   }
 }
 
+#endif // CGAL_IA_NEW_FILTERS
+
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #else
@@ -2219,6 +2243,8 @@ cmp_dist_to_pointC3(
     return result;
   }
 }
+
+#ifdef CGAL_IA_NEW_FILTERS
 
 struct Static_Filtered_cmp_dist_to_pointC3_9
 {
@@ -2417,6 +2443,8 @@ cmp_dist_to_pointC3(
   }
 }
 
+#endif // CGAL_IA_NEW_FILTERS
+
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #else
@@ -2522,6 +2550,8 @@ cmp_signed_dist_to_planeC3(
     return result;
   }
 }
+
+#ifdef CGAL_IA_NEW_FILTERS
 
 struct Static_Filtered_cmp_signed_dist_to_planeC3_10
 {
@@ -2731,6 +2761,8 @@ cmp_signed_dist_to_planeC3(
   }
 }
 
+#endif // CGAL_IA_NEW_FILTERS
+
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #else
@@ -2866,6 +2898,8 @@ cmp_signed_dist_to_planeC3(
     return result;
   }
 }
+
+#ifdef CGAL_IA_NEW_FILTERS
 
 struct Static_Filtered_cmp_signed_dist_to_planeC3_15
 {
@@ -3136,6 +3170,8 @@ cmp_signed_dist_to_planeC3(
   }
 }
 
+#endif // CGAL_IA_NEW_FILTERS
+
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #else
@@ -3271,6 +3307,8 @@ has_larger_signed_dist_to_planeC3(
     return result;
   }
 }
+
+#ifdef CGAL_IA_NEW_FILTERS
 
 struct Static_Filtered_has_larger_signed_dist_to_planeC3_15
 {
@@ -3535,6 +3573,8 @@ has_larger_signed_dist_to_planeC3(
   }
 }
 
+#endif // CGAL_IA_NEW_FILTERS
+
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #else
@@ -3670,6 +3710,8 @@ has_smaller_signed_dist_to_planeC3(
     return result;
   }
 }
+
+#ifdef CGAL_IA_NEW_FILTERS
 
 struct Static_Filtered_has_smaller_signed_dist_to_planeC3_15
 {
@@ -3933,6 +3975,8 @@ has_smaller_signed_dist_to_planeC3(
 		qz.exact());
   }
 }
+
+#endif // CGAL_IA_NEW_FILTERS
 
 CGAL_END_NAMESPACE
 

@@ -144,6 +144,8 @@ power_testC2(
   }
 }
 
+#ifdef CGAL_IA_NEW_FILTERS
+
 struct Static_Filtered_power_testC2_12
 {
   static double _bound;
@@ -402,6 +404,8 @@ power_testC2(
   }
 }
 
+#endif // CGAL_IA_NEW_FILTERS
+
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #else
@@ -501,6 +505,8 @@ power_testC2(
     return result;
   }
 }
+
+#ifdef CGAL_IA_NEW_FILTERS
 
 struct Static_Filtered_power_testC2_9
 {
@@ -744,6 +750,8 @@ power_testC2(
 		twt.exact());
   }
 }
+
+#endif // CGAL_IA_NEW_FILTERS
 
 CGAL_END_NAMESPACE
 

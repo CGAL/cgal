@@ -222,6 +222,8 @@ power_testH3(
   }
 }
 
+#ifdef CGAL_IA_NEW_FILTERS
+
 struct Static_Filtered_power_testH3_25
 {
   static double _bound;
@@ -661,6 +663,8 @@ power_testH3(
   }
 }
 
+#endif // CGAL_IA_NEW_FILTERS
+
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #else
@@ -826,6 +830,8 @@ power_testH3(
     return result;
   }
 }
+
+#ifdef CGAL_IA_NEW_FILTERS
 
 struct Static_Filtered_power_testH3_20
 {
@@ -1145,6 +1151,8 @@ power_testH3(
   }
 }
 
+#endif // CGAL_IA_NEW_FILTERS
+
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #else
@@ -1280,6 +1288,8 @@ power_testH3(
     return result;
   }
 }
+
+#ifdef CGAL_IA_NEW_FILTERS
 
 struct Static_Filtered_power_testH3_15
 {
@@ -1541,6 +1551,8 @@ power_testH3(
 		twt.exact());
   }
 }
+
+#endif // CGAL_IA_NEW_FILTERS
 
 CGAL_END_NAMESPACE
 

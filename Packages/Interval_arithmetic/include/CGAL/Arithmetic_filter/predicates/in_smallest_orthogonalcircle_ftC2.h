@@ -126,6 +126,8 @@ in_smallest_orthogonalcircleC2(
   }
 }
 
+#ifdef CGAL_IA_NEW_FILTERS
+
 struct Static_Filtered_in_smallest_orthogonalcircleC2_9
 {
   static double _bound;
@@ -334,6 +336,8 @@ in_smallest_orthogonalcircleC2(
 		tw.exact());
   }
 }
+
+#endif // CGAL_IA_NEW_FILTERS
 
 CGAL_END_NAMESPACE
 

@@ -350,9 +350,11 @@ sub print_predicates {
     print FO "CGAL_END_NAMESPACE\n\n"   if $CGAL ne "" && $was_in_CGAL;
     print_dynamic("Protected", @{$predicates[$i]});
     print_dynamic("Advanced", @{$predicates[$i]});
+    print FO "#ifdef CGAL_IA_NEW_FILTERS\n\n";
     print_predicate_struct(@{$predicates[$i]});
     print_static("Protected", @{$predicates[$i]});
     print_static("Advanced", @{$predicates[$i]});
+    print FO "#endif // CGAL_IA_NEW_FILTERS\n\n";
     print_static_infos(@{$predicates[$i]});
     $was_in_CGAL = $CGAL eq "";
   }

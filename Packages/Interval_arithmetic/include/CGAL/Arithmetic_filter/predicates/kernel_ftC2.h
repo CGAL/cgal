@@ -108,6 +108,8 @@ equal_lineC2(
   }
 }
 
+#ifdef CGAL_IA_NEW_FILTERS
+
 struct Static_Filtered_equal_lineC2_6
 {
   static double _bound;
@@ -320,6 +322,8 @@ equal_lineC2(
   }
 }
 
+#endif // CGAL_IA_NEW_FILTERS
+
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #else
@@ -407,6 +411,8 @@ compare_xC2(
     return result;
   }
 }
+
+#ifdef CGAL_IA_NEW_FILTERS
 
 struct Static_Filtered_compare_xC2_7
 {
@@ -597,6 +603,8 @@ compare_xC2(
   }
 }
 
+#endif // CGAL_IA_NEW_FILTERS
+
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #else
@@ -714,6 +722,8 @@ compare_xC2(
     return result;
   }
 }
+
+#ifdef CGAL_IA_NEW_FILTERS
 
 struct Static_Filtered_compare_xC2_12
 {
@@ -967,6 +977,8 @@ compare_xC2(
   }
 }
 
+#endif // CGAL_IA_NEW_FILTERS
+
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #else
@@ -1042,6 +1054,8 @@ compare_y_at_xC2(
     return result;
   }
 }
+
+#ifdef CGAL_IA_NEW_FILTERS
 
 struct Static_Filtered_compare_y_at_xC2_5
 {
@@ -1204,6 +1218,8 @@ compare_y_at_xC2(
   }
 }
 
+#endif // CGAL_IA_NEW_FILTERS
+
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #else
@@ -1291,6 +1307,8 @@ compare_y_at_xC2(
     return result;
   }
 }
+
+#ifdef CGAL_IA_NEW_FILTERS
 
 struct Static_Filtered_compare_y_at_xC2_7
 {
@@ -1483,6 +1501,8 @@ compare_y_at_xC2(
   }
 }
 
+#endif // CGAL_IA_NEW_FILTERS
+
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #else
@@ -1582,6 +1602,8 @@ compare_y_at_xC2(
     return result;
   }
 }
+
+#ifdef CGAL_IA_NEW_FILTERS
 
 struct Static_Filtered_compare_y_at_xC2_9
 {
@@ -1798,6 +1820,8 @@ compare_y_at_xC2(
   }
 }
 
+#endif // CGAL_IA_NEW_FILTERS
+
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #else
@@ -1915,6 +1939,8 @@ compare_y_at_xC2(
     return result;
   }
 }
+
+#ifdef CGAL_IA_NEW_FILTERS
 
 struct Static_Filtered_compare_y_at_xC2_12
 {
@@ -2174,6 +2200,8 @@ compare_y_at_xC2(
   }
 }
 
+#endif // CGAL_IA_NEW_FILTERS
+
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #else
@@ -2243,6 +2271,8 @@ equal_directionC2(
     return result;
   }
 }
+
+#ifdef CGAL_IA_NEW_FILTERS
 
 struct Static_Filtered_equal_directionC2_4
 {
@@ -2412,6 +2442,8 @@ equal_directionC2(
   }
 }
 
+#endif // CGAL_IA_NEW_FILTERS
+
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #else
@@ -2481,6 +2513,8 @@ compare_deltax_deltayC2(
     return result;
   }
 }
+
+#ifdef CGAL_IA_NEW_FILTERS
 
 struct Static_Filtered_compare_deltax_deltayC2_4
 {
@@ -2622,6 +2656,8 @@ compare_deltax_deltayC2(
   }
 }
 
+#endif // CGAL_IA_NEW_FILTERS
+
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #else
@@ -2691,6 +2727,8 @@ compare_lexicographically_xyC2(
     return result;
   }
 }
+
+#ifdef CGAL_IA_NEW_FILTERS
 
 struct Static_Filtered_compare_lexicographically_xyC2_4
 {
@@ -2840,6 +2878,8 @@ compare_lexicographically_xyC2(
   }
 }
 
+#endif // CGAL_IA_NEW_FILTERS
+
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #else
@@ -2921,6 +2961,8 @@ orientationC2(
     return result;
   }
 }
+
+#ifdef CGAL_IA_NEW_FILTERS
 
 struct Static_Filtered_orientationC2_6
 {
@@ -3086,6 +3128,8 @@ orientationC2(
   }
 }
 
+#endif // CGAL_IA_NEW_FILTERS
+
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #else
@@ -3179,6 +3223,8 @@ side_of_oriented_circleC2(
     return result;
   }
 }
+
+#ifdef CGAL_IA_NEW_FILTERS
 
 struct Static_Filtered_side_of_oriented_circleC2_8
 {
@@ -3400,6 +3446,8 @@ side_of_oriented_circleC2(
   }
 }
 
+#endif // CGAL_IA_NEW_FILTERS
+
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #else
@@ -3493,6 +3541,8 @@ side_of_bounded_circleC2(
     return result;
   }
 }
+
+#ifdef CGAL_IA_NEW_FILTERS
 
 struct Static_Filtered_side_of_bounded_circleC2_8
 {
@@ -3690,6 +3740,8 @@ side_of_bounded_circleC2(
   }
 }
 
+#endif // CGAL_IA_NEW_FILTERS
+
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #else
@@ -3771,6 +3823,8 @@ cmp_dist_to_pointC2(
     return result;
   }
 }
+
+#ifdef CGAL_IA_NEW_FILTERS
 
 struct Static_Filtered_cmp_dist_to_pointC2_6
 {
@@ -3936,6 +3990,8 @@ cmp_dist_to_pointC2(
   }
 }
 
+#endif // CGAL_IA_NEW_FILTERS
+
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #else
@@ -4017,6 +4073,8 @@ cmp_signed_dist_to_directionC2(
     return result;
   }
 }
+
+#ifdef CGAL_IA_NEW_FILTERS
 
 struct Static_Filtered_cmp_signed_dist_to_directionC2_6
 {
@@ -4182,6 +4240,8 @@ cmp_signed_dist_to_directionC2(
   }
 }
 
+#endif // CGAL_IA_NEW_FILTERS
+
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #else
@@ -4275,6 +4335,8 @@ cmp_signed_dist_to_lineC2(
     return result;
   }
 }
+
+#ifdef CGAL_IA_NEW_FILTERS
 
 struct Static_Filtered_cmp_signed_dist_to_lineC2_8
 {
@@ -4461,6 +4523,8 @@ cmp_signed_dist_to_lineC2(
 		sy.exact());
   }
 }
+
+#endif // CGAL_IA_NEW_FILTERS
 
 CGAL_END_NAMESPACE
 

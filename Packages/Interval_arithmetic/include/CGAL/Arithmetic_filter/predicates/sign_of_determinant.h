@@ -96,6 +96,8 @@ sign_of_determinant2x2(
   }
 }
 
+#ifdef CGAL_IA_NEW_FILTERS
+
 struct Static_Filtered_sign_of_determinant2x2_4
 {
   static double _bound;
@@ -232,6 +234,8 @@ sign_of_determinant2x2(
   }
 }
 
+#endif // CGAL_IA_NEW_FILTERS
+
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #else
@@ -331,6 +335,8 @@ sign_of_determinant3x3(
     return result;
   }
 }
+
+#ifdef CGAL_IA_NEW_FILTERS
 
 struct Static_Filtered_sign_of_determinant3x3_9
 {
@@ -531,6 +537,8 @@ sign_of_determinant3x3(
   }
 }
 
+#endif // CGAL_IA_NEW_FILTERS
+
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #else
@@ -672,6 +680,8 @@ sign_of_determinant4x4(
     return result;
   }
 }
+
+#ifdef CGAL_IA_NEW_FILTERS
 
 struct Static_Filtered_sign_of_determinant4x4_16
 {
@@ -951,6 +961,8 @@ sign_of_determinant4x4(
   }
 }
 
+#endif // CGAL_IA_NEW_FILTERS
+
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #else
@@ -1146,6 +1158,8 @@ sign_of_determinant5x5(
     return result;
   }
 }
+
+#ifdef CGAL_IA_NEW_FILTERS
 
 struct Static_Filtered_sign_of_determinant5x5_25
 {
@@ -1526,6 +1540,8 @@ sign_of_determinant5x5(
   }
 }
 
+#endif // CGAL_IA_NEW_FILTERS
+
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #else
@@ -1787,6 +1803,8 @@ sign_of_determinant6x6(
     return result;
   }
 }
+
+#ifdef CGAL_IA_NEW_FILTERS
 
 struct Static_Filtered_sign_of_determinant6x6_36
 {
@@ -2289,6 +2307,8 @@ sign_of_determinant6x6(
 		a55.exact());
   }
 }
+
+#endif // CGAL_IA_NEW_FILTERS
 
 CGAL_END_NAMESPACE
 
