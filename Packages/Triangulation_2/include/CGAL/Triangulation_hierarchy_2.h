@@ -395,7 +395,7 @@ locate(const Point& p,
   Vertex_handle nearest;
   int level  = Triangulation_hierarchy_2__maxlevel;
   typename Geom_traits::Compare_distance_2 
-    closer = geom_traits().compare_distance__2_object();
+    closer = geom_traits().compare_distance_2_object();
 
   // find the highest level with enough vertices
   while (hierarchy[--level]->number_of_vertices() 
