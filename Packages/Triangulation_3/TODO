@@ -15,6 +15,9 @@
   chainees.
   Le flag temporaire pourrait aller dans un des bits -> sizeof(cell) == 32 :)
   NB: Ca serait bien de factoriser ce probleme avec T2D !!!
+  De plus, un vrai allocateur (a la STL) serait mieux, pour preserver les
+  constructions/destructions (encore que je doute de l'utilite, je ne vois pas
+  comment ca peut etre vraiment fiable).
 - new Vertex/Cell
 - Regular :
   - faire marcher la hierarchie avec.  Le probleme est qu'on delete des
