@@ -9,13 +9,15 @@
 \RCSdefDate{\BoxIntersectionDate}{$Date$}
 % +------------------------------------------------------------------------+
 
+\newcommand{\LK}[1]{\textbf{L.K.:#1???}
+
 \ccParDims
 
 \chapter{Fast Intersection of Iso-oriented Boxes}
 \label{chapterBoxIntersection}
 \ccChapterRelease{\BoxIntersectionRev. \ \BoxIntersectionDate}\\
-\ccChapterAuthor{Lutz Kettner}
-\ccChapterAuthor{Andreas Meyer}
+\ccChapterAuthor{Lutz Kettner\\}
+\ccChapterAuthor{Andreas Meyer\\}
 \ccChapterAuthor{Afra Zomorodian}
 
 
@@ -79,7 +81,7 @@ to define such unique numbers. However, that does not suffice in the
 self-intersection case where we would need an explicit second copy to
 get distinct memory addresses.
 
-We offer a default box that
+We offer a default iso-oriented box type that
 \begin{itemize}
   \item implements a standard bounding box,
   \item is generic in terms of number type and dimension: \\
@@ -90,116 +92,214 @@ We offer a default box that
   that was approximated with the bounding box.
 \end{itemize}
 
-As a minimal requirement we require the box type to be assignable.
-All other requirements are factored in
+We require the box type to be assignable. Everything else is 
+factored into the following traits class.
 
-\subsection{Box Traits}
-Bounding box access is exclusively done using a box traits class, which serves as an adapter. This adapter hides the specific interface a box may have. A model of a box adapter may look as follows:
+% +------------------------------------------------------------------------+
+\section{Traits Class for Iso-oriented Box}
+
+The access to the iso-oriented box is exclusively done using a 
+traits class, which serves as an adaptor. This adaptor hides the
+specific interface a box may have. As an example, we show the
+implementation of the default traits class for the
+\texttt{Default\_box\_d}:
+
 \begin{ccExampleCode}
 template< class Box_ >
 struct Default_box_traits_d {
     typedef const Box_&       Box;
     typedef typename Box_::NT NT;
 
-    static NT get_lo(Box b, unsigned int dim)
-    { return b.get_lo(dim); }
-
-    static NT get_hi(Box b, unsigned int dim)
-    { return b.get_hi(dim); }
-
-    static unsigned int get_id(Box b)
-    { return b.get_id();     }
-
-    static unsigned int get_dim() { return Box_::get_dim(); }
+    static NT          get_lo( Box b, std::size_t dim) { return b.get_lo(dim);  }
+    static NT          get_hi( Box b, std::size_t dim) { return b.get_hi(dim);  }
+    static std::size_t get_id( Box b)                  { return b.get_id();     }
+    static std::size_t get_dim()                       { return Box_::get_dim();}
 };
 \end{ccExampleCode}
 
-This example of a box adapter is tailored for box classes that implement the default bounding box mentioned above. If another implementation of box classes is used that (for example) does not allow access via dimension indices directly, a custom box adapter has to be written that translates dimension indices to whatever method invocations needed.
+This default traits class can be used for our \texttt{Default\_box\_d}
+or box classes derived from it. Therefore its chosen as default for
+the box intersection algorithm. If a different custom box class is
+used, the user has to provide a suitable traits class.
 
-Box adapter requirements:
+The requirements for the \ccc{BoxTraits_d} concept are:
 \begin{itemize}
- \item \texttt{Box} specifies the argument type: box objects are passed to functions using exactly this type.
- \item \texttt{NT} must be the same type as for the provided box class. In the example above, \texttt{NT} is just propagated.
- \item \texttt{get\_lo} and \texttt{get\_hi} return the vector components of dimension \texttt{dim}, where the first  dimension has the index zero.
- \item \texttt{get\_num} returns the unique number of that box. Note that the return type is not constrained to \texttt{unsigned int}. Instead, it can be anything for which both \texttt{==} and \texttt{<} operators are defined.
- \item \texttt{get\_dim} returns the number of dimensions, starting with dimension one.
+    \item 
+      \texttt{Box} is the box type used in passing box objects to the
+      functions.\LK{Why is const-ref part of Box}
+    \item
+      \texttt{NT} is the number type used for the interval
+      boundaries. It must support all comparison operators.
+      \LK{How about construction of min/max-inf}
+    \item 
+      \texttt{get\_lo} and \texttt{get\_hi} return the low and high
+      interval boundaries of the corresponding dimension argument
+      \texttt{dim}, where the first  dimension has the index zero.
+    \item 
+      \texttt{get\_num} returns the unique number of that box. The
+      return type is not required to be \texttt{std::size\_t}. Any
+      type supporting \texttt{==} and \texttt{<} operators for a total
+      order suffice.
+    \item
+      \texttt{get\_dim} returns the number of dimensions. 
 \end{itemize}
 
-\subsection{Box Predicate Traits}
-The box predicate traits class specifies predicates between boxes. It propagates number type, box type, dimension and all other fields from the box adapter to the actual implementation of bounding box intersection. Some of the predicates it defines are:
-\begin{ccExampleCode}
-    static bool is_lo_less_lo(Box a, Box b, unsigned int dim) {
-        return get_lo(a,dim)  < get_lo(b,dim) ||
-               get_lo(a,dim) == get_lo(b,dim) && get_id(a) < get_id(b);
-    }
-
-    static bool contains_lo_point(Box a, Box b, unsigned int dim)
-    { return is_lo_less_lo(a,b,dim) && is_lo_less_hi(b,a,dim);  }
-
-    class Compare : public std::binary_function<Box,Box,bool> { ... };
-    ...
-\end{ccExampleCode}
-
-\begin{itemize}
- \item \texttt{bool contains\_lo\_point(Box interval, Box point, int dim)}: regard the first box in dimension \texttt{dim} as an interval, and the second as a point being the low point of an interval. Returns true iff \texttt{interval} contains \texttt{point}. One important special case here is that \texttt{point} may coincide with the endpoint of \texttt{interval}. Clearly, the answer depends on the choice between halfopen or closed intervals.
- \item \texttt{bool is\_lo\_less\_lo(Box a, Box b, int dim)}: interval starting point less than another intervals starting point (wrt. dimension \texttt{dim}). If both intervals share the same starting point in that dimension, the box IDs are compared.
- \item a binary predicate object \texttt{class Compare} that compares two boxes using the predicate \texttt{is\_lo\_less\_lo}.
-\end{itemize}
-
-Usually, the default predicates need not be changed. Detailed requirements for box traits can be found in the reference. The default implementation of box predicates is a template with two parameters:
-
-\texttt{template< class BoxTraits, bool closed > struct Default\_Box\_Predicate\_Traits\_d}
-
-Box access is required inside the predefined predicates, therefore a box traits class (which models an adapter) has to be given to the default predicate traits class. The boolean constant \texttt{closed} chooses between closed and half open box interpretation.
+\begin{ccAdvanced}
+  A more detailed interface is provided with the box predicate traits
+  class. It implements the various predicates used in the box
+  intersection algorithm. It is exchangeable and can be used by
+  experts to fine tune the comparisons performed in this algorithm,
+  e.g. utilizing machine instruction sets, see the
+  \ccc{BoxPredicateTraits_d} concept in the reference manual section
+  for more details. Note that the generic default model provided is
+  fully functional and efficient in all cases, thus usually there is
+  no need to look at this predicate traits. 
+\end{ccAdvanced}
 
 
-\subsection{Usage}
-First, for each geometric primitive, a bounding box has to be computed. Any bounding box class can be used, as long as a box adapter exists for it. The bounding box sets have to be supplied to the algorithm by pairs of \ccc{Random Access Iterators}. While checking, each bounding box intersection is written to an output iterator as two boxes. The input box sets need not be sorted in any order.
 
-If the used box class is derived from the default bounding box (or at least has the same fields), there is no need to specify a box adapter. When no box adapter is given, it is assumed that the default box adapter can be used to access the supplied boxes. A minimal example using just the defaults demonstrates the invocation:
+% +------------------------------------------------------------------------+
+\section{Intersection Algorithm}
+
+The conventional application of this algorithm will start from 
+
+First, for each geometric primitive, a bounding box has to be
+computed. Any bounding box class can be used, as long as a box adaptor
+exists for it. The bounding box sets have to be supplied to the
+algorithm by pairs of \ccc{Random Access Iterators}. While checking,
+each bounding box intersection is written to an output iterator as two
+boxes. The input box sets need not be sorted in any order.
+
+If the used box class is derived from the default bounding box (or at
+least has the same fields), there is no need to specify a box adaptor.
+When no box adaptor is given, it is assumed that the default box
+adaptor can be used to access the supplied boxes. A minimal example
+using just the defaults demonstrates the invocation:
 
 \ccIncludeExampleCode{../../../examples/Box_intersection_d/minimal.cc}
 
-Here, the box type is exactly the default box using three dimensions and \texttt{double} as the underlying number type. A number of boxes is filled with random data and all box intersections are reported as pairs of numbers. The callback has to accept two boxes of type similar to the iterator's value type.
+Here, the box type is exactly the default box using three dimensions
+and \texttt{double} as the underlying number type. A number of boxes
+is filled with random data and all box intersections are reported as
+pairs of numbers. The callback has to accept two boxes of type similar
+to the iterator's value type.
 
-Notice that the default box adapter is a template with a box type argument. The box type needed for the adapter is infered from the iterator's value type. It may be a class type or a pointer to a class. Default box traits templates exist for both kinds of types.
+Notice that the default box adaptor is a template with a box type
+argument. The box type needed for the adaptor is infered from the
+iterator's value type. It may be a class type or a pointer to a class.
+Default box traits templates exist for both kinds of types.
 
-It may be surprising, but here using plain structures instead of pointers to boxes is actually faster. Copying pointers is of course much faster than copying a whole structure, which may be eight times larger. But accessing a set of structures is faster when they are grouped together, so that the range of memory already cached in some way. While processing, the boxes are sorted and partitioned so that cacheing becomes effective. Of course, if the used hardware has no cache capabilities at all, there is no point in prefering plain structures against pointers.
+It may be surprising, but here using plain structures instead of
+pointers to boxes is actually faster. Copying pointers is of course
+much faster than copying a whole structure, which may be eight times
+larger. But accessing a set of structures is faster when they are
+grouped together, so that the range of memory already cached in some
+way. While processing, the boxes are sorted and partitioned so that
+cacheing becomes effective. Of course, if the used hardware has no
+cache capabilities at all, there is no point in prefering plain
+structures against pointers.
 
-\subsubsection*{Performance Parameters}
-Internally, the bounding box check uses a streamed segment tree. A cutoff threshold parameter specifies the minimum amount of boxes so that the segment tree is used. Below this minimum, a simpler algorithm is used that has less overhead and performs well only for low number of boxes and dimension. The choice of a cutoff parameter can have a significant effect on runtime. If the cutoff value is near to the overall number of boxes, the runtime may in extreme cases equal that of the simpler algorithm because it is invoked too early. Threshold values that are too low invoke the simpler algorithm too late and add some unneccessary overhead to the overall runtime.
+% \subsubsection*{Performance Parameters}
 
-Unfortunately, there is no general method to automatically determine an optimal cutoff parameter, since it depends on the used hardware, the callback runtime/segment tree runtime ratio and of course the number of boxes to be checked. In cases where the callback runtime is dominant, it may be best to set the threshold parameter to values near zero. Otherwise a formula like $cutoff=\sqrt{n}$ can lead to acceptable results. However, for optimal runtime some experiments to compare different cutoff parameters are required.
+Internally, the bounding box check uses a streamed segment tree. A
+cutoff threshold parameter specifies the minimum amount of boxes so
+that the segment tree is used. Below this minimum, a simpler algorithm
+is used that has less overhead and performs well only for low number
+of boxes and dimension. The choice of a cutoff parameter can have a
+significant effect on runtime. If the cutoff value is near to the
+overall number of boxes, the runtime may in extreme cases equal that
+of the simpler algorithm because it is invoked too early. Threshold
+values that are too low invoke the simpler algorithm too late and add
+some unneccessary overhead to the overall runtime.
+
+Unfortunately, there is no general method to automatically determine
+an optimal cutoff parameter, since it depends on the used hardware,
+the callback runtime/segment tree runtime ratio and of course the
+number of boxes to be checked. In cases where the callback runtime is
+dominant, it may be best to set the threshold parameter to values near
+zero. Otherwise a formula like $cutoff=\sqrt{n}$ can lead to
+acceptable results. However, for optimal runtime some experiments to
+compare different cutoff parameters are required.
 
 In general:
+
 \begin{itemize}
-  \item When using a reasonable cutoff parameter, the runtime is $O((n+m)\log^{d}(n+m)+k)$, where $n$ and $m$ are the number of boxes, $d$ is number of dimensions (starting with one) and $k$ is number of box intersections.
-  \item In cases of a badly chosen cutoff parameter, the runtime drops to $O(n\log n+m\log m+k`)$ where $k`$ is the number of intersections of a one dimensional interval set in which for each box in the box set, only the interval in dimension $d$ is considered. If all boxes are arranged in a row, so that in dimension $d$ all intervals overlap, $k`=n*m$ which is much higher than the usual $k=O(n+m)$.
-  \item Space requirement is $O(n+m)$ for the user provided boxes. No new space is allocated while computing.
+    \item
+      When using a reasonable cutoff parameter, the runtime is
+      $O((n+m)\log^{d}(n+m)+k)$, where $n$ and $m$ are the number of
+      boxes, $d$ is number of dimensions (starting with one) and $k$
+      is number of box intersections. 
+    \item
+      In cases of a badly chosen cutoff parameter, the runtime drops
+      to $O(n\log n+m\log m+k`)$ where $k`$ is the number of
+      intersections of a one dimensional interval set in which for
+      each box in the box set, only the interval in dimension $d$ is
+      considered. If all boxes are arranged in a row, so that in
+      dimension $d$ all intervals overlap, $k`=n*m$ which is much
+      higher than the usual $k=O(n+m)$. 
+    \item
+      Space requirement is $O(n+m)$ for the user provided boxes. No
+      new space is allocated while computing.  
 \end{itemize}
 
 Of course, in the complete case $n+m$ has to be substituted with $n$.
 
 % +------------------------------------------------------------------------+
-\section{Examples}
-All examples use closed boxes. No cutoff parameter is specified, so the default of 10 is used. 
+\section{Example Programs}
+
+All examples use closed boxes. No cutoff parameter is specified, so
+the default of 10 is used.
 
 \subsection{Custom Box}
-This shows how to use a custom box, together with the default box traits. For simplicity, the custom box inherits from the default box. A primitive field is added. Primitives intersect each other with a certain fixed probability. The point here is, that the box traits class need not be specified. If pointers to the custom box were stored inside the box container, the pointer specialization of the box traits template is used automatically, with the custom box as the template parameter.
+
+This shows how to use a custom box, together with the default box
+traits. For simplicity, the custom box inherits from the default box.
+A primitive field is added. Primitives intersect each other with a
+certain fixed probability. The point here is, that the box traits
+class need not be specified. If pointers to the custom box were stored
+inside the box container, the pointer specialization of the box traits
+template is used automatically, with the custom box as the template
+parameter.
 
 \ccIncludeExampleCode{../../../examples/Box_intersection_d/custombox.cc}
 
 \subsection{Custom Box Traits }
-Here, a bounding box is a cube. This saves some space at the expense of precision. The custom box only contains a vector to the minimal point plus a size for all three dimensions. The primitive class is the same as in the custom box example above. Invocation differs only where the box traits must be supplied as an argument.
-\ccIncludeExampleCode{../../../examples/Box_intersection_d/customadapter.cc}
+
+Here, a bounding box is a cube. This saves some space at the expense
+of precision. The custom box only contains a vector to the minimal
+point plus a size for all three dimensions. The primitive class is the
+same as in the custom box example above. Invocation differs only where
+the box traits must be supplied as an argument.
+
+\ccIncludeExampleCode{../../../examples/Box_intersection_d/customadaptor.cc}
 
 % +------------------------------------------------------------------------+
-\newpage
 \section{Implementation}
-\cgal{} makes liberal use of exact number types, which often has a significant impact on performance. Many algorithms depend on the usage of exact number types. However, 
-the bounding box intersection presented here only approximates some geometric primitives, and as such does not rely on exact representation of numbers. An important consequence is that \ccc{float} and \ccc{double} number types can be used, which are much faster, also because of hardware implementation. To demonstrate that box intersection can be done quite fast, different box sets are intersected in the range between 4 and 800000 boxes. Here, the size is the sum both set's sizes. Only plain default boxes are used, without carrying additional data fields. Boxes use closed topology, are of dimension three and as number type 32 bit \ccc{floats} are used. All boxes are stored as plain structures, not as pointers. Hardware used is a Xeon 2.4GHz equipped with 4GB of memory.
 
-For each box set, a near-optimal cutoff parameter is determined using an adaptive approximation. The runtime required for streaming is compared against usual scanning. Each box intersection is reported to a dummy callback, which itself does nothing. Results can be seen in figure \ref{fig_benchmark}. As can be seen, for low numbers of boxes, pure scanning is still faster than streaming with optimal cutoff, which would just delegate the box sets to the scanning algorithm. As there are more and more boxes, the overhead becomes less important.
+\cgal{} makes liberal use of exact number types, which often has a
+significant impact on performance. Many algorithms depend on the usage
+of exact number types. However, the bounding box intersection
+presented here only approximates some geometric primitives, and as
+such does not rely on exact representation of numbers. An important
+consequence is that \ccc{float} and \ccc{double} number types can be
+used, which are much faster, also because of hardware implementation.
+To demonstrate that box intersection can be done quite fast, different
+box sets are intersected in the range between 4 and 800000 boxes.
+Here, the size is the sum both set's sizes. Only plain default boxes
+are used, without carrying additional data fields. Boxes use closed
+topology, are of dimension three and as number type 32 bit
+\ccc{floats} are used. All boxes are stored as plain structures, not
+as pointers. Hardware used is a Xeon 2.4GHz equipped with 4GB of
+memory.
+
+For each box set, a near-optimal cutoff parameter is determined using
+an adaptive approximation. The runtime required for streaming is
+compared against usual scanning. Each box intersection is reported to
+a dummy callback, which itself does nothing. Results can be seen in
+figure \ref{fig_benchmark}. As can be seen, for low numbers of boxes,
+pure scanning is still faster than streaming with optimal cutoff,
+which would just delegate the box sets to the scanning algorithm. As
+there are more and more boxes, the overhead becomes less important.
 
 \begin{ccTexOnly}
  \begin{figure}
