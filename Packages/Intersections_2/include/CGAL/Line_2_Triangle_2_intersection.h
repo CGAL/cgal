@@ -266,7 +266,7 @@ intersection(const typename CGAL_WRAP(K)::Triangle_2 &tr,
 	     const typename CGAL_WRAP(K)::Line_2 &line,
 	     const K& k)
 {
-  return CGAli::intersection(line, tr, k);
+  return intersection(line, tr, k);
 }
 
 

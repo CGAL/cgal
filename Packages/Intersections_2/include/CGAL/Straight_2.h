@@ -123,7 +123,9 @@ template <class K>
 Straight_2_<K>::
 Straight_2_(typename K::Point_2 const &point)
 {
-    support_ = typename K::Line_2(point, Direction_2(K::RT(1), K::RT(0)));
+  typedef typename K::Direction_2 Direction_2;
+  typedef typename K::Line_2 Line_2;
+    support_ = Line_2(point, Direction_2(K::RT(1), K::RT(0)));
     main_dir_ = 0;
     dir_sign_ = 1;
     bound_state_ = NO_UNBOUNDED;

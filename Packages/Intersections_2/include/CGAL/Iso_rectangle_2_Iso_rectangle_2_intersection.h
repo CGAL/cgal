@@ -55,7 +55,7 @@ intersection(
     miny = (min1.y() >= min2.y()) ? min1.y() : min2.y();
     maxy = (max1.y() <= max2.y()) ? max1.y() : max2.y();
     if (maxy < miny)
-        return K::Object_2(); 
+        return Object(); 
     if (K::FT_denominator(minx) == K::FT_denominator(miny)) {
         newmin = construct_point_2(K::FT_numerator(minx), K::FT_numerator(miny),
 				   K::FT_denominator(minx));

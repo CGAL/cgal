@@ -269,7 +269,7 @@ intersection(const typename CGAL_WRAP(K)::Line_2 &line,
         return construct_object(ipt);
     }
     case is_t::SEGMENT: {
-        K::Segment_2 iseg;
+        typename K::Segment_2 iseg;
         ispair.intersection(iseg);
         return construct_object(iseg);
     }
