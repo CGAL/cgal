@@ -41,11 +41,7 @@ typedef CGAL::Point_2<Rep>  Point;
 typedef CGAL::Segment_2<Rep>  Segment;
 typedef CGAL::Triangle_2<Rep>  Triangle;
 
-typedef CGAL::Triangulation_euclidean_traits_2<Rep> Gt;
-typedef CGAL::Triangulation_vertex_base_2<Gt> Vb;
-typedef CGAL::Constrained_triangulation_face_base_2<Gt> Fb;
-typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
-typedef CGAL::Constrained_triangulation_2<Gt,Tds>  Constrained_triangulation;
+typedef CGAL::Constrained_triangulation_2<Rep>  Constrained_triangulation;
 
 typedef Constrained_triangulation::Constraint     Constraint;
 
@@ -238,6 +234,7 @@ private:
   Constrained_triangulation ct;
 };
 
+CGAL_MOC_FROM("constrained.C")
 #include "constrained.moc"
 
 int
