@@ -964,6 +964,15 @@ set_compiler_flags()
 	    PRINT_STACKTRACE_PROGRAM="gdb"
 	    EXE_EXT=".exe"
 	    ;;
+	*MINGW*g++*)
+	    #### settings for gcc on mingw
+	    ADDITIONAL_CXXFLAGS="-Wall"
+	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -Xlinker -shared"
+	    WINDOW_DIR=
+	    XLIBS="-luser32 -lgdi32 -lcomdlg32 -lshell32"
+	    PRINT_STACKTRACE_PROGRAM="gdb"
+	    EXE_EXT=".exe"
+	    ;;
 	*mwcc.exe*|*MWCC*)
 	    #### settings Metroworks C++ compiler 
 	    ADDITIONAL_CXXFLAGS="-gccincludes -lang c++ -msgstyle gcc "
