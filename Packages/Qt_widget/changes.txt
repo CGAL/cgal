@@ -1,4 +1,4 @@
-1.2.18
+1.2.19
 ----------------------
 Removed warnings for Unix like systems
 Tried to repair the nef_2 operator for Qt_widget (still have to work on it)
