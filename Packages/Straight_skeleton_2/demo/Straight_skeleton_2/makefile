@@ -28,41 +28,24 @@ LIBPATH = \
 LDFLAGS = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_QT_LDFLAGS)
+
+
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: straight_skeleton_2
+all: active_canvas
 
-straight_skeleton_2_toolbar$(OBJ_EXT): straight_skeleton_2_toolbar.C straight_skeleton_2_toolbar.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) straight_skeleton_2_toolbar.C
+active_canvas.moc: active_canvas.C 
+	${QT_MOC} -o active_canvas.moc active_canvas.C
 
-straight_skeleton_2_toolbar.moc: straight_skeleton_2_toolbar.h
-	$(QT_MOC) -o straight_skeleton_2_toolbar.moc straight_skeleton_2_toolbar.h
+active_canvas$(OBJ_EXT): active_canvas.C active_canvas.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) active_canvas.C
 
-straight_skeleton_2_toolbar_layers$(OBJ_EXT): straight_skeleton_2_toolbar_layers.C \
-		straight_skeleton_2_toolbar_layers.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) straight_skeleton_2_toolbar_layers.C
+active_canvas$(EXE_EXT): active_canvas$(OBJ_EXT)
+	$(CGAL_CXX) $(EXE_OPT)active_canvas active_canvas$(OBJ_EXT) $(LDFLAGS)
 
-straight_skeleton_2_toolbar_layers.moc: straight_skeleton_2_toolbar_layers.h
-	$(QT_MOC) -o straight_skeleton_2_toolbar_layers.moc straight_skeleton_2_toolbar_layers.h
-
-straight_skeleton_2.moc: straight_skeleton_2.C \
-		 straight_skeleton_2_toolbar$(OBJ_EXT) \
-		 straight_skeleton_2_toolbar_layers$(OBJ_EXT)
-	${QT_MOC} -o straight_skeleton_2.moc straight_skeleton_2.C
-
-straight_skeleton_2$(OBJ_EXT): straight_skeleton_2.C straight_skeleton_2.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) straight_skeleton_2.C
-
-straight_skeleton_2$(EXE_EXT): straight_skeleton_2$(OBJ_EXT)
-	$(CGAL_CXX) $(EXE_OPT)straight_skeleton_2 straight_skeleton_2$(OBJ_EXT) \
-		straight_skeleton_2_toolbar$(OBJ_EXT) \
-		straight_skeleton_2_toolbar_layers$(OBJ_EXT) $(LDFLAGS)
-
-clean: straight_skeleton_2.clean \
-       straight_skeleton_2_toolbar_layers.clean \
-       straight_skeleton_2_toolbar.clean
+clean: active_canvas.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
