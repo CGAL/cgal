@@ -7,6 +7,7 @@ Package=Interval_arithmetic
 
 WWW_base=/u/www/0/www/htdocs/files/equipes/prisme/CGAL/DR:/Members
 WWW_dir=$(WWW_base)/$(Package)
+TMP_file=/tmp/submit-mail
 
 package: doc filters example clean $(Package).tar.gz
 	@echo "----------------------------------"
@@ -30,7 +31,12 @@ rtag:
 submit: package
 	cp $(Package).tar.gz doc_ps/$(Package).ps version description.txt \
 	   $(WWW_dir)
-	mail -s autohandle cgal-submit@cs.uu.nl spion < submit-mail
+	echo > $(TMP_file)
+	echo "submission::" >> $(TMP_file)
+	echo "http://www-sop.inria.fr/prisme/CGAL/DR:/Members" >> $(TMP_file)
+	echo "/$(Package)/$(Package).tar.gz" >> $(TMP_file)
+	mail -s autohandle cgal-submit@cs.uu.nl spion < $(TMP_file)
+	rm -f $(TMP_file)
 
 test:
 	$(MAKE) -C test/$(Package)
