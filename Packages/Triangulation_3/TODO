@@ -9,6 +9,13 @@ General
 - utiliser le cell_container_iterator partout ou c'est possible 
   (unifier le code pour differentes dimensions) 
 
+TEST-SUITE
+- si un jour elle est revue, voici quelques idees pour l'organiser :
+  - prendre un noyau exact pour tout, et supposer qu'on l'a dans les tests.
+  - avoir des fonctions qui generent differentes distributions
+    (cas degeneres, grands nombre de points...)
+  - pour nearest_vertex() : comparer le resultat avec Spatial_searching ?
+
 TDS
 - reflechir a un support de facettes explicites (cf papier de Giesen)
 - nettoyer les trucs 2d only (face_circulator etc)
