@@ -64,7 +64,7 @@ public:
           if (maxx < fabs(prx)) maxx = fabs(prx);
           double maxy = fabs(pqy);
           if (maxy < fabs(pry)) maxy = fabs(pry);
-          double eps = 8.8872057372592758e-16 * maxx * maxy;
+          double eps = 8.8872057372592798e-16 * maxx * maxy;
 
           // Sort them
           if (maxx > maxy)  std::swap(maxx, maxy);
@@ -94,6 +94,7 @@ public:
     F det = det2x2_by_formula(t1, t1,
                               t1, t1); // Full det
     double err = det.error();
+    err += err * 2 * F::ulp(); // Correction due to "epsilon * maxx * maxy".
     std::cerr << "*** epsilon for Orientation_2 = " << err << std::endl;
     return err;
   }

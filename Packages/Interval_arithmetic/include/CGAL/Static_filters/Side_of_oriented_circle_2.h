@@ -81,7 +81,7 @@ public:
 
           if (maxx > maxy)  std::swap(maxx, maxy);
 
-          double eps = 8.887856576200131e-15 * maxx * maxy * (maxy*maxy);
+          double eps = 8.8878565762001373e-15 * maxx * maxy * (maxy*maxy);
 
           // Protect against underflow in the computation of eps.
           if (maxx < 1e-73) {
@@ -108,6 +108,8 @@ public:
     F b = t1*t1 + t1*t1;
     F det = det2x2_by_formula(a, b, a, b);
     double err = det.error();
+    err += err * 3 * F::ulp(); // Correction due to "eps * maxx * maxy...".
+
     std::cerr << "*** epsilon for In_circle_2 = " << err << std::endl;
     return err;
   }

@@ -102,7 +102,7 @@ public:
           else if (maxy < maxx)
               std::swap(maxx, maxy);
 
-          double eps = 1.246613653102729e-13 * maxx * maxy * maxz
+          double eps = 1.2466136531027298e-13 * maxx * maxy * maxz
                      * (maxz * maxz);
 
           double det = det4x4_by_formula(ptx,pty,ptz,pt2,
@@ -137,6 +137,8 @@ public:
                               t1, t1, t1, sq,
                               t1, t1, t1, sq); // Full det
     double err = det.error();
+    err += err * 3 * F::ulp(); // Correction due to "eps * maxx * ...".
+
     std::cerr << "*** epsilon for In_sphere_3 = " << err << std::endl;
     return err;
   }

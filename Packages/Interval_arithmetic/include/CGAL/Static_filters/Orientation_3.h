@@ -76,8 +76,7 @@ public:
           double maxz = fabs(pqz);
           if (maxz < fabs(prz)) maxz = fabs(prz);
           if (maxz < fabs(psz)) maxz = fabs(psz);
-          double eps = 5.1107127829973276e-15 * maxx * maxy * maxz;
-
+          double eps = 5.1107127829973299e-15 * maxx * maxy * maxz;
           double det = det3x3_by_formula(pqx, pqy, pqz,
                                          prx, pry, prz,
                                          psx, psy, psz);
@@ -116,6 +115,7 @@ public:
                               t1, t1, t1,
                               t1, t1, t1); // Full det
     double err = det.error();
+    err += err * 2 * F::ulp(); // Correction due to "eps * maxx * maxy...".
     std::cerr << "*** epsilon for Orientation_3 = " << err << std::endl;
     return err;
   }
