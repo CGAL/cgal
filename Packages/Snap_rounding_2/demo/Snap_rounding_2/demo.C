@@ -327,8 +327,6 @@ int main(int argc,char *argv[])
 
 	redraw(s,W,x1,y1,x2,y2);
       } else {
-        //x_type = x;
-        //y_type = y;
         // add a segment
         mouse_input = W.read_mouse_seg(x3,y3,x4,y4);
         if(x4 >= x1 && x4 <= x2 &&
@@ -337,11 +335,11 @@ int main(int argc,char *argv[])
             sr_shown = false;
             redraw(s,W,x1,y1,x2,y2);
           }
+          W << CGAL::BLACK;
+          Segment_2 tmp1(Point_2(x3,y3),Point_2(x4,y4));
+          s.insert(tmp1);
+          W << tmp1;
         }
-        W << CGAL::BLACK;
-        Segment_2 tmp1(Point_2(x3,y3),Point_2(x4,y4));
-        s.insert(tmp1);
-        W << tmp1;
       }
 
       if(automatic_show) {
