@@ -37,10 +37,10 @@ int main ()
   NT UNUSED e = d + d;
   cout << e/3 << endl;
   // NT UNUSED f = abs(NT(0));
-  cout << "sign(3*(1/3)-1) = " << sign(NT(3)*(NT(1)/NT(3))-NT(1)) << endl;
-  cout << "sign(sqrt(2)^2-2) = " << sign(square(sqrt(NT(2)))-NT(2)) << endl;
-  // cout << "sign(sqrt(2)) = " << sign(sqrt(NT(2))) << endl;
-  // cout << "sign(square(2)) = " << sign(square(NT(2))) << endl;
+  cout << "sign(3*(1/3)-1) = " << CGAL::sign(NT(3)*(NT(1)/NT(3))-NT(1)) << endl;
+  cout << "sign(sqrt(2)^2-2) = " << CGAL::sign(CGAL::square(CGAL::sqrt(NT(2)))-NT(2)) << endl;
+  // cout << "sign(sqrt(2)) = " << CGAL::sign(CGAL::sqrt(NT(2))) << endl;
+  // cout << "sign(square(2)) = " << CGAL::sign(CGAL::square(NT(2))) << endl;
   // bool UNUSED pipo = e < d;
   cout << "sizeof(rep) = " << sizeof(CGAL::Lazy_exact_nt_dyn_rep<int>) << endl;
   cout << "sizeof(cst) = " << sizeof(CGAL::Lazy_exact_nt_dyn_cst<int>) << endl;
