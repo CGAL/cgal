@@ -230,7 +230,7 @@ and no queries are performed.
 
 When additional information detailed below is available, special
 insertion function can be used to expedite the insertion of a single
-curve. This information may consists of one of the follwoing: (1) the
+curve. This information may consists of one of the following: (1) the
 face containing the curve to be inserted, (2) the vertex containing a
 curve endpoint, (3) the two vertices containing the two curve
 endpoints respectively, or (4) the halfedges whose incident vertices
@@ -281,7 +281,7 @@ curves it handles and the type of the curve endpoint.
 A simple textual format of a {\em planar map} representation can be
 written to the standard output with the \ccc{Extractor} (\ccc{ >> })
 operator defined for \ccc{Planar_map_2}. The same format can be read
-from the standard input with the \ccc{Insertor} (\ccc{ << }) operator
+from the standard input with the \ccc{Inserter} (\ccc{ << }) operator
 defined for \ccc{Planar_map_2}. Add the include directive below to
 include these operator definitions,
 
@@ -297,8 +297,8 @@ directive below to include this class definition.
 
 \ccInclude{CGAL/IO/Pm_drawer.h}
 
-Drawing a {\em planar map} with gomview or produce Postscript that
-represents a planar map, can be done by applying the \ccc{Insertor}
+Drawing a {\em planar map} with Geomview or producing Postscript that
+represents a planar map, can be done by applying the \ccc{Inserter}
 operator on the appropriate graphic stream and the planar map
 instance. Add the corresponding include directive below, to include
 any if these class definitions.
@@ -362,7 +362,7 @@ the number of vertices, halfedges and faces in the planar map.
 the point of its associative vertex. 
 \item The halfedges list: each halfedge component is written by an
 index indicating the vertex origin of the halfedge, and a curve
-specifying the halfedge's curve.
+specifying the halfedge curve.
 \item The faces list: each component in the faces list contains its
 outer boundary, if the face is bounded, and a list of its holes which
 can be empty in case the face has no holes. The format of the outer
@@ -491,7 +491,7 @@ maintaining planar maps is certainly possible.
 
 \ccc{ArrangementTraits_2} concept is a refinements of the
 \ccc{PlanarMapWithIntersectionsTraits_2} concept, and the latter is a
-refinment of the \ccc{PlanarMapTraits_2} concept.
+refinement of the \ccc{PlanarMapTraits_2} concept.
 Therefore, all models of the formers are models of the latter. 
 There are several supplied traits classes for the \ccc{Arrangement}
 that you can use. These classes are described at the end of Chapter
@@ -516,15 +516,15 @@ from the base class \ccc{Pm_point_location_base} which is a
 (\ccc{pure virtual}) base class that defines the interface between the 
 algorithm implemented by the users and the planar map. This follows the 
 known {\it Strategy}
-pattern ~\cite{ghjv-dpero-95}. The indirection overhead due to the virtual functions is
-negligible since the optimal point location algorithm 
-(e.g., the one implemented in our default strategy) takes $\Theta(\log n)$ time.  
+pattern ~\cite{ghjv-dpero-95}. The indirection overhead due to the virtual
+functions is negligible since the optimal point location algorithm 
+(e.g., the one implemented in our default strategy) takes $\Theta(\log n)$ time.
 We have derived three concrete classes for point location strategies,
 the {\it default\/} strategy, based on trapezoidal decomposition of the map,
 the {\it naive\/} strategy, which goes over all the vertices and halfedges
 of the planar map and the {\it walk-along-a-line strategy\/}, which improves
-the {\it naive\/} one by ``walking'' only along the zone of the vertical ray emanating
-from the query point. All three strategies are classes
+the {\it naive\/} one by ``walking'' only along the zone of the vertical ray
+emanating from the query point. All three strategies are classes
 that inherit \ccc{Pm_point_location_base<Planar_map>}.
 More details are give in sections 
   \ccc{Pm_default_point_location<Planar_map>}\lcTex{
@@ -653,7 +653,7 @@ turned on, significantly reduces running time.
 The following program creates a planar map from five curves (see figure
 ~\ref{PM_sec:example_pic}). It uses the interface class
 (\ccStyle{Pm_segment_traits_2<Kernel>}), where the injected kernel is the
-CAGL Cartesian Kernel templated with the field of quotions of longs as the
+CGAL Cartesian Kernel templated with the field of quot ions of longs as the
 number type.
 The first part of the code initializes five segments. The next part inserts them
 into the map and checks the validity of the map. In the last part, vertical ray
@@ -721,5 +721,3 @@ The output is the \ccc{Planar map} includes both formats, non-verbose
 and verbose. In addition the two lists (non-verbose and verbose) of
 halfedges are written.
 \ccIncludeExampleCode{Planar_map/example9.cout}
-
-%% EOF %%
