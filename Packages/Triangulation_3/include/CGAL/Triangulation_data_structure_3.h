@@ -350,7 +350,7 @@ public:
   // Internal function : assumes the conflict cells are marked.
   template <class CellIt>
   Vertex_handle _star_hole(CellIt cell_begin, CellIt cell_end,
-	                   Cell_handle begin = NULL, int i = 0)
+	                   Cell_handle begin = Cell_handle(), int i = 0)
   {
       CGAL_triangulation_precondition(begin != NULL);
       // if begin == NULL, we could compute one by walking in CellIt.
@@ -373,7 +373,7 @@ public:
   // Mark the cells in conflict, then calls the internal function.
   template <class CellIt>
   Vertex_handle star_hole(CellIt cell_begin, CellIt cell_end,
-	                  Cell_handle begin = NULL, int i = 0)
+	                  Cell_handle begin = Cell_handle(), int i = 0)
   {
       for (CellIt cit = cell_begin; cit != cell_end; ++cit)
 	  (*cit)->set_in_conflict_flag(1);
@@ -395,7 +395,7 @@ public:
   
   Vertex_handle insert_in_edge(Cell_handle c, int i, int j);
 
-  Vertex_handle insert_increase_dimension(Vertex_handle star = NULL);
+  Vertex_handle insert_increase_dimension(Vertex_handle star =Vertex_handle());
 
   // REMOVAL
 
@@ -670,11 +670,11 @@ public:
 
   void
   incident_cells(Vertex_handle v, std::set<Cell_handle> & cells,
-	         Cell_handle c = NULL ) const;
+	         Cell_handle c = Cell_handle() ) const;
 
   void
   incident_vertices(Vertex_handle v, std::set<Vertex_handle> & vertices,
-		    Cell_handle c = NULL ) const;
+		    Cell_handle c = Cell_handle() ) const;
 
   int degree(Vertex_handle v) const;
 
@@ -683,7 +683,8 @@ public:
 
 
   // Helping functions
-  Vertex_handle copy_tds(const Tds & tds, Vertex_handle vert = NULL);
+  Vertex_handle copy_tds(const Tds & tds,
+	                 Vertex_handle vert = Vertex_handle() );
     // returns the new vertex corresponding to vert in the new tds 
 
   void swap(Tds & tds);
