@@ -51,19 +51,19 @@ CGAL_BEGIN_NAMESPACE
 // FK = filtering kernel
 template < typename CK, typename Kernel >
 class Filtered_kernel_base
-  : public CK::template base<Kernel>::other
+  : public CK::template Base<Kernel>::Type
 {
-    typedef typename CK::template base<Kernel>::other   Base;
+    typedef typename CK::template Base<Kernel>::Type   Kernel_base;
     // Hardcoded for now.
-    typedef Simple_cartesian<Quotient<MP_Float> >               EK;
+    typedef Simple_cartesian<Quotient<MP_Float> >    EK;
     typedef Simple_cartesian<Interval_nt_advanced>   FK;
-    typedef Cartesian_converter<Base, EK>            C2E;
-    typedef Cartesian_converter<Base, FK,
-                                Interval_converter<typename Base::RT> > C2F;
+    typedef Cartesian_converter<Kernel_base, EK>     C2E;
+    typedef Cartesian_converter<Kernel_base, FK,
+                          Interval_converter<typename Kernel_base::RT> > C2F;
 public:
 
     template < typename Kernel2 >
-    struct base { typedef Filtered_kernel_base<CK, Kernel2>  other; };
+    struct Base { typedef Filtered_kernel_base<CK, Kernel2>  Type; };
 
     // What to do with the tag ?
     // Probably this should not exist, should it ?
@@ -90,10 +90,7 @@ struct Filtered_kernel
   : public Type_equality_wrapper<
                 Filtered_kernel_base< CK, Filtered_kernel<CK> >,
                 Filtered_kernel<CK> >
-{
-  template < typename Kernel >
-  struct base { typedef Filtered_kernel_base<CK, Kernel>   other; };
-};
+{};
 
 CGAL_END_NAMESPACE
 
