@@ -50,16 +50,18 @@ described.
 {Apollonius_graph_2/apollonius_graph_bw.eps} 
 \end{center}
 \end{ccTexOnly}
-\caption{The Apollonius diagram (left) and its dual the Apollonius
-  graph (right).}\label{fig-apollonius}
 \begin{ccHtmlOnly}
 <center>
-<img border=0 src="./apollonius_diagram.gif" align=center
+<img border=1 src="./apollonius_diagram.gif" align=center
 alt="The Apollonius diagram">
-<img border=0 src="./apollonius_graph.gif" align=center
+<img border=1 src="./apollonius_graph.gif" align=center
 alt="The Apollonius graph (dual of the Apollonius diagram)">
 </center>
 \end{ccHtmlOnly}
+\begin{center}
+\caption{The Apollonius diagram (left) and its dual the Apollonius
+  graph (right).}\label{fig-apollonius}
+\end{center}
 \end{figure}
 
 The 2D Apollonius graph class of \cgal\ is designed to compute the
@@ -334,21 +336,22 @@ not.
 {Apollonius_graph_2/apollonius-vertex_conflict-true_bw.eps} 
 \end{center}
 \end{ccTexOnly}
-\caption{
-    The \ccc{Vertex_conflict_2} predicate. The (unshaded) black
-    circles define the tritangent gray circle. We want to determine if
-    the sign of the distance of the shaded black circle from the gray
-    one. The gray curve is the bisector of the top-most and bottom-most
-    (unshaded) black circles. Left: the predicate returns
-    \ccc{NEGATIVE}. Right: the predicate returns \ccc{POSITIVE}.}
 \begin{ccHtmlOnly}
   <center>
-  <img border=0 src="./apollonius-vertex_conflict-false.gif" align=center
+  <img border=1 src="./apollonius-vertex_conflict-false.gif" align=center
   alt="The Vertex_conflict_2 predicate returns false">
-  <img border=0 src="./apollonius-vertex_conflict-true.gif" align=center
+  <img border=1 src="./apollonius-vertex_conflict-true.gif" align=center
   alt="The Vertex_conflict_2 predicate returns true">
   </center>
 \end{ccHtmlOnly}
+\caption{
+    The \ccc{Vertex_conflict_2} predicate. The left-most, bottom-most
+    and top-most circles define the tritangent circle in the middle.
+    We want to determine the sign of the distance of the left-most
+    circle from the one in the middle. The almost horizontal curve is
+    the bisector of the top-most and bottom-most circles. Left: the
+    predicate returns \ccc{NEGATIVE}. Right: the predicate returns
+    \ccc{POSITIVE}.}
 \end{figure}
 
 What we essentially want to compute when we construct incrementally a
@@ -394,34 +397,37 @@ otherwise it is a finite edge.
 {Apollonius_graph_2/apollonius-both_vertices_bw.eps}\\
 \end{center}
 \end{ccTexOnly}
-\caption{The \ccc{Finite_edge_interior_conflict_2} predicate. The
-  (unshaded) black circles define two tritangent gray circles, whose
-  centers are the endpoints of the edge in the Apollonius diagram.
-  The gray curve is the bisecting curve of the top-most and
-  bottom-most (unshaded) black circles, and it is also the supporting 
-  curve of the edge of the Apollonius diagram. The shaded black circle
-  is the circle to be inserted. Top left: only a neighborhood around
+\begin{ccHtmlOnly}
+<center>
+<img border=1 src="./apollonius-left_vertex.gif" align=center alt="">
+<img border=1 src="./apollonius-right_vertex.gif" align=center alt="">
+<br><br>
+<img border=1 src="./apollonius-no_conflict.gif" align=center alt="">
+<img border=1 src="./apollonius-entire_edge.gif" align=center alt="">
+<br><br>
+<img border=1 src="./apollonius-interior.gif" align=center alt="">
+<img border=1 src="./apollonius-both_vertices.gif" align=center alt="">
+</center>
+\end{ccHtmlOnly}
+\caption{The 6 possible outcomes of the
+  \ccc{Finite_edge_interior_conflict_2} predicate.
+%  The
+%  (unshaded) black circles define two tritangent gray circles, whose
+%  centers are the endpoints of the edge in the Apollonius diagram.
+%  The gray curve is the bisecting curve of the top-most and
+%  bottom-most (unshaded) black circles, and it is also the supporting 
+%  curve of the edge of the Apollonius diagram. The shaded black circle
+%  is the circle to be inserted. 
+  Top left: only a neighborhood around
   the left-most endpoint of the edge will be destroyed. Top right:
   only a neighborhood around the right-most endpoint of the edge will
-  be destroyed. Middle left: the shaded black circle does not destroy
-  any portion of the edge. Middle right: the entire edge will be
-  destroyed. Bottom left: a neighborhood in the interior of the edge
+  be destroyed. Middle left: no portion of the edge is destroyed.
+  Middle right: the entire edge will be destroyed. Bottom left: a
+  neighborhood in the interior of the edge
   will be destroyed; the regions near the endpoints remain
   unaffected. Bottom right: The neighborhood around the two endpoints
   will be destroyed, but an interval in the interior of the edge will
   remain in the new diagram.}\label{fig-ag2edgeconflict}
-\begin{ccHtmlOnly}
-<center>
-<img border=0 src="./apollonius-left_vertex.gif" align=center alt="">
-<img border=0 src="./apollonius-right_vertex.gif" align=center alt="">
-<br>
-<img border=0 src="./apollonius-no_conflict.gif" align=center alt="">
-<img border=0 src="./apollonius-entire_edge.gif" align=center alt="">
-<br>
-<img border=0 src="./apollonius-interior.gif" align=center alt="">
-<img border=0 src="./apollonius-both_vertices.gif" align=center alt="">
-</center>
-\end{ccHtmlOnly}
 \end{figure}
 
 The last predicate that we want to discuss is called
