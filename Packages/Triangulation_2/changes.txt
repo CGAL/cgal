@@ -1,6 +1,8 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+ver 8.33 (22/1/04)
+- small fixes due to previous changes of NULL to handles default constructors 
 
 ver 8.33 (21/1/04)
 - changed NULL to default constructed handles.
