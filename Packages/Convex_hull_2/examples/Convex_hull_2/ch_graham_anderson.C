@@ -28,7 +28,7 @@ ch_graham_anderson( InputIterator  first, InputIterator  beyond,
       *result = *(V.begin());  ++result;
       return result;
   }
-  return ch_graham_andrew_scan( V.begin(), V.end(), result, ch_traits);
+  return CGAL::ch_graham_andrew_scan( V.begin(), V.end(), result, ch_traits);
 }
 
 int main()
