@@ -1,3 +1,5 @@
+Version 3.32 (25 January 2004) [af]
+- Removed Alpha_shape_euclidean_traits_3 from doc, examples, demo and testsuite
 
 Version 3.30 (4 October 2003)[af]
 - Removed a typo (after cleanup, grrr!##) in demos

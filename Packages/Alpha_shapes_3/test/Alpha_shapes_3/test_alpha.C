@@ -17,7 +17,6 @@ the Alpha Shape.
 #include <CGAL/Alpha_shape_vertex_base_3.h>
 #include <CGAL/Alpha_shape_cell_base_3.h>
 #include <CGAL/Triangulation_data_structure_3.h>
-#include <CGAL/Alpha_shape_euclidean_traits_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Alpha_shape_3.h>
 
@@ -29,12 +28,12 @@ typedef CGAL::Filtered_kernel<SC> K;
 typedef K::Point_3  Point;
 typedef K::Segment_3  Segment;
 
-typedef K Gt;
-typedef CGAL::Alpha_shape_vertex_base_3<Gt> Vb;
-typedef CGAL::Alpha_shape_cell_base_3<Gt>   Fb;
+
+typedef CGAL::Alpha_shape_vertex_base_3<K> Vb;
+typedef CGAL::Alpha_shape_cell_base_3<K>   Fb;
 
 typedef CGAL::Triangulation_data_structure_3<Vb,Fb> Tds;
-typedef CGAL::Delaunay_triangulation_3<Gt,Tds> Triangulation_3;
+typedef CGAL::Delaunay_triangulation_3<K,Tds> Triangulation_3;
 
 typedef CGAL::Alpha_shape_3<Triangulation_3>  Alpha_shape_3;
 
@@ -64,7 +63,7 @@ construct_alpha_shape(const std::list<Point> &V_p,
 		      Alpha_shape_3& A)
   // Generate Alpha Shape
 { 
-  std::vector<Gt::Segment_3> V_seg;
+  std::vector<K::Segment_3> V_seg;
   
   int  n = A.make_alpha_shape(V_p.begin(), V_p.end());
   std::cout << "Inserted " << n  << " points" << std::endl;
