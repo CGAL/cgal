@@ -16,19 +16,19 @@
 
 \section{Introduction}
 
-This chapter presents the \cgal\ interface to geomview, which is a
+This chapter presents the \cgal\ interface to Geomview, which is a
 viewer for three-dimensional objects, developed at the Geometry Center
 in Minneapolis\footnote{\tt http://www.geom.umn.edu/}.
 
 \noindent {\bf Important:} The last line in the startup file \ccc{.geomview}
-must be \ccc{(echo "started")}. The two commands \ccc{rsh} and \ccc{geomview}
+must be \ccc{(echo "started")}. The two commands \ccc{rsh} and \ccc{Geomview}
 must be in the user's path, otherwise the program will not be able to execute.
 
 \begin{ccClass}{Geomview_stream}
 \ccDefinition
 An object of the class \ccClassName\ is a stream in which geometric
 objects can be inserted and where geometric objects can be extracted
-from. The constructor starts geomview either on the local either on
+from. The constructor starts Geomview either on the local either on
 a remote machine.
 
 \ccInclude{CGAL/IO/Geomview_stream.h}
@@ -42,8 +42,8 @@ a remote machine.
 	                                 = Bbox_3(0,0,0, 1,1,1),
 				    const char *machine = NULL,
                                     const char *login = NULL);}
-{Introduces a geomview stream \ccVar\ with a camera that sees the
-bounding box. If machine and login are non-null, geomview is started
+{Introduces a Geomview stream \ccVar\ with a camera that sees the
+bounding box. If machine and login are non-null, Geomview is started
 on the remote machine.}
 
 
@@ -108,11 +108,13 @@ operators. 2D objects are embedded in the \ccc{xy}-plane.
 
 
 \ccMethod{Geomview_stream&
-          operator<<(const Bbox_2& b);}
+          operator<<(Geomview_stream& G,
+	             const Bbox_2& b);}
 {Inserts the bounding box \ccc{b} into the stream \ccVar.}
 
 \ccMethod{Geomview_stream&
-          operator<<(const Bbox_3& b);}
+          operator<<(Geomview_stream& G,
+                     const Bbox_3& b);}
 {Inserts the bounding box \ccc{b} into the stream \ccVar.}
 
 
@@ -129,19 +131,6 @@ can be moved anywhere with the left mouse button, before a point is entered.
 {Extracts the point \ccc{p} from the stream \ccVar. The point is
  echoed.}
 
-
-\ccHeading{IO Operators for CGAL Basic Library Classes}
-
-At the moment input is only provided for points. The user has to select
-a point on the {\it pickplane} with the right mouse button. The pickplane
-can be moved anywhere with the left mouse button, before a point is entered.
-
-\ccFunction{template <class R>
-            Geomview_stream&
-            operator>>(Geomview_stream& G,
-                       Point_3<R>& p);}
-{Extracts the point \ccc{p} from the stream \ccVar. The point is
- echoed.}
 
 
 \ccHeading{Output Operators for CGAL Basic Library Classes}
@@ -160,7 +149,7 @@ operator<<(Geomview_stream &G,
 %%                        const Tetrahedralization_3<Traits>& T);}
 %% {Inserts the tetrahedralization \ccc{T} into the stream \ccVar.}
 %% 
-%% For geometric structures as a tetrahedalization only one geomview
+%% For geometric structures as a tetrahedalization only one Geomview
 %% object is created. If you want to select a single simplex you have
 %% to insert the simplices individually with the following operator.
 %% 
@@ -204,7 +193,7 @@ operator<<(Geomview_stream &G,
 
 \ccHeading{Colors}
 
-geomview distinguishes between edge and face colors. The edge color
+Geomview distinguishes between edge and face colors. The edge color
 is at the same time the color of vertices. 
 
 \ccMethod{Geomview_stream&
@@ -257,14 +246,16 @@ is at the same time the color of vertices.
 {Sets the radius of vertices to \ccc{d}. Returns the previous value.}
 
 \ccMethod{bool
+          get_trace();}
+{Returns \ccc{true} iff tracing is on.}
+
+\ccMethod{bool
           set_trace(bool b);} 
-{Sets tracing on. The data that are sent to \ccc{geomview} are also
+{Sets tracing on. The data that are sent to \ccc{Geomview} are also
  sent to \ccc{cerr}.  Returns the previous value. By default tracing is
  off.}
 
-\ccMethod{bool
-          get_trace();}
-{Returns \ccc{true} iff tracing is on.}
+
 
 
 \begin{ccAdvanced}
@@ -273,7 +264,7 @@ is at the same time the color of vertices.
 
 The following functions are helpful if you develop your own insert
 and extract functions. The following functions allow to pass a string
-from geomview and to read data sent back by geomview.
+from Geomview and to read data sent back by Geomview.
 
 \ccMethod{Geomview_stream&
             operator<<(const char* s);}
@@ -325,19 +316,19 @@ that can be inserted in the stream.
 \ccImplementation
 
 The constructor forks a process and establishes two pipes between the
-processes. The forked process is then overlaid with geomview. The
-file descriptors \ccc{stdin} and \ccc{stdout} of geomview are hooked
+processes. The forked process is then overlaid with Geomview. The
+file descriptors \ccc{stdin} and \ccc{stdout} of Geomview are hooked
 on the two pipes.
 
-All insert operators construct expressions in \ccc{gcl}, the geomview
+All insert operators construct expressions in \ccc{gcl}, the Geomview
 comand language, which is a subset of {\sc Lisp}. These expressions
-are sent to geomview via the pipe. The extract operators notify \ccc{interest}
-for a certain kind of events. When such an event happens geomview
-sends a description of the event in gcl and the extract operator has
+are sent to Geomview via the pipe. The extract operators notify \ccc{interest}
+for a certain kind of events. When such an event happens Geomview
+sends a description of the event in \cc{gcl} and the extract operator has
 to parse this expression.
 
 In order to implement further insert and extract operators you should
-take a look at the implementation \cite{f-higso-97} and at the geomview
+take a look at the implementation \cite{f-higso-97} and at the Geomview
 manual \cite{p-gmgv16-96}.
 \end{ccClass}
 
