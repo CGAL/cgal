@@ -70,9 +70,8 @@ with the rounding modes used in this package.
 5/ Problems with IRIX / MipsPro:
 --------------------------------
 
-  The C functions to acces rounding modes provided by the system appear
-  not to work correctly !  So we had to provide C functions compiled by GCC,
-  and link them into libCGAL.
+  By default the system flushes denormals to zero, so it has to be fixed
+  at the same time the rounding mode is changed.
 
   Another "problem" is that when you don't parenthesize an expression with
   doubles, MipsPro believes it can optimize more than it should (reordering
