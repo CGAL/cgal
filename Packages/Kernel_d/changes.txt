@@ -1,7 +1,7 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
 
-- Added typenames in include/CGAL/Cartesian_d.h
+- Added typenames in include/CGAL/Cartesian_d.h and in include/CGAL/Homogeneous_d.h
 
 0.97 (18 September 2003) [af]
 - Changed a typedef in include/CGAL/Cartesian_d.h
@@ -14,7 +14,9 @@ Kernel_d Package: Release changes
 
 0.94 (17 September 2003) [af]
 - Added code/testsuite/doc for Kernel::CartesianConstIterator and its model in Kernel_d
-
+0.9.98 (22 September 2003)
+- Added typenames
+ 
 0.9.93 (3 September 2003)
 - In Convex_hull_d_traits_3 we have to use Intersect_3 and not Intersect_2
 
