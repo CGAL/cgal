@@ -17,6 +17,7 @@
 // package       : Interval Arithmetic
 // author(s)     : Sylvain Pion
 //
+// coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
 // ======================================================================
  
 #include <CGAL/basic.h>
