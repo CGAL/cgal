@@ -24,6 +24,7 @@
 
 #include <CGAL/Fourtuple.h>
 #include <CGAL/Cartesian/solve_3.h>
+#include <CGAL/Cartesian/predicates_on_points_3.h>
 #include <vector>
 #include <functional>
 

@@ -1,3 +1,6 @@
+Version 6.67 (20 January 2003)
+- Missing #include <> spotted by GCC CVS.
+
 Version 6.66 (20 January 2003)
 - Remove obsolete left/right_turn function based on Origin : they are obsolete,
   and they didn't compile even in 2.4.
