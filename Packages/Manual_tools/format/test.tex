@@ -2,6 +2,7 @@
 % Test document for the CGAL manual LaTeX style:
 % 
 % 16.08.1995   Lutz Kettner
+% 29.09.1999   Susan Hert
 %
 % $Revision$
 % $Date$
@@ -11,8 +12,10 @@
 
 \usepackage{latexsym}
 \usepackage{amssymb}
+\usepackage{makeidx}
 \usepackage{latex_converter}
 \usepackage{cc_manual}
+\usepackage{cc_manual_index}
 \usepackage{alltt}
 \usepackage{cprog}
 \usepackage{path}
@@ -26,11 +29,13 @@
 \parindent0em
 \setlength{\parskip}{1ex minus 0.9ex}
 
+\makeindex
+
 \sloppy
 
 % ----------------------------------------------------------------------
 \title {Test Suite for the cc\_manual.sty}
-\author{Lutz Kettner}
+\author{Lutz Kettner and Susan Hert}
 \date{\ccRevision. \ccDate}
 
 \begin{document}
@@ -45,7 +50,7 @@ arbitrary structured and mostly no introductory explanations will be given.
 Each section will test a particularly feature. Sections were written
 while developing the style or while debugging. Thanks for bug-reports
 made so far and for future reports. Please send bug-reports to {\tt
-  kettner@inf.ethz.ch}.
+hert@mpi-sb.mpg.de}.
 
 
 % ----------------------------------------------------------------------
@@ -802,7 +807,7 @@ Another check with the trouble making operator in a member function.
 \end{ccClass}
 
 
-
+\ccAutoIndexingOff
 % ----------------------------------------------------------------------
 \section{Font Changes within a Declaration}
 
@@ -860,7 +865,7 @@ All elements that
 \def\ccLongParamLayout{\ccFalse}
 \def\ccTagRmEigenClassName{\ccTrue}
 
-
+\ccAutoIndexingOn
 % ----------------------------------------------------------------------
 \begin{ccClass}{ClassD}
 \section{Customization Tags for the Style}
@@ -1816,8 +1821,56 @@ A nice class herin.
 \end{lcHtmlBlock}
 
 % ----------------------------------------------------------------------
+\section{The ccRef... macros}
+
+\begin{ccRefClass}{Circulator_from_container<C>}
+
+This is a ref class and should produce an index entry without the template
+parameter...
+\end{ccRefClass}
+
+\begin{ccRefConcept}{Concept}
+A reference concept is talked about here...
+\end{ccRefConcept}
+
+\begin{ccRefEnum}[Class::]{Enum}
+A reference enumeration is talked about here...
+\end{ccRefEnum}
+
+\begin{ccRefEnum}{Enum}
+A reference enumeration is talked about here...
+\end{ccRefEnum}
+
+\begin{ccRefFunction}[Class::]{Function}
+A reference function is talked about here...
+\end{ccRefFunction}
+
+\begin{ccRefFunction}{Function}
+A reference function is talked about here...
+\end{ccRefFunction}
+
+\begin{ccRefVariable}[Class::]{Variable}
+A reference variable is talked about here...
+\end{ccRefVariable}
+
+\begin{ccRefVariable}{Variable}
+A reference variable is talked about here...
+\end{ccRefVariable}
+
+\begin{ccRefMacro}[Class::]{Macro}
+A reference macro is talked about here...
+\end{ccRefMacro}
+
+\begin{ccRefMacro}{Macro}
+A reference macro is talked about here...
+\end{ccRefMacro}
+
+
+% ----------------------------------------------------------------------
 \bibliographystyle{plain}
 \bibliography{cgal}
+
+\lcTex{\printindex}
 
 \end{document}
 

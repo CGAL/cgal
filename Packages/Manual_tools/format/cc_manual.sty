@@ -6,6 +6,8 @@
 % |                                                                         |
 % | 03.06.1995   Lutz Kettner   kettner@acm.org                             |
 % | Zurich, Switzerland                                                     |
+% | 15.09.1999   Susan Hert     hert@mpi-sb.mpg.de                          |
+% | Saarbruecken, Germany                                                   |
 % | $Revision$                                                       |
 % | $Date$                                            |
 % |_________________________________________________________________________|
@@ -42,7 +44,7 @@
 \newcommand{\ccPortability}{\ccFalse}
 
 % debug option, use only for small files!
-% \tracingmacros=1
+%\tracingmacros=1
 
 % \ccRevision and \ccDate can be found below of \RCSdef and \RCSdefDate
 % There is also the code to print the message during the typesetting.
@@ -400,10 +402,11 @@
 % +--------------------------------------------------------------------------
 \newcommand{\ccFont}{\it}   % font or style changing command in which all C++
                         % tokens will be typeset, including the variable names.
-\newcommand{\ccEndFont}{\/} % will be used after a C++ text. For slanted fonts,
+\newcommand{\ccEndFont}{\ifvmode\else\/\fi} 
+                        % will be used after a C++ text. For slanted fonts,
                         % here should stay \/ macro. The C++ code will be
                         % grouped, so this macros has not to restore the old
-                        % font.
+                        % font.  Cannot be used in vmode (e.g. in the index).
 
 % The special characters in typical C++ declarations:
 \newcommand{\ccOpenAngle }{\ccEndFont {\tt <}\discretionary{}{}{}}
@@ -612,6 +615,7 @@
 \newwrite\@unused
 \def\typeout#1{{\let\protect\string\immediate\write\@unused{#1}}}
 \typeout{cc_manual.sty: \ccRevision. \ccDate.}
+\typeout{cc_manual.sty: *** Including revisions for automatic indexing ***}
 \catcode`\@=12\relax
 
 
@@ -848,6 +852,9 @@
                    \begingroup\ccCatcode
                    \@ifnextchar[{\ccRefDeclarationXX}{\ccRefDeclarationX}%
                }{%
+                   \ifnum\ccAutoIndex=\ccTrue%
+                      \ccIndexRefDeclarationEnd%
+                   \fi%
                    \ccRefPageEnd
                    \ifnum\ccNewRefManualStyle=\ccTrue \clearpage \fi
                    \gdef\ccRefCategory{}%
@@ -875,9 +882,15 @@
                    \gdef\ccPureClassTemplateName{#1}%
                    \renewcommand{\ccClassTemplateName}{{{\ccFont
                            \ccPrintTokens #1\ccEnd\ccEndFont}}}%
+                   \ifnum\ccAutoIndex=\ccTrue%
+                      \ccIndexRefDeclarationBegin%
+                   \fi%
                }
 
+%% if there's an optional argument (used to specify the scope of a ceratin
+%% item, then assume it's a class name for indexing functions (and others???)
 \gdef\ccRefDeclarationXX [#1]{%
+                   \stripTrailingScope#1::\ccEnd\ccIndexClassName
                    \gdef\ccPureRefScope{#1}%
                    \gdef\ccRefScope{{\ccFont 
                            \ccPrintTokens #1\ccEnd\ccEndFont}}%
@@ -905,28 +918,46 @@
 }
 
 \newenvironment{ccRefConcept}{%
+                   \ccCurrentIndexCat=\ccIndexConceptCat%
                    \gdef\ccRefPureGlobalScope{}%
-                   \begin{ccRefDeclaration}{Concept}}{\end{ccRefDeclaration}}
+                   \begin{ccRefDeclaration}{Concept}}{%
+                   \ccCurrentIndexCat=\ccIndexConceptCat%
+                   \end{ccRefDeclaration}}
 
 \newenvironment{ccRefClass}{%
+                   \ccCurrentIndexCat=\ccIndexClassCat%
                    \gdef\ccRefPureGlobalScope{\ccPureGlobalScope}%
-                   \begin{ccRefDeclaration}{Class}}{\end{ccRefDeclaration}}
+                   \begin{ccRefDeclaration}{Class}}{%
+                   \ccCurrentIndexCat=\ccIndexClassCat%
+                   \end{ccRefDeclaration}}
 
 \newenvironment{ccRefEnum}{%
+                   \ccCurrentIndexCat=\ccIndexEnumCat%
                    \gdef\ccRefPureGlobalScope{\ccPureGlobalScope}%
-                   \begin{ccRefDeclaration}{Enum}}{\end{ccRefDeclaration}}
+                   \begin{ccRefDeclaration}{Enum}}{%
+                   \ccCurrentIndexCat=\ccIndexEnumCat%
+                   \end{ccRefDeclaration}}
 
 \newenvironment{ccRefFunction}{%
+                   \ccCurrentIndexCat=\ccIndexFunctionCat%
                    \gdef\ccRefPureGlobalScope{\ccPureGlobalScope}%
-                   \begin{ccRefDeclaration}{Function}}{\end{ccRefDeclaration}}
+                   \begin{ccRefDeclaration}{Function}}{%
+                   \ccCurrentIndexCat=\ccIndexFunctionCat%
+                   \end{ccRefDeclaration}}
 
 \newenvironment{ccRefVariable}{%
+                   \ccCurrentIndexCat=\ccIndexVariableCat%
                    \gdef\ccRefPureGlobalScope{\ccPureGlobalScope}%
-                   \begin{ccRefDeclaration}{Variable}}{\end{ccRefDeclaration}}
+                   \begin{ccRefDeclaration}{Variable}}{%
+                   \ccCurrentIndexCat=\ccIndexVariableCat%
+                   \end{ccRefDeclaration}}
 
 \newenvironment{ccRefMacro}{%
+                   \ccCurrentIndexCat=\ccIndexMacroCat%
                    \gdef\ccRefPureGlobalScope{}%
-                   \begin{ccRefDeclaration}{Macro}}{\end{ccRefDeclaration}}
+                   \begin{ccRefDeclaration}{Macro}}{%
+                   \ccCurrentIndexCat=\ccIndexMacroCat%
+                   \end{ccRefDeclaration}}
 
 \newcommand{\ccRefPage}{\begingroup\ccCatcode\ccRefPageX}
 \def\ccRefPageX #1{\endgroup page~\pageref{ccRef_#1}}
@@ -960,6 +991,10 @@
                    \begingroup\ccCatcode
                    \ccClassX%
                }{
+                   \ifnum\ccAutoIndex=\ccTrue%
+                      \ccIndexMainItemEnd[C]{\ccIndexClassName}%
+                      \def\ccIndexClassName{}%
+                   \fi%
                    \def\ccPureClassName{}%
                    \def\ccPureClassTemplateName{}%
                    \def\ccPureTemplateParameters{}
@@ -974,6 +1009,10 @@
                  %  parameters or not.
                    \endgroup
                    \def\ccPureClassName{#1}%
+                   \ifnum\ccAutoIndex=\ccTrue%
+                      \def\ccIndexClassName{#1}%
+                      \ccIndexMainItemBegin[C]{\ccIndexClassName}%
+                   \fi%
                    \def\ccPureClassTemplateName{#1}%
                    \renewcommand{\ccClassName}{{{\ccFont 
                            \ccPrintTokens #1\ccEnd\ccEndFont}}}%
@@ -981,10 +1020,49 @@
                            \ccPrintTokens #1\ccEnd\ccEndFont}}}%
                }
 
+% #1 -- the traits class (corresponds to #1 for ccClass)
+% #2 -- semicolon-separated list of classes for which this is a traits class
+% #3 -- semicolon-separated list of packages for which this is a traits class
+\newenvironment{ccTraitsClass}[3]{%
+                   \begingroup\ccCatcode
+                   \ccTraitsClassX{#1}{#2}{#3}%
+               }{
+                   \ifnum\ccAutoIndex=\ccTrue%
+                       \ccIndexTraitsClassEnd%
+                   \fi%
+                   \def\ccPureClassName{}%
+                   \def\ccPureClassTemplateName{}%
+                   \def\ccPureTemplateParameters{}
+                   \renewcommand{\ccClassName}{}%
+                   \renewcommand{\ccClassTemplateName}{}%
+                   \renewcommand{\ccTemplateParameters}{}
+                   \def\ccPureVar{}%
+                   \renewcommand{\ccVar}{}%
+               }
+
+\def\ccTraitsClassX #1#2#3{%  There is no check whether the class has template
+                         %  parameters or not.
+                   \endgroup
+                   \def\ccPureClassName{#1}%
+                   \ifnum\ccAutoIndex=\ccTrue%
+                      \ccIndexTraitsClassBegin{#1}{#2}{#3}%
+                   \fi%
+                   \def\ccPureClassTemplateName{#1}%
+                   \renewcommand{\ccClassName}{{{\ccFont
+                           \ccPrintTokens #1\ccEnd\ccEndFont}}}%
+                   \renewcommand{\ccClassTemplateName}{{{\ccFont
+                           \ccPrintTokens #1\ccEnd\ccEndFont}}}%
+               }
+
+
 \newenvironment{ccClassTemplate}{%
                    \begingroup\ccCatcode
                    \ccClassTemplateX%
                }{
+                   \ifnum\ccAutoIndex=\ccTrue%
+                      \ccIndexMainItemEnd[C]{\ccIndexClassName}%
+                      \def\ccIndexClassName{}%
+                   \fi%
                    \def\ccPureClassName{}%
                    \def\ccPureClassTemplateName{}%
                    \def\ccPureTemplateParameters{}%
@@ -995,9 +1073,15 @@
                    \renewcommand{\ccVar}{}%
                }
 
+
 \def\ccClassTemplateX #1{%
                    \endgroup
-                   \ccClassTemplateXX {#1}#1<\ccEnd}
+                   \ccClassTemplateXX {#1}#1<\ccEnd%
+                   \ifnum\ccAutoIndex=\ccTrue%
+                      \def\ccIndexClassName{\ccPureClassName}%
+                      \ccIndexMainItemBegin[C]{\ccIndexClassName}%
+                   \fi%
+}
 
 \def\ccClassTemplateXX #1#2<#3\ccEnd{%
                    \def\xparams{#3}\ifx\xparams\empty
@@ -1019,6 +1103,35 @@
                    \renewcommand{\ccTemplateParameters}{{{\ccFont
                            \ccPrintTokens #3\ccEnd\ccEndFont}}}%
                }
+
+% #1 -- the traits class (corresponds to #1 for ccClassTemplate)
+% #2 -- semicolon-separated list of classes for which this is a traits class
+% #3 -- semicolon-separated list of packages for which this is a traits class
+\newenvironment{ccTraitsClassTemplate}[3]{%
+                   \begingroup\ccCatcode
+                   \ccTraitsClassTemplateX{#1}{#2}{#3}%
+               }{
+                   \ifnum\ccAutoIndex=\ccTrue%
+                       \ccIndexTraitsClassEnd%
+                   \fi%
+                   \def\ccPureClassName{}%
+                   \def\ccPureClassTemplateName{}%
+                   \def\ccPureTemplateParameters{}%
+                   \renewcommand{\ccClassName}{}%
+                   \renewcommand{\ccClassTemplateName}{}%
+                   \renewcommand{\ccTemplateParameters}{}%
+                   \def\ccPureVar{}%
+                   \renewcommand{\ccVar}{}%
+               }
+
+\def\ccTraitsClassTemplateX #1#2#3{%
+                   \endgroup
+                   \ccClassTemplateXX {#1}#1<\ccEnd%
+                   \ifnum\ccAutoIndex=\ccTrue%
+                      \ccIndexTraitsClassBegin{\ccPureClassName}{#2}{#3}%
+                   \fi}%
+
+
 
 % +--------------------------------------------------------------------------
 % | \ccCreationVariable, \ccConstructor
@@ -1092,6 +1205,7 @@
 % +--------------------------------------------------------------------------
 % typedef's, variables, and constants are like functions without parameters.
 \newcommand{\ccVariable}{%
+                       \ccCurrentIndexCat=\ccIndexVariableCat%
                        \begingroup\ccCatcode
                        \ccVariableX
 }
@@ -1102,7 +1216,8 @@
 \long\def\ccVariableXX #1#2{%
                        \ccVariableDeclaration{#2}#1;\ccEnd
 }
-\newcommand{\ccTypedef}{\ccVariable}
+\newcommand{\ccTypedef}{\ccCurrentIndexCat=\ccIndexTypedefCat%
+                        \ccVariable}
 
 \newcommand{\ccNestedType}{%
                        \begingroup\ccCatcode
@@ -1125,6 +1240,7 @@
 % Enum's are formatted like constructors. There is exact one matching
 % pair of braces in the declaration.
 \newcommand{\ccEnum}{%
+                   \ccCurrentIndexCat=\ccIndexEnumCat%
                    \begingroup\ccCatcode
                    \catcode`\[=1
                    \catcode`\]=2
@@ -1155,6 +1271,7 @@
 
 % a struct is formatted like an enum (needs the parantheses parsing)
 \newcommand{\ccStruct}{%
+                   \ccCurrentIndexCat=\ccIndexStructCat%
                    \begingroup\ccCatcode
                    \catcode`\[=1
                    \catcode`\]=2
@@ -1555,9 +1672,15 @@
                                \ccSeparateOperator #3 #4\ccEnd%
                                \isParenthesisOperator{#3 #4(#5)#6}%
                                \ifnum\ccBool=\ccTrue
+                                   \ifnum\ccAutoIndex=\ccTrue%
+                                      \ccIndexOperator#1#3 operator(),#6,\ccEnd%
+                                   \fi
                                    \setbox\functioncallbox=\hbox{{\ccFont 
                                       \ccPrintParOperator #1#3 #4(#5)#6\ccEnd}}
                                \else
+                                   \ifnum\ccAutoIndex=\ccTrue%
+                                      \ccIndexOperator#1#3 #4,#5,\ccEnd%
+                                   \fi%
                                    \setbox\functioncallbox=\hbox{{\ccFont 
                                       \ccPrintOperator #1#3 #4(#5)#6\ccEnd}}
                                \fi
@@ -1582,14 +1705,24 @@
                                    \else
                                        \isParenthesisOperator{#3 #4(#5)#6}%
                                        \ifnum\ccBool=\ccTrue
+                                           \ifnum\ccAutoIndex=\ccTrue%
+                                            \ccIndexOperator#1#3 operator(),#5,\ccEnd
+                                           \fi
                                            \ccOperatorFunctionCall
                                                {#1}{#2}#3 #4(#5)#6;#7\ccEnd
                                            \ccBool=\ccTrue
+                                       \else
+                                           \ifnum\ccAutoIndex=\ccTrue%
+                                             \ccIndexOperator#1#3 #4,#5,\ccEnd%
+                                           \fi%
                                        \fi
                                    \fi
                                \fi
                            \fi
                            \ifnum\ccBool=\ccFalse
+                               \ifnum\ccAutoIndex=\ccTrue%
+                                  \ccIndexFunction{#1}{#4}%
+                               \fi%
                                \ccSeparateFunction{}#3 #4::\ccEnd%
                                \setbox\returntypebox=\hbox{{\ccFont
                                    \unhcopy\templatedeclbox
@@ -1688,6 +1821,9 @@
                      }
 
 \def\ccSeparateVariable #1 #2=#3\ccEnd{%
+                       \ifnum\ccAutoIndex=\ccTrue%
+                          \ccIndexTypedefOrVariable{#2}%
+                       \fi%
                        \ccSeparateFunction{}#1 #2::\ccEnd%
                        \def\xparam{#3}\ifx\xparam\empty
                        \else
@@ -1707,6 +1843,9 @@
 %   o  The 4th parameter contains an optional variable name.
 % The declaration has to be terminated with "\ccEnd".
 \def\ccEnumDeclaration #1#2\{#3\}#4\ccEnd {%
+                       \ifnum\ccAutoIndex=\ccTrue%
+                          \ccIndexEnumOrStruct#2\{#3\}\ccEnd%
+                       \fi%
                        \ccInitConstructorWidths
                        \setbox\returntypebox=\hbox{}%
                        \setbox\callnamebox=\hbox{\ccFont
