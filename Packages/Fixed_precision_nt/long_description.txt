@@ -10,6 +10,8 @@ predicates.
 
 Versions
 
+2.14 (17 May 2000)
+  improved version, no longer .C file, + pb borland std:: in example
 
 2.13 ( 6 Jan 2000)
   makefiles demo and example

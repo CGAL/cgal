@@ -202,7 +202,7 @@ int main(int argc, char* argv[])
   test_result &= (f2*f2==f4);
   //  test_result &= ! CGAL::is_valid(fi);
   test_result &= CGAL::is_finite(f1);
-  test_result &= (-f2 != f2);
+  test_result &= ((-f2) != f2);
   test_result &= (f1 <= f2);
   test_result &= (f1 <  f2);
   test_result &= (f2 >= f1);

@@ -29,7 +29,7 @@ rtag:
 	cvs rtag v`echo $(VERSION) | sed -e "s/\./_/g"` $(CVS_MODULE_NAME)
 
 submit: package
-	cp $(Package).tar.gz doc_ps/$(Package).ps version description.txt \
+	cp $(Package).tar.gz doc_ps/$(Package).ps version maintainer description.txt \
 	long_description.txt $(WWW_dir)
 	rm -f $(WWW_dir)/$(Package).ps.gz
 	gzip -9 $(WWW_dir)/$(Package).ps
@@ -60,7 +60,7 @@ $(Package).tar.gz:
 	tar -zcvf $(Package).tar.gz \
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
 	--exclude=TODO --exclude=cgal_test \
-	version description.txt long_description.txt \
+	version maintainer description.txt long_description.txt \
 	src include doc_tex doc_ps test demo examples
 
 doc: doc_ps/$(Package).ps

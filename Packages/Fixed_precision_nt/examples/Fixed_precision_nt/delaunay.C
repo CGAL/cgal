@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
     Random_points_in_square_2<Point_,
       Creator_uniform_2<double,Point_> > Input ( 1.0 );
 
-    int N; if (argc==2) sscanf(argv[1], "%d", &N); 
+    int N; if (argc==2) CGAL_CLIB_STD::sscanf(argv[1], "%d", &N); 
     else {N=100; std::cerr<<"usage : "<<argv[0]<<" nb-of-points"<<std::endl<<std::endl;}
     std::cout << "Delaunay of "<<N<<" random points"<<std::endl;
     t.start();

@@ -14,7 +14,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS =   -I../../include $(CGAL_CXXFLAGS)
+CXXFLAGS =   -g -I../../include $(CGAL_CXXFLAGS)
 
 #---------------------------------------------------------------------#
 #                    linker flags
