@@ -517,7 +517,7 @@ fill_hole_regular(std::list<Edge> & first_hole)
       // if the hole has only three edges, create the triangle
       if (hole.size() == 3)
 	{
-	  Face_handle  newf = new Face();
+	  Face_handle  newf = create_face();
 	  hit = hole.begin();
 	  for(int j=0; j<3; j++)
 	    {
@@ -611,7 +611,7 @@ fill_hole_regular(std::list<Edge> & first_hole)
 	}
  
       // create new triangle and update adjacency relations
-      Face_handle newf = new Face(v0,v1,v2);
+      Face_handle newf = create_face(v0,v1,v2);
       newf->set_neighbor(2,ff);
       ff->set_neighbor(ii, newf);
  
@@ -958,7 +958,7 @@ stack_flip_dim1(Face_handle f, int i)
   f->set_neighbor(i, n->neighbor(1-in));
   n->neighbor(1-in)->set_neighbor(n->neighbor(1-in)->index(n), f);
   (f->point_list()).splice(f->point_list().end(),n->point_list());
-  delete &(*n);
+  delete_face(n);
 }
 CGAL_END_NAMESPACE 
 

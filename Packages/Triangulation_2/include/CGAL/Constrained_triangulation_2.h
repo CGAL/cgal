@@ -40,6 +40,8 @@ CGAL_BEGIN_NAMESPACE
 template < class Gt, class Tds>
 class Constrained_triangulation_2  : public Triangulation_2<Gt,Tds>
 {
+  friend Constrained_triangulation_sweep_2<Gt,Tds>;
+  friend Constrained_triangulation_sweep_2<Gt,Tds>::Neighbor_list;
 public:
   typedef Triangulation_2<Gt,Tds> Triangulation;
   typedef Constrained_triangulation_2<Gt,Tds>  Constrained_triangulation;
@@ -435,7 +437,7 @@ insert(const Vertex_handle & va,
 	while( ! faces_to_be_removed.empty()){
 	  fl = faces_to_be_removed.front();
 	  faces_to_be_removed.pop_front();
-	  delete &(*fl);
+	  delete_face(fl);
 	}
       }
     }
@@ -708,7 +710,7 @@ triangulate(List_edges & list_edges, List_faces &
 	// creates the new triangle v0v1v2
 	// updates the neighbors, the constraints 
 	//and the list of new edges
-	newlf = new Face(v0,v2,v1);
+	newlf = create_face(v0,v2,v1);
 	new_edges.push_back(Edge(newlf,2));
 	newlf->set_neighbor(1, n1);
 	newlf->set_neighbor(0, n2);

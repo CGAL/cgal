@@ -192,6 +192,7 @@ public:
   Face* create_face(Vertex* v1, Vertex* v2, Vertex* v3);
   Face* create_face(Vertex* v1, Vertex* v2, Vertex* v3,
 		    Face* f1, Face* f2, Face* f3);
+  Face* create_face(Face* f); //calls copy constructor of Face
   Face* create_face();
   void  delete_face(Face*);
   
@@ -535,21 +536,15 @@ insert_dim_up(Vertex *w = NULL, bool orient)
       for (; ib != ib_end ; ++ib){
 	faces_list.push_back( & (*ib));
       }
-      // for (Iterator_base ib= Iterator_base(this); 
-      // 	 ib != Iterator_base(this,1);
-      // 	 ++ib){
-      //       faces_list.push_back( & (*ib));
-      //     }
-
+      
       std::list<Face *>  to_delete;
       std::list<Face *>::iterator lfit = faces_list.begin();
-      int i = dimension(); // maximun non NULL index in faces after the insertion
+      int i = dimension(); // maximun non NULL index in faces 
       Face *f, *g;
 
       for ( ; lfit != faces_list.end() ; ++lfit) {
 	f = * lfit;
-	g = create_face( f->vertex(0) ,f->vertex(1), f->vertex(2),
-			 f->neighbor(0), f->neighbor(1), f->neighbor(2));
+	g = create_face(f); //calls copy constructor of face
 	f->set_vertex(i,v); f->set_neighbor(i,g);
 	g->set_vertex(i,w); g->set_neighbor(i,f);
 	if (f->has_vertex(w)) to_delete.push_back(g); // flat face to be deleted 
@@ -825,9 +820,19 @@ Triangulation_data_structure_using_list_2<Vb,Fb>::Face*
 Triangulation_data_structure_using_list_2<Vb,Fb>::
 create_face()
 {
- Face* newf= new Face();
- add_face(newf);
- return newf;
+  Face* newf= new Face();
+  add_face(newf);
+  return newf;
+}
+
+template <class Vb, class Fb>
+Triangulation_data_structure_using_list_2<Vb,Fb>::Face*
+Triangulation_data_structure_using_list_2<Vb,Fb>::
+create_face( Face * f)
+{
+  Face* newf= new Face(*f); //calls copy constructor
+  add_face(newf);
+  return newf;
 }
 
 template <class Vb, class Fb>
@@ -835,9 +840,9 @@ Triangulation_data_structure_using_list_2<Vb,Fb>::Face*
 Triangulation_data_structure_using_list_2<Vb,Fb>::
 create_face(Vertex* v1, Vertex* v2, Vertex* v3)
 {
- Face* newf= new Face(v1, v2, v3);
- add_face(newf);
- return newf;
+  Face* newf= new Face(v1, v2, v3);
+  add_face(newf);
+  return newf;
 }
 
 template <class Vb, class Fb>

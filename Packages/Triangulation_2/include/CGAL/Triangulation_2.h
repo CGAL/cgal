@@ -284,11 +284,18 @@ protected:
   void fill_hole_delaunay(std::list<Edge> & hole);
 
   Face_handle create_face(Face_handle f1, int i1,
-		       Face_handle f2, int i2,
-		       Face_handle f3, int i3);
+			  Face_handle f2, int i2,
+			  Face_handle f3, int i3);
   Face_handle create_face(Face_handle f1, int i1,
-		       Face_handle f2, int i2);
+			  Face_handle f2, int i2);
   Face_handle create_face(Face_handle f, int i, Vertex_handle v);
+  Face_handle create_face(Vertex_handle v1, Vertex_handle v2,Vertex_handle v3);
+  Face_handle create_face(Vertex_handle v1, Vertex_handle v2,Vertex_handle v3,
+			  Face_handle f1, Face_handle f2, Face_handle f3);
+  Face_handle create_face();
+  Face_handle create_face(Face_handle); //calls copy constructor of Face
+  void delete_face(Face_handle f);
+
   Vertex_handle file_input(std::istream& is);
   void file_output(std::ostream& os) const;
 
@@ -1042,7 +1049,7 @@ make_hole ( Vertex_handle v, std::list<Edge> & hole)
   while(fc != done);
 
   while (! to_delete.empty()){
-    (to_delete.front()).Delete();
+    delete_face(to_delete.front());
     to_delete.pop_front();
   }
   return;
@@ -1083,21 +1090,27 @@ fill_hole ( Vertex_handle v, std::list< Edge > & hole )
 	if ( !is_infinite(v2) &&
 	     geom_traits().orientation(v0->point(), v1->point(), v2->point()) 
 	     == LEFTTURN ) {
-	  side =  bounded_side(v0->point(), v1->point(), v2->point(),
+	  side =  bounded_side(v0->point(), 
+			       v1->point(), 
+			       v2->point(),
 			       v->point());
+
 	  if( side == ON_UNBOUNDED_SIDE || 
-	      (side == ON_BOUNDARY && collinear_between(v0->point(), 
-							v->point(), 
-							v2->point()) )) {
-	    //create face
-	    Face_handle  newf = create_face(ff,ii,fn,in); 
-	    Hole::iterator tempo=hit;
-	    hit = hole.insert(hit,Edge(newf,1)); //push newf
-	    hole.erase(tempo); //erase ff
-	    hole.erase(next); //erase fn
-	    if (hit != hole.begin() ) --hit;
-	    continue;
-	  }
+	      (side == ON_BOUNDARY && 
+	       geom_traits().orientation(v0->point(),
+					 v->point(),
+					 v2->point()) == COLLINEAR &&
+	       collinear_between(v0->point(),v->point(),v2->point()) )) 
+	    {
+	      //create face
+	      Face_handle  newf = create_face(ff,ii,fn,in); 
+	      Hole::iterator tempo=hit;
+	      hit = hole.insert(hit,Edge(newf,1)); //push newf
+	      hole.erase(tempo); //erase ff
+	      hole.erase(next); //erase fn
+	      if (hit != hole.begin() ) --hit;
+	      continue;
+	    }
 	}
       }
       ++hit; 
@@ -1258,15 +1271,10 @@ fill_hole_delaunay(std::list<Edge> & first_hole)
 	}
 	++hit;
       }
-  
-  
+ 
       // create new triangle and update adjacency relations
-      // Face_handle  newf = new Face(v0,v1,v2);
-//       newf->set_neighbor(2,ff);
-//       ff->set_neighbor(ii, newf);
-      Face_handle newf;
-  
-  
+       Face_handle newf;
+    
       //update the hole and push back in the Hole_List stack
       // if v2 belongs to the neighbor following or preceding *f
       // the hole remain a single hole
@@ -1275,8 +1283,6 @@ fill_hole_delaunay(std::list<Edge> & first_hole)
       fn = (hole.front()).first;
       in = (hole.front()).second;
       if (fn->has_vertex(v2, i) && i == fn->ccw(in)) {
-	//newf->set_neighbor(0,fn);
-	//fn->set_neighbor(in,newf);
 	newf = create_face(ff,ii,fn,in);
 	hole.pop_front();
 	hole.push_front(Edge( &(*newf),1));
@@ -1286,11 +1292,8 @@ fill_hole_delaunay(std::list<Edge> & first_hole)
 	fn = (hole.back()).first;
 	in = (hole.back()).second;
 	if (fn->has_vertex(v2, i) && i== fn->cw(in)) {
-	  //newf->set_neighbor(1,fn);
-	  //fn->set_neighbor(in,newf);
 	  newf = create_face(fn,in,ff,ii);
 	  hole.pop_back();
-	  //hole.push_back(Edge(&(*newf),0));
 	  hole.push_back(Edge(&(*newf),1));
 	  hole_list.push_front(hole);
 	}
@@ -1342,6 +1345,55 @@ Triangulation_2<Gt, Tds>::
 create_face(Face_handle f, int i, Vertex_handle v)
 {
   return static_cast<Face*>(_tds.create_face(&(*f),i, &(*v)));
+}
+
+template <class Gt, class Tds >    
+inline
+Triangulation_2<Gt, Tds>::Face_handle
+Triangulation_2<Gt, Tds>::
+create_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3)
+{
+  return static_cast<Face*>(_tds.create_face(&(*v1), &(*v2), &(*v3)));
+}
+
+template <class Gt, class Tds >    
+inline
+Triangulation_2<Gt, Tds>::Face_handle
+Triangulation_2<Gt, Tds>::
+create_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,
+	    Face_handle f1, Face_handle f2,  Face_handle f3)
+{
+  return static_cast<Face*>(_tds.create_face(&(*v1), &(*v2), &(*v3),
+					     &(*f1), &(*f2), &(*f3)));
+}
+
+template <class Gt, class Tds >    
+inline
+Triangulation_2<Gt, Tds>::Face_handle
+Triangulation_2<Gt, Tds>::
+create_face(Face_handle fh)
+{
+  return static_cast<Face*>(_tds.create_face(&(*fh)));
+}
+
+
+
+template <class Gt, class Tds >    
+inline
+Triangulation_2<Gt, Tds>::Face_handle
+Triangulation_2<Gt, Tds>::
+create_face()
+{
+  return static_cast<Face*>(_tds.create_face());
+}
+
+template <class Gt, class Tds >    
+inline
+void
+Triangulation_2<Gt, Tds>::
+delete_face(Face_handle f)
+{
+  _tds.delete_face(&(*f));
 }
 
 
