@@ -1,3 +1,7 @@
+- INPUT BUG : not really fixed : if it takes long to run geomview (eg the
+  first time you run the program), then the bug is still there.
+  Try to fix it properly with select().
+  It's still probably a bug in Geomview.
 - Finish get rid of standard deprecated (and gcc 2.97 unfriendly) strstream.
   http://www.cmla.ens-cachan.fr/Utilisateurs/dosreis/C++/FAQ/
   It's harder than I thought, since g++ 2.95 doesn't have <sstream>.
@@ -15,6 +19,7 @@
 - For T3D : I want to be able to tell Geomview or the CGAL program to stop
   displaying a tetrahedron that I select, so that I can see the inside.
   Maybe it's not really worth it, finally.  See the real needs first.
+- I also want to display only the convex hull of a T3D.
 - See how we can use this as a debugger : ask Frederic details on his stuff.
   The fact we're multiprocess probably means we'll even have less problems
   than multi-threads...
@@ -33,6 +38,7 @@ Color:
 Demo :
 ------
 - Add demo files for polyhedrons ?
+- Bernd is asking to see minimum enclosing spheres.
 
 Doc:
 ---
