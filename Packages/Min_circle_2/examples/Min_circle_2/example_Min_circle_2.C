@@ -33,6 +33,9 @@
 #include <CGAL/Gmpz.h>
 #include <iostream>
 
+CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(
+       CGAL::Point_2< CGAL::Homogeneous< CGAL::Gmpz > > )
+
 using namespace CGAL;
 using std::cout;
 
