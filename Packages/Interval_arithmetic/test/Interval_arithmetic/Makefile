@@ -16,30 +16,30 @@ CXXFLAGS = \
 	-I../../include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS) \
-	-g -W -Wall -Winline
-	# -O2 -W -Wall -Winline -DLOOPS=10000000 -DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS -DCGAL_NO_WARNINGS
+	-DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS\
+	-DCGAL_NO_WARNINGS \
+	-O2 -fomit-frame-pointer -mcpu=pentiumpro -march=pentiumpro -W -Wall -DLOOPS=10000000
 	# -g -W -Wall -Winline
-	# -DCGAL_IA_NEW_FILTERS \
 	# -O2 -mcpu=pentiumpro -march=pentiumpro -W -Wall -DLOOPS=10000000
-	# -O2 -Wall -W
+	# -O2 -W -Winline -Wunused -malign-double
+	# -mcpu=pentiumpro -march=pentiumpro -mieee-fp
+	# -mcpu=ultrasparc -mtune=ultrasparc
+	# -fomit-frame-pointer
+	# -fprofile-arcs -ftest-coverage
+	# -fpermissive
+	# -B$(UTIL)/Binutils/$(UNAME)/bin/ \
+	# -Wa,-xarch=v8plus   # g++ sans -m*=ultra*
+	# -fhonor-std
+	# -frepo
+	# -pedantic
 	# /Fatst1.s
 	# /Op /Oi /Od /Za /O2 /Ox
-	# -fpermissive
+	# -DCGAL_IA_NEW_FILTERS \
 	# -DCGAL_CHECK_EXPENSIVE \
 	# -DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS\
 	# -DCGAL_NO_WARNINGS \
 	# -DCGAL_IA_DONT_STOP_CONSTANT_PROPAGATION \
 	# -DCGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT \
-	# -O2 -W -Winline -Wunused -malign-double
-	# -mcpu=pentiumpro -march=pentiumpro -mieee-fp
-	# -mcpu=ultrasparc -mtune=ultrasparc
-	# -B$(UTIL)/Binutils/$(UNAME)/bin/ \
-	# -fomit-frame-pointer
-	# -fprofile-arcs -ftest-coverage
-	# -Wa,-xarch=v8plus   # g++ sans -m*=ultra*
-	# -fhonor-std
-	# -frepo
-	# -pedantic
 	# -DLOOPS=10000000
 
 #---------------------------------------------------------------------#
@@ -49,7 +49,7 @@ CXXFLAGS = \
 # LDFLAGS = Interval_arithmetic$(OBJ_EXT)
 # LDFLAGS = ../../src/Interval_arithmetic/workaround_4_ms.obj
 
-LDFLAGS = Interval_arithmetic$(OBJ_EXT) \
+LDFLAGS = \
          $(TESTSUITE_LDFLAGS) \
          $(CGAL_LDFLAGS)
 
