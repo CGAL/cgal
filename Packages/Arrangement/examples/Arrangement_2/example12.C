@@ -7,10 +7,10 @@
 #include <CGAL/Arr_2_default_dcel.h>
 #include <CGAL/Arrangement_2.h>
 
+#include <iostream.h>
 #include <CGAL/Arr_polyline_traits.h>
 #include <CGAL/IO/Arr_iostream.h>
 
-#include <iostream.h>
 
 typedef CGAL::Quotient<int>                  NT;
 typedef CGAL::Cartesian<NT>                  R;
@@ -77,7 +77,6 @@ int main()
   Arr_writer verbose_writer(std::cout, arr, true);
   
   verbose_writer.write_halfedges(arr.halfedges_begin(), arr.halfedges_end());
+
+  return 0;
 }
-
-
-
