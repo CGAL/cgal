@@ -704,7 +704,6 @@ io_Operator
 io_tag (const Lazy_exact_nt<ET>&)
 { return io_Operator(); }
  
-#ifndef CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION
 template <typename ET>
 struct converter<ET, Lazy_exact_nt<ET> >
 {
@@ -713,7 +712,6 @@ struct converter<ET, Lazy_exact_nt<ET> >
         return z.exact();
     }
 };
-#endif
 
 CGAL_END_NAMESPACE
 

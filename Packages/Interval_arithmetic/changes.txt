@@ -1,3 +1,6 @@
+17 Feb 2004 Sylvain Pion
+- Remove CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION
+
 1 Feb 2004  Sylvain Pion
 - Give more control over the precision of to_double(Lazy_exact_nt)
 - Lazy_exact_nt's update_exact() now also updates the interval.
