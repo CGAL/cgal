@@ -50,11 +50,15 @@ struct Interval_nt_advanced
   struct unsafe_comparison {};		// Exception class.
   static unsigned number_of_failures;	// Counts the number of failures.
 
+  friend inline IA operator+     (const IA &, const IA &);
+  friend inline IA operator-     (const IA &, const IA &);
+  friend inline IA operator*     (const IA &, const IA &);
+  friend inline IA operator/     (const IA &, const IA &);
+  friend inline IA min           (const IA &, const IA &);
+  friend inline IA max           (const IA &, const IA &);
   friend inline IA sqrt          (const IA &);
   friend inline IA square        (const IA &);
   friend inline IA abs           (const IA &);
-  friend inline IA min           (const IA &, const IA &);
-  friend inline IA max           (const IA &, const IA &);
   friend inline double to_double (const IA &);
   friend inline bool is_valid    (const IA &);
   friend inline bool is_finite   (const IA &);
@@ -74,7 +78,8 @@ public:
   Interval_nt_advanced() {}
 
   // To stop constant propagation, I need these CGAL_IA_STOP_CPROP().
-  // It's not activated by default though.
+  // Ideally, these barriers should be placed just before the critical
+  // operations.
 
   Interval_nt_advanced(const double d)
   {
@@ -91,32 +96,13 @@ public:
 
 #if 1
   // The copy constructors/assignment: useless.
-  // The default ones are ok, but these are faster...
+  // The default ones are ok, but these appear to be faster...
   Interval_nt_advanced(const IA & d)
       : _inf(d._inf), _sup(d._sup) {}
 
   IA & operator=(const IA & d)
   { _inf = d._inf; _sup = d._sup; return *this; }
 #endif
-
-  // The operators.
-  IA  operator+(const IA & d) const
-  {
-      CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
-      return IA (-CGAL_IA_FORCE_TO_DOUBLE((-_inf) - d._inf),
-	          CGAL_IA_FORCE_TO_DOUBLE( _sup + d._sup));
-  }
-
-  IA  operator-(const IA & d) const
-  {
-      CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
-      return IA (-CGAL_IA_FORCE_TO_DOUBLE(d._sup - _inf),
-	          CGAL_IA_FORCE_TO_DOUBLE(_sup - d._inf));
-  }
-
-  // Those 2 ones could be made not inlined.
-  IA  operator*	(const IA & d) const;
-  IA  operator/	(const IA & d) const;
 
   IA  operator-() const { return IA (-_sup, -_inf); }
 
@@ -188,56 +174,77 @@ static const Interval_nt_advanced Interval_Largest (-HUGE_VAL, HUGE_VAL);
 
 inline
 Interval_nt_advanced
-Interval_nt_advanced::operator* (const Interval_nt_advanced & d) const
+operator+ (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
+{
+    CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+    return Interval_nt_advanced (-CGAL_IA_FORCE_TO_DOUBLE((-e._inf) - d._inf),
+	                          CGAL_IA_FORCE_TO_DOUBLE( e._sup + d._sup));
+}
+
+inline
+Interval_nt_advanced
+operator- (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
+{
+    CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+    return Interval_nt_advanced (-CGAL_IA_FORCE_TO_DOUBLE(d._sup - e._inf),
+	                          CGAL_IA_FORCE_TO_DOUBLE(e._sup - d._inf));
+}
+
+inline
+Interval_nt_advanced
+operator* (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
 {
   CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
-  if (_inf>=0.0)					// this>=0
+  if (e._inf>=0.0)					// this>=0
   {
       // d>=0     [_inf*d._inf; _sup*d._sup]
       // d<=0     [_sup*d._inf; _inf*d._sup]
       // d~=0     [_sup*d._inf; _sup*d._sup]
-    bound_t a = _inf, b = _sup;
+      Interval_nt_advanced::bound_t a = e._inf, b = e._sup;
     if (d._inf < 0.0)
     {
 	a=b;
 	if (d._sup < 0.0)
-	    b=_inf;
+	    b=e._inf;
     }
 
-    return IA (-CGAL_IA_FORCE_TO_DOUBLE(a*(-d._inf)),
-	        CGAL_IA_FORCE_TO_DOUBLE(b*d._sup));
+    return Interval_nt_advanced(-CGAL_IA_FORCE_TO_DOUBLE(a*(-d._inf)),
+	                         CGAL_IA_FORCE_TO_DOUBLE(b*d._sup));
   }
-  else if (_sup<=0.0)				// this<=0
+  else if (e._sup<=0.0)				// this<=0
   {
       // d>=0     [_inf*d._sup; _sup*d._inf]
       // d<=0     [_sup*d._sup; _inf*d._inf]
       // d~=0     [_inf*d._sup; _inf*d._inf]
-    bound_t a = _sup, b = _inf;
+      Interval_nt_advanced::bound_t a = e._sup, b = e._inf;
     if (d._inf < 0.0)
     {
 	a=b;
 	if (d._sup < 0.0)
-	    b=_sup;
+	    b=e._sup;
     }
-    return IA (-CGAL_IA_FORCE_TO_DOUBLE(b*(-d._sup)),
-	        CGAL_IA_FORCE_TO_DOUBLE(a*d._inf));
+    return Interval_nt_advanced(-CGAL_IA_FORCE_TO_DOUBLE(b*(-d._sup)),
+	                         CGAL_IA_FORCE_TO_DOUBLE(a*d._inf));
   }
   else						// 0 \in [_inf;_sup]
   {
     if (d._inf>=0.0)				// d>=0
-      return IA (-CGAL_IA_FORCE_TO_DOUBLE((-_inf)*d._sup),
-	          CGAL_IA_FORCE_TO_DOUBLE(_sup*d._sup));
+      return Interval_nt_advanced (-CGAL_IA_FORCE_TO_DOUBLE((-e._inf)*d._sup),
+	                            CGAL_IA_FORCE_TO_DOUBLE(e._sup*d._sup));
     if (d._sup<=0.0)				// d<=0
-      return IA (-CGAL_IA_FORCE_TO_DOUBLE(_sup*(-d._inf)),
-	          CGAL_IA_FORCE_TO_DOUBLE(_inf*d._inf));
+      return Interval_nt_advanced (-CGAL_IA_FORCE_TO_DOUBLE(e._sup*(-d._inf)),
+	                            CGAL_IA_FORCE_TO_DOUBLE(e._inf*d._inf));
         					// 0 \in d
-    bound_t tmp1 = CGAL_IA_FORCE_TO_DOUBLE((-_inf)*d._sup);
-    bound_t tmp2 = CGAL_IA_FORCE_TO_DOUBLE(_sup*(-d._inf));
-    bound_t tmp3 = CGAL_IA_FORCE_TO_DOUBLE(_inf*d._inf);
-    bound_t tmp4 = CGAL_IA_FORCE_TO_DOUBLE(_sup*d._sup);
-    return IA (-std::max(tmp1,tmp2), std::max(tmp3,tmp4));
+    Interval_nt_advanced::bound_t
+	tmp1 = CGAL_IA_FORCE_TO_DOUBLE((-e._inf)*d._sup),
+        tmp2 = CGAL_IA_FORCE_TO_DOUBLE(e._sup*(-d._inf)),
+        tmp3 = CGAL_IA_FORCE_TO_DOUBLE(e._inf*d._inf),
+        tmp4 = CGAL_IA_FORCE_TO_DOUBLE(e._sup*d._sup);
+    return Interval_nt_advanced(-std::max(tmp1,tmp2), std::max(tmp3,tmp4));
   };
 }
+
+// The following should be eliminated too.
 
 inline
 bool
@@ -271,22 +278,7 @@ operator!= (const double d, const Interval_nt_advanced & t)
 
 inline
 Interval_nt_advanced
-operator+ (const double d, const Interval_nt_advanced & t)
-{ return t+d; }
-
-inline
-Interval_nt_advanced
-operator- (const double d, const Interval_nt_advanced & t)
-{ return -(t-d); }
-
-inline
-Interval_nt_advanced
-operator* (const double d, const Interval_nt_advanced & t)
-{ return t*d; }
-
-inline
-Interval_nt_advanced
-Interval_nt_advanced::operator/ (const Interval_nt_advanced & d) const
+operator/ (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
 {
   CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
   if (d._inf>0.0)				// d>0
@@ -294,41 +286,36 @@ Interval_nt_advanced::operator/ (const Interval_nt_advanced & d) const
       // this>=0	[_inf/d._sup; _sup/d._inf]
       // this<=0	[_inf/d._inf; _sup/d._sup]
       // this~=0	[_inf/d._inf; _sup/d._inf]
-    bound_t a = d._sup, b = d._inf;
-    if (_inf<0.0)
+      Interval_nt_advanced::bound_t a = d._sup, b = d._inf;
+    if (e._inf<0.0)
     {
 	a=b;
-	if (_sup<0.0)
+	if (e._sup<0.0)
 	    b=d._sup;
     };
-    return IA(-CGAL_IA_FORCE_TO_DOUBLE((-_inf)/a),
-	       CGAL_IA_FORCE_TO_DOUBLE(_sup/b));
+    return Interval_nt_advanced(-CGAL_IA_FORCE_TO_DOUBLE((-e._inf)/a),
+	                         CGAL_IA_FORCE_TO_DOUBLE(e._sup/b));
   }
   else if (d._sup<0.0)			// d<0
   {
       // this>=0	[_sup/d._sup; _inf/d._inf]
       // this<=0	[_sup/d._inf; _inf/d._sup]
       // this~=0	[_sup/d._sup; _inf/d._sup]
-    bound_t a = d._sup, b = d._inf;
-    if (_inf<0.0)
+      Interval_nt_advanced::bound_t a = d._sup, b = d._inf;
+    if (e._inf<0.0)
     {
 	b=a;
-	if (_sup<0.0)
+	if (e._sup<0.0)
 	    a=d._inf;
     };
-    return IA(-CGAL_IA_FORCE_TO_DOUBLE((-_sup)/a),
-	       CGAL_IA_FORCE_TO_DOUBLE(_inf/b));
+    return Interval_nt_advanced(-CGAL_IA_FORCE_TO_DOUBLE((-e._sup)/a),
+	                         CGAL_IA_FORCE_TO_DOUBLE(e._inf/b));
   }
   else					// d~0
     return CGAL_IA_LARGEST; // IA (-HUGE_VAL, HUGE_VAL);
 	   // We could do slightly better -> [0;HUGE_VAL] when d._sup==0,
 	   // but is this worth ?
 }
-
-inline
-Interval_nt_advanced
-operator/ (const double d, const Interval_nt_advanced & t)
-{ return Interval_nt_advanced(d)/t; }
 
 inline
 Interval_nt_advanced &
@@ -390,10 +377,10 @@ inline
 bool
 is_valid (const Interval_nt_advanced & d)
 {
-    // The 2 first is_valid() are implicitely done by the 3rd test ;-)
 #if defined _MSC_VER || defined __sgi
     return is_valid(d._inf) && is_valid(d._sup) && d._inf <= d._sup;
 #else
+    // The 2 first is_valid() are implicitely done by the 3rd test ;-)
     return d._inf <= d._sup;
 #endif
 }
@@ -475,12 +462,6 @@ struct Interval_nt : public Interval_nt_advanced
   IA operator-() const 
     { return IA(-_sup, -_inf); }
 
-  // The member functions that have to be protected against rounding mode.
-  IA operator+(const IA & d) const;
-  IA operator-(const IA & d) const;
-  IA operator*(const IA & d) const;
-  IA operator/(const IA & d) const;
-
   IA & operator+=(const IA & d);
   IA & operator-=(const IA & d);
   IA & operator*=(const IA & d);
@@ -490,80 +471,43 @@ struct Interval_nt : public Interval_nt_advanced
 
 inline
 Interval_nt
-abs (const Interval_nt & d)
-{ return abs((Interval_nt_advanced) d); }
-
-inline
-Interval_nt
-min (const Interval_nt & d, const Interval_nt & e)
-{ return min((Interval_nt_advanced) d, (Interval_nt_advanced) e); }
-
-inline
-Interval_nt
-max (const Interval_nt & d, const Interval_nt & e)
-{ return max((Interval_nt_advanced) d, (Interval_nt_advanced) e); }
-
-inline
-Interval_nt
-Interval_nt::operator+ (const Interval_nt & d) const
+operator+ (const Interval_nt & e, const Interval_nt & d)
 {
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
-  Interval_nt tmp (-CGAL_IA_FORCE_TO_DOUBLE((-_inf) - d._inf),
-	            CGAL_IA_FORCE_TO_DOUBLE(_sup + d._sup));
+  Interval_nt tmp ( Interval_nt_advanced(e) + Interval_nt_advanced(d) );
   FPU_set_cw(backup);
   return tmp;
 }
 
 inline
 Interval_nt
-Interval_nt::operator- (const Interval_nt & d) const
+operator- (const Interval_nt & e, const Interval_nt & d)
 {
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
-  Interval_nt tmp (-CGAL_IA_FORCE_TO_DOUBLE(d._sup - _inf),
-                    CGAL_IA_FORCE_TO_DOUBLE(_sup - d._inf));
+  Interval_nt tmp ( Interval_nt_advanced(e) - Interval_nt_advanced(d) );
   FPU_set_cw(backup);
   return tmp;
 }
 
 inline
 Interval_nt
-Interval_nt::operator* (const Interval_nt & d) const
+operator* (const Interval_nt & e, const Interval_nt & d)
 {
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
-  Interval_nt tmp ( Interval_nt_advanced::operator*(d) );
+  Interval_nt tmp ( Interval_nt_advanced(e) * Interval_nt_advanced(d) );
   FPU_set_cw(backup);
   return tmp;
 }
 
 inline
 Interval_nt
-operator+ (const double d, const Interval_nt & t)
-{ return t+d; }
-
-inline
-Interval_nt
-operator- (const double d, const Interval_nt & t)
-{ return -(t-d); }
-
-inline
-Interval_nt
-operator* (const double d, const Interval_nt & t)
-{ return t*d; }
-
-inline
-Interval_nt
-Interval_nt::operator/ (const Interval_nt & d) const
+operator/ (const Interval_nt & e, const Interval_nt & d)
 {
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
-  Interval_nt tmp ( Interval_nt_advanced::operator/(d) );
+  Interval_nt tmp ( Interval_nt_advanced(e) / Interval_nt_advanced(d) );
   FPU_set_cw(backup);
   return tmp;
 }
-
-inline
-Interval_nt
-operator/ (const double d, const Interval_nt & t)
-{ return Interval_nt(d)/t; }
 
 inline
 Interval_nt &
@@ -605,6 +549,21 @@ square (const Interval_nt & d)
   return tmp;
 }
 
+inline
+Interval_nt
+abs (const Interval_nt & d)
+{ return abs( (Interval_nt_advanced) d); }
+
+inline
+Interval_nt
+min (const Interval_nt & d, const Interval_nt & e)
+{ return min( (Interval_nt_advanced) d, (Interval_nt_advanced) e); }
+
+inline
+Interval_nt
+max (const Interval_nt & d, const Interval_nt & e)
+{ return max( (Interval_nt_advanced) d, (Interval_nt_advanced) e); }
+
 
 // The undocumented tags.
 
@@ -620,9 +579,7 @@ number_type_tag (const Interval_nt_advanced &)
 
 CGAL_END_NAMESPACE
 
-// Finally we deal with the convert_to<Interval_nt_advanced>(NT)
-// functions from other NTs, when necessary.
-// convert_to<Interval_nt>() is templated below.
+// Finally we deal with the convert_to<Interval_nt_advanced>(NT).
 //
 // For the builtin types (well, all those that can be casted to double
 // exactly), the template in misc.h is enough.
