@@ -12,7 +12,7 @@
 // release_date  : $CGAL_Date$
 //
 // file          : include/CGAL/Optimisation_circle_2.h
-// package       : $CGAL_Package: Min_circle_2 WIP $
+// package       : Min_circle_2 3.10.3 (19 Mar 2001)
 // chapter       : Geometric Optimisation
 //
 // source        : web/Min_circle_2.aw
