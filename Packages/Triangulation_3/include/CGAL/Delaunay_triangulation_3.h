@@ -146,6 +146,8 @@ public:
   
   bool is_valid(bool verbose = false, int level = 0) const;
 
+  bool is_valid(Cell_handle c, bool verbose = false, int level = 0) const;
+
 };
 
 template < class Gt, class Tds >
@@ -594,6 +596,62 @@ is_valid(bool verbose, int level) const
     }
   }
   if (verbose) { std::cerr << "Delaunay valid triangulation" << std::endl;}
+  return true;
+}
+
+template < class Gt, class Tds >
+bool
+Delaunay_triangulation_3<Gt,Tds>::
+is_valid(Cell_handle c, bool verbose, int level) const
+{
+  int i;
+
+  if ( ! (&(*c))->is_valid(dimension(),verbose,level) ) {
+    if (verbose) { 
+      std::cerr << "combinatorically invalid cell" ;
+      for ( i=0; i <= dimension(); i++ ) {
+	std::cerr << c->vertex(i)->point() << ", " ;
+      }
+      std::cerr << std::endl;
+    }
+    CGAL_triangulation_assertion(false); return false;
+  }
+  switch ( dimension() ) {
+  case 3:
+    {
+      if ( ! is_infinite(c) ) {
+	is_valid_finite(c,verbose,level);
+	for ( i=0; i<4; i++ ) {
+	  if ( side_of_sphere
+	       ( c, c->vertex( (c->neighbor(i))->index(c) )->point() )
+	       == ON_BOUNDED_SIDE ) {
+	    if (verbose) { 
+	      std::cerr << "non-empty sphere " << std::endl;
+	    }
+	    CGAL_triangulation_assertion(false); return false;
+	  }
+	}
+      }
+      break;
+    }
+  case 2:
+    {
+      if ( ! is_infinite(c,3) ) {
+	for ( i=0; i<2; i++ ) {
+	  if ( side_of_circle
+	       ( c , 3, c->vertex(c->neighbor(i)->index(c))->point() )
+	       == ON_BOUNDED_SIDE ) {
+	    if (verbose) { 
+	      std::cerr << "non-empty circle " << std::endl;
+	    }
+	    CGAL_triangulation_assertion(false); return false;
+	  }
+	}
+      }
+      break;
+    }
+  }
+  if (verbose) { std::cerr << "Delaunay valid cell" << std::endl;}
   return true;
 }
 

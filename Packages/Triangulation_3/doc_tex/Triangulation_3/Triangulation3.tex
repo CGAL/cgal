@@ -1111,10 +1111,8 @@ debugging.
           is_valid(bool verbose = false) const;}
 {Checks the combinatorial validity of the triangulation. Checks also the
 validity of its geometric embedding (see
-Section~\ref{Triangulation3-sec-Valid}). When \ccc{verbose} is set to true, 
-messages describing the first invalidity encountered are printed.\\
-This method is  mainly a debugging help for the users of advanced features.
-}
+Section~\ref{Triangulation3-sec-Valid}).\\ When \ccc{verbose} is set to true, 
+messages describing the first invalidity encountered are printed.}
 
 \ccMethod{bool
           is_valid(Cell_handle c, bool verbose = false) const;}
@@ -1124,6 +1122,8 @@ geometric validity of \ccc{c}, if \ccc{c} is finite. (See
 Section~\pageref{Triangulation3-sec-Valid}.)\\ 
 When \ccc{verbose} is set to \ccc{true}, messages are printed to give
 a precise indication of the kind of invalidity encountered.}
+
+These methods are mainly a debugging help for the users of advanced features.
 
 \end{ccAdvanced}
 
@@ -1497,11 +1497,21 @@ by \ccc{f} and not containing any other point of the triangulation,
 validity of its geometric embedding (see
 Section~\ref{Triangulation3-sec-Valid}). Also checks that all the
 circumscribing spheres (resp. circles in dimension~2) of  cells
-(resp. facets in dimension~2) are empty. When \ccc{verbose} is set to
+(resp. facets in dimension~2) are empty.\\ When \ccc{verbose} is set to
 true,  messages describing the first invalidity encountered are
-printed.\\ 
-This method is  mainly a debugging help for the users of advanced features.
-}
+printed.}
+
+\ccMethod{bool
+          is_valid(Cell_handle c, bool verbose = false) const;}
+{Checks the combinatorial and geometric validity of the cell (see
+Section~\ref{Triangulation3-sec-Valid}). Also checks that the
+circumscribing sphere (resp. circle in dimension~2) of  cells
+(resp. facet in dimension~2) is empty.\\
+ When \ccc{verbose} is set to
+true, messages are printed to give
+a precise indication of the kind of invalidity encountered.}
+
+These methods are  mainly a debugging help for the users of advanced features.
 \end{ccAdvanced}
 
 \end{ccClassTemplate}

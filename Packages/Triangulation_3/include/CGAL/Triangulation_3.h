@@ -3227,17 +3227,17 @@ Triangulation_3<GT,Tds>::
 is_valid(Cell_handle c, bool verbose, int level) const
 {
   int i;
-  if ( ! (&(*c))->is_valid(t.dimension(),verbose,level) ) {
+  if ( ! (&(*c))->is_valid(dimension(),verbose,level) ) {
     if (verbose) { 
       std::cerr << "combinatorically invalid cell" ;
-      for ( i=0; i <= t.dimension(); i++ ) {
+      for ( i=0; i <= dimension(); i++ ) {
 	std::cerr << c->vertex(i)->point() << ", " ;
       }
       std::cerr << std::endl;
     }
     CGAL_triangulation_assertion(false); return false;
   }
-  if ( is_finite(c) ) {
+  if ( ! is_infinite(c) ) {
     is_valid_finite(c,verbose,level);
   }
   if (verbose) { std::cerr << "geometrically valid cell" << std::endl;}
