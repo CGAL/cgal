@@ -40,6 +40,7 @@
 #define CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
 #include <CGAL/Arithmetic_filter.h>
 
+using namespace std;
 using namespace CGAL;
 
 // Please pay attention to the workaround for MipsPro at the top of the file.

@@ -14,6 +14,7 @@
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/predicates_on_ftC2.h>
 
+using namespace std;
 using namespace CGAL;
 
 typedef TESTED_TYPE IA_nt;

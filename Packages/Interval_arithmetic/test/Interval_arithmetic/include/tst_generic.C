@@ -11,6 +11,7 @@
 #define CGAL_IA_NO_WARNINGS
 #include <CGAL/Interval_arithmetic.h>
 
+using namespace std;
 using namespace CGAL;
 
 // #define DEBUG(a) a;

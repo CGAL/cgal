@@ -2,6 +2,7 @@
 
 #include <CGAL/Interval_arithmetic.h>
 
+using namespace std;
 using namespace CGAL;
 
 // 5 temporary functions to test the inlining of the compiler.
