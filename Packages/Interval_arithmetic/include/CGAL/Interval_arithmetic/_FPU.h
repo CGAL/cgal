@@ -73,28 +73,28 @@
 #endif
 #else	/* __USE_ASSEMBLY */
 #ifdef __i386
-#define SETFPCW(CW) asm volatile ("fldcw %0" : : "m" (*&CW))
+#define SETFPCW(CW) asm volatile ("fldcw %0" : : "g" (CW))
 /* x86:                       rounding   | precision  | default mask */
-static unsigned int CGAL_FPU_cw_zero = 0xC00      | 0x200      | 0x107f; 
-static unsigned int CGAL_FPU_cw_near = 0x0        | 0x200      | 0x107f;
-static unsigned int CGAL_FPU_cw_up   = 0x800      | 0x200      | 0x107f; 
-static unsigned int CGAL_FPU_cw_down = 0x400      | 0x200      | 0x107f;
+static const unsigned int CGAL_FPU_cw_zero = 0xC00      | 0x200      | 0x107f; 
+static const unsigned int CGAL_FPU_cw_near = 0x0        | 0x200      | 0x107f;
+static const unsigned int CGAL_FPU_cw_up   = 0x800      | 0x200      | 0x107f; 
+static const unsigned int CGAL_FPU_cw_down = 0x400      | 0x200      | 0x107f;
 #endif
 #ifdef __sparc
-#define SETFPCW(CW) asm volatile ("ld %0,%%fsr" : "=m" (*&CW))
+#define SETFPCW(CW) asm volatile ("ld %0,%%fsr" : : "g" (CW))
 /* Sparc:                     rounding   | precision  | default mask */
-static unsigned int CGAL_FPU_cw_zero = 0x40000000 | 0x20000000 | 0x1f;
-static unsigned int CGAL_FPU_cw_near = 0x0        | 0x20000000 | 0x1f;
-static unsigned int CGAL_FPU_cw_up   = 0x80000000 | 0x20000000 | 0x1f;
-static unsigned int CGAL_FPU_cw_down = 0xc0000000 | 0x20000000 | 0x1f;
+static const unsigned int CGAL_FPU_cw_zero = 0x40000000 | 0x20000000 | 0x1f;
+static const unsigned int CGAL_FPU_cw_near = 0x0        | 0x20000000 | 0x1f;
+static const unsigned int CGAL_FPU_cw_up   = 0x80000000 | 0x20000000 | 0x1f;
+static const unsigned int CGAL_FPU_cw_down = 0xc0000000 | 0x20000000 | 0x1f;
 #endif
 #ifdef __alpha
-#define SETFPCW(CW) asm volatile ("mt_fpcr %0; excb" : : "f"(CW))
+#define SETFPCW(CW) asm volatile ("mt_fpcr %0; excb" : : "f" (CW))
 /* Alpha:                      rounding */
-static unsigned long CGAL_FPU_cw_zero = 0x0000000000000000UL;
-static unsigned long CGAL_FPU_cw_near = 0x0800000000000000UL;
-static unsigned long CGAL_FPU_cw_up   = 0x0c00000000000000UL;
-static unsigned long CGAL_FPU_cw_down = 0x0400000000000000UL;
+static const unsigned long CGAL_FPU_cw_zero = 0x0000000000000000UL;
+static const unsigned long CGAL_FPU_cw_near = 0x0800000000000000UL;
+static const unsigned long CGAL_FPU_cw_up   = 0x0c00000000000000UL;
+static const unsigned long CGAL_FPU_cw_down = 0x0400000000000000UL;
 #endif
 #endif
 
