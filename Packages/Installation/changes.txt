@@ -1,3 +1,6 @@
+20 December 2004 Sylvain Pion
+- Update doc for 3.1 and makefile_Core/makefile_Qt renames.
+
 18 December 2004 Sylvain Pion
 - install_cgal now automatically recognizes internal releases from the
   existence of "test/", no need to modify it by hand.

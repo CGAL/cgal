@@ -120,7 +120,7 @@ that they reasonnably conform to the ISO 14882 standard for \CC.
     & Solaris 2.6+\\\hline
     \msvc{7.1} (\textsc{.NET}) \footnotemark[12]           
     & \mswin\ 95/98/2000/XP/NT4\footnotemark[10]\\\hline
-    \icl{7.1} \footnotemark[13]                          
+    \icl{8.0} \footnotemark[13]                          
     & \mswin\ 95/98/2000/XP/NT4\footnotemark[10]\\\hline
 %%    \bcc{5.5.1} \footnotemark[13]                          
 %%    & \mswin\ 95/98/2000/XP/NT4\footnotemark[10]\\\hline
@@ -139,14 +139,6 @@ that they reasonnably conform to the ISO 14882 standard for \CC.
 If you are going to install \cgal\ using
 Cygwin\footnote{\path~http://www.cygwin.com~}, please read
 Section~\ref{sec:cygwin} first.
-
-For the \sunprocc{5.3} compiler, the latest patch set, in particular
-Patch 111685-05, is required. You can check with \texttt{CC~-V} which
-compiler version you have installed. It should read 
-\begin{verbatim}
-      CC: Sun WorkShop 6 update 2 C++ 5.3 Patch 111685-05 2002/02/03
-\end{verbatim}
-or later.
 
 Note that \Gcc{2.96/97} are not official \texttt{gcc} releases that
 are neither supported by the \texttt{GCC}
@@ -296,7 +288,7 @@ A menu similar to the following will appear on your screen.\index{main
 {\ccTexHtml{\scriptsize}{} \label{pic:main-menu}
 \begin{alltt}
   ****************************************************************
-  **              CGAL 3.0 Installation Main Menu               **
+  **              CGAL 3.1 Installation Main Menu               **
   **              -------------------------------               **
   **                                                            **
   **   OS:                  sparc_SunOS-5.9                     **
@@ -384,7 +376,7 @@ at the error messages from compiler or linker.)
 \begin{verbatim}
   ****************************************************************
   **                                                            **
-  **                     Compiling CGAL 3.0                     **
+  **                     Compiling CGAL 3.1                     **
   **                     ------------------                     **
   **                                                            **
   ****************************************************************
@@ -892,11 +884,10 @@ makefile structure of \cgal.
 
 If you enabled \core\ support and want to use the \core\ distribution
 shipped with \cgal, go to the \texttt{src/Core} directory and type
-\texttt{make -f makefile\_Core} to compile the \core\ library.
+\texttt{make} to compile the \core\ library.
 
 If you enabled \qt\ support, go to the \texttt{src/CGALQt} directory
-and type \texttt{make -f makefile\_Qt} to compile the \cgal\ \qt\ 
-support library.
+and type \texttt{make} to compile the \cgal\ \qt\ support library.
 
 %%When this is finished it would be a good idea to print and read the
 %%`Getting Started with \cgal'\index{CGAL@\cgal!getting started} document
@@ -1041,7 +1032,7 @@ into the right place:\TTsubindex{install\_cgal}{upgrade option}
 ./install_cgal --upgrade <OLD_CGAL_DIR>
 \end{verbatim}
 where \texttt{<OLD\_CGAL\_DIR>} is the root directory of your existing
-\cgal\ installation\\ (e.g. \texttt{/pub/local/CGAL-2.4}).  You can
+\cgal\ installation\\ (e.g. \texttt{/pub/local/CGAL-3.0}).  You can
 then build all libraries for the actual operating system that existed
 in your previous \cgal\ installation with
 \TTsubindex{install\_cgal}{rebuild-all option}
@@ -1129,7 +1120,7 @@ compiler.  To achieve this, the first section of each makefile
 contains an include statement that looks as follows:
 
 \begin{verbatim}
-      CGAL_MAKEFILE = /users/jannes/CGAL-3.0/make/makefile_<CGAL-OS description>
+      CGAL_MAKEFILE = /users/jannes/CGAL-3.1/make/makefile_<CGAL-OS description>
       include $(CGAL_MAKEFILE)
 \end{verbatim}
 %$
@@ -1366,7 +1357,7 @@ specific include directory. This directory can be found below
 description (cf. Section~\ref{sec:os-compiler-id}).
 
 The test programs used to generate the \texttt{compiler\_config.h}
-file can be found in \nonlinkedpath'CGAL-3.0/config/testfiles'.
+file can be found in \nonlinkedpath'CGAL-3.1/config/testfiles'.
 \index{directories!config/testfiles@\texttt{config/testfiles}} Both
 \texttt{compiler\_config.h} and the test programs contain a short
 description of the problem. In case of trouble with one of the
