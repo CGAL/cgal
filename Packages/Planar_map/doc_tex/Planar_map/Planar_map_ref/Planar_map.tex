@@ -56,9 +56,9 @@
   functionality. A Vertex has the additional \ccc{point} and \ccc{set_point} operations. A Halfedge has
   the additional \ccc{curve} and \ccc{set_curve} operations. 
   } % ccHtmlNoLinksFrom
-  See concepts \ccc{Planar_map_DCEL}\lcTex{ (\ccRefPage{Planar_map_DCEL})},
-  \ccc{Planar_map_DCEL::Vertex} \lcTex{(\ccRefPage{Pm_Dcel_Vertex})}
-  and \ccc{Planar_map_DCEL::Halfedge} \lcTex{(\ccRefPage{Pm_Dcel_Halfedge})}.
+  See concepts \ccc{PlanarMapDcel_2}\lcTex{ (\ccRefPage{PlanarMapDcel_2})},
+  \ccc{PlanarMapDcelVertex_2} \lcTex{(\ccRefPage{PlanarMapDcelVertex_2})}
+  and \ccc{PlanarMapDcelHalfedge_2} \lcTex{(\ccRefPage{PlanarMapDcelHalfedge_2})}.
 %\ccc{Dcel::Vertex}\\
 %\ccc{Dcel::Halfedge}\\
 
@@ -153,14 +153,17 @@
 
 \ccHeading{Point Location and Bounding Box}
 
-As described in the introduction, the planar map users can define which algorithm to use in the point location queries. 
-This is done with {\em point location class} passed to the map in this constructor. The randomized trapezoidal decomposition algorithm is the one used by default in our implementation.
-However, the users can choose to use the naive or ``walk'' algorithms
-(trading time
-for memory efficiency) or can implement their own point location algorithm.
-This is done with a class derived from the 
-\ccc{Point_location_base<Planar_map>} whose description is given on
-\ccRefPage{Pm_point_location_base<Planar_map>}.
+As described in the introduction, the planar map users can define
+which algorithm to use in the point location queries.  This is done
+by passing an instance of some point location class instance to the map in
+this constructor. The point location class should be a model of the
+\ccc{PlanarMapPointLocation_2} concept. The randomized trapezoidal
+decomposition algorithm is the one used by default in our
+implementation.  However, the users can choose to use the naive or
+``walk'' algorithms (trading time for memory efficiency) or can
+implement their own point location algorithm. This can be done with a
+class derived from the \ccc{Point_location_base<Planar_map>}. The concept \ccc{PlanarMapPointLocation_2} lists the set of requirements 
+(\ccRefPage{PlanarMapPointLocation_2}).
 
 \ccConstructor{Planar_map<Dcel,Traits>(Pm_point_location_base<Self> *pl_ptr);}{}
   
@@ -373,10 +376,12 @@ these functions with the naive point location strategy.
 %           of each face \ccStyle{f} point to \ccStyle{f} as their
 %           face} 
 
-% @@@ \end{ccClass}
+% @@@ \end{ccClas3s}
 \ccSeeAlso
-        \ccc{Topological_map<Dcel>}
-        \ccc{Planar_map_DCEL}
+     \ccc{Topological_map<Dcel>}\lcTex{ 
+     (\ccRefPage{CGAL::Tological_map<Dcel>})}\\
+     \ccc{PlanarMapDcel_2}\lcTex{ 
+     (\ccRefPage{PlanarMapDcel_2})}
 
 \end{ccRefClass}
 

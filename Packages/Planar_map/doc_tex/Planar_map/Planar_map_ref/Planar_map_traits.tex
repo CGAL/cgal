@@ -11,13 +11,13 @@
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
-\begin{ccRefConcept}{Planar_map_traits}
+\begin{ccRefConcept}{PlanarMapTraits_2}
 \label{PM_sec:req:interface} 
  
 %\label{I1_S}} 
 
 The planar map class is parameterized with the
-interface class \ccStyle{Planar_map_traits} which defines the abstract interface
+interface class \ccStyle{PlanarMapTraits_2} which defines the abstract interface
 between planar maps and the primitives they use. 
 The following
 requirement catalog lists the primitives, i.e., types, member functions
@@ -165,7 +165,7 @@ parameterize planar maps. %Ready-made implementation is available
   \ccc{Pm_segment_epsilon_traits<R>}\\
   \ccc{Pm_leda_segment_exact_traits}
 
-  The \ccc{Arrangement_2_traits} concept is a refinement of the \ccc{Planar_map_traits}
+  The \ccc{ArrangementTraits_2} concept is a refinement of the \ccc{PlanarMapTraits_2}
   concept, in other words, a model of the former is a model of the latter.
   The meaning of that is that all supplied (or user written ) arrangement traits classes
   can be used ass the \ccc{Traits} template parameter for 
