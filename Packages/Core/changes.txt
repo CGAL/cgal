@@ -1,4 +1,10 @@
 
+Version 0.15 (1 October 2003)
+- Copied  ceilLg5, BIG, and log_5 from Expr.cpp to include/CORE/ExprRep.h
+
+Version 0.14 (1 October 2003)
+- Moved template code from Expr.cpp to include/CORE/ExprRep.h
+
 Version 0.13 (1 October 2003)
 - Fixed makefile and example as we now have the macro CGAL_USE_CORE
 
