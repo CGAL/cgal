@@ -67,6 +67,17 @@ void force_ieee_double_precision()
 #endif
 }
 
+#ifdef __BORLANDC__
+// Borland doesn't initialize the FPU exception mask correctly => FP exceptions.
+struct Borland_workaround
+{
+    Borland_workaround() { FPU_set_cw(FPU_cw_near); }
+};
+
+static Borland_workaround Borland_workaround_object;
+#endif // __BORLANDC__
+
+
 // The results of 1-epsilon and -1+epsilon are enough
 // to detect exactly the current rounding mode.
 //                          1-MIN_DOUBLE
