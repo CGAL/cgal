@@ -1,3 +1,8 @@
+2.4.2 (31 January 2001)
++ Small fix to satisfy MSVC (initialisation of const ref variables).
++ Replaced multiplications by wmult calls to optimize Cartesian case.
+
+----
 2.4.1 (29 January 2001)
 + Small bug fix (removed spurious implementation).
 
