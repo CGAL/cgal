@@ -16,12 +16,19 @@
 // revision_date : $Date$
 // package       : Interval_arithmetic
 // author(s)     : Sylvain Pion
-// coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
+// coordinator   : INRIA Sophia-Antipolis
 //
 // ============================================================================
 
 #ifndef CGAL_FILTERED_KERNEL_H
 #define CGAL_FILTERED_KERNEL_H
+
+#include <CGAL/basic.h>
+#include <CGAL/Filtered_predicate.h>
+#include <CGAL/Cartesian_converter.h>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Kernel/Type_equality_wrapper.h>
+#include <CGAL/MP_Float.h>
 
 // This file contains the definition of a generic kernel filter.
 //
@@ -30,19 +37,11 @@
 //   generalized to allow other kinds of filters (static...).
 // - at the moment, only the predicates are filtered.
 //   Constructions will come later.
-// - the kernel only works with traits only and as a pure traits only.
-//   However it should be easy (and desirable for anything using
-//   Kernel_traits<>) to have the type equality.
+// - the kernel provides the traits interface, as well as type equality.
 //   Having the global functions working is another story...
 // - The converters are more a property of the types rather than anything else,
 //   so maybe they should not be passed as template parameter, but use a
 //   traits-like mecanism ?
-
-#include <CGAL/basic.h>
-#include <CGAL/Filtered_predicate.h>
-#include <CGAL/Cartesian_converter.h>
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/MP_Float.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -60,6 +59,7 @@ template <class CK,
 #endif
 		      CK::RT> > >
 class Filtered_kernel
+  : public Type_equality_wrapper< CK, Filtered_kernel<CK, EK, FK, C2E, C2F> >
 {
 public:
     // What to do with the tag ?
@@ -67,16 +67,9 @@ public:
     // struct filter_tag{};
     // typedef filter_tag                                     Kernel_tag;
     // typedef typename CK::Kernel_tag                       Kernel_tag;
-    typedef typename CK::Rep_tag                          Rep_tag;
-    typedef typename CK::RT                               RT;
-    typedef typename CK::FT                               FT;
+    // typedef typename CK::Rep_tag                          Rep_tag;
 
-    // Macros to define the types, predicates and constructions.
-
-    // If we adopt this solution, then we can simply derive ?
-#define CGAL_Filter_type(X) \
-    typedef typename CK::X X##_base; \
-    typedef typename CK::X X;
+    // Macros to define the predicates and constructions.
 
 #define CGAL_Filter_pred(P, Pf) \
     typedef Filtered_predicate<typename EK::P, typename FK::P, \
@@ -86,39 +79,6 @@ public:
 #define CGAL_Filter_cons(C, Cf) \
     typedef typename CK::C C; \
     C Cf() const { return C(); }
-
-    // Types :
-
-    // CGAL_Filter_type(RT) // ?
-    // CGAL_Filter_type(FT) // ?
-
-    CGAL_Filter_type(Object_2)
-    CGAL_Filter_type(Point_2)
-    CGAL_Filter_type(Vector_2)
-    CGAL_Filter_type(Direction_2)
-    CGAL_Filter_type(Segment_2)
-    CGAL_Filter_type(Line_2)
-    CGAL_Filter_type(Ray_2)
-    CGAL_Filter_type(Triangle_2)
-    CGAL_Filter_type(Circle_2)
-    CGAL_Filter_type(Iso_rectangle_2)
-    CGAL_Filter_type(Conic_2)
-    // CGAL_Filter_type(Aff_transformation_2)
-    // CGAL_Filter_type(Data_accessor_2) // ?
-
-    CGAL_Filter_type(Object_3)
-    CGAL_Filter_type(Point_3)
-    CGAL_Filter_type(Vector_3)
-    CGAL_Filter_type(Direction_3)
-    CGAL_Filter_type(Segment_3)
-    CGAL_Filter_type(Line_3)
-    CGAL_Filter_type(Plane_3)
-    CGAL_Filter_type(Ray_3)
-    CGAL_Filter_type(Triangle_3)
-    CGAL_Filter_type(Tetrahedron_3)
-    CGAL_Filter_type(Sphere_3)
-    CGAL_Filter_type(Iso_cuboid_3)
-    // CGAL_Filter_type(Aff_transformation_3)
 
 #define CGAL_Kernel_pred(Y,Z) CGAL_Filter_pred(Y,Z)
 #define CGAL_Kernel_cons(Y,Z) CGAL_Filter_cons(Y,Z)

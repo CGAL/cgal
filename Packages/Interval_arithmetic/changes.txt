@@ -1,3 +1,6 @@
+Version 4.160 on 17 February 2003
+- Filtered_kernel now uses Type_equality_wrapper.
+
 Version 4.159 on 13 January 2003
 - Added function zero() to make the testsuite pass for Intel 7 with -O2
 - Fix warning with Borland.
