@@ -261,6 +261,13 @@ sub check_package($)
 	if ($word_count > 50) {
 	    log_msg "WARNING: File description.txt contains more than 50 words!";
 	}
+	my $rc;
+	$rc = system("sed -e 's/</\\&lt;/g' -e 's/>/\\&gt;/g' < description.txt > descr");
+	if ($rc == 0) {
+	    rename 'descr', 'description.txt';
+	} else {
+	    unlink 'descr';
+	}
     }
 #    if ( ! -f 'changes.txt' ) {
 #	log_msg "WARNING: File changes.txt is missing!";
