@@ -28,7 +28,6 @@
 
 #include <CGAL/Homogeneous/PointH2.h>
 #include <CGAL/Homogeneous/LineH2.h>
-#include <CGAL/Homogeneous/TriangleH2.h>
 
 CGAL_BEGIN_NAMESPACE
 
