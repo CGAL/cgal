@@ -20,9 +20,10 @@ typedef leda_rational                   NT;
 typedef CGAL::Cartesian<NT>             R;
 
 typedef CGAL::Arr_segment_traits_2<R>   Traits;
-typedef Traits::X_monotone_curve_2               X_curve;
+typedef Traits::Curve_2                 Curve;
+typedef Traits::X_monotone_curve_2      X_curve;
 typedef Traits::Point_2                 Point;
-typedef CGAL::Arr_base_node<X_curve>    Base_node;
+typedef CGAL::Arr_base_node<Curve, X_curve> Base_node;
 
 
 typedef CGAL::Polygon_traits_2<R>                           Polygon_traits;

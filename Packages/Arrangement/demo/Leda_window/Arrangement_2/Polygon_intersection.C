@@ -39,7 +39,7 @@ int face_diff (Ccb_halfedge_circulator circ) {
   int diff = 0;
   Arr_2::Overlap_circulator oc = circ->overlap_edges();
   do {
-    if (circ->source()->point() == t.curve_source(oc->curve()) ) 
+    if (circ->source()->point() == t.curve_source(oc->x_curve()) ) 
     diff--;     //we're inside, going outside
   else
     diff++;
