@@ -190,6 +190,8 @@ private:
   typedef typename FK_traits::Is_degenerate_edge_2
   FK_Is_degenerate_edge_2;
 
+  typedef typename FK_traits::Do_intersect_2     FK_Do_intersect_2;
+
 
   // Predicates for the exact kernel
   typedef typename EK_traits::Compare_x_2        EK_Compare_x_2;
@@ -210,6 +212,8 @@ private:
 
   typedef typename EK_traits::Is_degenerate_edge_2
   EK_Is_degenerate_edge_2;
+
+  typedef typename EK_traits::Do_intersect_2     EK_Do_intersect_2;
 
 
 
@@ -259,6 +263,10 @@ public:
   Filtered_predicate<EK_Is_degenerate_edge_2,
 		     FK_Is_degenerate_edge_2, C2E, C2F>
   Is_degenerate_edge_2;
+
+  typedef
+  Filtered_predicate<EK_Do_intersect_2,	FK_Do_intersect_2, C2E, C2F>
+  Do_intersect_2;
 
 public:
   //-----------------------------------------------------------------------
@@ -324,6 +332,11 @@ public:
   Is_degenerate_edge_2
   is_degenerate_edge_2_object() const {
     return Is_degenerate_edge_2();
+  }
+
+  Do_intersect_2
+  do_intersect_2_object() const {
+    return Do_intersect_2();
   }
 };
 

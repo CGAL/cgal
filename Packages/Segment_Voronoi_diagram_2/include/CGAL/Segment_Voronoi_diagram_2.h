@@ -646,6 +646,20 @@ protected:
     return is_degenerate_edge(e.first, e.second);
   }
 
+  bool do_intersect(const Site& t, Face_handle f) const;
+  bool do_intersect(const Segment& s1, const Segment& s2) const
+  {
+    std::pair<int,int> res =
+      geom_traits().do_intersect_2_object()(s1, s2);
+    if ( res.first < 2 && res.second < 2 ) { return false; }
+    return (res.first != 3);
+  }
+
+  void print_error_message() const
+  {
+    std::cerr << "SVD::Insert aborted: intersecting segments found"
+	      << std::endl;
+  }
 
   //protected:
 public:

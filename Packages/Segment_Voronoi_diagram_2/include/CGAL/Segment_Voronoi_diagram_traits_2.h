@@ -90,10 +90,10 @@ svd_compare_distance_2(const typename K::Point_2& q,
 		       const typename K::Point_2& p,
 		       Cartesian_tag, Method_tag method_tag)
 {
-  return svd_compare_distanceC2(q.x(), q.y(),
-				s[0].x(), s[0].y(),
-				s[1].x(), s[1].y(),
-				p.x(), p.y(), method_tag);
+  return svd_compare_distance_ftC2(q.x(), q.y(),
+				   s[0].x(), s[0].y(),
+				   s[1].x(), s[1].y(),
+				   p.x(), p.y(), method_tag);
 }
 
 template<class K, class Method_tag>
@@ -117,11 +117,11 @@ svd_compare_distance_2(const typename K::Point_2& q,
 		       const typename K::Segment_2& s2,
 		       Cartesian_tag, Method_tag method_tag)
 {
-  return svd_compare_distanceC2(q.x(), q.y(),
-				s1[0].x(), s1[0].y(),
-				s1[1].x(), s1[1].y(),
-				s2[0].x(), s2[0].y(),
-				s2[1].x(), s2[1].y(), method_tag);
+  return svd_compare_distance_ftC2(q.x(), q.y(),
+				   s1[0].x(), s1[0].y(),
+				   s1[1].x(), s1[1].y(),
+				   s2[0].x(), s2[0].y(),
+				   s2[1].x(), s2[1].y(), method_tag);
 }
 
 template<class K, class Method_tag>
@@ -381,6 +381,29 @@ public:
   }
 };
 
+//-----------------------------------------------------------------------
+//                          do intersect
+//-----------------------------------------------------------------------
+
+template< class K, class Method_tag >
+class Svd_do_intersect_2
+{
+public:
+  typedef typename K::Segment_2  Segment_2;
+  typedef std::pair<int,int>     result_type;
+
+  struct Arity {};
+
+public:
+  
+  result_type
+  operator()(const Segment_2& s1, const Segment_2& s2) const
+  {
+    return
+      svd_do_intersect_ftC2<K,Method_tag>(s1, s2, Method_tag());
+  }
+};
+
 
 
 
@@ -440,6 +463,7 @@ public:
   typedef CGAL::Svd_infinite_edge_interior_conflict_2<K,MTag>
   /*                                    */ Infinite_edge_interior_conflict_2;
   typedef CGAL::Svd_is_degenerate_edge_2<K,MTag>        Is_degenerate_edge_2;
+  typedef CGAL::Svd_do_intersect_2<K,MTag>              Do_intersect_2;
 
 
 public:
@@ -506,6 +530,11 @@ public:
   Is_degenerate_edge_2
   is_degenerate_edge_2_object() const {
     return Is_degenerate_edge_2();
+  }
+
+  Do_intersect_2
+  do_intersect_2_object() const {
+    return Do_intersect_2();
   }
 
 };

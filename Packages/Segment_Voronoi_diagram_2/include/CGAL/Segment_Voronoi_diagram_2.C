@@ -467,6 +467,25 @@ insert_third(const Site& t)
 }
 
 
+template< class Gt, class Svdds >
+bool
+Segment_Voronoi_diagram_2<Gt,Svdds>::
+do_intersect(const Site& t, Face_handle f) const
+{
+  if ( t.is_segment() ) {
+    for (int i = 0; i < 3; i++) {
+      Vertex_handle v = f->vertex(i);
+      if ( !is_infinite(v) && v->is_segment() ) {
+	if ( do_intersect(t.segment(), v->segment()) ) {
+	  print_error_message();
+	  return true;
+	}
+      }
+    }
+  }
+  return false;
+}
+
 
 template< class Gt, class Svdds >
 typename Segment_Voronoi_diagram_2<Gt,Svdds>::Vertex_handle
@@ -531,6 +550,10 @@ insert(const Site& t, Vertex_handle vnear)
 
   do {
     Face_handle f(fc);
+    if ( do_intersect(t, f) ) {
+      return Vertex_handle(NULL);
+    }
+
     s = incircle(f, t);
 
     sign_map[f] = s;
@@ -583,6 +606,12 @@ insert(const Site& t, Vertex_handle vnear)
   // REGION AND EXPANDS THE CONFLICT REGION.
   initialize_conflict_region(start_f, l);
   expand_conflict_region(start_f, t, l, fm, sign_map, NULL);
+
+  // the following condition becomes true only if intersecting
+  // segments are found
+  if ( fm.size() == 0 ) {
+    return Vertex_handle(NULL);
+  }
 
   Vertex_handle v = retriangulate_conflict_region(t, l, fm);
 
@@ -685,19 +714,34 @@ expand_conflict_region(const Face_handle& f, const Site& t,
 		       std::map<Face_handle,Sign>& sign_map,
 		       std::vector<Vh_triple*>* fe)
 {
+  // this is done to stop the recursion when intersecting segments
+  // are found
+  if ( fm.size() == 0 && l.size() == 0 ) { return; }
+
+  if ( do_intersect(t, f) ) {
+    l.clear();
+    fm.clear();
+    return;
+  }
+
   // setting fm[f] to true means that the face has been reached and
   // that the face is available for recycling. If we do not want the
   // face to be available for recycling we must set this flag to
   // false.
   fm[f] = true;
 
+  // MK: I MAY NEED TO ADD SOME TEST HERE THAT CORRESPONDS TO THE CASE
+  // WHERE AN INTERSECTING SEGMENT HAS BEEN FOUND.
+
   //  std::cout << "Size of l: " << l.size() << std::endl;
 
   //  CGAL_assertion( fm.find(f) != fm.end() );
+
   for (int i = 0; i < 3; i++) {
     Face_handle n = f->neighbor(i);
 
     Sign s = incircle(n, t);
+
     sign_map[n] = s;
 
     Sign s_f = sign_map[f];
@@ -751,6 +795,10 @@ expand_conflict_region(const Face_handle& f, const Site& t,
 
 
     expand_conflict_region(n, t, l, fm, sign_map, fe);
+
+    // this is done to stop the recursion when intersecting segments
+    // are found
+    if ( fm.size() == 0 && l.size() == 0 ) { return; }
   } // for-loop
 }
 

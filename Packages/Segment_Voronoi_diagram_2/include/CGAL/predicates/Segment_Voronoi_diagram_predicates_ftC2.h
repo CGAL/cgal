@@ -30,6 +30,7 @@
 
 
 #include <CGAL/predicates/Segment_Voronoi_diagram_predicates_C2.h>
+#include <CGAL/predicates/Svd_do_intersect_C2.h>
 #include <CGAL/predicates/check_filter.h>
 #include <CGAL/Segment_Voronoi_diagram_kernel_wrapper_2.h>
 
@@ -38,10 +39,10 @@ CGAL_BEGIN_NAMESPACE
 
 template<class FT, class Method_tag>
 Comparison_result
-svd_compare_distanceC2(const FT& qx, const FT& qy,
-		       const FT& sx, const FT& sy,
-		       const FT& tx, const FT& ty,
-		       const FT& px, const FT& py, Method_tag)
+svd_compare_distance_ftC2(const FT& qx, const FT& qy,
+			  const FT& sx, const FT& sy,
+			  const FT& tx, const FT& ty,
+			  const FT& px, const FT& py, Method_tag)
 {
   // first check if (qx,qy) is inside, the boundary or at the exterior
   // of the band of the segment s
@@ -98,11 +99,11 @@ svd_compare_distanceC2(const FT& qx, const FT& qy,
 
 template<class FT, class Method_tag>
 Comparison_result
-svd_compare_distanceC2(const FT& qx, const FT& qy,
-		       const FT& s1x, const FT& s1y,
-		       const FT& t1x, const FT& t1y,
-		       const FT& s2x, const FT& s2y,
-		       const FT& t2x, const FT& t2y, Method_tag)
+svd_compare_distance_ftC2(const FT& qx, const FT& qy,
+			  const FT& s1x, const FT& s1y,
+			  const FT& t1x, const FT& t1y,
+			  const FT& s2x, const FT& s2y,
+			  const FT& t2x, const FT& t2y, Method_tag)
 {
   // first check if (qx,qy) is inside, the boundary or at the exterior
   // of the band of the segments s1, s2
@@ -663,6 +664,46 @@ svd_is_degenerate_edge_ftC2(const std::vector<FT>& v,
 
   delete[] t;
   return res;
+}
+
+//--------------------------------------------------------------------------
+
+template<class K, class Method_tag>
+inline
+std::pair<int,int>
+svd_do_intersect_ftC2(const typename K::Segment_2& s1,
+		      const typename K::Segment_2& s2,
+		      Method_tag mtag)
+{
+  return svd_do_intersect_ftC2(s1.source().x(),	s1.source().y(),
+			       s1.target().x(),	s1.target().y(),
+			       s2.source().x(),	s2.source().y(),
+			       s2.target().x(),	s2.target().y(),
+			       mtag);
+}
+
+
+template<class FT, class Method_tag>
+std::pair<int,int>
+svd_do_intersect_ftC2(const FT& x1, const FT& y1,
+		      const FT& x2, const FT& y2,
+		      const FT& x3, const FT& y3,
+		      const FT& x4, const FT& y4, Method_tag)
+{
+  must_be_filtered(FT());
+
+  typedef Simple_cartesian<FT>                           Rep;
+  typedef Segment_Voronoi_diagram_kernel_wrapper_2<Rep>  Kernel;
+
+  typedef typename Kernel::Point_2                       Point_2;
+  typedef typename Kernel::Segment_2                     Segment_2;
+
+  typedef Svd_do_intersect_C2<Kernel>                    Do_intersect;
+
+  Point_2 p1(x1, y1), p2(x2, y2), p3(x3, y3), p4(x4, y4);
+  Segment_2 s1(p1, p2), s2(p3, p4);
+
+  return Do_intersect()(s1, s2);
 }
 
 //--------------------------------------------------------------------------

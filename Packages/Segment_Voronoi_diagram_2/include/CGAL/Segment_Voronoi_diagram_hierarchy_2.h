@@ -339,6 +339,12 @@ insert(const Site& t, int hierarchy_level)
 
   Vertex_handle vertex = hierarchy[0]->insert(t, vertices[0]);
 
+  // this is the case when the new site is a segment and it intersects
+  // existing segments
+  if ( vertex == Vertex_handle(NULL) ) {
+    return vertex;
+  }
+
   // insert at other levels
   Vertex_handle previous = vertex;
   Vertex_handle first = vertex;
