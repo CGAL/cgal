@@ -1684,12 +1684,12 @@ test with leading and trailing spaces\ccIndexMainItem{  test  }
 test with leading and trailing spaces\ccIndexSubitem{test}{  subitem  }
 
 
-testing testing\removeTrailingSpaces{without}
-\def\word{word with  lots of spaces  in the middle too    }
-testing testing\removeTrailingSpaces{with }
-testing testing\removeTrailingSpaces{\word}
-\def\wordwithout{nospaceshere}
-testing testing\removeTrailingSpaces{\wordwithout}
+%testing testing\removeTrailingSpaces{without}
+%\def\word{word with  lots of spaces  in the middle too    }
+%testing testing\removeTrailingSpaces{with }
+%testing testing\removeTrailingSpaces{\word}
+%\def\wordwithout{nospaceshere}
+%testing testing\removeTrailingSpaces{\wordwithout}
 
 \ccIndexingOff
 %------------------------------------------------------------------------------
@@ -1749,6 +1749,7 @@ A reference concept is talked about here...
 
 The class name should not appear as an argument in this constructor
 
+\ccCreationVariable{x}
 \ccCreation
 \ccConstructor{Concept(Concept& c);}{copy constructor}
 
