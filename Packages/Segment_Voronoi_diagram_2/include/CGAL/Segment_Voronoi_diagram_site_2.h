@@ -36,7 +36,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
-  /** A Site is either a point or a segment (if defined)
+  /** A Site is either a point or a segment or a point defined as the
+      intersection of two non-parallel segments (if defined)
    */
 
 template <class R_>
@@ -47,96 +48,216 @@ public:
   typedef R  Rep;
   typedef typename R::Point_2   Point_2;
   typedef typename R::Segment_2 Segment_2;
-  typedef Segment_Voronoi_diagram_site_2<R>  Site_2;
 
-  Segment_Voronoi_diagram_site_2 () : defined_ (false) {}
-  ~Segment_Voronoi_diagram_site_2 () { }
+  Segment_Voronoi_diagram_site_2() : defined_(false) {}
 
-  Segment_Voronoi_diagram_site_2 (const Point_2 &p)
-    : _p(p), defined_ (true), point_ (true)  {}
-  
-  Segment_Voronoi_diagram_site_2 (const Segment_2 &s)
-    : _p(s.source()), _p2(s.target()), defined_ (true), point_ (false) { }
+  // constructs point site using input point
+  Segment_Voronoi_diagram_site_2(const Point_2 &p)
+    : p_(p), defined_(true), point_(true), input_(true)  {}
 
-  Segment_Voronoi_diagram_site_2 (const Object &o) {
+  // constructs segment site using input segment
+  Segment_Voronoi_diagram_site_2(const Segment_2 &s)
+    : p_(s.source()), p2_(s.target()), defined_(true), point_(false),
+      input_(true), is_exact1_(true), is_exact2_(true) {}
+
+  // constructs point site using point of intersection
+  Segment_Voronoi_diagram_site_2(const Segment_2& s1,
+				 const Segment_2& s2) {
+    initialize_site(s1, s2);
+  }
+
+  // constructs segment site using points of intersection of support
+  // with s1 and support with s2 as endpoints
+  Segment_Voronoi_diagram_site_2(const Segment_2& support,
+				 const Segment_2& s1,
+				 const Segment_2& s2) {
+    initialize_site(support, s1, s2);
+  }
+
+  // constructs segment site using either the source or the target of
+  // support (that depends on the boolean is_first_exact) and the
+  // intersection of support with s as the other endpoint
+  Segment_Voronoi_diagram_site_2(const Segment_2& support,
+				 const Segment_2& s,
+				 bool is_first_exact) {
+    initialize_site(support, s, is_first_exact);
+  }
+
+  Segment_Voronoi_diagram_site_2(const Object &o) {
     if ( assign(_p, o) ) {
       defined_ = true;
       point_ = true;
+      input_ = true;
       return;
     }
 
     Segment_2 s;
     if ( assign(s, o) ) {
-      //  *this = s;
-      _p = s.source();
-      _p2 = s.target();
+      p_ = s.source();
+      p2_ = s.target();
       defined_ = true;
       point_ = false;
+      input_ = true;
       return;
     }
 
     defined_ = false;
   }
 
-  inline bool is_defined () const { return defined_; }
-  inline bool is_point () const { return defined_ && point_; }
-  inline bool is_segment () const { return defined_ && !point_; }
+  //***********************************************************************
 
-  inline const Point_2& point() const { 
+  bool is_defined () const { return defined_; }
+  bool is_point () const { return defined_ && point_; }
+  bool is_segment () const { return defined_ && !point_; }
+  bool is_exact() const { return input_; }
+
+  Point_2 point() const { 
     CGAL_precondition ( is_point() );
-    return _p;
+    if ( !input_ ) {
+      return compute_intersection_point();
+    } else {
+      return p_;
+    }
   }
-  inline const Segment_2 segment() const {
+  Segment_2 segment() const {
     CGAL_precondition ( is_segment() ); 
-    return Segment_2(_p,_p2);
+    return Segment_2( source(), target() );
   }
 
-  inline const Point_2& source() const {
+  Point_2 source() const {
     CGAL_precondition ( is_segment() ); 
-    return _p;
+    return compute_source();
   }
 
-  inline const Point_2& target() const {
+  Point_2 target() const {
     CGAL_precondition ( is_segment() ); 
-    return _p2;
+    return compute_target();
   }
-
-#if 0
-  inline Point_2& point() { 
-    CGAL_precondition ( is_point() );
-    return _p;
-  }
-  inline Segment_2& segment() {
-    CGAL_precondition ( is_segment() ); 
-    return _s;
-  }
-#endif
 
   void set_point(const Point_2& p) {
-    _p = p;
+    p_ = p;
     defined_ = true;
     point_ = true;
+    input_ = true;
   }
 
   void set_segment(const Segment_2& s) {
-    _p = s.source();
-    _p2 = s.target();
+    p_ = s.source();
+    p2_ = s.target();
     defined_ = true;
     point_ = false;
+    input_ = true;
   }
 
-  inline std::ostream& write(std::ostream& os)
+  void set_point(const Segment_2& s1, Segment_2& s2) {
+    initialize_site(s1, s2);
+  }
+
+  void set_segment(const Segment_2& support, const Segment_2& s1,
+		   Segment_2& s2) {
+    initialize_site(support, s1, s2);
+  }
+
+  void set_point(const Segment_2& support, Segment_2& s,
+		 bool is_first_exact) {
+    initialize_site(support, s, is_first_exact);
+  }
+
+  std::ostream& write(std::ostream& os)
   {
     return os << (*this);
   }
 
 protected:
-  Point_2 _p;
-  Point_2 _p2;
+  void initialize_site(const Segment_2& s1, const Segment_2& s2)
+  {
+    defined_ = true;
+    point_ = true;
+    input_ = false;
+    q1_ = s1.source();
+    q2_ = s1.target();
+    q3_ = s2.source();
+    q4_ = s2.target();
+  }
+
+
+  void initialize_site(const Segment_2& support, const Segment_2& s1,
+		       const Segment_2& s2)
+  {
+    defined_ = true;
+    point_ = false;
+    input_ = false;
+    is_exact1_ = false;
+    is_exact2_ = false;
+    p_ = support.source();
+    p2_ = support.target();
+    q1_ = s1.source();
+    q2_ = s1.target();
+    q3_ = s2.source();
+    q4_ = s2.target();
+  }
+
+  void initialize_site(const Segment_2& support, const Segment_2& s,
+		       bool is_first_exact)
+  {
+    defined_ = true;
+    point_ = false;
+    input_ = false;
+    is_exact1_ = is_first_exact;
+    is_exact2_ = !is_first_exact;
+    p_ = support.source();
+    p2_ = support.target();
+    if ( is_first_exact ) {
+      q3_ = s.source();
+      q4_ = s.target();
+    } else {
+      q1_ = s.source();
+      q2_ = s.target();
+    }
+  }
+
+  Point_2 compute_source() const {
+    if ( input_ || is_exact1_ ) {
+      return p_;
+    } else {
+      return compute_intersection_point(0);
+    }
+  }
+
+  Point_2 compute_target() const {
+    if ( input_ || is_exact2_ ) {
+      return p2_;
+    } else {
+      return compute_intersection_point(1);
+    }
+  }
+
+  // MK: the following two methods have to be filled in
+  Point_2 compute_intersection_point() const
+  {
+    CGAL_precondition( point_ && !input_ );
+    return Point_2();
+  }
+
+  Point_2 compute_intersection_point(int i) const
+  {
+    CGAL_precondition( !point_ && !input_ );
+    CGAL_precondition( (i == 0 && !is_exact1_) ||
+		       (i == 1 && !is_exact2_) );
+    return Point_2();
+  }
+
+protected:
+  Point_2 p_;
+  Point_2 p2_;
+  Point_2 q1_, q2_, q3_, q4_;
   bool defined_;
   bool point_;
+  bool input_;
+  bool is_exact1_, is_exact2_;
 };
 
+//-------------------------------------------------------------------------
 
 template <class R>
 std::ostream&
@@ -187,50 +308,6 @@ operator<<(Stream& str, Segment_Voronoi_diagram_site_2<R>& t)
 
   return str;
 }
-
-#ifdef VORONOI_WANT_WINDOW
-
-#ifdef CHR_BIG_POINT
-#  define LittleCircle(c,rad) (Circle_2<R> (c, (rad)*(rad)))
-#  include <CGAL/Circle_2.h>
-#endif
-
-template <class R>
-Window_stream &
-operator<< (Window_stream &ws, const Site_2<R> &s)
-{
-  if (!s.is_defined())
-    return ws;
-  if (s.is_point()) {
-#ifdef CHR_BIG_POINT
-    return ws << LittleCircle (s.point (), 0.01)
-	      << LittleCircle (s.point (), 0.02);
-#else
-    return ws << s.point ();
-#endif
-  }
-  return ws << s.segment ();
-}
-
-
-template <class R>
-Window_stream &
-operator>> (Window_stream &ws, Site_2<R> &s)
-{
-  Segment_2<R> seg;
-
-  if (! (ws >> seg)) return ws;
-  
-  if (seg.is_degenerate ()) {
-    s = Site_2<R> (seg.start ());
-    ws << s;
-  } else
-    s = Site_2<R> (seg);
-
-  return ws;
-}
-
-#endif // VORONOI_WANT_WINDOW
 
 
 CGAL_END_NAMESPACE

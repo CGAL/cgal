@@ -78,7 +78,7 @@ public:
     :  Vb(f), _s(t)  {}
 
 
-  inline void set_point(const Point_2 & p)
+  inline void set_point(const Point_2& p)
     { _s.set_point(p); }
   inline void set_segment(const Segment_2& s)
     { _s.set_segment(s); }
@@ -87,16 +87,19 @@ public:
   
   //  inline void set_face(Face_handle f) { _f = f; }
  
-  inline const Point_2&    point() const
-    { CGAL_precondition( is_point() ); return _s.point(); }
-  inline const Segment_2  segment() const
-    { CGAL_precondition( is_segment() ); return _s.segment(); }
-  inline const Site_2& site() const { return _s; }
+  Point_2    point() const
+  { CGAL_precondition( is_point() ); return _s.point(); }
 
-  inline const Point_2&   source() const
-    { CGAL_precondition( is_segment() ); return _s.source(); }
-  inline const Point_2&   target() const
-    { CGAL_precondition( is_segment() ); return _s.target(); }
+  Segment_2  segment() const
+  { CGAL_precondition( is_segment() ); return _s.segment(); }
+
+  const Site_2& site() const { return _s; }
+
+  Point_2   source() const
+  { CGAL_precondition( is_segment() ); return _s.source(); }
+
+  Point_2   target() const
+  { CGAL_precondition( is_segment() ); return _s.target(); }
  
 #if 0
   inline Point_2&    point()
@@ -106,8 +109,8 @@ public:
   inline Site_2&     site() { return _s; }
 #endif
 
-  inline bool is_segment() const { return _s.is_segment(); }
-  inline bool is_point()   const { return _s.is_point(); }
+  bool is_segment() const { return _s.is_segment(); }
+  bool is_point()   const { return _s.is_point(); }
 
    
   //the following trivial is_valid to allow
