@@ -23,11 +23,11 @@
 #include <CGAL/IO/Qt_widget_layer.h>
 
 namespace CGAL {
-	void	Qt_widget_layer::attach(Qt_widget *w) {
-				widget=w;
-        if(activate())
-				  emit(activated(this));
-	}
+  void	Qt_widget_layer::attach(Qt_widget *w) {
+    widget=w;
+    if(activate())
+      emit(activated(this));
+  }
   void Qt_widget_layer::stateChanged(int i){
     if(i==2)
       activate();
