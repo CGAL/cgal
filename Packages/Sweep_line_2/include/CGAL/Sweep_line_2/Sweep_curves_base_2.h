@@ -180,8 +180,8 @@ protected:
     Curve_node(const X_curve_plus& cv, const Point& p, Traits *traits_) : 
       Handle_for_Curve_node_rep(Curve_node_rep(cv,p, traits_)) {
 #ifdef CGAL_MAKE_PROFILING
-      std::cout<<"allocating handle for Curve_node_rep(cv,p)" << cv <<" "<< p 
-	       << endl;
+      std::cout << "allocating handle for Curve_node_rep(cv,p)" << cv << " "
+                << p << endl;
 #endif
     }
 
@@ -523,12 +523,12 @@ protected:
       
       // now, copying the two merged vector to curves.
       curves.clear();
-      copy(merged_left_curves.begin(), 
+      std::copy(merged_left_curves.begin(), 
            merged_left_curves.end(), 
-           back_inserter(curves));
-      copy(merged_right_curves.begin(), 
+           std::back_inserter(curves));
+      std::copy(merged_right_curves.begin(), 
            merged_right_curves.end(), 
-           back_inserter(curves));
+           std::back_inserter(curves));
     }
     
     Point_plus& get_point() { return intersect_p; }
@@ -1356,7 +1356,7 @@ protected:
               }
 #ifdef  CGAL_SWEEP_LINE_DEBUG  
               cout << "the event point is the right point of the curve - ";
-	      cout << "the curve leaves the status" << std::endl;
+              cout << "the curve leaves the status" << std::endl;
 #endif
               status.erase(curr_cv_node);
               
@@ -1448,7 +1448,7 @@ protected:
             }
 #ifdef  CGAL_SWEEP_LINE_DEBUG  
             cout << "the event point is the right point of the curve - ";
-	    cout << "the curve leaves the status" << std::endl;
+            cout << "the curve leaves the status" << std::endl;
 #endif
             status.erase(curr_cv_node);
             
@@ -1499,9 +1499,9 @@ protected:
   }
 
   bool check_status_neighbors_intersections(Event_queue& event_queue, 
-					    Status_line& status,  
-					    Status_line_iterator lower_neighbor
-					    ,const Point &event_point)
+                                            Status_line& status,  
+                                            Status_line_iterator lower_neighbor
+                                            ,const Point &event_point)
   { 
 #ifdef CGAL_MAKE_PROFILING
     cout<<"In check_status_neighbors_intersections" <<endl;
@@ -1543,10 +1543,8 @@ protected:
                                                    event_point);
   
     bool curves_intersect = 
-      traits->nearest_intersection_to_right(cv1.get_curve()
-					    ,cv2.get_curve()
-					    ,event_point, 
-					    xp2, xp3);
+      traits->nearest_intersection_to_right(cv1.get_curve(), cv2.get_curve(),
+                                            event_point, xp2, xp3);
       
 #ifdef  CGAL_SWEEP_LINE_DEBUG  
     cout<<"reference point on status, xp1, xp2 and xp3 before changing are "<<
@@ -1599,12 +1597,11 @@ protected:
         Event_queue_iterator  xp_event = event_queue.find(xp3);
         bool xp3_cv1_in_queue = false,  xp3_cv2_in_queue = false;
         if (xp_event == event_queue.end())
-          xp_event = 
-	    event_queue.insert(Event_queue_value_type(xp3, 
-				      Intersection_point_node(cv1,
-							      cv2,
-							      xp3, 
-							      traits))).first;
+          xp_event =
+            event_queue.insert(Event_queue_value_type
+                               (xp3, 
+                                Intersection_point_node(cv1, cv2, xp3, traits)
+                                )).first;
         else{
           // have to check whether the event is a new event. 
           // (we might calculated this point before).

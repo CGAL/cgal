@@ -235,17 +235,18 @@ public:
                                   OutpoutIterator subcurves, 
                                   bool overlapping = false)
   { 
+    // Remove out of loop scope to compile undef MSVC:
+    Curve_iterator cv_iter;
+    X_curve_list_iterator xcv_iter;
+    
     typename Base::Less_xy         pred1(traits);
     Event_queue                    event_queue(pred1);
     typename Base::Less_yx         pred2(traits);
     Status_line                    status(pred2);
-    
-   
-    
+ 
 #ifdef  CGAL_SWEEP_LINE_DEBUG
     unsigned int n = 0;
-    for (Curve_iterator cv_iter = curves_begin; 
-         cv_iter !=  curves_end; ++cv_iter, ++n);
+    for (cv_iter = curves_begin; cv_iter !=  curves_end; ++cv_iter, ++n);
     cout<<"number of edges on input "<< n <<std::endl;
 #endif
 
@@ -253,9 +254,8 @@ public:
     //pre_preprocess_t.start();   
     
     // splitting all curves to x-monotone curves.
-    X_curve_list  x_monotone_curves;
-    for(Curve_iterator cv_iter = curves_begin; 
-        cv_iter != curves_end; ++cv_iter){
+    X_curve_list x_monotone_curves;
+    for (cv_iter = curves_begin; cv_iter != curves_end; ++cv_iter){
       if (!traits->is_x_monotone(*cv_iter)) {
         X_curve_list x_monotone_subcurves;
         traits->make_x_monotone(*cv_iter, x_monotone_subcurves);
@@ -263,7 +263,7 @@ public:
 #ifdef  CGAL_SWEEP_LINE_DEBUG
         std::cout<<"printing x-monotone parts"<<std::endl;
 #endif
-        for(X_curve_list_iterator iter = x_monotone_subcurves.begin(); 
+        for (X_curve_list_iterator iter = x_monotone_subcurves.begin(); 
             iter != x_monotone_subcurves.end(); ++iter){
 #ifdef  CGAL_SWEEP_LINE_DEBUG
           std::cout<<*iter<<endl;
@@ -277,13 +277,13 @@ public:
     
     // now creating the Curve_node handles and the event queue.
     unsigned int id = 0;
-    for(X_curve_list_iterator cv_iter = x_monotone_curves.begin(); 
-        cv_iter != x_monotone_curves.end(); ++cv_iter, ++id){
+    for(xcv_iter = x_monotone_curves.begin(); 
+        xcv_iter != x_monotone_curves.end(); ++xcv_iter, ++id){
       
-      X_curve cv(*cv_iter);
-      if (is_right(traits->curve_source(*cv_iter), 
-                   traits->curve_target(*cv_iter)) )
-        cv = traits->curve_flip(*cv_iter);
+      X_curve cv(*xcv_iter);
+      if (is_right(traits->curve_source(*xcv_iter), 
+                   traits->curve_target(*xcv_iter)) )
+        cv = traits->curve_flip(*xcv_iter);
       
 #ifdef  CGAL_SWEEP_LINE_DEBUG
       cout<<cv<<std::endl;
@@ -292,7 +292,7 @@ public:
       typename Event_queue::iterator  edge_point = 
         event_queue.find( traits->curve_source(cv) );
       // defining one cv_node for both source and target event points. 
-      Curve_node  cv_node = Curve_node(X_curve_plus(cv, id), 
+      Curve_node cv_node = Curve_node(X_curve_plus(cv, id), 
                                        traits->curve_source(cv), traits ); 
       
       Intersection_point_node  source_point_node = 
@@ -301,7 +301,7 @@ public:
       if (edge_point == event_queue.end() || 
           edge_point->second.get_point() != source_point_node.get_point())
         event_queue.insert(Event_queue_value_type(traits->curve_source(cv), 
-						  source_point_node));
+                                                  source_point_node));
       else
         edge_point->second.merge(source_point_node);
       
@@ -314,7 +314,7 @@ public:
       if (edge_point == event_queue.end() || 
           edge_point->second.get_point() != target_point_node.get_point())
         event_queue.insert(Event_queue_value_type(traits->curve_target(cv), 
-						  target_point_node));
+                                                  target_point_node));
       else
         edge_point->second.merge(target_point_node);
     }
@@ -359,12 +359,13 @@ public:
       cout<<"Printing status line "<<std::endl;
       print_status(status);   
 #endif
-      
-      for (Curve_node_iterator cv_iter = point_node.curves_begin(); 
-           cv_iter != point_node.curves_end(); ++cv_iter){
-        if (event_point != traits->curve_source(cv_iter->get_curve()) && 
-            event_point == cv_iter->get_rightmost_point().point())
-          cv_iter->erase_rightmost_point();
+
+      Curve_node_iterator ncv_iter;
+      for (ncv_iter = point_node.curves_begin(); 
+           ncv_iter != point_node.curves_end(); ++ncv_iter){
+        if (event_point != traits->curve_source(ncv_iter->get_curve()) && 
+            event_point == ncv_iter->get_rightmost_point().point())
+          ncv_iter->erase_rightmost_point();
       }
 
       // now, updating the planar map (or arrangement) according the 
@@ -373,10 +374,10 @@ public:
 
       // updating all the new intersection nodes of the curves 
       // participating within the event.
-      for (Curve_node_iterator cv_iter = point_node.curves_begin(); 
-           cv_iter != point_node.curves_end(); ++cv_iter){
-        if (event_point != cv_iter->get_rightmost_point().point())
-          cv_iter->push_event_point(point_node.get_point());
+      for (ncv_iter = point_node.curves_begin(); 
+           ncv_iter != point_node.curves_end(); ++ncv_iter){
+        if (event_point != ncv_iter->get_rightmost_point().point())
+          ncv_iter->push_event_point(point_node.get_point());
       }
 
       //if (event_terminated)
@@ -400,6 +401,10 @@ public:
                                bool edge_points = true,
                                bool overlapping = false)
   { 
+    // Remove out of loop scope to compile undef MSVC:
+    Curve_iterator cv_iter;
+    X_curve_list_iterator xcv_iter;
+    
     typename Base::Less_xy  event_queue_pred(traits);
     Event_queue           event_queue(event_queue_pred);
     typename Base::Less_yx  status_pred(traits);
@@ -407,14 +412,14 @@ public:
     
 #ifdef  CGAL_SWEEP_LINE_DEBUG
     unsigned int n = 0;
-    for (Curve_iterator cv_iter = curves_begin; 
+    for (cv_iter = curves_begin; 
          cv_iter !=  curves_end; ++cv_iter, ++n);
     cout<<"number of edges on input "<< n <<std::endl;
 #endif
     
     // splitting all curves to x-monotone curves.
     X_curve_list  x_monotone_curves;
-    for(Curve_iterator cv_iter = curves_begin; 
+    for (cv_iter = curves_begin; 
         cv_iter != curves_end; ++cv_iter){
       if (!traits->is_x_monotone(*cv_iter)) {
         X_curve_list x_monotone_subcurves;
@@ -423,8 +428,8 @@ public:
 #ifdef  CGAL_SWEEP_LINE_DEBUG
         std::cout<<"printing x-monotone parts"<<std::endl;
 #endif
-        for(X_curve_list_iterator iter = x_monotone_subcurves.begin(); 
-            iter != x_monotone_subcurves.end(); ++iter){
+        for (X_curve_list_iterator iter = x_monotone_subcurves.begin(); 
+             iter != x_monotone_subcurves.end(); ++iter){
 #ifdef  CGAL_SWEEP_LINE_DEBUG
           std::cout<<*iter<<endl;
 #endif
@@ -437,13 +442,13 @@ public:
     
     // now creating the Curve_node handles and the event queue.
     unsigned int id = 0;
-    for(X_curve_list_iterator cv_iter = x_monotone_curves.begin(); 
-        cv_iter != x_monotone_curves.end(); ++cv_iter, ++id){
+    for (xcv_iter = x_monotone_curves.begin(); 
+        xcv_iter != x_monotone_curves.end(); ++xcv_iter, ++id){
       
-      X_curve cv(*cv_iter);
-      if (is_right(traits->curve_source(*cv_iter), 
-                   traits->curve_target(*cv_iter)) )
-        cv = traits->curve_flip(*cv_iter);
+      X_curve cv(*xcv_iter);
+      if (is_right(traits->curve_source(*xcv_iter), 
+                   traits->curve_target(*xcv_iter)) )
+        cv = traits->curve_flip(*xcv_iter);
       
 #ifdef  CGAL_SWEEP_LINE_DEBUG
       cout<<cv<<std::endl;
@@ -453,7 +458,7 @@ public:
         event_queue.find( traits->curve_source(cv) );
       // defining one cv_node for both source and target event points. 
       Curve_node  cv_node = Curve_node(X_curve_plus(cv, id), 
-				       Point_plus(traits->curve_source(cv)),
+                                       Point_plus(traits->curve_source(cv)),
                                        traits );
       
       Intersection_point_node  source_point_node = 
@@ -462,7 +467,7 @@ public:
       if (edge_point == event_queue.end() || 
           edge_point->second.get_point() != source_point_node.get_point())
         event_queue.insert(Event_queue_value_type(traits->curve_source(cv), 
-						  source_point_node));
+                                                  source_point_node));
       else
         edge_point->second.merge(source_point_node);
       
@@ -475,7 +480,7 @@ public:
       if (edge_point == event_queue.end() || 
           edge_point->second.get_point() != target_point_node.get_point())
         event_queue.insert(Event_queue_value_type(traits->curve_target(cv), 
-						  target_point_node));
+                                                  target_point_node));
       else
         edge_point->second.merge(target_point_node);
     }
@@ -519,12 +524,13 @@ public:
       cout<<"Printing status line "<<std::endl;
       print_status(status);   
 #endif
-      
-      for (Curve_node_iterator cv_iter = point_node.curves_begin(); 
-           cv_iter != point_node.curves_end(); ++cv_iter){
-        if (event_point != traits->curve_source(cv_iter->get_curve()) && 
-            event_point == cv_iter->get_rightmost_point().point())
-          cv_iter->erase_rightmost_point();
+
+      Curve_node_iterator cvn_iter;
+      for (cvn_iter = point_node.curves_begin(); 
+           cvn_iter != point_node.curves_end(); ++cvn_iter){
+        if (event_point != traits->curve_source(cvn_iter->get_curve()) && 
+            event_point == cvn_iter->get_rightmost_point().point())
+          cvn_iter->erase_rightmost_point();
       }
 
       // now, updating the points containter according the 
@@ -536,10 +542,10 @@ public:
       
       // updating all the new intersection nodes of the curves 
       // participating within the event.
-      for (Curve_node_iterator cv_iter = point_node.curves_begin(); 
-           cv_iter != point_node.curves_end(); ++cv_iter){
-        if (event_point != cv_iter->get_rightmost_point().point())
-          cv_iter->push_event_point(point_node.get_point());
+      for (cvn_iter = point_node.curves_begin(); 
+           cvn_iter != point_node.curves_end(); ++cvn_iter){
+        if (event_point != cvn_iter->get_rightmost_point().point())
+          cvn_iter->push_event_point(point_node.get_point());
       }
       
       //if (event_terminated)
@@ -753,14 +759,3 @@ private:
 CGAL_END_NAMESPACE
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
