@@ -29,17 +29,9 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class FT >
-std::pair<int,int>
-Linear_algebraCd<FT>::
-transpose(std::pair<int,int> p)
-{ std::swap(p.first,p.second);
-  return p;
-}
-
-template < class FT >
-typename Linear_algebraCd<FT>::Matrix
-Linear_algebraCd<FT>::
+template < class FT, class AL >
+typename Linear_algebraCd<FT,AL>::Matrix
+Linear_algebraCd<FT,AL>::
 transpose(const Matrix &M)
 {
   Matrix P(transpose(M.dimension()));
@@ -50,10 +42,10 @@ transpose(const Matrix &M)
   return P;
 }
 
-template < class FT >
+template < class FT, class AL >
 inline // in order to facilitate the optimization with unused variables
 void
-Linear_algebraCd<FT>::
+Linear_algebraCd<FT,AL>::
 Gaussian_elimination(const Matrix &M,
                      // return parameters
                      Matrix &L, Matrix &U,
@@ -74,7 +66,8 @@ Gaussian_elimination(const Matrix &M,
   int sign = 1;
   // First create a copy of M into U, and set L and permutations to identity
   U = M; 
-  L = Matrix(dim,typename Matrix::Identity());
+  typename Matrix::Identity IDENTITY;
+  L = Matrix(dim,IDENTITY);
   for (i=0; i<dim; ++i) row_permutation.push_back(i);
   for (i=0; i<cdim; ++i) column_permutation.push_back(i);
   // Main loop : invariant is that L * M[q] = U
@@ -128,9 +121,9 @@ Gaussian_elimination(const Matrix &M,
   }
 }
 
-template < class FT >
+template < class FT, class AL >
 bool
-Linear_algebraCd<FT>::
+Linear_algebraCd<FT,AL>::
 Triangular_system_solver(const Matrix &U, const Matrix& L, const Vector &b, 
                          int rank, Vector &x, FT &D)
 { 
@@ -139,12 +132,12 @@ Triangular_system_solver(const Matrix &U, const Matrix& L, const Vector &b,
   // depends on "free" variables x[rdim+1], etc. x[cdim]
   CGAL_kernel_assertion( U.row_dimension() == b.dimension());
     TRACEN("Triangular_system_solver");TRACEV(U);TRACEV(b);
-  D = FT(1);
-  for (int i = rank; i < U.row_dimension(); ++i) 
+  D = FT(1); int i;
+  for (i = rank; i < U.row_dimension(); ++i) 
     if ( b[i] != FT(0) ) { x = L.row(i); return false; }
 
   x = Vector(U.column_dimension());
-  for (int i = rank-1; i>=0; --i) {
+  for (i = rank-1; i>=0; --i) {
     x[i] = b[i];
     for (int j = i+1; j<rank; ++j) 
       x[i] -= U[i][j] * x[j];
@@ -153,10 +146,10 @@ Triangular_system_solver(const Matrix &U, const Matrix& L, const Vector &b,
   return true;
 }
 
-template < class FT >
+template < class FT, class AL >
 inline // in order to facilitate the optimization with unused variables
 void
-Linear_algebraCd<FT>::
+Linear_algebraCd<FT,AL>::
 Triangular_left_inverse(const Matrix &U, Matrix &Uinv)
 {
   int i, j, k;
@@ -173,9 +166,9 @@ Triangular_left_inverse(const Matrix &U, Matrix &Uinv)
     TRACEN("finally : " << Uinv);
 }
 
-template < class FT >
+template < class FT, class AL >
 bool
-Linear_algebraCd<FT>::
+Linear_algebraCd<FT,AL>::
 inverse(const Matrix &M, Matrix &I, FT &D, Vector &c)
 {
   CGAL_kernel_precondition(M.row_dimension()==M.column_dimension());
@@ -192,17 +185,21 @@ inverse(const Matrix &M, Matrix &I, FT &D, Vector &c)
 
     TRACEN("inverse before permutation : "<<I);
   I = Matrix(M.column_dimension(),M.row_dimension());
+  typename Matrix::row_iterator rit, wit;
   for (rank=0; rank<I.column_dimension(); ++rank)
+    for ( wit = I.row_begin(rank), rit = Uinv.row_begin(cq[rank]); 
+          rit != Uinv.row_end(cq[rank]); ++wit, ++rit ) *wit = *rit;
+  /* does not work with MS:
     std::copy(Uinv.row_begin(cq[rank]), Uinv.row_end(cq[rank]),
-              I.row_begin(rank));
+              I.row_begin(rank)); */
   D = FT(1);
   return true;
 }
 
-template < class FT >
+template < class FT, class AL >
 inline
-typename Linear_algebraCd<FT>::Matrix
-Linear_algebraCd<FT>::
+typename Linear_algebraCd<FT,AL>::Matrix
+Linear_algebraCd<FT,AL>::
 inverse(const Matrix &M, FT &D)
 {
   CGAL_kernel_precondition(M.row_dimension()==M.column_dimension());
@@ -212,9 +209,9 @@ inverse(const Matrix &M, FT &D)
   return I;
 }
 
-template < class FT >
-typename Linear_algebraCd<FT>::FT
-Linear_algebraCd<FT>::
+template < class FT, class AL >
+typename Linear_algebraCd<FT,AL>::FT
+Linear_algebraCd<FT,AL>::
 determinant(const Matrix &M, Matrix &L, Matrix &U,
             std::vector<int> &q, Vector &c)
 {
@@ -224,10 +221,10 @@ determinant(const Matrix &M, Matrix &L, Matrix &U,
   return det;
 }
 
-template < class FT >
+template < class FT, class AL >
 inline
-typename Linear_algebraCd<FT>::FT
-Linear_algebraCd<FT>::
+typename Linear_algebraCd<FT,AL>::FT
+Linear_algebraCd<FT,AL>::
 determinant(const Matrix &M)
 {
   Matrix L,U; Vector c;
@@ -235,16 +232,16 @@ determinant(const Matrix &M)
   return determinant(M,L,U,q,c);
 }
 
-template < class FT >
+template < class FT, class AL >
 inline
 Sign
-Linear_algebraCd<FT>::
+Linear_algebraCd<FT,AL>::
 sign_of_determinant(const Matrix &M)
 { return CGAL_NTS sign(determinant(M)); }
 
-template < class FT >
+template < class FT, class AL >
 bool
-Linear_algebraCd<FT>::
+Linear_algebraCd<FT,AL>::
 verify_determinant(const Matrix & /*M*/,
                    const FT & /*D*/,
                    const Matrix & /*L*/,
@@ -258,9 +255,9 @@ verify_determinant(const Matrix & /*M*/,
   return false;
 }
 
-template < class FT >
+template < class FT, class AL >
 bool
-Linear_algebraCd<FT>::
+Linear_algebraCd<FT,AL>::
 linear_solver(const Matrix &M, const Vector &b,
               Vector &x, FT &D, Vector &c)
 {
@@ -289,9 +286,9 @@ linear_solver(const Matrix &M, const Vector &b,
 }
 
 
-template < class FT >
+template < class FT, class AL >
 bool
-Linear_algebraCd<FT>::
+Linear_algebraCd<FT,AL>::
 linear_solver(const Matrix &M, const Vector &b,
               Vector &x, FT &D, Matrix &spanning_vectors,
               Vector &c)
@@ -343,30 +340,30 @@ linear_solver(const Matrix &M, const Vector &b,
 
 
 
-template < class FT >
+template < class FT, class AL >
 bool
-Linear_algebraCd<FT>::
+Linear_algebraCd<FT,AL>::
 linear_solver(const Matrix &M, const Vector &b, Vector &x, FT &D)
 { Vector c;
   return linear_solver(M, b, x, D, c);
 }
 
-template < class FT >
+template < class FT, class AL >
 bool
-Linear_algebraCd<FT>::
+Linear_algebraCd<FT,AL>::
 is_solvable(const Matrix &M,  const Vector &b)
 { Vector x; FT D;
   return linear_solver(M, b, x, D);
 }
 
-template < class FT >
+template < class FT, class AL >
 int
-Linear_algebraCd<FT>::
+Linear_algebraCd<FT,AL>::
 homogeneous_linear_solver(const Matrix &M, Matrix &spanning_vectors)
 {
   Matrix L,U; Vector c, b(M.row_dimension());
   std::vector<int> dummy,var;
-  FT D; int rank;
+  FT D; int rank,i;
   Gaussian_elimination(M, L, U, dummy, var, D, rank, c);
 
 #ifdef CGAL_LA_SELFTEST
@@ -374,7 +371,7 @@ homogeneous_linear_solver(const Matrix &M, Matrix &spanning_vectors)
   Triangular_system_solver(U, L, b, rank, c, D);
   TRACEV(M);TRACEV(U);TRACEV(b);TRACEV(rank);TRACEV(c);TRACEV(D);
   x = Vector(M.column_dimension());
-  for (int i=0; i<U.row_dimension(); ++i)
+  for (i=0; i<U.row_dimension(); ++i)
     x[ var[i] ] = c[i];
   CGAL_assertion( (M*x).is_zero() );
 #endif
@@ -390,7 +387,7 @@ homogeneous_linear_solver(const Matrix &M, Matrix &spanning_vectors)
 
     for(int l=0; l < defect; ++l) { 
       spanning_vectors(var[rank + l],l)=FT(1); 
-      for(int i = rank - 1; i >= 0 ; i--) { 
+      for(i = rank - 1; i >= 0 ; i--) { 
         FT h = - U(i,rank+l); 
         for (int j= i + 1; j<rank; ++j)  
           h -= U(i,j)*spanning_vectors(var[j],l); 
@@ -410,9 +407,9 @@ homogeneous_linear_solver(const Matrix &M, Matrix &spanning_vectors)
   return defect;
 }
 
-template < class FT >
+template < class FT, class AL >
 bool
-Linear_algebraCd<FT>::
+Linear_algebraCd<FT,AL>::
 homogeneous_linear_solver(const Matrix &M, Vector &x)
 {
   x = Vector(M.row_dimension());
@@ -428,9 +425,9 @@ homogeneous_linear_solver(const Matrix &M, Vector &x)
 }
 
 
-template < class FT >
+template < class FT, class AL >
 int
-Linear_algebraCd<FT>::
+Linear_algebraCd<FT,AL>::
 independent_columns(const Matrix &M, std::vector<int> &q)
 { 
   int rank;
@@ -440,9 +437,9 @@ independent_columns(const Matrix &M, std::vector<int> &q)
   return rank;
 }
 
-template < class FT >
+template < class FT, class AL >
 int
-Linear_algebraCd<FT>::
+Linear_algebraCd<FT,AL>::
 rank(const Matrix &M)
 { std::vector<int> q; 
   return independent_columns(M,q);

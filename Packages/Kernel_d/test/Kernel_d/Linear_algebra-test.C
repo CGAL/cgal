@@ -90,9 +90,10 @@ int main(int argc, char* argv[])
       else           mat_dim = MAT_DIM;
 
       /* some construction and access ops */
+      Matrix::Initialize INIT;   
+      Matrix::Identity ID;
       Matrix A(mat_dim,mat_dim), B(mat_dim),
-             I(mat_dim,Matrix::Identity()),
-             One(mat_dim,mat_dim,Matrix::Initialize(),2); 
+             I(mat_dim,ID), One(mat_dim,mat_dim,INIT,2); 
       CGAL_TEST(A==B);
       CGAL_TEST(One*I==One);
       std::vector<Vector> F(mat_dim);
@@ -107,7 +108,11 @@ int main(int argc, char* argv[])
         }
         F[i] = v;
       }
+    #ifndef CGAL_SIMPLE_INTERFACE
       Matrix C(F), D(A), E(F.begin(),F.end());
+    #else
+      Matrix C(F), D(A), E(F);
+    #endif
       CGAL_TEST(C==F && E==F);
       /* A = (0,0,0,0...)
              (1,1,1,1...)
@@ -155,7 +160,7 @@ int main(int argc, char* argv[])
       Vector c; 
       std::vector<int> q; 
       NT det = LA::determinant(C, L, U, q, c); // det must be 2^{2*mat_dim}
-      NT pot = 1; for (int i=0; i<mat_dim; ++i) pot *= 4;
+      NT pot = 1; for (i=0; i<mat_dim; ++i) pot *= 4;
       CGAL_TEST(det == pot);
       CGAL_TEST(LA::verify_determinant(C, det, L, U, q, c));
       CGAL_TEST(det == LA::determinant(C));
@@ -172,8 +177,8 @@ int main(int argc, char* argv[])
 
       for (double f = 1.0; f > 0.0; f = f-=0.1) {
         Matrix E = C;
-        for (int i = 0; i< mat_dim; ++i)
-          for (int j = 0; j < mat_dim; ++j)
+        for (i = 0; i< mat_dim; ++i)
+          for (j = 0; j < mat_dim; ++j)
             if ( CGAL::default_random.get_double() > f ) E(i,j)=0;
 
         if (LA::linear_solver(E, b, x, denom, A, e)) {
@@ -278,9 +283,10 @@ int main(int argc, char* argv[])
       else           mat_dim = MAT_DIM;
 
       /* some construction and access ops */
+      Matrix::Initialize INIT;   
+      Matrix::Identity ID;
       Matrix A(mat_dim,mat_dim), B(mat_dim),
-             I(mat_dim,Matrix::Identity()),
-             One(mat_dim,mat_dim,Matrix::Initialize(),2); 
+             I(mat_dim,ID), One(mat_dim,mat_dim,INIT,2); 
       CGAL_TEST(A==B);
       CGAL_TEST(One*I==One);
       std::vector<Vector> F(mat_dim);
@@ -295,7 +301,11 @@ int main(int argc, char* argv[])
         }
         F[i] = v;
       }
+    #ifndef CGAL_SIMPLE_INTERFACE
       Matrix C(F), D(A), E(F.begin(),F.end());
+    #else
+      Matrix C(F), D(A), E(F);
+    #endif
       CGAL_TEST(C==F && E==F);
       /* A = (0,0,0,0...)
              (1,1,1,1...)
@@ -343,7 +353,7 @@ int main(int argc, char* argv[])
       Vector c; 
       std::vector<int> q; 
       NT det = LA::determinant(C, L, U, q, c); // det must be 2^{2*mat_dim}
-      NT pot = 1; for (int i=0; i<mat_dim; ++i) pot *= 4;
+      NT pot = 1; for (i=0; i<mat_dim; ++i) pot *= 4;
       CGAL_TEST(det == pot);
       CGAL_TEST(LA::verify_determinant(C, det, L, U, q, c));
       CGAL_TEST(det == LA::determinant(C));
@@ -360,8 +370,8 @@ int main(int argc, char* argv[])
 
       for (double f = 1.0; f > 0.0; f = f-=0.1) {
         Matrix E = C;
-        for (int i = 0; i< mat_dim; ++i)
-          for (int j = 0; j < mat_dim; ++j)
+        for (i = 0; i< mat_dim; ++i)
+          for (j = 0; j < mat_dim; ++j)
             if ( CGAL::default_random.get_double() > f ) E(i,j)=0;
 
         if (LA::linear_solver(E, b, x, denom, A, e)) {

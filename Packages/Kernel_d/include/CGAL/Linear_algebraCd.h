@@ -24,10 +24,10 @@
 #ifndef CGAL_LINEAR_ALGEBRACD_H
 #define CGAL_LINEAR_ALGEBRACD_H
 
-#include <memory>
-#include <vector>
 #include <CGAL/Kernel_d/Ivector.h>
 #include <CGAL/Kernel_d/Imatrix.h>
+#include <memory>
+#include <vector>
 #undef _DEBUG
 #define _DEBUG 13
 #include <CGAL/Kernel_d/debug.h>
@@ -36,15 +36,16 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class _FT >
+template < class _FT, class _AL = CGAL_ALLOCATOR(_FT) >
 class Linear_algebraCd
 {
 public:
   typedef _FT                     FT;
   typedef _FT                     RT;
-  typedef Linear_algebraCd<FT>    Self;
-  typedef Ivector<FT>             Vector;
-  typedef Imatrix<FT>             Matrix;
+  typedef _AL                     AL;
+  typedef Linear_algebraCd<FT,AL> Self;
+  typedef Ivector<FT,AL>          Vector;
+  typedef Imatrix<FT,AL>          Matrix;
   typedef const FT*               const_iterator;
   typedef FT*                     iterator;
   
@@ -66,8 +67,9 @@ protected:
 
 public:
   static
-  std::pair<int,int> transpose(std::pair<int,int> dim);
-  static
+  std::pair<int,int> transpose(std::pair<int,int> dim)
+  { std::swap(dim.first,dim.second); return dim; }
+  static 
   Matrix transpose(const Matrix &M);
 
   static

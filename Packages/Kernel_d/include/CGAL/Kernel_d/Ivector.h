@@ -48,11 +48,21 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class NT, class A = CGAL_ALLOCATOR(NT) > 
-  class Imatrix;
-template <class NT, class A = CGAL_ALLOCATOR(NT) > 
-  class Ivector;
+#ifdef _MSC_VER
+#define CGAL_SIMPLE_INTERFACE
+#endif
 
+template <class NT, class A> class Ivector;
+template <class NT, class A> class Imatrix;
+
+#define FIXIT(T) \
+Ivector(T f, T l) \
+{ int dist(0); T ff = f; while(ff++ != l) ++dist;\
+  dim = dist;\
+  allocate_vec_space(v,dim);\
+  iterator it = begin();\
+  while (f != l) { *it = NT(*f); ++it; ++f; }\
+}     
 #define CGAL_LA_PRECOND(cond,s) CGAL_assertion_msg((cond),s);
 #define ERROR_HANDLER(n,s) CGAL_assertion_msg(!(n),s)
 
@@ -112,6 +122,8 @@ protected:
   typedef _ALLOC allocator_type;
   static allocator_type MM;
 
+  #ifndef CGAL_SIMPLE_INTERFACE
+
   inline void allocate_vec_space(NT*& vi, int di)
   {
   /* We use this procedure to allocate memory. We first get an appropriate 
@@ -135,6 +147,32 @@ protected:
     MM.deallocate(vi, di);
     vi = (NT*)0;
   }
+
+  #else
+
+  inline void allocate_vec_space(NT*& vi, int di)
+  {
+  /* We use this procedure to allocate memory. We first get an appropriate
+     piece of memory from the allocator and then initialize each cell
+     by an inplace new. */
+
+    vi = new NT[di];
+    NT* p = vi + di - 1;
+    while (p >= vi) { *p = NT(0);  p--; }
+  }
+
+  inline void deallocate_vec_space(NT*& vi, int di)
+  {
+  /* We use this procedure to deallocate memory. We have to free it by
+     the allocator scheme. We first call the destructor for type NT for each
+     cell of the array and then return the piece of memory to the memory
+     manager. */
+
+    delete [] vi;
+    vi = (NT*)0;
+  }
+
+  #endif // CGAL_SIMPLE_INTERFACE
 
   inline void 
   check_dimensions(const Ivector<_NT,_ALLOC>& vec) const
@@ -174,6 +212,19 @@ Ivector(int d, const Initialize&, const NT& x)
   }
 }
 
+#ifdef CGAL_SIMPLE_INTERFACE
+
+FIXIT(NT*)
+FIXIT(const NT*)
+FIXIT(int*)
+FIXIT(const int*)
+//FIXIT(std::vector<NT>::interator)
+//FIXIT(std::vector<NT>::const_interator)
+//FIXIT(typename std::list<NT>::interator)
+//FIXIT(std::list<NT>::const_interator)
+
+#else     
+
 template <class Forward_iterator>
 Ivector(Forward_iterator first, Forward_iterator last)
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname|; 
@@ -184,6 +235,8 @@ Ivector(Forward_iterator first, Forward_iterator last)
   iterator it = begin();
   while (first != last) { *it = *first; ++it; ++first; }
 }
+
+#endif
 
 private:
 void init(int d, const NT& x0, const NT& x1, const NT& x2=0, const NT& x3=0)

@@ -82,9 +82,9 @@ typedef vector_pointer iterator;
 typedef const_vector_pointer const_iterator;
 /*{\Mtypemember the const iterator type for accessing rows.}*/ 
 
-typedef NT* Row_iterator;
+typedef NT* row_iterator;
 /*{\Xtypemember accessing row entries.}*/ 
-typedef const NT& Row_const_iterator;
+typedef const NT* row_const_iterator;
 
 class Identity {};
 /*{\Mtypemember a tag class for identity initialization}*/
@@ -98,13 +98,13 @@ protected:
   int  d2; 
 
   NT&  elem(int i, int j) const { return v[i]->v[j]; }
-  #ifndef _MSC_VER
+  #ifndef CGAL_SIMPLE_INTERFACE
   typedef typename _ALLOC::template rebind<vector_pointer>::other 
           allocator_type;
   static allocator_type MM;
   #endif
 
-  #ifndef _MSC_VER
+  #ifndef CGAL_SIMPLE_INTERFACE
   inline void allocate_mat_space(vector_pointer*& vi, int d)
   {
   /* We use this procedure to allocate memory. We use our allocator
@@ -188,6 +188,8 @@ void range_initialize(RAIterator first, RAIterator last,
     v = (Vector**)0; 
 }
 
+#ifndef CGAL_SIMPLE_INTERFACE
+
 template <class InputIterator>
 void range_initialize(InputIterator first, InputIterator last, 
                  std::forward_iterator_tag) 
@@ -210,6 +212,8 @@ requirements.}*/
 { typedef typename std::iterator_traits<Forward_iterator>::iterator_category 
     iterator_category;
   range_initialize(first,last,iterator_category()); }
+
+#endif
 
 Imatrix(const std::vector< Vector >& A) 
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname|. Let $A$
@@ -303,11 +307,11 @@ void swap_rows(int i, int j)
   std::swap(v[i],v[j]); 
 }
 
-Row_iterator row_begin(int i) { return v[i]->begin(); }
-Row_iterator row_end(int i)   { return v[i]->end(); }
+row_iterator row_begin(int i) { return v[i]->begin(); }
+row_iterator row_end(int i)   { return v[i]->end(); }
 
-Row_const_iterator row_begin(int i) const { return v[i]->begin(); }
-Row_const_iterator row_end(int i)   const { return v[i]->end(); }
+row_const_iterator row_begin(int i) const { return v[i]->begin(); }
+row_const_iterator row_end(int i)   const { return v[i]->end(); }
 
 
 bool  operator==(const Imatrix<_NT,_ALLOC>& M1)  const; 
@@ -442,11 +446,12 @@ Imatrix(int dim1, int dim2, const Initialize&, const NT& x) :
 { 
   CGAL_LA_PRECOND((dim1>=0 && dim2>=0), 
     "Imatrix::constructor: negative dimension.") 
+  typename Vector::Initialize INIT;
 
   if (d1 > 0) { 
     allocate_mat_space(v,d1);
     for (int i=0; i<d1; i++) 
-      v[i] = new Vector(d2, typename Vector::Initialize(), x); 
+      v[i] = new Vector(d2, INIT, x); 
   } else 
     v = (Vector**)0; 
 }
@@ -712,18 +717,18 @@ std::istream&  operator>>(std::istream& is, Imatrix<NT,A>& M)
                   d2-times
              x_d2,0 ... x_d2,d1-1 */
 
-  int cdim, rdim;
+  int cdim, rdim, i;
   switch(is.iword(IO::mode)) {
     case IO::BINARY : 
       CGAL::read(is,rdim);
       CGAL::read(is,cdim);
-      for (register int i=0; i<rdim*cdim; ++i)
+      for (i=0; i<rdim*cdim; ++i)
         CGAL::read(is,M(i/rdim,i%cdim));
       break;
     case IO::ASCII :
       is >> rdim >> cdim;
       M = Imatrix<NT,A>(rdim,cdim);
-      for (register int i=0; i<rdim*cdim; ++i)
+      for (i=0; i<rdim*cdim; ++i)
         is >> M(i/rdim,i%cdim);
       break; 
     default:
@@ -733,7 +738,7 @@ std::istream&  operator>>(std::istream& is, Imatrix<NT,A>& M)
   return is;
 }
 
-#ifndef _MSC_VER
+#ifndef CGAL_SIMPLE_INTERFACE
 template <class NT, class A>
 Imatrix<NT,A>::allocator_type Imatrix<NT,A>::MM;
 #endif
