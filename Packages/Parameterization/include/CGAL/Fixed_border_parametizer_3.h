@@ -22,11 +22,11 @@
 #define FIXED_BORDER_PARAMETIZER_3_H
 
 #include <CGAL/circulator.h>
+#include <OpenNL/linear_solver.h>
 
 #include "CGAL/Parametizer_3.h"
 #include "CGAL/Circular_border_parametizer_3.h"
 #include "CGAL/parameterization_assertions.h"
-#include "OpenNL/linear_solver.h"
 
 CGAL_BEGIN_NAMESPACE
 
