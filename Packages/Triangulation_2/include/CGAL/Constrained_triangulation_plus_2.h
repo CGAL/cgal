@@ -549,7 +549,7 @@ typename Constrained_triangulation_plus_2<Tr>::Context_iterator
 Constrained_triangulation_plus_2<Tr>::
 contexts_end(Vertex_handle va, Vertex_handle vb)
 {
-  return hierarchy.context_end(va,vb);
+  return hierarchy.contexts_end(va,vb);
 }
 
 template <class Tr>

@@ -30,6 +30,11 @@
 #include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/_test_cls_regular_triangulation_2.C>
 
+// Explicit instantiation of the whole class :
+typedef CGAL::Regular_triangulation_euclidean_traits_2
+                               <Test_rep_cartesian, Ftype>      RGt;
+template class CGAL::Regular_triangulation_2<RGt>;
+
 int main()
 {
   std::cout << "Testing Regular_triangulation_2" <<std::endl;
@@ -37,8 +42,8 @@ int main()
 	    <<std::endl;
   std::cout << "using  Cartesian  points "   <<  std::endl;
 
-  typedef CGAL::Regular_triangulation_euclidean_traits_2
-                               <Test_rep_cartesian, Ftype>      RGt;
+  //typedef CGAL::Regular_triangulation_euclidean_traits_2
+  //                             <Test_rep_cartesian, Ftype>      RGt;
   typedef CGAL::Regular_triangulation_2<RGt>                    RCls;
   _test_cls_reg_triangulation_2( RCls() );
 

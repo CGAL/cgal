@@ -39,20 +39,23 @@
 
 #include <CGAL/_test_cls_delaunay_hierarchy_2.C>
 
+typedef double                      Coord_type;
+typedef CGAL::Cartesian<Coord_type> Gt;
+typedef CGAL::Triangulation_vertex_base_2<Gt> Vbb;
+typedef CGAL::Triangulation_hierarchy_vertex_base_2<Vbb> Vb;
+typedef CGAL::Triangulation_face_base_2<Gt>  Fb;
+typedef CGAL::Triangulation_data_structure_2<Vb,Fb>  Tds;
+typedef CGAL::Delaunay_triangulation_2<Gt,Tds>  Dt;
+// Explicit instantiation of the whole class :
+template class CGAL::Triangulation_hierarchy_2<Dt>;
+
+
 int main()
 {
   std::cout << "Testing Delaunay_hierarchy_2 " << std::endl; 
   std::cout << " with Cartesian<double> points "<<  std::endl;
 
-  typedef double                      Coord_type;
-  typedef CGAL::Cartesian<Coord_type> Gt;
-  typedef CGAL::Triangulation_vertex_base_2<Gt> Vbb;
-  typedef CGAL::Triangulation_hierarchy_vertex_base_2<Vbb> Vb;
-  typedef CGAL::Triangulation_face_base_2<Gt>  Fb;
-  typedef CGAL::Triangulation_data_structure_2<Vb,Fb>  Tds;
-  typedef CGAL::Delaunay_triangulation_2<Gt,Tds>  Dt;
   typedef CGAL::Triangulation_hierarchy_2<Dt>  Dh;
-
   _test_cls_delaunay_hierarchy_2( Dh() );
 
    return 0;

@@ -31,8 +31,16 @@
 #include <CGAL/_test_types.C>
 #include <CGAL/_test_cls_tds_2.C>
 
-int
-main()
+
+
+typedef CGAL::Triangulation_vertex_base_2<TestK>     Vb;
+typedef CGAL::Triangulation_face_base_2<TestK>       Fb;
+
+// Explicit instantiation :
+// does not work because of off_file_input
+// template class CGAL::Triangulation_data_structure_2<Vb,Fb>;
+
+int main()
 {
   std::cout << "Testing Triangulation_data_structure_2" 
 	    << std::endl << std::endl;

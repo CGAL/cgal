@@ -2,7 +2,6 @@
   constrained riangulation transfers the contrained marks.
 - Something still tobe done for remove in Constrained
   Delaunay_constrained and  Constrained_triangulation_plus
-- Mettre la doc a jour
 - Harmoniser find_conflicts() avec le 3d
 - tester entree vrml
 - eclaircir ce qui arrive
@@ -12,16 +11,12 @@
   pour ne pas etre oblige d'inclure iostream obligatoirement
 - ajouter dans la doc du line face circulator, la precondition p!= q
 
-- get rid of  Construct_direction_of_line_2
-  in Triangulation_euclidean_traits_2.h 
 - arranger ca :
   Concernant la Constrained_triangulation_plus_2:
   Ca devrait etre Vertices_in_constraint_iterator a la place de 
   Vertices_in_constraint
 - constrained_triangulation_plus_2 plante sur Sun CC
 - tenir compte remarque de sylvain a propos de design
-- documenter Constrained_triangulation_plus_2
-- tester Constrained_triangulation_plus_2 avec le Tag exact
 - Constraint_hierarchy_3 
   to be done or redone : copy swap and delete
 

@@ -26,6 +26,9 @@
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/_test_cls_const_Del_triangulation_2.C>
 
+// Explicit instantiation of the whole class :
+template class CGAL::Constrained_Delaunay_triangulation_2<TestK>;
+
 int main()
 {
 

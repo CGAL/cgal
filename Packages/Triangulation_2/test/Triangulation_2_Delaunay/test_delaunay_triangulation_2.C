@@ -21,7 +21,6 @@
 // ============================================================================
 #include <CGAL/basic.h>
 #include <iostream>
-//#include <vector>
 
 #include <CGAL/_test_types.h>
 #include <CGAL/Cartesian.h>
@@ -32,6 +31,9 @@
 
 #include <CGAL/_test_types.C>
 #include <CGAL/_test_cls_delaunay_triangulation_2.C>
+
+// Explicit instantiation of the whole class :
+template class CGAL::Delaunay_triangulation_2<TestK>;
 
 int main()
 {

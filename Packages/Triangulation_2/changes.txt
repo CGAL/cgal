@@ -5,7 +5,9 @@ Package triangulation: provides triangulations Delaunay triangulations,
 constrained and regular triangulations with  tests and examples.
 
 
-Ver 7.43 ()
+Ver 7.43 (14/12/02)
+- introduced explicit instanciation of big classes in testsuite
+  so that each (non template) member function be instantiated
 - small doc fixes
 
 Ver 7.42 (13/12/02)

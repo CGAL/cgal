@@ -35,6 +35,8 @@
 #include <CGAL/_test_types.C>
 #include <CGAL/_test_cls_triangulation_2.C>
 
+// Explicit instantiation of the whole class :
+template class CGAL::Triangulation_2<TestK>;
 
 int main()
 {

@@ -30,6 +30,10 @@
 #include <CGAL/_test_cls_const_triang_plus_2.C>
 
 
+typedef CGAL::Constrained_Delaunay_triangulation_2<TestK> CDt_ni;  
+// Explicit instantiation of the whole class :
+template class CGAL::Constrained_triangulation_plus_2<CDt_ni>;
+
 int main()
 {
 
@@ -44,6 +48,9 @@ int main()
   typedef CGAL::Exact_predicates_tag                            Itag;
   typedef CGAL::Constrained_Delaunay_triangulation_2<TestK,TDS,Itag>   CDt;
   typedef CGAL::Constrained_triangulation_plus_2<CDt>   CDtplus;
+
+
+
   _test_cls_const_triang_plus_2(CDtplus());
   
   std::cout << "Testing constrained_triangulation_plus_2 "<<   std::endl;
