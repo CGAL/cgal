@@ -41,10 +41,9 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all:	test
+all:	\
+	test$(EXE_EXT)
 
-test: test$(OBJ_EXT)
-	$(CGAL_CXX) $(CXXFLAGS) $(LIBPATH)  test$(OBJ_EXT) $(LDFLAGS)
 
 clean:
 	rm -f *.$(OBJ_EXT)
