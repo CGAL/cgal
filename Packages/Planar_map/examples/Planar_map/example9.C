@@ -6,8 +6,8 @@
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Planar_map_2.h>
 #include <CGAL/Pm_segment_traits.h>
-#include <CGAL/IO/Pm_iostream.h>
 #include <CGAL/IO/write_pm.h>
+#include <CGAL/IO/Pm_iostream.h>
 #include <iostream>
 
 // #define CGAL_POSTSCRIPT
@@ -25,6 +25,8 @@ typedef CGAL::Pm_file_writer<Planar_map>        Pm_writer;
 int main()
 { 
   Planar_map pm;
+  Pm_writer verbose_writer(std::cout, pm, true);
+  Pm_writer writer(std::cout, pm);
 
   std::cout << "* * * Demonstrating a trivial use of IO functions"
             << std::endl << std::endl;
@@ -34,7 +36,6 @@ int main()
   std::cout << std::endl;
   std::cout << "* * * Presenting the use of verbose format" << std::endl;
   std::cout << std::endl;
-  Pm_writer verbose_writer(std::cout, pm, true);
   CGAL::write_pm(pm, verbose_writer, std::cout);
   
   std::cout << std::endl;
@@ -42,7 +43,6 @@ int main()
             << std::endl;
   std::cout << "* * * Printing all halfedges in non verbose format"
             << std::endl << std::endl;
-  Pm_writer writer(std::cout, pm);
   writer.write_halfedges(pm.halfedges_begin(), pm.halfedges_end());
   std::cout << std::endl;
   std::cout << "* * * Printing all halfedges in a verbose format" << std::endl

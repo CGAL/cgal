@@ -48,13 +48,7 @@ public:
   Pm_my_file_writer(std::ostream & o, const PM & pm, bool verbose = false) : 
     CGAL::Pm_file_writer<PM>(o, pm, verbose) { }
   
-  void write_vertex(Vertex_handle v)
-  {
-    out() << v->point() <<"  ";
-    out() << v->get_color()<< std::endl;
-  }
-  
-  void write_vertex(Vertex_const_handle v)
+  void write_vertex(Vertex_const_handle v) const
   {
     out() << v->point() <<"  ";
     out() << v->get_color()<< std::endl;

@@ -47,56 +47,25 @@ CGAL_BEGIN_NAMESPACE
 template <class PM, class Writer>
 void write_pm(const PM & pm, Writer & writer, std::ostream &)
 {
-  //typedef Planar_map_2<Dcel,Traits>                     PM;
-  typedef typename PM::Halfedge_const_iterator          HCI;
-  typedef typename PM::Vertex_const_iterator            VCI;
-  typedef typename PM::Face_const_iterator              FCI;
-  typedef Inverse_index<HCI>                            H_index;
-  typedef Inverse_index<VCI>                            V_index;
-  
-  //H_index h_index(pm.halfedges_begin(), pm.halfedges_end()); 
-  //V_index v_index(pm.vertices_begin(), pm.vertices_end()); 
-  
   // Print header. write #vertices, #halfedges, #faces.
-  writer.write_title("Printing Planar map" /*, pm.number_of_vertices(), pm.number_of_halfedges(), pm.number_of_faces()*/);
-  writer.write_comment("Printing number of vertices halfedges and faces in Planar map");
+  writer.write_title("Begin Planar Map");
+  writer.write_comment("Number of vertices halfedges and faces in Planar map");
   writer.write_pm_vhf_sizes(pm.number_of_vertices(),
                             pm.number_of_halfedges(),
                             pm.number_of_faces());
 
   writer.write_comment("vertices", pm.number_of_vertices());
-  //writer.write_vertices(pm.vertices_begin(), pm.vertices_end());
-  VCI v_iter;
-  for (v_iter = pm.vertices_begin(); v_iter != pm.vertices_end(); ++v_iter)
-    writer.write_vertex(v_iter);
+  writer.write_vertices(pm.vertices_begin(), pm.vertices_end());
   
   writer.write_comment("halfedges", pm.number_of_halfedges());
-  //writer.write_halfedges_header();
-  
-  // writer.write_index( v_index[ VCI(ei->target())] );*/
-  // writer.write_halfedges(pm.halfedges_begin(), pm.halfedges_end());
-  V_index v_index(pm.vertices_begin(), pm.vertices_end());
-  HCI h_iter;
-  for (h_iter = pm.halfedges_begin(); h_iter != pm.halfedges_end(); ++h_iter)
-    writer.write_halfedge(h_iter, v_index);
+  writer.write_halfedges(pm.halfedges_begin(), pm.halfedges_end());
 
   writer.write_comment("faces", pm.number_of_faces());
-  //writer.write_faces_header();
+  writer.write_faces(pm.faces_begin(), pm.faces_end());
   
-  //typename Planar_map_2<Dcel,Traits>::Holes_const_iterator iccbit;
-  //typename Planar_map_2<Dcel,Traits>::Ccb_halfedge_const_circulator ccb_circ;
-  
-  //int ck;
-  // writer.write_faces(pm.faces_begin(), pm.faces_end());
-  H_index h_index(pm.halfedges_begin(), pm.halfedges_end());
-  FCI f_iter;
-  for (f_iter = pm.faces_begin(); f_iter != pm.faces_end(); ++f_iter)
-    writer.write_face(f_iter, h_index);
-  
-  writer.write_title("End of Planar map");
+  writer.write_title("End Planar Map");
   //writer.write_footer();
 }
-
 
 CGAL_END_NAMESPACE
 

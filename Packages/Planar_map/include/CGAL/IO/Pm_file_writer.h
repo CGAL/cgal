@@ -77,11 +77,11 @@ public:
   typedef Inverse_index<Vertex_const_iterator>   V_index;
 
   Pm_file_writer(std::ostream & o, const PM & pm, bool verbose = false) : 
-    File_header(verbose), m_out(&o), m_pm(pm)
+    File_header(verbose), m_out(&o), m_pm(pm), m_h_index(0), m_v_index(0)
     { }
 
   Pm_file_writer(std::ostream & o, const PM & pm, const File_header & h) : 
-    File_header(h),  m_out(&o), m_pm(pm)
+    File_header(h),  m_out(&o), m_pm(pm), m_h_index(0), m_v_index(0)
     { }
   
   std::ostream & out() const { return *m_out; }
@@ -148,11 +148,13 @@ public:
     }
   }
 
-  void write_vertex(Vertex_const_handle v) const
+protected:
+  virtual void write_vertex(Vertex_const_handle v) const
   {
     out() << v->point() << std::endl;
   }
-  
+
+public:
   void write_halfedges_header() const
   {
     if (no_comments())
@@ -189,15 +191,17 @@ public:
       write_vertex(h->target());
   }
 
-  void write_halfedge(Halfedge_const_handle h, const V_index & v_index) const
+protected:
+  virtual void write_halfedge(Halfedge_const_handle h) const
   {
     if (verbose()) write_halfedge_verbose(h);
     else {
-      write_index(v_index[ Vertex_const_iterator(h->target())]);
+      write_index(get_v_index(Vertex_const_iterator(h->target())));
       out() << h->curve() << std::endl;
     }
   }
 
+public:
   void write_faces_header() const
   {
     if (no_comments())
@@ -208,8 +212,9 @@ public:
       out() << "# ------------------------------------------"<< std::endl;
     }
   }
-    
-  void write_face(Face_const_handle f, const H_index & h_index) const
+
+protected:
+  virtual void write_face(Face_const_handle f)
   {
     int ck;
 	Holes_const_iterator iccbit;
@@ -240,7 +245,7 @@ public:
         if (verbose())
           write_halfedge_verbose(iter);
         else
-          write_index(h_index[Halfedge_const_iterator(iter)]);
+          write_index(get_h_index(Halfedge_const_iterator(iter)));
         ++iter;
       } while (iter != first);
       
@@ -273,7 +278,7 @@ public:
         if (verbose())
           write_halfedge_verbose(iter);
         else
-          write_index(h_index[Halfedge_const_iterator(iter)]);
+          write_index(get_h_index(Halfedge_const_iterator(iter)));
         ++iter;
       } while (iter != ccb_circ);
       
@@ -284,6 +289,7 @@ public:
     out() << "# ------------------------------------------"<< std::endl;
   }
 
+public:
   void write_vertices(Vertex_const_iterator Vertices_begin,
                       Vertex_const_iterator Vertices_end) const
   {
@@ -291,23 +297,51 @@ public:
     for (v_iter = Vertices_begin; v_iter != Vertices_end; v_iter++)
       write_vertex(v_iter);
   }
-    
+
+  //
+  // The handling of the index arrays v_index and h_index is bad.
+  // One solution is to replace write_halfedge() and write_face() with
+  // corresponding classes with the index arrays as data members and
+  // functors to perform the respective operations. Their constructor will
+  // take the pm as a parameter to compure the index arrays.
+  // 
+  // void write_halfedges(Halfedge_const_iterator Halfedges_begin,
+  //                      Halfedge_const_iterator Halfedges_end)
+  // {
+  //   Write_halfedge write_halfedge(m_pm);
+  //   Halfedge_const_iterator h_iter;
+  //   for (h_iter = Halfedges_begin; h_iter != Halfedges_end; h_iter++)
+  //     write_halfedge(h_iter);
+  // }
+  //
+  // The class Pm_file_writer could be templated with Write_vertex,
+  // Write_halfedge, and Write_face.
+  //
+  // Also, I don't see any reason why write_pm should be a global function
+  // and not a member of Pm_file_writer
+  //
+  // Efi
+
   void write_halfedges(Halfedge_const_iterator Halfedges_begin,
-                       Halfedge_const_iterator Halfedges_end) const
+                       Halfedge_const_iterator Halfedges_end)
   {
     V_index v_index(m_pm.vertices_begin(), m_pm.vertices_end());
+    m_v_index = &v_index;
     Halfedge_const_iterator h_iter;
     for (h_iter = Halfedges_begin; h_iter != Halfedges_end; h_iter++)
-      write_halfedge(h_iter, v_index);
+      write_halfedge(h_iter);
+    m_v_index = 0;
   }
 
   void write_faces(Face_const_iterator Faces_begin,
-                   Face_const_iterator Faces_end) const
+                   Face_const_iterator Faces_end)
   {
     H_index h_index(m_pm.halfedges_begin(), m_pm.halfedges_end());
+    m_h_index = &h_index;
     Face_const_iterator f_iter;
     for (f_iter = Faces_begin; f_iter != Faces_end; ++f_iter)
-      write_face(f_iter, h_index);
+      write_face(f_iter);
+    m_h_index = 0;
   }
   
   //void skip_line(){
@@ -320,12 +354,26 @@ protected:
     out() << index << ' ';
   }
   
+  std::size_t get_v_index(Vertex_const_iterator vic) const
+  {
+    CGAL_assertion(m_v_index);
+    return (*m_v_index)[vic];
+  }
+
+  std::size_t get_h_index(Halfedge_const_iterator hic) const
+  {
+    CGAL_assertion(m_h_index);
+    return (*m_h_index)[hic];
+  }
+
   //void write_string(const char *str) {
   //  out() << str << std::endl;
   // }
 
   std::ostream * m_out;
   const PM & m_pm;
+  H_index * m_h_index;
+  V_index * m_v_index;
 };
 
 CGAL_END_NAMESPACE
