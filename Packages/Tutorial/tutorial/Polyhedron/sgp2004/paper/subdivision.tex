@@ -1,6 +1,23 @@
 % subdivision.tex
 % ------------------------------------------------------------------------
 
+\begin{figure}[tb]
+  \centering
+  \psfrag{A}[]{(a)}
+  \psfrag{B}[]{(b)}
+  \psfrag{C}[]{(c)}
+  \psfrag{D}[]{(d)}
+  \epsfig{file=figs/RefMap.eps, width=7cm}
+  \caption{The stencil (weights are not shown) and its 
+           vertex in the Catmull-Clark subdivision (a-c)
+           and Doo-Sabin subdivision (d). Catmull-Clark
+           subdivision has three stencils: facet-stencil (a), 
+           edge-stencil (b) and vertex-stencil (c). 
+           Doo-Sabin subdivision has only corner-stencil (d).}
+  \label{fig:RefMap}
+\end{figure}
+
+
 %Subdivision surfaces \cite{cc,ds,loop,sqrt3,qts}
 %are the limit surface resulting from the
 %application of a subdivision algorithm to a control mesh.
@@ -18,8 +35,7 @@ mesh. The \gm\ transforms a submesh on the control mesh
 to a vertex on the refined mesh. The submesh (with
 the normalized weights) is called the
 \emph{stencil}. A subdivision algorithm recursively 
-applies these two steps on the control mesh and approximates
-the limit surface. 
+applies these two steps and approximates the limit surface. 
 %A proper combination of a \tr\ and a set of 
 %rules of \gm\ define a valid subdivision scheme.
 
@@ -36,35 +52,12 @@ stencil and its vertex in Fig.~\ref{fig:RefMap}, where Catmull-Clark
 subdivision has three distinct stencils and Doo-Sabin subdivision has
 only one stencil. 
 
-\begin{figure}[htb]
-  \centering
-  \psfrag{PQQ}[]{\scriptsize PQQ} 
-  \psfrag{PTQ}[]{\scriptsize PTQ}
-  \psfrag{DQQ}[]{\scriptsize DQQ} 
-  \psfrag{Sqrt3}[]{\scriptsize $\sqrt{3}$} 
-  \epsfig{file=figs/RefSchemes.eps, width=7cm}
-  \caption{Examples of refinement schemes: 
-    primal quadrilateral quadrisection (PQQ),
-    primal triangle quadrisection (PTQ),
-    dual quadrilateral quadrisection (DQQ) and
-    $\sqrt{3}$ triangulation.}
-  \label{fig:RefSchemes}
-%\end{figure}
-%\begin{figure}
-%  \centering
-  \psfrag{A}[]{(a)}
-  \psfrag{B}[]{(b)}
-  \psfrag{C}[]{(c)}
-  \psfrag{D}[]{(d)}
-  \epsfig{file=figs/RefMap.eps, width=7cm}
-  \caption{The stencil (weights are not shown) and its 
-           vertex in the Catmull-Clark subdivision (a-c)
-           and Doo-Sabin subdivision (d). Catmull-Clark
-           subdivision has three stencils: facet-stencil (a), 
-           edge-stencil (b) and vertex-stencil (c). 
-           Doo-Sabin subdivision has only corner-stencil (d).}
-  \label{fig:RefMap}
+\begin{figure}
+    \centering{\includegraphics[width=7.0cm]{figs/sqrt3}}
+    \caption{$\sqrt{3}$-Subdivision of the mannequin mesh.}
+    \label{fig:sqrt3}\vspace*{-2mm}
 \end{figure}
+
 
 
 %\subsubsection{Sqrt 3}

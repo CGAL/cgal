@@ -2,19 +2,6 @@
 % ----------------------------------------------------------
 \label{sec:sqrt3}
 
-\begin{figure}
-    \centering{\includegraphics[width=7.0cm]{figs/sqrt3}}
-    \caption{$\sqrt{3}$-Subdivision of the mannequin mesh.}
-    \label{fig:sqrt3}
-\end{figure}
-
-\begin{figure}[htb]
-    \centering{\includegraphics[width=7.0cm]{figs/sqrt3_basic}}
-    \caption{The $\sqrt{3}$-subdivision scheme is decomposed into
-             Euler operators: center vertex and edge flips.}
-    \label{fig:sqrt3_basic}
-\end{figure}
-
 This scheme was introduced as an adaptive scheme~\cite{sqrt3}, but we
 restrict our example program to a single uniform subdivision step, see
 Fig.~\ref{fig:sqrt3} for an example of a subdivision sequence and
@@ -74,6 +61,14 @@ which is an extra array for the smoothed coordinates of original
 vertices. We start by creating the centroids, then smooth the old
 vertices, and conclude with flipping the old edges.
 
+\begin{figure}[tb]
+    \centering{\includegraphics[width=7.0cm]{figs/sqrt3_basic}}
+    \caption{The $\sqrt{3}$-subdivision scheme is decomposed into
+             Euler operators: center vertex and edge flips.}
+    \label{fig:sqrt3_basic}
+\end{figure}
+
+
 \begin{lstlisting}
 void subdiv( Polyhedron& P) {
   std::size_t nv = P.size_of_vertices();
@@ -102,13 +97,14 @@ void subdiv( Polyhedron& P) {
 }
 \end{lstlisting}
 
-The \openmesh\ library comes with a demo application for the
-subdivision algorithms that are available in \openmesh. Since L.
-Kobbelt, the author of the $\sqrt{3}$-subdivision, is the head of the
-group developing \openmesh, it is natural to find his algorithm in the
-library. We used it for a performance comparison with our example
-implementation on a laptop with an Intel Pentium4 Mobile CPU running
-at 1.80GHz with 512KB cache and 254MB main memory under Linux.
+The \openmesh\ library Release 1.0.0-beta4 comes with a demo
+application for the subdivision algorithms that are available in
+\openmesh. Since L.  Kobbelt, the author of the
+$\sqrt{3}$-subdivision, is the head of the group developing \openmesh,
+it is natural to find his algorithm in the library. We used it for a
+performance comparison with our example implementation on a laptop
+with an Intel Pentium4 Mobile CPU running at 1.80GHz with 512KB cache
+and 254MB main memory under Linux.
 
 We selected an instance of \cgalpoly\ that was closely matching the
 implementation used in \openmesh, which entails the array-storage

@@ -1,20 +1,20 @@
 \subsection{Generic Programming, \CC\ and Templates}
 
 \cgal\ is a \CC\ library and follows in its design the \emph{generic
-programming paradigm\/}~\cite{cgal:ms-aogl-94,cgal:sl-stl-95} and in
-a few places also design patterns~\cite{Gamma:1995:DP}. Generic
-programming has found wide spread acceptance in the \CC\ community
+programming paradigm\/}~\cite{cgal:ms-aogl-94} %,cgal:sl-stl-95
+% and in a few places also design patterns~\cite{Gamma:1995:DP}. 
+that has found wide spread acceptance in the \CC\ community
 with the \emph{Standard Template Library}, \stl, as its prominent
 example as part of the \CC\ Standard Library. The good \stl\ 
-introduction and reference book~\cite{cgal:a-gps-98} coins the terms
-\emph{concept} for a set of requirements imposed on a template
+book~\cite{cgal:a-gps-98} coins the terms
+\emph{concept\/} for a set of requirements imposed on a template
 parameter, and \emph{model\/} for all types that fulfill the set of
 requirements and can thus be used as template argument. An example
 function template:
 \begin{lstlisting}
 template <typename T>
 void swap( T& a, T& b) { T tmp = a; a = b; b = tmp; }
-\end{lstlisting}
+\end{lstlisting}%
 This generic \CodeFmt{swap} function requires from the template
 parameter \CodeFmt{T} to have a copy constructor and an assignment
 operator. This is collectively summarized under the \emph{concept\/}
@@ -30,16 +30,16 @@ depending on their capability of traversing the underlying sequence of
 elements in a container class, i.e., input and output iterator for
 simple read once or write once sequences, forward iterator for single
 linked lists, bidirectional iterator for doubly-linked lists, and
-random-access iterator for array-like data structures. More recent
-textbooks introducing template programming techniques
-are~\cite{Alexandrescu:2001:MCD,cgal:vj-ctcg-03}.
+random-access iterator for array-like data structures. 
+%See also the
+%recent textbooks on template programming
+%techniques~\cite{Alexandrescu:2001:MCD,cgal:vj-ctcg-03}.
 
 \subsection{Computational Geometry Algorithms Library}
 
 The development of \cgal, the Computational Geometry Algorithms
 Library, started in 1995 and the first public release appeared in June
-1997. \cgal\ is since its release 3.0 in November 2003 an Open Source
-project initiated by a consortium of European and Israeli research
+1997. \cgal\ is initiated by a consortium of European and Israeli research
 institutes with the goal to
 \begin{quote}
     {\em make the large body of geometric algorithms developed in the field
@@ -47,17 +47,20 @@ institutes with the goal to
 \end{quote}
 \cgal's main design goals are correctness, flexibility, efficiency,
 and ease of use. Its focus is on a broad foundation in computational
-geometry. Important related issues, for example visualization, are
-supported with standard formats and interfaces.
+geometry. \cgal\ is since its release 3.0 in November 2003 Open Source. 
+% Important related issues, for example visualization, are
+%supported with standard formats and interfaces.
 
-An overview of \cgal\ is given in~\cite{Kettner04Handbook}. The design
-is thoroughly covered in~\cite{fgkss-dccga-00} and generic programming
-aspects are discussed in~\cite{bksv-agppd-00}. \cgal\ is roughly
-structured into a geometric kernel and a basic library. The geometric
-kernel contains the geometric primitives, such as points, vectors,
-triangles, and predicates and constructions on those geometric
-primitives, and has an extendible design described
-in~\cite{hhkps-aegk-01}. 
+% An overview of \cgal\ is given in~\cite{Kettner04Handbook}. 
+The design of \cgal\ is thoroughly covered
+in~\cite{fgkss-dccga-00,bksv-agppd-00}. 
+% and generic programming aspects are discussed
+% in~\cite{bksv-agppd-00}. 
+\cgal\ is roughly structured into a geometric kernel and a basic
+library. The geometric kernel contains the geometric primitives, such
+as points, vectors, triangles, and predicates and constructions on
+those geometric primitives, and has an extendible design described
+in~\cite{hhkps-aegk-01}.
 
 The basic library contains data structure and
 algorithms.  Their design follows the \stl\ design with iterator based
@@ -74,10 +77,11 @@ kernel is a valid model.
 There are many choices for a \cgal\ geometric kernel. One can choose
 between reference counted and non-reference counted storage, between
 Cartesian or homogeneous coordinate
-representation\footnote{Homogeneous coordinates are only used to have
-  efficient implementations of exact integer arithmetic without
-  divisions, and not for projective geometry. \cgal\ works in affine
-  geometry.}, and the number type used to store coordinates and do the
+representation,%\footnote{Homogeneous coordinates are only used to have
+%  efficient implementations of exact integer arithmetic without
+%  divisions, and not for projective geometry. \cgal\ works in affine
+%  geometry.}, 
+and the number type used to store coordinates and do the
 arithmetic. The right choice for the number type is essential for the
 correctness of some of the algorithms and data structures. The main
 distinction in \cgal\ is along the boundary of exact predicate
@@ -93,23 +97,30 @@ usually exact long integer arithmetic.
 
 \subsection{Edge-based Mesh Data Structures}
 
-The first reported edge-based mesh data structures are the
-winged-edge~\cite{Baumgart:1975:PRCV} and the doubly-connected edge
-list (DCEL)~\cite{Muller78}. Both store one data record per edge and
-even simple traversals in the mesh neighborhood needed case
-distinctions. The key inside was the split of the edge into two
-halfedges~\cite{Weiler85,Maentylae88} (also referred to as DCEL
-nowadays), which allows to encode orientation in the mesh and
-traversal simplifies to mere pointer traversal. The edge
-split can be done in two ways, either assigning a halfedge to each
-incident facets, or assigning a halfedge to each incident
-vertex~\cite{Weiler85}, these are duals of each other. Thinking of
-both splits at once leads to the quad-edge data 
-structure~\cite{Guibas:1983:PMG} that, deploying an additional bit per
-quad-edge and per referring pointer, can also represent non-orientable
-2-manifold surfaces. A detailed comparison of these structures can be
-found in~\cite{k-ugpdd-99}.
+% The first reported edge-based mesh data structures are the
+% winged-edge~\cite{Baumgart:1975:PRCV} and the doubly-connected edge
+% list (DCEL)~\cite{Muller78}. Both store one data record per edge and
+% even simple traversals in the mesh neighborhood needed case
+% distinctions. The key inside was the split of the edge into two
+% halfedges~\cite{Weiler85,Maentylae88} (also referred to as DCEL
+% nowadays), which allows to encode orientation in the mesh and
+% traversal simplifies to mere pointer traversal. The edge split can be
+% done in two ways, either assigning a halfedge to each incident facets,
+% or assigning a halfedge to each incident vertex~\cite{Weiler85}, these
+% are duals of each other. Combining both splits leads to the quad-edge
+% data structure~\cite{Guibas:1983:PMG} that, deploying an additional
+% bit per quad-edge and per referring pointer, can also represent
+% non-orientable 2-manifold surfaces. A detailed comparison of these
+% structures can be found in~\cite{k-ugpdd-99}.
 
+Common edge-based mesh data structures are the
+winged-edge~\cite{Baumgart:1975:PRCV}, the doubly-connected edge list
+(DCEL)~\cite{Muller78}, halfedges with their key insight to split an
+edge into two halfedges~\cite{Weiler85,Maentylae88} that allows to
+encode orientation in the mesh and that traversal simplifies to mere
+pointer traversal, and the quad-edge data
+structure~\cite{Guibas:1983:PMG}. A detailed comparison of these
+structures can be found in~\cite{k-ugpdd-99}.
 Halfedge data structures (and similarly quad-edge) have been very
 successful for the design of algorithms on meshes for several reasons:
 \begin{itemize}
@@ -123,12 +134,13 @@ successful for the design of algorithms on meshes for several reasons:
 
 \subsection{Generic Mesh Data Structures}
 
-The quad-edge data structure is the theoretically most appealing data
-structure, however, non-orientable surfaces are typically not of interest in
-mesh algorithms, and the strict symmetry between vertices and facets
-makes this structure troublesome in a strong typed system where
-vertices and facets are different types. Getting the asymmetry back
-leads to the halfedge data structure in \cgal, where a halfedge is 
+%The quad-edge data structure is the theoretically more appealing data
+%structure, however, non-orientable surfaces are typically not of interest in
+%mesh algorithms, and the strict symmetry between vertices and facets
+%makes this structure troublesome in a strong typed system where
+%vertices and facets are different types. Getting the asymmetry back
+
+\cgal\ has chosen the halfedge data structure where a halfedge is 
 associated with a facet (see Fig.\ref{fig:halfedge}). The details
 of the halfedge data structure and the \cgalpoly\ based on it are
 described in~\cite{k-ugpdd-99}. We review the necessary parts in the
@@ -138,9 +150,10 @@ following sections.
     \centering{\includegraphics[width=5.0cm]{figs/halfedge}}
     \caption{One halfedge and its incident primitives. The next
       halfedge, the opposite halfedge, and the incident vertex are
-      mandatory, the remaining elements are optional and can be
-      selected by the user.}
-    \label{fig:halfedge}
+      mandatory, the remaining elements are optional.
+% and can be selected by the user.
+}
+    \label{fig:halfedge}\vspace*{-2mm}
 \end{figure}
 
 Starting from the design described in~\cite{k-ugpdd-99}, a thorough
@@ -150,29 +163,27 @@ out some design choices that are not realizable in the design of
 \cgalpoly. For example, although an array (\CodeFmt{std::vector}) can
 be used to store the mesh elements, a reference to elements must
 always be a pointer or iterator, and cannot be an index into that
-error.
+array.
 
-The same observation led the developers in the \openmesh\ 
-project, see Release 1.0.0-beta4 at \path|http://www.openmesh.org/|,
-to modify the \cgal\ design for their mesh data structure. Among
-others does their design allow indices instead of pointers, and they
-have a specialized data structure for meshes that consist only of
-triangles~\cite{Botsch:2002:OPENMESH}. This redesign comes at a price
-in readability of the user code; while the design of \cgalpoly\ allows
-the direct traversal from item to item, i.e., direct expressions such
-as
+The same observation led the developers in the \openmesh\ project, see
+\path|http://www.openmesh.org/|, to modify the \cgal\ design for their
+mesh data structure. Among others does their design allow indices
+instead of pointers, and they have a specialized data structure for
+meshes that consist only of triangles~\cite{Botsch:2002:OPENMESH}.
+This redesign comes at a price in readability of the user code;
+the design of \cgalpoly\ allows the direct traversal from item to item
+while the \openmesh\ solution require the knowledge of the data
+structure itself, and a potentially more costly array arithmetic. 
+An example shows the difference:
 \begin{lstlisting}
 facet_handle->halfedge()->opposite()->facet()
-\end{lstlisting}
-are possible, while in \openmesh\ the choice of an index always
-requires the knowledge of the data structure itself, and potentially
-more costly array arithmetic to access an item, such as in the
-equivalent example now written for \openmesh
-\begin{lstlisting}
+
 hds.face_handle(
     hds.opposite_halfedge_handle(
         hds.halfedge_handle(facet_handle))).
-\end{lstlisting}
+\end{lstlisting}\vspace*{-2mm}
+
+\noindent
 The obvious question is, does it matter, and if, for which design. We
 have a first answer in favor for the more readable \cgal\ design with
 a runtime comparison of the $\sqrt{3}$ subdivision algorithm in
@@ -185,6 +196,19 @@ conclusive answer.
 
 
 
+% % item, i.e., direct expressions such as
+% % \begin{lstlisting}
+% % facet_handle->halfedge()->opposite()->facet()
+% % \end{lstlisting}
+% % are possible, while in \openmesh\ the choice of an index always
+% % requires the knowledge of the data structure itself, and potentially
+% % more costly array arithmetic to access an item, such as in the
+% % equivalent example now written for \openmesh
+% % \begin{lstlisting}
+% % hds.face_handle(
+% %     hds.opposite_halfedge_handle(
+% %         hds.halfedge_handle(facet_handle))).
+% % \end{lstlisting}
 
 
 
