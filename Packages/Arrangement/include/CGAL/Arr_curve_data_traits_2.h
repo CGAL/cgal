@@ -20,6 +20,8 @@
 #ifndef CGAL_CURVE_DATA_TRAITS_2_H
 #define CGAL_CURVE_DATA_TRAITS_2_H
 
+#include <list>
+
 CGAL_BEGIN_NAMESPACE
 
 /*! A generic traits class for maintaining an arrangement of curves that have
@@ -35,7 +37,8 @@ CGAL_BEGIN_NAMESPACE
  */
 
 template <class Traits_, class Data_>
-class Arr_curve_data_traits_2 : public Traits_ {
+class Arr_curve_data_traits_2 : public Traits_ 
+{
 public:
   typedef Traits_                               Traits;
   typedef Data_                                 Data;
@@ -43,40 +46,192 @@ public:
   typedef typename Traits::X_monotone_curve_2   Org_x_monotone_curve_2;
   typedef typename Traits::Point_2              Point_2;
 
-  
-  class Curve_2 : public Org_curve_2 {
+  /*!
+   * Representation of an input curve with an addtional data field.
+   */
+  class Curve_2 : public Org_curve_2 
+  {
   private:
     Data m_data;
 
   public:
-    Curve_2() {}
+
+    /*!
+     * Default constructor.
+     */
+    Curve_2 ()
+    {}
     
-    Curve_2(const Org_curve_2 & cv, const Data & data) :
+    /*!
+     * Construct a curve from an original curve and a data object.
+     * \param cv The original curve.
+     * \param data The data object.
+     */ 
+    Curve_2 (const Org_curve_2 & cv, const Data & data) :
       Org_curve_2(cv),
       m_data(data)
     {}
 
-    const Data & get_data() const { return m_data; }
+    /*!
+     * Get the data.
+     * \return The data object associated with the curve.
+     */
+    const Data & get_data () const
+    {
+      return m_data;
+    }
 
-    void set_data(const Data & data) { m_data = data; }
+    /*!
+     * Set the curve data.
+     * \param data The data object to be associated with the curve.
+     */
+    void set_data (const Data & data)
+    {
+      m_data = data;
+      return;
+    }
   };
   
-  class X_monotone_curve_2 : public Org_x_monotone_curve_2 {
+  /*!
+   * Representation of an x-monotone cuvre. As this curve may represent
+   * an overlapping section of several input curves, we store a list of data
+   * objects with it.
+   */
+  class X_monotone_curve_2 : public Org_x_monotone_curve_2 
+  {
   private:
-    Data m_data;
+
+    std::list<Data>  m_data_list;
 
   public:
 
-    X_monotone_curve_2() {}
-    
-    X_monotone_curve_2(const Org_x_monotone_curve_2 & cv, const Data & data) :
-      Org_x_monotone_curve_2(cv),
-      m_data(data)
+    /*!
+     * Default constructor.
+     */
+    X_monotone_curve_2()
     {}
+    
+    /*!
+     * Construct a curve from an original x-monotone curve and a data object.
+     * \param cv The original x-monotone curve.
+     * \param data The data object.
+     */ 
+    X_monotone_curve_2 (const Org_x_monotone_curve_2 & cv, const Data & data) :
+      Org_x_monotone_curve_2(cv),
+      m_data_list()
+    {
+      m_data_list.push_back(data);
+    }
 
-    const Data & get_data() const { return m_data; }
+    /*!
+     * Construct a curve from an original x-monotone curve and a range of 
+     * data objects.
+     * \param cv The original x-monotone curve.
+     * \param begin A begin iterator for the data range.
+     * \param end A past-the-end iterator for the data range.
+     */
+    template <class InputIterator>
+    X_monotone_curve_2 (const Org_x_monotone_curve_2 & cv, 
+			const InputIterator& begin, const InputIterator& end) :
+      Org_x_monotone_curve_2(cv),
+      m_data_list()
+    {
+      InputIterator    it;
 
-    void set_data(const Data & data) { m_data = data; }
+      for (it = begin; it != end; it++)
+	m_data_list.push_back(*it);
+    }
+
+    /*!
+     * Get the number of data objects associated with the x-monotne curve.
+     */
+    int number_of_data_objects () const
+    {
+      return (m_data_list.size());
+    }
+
+    /*!
+     * Get the first data object associated with the curve.
+     * \pre number_of_data_objects() is not 0.
+     */
+    const Data& get_data () const
+    {
+      CGAL_precondition (m_data_list.size() > 0);
+
+      return (m_data_list.front());
+    }
+
+    /*!
+     * Get the data iterators (const version).
+     */
+    typename std::list<Data>::const_iterator begin_data () const
+    {
+      return (m_data_list.begin());
+    }
+
+    typename std::list<Data>::const_iterator end_data () const
+    {
+      return (m_data_list.end());
+    }
+
+    /*!
+     * Get the data iterators (non-const version).
+     */
+    typename std::list<Data>::iterator begin_data ()
+    {
+      return (m_data_list.begin());
+    }
+
+    typename std::list<Data>::iterator end_data ()
+    {
+      return (m_data_list.end());
+    }
+
+    /*!
+     * Add a data object to the curve.
+     * \param data The additional data object.
+     */
+    void add_data (const Data & data)
+    {
+      m_data_list.push_back (data);
+      return;
+    }
+
+    /*!
+     * Set a data object to the curve.
+     * \param data The data object to set.
+     */
+    void set_data (const Data & data)
+    {
+      clear_data();
+      add_data(data);
+      return;
+    }
+
+    /*!
+     * Add a range of data objects to the curve.
+     * \param begin A begin iterator for the data range.
+     * \param end A past-the-end iterator for the data range.
+     */
+    template <class InputIterator>
+    void add_data (const InputIterator & begin, const InputIterator & end)
+    {
+      InputIterator    it;
+
+      for (it = begin; it != end; it++)
+	m_data_list.push_back(*it);
+
+      return;
+    }
+
+    /*!
+     * Clear the data objects.
+     */
+    void clear_data ()
+    {
+      m_data_list.clear();
+      return;
+    }
   };
 
   // For backward compatibility:
@@ -85,50 +240,62 @@ public:
   typedef Curve_2                               Curve;
   
 public:
-  Arr_curve_data_traits_2 () : Traits() {}
+
+  /*!
+   * Default constructor.
+   */
+  Arr_curve_data_traits_2 () : 
+    Traits() {}
   
-  /*! Cut the given curve into x-monotone subcurves and insert them to the
+  /*!
+   * Cut the given curve into x-monotone subcurves and insert them to the
    * given output iterator. While segments are x_monotone, still need to pass
    * them out.
    * \param cv The curve.
-   * \param o The output iterator
-   * \return The past-the-end iterator
-   *
-   * why this function dose not compile as const???
+   * \param o The output iterator.
+   * \return The past-the-end iterator.
    */
   template<class OutputIterator>
   OutputIterator curve_make_x_monotone(const Curve_2 & cv,
-                                       OutputIterator o)// const
+                                       OutputIterator o) const
   {
+    // Make the original curve x-monotone.
     std::list<Org_x_monotone_curve_2>  org_x_curves;
     
     Traits::curve_make_x_monotone (cv, std::back_inserter(org_x_curves));
 
+    // Attach the data to each of the resulting x-monotone curves.
     typename std::list<Org_x_monotone_curve_2>::const_iterator it;
-    for (it = org_x_curves.begin(); it != org_x_curves.end(); it++) {
+
+    for (it = org_x_curves.begin(); it != org_x_curves.end(); it++) 
       *o++ = X_monotone_curve_2 (*it, cv.get_data());
-    }
     
     return o;
   } 
 
-  /*! Split a given curve at a given split point into two sub-curves.
-   * \param cv the curve to split
-   * \param c1 the output first part of the split curve. Its source is the
-   * source of the original curve.
-   * \param c2 the output second part of the split curve. Its target is the
-   * target of the original curve.
-   * \param p the split point.
+  /*! 
+   * Split a given curve at a given split point into two sub-curves.
+   * \param cv The curve to split
+   * \param c1 The output first part of the split curve. 
+   *           Its source is the source of the original curve.
+   * \param c2 The output second part of the split curve.
+   *           Its target is the target of the original curve.
+   * \param p The split point.
    * \pre p lies on cv but is not one of its end-points.
    */
   void curve_split(const X_monotone_curve_2 & cv, 
 		   X_monotone_curve_2 & c1, X_monotone_curve_2 & c2, 
                    const Point_2 & p) const
   {
+    // Split the original curve.
     Org_x_monotone_curve_2 org_c1, org_c2;
     Traits::curve_split (cv, org_c1, org_c2, p);
-    c1 = X_monotone_curve_2 (org_c1, cv.get_data());
-    c2 = X_monotone_curve_2 (org_c2, cv.get_data());
+
+    // Attach data.
+    c1 = X_monotone_curve_2 (org_c1, cv.begin_data(), cv.end_data());
+    c2 = X_monotone_curve_2 (org_c2, cv.begin_data(), cv.end_data());
+
+    return;
   }
 
   /*!
@@ -161,11 +328,18 @@ public:
     if (res.is_empty() || CGAL::assign (ip, res))
       return (res);
 
-    // Attach data to the overlapping curve and return it.
-    Org_x_monotone_curve_2  icv;
+    // In case we have an overlapping curve, attach data from both cv1 and cv2
+    // to it.
+    Org_x_monotone_curve_2  iocv;
+    bool                    assign_success;
+    
+    assign_success = CGAL::assign (iocv, res);
+    CGAL_assertion (assign_success);
+    
+    X_monotone_curve_2      icv (iocv, cv1.begin_data(), cv1.end_data());
 
-    CGAL::assign (icv, res);
-    return (CGAL::make_object (X_monotone_curve_2 (icv, cv1.get_data())));
+    icv.add_data (cv2.begin_data(), cv2.end_data());
+    return (CGAL::make_object (icv));
   }
 
   /*!
@@ -198,11 +372,18 @@ public:
     if (res.is_empty() || CGAL::assign (ip, res))
       return (res);
 
-    // Attach data to the overlapping curve and return it.
-    Org_x_monotone_curve_2  icv;
+    // In case we have an overlapping curve, attach data from both cv1 and cv2
+    // to it.
+    Org_x_monotone_curve_2  iocv;
+    bool                    assign_success;
+    
+    assign_success = CGAL::assign (iocv, res);
+    CGAL_assertion (assign_success);
+    
+    X_monotone_curve_2      icv (iocv, cv1.begin_data(), cv1.end_data());
 
-    CGAL::assign (icv, res);
-    return (CGAL::make_object (X_monotone_curve_2 (icv, cv1.get_data())));
+    icv.add_data (cv2.begin_data(), cv2.end_data());
+    return (CGAL::make_object (icv));
   }
 };
 
