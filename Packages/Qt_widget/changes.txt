@@ -1,4 +1,4 @@
-1.3.52 - 06/09/2003
+1.3.53 - 10/09/2003
 -------------------
 	- xpm icons are now const: " const char** " [rineau]
 	- little reorganisation of the standard toolbar [rineau]
