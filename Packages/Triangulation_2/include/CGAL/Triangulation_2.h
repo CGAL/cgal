@@ -405,7 +405,7 @@ int insert(InputIterator first, InputIterator last)
 
 public:
   template<class EdgeIt>
-  Vertex_handle star_hole( Point p, 
+  Vertex_handle star_hole( const Point& p, 
 			   EdgeIt edge_begin,
 			   EdgeIt edge_end) {
     std::list<Face_handle> empty_list;
@@ -417,7 +417,7 @@ public:
   }
 
   template<class EdgeIt, class FaceIt>
-  Vertex_handle star_hole( Point p, 
+  Vertex_handle star_hole( const Point& p, 
 			   EdgeIt edge_begin,
 			   EdgeIt edge_end,
 			   FaceIt face_begin,
@@ -918,10 +918,11 @@ insert_outside_convex_hull_2(const Point& p, Face_handle f)
   CGAL_triangulation_precondition(is_infinite(f));
   
   int li = f->index(infinite_vertex());
-  Point q,r;
-  q = f->vertex(ccw(li))->point();
-  r = f->vertex(cw(li))->point();
-  CGAL_triangulation_precondition( orientation(p,q,r) == LEFTTURN);
+  
+  CGAL_triangulation_precondition( 
+		orientation(p,
+			    f->vertex(ccw(li))->point(),
+			    f->vertex(cw(li))->point()) == LEFTTURN);
 
   std::list<Face_handle> ccwlist;
   std::list<Face_handle> cwlist;
@@ -931,8 +932,8 @@ insert_outside_convex_hull_2(const Point& p, Face_handle f)
   while(! done) {
     fc--;
     li = fc->index(infinite_vertex());
-    q = fc->vertex(ccw(li))->point();
-    r = fc->vertex(cw(li))->point();
+    const Point& q = fc->vertex(ccw(li))->point();
+    const Point& r = fc->vertex(cw(li))->point();
     if(orientation(p,q,r) == LEFTTURN ) { ccwlist.push_back(&(*fc)); }
     else {done=true;}
   }
@@ -942,8 +943,8 @@ insert_outside_convex_hull_2(const Point& p, Face_handle f)
   while(! done){
     fc++;
     li = fc->index(infinite_vertex());
-    q = fc->vertex(ccw(li))->point();
-    r = fc->vertex(cw(li))->point();
+    const Point& q = fc->vertex(ccw(li))->point();
+    const Point& r = fc->vertex(cw(li))->point();
     if(orientation(p,q,r) == LEFTTURN ) { cwlist.push_back(&(*fc));}
     else {done=true;}
   }
@@ -1118,8 +1119,8 @@ test_dim_down(Vertex_handle v)
   while (is_infinite(fic)) {++fic;}
   Face_circulator done(fic);
   Face_handle start(fic); int iv = start->index(v);
-  Point p = start->vertex(cw(iv))->point(); 
-  Point q = start->vertex(ccw(iv))->point();
+  const Point& p = start->vertex(cw(iv))->point(); 
+  const Point& q = start->vertex(ccw(iv))->point();
   while ( dim1 && ++fic != done) {
     iv = fic->index(v);
     if (fic->vertex(ccw(iv)) != infinite_vertex()) {
@@ -1364,8 +1365,8 @@ fill_hole_delaunay(std::list<Edge> & first_hole)
       hole.pop_front();
   
   
-      Vertex_handle v0 = ff->vertex(ff->cw(ii)); Point p0 =v0->point();
-      Vertex_handle v1 = ff->vertex(ff->ccw(ii)); Point p1 =v1->point();
+      Vertex_handle v0 = ff->vertex(ff->cw(ii)); const Point& p0 = v0->point();
+      Vertex_handle v1 = ff->vertex(ff->ccw(ii)); const Point& p1 = v1->point();
       Vertex_handle v2 = infinite_vertex(); Point p2;
       Vertex_handle vv; Point p;
   
@@ -1606,7 +1607,7 @@ march_locate_2D(Face_handle start,
 		int& li) const
 {
   //    CGAL_triangulation_precondition( ! is_infinite(start) );
-  Point p(start->vertex(0)->point());
+  const Point& p = start->vertex(0)->point();
   if(xy_equal(t,p)) {
     lt = VERTEX;
     li = 0;

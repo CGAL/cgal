@@ -382,8 +382,8 @@ dual(const Edge &e) const
 
   CGAL_triangulation_precondition (!is_infinite(e));
   if( dimension()== 1 ){
-    Point p = (e.first)->vertex(cw(e.second))->point();
-    Point q = (e.first)->vertex(ccw(e.second))->point();
+    const Point& p = (e.first)->vertex(cw(e.second))->point();
+    const Point& q = (e.first)->vertex(ccw(e.second))->point();
     Line l  = geom_traits().construct_bisector_2_object()(p,q);
     return make_object(l);
   }
@@ -403,8 +403,8 @@ dual(const Edge &e) const
   else {
     f=e.first; i=e.second;
   }
-  Point p = f->vertex(cw(i))->point();
-  Point q = f->vertex(ccw(i))->point();
+  const Point& p = f->vertex(cw(i))->point();
+  const Point& q = f->vertex(ccw(i))->point();
   Line l = geom_traits().construct_bisector_2_object()(p,q);
   Direction d = geom_traits().construct_direction_of_line_2_object()(l);
   Ray r = geom_traits().construct_ray_2_object()(dual(f), d);
