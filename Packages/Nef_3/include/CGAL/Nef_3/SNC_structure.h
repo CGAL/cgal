@@ -120,6 +120,8 @@ public:
   /*{\Mtypemember lines in space.}*/
   typedef typename Kernel::Ray_3       Ray_3;
   /*{\Mtypemember rays in space.}*/
+  typedef typename Kernel::Triangle_3       Triangle_3;
+  /*{\Mtypemember triangles in space.}*/
 
   typedef typename Kernel::Aff_transformation_3 Aff_transformation_3;
 
@@ -218,6 +220,17 @@ public:
   typedef Object_list::const_iterator Object_const_handle;
   typedef Object_list::const_iterator SObject_const_handle;
 
+  // Halffacet triangle
+  class Halffacet_triangle_handle : public Halffacet_handle {
+    typedef Halffacet_handle Base;
+    Triangle_3 triangle;
+  public:
+    Halffacet_triangle_handle() : Base() {}
+    Halffacet_triangle_handle( Halffacet_handle h, Triangle_3 t = Triangle_3()) :
+      Base(h), triangle(t) {}
+    Triangle_3 get_triangle() { return triangle; }
+  };
+  
   class Halffacet_cycle_iterator : public Object_iterator 
   /*{\Mtypemember a generic handle to an object in the boundary
   of a facet. Convertible to |Object_handle|.}*/
@@ -1418,15 +1431,17 @@ public:
 	 a cycle entry of f.  The outermost cycle is stored at first
 	 on the facet's cycles list. */
       SObject_list f_entries(f->boundary_entry_objects_);
-      if( is_empty_range( f_entries.begin(),f_entries.end()))
+      if( is_empty_range( f_entries.begin(),f_entries.end())) {
 	D.store_boundary_object( u_min, f);
+	TRACEN("new outer cycle min. vertex: "<<D.point(D.vertex(u_min)));
+      }
       else {
 	SHalfedge_handle f_sedge;
 	CGAL_nef3_assertion( assign( f_sedge, 
 				     f->boundary_entry_objects_.front()));
 	assign( f_sedge, f->boundary_entry_objects_.front());
 	Point_3 p(D.point(D.vertex(f_sedge)));
-	if( !lexicographically_xyz_smaller(D.point(D.vertex(u_min)), p))
+	if( lexicographically_xyz_smaller(D.point(D.vertex(u_min)), p))
 	  D.store_as_first_boundary_object( u_min, f);
 	else
 	  D.store_boundary_object( u_min, f);
