@@ -730,24 +730,24 @@ public:
   { return N1.difference(*this).is_empty(); } 
 
     void transform( const Aff_transformation_3& aff) {
+        // precondition: the polyhedron as a bounded boundary
+        // (needs to be explicitly tested at some time)
         if( is_shared())
             clone_rep();
+        // only linear transform for the origin-centered sphere maps
+        Aff_transformation_3 linear( aff.hm(0,0), aff.hm(0,1), aff.hm(0,2),
+                                     aff.hm(1,0), aff.hm(1,1), aff.hm(1,2),
+                                     aff.hm(2,0), aff.hm(2,1), aff.hm(2,2),
+                                     aff.hm(3,3));
         SNC_decorator deco( snc());
-        Vertex_iterator vi = deco.vertices_begin();
-        for ( ; vi != deco.vertices_end(); ++vi) {
+        Vertex_iterator vi;
+        CGAL_nef3_forall_vertices( vi, snc()) {
+            //Vertex_iterator vi = deco.vertices_begin();
+            //for ( ; vi != deco.vertices_end(); ++vi) {
             if ( ! deco.is_infbox_vertex(vi)) {
                 vi->point() = vi->point().transform( aff);
-#if 0
-                SM_decorator sdeco;
-                for ( SVertex_iterator si = vi->svertices_begin();
-                      si != vi->svertices_end(); ++si) {
-                    Sphere_point& sp = sdeco.point(si);
-                    Point_3 p( sp.x(), sp.y(), sp.z());
-                    p = p.transform( aff);
-                    sp = Sphere_point( p.hx(), p.hy(), p.hz());
-                    //sdeco.point(si)=Point_3(sdeco.point(si)).transform( aff);
-                }
-#endif
+                SM_decorator sdeco(vi);
+                sdeco.transform( linear);
             }
         }
         Halffacet_iterator fi;
