@@ -46,11 +46,11 @@ int main(int argc, char **argv) {
   Del T;
 
   // Initial point sample
-  Oracle::Points initial_point_sample = O.random_points (10);
+  Oracle::Points initial_point_sample = O.random_points (20);
   T.insert (initial_point_sample.begin(), initial_point_sample.end());
   
   // Meshing criteria
-  CGAL::Chew_4_surfaces::Curvature_size_criterion<Del> c_s_crit (0.1);
+  //CGAL::Chew_4_surfaces::Curvature_size_criterion<Del> c_s_crit (0.1);
   CGAL::Chew_4_surfaces::Uniform_size_criterion<Del> u_s_crit (0.3);
   CGAL::Chew_4_surfaces::Aspect_ratio_criterion<Del> a_r_crit (30);
   std::vector<Criterion*> crit_vect(2);
@@ -58,7 +58,7 @@ int main(int argc, char **argv) {
   crit_vect[1] = &a_r_crit;
   Criteria C (crit_vect);
 
-  Tets_criteria tets_criteria(1.0);
+  Tets_criteria tets_criteria(0.5);
 
   std::cout << "Initial number of points: " << T.number_of_vertices() 
             << std::endl;

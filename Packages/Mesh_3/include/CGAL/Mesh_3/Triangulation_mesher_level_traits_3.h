@@ -44,6 +44,12 @@ struct Triangulation_mesher_level_traits_3
     typedef typename Cells::const_iterator Cells_const_iterator;
     typedef typename Facets::const_iterator Facets_const_iterator;
 
+    typedef typename Tr::Locate_type Locate_type;
+
+    Locate_type locate_type;
+    Cell_handle cell;
+    int i, j;
+
     Cells cells;
     Facets boundary_facets;
     Facets internal_facets;
@@ -53,9 +59,11 @@ struct Triangulation_mesher_level_traits_3
   {
     Zone zone;
 
-    const Cell_handle ch = t.locate(p);
+    zone.cell = t.locate(p, zone.locate_type, zone.i, zone.j);
 
-    t.find_conflicts(p, ch,
+    if( zone.locate_type == Tr::VERTEX ) return zone;
+
+    t.find_conflicts(p, zone.cell,
                      std::back_inserter(zone.boundary_facets),
                      std::back_inserter(zone.cells),
                      std::back_inserter(zone.internal_facets));
@@ -64,6 +72,9 @@ struct Triangulation_mesher_level_traits_3
 
   Vertex_handle insert(Tr&t, const Point& p, Zone& zone)
   {
+    if( zone.locate_type == Tr::VERTEX 
+	) return zone.cell->vertex(zone.i);
+
     const Facet& f = *(zone.boundary_facets.begin());
     return t.insert_in_hole(p, zone.cells.begin(), zone.cells.end(),
                             f.first, f.second);

@@ -149,9 +149,10 @@ public:
     return std::make_pair(true, true);
   }
 
-  void do_before_insertion(const Cell_handle&, const Point&,
+  void do_before_insertion(const Cell_handle&, const Point& p,
                            Zone& zone)
   {
+    std::cerr << "Refine_tets: before insertion of " << p << std::endl;
     for(typename Zone::Cells_iterator cit = zone.cells.begin();
 	cit != zone.cells.end();
 	++cit)
