@@ -28,22 +28,18 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+
+
 template <class K>
+inline
 Object
-intersection(const typename CGAL_WRAP(K)::Triangle_2 &tr1, 
-	     const typename CGAL_WRAP(K)::Triangle_2 &tr2,
-	     const K& k);
-} // namespace CGALi
-
-template <class R>
-Object
-intersection(const Triangle_2<R> &tr1, const Triangle_2<R>&tr2);
-
+intersection(const Triangle_2<K> &tr1, 
+	     const Triangle_2<K>& tr2)
+{
+  return CGALi::intersection(tr1, tr2, K());
+}
 
 CGAL_END_NAMESPACE
 
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 #include <CGAL/Triangle_2_Triangle_2_intersection.C>
-#endif
 #endif

@@ -451,13 +451,7 @@ intersection(const typename CGAL_WRAP(K)::Triangle_2 &tr1,
 } // namespace CGALi
 
 
-template <class K>
-Object
-intersection(const Triangle_2<K> &tr1, 
-	     const Triangle_2<K>& tr2)
-{
-  return CGALi::intersection(tr1, tr2, K());
-}
+
 
 CGAL_END_NAMESPACE
 

@@ -1,5 +1,9 @@
+2.28 (7 October 2003) [af]
+- Removed CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
+- Removed Circle_2_Circle_2_intersection.C
+
 2.27 (4 October 2003) [af]
-- Moved some code in Trialge_2_Triangle_2_do_intersect.h to CGALi and changed Triangle_2<K> to K::Triangle_2
+- Moved some code in Triangle_2_Triangle_2_do_intersect.h to CGALi and changed Triangle_2<K> to K::Triangle_2
 - Added definitions from a .C file to .h file so that automatic header inclusion can work
 
 2.26(26 September 2003) [af]
