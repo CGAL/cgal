@@ -30,7 +30,7 @@
 #define CGAL_PARTITIONED_POLYGON_2_H
 
 #include <list>
-#include <vector>
+#include <CGAL/vector.h>
 #include <CGAL/circulator.h>
 
 namespace CGAL {
@@ -100,12 +100,12 @@ class Partition_vertex;
 //   Traits::Leftturn_2
 //   Traits::Orientation_2
 template <class Traits_>
-class Partitioned_polygon_2 : public std::vector< Partition_vertex< Traits_ > >
+class Partitioned_polygon_2 : public CGALi::vector<Partition_vertex< Traits_ > >
 {
 public:
    typedef Traits_                                      Traits;
    typedef Partition_vertex<Traits>                     Vertex;
-   typedef typename std::vector< Vertex >::iterator     Iterator;
+   typedef typename CGALi::vector< Vertex >::iterator   Iterator;
    typedef Circulator_from_iterator<Iterator>           Circulator;
    typedef typename Traits::Polygon_2                   Subpolygon_2;
    typedef typename Traits::Point_2                     Point_2;
