@@ -1,3 +1,6 @@
+Version 1.166 (25 August 03)
+- A few doc fixes.
+
 Version 1.165 (1 August 03)
 - use of predefined kernels in examples and demos
 - doc updates.
