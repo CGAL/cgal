@@ -18,7 +18,8 @@
 
 #include <CGAL/_test_short_names_2.h>
 
-typedef CGAL::Cartesian<CGAL::Gmpz> Test_rep_cartesian;
+typedef CGAL::Cartesian<CGAL::Quotient<CGAL::Gmpz> > Test_rep_cartesian;
+//typedef CGAL::Cartesian<CGAL::Gmpz>  Test_rep_cartesian;
 typedef CGAL::Homogeneous<CGAL::Gmpz> Test_rep_homogeneous;
 
 //the following define shorter names to make the (g++/egcs) linker work 
