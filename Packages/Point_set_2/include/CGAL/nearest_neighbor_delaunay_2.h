@@ -12,10 +12,10 @@
 // release_date  : 
 //
 // file          : include/CGAL/nearest_neighbor_delaunay_2.h
-// package       : Point_set_2 (2.2)
+// package       : Point_set_2 (2.2.1)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 2.2
-// revision_date : 6 July 2001 
+// revision      : 2.2.1
+// revision_date : 10 July 2001 
 // author(s)     : Matthias Baesken
 //
 // coordinator   : Matthias Baesken, Trier  (<baesken@informatik.uni-trier.de>)
@@ -56,7 +56,6 @@ template<class Dt>
 typename Dt::Vertex_handle  nearest_neighbor(const Dt& delau, typename Dt::Vertex_handle v)
 {
   typedef typename Dt::Geom_traits                    Gt;
-  typedef typename Dt::Triangulation_data_structure   Tds;
   typedef typename Dt::Point                          Point;  
   typedef typename Dt::Vertex_circulator              Vertex_circulator;
   typedef typename Dt::Vertex_handle                  Vertex_handle;
@@ -117,7 +116,6 @@ template<class Dt, class OutputIterator>
 OutputIterator   nearest_neighbors(Dt& delau, const typename Dt::Point& p, int k, OutputIterator res)
 {
   typedef typename Dt::Geom_traits                    Gt;
-  typedef typename Dt::Triangulation_data_structure   Tds;
   typedef typename Dt::Vertex_handle                  Vertex_handle;
   typedef typename Dt::Vertex_iterator                Vertex_iterator;
 
@@ -165,7 +163,6 @@ template<class Dt, class OutputIterator>
 OutputIterator  nearest_neighbors(const Dt& delau, typename Dt::Vertex_handle v, int k, OutputIterator res)
 {  
   typedef typename Dt::Geom_traits                    Gt;
-  typedef typename Dt::Triangulation_data_structure   Tds;
   typedef typename Dt::Vertex_handle                  Vertex_handle;
   typedef typename Dt::Vertex_iterator                Vertex_iterator;
 
@@ -208,7 +205,6 @@ template<class Dt, class T2>
 void nearest_neighbors_list(const Dt& delau, typename Dt::Vertex_handle v, int k, std::list<T2>& res) 
 {  
   typedef typename Dt::Geom_traits                    Gt;
-  typedef typename Dt::Triangulation_data_structure   Tds;
   typedef typename Dt::Vertex_handle                  Vertex_handle;
   typedef typename Dt::Vertex_iterator                Vertex_iterator;
   typedef typename Dt::Vertex_circulator              Vertex_circulator;
