@@ -1,3 +1,7 @@
+2.8.21 (16 Jan 2002)
+- casts added to create_demo_window and create_and_display_demo_window 
+  functions in leda_window.h to avoid warnings
+
 2.8.20 (11 Dec 2001)
 
 - removed test/WindowStream/polygonal_2.C and 

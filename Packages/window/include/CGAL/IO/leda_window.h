@@ -12,10 +12,10 @@
 // release_date  : $CGAL_Date: 2001/06/19 $
 // 
 // file          : include/CGAL/IO/leda_window.h
-// package       : window (2.8.4)
+// package       : window (2.8.21)
 // maintainer    : Susan Hert <hert@mpi-sb.mpg.de>
-// revision      : 2.8.4
-// revision_date : 21 June 2001
+// revision      : 2.8.21
+// revision_date : 16 Jan 2002
 // author(s)     : Andreas Fabri
 //                 Stefan Schirra
 //
@@ -78,7 +78,11 @@ create_demo_window( float w = 512.0, float h = 512.0,
                          const char* str = "CGAL",
                          double x_extension = 1.0)
 {
+#if __LEDA__ >= 420
+  leda_window* Wptr = new leda_window((int) w, (int) h);
+#else
   leda_window* Wptr = new leda_window( w, h);
+#endif
   cgalize( *Wptr);
   double y_extension = x_extension * h / w;
   Wptr->init(-x_extension, x_extension, -y_extension);
@@ -93,7 +97,11 @@ create_and_display_demo_window(float w = 512.0, float h = 512.0,
                                     const char* str = "CGAL",
                                     double x_extension = 1.0)
 {
+#if __LEDA__ >= 420
+  leda_window* Wptr = new leda_window( (int) w, (int) h);
+#else
   leda_window* Wptr = new leda_window( w, h);
+#endif
   cgalize( *Wptr);
   double y_extension = x_extension * h / w;
   Wptr->init(-x_extension, x_extension, -y_extension);
