@@ -1,3 +1,6 @@
+2.40
+- CGAL_CFG_LONGNAME_PROBLEM moved to CGAL_CFG_LONGNAME_BUG
+
 2.39
 - 2 files were added CGAL_CFG_LONGNAME_PROBLEM.C in test/Configuration and testfiles
 - CGAL_CFG_NO_LONGNAME_PROBLEM.C will be removed next release.

@@ -7,7 +7,7 @@
 // release       : $CGAL_Revision: CGAL-2.2-I-2 $
 // release_date  : $CGAL_Date: 2000/02/04 $
 //
-// file          : config/testfiles/CGAL_CFG_LONGNAME_PROBLEM.C
+// file          : config/testfiles/CGAL_CFG_LONGNAME_BUG.C
 // package       : Configuration (2.1)
 // author(s)     : various
 //
@@ -15,7 +15,7 @@
 //
 // ======================================================================
 
-// CGAL_CFG_LONGNAME_PROBLEM.C
+// CGAL_CFG_LONGNAME_BUG.C
 // ---------------------------------------------------------------------
 // A short test program to evaluate a C++ compiler.
 // This program is used by cgal_configure.
@@ -23,7 +23,7 @@
 // ---------------------------------------------------------------------
 
 //| If a compiler (or assembler or linker) has problems with long names
-//| CGAL_CFG_LONGNAME_PROBLEM is set.
+//| CGAL_CFG_LONGNAME_BUG is set.
 
 #pragma warning( error : 4503)
 
