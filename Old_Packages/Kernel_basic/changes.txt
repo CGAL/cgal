@@ -1,4 +1,4 @@
-3.69   (4 December 2001)
+3.69   (5 December 2001)
 - Add functional_base.h from STL extensions.
 
 3.68   (2 December 2001)
