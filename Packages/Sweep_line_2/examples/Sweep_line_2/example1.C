@@ -1,5 +1,3 @@
-#define CGAL_SWEEP_LINE_DEBUG
-
 // examples/Sweep_line/example1.C
 // ------------------------------
 #include <CGAL/Cartesian.h>
