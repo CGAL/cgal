@@ -1,3 +1,5 @@
+1.0.6  SunPro 5.3 fix added (suggested by Michael Hoffmann)
+
 1.0.5  fix for SunPro CC added in  _base_window.C
 
 1.0.4  cursorfont.h changed

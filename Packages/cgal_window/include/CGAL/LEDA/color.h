@@ -12,10 +12,10 @@
 // release_date  : $CGAL_Date: 2001/06/21 $
 //
 // file          : include/CGAL/LEDA/color.h
-// package       : cgal_window (1.0.3)
+// package       : cgal_window (1.0.6)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 1.0.3
-// revision_date : 25 June 2001
+// revision      : 1.0.6
+// revision_date : 13 September 2001
 // author(s)     : Matthias Baesken, Algorithmic Solutions
 //
 // coordinator   : Matthias Baesken, Trier  (<baesken@informatik.uni-trier.de>) 
@@ -100,8 +100,7 @@ public:
 
   operator int() const  { return col_index; }
 
-
-#if defined(__SUNPRO_CC) && (__SUNPRO_CC >= 0x500)
+#if defined(__SUNPRO_CC) && (__SUNPRO_CC >= 0x500) && (__SUNPRO_CC < 0x530)
 
 friend bool operator==(const color& c1 , const color& c2)
 { return c1.col_index == c2.col_index; }
