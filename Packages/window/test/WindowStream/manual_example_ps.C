@@ -26,7 +26,6 @@
 int main() { return 0; }
 #else
 #include <CGAL/Cartesian.h>
-#include <CGAL/Segment_2.h>
 #include <CGAL/IO/Postscript_file_stream.h>
 
 typedef CGAL::Point_2< CGAL::Cartesian<double> >     Point;
