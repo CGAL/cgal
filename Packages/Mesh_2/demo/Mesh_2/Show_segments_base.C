@@ -18,6 +18,8 @@
 //
 // Author(s)     : Laurent Rineau
 
+#ifdef CGAL_USE_QT
+
 #include "Show_segments_base.h"
 
 namespace CGAL {
@@ -55,3 +57,7 @@ namespace CGAL {
 
 // moc_source_file: Show_segments_base.h
 #include "Show_segments_base.moc"
+
+
+#endif
+
