@@ -43,6 +43,8 @@
 class CGAL_Interval_nt_advanced
 {
   friend CGAL_Interval_nt_advanced sqrt(const CGAL_Interval_nt_advanced&);
+  friend CGAL_Interval_nt_advanced operator*
+      (const double &, const CGAL_Interval_nt_advanced&);
   friend double CGAL_to_double(const CGAL_Interval_nt_advanced&);
 
 private:
@@ -97,6 +99,9 @@ public:
   CGAL_Interval_nt_advanced& operator-=(const CGAL_Interval_nt_advanced& d);
   CGAL_Interval_nt_advanced& operator*=(const CGAL_Interval_nt_advanced& d);
   CGAL_Interval_nt_advanced& operator/=(const CGAL_Interval_nt_advanced& d);
+
+  // For speed...
+  CGAL_Interval_nt_advanced operator*(const double& d) const;
 
   bool is_valid() const
   { return CGAL_is_valid(inf) && CGAL_is_valid(sup) && (sup >= -inf); }
@@ -171,6 +176,17 @@ inline CGAL_Interval_nt_advanced CGAL_Interval_nt_advanced::operator*
     };
   };
 }
+
+inline CGAL_Interval_nt_advanced CGAL_Interval_nt_advanced::operator*
+  (const double& d) const
+{
+  if (d>=0)	return CGAL_Interval_nt_advanced(-(inf*d), sup*d);
+  else		return CGAL_Interval_nt_advanced(-(sup*(-d)), inf*(-d));
+}
+
+inline CGAL_Interval_nt_advanced operator*
+  (const double& d, const CGAL_Interval_nt_advanced &t)
+{ return t*d; }
 
 inline CGAL_Interval_nt_advanced CGAL_Interval_nt_advanced::operator/
   (const CGAL_Interval_nt_advanced& d) const
@@ -247,6 +263,7 @@ ostream& operator<<(ostream& os, const CGAL_Interval_nt_advanced& d)
 class CGAL_Interval_nt : public CGAL_Interval_nt_advanced
 {
   friend CGAL_Interval_nt sqrt(const CGAL_Interval_nt&);
+  friend CGAL_Interval_nt operator* (const double &, const CGAL_Interval_nt &);
 
 public:
 
@@ -269,6 +286,8 @@ public:
   CGAL_Interval_nt operator-(const CGAL_Interval_nt& d) const ;
   CGAL_Interval_nt operator*(const CGAL_Interval_nt& d) const ;
   CGAL_Interval_nt operator/(const CGAL_Interval_nt& d) const ;
+  // For speed...
+  CGAL_Interval_nt operator*(const double& d) const;
   // These have exactly the same code as the advanced class.
   // How can I avoid duplicating the code ?
   CGAL_Interval_nt& operator+=(const CGAL_Interval_nt& d) ;
@@ -320,6 +339,26 @@ inline CGAL_Interval_nt CGAL_Interval_nt::operator*(const CGAL_Interval_nt& d)
   return tmp;
 }
 
+inline CGAL_Interval_nt CGAL_Interval_nt::operator* (const double& d)
+    const CGAL_NAMED_RETURN_VALUE_OPT_1
+{
+  CGAL_FPU_set_rounding_to_infinity();
+  CGAL_NAMED_RETURN_VALUE_OPT_2
+  if (d>=0) {
+      tmp.inf = inf*d;
+      tmp.sup = sup*d;
+  } else {
+      tmp.inf = sup*(-d);
+      tmp.sup = inf*(-d);
+  }
+  CGAL_FPU_set_rounding_to_nearest();
+  CGAL_NAMED_RETURN_VALUE_OPT_3
+}
+
+inline CGAL_Interval_nt operator*
+  (const double& d, const CGAL_Interval_nt &t)
+{ return t*d; }
+
 inline CGAL_Interval_nt CGAL_Interval_nt::operator/(const CGAL_Interval_nt& d)
     const
 {
@@ -328,6 +367,8 @@ inline CGAL_Interval_nt CGAL_Interval_nt::operator/(const CGAL_Interval_nt& d)
   CGAL_FPU_set_rounding_to_nearest();
   return tmp;
 }
+
+// For the following, use a base common class, and virtual functions ?
 
 inline CGAL_Interval_nt &
   CGAL_Interval_nt::operator+=(const CGAL_Interval_nt& d)
