@@ -1,6 +1,6 @@
 //examples/Arrangement_2/example10.C
 
-// Define shorter names to please linker (g++/egcs)
+// Define shorter names to please linker (g++)
 #define Arrangement_2 Ar
 #define _In_place_list_iterator IPLI
 #define Cartesian CRTS
@@ -29,8 +29,6 @@ typedef Traits::Curve                                 Curve;
 typedef CGAL::Arr_base_node<Curve>                    Base_node;
 typedef CGAL::Arr_2_default_dcel<Traits>              Dcel;
 typedef CGAL::Arrangement_2<Dcel,Traits,Base_node >   Arr_2;
-
-using namespace std;
 
 int main() {
    Arr_2 arr;
