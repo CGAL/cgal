@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 1997 The CGAL Consortium
+// Copyright (c) 2003 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -14,7 +14,6 @@
 // file          : config/testfiles/CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG.C
 // package       : Configuration (2.62)
 // maintainer    : Geert-Jan Giezeman <geert@cs.uu.nl>
-// source        :
 // revision      : 
 // revision_date : 
 // author(s)     : Radu Ursu
@@ -30,13 +29,14 @@
 // The following documentation will be pasted in the generated configfile.
 // ---------------------------------------------------------------------
 
-//| The flag CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG is set, if 
-//| a compiler does not support the definition of the members templates 
-//| out of line. The solution is to put the definition inside the class.
-//| This is a feature of cl1200 and cl1300.
+//| The flag CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG is set,
+//| if a compiler does not support the definition of member templates
+//| out of line, i.e. outside class scope. The solution is to put the
+//| definition inside the class. This is a feature of cl1200 and
+//| cl1300.
 
-template<class A>
-class B{
+template <class A>
+class B {
 public:
   typedef A Res;
 
