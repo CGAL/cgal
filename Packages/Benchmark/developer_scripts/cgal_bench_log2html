@@ -223,6 +223,12 @@ while ($line = <LOGFILE>) {
     } elsif ($name =~ m/Leda Kernel/) {
       $kernel = 'leda_kernel';
       $time_class = 'leda_kernel_time';
+    } elsif ($name =~ m/new Conics/) {
+      $kernel = 'leda_kernel';
+      $time_class = 'leda_kernel_time';
+    } elsif ($name =~ m/old Conics/) {
+      $kernel = 'cgal_kernel';
+      $time_class = 'cgal_kernel_time';
     } else {
       next;
     }
