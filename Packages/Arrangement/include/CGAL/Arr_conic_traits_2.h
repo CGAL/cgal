@@ -767,7 +767,7 @@ public:
     else
     {
       // No common endpoint found.
-      bool     found_common_endpoint = false;
+      CGAL_precondition_code (bool     found_common_endpoint = false;);
       CGAL_precondition (found_common_endpoint);
     }
 
