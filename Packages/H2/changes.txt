@@ -1,3 +1,6 @@
+2.88 (30 May 2003)
+- Workaround "using namespace" for VC++ 7.0.
+
 2.87 (22 May 2003) [mh]
 - Fixed bug in Homogeneous/function_objects.h
 
