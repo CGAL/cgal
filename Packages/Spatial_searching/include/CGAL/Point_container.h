@@ -59,15 +59,17 @@ namespace CGAL {
   private:
     Point_list p_list; // list of pointers to points
     int built_coord;    // a coordinate for which the pointer list is built
+    int the_size;
     Kd_tree_rectangle<NT> bbox;       // bounding box, i.e. rectangle of node
     Kd_tree_rectangle<NT> tbox;       // tight bounding box, 
 				      // i.e. minimal enclosing bounding
 	                	      // box of points
+	                	    
     
 
   public:
     std::ostream& print(std::ostream& s) {
-      s << "Points container of size " << size() << "\n cell:";
+      s << "Points container of size " << the_size << "\n cell:";
       s << bbox; // bbox.print(s);
       s << "\n minimal box enclosing points:"; s << tbox; // tbox.print(s);
       return s;
@@ -169,8 +171,12 @@ namespace CGAL {
 	}
 
     //  points
-    inline unsigned int size() const { return p_list.size(); }
-
+    inline int size() const {
+    	return the_size;
+    }
+    
+    inline void set_size() {the_size=p_list.size(); }
+    
     inline typename Point_list::const_iterator begin() const {
       return p_list.begin();
     }
@@ -196,11 +202,12 @@ namespace CGAL {
 
       // p_list[max_span_coord()].sort(comp_coord_val<Item>(max_span_coord()));
       built_coord = max_span_coord();
+      set_size();
     }
 
 	// building an empty container 
 	Point_container(int d) :
-	bbox(d), tbox(d) {}
+	bbox(d), tbox(d), the_size(0) {}
 
 	void swap(Point_container<Item>& c) {
 
@@ -226,13 +233,20 @@ namespace CGAL {
                 Kd_tree_rectangle<NT> h_tbox(tbox);
                 tbox = c.tbox;
                 c.tbox = h_tbox;
+                
+                //work-around
+                h=the_size;
+                the_size = c.the_size;
+                c.the_size = h;
+                
 	}
 
+        /* not used
 	void add_points_from_container(Point_container<Item>& c) {
 	  // assert(built_coord==c.built_coord);
 	  merge(p_list, c.p_list); 
 		// Less_lexicographically_d());
-	}
+	} */
 
     void recompute_tight_bounding_box() {
 		tbox.update_from_point_pointers(p_list.begin(),
@@ -313,6 +327,9 @@ namespace CGAL {
 	c.p_list.begin(),
 	c.p_list.end(),c.p_list.empty());
         
+        c.set_size();
+        set_size();
+        
         // assert(is_valid()); 
         // assert(c.is_valid());
     }
@@ -345,17 +362,21 @@ template <class Item_, class Value>
 
 
       NT median(const int split_coord) {
+      
+     
         
       p_list.sort(comp_coord_val<Item,int>(split_coord));
       
       typename Point_list::iterator 
       median_point_ptr=p_list.begin();
-      for (unsigned int i = 0; i < p_list.size()/2-1; i++, 
+      for (unsigned int i = 0; i < the_size/2-1; i++, 
 		   median_point_ptr++) {}
       
       NT val1=(*(*median_point_ptr))[split_coord];
       median_point_ptr++;
       NT val2=(*(*median_point_ptr))[split_coord];
+      
+      
       
       return (val1+val2)/NT(2); 
     };
@@ -365,7 +386,7 @@ template <class Item_, class Value>
 			p_list.clear(); 
     }
 
-    inline bool empty() const { return p_list.size() == 0;}
+    inline bool empty() const { return the_size == 0;}
      
      
 

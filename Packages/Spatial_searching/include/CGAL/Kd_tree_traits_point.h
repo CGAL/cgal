@@ -97,13 +97,13 @@ namespace CGAL {
 			case Split_rules::MEDIAN_OF_MAX_SPREAD:
 				{Median_of_max_spread<Item> M;
 				 sep=M.rule(c0);
-				 c0.split_container(c1,sep);}
+				 c0.split_container(c1,sep,true);}
 			    break;
 
 			case Split_rules::MEDIAN_OF_RECTANGLE:
 				{Median_of_rectangle<Item> M;
 				 sep=M.rule(c0);
-				 c0.split_container(c1,sep);}
+				 c0.split_container(c1,sep,true);}
 			    break;
 
 			case Split_rules::MIDPOINT_OF_MAX_SPREAD:
