@@ -1,8 +1,27 @@
+// ======================================================================
+//
+// Copyright (c) 2001 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : $CGAL_Revision: CGAL-2.3-I-79 $
+// release_date  : $CGAL_Date: 2001/07/03 $
+//
+// file          : include/CGAL/Arr_segment_circle_traits.h
+// package       : Arrangement 
+// maintainer    : Eyal Flato <flato@math.tau.ac.il>
+// author(s)     : Ron Wein <wein@post.tau.ac.il>
+// coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
+//
+// ======================================================================
 #ifndef CGAL_ARR_CONIC_TRAITS_H
 #define CGAL_ARR_CONIC_TRAITS_H
 
-#include <CGAL/Cartesian.h>
-//#include <CGAL/basic.h>
+#include <CGAL/basic.h>
 //#include <CGAL/Segment_2.h>
 //#include <CGAL/Circle_2.h>
 #include <list>
@@ -686,14 +705,6 @@ class Arr_segment_circle_traits
     bool cv2_is_left = (compare_x(cv2.target(), p) == SMALLER);
     bool cvx_is_left = (compare_x(cvx.target(), p) == SMALLER);
 
-    // Check the case of vertical segments.
-    //cout << "c1 = " << cv1 << " " 
-    // << (cv1.is_vertical_segment() ? "V" : (cv1_is_left ? "L" : "R")) << endl;
-    //cout << "c2 = " << cv2 << " " 
-    // << (cv2.is_vertical_segment() ? "V" : (cv2_is_left ? "L" : "R")) << endl;
-    //cout << "cx = " << cvx << " " 
-    // << (cvx.is_vertical_segment() ? "V" : (cvx_is_left ? "L" : "R")) << endl;
-
     if (cv1.is_vertical_segment())
     {
       // cv1 is a vertical segment:
@@ -716,30 +727,28 @@ class Arr_segment_circle_traits
       {
 	if (cv2_is_left)
 	{
-	  //cout << "case 1.1: " 
-	  //     << (curve_compare_at_x_left (cv2, cvx, p) != SMALLER) << endl;
-	  return (curve_compare_at_x_left (cv2, cvx, p) != SMALLER);
+	  return ((!cvx_is_left) ||
+		  (cvx_is_left &&
+		   curve_compare_at_x_left (cv2, cvx, p) == LARGER));
 	}
 	else
 	{
-	  //cout << "case 1.2: "
-	  //     << (curve_compare_at_x_right (cv2, cvx, p) == SMALLER) << endl;
-	  return (curve_compare_at_x_right (cv2, cvx, p) == SMALLER);
+	  return (!cvx_is_left &&
+		  curve_compare_at_x_right (cv2, cvx, p) == SMALLER);
 	}
       }
       else
       {
 	if (cv2_is_left)
 	{
-	  //cout << "case 1.3: "
-	  //     << (curve_compare_at_x_left (cv2, cvx, p) == LARGER) << endl;
-	  return (curve_compare_at_x_left (cv2, cvx, p) == LARGER);
+	  return (cvx_is_left &&
+		  curve_compare_at_x_left (cv2, cvx, p) == LARGER);
 	}
 	else
 	{
-	  //cout << "case 1.4: "
-	  //     << (curve_compare_at_x_right (cv2, cvx, p) != LARGER) << endl;
-	  return (curve_compare_at_x_right (cv2, cvx, p) != LARGER);
+	  return ((cvx_is_left) ||
+		  (!cvx_is_left &&
+		   curve_compare_at_x_right (cv2, cvx, p) == SMALLER));
 	}
       }
     }
@@ -753,30 +762,28 @@ class Arr_segment_circle_traits
       {
 	if (cv1_is_left)
 	{
-	  //cout << "case 2.1: "
-	  //     << (curve_compare_at_x_left (cv1, cvx, p) == SMALLER) << endl;
-	  return (curve_compare_at_x_left (cv1, cvx, p) == SMALLER);
+	  return (cvx_is_left &&
+		  curve_compare_at_x_left (cv1, cvx, p) == SMALLER);
 	}
 	else
 	{
-	  //cout << "case 2.2: "
-	  //     << (curve_compare_at_x_right (cv1, cvx, p) != SMALLER) << endl;
-	  return (curve_compare_at_x_right (cv1, cvx, p) != SMALLER);
+	  return ((cvx_is_left) ||
+		  (!cvx_is_left &&
+		   curve_compare_at_x_right (cv1, cvx, p) == LARGER));
 	}
       }
       else
       {
 	if (cv1_is_left)
 	{
-	  //cout << "case 2.3: "
-	  //     << (curve_compare_at_x_left (cv1, cvx, p) != LARGER) << endl;
-	  return (curve_compare_at_x_left (cv1, cvx, p) != LARGER);
+	  return ((!cvx_is_left) ||
+		  (cvx_is_left &&
+		   curve_compare_at_x_left (cv1, cvx, p) == SMALLER));
 	}
 	else
 	{
-	  //cout << "case 2.4: "
-	  //     << (curve_compare_at_x_right (cv1, cvx, p) == LARGER) << endl;
-	  return (curve_compare_at_x_right (cv1, cvx, p) == LARGER);
+	  return (cvx_is_left &&
+		  curve_compare_at_x_right (cv1, cvx, p) == LARGER);
 	}
       }
     }
@@ -791,18 +798,18 @@ class Arr_segment_circle_traits
 	if (cv1_is_left && !cv2_is_left)
 	  return (true);
 	else if (cv1_is_left && cv2_is_left)
-	  return (curve_compare_at_x_left(cv1, cv2, p) == SMALLER);
-	else if (!cv1_is_left && !cv2_is_left) 
 	  return (curve_compare_at_x_left(cv1, cv2, p) == LARGER);
+	else if (!cv1_is_left && !cv2_is_left) 
+	  return (curve_compare_at_x_right(cv1, cv2, p) == SMALLER);
       }
       else
       {
 	if (!cv1_is_left && cv2_is_left)
 	  return (true);
 	else if (cv1_is_left && cv2_is_left)
-	  return (curve_compare_at_x_left(cv1, cv2, p) == LARGER);
-	else if (!cv1_is_left && !cv2_is_left)
 	  return (curve_compare_at_x_left(cv1, cv2, p) == SMALLER);
+	else if (!cv1_is_left && !cv2_is_left)
+	  return (curve_compare_at_x_right(cv1, cv2, p) == LARGER);
       }
 
       return (false);
