@@ -1,0 +1,94 @@
+#ifndef __VIEWER_H__
+#define __VIEWER_H__
+
+#include <qwidget.h>
+#include <qmainwindow.h>
+#include <qmenubar.h>
+#include <qscrollview.h>
+#include <qtoolbar.h>
+#include <qpushbutton.h>
+#include <qlabel.h>
+#include <qlineedit.h>
+#include <qstatusbar.h>
+#include <list>
+#include <iostream>
+#include <math.h>
+#include <CGAL/basic.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Point_2.h>
+#include <CGAL/Segment_2.h>
+// #include <CGAL/Triangulation_euclidean_traits_2.h>
+#include <CGAL/Constrained_triangulation_2.h>
+#include <CGAL/Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/Constrained_triangulation_face_base_2.h> 
+#include <CGAL/triangulation_assertions.h>
+#include <CGAL/Triangulation_short_names_2.h>
+#include <CGAL/Arithmetic_filter.h>
+//#include <CGAL/double.h>
+//#include <LEDA/real.h>
+#include "Mesh.h"
+
+typedef CGAL::Cartesian<double>                   Gt;
+// typedef CGAL::Triangulation_euclidean_traits_2<rep>    Gt;
+typedef CGAL::Triangulation_vertex_base_2<Gt>         Vb;
+typedef CGAL::Constrained_triangulation_face_base_2<Gt>           Fb;
+typedef CGAL::Triangulation_data_structure_using_list_2<Vb, Fb> Tds;
+typedef Mesh<Gt, Tds> Msh;
+
+class TrViewer;
+
+class TrFrame : public QMainWindow {
+  Q_OBJECT  // Qt object
+    
+ public:
+  TrFrame();
+  void setStatus(int x, int y);
+ protected:
+  QScrollView *scr;
+  TrViewer *trv;
+  QLineEdit *editW, *editH;
+  QLabel *lblStatus;
+ private slots:
+   void clearTriangulation();
+   void openTriangulation();
+   void saveTriangulation();
+   void onChangeSizes();
+   void mesh();
+ public:
+   friend class TrViewer;
+};
+
+struct Point {
+  int x, y;
+  Point(int a, int b):x(a), y(b){}
+};
+
+struct Line {
+  int x1,y1,x2,y2;
+  Line(int a, int b, int c, int d):x1(a), y1(b), x2(c), y2(d) {}
+};
+
+class TrViewer : public QWidget {
+  Q_OBJECT
+ public:
+  TrViewer(TrFrame *f, QWidget *parent);
+ protected:
+  list<Point> points;
+  list<Line> lines;
+  Msh mesh;
+  TrFrame *frame;
+  void paintEvent(QPaintEvent *pe);
+  void mouseMoveEvent(QMouseEvent *me);
+  bool dragging;
+  int startx, starty, endx, endy, oldx, oldy;
+  void mousePressEvent(QMouseEvent *me);
+  void mouseReleaseEvent(QMouseEvent *me);
+  void keyPressEvent(QKeyEvent *ke);
+ public slots:
+  void onStep();
+  void onMesh();
+ public:
+  friend class TrFrame;
+};
+
+#endif
