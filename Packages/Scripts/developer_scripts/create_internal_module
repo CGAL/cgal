@@ -150,7 +150,7 @@ sub create_packages_dir(){
 
 
 sub install_packages() {
-  my ($filename, $direc, %is_permited_package, $package_name);
+  my ($filename, $direc, %is_permited_package, $package_name, $tmp_package_name);
   print "Installing packages ...\n";
   chdir $RELEASEDIR or die;
   if (! -f $packages_file){
@@ -181,19 +181,19 @@ sub install_packages() {
       system('tar', '-cf', "$RELEASEDIR/temppack.tar", '--exclude=CVS', '--exclude=dont_submit', '--exclude=maintainer', '--exclude=description.txt', '--exclude=changes.txt', '--exclude=TODO', '--exclude=wrapper.tex', '--exclude=version', '--exclude=.cvsignore',"$package_name");
     }
     system('mv', "$RELEASEDIR/temppack.tar", "$RELEASEDIR/$MODULE_NAME/");
-    
 
     chdir "$RELEASEDIR/$MODULE_NAME" or die;
     system('tar', '-xf', "temppack.tar");
-    opendir packagename, "$package_name";
+    $tmp_package_name = "temp_${package_name}";
+    system("mv", "$package_name", "$tmp_package_name");
+    opendir packagename, "$tmp_package_name";
     @fichiers = readdir packagename;
     closedir packagename;
     shift @fichiers; shift @fichiers;
     foreach $fichier (@fichiers){
-      system('cp', '-r', "$package_name/$fichier", "$RELEASEDIR/$MODULE_NAME");
+      system("cp", "-r", "$tmp_package_name/$fichier", "$RELEASEDIR/$MODULE_NAME");
     }
-    system('rm', '-rf', "$package_name");
-
+    system('rm', '-rf', "$tmp_package_name");
   }
   closedir ALLPACKAGESDIR;
   unlink 'temppack.tar', 'description.txt', 'long_description.txt', 'changes.txt', 'submission_info', 'long_description.txt.old';
@@ -995,7 +995,7 @@ chdir "$RELEASEDIR/$MODULE_NAME" or die;
 system("rm", "-rf", "test");
 system("rm", "-rf", "developer_scripts"); 
 system("rm", "-rf", "Modules");
-system("rm", "-rf", "web");
+system("rm", "-rf", "web", "noweb");
 
 @file_list_to_be_removed = glob("*");
 foreach $i  (@file_list_to_be_removed){

@@ -60,7 +60,7 @@ do
     do
       if [ -r "${j}" ]; then
         printf "  Updating package ${j} ...\n" 
-        cvs update ${j}
+        cvs -q update ${j}
       else
         printf "  Check out package ${j} ...\n" 
         cvs co -P ${j}

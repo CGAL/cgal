@@ -148,7 +148,7 @@ sub create_packages_dir(){
 
 
 sub install_packages() {
-  my ($filename, $direc, %is_permited_package, $package_name);
+  my ($filename, $direc, %is_permited_package, $package_name, $tmp_package_name);
   print "Installing packages ...\n";
   chdir $RELEASEDIR or die;
   if (! -f $packages_file){
@@ -183,14 +183,16 @@ sub install_packages() {
 
     chdir "$RELEASEDIR/$VERSION" or die;
     system('tar', '-xf', "temppack.tar");
-    opendir packagename, "$package_name";
+    $tmp_package_name = "temp_${package_name}";
+    system("mv", "$package_name", "$tmp_package_name");
+    opendir packagename, "$tmp_package_name";
     @fichiers = readdir packagename;
     closedir packagename;
     shift @fichiers; shift @fichiers;
     foreach $fichier (@fichiers){
-      system('cp', '-r', "$package_name/$fichier", "$RELEASEDIR/$VERSION");
+      system('cp', '-r', "$tmp_package_name/$fichier", "$RELEASEDIR/$VERSION");
     }
-    system('rm', '-rf', "$package_name");
+    system('rm', '-rf', "$tmp_package_name");
 
   }
   closedir ALLPACKAGESDIR;
