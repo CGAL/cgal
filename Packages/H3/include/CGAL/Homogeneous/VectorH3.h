@@ -223,17 +223,6 @@ VectorH3<R>::operator/(const typename VectorH3<R>::FT& f) const
 		              hz()*f.denominator(), hw()*f.numerator() ); }
 
 template <class R>
-CGAL_KERNEL_INLINE
-typename R::Vector_3
-cross_product(const VectorH3<R>& a, const VectorH3<R>& b)
-{
- return typename R::Vector_3(a.hy()*b.hz() - a.hz()*b.hy(),
-                             a.hz()*b.hx() - a.hx()*b.hz(),
-                             a.hx()*b.hy() - a.hy()*b.hx(),
-                             a.hw()*b.hw() );
-}
-
-template <class R>
 inline
 typename R::Point_3
 operator+(const Origin& , const VectorH3<R>& v)

@@ -25,7 +25,6 @@
 #define CGAL_CARTESIAN_BASIC_CONSTRUCTIONS_3_H
 
 #include <CGAL/Cartesian/point_constructions_3.h>
-#include <CGAL/Cartesian/vector_constructions_3.h>
 #include <CGAL/Cartesian/plane_constructions_3.h>
 #include <CGAL/Cartesian/ft_constructions_3.h>
 

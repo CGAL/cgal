@@ -88,6 +88,15 @@ circumcenter(const typename CGAL_WRAP(K)::Triangle_3 &t, const K& k)
 
 template < class K >
 inline
+typename K::Vector_3
+cross_product(const typename CGAL_WRAP(K)::Vector_3 &v,
+              const typename CGAL_WRAP(K)::Vector_3 &w, const K& k)
+{
+  return k.construct_cross_product_vector_3_object()(v, w);
+}
+
+template < class K >
+inline
 typename K::Point_3
 midpoint(const typename CGAL_WRAP(K)::Point_3 &p,
          const typename CGAL_WRAP(K)::Point_3 &q, const K &k)

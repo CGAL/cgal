@@ -86,6 +86,14 @@ circumcenter(const Triangle_3<K> &t)
 
 template < class K >
 inline
+typename K::Vector_3
+cross_product(const Vector_3<K> &v, const Vector_3<K> &w)
+{
+  return CGALi::cross_product(v, w, K());
+}
+
+template < class K >
+inline
 typename K::Point_3
 midpoint(const Point_3<K> &p, const Point_3<K> &q)
 {
