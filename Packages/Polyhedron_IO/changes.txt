@@ -1,5 +1,8 @@
 Polyhedron_IO Package: Release changes:
 ---------------------------------------------------------------------
+
+- Replaced #define OUT/IN with CGAL_OUT/CGAL_IN to avoid nameclash (mingw/g++) [af]
+
 3.16 (16 July 2003)
      - Changed example off2stl.C to avoid error in testsuite of VC7.0 that is confused with declaration and definition of one variable in the for scope and outside it
 
