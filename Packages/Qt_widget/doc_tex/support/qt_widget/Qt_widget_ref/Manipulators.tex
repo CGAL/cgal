@@ -2,7 +2,7 @@
 % | CGAL Reference Manual: Reference manual for Qt_widget.tex
 % +------------------------------------------------------------------------+
 % |
-% | 13.12.2001	Radu Ursu
+% | 20.12.2001	Radu Ursu
 % | 
 % | \RCSdef{\qtwidgetRev}{$Revision$}
 % | \RCSdefDate{\qtwidgetDate}{$Date$}
@@ -20,6 +20,26 @@ drawing.
 Here, we simply document the use of these operators which is all the
 user needs to know to modify the state of a stream. The design of
 \ccc{manipulators} and \ccc{manipulator-creator} being given after.
+
+\ccFunction{Qt_widget& operator<<(Qt_widget& win, BackgroundColor(const
+Color& c));}{Sets the color used for backgroundcolor.}
+\ccGlue
+
+\ccFunction{Qt_widget& operator<<(Qt_widget& win, FillColor(const
+Color& c));}{Sets the color used for filling the objects.}
+\ccGlue
+
+\ccFunction{Qt_widget& operator<<(Qt_widget& win, LineWidth(const
+Color& c));}{Sets the width of the line for drawing objects.}
+\ccGlue
+
+\ccFunction{Qt_widget& operator<<(Qt_widget& win, PointSize(const
+Color& c));}{Sets the size of the points.}
+\ccGlue
+
+
+
+
 
 
 % +-----------------------------------------------------+
