@@ -1,3 +1,6 @@
+1.6.5 (25 April 2003)
+- some demos fixed
+
 1.6.4 (3 Jan 2003)
 - arrangement and planar map demos changed
 
