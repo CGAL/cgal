@@ -394,8 +394,6 @@ locate(const Point& p,
   Face_handle position;
   Vertex_handle nearest;
   int level  = Triangulation_hierarchy_2__maxlevel;
-//   typename Geom_traits::Less_distance_to_point_2 
-//     closer = geom_traits().less_distance_to_point_2_object(p);
   typename Geom_traits::Compare_distance_2 
     closer = geom_traits().compare_distance__2_object();
 
