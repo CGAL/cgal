@@ -506,7 +506,8 @@ Curve read_polyline_curve(std::ifstream& file, bool reverse_order)
   }
   
   void read_file_build_arrangement(std::ifstream& input_file, 
-				   std::ifstream& file, bool reverse_order)
+				   std::ifstream& file,
+                                   bool /* reverse_order */)
   {
       NT    x,y; 
       Curve curr_curve;
