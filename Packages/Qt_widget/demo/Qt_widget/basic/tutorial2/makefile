@@ -35,11 +35,14 @@ LDFLAGS = \
 
 all: tutorial2$(EXE_EXT)
 
-tutorial2$(EXE_EXT): tutorial2$(OBJ_EXT)
+tutorial2.moc :
+	$(QT_MOC) tutorial2.C -o tutorial2.moc
+
+tutorial2$(EXE_EXT): tutorial2.moc tutorial2$(OBJ_EXT)
 	$(CGAL_CXX)  $(EXE_OPT)tutorial2 tutorial2$(OBJ_EXT) $(LDFLAGS)
 
 clean:
-	rm -f tutorial2.o
+	rm -f tutorial2.o tutorial2.moc
 
 #---------------------------------------------------------------------#
 #                    suffix rules

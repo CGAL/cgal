@@ -1,9 +1,8 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 
-
-#include <qapplication.h>
 #include <CGAL/IO/Qt_widget.h>
+#include <qapplication.h>
 
 typedef CGAL::Cartesian<double>		    Rep;
 typedef CGAL::Point_2<Rep>		    Point;
@@ -12,15 +11,19 @@ typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
 Delaunay dt;
 
 class My_Window : public CGAL::Qt_widget {
+  Q_OBJECT
 public:
-  My_Window(int x, int y){ resize(x,y); };
-private:
-  
-  void redraw()
+  My_Window(int x, int y){
+    resize(x,y);
+    connect(this, SIGNAL(custom_redraw()),
+	   this, SLOT(redraw_win()));
+  };
+private slots:  
+  void redraw_win()
   {
-    Qt_widget::redraw();
     *this << dt;
   }
+private:
   //this event is called only when the user presses the mouse
   void mousePressEvent(QMouseEvent *e)
   {
@@ -29,6 +32,9 @@ private:
     redraw();
   }
 };
+
+//moc_source_file : tutorial2.C
+#include "tutorial2.moc"
 
 int main( int argc, char **argv )
 {
