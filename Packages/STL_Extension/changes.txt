@@ -1,3 +1,6 @@
+22 June 2004 Sylvain Pion
+- G++ 3.4 test-suite fix.
+
 16 June 2004 Menelaos Karavelas
 - removed the CGAL_NO_DEPRECATED_CODE macro in Compact_container.h
 

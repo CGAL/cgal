@@ -72,17 +72,6 @@ void print_container(C c)
 
 
 template<class C, class A, class B>
-void copy_wrapper(C& c, A a, B b)
-{
-#if defined(__GNUC__) && (__GNUC__ < 3)
-  copy1(c, a, b);
-#else
-  ::copy(c, a, b);
-#endif
-}
-
-
-template<class C, class A, class B>
 #if defined(__GNUC__) && (__GNUC__ < 3)
 void copy1(C& c, A a, B b)
 #else
@@ -98,6 +87,17 @@ void copy(C& c, A a, B b)
   for (typename B::iterator it = b.begin(); it != b.end(); it++) {
     c.push_back(*it);
   }
+}
+
+
+template<class C, class A, class B>
+void copy_wrapper(C& c, A a, B b)
+{
+#if defined(__GNUC__) && (__GNUC__ < 3)
+  copy1(c, a, b);
+#else
+  ::copy(c, a, b);
+#endif
 }
 
 
