@@ -1644,7 +1644,7 @@ Section~\ref{sectionHdsDecorator} for the decorator. The program
 creates a loop, consisting of two halfedges, one vertex and two
 facets, and checks its validity.
 
-\ccIncludeVerbatim{hds_prog_default.C}
+\ccIncludeVerbatim{examples/Halfedge_DS/hds_prog_default.C}
 
 
 % +-------------------------------------------------------------+
@@ -1658,7 +1658,7 @@ maintaining only halfedges with next and opposite pointers.  No
 vertices or facets are stored. The data structure models an {\em
   undirected graph}.
 
-\ccIncludeVerbatim{hds_prog_graph.C}
+\ccIncludeVerbatim{examples/Halfedge_DS/hds_prog_graph.C}
 
 
 % +-------------------------------------------------------------+
@@ -1672,7 +1672,7 @@ Note that for the vector storage the size of the halfedge data
 structure must be reserved beforehand, either with the constructor as
 shown in the example or with the {\tt reserve()} member function.
 
-\ccIncludeVerbatim{hds_prog_vector.C}
+\ccIncludeVerbatim{examples/Halfedge_DS/hds_prog_vector.C}
 
 
 % +-------------------------------------------------------------+
@@ -1689,7 +1689,7 @@ since they are only maintained as {\tt void*} pointers at this
 level. The internal classes, which are responsible for the type safe
 pointers, must be extended to achieve this.
 
-\ccIncludeVerbatim{hds_prog_color.C}
+\ccIncludeVerbatim{examples/Halfedge_DS/hds_prog_color.C}
 
 
 % +-------------------------------------------------------------+
@@ -1743,7 +1743,7 @@ the list management. They are added internally of the halfedge data
 structure using the base class \ccc{In_place_list_base<My_halfedge>}.
 
 
-\ccIncludeVerbatim{hds_prog_compact.C}
+\ccIncludeVerbatim{examples/Halfedge_DS/hds_prog_compact.C}
 
 \end{ccAdvanced}
 
@@ -1753,7 +1753,7 @@ structure using the base class \ccc{In_place_list_base<My_halfedge>}.
 Three edges are created in the default halfedge data structure.
 The halfedge iterator is used to count the halfedges.
 
-\ccIncludeVerbatim{hds_prog_halfedge_iterator.C}
+\ccIncludeVerbatim{examples/Halfedge_DS/hds_prog_halfedge_iterator.C}
 
 % +-------------------------------------------------------------+
 \subsection{Example for an Adaptor to Build an Edge Iterator}
@@ -1762,7 +1762,7 @@ Three edges are created in the default halfedge data structure.
 The adaptor {\tt N\_step\_adaptor} is used to declare an edge
 iterator, which is used to count the edges.
 
-\ccIncludeVerbatim{hds_prog_edge_iterator.C}
+\ccIncludeVerbatim{examples/Halfedge_DS/hds_prog_edge_iterator.C}
 
 % +--------------------------------------------------------+
 

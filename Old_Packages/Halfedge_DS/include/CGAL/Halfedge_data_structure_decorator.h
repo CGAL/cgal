@@ -740,8 +740,7 @@ public:
     }
 
   protected:                               // Supports_halfedge_vertices
-      void erase_connected_component_vertex( HDS& hds, Halfedge* h,
-                                             Tag_false) {}
+      void erase_connected_component_vertex( HDS&, Halfedge*, Tag_false) {}
       void erase_connected_component_vertex( HDS& hds, Halfedge* h,
                                              Tag_true) {
           // Erases the the vertex incident to h and sets all references
