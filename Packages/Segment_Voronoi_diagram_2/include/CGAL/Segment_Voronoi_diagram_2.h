@@ -33,7 +33,7 @@
 
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Segment_Voronoi_diagram_site_2.h>
-#include <CGAL/Segment_Voronoi_diagram_data_structure_2.h>
+#include <CGAL/Apollonius_graph_data_structure_2.h>
 #include <CGAL/Triangulation_face_base_2.h>
 #include <CGAL/Segment_Voronoi_diagram_vertex_base_2.h>
 
@@ -119,40 +119,6 @@ namespace CGALi {
     }
   };
 
-  template < class Gt >
-  class Svd_point_2_less_than
-  {
-  public:
-    typedef Gt                                 Geom_traits;
-    typedef typename Geom_traits::Point_2      Point_2;
-    typedef typename Geom_traits::Site_2       Site_2;
-
-  private:
-    typedef typename Geom_traits::Compare_x_2  Compare_x_2;
-    typedef typename Geom_traits::Compare_y_2  Compare_y_2;
-
-  public:
-    Svd_point_2_less_than(const Geom_traits& gt = Geom_traits())
-      : gt(gt) {}
-
-    bool operator()(const Point_2& p, const Point_2& q) const {
-      Compare_x_2 comp_x = gt.compare_x_2_object();
-      // this should be optimized and not use the site constructors...
-      Comparison_result crx = comp_x( Site_2::construct_site_2(p),
-				      Site_2::construct_site_2(q) );
-      if ( crx == SMALLER ) { return true; }
-      if ( crx == LARGER ) { return false; }
-
-      Compare_y_2 comp_y = gt.compare_y_2_object();
-      Comparison_result cry = comp_y( Site_2::construct_site_2(p),
-				      Site_2::construct_site_2(q) );
-      return cry == SMALLER;
-    }
-
-  private:
-    Geom_traits gt;
-  };
-
 } // namespace CGALi
 
 
@@ -162,7 +128,7 @@ class Segment_Voronoi_diagram_hierarchy_2;
 
 
 template<class Gt,
-	 class DS = Segment_Voronoi_diagram_data_structure_2 < 
+	 class DS = Apollonius_graph_data_structure_2 < 
                 Segment_Voronoi_diagram_vertex_base_2<Gt,
 			    typename Gt::Intersections_tag>,
                 Triangulation_face_base_2<Gt> >,
@@ -214,11 +180,7 @@ protected:
   typedef typename Geom_traits::Arrangement_type_2  AT2;
   typedef typename AT2::Arrangement_type            Arrangement_type;
 
-  typedef CGALi::Svd_point_2_less_than<Modified_traits> Point_2_less_than;
-
-  //  typedef std::set<Point_2,Point_2_less_than>    PC;
   typedef std::set<Point_2>                      PC;
-  //  typedef std::list<Point_2>                     PC;
   typedef typename PC::iterator                  PH;
 
 
@@ -227,33 +189,6 @@ protected:
   typedef boost::tuples::tuple<PH,PH,bool>       Site_rep_2;
   //  typedef Triple<PH,PH,bool>                     Site_rep_2;
 
-  struct Site_rep_less_than {
-    // less than for site representations
-#if 1
-    bool operator()(const Site_rep_2& s1, const Site_rep_2& s2) const
-    {
-      if ( &(*boost::tuples::get<0>(s1)) ==
-	   &(*boost::tuples::get<0>(s2)) ) {
-	return &(*boost::tuples::get<1>(s1)) <
-	  &(*boost::tuples::get<1>(s2));
-      } else {
-	return &(*boost::tuples::get<0>(s1)) <
-	  &(*boost::tuples::get<0>(s2));
-      }
-    }
-#else
-    bool operator()(const Site_rep_2& s1, const Site_rep_2& s2) const
-    {
-      if ( &(*s1.first) == &(*s2.first) ) {
-	return &(*s1.second) < &(*s2.second);
-      } else {
-	return &(*s1.first) < &(*s2.first);
-      }
-    }
-#endif
-  };
-
-  //  typedef std::set<Site_rep_2,Site_rep_less_than>   Input_sites_container;
   typedef std::list<Site_rep_2>                    Input_sites_container;
   typedef typename Input_sites_container::const_iterator
   All_inputs_iterator;
@@ -301,8 +236,6 @@ protected:
   //-----------------
   typedef typename Gt::Intersections_tag        Intersections_tag;
 
-  typedef typename Data_structure::Vertex_base  Vertex_base;
-
   typedef std::map<Face_handle,bool>            Face_map;
   typedef std::vector<Edge>                     Edge_vector;
 
@@ -314,7 +247,7 @@ protected:
 
   typedef std::pair<Face_handle,Face_handle>    Face_pair;
 
-  typedef typename Vertex_base::Storage_site_2  Storage_site_2;
+  typedef typename Data_structure::Vertex::Storage_site_2   Storage_site_2;
 
   // the edge list
   typedef typename CGALi::SVD_which_list<Edge,List_tag>::List  List;

@@ -32,12 +32,12 @@ class Segment_Voronoi_diagram_hierarchy_vertex_base_2
 {
 public:
   typedef Vbb V_Base;
-  typedef typename V_Base::Segment_Voronoi_diagram_data_structure_2 DS;
+  typedef typename V_Base::Data_structure     DS;
 
   typedef typename V_Base::Site_2             Site_2;
   typedef typename V_Base::Storage_site_2     Storage_site_2;
 
-  typedef DS                    Segment_Voronoi_diagram_data_structure_2;
+  typedef DS                                  Data_structure;
 
   typedef typename DS::Vertex_handle         Vertex_handle;
   typedef typename DS::Face_handle           Face_handle;

@@ -97,7 +97,7 @@ private:
 public:
   typedef typename Which_storage_site::Storage_site_2  Storage_site_2;
 
-  typedef DS           Segment_Voronoi_diagram_data_structure_2;
+  typedef DS                                  Data_structure;
   
   typedef typename DS::Face_handle    Face_handle;
   typedef typename DS::Vertex_handle  Vertex_handle;

@@ -29,7 +29,6 @@
 #define Segment_Voronoi_diagram_simple_storage_site_2     Svdsimss2
 #define Segment_Voronoi_diagram_2                         Svd2
 #define Segment_Voronoi_diagram_hierarchy_2               Svdh2
-#define Segment_Voronoi_diagram_data_structure_2          Svdds2
 #define Segment_Voronoi_diagram_vertex_base_2             Svdvb2
 #define Segment_Voronoi_diagram_hierarchy_vertex_base_2   Svdhvb2
 #define Segment_Voronoi_diagram_traits_2                  Svdt2
