@@ -46,7 +46,7 @@ int main(int, char*)
 #include <CGAL/IO/Qt_widget_Polygon_2.h>
 #include "Qt_widget_toolbar2.h"
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
-#include <CGAL/IO/Qt_widget_helpwindow.h>
+#include <CGAL/IO/Qt_help_window.h>
 #include <CGAL/IO/Qt_widget_layer.h>
 
 #include <qplatinumstyle.h>
@@ -313,7 +313,8 @@ private slots:
   void howto(){
     QString home;
     home = "help/index.html";
-    HelpWindow *help = new HelpWindow(home, ".", 0, "help viewer");
+    CGAL::Qt_help_window * help =
+      new CGAL::Qt_help_window(home, ".", 0, "help viewer");
     help->resize(400, 400);
     help->setCaption("Demo HowTo");
     help->show();
