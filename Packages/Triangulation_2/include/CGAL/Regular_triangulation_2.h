@@ -1848,9 +1848,9 @@ typename Regular_triangulation_2<Gt,Tds>::All_vertices_iterator
 Regular_triangulation_2<Gt,Tds>::
 all_vertices_begin () const
 {
-  return filter_iterator(Base::all_vertices_begin(), 
-			 Base::all_vertices_end(), 
-			 Hidden_tester());
+  return filter_iterator(Base::all_vertices_end(), 
+			 Hidden_tester(),
+			 Base::all_vertices_begin());
 }
 
 template < class Gt, class Tds >
@@ -1858,10 +1858,8 @@ typename Regular_triangulation_2<Gt,Tds>::All_vertices_iterator
 Regular_triangulation_2<Gt,Tds>::
 all_vertices_end () const
 {
-  return filter_iterator(Base::all_vertices_begin(), 
-			 Base::all_vertices_end(), 
-			 Hidden_tester(), 
-			 Base::all_vertices_end());
+  return filter_iterator(Base::all_vertices_end(), 
+			 Hidden_tester() ): 
 }
 
 template < class Gt, class Tds >
@@ -1869,9 +1867,9 @@ typename Regular_triangulation_2<Gt,Tds>::Finite_vertices_iterator
 Regular_triangulation_2<Gt,Tds>::
 finite_vertices_begin () const
 {
-  return filter_iterator(Base::finite_vertices_begin(), 
-			 Base::finite_vertices_end(), 
-			 Hidden_tester());
+  return filter_iterator(Base::finite_vertices_end(), 
+			 Hidden_tester(),
+			 Base::finite_vertices_begin());
 }
 
 template < class Gt, class Tds >
@@ -1880,10 +1878,8 @@ Regular_triangulation_2<Gt,Tds>::
 finite_vertices_end () const
 {
 
-  return filter_iterator(Base::finite_vertices_begin(), 
-			 Base::finite_vertices_end(), 
-			 Hidden_tester(),
-			 Base::finite_vertices_end());
+  return filter_iterator(Base::finite_vertices_end(), 
+			 Hidden_tester() );
 
 }
 
@@ -1892,9 +1888,9 @@ typename Regular_triangulation_2<Gt,Tds>::Hidden_vertices_iterator
 Regular_triangulation_2<Gt,Tds>::
 hidden_vertices_begin () const
 {
-  return filter_iterator(Base::finite_vertices_begin(),
-			 Base::finite_vertices_end(), 
-			 Unhidden_tester());
+  return filter_iterator(Base::finite_vertices_end(), 
+			 Unhidden_tester(), 
+			 Base::finite_vertices_begin() );
 
 }
 
@@ -1903,11 +1899,8 @@ typename Regular_triangulation_2<Gt,Tds>::Hidden_vertices_iterator
 Regular_triangulation_2<Gt,Tds>::
 hidden_vertices_end () const
 {
-  return filter_iterator(Base::finite_vertices_begin(), 
-			 Base::finite_vertices_end(), 
-			 Unhidden_tester(),
-			 Base::finite_vertices_end());
-
+  return filter_iterator(Base::finite_vertices_end(), 
+			 Unhidden_tester() );
 }
 
 CGAL_END_NAMESPACE 

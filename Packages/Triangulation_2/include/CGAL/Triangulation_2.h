@@ -1734,9 +1734,9 @@ finite_faces_begin() const
 {
   if ( dimension() < 2 )
     return finite_faces_end();
-  return filter_iterator( all_faces_begin(),
-			  all_faces_end(),
-			  Infinite_tester(this));
+  return filter_iterator( all_faces_end(),
+			  Infinite_tester(this),
+			  all_faces_begin() );
 } 
 
 template <class Gt, class Tds >
@@ -1744,10 +1744,8 @@ typename Triangulation_2<Gt, Tds>::Finite_faces_iterator
 Triangulation_2<Gt, Tds>::
 finite_faces_end() const
 {
-  return filter_iterator( all_faces_begin(),
-			  all_faces_end(),
-			  Infinite_tester(this),
-			  all_faces_end() );
+  return filter_iterator(  all_faces_end(),
+			  Infinite_tester(this)   );
 }
 
 template <class Gt, class Tds >
@@ -1757,9 +1755,9 @@ finite_vertices_begin() const
 {
   if ( number_of_vertices() <= 0 ) 
     return finite_vertices_end();
-  return filter_iterator(all_vertices_begin(), 
-			 all_vertices_end(),
-			 Infinite_tester(this));
+  return filter_iterator( all_vertices_end(),
+			 Infinite_tester(this),
+			 all_vertices_begin() );
 }
 
 template <class Gt, class Tds >
@@ -1767,10 +1765,8 @@ typename Triangulation_2<Gt, Tds>::Finite_vertices_iterator
 Triangulation_2<Gt, Tds>::
 finite_vertices_end() const
 {
-  return filter_iterator(all_vertices_begin(), 
-			 all_vertices_end(),
-			 Infinite_tester(this), 
-			 all_vertices_end());
+  return filter_iterator(all_vertices_end(),
+			 Infinite_tester(this)); 
 }
 
 template <class Gt, class Tds >
@@ -1780,9 +1776,9 @@ finite_edges_begin() const
 {
   if ( dimension() < 1 )
 	  return finite_edges_end();
-  return filter_iterator(all_edges_begin(), 
-			 all_edges_end(),
-			 infinite_tester());
+  return filter_iterator( all_edges_end(),
+			 infinite_tester(),
+			  all_edges_begin());
 }
 
 template <class Gt, class Tds >
@@ -1790,10 +1786,8 @@ typename Triangulation_2<Gt, Tds>::Finite_edges_iterator
 Triangulation_2<Gt, Tds>::
 finite_edges_end() const
 {
-    return filter_iterator(all_edges_begin(), 
-			   all_edges_end(),
-			   infinite_tester(), 
-			   all_edges_end());
+    return filter_iterator(all_edges_end(),
+			   infinite_tester() );
 }
 
 template <class Gt, class Tds >
