@@ -483,7 +483,6 @@ private:
               h = pm.insert_from_vertex(
                                      sub_cv, 
                                      cv_iter->get_rightmost_point().vertex(), 
-                                     true,
                                      pm_change_notf);
           }
           else if (point_node.get_point().vertex() != Vertex_handle(NULL)) {
@@ -492,7 +491,6 @@ private:
             
             h = pm.insert_from_vertex(sub_cv, 
                                       point_node.get_point().vertex(), 
-                                      false, 
                                       pm_change_notf);
           }
           else{
