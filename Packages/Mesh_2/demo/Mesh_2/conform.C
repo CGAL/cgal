@@ -44,7 +44,7 @@ int main(int, char*)
 
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 
-#include <CGAL/Conforming_Delaunay_triangulation_maker_2.h>
+#include <CGAL/Triangulation_conformer_2.h>
 #include <CGAL/IO/File_poly.h>
 
 typedef CGAL::Simple_cartesian<double> K1;

@@ -44,7 +44,7 @@ int main(int, char*)
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Polygon_2.h>
 #define CGAL_MESH_2_USE_TIMERS
-#include <CGAL/Conforming_Delaunay_triangulation_maker_2.h>
+#include <CGAL/Triangulation_conformer_2.h>
 #include <CGAL/Delaunay_mesher_2.h>
 #include <CGAL/Delaunay_mesh_local_size_criteria_2.h>
 #include <CGAL/Delaunay_mesh_face_base_2.h>

@@ -17,15 +17,15 @@
 //
 // Author(s)     : Laurent RINEAU
 
-#ifndef CGAL_CONFORMING_DELAUNAY_TRIANGULATION_MAKER_2_H
-#define CGAL_CONFORMING_DELAUNAY_TRIANGULATION_MAKER_2_H
+#ifndef CGAL_TRIANGULATION_CONFORMER_2_H
+#define CGAL_TRIANGULATION_CONFORMER_2_H
 
 #include <CGAL/Mesh_2/Refine_edges_with_clusters.h>
 
 namespace CGAL {
 
 template <typename Tr>
-class Conforming_Delaunay_triangulation_maker_2
+class Triangulation_conformer_2
 {
   typedef typename Tr::Finite_edges_iterator Finite_edges_iterator;
   typedef typename Tr::Vertex_handle Vertex_handle;
@@ -57,7 +57,7 @@ protected:
 
 public:
   /** \name CONSTRUCTORS */
-  Conforming_Delaunay_triangulation_maker_2(Tr& tr_)
+  Triangulation_conformer_2(Tr& tr_)
     : initialized(NONE),
       tr(tr_),
       null_level(), null_visitor(),
@@ -232,7 +232,7 @@ public:
   }
   //@}
 
-}; // end Conforming_Delaunay_triangulation_maker_2
+}; // end Triangulation_conformer_2
 
 
 // --- GLOBAL FUNCTIONS ---
@@ -241,7 +241,7 @@ template <class Tr>
 void
 make_conforming_Gabriel_2(Tr& t)
 {
-  typedef Conforming_Delaunay_triangulation_maker_2<Tr> Conform;
+  typedef Triangulation_conformer_2<Tr> Conform;
 
   Conform conform(t);
   conform.make_conforming_Gabriel();
@@ -251,7 +251,7 @@ template <class Tr>
 void
 make_conforming_Delaunay_2(Tr& t)
 {
-  typedef Conforming_Delaunay_triangulation_maker_2<Tr> Conform;
+  typedef Triangulation_conformer_2<Tr> Conform;
 
   Conform conform(t);
   conform.make_conforming_Delaunay();
@@ -259,4 +259,4 @@ make_conforming_Delaunay_2(Tr& t)
 
 } // end namespace CGAL
 
-#endif // CGAL_CONFORMING_DELAUNAY_TRIANGULATION_MAKER_2_H
+#endif // CGAL_TRIANGULATION_CONFORMER_2_H

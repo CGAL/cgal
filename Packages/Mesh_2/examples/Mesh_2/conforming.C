@@ -2,7 +2,7 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Conforming_Delaunay_triangulation_maker_2.h>
+#include <CGAL/Triangulation_conformer_2.h>
 
 #include <iostream>
 

@@ -31,14 +31,7 @@ conform.o: \
   ../../../Triangulation_2/include/CGAL/Triangulation_face_base_2.h \
   ../../../Triangulation_2/include/CGAL/Triangulation_line_face_circulator_2.h \
   ../../../Triangulation_2/include/CGAL/Constrained_triangulation_face_base_2.h \
-  ../../include/CGAL/Conforming_Delaunay_triangulation_maker_2.h \
-  ../../include/CGAL/Mesh_2/Refine_edges_with_clusters.h \
-  ../../include/CGAL/Mesh_2/Refine_edges.h \
-  ../../include/CGAL/Mesher_level.h \
-  ../../include/CGAL/Mesh_2/Triangulation_mesher_level_traits_2.h \
-  ../../include/CGAL/Mesh_2/Filtered_queue_container.h \
-  ../../include/CGAL/Mesh_2/Clusters.h \
-  ../../include/CGAL/Filter_circulator.h \
+  ../../include/CGAL/Triangulation_conformer_2.h \
   ../../include/CGAL/IO/File_poly.h
 
 
@@ -102,7 +95,9 @@ mesh_demo.o: \
   ../../../Triangulation_2/include/CGAL/Triangulation_face_base_2.h \
   ../../../Triangulation_2/include/CGAL/Triangulation_line_face_circulator_2.h \
   ../../../Triangulation_2/include/CGAL/Constrained_triangulation_face_base_2.h \
-  ../../include/CGAL/Conforming_Delaunay_triangulation_maker_2.h \
+  ../../include/CGAL/Triangulation_conformer_2.h \
+  ../../include/CGAL/Delaunay_mesher_2.h \
+  ../../include/CGAL/Mesh_2/Refine_edges_for_refine_faces.h \
   ../../include/CGAL/Mesh_2/Refine_edges_with_clusters.h \
   ../../include/CGAL/Mesh_2/Refine_edges.h \
   ../../include/CGAL/Mesher_level.h \
@@ -110,8 +105,6 @@ mesh_demo.o: \
   ../../include/CGAL/Mesh_2/Filtered_queue_container.h \
   ../../include/CGAL/Mesh_2/Clusters.h \
   ../../include/CGAL/Filter_circulator.h \
-  ../../include/CGAL/Delaunay_mesher_2.h \
-  ../../include/CGAL/Mesh_2/Refine_edges_for_refine_faces.h \
   ../../include/CGAL/Mesh_2/Refine_edges_visitor.h \
   ../../include/CGAL/Mesh_2/Refine_faces.h \
   ../../include/CGAL/Double_map.h \
