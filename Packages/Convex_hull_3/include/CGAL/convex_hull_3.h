@@ -279,13 +279,6 @@ partition_outside_sets(const std::list<Facet_handle>& new_facets,
    
 }
 
-//
-// the MSVC 6.0 and 7.0 compilers cannot deal with function overloading
-// very well, so we have to use specific templating here with the CGAL
-// Polyhedron_3 type in its two different forms (one that is swallowed by
-// MSVC6 and the other by MSVC 7.0). 
-//
-
 
 
 #if defined(CGAL_CFG_FUNCTION_OVERLOAD_BUG)
@@ -305,7 +298,7 @@ ch_quickhull_3_scan(Polyhedron_3<Tr,Items,HDS,Alloc>& P,
 )
 
 
-#else // non-MSVC compilers can handle this more general interface
+#else 
 
 template <class Polyhedron_3, class Traits>
 void
@@ -442,12 +435,6 @@ ch_quickhull_3_scan(
   
 }
 
-//
-// the MSVC 6.0 and 7.0 compilers cannot deal with function overloading
-// very well, so we have to use specific templating here with the CGAL
-// Polyhedron_3 type in its two different forms (one that is swallowed by
-// MSVC6 and the other by MSVC 7.0). 
-//
 #if defined(CGAL_CFG_FUNCTION_OVERLOAD_BUG)
 
 
@@ -459,7 +446,7 @@ template < class Tr, class Traits, class Items,
 void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
 	Polyhedron_3<Tr,Items,HDS,Alloc>& P, const Traits& traits)
 
-#else // non-MSVC compilers can handle this more general interface
+#else 
 
 template <class Polyhedron_3, class Traits>
 void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
@@ -529,11 +516,6 @@ void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
 
 
 //
-// the MSVC 6.0 and 7.0 compilers cannot deal with function overloading
-// very well, so we have to use specific templating here with the CGAL
-// Polyhedron_3 type in its two different forms (one that is swallowed by
-// MSVC6 and the other by MSVC 7.0). 
-//
 #if defined(CGAL_CFG_FUNCTION_OVERLOAD_BUG)
 
 
@@ -554,7 +536,7 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
 		)
 
 
-#else // non-MSVC compilers can handle this more general interface
+#else
 
 template <class InputIterator, class Polyhedron_3, class Traits>
 void
@@ -726,12 +708,7 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
 }
 
 
-//
-// the MSVC 6.0 and 7.0 compilers cannot deal with function overloading
-// very well, so we have to use specific templating here with the CGAL
-// Polyhedron_3 type in its two different forms (one that is swallowed by
-// MSVC6 and the other by MSVC 7.0). 
-//
+
 #if defined(CGAL_CFG_FUNCTION_OVERLOAD_BUG)
 
 
@@ -747,7 +724,7 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
                    Polyhedron_3<Tr,Items,HDS,Alloc>& polyhedron,
 				   const Traits& traits)
 
-#else // non-MSVC compilers can handle this more general version
+#else
 
 template <class InputIterator, class Polyhedron_3, class Traits>
 void convex_hull_3(InputIterator first, InputIterator beyond,
@@ -790,12 +767,6 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
 
 }
 
-//
-// the MSVC 6.0 and 7.0 compilers cannot deal with function overloading
-// very well, so we have to use specific templating here with the CGAL
-// Polyhedron_3 type in its two different forms (one that is swallowed by
-// MSVC6 and the other by MSVC 7.0). 
-//
 #if defined(CGAL_CFG_FUNCTION_OVERLOAD_BUG)
 
 
@@ -810,7 +781,7 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
 
 
 
-#else // non-MSVC compilers can handle this simpler, more general version
+#else
 
 template <class InputIterator, class Polyhedron_3>
 void convex_hull_3(InputIterator first, InputIterator beyond,
