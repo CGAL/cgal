@@ -11,6 +11,11 @@ double force2mem(const double a)
   return CGAL_IA_FORCE_TO_DOUBLE(a);
 }
 
+void empty_handler(const char*, const char*, const char*, int, const char *)
+{
+  // Do nothing.
+}
+
 CGAL::Interval_nt_advanced add( const CGAL::Interval_nt_advanced & a,
 				const CGAL::Interval_nt_advanced & b)
 {
@@ -24,10 +29,12 @@ template < class NT >
 void test (const NT &)
 {
   CGAL::Failure_behaviour backup = CGAL::set_error_behaviour(CGAL::CONTINUE);
+  CGAL::Failure_function prev    = CGAL::set_error_handler(empty_handler);
   NT a;
   NT b=1;
   NT c;
   c = b+a; // a is used but not initialized.
+  CGAL::set_error_handler(prev);
   CGAL::set_error_behaviour(backup);
 }
 
