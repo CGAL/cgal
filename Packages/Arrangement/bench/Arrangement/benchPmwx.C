@@ -18,11 +18,21 @@
 #include <CGAL/Cartesian.h>
 #endif
 
+#if defined(USE_LEDA_KERNEL) || defined(USE_MY_KERNEL)
+#if defined(USE_CGAL_WINDOW)
+#include <LEDA/rat_window.h>
+#else
+#include <CGAL/IO/Qt_widget_Leda_rat.h>
+#endif
+#endif
+
 // Traits:
 #if defined(USE_CONIC_TRAITS)
 #include <CGAL/Arr_conic_traits_2.h>
 #if defined(USE_CGAL_WINDOW)
 #include <CGAL/IO/Conic_arc_2_Window_stream.h>
+#else
+#include <CGAL/IO/Qt_widget_Conic_arc_2.h>
 #endif
 #elif defined(USE_LEDA_SEGMENT_TRAITS)
 #include <CGAL/Arr_leda_segment_traits_2.h>
@@ -131,121 +141,6 @@ typedef CGAL::Window_stream Window_stream;
 #else
 typedef CGAL::Qt_widget Window_stream;
 QApplication * App;
-#endif
-
-#if defined(USE_LEDA_KERNEL) || defined(USE_MY_KERNEL)
-inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os,
-                                        const Point & p)
-{
-  os << leda_point(p.xcoordD(), p.ycoordD());
-  return os;
-}
-
-#if defined(USE_SEGMENT_CACHED_TRAITS)
-inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os,
-                                        const Curve & curve)
-{
-  Kernel::Segment_2 seg = static_cast<Kernel::Segment_2>(curve);
-  os << leda_segment(seg.xcoord1D(), seg.ycoord1D(),
-                     seg.xcoord2D(), seg.ycoord2D());
-  return os;
-}
-#else
-inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os,
-                                        const Kernel::Segment_2 & seg)
-{
-  os << leda_segment(seg.xcoord1D(), seg.ycoord1D(),
-                     seg.xcoord2D(), seg.ycoord2D());
-  return os;
-}
-#endif
-
-#else
-
-#if defined(USE_SEGMENT_CACHED_TRAITS)
-inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os,
-                                        const Curve & curve)
-{
-  os << static_cast<Kernel::Segment_2>(curve);  
-  return os;
-}
-#endif
-
-#endif
-
-#if defined(USE_POLYLINE_TRAITS)
-inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os, 
-                                        const Curve & cv)
-{
-  Curve::const_iterator ps = cv.begin();
-  Curve::const_iterator pt = ps; pt++;
-
-  while (pt != cv.end())
-  {
-    os << Kernel::Segment_2(*ps, *pt);
-    ps++; pt++;
-  }
-  return (os);
-}
-#endif
-
-#if !defined(USE_CGAL_WINDOW) && defined(USE_CONIC_TRAITS)
-
-template <class Kernel>
-Window_stream & operator<<(Window_stream & ws,
-                           const CGAL::Conic_arc_2<Kernel> & cv)
-{
-  // Get the co-ordinates of the curve's source and target.
-  double sx = CGAL::to_double(cv.source().x()),
-         sy = CGAL::to_double(cv.source().y()),
-         tx = CGAL::to_double(cv.target().x()),
-         ty = CGAL::to_double(cv.target().y());
-
-  if (cv.is_segment()) {
-    // The curve is a segment - simply draw it.
-    ws.get_painter().drawLine(ws.x_pixel(sx), ws.y_pixel(sy),
-                              ws.x_pixel(tx), ws.y_pixel(ty));
-    return (ws); 
-  } 
-
-  // The arc is circular
-  // If the curve is monotone, than its source and its target has the
-  // extreme x co-ordinates on this curve.
-  if (cv.is_x_monotone()) {
-    bool is_source_left = (sx < tx);
-    int  x_min = is_source_left ? ws.x_pixel(sx) : ws.x_pixel(tx);
-    int  x_max = is_source_left ? ws.x_pixel(tx) : ws.x_pixel(sx);
-    double prev_y = is_source_left ? sy : ty;
-    double end_x = is_source_left ? tx : sx;
-    double end_y = is_source_left ? ty : sy;
-    double curr_x, curr_y;
-    int x;
-
-    typename CGAL::Conic_arc_2<Kernel>::Point_2 ps[2];
-    int nps;
-
-    ws.get_painter().moveTo(x_min, ws.y_pixel(prev_y));
-      
-    for (x = x_min + 1; x < x_max; x++) {
-      curr_x = ws.x_real(x);
-      nps =
-        cv.get_points_at_x(CGAL::Conic_arc_2<Kernel>::
-                           Point_2(typename Kernel::FT(curr_x), 0), ps);
-      if (nps == 1) {
-        curr_y = CGAL::to_double(ps[0].y());
-        ws.get_painter().lineTo(x, ws.y_pixel(curr_y));
-      }
-    }
-
-    ws.get_painter().lineTo(ws.x_pixel(end_x), ws.y_pixel(end_y));
-    return (ws); 
-  }
-
-  // We should never reach here.
-  CGAL_assertion(false);
-  return (ws); 
-}
-
 #endif
 
 inline Window_stream & operator<<(Window_stream & os, Pmwx & pm)
@@ -427,7 +322,6 @@ public:
     float x0 = m_bbox.xmin() - x_margin;
     float x1 = m_bbox.xmax() + x_margin;
     float y0 = m_bbox.ymin() - y_margin;
-    float y1 = m_bbox.ymax() + y_margin;
 
 #if defined(USE_CGAL_WINDOW)
     m_window = new Window_stream(static_cast<int>(width),
@@ -442,6 +336,8 @@ public:
     m_window->set_line_width(1);
     m_window->display(leda_window::center, leda_window::center);
 #else
+    float y1 = m_bbox.ymax() + y_margin;
+
     m_window = new Window_stream();
     if (!m_window) return -1;
     App->setMainWidget(m_window);
