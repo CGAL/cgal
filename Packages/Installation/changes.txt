@@ -6,6 +6,9 @@
 //---------------------------------------------------------------------
 //	actual revision
 //---------------------------------------------------------------------
+GLOB: In install_cgal:
+GLOB:   Change the Qt support menu, by merging the qt_window_menu and 
+GLOBL   qt_menu functions
 GLOB: Remove CC specification from GMP's configure, and update the doc.
 GLOB: fix a bashism in install_cgal
 GLOB: QT_MOC is now always added in the master makefile, as it should be.
