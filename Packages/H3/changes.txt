@@ -1,5 +1,6 @@
 2.28   (?? Apr 2001)
 - angle()
+- Fix operator<<(Iso_cuboid_3).
 
 2.27   (26 Apr 2001)
 - Change coplanar_side_of_oriented_circle

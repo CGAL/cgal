@@ -1,3 +1,6 @@
+Version 6.17 (2 May 2001)
+- Fix operator<<(Iso_cuboid_3).
+
 Version 6.16 (1 May 2001)
 - angle()
 - compare_x_at_y()
