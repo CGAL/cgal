@@ -20,120 +20,71 @@ int main(int argc, char* argv[])
 #include <CGAL/Polygon_2.h>
 #include <CGAL/IO/Window_stream.h>
 #include <CGAL/IO/cgal_window_redefine.h>
-#include <CGAL/Largest_empty_iso_rectangle_2.h>
 #include "../../include/CGAL/Snap_rounding_2.h"
 
 #include <fstream>
 
-typedef leda_rational Number_Type;
-typedef CGAL::Cartesian<Number_Type> Rep;
-typedef CGAL::Segment_2<Rep> Segment_2;
-typedef CGAL::Point_2<Rep> Point_2;
-typedef CGAL::Snap_rounding_2<Rep> Snap_rounding_2;
-typedef Snap_rounding_2::Segment_iterator Segment_iterator;
+typedef leda_rational                            Number_Type;
+typedef CGAL::Cartesian<Number_Type>             Rep;
+typedef Rep::Segment_2                           Segment_2;
+typedef Rep::Point_2                             Point_2;
+typedef Rep::Iso_rectangle_2                     Iso_rectangle_2;
+typedef CGAL::Snap_rounding_2<Rep>               Snap_rounding_2;
+typedef Snap_rounding_2::Segment_iterator        Segment_iterator;
 typedef Snap_rounding_2::Polyline_const_iterator Polyline_const_iterator;
-typedef Snap_rounding_2::Point_const_iterator Point_const_iterator;
+typedef Snap_rounding_2::Point_const_iterator    Point_const_iterator;
 typedef CGAL::Window_stream Window_stream;
 
-void window_output(
-
-                   Snap_rounding_2 &s,
-
+void window_output(Snap_rounding_2 &s,
+                   Number_Type prec,
                    Window_stream &w,
-
-
                    bool wait_for_click)
-  {
+{
+  w << CGAL::BLACK;
 
-    w << CGAL::BLACK;
+  // draw original segments
+  for(Segment_iterator i1 = s.segments_begin();
+      i1 != s.segments_end();
+      ++i1)
+    w << *i1;
 
-    // draw original segments
-    for(Segment_iterator i1 = s.segments_begin();
-        i1 != s.segments_end();
-        ++i1)
-      w << *i1;
-
-
-   /*    for(typename std::set<Hot_Pixel<Rep_> *,hot_pixel_auclidian_cmp<Rep_> >::
-        iterator iter = hp_set.begin();
-        iter != hp_set.end();++iter)
-      (*iter)->draw(w);
-
-    // draw original segments
-    w << CGAL::BLACK;
-    for(typename std::list<Segment_data<Rep_> >::iterator iter =
-        seg_list.begin();iter != seg_list.end();++iter) {
-      if(iter->get_x1() == iter->get_x2() && iter->get_y1() == iter->get_y2())
-        w << Point_2(iter->get_x1(),iter->get_y1());
-      else
-        w << Segment_2(Point_2(iter->get_x1(),iter->get_y1()),
-                       Point_2(iter->get_x2(),iter->get_y2()));
-    }
-   */
-    // draw isr polylines
-    double x,y;
-    w << CGAL::RED;
-    for(Polyline_const_iterator i = s.polylines_begin();
-        i != s.polylines_end();
-        ++i) {
-      if(wait_for_click)
-        w.read_mouse(x,y);
-      Point_const_iterator prev = i->begin();
-      Point_const_iterator i2 = prev;
-      bool seg_painted = false;
-      for(++i2;
-          i2 != i->end();
-          ++i2) {
-        seg_painted = true;
-        w << Segment_2(*prev,*i2);
-        prev = i2;
-      }
-
-      if(!seg_painted) { // segment entirely inside hot pixel
-        w << *(i->begin());
-      }
+  // draw isr polylines
+  double x,y;
+  for(Polyline_const_iterator i = s.polylines_begin();
+      i != s.polylines_end();
+      ++i) {
+    if(wait_for_click)
+      w.read_mouse(x,y);
+    Point_const_iterator prev = i->begin();
+    Point_const_iterator i2 = prev;
+    bool seg_painted = false;
+    w << CGAL::GREEN << Iso_rectangle_2(Point_2(i2->x() - prec / 2.0,
+					        i2->y() - prec / 2.0),
+                                        Point_2(i2->x() + prec / 2.0,
+					        i2->y() + prec / 2.0));
+    for(++i2;
+        i2 != i->end();
+        ++i2) {
+      seg_painted = true;
+      w << CGAL::RED << Segment_2(*prev,*i2);
+      w << CGAL::GREEN << Iso_rectangle_2(Point_2(i2->x() - prec / 2.0,
+					          i2->y() - prec / 2.0),
+                                          Point_2(i2->x() + prec / 2.0,
+					          i2->y() + prec / 2.0));
+      prev = i2;
     }
 
-    int mouse_input;
-    while(true) {
-      mouse_input = w.read_mouse(x,y);
-      if(mouse_input == 1)
-        return;
-    }
+    if(!seg_painted) // segment entirely inside hot pixel
+      w << *(i->begin());
   }
 
-  /*    typename std::list<Point_2>::iterator iter2,iter3;
-  std::cerr << "r33333\n";
-    for(typename std::list<std::list<Point_2> >::iterator iter1 =
-        segments_output_list.begin();iter1 != segments_output_list.end();
-        ++iter1) {
-    std::cerr << "r44444\n";
-      if(wait_for_click)
-        w.read_mouse(x,y);
-      iter2 = iter3 = iter1->begin();
-      seg_painted = false;
-      for(++iter2;iter2 != iter1->end();++iter2) {
-    std::cerr << "r5555\n";
-        seg_painted = true;
-        w << Segment_2(*iter2,*iter3);
-        ++iter3;
-      }
-
-      if(!seg_painted) { // segment entirely inside hot pixel
-        --iter2;
-        w << *iter2;
-      }
-      }
-
-    int mouse_input;
-    while(true) {
-      mouse_input = w.read_mouse(x,y);
-      if(mouse_input == 1)
-        return;
-    }
+  int mouse_input;
+  while(true) {
+    mouse_input = w.read_mouse(x,y);
+    if(mouse_input == 1)
+      return;
   }
-*/
-
+}
 
 void draw_orig(CGAL::Window_stream &w,std::list<Segment_2> &seg_list)
 {
@@ -258,7 +209,7 @@ int main(int argc,char *argv[])
                                do_isr,
                                number_of_trees);
 
-  window_output(i,w,wait_for_click);
+  window_output(i,prec,w,wait_for_click);
 
   return(0);
 }
