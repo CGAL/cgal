@@ -1,7 +1,7 @@
 #ifndef CGAL_SEGMENT_CIRCLE_TRAITS_TEST_H
 #define CGAL_SEGMENT_CIRCLE_TRAITS_TEST_H
 
-#include "Base_traits_test.h"
+#include <Base_traits_test.h>
 #include <list>
 
 template <class Traits_class, class Number_type>
