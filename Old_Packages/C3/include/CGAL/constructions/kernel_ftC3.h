@@ -20,7 +20,6 @@
 //
 // ==========================================================================
 
-
 #ifndef CGAL_CONSTRUCTIONS_KERNEL_FTC3_H
 #define CGAL_CONSTRUCTIONS_KERNEL_FTC3_H
 
