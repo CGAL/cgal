@@ -142,7 +142,7 @@ public:
   void undo_make_hole_3D(std::list<Facet> & outside,
                          std::list<Facet> & inside);
   
-  void delete_cells(std::list<Cell_handle> & cells);
+  void delete_cells(std::list<Cell_handle> & cells, int dummy_for_windows=0);
   void delete_cells(std::list<Facet> & cells);
 
   bool fill_hole_3D(std::set<Facet> & boundhole,
@@ -473,7 +473,7 @@ undo_make_hole_3D(std::list<Facet> & outside,
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_3<Gt,Tds>::
-delete_cells(std::list<Cell_handle> & hole) {
+delete_cells(std::list<Cell_handle> & hole, int dummy_for_windows) {
   for(std::list<Cell_handle>::iterator cit = hole.begin(); cit != hole.end(); cit++) {
     _tds.delete_cell( &*(*cit) );
   }
