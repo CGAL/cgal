@@ -15,5 +15,6 @@ int main()
   Point p(0, 0);
   CGAL::set_ascii_mode(std::cout);
   std::cout << "p = " << p << std::endl;
+  return 0;
 }
 
