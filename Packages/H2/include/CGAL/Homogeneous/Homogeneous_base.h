@@ -51,7 +51,7 @@
 #include <CGAL/Homogeneous/RayH3.h>
 #include <CGAL/Cartesian/Segment_3.h>
 #include <CGAL/Homogeneous/SphereH3.h>
-#include <CGAL/Homogeneous/TetrahedronH3.h>
+#include <CGAL/Cartesian/Tetrahedron_3.h>
 #include <CGAL/Cartesian/Triangle_3.h>
 #include <CGAL/Homogeneous/VectorH3.h>
 
@@ -102,7 +102,7 @@ struct Homogeneous_base
     typedef LineH3<Kernel>                          Line_3;
     typedef RayH3<Kernel>                           Ray_3;
     typedef TriangleC3<Kernel>                      Triangle_3;
-    typedef TetrahedronH3<Kernel>                   Tetrahedron_3;
+    typedef TetrahedronC3<Kernel>                   Tetrahedron_3;
     typedef Iso_cuboidH3<Kernel>                    Iso_cuboid_3;
     typedef SphereH3<Kernel>                        Sphere_3;
     typedef Aff_transformationH3<Kernel>            Aff_transformation_3;

@@ -29,7 +29,7 @@
 #include <CGAL/predicates/kernel_ftC3.h>
 #include <CGAL/constructions/kernel_ftC2.h>
 #include <CGAL/constructions/kernel_ftC3.h>
-
+#include <CGAL/Cartesian/solve_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -139,6 +139,47 @@ namespace CartesianKernelFunctors {
                         r2.source().x(), r2.source().y(), r2.source().z(),
 	r2.second_point().x(), r2.second_point().y(), r2.second_point().z());
     }
+  };
+
+  template <typename K>
+  class Bounded_side_3
+  {
+    typedef typename K::FT              FT;
+    typedef typename K::Point_3         Point_3;
+    typedef typename K::Sphere_3        Sphere_3;
+    typedef typename K::Tetrahedron_3   Tetrahedron_3;
+    typedef typename K::Iso_cuboid_3    Iso_cuboid_3;
+  public:
+    typedef Bounded_side     result_type;
+    typedef Arity_tag< 2 >   Arity;
+
+    Bounded_side
+    operator()( const Sphere_3& s, const Point_3& p) const
+    { return s.bounded_side(p); }
+
+    Bounded_side
+    operator()( const Tetrahedron_3& t, const Point_3& p) const
+    {
+      FT alpha, beta, gamma;
+
+      solve(t.vertex(1)-t.vertex(0),
+            t.vertex(2)-t.vertex(0),
+            t.vertex(3)-t.vertex(0),
+            p - t.vertex(0), alpha, beta, gamma);
+      if (   (alpha < 0) || (beta < 0) || (gamma < 0)
+          || (alpha + beta + gamma > 1) )
+          return ON_UNBOUNDED_SIDE;
+
+      if (   (alpha == 0) || (beta == 0) || (gamma == 0)
+          || (alpha+beta+gamma == 1) )
+        return ON_BOUNDARY;
+
+      return ON_BOUNDED_SIDE;
+    }
+
+    Bounded_side
+    operator()( const Iso_cuboid_3& c, const Point_3& p) const
+    { return c.bounded_side(p); }
   };
 
   template <typename K>
@@ -820,6 +861,38 @@ namespace CartesianKernelFunctors {
 			      r.x(), r.y(), r.z(),
 			      s.x(), s.y(), s.z());
     }
+  };
+
+  template <typename K>
+  class Compute_volume_3
+  {
+    typedef typename K::FT             FT;
+    typedef typename K::Point_3        Point_3;
+    typedef typename K::Tetrahedron_3  Tetrahedron_3;
+    typedef typename K::Iso_cuboid_3   Iso_cuboid_3;
+  public:
+    typedef FT               result_type;
+    typedef Arity_tag< 1 >   Arity;
+
+    FT
+    operator()(const Point_3& p0, const Point_3& p1,
+	       const Point_3& p2, const Point_3& p3) const
+    {
+      return det3x3_by_formula(p1.x()-p0.x(), p1.y()-p0.y(), p1.z()-p0.z(),
+                               p2.x()-p0.x(), p2.y()-p0.y(), p2.z()-p0.z(),
+                               p3.x()-p0.x(), p3.y()-p0.y(), p3.z()-p0.z())/6;
+    }
+
+    FT
+    operator()( const Tetrahedron_3& t ) const
+    {
+      return this->operator()(t.vertex(0), t.vertex(1),
+		              t.vertex(2), t.vertex(3));
+    }
+
+    FT
+    operator()( const Iso_cuboid_3& c ) const
+    { return c.volume(); }
   };
 
   template <typename K>

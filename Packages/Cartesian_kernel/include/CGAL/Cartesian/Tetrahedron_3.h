@@ -25,8 +25,6 @@
 #define CGAL_CARTESIAN_TETRAHEDRON_3_H
 
 #include <CGAL/Fourtuple.h>
-#include <CGAL/Cartesian/solve_3.h>
-#include <CGAL/Cartesian/predicates_on_points_3.h>
 #include <vector>
 #include <functional>
 
@@ -159,7 +157,8 @@ Orientation
 TetrahedronC3<R>::
 orientation() const
 {
-  return CGAL::orientation(vertex(0), vertex(1), vertex(2), vertex(3));
+  return R().orientation_3_object()(vertex(0), vertex(1),
+                                    vertex(2), vertex(3));
 }
 
 template < class R >
@@ -171,7 +170,7 @@ oriented_side(const typename TetrahedronC3<R>::Point_3 &p) const
   if (o != ZERO)
     return Oriented_side(o * bounded_side(p));
 
-  CGAL_assertion (!is_degenerate());
+  CGAL_kernel_assertion (!is_degenerate());
   return ON_ORIENTED_BOUNDARY;
 }
 
@@ -180,19 +179,7 @@ Bounded_side
 TetrahedronC3<R>::
 bounded_side(const typename TetrahedronC3<R>::Point_3 &p) const
 {
-  FT alpha, beta, gamma;
-
-  solve(vertex(1)-vertex(0), vertex(2)-vertex(0), vertex(3)-vertex(0),
-             p - vertex(0), alpha, beta, gamma);
-  if (   (alpha < FT(0)) || (beta < FT(0)) || (gamma < FT(0))
-      || (alpha + beta + gamma > FT(1)) )
-      return ON_UNBOUNDED_SIDE;
-
-  if (   (alpha == FT(0)) || (beta == FT(0)) || (gamma == FT(0))
-      || (alpha+beta+gamma == FT(1)) )
-    return ON_BOUNDARY;
-
-  return ON_BOUNDED_SIDE;
+  return R().bounded_side_3_object()(*this, p);
 }
 
 template < class R >
@@ -241,12 +228,11 @@ TetrahedronC3<R>::has_on_unbounded_side
 }
 
 template < class R >
+inline
 bool
 TetrahedronC3<R>::is_degenerate() const
 {
-  Plane_3 plane(vertex(0), vertex(1), vertex(2));
-  return (plane.is_degenerate()) ? true
-                                 : plane.has_on(vertex(3));
+  return orientation() == COPLANAR;
 }
 
 template < class R >

@@ -1,4 +1,4 @@
-// Copyright (c) 1999,2002  Utrecht University (The Netherlands),
+// Copyright (c) 1999-2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -75,6 +75,105 @@ namespace HomogeneousKernelFunctors {
     operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
     { return (Angle) CGAL_NTS sign(c(q,p) * c(q,r)); } 
     // FIXME: scalar product
+  };
+
+  template <typename K>
+  class Bounded_side_3
+  {
+    typedef typename K::RT              RT;
+    typedef typename K::Point_3         Point_3;
+    typedef typename K::Vector_3        Vector_3;
+    typedef typename K::Sphere_3        Sphere_3;
+    typedef typename K::Tetrahedron_3   Tetrahedron_3;
+    typedef typename K::Iso_cuboid_3    Iso_cuboid_3;
+  public:
+    typedef Bounded_side     result_type;
+    typedef Arity_tag< 2 >   Arity;
+
+    Bounded_side
+    operator()( const Sphere_3& s, const Point_3& p) const
+    { return s.bounded_side(p); }
+
+    Bounded_side
+    operator()( const Tetrahedron_3& t, const Point_3& p) const
+    {
+      RT alpha;
+      RT beta ;
+      RT gamma;
+
+      Vector_3 v1 = t.vertex(1)-t.vertex(0);
+      Vector_3 v2 = t.vertex(2)-t.vertex(0);
+      Vector_3 v3 = t.vertex(3)-t.vertex(0);
+
+      Vector_3 vp =   p     - t.vertex(0);
+
+      // want to solve  alpha*v1 + beta*v2 + gamma*v3 == vp
+      // let vi' == vi*vi.hw()
+      // we solve alpha'*v1' + beta'*v2' + gamma'*v3' == vp' / vp.hw()
+      //          muliplied by vp.hw()
+      // then we have  alpha = alpha'*v1.hw() / vp.hw()
+      // and           beta  = beta' *v2.hw() / vp.hw()
+      // and           gamma = gamma'*v3.hw() / vp.hw()
+
+      RT v1x = v1.hx();
+      RT v1y = v1.hy();
+      RT v1z = v1.hz();
+      RT v2x = v2.hx();
+      RT v2y = v2.hy();
+      RT v2z = v2.hz();
+      RT v3x = v3.hx();
+      RT v3y = v3.hy();
+      RT v3z = v3.hz();
+      RT vpx = vp.hx();
+      RT vpy = vp.hy();
+      RT vpz = vp.hz();
+
+      alpha = det3x3_by_formula( vpx, v2x, v3x,
+                                 vpy, v2y, v3y,
+                                 vpz, v2z, v3z );
+      beta  = det3x3_by_formula( v1x, vpx, v3x,
+                                 v1y, vpy, v3y,
+                                 v1z, vpz, v3z );
+      gamma = det3x3_by_formula( v1x, v2x, vpx,
+                                 v1y, v2y, vpy,
+                                 v1z, v2z, vpz );
+      RT det= det3x3_by_formula( v1x, v2x, v3x,
+                                 v1y, v2y, v3y,
+                                 v1z, v2z, v3z );
+
+      CGAL_kernel_assertion( det != 0 );
+      if (det < 0 )
+      {
+          alpha = - alpha;
+          beta  = - beta ;
+          gamma = - gamma;
+          det   = - det  ;
+      }
+
+      bool t1 = ( alpha < 0 );
+      bool t2 = ( beta  < 0 );
+      bool t3 = ( gamma < 0 );
+            // t1 || t2 || t3 == not contained in cone
+
+      RT lhs = alpha*v1.hw() + beta*v2.hw() + gamma*v3.hw();
+      RT rhs = det * vp.hw();
+
+      bool t4 = ( lhs > rhs );
+            // alpha + beta + gamma > 1 ?
+      bool t5 = ( lhs < rhs );
+            // alpha + beta + gamma < 1 ?
+      bool t6 = ( (alpha > 0) && (beta > 0) && (gamma > 0) );
+
+      if ( t1 || t2 || t3 || t4 )
+      {
+          return ON_UNBOUNDED_SIDE;
+      }
+      return (t5 && t6) ? ON_BOUNDED_SIDE : ON_BOUNDARY;
+    }
+
+    Bounded_side
+    operator()( const Iso_cuboid_3& c, const Point_3& p) const
+    { return c.bounded_side(p); }
   };
 
   template <typename K>
@@ -1210,6 +1309,56 @@ namespace HomogeneousKernelFunctors {
     { 
       return squared_distance(p, circumcenter(p, q, r, s));
     } // FIXME
+  };
+
+  template <typename K>
+  class Compute_volume_3
+  {
+    typedef typename K::FT             FT;
+    typedef typename K::Point_3        Point_3;
+    typedef typename K::Vector_3       Vector_3;
+    typedef typename K::Tetrahedron_3  Tetrahedron_3;
+    typedef typename K::Iso_cuboid_3   Iso_cuboid_3;
+  public:
+    typedef FT               result_type;
+    typedef Arity_tag< 1 >   Arity;
+
+    FT
+    operator()(const Point_3& p0, const Point_3& p1,
+	       const Point_3& p2, const Point_3& p3) const
+    {
+      Vector_3 vec1 = p1 - p0;
+      Vector_3 vec2 = p2 - p0;
+      Vector_3 vec3 = p3 - p0;
+
+      // first compute (vec1.hw * vec2.hw * vec3.hw * det(vec1, vec2, vec3))
+      // then divide by (6 * vec1.hw * vec2.hw * vec3.hw)
+      const FT w123 = vec1.hw() * vec2.hw() * vec3.hw();
+      const FT& hx1 =  vec1.hx();
+      const FT& hy1 =  vec1.hy();
+      const FT& hz1 =  vec1.hz();
+      const FT& hx2 =  vec2.hx();
+      const FT& hy2 =  vec2.hy();
+      const FT& hz2 =  vec2.hz();
+      const FT& hx3 =  vec3.hx();
+      const FT& hy3 =  vec3.hy();
+      const FT& hz3 =  vec3.hz();
+
+      return (  (hx1 * (hy2 * hz3 - hy3 * hz2))
+              - (hy1 * (hx2 * hz3 - hx3 * hz2))
+              + (hz1 * (hx2 * hy3 - hx3 * hy2)))/ (6 * w123);
+    }
+
+    FT
+    operator()( const Tetrahedron_3& t ) const
+    {
+      return this->operator()(t.vertex(0), t.vertex(1),
+		              t.vertex(2), t.vertex(3));
+    }
+
+    FT
+    operator()( const Iso_cuboid_3& c ) const
+    { return c.volume(); }
   };
 
   template <typename K>

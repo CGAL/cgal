@@ -1,4 +1,8 @@
 13 Mar 2004 Sylvain Pion
+- Use TetrahedronC3 instead of TetrahedronH3.
+  Duplicate Compute_volume_3 and Bounded_side_3 functors instead.
+
+13 Mar 2004 Sylvain Pion
 - Use TriangleC3 instead of TriangleH3.
   Duplicated Has_on_3 instead.
 
