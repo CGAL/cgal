@@ -98,7 +98,7 @@ template<class Gt,
 	 class PC = std::list<typename Gt::Point_2>,
 	 class DS = Segment_Voronoi_diagram_data_structure_2 < 
                 Segment_Voronoi_diagram_vertex_base_2<Gt,PC,
-			    typename Gt::Intersections_flag>,
+			    typename Gt::Intersections_tag>,
                 Segment_Voronoi_diagram_face_base_2<Gt> >,
 	 class LTag = Tag_false >
 class Segment_Voronoi_diagram_2
@@ -944,7 +944,7 @@ protected:
 				       Vertex_handle v, Tag_true);
 
   Vertex_handle insert_point(const Point_2& p, Vertex_handle vnear);
-  Vertex_handle insert_point(const Storage_site_2& t,
+  Vertex_handle insert_point(const Storage_site_2& ss,
 			     const Site_2& t, Vertex_handle vnear);
 
   Vertex_handle insert_segment(const Site_2& t, Vertex_handle vnear,
