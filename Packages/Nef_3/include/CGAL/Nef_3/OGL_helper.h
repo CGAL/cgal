@@ -15,7 +15,7 @@
 #define CGAL_NEF3_UNMARKED_FACET_COLOR 249,215,44
 
 #ifndef _WIN32
-#define __cdecl
+#define CALLBACK
 #endif
 
 CGAL_BEGIN_NAMESPACE
@@ -338,13 +338,13 @@ namespace OGL {
       //      TRACEN("drawing facet "<<(f->debug(),""));
       GLUtesselator* tess_ = gluNewTess();
       gluTessCallback(tess_, GLenum(GLU_TESS_VERTEX_DATA),
-		      (GLvoid (_cdecl *)()) &vertexCallback);
+		      (GLvoid (CALLBACK *)()) &vertexCallback);
       gluTessCallback(tess_, GLenum(GLU_TESS_BEGIN),
-		      (GLvoid (_cdecl *)()) &beginCallback);
+		      (GLvoid (CALLBACK *)()) &beginCallback);
       gluTessCallback(tess_, GLenum(GLU_TESS_END),
-		      (GLvoid (_cdecl *)()) &endCallback);
+		      (GLvoid (CALLBACK *)()) &endCallback);
       gluTessCallback(tess_, GLenum(GLU_TESS_ERROR),
-		      (GLvoid (_cdecl *)()) &errorCallback);
+		      (GLvoid (CALLBACK *)()) &errorCallback);
       gluTessProperty(tess_, GLenum(GLU_TESS_WINDING_RULE),
 		      GLU_TESS_WINDING_POSITIVE);
 
@@ -630,6 +630,6 @@ namespace OGL {
 
 CGAL_END_NAMESPACE
 #ifndef _WIN32
-#undef __cdecl 
+#undef CALLBACK
 #endif
 #endif // CGAL_NEF_OPENGL_HELPER_H
