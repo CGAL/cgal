@@ -1,5 +1,8 @@
 Changes done to the `Min_annulus_d' package
 
+Version 0.5.1 on 05-Sep-2000
+- no changes (problem with submission script)
+
 Version 0.4 on 05-Sep-2000
 - data accessors moved to separate header files in package Optimisation_basic
 - changed leading `_' to trailing `_' in template parameters
