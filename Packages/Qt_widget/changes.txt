@@ -1,3 +1,7 @@
+1.2.47 - 22-10-2002
+-------------------
+	The alpha_shape, triangulation, triangulation_constrained resize the widget to fit the bounding box of loaded triangulation
+
 1.2.46
 --------
 	The Qt_widget_standard_toolbar contains a layer to display mouse real world coordinates.
