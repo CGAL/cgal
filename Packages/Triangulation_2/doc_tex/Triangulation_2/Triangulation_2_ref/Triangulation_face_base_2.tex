@@ -41,26 +41,20 @@ tuned for a specific application.
 vertices}
 \ccIndexHintAsSubitem[C]{Triangulation_face_base_2}{customizing}
 
-\ccExample
-The following example derives a new \ccc{Face_base} class from the default
-one and add a color to the faces of the triangulation. 
-The face of the triangulation data structure
-and the face of the triangulation will inherit the new data member 
-and its functionality.
-Any kind of additional fonctionality can thus be added to faces or vertices of a triangulation 
-as long as this functionality  does not involve additional pointers to vertices or faces
-(because the base classes use only void* pointer and have no knowledge
-of the vertex or face types.).
+%\ccExample
+%The following example derives a new \ccc{Face_base} class from the default
+%one and add a color to the faces of the triangulation. 
+%The face of the triangulation data structure
+%and the face of the triangulation will inherit the new data member 
+%and its functionality.
+%Any kind of additional fonctionality can thus be added to faces or vertices of a triangulation 
+%as long as this functionality  does not involve additional pointers to vertices or faces
+%(because the base classes use only void* pointer and have no knowledge
+%of the vertex or face types.).
 
-%\ccIncludeExampleCode{../../examples/Triangulation/colored_face.C}
-%\ccIncludeExampleCode{examples/Triangulation/colored_face.C}
-\ccIncludeExampleCode{Triangulation/colored_face.C}
-%\lcTex{
+
 %\ccIncludeExampleCode{Triangulation/colored_face.C}
-%}
-%\lcHtml{
-%\ccIncludeExampleCode{../../../examples/Triangulation/colored_face.C}
-%}
+
 
 
 \end{ccRefClass}
