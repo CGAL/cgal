@@ -100,20 +100,44 @@ template < class FT >
 /*CGAL_NO_FILTER*/
 CGAL_KERNEL_MEDIUM_INLINE
 Orientation
-coplanar_orientationC3(const FT &qx, const FT &qy, const FT &qz,
+coplanar_orientationC3(const FT &px, const FT &py, const FT &pz,
+                       const FT &qx, const FT &qy, const FT &qz,
                        const FT &rx, const FT &ry, const FT &rz,
-                       const FT &sx, const FT &sy, const FT &sz,
-                       const FT &px, const FT &py, const FT &pz)
+                       const FT &sx, const FT &sy, const FT &sz)
 {
-  Orientation oxy_qrs = orientationC2(qx,qy,rx,ry,sx,sy);
-  if (oxy_qrs != COLLINEAR)
-      return Orientation( oxy_qrs * orientationC2(qx,qy,rx,ry,px,py));
-  Orientation oyz_qrs = orientationC2(qy,qz,ry,rz,sy,sz);
-  if (oyz_qrs != COLLINEAR)
-      return Orientation( oyz_qrs * orientationC2(qy,qz,ry,rz,py,pz));
-  Orientation oxz_qrs = orientationC2(qx,qz,rx,rz,sx,sz);
-  assert(oxz_qrs != COLLINEAR);
-  return Orientation( oxz_qrs * orientationC2(qx,qz,rx,rz,px,pz));
+  Orientation oxy_pqr = orientationC2(px,py,qx,qy,rx,ry);
+  if (oxy_pqr != COLLINEAR)
+      return Orientation( oxy_pqr * orientationC2(px,py,qx,qy,sx,sy));
+
+  Orientation oyz_pqr = orientationC2(py,pz,qy,qz,ry,rz);
+  if (oyz_pqr != COLLINEAR)
+      return Orientation( oyz_pqr * orientationC2(py,pz,qy,qz,sy,sz));
+
+  Orientation oxz_pqr = orientationC2(px,pz,qx,qz,rx,rz);
+  CGAL_kernel_assertion(oxz_pqr != COLLINEAR);
+  return Orientation( oxz_pqr * orientationC2(px,pz,qx,qz,sx,sz));
+}
+
+template < class FT >
+/*CGAL_NO_FILTER*/
+CGAL_KERNEL_MEDIUM_INLINE
+Orientation
+coplanar_orientation_vectorC3(const FT &px, const FT &py, const FT &pz,
+                              const FT &qx, const FT &qy, const FT &qz,
+                              const FT &rx, const FT &ry, const FT &rz,
+                              const FT &vx, const FT &vy, const FT &vz)
+{
+  Sign svz = CGAL_NTS sign(vz);
+  if (svz != ZERO)
+      return Orientation(svz * orientationC2(px,py,qx,qy,rx,ry));
+
+  Sign svx = CGAL_NTS sign(vx);
+  if (svx != ZERO)
+      return Orientation(svx * orientationC2(py,pz,qy,qz,ry,rz));
+
+  Sign svy = CGAL_NTS sign(vy);
+  CGAL_kernel_assertion(svy != ZERO);
+  return Orientation(svy * orientationC2(pz,px,qz,qx,rz,rx));
 }
 
 template < class FT >
