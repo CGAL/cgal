@@ -276,6 +276,53 @@ showT   = new Qt_view_show_triangulation< Delaunay >(t);
 \end{ccExampleCode}
 
 
+\section{Using the standard toolbar}
+\label{Qt_widget_standard_toolbar}
+
+The standard toolbar includes the basic tools used for zooming and translating.
+It's very easy to use, we provide further down a tipical model of how to use 
+the standard toolbar in your application:
+\begin{ccExampleCode}
+#inlude<CGAL/IO/Qt_Widget_standard_toolbar.h>
+
+class MyWindow : public QMainWindow
+{
+  Q_OBJECT
+public:
+  MyWindow(int w, int h): win(this) {
+    setCentralWidget(&win);
+    resize(w, h);
+    
+    //the standard toolbar
+    stoolbar = new CGAL::Standard_toolbar (&win, this);
+    this->addToolBar(stoolbar->toolbar(), Top, FALSE);
+   ....
+  }
+  ....
+private:
+  CGAL::Qt_widget	  win;
+  CGAL::Standard_toolbar  *stoolbar;
+  ....
+};
+
+int
+main(int argc, char **argv)
+{
+  QApplication app( argc, argv );
+    app.setStyle( new QPlatinumStyle );
+    QPalette p( QColor( 250, 215, 100 ) );
+    app.setPalette( p, TRUE );
+  MyWindow win(800,800); // physical window size
+  app.setMainWidget(&win);
+  win.setMouseTracking(TRUE);
+  win.show();
+  // because Qt send resizeEvent only on show.
+  win.set_window(-1, 1, -1, 1);
+  return app.exec();
+}
+\end{ccExampleCode}
+
+
 
 % +-----------------------------------------------------+
 % EOF

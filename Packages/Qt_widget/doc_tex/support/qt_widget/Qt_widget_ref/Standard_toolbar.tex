@@ -1,0 +1,80 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual: Reference manual for Qt_widget.tex
+% +------------------------------------------------------------------------+
+% |
+% | 10.01.2002	Radu Ursu
+% | 
+% | \RCSdef{\qtwidgetRev}{$Revision$}
+% | \RCSdefDate{\qtwidgetDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+% +-----------------------------------------------------+
+\begin{ccRefClass}{Qt_widget_standard_toolbar}
+
+\ccDefinition
+
+The standard toolbar includes the basic tools used for zooming and translating.
+
+\ccInclude{CGAL/IO/Qt_widget_standard_toolbar.h}
+\ccGlue
+
+\ccCreation
+\ccCreationVariable{stoolbar}
+\ccSetTwoColumns{Qt_widget_standard_toolbar}{}
+
+\ccConstructor{Qt_widget_standard_toolbar(Qt_widget *w, QMainWindow *mw);}{The
+ default constructor creates a new toolbar in your application, containing all 
+the standard tools. The first param it is a pointer to a Qt\_widget object, the
+second is a pointer to a QMainWindow object.}
+
+\begin{ccExampleCode}
+#inlude<CGAL/IO/Qt_Widget_standard_toolbar.h>
+
+class MyWindow : public QMainWindow
+{
+  Q_OBJECT
+public:
+  MyWindow(int w, int h): win(this) {
+    setCentralWidget(&win);
+    resize(w, h);
+    
+    //the standard toolbar
+    stoolbar = new CGAL::Standard_toolbar (&win, this);
+    this->addToolBar(stoolbar->toolbar(), Top, FALSE);
+   ....
+  }
+  ....
+private:
+  CGAL::Qt_widget	  win;
+  CGAL::Standard_toolbar  *stoolbar;
+  ....
+};
+
+int
+main(int argc, char **argv)
+{
+  QApplication app( argc, argv );
+    app.setStyle( new QPlatinumStyle );
+    QPalette p( QColor( 250, 215, 100 ) );
+    app.setPalette( p, TRUE );
+  MyWindow win(800,800); // physical window size
+  app.setMainWidget(&win);
+  win.setMouseTracking(TRUE);
+  win.show();
+  // because Qt send resizeEvent only on show.
+  win.set_window(-1, 1, -1, 1);
+  return app.exec();
+}
+\end{ccExampleCode}
+
+\end{ccRefClass}
+
+% +-----------------------------------------------------+
+% EOF
+
+
+
+
+
+
+

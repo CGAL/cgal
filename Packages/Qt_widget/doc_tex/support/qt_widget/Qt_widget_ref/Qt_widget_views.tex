@@ -1,0 +1,102 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual: Reference manual for Qt_widget.tex
+% +------------------------------------------------------------------------+
+% |
+% | 03.01.2001	Radu Ursu
+% | 
+% | \RCSdef{\qtwidgetRev}{$Revision$}
+% | \RCSdefDate{\qtwidgetDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+% +-----------------------------------------------------+
+\begin{ccRefClass}{Qt_widget_view}
+
+\ccDefinition
+
+A view for Qt\_widget is a class that is used to draw something on the screen. 
+This is the base class for views and all the views should be derived from this
+base class.
+
+\ccInclude{CGAL/IO/Qt_widget_view.h}
+\ccGlue
+
+\ccCreation
+\ccCreationVariable{view}
+\ccSetTwoColumns{Qt_widget_view}{}
+
+\ccConstructor{Qt_widget_view();}{The default constructor.}
+\ccSetThreeColumns{const_iterator}{container.begin() const;}{}
+
+\ccMethod{virtual void mousePressEvent(QMouseEvent *, Qt_widget&);}{}
+\ccGlue
+\ccMethod{virtual void mouseReleaseEvent(QMouseEvent *, Qt_widget&);}{}
+\ccGlue
+\ccMethod{virtual void wheelEvent(QMouseEvent *, Qt_widget&);}{}
+\ccGlue
+\ccMethod{virtual void mouseDoubleClickEvent(QMouseEvent *, Qt_widget&);}{}
+\ccGlue
+\ccMethod{virtual void mouseMoveEvent(QMouseEvent *, Qt_widget&);}{}
+\ccGlue
+\ccMethod{virtual void keyPressEvent(QKeyEvent *, Qt_widget&);}{}
+\ccGlue
+\ccMethod{virtual void keyReleaseEvent(QMouseEvent *, Qt_widget&);}{}
+\ccGlue
+\ccMethod{virtual void enterEvent(QEvent *, Qt_widget&);}{}
+\ccGlue
+\ccMethod{virtual void leaveEvent(QEvent *, Qt_widget&);}{This virtual functions should be overloaded in the child view classes and declared as private 
+members. This functions are called by the Qt\_widget every time a event is 
+received by the widget, for every view attached.}
+\ccGlue
+
+\ccHeading{public slots:}
+\ccMethod{virtual void draw_scene(Qt_widget&)=0;}{This virtual member is the 
+most important of this base class. As you see it's a pure virtual function and
+you have to implement it in your view class if you don't want to get compiler
+errors. Receives a reference to Qt\_widget that you can use it do draw 
+something. This is the place where you will put all your code for drawing.}
+
+\end{ccRefClass}
+
+
+\ccExample
+The following it's an example of a view that will draw a triangulation(any 
+kind) in blue.
+\begin{ccExampleCode}
+#ifndef CGAL_QT_VIEW_SHOW_TRIANGULATION_H
+#define CGAL_QT_VIEW_SHOW_TRIANGULATION_H
+
+#include <CGAL/IO/Qt_widget_view.h>
+
+namespace CGAL {
+
+template <class T>
+class Qt_view_show_triangulation : public Qt_widget_view
+{
+public:
+  Qt_view_show_triangulation(T &t) : tr(t){};
+
+  void draw_scene(Qt_widget &widget)
+  {
+    widget << CGAL::BLUE; 
+    widget << tr;
+  };
+private:
+  T &tr;
+};//end class 
+
+} // namespace CGAL
+
+#endif // CGAL_QT_WINDOW_GET_SEGMENT_H
+\end{ccExampleCode}
+
+
+% +-----------------------------------------------------+
+% EOF
+
+
+
+
+
+
+
+
