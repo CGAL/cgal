@@ -313,8 +313,8 @@ bool Qt_widget::event(QEvent *e)
   return true;
 }
 
-void Qt_widget::set_window(double  x_min, double x_max,
-			   double y_min, double y_max,
+void Qt_widget::set_window(const double x_min, const double x_max,
+			   const double y_min, const double y_max,
 			   bool const_ranges)
 {
   xmin = x_min;
