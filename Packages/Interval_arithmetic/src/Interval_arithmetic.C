@@ -31,7 +31,7 @@
 #include <CGAL/predicates/Regular_triangulation_ftC2.h>
 #include <CGAL/predicates/Regular_triangulation_ftC3.h>
 #include <CGAL/predicates/Regular_triangulation_rtH2.h>
-#include <CGAL/predicates/Regular_triangulation_rtH3.h> // -> Quotient
+#include <CGAL/predicates/Regular_triangulation_rtH3.h>
 #endif
 
 #include <CGAL/Arithmetic_filter.h>
