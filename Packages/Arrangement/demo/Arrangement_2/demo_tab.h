@@ -1301,6 +1301,9 @@ public:
      case GRID:
       return Coord_point(getMid(x, xmin, xmax), 
                          getMid(y, ymin, ymax) );
+     case NONE:
+       break;
+
       break;
 
      case NONE: break;
@@ -1471,7 +1474,6 @@ public:
     e1->next()->curve().set_data( d2 );
     e1->next()->opposite()->curve().set_data( d2 );
   }
-
 
   /*!
    */
@@ -3241,8 +3243,8 @@ public:
 
       h->curve().set_data( d );
       h->opposite()->curve().set_data( d );
+      
       //w->update_curve_data_after_merge(h , c);
- 
       //// update c
       //
       // Curve_conic_data d = c.get_data();
