@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+ver 8.14 (10/09/03)
+- Qt_help_window class is in the CGAL namespace now
+
 ver 8.13 (08/09/03)
 - fixed bug in vrml_output de Triangulation_data_structure_2
 - remove deprecated "custom_redraw() from constrained.C demo
