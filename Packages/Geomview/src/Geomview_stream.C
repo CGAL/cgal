@@ -26,9 +26,9 @@
 #include <CGAL/basic.h>
 #include <CGAL/IO/Geomview_stream.h>
 
+#include <csignal>
+#include <cerrno>
 #include <unistd.h>
-#include <errno.h>
-#include <string.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -200,10 +200,10 @@ Geomview_stream::set_trace(bool b)
 }
 
 void
-Geomview_stream::trace(const char *cptr) const
+Geomview_stream::trace(const std::string s) const
 {
     if (trace_)
-        std::cerr << cptr;
+        std::cerr << s;
 }
 
 void
@@ -262,15 +262,15 @@ Geomview_stream::look_recenter() const
 }
 
 Geomview_stream&
-Geomview_stream::operator<<(const char *cptr)
+Geomview_stream::operator<<(const std::string s)
 {
-    int length = ::strlen(cptr);
-    if (length != ::write(out, cptr, length)) {
+    int l = s.length();
+    if (l != ::write(out, s.data(), l)) {
         std::cerr << "write problem in the pipe while sending data to geomview"
              << std::endl;
         exit(-1);
     }
-    trace(cptr);
+    trace(s);
 
     return *this;
 }
