@@ -1,6 +1,5 @@
 #ifndef CGAL_CONFORM_2_H
 #define CGAL_CONFORM_2_H
-#include <CGAL/Conform_2.h>
 #include <list>
 #include <map>
 #include <iterator>
@@ -24,21 +23,25 @@ CGAL_BEGIN_NAMESPACE
    not).
 */
 template <class Tr>
-class Conform_triangulation_2: public Tr
+class Conforming_Delaunay_triangulation_2: public Tr
 {
 public:
   // -- public typedef --
+
   typedef Tr Triangulation;
-  typedef Conform_triangulation_2<Tr> Conform; // for use by nested types
+  typedef Conforming_Delaunay_triangulation_2<Tr> Conform; 
+  /**< The \em Self type, for use by nested types. */
   
+
+  /** \name Types inherited from the templated base class
+      Must be redefined for use in the implementation */
+  //@{
   typedef typename Tr::Geom_traits Geom_traits;
   typedef typename Tr::Triangulation_data_structure Tds;
 
   typedef typename Geom_traits::FT FT;
-  typedef FT      Squared_length;
-
-  // -- types inherited from the templated base class --
-  // must be redefined for use in the implementation
+  typedef FT      Squared_length; /**<This typedef is used to remind that
+				     the lenght is squared. */
   typedef typename Tr::Vertex                 Vertex;
   typedef typename Tr::Vertex_handle          Vertex_handle;
   typedef typename Tr::Vertex_circulator      Vertex_circulator;
@@ -54,16 +57,17 @@ public:
   typedef typename Tr::Locate_type            Locate_type;
   
   typedef typename Tr::Point                  Point;
+  //@}
 
 protected:
   // typedefs for private members types
   typedef std::pair<Vertex_handle,Vertex_handle> Constrained_edge;
 
   /**
-     Is_edge_constrained: function object class. 
-     Take a Conform_triangulation_2 object m and a Vertex_handle v in
-     constructor. Is_edge_constrained(Vertex_handle v2) tells if
-     [v,v2] is a constrained edge in m. */
+     Function object class. Take a
+     Conforming_Delaunay_triangulation_2 object m and a Vertex_handle v in
+     constructor. Is_edge_constrained(Vertex_handle v2) tells if [v,v2] is
+     a constrained edge in m. */
   class Is_edge_constrained {
     Conform* _m;
     Vertex_handle _v;
@@ -71,17 +75,22 @@ protected:
     Is_edge_constrained(Conform* m, Vertex_handle v)
       : _m(m), _v(v) {}
 
-    bool operator()(/*const*/ Vertex& v2) const 
+    bool operator()(const Vertex_handle& v2) const 
       {
-	if(_m->is_infinite(v2.handle()))
+	if(_m->is_infinite(v2))
 	  return false;
 	Face_handle fh;
 	int i;
-	_m->is_edge(_v,v2.handle(),fh,i);
+	_m->is_edge(_v,v2,fh,i);
 	return fh->is_constrained(i);
       }
   };
 
+  /**
+     Function object class. Take a
+     Conforming_Delaunay_triangulation_2 object m in
+     constructor. Is_edge_constrained(Vertex_handle v2) tells if [v,v2] is
+     a constrained edge in m. */
   class Is_really_a_constrained_edge {
     const Conform& _m;
   public:
@@ -95,7 +104,7 @@ protected:
       }
   };
 
-  typedef Filtred_circulator<Vertex_circulator, Is_edge_constrained>
+  typedef Filter_circulator<Vertex_circulator, Is_edge_constrained>
     Constrained_vertex_circulator;
 
   typedef std::list<Constrained_edge> List_of_constraints;
@@ -146,8 +155,10 @@ private:
 
   typedef typename Cluster::Vertices_map Cluster_vertices_map;
 
-#ifdef CGAL_USE_BOOST
+  /** \name Access to clusters */
+  //@{
 public:
+#ifdef CGAL_USE_BOOST
   typedef typename boost::projection_iterator_generator<
     Pair_get_first<typename Cluster_map::value_type>,
     typename Cluster_map::const_iterator>::type
@@ -167,10 +178,11 @@ public:
     Pair_get_first<typename Cluster_vertices_map::value_type> >
   Vertices_in_cluster_iterator;
 #endif // CGAL_USE_BOOST
+  //@}
 
   // -- conform criteria --
 public:
-  struct Is_locally_gabriel_conform
+  struct Is_locally_conforming_Gabriel
   {
     bool operator()(const Conform& ct,
 		    const Face_handle& fh,
@@ -205,7 +217,7 @@ public:
 
   };
   
-  struct Is_locally_delaunay_conform
+  struct Is_locally_conforming_Delaunay
   {
     bool operator()(const Conform& ct,
 		    const Face_handle& fh,
@@ -215,7 +227,7 @@ public:
 	  Side_of_oriented_circle_2;
 	
 	const Side_of_oriented_circle_2 in_circle =
-	  ct.geom_traits().side_of_oriented_circle_2_object();
+	  ct.geom_traits.side_of_oriented_circle_2_object();
 	
 	const Point& a = fh->vertex(ct.cw(i))->point();
 	const Point& b = fh->vertex(ct.ccw(i))->point();
@@ -227,19 +239,35 @@ public:
   };
 
 public:
-  // --- CONSTRUCTORS ---
+  /** \name CONSTRUCTORS */
+  //@{
 
   /** default constructor */
   explicit
-  Conform_triangulation_2(const Geom_traits& gt = Geom_traits());
+  Conforming_Delaunay_triangulation_2(const Geom_traits& gt = Geom_traits());
+  //@}
 
-  // --- SURCHARGED INSERTION-DELETION FONCTIONS ---
-  // TODO!
+  /** \name SURCHARGED INSERTION-DELETION FONCTIONS
+      \todo SURCHARGED INSERTION-DELETION FONCTIONS must be done. */
+  //@{
+private:
+  /** Fake insert() function. */
+  void insert() {};
 
-  // --- ASSIGNEMENT ---
-  // TODO!
+  //@}
 
-  // --- ACCESS FUNCTIONS ---
+  /** \name ASSIGNMENT
+      \todo ASSIGNMENT must be done. */
+  //@{
+private:
+  /** Fake assignment function */
+  void operator=(const Self&) {};
+
+  //@}
+
+public:
+  /** \name ACCESS FUNCTIONS */
+  //@{
   int number_of_constrained_edges() const;
 
   int number_of_clusters_vertices() const
@@ -257,7 +285,7 @@ public:
     return Cluster_vertices_iterator(cluster_map.end());
   }
 
-  unsigned int number_of_clusters_at_vertex(Vertex_handle vh)
+  unsigned int number_of_clusters_at_vertex(const Vertex_handle& vh)
   {
     typedef typename Cluster_map::iterator Iterator;
     typedef std::pair<Iterator, Iterator> Range;
@@ -267,7 +295,8 @@ public:
 
   // returns the sequence of vertices bellonging to the n-th cluster of vh
   std::pair<Vertices_in_cluster_iterator, Vertices_in_cluster_iterator>
-  vertices_in_cluster_sequence(Vertex_handle vh, unsigned int n)
+  vertices_in_cluster_sequence(const Vertex_handle& vh,
+			       const unsigned int n)
   {
     typedef typename Cluster_map::iterator Iterator;
     typedef std::pair<Iterator, Iterator> Range;
@@ -284,54 +313,58 @@ public:
       std::make_pair(Vertices_in_cluster_iterator(c.vertices.begin()),
 		     Vertices_in_cluster_iterator(c.vertices.end()));
   }
+  //@}
 
-  // --- HELPING FUNCTION ---
+  bool is_conforming_Delaunay()
+  { return is_conforming(Is_locally_conforming_Delaunay()); }
+
+  bool is_conforming_Gabriel()
+  { return is_conforming(Is_locally_conforming_Gabriel()); }
+
+  /** \name HELPING FUNCTIONS */
+  //@{
   void clear();
+  //@}
 
-  // --- CONFORMING FUNCTIONS ---
+  /** \name CONFORMING FUNCTIONS */
+  //@{
+  void make_conforming_Delaunay();
+  void make_conforming_Gabriel();
+  //@}
 
-  // Conform edges
-  void gabriel_conform();
-  void delaunay_conform();
-
-  // -- other conform policies --
-  // TODO: should be protected and not public
-  template <class Is_locally_conform>
-  void conform(const Is_locally_conform& is_loc_conf)
-  {
-    while( !edges_to_be_conformed.empty() )
-    {
-      process_one_edge(is_loc_conf);
-    };
-  }
-
-  // --- STEP BY STEP FUNCTIONS ---
+  /** \name STEP BY STEP FUNCTIONS */
+  //@{
 
   /**
-     init(...): Initialize the data structures 
+     Initializes the data structures 
      (The call of this function is REQUIRED before any step by step
      operation).
   */
-  template <class Is_locally_conform>
-  void init(const Is_locally_conform&);
+  void init_Delaunay() { init(Is_locally_conforming_Delaunay());}
+  void init_Gabriel() { init(Is_locally_conforming_Gabriel()); }
 
   /** Execute on step of the algorithm.
       init() should have been called before.
   */
-  template <class Is_locally_conform>
-  bool refine_step(const Is_locally_conform&);
+  bool step_by_step_conforming_Delaunay()
+  { return step_by_step(Is_locally_conforming_Delaunay()); }
+  bool step_by_step_conforming_Gabriel()
+  { return step_by_step(Is_locally_conforming_Gabriel()); }
 
   /** Tells if all constrained edges are conformed. */
-  bool is_conformed()
+  bool is_conforming_done()
     // This function cannot be "const" because, as edges_to_be_conformed is
     // filtred, its empty() method is not const.
   { return edges_to_be_conformed.empty(); }
+
+  //@}
 
   // --- PROTECTED TYPES ---
 protected:
   typedef std::list<Face_handle> List_of_face_handles;
 
-  // -- traits type --
+  /** \name Traits types */
+  //@{
   typedef typename Geom_traits::Vector_2 Vector_2;
   typedef typename Geom_traits::Construct_translated_point_2
       Construct_translated_point_2;
@@ -345,6 +378,7 @@ protected:
   typedef typename Geom_traits::Construct_midpoint_2
       Construct_midpoint_2;
   typedef typename Geom_traits::Orientation_2 Orientation_2;
+  //@}
 
 private:
   // PRIVATE MEMBER DATAS
@@ -366,8 +400,9 @@ private:
   // --- PRIVATE MEMBER FUNCTIONS ---
 private: 
 
-  // -- auxiliary functions to handle clusters --
-
+  /** \name Auxiliary functions to handle clusters
+      See more functions about clusters in protected member functions. */
+  //@{
   // for all vertices, call create_clusters_of_vertex
   void create_clusters();
 
@@ -382,37 +417,50 @@ private:
 			 const Constrained_vertex_circulator& end,
 			 Cluster c = Cluster());
 
-  // see more functions about clusters in protected member functions
+  //@}
 
 
-  // -- functions that maintain the queue of encroached edges --
+  /** \name Functions that maintain the queue of encroached edges */
+  //@{
 
-  // scan all constrained edges and put them in the queue if they are
-  // encroached
+  /** Scans all constrained edges and put them in the queue if they are
+      encroached. */
   template <class Is_locally_conform>
   void fill_edge_queue(const Is_locally_conform&);
 
-  // update the queue with edges incident to vm
+  /** Update the queue with edges incident to vm. */
   template <class Is_locally_conform>
   void update_edges_to_be_conformed(const Vertex_handle va,
 				    const Vertex_handle vb,
 				    const Vertex_handle vm,
 				    const Is_locally_conform&);
 
-  // -- inlined functions that compose the refinement process --
+  /** \name Inlined functions that compose the refinement process. */
+  //@{
 
-  // take one edge in the queue and call refine_edge
+  /** Templated version that make_conforming_Gabriel and
+      make_conforming_Delaunay call. */
+  template <class Is_locally_conform>
+  void make_conforming(const Is_locally_conform& is_loc_conf)
+  {
+    while( !edges_to_be_conformed.empty() )
+    {
+      process_one_edge(is_loc_conf);
+    };
+  }
+
+  /** Takes one edge in the queue and call refine_edge. */
   template <class Is_locally_conform>
   void process_one_edge(const Is_locally_conform&);
 
-  // handle the encroached edge, call cut_cluster_edge+update_cluster
-  // or insert_middle
+  /** Handles the encroached edge, call cut_cluster_edge+update_cluster
+      or insert_middle. */
   template <class Is_locally_conform>
   void refine_edge(const Vertex_handle va, const Vertex_handle vb,
 		   const Is_locally_conform&);
 
-  // -- auxiliary functions that return a boolean --
-
+  /** \name Auxiliary functions that return a boolean. */
+  //@{
   // tell if [va,vb] is encroached, by looking for the two neighbors
   // This function takes care of markers.
 //   bool is_encroached(const Vertex_handle va, 
@@ -429,65 +477,84 @@ private:
   bool is_small_angle(const Point& pleft,
 		      const Point& pmiddle, 
 		      const Point& pright) const;
+  //@}
 
-  // -- auxiliary functions that are called to split an edge or --
-  // -- a face                                                  --
-
-  // cut [va,vb] knowing that it is in the cluster c
+  /** /name Auxiliary functions that are called to split an edge or a face
+   */
+  //@{
+  /** Cuts [va,vb] knowing that it is in the cluster c. */
   Vertex_handle cut_cluster_edge(const Vertex_handle va,
 				 const Vertex_handle vb,
 				 Cluster& c);
 
-  // insert the midpoint of the edge (f,i)
+  /** Inserts the midpoint of the edge (f,i). */
   Vertex_handle insert_middle(Face_handle f, const int i);
 
 
-  // -- functions that really insert points --
-
-  // virtual function that inserts the point p in the edge
-  // (fh,edge_index)
+  /** \name Functions that really insert points. */
+  //@{
+  /** Virtual function that inserts the point p in the edge
+      (fh,edge_index). */
   virtual
   Vertex_handle virtual_insert_in_the_edge(Face_handle fh,
 				   const int edge_index,
 				   const Point& p);
   
-  // -- helping computing functions -- 
+  /** \name Helping computing functions */
+  //@{
 
-  // return the squared cosine of the angle <pleft, pmiddle, pright>
-  // times 4
+  /** Returns the squared cosine of the angle <pleft, pmiddle, pright>
+      times 4. */
   FT squared_cosine_of_angle_times_4(const Point& pleft,
 				     const Point& pmiddle,
 				     const Point& pright) const;
 
+  /** \name Step by step templated functions */
+  //@{
+  template <class Is_locally_conform>
+  void init(const Is_locally_conform&);
+
+  template <class Is_locally_conform>
+  bool step_be_step(const Is_locally_conform&);
+  //@}
+
+  /** \name Templated access functions */
+  //@{
+  template <class Is_locally_conform>
+  bool is_conforming(const Is_locally_conform& is_locally_conform);
+  //@}
+
   // --- PROTECTED MEMBER FUNCTIONS ---
 protected:
-  // -- functions to manage clusters from derived classes --
+  /** \name Functions to manage clusters from derived classes. */
+  //@{
 
-  // update the cluster of [va,vb], putting vm instead of vb. If
-  // reduction=false, the edge [va,vm] is not set reduced.
+  /** Update the cluster of [va,vb], putting vm instead of vb. If
+      reduction=false, the edge [va,vm] is not set reduced. */
   void update_cluster(Cluster& c, const Vertex_handle va,
 		      const Vertex_handle vb, const Vertex_handle vm,
 		      bool reduction = true);
 
-  // get_cluster returns the cluster of [va,vb] in c and return true
-  // if it is in a cluster. If erase=true, the cluster is remove from
-  // the cluster map
+  /** Returns the cluster of [va,vb] in c and return true
+      if it is in a cluster. If erase=true, the cluster is remove from
+      the cluster map. */
   bool get_cluster(const Vertex_handle va, const Vertex_handle vb,
 		   Cluster &c, bool erase = false);
+  //@}
 
-
+  /** Pushes [va,vb] in the queue of edges to be conformed. */
   void add_contrained_edge_to_be_conform(const Vertex_handle& va,
 					 const Vertex_handle& vb)
   {
     edges_to_be_conformed.push_back(Constrained_edge(va,vb));
   }
-}; // end of Conform_triangulation_2
+}; // end of Conforming_Delaunay_triangulation_2
 
 // --- CONSTRUCTORS ---
 
 template <class Tr>
-Conform_triangulation_2<Tr>::
-Conform_triangulation_2(const Geom_traits& gt)
+Conforming_Delaunay_triangulation_2<Tr>::
+Conforming_Delaunay_triangulation_2(const Geom_traits& gt)
   : Tr(gt), is_really_a_constrained_edge(*this),
     edges_to_be_conformed(is_really_a_constrained_edge),
     cluster_map(),
@@ -497,7 +564,7 @@ Conform_triangulation_2(const Geom_traits& gt)
 // --- ACCESS FUNCTIONS ---
 
 template <class Tr>
-int Conform_triangulation_2<Tr>::
+int Conforming_Delaunay_triangulation_2<Tr>::
 number_of_constrained_edges() const
 {
   int nedges = 0;
@@ -509,11 +576,24 @@ number_of_constrained_edges() const
   return nedges;
 }
 
+template <class Tr>
+template <class Is_locally_conform>
+bool Conforming_Delaunay_triangulation_2<Tr>::
+is_conforming(const Is_locally_conform& is_locally_conform)
+{
+  for(Finite_edges_iterator ei = finite_edges_begin();
+      ei != finite_edges_end();
+      ++ei)
+    if((*ei).first->is_constrained((*ei).second) && 
+       !is_locally_conform(*this, (*ei).first, (*ei).second) )
+      return false;
+  return true;
+}
 
 // --- HELPING FUNCTIONS ---
 
 template <class Tr>
-void Conform_triangulation_2<Tr>::
+void Conforming_Delaunay_triangulation_2<Tr>::
 clear() 
 {
   cluster_map.clear();
@@ -525,25 +605,25 @@ clear()
 
 template <class Tr>
 inline
-void Conform_triangulation_2<Tr>::
-gabriel_conform()
+void Conforming_Delaunay_triangulation_2<Tr>::
+make_conforming_Delaunay()
 {
-  if(!initialized) init(Is_locally_gabriel_conform());
+  if(!initialized) init(Is_locally_conforming_Delaunay());
   while( !edges_to_be_conformed.empty() )
     {
-      process_one_edge(Is_locally_gabriel_conform());	
+      process_one_edge(Is_locally_conforming_Delaunay());
     };
 }
 
 template <class Tr>
 inline
-void Conform_triangulation_2<Tr>::
-delaunay_conform()
+void Conforming_Delaunay_triangulation_2<Tr>::
+make_conforming_Gabriel()
 {
-  if(!initialized) init(Is_locally_delaunay_conform());
+  if(!initialized) init(Is_locally_conforming_Gabriel());
   while( !edges_to_be_conformed.empty() )
     {
-      process_one_edge(Is_locally_delaunay_conform());
+      process_one_edge(Is_locally_conforming_Gabriel());	
     };
 }
 
@@ -551,7 +631,7 @@ delaunay_conform()
 template <class Tr>
 template <class Is_locally_conform>
 inline
-void Conform_triangulation_2<Tr>::
+void Conforming_Delaunay_triangulation_2<Tr>::
 init(const Is_locally_conform& is_loc_conf)
 {
   cluster_map.clear();
@@ -564,8 +644,8 @@ init(const Is_locally_conform& is_loc_conf)
 template <class Tr>
 template <class Is_locally_conform>
 inline
-bool Conform_triangulation_2<Tr>::
-refine_step(const Is_locally_conform& is_loc_conf)
+bool Conforming_Delaunay_triangulation_2<Tr>::
+step_be_step(const Is_locally_conform& is_loc_conf)
 {
   if( !edges_to_be_conformed.empty() )
     process_one_edge(is_loc_conf);
@@ -579,7 +659,7 @@ refine_step(const Is_locally_conform& is_loc_conf)
 // --- PRIVATE MEMBER FUNCTIONS ---
 
 template <class Tr>
-void Conform_triangulation_2<Tr>::
+void Conforming_Delaunay_triangulation_2<Tr>::
 create_clusters()
 {
   for(Finite_vertices_iterator vit = finite_vertices_begin();
@@ -589,7 +669,7 @@ create_clusters()
 }
 
 template <class Tr>
-void Conform_triangulation_2<Tr>::
+void Conforming_Delaunay_triangulation_2<Tr>::
 create_clusters_of_vertex(const Vertex_handle v)
 {
   Is_edge_constrained test(this, v);
@@ -643,7 +723,7 @@ create_clusters_of_vertex(const Vertex_handle v)
 }
 
 template <class Tr>
-void Conform_triangulation_2<Tr>::
+void Conforming_Delaunay_triangulation_2<Tr>::
 construct_cluster(Vertex_handle v,
 		  Constrained_vertex_circulator begin,
 		  const Constrained_vertex_circulator& end,
@@ -707,7 +787,7 @@ construct_cluster(Vertex_handle v,
 
 template <class Tr>
 template <class Is_locally_conform>
-void Conform_triangulation_2<Tr>::
+void Conforming_Delaunay_triangulation_2<Tr>::
 fill_edge_queue(const Is_locally_conform& is_locally_conform)
 {
   for(Finite_edges_iterator ei = finite_edges_begin();
@@ -729,7 +809,7 @@ fill_edge_queue(const Is_locally_conform& is_locally_conform)
 // TODO: rewrite this function one day
 template <class Tr>
 template <class Is_locally_conform>
-void Conform_triangulation_2<Tr>::
+void Conforming_Delaunay_triangulation_2<Tr>::
 update_edges_to_be_conformed(Vertex_handle va,
 			     Vertex_handle vb,
 			     Vertex_handle vm,
@@ -742,7 +822,7 @@ update_edges_to_be_conformed(Vertex_handle va,
     for(int i = 0; i<3; i++) {
       if( fc->is_constrained(i) && !is_infinite(fc,cw(i)) &&
 	  !is_infinite(fc,ccw(i)) &&
-	  !is_locally_conform(*this, fc->handle(), i) )
+	  !is_locally_conform(*this, fc, i) )
 	{
 	  const Vertex_handle& v1 = fc->vertex(ccw(i));
 	  const Vertex_handle& v2 = fc->vertex(cw(i));
@@ -767,7 +847,7 @@ update_edges_to_be_conformed(Vertex_handle va,
 template <class Tr>
 template <class Is_locally_conform>
 inline
-void Conform_triangulation_2<Tr>::
+void Conforming_Delaunay_triangulation_2<Tr>::
 process_one_edge(const Is_locally_conform& is_loc_conf)
 {
   Constrained_edge ce = edges_to_be_conformed.front();
@@ -779,7 +859,7 @@ process_one_edge(const Is_locally_conform& is_loc_conf)
 //this function split all the segments that are encroached
 template <class Tr>
 template <class Is_locally_conform>
-void Conform_triangulation_2<Tr>::
+void Conforming_Delaunay_triangulation_2<Tr>::
 refine_edge(Vertex_handle va, Vertex_handle vb,
 	    const Is_locally_conform& is_loc_conf)
 {
@@ -813,7 +893,7 @@ refine_edge(Vertex_handle va, Vertex_handle vb,
 
 // template <class Tr>
 // inline
-// bool Conform_triangulation_2<Tr>::
+// bool Conforming_Delaunay_triangulation_2<Tr>::
 // is_encroached(const Vertex_handle va, const Vertex_handle vb) const
 // {
 //   Face_handle fh;
@@ -833,7 +913,7 @@ refine_edge(Vertex_handle va, Vertex_handle vb,
 // -> traits?
 // TODO, FIXME: not robust!
 template <class Tr>
-bool Conform_triangulation_2<Tr>::
+bool Conforming_Delaunay_triangulation_2<Tr>::
 is_small_angle(const Point& pleft,
 	       const Point& pmiddle,
 	       const Point& pright) const
@@ -860,8 +940,8 @@ is_small_angle(const Point& pleft,
 }
 
 template <class Tr>
-typename Conform_triangulation_2<Tr>::Vertex_handle
-Conform_triangulation_2<Tr>::
+typename Conforming_Delaunay_triangulation_2<Tr>::Vertex_handle
+Conforming_Delaunay_triangulation_2<Tr>::
 cut_cluster_edge(Vertex_handle va, Vertex_handle vb, Cluster& c)
 {
   Construct_vector_2 vector =
@@ -918,8 +998,8 @@ cut_cluster_edge(Vertex_handle va, Vertex_handle vb, Cluster& c)
 }
 
 template <class Tr>
-typename Conform_triangulation_2<Tr>::Vertex_handle
-Conform_triangulation_2<Tr>::
+typename Conforming_Delaunay_triangulation_2<Tr>::Vertex_handle
+Conforming_Delaunay_triangulation_2<Tr>::
 insert_middle(Face_handle f, int i)
 {
   Construct_midpoint_2
@@ -938,8 +1018,8 @@ insert_middle(Face_handle f, int i)
 
 template <class Tr>
 inline 
-typename Conform_triangulation_2<Tr>::Vertex_handle
-Conform_triangulation_2<Tr>::
+typename Conforming_Delaunay_triangulation_2<Tr>::Vertex_handle
+Conforming_Delaunay_triangulation_2<Tr>::
 virtual_insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
   // insert the point p in the edge (fh, edge_index). It updates seeds 
   // too.
@@ -971,8 +1051,8 @@ virtual_insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
 // # compute 4 times the square of the cosine of the angle (ab,ac)
 // # WARNING, TODO: this is not exact with doubles and can lead to crashes!!
 template <class Tr>
-typename Conform_triangulation_2<Tr>::FT
-Conform_triangulation_2<Tr>::
+typename Conforming_Delaunay_triangulation_2<Tr>::FT
+Conforming_Delaunay_triangulation_2<Tr>::
 squared_cosine_of_angle_times_4(const Point& pb, const Point& pa,
 				const Point& pc) const
 {
@@ -993,7 +1073,7 @@ squared_cosine_of_angle_times_4(const Point& pb, const Point& pa,
 // --- PROTECTED MEMBER FUNCTIONS ---
 
 template <class Tr>
-void Conform_triangulation_2<Tr>::
+void Conforming_Delaunay_triangulation_2<Tr>::
 update_cluster(Cluster& c, Vertex_handle va,Vertex_handle vb,
 	       Vertex_handle vm, bool reduction)
 {
@@ -1028,7 +1108,7 @@ update_cluster(Cluster& c, Vertex_handle va,Vertex_handle vb,
 
 // # used by refine_face and cut_cluster_edge
 template <class Tr>
-bool Conform_triangulation_2<Tr>::
+bool Conforming_Delaunay_triangulation_2<Tr>::
 get_cluster(Vertex_handle va, Vertex_handle vb, Cluster &c, bool erase)
 {
   typedef typename Cluster_map::iterator Iterator;
@@ -1051,25 +1131,25 @@ get_cluster(Vertex_handle va, Vertex_handle vb, Cluster &c, bool erase)
 // --- GLOBAL FUNCTIONS ---
 template <class Tr>
 void
-gabriel_conform(Tr& t)
+make_conforming_Gabriel_2(Tr& t)
 {
-  typedef Conform_triangulation_2<Tr> Conform;
+  typedef Conforming_Delaunay_triangulation_2<Tr> Conform;
 
   Conform conform;
   conform.swap(t);
-  conform.gabriel_conform();
+  conform.conforming_Gabriel();
   t.swap(conform);
 }
 
 template <class Tr>
 void
-delaunay_conform(Tr& t)
+make_conforming_Delaunay_2(Tr& t)
 {
-  typedef Conform_triangulation_2<Tr> Conform;
+  typedef Conforming_Delaunay_triangulation_2<Tr> Conform;
 
   Conform conform;
   conform.swap(t);
-  conform.delaunay_conform();
+  conform.conforming_Delaunay();
   t.swap(conform);
 }
 

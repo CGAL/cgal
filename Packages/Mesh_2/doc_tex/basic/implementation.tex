@@ -1,8 +1,8 @@
 \chapter{Quelques détails d'implémentation jetés en vrac}
 
 Le package est composé de deux classes principales:
-\ccc{Conform_triangulation_2<Tr>} et \ccc{Mesh_2<Tr>}, qui dérive de
-la première. \ccc{Conform_triangulation_2<Tr>} permet de conformer une
+\ccc{Conforming_Delaunay_triangulation_2<Tr>} et \ccc{Mesh_2<Tr>}, qui dérive de
+la première. \ccc{Conforming_Delaunay_triangulation_2<Tr>} permet de conformer une
 CDT (Coonform Delaunay Triangulation) de tel sorte que les arêtes
 soient de Gabriel ou de Delaunay, et \ccc{Mesh_2<Tr>} permet de
 mailler une CDT.
@@ -18,7 +18,7 @@ deux classes possèdent des données internes, qui sont automatiquement
 initialisées par l'appel d'une fonction de conforming ou de maillage,
 par l'intermédiaire d'une fonction \ccc{init()}:
 \begin{itemize}
-\item \ccc{Conform_triangulation_2<Tr>} contient la liste (en fait,
+\item \ccc{Conforming_Delaunay_triangulation_2<Tr>} contient la liste (en fait,
   une \ccc{std::multimap}) des \ccc{Clusters} et une liste des arêtes
   à raffiner, qui sont initialisées par \ccc{void init()}\footnote{En
     fait cette méthode est paramétrée par une classe qui définit la
@@ -28,7 +28,7 @@ par l'intermédiaire d'une fonction \ccc{init()}:
   qui est elle-même remplie par \ccc{Mesh_2<Tr>::init()} ou par
   \ccc{Mesh_2<Tr>::calculate_bad_faces()}. \ccc{Mesh_2<Tr>::init()}
   appelle la fonction \ccc{init()} de la classe de base
-  \ccc{Conform_triangulation_2<Tr>} avec une \emph{policy class} qui
+  \ccc{Conforming_Delaunay_triangulation_2<Tr>} avec une \emph{policy class} qui
   conforme les arêtes de Gabriel en tenant compte des marques des
   faces. \todo{Ce comportement pourrait être décidé par un tag.}
 \end{itemize}
@@ -38,12 +38,12 @@ des segments de contraintes, les structures de données doivent être
 recalculées par un nouvel appel à \ccc{init()}.
 
 \section{Les \emph{conform policies} de
-  \ccc{Conform_triangulation_2<Tr>}}
+  \ccc{Conforming_Delaunay_triangulation_2<Tr>}}
 \label{policies}
 
 Afin de pouvoir indifféremment conformer de Delaunay, de Gabriel, ou
 de \emph{Gabriel\_inside}, une bonne partie des fonctions de la classe
-\ccc{Conform_triangulation_2<Tr>} sont paramétrées par une
+\ccc{Conforming_Delaunay_triangulation_2<Tr>} sont paramétrées par une
 \emph{policy class}, qui définit deux choses:
 \begin{enumerate}
 \item quelles sont les arêtes localement conformes?
@@ -65,18 +65,18 @@ alors juste des wrappers autour de
 appelle elle-même la fonction
 \ccc{Conform::conform(Gabriel_conform_inside_policy_2())}.
 
-\section{Pourquoi \ccc{Conform_triangulation_2<Tr>} est-elle une
+\section{Pourquoi \ccc{Conforming_Delaunay_triangulation_2<Tr>} est-elle une
   classe?}
 
 Conformément à ce que l'on avait dit, j'ai créé en dehors de la classe
-\ccc{Conform_triangulation_2<Tr>} deux fonctions globales \ccc{void
+\ccc{Conforming_Delaunay_triangulation_2<Tr>} deux fonctions globales \ccc{void
   gabriel_conform(CDT& t)} et \ccc{void delaunay_conform(CDT& t)} qui
 conforment une CDT. Pour pouvoir appeler ces deux fonctions, la
 \emph{geom\_traits} de la CDT doit être modèle de
 \ccc{ConformTraits_2}.
 
 Une fois qu'on a appelé \ccc{conform(ConfPolicy)} sur un objet de la
-classe \ccc{Conform_triangulation_2<Tr>} on ne peut plus rien faire
+classe \ccc{Conforming_Delaunay_triangulation_2<Tr>} on ne peut plus rien faire
 d'autre que des opérations usuelles de CDT (à moins de rappeler
 \ccc{init()}. On se demande alors pourquoi cette classe est une
 classe. En fait elle n'a pas de raison d'être une classe en soit. Elle

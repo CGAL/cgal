@@ -37,7 +37,7 @@ all:            \
                 conform$(EXE_EXT) \
                 mesh$(EXE_EXT) 
 
-conform$(OBJ_EXT): ../../include/CGAL/Conform_2.h \
+conform$(OBJ_EXT): ../../include/CGAL/Conforming_Delaunay_triangulation_2.h \
                 ../../include/CGAL/Mesh_default_traits_2.h \
 		../../include/CGAL/Double_map.h \
 		../../include/CGAL/Filter_circulator.h \

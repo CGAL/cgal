@@ -1,0 +1,34 @@
+\begin{ccRefConcept}{ConformingGabrielTriangulationTraits_2}
+
+\ccDefinition
+
+In addition of the requirements of the concept
+\ccc{ConformingDelaunayTriangulationTraits}, a model of the concept
+\ccRefName\ has to provide a predicate on angles \ccc{Angle_2}.
+
+\ccRefines
+
+\ccc{ConformingDelaunayTriangulationTraits_2}
+
+\ccTypes
+
+\ccNestedType{Angle_2}{Predicate object. Must provide the operator
+  \ccc{CGAL::Angle operator()(Point_2 p, Point_2 q, Point_2 r)} that
+  returns OBTUSE, RIGHT or ACUTE depending on the angle formed by the three
+  points p, q, r (q being the vertex of the angle).}
+
+\ccHeading{Access to predicate and constructor objects}
+
+\ccCreationVariable{traits}
+\ccMethod{Angle_2 angle_2_object();}{}
+
+\ccHasModels
+Any model of the \ccc{Kernel} concept. In particular, all CGAL kernels.
+
+\end{ccRefConcept}
+
+%%% For emacs/AucTeX:
+%%% Local Variables: ***
+%%% mode:latex ***
+%%% TeX-master: "ref_manual.tex"  ***
+%%% End: ***

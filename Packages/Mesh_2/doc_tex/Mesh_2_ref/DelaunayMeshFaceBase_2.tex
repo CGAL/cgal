@@ -1,0 +1,32 @@
+\begin{ccRefConcept}{DelaunayMeshFaceBase_2}
+
+\ccDefinition
+
+The concept \ccRefName\ is an extension of the concept
+\ccc{TriangulationFaceBase_2}. It adds two functions, that determine if the
+face is in the domain to mesh or not.\\
+\todo[QUESTION]{``determin'' c'est correct en anglais?}
+
+\ccRefines
+\ccc{TriangulationFaceBase_2}
+
+\ccCreationVariable{f} 
+
+\ccAccessFunctions
+
+\ccMethod{ bool is_in_domain() const;}
+{ returns true if this face is in the domain to be refined..}
+
+\ccMethod{ void set_in_domain(const bool b);}
+{ sets if this face is in the domain. }
+
+\ccHasModels
+\ccc{Delaunay_mesh_face_base_2<Traits, Fb>}
+
+\end{ccRefConcept}
+
+%%% For emacs/AucTeX:
+%%% Local Variables: ***
+%%% mode:latex ***
+%%% TeX-master: "ref_manual.tex"  ***
+%%% End: ***

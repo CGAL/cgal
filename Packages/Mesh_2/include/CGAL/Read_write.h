@@ -27,9 +27,9 @@ CGAL_BEGIN_NAMESPACE
 //the function that writes a file
 template <class Tr>
 void
-write(const Conform_triangulation_2<Tr>& mesh, std::ostream &f)
+write(const Conforming_Delaunay_triangulation_2<Tr>& mesh, std::ostream &f)
 {
-  typedef typename Conform_triangulation_2<Tr>::Finite_edges_iterator
+  typedef typename Conforming_Delaunay_triangulation_2<Tr>::Finite_edges_iterator
     Finite_edges_iterator;
 
   f << mesh.number_of_constrained_edges() << std::endl;
@@ -46,9 +46,9 @@ write(const Conform_triangulation_2<Tr>& mesh, std::ostream &f)
 //the function that reads a file
 template <class Tr>
 void
-read(Conform_triangulation_2<Tr>& mesh, std::istream &f)
+read(Conforming_Delaunay_triangulation_2<Tr>& mesh, std::istream &f)
 {
-  typedef typename Conform_triangulation_2<Tr>::Point Point;
+  typedef typename Conforming_Delaunay_triangulation_2<Tr>::Point Point;
   int nedges = 0;
   mesh.clear();
   f>>nedges;
@@ -62,9 +62,9 @@ read(Conform_triangulation_2<Tr>& mesh, std::istream &f)
 //the function that write a Shewchuk Triangle .poly file
 template <class Tr>
 void
-write_poly(const Conform_triangulation_2<Tr>& mesh, std::ostream &f)
+write_poly(const Conforming_Delaunay_triangulation_2<Tr>& mesh, std::ostream &f)
 {
-  typedef Conform_triangulation_2<Tr> Triangulation;
+  typedef Conforming_Delaunay_triangulation_2<Tr> Triangulation;
   typedef typename Triangulation::Vertex_handle Vertex_handle;
   typedef typename Triangulation::Finite_vertices_iterator
     Finite_vertices_iterator;
@@ -120,9 +120,9 @@ write_poly(const Conform_triangulation_2<Tr>& mesh, std::ostream &f)
 //the function that reads a Shewchuk Triangle .poly file
 template <class Tr>
 void
-read_poly(Conform_triangulation_2<Tr>& mesh, std::istream &f)
+read_poly(Conforming_Delaunay_triangulation_2<Tr>& mesh, std::istream &f)
 {
-  typedef Conform_triangulation_2<Tr> Triangulation;
+  typedef Conforming_Delaunay_triangulation_2<Tr> Triangulation;
   typedef typename Triangulation::Vertex_handle Vertex_handle;
   typedef typename Triangulation::Point Point;
 

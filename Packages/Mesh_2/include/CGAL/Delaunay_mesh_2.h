@@ -1,6 +1,6 @@
 #ifndef CGAL_MESH_2_H
 #define CGAL_MESH_2_H
-#include <CGAL/Conform_2.h>
+#include <CGAL/Conforming_Delaunay_triangulation_2.h>
 #include <CGAL/Double_map.h>
 
 #include <queue>
@@ -11,16 +11,17 @@ CGAL_BEGIN_NAMESPACE
    Tr is a Delaunay constrained triangulation (with intersections or not)
 */
 template <class Tr>
-class Mesh_2: public Conform_triangulation_2<Tr>
+class Delaunay_mesh_2: public Conforming_Delaunay_triangulation_2<Tr>
 {
 public:
   // --- public typedefs ---
-  typedef Conform_triangulation_2<Tr> Conform;
+  typedef Conforming_Delaunay_triangulation_2<Tr> Conform;
 
   typedef Conform Base;
-  typedef Mesh_2<Tr> Self;
+  typedef Delaunay_mesh_2<Tr> Self;
 
-  // -- types inherited from the templated base class --
+  /** \name Types inherited from the templated base class */
+  //@{
   typedef typename Base::Geom_traits Geom_traits;
   typedef typename Geom_traits::FT FT;
   typedef FT      Squared_length;
@@ -32,18 +33,27 @@ public:
   typedef typename Base::Finite_faces_iterator  Finite_faces_iterator;
   typedef typename Base::All_faces_iterator     All_faces_iterator;
   typedef typename Base::Point                  Point;
+  typedef typename Conform::Is_locally_gabriel_conform
+    Is_locally_gabriel_conform;
+  //@}
 
-  // -- types needed to access member datas
+  /** \name Types needed to access member datas */
+  //@{
   typedef std::list<Point> Seeds;
   typedef typename Seeds::const_iterator Seeds_iterator;
   typedef Seeds_iterator Seeds_const_iterator;
+  //@}
 
-  // --- CONSTRUCTORS ---
+  /** \name CONSTRUCTORS */
+  //@{
   
-  explicit Mesh_2(const Geom_traits& gt = Geom_traits()):
+  explicit Delaunay_mesh_2(const Geom_traits& gt = Geom_traits()):
     Base(gt), initialized(false) {}
 
-  // --- ACCESS FUNCTION ---
+  //@}
+
+  /** \name ACCESS FUNCTION */
+  //@{
   bool is_bad(const Face_handle fh) const;
 
   double squared_minimum_sine(const Face_handle fh) const;
@@ -54,10 +64,12 @@ public:
   Seeds_const_iterator seeds_begin() const;
   Seeds_const_iterator seeds_end() const;
 
-  // --- HELPING FUNCTION ---
+  //@}
+
+  /** \name HELPING FUNCTION */
   void clear();
 
-  // --- MARKING FUNCTIONS ---
+  /** \name MARKING FUNCTIONS */
   /** The value type of InputIterator should be Point, and represents
       seeds. Connected components of seeds are marked with the value of 
       "mark". Other components are marked with !mark. The connected
@@ -80,22 +92,21 @@ public:
     seeds_mark = false;
   }
 
-  /** Procedure that forces facets to be marked immediatelly. */
+  /** Procedure that forces facets to be marked immediatelly. \em Not
+      documented. */
   void mark_facets();
 
-  // --- MESHING FUNCTIONS ---
+  /** \name MESHING FUNCTIONS */
 
   // Perform meshing. 
-  void refine();
+  void refine_mesh();
 
-  // --- REMESHING FUNCTIONS ---
+  /** \name REMESHING FUNCTIONS */
 
   // Set the geom_traits nut DO NOT recalculate the list of bad faces (must
   // call set_bad_faces of calculate_bad_faces bellow)
-  void set_geom_traits(const Geom_traits& gt);
-
-  // re-calculate the list of bad faces
-  void calculate_bad_faces();
+  void set_geom_traits(const Geom_traits& gt,
+		       bool recalculate_bad_faces = true);
 
   // Set the geom_traits and add the sequence [begin, end[ to the list
   // of bad faces.
@@ -110,7 +121,7 @@ public:
       push_in_bad_faces(*pfit);
   }
 
-  // --- STEP BY STEP FUNCTIONS ---
+  /** \name STEP BY STEP FUNCTIONS */
 
   /**
      init(): Initialize the data structures 
@@ -124,10 +135,7 @@ public:
   bool refine_step();
 
 private:
-  // --- PRIVATE TYPES ---
-  typedef typename Conform::Is_locally_gabriel_conform
-    Is_locally_gabriel_conform;
-
+  /** \name PRIVATE TYPES */
   typedef CGAL::Triple<Vertex_handle,
                        Vertex_handle,
                        Vertex_handle> Threevertices; 
@@ -136,18 +144,18 @@ private:
   typedef std::list<Face_handle> List_of_face_handles;
   typedef typename Base::Cluster Cluster;
 
-  // -- traits type --
+  /** \name traits type */
   typedef typename Geom_traits::Is_bad Is_bad;
   typedef typename Geom_traits::Compute_squared_minimum_sine_2 
       Compute_squared_minimum_sine_2;
   typedef typename Geom_traits::Compute_squared_distance_2
       Compute_squared_distance_2;
 
-  // -- typedefs for private members types --
+  /** \name typedefs for private members types */
   typedef CGAL::Double_map<Face_handle, double> Bad_faces;
 
 private:
-  // --- PRIVATE MEMBER DATAS ---
+  /** \name PRIVATE MEMBER DATAS */
 
   // bad_faces: list of bad finite faces
   // warning: some faces could be recycled during insertion in the
@@ -160,9 +168,9 @@ private:
   bool seeds_mark;
 
 private: 
-  // --- PRIVATE MEMBER FUNCTIONS ---
+  /** \name PRIVATE MEMBER FUNCTIONS */
 
-  // -- auxiliary functions to set markers --
+  /** \name auxiliary functions to set markers */
 
   // mark all faces of the convex_hull but those connected to the
   // infinite faces
@@ -188,7 +196,7 @@ private:
   // update the map with faces incident to the vertex v
   void compute_new_bad_faces(Vertex_handle v);
 
-  // -- inlined functions that compose the refinement process --
+  /** \name inlined functions that compose the refinement process */
 
   // take one face in the queue and call refine_face
   void process_one_face();
@@ -200,7 +208,7 @@ private:
 
 
 
-  // -- functions that really insert points --
+  /** \name functions that really insert points */
 
   // split the face f by inserting its circum center circum_center
   void split_face(const Face_handle& f, const Point& circum_center);
@@ -211,20 +219,20 @@ private:
 					   const int edge_index,
 					   const Point& p);
 
-  // -- helping computing functions -- 
+  /** \name helping computing functions */ 
 
   // return the squared length of the triangle corresponding to the
   // face f
   Squared_length shortest_edge_squared_length(Face_handle f);
 
 
-  // -- debugging functions --
+  /** \name debugging functions */
 
   bool is_bad_faces_valid();
 
-}; // end of Mesh_2
+}; // end of Delaunay_mesh_2
 
-// --- ACCESS FUNCTIONS ---
+/** \name ACCESS FUNCTIONS */
 
 // ?????????????
 // ->traits
@@ -232,7 +240,7 @@ private:
 // # We can add here other contraints, such as a bound on the size
 template <class Tr>
 inline
-bool Mesh_2<Tr>::
+bool Delaunay_mesh_2<Tr>::
 is_bad(const Face_handle f) const
 {
   const Point
@@ -245,7 +253,7 @@ is_bad(const Face_handle f) const
 
 template <class Tr>
 inline
-double Mesh_2<Tr>::
+double Delaunay_mesh_2<Tr>::
 squared_minimum_sine(const Vertex_handle& va, const Vertex_handle& vb,
 		     const Vertex_handle& vc) const
 {
@@ -257,7 +265,7 @@ squared_minimum_sine(const Vertex_handle& va, const Vertex_handle& vb,
 
 template <class Tr>
 inline
-double Mesh_2<Tr>::
+double Delaunay_mesh_2<Tr>::
 squared_minimum_sine(const Face_handle fh) const
 {
   const Vertex_handle
@@ -270,8 +278,8 @@ squared_minimum_sine(const Face_handle fh) const
 
 template <class Tr>
 inline
-typename Mesh_2<Tr>::Seeds_const_iterator
-Mesh_2<Tr>::
+typename Delaunay_mesh_2<Tr>::Seeds_const_iterator
+Delaunay_mesh_2<Tr>::
 seeds_begin() const
 {
   return seeds.begin();
@@ -279,8 +287,8 @@ seeds_begin() const
 
 template <class Tr>
 inline
-typename Mesh_2<Tr>::Seeds_const_iterator
-Mesh_2<Tr>::
+typename Delaunay_mesh_2<Tr>::Seeds_const_iterator
+Delaunay_mesh_2<Tr>::
 seeds_end() const
 {
   return seeds.end();
@@ -291,7 +299,7 @@ seeds_end() const
 // --- HELPING FUNCTIONS ---
 
 template <class Tr>
-void Mesh_2<Tr>::
+void Delaunay_mesh_2<Tr>::
 clear() 
 {
   bad_faces.clear();
@@ -302,7 +310,7 @@ clear()
 // --- MARKING FUNCTIONS ---
 
 template <class Tr>
-void Mesh_2<Tr>::
+void Delaunay_mesh_2<Tr>::
 mark_facets()
 {
   if (Base::dimension()<2) return;
@@ -330,8 +338,8 @@ mark_facets()
 //the mesh refine function 
 template <class Tr>
 inline
-void Mesh_2<Tr>::
-refine()
+void Delaunay_mesh_2<Tr>::
+refine_mesh()
 {
   if(!initialized) init();
 
@@ -347,25 +355,19 @@ refine()
 
 template <class Tr>
 inline
-void Mesh_2<Tr>::
-set_geom_traits(const Geom_traits& gt)
+void Delaunay_mesh_2<Tr>::
+set_geom_traits(const Geom_traits& gt,
+		bool recalculate_bad_faces = true)
 {
   this->_gt = gt;
-}
-
-template <class Tr>
-inline
-void Mesh_2<Tr>::
-calculate_bad_faces()
-{
-  fill_facet_map();
+  if (recalculate_bad_faces) fill_facet_map();
 }
 
 // --- STEP BY STEP FUNCTIONS ---
 
 template <class Tr>
 inline
-void Mesh_2<Tr>::
+void Delaunay_mesh_2<Tr>::
 init()
 {
   bad_faces.clear();
@@ -379,7 +381,7 @@ init()
 
 template <class Tr>
 inline
-bool Mesh_2<Tr>::
+bool Delaunay_mesh_2<Tr>::
 refine_step()
 {
   if( !Conform::refine_step(Is_locally_gabriel_conform()) )
@@ -393,7 +395,7 @@ refine_step()
 // --- PRIVATE MEMBER FUNCTIONS ---
 
 template <class Tr>
-void Mesh_2<Tr>::
+void Delaunay_mesh_2<Tr>::
 mark_convex_hull()
 {
   for(All_faces_iterator fit=all_faces_begin();
@@ -404,7 +406,7 @@ mark_convex_hull()
 }
 
 template <class Tr>
-void Mesh_2<Tr>::
+void Delaunay_mesh_2<Tr>::
 propagate_marks(const Face_handle fh, bool mark)
 {
   // std::queue only works with std::list on VC++6, and not with
@@ -431,7 +433,7 @@ propagate_marks(const Face_handle fh, bool mark)
 
 template <class Tr>
 inline
-void Mesh_2<Tr>::
+void Delaunay_mesh_2<Tr>::
 push_in_bad_faces(Face_handle fh)
 {
   CGAL_assertion(fh->is_marked());
@@ -440,7 +442,7 @@ push_in_bad_faces(Face_handle fh)
 
 template <class Tr>
 inline
-void Mesh_2<Tr>::
+void Delaunay_mesh_2<Tr>::
 push_in_bad_faces(Vertex_handle va, Vertex_handle vb,
 		  Vertex_handle vc)
 {
@@ -451,7 +453,7 @@ push_in_bad_faces(Vertex_handle va, Vertex_handle vb,
 
 //it is necessarry for process_facet_map
 template <class Tr>
-void Mesh_2<Tr>::
+void Delaunay_mesh_2<Tr>::
 fill_facet_map()
 {
   for(Finite_faces_iterator fit = finite_faces_begin();
@@ -462,7 +464,7 @@ fill_facet_map()
 }
 
 template <class Tr>
-void Mesh_2<Tr>::
+void Delaunay_mesh_2<Tr>::
 compute_new_bad_faces(Vertex_handle v)
 {
   Face_circulator fc = v->incident_faces(), fcbegin(fc);
@@ -476,7 +478,7 @@ compute_new_bad_faces(Vertex_handle v)
 
 template <class Tr>
 inline
-void Mesh_2<Tr>::
+void Delaunay_mesh_2<Tr>::
 process_one_face()
 {
   Face_handle f = bad_faces.front()->second;
@@ -486,7 +488,7 @@ process_one_face()
 
 //split all the bad faces
 template <class Tr>
-void Mesh_2<Tr>::
+void Delaunay_mesh_2<Tr>::
 refine_face(const Face_handle f)
 {
   Is_locally_gabriel_conform is_gabriel_conform;
@@ -574,7 +576,7 @@ refine_face(const Face_handle f)
 // # used by refine_face
 template <class Tr>
 inline
-void Mesh_2<Tr>::
+void Delaunay_mesh_2<Tr>::
 split_face(const Face_handle& f, const Point& circum_center)
 {
   bool marked = f->is_marked();
@@ -608,8 +610,8 @@ split_face(const Face_handle& f, const Point& circum_center)
 
 template <class Tr>
 inline 
-typename Mesh_2<Tr>::Vertex_handle
-Mesh_2<Tr>::
+typename Delaunay_mesh_2<Tr>::Vertex_handle
+Delaunay_mesh_2<Tr>::
 virtual_insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
   // insert the point p in the edge (fh, edge_index). It updates seeds 
   // too.
@@ -672,7 +674,7 @@ virtual_insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
 
 
 template <class Tr>
-bool Mesh_2<Tr>::
+bool Delaunay_mesh_2<Tr>::
 is_bad_faces_valid()
 {
   typedef std::list<std::pair<double, Face_handle> > Bad_faces_list;
@@ -716,8 +718,8 @@ is_bad_faces_valid()
 //the shortest edge that are in a triangle
 // # used by: refine_face, squared_minimum_sine
 template <class Tr>
-typename Mesh_2<Tr>::FT
-Mesh_2<Tr>::
+typename Delaunay_mesh_2<Tr>::FT
+Delaunay_mesh_2<Tr>::
 shortest_edge_squared_length(Face_handle f)
 {
   Compute_squared_distance_2 squared_distance = 

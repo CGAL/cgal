@@ -4,18 +4,18 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class Circ, class Pred>
-class Filtred_circulator : public Circ
+class Filter_circulator : public Circ
 {
   bool is_null;
   Pred test;
 
 public:
-  typedef Filtred_circulator<Circ,Pred> Self;
+  typedef Filter_circulator<Circ,Pred> Self;
 
 
-  Filtred_circulator(const Pred p=Pred()): is_null(true), test(p) {};
+  Filter_circulator(const Pred p=Pred()): is_null(true), test(p) {};
 
-  Filtred_circulator(const Self& c): Circ(c), is_null(c.is_null),
+  Filter_circulator(const Self& c): Circ(c), is_null(c.is_null),
     test(c.test) {};
 
   Self& operator=(const Self& c)
@@ -28,17 +28,17 @@ public:
       return *this;
     }
 
-  Filtred_circulator(const Circ& c, const Pred& p=Pred())
+  Filter_circulator(const Circ& c, const Pred& p=Pred())
     : Circ(c), is_null(false), test(p)
     {
-      if(test(**this))
+      if(test(static_cast<Circ&>(*this)))
 	is_null=false;
       else
 	{
 	  Self end(*this);
 	  do { 
 	    this->Circ::operator++();
-	  } while( !test(**this) && (*this)!=end );
+	  } while( !test(static_cast<Circ&>(*this)) && (*this)!=end );
 	  if((*this)==end)
 	    is_null=true;
 	}
@@ -63,7 +63,7 @@ public:
     CGAL_assertion(!is_null);
     do {
       this->Circ::operator++();
-    } while( !test(**this) );
+    } while( !test(static_cast<Circ&>(*this)) );
     return *this;
   }
 
