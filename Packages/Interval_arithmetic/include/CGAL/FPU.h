@@ -56,11 +56,6 @@ extern "C" {
 }
 #endif
 
-// See below for explanation.  This must be outside namespace CGAL.
-#ifdef _MSC_VER
-extern "C" { double CGAL_ms_sqrt(double); }
-#endif
-
 CGAL_BEGIN_NAMESPACE
 
 // Some useful constants
@@ -118,8 +113,6 @@ inline double IA_force_to_double(double x)
 
 // std::sqrt(double) on VC++ and CygWin is buggy when not optimizing.
 #ifdef _MSC_VER
-// Let's try this asm version.  If it works, then we can get rid of some
-// painful stuff in the installation procedure.
 inline double IA_bug_sqrt(double d)
 {
   _asm
@@ -130,7 +123,6 @@ inline double IA_bug_sqrt(double d)
   }
   return d;
 }
-// #  define CGAL_BUG_SQRT(d) CGAL_ms_sqrt(d)
 #  define CGAL_BUG_SQRT(d) CGAL::IA_bug_sqrt(d)
 #elif defined __CYGWIN__
 inline double IA_bug_sqrt(double d)
