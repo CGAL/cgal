@@ -76,7 +76,8 @@ protected:
 // Point_plus:
 // The handle to Point_plus.
 template <class PM_>
-class Point_plus_handle : public  Handle_for<Point_plus_rep<PM_> > {
+class Point_plus_handle : public  Handle_for<Point_plus_rep<PM_> > 
+{
   typedef Handle_for<Point_plus_rep<PM_> > Handle_for_Point_plus_rep;
 public:
   typedef PM_                         PM;
@@ -85,18 +86,16 @@ public:
   typedef typename PM::Vertex_handle  Vertex_handle;
   typedef Point_plus_rep<PM>          Point_plus_rep_pm;
   
-  Point_plus_handle() : Handle() {}
+  Point_plus_handle() : Handle_for_Point_plus_rep() {}
   
   Point_plus_handle(const Point& p) : 
     Handle_for_Point_plus_rep(Point_plus_rep_pm(p)) 
   {  
-    //PTR = new Point_plus_rep_pm(p); 
   }
   
   Point_plus_handle(const Point& p, Vertex_handle v) : 
     Handle_for_Point_plus_rep(Point_plus_rep_pm(p,v)) 
   { 
-    //PTR = new Point_plus_rep_pm(p,v); 
   }
   
   Point_plus_handle(const Point_plus_handle& p_plus) : 
@@ -105,9 +104,6 @@ public:
   ~Point_plus_handle() {}
   
   Point_plus_handle& operator=(const Point_plus_handle &p_plus) {
-    //Point::operator=(p);
-    //ptr()->p_ = p_plus.point();
-    //ptr()->v_ = p_plus.vertex();
     Handle_for_Point_plus_rep::operator=(p_plus);
     return *this;
   }
@@ -126,8 +122,7 @@ public:
   
   Vertex_handle vertex() const { return ptr()->v_; } 
   
-private:
-  //Point_plus_rep_pm* ptr() const { return (Point_plus_rep_pm*) PTR; }
+
 };
 
 
