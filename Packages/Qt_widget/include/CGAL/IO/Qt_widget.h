@@ -667,7 +667,7 @@ operator<<(Qt_widget& w, const Triangle_2<R>& t)
   Point_2<R> pi;
   Segment_2<R> si;
   Triangle_2<R> ti;
-  typedef typename Point_2<R> Point;
+  typedef Point_2<R> Point;
   std::vector<Point> vi;
   if(CGAL::assign(pi, obj))
     w << pi;
