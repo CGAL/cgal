@@ -84,16 +84,9 @@ bool
 is_y_monotone_2(InputIterator first, InputIterator last)
 {
    typedef typename std::iterator_traits<InputIterator>::value_type Point_2;
-   return CGAL_is_y_monotone_2(first, last, reinterpret_cast<Point_2*>(0));
+   typedef typename Kernel_traits<Point_2>::Kernel  K;
+   return is_y_monotone_2(first, last, K());
 }
-
-template<class InputIterator, class R>
-bool 
-CGAL_is_y_monotone_2(InputIterator first, InputIterator last, Point_2<R>*)
-{
-   return is_y_monotone_2(first, last, R());
-}
-
 
 }
 
