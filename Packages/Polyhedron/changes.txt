@@ -1,6 +1,10 @@
 Polyhedron Package: Release changes:
 ---------------------------------------------------------------------
 
+3.19 (27 Jul 2001)
+     - Susan made changes necessary to do the manual split and minor 
+       formatting changes 
+
 3.18 (16 Jul 2001)
 
      - Changed template parameter name in I_Polyhedron_vertex,
