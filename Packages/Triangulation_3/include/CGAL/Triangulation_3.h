@@ -612,11 +612,11 @@ protected:
   class Conflict_tester_outside_convex_hull_3
   {
       const Point &p;
-      Self *t;
+      const Self *t;
 
   public:
 
-      Conflict_tester_outside_convex_hull_3(const Point &pt, Self *tr)
+      Conflict_tester_outside_convex_hull_3(const Point &pt, const Self *tr)
 	  : p(pt), t(tr) {}
 
       bool operator()(const Cell_handle c) const
@@ -630,11 +630,11 @@ protected:
   class Conflict_tester_outside_convex_hull_2
   {
       const Point &p;
-      Self *t;
+      const Self *t;
 
   public:
 
-      Conflict_tester_outside_convex_hull_2(const Point &pt, Self *tr)
+      Conflict_tester_outside_convex_hull_2(const Point &pt, const Self *tr)
 	  : p(pt), t(tr) {}
 
       bool operator()(const Cell_handle c) const

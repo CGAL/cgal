@@ -163,12 +163,12 @@ private:
   class Conflict_tester_3
   {
       const Weighted_point &p;
-      Self *t;
+      const Self *t;
       mutable std::vector<Vertex_handle> cv;
 
   public:
 
-      Conflict_tester_3(const Weighted_point &pt, Self *tr)
+      Conflict_tester_3(const Weighted_point &pt, const Self *tr)
 	  : p(pt), t(tr) {}
 
       bool operator()(const Cell_handle c) const
@@ -199,12 +199,12 @@ private:
   class Conflict_tester_2
   {
       const Weighted_point &p;
-      Self *t;
+      const Self *t;
       mutable std::vector<Vertex_handle> cv;
 
   public:
 
-      Conflict_tester_2(const Weighted_point &pt, Self *tr)
+      Conflict_tester_2(const Weighted_point &pt, const Self *tr)
 	  : p(pt), t(tr) {}
 
       bool operator()(const Cell_handle c) const

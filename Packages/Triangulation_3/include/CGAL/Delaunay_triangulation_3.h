@@ -286,11 +286,11 @@ private:
   class Conflict_tester_3
   {
       const Point &p;
-      Self *t;
+      const Self *t;
 
   public:
 
-      Conflict_tester_3(const Point &pt, Self *tr)
+      Conflict_tester_3(const Point &pt, const Self *tr)
 	  : p(pt), t(tr) {}
 
       bool operator()(const Cell_handle c) const
@@ -302,11 +302,11 @@ private:
   class Conflict_tester_2
   {
       const Point &p;
-      Self *t;
+      const Self *t;
 
   public:
 
-      Conflict_tester_2(const Point &pt, Self *tr)
+      Conflict_tester_2(const Point &pt, const Self *tr)
 	  : p(pt), t(tr) {}
 
       bool operator()(const Cell_handle c) const
