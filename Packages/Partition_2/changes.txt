@@ -1,3 +1,12 @@
+1.29 (24 Mar 2002)
+  - fixed remaining problems in optimal partition with collinear vertices
+  - fixed some problems in the traits classes (referring to old design and
+    undocumented types and such)
+
+1.28 (19 Mar 2002)
+  - fixed problems in optimal partition and greene_approx partition that
+    crop up when there are collinear vertices 
+
 1.27 (23 Jan 2002)
   - added a std:: to size_t in Matrix.h
 

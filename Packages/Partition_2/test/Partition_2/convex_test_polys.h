@@ -76,3 +76,81 @@ void make_nonconvex(Polygon_2& polygon)
    polygon.push_back(Point_2(421, 212));
    polygon.push_back(Point_2(441, 303));
 }
+
+/*
+template <class Polygon_2>
+void make_hilbert_polygon(Polygon_2& polygon)
+{
+   typedef typename Polygon_2::Point_2  Point_2;
+
+   polygon.push_back(Point_2(435, 157));
+   polygon.push_back(Point_2(435, 253));
+   polygon.push_back(Point_2(435, 349));
+   polygon.push_back(Point_2(383, 349));
+   polygon.push_back(Point_2(330, 349));
+   polygon.push_back(Point_2(330, 301));
+   polygon.push_back(Point_2(383, 301));
+   polygon.push_back(Point_2(383, 253));
+   polygon.push_back(Point_2(383, 205));
+   polygon.push_back(Point_2(330, 205));
+   polygon.push_back(Point_2(330, 253));
+   polygon.push_back(Point_2(278, 253));
+   polygon.push_back(Point_2(278, 205));
+   polygon.push_back(Point_2(226, 205));
+   polygon.push_back(Point_2(226, 253));
+   polygon.push_back(Point_2(226, 301));
+   polygon.push_back(Point_2(278, 301));
+   polygon.push_back(Point_2(278, 349));
+   polygon.push_back(Point_2(226, 349));
+   polygon.push_back(Point_2(173, 349));
+   polygon.push_back(Point_2(173, 301));
+   polygon.push_back(Point_2(121, 301));
+   polygon.push_back(Point_2(121, 349));
+   polygon.push_back(Point_2(69, 349));
+   polygon.push_back(Point_2(16, 349));
+   polygon.push_back(Point_2(16, 301));
+   polygon.push_back(Point_2(69, 301));
+   polygon.push_back(Point_2(69, 253));
+   polygon.push_back(Point_2(16, 253));
+   polygon.push_back(Point_2(16, 205));
+   polygon.push_back(Point_2(69, 205));
+   polygon.push_back(Point_2(121, 205));
+   polygon.push_back(Point_2(121, 253));
+   polygon.push_back(Point_2(173, 253));
+   polygon.push_back(Point_2(173, 205));
+   polygon.push_back(Point_2(173, 157));
+   polygon.push_back(Point_2(173, 108));
+   polygon.push_back(Point_2(121, 108));
+   polygon.push_back(Point_2(121, 157));
+   polygon.push_back(Point_2(69, 157));
+   polygon.push_back(Point_2(16, 157));
+   polygon.push_back(Point_2(16, 108));
+   polygon.push_back(Point_2(69, 108));
+   polygon.push_back(Point_2(69, 60));
+   polygon.push_back(Point_2(16, 60));
+   polygon.push_back(Point_2(16, 12));
+   polygon.push_back(Point_2(69, 12));
+   polygon.push_back(Point_2(121, 12));
+   polygon.push_back(Point_2(121, 60));
+   polygon.push_back(Point_2(173, 60));
+   polygon.push_back(Point_2(173, 12));
+   polygon.push_back(Point_2(226, 12));
+   polygon.push_back(Point_2(278, 12));
+   polygon.push_back(Point_2(278, 60));
+   polygon.push_back(Point_2(226, 60));
+   polygon.push_back(Point_2(226, 108));
+   polygon.push_back(Point_2(226, 157));
+   polygon.push_back(Point_2(278, 157));
+   polygon.push_back(Point_2(278, 108));
+   polygon.push_back(Point_2(330, 108));
+   polygon.push_back(Point_2(330, 157));
+   polygon.push_back(Point_2(383, 157));
+   polygon.push_back(Point_2(383, 108));
+   polygon.push_back(Point_2(383, 60));
+   polygon.push_back(Point_2(330, 60));
+   polygon.push_back(Point_2(330, 12));
+   polygon.push_back(Point_2(383, 12));
+   polygon.push_back(Point_2(435, 12));
+}
+*/
+

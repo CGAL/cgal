@@ -28,6 +28,7 @@ void make_monotone_w_collinear_points(Polygon_2& polygon)
    polygon.push_back(Point_2(220, 186));
    polygon.push_back(Point_2(152, 186));
 */
+/*
    polygon.push_back(Point_2(140, 226));
    polygon.push_back(Point_2(293, 226));
    polygon.push_back(Point_2(335, 226));
@@ -45,6 +46,26 @@ void make_monotone_w_collinear_points(Polygon_2& polygon)
    polygon.push_back(Point_2(132, 259));
    polygon.push_back(Point_2(132, 249));
    polygon.push_back(Point_2(132, 236));
+*/
+
+   polygon.push_back(Point_2(435.69, 349.976 ));
+   polygon.push_back(Point_2(383.312, 349.976 ));
+   polygon.push_back(Point_2(330.935, 349.976 ));
+   polygon.push_back(Point_2(383.312, 301.765 ));
+   polygon.push_back(Point_2(383.312, 275.765 ));
+   polygon.push_back(Point_2(383.312, 253.554 ));
+   polygon.push_back(Point_2(383.312, 205.344 ));
+   polygon.push_back(Point_2(330.935, 205.344 ));
+   polygon.push_back(Point_2(278.557, 205.344 ));
+   polygon.push_back(Point_2(226.179, 205.344 ));
+   polygon.push_back(Point_2(173.801, 205.344 ));
+   polygon.push_back(Point_2(383.312, 157.133 ));
+   polygon.push_back(Point_2(383.312, 108.922 ));
+   polygon.push_back(Point_2(383.312, 60.7117 ));
+   polygon.push_back(Point_2(330.935, 60.7117 ));
+   polygon.push_back(Point_2(330.935, 12.5011 ));
+   polygon.push_back(Point_2(383.312, 12.5011 ));
+   polygon.push_back(Point_2(435.69, 12.5011));
 }
 
 template <class Polygon_2>

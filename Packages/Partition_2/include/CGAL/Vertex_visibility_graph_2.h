@@ -51,7 +51,6 @@ template <class Traits>
 class Vertex_visibility_graph_2 
 {
 private:
-   typedef typename Traits::R                 R;
    typedef typename Traits::Point_2           Point_2;
    typedef typename Traits::Segment_2         Segment_2;
    typedef typename Traits::Ray_2             Ray_2;
@@ -215,7 +214,7 @@ public:
          }
          if (p_r != tree.end()) stack.push(p_r);
       }
-   //   print_edge_set(edges);
+//      print_edge_set(edges);
    }
 
 

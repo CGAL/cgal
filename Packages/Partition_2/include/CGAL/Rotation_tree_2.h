@@ -41,7 +41,7 @@ class Rotation_tree_2 : public std::vector< Rotation_tree_node_2<Traits_> >
 public:
    typedef Traits_                               Traits;
    typedef Rotation_tree_node_2<Traits>          Node;
-   typedef typename std::vector<Node>::iterator    Self_iterator;
+   typedef typename std::vector<Node>::iterator  Self_iterator;
    typedef typename Traits::Point_2              Point_2;
 
 
@@ -49,9 +49,6 @@ public:
    template<class ForwardIterator>
    Rotation_tree_2(ForwardIterator first, ForwardIterator beyond)
    {
-      typedef typename Traits::R                               R;
-      typedef typename Traits::R::FT                           FT;
-   
       for (ForwardIterator it = first; it != beyond; it++)
          push_back(*it);
    

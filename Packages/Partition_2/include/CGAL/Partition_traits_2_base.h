@@ -35,22 +35,22 @@
 
 namespace CGAL {
 
-template <class R_>
+template <class Kernel_>
 class Partition_traits_2_base
 {
+  private:
+    typedef Kernel_                                 Kernel;
   public:
-    typedef R_                                      R;
-    typedef CGAL::Polygon_traits_2<R>               Poly_Traits;
+    typedef CGAL::Polygon_traits_2<Kernel>          Poly_Traits;
     typedef typename Poly_Traits::Point_2           Point_2;
     typedef ::std::list<Point_2>                    Container;
     typedef CGAL::Polygon_2<Poly_Traits, Container> Polygon_2;
-    typedef typename R::Less_yx_2                   Less_yx_2;
-    typedef typename R::Less_xy_2                   Less_xy_2;
-    typedef typename R::Leftturn_2                  Leftturn_2;
-    typedef typename R::Orientation_2               Orientation_2;
-    typedef typename R::Compare_y_2                 Compare_y_2;
-    typedef typename R::Compare_x_2                 Compare_x_2;
-
+    typedef typename Kernel::Less_yx_2              Less_yx_2;
+    typedef typename Kernel::Less_xy_2              Less_xy_2;
+    typedef typename Kernel::Leftturn_2             Leftturn_2;
+    typedef typename Kernel::Orientation_2          Orientation_2;
+    typedef typename Kernel::Compare_y_2            Compare_y_2;
+    typedef typename Kernel::Compare_x_2            Compare_x_2;
 
     Less_yx_2
     less_yx_2_object() const

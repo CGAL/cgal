@@ -28,110 +28,8 @@
 
 namespace CGAL {
 
+
 /*
-// Pre:  ccw order of points; no repeated points
-template <class Traits>
-template <class ForwardIterator>
-void 
-Vertex_visibility_graph_2<Traits>::build(ForwardIterator first, 
-                                  ForwardIterator beyond)
-{
-   Polygon       polygon(first,beyond);
-   Tree            tree(polygon.begin(), polygon.end());
-
-   Vertex_map  vertex_map;
-   initialize_vertex_map(polygon, vertex_map);
-
-   std::stack<Tree_iterator> s;
-   s.push(tree.rightmost_point_ref());   // push on p_0, the rightmost point
-
-   Tree_iterator p, p_r, q, z;
-   while (!s.empty())
-   {
-      p = s.top();
-#ifdef CGAL_VISIBILITY_GRAPH_DEBUG
-      if (p != tree.end())
-         std::cout << "p = " << *p << std::endl;
-      else
-         std::cout << "p == NULL" << std::endl;
-#endif
-      s.pop();
-      p_r = tree.right_sibling(p);
-#ifdef CGAL_VISIBILITY_GRAPH_DEBUG
-      if (p_r != tree.end())
-         std::cout << "p_r = " << *p_r << std::endl;
-      else
-         std::cout << "p_r == NULL" << std::endl;
-#endif
-      q = tree.parent(p);
-#ifdef CGAL_VISIBILITY_GRAPH_DEBUG
-      if (q != tree.end())
-         std::cout << "q = " << *q << std::endl;
-      else
-         std::cout << "q == NULL" << std::endl;
-#endif
-      if (!tree.parent_is_p_minus_infinity(p))
-      {
-#ifdef CGAL_VISIBILITY_GRAPH_DEBUG
-         std::cout << "q is not p_minus_infinity" << std::endl;
-#endif
-         handle(p,q,polygon,vertex_map);
-      }
-      z = tree.left_sibling(q);
-#ifdef CGAL_VISIBILITY_GRAPH_DEBUG
-      if (z != tree.end())
-         std::cout << "z = " << *z << std::endl;
-      else
-         std::cout << "z == NULL" << std::endl;
-      std::cout << "erasing " << *p << " from tree " << std::endl;
-#endif
-      tree.erase(p);
-      if ((z == tree.end()) || !left_turn_to_parent(p,z,tree))
-      {
-#ifdef CGAL_VISIBILITY_GRAPH_DEBUG
-         std::cout << "making " << *p << " the left sibling of " << *q 
-                   << std::endl;
-#endif
-         tree.set_left_sibling(p,q);
-      }
-      else
-      {
-         // NOTE: no need to check here if z is p_infinity since you are
-         // moving DOWN the tree instead of up and p_infinity is at the root
-         while ((tree.rightmost_child(z) != tree.end()) &&
-                !rightturn(*p,*tree.rightmost_child(z),*z))
-         {
-            z = tree.rightmost_child(z);
-#ifdef CGAL_VISIBILITY_GRAPH_DEBUG
-            std::cout << "    z = " << *z << std::endl;
-#endif
-         }
-         tree.set_rightmost_child(p,z);
-         if (!s.empty() && z == s.top())
-         {
-#ifdef CGAL_VISIBILITY_GRAPH_DEBUG
-            std::cout << "popping " << *z << " from top of stack "<<std::endl;
-#endif
-            z = s.top();
-            s.pop();
-         }
-      }
-#ifdef CGAL_VISIBILITY_GRAPH_DEBUG
-      std::cout << " p is now " << *p << std::endl;
-#endif
-      if (tree.left_sibling(p) == tree.end() && !tree.parent_is_p_infinity(p))
-      {
-#ifdef CGAL_VISIBILITY_GRAPH_DEBUG
-         std::cout << "pushing " << *p << std::endl;
-#endif
-         s.push(p);
-      }
-      if (p_r != tree.end()) s.push(p_r);
-   }
-//   print_edge_set(edges);
-}
-
-
 // ??? need to finish this ???
 template <class Traits>
 template <class ForwardIterator>
@@ -202,6 +100,9 @@ Vertex_visibility_graph_2<Traits>::initialize_vertex_map(
    while (!iterator_list.empty())
    {
       event_it = iterator_list.front();
+#ifdef CGAL_VISIBILITY_GRAPH_DEBUG
+      std::cout << "event = " << *event_it << std::endl;     
+#endif
       next_endpt = event_it; next_endpt++;
       if (next_endpt == polygon.end()) next_endpt = polygon.begin();
       iterator_list.pop_front();
@@ -379,6 +280,11 @@ Vertex_visibility_graph_2<Traits>::diagonal_in_interior(
    }
    else // left turn or straight at vertex
    {
+/*
+      // p should not be able to see q through its own edge
+      if (are_strictly_ordered_along_line(*p, *after_p, *q))
+         return false;
+*/
       if (rightturn(*before_p, *p, *q) || rightturn(*q, *p, *after_p))
          return false;
    }
@@ -417,6 +323,7 @@ bool Vertex_visibility_graph_2<Traits>::point_is_visible(
     // to each other since it is known at this point that the edge from 
     // the looker to the point to see goes through the interior of the polygon
     if ((*looker).second.second == point_to_see)
+        
     {
 #ifdef CGAL_VISIBILITY_GRAPH_DEBUG
        std::cout << "looker sees point" << std::endl;
@@ -593,14 +500,14 @@ void Vertex_visibility_graph_2<Traits>::update_visibility(
       std::cout << "prev_q = " << *prev_q  << " turn_q = " << *turn_q 
                 << std::endl;
 #endif
-      // q sees nothing or there is a left turn to the next point after q
+      // q sees nothing or there is not a right turn to the point after q
       if ((*q_it).second.second == polygon.end() || 
-          orientation_2((*p_it).first, (*q_it).first, *turn_q) == LEFTTURN)
+          orientation_2((*p_it).first, (*q_it).first, *turn_q) != RIGHTTURN)
       {
          (*p_it).second.second = (*q_it).second.first; // p sees q
 #ifdef CGAL_VISIBILITY_GRAPH_DEBUG
-         std::cout << "p sees q's segment, q sees nothing and left to next "
-                   << " point; p sees q " << std::endl;
+         std::cout << "p sees q's segment, q sees nothing and not right to "
+                   << " next point; p sees q " << std::endl;
 #endif
       }
       else

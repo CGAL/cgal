@@ -35,4 +35,12 @@ void test_optimal_convex()
    CGAL::optimal_convex_partition_2(polygon.vertices_begin(), 
                                     polygon.vertices_end(),
                                     std::back_inserter(partition_polys));
+/*
+   partition_polys.clear();
+   polygon.erase(polygon.vertices_begin(), polygon.vertices_end());
+   make_hilbert_polygon(polygon);
+   CGAL::optimal_convex_partition_2(polygon.vertices_begin(), 
+                                    polygon.vertices_end(),
+                                    std::back_inserter(partition_polys));
+*/
 }

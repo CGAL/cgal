@@ -142,10 +142,12 @@ class Indirect_edge_compare
                 else 
                 {
                   bool p_larger_x = l_q.x_at_y((*p).y()) > (*p).x();
+/*
                   bool after_p_larger_x = 
                        l_q.x_at_y((*after_p).y()) > (*after_p).x();
      
                   CGAL_assertion (p_larger_x == after_p_larger_x);
+*/
      
                   return !p_larger_x;
                 }

@@ -37,44 +37,45 @@
 
 namespace CGAL {
 
-template <class R_>
-class Partition_traits_2  : public Partition_traits_2_base<R_>
+template <class Kernel_>
+class Partition_traits_2  : public Partition_traits_2_base<Kernel_>
 {
+  private:
+    typedef Kernel_                                     Kernel;
+    typedef Partition_traits_2<Kernel_>                 Self;
   public:
-    typedef R_                                          R;
-    typedef Partition_traits_2<R_>                      Self;
-    typedef CGAL::Polygon_traits_2<R_>                  Poly_Traits;
+    typedef CGAL::Polygon_traits_2<Kernel_>             Poly_Traits;
     typedef typename Poly_Traits::Point_2               Point_2;
     typedef ::std::list<Point_2>                        Container;
     typedef CGAL::Polygon_2<Poly_Traits, Container>     Polygon_2;
-    typedef typename R::Less_yx_2                       Less_yx_2;
-    typedef typename R::Less_xy_2                       Less_xy_2;
-    typedef typename R::Leftturn_2                      Leftturn_2;
-    typedef typename R::Orientation_2                   Orientation_2;
-    typedef typename R::Compare_y_2                     Compare_y_2;
-    typedef typename R::Compare_x_2                     Compare_x_2;
+    typedef typename Kernel::Less_yx_2                  Less_yx_2;
+    typedef typename Kernel::Less_xy_2                  Less_xy_2;
+    typedef typename Kernel::Leftturn_2                 Leftturn_2;
+    typedef typename Kernel::Orientation_2              Orientation_2;
+    typedef typename Kernel::Compare_y_2                Compare_y_2;
+    typedef typename Kernel::Compare_x_2                Compare_x_2;
     typedef CGAL::Is_convex_2<Self>                     Is_convex_2;
     typedef CGAL::Is_y_monotone_2<Self>                 Is_y_monotone_2;
 
     // needed by Indirect_edge_compare, used in y_monotone and greene_approx
-    typedef typename R::Line_2                          Line_2;
-    typedef typename R::Construct_line_2                Construct_line_2;
-    typedef typename R::Compare_x_at_y_2                Compare_x_at_y_2;
-    typedef typename R::Is_horizontal_2                 Is_horizontal_2;
+    typedef typename Kernel::Line_2                     Line_2;
+    typedef typename Kernel::Construct_line_2           Construct_line_2;
+    typedef typename Kernel::Compare_x_at_y_2           Compare_x_at_y_2;
+    typedef typename Kernel::Is_horizontal_2            Is_horizontal_2;
 
     // needed by visibility graph and thus by optimal convex
-    typedef typename R::Ray_2                           Ray_2; 
-    typedef typename R::Collinear_are_ordered_along_line_2
+    typedef typename Kernel::Ray_2                      Ray_2; 
+    typedef typename Kernel::Collinear_are_ordered_along_line_2
                                             Collinear_are_ordered_along_line_2;
-    typedef typename R::Are_strictly_ordered_along_line_2
+    typedef typename Kernel::Are_strictly_ordered_along_line_2
                                             Are_strictly_ordered_along_line_2;
 
     // needed by approx_convex (for constrained triangulation)
     // and optimal convex (for vis. graph)
-    typedef typename R::Segment_2                       Segment_2;
+    typedef typename Kernel::Segment_2                  Segment_2;
     // needed by optimal convex (for vis. graph)
-    typedef typename R::Construct_segment_2             Construct_segment_2;
-    typedef typename R::Construct_ray_2                 Construct_ray_2;
+    typedef typename Kernel::Construct_segment_2        Construct_segment_2;
+    typedef typename Kernel::Construct_ray_2            Construct_ray_2;
 
  
     Construct_line_2

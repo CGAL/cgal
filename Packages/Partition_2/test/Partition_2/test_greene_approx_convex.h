@@ -35,4 +35,12 @@ void test_greene_approx_convex()
    CGAL::greene_approx_convex_partition_2(polygon.vertices_begin(),
                                           polygon.vertices_end(),
                                           std::back_inserter(partition_polys));
+/*
+   partition_polys.clear();
+   polygon.erase(polygon.vertices_begin(), polygon.vertices_end());
+   make_hilbert_polygon(polygon);
+   CGAL::greene_approx_convex_partition_2(polygon.vertices_begin(),
+                                          polygon.vertices_end(),
+                                          std::back_inserter(partition_polys));
+*/
 }

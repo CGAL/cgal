@@ -42,10 +42,10 @@ template<class Iterator, class Traits>
 class Indirect_CW_diag_compare  
 {
 public:
-   typedef typename Traits::R              R;
+   typedef typename Traits::Point_2        Point_2;
    typedef typename Traits::Orientation_2  Orig_orientation;
 
-   Indirect_CW_diag_compare(Point_2<R> vertex, Iterator prev_ref, 
+   Indirect_CW_diag_compare(Point_2 vertex, Iterator prev_ref, 
                          Iterator next_ref) : 
                 _orientation(Traits().orientation_2_object()),
                 _vertex(vertex),
@@ -85,7 +85,7 @@ public:
    }
 private:
    Orig_orientation _orientation;
-   Point_2<R>       _vertex;
+   Point_2          _vertex;
    Iterator         _prev_v_ref;
    Orientation      _vertex_orientation;
 };
@@ -99,8 +99,6 @@ class Partition_vertex;
 //   Traits::Point_2
 //   Traits::Leftturn_2
 //   Traits::Orientation_2
-//   Traits::leftturn_2_object
-//   Traits::orientation_2_object
 template <class Traits_>
 class Partitioned_polygon_2 : public std::vector< Partition_vertex< Traits_ > >
 {
