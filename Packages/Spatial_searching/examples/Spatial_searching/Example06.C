@@ -1,6 +1,6 @@
 // Approximate spatial searching: Example06.C
 // Example illustrating for each separate splitting rule
-// building a kd-tree 
+// building a kd-tree   
 
 #include <vector>
 #include <numeric>

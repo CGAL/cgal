@@ -45,7 +45,7 @@ typedef Kd_tree<Traits> Tree;
 typedef typename Traits::Item_with_distance Item_with_distance;
 typedef std::pair<Node*,NT> Node_with_distance;
 
-private:
+
 
 // this forward declaration may cause problems for g++ 
 class iterator;
@@ -121,7 +121,7 @@ class iterator;
     }
 
     // copy constructor
-    iterator(iterator& Iter) {
+    iterator(const iterator& Iter) {
         Ptr_implementation = Iter.Ptr_implementation;
         if (Ptr_implementation != 0) Ptr_implementation->reference_count++;
     }

@@ -72,7 +72,7 @@ class Cell
 typedef typename Tree_traits::Item_with_distance Item_with_distance;
 typedef std::pair<Cell*,NT> Cell_with_distance;
 
-// this forward declaration causes problems for g++ 
+// this forward declaration may problems for g++ 
 class iterator;
 
 
@@ -140,7 +140,7 @@ class iterator;
     }
 
     // copy constructor
-    iterator(iterator& Iter) {
+    iterator(const iterator& Iter) {
         Ptr_implementation = Iter.Ptr_implementation;
         if (Ptr_implementation != 0) Ptr_implementation->reference_count++;
     }

@@ -1,5 +1,5 @@
 // Approximate spatial searching: Example08.C
-// Example illustrating for each separate splitting rule
+// Example illustrating for each separate splitting rule 
 // building a kd-tree 
 
 #include <vector>
@@ -16,7 +16,7 @@
 #include <CGAL/Random.h>
 #include <CGAL/Splitting_rules.h>
 #include <CGAL/Orthogonal_priority_search.h>
-#include <CGAL/Algorithm.h>
+#include <CGAL/algorithm.h>
 
 
 

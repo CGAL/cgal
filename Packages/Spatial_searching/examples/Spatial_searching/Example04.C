@@ -259,6 +259,8 @@ int generate_kd_tree(CGAL::Split_rule_enumeration::Split_rule s) {
      std::cout << " d(q,nn1)= " << nearest_neighbours1[i].second << 
      " d(q,nn2)= " << nearest_neighbours2[i].second << std::endl; 
   } 
+
+  return 0;
 };
 
 int main() {

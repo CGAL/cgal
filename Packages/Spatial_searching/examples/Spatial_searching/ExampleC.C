@@ -6,6 +6,7 @@
 #include <iostream>
 #include <fstream> 
 
+
 #include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Kd_tree_traits_point.h>
