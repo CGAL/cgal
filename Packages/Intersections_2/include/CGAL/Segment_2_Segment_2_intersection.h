@@ -206,7 +206,7 @@ bool seg_seg_do_intersect_crossing(
 
 template <class K>
 bool seg_seg_do_intersect_contained(
-        const typename K::Point_2  &p1, const typename K::Point_2 const &p2, 
+        const typename K::Point_2  &p1, const typename K::Point_2 &p2, 
 	const typename K::Point_2 &p3, const typename K::Point_2 &p4,
 	const K& k)
 {
