@@ -12,6 +12,8 @@ General
 - trouver une interface avec T_2 qui permette d'eviter de reprogrammer 
   tout le 2d dans le 3d
 - insure
+- virer le init() qui n'est plus necessaire, vu qu'on a le default ctor qui
+  remarche ?
 
 TEST SUITE
 
@@ -63,15 +65,7 @@ Delaunay
 Gestion memoire
 - Alignement des cellules en memoire : effets de cache + pointeurs a
   l'interieur des cellules pour le voisinage (Fred a deja fait => ask).
-- La gestion memoire (interne a l'allocateur new/delete) prend pas mal de
-  place (30%...).  Ca serait bien de ranger les cellules dans des tableaux,
-  et ca permettrait de surcroi[tsx] aussi de se passer des listes doublements
-  chainees.
-  Le flag temporaire pourrait aller dans un des bits -> sizeof(cell) == 32 :)
-  NB: Ca serait bien de factoriser ce probleme avec T2D !!!
-- De plus, un vrai allocateur (a la STL) serait mieux, pour preserver les
-  constructions/destructions (encore que je doute de l'utilite, je ne vois pas
-  comment ca peut etre vraiment fiable).
+- Le flag temporaire pourrait aller dans un des bits -> sizeof(cell) == 32 :)
 
 Regular :
 - faire marcher la hierarchie avec.  Le probleme est qu'on delete des
