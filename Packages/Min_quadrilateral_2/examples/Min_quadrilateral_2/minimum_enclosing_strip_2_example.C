@@ -45,7 +45,7 @@ int main()
   // build a random convex 20-gon p
   Polygon_2 p;
   CGAL::random_convex_set_2(20, std::back_inserter(p), Generator(1.0));
-  cout << p << endl;
+  std::cout << p << std::endl;
 
   // compute the minimal enclosing strip p_m of p
   Line_2 p_m[2];
