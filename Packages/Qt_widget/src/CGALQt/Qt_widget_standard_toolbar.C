@@ -47,6 +47,7 @@ namespace CGAL {
     handtoolbut.deactivate();
     //set the widget
     widget = w;
+    widget->clear_history();
 
 #if QT_VERSION < 300
   // for Qt 2.3 and before
