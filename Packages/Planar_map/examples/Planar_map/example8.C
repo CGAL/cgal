@@ -24,7 +24,7 @@
 #include <CGAL/Homogeneous.h>
 #endif
 
-#include <CGAL/Pm_straight_traits.h>
+#include <CGAL/Pm_straight_traits_2.h>
 
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Planar_map_2.h>
@@ -56,7 +56,7 @@ typedef CGAL::Homogeneous<double>               Kernel;
 #endif
 #endif
 
-typedef CGAL::Pm_straight_traits<Kernel>        Traits;
+typedef CGAL::Pm_straight_traits_2<Kernel>      Traits;
 typedef Traits::Bounding_box                    Bounding_box;
 typedef Traits::Point_2                         Point_2;
 typedef Traits::X_curve_2                       X_curve_2;

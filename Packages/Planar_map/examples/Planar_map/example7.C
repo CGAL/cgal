@@ -9,7 +9,7 @@
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/Pm_straight_traits.h>
+#include <CGAL/Pm_straight_traits_2.h>
 #include <CGAL/IO/Straight_2_stream.h>
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Planar_map_2.h>
@@ -20,7 +20,7 @@
 
 typedef CGAL::Quotient<CGAL::MP_Float>          Number_type;
 typedef CGAL::Cartesian<Number_type>            Kernel;
-typedef CGAL::Pm_straight_traits<Kernel>        Traits;
+typedef CGAL::Pm_straight_traits_2<Kernel>      Traits;
 typedef Traits::Point_2                         Point_2;
 typedef Traits::X_curve_2                       X_curve_2;
 typedef Traits::X_bounded_curve                 Segment;
