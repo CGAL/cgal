@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <iostream.h>
 #include <fstream.h>
+#include <strings.h>
 
 
 typedef struct Lines{
