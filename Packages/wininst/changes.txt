@@ -1,3 +1,7 @@
+(20/12/01)	   Created directory include/CGAL/config/msvc7
+		   Moved Stl_port/vc7/iterator to include/CGAL/config/msvc/iterator_specializations.h
+		   Moved Stl_port/vc7/stl_iterator_base.h to include/CGAL/config/msvc/    (af)
+
 2.1.3 (10/8/2001)  resubmit
 
 1.5.4 (23/7/2001)  removed more obsolete dirs
