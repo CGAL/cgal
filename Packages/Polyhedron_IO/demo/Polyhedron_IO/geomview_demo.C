@@ -22,6 +22,17 @@
 // Illustrate output of a Polyhedron_3 to Geomview_stream.
 // ============================================================================
 
+//Borland, Microsoft and Intel compiler are excluded
+#if defined(__BORLANDC__) || defined(_MSC_VER)
+
+#include <iostream>
+
+int main() {
+  std::cout << "Geomview doesn't work on Windows, so no demo." << std::endl;
+  return 0;
+}
+#else // not windows
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_geomview_ostream.h>
@@ -45,4 +56,6 @@ int main() {
     geo >> click;
     return 0;
 }
+
+#endif // not windows
 // EOF //
