@@ -50,9 +50,9 @@ bool partition_appx_cvx_is_edge_through_interior(const Point_2& before_s,
                                                  const Traits& traits )
 {
    // determine if the edge goes through the interior of the polygon or not
-   typedef typename Traits::Leftturn_2   Leftturn_2;
-   Leftturn_2 left_turn = traits.leftturn_2_object();
-   Turn_reverser<Point_2, Leftturn_2> right_turn(left_turn);
+   typedef typename Traits::Left_turn_2   Left_turn_2;
+   Left_turn_2 left_turn = traits.left_turn_2_object();
+   Turn_reverser<Point_2, Left_turn_2> right_turn(left_turn);
    if (right_turn(before_s, source, after_s)) // concave angle
    {
      if (right_turn(before_s, source, target) &&
@@ -120,10 +120,10 @@ bool partition_appx_cvx_cuts_nonconvex_angle( Edge_circulator e_circ,
              << *prev_ccw_pt_ref << std::endl;
 #endif
 
-   typedef typename Traits::Leftturn_2    Leftturn_2;
+   typedef typename Traits::Left_turn_2    Left_turn_2;
    typedef typename Traits::Point_2     Point_2;
-   Leftturn_2 left_turn = traits.leftturn_2_object();
-   Turn_reverser<Point_2, Leftturn_2>  right_turn(left_turn);
+   Left_turn_2 left_turn = traits.left_turn_2_object();
+   Turn_reverser<Point_2, Left_turn_2>  right_turn(left_turn);
    return right_turn(*next_ccw_pt_ref, *v_ref, *prev_ccw_pt_ref); 
 }
 

@@ -50,16 +50,16 @@ class Segment_less_yx_2
    typedef typename Traits::Less_xy_2           Less_xy_2;
    typedef typename Traits::Compare_x_2         Compare_x_2;
    typedef typename Traits::Compare_y_2         Compare_y_2;
-   typedef typename Traits::Leftturn_2          Leftturn_2;
-   typedef Turn_reverser<Point_2, Leftturn_2>   Rightturn_2;
+   typedef typename Traits::Left_turn_2          Left_turn_2;
+   typedef Turn_reverser<Point_2, Left_turn_2>   Right_turn_2;
 
    public:
      Segment_less_yx_2() : 
        _less_xy_2(Traits().less_xy_2_object()),
        _compare_x_2(Traits().compare_x_2_object()),
        _compare_y_2(Traits().compare_y_2_object()),
-       _leftturn_2(Traits().leftturn_2_object()),
-       _rightturn_2(Rightturn_2(_leftturn_2))
+       _left_turn_2(Traits().left_turn_2_object()),
+       _right_turn_2(Right_turn_2(_left_turn_2))
      { }
      
 
@@ -122,20 +122,20 @@ class Segment_less_yx_2
         // see if one of q's endpoints is contained in p's x range
         else if (_compare_x_2(p_smaller_xy,q_smaller_xy) == SMALLER && 
                  _compare_x_2(q_smaller_xy,p_larger_xy) == SMALLER)
-           return _leftturn_2(p_smaller_xy,p_larger_xy,q_smaller_xy);
+           return _left_turn_2(p_smaller_xy,p_larger_xy,q_smaller_xy);
         else if (_compare_x_2(p_smaller_xy,q_larger_xy) == SMALLER &&
                  _compare_x_2(q_larger_xy,p_larger_xy) == SMALLER)
-           return _leftturn_2(p_smaller_xy,p_larger_xy,q_larger_xy);
+           return _left_turn_2(p_smaller_xy,p_larger_xy,q_larger_xy);
         //
         // neither of q's endpoints is in p's x-range so see if one of
         // p's endpoints is in q's x-range 
         //
         else if (_compare_x_2(q_smaller_xy,p_smaller_xy) == SMALLER && 
                  _compare_x_2(p_smaller_xy,q_larger_xy) == SMALLER)
-           return _rightturn_2(q_smaller_xy,q_larger_xy,p_smaller_xy);
+           return _right_turn_2(q_smaller_xy,q_larger_xy,p_smaller_xy);
         else if (_compare_x_2(q_smaller_xy,p_larger_xy) == SMALLER &&
                  _compare_x_2(p_larger_xy,q_larger_xy) == SMALLER )
-           return _rightturn_2(q_smaller_xy,q_larger_xy,p_larger_xy);
+           return _right_turn_2(q_smaller_xy,q_larger_xy,p_larger_xy);
         else // the x ranges are exactly the same
         {
            Comparison_result y_comp = _compare_y_2(p_smaller_xy, q_smaller_xy);
@@ -160,8 +160,8 @@ class Segment_less_yx_2
       Less_xy_2 _less_xy_2;
       Compare_x_2 _compare_x_2;
       Compare_y_2 _compare_y_2;
-      Leftturn_2 _leftturn_2;
-      Rightturn_2 _rightturn_2;
+      Left_turn_2 _left_turn_2;
+      Right_turn_2 _right_turn_2;
 };
 
 }

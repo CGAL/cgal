@@ -553,8 +553,8 @@ protected:
       Point c = point(source(e3));
       Point d = point(target(e3));
 
-      if (! (K.orientation(b,d,a) > 0 && // leftturn
-             K.orientation(b,d,c) < 0) ) // rightturn
+      if (! (K.orientation(b,d,a) > 0 && // left_turn
+             K.orientation(b,d,c) < 0) ) // right_turn
         continue;
 
       if ( K.first_pair_closer_than_second(b,d,a,c) ) { // flip
@@ -657,7 +657,7 @@ public:
         { e = CT.twin(e); current = EDGE_COLLINEAR; }
         else { // crossing
           current = EDGE_CROSSING;
-          if ( !(K.orientation(CT.segment(e),q)>0) ) // not leftturn
+          if ( !(K.orientation(CT.segment(e),q)>0) ) // not left_turn
             e = CT.twin(e); 
         }
 
@@ -674,17 +674,17 @@ public:
         int or1 = K.orientation(p,q,p1);
         int or2 = K.orientation(p,q,p2);
         int or3 = K.orientation(p,q,p3);
-        if ( or1 == 0 && !K.leftturn(p1,p2,q) )
+        if ( or1 == 0 && !K.left_turn(p1,p2,q) )
         { v = CT.source(e); current = VERTEX; }
-        else if ( or2 == 0 && !K.leftturn(p2,p3,q) )
+        else if ( or2 == 0 && !K.left_turn(p2,p3,q) )
         { v = CT.target(e); current = VERTEX; }
-        else if ( or3 == 0 && !K.leftturn(p3,p1,q) )
+        else if ( or3 == 0 && !K.left_turn(p3,p1,q) )
         { v = CT.target(CT.next(e)); current = VERTEX; }
-        else if ( or2 > 0 && or1 < 0 && !K.leftturn(p1,p2,q) )
+        else if ( or2 > 0 && or1 < 0 && !K.left_turn(p1,p2,q) )
         { e = CT.twin(e); current = EDGE_CROSSING; }
-        else if ( or3 > 0 && or2 < 0 && !K.leftturn(p2,p3,q) )
+        else if ( or3 > 0 && or2 < 0 && !K.left_turn(p2,p3,q) )
         { e = CT.twin(CT.next(e)); current = EDGE_CROSSING; }
-        else if ( or1 > 0 && or3 < 0 && !K.leftturn(p3,p1,q) )
+        else if ( or1 > 0 && or3 < 0 && !K.left_turn(p3,p1,q) )
         { e = CT.twin(CT.previous(e)); current = EDGE_CROSSING; }
         else return Object_handle();
 
@@ -840,7 +840,7 @@ PM_point_locator<PMD,GEO>::walk_in_triangulation(const Point& q) const
             if ( K.strictly_ordered_along_line(p,q,CT.point(v_cand)) ) 
               return Object_handle(e);
             v = v_cand; current = VERTEX; break;
-          case +1: // leftturn
+          case +1: // left_turn
             e = twin(next(e)); current = EDGE_CROSSING; break;
           case -1: 
             e = twin(previous(e)); current = EDGE_CROSSING; break;

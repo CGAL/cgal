@@ -67,15 +67,15 @@ public:
                   const Point_2_& p4, const Point_2_& p5, const Point_2_& p6,
                   const Traits& traits)
    { 
-      typedef typename Traits::Leftturn_2     Leftturn_2;
-      Leftturn_2 leftturn = traits.leftturn_2_object();
+      typedef typename Traits::Left_turn_2     Left_turn_2;
+      Left_turn_2 left_turn = traits.left_turn_2_object();
 
       _validity = PARTITION_OPT_CVX_NOT_VALID;
 
-      Turn_reverser<Point_2_, Leftturn_2>  rightturn(leftturn);
-      if (rightturn(p1, p2, p3))
+      Turn_reverser<Point_2_, Left_turn_2>  right_turn(left_turn);
+      if (right_turn(p1, p2, p3))
          _validity = PARTITION_OPT_CVX_START_VALID;
-      if (rightturn(p4, p5, p6))
+      if (right_turn(p4, p5, p6))
          if (_validity == PARTITION_OPT_CVX_START_VALID) 
             _validity = PARTITION_OPT_CVX_BOTH_VALID;
          else _validity = PARTITION_OPT_CVX_END_VALID;

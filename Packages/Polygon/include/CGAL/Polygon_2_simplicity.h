@@ -221,8 +221,8 @@ less_than_in_tree(Vertex_index new_edge, Vertex_index tree_edge)
     }
     switch (m_vertex_data->orientation_2( m_vertex_data->point(left),
             m_vertex_data->point(mid), m_vertex_data->point(right))) {
-      case LEFTTURN: return true;
-      case RIGHTTURN: return false;
+      case LEFT_TURN: return true;
+      case RIGHT_TURN: return false;
       case COLLINEAR: break;
     }
     m_vertex_data->is_simple_result = false;
@@ -291,8 +291,8 @@ insertion_event(Tree *tree, Vertex_index prev_vt,
     // check which endpoint is above the other
     bool left_turn;
     switch(orientation_2(point(prev_vt), point(mid_vt), point(next_vt))) {
-      case LEFTTURN: left_turn = true; break;
-      case RIGHTTURN: left_turn = false; break;
+      case LEFT_TURN: left_turn = true; break;
+      case RIGHT_TURN: left_turn = false; break;
       case COLLINEAR: return false;
       
     }
@@ -333,13 +333,13 @@ on_right_side(Vertex_index vt, Vertex_index edge_id, bool above)
 {
     Orientation turn =
         orientation_2(point(edge_id), point(vt), point(next(edge_id)));
-    bool leftturn = edges[edge_id.as_int()].is_left_to_right ? above : !above;
-    if (leftturn) {
-        if (turn != RIGHTTURN) {
+    bool left_turn = edges[edge_id.as_int()].is_left_to_right ? above : !above;
+    if (left_turn) {
+        if (turn != RIGHT_TURN) {
             return false;
         }
     } else {
-        if (turn != LEFTTURN) {
+        if (turn != LEFT_TURN) {
             return false;
         }
     }

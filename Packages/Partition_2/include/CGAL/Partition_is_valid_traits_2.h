@@ -38,7 +38,7 @@ public:
    typedef typename Traits::Point_2         Point_2;
    typedef typename Traits::Polygon_2       Polygon_2;
    typedef typename Traits::Less_xy_2       Less_xy_2;
-   typedef typename Traits::Leftturn_2      Leftturn_2;
+   typedef typename Traits::Left_turn_2      Left_turn_2;
    typedef typename Traits::Orientation_2   Orientation_2;
 
    typedef PolygonIsValid                   Is_valid;

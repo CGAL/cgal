@@ -259,8 +259,8 @@ inline Orientation orientationC2
                 -( x2.to_double() - x0.to_double())
                 *( y1.to_double() - y0.to_double());
     /* stay inside double precision, thus it is exact */
-    if (det>0) return LEFTTURN;
-    if (det)   return RIGHTTURN;
+    if (det>0) return LEFT_TURN;
+    if (det)   return RIGHT_TURN;
     /* the points are collinear */
     return COLLINEAR;
 }

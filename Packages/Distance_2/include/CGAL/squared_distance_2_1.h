@@ -467,11 +467,11 @@ squared_distance(
     }
     ray_s_side = orientation(seg.source(), seg.target(), ray.source());
     switch (ray_s_side) {
-    case LEFTTURN:
-        crossing2 = rightturn(seg.target()-seg.source(), raydir);
+    case LEFT_TURN:
+        crossing2 = right_turn(seg.target()-seg.source(), raydir);
         break;
-    case RIGHTTURN:
-        crossing2 = leftturn(seg.target()-seg.source(), raydir);
+    case RIGHT_TURN:
+        crossing2 = left_turn(seg.target()-seg.source(), raydir);
         break;
     case COLLINEAR:
         crossing2 = true;

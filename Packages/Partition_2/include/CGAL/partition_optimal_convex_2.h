@@ -116,11 +116,11 @@ int partition_opt_cvx_best_so_far(Partition_opt_cvx_vertex& pivot_vertex,
                 << ")" << " old = " << old.vertex_num() 
                 << ", " << old.value() << std::endl;
 #endif
-      typedef typename Traits::Leftturn_2    Leftturn_2;
+      typedef typename Traits::Left_turn_2    Left_turn_2;
       typedef typename Traits::Point_2       Point_2;
-      Leftturn_2 leftturn = traits.leftturn_2_object();
-      Turn_reverser<Point_2, Leftturn_2>  rightturn(leftturn);
-      if (rightturn(polygon[old.vertex_num()], 
+      Left_turn_2 left_turn = traits.left_turn_2_object();
+      Turn_reverser<Point_2, Left_turn_2>  right_turn(left_turn);
+      if (right_turn(polygon[old.vertex_num()], 
                     polygon[pivot_vertex.vertex_num()], polygon[extension])) 
       {
 #ifdef CGAL_PARTITION_OPTIMAL_CONVEX_DEBUG
@@ -322,7 +322,7 @@ bool partition_opt_cvx_is_visible_n3(const Polygon& polygon, unsigned int i,
 {
    typedef typename Traits::Segment_2     Segment_2;
    typedef typename Polygon::size_type    size_type;
-   typedef typename Traits::Leftturn_2    Leftturn_2;
+   typedef typename Traits::Left_turn_2    Left_turn_2;
    typedef typename Traits::Point_2       Point_2;
    typedef typename Traits::Construct_segment_2 Construct_segment_2;
 
@@ -335,17 +335,18 @@ bool partition_opt_cvx_is_visible_n3(const Polygon& polygon, unsigned int i,
    size_type prev_j = (j == 0)? polygon.size()-1: j - 1;
 
    // determine if the edge goes through the interior of the polygon or not
-   Leftturn_2 leftturn = traits.leftturn_2_object();
-   Turn_reverser<Point_2, Leftturn_2> rightturn(leftturn);
-   if (rightturn(polygon[prev_i], polygon[i], polygon[next_i]))// concave angle
+   Left_turn_2 left_turn = traits.left_turn_2_object();
+   Turn_reverser<Point_2, Left_turn_2> right_turn(left_turn);
+   if (right_turn(polygon[prev_i], polygon[i], polygon[next_i]))
+                                                      // concave angle
    {
-     if (rightturn(polygon[prev_i], polygon[i], polygon[j]) &&
-         rightturn(polygon[j], polygon[i], polygon[next_i]))
+     if (right_turn(polygon[prev_i], polygon[i], polygon[j]) &&
+         right_turn(polygon[j], polygon[i], polygon[next_i]))
        return false;
    }
    else // left turn or straight
-     if (rightturn(polygon[prev_i], polygon[i], polygon[j]) ||
-         rightturn(polygon[j], polygon[i], polygon[next_i]))
+     if (right_turn(polygon[prev_i], polygon[i], polygon[j]) ||
+         right_turn(polygon[j], polygon[i], polygon[next_i]))
        return false;
 
    size_type next_e;

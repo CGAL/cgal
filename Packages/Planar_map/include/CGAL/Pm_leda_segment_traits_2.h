@@ -329,14 +329,14 @@ public:
     int orient=or0*or1;                        
 		
     if (orient < 0) 
-    { //one is a leftturn the other rightturn
-      return (or0 == LEFTTURN); //leftturn
+    { //one is a left_turn the other right_turn
+      return (or0 == LEFT_TURN); //left_turn
     }
     else 
     { //both are either left or right turns (or one is colinear)
-      if (orientation(p0,p,p1)==RIGHTTURN)
+      if (orientation(p0,p,p1)==RIGHT_TURN)
       {
-        if ((or1 == 0) && (or0 == RIGHTTURN)) 
+        if ((or1 == 0) && (or0 == RIGHT_TURN)) 
           // the case where cvx and cv1 are colinear
           return false; 
         else 

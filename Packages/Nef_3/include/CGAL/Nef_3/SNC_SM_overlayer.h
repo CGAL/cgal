@@ -942,7 +942,7 @@ create_face_objects(SHalfedge_iterator e_start, SHalfedge_iterator e_end,
     Sphere_point p1 = point(source(e)), 
                  p2 = point(target(e)), 
                  p3 = point(target(next(e)));
-    if ( SG.orientation(p1,p2,p3) > 0 ) { // leftturn => outer face cycle
+    if ( SG.orientation(p1,p2,p3) > 0 ) { // left_turn => outer face cycle
       SFace_handle f = new_face();
       link_as_face_cycle(e,f);
       TRACEN("  creating new face object "<<&*f<<" bd "<<&*e);

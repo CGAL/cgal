@@ -170,7 +170,7 @@ slow -- random shuffling gives these orders a very small probability.
 @!   \ccPropagateThreeToTwoColumns}
 @! \newcommand{\cgalSetOptTraitsAdaptLayout}{\ccTexHtml{%
 @!     \ccSetThreeColumns{CGAL_Oriented_side}{}{returns constants
-@!       \ccc{CGAL_LEFTTURN}, \ccc{CGAL_COLLINEAR}}
+@!       \ccc{CGAL_LEFT_TURN}, \ccc{CGAL_COLLINEAR}}
 @!     \ccPropagateThreeToTwoColumns}{}}
 @! \input{../../doc_tex/basic/Optimisation/Min_ellipse_2.tex}
 @! \input{../../doc_tex/basic/Optimisation/Optimisation_ellipse_2.tex}

@@ -34,14 +34,14 @@
 CGAL_BEGIN_NAMESPACE
 inline
 bool
-leftturn( const leda_point & p, 
+left_turn( const leda_point & p, 
           const leda_point & q, 
           const leda_point & r)
 { return  CGAL_LEDA_SCOPE::left_turn(p,q,r); }
 
 inline
 bool
-rightturn( const leda_point & p, 
+right_turn( const leda_point & p, 
            const leda_point & q, 
            const leda_point & r)
 { return  CGAL_LEDA_SCOPE::right_turn(p,q,r); }

@@ -49,13 +49,13 @@ template <class Iterator, class Traits>
 class CW_indirect_edge_info_compare
 {
 public:
-   typedef typename Traits::Leftturn_2              Leftturn_2;
+   typedef typename Traits::Left_turn_2              Left_turn_2;
    typedef typename Traits::Less_xy_2               Less_xy_2;
    typedef typename Traits::Point_2                 Point_2;
    typedef CGAL::Edge_info<Iterator>                Edge_info;
 
    CW_indirect_edge_info_compare (Iterator v_it) : vertex_it(v_it),
-      left_turn(Traits().leftturn_2_object()),
+      left_turn(Traits().left_turn_2_object()),
       less_xy(Traits().less_xy_2_object())
    {}
 
@@ -77,7 +77,7 @@ public:
 
 private:
    Iterator          vertex_it;  
-   Leftturn_2        left_turn;
+   Left_turn_2        left_turn;
    Less_xy_2         less_xy;
 };
 

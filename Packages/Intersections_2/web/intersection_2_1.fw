@@ -1156,10 +1156,10 @@ bool seg_seg_do_intersect_crossing(
         PT const &p1, PT const &p2, PT const &p3, PT const &p4)
 {
     switch (orientation(p1,p2,p3)) {
-    case LEFTTURN:
-        return !rightturn(p3,p4,p2);
-    case RIGHTTURN:
-        return !leftturn(p3,p4,p2);
+    case LEFT_TURN:
+        return !right_turn(p3,p4,p2);
+    case RIGHT_TURN:
+        return !left_turn(p3,p4,p2);
     case COLLINEAR:
         return true;
     }
@@ -1174,10 +1174,10 @@ bool seg_seg_do_intersect_contained(
         PT const &p1, PT const &p2, PT const &p3, PT const &p4)
 {
     switch (orientation(p1,p2,p3)) {
-    case LEFTTURN:
-        return !leftturn(p1,p2,p4);
-    case RIGHTTURN:
-        return !rightturn(p1,p2,p4);
+    case LEFT_TURN:
+        return !left_turn(p1,p2,p4);
+    case RIGHT_TURN:
+        return !right_turn(p1,p2,p4);
     case COLLINEAR:
         return true;
     }

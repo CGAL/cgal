@@ -160,7 +160,7 @@ Point_2 intersection(const Segment_2& s1, const Segment_2& s2) const
 { CGAL_nef3_assertion(target(s1)==target(s2)); 
   return target(s1); }
 
-bool leftturn(const Point_3& p1, const Point_3& p2, const Point_3& p3) const
+bool left_turn(const Point_3& p1, const Point_3& p2, const Point_3& p3) const
 { return CGAL::orientation(p1,p2,p3,above(p1)) == CGAL::POSITIVE; }
 
 }; // Halffacet_geometry
@@ -391,7 +391,7 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
     Point_3 p1 = point(source(e)), 
             p2 = point(target(e)), 
             p3 = point(target(next(e)));
-    if ( G.leftturn(p1,p2,p3) ) { 
+    if ( G.left_turn(p1,p2,p3) ) { 
       Halffacet_handle f = sncp()->new_halffacet_pair(plane_supporting_facet);
       link_as_facet_cycle(e,f); link_as_facet_cycle(twin(e),twin(f)); 
       mark(f) = mark(e); 

@@ -71,7 +71,7 @@ public:
       // vertex to this vertex then d1 comes before d2 (in CW order from
       // the edge (previous, vertex)) if one makes a left turn from d1 to d2
 
-      if (d1_orientation == d2_orientation) return (d1_to_d2 == LEFTTURN);
+      if (d1_orientation == d2_orientation) return (d1_to_d2 == LEFT_TURN);
 
       // if d1 is on the line containing the edge (previous, vertex), then
       // the vertex must be a reflex vertex (otherwise the diagonal would
@@ -103,7 +103,7 @@ class Partition_vertex;
 // requires 
 //   Traits::Polygon_2
 //   Traits::Point_2
-//   Traits::Leftturn_2
+//   Traits::Left_turn_2
 //   Traits::Orientation_2
 //
 //  MSVC6 doesn't work with the CGALi::vector but it does with the std::vector
@@ -127,17 +127,17 @@ public:
    typedef Circulator_from_iterator<Iterator>           Circulator;
    typedef typename Traits::Polygon_2                   Subpolygon_2;
    typedef typename Traits::Point_2                     Point_2;
-   typedef typename Traits::Leftturn_2                  Left_turn_2;
+   typedef typename Traits::Left_turn_2                  Left_turn_2;
    typedef std::list<Circulator>                        Diagonal_list;
    typedef typename Diagonal_list::iterator             Diagonal_iterator;
 
 
-   Partitioned_polygon_2() : _left_turn(Traits().leftturn_2_object())
+   Partitioned_polygon_2() : _left_turn(Traits().left_turn_2_object())
    { }
 
    template <class InputIterator>
    Partitioned_polygon_2(InputIterator first, InputIterator beyond) :  
-       _left_turn(Traits().leftturn_2_object())
+       _left_turn(Traits().left_turn_2_object())
    {
       for (; first != beyond; first++) {
          push_back(Vertex(*first));
@@ -295,7 +295,7 @@ private:
       else
          next = *next_d_it;
    
-//      return _rightturn(*prev, *vertex_ref, *next);
+//      return _right_turn(*prev, *vertex_ref, *next);
       return _left_turn(*vertex_ref, *prev, *next);
    }
 

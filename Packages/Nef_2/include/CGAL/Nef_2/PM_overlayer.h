@@ -714,7 +714,7 @@ void create_face_objects(const Below_info& D) const
     Point p1 = point(source(e)), 
           p2 = point(target(e)), 
           p3 = point(target(next(e)));
-    if ( K.leftturn(p1,p2,p3) ) { // leftturn => outer face cycle
+    if ( K.left_turn(p1,p2,p3) ) { // left_turn => outer face cycle
         TRACEN("  creating new face object");
       Face_handle f = new_face();
       link_as_outer_face_cycle(f,e);

@@ -230,7 +230,7 @@ leda_polygon convert_to_leda(const CGAL::Triangle_2<REP>& t)
  leda_point lp3(CGAL::to_double(p3.x()), CGAL::to_double(p3.y()));
 
  leda_list<leda_point> L;
- if (t.orientation()== CGAL::LEFTTURN)
+ if (t.orientation()== CGAL::LEFT_TURN)
  {
   L.append(lp1); L.append(lp2); L.append(lp3);
  }
@@ -300,7 +300,7 @@ leda_polygon convert_to_leda(const CGAL::Triangle_3<REP>& obj)
   leda_point pl3(CGAL::to_double(p3.x()), CGAL::to_double(p3.y()));    
   leda_list<leda_point> Lh;
   
-  if (orientation(pl1,pl2,pl3)== CGAL::LEFTTURN)
+  if (orientation(pl1,pl2,pl3)== CGAL::LEFT_TURN)
   { Lh.append(pl1); Lh.append(pl2); Lh.append(pl3); }
   else
   { Lh.push(pl1); Lh.push(pl2); Lh.push(pl3); }

@@ -282,8 +282,8 @@ int which_side_in_slab(Point const &point, Point const &low, Point const &high,
 	}
     }
     switch (orientation_2(low, point, high)) {
-      case LEFTTURN: return 1;
-      case RIGHTTURN: return -1;
+      case LEFT_TURN: return 1;
+      case RIGHT_TURN: return -1;
       default: return 0;
     }
 }

@@ -93,12 +93,12 @@ Partition_y_mono_vertex_type partition_y_mono_vertex_type(
       return PARTITION_Y_MONO_COLLINEAR_VERTEX;
 
    typename Traits::Less_yx_2   less_yx = traits.less_yx_2_object();
-   typename Traits::Leftturn_2  leftturn = traits.leftturn_2_object();
+   typename Traits::Left_turn_2  left_turn = traits.left_turn_2_object();
 
    if (less_yx(*previous, *c)) 
    {
       if (less_yx(*next, *c))                // previous and next both less_yx
-         if (leftturn(*previous, *c, *next)) // interior angle less than pi
+         if (left_turn(*previous, *c, *next)) // interior angle less than pi
              return PARTITION_Y_MONO_START_VERTEX;
          else                                // interior angle greater than pi
              return PARTITION_Y_MONO_SPLIT_VERTEX;
@@ -108,7 +108,7 @@ Partition_y_mono_vertex_type partition_y_mono_vertex_type(
    else 
    {
       if (less_yx(*c, *next))           // previous and next both not less_yx
-        if (leftturn(*previous, *c, *next)) // interior angle less than pi
+        if (left_turn(*previous, *c, *next)) // interior angle less than pi
            return PARTITION_Y_MONO_END_VERTEX; 
         else                                // interior angle greater than pi
            return PARTITION_Y_MONO_MERGE_VERTEX;

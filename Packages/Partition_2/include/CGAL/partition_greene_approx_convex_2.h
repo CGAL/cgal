@@ -150,14 +150,14 @@ void visible(Polygon& polygon,
 #endif
 
     typedef typename Traits::Point_2      Point_2;
-    typedef typename Traits::Leftturn_2   Leftturn_2;
-    Leftturn_2    leftturn = traits.leftturn_2_object();
-    Turn_reverser<Point_2, Leftturn_2> rightturn(leftturn);
+    typedef typename Traits::Left_turn_2   Left_turn_2;
+    Left_turn_2    left_turn = traits.left_turn_2_object();
+    Turn_reverser<Point_2, Left_turn_2> right_turn(left_turn);
 
     if (((bottom_chain.direction() == CLOCKWISE) && 
-        rightturn(*stack.back(), *stack.before_back(), *new_point_ref)) ||
+        right_turn(*stack.back(), *stack.before_back(), *new_point_ref)) ||
         ((bottom_chain.direction() == COUNTERCLOCKWISE) &&
-        leftturn(*stack.back(), *stack.before_back(), *new_point_ref)))
+        left_turn(*stack.back(), *stack.before_back(), *new_point_ref)))
     {
        typedef typename Traits::Polygon_2 new_Polygon_2;
        new_Polygon_2 new_polygon;
@@ -246,18 +246,18 @@ void visible(Polygon& polygon,
 #endif
                // angle at stack > 180
                if (bottom_chain.direction() == CLOCKWISE)
-                  big_angle_at_stack = rightturn(*bottom_chain.front(), 
+                  big_angle_at_stack = right_turn(*bottom_chain.front(), 
                                                  *stack.back(),
                                                  *stack.before_back()); 
                else
-                  big_angle_at_stack = leftturn(*bottom_chain.front(), 
+                  big_angle_at_stack = left_turn(*bottom_chain.front(), 
                                                         *stack.back(),
                                                         *stack.before_back()); 
                if (bottom_chain.direction() == CLOCKWISE)
-                  is_visible = !rightturn(*stack.back(), *stack.before_back(),
+                  is_visible = !right_turn(*stack.back(), *stack.before_back(),
                                           *new_point_ref);
                else
-                  is_visible = !leftturn(*stack.back(), *stack.before_back(),
+                  is_visible = !left_turn(*stack.back(), *stack.before_back(),
                                          *new_point_ref);
                // point can see stack bottom
             }
@@ -287,13 +287,13 @@ void stack_extend(Polygon& polygon,
 #endif
 
    typedef typename Traits::Point_2      Point_2;
-   typedef typename Traits::Leftturn_2   Leftturn_2;
-   Leftturn_2    leftturn = traits.leftturn_2_object();
-   Turn_reverser<Point_2, Leftturn_2> rightturn(leftturn);
+   typedef typename Traits::Left_turn_2   Left_turn_2;
+   Left_turn_2    left_turn = traits.left_turn_2_object();
+   Turn_reverser<Point_2, Left_turn_2> right_turn(left_turn);
    if (((stack.direction() == COUNTERCLOCKWISE) && 
-        rightturn(*stack.before_front(), *stack.front(), *point_ref)) ||
+        right_turn(*stack.before_front(), *stack.front(), *point_ref)) ||
        ((stack.direction() == CLOCKWISE) && 
-        leftturn(*stack.before_front(), *stack.front(), *point_ref)))
+        left_turn(*stack.before_front(), *stack.front(), *point_ref)))
    {
       // new stack top becomes new first (and only) element of top chain
       stack.push_front(point_ref);
@@ -327,13 +327,13 @@ void change_top_chain(Polygon& polygon,
              << " next_point_ref " << *next_point_ref << std::endl;
 #endif
    typedef typename Traits::Point_2      Point_2;
-   typedef typename Traits::Leftturn_2   Leftturn_2;
-   Leftturn_2    leftturn = traits.leftturn_2_object();
-   Turn_reverser<Point_2, Leftturn_2> rightturn(leftturn);
+   typedef typename Traits::Left_turn_2   Left_turn_2;
+   Left_turn_2    left_turn = traits.left_turn_2_object();
+   Turn_reverser<Point_2, Left_turn_2> right_turn(left_turn);
    if (((top_chain.direction() == COUNTERCLOCKWISE) &&
-       !rightturn(*top_chain.front(), *new_point_ref, *next_point_ref)) ||
+       !right_turn(*top_chain.front(), *new_point_ref, *next_point_ref)) ||
       ((top_chain.direction() == CLOCKWISE) &&
-       !leftturn(*top_chain.front(), *new_point_ref, *next_point_ref)))
+       !left_turn(*top_chain.front(), *new_point_ref, *next_point_ref)))
    {
       top_chain.push_front(new_point_ref);
    }
@@ -401,17 +401,18 @@ void change_top_chain(Polygon& polygon,
                       << *stack.front() << std::endl;
 #endif
             if (top_chain.direction() == COUNTERCLOCKWISE)
-               big_angle_at_stack = !leftturn(*stack.before_front(), 
+               big_angle_at_stack = !left_turn(*stack.before_front(), 
                                               *stack.front(), *new_point_ref);
             else
-               big_angle_at_stack = !rightturn(*stack.before_front(), 
+               big_angle_at_stack = !right_turn(*stack.before_front(), 
                                              *stack.front(), *new_point_ref);
             if (top_chain.direction() == COUNTERCLOCKWISE)
-               small_angle_at_point = leftturn(*stack.front(), *new_point_ref,
+               small_angle_at_point = left_turn(*stack.front(), *new_point_ref,
                                                *next_point_ref);
             else
-               small_angle_at_point = rightturn(*stack.front(), *new_point_ref,
-                                                *next_point_ref);
+               small_angle_at_point = right_turn(*stack.front(), 
+                                                 *new_point_ref,
+                                                 *next_point_ref);
             if (!big_angle_at_stack && !small_angle_at_point) 
             {
                old_top_ref = stack.front();
@@ -453,14 +454,14 @@ void change_bottom_chain(Polygon& polygon,
              << " next_point_ref " << *next_point_ref << std::endl;
 #endif
    typedef typename Traits::Point_2      Point_2;
-   typedef typename Traits::Leftturn_2   Leftturn_2;
-   Leftturn_2    leftturn = traits.leftturn_2_object();
-   Turn_reverser<Point_2, Leftturn_2> rightturn(leftturn);
+   typedef typename Traits::Left_turn_2   Left_turn_2;
+   Left_turn_2    left_turn = traits.left_turn_2_object();
+   Turn_reverser<Point_2, Left_turn_2> right_turn(left_turn);
    if (((bottom_chain.direction() == CLOCKWISE) &&
-        !leftturn(*bottom_chain.front(), *new_point_ref, 
+        !left_turn(*bottom_chain.front(), *new_point_ref, 
                           *next_point_ref)) ||
        ((bottom_chain.direction() == COUNTERCLOCKWISE) &&
-        !rightturn(*bottom_chain.front(), *new_point_ref, *next_point_ref)))
+        !right_turn(*bottom_chain.front(), *new_point_ref, *next_point_ref)))
    {
       bottom_chain.push_front(new_point_ref);
    }
@@ -535,10 +536,10 @@ void change_bottom_chain(Polygon& polygon,
          {
             // angle at new point is < 180
             if (bottom_chain.direction() == CLOCKWISE)
-               small_angle_at_point = rightturn(*stack.back(), *new_point_ref,
+               small_angle_at_point = right_turn(*stack.back(), *new_point_ref,
                                                 *next_point_ref);
             else
-               small_angle_at_point = leftturn(*stack.back(), *new_point_ref,
+               small_angle_at_point = left_turn(*stack.back(), *new_point_ref,
                                                *next_point_ref);
          }
       } while (!done && !small_angle_at_point);

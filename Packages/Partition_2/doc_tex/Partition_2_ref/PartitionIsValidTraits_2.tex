@@ -44,7 +44,7 @@ where $p_x$ and $p_y$ denote the $x$ and $y$ coordinates of point $p$,
 respectively.
 }
 
-\ccNestedType{Leftturn_2}{
+\ccNestedType{Left_turn_2}{
 Predicate object type that provides 
 \ccc{bool operator()(Point_2 p,Point_2 q,Point_2 r)}, which
 returns \ccc{true} iff \ccc{r} lies to the left of the 
@@ -52,8 +52,8 @@ oriented line through \ccc{p} and \ccc{q}.}
 
 \ccNestedType{Orientation_2}{Predicate object type that provides
 \ccc{CGAL::Orientation operator()(Point_2 p, Point_2 q, Point_2 r)} that
-returns \ccStyle{CGAL::LEFTTURN}, if $r$ lies to the left of the oriented 
-line $l$ defined by $p$ and $q$, returns \ccStyle{CGAL::RIGHTTURN} if $r$ 
+returns \ccStyle{CGAL::LEFT_TURN}, if $r$ lies to the left of the oriented 
+line $l$ defined by $p$ and $q$, returns \ccStyle{CGAL::RIGHT_TURN} if $r$ 
 lies to the right of $l$, and returns \ccStyle{CGAL::COLLINEAR} if $r$ lies
 on $l$.}
 
@@ -75,7 +75,7 @@ types must exist.
 
 \ccMethod{Less_xy_2 less_xy_2_object();}{}
 
-\ccMethod{Leftturn_2 leftturn_2_object();}{}
+\ccMethod{Left_turn_2 left_turn_2_object();}{}
 
 \ccMethod{Orientation_2 orientation_2_object();}{}
 

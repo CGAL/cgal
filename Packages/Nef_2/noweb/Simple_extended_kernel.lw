@@ -845,7 +845,7 @@ through |p1p2|.}*/
   return static_cast<int> ( _orientation(p1,p2,p3) ); 
 }
 
-bool leftturn(const Point_2& p1, const Point_2& p2, const Point_2& p3) 
+bool left_turn(const Point_2& p1, const Point_2& p2, const Point_2& p3) 
 const
 /*{\Mop return true iff the |p3| is left of the line through |p1p2|.}*/
 { return orientation(p1,p2,p3) > 0; }
@@ -1317,7 +1317,7 @@ through |p1p2|.}*/
   return static_cast<int> ( _orientation(p1,p2,p3) ); 
 }
 
-bool leftturn(const Point_2& p1, const Point_2& p2, const Point_2& p3) 
+bool left_turn(const Point_2& p1, const Point_2& p2, const Point_2& p3) 
 const
 /*{\Xop return true iff the |p3| is left of the line through |p1p2|.}*/
 { return orientation(p1,p2,p3) > 0; }

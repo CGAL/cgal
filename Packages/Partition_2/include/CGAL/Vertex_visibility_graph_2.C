@@ -249,7 +249,7 @@ Vertex_visibility_graph_2<Traits>::left_turn_to_parent(
    }
    else
    {
-      return leftturn_2(*p, *q, *(*q).parent());
+      return left_turn_2(*p, *q, *(*q).parent());
    }
 }
 
@@ -262,7 +262,7 @@ Vertex_visibility_graph_2<Traits>::diagonal_in_interior(
                              Polygon_const_iterator p,
                              Polygon_const_iterator q)
 {
-   Turn_reverser<Point_2, Leftturn_2> rightturn(leftturn_2);
+   Turn_reverser<Point_2, Left_turn_2> right_turn(left_turn_2);
    Polygon_const_iterator before_p;
    if (p == polygon.begin())
       before_p = polygon.end();
@@ -272,9 +272,9 @@ Vertex_visibility_graph_2<Traits>::diagonal_in_interior(
    Polygon_const_iterator after_p = p; after_p++;
    if (after_p == polygon.end()) after_p = polygon.begin();
 
-   if (rightturn(*before_p, *p, *after_p))
+   if (right_turn(*before_p, *p, *after_p))
    {
-      if (rightturn(*before_p, *p, *q) && rightturn(*q, *p, *after_p))
+      if (right_turn(*before_p, *p, *q) && right_turn(*q, *p, *after_p))
          return false;
    }
    else // left turn or straight at vertex
@@ -284,7 +284,7 @@ Vertex_visibility_graph_2<Traits>::diagonal_in_interior(
       if (are_strictly_ordered_along_line(*p, *after_p, *q))
          return false;
 */
-      if (rightturn(*before_p, *p, *q) || rightturn(*q, *p, *after_p))
+      if (right_turn(*before_p, *p, *q) || right_turn(*q, *p, *after_p))
          return false;
    }
    return true;
@@ -468,7 +468,7 @@ void Vertex_visibility_graph_2<Traits>::update_visibility(
 
    if (are_adjacent)
    {
-      if (orientation_2((*p_it).first, (*q_it).first, *turn_q) == RIGHTTURN)
+      if (orientation_2((*p_it).first, (*q_it).first, *turn_q) == RIGHT_TURN)
       {
          (*p_it).second.second = (*q_it).second.second; // p sees what q sees
 #ifdef CGAL_VISIBILITY_GRAPH_DEBUG
@@ -501,7 +501,7 @@ void Vertex_visibility_graph_2<Traits>::update_visibility(
 #endif
       // q sees nothing or there is not a right turn to the point after q
       if ((*q_it).second.second == polygon.end() || 
-          orientation_2((*p_it).first, (*q_it).first, *turn_q) != RIGHTTURN)
+          orientation_2((*p_it).first, (*q_it).first, *turn_q) != RIGHT_TURN)
       {
          (*p_it).second.second = (*q_it).second.first; // p sees q
 #ifdef CGAL_VISIBILITY_GRAPH_DEBUG
@@ -619,7 +619,7 @@ void Vertex_visibility_graph_2<Traits>::update_collinear_visibility(
 
    // if the point before q is above the line containing p and q, make
    // this p's visibility point
-   if (leftturn_2((*p_it).first, (*q_it).first, *prev_q))
+   if (left_turn_2((*p_it).first, (*q_it).first, *prev_q))
    {
       if (point_is_visible(polygon, prev_q, p_it))
          (*p_it).second.second = prev_q;
@@ -627,7 +627,7 @@ void Vertex_visibility_graph_2<Traits>::update_collinear_visibility(
    // check the same thing for the point after q and, if it is still visible
    // (even after possibly updating the visibility in the above if) the
    // update again.
-   if (leftturn_2((*p_it).first, (*q_it).first, *next_q))
+   if (left_turn_2((*p_it).first, (*q_it).first, *next_q))
    {
       if (point_is_visible(polygon, next_q, p_it))
          (*p_it).second.second = next_q;

@@ -45,7 +45,7 @@ class Vertex_visibility_traits_2
     typedef typename Kernel::Less_xy_2            Less_xy_2;
     typedef typename Kernel::Compare_x_2          Compare_x_2;
     typedef typename Kernel::Compare_y_2          Compare_y_2;
-    typedef typename Kernel::Leftturn_2           Leftturn_2;
+    typedef typename Kernel::Left_turn_2           Left_turn_2;
     typedef typename Kernel::Orientation_2        Orientation_2;
     typedef typename Kernel::Collinear_are_ordered_along_line_2
                                           Collinear_are_ordered_along_line_2;
@@ -68,9 +68,9 @@ class Vertex_visibility_traits_2
     less_xy_2_object() const
     { return Less_xy_2(); }
 
-    Leftturn_2
-    leftturn_2_object() const
-    { return Leftturn_2(); }
+    Left_turn_2
+    left_turn_2_object() const
+    { return Left_turn_2(); }
 
     Orientation_2
     orientation_2_object() const

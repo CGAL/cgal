@@ -448,7 +448,7 @@ inline bool counterclockwise(const Vector_2<R> &u,
 }
 
 template <class R>
-inline bool leftturn(const Vector_2<R> &u,
+inline bool left_turn(const Vector_2<R> &u,
     const Vector_2<R> &v)
 {
     typedef typename R::RT RT;
@@ -464,7 +464,7 @@ inline bool clockwise(const Vector_2<R> &u,
 }
 
 template <class R>
-inline bool rightturn(const Vector_2<R> &u,
+inline bool right_turn(const Vector_2<R> &u,
     const Vector_2<R> &v)
 {
     typedef typename R::RT RT;
@@ -480,7 +480,7 @@ inline bool collinear(const Vector_2<R> &u,
 }
 
 /*
-the ordertype, rightturn, leftturn and collinear routines for points are
+the ordertype, right_turn, left_turn and collinear routines for points are
 defined elsewhere.
 */
 
@@ -1131,11 +1131,11 @@ squared_distance(
     }
     ray_s_side = orientation(seg.source(), seg.target(), ray.source());
     switch (ray_s_side) {
-    case LEFTTURN:
-        crossing2 = rightturn(seg.target()-seg.source(), raydir);
+    case LEFT_TURN:
+        crossing2 = right_turn(seg.target()-seg.source(), raydir);
         break;
-    case RIGHTTURN:
-        crossing2 = leftturn(seg.target()-seg.source(), raydir);
+    case RIGHT_TURN:
+        crossing2 = left_turn(seg.target()-seg.source(), raydir);
         break;
     case COLLINEAR:
         crossing2 = true;
@@ -1637,10 +1637,10 @@ distance_index(
     const Point_2<R> &vt0 = triangle.vertex(0);
     const Point_2<R> &vt1 = triangle.vertex(1);
     const Point_2<R> &vt2 = triangle.vertex(2);
-    if (leftturn(vt0, vt1, vt2)) {
-        if (rightturn(vt0, vt1, pt)) {
+    if (left_turn(vt0, vt1, vt2)) {
+        if (right_turn(vt0, vt1, pt)) {
             if (!is_acute_angle(vt0, vt1, pt)) {
-                if (rightturn(vt1, vt2, pt)) {
+                if (right_turn(vt1, vt2, pt)) {
                     if (!is_acute_angle(vt1, vt2, pt)) {
                         ind1 = 2; ind2 = -1;
                         return;
@@ -1656,7 +1656,7 @@ distance_index(
                 return;
             }
             if (!is_acute_angle(vt1, vt0, pt)) {
-                if (rightturn(vt2, vt0, pt)) {
+                if (right_turn(vt2, vt0, pt)) {
                     if (!is_acute_angle(vt0, vt2, pt)) {
                         ind1 = 2; ind2 = -1;
                         return;
@@ -1674,9 +1674,9 @@ distance_index(
             ind1 = 0; ind2 = 1;
             return;
         } else {
-            if (rightturn(vt1, vt2, pt)) {
+            if (right_turn(vt1, vt2, pt)) {
                 if (!is_acute_angle(vt1, vt2, pt)) {
-                    if (rightturn(vt2, vt0, pt)) {
+                    if (right_turn(vt2, vt0, pt)) {
                         if (!is_acute_angle(vt0, vt2, pt)) {
                             ind1 = 2; ind2 = -1;
                             return;
@@ -1698,7 +1698,7 @@ distance_index(
                 ind1 = 1; ind2 = 2;
                 return;
             } else {
-                if (rightturn(vt2, vt0, pt)) {
+                if (right_turn(vt2, vt0, pt)) {
                     if (!is_acute_angle(vt2, vt0, pt)) {
                         ind1 = 0; ind2 = -1;
                         return;
@@ -1716,9 +1716,9 @@ distance_index(
             }
         }
     } else {
-        if (rightturn(vt0, vt2, pt)) {
+        if (right_turn(vt0, vt2, pt)) {
             if (!is_acute_angle(vt0, vt2, pt)) {
-                if (rightturn(vt2, vt1, pt)) {
+                if (right_turn(vt2, vt1, pt)) {
                     if (!is_acute_angle(vt2, vt1, pt)) {
                         ind1 = 1; ind2 = -1;
                         return;
@@ -1734,7 +1734,7 @@ distance_index(
                 return;
             }
             if (!is_acute_angle(vt2, vt0, pt)) {
-                if (rightturn(vt1, vt0, pt)) {
+                if (right_turn(vt1, vt0, pt)) {
                     if (!is_acute_angle(vt0, vt1, pt)) {
                         ind1 = 1; ind2 = -1;
                         return;
@@ -1752,9 +1752,9 @@ distance_index(
             ind1 = 0; ind2 = 2;
             return;
         } else {
-            if (rightturn(vt2, vt1, pt)) {
+            if (right_turn(vt2, vt1, pt)) {
                 if (!is_acute_angle(vt2, vt1, pt)) {
-                    if (rightturn(vt1, vt0, pt)) {
+                    if (right_turn(vt1, vt0, pt)) {
                         if (!is_acute_angle(vt0, vt1, pt)) {
                             ind1 = 1; ind2 = -1;
                             return;
@@ -1776,7 +1776,7 @@ distance_index(
                 ind1 = 2; ind2 = 1;
                 return;
             } else {
-                if (rightturn(vt1, vt0, pt)) {
+                if (right_turn(vt1, vt0, pt)) {
                     if (!is_acute_angle(vt1, vt0, pt)) {
                         ind1 = 0; ind2 = -1;
                         return;

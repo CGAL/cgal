@@ -152,7 +152,7 @@ check_forward_prefix_condition(Vertex_const_handle v) const
 { Halfedge_const_handle ef = first_out_edge(v);
   if ( ef == Halfedge_const_handle() ) return;
   Halfedge_const_handle el = cyclic_adj_pred(ef);
-  bool is_leftturn = K.leftturn(point(v),
+  bool is_left_turn = K.left_turn(point(v),
                                 point(target(ef)),
                                 point(target(el)));
   bool el_forward = is_forward(el);
@@ -165,11 +165,11 @@ check_forward_prefix_condition(Vertex_const_handle v) const
   error_status << " ef == el = " << ef_el_eq;
   error_status << " ef_forward = " << ef_forward;
   error_status << " el_forward = " << el_forward;
-  error_status << " is_leftturn = " << is_leftturn << '\0';
+  error_status << " is_left_turn = " << is_left_turn << '\0';
   CGAL_assertion_msg( (ef == el ||
                        ef_forward && !el_forward ||
-                       ef_forward &&  el_forward && is_leftturn ||
-                       !ef_forward && !el_forward && is_leftturn) ,
+                       ef_forward &&  el_forward && is_left_turn ||
+                       !ef_forward && !el_forward && is_left_turn) ,
                        error_status.str());
   error_status.freeze(0);  
 }
@@ -212,7 +212,7 @@ check_boundary_is_clockwise_weakly_polygon() const
     --hvit;
     Point p1 = point(target(e_boundary_at_v_min));
     Point p2 = point(target(hvit));
-    if ( K.orientation(p_min,p1,p2) > 0 ) { // leftturn
+    if ( K.orientation(p_min,p1,p2) > 0 ) { // left_turn
       e_boundary_at_v_min = hvit;
       break;
     }
@@ -268,7 +268,7 @@ check_is_triangulation() const
     }
     CGAL_assertion_msg(edges_in_face_cycle==3,error_status.str());
     CGAL_assertion_msg(
-      K.leftturn(point(source(hit)),point(target(hit)),
+      K.left_turn(point(source(hit)),point(target(hit)),
                  point(target(next(hit)))), error_status.str());
   }
   error_status.freeze(0);

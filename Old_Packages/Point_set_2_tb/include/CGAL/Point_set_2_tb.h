@@ -516,7 +516,7 @@ public:
      //Point d(a.xcoord(),c.ycoord());
      Point a=a1,b=b1,c=c1,d=d1;
    
-     if (tr_orientation(a,b,c) == RIGHTTURN) 
+     if (tr_orientation(a,b,c) == RIGHT_TURN) 
      { Point tmp = b;
        b = d;
        d = tmp;
@@ -530,8 +530,8 @@ public:
 
      for(;it != L.end();it++)
      { Point p = (*it)->point();
-       if ( tr_orientation(a,b,p) == RIGHTTURN || tr_orientation(b,c,p) == RIGHTTURN ||
-            tr_orientation(c,d,p) == RIGHTTURN || tr_orientation(d,a,p) == RIGHTTURN )  { }
+       if ( tr_orientation(a,b,p) == RIGHT_TURN || tr_orientation(b,c,p) == RIGHT_TURN ||
+            tr_orientation(c,d,p) == RIGHT_TURN || tr_orientation(d,a,p) == RIGHT_TURN )  { }
         else { *res = *it; res++; }
      }
      return res;     
@@ -549,8 +549,8 @@ public:
     Point c = f1->vertex(ccw(i))->point();
     Point d = f1->mirror_vertex(i)->point();
 
-    if ((tr_orientation(a,b,c)==LEFTTURN) && (tr_orientation(b,c,d)==LEFTTURN) && 
-        (tr_orientation(c,d,a)==LEFTTURN) && (tr_orientation(d,a,c)==LEFTTURN) && 
+    if ((tr_orientation(a,b,c)==LEFT_TURN) && (tr_orientation(b,c,d)==LEFT_TURN) && 
+        (tr_orientation(c,d,a)==LEFT_TURN) && (tr_orientation(d,a,c)==LEFT_TURN) && 
         (tr_so_circle(a,b,c,d)==ON_ORIENTED_BOUNDARY) )
         return true;
     return false;

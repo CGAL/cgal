@@ -923,9 +923,9 @@ bool strictly_ordered_ccw(const Extended_direction<RT>& d1,
   int or12 = orientation(d1,d2);
   int or13 = orientation(d1,d3);
   int or32 = orientation(d3,d2);
-  if ( or13 >= 0 ) // not rightturn
+  if ( or13 >= 0 ) // not right_turn
     return ( or12 > 0 && or32 < 0 );
-  else // ( or13 < 0 ) rightturn
+  else // ( or13 < 0 ) right_turn
     return ( or12 > 0 || or32 < 0 );
 }
 
@@ -1126,7 +1126,7 @@ const
         CGAL::orientation(p1,p2,p3))
   return CGAL::orientation(p1,p2,p3); }
 
-bool leftturn(const Point_2& p1, const Point_2& p2, const Point_2& p3) 
+bool left_turn(const Point_2& p1, const Point_2& p2, const Point_2& p3) 
 const
 { return orientation(p1,p2,p3) > 0; }
 

@@ -198,7 +198,7 @@ inline bool counterclockwise(const Vector_2<R> &u,
 }
 
 template <class R>
-inline bool leftturn(const Vector_2<R> &u,
+inline bool left_turn(const Vector_2<R> &u,
     const Vector_2<R> &v)
 {
     typedef typename R::RT RT;
@@ -214,7 +214,7 @@ inline bool clockwise(const Vector_2<R> &u,
 }
 
 template <class R>
-inline bool rightturn(const Vector_2<R> &u,
+inline bool right_turn(const Vector_2<R> &u,
     const Vector_2<R> &v)
 {
     typedef typename R::RT RT;
@@ -230,7 +230,7 @@ inline bool collinear(const Vector_2<R> &u,
 }
 
 /*
-the ordertype, rightturn, leftturn and collinear routines for points are
+the ordertype, right_turn, left_turn and collinear routines for points are
 defined elsewhere.
 */
 

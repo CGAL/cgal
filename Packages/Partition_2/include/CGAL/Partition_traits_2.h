@@ -50,7 +50,7 @@ class Partition_traits_2  : public Partition_traits_2_base<Kernel_>
     typedef CGAL::Polygon_2<Poly_Traits, Container>     Polygon_2;
     typedef typename Kernel::Less_yx_2                  Less_yx_2;
     typedef typename Kernel::Less_xy_2                  Less_xy_2;
-    typedef typename Kernel::Leftturn_2                 Leftturn_2;
+    typedef typename Kernel::Left_turn_2                 Left_turn_2;
     typedef typename Kernel::Orientation_2              Orientation_2;
     typedef typename Kernel::Compare_y_2                Compare_y_2;
     typedef typename Kernel::Compare_x_2                Compare_x_2;

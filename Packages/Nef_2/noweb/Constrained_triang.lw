@@ -480,7 +480,7 @@ bool edge_is_visible_from(Vertex_handle v, Halfedge_handle e)
   Point p =  point(v);
   Point p1 = point(source(e));
   Point p2 = point(target(e));
-  return ( K.orientation(p1,p2,p)>0 ); // leftturn
+  return ( K.orientation(p1,p2,p)>0 ); // left_turn
 }
 
 @ The following operations are used to enrich the output plane map by

@@ -55,7 +55,7 @@ private:
    typedef typename Traits::Segment_2         Segment_2;
    typedef typename Traits::Ray_2             Ray_2;
    typedef typename Traits::Object_2          Object_2;
-   typedef typename Traits::Leftturn_2        Leftturn_2;
+   typedef typename Traits::Left_turn_2        Left_turn_2;
    typedef typename Traits::Less_xy_2         Less_xy_2;
    typedef typename Traits::Orientation_2     Orientation_2;
    typedef typename Traits::Collinear_are_ordered_along_line_2 
@@ -100,7 +100,7 @@ public:
    //
    template <class ForwardIterator>
    Vertex_visibility_graph_2(ForwardIterator first, ForwardIterator beyond):
-     leftturn_2(Traits().leftturn_2_object()), 
+     left_turn_2(Traits().left_turn_2_object()), 
      orientation_2(Traits().orientation_2_object()), 
      collinear_ordered_2(Traits().collinear_are_ordered_along_line_2_object()),
      are_strictly_ordered_along_line_2(
@@ -185,10 +185,10 @@ public:
          {
             // NOTE: no need to check here if z is p_infinity since you are
             // moving DOWN the tree instead of up and p_infinity is at the root
-            Turn_reverser<Point_2, Leftturn_2> rightturn(leftturn_2);
+            Turn_reverser<Point_2, Left_turn_2> right_turn(left_turn_2);
 
             while ((tree.rightmost_child(z) != tree.end()) &&
-                   !rightturn(*p,*tree.rightmost_child(z),*z))
+                   !right_turn(*p,*tree.rightmost_child(z),*z))
             {
                z = tree.rightmost_child(z);
 #ifdef CGAL_VISIBILITY_GRAPH_DEBUG
@@ -378,7 +378,7 @@ private:
                Vertex_map& vertex_map);
 
 private:
-   Leftturn_2                            leftturn_2;
+   Left_turn_2                            left_turn_2;
    Orientation_2                         orientation_2;
    Collinear_are_ordered_along_line_2    collinear_ordered_2;
    Are_strictly_ordered_along_line_2     are_strictly_ordered_along_line_2;
