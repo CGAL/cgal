@@ -92,7 +92,7 @@ private:
 public:
   // TYPES (continued)
   //------------------
-  typedef Container                        Hidden_sites_container;
+  //  typedef Container                        Hidden_sites_container;
   typedef typename Container::iterator     Hidden_sites_iterator;
 
 public:

@@ -57,7 +57,6 @@
 #include <CGAL/Apollonius_graph_constructions_C2.h>
 
 
-#define KEEP_MOST_TYPES_IN_TRAITS 0
 
 
 CGAL_BEGIN_NAMESPACE
@@ -964,18 +963,6 @@ public:
   typedef typename Kernel::FT                           FT;
   typedef typename Kernel::RT                           RT;
 
-private:
-  typedef typename Site_2::FT                           Weight;
-
-public:
-#if KEEP_MOST_TYPES_IN_TRAITS
-  typedef CGAL::Parabola_segment_2<Point_2,Weight,Line_2>
-  /*                                                 */ Parabola_segment_2;
-  typedef CGAL::Hyperbola_2<Self>                       Hyperbola_2;
-  typedef CGAL::Hyperbola_ray_2<Self>                   Hyperbola_ray_2;
-  typedef CGAL::Hyperbola_segment_2<Self>
-  /*                                                 */ Hyperbola_segment_2;
-#endif
 
 public:
   // OBJECT CONSTRUCTION & ASSIGNMENT
@@ -991,22 +978,6 @@ public:
   typedef CGAL::Construct_Apollonius_site_2<Kernel>
   /*                                        */ Construct_Apollonius_site_2;
 
-
-#if KEEP_MOST_TYPES_IN_TRAITS
-  // bisectors and subsets
-  typedef CGAL::Construct_Apollonius_bisector_2<Self>
-  /*                                    */ Construct_Apollonius_bisector_2;
-  typedef CGAL::Construct_Apollonius_bisector_ray_2<Self>
-  /*                                */ Construct_Apollonius_bisector_ray_2;
-  typedef CGAL::Construct_Apollonius_bisector_segment_2<Self>
-  /*                            */ Construct_Apollonius_bisector_segment_2;
-
-  // primal edges
-  typedef CGAL::Construct_Apollonius_primal_ray_2<Self> 
-  /*                                   */ Construct_Apollonius_primal_ray_2;
-  typedef CGAL::Construct_Apollonius_primal_segment_2<Self>
-  /*                               */ Construct_Apollonius_primal_segment_2;
-#endif
 
   // PREDICATES
   //-----------
@@ -1054,32 +1025,6 @@ public:
     return Construct_Apollonius_site_2();
   }
 
-#if KEEP_MOST_TYPES_IN_TRAITS
-  Construct_Apollonius_bisector_2
-  construct_Apollonius_bisector_2_object() const {
-    return Construct_Apollonius_bisector_2();
-  }
-
-  Construct_Apollonius_bisector_ray_2
-  construct_Apollonius_bisector_ray_2_object() const {
-    return Construct_Apollonius_bisector_ray_2();
-  }
-
-  Construct_Apollonius_bisector_segment_2
-  construct_Apollonius_bisector_segment_2_object() const { 
-    return Construct_Apollonius_bisector_segment_2(); 
-  }
-
-  Construct_Apollonius_primal_ray_2
-  construct_Apollonius_primal_ray_2_object() const {
-    return Construct_Apollonius_primal_ray_2(); 
-  }
-
-  Construct_Apollonius_primal_segment_2
-  construct_Apollonius_primal_segment_2_object() const { 
-    return Construct_Apollonius_primal_segment_2();
-  }
-#endif
 
   // PREDICATES
   //-----------

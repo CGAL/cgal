@@ -23,7 +23,22 @@
 \chapter{2D Apollonius graph}
 \label{chapter-apollonius2}
 
-%\vspace*{1cm}
+\minitoc
+
+This chapter describes the two dimensional Apollonius graph
+of \cgal. We start with a few definitions in 
+Section~\ref{sec:apollonius2-definitions}.
+The software design of the 2D Apollonius graph package is described 
+in Section~\ref{sec:apollonius2-design}.
+In Section~\ref{sec:apollonius2-traits} we discuss the geometric
+traits of the 2D Apollonius graph package and in Section
+\ref{sec:apollonius2-hierarchy} the Apollonius graph hierarchy is
+briefly described, which is a data structure suitable for fast nearest
+neighbor queries.
+
+
+\section{Definitions}
+\label{sec:apollonius2-definitions}
 
 \begin{figure}[htb]
 \begin{ccTexOnly}
@@ -52,7 +67,7 @@ dual of the {\em Apollonius diagram} or, as it is also known, the
 {\em Additively weighted Voronoi diagram}. The algorithm that has been
 implemented is dynamic, which means that we can perform insertions and
 deletions on line. The corresponding \cgal\ class is called
-\ccc{Apollonius_graph_2<ApolloniusGraphTraits_2,StoreHidden,ApolloniusGraphDataStructure_2>}
+\ccc{Apollonius_graph_2<ApolloniusGraphTraits_2,ApolloniusGraphDataStructure_2>}
 and will be discussed in
 more detail below. The interested reader may want to refer to the
 paper by Karavelas and Yvinec \cite{ky-dawvd-02} for the general idea
@@ -61,13 +76,13 @@ as well as the details of the algorithm implemented.
 
 Before describing the details of the implementation we make a brief
 introduction to the theory of Apollonius diagrams.
-The Apollonius diagram is defined over a set of weighted points
+The Apollonius diagram is defined over a set of sites
 $P_i=(c_i,w_i)$, $i=1,\ldots,n$, where $c_i$ is the point and $w_i$
 the weight of $P_i$. It is a subdivision of the plane into connected
-regions, called {\em cells}, associated with the weighted points (see
+regions, called {\em cells}, associated with the sites (see
 Fig. \ref{fig-apollonius}(left)). The cell of a 
-weighted point $P_i$ is the locus of points on the plane that are
-closer to $P_i$ than any other weighted point $P_j$, $j\neq i$.
+site $P_i$ is the locus of points on the plane that are
+closer to $P_i$ than any other site $P_j$, $j\neq i$.
 The distance $\delta(x, P_i)$ of a point $x$ in the plane to a
 circle $P_i$ is defined as: 
 \[      \delta(x,P_i)=\|x-c_i\|-w_i,\]
@@ -75,11 +90,11 @@ where $\|\cdot\|$ denotes the Euclidean norm.
 It can easily be seen that it is a generalization of the Voronoi
 diagram for points, which can actually be obtained if all the weights
 $w_i$ are equal. Unlike the case of points, however, it is
-possible that a weighted point $P_i$ might have an empty cell. This
+possible that a site $P_i$ might have an empty cell. This
 can also happen in the case of the power diagram, whose dual is the
 regular triangulation (see Section \ref{I1_Sect_Regular}). If this is
-the case we call the weighted point {\em hidden} (these are the black
-circles in Fig. \ref{fig-apollonius}). A weighted point which is not
+the case we call the site {\em hidden} (these are the black
+circles in Fig. \ref{fig-apollonius}). A site which is not
 hidden will be referred to as {\em visible}.
 
 If all weights $w_i$ are non-negative, the Apollonius
@@ -99,8 +114,8 @@ positive $z$-direction (that is, $C_p$ is contained in the positive
 $z$-halfspace).
 The Apollonius diagram corresponds to shifting the
 apexes of these cones in the $z$-direction by a quantity equal to the
-weight. So weighted points with negative weight will give rise to
-cones whose apex is in the negative $z$-halfspace and weighted points
+weight. So site with negative weight will give rise to
+cones whose apex is in the negative $z$-halfspace and sites
 with positive weight will give rise to cones whose apex is in the
 positive $z$-halfspace. In a manner analogous to the case of points,
 the Apollonius diagram can then be defined as the vertical projection
@@ -115,7 +130,7 @@ particular, implies that we can assume without loss of generality that
 all weights are positive. Given the observations above and in order to
 simplify our discussion of Apollonius diagrams, we will, from now on,
 assume that all weights are positive, and we will refer to the
-weighted points as circles.
+sites as circles.
 
 
 The Apollonius diagram is a planar graph, and so is its dual, the
@@ -204,22 +219,16 @@ to this rule are as follows:
 \label{sec:apollonius2-design}
 
 The 2D Apollonius graph class
-\ccc{Apollonius_graph_2<ApolloniusGraphEuclideanTraits_2,StoreHidden,ApolloniusGraphDataStructure_2>}
+\ccc{Apollonius_graph_2<ApolloniusGraphEuclideanTraits_2,ApolloniusGraphDataStructure_2>}
 follows the design of the triangulation package of \cgal. It is
-parametrized by three arguments:
+parametrized by two arguments:
 \begin{itemize}
 \item the {\bf geometric traits} class. The user can specify the
-  type of geometric objects to be used such as weighted points, points
+  type of geometric objects to be used such as sites, points
   etc. It also provides the geometric predicates for the computation
   of the Apollonius graph, as well as some basic constructions that
   can be used, for example, to visualize the Apollonius graph or the
   Apollonius diagram.
-\item a {\bf boolean value} that indicates if the hidden weighted
-  points are to be stored or not. Its value should be \ccc{true} if the
-  user wants to keep track of the weighted points or \ccc{false}
-  otherwise. It is suggested that the value of this template parameter
-  is set to \ccc{false}, if only insertions are to be used. By default
-  its value is set to \ccc{true}.
 \item the {\bf Apollonius graph data structure}. This is essentially
   the same as the triangulation data structure (discussed in Chapter
   \ref{Chapter_2D_Triangulation_Data_structure}), augmented with some
@@ -244,10 +253,21 @@ To store hidden circles we assign to every visible circle a list. This
 list is comprised of the hidden circles that are contained in the
 visible circle. The user can access the hidden circles associated with
 a visible circle through an iterator called
-\ccc{Hidden_weighted_point_iterator}. This iterator is defined by the
+\ccc{Hidden_sites_iterator}. This iterator is defined by the
 \ccc{ApolloniusGraphVertexBase_2} concept and is implemented by its
-model, the \ccc{Apollonius_graph_vertex_base_2} class.
+model, the \ccc{Apollonius_graph_vertex_base_2} class. It is also
+possible to iterate through the entire set of hidden sites using an
+homonymous iterator defined by the \ccc{Apollonius_graph_2} class.
 
+Since storing hidden sites may not be of interest in some cases (e.g.,
+for example this is the case if we only perform insertions in the
+Apollonius graph), the user has the possibility of controllong this
+behavior. More precisely, the class
+\ccc{Apollonius_graph_vertex_base_2} has two template parameters, the
+second of which is a boolean value. This value is by default
+\ccc{true} and it indicates that hidden sites should be stored. The
+user may indicate that hidden sites need not be stored by setting this
+value to \ccc{false}.
 
 
 \section{The Geometric Traits}
@@ -404,7 +424,7 @@ the additional edges that we use to triangulate non-triangular faces.
 
 
 \section{The Apollonius graph hierarchy}
-\label{sec:ag2hierarchy}
+\label{sec:apollonius2-hierarchy}
 
 The \ccc{ApolloniusGraphHierarchy_2} concept is nothing but the
 equivalent of the concept behind the \ccc{Triangulation_hierarchy_2}
@@ -412,10 +432,10 @@ class, applied to the
 Apollonius graph. It consists of a series of Apollonius graphs
 constructed in a manner analogous to the Delaunay hierarchy by
 Devillers \cite{d-iirdt-98}. The class
-\ccc{Apollonius_graph_hierarchy_2<ApolloniusGraphTraits_2,StoreHidden,ApolloniusGraphDataStructure_2>}
+\ccc{Apollonius_graph_hierarchy_2<ApolloniusGraphTraits_2,ApolloniusGraphDataStructure_2>}
 is a model of the \ccc{ApolloniusGraphHierarchy_2} concept and has
 exactly the same interface and functionality as the
-\ccc{Apollonius_graph_2<ApolloniusGraphTraits_2,StoreHidden,ApolloniusGraphDataStructure_2>}
+\ccc{Apollonius_graph_2<ApolloniusGraphTraits_2,ApolloniusGraphDataStructure_2>}
 class. Using the Apollonius graph hierarchy involves an additional
 cost in space and time for maintaining the hierarchy. Our experiments
 have shown that it usually pays off to use the hierarchy for inputs

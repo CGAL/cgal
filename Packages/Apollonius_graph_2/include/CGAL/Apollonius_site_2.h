@@ -40,9 +40,10 @@ public:
   typedef K                       Kernel;
   typedef typename K::Point_2     Point_2;
   typedef Apollonius_site_2<K>    Self;
+  typedef typename K::FT          Weight;
   typedef typename K::RT          RT;
-  typedef typename K::FT          FT;
-  typedef FT                      Weight;
+  typedef Weight                  FT;
+
 
 public:
   Apollonius_site_2(const Point_2& p = Point_2(),
@@ -77,7 +78,7 @@ template <class K>
 std::istream&
 operator>>(std::istream& is, Apollonius_site_2<K>& wp)
 {
-  typename Apollonius_site_2<K>::RT       weight;
+  typename Apollonius_site_2<K>::Weight   weight;
   typename Apollonius_site_2<K>::Point_2  p;
   is >> p >> weight;
   wp = Apollonius_site_2<K>(p, weight);
