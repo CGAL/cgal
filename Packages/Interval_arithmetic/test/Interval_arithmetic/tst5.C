@@ -23,7 +23,6 @@
 #include <CGAL/Timer.h>
 
 #include <CGAL/double.h>
-#include <CGAL/Double_eps.h>
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Quotient.h>
 
@@ -64,7 +63,6 @@ int main()
   // double d = CGAL::to_double(ia);
   // cin >> ia;
   // std::cout << ia << std::endl;
-  CGAL::set_eps(0.0001);
   bench();
   return test();
 }
