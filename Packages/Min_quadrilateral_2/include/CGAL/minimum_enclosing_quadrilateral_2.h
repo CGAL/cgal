@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision $
 // release_date  : $CGAL_Date $
 //
-// file          : Minimum_enclosing_quadrilateral_2.h
+// file          : minimum_enclosing_quadrilateral_2.h
 // chapter       : $CGAL_Chapter: Geometric Optimisation $
 // package       : $CGAL_Package: Min_quadrilaterals $
 // source        : oops.aw
