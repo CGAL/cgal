@@ -287,6 +287,13 @@ test_new_3(const R& rep)
         = rep.compute_squared_length_3_object();
   FT tmp11 = compute_squared_length(s2);
 
+  
+  typename R::Compute_squared_radius_3 Compute_squared_radius
+        = rep.compute_squared_radius_3_object();
+  FT tmp11aa = Compute_squared_radius(sp1);
+     tmp11aa = Compute_squared_radius(p3, p4, p5);
+     tmp11aa = Compute_squared_radius(p3, p4, p5, p6);
+
   typename R::Compute_squared_area_3 compute_squared_area
         = rep.compute_squared_area_3_object();
   FT tmp11a = compute_squared_area(tmp9b);

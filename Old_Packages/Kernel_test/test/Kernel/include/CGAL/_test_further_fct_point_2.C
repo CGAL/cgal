@@ -141,6 +141,10 @@ _test_further_fct_point_2(const R& )
  assert( CGAL::side_of_bounded_circle(p10, p11, pt2) == CGAL::ON_BOUNDED_SIDE);
  assert( CGAL::side_of_bounded_circle(p10, p11, pt3) == CGAL::ON_UNBOUNDED_SIDE);
 
+ // Now test squared_radius().
+
+ assert( CGAL::squared_radius(p10, p11, pt1) == FT(200));
+
  std::cout << '.';
 
  std::cout << "done" << std::endl;

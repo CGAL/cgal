@@ -16,16 +16,13 @@
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-//
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ============================================================================
- 
 
 #ifndef CGAL__TEST_FCT_POINT_2_C
 #define CGAL__TEST_FCT_POINT_2_C
-#ifndef CGAL__TEST_FCT_POINT_2_H
+
 #include <CGAL/_test_fct_point_2.h>
-#endif // CGAL__TEST_FCT_POINT_2_H
 
 template <class R>
 bool
@@ -45,7 +42,6 @@ _test_fct_point_2(const R& )
  CGAL::Point_2<R> p7( RT(18), RT( 6), RT(3) );  // ( 6, 2)
  CGAL::Point_2<R> p8( RT(24), RT( 9), RT(3) );  // ( 8, 3)
  CGAL::Point_2<R> p9( RT( 6), RT(10), RT(1) );  // ( 6,10)
-
 
 
  assert( CGAL::compare_lexicographically_xy(p1,p2) == CGAL::SMALLER );
@@ -238,4 +234,5 @@ _test_fct_point_2(const R& )
  std::cout << "done" << std::endl;
  return true;
 }
+
 #endif // CGAL__TEST_FCT_POINT_2_C

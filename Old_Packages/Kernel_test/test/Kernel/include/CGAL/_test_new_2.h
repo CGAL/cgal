@@ -287,6 +287,11 @@ test_new_2(const R& rep)
         = rep.compute_squared_length_2_object();
   FT tmp23 = Compute_squared_length(s2);
 
+  typename R::Compute_squared_radius_2 Compute_squared_radius
+        = rep.compute_squared_radius_2_object();
+  FT tmp23b = Compute_squared_radius(c1);
+     tmp23b = Compute_squared_radius(p3, p4, p5);
+
   typename R::Equal_2 equal
         = rep.equal_2_object();
   bool tmp24 = equal(p2,p3);

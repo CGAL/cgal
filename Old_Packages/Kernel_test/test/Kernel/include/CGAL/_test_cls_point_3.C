@@ -16,16 +16,13 @@
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-//
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ============================================================================
- 
 
 #ifndef CGAL__TEST_CLS_POINT_3_C
 #define CGAL__TEST_CLS_POINT_3_C
-#ifndef CGAL__TEST_CLS_POINT_3_H
+
 #include <CGAL/_test_cls_point_3.h>
-#endif // CGAL__TEST_CLS_POINT_3_H
 
 template <class R>
 bool

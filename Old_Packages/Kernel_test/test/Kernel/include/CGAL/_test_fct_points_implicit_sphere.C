@@ -17,11 +17,9 @@
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-//
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ============================================================================
  
-
 #ifndef CGAL__TEST_FCT_POINTS_IMPLICIT_SPHERE_C
 #define CGAL__TEST_FCT_POINTS_IMPLICIT_SPHERE_C
 
@@ -183,6 +181,11 @@ _test_fct_points_implicit_sphere(const R&)
   assert( CGAL::side_of_bounded_sphere(p1, p2, pt2) == CGAL::ON_BOUNDARY);
   assert( CGAL::side_of_bounded_sphere(p1, p2, p3, pt1) == CGAL::ON_BOUNDED_SIDE);
   assert( CGAL::side_of_bounded_sphere(p1, p2, pt2, pt3) == CGAL::ON_BOUNDARY);
+  
+  // Now test squared_radius().
+
+  assert( CGAL::squared_radius(p1, p2, pt2, pt3) == FT(300));
+  assert( CGAL::squared_radius(p1, p2, pt2) == FT(300));
 
   return true;
 }

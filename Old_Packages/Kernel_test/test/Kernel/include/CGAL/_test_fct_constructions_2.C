@@ -17,7 +17,6 @@
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-//
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ============================================================================
  
@@ -25,9 +24,7 @@
 #ifndef CGAL__TEST_FCT_CONSTRUCTIONS_2_C
 #define CGAL__TEST_FCT_CONSTRUCTIONS_2_C
 
-#ifndef CGAL__TEST_FCT_CONSTRUCTIONS_2_H
 #include <CGAL/_test_fct_constructions_2.h>
-#endif // CGAL__TEST_FCT_CONSTRUCTIONS_2_H
 
 template <class R>
 bool
@@ -62,6 +59,5 @@ _test_fct_constructions_2(const R&)
 
   return true;
 }
-
 
 #endif // CGAL__TEST_FCT_CONSTRUCTIONS_2_C
