@@ -1,0 +1,1 @@
+vanilla_test3.cout

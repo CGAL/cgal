@@ -1,4 +1,7 @@
 * text=auto !eol
+Extension_Packages/Vanilla/doc/cgal-bg2.gif -text svneol=unset#unset
+Extension_Packages/Vanilla/doc/cgal_small.gif -text svneol=unset#unset
+Extension_Packages/Vanilla/doc/vanilla.ps -text
 Old_Packages/Doc23/doc_tex/kernel/IsoCuboid.gif svneol=native#unset
 Old_Packages/Doc23/doc_tex/kernel/arrlinthree.gif svneol=native#unset
 Old_Packages/Doc23/doc_tex/kernel/arrlintwo.gif svneol=native#unset
