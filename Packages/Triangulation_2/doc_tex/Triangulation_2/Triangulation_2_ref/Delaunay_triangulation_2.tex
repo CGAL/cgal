@@ -42,7 +42,13 @@ The concept of triangulation data structure
 is described \ccRefPage{Triangulation_data_structure_2}
 and the same models can be used to instantiate the
 triangulation data structure of either a \ccc{Triangulation_2<Traits,Tds>}
-or a \ccRefName. On the contrary, because the
+or a \ccRefName. 
+The  default for the data structure parameter is the class
+\ccc{CGAL::Triangulation_data_structure_using_list_2 <
+                       CGAL::Triangulation_vertex_base_2<Gt>,
+		       CGAL::Triangulation_face_base_2<Gt> >}.
+
+On the contrary, because the
 Delaunay triangulation relies on the notions of 
 empty circles and of distance, the geometric traits
  has to provide the famous \ccc{in_circle(p,q,r,s)} predicate

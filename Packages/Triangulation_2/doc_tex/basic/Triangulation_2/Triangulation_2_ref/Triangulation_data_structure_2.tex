@@ -235,11 +235,42 @@ user.
 They do not guarantee the combinatorial validity 
 of the resulting triangulation.
 
-\ccMethod{Vertex* star_hole(List_edges& hole);}
-{create a new vertex \ccc{v} and use it to star the hole \ccc{hole}.}
+\ccMethod{ template< class EdgeIt>
+   Vertex* star_hole(EdgeIt edge_begin,EdgeIt edge_end);}
+{creates a new vertex \ccc{v} and use it to star the hole 
+whose boundary is described  by the sequence of edges \ccc{[edge_begin, 
+edge_end[}. Returns a pointer to the  vertex.}
+\ccGlue 
+\ccMethod{   template< class EdgeIt, class FaceIt>
+   Vertex* star_hole(EdgeIt edge_begin, 
+		    EdgeIt edge_end,
+ 		    FaceIt face_begin,
+		    FaceIt face_end);}
+{ same as above, except that, to build the new faces, the  algorithm 
+first recycles faces in the sequence \ccc{[face_begin, 
+face_end[} and create new ones when the sequence is exhausted.}
 \ccGlue
-\ccMethod{void star_hole(Vertex* v, List_edges& hole);}
-{stars the hole \ccc{hole} using vertex \ccc{v}.}
+\ccMethod{   template< class EdgeIt>
+ void  star_hole(Vertex* v, EdgeIt edge_begin,  EdgeIt edge_end);}
+{uses vertex v to  star the hole 
+whose boundary is described  by the sequence of edges\ccc{[edge_begin, 
+edge_end[}.
+}
+\ccGlue
+\ccMethod{   template< class EdgeIt, class FaceIt>
+   void  star_hole(Vertex* v,
+ 		  EdgeIt edge_begin, 
+ 		  EdgeIt edge_end,
+ 		  FaceIt face_begin,
+ 		  FaceIt face_end);}
+{same as above, recycling faces in the sequence  \ccc{[face_begin, 
+face_end[ . } }
+
+%\ccMethod{Vertex* star_hole(List_edges& hole);}
+%{create a new vertex \ccc{v} and use it to star the hole \ccc{hole}.}
+%\ccGlue
+%\ccMethod{void star_hole(Vertex* v, List_edges& hole);}
+%{stars the hole \ccc{hole} using vertex \ccc{v}.}
 \ccGlue
 \ccMethod{void make_hole(Vertex* v, List_edges& hole);}
 {removes the vertex v, and store in \ccc{hole} the list of edges

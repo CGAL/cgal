@@ -122,6 +122,11 @@ concept described on page~\ccRefPage{Triangulation_traits_2}.
 The second parameter expects a model of the
 \ccc{Triangulation_data_structure_2} described
  on page~\ccRefPage{Triangulation_data_structure_2}.
+This second parameter admits a default the class
+\ccc{CGAL::Triangulation_data_structure_using_list_2 <
+                       CGAL::Triangulation_vertex_base_2<Gt>,
+		       CGAL::Triangulation_face_base_2<Gt> > >}.
+
 
 \ccInheritsFrom{\ccc{Triangulation_cw_ccw_2}}
 This class provides the functions \ccc{cw(i)} et \ccc{ccw(i)}.
@@ -535,7 +540,7 @@ convex hull">
 \end{ccHtmlOnly}
 \end{figure}
 
-
+\begin{ccAdvanced}
 The following member functions offer more specialized versions of the
 insertion or removal operation to be used when one knows to be in the
 corresponding case.
@@ -572,6 +577,32 @@ the third one is modified.
 \ccc{v} is a finite vertex with degree three.}}
 \ccMethod{void remove_second(Vertex_handle v);}{Removes the before last finite vertex.}
 \ccMethod{void remove_first(Vertex_handle v);}{Removes the last finite vertex.}
+
+The following fonctions are mainly intended to be used in conjonction
+with the \ccc{find_conflicts()} member fonctions of Delaunay and constrained 
+Delaunay triangulations to perfoem insertions.
+
+\ccMethod{   template<class EdgeIt>
+   Vertex_handle star_hole( Point p, 
+ 			      EdgeIt edge_begin,
+ 			      EdgeIt edge_end);}
+{creates a new vertex \ccc{v} and use it to star the hole 
+whose boundary is described  by the sequence of edges \ccc{[edge_begin, 
+edge_end[}. Returns a handle to the new vertex.}
+
+\ccMethod{
+   template<class EdgeIt, class FaceIt>
+   Vertex_handle star_hole( Point p, 
+ 			      EdgeIt edge_begin,
+ 			      EdgeIt edge_end,
+ 			      FaceIt face_begin,
+ 			      FaceIt face_end);}
+{same as above, except that the  algorithm 
+first recycles faces in the sequence \ccc{[face_begin, 
+face_end[} 
+and create new ones only when the sequence is exhausted.}
+\end{ccAdvanced}
+
 
 \ccHeading{Traversal of the Triangulation}
 
@@ -895,9 +926,9 @@ of the triangulation data structure.
 \ccc{Triangulation_traits_2} \\
 \ccc{Triangulation_data_structure} \\
 \ccc{CGAL::Triangulation_default_data_structure} \\
-\ccc{CGAL::Triangulation_data_structure_using_list}.
-
-
+\ccc{CGAL::Triangulation_data_structure_using_list} \\
+\ccc{CGAL::Triangulation_vertex_base_2} \\
+\ccc{CGAL::Triangulation_face_base_2}
 
 
 %\ccExample
