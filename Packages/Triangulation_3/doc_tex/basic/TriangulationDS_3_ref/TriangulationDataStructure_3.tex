@@ -75,6 +75,14 @@ class must provide the following types and operations.
 \ccNestedType{Vertex}{Vertex type}
 \ccGlue
 \ccNestedType{Cell}{Cell type}
+
+Vertices and cells are usually manipulated via \ccc{handles}, which support
+the two dereference operators \ccc{operator*} and \ccc{operator->}.
+
+\ccNestedType{Vertex_handle}{}
+\ccGlue
+\ccNestedType{Cell_handle}{}
+
 Requirements for \ccc{Vertex} and \ccc{Cell} are described in
 \ccc{TriangulationDataStructure_3::Vertex} and
 \ccc{TriangulationDataStructure_3::Cell} \lcTex{(
@@ -88,13 +96,6 @@ edge of cell \ccc{c} whose vertices indices are \ccc{i} and
 \ccTypedef{typedef std::pair<Cell_handle, int>  Facet;}{\ccc{(c,i)} is the facet
 of \ccc{c} opposite to the vertex of index \ccc{i}. (See
 Section~\ref{TDS3-sec-intro}.)} 
-
-Vertices and cells are usually manipulated via \ccc{handles}, which support
-the two dereference operators \ccc{operator*} and \ccc{operator->}.
-
-\ccNestedType{Vertex_handle}{}
-\ccGlue
-\ccNestedType{Cell_handle}{}
 
 The following iterators allow one to visit all the vertices, edges, facets
 and cells of the triangulation data structure. They are all
@@ -168,11 +169,11 @@ deleted.}
 more vertex than an associated geometric triangulation, if there is
 one, since the infinite vertex is a standard vertex and is thus also
 counted.} 
-
-\ccHeading{Non constant-time access functions}
+\ccGlue
 \ccMethod{int number_of_cells() const;}
 {The number of cells. Returns 0 if \ccVar.\ccc{dimension()}$<3$.}
-\ccGlue
+
+\ccHeading{Non constant-time access functions}
 \ccMethod{int number_of_facets() const;}
 {The number of facets. Returns 0 if \ccVar.\ccc{dimension()}$<2$.}
 \ccGlue
@@ -192,7 +193,8 @@ counted.}
 
 \ccMethod{bool is_edge(Cell_handle c, int i, int j) const;}
 {Tests whether \ccc{(c,i,j)} is an edge of \ccVar. Answers \ccc{false} when
-\ccc{dimension()} $<1$ .}
+\ccc{dimension()} $<1$ .
+\ccPrecond{$i,j \in \{0,1,2,3\}$}}
 \ccGlue
 \ccMethod{bool is_edge(Vertex_handle u, Vertex_handle v, 
 			Cell_handle & c, int & i, int & j) const;}
@@ -205,7 +207,8 @@ and \ccc{j} of the vertices \ccc{u} and \ccc{v}, in this order.}
 
 \ccMethod{ bool is_facet(Cell_handle c, int i) const;}
 {Tests whether \ccc{(c,i)} is a facet of \ccVar. Answers \ccc{false} when
-\ccc{dimension()} $<2$ .}
+\ccc{dimension()} $<2$ .
+\ccPrecond{$i \in \{0,1,2,3\}$}}
 \ccGlue
 \ccMethod{bool is_facet(Vertex_handle u, Vertex_handle v, Vertex_handle w, 
 			Cell_handle & c, int & i, int & j, int & k) const;}
@@ -263,10 +266,10 @@ tetrahedra. During the flip, these three tetrahedra disappear and two
 tetrahedra appear. Figure~\ref{TDS3-fig-flips}(left) shows the
 edge that is flipped as bold dashed, and one of its three incident
 facets is shaded. On the right, the facet shared by the two new
-tetrahedra is dashed. 
+tetrahedra is shaded. 
 
-Flips are possible only if the tetrahedra to be created do not already 
-exist.
+%Flips are possible only if the tetrahedra to be created do not already 
+%exist.
 
 \begin{figure}
 \begin{ccTexOnly}

@@ -31,7 +31,7 @@ base classes, there is a cycle in the definition of these classes.  In order
 to break the cycle, the base classes for vertex and cell which are given as
 arguments for the Triangulation data structure use \ccc{void} as Triangulation
 data structure parameter, and the Triangulation data structure then uses a
-{\it rebind}-like mecanism (similar to the one specified in
+{\it rebind}-like mechanism (similar to the one specified in
 \ccc{std::allocator}) in order to put itself as parameter to the vertex and
 cell classes.  The {\it rebound} base classes so obtained are the classes
 which are used as base classes for the final vertex and cell classes.

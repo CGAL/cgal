@@ -36,35 +36,35 @@ comparison, orientation in case of coplanar points and orientation in space.
 \ccTwo{TriangulationTraits_3}{}
 
 \ccNestedType{Construct_segment_3}
-{A constructor object which must provide the function operator\\
+{A constructor object that must provide the function operator\\
 \ccc{Segment_3 operator()(Point_3 p, Point_3 q)},\\
 which constructs a segment from two points.}
 \ccGlue
 \ccNestedType{Construct_triangle_3}
-{A constructor object which must provide the function operator\\
+{A constructor object that must provide the function operator\\
 \ccc{Triangle_3 operator()(Point_3 p, Point_3 q, Point_3 r )},\\
 which constructs a triangle from three points.}
 \ccGlue
 \ccNestedType{Construct_tetrahedron_3}
-{A constructor object which must provide the function operator\\
+{A constructor object that must provide the function operator\\
 \ccc{Tetrahedron_3 operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 s)},\\
 which constructs a tetrahedron from four points.}
 
 \ccNestedType{Compare_xyz_3}
-{A predicate object which must provide the function operator\\ 
+{A predicate object that must provide the function operator\\ 
 \ccc{Comparison_result operator()(Point p, Point q)},\\
 which returns \ccc{EQUAL} if the two points are equal.  Otherwise it must
 return a consistent order for any two points chosen in a same line.}
 \ccGlue
 \ccNestedType{Coplanar_orientation_3}
-{A predicate object which must provide the function operator\\
+{A predicate object that must provide the function operator\\
 \ccc{Orientation operator()(Point p, Point q, Point r)},\\
 which returns \ccc{COLLINEAR} if the points are collinear.  Otherwise it must
 return a consistent orientation for any three points chosen in a same plane.
 }
 \ccGlue
 \ccNestedType{Orientation_3}
-{A predicate object which must provide the function operator\\
+{A predicate object that must provide the function operator\\
 \ccc{Orientation operator()(Point p, Point q, Point r, Point s)},\\
 which returns POSITIVE, if \ccc{s} lies on the positive side of the oriented
 plane \ccc{h} defined by \ccc{p}, \ccc{q}, and \ccc{r}, returns NEGATIVE if
@@ -87,11 +87,11 @@ The following functions give access to the predicate and construction objects:
 
 \ccThree{coplanar_side_of_bounded_circle_3xxx}{gt.xxxxxxxxx(Point p0, Point p1)x}{}
 
-\ccMethod{Construct_segment_3 construct_segment_3_object();}{}
-\ccGlue
 \ccMethod{Construct_tetrahedron_3 construct_tetrahedron_3_object();}{}
 \ccGlue
 \ccMethod{Construct_triangle_3 construct_triangle_3_object();}{}
+\ccGlue
+\ccMethod{Construct_segment_3 construct_segment_3_object();}{}
 
 \ccMethod{Compare_xyz_3 compare_xyz_3_object();}{}
 \ccGlue

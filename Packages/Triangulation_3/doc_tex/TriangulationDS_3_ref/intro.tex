@@ -18,7 +18,12 @@ triangulation of a topological sphere $S^d$ of $\R^{d+1}$, for
 $d \in \{-1,0,1,2,3\}$. (See~\ref{TDS3-sec-intro}.)
 
 The vertex class of a 3D-triangulation data structure must define
-a number of types and operations.  The triangulation data structure
+a number of types and operations. 
+The requirements that are of geometric nature are required only when
+the triangulation data structure is used as a layer for the geometric
+triangulation class. 
+
+ The triangulation data structure
 does not have any geometric requirements on those itself, but they
 are required when the triangulation data structure is used by the
 geometric triangulations. (See Section~\ref{TDS3-sec-design}.)

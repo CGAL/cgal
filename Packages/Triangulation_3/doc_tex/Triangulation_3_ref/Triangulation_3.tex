@@ -22,10 +22,10 @@ of points.
 
 \ccParameters
 
-The first template argument has to be a model of the
+The first template argument must be a model of the
 \ccc{TriangulationTraits_3} concept.
 
-The second template argument has to be a model of the
+The second template argument must be a model of the
 \ccc{TriangulationDataStructure_3} concept.
 It has the default value \ccc{Triangulation_data_structure_3<
 Triangulation_vertex_base_3<TriangulationTraits_3>,Triangulation_cell_base_3<TriangulationTraits_3> 
@@ -342,7 +342,7 @@ methods for facets are defined here.
 \ccMethod{bool has_vertex(const Facet & f, Vertex_handle v, int & j) const;}
 {If \ccc{v} is a vertex of \ccc{f}, then \ccc{j} is the index of
 \ccc{v} in the cell \ccc{f.first}, and the method returns \ccc{true}.
-\ccPrecond{\ccVar.dimension()==3}}
+\ccPrecond{\ccVar.dimension()=3}}
 \ccGlue
 \ccMethod{bool has_vertex(Cell_handle c, int i, 
 	Vertex_handle v, int & j) const;}
@@ -366,7 +366,7 @@ vertices.
 {}
 \ccGlue
 \ccMethod{bool are_equal(const Facet & f, Cell_handle n, int j) const;}
-{For these three methods: \ccPrecond{\ccVar.dimension()==3}.}
+{For these three methods: \ccPrecond{\ccVar.dimension()=3}.}
 
 
 \ccHeading{Point location}
@@ -503,13 +503,12 @@ tetrahedra. During the flip, these three tetrahedra disappear and two
 tetrahedra appear. Figure~\ref{Triangulation3-fig-flips}(left) shows the
 edge that is flipped as bold dashed, and one of its three incident
 facets is shaded. On the right, the facet shared by the two new
-tetrahedra is dashed. 
+tetrahedra is shaded. 
 
 Flips are possible only under the following conditions:\\
 - the edge or facet to be flipped is not on the boundary of the convex
-hull of the triangulation 
-- the points that will be vertices of the tetrahedra to be created are 
-in convex position.
+hull of the triangulation \\
+- the five points involved are in convex position.
 
 \begin{figure}
 \begin{ccTexOnly}
@@ -736,7 +735,7 @@ triangulation.
 \ccMethod{Finite_vertices_iterator finite_vertices_begin() const;}
 {Starts at an arbitrary finite vertex. Then \ccc{++} and \ccc{--} will
 iterate over finite vertices. Returns \ccc{finite_vertices_end()} when
-\ccVar.\ccc{number_of_vertices()} $<1$.} 
+\ccVar.\ccc{number_of_vertices()} $=0$.} 
 \ccGlue
 \ccMethod{Finite_vertices_iterator finite_vertices_end() const;}
 {Past-the-end iterator}
@@ -766,9 +765,9 @@ iterate over finite cells. Returns \ccc{finite_cells_end()} when
 {Past-the-end iterator}
 
 \ccMethod{All_vertices_iterator all_vertices_begin() const;}
-{Starts at an arbitrary vertex. Iterates over all vertices (even infinite
-ones). Returns \ccc{vertices_end()} when
-\ccVar.\ccc{number_of_vertices()} $<1$.}  
+{Starts at an arbitrary vertex. Iterates over all vertices (even the infinite
+one). Returns \ccc{vertices_end()} when
+\ccVar.\ccc{number_of_vertices()} $=0$.}  
 \ccGlue
 \ccMethod{All_vertices_iterator all_vertices_end() const;}
 {Past-the-end iterator}
@@ -899,8 +898,6 @@ geometric validity of \ccc{c}, if \ccc{c} is finite. (See
 Section~\pageref{Triangulation3-sec-intro}.)\\ 
 When \ccc{verbose} is set to \ccc{true}, messages are printed to give
 a precise indication of the kind of invalidity encountered.}
-
-These methods are mainly a debugging help for the users of advanced features.
 
 \end{ccAdvanced}
 

@@ -23,6 +23,8 @@ class \ccc{Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDat
 It provides \ccc{Weighted_point}, a class for weighted points, which derives
 from the three dimensional point class \ccc{R::Point_3}.
 
+The first argument \ccc{R} must be a model of the \ccc{Kernel} concept. 
+
 The second argument \ccc{Weight} of the class
 \ccc{Regular_triangulation_euclidean_traits_3<R,Weight>} is in fact
 optional: if is it not provided, \ccc{R::RT} will be used.

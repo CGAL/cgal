@@ -27,7 +27,7 @@ int main()
   assert(T.dimension() == 3);
 
   // Inserts 100 random points if and only if their insertion
-  // in the Delaunay tetrahedralization would conflict with
+  // in the Delaunay tetrahedralization conflicts with
   // an even number of cells.
   for (int i = 0; i != 100; ++i) {
     Point p = *rnd++;

@@ -26,10 +26,10 @@ functionalities but is much more efficient for large data sets.
 
 \ccParameters
 
-The first template argument has to be a model of the
+The first template argument must be a model of the
 \ccc{DelaunayTriangulationTraits_3} concept.
 
-The second template argument has to be a model of the
+The second template argument must be a model of the
 \ccc{TriangulationDataStructure_3} concept.
 It has the default value \ccc{Triangulation_data_structure_3<Triangulation_vertex_base_3<DelaunayTriangulationTraits_3>, Triangulation_cell_base_3<DelaunayTriangulationTraits_3> >}.
 
@@ -56,7 +56,7 @@ construction of the Voronoi diagram:
 
 \ccConstructor{Delaunay_triangulation_3
 (const DelaunayTriangulationTraits_3& traits = DelaunayTriangulationTraits_3())}
-{Creates an empty Delaunay triangulation, eventually specifying a traits class
+{Creates an empty Delaunay triangulation, possibly specifying a traits class
 \ccc{traits}.}
 
 \ccConstructor{Delaunay_triangulation_3 (const Delaunay_triangulation_3 & dt1)}
@@ -66,7 +66,7 @@ construction of the Voronoi diagram:
        Delaunay_triangulation_3 (InputIterator first, InputIterator last,
  const DelaunayTriangulationTraits_3& traits = DelaunayTriangulationTraits_3())}
 {Creates a Delaunay triangulation of the points specified by the iterator range
-\ccc{[first,last)} of value type \ccc{Point}, eventually specifying a traits
+\ccc{[first,last)} of value type \ccc{Point}, possibly specifying a traits
 class \ccc{traits}.}
 
 \ccOperations
@@ -95,7 +95,7 @@ The optional argument \ccc{start} is used as a starting place for the search.}
 {Inserts point \ccc{p} in the triangulation and returns the corresponding
  vertex. Similar to the above \ccc{insert()} function, but takes as additional
  parameter the return values of a previous location query.  See description of
- \ccc{locate()} above.}
+ \ccc{Triangulation_3::locate()}.}
 
 The following method allows one to insert several points. It returns the
 number of inserted points. 
@@ -128,8 +128,7 @@ Note that in {\sc Cgal} 3.0 we have implemented a new algorithm for
 retriangulating the hole after the removal.
 In case that you experience problems when removing a vertex, the old
 code can be enabled with a \ccc{\#define CGAL_DELAUNAY_3_OLD_REMOVE 1}.
-\ccPrecond{\ccc{v} is a vertex of the triangulation and it is not the
-infinite vertex.}}
+\ccPrecond{\ccc{v} is a finite vertex of the triangulation.}}
 
 \ccMethod{template < typename InputIterator >
           int remove(InputIterator first, InputIterator beyond);}
@@ -137,8 +136,7 @@ infinite vertex.}}
 of value type \ccc{Vertex_handle}.
 \ccc{remove()} is called over each element of the range.
 The number of vertices removed is returned.
-\ccPrecond{All vertices of the range are vertices of the triangulation
-and they are not the infinite vertex.}}
+\ccPrecond{All vertices of the range are finite vertices of the triangulation.}}
 
 \ccHeading{Queries}
 
@@ -200,7 +198,7 @@ A point \ccc{p} is said to be in conflict with a cell \ccc{c} in dimension 3
                  OutputIteratorCells cit,
 		 OutputIteratorInternalFacets ifit);}
 {A point \ccc{p} defines a set of connected cells (resp. facets in dimension
-2) which are in conflict with it, which forms a hole.  The starting cell
+2) that are in conflict with it, which forms a hole.  The starting cell
 (resp.  facet) \ccc{c} must be in conflict.  Then this function returns
 respectively in the output iterators:\\
 -- \ccc{cit}: the cells (resp. facets) in conflict.\\

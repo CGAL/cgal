@@ -50,10 +50,10 @@ cells. Each vertex gives access to one of its incident cells.
 
 The four vertices of a cell are indexed with 0, 1, 2 and 3 in positive
 orientation, the positive orientation being defined by the orientation
-of the underlying Euclidean space $\R^3$. The neighbors of a cell are also
+of the underlying Euclidean space $\R^3$ (see
+Figure~\ref{Triangulation3-fig-orient}). The neighbors of a cell are also
 indexed with 0, 1, 2, 3 in such a way that the neighbor indexed by $i$
-is opposite to the vertex with the same index. See
-Figure~\ref{Triangulation3-fig-orient}.
+is opposite to the vertex with the same index. 
 
 \begin{figure}[htbp]
 \begin{ccTexOnly}
@@ -83,7 +83,7 @@ endpoints are the vertices of \ccc{c} with indices \ccc{i} and
 
 \paragraph{Degenerate Dimensions}
 The class \ccc{Triangulation_3} can also deal with
-triangulations whose dimension is less than~3. A triangulation of a
+triangulations whose dimension $d$ is less than~3. A triangulation of a
 set of points in $\R^d$ covers the whole space $\R^d$ and consists of
 cells having $d+1$ vertices: some of them are infinite, they are
 obtained by linking the additional infinite vertex to each facet of
@@ -317,8 +317,8 @@ can also be used, the later being recommended when the dual construction is
 used.
 
 In order to be used as the traits class for \ccc{Regular_triangulation_3},
-a class must provide functions to compute the \textit{power tests}.
-(See Section~\ref{Triangulation3-sec-class-Regulartriangulation}.)
+a class must provide functions to compute the \textit{power tests}
+(see Section~\ref{Triangulation3-sec-class-Regulartriangulation}).
 \ccc{Regular_triangulation_euclidean_traits_3<R,Weight>} is a traits class 
  designed to be used by the class
 \ccc{Regular_triangulation_3<RegularTriangulationTraits_3, TriangulationDataStructure_3>}. It provides
@@ -445,7 +445,7 @@ typedef Triangulation_3<GT, My_TDS>                                     Tr;
 While now, there are two possibilities.  The simplest one is to use the
 class \ccc{Triangulation_vertex_base_with_info_3}, and this approach is
 illustrated in a following subsection~\ref{Triangulation3-sec-examples-color}.
-But when the user needs to access some type which depends on the triangulation
+But when the user needs to access some type that depends on the triangulation
 data structure (typically handles), then he must write:
 \begin{ccExampleCode}
 ...
@@ -473,10 +473,10 @@ public:
 
 The changes that need to be made are the following:
 \begin{itemize}
-\item{} \ccc{My_vertex} has to be parameterized by the vertex base class it
+\item{} \ccc{My_vertex} must be parameterized by the vertex base class it
         derives from.
-\item{} a nested template class \ccc{Rebind_TDS} has to be defined.
-\item{} \texttt{void*} has to be changed to \ccc{Cell_handle}, and you need to
+\item{} a nested template class \ccc{Rebind_TDS} must be defined.
+\item{} \texttt{void*} must be changed to \ccc{Cell_handle}, and you need to
 	extract the \ccc{Cell_handle} type from the vertex base class that
         \ccc{My_vertex} derives from.
 \end{itemize}

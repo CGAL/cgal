@@ -12,7 +12,7 @@ geometric information related to the position of vertices.
 \cgal\ provides 3D geometric triangulations in which these
 two aspects are clearly separated.
 As described in Chapter~\ref{chapter-Triangulation3}, a geometric
-triangulation of a set of points in $\R^d$ is a partition of the
+triangulation of a set of points in $\R^d$, $d\leq 3$ is a partition of the
 whole space $\R^d$ into cells having $d+1$ vertices. Some of them
 are infinite, they are obtained by linking an additional vertex at
 infinity to each facet of the convex hull of the points (see
@@ -29,7 +29,7 @@ $\R^3$ is advised to read Chapter~\ref{chapter-Triangulation3}.
 \section{Representation}
 \label{TDS3-sec-intro}
 
-In \cgal, a triangulation data structure is a
+In \cgal, a 3D triangulation data structure is a
 container of cells ($3$-faces) and vertices ($0$-faces). Each cell gives
 access to its four incident vertices and to its four adjacent
 cells. Each vertex gives direct access to one of its incident cells, which is 
@@ -298,14 +298,14 @@ This is a cycle which cannot be resolved easily.
 The solution that we have chosen is similar to the mecanism used by the
 standard class \ccc{std::allocator}: the vertex and cell base classes are
 initially given a fake or dummy TDS template parameter, whose unique purpose
-is to provide the types which can be used by the vertex and cell base classes
+is to provide the types that can be used by the vertex and cell base classes
 (such as handles).  Then, inside the TDS itself, these base classes are
 \textit{rebound} to the real TDS type, that is we obtain the same vertex
 and cell base classes, but parameterized with the real TDS instead of the dummy
 one.  Rebinding is performed by a nested template class of the vertex and cell
 base classes (see code below), which provides a type which is the rebound
-vertex or cell base class\footnote{It is logically equivalent to a mecanism
-which does not exist yet in the C++ language: \textit{template typedef} or
+vertex or cell base class\footnote{It is logically equivalent to a mechanism
+that does not exist yet in the C++ language: \textit{template typedef} or
 \textit{template aliasing}}.
 
 Here is how it works, schematically:
