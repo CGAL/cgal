@@ -1,6 +1,4 @@
 // Generic test file for the IA package. include/tst_generic.C
-//  $Revision$
-//  $Date$
 // Written by Sylvain Pion, 1997-1999.
 
 // This file is included from tst[12].C, that do just a #define:
@@ -10,8 +8,6 @@
 #define CGAL_IA_NO_EXCEPTION
 #define CGAL_IA_NO_WARNINGS
 #include <CGAL/Interval_arithmetic.h>
-
-using namespace CGAL;
 
 // #define DEBUG(a) a;
 #define DEBUG(a)
@@ -194,9 +190,9 @@ bool utility_test()
   const IA_nt a(-1,1), b(-1,0), c(0,0), d(0,1), e(1,2), f(-2,-1), g(1);
   IA_nt h = 1/c;
 
-  tmpflag = (sign(c) == ZERO) &&
-            (sign(e) == POSITIVE) &&
-            (sign(f) == NEGATIVE) ;
+  tmpflag = (sign(c) == CGAL::ZERO) &&
+            (sign(e) == CGAL::POSITIVE) &&
+            (sign(f) == CGAL::NEGATIVE) ;
   DEBUG( std::cout << "Sign test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
@@ -223,13 +219,53 @@ bool utility_test()
   DEBUG( std::cout << "max test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
-  tmpflag = sign(f) == NEGATIVE;
+  tmpflag = sign(f) == CGAL::NEGATIVE;
   DEBUG( std::cout << "sign test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
-  tmpflag = (compare(b,e) == SMALLER)
-         && (compare(g,g) == EQUAL);
+  tmpflag = (compare(b,e) == CGAL::SMALLER)
+         && (compare(g,g) == CGAL::EQUAL);
   DEBUG( std::cout << "compare test :\t" << tmpflag << std::endl; )
+  flag = flag && tmpflag;
+
+  return flag;
+}
+
+// Test the is_valid() function.
+
+double zero = 0.0;
+
+bool is_valid_test()
+{
+  bool tmpflag, flag = true;
+  const double plus_inf = 1.0/zero;
+  const double nan = 0.0 * plus_inf;
+  const IA_nt a(nan, nan), b(0,nan), c(nan, 0), d(1,0);
+  const IA_nt e(0,1), f(0,0);
+
+  tmpflag = is_valid(a);
+  std::cout << std::endl;
+  std::cout << "is_valid( " << a << " ) = " << tmpflag << std::endl;
+  flag = flag && tmpflag;
+
+  tmpflag = is_valid(b);
+  std::cout << "is_valid( " << b << " ) = " << tmpflag << std::endl;
+  flag = flag && tmpflag;
+
+  tmpflag = is_valid(c);
+  std::cout << "is_valid( " << c << " ) = " << tmpflag << std::endl;
+  flag = flag && tmpflag;
+
+  tmpflag = is_valid(d);
+  std::cout << "is_valid( " << d << " ) = " << tmpflag << std::endl;
+  flag = flag && tmpflag;
+
+  tmpflag = is_valid(e);
+  std::cout << "is_valid( " << e << " ) = " << tmpflag << std::endl;
+  flag = flag && tmpflag;
+
+  tmpflag = is_valid(f);
+  std::cout << "is_valid( " << f << " ) = " << tmpflag << std::endl;
   flag = flag && tmpflag;
 
   return flag;
@@ -271,6 +307,7 @@ int main()
   TEST_MACRO(division_test);
   TEST_MACRO(multiplication_test);
   TEST_MACRO(utility_test);
+  TEST_MACRO(is_valid_test);
 
   print_res(0.0 < IA_nt(1));
 
