@@ -217,7 +217,7 @@ VectorH3<R>::operator/(const typename VectorH3<R>::RT& f) const
 
 template <class R>
 CGAL_KERNEL_INLINE
-typename R::Vector_3
+typename VectorH3<R>::Vector_3
 VectorH3<R>::operator/(const typename VectorH3<R>::FT& f) const
 { return VectorH3<R>( hx()*f.denominator(), hy()*f.denominator(),
 		      hz()*f.denominator(), hw()*f.numerator() ); }
@@ -230,7 +230,7 @@ VectorH3<R>::operator*(const typename VectorH3<R>::RT& f) const
 
 template <class R>
 CGAL_KERNEL_INLINE
-typename R::Vector_3
+typename VectorH3<R>::Vector_3
 VectorH3<R>::operator*(const typename VectorH3<R>::FT& f) const
 { return VectorH3<R>( hx()*f.numerator(), hy()*f.numerator(),
 		      hz()*f.numerator(), hw()*f.denominator() ); }

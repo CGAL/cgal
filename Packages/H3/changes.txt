@@ -1,3 +1,6 @@
+2.48   (4 February 2002)
+- VC++ fixes.
+
 2.47   (30 January 2002)
 - submit again...
 
