@@ -375,7 +375,8 @@ vertices.
 The class \ccClassTemplateName\  provides two functions to locate
 a given point with respect to a triangulation. It provides
 also functions to test if a given point is inside a finite face
-or not.
+or not.  Note that the class \ccc{Delaunay_triangulation_3} also
+provides a \ccc{nearest_vertex()} function.
 
 \ccMethod{Cell_handle
           locate(const Point & query, Cell_handle start = NULL) const;}
