@@ -902,6 +902,13 @@ public:
     return Cell_circulator(ncthis,e);
   }
 
+  Cell_circulator incident_cells(Edge e, Cell* c) const
+  {
+    CGAL_triangulation_precondition( dimension() == 3 );
+    Tds* ncthis = (Tds *)this;
+    return Cell_circulator(ncthis,e,c);
+  }
+
   // CHECKING
   bool is_valid(bool verbose = false, int level = 0) const
   { // is_valid()

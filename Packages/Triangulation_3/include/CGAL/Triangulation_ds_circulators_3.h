@@ -72,6 +72,21 @@ public:
       //      prev = e.first->neighbor(k);
 //    }
   }
+  
+  CGAL_Triangulation_ds_cell_circulator_3(Tds * tds, Edge e, Cell* c)
+    : _tds(tds), _e(e)
+  {
+    CGAL_triangulation_precondition( e.first != NULL && 
+				     (e.second==0 || e.second==1 ||
+				      e.second==2 || e.second==3 ) &&
+				     (e.third==0 || e.third==1 ||
+				      e.third==2 || e.third==3 ) );
+    int i, j;
+    CGAL_triangulation_precondition
+      ( c->has_vertex( e.first->vertex(e.second), i ) &&
+	c->has_vertex( e.first->vertex(e.third), j ) );
+    pos = c;
+  }
 
   CGAL_Triangulation_ds_cell_circulator_3(const Cell_circulator & ccir)
     : _tds(ccir._tds), _e(ccir._e), pos(ccir.pos)//, prev(ccir.prev)

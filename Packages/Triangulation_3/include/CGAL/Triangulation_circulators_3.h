@@ -60,7 +60,14 @@ public:
   CGAL_Triangulation_cell_circulator_3(Triangulation_3 * tr, Edge e)
     : _cb( &(tr->_tds), CGAL_make_triple( (Ctds *) &(*(e.first)), e.second, e.third ) ), _tr(tr)
     {}
-  
+
+   CGAL_Triangulation_cell_circulator_3(Triangulation_3 * tr, Edge e, Cell_handle c)
+    : _cb( &(tr->_tds), 
+	   CGAL_make_triple( (Ctds *) &(*(e.first)), e.second, e.third ),
+	   (Ctds *) &(*c) ), 
+      _tr(tr)
+    {}
+ 
   CGAL_Triangulation_cell_circulator_3(const Cell_circulator & ccir)
     : _cb(ccir._cb), _tr(ccir._tr)
     {}
