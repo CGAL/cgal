@@ -1648,6 +1648,7 @@ namespace CartesianKernelFunctors {
   template <typename K>
   class Less_signed_distance_to_plane_3
   {
+  public:
     typedef typename K::Point_3 Point_3;
     typedef typename K::Plane_3 Plane_3;
   public:
@@ -1660,6 +1661,17 @@ namespace CartesianKernelFunctors {
       return has_smaller_signed_dist_to_directionC3(h.a(), h.b(), h.c(),
 						    p.x(), p.y(), p.z(),
 						    q.x(), q.y(), q.z());
+    }
+
+    bool
+    operator()( const Point_3& hp, const Point_3& hq,  const Point_3& hr,
+		const Point_3& p, const Point_3& q) const
+    { 
+      return has_smaller_signed_dist_to_planeC3(hp.x(), hp.y(), hp.z(),
+						hq.x(), hq.y(), hq.z(),
+						hr.x(), hr.y(), hr.z(),
+						p.x(),  p.y(),  p.z(),
+						q.x(),  q.y(),  q.z());;
     }
   };
 
