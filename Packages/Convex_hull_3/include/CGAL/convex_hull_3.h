@@ -114,6 +114,7 @@ void coplanar_3_hull(InputIterator first, InputIterator beyond,
   typedef typename Traits::R                     R;
   typedef typename Traits::Point_3               Point_3;
   typedef typename Traits::Vector_3              Vector_3;
+  typedef Polyhedron_3                           Polyhedron;
   
   std::list<Point_3> CH_2;
   typedef typename std::list<Point_3>::iterator  CH_2_iterator;
@@ -146,7 +147,7 @@ void coplanar_3_hull(InputIterator first, InputIterator beyond,
      default:
        break;
   }
-  typedef typename Polyhedron_3::Halfedge_data_structure HDS;
+  typedef typename Polyhedron::Halfedge_data_structure HDS;
 
   Build_coplanar_poly<HDS,CH_2_iterator> poly(CH_2.begin(),CH_2.end());
   P.delegate(poly);
@@ -295,9 +296,10 @@ ch_quickhull_3_scan(
                    std::list<typename Traits::Point_3> >& outside_sets,
         const Traits& traits)
 {
-  typedef typename Polyhedron_3::Halfedge_handle          Halfedge_handle;
-  typedef typename Polyhedron_3::Halfedge_iterator        Halfedge_iterator;
-  typedef typename Polyhedron_3::Facet_handle             Facet_handle;
+  typedef Polyhedron_3                                    Polyhedron;
+  typedef typename Polyhedron::Halfedge_handle            Halfedge_handle;
+  typedef typename Polyhedron::Halfedge_iterator          Halfedge_iterator;
+  typedef typename Polyhedron::Facet_handle               Facet_handle;
   typedef typename Traits::Point_3			  Point_3;
   typedef std::list<Point_3>                              Outside_set;
   typedef typename std::list<Point_3>::iterator           Outside_set_iterator;
@@ -422,7 +424,7 @@ void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
                                                           Outside_set_map;
   typedef typename std::list<Point_3>::iterator           P3_iterator;
 
-  std::list<Facet_iterator> pending_facets;
+  std::list<Facet_handle> pending_facets;
 
   Facet_iterator f_it;
 
@@ -458,7 +460,7 @@ void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
   for (f_it = P.facets_begin(); f_it != P.facets_end(); f_it++)
      if (!outside_sets[f_it].empty())
        pending_facets.push_back(f_it);
-  ch_quickhull_3_scan(P, pending_facets, outside_sets, traits);
+  ch_quickhull_3_scan<Polyhedron_3, Traits>(P, pending_facets, outside_sets, traits);
 
   CGAL_ch_expensive_postcondition(all_points_inside(points.begin(),
                                                     points.end(),P,traits));
@@ -498,7 +500,6 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
   P3_iterator max_it;
   if (coplanar(*point1_it, *point2_it, *point3_it, *min_max.second))
   {
-    cout << "using min element" << endl;
      max_it = min_max.first;
      // want the orientation of the points defining the plane to be positive
      // so have to reorder these points if all points were on negative side
@@ -534,7 +535,7 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
      points.erase(point3_it);
      points.erase(max_it);
      if (!points.empty())
-        non_coplanar_quickhull_3(points, P, traits);
+        non_coplanar_quickhull_3<Polyhedron_3, Traits>(points, P, traits);
   }
 }
 
