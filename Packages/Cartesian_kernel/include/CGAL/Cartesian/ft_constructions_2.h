@@ -70,6 +70,16 @@ line_x_at_y(const LineC2<R CGAL_CTAG> &l, const typename R::FT &y)
   return line_y_at_xC2(l.b(), l.a(), l.c(), y);
 }
 
+template < class R >
+inline
+typename R::FT
+squared_circumradius(const PointC2<R CGAL_CTAG> &p,
+                     const PointC2<R CGAL_CTAG> &q,
+                     const PointC2<R CGAL_CTAG> &r)
+{
+  return squared_circumradiusC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
+}
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CARTESIAN_FT_CONSTRUCTIONS_2_H

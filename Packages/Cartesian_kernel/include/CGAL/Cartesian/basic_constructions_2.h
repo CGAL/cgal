@@ -24,7 +24,6 @@
 
 #include <CGAL/Cartesian/point_constructions_2.h>
 #include <CGAL/Cartesian/line_constructions_2.h>
-#include <CGAL/Cartesian/circle_constructions_2.h>
 #include <CGAL/Cartesian/ft_constructions_2.h>
 
 #endif // CGAL_CARTESIAN_BASIC_CONSTRUCTIONS_2_H
