@@ -35,11 +35,15 @@
 	{creates a line segment curve.}
 
     \ccConstructor{Segment_circle_2<NT> (Circle_2<NT> c);}
-	{creates a full circle curve.}
+	{creates a curve which is a full circle. The orientation of
+	the circle is preserved.}
 
     \ccConstructor{Segment_circle_2<NT> (Circle_2<NT> c, Point_2<NT> source, Point_2<NT> target);}
-	{creates a circular arcs based on the given circle and going in a clockwise direction from the source to the taget. Both the source and the target must be on the circle.}
-
+	{creates a circular arc based on the given circle and going
+	from the source to the target. The orientation of the circle
+	determines whether we go in a clockwise direction or in a
+	counterclockwise one. Both the source and the target must be
+	on the circle.}
 
 \ccOperations
     
@@ -47,7 +51,7 @@
 	{returns the curve source.}
 
     \ccMethod{Point_2<NT> target();}
-	{returns the curve source.}
+	{returns the curve target.}
 
     \ccMethod{bool is_segment();}
 	{check whether the curve is a segment.}
