@@ -32,16 +32,23 @@
 #include <CGAL/Kernel/function_objects.h>
 
 CGAL_BEGIN_NAMESPACE
+
+class LEDA_kernel_2
+{
+   tyepdef leda_point     Point_2;
+   tyepdef leda_segment   Segment_2;
+}
+
 class Convex_hull_leda_traits_2
 {
 public:
   typedef   leda_point                                      Point_2;    
-  typedef   CGALi::p_Less_xy<Point_2>                       Less_xy_2;
-  typedef   CGALi::p_Less_yx<Point_2>                       Less_yx_2;
-  typedef   CGALi::p_Less_dist_to_line_2<Point_2>           
+  typedef   CGALi::Less_xy_2<LEDA_kernel_2>                 Less_xy_2;
+  typedef   CGALi::Less_yx_2<LEDA_kernel_2>                 Less_yx_2;
+  typedef   CGALi::Less_signed_distance_to_line_2<LEDA_kernel_2>           
                                                Less_signed_distance_to_line_2;
-  typedef   CGALi::p_Less_rotate_ccw<Point_2>               Less_rotate_ccw_2;
-  typedef   CGALi::p_Left_turn<Point_2>                     Left_turn_2;
+  typedef   CGALi::Less_rotate_ccw<LEDA_kernel_2>           Less_rotate_ccw_2;
+  typedef   CGALi::Left_turn<LEDA_kernel_2>                 Left_turn_2;
   typedef   leda_segment                                    Segment_2; 
   
   Less_xy_2

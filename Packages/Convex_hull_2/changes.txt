@@ -1,5 +1,6 @@
 3.36 (17 Oct 2002)
 - added missing include of ch_extreme_points_2.h in ch_jarvis.C
+- adjust LEDA ch traits to use the new kernel function objects
 
 3.35 (12 Aug 2002)
 
