@@ -111,7 +111,8 @@ bisector_of_pointsC2(const FT &px, const FT &py,
 {
   a = FT(2)*(px - qx);
   b = FT(2)*(py - qy);
-  c = -px*px - py*py + qx*qx + qy*qy;
+  c = CGAL_NTS square(qx) + CGAL_NTS square(qy) -
+      CGAL_NTS square(px) - CGAL_NTS square(py);
 }
 
 template < class FT >
@@ -142,11 +143,51 @@ line_get_pointC2(const FT &a, const FT &b, const FT &c, int i,
 
 template < class FT > 
 inline
-Oriented_side
-side_of_oriented_lineC2(const FT &a, const FT &b, const FT &c,
-                        const FT &x, const FT &y)
+void
+perpendicular_through_pointC2(const FT &la, const FT &lb,
+		              const FT &px, const FT &py,
+			      FT &a, FT &b, FT &c)
 {
-  return Oriented_side(CGAL_NTS sign(a*x+b*y+c));
+  a = -lb;
+  b = la;
+  c = lb * px - la * py;
+}
+
+template < class FT >
+CGAL_KERNEL_MEDIUM_INLINE
+void
+line_project_pointC2(const FT &la, const FT &lb, const FT &lc,
+		     const FT &px, const FT &py,
+		     FT &x, FT &y)
+{
+#if 0
+  // Original old version
+  if (la==0) // horizontal line
+  {
+    x = px;
+    y = -lc/lb;
+  }
+  else if (lb==0) // vertical line
+  {
+    x = -lc/la;
+    y = py;
+  }
+  else
+  {
+    FT ab = la/lb, ba = lb/la, ca = lc/la;
+    y = ( -px + ab*py - ca ) / ( ba + ab );
+    x = -ba * y - ca;
+  }
+#else
+  // New version, with more multiplications, but less divisions and tests.
+  // Let's compare the results of the 2, benchmark them, as well as check
+  // the precision with the intervals.
+  FT a2 = CGAL_NTS square(a);
+  FT b2 = CGAL_NTS square(b);
+  FT d = a2 + b2;
+  x = (a * (b * py - c) - px * b2) / d;
+  y = (b * (c - a * px) + py * a2) / d;
+#endif
 }
 
 template < class FT >
