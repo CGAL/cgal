@@ -1,3 +1,7 @@
+3.34 (20 Mar 2001)
+- added the examples/include/ch_timing_2.[Ch] files back.  Some problem with
+  CVS there...
+
 3.33 (19 Mar 2001)
 - moved the leda_in_CGAL.h and rat_leda_in_CGAL.h files to the LEDA package.
 
