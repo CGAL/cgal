@@ -27,9 +27,11 @@
 #include <CGAL/Kernel_d/Matrix__.h>
 #include <memory>
 #include <vector>
+
 #undef _DEBUG
 #define _DEBUG 13
 #include <CGAL/Kernel_d/debug.h>
+
 
 //#define CGAL_LA_SELFTEST
 

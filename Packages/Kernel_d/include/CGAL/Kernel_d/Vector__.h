@@ -31,6 +31,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/memory.h>
 #include <CGAL/Kernel_d/d_utils.h>
+
 #undef _DEBUG
 #define _DEBUG 51
 #include <CGAL/Kernel_d/debug.h>

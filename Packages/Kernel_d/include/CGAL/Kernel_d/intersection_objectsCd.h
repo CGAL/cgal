@@ -22,9 +22,11 @@
 #define CGAL_INTERSECTION_OBJECTSCD_H
 
 #include <CGAL/basic.h>
+
 #undef _DEBUG
 #define _DEBUG 11
 #include <CGAL/Kernel_d/debug.h>
+
 
 CGAL_BEGIN_NAMESPACE
 
