@@ -432,6 +432,8 @@ public:
   template < class Conflict_test >
   Vertex * insert_conflict( Vertex * w, Cell *c, const Conflict_test &tester)
   {
+    CGAL_triangulation_precondition( dimension() >= 2 );
+    CGAL_triangulation_precondition( c != NULL );
     CGAL_triangulation_precondition( tester(c) );
 
     if ( w == NULL ) 
