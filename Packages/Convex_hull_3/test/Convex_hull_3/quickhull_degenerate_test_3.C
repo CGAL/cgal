@@ -104,7 +104,7 @@ void test_coplanar_arbitrary()
       p2 = *g++;
       p3 = *g++;
    }
-   while (collinear(p1, p2, p3));
+   while (CGAL::collinear(p1, p2, p3));
    Plane_3 plane(p1, p2, p3);
    for (int i = 0; i < num; i++)
    {
@@ -154,33 +154,43 @@ int main()
   CGAL::Object ch_object;
   Traits ch_traits;
 
-  convex_hull_3(points.begin(), points.end(), ch_object, ch_traits);
+  std::cout << "Testing hull of no points " << std::endl;
+  CGAL::convex_hull_3(points.begin(), points.end(), ch_object, 
+                      ch_traits);
   assert (ch_object.is_empty());
 
   Point_3 p1(0, 0, 0);
   points.push_back(p1);
 
+  std::cout << "Testing hull of one point " << std::endl;
   CGAL::convex_hull_3(points.begin(), points.end(), ch_object, ch_traits);
   Point_3 ch_point;
   assert (CGAL::assign(ch_point, ch_object));
 
+  std::cout << "Testing hull of two points " << std::endl;
   Point_3 p2(1, 0, 0);
   points.push_back(p2);
   CGAL::convex_hull_3(points.begin(), points.end(), ch_object, ch_traits);
   Segment_3 ch_segment;
   assert (CGAL::assign(ch_segment, ch_object));
 
+  std::cout << "Testing hull of three points " << std::endl;
   Point_3 p3(1, 1, 0);
   points.push_back(p3);
   CGAL::convex_hull_3(points.begin(), points.end(), ch_object, ch_traits);
   Triangle_3 ch_triangle;
   assert (CGAL::assign(ch_triangle, ch_object));
 
+  std::cout << "Testing hull of collinear points " << std::endl;
   test_collinear();
 
+  std::cout << "Testing hull of points in xy-plane " << std::endl;
   test_coplanar_xy();
+  std::cout << "Testing hull of points in xz-plane " << std::endl;
   test_coplanar_xz();
+  std::cout << "Testing hull of points in yz-plane " << std::endl;
   test_coplanar_yz();
+  std::cout << "Testing hull of points in arbitrary plane " << std::endl;
   test_coplanar_arbitrary();
 
   return 0;

@@ -51,12 +51,12 @@ int main()
   // determine what kind of object it is
   Segment_3 segment;
   Polyhedron_3 polyhedron;
-  if ( assign(segment, ch_object) )
-     cout << "convex hull is a segment " << endl;
-  else if ( assign (polyhedron, ch_object) )
-     cout << "convex hull is a polyhedron " << endl;
+  if ( CGAL::assign(segment, ch_object) )
+     std::cout << "convex hull is a segment " << std::endl;
+  else if ( CGAL::assign (polyhedron, ch_object) )
+     std::cout << "convex hull is a polyhedron " << std::endl;
   else
-     cout << "convex hull error!" << endl;
+     std::cout << "convex hull error!" << std::endl;
 
   return 0;
 }
