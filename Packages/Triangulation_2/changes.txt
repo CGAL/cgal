@@ -1,6 +1,12 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 5.23 (8/1/01)
+- changes prefixes to CGAL_CLIB_STD in front of ptrdiff_t and size_t
+- prevent insertion of twice the very same constraint in 
+  Constrained_triangulation_plus_2
+- fixed the test of  Constrained_triangulation_plus_2
+
 Ver 5.22 (3/12/01)
 - replace "assert" by "CGAL_triangulation_assertion"
 - in Regular_triangulation_euclidean_traits_2<R,W>
