@@ -542,10 +542,11 @@ refine_face(Face_handle f)
 
   if(split_the_face)
     {
-      int li;
-      Locate_type lt;
-      locate(pc,lt,li,f);
-      if(lt!=OUTSIDE_CONVEX_HULL)
+//       int li;
+//       Locate_type lt;
+//       locate(pc,lt,li,f);
+//       if(lt!=OUTSIDE_CONVEX_HULL)
+      if(f->is_marked())
 	split_face(f, pc);
     }
   else
@@ -562,7 +563,14 @@ inline
 void Mesh_2<Tr>::
 split_face(const Face_handle& f, const Point& circum_center)
 {
+  bool marked = f->is_marked();
   Vertex_handle v = insert(circum_center,f);
+
+  Face_circulator fc = incident_faces(v), fcbegin(fc);
+  do {
+    fc->set_marked(marked);
+  } while (++fc != fcbegin);
+
   update_facette_map(v);
 }
 
@@ -737,8 +745,30 @@ cut_cluster_edge(Vertex_handle va, Vertex_handle vb, Cluster& c)
       Face_handle fh;
       int index;
       is_edge(va,vb,fh,index);
+
+      // TODO: do not copy-paste with insert_middle
+      bool 
+	mark_at_right = fh->is_marked(),
+	mark_at_left = fh->neighbor(index)->is_marked();
       
       vc = special_insert_in_edge(i, fh, index);
+
+      is_edge(va, vc, fh, index); // set f to the face at the right of [va,vb]
+      Face_circulator fc = incident_faces(vc, fh), fcbegin(fc);
+      // circulators are counter-clockwise, so we start at the right of
+      // [va,vb]
+      do {
+	if( !is_infinite(fc) )
+	  fc->set_marked(mark_at_right);
+	++fc;
+      } while ( fc->vertex(ccw(fc->index(vc))) != vb );
+      // we are now at the left of [va,vb]
+      do {
+	if( !is_infinite(fc) )
+	  fc->set_marked(mark_at_left);
+	++fc;
+      } while ( fc != fcbegin );
+      
     }
   update_c_edge_queue(va, vb, vc);
   update_facette_map(vc);
@@ -758,11 +788,33 @@ insert_middle(Face_handle f, int i)
     va = f->vertex(cw(i)),
     vb = f->vertex(ccw(i));
 
+  bool 
+    mark_at_right = f->is_marked(),
+    mark_at_left = f->neighbor(i)->is_marked();
+
   Point mp = midpoint(va->point(), vb->point());
 
   Vertex_handle vm = special_insert_in_edge(mp, f, i);
-  // WARNING: special_insert_in_edge is not robust!
-  // We should deconstrained the constrained edge, 
+  // TODO, WARNING: special_insert_in_edge is not robust!
+  // We should deconstrained the constrained edge, insert the two
+  // subconstraints and re-constrain them
+
+  is_edge(va, vm, f, i); // set f to the face at the right of [va,vb]
+  Face_circulator fc = incident_faces(vm, f), fcbegin(fc);
+  // circulators are counter-clockwise, so we start at the right of
+  // [va,vb]
+  do {
+    if( !is_infinite(fc) )
+      fc->set_marked(mark_at_right);
+    ++fc;
+  } while ( fc->vertex(ccw(fc->index(vm))) != vb );
+  // we are now at the left of [va,vb]
+  do {
+    if( !is_infinite(fc) )
+      fc->set_marked(mark_at_left);
+    ++fc;
+  } while ( fc != fcbegin );
+
   update_c_edge_queue(va, vb, vm);
   update_facette_map(vm);
   return vm;
