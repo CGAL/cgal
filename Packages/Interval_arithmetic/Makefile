@@ -49,7 +49,7 @@ clean:
 $(Package).tar.gz:
 	tar -zcvf $(Package).tar.gz \
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
-	--exclude=TODO --exclude=submit-mail \
+	--exclude=TODO \
 	version description.txt changes.txt \
 	include doc_tex doc_ps test examples
 
