@@ -1126,6 +1126,8 @@ public:
     return (bbox);
   }
 
+  class const_iterator;
+  friend class const_iterator;
   /*!
    * An iterator for the polyline points.
    */
@@ -1287,6 +1289,7 @@ public:
     else
       return (size() + 1);
   }
+
 
 private:
 
