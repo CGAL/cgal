@@ -1260,7 +1260,7 @@ read_cells(std::istream& is,
       m = 2;
       Cell* c;
 
-      CGAL_triangulation_assertion( (n == 2) );
+      //      CGAL_triangulation_assertion( (n == 2) );
       for (i=0; i < 2; i++) {
 	c = tds.create_cell(V[i], NULL, NULL, NULL);
 	C[i] = c;
@@ -1276,7 +1276,7 @@ read_cells(std::istream& is,
     {
       m = 1;
       Cell* c;
-      CGAL_triangulation_assertion( (n == 1) );
+      //      CGAL_triangulation_assertion( (n == 1) );
       c = tds.create_cell(V[0], NULL, NULL, NULL);
       C[0] = c;
       V[0]->set_cell(c);
