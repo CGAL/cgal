@@ -1248,6 +1248,7 @@ BigFloat pow(const BigFloat& r, unsigned long n) {
   }
 }//pow
 
+// experimental
 BigFloat root(const BigFloat& x, unsigned long k,
          const extLong& a, const BigFloat& A) {
   if (x.sign() == 0) {
