@@ -1,3 +1,8 @@
+0.4 (6 Feb 2004)
+-Added lines
+  typedef CGAL::Tag_false Has_sqrt;
+  typedef CGAL::Tag_true  Has_division;
+
 0.3  (18 Jan 2004)
 - Remove CGAL_CFG_MATCHING_BUG_2.
 
