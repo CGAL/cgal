@@ -197,7 +197,7 @@ public:
       
       create_clusters();
       fill_edge_queue();
-      fill_facette_map();
+      fill_facet_map();
     }
 
   // mark_facets(...): procedure called to mark facets, same arguments 
@@ -309,7 +309,7 @@ private:
 	return *this;
       }
 
-    bool operator()(Vertex& v2) const 
+    bool operator()(/*const*/ Vertex& v2) const 
       {
 	if(_m->is_infinite(v2.handle()))
 	  return false;
@@ -436,7 +436,7 @@ private:
 			 Vertex_handle vc);
  
   // scan all faces and put them if needed in the map
-  void fill_facette_map();
+  void fill_facet_map();
 
   // update the map with faces incident to the vertex v
   void compute_new_bad_faces(Vertex_handle v);
@@ -773,7 +773,7 @@ set_geom_traits(const Geom_traits& gt)
 {
   _gt = gt;
   bad_faces.clear();
-  fill_facette_map();
+  fill_facet_map();
 }
 
 // STEP BY STEP MESHING
@@ -1101,10 +1101,10 @@ push_in_bad_faces(Vertex_handle va, Vertex_handle vb,
   push_in_bad_faces(fh);
 }
 
-//it is necessarry for process_facette_map
+//it is necessarry for process_facet_map
 template <class Tr>
 void Mesh_2<Tr>::
-fill_facette_map()
+fill_facet_map()
 {
   for(Finite_faces_iterator fit = finite_faces_begin();
       fit != finite_faces_end();
