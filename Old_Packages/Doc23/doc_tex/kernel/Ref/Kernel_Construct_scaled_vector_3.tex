@@ -1,0 +1,20 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::Construct_scaled_vector_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+
+\ccMemberFunction{
+template <class RT>
+Kernel::Vector_3 operator()(const Kernel::Vector_3 &v,
+                            const RT& scale);}
+            {produces the vector \ccc{v} scaled by a factor \ccc{scale}.}
+
+\ccMemberFunction{
+template <class RT>
+Kernel::Vector_3 operator()(const Kernel::Vector_3 &v,
+                            const Quotient<RT>& scale);}
+            {produces the vector \ccc{v} scaled by a factor \ccc{scale}.}
+
+
+\end{ccRefFunctionObjectConcept}
