@@ -1639,6 +1639,7 @@ Packages/Qt_widget/include/CGAL/IO/pixmaps/ymonotone.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/zoom_in.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/zoom_in_rect.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/zoom_out.xpm -text
+Packages/Qt_widget/src/CGALQt/CGALQt.sln -text
 Packages/Qt_widget/src/CGALQt/CGALQt.vcproj -text
 Packages/Robustness/demo/Robustness/robustness.vcproj -text
 Packages/SearchStructures/doc_tex/SearchStructures/d-range.eps -text
