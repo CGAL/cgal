@@ -108,6 +108,22 @@ public:
         assert(A.dimension() == x.dimension()) ;
         assert (A.dimension() > 0);
 
+//#ifndef NDEBUG 
+//		// Debug trace
+//		fprintf(stderr, "VVVVVVVVVVVVVVVVVV  A*x=b  VVVVVVVVVVVVVVVVVV\n");
+//		for (int i=0; i<A.dimension(); i++)
+//			for (int j=0; j<A.dimension(); j++)
+//				if ( ! IsZero(A.get_coef(i,j)) )
+//					fprintf(stderr, "A[i][j] = %10.18lf\n", (double)A.get_coef(i,j));
+//		for (int j=0; j<A.dimension(); j++)
+//			if ( ! IsZero(x[j]) )
+//				fprintf(stderr, "x[j] = %10.18lf\n", (double)x[j]);
+//		for (int j=0; j<A.dimension(); j++)
+//			if ( ! IsZero(b[j]) )
+//				fprintf(stderr, "b[j] = %10.18lf\n", (double)b[j]);
+//		fprintf(stderr, "^^^^^^^^^^^^^^^^^^  A*x=b  ^^^^^^^^^^^^^^^^^^\n");
+//#endif
+
         unsigned int n = A.dimension() ;						// (Square) matrix dimension
         unsigned int max_iter = max_iter_ ;						// Max number of iterations
         if(max_iter == 0) {
@@ -159,12 +175,20 @@ public:
             BLAS<Vector>::axpy(-omega,t,h);						// h = h - omega*t
 //#ifndef NDEBUG 
 //			// Debug trace
-//			if (its < 10)
-//				std::cerr << "solve: " << STREAM_TRACE(its) << STREAM_TRACE(rTr) << STREAM_TRACE(alpha) << STREAM_TRACE(beta) << STREAM_TRACE(omega) << STREAM_TRACE(rTh) << std::endl;
+//			std::cerr << "solve: " << STREAM_TRACE(its) << STREAM_TRACE(rTr) 
+//				      << STREAM_TRACE(alpha) << STREAM_TRACE(beta) << STREAM_TRACE(omega) 
+//					  << STREAM_TRACE(rTh) 
+//					  << STREAM_TRACE(rTAd) << STREAM_TRACE(ht) << STREAM_TRACE(tt) 
+//					  << std::endl;
 //#endif
-			if( IsZero(omega) )									// LS 03/2005: break to avoid division by zero (see Laspack implementation)
+			if (IsZero(omega)) {								// LS 03/2005: break to avoid division by zero (see Laspack implementation)
+				std::cerr << "solve: error: omega = 0" << std::endl;
 				break;		
-			assert( ! IsZero(rTh) );							// LS 03/2005: don't know what do do if division by zero 
+			}
+			if (IsZero(rTh)) {									// LS 04/2005: don't know what do do if division by zero 
+				std::cerr << "solve: error: rTh = 0" << std::endl;
+				break;	
+			}
             beta=(alpha/omega)/rTh; 
 			rTh=BLAS<Vector>::dot(rT,h); 						// rTh = (rT|h)
 			beta*=rTh;											// beta = (rTh / previous rTh) * (alpha / omega)
@@ -176,7 +200,11 @@ public:
 
 		bool success = (rTr <= err);
 #ifndef NDEBUG 
-		std::cerr << "solve: " << STREAM_TRACE(success) << "(" << STREAM_TRACE(its) << STREAM_TRACE(max_iter) << STREAM_TRACE(rTr) << STREAM_TRACE(err) << STREAM_TRACE(omega) << STREAM_TRACE(rTh) << ")" << std::endl;
+		std::cerr << "solve: " << STREAM_TRACE(success) 
+			      << "(" << STREAM_TRACE(its) << STREAM_TRACE(max_iter) 
+				         << STREAM_TRACE(rTr) << STREAM_TRACE(err) << STREAM_TRACE(alpha) << STREAM_TRACE(beta) << STREAM_TRACE(omega) 
+						 << STREAM_TRACE(rTh) << STREAM_TRACE(rTAd) << STREAM_TRACE(ht) << STREAM_TRACE(tt) 
+				  << ")" << std::endl;
 #endif
 		return success;
     }
