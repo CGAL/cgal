@@ -126,21 +126,21 @@ disk and two on the target disk). The names of these edges are given in the
 Figure below.
 \begin{ccTexOnly}
     \begin{center}
-	\psfrag{v}{$v$}
-	\psfrag{ccw_target_edge(v)}{\texttt{ccw\_target\_edge}($v$)}
-	\psfrag{cw_target_edge(v)}{\texttt{cw\_target\_edge}($v$)}
-	\psfrag{ccw_source_edge(v)}{\texttt{ccw\_source\_edge}($v$)}
-	\psfrag{cw_source_edge(v)}{\texttt{cw\_source\_edge}($v$)}
-	\psfrag{e}{$e$}
-	\psfrag{sup(e)}{$\sup(e)$}
-	\psfrag{inf(e)}{$\inf(e)$}
-	\includegraphics[height=8cm]{fig/edge-vertex.eps}%
+        \psfrag{v}{$v$}
+        \psfrag{ccw_target_edge(v)}{\texttt{ccw\_target\_edge}($v$)}
+        \psfrag{cw_target_edge(v)}{\texttt{cw\_target\_edge}($v$)}
+        \psfrag{ccw_source_edge(v)}{\texttt{ccw\_source\_edge}($v$)}
+        \psfrag{cw_source_edge(v)}{\texttt{cw\_source\_edge}($v$)}
+        \psfrag{e}{$e$}
+        \psfrag{sup(e)}{$\sup(e)$}
+        \psfrag{inf(e)}{$\inf(e)$}
+        \includegraphics[height=8cm]{fig/edge-vertex.eps}%
     \end{center}
 \end{ccTexOnly}
 
 \begin{ccHtmlOnly}
     <CENTER>
-	<img src="fig/edge-vertex.gif" alt="Edge-Vertex adjacencies"><P>
+        <img src="fig/edge-vertex.gif" alt="Edge-Vertex adjacencies"><P>
     </CENTER>
 \end{ccHtmlOnly}
 
@@ -190,19 +190,19 @@ are respectively:
 
 \begin{ccTexOnly}
     \begin{center}
-	\psfrag{Vertices}{Vertices}
-	\psfrag{Edge}{Edge}
-	\psfrag{Face}{Face}
-	\psfrag{forward view}{forward view}
-	\psfrag{backward view}{backward view}
-	\includegraphics[height=5cm,width=\linewidth]{fig/vis-complex.eps}%
+        \psfrag{Vertices}{Vertices}
+        \psfrag{Edge}{Edge}
+        \psfrag{Face}{Face}
+        \psfrag{forward view}{forward view}
+        \psfrag{backward view}{backward view}
+        \includegraphics[height=5cm,width=\linewidth]{fig/vis-complex.eps}%
     \end{center}
 \end{ccTexOnly}
 
 \begin{ccHtmlOnly}
     <CENTER>
         <img src="fig/vis-complex.gif" width="90%" 
-	 alt="The cells of the Visibility Complex"><P>
+         alt="The cells of the Visibility Complex"><P>
     </CENTER>
 \end{ccHtmlOnly}
 
@@ -222,33 +222,33 @@ edges which is discussed later on.
     and minimal angle. More precisely the set of maximal segments of a face is
     ordered by the following relation:
     \begin{equation}
-		    a < b \textrm{ iff. } \det(a,b) > 0.
+                    a < b \textrm{ iff. } \det(a,b) > 0.
     \end{equation}
     The vertices $\inf(\sigma)$ and $\sup(\sigma)$ are respectively the minimum
-    and maximum for this order. \emph{Warning: convex-hull vertices...}\\
+    and maximum for this order. \todo{Warning: convex-hull vertices...}\\
     Each vertex $v$ is incident to six faces. 
     \item \emph{Edge - Face incidences. } An edge $e$ is adjacent to three
     faces. These are obtained by taking a maximal segment of the edge and moving
     it slightly. See the figure below for the names of these faces.
 
     \begin{ccTexOnly}
-	\begin{center}
-	    \psfrag{dl(e)}{dl($e$)}
-	    \psfrag{dr(e)}{dr($e$)}
-	    \psfrag{ul(e)}{ul($e$)}
-	    \psfrag{ur(e)}{ur($e$)}
-	    \psfrag{e}{$e$}
-	    \psfrag{Positive edge}{Positive edge}
-	    \psfrag{Negative edge}{Negative edge}
-	    \includegraphics[height=5cm,width=\linewidth]{fig/edge-face.eps}%
-	\end{center}
+        \begin{center}
+            \psfrag{dl(e)}{dl($e$)}
+            \psfrag{dr(e)}{dr($e$)}
+            \psfrag{ul(e)}{ul($e$)}
+            \psfrag{ur(e)}{ur($e$)}
+            \psfrag{e}{$e$}
+            \psfrag{Positive edge}{Positive edge}
+            \psfrag{Negative edge}{Negative edge}
+            \includegraphics[height=5cm,width=\linewidth]{fig/edge-face.eps}%
+        \end{center}
     \end{ccTexOnly}
 
     \begin{ccHtmlOnly}
-	<CENTER>
-	    <img src="fig/edge-face.gif" width="90%"
-	     alt="Edge-Face adjacencies"><P>
-	</CENTER>
+        <CENTER>
+            <img src="fig/edge-face.gif" width="90%"
+             alt="Edge-Face adjacencies"><P>
+        </CENTER>
     \end{ccHtmlOnly}
     For a positive edge $e$ we set dr$(e) = $dl$(e)$ and for a negative edge
     ur$(e) = $ul$(e)$.
@@ -266,16 +266,16 @@ emanating from the extremity of a constraint. Such an edge $e$ is called a
 See the Figure below for an illustration.
 \begin{ccTexOnly}
     \begin{center}
-	\psfrag{face(e)}{face($e$)}
-	\psfrag{e}{$e$}
-	\psfrag{constraint}{constraint}
-	\includegraphics[height=5cm]{fig/constraint-edge.eps}%
+        \psfrag{face(e)}{face($e$)}
+        \psfrag{e}{$e$}
+        \psfrag{constraint}{constraint}
+        \includegraphics[height=5cm]{fig/constraint-edge.eps}%
     \end{center}
 \end{ccTexOnly}
 
 \begin{ccHtmlOnly}
     <CENTER>
-	<img src="fig/constraint-edge.gif" alt="Constraint Edges"><P>
+        <img src="fig/constraint-edge.gif" alt="Constraint Edges"><P>
     </CENTER>
 \end{ccHtmlOnly}
 
@@ -311,7 +311,7 @@ of a degenerate disk with a small circle having an infinitesimal radius.
 
 \begin{ccTexOnly}
     \begin{center}
-	\includegraphics[height=4cm]{fig/perturbation.eps}%
+        \includegraphics[height=4cm]{fig/perturbation.eps}%
     \end{center}
 \end{ccTexOnly}
 
@@ -328,8 +328,8 @@ visualize the visibility complex or graph.
 
 \begin{ccTexOnly}
     \begin{center}
-	\psfrag{Perturbation}{Perturbation}
-	\includegraphics[height=4cm]{fig/points.eps}%
+        \psfrag{Perturbation}{Perturbation}
+        \includegraphics[height=4cm]{fig/points.eps}%
     \end{center}
 \end{ccTexOnly}
 
@@ -349,7 +349,7 @@ bitangents is the only crossing pair in the figure above.  Also bear in mind
 that the presence of degenerate cases may imply arcs with zero length.
 
 Finally we explain how the general position assumption is dealt with.
-\emph{A finir ...}
+\todo{A finir ...}
 
 \paragraph{General polygonal configurations. } Recall that disks, as they are defined
 above, are convex. We now describe how to treat not only non convex polygons but
@@ -372,8 +372,8 @@ has to be given as an input to our algorithms.
 
 \begin{ccTexOnly}
     \begin{center}
-	\psfrag{S}{$S$}
-	\includegraphics[height=8cm]{fig/configuration.eps}%
+        \psfrag{S}{$S$}
+        \includegraphics[height=8cm]{fig/configuration.eps}%
     \end{center}
 \end{ccTexOnly}
 
@@ -414,11 +414,11 @@ $[0,2\pi)$) defines a total order on $B_o$. See the left part of the figure belo
 
 \begin{ccTexOnly}
     \begin{center}
-	\psfrag{a}{\textcolor{red}{$a$}}
-	\psfrag{b}{\textcolor{red}{$b$}}
-	\psfrag{o}{$o$}
-	\psfrag{angle}{\textcolor{green}{angle}}
-	\includegraphics[width=\textwidth]{fig/order.eps}%
+        \psfrag{a}{\textcolor{red}{$a$}}
+        \psfrag{b}{\textcolor{red}{$b$}}
+        \psfrag{o}{$o$}
+        \psfrag{angle}{\textcolor{green}{angle}}
+        \includegraphics[width=\textwidth]{fig/order.eps}%
     \end{center}
 \end{ccTexOnly}
 
@@ -452,9 +452,9 @@ argument function:
 template < class DiskIterator , class ConstraintIterator ,
            class OutputIterator , class Traits >
 shortest_path_2(InputIterator first       , InputIterator last ,
-		ConstraintIterator firstc , ConstraintIterator lastc ,
-		Traits::Point_2 p , Traits::Point_2 q ,
-		Traits g);
+                ConstraintIterator firstc , ConstraintIterator lastc ,
+                Traits::Point_2 p , Traits::Point_2 q ,
+                Traits g);
 \end{verbatim}
 The first two pairs of iterators provide the input scene. The function returns
 an iterator on the bitangents of the shortest path between the points $p$ and
@@ -520,7 +520,7 @@ the visibility complex. Currently four different traits classes are provided:
     \ccc{CGAL::Circle_by_radius_2}. The class \ccc{CGAL::Circle_by_radius_2}
     inherits from \ccc{CGAL::Circle_2} and is implemented in the file: 
     \begin{quote}
-	\ccInclude{CGAL/Circle_by_radius_2.h}
+        \ccInclude{CGAL/Circle_by_radius_2.h}
     \end{quote}
     This class adds functionality to manipulate circles with their \emph{radius}
     instead of their \emph{squared radius}. 
