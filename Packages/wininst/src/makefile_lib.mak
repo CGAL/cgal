@@ -43,6 +43,8 @@ Interval_arithmetic$(OBJ_EXT) \
 MP_Float$(OBJ_EXT) \
 Origin$(OBJ_EXT) \
 Random$(OBJ_EXT) \
+Real_timer$(OBJ_EXT) \
+Timer$(OBJ_EXT) \
 Triangulation_3$(OBJ_EXT) \
 aff_transformation_tags$(OBJ_EXT) \
 cgal_logo$(OBJ_EXT) \
@@ -70,6 +72,8 @@ $(CGAL_OBJ_PREFIX)Interval_arithmetic$(OBJ_EXT) \
 $(CGAL_OBJ_PREFIX)MP_Float$(OBJ_EXT) \
 $(CGAL_OBJ_PREFIX)Origin$(OBJ_EXT) \
 $(CGAL_OBJ_PREFIX)Random$(OBJ_EXT) \
+$(CGAL_OBJ_PREFIX)Real_timer$(OBJ_EXT) \
+$(CGAL_OBJ_PREFIX)Timer$(OBJ_EXT) \
 $(CGAL_OBJ_PREFIX)Triangulation_3$(OBJ_EXT) \
 $(CGAL_OBJ_PREFIX)aff_transformation_tags$(OBJ_EXT) \
 $(CGAL_OBJ_PREFIX)assertions$(OBJ_EXT) \
