@@ -12,14 +12,14 @@
 // release_date  : $CGAL_Date$
 //
 // file          : include/CGAL/Min_annulus_d.h
-// chapter       : Geometric Optimisation
 // package       : $CGAL_Package: Min_annulus_d $
+// chapter       : Geometric Optimisation
 //
 // source        : web/Min_annulus_d.aw
-// revision      : 1.8
-// revision_date : 2000/09/26
+// revision      : 1.9
+// revision_date : 2001/03/21
 //
-// author(s)     : Sven Schönherr
+// author(s)     : Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
 //
 // implementation: Smallest enclosing annulus in arbitrary dimension
