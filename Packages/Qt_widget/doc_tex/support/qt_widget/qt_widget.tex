@@ -279,26 +279,29 @@ application.
 
 \newcounter{bean}
 The functionality of the toolbar is like this from the left to right:
-\begin{list}
-	{Button---\Roman{bean}}{\usecounter{bean}\setlength{\rightmargin}{\leftmargin}}
-	\item Remove tool
+\begin{description}
+%	{Button---\Roman{bean}}{\usecounter{bean}\setlength{\rightmargin}{\leftmargin}}
+	\item[Point tool:] Does nothing.
 
-	\item Zoom In: The scales are multiplied by two keeping the same center
+	\item[Zoom In:] The scales are multiplied by two keeping the same center.
 
-	\item Zoom Out: The scales are divided by two keeping the same center
+	\item[Zoom Out:] The scales are divided by two keeping the same center.
 
-	\item Zoom In Region: Lets you choose the center of the region where you want to zoom in. The scales are multiplied by two
+	\item[Zoom In Region:] Lets you choose the center of the region where you want to zoom in. 
+           The scales are multiplied by two.
 
-	\item Focus on the Region: The area in the rectangle that you selected will be magnified to best fit in the window.
+	\item[Focus on the Region:] The area in the rectangle that you selected will be magnified to 
+           best fit in the window.
 
-	\item Hand Tool: Used for translate. Click to select the first point of translation and drag to select the second point.
-\end{list}
+	\item[Hand Tool:] Used for translate. Click to select the first point of translation and 
+           drag to select the second point.
+\end{description}
 
 You can select a tool by clicking on a button of the standard
 toolbar. To deselect the tool either you press once again the
 button, or you press the arrow button that deselects the active tool,
 no matter what tool it is.
-s
+
 \ccExample
 \ccIncludeExampleCode{../../../test/standard_toolbar.C}
 
