@@ -1,5 +1,10 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.17 on 24 June 1999
+- Removed the ".pure" and src/*.o files.
+- Removed include/CGAL/Arithmetic_filter/predicates_on_rtH2.h.
+- Updates the other specialization files.
+
 Version 4.16 on 24 June 1999
 - Added specializations for the regular triangulation predicates.
 - The script now adds "CGAL::", so that it works for the predicates
