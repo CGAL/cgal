@@ -75,12 +75,9 @@ int main()
   T.insert(Point(-1,0,1));  
 
   Delaunay::Finite_vertices_iterator vit;
-  for (vit = T.finite_vertices_begin(); vit != T.finite_vertices_end(); ++vit) {
-    std::vector<Delaunay::Vertex_handle> adjacent;
-    T.incident_vertices( vit->handle(), std::back_inserter(adjacent));
-    if (adjacent.size() == 6)
+  for (vit = T.finite_vertices_begin(); vit != T.finite_vertices_end(); ++vit)
+    if (T.degree(vit->handle()) == 6)
       vit->color = CGAL::RED;
-  }
 
   std::cout << "           Visualization of T" << std::endl;
   gv.set_wired(true);

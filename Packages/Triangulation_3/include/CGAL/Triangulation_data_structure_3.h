@@ -578,6 +578,8 @@ public:
   incident_vertices(Vertex_handle v, std::set<Vertex_handle> & vertices,
 		    Cell_handle c = NULL ) const;
 
+  unsigned int degree(Vertex_handle v) const;
+
   // CHECKING
   bool is_valid(bool verbose = false, int level = 0) const;
 
@@ -1972,6 +1974,16 @@ incident_vertices(Vertex_handle v, std::set<Vertex_handle> & vertices,
   for ( j=0; j <= d; j++ )
     if ( j != c->index(v) )
       incident_vertices( v, vertices, c->neighbor(j) );
+}
+
+template <class Vb, class Cb >
+unsigned int
+Triangulation_data_structure_3<Vb,Cb>::
+degree(Vertex_handle v) const
+{
+    std::vector<Vertex_handle> V;
+    incident_vertices(v, std::back_inserter(V));
+    return V.size();
 }
 
 template <class Vb, class Cb >

@@ -1,3 +1,6 @@
+Version 1.94 (?? September 01)
+- New function degree(v).
+
 Version 1.93 (27 September 01)
 - Use CGAL/iterator.h.
 - New function TDS::create_face() to prepare for the merge TDS_2/TDS_3.

@@ -809,6 +809,11 @@ public:
       _tds.incident_vertices(v, vertices);
   }
 
+  unsigned int degree(Vertex_handle v) const
+  {
+      return _tds.degree(v);
+  }
+
   // CHECKING
   bool is_valid(bool verbose = false, int level = 0) const;
 
