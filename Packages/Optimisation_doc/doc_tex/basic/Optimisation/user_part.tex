@@ -31,7 +31,7 @@ Euclidean space.
 \end{center}
 \end{ccTexOnly}
 
-The geometric optimisation algorithms in CGAL fall into three categories,
+The geometric optimisation algorithms in \cgal\ fall into three categories,
 ``Bounding Volumes'', ``Optimal Distances'' and ``Advanced Techniques''.
 
 \section{Bounding and Inscribed Volumes}\label{c:opt:sec:bounding}
@@ -45,7 +45,7 @@ above.
 
 In the following example a smallest enclosing circle
 (\ccc{Min_circle_2<Traits>}) is constructed from point data read from
-standard input and then shown in a CGAL window.
+standard input and then shown in a \cgal\ window.
 %%The default traits class is used here.
 
 \ccIncludeVerbatim{Min_circle_2_simple_demo.C}
@@ -105,7 +105,27 @@ of a point set are different in general.
 \begin{ccTexOnly}
 \begin{center}
 \includegraphics[width=5cm]{max_triangle.eps}
-%%\leavevmode\epsfxsize8cm\epsffile{annulus.eps}
+\end{center}
+\end{ccTexOnly}
+
+
+We further provide an algorithm for computing the maximal area
+inscribed axis parallel rectangle 
+
+Given a set of points in the plane, the class \ccc{Largest_empty_iso_rectangle_2<T>}
+is a data structure that maintains an iso-rectangle with the largest area among
+all iso-rectangles that are inside a given iso-rectangles, and
+that do not contain any point of the point set.
+
+\begin{ccHtmlOnly}
+<center>
+<img border=0 src=./largestEmptyRect..gif align=center>
+</center>
+\end{ccHtmlOnly} 
+
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics[width=5cm]{largestEmptyRect.eps}
 \end{center}
 \end{ccTexOnly}
 
@@ -143,15 +163,15 @@ three boxes; the center points are shown in red.
 \begin{ccTexOnly}
 \begin{center}
 \includegraphics[width=5cm]{pcenter.eps}
-%%\leavevmode\epsfxsize8cm\epsffile{pcenter.eps}
+
 \end{center}
 \end{ccTexOnly}
 
 To avoid later disappointment: one very nice class of bounding
 volumes, namely ellipsoids in three- and higherdimensional space, is
-currently not supported by CGAL. The reason is that the algebraic
+currently not supported by \cgal. The reason is that the algebraic
 complexity of this problem is still beyond the level which would allow
-us to come up with a solution that satisfies the CGAL standards. We
+us to come up with a solution that satisfies the \cgal\ standards. We
 are working on a solution for 3-space, though.
 
 \section{Optimal Distances}
@@ -172,7 +192,6 @@ compute the width of a point set in three dimensions
 \begin{ccTexOnly}
 \begin{center}
 \includegraphics[width=4cm]{polydist.eps}
-%%\leavevmode\epsfxsize8cm\epsffile{polydist.eps}
 \end{center}
 \end{ccTexOnly}
 
@@ -207,14 +226,14 @@ releases.
 %% well as additional concrete optimisation algorithms that derive from
 %% these general techniques.
 
-%% To be more specific, CGAL's solutions for the two quadratic
+%% To be more specific, \cgal's solutions for the two quadratic
 %% programming instances just mentioned are based on a general quadratic
 %% programming solver, which itself is available as an advanced
-%% technique.  This means, using CGAL, you can solve your favorite
+%% technique.  This means, using \cgal, you can solve your favorite
 %% quadratic program, even if it does not assume the form of one of the
 %% optimisation problems that we explicitly address! A word of warning is
 %% in order: the interface of the quadratic programming solver has mainly
-%% been developed for internal use by the CGAL developers community. In
+%% been developed for internal use by the \cgal\ developers community. In
 %% particular, feedback from the developers has influenced (and will
 %% further influence) its design. This means: you are welcome to use the
 %% solver's interface, but if you do so, please be aware that it might
