@@ -233,14 +233,17 @@ stream is in ascii mode.}
  is actually sent back to Geomview.
  Returns the previous value. By default, echo mode is on.}
 
-\ccMethod{bool in_binary_mode();}
+\ccMethod{bool get_binary_mode();}
 {Returns \ccc{true} iff \ccVar\ is in binary mode.}
 
-\ccMethod{bool in_ascii_mode();}
-{Returns \ccc{true} iff \ccVar\ is in binary mode.}
+\ccMethod{bool get_ascii_mode();}
+{Returns \ccc{true} iff \ccVar\ is in ascii mode.}
 
-\ccMethod{void set_binary_mode();}{}
-\ccMethod{void set_ascii_mode();}{}
+\ccMethod{bool set_binary_mode(bool b = true);}
+{Sets whether we are in binary mode.}
+
+\ccMethod{bool set_ascii_mode(bool b = true);}
+{Sets whether we are in ascii mode.}
 
 \end{ccAdvanced}
 

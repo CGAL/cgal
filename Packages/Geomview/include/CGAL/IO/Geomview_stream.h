@@ -43,6 +43,13 @@ public:
 
     ~Geomview_stream();
 
+    Geomview_stream &operator<<(const Color &c);
+    Geomview_stream &operator<<(std::string s);
+    Geomview_stream &operator<<(int i);
+    Geomview_stream &operator<<(double d);
+
+    Geomview_stream &operator>>(char *expr);
+
     void clear();
     void look_recenter();
 
@@ -87,13 +94,6 @@ public:
 	std::swap(w, line_width);
         return w;
     }
-
-    Geomview_stream &operator<<(const Color &c);
-    Geomview_stream &operator<<(std::string s);
-    Geomview_stream &operator<<(int i);
-    Geomview_stream &operator<<(double d);
-
-    Geomview_stream &operator>>(char *expr);
 
     bool set_echo(bool b)
     {
@@ -141,10 +141,23 @@ public:
             std::cerr << i << ' ';
     }
 
-    void set_binary_mode()         { binary_flag = true; }
-    void set_ascii_mode()          { binary_flag = false; }
-    bool in_binary_mode() const    { return binary_flag; }
-    bool in_ascii_mode() const     { return ! binary_flag; }
+    bool set_binary_mode(bool b = true)
+    {
+	std::swap(b, binary_flag);
+	return b;
+    }
+    bool set_ascii_mode(bool b = true)
+    {
+	return !set_binary_mode(!b);
+    }
+    bool get_binary_mode() const
+    {
+	return binary_flag;
+    }
+    bool get_ascii_mode() const
+    {
+	return !binary_flag;
+    }
 
     // Various counters for having different IDs corresponding to the
     // kernel objects sent to Geomview.
@@ -164,7 +177,7 @@ private:
     bool echo_flag;   // decides if we echo the point we get back to Geomview.
     bool raw_flag;    // decides if we output footers and headers.
     bool trace_flag;  // makes operator<<() write a trace on cerr.
-    bool binary_flag; // makes operator<< write binary format
+    bool binary_flag; // makes operator<<() write binary format
     int line_width;   // width of edges
     double radius;    // radius of vertices
     int in, out;      // file descriptors for input and output pipes
@@ -178,8 +191,9 @@ template < class R >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Point_2<R> &p)
 {
+    bool ascii_bak = true; // the initialization value shuts up the compiler.
     if (!gv.get_raw()) {
-    	gv.set_ascii_mode();
+    	ascii_bak = gv.set_ascii_mode();
     	gv << "(geometry P" << gv.point_count++
        	   << " {appearance {linewidth 5 material {edgecolor "
            << gv.vcr() << gv.vcg() << gv.vcb() << "}}{SKEL 1 1 ";
@@ -189,8 +203,10 @@ operator<<(Geomview_stream &gv, const Point_2<R> &p)
        << CGAL::to_double(p.y())
        << 0.0;
 
-    if (!gv.get_raw())
-        gv << "1 0\n" << "}})";
+    if (!gv.get_raw()) {
+        gv << "1 0\n}})";
+    	gv.set_ascii_mode(ascii_bak);
+    }
 
     return gv;
 }
@@ -203,8 +219,9 @@ template < class R >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Point_3<R> &p)
 {
+    bool ascii_bak = true; // the initialization value shuts up the compiler.
     if (!gv.get_raw()) {
-        gv.set_ascii_mode();
+        ascii_bak = gv.set_ascii_mode();
         gv << "(geometry P" << gv.point_count++
            << " {appearance {linewidth 5 material {edgecolor "
            << gv.vcr() << gv.vcg() << gv.vcb() << "}}{SKEL 1 1 ";
@@ -214,8 +231,10 @@ operator<<(Geomview_stream &gv, const Point_3<R> &p)
        << CGAL::to_double(p.y())
        << CGAL::to_double(p.z());
 
-    if (!gv.get_raw())
-	gv << "1 0\n" << "}})";
+    if (!gv.get_raw()) {
+	gv << "1 0\n}})";
+    	gv.set_ascii_mode(ascii_bak);
+    }
 
     return gv;
 }
@@ -228,7 +247,7 @@ template < class R >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Segment_2<R> &segment)
 {
-    gv.set_ascii_mode();
+    bool ascii_bak = gv.set_ascii_mode();
     gv << "(geometry Seg" << gv.segment_count++
        << " {appearance {linewidth "
        << gv.get_line_width() << "}{VECT "
@@ -243,6 +262,7 @@ operator<<(Geomview_stream &gv, const Segment_2<R> &segment)
 
     // and the color of the segment and its opaqueness
     gv << gv.ecr() << gv.ecg() << gv.ecb() << 1.0 << "}})";
+    gv.set_ascii_mode(ascii_bak);
 
     return gv;
 }
@@ -255,7 +275,7 @@ template < class R >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Segment_3<R> &segment)
 {
-    gv.set_ascii_mode();
+    bool ascii_bak = gv.set_ascii_mode();
     gv << "(geometry Seg" << gv.segment_count++
        << " {appearance {linewidth "
        << gv.get_line_width()
@@ -271,6 +291,7 @@ operator<<(Geomview_stream &gv, const Segment_3<R> &segment)
 
     // and the color of the segment and its opaqueness
     gv << gv.ecr() << gv.ecg() << gv.ecb() << 1.0 << "}})";
+    gv.set_ascii_mode(ascii_bak);
 
     return gv;
 }
@@ -283,7 +304,7 @@ template < class R >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Triangle_2<R> &t)
 {
-    gv.set_ascii_mode();
+    bool ascii_bak = gv.set_ascii_mode();
     gv << "(geometry Tr" << gv.triangle_count++
        << " {appearance {+edge material {edgecolor "
        << gv.ecr()  << gv.ecg()  << gv.ecb() <<  " } shading constant}{ ";
@@ -302,7 +323,7 @@ operator<<(Geomview_stream &gv, const Triangle_2<R> &t)
     // the face
     gv << 3 << 0 << 1 << 2 << 4 << gv.fcr() << gv.fcg() << gv.fcb() << 1.0
        << "}})";
-    gv.set_ascii_mode();
+    gv.set_ascii_mode(ascii_bak);
 
     return gv;
 }
@@ -315,7 +336,7 @@ template < class R >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Triangle_3<R> &t)
 {
-    gv.set_ascii_mode();
+    bool ascii_bak = gv.set_ascii_mode();
     gv << "(geometry Tr" << gv.triangle_count++
        << " {appearance {+edge material {edgecolor "
        << gv.ecr()  << gv.ecg()  << gv.ecb() <<  "} shading constant}{ ";
@@ -334,7 +355,7 @@ operator<<(Geomview_stream &gv, const Triangle_3<R> &t)
     // the face
     gv << 3 << 0 << 1 << 2 << 4 << gv.fcr() << gv.fcg() << gv.fcb() << 1.0
        << "}})";
-    gv.set_ascii_mode();
+    gv.set_ascii_mode(ascii_bak);
 
     return gv;
 }
@@ -347,7 +368,7 @@ template < class R >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Tetrahedron_3<R> &t)
 {
-    gv.set_ascii_mode();
+    bool ascii_bak = gv.set_ascii_mode();
     gv << "(geometry Tetra" << gv.tetrahedron_count++
        << " {appearance {}{ ";
     gv.set_binary_mode();
@@ -371,7 +392,7 @@ operator<<(Geomview_stream &gv, const Tetrahedron_3<R> &t)
        << 3 << 3 << 1 << 2 << 4 << r << g << b << 1.0
        << 3 << 3 << 0 << 2 << 4 << r << g << b << 1.0
        << "}})";
-    gv.set_ascii_mode();
+    gv.set_ascii_mode(ascii_bak);
     return gv;
 }
 #endif
@@ -383,7 +404,7 @@ template < class R >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Sphere_3<R> &S)
 {
-    gv.set_ascii_mode();
+    bool ascii_bak = gv.set_ascii_mode();
     gv << "(geometry Sph" << gv.sphere_count++
        << " {appearance {+edge material {edgecolor "
        << gv.ecr()  << gv.ecg()  << gv.ecb() <<  "} shading constant}{ "
@@ -393,6 +414,7 @@ operator<<(Geomview_stream &gv, const Sphere_3<R> &S)
     bool raw_bak = gv.set_raw(true);
     gv << Point_3<R>(S.center()) << "}})";
     gv.set_raw(raw_bak);
+    gv.set_ascii_mode(ascii_bak);
 
     return gv;
 }
@@ -432,9 +454,9 @@ operator>>(Geomview_stream &gv, Point_3<R> &point)
     const char *gclpick =
 	"(pick world pickplane * nil nil nil nil nil nil nil)";
 
-    gv.set_ascii_mode();
+    bool ascii_bak = gv.set_ascii_mode();
     gv << "(pickable pickplane yes) (ui-target pickplane yes)"
-       << "(interest " << gclpick <<")";
+       << "(interest " << gclpick << ")";
 
     char sexpr[1024];
     gv >> sexpr;  // this reads a gcl expression
@@ -448,9 +470,10 @@ operator>>(Geomview_stream &gv, Point_3<R> &point)
 	gv << point;
 
     // we are done and tell geomview to stop sending pick events
-    gv << "(uninterest " << gclpick  << ") (pickable pickplane no)" ;
+    gv << "(uninterest " << gclpick << ") (pickable pickplane no)";
+    gv.set_ascii_mode(ascii_bak);
 
-    return gv ;
+    return gv;
 }
 #endif
 

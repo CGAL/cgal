@@ -135,7 +135,7 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
 void
 Geomview_stream::pickplane(const Bbox_3 &bbox)
 {
-    set_binary_mode();
+    bool bin_bak = set_binary_mode();
     (*this) << "(geometry pickplane {QUAD BINARY\n"
             << 1
     // here are the four corners
@@ -146,7 +146,7 @@ Geomview_stream::pickplane(const Bbox_3 &bbox)
 
     // close the text bracket
             << "}) (pickable pickplane no)";
-    set_ascii_mode();
+    set_ascii_mode(bin_bak);
 }
 
 void
@@ -178,7 +178,7 @@ Geomview_stream&
 Geomview_stream::operator<<(int i)
 {
     // Depending on the mode chosen
-    if (in_binary_mode()) {
+    if (get_binary_mode()) {
         // we write raw binary data to the stream.
         ::write(out, (char*)&i, sizeof(i));
         trace(i);
@@ -196,7 +196,7 @@ Geomview_stream&
 Geomview_stream::operator<<(double d)
 {
     float f = d;
-    if (in_binary_mode()) {
+    if (get_binary_mode()) {
         ::write(out, (char*)&f, sizeof(f));
         trace(f);
     } else {
@@ -211,7 +211,7 @@ Geomview_stream::operator<<(double d)
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Bbox_2 &bbox)
 {
-    gv.set_ascii_mode();
+    bool ascii_bak = gv.set_ascii_mode();
     gv << "(geometry Bbox" << gv.bbox_count++
        << " {VECT 1 5 0 5 0 ";
     // here are the four corners
@@ -224,6 +224,7 @@ operator<<(Geomview_stream &gv, const Bbox_2 &bbox)
 
     // close the text bracket
     gv << "})";
+    gv.set_ascii_mode(ascii_bak);
 
     return gv;
 }
@@ -231,7 +232,7 @@ operator<<(Geomview_stream &gv, const Bbox_2 &bbox)
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Bbox_3 &bbox)
 {
-    gv.set_ascii_mode();
+    bool ascii_bak = gv.set_ascii_mode();
     gv << "(geometry Bbox" << gv.bbox_count++
        << " {appearance {material {edgecolor "
        << gv.ecr() << gv.ecg() << gv.ecb() <<  "}}{SKEL 8 4 "
@@ -252,6 +253,7 @@ operator<<(Geomview_stream &gv, const Bbox_3 &bbox)
 
     // close the text bracket
        << "}})";
+    gv.set_ascii_mode(ascii_bak);
 
     return gv;
 }
@@ -259,12 +261,13 @@ operator<<(Geomview_stream &gv, const Bbox_3 &bbox)
 void
 Geomview_stream::set_bg_color(const Color &c)
 {
-    set_ascii_mode();
+    bool ascii_bak = set_ascii_mode();
     *this << "(backcolor \"Camera\" "
           << double(c.r())/255.0
           << double(c.g())/255.0
           << double(c.b())/255.0
           << ")";
+    set_ascii_mode(ascii_bak);
 }
 
 Geomview_stream&
@@ -373,9 +376,7 @@ Geomview_stream::fcb() const
 void
 Geomview_stream::frame(const Bbox_3 &bbox)
 {
-    (*this) << bbox;
-    set_ascii_mode();
-    (*this) << "(look-recenter g0 c0)";
+    (*this) << bbox << "(look-recenter g0 c0)";
 }
 
 Geomview_stream&
