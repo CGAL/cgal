@@ -2,31 +2,30 @@
 // revision_date : $Date$
 // author(s)     : Herve.Bronnimann@sophia.inria.fr
 
-
 #ifndef CGAL_CARTESIAN_AFF_TRANSFORMATION_D_H
 #define CGAL_CARTESIAN_AFF_TRANSFORMATION_D_H
 
-#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_D_H
 #include <CGAL/Cartesian/redefine_names_d.h>
-#endif
-
 #include <cmath>
 
 CGAL_BEGIN_NAMESPACE
 
 class Identity_transformation;
+class Reflexion;
 template <class R> class Aff_transformation_rep_baseCd;
 template <class R> class Aff_transformation_repCd;
-// template <class R> class Translation_repCd;
-// template <class R> class Scaling_repCd;
-// template <class R> class Homothecy_repCd;
+//TODO template <class R> class Translation_repCd;
+//TODO template <class R> class Homothecy_repCd;
+//TODO template <class R> class Scaling_repCd;
+//TODO template <class R> class Reflexion_repCd;
 
 CGAL_END_NAMESPACE
 
 #include <CGAL/Cartesian/Aff_transformation_rep_d.h>
-// #include <CGAL/Cartesian/Translation_rep_d.h>
-// #include <CGAL/Cartesian/Homothecy_rep_d.h>
-// #include <CGAL/Cartesian/Scaling_rep_d.h>
+//TODO #include <CGAL/Cartesian/Translation_rep_d.h>
+//TODO #include <CGAL/Cartesian/Homothecy_rep_d.h>
+//TODO #include <CGAL/Cartesian/Scaling_rep_d.h>
+//TODO #include <CGAL/Cartesian/Reflexion_rep_d.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -59,44 +58,93 @@ public:
   typedef typename R::Plane_d_base         Plane_d;
 #endif
 
-  Aff_transformationCd();
-  // Aff_transformationCd(const Self &t); // Provided by default
+  Aff_transformationCd()
+    {
+      PTR = new Aff_transformation_repCd<R>();
+    }
 
   // Identity constructor:
-  Aff_transformationCd(const Identity_transformation &);
+  Aff_transformationCd(const Identity_transformation &)
+    {
+      typename R::LA:Matrix M(v.dimension());
+      std::fill(M.begin(),M.end(),FT(0));
+      int i; for (i=0; i<v.dimension(); ++i) M[i][i] = FT(1);
+      PTR = new Aff_transformation_repCd<R>(d,M.begin(),M.end(),FT(1));
+    }
 
   // Translation:
   Aff_transformationCd(const Translation,
-                       const Vector_d &v);
+                       const Vector_d &v)
+    {
+      typename R::LA:Matrix M(v.dimension());
+      std::fill(M.begin(),M.end(),FT(0));
+      int i; for (i=0; i<v.dimension(); ++i) M[i][i] = FT(1);
+      PTR = new Aff_transformation_repCd<R>(d,
+	           M.begin(),M.end(),w.begin(),w.end(),FT(1));
+    }
+
+  // Homothecy:
+  Aff_transformationCd(const Scaling, int d,
+                       const FT &s,
+                       const FT &w = FT(1))
+    {
+      typename R::LA:Matrix M(d);
+      std::fill(M.begin(),M.end(),FT(0));
+      int i; for (i=0; i<v.dimension(); ++i) M[i][i] = s/w;
+      PTR = new Aff_transformation_repCd<R>(d,M.begin(),M.end(),FT(1));
+    }
 
   // Scaling:
-  Aff_transformationCd(const Scaling,
-                       const FT &s,
-                       const FT &w = FT(1));
   template < class InputIterator >
-  Aff_transformationCd(const Scaling,
-                       const InputIterator &begin, const InputIterator &last);
+  Aff_transformationCd(const Scaling, int d,
+                       const InputIterator &first, const InputIterator &last);
+    {
+      CGAL_kernel_precondion( last-first==d );
+      typename R::LA:Matrix M(d);
+      std::fill(M.begin(),M.end(),FT(0));
+      int i; InputIterator it;
+      for (i=0,it=first; it!=last; ++i,++it) M[i][i] = *it;
+      PTR = new Aff_transformation_repCd<R>(d,M.begin(),M.end(),FT(1));
+    }
+
+  // Reflexion
+  Aff_transformationCd(const Reflexion,
+                       const Plane_d &p)
+    {
+      typename R::LA:Matrix M(d);
+      typename R::LA:Vector w(d);
+      //TODO aff_transformation_reflexion_from_plane(p,M.begin(),w.begin());
+      PTR = new Aff_transformation_repCd<R>(d,
+	           M.begin(),M.end(),w.begin(),w.end(),FT(1));
+    }
 
   // General form: without translation
   template < class InputIterator >
   Aff_transformationCd(int d,
-                       const InputIterator &begin, const InputIterator &last,
-                       const FT& w= FT(1));
+                       const InputIterator &first, const InputIterator &last,
+                       const FT& w= FT(1))
+    {
+      PTR = new Aff_transformation_repCd<R>(d, first, last, w);
+    }
 
   // General form: with translation
+  template < class InputIterator1, class InputIterator2 >
   Aff_transformationCd(int d,
-                       const InputIterator &begin, const InputIterator &last,
-                       const InputIterator &translation_begin,
-		       const InputIterator &translation_last,
-                       const FT& w = FT(1));
+                       const InputIterator1 &first, const InputIterator1 &last,
+                       const InputIterator2 &translation_first,
+		       const InputIterator2 &translation_last,
+                       const FT& w = FT(1))
+    {
+      PTR = new Aff_transformation_repCd<R>(d,
+	           first, last, translation_first, translation_end, w);
+    }
 
-  ~Aff_transformationCd();
+  ~Aff_transformationCd() {}
 
   Point_d     transform(const Point_d &p) const { return ptr()->transform(p); }
   Point_d     operator()(const Point_d &p) const { return transform(p); }
 
-  Vector_d    transform(const Vector_d &v) const
-                                           { return ptr()->transform(v); }
+  Vector_d    transform(const Vector_d &v) const { return ptr()->transform(v); }
   Vector_d    operator()(const Vector_d &v) const { return transform(v); }
 
   Direction_d transform(const Direction_d &d) const
@@ -104,17 +152,23 @@ public:
   Direction_d operator()(const Direction_d &d) const { return transform(d); }
 
   Plane_d     transform(const Plane_d& p) const { return p.transform(*this); }
-  Plane_d     operator()(const Plane_d& p) const { return transform(l); }
+  Plane_d     operator()(const Plane_d& p) const { return transform(p); }
 
   Self        inverse() const { return ptr()->inverse(); }
   
+  int         dimension() const { ptr()->dimension(); }
   bool        is_even() const { return ptr()->is_even(); }
   bool        is_odd() const { return  ! (ptr()->is_even()); }
   
   FT          cartesian(int i, int j) const { return ptr()->cartesian(i,j); }
-  FT          homogeneous(int i, int j) const { return cartesian(i,j); }
+  FT          homogeneous(int i, int j) const
+                {
+		  if (i==dimension()) 
+		     return (j==dimension()) ? FT(1) : FT(0);
+		  return cartesian(i,j); 
+	        }
   FT          m(int i, int j) const { return cartesian(i,j); }
-  FT          hm(int i, int j) const { return cartesian(i,j); }
+  FT          hm(int i, int j) const { return homogeneous(i,j); }
 
   Self        operator*(const Self &t) const { return (*ptr()) * (*t.ptr()); }
 
@@ -126,11 +180,5 @@ private:
 };
 
 CGAL_END_NAMESPACE
-
-#ifndef CGAL_CARTESIAN_CLASS_DEFINED
-#ifndef CGAL_CARTESIAN_AFF_TRANSFORMATION_d_C
-#include <CGAL/Cartesian/Aff_transformation_d.C>
-#endif // CGAL_CARTESIAN_AFF_TRANSFORMATION_d_C
-#endif 
 
 #endif // CGAL_CARTESIAN_AFF_TRANSFORMATION_D_H
