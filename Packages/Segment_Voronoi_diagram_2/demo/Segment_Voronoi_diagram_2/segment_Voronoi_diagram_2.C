@@ -357,43 +357,68 @@ private slots:
 
   void read_from_file(const QString& fileName)
   {
+    typedef SVD_2::Vertex_handle Vertex_handle;
     CGAL::Timer timer;
     svd.clear();
 
     std::ifstream f(fileName);
     assert( f );
-    //    int n;
-    //    f >> n;
+
 
     Site t;
     int counter = 0;
     timer.start();
 
     char msg[100];
-
+    bool bbox_empty = true;
     CGAL::Bbox_2 bbox;
-
-    while ( f >> t ) {
-      if ( t.is_point() ) {
-	svd.insert(t.point());
-      } else {
-	svd.insert(t.source(), t.target());
-      }
-
+    char type;
+    while (f >> type) {
       CGAL::Bbox_2 tbox;
-      if ( t.is_segment() ) {
-	tbox = t.segment().bbox();
-      } else if ( t.is_point() ) {
+      if (type == 'p') {
+        Point p;
+        f >> p;
+	t.set_point(p);
+        svd.insert(t.point());
 	tbox = t.point().bbox();
+	counter++;
+      } else if (type == 's') {
+        Segment s;
+        f >> s;
+	t.set_segment(s);
+        svd.insert(t.source(), t.target());
+        tbox = t.segment().bbox();
+	counter++;
+      } else if (type == 'l') {
+	Vertex_handle vh;
+        int nr_of_points;
+        f >> nr_of_points;
+        Point p1, p2;
+        f >> p1;
+	tbox = p1.bbox();
+	bool got_location = false;
+        while(--nr_of_points!=0){
+	  f >> p2;
+	  Segment s(p1, p2);
+	  t.set_segment(s);
+	  if(!got_location){
+	    vh = svd.insert(t.source(), t.target());
+	    got_location = true;
+	  } else
+	    vh = svd.Base::insert(t.source(), t.target(), vh);
+	  tbox = tbox + s.bbox();
+	  counter++;
+	  p1 = p2;
+        }
       }
-
-      if ( counter == 0 ) {
+      
+      if(bbox_empty) {
 	bbox = tbox;
+	bbox_empty = false;
       } else {
 	bbox = bbox + tbox;
       }
 
-      counter++;
       if ( counter % 500 == 0 ) {
 	std::cout << "\r" << counter
 		  << " sites haved been inserted..." << std::flush;
@@ -401,7 +426,8 @@ private slots:
 	sprintf(msg, "%d sites have been inserted...", counter);
 	statusBar()->message(msg);
       }
-    }
+    }//endwhile
+
     std::cout << "\r" << counter
 	      << " sites haved been inserted... Done!" << std::endl;
 
