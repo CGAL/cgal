@@ -54,6 +54,7 @@ public:
 
   void draw() const
   {
+    Qt_widget_layer::draw();
     do_erase = false;
   };
   
