@@ -1,4 +1,4 @@
-Version 1.171 (17 October 03)
+Version 1.172 (17 October 03)
 - Doc fixes.
 
 Version 1.170 (22 September 03) [af]
