@@ -120,7 +120,8 @@ bool
 Iso_rectangleC2<R CGAL_CTAG>::
 operator==(const Iso_rectangleC2<R CGAL_CTAG> &r) const
 {
-  if ( identical(r) ) return true;
+  if (identical(r))
+      return true;
   return vertex(0) == r.vertex(0) && vertex(2) == r.vertex(2);
 }
 
