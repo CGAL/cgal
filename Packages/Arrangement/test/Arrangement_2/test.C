@@ -522,7 +522,7 @@ int main(int argc, char* argv[])
 {
   
   Arr_polyline_traits_test test;
-  bool                     reverse_order;
+  bool                     reverse_order = false;
 
   if (argc < 2 || argc > 3) {
     std::cout << "usage: test data_file [reverse]" << std::endl;
