@@ -21,6 +21,9 @@
 The function \ccRefName\ generates the set of intersection points of a
 given set of input curves. It is also possible to ask the function to
 include the endpoints of the input curves within the output.
+Non $x$-monotone curves are split into $x$-monotone portions using the \ccc{make_x_monotone} 
+function of SweepLineTraits_2. The spliting points are treated as new endpoints rather than 
+intersection points.
 
 \ccInclude{sweep_to_produce_points_2.h}
 
@@ -30,19 +33,23 @@ include the endpoints of the input curves within the output.
    sweep_to_produce_points_2(InputIterator curves_begin, 
    InputIterator curves_end,  
    SweepLineTraits_2& traits, 
-   OutpoutIterator points,
-   bool edge_points = true);}
+   OutputIterator points,
+   bool endpoints = true);}
    {reports all intersections induced by the arrangement of the curves
    given in the range \ccStyle{[curves_begin, curves_end)}. The
    parameter \ccStyle{points} is an inserter iterator which 
    will eventually point to all the reported intersection points. 
-   \ccc{sweep_to_produce_points} supports
+   \ccc{sweep_to_produce_points_2} supports
    curves which are interior intersect, overlap or non x-monotone, and
    hence the user may provide his curves as input without any
    restriction of the kind mentioned above. 
    The user may obtain the input points in addition to the intersection 
-   by setting the flag \ccStyle{edge_points} to true. 
-   The default choice provides this first possibility.}
+   by setting the flag \ccStyle{endpoints} to true. 
+   The default choice provides this first possibility. 
+   Notice that if the input curves are not $x$-monotone, their splitting points 
+   to $x$-monotone curves are treated as new endpoints points, and hence 
+   when setting \ccStyle{endpoints} to false, this new endpoints are not part 
+   of the output.}
 
 \ccHeading{Requirements}
 \begin{enumerate}
