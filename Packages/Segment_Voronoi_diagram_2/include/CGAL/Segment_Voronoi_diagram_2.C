@@ -386,6 +386,11 @@ typename Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>::Vertex_handle
 Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>::
 insert_third(const Point_2& p)
 {
+#if 1
+  Site_2 t(p);
+  Storage_site_2 ss = create_storage_site(p);
+  return insert_third(t, ss);
+#else
   CGAL_precondition( number_of_vertices() == 2 );
 
   Site_2 t(p);
@@ -486,7 +491,123 @@ insert_third(const Point_2& p)
   }
 
   return v;
+#endif
 }
+
+template<class Gt, class PC, class DS, class LTag>
+typename Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>::Vertex_handle
+Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>::
+insert_third(const Site_2& t, const Storage_site_2& ss)
+{
+  CGAL_precondition( number_of_vertices() == 2 );
+
+  // p0 and p1 are actually points
+  Vertex_handle v0 = finite_vertices_begin();
+  Vertex_handle v1 = ++finite_vertices_begin();
+  Site_2 t0 = v0->site();
+  Site_2 t1 = v1->site();
+
+  // MK::ERROR: change the equality test between points by the functor
+  // in geometric traits
+  if ( are_same_points(t, t0) ) { return v0; }
+  if ( are_same_points(t, t1) ) { return v1; }
+
+  Vertex_handle v = create_vertex_dim_up(ss);
+
+  Face_handle f(finite_faces_begin());
+
+  Site_2 s1 = f->vertex(0)->site();
+  Site_2 s2 = f->vertex(1)->site();
+  Site_2 s3 = f->vertex(2)->site();
+
+  Orientation o =
+    geom_traits().orientation_2_object()(s1, s2, s3);
+
+  if ( o != COLLINEAR ) {
+    if ( o == RIGHT_TURN ) {
+      f->reorient();
+      for (int i = 0; i < 3; i++) {
+	f->neighbor(i)->reorient();
+      }
+    }
+  } else {
+    typename Geom_traits::Compare_x_2 compare_x =
+      geom_traits().compare_x_2_object();
+
+    Comparison_result xcmp12 = compare_x(s1, s2);
+    if ( xcmp12 == SMALLER ) {        // x1 < x2
+      Comparison_result xcmp23 = compare_x(s2, s3);
+      if ( xcmp23 == SMALLER ) {            // x2 < x3
+	flip(f, f->index(v1));
+      } else {
+	Comparison_result xcmp31 = compare_x(s3, s1);
+	if ( xcmp31 == SMALLER ) {          // x3 < x1
+	  flip(f, f->index(v0));
+	} else {                            // x1 < x3 < x2
+	  flip(f, f->index(v)); 
+	}
+      }
+    } else if ( xcmp12 == LARGER ) {  // x1 > x2
+      Comparison_result xcmp32 = compare_x(s3, s2);
+      if ( xcmp32 == SMALLER ) {            // x3 < x2
+	flip(f, f->index(v1));
+      } else {
+	Comparison_result xcmp13 = compare_x(s1, s3);
+	if ( xcmp13 == SMALLER ) {          // x1 < x3
+	  flip(f, f->index(v0));
+	} else {                            // x2 < x3 < x1
+	  flip(f, f->index(v));
+	}
+      }
+    } else {                          // x1 == x2
+      typename Geom_traits::Compare_y_2 compare_y =
+	geom_traits().compare_y_2_object();
+
+      Comparison_result ycmp12 = compare_y(s1, s2);
+      if ( ycmp12 == SMALLER ) {      // y1 < y2
+	Comparison_result ycmp23 = compare_y(s2, s3);
+	if ( ycmp23 == SMALLER ) {          // y2 < y3
+	  flip(f, f->index(v1));
+	} else {
+	  Comparison_result ycmp31 = compare_y(s3, s1);
+	  if ( ycmp31 == SMALLER ) {        // y3 < y1
+	    flip(f, f->index(v0));
+	  } else {                          // y1 < y3 < y2
+	    flip(f, f->index(v));
+	  }
+	}
+      } else if ( ycmp12 == LARGER ) { // y1 > y2
+	Comparison_result ycmp32 = compare_y(s3, s2);
+	if ( ycmp32 == SMALLER ) {           // y3 < y2
+	  flip(f, f->index(v1));
+	} else {
+	  Comparison_result ycmp13 = compare_y(s1, s3);
+	  if ( ycmp13 == SMALLER ) {         // y1 < y3
+	    flip(f, f->index(v0));
+	  } else {                           // y2 < y3 < y1
+	    flip(f, f->index(v));
+	  }
+	}
+      } else {
+	// this line should never have been reached
+	CGAL_assertion( false );
+      }
+    }
+  }
+
+  {
+    All_faces_iterator fit;
+    int k = 0;
+    for (fit = all_faces_begin(); fit != all_faces_end(); ++fit) {
+      k++;
+      std::cout << "is infinite? " << is_infinite(fit) << std::endl;
+    }
+    std::cout << "# of faces: " << k << std::endl;
+  }
+
+  return v;
+}
+
 
 template<class Gt, class PC, class DS, class LTag>
 typename Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>::Vertex_handle
@@ -628,6 +749,10 @@ insert_point(const Point_2& p, Vertex_handle vnear)
       Sign s2 = sign_map[e.first->neighbor(e.second)];
 
       if ( s1 == s2 ) {
+	std::cout << "common sign: " << int(s1) << std::endl;
+	std::cout << "t: " << t << std::endl;
+	std::cout << "is e infinite? " << is_infinite(e) << std::endl;
+	//	std::cout << 
 	interior_in_conflict = edge_interior(e, t, s1);
       }
 
@@ -810,6 +935,8 @@ insert_segment(const Site_2& t, Vertex_handle vnear,
   if ( is_degenerate_segment(t) ) {
     return insert_point(t.source(), vnear);
   }
+
+  Vertex_handle vs;
 
   if ( number_of_vertices() == 0 ) {
     Vertex_handle v0 = insert_first( t.source() );

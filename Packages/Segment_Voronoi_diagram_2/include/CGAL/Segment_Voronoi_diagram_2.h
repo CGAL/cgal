@@ -916,6 +916,7 @@ protected:
   Vertex_handle  insert_first(const Point_2& p);
   Vertex_handle  insert_second(const Point_2& p);
   Vertex_handle  insert_third(const Point_2& p);
+  Vertex_handle  insert_third(const Site_2& t, const Storage_site_2& ss);
   //  Vertex_handle  insert_third(const Point_2& p0, const Point_2& p1);
   Vertex_handle  insert_third(Vertex_handle v0, Vertex_handle v1);
 

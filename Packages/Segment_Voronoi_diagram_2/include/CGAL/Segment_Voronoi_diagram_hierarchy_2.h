@@ -519,6 +519,12 @@ insert_segment_with_tag(const Point_2& p0, const Point_2& p1,
     level = random_level();
   }
 
+#if 1
+  std::cout << "insert segment with segments' tag true:" << std::endl;
+  std::cout << "s: " << p0 << " " << p1 << std::endl;
+  std::cout << "level: " << level << std::endl;
+#endif
+
   Site_2 t(p0, p1);
 
   if ( is_degenerate_segment(t) ) {
@@ -540,9 +546,26 @@ insert_segment_with_tag(const Point_2& p0, const Point_2& p1,
 
   if ( hierarchy[0]->number_of_vertices() == 2 ) {
     vertex = hierarchy[0]->insert_third(vertices0[0], vertices1[0]);
+
+    Vertex_handle previous = vertex;
+    Vertex_handle first = vertex;
+      
+    int k = 1;
+    while (k <= level ){
+      CGAL_assertion( hierarchy[k]->number_of_vertices() == 2 );
+
+      vertex = hierarchy[k]->insert_third(vertices0[k], vertices1[k]);
+
+      CGAL_assertion( vertex != Vertex_handle() );
+
+      vertex->set_down(previous); // link with level above
+      previous->set_up(vertex);
+      previous = vertex;
+      k++;
+    }
+
+    vertex = first;
   } else {
-    //    vertex = hierarchy[0]->insert_segment_interior(t, ss,
-    //						   vertices0[0], false);
     vertex = insert_segment_interior(t, ss, vertices0, vertices1,
 				     level, stag);
   }
@@ -683,7 +706,21 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
   int k = 1;
   while (k <= level ){
     if ( hierarchy[k]->number_of_vertices() == 2 ) {
-      vertex = hierarchy[k]->insert_third(vertices0[k], vertices1[k]);
+      CGAL_precondition(vertices0 != NULL );
+      // MK::ERROR: the if-statement below is a hack. I should deal
+      //  with this problem homehow else
+      if ( vertices1 == NULL ) {
+	Vertex_handle v0(hierarchy[k]->finite_vertices_begin());
+	Vertex_handle v1(++(hierarchy[k]->finite_vertices_begin()));
+	CGAL_precondition( v0 != Vertex_handle() &&
+			   v1 != Vertex_handle() );
+	vertex = hierarchy[k]->insert_third(v0, v1);
+      } else {
+	std::cout << "lalala..................................."
+		  << std::endl;
+	vertex = hierarchy[k]->insert_third(vertices0[k],
+					    vertices1[k]);
+      }
     } else {
       vertex = hierarchy[k]->insert_segment_interior(t, ss,
 						     vertices0[k], false);
@@ -1073,6 +1110,9 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
 
   CGAL_precondition( t.is_segment() && v->is_segment() );
 
+  // MK::ERROR: I have to remove this; too expensive...
+  CGAL_precondition( do_intersect(t, v->site()) );
+
   if ( same_segments(t, v->site()) ) {
     // MK::ERROR: I may need to insert it to levels higher than its
     // previous level...
@@ -1149,10 +1189,16 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
   std::cout << "level: " << level << std::endl;
 
   Vertex_handle vertex = v;
-  Vertex_handle v1_old, v2_old;
+  Vertex_handle v1_old, v2_old, vsx_old;
 
   int m = 0;
   while ( m <= v_level ) {
+    std::cout << "m = " << m << std::endl;
+    std::cout << "is_valid? " << is_valid(false, 1) << std::endl;
+
+    // MK::ERROR: I have to remove this; too expensive...
+    CGAL_precondition( do_intersect(t, vertex->site()) );
+
     Face_circulator fc1 = hierarchy[m]->incident_faces(vertex);
     Face_circulator fc2 = fc1; ++fc2;
     Face_circulator fc_start = fc1;
@@ -1160,6 +1206,7 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
     bool found_f1 = false, found_f2 = false;
     do {
       Face_handle ff1(fc1), ff2(fc2);
+      CGAL_assertion( !is_infinite(ff1) && !is_infinite(ff2) );
       Oriented_side os1 = oriented_side(fc1->vertex(0)->site(),
 					fc1->vertex(1)->site(),
 					fc1->vertex(2)->site(),
@@ -1185,7 +1232,16 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
       ++fc1, ++fc2;
     } while ( fc_start != fc1 ); 
     
+#if 1
+    if ( f1 == f2 ) {
+      std::cout << "f1 == f2" << std::endl;
+      std::cout << "m = " << m << std::endl;
+      std::cout << "# vertices: " << hierarchy[m]->number_of_vertices()
+		<< std::endl;
+    }
+#endif
     CGAL_assertion( f1 != f2 );
+    CGAL_assertion( !is_infinite(f1) && !is_infinite(f2) );
 
     //******************************************************************
     //******************************************************************
@@ -1203,16 +1259,34 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
     //******************************************************************
     //******************************************************************
 
-    Vertex_handle vertex_copy = vertex;
+    Vertex_handle vertex_up = vertex->up();
+
+#if 1
+    if ( vertex_up != Vertex_handle() ) {
+      std::cout << "v up: " << vertex_up->site() << std::endl;
+    } else {
+      std::cout << "v up: " << "NULL" << std::endl;
+    }
+#endif
 
     Quadruple<Vertex_handle, Vertex_handle, Face_handle, Face_handle>
       qq = hierarchy[m]->_tds.split_vertex(vertex, f1, f2);
 
+    // now I need to update the sites for vertices v1 and v2
     Vertex_handle v1 = qq.first;
     Vertex_handle v2 = qq.second;
+    v1->set_site( ssv1 );
+    v2->set_site( ssv2 );
+
+    CGAL_assertion( v1->is_segment() && v2->is_segment() );
+
+    Vertex_handle vsx =
+      hierarchy[m]->_tds.insert_in_edge(qq.third,
+					cw(qq.third->index(v1)));
+    vsx->set_site(ssx);
 
     if ( m > 0 ) {
-      if ( v1->down() == v1_old || v2->down() == v2_old ) {
+      if ( same_segments(v1->site(), v1_old->site()) ) {
 	v1->set_down(v1_old);
 	v2->set_down(v2_old);
 	v1_old->set_up(v1);
@@ -1223,28 +1297,103 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
 	v1_old->set_up(v2);
 	v2_old->set_up(v1);
       }
+      vsx_old->set_up(vsx);
+      vsx->set_down(vsx_old);
     }
+
+#if 1
+    if ( m > 0 ) {
+      std::cout << "..........." << std::endl;
+      std::cout << "m = " << m << std::endl;
+      std::cout << "v1 old: " << v1_old->site() << std::endl;
+      std::cout << "v2 old: " << v2_old->site() << std::endl;
+      std::cout << "v1    : " << v1->site() << std::endl;
+      std::cout << "v2    : " << v2->site() << std::endl;
+      std::cout << "v1    : " << v1->site() << std::endl;
+      std::cout << "vsx    : " << vsx->site() << std::endl;
+      std::cout << "vsx old: " << vsx_old->site() << std::endl;
+      if ( v1_old->up() != Vertex_handle() ) {
+	std::cout << "v1 old up: " << v1_old->up()->site() << std::endl;
+      } else {
+	std::cout << "v1 old up: " << "NULL" << std::endl;
+      }
+      if ( v1_old->down() != Vertex_handle() ) {
+	std::cout << "v1 old down: " << v1_old->down()->site() << std::endl;
+      } else {
+	std::cout << "v1 old down: " << "NULL" << std::endl;
+      }
+
+      if ( v2_old->up() != Vertex_handle() ) {
+	std::cout << "v2 old up: " << v2_old->up()->site() << std::endl;
+      } else {
+	std::cout << "v2 old up: " << "NULL" << std::endl;
+      }
+      if ( v2_old->down() != Vertex_handle() ) {
+	std::cout << "v2 old down: " << v2_old->down()->site() << std::endl;
+      } else {
+	std::cout << "v2 old down: " << "NULL" << std::endl;
+      }
+
+      if ( v1->up() != Vertex_handle() ) {
+	std::cout << "v1 up: " << v1->up()->site() << std::endl;
+      } else {
+	std::cout << "v1 up: " << "NULL" << std::endl;
+      }
+      if ( v1->down() != Vertex_handle() ) {
+	std::cout << "v1 down: " << v1->down()->site() << std::endl;
+      } else {
+	std::cout << "v1 down: " << "NULL" << std::endl;
+      }
+
+      if ( v2->up() != Vertex_handle() ) {
+	std::cout << "v2 up: " << v2->up()->site() << std::endl;
+      } else {
+	std::cout << "v2 up: " << "NULL" << std::endl;
+      }
+      if ( v2->down() != Vertex_handle() ) {
+	std::cout << "v2 down: " << v2->down()->site() << std::endl;
+      } else {
+	std::cout << "v2 down: " << "NULL" << std::endl;
+      }
+
+      if ( vsx_old->up() != Vertex_handle() ) {
+	std::cout << "vsx old up: " << vsx_old->up()->site() << std::endl;
+      } else {
+	std::cout << "vsx old up: " << "NULL" << std::endl;
+      }
+      if ( vsx_old->down() != Vertex_handle() ) {
+	std::cout << "vsx old down: " << vsx_old->down()->site() << std::endl;
+      } else {
+	std::cout << "vsx old down: " << "NULL" << std::endl;
+      }
+
+      if ( vsx->up() != Vertex_handle() ) {
+	std::cout << "vsx up: " << vsx->up()->site() << std::endl;
+      } else {
+	std::cout << "vsx up: " << "NULL" << std::endl;
+      }
+      if ( vsx->down() != Vertex_handle() ) {
+	std::cout << "vsx down: " << vsx->down()->site() << std::endl;
+      } else {
+	std::cout << "vsx down: " << "NULL" << std::endl;
+      }
+      
+      std::cout << "^^^^^^^^^^^" << std::endl;
+    }
+#endif
 
     v1_old = v1;
     v2_old = v2;
+    vsx_old = vsx;
 
-    // now I need to update the sites for vertices v1 and v2
-    v1->set_site( ssv1 );
-    v2->set_site( ssv2 );
+    vertices[m] = vsx;
 
-    Vertex_handle vsx =
-      hierarchy[m]->_tds.insert_in_edge(qq.third,
-					cw(qq.third->index(v1)));
-
-    vsx->set_site(ssx);
-
-    vertices[m] = vertex;
-
-    vertex = vertex->up();
+    vertex = vertex_up;
     m++;
   }
 
   std::cout << "check 1" << std::endl;
+  std::cout << "is_valid? " << is_valid(false, 1) << std::endl;
 
   //  insert_point(sx, level, vertices);
 
@@ -1276,10 +1425,18 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
       // cannot be smaller since we already have added the endpoints
       // of the segment at level k.
       if ( hierarchy[k]->number_of_vertices() <= 2 ) {
-	//	CGAL_assertion( hierarchy[k]->number_of_vertices() == 2 );
-	break;
+	CGAL_assertion( hierarchy[k]->number_of_vertices() == 2 );
+	// MK::ERROR: this creates a site that is not exact (I am
+	// approximating an intersection point site by a regular point
+	// site...
+	//	CGAL_assertion( false );
+	vertex = hierarchy[k]->insert_third(sx, ssx);
+      } else {
+	std::cout << "k = " << k << std::endl;
+	std::cout << "is_valid? " << is_valid(false, 1) << std::endl;
+
+	vertex = hierarchy[k]->insert_point(ssx, sx, vnear[k]);
       }
-      vertex = hierarchy[k]->insert_point(ssx, sx, vnear[k]);
 
       vertices[k] = vertex;
 
@@ -1293,6 +1450,7 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
   }
 
   std::cout << "check 2" << std::endl;
+  std::cout << "is_valid? " << is_valid(false, 1) << std::endl;
 
   Storage_site_2 ss3, ss4;
   Site_2 s3, s4;
@@ -1343,7 +1501,7 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
   //*****************************************************************
   //*****************************************************************
   //*****************************************************************
-  insert_segment_interior(s3, ss3, vertices, vertices, level, stag);
+  insert_segment_interior(s3, ss3, vertices, NULL, level, stag);
   insert_segment_interior(s4, ss4, vertices, vertices, level, stag);
   return vertices[0];
 }
@@ -1443,6 +1601,10 @@ find_level(Vertex_handle v) const
     vertex = vertex->up();
     level++;
   }
+
+  std::cout << "v: " << v->site() << std::endl;
+  std::cout << "---> level: " << level << std::endl;
+
   return level;
 }
 
