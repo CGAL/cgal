@@ -420,27 +420,27 @@ _test_cls_delaunay_3(const Triangulation &)
   assert(T3_0.number_of_vertices()==125);
   assert(T3_0.dimension()==3);
 
-  // impossible !!!
-//   // %%%%%%%%%% deletion in Delaunay
-//   if (del) {
-//     std::cout << "    deletion in Delaunay - grid case" << std::endl;
-//     Cls Tdel( T3_0 );
-//     Vertex_handle v;
-//     while ( Tdel.number_of_vertices() >= 1 ) {
-//       if ( Tdel.dimension() > 1 )
-// 	v = Tdel.infinite_cell()->vertex
-// 	  ( (Tdel.infinite_cell()->index( Tdel.infinite_vertex() ) +1 )&3 );
-//       else
-// 	if ( Tdel.dimension() == 1 )
-// 	  v = Tdel.infinite_cell()->vertex
-// 	    ( (Tdel.infinite_cell()->index( Tdel.infinite_vertex() ) +1 )%2 );
-// 	else
-// 	  v = Tdel.infinite_cell()->neighbor(0)->vertex(0);
-
-//       Tdel.remove( v );
-//       assert(Tdel.is_valid(false));
-//     }
-//   }
+  if (del) {
+    std::cout << "    deletion in Delaunay - grid case - (dim 3) " <<
+      std::endl; 
+    Cls Tdel( T3_0 );
+    
+    std::vector<Vertex_handle> vertices(Tdel.number_of_vertices());
+    int i = 0;
+    for(Vertex_iterator vi=Tdel.finite_vertices_begin();
+	vi!=Tdel.vertices_end();vi++) {
+      vertices[i++] = vi;
+    }
+    int n = Tdel.number_of_vertices();
+    for(int i = 0; i < n; i++) {
+      if ( Tdel.dimension() == 3) {
+	assert(Tdel.remove(Vertex_handle(vertices[i])));
+      }
+    }
+    assert(Tdel.is_valid(false));
+    assert(Tdel.dimension()<3);
+    std::cout << "    successfull" << std::endl; 
+  }
 
 
    std::cout << "    Constructor12 " << std::endl;
