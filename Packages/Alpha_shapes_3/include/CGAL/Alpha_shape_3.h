@@ -1318,7 +1318,7 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
 	    {
 	      v = (*vertex_alpha_it).second;
 	      CGAL_triangulation_assertion(A.classify(v) ==
-						Alpha_shape_3<Dt>::REGULAR);
+					   Alpha_shape_3<Dt>::REGULAR);
 	      V[(Key)&(*v)] = number_of_vertices++;
 	      os << v->point() << endl;
 	    }
@@ -1331,7 +1331,7 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
 	{
 	  v = (*vertex_alpha_it).second;
 	  CGAL_triangulation_assertion(A.classify(v) ==
-					    Alpha_shape_3<Dt>::SINGULAR);
+				       Alpha_shape_3<Dt>::SINGULAR);
 
 	  V[(Key)&(*v)] = number_of_vertices++;
 	  os << v->point() << endl;
@@ -1375,7 +1375,7 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
 		  pInterval->second < A.get_alpha())
 		{
 		  CGAL_triangulation_assertion(A.classify(s, i) ==
-						    Alpha_shape_3<Dt>::REGULAR);
+					       Alpha_shape_3<Dt>::REGULAR);
 		  // assure that all vertices are in ccw order
 		  if (A.classify(s) == Alpha_shape_3<Dt>::EXTERIOR)
 		    { 
@@ -1406,7 +1406,7 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
 		  if (pInterval->first != A.UNDEFINED)
 		    {
 		      CGAL_triangulation_assertion(A.classify(s, i) ==
-							Alpha_shape_3<Dt>::SINGULAR);
+						   Alpha_shape_3<Dt>::SINGULAR);
 		      i0=(i+1)&3, i1=(i+2)&3, i2=(i+3)&3;
 
 		      os << V[(Key)&(*s->vertex(i0))] << ' ' 

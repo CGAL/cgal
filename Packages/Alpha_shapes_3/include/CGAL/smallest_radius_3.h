@@ -32,8 +32,8 @@ CGAL_BEGIN_NAMESPACE
 //-------------------------------------------------------------------
 
 template <class R >
-typename R::FT
 CGAL_KERNEL_MEDIUM_INLINE
+typename R::FT
 squared_radius_smallest_circumsphere(const Point_3<R> &p,
 				     const Point_3<R> &q)
 {

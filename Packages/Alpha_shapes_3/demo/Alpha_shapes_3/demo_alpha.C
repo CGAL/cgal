@@ -107,7 +107,7 @@ bool
 file_input(std::list<Point>& L)
 {
 
-  std::ifstream is("./Data/finput", std::ios::in);
+  std::ifstream is("./finput", std::ios::in);
 
   if(is.fail())
     {
@@ -152,7 +152,7 @@ void set_alpha(Alpha_shape_3& A, int alpha_index)
     
 //------------------ main -------------------------------------------
 
-int main(int argc,  char* argv[])
+int main()
 {
   CGAL::Geomview_stream gv(CGAL::Bbox_3(0,0,0, 2, 2, 2));
   Alpha_shape_3 A;

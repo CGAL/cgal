@@ -148,7 +148,7 @@ void set_alpha(Alpha_shape_3& A, int alpha_index)
     
 //------------------ main -------------------------------------------
 
-int main(int argc,  char* argv[])
+int main()
 {
 
   Alpha_shape_3 A;

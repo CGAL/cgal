@@ -105,10 +105,10 @@ Construct_Alpha_shape(const std::list<Wpoint> &V_p,
 }
 
 bool
-file_input(std::list<Wpoint>& L)
+file_input(std::list<Wpoint>& L, const coord_type& weight)
 {
 
-  std::ifstream is("./Data/finput", std::ios::in);
+  std::ifstream is("./finput", std::ios::in);
 
   if(is.fail())
     {
@@ -125,7 +125,7 @@ file_input(std::list<Wpoint>& L)
   for( ; n>0 ; n--)
     {
       is >> p;
-      L.push_back(Wpoint(p,0));
+      L.push_back(Wpoint(p, weight));
     }
   std::cout << "Points inserted" << std::endl;
   return true;
@@ -153,7 +153,7 @@ void set_alpha(Alpha_shape_3& A, int alpha_index)
     
 //------------------ main -------------------------------------------
 
-int main(int argc,  char* argv[])
+int main()
 {
   CGAL::Geomview_stream gv(CGAL::Bbox_3(0,0,0, 2, 2, 2));
   Alpha_shape_3 A;
@@ -167,8 +167,10 @@ int main(int argc,  char* argv[])
   gv.set_bg_color(CGAL::Color(0, 200, 200));
 
   std::list<Wpoint> L;
-
-  file_input(L);  
+  std::cout << "Enter a common weight for all points: ";
+  coord_type w;
+  std::cin >> w;
+  file_input(L, w);  
   Construct_Alpha_shape(L,Alpha_shape_3::GENERAL,gv,A);
 
   std::cout << "Alpha Shape computed" << std::endl;

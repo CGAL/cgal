@@ -92,7 +92,8 @@ private:
   typedef long Key;
  
   typedef std::pair< Coord_type, Face_handle > Interval_face;
-  typedef std::multimap< Coord_type, Face_handle, std::less<Coord_type> > Interval_face_map;
+  typedef std::multimap< Coord_type, Face_handle, std::less<Coord_type> > 
+  Interval_face_map;
 
   typedef typename Tds::Face Face_tds;
   typedef typename Face_tds::Face Face_base;
@@ -101,11 +102,13 @@ private:
   // typedef typename Face::Interval_3 Interval3;
 
   typedef std::pair< Interval3, Edge > Interval_edge;
-  typedef std::multimap< Interval3, Edge, std::less<Interval3> > Interval_edge_map;
+  typedef std::multimap< Interval3, Edge, std::less<Interval3> > 
+  Interval_edge_map;
 
   typedef std::pair< Coord_type, Coord_type > Interval2;
   typedef std::pair< Interval2, Vertex_handle > Interval_vertex;
-  typedef std::multimap< Interval2, Vertex_handle, std::less<Interval2> > Interval_vertex_map;
+  typedef std::multimap< Interval2, Vertex_handle, std::less<Interval2> > 
+  Interval_vertex_map;
 
   typedef Face_handle const const_void;
   typedef std::pair<const_void, int> const_Edge;
@@ -1005,7 +1008,8 @@ Alpha_shape_2<Dt>::initialize_alpha_spectrum()
 
 template < class Dt >
 std::back_insert_iterator
-                  < std::list< CGAL_TYPENAME_MSVC_NULL Alpha_shape_2<Dt>::Vertex_handle > >
+                  < std::list< CGAL_TYPENAME_MSVC_NULL 
+                                   Alpha_shape_2<Dt>::Vertex_handle > >
 Alpha_shape_2<Dt>::get_alpha_shape_vertices
 (std::back_insert_iterator< std::list< Vertex_handle > > result) const 
 {
@@ -1058,7 +1062,8 @@ Alpha_shape_2<Dt>::get_alpha_shape_vertices
 //-------------------------------------------------------------------------
 
 template < class Dt >
-std::back_insert_iterator< std::list< CGAL_TYPENAME_MSVC_NULL Alpha_shape_2<Dt>::Edge > >
+std::back_insert_iterator< std::list< CGAL_TYPENAME_MSVC_NULL 
+                                          Alpha_shape_2<Dt>::Edge > >
 Alpha_shape_2<Dt>::get_alpha_shape_edges
 (std::back_insert_iterator< std::list< Edge > > result) const 
 {

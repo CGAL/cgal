@@ -118,7 +118,6 @@ Construct_Alpha_shape(const std::list<Point> &V_p,
       //std::cout << p << std::endl;
     }
 
-  //std::cout << std::endl << "=============================================" << std::endl;
 
   for(A_e_it = A.Alpha_shape_edges_begin(); A_e_it !=
 	A.Alpha_shape_edges_end(); A_e_it++)
@@ -162,7 +161,7 @@ file_input(std::list<Point>& L)
     
 //------------------ main -------------------------------------------
 
-int main(int argc,  char* argv[])
+int main()
 {
   std::list<Point> L;
   file_input(L);

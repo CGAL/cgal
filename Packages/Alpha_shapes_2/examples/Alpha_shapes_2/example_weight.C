@@ -138,7 +138,7 @@ file_input(std::list<Point>& L)
     
 //------------------ main -------------------------------------------
 
-int main(int argc,  char* argv[])
+int main()
 {
   std::list<Point> L;
   file_input(L);

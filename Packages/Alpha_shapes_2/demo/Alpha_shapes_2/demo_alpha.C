@@ -282,8 +282,7 @@ random_input(Alpha_shape &A,
 void
 window_input(Alpha_shape &A,
 	     std::vector<Point> &V, 
-             Window_stream &W,
-             const Options& opt)
+             Window_stream &W)
 {
   std::cout << "Enter points with the left button" << std::endl;
   std::cout << "Right button terminates input of points" << std::endl;
@@ -324,10 +323,8 @@ window_input(Alpha_shape &A,
 //--------------------------------------------------------------------
 
 bool
-file_input(Alpha_shape& A, 
-	   std::vector<Point>& V,
-	   Window_stream &W,
-           const Options& opt)
+file_input(std::vector<Point>& V,
+	   const Options& opt)
 {
 
   std::ifstream is(opt.finname, std::ios::in);
@@ -513,7 +510,7 @@ int main(int argc,  char* argv[])
 			  std::cout << opt.finname << std::endl;
 	
 			  clear_all(A, V, W);
-			  if (!file_input(A, V, W, opt))
+			  if (!file_input(V, opt))
 			    break;
 				
 			  xmin = xmax = ymin = opt.min;
@@ -538,7 +535,7 @@ int main(int argc,  char* argv[])
 		    break;
 		  case 1: clear_all(A, V, W);
 		          W.init(opt.min, opt.max, opt.min);
-		          window_input(A, V, W, opt);
+		          window_input(A, V, W);
 			  set_alpha(alpha_index);
 		    break;
 		  case 2: clear_all(A, V, W);
@@ -579,6 +576,25 @@ int main(int argc,  char* argv[])
 	    break;
 	  }
 
+	case 4:
+	  {
+	    // help infos
+	    leda_panel Pout;
+	    Pout.text_item("Open : points input from file or mouse.");
+	    Pout.text_item("");
+	    Pout.text_item("Save : save points.");
+	    Pout.text_item("");
+	    Pout.text_item("Action : compute an optimal alpha under conditions.");
+	    Pout.text_item("");
+	    Pout.text_item("Clear : re-init the demo.");
+	    Pout.text_item("");
+	    Pout.text_item("Exit : quit the demo.");
+	    Pout.text_item("");
+	    Pout.button("OK",0);
+	    Pout.open(W);
+	    break;
+	  }
+
 	case 5:
 	  {
 	    // compute an optimal approximation
@@ -592,7 +608,7 @@ int main(int argc,  char* argv[])
 	    Popt.button("OK",0);
 	    Popt.button("Cancel",1);
 
-	    if (Popt.open(W) == 0)
+	    if ((Popt.open(W) == 0)&&(A.number_of_vertices() > 0))
 	      { 
 		Alpha_iterator opt_alpha_it = 
 		  A.find_optimal_alpha(nb_comp);
