@@ -21,88 +21,84 @@ LDFLAGS =
 CGDL = \
           $(LDFLAGS) $(CGAL_GEOWIN_LDFLAGS)
 
+CGAL_alpha_shape_2$(EXE_EXT) :  CGAL_alpha_shape_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGAL_alpha_shape_2 CGAL_alpha_shape_2$(OBJ_EXT)  $(CGDL)
 
-D2_demo$(EXE_EXT) :  D2_demo$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)D2_demo D2_demo$(OBJ_EXT)  $(CGDL)
+CGAL_arrangement_2$(EXE_EXT) :  CGAL_arrangement_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGAL_arrangement_2 CGAL_arrangement_2$(OBJ_EXT)  $(CGDL)
+
+CGAL_geometry_2$(EXE_EXT) :  CGAL_geometry_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGAL_geometry_2 CGAL_geometry_2$(OBJ_EXT)  $(CGDL)
 	
-CGALdt3d$(EXE_EXT) :  CGALdt3d$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGALdt3d CGALdt3d$(OBJ_EXT)  $(CGDL)
+CGAL_delaunay_triang_3$(EXE_EXT) :  CGAL_delaunay_triang_3$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGAL_delaunay_triang_3 CGAL_delaunay_triang_3$(OBJ_EXT)  $(CGDL)
 
-CGALhull$(EXE_EXT) :  CGALhull$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGALhull CGALhull$(OBJ_EXT)  $(CGDL)
+CGAL_convex_hull_2$(EXE_EXT) :  CGAL_convex_hull_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGAL_convex_hull_2 CGAL_convex_hull_2$(OBJ_EXT)  $(CGDL)
 
-CGALhull2$(EXE_EXT) :  CGALhull2$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGALhull2 CGALhull2$(OBJ_EXT)  $(CGDL)
+CGAL_kdtree_2$(EXE_EXT) :  CGAL_kdtree_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGAL_kdtree_2 CGAL_kdtree_2$(OBJ_EXT)  $(CGDL)
 
-CGAL2dtree$(EXE_EXT) :  CGAL2dtree$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGAL2dtree CGAL2dtree$(OBJ_EXT)  $(CGDL)
+CGAL_kdtree_3$(EXE_EXT) :  CGAL_kdtree_3$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGAL_kdtree_3 CGAL_kdtree_3$(OBJ_EXT)  $(CGDL)
 
-CGAL3dtree$(EXE_EXT) :  CGAL3dtree$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGAL3dtree CGAL3dtree$(OBJ_EXT)  $(CGDL)
+CGAL_convex_hull_3$(EXE_EXT) :  CGAL_convex_hull_3$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGAL_convex_hull_3 CGAL_convex_hull_3$(OBJ_EXT)  $(CGDL)
 
-CGALhull3d$(EXE_EXT) :  CGALhull3d$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGALhull3d CGALhull3d$(OBJ_EXT)  $(CGDL)
+CGAL_segment_intersection_2$(EXE_EXT) :  CGAL_segment_intersection_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGAL_segment_intersection_2 CGAL_segment_intersection_2$(OBJ_EXT)  $(CGDL)
 
-CGALsegint$(EXE_EXT) :  CGALsegint$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGALsegint CGALsegint$(OBJ_EXT)  $(CGDL)
+CGAL_polygon_2$(EXE_EXT) :  CGAL_polygon_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGAL_polygon_2 CGAL_polygon_2$(OBJ_EXT)  $(CGDL)
 
-CGALpolyinout$(EXE_EXT) :  CGALpolyinout$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGALpolyinout CGALpolyinout$(OBJ_EXT)  $(CGDL)
+CGAL_max_k_gon_2$(EXE_EXT) :  CGAL_max_k_gon_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGAL_max_k_gon_2 CGAL_max_k_gon_2$(OBJ_EXT)  $(CGDL)
 
-CGALmaxpoly$(EXE_EXT) :  CGALmaxpoly$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGALmaxpoly CGALmaxpoly$(OBJ_EXT)  $(CGDL)
+CGAL_all_furthest_neighbors_2$(EXE_EXT) :  CGAL_all_furthest_neighbors_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGAL_all_furthest_neighbors_2 CGAL_all_furthest_neighbors_2$(OBJ_EXT)  $(CGDL)
 
-CGALafn$(EXE_EXT) :  CGALafn$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGALafn CGALafn$(OBJ_EXT)  $(CGDL)
+CGAL_demo$(EXE_EXT) :  CGAL_demo$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGAL_demo CGAL_demo$(OBJ_EXT)  $(CGDL)
 
-CGALdemo$(EXE_EXT) :  CGALdemo$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGALdemo CGALdemo$(OBJ_EXT)  $(CGDL)
-
-CGALreg_triang$(EXE_EXT) :  CGALreg_triang$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGALreg_triang CGALreg_triang$(OBJ_EXT)  $(CGDL)
+CGAL_regular_triang_2$(EXE_EXT) :  CGAL_regular_triang_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGAL_regular_triang_2 CGAL_regular_triang_2$(OBJ_EXT)  $(CGDL)
 	
-CGALtriang$(EXE_EXT) :  CGALtriang$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGALtriang CGALtriang$(OBJ_EXT)  $(CGDL)
+CGAL_triangulation_2$(EXE_EXT) :  CGAL_triangulation_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGAL_triangulation_2 CGAL_triangulation_2$(OBJ_EXT)  $(CGDL)
 
-CGALconstr_triang$(EXE_EXT) :  CGALconstr_triang$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGALconstr_triang CGALconstr_triang$(OBJ_EXT)  $(CGDL)
+CGAL_constrained_triang_2$(EXE_EXT) :  CGAL_constrained_triang_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGAL_constrained_triang_2 CGAL_constrained_triang_2$(OBJ_EXT)  $(CGDL)
 		
-CGALtriang2$(EXE_EXT) :  CGALtriang2$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGALtriang2 CGALtriang2$(OBJ_EXT)  $(CGDL)
-
-CGALdtfl$(EXE_EXT) :  CGALdtfl$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGALdtfl CGALdtfl$(OBJ_EXT)  $(CGDL)
-
-CGALdtfl_tr$(EXE_EXT) :  CGALdtfl_tr$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGALdtfl_tr CGALdtfl_tr$(OBJ_EXT)  $(CGDL)
+CGAL_delaunay_triang_2$(EXE_EXT) :  CGAL_delaunay_triang_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGAL_delaunay_triang_2 CGAL_delaunay_triang_2$(OBJ_EXT)  $(CGDL)
 	
-CGALcircle$(EXE_EXT) :  CGALcircle$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGALcircle CGALcircle$(OBJ_EXT)  $(CGDL)
+CGAL_min_circle_2$(EXE_EXT) :  CGAL_min_circle_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGAL_min_circle_2 CGAL_min_circle_2$(OBJ_EXT)  $(CGDL)
 
-CGALcircle_tr$(EXE_EXT) :  CGALcircle_tr$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGALcircle_tr CGALcircle_tr$(OBJ_EXT)  $(CGDL)
+CGAL_min_ellipse_2$(EXE_EXT) :  CGAL_min_ellipse_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGAL_min_ellipse_2 CGAL_min_ellipse_2$(OBJ_EXT)  $(CGDL)
 
-CGALmin_ellipse$(EXE_EXT) :  CGALmin_ellipse$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGALmin_ellipse CGALmin_ellipse$(OBJ_EXT)  $(CGDL)
+CGAL_min_sphere_3$(EXE_EXT) :  CGAL_min_sphere_3$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGAL_min_sphere_3 CGAL_min_sphere_3$(OBJ_EXT)  $(CGDL)
 
-CGALmin_sphere$(EXE_EXT) :  CGALmin_sphere$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGALmin_sphere CGALmin_sphere$(OBJ_EXT)  $(CGDL)
+CGAL_planar_map_2$(EXE_EXT) :  CGAL_planar_map_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGAL_planar_map_2 CGAL_planar_map_2$(OBJ_EXT)  $(CGDL)
 
-CGALplmap$(EXE_EXT) :  CGALplmap$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGALplmap CGALplmap$(OBJ_EXT)  $(CGDL)
-
-all: CGALdemo CGALreg_triang CGALconstr_triang CGALdt3d D2_demo CGALhull CGALhull2 CGALsegint CGALtriang CGALtriang2 CGALcircle CGALdtfl CGALmaxpoly CGALafn CGALhull3d CGAL2dtree CGAL3dtree CGALmin_ellipse CGALpolyinout
+all: CGAL_alpha_shape_2 CGAL_arrangement_2 CGAL_constrained_triang_2 CGAL_min_sphere_3 CGAL_regular_triang_2 CGAL_delaunay_triang_3 CGAL_geometry_2 CGAL_min_circle_2 CGAL_delaunay_triang_2 CGAL_demo CGAL_convex_hull_2 CGAL_segment_intersection_2 CGAL_triangulation_2 CGAL_max_k_gon_2 CGAL_all_furthest_neighbors_2 CGAL_polygon_2 CGAL_convex_hull_3 CGAL_kdtree_2 CGAL_kdtree_3 CGAL_min_ellipse_2
 
 
-clean : CGALdemo.clean CGALreg_triang.clean \
- CGALconstr_triang.clean CGALdt3d.clean D2_demo.clean CGALhull.clean \
- CGALhull2.clean CGALsegint.clean CGALtriang.clean CGALtriang2.clean \
- CGALcircle.clean CGALdtfl.clean CGALmaxpoly.clean CGALafn.clean \
- CGALhull3d.clean CGAL2dtree.clean CGAL3dtree.clean CGALmin_ellipse.clean \
- CGALpolyinout.clean
-
-
-
+clean : \
+	CGAL_alpha_shape_2.clean CGAL_arrangement_2.clean \
+	 CGAL_constrained_triang_2.clean CGAL_min_sphere_3.clean \
+	 CGAL_regular_triang_2.clean CGAL_delaunay_triang_3.clean \
+	 CGAL_geometry_2.clean CGAL_min_circle_2.clean \
+	 CGAL_delaunay_triang_2.clean CGAL_demo.clean \ 
+	CGAL_convex_hull_2.clean  CGAL_segment_intersection_2.clean \
+	 CGAL_triangulation_2.clean CGAL_max_k_gon_2.clean \ 
+	 CGAL_all_furthest_neighbors_2.clean CGAL_polygon_2.clean \ 
+	 CGAL_convex_hull_3.clean CGAL_kdtree_2.clean \ 
+	 CGAL_kdtree_3.clean CGAL_min_ellipse_2.clean \ 
+	 CGAL_planar_map_2.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
