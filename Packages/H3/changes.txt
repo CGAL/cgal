@@ -1,3 +1,6 @@
+2.31   (20 June 2001)
+- Remove #include <misc.h>
+
 2.30   (19 June 2001)
 - fixed bug in centroid
 

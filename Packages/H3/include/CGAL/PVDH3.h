@@ -24,6 +24,7 @@
 
 #ifndef CGAL_PVDH3_H
 #define CGAL_PVDH3_H
+
 #define CGAL_POINTH3_H
 #define CGAL_VECTORH3_H
 #define CGAL_DIRECTIONH3_H
@@ -31,7 +32,6 @@
 #include <CGAL/homogeneous_classes.h>
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_3.h>
-#include <CGAL/misc.h>
 
 CGAL_BEGIN_NAMESPACE
 
