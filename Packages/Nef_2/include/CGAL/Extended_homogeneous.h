@@ -389,7 +389,7 @@ on the extended geometric objects.}*/
   bool is_degenerate(const Segment_2& s) const
   /*{\Mop return true iff |s| is degenerate.}*/
   { typename Base::Is_degenerate_2 _is_degenerate =
-     this-> is_degenerate_2_object();
+      this->is_degenerate_2_object();
     return _is_degenerate(s); }
 
   int compare_xy(const Point_2& p1, const Point_2& p2) const

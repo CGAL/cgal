@@ -21,13 +21,13 @@
 #define CGAL_NEF_POLYNOMIAL_H
 
 #include <CGAL/Nef_2/Polynomial.h>
-#include <CGAL/basic.h>
-#include <CGAL/kernel_assertions.h>
-#include <CGAL/Handle_for.h>
-#include <CGAL/number_type_basic.h>
-#include <CGAL/number_utils.h>
-#include <CGAL/Number_type_traits.h>
-#include <CGAL/IO/io.h>
+//#include <CGAL/basic.h>
+//#include <CGAL/kernel_assertions.h>
+//#include <CGAL/Handle_for.h>
+//#include <CGAL/number_type_basic.h>
+//#include <CGAL/number_utils.h>
+//#include <CGAL/Number_type_traits.h>
+//#include <CGAL/IO/io.h>
 #include <cstddef>
 #undef _DEBUG
 #define _DEBUG 3
@@ -128,8 +128,8 @@ template <class NT> NT Nef_polynomial<NT>::R_;
 int                    Nef_polynomial<int>::R_;
 double                 Nef_polynomial<double>::R_;
 
-template <class NT> double to_double(const Nef_polynomial<NT>& p) { 
-  return (CGAL::to_double(p.eval_at(Nef_polynomial<NT>::R_))); 
+template <class NT> double to_double(const ::CGAL::Nef_polynomial<NT>& p) { 
+  return (CGAL::to_double(p.eval_at(CGAL::Nef_polynomial<NT>::R_))); 
 }
 
 double to_double(const Nef_polynomial<int>& p) { 

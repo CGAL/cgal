@@ -403,11 +403,11 @@ and |\Mvar.mark(v,1) = D1.mark(f1)|.}*/
 
 
   TRACEN("transfering marks");
-  Face_iterator f = faces_begin(); assoc_info(f);
+  Face_iterator f = this->faces_begin(); assoc_info(f);
   for (i=0; i<2; ++i) mark(f,i) = PI[i].mark(PI[i].faces_begin());
 
-  Vertex_iterator v, vend = vertices_end();
-  for (v = vertices_begin(); v != vend; ++v) {
+  Vertex_iterator v, vend = this->vertices_end();
+  for (v = this->vertices_begin(); v != vend; ++v) {
     TRACEN("mark at "<<PV(v));
     Halfedge_handle e_below = halfedge_below(v);
     Mark m_below[2];
@@ -456,7 +456,7 @@ and |\Mvar.mark(v,1) = D1.mark(f1)|.}*/
     }
 
   }
-  for (f = ++faces_begin(); f != faces_end(); ++f) { // skip first face
+  for (f = ++this->faces_begin(); f != this->faces_end(); ++f) { // skip first face
     assoc_info(f);
     for (i=0; i<2; ++i) mark(f,i) = incident_mark(halfedge(f),i);
   }
@@ -476,20 +476,20 @@ according to the previous procedure |subdivide|, after this operation
 |\Mvar.mark(u) = predicate ( \Mvar.mark(u,0),\Mvar.mark(u,1) )|. The
 additional marks are invalidated afterwards. }*/
 { 
-  Vertex_iterator vit = vertices_begin(),
-                  vend = vertices_end();
+  Vertex_iterator vit = this->vertices_begin(),
+                  vend = this->vertices_end();
   for( ; vit != vend; ++vit) {
     mark(vit) = predicate(mark(vit,0),mark(vit,1));
     discard_info(vit); 
   }
-  Halfedge_iterator hit = halfedges_begin(),
-                    hend = halfedges_end();
+  Halfedge_iterator hit = this->halfedges_begin(),
+                    hend = this->halfedges_end();
   for(; hit != hend; ++(++hit)) {
     mark(hit) = predicate(mark(hit,0),mark(hit,1));
     discard_info(hit);
   }
-  Face_iterator fit = faces_begin(),
-                fend = faces_end();
+  Face_iterator fit = this->faces_begin(),
+                fend = this->faces_end();
   for(; fit != fend; ++fit) {
     mark(fit) = predicate(mark(fit,0),mark(fit,1));
     discard_info(fit);
@@ -514,15 +514,15 @@ avoid the simplification for edge pairs referenced by |e|.}*/
   CGAL::Unique_hash_map< Face_iterator, Union_find_handle> Pitem;
   CGAL::Union_find<Face_handle> unify_faces;
 
-  Face_iterator f, fend = faces_end();
-  for (f = faces_begin(); f!= fend; ++f) { 
+  Face_iterator f, fend = this->faces_end();
+  for (f = this->faces_begin(); f!= fend; ++f) { 
      Pitem[f] = unify_faces.make_set(f);
      clear_face_cycle_entries(f);
   }
 
 
-  Halfedge_iterator e = halfedges_begin(), en,
-                    eend = halfedges_end();
+  Halfedge_iterator e = this->halfedges_begin(), en,
+                    eend = this->halfedges_end();
   for(; en=e, ++(++en), e != eend; e=en) { 
     if ( keep(e) ) continue;
     if ( mark(e) == mark(face(e)) &&
@@ -541,7 +541,7 @@ avoid the simplification for edge pairs referenced by |e|.}*/
   }
 
   CGAL::Unique_hash_map<Halfedge_handle,bool> linked(false);
-  for (e = halfedges_begin(); e != eend; ++e) {
+  for (e = this->halfedges_begin(); e != eend; ++e) {
     if ( linked[e] ) continue;
     Halfedge_around_face_circulator hfc(e),hend(hfc);
     Halfedge_handle e_min = e;
@@ -560,8 +560,8 @@ avoid the simplification for edge pairs referenced by |e|.}*/
   }
 
 
-  Vertex_iterator v, vn, vend = vertices_end();
-  for(v = vertices_begin(); v != vend; v=vn) { TRACEN("at vertex "<<PV(v));
+  Vertex_iterator v, vn, vend = this->vertices_end();
+  for(v = this->vertices_begin(); v != vend; v=vn) { TRACEN("at vertex "<<PV(v));
     vn=v; ++vn;
     if ( is_isolated(v) ) {
       if ( mark(v) == mark(face(v)) ) delete_vertex_only(v);
@@ -578,7 +578,7 @@ avoid the simplification for edge pairs referenced by |e|.}*/
   }
 
   Face_iterator fn;
-  for (f = faces_begin(); f != fend; f=fn) {
+  for (f = this->faces_begin(); f != fend; f=fn) {
     fn=f; ++fn;
     Union_find_handle pit = Pitem[f];
     if ( unify_faces.find(pit) != pit ) delete_face(f);
@@ -681,13 +681,13 @@ Mark& mark(Face_handle f, int i)  const
 void clear_associated_info_of_all_objects() const 
 {
   Vertex_iterator vit;
-  for (vit = vertices_begin(); vit != vertices_end(); ++vit)
+  for (vit = this->vertices_begin(); vit != this->vertices_end(); ++vit)
     discard_info(vit);
   Halfedge_iterator hit;
-  for (hit = halfedges_begin(); hit != halfedges_end(); ++hit) 
+  for (hit = this->halfedges_begin(); hit != this->halfedges_end(); ++hit) 
     discard_info(hit);
   Face_iterator fit;
-  for (fit = faces_begin(); fit != faces_end(); ++fit) 
+  for (fit = this->faces_begin(); fit != this->faces_end(); ++fit) 
     discard_info(fit);
 }
 
@@ -698,8 +698,8 @@ void create_face_objects(const Below_info& D) const
   CGAL::Unique_hash_map<Halfedge_handle,int> FaceCycle(-1);
   std::vector<Halfedge_handle>  MinimalHalfedge;
   int i=0;
-  Halfedge_iterator e, eend = halfedges_end();
-  for (e=halfedges_begin(); e != eend; ++e) {
+  Halfedge_iterator e, eend = this->halfedges_end();
+  for (e=this->halfedges_begin(); e != eend; ++e) {
     if ( FaceCycle[e] >= 0 ) continue; // already assigned
     Halfedge_around_face_circulator hfc(e),hend(hfc);
     Halfedge_handle e_min = e;
@@ -714,7 +714,7 @@ void create_face_objects(const Below_info& D) const
     MinimalHalfedge.push_back(e_min); ++i;
   }
 
-  Face_handle f_outer = new_face();
+  Face_handle f_outer = this->new_face();
   for (int j=0; j<i; ++j) {
     Halfedge_handle e = MinimalHalfedge[j];
       TRACEN("  face cycle "<<j);TRACEN("  minimal halfedge "<<PE(e));
@@ -723,19 +723,19 @@ void create_face_objects(const Below_info& D) const
           p3 = point(target(next(e)));
     if ( K.left_turn(p1,p2,p3) ) { // left_turn => outer face cycle
         TRACEN("  creating new face object");
-      Face_handle f = new_face();
+      Face_handle f = this->new_face();
       link_as_outer_face_cycle(f,e);
     }
   }
 
-  for (e = halfedges_begin(); e != eend; ++e) {
+  for (e = this->halfedges_begin(); e != eend; ++e) {
     if ( face(e) != Face_handle() ) continue;
     TRACEN("linking hole "<<PE(e));
     Face_handle f = determine_face(e,MinimalHalfedge,FaceCycle,D);
     link_as_hole(f,e);
   }
-  Vertex_iterator v, v_end = vertices_end();
-  for (v = vertices_begin(); v != v_end; ++v) {
+  Vertex_iterator v, v_end = this->vertices_end();
+  for (v = this->vertices_begin(); v != v_end; ++v) {
     if ( !is_isolated(v) ) continue;
     Halfedge_handle e_below = D.halfedge_below(v);
     if ( e_below == Halfedge_handle() ) 
@@ -755,7 +755,7 @@ Face_handle determine_face(Halfedge_handle e,
   Halfedge_handle e_min = MinimalHalfedge[FaceCycle[e]];
   Halfedge_handle e_below = D.halfedge_below(target(e_min));
   if ( e_below == Halfedge_handle() ) // below is nirwana
-    return faces_begin();
+    return this->faces_begin();
   Face_handle f = face(e_below);
   if (f != Face_handle()) return f; // has face already
   f = determine_face(e_below, MinimalHalfedge, FaceCycle,D);

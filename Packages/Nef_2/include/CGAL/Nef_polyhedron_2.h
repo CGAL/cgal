@@ -425,7 +425,7 @@ public:
 
   void extract_complement()
   { TRACEN("extract complement");
-  if ( is_shared() ) {
+  if ( this->is_shared() ) {
 	  clone_rep();
   }
     Overlayer D(pm());
@@ -440,7 +440,7 @@ public:
 
   void extract_interior()
   { TRACEN("extract interior");
-    if ( is_shared() ) clone_rep();
+    if ( this->is_shared() ) clone_rep();
     Overlayer D(pm());
     Vertex_iterator v, vend = D.vertices_end();
     for(v = D.vertices_begin(); v != vend; ++v)      D.mark(v) = false;
@@ -452,7 +452,7 @@ public:
 
   void extract_boundary()
   { TRACEN("extract boundary");
-    if ( is_shared() ) clone_rep();
+    if ( this->is_shared() ) clone_rep();
     Overlayer D(pm());
     Vertex_iterator v, vend = D.vertices_end();
     for(v = D.vertices_begin(); v != vend; ++v)      D.mark(v) = true;

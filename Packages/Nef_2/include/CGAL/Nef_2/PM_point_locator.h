@@ -191,15 +191,15 @@ public:
   s.source()| in its relative interior. |s.target()| must be a point
   such that |s| intersects the $1$-skeleton of |P|.}*/
   { TRACEN("locate naivly "<<s);
-    if (number_of_vertices() == 0) 
+    if (this->number_of_vertices() == 0) 
       CGAL_assertion_msg(0,"PM_naive_point_locator: plane map is empty.");
     Point p = K.source(s);
     Vertex_const_iterator vit;
-    for(vit = vertices_begin(); vit != vertices_end(); ++vit) {
+    for(vit = this->vertices_begin(); vit != this->vertices_end(); ++vit) {
       if ( p == point(vit) ) return Object_handle(vit);
     }
     Halfedge_const_iterator eit;
-    for(eit = halfedges_begin(); eit != halfedges_end(); ++(++eit)) {
+    for(eit = this->halfedges_begin(); eit != this->halfedges_end(); ++(++eit)) {
       // we only have to check each second halfedge
       if ( K.contains(segment(eit),p) ) 
         return Object_handle(eit);
@@ -209,7 +209,7 @@ public:
     Segment ss = s; // we shorten the segment iteratively
     Direction dso = K.construct_direction(K.target(s),p), d_res;
     CGAL::Unique_hash_map<Halfedge_const_handle,bool> visited(false);
-    for(vit = vertices_begin(); vit != vertices_end(); ++vit) {
+    for(vit = this->vertices_begin(); vit != this->vertices_end(); ++vit) {
       Point p_res, vp = point(vit);
       if ( K.contains(ss,vp) ) {
         TRACEN(" location via vertex at "<<vp);
@@ -232,7 +232,7 @@ public:
       }
     }
 
-    for (eit = halfedges_begin(); eit != halfedges_end(); ++eit) {
+    for (eit = this->halfedges_begin(); eit != this->halfedges_end(); ++eit) {
       if ( visited[eit] ) continue;
       Point se = point(source(eit)),
             te = point(target(eit));
@@ -284,7 +284,7 @@ public:
          assign(f,h) && M(f) ) return h;
     h = Object_handle(); 
     TRACEN("not contained");
-    for (v = vertices_begin(); v != vertices_end(); ++v) {
+    for (v = this->vertices_begin(); v != this->vertices_end(); ++v) {
       Point pv = point(v);
       if ( !K.contains(ss,pv) ) continue;
       TRACEN("candidate "<<pv);
@@ -310,7 +310,7 @@ public:
     } // all vertices
 
     Halfedge_const_iterator e_res;
-    for(e = halfedges_begin(); e != halfedges_end(); ++(++e)) {
+    for(e = this->halfedges_begin(); e != this->halfedges_end(); ++(++e)) {
       Segment es = segment(e);
       int o1 = K.orientation(ss,K.source(es));
       int o2 = K.orientation(ss,K.target(es));
@@ -526,12 +526,12 @@ protected:
       Decorator,Geometry,CT_new_edge> NCTT;
     typedef CGAL::generic_sweep<NCTT> Constrained_triang_sweep;
     CT_new_edge NE(CT,*this);
-    Constrained_triang_sweep T(NE,CT.plane_map(),K); T.sweep();
+    Constrained_triang_sweep T(NE,CT.plane_map(),this->K); T.sweep();
   }
 
   void minimize_weight_CT() const
   { TRACEN("minimize_weight_CT");
-    if ( number_of_vertices() < 2 ) return;
+    if ( this->number_of_vertices() < 2 ) return;
     std::list<Halfedge_handle> S;
     /* We maintain a stack |S| of edges containing diagonals 
        which might have to be flipped. */
@@ -559,11 +559,11 @@ protected:
       Point c = point(source(e3));
       Point d = point(target(e3));
 
-      if (! (K.orientation(b,d,a) > 0 && // left_turn
-             K.orientation(b,d,c) < 0) ) // right_turn
+      if (! (this->K.orientation(b,d,a) > 0 && // left_turn
+             this->K.orientation(b,d,c) < 0) ) // right_turn
         continue;
 
-      if ( K.first_pair_closer_than_second(b,d,a,c) ) { // flip
+      if ( this->K.first_pair_closer_than_second(b,d,a,c) ) { // flip
         TRACEN("flipping diagonal of quadilateral"<<a<<b<<c<<d);
         Halfedge_handle e2 = next(e1);
         Halfedge_handle e4 = next(e3);
@@ -619,7 +619,7 @@ public:
       Halfedge_const_handle e = input_halfedge(e_triang);
       if ( e == Halfedge_const_handle() ) // inserted during triangulation
         return Object_handle(input_face(e_triang)); 
-      int orientation_ = K.orientation(segment(e),p);
+      int orientation_ = this->K.orientation(segment(e),p);
       if ( orientation_ == 0 ) return Object_handle(e);
       if ( orientation_ < 0 )  return Object_handle(face(twin(e)));
       if ( orientation_ > 0 )  return Object_handle(face(e));
@@ -640,9 +640,9 @@ public:
   operation returns the null handle |NULL| if the ray shoot along |s|
   does not hit any object |h| of |P| with |M(h)|.}*/
   { TRACEN("ray_shoot "<<s);
-    CGAL_assertion( !K.is_degenerate(s) );
-    Point p = K.source(s), q = K.target(s);
-    Direction d = K.construct_direction(p,q); 
+    CGAL_assertion( !this->K.is_degenerate(s) );
+    Point p = this->K.source(s), q = this->K.target(s);
+    Direction d = this->K.construct_direction(p,q); 
     Vertex_const_handle v;
     Halfedge_const_handle e;
     object_kind current;
@@ -654,7 +654,7 @@ public:
 
     if ( assign(e,h) ) {
       TRACEN("located edge "<<PE(e));
-      int orientation_ = K.orientation( segment(e), p);
+      int orientation_ = this->K.orientation( segment(e), p);
       if ( orientation_ == 0 ) { // p on segment
         TRACEN("on edge "<<PE(e));
         if ( d == CT.direction(e) ) 
@@ -663,7 +663,7 @@ public:
         { e = CT.twin(e); current = EDGE_COLLINEAR; }
         else { // crossing
           current = EDGE_CROSSING;
-          if ( !(K.orientation(CT.segment(e),q)>0) ) // not left_turn
+          if ( !(this->K.orientation(CT.segment(e),q)>0) ) // not left_turn
             e = CT.twin(e); 
         }
 
@@ -677,20 +677,20 @@ public:
         Point p1 = CT.point(CT.source(e)), 
               p2 = CT.point(CT.target(e)), 
               p3 = CT.point(CT.target(next(e)));
-        int or1 = K.orientation(p,q,p1);
-        int or2 = K.orientation(p,q,p2);
-        int or3 = K.orientation(p,q,p3);
-        if ( or1 == 0 && !K.left_turn(p1,p2,q) )
+        int or1 = this->K.orientation(p,q,p1);
+        int or2 = this->K.orientation(p,q,p2);
+        int or3 = this->K.orientation(p,q,p3);
+        if ( or1 == 0 && !this->K.left_turn(p1,p2,q) )
         { v = CT.source(e); current = VERTEX; }
-        else if ( or2 == 0 && !K.left_turn(p2,p3,q) )
+        else if ( or2 == 0 && !this->K.left_turn(p2,p3,q) )
         { v = CT.target(e); current = VERTEX; }
-        else if ( or3 == 0 && !K.left_turn(p3,p1,q) )
+        else if ( or3 == 0 && !this->K.left_turn(p3,p1,q) )
         { v = CT.target(CT.next(e)); current = VERTEX; }
-        else if ( or2 > 0 && or1 < 0 && !K.left_turn(p1,p2,q) )
+        else if ( or2 > 0 && or1 < 0 && !this->K.left_turn(p1,p2,q) )
         { e = CT.twin(e); current = EDGE_CROSSING; }
-        else if ( or3 > 0 && or2 < 0 && !K.left_turn(p2,p3,q) )
+        else if ( or3 > 0 && or2 < 0 && !this->K.left_turn(p2,p3,q) )
         { e = CT.twin(CT.next(e)); current = EDGE_CROSSING; }
-        else if ( or1 > 0 && or3 < 0 && !K.left_turn(p3,p1,q) )
+        else if ( or1 > 0 && or3 < 0 && !this->K.left_turn(p3,p1,q) )
         { e = CT.twin(CT.previous(e)); current = EDGE_CROSSING; }
         else return Object_handle();
 
@@ -718,7 +718,7 @@ public:
         break;
       case EDGE_CROSSING:
         { TRACEN("crossing edge "<<segment(e));
-          if ( K.orientation(CT.segment(e),q) == 0 ) 
+          if ( this->K.orientation(CT.segment(e),q) == 0 ) 
             return Object_handle();
           Halfedge_const_handle e_org = input_halfedge(e);
           if ( e_org != Halfedge_const_handle() ) { // not a CT edge
@@ -727,7 +727,7 @@ public:
           }
           Vertex_const_handle v_cand = CT.target(CT.next(e));
           TRACEN("v_cand "<<PV(v_cand));
-          int orientation_ = K.orientation(p,q,CT.point(v_cand));
+          int orientation_ = this->K.orientation(p,q,CT.point(v_cand));
           switch( orientation_ ) {
             case 0: 
               v = v_cand; current = VERTEX; break;
@@ -749,7 +749,7 @@ public:
             if ( M(e_org) )
               return Object_handle(e_org);
           }
-          if ( K.strictly_ordered_along_line(
+          if ( this->K.strictly_ordered_along_line(
                  CT.point(CT.source(e)),q,CT.point(CT.target(e))) ) 
             return Object_handle();
           v = CT.target(e); current = VERTEX;
@@ -817,8 +817,8 @@ PM_point_locator<PMD,GEO>::walk_in_triangulation(const Point& q) const
   Halfedge_const_handle e;
   Point p = CT.point(v);
   if ( p == q ) return Object_handle(v);
-  Segment s = K.construct_segment(p,q);
-  Direction dir = K.construct_direction(p,q);
+  //  Segment s = this->K.construct_segment(p,q);
+  Direction dir = this->K.construct_direction(p,q);
   object_kind current = VERTEX;
   while (true) switch ( current ) {
     case VERTEX:
@@ -837,13 +837,13 @@ PM_point_locator<PMD,GEO>::walk_in_triangulation(const Point& q) const
       break;
     case EDGE_CROSSING:
       { TRACEN("crossing edge "<<CT.segment(e));
-        if ( !(K.orientation(CT.segment(e),q) > 0) ) // q not left of e
+        if ( !(this->K.orientation(CT.segment(e),q) > 0) ) // q not left of e
           return Object_handle(e);
         Vertex_const_handle v_cand = CT.target(CT.next(e));
-        int orientation_ = K.orientation(p,q,CT.point(v_cand));
+        int orientation_ = this->K.orientation(p,q,CT.point(v_cand));
         switch( orientation_ ) {
           case 0:  // collinear 
-            if ( K.strictly_ordered_along_line(p,q,CT.point(v_cand)) ) 
+            if ( this->K.strictly_ordered_along_line(p,q,CT.point(v_cand)) ) 
               return Object_handle(e);
             v = v_cand; current = VERTEX; break;
           case +1: // left_turn
@@ -856,7 +856,7 @@ PM_point_locator<PMD,GEO>::walk_in_triangulation(const Point& q) const
       break;
     case EDGE_COLLINEAR:
       { TRACEN("collinear edge "<<CT.segment(e));
-        if ( K.strictly_ordered_along_line(
+        if ( this->K.strictly_ordered_along_line(
                CT.point(CT.source(e)),q,CT.point(CT.target(e))) ) 
           return Object_handle(e);
         v = CT.target(e); current = VERTEX;

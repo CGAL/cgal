@@ -268,7 +268,7 @@ Line_2 right() const { return construct_line(SE(),NE()); }
 Point_2 source(const Segment_2& s) const
 /*{\Xop returns the source point of |s|.}*/
 { typename Base::Construct_vertex_2 _source =
-   this-> construct_vertex_2_object();
+    this->construct_vertex_2_object();
   return _source(s,0); }
 
 Point_2 target(const Segment_2& s) const

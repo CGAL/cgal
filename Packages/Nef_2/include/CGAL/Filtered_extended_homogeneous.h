@@ -266,24 +266,24 @@ public:
   Extended_point& operator=(const Extended_point<RT>& p) 
   { Base::operator=(p); return *this; }
 
-  const RT& mx() const { return ptr()->x_.m(); }
-  const RT& nx() const { return ptr()->x_.n(); }
-  const RT& my() const { return ptr()->y_.m(); }
-  const RT& ny() const { return ptr()->y_.n(); }
-  const RT& hw()  const { return ptr()->w_; }
-  const DT& mxD() const { return ptr()->mxd; }
-  const DT& nxD() const { return ptr()->nxd; }
-  const DT& myD() const { return ptr()->myd; }
-  const DT& nyD() const { return ptr()->nyd; }
-  const DT& hwD() const { return ptr()->wd; }
+  const RT& mx() const { return this->ptr()->x_.m(); }
+  const RT& nx() const { return this->ptr()->x_.n(); }
+  const RT& my() const { return this->ptr()->y_.m(); }
+  const RT& ny() const { return this->ptr()->y_.n(); }
+  const RT& hw()  const { return this->ptr()->w_; }
+  const DT& mxD() const { return this->ptr()->mxd; }
+  const DT& nxD() const { return this->ptr()->nxd; }
+  const DT& myD() const { return this->ptr()->myd; }
+  const DT& nyD() const { return this->ptr()->nyd; }
+  const DT& hwD() const { return this->ptr()->wd; }
 
   SQuotient<RT> x() const 
-  { return SQuotient<RT>(ptr()->x_, ptr()->w_); }
+  { return SQuotient<RT>(this->ptr()->x_, this->ptr()->w_); }
   SQuotient<RT> y() const 
-  { return SQuotient<RT>(ptr()->y_, ptr()->w_); }
+  { return SQuotient<RT>(this->ptr()->y_, this->ptr()->w_); }
 
-  const SPolynomial<RT> hx() const { return ptr()->x_; }
-  const SPolynomial<RT> hy() const { return ptr()->y_; }
+  const SPolynomial<RT> hx() const { return this->ptr()->x_; }
+  const SPolynomial<RT> hy() const { return this->ptr()->y_; }
 
   bool is_standard() const { return (mx()==0)&&(my()==0); }
   Extended_point<RT> opposite() const 

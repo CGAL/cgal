@@ -187,7 +187,7 @@ Plane_map& plane_map() const
 
 void clear() const
 /*{\Mop reinitializes |P| to the empty map.}*/
-{ phds->clear(); }
+{ this->phds->clear(); }
 
 Vertex_handle source(Halfedge_handle e) const
 /*{\Mop returns the source of |e|.}*/
@@ -271,17 +271,17 @@ Halfedge_handle halfedge(Face_handle f) const
 { return f->halfedge(); }
 
 Vertex_iterator   vertices_begin() const
-{ return phds->vertices_begin(); }
+{ return this->phds->vertices_begin(); }
 Halfedge_iterator halfedges_begin() const
-{ return phds->halfedges_begin(); }
+{ return this->phds->halfedges_begin(); }
 Face_iterator     faces_begin() const
-{ return phds->faces_begin(); }
+{ return this->phds->faces_begin(); }
 Vertex_iterator   vertices_end() const
-{ return phds->vertices_end(); }
+{ return this->phds->vertices_end(); }
 Halfedge_iterator halfedges_end() const
-{ return phds->halfedges_end(); }
+{ return this->phds->halfedges_end(); }
 Face_iterator     faces_end() const
-{ return phds->faces_end(); }
+{ return this->phds->faces_end(); }
 
 /*{\Mtext \headerline{Iteration} \setopdims{6.5cm}{0cm}}*/
 
@@ -318,14 +318,14 @@ Isolated_vertex_iterator isolated_vertices_end(Face_handle f) const
 
 Vertex_handle new_vertex(const Vertex_base& vb = Vertex_base()) const
 /*{\Mop creates a new vertex.}*/
-{ Vertex_handle v = phds->vertices_push_back(vb);
+{ Vertex_handle v = this->phds->vertices_push_back(vb);
   v->set_halfedge(Halfedge_handle());
   return v; 
 }
 
 Face_handle new_face(const Face_base& fb = Face_base()) const
 /*{\Mop creates a new face.}*/
-{ Face_handle f = phds->faces_push_back(fb);
+{ Face_handle f = this->phds->faces_push_back(fb);
   return f;
 }
 
@@ -362,7 +362,7 @@ Halfedge_handle new_halfedge_pair(Vertex_handle v1, Vertex_handle v2,
                                   Halfedge_base hb = Halfedge_base()) const
 /*{\Mop creates a new pair of edges |(e1,e2)| representing |(v1,v2)| 
   by appending the |ei| to |A(vi)| $(i=1,2)$.}*/
-{ Halfedge_handle e1 = phds->edges_push_back(hb,hb);
+{ Halfedge_handle e1 = this->phds->edges_push_back(hb,hb);
   Halfedge_handle e2 = e1->opposite(); 
   e1->set_face(Face_handle()); e2->set_face(Face_handle());
   if ( ! is_isolated(v1) ) 
@@ -388,7 +388,7 @@ Halfedge_handle new_halfedge_pair(Halfedge_handle e1,
   into the cyclic adjacency list of |source(ei)| depending on 
   |posi| $(i=1,2)$ from |\Mname::BEFORE, \Mname::AFTER|.}*/
 { 
-  Halfedge_handle er = phds->edges_push_back(hb,hb);
+  Halfedge_handle er = this->phds->edges_push_back(hb,hb);
   Halfedge_handle ero = er->opposite();
   er->set_face(Face_handle()); ero->set_face(Face_handle()); 
   if (pos1 < 0) { // before e1
@@ -416,7 +416,7 @@ Halfedge_handle new_halfedge_pair(Halfedge_handle e, Vertex_handle v,
   |source(e)| depending on |pos| from |\Mname::BEFORE, \Mname::AFTER|
   and appending |e2| to |A(v)|.}*/
 {
-  Halfedge_handle e_new = phds->edges_push_back(hb,hb);
+  Halfedge_handle e_new = this->phds->edges_push_back(hb,hb);
   Halfedge_handle e_opp = e_new->opposite();
   e_new->set_face(Face_handle()); e_opp->set_face(Face_handle()); 
 
@@ -451,7 +451,7 @@ void delete_halfedge_pair(Halfedge_handle e) const
         and its target.}*/
 { remove_from_adj_list_at_source(e);
   remove_from_adj_list_at_source(e->opposite());
-  phds->edges_erase(e);
+  this->phds->edges_erase(e);
 }
 
 void delete_vertex(Vertex_handle v) const
@@ -464,12 +464,12 @@ void delete_vertex(Vertex_handle v) const
       delete_halfedge_pair(cap(e));  
     delete_halfedge_pair(e); 
   }
-  phds->vertices_erase(v);
+  this->phds->vertices_erase(v);
 }
 
 void delete_face(Face_handle f) const
 /*{\Mop deletes the face |f| without consideration of topological linkage.}*/
-{ phds->faces_erase(f); }
+{ this->phds->faces_erase(f); }
 
 
 bool has_outdeg_two(Vertex_handle v) const
@@ -509,8 +509,8 @@ void merge_halfedge_pairs_at_target(Halfedge_handle e) const
   { f2->remove_fc(eno); f2->store_fc(eo); }
   if (f1->halfedge() == en) f1->set_halfedge(e);
   if (f2->halfedge() == eno) f2->set_halfedge(eo);
-  phds->vertices_erase(v);
-  phds->edges_erase(en);
+  this->phds->vertices_erase(v);
+  this->phds->edges_erase(en);
 }
 
 void flip_diagonal(Halfedge_handle e) const
@@ -534,7 +534,7 @@ Halfedge_handle new_halfedge_pair_at_source
   by inserting |e1| before or after |e| into cyclic adjacency list of
   |source(e)| depending on |pos| from |\Mname::BEFORE, \Mname::AFTER|.}*/
 {
-  Halfedge_handle e_new = phds->edges_push_back(hb,hb);
+  Halfedge_handle e_new = this->phds->edges_push_back(hb,hb);
   if (pos < 0) // before e
     set_adjacency_at_source_between(cap(e),e_new,e);
   else  // after e
@@ -547,7 +547,7 @@ Halfedge_handle new_halfedge_pair_at_source
 /*{\Mop creates a new pair of edges  |(e1,e2)| representing |(v,())| 
   by inserting |e1| at the beginning (BEFORE) or end (AFTER)
   of adjacency list of |v|.}*/
-{ Halfedge_handle e1 = phds->edges_push_back(hb,hb);
+{ Halfedge_handle e1 = this->phds->edges_push_back(hb,hb);
   Halfedge_handle e2 = e1->opposite(); 
   e1->set_face(Face_handle()); e2->set_face(Face_handle());
   if ( ! is_isolated(v) ) {
@@ -563,7 +563,7 @@ void delete_halfedge_pair_at_source(Halfedge_handle e) const
 /*{\Mop deletes |e| and its twin and updates the adjacency at its 
   source.}*/
 { remove_from_adj_list_at_source(e);
-  phds->edges_erase(e);
+  this->phds->edges_erase(e);
 }
 
 void link_as_target_and_append(Vertex_handle v, Halfedge_handle e) const
@@ -579,17 +579,17 @@ Halfedge_handle new_halfedge_pair_without_vertices() const
 /*{\Mop inserts an open edge pair, and inits all link slots to their default 
     handles.}*/
 {
-  Halfedge_handle e_new = phds->edges_push_back(Halfedge(),Halfedge());
+  Halfedge_handle e_new = this->phds->edges_push_back(Halfedge(),Halfedge());
   return e_new;
 }
 
 void delete_vertex_only(Vertex_handle v) const
 /*{\Mop deletes |v| without consideration of adjacency.}*/
-{ phds->vertices_erase(v); }
+{ this->phds->vertices_erase(v); }
 
 void delete_halfedge_pair_only(Halfedge_handle e) const
 /*{\Mop deletes |e| and its twin without consideration of adjacency.}*/
-{ phds->edges_erase(e); }
+{ this->phds->edges_erase(e); }
 
 void link_as_target_of(Halfedge_handle e, Vertex_handle v) const
 /*{\Mop makes |target(e) = v| and sets |e| as the first
@@ -733,12 +733,12 @@ void clone_skeleton(const HDS& H, const LINKDA& L) const
   /* First clone all objects and store correspondance in the two maps.*/
   Vertex_const_iterator vit, vend = H.vertices_end();
   for (vit = H.vertices_begin(); vit!=vend; ++vit) {
-    Vertex_handle v = phds->vertices_push_back(Vertex_base());
+    Vertex_handle v = this->phds->vertices_push_back(Vertex_base());
     Vnew[vit] = v;
   }
   Halfedge_const_iterator eit, eend = H.halfedges_end();
   for (eit = H.halfedges_begin(); eit!=eend; ++(++eit)) {
-    Halfedge_handle e = phds->edges_push_back(Halfedge_base(),Halfedge_base());
+    Halfedge_handle e = this->phds->edges_push_back(Halfedge_base(),Halfedge_base());
     Hnew[eit] = e; Hnew[eit->opposite()] = e->opposite();
   }
 
@@ -752,7 +752,7 @@ void clone_skeleton(const HDS& H, const LINKDA& L) const
       vit2->set_halfedge(Hnew[vit->halfedge()]);
     L(vit2,vit);
   }
-  Halfedge_iterator eit2, eend2 = phds->halfedges_end();
+  Halfedge_iterator eit2, eend2 = this->phds->halfedges_end();
   for (eit = H.halfedges_begin(), eit2 = halfedges_begin(); 
        eit2!=eend2; ++eit, ++eit2) {
     eit2->set_prev(Hnew[eit->prev()]);
@@ -857,19 +857,19 @@ void PM_decorator<HDS>::clone(const HDS& H) const
   /* First clone all objects and store correspondance in three maps.*/
   Vertex_const_iterator vit, vend = H.vertices_end();
   for (vit = H.vertices_begin(); vit!=vend; ++vit) 
-    Vnew[vit] = phds->vertices_push_back(Vertex_base());
+    Vnew[vit] = this->phds->vertices_push_back(Vertex_base());
   Halfedge_const_iterator eit, eend = H.halfedges_end();
   for (eit = H.halfedges_begin(); eit!=eend; ++(++eit)) {
-    Hnew[eit] = phds->edges_push_back(Halfedge_base(),Halfedge_base());
+    Hnew[eit] = this->phds->edges_push_back(Halfedge_base(),Halfedge_base());
     Hnew[eit->opposite()] = Hnew[eit]->opposite();
   }
   Face_const_iterator fit, fend = H.faces_end();
   for (fit = H.faces_begin(); fit!=fend; ++fit) {
-    Fnew[fit] = phds->faces_push_back(Face_base());
+    Fnew[fit] = this->phds->faces_push_back(Face_base());
   }
 
   /* Now copy topology.*/
-  Vertex_iterator vit2, vend2 = phds->vertices_end();
+  Vertex_iterator vit2, vend2 = this->phds->vertices_end();
   for (vit = H.vertices_begin(), vit2 = vertices_begin(); 
        vit2!=vend2; ++vit, ++vit2) {
     mark(vit2) = DC.mark(vit);
@@ -877,7 +877,7 @@ void PM_decorator<HDS>::clone(const HDS& H) const
     if ( DC.is_isolated(vit) ) vit2->set_face(Fnew[vit->face()]);
     else vit2->set_halfedge(Hnew[vit->halfedge()]);
   }
-  Halfedge_iterator eit2, eend2 = phds->halfedges_end();
+  Halfedge_iterator eit2, eend2 = this->phds->halfedges_end();
   for (eit = H.halfedges_begin(), eit2 = halfedges_begin(); 
        eit2!=eend2; ++eit, ++eit2) {
     eit2->set_prev(Hnew[eit->prev()]);
@@ -925,12 +925,12 @@ clone_skeleton(const HDS& H, const LINKDA& L) const
   /* First clone all objects and store correspondance in the two maps.*/
   Vertex_const_iterator vit, vend = H.vertices_end();
   for (vit = H.vertices_begin(); vit!=vend; ++vit) {
-    Vertex_handle v = phds->vertices_push_back(Vertex_base());
+    Vertex_handle v = this->phds->vertices_push_back(Vertex_base());
     Vnew[vit] = v;
   }
   Halfedge_const_iterator eit, eend = H.halfedges_end();
   for (eit = H.halfedges_begin(); eit!=eend; ++(++eit)) {
-    Halfedge_handle e = phds->edges_push_back(Halfedge_base(),Halfedge_base());
+    Halfedge_handle e = this->phds->edges_push_back(Halfedge_base(),Halfedge_base());
     Hnew[eit] = e; Hnew[eit->opposite()] = e->opposite();
   }
 
@@ -944,7 +944,7 @@ clone_skeleton(const HDS& H, const LINKDA& L) const
       vit2->set_halfedge(Hnew[vit->halfedge()]);
     L(vit2,vit);
   }
-  Halfedge_iterator eit2, eend2 = phds->halfedges_end();
+  Halfedge_iterator eit2, eend2 = this->phds->halfedges_end();
   for (eit = H.halfedges_begin(), eit2 = halfedges_begin(); 
        eit2!=eend2; ++eit, ++eit2) {
     eit2->set_prev(Hnew[eit->prev()]);
