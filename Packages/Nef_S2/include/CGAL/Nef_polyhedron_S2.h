@@ -58,7 +58,6 @@ class Nef_polyhedron_S2_rep {
 
   typedef CGAL::Sphere_geometry<K>                     Sphere_kernel;
   typedef bool                                         Mark;
-  //  typedef CGAL::Sphere_map<Sphere_kernel,I>            Sphere_map;
   typedef M                                            Sphere_map;
   typedef CGAL::SM_const_decorator<Sphere_map>         Const_decorator;
   typedef CGAL::SM_decorator<Sphere_map>               Decorator;
@@ -273,9 +272,9 @@ protected:
   Nef_polyhedron_S2(const Sphere_map& H, bool clone=true) : Base(Nef_rep()) 
   /*{\Xcreate makes |\Mvar| a new object.  If |clone==true| then the
   underlying structure of |H| is copied into |\Mvar|.}*/
-  {     
-    if (!clone) return;
-    ptr()->sm_ = H; 
+{ 
+    if(clone)
+      ptr()->sm_ = H; 
     set_sm(&sphere_map());
   }
   
