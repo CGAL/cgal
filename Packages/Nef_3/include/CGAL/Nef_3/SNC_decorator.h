@@ -904,8 +904,8 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     void operator()( Halfedge_const_handle e0, Object_handle o1, const Point_3& ip)
       const {
 
-      Halfedge_handle e;
-      Halffacet_handle f;
+      Halfedge_const_handle e;
+      Halffacet_const_handle f;
       
       Point_3 p(normalized(ip));
 
@@ -1088,7 +1088,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     Intersection_call_back<Selection> call_back1 
       ( snc2, snc2, BOP, *sncp(), true);
     // choose between intersection algorithms
-#if 1
+#if 0
     Halfedge_const_iterator e0, e1;
     TRACEN("=> finding edge-edge intersections...");
     CGAL_forall_edges( e0, snc1) {
