@@ -73,15 +73,6 @@ struct Sgn :public CGAL_STD::unary_function< NT, int > {
 };
 
 template < class NT >
-struct Lexicographical_sign
-  :public CGAL_STD::binary_function< NT, NT, int > {
-  typedef Arity_tag< 2 > Arity;
-
-  Sign operator()( const NT& x, const NT& y) const
-  { return CGAL_NTS lexicographical_sign( x, y); }
-};
-
-template < class NT >
 struct Abs :public CGAL_STD::unary_function< NT, NT > {
   typedef Arity_tag< 1 > Arity;
   NT operator()( const NT& x) const

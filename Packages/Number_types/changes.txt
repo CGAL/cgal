@@ -1,3 +1,6 @@
+4.49     (21 March 02)
+- Kill lexicographical_sign.
+
 4.48     (21 March 02)
 - converted doc to new manual style
 - improved test suite

@@ -78,15 +78,6 @@ sign(const NT& x)
 
 template <class NT>
 CGAL_KERNEL_INLINE
-Sign
-lexicographical_sign(const NT& x, const NT& y)
-{
-  bool lexicographical_sign_is_obsolete__qualify_call_by_CGAL_NTS;
-  return (x == NT(0)) ? CGAL::sign(y) : CGAL::sign(x);
-}
-
-template <class NT>
-CGAL_KERNEL_INLINE
 NT
 abs(const NT& x)
 {
@@ -149,12 +140,6 @@ CGAL_KERNEL_INLINE
 Sign
 sign(const NT& x)
 { return (x < NT(0)) ? NEGATIVE : (NT(0) < x) ? POSITIVE : ZERO; }
-
-template <class NT>
-CGAL_KERNEL_INLINE
-Sign
-lexicographical_sign(const NT& x, const NT& y)
-{ return (x == NT(0)) ? CGAL_NTS sign(y) : CGAL_NTS sign(x); }
 
 template <class NT>
 CGAL_KERNEL_INLINE
