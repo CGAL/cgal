@@ -62,11 +62,6 @@ Delaunay
   choose ?  Is it worth the complexity (benchmark first) ?
 - nearest neighbor
 
-Gestion memoire
-- Alignement des cellules en memoire : effets de cache + pointeurs a
-  l'interieur des cellules pour le voisinage (Fred a deja fait => ask).
-- Le flag temporaire pourrait aller dans un des bits -> sizeof(cell) == 32 :)
-
 Regular :
 - faire marcher la hierarchie avec.  Le probleme est qu'on delete des
   vertex, et donc la hierarchie est perdue avec ses pointeurs up/down qui
