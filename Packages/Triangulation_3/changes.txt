@@ -1,3 +1,6 @@
+Version 1.101 (?? January 02)
+- Documentation updates.
+
 Version 1.100 (17 December 01)
 - Missing typenames for GCC 3.1.
 
