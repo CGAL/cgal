@@ -22,6 +22,7 @@
 #ifndef CGAL_CARTESIAN_COORDINATE_ITERATOR_3_H
 #define CGAL_CARTESIAN_COORDINATE_ITERATOR_3_H
 
+#include <cstddef>
 #include <iterator>
 
 CGAL_BEGIN_NAMESPACE
