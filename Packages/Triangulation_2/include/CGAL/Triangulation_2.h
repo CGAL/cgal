@@ -123,7 +123,7 @@ public:
     Self & operator--() { Base::operator--(); return *this; }
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
-    operator Vertex_handle() const { return Base::base(); }
+    operator const Vertex_handle() const { return Base::base(); }
   };
 
   class Finite_faces_iterator
@@ -138,7 +138,7 @@ public:
     Self & operator--() { Base::operator--(); return *this; }
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
-    operator Face_handle() const { return Base::base(); }
+    operator const Face_handle() const { return Base::base(); }
   };
   
   typedef Filter_iterator<All_edges_iterator, 

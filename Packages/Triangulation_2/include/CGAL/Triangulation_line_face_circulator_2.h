@@ -92,7 +92,7 @@ public:
   Face*                   operator->() {return &*pos;}
   Face&                   operator*() { return *pos;}
   Face_handle             handle() {return pos;}
-  operator Face_handle() const {return pos;}
+  operator const Face_handle() const {return pos;}
   bool  operator==(const Line_face_circulator& lfc) const;
   bool  operator!=(const Line_face_circulator& lfc) const;
 #ifdef CGAL_T2_USE_ITERATOR_AS_HANDLE
