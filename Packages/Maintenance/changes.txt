@@ -1,7 +1,10 @@
-07 January 2005 Sylvain Pion
+7 February 2005 Sylvain Pion
+- Don't use frames in test suites pages, and other improvements.
+
+7 January 2005 Sylvain Pion
 - Add Mesh_3 in the internal releases.
 
-06 January 2005 Sylvain Pion
+6 January 2005 Sylvain Pion
 - Add Map_overlay_2 back in the internal releases.
 - Add Persistent_homology_d back in the internal releases.
 
