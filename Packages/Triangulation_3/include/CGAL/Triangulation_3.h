@@ -588,8 +588,6 @@ protected:
     CGAL_triangulation_precondition( c != NULL );
     CGAL_triangulation_precondition( tester(c) );
 
-    set_number_of_vertices(number_of_vertices()+1);
-
     std::vector<Cell_handle> cells;
     cells.reserve(32);
 
@@ -844,7 +842,6 @@ operator>> (std::istream& is, Triangulation_3<GT, Tds> &tr)
   int n, d;
   is >> d >> n;
   tr._tds.set_dimension(d);
-  tr.set_number_of_vertices(n);
 
   std::map< int, Vertex_handle > V;
   V[0] = tr.infinite_vertex();

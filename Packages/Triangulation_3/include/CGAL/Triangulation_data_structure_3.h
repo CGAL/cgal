@@ -146,6 +146,7 @@ public:
 
   Vertex_handle create_vertex()
   {
+      ++_number_of_vertices;
       return vertex_container().get_new_element();
   }
 
@@ -202,6 +203,7 @@ public:
   void delete_vertex( Vertex_handle v )
   {
       CGAL_triangulation_expensive_precondition( is_vertex(v) );
+      --_number_of_vertices;
       vertex_container().release_element(&*v);
   }
 
@@ -755,7 +757,6 @@ operator>>(std::istream& is, Triangulation_data_structure_3<Vb,Cb>& tds)
   int n, d;
   is >> d >> n;
   tds.set_dimension(d);
-  tds.set_number_of_vertices(n);
 
   if(n == 0)
     return is;
@@ -1500,7 +1501,6 @@ insert_in_cell( Vertex_handle v, Cell_handle c )
 
   v0->set_cell(c1);
   v->set_cell(c);
-  set_number_of_vertices(number_of_vertices() +1);
 
   return v;
 }
@@ -1611,7 +1611,6 @@ insert_in_facet(Vertex_handle v, Cell_handle c, int i)
       break;
     }
   }
-  set_number_of_vertices(number_of_vertices() +1);
 
   return v;
 }
@@ -1699,7 +1698,6 @@ insert_in_edge(Vertex_handle v, Cell_handle c, int i, int j)
       break;
     }
   }
-  set_number_of_vertices(number_of_vertices() +1);
 
   return v;
 }// end insert_in_edge
@@ -1732,7 +1730,6 @@ insert_increase_dimension(Vertex_handle v, // new vertex
   // this is set now, so that it becomes allowed to reorient
   // new facets or cells by iterating on them (otherwise the
   // dimension is too small)
-  set_number_of_vertices( number_of_vertices()+1 );
   set_dimension( dimension()+1 );
 
   switch ( dim ) {
@@ -2109,7 +2106,6 @@ copy_tds(const Tds & tds, Vertex_handle vert )
   clear();
 
   int n = tds.number_of_vertices();
-  set_number_of_vertices(n);
   set_dimension(tds.dimension());
 
   if (n == 0)

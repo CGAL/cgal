@@ -423,7 +423,6 @@ remove(Vertex_handle v)
 
     _tds.clear_cells_only();
 
-    _tds.set_number_of_vertices(0);
     _tds.set_dimension(-2);
     _tds.insert_increase_dimension(inf);
     CGAL_triangulation_assertion( inf == infinite_vertex() );
@@ -453,7 +452,6 @@ remove(Vertex_handle v)
   if(filled){
     _tds.delete_vertex(v);
     _tds.delete_cells(hole.begin(), hole.end());
-    set_number_of_vertices(number_of_vertices()-1);
   } else {
     undo_make_hole_3D_ear(boundhole, hole);
   }

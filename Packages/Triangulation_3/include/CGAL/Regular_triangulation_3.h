@@ -380,7 +380,6 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
         if ((*it)->cell() == NULL)
 	{
           // vertex has to be deleted
-          set_number_of_vertices(number_of_vertices()-1);
           _tds.delete_vertex(*it);
 	}
       }
@@ -412,7 +411,6 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
             if ((*it)->cell() == NULL)
 	    {
               // vertex has to be deleted
-              set_number_of_vertices(number_of_vertices()-1);
               _tds.delete_vertex(*it);
 	    }
 	  }
@@ -441,7 +439,6 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
 	      return NULL;
 	  Vertex_handle v = _tds.create_vertex();
 	  v->set_point(p);
-	  set_number_of_vertices(number_of_vertices()+1);
 	  Cell_handle bound[2];
 	  Cell_handle n;
 	  std::set<Cell_handle> conflicts;
@@ -455,7 +452,6 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
 // 		P = new Weighted_point( n->vertex(1-j)->point() );
 // 		(void) deleted_points.insert((void*) P);
 	      _tds.delete_vertex( n->vertex(1-j) );
-	      set_number_of_vertices(number_of_vertices()-1);
 	      n = n->neighbor(j);
 	    }
 	    bound[j] = n;
