@@ -1,6 +1,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian_d.h>
-#include <CGAL/Constructions_d.h>
+// #include <CGAL/Constructions_d.h>
 #include <CGAL/Iso_rectangle_d.h>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Kd_tree_traits_point.h>
@@ -12,11 +12,17 @@
 
 typedef CGAL::Cartesian_d<double> R;
 typedef CGAL::Point_d<R> Point;
+typedef CGAL::Vector_d<R> Vector; // for square root onlys
 typedef Point::R::FT NT;
 
 typedef CGAL::Iso_rectangle_d<R> Rectangle;
 typedef CGAL::Plane_separator<NT> Separator;
 typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
+
+// after CGAL/Kernel/function_objectsHd.h
+
+NT squared_distance(const Point& p, const Point& q) 
+{ Vector v = p-q; return v.squared_length(); };
   
 int main() {
 
@@ -55,16 +61,16 @@ int main() {
 
   // define center point
   double c[dim];
-  for (int i=0; i<dim; i++) {
-  	c[i]=  300.0;
+  for (int i1=0; i1<dim; i1++) {
+  	c[i1]=  300.0;
   }
   
   Point C(dim,c,c+dim);
 
   std::cout << "all points are:" << std::endl;
   
-  for (int j=0; j < points_in_tree.size(); ++j) { 
-     std::cout << points_in_tree[j] << "d(C,p)=" << sqrt(CGAL::squared_distance(points_in_tree[j],C)) << std::endl; 
+  for (int j1=0; j1 < points_in_tree.size(); ++j1) { 
+     std::cout << points_in_tree[j1] << "d(C,p)=" << sqrt(squared_distance(points_in_tree[j1],C)) << std::endl; 
   }
   
   
@@ -72,17 +78,17 @@ int main() {
 
   std::cout << "points approximately in spherical range query are:" << std::endl;
   
-  for (int j=0; j < points_in_spherical_range_query.size(); ++j) { 
-     std::cout << points_in_spherical_range_query[j] << std::endl; 
+  for (int j2=0; j2 < points_in_spherical_range_query.size(); ++j2) { 
+     std::cout << points_in_spherical_range_query[j2] << std::endl; 
   }
  
  // define range query
   
   double p[dim];
   double q[dim];
-  for (int i=0; i<dim; i++) {
-  	p[i]=  -100.0;
-        q[i]=  900.0;
+  for (int i2=0; i2<dim; i2++) {
+  	p[i2]=  -100.0;
+        q[i2]=  900.0;
   }
   
   Point P(dim,p,p+dim);
@@ -95,8 +101,8 @@ int main() {
   std::cout << "points approximately in rectangular range query [-100,900]^4 are:" << std::endl;
 
   
-  for (int j=0; j < points_in_rectangular_range_query.size(); ++j) { 
-     std::cout << points_in_rectangular_range_query[j] << std::endl; 
+  for (int j3=0; j3 < points_in_rectangular_range_query.size(); ++j3) { 
+     std::cout << points_in_rectangular_range_query[j3] << std::endl; 
   }
   
 
