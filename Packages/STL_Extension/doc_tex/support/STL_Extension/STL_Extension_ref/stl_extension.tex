@@ -1187,9 +1187,9 @@
     const;}{(as many arguments as defined by \ccc{Arity})\\returns
     \ccc{f(a1,...an)}.}  \ccTagDefaults
     
-  \ccHeading{Notes} Alternatively, the type can be defined in a
-  specialization of \ccc{CGAL::Arity_traits<>} for the functor. This
-  is useful where existing classes cannot be changed easily, e.g. like
+  \ccHeading{Notes} Alternatively, the type \ccc{Arity} can be defined
+  in a specialization of \ccc{CGAL::Arity_traits<>} for the functor.
+  This is useful where existing classes cannot be changed easily, e.g.
   the functors from the standard library.
   
   \ccHasModels All functors from the standard library, and all
@@ -1218,11 +1218,11 @@
 \begin{ccRefClass}{Arity_traits<F>}
   
   \ccDefinition The class \ccRefName\ is used to define the arity of a
-  functor, i.e. the number of arguments it takes. It is used as a
-  compile time tag only, that is objects of this type are never
-  created anywhere. Specializations of \ccRefName\ can be defined,
-  where existing functors cannot be changed easily to contain their
-  \ccc{Arity} type.
+  functor class \ccc{F}, i.e. the number of arguments it takes. It is
+  used as a compile time tag only, that is objects of this type are
+  never created anywhere. Specializations of \ccRefName\ can be
+  defined, where existing functors cannot be changed easily to contain
+  their \ccc{Arity} type.
 
   \ccInclude{CGAL/functional_base.h}
 
@@ -1957,6 +1957,163 @@
 
   \ccTagDefaults\def\ccLongParamLayout{\ccFalse}
 \end{ccRefFunctionObjectClass}
+
+%% +--------------------------------------------------------+
+
+\begin{ccRefClass}{triple<T1, T2, T3>}
+  
+  \ccDefinition The triple class is an extension of \ccc{std::pair}.
+  \ccRefName\ is a heterogeneous triple: it holds one object of type
+  \ccc{T1}, one of type \ccc{T2}, and one of type \ccc{T3}.  A
+  \ccRefName\ is much like a container, in that it "owns" its
+  elements. It is not actually a model of container, though, because
+  it does not support the standard methods (such as iterators) for
+  accessing the elements of a container.
+
+  \ccInclude{CGAL/utility.h}
+  
+  \ccRequirements \ccc{T1}, \ccc{T2} and \ccc{T3} must be assignable.
+  Additional operations have additional requirements.
+
+  %\ccSetThreeColumns{T*}{next_link ;}{}
+  \ccThree{result_type;;}{operator()(argument a) ;;}{}
+
+  \ccTypes
+  \ccTypedef{typedef T1 first_type;}{}
+  \ccGlue
+  \ccTypedef{typedef T2 second_type;}{}
+  \ccGlue
+  \ccTypedef{typedef T3 third_type;}{}
+
+  \ccHeading{Variables}
+  \ccVariable{T1 first;}{first element}
+  \ccGlue
+  \ccVariable{T2 second;}{second element}
+  \ccGlue
+  \ccVariable{T3 third;}{third element}
+
+  \ccCreation
+  \ccCreationVariable{t}
+  
+  \ccConstructor{triple();}{introduces a triple using the default
+    constructor of the three elements.}
+  
+  \ccConstructor{triple(T1 x, T2 y, T3 z);}{constructs a triple such
+    that \ccc{first} is constructed from \ccc{x}, \ccc{second} is
+    constructed from \ccc{y}, and \ccc{third} is constructed from
+    \ccc{z}.}
+  
+  \ccFunction{template <class T1, class T2, class T3> bool
+    operator<(triple<T1, T2, T3> x, triple<T1, T2, T3> y);} {The
+    comparison operator. It uses lexicographic comparison: the return
+    value is true if the first element of \ccc{x} is less than the
+    first element of \ccc{y}, and false if the first element of
+    \ccc{y} is less than the first element of \ccc{x}. If neither of
+    these is the case, then it returns true if the second element of
+    \ccc{x} is less than the second element of \ccc{y}, and false if
+    the second element of \ccc{y} is less than the second element of
+    \ccc{x}.  If neither of these is the case, then it returns the
+    result of comparing the third elements of \ccc{x} and \ccc{y}.
+    This operator may only be used if \ccc{T1}, \ccc{T2} and \ccc{T3}
+    define the comparison operator.}
+  
+  \ccFunction{template <class T1, class T2, class T3> bool
+    operator==(triple<T1, T2, T3> x, triple<T1, T2, T3> y);} {The
+    equality operator. The return value is true if and only the first
+    elements of \ccc{x} and \ccc{y} are equal, the second elements of
+    \ccc{x} and \ccc{y} are equal, and the third elements of \ccc{x}
+    and \ccc{y} are equal.  This operator may only be used if
+    \ccc{T1}, \ccc{T2} and \ccc{T3} define the equality operator.}
+  
+  \ccFunction{template <class T1, class T2, class T3> triple<T1, T2,
+    T3> make_triple(T1 x, T2 y, T3 z);} {Equivalent to
+    \ccStyle{triple<T1, T2, T3>(x, y, z)}.}
+
+\end{ccRefClass}
+
+%% +--------------------------------------------------------+
+
+\begin{ccRefClass}{quadruple<T1, T2, T3, T4>}
+  
+  \ccDefinition The quadruple class is an extension of
+  \ccc{std::pair}.  \ccRefName\ is a heterogeneous quadruple: it holds
+  one object of type \ccc{T1}, one of type \ccc{T2}, one of type
+  \ccc{T3}, and one of type \ccc{T4}.  A \ccRefName\ is much like a
+  container, in that it ``owns'' its elements. It is not actually a
+  model of container, though, because it does not support the standard
+  methods (such as iterators) for accessing the elements of a
+  container.
+
+  \ccInclude{CGAL/utility.h}
+  
+  \ccRequirements \ccc{T1}, \ccc{T2}, \ccc{T3} and \ccc{T4} must be
+  assignable. Additional operations have additional requirements.
+
+  %\ccSetThreeColumns{T*}{next_link ;}{}
+  \ccThree{result_type;;}{operator()(argument a) ;;}{}
+
+  \ccTypes
+  \ccTypedef{typedef T1 first_type;}{}
+  \ccGlue
+  \ccTypedef{typedef T2 second_type;}{}
+  \ccGlue
+  \ccTypedef{typedef T3 third_type;}{}
+  \ccGlue
+  \ccTypedef{typedef T4 fourth_type;}{}
+
+  \ccHeading{Variables}
+  \ccVariable{T1 first;}{first element}
+  \ccGlue
+  \ccVariable{T2 second;}{second element}
+  \ccGlue
+  \ccVariable{T3 third;}{third element}
+  \ccGlue
+  \ccVariable{T4 fourth;}{fourth element}
+
+  \ccCreation
+  \ccCreationVariable{t}
+  
+  \ccConstructor{quadruple();} {introduces a quadruple using the
+    default constructor of the four elements.}
+  
+  \ccConstructor{quadruple(T1 x, T2 y, T3 z, T4 w);} {constructs a
+    quadruple such that \ccc{first} is constructed from \ccc{x},
+    \ccc{second} is constructed from \ccc{y}, \ccc{third} is
+    constructed from \ccc{z}, and \ccc{fourth} is constructed from
+    \ccc{w}.}
+  
+  \ccFunction{template <class T1, class T2, class T3, class T4> bool
+    operator<(quadruple<T1, T2, T3, T4> x, quadruple<T1, T2, T3, T4>
+    y);} {The comparison operator. It uses lexicographic comparison:
+    the return value is true if the first element of \ccc{x} is less
+    than the first element of \ccc{y}, and false if the first element
+    of \ccc{y} is less than the first element of \ccc{x}. If neither
+    of these is the case, then it returns true if the second element
+    of \ccc{x} is less than the second element of \ccc{y}, and false
+    if the second element of \ccc{y} is less than the second element
+    of \ccc{x}. If neither of these is the case, then it returns true
+    if the third element of \ccc{x} is less than the third element of
+    \ccc{y}, and false if the third element of \ccc{y} is less than
+    the third element of \ccc{x}.  If neither of these is the case,
+    then it returns the result of comparing the fourth elements of
+    \ccc{x} and \ccc{y}. This operator may only be used if \ccc{T1},
+    \ccc{T2}, \ccc{T3}, and \ccc{T4} define the comparison operator.}
+  
+  \ccFunction{template <class T1, class T2, class T3, class T4> bool
+    operator==(quadruple<T1, T2, T3, T4> x, quadruple<T1, T2, T3, T4>
+    y);} {The equality operator. The return value is true if and only
+    the first elements of \ccc{x} and \ccc{y} are equal, the second
+    elements of \ccc{x} and \ccc{y} are equal, the third elements of
+    \ccc{x} and \ccc{y} are equal, and the fourth elements of \ccc{x}
+    and \ccc{y} are equal.  This operator may only be used if
+    \ccc{T1}, \ccc{T2}, \ccc{T3}, and \ccc{T4} define the equality
+    operator.}
+  
+  \ccFunction{template <class T1, class T2, class T3, class T4>
+    quadruple<T1, T2, T3, T4> make_quadruple(T1 x, T2 y, T3 z, T4 w);}
+  {Equivalent to \ccStyle{quadruple<T1, T2, T3, T4>(x, y, z, w)}.}
+
+\end{ccRefClass}
 
 %% +=========================================================================+
 
