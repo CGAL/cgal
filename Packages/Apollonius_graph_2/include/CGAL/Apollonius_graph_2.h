@@ -554,7 +554,7 @@ public:
   // MISCELLANEOUS
   //--------------
   inline void clear() {
-    return DG::clear();
+    DG::clear();
   }
 
   inline void swap(Apollonius_graph_2& ag) {
