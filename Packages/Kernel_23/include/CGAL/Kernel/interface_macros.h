@@ -364,52 +364,5 @@ CGAL_Kernel_pred(Side_of_oriented_circle_2,
 CGAL_Kernel_pred(Side_of_oriented_sphere_3,
 		 side_of_oriented_sphere_3_object)
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-CGAL_Kernel_pred(Equal_xy_2,
-		 equal_xy_2_object)
-CGAL_Kernel_pred(Leftturn_2,
-		 leftturn_2_object)
-CGAL_Kernel_pred(Equal_xyz_3,
-		 equal_xyz_3_object)
-CGAL_Kernel_cons(Construct_direction_of_line_2,
-		 construct_direction_of_line_2_object)
-CGAL_Kernel_cons(Construct_direction_of_ray_2,
-		 construct_direction_of_ray_2_object)
-CGAL_Kernel_cons(Construct_direction_of_line_3,
-		 construct_direction_of_line_3_object)
-CGAL_Kernel_cons(Construct_direction_of_ray_3,
-		 construct_direction_of_ray_3_object)
-CGAL_Kernel_cons(Construct_max_point_2,
-		 construct_max_point_2_object)
-CGAL_Kernel_cons(Construct_max_point_3,
-		 construct_max_point_3_object)
-CGAL_Kernel_cons(Construct_min_point_2,
-		 construct_min_point_2_object)
-CGAL_Kernel_cons(Construct_min_point_3,
-		 construct_min_point_3_object)
-CGAL_Kernel_cons(Construct_source_point_2,
-		 construct_source_point_2_object)
-CGAL_Kernel_cons(Construct_source_point_3,
-		 construct_source_point_3_object)
-CGAL_Kernel_cons(Construct_target_point_2,
-		 construct_target_point_2_object)
-CGAL_Kernel_cons(Construct_target_point_3,
-		 construct_target_point_3_object)
-CGAL_Kernel_cons(Construct_second_point_on_2,
-		 construct_second_point_on_2_object)
-CGAL_Kernel_cons(Construct_second_point_on_3,
-		 construct_second_point_on_3_object)
-CGAL_Kernel_cons(Transform_2,
-		 transform_2_object)
-CGAL_Kernel_cons(Transform_3,
-		 transform_3_object)
-CGAL_Kernel_cons(Construct_aff_transformation_2,
-		 construct_aff_transformation_2_object)
-CGAL_Kernel_cons(Construct_aff_transformation_3,
-		 construct_aff_transformation_3_object)
-CGAL_Kernel_cons(Compute_y_at_x_2,
-		 compute_y_at_x_2_object)
-#endif // CGAL_NO_DEPRECATED_CODE
-
 #undef CGAL_Kernel_pred
 #undef CGAL_Kernel_cons

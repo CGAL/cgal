@@ -87,10 +87,6 @@ public:
     Oriented_side  oriented_side(const Point_3 &p) const;
     bool           has_on(const Point_3 &p) const;
     bool           has_on(const Line_3 &p) const;
-#ifndef CGAL_NO_DEPRECATED_CODE
-    bool           has_on_boundary(const Point_3 &p) const;
-    bool           has_on_boundary(const Line_3 &p) const;
-#endif // CGAL_NO_DEPRECATED_CODE
     bool           has_on_positive_side(const Point_3&l) const;
     bool           has_on_negative_side(const Point_3&l) const;
 
@@ -482,22 +478,6 @@ PlaneH3<R>::has_on( const typename PlaneH3<R>::Line_3& l) const
  return (  ( a()*p.hx() + b()*p.hy() + c()*p.hz() + d()*p.hw()   == RT(0) )
          &&( ld.hx()*ov.hx() + ld.hy()*ov.hy() + ld.hz()*ov.hz() == RT(0) ) );
 }
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-template < class R >
-bool
-PlaneH3<R>::has_on_boundary( const typename PlaneH3<R>::Point_3& p) const
-{
- return has_on(p);
-}
-
-template < class R >
-bool
-PlaneH3<R>::has_on_boundary( const typename PlaneH3<R>::Line_3& l) const
-{
- return has_on(l);
-}
-#endif
 
 template < class R >
 Oriented_side

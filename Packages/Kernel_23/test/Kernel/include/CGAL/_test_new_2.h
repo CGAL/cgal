@@ -72,9 +72,6 @@ test_new_2(const R& rep)
   typedef typename R::Circle_2                    Circle_2;
   typedef typename R::Triangle_2                  Triangle_2;
   typedef typename R::Iso_rectangle_2             Iso_rectangle_2;
-#ifndef CGAL_NO_DEPRECATED_CODE
-  typedef typename R::Aff_transformation_2        Aff_transformation_2;
-#endif // CGAL_NO_DEPRECATED_CODE
   typedef typename R::Object_2                    Object_2;
   typedef typename R::Plane_3                     Plane_3;
   typedef typename R::Point_3                     Point_3;
@@ -188,22 +185,6 @@ test_new_2(const R& rep)
 	   obj = construct_object(d6);
            obj = construct_object(l6);
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-  typename R::Construct_aff_transformation_2 construct_aff_transformation
-        = rep.construct_aff_transformation_2_object();
-  Aff_transformation_2 a1 = construct_aff_transformation(Translation(),v2);
-  Aff_transformation_2 a2 = construct_aff_transformation(Rotation(),d2,1);
-  Aff_transformation_2 a21 = construct_aff_transformation(Rotation(),d2,1,2);
-  Aff_transformation_2 a3 = construct_aff_transformation(Rotation(),1,1);
-  Aff_transformation_2 a31 = construct_aff_transformation(Rotation(),3,4,5);
-  Aff_transformation_2 a4 = construct_aff_transformation(Scaling(),5);
-  Aff_transformation_2 a41 = construct_aff_transformation(Scaling(),5,2);
-  Aff_transformation_2 a5 = construct_aff_transformation(1,2,3,4,5,6);
-  Aff_transformation_2 a51 = construct_aff_transformation(1,2,3,4,5,6,1);
-  Aff_transformation_2 a6 = construct_aff_transformation(1,2,3,4);
-  Aff_transformation_2 a61 = construct_aff_transformation(1,2,3,4,1);
-#endif // CGAL_NO_DEPRECATED_CODE
-
   typename R::Construct_point_on_2 construct_point_on
         = rep.construct_point_on_2_object();
   Point_2 tmp1 = construct_point_on(l2, 0);
@@ -225,33 +206,6 @@ test_new_2(const R& rep)
           p1 = construct_translated_point(tmp1, v6);
           p2 = construct_translated_point(p3, -v6);
 
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-  typename R::Construct_second_point_on_2 construct_second_point_on
-        = rep.construct_second_point_on_2_object();
-  Point_2 tmp2 = construct_second_point_on(r2);
-
-
-  typename R::Construct_source_point_2 construct_source_point
-        = rep.construct_source_point_2_object();
-  Point_2 tmp3 = construct_source_point(s2);
-
-
-  typename R::Construct_target_point_2 construct_target_point
-        = rep.construct_target_point_2_object();
-  Point_2 tmp4 = construct_target_point(s2);
-
-
-  typename R::Construct_min_point_2 construct_min_point
-        = rep.construct_min_point_2_object();
-  Point_2 tmp5a = construct_min_point(s2);
-  Point_2 tmp5b = construct_min_point(rec2);
-
-  typename R::Construct_max_point_2 construct_max_point
-        = rep.construct_max_point_2_object();
-  Point_2 tmp6a = construct_max_point(s2);
-  Point_2 tmp6b = construct_max_point(rec2);
-#endif // CGAL_NO_DEPRECATED_CODE
 
   typename R::Construct_vertex_2 construct_vertex_2
         = rep.construct_vertex_2_object();
@@ -277,17 +231,6 @@ test_new_2(const R& rep)
   cccit = construct_cartesian_const_iterator_2(p1);
   cccit = construct_cartesian_const_iterator_2(p1,0);
   
-#ifndef CGAL_NO_DEPRECATED_CODE
-  typename R::Construct_direction_of_line_2 construct_direction_from
-        = rep.construct_direction_of_line_2_object();
-  Direction_2 tmp7a = construct_direction_from(l2);
-
-  typename R::Construct_direction_of_ray_2 construct_direction_from_ray
-        = rep.construct_direction_of_ray_2_object();
-  Direction_2 tmp7b = construct_direction_from_ray(r2);
-#endif // CGAL_NO_DEPRECATED_CODE
-
-
   typename R::Construct_supporting_line_2 construct_supporting_line
         = rep.construct_supporting_line_2_object();
   Line_2 tmp8a = construct_supporting_line(r2);
@@ -361,13 +304,6 @@ test_new_2(const R& rep)
         = rep.construct_opposite_vector_2_object();
   Vector_2 tmp19a = construct_opposite_vector(v2);
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-  typename R::Transform_2 transform
-        = rep.transform_2_object();
-  Point_2 tmp20a = transform(p2,a3);
-  Line_2 tmp20b = transform(l2,a3);
-#endif // CGAL_NO_DEPRECATED_CODE
-
   typename R::Intersect_2 intersect
         = rep.intersect_2_object();
   Object_2 tmp21a = intersect(l2,l3);
@@ -384,13 +320,6 @@ test_new_2(const R& rep)
         = rep.assign_2_object();
        tmp_bool = assign(p1,tmp21a);
        tmp_bool = assign(p1,tmp21b);
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-  typename R::Compute_y_at_x_2 compute_y_at_x
-        = rep.compute_y_at_x_2_object();
-  FT tmp22 = compute_y_at_x(l2, FT(11));
-  use(tmp22);
-#endif // CGAL_NO_DEPRECATED_CODE
 
   typename R::Compute_area_2 compute_area_2
         = rep.compute_area_2_object();

@@ -779,44 +779,6 @@ compare_deltax_deltay(const PointH2<R>& p,
                   CGAL_NTS abs(r.hy()*s.hw() - s.hy()*r.hw()) * p.hw()*q.hw());
 }
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-template < class R>
-inline
-Comparison_result
-compare_lexicographically_xy(const PointH2<R>& p, const PointH2<R>& q)
-{
-  bool THIS_FUNCTION_IS_DEPRECATED;
-  return compare_xy(p, q);
-}
-
-template < class R>
-inline
-Comparison_result
-compare_lexicographically_yx(const PointH2<R>& p, const PointH2<R>& q)
-{
-  bool THIS_FUNCTION_IS_DEPRECATED;
-  return compare_yx(p, q);
-}
-
-template < class R>
-inline
-bool
-leftturn( const PointH2<R>& p, const PointH2<R>& q, const PointH2<R>& r)
-{
-  bool THIS_FUNCTION_IS_DEPRECATED;
-  return left_turn(p, q, r);
-}
-
-template < class R>
-inline
-bool
-rightturn( const PointH2<R>& p, const PointH2<R>& q, const PointH2<R>& r)
-{
-  bool THIS_FUNCTION_IS_DEPRECATED;
-  return right_turn(p, q, r);
-}
-#endif
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_PREDICATES_ON_POINTSH2_H

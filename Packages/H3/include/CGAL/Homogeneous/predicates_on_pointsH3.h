@@ -90,16 +90,6 @@ compare_xyz(const PointH3<R>& p, const PointH3<R>& q)
   }
 }
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-template < class R>
-inline
-Comparison_result
-compare_lexicographically_xyz(const PointH3<R>& p, const PointH3<R>& q)
-{
-   return compare_xyz(p, q);
-}
-#endif
-
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
 bool
@@ -231,16 +221,6 @@ compare_xy(const PointH3<R>& p, const PointH3<R>& q)
   // same x and y
   return EQUAL;
 }
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-template < class R>
-inline
-Comparison_result
-compare_lexicographically_xy(const PointH3<R>& p, const PointH3<R>& q)
-{
-   return compare_xy(p, q);
-}
-#endif
 
 template < class R >
 inline

@@ -54,9 +54,6 @@ test_new_3(const R& rep)
   typedef typename R::Triangle_3                  Triangle_3;
   typedef typename R::Tetrahedron_3               Tetrahedron_3;
   typedef typename R::Iso_cuboid_3                Iso_cuboid_3;
-#ifndef CGAL_NO_DEPRECATED_CODE
-  typedef typename R::Aff_transformation_3        Aff_transformation_3;
-#endif // CGAL_NO_DEPRECATED_CODE
   typedef typename R::Object_3                    Object_3;
   typedef typename R::Point_2                     Point_2;
 
@@ -184,24 +181,6 @@ test_new_3(const R& rep)
            obj = construct_object(th2);
            obj = construct_object(t2);
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-  typename R::Construct_aff_transformation_3 construct_aff_transformation
-        = rep.construct_aff_transformation_3_object();
-  Aff_transformation_3 a1 = construct_aff_transformation();
-  Aff_transformation_3 a2 = construct_aff_transformation(Translation(),v2);
-  Aff_transformation_3 a4 = construct_aff_transformation(Scaling(),5);
-  Aff_transformation_3 a41 = construct_aff_transformation(Scaling(),5,2);
-  Aff_transformation_3 a5 =
-        construct_aff_transformation(1,2,3,4,5,6,7,8,9,10,11,12);
-  Aff_transformation_3 a51 =
-        construct_aff_transformation(1,2,3,4,5,6,7,8,9,10,11,12,1);
-  Aff_transformation_3 a6 =
-        construct_aff_transformation(1,2,3,4,5,6,7,8,9);
-  Aff_transformation_3 a61 =
-        construct_aff_transformation(1,2,3,4,5,6,7,8,9,10);
-#endif // CGAL_NO_DEPRECATED_CODE
-
-
   typename R::Construct_point_on_3 construct_point_on
         = rep.construct_point_on_3_object();
   Point_3 tmp1 = construct_point_on(l2, 0);
@@ -223,31 +202,6 @@ test_new_3(const R& rep)
         = rep.construct_translated_point_3_object();
           p1 = construct_translated_point(tmp1, v6);
           p2 = construct_translated_point(p3, -v6);
-
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-  typename R::Construct_second_point_on_3 construct_second_point_on
-        = rep.construct_second_point_on_3_object();
-  Point_3 tmp2 = construct_second_point_on(r2);
-
-  typename R::Construct_source_point_3 construct_source_point
-        = rep.construct_source_point_3_object();
-  Point_3 tmp2b = construct_source_point(s2);
-
-  typename R::Construct_target_point_3 construct_target_point
-        = rep.construct_target_point_3_object();
-  Point_3 tmp2c = construct_target_point(s2);
-
-  typename R::Construct_min_point_3 construct_min_point
-        = rep.construct_min_point_3_object();
-  Point_3 tmp2d = construct_min_point(s2);
-  Point_3 tmp2e = construct_min_point(iso1);
-
-  typename R::Construct_max_point_3 construct_max_point
-        = rep.construct_max_point_3_object();
-          tmp2d = construct_max_point(s2);
-          tmp2e = construct_max_point(iso1);
-#endif // CGAL_NO_DEPRECATED_CODE
 
   typename R::Construct_vertex_3 construct_vertex_3
         = rep.construct_vertex_3_object();
@@ -276,17 +230,6 @@ test_new_3(const R& rep)
   cccit = construct_cartesian_const_iterator_3(p1);
   cccit = construct_cartesian_const_iterator_3(p1,0);
   
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-  typename R::Construct_direction_of_line_3 construct_direction_from
-        = rep.construct_direction_of_line_3_object();
-  Direction_3 tmp7a = construct_direction_from(l2);
-
-  typename R::Construct_direction_of_ray_3 construct_direction_from_ray
-        = rep.construct_direction_of_ray_3_object();
-  Direction_3 tmp7b = construct_direction_from_ray(r2);
-#endif // CGAL_NO_DEPRECATED_CODE
-
   typename R::Construct_supporting_line_3 construct_supporting_line
         = rep.construct_supporting_line_3_object();
   Line_3 tmp8a = construct_supporting_line(r2);
@@ -366,15 +309,6 @@ test_new_3(const R& rep)
   typename R::Construct_supporting_plane_3 construct_supporting_plane
         = rep.construct_supporting_plane_3_object();
   Plane_3 tmp8 = construct_supporting_plane(t2);
-
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-  typename R::Transform_3 transform
-        = rep.transform_3_object();
-  Point_3 tmp9a = transform(p2,a2);
-  Triangle_3 tmp9b = transform(t2,a2);
-  (void) tmp9b;
-#endif // CGAL_NO_DEPRECATED_CODE
 
 
   typename R::Intersect_3 intersect
@@ -618,10 +552,6 @@ test_new_3(const R& rep)
 
   typename R::Has_on_boundary_3 has_on_boundary
         = rep.has_on_boundary_3_object();
-#ifndef CGAL_NO_DEPRECATED_CODE
-  bool tmp36a = has_on_boundary(h2,p2);
-  (void) tmp36a;
-#endif // CGAL_NO_DEPRECATED_CODE
   bool tmp36b = has_on_boundary(th2,p2);
   bool tmp36c = has_on_boundary(sp2,p2);
   bool tmp36d = has_on_boundary(iso1,p2);

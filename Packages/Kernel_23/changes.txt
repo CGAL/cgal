@@ -1,3 +1,6 @@
+1.90 (17 November 2003)
+- Remove deprecated stuff.
+
 1.89 (7 November 2003)
 - Fix documentation of do_intersect() for Triangle_3.
 
