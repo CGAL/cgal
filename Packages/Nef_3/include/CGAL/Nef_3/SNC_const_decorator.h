@@ -24,7 +24,7 @@
 #define CGAL_SNC_CONST_DECORATOR_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Nef_3/Normalizing.h>
+#include <CGAL/Nef_S2/Normalizing.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Nef_3/SNC_iteration.h>
 #include <CGAL/Nef_3/SNC_decorator_traits.h>

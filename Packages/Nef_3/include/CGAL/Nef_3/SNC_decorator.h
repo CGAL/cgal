@@ -27,7 +27,7 @@
 //#define CGAL_NEF3_DUMP_SNC_OPERATORS
 
 #include <CGAL/basic.h>
-#include <CGAL/Nef_3/Normalizing.h>
+#include <CGAL/Nef_S2/Normalizing.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Nef_3/SNC_iteration.h>
 #include <CGAL/Nef_3/SNC_const_decorator.h>
@@ -1199,6 +1199,9 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       valid = valid && (++count <= max);
     }
 
+   verr << "CGAL::SNC_decorator<...>::is_valid(): structure is "
+	 << ( valid ? "valid." : "NOT VALID.") << std::endl;
+
     Points.sort(points_lt());
     typename std::list<Point_3>::const_iterator li1, li2;
     li2 = li1 = Points.begin();
@@ -1209,8 +1212,12 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       }
     }
 
+    verr << "CGAL::SNC_decorator<...>::is_valid(): structure is "
+	 << ( valid ? "valid." : "NOT VALID.") << std::endl;
+    
     Halfedge_iterator he;
     CGAL_forall_halfedges(he,*this) {
+
       valid = valid && he->is_valid(verb, level);
       valid = valid && (twin(he)!=he);
       valid = valid && (twin(twin(he))==he);
@@ -1225,7 +1232,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 	  SHalfedge_handle start2(S2.next(twin(se2)));
 	  while(facet(se1) != twin(facet(se2)) && se2 != start2)
 	    se2 = twin(S2.previous(se2));
-	  valid = valid && (facet(se1) == twin(facet(se2)));
+
 	  start2 = se2;
 	  do {
 	    se1 = S1.next(twin(se1));
@@ -1240,6 +1247,9 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       }
       valid = valid && (++count <= max);
     }
+
+    verr << "CGAL::SNC_decorator<...>::is_valid(): structure is "
+	 << ( valid ? "valid." : "NOT VALID.") << std::endl;
 
     Unique_hash_map<SHalfedge_handle, bool> SEinUniqueFC(false);
     Halffacet_iterator hfi;
@@ -1257,8 +1267,6 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 	  SHalfedge_around_facet_circulator shec1(sheh), shec2(shec1);
        	  CGAL_For_all(shec1, shec2) {
 	    SM_decorator SD(&*vertex(shec1));
-	    if(SEinUniqueFC[shec1])
-	      TRACEN("redundant facet " << point(vertex(shec1)) << " | " << SD.circle(shec1));
 	    CGAL_assertion(!SEinUniqueFC[shec1]);
 	    SEinUniqueFC[shec1] = true;
 	    Plane_3 p_ref(point(vertex(shec1)),SD.circle(shec1).opposite().orthogonal_vector());
@@ -1275,6 +1283,9 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       
       valid = valid && (++count <= max);
     }
+
+    verr << "CGAL::SNC_decorator<...>::is_valid(): structure is "
+	 << ( valid ? "valid." : "NOT VALID.") << std::endl;
 
     Volume_iterator voli;
     CGAL_forall_volumes(voli,*this) {
