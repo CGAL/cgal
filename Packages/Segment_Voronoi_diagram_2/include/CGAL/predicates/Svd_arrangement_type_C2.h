@@ -200,10 +200,10 @@ namespace CGALi {
 
 template<class RT>
 typename CGALi::Svd_arrangement_enum::Arrangement_type
-svd_arrangement_type_C2(const RT& x1, const RT& y1,
-			const RT& x2, const RT& y2,
-			const RT& x3, const RT& y3,
-			const RT& x4, const RT& y4)
+svd_arrangement_type_ftC2(const RT& x1, const RT& y1,
+			  const RT& x2, const RT& y2,
+			  const RT& x3, const RT& y3,
+			  const RT& x4, const RT& y4)
 {
   typedef CGALi::Svd_arrangement_enum Enum;
 
@@ -597,10 +597,10 @@ private:
     Segment_2 s2 = q.segment();
 
     result_type res =
-      svd_arrangement_type_C2( s1.source().x(), s1.source().y(),
-			       s1.target().x(), s1.target().y(),
-			       s2.source().x(), s2.source().y(),
-			       s2.target().x(), s2.target().y() );
+      svd_arrangement_type_ftC2( s1.source().x(), s1.source().y(),
+				 s1.target().x(), s1.target().y(),
+				 s2.source().x(), s2.source().y(),
+				 s2.target().x(), s2.target().y() );
 
     return res;
   }
