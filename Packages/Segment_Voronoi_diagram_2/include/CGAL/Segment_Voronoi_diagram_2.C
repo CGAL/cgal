@@ -814,7 +814,8 @@ insert_segment(const Site_2& t, Vertex_handle vnear,
   if ( number_of_vertices() == 0 ) {
     Vertex_handle v0 = insert_first( t.source() );
     Vertex_handle v1 = insert_second( t.target() );
-    return insert_third(v0, v1);
+    Vertex_handle vs = insert_third(v0, v1);
+    return vs;
   } else {
     Vertex_handle v0, v1;
     if ( number_of_vertices() == 1 ) {
@@ -829,10 +830,11 @@ insert_segment(const Site_2& t, Vertex_handle vnear,
     }
 
     Storage_site_2 ss = create_storage_site(v0, v1);
-    return insert_segment2( t, ss, v0, false );
-    //    insert_point( t.source_site(), Vertex_handle() );
-    //    insert_point( t.target_site(), Vertex_handle() );
-  }
+    // we do not add vs in the vertex list; it is inserted inside
+    // the method insert_segment2
+    vs = insert_segment2( t, ss, v0, false );
+    return vs;
+  } // if ( number_of_vertices() == 0 ) {
 }
 
 
@@ -871,8 +873,8 @@ insert_segment2(const Site_2& t, const Storage_site_2& ss,
   } else {
     vnearest = vnear;
   }
-
 #endif
+
   CGAL_assertion( vnearest != Vertex_handle() );
   // MK: add here code that checks if the inserted segment has already
   // been inserted; MAYBE THIS IS NOT NEEDED; I ALREADY DO IT IN
@@ -971,12 +973,15 @@ insert_segment2(const Site_2& t, const Storage_site_2& ss,
   // segments are found
   if ( vcross.first ) {
     if ( t.is_segment() ) {
+      Intersections_tag itag;
       return insert_intersecting_segment(ss, t, vcross.second,
-					 Intersections_tag());
+					 itag);
       //      return vcross.second;
     }
   }
 
+  // no intersecting segment has been found; we insert the segment as
+  // usual...
   Vertex_handle v = create_vertex(ss);
 
   retriangulate_conflict_region(v, l, fm);

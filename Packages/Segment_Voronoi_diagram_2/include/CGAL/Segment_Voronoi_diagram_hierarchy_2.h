@@ -251,6 +251,8 @@ private:
 			Vertex_handle vnear[svd_hierarchy_2__maxlevel],
 			bool force_point) const; 
   int random_level();
+
+  size_type find_level(Vertex_handle v) const;
 };
 
 template<class Gt, class STag, class PC, class DS, class LTag>
@@ -605,6 +607,16 @@ random_level()
   return l;
 }
 
+template<class Gt, class STag, class PC, class DS, class LTag>
+inline typename
+Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag>::size_type
+Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag>::
+find_level(Vertex_handle v) const
+{
+  size_type level = 0;
+  while ( v->up() != Vertex_handle() ) { level++; }
+  return level;
+}
 
 template<class Gt, class STag, class PC, class DS, class LTag>
 bool

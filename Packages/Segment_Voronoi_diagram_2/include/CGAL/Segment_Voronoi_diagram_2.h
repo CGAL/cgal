@@ -919,10 +919,22 @@ protected:
   //  Vertex_handle  insert_third(const Point_2& p0, const Point_2& p1);
   Vertex_handle  insert_third(Vertex_handle v0, Vertex_handle v1);
 
+  Vertex_handle insert_point(const Point_2& p, Vertex_handle vnear);
+  Vertex_handle insert_point(const Storage_site_2& ss,
+			     const Site_2& t, Vertex_handle vnear);
+
+  Vertex_handle insert_segment(const Site_2& t, Vertex_handle vnear,
+			       bool insert_endpoints);
+
+  Vertex_handle insert_segment2(const Site_2& t,
+				const Storage_site_2& ss,
+				Vertex_handle vnear, bool insert_endpoints);
+
   template<class ITag>
   Vertex_handle  insert_intersecting_segment(const Storage_site_2& ss,
 					     const Site_2& t,
-					     Vertex_handle v, ITag tag)
+					     Vertex_handle v,
+					     ITag tag)
   {
     return insert_intersecting_segment_with_tag(ss, t, v, tag);
   }
@@ -937,15 +949,7 @@ protected:
 				       const Site_2& t,
 				       Vertex_handle v, Tag_true);
 
-  Vertex_handle insert_point(const Point_2& p, Vertex_handle vnear);
-  Vertex_handle insert_point(const Storage_site_2& ss,
-			     const Site_2& t, Vertex_handle vnear);
 
-  Vertex_handle insert_segment(const Site_2& t, Vertex_handle vnear,
-			       bool insert_endpoints);
-  Vertex_handle insert_segment2(const Site_2& t,
-				const Storage_site_2& ss,
-				Vertex_handle vnear, bool insert_endpoints);
 
   // methods for insertion
   void initialize_conflict_region(const Face_handle& f, List& l);
