@@ -144,21 +144,10 @@
 // Users that does not want the global min/max 
 // should define CGAL_NOMINMAX
 //-------------------------------------------------------------------//
-
+#include <algorithm>
 #if defined NOMINMAX && !defined CGAL_NOMINMAX
-template <class NT>
-inline
-NT
-// const NT&
-min(const NT& x, const NT& y)
-{ return (y < x) ? y : x; }
-
-template <class NT>
-inline
-NT
-// const NT&
-max(const NT& x, const NT& y)
-{ return (x < y) ? y : x; }
+using std::min;
+using std::max;
 #endif
 
 
