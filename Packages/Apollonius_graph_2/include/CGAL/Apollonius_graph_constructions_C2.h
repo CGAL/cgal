@@ -130,7 +130,7 @@ public:
 			   const Site_2& q,
 			   const Site_2& r) const
   {
-    //      CGAL_triangulation_precondition( ! collinear(p, q, r) );
+    //      CGAL_precondition( ! collinear(p, q, r) );
     return ad_circumcircle_2< Gt >(p,q,r);
   }
 
