@@ -146,7 +146,7 @@ public:
 	Object o = dual(eit);
 	typename Geom_traits::Line_2  l;
 	typename Geom_traits::Ray_2   r;
-	Segment s;
+	typename Geom_traits::Segment_2 s;
 	if (CGAL::assign(s,o)) ps << s;
 	if (CGAL::assign(r,o)) ps << r;
 	if (CGAL::assign(l,o)) ps << l;
