@@ -920,7 +920,7 @@ dual(const Edge &e) const
 {
   typedef typename Geom_traits::Line_2        Line;
   typedef typename Geom_traits::Ray_2         Ray;
-  typedef typename Geom_traits::Segment       Segment;
+  typedef typename Geom_traits::Segment_2     Segment;
   
   CGAL_triangulation_precondition (! is_infinite(e));
   if( dimension()== 1 ){
