@@ -8,12 +8,12 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.2-I-25 $
-// release_date  : $CGAL_Date: 2000/07/07 $
+// release       : $CGAL_Revision: CGAL-2.4-I-62 $
+// release_date  : $CGAL_Date: 2002/03/12 $
 //
 // file          : include/CGAL/Arr_leda_segment_exact_traits.h
-// package       : arr (1.39)
-// maintainer    : Eyal Flato <flato@post.tau.ac.il>
+// package       : Arrangement (2.37)
+// maintainer    : Eyal Flato <flato@math.tau.ac.il>
 // author(s)     : Iddo Hanniel
 //                 Eyal Flato <flato@post.tau.ac.il>
 //
@@ -25,6 +25,7 @@
 
 #include <list>
 
+#include <CGAL/LEDA_basic.h>
 #include <CGAL/Pm_leda_segment_exact_traits.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -287,14 +288,14 @@ public:
 	  }
       }
 	  
-    int o1 = ::orientation(c1,c2.start()); 
-    int o2 = ::orientation(c1,c2.end());
+    int o1 = CGAL_LEDA_SCOPE::orientation(c1,c2.start()); 
+    int o2 = CGAL_LEDA_SCOPE::orientation(c1,c2.end());
 	  
     if ( o1 == 0 && o2 == 0 )
       { 
 	leda_rat_point sa = c1.source(); 
 	leda_rat_point sb = c1.target();
-	if ( ::compare (sa,sb) > 0 )
+	if ( CGAL_LEDA_SCOPE::compare (sa,sb) > 0 )
 	  { 
 	    leda_rat_point h = sa; 
 	    sa = sb; 
@@ -304,7 +305,7 @@ public:
 	leda_rat_point ta = c2.source(); 
 	leda_rat_point tb = c2.target();
 		  
-	if ( ::compare (ta,tb) > 0 )
+	if ( CGAL_LEDA_SCOPE::compare (ta,tb) > 0 )
 	  { 
 	    leda_rat_point h = ta; 
 	    ta = tb; 
@@ -312,14 +313,14 @@ public:
 	  }
 		  
 	leda_rat_point a = sa;
-	if (::compare(sa,ta) < 0) 
+	if (CGAL_LEDA_SCOPE::compare(sa,ta) < 0) 
 	  a = ta;
 		  
 	leda_rat_point b = tb; 
-	if (::compare(sb,tb) < 0) 
+	if (CGAL_LEDA_SCOPE::compare(sb,tb) < 0) 
 	  b = sb;
 		  
-	if ( ::compare(a,b) <= 0 )
+	if ( CGAL_LEDA_SCOPE::compare(a,b) <= 0 )
 	  { 
 	    // a is left-low to b
 	    if (right)
@@ -361,8 +362,8 @@ public:
 	return false;
       }
 
-    int o3 = ::orientation(c2,c1.start());
-    int o4 = ::orientation(c2,c1.end());
+    int o3 = CGAL_LEDA_SCOPE::orientation(c2,c1.start());
+    int o4 = CGAL_LEDA_SCOPE::orientation(c2,c1.end());
 	  
     if ( o1 != o2 && o3 != o4 )
       { 
