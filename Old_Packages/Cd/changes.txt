@@ -1,5 +1,12 @@
+Ver 1.1 (Nov ?? 1999)
+- Added Point, Vector and Direction in include/Cartesian
+- Rudimentary test suite, mostly to see if it compiles
+- wrapper and kernel classes to be found in test/KernelCd/include
+
 Ver 1.0 (Oct 1 1999)
-New package (code from Bernd and Sven, via Stefan)
 - extracted for (int i=...) declarations into "int i; for (i=...)"
   due to problems with VC++
 - added "os << d" in ASCII case of "os << Point_d" 
+
+New package (code from Bernd and Sven, via Stefan)
+- contains only PointCd.h

@@ -266,9 +266,8 @@ operator>>(std::istream& is, PointCd<FT> &p)
     delete[] e;
     return is;
 }
-
 #endif // NO_ISTREAM_EXTRACT_POINTCD
-CGAL_END_NAMESPACE
 
+CGAL_END_NAMESPACE
 
 #endif // CGAL_POINTCD_H
