@@ -72,6 +72,14 @@ class Segment_Voronoi_diagram_2
           Segment_Voronoi_diagram_traits_wrapper_2<Gt>, Svdds >
 {
   friend class Segment_Voronoi_diagram_hierarchy_2<Gt, Svdds>;
+protected:
+  bool intersection_flag;
+
+public:
+  void set_intersection_flag(bool b)
+  {
+    intersection_flag = b;
+  }
 private:
   static const char point_descriptor;
   static const char segment_descriptor;
@@ -177,18 +185,19 @@ protected:
 public:
   // CREATION
   //---------
-  Segment_Voronoi_diagram_2(const Gt& gt=Gt()) :  DG(gt) {}
+  Segment_Voronoi_diagram_2(const Gt& gt=Gt())
+    : DG(gt), intersection_flag(true) {}
 
   template< class Input_iterator >
   Segment_Voronoi_diagram_2(Input_iterator first, Input_iterator beyond,
 			    const Gt& gt=Gt())
-    : DG(gt)
+    : DG(gt), intersection_flag(true)
   {
     insert(first, beyond);
   }
 
   Segment_Voronoi_diagram_2(const Segment_Voronoi_diagram_2 &svd)
-    : DG(svd)
+    : DG(svd), intersection_flag(true)
   {
     CGAL_postcondition( is_valid() );
   }
@@ -197,6 +206,7 @@ public:
   operator=(const Segment_Voronoi_diagram_2& svd)
   {
     DG::operator=(svd);
+    intersection_flag = svd.intersection_flag;
     return (*this);
   }
 

@@ -88,11 +88,17 @@ private:
   Vertex_handle _down;  // same vertex one level below
 };
 
+//--------------------------------------------------------------------
+//--------------------------------------------------------------------
+
 // parameterization of the  hierarchy
 const int svd_hierarchy_2__ratio    = 30;
 const int svd_hierarchy_2__minsize  = 20;
 const int svd_hierarchy_2__maxlevel = 5;
 // maximal number of points is 30^5 = 24 millions !
+
+//--------------------------------------------------------------------
+//--------------------------------------------------------------------
 
 template < class Gt,
   class Tds = Segment_Voronoi_diagram_data_structure_2<
@@ -362,7 +368,7 @@ insert(const Site& t, int hierarchy_level)
 
   // MK:: by doing this the hierarchy stores segments only at the
   //      bottom-most level
-  if ( false && t.is_segment() ) {
+  if ( this->intersection_flag && t.is_segment() ) {
     return vertex;
   }
 

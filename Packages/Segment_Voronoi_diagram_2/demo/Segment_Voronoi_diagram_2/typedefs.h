@@ -44,7 +44,7 @@ typedef Gt::Segment_2          Segment;
 typedef CGAL::Polygon_2<Rep>   Polygon_2;
 typedef Gt::Site_2             Site;
 
-//typedef CGAL::Segment_Voronoi_diagram_hierarchy_2<Gt>          SVD_2;
-typedef CGAL::Segment_Voronoi_diagram_2<Gt>          SVD_2;
+typedef CGAL::Segment_Voronoi_diagram_hierarchy_2<Gt>          SVD_2;
+//typedef CGAL::Segment_Voronoi_diagram_2<Gt>          SVD_2;
 
 #endif  // _MK___TYPEDEFS_H

@@ -480,6 +480,7 @@ do_intersect(const Site& t, Vertex_handle v) const
   // and t is a point and lies in a segment
 
   //  return false;
+  if ( !intersection_flag ) { return false; }
 
   if ( t.is_segment() ) {
     if ( !is_infinite(v) && v->is_segment() ) {
