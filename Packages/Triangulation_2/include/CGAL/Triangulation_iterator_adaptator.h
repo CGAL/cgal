@@ -43,7 +43,7 @@ struct Triangulation_iterator_handle_adaptor
 
   // MK: added this to satisfy the mips_CC-7.40 compiler
   Self& operator=(const Self& other) {
-    Base::operator=((Base)other); 
+    static_cast<Base &>(*this) = static_cast<const Base&>(other); 
     return *this;
   }
 

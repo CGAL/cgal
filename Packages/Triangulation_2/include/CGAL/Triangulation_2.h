@@ -66,9 +66,7 @@ class Triangulation_2
 {
   friend std::istream& operator>> CGAL_NULL_TMPL_ARGS
                 (std::istream& is, Triangulation_2 &tr);
-  //friend class Triangulation_finite_faces_iterator_2<Self>;
-  //friend class Triangulation_finite_vertices_iterator_2<Self>;
-  class Infinite_tester;
+   class Infinite_tester;
   typedef Triangulation_2<Gt,Tds>             Self;
 
 public:
@@ -97,7 +95,8 @@ public:
  
   //We derive in order to add a conversion to handle.
   class Finite_vertices_iterator :
-    public Filter_iterator<All_vertices_iterator, Infinite_tester> {
+    public Filter_iterator<All_vertices_iterator, Infinite_tester> 
+  {
     typedef Filter_iterator<All_vertices_iterator, Infinite_tester> Base; 
     typedef Finite_vertices_iterator                          Self;
   public:
@@ -108,10 +107,11 @@ public:
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
     operator Vertex_handle() const { return Base::base(); }
- };
+  };
 
   class Finite_faces_iterator
-    : public Filter_iterator<All_faces_iterator, Infinite_tester> {
+    : public Filter_iterator<All_faces_iterator, Infinite_tester> 
+  {
     typedef Filter_iterator<All_faces_iterator, Infinite_tester> Base;
     typedef Finite_faces_iterator                           Self;
   public:

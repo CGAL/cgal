@@ -233,8 +233,9 @@ Triangulation_ds_face_circulator_2<Tds>&
 Triangulation_ds_face_circulator_2<Tds> ::
 operator=(const Face_circulator& other)
 {
-  Base_circulator::operator=((Base_circulator)other);
-  _v = other._v;
+   static_cast<Base_circulator &>(*this) =
+    static_cast<const Base_circulator &> (other);
+   _v = other._v;
   pos = other.pos;
   return *this;
 } 
