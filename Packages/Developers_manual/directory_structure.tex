@@ -443,50 +443,6 @@ for these programs will be somewhat dissimilar.
 \index{demo directory@{\tt demo} directory|)}
 
 
-\section{Bug fixes}
-\label{sec:bug_fixes}
-\ccIndexSubitemBegin{bug fixes}{submitting}
-
-The directory structure of a bug fix submission should follow that of a normal
-submission. It contains replacement files for buggy files in a public release.
-
-
-\begin{verbatim}
-      |- description.txt
-      |
-      |- long_description.txt
-      |
-      +- <files that replace files in the public release>
-\end{verbatim}
-
-The fules for submitting bug fixes are:
-\begin{itemize}
-   \item A bug fix should apply to the official public release of CGAL and 
-         should not depend on more recent internal releases. 
-
-   \item If possible, make your changes directly in the files from the public 
-         distribution (otherwise make sure that the file you edit is the same
-         as the one in the public release).
-
-   \item The file {\tt description.txt}%
-         \ccIndexSubitem{\tt description.txt}{for bug fixes}
-         should give a very short (not more
-         than 50 words) description of the bug that has been fixed. 
-
-   \item A file called {\tt long\_description.txt}
-         \ccIndexSubitem[c]{\tt long_description.txt}{for bug fixes}
-         must be added 
-         with more detailed information about the bug fix, including: 
-	 \begin{itemize}
-            \item description of the problem(s) that this patch fixes;
-            \item list of the files that are affected;
-            \item whether the library needs to be recompiled after applying
-	          this patch.
-        \end{itemize}
-   \item Bug fixes should be sent to the following address: 
-         \ccAnchor{mailto:cgal-bugfixes@cs.uu.nl}{{\tt cgal-bugfixes@cs.uu.nl}}.
-\end{itemize}
-\ccIndexSubitemEnd{bug fixes}{submitting}
 \ccIndexSubitemEnd{submitting}{directory structure for}
 \ccIndexMainItemEnd{directory structure}
 
