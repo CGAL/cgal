@@ -13,11 +13,10 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-#           -O2 -NDEBUG \
-#           -DCGAL_NEF3_INTERSECTION_BY_KDTREE \
+#           -O2 -DNDEBUG \
 
 CXXFLAGS = \
-           -DCGAL_NEF3_OVERLAY_BY_HAND_OFF \
+           $(ADDITIONAL_CXXFLAGS) \
            -DCGAL_NEF3_DUMP_STATISTICS \
            -DCGAL_NEF3_TIMER_INITIALIZE_KDTREE \
            -DCGAL_NEF3_TIMER_PLANE_SWEEPS \
@@ -28,9 +27,6 @@ CXXFLAGS = \
            -DCGAL_NEF3_TIMER_EXTERNAL_STRUCTURE \
            -DCGAL_NEF3_TIMER_OVERLAY \
 	   -DCGAL_NEF3_TIMER_BINARY_OPERATION \
-	   -DCGAL_NEF3_BOX_INTERSECTION_CUTOFF=1000 \
-           -DCGAL_NEF3_USE_LEDA_INTEGER \
-           -DCGAL_NEF3_USE_HOMOGENEOUS \
            -I/home/hachenb/CGAL/Nef_3/include \
            -I/home/hachenb/CGAL/Nef_S2/include \
            $(CGAL_CXXFLAGS) \
@@ -54,15 +50,12 @@ LDFLAGS = \
 
 all:            \
                 union_of_rotated_cylinders$(EXE_EXT) \
-	        union_of_small_objects$(EXE_EXT) \
 	        two_tetrahedra_fields$(EXE_EXT) \
 	       	tetrahedra_and_grid$(EXE_EXT) \
                 big_and_small$(EXE_EXT)
 
 union_of_rotated_cylinders$(EXE_EXT): union_of_rotated_cylinders$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)union_of_rotated_cylinders union_of_rotated_cylinders$(OBJ_EXT) $(LDFLAGS)
-union_of_small_objects$(EXE_EXT): union_of_small_objects$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)union_of_small_objects union_of_small_objects$(OBJ_EXT) $(LDFLAGS)
 two_tetrahedra_fields$(EXE_EXT): two_tetrahedra_fields$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)two_tetrahedra_fields two_tetrahedra_fields$(OBJ_EXT) $(LDFLAGS)
 tetrahedra_and_grid$(EXE_EXT): tetrahedra_and_grid$(OBJ_EXT)
@@ -72,7 +65,6 @@ big_and_small$(EXE_EXT): big_and_small$(OBJ_EXT)
 
 clean: \
                    union_of_rotated_cylinders.clean \
-	           union_of_small_objects.clean \
 	           two_tetrahedra_fields.clean \
 	           tetrahedra_and_grid.clean \
 	           big_and_small.clean

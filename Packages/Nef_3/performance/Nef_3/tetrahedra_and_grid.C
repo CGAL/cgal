@@ -14,7 +14,7 @@ typedef CGAL::Gmpz NT;
 #endif
 
 #ifdef CGAL_NEF3_USE_LAZY_EXACT_NT
-#include <CGAL/Lazy_nt>
+#include <CGAL/Lazy_nt.h>
 typedef CGAL::Lazy_nt<NT> RT;
 #else
 typedef NT RT;
@@ -69,6 +69,7 @@ typdef CGAL::Extended_cartesian<NT> Kernel;
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 #include <CGAL/Timer.h>
 #include <sstream>
+#include <fstream>
 #include "tetrahedron_generator.h"
 #include "grid_generator.h"
 
@@ -80,14 +81,15 @@ typedef CGAL::grid_generator<Nef_polyhedron> ggen;
 
 int main(int argc, char* argv[]) {
 
-  assert(argc < 5);
+  assert(argc>1 && argc < 6);
+  
+  int nx = argc>2 ? std::atoi(argv[2]) : 2;
+  int ny = argc>3 ? std::atoi(argv[3]) : 2;
+  int nz = argc>4 ? std::atoi(argv[4]) : 2;
 
-  int nx = argc>1 ? std::atoi(argv[1]) : 2;
-  int ny = argc>2 ? std::atoi(argv[2]) : 2;
-  int nz = argc>3 ? std::atoi(argv[3]) : 2;
-
+  std::ifstream in(argv[1]);
   Nef_polyhedron Nin;
-  std::cin >> Nin;
+  in >> Nin;
   Nin.transform(Aff_transformation_3(CGAL::SCALING,2,1));
   std::ostringstream out1;
   ggen g(out1, Nin);
@@ -97,16 +99,14 @@ int main(int argc, char* argv[]) {
   in1 >> N1;
   RT s = g.size_x();
   N1.transform(Aff_transformation_3(CGAL::TRANSLATION,Vector_3(s,s,s,2)));
-  //  std::cerr << N1;
   CGAL_assertion(N1.is_valid());
 
   std::ostringstream out2;
   tgen t2(out2);
-  t2.create_tetrahedra(nx,ny,nz,s);
+  t2.create_tetrahedra(nx+1,ny+1,nz+1,s);
   std::istringstream in2(out2.str());
   Nef_polyhedron N2;
-  //  in2 >> N2;
-  std::cerr << N2;
+  in2 >> N2;
   CGAL_assertion(N2.is_valid());
 
 #if defined CGAL_NEF3_UNION
