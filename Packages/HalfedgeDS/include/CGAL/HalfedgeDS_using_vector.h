@@ -393,9 +393,9 @@ public:
 #define CGAL__HalfedgeDS_using_vector HalfedgeDS_using_vector::HDS
 #endif
 
-#define CGAL__V_UPDATE(v) (v_new + ((v.iterator()) - v_old))
-#define CGAL__H_UPDATE(h) (h_new + ((h.iterator()) - h_old))
-#define CGAL__F_UPDATE(f) (f_new + ((f.iterator()) - f_old))
+#define CGAL__V_UPDATE(v) (v_new + ( Vertex_CI   (v.iterator()) - v_old))
+#define CGAL__H_UPDATE(h) (h_new + ( Halfedge_CI (h.iterator()) - h_old))
+#define CGAL__F_UPDATE(f) (f_new + ( Face_CI     (f.iterator()) - f_old))
 
 template < class p_Traits, class p_Items>
 void
@@ -415,11 +415,15 @@ pointer_update(  Vertex_CI v_old, Halfedge_CI h_old, Face_CI f_old) {
         if ( D.get_vertex(h) != Vertex_handle()) {
             D.set_vertex( h, CGAL__V_UPDATE( D.get_vertex(h)));
             D.set_vertex_halfedge(h);
-        }
+        } else {
+            D.set_vertex( h, Vertex_handle());
+	}
         if ( D.get_face(h) != Face_handle()) {
             D.set_face( h, CGAL__F_UPDATE( D.get_face(h)));
             if ( ! h->is_border())
                 D.set_face_halfedge(h);
+        } else {
+            D.set_face( h, Face_handle());
         }
     }
     border_halfedges = CGAL__H_UPDATE( border_halfedges);
