@@ -250,12 +250,12 @@ _test_cls_triangulation_2( const Triangulation & )
   Vertex_handle v2_1_0 = T2_1.insert(p0);
   Vertex_handle v2_1_1 = T2_1.insert(p1);
   Vertex_handle v2_1_2 = T2_1.insert(p2);
-  Vertex_handle v2_1_3 = T2_1.insert(p3);    // on the edge p1,p2, on the convex hull
-  Vertex_handle v2_1_4 = T2_1.insert(p4);    // outside, with two visible collinear edges
+  Vertex_handle v2_1_3 = T2_1.insert(p3);  // on the edge p1,p2, on the convex hull
+  Vertex_handle v2_1_4 = T2_1.insert(p4);  // outside, with two visible collineaar edges
   Vertex_handle v2_1_5 = T2_1.insert(p5); 
-  Vertex_handle v2_1_6 = T2_1.insert(p6);    // outside, collinear with p2,p5
-  Vertex_handle v2_1_7 = T2_1.insert(p7);    // outside with two visible collinear edges
-                      		             // but also collinear with and extending p0,p5 
+  Vertex_handle v2_1_6 = T2_1.insert(p6);  // outside, collinear with p2,p5
+  Vertex_handle v2_1_7 = T2_1.insert(p7);  // outside with two visible collinear edges
+                      		           // but also collinear with and extending p0,p5 
   Vertex_handle v2_1_8 = T2_1.insert(p8); 
   Vertex_handle v2_1_9 = T2_1.insert(p9);    // inside, on the edge p6,p7
   Vertex_handle v2_1_10 = T2_1.insert(p10);  // inside the face p2,p4,p6
@@ -353,7 +353,7 @@ _test_cls_triangulation_2( const Triangulation & )
      T2_8.insert(Point(1,0,1));
      T2_8.insert(Point(1,1,1));
      T2_8.insert(Point(0,1,1));
-     ff = T2_8.locate(Point(0.5,0.5));
+     ff = T2_8.locate(Point(1,1,2));
      assert(!T2_8.is_infinite(ff));
      f2 = ff->neighbor(0);
      assert(!T2_8.is_infinite(f2));
@@ -621,7 +621,7 @@ _test_cls_triangulation_2( const Triangulation & )
   fc--;
   ++fc;
   --fc;
-  Point pp(0,0.5);
+  Point pp(0,1,2); //Point pp(0,0.5);
   f = T2_7.locate(pp,lt,li);
   assert(lt==Cls::FACE);
   fc= T2_7.line_walk(pp,p10,f);
@@ -636,7 +636,8 @@ _test_cls_triangulation_2( const Triangulation & )
   do {fc2++ ; n = n+1;} while (fc2 != fc);
   assert(T2_8.number_of_vertices()>=2);
   assert(T2_8.is_valid());
-  fc= T2_8.line_walk(Point(0.5,0.4),Point(5,5));
+  //fc= T2_8.line_walk(Point(0.5,0.4),Point(5,5));
+  fc= T2_8.line_walk(Point(25,20,5),Point(5,5));
   fc2=fc;
   n=0;
   assert(fc==fc2);

@@ -163,7 +163,11 @@ class Triangulation_test_distance {
     {
       Point::TESTFT d01 = sqr(_p0.test_x()-_p1.test_x()) + sqr(_p0.test_y()-_p1.test_y());
       Point::TESTFT d02 = sqr(_p0.test_x()-_p2.test_x()) + sqr(_p0.test_y()-_p2.test_y());
-      return CGAL::compare( d01,d02);
+      //the followimg generates a bug with g++2.8.1
+      //return CGAL::compare( d01,d02);
+      if ( d01 < d02) return CGAL::SMALLER;
+      else if ( d01 > d02) return CGAL::LARGER;
+      else return CGAL::EQUAL;
     }
 };
 
@@ -186,11 +190,24 @@ public:
 
   static
   CGAL::Comparison_result compare_x(const Point &p, const Point &q)
-    { return CGAL::compare(p.test_x(),q.test_x()); }
+    { 
+      // the following generates a bug with g++ 2.8.1
+      // return CGAL::compare(p.test_x(),q.test_x()); 
+      if (p.test_x() < q.test_x()) return CGAL::SMALLER;
+      else if (p.test_x() > q.test_x()) return CGAL::LARGER;
+      else return CGAL::EQUAL;
+    }
 
   static
   CGAL::Comparison_result compare_y(const Point &p, const Point &q)
-    { return CGAL::compare(p.test_y(), q.test_y()); }
+    {  
+      // the following generates a bug with g++ 2.8.1
+      // return CGAL::compare(p.test_y(), q.test_y()); 
+      if (p.test_y() < q.test_y()) return CGAL::SMALLER;
+      else if (p.test_y() > q.test_y()) return CGAL::LARGER;
+      else return CGAL::EQUAL;
+    }
+
 
   static
   bool compare(const Point &p, const Point &q)
