@@ -220,6 +220,9 @@ while ($line = <LOGFILE>) {
     } elsif ($name =~ m/My Leda Kernel/) {
       $kernel = 'my_kernel';
       $time_class = 'my_kernel_time';
+    } elsif ($name =~ m/Leda Kernel Fast/) {
+      $kernel = 'cgal_kernel';
+      $time_class = 'cgal_kernel_time';
     } elsif ($name =~ m/Leda Kernel/) {
       $kernel = 'leda_kernel';
       $time_class = 'leda_kernel_time';
@@ -229,6 +232,12 @@ while ($line = <LOGFILE>) {
     } elsif ($name =~ m/old Conics/) {
       $kernel = 'cgal_kernel';
       $time_class = 'cgal_kernel_time';
+    } elsif ($name =~ m/Tight Sweep/) {
+      $kernel = 'cgal_kernel';
+      $time_class = 'cgal_kernel_time';
+    } elsif ($name =~ m/Sweep/) {
+      $kernel = 'leda_kernel';
+      $time_class = 'leda_kernel_time';
     } else {
       next;
     }
