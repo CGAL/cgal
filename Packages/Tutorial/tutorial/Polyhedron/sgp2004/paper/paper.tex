@@ -68,25 +68,23 @@
 
 % TITLE
 % ------------------------------------------------------------------------
-\title{Generic Subdivision Algorithms on Meshes \\ 
+\title{Algorithms on Meshes \\ 
        based on the CGAL Polyhedron}
-
-% pierre: other suggestion for the title?
-%  Generic Algorithms on Meshes 
-%  based on the CGAL Polyhedron
-
 
 % for anonymous conference submission please enter your SUBMISSION ID
 % instead of the author's name (and leave the affiliation blank) !!
 
 % we should submit with N.N.
-\author[Le-Jeng Shiue, Pierre Alliez, Radu Ursu, and Lutz Kettner]
-       {Le-Jeng Shiue\thanks{CISE, University of Florida},
-        Pierre Alliez\thanks{GEOMETRICA, INRIA Sophia-Antipolis},
-        Radu Ursu\thanks{GEOMETRICA, INRIA Sophia-Antipolis}, and
-        Lutz Kettner\thanks{MPII, Saarbr\"ucken}
-       }
-% ------------------------------------------------------------------------
+
+\author[N.N.]{N.N.}
+
+% \author[Le-Jeng Shiue, Pierre Alliez, Radu Ursu, and Lutz Kettner]
+%        {Le-Jeng Shiue\thanks{CISE, University of Florida},
+%         Pierre Alliez\thanks{GEOMETRICA, INRIA Sophia-Antipolis},
+%         Radu Ursu\thanks{GEOMETRICA, INRIA Sophia-Antipolis}, and
+%         Lutz Kettner\thanks{MPII, Saarbr\"ucken}
+%        }
+%  ------------------------------------------------------------------------
 
 % if the Editors-in-Chief have given you the data, you may uncomment
 % the following five lines and insert it here
@@ -105,41 +103,31 @@
 
 % pierre: I suggest to keep the abstract without any formatting
 % nor macros (ascii only)
-  
+
+
 The Computational Geometry Algorithms Library CGAL is an efficient
-modern C++ library following the generic programming paradigm. It
-contains a flexible data structure for meshes in graphics, the
-Polyhedron. In generic programming, data structures and algorithms are
-decoupled, for example, iterators decouple container classes from
-conventional search and sorting algorithms in the C++ Standard
-Template Library (STL). We describe two different approaches one can
-take with the Polyhedron when implementing subdivision algorithms: An
-example implementation of the square-root-of-three subdivision scheme
-based on Euler operations provided by the Polyhedron, and an example
-implementation of the quad-triangle subdivision based on the modifier
-callback mechanism that enables lower-level modifications. Then we
-describe a generic framework for subdivision algorithms; its key
-feature is the separation of the topological refinement operator from
-the geometric smoothing operator. This work is the core part of a
-tutorial for the Polyhedron. The tutorial also provides general
-amenities for working with meshes in graphics; we offer an interactive
-visualizer based on OpenGL, file I/O, and support for getting
-illustrations for publications.
-
-
-%   The computational geometry algorithms library (CGAL) adapts
-%   design patterns and the generic programming paradigm in the design
-%   and the implementation. The template parameterization 
-%   of the CGAL polyhedron meshes enhances the flexibility and
-%   the adaptability of supporting geometry algorithms.
-%   We introduce the modification operations supported
-%   in the CGAL polyhedron and demonstrate the applications
-%   of subdivision surfaces. Based on the CGAL polyhedron meshes, 
-%   we also propose a generic framework of the generic polyhedron and 
-%   the soft-coupled geometry algorithms. The soft-coupled algorithms
-%   are generic and to be specialized as combinations of the
-%   topology and geometry operators. The geometry operators
-%   are user-programmable based on the user-specialized CGAL polyhedron.
+modern C++ library following the generic programming paradigm. CGAL
+provides the notion of a geometric kernel (a complete set of simple
+geometric entities as well as predications) and a set of data
+structures and algorithms for geometric computing. In particular, it
+contains a flexible data structure for meshes, the Polyhedron, which
+design is presented in this paper. The flexibility of the CGAL
+Polyhedron data structure is moreover evaluated through the
+implementation of several algorithms.  Following the C++ Standard
+Template Library (STL) -- where data structures and algorithms are
+decoupled -- we first implement a generic subdivision algorithm acting
+on the CGAL Polyhedron. A high level of flexibility is obtained by the
+possibility to specify as a template parameter the subdivision rules
+themselves, which greatly facilitates the implementation of a new
+subdivision scheme.  Remeshing techniques implemented with a
+combination of Polyhedron and Delaunay triangulation are then shown to
+demonstrate the versatility of the unified framework provided by CGAL.
+Last, several additional functionalities such as minimum enclosing
+ball, convex hull, self intersection and boolean operations are
+demonstrated on large meshes.  Extensible algorithm models based on
+the robust and efficient mesh data structure and components provided
+by CGAL are aimed at speeding up the research, and therefore benefit
+the geometry processing community.
 
   \begin{classification} % according to http://www.acm.org/class/1998/
     \CCScat{I.3.5}{Computer Graphics}{Computational Geometry 
