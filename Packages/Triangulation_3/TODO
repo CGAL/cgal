@@ -1,5 +1,7 @@
 negocier la doc de Filtered_exact...
 
+penser a enlever -I../../include\ dans demo/Triangulation_3/makefile
+
 General
 - mettre a jour les noms d'auteurs
 - parametres template par defaut
