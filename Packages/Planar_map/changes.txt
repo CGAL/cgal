@@ -1,3 +1,5 @@
+- Workaround for SunPro 5.4/5.5 ICE: Moved nested class Token out of the class scope [af]
+
 5.48 (Susan)
 ===
 - copied dcel.gif and dcel.ipe to Topological_map_ref directory; added 
