@@ -8005,6 +8005,7 @@ void test_Random_access_adaptor() {
   {
     typedef std::vector<std::size_t> Vector;
     Vector v;
+    v.reserve(10);
     v.push_back( 1);
     v.push_back( 2);
     v.push_back( 3);
