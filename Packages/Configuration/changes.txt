@@ -1,3 +1,6 @@
+2.32
+- Corected the code introduced in the previous version.
+
 - kill unused variable warning.
 
 2.31
