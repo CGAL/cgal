@@ -73,9 +73,15 @@
 #endif
 
 #ifdef CGAL_CFG_NO_LONG_DOUBLE_IO
-#  define CGAL_LONG_DOUBLE_IO (double)
-#else
-#  define CGAL_LONG_DOUBLE_IO
+#include <iostream>
+namespace std {
+  template < typename _CharT, typename _Traits >
+  inline basic_ostream<_CharT, _Traits> &
+  operator<<(basic_ostream<_CharT, _Traits> & os, const long double &ld)
+  {
+      return os << (double) ld;
+  }
+}
 #endif
 
 // FIXME: what is the problem with Sun 5.5? MATCHING_BUG_4 is not
