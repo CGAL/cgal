@@ -13,6 +13,7 @@
 #include <CGAL/IO/Qt_widget_get_segment.h>
 #include <CGAL/IO/Qt_widget_get_point.h>
 #include <CGAL/IO/Qt_widget_get_simple_polygon.h>
+#include <CGAL/IO/pixmaps/demoicon.xpm>
 
 #include <CGAL/Timer.h>
 
@@ -485,6 +486,8 @@ main(int argc, char* argv[])
   QApplication app( argc, argv );
   My_Window W(size,size);
   app.setMainWidget( &W );
+  QPixmap cgal_icon = QPixmap((const char**)demoicon_xpm);
+  W.setIcon(cgal_icon);
   W.show();
   W.set_window(0,size,0,size);
   W.setCaption("Segment Voronoi diagram 2");
