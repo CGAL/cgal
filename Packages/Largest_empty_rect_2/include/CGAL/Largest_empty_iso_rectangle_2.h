@@ -15,7 +15,7 @@
 // package       : Largest_empty_iso_rectangle_2
 // maintainer    : Eli Packer
 // author(s)     : Eli Packer (algorithm), Andreas Fabri (cgal conformance)
-// coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
+// coordinator   : Tel-Aviv University(Dan Halperin <halperin@math.tau.ac.il>)
 //
 // ======================================================================
 
@@ -174,23 +174,47 @@ private:
 			const Point& py1);
   void tent(Point_data *first, Point_data *second);
   void tent(Point_data *first, Point_data *second, Point_data *third);
-  void get_next_for_top(typename std::list<Point_data *>::iterator &iter, typename std::list<Point_data *>::iterator &beyond);
+  void get_next_for_top(typename std::list<Point_data *>::iterator &iter,
+			typename std::list<Point_data *>::iterator &beyond);
   void get_prev_for_top(typename std::list<Point_data *>::iterator &iter);
-  void get_next_for_bot(typename std::list<Point_data *>::iterator &iter, typename std::list<Point_data *>::iterator &beyond);
+  void get_next_for_bot(typename std::list<Point_data *>::iterator &iter,
+			typename std::list<Point_data *>::iterator &beyond);
   void get_prev_for_bot(typename std::list<Point_data *>::iterator &iter);
   void get_next_for_bot(typename Point_data_set_of_y::iterator &iter);
-  void get_next_for_bot(typename Point_data_set_of_y::iterator &iter, typename Point_data_set_of_y::iterator &last);
+  void get_next_for_bot(typename Point_data_set_of_y::iterator &iter,
+			typename Point_data_set_of_y::iterator &last);
   void get_prev_for_bot(typename Point_data_set_of_y::iterator &iter);
-  void get_next_for_left(typename std::list<Point_data *>::iterator &iter, typename std::list<Point_data *>::iterator &beyond);
+  void get_next_for_left(typename std::list<Point_data *>::iterator &iter,
+			 typename std::list<Point_data *>::iterator &beyond);
   void get_prev_for_left(typename std::list<Point_data *>::iterator &iter);
-  void get_next_for_right(typename std::list<Point_data *>::iterator &iter, typename std::list<Point_data *>::iterator &beyond);
+  void get_next_for_right(typename std::list<Point_data *>::iterator &iter,
+			  typename std::list<Point_data *>::iterator &beyond);
   void get_prev_for_right(typename std::list<Point_data *>::iterator &iter);
-  void determine_first_two_iters(typename Point_data_set_of_y::iterator &iter1, typename Point_data_set_of_y::iterator &iter2, typename Point_data_set_of_y::iterator &iter3,bool &first_iter_is_right,bool &second_iter_is_right,bool &third_iter_is_right);
-  void determine_next_iter(typename Point_data_set_of_y::iterator &iter, typename Point_data_set_of_y::iterator &right_iter, typename Point_data_set_of_y::iterator &left_iter, typename Point_data_set_of_y::const_iterator right_iter_end, typename Point_data_set_of_y::const_iterator left_iter_end,bool &iter_is_right,bool &exist);
-  void calls_for_tents(typename Point_data_set_of_y::iterator iter1, typename Point_data_set_of_y::iterator iter2);
-  void calls_for_tents(typename Point_data_set_of_y::iterator iter1, typename Point_data_set_of_y::iterator iter2,Point_data_set_of_y::iterator iter3);
+  void determine_first_two_iters(typename Point_data_set_of_y::iterator &iter1,
+				 typename Point_data_set_of_y::iterator &iter2,
+				 typename Point_data_set_of_y::iterator &iter3,
+				 bool &first_iter_is_right,
+				 bool &second_iter_is_right,
+				 bool &third_iter_is_right);
+  void determine_next_iter(typename Point_data_set_of_y::iterator &iter,
+			   typename Point_data_set_of_y::iterator &right_iter,
+			   typename Point_data_set_of_y::iterator &left_iter,
+			   typename Point_data_set_of_y::const_iterator right_iter_end,
+			   typename Point_data_set_of_y::const_iterator left_iter_end,
+			   bool &iter_is_right,
+			   bool &exist);
+  void calls_for_tents(typename Point_data_set_of_y::iterator iter1,
+		       typename Point_data_set_of_y::iterator iter2);
+  void calls_for_tents(typename Point_data_set_of_y::iterator iter1,
+		       typename Point_data_set_of_y::iterator iter2,
+		       Point_data_set_of_y::iterator iter3);
   void phase_2_update_y_sorted_list();
-  void phase_3_check_for_larger(typename Point_data_set_of_y::iterator iter,typename Point_data_set_of_y::iterator iter1,typename Point_data_set_of_y::iterator iter2,typename Point_data_set_of_y::iterator iter3,bool first_iter_is_right,bool second_iter_is_right);
+  void phase_3_check_for_larger(typename Point_data_set_of_y::iterator iter,
+				typename Point_data_set_of_y::iterator iter1,
+				typename Point_data_set_of_y::iterator iter2,
+				typename Point_data_set_of_y::iterator iter3,
+				bool first_iter_is_right,
+				bool second_iter_is_right);
   void empty_tents();
   void update();
   void init(const Point& bl, const Point& tr);
