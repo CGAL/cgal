@@ -966,7 +966,7 @@ test_dim_down(Vertex_handle v) const
   // v is incident to all finite cells/facets
   // and all the other vertices are coplanar/collinear in dim3/2.
 {
-  CGAL_triangulation_precondition(dimension() >= 1);
+  CGAL_triangulation_precondition(dimension() >= 0);
   CGAL_triangulation_precondition(! is_infinite(v) );
 
   if (dimension() == 3) {
@@ -1007,8 +1007,8 @@ test_dim_down(Vertex_handle v) const
 	      return false;
       }
   }
-  else // dimension() == 1
-      return number_of_vertices() == 2;
+  else // dimension() == 1 or 0
+      return number_of_vertices() == dimension() + 1;
 
   return true;
 }

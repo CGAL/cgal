@@ -416,7 +416,7 @@ remove(Vertex_handle v)
   CGAL_triangulation_precondition( !is_infinite(v));
   CGAL_triangulation_expensive_precondition( _tds.is_vertex(v) );
 
-  if (dimension() >= 1 && test_dim_down(v)) {
+  if (dimension() >= 0 && test_dim_down(v)) {
       _tds.remove_decrease_dimension(v);
       // Now try to see if we need to re-orient.
       if (dimension() == 2) {
@@ -437,6 +437,9 @@ remove(Vertex_handle v)
   }
 
   if (dimension() < 3) {
+    CGAL_triangulation_precondition(dimension() == 2);
+    // TODO : This needs to be replaced by a proper remove_2D.
+
     // the triangulation is rebuilt...
 
     Vertex_handle inf = infinite_vertex();

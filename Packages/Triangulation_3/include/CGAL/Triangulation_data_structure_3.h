@@ -573,11 +573,17 @@ public:
   incident_vertices(Vertex_handle v, OutputIterator vertices) const
   {
       CGAL_triangulation_precondition( v != NULL );
+      CGAL_triangulation_precondition( dimension() >= -1 );
       CGAL_triangulation_expensive_precondition( is_vertex(v) );
       CGAL_triangulation_expensive_precondition( is_valid() );
 
-      if ( number_of_vertices() < 2 || dimension() < 1)
-          return;
+      if (dimension() == -1)
+	  return;
+
+      if (dimension() == 0) {
+	  *vertices++ = v->cell()->neighbor(0)->vertex(0);
+	  return;
+      }
 
       if (dimension() == 1) {
 	  CGAL_triangulation_assertion( number_of_vertices() >= 3);
@@ -1943,45 +1949,52 @@ void
 Triangulation_data_structure_3<Vb,Cb>::
 remove_decrease_dimension(Vertex_handle v)
 {
-    CGAL_triangulation_precondition( dimension() >= 1);
+    CGAL_triangulation_expensive_precondition( is_valid() );
+    CGAL_triangulation_precondition( dimension() >= -1 );
     CGAL_triangulation_precondition( dimension() != 1 ||
 	                             number_of_vertices() == 3);
     CGAL_triangulation_precondition( number_of_vertices() > dimension() + 1 );
     CGAL_triangulation_precondition( degree(v) == number_of_vertices()-1 );
 
-    // the cells incident to v are down graded one dimension
-    // the other cells are deleted
-    std::vector<Cell_handle> to_delete, to_downgrade;
-
-    for (Iterator_base ib = iterator_base_begin();
-         ib != iterator_base_end(); ++ib) {
-        if ( ib->has_vertex(v) )
-	    to_downgrade.push_back(ib->handle());
-        else
-	    to_delete.push_back(ib->handle());
+    if (dimension() <= 0) {
+	delete_cell(v->cell());
     }
+    else {
+        // the cells incident to v are down graded one dimension
+        // the other cells are deleted
+        std::vector<Cell_handle> to_delete, to_downgrade;
 
-    typename std::vector<Cell_handle>::iterator lfit = to_downgrade.begin();
-    for( ; lfit != to_downgrade.end(); ++lfit) {
-	Cell_handle f = *lfit;
-	int j = f->index(v);
-        if (j != dimension()) {
-	    f->set_vertex(j, f->vertex(dimension()));
-	    f->set_neighbor(j, f->neighbor(dimension()));
-	    if (dimension() != 1)
-		change_orientation(f);
-	}
-	f->set_vertex(dimension(), NULL);
-	f->set_neighbor(dimension(), NULL);
+        for (Iterator_base ib = iterator_base_begin();
+            ib != iterator_base_end(); ++ib) {
+            if ( ib->has_vertex(v) )
+	        to_downgrade.push_back(ib->handle());
+            else
+	        to_delete.push_back(ib->handle());
+        }
 
-	// Update vertex->cell() pointers.
-	for (int i = 0; i < dimension(); ++i)
-	    f->vertex(i)->set_cell(f);
+        typename std::vector<Cell_handle>::iterator lfit = to_downgrade.begin();
+        for( ; lfit != to_downgrade.end(); ++lfit) {
+	    Cell_handle f = *lfit;
+	    int j = f->index(v);
+            if (j != dimension()) {
+	        f->set_vertex(j, f->vertex(dimension()));
+	        f->set_neighbor(j, f->neighbor(dimension()));
+	        if (dimension() >= 1)
+		    change_orientation(f);
+	    }
+	    f->set_vertex(dimension(), NULL);
+	    f->set_neighbor(dimension(), NULL);
+
+	    // Update vertex->cell() pointers.
+	    for (int i = 0; i < dimension(); ++i)
+	        f->vertex(i)->set_cell(f);
+        }
+
+        delete_cells(to_delete.begin(), to_delete.end());
     }
-
-    delete_cells(to_delete.begin(), to_delete.end());
     delete_vertex(v);
     set_dimension(dimension()-1);
+    CGAL_triangulation_postcondition(is_valid());
 }
 
 template <class Vb, class Cb >
