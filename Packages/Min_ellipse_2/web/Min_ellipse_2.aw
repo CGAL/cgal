@@ -2931,6 +2931,12 @@ representation) and corresponding data accessors.
             return( ( _x == p._x) && ( _y == p._y));
         }
 
+        bool
+        operator != ( const MyPointC2& p) const
+        {
+            return( ( _x != p._x) || ( _y != p._y));
+        }
+
         friend
         std::ostream&
         operator << ( std::ostream& os, const MyPointC2& p)
@@ -2990,6 +2996,12 @@ representation) and corresponding data accessors.
         operator == ( const MyPointH2& p) const
         {
             return( ( _hx*p._hw == p._hx*_hw) && ( _hy*p._hw == p._hy*_hw));
+        }
+
+        bool
+        operator != ( const MyPointH2& p) const
+        {
+            return( ( _hx*p._hw != p._hx*_hw) || ( _hy*p._hw != p._hy*_hw));
         }
 
         friend
