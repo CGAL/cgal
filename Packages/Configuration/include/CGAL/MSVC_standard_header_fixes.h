@@ -36,4 +36,9 @@ namespace std{
   using ::ptrdiff_t;
 }
 
+#include <ctime>
+namespace std{
+  using ::time_t;
+}
+
 #endif // CGAL_MSVC_STANDARD_HEADER_FIXES_H
