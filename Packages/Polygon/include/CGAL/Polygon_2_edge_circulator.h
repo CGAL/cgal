@@ -24,9 +24,7 @@
 #ifndef CGAL_POLYGON_2_EDGE_CIRCULATOR_H
 #define CGAL_POLYGON_2_EDGE_CIRCULATOR_H
 
-#ifndef CGAL_STD_ITERATOR_H
-#include <CGAL/std/iterator>
-#endif
+#include <iterator.h>
 #ifndef CGAL_CIRCULATOR_H
 #include <CGAL/circulator.h>
 #endif // CGAL_CIRCULATOR_H

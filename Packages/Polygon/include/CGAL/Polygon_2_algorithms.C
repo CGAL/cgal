@@ -34,9 +34,7 @@
 #ifndef CGAL_STD_SET_H
 #include <CGAL/std/set>
 #endif
-#ifndef CGAL_STD_VECTOR_H
-#include <CGAL/std/vector>
-#endif
+#include <vector.h>
 
 //-----------------------------------------------------------------------//
 //                          CGAL_Simplicity_test_2

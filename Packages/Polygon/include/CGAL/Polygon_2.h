@@ -29,17 +29,11 @@
 #endif // CGAL_BASIC_H
 
 #ifdef CGAL_CFG_NO_MEMBER_TEMPLATES
-#ifndef CGAL_STD_VECTOR_H
-#include <CGAL/std/vector>
-#endif
-#ifndef CGAL_STD_LIST_H
-#include <CGAL/std/list>
-#endif
+#include <vector.h>
+#include <list.h>
 #endif
 
-#ifndef CGAL_STD_ITERATOR_H
-#include <CGAL/std/iterator>
-#endif
+#include <iterator.h>
 
 #ifndef CGAL_CIRCULATOR_H
 #include <CGAL/circulator.h>
