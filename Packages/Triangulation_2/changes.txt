@@ -1,6 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.53 (1 August 00)
+Fixed the copy of vertices in copy_tds().
+Fixed a few latex bugs in the doc
+
 Ver 4.52 (31 July 00)
 Cut the test suite of Triangulation on two subdirectories
 to cope with the time limit
