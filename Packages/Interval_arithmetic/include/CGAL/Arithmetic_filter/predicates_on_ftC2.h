@@ -33,11 +33,9 @@
 #ifndef CGAL_NUMBER_UTILS_H
 #include <CGAL/number_utils.h>
 #endif // CGAL_NUMBER_UTILS_H
-
 #ifndef CGAL_DETERMINANT_H
 #include <CGAL/determinant.h>
 #endif // CGAL_DETERMINANT_H
-
 #ifndef CGAL_BASIC_CONSTRUCTIONS_FTC2_H
 #include <CGAL/basic_constructions_ftC2.h>
 #endif
@@ -954,13 +952,13 @@ has_smaller_signed_dist_to_lineC2(const Filtered_exact<CT,ET> &px,
   return result;
 }
 
+
+CGAL_END_NAMESPACE
+
 #ifdef CGAL_ARITHMETIC_FILTER_H
 #ifndef CGAL_ARITHMETIC_FILTER_ARITHMETIC_FILTER_PREDICATES_ON_FTC2_H
 #include <CGAL/Arithmetic_filter/predicates_on_ftC2.h>
 #endif // CGAL_ARITHMETIC_FILTER_ARITHMETIC_FILTER_PREDICATES_ON_FTC2_H
 #endif
-
-
-CGAL_END_NAMESPACE
 
 #endif  // CGAL_ARITHMETIC_FILTER_PREDICATES_ON_FTC2_H
