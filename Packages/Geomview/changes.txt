@@ -1,6 +1,6 @@
 CHANGES to the Geomview package.
 
-Ver 3.6 (?? December 2000)
+Ver 3.6 (5 December 2000)
 - Factorized code between Point_[23], Segment_[23] and Triangle_[23].
 - Added some color to the kernel demo program.
 - Added a wired flag, with the get/set functions.
