@@ -268,7 +268,7 @@ public:
       }
                     
       // Non of the curves are vertical:
-      int res = LEDA_NAMESPACE_NAME::::cmp_segments_at_xcoord(cv1_, cv2_, q);
+      int res = LEDA_NAMESPACE_NAME::cmp_segments_at_xcoord(cv1_, cv2_, q);
       return ((res < 0) ? SMALLER : ((res > 0) ? LARGER : EQUAL));
     }
 
@@ -299,7 +299,7 @@ public:
     Comparison_result operator()(const Segment_2 & cv1, const Segment_2 & cv2)
       const
     {
-      int res = LEDA_NAMESPACE_NAME::::cmp_slopes(cv1, cv2);
+      int res = LEDA_NAMESPACE_NAME::cmp_slopes(cv1, cv2);
       return ((res < 0) ? SMALLER : ((res > 0) ? LARGER : EQUAL));
     }
   };
@@ -331,6 +331,14 @@ public:
     { return Direction_2(-d.xcoord(), -d.ycoord()); }
   };
 
+  /*!
+   */
+  class Construct_opposite_segment_2 {
+  public:
+    Segment_2 operator()(const Segment_2 & seg) const
+    { return Segment_2(seg.target(), seg.source()); }
+  };
+
   // creators:
   Is_vertical_2 is_vertical_2_object() const { return Is_vertical_2(); }
   Equal_2 equal_2_object() const { return Equal_2(); }
@@ -348,6 +356,8 @@ public:
     { return Construct_direction_2(); }
   Construct_opposite_direction_2 construct_opposite_direction_2_object() const
     { return Construct_opposite_direction_2(); }
+  Construct_opposite_segment_2 construct_opposite_segment_2_object() const
+    { return Construct_opposite_segment_2(); }
 };
 
 CGAL_END_NAMESPACE
