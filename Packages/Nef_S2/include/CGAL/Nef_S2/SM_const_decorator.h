@@ -413,8 +413,13 @@ check_integrity_and_topological_planarity(bool faces) const
 		      iso_vert_num 
 		      + number_of_sloops());
   CGAL_assertion_code(int f_num = number_of_sface_cycles() - c_num + 1);
-  TRACEV(fc_num);TRACEV(iv_num);TRACEV(iso_vert_num);
-  TRACEV(v_num);TRACEV(e_num);TRACEV(c_num);TRACEV(f_num);
+  CGAL_assertion_code(TRACEV(fc_num));
+  CGAL_assertion_code(TRACEV(iv_num));
+  CGAL_assertion_code(TRACEV(iso_vert_num));
+  CGAL_assertion_code(TRACEV(v_num));
+  CGAL_assertion_code(TRACEV(e_num));
+  CGAL_assertion_code(TRACEV(c_num));
+  CGAL_assertion_code(TRACEV(f_num));
   /* this means all face cycles and all isolated vertices are 
      indeed referenced from a face */
   /* every isolated vertex increases the component count
