@@ -73,22 +73,26 @@ Concerning the new filters:
 
 Concerning the main code:
 -------------------------
+- Use STL's relational operators from <utility>.  Check produced code before
+  switching for all...
+- KCC and GCC 3 support.
 - Turn CGAL_IA_CHECK_RESTRICT into an [expensive] assertion ?
 - volatile should be removed from FPU_empiric_test() now that we enforce this
   everywhere.
 - Move the constant propagation barriers more deeply, where they are needed.
   (i.e. just before the actual FP operations that need to be done at run time)
+  And go towards an ISO C9X compliant implementation.
 - Mark the cache as "mutable" (see Stroustrup, page 232) ?
 - Replace the NT wrapping, by Filtered_Cartesian<FT>, a new kernel ?
-  this would be cleaner, and won't rely on some optimizations in the compiler.
-  (same thing for Fixed)
+  this would be cleaner, and won't rely on some optimizations in the compiler,
+  won't need partial specialization...
 - Get rid of convert_to() ?  This is a mess for nothing (benchmark first).
   Target convert_from_to (const Target, const Source) is fine ?
   It could maybe be made better this way:
     void convert_from_to(Target &, const Source &) ?
   Suggest that to Stefan for misc.h ?
 - Handle in_smallest_orthogonalcircle_ftC2.h correctly (needs an include)
-- Essayer de bencher avec -fbranch-probabilities ?  Ça pourrait être pas mal.
+- Bench -fbranch-probabilities ?  Use __builtin_expect() for GCC 3 ?
 - Filter_Cache: Faire des benchs, et une test-suite qui soit raisonnable.
   Hum, rajouter un booléen pour calculer le cache seulement sur demande ?
   (ça évite de le faire inutilement pour les variables intermédiaires,
@@ -98,7 +102,7 @@ Concerning the main code:
   required between ldfsr and next FBfcc; nops inserted
 ? See the C++ Standard numeric_limits<>, section 18.2.
 ? See C9X and http://http.cs.berkeley.edu/~fateman/fp98/korenF/node3.html.
-? convert_to à faire pour: long double, long long (CGAL..._64), CLN.
+? Implement convert_to for: long double, long long (CGAL..._64), CLN.
 - Should IA_nt _privately_ derive from IA_nt_advanced ?
 
 Concerning the script:
