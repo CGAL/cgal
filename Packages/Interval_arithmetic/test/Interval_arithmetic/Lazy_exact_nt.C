@@ -7,7 +7,11 @@
 #include <iostream>
 #include <CGAL/Lazy_exact_nt.h>
 
+#ifdef __GNUG__
 #define UNUSED __attribute__((unused))
+#else
+#define UNUSED
+#endif
 
 /*
   Compilation with GCC-2.95:
