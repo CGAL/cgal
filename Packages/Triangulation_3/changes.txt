@@ -1,3 +1,6 @@
+Version 1.179 (20 November 03)
+- Remove deprecated functions push_back() and copy_triangulation().
+
 Version 1.178 (19 November 03)
 - Faster Delaunay_3::nearest_vertex()
 

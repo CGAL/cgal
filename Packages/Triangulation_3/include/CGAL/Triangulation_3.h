@@ -534,20 +534,6 @@ public:
   Vertex_handle insert(const Point & p, Locate_type lt, Cell_handle c,
 	               int li, int lj);
  
-#ifndef CGAL_NO_DEPRECATED_CODE
-  Vertex_handle push_back(const Point & p)
-  {
-      bool THIS_FUNCTION_IS_DEPRECATED; // use insert() and CGAL::Inserter<>
-      return insert(p);
-  }
-
-  void copy_triangulation(const Triangulation_3 & tr)
-    {
-      bool THIS_FUNCTION_IS_DEPRECATED; // Use assignment operator instead.
-      *this = tr;
-    }
-#endif
-
   template < class InputIterator >
   int insert(InputIterator first, InputIterator last)
     {

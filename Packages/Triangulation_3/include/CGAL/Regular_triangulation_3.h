@@ -101,14 +101,6 @@ public:
   Vertex_handle insert(const Weighted_point & p, Locate_type lt,
 	               Cell_handle c, int li, int);
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-  Vertex_handle push_back(const Weighted_point &p)
-  {
-      bool THIS_FUNCTION_IS_DEPRECATED; // Use insert() or CGAL::Inserter<>
-      return insert(p);
-  }
-#endif
-
   Bounded_side
   side_of_power_sphere( Cell_handle c, const Weighted_point &p) const;
 

@@ -41,7 +41,6 @@ TDS
   - Sharing the neighbor pointers seems less fruitful.
 
 T3
-- virer push_back/copy_triangulation apres 3.0.
 - degree() devrait-il, au niveau geometrique, ne pas compter le sommet infini ?
 - is_valid devrait verifier l'enveloppe convexe
 - prevoir differentes sorties : geomview (ameliorer le rendu pour

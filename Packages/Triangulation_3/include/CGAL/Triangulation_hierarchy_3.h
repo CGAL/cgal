@@ -91,20 +91,6 @@ public:
   // INSERT REMOVE
   Vertex_handle insert(const Point &p);
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-  Vertex_handle push_back(const Point &p)
-  {
-      bool THIS_FUNCTION_IS_DEPRECATED; // Use insert() or CGAL::Inserter<>
-      return insert(p);
-  }
-
-  void copy_triangulation(const Triangulation_hierarchy_3 &tr)
-  {
-    bool THIS_FUNCTION_IS_DEPRECATED; // Use assignment instead.
-    *this = tr;
-  }
-#endif
- 
   template < class InputIterator >
   int insert(InputIterator first, InputIterator last)
     {
