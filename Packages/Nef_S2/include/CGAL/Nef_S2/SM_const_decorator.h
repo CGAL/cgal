@@ -66,20 +66,20 @@ typedef size_t Size_type;
 
 typedef void*  GenPtr;
 
-#define USING(t) typedef typename Sphere_map_::t t
-USING(Vertex_const_handle);
-USING(Vertex_const_iterator);
-USING(Vertex); 
-USING(Halfedge); 
-USING(Halfedge_const_handle); 
-USING(Halfedge_const_iterator);
-USING(Face);
-USING(Face_const_handle);
-USING(Face_const_iterator);
-USING(Halfloop);
-USING(Halfloop_const_handle);
-USING(Halfloop_const_iterator);
-#undef USING
+#define CGAL_USING(t) typedef typename Sphere_map_::t t
+CGAL_USING(Vertex_const_handle);
+CGAL_USING(Vertex_const_iterator);
+CGAL_USING(Vertex); 
+CGAL_USING(Halfedge); 
+CGAL_USING(Halfedge_const_handle); 
+CGAL_USING(Halfedge_const_iterator);
+CGAL_USING(Face);
+CGAL_USING(Face_const_handle);
+CGAL_USING(Face_const_iterator);
+CGAL_USING(Halfloop);
+CGAL_USING(Halfloop_const_handle);
+CGAL_USING(Halfloop_const_iterator);
+#undef CGAL_USING
 
 /*{\Mtext Local types are handles, iterators and circulators of the
 following kind: |Vertex_handle|, |Vertex_iterator|, |Halfedge_handle|,

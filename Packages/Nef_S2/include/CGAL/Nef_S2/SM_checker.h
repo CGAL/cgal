@@ -4,7 +4,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Nef_S2/SM_const_decorator.h>
 
-#define USING(t) typedef typename Base::t t
+#define CGAL_USING(t) typedef typename Base::t t
 CGAL_BEGIN_NAMESPACE
 
 /*{\Moptions outfile=SM_checker.man }*/
@@ -35,12 +35,12 @@ typedef GEOM Geometry;
 typedef typename GEOM::Point_2     Point;
 typedef typename GEOM::Direction_2 Direction;
 
-USING(Vertex_const_handle);
-USING(SEdge_handle);
-USING(Vertex_const_iterator);
-USING(Halfedge_const_iterator);
-USING(Halfedge_around_vertex_const_circulator);
-USING(Halfedge_around_face_const_circulator);
+CGAL_USING(Vertex_const_handle);
+CGAL_USING(SEdge_handle);
+CGAL_USING(Vertex_const_iterator);
+CGAL_USING(Halfedge_const_iterator);
+CGAL_USING(Halfedge_around_vertex_const_circulator);
+CGAL_USING(Halfedge_around_face_const_circulator);
 /*{\Mtext Iterators, handles, and circulators are inherited from 
 |SM_const_decorator|.}*/
 
@@ -233,6 +233,6 @@ reading input.
 
 CGAL_END_NAMESPACE
 
-#undef USING
+#undef CGAL_USING
 #endif // CGAL_SM_CHECKER_H
 

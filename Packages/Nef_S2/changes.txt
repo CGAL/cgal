@@ -1,6 +1,7 @@
 Nef_S2 Package: Release changes
 ----------------------------------------------------------------------
 
+     - Rename USING in CGAL_USING.
      - Fixed the use of the 'or' keyword as variable. Changed to 'sor'.
      - Fixed handling of antipodal points in construction of Sphere_segment
        from two sphere-points.

@@ -87,28 +87,28 @@ public:
   |bool assign(Face_const_handle& h, Object_handle o)|\\ where each 
   function returns |true| iff the assignment of |o| to |h| was valid.}*/
 
-  #define USING(t) typedef typename Decorator_::t t
-  USING(Vertex_handle);   
-  USING(Halfedge_handle);   
-  USING(Halfloop_handle);   
-  USING(Face_handle);     
-  USING(Vertex_const_handle); 
-  USING(Halfedge_const_handle); 
-  USING(Halfloop_const_handle); 
-  USING(Face_const_handle); 
-  USING(Vertex_iterator);
-  USING(Halfedge_iterator);
-  USING(Halfloop_iterator);
-  USING(Face_iterator);
-  USING(Vertex_const_iterator);
-  USING(Halfedge_const_iterator);
-  USING(Halfloop_const_iterator);
-  USING(Face_const_iterator);
-  USING(Halfedge_around_vertex_circulator);
-  USING(Halfedge_around_vertex_const_circulator);
-  USING(Halfedge_around_face_circulator);
-  USING(Halfedge_around_face_const_circulator);
-  #undef USING
+  #define CGAL_USING(t) typedef typename Decorator_::t t
+  CGAL_USING(Vertex_handle);   
+  CGAL_USING(Halfedge_handle);   
+  CGAL_USING(Halfloop_handle);   
+  CGAL_USING(Face_handle);     
+  CGAL_USING(Vertex_const_handle); 
+  CGAL_USING(Halfedge_const_handle); 
+  CGAL_USING(Halfloop_const_handle); 
+  CGAL_USING(Face_const_handle); 
+  CGAL_USING(Vertex_iterator);
+  CGAL_USING(Halfedge_iterator);
+  CGAL_USING(Halfloop_iterator);
+  CGAL_USING(Face_iterator);
+  CGAL_USING(Vertex_const_iterator);
+  CGAL_USING(Halfedge_const_iterator);
+  CGAL_USING(Halfloop_const_iterator);
+  CGAL_USING(Face_const_iterator);
+  CGAL_USING(Halfedge_around_vertex_circulator);
+  CGAL_USING(Halfedge_around_vertex_const_circulator);
+  CGAL_USING(Halfedge_around_face_circulator);
+  CGAL_USING(Halfedge_around_face_const_circulator);
+  #undef CGAL_USING
 
   Sphere_segment segment(Halfedge_const_handle e) const
   { return Sphere_segment(point(source(e)), point(target(e)), circle(e)); }

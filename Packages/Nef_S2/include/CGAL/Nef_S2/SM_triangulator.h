@@ -32,7 +32,7 @@
 #define _DEBUG 137
 #include <CGAL/Nef_S2/debug.h>
 
-#define USING(t) typedef typename Base::t t
+#define CGAL_USING(t) typedef typename Base::t t
 #ifndef CGAL_USE_LEDA
 #define LEDA_MEMORY(t) 
 #endif
@@ -114,24 +114,24 @@ public:
   typedef typename Decorator_::Base     Explorer;
   typedef Decorator_                    Decorator;
   typedef SM_triangulator<Decorator_>   Self;
-  USING(Vertex_handle);
-  USING(Halfedge_handle);
-  USING(Halfloop_handle);
-  USING(Face_handle);
-  USING(Vertex_iterator);
-  USING(Halfedge_iterator);
-  USING(Face_iterator);
-  USING(Vertex_const_handle);
-  USING(Halfedge_const_handle);
-  USING(Halfloop_const_handle);
-  USING(Face_const_handle);
-  USING(Vertex_const_iterator);
-  USING(Halfedge_const_iterator);
-  USING(Face_const_iterator);
-  USING(Object_handle);
-  USING(Halfedge_around_vertex_circulator);
-  USING(Halfedge_around_face_circulator);
-  USING(Sphere_map);
+  CGAL_USING(Vertex_handle);
+  CGAL_USING(Halfedge_handle);
+  CGAL_USING(Halfloop_handle);
+  CGAL_USING(Face_handle);
+  CGAL_USING(Vertex_iterator);
+  CGAL_USING(Halfedge_iterator);
+  CGAL_USING(Face_iterator);
+  CGAL_USING(Vertex_const_handle);
+  CGAL_USING(Halfedge_const_handle);
+  CGAL_USING(Halfloop_const_handle);
+  CGAL_USING(Face_const_handle);
+  CGAL_USING(Vertex_const_iterator);
+  CGAL_USING(Halfedge_const_iterator);
+  CGAL_USING(Face_const_iterator);
+  CGAL_USING(Object_handle);
+  CGAL_USING(Halfedge_around_vertex_circulator);
+  CGAL_USING(Halfedge_around_face_circulator);
+  CGAL_USING(Sphere_map);
   typedef std::pair<Halfedge_handle,Halfedge_handle> Halfedge_pair;
 
   /*{\Mtypes 3}*/
@@ -651,7 +651,7 @@ complete_support(Vertex_iterator v_start, Vertex_iterator v_end, int pos) const
 
 
 CGAL_END_NAMESPACE
-#undef USING
+#undef CGAL_USING
 #endif //CGAL_SM_TRIANGULATOR_H
 
 

@@ -310,16 +310,16 @@ $|mark|(u,i)$.}*/
 typedef Decorator_                 Base;
 typedef typename Base::Sphere_map  Sphere_map;
 typedef SM_overlayer<Decorator_>   Self;
-USING(Vertex_handle);
-USING(Halfedge_handle);
-USING(Halfloop_handle);
-USING(Face_handle);
-USING(Vertex_iterator);
-USING(Halfedge_iterator);
-USING(Face_iterator);
-USING(Object_handle);
-USING(Halfedge_around_vertex_circulator);
-USING(Halfedge_around_face_circulator);
+CGAL_USING(Vertex_handle);
+CGAL_USING(Halfedge_handle);
+CGAL_USING(Halfloop_handle);
+CGAL_USING(Face_handle);
+CGAL_USING(Vertex_iterator);
+CGAL_USING(Halfedge_iterator);
+CGAL_USING(Face_iterator);
+CGAL_USING(Object_handle);
+CGAL_USING(Halfedge_around_vertex_circulator);
+CGAL_USING(Halfedge_around_face_circulator);
 typedef std::pair<Halfedge_handle,Halfedge_handle> Halfedge_pair;
 
 /*{\Mtypes 3}*/
@@ -2213,7 +2213,7 @@ void ending_segment(Vertex_handle v, ITERATOR it) {}
 #define _DEBUG 131
 #include <CGAL/Nef_S2/debug.h>
 
-#define USING(t) typedef typename Base::t t
+#define CGAL_USING(t) typedef typename Base::t t
 #ifndef CGAL_USE_LEDA
 #define LEDA_MEMORY(t) 
 #endif
@@ -2224,7 +2224,7 @@ CGAL_BEGIN_NAMESPACE
 <<SM overlayer implementation>>
 
 CGAL_END_NAMESPACE
-#undef USING
+#undef CGAL_USING
 #endif //CGAL_SM_OVERLAYER_H
 
 

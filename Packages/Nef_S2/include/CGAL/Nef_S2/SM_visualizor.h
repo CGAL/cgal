@@ -6,7 +6,7 @@
 #include <CGAL/Nef_S2/SM_triangulator.h>
 #include <CGAL/Nef_S2/Sphere_geometry_OGL.h>
 
-#define USING(t) typedef typename Sphere_map_::t t
+#define CGAL_USING(t) typedef typename Sphere_map_::t t
 //#define LGREY CGAL::Color(170,170,170)
 //#define DGREY CGAL::Color(30,30,30)
 #define LGREY CGAL::Color(170,170,200)
@@ -57,13 +57,13 @@ public:
   typedef SM_decorator<Sphere_map_,Sphere_kernel_>         Decorator;
   typedef SM_triangulator<Decorator>                       Base;
 
-  USING(Vertex_const_handle);   
-  USING(Halfedge_const_handle); 
-  USING(Face_const_handle);     
-  USING(Vertex_const_iterator);
-  USING(Halfedge_const_iterator);
-  USING(Face_const_iterator);
-  USING(Mark);
+  CGAL_USING(Vertex_const_handle);   
+  CGAL_USING(Halfedge_const_handle); 
+  CGAL_USING(Face_const_handle);     
+  CGAL_USING(Vertex_const_iterator);
+  CGAL_USING(Halfedge_const_iterator);
+  CGAL_USING(Face_const_iterator);
+  CGAL_USING(Mark);
 
   typedef typename Sphere_kernel::Sphere_point    Sphere_point;
   typedef typename Sphere_kernel::Sphere_segment  Sphere_segment;
@@ -184,7 +184,7 @@ void draw_triangulation() const
 
 
 CGAL_END_NAMESPACE
-#undef USING
+#undef CGAL_USING
 //#undef LGREY
 //#undef DGREY
 #endif // SM_VISUALIZOR_H
