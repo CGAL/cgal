@@ -4,9 +4,11 @@
 
 
 //---------------------------------------------------------------------
-//	actual revision
+//	revision 1.37
 //---------------------------------------------------------------------
 
+GLOB: added using directives to replacement headers to put symbols into
+GLOB: namespace std that should be there.
 
 //---------------------------------------------------------------------
 //	revision 1.36

@@ -7,6 +7,8 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: added using directives to replacement headers to put symbols into
+GLOB: namespace std that should be there.
 GLOB: changed order in compiler tests: first check standard headers
 GLOB: STL test is now just one among many other compiler tests
 GLOB: changed to support Cygwin
