@@ -189,7 +189,7 @@ on the extended geometric objects.}*/
         R = CGAL_NTS max(CGAL_NTS abs(p.hx()[0])/p.hw()[0], 
                          CGAL_NTS abs(p.hy()[0])/p.hw()[0]);
       } else {
-        Standard_RT rx = CGAL_NTS abs(p.hx()), ry = CGAL_NTS abs(p.hy());
+        RT rx = CGAL_NTS abs(p.hx()), ry = CGAL_NTS abs(p.hy());
         mx = ( rx.degree()>0 ? rx[1] : 0 ); nx = rx[0];
         my = ( ry.degree()>0 ? ry[1] : 0 ); ny = ry[0];
         if ( mx > my )      R = CGAL_NTS abs((ny-nx)/(mx-my));

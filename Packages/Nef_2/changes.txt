@@ -1,6 +1,11 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
 
+1.10 (22 Apr 2002)
+     - added function for gcd in content() to distinguish between number types
+       with gcd and those without (using Number_type_traits).  Rather a hack.
+     - changed back from Standard_RT to RT in Extended_homogeneous
+
 1.9 (19 Apr 2002)
      - added some missing CGAL_NTS before gcd calls
      - added missing include of number_utils.h
