@@ -1,3 +1,6 @@
+1.0.1  some files had to be converted 
+       from DOS to UNIX format to avoid warnings
+
 1.0    support for gcc 3.0
        LEDA fpu initialization removed
        some changes in the test files 
