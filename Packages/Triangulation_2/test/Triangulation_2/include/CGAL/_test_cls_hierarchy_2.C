@@ -37,21 +37,21 @@ _test_cls_hierarchy_2()
   // h.print();
   H_context co = h.context(v[1],v[5]);
   //H_vertex_it vit = (co.enclosing)->begin();
-  H_vertex_it vit = co.first();  
+  H_vertex_it vit = co.vertices_begin();  
   assert( *vit++ == v[1] && 
 	  *vit++ == v[5] && 
 	  *vit++ == v[2] &&
-	  vit == co.past() &&
+	  vit == co.vertices_end() &&
 	  *(co.current()) == v[1]) ;
   co = h.context(v[7],v[6]);
   //vit = (co.enclosing)->begin();
-  vit = co.first();
+  vit = co.vertices_begin();
   assert( *vit++ == v[3]);
   assert( *vit++ == v[7]);
   assert( *vit++ == v[6]);
   assert( *vit++ == v[4]);
   //assert( vit == (co.enclosing)->end());
-  assert( vit == co.past());
+  assert( vit == co.vertices_end());
   assert(*(co.current()) == v[7]) ;
   co = h.context(v[6],v[7]);
   //assert(*(co.pos) == v[7]) ;
@@ -92,12 +92,12 @@ _test_cls_hierarchy_2()
   assert(h.number_of_enclosing_constraints(v[1],v[5]) == 2);
   H_context_iterator co_it = h.contexts_begin(v[1],v[5]);
   assert(co_it->number_of_vertices() == 3);
-  vit = co_it->first();
+  vit = co_it->vertices_begin();
   assert ( *vit++ == v[1] && 
 	   *vit++ == v[5] &&
 	   *vit++ == v[2]);
   co_it++;
-  vit = co_it->first();
+  vit = co_it->vertices_begin();
   assert ( *vit++ == v[1] && 
 	   *vit++ == v[5] &&
 	   *vit++ == v[8]);

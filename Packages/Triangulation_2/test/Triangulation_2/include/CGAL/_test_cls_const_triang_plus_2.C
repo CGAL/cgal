@@ -52,11 +52,11 @@ _test_cls_const_triang_plus_2( const TrP & )
   Context_iterator cit2 = cit1++;
   //trp.print_hierarchy();
   assert( cit1->number_of_vertices() == 4  || cit1->number_of_vertices() == 7);
-  Vertices_in_constraint firstin1 = cit1->first();
-  Vertices_in_constraint lastin1 = --(cit1->past());
+  Vertices_in_constraint firstin1 = cit1->vertices_begin();
+  Vertices_in_constraint lastin1 = --(cit1->vertices_end());
   Vertices_in_constraint currentin1 = cit1->current();
-  Vertices_in_constraint firstin2 = cit2->first();
-  Vertices_in_constraint lastin2 = --(cit2->past());
+  Vertices_in_constraint firstin2 = cit2->vertices_begin();
+  Vertices_in_constraint lastin2 = --(cit2->vertices_end());
   Vertices_in_constraint currentin2 = cit2->current();
   if ( cit1->number_of_vertices() == 4) {
     assert( (*firstin1 == vh[10] &&  *lastin1 == vh[11]) ||

@@ -56,9 +56,9 @@ public:
     H_vertex_list*    enclosing;
     H_vertex_it       pos;
   public:
-    H_vertex_it    first() { return enclosing->begin();}
+    H_vertex_it    vertices_begin() { return enclosing->begin();}
     H_vertex_it    current() {return pos;}
-    H_vertex_it    past() {return enclosing->end();}
+    H_vertex_it    vertices_end() {return enclosing->end();}
     int number_of_vertices() {return enclosing->size();}
   };                                           
   typedef std::list<H_context>                 H_context_list;
