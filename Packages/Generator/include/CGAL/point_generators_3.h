@@ -142,6 +142,61 @@ generate_point() {
                       d_range * ( 2 * _rnd.get_double() - 1.0));
 }
 
+
+template <class OutputIterator, class Creator>
+OutputIterator
+points_on_square_grid_3( double a, std::size_t n, 
+                         OutputIterator o, Creator creator)
+{
+    if  (n == 0)
+        return o;
+
+    int m = int(CGAL_CLIB_STD::ceil(std::sqrt(std::sqrt(n))));
+
+    while (m*m*m < n) m++;
+
+    double base = -a;  // Left and bottom boundary.
+    double step = 2*a/(m-1);
+    int j = 0;
+    int k = 0;
+    double px = base;
+    double py = base;
+    double pz = base;
+    *o++ = creator( px, py, pz);
+    for (std::size_t i = 1; i < n; i++) {
+        j++;
+        if ( j == m) {
+           k++;
+           if ( k == m) {
+              py = base;
+              px = base;
+              pz = pz + step;
+              k = 0;
+           }
+           else {
+              px = base;
+              py = py + step;
+           }
+           j = 0;
+        } else {
+           px = px + step;
+        }
+        *o++ = creator( px, py, pz);
+    }
+    return o;
+}
+
+template <class OutputIterator>
+OutputIterator
+points_on_square_grid_3( double a, std::size_t n, OutputIterator o)
+{
+    typedef std::iterator_traits<OutputIterator> ITraits;
+    typedef typename ITraits::value_type         P;
+    return points_on_square_grid_3(a, n, o, Creator_uniform_3<double,P>());
+}
+
+
 CGAL_END_NAMESPACE
+
 #endif // CGAL_POINT_GENERATORS_3_H //
 // EOF //

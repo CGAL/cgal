@@ -23,6 +23,9 @@ generators_prog1.C
 generators_prog2.C
    generates 500 points with integer coordinates
 
+generators_prog3.C
+   generates 125 3D points with integer coordinates
+
 random_poly_manual_demo.C
    program presented in reference manual that generates a random 
    polygon from 50 points drawn at random from a square

@@ -65,7 +65,13 @@ void test_point_generators_2() {
     CGAL::copy_n( g4, 100, std::back_inserter(points));
     CGAL::copy_n( g5,  50, std::back_inserter(points));
     CGAL::copy_n( g5a, 50, std::back_inserter(points));
-    points_on_square_grid_2( 50.0, (std::size_t)100,
+    points_on_square_grid_2( 50.0, (std::size_t)1,
+                             std::back_inserter(points), Creator());
+    points_on_square_grid_2( 50.0, (std::size_t)2,
+                             std::back_inserter(points), Creator());
+    points_on_square_grid_2( 50.0, (std::size_t)3,
+                             std::back_inserter(points), Creator());
+    points_on_square_grid_2( 50.0, (std::size_t)94,
                              std::back_inserter(points), Creator());
     points_on_segment_2( Point_2(-100, 100), Point_2( 100,-100),
                          (std::size_t)100, std::back_inserter(points));
@@ -102,17 +108,25 @@ void test_point_generators_3() {
 
     /* Create test point set. */
     std::vector<Point_3> points;
-    points.reserve(400);
-    Random_points_in_sphere_3<Point_3,Creator>     g1( 100.0);
+    points.reserve(500);
+    Random_points_in_sphere_3<Point_3,Creator>      g1( 100.0);
     CGAL::copy_n( g1, 100, std::back_inserter(points));
-    Random_points_on_sphere_3<Point_3,Creator>     g2( 100.0);
-    Random_points_in_cube_3<Point_3,Creator>       g3( 100.0);
+    Random_points_on_sphere_3<Point_3,Creator>      g2( 100.0);
+    Random_points_in_cube_3<Point_3,Creator>        g3( 100.0);
     CGAL::copy_n( g2, 100, std::back_inserter(points));
     CGAL::copy_n( g3, 100, std::back_inserter(points));
+    points_on_square_grid_3( 50.0, (std::size_t)1,
+                             std::back_inserter(points), Creator());
+    points_on_square_grid_3( 50.0, (std::size_t)2,
+                             std::back_inserter(points), Creator());
+    points_on_square_grid_3( 50.0, (std::size_t)3,
+                             std::back_inserter(points), Creator());
+    points_on_square_grid_3( 50.0, (std::size_t)94,
+                             std::back_inserter(points), Creator());
     random_selection( points.begin(), points.end(), 100,
                       std::back_inserter(points));
 
-    CGAL_assertion( points.size() == 400);
+    CGAL_assertion( points.size() == 500);
     for ( std::vector<Point_3>::iterator i = points.begin();
           i != points.end(); i++){
         CGAL_assertion( i->x() <=  100);

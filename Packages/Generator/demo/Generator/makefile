@@ -41,6 +41,7 @@ all:            \
                 Triangle_generator_prog2$(EXE_EXT) \
                 generators_prog1$(EXE_EXT) \
                 generators_prog2$(EXE_EXT) \
+                generators_prog3$(EXE_EXT) \
                 random_poly_manual_demo$(EXE_EXT) \
                 random_polygons_demo$(EXE_EXT) \
                 rcs_demo$(EXE_EXT) \
@@ -64,6 +65,9 @@ generators_prog1$(EXE_EXT): generators_prog1$(OBJ_EXT)
 generators_prog2$(EXE_EXT): generators_prog2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)generators_prog2 generators_prog2$(OBJ_EXT) $(LDFLAGS)
 
+generators_prog3$(EXE_EXT): generators_prog3$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)generators_prog3 generators_prog3$(OBJ_EXT) $(LDFLAGS)
+
 random_poly_manual_demo$(EXE_EXT): random_poly_manual_demo$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)random_poly_manual_demo random_poly_manual_demo$(OBJ_EXT) $(LDFLAGS)
 
@@ -83,6 +87,7 @@ clean: \
                    Triangle_generator_prog2.clean \
                    generators_prog1.clean \
                    generators_prog2.clean \
+                   generators_prog3.clean \
                    random_poly_manual_demo.clean \
                    random_polygons_demo.clean \
                    rcs_demo.clean \
