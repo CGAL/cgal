@@ -1,6 +1,11 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.68 (22 september 00)
+- added the ref pages for triangulation hierarchy 
+- removed the call to _test_cls_delaunay_triangulation_2 in
+ _test_cls_delaunay_hierarchy_2 (that makes i686_CYGWINNT-5.0-1.1.4-0.26-3-2_CL.EXE-12.00.8804 crash)
+
 Ver 4.67 (18 september 00)
 -change type number of the test of Delaunay hierarchy to an exact type
 -chabge typedef in _test_triangulation_short.C _test_cls_Delaunay.C
