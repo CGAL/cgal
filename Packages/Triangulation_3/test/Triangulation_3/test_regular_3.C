@@ -379,7 +379,6 @@ int main()
   Weighted_point wq1(q1,0.);
   Weighted_point wq2(q2,0.);
   Weighted_point wq3(q3,0.);
-  Weighted_point wq4(q4,0.);
   Weighted_point wq01(q0,2.);
   
   Cls T4;
@@ -405,6 +404,7 @@ int main()
   assert(T4.is_Gabriel(c,i,j));
   
   Vertex_handle v01 = T4.insert(wq01);
+  (void) v01; // kill warning
   assert(T4.is_edge(v2,v3,c,i,j));
   assert(!T4.is_Gabriel(c,i,j));
 
