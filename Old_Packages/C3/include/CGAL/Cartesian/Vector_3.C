@@ -25,7 +25,7 @@
 #define CGAL_CTAG
 #endif
 
-#ifdef _MSC_VER
+#ifdef CGAL_CFG_TYPENAME_BUG
 #define typename
 #endif
 
@@ -324,8 +324,8 @@ std::istream &operator>>(std::istream &is, VectorC3<R CGAL_CTAG> &p)
         read(is, z);
         break;
     default:
-        cerr << "" << std::endl;
-        cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "" << std::endl;
+        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
         break;
     }
     p = VectorC3<R CGAL_CTAG>(x, y, z);
@@ -335,7 +335,7 @@ std::istream &operator>>(std::istream &is, VectorC3<R CGAL_CTAG> &p)
 
 CGAL_END_NAMESPACE
 
-#ifdef _MSC_VER
+#ifdef CGAL_CFG_TYPENAME_BUG
 #undef typename
 #endif
 

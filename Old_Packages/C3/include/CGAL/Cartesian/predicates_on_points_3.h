@@ -147,8 +147,32 @@ coplanar(const PointC3<R CGAL_CTAG> &p,
          const PointC3<R CGAL_CTAG> &r,
          const PointC3<R CGAL_CTAG> &s)
 {
-  return orientation(p, q, r, s) == COLLINEAR;
+  return orientation(p, q, r, s) == COPLANAR;
 }
+
+template < class R >
+inline
+Orientation
+coplanar_orientation(const PointC3<R CGAL_CTAG> &q,
+         const PointC3<R CGAL_CTAG> &r,
+         const PointC3<R CGAL_CTAG> &s,
+         const PointC3<R CGAL_CTAG> &p)
+{
+  // p,q,r,s supposed to be coplanar                                   
+  // q,r,s supposed to be non collinear                                
+  // tests whether p is on the same side of q,r as s                   
+  // returns :                                                         
+  // COLLINEAR if pqr collinear                                        
+  // POSITIVE if qrp and qrs have the same orientation                 
+  // NEGATIVE if qrp and qrs have opposite orientations       
+  CGAL_kernel_exactness_precondition( ! collinear(q, r, s) );
+  CGAL_kernel_exactness_precondition( coplanar(p, q, r, s) );
+  return coplanar_orientationC3(q.x(), q.y(), q.z(),
+                                r.x(), r.y(), r.z(),
+                                s.x(), s.y(), s.z(),
+                                p.x(), p.y(), p.z());
+}
+
 
 template < class R>
 inline

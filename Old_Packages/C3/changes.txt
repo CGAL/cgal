@@ -1,3 +1,9 @@
+Version 3.3.4 (September 16 1999)
+- Use the new CGAL_CFG_TYPENAME_BUG
+- Added Monique's predicate coplanar_orientation
+- Fixed some missing std:: for cerr
+- Avoid using <CGAL/predicate_classes_3.h> in Tetrahedron_3.C
+
 Version 3.3.3 (September 9 1999)
 - Renamed the script to spare the work for Geert-Jan
   (otherwise clash with C2)

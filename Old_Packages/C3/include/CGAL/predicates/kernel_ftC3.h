@@ -29,6 +29,9 @@
 #ifndef CGAL_DETERMINANT_H
 #include <CGAL/determinant.h>
 #endif // CGAL_DETERMINANT_H
+#ifndef CGAL_PREDICATES_KERNEL_FTC2_H
+#include <CGAL/predicates/kernel_ftC2.h>
+#endif // CGAL_PREDICATES_KERNEL_FTC2_H
 #ifndef CGAL_CONSTRUCTIONS_KERNEL_FTC3_H
 #include <CGAL/constructions/kernel_ftC3.h>
 #endif // CGAL_CONSTRUCTIONS_KERNEL_FTC3_H
@@ -79,6 +82,25 @@ orientationC3(const FT &px, const FT &py, const FT &pz,
   return Orientation(sign_of_determinant3x3(qx-px,rx-px,sx-px,
                                             qy-py,ry-py,sy-py,
                                             qz-pz,rz-pz,sz-pz));
+}
+
+template < class FT >
+CGAL_KERNEL_MEDIUM_INLINE
+Orientation
+coplanar_orientationC3(const FT &qx, const FT &qy, const FT &qz,
+                       const FT &rx, const FT &ry, const FT &rz,
+                       const FT &sx, const FT &sy, const FT &sz,
+                       const FT &px, const FT &py, const FT &pz)
+{
+  Orientation oxy_qrs = orientationC2(qx,qy,rx,ry,sx,sy);
+  if (oxy_qrs != COLLINEAR)
+      return Orientation( oxy_qrs * orientationC2(qx,qy,rx,ry,px,py));
+  Orientation oyz_qrs = orientationC2(qy,qz,ry,rz,sy,sz);
+  if (oyz_qrs != COLLINEAR)
+      return Orientation( oyz_qrs * orientationC2(qy,qz,ry,rz,py,pz));
+  Orientation oxz_qrs = orientationC2(qx,qz,rx,rz,sx,sz);
+  assert(oxz_qrs != COLLINEAR);
+  return Orientation( oxz_qrs * orientationC2(qx,qz,rx,rz,px,pz));
 }
 
 template < class FT >

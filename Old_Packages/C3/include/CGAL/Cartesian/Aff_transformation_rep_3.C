@@ -25,7 +25,7 @@
 #define CGAL_CTAG
 #endif
 
-#ifdef _MSC_VER
+#ifdef CGAL_CFG_TYPENAME_BUG
 #define typename
 #endif
 
@@ -82,7 +82,7 @@ Aff_transformation_repC3<R>::transpose() const
 
 CGAL_END_NAMESPACE
 
-#ifdef _MSC_VER
+#ifdef CGAL_CFG_TYPENAME_BUG
 #undef typename
 #endif
 

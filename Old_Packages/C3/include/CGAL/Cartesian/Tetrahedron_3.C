@@ -26,7 +26,7 @@
 #define CGAL_CTAG
 #endif
 
-#ifdef _MSC_VER
+#ifdef CGAL_CFG_TYPENAME_BUG
 #define typename
 #endif
 
@@ -34,7 +34,6 @@
 #define CGAL_CARTESIAN_TETRAHEDRON_3_C
 
 #include <CGAL/Cartesian/solve_3.h>
-#include <CGAL/predicate_classes_3.h>
 #include <vector>
 #include <functional>
 
@@ -83,6 +82,22 @@ TetrahedronC3<R CGAL_CTAG>::operator=(const TetrahedronC3<R CGAL_CTAG> &t)
   Handle::operator=(t);
   return *this;
 }
+
+template < class Point_3 >
+struct Less_xyzC3 {
+  // cannot reuse it from predicate_classes, because of
+  // problems with file inclusions...
+  bool operator() (Point_3 const &p, Point_3 const &q) {
+      if (p.x()<q.x()) return true;
+      if (q.x()<p.x()) return false;
+      if (p.y()<q.y()) return true;
+      if (q.y()<p.y()) return false;
+      if (p.z()<q.z()) return true;
+      if (q.z()<p.z()) return false;
+      return false;
+    }
+};
+
 template < class R >
 bool
 TetrahedronC3<R CGAL_CTAG>::operator==(const TetrahedronC3<R CGAL_CTAG> &t) const
@@ -97,8 +112,8 @@ TetrahedronC3<R CGAL_CTAG>::operator==(const TetrahedronC3<R CGAL_CTAG> &t) cons
   int k;
   for ( k=0; k < 4; k++) V1.push_back( vertex(k));
   for ( k=0; k < 4; k++) V2.push_back( t.vertex(k));
-  std::sort(V1.begin(), V1.end(), Less_xyz< Point_3 >());
-  std::sort(V2.begin(), V2.end(), Less_xyz< Point_3 >());
+  std::sort(V1.begin(), V1.end(), Less_xyzC3<Point_3>());
+  std::sort(V2.begin(), V2.end(), Less_xyzC3<Point_3>());
   uniq_end1 = std::unique( V1.begin(), V1.end());
   uniq_end2 = std::unique( V2.begin(), V2.end());
   V1.erase( uniq_end1, V1.end());
@@ -126,7 +141,6 @@ template < class R >
 typename TetrahedronC3<R CGAL_CTAG>::Point_3
 TetrahedronC3<R CGAL_CTAG>::vertex(int i) const
 {
-  // modulo 4 is a logical operation, hence cheap
   if (i<0) i=(i%4)+4;
   else if (i>3) i=i%4;
   switch (i)
@@ -295,7 +309,7 @@ std::istream &operator>>(std::istream &is, TetrahedronC3<R CGAL_CTAG> &t)
  
 CGAL_END_NAMESPACE
 
-#ifdef _MSC_VER
+#ifdef CGAL_CFG_TYPENAME_BUG
 #undef typename
 #endif
 
