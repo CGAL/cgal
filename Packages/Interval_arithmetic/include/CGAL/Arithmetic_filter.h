@@ -259,4 +259,14 @@ CGAL_END_NAMESPACE
 #include <CGAL/Arithmetic_filter/predicates_on_rtH3.h>
 #endif
 
+#if defined( CGAL_REGULAR_TRIANGULATION_FTC2_H ) && \
+   !defined( CGAL_ARITHMETIC_FILTER_REGULAR_TRIANGULATION_FTC2_H )
+#include <CGAL/Arithmetic_filter/predicates/Regular_triangulation_ftC2.h>
+#endif
+
+#if defined( CGAL_REGULAR_TRIANGULATION_RTH2_H ) && \
+   !defined( CGAL_ARITHMETIC_FILTER_REGULAR_TRIANGULATION_RTH2_H )
+#include <CGAL/Arithmetic_filter/predicates/Regular_triangulation_rtH2.h>
+#endif
+
 #endif // CGAL_ARITHMETIC_FILTER_H
