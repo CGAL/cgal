@@ -1,0 +1,18 @@
+- The file Triangulation_dsul_face_2.h has to disappear. This has to be done
+  after the appropriate changes are done in the triangulation data structure
+  of CGAL.
+- The special degenerate cases for some of the predicates need to be done
+- The insertion does not work if the new disk leaves less than 2 non-trivial
+  disks. I need to fix this.
+- When insertion and deletion are done several maps are used to keep track
+  of the information. These maps should be replaced by something that is more
+  efficient (constant time for all operations instead of logarithmic).
+- When deletions are done use the current information to locate the nearest
+  neighbor of the trivial disks to be added.
+- When there are only 1 or 2 vertices in the triangulation and we add the
+  next one the test whether the new one is trivial is not done correctly.
+  In particular of the new contains (one of) the existing one(s) we get a
+  wrong answer.
+- Removal of a degree 4 vertex when I have 4 sites does not work
+- Change all the calls to CGAL::Object(..Wrapper.. o) to
+  CGAL::make_object(o)
