@@ -100,9 +100,9 @@ $\alpha$-values.
 \subsection*{Main Application}
 
 Alpha shapes can be used for shape reconstruction from a dense unorganized set
-of data points. The  $\alpha$-shape is demarcated by a frontier, which is, under
-conditions described for the classic version in \cite{bb-srmua-97t}, a linear
-approximation of the original contour.
+of data points. Indeed, an  $\alpha$-shape is demarcated by a frontier, which is
+a linear approximation of the original contour, under conditions described for
+the classic version, in \cite{bb-srmua-97t}.
 
 %----------------------------------------------------------------------
 
@@ -693,7 +693,7 @@ underlying triangulation \ccc{Dt} and follow the requirements listed above.
 Of course, \cgal\ provides a default \ccc{Alpha_shape_traits} class in this
 case, with an implementation of the appropriate predicate and constructions.
 The class \ccc{Weighted_alpha_shape_euclidean_traits_2<Rp>} simply derived from 
-\ccc{Regular_euclidean_traits_2<Rp>}.
+\ccc{Regular_triangulation_euclidean_traits_2<Rp>}.
 
 \ccInclude{CGAL/Weighted_alpha_shape_euclidean_traits_2.h}
 
