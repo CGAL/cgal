@@ -1,3 +1,6 @@
 
+Version 0.7 (30 June 03) [af]
+- Replaced SUFFIXES with .SUFFIXES
+
 Version 0.6 (30 June 03) [af]
 - Added  SUFFIXES: .cpp $(SUFFIXES)  to src/Core/Makefile_Core
