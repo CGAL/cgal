@@ -24,6 +24,7 @@ package: doc filters clean $(Package).tar.gz
 
 version:
 	echo $(CGAL_VERSION) > version
+	echo "Maintainer : Sylvain.Pion@sophia.inria.fr" >> version
 
 tag:
 	cvs tag -c $(TAG_VERSION)
