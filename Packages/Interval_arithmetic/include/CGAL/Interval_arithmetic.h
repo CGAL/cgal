@@ -43,6 +43,8 @@
 #include <CGAL/enum.h>  // Because we overload CGAL_{sign,compare,abs,min,max}
 #include <CGAL/number_utils.h>  // For CGAL_max(double, double).
 #include <CGAL/Interval_arithmetic/_FPU.h>	// FPU rounding mode functions.
+#include <CGAL/misc.h>		// For CGAL_convert_to<>()
+
 
 struct CGAL_Interval_nt_advanced
 {
@@ -532,15 +534,13 @@ CGAL_number_type_tag(CGAL_Interval_nt_advanced)
 { return CGAL_Number_tag(); }
 
 
-// Finally we source the CGAL_convert_to<CGAL_Interval_nt_advanced>()
+// Finally we deal with the CGAL_convert_to<CGAL_Interval_nt_advanced>(NT)
 // functions from other NTs, when necessary.
-// CGAL_convert_to<CGAL_Interval_nt>() is templated below, only specialized
-// for double (handled genericaly anyway).
+// CGAL_convert_to<CGAL_Interval_nt>() is templated below.
+//
+// For the builtin types (well, all those that can be casted to double
+// exactly), the template in misc.h is enough.
 
-// The following big template should be put in number_utils.h, imho.
-template <class NTtarget, class NTsource>
-inline NTtarget CGAL_convert_to (const NTsource & source)
-{ return NTtarget(source); }
 
 #ifdef CGAL_GMPZ_H
 #include <CGAL/Interval_arithmetic/IA_Gmpz.h>
@@ -574,17 +574,5 @@ inline CGAL_Interval_nt CGAL_convert_to(const FT &z)
     CGAL_FPU_set_rounding_to_nearest();
     return tmp;
 }
-
-// These 2 could be replaced by the general (already present in
-// Arithmetic_filter.h):
-// template <class ET, class CT>
-// inline ET CGAL_convert_to (const CT & ct)
-// { return ET(ct); }
-
-// inline CGAL_Interval_nt_advanced CGAL_convert_to (const double d)
-// { return CGAL_Interval_nt_advanced(d); }
-
-// inline CGAL_Interval_nt CGAL_convert_to (const double d)
-// { return CGAL_Interval_nt(d); }
 
 #endif // CGAL_INTERVAL_ARITHMETIC_H
