@@ -45,6 +45,7 @@ public:
     Comparison_result r;
     r = CGAL::compare_y<R>(p,q);
     if (r == EQUAL) r = CGAL::compare_z<R>(p,q);
+    return r;
    }
 };
     
