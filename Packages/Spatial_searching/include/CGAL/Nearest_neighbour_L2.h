@@ -226,6 +226,7 @@ class Distance_smaller
     public:
 
     int reference_count;
+    int dim;
 
     std::priority_queue<Item_with_distance*, Item_with_distance_vector,
     Distance_smaller> Item_PriorityQueue;
@@ -246,6 +247,7 @@ class Distance_smaller
         Max_squared_distance_l2_to_box<NT,Item>(q,*(tree.bounding_box()));
        
         query_point = &q;
+        dim=query_point->dimension();
 
         total_item_number=tree.item_number();
 
@@ -370,10 +372,9 @@ class Distance_smaller
                 for (Item_iterator it=N->begin(); it != N->end(); it++) {
                         number_of_items_visited++;
                         NT distance_to_query_point=0.0;
-                        for (int i=0; i< (*it)->dimension(); i++)       {
-                                distance_to_query_point += 
-								((*query_point)[i]- (*(*it))[i])*
-                                ((*query_point)[i]- (*(*it))[i]);
+                        for (int i=0; i< dim; i++)       {
+				NT h=((*query_point)[i]- (*(*it))[i]);
+                                distance_to_query_point += h*h;
                         }
                         Item_with_distance *NN_Candidate=
                         new Item_with_distance(*it,distance_to_query_point);

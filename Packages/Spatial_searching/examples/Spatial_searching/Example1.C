@@ -1,5 +1,5 @@
 // example using nearest_neighbour_iterator for L2
-// benchmark example using 10000 data points and 2000 query points
+// benchmark example using 10000 data points and 10000 query points
 // bucketsize=1
 // both generated with Random_points_in_cube_3<Point_3>
 // comparing ASPAS to brute force method
@@ -12,7 +12,7 @@
 
 #include <iostream>
 
-#include <CGAL/Simple_cartesian.h>
+//#include <CGAL/Cartesian.h>
 #include <CGAL/Point_3.h>
 #include <CGAL/Binary_search_tree.h>
 #include <CGAL/Kd_tree_traits_point.h>
@@ -23,13 +23,102 @@
 #include <CGAL/algorithm.h>
 // #include <CGAL/squared_distance_3.h>
 
-typedef CGAL::Simple_cartesian<double> R;
-typedef R::Point_3 Point;
+// typedef CGAL::Cartesian<double> R;
+// typedef R::Point_3 Point;
+
+// create own Point type (adapted from example3.C from kdtree and Point_3.h)
+
+class Point
+{
+public:
+
+  class R
+  { 
+  public:
+    typedef double FT;
+  };
+
+private:
+  double   vec[ 3 ];
+  
+public: 
+  
+  Point()
+  { 
+    for  ( int ind = 0; ind < 3; ind++ )
+      vec[ ind ] = 0;
+  }
+
+  Point (double& x, double& y, double& z)
+  {
+    vec[0]=x;
+    vec[1]=y;
+    vec[2]=z;
+  }
+
+  inline
+  int dimension() const
+  {
+    return  3;
+  }
+ 
+  inline
+  double x() const
+  { 
+	return vec[ 0 ];
+  }
+
+  inline
+  double y() const
+  { 
+ 	return vec[ 1 ];
+  }
+  
+  inline
+  double z() const
+  { 
+	return vec[ 2 ];
+  }
+
+  inline
+  void set_coord(int k, double x)
+  {
+    vec[ k ] = x;
+  }
+  
+  inline
+  double  & operator[](int k)  
+  {
+    return  vec[ k ];
+  }
+
+  inline
+  double  operator[](int k) const
+  {
+    return  vec[ k ];
+  }
+};
+
+inline
+bool
+operator!=(const Point& p, const Point& q)
+{
+  return ( (p[0] != q[0]) || (p[1] != q[1]) || (p[2] != q[2]) ); 
+}
+
+inline
+bool
+operator==(const Point& p, const Point& q)
+{
+  return ( (p[0] == q[0]) && (p[1] == q[1]) && (p[2] == q[2]) ) ;
+}
+
 typedef CGAL::Creator_uniform_3<double,Point> Creator;
 typedef std::vector<Point> Vector;
 
-typedef CGAL::Kernel_traits<Point>::Kernel K;
-typedef K::FT NT;
+// typedef CGAL::Kernel_traits<Point>::Kernel K;
+// typedef K::FT NT;
+typedef double NT;
 
 typedef CGAL::Plane_separator<NT> Separator;
 typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
@@ -37,8 +126,7 @@ typedef CGAL::Nearest_neighbour_L2<Traits,
 	CGAL::Search_nearest_neighbour>::iterator NNN_Iterator;
 
 
-
-NT The_squared_distance(Point P, Point Q) {
+NT The_squared_distance(const Point& P, const Point& Q) {
 	NT distx= P.x()-Q.x();
         NT disty= P.y()-Q.y();
         NT distz= P.z()-Q.z();
@@ -78,9 +166,9 @@ NT The_squared_distance(Point P, Point Q) {
     
   
   Vector query_points;
-  query_points.reserve(2000);
+  query_points.reserve(10000);
 
-  // Create 2000 query points within the same cube.
+  // Create 10000 query points within the same cube.
   CGAL::copy_n( g, query_point_number, std::back_inserter(query_points));
 
   t.reset(); t.start();
