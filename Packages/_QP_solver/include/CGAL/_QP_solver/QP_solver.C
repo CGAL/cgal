@@ -169,7 +169,7 @@ QP_solver<Rep_>::
 set_up_initial_solution( )
 {
     // initialize exact version of `qp_b' (implicit conversion to ET)
-#ifndef CGAL_RWSTD_NO_MEMBER_TEMPLATES
+#ifndef CGAL_CFG_RWSTD_NO_MEMBER_TEMPLATES
     b = Values( qp_b, qp_b+qp_m);
 #else
     b = Values ( qp_m );

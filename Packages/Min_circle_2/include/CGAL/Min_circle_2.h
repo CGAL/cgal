@@ -341,7 +341,7 @@ class Min_circle_2 {
                 if ( randomize) {
     
                     // shuffle points at random
-#ifndef CGAL_RWSTD_NO_MEMBER_TEMPLATES
+#ifndef CGAL_CFG_RWSTD_NO_MEMBER_TEMPLATES
                     std::vector<Point> v( first, last);
 #else
 		    std::vector<Point> v;
