@@ -24,7 +24,7 @@ template <class Triangul>
 void
 _test_line_face_circulator( const Triangul & )
 {
- typedef Triangul                           Tri;
+ typedef Triangul                  Tri;
  typedef typename Tri::Geom_traits          Gt;
  typedef typename Tri::Point                Point;
 
