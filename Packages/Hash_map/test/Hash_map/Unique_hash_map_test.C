@@ -38,14 +38,14 @@ int main() {
         CGAL_TEST( H1[i] == *i);
     }
     CGAL::Unique_hash_map<Iterator,int> H3( L.begin(), L.end(), 1);
-    for ( Iterator i = L.begin(); i != L.end(); ++i) {
-        CGAL_TEST( H3[i] == *i);
+    for ( Iterator j = L.begin(); j != L.end(); ++j) {
+        CGAL_TEST( H3[j] == *j);
     }
     CGAL::Handle_hash_function hash;
     CGAL::Unique_hash_map<Iterator,int,CGAL::Handle_hash_function> 
         H4( L.begin(), L.end(), 1, -1, 512, hash);
-    for ( Iterator i = L.begin(); i != L.end(); ++i) {
-        CGAL_TEST( H4[i] == *i);
+    for ( Iterator k = L.begin(); k != L.end(); ++k) {
+        CGAL_TEST( H4[k] == *k);
     }
     hash = H4.hash_function();
 

@@ -1,5 +1,8 @@
 Hash_map Package: Release changes
 ----------------------------------------------------------------------
+0.9.5 (16 Jul 2001)
+
+     - Fixed variable names in for loop of tests to please MSVC.
 
 0.9.4 (16 Jul 2001)
 
