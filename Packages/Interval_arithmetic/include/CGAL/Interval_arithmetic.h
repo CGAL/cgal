@@ -35,7 +35,7 @@
 // and the opposite of the result (see operator+, operator*,...).
 
 #include <CGAL/basic.h>
-#include <CGAL/Interval_arithmetic/_FPU.h>
+#include <CGAL/FPU.h>
 #include <CGAL/Interval_base.h>
 
 CGAL_BEGIN_NAMESPACE

@@ -37,7 +37,7 @@
 // - Add __attribute__((const)) for optimizing ?
 
 #include <CGAL/basic.h>
-#include <CGAL/Interval_arithmetic/_FPU.h>
+#include <CGAL/FPU.h>
 
 CGAL_BEGIN_NAMESPACE
 
