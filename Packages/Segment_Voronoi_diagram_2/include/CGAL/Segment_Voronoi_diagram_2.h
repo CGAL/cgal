@@ -942,7 +942,7 @@ protected:
 			   ss2.point_handle(4), ss2.point_handle(5));
   }
 
-protected:
+public:
   // METHODS FOR ACCESSING THE PRIMAL GRAPH
   //---------------------------------------
   // used primarily for visualization
