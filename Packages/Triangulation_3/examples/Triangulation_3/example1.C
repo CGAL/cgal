@@ -35,16 +35,18 @@
 #include <CGAL/Triangulation_geom_traits_3.h>
 #include <CGAL/Triangulation_3.h>
 
-// for this simple example, using doubles would be enough
-// typedef CGAL::Cartesian<double>  Repr;
+// for this simple example, using doubles is ok
+//
+typedef double NT;
 
 // for more complicated examples with degenerate configurations,
 // using Filtered_exact number type is advised :
-#include <CGAL/Arithmetic_filter.h>
-#include <CGAL/leda_real.h>
-#include <CGAL/double.h>
-
-typedef CGAL::Filtered_exact<double, leda_real> NT;
+// 
+// #include <CGAL/Arithmetic_filter.h>
+// #include <CGAL/leda_real.h>
+// #include <CGAL/double.h>
+// 
+// typedef CGAL::Filtered_exact<double, leda_real> NT;
 
 typedef CGAL::Cartesian<NT> Repr;
 typedef CGAL::Triangulation_geom_traits_3<Repr> Gt;
