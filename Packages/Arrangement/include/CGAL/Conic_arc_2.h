@@ -221,7 +221,8 @@ class Conic_arc_2
                                 // Bit 3 & 4 - Whether the arc is x-monotone
                                 //             (00, 01 or 11 - undefined).
                                 // Bit 5 & 6 - Indicate whether the arc is
-                                //             facing upwards or downwards (for                                //             x-monotone curves of degree 2).
+                                //             facing upwards or downwards (for
+                                //             x-monotone curves of degree 2).
 #ifdef CGAL_CONIC_ARC_USE_BOUNDING_BOX
   Bbox_2   _bbox;               // A bounding box for the arc.  
 #endif
