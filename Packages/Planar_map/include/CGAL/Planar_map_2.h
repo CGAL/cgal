@@ -404,26 +404,30 @@ public:
   /*! is_point_in_face() is a predicate that determines whether a given point 
    * lies within the interior of a given face.
    * A point lies within a face interior, iff the number of intersections 
-   * between the face boundary and a ray emenating from the point is even.
-   * If the face is the unbounded face and it has no 
+   * between the face boundary and a ray emanating from the point is even.
+   * Note that if the given face is the unbounded face, and it has no holes,
+   * the point must lie within the face interior.
    * \param p the given point.
    * \param f a handle to the given face.
    * \return true if the given point lies within the interior of the given 
    * face, and false otherwise.
    */
 
-  //bool is_point_in_face(const Point_2 & p, Face_const_handle f)
-  //{
-  //if (!f->is_unbounded()) {
-  //  Halfedge_const_handle h = ;
-  //  return point_in_in(p, f->h, h->curve());
-  //}
-  // Find halfedge on boundary:
-  //   if unbounded face is empty return yes,
-  //   if unbouded face find halfedge on some hole,
-  //   all other faces have outer ccb, so just find a halfedge of it.
-  //}
-  
+  bool is_point_in_face(const Point_2 & p, Face_const_handle f)
+  {
+    if (!f->is_unbounded()) {
+      // f is bounded:
+      Halfedge_const_handle h = f->halfedge_on_outer_ccb();
+      return point_is_in(p, h, h->curve());
+    return false;
+    }
+    // f is the unbounded face:
+    if (f->holes_begin() == f->holes_end()) return true;
+    // f has at least one hole:
+    Halfedge_const_handle h = *(f->holes_begin());
+    return point_is_in(p, h, h->curve());
+  }
+
 protected:
 
   //! determines whether a given point lies within the interior of a face
@@ -434,7 +438,7 @@ protected:
    * curve is provided explicitly, in case the halfedge hasn't been fully
    * constructed yet.
    * A point lies within a face interior, iff the number of intersections 
-   * between the face boundary and a ray emenating from the point is even.
+   * between the face boundary and a ray emanating from the point is even.
    * This function counts the number of intersections with a vertical ray, by
    * counting the number of boundary halfedges that are above the input point,
    * and the input point is in their x-range. The functions carefuly handles
