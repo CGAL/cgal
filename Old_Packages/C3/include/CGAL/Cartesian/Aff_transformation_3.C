@@ -12,6 +12,8 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/Aff_transformation_3.C
+// source        : include/CGAL/Cartesian/Aff_transformation_3.C
+// package       : C3
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Andreas Fabri

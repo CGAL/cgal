@@ -12,6 +12,8 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/Triangle_3.C
+// source        : include/CGAL/Cartesian/Triangle_3.C
+// package       : C3
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Andreas Fabri

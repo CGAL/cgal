@@ -11,7 +11,9 @@
 // release       :
 // release_date  :
 //
+// source        : include/CGAL/Cartesian/Aff_transformation_rep_2.h
 // file          : include/CGAL/Cartesian/Aff_transformation_rep_2.h
+// package       : C2
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Andreas Fabri, Lutz Kettner

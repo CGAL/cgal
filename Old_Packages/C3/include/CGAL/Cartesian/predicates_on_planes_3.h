@@ -12,6 +12,8 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/predicates_on_planes_3.h
+// source        : include/CGAL/Cartesian/predicates_on_planes_3.h
+// package       : C3
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Andreas Fabri, Herve Bronnimann

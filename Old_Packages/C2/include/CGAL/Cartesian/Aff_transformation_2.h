@@ -12,6 +12,8 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/Aff_transformation_2.h
+// source        : include/CGAL/Cartesian/Aff_transformation_2.h
+// package       : C2
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Andreas Fabri, Lutz Kettner
@@ -23,9 +25,9 @@
 #ifndef CGAL_CARTESIAN_AFF_TRANSFORMATION_2_H
 #define CGAL_CARTESIAN_AFF_TRANSFORMATION_2_H
 
+#include <cmath>
 #include <CGAL/Cartesian/redefine_names_2.h>
 #include <CGAL/Handle.h>
-#include <cmath>
 
 CGAL_BEGIN_NAMESPACE
 

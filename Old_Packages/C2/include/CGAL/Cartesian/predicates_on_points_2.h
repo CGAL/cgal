@@ -12,6 +12,8 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/predicates_on_points_2.h
+// source        : include/CGAL/Cartesian/predicates_on_points_2.h
+// package       : C2
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Herve Bronnimann

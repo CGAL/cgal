@@ -12,6 +12,8 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/Ray_2.C
+// source        : include/CGAL/Cartesian/Ray_2.C
+// package       : C2
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Andreas Fabri, Herve Bronnimann

@@ -4,7 +4,7 @@
 LINK="ln -sf"
 
 # The following is necessary for the new kernel to work, since
-# 1. outer files may still try to include ClassC2<R>
+# 1. outer files may still try to include ClassC3<R>
 # 2. if they include Class_2<R> in Michael's design, we'd like them to
 # include Cartesian/Class_2<R> instead
 

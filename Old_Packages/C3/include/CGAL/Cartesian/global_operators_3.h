@@ -12,6 +12,8 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/global_operators_3.h
+// source        : include/CGAL/Cartesian/global_operators_3.h
+// package       : C3
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Andreas Fabri, Herve Bronnimann

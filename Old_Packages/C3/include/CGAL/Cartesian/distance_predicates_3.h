@@ -12,6 +12,8 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/distance_predicates_3.h
+// source        : include/CGAL/Cartesian/distance_predicates_3.h
+// package       : C3
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Herve Bronnimann

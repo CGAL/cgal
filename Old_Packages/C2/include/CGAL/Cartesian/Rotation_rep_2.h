@@ -12,6 +12,8 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/Rotation_rep_2.h
+// source        : include/CGAL/Cartesian/Rotation_rep_2.h
+// package       : C2
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Andreas Fabri, Herve Bronnimann
