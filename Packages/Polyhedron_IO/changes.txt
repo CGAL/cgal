@@ -1,5 +1,9 @@
 Polyhedron_IO Package: Release changes:
 ---------------------------------------------------------------------
+
+3.21 (10 Dec 2003) [rursu]
+- Files with common functionality were moved to Stream_support package
+
 3.20 (17 Nov 2003)
 - Added easy examples/Polyhedron_IO/polyhedron2vrml.C .
 
