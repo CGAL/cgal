@@ -82,8 +82,8 @@ namespace CGAL_MINIBALL_NAMESPACE {
         std::swap(l[j],l[e+random(j+1-e)]);
   
       for (i=e; i<n; ++i)
-        if (!ss.contains(t.center_cartesian_begin(l[i]),
-                         t.radius(l[i]),Tol,Is_exact()) && pivot(i)) {
+        if (!ss.contains(t.center_cartesian_begin(*l[i]),
+                         t.radius(*l[i]),Tol,Is_exact()) && pivot(i)) {
           k = i+1;
           break;
         }
@@ -104,12 +104,12 @@ namespace CGAL_MINIBALL_NAMESPACE {
     for (int k=from; k<to; ++k) {
       // compute the (squared) distance from c1 to c2:
       const FT dist = inner_product_n<D>(ss.begin(),
-        t.center_cartesian_begin(l[k]),0.0,std::plus<FT>(),
+        t.center_cartesian_begin(*l[k]),0.0,std::plus<FT>(),
         Subtract_and_square<FT>());
   
       // compute excess:
       using std::sqrt;
-      const FT ex = sqrt(dist)+t.radius(l[k]);
+      const FT ex = sqrt(dist)+t.radius(*l[k]);
   
       // compare with current maximum:
       if (ex > maximum) { // (*)
@@ -139,13 +139,13 @@ namespace CGAL_MINIBALL_NAMESPACE {
     for (int k=from; k<to; ++k) {
       // compute the (squared) distance from c1 to c2:
       const double dist = inner_product_n<D>(center,
-         t.center_cartesian_begin(l[k]),0.0,std::plus<double>(),
+         t.center_cartesian_begin(*l[k]),0.0,std::plus<double>(),
          Subtract_and_square_to_double<FT>());
   
       // compute excess:
       using std::sqrt;
       const double ex = sqrt(dist) +
-         CGAL_MINIBALL_NTS to_double(t.radius(l[k]));
+         CGAL_MINIBALL_NTS to_double(t.radius(*l[k]));
   
       // compare with current maximum:
       if (ex > maximum) { // (*)
@@ -156,8 +156,8 @@ namespace CGAL_MINIBALL_NAMESPACE {
   
     // return whether B doesn't contain the ball l[i]:
     return maximum > radius &&
-           !ss.contains(t.center_cartesian_begin(l[i]),
-                        t.radius(l[i]),Tol,Is_exact());
+           !ss.contains(t.center_cartesian_begin(*l[i]),
+                        t.radius(*l[i]),Tol,Is_exact());
   }
   
   template<class Traits>
@@ -175,11 +175,11 @@ namespace CGAL_MINIBALL_NAMESPACE {
     for (int k=from; k<to; ++k) {
       // compute the (squared) distance from c1 to c2:
       const FT dist = inner_product_n<D>(ss.begin(),
-        t.center_cartesian_begin(l[k]),0.0,std::plus<FT>(),
+        t.center_cartesian_begin(*l[k]),0.0,std::plus<FT>(),
         Subtract_and_square<FT>());
   
-      if (compare(max,maxp,t.radius(l[k]),dist)) {
-        max   = t.radius(l[k]);
+      if (compare(max,maxp,t.radius(*l[k]),dist)) {
+        max   = t.radius(*l[k]);
         maxp  = dist;
         i     = k;
         found = true;
@@ -208,10 +208,10 @@ namespace CGAL_MINIBALL_NAMESPACE {
     for (int k=from; k<to; ++k) {
       // compute the (squared) distance from c1 to c2:
       const double dist = inner_product_n<D>(center,
-         t.center_cartesian_begin(l[k]),0.0,std::plus<double>(),
+         t.center_cartesian_begin(*l[k]),0.0,std::plus<double>(),
          Subtract_and_square_to_double<FT>());
   
-      const double r = CGAL_MINIBALL_NTS to_double(t.radius(l[k]));
+      const double r = CGAL_MINIBALL_NTS to_double(t.radius(*l[k]));
       if (compare(max,maxp,r,dist)) {
         max   = r;
         maxp  = dist;
@@ -222,8 +222,8 @@ namespace CGAL_MINIBALL_NAMESPACE {
   
     // return whether B doesn't contain the ball l[i]:
     return found &&
-           !ss.contains(t.center_cartesian_begin(l[i]),
-                        t.radius(l[i]),Tol,Is_exact());
+           !ss.contains(t.center_cartesian_begin(*l[i]),
+                        t.radius(*l[i]),Tol,Is_exact());
   }
   
   template<class Traits>
@@ -279,8 +279,8 @@ namespace CGAL_MINIBALL_NAMESPACE {
   
     // check that the miniball is enclosing:
     for (unsigned int i=0; i<l.size(); ++i)
-      if (!ss.contains(t.center_cartesian_begin(l[i]),
-                       t.radius(l[i]),Tol,Is_exact())) {
+      if (!ss.contains(t.center_cartesian_begin(*l[i]),
+                       t.radius(*l[i]),Tol,Is_exact())) {
         cerr << "Min_sphere_of_spheres_d: miniball not enclosing." << endl
              << "Please contact the author <kf@iaeth.ch>." << endl;
         return false;
@@ -291,13 +291,13 @@ namespace CGAL_MINIBALL_NAMESPACE {
     bool isSupporting = true;
     for (int i=0; i<e; ++i) {
       // check radii:
-      const P rd = ss.radius()-t.radius(l[i]);
+      const P rd = ss.radius()-t.radius(*l[i]);
       if (is_neg(rd,ss.disc()))
         isSupporting = false;
     
       // compute the (squared) distance from ss.begin() to l[i]'s center:
       const P dist = inner_product_n<D>(ss.begin(),
-        t.center_cartesian_begin(l[i]),P(0,0),std::plus<P>(),
+        t.center_cartesian_begin(*l[i]),P(0,0),std::plus<P>(),
         Subtract_and_square_pair<FT>(ss.disc()));
     
       // compute the square of rd:
@@ -317,7 +317,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     // set up initial system's coefficient matrix:
     FT (*m)[D+1] = new FT[e][D+1];
     for (int j=0; j<e; ++j)
-      copy_n<D>(t.center_cartesian_begin(l[j]),m[j]);
+      copy_n<D>(t.center_cartesian_begin(*l[j]),m[j]);
     for (int j=0; j<e; ++j)
       m[j][D] = FT(1);
     

@@ -209,9 +209,10 @@ namespace CGAL_MINIBALL_NAMESPACE {
                        Tag_false use_sqrt,Tag_true is_exact);
   
   private:
-    std::vector<Sphere> l;        // list of the added bals
-    Support_set<Traits> ss;       // current support set
-    int e;                        // l[0..(e-1)] is a basis
+    std::vector<Sphere> S;         // list of the added bals
+    std::vector<const Sphere *> l; // list of pointers to the added bals
+    Support_set<Traits> ss;        // current support set
+    int e;                         // l[0..(e-1)] is a basis
   
   private: // forbid copy constructing and assignment (because our
            // pointers in ss would be wrong then):
@@ -230,18 +231,21 @@ namespace CGAL_MINIBALL_NAMESPACE {
 
   template<class Traits>
   void Min_sphere_of_spheres_d<Traits>::prepare(int size) {
+    S.reserve(size);
     l.reserve(size);
   }
 
   template<class Traits>
   void Min_sphere_of_spheres_d<Traits>::insert(const Sphere& b) {
     CGAL_MINIBALL_ASSERT(t.radius(b) >= FT(0));
-    l.push_back(b);
+    S.push_back(b);
+    l.push_back(&b);
     is_up_to_date = false;
   }
 
   template<class Traits>
   void Min_sphere_of_spheres_d<Traits>::clear() {
+    S.clear();
     l.clear();
     ss.reset();
     e = 0;
@@ -309,7 +313,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     Min_sphere_of_spheres_d<Traits>::support_begin() {
     if (!is_up_to_date)
       update();
-    return Support_iterator(l.begin());
+    return Support_iterator(*l.begin());
   }
 
   template<class Traits>
@@ -317,7 +321,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     Min_sphere_of_spheres_d<Traits>::support_end() {
     if (!is_up_to_date)
       update();
-    return Support_iterator(l.begin()+e);
+    return Support_iterator(*l.begin()+e);
   }
 
 } // namespace CGAL_MINIBALL_NAMESPACE
