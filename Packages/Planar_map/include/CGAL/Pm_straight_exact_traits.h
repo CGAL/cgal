@@ -1788,11 +1788,11 @@ public:
 
 private:
   inline const Bounding_box& ref() const {return ref(bbox);}
-  //inline const Bounding_box& ref(const Indirect_bounding_box & bbox) const 
-  //{ return bbox.pointer()->e0; }
+  inline const Bounding_box& ref(const Indirect_bounding_box & bbox) const 
+  { return bbox.pointer()->e0; }
   inline Bounding_box& ref() {return ref(bbox);}
-  //inline Bounding_box& ref(Indirect_bounding_box & bbox)
-  //{ return bbox.pointer()->e0; }
+  inline Bounding_box& ref(Indirect_bounding_box & bbox)
+  { return bbox.pointer()->e0; }
   inline bool is_totally_unbounded() const
   { return is_totally_unbounded(ref()); }
   inline bool is_totally_unbounded(const Bounding_box & b) const
