@@ -170,7 +170,7 @@ private:
 public:
 
   Kd_tree(Splitter s = Splitter())
-    : split(s), built(false)
+    : split(s), built_(false)
   {}
   
   template <class InputIterator>
@@ -190,7 +190,7 @@ public:
     int dim = std::distance(ccci(p), ccci(p,0)); 
 
     data.reserve(pts.size());
-    for(int i = 0; i < pts.size(); i++){
+    for(unsigned int i = 0; i < pts.size(); i++){
       data.push_back(&pts[i]);
     }
     Point_container c(dim, data.begin(), data.end());

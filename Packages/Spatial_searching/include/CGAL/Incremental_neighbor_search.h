@@ -96,8 +96,8 @@ class iterator;
 			    FT Eps=FT(0.0), bool search_nearest=true, 
 			    const Distance& tr=Distance())
     {
-        start = new iterator(tree,q,tr,Eps,search_nearest);
-        past_the_end = new iterator();
+      start = new iterator(tree,q,tr,Eps,search_nearest);
+      past_the_end = new iterator();
     };
 
     // destructor

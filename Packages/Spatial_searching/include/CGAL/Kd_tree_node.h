@@ -74,7 +74,7 @@ namespace CGAL {
     {}
 
     Kd_tree_node(int n_, Node_type t ) 
-      : n(n_), the_node_type(t) 
+      : the_node_type(t), n(n_)
     {}
 
     // members for all nodes

@@ -30,15 +30,15 @@
 
 namespace CGAL {
 
-template <class SearchTraits> 
+template <class Traits> 
 class Point_container {
 
 private:
-  typedef typename SearchTraits::Point_d Point_d;
+  typedef typename Traits::Point_d Point_d;
   typedef std::vector<Point_d*> Point_vector;
   
 public:
-  typedef typename SearchTraits::FT FT;
+  typedef typename Traits::FT FT;
   
   typedef typename Point_vector::iterator iterator;
   
@@ -46,20 +46,20 @@ private:
   iterator b, e; // the iterator range of the Point_container 
   
   int built_coord;    // a coordinate for which the pointer list is built
-  Kd_tree_rectangle<SearchTraits> bbox;       // bounding box, i.e. rectangle of node
-  Kd_tree_rectangle<SearchTraits> tbox;       // tight bounding box, 
+  Kd_tree_rectangle<Traits> bbox;       // bounding box, i.e. rectangle of node
+  Kd_tree_rectangle<Traits> tbox;       // tight bounding box, 
   // i.e. minimal enclosing bounding
   // box of points
 	                	    
 public:
 
-  inline const Kd_tree_rectangle<SearchTraits>& 
+  inline const Kd_tree_rectangle<Traits>& 
   bounding_box() const 
   { 
     return bbox; 
   }
   
-  inline const Kd_tree_rectangle<SearchTraits>&
+  inline const Kd_tree_rectangle<Traits>&
   tight_bounding_box() const 
   { 
     return tbox; 
@@ -235,15 +235,15 @@ public:
     b(NULL), e(NULL), bbox(d), tbox(d)  
   {}
   
-  template <class SearchTraits>   
+  template <class Traits2>   
   struct Cmp {
-    typedef typename SearchTraits::FT FT;
-    typedef typename SearchTraits::Point_d Point_d;
+    typedef typename Traits2::FT FT;
+    typedef typename Traits2::Point_d Point_d;
     typedef std::vector<Point_d*> Point_vector;
     
     int split_coord;
     FT value;
-    typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+    typename Traits2::Construct_cartesian_const_iterator_d construct_it;
     
     Cmp(int s, FT c)
       : split_coord(s), value(c)
@@ -252,22 +252,22 @@ public:
     bool 
     operator()(Point_d* pt) const
     {
-      typename SearchTraits::Cartesian_const_iterator_d ptit;
+      typename Traits2::Cartesian_const_iterator_d ptit;
       ptit = construct_it(*pt);
       return  *(ptit+split_coord) < value; 
     }
   };
 
 
-  template <class SearchTraits>   
+  template <class Traits2>   
   struct Between {
-    typedef typename SearchTraits::FT FT;
-    typedef typename SearchTraits::Point_d Point_d;
+    typedef typename Traits2::FT FT;
+    typedef typename Traits2::Point_d Point_d;
     typedef std::vector<Point_d*> Point_vector;
     
     int split_coord;
     FT low, high;
-    typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+    typename Traits2::Construct_cartesian_const_iterator_d construct_it;
     
     Between(int s, FT l, FT h)
       : split_coord(s), low(l), high(h)
@@ -276,7 +276,7 @@ public:
     bool 
     operator()(Point_d* pt) const
     {
-      typename SearchTraits::Cartesian_const_iterator_d ptit;
+      typename Traits2::Cartesian_const_iterator_d ptit;
       ptit = construct_it(*pt);
       if(! ( *(ptit+split_coord) <= high ) ){
 	//	std::cerr << "Point " << *pt << " exceeds " << high << " in dimension " << split_coord << std::endl;
@@ -305,7 +305,7 @@ public:
       assert( b = b && (bbox.min_coord(i) <= tbox.min_coord(i)));
       assert( b = b && (bbox.max_coord(i) >= tbox.max_coord(i)));
 
-      Between<SearchTraits> between(i,tbox.min_coord(i), tbox.max_coord(i));
+      Between<Traits> between(i,tbox.min_coord(i), tbox.max_coord(i));
       for(iterator it = begin(); it != end(); it++){
 	between(*it);
       }
@@ -316,7 +316,7 @@ public:
 
   // note that splitting is restricted to the built coordinate
   template <class Separator>
-  void split(Point_container<SearchTraits>& c, Separator& sep,  
+  void split(Point_container<Traits>& c, Separator& sep,  
 	     bool sliding=false) 
   {
     assert(dimension()==c.dimension());
@@ -330,16 +330,15 @@ public:
     c.built_coord=split_coord;
 		
 	
-    typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
-    typename SearchTraits::Cartesian_const_iterator_d ptit;
+    typename Traits::Construct_cartesian_const_iterator_d construct_it;
 
-    Cmp<SearchTraits> cmp(split_coord, cutting_value);
+    Cmp<Traits> cmp(split_coord, cutting_value);
     iterator it = std::partition(begin(), end(), cmp);
     // now [begin,it) are lower and [it,end) are upper
     if (sliding) { // avoid empty lists 
 
       if (it == begin()) {
-	iterator minelt = std::min_element(begin(),end(),comp_coord_val<SearchTraits,int>(split_coord));
+	iterator minelt = std::min_element(begin(),end(),comp_coord_val<Traits,int>(split_coord));
 	if(minelt != it){
 	  std::iter_swap(minelt,it);
 	}
@@ -348,7 +347,7 @@ public:
 	it++;
       }
       if (it == end()) {
-	iterator maxelt = std::max_element(begin(),end(),comp_coord_val<SearchTraits,int>(split_coord));
+	iterator maxelt = std::max_element(begin(),end(),comp_coord_val<Traits,int>(split_coord));
 	it--;
 	if(maxelt != it){
 	  std::iter_swap(maxelt,it);
@@ -373,13 +372,13 @@ public:
 
 
 
-  template <class SearchTraits2, class Value>
+  template <class Traits2, class Value>
   struct comp_coord_val {
     
   private:
     Value coord;   
     
-    typedef typename SearchTraits2::Point_d Point_d;
+    typedef typename Traits2::Point_d Point_d;
   public:
     comp_coord_val (const Value& coordinate) 
       : coord(coordinate) 
@@ -388,8 +387,8 @@ public:
     bool 
     operator()(const Point_d *a, const Point_d *b) const
     {
-      typename SearchTraits2::Construct_cartesian_const_iterator_d construct_it;
-      typename SearchTraits2::Cartesian_const_iterator_d ait = construct_it(*a),
+      typename Traits2::Construct_cartesian_const_iterator_d construct_it;
+      typename Traits2::Cartesian_const_iterator_d ait = construct_it(*a),
 	bit = construct_it(*b);
       return *(ait+coord) < *(bit+coord);
     }
@@ -400,11 +399,10 @@ public:
   median(const int split_coord) 
   {
     typename Point_vector::iterator mid = begin() + (end() - begin())/2;
-    int dist = std::distance(begin(),end());
-    std::nth_element(begin(), mid, end(),comp_coord_val<SearchTraits,int>(split_coord));
+    std::nth_element(begin(), mid, end(),comp_coord_val<Traits,int>(split_coord));
     
-    typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
-    typename SearchTraits::Cartesian_const_iterator_d mpit = construct_it((*(*mid)));
+    typename Traits::Construct_cartesian_const_iterator_d construct_it;
+    typename Traits::Cartesian_const_iterator_d mpit = construct_it((*(*mid)));
     FT val1 = *(mpit+split_coord);
     mid++;
     mpit = construct_it((*(*mid)));
