@@ -30,13 +30,13 @@ Interval_nt_advanced
 convert_from_to (const Interval_nt_advanced&, const Lazy_exact_nt<RT> & z)
 {
 	CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
-	return  z.interval_advanced();
+	return  z.approx_adv();
 }
 
 #if !defined(CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION) \
  && !defined(CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION)
 template <class RT>
-struct converter<Interval_nt_advanced,Lazy_exact_nt<RT> >
+struct converter<Interval_nt_advanced, Lazy_exact_nt<RT> >
 {
     static inline Interval_nt_advanced do_it (const Lazy_exact_nt<RT> & z)
     {

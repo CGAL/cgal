@@ -51,21 +51,14 @@
 
 /*
  * TODO (vaguely by decreasing priority):
- * - A choice must be made between Interval_nt/Interval_nt_advanced (or both)
- *   for access members.
- * - There's probably a mean to factorize something in the base class for
- *   .exact().
- ------ [ passed this, it'll be usable ] -----
- * - Don't use the CGAL template for sign, compare.
- * - Do we want to have an interval rafinement functionnality ?
+ * - Predicates should use the filtered advanced version.
+ *   [ done via Filtered_exact<Lazy_exact<X>, X>  :-) ]
+ * - Interval rafinement functionnality ?
  * - The next step will be to replace Cartesian<Lazy_exact_nt<ET> > by a kernel
  *   similar to LOOK in functionality : Lazy_exact_Cartesian<FT,ET>.
- * - Predicates could use the filtered advanced version.
  * - Geometric constructions could use the interval_advanced.
- ------ [ style issues ] -----
- * - Make all binary/unary operations via a template, having the template
- *   operation as argument (needs a function objet for that...).
- * - Separate the handle and the representation in 2 files.
+ *   [ will be done via the filtered Kernel ]
+ * - Separate the handle and the representation in 2 files (?)
  * - Add an Allocator template argument ?
  * - Add a CT template parameter like Filtered_exact_nt<> ?
  * - Add a string constant to provide an expression string (a la MetaCGAL) ?
@@ -98,6 +91,19 @@
  * For the moment, I choose to implement it lazily (=> virtual) ???
  */
 
+/*
+ * Interface of the rep classes:
+ * - .approx()      returns Interval_nt and assumes rounding=nearest.
+ *                  [ only called from the handle, and declared in the base ]
+ * - .approx_adv()  returns Interval_nt_advanced and assumes rounding=+\inf.
+ *                  [ called from .approx(), virtual ]
+ * - .exact()       returns ET, if not already done, computes recursively
+ *                  virtual
+ *
+ * - .rafine_approx()  later we can do that (having a birthdate like LOOK ?).
+ *
+ */
+
 CGAL_BEGIN_NAMESPACE
 
 template <typename ET> class Lazy_exact_nt;
@@ -107,16 +113,15 @@ template <typename ET>
 struct Lazy_exact_nt_rep : public Ref_counted
 {
   mutable Interval_nt_advanced in;
+  mutable ET *et;
 
+  // Invalid interval for uninitialized variable, maybe it's not very clean.
   Lazy_exact_nt_rep ()
-	  : in(1,0) {}
+      : in(1,0), et(NULL) {}
   Lazy_exact_nt_rep (const double d)
-	  : in(d) {}
-  // virtual void update_interval() const = 0;
-  // update_interval() is supposed to be called with rounding -> +inf.
-  virtual void update_approx() const = 0;
-  virtual ET exact() const = 0;
-  Interval_nt_advanced interval() const
+      : in(d), et(NULL) {}
+
+  Interval_nt approx() const
   {
       if (!is_valid(in))
       {
@@ -126,13 +131,20 @@ struct Lazy_exact_nt_rep : public Ref_counted
       }
       return in;
   }
-  Interval_nt_advanced approx() const
+
+  // update_approx() and approx_adv() must be called with rounding -> +inf.
+  // NOTE TODO FIXME: those 2 functions are redundant.  Simplify this.
+  Interval_nt_advanced approx_adv() const
   {
+      // CGAL_assertion(correct rounding)
       if (!is_valid(in))
 	  update_approx();
       return in;
   }
-  virtual ~Lazy_exact_nt_rep () {}; // ok ?
+
+  virtual void update_approx() const = 0;
+  virtual ET exact() const = 0;
+  virtual ~Lazy_exact_nt_rep () {};
 };
 
 // double constant
@@ -144,105 +156,67 @@ struct Lazy_exact_nt_Cst : public Lazy_exact_nt_rep<ET>
 
   void update_approx() const
   {
-	  CGAL_assertion(false);
+      CGAL_assertion(false);
   }
   ET exact() const
   {
-	  return ET(in.inf());
+      if (!et)
+	  et = new ET(in.inf());
+      return *et;
   }
-  // ~Lazy_exact_nt_Cst() {}
 };
 
-// Unary operations: abs, sqrt, square.
+// Unary  operations: abs, sqrt, square.
+// Binary operations: +, -, *, /, min, max.
 
 // Base unary operation
 template <typename ET>
 struct Lazy_exact_nt_unary : public Lazy_exact_nt_rep<ET>
 {
-  mutable ET *et;
   const Lazy_exact_nt<ET> op1;
 
   Lazy_exact_nt_unary (const Lazy_exact_nt<ET> &a)
-      : Lazy_exact_nt_rep<ET>(), et(NULL), op1(a) {}
-
-  // Interval_nt_advanced interval() const {};
+      : Lazy_exact_nt_rep<ET>(), op1(a) {}
 };
 
-// abs
+// Base binary operation
 template <typename ET>
-struct Lazy_exact_nt_Abs : public Lazy_exact_nt_unary<ET>
+struct Lazy_exact_nt_binary : public Lazy_exact_nt_unary<ET>
 {
-  Lazy_exact_nt_Abs (const Lazy_exact_nt<ET> &a)
-      : Lazy_exact_nt_unary<ET>(a) {}
+  const Lazy_exact_nt<ET> op2;
 
-  void update_approx() const
-  {
-      in = CGAL_NTS abs(op1.approx());
-  }
-  ET exact() const
-  {
-      if (!et)
-	  et = new ET(CGAL_NTS abs(op1.exact()));
-      return *et;
-  }
+  Lazy_exact_nt_binary (const Lazy_exact_nt<ET> &a, const Lazy_exact_nt<ET> &b)
+      : Lazy_exact_nt_unary<ET>(a), op2(b) {}
 };
 
-// sqrt
-template <typename ET>
-struct Lazy_exact_nt_Sqrt : public Lazy_exact_nt_unary<ET>
-{
-  Lazy_exact_nt_Sqrt (const Lazy_exact_nt<ET> &a)
-      : Lazy_exact_nt_unary<ET>(a) {}
-
-  void update_approx() const
-  {
-      in = sqrt(op1.approx());
-  }
-  ET exact() const
-  {
-      if (!et)
-	  et = new ET(CGAL::sqrt(op1.exact()));
-      return *et;
-  }
+// Macro for unary operations
+#define CGAL_LAZY_UNARY_OP(OP, NAME)                                 \
+template <typename ET>                                               \
+struct NAME : public Lazy_exact_nt_unary<ET>                         \
+{                                                                    \
+  NAME (const Lazy_exact_nt<ET> &a)                                  \
+      : Lazy_exact_nt_unary<ET>(a) {}                                \
+                                                                     \
+  void update_approx() const                                         \
+  {                                                                  \
+      in = OP(op1.approx_adv());                                     \
+  }                                                                  \
+  ET exact() const                                                   \
+  {                                                                  \
+      if (!et)                                                       \
+	  et = new ET(OP(op1.exact()));                              \
+      return *et;                                                    \
+  }                                                                  \
 };
 
-// square
-template <typename ET>
-struct Lazy_exact_nt_Square : public Lazy_exact_nt_unary<ET>
-{
-  Lazy_exact_nt_Square (const Lazy_exact_nt<ET> &a)
-      : Lazy_exact_nt_unary<ET>(a) {}
-
-  void update_approx() const
-  {
-      in = CGAL_NTS square(op1.approx());
-  }
-  ET exact() const
-  {
-      if (!et)
-	  et = new ET(CGAL_NTS square(op1.exact()));
-      return *et;
-  }
-};
-
-
-// Binary operations: +, -, *, /, min, max.
-
-// Base binary operation (should it derive from unary instead ?)
-template <typename ET>
-struct Lazy_exact_nt_binary : public Lazy_exact_nt_rep<ET>
-{
-  mutable ET *et;
-  const Lazy_exact_nt<ET> op1, op2;
-  Lazy_exact_nt_binary (const Lazy_exact_nt<ET> &a,
-	                    const Lazy_exact_nt<ET> &b)
-      : Lazy_exact_nt_rep<ET>(), et(NULL), op1(a), op2(b) {}
-  // ~Lazy_exact_nt_binary() { }
-};
+CGAL_LAZY_UNARY_OP(CGAL_NTS abs, Lazy_exact_nt_Abs)
+CGAL_LAZY_UNARY_OP(CGAL_NTS square, Lazy_exact_nt_Square)
+CGAL_LAZY_UNARY_OP(sqrt, Lazy_exact_nt_Sqrt)
 
 #if 0
 // Template binary operator (might be merged with the above ?)
 // Note : G++ 2.95 produces an ICE on this  :(  Will try again later...
+// Second solution is a macro.
 template <typename ET, template <typename T> class Op>
 struct Lazy_exact_nt_binary_op : public Lazy_exact_nt_binary<ET>
 {
@@ -252,7 +226,7 @@ struct Lazy_exact_nt_binary_op : public Lazy_exact_nt_binary<ET>
 
   void update_approx() const
   {
-      in = Op<Interval_nt_advanced>()(op1.approx(), op2.approx());
+      in = Op<Interval_nt_advanced>()(op1.approx_adv(), op2.approx_adv());
   }
   ET exact() const
   {
@@ -261,109 +235,32 @@ struct Lazy_exact_nt_binary_op : public Lazy_exact_nt_binary<ET>
       return *et;
   }
 };
+#endif
 
-#elsif 0
-// Second solution : the macro :)
-
-#define CGAL_LAZY_BINARY_OP(OP)                                       \
+// A macro for +, -, * and /
+#define CGAL_LAZY_BINARY_OP(OP, NAME)                                 \
 template <typename ET>                                                \
-struct Lazy_exact_nt_##OP : public Lazy_exact_nt_binary<ET>   \
+struct NAME : public Lazy_exact_nt_binary<ET>                         \
 {                                                                     \
-  Lazy_exact_nt_##OP (const Lazy_exact_nt<ET> &a,                 \
-		          const Lazy_exact_nt<ET> &b)                 \
-    : Lazy_exact_nt_binary<ET>(a,b) {}                            \
+  NAME (const Lazy_exact_nt<ET> &a, const Lazy_exact_nt<ET> &b)       \
+    : Lazy_exact_nt_binary<ET>(a,b) {}                                \
                                                                       \
   void update_approx() const                                          \
   {                                                                   \
-      in = OP<Interval_nt_advanced>()(op1.approx(), op2.approx());    \
+      in = op1.approx_adv() OP op2.approx_adv();                      \
   }                                                                   \
   ET exact() const                                                    \
   {                                                                   \
       if (!et)                                                        \
-	  et = new ET(OP<ET>()(op1.exact(), op2.exact()));            \
+	  et = new ET(op1.exact() OP op2.exact());                    \
       return *et;                                                     \
   }                                                                   \
 };
 
-CGAL_LAZY_BINARY_OP(Min)
-
-#endif
-
-// Addition
-template <typename ET>
-struct Lazy_exact_nt_Add : public Lazy_exact_nt_binary<ET>
-{
-  Lazy_exact_nt_Add (const Lazy_exact_nt<ET> &a, const Lazy_exact_nt<ET> &b)
-    : Lazy_exact_nt_binary<ET>(a,b) {}
-
-  void update_approx() const
-  {
-      in = op1.approx() + op2.approx();
-  }
-  ET exact() const
-  {
-      if (!et)
-	  et = new ET(op1.exact() + op2.exact());
-      return *et;
-  }
-};
-
-// Subtraction
-template <typename ET>
-struct Lazy_exact_nt_Sub : public Lazy_exact_nt_binary<ET>
-{
-  Lazy_exact_nt_Sub (const Lazy_exact_nt<ET> &a, const Lazy_exact_nt<ET> &b)
-    : Lazy_exact_nt_binary<ET>(a,b) {}
-
-  void update_approx() const
-  {
-      in = op1.approx() - op2.approx();
-  }
-  ET exact() const
-  {
-      if (!et)
-	  et = new ET(op1.exact() - op2.exact());
-      return *et;
-  }
-};
-
-// Multiplication
-template <typename ET>
-struct Lazy_exact_nt_Mul : public Lazy_exact_nt_binary<ET>
-{
-  Lazy_exact_nt_Mul (const Lazy_exact_nt<ET> &a, const Lazy_exact_nt<ET> &b)
-    : Lazy_exact_nt_binary<ET>(a,b) {}
-
-  void update_approx() const
-  {
-      in = op1.approx() * op2.approx();
-  }
-  ET exact() const
-  {
-      if (!et)
-	  et = new ET(op1.exact() * op2.exact());
-      return *et;
-  }
-};
-
-// Division
-template <typename ET>
-struct Lazy_exact_nt_Div : public Lazy_exact_nt_binary<ET>
-{
-  Lazy_exact_nt_Div (const Lazy_exact_nt<ET> &a, const Lazy_exact_nt<ET> &b)
-    : Lazy_exact_nt_binary<ET>(a,b) {}
-
-  void update_approx() const
-  {
-      in = op1.approx() / op2.approx();
-  }
-  ET exact() const
-  {
-      if (!et)
-	  et = new ET(op1.exact() / op2.exact());
-      return *et;
-  }
-};
+CGAL_LAZY_BINARY_OP(+, Lazy_exact_nt_Add)
+CGAL_LAZY_BINARY_OP(-, Lazy_exact_nt_Sub)
+CGAL_LAZY_BINARY_OP(*, Lazy_exact_nt_Mul)
+CGAL_LAZY_BINARY_OP(/, Lazy_exact_nt_Div)
 
 // Minimum
 template <typename ET>
@@ -374,14 +271,12 @@ struct Lazy_exact_nt_Min : public Lazy_exact_nt_binary<ET>
 
   void update_approx() const
   {
-      // in = min(op1.approx(), op2.approx());
-      in = Min<Interval_nt_advanced>()(op1.approx(), op2.approx());
+      in = min(op1.approx_adv(), op2.approx_adv());
   }
   ET exact() const
   {
       if (!et)
-	  // et = new ET(min(op1.exact(), op2.exact()));
-	  et = new ET(Min<ET>()(op1.exact(), op2.exact()));
+	  et = new ET(min(op1.exact(), op2.exact()));
       return *et;
   }
 };
@@ -395,7 +290,7 @@ struct Lazy_exact_nt_Max : public Lazy_exact_nt_binary<ET>
 
   void update_approx() const
   {
-      in = max(op1.approx(), op2.approx());
+      in = max(op1.approx_adv(), op2.approx_adv());
   }
   ET exact() const
   {
@@ -413,19 +308,7 @@ struct Lazy_exact_nt : public Handle_for<Lazy_exact_nt_rep<ET> >
   typedef Handle_for<Lazy_exact_nt_rep<ET> > PTR;
   typedef Lazy_exact_nt<ET> Self;
   typedef Lazy_exact_nt_rep<ET> Self_rep;
-  // typedef Lazy_exact_nt_rep<ET> Self_rep;
 
-  // Data members:
-  // Here we should take leda real's idea to cache an exact double value.
-  // double d;
-  // bool is_double;
-  // if "is_double" is false then ptr != NULL.
-  // Can we say is_double = (ptr == NULL) ?  And factorize ;-)
-  //
-  // Computation over this cache can be done cleanly by testing the "inexact"
-  // bit of the FPUSW.
-
-  // Ctors:
   Lazy_exact_nt () {}  // Note : this allocates 1 element...
 
   Lazy_exact_nt (Self_rep *r)
@@ -462,34 +345,58 @@ struct Lazy_exact_nt : public Handle_for<Lazy_exact_nt_rep<ET> >
   Self operator/ (const Self & a) const
   { return new Lazy_exact_nt_Div<ET>(*this, a); }
 
-  // Dtor:
-  // ~Lazy_exact_nt () {}
+  Interval_nt approx() const
+  { return ptr->approx(); }
 
-  Interval_nt_advanced approx() const
-  {
-      return ptr->approx();
-  }
+  Interval_nt_advanced approx_adv() const
+  { return ptr->approx_adv(); }
+
   ET exact() const
+  { return ptr->exact(); }
+
+  // The other comparison operators are currently provided by STL.
+  bool operator< (const Self & a) const
   {
-      return ptr->exact();
+    // No need for exceptions => could be optimized.
+    // Can we have operator< (nothrow), like new (nothrow) ?
+    // Could be wonderful...
+    try {
+      return approx() < a.approx();
+    }
+    catch (...) {
+      std::cerr << "Interval filter failure (<)" << std::endl;
+      return exact() < a.exact();
+    }
   }
 };
 
-// Other operators are currently provided by STL, the CGAL ones are template.
+namespace NTS {
+
 template <typename ET>
 inline
-bool
-operator< (const Lazy_exact_nt<ET> &r, const Lazy_exact_nt<ET> &s)
+Sign
+sign(const Lazy_exact_nt<ET> & a)
 {
-  // No need for exceptions... could be optimized.
-  // Can we have operator< (nothrow), like new (nothrow) ?
-  // Could be wonderful...
   try {
-    return r.approx() < s.approx();
+    return CGAL_NTS sign(a.approx());
   }
   catch (...) {
-    std::cerr << "Interval filter failure" << std::endl;
-    return r.exact() < s.exact();
+    std::cerr << "Interval filter failure (sign)" << std::endl;
+    return CGAL_NTS sign(a.exact());
+  }
+}
+
+template <typename ET>
+inline
+Comparison_result
+compare(const Lazy_exact_nt<ET> & a, const Lazy_exact_nt<ET> & b)
+{
+  try {
+    return CGAL_NTS compare(a.approx(), b.approx());
+  }
+  catch (...) {
+    std::cerr << "Interval filter failure (compare)" << std::endl;
+    return CGAL_NTS compare(a.exact(), b.exact());
   }
 }
 
@@ -502,21 +409,23 @@ abs(const Lazy_exact_nt<ET> & a)
 template <typename ET>
 inline
 Lazy_exact_nt<ET>
+square(const Lazy_exact_nt<ET> & a)
+{ return new Lazy_exact_nt_Square<ET>(a); }
+
+} // namespace NTS
+
+template <typename ET>
+inline
+Lazy_exact_nt<ET>
 sqrt(const Lazy_exact_nt<ET> & a)
 { return new Lazy_exact_nt_Sqrt<ET>(a); }
 
 template <typename ET>
 inline
 Lazy_exact_nt<ET>
-square(const Lazy_exact_nt<ET> & a)
-{ return new Lazy_exact_nt_Square<ET>(a); }
-
-template <typename ET>
-inline
-Lazy_exact_nt<ET>
 min(const Lazy_exact_nt<ET> & a, const Lazy_exact_nt<ET> & b)
-{ return new Lazy_exact_nt_Min<ET>(a, b); }     // Current solution
-// { return new Lazy_exact_nt_binary_op<ET,Min>(a, b); } // template² sol.
+{ return new Lazy_exact_nt_Min<ET>(a, b); }
+// { return new Lazy_exact_nt_binary_op<ET,Min>(a, b); } // if template² param
 
 template <typename ET>
 inline
@@ -553,8 +462,19 @@ Lazy_exact_nt<ET>
 operator/=(Lazy_exact_nt<ET> & a, const Lazy_exact_nt<ET> & b)
 { return a = a / b; }
 
+template <typename ET>
+inline
+io_Operator
+io_tag (const Lazy_exact_nt<ET>&)
+{ return io_Operator(); }
+ 
+template <typename ET>
+inline
+Number_tag
+number_type_tag (const Lazy_exact_nt<ET>&)
+{ return Number_tag(); }
 
-// Hackery.
+// Temporary hack
 inline
 int
 convert_from_to (const int&, const Lazy_exact_nt<int> &)
@@ -569,6 +489,14 @@ struct converter<int, Lazy_exact_nt<int> >
     static inline int do_it (const Lazy_exact_nt<int> & z)
     {
         return convert_from_to(int(), z);
+    }
+};
+
+struct converter<leda_real, Lazy_exact_nt<leda_real> >
+{
+    static inline leda_real do_it (const Lazy_exact_nt<leda_real> & z)
+    {
+        return z.exact();
     }
 };
 #endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION

@@ -1,12 +1,15 @@
-
 // Test program for Lazy_exact_nt<>.
 
 #define CGAL_NO_ASSERTIONS
 
 #include <CGAL/basic.h>
 #include <iostream>
-#include <CGAL/Lazy_exact_nt.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Point_2.h>
+#include <CGAL/predicates_on_points_2.h>
 #include <CGAL/leda_real.h>
+#include <CGAL/Arithmetic_filter.h>
+#include <CGAL/Lazy_exact_nt.h>
 
 #ifdef __GNUG__
 #define UNUSED __attribute__((unused))
@@ -22,21 +25,36 @@
 */
 
 // typedef CGAL::Lazy_exact_nt<int> NT;
-typedef CGAL::Lazy_exact_nt<leda_real> NT;
+// typedef CGAL::Lazy_exact_nt<leda_real> NT;
+typedef CGAL::Filtered_exact<CGAL::Lazy_exact_nt<leda_real>, leda_real> NT;
 // typedef leda_real NT;
+
+typedef CGAL::Cartesian<NT> Kernel;
+typedef CGAL::Point_2<Kernel> Point;
+
+using std::cout;
+using std::endl;
+
+void predicats()
+{
+  Point A(NT(1.0)/NT(3),NT(2.0)/NT(3));
+  Point B(NT(2.0)/NT(3),NT(3.0)/NT(3));
+  Point C(NT(3.0)/NT(3),NT(4.0)/NT(3));
+  Point D(NT(4.0)/NT(3),NT(3.0)/NT(3));
+  cout << A << B << C << endl;
+  cout << (int) CGAL::orientation(A,B,C) << endl;
+}
 
 int main ()
 {
-  using std::cout;
-  using std::endl;
   cout.precision(20);
   // NT UNUSED a;
   // NT UNUSED b(a);
   // NT UNUSED c = b;
-  NT UNUSED d = 1.0;
+  NT UNUSED d (1.0);
   NT UNUSED e = d + d;
   NT UNUSED z = min(e,d);
-  cout << e/3 << endl;
+  cout << e/NT(3) << endl;
   // NT UNUSED f = abs(NT(0));
   cout << "sign(3*(1/3)-1) = " << CGAL_NTS sign(NT(3)*(NT(1)/NT(3))-NT(1)) << endl;
   cout << "sign(sqrt(2)^2-2) = " << CGAL_NTS sign(CGAL_NTS square(CGAL_NTS sqrt(NT(2)))-NT(2)) << endl;
@@ -49,6 +67,7 @@ int main ()
   cout << "sizeof(add) = " << sizeof(CGAL::Lazy_exact_nt_Add<int>) << endl;
   cout << "sizeof(leda_real) = " << sizeof(leda_real) << endl;
   cout << "sizeof(Lazy_exact_nt) = " << sizeof(CGAL::Lazy_exact_nt<int>) << endl;
+  predicats();
   return 0;
 }
 
