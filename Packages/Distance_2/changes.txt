@@ -1,3 +1,6 @@
+2.5.5 (30 October 2002)
+- fixed one thing in .fw file that was only altered in generated file
+
 2.5.4 (29 October 2002)
 - rename leftturn and co to left_turn and co.
 - make it work with GMP++.
