@@ -23,13 +23,13 @@ int main(int argc, char* argv[]) {
   std::ifstream in(argv[1]);
   Nef_polyhedron N;
   in >> N;
-
+  //  CGAL_NEF_SETDTHREAD(503*509);
   SNC_decorator D(*const_cast<SNC_structure*>(N.sncp()));
   Halfedge_iterator e = D.halfedges_begin();
   for(;e!=D.halfedges_end();++e) {
     std::cerr << "edge: " << e->source()->point() << "->" 
 	      << e->twin()->source()->point() << std::endl;
-    Single_wall W(e,Vector_3(1,0,0));
+    Single_wall W(e,Vector_3(-1,0,0));
     N.delegate(W);
   }
   std::cerr << N;

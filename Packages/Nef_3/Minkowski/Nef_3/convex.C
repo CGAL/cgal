@@ -1,18 +1,21 @@
 #include <CGAL/basic.h>
+#include <CGAL/Timer.h>
 
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <vector>
 
-#include <CGAL/Cartesian.h>
+// #include <CGAL/Cartesian.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/convex_hull_3.h> 
 
 using namespace std;
 
-typedef CGAL::Cartesian<double>                               R;
+typedef CGAL::Exact_predicates_exact_constructions_kernel     R;
+//typedef CGAL::Cartesian<double>                               R;
 typedef CGAL::Polyhedron_3<R>                                 Polyhedron;
 typedef Polyhedron::Point_3                                   Point;
 
@@ -64,6 +67,10 @@ int main( int argc, char **argv) {
     Polyhedron P2;
     read( argv[1], P1);
     read( argv[2], P2);
+
+    CGAL::Timer t;
+    t.start();
+
     vector<Point> points;
     Add_points add;
     fold( P1.vertices_begin(), P1.vertices_end(),
@@ -72,6 +79,10 @@ int main( int argc, char **argv) {
           add);
     Polyhedron P3;
     convex_hull_3( points.begin(), points.end(), P3);
-    cout << P3;
+
+    t.stop();
+    std::cout << "Runtime Minkowski Sum: " << t.time() << std::endl;
+
+    //    cout << P3;
     return 0;
 }

@@ -26,10 +26,6 @@ MINKOWSKI = $(MY_DIR)/Nef_3/Minkowski/include
 
 CUSTOM_CXXFLAGS = -I$(POLY) -I$(NEF3) -I$(NEF2) -I$(NEFS2) -I$(MINKOWSKI)
 
-# CGAL_CXX = /home/hachenb/GCC/GCC-3.3.2/bin/g++-3.3.2
-# CGAL_CXX = g++ -O2 -NDEBUG
-# CGAL_CXX = g++ -pg -p
-
 CXXFLAGS = \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
@@ -40,14 +36,13 @@ CXXFLAGS = \
 #                    linker flags
 #---------------------------------------------------------------------#
 
-CUSTOM_LDFLAGS = -lGL -lGLU
-
 LIBPATH = \
           $(CGAL_LIBPATH)
 
 LDFLAGS = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_LDFLAGS)
+          $(CGAL_QT_LDFLAGS)  \
+	  $(OPENGL_LIBS)
 
 #---------------------------------------------------------------------#
 #                    target entries
@@ -68,10 +63,14 @@ mixed$(EXE_EXT): mixed$(OBJ_EXT)
 decomposition_test$(EXE_EXT): decomposition_test$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)decomposition_test decomposition_test$(OBJ_EXT) $(LDFLAGS)
 
+gausian_map_test$(EXE_EXT): gausian_map_test$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)gausian_map_test gausian_map_test$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
                    convex.clean \
                    mixed.clean \
-	           decomposition_test
+	           decomposition_test \
+	           gausian_map_test
 
 #---------------------------------------------------------------------#
 #                    suffix rules
