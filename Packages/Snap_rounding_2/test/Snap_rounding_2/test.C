@@ -114,6 +114,11 @@ int main(int argc,char *argv[])
   s1.insert(*(seg_list.begin()));
   print_out(s1);
 
+  std::cout << "\ncheking clear\n";
+  s1.clear();
+  s1.insert(*(seg_list.begin()));
+  print_out(s1);
+
   Snap_rounding_2 s2(prec,true,4);
 
   std::cout << "\ndefault ctor + multiple insertion\n";
