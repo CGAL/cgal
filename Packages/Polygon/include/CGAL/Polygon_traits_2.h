@@ -76,8 +76,8 @@ class Polygon_traits_2_aux : public _R
     typedef ::CGAL::Segment_2<_R>            Segment_2;
     typedef ::CGAL::Vector_2<_R>             Vector_2;
 
-    typedef Less_xy_2<Point_2>       Less_xy;
-    typedef Less_yx_2<Point_2>       Less_yx;
+    typedef ::CGAL::Less_xy_2<Point_2>       Less_xy;
+    typedef ::CGAL::Less_yx_2<Point_2>       Less_yx;
 
     bool lexicographically_xy_smaller(const Point_2& p, const Point_2& q) const
     {

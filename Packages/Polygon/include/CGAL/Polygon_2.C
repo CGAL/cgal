@@ -112,11 +112,11 @@ std::ostream &operator<<(std::ostream &os, const Polygon_2<_Traits,_Container>& 
       return os;
 
     default:
-      os << "Polygon_2(" << endl;
+      os << "Polygon_2(" << std::endl;
       for (i = p.vertices_begin(); i != p.vertices_end(); ++i) {
-        os << "  " << *i << endl;
+        os << "  " << *i << std::endl;
       }
-      os << ")" << endl;
+      os << ")" << std::endl;
       return os;
   }
 }
