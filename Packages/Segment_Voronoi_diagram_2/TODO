@@ -1,3 +1,9 @@
+- make the storage site take a point container as template parameter,
+  rather than a point handle
+- make sure all types in the doc correspond to real types in the code
+- add a container that stores the input sites 
+- add the methods number_of_{input,output}_sites() in the
+  Segment_Voronoi_diagram_2 class.
 - add swap method in hierarchy; verify that the swap method in the segment
   Voronoi diagram class works correctly (does it swap the point container
   correctly?)
@@ -12,8 +18,6 @@
 - in class Svd_basic_constructions_C2.h, inside method to_ft, check
   if sqrt is supported by the number type; actually this is ok for predicates
   but constructions also need to use this too.
-- in the doc change the name of the template parameter for the
-  point container from SC to PC.
 - change the doc so that the requirement for the face base is the
   Triangulation_face_base_2 class
 - add the methods insert_polyline and insert_polygon that do some
