@@ -1180,7 +1180,7 @@ Another possible section heading here is \verb|\ccSeeAlso|.
 When including pictures in your documentation, you must provide versions
 of the pictures for the PostScript, PDF, and HTML versions of the manuals.
 This generally means providing both a {\tt .ps} or {\tt .eps} file for
-PostScript manuals, a {\tt .pdf} file for PDF manuals, and a {\tt
+PostScript manuals, a {\tt .pdf} or {\tt .png} file for PDF manuals, and a {\tt
   .gif}, {\tt .jpg}, or {\tt .png} file for HTML manuals.  You should
 take care that the figures are  
 readable in both formats and that they are neither too large nor too small.  
@@ -1199,7 +1199,18 @@ We use currently PDF\LaTeX\ to create the PDF manuals. The
 PostScript images as well as the PDF images. One has just to omit the
 file suffix, and the \verb|\includegraphics| macro uses automatically
 an \texttt{.eps} or \texttt{.ps} file (whatever exits) for the \LaTeX\
-run, and uses a \texttt{.pdf} file for the PDF\LaTeX\ run.
+run, and uses a \texttt{.pdf} file or \texttt{.png} file for the
+PDF\LaTeX\ run. 
+
+To convert an existing \texttt{.eps} file to the corresponding
+\texttt{.pdf} file one can use the
+\texttt{epstopdf}\ccIndexMainItem[c]{\tt epstopdf} script (e.g.
+available under Linux), which has the benefit of respecting the
+bounding box. (The \texttt{pstopdf}\ccIndexMainItem[c]{\tt pstopdf}
+script ignores the bounding box.)  Ipe\ccIndexMainItem{Ipe} users
+should save their files as \texttt{.eps} files and also use the
+\texttt{epstopdf} script to get a proper conversion respecting the
+bounding box and placement on paper.
 
 The program that converts to HTML does not currently support
 the commands that input PostScript figures into a document (since the figures
@@ -1459,7 +1470,7 @@ program with the same name in the same package, so try to avoid this.
 \noindent
 Requirements:
 \begin{itemize}
-   \item Documentation must be written using the {\tt cc\_manaul.sty}
+   \item Documentation must be written using the {\tt cc\_manual.sty}
          and {\tt cc\_manual\_index.sty} style files.
    \item There must be a {\tt main.tex} file for both the users' manual
          and reference manual parts of the documentation.
