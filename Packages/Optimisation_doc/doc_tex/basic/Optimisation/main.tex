@@ -26,17 +26,18 @@
 \begin{ccTexOnly}\section*{Introduction}\end{ccTexOnly}
 \begin{ccHtmlOnly}<H2>Introduction</H2><P>\end{ccHtmlOnly}
 
-This chapter describes routines for solving geometric optimisation
-problems. The first two sections contain algorithms for computing and
-updating the smallest enclosing circle resp.\ ellipse of a finite
-point set. Formally, the `smallest enclosing circle' is the boundary
-of the closed disk of minimum area covering the point set. It is known
-that this disk is unique. We usually identify the disk with its
-bounding circle, allowing us to talk about points being on the
-boundary of the circle, etc. The same holds for the smallest enclosing
-ellipse. These algorithms work in an incremental manner. They are
-implemented as semi-dynamic data structures, thus allowing to insert
-points while maintaining the smallest enclosing circle resp.\ ellipse.
+This chapter describes routines for solving geometric optimisation problems.
+The first two sections contain algorithms for computing and updating the
+smallest enclosing circle (Section~\ref{sec:smallest_enclosing_circles})
+resp.\ ellipse (Section~\ref{sec:smallest_enclosing_ellipses}) of a finite
+point set.  Formally, the `smallest enclosing circle' is the boundary of the
+closed disk of minimum area covering the point set. It is known that this
+disk is unique.  We usually identify the disk with its bounding circle,
+allowing us to talk about points being on the boundary of the circle, etc.
+The same holds for the smallest enclosing ellipse. These algorithms work in
+an incremental manner. They are implemented as semi-dynamic data structures,
+thus allowing to insert points while maintaining the smallest enclosing
+circle resp.\ ellipse.
 
 The remaining sections describe algorithms for searching in matrices with
 specific properties and some applications. In particular, there are
