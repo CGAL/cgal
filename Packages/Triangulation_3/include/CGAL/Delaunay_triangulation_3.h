@@ -256,14 +256,40 @@ public:
              OutputIteratorCells,
 	     Emptyset_iterator> t = find_conflicts(p, c, bfit, cit,
 		                                   Emptyset_iterator());
-     return std::make_pair(t.first, t.second);
+      return std::make_pair(t.first, t.second);
   }
 
-  void
-  make_canonical(Vertex_triple& t) const;
-  
-  Vertex_triple
-  make_vertex_triple(const Facet& f) const;
+  // Returns the vertices on the boundary of the conflict hole.
+  template <class OutputIterator>
+  OutputIterator
+  vertices_in_conflict(const Point&p, Cell_handle c, OutputIterator res) const
+  {
+      CGAL_triangulation_precondition(dimension() >= 2);
+
+      // Get the facets on the boundary of the hole.
+      std::vector<Facet> facets;
+      find_conflicts(p, c, std::back_inserter(facets),
+	             Emptyset_iterator(), Emptyset_iterator());
+
+      // Then extract uniquely the vertices.
+      std::set<Vertex_handle> vertices;
+      if (dimension() == 3) {
+          for (typename std::vector<Facet>::const_iterator i = facets.begin();
+	       i != facets.end(); ++i) {
+	      vertices.insert(i->first->vertex((i->second+1)&3));
+	      vertices.insert(i->first->vertex((i->second+2)&3));
+	      vertices.insert(i->first->vertex((i->second+3)&3));
+          }
+      } else {
+          for (typename std::vector<Facet>::const_iterator i = facets.begin();
+	       i != facets.end(); ++i) {
+	      vertices.insert(i->first->vertex(cw(i->second)));
+	      vertices.insert(i->first->vertex(ccw(i->second)));
+          }
+      }
+
+      return std::copy(vertices.begin(), vertices.end(), res);
+  }
 
   // We return bool only for backward compatibility (it's always true).
   // The documentation mentions void.
@@ -285,6 +311,11 @@ private:
   void remove_2D(Vertex_handle v);
   void make_hole_2D(Vertex_handle v, std::list<Edge_2D> & hole);
   void fill_hole_delaunay_2D(std::list<Edge_2D> & hole);
+
+  void make_canonical(Vertex_triple& t) const;
+
+  Vertex_triple
+  make_vertex_triple(const Facet& f) const;
 
   void remove_3D(Vertex_handle v);
   void remove_3D_new(Vertex_handle v);

@@ -1,8 +1,9 @@
-Version 1.185 (? December 03)
+Version 1.185 (17 December 03)
 - Triangulation_hierarchy_3 : move the global "const int" parameters to
   nested enums (equivalent to static const int).
 - New types size_type and difference_type (like HDS and standard containers),
   and the functions number_of*() and degree() now return size_type.
+- Added Delaunay_3::vertices_in_conflict().
 
 Version 1.184 (4 December 03)
 - Get rid of CGAL_NULL_TMPL_ARGS.

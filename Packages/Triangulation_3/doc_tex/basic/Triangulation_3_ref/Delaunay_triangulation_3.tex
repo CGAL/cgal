@@ -250,6 +250,18 @@ Returns the \ccc{Triple} composed of the resulting output iterators.
 with \ccc{p}.}
 }
 
+\ccMethod{template <class OutputIterator>
+  OutputIterator
+  vertices_in_conflict(Point p, Cell_handle c,
+	         OutputIterator res);}
+{Similar to \ccc{find_conflicts()}, but reports the vertices which are on the
+boundary of the conflict hole of \ccc{p}, in the output iterator \ccc{res}.
+Returns the resulting output iterator.
+\ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$, and \ccc{c} is in conflict
+with \ccc{p}.}
+}
+
+
 
 \ccHeading{Voronoi diagram}
 \ccIndexMainItem{Voronoi diagram}

@@ -429,10 +429,11 @@ _test_cls_delaunay_3(const Triangulation &)
       assert(Tfromfile.number_of_vertices() == 22);
   }
 
-  // Testing find_conflicts() + insert_in_hole()
+  // Testing find_conflicts(), vertices_in_conflict(), insert_in_hole()
   // FIXME : Note that we do not test the version of find_conflicts()
   //         which returns the internal facets too...
-  std::cout << "    Constructor13 (find_conflicts/insert_in_hole)" << std::endl;
+  std::cout << "    Testing find_conflicts/vertices_in_conflict/insert_in_hole"
+            << std::endl;
   Cls T3_13;
   for (i=0; i<22; ++i) {
     if (T3_13.dimension() < 2)
@@ -448,12 +449,22 @@ _test_cls_delaunay_3(const Triangulation &)
         T3_13.insert_outside_affine_hull(q[i]);
         continue;
       }
-      // Get the cells in conflicts.
-      std::vector<Cell_handle> V;
-      Facet facet;
-      T3_13.find_conflicts(q[i], c, CGAL::Oneset_iterator<Facet>(facet),
-                           std::back_inserter(V));
-      T3_13.insert_in_hole(q[i], V.begin(), V.end(), facet.first, facet.second);
+      // Get the stuff in conflicts.
+      std::vector<Cell_handle>   C;
+      std::vector<Facet>         F;
+      std::vector<Vertex_handle> V;
+
+      T3_13.vertices_in_conflict(q[i], c, std::back_inserter(V));
+      T3_13.find_conflicts(q[i], c, std::back_inserter(F),
+                           std::back_inserter(C));
+
+      if (T3_13.dimension() == 3)
+          assert(F.size() == 2*V.size() - 4); // Euler relation.
+      if (T3_13.dimension() == 2)
+          assert(F.size() == V.size());
+
+      T3_13.insert_in_hole(q[i], C.begin(), C.end(),
+                           F.begin()->first, F.begin()->second);
     }
   }
   assert(T3_13.is_valid());
