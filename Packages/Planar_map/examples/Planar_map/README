@@ -59,9 +59,17 @@ example8:
 
 example9:
   This example tests the use of IO functions provided for Planar map.
-  This example demonsrates a trivial using of reading Planar map from 
+  This example demonsrates a trivial usage of reading Planar map from 
   input stream and writing it to output stream. Writing the Planar map 
   to a Postscript file is also demonstated in this example.
-  example9.cin is an example input to the program (example9 < example9.cin).
+  example9.cin is the example input file of this program (example9 < example9.cin).
   By: Eti ezra.
  
+example10:
+ This example is also a demonstration of the IO functions for Planar map.
+ It presents an advance udage of the IO utilities.
+ When users would like to add attribures to their planar map components and then 
+ using the IO functions on the resulting planar maps.
+ example10.cin is the example input file of this program (example10 < example10.cin).
+ By: Eti ezra.
+
