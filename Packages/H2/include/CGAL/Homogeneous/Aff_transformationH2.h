@@ -40,7 +40,7 @@ _general_transformation_composition( Aff_transformation_repH2<R> l,
                                      Aff_transformation_repH2<R> r);
 
 template <class R>
-class Aff_transformation_rep_baseH2 : public Ref_counted
+class Aff_transformation_rep_baseH2 : public Ref_counted_virtual
 {
   public:
     typedef typename R::RT RT;

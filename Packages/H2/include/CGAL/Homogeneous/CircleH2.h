@@ -30,7 +30,7 @@ CGAL_BEGIN_NAMESPACE
 template <class R_> class CircleH2;
 
 template <class R>
-class Circle_repH2 : public Ref_counted
+class Circle_repH2
 {
 public:
   typedef typename R::FT     FT;
@@ -48,24 +48,6 @@ protected:
   Orientation  orientation_;
 };
 
-template <class R>
-class Simple_Circle_repH2
-{
-public:
-  typedef typename R::FT     FT;
-  typedef typename R::Kernel_base::Point_2      Point_2;
-
-friend class CircleH2<R>;
-
-  Simple_Circle_repH2() {}
-  Simple_Circle_repH2(const Point_2& p, const FT sq_rad, const Orientation&o)
-    : center(p), squared_radius(sq_rad), orientation_(o) {}
-
-protected:
-  Point_2      center;
-  FT           squared_radius;
-  Orientation  orientation_;
-};
 
 template <class R_>
 class CircleH2

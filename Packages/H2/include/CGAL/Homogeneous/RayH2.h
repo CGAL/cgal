@@ -26,32 +26,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class R >
-class Ray_repH2 : public Ref_counted
-{
-public:
-    typedef typename R::Kernel_base::Point_2  Point_2;
-    Ray_repH2() {}
-    Ray_repH2(const Point_2& fp, const Point_2& sp)
-	: start(fp), second(sp) {}
-
-    Point_2  start;
-    Point_2  second;
-};
-
-template < class R >
-class Simple_Ray_repH2
-{
-public:
-    typedef typename R::Kernel_base::Point_2  Point_2;
-    Simple_Ray_repH2() {}
-    Simple_Ray_repH2(const Point_2& fp, const Point_2& sp)
-	: start(fp), second(sp) {}
-
-    Point_2  start;
-    Point_2  second;
-};
-
 template < class R_ >
 class RayH2
   : public R_::Ray_handle_2
@@ -103,13 +77,13 @@ template < class R >
 inline
 const typename RayH2<R>::Point_2 &
 RayH2<R>::source() const
-{ return Ptr()->start; }
+{ return Ptr()->e0; }
 
 template < class R >
 inline
 const typename RayH2<R>::Point_2 &
 RayH2<R>::start() const
-{ return Ptr()->start; }
+{ return source(); }
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -125,7 +99,7 @@ const typename RayH2<R>::Point_2 &
 RayH2<R>::second_point() const
 {
   CGAL_kernel_precondition( !is_degenerate() );
-  return Ptr()->second;
+  return Ptr()->e1;
 }
 
 template < class R >
@@ -220,7 +194,7 @@ template < class R >
 CGAL_KERNEL_INLINE
 bool
 RayH2<R>::is_degenerate() const
-{ return start() == Ptr()->second; }
+{ return start() == Ptr()->e1; }
 
 template < class R >
 inline

@@ -47,7 +47,7 @@ public:
     PointH2() 
        : Point_handle_2_ ( Point_ref_2()) { }
 
-    PointH2(const Origin & o)  
+    PointH2(const Origin &)  
        : Point_handle_2_ ( Point_ref_2( RT(0), RT(0), RT(1))) { }
 
     PointH2(const PointH2<R> & p) 

@@ -27,33 +27,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class R >
-class Segment_repH2 : public Ref_counted
-{
-public:
-    typedef typename R::Kernel_base::Point_2       Point_2;
-
-    Segment_repH2() {}
-    Segment_repH2(const Point_2& sp, const Point_2& ep)
-	: start(sp), end(ep) {}
-
-    Point_2  start;
-    Point_2  end;
-};
-
-template < class R >
-class Simple_Segment_repH2
-{
-public:
-    typedef typename R::Kernel_base::Point_2       Point_2;
-    Simple_Segment_repH2() {}
-    Simple_Segment_repH2(const Point_2& sp, const Point_2& ep)
-	: start(sp), end(ep) {}
-
-    Point_2  start;
-    Point_2  end;
-};
-
 template < class R_ >
 class SegmentH2
   : public R_::Segment_handle_2
@@ -122,25 +95,25 @@ template < class R >
 inline
 const typename SegmentH2<R>::Point_2 &
 SegmentH2<R>::source() const
-{ return Ptr()->start; }
+{ return Ptr()->e0; }
 
 template < class R >
 inline
 const typename SegmentH2<R>::Point_2 &
 SegmentH2<R>::start() const
-{ return Ptr()->start; }
+{ return source(); }
 
 template < class R >
 inline
 const typename SegmentH2<R>::Point_2 &
 SegmentH2<R>::target() const
-{ return Ptr()->end; }
+{ return Ptr()->e1; }
 
 template < class R >
 inline
 const typename SegmentH2<R>::Point_2 &
 SegmentH2<R>::end() const
-{ return Ptr()->end; }
+{ return target(); }
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -268,8 +241,8 @@ CGAL_KERNEL_INLINE
 bool
 SegmentH2<R>::is_horizontal() const
 {
-  return (    Ptr()->start.hy() * Ptr()->end.hw()
-           == Ptr()->end.hy() * Ptr()->start.hw() );
+  return (    start().hy() * end().hw()
+           == end().hy() * start().hw() );
 }
 
 template < class R >
@@ -277,8 +250,8 @@ CGAL_KERNEL_INLINE
 bool
 SegmentH2<R>::is_vertical() const
 {
-  return (    Ptr()->start.hx() * Ptr()->end.hw()
-           == Ptr()->end.hx() * Ptr()->start.hw() );
+  return (    start().hx() * end().hw()
+           == end().hx() * start().hw() );
 }
 
 template < class R >
@@ -291,7 +264,7 @@ CGAL_KERNEL_INLINE
 bool
 SegmentH2<R>::has_on(const typename SegmentH2<R>::Point_2& p) const
 {
-  if ( collinear(Ptr()->start, p, Ptr()->end ) )
+  if ( collinear(start(), p, end() ) )
   {
       return collinear_has_on(p);
   }

@@ -29,7 +29,7 @@ CGAL_BEGIN_NAMESPACE
 template <class R_> class TriangleH2;
 
 template <class R>
-class Triangle_repH2 : public Ref_counted
+class Triangle_repH2
 {
   public:
 
@@ -54,31 +54,6 @@ class Triangle_repH2 : public Ref_counted
     Orientation  _orientation;
 };
 
-template <class R>
-class Simple_Triangle_repH2
-{
-  public:
-
-    typedef typename R::Kernel_base::Point_2   Point_2;
-
-    Simple_Triangle_repH2() {}
-
-    Simple_Triangle_repH2(const Point_2& v1,
-                          const Point_2& v2,
-                          const Point_2& v3)
-    {
-        A[0] = v1;
-        A[1] = v2;
-        A[2] = v3;
-        _orientation = CGAL::orientation(v1,v2,v3); // FIXME : use the traits.
-    }
-
- friend class TriangleH2<R>;
-
- private:
-    Point_2        A[3];
-    Orientation    _orientation;
-};
 
 template <class R_>
 class TriangleH2

@@ -23,6 +23,7 @@
 #define CGAL_SIMPLE_HOMOGENEOUS_REP_H
 
 #include <CGAL/Simple_Handle_for.h>
+#include <CGAL/Handle_for_virtual.h>
 #include <CGAL/Twotuple.h>
 #include <CGAL/Threetuple.h>
 #include <CGAL/Fourtuple.h>
@@ -78,52 +79,34 @@ class Simple_homogeneous_base
 
     typedef PointHd< FT, RT>                         Point_d;
 
-    typedef CGAL::Simple_Handle_for< Simple_Threetuple<RT> >
-	Point_handle_2;
-    typedef CGAL::Simple_Handle_for< Simple_Threetuple<RT> >
-	Vector_handle_2;
-    typedef CGAL::Simple_Handle_for< Simple_Threetuple<RT> >
-	Direction_handle_2;
-    typedef CGAL::Simple_Handle_for< Simple_Ray_repH2<R_> >
-	Ray_handle_2;
-    typedef CGAL::Simple_Handle_for< Simple_Triangle_repH2< R_> >
-	Triangle_handle_2;
-    typedef CGAL::Simple_Handle_for< Simple_Circle_repH2<R_> >
-	Circle_handle_2;
-    typedef CGAL::Simple_Handle_for< Simple_Twotuple<PointH2<R_> > >
+    typedef CGAL::Simple_Handle_for< Threetuple<RT> > Point_handle_2;
+    typedef CGAL::Simple_Handle_for< Threetuple<RT> > Vector_handle_2;
+    typedef CGAL::Simple_Handle_for< Threetuple<RT> > Direction_handle_2;
+    typedef CGAL::Simple_Handle_for< Twotuple<PointH2<R_> > > Ray_handle_2;
+    typedef CGAL::Simple_Handle_for< Triangle_repH2< R_> > Triangle_handle_2;
+    typedef CGAL::Simple_Handle_for< Circle_repH2<R_> > Circle_handle_2;
+    typedef CGAL::Simple_Handle_for< Twotuple<PointH2<R_> > >
 	Iso_rectangle_handle_2;
-    typedef CGAL::Simple_Handle_for< Simple_Threetuple<RT> >
-	Line_handle_2;
-    typedef CGAL::Simple_Handle_for< Simple_Segment_repH2<R_> >
-	Segment_handle_2;
-    typedef CGAL::Handle_for< Aff_transformation_rep_baseH2<R_>,
-		   New_delete_allocator< Aff_transformation_rep_baseH2<R_> > >
+    typedef CGAL::Simple_Handle_for< Threetuple<RT> > Line_handle_2;
+    typedef CGAL::Simple_Handle_for< Twotuple<PointH2<R_> > > Segment_handle_2;
+    typedef CGAL::Handle_for_virtual< Aff_transformation_rep_baseH2<R_> >
 			                        Aff_transformation_handle_2;
 
-    typedef CGAL::Simple_Handle_for< Simple_RepH3<RT> >
-	Point_handle_3;
-    typedef CGAL::Simple_Handle_for< Simple_RepH3<RT> >
-	Vector_handle_3;
-    typedef CGAL::Simple_Handle_for< Simple_RepH3<RT> >
-	Direction_handle_3;
-    typedef CGAL::Simple_Handle_for< Simple_Fourtuple<RT> >
-	Plane_handle_3;
-    typedef CGAL::Simple_Handle_for< Simple_Ray_repH3<R_> >
-	Ray_handle_3;
-    typedef CGAL::Simple_Handle_for< Simple_Line_repH3<R_> >
-	Line_handle_3;
-    typedef CGAL::Simple_Handle_for< Simple_Sphere_repH3<R_> >
-	Sphere_handle_3;
-    typedef CGAL::Simple_Handle_for< Simple_Tetrahedron_repH3<R_> >
+    typedef CGAL::Simple_Handle_for< RepH3<RT> > Point_handle_3;
+    typedef CGAL::Simple_Handle_for< RepH3<RT> > Vector_handle_3;
+    typedef CGAL::Simple_Handle_for< RepH3<RT> > Direction_handle_3;
+    typedef CGAL::Simple_Handle_for< Fourtuple<RT> > Plane_handle_3;
+    typedef CGAL::Simple_Handle_for< Ray_repH3<R_> > Ray_handle_3;
+    typedef CGAL::Simple_Handle_for< Line_repH3<R_> > Line_handle_3;
+    typedef CGAL::Simple_Handle_for< Sphere_repH3<R_> > Sphere_handle_3;
+    typedef CGAL::Simple_Handle_for< Tetrahedron_repH3<R_> >
 	Tetrahedron_handle_3;
-    typedef CGAL::Simple_Handle_for< Simple_Segment_repH3<R_> >
-	Segment_handle_3;
-    typedef CGAL::Simple_Handle_for< Simple_Threetuple< PointH3<R_> > >
+    typedef CGAL::Simple_Handle_for< Twotuple<PointH3<R_> > > Segment_handle_3;
+    typedef CGAL::Simple_Handle_for< Threetuple< PointH3<R_> > >
 	Triangle_handle_3;
-    typedef CGAL::Simple_Handle_for< Simple_Twotuple<PointH3<R_> > >
+    typedef CGAL::Simple_Handle_for< Twotuple<PointH3<R_> > >
 	Iso_cuboid_handle_3;
-    typedef CGAL::Handle_for< Aff_transformation_rep_baseH3<R_>,
-		   New_delete_allocator< Aff_transformation_rep_baseH3<R_> > >
+    typedef CGAL::Handle_for_virtual< Aff_transformation_rep_baseH3<R_> >
 			                        Aff_transformation_handle_3;
 };
 
