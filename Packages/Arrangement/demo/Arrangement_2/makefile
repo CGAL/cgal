@@ -13,10 +13,19 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
+ifdef COREROOT
+COREROOT_INC=-I$(COREROOT)/inc
+COREROOT_LIB=-L$(COREROOT)/lib
+CORE_LIB=-lcore
+else
+COREROOT_INC=
+COREROOT_LIB=
+CORE_LIB=-lCore
+endif
+
 CXXFLAGS = \
-       -Iinclude \
        -I../../include \
-       -I$(COREROOT)/inc \
+       $(COREROOT_INC) \
        $(CGAL_CXXFLAGS) \
        $(LONG_NAME_PROBLEM_CXXFLAGS)
 
@@ -25,11 +34,11 @@ CXXFLAGS = \
 #---------------------------------------------------------------------#
 
 LIBPATH = \
-          -L$(COREROOT)/lib \
+          $(COREROOT_LIB) \
           $(CGAL_LIBPATH)
 
 LDFLAGS = \
-          -lcore \
+          $(CORE_LIB) \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_QT_LDFLAGS)
 
