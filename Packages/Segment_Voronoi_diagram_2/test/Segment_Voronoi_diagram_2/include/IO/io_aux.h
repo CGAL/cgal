@@ -3,25 +3,26 @@
 
 
 #include <iostream>
+#include <string>
 
 
-std::ostream& start_testing(std::ostream& os, char* msg) {
+std::ostream& start_testing(std::ostream& os,const std::string& msg) {
   os << "testing " << msg << "... " << std::flush;
   return os;
 }
 
-void start_testing(char* msg) {
+void start_testing(const std::string& msg) {
   start_testing(std::cout, msg);
 }
 
 //---------------------------------------------------------------
 
-std::ostream& end_testing(std::ostream& os, char* msg) {
+std::ostream& end_testing(std::ostream& os, const std::string& msg) {
   os << "done." << std::endl;
   return os;
 }
 
-void end_testing(char* msg) {
+void end_testing(const std::string& msg) {
   end_testing(std::cout, msg);
 }
 
