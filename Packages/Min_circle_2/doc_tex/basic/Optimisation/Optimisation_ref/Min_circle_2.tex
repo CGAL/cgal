@@ -2,12 +2,12 @@
 % The CGAL Reference Manual
 % Section: 2D Smallest Enclosing Circle
 % -----------------------------------------------------------------------------
-% source: Min_circle_2.tex
-% author: Sven Schönherr (sven@inf.fu-berlin.de)
+% file  : Min_circle_2.tex
+% author: Bernd Gärtner, Sven Schönherr (sven@inf.fu-berlin.de)
 % $Id$
 % =============================================================================
  
-\begin{CCclassTemplate}{CGAL_Min_circle_2<R>}
+\begin{ccClassTemplate}{CGAL_Min_circle_2<R>}
 \ccSection{2D Smallest Enclosing Circle}
 
 \ccDefinition
@@ -24,9 +24,9 @@ is no circle containing $P$ with $B$ on the boundary.
 
 The smallest enclosing circle of a point set $P$ is determined by at
 most three points on the boundary. A minimal subset $S$ of $P$ with
-$\textit{mc}(S,\emptyset) = \textit{mc}(P,\emptyset)$ is called a {\em
-support set}, the points in $S$ are the {\em support points}.  Note
-that in general the set $S$ is not unique.
+$\textit{mc}(S,\emptyset) = \textit{mc}(P,\emptyset)$ is called a
+\emph{support set}, the points in $S$ are the \emph{support points}.
+Note that in general the set $S$ is not unique.
 
 The underlying algorithm can cope with all kinds of input, e.g.\ one
 or both of the point sets $P$ or $B$ may be empty, $B$ may contain
@@ -38,10 +38,8 @@ fixed until the next update operation.
 \ccCreation
 \ccCreationVariable{min_circle}
 
-\ccSetThreeColumns
-  {CGAL_Bounded_side}
-  {}
-  {returns \ccStyle{CGAL_ON_BOUNDED_SIDE}, \ccStyle{CGAL_ON_BOUNDARY},}
+\ccSetThreeColumns{CGAL_Bounded_side}{}{
+  returns \ccStyle{CGAL_ON_BOUNDED_SIDE}, \ccStyle{CGAL_ON_BOUNDARY},}
 \ccPropagateThreeToTwoColumns
 
 \ccStyle{#include <CGAL/Min_circle_2.h>}
@@ -56,31 +54,33 @@ fixed until the next update operation.
 \ccConstructor{ CGAL_Min_circle_2( const CGAL_Min_circle_2<R>& min_circle2);}{
         copy constructor.}
 
-\ccConstructor{ CGAL_Min_circle_2( const Point_2<R>& p);}{
+\ccConstructor{ CGAL_Min_circle_2( const CGAL_Point_2<R>& p);}{
         introduces a variable \ccVar\ of type \ccClassTemplateName.
         It is initialized to $\textit{mc}(\emptyset,\{\ccStyle{p}\})$,
         i.e.\ to the set $\{\ccStyle{p}\}$.
         \ccPostcond \ccVar\ccStyle{.is_degenerate()}.}
 
-\ccConstructor{ CGAL_Min_circle_2( const Point_2<R>& p1,
-                                   const Point_2<R>& p2);}{
+\ccConstructor{ CGAL_Min_circle_2( const CGAL_Point_2<R>& p1,
+                                   const CGAL_Point_2<R>& p2);}{
         introduces a variable \ccVar\ of type \ccClassTemplateName.
         It is initialized to
-        $\textit{mc}(\emptyset,\{\ccStyle{p1},\ccStyle{p2}\})$,
-        i.e.\ to the circle with diameter
-        $\overline{\ccStyle{p1}\ccStyle{p2}}$.}
+        $\textit{mc}(\emptyset,\{\ccStyle{p1},\ccStyle{p2}\})$, i.e.\
+        to the circle with diameter
+        $\overline{\ccStyle{p1}\ccStyle{p2}}$, if $\ccStyle{p1} \neq
+        \ccStyle{p2}$, or to the set $\{\ccStyle{p1}\}$ otherwise.}
 
-\ccConstructor{ CGAL_Min_circle_2( const Point_2<R>& p1,
-                                   const Point_2<R>& p2,
-                                   const Point_2<R>& p3);}{
+\ccConstructor{ CGAL_Min_circle_2( const CGAL_Point_2<R>& p1,
+                                   const CGAL_Point_2<R>& p2,
+                                   const CGAL_Point_2<R>& p3);}{
         introduces a variable \ccVar\ of type \ccClassTemplateName.
         It is initialized to $\textit{mc}(\emptyset,
-        \{\ccStyle{p1},\ccStyle{p2},\ccStyle{p3}\})$,
-        i.e.\ to the unique circle with \ccStyle{p1}, \ccStyle{p2} and
-        \ccStyle{p3} on the boundary.}
+        \{\ccStyle{p1},\ccStyle{p2},\ccStyle{p3}\})$, i.e.\ to the
+        unique circle with \ccStyle{p1}, \ccStyle{p2} and \ccStyle{p3}
+        on the boundary, if it exists. Otherwise \ccVar\ is
+        undefined.}
 
-\ccConstructor{ CGAL_Min_circle_2( forward_iterator< Point_2<R> > first,
-                                   forward_iterator< Point_2<R> > last,
+\ccConstructor{ CGAL_Min_circle_2( forward_iterator< CGAL_Point_2<R> > first,
+                                   forward_iterator< CGAL_Point_2<R> > last,
                                    bool randomize = false);}{
         introduces a variable \ccVar\ of type \ccClassTemplateName. It
         is initialized to $\textit{mc}(P,\emptyset)$ with $P$ being
@@ -89,18 +89,24 @@ fixed until the next update operation.
         \ccStyle{true}, a random permutation of $P$ is computed in
         advance.}
 
-\ccConstructor{ CGAL_Min_circle_2( forward_iterator< Point_2<R> > p_first,
-                                   forward_iterator< Point_2<R> > p_last,
-                                   forward_iterator< Point_2<R> > b_first,
-                                   forward_iterator< Point_2<R> > b_last,
+\ccConstructor{ CGAL_Min_circle_2( forward_iterator< CGAL_Point_2<R> > p_first,
+                                   forward_iterator< CGAL_Point_2<R> > p_last,
+                                   forward_iterator< CGAL_Point_2<R> > b_first,
+                                   forward_iterator< CGAL_Point_2<R> > b_last,
                                    bool randomize = false);}{
         introduces a variable \ccVar\ of type \ccClassTemplateName. It
-        is initialized to $\textit{mc}(P,B)$ with $P$ being the set of
-        points in the range $[\ccStyle{p_first},\ccStyle{p_last})$ and
-        $B$ being the set of points in the range
+        is initialized to $\textit{mc}(P,B)$ (if it exists, to
+        undefined otherwise) with $P$ being the set of points in the
+        range $[\ccStyle{p_first},\ccStyle{p_last})$ and $B$ being the
+        set of points in the range
         $[\ccStyle{b_first},\ccStyle{b_last})$. If \ccStyle{randomize}
         is \ccStyle{true}, a random permutation of $P$ is computed in
         advance.}
+
+\ccHidden
+\ccMemberFunction{ const Min_circle_2<R>&
+                   operator = ( const Min_circle_2<R>& min_circle2);}{
+        assignment operator.}
 
 
 \ccHeading{Access operations}
@@ -109,7 +115,8 @@ fixed until the next update operation.
         returns the number of points of \ccVar, i.e.\ $|P|+|B|$.}
 
 \ccMemberFunction{ int number_of_support_points( ) const;}{
-        returns the number of support points of \ccVar, i.e.\ $|S|$.}
+        returns the number of support points of \ccVar, i.e.\ $|S|$,
+        if \ccVar\ is defined, $-1$ otherwise.}
 
 \ccMemberFunction{ const CGAL_Point_2<R>& point( int i) const;}{
         returns the \ccStyle{i}'th point of \ccVar. Between two update
@@ -133,17 +140,33 @@ fixed until the next update operation.
         squared radius $r$ as \ccVar\ and positive orientation. If
         \ccVar\ is the empty set, $c$ is undefined und $r$ is set to
         zero. If \ccVar\ contains exactly one point $p$, $c$ is set to
-        $p$ and $r$ is set to zero.}
+        $p$ and $r$ is set to zero.
+        \ccPrecond $\ccVar\ccStyle{.is_undefined()} = \ccStyle{false}$.}
 
 \ccMemberFunction{ CGAL_Bbox_2 bbox( ) const;}{
-        returns a bounding box containing \ccVar.}
+        returns a bounding box containing \ccVar.
+        \ccPrecond $\ccVar\ccStyle{.is_undefined()} = \ccStyle{false}$.}
 
 
 \ccHeading{Update operations}
 
 \ccMemberFunction{ void insert( const CGAL_Point_2<R>& p);}{
         inserts \ccStyle{p} in \ccVar\ and recomputes the smallest
-        enclosing circle.}
+        enclosing circle.
+        \ccPrecond $\ccVar\ccStyle{.is_undefined()} = \ccStyle{false}$.}
+
+\ccMemberFunction{ void reserve( int n);}{
+        reserves storage for at least \ccStyle{n} points in \ccVar.
+        It can be used, if the number of insert operations is known in
+        advance.
+        \ccPrecond $\ccVar\ccStyle{.is_undefined()} = \ccStyle{false}$.}
+
+\ccUnchecked
+\ccHidden
+\ccMemberFunction{ void reset( );}{
+        resets \ccVar\ to $\textit{mc}(\emptyset,\emptyset)$,
+        i.e.\ to the empty set.
+        \ccPostcond \ccVar\ccStyle{.is_empty()}.}
 
 
 \ccHeading{Tests}
@@ -153,18 +176,25 @@ fixed until the next update operation.
         returns \ccStyle{CGAL_ON_BOUNDED_SIDE},
         \ccStyle{CGAL_ON_BOUNDARY}, or
         \ccStyle{CGAL_ON_UNBOUNDED_SIDE} iff \ccStyle{p} lies inside,
-        on the boundary, or outside of \ccVar, respectively.}
+        on the boundary, or outside of \ccVar, respectively.
+        \ccPrecond $\ccVar\ccStyle{.is_undefined()} = \ccStyle{false}$.}
 
 \ccMemberFunction{ bool has_on_bounded_side( const CGAL_Point_2<R>& p) const;}{
-        returns \ccStyle{true}, iff \ccStyle{p} lies inside \ccVar.}
+        returns \ccStyle{true}, iff \ccStyle{p} lies inside \ccVar.
+        \ccPrecond $\ccVar\ccStyle{.is_undefined()} = \ccStyle{false}$.}
 
 \ccMemberFunction{ bool has_on_boundary( const CGAL_Point_2<R>& p) const;}{
         returns \ccStyle{true}, iff \ccStyle{p} lies on the boundary
-        of \ccVar.}
+        of \ccVar.
+        \ccPrecond $\ccVar\ccStyle{.is_undefined()} = \ccStyle{false}$.}
 
 \ccMemberFunction{ bool
                    has_on_unbounded_side( const CGAL_Point_2<R>& p) const;}{
-        returns \ccStyle{true}, iff \ccStyle{p} lies outside of \ccVar.}
+        returns \ccStyle{true}, iff \ccStyle{p} lies outside of \ccVar.
+        \ccPrecond $\ccVar\ccStyle{.is_undefined()} = \ccStyle{false}$.}
+
+\ccMemberFunction{ bool is_empty( ) const;}{
+        returns \ccStyle{true}, iff \ccVar\ is empty.}
 
 \ccMemberFunction{ bool is_degenerate( ) const;}{
         returns \ccStyle{true}, iff \ccVar\ is degenerate.}
@@ -172,6 +202,6 @@ fixed until the next update operation.
 \ccMemberFunction{ bool is_undefined( ) const;}{
         returns \ccStyle{true}, iff \ccVar\ is undefined.}
 
-\end{CCclassTemplate}
+\end{ccClassTemplate}
 
 % ===== EOF ===================================================================
