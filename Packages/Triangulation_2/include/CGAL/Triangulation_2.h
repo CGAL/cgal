@@ -571,9 +571,9 @@ includes_edge(Vertex_handle va, Vertex_handle & vb,
 					     vb->point(),
 					     v->point()); 
 	  if((orient==COLLINEAR) && 
-	     (are_ordered_along_line (va->point(),
-				      v->point(),
-				      vb->point()))) {
+	     (collinear_between (va->point(),
+				 v->point(),
+				 vb->point()))) {
 	    vb=v;
 	    fr=(*ec).first;
 	    i= (*ec).second;
