@@ -395,13 +395,11 @@ inline
 Gmpq
 operator/(const Gmpq &a, const Gmpq &b)
 {
+    CGAL_precondition(b != 0);
     Gmpq Res;
     mpq_div(Res.mpq(), a.mpq(), b.mpq());
     return Res;
 }
-
-
-
 
 inline
 Gmpq&

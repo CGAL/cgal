@@ -1,3 +1,6 @@
+12 Apr 2004 Sylvain Pion
+- Added preconditions (denominator != 0) in operator/ of Gmpz and Gmpq.
+
 10 Apr 2004 Sylvain Pion
 - Added expensive_assertions in to_interval(CORE::Expr) since it was buggy.
 

@@ -368,6 +368,7 @@ inline
 Gmpz
 operator/(const Gmpz &a, const Gmpz &b)
 {
+    CGAL_precondition(b != 0);
     Gmpz Res;
     mpz_tdiv_q(Res.mpz(), a.mpz(), b.mpz());
     return Res;
