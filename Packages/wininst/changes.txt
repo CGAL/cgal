@@ -1,3 +1,5 @@
+1.5.3 (18/7/2001)  Remove some obsolete directories.
+
 1.5.2 (25/6/2001)  Changed directory names Triangulation -> Triangulation_2
                    and Triangulation3 -> Triangulation_3.
 
