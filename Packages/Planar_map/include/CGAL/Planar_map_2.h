@@ -158,8 +158,207 @@ public:
   
 #ifndef CGAL_NO_PM_DEFAULT_POINT_LOCATION
   // constructor #1 - no parameters
-  Planar_map_2 ()
+  Planar_map_2 ();
+  
+#endif
+
+  // constructor #2 - set only the PL
+  Planar_map_2(Point_location_base *pl_ptr);
+  
+  // constructor #3 - copy traits, set pl and bb
+  // set NULLs for defaults
+  Planar_map_2(const Traits &tr_, Point_location_base *pl_ptr, 
+	       Bounding_box_base *bb_ptr);
+  
+  // constructor #4 - set traits, pl and bb
+  // set NULLs for defaults
+  Planar_map_2( Traits_wrap          *tr_ptr, 
+                Point_location_base  *pl_ptr, 
+	        Bounding_box_base    *bb_ptr );
+
+///////////////////////////////////////////////////////////////////////////////
+//                                 Copy constructor.
+///////////////////////////////////////////////////////////////////////////////
+  Planar_map_2(const Self& pm);
+  
+  /////////////////////////////////////////////////////////////////////////////
+  //                  Reading Planar map functions. 
+  ////////////////////////////////////////////////////////////////////////////
+  bool read (std::istream &in);
+
+  template <class Scanner>
+  bool read (std::istream &in, Scanner& scanner);
+  
+  virtual ~Planar_map_2 ();
+
+  // Inserts a new curve cv in the interior of the face f.
+  // Returns the halfedge which is directed in the same way as the curve cv
+  // (i.e., traits->curve_source(cv) == h.source()).
+  Halfedge_handle insert_in_face_interior(const X_curve&       cv, 
+                                          Face_handle          f, 
+                                          Change_notification *en = NULL);
+		
+  Halfedge_handle insert_from_vertex(const X_curve& cv, 
+				     Vertex_handle v1, bool source, 
+                                     Change_notification *en = NULL);
+		
+  Halfedge_handle insert_at_vertices(const X_curve&      cv, 
+				     Vertex_handle       v1, 
+                                     Vertex_handle       v2, 
+                                     Change_notification *en = NULL);
+		
+  bool is_empty() const {return halfedges_begin()==halfedges_end();}
+  
+  // Note that the return types are abstract base classes
+  const Point_location_base* get_point_location() const {return pl;}
+  const Bounding_box_base* get_bounding_box() const {return bb;}
+  
+  const Traits_wrap& get_traits() const { return *traits;}
+
+		
+private:
+	
+  //a private implementation which defines if previous1 is on an outer ccb of 
+  //the new face (returns true) or on an inner ccb (returns false)
+  bool prev1_inside_hole(Halfedge_const_handle previous1,
+			 Halfedge_const_handle previous2,
+			 const X_curve& cv);  
+  
+public:
+  Halfedge_handle insert(const X_curve&       cv, 
+                         Change_notification *en = NULL);
+  
+  template <class X_curve_iterator>
+  Halfedge_iterator insert(const X_curve_iterator& begin,
+			   const X_curve_iterator& end,
+                           Change_notification    *en = NULL);
+  
+  Halfedge_handle split_edge(Halfedge_handle       e, 
+                             const X_curve       & c1, 
+                             const X_curve       & c2,
+                             Change_notification * en = NULL);	
+	
+  Halfedge_handle merge_edge(Halfedge_handle e1, 
+                             Halfedge_handle e2, 
+			     const X_curve& cv, 
+                             Change_notification * en = NULL);              
+	
+  Face_handle remove_edge(Halfedge_handle e);
+	
+	
+  Halfedge_handle vertical_ray_shoot(const Point& p,
+				     Locate_type &lt, bool up)
   {
+    CGAL_precondition(pl);
+    return pl->vertical_ray_shoot(p,lt,up);
+  }
+	
+  
+  Halfedge_const_handle vertical_ray_shoot(const Point& p,
+					   Locate_type &lt, bool up) const
+  {
+    CGAL_precondition(pl);
+    return ((const Point_location_base*)pl)->vertical_ray_shoot(p,lt,up);
+    // The type cast to const is there to ensure that the planar map 
+    // is not changed.
+  }
+	
+	
+	
+  Halfedge_handle locate(const Point& p, Locate_type &lt) {
+    CGAL_precondition(pl);
+    return pl->locate(p,lt);
+  }
+	
+  Halfedge_const_handle locate(const Point& p, Locate_type &lt) const {
+    CGAL_precondition(pl);
+    return ((const Point_location_base*)pl)->locate(p,lt);
+    // The type cast to const is there to ensure that the planar map 
+    // is not changed.
+  }
+  
+protected:
+
+  
+  // Determines if an input point is within the face incident
+  // to an input halfedge.
+  //
+  // p   - input point
+  // ne  - handle of input halfedge
+  // nvc - curve of input halfedge
+  //
+  // return value - true iff the above condition holds
+  //
+  // Implementation:
+  // Conceptually, we shoot a ray from p vertically upwards and count
+  // the number of pm-halfedges of the boundary of the face that intersect it.
+  // If this number is odd the point is inside the face. In practice, we 
+  // we use a check whether a curve is above or below a point.
+  //
+  bool point_is_in( const Point           & p, 
+                    Halfedge_const_handle   ne,
+		    const X_curve         & ncv) const;
+  
+  /////////////////////////////////////////////////////////
+  // Assignment functions 
+  // Those are temporary functions and it should not be used
+public:
+  void assign(const Self &pm)
+  {
+    TPM::assign(pm);
+    // traits->assign(pm->traits);
+    // bb->assign(pm->bb);
+    // pl->assign(pm->pl);
+  }
+
+  Self& operator=(const Self& pm);
+	
+  // used in implementation of operator=(
+  void clear();
+  
+protected:
+	// used in implementation of operator=(
+  void x_curve_container(X_curve_container &l) const;
+	// default initializer for the bounding box.
+#include <CGAL/Planar_map_2/Bounding_box_special_initializer.h>
+
+#ifdef CGAL_PM_DEBUG // for private debugging use
+	
+public:
+  void debug()
+  {
+    if (pl) (pl->debug());
+  }
+
+#endif	
+private:
+///////////////////////////////////////////////////////////////////////////
+//                 Scanning Arrangement.
+///////////////////////////////////////////////////////////////////////// 
+
+template <class Scanner>
+bool  scan_planar_map (Scanner& scanner);
+
+template <class Scanner>
+  bool  build_dcel (Scanner& scanner);
+
+protected:
+  Point_location_base *pl;
+  Bounding_box_base *bb;
+  Traits_wrap*  traits;
+private:
+  bool use_delete_pl;
+  bool use_delete_bb;
+  bool use_delete_traits;
+};
+
+//-----------------------------------------------------------------------------
+/*
+                               DEFINITIONS
+*/
+//-----------------------------------------------------------------------------
+template < class Dcel_, class Traits_ >
+Planar_map_2< Dcel_, Traits_ >::Planar_map_2(){
     traits = new Traits_wrap();
     use_delete_traits = true;
     
@@ -170,13 +369,11 @@ public:
     bb=init_default_bounding_box((Traits*)traits);
     use_delete_bb=true;
     bb->init(*this,*traits);
-  }    
-  
-#endif
-
-  // constructor #2 - set only the PL
-  Planar_map_2(Point_location_base *pl_ptr)
-  {
+}
+//-----------------------------------------------------------------------------
+template < class Dcel_, class Traits_ >
+Planar_map_2< Dcel_, Traits_ >::Planar_map_2( 
+  Planar_map_2< Dcel_, Traits_ >::Point_location_base *pl_ptr ){
     traits = new Traits_wrap();
     use_delete_traits = true;
     
@@ -187,13 +384,14 @@ public:
     bb = init_default_bounding_box((Traits*)traits);
     use_delete_bb = true;
     bb->init(*this,*traits);
-  }
-  
-  // constructor #3 - copy traits, set pl and bb
-  // set NULLs for defaults
-  Planar_map_2(const Traits &tr_, Point_location_base *pl_ptr, 
-	       Bounding_box_base *bb_ptr)
-  {
+}
+//-----------------------------------------------------------------------------
+template < class Dcel_, class Traits_ >
+Planar_map_2< Dcel_, Traits_ >::Planar_map_2(
+  const Planar_map_2< Dcel_, Traits_ >::Traits& tr_, 
+  Planar_map_2< Dcel_, Traits_ >::Point_location_base *pl_ptr, 
+  Planar_map_2< Dcel_, Traits_ >::Bounding_box_base *bb_ptr ){
+    
     traits = new Traits_wrap(tr_);
     use_delete_traits = true;
     
@@ -227,13 +425,13 @@ public:
         use_delete_bb = false;
         bb->init(*this,*traits);
       }
-  }
-  
-  // constructor #4 - set traits, pl and bb
-  // set NULLs for defaults
-  Planar_map_2(Traits_wrap *tr_ptr, Point_location_base *pl_ptr, 
-	       Bounding_box_base *bb_ptr)
-  {
+}
+//-----------------------------------------------------------------------------
+template < class Dcel_, class Traits_ >
+Planar_map_2< Dcel_, Traits_ >::Planar_map_2(
+  Planar_map_2< Dcel_, Traits_ >::Traits_wrap          *tr_ptr, 
+  Planar_map_2< Dcel_, Traits_ >::Point_location_base  *pl_ptr, 
+  Planar_map_2< Dcel_, Traits_ >::Bounding_box_base    *bb_ptr ){
     if (tr_ptr == NULL)
       {
         traits = new Traits_wrap();
@@ -274,13 +472,12 @@ public:
         bb = bb_ptr;
         use_delete_bb = false;
         bb->init(*this,*traits);
-      }
-  }
-
-///////////////////////////////////////////////////////////////////////////////
-//                                 Copy constructor.
-///////////////////////////////////////////////////////////////////////////////
-  Planar_map_2(const Self& pm){
+      }  
+}
+//-----------------------------------------------------------------------------
+template < class Dcel_, class Traits_ >
+Planar_map_2< Dcel_, Traits_ >::Planar_map_2( 
+  const Planar_map_2< Dcel_, Traits_ >& pm ){
     // doing the same as Planar_map_2(pm.get_traits(),pm.get_point_location(),
     //                                pm.get_point_bbox());
     
@@ -332,145 +529,36 @@ public:
 	 h_iter !=  halfedges_end(); 
 	 h_iter++, h_iter++)
       bb->insert(h_iter->curve());
-  }
-  
-  /////////////////////////////////////////////////////////////////////////////
-  //                  Reading Planar map functions. 
-  ////////////////////////////////////////////////////////////////////////////
-  bool read (std::istream &in)
-  {
-    clear();
-    
-    Pm_file_scanner<Self>  scanner(in); 
-    
-    return scan_planar_map(scanner);
-  }    
-
-  template <class Scanner>
-  bool read (std::istream &in, Scanner& scanner)
-  {
-    clear(); 
-    
-    return scan_planar_map(scanner);
-  } 
-  
-  /*
-#ifndef CGAL_NO_PM_DEFAULT_POINT_LOCATION
-    
-  Planar_map_2 (const Traits& tr_=Traits()) :
-    pl(new Pm_default_point_location<Self>),use_delete_pl(true)
-  {
-    traits = new Traits_wrap(tr_);
-    use_delete_traits = true;
-    pl->init(*this,*traits);
-    bb=init_default_bounding_box(traits);
-    use_delete_bb=true;
-    bb->init(*this,*traits);
-  }    
-  
-  Planar_map_2( Bounding_box_base *bb_ptr, const Traits& tr_): 
-    pl(new Pm_default_point_location<Self>),bb(bb_ptr),
-    use_delete_pl(true),use_delete_bb(false)
-  {
-    traits = new Traits_wrap(tr_);
-    use_delete_traits = true;
-    if (!bb) 
-      {				
-        bb=init_default_bounding_box(&tr_);
-        use_delete_bb=true;
-      }
-    pl->init(*this,*traits);
-    bb->init(*this,*traits);
-  }    
-  
-  Planar_map_2( Bounding_box_base *bb_ptr): 
-    pl(new Pm_default_point_location<Self>),bb(bb_ptr), 
-    traits(new Traits_wrap),
-    use_delete_pl(true),use_delete_bb(false),use_delete_traits(true)
-  {
-    if (!bb) 
-      {				
-        bb=init_default_bounding_box((Traits*)0);
-        use_delete_bb=true;
-      }
-    pl->init(*this,*traits);
-    bb->init(*this,*traits);
-  }    
-#endif // CGAL_NO_PM_DEFAULT_POINT_LOCATION
-  
-  Planar_map_2 (Point_location_base *pl_ptr, Traits_wrap *tr_ptr) : 
-    pl(pl_ptr),use_delete_pl(false), traits(tr_ptr),use_delete_traits(false)
-  {
-    pl->init(*this,*traits);
-    bb=init_default_bounding_box(traits);
-    use_delete_bb=true;
-    bb->init(*this,*traits);
-  }
-  
-  Planar_map_2(Point_location_base *pl_ptr,const Traits& tr_) : 
-    pl(pl_ptr), use_delete_pl(false)
-  {
-    traits = new Traits_wrap(tr_);
-    use_delete_traits = true;
-    bb = init_default_bounding_box(traits);
-    use_delete_bb = true;
-    // initialize the bounding box.
-    pl->init(*this,*traits);
-    bb->init(*this,*traits);
-  }
-  
-  Planar_map_2(Point_location_base *pl_ptr,Bounding_box_base *bb_ptr, 
-               const Traits& tr_) : 
-    pl(pl_ptr),bb(bb_ptr),
-    use_delete_pl(false),use_delete_bb(false),
-  {
-    traits = new Traits_wrap(tr_);
-    use_delete_traits = true;
-    pl->init(*this,traits);
-    bb->init(*this,traits);
-  }
-  
-  Planar_map_2(Point_location_base *pl_ptr):
-    pl(pl_ptr),bb(init_default_bounding_box((Traits*)0)),
-    traits(new Traits_wrap),
-    use_delete_pl(false),use_delete_bb(true),use_delete_traits(true)
-  {
-    if (!traits) 
-      {				
-        traits=new Traits_wrap;
-        use_delete_traits=true;
-      }
-    // initialize the bounding box.
-    pl->init(*this,*traits);
-    bb->init(*this,*traits);
-  }
-  
-  Planar_map_2(
-               Point_location_base *pl_ptr,Bounding_box_base *bb_ptr):
-    pl(pl_ptr),bb(bb_ptr),
-    traits(new Traits_wrap),			
-    use_delete_pl(false),
-    use_delete_bb(false),
-    use_delete_traits(true)
-  {
-    pl->init(*this,*traits);
-    bb->init(*this,*traits);
-  }
-*/
-  
-  virtual ~Planar_map_2 () {
+}
+//-----------------------------------------------------------------------------
+template < class Dcel_, class Traits_ > 
+Planar_map_2< Dcel_, Traits_ >::~Planar_map_2 ()
+ {
     if (use_delete_pl) delete pl;
     if (use_delete_bb) delete bb;
     if (use_delete_traits) delete traits;
   }
-
-  // Inserts a new curve cv in the interior of the face f.
-  // Returns the halfedge which is directed in the same way as the curve cv
-  // (i.e., traits->curve_source(cv) == h.source()).
-  Halfedge_handle insert_in_face_interior(const X_curve&       cv, 
-                                          Face_handle          f, 
-                                          Change_notification *en = NULL) 
-  {
+//-----------------------------------------------------------------------------
+template < class Dcel_, class Traits_ > 
+bool Planar_map_2< Dcel_, Traits_ >::read (std::istream &in ){
+  clear();
+  Pm_file_scanner<Self>  scanner(in); 
+  return scan_planar_map(scanner);
+}
+//-----------------------------------------------------------------------------
+template < class Dcel_, class Traits_ > 
+template <class Scanner>
+bool Planar_map_2< Dcel_, Traits_ >::read (std::istream &in, Scanner& scanner){
+  clear(); 
+  return scan_planar_map(scanner);
+}
+//-----------------------------------------------------------------------------
+template < class Dcel_, class Traits_ >
+Planar_map_2< Dcel_, Traits_ >::Halfedge_handle 
+Planar_map_2< Dcel_, Traits_ >::insert_in_face_interior(
+  const Planar_map_2< Dcel_, Traits_ >::X_curve&       cv, 
+  Planar_map_2< Dcel_, Traits_ >::Face_handle          f, 
+  Change_notification *en = NULL){
     Halfedge_handle h = Topological_map<Dcel>::insert_in_face_interior(f);
     h->set_curve(cv);  //should set the curve of the twin as well but for now
     h->twin()->set_curve(cv);
@@ -489,12 +577,16 @@ public:
       }
 			
     return h;
-  }
-		
-  Halfedge_handle insert_from_vertex(const X_curve& cv, 
-				     Vertex_handle v1, bool source, 
-                                     Change_notification *en = NULL) 
-  {
+
+}
+//-----------------------------------------------------------------------------
+template < class Dcel_, class Traits_ >
+Planar_map_2< Dcel_, Traits_ >::Halfedge_handle 
+Planar_map_2< Dcel_, Traits_ >::insert_from_vertex(
+  const Planar_map_2< Dcel_, Traits_ >::X_curve& cv, 
+  Planar_map_2< Dcel_, Traits_ >::Vertex_handle v1, 
+  bool source, 
+  Change_notification *en = NULL ){
     //find the previous of cv.
     Halfedge_around_vertex_circulator
       previous=v1->incident_halfedges(),
@@ -536,13 +628,16 @@ public:
       en->add_edge(cv, h,true, false);
 
     return h;
-  }
-		
-  Halfedge_handle insert_at_vertices(const X_curve&      cv, 
-				     Vertex_handle       v1, 
-                                     Vertex_handle       v2, 
-                                     Change_notification *en = NULL) 
-  {
+}
+//-----------------------------------------------------------------------------
+template < class Dcel_, class Traits_ >
+Planar_map_2< Dcel_, Traits_ >::Halfedge_handle 
+Planar_map_2< Dcel_, Traits_ >::insert_at_vertices(
+  const Planar_map_2< Dcel_, Traits_ >::X_curve&      cv, 
+  Planar_map_2< Dcel_, Traits_ >::Vertex_handle       v1, 
+  Planar_map_2< Dcel_, Traits_ >::Vertex_handle       v2, 
+  Change_notification *en = NULL ){
+
     Size num_before=number_of_faces();
 			
     Halfedge_around_vertex_circulator 
@@ -653,25 +748,13 @@ public:
     }
     
     return h;
-  }   
-		
-  bool is_empty() const {return halfedges_begin()==halfedges_end();}
-  
-  // Note that the return types are abstract base classes
-  const Point_location_base* get_point_location() const {return pl;}
-  const Bounding_box_base* get_bounding_box() const {return bb;}
-  
-  const Traits_wrap& get_traits() const { return *traits;}
-
-		
-private:
-	
-  //a private implementation which defines if previous1 is on an outer ccb of 
-  //the new face (returns true) or on an inner ccb (returns false)
-  bool prev1_inside_hole(Halfedge_const_handle previous1,
-			 Halfedge_const_handle previous2,
-			 const X_curve& cv) 
-  {
+}
+//-----------------------------------------------------------------------------
+template < class Dcel_, class Traits_ >
+bool Planar_map_2< Dcel_, Traits_ >::prev1_inside_hole(
+  Planar_map_2< Dcel_, Traits_ >::Halfedge_const_handle previous1,
+  Planar_map_2< Dcel_, Traits_ >::Halfedge_const_handle previous2,
+  const Planar_map_2< Dcel_, Traits_ >::X_curve& cv ){
     /*
       Defining geometrically whether there is a new face. If 
       there is, finds if previous1 is on the outside of the new 
@@ -778,13 +861,14 @@ private:
 		
     return (traits->point_is_left(left_edge->source()->point(),
 				  left_edge->target()->point()));
-		
-  }
-  
-  
-public:
-  Halfedge_handle insert(const X_curve&       cv, 
-                         Change_notification *en = NULL) {
+	
+}
+//-----------------------------------------------------------------------------
+template < class Dcel_, class Traits_ >
+Planar_map_2< Dcel_, Traits_ >::Halfedge_handle 
+Planar_map_2< Dcel_, Traits_ >::insert(
+  const Planar_map_2< Dcel_, Traits_ >::X_curve& cv, 
+  Change_notification *en = NULL ){
     CGAL_assertion(bb);
     bb->insert(cv);
     
@@ -836,13 +920,15 @@ public:
     
     CGAL_postcondition(lt1==VERTEX||lt1==UNBOUNDED_FACE||lt1==FACE);
     return Halfedge_handle();
-    
-  }
-  
-  template <class X_curve_iterator>
-  Halfedge_iterator insert(const X_curve_iterator& begin,
-			   const X_curve_iterator& end,
-                           Change_notification    *en = NULL) {
+}
+//-----------------------------------------------------------------------------
+template < class Dcel_, class Traits_ >
+template <class X_curve_iterator>
+Planar_map_2< Dcel_, Traits_ >::Halfedge_iterator
+Planar_map_2< Dcel_, Traits_ >::insert(
+  const X_curve_iterator& begin,
+  const X_curve_iterator& end,
+  Change_notification    *en = NULL ){
     X_curve_iterator it=begin;
     Halfedge_iterator out;
     if (it!=end) 
@@ -856,13 +942,15 @@ public:
         it++;
       }
     return out;
-  }
-  
-  Halfedge_handle split_edge(Halfedge_handle       e, 
-                             const X_curve       & c1, 
-                             const X_curve       & c2,
-                             Change_notification * en = NULL)
-  {
+}
+//-----------------------------------------------------------------------------
+template < class Dcel_, class Traits_ >
+Planar_map_2< Dcel_, Traits_ >::Halfedge_handle 
+Planar_map_2< Dcel_, Traits_ >::split_edge( 
+  Planar_map_2< Dcel_, Traits_ >::Halfedge_handle       e, 
+  const Planar_map_2< Dcel_, Traits_ >::X_curve       & c1, 
+  const Planar_map_2< Dcel_, Traits_ >::X_curve       & c2,
+  Change_notification * en = NULL ){
     
     CGAL_precondition(traits->point_is_same(traits->curve_source(c2),
 					    traits->curve_target(c1)));
@@ -912,13 +1000,15 @@ public:
     //  en->split_edge(h, h->next_halfedge(), c1, c2);	
 
     return h;
-  }
-	
-	
-  Halfedge_handle merge_edge(Halfedge_handle e1, 
-                             Halfedge_handle e2, 
-			     const X_curve& cv, 
-                             Change_notification * en = NULL) {
+}
+//-----------------------------------------------------------------------------
+template < class Dcel_, class Traits_ >
+Planar_map_2< Dcel_, Traits_ >::Halfedge_handle 
+Planar_map_2< Dcel_, Traits_ >::merge_edge(
+  Planar_map_2< Dcel_, Traits_ >::Halfedge_handle e1, 
+  Planar_map_2< Dcel_, Traits_ >::Halfedge_handle e2, 
+  const Planar_map_2< Dcel_, Traits_ >::X_curve& cv, 
+  Change_notification * en = NULL){
     CGAL_precondition( (traits->point_is_same(traits->curve_source(cv),
 					      e1->source()->point() )&&
 			traits->point_is_same(traits->curve_target(cv),
@@ -947,9 +1037,12 @@ public:
     //  en->merge_edge(h, e1, e2, cv);	
 
     return h;
-  }
-	
-  Face_handle remove_edge(Halfedge_handle e) {
+} 
+//-----------------------------------------------------------------------------
+template < class Dcel_, class Traits_ >
+Planar_map_2< Dcel_, Traits_ >::Face_handle
+Planar_map_2< Dcel_, Traits_ >::remove_edge(
+Planar_map_2< Dcel_, Traits_ >::Halfedge_handle e ){
 
     // en->remove_edge(e);
     
@@ -995,130 +1088,13 @@ public:
 			
       return Topological_map<Dcel>::remove_edge(e);
     }
-		
-  }
-	
-	
-  Halfedge_handle vertical_ray_shoot(const Point& p,
-				     Locate_type &lt, bool up)
-  {
-    CGAL_precondition(pl);
-    return pl->vertical_ray_shoot(p,lt,up);
-  }
-	
-  
-  Halfedge_const_handle vertical_ray_shoot(const Point& p,
-					   Locate_type &lt, bool up) const
-  {
-    CGAL_precondition(pl);
-    return ((const Point_location_base*)pl)->vertical_ray_shoot(p,lt,up);
-    // The type cast to const is there to ensure that the planar map 
-    // is not changed.
-  }
-	
-	
-	
-  Halfedge_handle locate(const Point& p, Locate_type &lt) {
-    CGAL_precondition(pl);
-    return pl->locate(p,lt);
-  }
-	
-  Halfedge_const_handle locate(const Point& p, Locate_type &lt) const {
-    CGAL_precondition(pl);
-    return ((const Point_location_base*)pl)->locate(p,lt);
-    // The type cast to const is there to ensure that the planar map 
-    // is not changed.
-  }
-  
-protected:  //private implementation
-  //returns true if the point  is inside (in the strict sense) of nf
-  //algorithm: count the intersections of a vertical ray shoot - are they odd ?
-  //assumes outer ccb exists
-  
-  //CHANGE - for this to work in the arrangement, it should not pass over
-  //the curve just inserted (i.e the halfedge)
-  
-  /*
-    bool point_is_in(const Point& p, Face_const_handle nf) const
-    {
-    int count = 0;
-    
-    Ccb_halfedge_const_circulator circ = nf->outer_ccb();
-    do {
-    ++circ;
-    } while ((traits->curve_is_vertical(circ->curve()))&&
-              circ!=nf->outer_ccb());
-    if (circ==nf->outer_ccb() && traits->curve_is_vertical(circ->curve()) )
-    return false; 
-    //if the whole ccb is vertical then the point is out.
-    //else advance to a non vertical curve 
-    
-    Ccb_halfedge_const_circulator last = circ;
-    
-    
-    do {
-    if (traits->point_is_same(circ->target()->point(), p)) 
-    //point is on outer ccb 
-    return false;
-    if (!traits->curve_is_vertical(circ->curve())) {
-    
-    if ( (traits->curve_get_point_status(circ->curve(),p) == 
-    Traits::UNDER_CURVE) && 
-    !(traits->point_is_same_x(circ->source()->point(),p)) ) {  
-    //point is under curve in the range (source,target]
-    
-    if (traits->point_is_same_x(circ->target()->point(),p)) {
-    //p is exactly under a vertex of the ccb - if next is not on the 
-    //same side of the vertical line from p as circ is, 
-    //we count one more intersection
-    
-    Ccb_halfedge_const_circulator next=circ;
-    ++next;
-    if (traits->curve_is_vertical(next->curve())) {
-    //advance to non-vertical edge
-    while (traits->curve_is_vertical(next->curve())) {
-    ++next;
-    }
-    }
-    if ( (traits->point_is_right(circ->source()->point(),p)&&
-    traits->point_is_left(next->target()->point(),p)) ||
-    (traits->point_is_left(circ->source()->point(),p)&&
-    traits->point_is_right(next->target()->point(),p)) ) {
-    
-    ++count;
-    }
-    }
-    else {
-    ++count;
-    }
-    }
-    }
-    } while (++circ!=last);
-    
-    return (count%2 != 0);  //if count is odd return true
-    
-    }
-  */
-  
-  // Determines if an input point is within the face incident
-  // to an input halfedge.
-  //
-  // p   - input point
-  // ne  - handle of input halfedge
-  // nvc - curve of input halfedge
-  //
-  // return value - true iff the above condition holds
-  //
-  // Implementation:
-  // Conceptually, we shoot a ray from p vertically upwards and count
-  // the number of pm-halfedges of the boundary of the face that intersect it.
-  // If this number is odd the point is inside the face. In practice, we 
-  // we use a check whether a curve is above or below a point.
-  //
-  bool point_is_in(const Point           & p, 
-                   Halfedge_const_handle   ne,
-                   const X_curve         & ncv) const
-  {
+}
+//-----------------------------------------------------------------------------
+template < class Dcel_, class Traits_ >
+bool Planar_map_2< Dcel_, Traits_ >::
+point_is_in( const Point           & p, 
+             Halfedge_const_handle   ne,
+             const X_curve         & ncv) const{
     // count stores the number of curves that intersect the upward vertical 
     // ray shot from p (except for a degenerate case which is explained in 
     // the code)
@@ -1213,114 +1189,69 @@ protected:  //private implementation
     
     return (count%2 != 0);  //if count is odd return true
   }
-  
-  
-  /////////////////////////////////////////////////////////
-  // Assignment functions 
-  // Those are temporary functions and it should not be used
-public:
-  void assign(const Self &pm)
-  {
-    TPM::assign(pm);
-    // traits->assign(pm->traits);
-    // bb->assign(pm->bb);
-    // pl->assign(pm->pl);
-  }
-
-  /*Self& operator=(const Self& pm)
-    {
-    if (this != &pm)
-    {
-    X_curve_container l;
-    pm.x_curve_container(l);
+//-----------------------------------------------------------------------------
+template < class Dcel_, class Traits_ >
+Planar_map_2< Dcel_, Traits_ >& Planar_map_2< Dcel_, Traits_ >::
+operator=(const Planar_map_2< Dcel_, Traits_ >& pm){
+  if( this != &pm ){
     clear();
-    insert(l.begin(), l.end());
-    }
-    return *this;
-    }
+    assign(pm);
+               
+    Halfedge_iterator h_iter;
+    for( h_iter = halfedges_begin(); 
+         h_iter != halfedges_end(); 
+	 h_iter++, h_iter++)
+      pl->insert(h_iter, h_iter->curve());
+                 
+    for( Vertex_iterator v_iter = vertices_begin(); 
+	 v_iter != vertices_end(); 
+	 v_iter++)
+      bb->insert(v_iter->point());
+                 
+    for( h_iter = halfedges_begin(); 
+	 h_iter !=  halfedges_end(); 
+	 h_iter++, h_iter++)
+      bb->insert(h_iter->curve());
+  }
+  return *this;
+}
+//-----------------------------------------------------------------------------
+template < class Dcel_, class Traits_ >
+void Planar_map_2< Dcel_, Traits_ >:: clear(){
+  pl->clear();
+  TPM::clear();
+  /*
+    Halfedge_iterator it=halfedges_begin(),prev=it,it_e=halfedges_end();
+    while (it!=it_e) {++it;++it;remove_edge(prev);prev=it;}
   */
-  
-  Self& operator=(const Self& pm)
-  {
-    if (this != &pm) {
-      clear();
-      assign(pm);
-                 
-      Halfedge_iterator h_iter;
-      for (h_iter = halfedges_begin(); 
-	   h_iter != halfedges_end(); 
-	   h_iter++, h_iter++)
-	pl->insert(h_iter, h_iter->curve());
-                 
-      for (Vertex_iterator v_iter = vertices_begin(); 
-	   v_iter != vertices_end(); 
-	   v_iter++)
-	bb->insert(v_iter->point());
-                 
-      for (h_iter = halfedges_begin(); 
-	   h_iter !=  halfedges_end(); 
-	   h_iter++, h_iter++)
-	bb->insert(h_iter->curve());
-    }
-    return *this;
+  bb->clear();
+}
+//-----------------------------------------------------------------------------
+template < class Dcel_, class Traits_ >
+void Planar_map_2< Dcel_, Traits_ >::
+x_curve_container(X_curve_container &l) const{
+  Halfedge_const_iterator it=halfedges_begin(),it_e=halfedges_end();
+  while (it!=it_e){
+    l.push_back(it->curve());
+    ++it;
+    ++it;
   }
-	
-  // used in implementation of operator=(
-  void clear() 
-  {
-    pl->clear();
-    TPM::clear();
-    /*
-      Halfedge_iterator it=halfedges_begin(),prev=it,it_e=halfedges_end();
-      while (it!=it_e) {++it;++it;remove_edge(prev);prev=it;}
-    */
-    bb->clear();
-  }
-  
-protected:
-	// used in implementation of operator=(
-  void x_curve_container(X_curve_container &l) const
-  {
-    Halfedge_const_iterator it=halfedges_begin(),it_e=halfedges_end();
-    while (it!=it_e) 
-      {
-	l.push_back(it->curve());
-	++it;++it;
-      }
-  }
-  //
-  /////////////////////////////////////////////////////////
-
-
-
-protected:
-	// default initializer for the bounding box.
-#include <CGAL/Planar_map_2/Bounding_box_special_initializer.h>
-
-#ifdef CGAL_PM_DEBUG // for private debugging use
-	
-public:
-  void debug()
-  {
-    if (pl) (pl->debug());
-  }
-
-#endif	
-	
-private:
-///////////////////////////////////////////////////////////////////////////
-//                 Scanning Arrangement.
-///////////////////////////////////////////////////////////////////////// 
-template <class Scanner>
-bool  scan_planar_map (Scanner& scanner){
+}
+//-----------------------------------------------------------------------------
+template < class Dcel_, class Traits_ >
+template < class Scanner > 
+bool
+Planar_map_2< Dcel_, Traits_ >::scan_planar_map( Scanner& scanner ){
   if (!build_dcel(scanner))
     return false;
 
   return true;
 }
-  
+//-----------------------------------------------------------------------------  
+template <class Dcel_, class Traits_> 
 template <class Scanner>
-bool  build_dcel (Scanner& scanner) {
+bool Planar_map_2< Dcel_, Traits_ >:: 	
+build_dcel( Scanner& scanner ){
   typedef typename Dcel::Vertex	                  D_vertex;
   typedef typename Dcel::Halfedge                 D_halfedge;
   typedef typename Dcel::Face	                  D_face;
@@ -1480,116 +1411,6 @@ bool  build_dcel (Scanner& scanner) {
       clear();
       return false;
     }
-    
-    /*
-    //if (i > 0){ // not an unbounded face. Scanning the outer ccb.
-    scanner.scan_face_number(num_halfedges_on_outer_ccb, i);
-    if ( ! scanner.in()){
-    std::cerr << "can't read face number"<<std::endl;
-    scanner.in().clear( std::ios::badbit);
-    clear();
-    return false;
-    }
-    
-    // not an unbounded face. Scanning the outer ccb.
-    if (num_halfedges_on_outer_ccb > 0) {
-    std::size_t  index, prev_index, first_index;
-    for (unsigned int j = 0; j < num_halfedges_on_outer_ccb; j++) {
-    
-    scanner.scan_index(index);
-    if ( ! scanner.in()){
-    std::cerr << "can't read halfedge's index on face"<<std::endl;
-    scanner.in().clear( std::ios::badbit);
-    clear();
-    return false;
-    }
-    
-    D_halfedge* nh = halfedges_vec[index];
-    
-    // for debugging.
-    //std::cout<<"source of haledge : "<<nh->vertex()->point()<<std::endl;
-        
-    if (j > 0) {
-    D_halfedge* prev_nh = halfedges_vec[prev_index];
-    prev_nh->set_next(nh);
-    }
-    else {
-    nf->set_halfedge(nh);
-    first_index = index;
-    }
-    
-    nh->set_face(nf); 
-    
-    prev_index = index;
-    }
-    
-    // making the last halfedge point to the first one (cyclic order).
-    D_halfedge* nh = halfedges_vec[first_index];
-    D_halfedge* prev_nh = halfedges_vec[prev_index];
-      prev_nh->set_next(nh);
-      }
-      
-    scanner.scan_face_number(num_of_holes, i);
-    if ( ! scanner.in()){
-    std::cerr << "can't read number holes in face"<<std::endl;
-    scanner.in().clear( std::ios::badbit);
-    clear();
-    return false;
-    }
-    
-    // take care the hols.
-    for (unsigned int k = 0; k < num_of_holes; k++){
-    std::size_t  num_halfedges_on_inner_ccb;
-      
-    scanner.scan_face_number(num_halfedges_on_inner_ccb, i);
-    if ( ! scanner.in()){
-    std::cerr << "can't read number of halfedges in hole"<<std::endl;
-    scanner.in().clear( std::ios::badbit);
-    clear();
-    return false;
-    }
-    
-      std::size_t  index, prev_index, first_index;
-      for (unsigned int j = 0; j < num_halfedges_on_inner_ccb; j++) {
-      scanner.scan_index(index);
-      if ( ! scanner.in()){
-      std::cerr << "can't read halfedge's index on hole"<<std::endl;
-      scanner.in().clear( std::ios::badbit);
-      clear();
-      return false;
-      }
-      
-      D_halfedge* nh = halfedges_vec[index];
-        
-      // for debugging.
-      //std::cout<<"source of haledge : "<<nh->vertex()->point()<<std::endl;
-      
-      if (j > 0) {
-      D_halfedge* prev_nh = halfedges_vec[prev_index];
-      prev_nh->set_next(nh);
-      }
-      else {
-      nf->add_hole(nh);
-      first_index = index;
-      }
-      
-      nh->set_face(nf); 
-        
-      prev_index = index;
-      }
-      
-      // making the last halfedge point to the first one (cyclic order).
-      D_halfedge* nh = halfedges_vec[first_index];
-      D_halfedge* prev_nh = halfedges_vec[prev_index];
-      prev_nh->set_next(nh);
-      }
-      scanner.skip_to_next_face(i);
-      if ( ! scanner.in()){
-      std::cerr << "can't skip to next face"<<std::endl;
-      scanner.in().clear( std::ios::badbit);
-      clear();
-      return false;
-      }*/
   }
   
   if ( ! scanner.in() ) {
@@ -1601,16 +1422,6 @@ bool  build_dcel (Scanner& scanner) {
 }	
   
   // #else was removed by eti.
-protected:
-	
-  Point_location_base *pl;
-  Bounding_box_base *bb;
-  Traits_wrap*  traits;
-private:
-  bool use_delete_pl;
-  bool use_delete_bb;
-  bool use_delete_traits;
-};
 
 CGAL_END_NAMESPACE
 
