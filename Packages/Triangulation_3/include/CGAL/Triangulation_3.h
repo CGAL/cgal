@@ -453,10 +453,10 @@ public:
   Cell_handle
   locate(const Point & p,
 	 Locate_type & lt, int & li, int & lj,
-	 Cell_handle start = NULL) const;
+	 Cell_handle start = Cell_handle()) const;
 
   Cell_handle
-  locate(const Point & p, Cell_handle start = NULL) const
+  locate(const Point & p, Cell_handle start = Cell_handle()) const
   {
       Locate_type lt;
       int li, lj;
@@ -542,7 +542,7 @@ public:
 
   //INSERTION 
 
-  Vertex_handle insert(const Point & p, Cell_handle start = NULL);
+  Vertex_handle insert(const Point & p, Cell_handle start = Cell_handle());
   Vertex_handle insert(const Point & p, Locate_type lt, Cell_handle c,
 	               int li, int lj);
  
@@ -689,7 +689,7 @@ protected:
   insert_conflict_2(Cell_handle c, const Conflict_test &tester)
   {
     CGAL_triangulation_precondition( dimension() == 2 );
-    CGAL_triangulation_precondition( c != NULL );
+    CGAL_triangulation_precondition( c != Cell_handle() );
     CGAL_triangulation_precondition( tester(c) );
 
     std::vector<Cell_handle> cells;
@@ -714,7 +714,7 @@ protected:
   insert_conflict_3(Cell_handle c, const Conflict_test &tester)
   {
     CGAL_triangulation_precondition( dimension() == 3 );
-    CGAL_triangulation_precondition( c != NULL );
+    CGAL_triangulation_precondition( c != Cell_handle() );
     CGAL_triangulation_precondition( tester(c) );
 
     std::vector<Cell_handle> cells;
@@ -1434,7 +1434,7 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
 {
   int i, inf;
 
-  if ( dimension() >= 1 && start == NULL )
+  if ( dimension() >= 1 && start == Cell_handle() )
     // there is at least one finite "cell" (or facet or edge)
     start = infinite_vertex()->cell()->neighbor
             ( infinite_vertex()->cell()->index( infinite_vertex()) );
@@ -1442,8 +1442,8 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
   switch (dimension()) {
   case 3:
     {
-      CGAL_triangulation_precondition( start != NULL );
-      Cell_handle previous(NULL);
+      CGAL_triangulation_precondition( start != Cell_handle() );
+      Cell_handle previous = Cell_handle();
       Cell_handle c;
       int ind_inf;
       if ( start->has_vertex(infinite, ind_inf) )
@@ -1574,7 +1574,7 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
     }
   case 2:
     {
-      CGAL_triangulation_precondition( start != NULL );
+      CGAL_triangulation_precondition( start != Cell_handle() );
       Cell_handle c;
       int ind_inf;
       if ( start->has_vertex(infinite, ind_inf) )
@@ -1663,7 +1663,7 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
     }
   case 1:
     {
-      CGAL_triangulation_precondition( start != NULL );
+      CGAL_triangulation_precondition( start != Cell_handle() );
       Cell_handle c;
       int ind_inf;
       if ( start->has_vertex(infinite, ind_inf) )
@@ -1729,12 +1729,12 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
   case -1:
     {
       lt = OUTSIDE_AFFINE_HULL;
-      return NULL;
+      return Cell_handle();
     }
   default:
     {
       CGAL_triangulation_assertion(false);
-      return NULL;
+      return Cell_handle();
     }
   }
 }
@@ -2551,7 +2551,7 @@ is_valid(bool verbose, int level) const
     return false;
   }
     
-  if ( infinite_vertex() == NULL ) {
+  if ( infinite_vertex() == Vertex_handle() ) {
     if (verbose)
 	std::cerr << "no infinite vertex" << std::endl;
     CGAL_triangulation_assertion(false);

@@ -41,16 +41,16 @@ _test_vertex_tds_3(const Vertex &)
   c2->set_vertex(0, v1);
   assert(v1->is_valid());
 
-  // Compatibility of handles with NULL.
-  Vertex_handle v = NULL;
-  v = NULL;
-  assert(v == NULL);
-  assert(v1 != NULL);
+  // Unicity of the default constructed handle.
+  Vertex_handle v = Vertex_handle();
+  v = Vertex_handle();
+  assert(v == Vertex_handle());
+  assert(v1 != Vertex_handle());
 
-  Cell_handle c = NULL;
-  c = NULL;
-  assert(c == NULL);
-  assert(c1 != NULL);
+  Cell_handle c = Cell_handle();
+  c = Cell_handle();
+  assert(c == Cell_handle());
+  assert(c1 != Cell_handle());
 
   // We want the following comparisons to work for use in std::set<>...
   bool b1 = v<v1;  (void) b1;

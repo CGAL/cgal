@@ -123,7 +123,7 @@ public:
   Cell_handle locate(const Point& p) const;
 
   Vertex_handle
-  nearest_vertex(const Point& p, Cell_handle start = NULL) const;
+  nearest_vertex(const Point& p, Cell_handle start = Cell_handle()) const;
 
 private:
 
@@ -187,7 +187,7 @@ Triangulation_hierarchy_3(const Triangulation_hierarchy_3<Tr> &tr)
 
   for( Finite_vertices_iterator it=hierarchy[0]->finite_vertices_begin(); 
        it != hierarchy[0]->finite_vertices_end(); ++it)
-    if (it->up() != NULL)
+    if (it->up() != Vertex_handle())
       V[ it->up()->down() ] = it;
 
   for(int j=1; j<maxlevel; ++j) {
@@ -198,7 +198,7 @@ Triangulation_hierarchy_3(const Triangulation_hierarchy_3<Tr> &tr)
 	// make reverse link
 	it->down()->set_up( it );
 	// make map for next level
-	if (it->up() != NULL)
+	if (it->up() != Vertex_handle())
 	    V[ it->up()->down() ] = it;
     }
   }
@@ -246,7 +246,7 @@ is_valid(bool verbose, int level) const
   // verify that lower level has no down pointers
   for( Finite_vertices_iterator it = hierarchy[0]->finite_vertices_begin(); 
        it != hierarchy[0]->finite_vertices_end(); ++it) 
-    result = result && (it->down() == NULL);
+    result = result && (it->down() == Vertex_handle());
 
   // verify that other levels has down pointer and reciprocal link is fine
   for(int j=1; j<maxlevel; ++j)
@@ -258,7 +258,7 @@ is_valid(bool verbose, int level) const
   for(int k=0; k<maxlevel-1; ++k)
     for( Finite_vertices_iterator it = hierarchy[k]->finite_vertices_begin(); 
 	 it != hierarchy[k]->finite_vertices_end(); ++it) 
-      result = result && ( it->up() == NULL ||
+      result = result && ( it->up() == Vertex_handle() ||
 	        &*it == &*(it->up())->down() );
 
   return result;
@@ -286,7 +286,7 @@ insert(const Point &p)
 
   int level = 1;
   while (level <= vertex_level ){
-      if (positions[level].pos == NULL)
+      if (positions[level].pos == Cell_handle())
           vertex = hierarchy[level]->insert(p);
       else
           vertex = hierarchy[level]->insert(p,
@@ -307,12 +307,12 @@ bool
 Triangulation_hierarchy_3<Tr>::
 remove(Vertex_handle v)
 {
-  CGAL_triangulation_precondition(v != NULL);
+  CGAL_triangulation_precondition(v != Vertex_handle());
   Vertex_handle u = v->up();
   int l = 0;
   while (1) {
     hierarchy[l++]->remove(v);
-    if (u == NULL || l > maxlevel)
+    if (u == Vertex_handle() || l > maxlevel)
 	break;
     v = u;
     u = v->up();
@@ -325,7 +325,7 @@ typename Triangulation_hierarchy_3<Tr>::Vertex_handle
 Triangulation_hierarchy_3<Tr>::
 move_point(Vertex_handle v, const Point & p)
 {
-  CGAL_triangulation_precondition(v != NULL);
+  CGAL_triangulation_precondition(v != Vertex_handle());
   Vertex_handle u = v->up();
   Vertex_handle old, ret;
   int l = 0;
@@ -338,7 +338,7 @@ move_point(Vertex_handle v, const Point & p)
 	w->set_down(old);
     }
     old = w;
-    if (u == NULL || l > maxlevel)
+    if (u == Vertex_handle() || l > maxlevel)
 	break;
     v = u;
     u = v->up();
@@ -383,9 +383,9 @@ locate(const Point& p, Locate_type& lt, int& li, int& lj,
   }
 
   for (int i=level+1; i<maxlevel; ++i)
-      pos[i].pos = NULL;
+      pos[i].pos = Cell_handle();
 
-  Cell_handle position = NULL;
+  Cell_handle position = Cell_handle();
   while(level > 0) {
     // locate at that level from "position"
     // result is stored in "position" for the next level
@@ -414,7 +414,8 @@ typename Triangulation_hierarchy_3<Tr>::Vertex_handle
 Triangulation_hierarchy_3<Tr>::
 nearest_vertex(const Point& p, Cell_handle start) const
 {
-    return Tr_Base::nearest_vertex(p, start != NULL ? start : locate(p));
+    return Tr_Base::nearest_vertex(p, start != Cell_handle() ? start
+	                                                     : locate(p));
 }
 
 template <class Tr>

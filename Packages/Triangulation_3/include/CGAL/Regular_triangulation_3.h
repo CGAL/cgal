@@ -1,4 +1,4 @@
-// Copyright (c) 1999  INRIA Sophia-Antipolis (France).
+// Copyright (c) 1999-2004  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -93,7 +93,8 @@ public:
     return number_of_vertices() - n;
   }
 
-  Vertex_handle insert(const Weighted_point & p, Cell_handle start = NULL);
+  Vertex_handle insert(const Weighted_point & p,
+	               Cell_handle start = Cell_handle());
 
   Vertex_handle insert(const Weighted_point & p, Locate_type lt,
 	               Cell_handle c, int li, int);
@@ -187,10 +188,10 @@ private:
 	      for (int i=0; i<4; i++)
 	      {
 		  Vertex_handle v = c->vertex(i);
-		  if (v->cell() != NULL)
+		  if (v->cell() != Cell_handle())
 		  {
 		      cv.push_back(v);
-		      v->set_cell(NULL);
+		      v->set_cell(Cell_handle());
 		  }
 	      }
 	      return true;
@@ -222,10 +223,10 @@ private:
 	      for (int i=0; i<3; i++)
 	      {
 		  Vertex_handle v = c->vertex(i);
-		  if (v->cell() != NULL)
+		  if (v->cell() != Cell_handle())
 		  {
 		      cv.push_back(v);
-		      v->set_cell(NULL);
+		      v->set_cell(Cell_handle());
 		  }
 	      }
 	      return true;
@@ -392,7 +393,7 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
           if (lt == Tr_Base::VERTEX)
               return c->vertex(li); // by coinciding point
           else
-              return NULL;          // by cell
+              return Vertex_handle();  // by cell
       }
 
       // Should I mark c's vertices too ?
@@ -403,7 +404,7 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
 		it = tester.conflict_vector().begin();
 		it != tester.conflict_vector().end(); ++it)
       {
-        if ((*it)->cell() == NULL)
+        if ((*it)->cell() == Cell_handle())
 	{
           // vertex has to be deleted
           tds().delete_vertex(*it);
@@ -425,7 +426,7 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
               if (lt == Tr_Base::VERTEX)
                   return c->vertex(li); // by coinciding point
               else
-                  return NULL;          // by face
+                  return Vertex_handle();          // by face
           }
 
 	  Conflict_tester_2 tester(p, this);
@@ -435,7 +436,7 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
 		it = tester.conflict_vector().begin();
 		it != tester.conflict_vector().end(); ++it)
 	  {
-            if ((*it)->cell() == NULL)
+            if ((*it)->cell() == Cell_handle())
 	    {
               // vertex has to be deleted
               tds().delete_vertex(*it);
@@ -462,7 +463,7 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
               if (lt == Tr_Base::VERTEX)
                   return c->vertex(li); // by coinciding point
               else
-                  return NULL;          // by edge
+                  return Vertex_handle();  // by edge
           }
 
 	  Cell_handle bound[2];
@@ -488,8 +489,10 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
 
 	  Vertex_handle v = tds().create_vertex();
 	  v->set_point(p);
-          Cell_handle c0 = tds().create_face(v, bound[0]->vertex(0), NULL);
-          Cell_handle c1 = tds().create_face(bound[1]->vertex(1), v, NULL);
+          Cell_handle c0 = tds().create_face(v, bound[0]->vertex(0),
+		                             Vertex_handle());
+          Cell_handle c1 = tds().create_face(bound[1]->vertex(1), v,
+		                             Vertex_handle());
           tds().set_adjacency(c0, 1, c1, 0);
           tds().set_adjacency(bound[0], 1, c0, 0);
           tds().set_adjacency(c1, 1, bound[1], 0);
@@ -507,7 +510,7 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
       case Tr_Base::CELL:
 	// impossible in dimension 1
         CGAL_assertion(false);
-	return NULL;
+	return Vertex_handle();
       }
     }
   case 0:

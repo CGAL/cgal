@@ -1,5 +1,6 @@
 Version 1.188 (?? January 04)
 - Remove useless friend declarations.
+- Replace NULL by default constructed Handles.
 
 Version 1.187 (07 January 04)
 - cleaning in demos and doc (#include for geomview)

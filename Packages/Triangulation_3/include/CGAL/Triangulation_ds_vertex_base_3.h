@@ -38,7 +38,7 @@ public:
   struct Rebind_TDS { typedef Triangulation_ds_vertex_base_3<TDS2> Other; };
 
   Triangulation_ds_vertex_base_3()
-    : _c(NULL) {}
+    : _c() {}
   
   Triangulation_ds_vertex_base_3(const Cell_handle& c)
     : _c(c) {}
@@ -54,7 +54,7 @@ public:
   // to add their own purpose checking
   bool is_valid(bool, int ) const
   { 
-    return cell() != NULL;
+    return cell() != Cell_handle();
   }
 
   // For use by the Compact_container.

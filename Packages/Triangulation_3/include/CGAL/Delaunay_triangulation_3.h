@@ -187,7 +187,7 @@ public:
     return number_of_vertices() - n;
   }
 
-  Vertex_handle insert(const Point & p, Cell_handle start = NULL);
+  Vertex_handle insert(const Point & p, Cell_handle start = Cell_handle());
 
   Vertex_handle insert(const Point & p, Locate_type lt,
 	               Cell_handle c, int li, int);
@@ -345,7 +345,7 @@ public:
   nearest_vertex_in_cell(const Point& p, const Cell_handle& c) const;
 
   Vertex_handle
-  nearest_vertex(const Point& p, Cell_handle c = NULL) const;
+  nearest_vertex(const Point& p, Cell_handle c = Cell_handle()) const;
 
   Point dual(Cell_handle c) const;
 
@@ -543,7 +543,7 @@ move_point(Vertex_handle v, const Point & p)
     CGAL_triangulation_expensive_assertion(number_of_vertices() == 0
 	                                   || tds().is_cell(c));
 
-    return insert(p, number_of_vertices() == 0 ? Cell_handle(NULL) : c);
+    return insert(p, number_of_vertices() == 0 ? Cell_handle() : c);
 }
  
 template < class Gt, class Tds >
@@ -716,7 +716,7 @@ make_hole_2D(Vertex_handle v, std::list<Edge_2D> & hole)
     int in = fn->index(f);
 
     f->vertex(cw(i))->set_cell(fn);
-    fn->set_neighbor(in, NULL);
+    fn->set_neighbor(in, Cell_handle());
 
     hole.push_back(Edge_2D(fn, in));
     to_delete.push_back(f);
@@ -822,7 +822,7 @@ remove_3D_new(Vertex_handle v)
 
   Unique_hash_map<Vertex_handle,Vertex_handle> vmap;
 
-  Cell_handle ch(NULL);
+  Cell_handle ch = Cell_handle();
   for(i=0; i < vertices.size(); i++){
     if(! is_infinite(vertices[i])){
       Vertex_handle vh = aux.insert(vertices[i]->point(), ch);
@@ -935,7 +935,7 @@ bool
 Delaunay_triangulation_3<Gt,Tds>::
 remove(Vertex_handle v)
 {
-  CGAL_triangulation_precondition( v != NULL);
+  CGAL_triangulation_precondition( v != Vertex_handle());
   CGAL_triangulation_precondition( !is_infinite(v));
   CGAL_triangulation_expensive_precondition( tds().is_vertex(v) );
 
@@ -1251,7 +1251,7 @@ Delaunay_triangulation_3<Gt,Tds>::
 nearest_vertex(const Point& p, Cell_handle start) const
 {
     if (number_of_vertices() == 0)
-	return Vertex_handle(NULL);
+	return Vertex_handle();
 
     // Use a brute-force algorithm if dimension < 3.
     if (dimension() < 3) {
@@ -1356,7 +1356,7 @@ is_valid(bool verbose, int level) const
     return false;
   }
     
-  if ( infinite_vertex() == NULL ) {
+  if ( infinite_vertex() == Vertex_handle() ) {
     if (verbose)
 	std::cerr << "no infinite vertex" << std::endl;
     CGAL_triangulation_assertion(false);

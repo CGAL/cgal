@@ -118,8 +118,10 @@ public:
 
     Vertex_handle() : _v() {}
     Vertex_handle(Vertex_iterator v) : _v(v) {}
+#ifndef CGAL_NO_DEPRECATED_CODE // must be kept
     Vertex_handle(void * CGAL_triangulation_precondition_code(n)) : _v()
     { CGAL_triangulation_precondition(n == NULL); }
+#endif
 
     Vertex* operator->() const { return &*_v; }
     Vertex& operator*()  const { return *_v; }
@@ -127,8 +129,10 @@ public:
     bool operator==(Vertex_handle v) const { return _v == v._v; }
     bool operator!=(Vertex_handle v) const { return _v != v._v; }
 
+#ifndef CGAL_NO_DEPRECATED_CODE // must be kept
     // For std::set and co.
     bool operator<(Vertex_handle v) const { return &*_v < &*v._v; }
+#endif
 
     // Should be private to the TDS :
     const Vertex_iterator & base() const { return _v; }
@@ -157,8 +161,10 @@ public:
     Cell_handle(Cell_circulator c) : _c(c.base()._c) {}
     Cell_handle(Face_circulator c) : _c(c.base()._c) {}
 #endif
+#ifndef CGAL_NO_DEPRECATED_CODE // must be kept
     Cell_handle(void * CGAL_triangulation_precondition_code(n)) : _c()
     { CGAL_triangulation_precondition(n == NULL); }
+#endif
 
     Cell* operator->() const { return &*_c; }
     Cell& operator*()  const { return *_c; }
@@ -166,8 +172,10 @@ public:
     bool operator==(Cell_handle c) const { return _c == c._c; }
     bool operator!=(Cell_handle c) const { return _c != c._c; }
 
+#ifndef CGAL_NO_DEPRECATED_CODE // must be kept
     // For std::set and co.
     bool operator<(Cell_handle c) const { return &*_c < &*c._c; }
+#endif
 
     // These should be private to the TDS :
     const Cell_iterator & base() const { return _c; }
@@ -454,7 +462,7 @@ public:
   Vertex_handle _insert_in_hole(CellIt cell_begin, CellIt cell_end,
 	                        const Cell_handle& begin, int i)
   {
-      CGAL_triangulation_precondition(begin != NULL);
+      CGAL_triangulation_precondition(begin != Cell_handle());
       // if begin == NULL (default arg), we could compute one by walking in
       // CellIt.  At the moment, the functionality is not available, you have
       // to specify a starting facet.
@@ -692,7 +700,7 @@ public:
   OutputIterator
   incident_cells(const Vertex_handle& v, OutputIterator cells) const
   {
-      CGAL_triangulation_precondition( v != NULL );
+      CGAL_triangulation_precondition( v != Vertex_handle() );
       CGAL_triangulation_expensive_precondition( is_vertex(v) );
 
       if ( dimension() < 3 )
@@ -714,7 +722,7 @@ public:
   OutputIterator
   incident_vertices(const Vertex_handle& v, OutputIterator vertices) const
   {
-      CGAL_triangulation_precondition( v != NULL );
+      CGAL_triangulation_precondition( v != Vertex_handle() );
       CGAL_triangulation_precondition( dimension() >= -1 );
       CGAL_triangulation_expensive_precondition( is_vertex(v) );
       CGAL_triangulation_expensive_precondition( is_valid() );
@@ -846,7 +854,7 @@ create_star_3(const Vertex_handle& v, const Cell_handle& c, int li,
 
     // Look for the other neighbors of cnew.
     for (int ii=0; ii<4; ++ii) {
-      if (ii == prev_ind2 || cnew->neighbor(ii) != NULL)
+      if (ii == prev_ind2 || cnew->neighbor(ii) != Cell_handle())
 	  continue;
       cnew->vertex(ii)->set_cell(cnew);
 
@@ -901,7 +909,7 @@ create_star_2(const Vertex_handle& v, const Cell_handle& c, int li )
   int ind = c->neighbor(li)->index(c); // to be able to find the
                                        // first cell that will be created 
   Cell_handle cur;
-  Cell_handle pnew = NULL;
+  Cell_handle pnew = Cell_handle();
   do {
     cur = bound;
     // turn around v2 until we reach the boundary of region
@@ -915,12 +923,12 @@ create_star_2(const Vertex_handle& v, const Cell_handle& c, int li )
     cnew = create_face( v, v1, cur->vertex( ccw(i1) ) );
     set_adjacency(cnew, 0, cur->neighbor(cw(i1)),
 	                   cur->neighbor(cw(i1))->index(cur));
-    cnew->set_neighbor(1, NULL);
+    cnew->set_neighbor(1, Cell_handle());
     cnew->set_neighbor(2, pnew);
     // pnew is null at the first iteration
     v1->set_cell(cnew);
     //pnew->set_neighbor( cw(pnew->index(v1)), cnew );
-    if (pnew != NULL) { pnew->set_neighbor( 1, cnew );}
+    if (pnew != Cell_handle()) { pnew->set_neighbor( 1, cnew );}
 
     bound = cur;
     i1 = ccw(i1);
@@ -1680,7 +1688,7 @@ Triangulation_data_structure_3<Vb,Cb>::
 insert_in_cell(const Cell_handle& c)
 {
   CGAL_triangulation_precondition( dimension() == 3 );
-  CGAL_triangulation_precondition( c != NULL );
+  CGAL_triangulation_precondition( c != Cell_handle() );
   CGAL_triangulation_expensive_precondition( is_cell(c) );
 
   Vertex_handle v = create_vertex();
@@ -1725,7 +1733,7 @@ Triangulation_data_structure_3<Vb,Cb>::
 insert_in_facet(const Cell_handle& c, int i)
 { // inserts v in the facet opposite to vertex i of cell c
 
-  CGAL_triangulation_precondition( c != NULL );
+  CGAL_triangulation_precondition( c != Cell_handle() );
   CGAL_triangulation_precondition( dimension() >= 2 );
 
   Vertex_handle v = create_vertex();
@@ -1834,7 +1842,7 @@ Triangulation_data_structure_3<Vb,Cb>::
 insert_in_edge(const Cell_handle& c, int i, int j)   
   // inserts a vertex in the edge of cell c with vertices i and j
 { 
-  CGAL_triangulation_precondition( c != NULL ); 
+  CGAL_triangulation_precondition( c != Cell_handle() ); 
   CGAL_triangulation_precondition( i != j );
   CGAL_triangulation_precondition( dimension() >= 1 );
 
@@ -1926,7 +1934,7 @@ insert_increase_dimension(Vertex_handle star)
 
   int dim = dimension();
   if (dim != -2) {
-      CGAL_triangulation_precondition( star != NULL );
+      CGAL_triangulation_precondition( star != Vertex_handle() );
       // In this case, this precondition is not relatively expensive.
       CGAL_triangulation_precondition( is_vertex(star) ); 
   }
@@ -1987,7 +1995,7 @@ insert_increase_dimension(Vertex_handle star)
 
       Cell_handle e = c->neighbor(i);
       Cell_handle cnew = c;
-      Cell_handle enew = NULL;
+      Cell_handle enew = Cell_handle();
 	
       while( e != d ){
 	enew = create_cell();
@@ -2038,10 +2046,10 @@ insert_increase_dimension(Vertex_handle star)
 	// Here we must be careful since we create_cells in a loop controlled
 	// by an iterator.  So we first take care of the cells newly created
 	// by the following test :
-	if (it->neighbor(0) == NULL)
+	if (it->neighbor(0) == Cell_handle())
 	  continue;
-	it->set_neighbor(3, NULL);
-	it->set_vertex(3,v);
+	it->set_neighbor(3, Cell_handle());
+	it->set_vertex(3, v);
 	if ( ! it->has_vertex(star) ) {
 	  Cell_handle cnew = create_cell( it->vertex(0), it->vertex(2),
 			                  it->vertex(1), star);
@@ -2049,7 +2057,7 @@ insert_increase_dimension(Vertex_handle star)
 	  // function "set_adjacency": the adjacency is not changed.
 	  Cell_handle ch_it = it;
 	  set_adjacency(cnew, 3, ch_it, 3);
-	  cnew->set_neighbor(0, NULL);
+	  cnew->set_neighbor(0, Cell_handle());
 	  new_cells.push_back(cnew);
 	}
       }
@@ -2064,7 +2072,7 @@ insert_increase_dimension(Vertex_handle star)
 	  else j=3-i; // vertex 1 and vertex 2 are always switched when
 	  // creating a new cell (see above)
           Cell_handle c = n->neighbor(i)->neighbor(3);
-	  if ( c != NULL ) {
+	  if ( c != Cell_handle() ) {
 	    // i.e. star is not a vertex of n->neighbor(i)
 	    (*ncit)->set_neighbor(j, c);
 	    // opposite relation will be set when ncit arrives on c
@@ -2122,8 +2130,8 @@ remove_decrease_dimension(const Vertex_handle& v)
 	        if (dimension() >= 1)
 		    change_orientation(f);
 	    }
-	    f->set_vertex(dimension(), NULL);
-	    f->set_neighbor(dimension(), NULL);
+	    f->set_vertex(dimension(), Vertex_handle());
+	    f->set_neighbor(dimension(), Cell_handle());
 
 	    // Update vertex->cell() pointers.
 	    for (int i = 0; i < dimension(); ++i)
@@ -2149,7 +2157,7 @@ remove_from_maximal_dimension_simplex(const Vertex_handle& v)
 
     if (number_of_vertices() == (size_type) dimension() + 2) {
 	remove_decrease_dimension(v);
-	return NULL;
+	return Cell_handle();
     }
 
     if (dimension() == 3)
@@ -2442,7 +2450,7 @@ Triangulation_data_structure_3<Vb,Cb>::
 copy_tds(const Tds & tds, Vertex_handle vert )
   // returns the new vertex corresponding to vert in the new tds 
 {
-  CGAL_triangulation_expensive_precondition( vert == NULL
+  CGAL_triangulation_expensive_precondition( vert == Vertex_handle()
 	                                  || tds.is_vertex(vert) );
 
   clear();
@@ -2494,7 +2502,7 @@ copy_tds(const Tds & tds, Vertex_handle vert )
 
   CGAL_triangulation_postcondition( is_valid() );
 
-  return (vert != NULL) ? V[vert] : vert;
+  return (vert != Vertex_handle()) ? V[vert] : vert;
 }
 
 template <class Vb, class Cb >

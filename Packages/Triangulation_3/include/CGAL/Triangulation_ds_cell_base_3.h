@@ -138,7 +138,7 @@ public:
 
   void set_vertices()
   {
-    V[0] = V[1] = V[2] = V[3] = NULL;
+    V[0] = V[1] = V[2] = V[3] = Vertex_handle();
   }
     
   void set_vertices(const Vertex_handle& v0, const Vertex_handle& v1,
@@ -152,7 +152,7 @@ public:
     
   void set_neighbors()
   {
-    N[0] = N[1] = N[2] = N[3] = NULL;
+    N[0] = N[1] = N[2] = N[3] = Cell_handle();
   }
     
   void set_neighbors(const Cell_handle& n0, const Cell_handle& n1,
