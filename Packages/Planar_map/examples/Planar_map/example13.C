@@ -22,11 +22,12 @@ public:
 
 public:
   /*! The new segment type */
-  class New_segment_2 : public Old_segment_2 {
+  template <class K>
+  class New_segment_2 : public K::Old_segment_2 {
   private:
     /*! A field extending the segment */
     int m_data;
-    
+    typedef typename K::Point_2 Point_2;
   public:
     /*! Constructors: */
     New_segment_2(int data = 0) : m_data(data) {}
@@ -39,7 +40,7 @@ public:
     int get_data() const { return m_data; }
   };
   
-  typedef New_segment_2                 Segment_2;
+  typedef New_segment_2<Kernel>                 Segment_2;
 
   /*! */
   template <typename Kernel2>
