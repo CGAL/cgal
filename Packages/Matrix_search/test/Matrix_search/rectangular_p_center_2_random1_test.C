@@ -220,11 +220,10 @@ main(int argc, char* argv[])
 #ifdef CGAL_USE_LEDA
     // check that all points are covered
     CGAL::Infinity_distance_2< R > dist;
-    #ifndef _MSC_VER
-    for (iterator i = input_points.begin(); i != input_points.end(); ++i) {
-    #else
-    for (i = input_points.begin(); i != input_points.end(); ++i) {
+    #ifdef _MSC_VER
+    {
     #endif
+    for (iterator i = input_points.begin(); i != input_points.end(); ++i) {
       iterator j = centers.begin();
       do {
         if (dist(*i, *j) <= result / FT(2))
@@ -239,17 +238,19 @@ main(int argc, char* argv[])
         }
       } while (j != centers.end());
     }
+    #ifdef _MSC_VER
+    }
+    #endif
     
     // check that there is at least one square with two points
     // on opposite sides
     CGAL::Signed_x_distance_2< R > xdist;
     CGAL::Signed_y_distance_2< R > ydist;
     bool boundary = false;
-    #ifndef _MSC_VER
-    for (iterator i = centers.begin(); i != centers.end(); ++i) {
-    #else
-    for (i = centers.begin(); i != centers.end(); ++i) {
+    #ifdef _MSC_VER
+    {
     #endif
+    for (iterator i = centers.begin(); i != centers.end(); ++i) {
       int left = 0, right = 0, bottom = 0, top = 0;
       for (iterator j = input_points.begin(); j != input_points.end(); ++j) {
         if (xdist(*i, *j) == result / FT(2))
@@ -264,6 +265,9 @@ main(int argc, char* argv[])
       if (left > 0 && right > 0 || top > 0 && bottom > 0)
         boundary = true;
     }
+    #ifdef _MSC_VER
+    }
+    #endif
     if (!boundary)
       cerr << "Error: No square has two points on boundary." << endl;
     CGAL_assertion(boundary);
