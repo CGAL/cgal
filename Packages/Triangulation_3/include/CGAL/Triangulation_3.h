@@ -1424,7 +1424,7 @@ is_infinite(const Cell_handle c, int i) const
     return ( is_infinite(c->vertex(1)) ||
 	     is_infinite(c->vertex(2)) ||
 	     is_infinite(c->vertex(3)) );
-    break;
+
   case 1:
     return ( is_infinite(c->vertex(0)) ||
 	     is_infinite(c->vertex(2)) ||
@@ -1823,8 +1823,8 @@ locate(const Point & p,
 	}
 	return c;
       }
-      // to avoid warning
-      return start;
+
+
     }
   case 2:
     {
@@ -1921,8 +1921,8 @@ locate(const Point & p,
 	}
 	return c;
       }
-      // to avoid warning
-      return start;
+
+
     }
   case 1:
     {
@@ -2069,8 +2069,8 @@ locate(const Point & p,
       // 	  lj = 1-li;
       // 	} // else vertex, li is already the right index
 	
-      // to avoid warning
-      return start;
+
+
     }
   case 0:
     {
@@ -2083,7 +2083,7 @@ locate(const Point & p,
 	li = 0;
       }
       return vit->cell();
-      break;
+
     }
   case -1:
     {
@@ -2096,9 +2096,7 @@ locate(const Point & p,
       return NULL;
     }
   }
-  // to avoid warning
-  CGAL_triangulation_assertion(false);
-  return start;
+
 }
 	  
 template < class GT, class Tds >
@@ -2543,7 +2541,6 @@ side_of_segment(const Point & p,
   if ( c == EQUAL ) {
     c = geom_traits().compare_y(p0,p1);
     if ( c == EQUAL ) {
-      c = geom_traits().compare_z(p0,p1);
       c0 = geom_traits().compare_z(p0,p);
       c1 = geom_traits().compare_z(p,p1);
     }

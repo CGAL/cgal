@@ -1986,7 +1986,7 @@ insert_increase_dimension(const Vertex & w, // new vertex
 	e->set_vertex(2,v);
 	e->set_neighbor(2,enew);
 	  
-	c = e;
+
 	e = e->neighbor(i);
 	cnew = enew;
       }
