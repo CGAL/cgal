@@ -239,7 +239,7 @@ depends on the point location strategy used.
    }
     
 %\ccMethod{ Halfedge_handle vertical_ray_shoot(const typename
-%Traits::Point & p, 
+%Traits::Point_2 & p, 
 \ccMethod{ Halfedge_handle vertical_ray_shoot(const Point_2 & p, 
                                               Locate_type & lt,
 					      bool up_direction );}
@@ -296,9 +296,9 @@ depends on the point location strategy used.
    \ccPrecond{\ccc{cv} is not equivalent to a point. } 
   }                
 
-  \ccMethod{template <X_curve_2_iterator>
-            Halfedge_handle insert(const X_curve_2_iterator & begin, 
-                                   const X_curve_2_iterator & end);}
+  \ccMethod{template <X_curve_iterator>
+            Halfedge_handle insert(const X_curve_iterator & begin, 
+                                   const X_curve_iterator & end);}
   {iterates through a given range of curves, inserting the curves into the
    map. \ccc{begin} and \ccc{end} are input iterators that point to the first
    curve and past-the-end curve of the range respectively. \ccc{insert()} 

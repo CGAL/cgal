@@ -53,15 +53,16 @@ We supply a default traits class for exact arithmetic ---
 \ccStyle{Pm_segment_traits_2<R>} % and a class for finite
 %precision arithmetic --- \ccStyle{Pm_segment_epsilon_traits<R>},
 where \ccStyle{R} is the kernel representation type
-(\ccc{Homogeneous} or \ccc{Cartesian}).  There is also a class
-for finite precision arithmetic --- \ccStyle{Pm_segment_epsilon_traits<R>},
-which is not recommended unless it is known that robustness issues will not
-arise. 
-Both traits handle
-finite line segments in the plane
-and use the CGAL kernel (\ccStyle{Point} is of type 
-\ccStyle{Point_2<R>} and \ccStyle{X_curve} is of type
-\ccStyle{Segment_2<R>}).
+(\ccc{Homogeneous} or \ccc{Cartesian}).  
+%There is also a class
+%for finite precision arithmetic --- \ccStyle{Pm_segment_epsilon_traits<R>},
+%which is not recommended unless it is known that robustness issues will not
+%arise. 
+%Both traits handle
+The traits class handle finite line segments in the plane
+and use the CGAL kernel (\ccStyle{Point_2} is of type 
+\ccStyle{R::Point_2} and \ccStyle{X_curve_2} is of type
+\ccStyle{R::Segment_2}).
 We also supply a traits class that uses LEDA's rational kernel and makes use
 of its efficient predicates. The different supplied traits classes are described at the end of this chapter.
 

@@ -41,8 +41,8 @@ are given in terms that the \ccc{Planar_map_2<Dcel, Traits>} handles.
 \ccTypedef{typedef typename Planar_map::Locate_type Locate_type;}{}
 \ccTypedef{typedef typename Planar_map::Halfedge_handle Halfedge_handle;}{}
 
-\ccTypedef{typedef typename Traits::X_curve X_curve;}{}
-\ccTypedef{typedef typename Traits::Point Point;}{}
+\ccTypedef{typedef typename Traits::X_curve_2 X_curve_2;}{}
+\ccTypedef{typedef typename Traits::Point_2 Point_2;}{}
 
 \ccThree{virtual Halfedge_handle}{}{\hspace*{10cm}}
 
@@ -57,15 +57,15 @@ planar map, as its parameters.}
 %\ccHeading{Query Functions}
 \ccQueryFunctions
 
-%\ccMethod{virtual Halfedge_handle locate(const Point& p,
+%\ccMethod{virtual Halfedge_handle locate(const Point_2& p,
 %   Locate_type& lt) const;}{}
-\ccMethod{virtual Halfedge_handle locate(const Point& p, Locate_type& lt);}
+\ccMethod{virtual Halfedge_handle locate(const Point_2& p, Locate_type& lt);}
 {point location query. A \ccc{const} version is also required.}
 
 %\ccMethod{virtual Halfedge_handle vertical_ray_shoot(
-%const Point& p, Locate_type& lt, bool up) const;}{}
+%const Point_2& p, Locate_type& lt, bool up) const;}{}
 \ccMethod{virtual Halfedge_handle vertical_ray_shoot(
-const Point& p, Locate_type& lt, bool up);}
+const Point_2& p, Locate_type& lt, bool up);}
 {vertical ray shooting query. A \ccc{const} version is also required.}
 
 The non const versions may update the internal structure of the Point location.
@@ -74,15 +74,15 @@ The non const versions may update the internal structure of the Point location.
 %\ccHeading{Updating Functions}
 \ccModifiers
 
-\ccMethod{virtual void insert(Halfedge_handle h,const X_curve& cv);}
+\ccMethod{virtual void insert(Halfedge_handle h,const X_curve_2& cv);}
 {updates the internal structure of the strategy after an insertion in the 
 planar map. The planar
 map will call this function after the insertion has taken place. \ccc{h} is
 the handle which is returned by the map after insertion, \ccc{cv} is
 the curve inserted into the map.}
 
-\ccMethod{virtual void split_edge(const X_curve &cv, Halfedge_handle e1,
-   Halfedge_handle e2,const X_curve& cv1, const X_curve& cv2);}{updates the 
+\ccMethod{virtual void split_edge(const X_curve_2 &cv, Halfedge_handle e1,
+   Halfedge_handle e2,const X_curve_2& cv1, const X_curve_2& cv2);}{updates the 
 internal structure of the strategy 
 after a \ccc{split_edge} operation in the planar map. The planar
 map will call this function after the splitting has taken place. \ccc{e1}
@@ -91,8 +91,8 @@ the original curve that was in the map before the splitting,
 \ccc{cv1} and \ccc{cv2} are the curves in \ccc{e1} and \ccc{e2} (respectively.)
 after the splitting has taken place.}
 
-\ccMethod{virtual void merge_edge(const X_curve &cv1, const X_curve &cv2,
-                        Halfedge_handle e,const X_curve& cv );}{updates 
+\ccMethod{virtual void merge_edge(const X_curve_2 &cv1, const X_curve_2 &cv2,
+                        Halfedge_handle e,const X_curve_2& cv );}{updates 
 the internal structure of the strategy 
 after a \ccc{merge_edge} operation in the planar map. The planar
 map will call this function after the merging has taken place. \ccc{e}

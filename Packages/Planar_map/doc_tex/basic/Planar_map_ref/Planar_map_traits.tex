@@ -45,8 +45,8 @@
     The geometric types defined below must have a default constructor,
     copy constructor, assignment operator and \ccStyle{operator==}.
     
-    \ccNestedType{Point}{A type to hold the location of a vertex in the plane.}
-    \ccNestedType{X_curve}{A type to hold an $x$-monotone curve in the plane.}
+    \ccNestedType{Point_2}{A type to hold the location of a vertex in the plane.}
+    \ccNestedType{X_curve_2}{A type to hold an $x$-monotone curve in the plane.}
   
     \ccEnum{enum Curve_point_status {UNDER_CURVE = -1,
           CURVE_NOT_IN_RANGE ,
@@ -59,9 +59,9 @@
     %   necessarily monotone. This type is used by the
     %   \ccStyle{Arrangement_2} class.}
     
-%    \ccNestedType{Point_handle}{A handle of a \ccStyle{Point}.}
+%    \ccNestedType{Point_handle}{A handle of a \ccStyle{Point_2}.}
     
-%    \ccNestedType{X_curve_handle}{A handle of an \ccStyle{X_curve}.}
+%    \ccNestedType{X_curve_handle}{A handle of an \ccStyle{X_curve_2}.}
     
     %\ccNestedType{Curve_handle}{A handle of \ccStyle{Curve}.}
 
@@ -81,48 +81,48 @@
 
 %predicates
 %----------
-    \ccMethod{Comparison_result compare_x(const Point& p0,
-       const Point& p1);} {compares the \ccStyle{x}-coordinates
+    \ccMethod{Comparison_result compare_x(const Point_2& p0,
+       const Point_2& p1);} {compares the \ccStyle{x}-coordinates
        of $p0$ and $p1$.  Return \ccStyle{LARGER} if $x(p0) >
        x(p1)$, \ccStyle{SMALLER} if $x(p0) < x(p1)$, or else
        \ccStyle{EQUAL}.  }
     
-    \ccMethod{Comparison_result compare_y(const Point& p0,
-       const Point& p1);} {compares the
+    \ccMethod{Comparison_result compare_y(const Point_2& p0,
+       const Point_2& p1);} {compares the
        \ccStyle{y}-coordinates of $p0$ and $p1$.}
 
 
-    \ccMethod{bool curve_is_vertical(const X_curve& cv);} 
+    \ccMethod{bool curve_is_vertical(const X_curve_2& cv);} 
    {returns \ccStyle{true} if \ccStyle{cv} is a vertical segment.}
         
 %redundant - we have curve point status ?
-    \ccMethod{bool curve_is_in_x_range( const X_curve& cv,
-       const Point& pnt );}{returns \ccStyle{true} if \ccStyle{pnt} is
+    \ccMethod{bool curve_is_in_x_range( const X_curve_2& cv,
+       const Point_2& pnt );}{returns \ccStyle{true} if \ccStyle{pnt} is
        in the $x$ range of \ccStyle{cv}.}
     
     \ccMethod{Comparison_result curve_compare_at_x(
-       const X_curve& cv1, const X_curve& cv2, const Point& pnt );}
+       const X_curve_2& cv1, const X_curve_2& cv2, const Point_2& pnt );}
     {compares the $y$-coordinate of $cv1$ and $cv2$ at the $x$-coordinate 
      of $pnt$. Return \ccStyle{EQUAL} if at least one of $cv1$ and $cv2$  
      is not defined at $pnt$'s $x$-coordinate.}
    
   \ccMethod{Comparison_result curve_compare_at_x_left(
-     const X_curve& cv1, const X_curve& cv2, const Point& pnt);}
+     const X_curve_2& cv1, const X_curve_2& cv2, const Point_2& pnt);}
   {compares the $y$-coordinate of $cv1$ and $cv2$ immediately to the
      left of the $x$-coordinate of $pnt$. Return \ccStyle{EQUAL}
      if at least one of $cv1$ and $cv2$ is not defined to the left of $pnt$'s
      $x$-coordinate.}
     
   \ccMethod{Comparison_result
-     curve_compare_at_x_right(const X_curve& cv1, const X_curve& cv2,
-     const Point& pnt);} {compares the $y$-coordinate of $cv1$ and
+     curve_compare_at_x_right(const X_curve_2& cv1, const X_curve_2& cv2,
+     const Point_2& pnt);} {compares the $y$-coordinate of $cv1$ and
      $cv2$ immediately to the right of the $x$-coordinate of $pnt$.
      Return \ccStyle{EQUAL} if at least one of $cv1$ and $cv2$ is
      not defined to the right of $pnt$'s $x$-coordinate.}
 
     
-    \ccMethod{Curve_point_status curve_get_point_status(const X_curve& cv,
-       const Point& pnt);} {returns a constant describing the
+    \ccMethod{Curve_point_status curve_get_point_status(const X_curve_2& cv,
+       const Point_2& pnt);} {returns a constant describing the
        relative position between $cv$ and $pnt$:
        \begin{itemize}
        \item[]\ccStyle{CURVE_NOT_IN_RANGE} - $pnt$ is not in the $x$-range of
@@ -133,31 +133,30 @@
        \item[]\ccStyle{ON_CURVE} - $pnt$ is on $cv$.
        \end{itemize}}
        
-       \ccMethod{bool curve_is_between_cw(const X_curve& cv,
-          const X_curve& first, const X_curve& second, const Point&
+       \ccMethod{bool curve_is_between_cw(const X_curve_2& cv,
+          const X_curve_2& first, const X_curve_2& second, const Point_2&
           pnt);} {given three curves that share an endpoint $pnt$,
           returns $true$ if $cv$ is between $first$ and $second$, when
           going in the clockwise direction around $pnt$ from $first$
           to $second$. }
 
 
-       \ccMethod{bool curve_is_same(const X_curve &cv1, const X_cur
+       \ccMethod{bool curve_is_same(const X_curve_2 &cv1, const X_cur
           ve &cv2);}{returns \ccc{true} if \ccc{cv1} is the same as \ccc{cv2}.}
 
 %construction function
 %---------------------   
 
-    \ccMethod{Point curve_source(const X_curve& cv);}{returns the source of 
-       \ccc{cv}.}
-    \ccMethod{Point curve_target(const X_curve& cv);}{returns the target of 
-       \ccc{cv}.}
+    \ccMethod{Point_2 curve_source(const X_curve_2& cv);}
+             {returns the source of \ccc{cv}.}
+    \ccMethod{Point_2 curve_target(const X_curve_2& cv);}
+             {returns the target of \ccc{cv}.}
 
 %additions needed for the default point location strategy
-\ccMethod{Point point_to_left(const Point& p);}{returns a point to 
+\ccMethod{Point_2 point_to_left(const Point_2& p);}{returns a point to 
    the left of \ccc{p}.}
-\ccMethod{Point point_to_right(const Point& p);}{returns a point to the right
-   of \ccc{p}.} %}
-
+\ccMethod{Point_2 point_to_right(const Point_2& p);}
+         {returns a point to the right of \ccc{p}.} %}
 
 %      \smallskip {\noindent \bf \large Requirements for
 %         \ccStyle{Info_face}, \ccStyle{Info_edge}, \ccStyle{Info_vertex}}
