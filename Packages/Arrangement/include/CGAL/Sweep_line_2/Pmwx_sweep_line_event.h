@@ -41,17 +41,17 @@ CGAL_BEGIN_NAMESPACE
  * \sa Sweep_line_event
  */
 
-template<class SweepLineTraits_2, class CurveWrap, class SweepNotif>
+template<class SweepLineTraits_2, class CurveWrap, class SweepVisitor>
 class Pmwx_sweep_line_event : 
-  public Sweep_line_event<SweepLineTraits_2, CurveWrap, SweepNotif>
+  public Sweep_line_event<SweepLineTraits_2, CurveWrap, SweepVisitor>
 {
 public:
   typedef SweepLineTraits_2 Traits;
   typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
   typedef typename Traits::Point_2 Point_2;
 
-  typedef Sweep_line_event<SweepLineTraits_2, CurveWrap, SweepNotif> Base;
-  typedef Pmwx_sweep_line_event<Traits, CurveWrap, SweepNotif> Self;
+  typedef Sweep_line_event<SweepLineTraits_2, CurveWrap, SweepVisitor> Base;
+  typedef Pmwx_sweep_line_event<Traits, CurveWrap, SweepVisitor> Self;
 
   typedef CurveWrap SubCurve;
   typedef std::list<SubCurve *> SubcurveContainer;

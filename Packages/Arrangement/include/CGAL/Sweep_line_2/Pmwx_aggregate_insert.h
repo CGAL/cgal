@@ -23,7 +23,7 @@
 #include <CGAL/Sweep_line_2/Sweep_line_2_impl.h>
 #include <CGAL/Sweep_line_2/Pmwx_sweep_line_event.h>
 #include <CGAL/Sweep_line_2/Pmwx_sweep_line_curve.h>
-#include <CGAL/Sweep_line_2/Pmwx_sweep_line_notification.h>
+#include <CGAL/Sweep_line_2/Pmwx_sweep_line_visitor.h>
 #include <CGAL/assertions.h>
 #include <list>
 #include <vector>
@@ -39,9 +39,9 @@ class Pmwx_aggregate_insert
   typedef typename Arr::Edge_iterator                               Edge_iterator;
   typedef SweepLineTraits_2                                         Traits;
   typedef typename Traits::X_monotone_curve_2                       X_monotone_curve_2;
-  typedef Pmwx_sweep_line_notification<Traits,
-                                       Arr,
-                                       Change_notification>         Visitor;
+  typedef Pmwx_sweep_line_visitor<Traits,
+                                   Arr,
+                                   Change_notification>             Visitor;
 
   typedef Pmwx_sweep_line_curve<Traits,Visitor, Halfedge_handle>    Subcurve; 
   typedef Pmwx_sweep_line_event<Traits, Subcurve, Visitor>          Event;

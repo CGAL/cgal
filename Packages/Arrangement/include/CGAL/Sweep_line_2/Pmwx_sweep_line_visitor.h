@@ -1,5 +1,5 @@
-#ifndef PMWX_SWEEP_LINE_NOTIFICATION_H
-#define PMWX_SWEEP_LINE_NOTIFICATION_H
+#ifndef PMWX_SWEEP_LINE_VISITOR_H
+#define PMWX_SWEEP_LINE_VISITOR_H
 
 #include <CGAL/Sweep_line_2/Pmwx_sweep_line_event.h>
 #include <CGAL/Sweep_line_2/Pmwx_sweep_line_curve.h>
@@ -8,12 +8,12 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class Traits, class Arr, class Arr_notif>
-class Pmwx_sweep_line_notification
+class Pmwx_sweep_line_visitor
 {
   typedef typename Arr::Halfedge_handle                            Halfedge_handle;
-  typedef Pmwx_sweep_line_notification<Traits,
-                                       Arr,
-                                       Arr_notif>                  Self;
+  typedef Pmwx_sweep_line_visitor<Traits,
+                                  Arr,
+                                  Arr_notif>                       Self;
   typedef Pmwx_sweep_line_curve<Traits,Self, Halfedge_handle>      Subcurve;
   typedef Pmwx_sweep_line_event<Traits, Subcurve, Self>            Event;
   typedef typename Traits::X_monotone_curve_2                      X_monotone_curve_2;
@@ -31,7 +31,7 @@ class Pmwx_sweep_line_notification
   typedef typename SubcurveContainer::iterator                     SubCurveIter;
 public:
 
-  Pmwx_sweep_line_notification(Arr *arr, Arr_notif *notif, Traits* traits):
+  Pmwx_sweep_line_visitor(Arr *arr, Arr_notif *notif, Traits* traits):
       m_arr(arr),
       m_notif(notif),
       m_traits(traits)
@@ -150,11 +150,11 @@ public:
    protected:
      
      
-  Arr *m_arr;
-  Arr_notif *m_notif;
-  Traits *m_traits;
-  Sweep_line *m_sweep_line;
-  Event* m_currentEvent;
+  Arr         *m_arr;
+  Arr_notif   *m_notif;
+  Traits      *m_traits;
+  Sweep_line  *m_sweep_line;
+  Event       *m_currentEvent;
 };
 
 
