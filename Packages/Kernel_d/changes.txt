@@ -1,5 +1,8 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
+0.9.68 (6 May 2002)
+   fixed typo in doc
+
 0.9.67 (3 May 2002)
    updated editorial committee
 
