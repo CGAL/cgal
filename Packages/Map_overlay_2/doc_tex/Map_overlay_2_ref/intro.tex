@@ -100,7 +100,7 @@ constructed arrangement.
 
 \begin{ccTexOnly}
 
-\section{Software Design}
+\subsection*{Software Design}
 The \ccc{Map_overlay_2<Subdivision,Notifier>} class 
 is a data structure for maintaining 2D map overlays.
 The data structure maintains the subdivision induced by overlaying 
@@ -117,7 +117,7 @@ of a DCEL and a traits class (see Chapter~\ccRefPage{I1_ChapterPlanarMap}).
 {\it Notifier} should be a model of the 
 \ccc{PlanarMapWithIntersectionsChangeNotification_2} concept.
 
-\section{Map Overlay Algorithms}
+\subsection*{Map Overlay Algorithms}
 \label{sec:algorithms}
 The input to our algorithms are two planar subdivisions, 
 $R$ and $B$, having $N$ curves in total. 
@@ -137,7 +137,7 @@ In most cases, the sweep-line algorithm has much better performance
 than the incremental algorithm. Hence, users are encouraged employing 
 the sweep-line algorithm,
 
-\section{Map Overlay DCEL}
+\subsection*{Map Overlay DCEL}
 \label{sec:dcel}
 The \ccc{Map_overlay_default_dcel<Traits,Vertex_base,Halfedge_base,Face_base>}
 class is the data structure representing the DCEL of the overlay. 
@@ -154,7 +154,7 @@ Namely, every component $o \in O(R,B)$ points to the
 respective components $r \in R$ and $b \in B$ that created it. 
 
 
-\section{Map Overlay Notifier}
+\subsection*{Map Overlay Notifier}
 \label{sec:notifier}
 Updating the DCEL additional attributes is performed by the {\em Notifier} class.
 We extend and override the notification functions of the basic {\em Notifier}, 
@@ -162,7 +162,7 @@ defined in the \ccc{Planar_Map_2<Dcel,Traits>} package
 (see Chapter~\ccRefPage{I1_ChapterPlanarMap}), 
 in order to update the corresponding features constructed by the overlay. 
 
-\section{Boolean Operations:}
+\subsection*{Boolean Operations:}
 A straightforward usage of the \ccc{Map_overlay_2<Subsection,Notifier>} 
 utilities, is performing boolean operations on planar subdivisions in general, 
 and specifically on polygons.
@@ -201,7 +201,7 @@ namely, for intersection, union, difference, and
 symmetric difference.
 
 
-\subsection*{Example: Overlaying Two Subdivisions of Line Segments:}
+\paragraph*{Example: Overlaying Two Subdivisions of Line Segments:}
 The following example demonstrates a simple usage of the 
 \ccc{Map_overlay_2<Subdivision,Notifier>} package.
 In this example we construct two planar maps of line segments. 
