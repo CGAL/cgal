@@ -47,7 +47,8 @@ lib: lib_no_install
 	mv $(CGAL_LIB) $(CGAL_LIB_DESTINATION)
 
 lib_no_install: $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS)
-	$(CGAL_LIB_CREATE)$(CGAL_LIB) *$(OBJ_EXT) \
+	$(CGAL_LIB_CREATE)$(CGAL_LIB) \
+	`ls *$(OBJ_EXT) | awk '{for (i=1; i<=NF;++i){printf "$(CGAL_OBJ_PREFIX)";print $i}}`\
 		$(CGAL_LIB_LDFLAGS)
 	rm $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS)
 
@@ -112,7 +113,8 @@ print MFSHARED <<'EOF';
 #---------------------------------------------------------------------#
 
 lib: $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS)
-	$(CGAL_SHARED_LIB_CREATE)$(CGAL_SHARED_LIB) *$(OBJ_EXT) \
+	$(CGAL_SHARED_LIB_CREATE)$(CGAL_SHARED_LIB) \
+	`ls *$(OBJ_EXT) | awk '{for (i=1; i<=NF;++i){printf "$(CGAL_OBJ_PREFIX)";print $i}}`\
 		$(CGAL_SHARED_LIB_LDFLAGS)
 	mv $(CGAL_SHARED_LIB) '$(CGAL_LIB_DESTINATION)'
 	rm $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS)
