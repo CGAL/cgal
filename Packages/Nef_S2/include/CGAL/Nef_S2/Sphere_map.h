@@ -25,6 +25,7 @@
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Nef_2/Object_handle.h>
 #include <CGAL/Nef_S2/SM_items.h>
+#include <CGAL/Nef_S2/SM_list.h>
 #include <CGAL/Nef_S2/SM_iteration.h>
 #include <CGAL/Nef_S2/Generic_handle_map.h>
 #include <CGAL/Nef_2/iterator_tools.h>
