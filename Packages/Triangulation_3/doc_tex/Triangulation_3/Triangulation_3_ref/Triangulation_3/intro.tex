@@ -14,8 +14,7 @@
 \section{Reference pages for 3D-Triangulations}
 
 A three-dimensional triangulation is a three-dimensional simplicial
-complex, pure connected and without singularities. (See
-\cite{by-ag-98} or Chapter~\ref{I1_Chapter_Triangulations}.) Its
+complex, pure connected and without singularities \cite{by-ag-98}. Its
 cells ($3$-faces) are such that two cells either do not intersect or
 share a common facet ($2$-face), edge ($1$-face) or vertex ($0$-face).
 
@@ -49,20 +48,23 @@ Figure~\ref{Triangulation3-fig-orient}.
 
 \subsection*{Concepts}
 
-\ccRefConceptPage{Triangulation_traits_3}\\
+\ccRefConceptPage{TriangulationTraits_3}\\
+\ccRefConceptPage{DelaunayTriangulationTraits_3}\\
+\ccRefConceptPage{TriangulationHierarchyTraits_3}\\
+\ccRefConceptPage{RegularTriangulationTraits_3}
+
 \ccRefConceptPage{Tds_3}\\
-%\ccRefIdfierPage{Tds_3}{Tds_3<Triangulation_vb_3,Triangulation_cb_3>}\\
 \ccRefConceptPage{Weighted_pt}
 
 \subsection*{Classes}
 
 \subsubsection*{Main classes}
 
-\ccRefIdfierPage{CGAL::Triangulation_3<Triangulation_traits_3,Tds_3>}
+\ccRefIdfierPage{CGAL::Triangulation_3<TriangulationTraits_3,Tds_3>}
 
-\ccRefIdfierPage{CGAL::Delaunay_triangulation_3<Triangulation_traits_3,Tds_3>}\\
+\ccRefIdfierPage{CGAL::Delaunay_triangulation_3<DelaunayTriangulationTraits_3,Tds_3>}\\
 \ccRefIdfierPage{CGAL::Triangulation_hierarchy_3<Tr>}\\
-\ccRefIdfierPage{CGAL::Regular_triangulation_3<Triangulation_traits_3,Tds_3>}
+\ccRefIdfierPage{CGAL::Regular_triangulation_3<RegularTriangulationTraits_3,Tds_3>}
 
 The vertex stores a point and gives access to an incident face of
 maximal dimension. A cell of a triangulation gives access to its four
@@ -70,12 +72,11 @@ vertices indexed 0, 1, 2, and 3 in positive orientation and to its
 four adjacent cells, also called neighbors. The neighbors are indexed
 in such a way that neighbor $i$ lies opposite to vertex $i$.
 
-\ccRefIdfierPage{CGAL::Triangulation_3<Triangulation_traits_3,Tds_3>::Vertex}\\
-\ccRefIdfierPage{CGAL::Triangulation_3<Triangulation_traits_3,Tds_3>::Cell}
+\ccRefIdfierPage{CGAL::Triangulation_3<TriangulationTraits_3,Tds_3>::Vertex}\\
+\ccRefIdfierPage{CGAL::Triangulation_3<TriangulationTraits_3,Tds_3>::Cell}
 
 \subsubsection*{Traits classes}
 
-\ccRefIdfierPage{CGAL::Triangulation_geom_traits_3<R>}\\
 \ccRefIdfierPage{CGAL::Regular_triangulation_euclidean_traits_3<R,Weight>}
 
 \subsubsection*{A class of tools}
@@ -87,6 +88,6 @@ a cell of a triangulation.
 
 \subsection*{Enums}
 
-\ccRefIdfierPage{CGAL::Triangulation_3<Triangulation_traits_3,Tds_3>::Locate_type}
+\ccRefIdfierPage{CGAL::Triangulation_3<TriangulationTraits_3,Tds_3>::Locate_type}
 
 %% EOF %%

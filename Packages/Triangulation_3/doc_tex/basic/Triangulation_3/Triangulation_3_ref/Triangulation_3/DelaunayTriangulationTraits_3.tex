@@ -1,0 +1,55 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_Traits_3.tex
+% +------------------------------------------------------------------------+
+% | 27.3.2000   Monique Teillaud
+% | Package: Triangulation3
+% | 
+\RCSdef{\RCSTriangulationTraitsRev}{$Revision$}
+\RCSdefDate{\RCSTriangulationTraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{DelaunayTriangulationTraits_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+To be used by \protect 
+\ccc{Delaunay_triangulation_3<DelaunayTriangulationTraits_3, Tds_3>}
+
+\ccDefinition
+In addition to the requirements described for the traits class of a 3D 
+triangulation \ccc{TriangulationTraits_3}, 
+the geometric traits
+class of a Delaunay triangulation must fulfill the following
+requirements:
+
+\ccNestedType{Side_of_oriented_sphere_3}{Predicate object. Must provide
+the operator
+\ccc{Oriented_side operator()(Point p, Point q, Point r, Point s, Point test)}
+which determines on which side of the oriented sphere circumscribing 
+\ccc{p, q, r, s} the point \ccc{test} lies.}
+%
+\ccGlue
+%
+\ccNestedType{Coplanar_side_of_bounded_circle_3}{Predicate object. Must provide
+the operator
+\ccc{Bounded_side operator()(Point p, Point q, Point r, Point s)}
+which determines the bounded side of the circle defined
+by \ccc{p}, \ccc{q}, and \ccc{r} on which \ccc{s} lies.
+\ccPrecond \ccc{p}, \ccc{q}, \ccc{r}, and \ccc{s} are coplanar and
+\ccc{p}, \ccc{q}, and \ccc{r} are not collinear.}
+
+\ccHasModels
+
+The cartesian and homegenous kernels provided by \cgal.
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Regular_triangulation_3<Triangulation_traits_3,Tds_3>}  %% add template arg's if necessary
+\begin{ccRefClass}{Regular_triangulation_3<RegularTriangulationTraits_3,Tds_3>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -41,36 +41,36 @@ of all simplices are regular.
 
 \ccInclude{CGAL/Regular_triangulation_3.h}
 
-\ccInheritsFrom{\ccc{Triangulation_3<Triangulation_traits_3,Tds_3>}}
+\ccInheritsFrom{\ccc{Triangulation_3<RegularTriangulationTraits_3,Tds_3>}}
 
 \ccTypes
-\ccThree{typedef Triangulation_traits_3::Weighted_point}{Weighted_point}{}
+\ccThree{typedef RegularTriangulationTraits_3::Weighted_point}{Weighted_point}{}
 
-Inherits the types of \ccc{Triangulation_3<Triangulation_traits_3,Tds_3>}.
+Inherits the types of \ccc{Triangulation_3<RegularTriangulationTraits_3,Tds_3>}.
 
-\ccTypedef{typedef Triangulation_traits_3::Bare_point Bare_point;}
+\ccTypedef{typedef RegularTriangulationTraits_3::Bare_point Bare_point;}
 {The type for points
 \ccc{p} of weighted points ${p}^{(w)}=(p,w_p)$}
 \ccGlue
-\ccTypedef{typedef Triangulation_traits_3::Weighted_point Weighted_point;}{}
+\ccTypedef{typedef RegularTriangulationTraits_3::Weighted_point Weighted_point;}{}
 
 \ccCreation
 \ccCreationVariable{rt}  %% choose variable name
 
 
-\ccThree{Regular_triangulation_3<Triangulation_traits_3,Tds_3>}
-{rt( Triangulation_traits_3 traits );xxx}{}
+\ccThree{Regular_triangulation_3<RegularTriangulationTraits_3,Tds_3>}
+{rt( RegularTriangulationTraits_3 traits );xxx}{}
 
-\ccConstructor{Regular_triangulation_3<Triangulation_traits_3,Tds_3>()}
+\ccConstructor{Regular_triangulation_3<RegularTriangulationTraits_3,Tds_3>()}
 {Creates an empty regular triangulation.}
 
-\ccConstructor{Regular_triangulation_3<Triangulation_traits_3,Tds_3>
-(const Triangulation_traits_3 & traits)}
+\ccConstructor{Regular_triangulation_3<RegularTriangulationTraits_3,Tds_3>
+(const RegularTriangulationTraits_3 & traits)}
 {Creates an empty regular triangulation with traits class
 \ccc{traits}.}
 
-\ccConstructor{Regular_triangulation_3<Triangulation_traits_3,Tds_3>
-(const Regular_triangulation_3<Triangulation_traits_3,Tds_3> & dt1)}
+\ccConstructor{Regular_triangulation_3<RegularTriangulationTraits_3,Tds_3>
+(const Regular_triangulation_3<RegularTriangulationTraits_3,Tds_3> & dt1)}
 {Copy constructor.}
 
 \ccOperations

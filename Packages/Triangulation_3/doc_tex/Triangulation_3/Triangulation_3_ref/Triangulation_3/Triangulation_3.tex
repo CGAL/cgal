@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Triangulation_3<Triangulation_traits_3,Tds_3>}  %% add template arg's if necessary
+\begin{ccRefClass}{Triangulation_3<TriangulationTraits_3,Tds_3>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -28,21 +28,21 @@ structure} as its second argument.
 
 \ccTypes
 The class \ccClassTemplateName\ defines the following types:
-\ccThree{typedef Triangulation_traits_3::Tetrahedron Tetrahedron;}
+\ccThree{typedef TriangulationTraits_3::Tetrahedron Tetrahedron;}
 {Tetrahedron}{}
 \ccThreeToTwo
 
 \ccTypedef{typedef Tds_3 Triangulation_data_structure;}{}
 \ccGlue
-\ccTypedef{typedef Triangulation_traits_3 Geom_traits;}{}
+\ccTypedef{typedef TriangulationTraits_3 Geom_traits;}{}
 
-\ccTypedef{typedef Triangulation_traits_3::Point_3 Point;}{}
+\ccTypedef{typedef TriangulationTraits_3::Point_3 Point;}{}
 \ccGlue
-\ccTypedef{typedef Triangulation_traits_3::Segment_3 Segment;}{}
+\ccTypedef{typedef TriangulationTraits_3::Segment_3 Segment;}{}
 \ccGlue
-\ccTypedef{typedef Triangulation_traits_3::Triangle_3 Triangle;}{}
+\ccTypedef{typedef TriangulationTraits_3::Triangle_3 Triangle;}{}
 \ccGlue
-\ccTypedef{typedef Triangulation_traits_3::Tetrahedron_3 Tetrahedron;}{}
+\ccTypedef{typedef TriangulationTraits_3::Tetrahedron_3 Tetrahedron;}{}
 
 Only vertices ($0$-faces) and cells ($3$-faces) are stored. Edges
 ($1$-faces) and facets ($2$-faces) are not explicitly represented and
@@ -102,15 +102,15 @@ OUTSIDE_AFFINE_HULL};}
 \ccCreation
 \ccCreationVariable{t}  %% choose variable name
 
-\ccThree{Triangulation_3<Triangulation_traits_3,Tds_3>}{Facet }{}
+\ccThree{Triangulation_3<TriangulationTraits_3,Tds_3>}{Facet }{}
 
-\ccConstructor{Triangulation_3<Triangulation_traits_3,Tds_3>
-(const Triangulation_traits_3 & traits );}
+\ccConstructor{Triangulation_3<TriangulationTraits_3,Tds_3>
+(const TriangulationTraits_3 & traits );}
 {Introduces a triangulation \ccVar\ having only one vertex which is the
 infinite vertex.} 
 
-\ccConstructor{Triangulation_3<Triangulation_traits_3,Tds_3>(const
-Triangulation_3<Triangulation_traits_3,Tds_3> & tr);} 
+\ccConstructor{Triangulation_3<TriangulationTraits_3,Tds_3>(const
+Triangulation_3<TriangulationTraits_3,Tds_3> & tr);} 
 {Copy constructor. All vertices and faces are duplicated.}
 
 \ccFunction{void ~t();}
@@ -121,18 +121,18 @@ deleted.}
 
 \ccHeading{Assignment}
 
-\ccMethod{Triangulation_3<Triangulation_traits_3,Tds_3>
-	operator=(const Triangulation_3<Triangulation_traits_3,Tds_3> & tr);}
+\ccMethod{Triangulation_3<TriangulationTraits_3,Tds_3>
+	operator=(const Triangulation_3<TriangulationTraits_3,Tds_3> & tr);}
 {The triangulation \ccc{tr} is duplicated, and modifying one copy after the 
 duplication does not modify the other copy.}
 
 \ccMethod{void copy_triangulation
-		(const Triangulation_3<Triangulation_traits_3,Tds_3> & tr);}
+		(const Triangulation_3<TriangulationTraits_3,Tds_3> & tr);}
 {The triangulation is duplicated.}
 
 The previous two methods are equivalent.
 
-\ccMethod{void swap(Triangulation_3<Triangulation_traits_3,Tds_3> & tr);}
+\ccMethod{void swap(Triangulation_3<TriangulationTraits_3,Tds_3> & tr);}
 {The triangulations \ccc{tr} and \ccVar\ are swapped.
 \ccVar.\ccc{swap(tr)} should be preferred to \ccVar\ = \ccc{tr} or to
 \ccc{t(tr)} if \ccc{tr} is deleted after that. Indeed, there is no
@@ -141,7 +141,7 @@ copy of cells and vertices, thus this method runs in constant time.}
 \ccAccessFunctions
 \ccThree{Vertex_handle}{t.number_of_finite_edges()toto}{}
 
-\ccMethod{const Triangulation_traits_3 & geom_traits() const;}
+\ccMethod{const TriangulationTraits_3 & geom_traits() const;}
 {Returns a const reference to the geometric traits object.}
 \ccGlue
 \ccMethod{const Tds_3 & tds() const;}
@@ -195,7 +195,7 @@ The geometric triangulation is not supposed to perform any operations
 on its underlying triangulation data structure. We nevertheless
 provide the following function to add a cell created by a constructor
 of the cell class of a triangulation
-\ccc{Triangulation_cell_3<Triangulation_traits_3,Tds_3>}. 
+\ccc{Triangulation_cell_3<TriangulationTraits_3,Tds_3>}. 
 Users programming their own
 triangulation algorithms might use it.
 
@@ -876,7 +876,7 @@ These methods are mainly a debugging help for the users of advanced features.
 See Chapter~\ref{ChapterGeomview}. 
 
 \ccFunction{istream& operator>>
-(istream& is, Triangulation_3<Triangulation_traits_3, Tds_3> &t);}
+(istream& is, Triangulation_3<TriangulationTraits_3, Tds_3> &t);}
 {Reads the underlying combinatorial triangulation from \ccc{is} by
 calling the corresponding input operator of the triangulation data
 structure class, and the non-combinatorial information by calling the
@@ -884,7 +884,7 @@ corresponding input operators of the vertex and the cell
 classes. Assigns the resulting triangulation to \ccc{t}.}
 
 \ccFunction{ostream& operator<<
-(ostream& os, const Triangulation_3<Triangulation_traits_3, Tds_3> &t);}
+(ostream& os, const Triangulation_3<TriangulationTraits_3, Tds_3> &t);}
 {Writes the triangulation \ccc{t} into \ccc{os}.}
 
 The information in the \ccc{iostream} is: the dimension, the number of
@@ -898,8 +898,8 @@ cells.
 
 \ccSeeAlso
 
-\ccc{CGAL::Triangulation_3<Triangulation_traits_3,Tds_3>::Vertex},\\
-\ccc{CGAL::Triangulation_3<Triangulation_traits_3,Tds_3>::Cell}.
+\ccc{CGAL::Triangulation_3<TriangulationTraits_3,Tds_3>::Vertex},\\
+\ccc{CGAL::Triangulation_3<TriangulationTraits_3,Tds_3>::Cell}.
 
 %\ccExample
 

@@ -19,7 +19,9 @@
 \ccDefinition
   
 The class \ccRefName\ is designed as a default traits class for the
-class \ccc{Regular_triangulation_3<Triangulation_traits_3,Tds_3>}. It provides
+class
+\ccc{Regular_triangulation_3<RegularTriangulationTraits_3,Tds_3>}. 
+It provides
 \ccc{Weighted_point}, a class for weighted points, which derives from 
 the \cgal\ three dimensional point class.
 
@@ -30,25 +32,17 @@ optional: if is it not provided, \ccc{R::RT} will be used.
 \ccInclude{CGAL/Regular_triangulation_euclidean_traits_3.h}
 
 \ccIsModel
-\ccc{Triangulation_traits_3}
+\ccc{RegularTriangulationTraits_3}
 
-\ccInheritsFrom{\ccc{Triangulation_geom_traits_3<R>}}
+\ccInheritsFrom{\ccc{R}}
 
 \ccTypes
-\ccThree{typedef Triangulation_geom_traits_3::Point}{Weighted_point;}{}
+\ccThree{typedef R::Point}{Weighted_point;}{}
 
-\ccTypedef{typedef Triangulation_geom_traits_3::Point Bare_point;}
+\ccTypedef{typedef R::Point_3 Bare_point;}
 {The type for point $p$ of a weighted point ${p}^{(w)}=(p,w_p)$.}
 \ccGlue
 \ccTypedef{typedef Weighted_point <Bare_point, Weight> Weighted_point;}{}
-
-As \ccClassTemplateName\ inherits from
-\ccc{Triangulation_geom_traits_3<R>}, the \ccc{Bare_point} type is in
-fact \ccc{Point_3<R>}.
-
-\ccSeeAlso
-
-\ccc{CGAL::Triangulation_geom_traits_3<R>}.
 
 %% \ccExample
 
