@@ -98,13 +98,13 @@ int sign_of(const CGAL::Plane_3<R>& h)
 template <typename R>
 CGAL::Plane_3<R> normalized(CGAL::Plane_3<R>& h)
 { 
-  //  if(h.a().degree() > 0 | h.b().degree() > 0 | h.c().degree() > 0 | h.d().degree() > 0)
-  //  return h;
-
   typedef typename R::RT::NT NT;
   typedef typename R::RT RT;
 
-  NT a(h.a()[h.a().degree()]),b(h.b()[h.b().degree()]),c(h.c()[h.c().degree()]),d(h.d()[h.d().degree()]);
+  NT a(h.a()[h.a().degree()]);
+  NT b(h.b()[h.b().degree()]);
+  NT c(h.c()[h.c().degree()]);
+  NT d(h.d()[h.d().degree()]);
   NT x = (a==0) ? ((b==0) ? ((c==0) ? ((d==0) ? 1: d): c): b): a;
   TRACE("gcd... i"<<x<<' ');
   x = ( a != 0 ? a : x);
@@ -124,7 +124,6 @@ CGAL::Plane_3<R> normalized(CGAL::Plane_3<R>& h)
   RT pd = (h.d().degree() > 0 ? RT(h.d()[0],d/x) : d/x);
   
   TRACEN("  before normalizing "<<h);
-  //  TRACEN("  after normalizing "<<CGAL::Plane_3<R>(a/x,b/x,c/x,d/x)<<std::endl);
   TRACEN("  after normalizing "  << CGAL::Plane_3<R>(pa,pb,pc,pd));
   return CGAL::Plane_3<R>(pa,pb,pc,pd);
   //  return CGAL::Plane_3<R>(a/x,b/x,c/x,d/x); 
@@ -276,7 +275,7 @@ public:
       SM_decorator SD(D.vertex(h));
       SFace_handle sf = D.source(h)->sfaces_begin();
       if( Closed[sf] ) {
-	if( SD.is_isolated(h) || SD.first_out_edge(h) == SD.last_out_edge(h) ) {
+	if( SD.is_isolated(h) || SD.first_out_edge(h) == SD.last_out_edge(h)) {
 	  Closed[sf] = false;
 	}
       }
@@ -363,7 +362,8 @@ public:
     if(!Kernel::is_standard(p))
       return Halffacet_handle();
 
-    Segment_3 ray( p, Kernel::epoint( 0, p.hx()[0], 0,p.hy()[0], 1,0, p.hw()[0]));
+    Segment_3 ray( p, Kernel::epoint( 0, p.hx()[0], 0,p.hy()[0], 1,0, 
+                                      p.hw()[0]));
     SNC_ray_shooter rs(*sncp());
     Object_handle o = rs.shoot(ray);
     Vertex_handle v;
@@ -391,19 +391,24 @@ public:
     return f_below;
   }
   
-  void create_facet(int min, int max, const typename Kernel::RT::NT cross[4][4], Plane_3 h) const ;
+  void create_facet(int min, int max,
+                    const typename Kernel::RT::NT cross[4][4],
+                    Plane_3 h) const;
 
 }; // SNC_constructor<SNC>
 
 template <typename SNC_>
 void
 SNC_constructor<SNC_>::
-create_facet(int min, int max, const typename Kernel::RT::NT cross[4][4], Plane_3 h) const { 
+create_facet(int min, int max, const typename Kernel::RT::NT cross[4][4],
+             Plane_3 h) const { 
 
   CGAL_nef3_assertion(max>-1 && max<4 && min>-1 && min<4);
 
   for(int vi=0; vi<4; ++vi) {
-    Vertex_handle v=sncp()->new_vertex( SNC_::Kernel::epoint(cross[vi][0],0,cross[vi][1],0,cross[vi][2],0,cross[vi][3]), true);
+    Vertex_handle v=sncp()->new_vertex( 
+        SNC_::Kernel::epoint(cross[vi][0],0,cross[vi][1],0,cross[vi][2],0,
+                             cross[vi][3]), true);
     
     SM_decorator SD(v);
     
@@ -418,7 +423,8 @@ create_facet(int min, int max, const typename Kernel::RT::NT cross[4][4], Plane_
     SHalfedge_handle she[2][3];
     for(int fi=0;fi<2;++fi) {
  
-      typename Kernel::RT::NT crossmax = (fi==1 ? cross[vi][max] : -cross[vi][max]);
+      typename Kernel::RT::NT crossmax = (fi==1 ? cross[vi][max] : 
+                                          -cross[vi][max]);
       //      typename Kernel::RT::NT crossmax = (fi==1 ? 2 : -2);
       CGAL_nef3_assertion(crossmax != 0);
 
@@ -453,22 +459,29 @@ create_facet(int min, int max, const typename Kernel::RT::NT cross[4][4], Plane_
     if (spherical_orientation(SP[0][0],SP[0][1],SP[0][2]) > 0) {
       for(int si=0; si<3;++si) {
 	she[0][si]=SD.new_edge_pair(sv[0][si], sv[0][(si+1)%3]);
-	SD.circle(she[0][si])= Sphere_circle(Plane_3(SP[0][si],SP[0][(si+1)%3],Point_3(0,0,0)));
-	SD.circle(SD.twin(she[0][si])) =  SD.circle(she[0][si]).opposite();	  
+	SD.circle(she[0][si])= Sphere_circle(Plane_3(SP[0][si],SP[0][(si+1)%3],
+                                                     Point_3(0,0,0)));
+	SD.circle(SD.twin(she[0][si])) =  SD.circle(she[0][si]).opposite();
 	SD.mark(she[0][si]) = 1;
 	TRACEN("A " << Plane_3(SP[0][si],SP[0][(si+1)%3],Point_3(0,0,0)));
       }
       she[1][max] = SD.new_edge_pair(sv[1][max], she[0][(max+1)%3],1);
       she[1][(max+1)%3] = she[0][(max+1)%3];
-      she[1][(max+2)%3] = SD.new_edge_pair(sv[1][max],SD.twin(she[0][(max+1)%3]),-1);
+      she[1][(max+2)%3] = SD.new_edge_pair(sv[1][max],
+                                           SD.twin(she[0][(max+1)%3]),-1);
       
-      SD.circle(SD.twin(she[1][max]))= Sphere_circle(Plane_3(SP[1][(max+1)%3],SP[1][max],Point_3(0,0,0)));
-      SD.circle(she[1][max]) =  SD.circle(SD.twin(she[1][max])).opposite();	  
+      SD.circle(SD.twin(she[1][max]))= Sphere_circle(Plane_3(SP[1][(max+1)%3],
+                                                             SP[1][max],
+                                                             Point_3(0,0,0)));
+      SD.circle(she[1][max]) =  SD.circle(SD.twin(she[1][max])).opposite();
       SD.mark(she[1][max]) = 1;
       	TRACEN("B " << Plane_3(SP[1][(max+1)%3],SP[1][max],Point_3(0,0,0)) );
 
-      SD.circle(she[1][(max+2)%3])= Sphere_circle(Plane_3(SP[1][max],SP[1][(max+2)%3],Point_3(0,0,0)));
-      SD.circle(SD.twin(she[1][(max+2)%3])) =  SD.circle(she[1][(max+2)%3]).opposite();	  
+      SD.circle(she[1][(max+2)%3])= Sphere_circle(Plane_3(SP[1][max],
+                                                          SP[1][(max+2)%3],
+                                                          Point_3(0,0,0)));
+      SD.circle(SD.twin(she[1][(max+2)%3])) =  SD.circle(she[1][(max+2)%3])
+          .opposite();	  
       SD.mark(she[1][(max+2)%3]) = 1;
       
       SD.link_as_face_cycle(she[0][max],sf[0]);
@@ -479,23 +492,30 @@ create_facet(int min, int max, const typename Kernel::RT::NT cross[4][4], Plane_
     else {
       for(int si=0; si<3;++si) {
 	she[0][si]=SD.new_edge_pair(sv[0][si], sv[0][(si+1)%3]);
-	SD.circle(SD.twin(she[0][si]))= Sphere_circle(Plane_3(SP[0][(si+1)%3],SP[0][si],Point_3(0,0,0)));
-	SD.circle(she[0][si]) =  SD.circle(SD.twin(she[0][si])).opposite();	  
+	SD.circle(SD.twin(she[0][si]))= Sphere_circle(Plane_3(SP[0][(si+1)%3],
+                                                              SP[0][si],
+                                                              Point_3(0,0,0)));
+	SD.circle(she[0][si]) =  SD.circle(SD.twin(she[0][si])).opposite();
       	SD.mark(she[0][si]) = 1;
 	TRACEN("D " << Plane_3(SP[0][(si+1)%3],SP[0][si],Point_3(0,0,0)));
       }
 
       she[1][max] = SD.new_edge_pair(sv[1][max], she[0][(max+1)%3],-1);
       she[1][(max+1)%3] = she[0][(max+1)%3]; 
-      she[1][(max+2)%3] = SD.new_edge_pair(sv[1][max],SD.twin(she[0][(max+1)%3]),1);
+      she[1][(max+2)%3] = SD.new_edge_pair(sv[1][max],
+                                           SD.twin(she[0][(max+1)%3]),1);
       
-      SD.circle(she[1][max])= Sphere_circle(Plane_3(SP[1][max],SP[1][(max+1)%3],Point_3(0,0,0)));
-      SD.circle(SD.twin(she[1][max])) =  SD.circle(she[1][max]).opposite();	  
+      SD.circle(she[1][max])= Sphere_circle(Plane_3(SP[1][max],
+                                                    SP[1][(max+1)%3],
+                                                    Point_3(0,0,0)));
+      SD.circle(SD.twin(she[1][max])) =  SD.circle(she[1][max]).opposite();
       SD.mark(she[1][max]) = 1;
       TRACEN("E " << Plane_3(SP[1][max],SP[1][(max+1)%3],Point_3(0,0,0)));
 
-      SD.circle(SD.twin(she[1][(max+2)%3]))= Sphere_circle(Plane_3(SP[1][(max+2)%3],SP[1][max],Point_3(0,0,0)));
-      SD.circle(she[1][(max+2)%3]) =  SD.circle(SD.twin(she[1][(max+2)%3])).opposite();	  
+      SD.circle(SD.twin(she[1][(max+2)%3]))= 
+          Sphere_circle(Plane_3(SP[1][(max+2)%3],SP[1][max],Point_3(0,0,0)));
+      SD.circle(she[1][(max+2)%3]) =  SD.circle(SD.twin(she[1][(max+2)%3]))
+          .opposite();	  
       SD.mark(she[1][(max+2)%3]) = 1;
       TRACEN("F " << Plane_3(SP[1][(max+2)%3],SP[1][max],Point_3(0,0,0)));
 
@@ -576,7 +596,8 @@ create_box_corner(int x, int y, int z, bool space, bool boundary) const {
 template <typename SNC_>
 typename SNC_::Vertex_handle 
 SNC_constructor<SNC_>::
-create_extended_box_corner(int x, int y, int z, bool space, bool boundary) const { 
+create_extended_box_corner(int x, int y, int z, bool space, 
+                           bool boundary) const { 
   CGAL_nef3_assertion(CGAL_NTS abs(x) == CGAL_NTS abs(y) &&
 		      CGAL_NTS abs(y) == CGAL_NTS abs(z));
   TRACEN("  constructing box corner on "<<Point_3(x,y,z)<<"...");
@@ -600,7 +621,8 @@ create_extended_box_corner(int x, int y, int z, bool space, bool boundary) const
     she[si] = SD.new_edge_pair(sv[si], sv[(si+1)%3]);
   
   for(int i=0; i<3;++i) {
-    SD.circle(she[i]) = Sphere_circle(Plane_3(sp[i],sp[(i+1)%3],Point_3(0,0,0)));
+    SD.circle(she[i]) = Sphere_circle(Plane_3(sp[i],sp[(i+1)%3],
+                                              Point_3(0,0,0)));
     SD.circle(SD.twin(she[i])) =  SD.circle(she[i]).opposite();
     SD.mark(she[i]) = boundary;
   }
@@ -758,7 +780,8 @@ pair_up_halfedges() const
     int inverted;
     l = categorize(l,inverted);
     M[l].push_back(Halfedge_key(p,inverted,e,D));
-    TRACEN(" ("<<p<<") ("<<p+ Vector_3(tmp_point(e))<<") "<< " (" << tmp_point(e) << ") " << &*e<<" |"<<l << " " << inverted);
+    TRACEN(" ("<<p<<") ("<<p+ Vector_3(tmp_point(e))<<") "<< " (" 
+           << tmp_point(e) << ") " << &*e<<" |"<<l << " " << inverted);
   }
 
   typename Pluecker_line_map::iterator it;
@@ -799,12 +822,15 @@ link_shalfedges_to_facet_cycles() const
     SHalfedge_around_svertex_circulator cet(Dt.first_out_edge(et)),cete(cet);
 
     CGAL_For_all(cet,cete)
-      if ( Dt.circle(cet) == D.circle(ce).opposite() &&  twin(Dt.source(cet)) == D.source(ce) ) break;
+      if ( Dt.circle(cet) == D.circle(ce).opposite() && 
+           twin(Dt.source(cet)) == D.source(ce) ) 
+          break;
 
     /*    DEBUG 
     if( Dt.circle(cet) != D.circle(ce).opposite() )
       TRACEN("assertion failed!");
-    TRACEN("vertices " << point(vertex(e)) << "    " << point(vertex(et)) << std::endl);
+    TRACEN("vertices " << point(vertex(e)) << "    " << point(vertex(et))
+            << std::endl);
       SHalfedge_around_svertex_circulator sc(D.first_out_edge(e));
       SHalfedge_around_svertex_circulator sct(Dt.first_out_edge(et));
       CGAL_For_all(sc,cee)
