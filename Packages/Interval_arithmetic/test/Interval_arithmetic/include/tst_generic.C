@@ -7,6 +7,7 @@
 // #define TESTED_TYPE CGAL_Interval_nt_advanced // For tst1.C
 // #define TESTED_TYPE CGAL_Interval_nt          // For tst2.C
 
+#define CGAL_IA_NO_EXCEPTION
 #define CGAL_IA_NO_WARNINGS
 #include <CGAL/Interval_arithmetic.h>
 
@@ -24,20 +25,21 @@ int spiral_test()
   int i=0;
   IA x_i (1), y_i (0), x_ip1, y_ip1, length;
 
-  try {
-    while (++i < 500)
-    {
-      x_ip1 = x_i - y_i/sqrt((IA)i);
-      y_ip1 = y_i + x_i/sqrt((IA)i);
-      x_i = x_ip1;
-      y_i = y_ip1;
-      length = x_i*x_i + y_i*y_i;
-      DEBUG( cout << i << ": (" << x_i << " , " << y_i << ") : " << length << "\n";)
-      if ((x_i == 0) || (y_i == 0))
-        break;
-    };
-  }
-  catch (IA::unsafe_comparison) { }
+  // try {
+  while (++i < 500)
+  {
+    x_ip1 = x_i - y_i/sqrt((IA)i);
+    y_ip1 = y_i + x_i/sqrt((IA)i);
+    x_i = x_ip1;
+    y_i = y_ip1;
+    length = x_i*x_i + y_i*y_i;
+    DEBUG(cout<<i<<": (" << x_i << " , " << y_i << ") : " << length << "\n";)
+    // if ((x_i == 0) || (y_i == 0))
+    if ( x_i.overlap(0) || y_i.overlap(0) )
+      break;
+  };
+  // }
+  // catch (IA::unsafe_comparison) { }
 
   return (i == 396);
 }
@@ -271,7 +273,7 @@ cout << CGAL_is_finite(d.upper_bound()) << CGAL_is_valid(d.upper_bound())<<endl;
 
   cout << "Do square_root_test()   \t";
   tmpflag = square_root_test();
-  cout << tmpflag << endl;
+  cout << (int) tmpflag << endl;
   flag = tmpflag && flag;
 
   // GETFPCW(rd_mode);
@@ -279,32 +281,32 @@ cout << CGAL_is_finite(d.upper_bound()) << CGAL_is_valid(d.upper_bound())<<endl;
 
   cout << "Do spiral_test()        \t";
   tmpflag = spiral_test();
-  cout << tmpflag << endl;
+  cout << (int) tmpflag << endl;
   flag = tmpflag && flag;
 
   cout << "Do overflow_test()      \t";
   tmpflag = overflow_test();
-  cout << tmpflag << endl;
+  cout << (int) tmpflag << endl;
   flag = tmpflag && flag;
 
   cout << "Do underflow_test()     \t";
   tmpflag = underflow_test();
-  cout << tmpflag << endl;
+  cout << (int) tmpflag << endl;
   flag = tmpflag && flag;
 
   cout << "Do division_test()      \t";
   tmpflag = division_test();
-  cout << tmpflag << endl;
+  cout << (int) tmpflag << endl;
   flag = tmpflag && flag;
 
   cout << "Do multiplication_test()\t";
   tmpflag = multiplication_test();
-  cout << tmpflag << endl;
+  cout << (int) tmpflag << endl;
   flag = tmpflag && flag;
 
   cout << "Do utility_test()       \t";
   tmpflag = utility_test();
-  cout << tmpflag << endl;
+  cout << (int) tmpflag << endl;
   flag = tmpflag && flag;
 
 #ifdef ADVANCED
