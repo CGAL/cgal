@@ -1,3 +1,5 @@
+2.1.20(03/02/03)  removed VC6 project files (cl version = 1200)
+
 2.1.19(26/07/02)  Fixed the cgallib.vcproj debug and release version
 
 2.1.18(05/07/02)  Removed the CGALQt.dsp and CGALQt.vcproj from wininst package

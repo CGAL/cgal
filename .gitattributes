@@ -2025,5 +2025,4 @@ Packages/kdtree/doc_tex/basic/SearchStructures/kdtree.gif svneol=native#unset
 Packages/wininst/Install.hlp svneol=native#unset
 Packages/wininst/demo/Alpha_shapes_3/VC7/demo_alpha.vcproj -text
 Packages/wininst/demo/Alpha_shapes_3/VC7/demo_weight.vcproj -text
-Packages/wininst/src/cgallib.dsp -text
 Packages/wininst/src/cgallib.vcproj -text
