@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.67 on 15 February 2001
+- test
+
 Version 4.66 on 12 February 2001
 - Undefine CGAL_IA_NEW_FILTERS, it breaks VC++.
 
