@@ -1479,6 +1479,8 @@ Packages/Partition_2/doc_tex/Partition_2/Idar-Oberstein_appx_cvx.ps -text
 Packages/Partition_2/doc_tex/Partition_2/Trier_opt_cvx.gif -text svneol=unset#unset
 Packages/Partition_2/doc_tex/Partition_2/Trier_opt_cvx.pdf -text svneol=unset#unset
 Packages/Partition_2/doc_tex/Partition_2/Trier_opt_cvx.ps -text
+Packages/Planar_map/doc_tex/Planar_map/circ_dcel.pstex -text
+Packages/Planar_map/doc_tex/Planar_map/circ_dcel.pstex_t -text
 Packages/Planar_map/doc_tex/Planar_map/example_p.gif -text svneol=unset#unset
 Packages/Planar_map/doc_tex/Planar_map/example_p.pdf -text svneol=unset#unset
 Packages/Planar_map/doc_tex/Planar_map/example_p.ps -text
@@ -1491,6 +1493,8 @@ Packages/Planar_map/doc_tex/Planar_map/insert_at.ps -text
 Packages/Planar_map/doc_tex/Planar_map/pm_ray_shoot.gif -text svneol=unset#unset
 Packages/Planar_map/doc_tex/Planar_map/pm_ray_shoot.pdf -text svneol=unset#unset
 Packages/Planar_map/doc_tex/Planar_map/pm_ray_shoot.ps -text
+Packages/Planar_map/doc_tex/Planar_map/rose_14.eps -text
+Packages/Planar_map/doc_tex/Planar_map/rose_14.gif -text svneol=unset#unset
 Packages/Planar_map/doc_tex/Topological_map/dcel.eps -text
 Packages/Planar_map/doc_tex/Topological_map/dcel.gif -text svneol=unset#unset
 Packages/Planar_map/doc_tex/Topological_map/dcel.ipe -text
