@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.58 on 13 September 2000
+- Last fix was not correct.  Try this one...
+
 Version 4.57 on 10 September 2000
 - Workaround for M$VC++, min/max.
 
