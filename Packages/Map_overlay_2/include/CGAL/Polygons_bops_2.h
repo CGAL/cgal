@@ -74,6 +74,9 @@
 #include <CGAL/Bops/Polygons_from_faces.h>
 #endif
 
+#ifndef CGAL_POLYGONS_DO_INTERSECT_2_H
+#include <CGAL/Bops/Polygons_do_intersect_2.h>
+#endif
 #ifndef CGAL_POLYGONS_INTERSECTION_2_H
 #include <CGAL/Bops/Polygons_intersection_2.h>
 #endif
