@@ -1,5 +1,9 @@
 Polyhedron Package: Release changes:
 ---------------------------------------------------------------------
+3.8 (18 Jun 2001)
+
+     - Added missing htmlfiles and main.tex to doc_tex/basic/Polyhedron.
+
 3.7 (18 Jun 2001)
 
      - Added old manual part to deprecated_basic.
