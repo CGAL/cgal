@@ -380,9 +380,9 @@ int main()
 This section describes the concepts for a 3D-triangulation data
 structure, its vertices and cells.
 
+\begin{ccClassTemplate}{Tds<Vb,Fb>}
 \subsection{Concepts for a 3D-Triangulation Data Structure}
 \label{TDS3-sec-concept} 
-\begin{ccClassTemplate}{Tds<Vb,Fb>}
 
 The triangulation data structure must be able to represent a
 triangulation of a topological sphere $S^d$ of $\R^{d+1}$, for 
@@ -839,10 +839,10 @@ for faces of maximal dimension instead of cells.
 
 	\end{ccClassTemplate} 
 
+	\begin{ccClass}{Tds::Vertex}
 	\subsection{Concept for the Vertex of a 3D-Triangulation Data Structure} 
 	\label{TDS3-sec-concept-Tds_Vertex}
 
-	\begin{ccClass}{Tds::Vertex}
 	
 \ccCreationVariable{v}
 
@@ -913,10 +913,10 @@ a precise indication on the kind of invalidity encountered.}
 
 	\end{ccClass} 
 
+	\begin{ccClass}{Tds::Cell}
 	\subsection{Concept for the Cell of a 3D-Triangulation Data Structure} 
 	\label{TDS3-sec-concept-Tds_Cell}
 
-	\begin{ccClass}{Tds::Cell}
 
 \ccCreationVariable{c}
 
@@ -1042,8 +1042,7 @@ a precise indication of the kind of invalidity encountered.}
 	\end{ccClass} 
 
 \begin{ccClassTemplate}{Triangulation_data_structure_3<Vb,Cb>}
-\section{A model of Triangulation Data Structure\\ 
-\protect \ccc{Triangulation_data_structure_3<Vb,Cb>} }
+\section{A model of Triangulation Data Structure \ccClassTemplateName}
 \label{TDS3-sec-class}
 
 This class is a model for the concept of a 3D-triangulation data structure
@@ -1142,18 +1141,18 @@ pointer to an incident cell is not \ccc{NULL}.}
 \ccFunction{istream& operator>>
 (istream& is, Vertex_base & v);}
 {Inputs the non-combinatorial information given by the vertex: 
-the optional point and other possible information.
-\ccPrecond{The point and the other information have a corresponding
-operator \ccc{>>}. \textit{This precondition is optional for the
-triangulation data structure alone.}}}  
+the optional point and other possible information.}
+%\ccPrecond{The point and the other information have a corresponding
+%operator \ccc{>>}. \textit{This precondition is optional for the
+%triangulation data structure alone.}}}  
 
 \ccFunction{ostream& operator<< (ostream& os, 
 			const Vertex_base & v);}
 {Outputs the non combinatorial operation given by the vertex: the
-optional point and other possible information.
-\ccPrecond{The point and the other information have a corresponding
-operator \ccc{<<}. \textit{This precondition is optional for the
-triangulation data structure alone.}}} 
+optional point and other possible information.}
+%\ccPrecond{The point and the other information have a corresponding
+%operator \ccc{<<}. \textit{This precondition is optional for the
+%triangulation data structure alone.}}} 
 
 	\end{ccClass}
 
@@ -1264,7 +1263,7 @@ a precise indication of the kind of invalidity encountered.}
 \label{TDS3-sec-class-Base}
 
 	\begin{ccClassTemplate}{Triangulation_vertex_base_3<Traits>}
-	\subsection{The Base Class \protect \ccc{Triangulation_vertex_base_3<Traits>} }
+	\subsection{The Base Class \protect \ccClassTemplateName}
 	\label{TDS3-sec-class-Base_Vertex}
 
 This class is provided by \cgal\ as a base vertex class. It is
@@ -1287,7 +1286,7 @@ example) tuned for a specific application.
 	\end{ccClassTemplate} 
 
 	\begin{ccClassTemplate}{Triangulation_cell_base_3<Traits>}
-	\subsection{The Base Class \protect \ccc{Triangulation_cell_base_3<Traits>}}
+	\subsection{The Base Class \protect \ccClassTemplateName}
 
 This class is provided by \cgal\ as a base cell class, and is similar
 to the case of the base vertex class. (See

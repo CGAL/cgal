@@ -275,7 +275,8 @@ int main(int argc, char* argv[])
 \clearpage
 
 \begin{ccClass}{Triangulation_utils_3}
-\section{A Class of Tools \protect\ccc{Triangulation_utils_3}} 
+%\section{A Class of Tools \protect\ccc{Triangulation_utils_3}} 
+\section{A Class of Tools \protect \ccClassName}
 \label{Triangulation3-sec-class-Utils}
 
 This class defines operations on the indices of vertices and neighbors 
@@ -322,7 +323,8 @@ Figure~\ref{Triangulation3-fig-utils}).
 \end{ccClass}
 
 \begin{ccClassTemplate}{Triangulation_3<Traits,Tds>}
-\section{The Triangulation Class \protect\ccc{Triangulation_3<Traits,Tds>} }
+%\section{The Triangulation Class \protect\ccc{Triangulation_3<Traits,Tds>} }
+\section{The Triangulation Class \protect \ccClassTemplateName}
 
 \ccDefinition
 
@@ -1150,8 +1152,7 @@ cells.
 \end{ccClassTemplate}
 
 \begin{ccClassTemplate}{Triangulation_vertex_3<Traits,Tds>}
-\section{The Vertex Class of a Triangulation\\ \protect
-\ccc{Triangulation_vertex_3<Traits,Tds>} } 
+\section{The Vertex Class of a Triangulation \protect \ccClassTemplateName} 
 \label{Triangulation3-sec-class-Vertex}
 
 \ccCreationVariable{v}
@@ -1180,7 +1181,7 @@ defined in the class \ccc{Triangulation_3<Traits,Tds>}:
 The user needs to construct vertices explicitly only when implementing his
 own triangulation algorithms. 
 
-\ccConstructor{{Triangulation_vertex_3<Traits,Tds>}()}
+\ccConstructor{{Triangulation_vertex_3<Traits,Tds>}();}
 {Introduces a new vertex. The geometric information is initialized by
 the default constructor of the class \ccc{Point}. A test on the handle
 to the incident cell of \ccVar\ for equality with \ccc{NULL} will
@@ -1233,8 +1234,7 @@ of maximal dimension (Section~\ref{Triangulation3-sec-degen_dim}).}
 	\end{ccClassTemplate} 
 
 \begin{ccClassTemplate}{Triangulation_cell_3<Traits,Tds>}
-\section{The Cell Class of a Triangulation\\ \protect
-\ccc{Triangulation_cell_3<Traits,Tds>} }
+\section{The Cell Class of a Triangulation \protect \ccClassTemplateName} 
 \label{Triangulation3-sec-class-Cell}
 
 \ccCreationVariable{c}
@@ -1265,7 +1265,7 @@ it into any triangulation. To add a cell to a given triangulation,
 the \ccc{add_cell()} method of the triangulation must be used. Note
 that a given cell can be inserted into only textit{one} triangulation.
 
-\ccConstructor{Triangulation_cell_3<Traits,Tds>()}
+\ccConstructor{Triangulation_cell_3<Traits,Tds>();}
 {Introduces a variable \ccVar\ and initializes all its vertices and
 neighbors in such a way that tests on the handles for equality with
 \ccc{NULL} will answer \ccc{true}.} 
@@ -1368,8 +1368,7 @@ computes the index \ccc{i} of the neighbor.}
 
 
 \begin{ccClassTemplate}{Delaunay_triangulation_3<Traits,Tds>}
-\section{The Delaunay Triangulation Class\\
-\protect\ccc{Delaunay_triangulation_3<Traits,Tds>} }  
+\section{The Delaunay Triangulation Class \protect \ccClassTemplateName} 
 
 \ccDefinition
 \ccInclude{CGAL/Delaunay_triangulation_3.h}
@@ -1507,16 +1506,14 @@ This method is  mainly a debugging help for the users of advanced features.
 \end{ccClassTemplate}
 
 \begin{ccClassTemplate}{Delaunay_hierarchic_triangulation_3<Traits,Tds>}
-\section{The Hierarchic Delaunay Triangulation Class\\ \protect
-\ccc{Delaunay_hierarchic_triangulation_3<Traits,Tds>} }
+\section{The Hierarchic Delaunay Triangulation Class \ccClassTemplateName} 
 
 \textit{Not yet implemented}
 
 \end{ccClassTemplate}
 
 \begin{ccClassTemplate}{Regular_triangulation_3<Traits,Tds>}
-\section{The Regular Triangulation Class\\ \protect
-\ccc{Regular_triangulation_3<Traits,Tds>} }
+\section{The Regular Triangulation Class \protect \ccClassTemplateName} 
 \label{Triangulation3-sec-class-Regulartriangulation}
 
 \ccDefinition
@@ -1975,7 +1972,7 @@ segment with endpoints \ccc{p} and \ccc{q}.
 	\end{ccClass} 
 
 	\begin{ccClassTemplate}{Triangulation_geom_traits_3<R>}
-	\subsection{The Class \protect \ccc{Triangulation_geom_traits_3<R>}}
+	\subsection{The Class \protect \ccClassTemplateName} 
 	\label{Triangulation3-sec-class-Traits}
 
 \cgal\ provides a predefined geometric traits class using the kernel
@@ -2007,8 +2004,7 @@ class for \ccc{Triangulation_3<Traits,Tds>},
 	\end{ccClassTemplate} 
 
 	\begin{ccClassTemplate}{Regular_triangulation_euclidean_traits_3<R,Weight>}
-	\subsection{The Class \protect
-\ccc{Regular_triangulation_euclidean_traits_3<R,Weight>} }
+	\subsection{The Class \protect \ccClassTemplateName} 
 	\label{Triangulation3-sec-class-Regulartraits}
 
 This traits class is designed to be used by the class
@@ -2070,7 +2066,7 @@ The weighted point class must fulfill the following requirements:
 \ccFunction{Weight weight() const;}{}
 
 		\begin{ccClassTemplate}{Weighted_point<Point,Weight>}
-		\subsubsection{The class \protect\ccc{Weighted\_point<Point,Weight>}}
+		\subsubsection{The class \protect \ccClassTemplateName} 
 
 This class provides \ccc{Regular_triangulation_euclidean_traits_3}
 with all the required functionalities.
