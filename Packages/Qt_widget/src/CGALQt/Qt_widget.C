@@ -80,7 +80,7 @@ void Qt_widget::set_scales()
     }
 }
 
-void Qt_widget::set_scale_center(double xc, double yc)
+void Qt_widget::set_scale_center(const double xc, const double yc)
 {
   xmin = xc - (width()/xscal)/2;
   xmax = xc + (width()/xscal)/2;
