@@ -1,3 +1,6 @@
+7 September Andreas Fabri
+- Encapsulated \includegraphics in a \begin{texonly} and added \begin{htmlonly}
+
 27 August 2004 Sylvain Pion
 - Put myself as maintainer instead of Julia.
 
