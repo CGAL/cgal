@@ -1,4 +1,8 @@
-1.31 (!5 April 2003) [af]
+1.32 (5 May 2003)
+- remove VC++ 6 stuff in functional_base.h
+- document new Triangle_3 intersections rountines.
+
+1.31 (15 April 2003) [af]
 - added #include of Bbox_{2,3}
 - added "use" statements
 
