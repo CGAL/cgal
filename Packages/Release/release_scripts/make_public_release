@@ -14,9 +14,10 @@ Run this script. This does the following:
     Remove the test directory.
     Remove developer_scripts dir
     Remove doc_tex dir
+    Remove winutils dir
     Remove src/CGALwin dir
-    Remove examples/*/cgal_test, demos/*/cgal_test, 
-           examples/*/version demos/*/version
+    Remove examples/*/cgal_test, demo/*/cgal_test, 
+           examples/*/version demo/*/version
     Find all .C and .h files and collect them in a file
     Run the script 'make_public_header' to update the headers of all files.
     Edit include/CGAL/config.h
@@ -47,11 +48,12 @@ if (! -d 'include/CGAL' );
 system ("rm -rf test");
 system ("rm -rf developer_scripts");
 system ("rm -rf doc_tex");
+system ("rm -rf winutils");
 system ("rm -rf src/CGALWin");
 system ("rm -f examples/*/cgal_test");
-system ("rm -f demos/*/cgal_test");
+system ("rm -f demo/*/cgal_test");
 system ("rm -f examples/*/version");
-system ("rm -f demos/*/version");
+system ("rm -f demo/*/version");
 system("find . -name '*.[hC]' -print > filenames");
 system("make_public_header -v CGAL-$major.$minor -f filenames $release_date_option");
 unlink 'filenames';
