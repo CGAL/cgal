@@ -27,8 +27,8 @@ CGAL_BEGIN_NAMESPACE
 template < class R >
 inline
 typename R::FT
-squared_distance(const PointC2<R CGAL_CTAG> &p,
-                 const PointC2<R CGAL_CTAG> &q)
+squared_distance(const PointC2<R> &p,
+                 const PointC2<R> &q)
 {
   return squared_distanceC2(p.x(), p.y(), q.x(), q.y());
 }
@@ -36,8 +36,8 @@ squared_distance(const PointC2<R CGAL_CTAG> &p,
 template < class R >
 inline
 typename R::FT
-scaled_distance_to_line(const LineC2<R CGAL_CTAG> &l,
-                        const PointC2<R CGAL_CTAG> &p)
+scaled_distance_to_line(const LineC2<R> &l,
+                        const PointC2<R> &p)
 {
   return scaled_distance_to_lineC2(l.a(), l.b(), l.c(), p.x(), p.y());
 }
@@ -45,9 +45,9 @@ scaled_distance_to_line(const LineC2<R CGAL_CTAG> &l,
 template < class R >
 inline
 typename R::FT
-scaled_distance_to_line(const PointC2<R CGAL_CTAG> &p,
-                        const PointC2<R CGAL_CTAG> &q,
-                        const PointC2<R CGAL_CTAG> &r)
+scaled_distance_to_line(const PointC2<R> &p,
+                        const PointC2<R> &q,
+                        const PointC2<R> &r)
 {
   return scaled_distance_to_lineC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
 }
@@ -55,7 +55,7 @@ scaled_distance_to_line(const PointC2<R CGAL_CTAG> &p,
 template < class R >
 inline
 typename R::FT
-line_y_at_x(const LineC2<R CGAL_CTAG> &l, const typename R::FT &x)
+line_y_at_x(const LineC2<R> &l, const typename R::FT &x)
 {
   return line_y_at_xC2(l.a(), l.b(), l.c(), x);
 }
@@ -63,7 +63,7 @@ line_y_at_x(const LineC2<R CGAL_CTAG> &l, const typename R::FT &x)
 template < class R >
 inline
 typename R::FT
-line_x_at_y(const LineC2<R CGAL_CTAG> &l, const typename R::FT &y)
+line_x_at_y(const LineC2<R> &l, const typename R::FT &y)
 {
   return line_y_at_xC2(l.b(), l.a(), l.c(), y);
 }
@@ -71,9 +71,9 @@ line_x_at_y(const LineC2<R CGAL_CTAG> &l, const typename R::FT &y)
 template < class R >
 inline
 typename R::FT
-squared_radius(const PointC2<R CGAL_CTAG> &p,
-                     const PointC2<R CGAL_CTAG> &q,
-                     const PointC2<R CGAL_CTAG> &r)
+squared_radius(const PointC2<R> &p,
+                     const PointC2<R> &q,
+                     const PointC2<R> &r)
 {
   return squared_radiusC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
 }

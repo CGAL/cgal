@@ -28,7 +28,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
-class PointC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
+class PointC3
   : public R_::Point_handle_3
 {
   typedef typename R_::FT                   FT;
@@ -124,8 +124,8 @@ public:
 
 template < class R >
 inline
-const typename PointC3<R CGAL_CTAG>::FT &
-PointC3<R CGAL_CTAG>::cartesian(int i) const
+const typename PointC3<R>::FT &
+PointC3<R>::cartesian(int i) const
 {
   CGAL_kernel_precondition( (i>=0) && (i<=2) );
   // return (i==0) ? x() :
@@ -137,16 +137,16 @@ PointC3<R CGAL_CTAG>::cartesian(int i) const
 
 template < class R >
 inline
-const typename PointC3<R CGAL_CTAG>::FT &
-PointC3<R CGAL_CTAG>::operator[](int i) const
+const typename PointC3<R>::FT &
+PointC3<R>::operator[](int i) const
 {
   return cartesian(i);
 }
 
 template < class R >
 inline
-typename PointC3<R CGAL_CTAG>::FT
-PointC3<R CGAL_CTAG>::homogeneous(int i) const
+typename PointC3<R>::FT
+PointC3<R>::homogeneous(int i) const
 {
   CGAL_kernel_precondition(i>=0 && i<=3);
   if (i<3) return cartesian(i);
@@ -155,7 +155,7 @@ PointC3<R CGAL_CTAG>::homogeneous(int i) const
 
 template < class R >
 Bbox_3
-PointC3<R CGAL_CTAG>::bbox() const
+PointC3<R>::bbox() const
 {
   // FIXME: to_interval
   double bx = CGAL::to_double(x());
@@ -167,7 +167,7 @@ PointC3<R CGAL_CTAG>::bbox() const
 #ifndef CGAL_CARTESIAN_NO_OSTREAM_INSERT_POINTC3
 template < class R >
 std::ostream &
-operator<<(std::ostream &os, const PointC3<R CGAL_CTAG> &p)
+operator<<(std::ostream &os, const PointC3<R> &p)
 {
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
@@ -187,7 +187,7 @@ operator<<(std::ostream &os, const PointC3<R CGAL_CTAG> &p)
 #ifndef CGAL_CARTESIAN_NO_ISTREAM_EXTRACT_POINTC3
 template < class R >
 std::istream &
-operator>>(std::istream &is, PointC3<R CGAL_CTAG> &p)
+operator>>(std::istream &is, PointC3<R> &p)
 {
     typename R::FT x, y, z;
     switch(is.iword(IO::mode)) {
@@ -205,7 +205,7 @@ operator>>(std::istream &is, PointC3<R CGAL_CTAG> &p)
         break;
     }
     if (is)
-	p = PointC3<R CGAL_CTAG>(x, y, z);
+	p = PointC3<R>(x, y, z);
     return is;
 }
 #endif // CGAL_CARTESIAN_NO_ISTREAM_EXTRACT_POINTC3

@@ -25,7 +25,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
-class Iso_rectangleC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
+class Iso_rectangleC2
   : public R_::Iso_rectangle_handle_2
 {
   typedef typename R_::FT                   FT;
@@ -118,8 +118,8 @@ public:
 template < class R >
 inline
 bool
-Iso_rectangleC2<R CGAL_CTAG>::
-operator==(const Iso_rectangleC2<R CGAL_CTAG> &r) const
+Iso_rectangleC2<R>::
+operator==(const Iso_rectangleC2<R> &r) const
 {
   if (identical(r))
       return true;
@@ -129,48 +129,48 @@ operator==(const Iso_rectangleC2<R CGAL_CTAG> &r) const
 template < class R >
 inline
 bool
-Iso_rectangleC2<R CGAL_CTAG>::
-operator!=(const Iso_rectangleC2<R CGAL_CTAG> &r) const
+Iso_rectangleC2<R>::
+operator!=(const Iso_rectangleC2<R> &r) const
 {
   return !(*this == r);
 }
 
 template < class R >
 inline
-const typename Iso_rectangleC2<R CGAL_CTAG>::FT &
-Iso_rectangleC2<R CGAL_CTAG>::xmin() const
+const typename Iso_rectangleC2<R>::FT &
+Iso_rectangleC2<R>::xmin() const
 {
   return min().x();
 }
 
 template < class R >
 inline
-const typename Iso_rectangleC2<R CGAL_CTAG>::FT &
-Iso_rectangleC2<R CGAL_CTAG>::ymin() const
+const typename Iso_rectangleC2<R>::FT &
+Iso_rectangleC2<R>::ymin() const
 {
   return min().y();
 }
 
 template < class R >
 inline
-const typename Iso_rectangleC2<R CGAL_CTAG>::FT &
-Iso_rectangleC2<R CGAL_CTAG>::xmax() const
+const typename Iso_rectangleC2<R>::FT &
+Iso_rectangleC2<R>::xmax() const
 {
   return max().x();
 }
 
 template < class R >
 inline
-const typename Iso_rectangleC2<R CGAL_CTAG>::FT &
-Iso_rectangleC2<R CGAL_CTAG>::ymax() const
+const typename Iso_rectangleC2<R>::FT &
+Iso_rectangleC2<R>::ymax() const
 {
   return max().y();
 }
 
 template < class R >
 inline
-const typename Iso_rectangleC2<R CGAL_CTAG>::FT &
-Iso_rectangleC2<R CGAL_CTAG>::min_coord(int i) const
+const typename Iso_rectangleC2<R>::FT &
+Iso_rectangleC2<R>::min_coord(int i) const
 {
   CGAL_kernel_precondition( i == 0 || i == 1 );
   if (i == 0)
@@ -181,8 +181,8 @@ Iso_rectangleC2<R CGAL_CTAG>::min_coord(int i) const
 
 template < class R >
 inline
-const typename Iso_rectangleC2<R CGAL_CTAG>::FT &
-Iso_rectangleC2<R CGAL_CTAG>::max_coord(int i) const
+const typename Iso_rectangleC2<R>::FT &
+Iso_rectangleC2<R>::max_coord(int i) const
 {
   CGAL_kernel_precondition( i == 0 || i == 1 );
   if (i == 0)
@@ -192,8 +192,8 @@ Iso_rectangleC2<R CGAL_CTAG>::max_coord(int i) const
 }
 
 template < class R >
-typename Iso_rectangleC2<R CGAL_CTAG>::Point_2
-Iso_rectangleC2<R CGAL_CTAG>::vertex(int i) const
+typename Iso_rectangleC2<R>::Point_2
+Iso_rectangleC2<R>::vertex(int i) const
 {
   switch (i%4) {
   case 0: return min();
@@ -205,16 +205,16 @@ Iso_rectangleC2<R CGAL_CTAG>::vertex(int i) const
 
 template < class R >
 inline
-typename Iso_rectangleC2<R CGAL_CTAG>::Point_2
-Iso_rectangleC2<R CGAL_CTAG>::operator[](int i) const
+typename Iso_rectangleC2<R>::Point_2
+Iso_rectangleC2<R>::operator[](int i) const
 {
   return vertex(i);
 }
 
 template < class R >
 inline
-typename Iso_rectangleC2<R CGAL_CTAG>::FT
-Iso_rectangleC2<R CGAL_CTAG>::area() const
+typename Iso_rectangleC2<R>::FT
+Iso_rectangleC2<R>::area() const
 {
   return (xmax()-xmin()) * (ymax()-ymin());
 }
@@ -222,8 +222,8 @@ Iso_rectangleC2<R CGAL_CTAG>::area() const
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
 Bounded_side
-Iso_rectangleC2<R CGAL_CTAG>::
-bounded_side(const typename Iso_rectangleC2<R CGAL_CTAG>::Point_2 &p) const
+Iso_rectangleC2<R>::
+bounded_side(const typename Iso_rectangleC2<R>::Point_2 &p) const
 { // FIXME : predicate
   bool x_incr = (xmin() < p.x()) && (p.x() < xmax()),
        y_incr = (ymin() < p.y()) && (p.y() < ymax());
@@ -244,8 +244,8 @@ bounded_side(const typename Iso_rectangleC2<R CGAL_CTAG>::Point_2 &p) const
 template < class R >
 inline
 bool
-Iso_rectangleC2<R CGAL_CTAG>::
-has_on_boundary(const typename Iso_rectangleC2<R CGAL_CTAG>::Point_2 &p) const
+Iso_rectangleC2<R>::
+has_on_boundary(const typename Iso_rectangleC2<R>::Point_2 &p) const
 {
   return bounded_side(p) == ON_BOUNDARY;
 }
@@ -253,8 +253,8 @@ has_on_boundary(const typename Iso_rectangleC2<R CGAL_CTAG>::Point_2 &p) const
 template < class R >
 inline
 bool
-Iso_rectangleC2<R CGAL_CTAG>::
-has_on_bounded_side(const typename Iso_rectangleC2<R CGAL_CTAG>::Point_2 &p)
+Iso_rectangleC2<R>::
+has_on_bounded_side(const typename Iso_rectangleC2<R>::Point_2 &p)
     const
 {
   return bounded_side(p) == ON_BOUNDED_SIDE;
@@ -263,8 +263,8 @@ has_on_bounded_side(const typename Iso_rectangleC2<R CGAL_CTAG>::Point_2 &p)
 template < class R >
 inline
 bool
-Iso_rectangleC2<R CGAL_CTAG>::
-has_on_unbounded_side(const typename Iso_rectangleC2<R CGAL_CTAG>::Point_2 &p)
+Iso_rectangleC2<R>::
+has_on_unbounded_side(const typename Iso_rectangleC2<R>::Point_2 &p)
     const
 {
   return bounded_side(p) == ON_UNBOUNDED_SIDE;
@@ -273,7 +273,7 @@ has_on_unbounded_side(const typename Iso_rectangleC2<R CGAL_CTAG>::Point_2 &p)
 template < class R >
 inline
 bool
-Iso_rectangleC2<R CGAL_CTAG>::is_degenerate() const
+Iso_rectangleC2<R>::is_degenerate() const
 {
   return (xmin() == xmax()) || (ymin() == ymax());
 }
@@ -281,7 +281,7 @@ Iso_rectangleC2<R CGAL_CTAG>::is_degenerate() const
 template < class R >
 inline
 Bbox_2
-Iso_rectangleC2<R CGAL_CTAG>::bbox() const
+Iso_rectangleC2<R>::bbox() const
 { // FIXME : to_interval
   return Bbox_2(CGAL::to_double(xmin()), CGAL::to_double(ymin()),
                 CGAL::to_double(xmax()), CGAL::to_double(ymax()));
@@ -290,7 +290,7 @@ Iso_rectangleC2<R CGAL_CTAG>::bbox() const
 #ifndef CGAL_NO_OSTREAM_INSERT_ISO_RECTANGLEC2
 template < class R >
 std::ostream &
-operator<<(std::ostream &os, const Iso_rectangleC2<R CGAL_CTAG> &r)
+operator<<(std::ostream &os, const Iso_rectangleC2<R> &r)
 {
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
@@ -307,14 +307,14 @@ operator<<(std::ostream &os, const Iso_rectangleC2<R CGAL_CTAG> &r)
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
 std::istream &
-operator>>(std::istream &is, Iso_rectangleC2<R CGAL_CTAG> &r)
+operator>>(std::istream &is, Iso_rectangleC2<R> &r)
 {
     typename R::Point_2 p, q;
 
     is >> p >> q;
 
     if (is)
-	r = Iso_rectangleC2<R CGAL_CTAG>(p, q);
+	r = Iso_rectangleC2<R>(p, q);
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_ISO_RECTANGLEC2

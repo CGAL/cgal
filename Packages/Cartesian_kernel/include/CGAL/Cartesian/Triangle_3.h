@@ -25,7 +25,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
-class TriangleC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
+class TriangleC3
   : public R_::Triangle_handle_3
 {
   typedef typename R_::FT                   FT;
@@ -76,7 +76,7 @@ public:
 
 template < class R >
 bool
-TriangleC3<R CGAL_CTAG>::operator==(const TriangleC3<R CGAL_CTAG> &t) const
+TriangleC3<R>::operator==(const TriangleC3<R> &t) const
 {
   if (identical(t))
       return true;
@@ -92,14 +92,14 @@ TriangleC3<R CGAL_CTAG>::operator==(const TriangleC3<R CGAL_CTAG> &t) const
 template < class R >
 inline
 bool
-TriangleC3<R CGAL_CTAG>::operator!=(const TriangleC3<R CGAL_CTAG> &t) const
+TriangleC3<R>::operator!=(const TriangleC3<R> &t) const
 {
   return !(*this == t);
 }
 
 template < class R >
-const typename TriangleC3<R CGAL_CTAG>::Point_3 &
-TriangleC3<R CGAL_CTAG>::vertex(int i) const
+const typename TriangleC3<R>::Point_3 &
+TriangleC3<R>::vertex(int i) const
 {
   if (i<0) i=(i%3)+3;
   else if (i>2) i=i%3;
@@ -110,16 +110,16 @@ TriangleC3<R CGAL_CTAG>::vertex(int i) const
 
 template < class R >
 inline
-const typename TriangleC3<R CGAL_CTAG>::Point_3 &
-TriangleC3<R CGAL_CTAG>::operator[](int i) const
+const typename TriangleC3<R>::Point_3 &
+TriangleC3<R>::operator[](int i) const
 {
   return vertex(i);
 }
 
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
-typename TriangleC3<R CGAL_CTAG>::FT
-TriangleC3<R CGAL_CTAG>::squared_area() const
+typename TriangleC3<R>::FT
+TriangleC3<R>::squared_area() const
 {
   typename R::Vector_3 v1 = vertex(1)-vertex(0);
   typename R::Vector_3 v2 = vertex(2)-vertex(0);
@@ -129,23 +129,23 @@ TriangleC3<R CGAL_CTAG>::squared_area() const
 
 template < class R >
 inline
-typename TriangleC3<R CGAL_CTAG>::Plane_3
-TriangleC3<R CGAL_CTAG>::supporting_plane() const
+typename TriangleC3<R>::Plane_3
+TriangleC3<R>::supporting_plane() const
 {
   return Plane_3(vertex(0), vertex(1), vertex(2));
 }
 
 template < class R >
 Bbox_3
-TriangleC3<R CGAL_CTAG>::bbox() const
+TriangleC3<R>::bbox() const
 {
   return vertex(0).bbox() + vertex(1).bbox() + vertex(2).bbox();
 }
 
 template < class R >
 bool
-TriangleC3<R CGAL_CTAG>::
-has_on(const typename TriangleC3<R CGAL_CTAG>::Point_3 &p) const
+TriangleC3<R>::
+has_on(const typename TriangleC3<R>::Point_3 &p) const
 {
   Point_3  o  = vertex(0) + supporting_plane().orthogonal_vector();
   Vector_3 v0 = vertex(0)-o,
@@ -160,7 +160,7 @@ has_on(const typename TriangleC3<R CGAL_CTAG>::Point_3 &p) const
 
 template < class R >
 bool
-TriangleC3<R CGAL_CTAG>::is_degenerate() const
+TriangleC3<R>::is_degenerate() const
 {
   return collinear(vertex(0),vertex(1),vertex(2));
 }
@@ -168,7 +168,7 @@ TriangleC3<R CGAL_CTAG>::is_degenerate() const
 #ifndef CGAL_NO_OSTREAM_INSERT_TRIANGLEC3
 template < class R >
 std::ostream &
-operator<<(std::ostream &os, const TriangleC3<R CGAL_CTAG> &t)
+operator<<(std::ostream &os, const TriangleC3<R> &t)
 {
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
@@ -185,14 +185,14 @@ operator<<(std::ostream &os, const TriangleC3<R CGAL_CTAG> &t)
 #ifndef CGAL_NO_ISTREAM_EXTRACT_TRIANGLEC3
 template < class R >
 std::istream &
-operator>>(std::istream &is, TriangleC3<R CGAL_CTAG> &t)
+operator>>(std::istream &is, TriangleC3<R> &t)
 {
     typename R::Point_3 p, q, r;
 
     is >> p >> q >> r;
 
     if (is)
-	t = TriangleC3<R CGAL_CTAG>(p, q, r);
+	t = TriangleC3<R>(p, q, r);
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_TRIANGLEC3

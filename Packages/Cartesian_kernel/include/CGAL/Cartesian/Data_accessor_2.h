@@ -26,7 +26,7 @@ CGAL_BEGIN_NAMESPACE
 
 // 2D Cartesian point data accessor
 template < class R_ >
-class Data_accessorC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
+class Data_accessorC2
 {
 public:
     // Min_ellipse_2 wants FT public...

@@ -28,7 +28,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
-class PointC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
+class PointC2
   : public R_::Point_handle_2
 {
   typedef typename R_::FT                   FT;
@@ -121,8 +121,8 @@ public:
 
 template < class R >
 CGAL_KERNEL_INLINE
-const typename PointC2<R CGAL_CTAG>::FT &
-PointC2<R CGAL_CTAG>::cartesian(int i) const
+const typename PointC2<R>::FT &
+PointC2<R>::cartesian(int i) const
 {
   CGAL_kernel_precondition( (i == 0) || (i == 1) );
   return (i == 0) ? x() : y();
@@ -130,8 +130,8 @@ PointC2<R CGAL_CTAG>::cartesian(int i) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename PointC2<R CGAL_CTAG>::FT
-PointC2<R CGAL_CTAG>::homogeneous(int i) const
+typename PointC2<R>::FT
+PointC2<R>::homogeneous(int i) const
 {
   CGAL_kernel_precondition( (i>=0) && (i<=2) );
   if (i<2)
@@ -142,7 +142,7 @@ PointC2<R CGAL_CTAG>::homogeneous(int i) const
 template < class R >
 CGAL_KERNEL_INLINE
 Bbox_2
-PointC2<R CGAL_CTAG>::bbox() const
+PointC2<R>::bbox() const
 {
   double bx = CGAL::to_double(x());
   double by = CGAL::to_double(y());
@@ -152,7 +152,7 @@ PointC2<R CGAL_CTAG>::bbox() const
 #ifndef CGAL_NO_OSTREAM_INSERT_POINTC2
 template < class R >
 std::ostream &
-operator<<(std::ostream &os, const PointC2<R CGAL_CTAG> &p)
+operator<<(std::ostream &os, const PointC2<R> &p)
 {
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
@@ -170,7 +170,7 @@ operator<<(std::ostream &os, const PointC2<R CGAL_CTAG> &p)
 #ifndef CGAL_NO_ISTREAM_EXTRACT_POINTC2
 template < class R >
 std::istream &
-operator>>(std::istream &is, PointC2<R CGAL_CTAG> &p)
+operator>>(std::istream &is, PointC2<R> &p)
 {
     typename R::FT x, y;
     switch(is.iword(IO::mode)) {
@@ -187,7 +187,7 @@ operator>>(std::istream &is, PointC2<R CGAL_CTAG> &p)
         break;
     }
     if (is)
-	p = PointC2<R CGAL_CTAG>(x, y);
+	p = PointC2<R>(x, y);
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_POINTC2

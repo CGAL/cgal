@@ -27,73 +27,73 @@ CGAL_BEGIN_NAMESPACE
 template < class R >
 inline
 typename R::Point_2
-operator+(const PointC2<R CGAL_CTAG> &p, const VectorC2<R CGAL_CTAG> &v)
+operator+(const PointC2<R> &p, const VectorC2<R> &v)
 {
-  return PointC2<R CGAL_CTAG>(p.x() + v.x(), p.y() + v.y());
+  return PointC2<R>(p.x() + v.x(), p.y() + v.y());
 }
 
 template < class R >
 inline
 typename R::Point_2
-operator-(const PointC2<R CGAL_CTAG> &p, const VectorC2<R CGAL_CTAG> &v)
+operator-(const PointC2<R> &p, const VectorC2<R> &v)
 {
-  return PointC2<R CGAL_CTAG>(p.x() - v.x(), p.y() - v.y());
+  return PointC2<R>(p.x() - v.x(), p.y() - v.y());
 }
 
 template < class R >
 inline
 typename R::Point_2
-operator+(const Origin &, const VectorC2<R CGAL_CTAG> &v)
+operator+(const Origin &, const VectorC2<R> &v)
 {
-  return PointC2<R CGAL_CTAG>(v);
+  return PointC2<R>(v);
 }
 
 template < class R >
 inline
 typename R::Point_2
-operator-(const Origin &, const VectorC2<R CGAL_CTAG> &v)
+operator-(const Origin &, const VectorC2<R> &v)
 {
-  return PointC2<R CGAL_CTAG>(-v);
+  return PointC2<R>(-v);
 }
 
 template < class R >
 inline
 typename R::Vector_2
-operator-(const PointC2<R CGAL_CTAG> &p, const PointC2<R CGAL_CTAG> &q)
+operator-(const PointC2<R> &p, const PointC2<R> &q)
 {
-  return VectorC2<R CGAL_CTAG>(p.x() - q.x(), p.y() - q.y());
+  return VectorC2<R>(p.x() - q.x(), p.y() - q.y());
 }
 
 template < class R >
 inline
 typename R::Vector_2
-operator-(const PointC2<R CGAL_CTAG> &p, const Origin &)
+operator-(const PointC2<R> &p, const Origin &)
 {
-  return VectorC2<R CGAL_CTAG>(p);
+  return VectorC2<R>(p);
 }
 
 template < class R >
 inline
 typename R::Vector_2
-operator-(const Origin &, const PointC2<R CGAL_CTAG> &p)
+operator-(const Origin &, const PointC2<R> &p)
 {
-  return VectorC2<R CGAL_CTAG>(-p.x(), -p.y());
+  return VectorC2<R>(-p.x(), -p.y());
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
 typename R::Vector_2
-operator*(const typename R::FT &c, const VectorC2<R CGAL_CTAG> &w)
+operator*(const typename R::FT &c, const VectorC2<R> &w)
 {
-   return VectorC2<R CGAL_CTAG>(c * w.x(), c * w.y());
+   return VectorC2<R>(c * w.x(), c * w.y());
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
 typename R::Vector_2
-operator*(const VectorC2<R CGAL_CTAG> &w, const typename R::FT &c)
+operator*(const VectorC2<R> &w, const typename R::FT &c)
 {
-   return VectorC2<R CGAL_CTAG>(c * w.x(), c * w.y());
+   return VectorC2<R>(c * w.x(), c * w.y());
 }
 
 CGAL_END_NAMESPACE

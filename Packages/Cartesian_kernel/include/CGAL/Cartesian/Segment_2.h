@@ -27,7 +27,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
-class SegmentC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
+class SegmentC2
   : public R_::Segment_handle_2
 {
   typedef typename R_::FT                   FT;
@@ -96,7 +96,7 @@ public:
 template < class R >
 inline
 bool
-SegmentC2<R CGAL_CTAG>::operator==(const SegmentC2<R CGAL_CTAG> &s) const
+SegmentC2<R>::operator==(const SegmentC2<R> &s) const
 {
   if (identical(s))
       return true;
@@ -106,103 +106,103 @@ SegmentC2<R CGAL_CTAG>::operator==(const SegmentC2<R CGAL_CTAG> &s) const
 template < class R >
 inline
 bool
-SegmentC2<R CGAL_CTAG>::operator!=(const SegmentC2<R CGAL_CTAG> &s) const
+SegmentC2<R>::operator!=(const SegmentC2<R> &s) const
 {
   return !(*this == s);
 }
 
 template < class R >
 inline
-const typename SegmentC2<R CGAL_CTAG>::Point_2 &
-SegmentC2<R CGAL_CTAG>::start() const
+const typename SegmentC2<R>::Point_2 &
+SegmentC2<R>::start() const
 {
   return source();
 }
 
 template < class R >
 inline
-const typename SegmentC2<R CGAL_CTAG>::Point_2 &
-SegmentC2<R CGAL_CTAG>::end() const
+const typename SegmentC2<R>::Point_2 &
+SegmentC2<R>::end() const
 {
   return target();
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
-const typename SegmentC2<R CGAL_CTAG>::Point_2 &
-SegmentC2<R CGAL_CTAG>::min() const
+const typename SegmentC2<R>::Point_2 &
+SegmentC2<R>::min() const
 {
   return lexicographically_xy_smaller(source(),target()) ? source() : target();
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
-const typename SegmentC2<R CGAL_CTAG>::Point_2 &
-SegmentC2<R CGAL_CTAG>::max() const
+const typename SegmentC2<R>::Point_2 &
+SegmentC2<R>::max() const
 {
   return lexicographically_xy_smaller(source(),target()) ? target() : source();
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
-const typename SegmentC2<R CGAL_CTAG>::Point_2 &
-SegmentC2<R CGAL_CTAG>::vertex(int i) const
+const typename SegmentC2<R>::Point_2 &
+SegmentC2<R>::vertex(int i) const
 {
   return (i%2 == 0) ? source() : target();
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
-const typename SegmentC2<R CGAL_CTAG>::Point_2 &
-SegmentC2<R CGAL_CTAG>::point(int i) const
+const typename SegmentC2<R>::Point_2 &
+SegmentC2<R>::point(int i) const
 {
   return (i%2 == 0) ? source() : target();
 }
 
 template < class R >
 inline
-const typename SegmentC2<R CGAL_CTAG>::Point_2 &
-SegmentC2<R CGAL_CTAG>::operator[](int i) const
+const typename SegmentC2<R>::Point_2 &
+SegmentC2<R>::operator[](int i) const
 {
   return vertex(i);
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename SegmentC2<R CGAL_CTAG>::FT
-SegmentC2<R CGAL_CTAG>::squared_length() const
+typename SegmentC2<R>::FT
+SegmentC2<R>::squared_length() const
 {
   return squared_distance(source(), target());
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename SegmentC2<R CGAL_CTAG>::Direction_2
-SegmentC2<R CGAL_CTAG>::direction() const
+typename SegmentC2<R>::Direction_2
+SegmentC2<R>::direction() const
 {
   return Direction_2( target() - source() );
 }
 
 template < class R >
 inline
-typename SegmentC2<R CGAL_CTAG>::Line_2
-SegmentC2<R CGAL_CTAG>::supporting_line() const
+typename SegmentC2<R>::Line_2
+SegmentC2<R>::supporting_line() const
 {
   return Line_2(*this);
 }
 
 template < class R >
 inline
-typename SegmentC2<R CGAL_CTAG>::Segment_2
-SegmentC2<R CGAL_CTAG>::opposite() const
+typename SegmentC2<R>::Segment_2
+SegmentC2<R>::opposite() const
 {
-  return SegmentC2<R CGAL_CTAG>(target(), source());
+  return SegmentC2<R>(target(), source());
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
 Bbox_2
-SegmentC2<R CGAL_CTAG>::bbox() const
+SegmentC2<R>::bbox() const
 {
   return source().bbox() + target().bbox();
 }
@@ -210,7 +210,7 @@ SegmentC2<R CGAL_CTAG>::bbox() const
 template < class R >
 inline
 bool
-SegmentC2<R CGAL_CTAG>::is_degenerate() const
+SegmentC2<R>::is_degenerate() const
 {
   return source() == target();
 }
@@ -218,7 +218,7 @@ SegmentC2<R CGAL_CTAG>::is_degenerate() const
 template < class R >
 CGAL_KERNEL_INLINE
 bool
-SegmentC2<R CGAL_CTAG>::is_horizontal() const
+SegmentC2<R>::is_horizontal() const
 {
   return y_equal(source(), target());
 }
@@ -226,7 +226,7 @@ SegmentC2<R CGAL_CTAG>::is_horizontal() const
 template < class R >
 CGAL_KERNEL_INLINE
 bool
-SegmentC2<R CGAL_CTAG>::is_vertical() const
+SegmentC2<R>::is_vertical() const
 {
   return x_equal(source(), target());
 }
@@ -234,8 +234,8 @@ SegmentC2<R CGAL_CTAG>::is_vertical() const
 template < class R >
 CGAL_KERNEL_INLINE
 bool
-SegmentC2<R CGAL_CTAG>::
-has_on(const typename SegmentC2<R CGAL_CTAG>::Point_2 &p) const
+SegmentC2<R>::
+has_on(const typename SegmentC2<R>::Point_2 &p) const
 {
   return are_ordered_along_line(source(), p, target());
 }
@@ -243,8 +243,8 @@ has_on(const typename SegmentC2<R CGAL_CTAG>::Point_2 &p) const
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
 bool
-SegmentC2<R CGAL_CTAG>::
-collinear_has_on(const typename SegmentC2<R CGAL_CTAG>::Point_2 &p) const
+SegmentC2<R>::
+collinear_has_on(const typename SegmentC2<R>::Point_2 &p) const
 {
     return collinear_are_ordered_along_line(source(), p, target());
 }
@@ -252,7 +252,7 @@ collinear_has_on(const typename SegmentC2<R CGAL_CTAG>::Point_2 &p) const
 #ifndef CGAL_NO_OSTREAM_INSERT_SEGMENTC2
 template < class R >
 std::ostream &
-operator<<(std::ostream &os, const SegmentC2<R CGAL_CTAG> &s)
+operator<<(std::ostream &os, const SegmentC2<R> &s)
 {
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
@@ -268,14 +268,14 @@ operator<<(std::ostream &os, const SegmentC2<R CGAL_CTAG> &s)
 #ifndef CGAL_NO_ISTREAM_EXTRACT_SEGMENTC2
 template < class R >
 std::istream &
-operator>>(std::istream &is, SegmentC2<R CGAL_CTAG> &s)
+operator>>(std::istream &is, SegmentC2<R> &s)
 {
     typename R::Point_2 p, q;
 
     is >> p >> q;
 
     if (is)
-	s = SegmentC2<R CGAL_CTAG>(p, q);
+	s = SegmentC2<R>(p, q);
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_SEGMENTC2

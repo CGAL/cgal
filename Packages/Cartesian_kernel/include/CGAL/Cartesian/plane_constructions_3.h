@@ -29,29 +29,29 @@ CGAL_BEGIN_NAMESPACE
 
 template <class R>
 CGAL_KERNEL_LARGE_INLINE
-PlaneC3<R CGAL_CTAG>
-plane_from_points(const PointC3<R CGAL_CTAG> &p,
-                  const PointC3<R CGAL_CTAG> &q,
-		  const PointC3<R CGAL_CTAG> &r)
+PlaneC3<R>
+plane_from_points(const PointC3<R> &p,
+                  const PointC3<R> &q,
+		  const PointC3<R> &r)
 {
   typename R::FT a, b, c, d;
   plane_from_pointsC3(p.x(), p.y(), p.z(),
                       q.x(), q.y(), q.z(),
                       r.x(), r.y(), r.z(),
                       a, b, c, d);
-  return PlaneC3<R CGAL_CTAG>(a, b, c, d);
+  return PlaneC3<R>(a, b, c, d);
 }
 
 template <class R>
 CGAL_KERNEL_LARGE_INLINE
-PlaneC3<R CGAL_CTAG>
-plane_from_point_direction(const PointC3<R CGAL_CTAG> &p,
-                           const DirectionC3<R CGAL_CTAG> &d)
+PlaneC3<R>
+plane_from_point_direction(const PointC3<R> &p,
+                           const DirectionC3<R> &d)
 {
   typename R::FT A, B, C, D;
   plane_from_point_directionC3(p.x(), p.y(), p.z(), d.dx(), d.dy(), d.dz(),
                                A, B, C, D);
-  return PlaneC3<R CGAL_CTAG>(A, B, C, D);
+  return PlaneC3<R>(A, B, C, D);
 }
 
 CGAL_END_NAMESPACE

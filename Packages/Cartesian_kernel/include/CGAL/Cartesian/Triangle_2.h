@@ -27,7 +27,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
-class TriangleC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
+class TriangleC2
   : public R_::Triangle_handle_2
 {
   typedef typename R_::FT                   FT;
@@ -88,7 +88,7 @@ public:
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
 bool
-TriangleC2<R CGAL_CTAG>::operator==(const TriangleC2<R CGAL_CTAG> &t) const
+TriangleC2<R>::operator==(const TriangleC2<R> &t) const
 {
   if (identical(t))
       return true;
@@ -104,15 +104,15 @@ TriangleC2<R CGAL_CTAG>::operator==(const TriangleC2<R CGAL_CTAG> &t) const
 template < class R >
 inline
 bool
-TriangleC2<R CGAL_CTAG>::operator!=(const TriangleC2<R CGAL_CTAG> &t) const
+TriangleC2<R>::operator!=(const TriangleC2<R> &t) const
 {
   return !(*this == t);
 }
 
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
-const typename TriangleC2<R CGAL_CTAG>::Point_2 &
-TriangleC2<R CGAL_CTAG>::vertex(int i) const
+const typename TriangleC2<R>::Point_2 &
+TriangleC2<R>::vertex(int i) const
 {
   if (i>2) i = i%3;
   else if (i<0) i = (i%3) + 3;
@@ -123,16 +123,16 @@ TriangleC2<R CGAL_CTAG>::vertex(int i) const
 
 template < class R >
 inline
-const typename TriangleC2<R CGAL_CTAG>::Point_2 &
-TriangleC2<R CGAL_CTAG>::operator[](int i) const
+const typename TriangleC2<R>::Point_2 &
+TriangleC2<R>::operator[](int i) const
 {
   return vertex(i);
 }
 
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
-typename TriangleC2<R CGAL_CTAG>::FT
-TriangleC2<R CGAL_CTAG>::area() const
+typename TriangleC2<R>::FT
+TriangleC2<R>::area() const
 {
   typename R::Vector_2 v1 = vertex(1)-vertex(0);
   typename R::Vector_2 v2 = vertex(2)-vertex(0);
@@ -142,7 +142,7 @@ TriangleC2<R CGAL_CTAG>::area() const
 template < class R >
 inline
 Orientation
-TriangleC2<R CGAL_CTAG>::orientation() const
+TriangleC2<R>::orientation() const
 {
   return CGAL::orientation(vertex(0), vertex(1), vertex(2));
 }
@@ -150,8 +150,8 @@ TriangleC2<R CGAL_CTAG>::orientation() const
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
 Bounded_side
-TriangleC2<R CGAL_CTAG>::
-bounded_side(const typename TriangleC2<R CGAL_CTAG>::Point_2 &p) const
+TriangleC2<R>::
+bounded_side(const typename TriangleC2<R>::Point_2 &p) const
 {
   Orientation o1 = CGAL::orientation(vertex(0), vertex(1), p),
               o2 = CGAL::orientation(vertex(1), vertex(2), p),
@@ -173,8 +173,8 @@ bounded_side(const typename TriangleC2<R CGAL_CTAG>::Point_2 &p) const
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
 Oriented_side
-TriangleC2<R CGAL_CTAG>::
-oriented_side(const typename TriangleC2<R CGAL_CTAG>::Point_2 &p) const
+TriangleC2<R>::
+oriented_side(const typename TriangleC2<R>::Point_2 &p) const
 {
   // depends on the orientation of the vertices
   Orientation o1 = CGAL::orientation(vertex(0), vertex(1), p),
@@ -198,8 +198,8 @@ oriented_side(const typename TriangleC2<R CGAL_CTAG>::Point_2 &p) const
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
 bool
-TriangleC2<R CGAL_CTAG>::
-has_on_bounded_side(const typename TriangleC2<R CGAL_CTAG>::Point_2 &p) const
+TriangleC2<R>::
+has_on_bounded_side(const typename TriangleC2<R>::Point_2 &p) const
 {
   return bounded_side(p) == ON_BOUNDED_SIDE;
 }
@@ -207,8 +207,8 @@ has_on_bounded_side(const typename TriangleC2<R CGAL_CTAG>::Point_2 &p) const
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
 bool
-TriangleC2<R CGAL_CTAG>::
-has_on_unbounded_side(const typename TriangleC2<R CGAL_CTAG>::Point_2 &p) const
+TriangleC2<R>::
+has_on_unbounded_side(const typename TriangleC2<R>::Point_2 &p) const
 {
   return bounded_side(p) == ON_UNBOUNDED_SIDE;
 }
@@ -216,8 +216,8 @@ has_on_unbounded_side(const typename TriangleC2<R CGAL_CTAG>::Point_2 &p) const
 template < class R >
 inline
 bool
-TriangleC2<R CGAL_CTAG>::
-has_on_boundary(const typename TriangleC2<R CGAL_CTAG>::Point_2 &p) const
+TriangleC2<R>::
+has_on_boundary(const typename TriangleC2<R>::Point_2 &p) const
 {
   return bounded_side(p) == ON_BOUNDARY;
 }
@@ -225,8 +225,8 @@ has_on_boundary(const typename TriangleC2<R CGAL_CTAG>::Point_2 &p) const
 template < class R >
 inline
 bool
-TriangleC2<R CGAL_CTAG>::
-has_on_negative_side(const typename TriangleC2<R CGAL_CTAG>::Point_2 &p) const
+TriangleC2<R>::
+has_on_negative_side(const typename TriangleC2<R>::Point_2 &p) const
 {
   return oriented_side(p) == ON_NEGATIVE_SIDE;
 }
@@ -234,8 +234,8 @@ has_on_negative_side(const typename TriangleC2<R CGAL_CTAG>::Point_2 &p) const
 template < class R >
 inline
 bool
-TriangleC2<R CGAL_CTAG>::
-has_on_positive_side(const typename TriangleC2<R CGAL_CTAG>::Point_2 &p) const
+TriangleC2<R>::
+has_on_positive_side(const typename TriangleC2<R>::Point_2 &p) const
 {
   return oriented_side(p) == ON_POSITIVE_SIDE;
 }
@@ -243,7 +243,7 @@ has_on_positive_side(const typename TriangleC2<R CGAL_CTAG>::Point_2 &p) const
 template < class R >
 inline
 bool
-TriangleC2<R CGAL_CTAG>::is_degenerate() const
+TriangleC2<R>::is_degenerate() const
 {
   return collinear(vertex(0), vertex(1), vertex(2));
 }
@@ -251,23 +251,23 @@ TriangleC2<R CGAL_CTAG>::is_degenerate() const
 template < class R >
 inline
 Bbox_2
-TriangleC2<R CGAL_CTAG>::bbox() const
+TriangleC2<R>::bbox() const
 {
   return vertex(0).bbox() + vertex(1).bbox() + vertex(2).bbox();
 }
 
 template < class R >
 inline
-typename TriangleC2<R CGAL_CTAG>::Triangle_2
-TriangleC2<R CGAL_CTAG>::opposite() const
+typename TriangleC2<R>::Triangle_2
+TriangleC2<R>::opposite() const
 {
-  return TriangleC2<R CGAL_CTAG>(vertex(0), vertex(2), vertex(1));
+  return TriangleC2<R>(vertex(0), vertex(2), vertex(1));
 }
 
 #ifndef CGAL_NO_OSTREAM_INSERT_TRIANGLEC2
 template < class R >
 std::ostream &
-operator<<(std::ostream &os, const TriangleC2<R CGAL_CTAG> &t)
+operator<<(std::ostream &os, const TriangleC2<R> &t)
 {
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
@@ -284,14 +284,14 @@ operator<<(std::ostream &os, const TriangleC2<R CGAL_CTAG> &t)
 #ifndef CGAL_NO_ISTREAM_EXTRACT_TRIANGLEC2
 template < class R >
 std::istream &
-operator>>(std::istream &is, TriangleC2<R CGAL_CTAG> &t)
+operator>>(std::istream &is, TriangleC2<R> &t)
 {
     typename R::Point_2 p, q, r;
 
     is >> p >> q >> r;
 
     if (is)
-	t = TriangleC2<R CGAL_CTAG>(p, q, r);
+	t = TriangleC2<R>(p, q, r);
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_TRIANGLEC2

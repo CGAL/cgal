@@ -43,7 +43,7 @@ CGAL_END_NAMESPACE
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
-class Aff_transformationC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
+class Aff_transformationC2
   : public R_::Aff_transformation_handle_2
 {
   typedef typename R_::FT                   FT;
@@ -175,7 +175,7 @@ public:
 
 template < class R >
 std::ostream&
-Aff_transformationC2<R CGAL_CTAG>::print(std::ostream &os) const
+Aff_transformationC2<R>::print(std::ostream &os) const
 {
   Ptr()->print(os);
   return os;
@@ -184,7 +184,7 @@ Aff_transformationC2<R CGAL_CTAG>::print(std::ostream &os) const
 #ifndef CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATIONC2
 template < class R >
 std::ostream&
-operator<<(std::ostream& os, const Aff_transformationC2<R CGAL_CTAG>& t)
+operator<<(std::ostream& os, const Aff_transformationC2<R>& t)
 {
   t.print(os);
   return os;

@@ -25,7 +25,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
-class SphereC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
+class SphereC3
   : public R_::Sphere_handle_3
 {
   typedef typename R_::FT                   FT;
@@ -156,7 +156,7 @@ public:
 template < class R >
 CGAL_KERNEL_INLINE
 bool
-SphereC3<R CGAL_CTAG>::operator==(const SphereC3<R CGAL_CTAG> &t) const
+SphereC3<R>::operator==(const SphereC3<R> &t) const
 {
   if (identical(t))
       return true;
@@ -168,7 +168,7 @@ SphereC3<R CGAL_CTAG>::operator==(const SphereC3<R CGAL_CTAG> &t) const
 template < class R >
 inline
 bool
-SphereC3<R CGAL_CTAG>::operator!=(const SphereC3<R CGAL_CTAG> &t) const
+SphereC3<R>::operator!=(const SphereC3<R> &t) const
 {
   return !(*this == t);
 }
@@ -176,8 +176,8 @@ SphereC3<R CGAL_CTAG>::operator!=(const SphereC3<R CGAL_CTAG> &t) const
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
 Oriented_side
-SphereC3<R CGAL_CTAG>::
-oriented_side(const typename SphereC3<R CGAL_CTAG>::Point_3 &p) const
+SphereC3<R>::
+oriented_side(const typename SphereC3<R>::Point_3 &p) const
 {
   return Oriented_side(bounded_side(p) * orientation());
 }
@@ -185,8 +185,8 @@ oriented_side(const typename SphereC3<R CGAL_CTAG>::Point_3 &p) const
 template < class R >
 CGAL_KERNEL_INLINE
 Bounded_side
-SphereC3<R CGAL_CTAG>::
-bounded_side(const typename SphereC3<R CGAL_CTAG>::Point_3 &p) const
+SphereC3<R>::
+bounded_side(const typename SphereC3<R>::Point_3 &p) const
 {
     // FIXME: it's a predicate...
   return Bounded_side(CGAL_NTS compare(squared_radius(),
@@ -196,8 +196,8 @@ bounded_side(const typename SphereC3<R CGAL_CTAG>::Point_3 &p) const
 template < class R >
 inline
 bool
-SphereC3<R CGAL_CTAG>::
-has_on_boundary(const typename SphereC3<R CGAL_CTAG>::Point_3 &p) const
+SphereC3<R>::
+has_on_boundary(const typename SphereC3<R>::Point_3 &p) const
 {
     // FIXME: it's a predicate...
   return squared_distance(center(),p) == squared_radius();
@@ -209,8 +209,8 @@ has_on_boundary(const typename SphereC3<R CGAL_CTAG>::Point_3 &p) const
 template < class R >
 CGAL_KERNEL_INLINE
 bool
-SphereC3<R CGAL_CTAG>::
-has_on_negative_side(const typename SphereC3<R CGAL_CTAG>::Point_3 &p) const
+SphereC3<R>::
+has_on_negative_side(const typename SphereC3<R>::Point_3 &p) const
 {
   if (orientation() == COUNTERCLOCKWISE)
     return has_on_unbounded_side(p);
@@ -222,8 +222,8 @@ has_on_negative_side(const typename SphereC3<R CGAL_CTAG>::Point_3 &p) const
 template < class R >
 CGAL_KERNEL_INLINE
 bool
-SphereC3<R CGAL_CTAG>::
-has_on_positive_side(const typename SphereC3<R CGAL_CTAG>::Point_3 &p) const
+SphereC3<R>::
+has_on_positive_side(const typename SphereC3<R>::Point_3 &p) const
 {
   if (orientation() == COUNTERCLOCKWISE)
     return has_on_bounded_side(p);
@@ -235,8 +235,8 @@ has_on_positive_side(const typename SphereC3<R CGAL_CTAG>::Point_3 &p) const
 template < class R >
 inline
 bool
-SphereC3<R CGAL_CTAG>::
-has_on_bounded_side(const typename SphereC3<R CGAL_CTAG>::Point_3 &p) const
+SphereC3<R>::
+has_on_bounded_side(const typename SphereC3<R>::Point_3 &p) const
 {
     // FIXME: it's a predicate...
   return squared_distance(center(),p) < squared_radius();
@@ -247,8 +247,8 @@ has_on_bounded_side(const typename SphereC3<R CGAL_CTAG>::Point_3 &p) const
 template < class R >
 inline
 bool
-SphereC3<R CGAL_CTAG>::
-has_on_unbounded_side(const typename SphereC3<R CGAL_CTAG>::Point_3 &p) const
+SphereC3<R>::
+has_on_unbounded_side(const typename SphereC3<R>::Point_3 &p) const
 {
     // FIXME: it's a predicate...
   return squared_distance(center(),p) > squared_radius();
@@ -259,7 +259,7 @@ has_on_unbounded_side(const typename SphereC3<R CGAL_CTAG>::Point_3 &p) const
 template < class R >
 inline
 bool
-SphereC3<R CGAL_CTAG>::
+SphereC3<R>::
 is_degenerate() const
 {
     // FIXME: it's a predicate (?)
@@ -268,17 +268,17 @@ is_degenerate() const
 
 template < class R >
 inline
-typename SphereC3<R CGAL_CTAG>::Sphere_3
-SphereC3<R CGAL_CTAG>::opposite() const
+typename SphereC3<R>::Sphere_3
+SphereC3<R>::opposite() const
 {
-  return SphereC3<R CGAL_CTAG>(center(), squared_radius(),
+  return SphereC3<R>(center(), squared_radius(),
                                CGAL::opposite(orientation()) );
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
 Bbox_3
-SphereC3<R CGAL_CTAG>::bbox() const
+SphereC3<R>::bbox() const
 {
   double cx = CGAL::to_double(center().x());
   double cy = CGAL::to_double(center().y());
@@ -292,10 +292,10 @@ SphereC3<R CGAL_CTAG>::bbox() const
 /*
 template < class R >
 inline
-EllipseC3<SphereC3<R CGAL_CTAG>::FT> SphereC3<R CGAL_CTAG>::i
-transform(const Aff_transformationC3<SphereC3<R CGAL_CTAG>::FT> &t) const
+EllipseC3<SphereC3<R>::FT> SphereC3<R>::i
+transform(const Aff_transformationC3<SphereC3<R>::FT> &t) const
 {
-  return SphereC3<R CGAL_CTAG>(t.transform(center()),
+  return SphereC3<R>(t.transform(center()),
                       squared_radius(),
                       orientation());
 }
@@ -305,7 +305,7 @@ transform(const Aff_transformationC3<SphereC3<R CGAL_CTAG>::FT> &t) const
 template < class R >
 CGAL_KERNEL_INLINE
 std::ostream &
-operator<<(std::ostream &os, const SphereC3<R CGAL_CTAG> &c)
+operator<<(std::ostream &os, const SphereC3<R> &c)
 {
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
@@ -340,7 +340,7 @@ operator<<(std::ostream &os, const SphereC3<R CGAL_CTAG> &c)
 template < class R >
 CGAL_KERNEL_INLINE
 std::istream &
-operator>>(std::istream &is, SphereC3<R CGAL_CTAG> &c)
+operator>>(std::istream &is, SphereC3<R> &c)
 {
     typename R::Point_3 center;
     typename R::FT squared_radius;
@@ -360,7 +360,7 @@ operator>>(std::istream &is, SphereC3<R CGAL_CTAG> &c)
         break;
     }
     if (is)
-	c = SphereC3<R CGAL_CTAG>(center, squared_radius,
+	c = SphereC3<R>(center, squared_radius,
 		                  static_cast<Orientation>(o));
     return is;
 }

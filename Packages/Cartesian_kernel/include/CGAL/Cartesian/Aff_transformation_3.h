@@ -41,12 +41,10 @@ CGAL_END_NAMESPACE
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
-class Aff_transformationC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
+class Aff_transformationC3
   : public R_::Aff_transformation_handle_3
 {
-#ifdef CGAL_CFG_NO_ADVANCED_KERNEL
-  friend class PlaneC3<R_ CGAL_CTAG>; // FIXME: why ?
-#endif
+  friend class PlaneC3<R_>; // FIXME: why ?
 
   typedef typename R_::FT                   FT;
   typedef Aff_transformation_rep_baseC3<R_> Aff_t_base;
@@ -174,7 +172,7 @@ protected:
 #ifndef CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATIONC3
 template < class R >
 std::ostream &operator<<(std::ostream &os,
-                         const Aff_transformationC3<R CGAL_CTAG> &t)
+                         const Aff_transformationC3<R> &t)
 {
     t.print(os);
     return os;

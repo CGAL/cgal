@@ -26,9 +26,6 @@
 #define CGAL_CARTESIAN_CLASS_DEFINED
 
 #include <CGAL/basic.h>
-#include <CGAL/Cartesian/redefine_names_2.h>
-#include <CGAL/Cartesian/redefine_names_3.h>
-
 #include <CGAL/Cartesian_dynamic_d.h>
 
 #include <CGAL/Twotuple.h>
@@ -36,12 +33,7 @@
 #include <CGAL/Simple_Handle_for.h>
 #include <CGAL/Handle_for_virtual.h>
 #include <CGAL/utility.h>
-
-#ifdef CGAL_CFG_NO_ADVANCED_KERNEL
-  // Because we cannot use Michael's scheme, we need the wrapper classes
-  // We include them (they are common to Cartesian and Homogeneous)
 #include <CGAL/user_classes.h>
-#endif // CGAL_CFG_NO_ADVANCED_KERNEL
 
 #include <CGAL/Cartesian/Point_2.h>
 #include <CGAL/Cartesian/Vector_2.h>
@@ -90,7 +82,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#ifdef CGAL_CFG_NO_ADVANCED_KERNEL
 template< class R, class FT_ >
 struct Simple_cartesian_base :
      public Cartesian_base_dynamic_d<R,FT_>
@@ -135,14 +126,11 @@ struct Simple_cartesian_base :
     typedef typename Kernel_base_d::Point_d             Point_d;
 
 };
-#endif
 
 
 template< class FT_ >
 struct Simple_cartesian
-#ifdef CGAL_CFG_NO_ADVANCED_KERNEL
   : public Simple_cartesian_base< Simple_cartesian<FT_>, FT_ >
-#endif
 {
     // Number types and representation tag (to avoid ambiguity)
     typedef FT_                                           RT;
@@ -151,10 +139,6 @@ struct Simple_cartesian
     typedef Cartesian_tag                                 Kernel_tag;
 
     typedef Simple_cartesian<FT>                          Self;
-
-#ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-    typedef Self                                          Kernel_base;
-#else
     typedef Simple_cartesian_base<Self,FT>                Kernel_base;
 
     // Now CGAL::Point_2<R> is only a wrapper around CGAL::PointC2<R>
@@ -162,8 +146,6 @@ struct Simple_cartesian
     // Cartesian<FT>::Point_2 is exactly CGAL::Point_2< Cartesian<FT> >
 
     typedef typename Kernel_base::Point_d                 Point_d_base;
-#endif // CGAL_CFG_NO_ADVANCED_KERNEL
-
     typedef typename Kernel_base::Object_2                Object_2;
     typedef typename Kernel_base::Object_3                Object_3;          
 

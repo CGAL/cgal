@@ -26,9 +26,6 @@
 #define CGAL_CARTESIAN_CLASS_DEFINED
 
 #include <CGAL/basic.h>
-#include <CGAL/Cartesian/redefine_names_2.h>
-#include <CGAL/Cartesian/redefine_names_3.h>
-
 #include <CGAL/Handle_for_virtual.h>
 #include <CGAL/basic_classes.h>
 #include <CGAL/user_classes.h>
@@ -85,7 +82,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#ifdef CGAL_CFG_NO_ADVANCED_KERNEL
 template< class R, class FT_ >
 struct Cartesian_base
   : public Cartesian_base_dynamic_d<R,FT_>
@@ -129,14 +125,11 @@ struct Cartesian_base
   
     typedef typename Kernel_base_d::Point_d             Point_d;
 };
-#endif
 
 
 template< class FT_ >
 struct Cartesian
-#ifdef CGAL_CFG_NO_ADVANCED_KERNEL
   : public Cartesian_base< Cartesian<FT_>, FT_ >
-#endif
 {
     // Number types and representation tag (to avoid ambiguity)
     typedef FT_                                           RT;
@@ -145,10 +138,6 @@ struct Cartesian
     typedef Cartesian_tag                                 Kernel_tag;
 
     typedef Cartesian<FT>                                 Self;
-
-#ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-    typedef Self                                          Kernel_base;
-#else
     typedef Cartesian_base<Self,FT>                       Kernel_base;
 
     // Now CGAL::Point_2<R> is only a wrapper around CGAL::PointC2<R>
@@ -156,9 +145,6 @@ struct Cartesian
     // Cartesian<FT>::Point_2 is exactly CGAL::Point_2< Cartesian<FT> >
 
     typedef typename Kernel_base::Point_d                 Point_d_base;
-
-#endif // CGAL_CFG_NO_ADVANCED_KERNEL
-
     typedef typename Kernel_base::Object_2                Object_2;
     typedef typename Kernel_base::Object_3                Object_3;          
 

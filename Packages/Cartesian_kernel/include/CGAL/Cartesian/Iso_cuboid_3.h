@@ -27,7 +27,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
-class Iso_cuboidC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
+class Iso_cuboidC3
   : public R_::Iso_cuboid_handle_3
 {
   typedef typename R_::FT                   FT;
@@ -123,7 +123,7 @@ public:
 template < class R >
 CGAL_KERNEL_INLINE
 bool
-Iso_cuboidC3<R CGAL_CTAG>::operator==(const Iso_cuboidC3<R CGAL_CTAG>& r) const
+Iso_cuboidC3<R>::operator==(const Iso_cuboidC3<R>& r) const
 { // FIXME : predicate
   if (identical(r))
       return true;
@@ -133,63 +133,63 @@ Iso_cuboidC3<R CGAL_CTAG>::operator==(const Iso_cuboidC3<R CGAL_CTAG>& r) const
 template < class R >
 inline
 bool
-Iso_cuboidC3<R CGAL_CTAG>::operator!=(const Iso_cuboidC3<R CGAL_CTAG>& r) const
+Iso_cuboidC3<R>::operator!=(const Iso_cuboidC3<R>& r) const
 {
   return !(*this == r);
 }
 
 template < class R >
 inline
-const typename Iso_cuboidC3<R CGAL_CTAG>::FT &
-Iso_cuboidC3<R CGAL_CTAG>::xmin() const
+const typename Iso_cuboidC3<R>::FT &
+Iso_cuboidC3<R>::xmin() const
 {
   return min().x();
 }
 
 template < class R >
 inline
-const typename Iso_cuboidC3<R CGAL_CTAG>::FT &
-Iso_cuboidC3<R CGAL_CTAG>::ymin() const
+const typename Iso_cuboidC3<R>::FT &
+Iso_cuboidC3<R>::ymin() const
 {
   return min().y();
 }
 
 template < class R >
 inline
-const typename Iso_cuboidC3<R CGAL_CTAG>::FT &
-Iso_cuboidC3<R CGAL_CTAG>::zmin() const
+const typename Iso_cuboidC3<R>::FT &
+Iso_cuboidC3<R>::zmin() const
 {
   return min().z();
 }
 
 template < class R >
 inline
-const typename Iso_cuboidC3<R CGAL_CTAG>::FT &
-Iso_cuboidC3<R CGAL_CTAG>::xmax() const
+const typename Iso_cuboidC3<R>::FT &
+Iso_cuboidC3<R>::xmax() const
 {
   return max().x();
 }
 
 template < class R >
 inline
-const typename Iso_cuboidC3<R CGAL_CTAG>::FT &
-Iso_cuboidC3<R CGAL_CTAG>::ymax() const
+const typename Iso_cuboidC3<R>::FT &
+Iso_cuboidC3<R>::ymax() const
 {
   return max().y();
 }
 
 template < class R >
 inline
-const typename Iso_cuboidC3<R CGAL_CTAG>::FT &
-Iso_cuboidC3<R CGAL_CTAG>::zmax() const
+const typename Iso_cuboidC3<R>::FT &
+Iso_cuboidC3<R>::zmax() const
 {
   return max().z();
 }
 
 template < class R >
 inline
-const typename Iso_cuboidC3<R CGAL_CTAG>::FT &
-Iso_cuboidC3<R CGAL_CTAG>::min_coord(int i) const
+const typename Iso_cuboidC3<R>::FT &
+Iso_cuboidC3<R>::min_coord(int i) const
 {
   CGAL_kernel_precondition( i == 0 || i == 1 || i == 2 );
   if (i == 0)
@@ -202,8 +202,8 @@ Iso_cuboidC3<R CGAL_CTAG>::min_coord(int i) const
 
 template < class R >
 inline
-const typename Iso_cuboidC3<R CGAL_CTAG>::FT &
-Iso_cuboidC3<R CGAL_CTAG>::max_coord(int i) const
+const typename Iso_cuboidC3<R>::FT &
+Iso_cuboidC3<R>::max_coord(int i) const
 {
   CGAL_kernel_precondition( i == 0 || i == 1 || i == 2 );
   if (i == 0)
@@ -216,8 +216,8 @@ Iso_cuboidC3<R CGAL_CTAG>::max_coord(int i) const
 
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
-typename Iso_cuboidC3<R CGAL_CTAG>::Point_3
-Iso_cuboidC3<R CGAL_CTAG>::vertex(int i) const
+typename Iso_cuboidC3<R>::Point_3
+Iso_cuboidC3<R>::vertex(int i) const
 {
   switch (i%8)
   {
@@ -235,16 +235,16 @@ Iso_cuboidC3<R CGAL_CTAG>::vertex(int i) const
 
 template < class R >
 inline
-typename Iso_cuboidC3<R CGAL_CTAG>::Point_3
-Iso_cuboidC3<R CGAL_CTAG>::operator[](int i) const
+typename Iso_cuboidC3<R>::Point_3
+Iso_cuboidC3<R>::operator[](int i) const
 {
   return vertex(i);
 }
 
 template < class R >
 inline
-typename Iso_cuboidC3<R CGAL_CTAG>::FT
-Iso_cuboidC3<R CGAL_CTAG>::volume() const
+typename Iso_cuboidC3<R>::FT
+Iso_cuboidC3<R>::volume() const
 {
   return (xmax()-xmin()) * (ymax()-ymin()) * (zmax()-zmin());
 }
@@ -252,8 +252,8 @@ Iso_cuboidC3<R CGAL_CTAG>::volume() const
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
 Bounded_side
-Iso_cuboidC3<R CGAL_CTAG>::
-bounded_side(const typename Iso_cuboidC3<R CGAL_CTAG>::Point_3& p) const
+Iso_cuboidC3<R>::
+bounded_side(const typename Iso_cuboidC3<R>::Point_3& p) const
 {
   if (strict_dominance(p, min()) && strict_dominance(max(), p) )
     return ON_BOUNDED_SIDE;
@@ -265,8 +265,8 @@ bounded_side(const typename Iso_cuboidC3<R CGAL_CTAG>::Point_3& p) const
 template < class R >
 inline
 bool
-Iso_cuboidC3<R CGAL_CTAG>::
-has_on_boundary(const typename Iso_cuboidC3<R CGAL_CTAG>::Point_3& p) const
+Iso_cuboidC3<R>::
+has_on_boundary(const typename Iso_cuboidC3<R>::Point_3& p) const
 {
   return bounded_side(p) == ON_BOUNDARY;
 }
@@ -274,8 +274,8 @@ has_on_boundary(const typename Iso_cuboidC3<R CGAL_CTAG>::Point_3& p) const
 template < class R >
 inline
 bool
-Iso_cuboidC3<R CGAL_CTAG>::
-has_on(const typename Iso_cuboidC3<R CGAL_CTAG>::Point_3& p) const
+Iso_cuboidC3<R>::
+has_on(const typename Iso_cuboidC3<R>::Point_3& p) const
 {
   return bounded_side(p) == ON_BOUNDARY;
 }
@@ -283,8 +283,8 @@ has_on(const typename Iso_cuboidC3<R CGAL_CTAG>::Point_3& p) const
 template < class R >
 inline
 bool
-Iso_cuboidC3<R CGAL_CTAG>::
-has_on_bounded_side(const typename Iso_cuboidC3<R CGAL_CTAG>::Point_3& p) const
+Iso_cuboidC3<R>::
+has_on_bounded_side(const typename Iso_cuboidC3<R>::Point_3& p) const
 {
   return bounded_side(p) == ON_BOUNDED_SIDE;
 }
@@ -292,8 +292,8 @@ has_on_bounded_side(const typename Iso_cuboidC3<R CGAL_CTAG>::Point_3& p) const
 template < class R >
 CGAL_KERNEL_INLINE
 bool
-Iso_cuboidC3<R CGAL_CTAG>::
-has_on_unbounded_side(const typename Iso_cuboidC3<R CGAL_CTAG>::Point_3& p)
+Iso_cuboidC3<R>::
+has_on_unbounded_side(const typename Iso_cuboidC3<R>::Point_3& p)
     const
 {
   return bounded_side(p) == ON_UNBOUNDED_SIDE;
@@ -302,7 +302,7 @@ has_on_unbounded_side(const typename Iso_cuboidC3<R CGAL_CTAG>::Point_3& p)
 template < class R >
 CGAL_KERNEL_INLINE
 bool
-Iso_cuboidC3<R CGAL_CTAG>::is_degenerate() const
+Iso_cuboidC3<R>::is_degenerate() const
 { // FIXME : predicate
   return min().hx() == max().hx()
       || min().hy() == max().hy()
@@ -312,7 +312,7 @@ Iso_cuboidC3<R CGAL_CTAG>::is_degenerate() const
 template < class R >
 inline
 Bbox_3
-Iso_cuboidC3<R CGAL_CTAG>::bbox() const
+Iso_cuboidC3<R>::bbox() const
 {
   return min().bbox() + max().bbox();
 }
@@ -320,7 +320,7 @@ Iso_cuboidC3<R CGAL_CTAG>::bbox() const
 #ifndef CGAL_NO_OSTREAM_INSERT_ISO_CUBOIDC3
 template < class R >
 std::ostream &
-operator<<(std::ostream& os, const Iso_cuboidC3<R CGAL_CTAG>& r)
+operator<<(std::ostream& os, const Iso_cuboidC3<R>& r)
 {
   switch(os.iword(IO::mode)) {
   case IO::ASCII :
@@ -336,12 +336,12 @@ operator<<(std::ostream& os, const Iso_cuboidC3<R CGAL_CTAG>& r)
 #ifndef CGAL_NO_ISTREAM_EXTRACT_ISO_CUBOIDC3
 template < class R >
 std::istream &
-operator>>(std::istream& is, Iso_cuboidC3<R CGAL_CTAG>& r)
+operator>>(std::istream& is, Iso_cuboidC3<R>& r)
 {
   typename R::Point_3 p, q;
   is >> p >> q;
   if (is)
-      r = Iso_cuboidC3<R CGAL_CTAG>(p, q);
+      r = Iso_cuboidC3<R>(p, q);
   return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_ISO_CUBOIDC3

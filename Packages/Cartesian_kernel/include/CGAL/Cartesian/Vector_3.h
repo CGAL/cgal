@@ -25,7 +25,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
-class VectorC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
+class VectorC3
   : public R_::Vector_handle_3
 {
   typedef typename R_::FT                   FT;
@@ -131,7 +131,7 @@ public:
 template < class R >
 inline
 bool
-VectorC3<R CGAL_CTAG>::operator==(const VectorC3<R CGAL_CTAG> &v) const
+VectorC3<R>::operator==(const VectorC3<R> &v) const
 {
   if (identical(v))
       return true;
@@ -141,7 +141,7 @@ VectorC3<R CGAL_CTAG>::operator==(const VectorC3<R CGAL_CTAG> &v) const
 template < class R >
 inline
 bool
-VectorC3<R CGAL_CTAG>::operator!=(const VectorC3<R CGAL_CTAG> &v) const
+VectorC3<R>::operator!=(const VectorC3<R> &v) const
 {
   return !(*this == v);
 }
@@ -149,7 +149,7 @@ VectorC3<R CGAL_CTAG>::operator!=(const VectorC3<R CGAL_CTAG> &v) const
 template < class R >
 inline
 bool
-VectorC3<R CGAL_CTAG>::operator==(const Null_vector &) const
+VectorC3<R>::operator==(const Null_vector &) const
 {
   return CGAL_NTS is_zero(x()) && CGAL_NTS is_zero(y()) &&
          CGAL_NTS is_zero(z());
@@ -158,15 +158,15 @@ VectorC3<R CGAL_CTAG>::operator==(const Null_vector &) const
 template < class R >
 inline
 bool
-VectorC3<R CGAL_CTAG>::operator!=(const Null_vector &v) const
+VectorC3<R>::operator!=(const Null_vector &v) const
 {
   return !(*this == v);
 }
 
 template < class R >
 inline
-const typename VectorC3<R CGAL_CTAG>::FT &
-VectorC3<R CGAL_CTAG>::cartesian(int i) const
+const typename VectorC3<R>::FT &
+VectorC3<R>::cartesian(int i) const
 {
   CGAL_kernel_precondition( (i>=0) && (i<3) );
   if (i==0) return x();
@@ -176,15 +176,15 @@ VectorC3<R CGAL_CTAG>::cartesian(int i) const
 
 template < class R >
 inline
-const typename VectorC3<R CGAL_CTAG>::FT &
-VectorC3<R CGAL_CTAG>::operator[](int i) const
+const typename VectorC3<R>::FT &
+VectorC3<R>::operator[](int i) const
 {
   return cartesian(i);
 }
 
 template < class R >
-typename VectorC3<R CGAL_CTAG>::FT
-VectorC3<R CGAL_CTAG>::homogeneous(int i) const
+typename VectorC3<R>::FT
+VectorC3<R>::homogeneous(int i) const
 {
   if (i==3) return FT(1);
   return cartesian(i);
@@ -192,58 +192,58 @@ VectorC3<R CGAL_CTAG>::homogeneous(int i) const
 
 template < class R >
 inline
-typename VectorC3<R CGAL_CTAG>::Vector_3
-VectorC3<R CGAL_CTAG>::
-operator+(const VectorC3<R CGAL_CTAG> &w) const
+typename VectorC3<R>::Vector_3
+VectorC3<R>::
+operator+(const VectorC3<R> &w) const
 {
-  return VectorC3<R CGAL_CTAG>(x() + w.x(), y() + w.y(), z() + w.z());
+  return VectorC3<R>(x() + w.x(), y() + w.y(), z() + w.z());
 }
 
 template < class R >
 inline
-typename VectorC3<R CGAL_CTAG>::Vector_3
-VectorC3<R CGAL_CTAG>::operator-(const VectorC3<R CGAL_CTAG> &w) const
+typename VectorC3<R>::Vector_3
+VectorC3<R>::operator-(const VectorC3<R> &w) const
 {
-  return VectorC3<R CGAL_CTAG>(x() - w.x(), y() - w.y(), z() - w.z());
+  return VectorC3<R>(x() - w.x(), y() - w.y(), z() - w.z());
 }
 
 template < class R >
 inline
-typename VectorC3<R CGAL_CTAG>::Vector_3
-VectorC3<R CGAL_CTAG>::operator-() const
+typename VectorC3<R>::Vector_3
+VectorC3<R>::operator-() const
 {
   return Vector_3(-x(), -y(), -z());
 }
 
 template < class R >
 inline
-typename VectorC3<R CGAL_CTAG>::FT
-VectorC3<R CGAL_CTAG>::operator*(const VectorC3<R CGAL_CTAG> &w) const
+typename VectorC3<R>::FT
+VectorC3<R>::operator*(const VectorC3<R> &w) const
 {
   return x() * w.x() + y() * w.y() + z() * w.z();
 }
 
 template < class R >
 inline
-typename VectorC3<R CGAL_CTAG>::FT
-VectorC3<R CGAL_CTAG>::squared_length() const
+typename VectorC3<R>::FT
+VectorC3<R>::squared_length() const
 {
   return CGAL_NTS square(x()) + CGAL_NTS square(y()) + CGAL_NTS square(z());
 }
 
 template < class R >
 inline
-typename VectorC3<R CGAL_CTAG>::Vector_3
-VectorC3<R CGAL_CTAG>::
-operator/(const typename VectorC3<R CGAL_CTAG>::FT &c) const
+typename VectorC3<R>::Vector_3
+VectorC3<R>::
+operator/(const typename VectorC3<R>::FT &c) const
 {
-  return VectorC3<R CGAL_CTAG>(x()/c, y()/c, z()/c);
+  return VectorC3<R>(x()/c, y()/c, z()/c);
 }
 
 template < class R >
 inline
-typename VectorC3<R CGAL_CTAG>::Direction_3
-VectorC3<R CGAL_CTAG>::direction() const
+typename VectorC3<R>::Direction_3
+VectorC3<R>::direction() const
 {
   return Direction_3(*this);
 }
@@ -251,7 +251,7 @@ VectorC3<R CGAL_CTAG>::direction() const
 #ifndef CGAL_CARTESIAN_NO_OSTREAM_INSERT_VECTORC3
 template < class R >
 std::ostream &
-operator<<(std::ostream &os, const VectorC3<R CGAL_CTAG> &v)
+operator<<(std::ostream &os, const VectorC3<R> &v)
 {
   switch(os.iword(IO::mode)) {
     case IO::ASCII :
@@ -271,7 +271,7 @@ operator<<(std::ostream &os, const VectorC3<R CGAL_CTAG> &v)
 #ifndef CGAL_CARTESIAN_NO_ISTREAM_EXTRACT_VECTORC3
 template < class R >
 std::istream &
-operator>>(std::istream &is, VectorC3<R CGAL_CTAG> &p)
+operator>>(std::istream &is, VectorC3<R> &p)
 {
   typename R::FT x, y, z;
   switch(is.iword(IO::mode)) {
@@ -289,7 +289,7 @@ operator>>(std::istream &is, VectorC3<R CGAL_CTAG> &p)
       break;
   }
   if (is)
-      p = VectorC3<R CGAL_CTAG>(x, y, z);
+      p = VectorC3<R>(x, y, z);
   return is;
 }
 #endif // CGAL_CARTESIAN_NO_ISTREAM_EXTRACT_VECTORC3

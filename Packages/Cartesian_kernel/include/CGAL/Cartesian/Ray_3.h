@@ -25,7 +25,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
-class RayC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
+class RayC3
   : public R_::Ray_handle_3
 {
   typedef typename R_::FT                   FT;
@@ -85,7 +85,7 @@ public:
 template < class R >
 inline
 bool
-RayC3<R CGAL_CTAG>::operator==(const RayC3<R CGAL_CTAG> &r) const
+RayC3<R>::operator==(const RayC3<R> &r) const
 {
     if (identical(r))
 	return true;
@@ -95,23 +95,23 @@ RayC3<R CGAL_CTAG>::operator==(const RayC3<R CGAL_CTAG> &r) const
 template < class R >
 inline
 bool
-RayC3<R CGAL_CTAG>::operator!=(const RayC3<R CGAL_CTAG> &r) const
+RayC3<R>::operator!=(const RayC3<R> &r) const
 {
   return !(*this == r);
 }
 
 template < class R >
 inline
-const typename RayC3<R CGAL_CTAG>::Point_3 &
-RayC3<R CGAL_CTAG>::start() const
+const typename RayC3<R>::Point_3 &
+RayC3<R>::start() const
 {
   return source();
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename RayC3<R CGAL_CTAG>::Point_3
-RayC3<R CGAL_CTAG>::point(int i) const
+typename RayC3<R>::Point_3
+RayC3<R>::point(int i) const
 {
   CGAL_kernel_precondition( i >= 0 );
   if (i == 0) return source();
@@ -121,32 +121,32 @@ RayC3<R CGAL_CTAG>::point(int i) const
 
 template < class R >
 inline
-typename RayC3<R CGAL_CTAG>::Direction_3
-RayC3<R CGAL_CTAG>::direction() const
+typename RayC3<R>::Direction_3
+RayC3<R>::direction() const
 {
   return Direction_3( second_point() - source() );
 }
 
 template < class R >
 inline
-typename RayC3<R CGAL_CTAG>::Line_3
-RayC3<R CGAL_CTAG>::supporting_line() const
+typename RayC3<R>::Line_3
+RayC3<R>::supporting_line() const
 {
   return Line_3(*this);
 }
 
 template < class R >
 inline
-typename RayC3<R CGAL_CTAG>::Ray_3
-RayC3<R CGAL_CTAG>::opposite() const
+typename RayC3<R>::Ray_3
+RayC3<R>::opposite() const
 {
-  return RayC3<R CGAL_CTAG>( source(), - direction() );
+  return RayC3<R>( source(), - direction() );
 }
 
 template < class R >
 bool
-RayC3<R CGAL_CTAG>::
-has_on(const typename RayC3<R CGAL_CTAG>::Point_3 &p) const
+RayC3<R>::
+has_on(const typename RayC3<R>::Point_3 &p) const
 {
   return (p == source()) ||
          ( collinear(source(), p, second_point())
@@ -156,7 +156,7 @@ has_on(const typename RayC3<R CGAL_CTAG>::Point_3 &p) const
 template < class R >
 inline
 bool
-RayC3<R CGAL_CTAG>::is_degenerate() const
+RayC3<R>::is_degenerate() const
 {
   return source() == second_point();
 }
@@ -164,8 +164,8 @@ RayC3<R CGAL_CTAG>::is_degenerate() const
 template < class R >
 inline
 bool
-RayC3<R CGAL_CTAG>::
-collinear_has_on(const typename RayC3<R CGAL_CTAG>::Point_3 &p) const
+RayC3<R>::
+collinear_has_on(const typename RayC3<R>::Point_3 &p) const
 {
   CGAL_kernel_exactness_precondition( collinear(source(), p, second_point()) );
 
@@ -187,7 +187,7 @@ collinear_has_on(const typename RayC3<R CGAL_CTAG>::Point_3 &p) const
 #ifndef CGAL_NO_OSTREAM_INSERT_RAYC3
 template < class R >
 std::ostream &
-operator<<(std::ostream &os, const RayC3<R CGAL_CTAG> &r)
+operator<<(std::ostream &os, const RayC3<R> &r)
 {
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
@@ -203,7 +203,7 @@ operator<<(std::ostream &os, const RayC3<R CGAL_CTAG> &r)
 #ifndef CGAL_NO_ISTREAM_EXTRACT_RAYC3
 template < class R >
 std::istream &
-operator>>(std::istream &is, RayC3<R CGAL_CTAG> &r)
+operator>>(std::istream &is, RayC3<R> &r)
 {
     typename R::Point_3 p;
     typename R::Direction_3 d;
@@ -211,7 +211,7 @@ operator>>(std::istream &is, RayC3<R CGAL_CTAG> &r)
     is >> p >> d;
 
     if (is)
-	r = RayC3<R CGAL_CTAG>(p, d);
+	r = RayC3<R>(p, d);
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_RAYC3

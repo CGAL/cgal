@@ -28,10 +28,10 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class R>
-void solve (const VectorC3<R CGAL_CTAG> &v0,
-            const VectorC3<R CGAL_CTAG> &v1,
-            const VectorC3<R CGAL_CTAG> &v2,
-            const VectorC3<R CGAL_CTAG> &d,
+void solve (const VectorC3<R> &v0,
+            const VectorC3<R> &v1,
+            const VectorC3<R> &v2,
+            const VectorC3<R> &d,
             typename R::FT &alpha, typename R::FT &beta, typename R::FT &gamma)
 {
   solve(v0.x(), v0.y(), v0.z(),

@@ -25,7 +25,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
-class RayC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
+class RayC2
   : public R_::Ray_handle_2
 {
   typedef typename R_::FT                   FT;
@@ -87,7 +87,7 @@ public:
 template < class R >
 CGAL_KERNEL_INLINE
 bool
-RayC2<R CGAL_CTAG>::operator==(const RayC2<R CGAL_CTAG> &r) const
+RayC2<R>::operator==(const RayC2<R> &r) const
 {
   if (identical(r))
       return true;
@@ -97,23 +97,23 @@ RayC2<R CGAL_CTAG>::operator==(const RayC2<R CGAL_CTAG> &r) const
 template < class R >
 inline
 bool
-RayC2<R CGAL_CTAG>::operator!=(const RayC2<R CGAL_CTAG> &r) const
+RayC2<R>::operator!=(const RayC2<R> &r) const
 {
   return !(*this == r);
 }
 
 template < class R >
 inline
-const typename RayC2<R CGAL_CTAG>::Point_2 &
-RayC2<R CGAL_CTAG>::start() const
+const typename RayC2<R>::Point_2 &
+RayC2<R>::start() const
 {
   return source();
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename RayC2<R CGAL_CTAG>::Point_2
-RayC2<R CGAL_CTAG>::point(int i) const
+typename RayC2<R>::Point_2
+RayC2<R>::point(int i) const
 {
   CGAL_kernel_precondition( i >= 0 );
   if (i == 0) return source();
@@ -123,45 +123,45 @@ RayC2<R CGAL_CTAG>::point(int i) const
 
 template < class R >
 inline
-typename RayC2<R CGAL_CTAG>::Direction_2
-RayC2<R CGAL_CTAG>::direction() const
+typename RayC2<R>::Direction_2
+RayC2<R>::direction() const
 {
   return Direction_2( second_point() - source() );
 }
 
 template < class R >
 inline
-typename RayC2<R CGAL_CTAG>::Line_2
-RayC2<R CGAL_CTAG>::supporting_line() const
+typename RayC2<R>::Line_2
+RayC2<R>::supporting_line() const
 {
   return Line_2(*this);
 }
 
 template < class R >
 inline
-typename RayC2<R CGAL_CTAG>::Ray_2
-RayC2<R CGAL_CTAG>::opposite() const
+typename RayC2<R>::Ray_2
+RayC2<R>::opposite() const
 {
-  return RayC2<R CGAL_CTAG>( source(), - direction() );
+  return RayC2<R>( source(), - direction() );
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
-bool RayC2<R CGAL_CTAG>::is_horizontal() const
+bool RayC2<R>::is_horizontal() const
 {
   return y_equal(source(), second_point());
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
-bool RayC2<R CGAL_CTAG>::is_vertical() const
+bool RayC2<R>::is_vertical() const
 {
   return x_equal(source(), second_point());
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
-bool RayC2<R CGAL_CTAG>::is_degenerate() const
+bool RayC2<R>::is_degenerate() const
 {
   return source() == second_point();
 }
@@ -169,7 +169,7 @@ bool RayC2<R CGAL_CTAG>::is_degenerate() const
 template < class R >
 CGAL_KERNEL_INLINE
 bool
-RayC2<R CGAL_CTAG>::has_on(const typename RayC2<R CGAL_CTAG>::Point_2 &p) const
+RayC2<R>::has_on(const typename RayC2<R>::Point_2 &p) const
 {
   return p == source()
       || collinear(source(), p, second_point())
@@ -179,8 +179,8 @@ RayC2<R CGAL_CTAG>::has_on(const typename RayC2<R CGAL_CTAG>::Point_2 &p) const
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
 bool
-RayC2<R CGAL_CTAG>::
-collinear_has_on(const typename RayC2<R CGAL_CTAG>::Point_2 &p) const
+RayC2<R>::
+collinear_has_on(const typename RayC2<R>::Point_2 &p) const
 {
     switch(compare_x(source(), second_point())){
     case SMALLER:
@@ -202,7 +202,7 @@ collinear_has_on(const typename RayC2<R CGAL_CTAG>::Point_2 &p) const
 #ifndef CGAL_NO_OSTREAM_INSERT_RAYC2
 template < class R >
 std::ostream &
-operator<<(std::ostream &os, const RayC2<R CGAL_CTAG> &r)
+operator<<(std::ostream &os, const RayC2<R> &r)
 {
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
@@ -218,7 +218,7 @@ operator<<(std::ostream &os, const RayC2<R CGAL_CTAG> &r)
 #ifndef CGAL_NO_ISTREAM_EXTRACT_RAYC2
 template < class R >
 std::istream &
-operator>>(std::istream &is, RayC2<R CGAL_CTAG> &r)
+operator>>(std::istream &is, RayC2<R> &r)
 {
     typename R::Point_2 p;
     typename R::Direction_2 d;
@@ -226,7 +226,7 @@ operator>>(std::istream &is, RayC2<R CGAL_CTAG> &r)
     is >> p >> d;
 
     if (is)
-	r = RayC2<R CGAL_CTAG>(p, d);
+	r = RayC2<R>(p, d);
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_RAYC2

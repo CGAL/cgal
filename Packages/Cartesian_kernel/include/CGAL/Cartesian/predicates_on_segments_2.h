@@ -30,8 +30,8 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R >
 Comparison_result
-compare_slopes(const SegmentC2<R CGAL_CTAG> &s1,
-               const SegmentC2<R CGAL_CTAG> &s2)
+compare_slopes(const SegmentC2<R> &s1,
+               const SegmentC2<R> &s2)
 {
    return compare_slopesC2(s1.source().x(), s1.source().y(),
                            s1.target().x(), s1.target().y(),
@@ -41,8 +41,8 @@ compare_slopes(const SegmentC2<R CGAL_CTAG> &s1,
 
 template < class R >
 Comparison_result
-compare_y_at_x(const PointC2<R CGAL_CTAG> &p,
-               const SegmentC2<R CGAL_CTAG> &s)
+compare_y_at_x(const PointC2<R> &p,
+               const SegmentC2<R> &s)
 {
     return compare_y_at_xC2(p.x(), p.y(),
 	                    s.source().x(), s.source().y(),
@@ -51,9 +51,9 @@ compare_y_at_x(const PointC2<R CGAL_CTAG> &p,
 
 template < class R >
 Comparison_result
-compare_y_at_x(const PointC2<R CGAL_CTAG> &p,
-               const SegmentC2<R CGAL_CTAG> &s1,
-               const SegmentC2<R CGAL_CTAG> &s2)
+compare_y_at_x(const PointC2<R> &p,
+               const SegmentC2<R> &s1,
+               const SegmentC2<R> &s2)
 {
     return compare_y_at_x_segment_C2(p.x(),
 	                    s1.source().x(), s1.source().y(),

@@ -25,7 +25,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
-class DirectionC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
+class DirectionC3
   : public R_::Direction_handle_3
 {
   typedef typename R_::FT                   FT;
@@ -112,7 +112,7 @@ public:
 template < class R >
 inline
 bool
-DirectionC3<R CGAL_CTAG>::operator==(const DirectionC3<R CGAL_CTAG> &d) const
+DirectionC3<R>::operator==(const DirectionC3<R> &d) const
 {
   if (identical(d))
       return true;
@@ -122,30 +122,30 @@ DirectionC3<R CGAL_CTAG>::operator==(const DirectionC3<R CGAL_CTAG> &d) const
 template < class R >
 inline
 bool
-DirectionC3<R CGAL_CTAG>::operator!=(const DirectionC3<R CGAL_CTAG> &d) const
+DirectionC3<R>::operator!=(const DirectionC3<R> &d) const
 {
   return !(*this == d);
 }
 
 template < class R >
 inline
-typename DirectionC3<R CGAL_CTAG>::Vector_3
-DirectionC3<R CGAL_CTAG>::to_vector() const
+typename DirectionC3<R>::Vector_3
+DirectionC3<R>::to_vector() const
 {
   return Vector_3(dx(), dy(), dz());
 }
 
 template < class R >
 inline
-typename DirectionC3<R CGAL_CTAG>::Direction_3
-DirectionC3<R CGAL_CTAG>::operator-() const
+typename DirectionC3<R>::Direction_3
+DirectionC3<R>::operator-() const
 {
   return DirectionC3<R>(-dx(), -dy(), -dz());
 }
 
 template < class R >
-const typename DirectionC3<R CGAL_CTAG>::FT &
-DirectionC3<R CGAL_CTAG>::delta(int i) const
+const typename DirectionC3<R>::FT &
+DirectionC3<R>::delta(int i) const
 {
   CGAL_kernel_precondition( i >= 0 && i <= 2 );
   if (i==0) return dx();
@@ -156,7 +156,7 @@ DirectionC3<R CGAL_CTAG>::delta(int i) const
 #ifndef CGAL_NO_OSTREAM_INSERT_DIRECTIONC3
 template < class R >
 std::ostream &
-operator<<(std::ostream &os, const DirectionC3<R CGAL_CTAG> &d)
+operator<<(std::ostream &os, const DirectionC3<R> &d)
 {
   typename R::Vector_3 v = d.to_vector();
   switch(os.iword(IO::mode)) {
@@ -177,7 +177,7 @@ operator<<(std::ostream &os, const DirectionC3<R CGAL_CTAG> &d)
 #ifndef CGAL_NO_ISTREAM_EXTRACT_DIRECTIONC3
 template < class R >
 std::istream &
-operator>>(std::istream &is, DirectionC3<R CGAL_CTAG> &d)
+operator>>(std::istream &is, DirectionC3<R> &d)
 {
   typename R::FT x, y, z;
   switch(is.iword(IO::mode)) {
@@ -195,7 +195,7 @@ operator>>(std::istream &is, DirectionC3<R CGAL_CTAG> &d)
       break;
   }
   if (is)
-      d = DirectionC3<R CGAL_CTAG>(x, y, z);
+      d = DirectionC3<R>(x, y, z);
   return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_DIRECTIONC3

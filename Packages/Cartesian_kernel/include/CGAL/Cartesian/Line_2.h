@@ -25,7 +25,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
-class LineC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
+class LineC2
   : public R_::Line_handle_2
 {
   typedef typename R_::FT                   FT;
@@ -100,7 +100,7 @@ public:
 
   Line_2          transform(const Aff_transformation_2 &t) const
   {
-    return LineC2<R CGAL_CTAG>(t.transform(point(0)),
+    return LineC2<R>(t.transform(point(0)),
                                t.transform(direction()));
   }
 };
@@ -112,7 +112,7 @@ public:
 template < class R >
 CGAL_KERNEL_INLINE
 bool
-LineC2<R CGAL_CTAG>::operator==(const LineC2<R CGAL_CTAG> &l) const
+LineC2<R>::operator==(const LineC2<R> &l) const
 {
   if (identical(l))
       return true;
@@ -122,7 +122,7 @@ LineC2<R CGAL_CTAG>::operator==(const LineC2<R CGAL_CTAG> &l) const
 template < class R >
 inline
 bool
-LineC2<R CGAL_CTAG>::operator!=(const LineC2<R CGAL_CTAG> &l) const
+LineC2<R>::operator!=(const LineC2<R> &l) const
 {
   return !(*this == l);
 }
@@ -130,7 +130,7 @@ LineC2<R CGAL_CTAG>::operator!=(const LineC2<R CGAL_CTAG> &l) const
 template < class R >
 inline
 bool
-LineC2<R CGAL_CTAG>::is_horizontal() const
+LineC2<R>::is_horizontal() const
 { // FIXME : predicate
   return CGAL_NTS is_zero(a());
 }
@@ -138,15 +138,15 @@ LineC2<R CGAL_CTAG>::is_horizontal() const
 template < class R >
 inline
 bool
-LineC2<R CGAL_CTAG>::is_vertical() const
+LineC2<R>::is_vertical() const
 { // FIXME : predicate
   return CGAL_NTS is_zero(b());
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename LineC2<R CGAL_CTAG>::FT
-LineC2<R CGAL_CTAG>::x_at_y(const typename LineC2<R CGAL_CTAG>::FT &y) const
+typename LineC2<R>::FT
+LineC2<R>::x_at_y(const typename LineC2<R>::FT &y) const
 {
   CGAL_kernel_precondition_msg( ! is_horizontal(),
     "Line::x_at_y(FT y) is undefined for horizontal line");
@@ -155,8 +155,8 @@ LineC2<R CGAL_CTAG>::x_at_y(const typename LineC2<R CGAL_CTAG>::FT &y) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename LineC2<R CGAL_CTAG>::FT
-LineC2<R CGAL_CTAG>::y_at_x(const typename LineC2<R CGAL_CTAG>::FT &x) const
+typename LineC2<R>::FT
+LineC2<R>::y_at_x(const typename LineC2<R>::FT &x) const
 {
   CGAL_kernel_precondition_msg( ! is_vertical(),
     "Line::y_at_x(FT x) is undefined for vertical line");
@@ -165,50 +165,50 @@ LineC2<R CGAL_CTAG>::y_at_x(const typename LineC2<R CGAL_CTAG>::FT &x) const
 
 template < class R >
 inline
-typename LineC2<R CGAL_CTAG>::Line_2
-LineC2<R CGAL_CTAG>::
-perpendicular(const typename LineC2<R CGAL_CTAG>::Point_2 &p) const
+typename LineC2<R>::Line_2
+LineC2<R>::
+perpendicular(const typename LineC2<R>::Point_2 &p) const
 {
   return perpendicular_through_point(*this, p);
 }
 
 template < class R >
 inline
-typename LineC2<R CGAL_CTAG>::Line_2
-LineC2<R CGAL_CTAG>::opposite() const
+typename LineC2<R>::Line_2
+LineC2<R>::opposite() const
 {
-  return LineC2<R CGAL_CTAG>( -a(), -b(), -c() );
+  return LineC2<R>( -a(), -b(), -c() );
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename LineC2<R CGAL_CTAG>::Point_2
-LineC2<R CGAL_CTAG>::point(int i) const
+typename LineC2<R>::Point_2
+LineC2<R>::point(int i) const
 {
   return line_get_point(*this, i);
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename LineC2<R CGAL_CTAG>::Point_2
-LineC2<R CGAL_CTAG>::point() const
+typename LineC2<R>::Point_2
+LineC2<R>::point() const
 {
   return line_get_point(*this, 0);
 }
 
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
-typename LineC2<R CGAL_CTAG>::Point_2
-LineC2<R CGAL_CTAG>::
-projection(const typename LineC2<R CGAL_CTAG>::Point_2 &p) const
+typename LineC2<R>::Point_2
+LineC2<R>::
+projection(const typename LineC2<R>::Point_2 &p) const
 {
   return line_project_point(*this, p);
 }
 
 template < class R >
 inline
-typename LineC2<R CGAL_CTAG>::Direction_2
-LineC2<R CGAL_CTAG>::direction() const
+typename LineC2<R>::Direction_2
+LineC2<R>::direction() const
 {
   return Direction_2( b(), -a() );
 }
@@ -216,8 +216,8 @@ LineC2<R CGAL_CTAG>::direction() const
 template < class R >
 CGAL_KERNEL_INLINE
 Oriented_side
-LineC2<R CGAL_CTAG>::
-oriented_side(const typename LineC2<R CGAL_CTAG>::Point_2 &p) const
+LineC2<R>::
+oriented_side(const typename LineC2<R>::Point_2 &p) const
 {
   return side_of_oriented_line(*this, p);
 }
@@ -225,8 +225,8 @@ oriented_side(const typename LineC2<R CGAL_CTAG>::Point_2 &p) const
 template < class R >
 inline
 bool
-LineC2<R CGAL_CTAG>::
-has_on_boundary(const typename LineC2<R CGAL_CTAG>::Point_2 &p) const
+LineC2<R>::
+has_on_boundary(const typename LineC2<R>::Point_2 &p) const
 {
   return oriented_side(p) == ON_ORIENTED_BOUNDARY;
 }
@@ -234,8 +234,8 @@ has_on_boundary(const typename LineC2<R CGAL_CTAG>::Point_2 &p) const
 template < class R >
 inline
 bool
-LineC2<R CGAL_CTAG>::
-has_on_positive_side(const typename LineC2<R CGAL_CTAG>::Point_2 &p) const
+LineC2<R>::
+has_on_positive_side(const typename LineC2<R>::Point_2 &p) const
 {
   return oriented_side(p) == ON_POSITIVE_SIDE;
 }
@@ -243,8 +243,8 @@ has_on_positive_side(const typename LineC2<R CGAL_CTAG>::Point_2 &p) const
 template < class R >
 CGAL_KERNEL_INLINE
 bool
-LineC2<R CGAL_CTAG>::
-has_on_negative_side(const typename LineC2<R CGAL_CTAG>::Point_2 &p) const
+LineC2<R>::
+has_on_negative_side(const typename LineC2<R>::Point_2 &p) const
 {
   return oriented_side(p) == ON_NEGATIVE_SIDE;
 }
@@ -252,7 +252,7 @@ has_on_negative_side(const typename LineC2<R CGAL_CTAG>::Point_2 &p) const
 template < class R >
 inline
 bool
-LineC2<R CGAL_CTAG>::is_degenerate() const
+LineC2<R>::is_degenerate() const
 {
   return is_horizontal() && is_vertical();
 }
@@ -260,7 +260,7 @@ LineC2<R CGAL_CTAG>::is_degenerate() const
 #ifndef CGAL_NO_OSTREAM_INSERT_LINEC2
 template < class R >
 std::ostream &
-operator<<(std::ostream &os, const LineC2<R CGAL_CTAG> &l)
+operator<<(std::ostream &os, const LineC2<R> &l)
 {
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
@@ -280,7 +280,7 @@ operator<<(std::ostream &os, const LineC2<R CGAL_CTAG> &l)
 #ifndef CGAL_NO_ISTREAM_EXTRACT_LINEC2
 template < class R >
 std::istream &
-operator>>(std::istream &is, LineC2<R CGAL_CTAG> &l)
+operator>>(std::istream &is, LineC2<R> &l)
 {
     typename R::FT a, b, c;
     switch(is.iword(IO::mode)) {
@@ -298,7 +298,7 @@ operator>>(std::istream &is, LineC2<R CGAL_CTAG> &l)
         break;
     }
     if (is)
-	l = LineC2<R CGAL_CTAG>(a, b, c);
+	l = LineC2<R>(a, b, c);
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_LINEC2
