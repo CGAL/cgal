@@ -1,6 +1,9 @@
 Changes done to the Interval Arithmetic package.
 
-Version 4.24 on 10 October 1999
+Version 4.25 on 11 October 1999
+- Borland version of the rounding mode changes.
+
+Version 4.24 on 10 October 1999   [ not submitted ]
 - New class Lazy_exact_nt<> (in a preliminary state).
 - Replaced CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION by
            CGAL_CFG_NO_PARTIAL_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION or

@@ -17,6 +17,8 @@ CXXFLAGS = \
         -I../../include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS) \
+	-g -Wall -W
+	# -O2 -Wall -W
 	# /Oi /Fatst2.s
 	# /Fatst1.s
 	# /Op /Oi /Od /Za /O2 /Ox

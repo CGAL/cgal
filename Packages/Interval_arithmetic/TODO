@@ -63,8 +63,15 @@ Concerning the code itself:
 ? See the C++ Standard numeric_limits<>, section 18.2.
 ? convert_to à faire pour: long double, long long (CGAL..._64), CLN.
 - Use friend functions for operator+(IA,IA), because this way, there's no need
-  for a special version for double...
+  for a special version for double...  That would simplify the code, but I
+  need to check it doesn't impact performance first.
 - Have a look at the "function-try-blocks" ?
+- Replace the macros CGAL_IA_SMALLEST/CGAL_IA_LARGEST by consts ?  See if it
+  impacts performance before.
+- The idea of an CGAL::Ieee_double, which would have corrected operators
+  is not so bad.  It would save VC++, as well as allow to replace all the
+  CGAL_IA_FORCE_TO_DOUBLE.  But it would perhaps impact performance and
+  compile time...
 
 Concerning the script:
 ----------------------
