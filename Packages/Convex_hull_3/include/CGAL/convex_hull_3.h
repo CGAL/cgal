@@ -37,6 +37,7 @@
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Convex_hull_traits_3.h>
 #include <CGAL/functional.h>
+#include <CGAL/ch_assertions.h>
 #include <iostream>
 #include <algorithm>
 #include <utility>
@@ -459,7 +460,8 @@ void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
        pending_facets.push_back(f_it);
   ch_quickhull_3_scan(P, pending_facets, outside_sets, traits);
 
-  CGAL_ch_expensive_postcondition(all_points_inside(first,beyond,P,traits));
+  CGAL_ch_expensive_postcondition(all_points_inside(points.begin(),
+                                                    points.end(),P,traits));
   CGAL_ch_postcondition(is_strongly_convex_3(P, traits));
 }
 
