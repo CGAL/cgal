@@ -12,8 +12,8 @@
 // release_date  :
 //
 // file          : include/CGAL/_FPU.h
-// revision      : 1.2
-// revision_date : 16 December 1997
+// revision      : 1.3
+// revision_date : 6 February 1998
 // author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //
 // coordinator   : INRIA Sophia-Antipolis (<Herve.Bronnimann@sophia.inria.fr>)
@@ -29,6 +29,9 @@
  *
  * I try to make it work with gcc/g++/cc/CC.
  * And I also try to provide the equivalent assembly code for GNU C.
+ *
+ * TODO: Check the exception flags, according to Christoph's remarks/code.
+ *        (ie should we erase all, should we save&restore, etc...)
  */
 
 #if defined(__osf__)
@@ -249,4 +252,4 @@ static inline void _FPU_set_rounding_to_minus_infinity (void)
 #endif
 }
 
-#endif
+#endif /* _FPU_H */

@@ -12,8 +12,8 @@
 // release_date  :
 //
 // file          : include/CGAL/Interval_arithmetic.h
-// revision      : 1.2
-// revision_date : 16 December 1997
+// revision      : 1.3
+// revision_date : 6 February 1998
 // author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //
 // coordinator   : INRIA Sophia-Antipolis (<Herve.Bronnimann@sophia.inria.fr>)
@@ -23,14 +23,6 @@
 // This file contains the description of the two classes:
 // - CGAL_Interval_nt_advanced  (do the FPU tricks yourself)
 // - CGAL_Interval_nt		(derived from the other one)
-
-/*
- * TODO:
- * - get/set FPU rounding modes.
- * - Check_assertions, when it's needed.
- * - don't force (check if it's ok) the precision: long doubles internally
- *   are great !
- */
 
 #ifndef CGAL_INTERVAL_ARITHMETIC_H
 #define CGAL_INTERVAL_ARITHMETIC_H
@@ -49,7 +41,9 @@ public:
 
   inline CGAL_Interval_nt_advanced(double i, double s)
   {
-// Check assertion i<=s.
+#ifndef CGAL_NO_PRECONDITIONS
+    assert(i<=s);
+#endif
     inf = -i; sup = s;
   }
 
@@ -214,12 +208,12 @@ public:
 
   inline bool operator==(const CGAL_Interval_nt_advanced& d) const
   {
-    return (inf>=d.inf && sup>=-d.inf) || (d.inf>=inf && d.sup>=-inf);
+    return !(*this != d);
   }
 
   inline bool operator!=(const CGAL_Interval_nt_advanced& d) const
   {
-    return !(*this == d);
+    return (*this < d) || (d < *this);
   }
 
   inline bool operator<(const CGAL_Interval_nt_advanced& d) const
@@ -229,7 +223,7 @@ public:
 
   inline bool operator>(const CGAL_Interval_nt_advanced& d) const
   {
-    return (-inf > d.sup);
+    return (d.sup < -inf);
   }
 
   inline bool operator<=(const CGAL_Interval_nt_advanced& d) const
@@ -253,7 +247,7 @@ public:
   }
 
 protected:
-        // "inf" stores the opposite of the inferior bound.
+        // "inf" stores the __opposite__ of the inferior bound.
         // "sup" stores the upper bound of the interval.
   double inf, sup;
 };
