@@ -22,7 +22,7 @@
 
 #ifndef CGAL_CONCEPT_ARCHETYPE_2
 #define CGAL_CONCEPT_ARCHETYPE_2
-
+ 
 // 2d CA types (and number types)...
 
 #define CGAL_concept_archetype_constructors(T) \
