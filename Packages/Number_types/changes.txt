@@ -1,3 +1,6 @@
+4.52     (27 March 02)
+- Fixed test makefile to include utilities test.
+
 4.51     (27 March 02)
 - Fixed some unused parameter warnings.
 
