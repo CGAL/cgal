@@ -5,6 +5,7 @@ Nef_2 Package: Release changes
      - replaced deprecated Construct_direction_of_line_2, 
        Construct_source_point_2, Construct_target_point_2, with non-deprepcated
        counterparts.
+     - fixed construction of standard ray from a point.
 
 1.22 (22 July 2002)
      - fixed doc of Extended_cartesian

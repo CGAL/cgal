@@ -239,10 +239,14 @@ bundle of rays defining |p|.
 
 Standard_ray_2 standard_ray(const Point_2& p) const
 /*{\Xop a ray defining |p|. \precond |!\Mvar.is_standard(p)|.}*/
-{ Standard_line_2 l = standard_line(p);
-  Standard_direction_2 d = l.direction();
-  Standard_point_2 q = l.point(0);
-  return Standard_ray_2(q,d);
+{ 
+  CGAL_assertion( type(p)!=STANDARD );
+  FT x = p.x(), y = p.y();
+  Standard_FT dx = x.degree()>0 ? x[1] : Standard_FT(0);
+  Standard_FT dy = y.degree()>0 ? y[1] : Standard_FT(0);
+  Standard_point_2 p0(x[0],y[0]);
+  Standard_point_2 p1(x[0]+dx,y[0]+dy);
+  return Standard_ray_2(p0,p1);
 }
 
 Point_2 NE() const { return construct_point(Standard_line_2(-1, 1,0)); }
