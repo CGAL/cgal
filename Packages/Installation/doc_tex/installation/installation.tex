@@ -61,9 +61,7 @@
 
 %% macros for WWW pages
 \newcommand{\cgalhomepage}{\path'http://www.cgal.org'}
-%%\newcommand{\compilerpage}{\path'http://www.cs.uu.nl/CGAL/Compilers/'}
-%%\newcommand{\faqpage}{\path'http://www.cs.uu.nl/CGAL/FAQ/'}
-%%\newcommand{\hpstlpage}{\path'http://www.cs.rpi.edu/~musser/stl.html'}
+\newcommand{\cgalwinlibpage}{\path'http://www.cgal.org/download/CGALwin/'}
 \newcommand{\sgistlpage}{\path'http://www.sgi.com/tech/stl/'}
 \newcommand{\stlportpage}{\path'http://www.stlport.org/'}
 \newcommand{\ledapage}{\path'http://www.mpi-sb.mpg.de/LEDA'}
@@ -73,6 +71,7 @@
 %% write index in typewriter type. (c) Susan :-)
 \newcommand{\TTindex}[1]{\index{#1@{\tt #1}}}
 \newcommand{\TTsubindex}[2]{\index{#1@{\tt #1}!{#2}}}
+\newcommand{\TTsubindextwo}[2]{\index{#1!#2@{\tt #2} }}
 
 \lcHtml{\chapter{Installation}}
 \section{Introduction}
@@ -125,7 +124,7 @@ systems:
     & IRIX 6.5\\\hline
     \kcc{4} \footnotemark[8]                 
     & Solaris 2.6+\\\hline
-    \Gcc{2.95} \footnotemark[9]            
+    \Gcc{2.95 and 3.0} \footnotemark[9]            
     & IRIX 6.5 / Solaris 2.6+ / Linux 2.x / 
       \mswin\ 95/98/2000/NT4\footnotemark[12]\\\hline
     \msvc{6.0} \footnotemark[10]           
@@ -141,12 +140,17 @@ systems:
 \footnotetext[11]{\bccurl}\addtocounter{footnote}{1}
 \footnotetext[12]{with Cygwin}\addtocounter{footnote}{1}
 
-\msvc{5.0} and prior is not supported and there are no plans to
-support it in future releases.  The \sunprocc{4.2} compiler is not
-supported anymore, please stay with \cgal-1.2 if you have to use it.
-Support for \sunprocc{} will be reconsidered as
-soon as an acceptable degree of standard-conformance is reached.
-Support for \icl{4.0} will be considered.
+%%\msvc{5.0} and prior is not supported and there are no plans to
+%%support it in future releases.  
+%%The \sunprocc{4.2} compiler is not
+%%supported anymore, please stay with \cgal-1.2 if you have to use it.
+Support for \sunprocc{} will be reconsidered as soon as an acceptable
+degree of standard-conformance is reached. Note that \Gcc{2.96/97} are
+not official \texttt{gcc} releases that are neither supported by the
+\texttt{GCC} team\footnote{\path'http://gcc.gnu.org/gcc-2.96.html'}
+nor by \cgal. Please upgrade to \Gcc{3.0}, if you happen to have this
+compiler.
+%%Support for \icl{4.0} will be considered.
 
 \section{Getting \cgal} \label{sec:gettingcgal}
 \index{CGAL@\cgal!getting}\index{getting \cgal} 
@@ -236,12 +240,38 @@ contains the following subdirectories:\index{directories!structure}
 \end{center}
 
 In order to avoid problems with installation routines, please make
-sure that  the full path to \cgaldir\ does not contain spaces
+sure that the full path to \cgaldir\ does not contain spaces
 (the latter, while in principle possible on \mswin , in not supported
 in the present release).
 
 It is planned that in the future on \mswin\ the installation procedure
 will be automated via InstallShield.
+
+\subsection{Visualization}\label{sec:vis}
+
+The programs in the \texttt{demo} directory provide visual output.
+Most of these use the \ccc{CGAL::Window_stream}, which is currently
+provided via the \leda\ library.  If you have \leda\ installed, you
+need do nothing more than compile \cgal\ with \leda\ support to be
+able to use the \ccc{Window_stream} and thus run these demo
+programs.\index{visualization!LEDA}
+
+Because \leda\ is no longer available for free for academic use, we
+have made arrangements with Algorithmic Solutions Software GmbH, the
+distributors of \leda\, to provide a separate
+\texttt{CGALwin}\TTsubindextwo{visualization}{CGALwin}\TTindex{CGALwin}
+library for those who do not have \leda\ installed. This library is
+based on the \leda\ window but is available for download independently
+of \leda\ from the \cgal\ download page. It is available in binary
+form only and only for academic research and teaching use.
+
+The installation of the \texttt{CGALwin} binary is described in
+Section~\ref{sec:cgalwin}, but notice that it should be installed only
+after the \cgal\ libraries have been built.
+
+Demo programs for 3D structures require the geomview program for
+visualisation.\index{visualization!geomview} This is available from
+\path'http://www.geomview.org'.
 
 \section{Installing \cgal}
 
@@ -294,7 +324,7 @@ dots written to the screen indicating progress.
 starting interactive mode - one moment, please
 ......
 
-  Choosing compiler GNU gcc-2.95
+  Choosing compiler GNU gcc-2.95.3
   Testing for STL ... ok.
   ...
   <tests for several compiler features>
@@ -324,7 +354,7 @@ A menu similar to the following will appear on your screen.\index{main
   **              -------------------------------               **
   **                                                            **
   **   OS:                  sparc_SunOS-5.6                     **
-  **   Compiler:            GNU gcc-2.95                        **
+  **   Compiler:            GNU gcc-2.95.3                      **
   **   LEDA:                not supported.                      **
   **   GMP:                 not supported.                      **
   **   CLN:                 not supported.                      **
@@ -388,7 +418,7 @@ the error messages from compiler or linker).
   ****************************************************************
 
   OS:           sparc_SunOS-5.6
-  COMPILER:     GNU gcc-2.95
+  COMPILER:     GNU gcc-2.95.3
   LEDA:         not supported
   GMP:          not supported
   CLN:          not supported
@@ -401,19 +431,83 @@ the error messages from compiler or linker).
   **             Please press <ENTER> to continue.              **
   ****************************************************************
 \end{verbatim}}
-  
+{
+}  
+
 That's all, it's done. Press ``\texttt{<ENTER>}'' to return to the
 main menu and proceed by installing for a different compiler (go to
-the compiler menu and choose ``\texttt{c}'' to get a list of
-supported compilers detected on your system) or with \leda, GMP or
-CLN support (go to the \leda, GMP, CLN menu resp.) or simply quit
-the install script by typing ``\texttt{q}''. When leaving the
-script, you get a list of successful builds during the session.
+the compiler menu and choose ``\texttt{c}'' to get a list of supported
+compilers detected on your system) or with \leda, GMP or CLN support
+(go to the \leda, GMP, CLN menu resp.) or simply quit the install
+script by typing ``\texttt{q}''. When leaving the script, you get a
+list of successful builds during the session. Furthermore, the script
+prints the setting of \texttt{CGAL\_MAKEFILE} for the last active
+configuration. Remember to set this environment variable before
+compiling \cgal\ applications. On bourne shell derivatives, you would
+type in our example
+\begin{alltt}
+      export CGAL_MAKEFILE=\cgaldir/make/makefile_sparc_SunOS-5.6_g++-2.95.3
+\end{alltt}
+while for \texttt{csh} descendants the syntax is
+\begin{alltt}
+      setenv CGAL_MAKEFILE \cgaldir/make/makefile_sparc_SunOS-5.6_g++-2.95.3
+\end{alltt}
+In Section~\ref{sec:makefiles} you can find more information on the
+\cgal\ makefile structure, and how to set \texttt{CGAL\_MAKEFILE} when
+using \cgal\ on several platforms.
 
-Now it would be a good idea to print and read the document ``Getting
-Started with \cgal'' that can be found in various formats in the
-\texttt{doc\_html}, \texttt{doc\_pdf} and \texttt{doc\_ps}
-directories.
+If you want to use the visualization provided by
+\ccc{CGAL::Window_stream} (Section~\ref{sec:vis}) and you do not have
+the \leda\ libraries installed, you should now proceed to
+Section~\ref{sec:cgalwin} and install the \texttt{CGALwin} library.
+
+%% Now it would be a good idea to print and read the document ``Getting
+%% Started with \cgal'' that can be found in various formats in the
+%% \texttt{doc\_html}, \texttt{doc\_pdf} and \texttt{doc\_ps}
+%% directories.
+
+\section{Installing the \texttt{CGALwin} library}\label{sec:cgalwin}
+\TTsubindextwo{installation}{CGALwin}\TTsubindextwo{visualization}{CGALwin}
+\TTindex{CGALwin}
+
+\textit{Note: This section applies only to those who do \textbf{not}
+  have the \leda\ libraries installed on their system.}
+
+The \texttt{CGALwin} library, as described in Section~\ref{sec:vis},
+can be shipped in binary format only because of licensing
+restrictions. The binaries are available at the \cgal\ download
+pages\footnote{\cgalwinlibpage}. 
+
+Fetch the file matching your operating system and compiler, uncompress
+it, and place it into the corresponding \cgal\ lib directory. This
+directory has been created during installation of the \cgal\ library
+and it is called
+\begin{alltt}
+      \cgaldir/lib/<\textit{CGAL-OS-description}>
+\end{alltt}
+where $<$\textit{CGAL-OS-description}$>$ identifies your OS/compiler
+combination in a way specified in section \ref{sec:os-compiler-id}.
+When quitting \texttt{install\_cgal}, it prints the \cgal\ lib
+directory (\texttt{CGAL\_LIB\_DIR})\TTindex{CGAL\_LIB\_DIR} of the
+last active configuration.
+
+If you do not find a binary format that works on your system, contact
+us at \texttt{contact@cgal.org}, and we will try to accommodate your
+needs.
+
+Continuing the example from the previous section, you would download
+the file \texttt{libCGALWin.a.gz} from 
+\begin{verbatim}
+      Solaris -> Solaris-2.6 -> g++-2.95.3
+\end{verbatim}
+and uncompress it.
+\begin{alltt}
+      gunzip libCGALWin.a.gz
+\end{alltt}
+Finally, you have to place it into the lib directory
+\begin{alltt}
+      cp libCGALWin.a \cgaldir/lib/sparc_SunOS-5.6_g++-2.95.3
+\end{alltt}
 
 \section{The interactive mode}\label{sec:interactive-mode}
 \index{interactive installation}\index{installation!interactive}
@@ -778,7 +872,7 @@ to determine your \cgal-OS description\index{OS description} (see section
 \ref{sec:os-compiler-id}). The compiler can either be given by an
 absolute path like
 \begin{verbatim}
-./install_cgal -os /usr/local/gcc-2.95/sun/bin/g++
+./install_cgal -os /usr/local/gcc-2.95.3/sun/bin/g++
 \end{verbatim}
 or just by denoting its basename, as long as it is on your path:
 \begin{verbatim}
@@ -866,7 +960,7 @@ The suffix \texttt{\_}LEDA is appended to indicate \leda\ support.
 
 We call the resulting string \cgal-OS description.\\ Examples are
 \texttt{mips\_IRIX-6.2\_CC-7.2} or {\tt
-  sparc\_SunOS-5.5\_g++-2.95\_LEDA}.\\ You can use the install script
+  sparc\_SunOS-5.5\_g++-2.95.3\_LEDA}.\\ You can use the install script
 to get your \cgal-OS description, see section \ref{sec:other-options}.
 
 \section{The \cgal\ makefile structure}\label{sec:makefiles}
@@ -1475,10 +1569,10 @@ a look at the \cgal\ homepage:
 \end{alltt}
 or send an email to \texttt{cgal@cs.uu.nl}.
 
-\subsection{The ``Long-Name-Problem'' on Irix6}\label{sec:longnameirix}
+\subsection{The ``Long-Name-Problem'' on IRIX6}\label{sec:longnameirix}
 \index{problems with long names}\index{long name problem}
 
-The system assembler and linker on Irix6 cannot handle symbols with
+The system assembler and linker on IRIX6 cannot handle symbols with
 more than 4096 characters. But this number can be exceeded where one
 starts nesting templates into each other. So if you encounter strange
 assembler or linker errors like
@@ -1490,7 +1584,7 @@ there is a good chance that you suffer from this ``long-name''
 problem.
 
 In contrast to Solaris, using the \gnu\ binutils does not work, since
-\texttt{gas} has not been ported to Irix6 yet. The solution proposed
+\texttt{gas} has not been ported to IRIX6 yet. The solution proposed
 in the GCC
 faq\footnote{\path'http://gcc.gnu.org/cgi-bin/fom.cgi?file=41'} is to
 compile with the (experimental) option \texttt{-fsquangle}, that
@@ -1542,7 +1636,7 @@ If you cannot (or do not want to) install \gnu -binutils, there is a
 workaround that lets you compile, link and run your programs, but it
 prevents debugging, since the executables have to be stripped. In
 short the workaround is to compile with \texttt{-g} and to link with
-\texttt{-z nodefs -s} on Solaris, \texttt{-U -s} on Irix,
+\texttt{-z nodefs -s} on Solaris, \texttt{-U -s} on IRIX,
 respectively.
 
 In order to still have portable makefiles (see
@@ -1615,7 +1709,7 @@ the use of \texttt{std::iterator\_traits} template, where possible;
 a plain C pointer as \texttt{vector\_iterator}.
 \end{itemize}
 The latter allows using the full power of STL algorithms on
-\texttt{std::vector} without the limitation given by the absense
+\texttt{std::vector} without the limitation given by the absence
 of the support for partial specialization of template parameters.
 
 Always make sure that the subdirectory
@@ -1626,7 +1720,7 @@ makefiles.
 
 
 \paragraph{\texttt{std::iterator\_traits}} is only partially
-supported, due to absense of partial specialization support in \msvc.
+supported, due to absence of partial specialization support in \msvc.
 This means that \texttt{std::iterator\_traits<T>} must be explicitly
 instantiated when \texttt{T} is a C pointer. 
 
