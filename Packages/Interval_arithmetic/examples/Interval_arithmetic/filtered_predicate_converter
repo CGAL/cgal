@@ -8,6 +8,9 @@
 #
 # See the CGAL documentation: Support Library, Number Types.
 
+# TODO:
+# - Split the lines only if the result is larger than 80 characters ?
+
 use vars qw($opt_p $opt_h $opt_s $opt_d $opt_v); # Suppress stupid warnings
 require 'getopt.pl';
 
@@ -177,7 +180,7 @@ sub print_static_adaptatif {
   my $static_epsilons = join(";\n  static double SAF_epsilon_", 0..$eps-1);
   my $bounds_check = join(".value()) > SAF_bound ||\n\tfabs(", @args);
   my $args_value = join(".value()),\n\t\tRestricted_double(", @args);
-  my $args_error = "\n\t\tStatic_filter_error(SAF_bound,0,1)," x ($#args+1);
+  my $args_error = "\n\t\tStatic_filter_error(SAF_bound)," x ($#args+1);
   my $args_epsilons = join(",\n\t\tSAF_epsilon_", 0..$eps-1);
   my $compute_new_bounds = join(".value()));\n      SAF_bound = std::max(SAF_bound, fabs(", @args);
   my $args_exact = join(".exact(),\n\t\t", @args);
@@ -188,40 +191,36 @@ $ret_type
 $fct_name(
     const ${CGAL}Static_adaptatif_filter &$args_call)
 {
-  bool tried = false;
+  bool re_adjusted = false;
   static double SAF_bound = -1.0;
   static double SAF_epsilon_$static_epsilons;
 
-letstry:
-  try
+  // Check the bounds.  All arguments must be <= SAF_bound.
+  if (\tfabs($bounds_check.value()) > SAF_bound)
   {
-    // Check the bounds.  All arguments must be <= SAF_bound.
-    // The throw mecanism is not useful here, it should be before the try{}.
-    if (\n\tfabs($bounds_check.value()) > SAF_bound)
-      throw ${CGAL}Restricted_double::unsafe_comparison();
-    // Try the epsilon variant of the predicate.
+re_adjust:
+      // Re-adjust SAF_bound.
+      SAF_bound = std::max(0.0, fabs($compute_new_bounds.value()));
+
+      // recompute the epsilons: \"just\" call it over Static_filter_error.
+      // That's the tricky part that might not work for everything.
+      (void) $fct_name\_SAF($args_error\n\t\tSAF_epsilon_$args_epsilons);
+
+      // TODO: We should verify that all epsilons have really been updated.
+  }
+
+  try  // Try the epsilon variant of the predicate.
+  {
     return $fct_name\_SAF(
 		Restricted_double($args_value.value()),
 		SAF_epsilon_$args_epsilons);
   }
   catch (${CGAL}Restricted_double::unsafe_comparison)
   {
-    // It failed once, we re-adjust (bound, epsilons).
-    if (!tried)
-    {
-      tried = true;
-      // Recompute SAF_bound (tighter or larger).
-      SAF_bound = 0;
-      SAF_bound = std::max(SAF_bound, fabs($compute_new_bounds.value()));
-
-      // recompute epsilons: \"just\" call it over Static_filter_error.
-      // That's the tricky part that might not work for everything.
-      (void) $fct_name\_SAF($args_error\n\t\tSAF_epsilon_$args_epsilons);
-
-      // We should verify that all epsilons have really been updated.
-
-      // Try again with the updated (SAF_bound, epsilon)
-      goto letstry;
+    // It failed, we re-adjust once.
+    if (!re_adjusted) {
+      re_adjusted = true;
+      goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
     return $fct_name(\n\t\t$args_exact.exact());
