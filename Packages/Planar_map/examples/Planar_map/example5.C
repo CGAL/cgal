@@ -7,6 +7,8 @@
  * incident to the unbounded face.
  */
 
+#include "short_names.h"
+
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Pm_segment_traits_2.h>
 #include <CGAL/Pm_default_dcel.h>

@@ -4,6 +4,8 @@
  * is constructed.
  */
 
+#include "short_names.h"
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/Pm_segment_traits_2.h>

@@ -8,6 +8,8 @@
  * well. Note the format of the stream.
  */
 
+#include "short_names.h"
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/Pm_segment_traits_2.h>
@@ -54,7 +56,7 @@ int main()
   e[2] = pm.insert_from_vertex(cv[2], e[1]);
   e[3] = pm.insert_at_vertices(cv[3], e[2], e[0]->twin());
   e[4] = pm.insert_at_vertices(cv[4], e[1]->twin(), e[3]->twin());
-  
+
   std::cout << ((pm.is_valid()) ? "map valid!" : "map invalid!") << std::endl
             << std::endl;
   
