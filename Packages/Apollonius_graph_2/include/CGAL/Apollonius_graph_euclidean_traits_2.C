@@ -471,24 +471,24 @@ inline
 bool
 ad_is_hidden_test_2(const Weighted_point< Point, We >& p,
 		    const Weighted_point< Point, We >& q,
-		    Cartesian_tag, Naive_tag )
+		    Cartesian_tag, Sqrt_field_tag )
 {
   typedef typename Point::FT  FT;
-  return ad_is_trivial_test_naive_C2(p.x(), p.y(), FT(p.weight()),
-				     q.x(), q.y(), FT(q.weight()));
+  return ad_is_hidden_test_sqrtf_C2(p.x(), p.y(), FT(p.weight()),
+				    q.x(), q.y(), FT(q.weight()));
 }
 
 
-template < class Point, class We, class Algebraic_tag >
+template < class Point, class We >
 inline
 bool
 ad_is_hidden_test_2(const Weighted_point< Point, We >& p,
 		    const Weighted_point< Point, We >& q,
-		    Cartesian_tag, Algebraic_tag )
+		    Cartesian_tag, Ring_tag )
 {
   typedef typename Point::FT  FT;
-  return ad_is_trivial_test_alg_C2(p.x(), p.y(), FT(p.weight()),
-				   q.x(), q.y(), FT(q.weight()));
+  return ad_is_hidden_test_ring_C2(p.x(), p.y(), FT(p.weight()),
+				    q.x(), q.y(), FT(q.weight()));
 }
 
 
@@ -550,11 +550,11 @@ inline
 Comparison_result
 ad_distances_test_2(const Weighted_point< Point, We >& p1,
 		    const Weighted_point< Point, We >& p2,
-		    const Point& p, Cartesian_tag, Naive_tag )
+		    const Point& p, Cartesian_tag, Sqrt_field_tag )
 {
   typedef typename Point::FT  FT;
   return
-    compare_ad_distances_test_naive_C2(p1.x(), p1.y(), FT(p1.weight()),
+    compare_ad_distances_test_sqrtf_C2(p1.x(), p1.y(), FT(p1.weight()),
 				       p2.x(), p2.y(), FT(p2.weight()),
 				       p.x(),  p.y());
 }
@@ -565,25 +565,11 @@ inline
 Comparison_result
 ad_distances_test_2(const Weighted_point< Point, We >& p1,
 		    const Weighted_point< Point, We >& p2,
-		    const Point& p, Cartesian_tag, Algebraic1_tag )
+		    const Point& p, Cartesian_tag, Ring_tag )
 {
   typedef typename Point::FT  FT;
   return
-    compare_ad_distances_test_alg1_C2(p1.x(), p1.y(), FT(p1.weight()),
-				      p2.x(), p2.y(), FT(p2.weight()),
-				      p.x(),  p.y());
-}
-
-template < class Point, class We >
-inline
-Comparison_result
-ad_distances_test_2(const Weighted_point< Point, We >& p1,
-		    const Weighted_point< Point, We >& p2,
-		    const Point& p, Cartesian_tag, Algebraic2_tag )
-{
-  typedef typename Point::FT  FT;
-  return
-    compare_ad_distances_test_alg2_C2(p1.x(), p1.y(), FT(p1.weight()),
+    compare_ad_distances_test_ring_C2(p1.x(), p1.y(), FT(p1.weight()),
 				      p2.x(), p2.y(), FT(p2.weight()),
 				      p.x(),  p.y());
 }
@@ -668,10 +654,10 @@ Sign
 ad_incircle_test_2(const Weighted_point< Point, We >& p1,
 		   const Weighted_point< Point, We >& p2,
 		   const Weighted_point< Point, We >&  q,
-		   Cartesian_tag, Naive_tag )
+		   Cartesian_tag, Sqrt_field_tag )
 {
   typedef typename Point::FT  FT;
-  return ad_incircle_test_naive_C2(p1.x(), p1.y(), FT(p1.weight()),
+  return ad_incircle_test_sqrtf_C2(p1.x(), p1.y(), FT(p1.weight()),
 				   p2.x(), p2.y(), FT(p2.weight()),
 				    q.x(),  q.y(), FT( q.weight()));
 }
@@ -683,28 +669,13 @@ Sign
 ad_incircle_test_2(const Weighted_point< Point, We >& p1,
 		   const Weighted_point< Point, We >& p2,
 		   const Weighted_point< Point, We >&  q,
-		   Cartesian_tag, Algebraic1_tag )
+		   Cartesian_tag, Ring_tag )
 {
   typedef typename Point::FT  FT;
-  return ad_incircle_test_alg1_C2(p1.x(), p1.y(), FT(p1.weight()),
+  return ad_incircle_test_ring_C2(p1.x(), p1.y(), FT(p1.weight()),
 				  p2.x(), p2.y(), FT(p2.weight()),
 				   q.x(),  q.y(), FT( q.weight()));
 }
-
-template < class Point, class We >
-inline
-Sign
-ad_incircle_test_2(const Weighted_point< Point, We >& p1,
-		   const Weighted_point< Point, We >& p2,
-		   const Weighted_point< Point, We >&  q,
-		   Cartesian_tag, Algebraic2_tag )
-{
-  typedef typename Point::FT  FT;
-  return ad_incircle_test_alg2_C2(p1.x(), p1.y(), FT(p1.weight()),
-				  p2.x(), p2.y(), FT(p2.weight()),
-				   q.x(),  q.y(), FT( q.weight()));
-}
-
 
 
 template < class Point, class We, class Method_tag >
@@ -745,10 +716,10 @@ ad_incircle_test_2(const Weighted_point< Point, We >& p1,
 		   const Weighted_point< Point, We >& p2,
 		   const Weighted_point< Point, We >& p3,
 		   const Weighted_point< Point, We >&  q,
-		   Cartesian_tag, Naive_tag )
+		   Cartesian_tag, Sqrt_field_tag )
 {
   typedef typename Point::FT  FT;
-  return ad_incircle_test_naive_C2(p1.x(), p1.y(), FT(p1.weight()),
+  return ad_incircle_test_sqrtf_C2(p1.x(), p1.y(), FT(p1.weight()),
 				   p2.x(), p2.y(), FT(p2.weight()),
 				   p3.x(), p3.y(), FT(p3.weight()),
 				    q.x(),  q.y(), FT( q.weight()));
@@ -762,29 +733,13 @@ ad_incircle_test_2(const Weighted_point< Point, We >& p1,
 		   const Weighted_point< Point, We >& p2,
 		   const Weighted_point< Point, We >& p3,
 		   const Weighted_point< Point, We >&  q,
-		   Cartesian_tag, Algebraic1_tag )
+		   Cartesian_tag, Ring_tag )
 {
   typedef typename Point::FT  FT;
-  return ad_incircle_test_alg1_C2(p1.x(), p1.y(), FT(p1.weight()),
+  return ad_incircle_test_ring_C2(p1.x(), p1.y(), FT(p1.weight()),
 				  p2.x(), p2.y(), FT(p2.weight()),
 				  p3.x(), p3.y(), FT(p3.weight()),
 				  q.x(),  q.y(), FT( q.weight()));
-}
-
-template < class Point, class We >
-inline
-Sign
-ad_incircle_test_2(const Weighted_point< Point, We >& p1,
-		   const Weighted_point< Point, We >& p2,
-		   const Weighted_point< Point, We >& p3,
-		   const Weighted_point< Point, We >&  q,
-		   Cartesian_tag, Algebraic2_tag )
-{
-  typedef typename Point::FT  FT;
-  return ad_incircle_test_alg2_C2(p1.x(), p1.y(), FT(p1.weight()),
-				  p2.x(), p2.y(), FT(p2.weight()),
-				  p3.x(), p3.y(), FT(p3.weight()),
-				   q.x(),  q.y(), FT( q.weight()));
 }
 
 
@@ -865,11 +820,11 @@ bool
 ad_finite_edge_test_2(const Weighted_point< Pt, We >& p1,
 		      const Weighted_point< Pt, We >& p2,
 		      const Weighted_point< Pt, We >& q,
-		      bool b, Cartesian_tag, Naive_tag)
+		      bool b, Cartesian_tag, Sqrt_field_tag)
 {
   typedef typename Pt::FT  FT;
   return
-    ad_finite_edge_test_degenerated_naive_C2(p1.x(), p1.y(),
+    ad_finite_edge_test_degenerated_sqrtf_C2(p1.x(), p1.y(),
 					     FT(p1.weight()),
 					     p2.x(), p2.y(),
 					     FT(p2.weight()),
@@ -883,29 +838,11 @@ bool
 ad_finite_edge_test_2(const Weighted_point< Pt, We >& p1,
 		      const Weighted_point< Pt, We >& p2,
 		      const Weighted_point< Pt, We >& q,
-		      bool b, Cartesian_tag, Algebraic1_tag)
+		      bool b, Cartesian_tag, Ring_tag)
 {
   typedef typename Pt::FT  FT;
   return
-    ad_finite_edge_test_degenerated_alg1_C2(p1.x(), p1.y(),
-					    FT(p1.weight()),
-					    p2.x(), p2.y(),
-					    FT(p2.weight()),
-					    q.x(),  q.y(),
-					    FT( q.weight()), b);
-}
-
-template < class Pt, class We>
-inline
-bool
-ad_finite_edge_test_2(const Weighted_point< Pt, We >& p1,
-		      const Weighted_point< Pt, We >& p2,
-		      const Weighted_point< Pt, We >& q,
-		      bool b, Cartesian_tag, Algebraic2_tag)
-{
-  typedef typename Pt::FT  FT;
-  return
-    ad_finite_edge_test_degenerated_alg2_C2(p1.x(), p1.y(),
+    ad_finite_edge_test_degenerated_ring_C2(p1.x(), p1.y(),
 					    FT(p1.weight()),
 					    p2.x(), p2.y(),
 					    FT(p2.weight()),
@@ -968,10 +905,10 @@ ad_finite_edge_test_2(const Weighted_point< Pt, We >& p1,
 		      const Weighted_point< Pt, We >& p2,
 		      const Weighted_point< Pt, We >& p3,
 		      const Weighted_point< Pt, We >& q,
-		      bool b, Cartesian_tag, Naive_tag)
+		      bool b, Cartesian_tag, Sqrt_field_tag)
 {
   typedef typename Pt::FT  FT;
-  return ad_finite_edge_test_degenerated_naive_C2(p1.x(), p1.y(),
+  return ad_finite_edge_test_degenerated_sqrtf_C2(p1.x(), p1.y(),
 						  FT(p1.weight()),
 						  p2.x(), p2.y(),
 						  FT(p2.weight()),
@@ -988,30 +925,10 @@ ad_finite_edge_test_2(const Weighted_point< Pt, We >& p1,
 		      const Weighted_point< Pt, We >& p2,
 		      const Weighted_point< Pt, We >& p3,
 		      const Weighted_point< Pt, We >& q,
-		      bool b, Cartesian_tag, Algebraic1_tag)
+		      bool b, Cartesian_tag, Ring_tag)
 {
   typedef typename Pt::FT  FT;
-  return ad_finite_edge_test_degenerated_alg1_C2(p1.x(), p1.y(),
-						 FT(p1.weight()),
-						 p2.x(), p2.y(),
-						 FT(p2.weight()),
-						 p3.x(), p3.y(),
-						 FT(p3.weight()),
-						 q.x(),  q.y(),
-						 FT( q.weight()), b);
-}
-
-template < class Pt, class We >
-inline
-bool
-ad_finite_edge_test_2(const Weighted_point< Pt, We >& p1,
-		      const Weighted_point< Pt, We >& p2,
-		      const Weighted_point< Pt, We >& p3,
-		      const Weighted_point< Pt, We >& q,
-		      bool b, Cartesian_tag, Algebraic2_tag)
-{
-  typedef typename Pt::FT  FT;
-  return ad_finite_edge_test_degenerated_alg2_C2(p1.x(), p1.y(),
+  return ad_finite_edge_test_degenerated_ring_C2(p1.x(), p1.y(),
 						 FT(p1.weight()),
 						 p2.x(), p2.y(),
 						 FT(p2.weight()),
@@ -1084,11 +1001,11 @@ ad_finite_edge_test_2(const Weighted_point< Pt, We >& p1,
 		      const Weighted_point< Pt, We >& p3,
 		      const Weighted_point< Pt, We >& p4,
 		      const Weighted_point< Pt, We >& q,
-		      bool b, Cartesian_tag, Naive_tag)
+		      bool b, Cartesian_tag, Sqrt_field_tag)
 {
   typedef typename Pt::FT  FT;
   return
-    ad_finite_edge_test_naive_C2(p1.x(), p1.y(), FT(p1.weight()),
+    ad_finite_edge_test_sqrtf_C2(p1.x(), p1.y(), FT(p1.weight()),
 				 p2.x(), p2.y(), FT(p2.weight()),
 				 p3.x(), p3.y(), FT(p3.weight()),
 				 p4.x(), p4.y(), FT(p4.weight()),
@@ -1103,31 +1020,11 @@ ad_finite_edge_test_2(const Weighted_point< Pt, We >& p1,
 		      const Weighted_point< Pt, We >& p3,
 		      const Weighted_point< Pt, We >& p4,
 		      const Weighted_point< Pt, We >& q,
-		      bool b, Cartesian_tag, Algebraic1_tag)
+		      bool b, Cartesian_tag, Ring_tag)
 {
   typedef typename Pt::FT  FT;
   return
-    ad_finite_edge_test_alg1_C2(p1.x(), p1.y(), FT(p1.weight()),
-				p2.x(), p2.y(), FT(p2.weight()),
-				p3.x(), p3.y(), FT(p3.weight()),
-				p4.x(), p4.y(), FT(p4.weight()),
-				q.x(),  q.y(), FT(q.weight()), b);
-}
-
-
-template < class Pt, class We >
-inline
-bool
-ad_finite_edge_test_2(const Weighted_point< Pt, We >& p1,
-		      const Weighted_point< Pt, We >& p2,
-		      const Weighted_point< Pt, We >& p3,
-		      const Weighted_point< Pt, We >& p4,
-		      const Weighted_point< Pt, We >& q,
-		      bool b, Cartesian_tag, Algebraic2_tag)
-{
-  typedef typename Pt::FT  FT;
-  return
-    ad_finite_edge_test_alg2_C2(p1.x(), p1.y(), FT(p1.weight()),
+    ad_finite_edge_test_ring_C2(p1.x(), p1.y(), FT(p1.weight()),
 				p2.x(), p2.y(), FT(p2.weight()),
 				p3.x(), p3.y(), FT(p3.weight()),
 				p4.x(), p4.y(), FT(p4.weight()),
@@ -1245,11 +1142,11 @@ ad_infinite_edge_test_2(const Weighted_point< Pt, We >& p2,
 			const Weighted_point< Pt, We >& p3,
 			const Weighted_point< Pt, We >& p4,
 			const Weighted_point< Pt, We >& q,
-			bool b, Cartesian_tag, Naive_tag)
+			bool b, Cartesian_tag, Sqrt_field_tag)
 {
   typedef typename Pt::FT  FT;
   return
-    ad_infinite_edge_test_naive_C2(p2.x(), p2.y(), FT(p2.weight()),
+    ad_infinite_edge_test_sqrtf_C2(p2.x(), p2.y(), FT(p2.weight()),
 				   p3.x(), p3.y(), FT(p3.weight()),
 				   p4.x(), p4.y(), FT(p4.weight()),
 				   q.x(),  q.y(), FT( q.weight()), b);
@@ -1263,28 +1160,11 @@ ad_infinite_edge_test_2(const Weighted_point< Pt, We >& p2,
 			const Weighted_point< Pt, We >& p3,
 			const Weighted_point< Pt, We >& p4,
 			const Weighted_point< Pt, We >& q,
-			bool b, Cartesian_tag, Algebraic1_tag)
+			bool b, Cartesian_tag, Ring_tag)
 {
   typedef typename Pt::FT  FT;
   return
-    ad_infinite_edge_test_alg1_C2(p2.x(), p2.y(), FT(p2.weight()),
-				  p3.x(), p3.y(), FT(p3.weight()),
-				  p4.x(), p4.y(), FT(p4.weight()),
-				  q.x(),  q.y(), FT( q.weight()), b);
-}
-
-template < class Pt, class We >
-inline
-bool
-ad_infinite_edge_test_2(const Weighted_point< Pt, We >& p2,
-			const Weighted_point< Pt, We >& p3,
-			const Weighted_point< Pt, We >& p4,
-			const Weighted_point< Pt, We >& q,
-			bool b, Cartesian_tag, Algebraic2_tag)
-{
-  typedef typename Pt::FT  FT;
-  return
-    ad_infinite_edge_test_alg2_C2(p2.x(), p2.y(), FT(p2.weight()),
+    ad_infinite_edge_test_ring_C2(p2.x(), p2.y(), FT(p2.weight()),
 				  p3.x(), p3.y(), FT(p3.weight()),
 				  p4.x(), p4.y(), FT(p4.weight()),
 				  q.x(),  q.y(), FT( q.weight()), b);
@@ -1375,11 +1255,11 @@ ad_is_degenerate_edge_test_2(const Weighted_point< Pt, We >& p1,
 			     const Weighted_point< Pt, We >& p2,
 			     const Weighted_point< Pt, We >& p3,
 			     const Weighted_point< Pt, We >& p4,
-			     Cartesian_tag, Naive_tag)
+			     Cartesian_tag, Sqrt_field_tag)
 {
   typedef typename Pt::FT  FT;
   return
-    ad_is_degenerate_edge_test_naive_C2(p1.x(), p1.y(), FT(p1.weight()),
+    ad_is_degenerate_edge_test_sqrtf_C2(p1.x(), p1.y(), FT(p1.weight()),
 					p2.x(), p2.y(), FT(p2.weight()),
 					p3.x(), p3.y(), FT(p3.weight()),
 					p4.x(), p4.y(), FT(p4.weight()));
@@ -1392,29 +1272,11 @@ ad_is_degenerate_edge_test_2(const Weighted_point< Pt, We >& p1,
 			     const Weighted_point< Pt, We >& p2,
 			     const Weighted_point< Pt, We >& p3,
 			     const Weighted_point< Pt, We >& p4,
-			     Cartesian_tag, Algebraic1_tag)
+			     Cartesian_tag, Ring_tag)
 {
   typedef typename Pt::FT  FT;
   return
-    ad_is_degenerate_edge_test_alg1_C2(p1.x(), p1.y(), FT(p1.weight()),
-				       p2.x(), p2.y(), FT(p2.weight()),
-				       p3.x(), p3.y(), FT(p3.weight()),
-				       p4.x(), p4.y(), FT(p4.weight()));
-}
-
-
-template < class Pt, class We >
-inline
-bool
-ad_is_degenerate_edge_test_2(const Weighted_point< Pt, We >& p1,
-			     const Weighted_point< Pt, We >& p2,
-			     const Weighted_point< Pt, We >& p3,
-			     const Weighted_point< Pt, We >& p4,
-			     Cartesian_tag, Algebraic2_tag)
-{
-  typedef typename Pt::FT  FT;
-  return
-    ad_is_degenerate_edge_test_alg2_C2(p1.x(), p1.y(), FT(p1.weight()),
+    ad_is_degenerate_edge_test_ring_C2(p1.x(), p1.y(), FT(p1.weight()),
 				       p2.x(), p2.y(), FT(p2.weight()),
 				       p3.x(), p3.y(), FT(p3.weight()),
 				       p4.x(), p4.y(), FT(p4.weight()));

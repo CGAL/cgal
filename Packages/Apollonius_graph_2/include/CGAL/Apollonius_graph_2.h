@@ -33,7 +33,6 @@ protected:
   typedef DG                                 Delaunay_graph;
   typedef typename DG::Vertex                Vertex;
   typedef typename DG::Face                  Face;
-  //  typedef typename Gt::Line_2                Line;
 
 public:
   // TYPES

@@ -11,8 +11,6 @@
 #include <CGAL/functions_on_signs.h>
 #include <CGAL/predicates/compare_quadratic.h>
 
-#include <CGAL/Apollonius_graph_method_tags.h>
-
 CGAL_BEGIN_NAMESPACE
 
 
@@ -28,22 +26,20 @@ public:
 public:
 
   inline
-  Sign operator()(const Voronoi_radius& vr, Naive_tag )
+  Sign operator()(const Voronoi_radius& vr, Sqrt_field_tag )
     {
       FT r = vr.c1() + vr.c2() * CGAL_NTS sqrt(vr.delta());
       return CGAL_NTS sign(r);
     }
 
+
   inline
-  Sign operator()(const Voronoi_radius& vr, Algebraic3_tag )
+  Sign operator()(const Voronoi_radius& vr, Ring_tag )
     {
-      return sign_a_plus_b_x_sqrt_c(vr.c1(), vr.c2(), vr.delta());
-    }
+      // this is another way of doing this; the degree becomes 10
+      // instead of 5 in this case.
+      //      return sign_a_plus_b_x_sqrt_c(vr.c1(), vr.c2(), vr.delta());
 
-
-  template<class Algebraic_tag>
-  Sign operator()(const Voronoi_radius& vr, Algebraic_tag )
-    {
       bool is_first_root = CGAL_NTS is_negative(vr.c2());
 
       Sign s_beta = CGAL_NTS sign(vr.b());
@@ -93,7 +89,8 @@ public:
 public:
 
   Sign
-  operator()(const Bitangent_line& bl, const Weighted_point& q, Naive_tag)
+  operator()(const Bitangent_line& bl, const Weighted_point& q,
+	     Sqrt_field_tag)
     {
 #ifdef AG2_PROFILE_PREDICATES
       ag2_predicate_profiler::distance_from_bitangent_counter++;
@@ -105,9 +102,8 @@ public:
       return CGAL_NTS sign(r);
     }
 
-  template<class Algebraic_tag>
   Sign
-  operator()(const Bitangent_line& bl, const Weighted_point& q, Algebraic_tag)
+  operator()(const Bitangent_line& bl, const Weighted_point& q, Ring_tag)
     {
 #ifdef AG2_PROFILE_PREDICATES
       ag2_predicate_profiler::distance_from_bitangent_counter++;
@@ -134,7 +130,7 @@ public:
 
   Sign
   operator()(const Bitangent_line& bl,
-	     const Inverted_weighted_point& v, Naive_tag)
+	     const Inverted_weighted_point& v, Sqrt_field_tag)
     {
       FT a = bl.a1() + bl.a2() * CGAL_NTS sqrt(bl.delta());
       FT b = bl.b1() + bl.b2() * CGAL_NTS sqrt(bl.delta());
@@ -143,10 +139,9 @@ public:
       return CGAL_NTS sign(r);
     }
 
-  template<class Algebraic_tag>
   Sign
   operator()(const Bitangent_line& bl,
-	     const Inverted_weighted_point& v, Algebraic_tag)
+	     const Inverted_weighted_point& v, Ring_tag)
     {
       FT A = bl.a1() * v.x() + bl.b1() * v.y() + bl.c1() * v.p()
 	- v.weight() * bl.d();
@@ -195,7 +190,7 @@ public:
 private:
   Orientation
   orientation(const Bitangent_line& l, const Point& p,
-	      Naive_tag) const
+	      Sqrt_field_tag) const
     {
       FT A = l.a1() * p.x() + l.b1() * p.y() + l.c1();
       FT B = l.a2() * p.x() + l.b2() * p.y() + l.c2();
@@ -203,10 +198,9 @@ private:
       return CGAL_NTS sign(P);
     }
 
-  template<class Algebraic_tag>
   Orientation
   orientation(const Bitangent_line& l, const Point& p,
-	      Algebraic_tag) const
+	      Ring_tag) const
     {
       FT A = l.a1() * p.x() + l.b1() * p.y() + l.c1();
       FT B = l.a2() * p.x() + l.b2() * p.y() + l.c2();
@@ -286,7 +280,7 @@ public:
 
   Orientation
   operator()(const Voronoi_circle& vc, const Point& p1,
-	     const Point& p2, Naive_tag)
+	     const Point& p2, Sqrt_field_tag)
     {
       FT a = vc.a1() + vc.a2() * CGAL_NTS sqrt(vc.delta());
       FT b = vc.b1() + vc.b2() * CGAL_NTS sqrt(vc.delta());
@@ -294,10 +288,9 @@ public:
       return CGAL_NTS sign(det);
     }
 
-  template<class Algebraic_tag>
   Orientation
   operator()(const Voronoi_circle& vc, const Point& p1,
-	     const Point& p2, Algebraic_tag)
+	     const Point& p2, Ring_tag)
     {
       FT dx = p2.x() - p1.x();
       FT dy = p2.y() - p1.y();
@@ -378,7 +371,7 @@ private:
 public:
   Comparison_result
   operator()(const Voronoi_circle& vc1, const Voronoi_circle& vc2,
-	     Naive_tag)
+	     Sqrt_field_tag)
     {
       FT c1 = (vc1.c1() + vc1.c2() * CGAL_NTS sqrt(vc1.delta())) / vc1.d();
       FT c2 = (vc2.c1() + vc2.c2() * CGAL_NTS sqrt(vc2.delta())) / vc2.d();
@@ -387,9 +380,12 @@ public:
       return r;
     }
 
+  // this is the naive way but without divisions and square roots; the
+  // degree becomes 36 in this case.
+  /*
   Comparison_result
   operator()(const Voronoi_circle& vc1, const Voronoi_circle& vc2,
-	     Algebraic3_tag)
+	     Ring_tag)
     {
       FT A = vc1.c1() * vc2.d() - vc2.c1() * vc1.d();
       FT B = vc1.c2() * vc2.d();
@@ -402,11 +398,11 @@ public:
       if ( s == ZERO ) { return EQUAL; }
       return ( s == POSITIVE ) ? SMALLER : LARGER;
     }
-
+  */
 
   Comparison_result
   operator()(const Voronoi_circle& vc1, const Voronoi_circle& vc2,
-	     Algebraic1_tag)
+	     Ring_tag)
     {
       bool is_first_root1 = vc1.is_first_root();
       bool is_first_root2 = vc2.is_first_root();
@@ -445,9 +441,11 @@ public:
       return ( r == LARGER ) ? SMALLER : LARGER;
     }
 
+  // this uses the DFMT trees; slightly slower but same degree (20).
+  /*
   Comparison_result
   operator()(const Voronoi_circle& vc1, const Voronoi_circle& vc2,
-	     Algebraic2_tag)
+	     Ring_tag)
     {
       bool is_first_root1 = vc1.is_first_root();
       bool is_first_root2 = vc2.is_first_root();
@@ -473,7 +471,7 @@ public:
       if ( r == EQUAL ) { return EQUAL; }
       return ( r == LARGER ) ? SMALLER : LARGER;
     }
-
+  */
 };
 
 
@@ -893,7 +891,7 @@ public:
     }
 
   Sign chi2(const Bitangent_line& bl1,
-	    const Bitangent_line& bl2, Naive_tag) const
+	    const Bitangent_line& bl2, Sqrt_field_tag) const
     {
       FT sigma = bl1.dx() * bl2.dx() + bl1.dy() * bl2.dy();
       FT delta = bl1.dx() * bl2.dy() - bl1.dy() * bl2.dx();
@@ -913,10 +911,9 @@ public:
       return CGAL_NTS sign(E);
     }
 
-  template< class Algebraic_tag>
   inline
   Sign chi2(const Bitangent_line& bl1,
-	    const Bitangent_line& bl2, Algebraic_tag) const
+	    const Bitangent_line& bl2, Ring_tag) const
     {
       return chi2(bl1.dx(), bl1.dy(), -bl1.dw(), bl1.d(), bl1.delta(),
 		  bl2.dx(), bl2.dy(), -bl2.dw(), bl2.d(), bl2.delta());

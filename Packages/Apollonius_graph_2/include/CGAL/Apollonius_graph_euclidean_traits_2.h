@@ -8,8 +8,6 @@
 #include <CGAL/Hyperbola_segment_2.h>
 #include <CGAL/Hyperbola_ray_2.h>
 
-#include <CGAL/Apollonius_graph_method_tags.h>
-
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/Filtered_predicate.h>
 

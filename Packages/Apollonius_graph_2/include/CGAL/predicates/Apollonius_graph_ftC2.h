@@ -9,8 +9,6 @@
 #include <CGAL/functions_on_signs.h>
 #include <CGAL/predicates/Apollonius_graph_predicates_C2.h>
 
-#include <CGAL/Apollonius_graph_method_tags.h>
-
 CGAL_BEGIN_NAMESPACE
 
 //--------------------------------------------------------------------
@@ -18,7 +16,7 @@ CGAL_BEGIN_NAMESPACE
 template< class RT >
 inline
 bool
-ad_is_trivial_test_alg_C2(const RT &x1, const RT &y1, const RT &w1,
+ad_is_hidden_test_ring_C2(const RT &x1, const RT &y1, const RT &w1,
 			  const RT &x2, const RT &y2, const RT &w2)
 {
 #ifdef AG2_PROFILE_PREDICATES
@@ -39,8 +37,8 @@ ad_is_trivial_test_alg_C2(const RT &x1, const RT &y1, const RT &w1,
 template< class RT >
 inline
 bool
-ad_is_trivial_test_naive_C2(const RT &x1, const RT &y1, const RT &w1,
-			    const RT &x2, const RT &y2, const RT &w2)
+ad_is_hidden_test_sqrtf_C2(const RT &x1, const RT &y1, const RT &w1,
+			   const RT &x2, const RT &y2, const RT &w2)
 {
 #ifdef AG2_PROFILE_PREDICATES
   ag2_predicate_profiler::is_trivial_counter++;
@@ -59,7 +57,7 @@ ad_is_trivial_test_naive_C2(const RT &x1, const RT &y1, const RT &w1,
 template< class RT >
 CGAL_MEDIUM_INLINE
 Comparison_result
-compare_ad_distances_test_alg1_C2(const RT &x1, const RT &y1, const RT &w1,
+compare_ad_distances_test_ring_C2(const RT &x1, const RT &y1, const RT &w1,
 				  const RT &x2, const RT &y2, const RT &w2,
 				  const RT & x, const RT & y)
 {
@@ -95,25 +93,13 @@ compare_ad_distances_test_alg1_C2(const RT &x1, const RT &y1, const RT &w1,
   return ((s == POSITIVE) ? LARGER : ((s == ZERO) ? EQUAL : SMALLER));
 }
 
-template< class RT >
-/*CGAL_NO_FILTER*/
-inline
-Comparison_result
-compare_ad_distances_test_alg2_C2(const RT &x1, const RT &y1, const RT &w1,
-				  const RT &x2, const RT &y2, const RT &w2,
-				  const RT & x, const RT & y)
-{
-  return
-    compare_ad_distances_test_alg2_C2(x1, y1, w1, x2, y2, w2, x, y);
-}
-
 //--------------------------------------------------------------------
 
 
 template< class RT >
 CGAL_MEDIUM_INLINE
 Comparison_result
-compare_ad_distances_test_naive_C2(const RT &x1, const RT &y1, const RT &w1,
+compare_ad_distances_test_sqrtf_C2(const RT &x1, const RT &y1, const RT &w1,
 				   const RT &x2, const RT &y2, const RT &w2,
 				   const RT & x, const RT & y)
 {
@@ -191,7 +177,7 @@ bounded_side_of_segment(const RT& x1, const RT& y1,
 
 template < class RT >
 Sign
-ad_incircle_test_naive_C2(const RT &x1, const RT &y1,
+ad_incircle_test_sqrtf_C2(const RT &x1, const RT &y1,
 			  const RT &w1,
 			  const RT &x2, const RT &y2,
 			  const RT &w2,
@@ -208,13 +194,13 @@ ad_incircle_test_naive_C2(const RT &x1, const RT &y1,
   Weighted_point  q(Point(qx, qy), qw);
 
   Incircle_test<R> f;
-  return f(p1, p2, q, Naive_tag() );
+  return f(p1, p2, q, Sqrt_field_tag() );
 }
 
 
 template < class RT >
 Sign
-ad_incircle_test_alg1_C2(const RT &x1, const RT &y1,
+ad_incircle_test_ring_C2(const RT &x1, const RT &y1,
 			 const RT &w1,
 			 const RT &x2, const RT &y2,
 			 const RT &w2,
@@ -233,30 +219,7 @@ ad_incircle_test_alg1_C2(const RT &x1, const RT &y1,
   Weighted_point  q(Point(qx, qy), qw);
 
   Incircle_test<R> f;
-  return f(p1, p2, q, Algebraic1_tag() );
-}
-
-
-template < class RT >
-Sign
-ad_incircle_test_alg2_C2(const RT &x1, const RT &y1,
-			 const RT &w1,
-			 const RT &x2, const RT &y2,
-			 const RT &w2,
-			 const RT &qx, const RT &qy,
-			 const RT &qw)
-{
-  typedef Simple_cartesian<RT>             R;
-  typedef Point_2<R>                       Point;
-  typedef RT                               Weight;
-  typedef Weighted_point<Point, Weight>    Weighted_point;
-
-  Weighted_point p1(Point(x1, y1), w1);
-  Weighted_point p2(Point(x2, y2), w2);
-  Weighted_point  q(Point(qx, qy), qw);
-
-  Incircle_test<R> f;
-  return f(p1, p2, q, Algebraic2_tag() );
+  return f(p1, p2, q, Ring_tag() );
 }
 
 
@@ -266,7 +229,7 @@ ad_incircle_test_alg2_C2(const RT &x1, const RT &y1,
 
 template < class RT >
 Sign
-ad_incircle_test_naive_C2(const RT &x1, const RT &y1,
+ad_incircle_test_sqrtf_C2(const RT &x1, const RT &y1,
 			  const RT &w1,
 			  const RT &x2, const RT &y2,
 			  const RT &w2,
@@ -286,13 +249,13 @@ ad_incircle_test_naive_C2(const RT &x1, const RT &y1,
   Weighted_point  q(Point(qx, qy), qw);
 
   Incircle_test<R> f;
-  return f(p1, p2, p3, q, Naive_tag() );
+  return f(p1, p2, p3, q, Sqrt_field_tag() );
 }
 
 
 template < class RT >
 Sign
-ad_incircle_test_alg1_C2(const RT &x1, const RT &y1,
+ad_incircle_test_ring_C2(const RT &x1, const RT &y1,
 			 const RT &w1,
 			 const RT &x2, const RT &y2,
 			 const RT &w2,
@@ -312,35 +275,8 @@ ad_incircle_test_alg1_C2(const RT &x1, const RT &y1,
   Weighted_point  q(Point(qx, qy), qw);
 
   Incircle_test<R> f;
-  return f(p1, p2, p3, q, Algebraic1_tag() );
+  return f(p1, p2, p3, q, Ring_tag() );
 }
-
-
-template < class RT >
-Sign
-ad_incircle_test_alg2_C2(const RT &x1, const RT &y1,
-			 const RT &w1,
-			 const RT &x2, const RT &y2,
-			 const RT &w2,
-			 const RT &x3, const RT &y3,
-			 const RT &w3,
-			 const RT &qx, const RT &qy,
-			 const RT &qw)
-{
-  typedef Simple_cartesian<RT>             R;
-  typedef Point_2<R>                       Point;
-  typedef RT                               Weight;
-  typedef Weighted_point<Point, Weight>    Weighted_point;
-
-  Weighted_point p1(Point(x1, y1), w1);
-  Weighted_point p2(Point(x2, y2), w2);
-  Weighted_point p3(Point(x3, y3), w3);
-  Weighted_point  q(Point(qx, qy), qw);
-
-  Incircle_test<R> f;
-  return f(p1, p2, p3, q, Algebraic2_tag() );
-}
-
 
 
 
@@ -349,7 +285,7 @@ ad_incircle_test_alg2_C2(const RT &x1, const RT &y1,
 
 template < class RT >
 bool
-ad_finite_edge_test_naive_C2(const RT &x1, const RT &y1,
+ad_finite_edge_test_sqrtf_C2(const RT &x1, const RT &y1,
 			     const RT &w1,
 			     const RT &x2, const RT &y2,
 			     const RT &w2,
@@ -372,12 +308,12 @@ ad_finite_edge_test_naive_C2(const RT &x1, const RT &y1,
   Weighted_point  q(Point(qx, qy), qw);
 
   Finite_edge_test<R> f;
-  return f(p1, p2, p3, p4, q, b, Naive_tag() );
+  return f(p1, p2, p3, p4, q, b, Sqrt_field_tag() );
 }
 
 template < class RT >
 bool
-ad_finite_edge_test_alg1_C2(const RT &x1, const RT &y1,
+ad_finite_edge_test_ring_C2(const RT &x1, const RT &y1,
 			    const RT &w1,
 			    const RT &x2, const RT &y2,
 			    const RT &w2,
@@ -402,42 +338,15 @@ ad_finite_edge_test_alg1_C2(const RT &x1, const RT &y1,
   Weighted_point  q(Point(qx, qy), qw);
 
   Finite_edge_test<R> f;
-  return f(p1, p2, p3, p4, q, b, Algebraic1_tag() );
+  return f(p1, p2, p3, p4, q, b, Ring_tag() );
 }
 
-template < class RT >
-bool
-ad_finite_edge_test_alg2_C2(const RT &x1, const RT &y1,
-			    const RT &w1,
-			    const RT &x2, const RT &y2,
-			    const RT &w2,
-			    const RT &x3, const RT &y3,
-			    const RT &w3,
-			    const RT &x4, const RT &y4,
-			    const RT &w4,
-			    const RT &qx, const RT &qy,
-			    const RT &qw, bool b)
-{
-  typedef Simple_cartesian<RT>             R;
-  typedef Point_2<R>                       Point;
-  typedef RT                               Weight;
-  typedef Weighted_point<Point, Weight>    Weighted_point;
-
-  Weighted_point p1(Point(x1, y1), w1);
-  Weighted_point p2(Point(x2, y2), w2);
-  Weighted_point p3(Point(x3, y3), w3);
-  Weighted_point p4(Point(x4, y4), w4);
-  Weighted_point  q(Point(qx, qy), qw);
-
-  Finite_edge_test<R> f;
-  return f(p1, p2, p3, p4, q, b, Algebraic2_tag() );
-}
 
 //--------------------------------------------------------------------
 
 template < class RT >
 bool
-ad_finite_edge_test_degenerated_naive_C2(const RT &x1, const RT &y1,
+ad_finite_edge_test_degenerated_sqrtf_C2(const RT &x1, const RT &y1,
 					 const RT &w1,
 					 const RT &x2, const RT &y2,
 					 const RT &w2,
@@ -454,12 +363,12 @@ ad_finite_edge_test_degenerated_naive_C2(const RT &x1, const RT &y1,
   Weighted_point  q(Point(qx, qy), qw);
 
   Finite_edge_test_degenerated<R> f;
-  return f(p1, p2, q, b, Naive_tag() );
+  return f(p1, p2, q, b, Sqrt_field_tag() );
 }
 
 template < class RT >
 bool
-ad_finite_edge_test_degenerated_alg1_C2(const RT &x1, const RT &y1,
+ad_finite_edge_test_degenerated_ring_C2(const RT &x1, const RT &y1,
 					const RT &w1,
 					const RT &x2, const RT &y2,
 					const RT &w2,
@@ -478,36 +387,13 @@ ad_finite_edge_test_degenerated_alg1_C2(const RT &x1, const RT &y1,
   Weighted_point  q(Point(qx, qy), qw);
 
   Finite_edge_test_degenerated<R> f;
-  return f(p1, p2, q, b, Algebraic1_tag() );
+  return f(p1, p2, q, b, Ring_tag() );
 }
-
-template < class RT >
-bool
-ad_finite_edge_test_degenerated_alg2_C2(const RT &x1, const RT &y1,
-					const RT &w1,
-					const RT &x2, const RT &y2,
-					const RT &w2,
-					const RT &qx, const RT &qy,
-					const RT &qw, bool b)
-{
-  typedef Simple_cartesian<RT>             R;
-  typedef Point_2<R>                       Point;
-  typedef RT                               Weight;
-  typedef Weighted_point<Point, Weight>    Weighted_point;
-
-  Weighted_point p1(Point(x1, y1), w1);
-  Weighted_point p2(Point(x2, y2), w2);
-  Weighted_point  q(Point(qx, qy), qw);
-
-  Finite_edge_test_degenerated<R> f;
-  return f(p1, p2, q, b, Algebraic2_tag() );
-}
-
 
 
 template < class RT >
 bool
-ad_finite_edge_test_degenerated_naive_C2(const RT &x1, const RT &y1,
+ad_finite_edge_test_degenerated_sqrtf_C2(const RT &x1, const RT &y1,
 					 const RT &w1,
 					 const RT &x2, const RT &y2,
 					 const RT &w2,
@@ -527,13 +413,13 @@ ad_finite_edge_test_degenerated_naive_C2(const RT &x1, const RT &y1,
   Weighted_point  q(Point(qx, qy), qw);
 
   Finite_edge_test_degenerated<R> f;
-  return f(p1, p2, p3, q, b, Naive_tag() );
+  return f(p1, p2, p3, q, b, Sqrt_field_tag() );
 }
 
 
 template < class RT >
 bool
-ad_finite_edge_test_degenerated_alg1_C2(const RT &x1, const RT &y1,
+ad_finite_edge_test_degenerated_ring_C2(const RT &x1, const RT &y1,
 					const RT &w1,
 					const RT &x2, const RT &y2,
 					const RT &w2,
@@ -553,40 +439,14 @@ ad_finite_edge_test_degenerated_alg1_C2(const RT &x1, const RT &y1,
   Weighted_point  q(Point(qx, qy), qw);
 
   Finite_edge_test_degenerated<R> f;
-  return f(p1, p2, p3, q, b, Algebraic1_tag() );
+  return f(p1, p2, p3, q, b, Ring_tag() );
 }
-
-template < class RT >
-bool
-ad_finite_edge_test_degenerated_alg2_C2(const RT &x1, const RT &y1,
-					const RT &w1,
-					const RT &x2, const RT &y2,
-					const RT &w2,
-					const RT &x3, const RT &y3,
-					const RT &w3,
-					const RT &qx, const RT &qy,
-					const RT &qw, bool b)
-{
-  typedef Simple_cartesian<RT>             R;
-  typedef Point_2<R>                       Point;
-  typedef RT                               Weight;
-  typedef Weighted_point<Point, Weight>    Weighted_point;
-
-  Weighted_point p1(Point(x1, y1), w1);
-  Weighted_point p2(Point(x2, y2), w2);
-  Weighted_point p3(Point(x3, y3), w3);
-  Weighted_point  q(Point(qx, qy), qw);
-
-  Finite_edge_test_degenerated<R> f;
-  return f(p1, p2, p3, q, b, Algebraic2_tag() );
-}
-
 
 //--------------------------------------------------------------------
 
 template < class RT >
 bool
-ad_infinite_edge_test_naive_C2(const RT &x2, const RT &y2,
+ad_infinite_edge_test_sqrtf_C2(const RT &x2, const RT &y2,
 			       const RT &w2,
 			       const RT &x3, const RT &y3,
 			       const RT &w3,
@@ -606,12 +466,12 @@ ad_infinite_edge_test_naive_C2(const RT &x2, const RT &y2,
   Weighted_point  q(Point(qx, qy), qw);
 
   Infinite_edge_test<R> f;
-  return f(p2, p3, p4, q, b, Naive_tag() );
+  return f(p2, p3, p4, q, b, Sqrt_field_tag() );
 }
 
 template < class RT >
 bool
-ad_infinite_edge_test_alg1_C2(const RT &x2, const RT &y2,
+ad_infinite_edge_test_ring_C2(const RT &x2, const RT &y2,
 			      const RT &w2,
 			      const RT &x3, const RT &y3,
 			      const RT &w3,
@@ -633,32 +493,7 @@ ad_infinite_edge_test_alg1_C2(const RT &x2, const RT &y2,
   Weighted_point  q(Point(qx, qy), qw);
 
   Infinite_edge_test<R> f;
-  return f(p2, p3, p4, q, b, Algebraic1_tag() );
-}
-
-template < class RT >
-bool
-ad_infinite_edge_test_alg2_C2(const RT &x2, const RT &y2,
-			      const RT &w2,
-			      const RT &x3, const RT &y3,
-			      const RT &w3,
-			      const RT &x4, const RT &y4,
-			      const RT &w4,
-			      const RT &qx, const RT &qy,
-			      const RT &qw, bool b)
-{
-  typedef Simple_cartesian<RT>             R;
-  typedef Point_2<R>                       Point;
-  typedef RT                               Weight;
-  typedef Weighted_point<Point, Weight>    Weighted_point;
-
-  Weighted_point p2(Point(x2, y2), w2);
-  Weighted_point p3(Point(x3, y3), w3);
-  Weighted_point p4(Point(x4, y4), w4);
-  Weighted_point  q(Point(qx, qy), qw);
-
-  Infinite_edge_test<R> f;
-  return f(p2, p3, p4, q, b, Algebraic2_tag() );
+  return f(p2, p3, p4, q, b, Ring_tag() );
 }
 
 
@@ -667,7 +502,7 @@ ad_infinite_edge_test_alg2_C2(const RT &x2, const RT &y2,
 
 template < class RT >
 bool
-ad_is_degenerate_edge_test_naive_C2(const RT &x1, const RT &y1,
+ad_is_degenerate_edge_test_sqrtf_C2(const RT &x1, const RT &y1,
 				    const RT &w1,
 				    const RT &x2, const RT &y2,
 				    const RT &w2,
@@ -687,12 +522,12 @@ ad_is_degenerate_edge_test_naive_C2(const RT &x1, const RT &y1,
   Weighted_point p4(Point(x4, y4), w4);
 
   Is_degenerate_edge_test<R> f;
-  return f(p1, p2, p3, p4, Naive_tag() );
+  return f(p1, p2, p3, p4, Sqrt_field_tag() );
 }
 
 template < class RT >
 bool
-ad_is_degenerate_edge_test_alg1_C2(const RT &x1, const RT &y1,
+ad_is_degenerate_edge_test_ring_C2(const RT &x1, const RT &y1,
 				   const RT &w1,
 				   const RT &x2, const RT &y2,
 				   const RT &w2,
@@ -712,33 +547,7 @@ ad_is_degenerate_edge_test_alg1_C2(const RT &x1, const RT &y1,
   Weighted_point p4(Point(x4, y4), w4);
 
   Is_degenerate_edge_test<R> f;
-  return f(p1, p2, p3, p4, Algebraic1_tag() );
-}
-
-
-template < class RT >
-bool
-ad_is_degenerate_edge_test_alg2_C2(const RT &x1, const RT &y1,
-				   const RT &w1,
-				   const RT &x2, const RT &y2,
-				   const RT &w2,
-				   const RT &x3, const RT &y3,
-				   const RT &w3,
-				   const RT &x4, const RT &y4,
-				   const RT &w4)
-{
-  typedef Simple_cartesian<RT>             R;
-  typedef Point_2<R>                       Point;
-  typedef RT                               Weight;
-  typedef Weighted_point<Point, Weight>    Weighted_point;
-
-  Weighted_point p1(Point(x1, y1), w1);
-  Weighted_point p2(Point(x2, y2), w2);
-  Weighted_point p3(Point(x3, y3), w3);
-  Weighted_point p4(Point(x4, y4), w4);
-
-  Is_degenerate_edge_test<R> f;
-  return f(p1, p2, p3, p4, Algebraic2_tag() );
+  return f(p1, p2, p3, p4, Ring_tag() );
 }
 
 
