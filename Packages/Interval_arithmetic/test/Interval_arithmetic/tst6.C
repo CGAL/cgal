@@ -5,6 +5,12 @@
 #include <CGAL/basic.h>
 #include <CGAL/Arithmetic_filter.h>
 
+// Just to look at how good the CGAL_IA_FORCE_TO_DOUBLE macro is compiled.
+double force2mem(const double a)
+{
+  return CGAL_IA_FORCE_TO_DOUBLE(a);
+}
+
 template < class NT >
 void test (const NT &)
 {
