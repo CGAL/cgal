@@ -4,6 +4,9 @@ Version 1.45 (?? dec 00)
 - new typdefs Geom_traits and Triangulation_data_structure.
 - various cleanups.
 - the kernel can be used as geometric traits class
+- function objects are created and applied directly. This means one less redirection
+- reintroduced the type Point in the traits class for backward compatibility
+- undo added so that the remove fails gracefully, instead of invalidating the triangulation
 
 Version 1.44 (11 dec 00)
 - typdefs _3 fixed in demo and example
