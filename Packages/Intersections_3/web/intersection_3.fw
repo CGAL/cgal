@@ -422,12 +422,12 @@ intersection(const Line_3<R> &line,
     const Point_3<R> &linepoint = line.point();
     const Direction_3<R> &linedir = line.direction();
     return intersection_bl(box,
-        to_double(linepoint.x()),
-        to_double(linepoint.y()),
-        to_double(linepoint.z()),
-        to_double(linedir.dx()),
-        to_double(linedir.dy()),
-        to_double(linedir.dz()),
+        CGAL::to_double(linepoint.x()),
+        CGAL::to_double(linepoint.y()),
+        CGAL::to_double(linepoint.z()),
+        CGAL::to_double(linedir.dx()),
+        CGAL::to_double(linedir.dy()),
+        CGAL::to_double(linedir.dz()),
         true, true
         );
 }
@@ -601,12 +601,12 @@ intersection(const Ray_3<R> &ray,
     const Point_3<R> &linepoint = ray.source();
     const Direction_3<R> &linedir = ray.direction();
     return intersection_bl(box,
-        to_double(linepoint.x()),
-        to_double(linepoint.y()),
-        to_double(linepoint.z()),
-        to_double(linedir.dx()),
-        to_double(linedir.dy()),
-        to_double(linedir.dz()),
+        CGAL::to_double(linepoint.x()),
+        CGAL::to_double(linepoint.y()),
+        CGAL::to_double(linepoint.z()),
+        CGAL::to_double(linedir.dx()),
+        CGAL::to_double(linedir.dy()),
+        CGAL::to_double(linedir.dz()),
         false, true
         );
 }
@@ -653,12 +653,12 @@ intersection(const Segment_3<R> &seg,
     const Point_3<R> &linepoint = seg.source();
     const Vector_3<R> &diffvec = seg.target()-linepoint;
     return intersection_bl(box,
-        to_double(linepoint.x()),
-        to_double(linepoint.y()),
-        to_double(linepoint.z()),
-        to_double(diffvec.x()),
-        to_double(diffvec.y()),
-        to_double(diffvec.z()),
+        CGAL::to_double(linepoint.x()),
+        CGAL::to_double(linepoint.y()),
+        CGAL::to_double(linepoint.z()),
+        CGAL::to_double(diffvec.x()),
+        CGAL::to_double(diffvec.y()),
+        CGAL::to_double(diffvec.z()),
         false, false
         );
 }
