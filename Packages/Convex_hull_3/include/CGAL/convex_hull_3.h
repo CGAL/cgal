@@ -36,6 +36,7 @@
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Convex_hull_traits_3.h>
+#include <CGAL/functional.h>
 #include <iostream>
 #include <algorithm>
 #include <utility>
@@ -212,10 +213,11 @@ farthest_outside_point(Facet_handle f_handle,
 
    assert (!outside_set.empty());
    typename Traits::Less_signed_distance_to_plane_3 less_dist_to_plane =
-            traits.less_signed_distance_to_plane_3_object((*f_handle).plane());
+            traits.less_signed_distance_to_plane_3_object();
    Outside_set_iterator farthest_it =
           std::max_element(outside_set.begin(),
-                           outside_set.end(), less_dist_to_plane);
+                           outside_set.end(), 
+                           bind_1(less_dist_to_plane, (*f_handle).plane()));
 
    return *farthest_it;
 }
@@ -442,15 +444,16 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
   Plane_3 plane = construct_plane(*point3_it, *point2_it, *point1_it);
   typedef typename Traits::Less_signed_distance_to_plane_3      Dist_compare; 
   Dist_compare compare_dist = 
-                traits.less_signed_distance_to_plane_3_object(plane);
+                traits.less_signed_distance_to_plane_3_object();
   
   typename Traits::Coplanar_3  coplanar = traits.coplanar_3_object(); 
   // find both min and max here since using signed distance.  If all points
   // are on the negative side of ths plane, the max element will be on the
   // plane.
   std::pair<P3_iterator, P3_iterator> min_max;
-  min_max = CGAL::min_max_element(points.begin(), points.end(), compare_dist,
-                                  compare_dist);
+  min_max = CGAL::min_max_element(points.begin(), points.end(), 
+                                  bind_1(compare_dist, plane),
+                                  bind_1(compare_dist, plane));
   P3_iterator max_it;
   if (coplanar(*point1_it, *point2_it, *point3_it, *min_max.second))
      max_it = min_max.first;

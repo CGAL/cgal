@@ -37,7 +37,6 @@
 #include <CGAL/Triangle_3.h>
 #include <CGAL/predicates_on_points_3.h>
 #include <CGAL/distance_predicates_3.h>
-#include <CGAL/ch_predicate_classes_3.h>
 #include <CGAL/Polyhedron_default_traits_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Convex_hull_projective_xy_traits_2.h>
@@ -99,7 +98,7 @@ class Convex_hull_traits_3
   typedef typename R::Less_distance_to_point_3   Less_distance_to_point_3;
   typedef typename R::Has_on_positive_side_3     Has_on_positive_side_3;
 
-  typedef Less_signed_dist_to_plane_3<Plane_3, Point_3>
+  typedef typename R::Less_signed_distance_to_plane_3
                                                Less_signed_distance_to_plane_3;
 
   // required for degenerate case of all points coplanar
@@ -171,8 +170,8 @@ class Convex_hull_traits_3
   { return Intersect_3(); }
 
   Less_signed_distance_to_plane_3  
-  less_signed_distance_to_plane_3_object(Plane_3 p) const
-  { return Less_signed_distance_to_plane_3(p); }
+  less_signed_distance_to_plane_3_object() const
+  { return Less_signed_distance_to_plane_3(); }
 };
 
 } // namespace CGAL
