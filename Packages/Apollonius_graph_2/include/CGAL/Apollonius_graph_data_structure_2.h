@@ -49,11 +49,11 @@ public:
   void
   flip(Face_handle f, int i)
   {
-    CGAL_triangulation_precondition( dimension()==2 );
+    CGAL_precondition( dimension()==2 );
 
     // AWDG CHANGE
     // flip sould never be called if i and its mirror vertex are the same
-    CGAL_triangulation_precondition( f->vertex(i) != f->mirror_vertex(i) );
+    CGAL_precondition( f->vertex(i) != f->mirror_vertex(i) );
 
     Face_handle n  = f->neighbor(i);
     // this another change: we make sure that the index of f is given
@@ -141,7 +141,7 @@ public:
     // give a wrong answer in our case, because the index of a face is
     // not longer unique; this is because two faces can have two common edges
 
-    CGAL_triangulation_precondition( f != NULL && dimension()== 2);
+    CGAL_precondition( f != NULL && dimension()== 2);
     Vertex_handle  v = create_vertex();
 
     Vertex_handle v0 = f->vertex(0);
@@ -230,14 +230,14 @@ public:
     // this methods does the "join"-operation and preserves
     // the vertex v among the two vertices that define the edge (f, i) 
 
-    CGAL_triangulation_precondition( is_valid() );
+    CGAL_precondition( is_valid() );
 
     std::cout << "inside join: just started..." << std::endl;
 
     Vertex* v1 = f->vertex( ccw(i) );
     Vertex* v2 = f->vertex(  cw(i) );
 
-    CGAL_triangulation_precondition( v == v1 || v == v2 );
+    CGAL_precondition( v == v1 || v == v2 );
 
     if ( v == v2 ) {
       return join_vertices(f->neighbor(i), f->mirror_index(i), v);
@@ -374,7 +374,7 @@ public:
 
     delete_vertex(v2);
 
-    CGAL_triangulation_postcondition( is_valid() );
+    CGAL_postcondition( is_valid() );
 
     return v1;
   }
