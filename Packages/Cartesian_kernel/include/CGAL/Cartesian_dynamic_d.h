@@ -23,13 +23,9 @@
 #define CGAL_CARTESIAN_DYNAMIC_D_H
 
 #include <CGAL/basic.h>
+#include <CGAL/basic_classes.h>
 #include <CGAL/cartesian_classes.h>
-
-#ifdef CGAL_CFG_NO_ADVANCED_KERNEL
-  // Because we cannot use Michael's scheme, we need the wrapper classes
-  // We include them (they are common to Cartesian and Homogeneous)
-  #include <CGAL/user_classes.h>
-#endif // CGAL_CFG_NO_ADVANCED_KERNEL
+#include <CGAL/user_classes.h>
 
 #define CGAL_REP_CLASS_DEFINED
 #define CGAL_CARTESIAN_CLASS_DEFINED
