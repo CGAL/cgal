@@ -97,7 +97,6 @@ public:
   USING(Line_3);
   USING(Plane_3);
   USING(Vector_3);
-  USING(Direction_3);
 
   USING(Sphere_kernel);
   USING(Sphere_point);
