@@ -49,7 +49,7 @@ template < class Gt,
            class Tds = Triangulation_data_structure_2 <
                        Triangulation_vertex_base_2<Gt>,
 		       Constrained_triangulation_face_base_2<Gt> >, 
-           class Itag = Exact_predicates_tag >
+           class Itag = No_intersection_tag >
 class Constrained_triangulation_2  : public Triangulation_2<Gt,Tds>
 {
 
@@ -69,7 +69,7 @@ public:
   
 
   typedef Gt                                 Geom_traits;
-  typedef Itag                              Intersection_tag;
+  typedef Itag                               Intersection_tag;
   typedef typename Geom_traits::Point_2      Point;
   typedef typename Geom_traits::Segment_2    Segment;
   typedef std::pair<Point,Point>             Constraint;
@@ -186,11 +186,6 @@ protected:
 			  Vertex_handle vbb,
 			  Exact_predicates_tag);
 
-  Vertex_handle t_intersect(Vertex_handle vaa,
-			    Vertex_handle vbb,
-			    Vertex_handle vcc,
-			    Vertex_handle vdd);
- 
   bool find_intersected_faces(Vertex_handle va, 
 			      Vertex_handle vb,
 			      List_faces & intersected_faces,
@@ -517,7 +512,7 @@ intersect(Face_handle f, int i,
 	  Vertex_handle vaa,
 	  Vertex_handle vbb) 
 {
-  return intersect(f, i, vaa, vbb, Intersection_tag());
+  return intersect(f, i, vaa, vbb, Itag());
 }
 
 template <class Gt, class Tds, class Itag >
@@ -547,22 +542,19 @@ intersect(Face_handle f, int i,
 // insert the intersection point
 // split constraint edge (f,i) 
 // and return the Vertex_handle of the new Vertex
-{
+{ 
   std::cerr << "You are using an exact number types" << std::endl;
   std::cerr << "using a Constrained_triangulation_plus_2 class" << std::endl;
   std::cerr << "would avoid cascading intersection computation" << std::endl;
   std::cerr << " and be much more efficient" << std::endl;
-  Vertex_handle vcc = f->vertex(cw(i));
-  Vertex_handle vdd = f->vertex(ccw(i));
-  						  
-  Point pi; //creator for point is required here
-  Object result;
-  typename Geom_traits::Intersect_2 
-    compute_intersection=geom_traits().intersect_2_object();
-  result = compute_intersection(Segment(vcc->point(),vdd->point()),
-				Segment(vaa->point(),vbb->point()));
-  CGAL_triangulation_assertion(assign(pi, result));
-
+  Point pa = vaa->point();
+  Point pb = vbb->point();
+  Point pc = f->vertex(cw(i))->point();
+  Point pd = f->vertex(ccw(i))->point();
+  Point pi;
+  Itag itag;
+  bool ok = intersection(geom_traits(), pa, pb, pc, pd, pi, itag );
+  CGAL_triangulation_assertion(ok);
   Vertex_handle vi = insert(pi, EDGE, f, i);
   return vi; 
 }
@@ -579,18 +571,26 @@ intersect(Face_handle f, int i,
   vcc = f->vertex(cw(i));
   vdd = f->vertex(ccw(i));
 
+  Point pa = vaa->point();
+  Point pb = vbb->point();
+  Point pc = vcc->point();
+  Point pd = vdd->point();
+
   Point pi; //creator for point is required here
-  Object result;
-  typename Geom_traits::Intersect_2 
-    compute_intersection = geom_traits().intersect_2_object();
-  result = compute_intersection(Segment(vcc->point(),vdd->point()),
-				Segment(vaa->point(),vbb->point()));
-  bool intersection = assign(pi, result);
+  Itag itag;
+  bool ok  = intersection(geom_traits(), pa, pb, pc, pd, pi, itag );
+
   Vertex_handle vi;
-  if ( !intersection) {  //intersection detected but not computed
-    vi = t_intersect(vaa,vbb,vcc,vdd);
+  if ( !ok) {  //intersection detected but not computed
+    int i = limit_intersection(geom_traits(), pa, pb, pc, pd, itag);
+    switch(i){
+    case 0 : vi = vaa; break;
+    case 1 : vi = vbb; break;
+    case 2 : vi = vcc; break;
+    case 3 : vi = vdd; break; 
+    }
   }
-  else{ //intersection detected but not computed
+  else{ //intersection computed
     remove_constraint(f, i);
     vi = insert(pi, f);
   }
@@ -606,35 +606,6 @@ intersect(Face_handle f, int i,
   }
   return vi; 
 }
-
-template <class Gt, class Tds, class Itag >
-typename Constrained_triangulation_2<Gt,Tds,Itag>::Vertex_handle 
-Constrained_triangulation_2<Gt,Tds,Itag>::
-t_intersect(Vertex_handle vaa,
-	    Vertex_handle vbb,
-	    Vertex_handle vcc,
-	    Vertex_handle vdd)
-{
-  // intersection between edges [vaa,vbb] and [vcc,vdd]
-  // has been detected by exact predicates
-  // but not computed by approximate construction
-  typename Geom_traits::Construct_line_2  construct_line = 
-    geom_traits().construct_line_2_object();
-  typename Geom_traits::Compute_squared_distance_2
-    compute_squared_distance = 
-    geom_traits().compute_squared_distance_2_object();
-  typename Geom_traits::Line_2 l1 = construct_line(vaa->point(),
-						   vbb->point());
-  typename Geom_traits::Line_2 l2 = construct_line(vcc->point(),
-						   vdd->point());
-  Vertex_handle vi = vaa;
-  typename Geom_traits::FT dd = compute_squared_distance(l2,vaa->point());
-  if (compute_squared_distance(l2,vbb->point()) < dd) vi = vbb;
-  if (compute_squared_distance(l1,vcc->point()) < dd) vi = vcc;
-  if (compute_squared_distance(l1,vdd->point()) < dd) vi = vdd;
-  return vi;
-}
-
 
 template <class Gt, class Tds, class Itag >
 inline
@@ -1046,6 +1017,113 @@ operator<<(std::ostream& os,
   return os ;
 }
 
+//Helping functions to compute intersections of constrained edges
+template<class Gt>
+bool
+intersection(Gt gt,
+	     const typename Gt::Point_2& pa, 
+	     const typename Gt::Point_2& pb, 
+	     const typename Gt::Point_2& pc, 
+	     const typename Gt::Point_2& pd,
+	     typename Gt::Point_2& pi,
+	     No_intersection_tag)
+{
+  return false;
+}
+	     
+template<class Gt>
+bool
+intersection(Gt gt,
+	     const typename Gt::Point_2& pa, 
+	     const typename Gt::Point_2& pb, 
+	     const typename Gt::Point_2& pc, 
+	     const typename Gt::Point_2& pd,
+	     typename Gt::Point_2& pi,
+	     Exact_intersections_tag)
+{
+  return compute_intersection(gt,pa,pb,pc,pd,pi);
+}
+
+
+template<class Gt>
+inline bool
+intersection(Gt gt,
+	     const typename Gt::Point_2& pa, 
+	     const typename Gt::Point_2& pb, 
+	     const typename Gt::Point_2& pc, 
+	     const typename Gt::Point_2& pd,
+	     typename Gt::Point_2& pi,
+	     Exact_predicates_tag)
+{
+  return compute_intersection(gt,pa,pb,pc,pd,pi);
+}
+
+template<class Gt>
+bool
+compute_intersection(Gt gt,
+	     const typename Gt::Point_2& pa, 
+	     const typename Gt::Point_2& pb, 
+	     const typename Gt::Point_2& pc, 
+	     const typename Gt::Point_2& pd,
+	     typename Gt::Point_2& pi)
+{
+  typename Gt::Intersect_2 compute_intersection=gt.intersect_2_object();
+   typename Gt::Construct_segment_2  
+    construct_segment=gt.construct_segment_2_object();
+  Object result = compute_intersection(construct_segment(pa,pb),
+				       construct_segment(pc,pd));
+  return assign(pi, result);
+}
+
+
+template<class Gt>
+int
+limit_intersection(Gt gt,
+		   const typename Gt::Point_2& pa, 
+		   const typename Gt::Point_2& pb, 
+		   const typename Gt::Point_2& pc, 
+		   const typename Gt::Point_2& pd,
+		   No_intersection_tag)
+{
+  return 0;
+}
+
+template<class Gt>
+int
+limit_intersection(Gt gt,
+		   const typename Gt::Point_2& pa, 
+		   const typename Gt::Point_2& pb, 
+		   const typename Gt::Point_2& pc, 
+		   const typename Gt::Point_2& pd,
+		   Exact_intersections_tag)
+{
+  return 0;
+}
+
+template<class Gt>
+int
+limit_intersection(Gt gt,
+	     const typename Gt::Point_2& pa, 
+	     const typename Gt::Point_2& pb, 
+	     const typename Gt::Point_2& pc, 
+	     const typename Gt::Point_2& pd,
+	     Exact_predicates_tag)
+{
+  typename Gt::Construct_line_2 line = gt.construct_line_2_object();
+  typename Gt::Compute_squared_distance_2 
+    distance = gt.compute_squared_distance_2_object();
+  typename Gt::Line_2 l1 = line(pa,pb);
+  typename Gt::Line_2 l2 = line(pc,pd);
+  int i = 0;
+  typename Gt::FT dx = distance(l2,pa);
+  typename Gt::FT db = distance(l2,pb);
+  typename Gt::FT dc = distance(l1,pc);
+  typename Gt::FT dd = distance(l1,pd);
+  if ( db < dx  ) { dx = db; i = 1;}
+  if ( dc < dx  ) { dx = dc; i = 2;}
+  if ( dd < dx  ) { dx = dd; i = 3;}
+  return i;
+}
 
 CGAL_END_NAMESPACE
 

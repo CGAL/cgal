@@ -357,17 +357,17 @@ intersect(Face_handle f, int i,
   vdd = f->vertex(ccw(i));
   CGAL_triangulation_assertion(hierarchy.enclosing_constraint(vcc,vdd,vc,vd));
   CGAL_triangulation_assertion(hierarchy.enclosing_constraint(vaa,vbb,va,vb));
-						  
-  Point pi; //creator for point is required here
-  Object result;
-  typename Geom_traits::Intersect_2 
-    compute_intersection=geom_traits().intersect_2_object();
-  result = compute_intersection(Segment(vc->point(),vd->point()),
-				Segment(va->point(),vb->point()));
-  CGAL_triangulation_assertion(assign(pi, result));
+
+  Point pa = va->point();
+  Point pb = vb->point();
+  Point pc = vc->point();
+  Point pd = vd->point();
+  Point pi;
+  Intersection_tag itag;
+  bool ok = intersection(geom_traits(), pa, pb, pc, pd, pi, itag );
+  CGAL_triangulation_assertion(ok);
 
   Vertex_handle vi = insert(pi, EDGE, f, i);
-  //hierarchy.split_constraint(vcc,vdd,vi);
   return vi; 
 }
 
@@ -383,18 +383,26 @@ intersect(Face_handle f, int i,
   vcc = f->vertex(cw(i));
   vdd = f->vertex(ccw(i));
 
+  Point pa = vaa->point();
+  Point pb = vbb->point();
+  Point pc = vcc->point();
+  Point pd = vdd->point();
+
   Point pi; //creator for point is required here
-  Object result;
-  typename Geom_traits::Intersect_2 
-    compute_intersection = geom_traits().intersect_2_object();
-  result = compute_intersection(Segment(vcc->point(),vdd->point()),
-				Segment(vaa->point(),vbb->point()));
-  bool intersection = assign(pi, result);
+  Intersection_tag itag;
+  bool ok  = intersection(geom_traits(), pa, pb, pc, pd, pi, itag );
+
   Vertex_handle vi;
-  if ( !intersection) {  //intersection detected but not computed
-    vi = t_intersect(vaa,vbb,vcc,vdd);
+  if ( !ok) {  //intersection detected but not computed
+        int i = limit_intersection(geom_traits(), pa, pb, pc, pd, itag);
+    switch(i){
+    case 0 : vi = vaa; break;
+    case 1 : vi = vbb; break;
+    case 2 : vi = vcc; break;
+    case 3 : vi = vdd; break; 
+    }
   }
-  else{ //intersection detected but not computed
+  else{ //computed
     remove_constraint(f, i);
     vi = insert(pi, f);
   }

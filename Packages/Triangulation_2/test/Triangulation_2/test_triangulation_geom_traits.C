@@ -52,7 +52,24 @@ main()
   };
   _test_cls_delaunay_geom_traits( p1, Cls1() );
 
-  std::cout << "   with Homogeneous" << std::endl;
+  std::cout << "   with Kernel traits" << std::endl;
+  typedef CGAL::Triangulation_euclidean_traits_2<TestK> Cls1b;
+  typedef Cls1b::Point_2  Pt1b;
+  Pt1b p1b[34] = {
+	Pt1b(1,3), Pt1b(3,5), Pt1b(3,8), 
+	Pt1b(1,3), Pt1b(3,5), Pt1b(7,5), 
+	Pt1b(4,4), Pt1b(4,4), Pt1b(2,6), 
+	Pt1b(1,1), Pt1b(2,2), Pt1b(1,3), 
+	Pt1b(1,1), Pt1b(2,3), Pt1b(5,0), 
+	Pt1b(6,0), Pt1b(0,6), Pt1b(3,3),
+	Pt1b(91,312), Pt1b(125,300), Pt1b(204,253), Pt1b(324,0),
+	Pt1b(91,312), Pt1b(125,300), Pt1b(204,253), Pt1b(326,0),
+	Pt1b(91,312), Pt1b(125,300), Pt1b(204,253), Pt1b(325,0),
+	Pt1b(91,312), Pt1b(125,300), Pt1b(204,253), Pt1b(0,0)
+  };
+  _test_cls_delaunay_geom_traits( p1b, Cls1b() );
+
+::cout << "   with Homogeneous" << std::endl;
   typedef CGAL::Triangulation_euclidean_traits_2<Test_rep_homogeneous> Cls2;
   typedef Cls2::Point_2  Pt2;
   Pt2 p2[34] = {

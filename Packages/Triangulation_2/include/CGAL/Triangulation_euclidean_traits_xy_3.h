@@ -41,7 +41,7 @@ template <class R>
 class Orientation_xy_3 
 {
 public:
-  typedef Point_3<R>     Point; 
+  typedef typename R::Point_3     Point; 
   typename R::FT x(const Point &p) const { return p.x(); }
   typename R::FT y(const Point &p) const { return p.y(); }
 
@@ -57,7 +57,7 @@ template <class R>
 class Side_of_oriented_circle_xy_3 
 {
 public:
-  typedef Point_3<R>     Point; 
+  typedef typename R::Point_3     Point; 
   typename R::FT x(const Point &p) const { return p.x(); }
   typename R::FT y(const Point &p) const { return p.y(); }
 
@@ -78,9 +78,9 @@ class Triangulation_euclidean_traits_xy_3 {
 public:
   typedef Triangulation_euclidean_traits_xy_3<R> Traits;
   typedef R Rp;
-  typedef Point_3<R>     Point_2;
-  typedef Segment_3<R>   Segment_2;
-  typedef Triangle_3<R>  Triangle_2;
+  typedef typename Rp::Point_3     Point_2;
+  typedef typename Rp::Segment_3   Segment_2;
+  typedef typename Rp::Triangle_3  Triangle_2;
 
   typedef typename Rp::Compare_x_3          Compare_x_2;
   typedef typename Rp::Compare_y_3          Compare_y_2;

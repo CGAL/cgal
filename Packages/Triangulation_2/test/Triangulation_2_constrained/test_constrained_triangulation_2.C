@@ -32,17 +32,17 @@ int main()
 {
   std::cout << "Testing constrained_triangulation "<< std::endl;
   std::cout << " with No_intersection_tag : " << std::endl;
-  typedef CGAL::Triangulation_euclidean_traits_2<TestK>            Gt;
-  typedef CGAL::Triangulation_vertex_base_2<TestK>                 Vb;
-  typedef CGAL::Constrained_triangulation_face_base_2<TestK>       Fb;
-  typedef CGAL::Triangulation_data_structure_2<Vb,Fb>              TDS;
-  typedef CGAL::No_intersection_tag                                Itag;
-  typedef CGAL::Constrained_triangulation_2<TestK,TDS,Itag>        Ct;
+  typedef CGAL::Triangulation_euclidean_traits_2<TestK> Gt;
+  typedef CGAL::Constrained_triangulation_2<Gt>         Ct;
   _test_cls_constrained_triangulation(Ct());
 
   std::cout << "Testing constrained_triangulation "<< std::endl;
   std::cout << " with Exact_predicates_tag : " << std::endl;
-  typedef CGAL::Constrained_triangulation_2<TestK>        Ctwi;
+  typedef CGAL::Triangulation_vertex_base_2<TestK>                 Vb;
+  typedef CGAL::Constrained_triangulation_face_base_2<TestK>       Fb;
+  typedef CGAL::Triangulation_data_structure_2<Vb,Fb>              TDS;
+  typedef CGAL::Exact_predicates_tag                               Itag;
+  typedef CGAL::Constrained_triangulation_2<TestK,TDS,Itag>        Ctwi;
   _test_cls_constrained_triangulation(Ctwi());
   
   std::cout << "Testing constrained_triangulation "<< std::endl;

@@ -44,12 +44,19 @@ template < class R >
 class Triangulation_euclidean_traits_2 {
 public:
   typedef R Rep;
-  typedef CGAL::Point_2<R>  Point_2;
-  typedef CGAL::Segment_2<R> Segment_2;
-  typedef CGAL::Triangle_2<R> Triangle_2;
-  typedef CGAL::Line_2<R> Line_2;
-  typedef CGAL::Direction_2<R> Direction_2;
-  typedef CGAL::Ray_2<R> Ray_2;
+//   typedef CGAL::Point_2  Point_2;
+//   typedef CGAL::Segment_2<R> Segment_2;
+//   typedef CGAL::Triangle_2<R> Triangle_2;
+//   typedef CGAL::Line_2<R> Line_2;
+//   typedef CGAL::Direction_2<R> Direction_2;
+//   typedef CGAL::Ray_2<R> Ray_2;
+
+  typedef typename R::Point_2     Point_2;
+  typedef typename R::Segment_2   Segment_2;
+  typedef typename R::Triangle_2  Triangle_2;
+  typedef typename R::Line_2      Line_2;
+  typedef typename R::Direction_2 Direction_2;
+  typedef typename R::Ray_2       Ray_2;
 
   typedef typename R::Compare_x_2                Compare_x_2;
   typedef typename R::Compare_y_2                Compare_y_2;

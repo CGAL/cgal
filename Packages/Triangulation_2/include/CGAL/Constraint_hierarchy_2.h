@@ -151,7 +151,7 @@ public:
 
 template <class T, class Data> 
 Constraint_hierarchy_2<T,Data>::
-Constraint_hierarchy_2<T,Data>(const Constraint_hierarchy_2& ch)
+Constraint_hierarchy_2<T,Data>(const Constraint_hierarchy_2<T,Data>& ch)
 {
   copy(ch);
 }
