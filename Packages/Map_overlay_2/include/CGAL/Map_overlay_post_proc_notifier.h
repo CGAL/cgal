@@ -46,17 +46,17 @@ public:
   typedef Map_overlay_post_proc_notifier<Arrangement>        Self;
   typedef const Arrangement*                                 Arr_const_pointer;
   
-  Map_overlay_post_proc_notifier() : arr1(0), arr2(0) {}
+  Map_overlay_post_proc_notifier() : first_creator_(0), second_creator_(0) {}
 
-  Map_overlay_post_proc_notifier (Arr_const_pointer sub_division1, 
-                                  Arr_const_pointer sub_division2) 
-    : arr1(sub_division1), arr2(sub_division2) {}
+  Map_overlay_post_proc_notifier (Arr_const_pointer first_creator, 
+                                  Arr_const_pointer second_creator) 
+    : first_creator_(first_creator), second_creator_(second_creator) {}
   
   Map_overlay_post_proc_notifier (const Self& notf) 
-    : arr1(notf.get_sub_division1()), arr2(notf.get_sub_division2()) {}
+    : first_creator_(notf.first_creator()), second_creator_(notf.second_creator()) {}
   
   Map_overlay_post_proc_notifier (const Self* notf) 
-    : arr1(notf->get_sub_division1()), arr2(notf->get_sub_division2()) {}
+    : first_creator_(notf->first_creator()), second_creator_(notf->second_creator()) {}
   
   virtual ~Map_overlay_post_proc_notifier() {}
 
@@ -247,8 +247,8 @@ public:
     Face_handle  unbounded = pmwx.unbounded_face();
 
     // first taking care of the unbounded face.
-    set_first_face_above(unbounded, arr1->unbounded_face());
-    set_second_face_above(unbounded, arr2->unbounded_face());
+    set_first_face_above(unbounded, first_creator_->unbounded_face());
+    set_second_face_above(unbounded, second_creator_->unbounded_face());
     unbounded->set_color(Face::BLACK);
 
     for (Holes_iterator hit = unbounded->holes_begin(); 
@@ -324,7 +324,7 @@ public:
             std::cout<<"first face above begin_face is 0 - putting unbounded"<<std::endl;
 #endif
             
-            set_first_face_above(begin_face, arr1->unbounded_face());
+            set_first_face_above(begin_face, first_creator_->unbounded_face());
             //begin_face->set_first_face_above(first_creator.unbounded_face().operator->());
           }
    
@@ -333,7 +333,7 @@ public:
             std::cout<<"second face above begin_face is 0 - putting unbounded"<<std::endl;
 #endif
             
-            set_second_face_above(begin_face, arr2->unbounded_face());
+            set_second_face_above(begin_face, second_creator_->unbounded_face());
             //begin_face->set_second_face_above(second_creator.unbounded_face().operator->());
           }
           
@@ -524,9 +524,9 @@ public:
     first_halfedge = first_halfedge_;
   }
   
-  Arr_const_pointer first_subdivision () const { return arr1;}
+  Arr_const_pointer first_creator () const { return first_creator_;}
   
-  Arr_const_pointer second_subdivision () const { return arr2;}
+  Arr_const_pointer second_creator () const { return second_creator_;}
   
   //-----------------------------------------  handle wrappering.
   // setting the vertex above.
@@ -929,7 +929,7 @@ private:
 
   bool                   first_halfedge;
   Halfedge_const_handle  orig_halfedge1, orig_halfedge2;
-  Arr_const_pointer      arr1, arr2;
+  Arr_const_pointer      first_creator_, second_creator_;
 };
 
 CGAL_END_NAMESPACE
