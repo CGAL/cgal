@@ -15,19 +15,14 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = -I../../include \
            $(CGAL_CXXFLAGS) \
-           $(LONG_NAME_PROBLEM_CXXFLAGS) \
-           $(DEBUG_OPT)
+           $(LONG_NAME_PROBLEM_CXXFLAGS)
 
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
 
 LIBPATH = \
-          $(CGAL_WINDOW_LIBPATH)
-
-LDFLAGS = \
-          $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_WINDOW_LDFLAGS)
+          $(CGAL_LIBPATH)
 
 LDFLAGSQT = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
@@ -48,12 +43,25 @@ Qt_widget_styled_layer.moc:  Qt_widget_styled_layer.h
 Qt_widget_styled_layer$(OBJ_EXT): Qt_widget_styled_layer.moc \
 		Qt_widget_styled_layer.C
 
+<<<<<<< makefile
+Qt_widget_style_editor.moc:  Qt_widget_style_editor.h
+	$(QT_MOC) -o Qt_widget_style_editor.moc Qt_widget_style_editor.h
+
+Qt_widget_style_editor.C.moc:  Qt_widget_style_editor.C
+	$(QT_MOC) -o Qt_widget_style_editor.C.moc Qt_widget_style_editor.C
+
+Qt_widget_style_editor$(OBJ_EXT): Qt_widget_style_editor.moc \
+		Qt_widget_style_editor.C.moc \
+		Qt_widget_style_editor.C
+
+=======
 Qt_widget_style_editor.moc:  Qt_widget_style_editor.h
 	$(QT_MOC) -o Qt_widget_style_editor.moc Qt_widget_style_editor.h
 
 Qt_widget_style_editor$(OBJ_EXT): Qt_widget_style_editor.moc \
 		Qt_widget_style_editor.C
 
+>>>>>>> 1.4
 Show_points.moc:  Show_points.h
 	$(QT_MOC) -o Show_points.moc Show_points.h
 
@@ -80,7 +88,7 @@ arrangements$(OBJ_EXT): arrangements.moc \
 	Qt_widget_style_editor.h
 
 arrangements.moc:  arrangements.C
-	$(QT_MOC) -o arrangements.moc arrangements.C
+	$(QT_MOC) -o arrangements.moc  arrangements.C
 
 arrangements$(OBJ_EXT): arrangements.moc
 

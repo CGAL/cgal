@@ -45,11 +45,20 @@
 #include <qpushbutton.h>
 #include <qframe.h>
 #include <qhbox.h>
+<<<<<<< arrangements.C
+#include <qvbox.h>
+#include <qdialog.h>
+#include <qcheckbox.h>
+#include <qlayout.h>
+#include <qtabwidget.h>
+#include <qgroupbox.h>
+=======
 #include <qvbox.h>
 #include <qdialog.h>
 #include <qcheckbox.h>
 #include <qtabwidget.h>
 #include <qgroupbox.h>
+>>>>>>> 1.3
 #include <qtimer.h>
 #include <qtooltip.h>
 #include <qpixmap.h>
@@ -119,6 +128,48 @@ void display_zone(CGAL::Qt_widget* widget, Vertex_handle top)
   *widget << poly;
 }
 
+<<<<<<< arrangements.C
+class Preferences : public QDialog
+{
+private:
+  QGridLayout* layout;
+  QTabWidget* tab;
+
+public:
+  Preferences(QWidget* parent = 0, const char* name = 0, bool modal = false)
+    : QDialog(parent, name, modal)
+  {
+    layout = new QGridLayout(this, 1,1, 11, 6, "pref_layout");
+    tab = new QTabWidget(this);
+    layout->addWidget(tab, 0, 0);
+  }
+
+  template <typename LayersIterator>
+  void setLayers(LayersIterator begin, LayersIterator end)
+  {
+    QWidget* w;
+    while( (w = tab->currentPage()) != 0)
+      {
+	tab->removePage(w);
+	delete w;
+      }
+
+    for(LayersIterator it = begin; it!=end; ++it)
+      {
+	QVBox* box = new QVBox(tab);
+	//	QCheckBox* check = new QCheckBox("&Enable", box);
+	//	QGroupBox* group = new QGroupBox("&Properties", box);
+	CGAL::Qt_widget_style_editor* editor =
+	  new CGAL::Qt_widget_style_editor((*it)->style(), box);
+	editor->setFrameShape(QFrame::Panel);
+	editor->setLineWidth(5);
+	editor->show();
+	tab->addTab(box, (*it)->name());
+      }
+  }
+};
+
+=======
 class Preferences : public QDialog
 {
 private:
@@ -156,6 +207,7 @@ public:
   }
 };
 
+>>>>>>> 1.3
 // ********* MAIN WINDOW CLASS  ********** //
 class MyWindow : public QMainWindow
 {

@@ -1,6 +1,10 @@
 #ifndef QT_WIDGET_STYLE_EDITOR_H
 #define QT_WIDGET_STYLE_EDITOR_H
 
+<<<<<<< Qt_widget_style_editor.h
+#include <qframe.h>
+#include "Qt_widget_styled_layer.h"
+=======
 #include <qcolor.h>
 #include <qcolordialog.h>
 #include <qpushbutton.h>
@@ -16,9 +20,13 @@
 #include <qvariant.h>
 #include <qsizepolicy.h>
 #include "Qt_widget_styled_layer.h"
+>>>>>>> 1.2
 
 namespace CGAL {
 
+<<<<<<< Qt_widget_style_editor.h
+class Qt_widget_style_editor : public QFrame {
+=======
 namespace Qt_widget_internals {
   class Color_selector : public QPushButton
   {
@@ -128,12 +136,19 @@ namespace Qt_widget_internals {
 } // end namespace Qt_widget
 
 class Qt_widget_style_editor : public QScrollView {
+>>>>>>> 1.2
   Q_OBJECT
 public:
 
   typedef Qt_widget_styled_layer::Style Style;
 
   Qt_widget_style_editor(Style* style,
+<<<<<<< Qt_widget_style_editor.h
+			 QWidget *parent = 0 , const char *name = 0);
+
+  virtual ~Qt_widget_style_editor() {}
+}; // end of class Qt_widget_style_editor
+=======
 			 QWidget *parent = 0 , const char *name = 0)
     : QScrollView(parent, name)
   {
@@ -182,6 +197,7 @@ public:
 
   virtual ~Qt_widget_style_editor() {}
 }; // end of class Qt_widget_style_editor
+>>>>>>> 1.2
 
 } // end namespace CGAL
 
