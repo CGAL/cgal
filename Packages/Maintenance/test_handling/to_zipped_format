@@ -3,10 +3,11 @@
 use strict;
 
 my $TMPDIR;
+my $version = "";
 
 sub usage {
     print STDERR "$0: usage\n";
-    print STDERR "$0 result1.tar[.gz] ...\n";
+    print STDERR "$0 [-v version] result1.tar[.gz] ...\n";
 }
 
 sub make_tempdir()
@@ -65,9 +66,12 @@ $LEDA_VERSION
 $GMP
 $CLN
 EOF
-   close(PLATFORM_INFO);
-   close(PLATFORM_RESULTS);
-   close(PLATFORM_NEW_RESULTS);
+    close(PLATFORM_INFO);
+    close(PLATFORM_RESULTS);
+    close(PLATFORM_NEW_RESULTS);
+    if ($version && $version ne $CGAL_VERSION) {
+	die "Wrong version in $platform: $CGAL_VERSION instead of $version.\n";
+    }
 }
 
 sub one_archive($)
@@ -92,7 +96,7 @@ sub one_archive($)
     make_tempdir();
     rename("$archive","$TMPDIR/$archive") or die;
     chdir("$TMPDIR") or die;
-    system("tar", "xf", "$archive") == 0 or die;
+    system("gtar", "xf", "$archive") == 0 or die;
     unlink($archive);
 
     reformat_results($archive);
@@ -115,11 +119,21 @@ sub all_archives() {
     }
 }
 
+
+if ($#ARGV < 0) {
+    usage;
+    exit 1;
+}
+
+if ($ARGV[0] eq "-v") {
+    shift;
+    $version = shift;
+}
+
 if ($#ARGV < 0) {
     usage;
     exit 1;
 }
 
 all_archives();
-
-
+exit 0;
