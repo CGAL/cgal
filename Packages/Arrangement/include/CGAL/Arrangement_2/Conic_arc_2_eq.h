@@ -985,8 +985,8 @@ Comparison_result compare_roots (const std::vector<NT>& p1_coeffs,
 
   // Determine the number of iterations.
   const int      max_deg = (p1_deg > p2_deg) ? p1_deg : p2_deg;
-  const int      max_iters = max_deg *
-                             static_cast<int>(log(max_coeff) / log(2) + 1);
+  const int      max_iters = max_deg * static_cast<int>
+      (log(static_cast<double>(max_coeff)) / log(static_cast<double>(2)) + 1);
   NT             m1, m2;
   const NT       _two = NT(2);
 
