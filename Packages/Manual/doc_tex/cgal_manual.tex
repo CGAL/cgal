@@ -1,0 +1,25 @@
+% +------------------------------------------------------------------------+
+% | cgal_manual.tex
+% | CGAL User and Reference Manual for all packages
+% +------------------------------------------------------------------------+
+
+\documentclass{book}
+\usepackage{cgal_manual}
+
+\begin{document}
+
+\cgalchapters{
+    \entryleftright{\part{Basic Library User Manual}}
+                   {\part{Reference Manual}}
+
+    \lcTex{\entryright{\listofrefpages}}
+
+    \packageleftright{Polyhedron}{Polyhedron_ref}
+}
+
+\bibliographystyle{alpha}
+\bibliography{cgal_manual,geom}
+
+\printindex
+
+\end{document}
