@@ -26,7 +26,7 @@ struct Lines{
   Lines(int n, const std::string& s) : number(n), text(s) {}
 };
 
-class Lines_eq : public unary_function<Lines, bool> {
+class Lines_eq : public std::unary_function<Lines, bool> {
   int ref_number;
 public:
   explicit Lines_eq(int number) : ref_number(number) {}
@@ -138,9 +138,7 @@ main( int argc, char **argv) {
 		    out_file << ch;
                   } else out_file << name_link; 
 
-                 } else out_file << ch; \end{description}
-
-
+                 } else out_file << ch;
               }
           } else out_file << ch;
       } 
