@@ -108,14 +108,16 @@ public:
 /*{\Manpage {Nef_polyhedron_2} {T} {Nef Polyhedra in the Plane}{N}}*/
 
 /*{\Mdefinition
-An instance of data type |\Mname| is a subset of the plane which is the
-result of forming complements and intersections starting from a set |H| of
-halfspaces. |\Mtype| is closed under all binary set operations |intersection|,
-|union|, |difference|, |complement| and under the topological operations
-|boundary|, |closure|, and |interior|. 
+An instance of data type |\Mname| is a subset of the plane which is
+the result of forming complements and intersections starting from a
+finite set |H| of halfspaces. |\Mtype| is closed under all binary set
+operations |intersection|, |union|, |difference|, |complement| and
+under the topological operations |boundary|, |closure|, and
+|interior|.
 
-The template parameter is specified via an extended kernel concept. 
-|T| must be a model of the concept |Extended_geometry|.}*/
+The template parameter |T| is specified via an extended kernel
+concept. |T| must be a model of the concept |ExtendedKernelTraits_2|.
+}*/
 
 template <typename T>
 class Nef_polyhedron_2 : public Handle_for< Nef_polyhedron_2_rep<T> >
@@ -130,13 +132,13 @@ static T EPD; // static extended kernel
   typedef typename T::Point_2 EPoint;
   typedef typename T::Segment_2 ESegment;
 
-  typedef typename T::sLine_2 Line;
+  typedef typename T::Standard_line_2 Line;
   /*{\Mtypemember the oriented lines modeling halfplanes}*/
-  typedef typename T::sPoint_2 Point;
+  typedef typename T::Standard_point_2 Point;
   /*{\Mtypemember the affine points of the plane.}*/
-  typedef typename T::sDirection_2 Direction;
+  typedef typename T::Standard_direction_2 Direction;
   /*{\Mtypemember directions in our plane.}*/
-  typedef typename T::sAff_transformation_2  Aff_transformation;
+  typedef typename T::Standard_aff_transformation_2  Aff_transformation;
   /*{\Mtypemember affine transformations of the plane.}*/
 
   typedef bool Mark;

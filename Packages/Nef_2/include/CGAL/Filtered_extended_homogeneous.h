@@ -213,14 +213,14 @@ public:
 
 };
 
-template <typename pRT>
+template <typename RT_>
 class Extended_point : public CGAL::Handle {
   typedef CGAL::Handle Base;
-  Extended_point_rep<pRT>* ptr() const 
-  { return (Extended_point_rep<pRT>*)PTR; } 
+  Extended_point_rep<RT_>* ptr() const 
+  { return (Extended_point_rep<RT_>*)PTR; } 
 public:
-  typedef typename Extended_point_rep<pRT>::DT DT;
-  typedef pRT RT;
+  typedef typename Extended_point_rep<RT_>::DT DT;
+  typedef RT_ RT;
 
   Extended_point() { PTR = new Extended_point_rep<RT>; }
 
@@ -273,13 +273,13 @@ public:
   { return Extended_point<RT>(-mx(),nx(),-my(),ny(),w()); }
 
 #ifdef KERNEL_CHECK
-typedef CGAL::Extended_homogeneous<pRT> CheckKernel;
+typedef CGAL::Extended_homogeneous<RT_> CheckKernel;
 typedef typename CheckKernel::Point_2   CheckPoint;
 typedef typename CheckKernel::RT        CheckRT;
 
-CheckRT convert(const CGAL::SPolynomial<pRT>& p) const
+CheckRT convert(const CGAL::SPolynomial<RT_>& p) const
 { return CheckRT(p.n(),p.m()); }
-CheckRT convert(const pRT& t) const
+CheckRT convert(const RT_& t) const
 { return CheckRT(t); }
 CheckPoint checkrep() const
 { return CheckPoint(convert(hx()),convert(hy()),convert(w())); }
@@ -936,28 +936,29 @@ bool operator<(const Extended_direction<RT>& d1,
 }
 
 
-template <typename pRT>
+template <typename RT_>
 class Filtered_extended_homogeneous {
-typedef Filtered_extended_homogeneous<pRT> Self;
+typedef Filtered_extended_homogeneous<RT_> Self;
 
 public:
-typedef CGAL::Homogeneous<pRT>           sKernel;
-typedef typename sKernel::RT             sRT;
-typedef typename sKernel::FT             sFT;
-typedef typename sKernel::Point_2        sPoint_2;
-typedef typename sKernel::Segment_2      sSegment_2;
-typedef typename sKernel::Line_2         sLine_2;
-typedef typename sKernel::Direction_2    sDirection_2;
-typedef typename sKernel::Ray_2          sRay_2;
-typedef typename sKernel::Aff_transformation_2 sAff_transformation_2;
+typedef CGAL::Homogeneous<RT_> Standard_kernel;
+typedef typename Standard_kernel::RT           Standard_RT;
+typedef typename Standard_kernel::FT           Standard_FT;
+typedef typename Standard_kernel::Point_2      Standard_point_2;
+typedef typename Standard_kernel::Segment_2    Standard_segment_2;
+typedef typename Standard_kernel::Line_2       Standard_line_2;
+typedef typename Standard_kernel::Direction_2  Standard_direction_2;
+typedef typename Standard_kernel::Ray_2        Standard_ray_2;
+typedef typename Standard_kernel::Aff_transformation_2 
+  Standard_aff_transformation_2;
 
-typedef SPolynomial<pRT>        RT;
-typedef SQuotient<pRT>          FT;
-typedef Extended_point<pRT>     Point_2;
-typedef Extended_segment<pRT>   Segment_2;
-typedef Extended_direction<pRT> Direction_2;
+typedef SPolynomial<RT_>        RT;
+typedef SQuotient<RT_>          FT;
+typedef Extended_point<RT_>     Point_2;
+typedef Extended_segment<RT_>   Segment_2;
+typedef Extended_direction<RT_> Direction_2;
 #ifdef KERNEL_CHECK
-typedef Extended_homogeneous<pRT>         CheckKernel;
+typedef Extended_homogeneous<RT_>         CheckKernel;
 typedef typename CheckKernel::Point_2     CheckPoint;
 typedef typename CheckKernel::Direction_2 CheckDirection;
 typedef typename CheckKernel::Segment_2   CheckSegment;
@@ -978,15 +979,15 @@ enum point_type { SWCORNER=1, LEFTFRAME, NWCORNER,
                   LOWERFRAME, STANDARD, UPPERFRAME,
                   SECORNER, RIGHTFRAME, NECORNER };
 
-sRT dx(const sLine_2& l) const { return l.b(); }
-sRT dy(const sLine_2& l) const { return -l.a(); }
-sFT abscissa_distance(const sLine_2& l) const 
-{ return sKernel::make_FT(-l.c(),l.b()); }
+Standard_RT dx(const Standard_line_2& l) const { return l.b(); }
+Standard_RT dy(const Standard_line_2& l) const { return -l.a(); }
+Standard_FT abscissa_distance(const Standard_line_2& l) const 
+{ return Standard_kernel::make_FT(-l.c(),l.b()); }
 
-point_type determine_type(const sLine_2& l) const
+point_type determine_type(const Standard_line_2& l) const
 {
   // TRACEN("determine_type "<<l);
-  sRT adx = CGAL_NTS abs(dx(l)), ady = CGAL_NTS abs(dy(l));
+  Standard_RT adx = CGAL_NTS abs(dx(l)), ady = CGAL_NTS abs(dy(l));
   int sdx = CGAL_NTS sign(dx(l)), sdy = CGAL_NTS sign(dy(l));
   int cmp_dx_dy = CGAL_NTS compare(adx,ady), s(1);
   // TRACEN("   "<<cmp_dx_dy<<" "<<sdx<<" "<<sdy);
@@ -999,27 +1000,27 @@ point_type determine_type(const sLine_2& l) const
     if (0 == s) return ( sdy < 0 ? SECORNER : NECORNER );
     else        return RIGHTFRAME;
   } else if (sdy < 0 && ( cmp_dx_dy < 0 || cmp_dx_dy == 0 && 
-             abscissa_distance(l) < sFT(0))) {
+             abscissa_distance(l) < Standard_FT(0))) {
     return LOWERFRAME;
   } else if (sdy > 0 && ( cmp_dx_dy < 0 || cmp_dx_dy == 0 && 
-             abscissa_distance(l) > sFT(0))) {
+             abscissa_distance(l) > Standard_FT(0))) {
     return UPPERFRAME;
   }
   CGAL_assertion_msg(false," determine_type: degenerate line.");
   return (point_type)-1; // never come here
 }
 
-Point_2 epoint(const sRT& m1, const sRT& n1, 
-                  const sRT& m2, const sRT& n2, 
-                                 const sRT& n3) const
+Point_2 epoint(const Standard_RT& m1, const Standard_RT& n1, 
+                  const Standard_RT& m2, const Standard_RT& n2, 
+                                 const Standard_RT& n3) const
 { return Point_2(m1,n1,m2,n2,n3); }
 
 public:
 
-Point_2 construct_point(const sPoint_2& p) const
+Point_2 construct_point(const Standard_point_2& p) const
 { return Point_2(p.hx(), p.hy(), p.hw()); }
 
-Point_2 construct_point(const sLine_2& l, point_type& t) const
+Point_2 construct_point(const Standard_line_2& l, point_type& t) const
 {
   t = determine_type(l);
   // TRACEN("construct_point(line)"<<l<<" "<<t);
@@ -1042,16 +1043,19 @@ Point_2 construct_point(const sLine_2& l, point_type& t) const
   return res;
 }
 
-Point_2 construct_point(const sPoint_2& p1, const sPoint_2& p2, 
+Point_2 construct_point(const Standard_point_2& p1, 
+                        const Standard_point_2& p2, 
                         point_type& t) const
-{ return construct_point(sLine_2(p1,p2),t); }
-Point_2 construct_point(const sLine_2& l) const
+{ return construct_point(Standard_line_2(p1,p2),t); }
+Point_2 construct_point(const Standard_line_2& l) const
 { point_type dummy; return construct_point(l,dummy); }
-Point_2 construct_point(const sPoint_2& p1, const sPoint_2& p2) const
-{ return construct_point(sLine_2(p1,p2)); }
-Point_2 construct_point(const sPoint_2& p, const sDirection_2& d) const
-{ return construct_point(sLine_2(p,d)); }
-Point_2 construct_opposite_point(const sLine_2& l) const
+Point_2 construct_point(const Standard_point_2& p1, 
+                        const Standard_point_2& p2) const
+{ return construct_point(Standard_line_2(p1,p2)); }
+Point_2 construct_point(const Standard_point_2& p, 
+                        const Standard_direction_2& d) const
+{ return construct_point(Standard_line_2(p,d)); }
+Point_2 construct_opposite_point(const Standard_line_2& l) const
 { point_type dummy; return construct_point(l.opposite(),dummy); }
 
 point_type type(const Point_2& p) const
@@ -1086,30 +1090,30 @@ point_type type(const Point_2& p) const
 bool is_standard(const Point_2& p) const
 { return p.is_standard();  }
 
-sPoint_2 standard_point(const Point_2& p) const
+Standard_point_2 standard_point(const Point_2& p) const
 { CGAL_assertion(is_standard(p));
-  return sPoint_2(p.nx(),p.ny(),p.hw());
+  return Standard_point_2(p.nx(),p.ny(),p.hw());
 }
 
-sLine_2 standard_line(const Point_2& p) const
+Standard_line_2 standard_line(const Point_2& p) const
 { CGAL_assertion(!p.is_standard());
-  sPoint_2 p0(p.nx(),p.ny(),p.hw());
-  sPoint_2 p1(p.mx()+p.nx(),p.my()+p.ny(),p.hw());
-  return sLine_2(p0,p1);
+  Standard_point_2 p0(p.nx(),p.ny(),p.hw());
+  Standard_point_2 p1(p.mx()+p.nx(),p.my()+p.ny(),p.hw());
+  return Standard_line_2(p0,p1);
 }
 
-sRay_2 standard_ray(const Point_2& p) const
+Standard_ray_2 standard_ray(const Point_2& p) const
 { CGAL_assertion(!p.is_standard());
-  sLine_2 l = standard_line(p);
-  sDirection_2 d = l.direction();
-  sPoint_2 q = l.point(0);
-  return sRay_2(q,d);
+  Standard_line_2 l = standard_line(p);
+  Standard_direction_2 d = l.direction();
+  Standard_point_2 q = l.point(0);
+  return Standard_ray_2(q,d);
 }
 
-Point_2 NE() const { return construct_point(sLine_2(-1, 1,0)); }
-Point_2 SE() const { return construct_point(sLine_2( 1, 1,0)); }
-Point_2 NW() const { return construct_point(sLine_2(-1,-1,0)); }
-Point_2 SW() const { return construct_point(sLine_2( 1,-1,0)); }
+Point_2 NE() const { return construct_point(Standard_line_2(-1, 1,0)); }
+Point_2 SE() const { return construct_point(Standard_line_2( 1, 1,0)); }
+Point_2 NW() const { return construct_point(Standard_line_2(-1,-1,0)); }
+Point_2 SW() const { return construct_point(Standard_line_2( 1,-1,0)); }
 
 int orientation(const Point_2& p1, const Point_2& p2, const Point_2& p3) 
 const
@@ -1208,8 +1212,8 @@ void print_statistics() const
 
 template <class Forward_iterator>
 void determine_frame_radius(Forward_iterator start, Forward_iterator end,
-                            sRT& R0) const
-{ sRT R;
+                            Standard_RT& R0) const
+{ Standard_RT R;
   while ( start != end ) {
     Point_2 p = *start;
     if ( is_standard(p) ) {

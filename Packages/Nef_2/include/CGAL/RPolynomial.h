@@ -488,15 +488,15 @@ determines the sign for the limit process $x \rightarrow \infty$.
 
   RPolynomial<NT>  operator / CGAL_NULL_TMPL_ARGS 
   (const RPolynomial<NT>& p1, const RPolynomial<NT>& p2);
-  /*{\Mbinopfunc implements polynomial division of |p1| and
-  |p2|. if |p1 = p2 * p3| then |p2| is returned. The result
-  is undefined if |p3| does not exist in |NT[x]|. 
-  The correct division algorithm is chosen according to a traits class
-  |ring_or_field<NT>| provided by the user.  If |ring_or_field<NT>::kind
-  == ring_with_gcd| then the division is done by \emph{pseudo division}
-  based on a |gcd| operation of |NT|.  If |ring_or_field<NT>::kind ==
-  field_with_div| then the division is done by \emph{euclidean division}
-  based on the division operation of the field |NT|.
+  /*{\Mbinopfunc implements polynomial division of |p1| and |p2|. if
+  |p1 = p2 * p3| then |p2| is returned. The result is undefined if |p3|
+  does not exist in |NT[x]|.  The correct division algorithm is chosen
+  according to a traits class |ring_or_field<NT>| provided by the user.
+  If |ring_or_field<NT>::kind == ring_with_gcd| then the division is
+  done by \emph{pseudo division} based on a |gcd| operation of |NT|.  If
+  |ring_or_field<NT>::kind == field_with_div| then the division is done
+  by \emph{euclidean division} based on the division operation of the
+  field |NT|.
 
   \textbf{Note} that |NT=int| quickly leads to overflow
   errors when using this operation.}*/
@@ -831,15 +831,15 @@ determines the sign for the limit process $x \rightarrow \infty$.
 
   RPolynomial<int>  operator / CGAL_NULL_TMPL_ARGS 
   (const RPolynomial<int>& p1, const RPolynomial<int>& p2);
-  /*{\Xbinopfunc implements polynomial division of |p1| and
-  |p2|. if |p1 = p2 * p3| then |p2| is returned. The result
-  is undefined if |p3| does not exist in |int[x]|. 
-  The correct division algorithm is chosen according to a traits class
-  |ring_or_field<int>| provided by the user.  If |ring_or_field<int>::kind
-  == ring_with_gcd| then the division is done by \emph{pseudo division}
-  based on a |gcd| operation of |int|.  If |ring_or_field<int>::kind ==
-  field_with_div| then the division is done by \emph{euclidean division}
-  based on the division operation of the field |int|.
+  /*{\Xbinopfunc implements polynomial division of |p1| and |p2|. if
+  |p1 = p2 * p3| then |p2| is returned. The result is undefined if |p3|
+  does not exist in |int[x]|.  The correct division algorithm is chosen
+  according to a traits class |ring_or_field<int>| provided by the user.
+  If |ring_or_field<int>::kind == ring_with_gcd| then the division is
+  done by \emph{pseudo division} based on a |gcd| operation of |int|.  If
+  |ring_or_field<int>::kind == field_with_div| then the division is done
+  by \emph{euclidean division} based on the division operation of the
+  field |int|.
 
   \textbf{Note} that |int=int| quickly leads to overflow
   errors when using this operation.}*/
@@ -1155,16 +1155,15 @@ determines the sign for the limit process $x \rightarrow \infty$.
 
   RPolynomial<double>  operator / CGAL_NULL_TMPL_ARGS 
   (const RPolynomial<double>& p1, const RPolynomial<double>& p2);
-  /*{\Xbinopfunc implements polynomial division of |p1| and
-  |p2|. if |p1 = p2 * p3| then |p2| is returned. The result
-  is undefined if |p3| does not exist in |double[x]|. 
-  The correct division algorithm is chosen according to a traits class
-  |ring_or_field<double>| provided by the user.  
-  If |ring_or_field<double>::kind == ring_with_gcd| then the division is 
-  done by \emph{pseudo division} based on a |gcd| operation of |double|.  
-  If |ring_or_field<double>::kind == field_with_div| then the division 
-  is done by \emph{euclidean division} based on the division operation 
-  of the field |double|.
+  /*{\Xbinopfunc implements polynomial division of |p1| and |p2|. if
+  |p1 = p2 * p3| then |p2| is returned. The result is undefined if |p3|
+  does not exist in |double[x]|.  The correct division algorithm is chosen
+  according to a traits class |ring_or_field<double>| provided by the user.
+  If |ring_or_field<double>::kind == ring_with_gcd| then the division is
+  done by \emph{pseudo division} based on a |gcd| operation of |double|.  If
+  |ring_or_field<double>::kind == field_with_div| then the division is done
+  by \emph{euclidean division} based on the division operation of the
+  field |double|.
 
   \textbf{Note} that |double=int| quickly leads to overflow
   errors when using this operation.}*/

@@ -41,19 +41,19 @@ template <typename T>
 CGAL::Window_stream& operator<<(CGAL::Window_stream& ws, 
 const Nef_polyhedron_2<T>& P)
 {
-  typedef Nef_polyhedron_2<T> NefPoly;
-  typedef typename NefPoly::Const_decorator  Const_decorator;
-  typedef typename NefPoly::Point            Point;
-  typedef typename NefPoly::Line             Line;
-  typedef typename T::RT  RT;
-  typedef typename T::sRT sRT;
+  typedef Nef_polyhedron_2<T> Polyhedron;
+  typedef typename T::RT RT;
+  typedef typename T::Standard_RT Standard_RT;
+  typedef typename Polyhedron::Const_decorator  Const_decorator;
+  typedef typename Polyhedron::Point            Point;
+  typedef typename Polyhedron::Line             Line;
   typedef CGAL::PM_BooleColor<Const_decorator> BooleColor;
   typedef CGAL::PM_visualizor<Const_decorator,T,BooleColor> Visualizor;
 
   Const_decorator D = P.explorer();
   const T& E = Nef_polyhedron_2<T>::EPD;
 
-  sRT frame_radius = frame_default;
+  Standard_RT frame_radius = frame_default;
   E.determine_frame_radius(D.points_begin(),D.points_end(),frame_radius);
   RT::set_R(frame_radius);
   Visualizor PMV(ws,D); PMV.draw_map();

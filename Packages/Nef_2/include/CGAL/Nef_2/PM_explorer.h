@@ -35,7 +35,10 @@
 CGAL_BEGIN_NAMESPACE
 
 /*{\Moptions print_title=yes }*/ 
-/*{\Moptions outfile=PM_explorer.man }*/
+/*{\Moptions outfile=Explorer.man }*/
+/*{\Msubst
+PM_explorer#Explorer
+}*/
 /*{\Manpage {PM_explorer}{}{Plane map exploration}{E}}*/
 
 /*{\Xdefinition An instance |\Mvar| of the data type |\Mname| is a
@@ -72,16 +75,16 @@ however they are topologically closed by the frame edges. No standard
 point can be placed outside the frame.}{10cm}
 }*/
 
-/*{\Mgeneralization PM_const_decorator}*/
+/*{\Mgeneralization Const_decorator}*/
 
-template <typename PMCDEC, typename GEOM> 
+template <typename PMCDEC, typename GEOM>
 class PM_explorer : public PMCDEC
 { typedef PMCDEC Base;
   typedef PM_explorer<PMCDEC,GEOM> Self;
   const GEOM* pK;
 public:
 /*{\Mtypes 4}*/
-typedef PMCDEC  PM_const_decorator;
+typedef PMCDEC Const_decorator;
 /*{\Xtypemember equals |PMCDEC|. Add link to PMCDEC model.}*/
 typedef typename PMCDEC::Plane_map Plane_map;
 /*{\Xtypemember equals |PMCDEC::Plane_map|, the underlying plane map type.}*/
@@ -89,10 +92,10 @@ typedef GEOM Geometry;
 /*{\Xtypemember equals |GEOM|. Add link to GEOM model.\\
 \precond |Geometry::Point_2| equals |Plane_map::Point|. }*/
 
-typedef typename GEOM::sPoint_2     Point;
+typedef typename GEOM::Standard_point_2 Point;
 /*{\Mtypemember the point type of finite vertices.}*/
 
-typedef typename GEOM::sRay_2       Ray;
+typedef typename GEOM::Standard_ray_2   Ray;
 /*{\Mtypemember the ray type of vertices on the frame.}*/
 
 typedef typename Base::Vertex_const_handle Vertex_const_handle;
@@ -112,7 +115,7 @@ typedef typename Base::Hole_const_iterator
 
 
 /*{\Mtext Iterators, handles, and circulators are inherited from 
-|PM_const_decorator|.}*/
+|Const_decorator|.}*/
 
 /*{\Mcreation 3}*/
 /*{\Mtext |\Mname| is copy constructable and assignable. An object

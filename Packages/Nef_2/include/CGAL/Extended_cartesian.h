@@ -61,31 +61,32 @@ typedef Extended_cartesian<pFT> Self;
 /*{\Xtypes 6.5}*/
 /*{\Xtext \headerline{Affine kernel and types}}*/
 
-typedef CGAL::Cartesian<pFT> sKernel;
+typedef CGAL::Cartesian<pFT> Standard_kernel;
 /*{\Xtypemember the standard affine kernel.}*/
 
-typedef typename sKernel::RT sRT;
+typedef typename Standard_kernel::RT Standard_RT;
 /*{\Xtypemember the standard ring type.}*/
 
-typedef typename sKernel::FT sFT;
+typedef typename Standard_kernel::FT Standard_FT;
 /*{\Xtypemember the field type.}*/
 
-typedef typename sKernel::Point_2           sPoint_2;
+typedef typename Standard_kernel::Point_2     Standard_point_2;
 /*{\Xtypemember standard points.}*/
 
-typedef typename sKernel::Segment_2         sSegment_2;
+typedef typename Standard_kernel::Segment_2   Standard_segment_2;
 /*{\Xtypemember standard segments.}*/
 
-typedef typename sKernel::Line_2            sLine_2;
+typedef typename Standard_kernel::Line_2      Standard_line_2;
 /*{\Xtypemember standard oriented lines.}*/
 
-typedef typename sKernel::Direction_2       sDirection_2;
+typedef typename Standard_kernel::Direction_2 Standard_direction_2;
 /*{\Xtypemember standard directions.}*/
 
-typedef typename sKernel::Ray_2             sRay_2;
+typedef typename Standard_kernel::Ray_2       Standard_ray_2;
 /*{\Xtypemember standard rays.}*/
 
-typedef typename sKernel::Aff_transformation_2 sAff_transformation_2;
+typedef typename Standard_kernel::Aff_transformation_2 
+  Standard_aff_transformation_2;
 /*{\Xtypemember standard affine transformations.}*/
 
 /*{\Xtext \headerline{Extended kernel types}}*/
@@ -113,25 +114,25 @@ enum point_type { SWCORNER=1, LEFTFRAME, NWCORNER,
                   SECORNER, RIGHTFRAME, NECORNER };
 /*{\Xenum a type descriptor for extended points.}*/
 
-Point_2 epoint(const sFT& m1, const sFT& n1, 
-               const sFT& m2, const sFT& n2) const
+Point_2 epoint(const Standard_FT& m1, const Standard_FT& n1, 
+               const Standard_FT& m2, const Standard_FT& n2) const
 { return Point_2(FT(n1,m1),FT(n2,m2)); }
 
 public:
 /*{\Xoperations 2}*/
 /*{\Xtext \headerline{Interfacing the affine kernel types}}*/
 
-Point_2 construct_point(const sPoint_2& p) const
+Point_2 construct_point(const Standard_point_2& p) const
 /*{\Xop creates an extended point |Point_2| and initializes it to the 
 standard point |p|.}*/
 { return Point_2(p.x(), p.y()); }
 
-Point_2 construct_point(const sLine_2& l, point_type& t) const
+Point_2 construct_point(const Standard_line_2& l, point_type& t) const
 /*{\Xop creates an extended point initialized to the equivalence
 class of all the rays underlying the oriented line |l|. 
 |t| returns the type of the new extended point.}*/
 { 
-  t = (point_type)Line_to_epoint<sKernel>::determine_type(l);
+  t = (point_type)Line_to_epoint<Standard_kernel>::determine_type(l);
   Point_2 res;
   switch (t) {
     case SWCORNER:   res = epoint(-1, 0, -1, 0); break;
@@ -151,29 +152,32 @@ class of all the rays underlying the oriented line |l|.
   return res;
 }
 
-Point_2 construct_point(const sPoint_2& p1, const sPoint_2& p2, 
+Point_2 construct_point(const Standard_point_2& p1, 
+                        const Standard_point_2& p2, 
                         point_type& t) const
 /*{\Xop creates an extended point and initializes it to the equivalence
 class of all the rays underlying the oriented line |l(p1,p2)|. 
 |t| returns the type of the new extended point.}*/
-{ return construct_point(sLine_2(p1,p2),t); }
+{ return construct_point(Standard_line_2(p1,p2),t); }
 
-Point_2 construct_point(const sLine_2& l) const
+Point_2 construct_point(const Standard_line_2& l) const
 /*{\Xop creates an extended point and initializes it to the equivalence
 class of all the rays underlying the oriented line |l|. }*/
 { point_type dummy; return construct_point(l,dummy); }
 
-Point_2 construct_point(const sPoint_2& p1, const sPoint_2& p2) const
+Point_2 construct_point(const Standard_point_2& p1, 
+                        const Standard_point_2& p2) const
 /*{\Xop creates an extended point and initializes it to the equivalence
 class of all the rays underlying the oriented line |l(p1,p2)|.}*/
-{ return construct_point(sLine_2(p1,p2)); }
+{ return construct_point(Standard_line_2(p1,p2)); }
 
-Point_2 construct_point(const sPoint_2& p, const sDirection_2& d) const
+Point_2 construct_point(const Standard_point_2& p, 
+                        const Standard_direction_2& d) const
 /*{\Xop creates an extended point and initializes it to the equivalence
 class of all the rays underlying the ray starting in |p| in direction |d|.}*/
-{ return construct_point(sLine_2(p,d)); }
+{ return construct_point(Standard_line_2(p,d)); }
 
-Point_2 construct_opposite_point(const sLine_2& l) const
+Point_2 construct_opposite_point(const Standard_line_2& l) const
 /*{\Xop creates an extended point and initializes it to the equivalence
 class of all the rays underlying the oriented line opposite to |l|. }*/
 { point_type dummy; return construct_point(l.opposite(),dummy); }
@@ -214,44 +218,44 @@ bool is_standard(const Point_2& p) const
 /*{\Xop returns |true| iff |p| is a standard point.}*/
 { return (type(p)==STANDARD);  }
 
-sPoint_2 standard_point(const Point_2& p) const
+Standard_point_2 standard_point(const Point_2& p) const
 /*{\Xop returns the standard point represented by |p|.
 \precond |\Mvar.is_standard(p)|.}*/
 { CGAL_assertion( type(p)==STANDARD );
-  return sPoint_2(p.x()[0],p.y()[0]);
+  return Standard_point_2(p.x()[0],p.y()[0]);
 }
 
-sLine_2 standard_line(const Point_2& p) const
+Standard_line_2 standard_line(const Point_2& p) const
 /*{\Xop returns the oriented line representing the 
 bundle of rays defining |p|.
 \precond |!\Mvar.is_standard(p)|.}*/
 { CGAL_assertion( type(p)!=STANDARD );
   FT x = p.x(), y = p.y();
-  sFT dx = x.degree()>0 ? x[1] : sFT(0);
-  sFT dy = y.degree()>0 ? y[1] : sFT(0);
-  sPoint_2 p0(x[0],y[0]);
-  sPoint_2 p1(x[0]+dx,y[0]+dy);
-  return sLine_2(p0,p1);
+  Standard_FT dx = x.degree()>0 ? x[1] : Standard_FT(0);
+  Standard_FT dy = y.degree()>0 ? y[1] : Standard_FT(0);
+  Standard_point_2 p0(x[0],y[0]);
+  Standard_point_2 p1(x[0]+dx,y[0]+dy);
+  return Standard_line_2(p0,p1);
 }
 
-sRay_2 standard_ray(const Point_2& p) const
+Standard_ray_2 standard_ray(const Point_2& p) const
 /*{\Xop a ray defining |p|. \precond |!\Mvar.is_standard(p)|.}*/
-{ sLine_2 l = standard_line(p);
-  sDirection_2 d = l.direction();
-  sPoint_2 q = l.point(0);
-  return sRay_2(q,d);
+{ Standard_line_2 l = standard_line(p);
+  Standard_direction_2 d = l.direction();
+  Standard_point_2 q = l.point(0);
+  return Standard_ray_2(q,d);
 }
 
-Point_2 NE() const { return construct_point(sLine_2(-1, 1,0)); }
+Point_2 NE() const { return construct_point(Standard_line_2(-1, 1,0)); }
 /*{\Xop returns the point on the north east frame corner.}*/
 
-Point_2 SE() const { return construct_point(sLine_2( 1, 1,0)); }
+Point_2 SE() const { return construct_point(Standard_line_2( 1, 1,0)); }
 /*{\Xop returns the point on the south east frame corner.}*/
 
-Point_2 NW() const { return construct_point(sLine_2(-1,-1,0)); }
+Point_2 NW() const { return construct_point(Standard_line_2(-1,-1,0)); }
 /*{\Xop returns the point on the north west frame corner.}*/
 
-Point_2 SW() const { return construct_point(sLine_2( 1,-1,0)); }
+Point_2 SW() const { return construct_point(Standard_line_2( 1,-1,0)); }
 /*{\Xop returns the point on the south west frame corner.}*/
 
 
@@ -288,7 +292,7 @@ Segment_2 construct_segment(const Point_2& p, const Point_2& q) const
     construct_segment_2_object();
   return _segment(p,q); }
 
-Line_2 construct_line(const sLine_2& l)  const
+Line_2 construct_line(const Standard_line_2& l)  const
 /*{\Xop returns an extended line.}*/
 { return Line_2(l.a(),l.b(),l.c()); }
 
@@ -407,8 +411,8 @@ bool first_pair_closer_than_second(
 
 template <class Forward_iterator>
 void determine_frame_radius(Forward_iterator start, Forward_iterator end,
-                            sRT& R0) const
-{ sRT R;
+                            Standard_RT& R0) const
+{ Standard_RT R;
   while ( start != end ) {
     Point_2 p = *start++;
     if ( is_standard(p) ) {

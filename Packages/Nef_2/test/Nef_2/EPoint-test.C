@@ -56,9 +56,9 @@ int main()
   typedef EDec::Point_2     EP;
   typedef EDec::Segment_2   ES;
   typedef EDec::Direction_2 ED;
-  typedef EDec::sKernel::Point_2  Point;
-  typedef EDec::sKernel::Line_2   Line;
-  typedef EDec::sRT RT;
+  typedef EDec::Standard_kernel::Point_2  Point;
+  typedef EDec::Standard_kernel::Line_2   Line;
+  typedef EDec::Standard_RT RT;
 
   EDec D;
   CGAL::set_pretty_mode ( std::cerr );
@@ -165,9 +165,9 @@ int main()
   typedef EDec::Point_2     EP;
   typedef EDec::Segment_2   ES;
   typedef EDec::Direction_2 ED;
-  typedef EDec::sKernel::Point_2  Point;
-  typedef EDec::sKernel::Line_2   Line;
-  typedef EDec::sRT RT;
+  typedef EDec::Standard_kernel::Point_2  Point;
+  typedef EDec::Standard_kernel::Line_2   Line;
+  typedef EDec::Standard_RT RT;
 
   EDec D;
   CGAL::set_pretty_mode ( std::cerr );
@@ -271,9 +271,9 @@ int main()
   typedef EDec::Point_2     EP;
   typedef EDec::Segment_2   ES;
   typedef EDec::Direction_2 ED;
-  typedef EDec::sKernel::Point_2  Point;
-  typedef EDec::sKernel::Line_2   Line;
-  typedef EDec::sRT RT;
+  typedef EDec::Standard_kernel::Point_2  Point;
+  typedef EDec::Standard_kernel::Line_2   Line;
+  typedef EDec::Standard_RT RT;
 
   EDec D;
   CGAL::set_pretty_mode ( std::cerr );
