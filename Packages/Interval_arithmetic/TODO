@@ -14,19 +14,17 @@
 
 Concerning the code itself:
 
+- Write include/CGAL/predicates/README to say what I want.
+  avec un main.h que je sources depuis Arithmetic_filter.h...
+- Interval_nt doesn't need to be fast => no inline => libCGAL ?
+- Converning in_smallest_orthogonalcircle_ftC2.h, it needs some #include at
+  the end for the overloading (when it's more mature), same thing for
+  Arithmetic_filter.h (could this be automated ?).  Same thing for Regular T3D.
 - Est-ce que les spécialisations doivent être sous CVS ?
 - Essayer de bencher avec -fbranch-probabilities ?  Ça pourrait être pas mal.
 - Expertiser le bench de Stefan.
-- Stop constant propagation (could be considered a compiler bug, or at least
-  misfeature).  It's not specific to Intel, it would be nice if egcs had
-  better control over that (work on that ?).  It can easily be fixed by
-  "CGAL_IA_FORCE_TO_DOUBLE" in the constructors.
-- On Intel, due to lack of IEEE support, after each critical operation, I need
-  to "CGAL_IA_FORCE_TO_DOUBLE".  Would be nice if egcs had a good option for
-  that.  I should try/bench the other solution: use "long double" bounds.
 - Drop the class Interval_nt ?
   Or have a boolean template parameter, instead or the derivation ?
-- FPU_get_and_set_cw (), c'est plus joli, et ça peut être plus efficace.
 - Filter_Cache: Faire des benchs, et une test-suite qui soit raisonnable.
   Hum, rajouter un booléen pour calculer le cache seulement sur demande ?
   (ça évite de le faire inutilement pour les variables intermédiaires,
@@ -64,12 +62,14 @@ Concerning the code itself:
 
 Concerning the script:
 
+- Have a command line option "--in-CGAL" for differencing user vs CGAL code.
 - Try to be less pedantic (accept more C++).
 - Add a warning/check to the argument being "const".
 - Add determinant_signs.h to the list of filtered files ?  And send the 3
   lines to Stefan to add to the end of the original determinant.h.
 - Produire un fichier avec juste les déclarations, et un autre avec les
   définitions, ça aidera à faire une library séparée de trucs précompilés.
+- Parser des declarations sans definition ?
 
 Concerning the doc:
 
@@ -83,6 +83,8 @@ Concerning the doc:
 - add a pointer to my MISC'99 paper.
 - document overlap_action(), when it is made customisable.
 - Passer au nouveau format de doc.
+- Document CGAL_IA_STOP_CONSTANT_PROPAGATION ?
+- Document "//CGAL_NO_FILTER_BEGIN" and "//CGAL_NO_FILTER_END".
 
 Concerning the test-suite:
 

@@ -1,5 +1,13 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.21 on 20 July 1999
+- Removed the buggy [1;-1] interval, users just have to write good code.
+- New flag (disabled by default) -DCGAL_IA_STOP_CONSTANT_PROPAGATION, that
+  stops the constant propagation done by the compiler.
+- New FPU_get_and_set_cw() function.
+- Big rewrite of the Perl script.
+- CGAL_DONT_NEED_FILTER replaced by C++ comments //CGAL_NO_FILTER_BEGIN {END}.
+
 Version 4.20 on 8 July 1999
 - Changed back __asm__ to asm.
 - Removed tstlink in the test-suite (which was not submitted anyway).

@@ -21,9 +21,9 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = -I../../include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS) \
-	-DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS\
-	-O6 -fomit-frame-pointer -DLOOPS=100000 -W
+	-g -W
 	# -fpermissive
+	# -DCGAL_IA_STOP_CONSTANT_PROPAGATION \
 	# -DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS\
 	# -O2 -W -Winline -Wunused -malign-double
 	# -mcpu=pentiumpro -march=pentiumpro -mieee-fp
