@@ -21,19 +21,9 @@ Version:
 	echo $(CGAL_VERSION) > version
 	cvs commit -m "Bump for $(CGAL_VERSION)" version
 	cvs tag -c $(TAG_VERSION)
-	cvs tag -F -c current_submission
 
-submit: specific clean Version $(Package).tar.gz
-	cp $(Package).tar.gz doc_ps/$(Package).ps version description.txt \
-	   changes.txt $(WWW_dir)
-	rm -f $(WWW_dir)/$(Package).ps.gz
-	gzip -9 $(WWW_dir)/$(Package).ps
-	echo > $(TMP_file)
-	echo "submission::" >> $(TMP_file)
-	echo "http://www-sop.inria.fr/prisme/CGAL/DR:/Members" >> $(TMP_file)
-	echo "/$(Package)/$(Package).tar.gz" >> $(TMP_file)
-	mail -s autohandle cgal-submit@cs.uu.nl $(USER) < $(TMP_file)
-	rm -f $(TMP_file)
+submit: specific Version
+	cvs tag -F -c current_submission
 
 test:
 	$(MAKE) -C test/$(Package)
