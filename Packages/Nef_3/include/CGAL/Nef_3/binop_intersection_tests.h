@@ -128,29 +128,18 @@ struct binop_intersection_test_segment_tree {
       }
     };
 
-    typedef std::pair<Halfedge_const_handle,
-                      Halffacet_const_handle> Hash_key_type;
-
-
-    Unique_hash_map< Hash_key_type,
-                     bool,
-                     Pair_hash_function > ignore;
-
     Bop_edge0_face1_callback(SNC_intersection &is, Callback &cb)
-    : is(is), cb(cb), ignore( false )
+    : is(is), cb(cb)
     {}
 
     void operator()( Nef_box& box0, Nef_box& box1 ) {
       Halfedge_const_iterator  e0 = box0.get_halfedge();
       Halffacet_const_iterator f1 = box1.get_halffacet();
-      if(ignore[ std::make_pair( e0, f1 ) ])
-        return;
       if( Infi_box::degree( f1->plane().d() ) > 0 )
         return;
       Point_3 ip;
       if( is.does_intersect_internally( Const_decorator::segment(e0), f1, ip )) {
         cb(e0,f1,ip);
-        ignore[ std::make_pair( e0->twin(), f1 ) ] = true;
       }
     }
   };
