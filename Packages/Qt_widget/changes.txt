@@ -1,3 +1,11 @@
+1.2.11
+------------------------
+This version is very stable.
+In this version the operators are in separate files.
+The doc is almost up to date. !!!!
+Two new demos have been added. Alpha_shapes_2 and Triangulation_2_constrained.
+
+
 1.2.1
 ------------------
 Replaced Qt_widget_zoom.h by Qt_widget_focus.h
