@@ -27,7 +27,7 @@ main() {
   Tree tree(N_Random_points_iterator(rpit,0),
 	    N_Random_points_iterator(N));
 
-  std::list<Point>result;
+  std::list<Point> result;
   
   // define range query
   Point p(0.2, 0.2);
