@@ -16,9 +16,14 @@
 
 \ccDefinition
 
-The widget Qt\_Widget is a class that bla bla bla.
+The widget Qt\_Widget is a class that is designed to help \cgal\ users easily 
+visualize \cgal\ objects and for advanced users to interact with them. This 
+widget is designed only for 2D \cgal\ objects.
+
+
 
 \ccInclude{CGAL/Qt_widget.h}
+\ccGlue
 
 \ccCreation
 \ccCreationVariable{win}
@@ -30,7 +35,7 @@ The widget Qt\_Widget is a class that bla bla bla.
 \ccSetThreeColumns{const_iterator}{container.begin() const;}{}
 
 %scales
-\ccHeading{Scales}
+%\ccHeading{Scales}
 \ccMethod{void set_window(double x_min, double x_max, double y_min, double 
 y_max);}{Map the widget coordinates to the interval defined by the rectangle 
 with given coordinates. This method should be called before \ccc{show()} from 
@@ -44,13 +49,20 @@ QWidget.}
 \ccMethod{void set_center(double x, double y);}{Set the center of the widget to
  O(x, y)}
 
-\ccHeading{Painter}
+%\ccHeading{Painter}
 %painter
 \ccMethod{void clear();}{Clear the screen. The properties remain the same 
 after calling this member function.}
+\ccMethod{void lock();}{Locks the widget, keeping the widget away from being 
+refreshed. If you lock the widget you should verify that you unlock it 
+somewhere else. The number of \ccc{lock()} calls should be the same with the 
+number of \ccc{unlock()} calls.}
+%\ccMethod(void unlock();){Unlocks the widget, and call do\_paint().}
+\ccMethod{void do_paint();}{Refresh the widget calling 
+\ccc{paintEvent(QPaintEvent *e)} for the Qt\_widget.}
 
 %properties
-\ccHeading{Properties}
+%\ccHeading{Properties}
 \ccMethod{void setColor(Qcolor c);}{Set the current pen color of the widget to 
 be c.}
 \ccMethod{void setBackgroundColor(QColor c);}{Set the current background color 
@@ -66,7 +78,7 @@ widget to be c.}
 \ccMethod{void setRasterOp(RasterOp r);}{Set the current raster operation.}
 
 %scenes
-\ccHeading{Scenes}
+%\ccHeading{Scenes}
 \ccMethod{void add_scene(Qt_scene* s);}{Add the scene s in the list of scenes.
 The last added will be on top of the screen.}
 \ccMethod{void remove_scene(Qt_scene* s);}{Remove the scene s from the list.}
@@ -76,7 +88,7 @@ current tool.}
 
 \ccAccessFunctions
 %Properties
-\ccHeading{Properties}
+%\ccHeading{Properties}
 \ccMethod{QColor color() const;}{Returns the current pen color. The color 
 returned is a Qt class.}
 \ccMethod{QColor backgroundColor() const;}{Returns the current widget background
@@ -90,18 +102,98 @@ the objects. The color returned is a Qt class.}
 \ccMethod{RasterOp rasterOp();}{Return the current raster operation.}
 
 %Painter
-\ccHeading{Painter}
+%\ccHeading{Painter}
 \ccMethod{QPixmap& get_pixmap();}{Returns the current pixmap.}
 \ccMethod{QPainter& painter();}{Returns the current painter.}
 
 %Coordinates
-\ccHeading{Coordinates}
+%\ccHeading{Coordinates}
 \ccMethod{double x_min() const;}{Returns the left X coordinate  of the widget.}
 \ccMethod{double y_min() const;}{Returns the lower Y coordinate  of the widget.}
 \ccMethod{double x_max() const;}{Returns the right X coordinate of the widget.}
 \ccMethod{double y_max() const;}{Returns the upper Y coordinate of the widget.}
 
+\input{Qt_widget_ref/Operators_for_output.tex}
+\input{Qt_widget_ref/Manipulators.tex}
+
 \end{ccRefClass}
+
+\ccExample
+We could imagine a typical scenario to use Qt\_widget, like the example shown 
+bellow:
+\begin{ccExampleCode}
+#include <CGAL/Cartesian.h>
+#include <CGAL/Point_2.h>
+#include <CGAL/Segment_2.h>
+#include <CGAL/Line_2.h>
+#include <CGAL/Ray_2.h>
+#include <CGAL/Circle_2.h>
+#include <CGAL/Triangle_2.h>
+#include <CGAL/Iso_rectangle_2.h>
+#include <CGAL/Bbox_2.h>
+#include <CGAL/Polygon_2.h>
+
+#include <qapplication.h>
+#include <CGAL/IO/Qt_Widget.h>
+
+typedef CGAL::Cartesian<int> Rep;
+typedef CGAL::Point_2<Rep> Point;
+typedef CGAL::Circle_2<Rep> Circle;
+typedef CGAL::Segment_2<Rep> Segment;
+typedef CGAL::Line_2<Rep> Line;
+typedef CGAL::Ray_2<Rep> Ray;
+typedef CGAL::Triangle_2<Rep> Triangle;
+typedef CGAL::Iso_rectangle_2<Rep> Rectangle;
+typedef CGAL::Bbox_2 BBox;
+typedef std::list<Point> Container;
+typedef CGAL::Polygon_2<Rep,Container> Polygon;
+
+int main( int argc, char **argv )
+{
+    QApplication app( argc, argv );
+    using namespace CGAL;
+    CGAL::Qt_widget W;
+    app.setMainWidget( &W );
+    W.resize(600, 600);
+    W.set_window(0, 600, 0, 600);
+    W.show();
+    //painting something on the screen
+    W.lock();
+    W << BackgroundColor(ORANGE) << RED <<
+	  LineWidth(3) << PointSize(3) << PointStyle(DISC);
+    W << Segment(Point(10,20),Point(300,400));
+    W << LineWidth(5) << GREEN << FillColor(BLACK) <<
+      Circle(Point(400,400),50*50);
+    W << LineWidth(1) << noFill << Circle(Point(300,300),300*300);
+    W << BLUE << LineWidth(2);
+    W << Segment(Point(200,200),Point(400,400));
+    W << Segment(Point(200,400),Point(400,200));
+    W.setFilled(TRUE);
+    W << RED << Triangle(Point(150,300),
+				   Point(150,350),
+				   Point(100,325));
+    W << FillColor(RED) << Rectangle(Point(320,220),
+					       Point(350,240));
+    W << DEEPBLUE << BBox(100,80,260,140);
+    Polygon p;
+    p.push_back(Point(300,30));
+    p.push_back(Point(400,30));
+    p.push_back(Point(500,130));
+    p.push_back(Point(400,180));
+    p.push_back(Point(300,130));
+    W << p;
+    W << Ray(Point(200,400), Point(180,430))
+      << Ray(Point(200,400), Point(180,370));
+    
+    W.unlock();
+
+    return app.exec();
+}
+\end{ccExampleCode}
+
+In the given example, that is found in demo/basic/first.C, it is created an 
+object of type Qt\_widget and then it's used the operators for output and the
+manipulators to show some of the widget's functionality.
 
 % +-----------------------------------------------------+
 % EOF
