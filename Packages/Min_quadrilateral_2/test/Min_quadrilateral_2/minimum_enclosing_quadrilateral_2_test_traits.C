@@ -43,41 +43,34 @@ struct MyTraits {
     Direction_2 dd1, dd2;
   };
   struct Strip_2      { Point_2 pp1, pp2; Direction_2 dd; };
-private:
+//private:
   struct Equal_2 : public std::binary_function< Point_2, Point_2, bool > {
+    typedef CGAL::Arity_tag< 2 > Arity;
     bool operator()(const Point_2& p, const Point_2& q) const
     { return p.xc == q.xc && p.yc == q.yc; }
   };
   struct Less_xy_2
   : public std::binary_function< Point_2, Point_2, bool >
   {
+    typedef CGAL::Arity_tag< 2 > Arity;
     bool operator()(const Point_2& p, const Point_2& q) const
     { return p.xc < q.xc || p.xc == q.xc && p.yc < q.yc; }
   };
   struct Less_yx_2
   : public std::binary_function< Point_2, Point_2, bool >
   {
+    typedef CGAL::Arity_tag< 2 > Arity;
     bool operator()(const Point_2& p, const Point_2& q) const
     { return p.yc < q.yc || p.yc == q.yc && p.xc < q.xc; }
   };
-  struct Greater_xy_2
-  : public std::binary_function< Point_2, Point_2, bool >
-  {
-    bool operator()(const Point_2& p, const Point_2& q) const
-    { return p.xc > q.xc || p.xc == q.xc && p.yc > q.yc; }
-  };
-  struct Greater_yx_2
-  : public std::binary_function< Point_2, Point_2, bool >
-  {
-    bool operator()(const Point_2& p, const Point_2& q) const
-    { return p.yc > q.yc || p.yc == q.yc && p.xc > q.xc; }
-  };
   struct Right_of_implicit_line_2 {
+    typedef CGAL::Arity_tag< 3 > Arity;
     bool operator()(const Point_2& p,
                     const Point_2& q, const Direction_2& d) const
     { return d.xd * (q.yc - p.yc) < d.yd * (q.xc - p.xc); }
   };
   struct Less_rotate_ccw_2 {
+    typedef CGAL::Arity_tag< 2 > Arity;
     bool operator()(const Direction_2& d, const Direction_2& e) const
     { return CGAL::SMALLER ==
       CGAL::compare_angle_with_x_axisC2(d.xd, d.yd, e.xd, e.yd); }
@@ -85,6 +78,7 @@ private:
   struct Area_less_rectangle_2
   : public std::binary_function< Rectangle_2, Rectangle_2, bool >
   {
+    typedef CGAL::Arity_tag< 2 > Arity;
     bool operator()(const Rectangle_2& d, const Rectangle_2& e) const
     {
       return
@@ -103,6 +97,7 @@ private:
   struct Area_less_parallelogram_2
   : public std::binary_function< Parallelogram_2, Parallelogram_2, bool >
   {
+    typedef CGAL::Arity_tag< 2 > Arity;
     bool operator()(const Parallelogram_2& d,
                     const Parallelogram_2& e) const
     {
@@ -122,6 +117,7 @@ private:
   struct Width_less_strip_2
   : public std::binary_function< Strip_2, Strip_2, bool >
   {
+    typedef CGAL::Arity_tag< 2 > Arity;
     bool operator()(const Strip_2& d, const Strip_2& e) const
     {
       return
@@ -200,7 +196,7 @@ private:
       return n;
     }
   };
-public:
+//public:
   template < class OutputIterator >
   OutputIterator
   copy_rectangle_vertices_2(const Rectangle_2&, OutputIterator o) const
@@ -257,9 +253,6 @@ public:
   
   Construct_strip_2 construct_strip_2_object() const
   { return Construct_strip_2(); }
-
-  Greater_xy_2 greater_xy_2_object() const { return Greater_xy_2(); }
-  Greater_yx_2 greater_yx_2_object() const { return Greater_yx_2(); }
 
   friend class Data;
 };

@@ -31,12 +31,10 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Optimisation/assertions.h>
+#include <CGAL/functional.h>
 #include <iterator>
 
-#if (    ! (    defined( CGAL_OPTIMISATION_CHECK_EXPENSIVE) \
-|| defined( CGAL_CHECK_EXPENSIVE)              ) \
-  || defined( CGAL_OPTIMISATION_NO_PRECONDITIONS) \
-  || defined( CGAL_NO_PRECONDITIONS) || defined( NDEBUG))
+#ifdef CGAL_OPTIMISATION_EXPENSIVE_PRECONDITION_TAG
 #include <CGAL/Polygon_2_algorithms.h>
 #endif
 
@@ -82,9 +80,19 @@ convex_bounding_box_2(
   ForwardIterator miny;
   ForwardIterator maxy;
 
-  if (t.less_xy_2_object()(*minx, *f) ||
-      t.less_yx_2_object()(*minx, *f) && !t.less_xy_2_object()(*f, *minx))
-    if (t.less_yx_2_object()(*minx, *f))
+  typedef typename Traits::Less_xy_2        Less_xy_2;
+  typedef typename Traits::Less_yx_2        Less_yx_2;
+  typedef typename Swap<Less_xy_2,1>::Type  Greater_xy_2;
+  typedef typename Swap<Less_yx_2,1>::Type  Greater_yx_2;
+
+  Less_xy_2    less_xy_2    = t.less_xy_2_object();
+  Less_yx_2    less_yx_2    = t.less_yx_2_object();
+  Greater_xy_2 greater_xy_2 = swap_1(less_xy_2);
+  Greater_yx_2 greater_yx_2 = swap_1(less_yx_2);
+
+  if (less_xy_2(*minx, *f) ||
+      less_yx_2(*minx, *f) && !less_xy_2(*f, *minx))
+    if (less_yx_2(*minx, *f))
       // first quadrant
       for (;;) {
         maxx = f;
@@ -92,7 +100,7 @@ convex_bounding_box_2(
           maxy = minx = miny = maxx;
           break;
         }
-        if (t.less_xy_2_object()(*f, *maxx)) {
+        if (less_xy_2(*f, *maxx)) {
           f = maxx;
           for (;;) {
             maxy = f;
@@ -100,7 +108,7 @@ convex_bounding_box_2(
               minx = miny = maxy;
               break;
             }
-            if (t.less_yx_2_object()(*f, *maxy)) {
+            if (less_yx_2(*f, *maxy)) {
               f = maxy;
               for (;;) {
                 minx = f;
@@ -108,19 +116,19 @@ convex_bounding_box_2(
                   miny = minx;
                   break;
                 }
-                if (t.greater_xy_2_object()(*f, *minx)) {
+                if (greater_xy_2(*f, *minx)) {
                   f = minx;
                   do
                     miny = f;
-                  while (++f != l && !t.greater_yx_2_object()(*f, *miny));
+                  while (++f != l && !greater_yx_2(*f, *miny));
                   break;
                 }
               } // for (;;)
               break;
-            } // if (t.less_yx_2_object()(*f, *maxy))
+            } // if (less_yx_2(*f, *maxy))
           } // for (;;)
           break;
-        } // if (t.less_xy_2_object()(*f, *maxx))
+        } // if (less_xy_2(*f, *maxx))
       } // for (;;)
     else
       // fourth quadrant
@@ -130,7 +138,7 @@ convex_bounding_box_2(
           maxx = maxy = minx = miny;
           break;
         }
-        if (t.greater_yx_2_object()(*f, *miny)) {
+        if (greater_yx_2(*f, *miny)) {
           f = miny;
           for (;;) {
             maxx = f;
@@ -138,7 +146,7 @@ convex_bounding_box_2(
               maxy = minx = maxx;
               break;
             }
-            if (t.less_xy_2_object()(*f, *maxx)) {
+            if (less_xy_2(*f, *maxx)) {
               f = maxx;
               for (;;) {
                 maxy = f;
@@ -146,22 +154,22 @@ convex_bounding_box_2(
                   minx = maxy;
                   break;
                 }
-                if (t.less_yx_2_object()(*f, *maxy)) {
+                if (less_yx_2(*f, *maxy)) {
                   f = maxy;
                   do
                     minx = f;
-                  while (++f != l && !t.greater_xy_2_object()(*f, *minx));
+                  while (++f != l && !greater_xy_2(*f, *minx));
                   break;
                 }
               } // for (;;)
               break;
-            } // if (t.less_xy_2_object()(*f, *maxx))
+            } // if (less_xy_2(*f, *maxx))
           } // for (;;)
           break;
-        } // if (t.greater_yx_2_object()(*f, *miny))
+        } // if (greater_yx_2(*f, *miny))
       } // for (;;)
   else
-    if (t.less_yx_2_object()(*f, *minx))
+    if (less_yx_2(*f, *minx))
       // third quadrant
       for (;;) {
         minx = f;
@@ -169,7 +177,7 @@ convex_bounding_box_2(
           miny = maxx = maxy = minx;
           break;
         }
-        if (t.greater_xy_2_object()(*f, *minx)) {
+        if (greater_xy_2(*f, *minx)) {
           f = minx;
           for (;;) {
             miny = f;
@@ -177,7 +185,7 @@ convex_bounding_box_2(
               maxx = maxy = miny;
               break;
             }
-            if (t.greater_yx_2_object()(*f, *miny)) {
+            if (greater_yx_2(*f, *miny)) {
               f = miny;
               for (;;) {
                 maxx = f;
@@ -185,19 +193,19 @@ convex_bounding_box_2(
                   maxy = maxx;
                   break;
                 }
-                if (t.less_xy_2_object()(*f, *maxx)) {
+                if (less_xy_2(*f, *maxx)) {
                   f = maxx;
                   do
                     maxy = f;
-                  while (++f != l && !t.less_yx_2_object()(*f, *maxy));
+                  while (++f != l && !less_yx_2(*f, *maxy));
                   break;
                 }
               } // for (;;)
               break;
-            } // if (t.greater_yx_2_object()(*f, *miny))
+            } // if (greater_yx_2(*f, *miny))
           } // for (;;)
           break;
-        } // if (t.greater_xy_2_object()(*f, *minx))
+        } // if (greater_xy_2(*f, *minx))
       } // for (;;)
     else
       // second quadrant
@@ -207,7 +215,7 @@ convex_bounding_box_2(
           minx = miny = maxx = maxy;
           break;
         }
-        if (t.less_yx_2_object()(*f, *maxy)) {
+        if (less_yx_2(*f, *maxy)) {
           f = maxy;
           for (;;) {
             minx = f;
@@ -215,7 +223,7 @@ convex_bounding_box_2(
               miny = maxx = minx;
               break;
             }
-            if (t.greater_xy_2_object()(*f, *minx)) {
+            if (greater_xy_2(*f, *minx)) {
               f = minx;
               for (;;) {
                 miny = f;
@@ -223,26 +231,26 @@ convex_bounding_box_2(
                   maxx = miny;
                   break;
                 }
-                if (t.greater_yx_2_object()(*f, *miny)) {
+                if (greater_yx_2(*f, *miny)) {
                   f = miny;
                   do
                     maxx = f;
-                  while (++f != l && !t.less_xy_2_object()(*f, *maxx));
+                  while (++f != l && !less_xy_2(*f, *maxx));
                   break;
                 }
               } // for (;;)
               break;
-            } // if (t.greater_xy_2_object()(*f, *minx))
+            } // if (greater_xy_2(*f, *minx))
           } // for (;;)
           break;
-        } // if (t.less_yx_2_object()(*f, *maxy))
+        } // if (less_yx_2(*f, *maxy))
       } // for (;;)
 
   // Output
-  *o++ = t.less_xy_2_object()(*first, *minx) ? first : minx;
-  *o++ = t.less_yx_2_object()(*first, *miny) ? first : miny;
-  *o++ = t.less_xy_2_object()(*maxx, *first) ? first : maxx;
-  *o++ = t.less_yx_2_object()(*maxy, *first) ? first : maxy;
+  *o++ = less_xy_2(*first, *minx) ? first : minx;
+  *o++ = less_yx_2(*first, *miny) ? first : miny;
+  *o++ = less_xy_2(*maxx, *first) ? first : maxx;
+  *o++ = less_yx_2(*maxy, *first) ? first : maxy;
   return o;
 } // convex_bounding_box_2(f, l, o, t)
 

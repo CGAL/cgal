@@ -56,31 +56,47 @@ typedef CGAL::Polygon_2< P_traits, Cont >              Polygon_2;
 typedef Creator_uniform_2< double, Point_2 >           Creator;
 typedef Random_points_in_square_2< Point_2, Creator >  Point_generator;
 
+template < class ForwardIterator >
+void compute(ForwardIterator f, ForwardIterator l)
+{
+  // compute the minimal enclosing rectangle p_m of p
+  Polygon_2 p_r;
+  min_rectangle_2(f, l, back_inserter(p_r));
+  cout << "Min_rectangle:\n" << p_r << endl;
+
+  // compute the minimal enclosing parallelogram p_p of p
+  Polygon_2 p_p;
+  min_parallelogram_2(f, l, back_inserter(p_p));
+  cout << "Min_parallelogram:\n" << p_p << endl;
+
+  // compute the minimal enclosing strip p_s of p
+  Line_2 lines[2];
+  min_strip_2(f, l, lines);
+  cout << "Min_strip:\n" << lines[0] << "\n" << lines[1] << endl;
+}
+
 int main()
 {
   CGAL::set_pretty_mode(cout);
 
   // build a random convex 20-gon p
-  Polygon_2 p;
-  random_convex_set_2(20, back_inserter(p), Point_generator(1.0));
-  cout << "Input:\n" << p << endl;
+  {
+    Polygon_2 p;
+    random_convex_set_2(20, back_inserter(p), Point_generator(1.0));
+    cout << "------------------------------\nInput:\n" << p << endl;
+    compute(p.vertices_begin(), p.vertices_end());
+  }
 
-  // compute the minimal enclosing rectangle p_m of p
-  Polygon_2 p_r;
-  min_rectangle_2(
-    p.vertices_begin(), p.vertices_end(), back_inserter(p_r));
-  cout << "Min_rectangle:\n" << p_r << endl;
+  // try identical points
+  {
+    Polygon_2 p;
+    for (int i = 1; i < 3; ++i) {
+      cout << "------------------------------\nInput:\n" << p << endl;
+      compute(p.vertices_begin(), p.vertices_end());
+      p.push_back(Point_2(0,0));
+    }
+  }
 
-  // compute the minimal enclosing parallelogram p_p of p
-  Polygon_2 p_p;
-  min_parallelogram_2(
-    p.vertices_begin(), p.vertices_end(), back_inserter(p_p));
-  cout << "Min_parallelogram:\n" << p_p << endl;
-
-  // compute the minimal enclosing strip p_s of p
-  Line_2 lines[2];
-  min_strip_2(p.vertices_begin(), p.vertices_end(), lines);
-  cout << "Min_strip:\n" << lines[0] << "\n" << lines[1] << endl;
 
   return 0;
 } 

@@ -31,7 +31,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Optimisation/assertions.h>
-#include <CGAL/functional.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Direction_2.h>
 #include <CGAL/Polygon_2.h>
@@ -115,8 +114,6 @@ struct Min_quadrilateral_default_traits_2 {
   // std::equal_to< Point_2 >                Equal_2;
   typedef typename R::Less_xy_2              Less_xy_2;
   typedef typename R::Less_yx_2              Less_yx_2;
-  typedef typename Swap<Less_xy_2,1>::Type   Greater_xy_2;
-  typedef typename Swap<Less_yx_2,1>::Type   Greater_yx_2;
 
   struct Right_of_implicit_line_2
   {
@@ -435,11 +432,6 @@ struct Min_quadrilateral_default_traits_2 {
   
   Construct_strip_2 construct_strip_2_object() const
   { return Construct_strip_2(); }
-
-  Greater_xy_2 greater_xy_2_object() const
-  { return swap_1(less_xy_2_object()); }
-  Greater_yx_2 greater_yx_2_object() const
-  { return swap_1(less_yx_2_object()); }
 
 };
 
