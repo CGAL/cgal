@@ -1,6 +1,23 @@
 // ============================================================================
 //
-// $Id$
+// Copyright (c) 1998 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// release       :
+// release_date  :
+//
+// file          : include/CGAL/Triangulation_ds_vertex.h
+// revision      : $Revision$
+// author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
+//
+// coordinator   : Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
+//
+// ============================================================================
 //
 // vertex of a combinatotial triangulation of any dimension <=3
 //
