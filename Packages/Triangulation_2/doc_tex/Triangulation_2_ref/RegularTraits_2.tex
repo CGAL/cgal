@@ -52,30 +52,41 @@ a model of the concept \ccc{WeightedPoint}.}
 \ccNestedType{Power_test_2}{A predicate object type. Must provide
 the operator : \\
 \ccc{Oriented_side operator() ( Weighted_point p,
-			     Weighted_point q,
-			     Weighted_point r,
-			     Weighted_point s) } \\
+                             Weighted_point q,
+                             Weighted_point r,
+                             Weighted_point s) } \\
 which is the power test for points \ccc{p}, \ccc{q}, \ccc{r} and 
 \ccc{s}. \ccPrecond{the bare points corresponding to 
 \ccc{p}, \ccc{q}, \ccc{r} are not collinear}.}
 \ccGlue
-\ccNestedType{Power_test_degenerated_2}{A predicate object type. Must provide
-the operator 
-\ccc{Oriented_side operator() ( Weighted_point p,
-			     Weighted_point q,
-			     Weighted_point r) }
-which is the degenerated power test for collinear points 
-\ccc{p}, \ccc{q}, \ccc{r}.
-\ccPrecond{the bare points corresponding to 
-\ccc{p}, \ccc{q}, \ccc{r} are collinear and \ccc{p != q}.}}
+\ccNestedType{Power_test_degenerated_2}{A predicate object type. Must provide twp operators:
+  \begin{enumerate}
+  \item 
+    the operator 
+    \ccc{Oriented_side operator() ( Weighted_point p,
+      Weighted_point q,
+      Weighted_point r) }
+    which is the degenerated power test for collinear points 
+    \ccc{p}, \ccc{q}, \ccc{r}.
+    \ccPrecond{the bare points corresponding to 
+      \ccc{p}, \ccc{q}, \ccc{r} are collinear and \ccc{p != q}.}
+  \item the operator 
+    \ccc{Oriented_side operator() ( Weighted_point p,
+      Weighted_point q) }
+    which is the degenerated power test for weighted points  
+    \ccc{p} and \ccc{q} whose corresponding bare-points are identical.
+    \ccPrecond{the bare points corresponding to 
+      \ccc{p} and \ccc{q} are identical.}
+  \end{enumerate}
+  }
 
 
 \ccNestedType{Construct_weighted_circumcenter_2}{A constructor
 object which constructs the weighted circumcenter of  three
 weighted points. Provides the operator \\
 \ccc{Bare_point operator() ( Weighted_point p,
-		     Weighted_point q,
-		     Weighted_point r);} }
+                     Weighted_point q,
+                     Weighted_point r);} }
 
 
 \ccNestedType{Construct_radical_axis_2} {A constructor type which
