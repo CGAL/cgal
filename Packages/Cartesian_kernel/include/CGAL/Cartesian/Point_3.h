@@ -31,6 +31,7 @@ template < class R_ >
 class PointC3
   : public R_::Point_handle_3
 {
+CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                   FT;
   typedef typename R_::Vector_3             Vector_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;

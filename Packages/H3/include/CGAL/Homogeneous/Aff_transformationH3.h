@@ -278,6 +278,7 @@ private:
 template < class R_ >
 class Aff_transformationH3 : public R_::Aff_transformation_handle_3
 {
+CGAL_VC7_BUG_PROTECTED
   typedef typename R_::RT                   RT;
   typedef typename R_::FT                   FT;
   typedef typename R_::Point_3              Point_3;

@@ -30,6 +30,7 @@ template < class R_ >
 class Iso_cuboidC3
   : public R_::Iso_cuboid_handle_3
 {
+CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                   FT;
   typedef typename R_::Iso_cuboid_3         Iso_cuboid_3;
   typedef typename R_::Point_3              Point_3;

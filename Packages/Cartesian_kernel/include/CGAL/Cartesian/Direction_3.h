@@ -28,6 +28,7 @@ template < class R_ >
 class DirectionC3
   : public R_::Direction_handle_3
 {
+CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                   FT;
   typedef typename R_::Vector_3             Vector_3;
   typedef typename R_::Line_3               Line_3;

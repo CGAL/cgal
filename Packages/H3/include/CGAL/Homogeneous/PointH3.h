@@ -33,6 +33,7 @@ template < class R_ >
 class PointH3
   : public R_::Point_handle_3
 {
+CGAL_VC7_BUG_PROTECTED
    typedef typename R_::RT                   RT;
    typedef typename R_::FT                   FT;
    typedef typename R_::Vector_3             Vector_3;

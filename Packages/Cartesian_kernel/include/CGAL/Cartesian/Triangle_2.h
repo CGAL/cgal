@@ -30,6 +30,7 @@ template <class R_>
 class TriangleC2
   : public R_::Triangle_handle_2
 {
+CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                   FT;
   typedef typename R_::Point_2              Point_2;
   typedef typename R_::Vector_2             Vector_2;

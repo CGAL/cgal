@@ -1,3 +1,6 @@
+2.49   (6 February 2002)
+- VC7 workarounds.
+
 2.48   (4 February 2002)
 - VC++ fixes.
 

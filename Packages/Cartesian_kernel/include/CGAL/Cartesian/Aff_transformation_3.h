@@ -44,6 +44,7 @@ template < class R_ >
 class Aff_transformationC3
   : public R_::Aff_transformation_handle_3
 {
+CGAL_VC7_BUG_PROTECTED
   friend class PlaneC3<R_>; // FIXME: why ?
 
   typedef typename R_::FT                   FT;

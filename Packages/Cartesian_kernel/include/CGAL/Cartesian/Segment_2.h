@@ -30,6 +30,7 @@ template < class R_ >
 class SegmentC2
   : public R_::Segment_handle_2
 {
+CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                   FT;
   typedef typename R_::Point_2              Point_2;
   typedef typename R_::Direction_2          Direction_2;
