@@ -3,6 +3,7 @@ constrained and regular triangulations with  tests and examples.
 
 Ver 4.75
 - Regular triangulation support for Simple Cartesian kernels. [syl]
+- Geomview output, which works for terrains as well. [syl]
 
 Ver 4.74
 - make big changes in Constrained_triangulation_2.h
