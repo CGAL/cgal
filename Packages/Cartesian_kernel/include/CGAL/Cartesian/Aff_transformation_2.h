@@ -49,10 +49,11 @@ class Aff_transformationC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   typedef typename R_::FT                   FT;
   typedef Aff_transformation_rep_baseC2<R_> Aff_t_base;
 
-  typedef typename R_::Kernel_base::Point_2              Point_2;
-  typedef typename R_::Kernel_base::Vector_2             Vector_2;
-  typedef typename R_::Kernel_base::Direction_2          Direction_2;
-  typedef typename R_::Kernel_base::Line_2               Line_2;
+  typedef typename R_::Point_2              Point_2;
+  typedef typename R_::Vector_2             Vector_2;
+  typedef typename R_::Direction_2          Direction_2;
+  typedef typename R_::Line_2               Line_2;
+  typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
 public:
   typedef R_                                R;
@@ -153,7 +154,7 @@ public:
   operator()(const Line_2 &l) const
   { return transform(l); }
 
-  Aff_transformationC2 inverse() const { return Ptr()->inverse(); }
+  Aff_transformation_2 inverse() const { return Ptr()->inverse(); }
 
   bool is_even() const { return Ptr()->is_even(); }
   bool is_odd() const { return ! (Ptr()->is_even()); }
@@ -163,7 +164,7 @@ public:
   FT m(int i, int j) const { return cartesian(i,j); }
   FT hm(int i, int j) const { return cartesian(i,j); }
 
-  Aff_transformationC2 operator*(const Aff_transformationC2 &t) const
+  Aff_transformation_2 operator*(const Aff_transformationC2 &t) const
   {
     return (*Ptr()) * (*t.Ptr());
   }

@@ -48,11 +48,11 @@ public:
   typedef R_                       R;
   typedef typename R::FT           FT;
   typedef typename R::RT           RT;
-  typedef typename R::Kernel_base::Point_3        Point_3;
-  typedef typename R::Kernel_base::Vector_3       Vector_3;
-  typedef typename R::Kernel_base::Direction_3    Direction_3;
-  typedef typename R::Kernel_base::Plane_3        Plane_3;
-  typedef typename R::Kernel_base::Aff_transformation_3 Aff_transformation_3;
+  typedef typename R::Point_3        Point_3;
+  typedef typename R::Vector_3       Vector_3;
+  typedef typename R::Direction_3    Direction_3;
+  typedef typename R::Plane_3        Plane_3;
+  typedef typename R::Aff_transformation_3 Aff_transformation_3;
 
   virtual  ~Aff_transformation_rep_baseH3(){}
 
@@ -68,10 +68,10 @@ public:
   virtual  Plane_3
            transform(const Plane_3&) const = 0;
 
-  virtual  Aff_transformationH3<R>
+  virtual  Aff_transformation_3
            inverse() const = 0;
 
-  virtual  Aff_transformationH3<R>
+  virtual  Aff_transformation_3
            transpose() const = 0;
 
   virtual  Aff_transformation_repH3<R>
@@ -92,11 +92,11 @@ class Aff_transformation_repH3 : public Aff_transformation_rep_baseH3<R_>
 {
   typedef typename R_::FT           FT;
   typedef typename R_::RT           RT;
-  typedef typename R_::Kernel_base::Point_3              Point_3;
-  typedef typename R_::Kernel_base::Vector_3             Vector_3;
-  typedef typename R_::Kernel_base::Direction_3          Direction_3;
-  typedef typename R_::Kernel_base::Plane_3              Plane_3;
-  typedef typename R_::Kernel_base::Aff_transformation_3 Aff_transformation_3;
+  typedef typename R_::Point_3              Point_3;
+  typedef typename R_::Vector_3             Vector_3;
+  typedef typename R_::Direction_3          Direction_3;
+  typedef typename R_::Plane_3              Plane_3;
+  typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
 public:
   typedef R_                       R;
@@ -165,11 +165,11 @@ class Identity_repH3 : public Aff_transformation_rep_baseH3<R_>
 {
   typedef typename R_::RT    RT;
   typedef typename R_::FT    FT;
-  typedef typename R_::Kernel_base::Point_3              Point_3;
-  typedef typename R_::Kernel_base::Vector_3             Vector_3;
-  typedef typename R_::Kernel_base::Direction_3          Direction_3;
-  typedef typename R_::Kernel_base::Plane_3              Plane_3;
-  typedef typename R_::Kernel_base::Aff_transformation_3 Aff_transformation_3;
+  typedef typename R_::Point_3              Point_3;
+  typedef typename R_::Vector_3             Vector_3;
+  typedef typename R_::Direction_3          Direction_3;
+  typedef typename R_::Plane_3              Plane_3;
+  typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
 public:
   typedef R_                R;
@@ -225,11 +225,11 @@ class Translation_repH3 : public Aff_transformation_rep_baseH3<R_>
 {
   typedef typename R_::FT       FT;
   typedef typename R_::RT       RT;
-  typedef typename R_::Kernel_base::Point_3              Point_3;
-  typedef typename R_::Kernel_base::Vector_3             Vector_3;
-  typedef typename R_::Kernel_base::Direction_3          Direction_3;
-  typedef typename R_::Kernel_base::Plane_3              Plane_3;
-  typedef typename R_::Kernel_base::Aff_transformation_3 Aff_transformation_3;
+  typedef typename R_::Point_3              Point_3;
+  typedef typename R_::Vector_3             Vector_3;
+  typedef typename R_::Direction_3          Direction_3;
+  typedef typename R_::Plane_3              Plane_3;
+  typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
 public:
   typedef R_                    R;
@@ -278,12 +278,13 @@ private:
 template < class R_ >
 class Aff_transformationH3 : public R_::Aff_transformation_handle_3
 {
-  typedef typename R_::RT    RT;
-  typedef typename R_::FT    FT;
-  typedef typename R_::Kernel_base::Point_3        Point_3;
-  typedef typename R_::Kernel_base::Vector_3       Vector_3;
-  typedef typename R_::Kernel_base::Direction_3    Direction_3;
-  typedef typename R_::Kernel_base::Plane_3        Plane_3;
+  typedef typename R_::RT                   RT;
+  typedef typename R_::FT                   FT;
+  typedef typename R_::Point_3              Point_3;
+  typedef typename R_::Vector_3             Vector_3;
+  typedef typename R_::Direction_3          Direction_3;
+  typedef typename R_::Plane_3              Plane_3;
+  typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
 public:
   typedef R_                R;
@@ -323,7 +324,7 @@ public:
   Plane_3
   transform(const Plane_3& pl) const;
 
-  Aff_transformationH3<R>
+  Aff_transformation_3
   inverse()   const;
 
   Aff_transformationH3<R>
@@ -399,17 +400,14 @@ typename Aff_transformation_repH3<R>::Direction_3
 Aff_transformation_repH3<R>::
 transform(const typename Aff_transformation_repH3<R>::Direction_3& d) const
 {
-  Vector_3 v( d.to_vector() );
-  return Direction_3(t00 * v.hx() + t01 * v.hy() + t02 * v.hz(),
-                     t10 * v.hx() + t11 * v.hy() + t12 * v.hz(),
-                     t20 * v.hx() + t21 * v.hy() + t22 * v.hz(),
-                     t33 * v.hw() );
-
-/*
-  return Direction_3( t00 * d.hx() + t01 * d.hy() + t02 * d.hz(),
-                      t10 * d.hx() + t11 * d.hy() + t12 * d.hz(),
-                      t20 * d.hx() + t21 * d.hy() + t22 * d.hz() );
-*/
+    if (t33 > RT(0))
+        return Direction_3(t00 * d.hx() + t01 * d.hy() + t02 * d.hz(),
+                           t10 * d.hx() + t11 * d.hy() + t12 * d.hz(),
+                           t20 * d.hx() + t21 * d.hy() + t22 * d.hz());
+    else
+        return - Direction_3(t00 * d.hx() + t01 * d.hy() + t02 * d.hz(),
+                             t10 * d.hx() + t11 * d.hy() + t12 * d.hz(),
+                             t20 * d.hx() + t21 * d.hy() + t22 * d.hz());
 }
 
 template < class R >
@@ -840,7 +838,7 @@ transform(const typename Aff_transformationH3<R>::Plane_3& pl) const
 
 template < class R >
 inline
-Aff_transformationH3<R>
+typename Aff_transformationH3<R>::Aff_transformation_3
 Aff_transformationH3<R>::inverse() const
 { return Ptr()->inverse(); }
 

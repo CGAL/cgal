@@ -28,13 +28,13 @@ template <class R_>
 class Iso_rectangleC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public R_::Iso_rectangle_handle_2
 {
-  typedef typename R_::FT                        FT;
+  typedef typename R_::FT                   FT;
+  typedef typename R_::Point_2              Point_2;
+  typedef typename R_::Iso_rectangle_2      Iso_rectangle_2;
+  typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
   typedef typename R_::Iso_rectangle_handle_2    base;
   typedef typename base::element_type            rep;
-
-  typedef typename R_::Point_2              Point_2;
-  typedef typename R_::Kernel_base::Aff_transformation_2 Aff_transformation_2;
 
 public:
   typedef R_                                     R;
@@ -43,7 +43,7 @@ public:
     : base(rep()) {}
 
   Iso_rectangleC2(const Point_2 &p, const Point_2 &q)
-  { // FIXME : construction
+  {
     FT minx, maxx, miny, maxy;
     if (p.x() < q.x()) { minx = p.x(); maxx = q.x(); }
     else               { minx = q.x(); maxx = p.x(); }
@@ -85,7 +85,7 @@ public:
   Point_2 vertex(int i) const;
   Point_2 operator[](int i) const;
 
-  Iso_rectangleC2 transform(const Aff_transformation_2 &t) const
+  Iso_rectangle_2 transform(const Aff_transformation_2 &t) const
   {
     // FIXME : We need a precondition like this!!!
     // CGAL_kernel_precondition(t.is_axis_preserving());

@@ -30,16 +30,17 @@ template < class R_ >
 class PlaneH3
   : public R_::Plane_handle_3
 {
-   typedef typename R_::RT     RT;
-   typedef typename R_::FT     FT;
-   typedef typename R_::Kernel_base::Point_2              Point_2;
-   typedef typename R_::Kernel_base::Point_3              Point_3;
-   typedef typename R_::Kernel_base::Vector_3             Vector_3;
-   typedef typename R_::Kernel_base::Line_3               Line_3;
-   typedef typename R_::Kernel_base::Segment_3            Segment_3;
-   typedef typename R_::Kernel_base::Ray_3                Ray_3;
-   typedef typename R_::Kernel_base::Direction_3          Direction_3;
-   typedef typename R_::Kernel_base::Aff_transformation_3 Aff_transformation_3;
+   typedef typename R_::RT                   RT;
+   typedef typename R_::FT                   FT;
+   typedef typename R_::Point_2              Point_2;
+   typedef typename R_::Point_3              Point_3;
+   typedef typename R_::Vector_3             Vector_3;
+   typedef typename R_::Line_3               Line_3;
+   typedef typename R_::Segment_3            Segment_3;
+   typedef typename R_::Ray_3                Ray_3;
+   typedef typename R_::Direction_3          Direction_3;
+   typedef typename R_::Plane_3              Plane_3;
+   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
    typedef typename R_::Plane_handle_3            Plane_handle_3_;
    typedef typename Plane_handle_3_::element_type Plane_ref_3;
@@ -50,9 +51,7 @@ class PlaneH3
     PlaneH3()
       : Plane_handle_3_(Plane_ref_3()) {}
 
-    PlaneH3(const Point_3&,
-            const Point_3&,
-            const Point_3& );
+    PlaneH3(const Point_3&, const Point_3&, const Point_3& );
     PlaneH3(const RT& a, const RT& b,
             const RT& c, const RT& d );
     PlaneH3(const Point_3&, const Ray_3& );
@@ -74,7 +73,7 @@ class PlaneH3
     bool       operator!=( const PlaneH3<R>& ) const;
 
     Line_3  perpendicular_line(const Point_3& ) const;
-    PlaneH3<R> opposite() const;  // plane with opposite orientation
+    Plane_3 opposite() const;  // plane with opposite orientation
     Point_3 projection(const Point_3& ) const;
 
     Point_3 point() const;     // same point on the plane
@@ -95,7 +94,7 @@ class PlaneH3
 
     bool           is_degenerate() const;
 
-    PlaneH3<R> transform(const Aff_transformation_3& ) const;
+    Plane_3 transform(const Aff_transformation_3& ) const;
 
     Aff_transformation_3 transform_to_2d() const;
     Point_2   to_2d(const Point_3& )  const;
@@ -184,20 +183,20 @@ PlaneH3<R>::operator!=(const PlaneH3<R>& l) const
 template < class R >
 CGAL_KERNEL_INLINE
 PlaneH3<R>::PlaneH3(const typename PlaneH3<R>::Point_3& p,
-                        const typename PlaneH3<R>::Point_3& q,
-                        const typename PlaneH3<R>::Point_3& r)
+                    const typename PlaneH3<R>::Point_3& q,
+                    const typename PlaneH3<R>::Point_3& r)
 { new_rep(p,q,r); }
 
 template < class R >
 CGAL_KERNEL_INLINE
 PlaneH3<R>::PlaneH3(const RT& a, const RT& b,
-                        const RT& c, const RT& d)
+                    const RT& c, const RT& d)
 { new_rep(a,b,c,d); }
 
 template < class R >
 CGAL_KERNEL_INLINE
 PlaneH3<R>::PlaneH3(const typename PlaneH3<R>::Point_3& p ,
-                        const typename PlaneH3<R>::Line_3&  l)
+                    const typename PlaneH3<R>::Line_3&  l)
 { new_rep(p, l.point(0), l.point(1) ); }
 
 template < class R >
@@ -292,7 +291,7 @@ PlaneH3<R>::perpendicular_line(const typename PlaneH3<R>::Point_3& p) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-PlaneH3<R>
+typename R::Plane_3
 PlaneH3<R>::opposite() const
 { return PlaneH3<R>(-a(), -b(), -c(), -d() ); }
 
@@ -388,7 +387,7 @@ PlaneH3<R>::orthogonal_vector() const
 { return Vector_3(a(), b(), c() ); }
 
 template < class R >
-PlaneH3<R>
+typename R::Plane_3
 PlaneH3<R>::transform(const typename PlaneH3<R>::Aff_transformation_3& t) const
 {
  return t.transform(*this);

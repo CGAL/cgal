@@ -32,7 +32,7 @@ class Data_accessorH2
 public:
     typedef typename R::FT FT;
     typedef typename R::RT RT;
-    typedef typename R::Kernel_base::Point_2      Point_2;
+    typedef typename R::Point_2      Point_2;
 
     RT  get_hx( const Point_2 & p) const { return( p.hx()); }
     RT  get_hy( const Point_2 & p) const { return( p.hy()); }

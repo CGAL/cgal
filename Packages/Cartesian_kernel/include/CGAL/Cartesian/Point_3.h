@@ -32,12 +32,11 @@ class PointC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public R_::Point_handle_3
 {
   typedef typename R_::FT                   FT;
+  typedef typename R_::Vector_3             Vector_3;
+  typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
   typedef typename R_::Point_handle_3       base;
   typedef typename base::element_type       rep;
-
-  typedef typename R_::Kernel_base::Vector_3             Vector_3;
-  typedef typename R_::Kernel_base::Aff_transformation_3 Aff_transformation_3;
 
 public:
   typedef R_                                R;

@@ -29,15 +29,14 @@ template < class R_ >
 class DirectionH3
   : public R_::Direction_handle_3
 {
-   typedef typename R_::RT     RT;
-   typedef typename R_::FT     FT;
-
-   typedef typename R_::Kernel_base::Point_3              Point_3;
-   typedef typename R_::Kernel_base::Vector_3             Vector_3;
-   typedef typename R_::Kernel_base::Segment_3            Segment_3;
-   typedef typename R_::Kernel_base::Line_3               Line_3;
-   typedef typename R_::Kernel_base::Ray_3                Ray_3;
-   typedef typename R_::Kernel_base::Aff_transformation_3 Aff_transformation_3;
+   typedef typename R_::RT                   RT;
+   typedef typename R_::FT                   FT;
+   typedef typename R_::Point_3              Point_3;
+   typedef typename R_::Vector_3             Vector_3;
+   typedef typename R_::Segment_3            Segment_3;
+   typedef typename R_::Line_3               Line_3;
+   typedef typename R_::Ray_3                Ray_3;
+   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
    typedef typename R_::Direction_handle_3            Direction_handle_3_;
    typedef typename Direction_handle_3_::element_type Direction_ref_3;
@@ -63,6 +62,7 @@ class DirectionH3
   DirectionH3(const Segment_3 & s )
     : Direction_handle_3_(s.direction()) {}
 
+  // the fourth argument is not documented.  Should go away ?
   DirectionH3(const RT& x, const RT& y,
               const RT& z, const RT& w = RT(1) )
   {
@@ -83,6 +83,7 @@ class DirectionH3
   bool  operator!=( const DirectionH3<R>& d) const;
 
   Vector_3    to_vector() const;
+  Vector_3    vector() const { return to_vector(); }
 
   const RT & dx() const { return Ptr()->e0; }
   const RT & dy() const { return Ptr()->e1; }
@@ -150,7 +151,7 @@ template <class R >
 inline
 typename DirectionH3<R>::Vector_3
 DirectionH3<R>::to_vector() const
-{ return Vector_3(*this); }
+{ return Vector_3(dx(), dy(), dz(), RT(1)); }
 
 template <class R>
 CGAL_KERNEL_INLINE

@@ -28,14 +28,14 @@ template <class R_>
 class SphereC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public R_::Sphere_handle_3
 {
-  typedef typename R_::FT                        FT;
+  typedef typename R_::FT                   FT;
+  typedef typename R_::Point_3              Point_3;
+  typedef typename R_::Vector_3             Vector_3;
+  typedef typename R_::Sphere_3             Sphere_3;
+  typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
   typedef typename R_::Sphere_handle_3           base;
   typedef typename base::element_type            rep;
-
-  typedef typename R_::Kernel_base::Point_3              Point_3;
-  typedef typename R_::Kernel_base::Vector_3             Vector_3;
-  typedef typename R_::Kernel_base::Aff_transformation_3 Aff_transformation_3;
 
 public:
   typedef R_                                     R;
@@ -113,7 +113,7 @@ public:
       return Ptr()->third;
   }
 
-  SphereC3 orthogonal_transform(const Aff_transformation_3 &t) const
+  Sphere_3 orthogonal_transform(const Aff_transformation_3 &t) const
   {
     // FIXME: precond: t.is_orthogonal() (*UNDEFINED*)
     Vector_3 vec(FT(1), FT(0));               // unit vector
@@ -130,7 +130,7 @@ public:
   bool is_degenerate() const;
 
   // Returns a circle with opposite orientation
-  SphereC3 opposite() const;
+  Sphere_3 opposite() const;
 
   Oriented_side  oriented_side(const Point_3 &p) const;
   //! precond: ! x.is_degenerate() (when available)
@@ -268,8 +268,8 @@ is_degenerate() const
 
 template < class R >
 inline
-SphereC3<R CGAL_CTAG> SphereC3<R CGAL_CTAG>::
-opposite() const
+typename SphereC3<R CGAL_CTAG>::Sphere_3
+SphereC3<R CGAL_CTAG>::opposite() const
 {
   return SphereC3<R CGAL_CTAG>(center(), squared_radius(),
                                CGAL::opposite(orientation()) );

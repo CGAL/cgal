@@ -28,15 +28,15 @@ template <class R_>
 class TriangleC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public R_::Triangle_handle_3
 {
-  typedef typename R_::FT                        FT;
+  typedef typename R_::FT                   FT;
+  typedef typename R_::Point_3              Point_3;
+  typedef typename R_::Vector_3             Vector_3;
+  typedef typename R_::Plane_3              Plane_3;
+  typedef typename R_::Triangle_3           Triangle_3;
+  typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
   typedef typename R_::Triangle_handle_3         base;
   typedef typename base::element_type            rep;
-
-  typedef typename R_::Kernel_base::Point_3              Point_3;
-  typedef typename R_::Kernel_base::Vector_3             Vector_3;
-  typedef typename R_::Kernel_base::Plane_3              Plane_3;
-  typedef typename R_::Kernel_base::Aff_transformation_3 Aff_transformation_3;
 
 public:
   typedef R_                                     R;
@@ -52,7 +52,7 @@ public:
 
   Plane_3    supporting_plane() const;
 
-  TriangleC3       transform(const Aff_transformation_3 &t) const
+  Triangle_3 transform(const Aff_transformation_3 &t) const
   {
     return TriangleC3<R>(t.transform(vertex(0)),
                 t.transform(vertex(1)),

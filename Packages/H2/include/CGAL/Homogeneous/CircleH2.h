@@ -31,12 +31,10 @@ template <class R_>
 class CircleH2
   : public R_::Circle_handle_2
 {
-    typedef typename R_::FT                         FT;
-    typedef typename R_::RT                         RT;
-    typedef typename R_::Kernel_base::Point_2       Point_2;
-    typedef typename R_::Kernel_base::Vector_2      Vector_2;
-    typedef typename R_::Kernel_base::Aff_transformation_2 
-                                                    Aff_transformation_2;
+    typedef typename R_::FT                   FT;
+    typedef typename R_::RT                   RT;
+    typedef typename R_::Point_2              Point_2;
+    typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
     typedef typename R_::Circle_handle_2            Circle_handle_2_;
     typedef typename Circle_handle_2_::element_type Circle_ref_2;
@@ -290,7 +288,7 @@ CircleH2<R>
 CircleH2<R>::
 orthogonal_transform(const typename CircleH2<R>::Aff_transformation_2& t) const
 {
-  Vector_2 vec( RT(1), RT(0) );   // unit vector
+  typename R::Vector_2 vec( RT(1), RT(0) );   // unit vector
   vec = vec.transform(t);                     // transformed
   FT  sq_scale = FT( vec*vec );               // squared scaling factor
 

@@ -28,15 +28,15 @@ template < class R_ >
 class RayC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public R_::Ray_handle_3
 {
-  typedef typename R_::FT                        FT;
+  typedef typename R_::FT                   FT;
+  typedef typename R_::Point_3              Point_3;
+  typedef typename R_::Direction_3          Direction_3;
+  typedef typename R_::Line_3               Line_3;
+  typedef typename R_::Ray_3                Ray_3;
+  typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
   typedef typename R_::Ray_handle_3              base;
   typedef typename base::element_type            rep;
-
-  typedef typename R_::Kernel_base::Point_3              Point_3;
-  typedef typename R_::Kernel_base::Direction_3          Direction_3;
-  typedef typename R_::Kernel_base::Line_3               Line_3;
-  typedef typename R_::Kernel_base::Aff_transformation_3 Aff_transformation_3;
 
 public:
   typedef R_                                     R;
@@ -66,9 +66,9 @@ public:
 
   Direction_3 direction() const;
   Line_3      supporting_line() const;
-  RayC3        opposite() const;
+  Ray_3       opposite() const;
 
-  RayC3        transform(const Aff_transformation_3 &t) const
+  Ray_3       transform(const Aff_transformation_3 &t) const
   {
     return RayC3<R>(t.transform(source()), t.transform(second_point()));
   }
@@ -137,7 +137,7 @@ RayC3<R CGAL_CTAG>::supporting_line() const
 
 template < class R >
 inline
-RayC3<R CGAL_CTAG>
+typename RayC3<R CGAL_CTAG>::Ray_3
 RayC3<R CGAL_CTAG>::opposite() const
 {
   return RayC3<R CGAL_CTAG>( source(), - direction() );

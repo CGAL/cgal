@@ -28,14 +28,14 @@ template < class R_ >
 class VectorC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public R_::Vector_handle_2
 {
-  typedef typename R_::FT                        FT;
+  typedef typename R_::FT                   FT;
+  typedef typename R_::Point_2              Point_2;
+  typedef typename R_::Direction_2          Direction_2;
+  typedef typename R_::Vector_2             Vector_2;
+  typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
   typedef typename R_::Vector_handle_2		 base;
   typedef typename base::element_type	         rep;
-
-  typedef typename R_::Kernel_base::Point_2              Point_2;
-  typedef typename R_::Kernel_base::Direction_2          Direction_2;
-  typedef typename R_::Kernel_base::Aff_transformation_2 Aff_transformation_2;
 
 public:
   typedef R_                                     R;
@@ -102,16 +102,16 @@ public:
       return 2;
   }
 
-  VectorC2 operator+(const VectorC2 &w) const;
-  VectorC2 operator-(const VectorC2 &w) const;
-  VectorC2 operator-() const;
+  Vector_2 operator+(const VectorC2 &w) const;
+  Vector_2 operator-(const VectorC2 &w) const;
+  Vector_2 operator-() const;
   FT operator*(const VectorC2 &w) const;
   FT squared_length() const;
-  VectorC2 operator/(const FT &c) const;
+  Vector_2 operator/(const FT &c) const;
   Direction_2 direction() const;
 
-  VectorC2 perpendicular(const Orientation &o) const;
-  VectorC2 transform(const Aff_transformation_2 &t) const
+  Vector_2 perpendicular(const Orientation &o) const;
+  Vector_2 transform(const Aff_transformation_2 &t) const
   {
     return t.transform(*this);
   }
@@ -182,7 +182,7 @@ VectorC2<R CGAL_CTAG>::homogeneous(int i) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-VectorC2<R CGAL_CTAG>
+typename VectorC2<R CGAL_CTAG>::Vector_2
 VectorC2<R CGAL_CTAG>::operator+(const VectorC2<R CGAL_CTAG> &w) const
 {
   return VectorC2<R CGAL_CTAG>(x() + w.x(), y() + w.y());
@@ -190,7 +190,7 @@ VectorC2<R CGAL_CTAG>::operator+(const VectorC2<R CGAL_CTAG> &w) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-VectorC2<R CGAL_CTAG>
+typename VectorC2<R CGAL_CTAG>::Vector_2
 VectorC2<R CGAL_CTAG>::operator-(const VectorC2<R CGAL_CTAG> &w) const
 {
   return VectorC2<R CGAL_CTAG>(x() - w.x(), y() - w.y());
@@ -198,7 +198,7 @@ VectorC2<R CGAL_CTAG>::operator-(const VectorC2<R CGAL_CTAG> &w) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-VectorC2<R CGAL_CTAG>
+typename VectorC2<R CGAL_CTAG>::Vector_2
 VectorC2<R CGAL_CTAG>::operator-() const
 {
   return VectorC2<R CGAL_CTAG>(-x(), -y());
@@ -222,7 +222,7 @@ VectorC2<R CGAL_CTAG>::squared_length() const
 
 template < class R >
 CGAL_KERNEL_INLINE
-VectorC2<R CGAL_CTAG>
+typename VectorC2<R CGAL_CTAG>::Vector_2
 VectorC2<R CGAL_CTAG>::
 operator/(const typename VectorC2<R CGAL_CTAG>::FT &c) const
 {
@@ -239,7 +239,7 @@ VectorC2<R CGAL_CTAG>::direction() const
 
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
-VectorC2<R CGAL_CTAG>
+typename VectorC2<R CGAL_CTAG>::Vector_2
 VectorC2<R CGAL_CTAG>::perpendicular(const Orientation &o) const
 {
   CGAL_kernel_precondition( o != COLLINEAR );

@@ -31,13 +31,13 @@ template < class R_ >
 class PointC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public R_::Point_handle_2
 {
-  typedef typename R_::FT                        FT;
+  typedef typename R_::FT                   FT;
+  typedef typename R_::Vector_2             Vector_2;
+  typedef typename R_::Point_2              Point_2;
+  typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
   typedef typename R_::Point_handle_2		 base;
   typedef typename base::element_type	         rep;
-
-  typedef typename R_::Kernel_base::Vector_2             Vector_2;
-  typedef typename R_::Kernel_base::Aff_transformation_2 Aff_transformation_2;
 
 public:
   typedef R_                                     R;
@@ -109,7 +109,7 @@ public:
 
   Bbox_2 bbox() const;
 
-  PointC2 transform(const Aff_transformation_2 &t) const
+  Point_2 transform(const Aff_transformation_2 &t) const
   {
     return t.transform(*this);
   }

@@ -31,12 +31,11 @@ class Aff_transformation_rep_baseC2
   : public Ref_counted_virtual
 {
 public:
-  typedef typename R::FT                        FT;
-
-  typedef typename R::Kernel_base::Point_2              Point_2;
-  typedef typename R::Kernel_base::Vector_2             Vector_2;
-  typedef typename R::Kernel_base::Direction_2          Direction_2;
-  typedef typename R::Kernel_base::Aff_transformation_2 Aff_transformation_2;
+  typedef typename R::FT                   FT;
+  typedef typename R::Point_2              Point_2;
+  typedef typename R::Vector_2             Vector_2;
+  typedef typename R::Direction_2          Direction_2;
+  typedef typename R::Aff_transformation_2 Aff_transformation_2;
 
   virtual ~Aff_transformation_rep_baseC2() {}
 
@@ -166,7 +165,7 @@ friend class Scaling_repC2<R>;
   }
 
 private:
-    FT   t11, t12, t13; // FIXME : use an array instead ?
+    FT   t11, t12, t13;
     FT   t21, t22, t23;
 };
 
@@ -178,7 +177,7 @@ template < class R >
 CGAL_KERNEL_LARGE_INLINE
 typename Aff_transformation_repC2<R>::Aff_transformation_2
 Aff_transformation_repC2<R>::
-inverse() const // FIXME : construction
+inverse() const
 {
   FT det = FT(1) / (t11 * t22 - t12 * t21);
   return Aff_transformation_2(
@@ -199,7 +198,7 @@ template < class R >
 CGAL_KERNEL_LARGE_INLINE
 typename Aff_transformation_repC2<R>::Aff_transformation_2
 Aff_transformation_repC2<R>::
-compose(const Aff_transformation_repC2<R> &t) const // FIXME : construction
+compose(const Aff_transformation_repC2<R> &t) const
 {
   return Aff_transformation_2(t.t11*t11 + t.t12*t21,
                               t.t11*t12 + t.t12*t22,
@@ -213,7 +212,7 @@ template < class R >
 CGAL_KERNEL_LARGE_INLINE
 typename Aff_transformation_repC2<R>::Aff_transformation_2
 Aff_transformation_repC2<R>::
-compose(const Translation_repC2<R> &t) const // FIXME : construction
+compose(const Translation_repC2<R> &t) const
 {
   return Aff_transformation_2(t11,
                               t12,
@@ -227,7 +226,7 @@ template < class R >
 CGAL_KERNEL_LARGE_INLINE
 typename Aff_transformation_repC2<R>::Aff_transformation_2
 Aff_transformation_repC2<R>::
-compose(const Rotation_repC2<R> &t) const // FIXME : construction
+compose(const Rotation_repC2<R> &t) const
 {
   return Aff_transformation_2(t.cosinus_*t11 - t.sinus_*t21,
                               t.cosinus_*t12 - t.sinus_*t22,
@@ -241,7 +240,7 @@ template < class R >
 CGAL_KERNEL_LARGE_INLINE
 typename Aff_transformation_repC2<R>::Aff_transformation_2
 Aff_transformation_repC2<R>::
-compose(const Scaling_repC2<R> &t) const // FIXME : construction
+compose(const Scaling_repC2<R> &t) const
 {
    return Aff_transformation_2(t.scalefactor_ * t11,
                                t.scalefactor_ * t12,

@@ -30,14 +30,13 @@ template < class R_ >
 class RayH2
   : public R_::Ray_handle_2
 {
-    typedef typename R_::FT                                FT;
-    typedef typename R_::RT                                RT;
-    typedef typename R_::Kernel_base::Point_2              Point_2;
-    typedef typename R_::Kernel_base::Direction_2          Direction_2;
-    typedef typename R_::Kernel_base::Line_2               Line_2;
-    typedef typename R_::Kernel_base::Vector_2             Vector_2;
-    typedef typename R_::Kernel_base::Aff_transformation_2 
-                                                          Aff_transformation_2;
+    typedef typename R_::FT                   FT;
+    typedef typename R_::RT                   RT;
+    typedef typename R_::Point_2              Point_2;
+    typedef typename R_::Direction_2          Direction_2;
+    typedef typename R_::Line_2               Line_2;
+    typedef typename R_::Vector_2             Vector_2;
+    typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
     typedef typename R_::Ray_handle_2                      Ray_handle_2_;
     typedef typename Ray_handle_2_::element_type           Ray_ref_2;

@@ -30,12 +30,12 @@ template < class R_ >
 class SegmentH3
   : public R_::Segment_handle_3
 {
-  typedef typename R_::RT   RT;
-  typedef typename R_::FT   FT;
-  typedef typename R_::Kernel_base::Point_3              Point_3;
-  typedef typename R_::Kernel_base::Direction_3          Direction_3;
-  typedef typename R_::Kernel_base::Line_3               Line_3;
-  typedef typename R_::Kernel_base::Aff_transformation_3 Aff_transformation_3;
+  typedef typename R_::RT                   RT;
+  typedef typename R_::FT                   FT;
+  typedef typename R_::Point_3              Point_3;
+  typedef typename R_::Direction_3          Direction_3;
+  typedef typename R_::Line_3               Line_3;
+  typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
   typedef typename R_::Segment_handle_3            Segment_handle_3_;
   typedef typename Segment_handle_3_::element_type Segment_ref_3;

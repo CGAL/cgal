@@ -48,15 +48,16 @@ class Aff_transformationC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   friend class PlaneC3<R_ CGAL_CTAG>; // FIXME: why ?
 #endif
 
+  typedef typename R_::FT                   FT;
+  typedef Aff_transformation_rep_baseC3<R_> Aff_t_base;
+
+  typedef typename R_::Point_3              Point_3;
+  typedef typename R_::Vector_3             Vector_3;
+  typedef typename R_::Direction_3          Direction_3;
+  typedef typename R_::Plane_3              Plane_3;
+  typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 public:
   typedef R_                               R;
-  typedef typename R::FT                   FT;
-  typedef Aff_transformation_rep_baseC3<R> Aff_t_base;
-
-  typedef typename R::Kernel_base::Point_3              Point_3;
-  typedef typename R::Kernel_base::Vector_3             Vector_3;
-  typedef typename R::Kernel_base::Direction_3          Direction_3;
-  typedef typename R::Kernel_base::Plane_3              Plane_3;
 
   Aff_transformationC3()
   {
@@ -152,7 +153,7 @@ public:
   operator()(const Plane_3& p) const
   { return transform(p); } // FIXME : not compiled by the test-suite !
 
-  Aff_transformationC3 inverse() const { return Ptr()->inverse(); }
+  Aff_transformation_3 inverse() const { return Ptr()->inverse(); }
   
   bool is_even() const { return Ptr()->is_even(); }
   bool is_odd() const { return  ! (Ptr()->is_even()); }
@@ -162,11 +163,11 @@ public:
   FT m(int i, int j) const { return cartesian(i,j); }
   FT hm(int i, int j) const { return cartesian(i,j); }
 
-  Aff_transformationC3 operator*(const Aff_transformationC3 &t) const
+  Aff_transformation_3 operator*(const Aff_transformationC3 &t) const
   { return (*Ptr()) * (*t.Ptr()); }
 
 protected:
-  Aff_transformationC3        transpose() const { return Ptr()->transpose(); }
+  Aff_transformation_3        transpose() const { return Ptr()->transpose(); }
 };
 
 

@@ -1,3 +1,6 @@
+Version 6.51 (22 January 2002)
+- Classes and funtion return type only refer to R::...
+
 Version 6.50 (9 January 2002)
 - Update compare_y_at_x.
 

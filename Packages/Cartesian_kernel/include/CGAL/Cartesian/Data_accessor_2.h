@@ -31,7 +31,7 @@ class Data_accessorC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
 public:
     // Min_ellipse_2 wants FT public...
     typedef typename R_::FT                   FT;
-    typedef typename R_::Kernel_base::Point_2 Point;
+    typedef typename R_::Point_2              Point;
 
     typedef R_                           R;
 

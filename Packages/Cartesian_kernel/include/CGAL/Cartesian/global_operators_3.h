@@ -26,23 +26,23 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R >
 inline
-PointC3<R CGAL_CTAG>
+typename R::Point_3
 operator+(const PointC3<R CGAL_CTAG> &p, const VectorC3<R CGAL_CTAG> &v)
-{ // FIXME : construction
+{
   return PointC3<R CGAL_CTAG>(p.x() + v.x(), p.y() + v.y(), p.z() + v.z());
 }
 
 template < class R >
 inline
-PointC3<R CGAL_CTAG>
+typename R::Point_3
 operator-(const PointC3<R CGAL_CTAG> &p, const VectorC3<R CGAL_CTAG> &v)
-{ // FIXME : construction
+{
   return PointC3<R CGAL_CTAG>(p.x() - v.x(), p.y() - v.y(), p.z() - v.z());
 }
 
 template < class R >
 inline
-PointC3<R CGAL_CTAG>
+typename R::Point_3
 operator+(const Origin &, const VectorC3<R CGAL_CTAG> &v)
 {
   return PointC3<R CGAL_CTAG>(v);
@@ -50,7 +50,7 @@ operator+(const Origin &, const VectorC3<R CGAL_CTAG> &v)
 
 template < class R >
 inline
-PointC3<R CGAL_CTAG>
+typename R::Point_3
 operator-(const Origin &, const VectorC3<R CGAL_CTAG> &v)
 {
   return PointC3<R CGAL_CTAG>(-v);
@@ -58,15 +58,15 @@ operator-(const Origin &, const VectorC3<R CGAL_CTAG> &v)
 
 template < class R >
 inline
-VectorC3<R CGAL_CTAG>
+typename R::Vector_3
 operator-(const PointC3<R CGAL_CTAG> &p, const PointC3<R CGAL_CTAG> &q)
-{ // FIXME : construction
+{
   return VectorC3<R CGAL_CTAG>(p.x() - q.x(), p.y() - q.y(), p.z() - q.z());
 }
 
 template < class R >
 inline
-VectorC3<R CGAL_CTAG>
+typename R::Vector_3
 operator-(const PointC3<R CGAL_CTAG> &p, const Origin &)
 {
   return VectorC3<R CGAL_CTAG>(p);
@@ -74,32 +74,25 @@ operator-(const PointC3<R CGAL_CTAG> &p, const Origin &)
 
 template < class R >
 inline
-VectorC3<R CGAL_CTAG>
+typename R::Vector_3
 operator-(const Origin &, const PointC3<R CGAL_CTAG> &p)
-{ // FIXME : construction
+{
   return VectorC3<R CGAL_CTAG>(-p.x(), -p.y(), -p.z());
 }
 
-#ifdef __SUNPRO_CC
-template < class FT, class R >
-CGAL_KERNEL_INLINE
-VectorC3<R CGAL_CTAG>
-operator*(const FT &c, const VectorC3<R CGAL_CTAG> &w)
-#else
 template < class R >
 CGAL_KERNEL_INLINE
-VectorC3<R CGAL_CTAG>
+typename R::Vector_3
 operator*(const typename R::FT &c, const VectorC3<R CGAL_CTAG> &w)
-#endif
-{ // FIXME : construction
+{
    return VectorC3<R CGAL_CTAG>(c * w.x(), c * w.y(), c * w.z());
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
-VectorC3<R CGAL_CTAG>
+typename R::Vector_3
 operator*(const VectorC3<R CGAL_CTAG> &w, const typename R::FT &c)
-{ // FIXME : construction
+{
    return VectorC3<R CGAL_CTAG>(c * w.x(), c * w.y(), c * w.z());
 }
 

@@ -28,14 +28,14 @@ template < class R_ >
 class VectorC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public R_::Vector_handle_3
 {
-  typedef typename R_::FT                        FT;
+  typedef typename R_::FT                   FT;
+  typedef typename R_::Point_3              Point_3;
+  typedef typename R_::Vector_3             Vector_3;
+  typedef typename R_::Direction_3          Direction_3;
+  typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
   typedef typename R_::Vector_handle_3	   	 base;
   typedef typename base::element_type   	 rep;
-
-  typedef typename R_::Kernel_base::Point_3              Point_3;
-  typedef typename R_::Kernel_base::Direction_3          Direction_3;
-  typedef typename R_::Kernel_base::Aff_transformation_3 Aff_transformation_3;
 
 public:
   typedef R_                                     R;
@@ -111,14 +111,14 @@ public:
       return 3;
   }
 
-  VectorC3 operator+(const VectorC3 &w) const;
-  VectorC3 operator-(const VectorC3 &w) const;
-  VectorC3 operator-() const;
-  VectorC3 operator/(const FT &c) const;
+  Vector_3 operator+(const VectorC3 &w) const;
+  Vector_3 operator-(const VectorC3 &w) const;
+  Vector_3 operator-() const;
+  Vector_3 operator/(const FT &c) const;
   FT operator*(const VectorC3 &w) const;
   FT squared_length() const;
   Direction_3 direction() const;
-  VectorC3 transform(const Aff_transformation_3 &t) const
+  Vector_3 transform(const Aff_transformation_3 &t) const
   {
     return t.transform(*this);
   }
@@ -192,7 +192,7 @@ VectorC3<R CGAL_CTAG>::homogeneous(int i) const
 
 template < class R >
 inline
-VectorC3<R CGAL_CTAG>
+typename VectorC3<R CGAL_CTAG>::Vector_3
 VectorC3<R CGAL_CTAG>::
 operator+(const VectorC3<R CGAL_CTAG> &w) const
 {
@@ -201,7 +201,7 @@ operator+(const VectorC3<R CGAL_CTAG> &w) const
 
 template < class R >
 inline
-VectorC3<R CGAL_CTAG>
+typename VectorC3<R CGAL_CTAG>::Vector_3
 VectorC3<R CGAL_CTAG>::operator-(const VectorC3<R CGAL_CTAG> &w) const
 {
   return VectorC3<R CGAL_CTAG>(x() - w.x(), y() - w.y(), z() - w.z());
@@ -209,10 +209,10 @@ VectorC3<R CGAL_CTAG>::operator-(const VectorC3<R CGAL_CTAG> &w) const
 
 template < class R >
 inline
-VectorC3<R CGAL_CTAG>
+typename VectorC3<R CGAL_CTAG>::Vector_3
 VectorC3<R CGAL_CTAG>::operator-() const
 {
-  return VectorC3<R CGAL_CTAG>(-x(), -y(), -z());
+  return Vector_3(-x(), -y(), -z());
 }
 
 template < class R >
@@ -233,7 +233,7 @@ VectorC3<R CGAL_CTAG>::squared_length() const
 
 template < class R >
 inline
-VectorC3<R CGAL_CTAG>
+typename VectorC3<R CGAL_CTAG>::Vector_3
 VectorC3<R CGAL_CTAG>::
 operator/(const typename VectorC3<R CGAL_CTAG>::FT &c) const
 {

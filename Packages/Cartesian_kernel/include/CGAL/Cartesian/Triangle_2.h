@@ -30,14 +30,14 @@ template <class R_>
 class TriangleC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public R_::Triangle_handle_2
 {
-  typedef typename R_::FT                        FT;
+  typedef typename R_::FT                   FT;
+  typedef typename R_::Point_2              Point_2;
+  typedef typename R_::Vector_2             Vector_2;
+  typedef typename R_::Triangle_2           Triangle_2;
+  typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
   typedef typename R_::Triangle_handle_2         base;
   typedef typename base::element_type            rep;
-
-  typedef typename R_::Kernel_base::Point_2              Point_2;
-  typedef typename R_::Kernel_base::Vector_2             Vector_2;
-  typedef typename R_::Kernel_base::Aff_transformation_2 Aff_transformation_2;
 
 public:
   typedef R_                                    R;
@@ -54,8 +54,8 @@ public:
   const Point_2 & vertex(int i) const;
   const Point_2 & operator[](int i) const;
 
-  TriangleC2           opposite() const;
-  TriangleC2           transform(const Aff_transformation_2 &t) const
+  Triangle_2           opposite() const;
+  Triangle_2           transform(const Aff_transformation_2 &t) const
   {
     return TriangleC2<R>(t.transform(vertex(0)),
                 t.transform(vertex(1)),
@@ -258,9 +258,8 @@ TriangleC2<R CGAL_CTAG>::bbox() const
 
 template < class R >
 inline
-TriangleC2<R CGAL_CTAG>
-TriangleC2<R CGAL_CTAG>::
-opposite() const
+typename TriangleC2<R CGAL_CTAG>::Triangle_2
+TriangleC2<R CGAL_CTAG>::opposite() const
 {
   return TriangleC2<R CGAL_CTAG>(vertex(0), vertex(2), vertex(1));
 }

@@ -31,12 +31,11 @@ class Aff_transformation_rep_baseC3
   : public Ref_counted_virtual
 {
 public:
-  typedef typename R::FT                        FT;
-
-  typedef typename R::Kernel_base::Point_3              Point_3;
-  typedef typename R::Kernel_base::Vector_3             Vector_3;
-  typedef typename R::Kernel_base::Direction_3          Direction_3;
-  typedef typename R::Kernel_base::Aff_transformation_3 Aff_transformation_3;
+  typedef typename R::FT                   FT;
+  typedef typename R::Point_3              Point_3;
+  typedef typename R::Vector_3             Vector_3;
+  typedef typename R::Direction_3          Direction_3;
+  typedef typename R::Aff_transformation_3 Aff_transformation_3;
 
   virtual ~Aff_transformation_rep_baseC3(){}
 

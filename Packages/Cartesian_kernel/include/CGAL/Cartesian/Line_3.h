@@ -28,18 +28,18 @@ template < class R_ >
 class LineC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public R_::Line_handle_3
 {
-  typedef typename R_::FT                        FT;
+  typedef typename R_::FT                   FT;
+  typedef typename R_::Point_3              Point_3;
+  typedef typename R_::Vector_3             Vector_3;
+  typedef typename R_::Direction_3          Direction_3;
+  typedef typename R_::Plane_3              Plane_3;
+  typedef typename R_::Ray_3                Ray_3;
+  typedef typename R_::Line_3               Line_3;
+  typedef typename R_::Segment_3            Segment_3;
+  typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
   typedef typename R_::Line_handle_3             base;
   typedef typename base::element_type            rep;
-
-  typedef typename R_::Kernel_base::Point_3              Point_3;
-  typedef typename R_::Kernel_base::Vector_3             Vector_3;
-  typedef typename R_::Kernel_base::Direction_3          Direction_3;
-  typedef typename R_::Kernel_base::Plane_3              Plane_3;
-  typedef typename R_::Kernel_base::Ray_3                Ray_3;
-  typedef typename R_::Kernel_base::Segment_3            Segment_3;
-  typedef typename R_::Kernel_base::Aff_transformation_3 Aff_transformation_3;
 
 public:
   typedef R_                                     R;
@@ -47,13 +47,13 @@ public:
   LineC3()
     : base(rep()) {}
 
-  LineC3(const Point_3 &p, const Point_3 &q) // FIXME : construction
+  LineC3(const Point_3 &p, const Point_3 &q)
     : base(rep(p, (q-p).direction())) {}
 
-  LineC3(const Segment_3 &s) // FIXME : construction
+  LineC3(const Segment_3 &s)
     : base(rep(s.start(), (s.end() - s.start()).direction())) {}
 
-  LineC3(const Ray_3 &r) // FIXME : construction
+  LineC3(const Ray_3 &r)
     : base(rep(r.start(), (r.point(1) - r.start()).direction())) {}
 
   LineC3(const Point_3 &p, const Direction_3 &d)
@@ -63,7 +63,7 @@ public:
   bool        operator!=(const LineC3 &l) const;
 
   Plane_3     perpendicular_plane(const Point_3 &p) const;
-  LineC3        opposite() const;
+  Line_3      opposite() const;
 
   const Point_3 &     point() const
   {
@@ -81,7 +81,7 @@ public:
   bool        has_on(const Point_3 &p) const;
   bool        is_degenerate() const;
 
-  LineC3        transform(const Aff_transformation_3 &t) const
+  Line_3        transform(const Aff_transformation_3 &t) const
   {
     return LineC3<R>(t.transform(point()), t.transform(direction()));
   }
@@ -128,7 +128,7 @@ perpendicular_plane(const typename LineC3<R CGAL_CTAG>::Point_3 &p) const
 
 template < class R >
 inline
-LineC3<R CGAL_CTAG>
+typename LineC3<R CGAL_CTAG>::Line_3
 LineC3<R CGAL_CTAG>::opposite() const
 {
   return LineC3<R CGAL_CTAG>(point(), -direction());

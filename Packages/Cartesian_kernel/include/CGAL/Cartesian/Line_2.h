@@ -28,16 +28,16 @@ template < class R_ >
 class LineC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public R_::Line_handle_2
 {
-  typedef typename R_::FT                        FT;
+  typedef typename R_::FT                   FT;
+  typedef typename R_::Point_2              Point_2;
+  typedef typename R_::Direction_2          Direction_2;
+  typedef typename R_::Ray_2                Ray_2;
+  typedef typename R_::Segment_2            Segment_2;
+  typedef typename R_::Line_2               Line_2;
+  typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
   typedef typename R_::Line_handle_2             base;
   typedef typename base::element_type            rep;
-
-  typedef typename R_::Kernel_base::Point_2              Point_2;
-  typedef typename R_::Kernel_base::Direction_2          Direction_2;
-  typedef typename R_::Kernel_base::Ray_2                Ray_2;
-  typedef typename R_::Kernel_base::Segment_2            Segment_2;
-  typedef typename R_::Kernel_base::Aff_transformation_2 Aff_transformation_2;
 
 public:
   typedef R_                                     R;
@@ -79,8 +79,8 @@ public:
   FT              x_at_y(const FT &y) const;
   FT              y_at_x(const FT &x) const;
 
-  LineC2            perpendicular(const Point_2 &p) const;
-  LineC2            opposite() const;
+  Line_2          perpendicular(const Point_2 &p) const;
+  Line_2          opposite() const;
   Point_2         point(int i) const;
 
   Point_2         point() const;
@@ -98,7 +98,7 @@ public:
   bool            is_vertical() const;
   bool            is_degenerate() const;
 
-  LineC2            transform(const Aff_transformation_2 &t) const
+  Line_2          transform(const Aff_transformation_2 &t) const
   {
     return LineC2<R CGAL_CTAG>(t.transform(point(0)),
                                t.transform(direction()));
@@ -165,7 +165,7 @@ LineC2<R CGAL_CTAG>::y_at_x(const typename LineC2<R CGAL_CTAG>::FT &x) const
 
 template < class R >
 inline
-LineC2<R CGAL_CTAG>
+typename LineC2<R CGAL_CTAG>::Line_2
 LineC2<R CGAL_CTAG>::
 perpendicular(const typename LineC2<R CGAL_CTAG>::Point_2 &p) const
 {
@@ -174,9 +174,9 @@ perpendicular(const typename LineC2<R CGAL_CTAG>::Point_2 &p) const
 
 template < class R >
 inline
-LineC2<R CGAL_CTAG>
+typename LineC2<R CGAL_CTAG>::Line_2
 LineC2<R CGAL_CTAG>::opposite() const
-{ // FIXME : construction
+{
   return LineC2<R CGAL_CTAG>( -a(), -b(), -c() );
 }
 
@@ -209,7 +209,7 @@ template < class R >
 inline
 typename LineC2<R CGAL_CTAG>::Direction_2
 LineC2<R CGAL_CTAG>::direction() const
-{ // FIXME : construction
+{
   return Direction_2( b(), -a() );
 }
 

@@ -33,11 +33,11 @@ template < class R_ >
 class TetrahedronH3
   : public R_::Tetrahedron_handle_3
 {
-  typedef typename R_::RT    RT;
-  typedef typename R_::FT    FT;
-  typedef typename R_::Kernel_base::Point_3              Point_3;
-  typedef typename R_::Kernel_base::Vector_3             Vector_3;
-  typedef typename R_::Kernel_base::Aff_transformation_3 Aff_transformation_3;
+  typedef typename R_::RT                   RT;
+  typedef typename R_::FT                   FT;
+  typedef typename R_::Point_3              Point_3;
+  typedef typename R_::Vector_3             Vector_3;
+  typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
   typedef typename R_::Tetrahedron_handle_3            Tetrahedron_handle_3_;
   typedef typename Tetrahedron_handle_3_::element_type Tetrahedron_ref_3;

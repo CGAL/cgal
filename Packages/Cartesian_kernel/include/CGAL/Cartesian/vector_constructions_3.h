@@ -28,7 +28,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class R >
-VectorC3<R CGAL_CTAG>
+typename VectorC3<R CGAL_CTAG>::Vector_3
 cross_product(const VectorC3<R CGAL_CTAG> &v,
               const VectorC3<R CGAL_CTAG> &w)
 {

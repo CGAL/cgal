@@ -241,16 +241,13 @@ struct Simple_cartesian
                                                  	Direction_handle_2;
     typedef CGAL::Simple_Handle_for<CGAL::Threetuple<FT> >
                                                         Line_handle_2;
-    typedef CGAL::Simple_Handle_for<CGAL::Twotuple<
-	                CGAL_TYPENAME_MSVC_NULL Kernel_base::Point_2> >
+    typedef CGAL::Simple_Handle_for<CGAL::Twotuple<Point_2> >
                                                        	Ray_handle_2;
-    typedef CGAL::Simple_Handle_for<CGAL::Twotuple<
-	                    CGAL_TYPENAME_MSVC_NULL Kernel_base::Point_2> >
+    typedef CGAL::Simple_Handle_for<CGAL::Twotuple<Point_2> >
                                                       	Segment_handle_2;
-    typedef CGAL::Simple_Handle_for<triple<Point_2_base, FT, Orientation> >
+    typedef CGAL::Simple_Handle_for<triple<Point_2, FT, Orientation> >
                                                       	Circle_handle_2;
-    typedef CGAL::Simple_Handle_for<CGAL::Threetuple<
-	                     CGAL_TYPENAME_MSVC_NULL Kernel_base::Point_2> >
+    typedef CGAL::Simple_Handle_for<CGAL::Threetuple<Point_2> >
                                                        	Triangle_handle_2;
     typedef CGAL::Simple_Handle_for<CGAL::Twotuple<Point_2> >
                                                  	Iso_rectangle_handle_2;
@@ -263,26 +260,21 @@ struct Simple_cartesian
                                                    	Vector_handle_3;
     typedef CGAL::Simple_Handle_for<CGAL::Threetuple<FT> >
                                                   	Direction_handle_3;
-    typedef CGAL::Simple_Handle_for<std::pair<Point_3_base, Direction_3_base> >
+    typedef CGAL::Simple_Handle_for<std::pair<Point_3, Direction_3> >
                                                      	Line_handle_3;
     typedef CGAL::Simple_Handle_for<CGAL::Fourtuple<FT> >
                                                    	Plane_handle_3;
-    typedef CGAL::Simple_Handle_for<CGAL::Twotuple<
-	                CGAL_TYPENAME_MSVC_NULL Kernel_base::Point_3> >
+    typedef CGAL::Simple_Handle_for<CGAL::Twotuple<Point_3> >
                                                   	Ray_handle_3;
-    typedef CGAL::Simple_Handle_for<CGAL::Twotuple<
-	                    CGAL_TYPENAME_MSVC_NULL Kernel_base::Point_3> >
+    typedef CGAL::Simple_Handle_for<CGAL::Twotuple<Point_3> >
                                                    	Segment_handle_3;
-    typedef CGAL::Simple_Handle_for<triple<Point_3_base, FT, Orientation> >
+    typedef CGAL::Simple_Handle_for<triple<Point_3, FT, Orientation> >
                                                     	Sphere_handle_3;
-    typedef CGAL::Simple_Handle_for<CGAL::Threetuple<
-	                     CGAL_TYPENAME_MSVC_NULL Kernel_base::Point_3> >
+    typedef CGAL::Simple_Handle_for<CGAL::Threetuple<Point_3> >
                                                   	Triangle_handle_3;
-    typedef CGAL::Simple_Handle_for<CGAL::Fourtuple<
-	                        CGAL_TYPENAME_MSVC_NULL Kernel_base::Point_3> >
+    typedef CGAL::Simple_Handle_for<CGAL::Fourtuple<Point_3> >
                                                    	Tetrahedron_handle_3;
-    typedef CGAL::Simple_Handle_for<CGAL::Twotuple<
-	                       CGAL_TYPENAME_MSVC_NULL Kernel_base::Point_3> >
+    typedef CGAL::Simple_Handle_for<CGAL::Twotuple<Point_3> >
                                                 	Iso_cuboid_handle_3;
     typedef CGAL::Handle_for_virtual< Aff_transformation_rep_baseC3<Self> >
 			                           Aff_transformation_handle_3;

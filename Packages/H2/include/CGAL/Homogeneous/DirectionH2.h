@@ -29,14 +29,14 @@ template < class R_ >
 class DirectionH2
   : public R_::Direction_handle_2
 {
-  typedef typename R_::FT                        FT;
-  typedef typename R_::RT                        RT;
-  typedef typename R_::Kernel_base::Point_2      Point_2;
-  typedef typename R_::Kernel_base::Vector_2     Vector_2;
-  typedef typename R_::Kernel_base::Line_2       Line_2;
-  typedef typename R_::Kernel_base::Ray_2        Ray_2;
-  typedef typename R_::Kernel_base::Segment_2    Segment_2;
-  typedef typename R_::Kernel_base::Aff_transformation_2 Aff_transformation_2;
+  typedef typename R_::FT                   FT;
+  typedef typename R_::RT                   RT;
+  typedef typename R_::Point_2              Point_2;
+  typedef typename R_::Vector_2             Vector_2;
+  typedef typename R_::Line_2               Line_2;
+  typedef typename R_::Ray_2                Ray_2;
+  typedef typename R_::Segment_2            Segment_2;
+  typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
   typedef typename R_::Direction_handle_2        Direction_handle_2_;
   typedef typename Direction_handle_2_::element_type  Direction_ref_2;
@@ -68,6 +68,8 @@ public:
    DirectionH2(const RT& x, const RT& y)
       : Direction_handle_2_ ( Direction_ref_2( x, y, RT(1) )) {}
 
+   // TODO Not documented : should not exist , not used.
+   // we should also change Threetuple<RT> -> Twotuple<RT>
    DirectionH2(const RT& x, const RT& y, const RT& w )
    {
      if (w > RT(0)   )
@@ -88,6 +90,7 @@ public:
     DirectionH2<R> operator-() const;
 
     Vector_2       to_vector() const;
+    Vector_2       vector() const { return to_vector(); }
 
     const RT & x() const { return Ptr()->e0; };
     const RT & y() const { return Ptr()->e1; };
@@ -215,7 +218,7 @@ template <class R >
 CGAL_KERNEL_INLINE
 typename DirectionH2<R>::Vector_2
 DirectionH2<R>::to_vector() const
-{ return Vector_2(*this); }
+{ return Vector_2(dx(), dy(), typename R::RT(1)); }
 
 
 #ifndef CGAL_NO_OSTREAM_INSERT_DIRECTIONH2

@@ -30,16 +30,15 @@ template < class R_ >
 class SegmentC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public R_::Segment_handle_2
 {
-  typedef typename R_::FT                        FT;
+  typedef typename R_::FT                   FT;
+  typedef typename R_::Point_2              Point_2;
+  typedef typename R_::Direction_2          Direction_2;
+  typedef typename R_::Line_2               Line_2;
+  typedef typename R_::Segment_2            Segment_2;
+  typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
   typedef typename R_::Segment_handle_2          base;
   typedef typename base::element_type            rep;
-
-  typedef typename R_::Kernel_base::Point_2              Point_2;
-  typedef typename R_::Kernel_base::Vector_2             Vector_2;
-  typedef typename R_::Kernel_base::Direction_2          Direction_2;
-  typedef typename R_::Kernel_base::Line_2               Line_2;
-  typedef typename R_::Kernel_base::Aff_transformation_2 Aff_transformation_2;
 
 public:
   typedef R_                                     R;
@@ -80,8 +79,8 @@ public:
 
   Direction_2 direction() const;
   Line_2      supporting_line() const;
-  SegmentC2        opposite() const;
-  SegmentC2        transform(const Aff_transformation_2 &t) const
+  Segment_2        opposite() const;
+  Segment_2        transform(const Aff_transformation_2 &t) const
   {
     return SegmentC2<R>(t.transform(source()), t.transform(target()));
   }
@@ -194,7 +193,7 @@ SegmentC2<R CGAL_CTAG>::supporting_line() const
 
 template < class R >
 inline
-SegmentC2<R CGAL_CTAG>
+typename SegmentC2<R CGAL_CTAG>::Segment_2
 SegmentC2<R CGAL_CTAG>::opposite() const
 {
   return SegmentC2<R CGAL_CTAG>(target(), source());

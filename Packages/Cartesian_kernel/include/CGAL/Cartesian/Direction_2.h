@@ -28,17 +28,17 @@ template < class R_ >
 class DirectionC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public R_::Direction_handle_2
 {
-  typedef typename R_::FT                        FT;
+  typedef typename R_::FT                   FT;
+  typedef typename R_::Point_2              Point_2;
+  typedef typename R_::Vector_2             Vector_2;
+  typedef typename R_::Line_2               Line_2;
+  typedef typename R_::Ray_2                Ray_2;
+  typedef typename R_::Segment_2            Segment_2;
+  typedef typename R_::Direction_2          Direction_2;
+  typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
   typedef typename R_::Direction_handle_2        base;
   typedef typename base::element_type            rep;
-
-  typedef typename R_::Kernel_base::Point_2              Point_2;
-  typedef typename R_::Kernel_base::Vector_2             Vector_2;
-  typedef typename R_::Kernel_base::Line_2               Line_2;
-  typedef typename R_::Kernel_base::Ray_2                Ray_2;
-  typedef typename R_::Kernel_base::Segment_2            Segment_2;
-  typedef typename R_::Kernel_base::Aff_transformation_2 Aff_transformation_2;
 
 public:
   typedef R_                                     R;
@@ -71,14 +71,15 @@ public:
 	                            const DirectionC2 &d2) const;
   
   Vector_2 to_vector() const;
+  Vector_2 vector() const { return to_vector(); }
 
-  DirectionC2 perpendicular(const Orientation &o) const;
-  DirectionC2 transform(const Aff_transformation_2 &t) const
+  Direction_2 perpendicular(const Orientation &o) const;
+  Direction_2 transform(const Aff_transformation_2 &t) const
   {
     return t.transform(*this);
   }
 
-  DirectionC2 operator-() const;
+  Direction_2 operator-() const;
 
   const FT & delta(int i) const;
   const FT & dx() const
@@ -168,14 +169,14 @@ inline
 typename DirectionC2<R CGAL_CTAG>::Vector_2
 DirectionC2<R CGAL_CTAG>::to_vector() const
 {
-  return Vector_2(*this);
+  return Vector_2(dx(), dy());
 }
 
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
-DirectionC2<R CGAL_CTAG>
+typename DirectionC2<R CGAL_CTAG>::Direction_2
 DirectionC2<R CGAL_CTAG>::perpendicular(const Orientation &o) const
-{ // FIXME : construction
+{
   CGAL_kernel_precondition(o != COLLINEAR);
   if (o == COUNTERCLOCKWISE)
     return DirectionC2<R CGAL_CTAG>(-dy(), dx());
@@ -185,9 +186,9 @@ DirectionC2<R CGAL_CTAG>::perpendicular(const Orientation &o) const
 
 template < class R >
 inline
-DirectionC2<R CGAL_CTAG>
+typename DirectionC2<R CGAL_CTAG>::Direction_2
 DirectionC2<R CGAL_CTAG>::operator-() const
-{ // FIXME : construction
+{
   return DirectionC2<R CGAL_CTAG>(-dx(), -dy());
 }
 

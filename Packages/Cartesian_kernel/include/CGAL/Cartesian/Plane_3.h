@@ -28,19 +28,19 @@ template <class R_>
 class PlaneC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public R_::Plane_handle_3
 {
-  typedef typename R_::FT                        FT;
+  typedef typename R_::FT                   FT;
+  typedef typename R_::Point_2              Point_2;
+  typedef typename R_::Point_3              Point_3;
+  typedef typename R_::Vector_3             Vector_3;
+  typedef typename R_::Direction_3          Direction_3;
+  typedef typename R_::Line_3               Line_3;
+  typedef typename R_::Ray_3                Ray_3;
+  typedef typename R_::Segment_3            Segment_3;
+  typedef typename R_::Plane_3              Plane_3;
+  typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
   typedef typename R_::Plane_handle_3            base;
   typedef typename base::element_type            rep;
-
-  typedef typename R_::Kernel_base::Point_2              Point_2;
-  typedef typename R_::Kernel_base::Point_3              Point_3;
-  typedef typename R_::Kernel_base::Vector_3             Vector_3;
-  typedef typename R_::Kernel_base::Direction_3          Direction_3;
-  typedef typename R_::Kernel_base::Line_3               Line_3;
-  typedef typename R_::Kernel_base::Ray_3                Ray_3;
-  typedef typename R_::Kernel_base::Segment_3            Segment_3;
-  typedef typename R_::Kernel_base::Aff_transformation_3 Aff_transformation_3;
 
 public:
   typedef R_                                     R;
@@ -92,7 +92,7 @@ public:
   }
 
   Line_3       perpendicular_line(const Point_3 &p) const;
-  PlaneC3         opposite() const;
+  Plane_3      opposite() const;
 
   Point_3      point() const;
   Point_3      projection(const Point_3 &p) const;
@@ -106,7 +106,7 @@ public:
   Point_2      to_2d(const Point_3 &p) const;
   Point_3      to_3d(const Point_2 &p) const;
 
-  PlaneC3         transform(const Aff_transformation_3 &t) const
+  Plane_3      transform(const Aff_transformation_3 &t) const
   {
     if (t.is_even())
       return PlaneC3<R>(t.transform(point()),
@@ -200,7 +200,7 @@ PlaneC3<R CGAL_CTAG>::orthogonal_direction() const
 template < class R >
 typename PlaneC3<R CGAL_CTAG>::Vector_3
 PlaneC3<R CGAL_CTAG>::base1() const
-{ // FIXME : construction
+{
   if ( CGAL_NTS is_zero(a()) )  // parallel to x-axis
       return Vector_3(FT(1), FT(0), FT(0));
 
@@ -216,7 +216,7 @@ PlaneC3<R CGAL_CTAG>::base1() const
 template < class R >
 typename PlaneC3<R CGAL_CTAG>::Vector_3
 PlaneC3<R CGAL_CTAG>::base2() const
-{ // FIXME : construction
+{
   return cross_product(orthogonal_vector(), base1());
 }
 
@@ -224,7 +224,7 @@ template < class R >
 typename PlaneC3<R CGAL_CTAG>::Point_3
 PlaneC3<R CGAL_CTAG>::
 to_plane_basis(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p) const
-{ // FIXME : construction
+{
   FT alpha, beta, gamma;
 
   solve(base1(), base2(), orthogonal_vector(), p - point(),
@@ -237,7 +237,7 @@ template < class R >
 typename PlaneC3<R CGAL_CTAG>::Point_2
 PlaneC3<R CGAL_CTAG>::
 to_2d(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p) const
-{ // FIXME : construction
+{
   FT alpha, beta, gamma;
 
   solve(base1(), base2(), orthogonal_vector(), p - point(),
@@ -251,7 +251,7 @@ inline
 typename PlaneC3<R CGAL_CTAG>::Point_3
 PlaneC3<R CGAL_CTAG>::
 to_3d(const typename PlaneC3<R CGAL_CTAG>::Point_2 &p) const
-{ // FIXME : construction
+{
   return point() + p.x() * base1() + p.y() * base2();
 }
 
@@ -266,9 +266,9 @@ perpendicular_line(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p) const
 
 template < class R >
 inline
-PlaneC3<R CGAL_CTAG>
+typename PlaneC3<R CGAL_CTAG>::Plane_3
 PlaneC3<R CGAL_CTAG>::opposite() const
-{ // FIXME : construction
+{
   return PlaneC3<R CGAL_CTAG>(-a(), -b(), -c(), -d());
 }
 

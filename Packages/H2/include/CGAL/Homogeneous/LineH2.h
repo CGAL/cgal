@@ -30,15 +30,14 @@ template < class R_ >
 class LineH2
   : public R_::Line_handle_2
 {
-    typedef typename R_::FT                                FT;
-    typedef typename R_::RT                                RT;
-    typedef typename R_::Kernel_base::Point_2              Point_2;
-    typedef typename R_::Kernel_base::Vector_2             Vector_2;
-    typedef typename R_::Kernel_base::Direction_2          Direction_2;
-    typedef typename R_::Kernel_base::Segment_2            Segment_2;
-    typedef typename R_::Kernel_base::Ray_2                Ray_2;
-    typedef typename R_::Kernel_base::Aff_transformation_2 
-                                                          Aff_transformation_2;
+    typedef typename R_::FT                   FT;
+    typedef typename R_::RT                   RT;
+    typedef typename R_::Point_2              Point_2;
+    typedef typename R_::Vector_2             Vector_2;
+    typedef typename R_::Direction_2          Direction_2;
+    typedef typename R_::Segment_2            Segment_2;
+    typedef typename R_::Ray_2                Ray_2;
+    typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
     typedef typename R_::Line_handle_2            Line_handle_2_;
     typedef typename Line_handle_2_::element_type Line_ref_2;
@@ -141,7 +140,7 @@ CGAL_KERNEL_INLINE
 LineH2<R>::LineH2(const typename LineH2<R>::Point_2& p,
 		  const typename LineH2<R>::Direction_2& d)
 {
-  Point_2 q = p + Vector_2(d);
+  Point_2 q = p + d.to_vector();
   initialize_with( Line_ref_2 (
             p.hy()*q.hw() - p.hw()*q.hy(),
             p.hw()*q.hx() - p.hx()*q.hw(),

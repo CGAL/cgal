@@ -1,3 +1,6 @@
+2.44   (22 January 2002)
+- Classes and funtion return type only refer to R::...
+
 2.43   (4 January 2002)
 - Replace the small helper *rep classes by std::pair and triple.
 - Tetrahedron_3.orientation() is not cached anymore.

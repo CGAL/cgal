@@ -29,15 +29,15 @@ class DirectionC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public R_::Direction_handle_3
 {
   typedef typename R_::FT                   FT;
+  typedef typename R_::Vector_3             Vector_3;
+  typedef typename R_::Line_3               Line_3;
+  typedef typename R_::Ray_3                Ray_3;
+  typedef typename R_::Segment_3            Segment_3;
+  typedef typename R_::Direction_3          Direction_3;
+  typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
   typedef typename R_::Direction_handle_3   base;
   typedef typename base::element_type       rep;
-
-  typedef typename R_::Kernel_base::Vector_3             Vector_3;
-  typedef typename R_::Kernel_base::Line_3               Line_3;
-  typedef typename R_::Kernel_base::Ray_3                Ray_3;
-  typedef typename R_::Kernel_base::Segment_3            Segment_3;
-  typedef typename R_::Kernel_base::Aff_transformation_3 Aff_transformation_3;
 
 public:
   typedef R_                                R;
@@ -64,12 +64,14 @@ public:
   bool           operator!=(const DirectionC3 &d) const;
 
   Vector_3       to_vector() const;
-  DirectionC3           transform(const Aff_transformation_3 &t) const
+  Vector_3       vector() const { return to_vector(); }
+
+  Direction_3    transform(const Aff_transformation_3 &t) const
   {
     return t.transform(*this);
   }
 
-  DirectionC3           operator-() const;
+  Direction_3    operator-() const;
 
   const FT & delta(int i) const;
   const FT & dx() const
@@ -130,14 +132,14 @@ inline
 typename DirectionC3<R CGAL_CTAG>::Vector_3
 DirectionC3<R CGAL_CTAG>::to_vector() const
 {
-  return Vector_3(*this);
+  return Vector_3(dx(), dy(), dz());
 }
 
 template < class R >
 inline
-DirectionC3<R CGAL_CTAG> 
+typename DirectionC3<R CGAL_CTAG>::Direction_3
 DirectionC3<R CGAL_CTAG>::operator-() const
-{ // FIXME : construction
+{
   return DirectionC3<R>(-dx(), -dy(), -dz());
 }
 

@@ -30,15 +30,15 @@ template < class R_ >
 class LineH3
   : public R_::Line_handle_3
 {
-  typedef typename R_::RT    RT;
-  typedef typename R_::FT    FT;
-  typedef typename R_::Kernel_base::Point_3              Point_3;
-  typedef typename R_::Kernel_base::Segment_3            Segment_3;
-  typedef typename R_::Kernel_base::Ray_3                Ray_3;
-  typedef typename R_::Kernel_base::Direction_3          Direction_3;
-  typedef typename R_::Kernel_base::Plane_3              Plane_3;
-  typedef typename R_::Kernel_base::Vector_3             Vector_3;
-  typedef typename R_::Kernel_base::Aff_transformation_3 Aff_transformation_3;
+  typedef typename R_::RT                   RT;
+  typedef typename R_::FT                   FT;
+  typedef typename R_::Point_3              Point_3;
+  typedef typename R_::Segment_3            Segment_3;
+  typedef typename R_::Ray_3                Ray_3;
+  typedef typename R_::Direction_3          Direction_3;
+  typedef typename R_::Plane_3              Plane_3;
+  typedef typename R_::Vector_3             Vector_3;
+  typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
   typedef typename R_::Line_handle_3             Line_handle_3_;
   typedef typename Line_handle_3_::element_type  Line_ref_3;

@@ -31,12 +31,12 @@ class Iso_cuboidC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public R_::Iso_cuboid_handle_3
 {
   typedef typename R_::FT                   FT;
+  typedef typename R_::Iso_cuboid_3         Iso_cuboid_3;
+  typedef typename R_::Point_3              Point_3;
+  typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
   typedef typename R_::Iso_cuboid_handle_3  base;
   typedef typename base::element_type       rep;
-
-  typedef typename R_::Kernel_base::Point_3              Point_3;
-  typedef typename R_::Kernel_base::Aff_transformation_3 Aff_transformation_3;
 
 public:
   typedef R_                                R;
@@ -45,7 +45,7 @@ public:
     : base(rep()) {}
 
   Iso_cuboidC3(const Point_3 &p, const Point_3 &q)
-  { // FIXME : construction
+  {
     FT minx, maxx, miny, maxy, minz, maxz;
     if (p.x() < q.x()) { minx = p.x(); maxx = q.x(); }
     else               { minx = q.x(); maxx = p.x(); }
@@ -92,7 +92,7 @@ public:
   Point_3 vertex(int i) const;
   Point_3 operator[](int i) const;
 
-  Iso_cuboidC3 transform(const Aff_transformation_3 &t) const
+  Iso_cuboid_3 transform(const Aff_transformation_3 &t) const
   {
     return Iso_cuboidC3(t.transform(min()), t.transform(max()));
   }
