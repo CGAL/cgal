@@ -143,6 +143,8 @@ echo "***copying Modifier to Miscellaney***"
 \cp -r $TARGET_DIR/support/Modifier_ref/*.tex $TARGET_DIR/support/Miscellany_ref
 echo "***recopying Miscellany main.tex***"
 \cp doc_tex_skel/support/Miscellany/main.tex $TARGET_DIR/support/Miscellany
+echo "***recopying Miscellany_ref intro.tex***"
+\cp doc_tex_skel/support/Miscellany_ref/intro.tex $TARGET_DIR/support/Miscellany_ref
 
 cd $TARGET_DIR/support
 echo "***creating Handles_and_Circs_ref main.tex***"
