@@ -112,7 +112,6 @@ private:
       widget->x_real(e->x(), x);
       widget->y_real(e->y(), y);	
       widget->set_center(x, y);
-      widget->redraw();
     }
   };
   void deactivating()

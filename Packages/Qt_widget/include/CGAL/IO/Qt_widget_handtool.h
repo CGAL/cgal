@@ -98,7 +98,6 @@ private:
       distx = xfirst2 - x;
       disty = yfirst2 - y;
       widget->move_center(distx, disty);
-      widget->redraw();
       on_first = FALSE;
     }
   }
@@ -116,8 +115,8 @@ private:
       widget->lock();
         *widget << CGAL::GRAY;
       if(!wasrepainted) {
-	widget->x_real(x2 - first_x, xcoord);
-	widget->x_real(y2 - first_y, ycoord);
+        widget->x_real(x2 - first_x, xcoord);
+        widget->x_real(y2 - first_y, ycoord);
         CGAL_CLIB_STD::sprintf(tempc1, " dx=%20.6f", xcoord);
         CGAL_CLIB_STD::sprintf(tempc2, ", dy=%20.6f", ycoord);
         strcat(tempc1, tempc2);
