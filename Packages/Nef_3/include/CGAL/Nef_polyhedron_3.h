@@ -218,77 +218,16 @@ protected:
   typedef typename SNC_structure::Sphere_segment   Sphere_segment;
   typedef typename SNC_structure::Sphere_circle    Sphere_circle;
   
-  Vertex_handle create_cube_corner(int x, int y, int z, bool space=false) {
-    CGAL_nef3_assertion(CGAL_NTS abs(x) == 
-		   CGAL_NTS abs(y) == 
-		   CGAL_NTS abs(z) == 1);
-    SNC_decorator D(snc());
-    Vertex_handle v = snc().new_vertex();
-    D.point(v) = Point_3(x*IMMN, y*IMMN, z*IMMN); 
-    /* TODO: to replace the IMMN constant by a real infimaximal number */
-    SM_decorator SD(v);
-    Sphere_point sp[] = { Sphere_point(-x, 0, 0), 
-			  Sphere_point(0, -y, 0), 
-			  Sphere_point(0, 0, -z) };
-    /* create box vertices */
-    SVertex_handle sv[3];
-    for(int vi=0; vi<3; ++vi) {
-      sv[vi] = SD.new_vertex(sp[vi]);
-      D.mark(sv[vi]) = true;
-    }
-    /* create facet's edge uses */
-    Sphere_segment ss[3];
-    SHalfedge_handle she[3];
-    for(int si=0; si<3; ++si) {
-      she[si] = SD.new_edge_pair(sv[si], sv[(si+1)%3]);
-      ss[si] = Sphere_segment(sp[si],sp[(si+1)%3]);
-      SD.circle(she[si]) = ss[si].sphere_circle();
-      SD.circle(SD.twin(she[si])) = ss[si].opposite().sphere_circle();
-      SD.mark(she[si]) = true;
-    }
-    /* create facets */
-    SFace_handle fi = SD.new_face();
-    SFace_handle fe = SD.new_face();
-    SD.link_as_face_cycle(she[0], fi);
-    SD.link_as_face_cycle(SD.twin(she[0]), fe);
-    SD.mark(fi) = true;
-    SD.mark(fe) = true;
-    /* set face mark */
-    if( space == EMPTY) {
-      SHalfedge_iterator e = SD.shalfedges_begin();
-      SFace_handle f;
-      Sphere_point p1 = SD.point(SD.source(e));
-      Sphere_point p2 = SD.point(SD.target(e));
-      Sphere_point p3 = SD.point(SD.target(SD.next(e)));
-      if ( spherical_orientation(p1,p2,p3) > 0 )
-	f = SD.face(e);
-      else
-	f = SD.face(SD.twin(e));
-      SD.mark(f) = false;
-    }
-    // SD.mark_of_halfsphere(-1) = (x<0 && y>0 && z>0);
-    // SD.mark_of_halfsphere(+1) = (x>0 && y>0 && z<0);
-    /* TODO: to check if the commented code above could be wrong */
-    SM_point_locator L(v);
-    L.init_marks_of_halfspheres();
-#ifdef CGAL_NEF3_DUMP_SPHERE_MAPS
-    TRACEN("new bbox corner...");
-    SM_io_parser IO( std::cerr, v);
-    TRACEN(v->debug());
-    IO.debug();
-#endif // CGAL_NEF3_DUMP_SPHERE_MAPS
-    return v;
-  }
-
   void initialize_simple_cube_vertices(Content space) {
-    create_cube_corner( 1, 1, 1, space );
-    create_cube_corner(-1, 1, 1, space );
-    create_cube_corner( 1,-1, 1, space );
-    create_cube_corner(-1,-1, 1, space );
-    create_cube_corner( 1, 1,-1, space );
-    create_cube_corner(-1, 1,-1, space );
-    create_cube_corner( 1,-1,-1, space );
-    create_cube_corner(-1,-1,-1, space );
+    SNC_constructor C(snc());
+    C.create_box_corner( IMMN, IMMN, IMMN, space );
+    C.create_box_corner(-IMMN, IMMN, IMMN, space );
+    C.create_box_corner( IMMN,-IMMN, IMMN, space );
+    C.create_box_corner(-IMMN,-IMMN, IMMN, space );
+    C.create_box_corner( IMMN, IMMN,-IMMN, space );
+    C.create_box_corner(-IMMN, IMMN,-IMMN, space );
+    C.create_box_corner( IMMN,-IMMN,-IMMN, space );
+    C.create_box_corner(-IMMN,-IMMN,-IMMN, space );
   }
 
   void check_h_for_intersection_of_12_cube_edges_and_add_vertices

@@ -282,8 +282,8 @@ public:
 
 
   Vertex_handle create_box_corner(int x, int y, int z,
-                                  bool boundary=true) const; 
-  /*{\Mop produces the sphere map representing the box corner in
+                                  bool space=true, bool boundary=true) const; 
+  /*{\Mop produces the sphere map representing thp,e box corner in
           direction $(x,y,z)$.}*/
 
   Vertex_handle create_from_facet(Halffacet_handle f,
@@ -377,40 +377,60 @@ public:
 // ----------------------------------------------------------------------------
 // create_box_corner()
 // creates the local graph at the corner of a cube in direction (x,y,z)
-// boundary specifies if the bounding planes should be included
+// 'space' specifies if the bounded volume is selected.
+// 'boundary' specifies if the boundary of the box is selected 
 
 template <typename SNC_>
 typename SNC_::Vertex_handle 
 SNC_constructor<SNC_>::
-create_box_corner(int x, int y, int z, bool boundary) const { 
-  CGAL_nef3_assertion(x*y*z != 0);
-  CGAL_nef3_assertion(x==y==z==1);
-  Vertex_handle v = sncp()->new_vertex();
-  int R=IMMN; point(v) = Point_3(x*R,y*R,z*R);
-  Sphere_point px(-x,0,0), py(0,-y,0), pz(0,0,-z);
-  std::list<Sphere_segment> L;
-  L.push_back(Sphere_segment(px,py));
-  L.push_back(Sphere_segment(py,pz));
-  L.push_back(Sphere_segment(px,pz));
-  // construction of sphere map from sphere segments:
-  SM_overlayer D(v); 
-  D.create_from_segments(L.begin(),L.end()); 
-  D.simplify();
-  SHalfedge_iterator e = D.shalfedges_begin();
+create_box_corner(int x, int y, int z, bool space, bool boundary) const { 
+  CGAL_nef3_assertion(CGAL_NTS abs(x) == CGAL_NTS abs(y) &&
+		      CGAL_NTS abs(y) == CGAL_NTS abs(z));
+  TRACEN("  constructing box corner on "<<Point_3(x,y,z)<<"...");
+  Vertex_handle v = sncp()->new_vertex( Point_3(x, y, z), boundary);
+  SM_decorator SD(v);
+  Sphere_point sp[] = { Sphere_point(-x, 0, 0), 
+			Sphere_point(0, -y, 0), 
+			Sphere_point(0, 0, -z) };
+  /* create box vertices */
+  SVertex_handle sv[3];
+  for(int vi=0; vi<3; ++vi) {
+    sv[vi] = SD.new_vertex(sp[vi]);
+    mark(sv[vi]) = boundary;
+  }
+  /* create facet's edge uses */
+  Sphere_segment ss[3];
+  SHalfedge_handle she[3];
+  for(int si=0; si<3; ++si) {
+    she[si] = SD.new_edge_pair(sv[si], sv[(si+1)%3]);
+    ss[si] = Sphere_segment(sp[si],sp[(si+1)%3]);
+    SD.circle(she[si]) = ss[si].sphere_circle();
+    SD.circle(SD.twin(she[si])) = ss[si].opposite().sphere_circle();
+    SD.mark(she[si]) = boundary;
+  }
+  /* create facets */
+  SFace_handle fi = SD.new_face();
+  SFace_handle fe = SD.new_face();
+  SD.link_as_face_cycle(she[0], fi);
+  SD.link_as_face_cycle(SD.twin(she[0]), fe);
+  /* set face mark */
+  SHalfedge_iterator e = SD.shalfedges_begin();
   SFace_handle f;
-  Sphere_point p1 = D.point(D.source(e));
-  Sphere_point p2 = D.point(D.target(e));
-  Sphere_point p3 = D.point(D.target(D.next(e)));
-  if ( spherical_orientation(p1,p2,p3) > 0 ) f = D.face(e);
-  else f = D.face(D.twin(e));
-  D.mark(f) = true;
-  CGAL_nef3_forall_sedges_of(e,v)
-    D.mark(e) = D.mark(D.source(e)) = boundary;
-  D.mark_of_halfsphere(-1) = (x<0 && y>0 && z>0);
-  D.mark_of_halfsphere(+1) = (x>0 && y>0 && z<0);
+  Sphere_point p1 = SD.point(SD.source(e));
+  Sphere_point p2 = SD.point(SD.target(e));
+  Sphere_point p3 = SD.point(SD.target(SD.next(e)));
+  if ( spherical_orientation(p1,p2,p3) > 0 )
+    f = SD.face(e);
+  else
+    f = SD.face(SD.twin(e));
+  SD.mark(f) = space;
+  // SD.mark_of_halfsphere(-1) = (x<0 && y>0 && z>0);
+  // SD.mark_of_halfsphere(+1) = (x>0 && y>0 && z<0);
+  /* TODO: to check if the commented code above could be wrong */
+  SM_point_locator L(v);
+  L.init_marks_of_halfspheres();
   return v;
-} 
-
+}
 
 // ----------------------------------------------------------------------------
 // create_from_facet() 
