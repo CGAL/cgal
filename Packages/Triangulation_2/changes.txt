@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.76 (        )
+- added the dual power diagram to regular triangulations
+
 Ver 4.75 (11/12/00)
 - fixed a few bugs in Constrained_Delaunay_triangulations :
   missing typedef + clashing typedef  for VC++
