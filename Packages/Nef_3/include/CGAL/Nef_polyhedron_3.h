@@ -39,7 +39,7 @@
 #include <CGAL/Nef_3/SNC_decorator.h>
 #include <CGAL/Nef_3/SNC_constructor.h>
 #include <CGAL/Nef_3/SNC_io_parser.h>
-#include <CGAL/Nef_3/SNC_ray_shoter.h>
+#include <CGAL/Nef_3/SNC_ray_shooter.h>
 #ifdef CGAL_NEF3_VISUALIZOR
 #include <CGAL/Nef_3/SNC_visualizor_OGL.h>
 #endif // CGAL_NEF3_VISUALIZOR
@@ -82,7 +82,7 @@ class Nef_polyhedron_3_rep : public Ref_counted
   typedef CGAL::SNC_structure<T>                       SNC_structure;
   typedef CGAL::SNC_decorator<SNC_structure>           SNC_decorator;
   typedef CGAL::SNC_constructor<SNC_structure>         SNC_constructor;
-  typedef CGAL::SNC_ray_shoter<SNC_structure>          SNC_ray_shoter;
+  typedef CGAL::SNC_ray_shooter<SNC_structure>         SNC_ray_shooter;
   typedef CGAL::SNC_io_parser<SNC_structure>           SNC_io_parser;
 
 #ifdef CGAL_NEF3_VISUALIZOR
@@ -151,7 +151,7 @@ protected:
   typedef typename Nef_rep::SNC_structure       SNC_structure;
   typedef typename Nef_rep::SNC_decorator       SNC_decorator;
   typedef typename Nef_rep::SNC_constructor     SNC_constructor;
-  typedef typename Nef_rep::SNC_ray_shoter      SNC_ray_shoter;
+  typedef typename Nef_rep::SNC_ray_shooter     SNC_ray_shooter;
   typedef typename Nef_rep::SNC_io_parser       SNC_io_parser;
 
 #ifdef CGAL_NEF3_VISUALIZOR
@@ -252,6 +252,7 @@ protected:
   
   void build_external_structure() {
     SNC_constructor C(snc());
+    // SETDTHREAD(43);
     C.pair_up_halfedges();
     C.link_shalfedges_to_facet_cycles();
     C.categorize_facet_cycles_and_create_facets();
@@ -299,30 +300,32 @@ public:
     
     class Visitor {
 
-      Object_index<Vertex_iterator> *VI;
-      Polyhedron_incremental_builder_3<HDS> *B;
-      SNC_decorator *D;
+      const Object_index<Vertex_iterator>& VI;
+      Polyhedron_incremental_builder_3<HDS>& B;
+      SNC_decorator& D;
       
     public:
-      Visitor(Polyhedron_incremental_builder_3<HDS> *BB,
-	      SNC_decorator *sd,
-	      Object_index<Vertex_iterator> *vi) {B=BB; D=sd; VI=vi;}
+      Visitor(Polyhedron_incremental_builder_3<HDS>& BB,
+	      SNC_decorator& sd,
+	      Object_index<Vertex_iterator>& vi) : VI(vi), D(sd), B(BB){}
 
-      void visit(Halffacet_handle f) {
+      void visit(Halffacet_handle opposite_facet) {
  
 	SHalfedge_handle se;
 	Halffacet_cycle_iterator fc;
      	
-	B->begin_facet();
+	Halffacet_handle f = D.twin(opposite_facet);
+
+	B.begin_facet();
 	fc = f->facet_cycles_begin();
 	assign(se,fc);
 	CGAL_assertion(se!=0);
 	SHalfedge_around_facet_circulator hc_start(se);
 	SHalfedge_around_facet_circulator hc_end(hc_start);
 	CGAL_For_all(hc_start,hc_end) {
-	  B->add_vertex_to_facet((*VI)[D->vertex(hc_start)]);
+	  B.add_vertex_to_facet(VI[D.vertex(hc_start)]);
 	}
-	B->end_facet();
+	B.end_facet();
       }
 
       void visit(SFace_handle s) {}
@@ -360,7 +363,7 @@ public:
         
       int outer_volume = 0;
       Shell_entry_iterator it;
-      Visitor V(&B,&D,&VI);
+      Visitor V(B,D,VI);
       Volume_handle c;
       CGAL_nef3_forall_volumes(c,snc) {
 	if(outer_volume++ > 1)

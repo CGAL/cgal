@@ -41,7 +41,7 @@
 #include <CGAL/Nef_3/SNC_SM_overlayer.h>
 #include <CGAL/Nef_3/SNC_SM_point_locator.h>
 #include <CGAL/Nef_3/SNC_FM_decorator.h>
-#include <CGAL/Nef_3/SNC_ray_shoter.h>
+#include <CGAL/Nef_3/SNC_ray_shooter.h>
 #ifdef SM_VISUALIZOR
 #include <CGAL/Nef_3/SNC_SM_visualizor.h>
 #endif // SM_VISUALIZOR
@@ -146,7 +146,7 @@ public:
   typedef CGAL::SNC_constructor<SNC_structure>          Self;
   typedef CGAL::SNC_decorator<SNC_structure>            Base;
   typedef CGAL::SNC_decorator<SNC_structure>            SNC_decorator;
-  typedef CGAL::SNC_ray_shoter<SNC_structure>           SNC_ray_shoter;
+  typedef CGAL::SNC_ray_shooter<SNC_structure>           SNC_ray_shooter;
   typedef CGAL::SNC_FM_decorator<SNC_structure>         FM_decorator;
   typedef CGAL::SNC_SM_decorator<SNC_structure>         SM_decorator;
   typedef CGAL::SNC_SM_overlayer<SNC_structure>         SM_overlayer;
@@ -336,14 +336,14 @@ public:
   }
 
   Halffacet_handle get_facet_below( Vertex_handle vi) const 
-     /*{\Mop determines the facet below a vertex |vi| via ray shoting. }*/ {
+     /*{\Mop determines the facet below a vertex |vi| via ray shooting. }*/ {
     Halffacet_handle f_below;
     Point_3 p = point(vi);
     // ######### Non-generic code ##########
     Segment_3 ray( p, Point_3( p.hx(), p.hy(), -INT_MAX*p.hw(), p.hw()));
     // ####################################
-    SNC_ray_shoter rs(*sncp());
-    Object_handle o = rs.shot(ray);
+    SNC_ray_shooter rs(*sncp());
+    Object_handle o = rs.shoot(ray);
     Vertex_handle v;
     Halfedge_handle e;
     Halffacet_handle f;
@@ -434,6 +434,8 @@ create_box_corner(int x, int y, int z, bool space, bool boundary) const {
 // create_from_facet() 
 // Creates the local graph of a facet f at point p.
 // Precondition is that p ist part of f.
+
+#define CGAL_NEF3_BUGGY_CODE
 
 template <typename SNC_>
 typename SNC_::Vertex_handle 
@@ -549,17 +551,16 @@ pair_up_halfedges() const
   CGAL_nef3_forall_halfedges(e,*sncp()) {
     Point_3 p = point(vertex(e));
     Pluecker_line_3 l(p, p + tmp_point(e));
-    TRACEN("  "<<p<<" "<<tmp_point(e)<<" "<<&*e<<" "<<l);
     int inverted;
     l = categorize(l,inverted);
     M[l].push_back(Halfedge_key(p,inverted,e,D));
+    TRACEN(" ("<<p<<") ("<<tmp_point(e)<<") "<<&*e<<" |"<<l << " " << inverted);
   }
 
   typename Pluecker_line_map::iterator it;
   CGAL_nef3_forall_iterators(it,M) {
     it->second.sort(Halfedge_key_lt());
-    TRACEN("  "<<it->first<<"\n   "
-	   <<(debug_container(it->second),""));
+    TRACEN("search opposite  "<<it->first<< "\n    " <<(debug_container(it->second),"")<< std::endl);
     typename Halfedge_list::iterator itl;
     CGAL_nef3_forall_iterators(itl,it->second) {
       Halfedge_handle e1 = itl->e;
@@ -702,7 +703,7 @@ create_volumes() const
     V.increment_shell_number();
   }
   /* then, we determine the Shells which correspond to Volumes via a ray
-     shotting in the direction (-1,0,0) over the Sphere_map of the minimal 
+     shootting in the direction (-1,0,0) over the Sphere_map of the minimal 
      vertex.  The Shell corresponds to a Volume if the object hit belongs 
      to another Shell. */
   sncp()->new_volume(); // outermost volume (nirvana)

@@ -401,7 +401,7 @@ void SNC_SM_io_parser<Refs_>::debug_edge(SHalfedge_handle e) const
 { 
   out << index(e)
       << "(" << index(source(e)) << "," << index(target(e)) << ") "
-      << index(twin(e)) << " " << index(face(e))
+      << index(twin(e)) << " " << index(face(e)) << " " << mark(face(e))
       << " ["<< mark(e) << "] " << circle(e) << endl;
 }
 

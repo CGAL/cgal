@@ -244,6 +244,12 @@ namespace OGL {
     glNormal3dv(pu);
   }
 
+  inline void combineCallback(GLdouble coords[3], void *vertex_data[4], GLfloat weight[4], void **outData)
+  {
+    
+    *outData = vertex_data;
+  }
+
   class Polyhedron {
     std::list<DPoint>    vertices_;
     std::list<DSegment>  edges_;
@@ -320,6 +326,8 @@ namespace OGL {
 		      (GLvoid (*)()) &endCallback);
       gluTessCallback(tess_, GLenum(GLU_TESS_ERROR),
 		      (GLvoid (*)()) &errorCallback);
+      gluTessCallback(tess_, GLenum(GLU_TESS_COMBINE),
+		      (GLvoid (*)()) &combineCallback);
       gluTessProperty(tess_, GLenum(GLU_TESS_WINDING_RULE),
 		      GLU_TESS_WINDING_POSITIVE);
 

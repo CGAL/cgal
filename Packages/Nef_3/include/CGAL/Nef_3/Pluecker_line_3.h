@@ -136,8 +136,18 @@ void normalize()
 /*{\Mop reduces the Pluecker coefficients to a minimal 
 representation. This is done by dividing all Pluecker 
 coefficients by their common gcd.}*/
-{ RT D = c_[0];
-  for(int i=1; i<6; ++i) 
+{ 
+  int i=0;
+  while(i<6 && c_[i]==0)
+    i++;
+  
+  if(i>5)
+    return;
+
+  RT D = c_[i];
+  CGAL_assertion(D!=0);
+
+  for(++i; i<6; ++i) 
     D = (c_[i]==0 ? D : CGAL_NTS gcd(D, c_[i]));
   if (D==0) return;
   for(int i=0; i<6; ++i) c_[i]/=D;
@@ -204,7 +214,6 @@ struct Pluecker_line_lt {
                   const CGAL::Pluecker_line_3<R>& l2) const
   { return CGAL::Pluecker_line_3<R>::cmp(l1,l2)<0; }
 };
-
 
 CGAL_END_NAMESPACE
 #endif //CGAL_PLUECKER_LINE_3_H

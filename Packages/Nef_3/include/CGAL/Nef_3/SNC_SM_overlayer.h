@@ -745,29 +745,44 @@ subdivide(Vertex_handle v0, Vertex_handle v1)
     SVertex_iterator v;
     CGAL_nef3_forall_svertices(v,PI[i]) {
       if ( !PI[i].is_isolated(v) ) continue;
+      TRACEN("isolated " << PH(v));
       L.push_back(trivial_segment(PI[i],v));
       From[--L.end()] = Seg_info(v,i);
     }
     SHalfedge_iterator e;
     CGAL_nef3_forall_sedges(e,PI[i]) {
       if ( source(e) == target(e) ) {
+	TRACEN("degenerierte Kante " << PH(e));
         Seg_pair p = two_segments(PI[i],e);
         L.push_back(p.first); 
         L.push_back(p.second);
         From[--L.end()] = From[--(--L.end())] = Seg_info(e,i);
       } else {
+	TRACEN("normale Kante " << PH(e));
         L.push_back(segment(PI[i],e));
         From[--L.end()] = Seg_info(e,i);
       }
     }
     if ( PI[i].has_loop() ) {
-      Seg_pair p = two_segments(PI[i],PI[i].shalfloop());
+      TRACEN("halfloop");
+      SHalfloop_handle shl = PI[i].shalfloop();
+      Seg_pair p = two_segments(PI[i],shl);
       L.push_back(p.first); 
       L.push_back(p.second);
       From[--L.end()] = From[--(--L.end())] = 
-        Seg_info(PI[i].shalfloop(),i);
+        Seg_info(shl,i);
+      /*  
+      p = two_segments(PI[i],PI[i].twin(shl));
+      L.push_back(p.first); 
+      L.push_back(p.second);
+      From[--L.end()] = From[--(--L.end())] = 
+        Seg_info(PI[i].twin(shl),i);
+      */
     }
   }
+  
+  typename Seg_list::iterator it;
+  CGAL_nef3_forall_iterators(it,L) TRACEN("  "<<*it);
 
   Seg_list L_pos,L_neg;
   partition_to_halfsphere(L.begin(), L.end(), L_pos, From, +1);
@@ -814,11 +829,12 @@ subdivide(Vertex_handle v0, Vertex_handle v1)
   // now two CCs of sphere graph are calculated
   // v = first vertex of CC in negative x-sphere
   // e = first edge of CC in negative x-sphere
-   
+
   create_face_objects(shalfedges_begin(), e, svertices_begin(), v, O,
                       PH_geometry());
   create_face_objects(e, shalfedges_end(), v, svertices_end(), O,
                       NH_geometry());
+
 
   SHalfedge_iterator u;
   CGAL_nef3_forall_sedges(u,*this) {
@@ -829,6 +845,8 @@ subdivide(Vertex_handle v0, Vertex_handle v1)
 
   complete_face_support(svertices_begin(), v, O, +1);
   complete_face_support(v, svertices_end(), O, -1);
+
+
 
   /* DEBUG CODE: to do: have all svertices a halfedge below associated? */
   TRACEN("Vertex info after swep");
@@ -975,12 +993,39 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
     TRACEN("VERTEX = "<<PH(v));
     Mark m_buffer[2];
     SHalfedge_handle e_below = halfedge_below(v);
-    if ( v == v_start ) {
-      for (int i=0; i<2; ++i) 
-        m_buffer[i] = PI[i].mark_of_halfsphere(-pos);
+    if ( v == v_start ) {     
+      for (int i=0; i<2; ++i){ 
+	SHalfedge_around_sface_circulator e(first_out_edge(v)), end(e);
+	CGAL_For_all(e,end) {
+	  if(supp_object(e,i) != NULL)
+	    break;
+	}
+	
+	if(supp_object(e,i) != NULL) {
+	  SHalfedge_handle ei;
+	  if ( assign(ei,supp_object(e,i)) ) { 
+	    if ( PI[i].circle(ei) != circle(e) ) { ei = PI[i].twin(ei); }
+	    CGAL_nef3_assertion( PI[i].circle(ei) == circle(e) ); 
+	    TRACEN("initial " << PH(e) << " " << PH(ei)<< " von Ebene " << i);
+	    m_buffer[i] = PI[i].mark(PI[i].face(ei));       
+	  }
+	  SHalfloop_handle li;
+	  if ( assign(li,supp_object(e,i)) ) { 
+	    if ( PI[i].circle(li) != circle(e) ) { li = PI[i].twin(li); }
+	    m_buffer[i] = PI[i].mark(PI[i].face(li));
+	    TRACEN("initial " << PH(li) << " von Ebene " << i);
+	  }
+	}
+	else {
+	  m_buffer[i] = PI[i].mark_of_halfsphere(-pos);
+	  TRACEN("no initial support");
+	}
+      }
     } else if ( e_below != SHalfedge_handle() ) {
-      for (int i=0; i<2; ++i) 
+      for (int i=0; i<2; ++i) {
+	TRACEN("edge below "<< PH(e_below) << " " << mark(e_below,i));
         m_buffer[i] = incident_mark(e_below,i); 
+      }
     } else { // e_below does not exist
       CGAL_nef3_assertion( point(v).hz() == 0 && 
                       ( pos > 0 ? (point(v).hx() >= 0) : (point(v).hx()<=0)) );
@@ -1044,6 +1089,8 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
 
     TRACEN(" mark of "<<PH(v)<<" "<<mark(v,0)<<" "<<mark(v,1));
   }
+
+ 
   SFace_iterator f;
   for (f = sfaces_begin(); f != sfaces_end(); ++f) {
     assoc_info(f);
@@ -1055,6 +1102,49 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
     for (int i=0; i<2; ++i) mark(f,i) = incident_mark(e,i);
   }
 
+  TRACEN(psm_->point());
+
+  SVertex_handle v;
+  CGAL_nef3_forall_svertices(v,*this)
+    TRACEN(PH(v) << " " << mark(v,0));
+  TRACEN(" ");
+  CGAL_nef3_forall_svertices(v,PI[0])
+    TRACEN(PH(v));
+  TRACEN(" ");
+  CGAL_nef3_forall_svertices(v,*this)
+    TRACEN(PH(v) << " " << mark(v,1));
+  TRACEN(" ");
+  CGAL_nef3_forall_svertices(v,PI[1])
+    TRACEN(PH(v));
+  TRACEN(" ");
+
+  SHalfedge_handle e;
+  CGAL_nef3_forall_shalfedges(e,*this)
+    TRACEN(PH(e)<< " " << mark(e,0));
+  TRACEN(" ");
+  CGAL_nef3_forall_shalfedges(e,PI[0])
+    TRACEN(PH(e)<< " " << PI[0].mark(e) << " " << PI[0].mark(PI[0].face(e)));
+  TRACEN(" ");
+  CGAL_nef3_forall_shalfedges(e,*this)
+    TRACEN(PH(e) << " " << mark(e,1));
+  TRACEN(" ");
+  CGAL_nef3_forall_shalfedges(e,PI[1])
+    TRACEN(PH(e) << " " << PI[1].mark(e) << " " << PI[1].mark(PI[1].face(e)));
+  TRACEN(" ");
+
+    SFace_handle ff;
+  CGAL_nef3_forall_sfaces(ff,*this)
+    TRACEN(&*ff << " " << mark(ff,0));
+  TRACEN(" ");
+    CGAL_nef3_forall_sfaces(ff,PI[0])
+    TRACEN(&*ff << " " << PI[0].mark(ff));
+  TRACEN(" ");
+   CGAL_nef3_forall_sfaces(ff,*this)
+    TRACEN(&*ff << " " << mark(ff,1));
+  TRACEN(" "); 
+    CGAL_nef3_forall_sfaces(ff,PI[1])
+    TRACEN(&*ff << " " << PI[1].mark(ff));
+    TRACEN(" ");
 
 }
 
@@ -1072,7 +1162,9 @@ merge_nodes(SHalfedge_handle e1, SHalfedge_handle e2,
   CGAL_For_all(eav,ee) { set_source(eav,v1); }
   link_as_prev_next_pair(e2,e1);  
   link_as_prev_next_pair(ep1,en2); 
-  D.assert_equal_marks(v1,v2);
+  //D.assert_equal_marks(v1,v2);
+  mark(v1,0) = mark(v1,0) || mark(v2,0);
+  mark(v1,1) = mark(v1,1) || mark(v2,1);
   D.discard_info(v2);
   delete_vertex_only(v2);
 }
@@ -1107,6 +1199,8 @@ merge_halfsphere_maps(SVertex_handle v1, SVertex_handle v2,
     set_face(e1,f);
     if ( e2 == first_out_edge(source(e2)) )
       set_first_out_edge(source(e2),e1t);
+    mark(e1,0) = mark(e1,0) || mark(e2,0);
+    mark(e1,1) = mark(e1,1) || mark(e2,1);
     D.discard_info(e2);
     delete_edge_pair_only(e2);
   }
@@ -1173,6 +1267,23 @@ void SNC_SM_overlayer<Refs_>::simplify() const
         set_face(target(e),face(e));
       delete_edge_pair(e);
     }
+
+  SVertex_handle v;
+  CGAL_nef3_forall_svertices(v,*this)
+    TRACEN(PH(v) << " " << mark(v));
+  TRACEN(" ");
+
+
+  SHalfedge_handle e;
+  CGAL_nef3_forall_shalfedges(e,*this)
+    TRACEN(PH(e)<< " " << mark(e));
+  TRACEN(" ");
+
+    SFace_handle ff;
+  CGAL_nef3_forall_sfaces(ff,*this)
+    TRACEN(&*ff << " " << mark(ff));
+  TRACEN(" ");
+
   }
 
   CGAL::Unique_hash_map<SHalfedge_handle,bool> linked(false);
@@ -1191,6 +1302,20 @@ void SNC_SM_overlayer<Refs_>::simplify() const
     link_as_loop(twin(l),f);
   }
 
+  SVertex_handle vi;
+  CGAL_nef3_forall_svertices(vi,*this)
+    TRACEN(PH(vi) << " " << mark(vi));
+  TRACEN(" ");
+
+  SHalfedge_handle ei;
+  CGAL_nef3_forall_shalfedges(ei,*this)
+    TRACEN(PH(ei)<< " " << mark(ei));
+  TRACEN(" ");
+
+    SFace_handle ff;
+  CGAL_nef3_forall_sfaces(ff,*this)
+    TRACEN(&*ff << " " << mark(ff));
+  TRACEN(" ");
 
   SVertex_iterator v,vn;
   for(v = svertices_begin(); v != svertices_end(); v=vn) {
@@ -1213,6 +1338,23 @@ void SNC_SM_overlayer<Refs_>::simplify() const
     }
   }
 
+
+
+  CGAL_nef3_forall_svertices(vi,*this)
+    TRACEN(PH(vi) << " " << mark(vi));
+  TRACEN(" ");
+
+
+  CGAL_nef3_forall_shalfedges(ei,*this)
+    TRACEN(PH(ei)<< " " << mark(ei));
+  TRACEN(" ");
+
+
+
+  CGAL_nef3_forall_sfaces(ff,*this)
+    TRACEN(&*ff << " " << mark(ff));
+  TRACEN(" ");
+
   SFace_iterator fn;
   for (f = fn = sfaces_begin(); f != sfaces_end(); f=fn) { 
     ++fn;
@@ -1221,6 +1363,21 @@ void SNC_SM_overlayer<Refs_>::simplify() const
       delete_face_only(f);
   }
 
+
+  CGAL_nef3_forall_svertices(vi,*this)
+    TRACEN(PH(vi) << " " << mark(vi));
+  TRACEN(" ");
+
+
+  CGAL_nef3_forall_shalfedges(ei,*this)
+    TRACEN(PH(ei)<< " " << mark(ei));
+  TRACEN(" ");
+
+
+
+  CGAL_nef3_forall_sfaces(ff,*this)
+    TRACEN(&*ff << " " << mark(ff));
+  TRACEN(" ");
 
 }
 

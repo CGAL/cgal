@@ -27,6 +27,23 @@
 
 #include <iostream>
 
+
+
+#ifndef CGAL_DEBUG_H
+#define CGAL_DEBUG_H
+
+static int debugthread=1;
+
+template <typename C>
+void debug_container(const C& container,
+		     std::ostream& os = std::cerr)
+{ typename C::const_iterator it;
+  for(it = container.begin(); it != container.end(); ++it)
+    os << *it << std::endl;
+}
+ 
+#endif //CGAL_DEBUG_H
+
 #undef TRACE
 #undef TRACEN
 #undef TRACEV
@@ -77,19 +94,5 @@
 #define CTRACEN(b,t) 
 #endif
 
-#ifndef CGAL_DEBUG_H
-#define CGAL_DEBUG_H
-
-static int debugthread=3141592;
-
-template <typename C>
-void debug_container(const C& container,
-		     std::ostream& os = std::cerr)
-{ typename C::const_iterator it;
-  for(it = container.begin(); it != container.end(); ++it)
-    os << *it << std::endl;
-}
- 
-#endif //CGAL_DEBUG_H
 
 

@@ -38,7 +38,7 @@
 #include <CGAL/Nef_3/SNC_SM_point_locator.h>
 #include <CGAL/Nef_3/SNC_SM_overlayer.h>
 #include <CGAL/Nef_3/SNC_SM_io_parser.h>
-#include <CGAL/Nef_3/SNC_ray_shoter.h>
+#include <CGAL/Nef_3/SNC_ray_shooter.h>
 #ifdef  CGAL_NEF3_SM_VISUALIZOR
 #include <CGAL/Nef_3/SNC_SM_visualizor.h>
 #endif // CGAL_NEF3_SM_VISUALIZOR
@@ -54,7 +54,7 @@ class SNC_decorator {
   typedef SNC_structure_ SNC_structure;
   typedef SNC_decorator<SNC_structure>        Self;
   typedef SNC_constructor<SNC_structure>      SNC_constructor;
-  typedef SNC_ray_shoter<SNC_structure>       SNC_ray_shoter;
+  typedef SNC_ray_shooter<SNC_structure>       SNC_ray_shooter;
   typedef SNC_SM_decorator<SNC_structure>     SM_decorator;
   typedef SNC_SM_overlayer<SNC_structure>     SM_overlayer;
   typedef SNC_SM_point_locator<SNC_structure> SM_point_locator;
@@ -403,7 +403,7 @@ public:
 
   Halffacet_handle get_visible_facet( const Vertex_handle v, 
 				      const Segment_3& ray) const 
-    /*{\Mop when one shot a ray |ray| in order to find the facet below to
+    /*{\Mop when one shoot a ray |ray| in order to find the facet below to
       an object, and vertex |v| is hit, we need to choose one of the facets
       in the adjacency list of |v| such that it could be 'seen' from the
       piercing point of the |ray| on the sphere map on |v|.  We make it just
@@ -445,7 +445,7 @@ public:
 
   Halffacet_handle get_visible_facet( const Halfedge_handle e,
 				      const Segment_3& ray) const
-    /*{\Mop when one shot a ray |ray| in order to find the facet below to
+    /*{\Mop when one shoot a ray |ray| in order to find the facet below to
       an object, and an edge |e| is hit, we need to choose one of the two 
       facets in the adjacency list of |e| that could be 'seen'  from the
       piercing point of the |ray| on the local (virtual) view  of |e|
@@ -479,7 +479,7 @@ public:
   
   Halffacet_handle get_visible_facet( const Halffacet_handle f,
 				      const Segment_3& ray) const 
-    /*{\Mop when one shot a ray |ray| in order to find the facet below to
+    /*{\Mop when one shoot a ray |ray| in order to find the facet below to
       an object, and a facet |f| is hit, we need to choose the right facet
       from the halffacet pair |f| that  could be 'seen'  from the
       piercing point of the |ray| on the local (virtual) view  of |f|.
@@ -497,6 +497,7 @@ public:
     Vertex_handle binop_local_views( Vertex_handle v0, Vertex_handle v1,
 				     const Selection& BOP, SNC_structure& rsnc)
     /*{\opOverlays two spheres maps.}*/ {
+
 #ifdef CGAL_NEF3_DUMP_SPHERE_MAPS
     typedef SNC_SM_io_parser<SNC_structure> SNC_SM_io_parser;
     SNC_SM_io_parser IO0( std::cerr, v0);
@@ -514,7 +515,7 @@ public:
     O.subdivide( v0, v1);
     O.select( BOP);
     O.simplify();
-    //    O.check_integrity_and_topological_planarity();
+    O.check_integrity_and_topological_planarity();
 
 #ifdef CGAL_NEF3_DUMP_SPHERE_MAPS
     TRACEN(" result sphere map:");
@@ -567,7 +568,7 @@ public:
 				      SNC_structure& P1i,
 				      SNC_structure& result)
     /*{\op }*/ {
-    SNC_ray_shoter rs(P1i);
+    SNC_ray_shooter rs(P1i);
     Vertex_handle v;
     Halfedge_handle e;
     Halffacet_handle f;
@@ -619,6 +620,8 @@ public:
     O1.print();
 #endif // CGAL_NEF3_DUMP_SNC_OPERATORS
 
+    //    SETDTHREAD(131*19*43);
+
     TRACEN("=> for all v0 in snc0, qualify v0 with respect snc1");
 
     TRACEN("vertices on snc0:");
@@ -636,9 +639,8 @@ public:
 	   snc1i.number_of_vertices()<<' '<<
 	   result.number_of_vertices());
 
-    //cerr << "Checkpoint SNC_d 1 " << std::endl;
-
     CGAL_nef3_forall_vertices( v0, *sncp()) {
+
       CGAL_nef3_assertion(!Ignore[v0]);
       v1 = qualify_with_respect( point(v0), snc1i, result);
       TRACEN("=> overlay of vertices v0 "<<&*v0<<" v1 "<<&*v1);
@@ -648,15 +650,11 @@ public:
       else
 	Ignore[v1] = true;
 
-      //cerr << "Checkpoint SNC_d 2 " << std::endl;
-
       TRACEN("vertices on snc0 sn1 snc01: "<<
 	     sncp()->number_of_vertices()<<' '<<
 	     snc1i.number_of_vertices()<<' '<<
 	     result.number_of_vertices());
     }
-
-    //cerr << "Checkpoint SNC_d 2c " << std::endl;
 
     TRACEN("=> for all v1 in snc1, qualify v1 with respect snc0");
 
@@ -671,6 +669,7 @@ public:
     TRACEN("end vertices"<<std::endl);
 
     CGAL_nef3_forall_vertices( v1, snc1i) {
+
       if( Ignore[v1]) continue;
       v0 = qualify_with_respect( point(v1), *sncp(), result);
       TRACEN("=> overlay of vertices v1 "<<&*v1<<" v0 "<<&*v0);
@@ -683,9 +682,7 @@ public:
 	     snc1i.number_of_vertices()<<' '<<
 	     result.number_of_vertices());
     }
-
-    //cerr << "Checkpoint SNC_d 2d " << std::endl;
-
+  
     TRACEN("=> edge facet intersection");
 
     TRACEN("vertices on snc0:");
@@ -698,30 +695,50 @@ public:
     CGAL_nef3_forall_vertices( v0, result) TRACEN(point(v0)<<&*(v0->sncp_));
     TRACEN("end vertices"<<std::endl);
 
-    SNC_ray_shoter rs(*sncp());
+    SNC_ray_shooter rs(*sncp());
 
     Halfedge_iterator e0, e1;
     Halffacet_iterator f0, f1;
-    CGAL_nef3_forall_edges( e0, *sncp()) { 
-      CGAL_nef3_forall_facets( f1, snc1i) { 
-	Point_3 ip;
-	if( rs.does_intersect_internally( segment(e0), f1, ip )) {
-	  TRACEN(" edge0 face1 intersection...");
-	  v0 = qualify_with_respect( ip, *sncp(), result);
-	  v1 = qualify_with_respect( ip, snc1i, result);
-	  binop_local_views( v0, v1, BOP, result);
-	  result.delete_vertex(v0);
-	  result.delete_vertex(v1);
+    Unique_hash_map<Halfedge_handle, bool> Ignore_halfedge(false);
+    CGAL_nef3_forall_halfedges( e0, *sncp()) {
+      TRACEN(PH(e0));
+      if(!Ignore_halfedge[e0]) {
+	CGAL_nef3_forall_facets( f1, snc1i) { 
+	  Point_3 ip;
+	  if( rs.does_intersect_internally( segment(e0), f1, ip )) {
+	    TRACEN(" edge0 face1 intersection...");
+	    v0 = qualify_with_respect( ip, *sncp(), result);
+	    v1 = qualify_with_respect( ip, snc1i, result);
+	    binop_local_views( v0, v1, BOP, result);
+	    result.delete_vertex(v0);
+	    result.delete_vertex(v1);
+	    Ignore_halfedge[twin(e0)]=true;
+	  }
 	}
       }
     }
+
     CGAL_nef3_forall_edges( e1, snc1i) { 
       CGAL_nef3_forall_facets( f0, *sncp()) { 
 	Point_3 ip;
 	if( rs.does_intersect_internally( segment(e1), f0, ip )) {
 	  TRACEN(" edge1 face0 intersection...");
+
+	  Halffacet_cycle_iterator it; 
+	  CGAL_nef3_forall_facet_cycles_of(it,f0){ 
+	    TRACEN("facet cycle");
+	    SHalfedge_handle es;
+	    if ( assign(es,it)) {
+	      SHalfedge_around_facet_circulator start(es), end(es);
+	      CGAL_For_all(start,end) {
+		TRACEN("vertex " << PH(source(previous(start))));
+	      }
+	    }
+	  }
+	  
 	  v1 = qualify_with_respect( ip, snc1i, result);
 	  v0 = qualify_with_respect( ip, *sncp(), result);
+
 	  binop_local_views( v0, v1, BOP, result);
 	  result.delete_vertex(v0);
 	  result.delete_vertex(v1);
@@ -752,9 +769,7 @@ public:
     SNC_io_parser<SNC_structure> O(std::cout, result);
     O.print();
 #endif // CGAL_NEF3_DUMP_SNC_OPERATORS
-
-    //cerr << "Checkpoint SNC_d 3 " << std::endl;
-
+ 
     // remove vertices whose local view is not that of a vertex
     Vertex_iterator vi, vin;
     for( vi = result.vertices_begin(); vi != result.vertices_end(); vi = vin) {
@@ -771,7 +786,7 @@ public:
 	   mark(vi) == SD.mark(SD.svertices_begin())))
 	result.delete_vertex(vi);
     }
-
+  
     // synthesis of spatial structure
     SNC_constructor C(result);
     C.pair_up_halfedges();
@@ -779,9 +794,6 @@ public:
     C.categorize_facet_cycles_and_create_facets();
     C.create_volumes();
     result.simplify();
-
-
-    //cerr << "Checkpoint SNC_d 4 " << std::endl;
 
 #ifdef CGAL_NEF3_DUMP_SNC_OPERATORS
     TRACEN("=> construction completed, result: ");
