@@ -1,9 +1,8 @@
 #  Makefile for CGAL's Interval Arithmetic package. [Sylvain Pion]
 
-CVS_MODULE_NAME=ia
 Package=Interval_arithmetic
 
-.PHONY: doc package filters test example submit version rtag
+.PHONY: doc package filters test example submit version tag
 
 WWW_base=/u/www/0/www/htdocs/files/equipes/prisme/CGAL/DR:/Members
 WWW_dir=$(WWW_base)/$(Package)
@@ -17,7 +16,7 @@ package: doc filters example clean $(Package).tar.gz
 	@echo "---- make test                 ----"
 	@echo "---- make VERSION=4.11 version ----"
 	@echo "---- cvs commit                ----"
-	@echo "---- make VERSION=4.11 rtag    ----"
+	@echo "---- make VERSION=4.11 tag     ----"
 	@echo "---- make package              ----"
 	@echo "---- make submit               ----"
 	@echo "-----------------------------------"
@@ -25,8 +24,8 @@ package: doc filters example clean $(Package).tar.gz
 version:
 	echo "$(VERSION) (`date '+%e %b %Y'`)" > version
 
-rtag:
-	cvs rtag v`echo $(VERSION) | sed -e "s/\./_/g"` $(CVS_MODULE_NAME)
+tag:
+	cvs tag -c v`echo $(VERSION) | sed -e "s/\./_/g"`
 
 submit: package
 	cp $(Package).tar.gz doc_ps/$(Package).ps version description.txt \
