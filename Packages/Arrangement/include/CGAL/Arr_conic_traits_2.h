@@ -827,7 +827,7 @@ public:
       {
 	// The source is to the left of p, and the traget is to its right.
 	Point_2        vps[2];
-	int            n_ps = curve1.get_points_at_x (p, vps);
+	CGAL_assertion_code(int n_ps = curve1.get_points_at_x (p, vps);)
 
 	CGAL_assertion (n_ps == 1);
 
@@ -839,7 +839,7 @@ public:
       {
 	// The source is to the right of p, and the traget is to its left.
 	Point_2        vps[2];
-	int            n_ps = curve1.get_points_at_x (p, vps);
+	CGAL_assertion_code(int n_ps = curve1.get_points_at_x (p, vps);)
 
 	CGAL_assertion (n_ps == 1);
 
@@ -982,7 +982,7 @@ public:
       {
 	// The source is to the right of p, and the traget is to its left.
 	Point_2        vps[2];
-	int            n_ps = curve1.get_points_at_x (p, vps);
+	CGAL_assertion_code(int n_ps = curve1.get_points_at_x (p, vps);)
 
 	CGAL_assertion (n_ps == 1);
 
@@ -994,7 +994,7 @@ public:
       {
 	// The source is to the left of p, and the traget is to its right.
 	Point_2        vps[2];
-	int            n_ps = curve1.get_points_at_x (p, vps);
+	CGAL_assertion_code(int n_ps = curve1.get_points_at_x (p, vps);)
 
 	CGAL_assertion (n_ps == 1);
 
