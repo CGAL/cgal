@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-int main(int argc, char *argv[])
+int main()
 {
  std::cout << "No FLTK or OpenGL or Mesa version installed!\n";
  return 0;
@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 typedef CGAL::Cartesian<double> rep_t;
 typedef CGAL::Point_3<rep_t> point_t;
 
-int main(int argc, char *argv[])
+int main()
 {
  CGAL::Viewer_3 W(500);
  point_t p(100,100,100);
