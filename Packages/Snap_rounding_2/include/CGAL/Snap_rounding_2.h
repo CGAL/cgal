@@ -988,6 +988,7 @@ bool Snap_rounding_2<Rep_>::change_number_of_kd_trees(
   {
     if(inp_number_of_kd_trees > 0) {
       number_of_kd_trees = inp_number_of_kd_trees;
+      need_sr = true;
       return(true);
     } else
       return(false);
@@ -998,6 +999,7 @@ bool Snap_rounding_2<Rep_>::change_pixel_size(NT inp_pixel_size)
   {
     if(inp_pixel_size > 0) {
       pixel_size = inp_pixel_size;
+      need_sr = true;
       return(true);
     } else
       return(false);
@@ -1007,6 +1009,7 @@ template<class Rep_>
 void Snap_rounding_2<Rep_>::do_isr(bool inp_do_isr)
   { 
     wheteher_to_do_isr = inp_do_isr;
+    need_sr = true;
   }
 
 template<class Rep_>
