@@ -248,8 +248,9 @@ swap_4(const F& f) {
 template < class F, class A >
 struct Binder_1 {
   typedef typename F::result_type result_type;
+  typedef typename Arity_traits< F >::Arity FArity;
   typedef
-    typename CGALi::Arity_minus_one< typename F::Arity >::Arity Arity;
+    typename CGALi::Arity_minus_one< FArity >::Arity Arity;
 
   Binder_1(const F& f_, const A& a_) : f(f_), a(a_) {}
 
@@ -285,8 +286,9 @@ protected:
 template < class F, class A >
 struct Binder_2 {
   typedef typename F::result_type result_type;
+  typedef typename Arity_traits< F >::Arity FArity;
   typedef
-    typename CGALi::Arity_minus_one< typename F::Arity >::Arity Arity;
+    typename CGALi::Arity_minus_one< FArity >::Arity Arity;
 
   Binder_2(const F& f_, const A& a_) : f(f_), a(a_) {}
 
@@ -318,8 +320,9 @@ protected:
 template < class F, class A >
 struct Binder_3 {
   typedef typename F::result_type result_type;
+  typedef typename Arity_traits< F >::Arity FArity;
   typedef
-    typename CGALi::Arity_minus_one< typename F::Arity >::Arity Arity;
+    typename CGALi::Arity_minus_one< FArity >::Arity Arity;
 
   Binder_3(const F& f_, const A& a_) : f(f_), a(a_) {}
 
@@ -346,8 +349,9 @@ protected:
 template < class F, class A >
 struct Binder_4 {
   typedef typename F::result_type result_type;
+  typedef typename Arity_traits< F >::Arity FArity;
   typedef
-    typename CGALi::Arity_minus_one< typename F::Arity >::Arity Arity;
+    typename CGALi::Arity_minus_one< FArity >::Arity Arity;
 
   Binder_4(const F& f_, const A& a_) : f(f_), a(a_) {}
 
@@ -369,8 +373,9 @@ protected:
 template < class F, class A >
 struct Binder_5 {
   typedef typename F::result_type result_type;
+  typedef typename Arity_traits< F >::Arity FArity;
   typedef
-    typename CGALi::Arity_minus_one< typename F::Arity >::Arity Arity;
+    typename CGALi::Arity_minus_one< FArity >::Arity Arity;
 
   Binder_5(const F& f_, const A& a_) : f(f_), a(a_) {}
 
