@@ -24,6 +24,7 @@
 #define CGAL_LEDA_INTEGER_H
 
 #include <CGAL/basic.h>
+#include <CGAL/LEDA_basic.h>
 #include <LEDA/integer.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -59,7 +60,7 @@ io_tag(const leda_integer &)
 inline
 Sign
 sign(const leda_integer& n)
-{ return (Sign)::sign(n); }
+{ return (Sign) CGAL_LEDA_SCOPE::sign(n); }
 #endif
 
 inline

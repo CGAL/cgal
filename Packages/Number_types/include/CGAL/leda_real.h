@@ -33,6 +33,7 @@
 */
 
 #include <CGAL/basic.h>
+#include <CGAL/LEDA_basic.h>
 
 // #ifndef IO_IO_TAGS_H
 // #include <CGAL/IO/io_tags.h>
@@ -58,7 +59,7 @@ to_double(const leda_real & r)
 inline
 leda_real
 sqrt(const leda_real & r)
-{ return ::sqrt(r); }
+{ return CGAL_LEDA_SCOPE::sqrt(r); }
 
 inline
 Number_tag
@@ -84,13 +85,13 @@ io_tag(const leda_real &)
 inline
 Sign
 sign(const leda_real& r)
-{ return (Sign)::sign(r); }
+{ return (Sign)CGAL_LEDA_SCOPE::sign(r); }
 
 inline
 Comparison_result
 compare(const leda_real& r1, const leda_real& r2)
 {
-  int c = ::compare(r1,r2);
+  int c = CGAL_LEDA_SCOPE::compare(r1,r2);
   return (c < 0) ? SMALLER : ((0 < c) ?  LARGER : EQUAL);
 }
 #endif // CGAL_CFG_NO_NAMESPACE

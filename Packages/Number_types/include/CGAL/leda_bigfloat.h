@@ -26,6 +26,7 @@
 #define CGAL_BIGFLOAT_H
 
 #include <CGAL/basic.h>
+#include <CGAL/LEDA_basic.h>
 
 // #ifndef IO_IO_TAGS_H
 // #include <CGAL/IO/io_tags.h>
@@ -46,7 +47,7 @@ CGAL_BEGIN_NAMESPACE
 inline
 double
 to_double(const leda_bigfloat & b)
-{ return ::to_double(b); }
+{ return CGAL_LEDA_SCOPE::to_double(b); }
 #endif // CGAL_CFG_NO_NAMESPACE
 
 inline
@@ -57,12 +58,12 @@ number_type_tag(const leda_bigfloat& )
 inline
 bool
 is_finite(const leda_bigfloat & b)
-{ return !( isInf(b) || isNaN(b) ); }
+{ return !( CGAL_LEDA_SCOPE::isInf(b) || CGAL_LEDA_SCOPE::isNaN(b) ); }
 
 inline
 bool
 is_valid(const leda_bigfloat & b)
-{ return !( isNaN(b) ); }
+{ return !( CGAL_LEDA_SCOPE::isNaN(b) ); }
 
 inline
 io_Operator
@@ -75,7 +76,7 @@ to_interval (const leda_bigfloat & z)
 {
   // assuming leda_bigfloat guarantee 1 bit error max
   Protect_FPU_rounding<true> P (CGAL_FE_TONEAREST);
-  Interval_nt_advanced approx (::to_double(z));
+  Interval_nt_advanced approx (CGAL_LEDA_SCOPE::to_double(z));
   FPU_set_cw(CGAL_FE_UPWARD);
   return approx + Interval_base::Smallest;
 }

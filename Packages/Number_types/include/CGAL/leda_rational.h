@@ -25,6 +25,7 @@
 #define CGAL_LEDA_RATIONAL_H
 
 #include <CGAL/basic.h>
+#include <CGAL/LEDA_basic.h>
 
 // #ifndef CGAL_NUMBER_TYPE_TAGS_H
 // #include <CGAL/number_type_tags.h>
@@ -79,7 +80,7 @@ io_tag(const leda_rational &)
 inline
 Sign
 sign(const leda_rational& r)
-{ return (Sign)::sign(r); }
+{ return (Sign) CGAL_LEDA_SCOPE::sign(r); }
 #endif // CGAL_CFG_NO_NAMESPACE
 
 inline
