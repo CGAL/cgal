@@ -7,6 +7,12 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: Added support for libCGALWin.
+GLOB: Added messages for stupid users.
+GLOB: modified guess_os to truncate everything in "()" in the
+GLOB: output of uname -r
+GLOB: adding special alpha-linux handling
+GLOB: changed the location of vc7/ stuff (DVP)
 GLOB: Changed STL include for VC7-beta.
 GLOB: Set -ftemplate-depth25 for gcc 2.* only. (gcc 3 has a default of 50.)
 GLOB: Fixed clocales -> clocale.
@@ -20,6 +26,9 @@ GLOB: Recognize existing _LEDA config/install files.
 GLOB: The _LEDA suffix is now part of the config/install file as well.
 GLOB: Run the compiler tests when it becomes necessary only.
 ALL : Changed CGAL version to 2.3.
+DOCS: - Remove some obsolete or buggy references.
+DOCS: Removed egcs-1.* support.
+DOCS: Updated http links.
 
 //---------------------------------------------------------------------
 //	 CGAL 2.2
