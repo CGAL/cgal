@@ -27,7 +27,7 @@ _test_vertex_tds_3(const Vertex &)
 {
   
   typedef typename Vertex::Point             Point;
-  typedef typename Vertex::Vertex            Vertex;
+  //  typedef typename Vertex::Vertex            Vertex;
   typedef typename Vertex::Cell              Cell;
 
   // Build object 

@@ -28,7 +28,7 @@ _test_cell_tds_3( const Cell &)
   
   
   typedef typename Cell::Vertex            Vertex;
-  typedef typename Cell::Cell              Cell;
+  //  typedef typename Cell::Cell              Cell;
 
   typedef typename Cell::Tds               Tds;
 

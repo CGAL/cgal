@@ -40,7 +40,7 @@ class Triangulation_ds_cell_circulator_3
   // circulates on cells around a given edge
 public:
 
-  friend class Tds;
+  //  friend class Tds;
   typedef typename Tds::Cell Cell;
   typedef typename Tds::Edge Edge;
   typedef typename Tds::Vertex Vertex;

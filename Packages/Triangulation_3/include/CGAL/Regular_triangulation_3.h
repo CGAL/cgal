@@ -504,7 +504,7 @@ insert(const Weighted_point & p, Cell_handle start )
 
 	    std::set<void*, std::less<void*> >::const_iterator it;
 	    for ( it = conflicts.begin(); it != conflicts.end(); ++it) {
-	      delete(*it);
+	      delete((Cell*)*it);
 	    }
 	  }
 	  else {
@@ -530,7 +530,7 @@ insert(const Weighted_point & p, Cell_handle start )
     {
       // temporary : will only work for non degenerated dimensions
       // (only for the first 4 points if they form a true tetrahedron)
-      return Triangulation_3::insert(p,start);
+      return Triangulation_3<Gt,Tds>::insert(p,start);
     }
   }
 }
@@ -584,7 +584,7 @@ star_region_delete_points(std::set<void*, std::less<void*> > & region,
       p = new Point( v_tmp->point() );
       pts.insert( p );
       set_number_of_vertices(number_of_vertices()-1);
-      delete(*it);
+      delete((Vertex *)*it);
     }
   }
     
