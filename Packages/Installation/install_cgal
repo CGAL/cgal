@@ -4141,14 +4141,14 @@ _set_support()
 {
     CGAL_SUPPORT_COMPILER=''
     case `compiler_description` in
-	*Borland*)
-	    case `compiler_version` in
-		5.5*) CGAL_SUPPORT_COMPILER='y';;
-	    esac
-	    ;;
+#	*Borland*)
+#	    case `compiler_version` in
+#		5.5*) CGAL_SUPPORT_COMPILER='y';;
+#	    esac
+#	    ;;
 	*SUNPRO*)
 	    case `compiler_version` in
-		5.3*) CGAL_SUPPORT_COMPILER='y';;
+		5.3*|5.4*) CGAL_SUPPORT_COMPILER='y';;
 	    esac
 	    ;;
 	*MIPSPRO*n32*|*MIPSPRO*64*) 
@@ -4160,6 +4160,11 @@ _set_support()
 	    case `compiler_version` in
 		2.95*) CGAL_SUPPORT_COMPILER='y';;
 		3.[0123]*) CGAL_SUPPORT_COMPILER='y';;
+	    esac
+	    ;;
+	*Intel*)
+	    case `compiler_version` in
+		7*) CGAL_SUPPORT_COMPILER='y';;
 	    esac
 	    ;;
 	*VC++*)

@@ -39,7 +39,7 @@
 
 %% macro for Intel C++ Compiler
 \newcommand{\icl}[1]{\textsc{Intel}~\texttt{C++}~{\rm #1}}
-\newcommand{\iclurl}{\path'http://developer.intel.com/vtune/compilers/cpp/'}
+\newcommand{\iclurl}{\path'http://developer.intel.com/software/products/compilers/'}
 
 %% macro for Microsoft Windows
 \newcommand{\mswin}{\textsc{MS}~Windows}
@@ -122,12 +122,14 @@ that we could not work around all of them.
     \Gcc{2.95.3, 3.0, 3.1, 3.2, 3.3} \footnotemark[9]            
     & IRIX 6.5 / Solaris 2.6+ / Linux 2.x / 
       \mswin\ 95/98/2000/XP/NT4\footnotemark[10]\\\hline
-    \sunprocc{5.3} \footnotemark[11]                 
+    \sunprocc{5.3, 5.4} \footnotemark[11]                 
     & Solaris 2.6+\\\hline
-    \msvc{7.0} (\textsc{.NET}) \footnotemark[12]           
+    \msvc{7.0, 7.1} (\textsc{.NET}) \footnotemark[12]           
     & \mswin\ 95/98/2000/XP/NT4\footnotemark[10]\\\hline
-    \bcc{5.5.1} \footnotemark[13]                          
+    \icl{7.1} \footnotemark[13]                          
     & \mswin\ 95/98/2000/XP/NT4\footnotemark[10]\\\hline
+%%    \bcc{5.5.1} \footnotemark[13]                          
+%%    & \mswin\ 95/98/2000/XP/NT4\footnotemark[10]\\\hline
   \end{tabular}
 \end{center}
 \footnotetext[7]{\mipsprourl}\addtocounter{footnote}{1}
@@ -136,7 +138,8 @@ that we could not work around all of them.
   (\path~http://www.cygwin.com~)}\addtocounter{footnote}{1}
 \footnotetext[11]{\sunproccurl}\addtocounter{footnote}{1}
 \footnotetext[12]{\msvcurl}\addtocounter{footnote}{1}
-\footnotetext[13]{\bccurl}\addtocounter{footnote}{1}
+\footnotetext[13]{\iclurl}\addtocounter{footnote}{1}
+%%\footnotetext[13]{\bccurl}\addtocounter{footnote}{1}
 \addtocounter{footnote}{1}
 
 If you are going to install \cgal\ using
@@ -190,7 +193,7 @@ decompression program by itself.
 In both cases the directory \cgaldir\ will be created. This directory
 contains the following subdirectories:\index{directories!structure}
 
-\footnotetext[14]{\stlportpage}\addtocounter{footnote}{1}
+%%\footnotetext[14]{\stlportpage}\addtocounter{footnote}{1}
 \begin{center}
   \renewcommand{\arraystretch}{1.3}
   \gdef\lcTabularBorder{2}
@@ -209,9 +212,6 @@ contains the following subdirectories:\index{directories!structure}
     \texttt{make}      & files with platform dependent makefile settings\\\hline
     \texttt{scripts}   & some useful scripts (e.g. for creating makefiles)\\\hline
     \texttt{src}       & source files\\\hline
-    \texttt{stlport}   & 
-         a customized version of \texttt{Stlport-3.2.1}\footnotemark[14] 
-         that is used with \msvc{6.0}\\\hline
   \end{tabular}
 \end{center}
 
