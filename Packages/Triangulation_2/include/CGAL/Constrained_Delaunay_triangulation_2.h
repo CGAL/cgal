@@ -59,7 +59,7 @@ public:
     Constrained_triangulation(gt) { }
 
   Constrained_Delaunay_triangulation_2(const CD_triangulation& cdt)
-    : Triangulation(cdt) {}
+    : Constrained_triangulation(cdt) {}
 
   Constrained_Delaunay_triangulation_2(std::list<Constraint>& lc, 
 					    const Gt& gt=Gt())
@@ -71,7 +71,23 @@ public:
 	insert((*itc).first, (*itc).second);
 	++itc;
       } while (itc != list_contraintes.end());
+      CGAL_triangulation_postcondition( is_valid() );
   }
+
+  template<class InputIterator>
+  Constrained_triangulation_2(InputIterator first,
+			      InputIterator last,
+			      const Gt& gt=Gt() )
+     : Constrained_Delaunay_triangulation_2(gt)
+  {
+    while(first != last){
+          insert((*first).first, (*first).second);
+	  first++;
+    }
+    CGAL_triangulation_postcondition( is_valid() );
+  }
+
+
 
   // FLIPS
   bool is_flipable(Face_handle f, int i) const;
