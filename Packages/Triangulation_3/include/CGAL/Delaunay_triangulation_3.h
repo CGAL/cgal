@@ -134,8 +134,16 @@ public:
 
   // to be made private after tests
   void make_hole_3D(Vertex_handle v,
-		    std::set<Facet> & boundhole,
-		    std::set<Vertex_handle> & boundvert);	
+                    std::set<Facet> & boundhole,
+                    std::set<Vertex_handle> & boundvert,
+                    std::list<Facet> & outside,
+                    std::list<Facet> & inside); 
+  
+  void undo_make_hole_3D(std::list<Facet> & outside,
+                         std::list<Facet> & inside);
+  
+  void delete_cells(std::list<Cell_handle> & cells);
+  void delete_cells(std::list<Facet> & cells);
 
   bool fill_hole_3D(std::set<Facet> & boundhole,
 		    std::set<Vertex_handle> & boundvert);	
@@ -368,21 +376,28 @@ remove_3D(Vertex_handle v)
 
   //  std::cout << "removed point " << v->point() << std::endl;
 
-  make_hole_3D(v, boundary, bdvert);
-  bool b = fill_hole_3D(boundary, bdvert);
-
-  delete( &(*v) );
-  set_number_of_vertices(number_of_vertices()-1);
-
-  return b;
+  std::list<Facet> outside, inside;
+  make_hole_3D(v, boundary, bdvert, outside, inside);
+  bool filled = fill_hole_3D(boundary, bdvert);
+if(filled){
+    delete( &(*v) );
+    delete_cells(inside);
+    set_number_of_vertices(number_of_vertices()-1);
+  } else {
+    undo_make_hole_3D(outside, inside);
+  }
+  return filled;
+  
 }// remove_3D(v)
 
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_3<Gt,Tds>::
 make_hole_3D( Vertex_handle v, 
-	      std::set<Facet> & boundhole,
-	      std::set<Vertex_handle> & boundvert)
+              std::set<Facet> & boundhole,
+              std::set<Vertex_handle> & boundvert,
+                    std::list<Facet> & outside,
+                    std::list<Facet> & inside)
 {
   CGAL_triangulation_precondition( ! test_dim_down(v) );
 
@@ -401,7 +416,9 @@ make_hole_3D( Vertex_handle v,
     opp_cit = (*cit)->neighbor( indv );
     
     boundhole.insert
-      (	std::make_pair( opp_cit, opp_cit->index(*cit)) );
+      ( std::make_pair( opp_cit, opp_cit->index(*cit)) );
+    outside.push_back(  std::make_pair( opp_cit, opp_cit->index(*cit)) );
+    inside.push_back(   std::make_pair( Cell_handle(*cit), indv) );
     for ( i=0; i<4; i++) {
       if ( i != indv ) {
 	vi = (*cit)->vertex(i);
@@ -412,14 +429,58 @@ make_hole_3D( Vertex_handle v,
 	  }
       }
     }
-    
-    _tds.delete_cell( &*(*cit) );
 
     ++cit;
   } while ( cit != cdone );
 
   return;
 }// make_hole_3D
+
+
+
+
+
+
+template < class Gt, class Tds >
+void
+Delaunay_triangulation_3<Gt,Tds>::
+undo_make_hole_3D(std::list<Facet> & outside,
+                  std::list<Facet> & inside){
+  std::list<Facet>::iterator cit = inside.begin();
+  for(std::list<Facet>::iterator fit = outside.begin(); 
+      fit != outside.end();
+      fit++) {
+    Cell_handle ch = (*fit).first;
+    ch->set_neighbor((*fit).second, (*cit).first);
+    CGAL_triangulation_assertion( (*cit).first->neighbor((*cit).second) == ch );
+    for(int i = 0; i < 4; i++) {
+      ch->vertex(i)->set_cell(ch);
+    }
+    cit++;
+  }
+}
+
+
+template < class Gt, class Tds >
+void
+Delaunay_triangulation_3<Gt,Tds>::
+delete_cells(std::list<Cell_handle> & hole) {
+  for(std::list<Cell_handle>::iterator cit = hole.begin(); cit != hole.end(); cit++) {
+    _tds.delete_cell( &*(*cit) );
+  }
+}
+
+
+template < class Gt, class Tds >
+void
+Delaunay_triangulation_3<Gt,Tds>::
+delete_cells(std::list<Facet> & hole) {
+    for(std::list<Facet>::iterator cit = hole.begin(); cit != hole.end(); cit++) {
+     _tds.delete_cell( &*((*cit).first) );
+   }
+}
+
+
 
 //debug
 template < class Gt, class Tds >
@@ -444,6 +505,7 @@ fill_hole_3D( std::set<Facet> & boundhole,
   typename std::set<Facet>::iterator fit;
   typename std::set<Facet>::iterator fitset_tmp;
 
+  std::list<Cell_handle> cells;
   Facet fit_stick;
   typename std::list<Facet>::iterator fitlist_tmp;
 
@@ -534,6 +596,7 @@ fill_hole_3D( std::set<Facet> & boundhole,
     if ( nbnew == 0 ) {
       // the program is looping
       std::cerr << " !!!!! IMPOSSIBLE TO RETRIANGULATE !!!!! " << std::endl;
+      delete_cells(cells);
       return false;
     }
     nbnew = 0;
