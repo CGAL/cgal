@@ -23,6 +23,7 @@ int main()
 
 #include <unistd.h>
 #include <vector>
+#include <algorithm>
 #include <cassert>
 
 struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
