@@ -8,6 +8,8 @@
 #include <Inventor/nodes/SoTexture2.h>
 #include <Inventor/nodes/SoRotation.h>
 #include <Inventor/nodes/SoComplexity.h>
+#include <Inventor/nodes/SoDirectionalLight.h>
+#include <Inventor/nodes/SoPerspectiveCamera.h>
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_layer.h>
@@ -42,24 +44,35 @@ SoQtExaminerViewer * viewer;
 SoSeparator *root;
 Node_terrain<Delaunay> *terrain;
 SoComplexity * complexity_node;
+SoPerspectiveCamera *cam1;
+
+void pp(){
+  std::cout << "print\n";
+}
 
 SoSeparator* get_main_scene(){
 
   dt.clear();
   SoSeparator * sep1 = new SoSeparator;
   SoMaterial * material = new SoMaterial;
-  SoRotation * rot = new SoRotation;
+  //SoRotation * rot = new SoRotation;
   complexity_node = new SoComplexity;
   terrain = new Node_terrain<Delaunay>(dt);
 
-  rot->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 30.0f);
-  material->diffuseColor.setValue(0.8f, 0.2f, 0.0);
+  //rot->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 30.0f);
+  material->diffuseColor.setValue(0.5f, 0.6f, 0.0f);
   complexity_node->value.setValue(0.7f);
+
+  cam1 = new SoPerspectiveCamera;  
+
   sep1->ref();
-  sep1->addChild(rot);
+  sep1->addChild(cam1);
+  //sep1->addChild(rot);
   sep1->addChild(complexity_node);
   sep1->addChild(material);
+  sep1->addChild(new SoDirectionalLight);
   sep1->addChild(terrain);
+  
 
   return sep1;
 
@@ -106,6 +119,7 @@ public:
     viewer->getBaseWidget()->resize(300, 300);
 
     topLayout1->addWidget(viewer->getBaseWidget());
+    //topLayout1->addWidget(viewer->getRenderAreaWidget());
     topLayout1->addWidget(widget);        
   }
   ~Layout_widget(){}
@@ -158,7 +172,8 @@ public:
 
     //the standard toolbar
     stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this);
-    this->addToolBar(stoolbar->toolbar(), Top, FALSE);
+    //this->addToolBar(stoolbar->toolbar(), RIGHT, FALSE);
+    this->addDockWindow(stoolbar->toolbar(), DockTop, FALSE);
 
 
   }
@@ -194,7 +209,7 @@ public slots:
       for ( int y = 0; y < gridSize; y++ ) {
         if ( progress.wasCancelled() )
           exit(1);
-        for(int count = 0; count < 6; count++){
+        for(int count = 0; count < 10; count++){
           p.x = (double) x / (101 - frequency);
           p.y = (double) y / (101 - frequency);
 	        p.z = (double) landscape[x][y] / (101 - frequency);
@@ -208,9 +223,31 @@ public slots:
     }
     progress.setProgress( gridSize );
     terrain->compute_normals_for_faces();
-    terrain->compute_normals_for_vertices();    
+    terrain->compute_normals_for_vertices();
+        
+    Finite_vertices_iterator it = dt.finite_vertices_begin();        
+    double  xmin = (*it).point().x(), ymin = (*it).point().y(), zmin = (*it).point().z(),
+            xmax = (*it).point().x(), ymax = (*it).point().y(), zmax = (*it).point().z();
+    while(it != dt.finite_vertices_end()){
+      if((*it).point().x() < xmin)
+        xmin = (*it).point().x();
+      if((*it).point().y() < ymin)
+        ymin = (*it).point().y();
+      if((*it).point().x() > xmax)
+        xmax = (*it).point().x();
+      if((*it).point().y() > ymax)
+        ymax = (*it).point().y();
+      if((*it).point().z() > zmax)
+        zmax = (*it).point().z();
+      it++;
+    }    
+    cam1->position.setValue(SbVec3f(xmin - (xmax-xmin)/2, ymin - (ymax-ymin)/2, 4*zmax));
+    cam1->pointAt(SbVec3f(xmin + (xmax-xmin)/2, ymin + (ymax-ymin)/2, zmin), SbVec3f(0, 0, 1));
+    widget->clear_history();
+    widget->set_window(xmin, xmax, ymin, ymax);
     terrain->touch();
-    viewer->viewAll();
+    //viewer->viewAll();
+    viewer->render();
     widget->redraw();
     
   }
@@ -231,18 +268,52 @@ public slots:
 
   void load_terrain(){
     QString s( QFileDialog::getOpenFileName( QString::null,
-			    "CGAL files (*.cgal)", this ) );
+			    "CGAL files (*.cgal);;All files (*.*)", this ) );
     if ( s.isEmpty() )
         return;
       
     std::ifstream in(s);
     //CGAL::set_ascii_mode(out);
     dt.clear();
-    in >> dt;
+    
+    if(s.right(5) == ".cgal")
+    {
+      in >> dt;
+    } else {
+      TPoint_3 p;
+      while (in){
+        in >> p;
+        dt.insert(p);
+      }
+    }
+    //in >> dt;
     terrain->compute_normals_for_faces();
-    terrain->compute_normals_for_vertices();    
-    terrain->touch();
-    viewer->viewAll();
+    terrain->compute_normals_for_vertices();
+    
+    Finite_vertices_iterator it = dt.finite_vertices_begin();        
+    double  xmin = (*it).point().x(), ymin = (*it).point().y(), zmin = (*it).point().z(),
+            xmax = (*it).point().x(), ymax = (*it).point().y(), zmax = (*it).point().z();
+    while(it != dt.finite_vertices_end()){
+      if((*it).point().x() < xmin)
+        xmin = (*it).point().x();
+      if((*it).point().y() < ymin)
+        ymin = (*it).point().y();
+      if((*it).point().x() > xmax)
+        xmax = (*it).point().x();
+      if((*it).point().y() > ymax)
+        ymax = (*it).point().y();
+      if((*it).point().z() > zmax)
+        zmax = (*it).point().z();
+      it++;
+    }    
+    cam1->position.setValue(SbVec3f(xmin , ymin , 4*zmax));
+    cam1->pointAt(SbVec3f(xmin + (xmax-xmin)/2, ymin + (ymax-ymin)/2, zmin), SbVec3f(0, 0, 1));
+
+    widget->clear_history();
+    widget->set_window(xmin, xmax, ymin, ymax);
+    terrain->touch();    
+    //viewer->viewAll();
+    viewer->render();
     widget->redraw();
   }
   void save_terrain(){
@@ -263,6 +334,7 @@ public slots:
     }
   }
   void print_to_ps(){
+        
   }
   void set_window(double xmin, double xmax, double ymin, double ymax)
   {

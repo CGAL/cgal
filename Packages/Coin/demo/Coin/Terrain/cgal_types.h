@@ -19,7 +19,7 @@ typedef CGAL::Triangulation_euclidean_traits_xy_3<Rp>  Gt;
 typedef CGAL::Delaunay_triangulation_2<Gt> Delaunay;
 typedef Delaunay::Finite_edges_iterator Finite_edges_iterator;
 typedef Delaunay::Finite_faces_iterator Finite_faces_iterator;  
-
+typedef Delaunay::Finite_vertices_iterator Finite_vertices_iterator;
 typedef Rp::Point_3   TPoint_3;
 
 
