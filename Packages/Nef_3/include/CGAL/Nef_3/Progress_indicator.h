@@ -66,7 +66,7 @@ class Progress_indicator_cout
 {
   typedef Progress_indicator_ostream Base;
  public:
-  Progress_indicator_clog( long n, char *msg, char s='\r') 
+  Progress_indicator_cout( long n, char *msg, char s='\r') 
     : Base( std::cout, n, msg, s) {}
 };
 
