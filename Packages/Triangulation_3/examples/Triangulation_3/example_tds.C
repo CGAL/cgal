@@ -18,35 +18,33 @@
 // coordinator   : INRIA Sophia Antipolis (Mariette Yvinec)
 //
 // ============================================================================
+
 #include <CGAL/basic.h>
 
 #include <iostream>
 #include <fstream>
-
-#include <assert.h>
-
+#include <cassert>
 #include <vector>
 
-#include <CGAL/Cartesian.h>
-
-#include <CGAL/Triangulation_geom_traits_3.h>
 #include <CGAL/Triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/Triangulation_data_structure_3.h>
 
-// the definition of the geometric traits class is necessary to
-// instanciate base vertices and cells but will in fact never be used
-// in the program 
-typedef CGAL::Cartesian<double>  Repr;
-typedef CGAL::Triangulation_geom_traits_3<Repr> Gt;
+// We define a minimal traits class, because the Point_3 type is needed in
+// order to instantiate Triangulation_vertex_base_3<>.
 
-typedef CGAL::Triangulation_vertex_base_3<Gt> Vb;
-typedef CGAL::Triangulation_cell_base_3<Gt> Cb;
+class empty_traits {
+  class Point_3 {};
+};
+typedef empty_traits Gt;
+
+typedef CGAL::Triangulation_vertex_base_3<Gt>       Vb;
+typedef CGAL::Triangulation_cell_base_3<Gt>         Cb;
 
 typedef CGAL::Triangulation_data_structure_3<Vb,Cb> Tds;
 
-typedef Tds::Cell TDSCell;
-typedef Tds::Vertex TDSVertex;
+typedef Tds::Cell                                   TDSCell;
+typedef Tds::Vertex                                 TDSVertex;
 
 int main()
 {
@@ -56,10 +54,9 @@ int main()
   assert( T.dimension() == -2 );
   assert( T.is_valid() );
 
-  std::vector<TDSVertex> V(5);
   std::vector<TDSVertex*> PV(7);
 
-  PV[0] = T.insert_increase_dimension(V[0]);
+  PV[0] = T.insert_increase_dimension(NULL);
   assert( T.number_of_vertices() == 1 );
   assert( T.dimension() == -1 );
   assert( T.is_valid() );
@@ -67,7 +64,7 @@ int main()
   int i;
   // each of the following insertions of vertices increases the dimension
   for ( i=1; i<5; i++ ) {
-    PV[i] = T.insert_increase_dimension(V[i], PV[0]);
+    PV[i] = T.insert_increase_dimension(NULL, PV[0]);
     assert( T.number_of_vertices() == i+1 );
     assert( T.dimension() == i-1 );
     assert( T.is_valid() );
@@ -83,14 +80,14 @@ int main()
   // PV[0] is the vertex of index ind in c
 
   // insertion of a new vertex in the facet opposite to PV[0]
-  PV[5] = T.insert_in_facet(TDSVertex(), c, ind);
+  PV[5] = T.insert_in_facet(NULL, c, ind);
   
   assert( T.number_of_vertices() == 6 );
   assert( T.dimension() == 3 );
   assert( T.is_valid() );
 
   // insertion of a new vertex in c
-  PV[6] = T.insert_in_cell( TDSVertex(), c );
+  PV[6] = T.insert_in_cell(NULL, c);
 
   assert( T.number_of_vertices() == 7 );
   assert( T.dimension() == 3 );
