@@ -1,3 +1,23 @@
+// ======================================================================
+//
+// Copyright (c) 2001 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : $CGAL_Revision: CGAL-2.4-I-5 $
+// release_date  : $CGAL_Date: 2001/08/31 $
+//
+// file          : include/CGAL/IO/Segment_circle_Window_stream.h
+// package       : Arrangement (2.19)
+// maintainer    : Eyal Flato <flato@math.tau.ac.il>
+// author(s)     : ?
+// coordinator   : ?
+//
+// ======================================================================
 #ifndef SEGMENT_CIRCLE_WINDOW_STREAM_H
 #define SEGMENT_CIRCLE_WINDOW_STREAM_H
 
@@ -18,7 +38,7 @@ Window_stream& operator<<(Window_stream& os,
 
   if (cv.is_segment())
   {
-    W << leda_segment(sx, sy, tx, ty);
+    os << leda_segment(sx, sy, tx, ty);
   } 
   // The arc is circular
   else
