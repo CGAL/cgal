@@ -1,3 +1,6 @@
+22 June 2004 Sylvain Pion
+- Add some "using base::member;" to please g++ 3.4.
+
 14 May 2004 Sylvain Pion
 - demo/alpha_shapes_2.C : add static_cast<int> to stop warning.
 

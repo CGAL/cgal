@@ -84,6 +84,22 @@ public:
 
   typedef typename Dt::Locate_type Locate_type;
 
+  using Dt::finite_vertices_begin;
+  using Dt::finite_vertices_end;
+  using Dt::faces_begin;
+  using Dt::faces_end;
+  using Dt::edges_begin;
+  using Dt::edges_end;
+  using Dt::number_of_vertices;
+  using Dt::cw;
+  using Dt::ccw;
+  using Dt::VERTEX;
+  using Dt::EDGE;
+  using Dt::FACE;
+  using Dt::OUTSIDE_CONVEX_HULL;
+  using Dt::OUTSIDE_AFFINE_HULL;
+  using Dt::dimension;
+
   // for backward compatibility
   typedef Finite_vertices_iterator Vertex_iterator;
   typedef Finite_faces_iterator Face_iterator;
