@@ -124,7 +124,7 @@ private:
 
 protected:
   // some more local types
-  typedef typename Agds::Vertex            Vertex;
+  //  typedef typename Agds::Vertex            Vertex;
 
   // point lists
   typedef std::vector<Site_2>              Site_list;
