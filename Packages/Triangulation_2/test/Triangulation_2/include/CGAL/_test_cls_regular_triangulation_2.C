@@ -642,8 +642,7 @@ _test_cls_regular_triangulation_2( const Triangulation & )
 							       std::back_inserter(hidden_vertices));
   be_inserter = bev_pit.first;
   v_inserter = bev_pit.second;
-  //std::cout << "hidden " << hidden_vertices.size()<<" bound " << hole_bd.size() << " hole " << conflicts.size()<<std::endl;
-  assert(hole_bd.size() <= conflicts.size() + 2);
+  assert(2*hidden_vertices.size() +  hole_bd.size() - conflicts.size() == 2);
   conflicts.clear();
   hole_bd.clear();
   hidden_vertices.clear();
