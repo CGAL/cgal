@@ -1,3 +1,6 @@
+2.11    (20 Mar 2001)
+- Added squared_radius() and Compute_squared_radius_[23].
+
 2.10    (16 Mar 2001)
 - Added constructor Vector(Point, Point).
 - Fix copy-paste bug in Compute_squared_distance that prevented compilation.
