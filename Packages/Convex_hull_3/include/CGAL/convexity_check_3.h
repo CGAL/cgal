@@ -78,7 +78,7 @@ bool is_strongly_convex_3(Polyhedron& P, const Traits& traits)
   for ( f_it = P.facets_begin(); f_it != P.facets_end(); ++f_it)
      if (!is_locally_convex(f_it, traits)) 
 	return false;
- 
+
   // Check 2: see if a point interior to the hull is actually on the same
   // side of each facet of P
  
@@ -96,23 +96,19 @@ bool is_strongly_convex_3(Polyhedron& P, const Traits& traits)
   r = v_it->point();  v_it++;
   
   // Now take 4th point s.t. it's not coplaner with them
-  do
-  {
-    s = v_it->point();  
+  while (v_it != P.vertices_end() && coplanar(p, q, r, (*v_it).point()))
     v_it++;
-  } while (coplanar(p,q,r,s) && (v_it != P.vertices_end()));
-  
 
   // if no such point, all are coplanar so it is not strongly convex
   if( v_it == P.vertices_end() )
     return false;
 
-  
+  s = (*v_it).point();
+
   // else construct a point inside the polyhedron
   typename Traits::Construct_centroid_3 construct_centroid =
            traits.construct_centroid_3_object();
   Point_3 inside_pt = construct_centroid(p,q,r,s);
-
 
   typename Traits::Oriented_side_3 oriented_side = 
             traits.oriented_side_3_object();
