@@ -41,6 +41,7 @@ void make_polygon(Polygon_2& polygon)
    polygon.push_back(Point_2(196,326));
 }
 
+
 void draw_polygons(const Polygon_2& polygon, 
                    const Polygon_list& partition_polys,
                    CGAL::Window_stream& W)
