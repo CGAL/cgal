@@ -29,20 +29,21 @@ Expects for the first template argument a model of the concept
 Excepts for the second template argument a model for the concept \ccc{Splitter}.
 It defaults  to \ccc{Sliding_midpoint<PointTraits>}
 
-Expects for the third template argument \ccc{CGAL::Tag_true} if the 
-tree shall be built with extended nodes, and otherwise \ccc{CGAL::Tag_false}.
+Expects for the third template argument \ccc{CGAL::Tag_true}, if the 
+tree shall be built with extended nodes, and \ccc{CGAL::Tag_false} else.
 
 \ccTypes
 
 \ccTypedef{PointTraits::Point Point;} {Point class.}
 \ccTypedef{PointTraits::NT NT;}{Number type.}
-\ccTypedef{Splitter::Container Point_container;} {Point container.}
-\ccTypedef{Kd_tree<PointTraits,Splitter> Tree;}{Tree type.}
+\ccNestedType{Splitter;}{Splitter type.}
+
+\begin{ccAdvanced}
 \ccTypedef{Kd_tree_node<PointTraits, Splitter> Node;}{Node type.}
 \ccNestedType{Node_handle;}{A handle with value type \ccc{Node}.}
 \ccNestedType{Point_iterator;} {Random access iterator 
 with value type \ccc{Point*}.}
-
+\end{ccAdvanced}
 
 \ccCreation
 \ccCreationVariable{tree}

@@ -46,12 +46,10 @@ given by the iterator sequence \ccc{begin}, \ccc{end}.
 \ccOperations
 
 \ccMethod{template <class SpatialSeparator>
-void split_container(PointContainer& C, SpatialSeparator sep, bool sliding=false);}
+void split(PointContainer& C, SpatialSeparator sep, bool sliding=false);}
 {Given an empty container \ccc{C} with the same dimension as \ccc{c}, splits \ccc{c} into
 \ccc{c} and \ccc{C} using the separator \ccc{sep}. If sliding is true after splitting 
-each container contains at least one point. \ccc{c} should contain at least two points.
-{\bf AF: Should or must? What happens, if not. Does the user code take care of not calling
-it, if this condition is not fulfilled?}}
+each container contains at least one point. \ccc{c} should contain at least two points.}
 
 \ccHasModels
 

@@ -21,23 +21,19 @@
 The concept \ccRefName\ defines the requirements for a tree supporting
 both neighbor searching and approximate range searching. 
 
-\ccParameters
-
-\ccc{TreeTraits} represents a tree traits class.
-
 \ccTypes
 
 \ccNestedType{PointTraits}{Point traits.}
 \ccNestedType{Node;}{Node type.}
 \ccNestedType{Node_handle;}{Node handle.}
-\ccNestedType{Point_iterator;}{Iterator over points.}
+\ccNestedType{Point_iterator;}{Iterator with value type \ccc{Point*}.}
 \ccNestedType{Splitter}{Splitter.}
 \ccNestedType{Distance}{Distance.}
 
 \ccCreation
 \ccCreationVariable{tree}  %% choose variable name
 
-\ccConstructor{template <class InputIterator> Tree(InputIterator first, InputIterator beyond, TreeTraits t);}
+\ccConstructor{template <class InputIterator> Tree(InputIterator first, InputIterator beyond, PointTraits t);}
 {
 Constructs a tree on the elements from the sequence 
 \ccc{first, beyond}. 
@@ -59,7 +55,7 @@ OutputIterator report_all_points(OutputIterator it);}
 Returns a handle to the root node of the tree.
 }
 
-\ccMethod{Kd_tree_rectangle<PointTraits>* bounding_box();}{returns a pointer to the bounding box 
+\ccMethod{const Kd_tree_rectangle<PointTraits>& bounding_box();}{returns a reference to the bounding box 
 of the root node of the tree.}
 
 
@@ -70,11 +66,8 @@ Returns the number of items that are stored in the tree.
 
 \ccHasModels
 
-\ccc{CGAL::Kd_tree<TreeTraits>}.
+\ccc{CGAL::Kd_tree<PointRaits>}.
 
-\ccSeeAlso
-
-\ccc{CGAL::Kd_tree<TreeTraits>}.
 \end{ccRefConcept}
 
 % +------------------------------------------------------------------------+

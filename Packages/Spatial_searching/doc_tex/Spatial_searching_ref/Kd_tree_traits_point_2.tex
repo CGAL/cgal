@@ -38,9 +38,12 @@ PointTraits.
 \ccTypes
 
 \ccTypedef {Kernel::Point_2 Point;}{Point type.}
-\ccTypedef {Point** Point_iterator;}{Point iterator.}
+
 \ccTypedef {Kernel::Cartesian_const_iterator_2 Cartesian_const_iterator;}{An iterator over the coordinates.}
-\ccTypedef {Kernel::Construct_cartesian_const_iterator_2 Construct_cartesian_const_iterator;}{.}
+\ccTypedef {Kernel::Construct_cartesian_const_iterator_2 Construct_cartesian_const_iterator;}{A functor with
+two function operators, which return the begin and past the end iterator for the Cartesian coordinates. 
+The functor for begin has as argument a \ccc{Point}. The functor for the past the end iterator, 
+has as argument a \ccc{Point} and an \ccc{int}.}
 \ccTypedef{Kernel::FT NT;}{Number type.}
 
 

@@ -42,6 +42,7 @@ namespace CGAL {
   public:
    typedef typename GeomTraits::NT NT;
    typedef std::list<Point*> Point_list; 
+    typedef Point_list::iterator iterator;
 
   private:
     Point_list p_list; // list of pointers to points
@@ -245,7 +246,7 @@ namespace CGAL {
 	c.built_coord=split_coord;
 		
 	
-	typename Point_list::iterator pt=p_list.begin();
+	iterator pt=p_list.begin();
 			
 	typename GeomTraits::Construct_cartesian_const_iterator construct_it;
 	typename GeomTraits::Cartesian_const_iterator ptit;
@@ -261,7 +262,7 @@ namespace CGAL {
 	
 	if (sliding) { // avoid empty lists 
 		if (l_lower.empty()) {
-		  typename Point_list::iterator pt_min=l_upper.begin();
+		  iterator pt_min=l_upper.begin();
 		  NT min_value=bbox.max_coord(built_coord);
 		  for (pt=l_upper.begin(); (pt != l_upper.end()); ++pt) {
 		    ptit = construct_it((*(*pt)));	
@@ -273,7 +274,7 @@ namespace CGAL {
 			l_lower.splice(l_lower.end(), l_upper, pt_min);
 		}
 		if (l_upper.empty()) {
-		  typename Point_list::iterator pt_max=l_lower.begin();
+		  iterator pt_max=l_lower.begin();
 		  NT max_value=bbox.min_coord(built_coord);
 		  for (pt=l_lower.begin(); (pt != l_lower.end()); ++pt) {
 		    ptit = construct_it((*(*pt)));	
@@ -341,8 +342,7 @@ namespace CGAL {
         p_list.sort(comp_coord_val<GeomTraits,int>(split_coord));
     #endif 
       
-      typename Point_list::iterator 
-      median_point_ptr=p_list.begin();
+      iterator median_point_ptr = p_list.begin();
       for (unsigned int i = 0; i < the_size/2-1; i++, 
 		   median_point_ptr++) {}
       

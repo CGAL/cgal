@@ -16,6 +16,8 @@
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
+\begin{ccAdvanced}
+
 \ccDefinition
   
 The class \ccRefName\ implements a node class for a $k$-$d$ tree. 
@@ -40,9 +42,8 @@ for example \ccc{CGAL::Kd_tree_traits_point_2<Kernel>}.
 
 \ccTypedef{PointTraits::NT NT;}{Number type.}
 \ccTypedef{PointTraits::Point Point;}{Point type.}
-\ccTypedef{PointTraits::Point_iterator Point_iterator;}{Iterator over points.} 
-\ccTypedef{Splitter::Container Point_container;} {Point container type.}
 \ccTypedef{Splitter::Separator Separator;}{Separator type.}
+\ccTypedef{Kd_tree<PointTraits>::Point_iterator Point_iterator;}{Iterator over points.} 
 \ccTypedef{Kd_tree<PointTraits>::Node_handle Node_handle;}{Node handle.}
 
 
@@ -69,12 +70,14 @@ OutputIterator tree_points(OutputIterator it);}
 \ccMethod{Point_iterator end();}{Returns the past-the-end iterator in a leaf node.}
 \ccMethod{Node_handle lower();}{Returns a handle to the lower child of an internal node.}
 \ccMethod{Node_handle upper();}{Returns a handle to the upper child of an internal node.}
-\ccMethod{Separator* separator();}{Returns a pointer to the separator.}
+\ccMethod{Separator& separator();}{Returns a reference to the separator.}
 \ccMethod{NT low_val();}{Returns the lower limit of an exteneded node's rectangle
 along the node's cutting dimension.}
 \ccMethod{NT high_val();}{Returns the upper limit of an extended node's rectangle
 along the node's cutting dimension.}
 
+
+\end{ccAdvanced}
 \end{ccRefClass}
 
 % +------------------------------------------------------------------------+

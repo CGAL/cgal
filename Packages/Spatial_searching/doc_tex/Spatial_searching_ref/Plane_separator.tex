@@ -16,6 +16,8 @@
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
+\begin{ccAdvanced}
+
 \ccDefinition
   
 The class \ccRefName\ implements a plane separator, i.e., a hyperplane that is used to separate two half spaces.
@@ -62,9 +64,7 @@ bool has_on_negative_side(SpatialPoint p);}
 Plane_separator<NT> operator=(Plane_separator<NT> p);}
 {Assignment operator.}
 
-\begin{ccAdvanced}
-
-{\bf Non-Member functions related to \ccc{Plane_separator<NT>}}
+\ccHeading{Output Operators}
 
 \ccGlueBegin
 \ccGlobalFunction{ template<class NT>

@@ -41,7 +41,7 @@ for example \ccc{CGAL::Kd_tree_traits_point_d< Cartesian_d<double> >}.
 
 \ccTypedef{PointTraits::NT NT;}{Number type.}
 \ccTypedef{PointTraits::Point Point;}{Point type.}
-\ccTypedef{std::list<Point*> Point_list;}{(Sorted) list of pointers to points.}
+\ccNestedType{iterator;}{An iterator with value type \ccc{Point*}.}
 
 %----------------------------------------
 \ccCreation
@@ -65,7 +65,7 @@ given by the iterator sequence \ccc{[begin, end)}.
 \ccOperations
 
 \ccMethod{template <class SpatialSeparator>
-void split_container(Point_container<PointTraits> &C, SpatialSeparator sep, bool sliding=false);}
+void split(Point_container<PointTraits> &C, SpatialSeparator sep, bool sliding=false);}
 {Given an empty container \ccc{C} with the same dimension as \ccc{c}, splits \ccc{c} into
 \ccc{c} and \ccc{C} using the separator \ccc{sep}. If sliding is true after splitting 
 each container contains at least one point. \ccc{c} should contain at least two points.}
@@ -79,12 +79,12 @@ each container contains at least one point. \ccc{c} should contain at least two 
 {Recompute the bounding box of the points in the container.}
 
 
-\ccMethod{Point_list::iterator begin();}
+\ccMethod{iterator begin();}
 {
-Return the iterator pointing to the pointer to the first point.
+Return an iterator pointing to the pointer to the first point.
 }
 
-\ccMethod{Point_list::iterator end();}
+\ccMethod{iterator end();}
 {
 Return the iterator to the corresponding past-the-end iterator.
 }
@@ -169,7 +169,7 @@ dimension \ccc{split_coord}.
 {Return the dimension with the maximal point spread, for which after fair splitting
 the ratio of the length of the longest side and the smallest side of the bounding box of
 the items in associated rectangle,
-does not exceed \ccc{Aspect_ratio}.}
+does not exceed \ccc{aspect_ratio}.}
 
 \ccMethod{NT balanced_fair(int d, NT aspect_ratio);}
 {Return the splitting value for fair splitting.}
@@ -189,21 +189,20 @@ Return true if no points are present, false otherwise.
 
 
 
-\begin{ccAdvanced}
 
-{\bf Non-Member functions related to \ccc{Point_container<PointTraits>}}
+\ccHeading{Output Routines}
 
-\ccGlueBegin
 \ccGlobalFunction{ template<class PointTraits>
 std::ostream& operator<<(std::ostream& s, Point_container<PointTraits> c);}
 {Prints the point container \ccc{c} to the output stream \ccc{s} and returns \ccc{s}.}
-\ccGlueEnd
 
-\end{ccAdvanced}
 
 \ccSeeAlso
 
-PointTraits, SpatialSeparator, PointContainer.
+\ccc{PointTraits},\\
+\ccc{SpatialSeparator},\\
+\ccc{PointContainer}.
+
 \end{ccAdvanced}
 \end{ccRefClass}
 

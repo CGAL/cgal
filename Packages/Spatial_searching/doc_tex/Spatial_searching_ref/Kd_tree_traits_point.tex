@@ -31,12 +31,11 @@ PointTraits.
 \ccTypes
 \ccTypedef {NT_ NT;}{The number type of the coordinates.}
 \ccTypedef {Point_ Point;}{Point type.}
-\ccTypedef {Point** Point_iterator;}{Point iterator.}
 \ccTypedef {CartesianConstIterator Cartesian_const_iterator;}{An iterator over the coordinates.}
-\ccTypedef {ConstructCartesianConstIterator Construct_Cartesian_const_iterator;}{A class with
-two function operators, which return the iterator range for the coordinates. The functor for
-begin has as argument a \ccc{Point}. The functor for the past the end iterator, has as argument
-a \ccc{Point} and an \ccc{int}.}
+\ccTypedef {ConstructCartesianConstIterator Construct_Cartesian_const_iterator;}{A functor with
+two function operators, which return the begin and past the end iterator for the Cartesian coordinates. 
+The functor for begin has as argument a \ccc{Point}. The functor for the past the end iterator, 
+has as argument a \ccc{Point} and an \ccc{int}.}
 
 
 \ccSeeAlso
