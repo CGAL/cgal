@@ -1,3 +1,8 @@
+Version 5.1 (?? August 2000)
+- Removed Sphere_3::id(). [syl]
+- Various other cleanups. [syl]
+- Removed long_description.txt. [syl]
+
 Version 5.0 (1 August 2000)
 - Added a new construction circumcenterC3(3 points). [syl]
 - Minor cleanups. [syl]
