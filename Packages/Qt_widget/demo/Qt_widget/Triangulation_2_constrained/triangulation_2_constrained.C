@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : triangulation_2.C
+// file          : triangulation_2_constrained.C
 // package       : Qt_widget
 // author(s)     : Radu Ursu 
 // release       : 
