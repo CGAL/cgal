@@ -1,3 +1,11 @@
+5.46 (Shai and Eti)
+===
+- As of this internal release, only big changes will be written
+  in changes.txt due to the use of CVS.
+- Introducing new I/O utilities.
+- New copy constructor for Planar_map.
+- Updated assignment operator for Planar_map. 
+
 5.45 (Shai)
 ====
 - Change variable 'or' in Pm_leda_segment_exact_traits to 'orient'.
