@@ -1,3 +1,6 @@
+9 August 2004 Andreas Fabri
+- Changed CGAL_CFG_USING_BASE_MEMBER_BUG_3
+
 24 June 2004 Sylvain Pion
 - Add CGAL_CFG_USING_BASE_MEMBER_BUG_3 : attempt to detect MipsPRO bug.
 
