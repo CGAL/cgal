@@ -13,7 +13,7 @@ package:
 	@echo "---- editer changes.txt  ---------"
 	@echo "---- cvs update; cvs commit ------"
 	@echo "---- more version ----------------"
-	@echo "---- VERSION=2.8; export VERSION -"
+	@echo "---- VERSION=2.9; export VERSION -"
 	@echo "---- make Doc --------------------"
 	@echo "---- make Version ----------------"
 	@echo "---- make commit -----------------"
@@ -50,13 +50,20 @@ submit:
 	mail -s autohandle cgal-submit@cs.uu.nl yvinec < $(TMP_file)
 	rm -f $(TMP_file)
 
+Doc : Doc_ps Doc_html
 
-Doc : 	
-	cd doc;\
-	latex wrapper ; latex wrapper ;\
-	dvips wrapper -o ; gzip wrapper.ps ;
-	cp doc/main.tex  doc_tex/support/Geomview/main.tex
-	mv doc/wrapper.ps.gz doc_ps/geomview.ps.gz
+Doc_ps : 	
+	rm -f doc_ps/Geomview.ps.gz;
+	cd doc_tex/support/Geomview; \
+	latex wrapper ; bibtex wrapper; \
+	latex wrapper ; bibtex wrapper; \
+	dvips -o Geomview.ps wrapper.dvi; \
+	gzip Geomview.ps ;\
+	rm -f *.aux *.log *.dvi *.ps *.blg *.bbl *.toc ;
+	mv doc_tex/support/Geomview/Geomview.ps.gz doc_ps ;
+
+Doc_html :
+	cd doc_tex/support/Geomview; \
 	cc_manual_to_html -title Geomview -release $(VERSION) \
-		-cgal_dir $(CGAL)/include/ -o doc_html/support/Geomview \
-		doc/main.tex
+	-o ../../../doc_html/support/Geomview main.tex ;
+	echo "done"

@@ -7,6 +7,9 @@ src/Geomview_stream.C
 
 CHANGES
 
+Ver 2.9 (8 August 00)
+- find back the tex files which had disappear
+
 Ver 2.8 (27 June 00)
 - Rewrote is_prefix() and nth() [syl].
 
