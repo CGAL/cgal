@@ -168,10 +168,6 @@ public:
 #ifdef CGAL_MAKE_PROFILING
     std::cout<<"allocating handle for Point_rep_traits(p)" << p << endl;
 #endif
-    //PTR = allocator.allocate(1);
-    //allocator.construct(ptr(), Point_rep_traits(p));
-    
-    //  PTR = new Point_rep_traits(p); 
   }
   
   Point_handle(const Point_handle& p) : Handle_for_Point_rep(p) {}
@@ -181,7 +177,6 @@ public:
   
   Point_handle& operator=(const Point_handle &p) {
     Handle_for_Point_rep::operator=(p);
-    //ptr()->p_ = p.point();
     return *this;
   }
   
