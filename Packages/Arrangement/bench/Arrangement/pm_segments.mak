@@ -151,7 +151,7 @@ double_cached_pm_seg_inst:
 	$(MAKEF) "BENCH_PM=$(PLANAR_MAP)" "BENCH_NT=$(DOUBLE_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_CACHED_TRAITS)" install
 
 #
-seg_std_inst: leda_rat_cartesian_pm_seg_inst \
+pm_seg_std_inst: leda_rat_cartesian_pm_seg_inst \
         leda_rat_simple_cartesian_pm_seg_inst \
 	quotient_mp_float_pm_seg_inst \
 	quotient_cgal_gmpz_pm_seg_inst \
@@ -163,7 +163,7 @@ seg_std_inst: leda_rat_cartesian_pm_seg_inst \
 
 #	leda_kernel_pm_seg_inst \
 
-seg_cached_inst: leda_rat_cartesian_cached_pm_seg_inst \
+pm_seg_cached_inst: leda_rat_cartesian_cached_pm_seg_inst \
         leda_rat_simple_cartesian_cached_pm_seg_inst \
 	quotient_mp_float_cached_pm_seg_inst \
 	quotient_cgal_gmpz_cached_pm_seg_inst \
