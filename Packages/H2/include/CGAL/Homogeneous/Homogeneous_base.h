@@ -49,7 +49,7 @@
 #include <CGAL/Homogeneous/PlaneH3.h>
 #include <CGAL/Homogeneous/PointH3.h>
 #include <CGAL/Homogeneous/RayH3.h>
-#include <CGAL/Homogeneous/SegmentH3.h>
+#include <CGAL/Cartesian/Segment_3.h>
 #include <CGAL/Homogeneous/SphereH3.h>
 #include <CGAL/Homogeneous/TetrahedronH3.h>
 #include <CGAL/Homogeneous/TriangleH3.h>
@@ -97,7 +97,7 @@ struct Homogeneous_base
     typedef PointH3<Kernel>                         Point_3;
     typedef VectorH3<Kernel>                        Vector_3;
     typedef DirectionH3<Kernel>                     Direction_3;
-    typedef SegmentH3<Kernel>                       Segment_3;
+    typedef SegmentC3<Kernel>                       Segment_3;
     typedef PlaneH3<Kernel>                         Plane_3;
     typedef LineH3<Kernel>                          Line_3;
     typedef RayH3<Kernel>                           Ray_3;
