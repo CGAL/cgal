@@ -1,6 +1,5 @@
 // example11
 
-#include <CGAL/basic.h> //CGAL definitions that need to come before anything
 
 #include <CGAL/Quotient.h>
 
