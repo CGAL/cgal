@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.29 on 13 October 1999
+- Added headers to the automaticaly generated static_infos files.
+
 Version 4.28 on 13 October 1999
 - Formatting changes.
 - Removed "inline call before definition" warning detected by MipsPro.
