@@ -134,22 +134,18 @@ namespace CGAL {
   void Qt_widget_standard_toolbar::zoomin()
   {
     widget->zoom(2);
-    widget->redraw();
   }
   void Qt_widget_standard_toolbar::zoomout()
   {
     widget->zoom(0.5);
-    widget->redraw();
   }
   void Qt_widget_standard_toolbar::back()
   {
     widget->back();
-    widget->redraw();
   }
     void Qt_widget_standard_toolbar::forward()
   {
     widget->forth();
-    widget->redraw();
   }
 
 }//end namespace
