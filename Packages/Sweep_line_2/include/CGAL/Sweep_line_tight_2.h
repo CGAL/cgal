@@ -31,7 +31,7 @@
 
 #include <map>
 #include <set>
-
+#include <assert.h>
 
 #ifndef VERBOSE
 
@@ -59,9 +59,9 @@
 #define STORE_RESULT(a) {a}
 #endif
 
+#include <list>
 
 CGAL_BEGIN_NAMESPACE
-
 
 /*!
   Sweep_line_tight_2 is a class that implements the sweep line algorithm
