@@ -1,5 +1,10 @@
 Changes done to the `Min_annulus_d' package
 
+Version 0.6 on 06-Sep-2000
+- features `inner/outer support points' implemented
+- adapted to "enhanced" QP solver
+- enabled partial exact/filtered pricing
+
 Version 0.5.1 on 05-Sep-2000
 - no changes (problem with submission script)
 
