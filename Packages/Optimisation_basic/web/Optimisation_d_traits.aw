@@ -154,7 +154,7 @@ in the \cgal\ Reference Manual.
 @! ----------------------------------------------------------------------------
 
 \subsectionRef{Class}{%
-  CGAL::Optimisation\_d\_traits\_2\texttt{<}R,ET,NT\texttt{>}}
+  CGAL::Optimisation\_d\_traits\_2\texttt{<}K,ET,NT\texttt{>}}
 \input{../doc_tex/basic/Optimisation/Optimisation_ref/Optimisation_d_traits_2.tex}
 
 @! ----------------------------------------------------------------------------
@@ -162,7 +162,7 @@ in the \cgal\ Reference Manual.
 @! ----------------------------------------------------------------------------
 
 \subsectionRef{Class}{%
-  CGAL::Optimisation\_d\_traits\_3\texttt{<}R,ET,NT\texttt{>}}
+  CGAL::Optimisation\_d\_traits\_3\texttt{<}K,ET,NT\texttt{>}}
 \input{../doc_tex/basic/Optimisation/Optimisation_ref/Optimisation_d_traits_3.tex}
 
 @! ----------------------------------------------------------------------------
@@ -170,7 +170,7 @@ in the \cgal\ Reference Manual.
 @! ----------------------------------------------------------------------------
 
 \subsectionRef{Class}{%
-  CGAL::Optimisation\_d\_traits\_d\texttt{<}R,ET,NT\texttt{>}}
+  CGAL::Optimisation\_d\_traits\_d\texttt{<}K,ET,NT\texttt{>}}
 \input{../doc_tex/basic/Optimisation/Optimisation_ref/Optimisation_d_traits_d.tex}
 
 @p maximum_input_line_length = 80
@@ -184,55 +184,55 @@ in the \cgal\ Reference Manual.
 \section{Traits Class Models} \label{sec:traits_class_models}
 
 @! ----------------------------------------------------------------------------
-@! The Class Template CGAL::Optimisation_d_traits_2<R,ET,NT>
+@! The Class Template CGAL::Optimisation_d_traits_2<K,ET,NT>
 @! ----------------------------------------------------------------------------
 
 \subsection{The Class Template \ccFont
-  CGAL::Optimisation\_d\_traits\_2\texttt{<}R,ET,NT\texttt{>}}
+  CGAL::Optimisation\_d\_traits\_2\texttt{<}K,ET,NT\texttt{>}}
 \label{sec:Optimisation_d_traits_2}
 
 The first template argument of \ccc{Optimisation_d_traits_2} is expected to
 be a \cgal\ representation class. The second and third template argument
 are expected to be number types fulfilling the requirements of a \cgal\ 
-number type. They have default type \ccc{R::RT}.
+number type. They have default type \ccc{K::RT}.
 
 @macro <Optimisation_d_traits_2 declaration> = @begin
-    template < class R_, class ET_ = CGAL_TYPENAME_MSVC_NULL R_::RT,
-                         class NT_ = CGAL_TYPENAME_MSVC_NULL R_::RT >
+    template < class K_, class ET_ = CGAL_TYPENAME_MSVC_NULL K_::RT,
+                         class NT_ = CGAL_TYPENAME_MSVC_NULL K_::RT >
     class Optimisation_d_traits_2;
 @end
 
 The interface consists of the types and member functions described in
-Section~\ref{ccRef_CGAL::Optimisation_d_traits_2<R,ET,NT>}.3.
+Section~\ref{ccRef_CGAL::Optimisation_d_traits_2<K,ET,NT>}.3.
 
 @macro <Optimisation_d_traits_2 interface> = @begin
-    template < class R_, class ET_, class NT_>
+    template < class K_, class ET_, class NT_>
     class Optimisation_d_traits_2 {
       public:
         // self
-        typedef  R_                         R;
+        typedef  K_                         K;
         typedef  ET_                        ET;
         typedef  NT_                        NT;
-        typedef  Optimisation_d_traits_2<R,ET,NT>
+        typedef  Optimisation_d_traits_2<K,ET,NT>
                                             Self;
 
         // types
-        typedef  typename R::Point_2        Point_d;
+        typedef  typename K::Point_2        Point_d;
 
-        typedef  typename R::Rep_tag        Rep_tag;
+        typedef  typename K::Rep_tag        Rep_tag;
 
-        typedef  typename R::RT             RT;
-        typedef  typename R::FT             FT;
+        typedef  typename K::RT             RT;
+        typedef  typename K::FT             FT;
 
-        typedef  Access_dimension_2<R>      Access_dimension_d;
-        typedef  Access_coordinates_begin_2<R>
+        typedef  Access_dimension_2<K>      Access_dimension_d;
+        typedef  Access_coordinates_begin_2<K>
                                             Access_coordinates_begin_d;
 
-        typedef  Construct_point_2<R>       Construct_point_d;
+        typedef  Construct_point_2<K>       Construct_point_d;
 
         // creation
         Optimisation_d_traits_2( ) { }
-        Optimisation_d_traits_2( const Optimisation_d_traits_2<R_,ET_,NT_>&) {}
+        Optimisation_d_traits_2( const Optimisation_d_traits_2<K_,ET_,NT_>&) {}
 
         // operations
         Access_dimension_d
@@ -251,21 +251,21 @@ Section~\ref{ccRef_CGAL::Optimisation_d_traits_2<R,ET,NT>}.3.
 
 
 @! ----------------------------------------------------------------------------
-@! The Class Template CGAL::Optimisation_d_traits_3<R,ET,NT>
+@! The Class Template CGAL::Optimisation_d_traits_3<K,ET,NT>
 @! ----------------------------------------------------------------------------
 
 \subsection{The Class Template \ccFont
-  CGAL::Optimisation\_d\_traits\_3\texttt{<}R,ET,NT\texttt{>}}
+  CGAL::Optimisation\_d\_traits\_3\texttt{<}K,ET,NT\texttt{>}}
 \label{sec:Optimisation_d_traits_3}
 
 The first template argument of \ccc{Optimisation_d_traits_3} is expected to
 be a \cgal\ representation class. The second and third template argument
 are expected to be number types fulfilling the requirements of a \cgal\ 
-number type. They have default type \ccc{R::RT}.
+number type. They have default type \ccc{K::RT}.
 
 @macro <Optimisation_d_traits_3 declaration> = @begin
-    template < class R_, class ET_ = CGAL_TYPENAME_MSVC_NULL R_::RT,
-                         class NT_ = CGAL_TYPENAME_MSVC_NULL R_::RT >
+    template < class K_, class ET_ = CGAL_TYPENAME_MSVC_NULL K_::RT,
+                         class NT_ = CGAL_TYPENAME_MSVC_NULL K_::RT >
     class Optimisation_d_traits_3;
 @end
 
@@ -273,33 +273,33 @@ The interface consists of the types and member functions described in
 Section~\ref{ccRef_CGAL::Optimisation_d_traits_3<R,ET,NT>}.4.
 
 @macro <Optimisation_d_traits_3 interface> = @begin
-    template < class R_, class ET_, class NT_>
+    template < class K_, class ET_, class NT_>
     class Optimisation_d_traits_3 {
       public:
         // self
-        typedef  R_                         R;
+        typedef  K_                         K;
         typedef  ET_                        ET;
         typedef  NT_                        NT;
         typedef  Optimisation_d_traits_3<R,ET,NT>
                                             Self;
 
         // types
-        typedef  typename R::Point_3        Point_d;
+        typedef  typename K::Point_3        Point_d;
 
-        typedef  typename R::Rep_tag        Rep_tag;
+        typedef  typename K::Rep_tag        Rep_tag;
 
-        typedef  typename R::RT             RT;
-        typedef  typename R::FT             FT;
+        typedef  typename K::RT             RT;
+        typedef  typename K::FT             FT;
 
-        typedef  Access_dimension_3<R>      Access_dimension_d;
-        typedef  Access_coordinates_begin_3<R>
+        typedef  Access_dimension_3<K>      Access_dimension_d;
+        typedef  Access_coordinates_begin_3<K>
                                             Access_coordinates_begin_d;
 
-        typedef  Construct_point_3<R>       Construct_point_d;
+        typedef  Construct_point_3<K>       Construct_point_d;
 
         // creation
         Optimisation_d_traits_3( ) { }
-        Optimisation_d_traits_3( const Optimisation_d_traits_3<R_,ET_,NT_>&) {}
+        Optimisation_d_traits_3( const Optimisation_d_traits_3<K_,ET_,NT_>&) {}
 
         // operations
         Access_dimension_d
@@ -318,21 +318,21 @@ Section~\ref{ccRef_CGAL::Optimisation_d_traits_3<R,ET,NT>}.4.
 
 
 @! ----------------------------------------------------------------------------
-@! The Class Template CGAL::Optimisation_d_traits_d<R,ET,NT>
+@! The Class Template CGAL::Optimisation_d_traits_d<K,ET,NT>
 @! ----------------------------------------------------------------------------
 
 \subsection{The Class Template \ccFont
-  CGAL::Optimisation\_d\_traits\_d\texttt{<}R,ET,NT\texttt{>}}
+  CGAL::Optimisation\_d\_traits\_d\texttt{<}K,ET,NT\texttt{>}}
 \label{sec:Optimisation_d_traits_d}
 
 The first template argument of \ccc{Optimisation_d_traits_d} is expected to
 be a \cgal\ representation class. The second and third template argument
 are expected to be number types fulfilling the requirements of a \cgal\ 
-number type. They have default type \ccc{R::RT}.
+number type. They have default type \ccc{K::RT}.
 
 @macro <Optimisation_d_traits_d declaration> = @begin
-    template < class R_, class ET_ = CGAL_TYPENAME_MSVC_NULL R_::RT,
-                         class NT_ = CGAL_TYPENAME_MSVC_NULL R_::RT >
+    template < class K_, class ET_ = CGAL_TYPENAME_MSVC_NULL K_::RT,
+                         class NT_ = CGAL_TYPENAME_MSVC_NULL K_::RT >
     class Optimisation_d_traits_d;
 @end
 
@@ -340,33 +340,33 @@ The interface consists of the types and member functions described in
 Section~\ref{ccRef_CGAL::Optimisation_d_traits_d<R,ET,NT>}.5.
 
 @macro <Optimisation_d_traits_d interface> = @begin
-    template < class R_, class ET_, class NT_>
+    template < class K_, class ET_, class NT_>
     class Optimisation_d_traits_d {
       public:
         // self
-        typedef  R_                         R;
+        typedef  K_                         K;
         typedef  ET_                        ET;
         typedef  NT_                        NT;
         typedef  Optimisation_d_traits_d<R,ET,NT>
                                             Self;
 
         // types
-        typedef  typename R::Point_d        Point_d;
+        typedef  typename K::Point_d        Point_d;
 
-        typedef  typename R::Rep_tag        Rep_tag;
+        typedef  typename K::Rep_tag        Rep_tag;
 
-        typedef  typename R::RT             RT;
-        typedef  typename R::FT             FT;
+        typedef  typename K::RT             RT;
+        typedef  typename K::FT             FT;
 
-        typedef  Access_dimension_d<R>      Access_dimension_d;
-        typedef  Access_coordinates_begin_d<R>
+        typedef  Access_dimension_d<K>      Access_dimension_d;
+        typedef  Access_coordinates_begin_d<K>
                                             Access_coordinates_begin_d;
 
-        typedef  Construct_point_d<R>       Construct_point_d;
+        typedef  Construct_point_d<K>       Construct_point_d;
 
         // creation
         Optimisation_d_traits_d( ) { }
-        Optimisation_d_traits_d( const Optimisation_d_traits_d<R_,ET_,NT_>&) {}
+        Optimisation_d_traits_d( const Optimisation_d_traits_d<K_,ET_,NT_>&) {}
 
         // operations
         Access_dimension_d
