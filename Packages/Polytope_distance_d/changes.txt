@@ -1,5 +1,9 @@
 Changes done to the `Polytope_distance_d' package
 
+Version 0.3 on 06-Sep-2000
+- adapted to "enhanced" QP solver
+- enabled partial exact/filtered pricing
+
 Version 0.2.1 on 05-Sep-2000
 - no changes (problem with submission script)
 
