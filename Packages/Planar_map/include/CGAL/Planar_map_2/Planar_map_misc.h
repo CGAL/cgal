@@ -86,10 +86,12 @@ public:
   const Point_2 & point_rightmost(const Point_2 & p1, const Point_2 & p2) const
   { return (point_is_right(p1, p2) ? p1 : p2); }
     
-  const Point_2 & point_leftlow_most(const Point_2 & p1, const Point_2 & p2) const
+  const Point_2 & point_leftlow_most (const Point_2 & p1, 
+				      const Point_2 & p2) const
   { return (point_is_left_low(p1, p2) ? p1 : p2); }
     
-  const Point_2 & point_righttop_most(const Point_2 & p1, const Point_2 & p2) const
+  const Point_2 & point_righttop_most (const Point_2 & p1, 
+				       const Point_2 & p2) const
   { return (point_is_right_top(p1, p2) ? p1 : p2); }
     
   Point_2 curve_leftmost(const X_curve_2 & cv) const 
@@ -210,7 +212,8 @@ public:
     } else {
       // cv1 is vertical
       if (point_is_same(curve_righttop_most(cv1),q))
-        if (!curve_is_vertical(cv2) || point_is_same(curve_leftlow_most(cv2),q))
+        if (!curve_is_vertical(cv2) || 
+	    point_is_same(curve_leftlow_most(cv2),q))
           return SMALLER;
         else
           return EQUAL; // both curves extend downwards
@@ -270,7 +273,8 @@ public:
     else // cv1 is vertical
     {
       if (point_is_same(curve_leftlow_most(cv1),q))
-        if (!curve_is_vertical(cv2) || point_is_same(curve_righttop_most(cv2),q))
+        if (!curve_is_vertical(cv2) || 
+	    point_is_same(curve_righttop_most(cv2),q))
           return SMALLER;
         else
           return EQUAL; // both curves extend upwards

@@ -79,7 +79,7 @@ Pm_walk_along_line_point_location<Planar_map>::locate(
                     break;
                   default:
                     CGAL_assertion(lt==Planar_map::FACE||
-					lt==Planar_map::EDGE||
+				   lt==Planar_map::EDGE||
                                    lt==Planar_map::VERTEX);
                     break;
                   }
@@ -433,7 +433,8 @@ bool Pm_walk_along_line_point_location<Planar_map>::find_closest(
               
               if (traits->curve_is_vertical(cv))
                 {
-                  if (traits->point_is_left_low(traits->curve_leftlow_most(cv), q))
+                  if (traits->point_is_left_low
+		      (traits->curve_leftlow_most(cv), q))
                     // special treatment for this special case:
                     // vertical segment downward - here we should take
                     // the opposite direction
