@@ -175,6 +175,10 @@ public:
   bool get_cluster(const Vertex_handle va, const Vertex_handle vb,
                    Cluster& c, bool erase = false);
 
+  /** Const version of get_cluster. */
+  bool get_cluster(const Vertex_handle va, const Vertex_handle vb,
+                   Cluster& c) const;
+
   /** \name Auxiliary functions that return a boolean. */
 
   /**
@@ -319,6 +323,26 @@ get_cluster(Vertex_handle va, Vertex_handle vb, Cluster& c, bool erase)
         c = it->second;
         if(erase)
           cluster_map.erase(it);
+        return true;
+      }
+    }
+  return false;
+}
+
+template <typename Tr>
+bool Clusters<Tr>::
+get_cluster(Vertex_handle va, Vertex_handle vb, Cluster& c) const
+{
+  typedef typename Cluster_map::const_iterator Iterator;
+  typedef std::pair<Iterator, Iterator> Range;
+
+  Range range = cluster_map.equal_range(va);
+
+  for(Iterator it = range.first; it != range.second; it++)
+    {
+      const Cluster &cl = it->second;
+      if(cl.vertices.find(vb)!=cl.vertices.end()) {
+        c = it->second;
         return true;
       }
     }
