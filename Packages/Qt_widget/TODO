@@ -23,6 +23,7 @@ RADU URSU
 3) Add << operator for Alpha_shapes_2
 4) Make attach uniform for tools and layers. (pointer vs ref)
 5) Split the demos .C files in 2 .h and .C
+6) Detect the files with lines too long and remove the problem
 
 
 TODO FOR DOC
