@@ -530,7 +530,7 @@ Curve read_seg_circ_curve(std::ifstream& file, bool reverse_order)
         Ccb_halfedge_const_circulator cc2 = f_iter2->outer_ccb();
         
         CGAL_assertion(Circ_size(cc1) == Circ_size(cc2));
-        cout<<"copied outer ccb and original outer ccb have the same size"<< std::endl;
+        std::cout << "copied outer ccb and original outer ccb have the same size"<< std::endl;
           
         do {
           CGAL_assertion(cc1->curve() == cc2->curve());
@@ -552,7 +552,7 @@ Curve read_seg_circ_curve(std::ifstream& file, bool reverse_order)
           Ccb_halfedge_const_circulator cch1(*hole_iter1), cch2(*hole_iter2);
           
           CGAL_assertion(Circ_size(cch1) == Circ_size(cch2));
-          cout<<"copied hole and original hole have the same size"<< std::endl;
+          std::cout<<"copied hole and original hole have the same size"<< std::endl;
           
           do{
             CGAL_assertion(cch1->curve() == cch2->curve());
@@ -635,7 +635,7 @@ Curve read_seg_circ_curve(std::ifstream& file, bool reverse_order)
       
       Overlap_const_circulator  ovlp_edges1 = h_iter1->overlap_edges(), ovlp_edges2 = h_iter2->overlap_edges();
       CGAL_assertion(Circ_size(ovlp_edges1) == Circ_size(ovlp_edges2));
-      cout<<"copied hole and original hole have the same size"<< std::endl;
+      std::cout<<"copied hole and original hole have the same size"<< std::endl;
 
       do{
         CGAL_assertion(ovlp_edges1->curve() == ovlp_edges2->curve());
