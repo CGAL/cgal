@@ -152,10 +152,10 @@ typedef typename Rep::FT                             NT;
 //typedef CGAL::Quotient<CGAL::MP_Float>             NT2;
 //typedef CGAL::Cartesian<NT>                        Kernel2;
 //typedef CGAL::Arr_segment_traits_2<Kernel2> Traits2;
-typedef CGAL::Pm_default_dcel<Traits>      Dcel2;
-typedef CGAL::Planar_map_2<Dcel2,Traits>             Planar_map2;
-typedef CGAL::Planar_map_with_intersections_2<Planar_map2> Pmwx;
-typedef Traits::X_curve                              X_curve2;
+typedef CGAL::Pm_default_dcel<Traits>                      Dcel2;
+typedef CGAL::Planar_map_2<Dcel2,Traits>                   Planar_map_2;
+typedef CGAL::Planar_map_with_intersections_2<Planar_map_2> Pmwx;
+typedef Traits::X_curve                                    X_curve2;
 // @@@@ end special typedefs for pm
 typedef typename Traits::X_curve                     X_curve;
 typedef typename Traits::Curve                       Curve;
@@ -274,6 +274,11 @@ private:
   Pmwx pm;// @@@@
 
   void find_hot_pixels_and_create_kd_trees();
+
+  //@@@@ next function
+  //  void produce_extra_hot_pixels(std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >&
+  //                 hot_pixels_list,std::list<Segment_2> segment_list);
+
   void find_intersected_hot_pixels(Segment_data<Rep> &seg,
                          std::set<Hot_Pixel<Rep> *,
                          hot_pixel_dir_cmp<Rep> > &hot_pixels_intersected_set,
@@ -602,6 +607,52 @@ bool hot_pixel_dir_cmp<Rep_>::operator ()(const Hot_Pixel<Rep_> *h1,
     cx == SMALLER);
 }
 
+// @@@@ a function for ISRS
+/* template<class Rep_>
+void Snap_rounding_2<Rep_>::produce_extra_hot_pixels(std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list,std::list<Segment_2> segment_list,NT delta)
+{
+  typename std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >::const_iterator iter;
+
+  for(iter = hot_pixels_list.begin();iter != hot_pixels_list.end();++iter) {
+    Point_2 p_center = iter->first;
+    bool done = false;
+    while(!done) {
+      bool found;
+      Segment_2 first_s = find_segment_to_up_right(p_center,segment_list,found);
+      if(found && negative_slope(first_s) && inside_bounding_box(p_center,first_s)) {
+        NT sq_dis = squared_distance_2(p_center,first_s);
+        if(sq_dis < delta * delta) // !!! add triangle is empty
+          p_center = YYY;
+        else if(sq_dis < delta * delta + R * R + 2 * delta * R) { // !!!! and the triangle is empty
+          heat_pixel(XXX);
+          done = true;
+	}
+      } else
+	 done = true;
+    }
+
+    **** repeat 3 more times
+
+  // below is the ray shooting code
+  //typename std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >::const_iterator iter;
+
+  //for(iter = hot_pixels_list.begin();iter != hot_pixels_list.end();++iter) {
+  // Point_2 p_center = iter->first;
+  //  Planar_map_2::Locate_type lt;
+  //  Planar_map_2::Halfedge_handle e = pm.vertical_ray_shoot(p_center, lt, true);
+  //}
+
+  // Shoot a vertical ray upward from p:
+  //Point_2 p(95, 30);
+  //Planar_map_2::Locate_type lt;
+
+  //std::cout << "Upward vertical ray shooting from " << p << std::endl; 
+  //Planar_map_2::Halfedge_handle e = pm.vertical_ray_shoot(p, lt, true);
+  //std::cout << "returned the curve " << e->curve() <<  ", oriented toward " 
+  //<< e->target()->point() << std::endl;
+}
+*/
+
 template<class Rep_>
 void Snap_rounding_2<Rep_>::find_hot_pixels_and_create_kd_trees()
   {
@@ -646,19 +697,17 @@ void Snap_rounding_2<Rep_>::find_hot_pixels_and_create_kd_trees()
 				hp->get_center(),hp));
     }
 
-
-
-    // @@@@ for ISRS : create new hot pixels
-
-
-
-
     // create kd multiple tree
     // create simple_list from seg_list
     std::list<Segment_2> simple_seg_list;
     for(typename std::list<Segment_data<Rep_> >::iterator iter =
         seg_list.begin();iter != seg_list.end();++iter)
       simple_seg_list.push_back(Segment_2(iter->source(),iter->target()));
+
+
+    // @@@@ for ISRS : create new hot pixels
+    // produce_extra_hot_pixels(hot_pixels_list,simple_seg_list);
+
 
     mul_kd_tree = new Multiple_kd_tree<Rep,Hot_Pixel<Rep> *>(hot_pixels_list,
                   number_of_kd_trees,simple_seg_list);

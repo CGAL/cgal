@@ -25,6 +25,8 @@
 #include <CGAL/basic.h>
 #include <map>
 
+#include <CGAL/leda_integer.h> 
+
 CGAL_BEGIN_NAMESPACE
 
 template<class base_rep>
@@ -44,10 +46,10 @@ Snap_rounding_traits()
 
 void snap(Point_2 p,NT pixel_size,NT &x,NT &y)
   {
-    x = NT(floor((p.x() / pixel_size).to_double())) * pixel_size +
+    x = floor(p.x() / pixel_size) * pixel_size +
         pixel_size / 2.0;
 
-    y = NT(floor((p.y() / pixel_size).to_double())) * pixel_size +
+    y = floor(p.y() / pixel_size) * pixel_size +
         pixel_size / 2.0;
   }
 
