@@ -1371,7 +1371,7 @@ public:
     
     CGAL_forall_sfaces(f,*this->sncp()) {
       //    progress3++;
-      if ( volume(f) != Volume_handle() ) 
+      if ( Base::volume(f) != Volume_handle() ) 
 	continue;
       TRACEN( "Outer shell #" << ShellSf[f] << " volume?");
       Volume_handle c = determine_volume( MinimalSFace[ShellSf[f]], 
@@ -1453,7 +1453,7 @@ public:
     Halffacet_handle f_below = get_facet_below(v_min, MinimalSFace, Shell);
     if ( f_below == Halffacet_handle())
       return Base(*this).volumes_begin();
-    Volume_handle c = volume(f_below);
+    Volume_handle c = Base::volume(f_below);
     if( c != Volume_handle()) {
       TRACE( "Volume " << &*c << " hit ");
       TRACEN("(Shell #" << Shell[adjacent_sface(f_below)] << ")");

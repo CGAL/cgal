@@ -1393,7 +1393,7 @@ void SNC_io_parser<EW>::print_facet(Halffacet_handle f) const
   out << ", ";
   CGAL_forall_facet_cycles_of(it,f)
     if ( it.is_shalfloop() ) out << index(SHalfloop_handle(it)) << ' ';
-  out << ", " << index(volume(f)) << " | ";
+  out << ", " << index(Base::volume(f)) << " | ";
   if(reduce) {
     Standard_plane p(Infi_box::standard_plane(plane(f)));
     out << p.a() << " " << p.b() << " " << p.c() << " " << p.d();
@@ -1720,7 +1720,7 @@ print_sface(SFace_handle f) const
   out << ", ";
   CGAL_forall_sface_cycles_of(it,f)
     if ( it.is_shalfloop() ) out << index(SHalfloop_handle(it));
-  out << ", " << index(volume(f)) << " } " << D.mark(f) <<"\n";
+  out << ", " << index(Base::volume(f)) << " } " << D.mark(f) <<"\n";
 }
 
 /*

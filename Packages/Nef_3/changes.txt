@@ -1,5 +1,8 @@
 Nef_3 Package: Release changes:
 ---------------------------------------------------------------------
+19 November 2004 Sylvain Pion
+- Some g++ 3.4.3 workarounds.
+
 12 August 2004 Andreas Fabri
 - Made Compare_triangle_3::operator()(...) const
 - Replaced M_PI with CGAL_PI
