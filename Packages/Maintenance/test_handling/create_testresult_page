@@ -79,7 +79,7 @@ EOF
   }
 
   for ($i = 0; $i<($#version_nr_vector + 1); $i++){
-    print OUTPUTV '<option value="', $version_nr_vector[$i], '">';
+    print OUTPUTV '<option value="', $version_name_vector[$i], '">';
     $temp = $version_name_vector[$i];
     $temp =~ /results-(.*?)\.html\s*/;
     print OUTPUTV ${1}, "</option>";
