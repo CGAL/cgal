@@ -27,32 +27,22 @@ Snap rounding is a well known method for converting
 arbitrary-precision arrangements of segments into a fixed-precision
 representation. It is classified as a finite precision approximation 
 technique. This package makes Snap Rounding of line segments in $\reals_2$.
-It is based on the paper 'Iterated Snap Rounding' which provides a modification
-to Snap Rounding named Iterated Snap Rounding. This package provides both
-Iterated Snap Rounding and the usual Snap Rounding which is a private case.
-For details we refer you to the article.
+Iterated Snap Rounding is a modification of Snap Rounding. In
+Iterated Snap Rounding,
+each vertex is at leat half-the-width-of-a-pixel away from any non-incident
+edge.
+This package provides both Iterated Snap Rounding and Snap Rounding.
 
 \begin{figure}
 \begin{center}
-\begin{ccTexOnly}
-{\centering \resizebox*{0.4\textwidth}{0.15\textheight}%
- {\includegraphics{sr1.ps}}
-}
-\end{ccTexOnly}
-\caption{Snap rounding: before (a) and after (b).\label{fig:sr1}}
-\begin{ccHtmlOnly}
-<P>
-<center><img border=0 src="./sr1.gif" alt=" ">
-<!--
-<br>
-Snap rounding: before (a) and after (b).
--->
-</center>
-\end{ccHtmlOnly}
+\ \psfig{figure=sr1.ps,width=9cm} \
 \end{center}
+\vspace{-2ex}
+\caption{An arrangement of segments before (a) and after (b)
+Snap Rounding (hot pixels are shaded)}
+\label{fig:sr1}
 \end{figure}
 
-Figure~\ref{fig:sr1} demonstrates a snap rounding output. 
 
 \section{What is Snap Rounding/Iterated Snap Rounding}
 Given a finite collection $\S$ of segments in the plane, the
@@ -67,20 +57,35 @@ with integer coordinates. A pixel is {\it hot\/} if it contains a
 vertex of the arrangement. Each vertex of the arrangement is replaced
 by the center of the hot pixel containing it and each edge $e$ is
 replaced by the polygonal chain through the centers of the hot pixels
-met by $e$, in the same order as they are met by $e$.
+met by $e$, in the same order as they are met by $e$. 
+Figure~\ref{fig:sr1} demonstrates a snap rounding output. 
 
 Since in a snap-rounded arrangement, the distance between a vertex and
 a non-incident edge can be extremely small compared with the width of a
 pixel in the grid used for rounding, this package provides, beside the
 usual Snap Rounding, a modification of it, named Iterated Snap Rounding,
-which makes the a vertex and a non-incident edge well separated.
+which makes the a vertex and a non-incident edge well separated. However,
+the guaranteed quality of the approximation in Iterated Snap Rounding
+degrades. 
+Figure~\ref{fig:isr_vs_sr} demonstrates the differences between Iterated
+Snap Rounding and Snap Rounding.
 
+\begin{figure}
+\begin{center}
+\ \psfig{figure=isr_vs_sr.ps,width=13cm} \
+\end{center}
+\vspace{-2ex}
+\caption{An arrangement of segments before (a), after SR (b)
+and ISR (c) (hot pixels are shaded)}
+\label{fig:isr_vs_sr}
+\end{figure}
 
 % +========================================================================+
 \section{Examples of Snap Rounding}
 % +========================================================================+
 
-The following example generates a snap rounding representation of an arrangement of four line segments
+The following example generates an Iterated Snap Rounding representation
+of an arrangement of four line segments
 and a list of points which are the vertices of the resulting polylines.
 
 % \ccIncludeExampleCode{../../examples/Snap_rounding/example.C}
