@@ -27,6 +27,8 @@
 #ifndef CGAL_PMWX_SWEEP_LINE_CURVE_H
 #define CGAL_PMWX_SWEEP_LINE_CURVE_H
 
+#include <set>
+
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
 #include <CGAL/Sweep_line_2/Pmwx_insert_info.h>
 #include <CGAL/Sweep_line_2/Pmwx_sweep_line_event.h>
@@ -57,6 +59,11 @@ public:
   typedef Sweep_line_subcurve<SweepLineTraits_2> Base;
   typedef Pmwx_sweep_line_curve<Traits, HalfedgeHandle> Self;
 
+  typedef Status_line_curve_less_functor<Traits, Self> StatusLineCurveLess;
+  typedef std::set<Self*, StatusLineCurveLess> StatusLine;
+  typedef typename StatusLine::iterator StatusLineIter;
+
+
   typedef Pmwx_insert_info<HalfedgeHandle> PmwxInsertInfo;
   typedef Pmwx_sweep_line_event<Traits, Self> Event;
 
@@ -64,6 +71,16 @@ public:
 			SweepLineTraits_2 *traits) : 
     Base(id, curve, reference, traits) , m_insertInfo(0), m_lastEvent(0)
   {
+  }
+
+  void set_hint(StatusLineIter hint) 
+  {
+    m_hint1 = hint;
+  }
+
+  StatusLineIter get_hint() const 
+  {
+    return m_hint1;
   }
 
   void setInsertInfo(PmwxInsertInfo *insertInfo) {
@@ -82,6 +99,7 @@ public:
     return m_lastEvent;
   }
 
+
 private:
 
   /* the insert information  of this curve */
@@ -90,7 +108,10 @@ private:
   /*! the last event that was handled on the curve */
   Event *m_lastEvent;
   
+  /*! */
+  StatusLineIter m_hint1;
 };
+
 
 CGAL_END_NAMESPACE
 
