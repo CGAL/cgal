@@ -28,6 +28,7 @@ typedef std::pair< Sphere_segment<R>,Sphere_segment<R> >
 /*{\Mtypemember sphere segment pair.}*/
 
 typedef typename R_::Plane_3 Plane_3;
+typedef typename R_::Line_3 Line_3;
 typedef typename R_::Point_3 Point_3;
 typedef Sphere_circle<R_> Self;
 typedef typename R_::Plane_3 Base;

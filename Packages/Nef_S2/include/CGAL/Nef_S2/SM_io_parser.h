@@ -4,6 +4,7 @@
 #include <CGAL/Nef_S2/SM_decorator.h>
 #include <CGAL/Nef_2/Object_index.h>
 #include <vector>
+#include <iostream>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -308,30 +309,30 @@ bool SM_io_parser<Decorator_>::read_init_points() const
 template <typename Decorator_>
 void SM_io_parser<Decorator_>::print() const
 {
-  out << "Sphere_map_2" << endl;
-  out << "vertices "  << vn << endl;
-  out << "edges "     << en << endl;
-  out << "loops "     << ln << endl;
-  out << "faces "     << fn << endl;
+  out << "Sphere_map_2" << std::endl;
+  out << "vertices "  << vn << std::endl;
+  out << "edges "     << en << std::endl;
+  out << "loops "     << ln << std::endl;
+  out << "faces "     << fn << std::endl;
   if (verbose) 
-    out << "/* index { isolated ? face : edge, mark, point } */" << endl;
+    out << "/* index { isolated ? face : edge, mark, point } */" << std::endl;
   Vertex_iterator vit;
   CGAL_forall_vertices(vit,*this) print_vertex(vit);
   if (verbose) 
     out << "/* index { twin, prev, next, source, face, mark, circle } */" 
-	<< endl;
+	<< std::endl;
   Halfedge_iterator eit;
   CGAL_forall_halfedges(eit,*this) print_edge(eit);
   if (verbose) 
-    out << "/* index { twin, face, mark, circle } */" << endl;
+    out << "/* index { twin, face, mark, circle } */" << std::endl;
   if ( has_loop() ) 
   { print_loop(halfloop()); print_loop(twin(halfloop())); }
   if (verbose) 
-    out << "/* index { fclist, ivlist, loop, mark } */" << endl;
+    out << "/* index { fclist, ivlist, loop, mark } */" << std::endl;
   Face_iterator fit;
   CGAL_forall_faces(fit,*this) print_face(fit);
   if (verbose) 
-    out << "/* mark at y-/y+ */" << endl;
+    out << "/* mark at y-/y+ */" << std::endl;
   print_init_points();  
   out.flush();
   if (verbose) debug();
@@ -390,7 +391,7 @@ void SM_io_parser<Decorator_>::read()
 template <typename Decorator_>
 void SM_io_parser<Decorator_>::debug_vertex(Vertex_handle v) const
 { 
-  out << index(v) << "[" << mark(v) << "," << point(v) << "]" << endl; 
+  out << index(v) << "[" << mark(v) << "," << point(v) << "]" << std::endl; 
 }
 
 template <typename Decorator_>
@@ -399,7 +400,7 @@ void SM_io_parser<Decorator_>::debug_edge(Halfedge_handle e) const
   out << index(e)
       << "(" << index(source(e)) << "," << index(target(e)) << ") "
       << index(twin(e)) << " " << index(face(e))
-      << " ["<< mark(e) << "," << circle(e) << "] " << endl;
+      << " ["<< mark(e) << "," << circle(e) << "] " << std::endl;
 }
 
 template <typename Decorator_>
@@ -407,7 +408,7 @@ void SM_io_parser<Decorator_>::debug_loop(Halfloop_handle l) const
 { 
   out << index(l) << " "
       << index(twin(l)) << " " << index(face(l))
-      << " ["<< mark(l) << "] " << circle(l) << endl;
+      << " ["<< mark(l) << "] " << circle(l) << std::endl;
 }
 
 

@@ -55,9 +55,9 @@ int spherical_compare(const Sphere_point<R>& p1,
     return s1 * CGAL::spherical_orientation(p1,Sphere_point<R>(0,0,1),p2);
     
   } else { // not in xy-plane
-    int or = CGAL::spherical_orientation(pS,p1,p2);
-    if ( or ) return or;
-    else // or == 0 => on the same sweep line
+    int sor = CGAL::spherical_orientation(pS,p1,p2);
+    if ( sor ) return sor;
+    else // sor == 0 => on the same sweep line
       return CGAL::spherical_orientation(Sphere_point<R>(-pos,0,0),p2,p1);
   }
 }

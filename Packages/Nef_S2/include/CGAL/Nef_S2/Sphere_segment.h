@@ -20,12 +20,15 @@ Sphere_segment_rep() { ps_ = pt_ = Point(); c_ = Circle(); }
 Sphere_segment_rep(const Point& p1, const Point& p2,
 		   bool shorter_arc=true) :
   ps_(p1), pt_(p2), c_(Plane_3(p1,p2,Point_3(0,0,0))) 
-{ CGAL_assertion(p1 != p2.antipode()); 
+{ // warning stays as reminder that one gets an arbitrary plane equation
+  // in this degenerate case
+  CGAL_warning(p1 != p2.antipode());
   if ( p1 == p2 ) { 
     Plane_3 h(Point_3(0,0,0),(p1-CGAL::ORIGIN));
     c_ = Sphere_circle<R_>(Plane_3(Point_3(0,0,0),h.base1()));
   }
   if (!shorter_arc) c_ = c_.opposite(); 
+  CGAL_assertion(c_.has_on(p1) && c_.has_on(p2));
 }
 
 Sphere_segment_rep(const Point& p1, const Point& p2, const Circle& c) :

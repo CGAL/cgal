@@ -49,11 +49,11 @@ void xz_pi_half_rotate(Point_2& p) const
 
 int orientation(const Point_2& p1, const Point_2& p2,
                 const Point_2& p3) const
-{ int or = CGAL::spherical_orientation(p1,p2,p3); 
-  if (or) return or;
+{ int sor = CGAL::spherical_orientation(p1,p2,p3); 
+  if (sor) return sor;
   Point_2 pp1(p1), pp2(p2), pp3(p3);    
-  if ( !( p1.hz() == 0 && p2.hz() == 0 && p3.hz() == 0) ) return or;
-  // or==0 we perturb any point in the xy-plane with x>0
+  if ( !( p1.hz() == 0 && p2.hz() == 0 && p3.hz() == 0) ) return sor;
+  // sor==0 we perturb any point in the xy-plane with x>0
   // by a negative rotation around the y-axis 
   // our perturbation is big :-) we take PI/2 :
   if ( p1.hx()>0 ) xz_pi_half_rotate(pp1);
@@ -92,11 +92,11 @@ Negative_halfsphere_geometry() {}
   
 int orientation(const Point_2& p1, const Point_2& p2,
                 const Point_2& p3) const
-{ int or = CGAL::spherical_orientation(p1,p2,p3); 
-  if (or) return or;
+{ int sor = CGAL::spherical_orientation(p1,p2,p3); 
+  if (sor) return sor;
   Point_2 pp1(p1), pp2(p2), pp3(p3);    
-  if ( !( p1.hz() == 0 && p2.hz() == 0 && p3.hz() == 0) ) return or;
-  // or==0 we perturb any point in the xy-plane with x>0
+  if ( !( p1.hz() == 0 && p2.hz() == 0 && p3.hz() == 0) ) return sor;
+  // sor==0 we perturb any point in the xy-plane with x>0
   // by a negative rotation around the y-axis 
   // our perturbation is big :-) we take PI/2 :
   if ( p1.hx()<0 ) xz_pi_half_rotate(pp1);
