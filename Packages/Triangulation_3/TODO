@@ -4,8 +4,6 @@
   sommets). 
 - Verifier qu'il n'y a pas d'autres operations du meme style a modifier. 
 
-- grep obsolete et deprecated et virer
-
 -------------- POUR DES QU'ON PEUT
 
 - Finir de decider pour find_conflicts, si on veut les facettes du bord du
@@ -20,8 +18,6 @@ General
 - trouver une interface avec T_2 qui permette d'eviter de reprogrammer 
   tout le 2d dans le 3d
 - insure
-- Pointer -> Comparable_iterator quand Comparable_iterator sera mis dans 
-  STL extensions
 - const handle, const it, const circ ...
 - utiliser le cell_container_iterator partout ou c'est possible 
   (unifier le code pour differentes dimensions) 
@@ -39,7 +35,6 @@ Exemples - demo
 - Monique elle veut des exemples pour les output iterators.
 
 TDS
-- virer le truc infame dans DS_Container (le magic machin).
 - reflechir a un support de facettes explicites (cf papier de Giesen)
 - nettoyer les trucs 2d only (face_circulator etc)
 
