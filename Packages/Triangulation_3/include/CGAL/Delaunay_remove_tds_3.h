@@ -41,34 +41,26 @@ public :
   Delaunay_remove_tds_vertex_3_2() 
     : _f(NULL) {}
 
-  Delaunay_remove_tds_vertex_3_2(const I & i)
-    : _info(i) {}
-
-  void* 
-  face() const {
+  void* face() const {
       return _f;
   }
 
-  void 
-  set_face(void* f) {
-    _f = f ;
+  void set_face(void* f) {
+    _f = f;
   }
 
-  bool
-  is_valid(bool /* verbose */ = false, int /* level */ = 0) const {
+  bool is_valid(bool /* verbose */ = false, int /* level */ = 0) const {
       return true;
   }
 
-  void 
-  set_info(I i) { 
+  void set_info(I i) { 
     _info = i;
   }
 
-  I 
-  info(){ 
-    return _info; 
+  I info() const {
+    return _info;
   }
-  
+
 private:
   I _info;
   void * _f;
@@ -92,25 +84,15 @@ class Delaunay_remove_tds_face_3_2
   : public Triangulation_face_base_2<void>
 {
 public:
-  Delaunay_remove_tds_face_3_2() {}
-
-  Delaunay_remove_tds_face_3_2(void* v0, void* v1, void* v2)
-      : Triangulation_face_base_2<void>(v0, v1, v2) {}
-
-  Delaunay_remove_tds_face_3_2(void* v0, void* v1, void* v2, 
-			       void* n0, void* n1, void* n2)
-      : Triangulation_face_base_2<void>(v0, v1, v2, n0, n1, n2) {}
-
-  void 
-  set_info(I i) { 
-    inf = i;    
+  void set_info(I i) { 
+    inf = i;
   }
 
-  I info(){ 
-    return inf; 
+  I info() const { 
+    return inf;
   }
 
-  //Handling the doubly connected list of faces
+  // Handling the doubly connected list of faces
   // These functions should not be public, but private
   // and the tds should be declared friend. 
 
@@ -120,34 +102,28 @@ public:
   // Returns the predecessor
   Delaunay_remove_tds_face_3_2* p() const {return _p;}
 
-  void
-  set_p(Delaunay_remove_tds_face_3_2* f) {_p = f;};
+  void set_p(Delaunay_remove_tds_face_3_2* f) {_p = f;};
 
-  void
-  set_n(Delaunay_remove_tds_face_3_2* f) {_n = f;};
+  void set_n(Delaunay_remove_tds_face_3_2* f) {_n = f;};
 
- private:
+private:
   // Remove this face from the list
-  void 
-  remove_from_list() {
+  void remove_from_list() {
     // Q: Can't we be sure that there is always a predecessor
     // and successor?? This might pose a problem when we
     // remove the final tetrahedron, that is we have to 
     // check whether that one still performs the
     // Surface::remove_vertex_3() method
- 
-    if(_p) {
+    if(_p)
       _p->set_n(_n);
-    }
-    if(_n) {
+
+    if(_n)
       _n->set_p(_p);
-    }
   }
 
- public:
+public:
   // Remove neighbor cw(i) and ccw(i) from the list
-  void 
-  remove_neighbors_from_list(int i) {
+  void remove_neighbors_from_list(int i) {
     Delaunay_remove_tds_face_3_2 * n = 
       (Delaunay_remove_tds_face_3_2*)neighbor(cw(i));
     n->remove_from_list();
@@ -161,8 +137,7 @@ public:
   //
   // Additionally, this face is then moved right behind face h,
   // because it is a candidate for an ear.
-  void
-  mark_edge(int i, Delaunay_remove_tds_face_3_2* h) {
+  void mark_edge(int i, Delaunay_remove_tds_face_3_2* h) {
     Delaunay_remove_tds_face_3_2 *n = 
       (Delaunay_remove_tds_face_3_2*)neighbor(i);
     if(n < this) {
@@ -172,15 +147,13 @@ public:
     } else {
       n->unmark_halfedge(n->face_index(this));
       mark_halfedge(i);
-      if(h != this) {
+      if(h != this)
 	h->move_after_this(this);
-      }
     }      
   }
 
   // unmarks the two halfedges
-  void
-  unmark_edge(int i) {
+  void unmark_edge(int i) {
     Delaunay_remove_tds_face_3_2 *n = 
       (Delaunay_remove_tds_face_3_2*)neighbor(i);
 
@@ -190,31 +163,25 @@ public:
   }
 
   // marks all edges adjacent to the face
-  void 
-  mark_adjacent_edges() {
-    for(int i = 0; i < 3; i++) {
+  void mark_adjacent_edges() {
+    for(int i = 0; i < 3; i++)
       mark_edge(i, this);
-    }
   }
 
-  bool 
-  is_halfedge_marked(int i) const {
+  bool is_halfedge_marked(int i) const {
     return _edge[i];
   }
 
-  void 
-  set_edge(int i, bool b) {
+  void set_edge(int i, bool b) {
     _edge[i] = b;
   }
 
 private:
-
   // Move face f after this.
-  void 
-  move_after_this(Delaunay_remove_tds_face_3_2* f) {
-    if(_n == f) {
+  void move_after_this(Delaunay_remove_tds_face_3_2* f) {
+    if (_n == f)
       return;
-    }
+
     Delaunay_remove_tds_face_3_2 *p = f->p();
     Delaunay_remove_tds_face_3_2 *n = f->n();
     p->set_n(n);
@@ -227,13 +194,11 @@ private:
     f->set_p(this);
   }
 
-  void
-  unmark_halfedge(int i) {
+  void unmark_halfedge(int i) {
     _edge[i] = false;
   }
 
-  void
-  mark_halfedge(int i) {
+  void mark_halfedge(int i) {
     _edge[i] = true;
   }
 
