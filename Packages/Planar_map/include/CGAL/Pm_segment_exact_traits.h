@@ -25,16 +25,12 @@
 #ifndef CGAL_PM_SEGMENT_EXACT_TRAITS_H
 #define CGAL_PM_SEGMENT_EXACT_TRAITS_H
 
-CGAL_BEGIN_NAMESPACE
-
 // This file serves for backward compatibility purposes.
 // Pm_segment_exact_traits is obsolete. Please use Pm_segment_traits_2 instead.
 
 #include <CGAL/Pm_segment_traits_2.h>
-#define Pm_segment_traits_2 Pm_segment_exact_traits
+#define Pm_segment_exact_traits Pm_segment_traits_2
 
-CGAL_END_NAMESPACE
-
-#endif // CGAL_PM_SEGMENT_TRAITS_H
+#endif // CGAL_PM_SEGMENT_EXACT_TRAITS_H
 // EOF
 
