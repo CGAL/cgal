@@ -1,4 +1,4 @@
-Version 6.102 (24 September 2003) [af]
+Version 6.102 (29 September 2003) [af]
 - Replaced K:Point_[2,3] constructor calls with K::Construct_point_[2,3]
 
 Version 6.101 (24 September 2003) [af]
