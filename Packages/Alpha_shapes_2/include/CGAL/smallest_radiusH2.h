@@ -36,12 +36,12 @@ inline squared_radius_circumcircle(const PointH2<FT,RT> &p,
   // compute the smallest radius directly
   if (orientation(p, q, r) == COLLINEAR)
     // what do we do 
-    return R_FT_return(R)(0);
+    return typename R::FT (0);
   else
     
     {
       Circle_2<R> c(p, q, r);
-      return R_FT_return(R)(c.squared_radius());
+      return typename R::FT (c.squared_radius());
     }
 }
 

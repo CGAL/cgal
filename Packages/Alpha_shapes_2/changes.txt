@@ -1,3 +1,9 @@
+version 6.0:
+And now CGAL-2.2-I...
+
+version 5.5:
+This one for CGAL-2.1
+
 version 5.0:
 Ready now...
 

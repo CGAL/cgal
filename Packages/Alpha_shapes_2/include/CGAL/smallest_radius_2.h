@@ -42,9 +42,9 @@ CGAL_BEGIN_NAMESPACE
 
 template <class R >
 inline
-R_FT_return(R)
-  squared_radius_smallest_circumcircle(const Point_2<R> &p,
-				       const Point_2<R> &q) 
+typename R::FT
+squared_radius_smallest_circumcircle(const Point_2<R> &p,
+				     const Point_2<R> &q) 
 {
   typedef typename R::FT Return_type;
   Vector_2<R> v(p - q);
@@ -53,10 +53,10 @@ R_FT_return(R)
 
 template <class R >
 inline
-R_FT_return(R)
-  squared_radius_circumcircle(const Point_2<R> &p,
-				       const Point_2<R> &q,
-				       const Point_2<R> &r) 
+typename R::FT
+squared_radius_circumcircle(const Point_2<R> &p,
+			    const Point_2<R> &q,
+			    const Point_2<R> &r) 
 {
   typedef typename R::Point_2_base Point_two; 
   // compute the smallest radius directly
