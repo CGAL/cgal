@@ -63,7 +63,7 @@ struct segment_tree_node: public tree_node_base
   Key right_key;
   tree_base<C_Data, C_Window> *sublayer;
 public:
-  friend sT_d;
+  friend class Segment_tree_d< C_Data,  C_Window,  C_Interface>;
   
   segment_tree_node(){
     sublayer = 0; //(tree_base_type *)
@@ -107,7 +107,7 @@ protected:
   // type of a vertex
   // struct segment_tree_node;
   
-  friend segment_tree_node<C_Data,C_Window,C_Interface>;
+  friend class segment_tree_node<C_Data,C_Window,C_Interface>;
   typedef segment_tree_node<C_Data,C_Window,C_Interface> segment_tree_node_t;
   typedef segment_tree_node<C_Data,C_Window,C_Interface> *link_type;
   
