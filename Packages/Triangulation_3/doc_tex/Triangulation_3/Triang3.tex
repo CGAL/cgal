@@ -3,7 +3,7 @@
 %
 % author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 
-
+\ccChapterAuthor{Andreas Fabri, Sylvain Pion, Monique Teillaud}
 
 \begin{ccTexOnly}
 %\vspace*{-1cm}
@@ -538,3 +538,35 @@ Another difference is that a specific traits class has to be used
 (at least at the moment).
 
 \ccIncludeExampleCode{Triangulation_3/example_regular.C}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Design and Implementation History}
+
+Monique Teillaud started to work on the 3D triangulation packages in
+1997, following the design of the 2D triangulation packages. The
+notions of degenerate dimensions and infinite vertex were formalized
+\cite{t-tdtc-99} and induced changes in the 2D triangulation
+packages. The packages were first released in CGAL 2.1. They contained
+basic functionalities on triangulations, Delaunay triangulations,
+regular triangulations.
+
+A first version of removal of a vertex from a Delaunay triangulation
+was released in CGAL 2.2. However, this removal became really robust
+only in CGAL 2.3, after some research that allowed to deal with
+degenerate cases quite easily \cite{dt-pvr3d-03}. Andreas Fabri
+implemented this revised version of the removal, and a faster removal
+algorithm for CGAL 3.0.
+
+In 2000, Sylvain Pion started working on these packages.  He improved
+the efficiency of triangulations in CGAL 2.3 and 2.4 in several ways
+\cite{bdpty-tc-02}: he implemented the Delaunay hierarchy
+\cite{d-dh-02} in 2.3, he improved the memory footprint in 2.4 and
+3.0, he also performed work on arithmetic filters \cite{dp-eegpd-03}
+(see Support Library and Kernel) to improve the speed of
+triangulations.
+
+He changed the design in CGAL 3.0, allowing users to add handles in
+his own vertices and cells. 
+
+The authors wish to thank Jean-Daniel Boissonnat, Olivier Devillers
+and Mariette Yvinec for helpful discussions \cite{bdty-tcgal-00}.
