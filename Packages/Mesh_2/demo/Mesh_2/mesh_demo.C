@@ -557,9 +557,9 @@ public:
       connect(sbTimerInterval, SIGNAL(valueChanged(int)),
               this, SLOT(updateTimerInterval(int)));
 
-      QPushButton* pbShowCluster =
-        new QPushButton("Show clusters", toolBarAdvanced);
+      pbShowCluster = new QPushButton("Show clusters", toolBarAdvanced);
       pbShowCluster->setToggleButton(true);
+      pbShowCluster->setEnabled(false);
       connect(pbShowCluster, SIGNAL(stateChanged(int)),
               show_clusters, SLOT(stateChanged(int)));
       connect(pbShowCluster, SIGNAL(stateChanged(int)),
@@ -586,8 +586,6 @@ public:
 
       connect(this, SIGNAL(insertedInput()),
               this, SLOT(after_inserted_input()));
-      connect(this, SIGNAL(insertedInput()),
-              show_clusters, SLOT(reinitClusters()));
       connect(this, SIGNAL(initializedMesher()),
               this, SLOT(after_initialized_mesher()));
 
@@ -622,10 +620,17 @@ private slots:
   {
     updatePointCounter();
     if( mesher !=0 )
-      init_status->setText("yes");
+      {
+        init_status->setText("yes");
+        pbShowCluster->setEnabled(true);
+      }
     else
-      init_status->setText("no");
-    show_clusters->reinitClusters();
+      {
+        init_status->setText("no");
+        pbShowCluster->setOn(false);
+        pbShowCluster->setEnabled(false);
+      }
+    show_clusters->change_mesher(mesher);
   }
 
   void after_inserted_input()
@@ -749,6 +754,9 @@ public slots:
       dumpTriangulation("last_input.edg");
       CGAL::make_conforming_Gabriel_2(cdt);
       mark_facets();
+      delete mesher;
+      mesher = 0;
+      emit initializedMesher();
       updatePointCounter();
       widget->redraw();
     }
@@ -760,7 +768,7 @@ public slots:
         {
           mesher = create_mesher();
           mesher->init();
-          initializedMesher();
+          emit initializedMesher();
           dumpTriangulation("last_input.edg");
         }
       while(counter>0)
@@ -815,7 +823,7 @@ public slots:
       seeds.clear();
       delete mesher;
       mesher = 0;
-      initializedMesher();
+      emit initializedMesher();
       mark_facets();
       widget->redraw();
     }
@@ -993,7 +1001,7 @@ public slots:
       if( mesher == 0 )
         {
           mesher = create_mesher();
-          initializedMesher();
+          emit initializedMesher();
         }
       mesher->set_criteria(criteria);
       if(criteria.is_local_size())
@@ -1013,9 +1021,9 @@ public slots:
 private:
   Mesher* create_mesher()
   {
-    mesher = new Mesher(cdt, criteria);
-    mesher->set_seeds(seeds.begin(), seeds.end());
-    return mesher;
+    Mesher* m = new Mesher(cdt, criteria);
+    m->set_seeds(seeds.begin(), seeds.end());
+    return m;
   }
 
 private:
@@ -1062,6 +1070,7 @@ private:
   QTimer* timer;
   QPushButton *pbMeshTimer;
   QPushButton *pbMeshStep;
+  QPushButton* pbShowCluster;
   QToolBar *toolBarAdvanced;
   int timer_interval;
   int step_lenght;
