@@ -85,7 +85,9 @@ struct tree_node_base {
   void *parent_link;
   void *left_link;
   void *right_link;
-  tree_node_base(){parent_link=0; left_link=0; right_link=0;}
+  tree_node_base()
+    :parent_link(0), left_link(0), right_link(0)
+  {}
 };
 
 
