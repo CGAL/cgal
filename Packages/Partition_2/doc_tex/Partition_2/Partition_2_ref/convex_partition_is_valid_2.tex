@@ -18,24 +18,24 @@ convex.
 template<class InputIterator, class ForwardIterator, class Traits>
 bool
 convex_partition_is_valid_2 (InputIterator point_first, 
-                             InputIterator point_last,
+                             InputIterator point_beyond,
                              ForwardIterator poly_first, 
-                             ForwardIterator poly_last,
+                             ForwardIterator poly_beyond,
                              const Traits& traits = Default_traits);
 }
 {
-determines if the polygons in the range [\ccc{poly_first}, \ccc{poly_last})
+determines if the polygons in the range [\ccc{poly_first}, \ccc{poly_beyond})
 define a valid convex partition of the polygon defined by the points in the 
-range [\ccc{point_first}, \ccc{point_last}). 
+range [\ccc{point_first}, \ccc{point_beyond}). 
 The function returns \ccc{true} iff the partition is valid and otherwise
 returns \ccc{false}.
+\ccPrecond The points in the range [\ccc{point_first}, \ccc{point_beyond}) 
+define a simple, counterclockwise-oriented polygon.
 }
 
-\ccHeading{Preconditions}
+\ccHeading{Requirements}
 \ccIndexSubitem[C]{convex_partition_is_valid_2}{preconditions}
 \begin{enumerate}
-    \item The points in the range [\ccc{point_first}, \ccc{point_last}) define
-          a simple, counterclockwise-oriented polygon.
     \item \ccc{Traits} is a model of the concept
           ConvexPartitionIsValidTraits\_2%
           \ccIndexMainItem[c]{ConvexPartitionIsValidTraits_2}.
@@ -58,44 +58,18 @@ with the representation type determined by \ccc{InputIterator::value_type}.
 \ccRefIdfierPage{CGAL::partition_is_valid_2} \\
 \ccc{CGAL::is_convex_2}
 
+\ccImplementation
+
+This function calls \ccc{partition_is_valid_2} using the function object
+\ccc{Is_convex_2} to determine the convexity of each partition polygon.
+Thus the time required by this function is $O(n \log n + e \log e)$ where
+$n$ is the total number of vertices in the partition polgons and $e$ the
+total number of edges.
+
 \ccExample
 
-The following code fragment will compute an optimal
-convex partitioning of the simple polygon \ccc{P} 
-and store the partition polygons in the list \ccc{partition_polys}.
-It then asserts that the partition produced is valid. 
-(Note that this assertion is superfluous unless the postcondition checking
-done in \ccc{optimal_convex_partition_2} has been turned off during
-compilation.)
-
-\begin{verbatim}
-   #include <CGAL/basic.h>
-   #include <CGAL/Cartesian.h>
-   #include <CGAL/Partition_traits_2.h>
-   #include <CGAL/partition_2.h>
-   #include <list>
-
-   typedef CGAL::Cartesian<double>                           R;
-   typedef CGAL::Partition_traits_2<R>                       Traits;
-   typedef Traits::Polygon_2                                 Polygon_2;
-   typedef Polygon_2::Vertex_const_iterator                  Vertex_iterator;
-
-   Polygon_2            P;
-   std::list<Polygon_2> partition_polys;
-   Traits               partition_traits;
-
-   // ...
-   // insert vertices into P to create a simple CCW-oriented polygon
-   // ...
-   CGAL::optimal_convex_partition_2(P.vertices_begin(),
-                                   P.vertices_end(),
-                                   std::back_inserter(partition_polys),
-                                   partition_traits);
-   assert(convex_partition_is_valid_2(P.vertices_begin(), P.vertices_end(),
-                                      partition_polys.begin(), 
-                                      partition_polys.end(),
-                                      partition_traits));
-\end{verbatim}
+See the example presented with the function \ccc{approx_convex_partition_2}
+for an illustration of the use of this function.
 
 \end{ccRefFunction}
 \renewcommand\ccRefPageBegin{\ccParDims\cgalColumnLayout}
