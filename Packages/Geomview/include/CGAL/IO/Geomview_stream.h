@@ -49,7 +49,6 @@ public:
 
     void set_bg_color(const Color &c);
 
-    Geomview_stream &operator<<(const Color &c);
     Color get_vertex_color() const;
     Color get_edge_color() const;
     Color get_face_color() const;
@@ -76,6 +75,7 @@ public:
     int get_line_width() const;
     int set_line_width(int w);
 
+    Geomview_stream &operator<<(const Color &c);
     Geomview_stream &operator<<(const std::string s);
     Geomview_stream &operator<<(int i);
     Geomview_stream &operator<<(double d);
