@@ -9,82 +9,63 @@
 
 #if defined(USE_CONIC_TRAITS)
 #include <CGAL/leda_real.h>
-#else
-
-#if defined(USE_LEDA_KERNEL)
+#elif defined(USE_LEDA_KERNEL)
 #include <CGAL/leda_rational.h>
-#else
-
-#if defined(USE_MY_KERNEL)
+#elif defined(USE_MY_KERNEL)
 #include <CGAL/leda_rational.h>
-#else
-
-#if defined(USE_LAZY_RAT)
+#elif defined(USE_LAZY_RAT)
 #include <CGAL/leda_rational.h>
 #include <CGAL/Lazy_exact_nt.h>
-#else
-
-#if defined(USE_MP_FLOAT)
+#elif defined(USE_GMPQ)
+#include <CGAL/Gmpq.h>
+#elif defined(USE_LAZY_GMPQ)
+#include <CGAL/Gmpq.h>
+#include <CGAL/Lazy_exact_nt.h>
+#elif defined(USE_MP_FLOAT)
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
-#else
-
-#if defined(USE_LAZY_QUOTIENT)
+#elif defined(USE_LAZY_QUOTIENT)
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/Lazy_exact_nt.h>
 #else
-
 #include <CGAL/leda_rational.h>
-#endif
-#endif
-#endif
-#endif
-#endif
 #endif
 
 #if defined(USE_CONIC_TRAITS)
 typedef leda_real                                       NT;
 typedef NT                                              WNT;
 #define NUMBER_TYPE "Leda Real"
-#else
-
-#if defined(USE_LEDA_KERNEL)
+#elif defined(USE_LEDA_KERNEL)
 typedef leda_rational                                   NT;
 #define NUMBER_TYPE "Leda Rat"
-#else
-
-#if defined(USE_MY_KERNEL)
+#elif defined(USE_MY_KERNEL)
 typedef leda_rational                                   NT;
 #define NUMBER_TYPE "Leda Rat"
-#else
-
-#if defined(USE_LAZY_RAT)
+#elif defined(USE_LAZY_RAT)
 typedef leda_rational                                   NT;
 typedef CGAL::Lazy_exact_nt<NT>                         WNT;
 #define NUMBER_TYPE "Lazy Leda Rat"
-#else
-
-#if defined(USE_MP_FLOAT)
+#elif defined(USE_GMPQ)
+typedef CGAL::Gmpq                                      NT;
+typedef NT                                              WNT;
+#define NUMBER_TYPE "Gmpq"
+#elif defined(USE_LAZY_GMPQ)
+typedef CGAL::Gmpq                                      NT;
+typedef CGAL::Lazy_exact_nt<NT>                         WNT;
+#define NUMBER_TYPE "Lazy Gmpq"
+#elif defined(USE_MP_FLOAT)
 typedef CGAL::Quotient<CGAL::MP_Float>                  NT;
 typedef NT                                              WNT;
 #define NUMBER_TYPE "Quotient MP Float"
-#else
-
-#if defined(USE_LAZY_QUOTIENT)
+#elif defined(USE_LAZY_QUOTIENT)
 typedef CGAL::Quotient<CGAL::MP_Float>                  NT;
 typedef CGAL::Lazy_exact_nt<NT>                         WNT;
 #define NUMBER_TYPE "Lazy Quotient MP Float"
 #else
-
 typedef leda_rational                                   NT;
 typedef NT                                              WNT;
 #define NUMBER_TYPE "Leda Rat"
-#endif
-#endif
-#endif
-#endif
-#endif
 #endif
 
 #endif
