@@ -321,7 +321,7 @@ sub check_for_ignored_files()
 		"version","doc_tex","stlport","winutils","auxiliary",
 		"developer_scripts","scripts","cgal_config.bat",
 		"install.txt","INSTALL.win32",
-		"submission_info","maintainer");
+		"submission_info","maintainer","description.txt","changes.txt");
     my @files_in_directory;
     opendir THISDIR, "." or die "Cannot open current directory: $!";
     @files_in_directory = grep !/^\.\.?$/, readdir THISDIR;
@@ -331,7 +331,7 @@ sub check_for_ignored_files()
     }
     for (@files_in_directory) {
         if (!$expected_names{$_}) {
-	    log_msg "Warning: toplevel file $_ will not go into releases!";
+	    log_msg "WARNING: toplevel file $_ will not go into releases!";
 	}
     }
 }
