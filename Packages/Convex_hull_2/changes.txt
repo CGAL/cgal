@@ -1,3 +1,6 @@
+3.30 (1 Feb 2002)
+- fixed?  CVS problems in examples directory
+
 3.29 (28 Jan 2002)
 - fixed remaining problems with ch_function_objects.h
 
