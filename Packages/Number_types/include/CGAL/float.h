@@ -29,7 +29,7 @@
 #include <CGAL/tags.h>
 #include <cmath>
 #if defined(_MSC_VER) || defined(__BORLANDC__) || \
-    defined(CGAL_MASK_FINITE_VALID)
+    defined(CGAL_MASK_FINITE_VALID) || defined(__PGI)
 #  include <CGAL/IEEE_754_unions.h>
 #endif
 #ifdef __sgi
@@ -101,7 +101,7 @@ bool is_valid(float d)
 }
 
 #elif defined(_MSC_VER) || defined(__BORLANDC__) || \
-      defined(CGAL_MASK_FINITE_VALID)
+      defined(CGAL_MASK_FINITE_VALID) || defined(__PGI)
 
 #define CGAL_EXPONENT_FLOAT_MASK   0x7f800000
 #define CGAL_MANTISSA_FLOAT_MASK   0x007fffff
