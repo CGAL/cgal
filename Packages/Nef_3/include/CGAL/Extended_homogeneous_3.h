@@ -60,8 +60,6 @@ public:
 
   typedef typename Standard_kernel::Line_3      Standard_line_3;
 
-  typedef typename Standard_kernel::Direction_3 Standard_direction_3;
-
   typedef typename Standard_kernel::Ray_3       Standard_ray_3;
 
   typedef typename Standard_kernel::Aff_transformation_3 
@@ -72,8 +70,6 @@ public:
   typedef typename Base::Point_3      Point_3;
 
   typedef typename Base::Segment_3    Segment_3;
-
-  typedef typename Base::Direction_3  Direction_3;
 
   typedef typename Base::Line_3       Line_3;
 
@@ -99,7 +95,6 @@ public:
   /* Vorsicht> vereinfacht, da Ortsvektor nicht mit einbezogen */
   Point_3 construct_point(const Standard_line_3& l, Point_type& t) const
   { 
-    //   Standard_direction_3 d = l.direction();
     Point_3 res = epoint(l.dx(),0,l.dy(),0,l.dz(),0);
     t = (Point_type) determine_type(res);
     return res;
@@ -153,10 +148,6 @@ public:
                           const Standard_point_3& p2,
                           const Standard_point_3& p3) const
   { return construct_point(Standard_line_3(p1,p2,p3)); }
-
-  Point_3 construct_point(const Standard_point_3& p, 
-                          const Standard_direction_3& d) const
-  { return construct_point(Standard_line_3(p,d)); }
 
   Point_3 construct_opposite_point(const Standard_line_3& l) const
   { Point_type dummy; return construct_point(l.opposite(),dummy); }
@@ -308,9 +299,8 @@ public:
   Standard_ray_3 standard_ray(const Point_3& p) const
   { CGAL_assertion(type(p)!=STANDARD);
     Standard_line_3 l = standard_line(p);
-    Standard_direction_3 d = l.direction();
     Standard_point_3 q = l.point(0);
-    return Standard_ray_3(q,d);
+    return Standard_ray_3(q,l);
   }
 
   Point_3 NEF() const { return construct_point(Standard_line_3( 1, 1, 1,0)); }
@@ -418,23 +408,6 @@ public:
     simplify(p);
     return p;
   }
-
-  Direction_3 construct_direction(
-    const Point_3& p1, const Point_3& p2) const
-  { typename Base::Construct_direction_3 _direction =
-      construct_direction_3_object();
-    return _direction(construct_line(p1,p2)); 
-  }
-
-  /*
-  bool strictly_ordered_ccw(const Direction_3& d1, 
-    const Direction_3& d2, const Direction_3& d3) const
-  { 
-??    if ( d1 < d2 )  return ( d2 < d3 )||( d3 <= d1 );
-??    if ( d1 > d2 )  return ( d2 < d3 )&&( d3 <= d1 );
-    return false;
-  }
-  */
 
   bool strictly_ordered_along_line(
     const Point_3& p1, const Point_3& p2, const Point_3& p3) const
