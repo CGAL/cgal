@@ -40,6 +40,8 @@ CGAL_VC7_BUG_PROTECTED
   typedef typename R_::Segment_3            Segment_3;
   typedef typename R_::Plane_3              Plane_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
+  typedef typename R_::Construct_point_3    Construct_point_3;
+  typedef typename R_::Construct_point_2    Construct_point_2;
 
   typedef Fourtuple<FT>	                           rep;
   typedef typename R_::template Handle<rep>::type  base;
@@ -216,11 +218,11 @@ PlaneC3<R>::
 to_plane_basis(const typename PlaneC3<R>::Point_3 &p) const
 {
   FT alpha, beta, gamma;
-
+  Construct_point_3 construct_point_3;
   solve(base1(), base2(), orthogonal_vector(), p - point(),
 	alpha, beta, gamma);
 
-  return Point_3(alpha, beta, gamma);
+  return construct_point_3(alpha, beta, gamma);
 }
 
 template < class R >
@@ -229,11 +231,12 @@ PlaneC3<R>::
 to_2d(const typename PlaneC3<R>::Point_3 &p) const
 {
   FT alpha, beta, gamma;
+  Construct_point_2 construct_point_2;
 
   solve(base1(), base2(), orthogonal_vector(), p - point(),
 	alpha, beta, gamma);
 
-  return Point_2(alpha, beta);
+  return construct_point_2(alpha, beta);
 }
 
 template < class R >

@@ -190,8 +190,9 @@ typename LineC2<R>::Point_2
 LineC2<R>::point(int i) const
 {
   typename R::FT x, y;
+  typename R::Construct_point_2 construct_point_2;
   line_get_pointC2(a(), b(), c(), i, x, y);
-  return Point_2(x,y);
+  return construct_point_2(x,y);
 }
 
 template < class R >
@@ -200,8 +201,9 @@ typename LineC2<R>::Point_2
 LineC2<R>::point() const
 {
   typename R::FT x, y;
+  typename R::Construct_point_2 construct_point_2;
   line_get_pointC2(a(), b(), c(), 0, x, y);
-  return Point_2(x,y);
+  return construct_point_2(x,y);
 }
 
 template < class R >
@@ -211,8 +213,9 @@ LineC2<R>::
 projection(const typename LineC2<R>::Point_2 &p) const
 {
   typename R::FT x, y;
+  typename R::Construct_point_2 construct_point_2;
   line_project_pointC2(a(), b(), c(), p.x(), p.y(), x, y);
-  return Point_2(x, y);
+  return construct_point_2(x, y);
 }
 
 template < class R >
