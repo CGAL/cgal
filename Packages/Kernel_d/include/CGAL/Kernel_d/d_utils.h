@@ -15,7 +15,7 @@
 // package       : Cd (1.1)
 // revision      : $Revision$
 // revision_date : $Date$
-// author        : Herve Brönnimann
+// author        : Herve Broennimann
 // coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
 //
 // ======================================================================

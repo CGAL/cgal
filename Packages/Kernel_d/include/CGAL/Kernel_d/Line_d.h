@@ -18,8 +18,8 @@
 // revision_date : $Date$
 // author(s)     : Michael Seel
 // coordinator   : MPI Saarbruecken (Susan.Hert@mpi-sb.mpg.de)
-//
 // ======================================================================
+
 #ifndef CGAL_LINE_D_H
 #define CGAL_LINE_D_H
 
