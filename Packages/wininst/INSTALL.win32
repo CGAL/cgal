@@ -17,41 +17,50 @@ sure you carefully read the instructions from each installation step.
 
 
 GMP
-Some examples and demos need gmp. In order to use it you have to copy gmp.dll 
+Some examples and demos need GMP. In order to use it you have to copy gmp.dll 
 from CGALROOT/auxiliary/wingmp/gmp-4.1.2/gmp.dll to your path.
 If you had CGAL-2.4 installed you have to overwrite the old gmp.dll file, 
-because it came from a different version of gmp, that was gmp-4.0.1.
+because it came from a different version of GMP, that was gmp-4.0.1.
+
      
-Building the library
-The CGAL.lib is located in CGALROOT/lib/msvc7/CGAL.lib. It is buit using
+Building the Library
+
+The CGAL.lib is located in CGALROOT/lib/msvc7/CGAL.lib. It is built using
 the ML compiler option. If you want to rebuild the CGAL.lib you should go
 into the CGALROOT/src directory and open cgallib.vcproj using VC++ .NET or 
 VC++ .NET 2003. Go to "Build" menubar and press on "Rebuild Solution". The 
 CGAL library will be created in CGALROOT/lib/msvc7/ as CGAL.lib.
 
-Building the examples
+
+Building the Examples
+
 You can find the examples in CGALROOT/examples directory. Each 
 directory contains a new directory called Vc7. Those directories contain 
 projects for the example files. To build an example you should open one of 
 those projects and build it. You have to specify the right working directory 
 if you want to run the examples within the IDE. For the projects that are 
-shiped with CGAL, the Working Directory should be "../".
+shipped with CGAL, the working directory should be "../".
 
-Building the demos
+
+Building the Demos
+
 The demos come in CGALROOT/demo directory. Each demo directory contains the 
 VC++ .NET project files. To build one demo you should open one of those files.
 The demos need Qt installed. The projects are configured for commercial users.
 The libraries that are used are qt.lib and qtmain.lib, and you should change 
 manually those settings if you have a different version of Qt or you have 
 built Qt with thread support. All the demos use also the CGALQt.lib that 
-represents the Qt_widget library also wrote and distributed by CGAL.
+represents the Qt_widget library also developed in the CGAL project.
 
-Running the examples and demos.
+
+Running the Examples and Demos
+
 The corresponding executable(s) then can be run as usual, from the
 command prompt, or via Explorer.
 
 
-NOTE for VC++ .NET 2003 users
+NOTE for VC++ .NET 2003 Users
+
 This product can convert the old VC++ .NET project files. CGAL provides only 
 project files for VC++ .NET because you should convert them without problems 
 using the new product. The other way around is not possible.
