@@ -1,3 +1,5 @@
+#line 1339 "mon_search.aw"
+#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -24,12 +26,17 @@
 // A Representation for Dynamic Matrices
 // ============================================================================
 
+#line 1343 "mon_search.aw"
+#line 54 "code_formatting.awi"
 #if ! (CGAL_DYNAMIC_MATRIX_H)
 #define CGAL_DYNAMIC_MATRIX_H 1
 
-#include <CGAL/optimisation_assertions.h>
+#line 183 "afn.awi"
+#include <CGAL/Optimisation/assertions.h>
 
+#line 46 "code_formatting.awi"
 CGAL_BEGIN_NAMESPACE
+#line 186 "afn.awi"
 
 template < class Matrix >
 class Dynamic_matrix
@@ -121,10 +128,13 @@ Dynamic_matrix< Matrix >
 dynamic_matrix( const Matrix& m)
 { return Dynamic_matrix< Matrix >( m); }
 
+#line 50 "code_formatting.awi"
 CGAL_END_NAMESPACE
+#line 278 "afn.awi"
 
 #endif // ! (CGAL_DYNAMIC_MATRIX_H)
 
+#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

@@ -1,3 +1,5 @@
+#line 1394 "mon_search.aw"
+#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -24,16 +26,21 @@
 // Compute all furthest neighbors for the vertices of a convex polygon
 // ============================================================================
 
+#line 1398 "mon_search.aw"
+#line 54 "code_formatting.awi"
 #if ! (CGAL_ALL_FURTHEST_NEIGHBORS_TRAITS_2_H)
 #define CGAL_ALL_FURTHEST_NEIGHBORS_TRAITS_2_H 1
 
+#line 281 "afn.awi"
 #include <CGAL/basic.h>
-#include <CGAL/optimisation_assertions.h>
+#include <CGAL/Optimisation/assertions.h>
 //!!! this should go into function_objects.h
 #include <functional>
 #include <CGAL/squared_distance_2.h>
 
+#line 46 "code_formatting.awi"
 CGAL_BEGIN_NAMESPACE
+#line 288 "afn.awi"
 
 template < class T1, class T2 >
 struct Squared_distance
@@ -44,11 +51,15 @@ struct Squared_distance
   { return squared_distance( t1, t2); }
 };
 
+#line 50 "code_formatting.awi"
 CGAL_END_NAMESPACE
+#line 299 "afn.awi"
 #ifdef CGAL_CFG_NO_MEMBER_TEMPLATES
 #include <vector>
 #endif
+#line 46 "code_formatting.awi"
 CGAL_BEGIN_NAMESPACE
+#line 303 "afn.awi"
 
 template < class _R >
 class All_furthest_neighbors_traits {
@@ -64,6 +75,7 @@ public:
     OutputIterator;
 #endif
 
+  #line 130 "traits.awi"
   #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
   template < class RandomAccessIC >
   #endif
@@ -81,6 +93,7 @@ public:
     Polygon_2 p( points_begin, points_end);
     return p.is_convex();
   } // is_convex( points_begin, points_end)
+#line 319 "afn.awi"
 };
 
 template < class RandomAccessIC, class OutputIterator >
@@ -116,10 +129,13 @@ CGAL_all_furthest_neighbors( RandomAccessIC points_begin,
     All_furthest_neighbors_traits< R >());
 } // CGAL_all_furthest_neighbors( ... )
 
+#line 50 "code_formatting.awi"
 CGAL_END_NAMESPACE
+#line 355 "afn.awi"
 
 #endif // ! (CGAL_ALL_FURTHEST_NEIGHBORS_TRAITS_2_H)
 
+#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

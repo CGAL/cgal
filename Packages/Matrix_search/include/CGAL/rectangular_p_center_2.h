@@ -1,3 +1,5 @@
+#line 574 "pcenter.aw"
+#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -24,9 +26,12 @@
 // 2-4-Center Computation for Axis-Parallel 2D-Rectangles
 // ============================================================================
 
+#line 578 "pcenter.aw"
+#line 54 "code_formatting.awi"
 #if ! (CGAL_RECTANGULAR_P_CENTER_2_H)
 #define CGAL_RECTANGULAR_P_CENTER_2_H 1
 
+#line 556 "pcenter.aw"
 #include <CGAL/pierce_rectangles_2.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/sorted_matrix_search.h>
@@ -36,12 +41,19 @@
 #include <CGAL/Rectangular_p_center_traits_2.h>
 #endif // CGAL_REP_CLASS_DEFINED
 
+#line 46 "code_formatting.awi"
 CGAL_BEGIN_NAMESPACE
+#line 566 "pcenter.aw"
+#line 28 "matrix_flip.awi"
+#line 50 "code_formatting.awi"
 CGAL_END_NAMESPACE
+#line 29 "matrix_flip.awi"
 
 #include <CGAL/Cartesian_matrix.h>
 
+#line 46 "code_formatting.awi"
 CGAL_BEGIN_NAMESPACE
+#line 33 "matrix_flip.awi"
 
 #ifdef _MSC_VER
 // that compiler cannot even distinguish between global
@@ -125,6 +137,8 @@ cartesian_matrix_horizontally_flipped(
     RandomAccessIC_column >
   ( r_f, r_l, c_f, c_l, o);
 }
+#line 567 "pcenter.aw"
+#line 141 "pcenter.aw"
 /*
 template < class ForwardIterator,
            class OutputIterator,
@@ -193,6 +207,7 @@ rectangular_p_center_2_binary_search(
   // create Traits object:
   Traits pierce_it( f, l, pf);
 
+  #line 225 "pcenter.aw"
   // check, if input data is trivial
   bool ok;
   OutputIterator oi = pierce_it(FT(0), o, ok);
@@ -200,6 +215,8 @@ rectangular_p_center_2_binary_search(
     r = 0;
     return oi;
   }
+#line 213 "pcenter.aw"
+  #line 237 "pcenter.aw"
   // create vector with absolute coordinate differences:
   std::vector< FT > c_diffs;
   c_diffs.reserve( pierce_it.number_of_points() *
@@ -215,6 +232,8 @@ rectangular_p_center_2_binary_search(
   
   // sort it:
   sort( c_diffs.begin(), c_diffs.end());
+#line 214 "pcenter.aw"
+  #line 263 "pcenter.aw"
   // search it:
   int b( 0);
   int e( c_diffs.size());
@@ -240,9 +259,11 @@ rectangular_p_center_2_binary_search(
   OutputIterator o_return( pierce_it( r, o, ok));
   CGAL_optimisation_assertion( ok);
   return o_return;
+#line 215 "pcenter.aw"
 
 } // rectangular_p_center_2_binary_search( ... )
 */
+#line 321 "pcenter.aw"
 template < class RandomAccessIC,
            class OutputIterator,
 #ifdef CGAL_CFG_MATCHING_BUG_1
@@ -262,7 +283,7 @@ rectangular_p_center_2_matrix_search(
   FT& r,
 #endif
   PiercingFunction pf,
-  Traits t,
+  const Traits& t,
   const MatrixOperator&)
 {
   int number_of_points( iterator_distance( f, l));
@@ -295,6 +316,7 @@ rectangular_p_center_2_matrix_search(
   // create Traits object:
   MSTraits pierce_it(f, l, t, pf);
 
+  #line 225 "pcenter.aw"
   // check, if input data is trivial
   bool ok;
   OutputIterator oi = pierce_it(FT(0), o, ok);
@@ -302,10 +324,12 @@ rectangular_p_center_2_matrix_search(
     r = 0;
     return oi;
   }
+#line 377 "pcenter.aw"
 
   // create matrix search traits:
   Matrix_search_traits search_it(pierce_it);
 
+  #line 444 "pcenter.aw"
   // copy x and y coordinates from [f,l):
   std::vector< FT > x_coords;
   std::vector< FT > y_coords;
@@ -341,6 +365,7 @@ rectangular_p_center_2_matrix_search(
             compose1_2(
               bind1st( Max< FT >(), 0),
               minus< FT >())));
+#line 382 "pcenter.aw"
 
   // do the actual search:
   r = sorted_matrix_search(matrices.begin(),
@@ -395,27 +420,9 @@ rectangular_p_center_2_matrix_search(
 } // Pcenter_matrix_search( ... )
 
 
+#line 568 "pcenter.aw"
 
-template < class ForwardIterator, class OutputIterator, class FT >
-inline OutputIterator
-rectangular_p_center_binary_search_2(
-  ForwardIterator f,
-  ForwardIterator l,
-  OutputIterator o,
-  FT& r,
-  int p)
-{
-  CGAL_optimisation_precondition(p >= 2 && p < 5);
-  if (p == 2)
-    return rectangular_p_center_2_matrix_search(
-      f, l, o, r, Two_covering_algorithm(), t);
-  else if (p == 3)
-    return rectangular_p_center_2_matrix_search(
-      f, l, o, r, Three_covering_algorithm(), t);
-  return rectangular_p_center_2_matrix_search(
-    f, l, o, r, Four_covering_algorithm(), t);
-} // rectangular_p_center_matrix_search_2(f, l, o, r, p)
-
+#line 484 "pcenter.aw"
 template < class ForwardIterator, class OutputIterator, class FT >
 inline OutputIterator
 rectangular_p_center_matrix_search_2(
@@ -436,6 +443,35 @@ rectangular_p_center_matrix_search_2(
     f, l, o, r, Four_covering_algorithm(), t);
 } // rectangular_p_center_matrix_search_2(f, l, o, r, p)
 
+template < class ForwardIterator,
+           class OutputIterator,
+#ifdef CGAL_CFG_MATCHING_BUG_1
+           class FT,
+#endif
+           class Traits >
+inline OutputIterator
+rectangular_p_center_2(ForwardIterator f,
+                       ForwardIterator l,
+                       OutputIterator o,
+#ifndef CGAL_CFG_MATCHING_BUG_1
+                       typename Traits::FT& r,
+#else
+                       FT& r,
+#endif
+                       int p,
+                       const Traits& t)
+{
+  CGAL_optimisation_precondition(p >= 2 && p < 5);
+
+  if (p == 2)
+    return rectangular_2_center_2(f, l, o, r, t);
+  else if (p == 3)
+    return rectangular_3_center_2(f, l, o, r, t);
+  return rectangular_p_center_2_matrix_search(
+    f, l, o, r, Four_covering_algorithm(), t);
+
+} // rectangular_p_center_2( ... )
+
 template < class ForwardIterator, class OutputIterator, class FT >
 inline OutputIterator
 rectangular_p_center_2(ForwardIterator f,
@@ -449,20 +485,18 @@ rectangular_p_center_2(ForwardIterator f,
     std::iterator_traits< ForwardIterator >::value_type::R R;
   Rectangular_p_center_default_traits_2< R > t;
 
-  if (p == 2)
-    return rectangular_2_center_2(f, l, o, r, t);
-  else if (p == 3)
-    return rectangular_3_center_2(f, l, o, r, t);
-  return rectangular_p_center_2_matrix_search(
-    f, l, o, r, Four_covering_algorithm(), t);
-
+  return rectangular_p_center_2(f, l, o, r, p, t);
 } // rectangular_p_center_2( ... )
 
 
+#line 570 "pcenter.aw"
+#line 50 "code_formatting.awi"
 CGAL_END_NAMESPACE
+#line 571 "pcenter.aw"
 
 #endif // ! (CGAL_RECTANGULAR_P_CENTER_2_H)
 
+#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

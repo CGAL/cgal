@@ -1,3 +1,5 @@
+#line 634 "pcenter.aw"
+#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -24,11 +26,15 @@
 // MSVC Workarounds
 // ============================================================================
 
+#line 638 "pcenter.aw"
+#line 54 "code_formatting.awi"
 #if ! (CGAL_RECTANGULAR_3_CENTER_2_MSVC_H)
 #define CGAL_RECTANGULAR_3_CENTER_2_MSVC_H 1
 
+#line 755 "3cover.awi"
 template < class R >
 struct Rectangular_3_center_2_type2_operations0 {
+  #line 220 "3cover.awi"
   typedef typename R::FT                         FT;
   typedef typename R::Point_2                    Point_2;
   typedef typename R::Iso_rectangle_2            Iso_rectangle_2;
@@ -37,63 +43,68 @@ struct Rectangular_3_center_2_type2_operations0 {
   typedef typename R::Less_y_2                   Less_y_2;
   typedef typename R::Greater_x_2                Greater_x_2;
   typedef typename R::Greater_y_2                Greater_y_2;
-  typedef typename R::Construct_min_2            Construct_min_2;
-  typedef typename R::Construct_max_2            Construct_max_2;
+  typedef typename R::Construct_min_point_2      Construct_min_point_2;
+  typedef typename R::Construct_max_point_2      Construct_max_point_2;
   typedef typename R::Construct_corner_2         Construct_corner_2;
-  typedef typename R::Construct_iso_rectangle_2  C_rect;
+  typedef typename R::Construct_iso_rectangle_2  Construct_iso_rectangle_2;
   typedef typename R::Construct_projection_onto_horizontal_implicit_line_2
     Construct_projection_onto_horizontal_implicit_line_2;
-  typedef typename R::Construct_iso_rectangle_2_below_left_point_2
-    Construct_iso_rectangle_2_below_left_point_2;
-  typedef typename R::Construct_iso_rectangle_2_above_left_point_2
-    Construct_iso_rectangle_2_above_left_point_2;
-  typedef typename R::Construct_iso_rectangle_2_below_right_point_2
-    Construct_iso_rectangle_2_below_right_point_2;
-  typedef typename R::Construct_iso_rectangle_2_above_right_point_2
-    Construct_iso_rectangle_2_above_right_point_2;
+  typedef typename R::Construct_point_2_above_right_implicit_point_2
+    Construct_point_2_above_right_implicit_point_2;
+  typedef typename R::Construct_point_2_above_left_implicit_point_2
+    Construct_point_2_above_left_implicit_point_2;
+  typedef typename R::Construct_point_2_below_right_implicit_point_2
+    Construct_point_2_below_right_implicit_point_2;
+  typedef typename R::Construct_point_2_below_left_implicit_point_2
+    Construct_point_2_below_left_implicit_point_2;
   typedef std::binder1st< Infinity_distance_2 >   Delta;
   
   Delta  delta() const { return delta_; }
-  Less_x_2  less_x() const { return r_.get_less_x_2(); }
-  Less_y_2  less_y() const { return r_.get_less_y_2(); }
-  Greater_x_2  greater_x() const { return r_.get_greater_x_2(); }
-  Greater_y_2  greater_y() const { return r_.get_greater_y_2(); }
+  Less_x_2  less_x_2_object() const { return r_.less_x_2_object(); }
+  Less_y_2  less_y_2_object() const { return r_.less_y_2_object(); }
+  Greater_x_2  greater_x_2_object() const { return r_.greater_x_2_object(); }
+  Greater_y_2  greater_y_2_object() const { return r_.greater_y_2_object(); }
   Infinity_distance_2  distance() const
-  { return r_.get_infinity_distance_2(); }
-  Construct_min_2  rmin() const { return r_.get_construct_min_2(); }
-  Construct_max_2  rmax() const { return r_.get_construct_max_2(); }
-  Construct_corner_2  corner() const { return r_.get_construct_corner_2(); }
-  C_rect rectangle() const { return r_.get_construct_iso_rectangle_2(); }
+  { return r_.infinity_distance_2_object(); }
+  Construct_min_point_2  construct_min_point_2_object() const
+  { return r_.construct_min_point_2_object(); }
+  Construct_max_point_2  construct_max_point_2_object() const
+  { return r_.construct_max_point_2_object(); }
+  Construct_corner_2  corner() const
+  { return r_.construct_corner_2_object(); }
+  Construct_iso_rectangle_2 construct_iso_rectangle_2_object() const
+  { return r_.construct_iso_rectangle_2_object(); }
   
-  Construct_iso_rectangle_2_below_left_point_2
-  rect_b_l() const
-  { return r_.get_construct_iso_rectangle_2_below_left_point_2(); }
-  Construct_iso_rectangle_2_above_left_point_2
-  rect_a_l() const
-  { return r_.get_construct_iso_rectangle_2_above_left_point_2(); }
-  Construct_iso_rectangle_2_below_right_point_2
-  rect_b_r() const
-  { return r_.get_construct_iso_rectangle_2_below_right_point_2(); }
-  Construct_iso_rectangle_2_above_right_point_2
-  rect_a_r() const
-  { return r_.get_construct_iso_rectangle_2_above_right_point_2(); }
+  Construct_point_2_below_left_implicit_point_2
+  pt_b_l() const
+  { return r_.construct_point_2_below_left_implicit_point_2_object(); }
+  Construct_point_2_above_left_implicit_point_2
+  pt_a_l() const
+  { return r_.construct_point_2_above_left_implicit_point_2_object(); }
+  Construct_point_2_below_right_implicit_point_2
+  pt_b_r() const
+  { return r_.construct_point_2_below_right_implicit_point_2_object(); }
+  Construct_point_2_above_right_implicit_point_2
+  pt_a_r() const
+  { return r_.construct_point_2_above_right_implicit_point_2_object(); }
   
   typedef typename R::Min_x_2 Min_x_2;
-  Min_x_2 minx() const { return r_.get_min_x_2(); }
+  Min_x_2 minx() const { return r_.min_x_2_object(); }
   typedef typename R::Min_y_2 Min_y_2;
-  Min_y_2 miny() const { return r_.get_min_y_2(); }
+  Min_y_2 miny() const { return r_.min_y_2_object(); }
   typedef typename R::Max_x_2 Max_x_2;
-  Max_x_2 maxx() const { return r_.get_max_x_2(); }
+  Max_x_2 maxx() const { return r_.max_x_2_object(); }
   typedef typename R::Max_y_2 Max_y_2;
-  Max_y_2 maxy() const { return r_.get_max_y_2(); }
+  Max_y_2 maxy() const { return r_.max_y_2_object(); }
   
   Construct_projection_onto_horizontal_implicit_line_2
-  build_point() const
-  { return r_.get_construct_projection_onto_horizontal_implicit_line_2(); }
+  construct_projection_onto_horizontal_implicit_line_2_object() const
+  { return r_.construct_projection_onto_horizontal_implicit_line_2_object(); }
   
   private:
     R& r_;
     Delta delta_;
+#line 758 "3cover.awi"
 public:
   typedef Point_2              Point;
   typedef Iso_rectangle_2      Rectangle;
@@ -102,39 +113,43 @@ public:
   typedef Infinity_distance_2  Distance;
 
   Rectangular_3_center_2_type2_operations0(R& r, const Point& p)
-  : r_(r), delta_(std::bind1st(r.get_infinity_distance_2(), p))
+  : r_(r), delta_(std::bind1st(r.infinity_distance_2_object(), p))
   {}
 
-  X_compare  compare_x() const { return less_x(); }
-  Y_compare  compare_y() const { return greater_y(); }
+  #line 309 "3cover.awi"
+  X_compare  compare_x() const { return less_x_2_object(); }
+  Y_compare  compare_y() const { return greater_y_2_object(); }
   
   Point place_x_square(bool constraint_empty,
                        const Rectangle& constraint,
                        const Point& first_uncovered,
                        const Rectangle& bbox) const
   {
-    return build_point()(
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
       constraint_empty ? first_uncovered :
-      minx()(first_uncovered, rmin()(constraint)),
-        rmax()(bbox));
+      minx()(first_uncovered, construct_min_point_2_object()(constraint)),
+        construct_max_point_2_object()(bbox));
   }
   
   Point place_x_square(bool constraint_empty,
                        const Rectangle& constraint,
                        const Rectangle& bbox) const
   {
-    return build_point()(
-      constraint_empty ? rmax()(bbox) : rmin()(constraint),
-      rmax()(bbox));
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
+      constraint_empty ?
+      construct_max_point_2_object()(bbox) :
+      construct_min_point_2_object()(constraint),
+      construct_max_point_2_object()(bbox));
   }
   
   Point place_x_square(const Point& so_far,
                        const Rectangle& bbox,
                        FT radius) const
   {
-    return build_point()(
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
       minx()(
-        rmin()(rect_b_l()(rmax()(bbox), radius)), so_far),
+        pt_b_l()(construct_max_point_2_object()(bbox),
+                 construct_max_point_2_object()(bbox), radius), so_far),
         so_far);
   }
   
@@ -143,36 +158,41 @@ public:
                        const Point& first_uncovered,
                        const Rectangle& bbox) const
   {
-    return build_point()(
-      rmax()(bbox),
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
+      construct_max_point_2_object()(bbox),
       constraint_empty ? first_uncovered :
-    miny()(first_uncovered, rmin()(constraint)));
+    miny()(first_uncovered, construct_min_point_2_object()(constraint)));
   }
   
   Point place_y_square(bool constraint_empty,
                        const Rectangle& constraint,
                        const Rectangle& bbox) const
   {
-    return build_point()(
-      rmax()(bbox),
-      constraint_empty ? rmax()(bbox) : rmin()(constraint));
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
+      construct_max_point_2_object()(bbox),
+      constraint_empty ?
+    construct_max_point_2_object()(bbox) :
+    construct_min_point_2_object()(constraint));
   }
   
   Point place_y_square(const Point& so_far,
                        const Rectangle& bbox,
                        FT radius) const
   {
-    return build_point()(
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
       so_far,
-      miny()(rmin()(rect_b_l()(rmax()(bbox), radius)),
+      miny()(pt_b_l()(construct_max_point_2_object()(bbox),
+                      construct_max_point_2_object()(bbox), radius),
              so_far));
   }
   
   Point update_x_square(const Point& s, const Point& newp) const
-  { return build_point()(minx()(s, newp), s); }
+  { return construct_projection_onto_horizontal_implicit_line_2_object()(
+    minx()(s, newp), s); }
   
   Point update_y_square(const Point& s, const Point& newp) const
-  { return build_point()(s, miny()(s, newp)); }
+  { return construct_projection_onto_horizontal_implicit_line_2_object()(
+    s, miny()(s, newp)); }
   
   FT compute_x_distance(const Point& extreme,
                         const Rectangle& constraint) const
@@ -183,16 +203,19 @@ public:
   { return distance()(extreme, corner()(constraint, 3)); }
   
   Point construct_corner_square(const Rectangle& bbox, FT r) const
-  { return rmax()(rect_a_r()(rmin()(bbox), r)); }
+  { return pt_a_r()(construct_min_point_2_object()(bbox),
+                    construct_min_point_2_object()(bbox), r); }
   
   Point construct_x_square(const Point& p, FT r) const
-  { return corner()(rect_b_r()(p, r), 1); }
+  { return pt_b_r()(p, p, r); }
   
   Point construct_y_square(const Point& p, FT r) const
-  { return corner()(rect_a_l()(p, r), 3); }
+  { return pt_a_l()(p, p, r); }
+#line 770 "3cover.awi"
 };
 template < class R >
 struct Rectangular_3_center_2_type2_operations1 {
+  #line 220 "3cover.awi"
   typedef typename R::FT                         FT;
   typedef typename R::Point_2                    Point_2;
   typedef typename R::Iso_rectangle_2            Iso_rectangle_2;
@@ -201,63 +224,68 @@ struct Rectangular_3_center_2_type2_operations1 {
   typedef typename R::Less_y_2                   Less_y_2;
   typedef typename R::Greater_x_2                Greater_x_2;
   typedef typename R::Greater_y_2                Greater_y_2;
-  typedef typename R::Construct_min_2            Construct_min_2;
-  typedef typename R::Construct_max_2            Construct_max_2;
+  typedef typename R::Construct_min_point_2      Construct_min_point_2;
+  typedef typename R::Construct_max_point_2      Construct_max_point_2;
   typedef typename R::Construct_corner_2         Construct_corner_2;
-  typedef typename R::Construct_iso_rectangle_2  C_rect;
+  typedef typename R::Construct_iso_rectangle_2  Construct_iso_rectangle_2;
   typedef typename R::Construct_projection_onto_horizontal_implicit_line_2
     Construct_projection_onto_horizontal_implicit_line_2;
-  typedef typename R::Construct_iso_rectangle_2_below_left_point_2
-    Construct_iso_rectangle_2_below_left_point_2;
-  typedef typename R::Construct_iso_rectangle_2_above_left_point_2
-    Construct_iso_rectangle_2_above_left_point_2;
-  typedef typename R::Construct_iso_rectangle_2_below_right_point_2
-    Construct_iso_rectangle_2_below_right_point_2;
-  typedef typename R::Construct_iso_rectangle_2_above_right_point_2
-    Construct_iso_rectangle_2_above_right_point_2;
+  typedef typename R::Construct_point_2_above_right_implicit_point_2
+    Construct_point_2_above_right_implicit_point_2;
+  typedef typename R::Construct_point_2_above_left_implicit_point_2
+    Construct_point_2_above_left_implicit_point_2;
+  typedef typename R::Construct_point_2_below_right_implicit_point_2
+    Construct_point_2_below_right_implicit_point_2;
+  typedef typename R::Construct_point_2_below_left_implicit_point_2
+    Construct_point_2_below_left_implicit_point_2;
   typedef std::binder1st< Infinity_distance_2 >   Delta;
   
   Delta  delta() const { return delta_; }
-  Less_x_2  less_x() const { return r_.get_less_x_2(); }
-  Less_y_2  less_y() const { return r_.get_less_y_2(); }
-  Greater_x_2  greater_x() const { return r_.get_greater_x_2(); }
-  Greater_y_2  greater_y() const { return r_.get_greater_y_2(); }
+  Less_x_2  less_x_2_object() const { return r_.less_x_2_object(); }
+  Less_y_2  less_y_2_object() const { return r_.less_y_2_object(); }
+  Greater_x_2  greater_x_2_object() const { return r_.greater_x_2_object(); }
+  Greater_y_2  greater_y_2_object() const { return r_.greater_y_2_object(); }
   Infinity_distance_2  distance() const
-  { return r_.get_infinity_distance_2(); }
-  Construct_min_2  rmin() const { return r_.get_construct_min_2(); }
-  Construct_max_2  rmax() const { return r_.get_construct_max_2(); }
-  Construct_corner_2  corner() const { return r_.get_construct_corner_2(); }
-  C_rect rectangle() const { return r_.get_construct_iso_rectangle_2(); }
+  { return r_.infinity_distance_2_object(); }
+  Construct_min_point_2  construct_min_point_2_object() const
+  { return r_.construct_min_point_2_object(); }
+  Construct_max_point_2  construct_max_point_2_object() const
+  { return r_.construct_max_point_2_object(); }
+  Construct_corner_2  corner() const
+  { return r_.construct_corner_2_object(); }
+  Construct_iso_rectangle_2 construct_iso_rectangle_2_object() const
+  { return r_.construct_iso_rectangle_2_object(); }
   
-  Construct_iso_rectangle_2_below_left_point_2
-  rect_b_l() const
-  { return r_.get_construct_iso_rectangle_2_below_left_point_2(); }
-  Construct_iso_rectangle_2_above_left_point_2
-  rect_a_l() const
-  { return r_.get_construct_iso_rectangle_2_above_left_point_2(); }
-  Construct_iso_rectangle_2_below_right_point_2
-  rect_b_r() const
-  { return r_.get_construct_iso_rectangle_2_below_right_point_2(); }
-  Construct_iso_rectangle_2_above_right_point_2
-  rect_a_r() const
-  { return r_.get_construct_iso_rectangle_2_above_right_point_2(); }
+  Construct_point_2_below_left_implicit_point_2
+  pt_b_l() const
+  { return r_.construct_point_2_below_left_implicit_point_2_object(); }
+  Construct_point_2_above_left_implicit_point_2
+  pt_a_l() const
+  { return r_.construct_point_2_above_left_implicit_point_2_object(); }
+  Construct_point_2_below_right_implicit_point_2
+  pt_b_r() const
+  { return r_.construct_point_2_below_right_implicit_point_2_object(); }
+  Construct_point_2_above_right_implicit_point_2
+  pt_a_r() const
+  { return r_.construct_point_2_above_right_implicit_point_2_object(); }
   
   typedef typename R::Min_x_2 Min_x_2;
-  Min_x_2 minx() const { return r_.get_min_x_2(); }
+  Min_x_2 minx() const { return r_.min_x_2_object(); }
   typedef typename R::Min_y_2 Min_y_2;
-  Min_y_2 miny() const { return r_.get_min_y_2(); }
+  Min_y_2 miny() const { return r_.min_y_2_object(); }
   typedef typename R::Max_x_2 Max_x_2;
-  Max_x_2 maxx() const { return r_.get_max_x_2(); }
+  Max_x_2 maxx() const { return r_.max_x_2_object(); }
   typedef typename R::Max_y_2 Max_y_2;
-  Max_y_2 maxy() const { return r_.get_max_y_2(); }
+  Max_y_2 maxy() const { return r_.max_y_2_object(); }
   
   Construct_projection_onto_horizontal_implicit_line_2
-  build_point() const
-  { return r_.get_construct_projection_onto_horizontal_implicit_line_2(); }
+  construct_projection_onto_horizontal_implicit_line_2_object() const
+  { return r_.construct_projection_onto_horizontal_implicit_line_2_object(); }
   
   private:
     R& r_;
     Delta delta_;
+#line 774 "3cover.awi"
 public:
   typedef Point_2              Point;
   typedef Iso_rectangle_2      Rectangle;
@@ -266,38 +294,42 @@ public:
   typedef Infinity_distance_2  Distance;
 
   Rectangular_3_center_2_type2_operations1(R& r, const Point& p)
-  : r_(r), delta_(std::bind1st(r.get_infinity_distance_2(), p))
+  : r_(r), delta_(std::bind1st(r.infinity_distance_2_object(), p))
   {}
 
-  X_compare  compare_x() const { return greater_x(); }
-  Y_compare  compare_y() const { return greater_y(); }
+  #line 428 "3cover.awi"
+  X_compare  compare_x() const { return greater_x_2_object(); }
+  Y_compare  compare_y() const { return greater_y_2_object(); }
   
   Point place_x_square(bool constraint_empty,
                        const Rectangle& constraint,
                        const Point& first_uncovered,
                        const Rectangle& bbox) const
   {
-    return build_point()(
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
       constraint_empty ? first_uncovered :
-      maxx()(first_uncovered, rmax()(constraint)),
-        rmax()(bbox));
+      maxx()(first_uncovered, construct_max_point_2_object()(constraint)),
+        construct_max_point_2_object()(bbox));
   }
   
   Point place_x_square(bool constraint_empty,
                        const Rectangle& constraint,
                        const Rectangle& bbox) const
   {
-    return build_point()(
-      constraint_empty ? rmin()(bbox) : rmax()(constraint),
-      rmax()(bbox));
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
+      constraint_empty ?
+      construct_min_point_2_object()(bbox) :
+      construct_max_point_2_object()(constraint),
+      construct_max_point_2_object()(bbox));
   }
   
   Point place_x_square(const Point& so_far,
                        const Rectangle& bbox,
                        FT radius) const
   {
-    return build_point()(
-      maxx()(so_far, rmax()(rect_a_r()(rmin()(bbox), radius))),
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
+      maxx()(so_far, pt_a_r()(construct_min_point_2_object()(bbox),
+                              construct_min_point_2_object()(bbox), radius)),
       so_far);
   }
   
@@ -306,35 +338,40 @@ public:
                        const Point& first_uncovered,
                        const Rectangle& bbox) const
   {
-    return build_point()(
-      rmin()(bbox),
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
+      construct_min_point_2_object()(bbox),
       constraint_empty ? first_uncovered :
-    miny()(first_uncovered, rmin()(constraint)));
+    miny()(first_uncovered, construct_min_point_2_object()(constraint)));
   }
   
   Point place_y_square(bool constraint_empty,
                        const Rectangle& constraint,
                        const Rectangle& bbox) const
   {
-    return build_point()(
-      rmin()(bbox),
-      constraint_empty ? rmax()(bbox) : rmin()(constraint));
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
+      construct_min_point_2_object()(bbox),
+      constraint_empty ?
+      construct_max_point_2_object()(bbox) :
+      construct_min_point_2_object()(constraint));
   }
   
   Point place_y_square(const Point& so_far,
                        const Rectangle& bbox,
                        FT radius) const
   {
-    return build_point()(
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
       so_far,
-      miny()(so_far, rmin()(rect_b_l()(rmax()(bbox), radius))));
+      miny()(so_far, pt_b_l()(construct_max_point_2_object()(bbox),
+                              construct_max_point_2_object()(bbox), radius)));
   }
   
   Point update_x_square(const Point& s, const Point& newp) const
-  { return build_point()(maxx()(s, newp), s); }
+  { return construct_projection_onto_horizontal_implicit_line_2_object()(
+    maxx()(s, newp), s); }
   
   Point update_y_square(const Point& s, const Point& newp) const
-  { return build_point()(s, miny()(s, newp)); }
+  { return construct_projection_onto_horizontal_implicit_line_2_object()(
+    s, miny()(s, newp)); }
   
   FT compute_x_distance(const Point& extreme,
                         const Rectangle& constraint) const
@@ -345,16 +382,19 @@ public:
   { return distance()(extreme, corner()(constraint, 2)); }
   
   Point construct_corner_square(const Rectangle& bbox, FT r) const
-  { return corner()(rect_a_l()(corner()(bbox, 1), r), 3); }
+  { return pt_a_l()(construct_max_point_2_object()(bbox),
+                    construct_min_point_2_object()(bbox), r); }
   
   Point construct_x_square(const Point& p, FT r) const
-  { return rmin()(rect_b_l()(p, r)); }
+  { return pt_b_l()(p, p, r); }
   
   Point construct_y_square(const Point& p, FT r) const
-  { return rmax()(rect_a_r()(p, r)); }
+  { return pt_a_r()(p, p, r); }
+#line 786 "3cover.awi"
 };
 template < class R >
 struct Rectangular_3_center_2_type2_operations2 {
+  #line 220 "3cover.awi"
   typedef typename R::FT                         FT;
   typedef typename R::Point_2                    Point_2;
   typedef typename R::Iso_rectangle_2            Iso_rectangle_2;
@@ -363,63 +403,68 @@ struct Rectangular_3_center_2_type2_operations2 {
   typedef typename R::Less_y_2                   Less_y_2;
   typedef typename R::Greater_x_2                Greater_x_2;
   typedef typename R::Greater_y_2                Greater_y_2;
-  typedef typename R::Construct_min_2            Construct_min_2;
-  typedef typename R::Construct_max_2            Construct_max_2;
+  typedef typename R::Construct_min_point_2      Construct_min_point_2;
+  typedef typename R::Construct_max_point_2      Construct_max_point_2;
   typedef typename R::Construct_corner_2         Construct_corner_2;
-  typedef typename R::Construct_iso_rectangle_2  C_rect;
+  typedef typename R::Construct_iso_rectangle_2  Construct_iso_rectangle_2;
   typedef typename R::Construct_projection_onto_horizontal_implicit_line_2
     Construct_projection_onto_horizontal_implicit_line_2;
-  typedef typename R::Construct_iso_rectangle_2_below_left_point_2
-    Construct_iso_rectangle_2_below_left_point_2;
-  typedef typename R::Construct_iso_rectangle_2_above_left_point_2
-    Construct_iso_rectangle_2_above_left_point_2;
-  typedef typename R::Construct_iso_rectangle_2_below_right_point_2
-    Construct_iso_rectangle_2_below_right_point_2;
-  typedef typename R::Construct_iso_rectangle_2_above_right_point_2
-    Construct_iso_rectangle_2_above_right_point_2;
+  typedef typename R::Construct_point_2_above_right_implicit_point_2
+    Construct_point_2_above_right_implicit_point_2;
+  typedef typename R::Construct_point_2_above_left_implicit_point_2
+    Construct_point_2_above_left_implicit_point_2;
+  typedef typename R::Construct_point_2_below_right_implicit_point_2
+    Construct_point_2_below_right_implicit_point_2;
+  typedef typename R::Construct_point_2_below_left_implicit_point_2
+    Construct_point_2_below_left_implicit_point_2;
   typedef std::binder1st< Infinity_distance_2 >   Delta;
   
   Delta  delta() const { return delta_; }
-  Less_x_2  less_x() const { return r_.get_less_x_2(); }
-  Less_y_2  less_y() const { return r_.get_less_y_2(); }
-  Greater_x_2  greater_x() const { return r_.get_greater_x_2(); }
-  Greater_y_2  greater_y() const { return r_.get_greater_y_2(); }
+  Less_x_2  less_x_2_object() const { return r_.less_x_2_object(); }
+  Less_y_2  less_y_2_object() const { return r_.less_y_2_object(); }
+  Greater_x_2  greater_x_2_object() const { return r_.greater_x_2_object(); }
+  Greater_y_2  greater_y_2_object() const { return r_.greater_y_2_object(); }
   Infinity_distance_2  distance() const
-  { return r_.get_infinity_distance_2(); }
-  Construct_min_2  rmin() const { return r_.get_construct_min_2(); }
-  Construct_max_2  rmax() const { return r_.get_construct_max_2(); }
-  Construct_corner_2  corner() const { return r_.get_construct_corner_2(); }
-  C_rect rectangle() const { return r_.get_construct_iso_rectangle_2(); }
+  { return r_.infinity_distance_2_object(); }
+  Construct_min_point_2  construct_min_point_2_object() const
+  { return r_.construct_min_point_2_object(); }
+  Construct_max_point_2  construct_max_point_2_object() const
+  { return r_.construct_max_point_2_object(); }
+  Construct_corner_2  corner() const
+  { return r_.construct_corner_2_object(); }
+  Construct_iso_rectangle_2 construct_iso_rectangle_2_object() const
+  { return r_.construct_iso_rectangle_2_object(); }
   
-  Construct_iso_rectangle_2_below_left_point_2
-  rect_b_l() const
-  { return r_.get_construct_iso_rectangle_2_below_left_point_2(); }
-  Construct_iso_rectangle_2_above_left_point_2
-  rect_a_l() const
-  { return r_.get_construct_iso_rectangle_2_above_left_point_2(); }
-  Construct_iso_rectangle_2_below_right_point_2
-  rect_b_r() const
-  { return r_.get_construct_iso_rectangle_2_below_right_point_2(); }
-  Construct_iso_rectangle_2_above_right_point_2
-  rect_a_r() const
-  { return r_.get_construct_iso_rectangle_2_above_right_point_2(); }
+  Construct_point_2_below_left_implicit_point_2
+  pt_b_l() const
+  { return r_.construct_point_2_below_left_implicit_point_2_object(); }
+  Construct_point_2_above_left_implicit_point_2
+  pt_a_l() const
+  { return r_.construct_point_2_above_left_implicit_point_2_object(); }
+  Construct_point_2_below_right_implicit_point_2
+  pt_b_r() const
+  { return r_.construct_point_2_below_right_implicit_point_2_object(); }
+  Construct_point_2_above_right_implicit_point_2
+  pt_a_r() const
+  { return r_.construct_point_2_above_right_implicit_point_2_object(); }
   
   typedef typename R::Min_x_2 Min_x_2;
-  Min_x_2 minx() const { return r_.get_min_x_2(); }
+  Min_x_2 minx() const { return r_.min_x_2_object(); }
   typedef typename R::Min_y_2 Min_y_2;
-  Min_y_2 miny() const { return r_.get_min_y_2(); }
+  Min_y_2 miny() const { return r_.min_y_2_object(); }
   typedef typename R::Max_x_2 Max_x_2;
-  Max_x_2 maxx() const { return r_.get_max_x_2(); }
+  Max_x_2 maxx() const { return r_.max_x_2_object(); }
   typedef typename R::Max_y_2 Max_y_2;
-  Max_y_2 maxy() const { return r_.get_max_y_2(); }
+  Max_y_2 maxy() const { return r_.max_y_2_object(); }
   
   Construct_projection_onto_horizontal_implicit_line_2
-  build_point() const
-  { return r_.get_construct_projection_onto_horizontal_implicit_line_2(); }
+  construct_projection_onto_horizontal_implicit_line_2_object() const
+  { return r_.construct_projection_onto_horizontal_implicit_line_2_object(); }
   
   private:
     R& r_;
     Delta delta_;
+#line 790 "3cover.awi"
 public:
   typedef Point_2              Point;
   typedef Iso_rectangle_2      Rectangle;
@@ -428,38 +473,42 @@ public:
   typedef Infinity_distance_2  Distance;
 
   Rectangular_3_center_2_type2_operations2(R& r, const Point& p)
-  : r_(r), delta_(std::bind1st(r.get_infinity_distance_2(), p))
+  : r_(r), delta_(std::bind1st(r.infinity_distance_2_object(), p))
   {}
 
-  X_compare  compare_x() const { return greater_x(); }
-  Y_compare  compare_y() const { return less_y(); }
+  #line 544 "3cover.awi"
+  X_compare  compare_x() const { return greater_x_2_object(); }
+  Y_compare  compare_y() const { return less_y_2_object(); }
   
   Point place_x_square(bool constraint_empty,
                        const Rectangle& constraint,
                        const Point& first_uncovered,
                        const Rectangle& bbox) const
   {
-    return build_point()(
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
       constraint_empty ? first_uncovered :
-      maxx()(first_uncovered, rmax()(constraint)),
-        rmin()(bbox));
+      maxx()(first_uncovered, construct_max_point_2_object()(constraint)),
+        construct_min_point_2_object()(bbox));
   }
   
   Point place_x_square(bool constraint_empty,
                        const Rectangle& constraint,
                        const Rectangle& bbox) const
   {
-    return build_point()(
-      constraint_empty ? rmin()(bbox) : rmax()(constraint),
-      rmin()(bbox));
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
+      constraint_empty ?
+      construct_min_point_2_object()(bbox) :
+      construct_max_point_2_object()(constraint),
+      construct_min_point_2_object()(bbox));
   }
   
   Point place_x_square(const Point& so_far,
                        const Rectangle& bbox,
                        FT radius) const
   {
-    return build_point()(
-      maxx()(so_far, rmax()(rect_a_r()(rmin()(bbox), radius))),
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
+      maxx()(so_far, pt_a_r()(construct_min_point_2_object()(bbox),
+                              construct_min_point_2_object()(bbox), radius)),
       so_far);
   }
   
@@ -468,35 +517,40 @@ public:
                        const Point& first_uncovered,
                        const Rectangle& bbox) const
   {
-    return build_point()(
-      rmin()(bbox),
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
+      construct_min_point_2_object()(bbox),
       constraint_empty ? first_uncovered :
-    maxy()(first_uncovered, rmax()(constraint)));
+    maxy()(first_uncovered, construct_max_point_2_object()(constraint)));
   }
   
   Point place_y_square(bool constraint_empty,
                        const Rectangle& constraint,
                        const Rectangle& bbox) const
   {
-    return build_point()(
-      rmin()(bbox),
-      constraint_empty ? rmin()(bbox) : rmax()(constraint));
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
+      construct_min_point_2_object()(bbox),
+      constraint_empty ?
+      construct_min_point_2_object()(bbox) :
+      construct_max_point_2_object()(constraint));
   }
   
   Point place_y_square(const Point& so_far,
                        const Rectangle& bbox,
                        FT radius) const
   {
-    return build_point()(
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
       so_far,
-      maxy()(rmax()(rect_a_r()(rmin()(bbox), radius)), so_far));
+      maxy()(pt_a_r()(construct_min_point_2_object()(bbox),
+                      construct_min_point_2_object()(bbox), radius), so_far));
   }
   
   Point update_x_square(const Point& s, const Point& newp) const
-  { return build_point()(maxx()(s, newp), s); }
+  { return construct_projection_onto_horizontal_implicit_line_2_object()(
+    maxx()(s, newp), s); }
   
   Point update_y_square(const Point& s, const Point& newp) const
-  { return build_point()(s, maxy()(s, newp)); }
+  { return construct_projection_onto_horizontal_implicit_line_2_object()(
+    s, maxy()(s, newp)); }
   
   FT compute_x_distance(const Point& extreme,
                         const Rectangle& constraint) const
@@ -507,16 +561,19 @@ public:
   { return distance()(extreme, corner()(constraint, 1)); }
   
   Point construct_corner_square(const Rectangle& bbox, FT r) const
-  { return rmin()(rect_b_l()(rmax()(bbox), r)); }
+  { return pt_b_l()(construct_max_point_2_object()(bbox),
+                    construct_max_point_2_object()(bbox), r); }
   
   Point construct_x_square(const Point& p, FT r) const
-  { return corner()(rect_a_l()(p, r), 3); }
+  { return pt_a_l()(p, p, r); }
   
   Point construct_y_square(const Point& p, FT r) const
-  { return corner()(rect_b_r()(p, r), 1); }
+  { return pt_b_r()(p, p, r); }
+#line 802 "3cover.awi"
 };
 template < class R >
 struct Rectangular_3_center_2_type2_operations3 {
+  #line 220 "3cover.awi"
   typedef typename R::FT                         FT;
   typedef typename R::Point_2                    Point_2;
   typedef typename R::Iso_rectangle_2            Iso_rectangle_2;
@@ -525,63 +582,68 @@ struct Rectangular_3_center_2_type2_operations3 {
   typedef typename R::Less_y_2                   Less_y_2;
   typedef typename R::Greater_x_2                Greater_x_2;
   typedef typename R::Greater_y_2                Greater_y_2;
-  typedef typename R::Construct_min_2            Construct_min_2;
-  typedef typename R::Construct_max_2            Construct_max_2;
+  typedef typename R::Construct_min_point_2      Construct_min_point_2;
+  typedef typename R::Construct_max_point_2      Construct_max_point_2;
   typedef typename R::Construct_corner_2         Construct_corner_2;
-  typedef typename R::Construct_iso_rectangle_2  C_rect;
+  typedef typename R::Construct_iso_rectangle_2  Construct_iso_rectangle_2;
   typedef typename R::Construct_projection_onto_horizontal_implicit_line_2
     Construct_projection_onto_horizontal_implicit_line_2;
-  typedef typename R::Construct_iso_rectangle_2_below_left_point_2
-    Construct_iso_rectangle_2_below_left_point_2;
-  typedef typename R::Construct_iso_rectangle_2_above_left_point_2
-    Construct_iso_rectangle_2_above_left_point_2;
-  typedef typename R::Construct_iso_rectangle_2_below_right_point_2
-    Construct_iso_rectangle_2_below_right_point_2;
-  typedef typename R::Construct_iso_rectangle_2_above_right_point_2
-    Construct_iso_rectangle_2_above_right_point_2;
+  typedef typename R::Construct_point_2_above_right_implicit_point_2
+    Construct_point_2_above_right_implicit_point_2;
+  typedef typename R::Construct_point_2_above_left_implicit_point_2
+    Construct_point_2_above_left_implicit_point_2;
+  typedef typename R::Construct_point_2_below_right_implicit_point_2
+    Construct_point_2_below_right_implicit_point_2;
+  typedef typename R::Construct_point_2_below_left_implicit_point_2
+    Construct_point_2_below_left_implicit_point_2;
   typedef std::binder1st< Infinity_distance_2 >   Delta;
   
   Delta  delta() const { return delta_; }
-  Less_x_2  less_x() const { return r_.get_less_x_2(); }
-  Less_y_2  less_y() const { return r_.get_less_y_2(); }
-  Greater_x_2  greater_x() const { return r_.get_greater_x_2(); }
-  Greater_y_2  greater_y() const { return r_.get_greater_y_2(); }
+  Less_x_2  less_x_2_object() const { return r_.less_x_2_object(); }
+  Less_y_2  less_y_2_object() const { return r_.less_y_2_object(); }
+  Greater_x_2  greater_x_2_object() const { return r_.greater_x_2_object(); }
+  Greater_y_2  greater_y_2_object() const { return r_.greater_y_2_object(); }
   Infinity_distance_2  distance() const
-  { return r_.get_infinity_distance_2(); }
-  Construct_min_2  rmin() const { return r_.get_construct_min_2(); }
-  Construct_max_2  rmax() const { return r_.get_construct_max_2(); }
-  Construct_corner_2  corner() const { return r_.get_construct_corner_2(); }
-  C_rect rectangle() const { return r_.get_construct_iso_rectangle_2(); }
+  { return r_.infinity_distance_2_object(); }
+  Construct_min_point_2  construct_min_point_2_object() const
+  { return r_.construct_min_point_2_object(); }
+  Construct_max_point_2  construct_max_point_2_object() const
+  { return r_.construct_max_point_2_object(); }
+  Construct_corner_2  corner() const
+  { return r_.construct_corner_2_object(); }
+  Construct_iso_rectangle_2 construct_iso_rectangle_2_object() const
+  { return r_.construct_iso_rectangle_2_object(); }
   
-  Construct_iso_rectangle_2_below_left_point_2
-  rect_b_l() const
-  { return r_.get_construct_iso_rectangle_2_below_left_point_2(); }
-  Construct_iso_rectangle_2_above_left_point_2
-  rect_a_l() const
-  { return r_.get_construct_iso_rectangle_2_above_left_point_2(); }
-  Construct_iso_rectangle_2_below_right_point_2
-  rect_b_r() const
-  { return r_.get_construct_iso_rectangle_2_below_right_point_2(); }
-  Construct_iso_rectangle_2_above_right_point_2
-  rect_a_r() const
-  { return r_.get_construct_iso_rectangle_2_above_right_point_2(); }
+  Construct_point_2_below_left_implicit_point_2
+  pt_b_l() const
+  { return r_.construct_point_2_below_left_implicit_point_2_object(); }
+  Construct_point_2_above_left_implicit_point_2
+  pt_a_l() const
+  { return r_.construct_point_2_above_left_implicit_point_2_object(); }
+  Construct_point_2_below_right_implicit_point_2
+  pt_b_r() const
+  { return r_.construct_point_2_below_right_implicit_point_2_object(); }
+  Construct_point_2_above_right_implicit_point_2
+  pt_a_r() const
+  { return r_.construct_point_2_above_right_implicit_point_2_object(); }
   
   typedef typename R::Min_x_2 Min_x_2;
-  Min_x_2 minx() const { return r_.get_min_x_2(); }
+  Min_x_2 minx() const { return r_.min_x_2_object(); }
   typedef typename R::Min_y_2 Min_y_2;
-  Min_y_2 miny() const { return r_.get_min_y_2(); }
+  Min_y_2 miny() const { return r_.min_y_2_object(); }
   typedef typename R::Max_x_2 Max_x_2;
-  Max_x_2 maxx() const { return r_.get_max_x_2(); }
+  Max_x_2 maxx() const { return r_.max_x_2_object(); }
   typedef typename R::Max_y_2 Max_y_2;
-  Max_y_2 maxy() const { return r_.get_max_y_2(); }
+  Max_y_2 maxy() const { return r_.max_y_2_object(); }
   
   Construct_projection_onto_horizontal_implicit_line_2
-  build_point() const
-  { return r_.get_construct_projection_onto_horizontal_implicit_line_2(); }
+  construct_projection_onto_horizontal_implicit_line_2_object() const
+  { return r_.construct_projection_onto_horizontal_implicit_line_2_object(); }
   
   private:
     R& r_;
     Delta delta_;
+#line 806 "3cover.awi"
 public:
   typedef Point_2              Point;
   typedef Iso_rectangle_2      Rectangle;
@@ -590,38 +652,42 @@ public:
   typedef Infinity_distance_2  Distance;
 
   Rectangular_3_center_2_type2_operations3(R& r, const Point& p)
-  : r_(r), delta_(std::bind1st(r.get_infinity_distance_2(), p))
+  : r_(r), delta_(std::bind1st(r.infinity_distance_2_object(), p))
   {}
 
-  X_compare  compare_x() const { return less_x(); }
-  Y_compare  compare_y() const { return less_y(); }
+  #line 660 "3cover.awi"
+  X_compare  compare_x() const { return less_x_2_object(); }
+  Y_compare  compare_y() const { return less_y_2_object(); }
   
   Point place_x_square(bool constraint_empty,
                        const Rectangle& constraint,
                        const Point& first_uncovered,
                        const Rectangle& bbox) const
   {
-    return build_point()(
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
       constraint_empty ? first_uncovered :
-      minx()(first_uncovered, rmin()(constraint)),
-        rmin()(bbox));
+      minx()(first_uncovered, construct_min_point_2_object()(constraint)),
+        construct_min_point_2_object()(bbox));
   }
   
   Point place_x_square(bool constraint_empty,
                        const Rectangle& constraint,
                        const Rectangle& bbox) const
   {
-    return build_point()(
-      constraint_empty ? rmax()(bbox) : rmin()(constraint),
-      rmin()(bbox));
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
+      constraint_empty ?
+      construct_max_point_2_object()(bbox) :
+      construct_min_point_2_object()(constraint),
+      construct_min_point_2_object()(bbox));
   }
   
   Point place_x_square(const Point& so_far,
                        const Rectangle& bbox,
                        FT radius) const
   {
-    return build_point()(
-      minx()(rmin()(rect_b_l()(rmax()(bbox), radius)), so_far),
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
+      minx()(pt_b_l()(construct_max_point_2_object()(bbox),
+                      construct_max_point_2_object()(bbox), radius), so_far),
       so_far);
   }
   
@@ -630,35 +696,40 @@ public:
                        const Point& first_uncovered,
                        const Rectangle& bbox) const
   {
-    return build_point()(
-      rmax()(bbox),
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
+      construct_max_point_2_object()(bbox),
       constraint_empty ? first_uncovered :
-    maxy()(first_uncovered, rmax()(constraint)));
+    maxy()(first_uncovered, construct_max_point_2_object()(constraint)));
   }
   
   Point place_y_square(bool constraint_empty,
                        const Rectangle& constraint,
                        const Rectangle& bbox) const
   {
-    return build_point()(
-      rmax()(bbox),
-      constraint_empty ? rmin()(bbox) : rmax()(constraint));
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
+      construct_max_point_2_object()(bbox),
+      constraint_empty ?
+      construct_min_point_2_object()(bbox) :
+      construct_max_point_2_object()(constraint));
   }
   
   Point place_y_square(const Point& so_far,
                        const Rectangle& bbox,
                        FT radius) const
   {
-    return build_point()(
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
       so_far,
-      maxy()(rmax()(rect_a_r()(rmin()(bbox), radius)), so_far));
+      maxy()(pt_a_r()(construct_min_point_2_object()(bbox),
+                      construct_min_point_2_object()(bbox), radius), so_far));
   }
   
   Point update_x_square(const Point& s, const Point& newp) const
-  { return build_point()(minx()(s, newp), s); }
+  { return construct_projection_onto_horizontal_implicit_line_2_object()(
+    minx()(s, newp), s); }
   
   Point update_y_square(const Point& s, const Point& newp) const
-  { return build_point()(s, maxy()(s, newp)); }
+  { return construct_projection_onto_horizontal_implicit_line_2_object()(
+    s, maxy()(s, newp)); }
   
   FT compute_x_distance(const Point& extreme,
                         const Rectangle& constraint) const
@@ -669,17 +740,20 @@ public:
   { return distance()(extreme, corner()(constraint, 0)); }
   
   Point construct_corner_square(const Rectangle& bbox, FT r) const
-  { return corner()(rect_b_r()(corner()(bbox, 3), r), 1); }
+  { return pt_b_r()(construct_min_point_2_object()(bbox),
+                    construct_max_point_2_object()(bbox), r); }
   
   Point construct_x_square(const Point& p, FT r) const
-  { return rmax()(rect_a_r()(p, r)); }
+  { return pt_a_r()(p, p, r); }
   
   Point construct_y_square(const Point& p, FT r) const
-  { return rmin()(rect_b_l()(p, r)); }
+  { return pt_b_l()(p, p, r); }
+#line 818 "3cover.awi"
 };
 
 #endif // ! (CGAL_RECTANGULAR_3_CENTER_2_MSVC_H)
 
+#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

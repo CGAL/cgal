@@ -1,3 +1,5 @@
+#line 585 "pcenter.aw"
+#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -24,17 +26,26 @@
 // 2-4-Center Computation for Axis-Parallel 2D-Rectangles
 // ============================================================================
 
+#line 589 "pcenter.aw"
+#line 54 "code_formatting.awi"
 #if ! (CGAL_RECTANGULAR_P_CENTER_TRAITS_2_H)
 #define CGAL_RECTANGULAR_P_CENTER_TRAITS_2_H 1
 
+#line 338 "pc_traits.awi"
+#line 565 "pc_traits.awi"
 #include <CGAL/Point_2.h>
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/basic_constructions_2.h>
 
 
+#line 339 "pc_traits.awi"
 
+#line 46 "code_formatting.awi"
 CGAL_BEGIN_NAMESPACE
+#line 341 "pc_traits.awi"
+#line 344 "pc_traits.awi"
 
+#line 30 "pc_traits.awi"
 template < class R >
 struct Less_x_2
 : public CGAL_STD::binary_function< Point_2< R >, Point_2< R >, bool >
@@ -54,6 +65,7 @@ struct Less_y_2
   { return p.y() < q.y(); }
 };
 
+/*
 template < class R >
 struct Greater_x_2
 : public CGAL_STD::binary_function< Point_2< R >, Point_2< R >, bool >
@@ -71,8 +83,9 @@ struct Greater_y_2
                   const Point_2< R >& q) const
   { return p.y() > q.y(); }
 };
+#line 70 "pc_traits.awi"
 template < class R >
-struct Construct_min_2
+struct Construct_min_point_2
 : public CGAL_STD::unary_function< Iso_rectangle_2< R >, Point_2< R > >
 {
   Point_2< R > operator()(const Iso_rectangle_2< R >& r) const
@@ -80,16 +93,18 @@ struct Construct_min_2
 };
 
 template < class R >
-struct Construct_max_2
+struct Construct_max_point_2
 : public CGAL_STD::unary_function< Iso_rectangle_2< R >, Point_2< R > >
 {
   Point_2< R > operator()(const Iso_rectangle_2< R >& r) const
   { return r.max(); }
 };
+*/
+#line 89 "pc_traits.awi"
 template < class A, class S >
 struct Select : public CGAL_STD::binary_function< A, A, A > {
   Select() {}
-  Select(S& s) : s_(s) {}
+  Select(const S& s) : s_(s) {}
   A operator()(const A& a, const A& b) const
   { return s_(a, b) ? a : b; }
   A operator()(const A& a, const A& b)
@@ -98,81 +113,14 @@ private:
   S s_;
 };
 
-template < class R >
-struct Min_x_2 : public Select< Point_2< R >, Less_x_2< R > > {};
-
-template < class R >
-struct Min_y_2 : public Select< Point_2< R >, Less_y_2< R > > {};
-
-template < class R >
-struct Max_x_2 : public Select< Point_2< R >, Greater_x_2< R > > {};
-
-template < class R >
-struct Max_y_2 : public Select< Point_2< R >, Greater_y_2< R > > {};
+#line 104 "pc_traits.awi"
 template < class R >
 struct Construct_iso_rectangle_2 {
   Iso_rectangle_2< R >
-  operator()(const Point_2< R >& xmin,
-             const Point_2< R >& ymin,
-             const Point_2< R >& xmax,
-             const Point_2< R >& ymax) const
-  {
-    typedef Point_2< R >         P;
-    typedef Iso_rectangle_2< R > Rect;
-    return Rect(P(xmin.x(), ymin.y()), P(xmax.x(), ymax.y()));
-  }
+  operator()(const Point_2< R >& min, const Point_2< R >& max) const
+  { return Iso_rectangle_2< R >(min, max); }
 };
-template < class ForwardIterator >
-Iso_rectangle_2<
-  typename std::iterator_traits< ForwardIterator >::value_type::R >
-bounding_box_2(ForwardIterator f, ForwardIterator l)
-// PRE: f != l.
-{
-  CGAL_precondition(f != l);
-  typedef
-    typename std::iterator_traits< ForwardIterator >::value_type
-  Point;
-  typedef typename Point::R R;
-  typedef Iso_rectangle_2< R > Return_type;
-
-  ForwardIterator xmin = f;
-  ForwardIterator xmax = f;
-  ForwardIterator ymin = f;
-  ForwardIterator ymax = f;
-
-  while (++f != l) {
-    if (Less_x_2< R >()(*f, *xmin))
-      xmin = f;
-    if (Less_x_2< R >()(*xmax, *f))
-      xmax = f;
-    if (Less_y_2< R >()(*f, *ymin))
-      ymin = f;
-    if (Less_y_2< R >()(*ymax, *f))
-      ymax = f;
-  }
-
-  return Construct_iso_rectangle_2< R >()(*xmin, *ymin, *xmax, *ymax);
-} //  bounding_box_2( ... )
-template < class Rectangle >
-inline Rectangle
-construct_bounding_box_union(const Rectangle& r1, const Rectangle& r2)
-{
-  typedef typename Rectangle::R R;
-  return Construct_iso_rectangle_2< R >()(
-    Less_x_2< R >()(r1.min(), r2.min()) ? r1.min() : r2.min(),
-    Less_y_2< R >()(r1.min(), r2.min()) ? r1.min() : r2.min(),
-    Less_x_2< R >()(r2.max(), r1.max()) ? r1.max() : r2.max(),
-    Less_y_2< R >()(r2.max(), r1.max()) ? r1.max() : r2.max());
-}
-template < class R >
-struct X_distance_2
-: public CGAL_STD::binary_function<
-  Point_2< R >, Point_2< R >, typename R::FT >
-{
-  typename R::FT
-  operator()(const Point_2< R >& q1, const Point_2< R >& q2) const
-  { return CGAL::abs(q1.x() - q2.x()); }
-};
+#line 215 "pc_traits.awi"
 template < class R >
 struct Signed_x_distance_2
 : public CGAL_STD::binary_function<
@@ -182,15 +130,7 @@ struct Signed_x_distance_2
   operator()(const Point_2< R >& q1, const Point_2< R >& q2) const
   { return q1.x() - q2.x(); }
 };
-template < class R >
-struct Y_distance_2
-: public CGAL_STD::binary_function<
-  Point_2< R >, Point_2< R >, typename R::FT >
-{
-  typename R::FT
-  operator()(const Point_2< R >& q1, const Point_2< R >& q2) const
-  { return CGAL::abs(q1.y() - q2.y()); }
-};
+#line 227 "pc_traits.awi"
 template < class R >
 struct Signed_y_distance_2
 : public CGAL_STD::binary_function<
@@ -200,6 +140,7 @@ struct Signed_y_distance_2
   operator()(const Point_2< R >& q1, const Point_2< R >& q2) const
   { return q1.y() - q2.y(); }
 };
+#line 239 "pc_traits.awi"
 template < class R >
 struct Infinity_distance_2
 : public CGAL_STD::binary_function<
@@ -211,6 +152,7 @@ struct Infinity_distance_2
                     CGAL::abs(q1.y() - q2.y()));
   }
 };
+#line 253 "pc_traits.awi"
 template < class R >
 struct Signed_infinity_distance_2
 : public CGAL_STD::binary_function<
@@ -220,6 +162,7 @@ struct Signed_infinity_distance_2
   operator()(const Point_2< R >& q1, const Point_2< R >& q2) const
   { return std::max(q1.x() - q2.x(), q1.y() - q2.y()); }
 };
+#line 265 "pc_traits.awi"
 template < class R >
 struct Construct_corner_2
 : public CGAL_STD::binary_function<
@@ -229,49 +172,7 @@ struct Construct_corner_2
   operator()(const Iso_rectangle_2< R >& q, unsigned int i) const
   { return q[i]; }
 };
-template < class R >
-struct Construct_iso_rectangle_2_above_right_point_2 {
-  typedef typename R::FT                     FT;
-  typedef Point_2< Cartesian< FT > >         P;
-  typedef Iso_rectangle_2< Cartesian< FT > > Rect;
-
-  inline Rect
-  operator()(const P& p, FT r) const
-  { return Rect(p, P(p.x() + r, p.y() + r)); }
-};
-
-template < class R >
-struct Construct_iso_rectangle_2_above_left_point_2 {
-  typedef typename R::FT                     FT;
-  typedef Point_2< Cartesian< FT > >         P;
-  typedef Iso_rectangle_2< Cartesian< FT > > Rect;
-
-  inline Rect
-  operator()(const P& p, FT r) const
-  { return Rect(P(p.x() - r, p.y()), P(p.x(), p.y() + r)); }
-};
-
-template < class R >
-struct Construct_iso_rectangle_2_below_right_point_2 {
-  typedef typename R::FT                     FT;
-  typedef Point_2< Cartesian< FT > >         P;
-  typedef Iso_rectangle_2< Cartesian< FT > > Rect;
-
-  inline Rect
-  operator()(const P& p, FT r) const
-  { return Rect(P(p.x(), p.y() - r), P(p.x() + r, p.y())); }
-};
-
-template < class R >
-struct Construct_iso_rectangle_2_below_left_point_2 {
-  typedef typename R::FT                     FT;
-  typedef Point_2< Cartesian< FT > >         P;
-  typedef Iso_rectangle_2< Cartesian< FT > > Rect;
-
-  inline Rect
-  operator()(const P& p, FT r) const
-  { return Rect(P(p.x() - r, p.y() - r), p); }
-};
+#line 277 "pc_traits.awi"
 template < class R >
 struct Construct_point_2_above_right_implicit_point_2 {
   // (p, q, r) |--> (p.x() + r, q.y() + r)
@@ -315,6 +216,7 @@ struct Construct_point_2_below_right_implicit_point_2 {
   operator()(const P& p, const P& q, FT r) const
   { return P(p.x() + r, q.y() - r); }
 };
+#line 323 "pc_traits.awi"
 // Point_2 x Point_2 --> Point_2
 // (p, q) |-> projection of p onto the horizontal line through q
 template < class R >
@@ -328,9 +230,11 @@ struct Construct_projection_onto_horizontal_implicit_line_2
   { return Point_2(p.x(), q.y()); }
 };
 
+#line 346 "pc_traits.awi"
 
 template < class R >
-struct Rectangular_p_center_default_traits_2 {
+struct Rectangular_p_center_default_traits_2 : public R
+{
   // -----------------------------------------------------------------
   // types:
   //
@@ -341,43 +245,66 @@ struct Rectangular_p_center_default_traits_2 {
   // -----------------------------------------------------------------
   // predicates:
   //
-  typedef Less_x_2< R >                Less_x_2;
-  typedef Less_y_2< R >                Less_y_2;
-  typedef Greater_x_2< R >             Greater_x_2;
-  typedef Greater_y_2< R >             Greater_y_2;
 
-  // get object methods:
-  Less_x_2    get_less_x_2() const    { return Less_x_2(); }
-  Less_y_2    get_less_y_2() const    { return Less_y_2(); }
-  Greater_x_2 get_greater_x_2() const { return Greater_x_2(); }
-  Greater_y_2 get_greater_y_2() const { return Greater_y_2(); }
+  // from the kernel
+  //typedef typename R::Less_x_2         Less_x_2;
+  //typedef typename R::Less_y_2         Less_y_2;
+  typedef CGAL::Less_x_2< R > Less_x_2;
+  typedef CGAL::Less_y_2< R > Less_y_2;
+  Less_x_2 less_x_2_object() const { return Less_x_2(); }
+  Less_y_2 less_y_2_object() const { return Less_y_2(); }
+
+  // additions
+  #line 444 "pc_traits.awi"
+  struct Greater_x_2 : public std::binary_function< Point_2, Point_2, bool >
+  {
+    Greater_x_2(const Less_x_2& l) : lessx2(l) {}
+  
+    bool operator()(const Point_2& p, const Point_2& q) const
+    { return lessx2(q, p); }
+  private:
+    Less_x_2 lessx2;
+  };
+  struct Greater_y_2 : public std::binary_function< Point_2, Point_2, bool >
+  {
+    Greater_y_2(const Less_y_2& l) : lessy2(l) {}
+  
+    bool operator()(const Point_2& p, const Point_2& q) const
+    { return lessy2(q, p); }
+  private:
+    Less_y_2 lessy2;
+  };
+  
+  // object methods:
+  Greater_x_2 greater_x_2_object() const
+  { return Greater_x_2(less_x_2_object()); }
+  Greater_y_2 greater_y_2_object() const
+  { return Greater_y_2(less_y_2_object()); }
+#line 371 "pc_traits.awi"
 
   // -----------------------------------------------------------------
   // constructions:
   //
-  typedef X_distance_2< R >         X_distance_2;
-  typedef Y_distance_2< R >         Y_distance_2;
+
+  // from the kernel
+  typedef typename R::Construct_min_point_2     Construct_min_point_2;
+  typedef typename R::Construct_max_point_2     Construct_max_point_2;
+
+  // additions
+  typedef Construct_iso_rectangle_2< R > Construct_iso_rectangle_2;
+  Construct_iso_rectangle_2
+  construct_iso_rectangle_2_object() const
+  { return Construct_iso_rectangle_2(); }
+
   typedef Signed_x_distance_2< R >  Signed_x_distance_2;
   typedef Signed_y_distance_2< R >  Signed_y_distance_2;
 
-  typedef Infinity_distance_2< R >          Infinity_distance_2;
-  typedef Signed_infinity_distance_2< R >   Signed_infinity_distance_2;
+  typedef Infinity_distance_2< R >           Infinity_distance_2;
+  typedef Signed_infinity_distance_2< R >    Signed_infinity_distance_2;
+  typedef Construct_corner_2< R >            Construct_corner_2;
 
-  typedef Construct_min_2< R >         Construct_min_2;
-  typedef Construct_max_2< R >         Construct_max_2;
-  typedef Construct_corner_2< R >      Construct_corner_2;
   typedef Construct_projection_onto_horizontal_implicit_line_2< R >
     Construct_projection_onto_horizontal_implicit_line_2;
-  typedef Construct_iso_rectangle_2< R >  Construct_iso_rectangle_2;
-
-  typedef Construct_iso_rectangle_2_below_left_point_2< R >
-    Construct_iso_rectangle_2_below_left_point_2;
-  typedef Construct_iso_rectangle_2_above_left_point_2< R >
-    Construct_iso_rectangle_2_above_left_point_2;
-  typedef Construct_iso_rectangle_2_below_right_point_2< R >
-    Construct_iso_rectangle_2_below_right_point_2;
-  typedef Construct_iso_rectangle_2_above_right_point_2< R >
-    Construct_iso_rectangle_2_above_right_point_2;
 
   typedef Construct_point_2_above_right_implicit_point_2< R >
     Construct_point_2_above_right_implicit_point_2;
@@ -389,71 +316,67 @@ struct Rectangular_p_center_default_traits_2 {
     Construct_point_2_below_left_implicit_point_2;
 
   // get object methods:
-  X_distance_2 get_x_distance_2() const { return X_distance_2(); }
-  Y_distance_2 get_y_distance_2() const { return Y_distance_2(); }
   Signed_x_distance_2
-  get_signed_x_distance_2() const
+  signed_x_distance_2_object() const
   { return Signed_x_distance_2(); }
   Signed_y_distance_2
-  get_signed_y_distance_2() const
+  signed_y_distance_2_object() const
   { return Signed_y_distance_2(); }
   Infinity_distance_2
-  get_infinity_distance_2() const
+  infinity_distance_2_object() const
   { return Infinity_distance_2(); }
   Signed_infinity_distance_2
-  get_signed_infinity_distance_2() const
+  signed_infinity_distance_2_object() const
   { return Signed_infinity_distance_2(); }
-  Construct_min_2
-  get_construct_min_2() const
-  { return Construct_min_2(); }
-  Construct_max_2
-  get_construct_max_2() const
-  { return Construct_max_2(); }
   Construct_corner_2
-  get_construct_corner_2() const
+  construct_corner_2_object() const
   { return Construct_corner_2(); }
-  Construct_iso_rectangle_2
-  get_construct_iso_rectangle_2() const
-  { return Construct_iso_rectangle_2(); }
   Construct_projection_onto_horizontal_implicit_line_2
-  get_construct_projection_onto_horizontal_implicit_line_2() const
+  construct_projection_onto_horizontal_implicit_line_2_object() const
   { return Construct_projection_onto_horizontal_implicit_line_2(); }
-  Construct_iso_rectangle_2_below_left_point_2
-  get_construct_iso_rectangle_2_below_left_point_2() const
-  { return Construct_iso_rectangle_2_below_left_point_2(); }
-  Construct_iso_rectangle_2_above_left_point_2
-  get_construct_iso_rectangle_2_above_left_point_2() const
-  { return Construct_iso_rectangle_2_above_left_point_2(); }
-  Construct_iso_rectangle_2_below_right_point_2
-  get_construct_iso_rectangle_2_below_right_point_2() const
-  { return Construct_iso_rectangle_2_below_right_point_2(); }
-  Construct_iso_rectangle_2_above_right_point_2
-  get_construct_iso_rectangle_2_above_right_point_2() const
-  { return Construct_iso_rectangle_2_above_right_point_2(); }
   Construct_point_2_above_right_implicit_point_2
-  get_construct_point_2_above_right_implicit_point_2() const
+  construct_point_2_above_right_implicit_point_2_object() const
   { return Construct_point_2_above_right_implicit_point_2(); }
   Construct_point_2_above_left_implicit_point_2
-  get_construct_point_2_above_left_implicit_point_2() const
+  construct_point_2_above_left_implicit_point_2_object() const
   { return Construct_point_2_above_left_implicit_point_2(); }
   Construct_point_2_below_left_implicit_point_2
-  get_construct_point_2_below_left_implicit_point_2() const
+  construct_point_2_below_left_implicit_point_2_object() const
   { return Construct_point_2_below_left_implicit_point_2(); }
   Construct_point_2_below_right_implicit_point_2
-  get_construct_point_2_below_right_implicit_point_2() const
+  construct_point_2_below_right_implicit_point_2_object() const
   { return Construct_point_2_below_right_implicit_point_2(); }
 
   //!!! this shouldn't be here as it can be written in terms
   // of known stuff
-  typedef Min_x_2< R >  Min_x_2;
-  typedef Max_x_2< R >  Max_x_2;
-  typedef Min_y_2< R >  Min_y_2;
-  typedef Max_y_2< R >  Max_y_2;
-  Min_x_2 get_min_x_2() const { return Min_x_2(); }
-  Max_x_2 get_max_x_2() const { return Max_x_2(); }
-  Min_y_2 get_min_y_2() const { return Min_y_2(); }
-  Max_y_2 get_max_y_2() const { return Max_y_2(); }
+  #line 471 "pc_traits.awi"
+  struct Min_x_2 : public Select< Point_2, Less_x_2 > {
+    Min_x_2(const Less_x_2& l) : Select< Point_2, Less_x_2 >(l) {}
+  };
+  
+  struct Min_y_2 : public Select< Point_2, Less_y_2 > {
+    Min_y_2(const Less_y_2& l) : Select< Point_2, Less_y_2 >(l) {}
+  };
+  
+  struct Max_x_2 : public Select< Point_2, Greater_x_2 > {
+    Max_x_2(const Greater_x_2& l) : Select< Point_2, Greater_x_2 >(l) {}
+  };
+  
+  struct Max_y_2 : public Select< Point_2, Greater_y_2 > {
+    Max_y_2(const Greater_y_2& l) : Select< Point_2, Greater_y_2 >(l) {}
+  };
+  
+  Min_x_2 min_x_2_object() const
+  { return Min_x_2(less_x_2_object()); }
+  Max_x_2 max_x_2_object() const
+  { return Max_x_2(greater_x_2_object()); }
+  Min_y_2 min_y_2_object() const
+  { return Min_y_2(less_y_2_object()); }
+  Max_y_2 max_y_2_object() const
+  { return Max_y_2(greater_y_2_object()); }
+#line 440 "pc_traits.awi"
 };
+#line 501 "pc_traits.awi"
 
 template < class _Traits, class _PiercingFunction >
 struct Rectangular_p_center_matrix_search_traits_2 {
@@ -509,11 +432,111 @@ private:
 
 }; // Rectangular_p_center_matrix_search_traits_2< ... >
 
+#line 113 "pc_traits.awi"
+template < class ForwardIterator, class Traits >
+Iso_rectangle_2<
+  typename std::iterator_traits< ForwardIterator >::value_type::R >
+bounding_box_2(ForwardIterator f, ForwardIterator l, const Traits& t)
+// PRE: f != l.
+{
+  CGAL_precondition(f != l);
+  //typedef typename R::Less_x_2 Less_x_2;
+  //typedef typename R::Less_y_2 Less_y_2;
+  typedef typename Traits::Less_x_2                  Less_x_2;
+  typedef typename Traits::Less_y_2                  Less_y_2;
+  typedef typename Traits::Construct_iso_rectangle_2 Rect;
+  typedef typename
+    Traits::Construct_projection_onto_horizontal_implicit_line_2
+    Pohil;
+
+  Less_x_2 lessx = t.less_x_2_object();
+  Less_y_2 lessy = t.less_y_2_object();
+  Rect rect = t.construct_iso_rectangle_2_object();
+  Pohil pohil =
+    t.construct_projection_onto_horizontal_implicit_line_2_object();
+
+  ForwardIterator xmin = f;
+  ForwardIterator xmax = f;
+  ForwardIterator ymin = f;
+  ForwardIterator ymax = f;
+
+  while (++f != l) {
+    if (lessx(*f, *xmin)) xmin = f;
+    if (lessx(*xmax, *f)) xmax = f;
+    if (lessy(*f, *ymin)) ymin = f;
+    if (lessy(*ymax, *f)) ymax = f;
+  }
+
+  return rect(pohil(*xmin, *ymin), pohil(*xmax, *ymax));
+} // bounding_box_2(f, l, t)
+#line 152 "pc_traits.awi"
+template < class ForwardIterator >
+inline typename
+std::iterator_traits< ForwardIterator >::value_type::R::Iso_rectangle_2
+bounding_box_2(ForwardIterator f, ForwardIterator l)
+// PRE: f != l.
+{
+  CGAL_precondition(f != l);
+  // that is how it is supposed to be ...
+  //typedef typename std::iterator_traits< ForwardIterator >::value_type::R
+  //  Traits;
+  typedef typename std::iterator_traits< ForwardIterator >::value_type::R R;
+  typedef Rectangular_p_center_default_traits_2< R > Traits;
+  Traits t;
+  return bounding_box_2(f, l, t);
+} // bounding_box_2(f, l)
+#line 170 "pc_traits.awi"
+template < class Rectangle, class Traits >
+inline Rectangle
+construct_bounding_box_union_2(const Rectangle& r1,
+                               const Rectangle& r2,
+                               const Traits& t)
+{
+  //typedef typename R::Construct_iso_rectangle_2  Rect;
+  //typedef typename R::Less_x_2 Less_x_2;
+  //typedef typename R::Less_y_2 Less_y_2;
+  typedef typename Traits::Construct_iso_rectangle_2  Rect;
+  typedef typename Traits::Construct_min_point_2      Minpt;
+  typedef typename Traits::Construct_max_point_2      Maxpt;
+  typedef typename Traits::Less_x_2                   Less_x_2;
+  typedef typename Traits::Less_y_2                   Less_y_2;
+  typedef typename
+    Traits::Construct_projection_onto_horizontal_implicit_line_2
+    Pohil;
+
+  Less_x_2 lessx = t.less_x_2_object();
+  Less_y_2 lessy = t.less_y_2_object();
+  Rect     rect  = t.construct_iso_rectangle_2_object();
+  Minpt    minpt = t.construct_min_point_2_object();
+  Maxpt    maxpt = t.construct_max_point_2_object();
+  Pohil    pohil =
+    t.construct_projection_onto_horizontal_implicit_line_2_object();
+
+  return rect(
+    pohil(lessx(minpt(r1), r2.min()) ? minpt(r1) : minpt(r2),
+          lessy(minpt(r1), r2.min()) ? minpt(r1) : minpt(r2)),
+    pohil(lessx(maxpt(r2), maxpt(r1)) ? maxpt(r1) : maxpt(r2),
+          lessy(maxpt(r2), maxpt(r1)) ? maxpt(r1) : maxpt(r2)));
+} // construct_bounding_box_union_2(r1, r2, t)
+#line 205 "pc_traits.awi"
+template < class Rectangle >
+inline Rectangle
+construct_bounding_box_union_2(const Rectangle& r1, const Rectangle& r2)
+{
+  typename Rectangle::R t;
+  return construct_bounding_box_union_2(r1, r2, t);
+} // construct_bounding_box_union_2(r1, r2)
+
+#line 557 "pc_traits.awi"
+
+#line 50 "code_formatting.awi"
 CGAL_END_NAMESPACE
+#line 559 "pc_traits.awi"
 
 
 #endif // ! (CGAL_RECTANGULAR_P_CENTER_TRAITS_2_H)
 
+#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

@@ -1,3 +1,5 @@
+#line 863 "fjsearch.aw"
+#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -24,29 +26,22 @@
 // Frederickson-Johnson matrix search
 // ============================================================================
 
+#line 867 "fjsearch.aw"
+#line 54 "code_formatting.awi"
 #if ! (CGAL_SORTED_MATRIX_SEARCH_H)
 #define CGAL_SORTED_MATRIX_SEARCH_H 1
 
-#ifndef CGAL_BASIC_H
+#line 848 "fjsearch.aw"
 #include <CGAL/basic.h>
-#endif // CGAL_BASIC_H
-#ifndef CGAL_PROTECT_ALGORITHM
 #include <algorithm>
-#define CGAL_PROTECT_ALGORITHM
-#endif
-#ifndef CGAL_PROTECT_FUNCTIONAL
 #include <functional>
-#define CGAL_PROTECT_FUNCTIONAL
-#endif
-#ifndef CGAL_PROTECT_VECTOR
 #include <vector>
-#define CGAL_PROTECT_VECTOR
-#endif
-#ifndef CGAL_SORTED_MATRIX_SEARCH_TRAITS_ADAPTOR_H
 #include <CGAL/Sorted_matrix_search_traits_adaptor.h>
-#endif // CGAL_SORTED_MATRIX_SEARCH_TRAITS_ADAPTOR_H
 
+#line 46 "code_formatting.awi"
 CGAL_BEGIN_NAMESPACE
+#line 855 "fjsearch.aw"
+#line 217 "fjsearch.aw"
 template < class Matrix >
 class Padded_matrix {
 public:
@@ -84,44 +79,50 @@ public:
 private:
   const Matrix* matrix;
 };
+#line 856 "fjsearch.aw"
+#line 285 "fjsearch.aw"
 template < class PaddedMatrix >
 class Matrix_cell {
 public:
   typedef typename PaddedMatrix::Value Value;
 
-  Matrix_cell( PaddedMatrix m, int xpos = 0, int ypos = 0)
-  : base_matrix( m), x( xpos), y( ypos)
+  Matrix_cell(PaddedMatrix m, int xpos = 0, int ypos = 0)
+  : base_matrix(m), x(xpos), y(ypos)
   {}
 
   Value
   min() const
-  { return base_matrix( x, y); }
+  { return base_matrix(x, y); }
 
   Value
-  max( int offset) const
+  max(int offset) const
   // offset denotes the cell's dimension
-  { return base_matrix( x + offset - 1, y + offset - 1); }
+  { return base_matrix(x + offset - 1, y + offset - 1); }
 
-  int
-  x_min() const
-  { return x; }
-
-  int
-  y_min() const
-  { return y; }
-
-  PaddedMatrix
-  matrix() const
-  { return base_matrix; }
+  int          x_min() const  { return x; }
+  int          y_min() const  { return y; }
+  PaddedMatrix matrix() const { return base_matrix; }
 
   void
-  output( std::ostream& o, int dim) const
+  output(std::ostream& o, int dim) const
   {
-    for ( int i = 0; i < dim; ++i) {
-      for ( int j = 0; j < dim; ++j)
-        o << base_matrix( x + i, y + j) << " ";
+    for (int i = 0; i < dim; ++i) {
+      for (int j = 0; j < dim; ++j)
+        o << base_matrix(x + i, y + j) << " ";
       o << std::endl;
     }
+  }
+
+  bool
+  check_for(Value v, int dim) const {
+    for (int i = 0; i < dim; ++i)
+      for (int j = 0; j < dim; ++j) {
+        if (CGAL::abs(base_matrix(x + i, y + j) - v) < Value(1E-10))
+          cerr << "***" <<        base_matrix(x + i, y + j) << endl;
+        if (base_matrix(x + i, y + j) == v)
+          return true;
+      }
+    return false;
   }
 
 private:
@@ -129,8 +130,9 @@ private:
   int x;
   int y;
 };
+#line 345 "fjsearch.aw"
 template < class Cell >
-struct _Cell_min
+struct Cell_min
 : public CGAL_STD::unary_function< Cell, typename Cell::Value >
 {
   typename Cell::Value
@@ -139,10 +141,10 @@ struct _Cell_min
 };
 
 template < class Cell >
-struct _Cell_max
+struct Cell_max
 : public CGAL_STD::unary_function< Cell, typename Cell::Value > {
 
-  _Cell_max( int offset) : ofs( offset) {}
+  Cell_max( int offset) : ofs( offset) {}
 
   typename Cell::Value
   operator()( const Cell& c) const
@@ -152,33 +154,39 @@ private:
   int ofs;
 };
 
+#line 857 "fjsearch.aw"
 
+#line 165 "fjsearch.aw"
 template < class InputIterator, class Traits >
 typename Traits::Value
 sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
 {
+  #line 375 "fjsearch.aw"
   #ifndef CGAL_CFG_NO_NAMESPACE
   using std::max;
   using std::nth_element;
   using std::iter_swap;
+  using std::find_if;
   using std::remove_if;
   using std::logical_or;
+  using std::equal_to;
   using std::compose1;
   using std::compose2;
   using std::bind1st;
   using std::bind2nd;
   #endif
   
-  typedef typename Traits::Matrix            Matrix;
-  typedef typename Traits::Value             Value;
-  typedef Padded_matrix< Matrix >           PaddedMatrix;
-  typedef Matrix_cell< PaddedMatrix >       Cell;
-  typedef std::vector< Cell >                Cell_container;
-  typedef typename Cell_container::iterator  Cell_iterator;
-  typedef typename Cell_container::reverse_iterator
-    Cell_reverse_iterator;
+  typedef typename Traits::Matrix                   Matrix;
+  typedef typename Traits::Value                    Value;
+  typedef Padded_matrix< Matrix >                   PaddedMatrix;
+  typedef Matrix_cell< PaddedMatrix >               Cell;
+  typedef std::vector< Cell >                       Cell_container;
+  typedef typename Cell_container::iterator         Cell_iterator;
+  typedef typename Cell_container::reverse_iterator Cell_reverse_iterator;
   
   Cell_container active_cells;
+#line 170 "fjsearch.aw"
+  #line 408 "fjsearch.aw"
   
   // set of input matrices must not be empty:
   CGAL_precondition( f != l);
@@ -204,14 +212,14 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
   while ( ccd < maxdim)
     ccd <<= 1;
   
-  /*
-  */
   
   
+#line 171 "fjsearch.aw"
 
   // now start the search:
 
   for (;;) {
+    #line 473 "fjsearch.aw"
     if ( ccd > 1) {
       // ------------------------------------------------------
       // divide cells:
@@ -260,38 +268,53 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
     // there has to be at least one cell left:
     CGAL_assertion( active_cells.size() > 0);
     
+#line 179 "fjsearch.aw"
+    #line 562 "fjsearch.aw"
     // ------------------------------------------------------
     // compute medians of smallest and largest elements:
     
     
-    int lower_median_rank = ( active_cells.size() - 1) >> 1;
-    int upper_median_rank = ( active_cells.size() >> 1);
+    int lower_median_rank = (active_cells.size() - 1) >> 1;
+    int upper_median_rank = (active_cells.size() >> 1);
     
     // compute upper median of cell's minima:
-    nth_element( active_cells.begin(),
-                 active_cells.begin() + upper_median_rank,
-                 active_cells.end(),
-                 compose2_2(
-                   t.compare_strictly(),
-                   _Cell_min< Cell >(),
-                   _Cell_min< Cell >()));
+    nth_element(active_cells.begin(),
+                active_cells.begin() + upper_median_rank,
+                active_cells.end(),
+                compose2_2(
+                  t.compare_strictly(),
+                  Cell_min< Cell >(),
+                  Cell_min< Cell >()));
     
     Cell_iterator lower_median_cell =
       active_cells.begin() + upper_median_rank;
-    Value lower_median = (*lower_median_cell).min();
+    Value lower_median = lower_median_cell->min();
     
     // compute lower median of cell's maxima:
-    nth_element( active_cells.begin(),
-                 active_cells.begin() + lower_median_rank,
-                 active_cells.end(),
-                 compose2_2(
-                   t.compare_strictly(),
-                   _Cell_max< Cell >( ccd),
-                   _Cell_max< Cell >( ccd)));
+    nth_element(active_cells.begin(),
+                active_cells.begin() + lower_median_rank,
+                active_cells.end(),
+                compose2_2(
+                  t.compare_strictly(),
+                  Cell_max< Cell >(ccd),
+                  Cell_max< Cell >(ccd)));
     
     Cell_iterator upper_median_cell =
       active_cells.begin() + lower_median_rank;
-    Value upper_median = (*upper_median_cell).max( ccd);
+    Value upper_median = upper_median_cell->max(ccd);
+    
+    // restore lower_median_cell, if it has been displaced
+    // by the second search
+    if (lower_median_cell->min() != lower_median)
+      lower_median_cell =
+        find_if(active_cells.begin(),
+                active_cells.end(),
+                compose1(
+                  bind1st(equal_to< Value >(), lower_median),
+                  Cell_min< Cell >()));
+    CGAL_optimisation_assertion(lower_median_cell != active_cells.end());
+#line 180 "fjsearch.aw"
+    #line 644 "fjsearch.aw"
     // ------------------------------------------------------
     // test feasibility of medians and remove cells accordingly:
     Cell_iterator new_end;
@@ -325,7 +348,7 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
             active_cells.end(),
             compose1(
               bind1st( t.compare_non_strictly(), min_median),
-              _Cell_min< Cell >()));
+              Cell_min< Cell >()));
     
       } // lower_median and upper_median are feasible
       else { // lower_median is feasible, but upper_median is not
@@ -347,12 +370,12 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
                 bind1st(
                   t.compare_non_strictly(),
                   lower_median),
-                _Cell_min< Cell >()),
+                Cell_min< Cell >()),
               compose1(
                 bind2nd(
                   t.compare_non_strictly(),
                   upper_median),
-                _Cell_max< Cell >( ccd))));
+                Cell_max< Cell >( ccd))));
     
       } // lower_median is feasible, but upper_median is not
     else
@@ -376,12 +399,12 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
                 bind1st(
                   t.compare_non_strictly(),
                   upper_median),
-                _Cell_min< Cell >()),
+                Cell_min< Cell >()),
               compose1(
                 bind2nd(
                   t.compare_non_strictly(),
                   lower_median),
-                _Cell_max< Cell >( ccd))));
+                Cell_max< Cell >( ccd))));
     
       } // upper_median is feasible, but lower_median is not
       else { // both upper_median and lower_median are infeasible
@@ -396,12 +419,13 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
             compose1(
               bind2nd(
                 t.compare_non_strictly(),
-                max( lower_median, upper_median)),
-              _Cell_max< Cell >( ccd)));
+                CGAL::max( lower_median, upper_median)),
+              Cell_max< Cell >( ccd)));
     
       } // both upper_median and lower_median are infeasible
     
       active_cells.erase( new_end, active_cells.end());
+#line 181 "fjsearch.aw"
   } // for (;;)
 
   // there must be only one cell left:
@@ -411,10 +435,14 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
   return (*active_cells.begin()).min();
 }
 
+#line 859 "fjsearch.aw"
+#line 50 "code_formatting.awi"
 CGAL_END_NAMESPACE
+#line 860 "fjsearch.aw"
 
 #endif // ! (CGAL_SORTED_MATRIX_SEARCH_H)
 
+#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

@@ -1,3 +1,5 @@
+#line 138 "pierce.awi"
+#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -24,18 +26,26 @@
 // 2-4-Piercing Axis-Parallel 2D-Rectangles
 // ============================================================================
 
+#line 142 "pierce.awi"
+#line 54 "code_formatting.awi"
 #if ! (CGAL_PIERCE_RECTANGLES_2_H)
 #define CGAL_PIERCE_RECTANGLES_2_H 1
 
-#include <CGAL/optimisation_assertions.h>
+#line 110 "pierce.awi"
+#line 101 "pierce.awi"
+#include <CGAL/Optimisation/assertions.h>
 #include <CGAL/circulator.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/algorithm.h>
 #include <algorithm>
 #include <vector>
+#line 111 "pierce.awi"
 
+#line 46 "code_formatting.awi"
 CGAL_BEGIN_NAMESPACE
+#line 113 "pierce.awi"
 
+#line 66 "pierce.awi"
 //!!! STL-extensions
 template < class T >
 struct Wastebasket : public CGAL_STD::output_iterator
@@ -58,7 +68,9 @@ struct Wastebasket : public CGAL_STD::output_iterator
   operator++( int)
   { return *this; }
 };
+#line 115 "pierce.awi"
 
+#line 90 "pc_intro.awi"
 template < class _Traits >
 struct Loc_domain {
   // ---------------------------------------------
@@ -84,21 +96,21 @@ struct Loc_domain {
     CGAL_optimisation_precondition(j >= 0 && j < 4);
     if (j < 2)
       if (j == 0) {
-        if (traits.get_less_x_2()(*i, minx)) minx = *i;
-        if (traits.get_less_y_2()(*i, miny)) miny = *i;
+        if (traits.less_x_2_object()(*i, minx)) minx = *i;
+        if (traits.less_y_2_object()(*i, miny)) miny = *i;
       }
       else {
-        if (traits.get_less_y_2()(*i, miny)) miny = *i;
-        if (traits.get_less_x_2()(maxx, *i)) maxx = *i;
+        if (traits.less_y_2_object()(*i, miny)) miny = *i;
+        if (traits.less_x_2_object()(maxx, *i)) maxx = *i;
       }
     else
       if (j == 2) {
-        if (traits.get_less_x_2()(maxx, *i)) maxx = *i;
-        if (traits.get_less_y_2()(maxy, *i)) maxy = *i;
+        if (traits.less_x_2_object()(maxx, *i)) maxx = *i;
+        if (traits.less_y_2_object()(maxy, *i)) maxy = *i;
       }
       else {
-        if (traits.get_less_y_2()(maxy, *i)) maxy = *i;
-        if (traits.get_less_x_2()(*i, minx)) minx = *i;
+        if (traits.less_y_2_object()(maxy, *i)) maxy = *i;
+        if (traits.less_x_2_object()(*i, minx)) minx = *i;
       }
   }
 
@@ -116,10 +128,10 @@ struct Loc_domain {
     Iterator i = pts.begin();
     CGAL_optimisation_assertion(i != pts.end());
     while (++i != pts.end()) {
-      if (traits.get_less_x_2()(*i, minx)) minx = *i;
-      if (traits.get_less_x_2()(maxx, *i)) maxx = *i;
-      if (traits.get_less_y_2()(*i, miny)) miny = *i;
-      if (traits.get_less_y_2()(maxy, *i)) maxy = *i;
+      if (traits.less_x_2_object()(*i, minx)) minx = *i;
+      if (traits.less_x_2_object()(maxx, *i)) maxx = *i;
+      if (traits.less_y_2_object()(*i, miny)) miny = *i;
+      if (traits.less_y_2_object()(maxy, *i)) maxy = *i;
     }
   }
 
@@ -132,15 +144,15 @@ struct Loc_domain {
   {
     CGAL_optimisation_precondition(i >= 0 && i < 4);
     if (i == 0)
-      return traits.get_construct_point_2_above_right_implicit_point_2()(
+      return traits.construct_point_2_above_right_implicit_point_2_object()(
         minx, miny, r);
     else if (i == 1)
-      return traits.get_construct_point_2_above_left_implicit_point_2()(
+      return traits.construct_point_2_above_left_implicit_point_2_object()(
         maxx, miny, r);
     else if (i == 2)
-      return traits.get_construct_point_2_below_left_implicit_point_2()(
+      return traits.construct_point_2_below_left_implicit_point_2_object()(
         maxx, maxy, r);
-    return traits.get_construct_point_2_below_right_implicit_point_2()(
+    return traits.construct_point_2_below_right_implicit_point_2_object()(
       minx, maxy, r);
   }
 
@@ -186,10 +198,10 @@ struct Loc_domain {
     CGAL_optimisation_expensive_assertion_code(
       Iterator i = pts.begin();
       do {
-        CGAL_optimisation_assertion(!traits.get_less_x_2()(*i, minx));
-        CGAL_optimisation_assertion(!traits.get_less_x_2()(maxx, *i));
-        CGAL_optimisation_assertion(!traits.get_less_y_2()(*i, miny));
-        CGAL_optimisation_assertion(!traits.get_less_y_2()(maxy, *i));
+        CGAL_optimisation_assertion(!traits.less_x_2_object()(*i, minx));
+        CGAL_optimisation_assertion(!traits.less_x_2_object()(maxx, *i));
+        CGAL_optimisation_assertion(!traits.less_y_2_object()(*i, miny));
+        CGAL_optimisation_assertion(!traits.less_y_2_object()(maxy, *i));
       } while (++i != end);
       )
   }
@@ -208,6 +220,8 @@ public:
   Traits traits;
 
 }; // class Loc_domain
+#line 117 "pierce.awi"
+#line 57 "pierce_4.awi"
 template < class _Traits >
 struct Staircases : public Loc_domain< _Traits > {
   typedef _Traits                           Traits;
@@ -222,7 +236,9 @@ struct Staircases : public Loc_domain< _Traits > {
 
   template < class InputIC >
   Staircases(InputIC b, InputIC e, Traits t)
-  : Base(b, e, t)
+  : Base(b, e, t), sorted(pts),
+    xgy(t.signed_x_distance_2_object()(maxx, minx) >
+        t.signed_y_distance_2_object()(maxy, miny))
   {
 #ifndef CGAL_CFG_NO_NAMESPACE
     using std::sort;
@@ -231,53 +247,58 @@ struct Staircases : public Loc_domain< _Traits > {
     using std::bind2nd;
 #endif // ! CGAL_CFG_NO_NAMESPACE
 
+    Container& xsort = xgy ? sorted : pts;
+    Container& ysort = xgy ? pts : sorted;
+
     // build top-left and bottom-right staircases
-    sort(pts.begin(), pts.end(), traits.get_less_y_2());
+    sort(ysort.begin(), ysort.end(), traits.less_y_2_object());
     // bottom-right
-    Iterator i = pts.begin();
+    Iterator i = ysort.begin();
     do {
       brstc.push_back(*i++);
-      i = find_if(i, pts.end(),
-                  bind1st(traits.get_less_x_2(), brstc.back()));
-    } while (i != pts.end());
+      i = find_if(i, ysort.end(),
+                  bind1st(traits.less_x_2_object(), brstc.back()));
+    } while (i != ysort.end());
     // top-left
-    Riterator j = pts.rbegin();
+    Riterator j = ysort.rbegin();
     do {
       tlstc.push_back(*j++);
-      j = find_if(j, pts.rend(),
-                  bind2nd(traits.get_less_x_2(), tlstc.back()));
-    } while (j != pts.rend());
+      j = find_if(j, ysort.rend(),
+                  bind2nd(traits.less_x_2_object(), tlstc.back()));
+    } while (j != ysort.rend());
 
     // build left-bottom and right-top staircases
-    sort(pts.begin(), pts.end(), traits.get_less_x_2());
+    sort(xsort.begin(), xsort.end(), traits.less_x_2_object());
     // left-bottom
-    i = pts.begin();
+    i = xsort.begin();
     do {
       lbstc.push_back(*i++);
-      i = find_if(i, pts.end(),
-                  bind2nd(traits.get_less_y_2(), lbstc.back()));
-    } while (i != pts.end());
+      i = find_if(i, xsort.end(),
+                  bind2nd(traits.less_y_2_object(), lbstc.back()));
+    } while (i != xsort.end());
     // right-top
-    j = pts.rbegin();
+    j = xsort.rbegin();
     do {
       rtstc.push_back(*j++);
-      j = find_if(j, pts.rend(),
-                  bind1st(traits.get_less_y_2(), rtstc.back()));
-    } while (j != pts.rend());
+      j = find_if(j, xsort.rend(),
+                  bind1st(traits.less_y_2_object(), rtstc.back()));
+    } while (j != xsort.rend());
   } // Staircases(b, e, t)
 
   bool is_middle_empty() const {
     //!!! the "middle" point could be precomputed in advance
     Citerator i = pts.begin();
     do
-      if (traits.get_signed_x_distance_2()(maxx, *i) > FT(2) * r &&
-          traits.get_signed_x_distance_2()(*i, minx) > FT(2) * r &&
-          traits.get_signed_y_distance_2()(*i, miny) > FT(2) * r &&
-          traits.get_signed_y_distance_2()(maxy, *i) > FT(2) * r)
+      if (traits.signed_x_distance_2_object()(maxx, *i) > FT(2) * r &&
+          traits.signed_x_distance_2_object()(*i, minx) > FT(2) * r &&
+          traits.signed_y_distance_2_object()(*i, miny) > FT(2) * r &&
+          traits.signed_y_distance_2_object()(maxy, *i) > FT(2) * r)
         return false;
     while (++i != pts.end());
     return true;
   } // is_middle()
+
+  bool is_x_greater_y() const { return xgy; }
 
   Citerator tlstc_begin() const { return tlstc.begin(); }
   Citerator tlstc_end() const   { return tlstc.end(); }
@@ -290,118 +311,164 @@ struct Staircases : public Loc_domain< _Traits > {
 
   Intervall top_intervall() const {
     Point_2 p =
-      traits.get_construct_point_2_above_right_implicit_point_2()(
+      traits.construct_point_2_above_right_implicit_point_2_object()(
         minx, miny, FT(2) * r);
     Point_2 q =
-      traits.get_construct_point_2_above_left_implicit_point_2()(
+      traits.construct_point_2_above_left_implicit_point_2_object()(
         maxx, miny, FT(2) * r);
 
     Citerator i =
       min_element_if(
         pts.begin(), pts.end(),
-        traits.get_less_x_2(),
+        traits.less_x_2_object(),
         std::compose2(std::logical_and< bool >(),
-                      std::bind1st(traits.get_less_x_2(), p),
-                      std::bind1st(traits.get_less_y_2(), p)));
+                      std::bind1st(traits.less_x_2_object(), p),
+                      std::bind1st(traits.less_y_2_object(), p)));
     Citerator j =
       max_element_if(
         pts.begin(), pts.end(),
-        traits.get_less_x_2(),
+        traits.less_x_2_object(),
         std::compose2(std::logical_and< bool >(),
-                      std::bind2nd(traits.get_less_x_2(), q),
-                      std::bind1st(traits.get_less_y_2(), q)));
+                      std::bind2nd(traits.less_x_2_object(), q),
+                      std::bind1st(traits.less_y_2_object(), q)));
     return Intervall(i == pts.end() ? maxx : *i,
                      j == pts.end() ? minx : *j);
   } // top_intervall()
 
   Intervall bottom_intervall() const {
     Point_2 p =
-      traits.get_construct_point_2_below_right_implicit_point_2()(
+      traits.construct_point_2_below_right_implicit_point_2_object()(
         minx, maxy, FT(2) * r);
     Point_2 q =
-      traits.get_construct_point_2_below_left_implicit_point_2()(
+      traits.construct_point_2_below_left_implicit_point_2_object()(
         maxx, maxy, FT(2) * r);
 
     Citerator i =
       min_element_if(
         pts.begin(), pts.end(),
-        traits.get_less_x_2(),
+        traits.less_x_2_object(),
         std::compose2(std::logical_and< bool >(),
-                      std::bind1st(traits.get_less_x_2(), p),
-                      std::bind2nd(traits.get_less_y_2(), p)));
+                      std::bind1st(traits.less_x_2_object(), p),
+                      std::bind2nd(traits.less_y_2_object(), p)));
     Citerator j =
       max_element_if(
         pts.begin(), pts.end(),
-        traits.get_less_x_2(),
+        traits.less_x_2_object(),
         std::compose2(std::logical_and< bool >(),
-                      std::bind2nd(traits.get_less_x_2(), q),
-                      std::bind2nd(traits.get_less_y_2(), q)));
+                      std::bind2nd(traits.less_x_2_object(), q),
+                      std::bind2nd(traits.less_y_2_object(), q)));
     return Intervall(i == pts.end() ? maxx : *i,
                      j == pts.end() ? minx : *j);
   } // bottom_intervall()
 
   Intervall left_intervall() const {
     Point_2 p =
-      traits.get_construct_point_2_above_left_implicit_point_2()(
+      traits.construct_point_2_above_left_implicit_point_2_object()(
         maxx, miny, FT(2) * r);
     Point_2 q =
-      traits.get_construct_point_2_below_left_implicit_point_2()(
+      traits.construct_point_2_below_left_implicit_point_2_object()(
         maxx, maxy, FT(2) * r);
 
     Citerator i =
       min_element_if(
         pts.begin(), pts.end(),
-        traits.get_less_y_2(),
+        traits.less_y_2_object(),
         std::compose2(std::logical_and< bool >(),
-                      std::bind2nd(traits.get_less_x_2(), p),
-                      std::bind1st(traits.get_less_y_2(), p)));
+                      std::bind2nd(traits.less_x_2_object(), p),
+                      std::bind1st(traits.less_y_2_object(), p)));
     Citerator j =
       max_element_if(
         pts.begin(), pts.end(),
-        traits.get_less_y_2(),
+        traits.less_y_2_object(),
         std::compose2(std::logical_and< bool >(),
-                      std::bind2nd(traits.get_less_x_2(), q),
-                      std::bind2nd(traits.get_less_y_2(), q)));
+                      std::bind2nd(traits.less_x_2_object(), q),
+                      std::bind2nd(traits.less_y_2_object(), q)));
     return Intervall(i == pts.end() ? maxy : *i,
                      j == pts.end() ? miny : *j);
   } // left_intervall()
 
   Intervall right_intervall() const {
     Point_2 p =
-      traits.get_construct_point_2_above_right_implicit_point_2()(
+      traits.construct_point_2_above_right_implicit_point_2_object()(
         minx, miny, FT(2) * r);
     Point_2 q =
-      traits.get_construct_point_2_below_right_implicit_point_2()(
+      traits.construct_point_2_below_right_implicit_point_2_object()(
         minx, maxy, FT(2) * r);
 
     Citerator i =
       min_element_if(
         pts.begin(), pts.end(),
-        traits.get_less_y_2(),
+        traits.less_y_2_object(),
         std::compose2(std::logical_and< bool >(),
-                      std::bind1st(traits.get_less_x_2(), p),
-                      std::bind1st(traits.get_less_y_2(), p)));
+                      std::bind1st(traits.less_x_2_object(), p),
+                      std::bind1st(traits.less_y_2_object(), p)));
     Citerator j =
       max_element_if(
         pts.begin(), pts.end(),
-        traits.get_less_y_2(),
+        traits.less_y_2_object(),
         std::compose2(std::logical_and< bool >(),
-                      std::bind1st(traits.get_less_x_2(), q),
-                      std::bind2nd(traits.get_less_y_2(), q)));
+                      std::bind1st(traits.less_x_2_object(), q),
+                      std::bind2nd(traits.less_y_2_object(), q)));
     return Intervall(i == pts.end() ? maxy : *i,
                      j == pts.end() ? miny : *j);
   } // right_intervall()
 
-private:
-  Container tlstc, lbstc, brstc, rtstc;
-};
+  template < class OutputIterator >
+  OutputIterator shared_intervall(OutputIterator o) const {
+    if (xgy) {
+      if (traits.signed_y_distance_2_object()(maxy, miny) > FT(4) * r)
+        return o;
+      Point_2 p =
+        traits.construct_point_2_below_right_implicit_point_2_object()(
+          minx, maxy, FT(2) * r);
+      Point_2 q =
+        traits.construct_point_2_above_left_implicit_point_2_object()(
+          maxx, miny, FT(2) * r);
+      //!!! start with binary search
+      for (Citerator i = sorted.begin(); i != sorted.end(); ++i)
+        if (traits.less_x_2_object()(p, *i) &&
+            traits.less_x_2_object()(*i, q) &&
+            !traits.less_y_2_object()(*i, p) &&
+            !traits.less_y_2_object()(q, *i))
+          *o++ = *i;
+    } else {
+      if (traits.signed_x_distance_2_object()(maxx, minx) > FT(4) * r)
+        return o;
+      Point_2 p =
+        traits.construct_point_2_above_left_implicit_point_2_object()(
+          maxx, miny, FT(2) * r);
+      Point_2 q =
+        traits.construct_point_2_below_right_implicit_point_2_object()(
+          minx, maxy, FT(2) * r);
+      //!!! start with binary search
+      for (Citerator i = sorted.begin(); i != sorted.end(); ++i)
+        if (!traits.less_x_2_object()(*i, p) &&
+            !traits.less_x_2_object()(q, *i) &&
+            traits.less_y_2_object()(p, *i) &&
+            traits.less_y_2_object()(*i, q))
+          *o++ = *i;
+    }
+    return o;
+  } // shared_intervall(o)
 
+private:
+  Container tlstc, lbstc, brstc, rtstc, sorted;
+  // exceeds the x-dimension of the location domain its y-dimension?
+  bool xgy;
+};
+#line 118 "pierce.awi"
+
+#line 50 "code_formatting.awi"
 CGAL_END_NAMESPACE
+#line 120 "pierce.awi"
 //#ifdef CGAL_REP_CLASS_DEFINED
 //#include <CGAL/Pierce_rectangles_2_traits.h>
 //#endif // CGAL_REP_CLASS_DEFINED
+#line 46 "code_formatting.awi"
 CGAL_BEGIN_NAMESPACE
+#line 124 "pierce.awi"
 
+#line 11 "pierce_2.awi"
 template < class InputIC, class OutputIterator, class Traits >
 inline OutputIterator
 two_cover_points(
@@ -414,6 +481,7 @@ two_cover_points(
 
   return two_cover_points(d, o, ok, t);
 } // two_cover_points(f, l, o, ok, t)
+#line 11 "pierce_2.awi"
 template < class InputIC, class OutputIterator, class Traits >
 inline OutputIterator
 three_cover_points(
@@ -426,6 +494,7 @@ three_cover_points(
 
   return three_cover_points(d, o, ok, t);
 } // three_cover_points(f, l, o, ok, t)
+#line 11 "pierce_2.awi"
 template < class InputIC, class OutputIterator, class Traits >
 inline OutputIterator
 four_cover_points(
@@ -438,6 +507,7 @@ four_cover_points(
 
   return four_cover_points(d, o, ok, t);
 } // four_cover_points(f, l, o, ok, t)
+#line 41 "pierce_2.awi"
 template < class OutputIterator, class Traits >
 OutputIterator
 two_cover_points(
@@ -456,52 +526,61 @@ two_cover_points(
   typedef typename Traits::FT           FT;
   typedef typename Traits::Point_2      Point_2;
   typename Traits::Infinity_distance_2 dist =
-    d.traits.get_infinity_distance_2();
+    d.traits.infinity_distance_2_object();
   typename Traits::Signed_infinity_distance_2 sdist =
-    d.traits.get_signed_infinity_distance_2();
+    d.traits.signed_infinity_distance_2_object();
 
   Min< FT > minft;
   less< FT > lessft;
 
+  #line 85 "pierce_2.awi"
   if (sdist(d[2], d[0]) <= FT(0)) {
     // the location domain is degenerate and [f,l) is one-pierceable
     *o++ = d[0];
     ok = true;
     return o;
   }
-  // check whether {d[0], d[2]} forms a piercing set
-  if (d.end() ==
-      find_if(d.begin(),
-              d.end(),
-              compose1(
-                bind1st(lessft, d.r),
-                compose2(
-                  minft, bind1st(dist, d[0]), bind1st(dist, d[2])))))
-  {
-    *o++ = d[0];
-    *o++ = d[2];
-    ok = true;
-    return o;
-  }
-  // check whether {d[1], d[3]} forms a piercing set
-  if (d.end() ==
-      find_if(d.begin(),
-              d.end(),
-              compose1(
-                bind1st(lessft, d.r),
-                compose2(
-                  minft, bind1st(dist, d[1]), bind1st(dist, d[3])))))
-  {
-    *o++ = d[1];
-    *o++ = d[3];
-    ok = true;
-    return o;
-  }
+#line 70 "pierce_2.awi"
+
+  #line 98 "pierce_2.awi"
+  
+    // check whether {d[0], d[2]} forms a piercing set
+    if (d.end() ==
+        find_if(d.begin(),
+                d.end(),
+                compose1(
+                  bind1st(lessft, d.r),
+                  compose2(
+                    minft, bind1st(dist, d[0]), bind1st(dist, d[2])))))
+      {
+        *o++ = d[0];
+        *o++ = d[2];
+        ok = true;
+        return o;
+      }
+  #line 98 "pierce_2.awi"
+  
+    // check whether {d[1], d[3]} forms a piercing set
+    if (d.end() ==
+        find_if(d.begin(),
+                d.end(),
+                compose1(
+                  bind1st(lessft, d.r),
+                  compose2(
+                    minft, bind1st(dist, d[1]), bind1st(dist, d[3])))))
+      {
+        *o++ = d[1];
+        *o++ = d[3];
+        ok = true;
+        return o;
+      }
 
   // no piercing set exists:
   ok = false;
   return o;
 } // two_cover_points(d, o, ok, t)
+#line 129 "pierce.awi"
+#line 12 "pierce_3.awi"
 template < class OutputIterator, class Traits >
 OutputIterator
 three_cover_points(
@@ -523,15 +602,18 @@ three_cover_points(
   typedef typename Traits::Point_2                 Point_2;
   typedef typename Loc_domain< Traits >::Iterator  Iterator;
   typename Traits::Infinity_distance_2 dist =
-    d.traits.get_infinity_distance_2();
+    d.traits.infinity_distance_2_object();
   less< FT > lessft;
 
+  #line 57 "pierce_3.awi"
   // test the four corners:
   for (int k = 0; k < 4; ++k) {
+    #line 81 "pierce_3.awi"
     
     // extract all points which are close enough to d[k]
     Point_2 corner = d[k];
     
+    #line 92 "pierce_3.awi"
     // find first point not covered by the rectangle at d[k]
     Iterator i = find_if(d.begin(), d.end(),
                          compose1(bind1st(lessft, d.r),
@@ -576,51 +658,15 @@ three_cover_points(
     
     // check disjoint for two-pierceability:
     
-    CGAL_optimisation_assertion(
+    CGAL_optimisation_expensive_assertion(
       save_end == find_if(d.end(), save_end,
                           compose1(bind1st(lessft, d.r),
                                    bind1st(dist, corner))));
-    CGAL_optimisation_assertion(
+    CGAL_optimisation_expensive_assertion(
       d.end() == find_if(d.begin(), d.end(),
                          compose1(bind1st(std::greater_equal<FT>(), d.r),
                                   bind1st(dist, corner))));
     
-    #if 0
-    if (false && d.r <= 0.27710729236714543023 &&
-        d.r >= 0.27710729236714543021)
-      {
-        typedef Ostream_iterator< Point_2, leda_window > OIP;
-        leda_window W(730, 690);
-        cgalize(W);
-        W.set_node_width(2);
-        W.init(-1.5, 1.5, -1.2);
-        W.display();
-        OIP oip(W);
-        typedef typename Traits::Iso_rectangle_2 Iso_rectangle_2;
-    
-        FT rsav = d.r;
-        d.r = 0;
-        Point_2 ss1 = d.extreme(k);
-        Point_2 ss2 = d.extreme((k+1) % 4);
-        d.extreme(k) = save_side1;
-        d.extreme((k+1) % 4) = save_side2;
-        W << GREEN << Iso_rectangle_2(d[0], d[2]);
-        Point_2 psav = d[k];
-        d.r = FT(2) * rsav;
-        W << ORANGE << Iso_rectangle_2(psav, d[k]);
-        d.extreme(k) = ss1;
-        d.extreme((k+1) % 4) = ss2;
-        d.r = 0;
-        W << VIOLET << Iso_rectangle_2(d[0], d[2]);
-        d.r = rsav;
-    
-        W << RED; std::copy(d.begin(), d.end(), oip);
-        W << BLUE; std::copy(d.end(), save_end, oip);
-        W << BLACK; std::copy(save_end, d.real_end(), oip);
-    
-        { Point_2 du; W >> du; }
-      }
-    #endif // 0
     
     two_cover_points(d, o, ok);
     
@@ -631,7 +677,7 @@ three_cover_points(
     if (ok) {
       // does any rectangle contain the corner?
       if (d.end() != save_end) {
-        *o++ = d[k];
+        *o++ = corner;
         d.end() = save_end;
       }
       return o;
@@ -645,6 +691,8 @@ three_cover_points(
   return o;
 
 } // three_cover_points(d, o, ok)
+#line 130 "pierce.awi"
+#line 324 "pierce_4.awi"
 CGAL_END_NAMESPACE
 CGAL_BEGIN_NAMESPACE
 template < class OutputIterator, class Traits >
@@ -652,6 +700,7 @@ OutputIterator
 four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
 {
 
+  #line 380 "pierce_4.awi"
   #ifndef CGAL_CFG_NO_NAMESPACE
   using std::less;
   using std::iter_swap;
@@ -659,6 +708,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
   using std::bind1st;
   using std::bind2nd;
   using std::compose1;
+  using std::back_inserter;
   #endif
   
   typedef typename Traits::Point_2                  Point_2;
@@ -667,22 +717,56 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
   typedef typename Traits::Less_y_2                 Less_y_2;
   typedef typename Traits::Signed_x_distance_2      Signed_x_distance_2;
   typedef typename Traits::Signed_y_distance_2      Signed_y_distance_2;
+  typedef typename Traits::Infinity_distance_2      Infinity_distance_2;
+  typedef typename Staircases< Traits >::Container  Container;
   typedef typename Staircases< Traits >::Iterator   Iterator;
   typedef typename Staircases< Traits >::Citerator  Citerator;
   typedef typename Staircases< Traits >::Intervall  Intervall;
   
   less< FT > lessft;
-  typename Traits::Infinity_distance_2 dist =
-    d.traits.get_infinity_distance_2();
+  Infinity_distance_2 dist   = d.traits.infinity_distance_2_object();
+  Less_x_2 lessx             = d.traits.less_x_2_object();
+  Less_y_2 lessy             = d.traits.less_y_2_object();
+  Signed_x_distance_2 sdistx = d.traits.signed_x_distance_2_object();
+  Signed_y_distance_2 sdisty = d.traits.signed_y_distance_2_object();
+  
+  typename Traits::Construct_projection_onto_horizontal_implicit_line_2
+  cpohil =
+    d.traits.construct_projection_onto_horizontal_implicit_line_2_object();
+  typename Traits::Construct_point_2_above_right_implicit_point_2
+  cparip =
+    d.traits.construct_point_2_above_right_implicit_point_2_object();
+  typename Traits::Construct_point_2_above_left_implicit_point_2
+  cpalip =
+    d.traits.construct_point_2_above_left_implicit_point_2_object();
+  typename Traits::Construct_point_2_below_right_implicit_point_2
+  cpbrip =
+    d.traits.construct_point_2_below_right_implicit_point_2_object();
   
   
+#line 341 "pierce_4.awi"
 
+  #line 353 "pierce_4.awi"
   // test the four corners:
-  for (int k = 0; k < 4; ++k) {
-    
-    // extract all points which are close enough to d[k]
+  for (int j = 0; j < 5; ++j) {
+    const int k = j < 4 ? j : 3;
+  
+    // extract all points which are close enough to this point
     Point_2 corner = d[k];
-    
+    if (j >= 3)
+      if (j == 3) {
+        Citerator i = d.tlstc_begin();
+        while (sdistx(*i, d.minx) > FT(2) * d.r)
+          ++i;
+        corner = cpbrip(d.minx, *i, d.r);
+      } else {
+        Citerator i = d.tlstc_end();
+        while (sdisty(d.maxy, *--i) > FT(2) * d.r) {}
+        corner = cpbrip(*i, d.maxy, d.r);
+      }
+  
+  
+    #line 92 "pierce_3.awi"
     // find first point not covered by the rectangle at d[k]
     Iterator i = find_if(d.begin(), d.end(),
                          compose1(bind1st(lessft, d.r),
@@ -727,51 +811,15 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
     
     // check disjoint for two-pierceability:
     
-    CGAL_optimisation_assertion(
+    CGAL_optimisation_expensive_assertion(
       save_end == find_if(d.end(), save_end,
                           compose1(bind1st(lessft, d.r),
                                    bind1st(dist, corner))));
-    CGAL_optimisation_assertion(
+    CGAL_optimisation_expensive_assertion(
       d.end() == find_if(d.begin(), d.end(),
                          compose1(bind1st(std::greater_equal<FT>(), d.r),
                                   bind1st(dist, corner))));
     
-    #if 0
-    if (false && d.r <= 0.27710729236714543023 &&
-        d.r >= 0.27710729236714543021)
-      {
-        typedef Ostream_iterator< Point_2, leda_window > OIP;
-        leda_window W(730, 690);
-        cgalize(W);
-        W.set_node_width(2);
-        W.init(-1.5, 1.5, -1.2);
-        W.display();
-        OIP oip(W);
-        typedef typename Traits::Iso_rectangle_2 Iso_rectangle_2;
-    
-        FT rsav = d.r;
-        d.r = 0;
-        Point_2 ss1 = d.extreme(k);
-        Point_2 ss2 = d.extreme((k+1) % 4);
-        d.extreme(k) = save_side1;
-        d.extreme((k+1) % 4) = save_side2;
-        W << GREEN << Iso_rectangle_2(d[0], d[2]);
-        Point_2 psav = d[k];
-        d.r = FT(2) * rsav;
-        W << ORANGE << Iso_rectangle_2(psav, d[k]);
-        d.extreme(k) = ss1;
-        d.extreme((k+1) % 4) = ss2;
-        d.r = 0;
-        W << VIOLET << Iso_rectangle_2(d[0], d[2]);
-        d.r = rsav;
-    
-        W << RED; std::copy(d.begin(), d.end(), oip);
-        W << BLUE; std::copy(d.end(), save_end, oip);
-        W << BLACK; std::copy(save_end, d.real_end(), oip);
-    
-        { Point_2 du; W >> du; }
-      }
-    #endif // 0
     
     three_cover_points(d, o, ok);
     
@@ -782,7 +830,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
     if (ok) {
       // does any rectangle contain the corner?
       if (d.end() != save_end) {
-        *o++ = d[k];
+        *o++ = corner;
         d.end() = save_end;
       }
       return o;
@@ -790,6 +838,9 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
     
     d.end() = save_end;
   } // for (int k = 0; k < 4; ++k)
+#line 343 "pierce_4.awi"
+
+  #line 454 "pierce_4.awi"
   
   // test if four covering rectangles can be placed
   // on the boundary of d, one on each side
@@ -802,44 +853,28 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
     // (no need to consider S_bl, since we move from left
     // to right and leaving a rectangle won't make piercing easier)
   
+    #line 497 "pierce_4.awi"
     
     Intervall top_i    = d.top_intervall();
     Intervall left_i   = d.left_intervall();
     Intervall bottom_i = d.bottom_intervall();
     Intervall right_i  = d.right_intervall();
+    Container share;
+    d.shared_intervall(back_inserter(share));
+    Citerator shf = share.end();
+    Citerator shl = share.end();
     
     Citerator tl = d.tlstc_begin();
     Citerator lb = d.lbstc_begin();
     Citerator br = d.brstc_begin();
     Citerator rt = d.rtstc_begin();
     
-    Less_x_2 lessx = d.traits.get_less_x_2();
-    Less_y_2 lessy = d.traits.get_less_y_2();
-    Signed_x_distance_2 sdistx = d.traits.get_signed_x_distance_2();
-    Signed_y_distance_2 sdisty = d.traits.get_signed_y_distance_2();
-    
-    typename Traits::Construct_projection_onto_horizontal_implicit_line_2
-    cpohil =
-      d.traits.get_construct_projection_onto_horizontal_implicit_line_2();
-    typename Traits::Construct_point_2_above_right_implicit_point_2
-    cparip =
-      d.traits.get_construct_point_2_above_right_implicit_point_2();
-    typename Traits::Construct_point_2_above_left_implicit_point_2
-    cpalip =
-      d.traits.get_construct_point_2_above_left_implicit_point_2();
-    typename Traits::Construct_point_2_below_right_implicit_point_2
-    cpbrip =
-      d.traits.get_construct_point_2_below_right_implicit_point_2();
-    
     // make sure the top intervall is covered (left endpoint)
     // (it might be that top_i.first determines the placement of
     //  the top square)
     Point_2 top = top_i.first;
     if (lessx(top, *tl))
-      for (;;) {
-        if (++tl != d.tlstc_end() || lessx(*tl, top))
-          break;
-      }
+      while (++tl != d.tlstc_end() && !lessx(*tl, top)) {}
     else
       top = *tl++;
     
@@ -865,61 +900,152 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
             break;
           Point_2 bottom = lessx(bottom_i.first, *lb) ? bottom_i.first : *lb;
     
-          // make sure the bottom intervall is covered
-          if (sdistx(bottom_i.second, bottom) <= FT(2) * d.r) {
+          // check the shared x-intervall
+          if (d.is_x_greater_y()) {
+            // compute position of top in share
+    #ifndef _MSC_VER
+            while (shf != share.begin() && !lessx(*(shf - 1), top))
+    #else
+            while (shf != Citerator(share.begin()) &&
+                   !lessx(*(shf - 1), top))
+    #endif
+              --shf;
+            // make sure shared intervall is covered (left endpoint)
+    #ifndef _MSC_VER
+            if (shf != share.begin() && lessx(share.front(), bottom))
+    #else
+            if (shf != Citerator(share.begin()) &&
+                lessx(share.front(), bottom))
+    #endif
+              bottom = share.front();
+    #ifndef _MSC_VER
+            while (shl != share.begin() &&
+    #else
+            while (shl != Citerator(share.begin()) &&
+    #endif
+                   sdistx(*(shl - 1), top) > FT(2) * d.r)
+              --shl;
     
-            // compute position of right square
-            while (br != d.brstc_end() && sdistx(*br, bottom) <= FT(2) * d.r)
-              ++br;
-            // has the bottom square reached the bottom-right corner?
-            if (br == d.brstc_end())
-              break;
-            Point_2 right = lessy(right_i.first, *br) ? right_i.first : *br;
+          }
     
-            // make sure the right intervall is covered
-            if (sdisty(right_i.second, right) <= FT(2) * d.r) {
     
-              // compute right bound for top square
-              while (rt != d.rtstc_end() && sdisty(*rt, right) <= FT(2) * d.r)
-                ++rt;
-              // has the right square reached the top-right corner?
-              if (rt == d.rtstc_end())
+          // make sure the bottom and the shared intervall (right endpoint)
+          // are covered
+    #ifndef _MSC_VER
+          if (sdistx(bottom_i.second, bottom) <= FT(2) * d.r &&
+              (!d.is_x_greater_y() ||
+               (shl == share.end() ||
+                sdistx(share.back(), bottom) <= FT(2) * d.r) &&
+               (shf == share.begin() ||
+                sdistx(*(shf - 1), bottom) <= FT(2) * d.r)))
+    #else
+          if (sdistx(bottom_i.second, bottom) <= FT(2) * d.r &&
+              (!d.is_x_greater_y() ||
+               (shl == Citerator(share.end()) ||
+                sdistx(share.back(), bottom) <= FT(2) * d.r) &&
+               (shf == Citerator(share.begin()) ||
+                sdistx(*(shf - 1), bottom) <= FT(2) * d.r)))
+    #endif
+            {
+              // compute position of right square
+              while (br != d.brstc_end() && sdistx(*br, bottom) <= FT(2) * d.r)
+                ++br;
+              // has the bottom square reached the bottom-right corner?
+              if (br == d.brstc_end())
                 break;
+              Point_2 right = lessy(right_i.first, *br) ? right_i.first : *br;
     
-              // Finally: Do we have a covering?
-              if (sdistx(*rt, top) <= FT(2) * d.r) {
-                *o++ = cpbrip(d.minx, left, d.r);
-                *o++ = cparip(bottom, d.miny, d.r);
-                *o++ = cpalip(d.maxx, right, d.r);
-                *o++ = cpbrip(top, d.maxy, d.r);
-                ok = true;
+              // check the shared y-intervall
+              if (!d.is_x_greater_y()) {
+                // compute position of left in share
+    #ifndef _MSC_VER
+                while (shf != share.begin() && !lessy(*(shf - 1), left))
+    #else
+                while (shf != Citerator(share.begin()) &&
+                       !lessy(*(shf - 1), left))
+    #endif
+                  --shf;
+                // make sure shared intervall is covered (bottom endpoint)
+    #ifndef _MSC_VER
+                if (shf != share.begin() && lessy(share.front(), right))
+                  right = share.front();
+                while (shl != share.begin() &&
+    #else
+                if (shf != Citerator(share.begin()) &&
+                    lessy(share.front(), right))
+                  right = share.front();
+                while (shl != Citerator(share.begin()) &&
+    #endif
+                       sdisty(*(shl - 1), left) > FT(2) * d.r)
+                  --shl;
+    
+              }
     
     
-                return o;
-              } // if (covering)
+              // make sure the right intervall and the shared intervall
+              // (top endpoint) are covered
+    #ifndef _MSC_VER
+              if (sdisty(right_i.second, right) <= FT(2) * d.r &&
+                  (d.is_x_greater_y() ||
+                   (shl == share.end() ||
+                    sdisty(share.back(), right) <= FT(2) * d.r) &&
+                   (shf == share.begin() ||
+                    sdisty(*(shf - 1), right) <= FT(2) * d.r)))
+    #else
+              if (sdisty(right_i.second, right) <= FT(2) * d.r &&
+                  (d.is_x_greater_y() ||
+                   (shl == Citerator(share.end()) ||
+                    sdisty(share.back(), right) <= FT(2) * d.r) &&
+                   (shf == Citerator(share.begin()) ||
+                    sdisty(*(shf - 1), right) <= FT(2) * d.r)))
+    #endif
+                {
+                  // compute right bound for top square
+                  while (rt != d.rtstc_end() &&
+                         sdisty(*rt, right) <= FT(2) * d.r)
+                    ++rt;
+                  // has the right square reached the top-right corner?
+                  if (rt == d.rtstc_end())
+                    break;
     
-            } // if (sdisty(right_i.second, right) <= FT(2) * d.r)
+                  // Finally: Do we have a covering?
+                  if (sdistx(*rt, top) <= FT(2) * d.r) {
+                    *o++ = cpbrip(d.minx, left, d.r);
+                    *o++ = cparip(bottom, d.miny, d.r);
+                    *o++ = cpalip(d.maxx, right, d.r);
+                    *o++ = cpbrip(top, d.maxy, d.r);
+                    ok = true;
     
-          } // if (sdistx(bottom_i.second, bottom) <= FT(2) * d.r)
+    
+                    return o;
+                  } // if (covering)
+    
+              } // if (sdisty(right_i.second, right) <= FT(2) * d.r)
+    
+            } // if (bottom and shared intervall are covered)
     
         } // if (sdisty(left, left_i.first) <= FT(2) * d.r)
     
         top = *tl;
-        if (lessy(left_i.second, *tl) || ++tl == d.tlstc_end() ||
+        if (!lessy(left_i.second, *tl) || ++tl == d.tlstc_end() ||
             lessx(bottom_i.first, *lb) || lessy(right_i.first, *br))
           break;
     
       } // for (;;)
     } // if (tl != d.tlstc_end())
     
+  #line 470 "pierce_4.awi"
   
   } // if (!d.is_middle_empty())
+#line 345 "pierce_4.awi"
 
   ok = false;
   return o;
 
 } // four_cover_points(d, o, ok)
 
+#line 131 "pierce.awi"
+#line 55 "pierce_traits.awi"
 struct Two_covering_algorithm {
   template < class Traits, class OutputIterator >
   OutputIterator
@@ -928,6 +1054,7 @@ struct Two_covering_algorithm {
              bool& ok) const
   { return two_cover_points(d, o, ok); }
 }; // class Two_covering_algorithm
+#line 55 "pierce_traits.awi"
 struct Three_covering_algorithm {
   template < class Traits, class OutputIterator >
   OutputIterator
@@ -936,6 +1063,7 @@ struct Three_covering_algorithm {
              bool& ok) const
   { return three_cover_points(d, o, ok); }
 }; // class Three_covering_algorithm
+#line 55 "pierce_traits.awi"
 struct Four_covering_algorithm {
   template < class Traits, class OutputIterator >
   OutputIterator
@@ -944,10 +1072,13 @@ struct Four_covering_algorithm {
              bool& ok) const
   { return four_cover_points(d, o, ok); }
 }; // class Four_covering_algorithm
+#line 50 "code_formatting.awi"
 CGAL_END_NAMESPACE
+#line 135 "pierce.awi"
 
 #endif // ! (CGAL_PIERCE_RECTANGLES_2_H)
 
+#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------
