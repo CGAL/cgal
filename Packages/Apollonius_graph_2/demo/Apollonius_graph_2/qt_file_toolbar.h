@@ -63,8 +63,9 @@ public:
 
 signals:
   void fileToRead(const QString& f);
-  void clearAll();
+  void fileToWrite(const QString& f);
   void printScreen();
+  void clearAll();
 
 private:
   void initActions()
@@ -118,15 +119,6 @@ private:
 
   void initToolBar()
     {
-#if 0
-      fileToolbar = new QToolBar(window, "file operations");
-      fileNew->addTo(fileToolbar);
-      fileOpen->addTo(fileToolbar);
-      fileSaveAs->addTo(fileToolbar);
-      filePrint->addTo(fileToolbar);
-      fileToolbar->addSeparator();
-      QWhatsThis::whatsThisButton(fileToolbar);
-#endif
       fileNew->addTo(this);
       fileOpen->addTo(this);
       fileSaveAs->addTo(this);
@@ -167,7 +159,7 @@ public slots:
 				     window, "Save file As...");
 						      
       if ( !fileName.isNull() ) {
-	std::cout << fileName << std::endl;
+	emit fileToWrite(fileName);
       }
     }
   /** close the actual file */

@@ -79,10 +79,6 @@ public:
     //    setUsesBigPixmaps(TRUE);
 
     //How to attach the standard toolbar
-    //    stoolbar = new CGAL::Qt_widget_standard_toolbar(widget, this);
-    //    this->addToolBar(stoolbar->toolbar(), Top, FALSE);
-
-    // the following should have worked...
     stoolbar = new CGAL::Qt_widget_standard_toolbar(widget, this,
 						    this, FALSE, "");
 
@@ -106,6 +102,9 @@ public:
 
     connect(file_toolbar, SIGNAL(fileToRead(const QString&)), this,
 	    SLOT(read_from_file(const QString&)));
+
+    connect(file_toolbar, SIGNAL(fileToWrite(const QString&)), this,
+	    SLOT(write_to_file(const QString&)));
 
     connect(file_toolbar, SIGNAL(printScreen()), this,
 	    SLOT(print_screen()));
@@ -240,6 +239,18 @@ private slots:
       assert( ag.is_valid(false, 1) );
       widget->redraw();
     }
+
+  void write_to_file(const QString& fileName)
+  {
+    std::ofstream f(fileName);
+    assert( f );
+    f.precision(18);
+
+    for( AG_2::Sites_iterator it = ag.sites_begin();
+	 it != ag.sites_end(); it++ ) {
+      f << (*it) << std::endl;
+    }
+  }
 
   void print_screen()
     {
