@@ -11,7 +11,7 @@
 // release       : 
 // release_date  :
 //
-// file          : include/CGAL/Polygon_2_sweep.h
+// file          : include/CGAL/Random_polygon_2_sweep.h
 // source        :
 // author(s)     : Geert-Jan Giezeman <geert@cs.uu.nl>
 //               : Susan Hert <hert@mpi-sb.mpg.de>
