@@ -49,7 +49,7 @@ constrained$(EXE_EXT): constrained$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)constrained constrained$(OBJ_EXT) $(SOURCE) $(LDFLAGS)
 
 test$(EXE_EXT): test$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test test$(OBJ_EXT) $(LDFLAGS)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test test$(OBJ_EXT) $(SOURCE) $(LDFLAGS)
 
 clean: \
                    constrained.clean \
