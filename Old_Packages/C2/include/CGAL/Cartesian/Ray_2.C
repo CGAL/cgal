@@ -121,7 +121,7 @@ RayC2<R CGAL_CTAG>::point(int i) const
   CGAL_kernel_precondition( i >= 0 );
   if (i == 0) return ptr()->e0;
   if (i == 1) return ptr()->e1;
-  return source() + FT(i) * (second_point() - source());
+  return source() + (second_point() - source()) * FT(i);
 }
 
 template < class R >
