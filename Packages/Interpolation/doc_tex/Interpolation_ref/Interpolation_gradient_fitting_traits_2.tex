@@ -15,23 +15,72 @@
   
   %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
   %% \ccHtmlIndexC[class]{} %% add further index entries
-  \ccCreationVariable{traits} \ccDefinition \ccRefName\ is a model for
-  the concept \ccc{InterpolationTraits} and
-  \ccc{GradientFittingTraits}. It can be used to instantiate the
-  geometric traits class of interpolation functions and of Sibson's
-  gradient fitting function. The traits class is templated by a kernel
-  class \ccc{K}.
+  \ccCreationVariable{traits} 
+  
+  \ccDefinition \ccRefName\ is a model for the concepts
+  \ccc{InterpolationTraits} and \ccc{GradientFittingTraits}. It can be
+  used to instantiate the geometric traits class of interpolation
+  functions and of Sibson's gradient fitting function when applied on
+  a bivariate function over a two-dimensional domain. The traits class
+  is templated by a kernel class \ccc{K}.
   
   \ccInclude{CGAL/Interpolation_gradient_fitting_traits_2.h}
 
   \ccIsModel 
   \ccc{GradientFittingTraits}
   \ccc{InterpolationTraits}
+  \ccIndexSubitem[c]{InterpolationTraits}{model} \\
+  \ccIndexSubitem[c]{GradientFittingTraits}{model} \\
+   \ccTypes
+  \ccSetThreeColumns{typedef R::Less_signed_distance_to_line_2 }{Less_signed_distance_to_line_2}{}
+  \ccThreeToTwo 
+  \ccTypedef{typedef R::FT                            FT;}{}
+  \ccGlue
+  \ccTypedef{typedef R::Point_2                        Point_d;}{}
+  \ccGlue
+  \ccTypedef{typedef R::Vector_2                       Vector_d;}{}
+  \ccGlue
+\ccTypedef{typedef R::Aff_transformation_2         Aff_transformation_d;}{}
+\ccGlue
+  \ccTypedef{typedef R::Construct_vector_2     Construct_vector_d;}{}
+  \ccGlue
+  \ccTypedef{typedef R::Construct_scaled_vector_2 
+    Construct_scaled_vector_d;}{}
+  \ccGlue
+  \ccTypedef{typedef R::Compute_squared_distance_2 
+    Compute_squared_distance_d;}{}
+  \ccGlue
+  \ccTypedef{typedef Construct_null_matrix_2<Aff_transformation_d>   
+    Construct_null_matrix_d;}{}
+  \ccGlue                                             
+  \ccTypedef{typedef Construct_scaling_matrix_2<Aff_transformation_d> 
+    Construct_scaling_matrix_d;}{}
+  \ccGlue
+  \ccTypedef{typedef Construct_sum_matrix_2<Aff_transformation_d> Construct_sum_matrix_d;}{}
+  \ccGlue
+  \ccTypedef{typedef Construct_outer_product_2<Rep>             Construct_outer_product_d;}{}
+                      
+\ccOperations
+\ccAutoIndexingOff
+\ccMemberFunction{Construct_scaled_vector_d
+  construct_scaled_vector_d_object() const;}{}
+\ccMemberFunction{Construct_vector_d
+  construct_vector_d_object()const;}{}
+\ccMemberFunction{Compute_squared_distance_d
+  compute_squared_distance_d_object() const;}{}
+\ccMemberFunction{ Construct_null_matrix_d
+  construct_null_matrix_d_object() const;}{}
+\ccMemberFunction{ Construct_scaling_matrix_d
+  construct_scaling_matrix_d_object() const;}{}
+\ccMemberFunction{Construct_sum_matrix_d
+  construct_sum_matrix_d_object() const;}{}
+\ccMemberFunction{ Construct_outer_product_d
+  construct_outer_product_d_object() const;}{}
 
-
-  \ccSeeAlso
-  
-  
+\ccSeeAlso
+\ccRefConceptPage{InterpolationTraits}\\
+\ccRefConceptPage{GradientFittingTraits}\\
+\ccRefIdfierPage{CGAL::Interpolation_traits_2<K>} 
 \end{ccRefClass}
 
 % +------------------------------------------------------------------------+

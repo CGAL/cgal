@@ -7,7 +7,7 @@
 % |
 % +------------------------------------------------------------------------+
 
-%\clearpage
+%\clearpage 
 %\section{Reference Pages for Interpolation class}
 \chapter{Interpolation}
 \label{chap:Interpolation}
@@ -22,7 +22,7 @@ that allow to express the query point as the convex combination of
 some data-points, the function can be exactly interpolated. If the
 function gradients are known, we can exactly interpolate quadratic
 functions provided barycentric coordinates are known. These interpolation
-functions are independant of further properties of the barycentric
+functions are independent of further properties of the barycentric
 coordinates. They are provided in this package under the name
 \ccc{linear_interpolation} and \ccc{quadratic_interpolation}.\medskip
 
@@ -31,10 +31,10 @@ coordinates are defined by Sibson in 1980 and are based on the Voronoi
 diagram of the data points. Interpolation methods based on natural
 neighbor coordinates are particularly interesting because they adapt
 easily to non-uniform and highly anisotropic data.  This package
-contains Sibson's $C^1$ contiuous interpolation method which
+contains Sibson's $C^1$ continuous interpolation method which
 interpolates exactly spherical quadrics (of the form $\Phi(\mathbf{x})
 =a + \mathbf{b}^t \mathbf{x} +\gamma\ \mathbf{x}^t\mathbf{x}$) and
-Farin's $C^1$ contiuous interpolation method based on
+Farin's $C^1$ continuous interpolation method based on
 Bernstein-B\'ezier techniques and interpolating exactly quadratic
 functions -- assuming that the function gradient is known. Sibson
 defines, in addition, a method to approximate the function gradients
@@ -53,7 +53,7 @@ also be computed if the normal to the surface at the query point is
 known. The latter coordinates are only approximately barycentric, see
 \cite{bf-lcss-02}.
 
-For a more thoughrough introduction see the user manual.
+For a more thorough introduction see the user manual.
 
 \ccHeading{Concepts}
 \ccRefConceptPage{InterpolationTraits}\\

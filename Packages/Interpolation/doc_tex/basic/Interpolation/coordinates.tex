@@ -1,4 +1,4 @@
-\section{Natural neighbor coordinates}
+\section{Natural neighbor coordinates}\label{sec:coordinates}
 \subsection{Introduction}
 Natural neighbor interpolation has been introduced by Sibson
 \cite{s-bdnni-81} to interpolate multivariate scattered data.  Given
@@ -20,10 +20,9 @@ cells.
 \end{figure}
 Let $\pi(\mathbf{x})$ denote the volume of the potential Voronoi cell
 of $\mathbf{x}$ and $\pi_i(\mathbf{x})$ denote the volume of the
-sub-cell that would be stolen by the cell of $\mathbf{x}$ from the
-cell of $\mathbf{p_i}$.  The natural neighbor coordinate of
-$\mathbf{x}$ with respect to the data point $\mathbf{p_i}$ is defined
-by
+sub-cell that would be stolen from the cell of $\mathbf{p_i}$ by the
+cell of $\mathbf{x}$.  The natural neighbor coordinate of $\mathbf{x}$
+with respect to the data point $\mathbf{p_i}$ is defined by
 $$
 \lambda_i(\mathbf{x}) =
 \frac{\pi_i(\mathbf{x})}{\pi(\mathbf{x})}.$$
@@ -54,28 +53,30 @@ the natural neighbor coordinates have the following properties:
   \ccc{natural_neighbor_coordinates_2},
   \ccc{natural_neighbor_coordinates_3} and
   \ccc{regular_neighbor_coordinates_2}.
-
-In addition, the package provides funtions to compute natural neighbor
-coordinates on well sampled point set surfaces. See the reference page
-\ccc{surface_neighbor_coordinates_2_3}.
+  
+  In addition, the package provides funtions to compute natural
+  neighbor coordinates on well sampled point set surfaces. See
+  Section~\ref{sec:surface} and the reference page
+  \ccc{surface_neighbor_coordinates_2_3} for further information.
 
 \subsection{Implementation}
 Given a Delaunay triangulation or a Regular triangulation, the
 vertices in conflict with the query point are determined. The areas of
 conflict zone are computed by triangulating the Voronoi sub-cells. The
-normalization factor is also returned. If the query point is already
-located and/or the boundary edges of the conflict zone are already
-determined, alternative functions allow to avoid the re-computation.
+normalization factor $\pi(\mathbf{x})$ is also returned. If the query
+point is already located and/or the boundary edges of the conflict
+zone are already determined, alternative functions allow to avoid the
+re-computation.
 
-\subsection{Example for regular neighbor coordinate computation}
-The signature of all coordinate computation functions is roughly the
-same. 
+\subsection{Example}
+The signature of all coordinate computation functions is about the
+same.
 \ccIncludeExampleCode{../../examples/Interpolation/nn_coordinates_2.C}
-
+\subsubsection{Regular neighbor coordinate computation}
 For regular neighbor coordinates, it is sufficient to replace the name
 of the function and the type of triangulation passed as parameter. A
 special traits class is needed.
 \ccIncludeExampleCode{../../examples/Interpolation/rn_coordinates_2.C}
 For surface neighbor coordinates, the surface normal at the query
-point must be provided.
+point must be provided, see Section~\ref{sec:surface}.
 %
