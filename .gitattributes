@@ -34,6 +34,9 @@ Packages/Matrix_search/doc_tex/basic/Optimisation/Optimisation_ref/MatrixSearch_
 Packages/Matrix_search/doc_tex/basic/Optimisation/Optimisation_ref/MatrixSearch_totmon3.gif svneol=native#unset
 Packages/Matrix_search/doc_tex/basic/Optimisation/Optimisation_ref/MatrixSearch_totmon4.gif svneol=native#unset
 Packages/Matrix_search/doc_tex/basic/Optimisation/Optimisation_ref/MatrixSearch_totmon5.gif svneol=native#unset
+Packages/PS_Stream/latex/test.dvi svneol=native#unset
+Packages/PS_Stream/src/test.ps.gz svneol=native#unset
+Packages/PS_Stream/src/toto.ps.gz svneol=native#unset
 Packages/Triangulation_3/doc_tex/Triangulation_3/comborient.gif svneol=native#unset
 Packages/Triangulation_3/doc_tex/Triangulation_3/design.eps -text
 Packages/Triangulation_3/doc_tex/Triangulation_3/design.gif -text svneol=unset#unset
