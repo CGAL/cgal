@@ -8,19 +8,20 @@
 //
 // ----------------------------------------------------------------------
 // 
-// release       : 
-// release_date  : 
+// release       : $CGAL_Revision: CGAL-2.3-I-73 $
+// release_date  : $CGAL_Date: 2001/06/19 $
 // 
 // file          : include/CGAL/IO/cgal_window.h
-// package       : window (2.8.0)
-// maintainer    : Matthias Baesken (<baesken@informatik.uni-trier.de>)
-// revision      : 2.8.0
-// revision_date : 17 May 2001 
+// package       : window (2.8.4)
+// maintainer    : Susan Hert <hert@mpi-sb.mpg.de>
+// revision      : 2.8.4
+// revision_date : 21 June 2001 
 // author(s)     : Matthias Baesken
 //
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
  
+
 #ifndef CGAL_LEDA_WINDOW_H
 #define CGAL_LEDA_WINDOW_H
 
@@ -28,7 +29,9 @@
 #include <CGAL/LEDA/window.h>
 #include <CGAL/IO/esprit_logo.xpm>
 
+
 CGAL_BEGIN_NAMESPACE
+
 
 typedef CGAL::window        Window_stream;
 
@@ -40,13 +43,13 @@ operator<<(CGAL::window& w, const Color& c)
   return w;
 }
 
+
 inline
 void
 cgalize(CGAL::window& w)
 {
   w.set_frame_label("CGAL-2.3");
   w.set_icon_label("CGAL");
-  w.set_node_width( 3);
   w.set_line_width( 2);
   w.set_icon_pixrect( w.create_pixrect((const char**) esprit_logo));
 }
@@ -64,6 +67,7 @@ create_demo_window( float w = 512.0, float h = 512.0,
   Wptr->set_frame_label( str);
   return Wptr;
 }
+
 
 inline
 CGAL::window*
@@ -99,11 +103,7 @@ operator<<(CGAL::window& w, const Point_2<R>& p)
 {
   double x = CGAL::to_double(p.x());
   double y = CGAL::to_double(p.y());
-  int width = w.get_node_width();
-  if (width < 2)
-      w.draw_point(x,y);
-  else
-      w.draw_filled_node(x,y);
+  w.draw_point(x,y);
   
   return w;
 }
@@ -121,11 +121,7 @@ operator>>(CGAL::window& w, Point_2<R>& p)
       double y = l_p.ycoord();
       w.draw_point(x,y);
       w.set_mode( save);
-      int width = w.get_node_width();
-      if (width < 2)
-          w.draw_point(x,y);
-      else
-          w.draw_filled_node(x,y);
+      w.draw_point(x,y);
       
       p = Point_2<R>( RT(x), RT(y));
   }
@@ -158,11 +154,8 @@ read_mouse_plus(CGAL::window& w, Point_2<R>& p, int& button)
   typedef typename R::RT RT;
   double x, y;
   button = w.read_mouse(x,y);
-  int width = w.get_node_width();
-  if (width < 2)
-      w.draw_point(x,y);
-  else
-      w.draw_filled_node(x,y);
+
+  w.draw_point(x,y);
   
   p = Point_2<R>(RT(x), RT(y));
 }
@@ -367,6 +360,13 @@ operator<<(CGAL::window& w, const Triangle_2<R>& t)
          y1 = CGAL::to_double(t.vertex(1).y()),
          x2 = CGAL::to_double(t.vertex(2).x()),
          y2 = CGAL::to_double(t.vertex(2).y());
+	 
+  CGAL::color cl = w.get_fill_color();
+  
+  if (cl != CGAL::invisible) { // draw filled triangle ...
+    w.draw_filled_triangle(CGAL::window_point(x0,y0), CGAL::window_point(x1,y1), CGAL::window_point(x2,y2), cl); 
+  }
+	 
   w.draw_segment(x0, y0, x1, y1);
   w.draw_segment(x1, y1, x2, y2);
   w.draw_segment(x2, y2, x0, y0);
@@ -429,6 +429,13 @@ operator>>(CGAL::window& w, Triangle_2<R>& t)
   double x2 = third.x();
   double y2 = third.y();
   w.set_mode( save);
+  
+  CGAL::color cl = w.get_fill_color();
+  
+  if (cl != CGAL::invisible) { // draw filled triangle ...
+    w.draw_filled_triangle(CGAL::window_point(x0,y0), CGAL::window_point(x1,y1), CGAL::window_point(x2,y2), cl); 
+  }  
+  
   w.draw_segment(x0,y0, x1, y1);
   w.draw_segment(x1,y1, x2, y2);
   w.draw_segment(x2,y2, x0, y0);
@@ -514,6 +521,13 @@ operator<<(CGAL::window& w, const Circle_2<R>& c)
   double cx = CGAL::to_double(c.center().x()),
          cy = CGAL::to_double(c.center().y()),
          r  = CGAL::to_double(c.squared_radius());
+	 
+  CGAL::color cl = w.get_fill_color();
+  
+  if (cl != CGAL::invisible) { // draw filled circle ...
+    w.draw_disc(cx, cy , std::sqrt(r), cl); 
+  }	 
+	 
   w.draw_circle(cx, cy , std::sqrt(r));
   return w;
 }
@@ -552,6 +566,13 @@ operator>>(CGAL::window& w, Circle_2<R>& c)
   double sqr = dx*dx+dy*dy;
   w.set_mode( save);
   w.set_buttons( save_but);
+
+  CGAL::color cl = w.get_fill_color();
+  
+  if (cl != CGAL::invisible) { // draw filled circle ...
+    w.draw_disc(cx, cy , std::sqrt(sqr), cl); 
+  }  
+  
   w.draw_circle(cx, cy , std::sqrt(sqr));
   c = Circle_2<R>(center, RT(sqr));
   return w;
@@ -607,6 +628,13 @@ operator<<(CGAL::window& w, const Iso_rectangle_2<R>& r)
          ymin = CGAL::to_double(r.min().y()),
          xmax = CGAL::to_double(r.max().x()),
          ymax = CGAL::to_double(r.max().y());
+
+  CGAL::color cl = w.get_fill_color();
+  
+  if (cl != CGAL::invisible) { // draw filled rectangle ...
+    w.draw_filled_rectangle(xmin, ymin, xmax, ymax, cl); 
+  }		 
+	 
   w.draw_segment(xmin, ymin, xmax, ymin);
   w.draw_segment(xmax, ymin, xmax, ymax);
   w.draw_segment(xmax, ymax, xmin, ymax);
@@ -644,6 +672,13 @@ operator>>(CGAL::window& w, Iso_rectangle_2<R>& r)
                                                RT(first.y())),
                               Point_2<R>( RT(x), RT(y)));
   w.set_mode( save);
+
+  CGAL::color cl = w.get_fill_color();
+  
+  if (cl != CGAL::invisible) { // draw filled rectangle ...
+    w.draw_filled_rectangle(first.x(), first.y(), x, y, cl); 
+  }	  
+  
   w.draw_rectangle( first.x(), first.y(), x, y);
   w.set_buttons( save_but);
   return w;
