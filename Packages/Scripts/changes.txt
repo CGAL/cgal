@@ -1,4 +1,8 @@
 //--------------------------------
+// 1.12
++ Added support for geowin in create_makefile script.
+
+//--------------------------------
 // 1.11
 +Altered cgal_conditional_include_remove to work with headers not ending in .h
 +Adapted output of cgreate_cgal_test to error.txt (formatted differently)
