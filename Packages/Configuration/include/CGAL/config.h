@@ -115,6 +115,11 @@
 
 #ifdef _MSC_VER
 #  include <CGAL/MSVC_standard_header_fixes.h>
+CGAL_BEGIN_NAMESPACE
+namespace std {
+    using namespace ::std;
+}
+CGAL_END_NAMESPACE
 #endif
 #if defined(__BORLANDC__) && __BORLANDC__ > 0x520
 #include <CGAL/Borland_fixes.h>

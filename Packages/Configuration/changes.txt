@@ -1,3 +1,6 @@
+2.16
++ Introduce CGAL::std for VC++.
+
 2.15
 + Added __distance_type() and __iterator_category() for sunpro.
 
