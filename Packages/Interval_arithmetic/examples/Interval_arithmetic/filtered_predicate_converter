@@ -13,8 +13,6 @@
 # See the CGAL documentation: Support Library, Number Types, Filtered_exact.
 
 # TODO list:
-#      - Parse the _whole_ file as a string, process with regexps.
-#      - We should definitely simply match a balanced { ... }.
 #      - Introduce a EPSILON_COMPUTATION section, so that the user can provide
 #        in place the alternative code to be used to recompute the epsilons,
 #        when the default is not correct or fast enough.
@@ -102,7 +100,8 @@ __RETURN_TYPE__
 __FUNCTION_NAME__(__ARGUMENTS_CALL__)
 {
   bool tried = false;
-  static double _bound=0;
+  static double _bound = -1.0;
+__STATIC_EPSILONS__
 letstry:
   try
   {
@@ -163,51 +162,34 @@ sub parse_command_line {
 # Auxiliary routine to emit a warning and die if pedantic.
 sub warning {
   my ($msg) = @_;
-  print STDERR "// Warning : $msg\n";
+  warn "// Warning : $msg";
   die if $pedantic;
 }
 
 # Emit a message in verbose mode only.
 sub verbose {
   my ($msg) = @_;
-  print STDERR "// Info : $msg\n" if $opt_v;
+  warn "// Info : $msg" if $opt_v;
 }
 
-# Treats the CGAL header.
-sub treat_CGAL_header {
-  my $file_name="";
-  my $directory = "Arithmetic_filter";
-  my $new_protect_macro = "CGAL_ARITHMETIC_FILTER_";
-  my $new_protect_name;
-  if ($static_version) {
-    $new_protect_macro="CGAL_STATIC_ADAPTATIF_FILTER_";
-    $directory="Static_adaptatif_filter";
-  }
-  # skip the old header.
-  while (<FI>) {
-    # get $file_name from the "file:" field in the headers.
-    $file_name = $1 if m#// file[\s]*: include/CGAL/(.*)#;
+# Parse the CGAL header
+sub parse_CGAL_header {
+  local ($_) = @_;
+  my $file_name = $1 if m#// file[\s]*: include/CGAL/(.*)#m;
+  my $rest      = $' if /^#ifndef[\s]*([\S]*_H)\s*?/m;
+  $_ = $1;
+  $_ = "CGAL_$_" unless /CGAL_/;
+  s/CGAL_/CGAL_ARITHMETIC_FILTER_/;
+  return ($_, $file_name, $rest);
+}
 
-    # set $new_protect_name and exit.
-    if (/^#ifndef[\s]*([\S]*_H)\s*/) {
-      $_ = $1;
-      $_ = "CGAL_$_" unless /CGAL_/;
-      s/CGAL_/$new_protect_macro/;
-      $new_protect_name = $_;
-      last;
-    }
-  }
-  # put the new header.
+# Put new CGAL header
+sub put_CGAL_header {
+  my ($new_protect_name, $file_name) = @_;
   $_ = $CGAL_header_template;
-  s#__FILE_FIELD__#include/CGAL/$directory/$file_name#ms;
+  s#__FILE_FIELD__#include/CGAL/Arithmetic_filter/$file_name#ms;
   s#__NEW_PROTECT_NAME__#$new_protect_name#msg;
   print FO;
-  return $new_protect_name;
-}
-
-# Skips a "CGAL_NO_FILTER" section.
-sub skip_no_filter_section {
-  while (<FI>) { last if m#//CGAL_NO_FILTER_END#; }
 }
 
 # Output "$before$_$after$after_not_last" for each arg, except last.
@@ -276,7 +258,7 @@ sub print_static_adaptatif {
   }
 
   # Print the epsilons needed.
-  print FO eps_string("double Filter_epsilon_${fct_name}_".scalar(@args)."_", ";\n", "", $eps)."\n";
+  my $static_epsilons = eps_string("  static double _epsilon_",";\n", "", $eps);
 
   # Print the SFE version of the predicate.
   print FO give_new_body($ret_type, $fct_name, $new_body, $t, $eps,
@@ -291,7 +273,7 @@ sub print_static_adaptatif {
   my $args_value   = arg_string("\n\t\tRestricted_double(", ".value())", ",", @args);
   my $args_error   = "\n\t\tStatic_filter_error(_bound,0,1)," x ($#args+1);
   my $args_exact   = arg_string("\n\t\t", ".exact()", ",", @args);
-  my $args_epsilons = eps_string("\n\t\tFilter_epsilon_${fct_name}_".scalar(@args)."_", "", ",", $eps);
+  my $args_epsilons = eps_string("\n\t\t_epsilon_", "", ",", $eps);
   my $args_call = arg_string("\n    const ${CGAL}Static_adaptatif_filter &", "", ",", @args);
   my $compute_new_bounds = arg_string("\n      _bound = std::max(_bound, fabs(", ".value()));", "", @args);
 
@@ -307,23 +289,20 @@ sub print_static_adaptatif {
   s#__COMPUTE_NEW_BOUND__#$compute_new_bounds#ms;
   s#__ARGUMENTS_ERROR__#$args_error#msg;
   s#__ARGUMENTS_EXACT__#$args_exact#msg;
+  s#__STATIC_EPSILONS__#$static_epsilons#ms;
   print FO;
 }
 
 # Parse from "template" to end of body "}"
 sub parse_function_definition {
-  my ($def) = @_;
-  while (<FI>) {
-    $def .= $_;
-    last if /^}\s*$/;
-  }
-  $_ = $def;
+  local ($_) = @_;
   /^\W*template\s*\<\s*(?:class|typename)\s*(\S*)\s*\>	# template type name
     \W*(CGAL_\w*INLINE|inline|)			# eventual inline directive
     \W*($CGAL_symbol_re)			# return type
     \W*($C_symbol_re)				# function name
     .*?\((.*?)\)/smx;				# argument list
-  my @pred = ($1, $2, $3, $4, -1, $', "");
+  my ($x, $body, $after) = extract_balanced("{", "}", $');
+  my @pred = ($1, $2, $3, $4, -1, $body."}", "");
   my $fct_name = $4;
   if (not $known_ret_types{$3}) {
     warning("Return type \"$3\" of function \"$4\" is unknown");
@@ -335,26 +314,26 @@ sub parse_function_definition {
     /($C_symbol_re)\s*$/;
     push @pred, $1;
   }
-  return @pred;
+  return ($after, @pred);
 }
 
+# Main parsing subroutine
 sub parse_input_code {
+  local ($_) = @_;
   my $CGAL = "CGAL::";
-  while (<FI>) {
-    # Treat the CGAL_NO_FILTER_BEGIN/CGAL_NO_FILTER_END section.
-    if (m#//CGAL_NO_FILTER_BEGIN#) {
-      skip_no_filter_section();
-      next;
-    }
-  
-    # Detect if we are in namespace CGAL:
-    $CGAL="" if /CGAL_BEGIN_NAMESPACE/;
-    $CGAL="CGAL::" if /CGAL_END_NAMESPACE/;
-  
-    # Treat next template function declaration.
-    if (/template\s*\<.*\>/) {
-      push @predicates, [ $CGAL, parse_function_definition($_) ];
+  # Treat NO_FILTER parts
+  s#//CGAL_NO_FILTER_BEGIN.*?//CGAL_NO_FILTER_END##msg;
+  # Note that the following are buggy if they appear in strings (cf Perl FAQ).
+  s#//.*##mg;      # Remove C++ "//" comments
+  s#/\*.*?\*/##sg; # Remove C "/**/" comments
+  while (/(CGAL_BEGIN_NAMESPACE|CGAL_END_NAMESPACE|template\s*\<.*?\>)/sm) {
+    if ($1 eq "CGAL_BEGIN_NAMESPACE") { $CGAL=""; $_=$'; }
+    elsif ($1 eq "CGAL_END_NAMESPACE") { $CGAL="CGAL::"; $_=$'; }
+    else {
+      my ($after, @pred) = parse_function_definition($1.$');
+      push @predicates, [ $CGAL, @pred ];
       if ($static_version) { treat_predicate($#predicates); }
+      $_ = $after;
     }
   }
 }
@@ -377,58 +356,47 @@ sub print_predicates {
   print "CGAL_END_NAMESPACE\n\n" if $was_in_CGAL;
 }
 
-# Match the first closing parenthesis at level -1 (assumes "(" already open).
-# Returns number of arguments found before, text before, and after.
-sub extract_closing_paren {
-  local ($_) = @_;
+# Matches balanced $beg $end (say "(" and ")"), and counts the number
+# of zones separated by a comma at level 1.
+# Returns number of zones found, text before, and after.
+# Perl 5.6 will support extended regexp that will understand balanced exprs...
+sub extract_balanced {
+  local ($beg, $end, $_) = @_;
   my $num_args = 1;	# We don't handle 0 argument functions.
   my $before = "";
   my $quote_level = 0;
   while ( /./sm ) {
-    if ($& eq "(") {
-      ++$quote_level;
-    } elsif ($& eq ")") {
-      --$quote_level;
-      last if ($quote_level == -1);
-    } elsif ($& eq "," && not $quote_level) {
-      ++$num_args;
-    }
+    if    ($& eq $beg) { ++$quote_level; }
+    elsif ($& eq $end) { --$quote_level; last if ($quote_level == 0); }
+    elsif ($& eq "," && $quote_level == 1) { ++$num_args; }
     $before .= $&;
     $_ = $';
   }
+  # The original text was "$before$end$_" (the last closing $end).
   return ($num_args, $before, $_);
 }
 
-# Find predicate calls in the function body
+# Find predicate calls in the body
 # Returns the number of epsilons that this predicate needs, and the new body.
 sub match_calls_in_body {
-  my ($body) = @_;
+  local ($_) = @_;
   my $new_body = "";
-  my $predicates_re = "(?:";
   my $num_eps=0;
 
   # We prepare the $predicates_re (should be done at an upper level).
   # Final is sthg like "(?:compare|sign|orientationC2)".
+  my $predicates_re = "(?:";
   foreach ( @predicates ) {
     $predicates_re .= "@$_[$fct_name_pos]|";
   }
   chop($predicates_re);
   $predicates_re .= ')';
 
-  # Maybe we should first globally remove comments ?
-  # Note that the following are buggy if they appear in strings...
-  # (http://www.perl.com/cgi-bin/pace/pub/doc/manual/html/pod/perlfaq6.html)
-  $_ = $body;
-  s#//.*##mg;      # Remove C++ "//" comments.
-  s#/\*.*?\*/##sg; # Remove C "/* ... */" comments.
-
   # We match the first call to a known predicate function.
   while (/([^\w\d_])($predicates_re)(\s*\()/sm) {
     $predicate_name = $2;
-    # We add "_SAF" to the predicate name.
-    $new_body .= "$`$1$2_SAF$3";
-    ($num_args, $before, $after) = extract_closing_paren($');
-    $new_body .= $before;
+    my ($num_args, $before, $after) = extract_balanced ("(", ")", "(".$');
+    $new_body .= "$`$1$2_SAF$before"; # We add "_SAF" to the predicate name
 
     # Recognize the actual predicate.
     my $p;
@@ -467,10 +435,10 @@ sub treat_predicate {
 sub parse_dependancy_files {
   foreach (@dependancy_files) {
     open(FI, "<$_") || die "Couldn't open dependancy file \"$_\"\n";
-    parse_input_code();
+    parse_input_code(<FI>);
     close(FI);
   }
-  # Consider them as built-in now (i.e. don't output specializations).
+  # Consider them as built-in now (i.e. don't output specializations for them)
   $num_built_in_predicates=$#predicates+1;
 }
 
@@ -481,13 +449,17 @@ sub main {
     $known_ret_types{"CGAL::$_"}=1;
   }
   parse_command_line();
+  undef $/; # We parse the _whole_ input files as strings, not line by line.
   if ($static_version && $opt_d) { parse_dependancy_files(); }
   open(FI, "<$opt_i") || die "Couldn't open input file \"$opt_i\"\n";
+  my ($new_protect_name, $file_name, $rest) = parse_CGAL_header(<FI>);
+  close(FI);
+  parse_input_code($rest);
   open(FO, ">$opt_o") || die "Couldn't open output file \"$opt_o\"\n";
-  my $new_protect_name = treat_CGAL_header();
-  parse_input_code();
+  put_CGAL_header($new_protect_name, $file_name);
   print_predicates();
   print FO "#endif // $new_protect_name\n";
+  close(FO);
 }
 
 main();
