@@ -256,14 +256,14 @@ the software design in this case.
 In the bottom layer, the \cgal\ base classes store elementary
 geometric information.  These classes are parameterized by a geometric
 traits class providing all the geometric types. A vertex has a pointer
-to a cell, and a cell has four pointers to vertices. These pointers
-are of type \ccc{void*}.
+to a cell, and a cell has four pointers to vertices and four pointers to cells.
+These pointers are of type \ccc{void*}.
 
 The middle layer class stores the triangulation data structure, which
 is purely combinatorial. A vertex of the triangulation data structure
 has a pointer to a cell of the triangulation data structure, and a
-cell has four pointers to vertices. These pointers are usual
-\ccc{C++} pointers. The triangulation data structure provides
+cell has four pointers to vertices. These pointers are \emph{handles}.
+The triangulation data structure provides
 operations such as insertion of a new vertex in a given cell, on a
 $1$ or $2$-face. It also allows one, if the dimension of the triangulation
 is smaller than $3$, to insert a vertex so that the dimension of the
@@ -274,20 +274,20 @@ triangulation.
 It is up to the user to derive his own base classes from the \cgal\
 base classes to add any other information he may need for his given
 application, or to write his own base classes from scratch. In this
-case, the base classes must be models for the concepts described in
-\ccc{Triangulation_vb_3} and \ccc{Triangulation_cb_3}.
+case, the base classes must be models for the \ccc{TriangulationVertexBase_3}
+and \ccc{TriangulationCellBase_3} concepts described in
+\ccRefPage{TriangulationVertexBase_3} and \ccRefPage{TriangulationCellBase_3}.
 
 The upper layer, described in Chapter~\ref{chapter-Triangulation3}, is
 the geometric triangulation class, providing operations such as
 location of a point in the triangulation, insertion of a point, and is
-responsible for the geometric validity. A vertex of the triangulation
-has a pointer to a cell and a cell has four pointers to
-vertices. These pointers are \cgal\ \emph{handles}. The triangulation
+responsible for the geometric validity.  The triangulation
 data structure class is one of the template parameters of the
 geometric triangulation class. The user may choose to replace the
-\cgal\ triangulation data structure class by his own triangulation
+triangulation data structure class provided by \cgal\ by his own triangulation
 data structure. In this case, his class has to be a model of the
-concept described in \ccRefPage{TriangulationDataStructure_3}.
+\ccc{TriangulationDataStructure_3} concept described in
+\ccRefPage{TriangulationDataStructure_3}.
 
 \section{Example of incremental construction}
 \label{TDS3-sec-examples}
