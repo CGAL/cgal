@@ -1,3 +1,5 @@
+27 April 2004 Mariette Yvinec
+- add test suite for  Regular_triangulation_euclidean_traits_3
 
 27 April 2004 Mariette Yvinec
 - changed the order in tab_vertex_triple_index[4][3]
