@@ -774,13 +774,12 @@ public:
   {
       if ( dimension() < 3 )
 	  return finite_cells_end();
-      return filter_iterator(cells_begin(), cells_end(),
-	                     Infinite_tester(this));
+      return filter_iterator(cells_end(), Infinite_tester(this),
+	                     cells_begin());
   }
   Finite_cells_iterator finite_cells_end() const
   {
-      return filter_iterator(cells_begin(), cells_end(),
-	                     Infinite_tester(this), cells_end());
+      return filter_iterator(cells_end(), Infinite_tester(this));
   }
 
   Cell_iterator cells_begin() const
@@ -805,13 +804,12 @@ public:
   {
       if ( number_of_vertices() <= 0 )
 	  return finite_vertices_end();
-      return filter_iterator(vertices_begin(), vertices_end(),
-	                     Infinite_tester(this));
+      return filter_iterator(vertices_end(), Infinite_tester(this),
+	                     vertices_begin());
   }
   Finite_vertices_iterator finite_vertices_end() const
   {
-      return filter_iterator(vertices_begin(), vertices_end(),
-	                     Infinite_tester(this), vertices_end());
+      return filter_iterator(vertices_end(), Infinite_tester(this));
   }
 
   Vertex_iterator vertices_begin() const
@@ -836,13 +834,12 @@ public:
   {
       if ( dimension() < 1 )
 	  return finite_edges_end();
-      return filter_iterator(edges_begin(), edges_end(),
-	                     Infinite_tester(this));
+      return filter_iterator(edges_end(), Infinite_tester(this),
+	                     edges_begin());
   }
   Finite_edges_iterator finite_edges_end() const
   {
-      return filter_iterator(edges_begin(), edges_end(),
-	                     Infinite_tester(this), edges_end());
+      return filter_iterator(edges_end(), Infinite_tester(this));
   }
 
   Edge_iterator edges_begin() const
@@ -867,13 +864,12 @@ public:
   {
       if ( dimension() < 2 )
 	  return finite_facets_end();
-      return filter_iterator(facets_begin(), facets_end(),
-	                     Infinite_tester(this));
+      return filter_iterator(facets_end(), Infinite_tester(this),
+	                     facets_begin());
   }
   Finite_facets_iterator finite_facets_end() const
   {
-      return filter_iterator(facets_begin(), facets_end(),
-	                     Infinite_tester(this), facets_end());
+      return filter_iterator(facets_end(), Infinite_tester(this));
   }
 
   Facet_iterator facets_begin() const

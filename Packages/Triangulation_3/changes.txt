@@ -1,3 +1,6 @@
+Version 1.183 (1 December 03)
+- Update to the new filter_iterator() interface.
+
 Version 1.182 (28 November 03)
 - Add missing CGAL:: in the test-suite.
 
