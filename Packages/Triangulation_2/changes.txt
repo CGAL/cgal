@@ -1,6 +1,14 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 
+- Instead of hiding weighted points in faces of the regular triangulation, we now hide vertices.
+  This makes that the Triangulation_hierarchy works for Regular now
+- changed typedef Point in Triangulation_Hierarchy_2
+- Added a new class Regular_traingulation_vertex_base_2 with  member: bool hidden
+- added iterators for hidden vertices, all vertices
+- Regular_triangulation gets type Vertex_list from Regular_triangulation_face_base_2
+
 Ver 7.54
 - Functions cw(int) and ccw(int) no longer use an if-statement
   but a lookup table. It leads to more performance [af]
