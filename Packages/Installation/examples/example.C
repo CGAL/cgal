@@ -2,7 +2,6 @@
 // This is just a small sample application for testing the makefile.
 //----------------------------------------------------------------------//
 
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
 #include <iostream>
