@@ -13,11 +13,10 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-# Remove stupid gcc warnings and turn on debugger (optional)
+# Turn on optimizer and extensive checking
 EXTRA_FLAGS = \
-           -Wno-reorder \
-		   -Wno-sign-compare \
-		   -g
+           -O3 \
+		   -DCGAL_PARAMETERIZATION_CHECK_EXPENSIVE
 
 CXXFLAGS = \
            -I../../include \
