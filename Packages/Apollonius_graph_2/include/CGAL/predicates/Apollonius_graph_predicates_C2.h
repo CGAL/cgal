@@ -43,12 +43,12 @@ CGAL_BEGIN_NAMESPACE
 
 //--------------------------------------------------------------------
 
-template<class Point, class Weight>
+template< class K >
 class Sign_of_Voronoi_radius
 {
 public:
-  typedef Voronoi_radius<Point, Weight>   Voronoi_radius;
-  typedef typename Point::R::FT           FT;
+  typedef CGAL::Voronoi_radius<K>   Voronoi_radius;
+  typedef typename K::FT            FT;
 
 public:
 
@@ -83,14 +83,14 @@ public:
     }
 };
 
-template<class Point, class Weight>
+template< class K >
 class Bounded_side_of_CCW_circle
 {
 private:
-  Sign_of_Voronoi_radius<Point, Weight> test;
+  CGAL::Sign_of_Voronoi_radius<K> test;
 public:
-  typedef Voronoi_radius<Point, Weight>   Voronoi_radius;
-  typedef typename Point::R::FT           FT;
+  typedef CGAL::Voronoi_radius<K>   Voronoi_radius;
+  typedef typename K::FT            FT;
 public:
 
   template<class Tag>
@@ -104,19 +104,19 @@ public:
 
 //--------------------------------------------------------------------
 
-template<class Point, class Weight>
+template< class K >
 class Sign_of_distance_from_bitangent_line
 {
 public:
-  typedef Bitangent_line<Point, Weight>           Bitangent_line;
-  typedef Weighted_point<Point, Weight>           Weighted_point;
-  typedef Inverted_weighted_point<Point, Weight>  Inverted_weighted_point;
-  typedef typename Point::R::FT                   FT;
+  typedef CGAL::Bitangent_line<K>           Bitangent_line;
+  typedef typename K::Weighted_point_2      Weighted_point_2;
+  typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
+  typedef typename K::FT                    FT;
 
 public:
 
   Sign
-  operator()(const Bitangent_line& bl, const Weighted_point& q,
+  operator()(const Bitangent_line& bl, const Weighted_point_2& q,
 	     Sqrt_field_tag)
     {
 #ifdef AG2_PROFILE_PREDICATES
@@ -130,7 +130,7 @@ public:
     }
 
   Sign
-  operator()(const Bitangent_line& bl, const Weighted_point& q, Ring_tag)
+  operator()(const Bitangent_line& bl, const Weighted_point_2& q, Ring_tag)
     {
 #ifdef AG2_PROFILE_PREDICATES
       ag2_predicate_profiler::distance_from_bitangent_counter++;
@@ -145,14 +145,13 @@ public:
 //--------------------------------------------------------------------
 
 
-template<class Point, class Weight>
+template< class K >
 class Sign_of_distance_from_CCW_circle
 {
 public:
-  typedef Bitangent_line<Point, Weight>           Bitangent_line;
-  typedef Weighted_point<Point, Weight>           Weighted_point;
-  typedef Inverted_weighted_point<Point, Weight>  Inverted_weighted_point;
-  typedef typename Point::R::FT                   FT;
+  typedef CGAL::Bitangent_line<K>           Bitangent_line;
+  typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
+  typedef typename K::FT                    FT;
 public:
 
   Sign
@@ -193,30 +192,28 @@ public:
   }
 };
 
-template < class R, class W = typename R::RT >
+template < class K >
 class Incircle_test
 {
 public:
-  typedef Point_2<R>                              Point;
-  typedef W                                       Weight;
+  typedef typename K::Point_2               Point_2;
+  typedef typename K::Weighted_point_2      Weighted_point_2;
+  typedef CGAL::Weighted_point_inverter<K>  Weighted_point_inverter;
+  typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
+  typedef CGAL::Bitangent_line<K>           Bitangent_line;
+  typedef CGAL::Voronoi_radius<K>           Voronoi_radius;
+  typedef typename K::FT                    FT;
 
-  typedef Weighted_point<Point, Weight>           Weighted_point;
-  typedef Weighted_point_inverter<Point, Weight>  Weighted_point_inverter;
-  typedef Inverted_weighted_point<Point, Weight>  Inverted_weighted_point;
-  typedef Bitangent_line<Point, Weight>           Bitangent_line;
-  typedef Voronoi_radius<Point, Weight>           Voronoi_radius;
-  typedef typename R::FT                          FT;
-
-  typedef Bounded_side_of_CCW_circle<Point, Weight>
+  typedef CGAL::Bounded_side_of_CCW_circle<K>
                                                Bounded_side_of_CCW_circle;
-  typedef Sign_of_distance_from_bitangent_line<Point, Weight>
+  typedef CGAL::Sign_of_distance_from_bitangent_line<K>
                                      Sign_of_distance_from_bitangent_line;
-  typedef Sign_of_distance_from_CCW_circle<Point, Weight>
+  typedef CGAL::Sign_of_distance_from_CCW_circle<K>
                                          Sign_of_distance_from_CCW_circle;
 
 private:
   Orientation
-  orientation(const Bitangent_line& l, const Point& p,
+  orientation(const Bitangent_line& l, const Point_2& p,
 	      Sqrt_field_tag) const
     {
       FT A = l.a1() * p.x() + l.b1() * p.y() + l.c1();
@@ -226,7 +223,7 @@ private:
     }
 
   Orientation
-  orientation(const Bitangent_line& l, const Point& p,
+  orientation(const Bitangent_line& l, const Point_2& p,
 	      Ring_tag) const
     {
       FT A = l.a1() * p.x() + l.b1() * p.y() + l.c1();
@@ -248,10 +245,10 @@ private:
 public:
 
   template<class Method_tag>
-  inline Sign operator()(const Weighted_point& p1,
-			 const Weighted_point& p2,
-			 const Weighted_point& p3,
-			 const Weighted_point& q,
+  inline Sign operator()(const Weighted_point_2& p1,
+			 const Weighted_point_2& p2,
+			 const Weighted_point_2& p3,
+			 const Weighted_point_2& q,
 			 Method_tag tag) const {
 #ifdef AG2_PROFILE_PREDICATES
     ag2_predicate_profiler::incircle_counter++;
@@ -274,9 +271,9 @@ public:
   }
 
   template<class Method_tag>
-  inline Sign operator()(const Weighted_point& p1,
-			 const Weighted_point& p2,
-			 const Weighted_point& q,
+  inline Sign operator()(const Weighted_point_2& p1,
+			 const Weighted_point_2& p2,
+			 const Weighted_point_2& q,
 			 Method_tag tag) const {
     //
     Bitangent_line bl_21(p2, p1);
@@ -296,18 +293,19 @@ public:
 
 //--------------------------------------------------------------------
 
-template<class Point, class Weight>
+template< class K >
 class Orientation_wrt_symmetry_axis
 {
 public:
-  typedef Voronoi_circle<Point, Weight>           Voronoi_circle;
-  typedef typename Point::R::FT                   FT;
+  typedef typename K::Point_2        Point_2;
+  typedef CGAL::Voronoi_circle<K>    Voronoi_circle;
+  typedef typename K::FT             FT;
 
 public:
 
   Orientation
-  operator()(const Voronoi_circle& vc, const Point& p1,
-	     const Point& p2, Sqrt_field_tag)
+  operator()(const Voronoi_circle& vc, const Point_2& p1,
+	     const Point_2& p2, Sqrt_field_tag)
     {
       FT a = vc.a1() + vc.a2() * CGAL_NTS sqrt(vc.delta());
       FT b = vc.b1() + vc.b2() * CGAL_NTS sqrt(vc.delta());
@@ -316,8 +314,8 @@ public:
     }
 
   Orientation
-  operator()(const Voronoi_circle& vc, const Point& p1,
-	     const Point& p2, Ring_tag)
+  operator()(const Voronoi_circle& vc, const Point_2& p1,
+	     const Point_2& p2, Ring_tag)
     {
       FT dx = p2.x() - p1.x();
       FT dy = p2.y() - p1.y();
@@ -330,13 +328,13 @@ public:
 
 //--------------------------------------------------------------------
 
-template<class Point, class Weight>
+template< class K >
 class Compare_Voronoi_radii
 {
 public:
-  typedef Voronoi_circle<Point, Weight>           Voronoi_circle;
-  typedef Weighted_point<Point, Weight>           Weighted_point;
-  typedef typename Point::R::FT                   FT;
+  typedef CGAL::Voronoi_circle<K>           Voronoi_circle;
+  //  typedef typename K::Weighted_point_2      Weighted_point_2;
+  typedef typename K::FT                    FT;
 
 private:
 
@@ -504,23 +502,22 @@ public:
 
 //--------------------------------------------------------------------
 
-template<class Point, class Weight>
+template< class K >
 class Order_on_finite_bisector
 {
 public:
-  typedef Voronoi_circle<Point, Weight>           Voronoi_circle;
-  typedef Weighted_point<Point, Weight>           Weighted_point;
-  typedef typename Point::R::FT                   FT;
-  typedef Orientation_wrt_symmetry_axis<Point, Weight>
-                                   Orientation_wrt_symmetry_axis;
-  typedef Compare_Voronoi_radii<Point, Weight>
-                                           Compare_Voronoi_radii;
+  typedef CGAL::Voronoi_circle<K>           Voronoi_circle;
+  typedef typename K::Weighted_point_2      Weighted_point_2;
+  typedef typename K::FT                    FT;
+  typedef CGAL::Orientation_wrt_symmetry_axis<K>
+                                    Orientation_wrt_symmetry_axis;
+  typedef CGAL::Compare_Voronoi_radii<K>    Compare_Voronoi_radii;
   
 public:
   template<class Method_tag>
   Comparison_result
   operator()(const Voronoi_circle& vc1, const Voronoi_circle& vc2,
-	     const Weighted_point& p1, const Weighted_point& p2,
+	     const Weighted_point_2& p1, const Weighted_point_2& p2,
 	     Method_tag tag)
     {
 #ifdef AG2_PROFILE_PREDICATES
@@ -565,38 +562,34 @@ public:
 
 //--------------------------------------------------------------------
 
-template < class R, class W = typename R::RT >
+template < class K >
 class Finite_edge_test
 {
 public:
-  typedef Point_2<R>                              Point;
-  typedef W                                       Weight;
+  //  typedef typename K::Point_2               Point_2;
+  typedef typename K::Weighted_point_2      Weighted_point_2;
+  typedef CGAL::Weighted_point_inverter<K>  Weighted_point_inverter;
+  typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
+  typedef CGAL::Voronoi_radius<K>           Voronoi_radius;
+  typedef CGAL::Voronoi_circle<K>           Voronoi_circle;
+  typedef CGAL::Bitangent_line<K>           Bitangent_line;
+  typedef typename K::FT                    FT;
 
-  typedef Weighted_point<Point, Weight>           Weighted_point;
-  typedef Weighted_point_inverter<Point, Weight>  Weighted_point_inverter;
-  typedef Inverted_weighted_point<Point, Weight>  Inverted_weighted_point;
-  typedef Voronoi_radius<Point, Weight>           Voronoi_radius;
-  typedef Voronoi_circle<Point, Weight>           Voronoi_circle;
-  typedef Bitangent_line<Point, Weight>           Bitangent_line;
-  typedef typename R::FT                          FT;
-
-  typedef Bounded_side_of_CCW_circle<Point, Weight>
-                                               Bounded_side_of_CCW_circle;
-  typedef Sign_of_distance_from_bitangent_line<Point, Weight>
+  typedef CGAL::Bounded_side_of_CCW_circle<K>  Bounded_side_of_CCW_circle;
+  typedef CGAL::Sign_of_distance_from_bitangent_line<K>
                                      Sign_of_distance_from_bitangent_line;
-  typedef Sign_of_distance_from_CCW_circle<Point, Weight>
+  typedef CGAL::Sign_of_distance_from_CCW_circle<K>
                                          Sign_of_distance_from_CCW_circle;
-  typedef Order_on_finite_bisector<Point, Weight>
-                                                 Order_on_finite_bisector;
+  typedef CGAL::Order_on_finite_bisector<K>      Order_on_finite_bisector;
 
 public:
   template<class Method_tag>
   bool
-  operator()(const Weighted_point& p1,
-	     const Weighted_point& p2,
-	     const Weighted_point& p3,
-	     const Weighted_point& p4,
-	     const Weighted_point& q, bool b, Method_tag tag) {
+  operator()(const Weighted_point_2& p1,
+	     const Weighted_point_2& p2,
+	     const Weighted_point_2& p3,
+	     const Weighted_point_2& p4,
+	     const Weighted_point_2& q, bool b, Method_tag tag) {
 #ifdef AG2_PROFILE_PREDICATES
       ag2_predicate_profiler::shadow_region_type_counter++;
 #endif
@@ -693,37 +686,34 @@ public:
 
 //--------------------------------------------------------------------
 
-template < class R, class W = typename R::RT >
+template < class K >
 class Finite_edge_test_degenerated
 {
 public:
-  typedef Point_2<R>                              Point;
-  typedef W                                       Weight;
+  //  typedef Point_2<R>                              Point;
 
-  typedef Weighted_point<Point, Weight>           Weighted_point;
-  typedef Weighted_point_inverter<Point, Weight>  Weighted_point_inverter;
-  typedef Inverted_weighted_point<Point, Weight>  Inverted_weighted_point;
-  typedef Voronoi_radius<Point, Weight>           Voronoi_radius;
-  typedef Voronoi_circle<Point, Weight>           Voronoi_circle;
-  typedef Bitangent_line<Point, Weight>           Bitangent_line;
-  typedef typename R::FT                          FT;
+  typedef typename K::Weighted_point_2      Weighted_point_2;
+  typedef CGAL::Weighted_point_inverter<K>  Weighted_point_inverter;
+  typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
+  typedef CGAL::Voronoi_radius<K>           Voronoi_radius;
+  typedef CGAL::Voronoi_circle<K>           Voronoi_circle;
+  typedef CGAL::Bitangent_line<K>           Bitangent_line;
+  typedef typename K::FT                    FT;
 
-  typedef Bounded_side_of_CCW_circle<Point, Weight>
-                                               Bounded_side_of_CCW_circle;
-  typedef Sign_of_distance_from_bitangent_line<Point, Weight>
+  typedef CGAL::Bounded_side_of_CCW_circle<K>  Bounded_side_of_CCW_circle;
+  typedef CGAL::Sign_of_distance_from_bitangent_line<K>
                                      Sign_of_distance_from_bitangent_line;
-  typedef Sign_of_distance_from_CCW_circle<Point, Weight>
+  typedef CGAL::Sign_of_distance_from_CCW_circle<K>
                                          Sign_of_distance_from_CCW_circle;
-  typedef Order_on_finite_bisector<Point, Weight>
-                                                 Order_on_finite_bisector;
+  typedef CGAL::Order_on_finite_bisector<K>      Order_on_finite_bisector;
 public:
 
   template<class Method_tag>
   bool
-  operator()(const Weighted_point& p1,
-	     const Weighted_point& p2,
-	     const Weighted_point& p3,
-	     const Weighted_point& q, bool b, Method_tag tag) {
+  operator()(const Weighted_point_2& p1,
+	     const Weighted_point_2& p2,
+	     const Weighted_point_2& p3,
+	     const Weighted_point_2& q, bool b, Method_tag tag) {
 #ifdef AG2_PROFILE_PREDICATES
     ag2_predicate_profiler::shadow_region_type_counter++;
 #endif
@@ -800,9 +790,9 @@ public:
 
   template<class Method_tag>
   bool
-  operator()(const Weighted_point& p1,
-	     const Weighted_point& p2,
-	     const Weighted_point& q, bool b, Method_tag tag) {
+  operator()(const Weighted_point_2& p1,
+	     const Weighted_point_2& p2,
+	     const Weighted_point_2& q, bool b, Method_tag tag) {
 #ifdef AG2_PROFILE_PREDICATES
       ag2_predicate_profiler::shadow_region_type_counter++;
 #endif
@@ -842,17 +832,17 @@ public:
 
 //--------------------------------------------------------------------
 
-template< class Point, class Weight >
+template< class K >
 class Bounded_side_of_CCW_circular_arc
 {
 public:
-  typedef Weighted_point<Point, Weight>           Weighted_point;
-  typedef Weighted_point_inverter<Point, Weight>  Weighted_point_inverter;
-  typedef Inverted_weighted_point<Point, Weight>  Inverted_weighted_point;
-  typedef Voronoi_radius<Point, Weight>           Voronoi_radius;
-  typedef Voronoi_circle<Point, Weight>           Voronoi_circle;
-  typedef Bitangent_line<Point, Weight>           Bitangent_line;
-  typedef typename Point::R::FT                          FT;
+  typedef typename K::Weighted_point_2      Weighted_point_2;
+  typedef CGAL::Weighted_point_inverter<K>  Weighted_point_inverter;
+  typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
+  typedef CGAL::Voronoi_radius<K>           Voronoi_radius;
+  typedef CGAL::Voronoi_circle<K>           Voronoi_circle;
+  typedef CGAL::Bitangent_line<K>           Bitangent_line;
+  typedef typename K::FT                    FT;
 public:
   
   template< class Method_tag >
@@ -1043,40 +1033,38 @@ public:
 
 //--------------------------------------------------------------------
 
-template < class R, class W = typename R::RT >
+template < class K >
 class Infinite_edge_test
 {
 public:
-  typedef Point_2<R>                              Point;
-  typedef W                                       Weight;
+  //  typedef Point_2<R>                              Point;
+  //  typedef W                                       Weight;
 
-  typedef Weighted_point<Point, Weight>           Weighted_point;
-  typedef Weighted_point_inverter<Point, Weight>  Weighted_point_inverter;
-  typedef Inverted_weighted_point<Point, Weight>  Inverted_weighted_point;
-  typedef Voronoi_radius<Point, Weight>           Voronoi_radius;
-  typedef Voronoi_circle<Point, Weight>           Voronoi_circle;
-  typedef Bitangent_line<Point, Weight>           Bitangent_line;
-  typedef typename R::FT                          FT;
+  typedef typename K::Weighted_point_2      Weighted_point_2;
+  typedef CGAL::Weighted_point_inverter<K>  Weighted_point_inverter;
+  typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
+  typedef CGAL::Voronoi_radius<K>           Voronoi_radius;
+  typedef CGAL::Voronoi_circle<K>           Voronoi_circle;
+  typedef CGAL::Bitangent_line<K>           Bitangent_line;
+  typedef typename K::FT                    FT;
 
-  typedef Bounded_side_of_CCW_circle<Point, Weight>
-                                               Bounded_side_of_CCW_circle;
-  typedef Sign_of_distance_from_bitangent_line<Point, Weight>
+  typedef CGAL::Bounded_side_of_CCW_circle<K>  Bounded_side_of_CCW_circle;
+  typedef CGAL::Sign_of_distance_from_bitangent_line<K>
                                      Sign_of_distance_from_bitangent_line;
-  typedef Sign_of_distance_from_CCW_circle<Point, Weight>
+  typedef CGAL::Sign_of_distance_from_CCW_circle<K>
                                          Sign_of_distance_from_CCW_circle;
-  typedef Order_on_finite_bisector<Point, Weight>
-                                                 Order_on_finite_bisector;
+  typedef CGAL::Order_on_finite_bisector<K>      Order_on_finite_bisector;
 
-  typedef Bounded_side_of_CCW_circular_arc<Point, Weight>
+  typedef CGAL::Bounded_side_of_CCW_circular_arc<K>
                                          Bounded_side_of_CCW_circular_arc;
 
 public:
   template<class Method_tag>
   bool
-  operator()(const Weighted_point& p2,
-	     const Weighted_point& p3,
-	     const Weighted_point& p4,
-	     const Weighted_point& q, bool b, Method_tag tag) {
+  operator()(const Weighted_point_2& p2,
+	     const Weighted_point_2& p3,
+	     const Weighted_point_2& p4,
+	     const Weighted_point_2& q, bool b, Method_tag tag) {
     Bitangent_line bl_32(p3, p2);
     Bitangent_line bl_24(p2, p4);
     Bitangent_line bl_2q(p2, q);
@@ -1116,33 +1104,32 @@ public:
 
 //--------------------------------------------------------------------
 
-template < class R, class W = typename R::RT >
+template < class K >
 class Is_degenerate_edge_test
 {
 public:
-  typedef Point_2<R>                              Point;
-  typedef W                                       Weight;
+  //  typedef Point_2<R>                              Point;
+  //  typedef W                                       Weight;
 
 
-  typedef Weighted_point<Point, Weight>           Weighted_point;
-  typedef Weighted_point_inverter<Point, Weight>  Weighted_point_inverter;
-  typedef Inverted_weighted_point<Point, Weight>  Inverted_weighted_point;
-  typedef Bitangent_line<Point, Weight>           Bitangent_line;
-  typedef Voronoi_circle<Point, Weight>           Voronoi_circle;
-  typedef typename R::FT                          FT;
+  typedef typename K::Weighted_point_2      Weighted_point_2;
+  typedef CGAL::Weighted_point_inverter<K>  Weighted_point_inverter;
+  typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
+  typedef CGAL::Bitangent_line<K>           Bitangent_line;
+  typedef CGAL::Voronoi_circle<K>           Voronoi_circle;
+  typedef typename K::FT                    FT;
 
-  typedef Sign_of_distance_from_CCW_circle<Point, Weight>
+  typedef CGAL::Sign_of_distance_from_CCW_circle<K>
                                           Sign_of_distance_from_CCW_circle;
-  typedef Order_on_finite_bisector<Point, Weight>
-                                                  Order_on_finite_bisector;
+  typedef CGAL::Order_on_finite_bisector<K>       Order_on_finite_bisector;
 
 public:
 
   template<class Method_tag>
-  inline bool operator()(const Weighted_point& p1,
-			 const Weighted_point& p2,
-			 const Weighted_point& p3,
-			 const Weighted_point& p4,
+  inline bool operator()(const Weighted_point_2& p1,
+			 const Weighted_point_2& p2,
+			 const Weighted_point_2& p3,
+			 const Weighted_point_2& p4,
 			 Method_tag tag) const {
     Weighted_point_inverter inverter(p1);
     Inverted_weighted_point u2 = inverter(p2);

@@ -35,6 +35,8 @@
 #include <CGAL/functions_on_signs.h>
 #include <CGAL/predicates/Apollonius_graph_predicates_C2.h>
 
+#include <CGAL/Kernel_wrapper_2.h>
+
 CGAL_BEGIN_NAMESPACE
 
 //--------------------------------------------------------------------
@@ -210,16 +212,18 @@ ad_incircle_test_sqrtf_C2(const RT &x1, const RT &y1,
 			  const RT &qx, const RT &qy,
 			  const RT &qw)
 {
-  typedef Simple_cartesian<RT>             R;
-  typedef Point_2<R>                       Point;
-  typedef RT                               Weight;
-  typedef Weighted_point<Point, Weight>    Weighted_point;
+  must_be_filtered(x1);
 
-  Weighted_point p1(Point(x1, y1), w1);
-  Weighted_point p2(Point(x2, y2), w2);
-  Weighted_point  q(Point(qx, qy), qw);
+  typedef Simple_cartesian<RT>                Rep;
+  typedef Kernel_wrapper_2<Rep>               Kernel;
+  typedef typename Kernel::Point_2            Point_2;
+  typedef typename Kernel::Weighted_point_2   Weighted_point_2;
 
-  Incircle_test<R> f;
+  Weighted_point_2 p1(Point_2(x1, y1), w1);
+  Weighted_point_2 p2(Point_2(x2, y2), w2);
+  Weighted_point_2  q(Point_2(qx, qy), qw);
+
+  Incircle_test<Kernel> f;
   return f(p1, p2, q, Sqrt_field_tag() );
 }
 
@@ -235,16 +239,16 @@ ad_incircle_test_ring_C2(const RT &x1, const RT &y1,
 {
   must_be_filtered(x1);
 
-  typedef Simple_cartesian<RT>             R;
-  typedef Point_2<R>                       Point;
-  typedef RT                               Weight;
-  typedef Weighted_point<Point, Weight>    Weighted_point;
+  typedef Simple_cartesian<RT>               Rep;
+  typedef Kernel_wrapper_2<Rep>              Kernel;
+  typedef typename Kernel::Point_2           Point_2;
+  typedef typename Kernel::Weighted_point_2  Weighted_point_2;
 
-  Weighted_point p1(Point(x1, y1), w1);
-  Weighted_point p2(Point(x2, y2), w2);
-  Weighted_point  q(Point(qx, qy), qw);
+  Weighted_point_2 p1(Point_2(x1, y1), w1);
+  Weighted_point_2 p2(Point_2(x2, y2), w2);
+  Weighted_point_2  q(Point_2(qx, qy), qw);
 
-  Incircle_test<R> f;
+  Incircle_test<Kernel> f;
   return f(p1, p2, q, Ring_tag() );
 }
 
@@ -264,17 +268,19 @@ ad_incircle_test_sqrtf_C2(const RT &x1, const RT &y1,
 			  const RT &qx, const RT &qy,
 			  const RT &qw)
 {
-  typedef Simple_cartesian<RT>             R;
-  typedef Point_2<R>                       Point;
-  typedef RT                               Weight;
-  typedef Weighted_point<Point, Weight>    Weighted_point;
+  must_be_filtered(x1);
 
-  Weighted_point p1(Point(x1, y1), w1);
-  Weighted_point p2(Point(x2, y2), w2);
-  Weighted_point p3(Point(x3, y3), w3);
-  Weighted_point  q(Point(qx, qy), qw);
+  typedef Simple_cartesian<RT>               Rep;
+  typedef Kernel_wrapper_2<Rep>              Kernel;
+  typedef typename Kernel::Point_2           Point_2;
+  typedef typename Kernel::Weighted_point_2  Weighted_point_2;
 
-  Incircle_test<R> f;
+  Weighted_point_2 p1(Point_2(x1, y1), w1);
+  Weighted_point_2 p2(Point_2(x2, y2), w2);
+  Weighted_point_2 p3(Point_2(x3, y3), w3);
+  Weighted_point_2  q(Point_2(qx, qy), qw);
+
+  Incircle_test<Kernel> f;
   return f(p1, p2, p3, q, Sqrt_field_tag() );
 }
 
@@ -290,17 +296,19 @@ ad_incircle_test_ring_C2(const RT &x1, const RT &y1,
 			 const RT &qx, const RT &qy,
 			 const RT &qw)
 {
-  typedef Simple_cartesian<RT>             R;
-  typedef Point_2<R>                       Point;
-  typedef RT                               Weight;
-  typedef Weighted_point<Point, Weight>    Weighted_point;
+  must_be_filtered(x1);
 
-  Weighted_point p1(Point(x1, y1), w1);
-  Weighted_point p2(Point(x2, y2), w2);
-  Weighted_point p3(Point(x3, y3), w3);
-  Weighted_point  q(Point(qx, qy), qw);
+  typedef Simple_cartesian<RT>               Rep;
+  typedef Kernel_wrapper_2<Rep>              Kernel;
+  typedef typename Kernel::Point_2           Point_2;
+  typedef typename Kernel::Weighted_point_2  Weighted_point_2;
 
-  Incircle_test<R> f;
+  Weighted_point_2 p1(Point_2(x1, y1), w1);
+  Weighted_point_2 p2(Point_2(x2, y2), w2);
+  Weighted_point_2 p3(Point_2(x3, y3), w3);
+  Weighted_point_2  q(Point_2(qx, qy), qw);
+
+  Incircle_test<Kernel> f;
   return f(p1, p2, p3, q, Ring_tag() );
 }
 
@@ -322,18 +330,20 @@ ad_finite_edge_test_sqrtf_C2(const RT &x1, const RT &y1,
 			     const RT &qx, const RT &qy,
 			     const RT &qw, bool b)
 {
-  typedef Simple_cartesian<RT>             R;
-  typedef Point_2<R>                       Point;
-  typedef RT                               Weight;
-  typedef Weighted_point<Point, Weight>    Weighted_point;
+  must_be_filtered(x1);
 
-  Weighted_point p1(Point(x1, y1), w1);
-  Weighted_point p2(Point(x2, y2), w2);
-  Weighted_point p3(Point(x3, y3), w3);
-  Weighted_point p4(Point(x4, y4), w4);
-  Weighted_point  q(Point(qx, qy), qw);
+  typedef Simple_cartesian<RT>               Rep;
+  typedef Kernel_wrapper_2<Rep>              Kernel;
+  typedef typename Kernel::Point_2           Point_2;
+  typedef typename Kernel::Weighted_point_2  Weighted_point_2;
 
-  Finite_edge_test<R> f;
+  Weighted_point_2 p1(Point_2(x1, y1), w1);
+  Weighted_point_2 p2(Point_2(x2, y2), w2);
+  Weighted_point_2 p3(Point_2(x3, y3), w3);
+  Weighted_point_2 p4(Point_2(x4, y4), w4);
+  Weighted_point_2  q(Point_2(qx, qy), qw);
+
+  Finite_edge_test<Kernel> f;
   return f(p1, p2, p3, p4, q, b, Sqrt_field_tag() );
 }
 
@@ -352,18 +362,18 @@ ad_finite_edge_test_ring_C2(const RT &x1, const RT &y1,
 {
   must_be_filtered(x1);
 
-  typedef Simple_cartesian<RT>             R;
-  typedef Point_2<R>                       Point;
-  typedef RT                               Weight;
-  typedef Weighted_point<Point, Weight>    Weighted_point;
+  typedef Simple_cartesian<RT>               Rep;
+  typedef Kernel_wrapper_2<Rep>              Kernel;
+  typedef typename Kernel::Point_2           Point_2;
+  typedef typename Kernel::Weighted_point_2  Weighted_point_2;
 
-  Weighted_point p1(Point(x1, y1), w1);
-  Weighted_point p2(Point(x2, y2), w2);
-  Weighted_point p3(Point(x3, y3), w3);
-  Weighted_point p4(Point(x4, y4), w4);
-  Weighted_point  q(Point(qx, qy), qw);
+  Weighted_point_2 p1(Point_2(x1, y1), w1);
+  Weighted_point_2 p2(Point_2(x2, y2), w2);
+  Weighted_point_2 p3(Point_2(x3, y3), w3);
+  Weighted_point_2 p4(Point_2(x4, y4), w4);
+  Weighted_point_2  q(Point_2(qx, qy), qw);
 
-  Finite_edge_test<R> f;
+  Finite_edge_test<Kernel> f;
   return f(p1, p2, p3, p4, q, b, Ring_tag() );
 }
 
@@ -379,16 +389,18 @@ ad_finite_edge_test_degenerated_sqrtf_C2(const RT &x1, const RT &y1,
 					 const RT &qx, const RT &qy,
 					 const RT &qw, bool b)
 {
-  typedef Simple_cartesian<RT>             R;
-  typedef Point_2<R>                       Point;
-  typedef RT                               Weight;
-  typedef Weighted_point<Point, Weight>    Weighted_point;
+  must_be_filtered(x1);
 
-  Weighted_point p1(Point(x1, y1), w1);
-  Weighted_point p2(Point(x2, y2), w2);
-  Weighted_point  q(Point(qx, qy), qw);
+  typedef Simple_cartesian<RT>               Rep;
+  typedef Kernel_wrapper_2<Rep>              Kernel;
+  typedef typename Kernel::Point_2           Point_2;
+  typedef typename Kernel::Weighted_point_2  Weighted_point_2;
 
-  Finite_edge_test_degenerated<R> f;
+  Weighted_point_2 p1(Point_2(x1, y1), w1);
+  Weighted_point_2 p2(Point_2(x2, y2), w2);
+  Weighted_point_2  q(Point_2(qx, qy), qw);
+
+  Finite_edge_test_degenerated<Kernel> f;
   return f(p1, p2, q, b, Sqrt_field_tag() );
 }
 
@@ -403,16 +415,16 @@ ad_finite_edge_test_degenerated_ring_C2(const RT &x1, const RT &y1,
 {
   must_be_filtered(x1);
 
-  typedef Simple_cartesian<RT>             R;
-  typedef Point_2<R>                       Point;
-  typedef RT                               Weight;
-  typedef Weighted_point<Point, Weight>    Weighted_point;
+  typedef Simple_cartesian<RT>               Rep;
+  typedef Kernel_wrapper_2<Rep>              Kernel;
+  typedef typename Kernel::Point_2           Point_2;
+  typedef typename Kernel::Weighted_point_2  Weighted_point_2;
 
-  Weighted_point p1(Point(x1, y1), w1);
-  Weighted_point p2(Point(x2, y2), w2);
-  Weighted_point  q(Point(qx, qy), qw);
+  Weighted_point_2 p1(Point_2(x1, y1), w1);
+  Weighted_point_2 p2(Point_2(x2, y2), w2);
+  Weighted_point_2  q(Point_2(qx, qy), qw);
 
-  Finite_edge_test_degenerated<R> f;
+  Finite_edge_test_degenerated<Kernel> f;
   return f(p1, p2, q, b, Ring_tag() );
 }
 
@@ -428,17 +440,19 @@ ad_finite_edge_test_degenerated_sqrtf_C2(const RT &x1, const RT &y1,
 					 const RT &qx, const RT &qy,
 					 const RT &qw, bool b)
 {
-  typedef Simple_cartesian<RT>             R;
-  typedef Point_2<R>                       Point;
-  typedef RT                               Weight;
-  typedef Weighted_point<Point, Weight>    Weighted_point;
+  must_be_filtered(x1);
 
-  Weighted_point p1(Point(x1, y1), w1);
-  Weighted_point p2(Point(x2, y2), w2);
-  Weighted_point p3(Point(x3, y3), w3);
-  Weighted_point  q(Point(qx, qy), qw);
+  typedef Simple_cartesian<RT>               Rep;
+  typedef Kernel_wrapper_2<Rep>              Kernel;
+  typedef typename Kernel::Point_2           Point_2;
+  typedef typename Kernel::Weighted_point_2  Weighted_point_2;
 
-  Finite_edge_test_degenerated<R> f;
+  Weighted_point_2 p1(Point_2(x1, y1), w1);
+  Weighted_point_2 p2(Point_2(x2, y2), w2);
+  Weighted_point_2 p3(Point_2(x3, y3), w3);
+  Weighted_point_2  q(Point_2(qx, qy), qw);
+
+  Finite_edge_test_degenerated<Kernel> f;
   return f(p1, p2, p3, q, b, Sqrt_field_tag() );
 }
 
@@ -454,17 +468,19 @@ ad_finite_edge_test_degenerated_ring_C2(const RT &x1, const RT &y1,
 					const RT &qx, const RT &qy,
 					const RT &qw, bool b)
 {
-  typedef Simple_cartesian<RT>             R;
-  typedef Point_2<R>                       Point;
-  typedef RT                               Weight;
-  typedef Weighted_point<Point, Weight>    Weighted_point;
+  must_be_filtered(x1);
 
-  Weighted_point p1(Point(x1, y1), w1);
-  Weighted_point p2(Point(x2, y2), w2);
-  Weighted_point p3(Point(x3, y3), w3);
-  Weighted_point  q(Point(qx, qy), qw);
+  typedef Simple_cartesian<RT>               Rep;
+  typedef Kernel_wrapper_2<Rep>              Kernel;
+  typedef typename Kernel::Point_2           Point_2;
+  typedef typename Kernel::Weighted_point_2  Weighted_point_2;
 
-  Finite_edge_test_degenerated<R> f;
+  Weighted_point_2 p1(Point_2(x1, y1), w1);
+  Weighted_point_2 p2(Point_2(x2, y2), w2);
+  Weighted_point_2 p3(Point_2(x3, y3), w3);
+  Weighted_point_2  q(Point_2(qx, qy), qw);
+
+  Finite_edge_test_degenerated<Kernel> f;
   return f(p1, p2, p3, q, b, Ring_tag() );
 }
 
@@ -480,18 +496,20 @@ ad_infinite_edge_test_sqrtf_C2(const RT &x2, const RT &y2,
 			       const RT &w4,
 			       const RT &qx, const RT &qy,
 			       const RT &qw, bool b)
-{
-  typedef Simple_cartesian<RT>             R;
-  typedef Point_2<R>                       Point;
-  typedef RT                               Weight;
-  typedef Weighted_point<Point, Weight>    Weighted_point;
+{ 
+  must_be_filtered(x2);
 
-  Weighted_point p2(Point(x2, y2), w2);
-  Weighted_point p3(Point(x3, y3), w3);
-  Weighted_point p4(Point(x4, y4), w4);
-  Weighted_point  q(Point(qx, qy), qw);
+  typedef Simple_cartesian<RT>               Rep;
+  typedef Kernel_wrapper_2<Rep>              Kernel;
+  typedef typename Kernel::Point_2           Point_2;
+  typedef typename Kernel::Weighted_point_2  Weighted_point_2;
 
-  Infinite_edge_test<R> f;
+  Weighted_point_2 p2(Point_2(x2, y2), w2);
+  Weighted_point_2 p3(Point_2(x3, y3), w3);
+  Weighted_point_2 p4(Point_2(x4, y4), w4);
+  Weighted_point_2  q(Point_2(qx, qy), qw);
+
+  Infinite_edge_test<Kernel> f;
   return f(p2, p3, p4, q, b, Sqrt_field_tag() );
 }
 
@@ -508,17 +526,17 @@ ad_infinite_edge_test_ring_C2(const RT &x2, const RT &y2,
 {
   must_be_filtered(x2);
 
-  typedef Simple_cartesian<RT>             R;
-  typedef Point_2<R>                       Point;
-  typedef RT                               Weight;
-  typedef Weighted_point<Point, Weight>    Weighted_point;
+  typedef Simple_cartesian<RT>               Rep;
+  typedef Kernel_wrapper_2<Rep>              Kernel;
+  typedef typename Kernel::Point_2           Point_2;
+  typedef typename Kernel::Weighted_point_2  Weighted_point_2;
 
-  Weighted_point p2(Point(x2, y2), w2);
-  Weighted_point p3(Point(x3, y3), w3);
-  Weighted_point p4(Point(x4, y4), w4);
-  Weighted_point  q(Point(qx, qy), qw);
+  Weighted_point_2 p2(Point_2(x2, y2), w2);
+  Weighted_point_2 p3(Point_2(x3, y3), w3);
+  Weighted_point_2 p4(Point_2(x4, y4), w4);
+  Weighted_point_2  q(Point_2(qx, qy), qw);
 
-  Infinite_edge_test<R> f;
+  Infinite_edge_test<Kernel> f;
   return f(p2, p3, p4, q, b, Ring_tag() );
 }
 
@@ -537,17 +555,19 @@ ad_is_degenerate_edge_test_sqrtf_C2(const RT &x1, const RT &y1,
 				    const RT &x4, const RT &y4,
 				    const RT &w4)
 {
-  typedef Simple_cartesian<RT>             R;
-  typedef Point_2<R>                       Point;
-  typedef RT                               Weight;
-  typedef Weighted_point<Point, Weight>    Weighted_point;
+  must_be_filtered(x1);
 
-  Weighted_point p1(Point(x1, y1), w1);
-  Weighted_point p2(Point(x2, y2), w2);
-  Weighted_point p3(Point(x3, y3), w3);
-  Weighted_point p4(Point(x4, y4), w4);
+  typedef Simple_cartesian<RT>               Rep;
+  typedef Kernel_wrapper_2<Rep>              Kernel;
+  typedef typename Kernel::Point_2           Point_2;
+  typedef typename Kernel::Weighted_point_2  Weighted_point_2;
 
-  Is_degenerate_edge_test<R> f;
+  Weighted_point_2 p1(Point_2(x1, y1), w1);
+  Weighted_point_2 p2(Point_2(x2, y2), w2);
+  Weighted_point_2 p3(Point_2(x3, y3), w3);
+  Weighted_point_2 p4(Point_2(x4, y4), w4);
+
+  Is_degenerate_edge_test<Kernel> f;
   return f(p1, p2, p3, p4, Sqrt_field_tag() );
 }
 
@@ -562,17 +582,19 @@ ad_is_degenerate_edge_test_ring_C2(const RT &x1, const RT &y1,
 				   const RT &x4, const RT &y4,
 				   const RT &w4)
 {
-  typedef Simple_cartesian<RT>             R;
-  typedef Point_2<R>                       Point;
-  typedef RT                               Weight;
-  typedef Weighted_point<Point, Weight>    Weighted_point;
+  must_be_filtered(x1);
 
-  Weighted_point p1(Point(x1, y1), w1);
-  Weighted_point p2(Point(x2, y2), w2);
-  Weighted_point p3(Point(x3, y3), w3);
-  Weighted_point p4(Point(x4, y4), w4);
+  typedef Simple_cartesian<RT>               Rep;
+  typedef Kernel_wrapper_2<Rep>              Kernel;
+  typedef typename Kernel::Point_2           Point_2;
+  typedef typename Kernel::Weighted_point_2  Weighted_point_2;
 
-  Is_degenerate_edge_test<R> f;
+  Weighted_point_2 p1(Point_2(x1, y1), w1);
+  Weighted_point_2 p2(Point_2(x2, y2), w2);
+  Weighted_point_2 p3(Point_2(x3, y3), w3);
+  Weighted_point_2 p4(Point_2(x4, y4), w4);
+
+  Is_degenerate_edge_test<Kernel> f;
   return f(p1, p2, p3, p4, Ring_tag() );
 }
 

@@ -300,8 +300,8 @@ class Construct_Apollonius_bisector_segment_2
 public:
   typedef typename K::Point_2                 Point_2;
   typedef typename K::RT                      Weight;
-  typedef typename K::Segment_2                 Segment_2;
-  typedef typename K::Weighted_point_2          Weighted_point_2;
+  typedef typename K::Segment_2               Segment_2;
+  typedef typename K::Weighted_point_2        Weighted_point_2;
   typedef CGAL::Hyperbola_segment_2<Point_2, Weight>  Hyperbola_segment_2;
   typedef CGAL::Construct_Apollonius_vertex_2<K>      Apollonius_vertex_2;
 

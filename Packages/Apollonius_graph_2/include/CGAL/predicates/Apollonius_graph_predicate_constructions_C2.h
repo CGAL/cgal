@@ -32,37 +32,38 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template< class Point, class Weight >
+template< class K >
 class Inverted_weighted_point
-  : public Weighted_point<Point, Weight>
+  : public K::Weighted_point_2
 {
 public:
-  typedef Weighted_point<Point, Weight>    Weighted_point;
-  typedef typename Point::R::FT            FT;
+  typedef typename K::Weighted_point_2   Weighted_point_2;
+  typedef typename K::FT                 FT;
 private:
   FT   _p;
 public:
-  Inverted_weighted_point(const Weighted_point& wp, const FT& p)
-    : Weighted_point(wp), _p(p) {}
+  Inverted_weighted_point(const Weighted_point_2& wp, const FT& p)
+    : Weighted_point_2(wp), _p(p) {}
 
   inline FT p() const { return _p; }
 };
 
 
-template< class Point, class Weight >
+template< class K >
 class Weighted_point_inverter
 {
 public:
-  typedef Weighted_point<Point, Weight>           Weighted_point;
-  typedef Inverted_weighted_point<Point, Weight>  Inverted_weighted_point;
-  typedef typename Point::R::FT                   FT;
+  typedef typename K::Point_2               Point_2;
+  typedef typename K::Weighted_point_2      Weighted_point_2;
+  typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
+  typedef typename K::FT                    FT;
 private:
-  Weighted_point _pole;
+  Weighted_point_2 _pole;
 public:
-  Weighted_point_inverter(const Weighted_point& pole)
+  Weighted_point_inverter(const Weighted_point_2& pole)
     : _pole(pole) {}
 
-  Inverted_weighted_point operator()(const Weighted_point& wp)
+  Inverted_weighted_point operator()(const Weighted_point_2& wp)
     {
       FT xs = wp.x() - _pole.x();
       FT ys = wp.y() - _pole.y();
@@ -71,14 +72,14 @@ public:
 	- CGAL_NTS square(ws);
 
       return
-	Inverted_weighted_point(Weighted_point(Point(xs, ys), ws), ps);
+	Inverted_weighted_point(Weighted_point_2(Point_2(xs, ys), ws), ps);
     }
 
-  Weighted_point pole() const { return _pole; }
+  Weighted_point_2 pole() const { return _pole; }
 };
 
 
-template< class Point, class Weight >
+template< class K >
 class Voronoi_radius
 {
   // this class stores the coefficients for the tritangent circle
@@ -86,9 +87,9 @@ class Voronoi_radius
   //             a x^2 - 2 b x + c = 0;
   // x here represents the inverse of the radius
 public:
-  typedef Weighted_point<Point, Weight>            Weighted_point;
-  typedef typename Point::R::FT                    FT;
-  typedef Inverted_weighted_point<Point, Weight>   Inverted_weighted_point;
+  typedef typename K::FT                     FT;
+  typedef CGAL::Inverted_weighted_point<K>   Inverted_weighted_point;
+
 private:
   FT _a, _b, _c;
   FT _c2, _delta;
@@ -142,7 +143,7 @@ public:
 };
 
 
-template< class Point, class Weight >
+template< class K >
 class Bitangent_line
 {
   // this class computes and stores the data for the left bitangent
@@ -150,9 +151,10 @@ class Bitangent_line
   // or the left bitangent line of the inverted weighted point u1 and
   // u2, oriented from u1 to u2
 public:
-  typedef Weighted_point<Point, Weight>             Weighted_point;
-  typedef Inverted_weighted_point<Point, Weight>    Inverted_weighted_point;
-  typedef typename Kernel_traits<Point>::Kernel::FT    FT;
+  typedef typename K::Point_2               Point_2;
+  typedef typename K::Weighted_point_2      Weighted_point_2;
+  typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
+  typedef typename K::FT                    FT;
 protected:
   FT _a1, _a2;
   FT _b1, _b2;
@@ -190,7 +192,7 @@ protected:
     }
 
 public:
-  Bitangent_line(const Weighted_point& p1, const Weighted_point& p2)
+  Bitangent_line(const Weighted_point_2& p1, const Weighted_point_2& p2)
     {
       FT dx = p1.x() - p2.x();
       FT dy = p1.y() - p2.y();
@@ -230,7 +232,7 @@ public:
 		       _dw, -_dyw, _dxw);
     }
 
-  Bitangent_line perpendicular(const Point& p) const
+  Bitangent_line perpendicular(const Point_2& p) const
     {
       // THIS DOES NOT KEEP TRACK OF THE ADDITIONALLY STORED
       // QUANTITIES; THIS IS INEVITABLE IN ANY CASE SINCE GIVEN p WE
@@ -271,16 +273,14 @@ public:
 };
 
 
-template<class Point, class Weight>
-class Voronoi_circle : public Bitangent_line<Point, Weight>
+template< class K >
+class Voronoi_circle : public Bitangent_line<K>
 {
 public:
-  //  typedef Weighted_point<Point, Weight>            Weighted_point;
-  typedef CGAL::Inverted_weighted_point<Point,Weight>  Inverted_weighted_point;
-  typedef Bitangent_line<Point, Weight>            Bitangent_line;
-  //  typedef Bitangent_line::Inverted_weighted_point  Inverted_weighted_point;
-  typedef Voronoi_radius<Point, Weight>            Voronoi_radius;
-  typedef typename Bitangent_line::FT              FT;
+  typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
+  typedef CGAL::Bitangent_line<K>           Bitangent_line;
+  typedef CGAL::Voronoi_radius<K>           Voronoi_radius;
+  typedef typename Bitangent_line::FT       FT;
 
 protected:
   FT _gamma;

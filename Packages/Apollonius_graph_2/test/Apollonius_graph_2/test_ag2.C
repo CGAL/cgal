@@ -1,6 +1,8 @@
+#include <CGAL/basic.h>
+
 #include <iostream>
 #include <fstream>
-#include <assert.h>
+#include <cassert>
 
 // choose number type
 #include <CGAL/MP_Float.h>
