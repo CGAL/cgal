@@ -94,32 +94,12 @@ public:
 
   Sign sign() const
   {
-    //    std::cout << "cp sgn 1" << std::flush;
-
     Sqrt_1 x(a0_, a1_, A_);
     Sqrt_1 y(a2_, a3_, A_);
 
-#if 0
-    std::cout << "a0: " << a0_ << std::endl;
-    std::cout << "a1: " << a1_ << std::endl;
-    std::cout << "A : " << A_ << std::endl;
-    std::cout << "x: " << x << std::endl;
-
-    std::cout << " 2" << std::flush;
-#endif
-
     Sign s_x = CGAL_NTS sign(x);
-
-    //    std::cout << " 3" << std::flush;
-
     Sign s_y = CGAL_NTS sign(y);
-
-    //    std::cout << " 4" << std::flush;
-
     Sign s_B = CGAL_NTS sign(B_);
-
-    //    std::cout << " 5" << std::flush;
-    //    std::cout << std::endl;
 
     if ( s_B == ZERO ) {
       return s_x;
@@ -148,6 +128,7 @@ public:
     return (a0d + a1d * CGAL_NTS sqrt(Ad) + a2d * CGAL_NTS sqrt(Bd)
 	    + a3d * CGAL_NTS sqrt(Ad * Bd));
   }
+
 };
 
 

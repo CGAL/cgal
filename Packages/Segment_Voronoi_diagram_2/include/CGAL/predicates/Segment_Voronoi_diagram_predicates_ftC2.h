@@ -32,14 +32,14 @@ svd_compare_distanceC2(const FT& qx, const FT& qy,
 
   if ( px == sx && py == sy ) {
     FT o = dx * d1x + dy * d1y;
-    if ( o >= 0 ) {
+    if ( o >= FT(0) ) {
       return LARGER;
     }
   }
 
   if ( px == tx && py == ty ) {
     FT o = dx * d2x + dy * d2y;
-    if ( o <= 0 ) {
+    if ( o <= FT(0) ) {
       return LARGER;
     }
   }
@@ -48,14 +48,14 @@ svd_compare_distanceC2(const FT& qx, const FT& qy,
   FT d2_from_p = CGAL_NTS square (qx-px) + CGAL_NTS square(qy-py);
 
   FT dot1 = dx * d1x + dy * d1y;
-  if ( dot1 >= 0 ) {
+  if ( dot1 >= FT(0) ) {
     // q is outside (or the boundary of) the band on the side of s.
     FT d2_from_s = CGAL_NTS square(d1x) + CGAL_NTS square(d1y);
     return CGAL_NTS compare(d2_from_s, d2_from_p);
   }
 
   FT dot2 = dx * d2x + dy * d2y;
-  if ( dot2 <= 0 ) {
+  if ( dot2 <= FT(0) ) {
     // q is outside (or the boundary of) the band on the side of t.
     FT d2_from_t = CGAL_NTS square(d2x) + CGAL_NTS square(d2y);
     return CGAL_NTS compare(d2_from_t, d2_from_p);
@@ -105,12 +105,12 @@ svd_compare_distanceC2(const FT& qx, const FT& qy,
     idx1 = 0;
   } else if ( qx == t1x && qy == t1y ) {
     idx1 = 2;
-  } else if ( dot_s1 >= 0 ) {
+  } else if ( dot_s1 >= FT(0) ) {
     // q is outside (or the boundary of) the band of 1 on the side of s1.
     idx1 = 0;
   } else {
     FT dot_t1 = d1x * dqt1x + d1y * dqt1y;
-    if ( dot_t1 <= 0 ) {
+    if ( dot_t1 <= FT(0) ) {
       // q is outside (or the boundary of) the band of 1 on the side of t1.
       idx1 = 2;
     } else {
@@ -125,12 +125,12 @@ svd_compare_distanceC2(const FT& qx, const FT& qy,
     idx2 = 0;
   } else if ( qx == t2x && qy == t2y ) {
     idx2 = 2;
-  } else if ( dot_s2 >= 0 ) {
+  } else if ( dot_s2 >= FT(0) ) {
     // q is outside (or the boundary of) the band of 2 on the side of s2.
     idx2 = 0;
   } else {
     FT dot_t2 = d2x * dqt2x + d2y * dqt2y;
-    if ( dot_t2 <= 0 ) {
+    if ( dot_t2 <= FT(0) ) {
       // q is outside (or the boundary of) the band of 2 on the side of t2.
       idx2 = 2;
     } else {
@@ -147,15 +147,8 @@ svd_compare_distanceC2(const FT& qx, const FT& qy,
 
       if ( s1x == s2x && s1y == s2y ) { return EQUAL; }
 
-      //      std::cout << "checkpoint 2.1" << std::endl;
-  
-
       return CGAL_NTS compare(d2_from_s1, d2_from_s2);
     } else if ( idx2 == 2 ) {
-
-      //      std::cout << "checkpoint 2.2" << std::endl;
-
-
 
       FT d2_from_t2 = CGAL_NTS square(dqt2x) + CGAL_NTS square(dqt2y);
       //      if ( qx == t2x && qy == t2y ) { d2_from_t2 = FT(0); }
@@ -168,8 +161,6 @@ svd_compare_distanceC2(const FT& qx, const FT& qy,
       FT n2 = CGAL_NTS square(d2x) + CGAL_NTS square(d2y);
       FT d2_from_l2 = CGAL_NTS square(qx * d2y - qy * d2x + c2);
 
-      //      std::cout << "checkpoint 2.3" << std::endl;
-
       return CGAL_NTS compare(d2_from_s1 * n2, d2_from_l2);
     }
   } else if ( idx1 == 2 ) {
@@ -180,27 +171,12 @@ svd_compare_distanceC2(const FT& qx, const FT& qy,
        FT d2_from_s2 = CGAL_NTS square(dqs2x) + CGAL_NTS square(dqs2y);
        //       if ( qx == s2x && qy == s2y ) { d2_from_s2 = FT(0); }
 
-       /*
-       std::cout << "checkpoint 3.1" << std::endl;
-
-       std::pair<double,double> ivl;
-
-       ivl = to_interval(d2_from_t1);
-       std::cout << "interval of d2_from_t1: "
-		 << ivl.first << " " << ivl.second << std::endl;
-
-       ivl = to_interval(d2_from_s2);
-       std::cout << "interval of d2_from_s2: "
-		 << ivl.first << " " << ivl.second << std::endl;
-	*/
        if ( t1x == s2x && t1y == s2y ) { return EQUAL; }
 
        return CGAL_NTS compare(d2_from_t1, d2_from_s2);
      } else if ( idx2 == 2 ) {
        FT d2_from_t2 = CGAL_NTS square(dqt2x) + CGAL_NTS square(dqt2y);
        //       if ( qx == t2x && qy == t2y ) { d2_from_t2 = FT(0); }
-
-       //       std::cout << "checkpoint 3.2" << std::endl;
 
        if ( t1x == t2x && t1y == t2y ) { return EQUAL; }
 
@@ -209,10 +185,6 @@ svd_compare_distanceC2(const FT& qx, const FT& qy,
       FT c2 = s2x * t2y - s2y * t2x;
       FT n2 = CGAL_NTS square(d2x) + CGAL_NTS square(d2y);
       FT d2_from_l2 = CGAL_NTS square(qx * d2y - qy * d2x + c2);
-
-
-      //      std::cout << "checkpoint 3.3" << std::endl;
-
 
       return CGAL_NTS compare(d2_from_t1 * n2, d2_from_l2);
     }
@@ -224,25 +196,16 @@ svd_compare_distanceC2(const FT& qx, const FT& qy,
       FT d2_from_s2 = CGAL_NTS square(dqs2x) + CGAL_NTS square(dqs2y);
       //      if ( qx == s2x && qy == s2y ) { d2_from_s2 = FT(0); }
 
-      //      std::cout << "checkpoint 4.1" << std::endl;
-
-
       return CGAL_NTS compare(d2_from_l1, d2_from_s2 * n1);
     } else if ( idx2 == 2 ) {
       FT d2_from_t2 = CGAL_NTS square(dqt2x) + CGAL_NTS square(dqt2y);
       //      if ( qx == t2x && qy == t2y ) { d2_from_t2 = FT(0); }
-
-      //      std::cout << "checkpoint 4.2" << std::endl;
-
 
       return CGAL_NTS compare(d2_from_l1, d2_from_t2 * n1);
     } else { // idx2 == 1
       FT c2 = s2x * t2y - s2y * t2x;
       FT n2 = CGAL_NTS square(d2x) + CGAL_NTS square(d2y);
       FT d2_from_l2 = CGAL_NTS square(qx * d2y - qy * d2x + c2);
-
-      //      std::cout << "checkpoint 4.3" << std::endl;
-
 
       return CGAL_NTS compare(d2_from_l1 * n2, d2_from_l2 * n1);
     }

@@ -30,7 +30,9 @@ public:
   Square_root_1(const NT& a, const NT& b, const NT& c)
     : x(a), y(b), r(c)
   {
-    //    CGAL_assertion( !(CGAL_NTS is_negative(r)) );
+#if CHECK_CGAL_PRECONDITIONS
+    CGAL_assertion( !(CGAL_NTS is_negative(r)) );
+#endif
   }
 
   Square_root_1(const Square_root_1<NT>& other)

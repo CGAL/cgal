@@ -7,8 +7,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#define PRED_PRINT 0
-
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -83,9 +81,6 @@ private:
       Orientation o = orientation(p.point(), q.point(), t);
 
       if ( o != COLLINEAR ) {
-#if PRED_PRINT
-	std::cout << ((o == LEFT_TURN) ? POSITIVE : NEGATIVE) << std::endl;
-#endif
 	return (o == LEFT_TURN) ? POSITIVE : NEGATIVE;
       }
 
@@ -93,14 +88,12 @@ private:
       RT dtpx = p.point().x() - t.x();
       RT dtpy = p.point().y() - t.y();
       RT dtqx = q.point().x() - t.x();
-      RT dtqy = q.point().y() - t.y();
+      RT minus_dtqy = -q.point().y() + t.y();
       
-      Sign s = sign_of_determinant2x2(dtpx, dtpy, -dtqy, dtqx);
+      Sign s = sign_of_determinant2x2(dtpx, dtpy, minus_dtqy, dtqx);
 
       CGAL_assertion( s != ZERO );
-#if PRED_PRINT
-      std::cout << s << std::endl;
-#endif
+
       return s;
     }
 
@@ -110,17 +103,9 @@ private:
     if ( p.is_point() && q.is_segment() ) {
       Point pq = (p.point() == q.source()) ? q.target() : q.source();
       o = orientation(p.point(), pq, t);
-
-#if PRED_PRINT
-      std::cout << ((o == RIGHT_TURN) ? NEGATIVE : POSITIVE) << std::endl;
-#endif
     } else { // p is a segment and q is a point
       Point pp = (q.point() == p.source()) ? p.target() : p.source();
       o = orientation(pp, q.point(), t);
-
-#if PRED_PRINT
-      std::cout << ((o == RIGHT_TURN) ? NEGATIVE : POSITIVE) << std::endl;
-#endif
     }
     return ( o == RIGHT_TURN ) ? NEGATIVE : POSITIVE;
   }
@@ -135,9 +120,6 @@ private:
 	 (q == t.source() || q == t.target()) ) {
 	// if t is the segment joining p and q then t must be a vertex
 	// on the convex hull
-#if PRED_PRINT
-	std::cout << NEGATIVE << std::endl;
-#endif
 	return NEGATIVE;
     } else if ( p == t.source() || p == t.target() ) {
       // p is an endpoint of t
@@ -146,17 +128,11 @@ private:
       Point pt = (p == t.source()) ? t.target() : t.source();
       Orientation o = orientation(p, q, pt);
 
-#if PRED_PRINT
-      std::cout << ((o == RIGHT_TURN) ? NEGATIVE : POSITIVE) << std::endl;
-#endif
       return (o == RIGHT_TURN) ? NEGATIVE : POSITIVE;
     } else if ( q == t.source() || q == t.target() ) {
       Point pt = (q == t.source()) ? t.target() : t.source();
       Orientation o = orientation(p, q, pt);
 
-#if PRED_PRINT
-      std::cout << ((o == RIGHT_TURN) ? NEGATIVE : POSITIVE) << std::endl;
-#endif
       return (o == RIGHT_TURN) ? NEGATIVE : POSITIVE;
     } else {
       // maybe here I should immediately return POSITIVE;
@@ -167,14 +143,8 @@ private:
       Orientation o2 = orientation(p, q, t.target());
 
       if ( o1 == RIGHT_TURN || o2 == RIGHT_TURN ) {
-#if PRED_PRINT
-	std::cout << NEGATIVE << std::endl;
-#endif
 	return NEGATIVE;
       }
-#if PRED_PRINT
-      std::cout << POSITIVE << std::endl;
-#endif
       return POSITIVE;
     }
   }
@@ -189,14 +159,8 @@ private:
 
       Orientation o = orientation(pp, q, pt);
 
-#if PRED_PRINT
-      std::cout << ((o == RIGHT_TURN) ? NEGATIVE : POSITIVE) << std::endl;
-#endif
       return (o == RIGHT_TURN) ? NEGATIVE : POSITIVE;
     } else {
-#if PRED_PRINT
-      std::cout << POSITIVE << std::endl;		
-#endif
       return POSITIVE;
     }
   }
@@ -211,17 +175,11 @@ private:
 
       Orientation o = orientation(p, pq, pt);
 
-#if PRED_PRINT
-      std::cout << ((o == RIGHT_TURN) ? NEGATIVE : POSITIVE) << std::endl;
-#endif
       return (o == RIGHT_TURN) ? NEGATIVE : POSITIVE;
     } else {
       // if p is not an endpoint of t, then either p and q should
       // not be on the convex hull or t does not affect the vertex
       // of p and q.
-#if PRED_PRINT
-      std::cout << POSITIVE << std::endl;
-#endif
       return POSITIVE;
     }
   }
@@ -245,19 +203,7 @@ public:
   Sign operator()(const Site& p, const Site& q,
 		  const Site& r, const Site& t) const
   {
-#if PRED_PRINT
-    std::cout << "Incircle(p,q,r,t): " << std::endl;
-    std::cout << p << std::endl;
-    std::cout << q << std::endl;
-    std::cout << r << std::endl;
-    std::cout << t << std::endl;
-#endif
-
     Voronoi_vertex v(p, q, r);
-
-#if PRED_PRINT
-    std::cout << v.incircle(t, Method_tag()) << std::endl;
-#endif
 
     return v.incircle(t, Method_tag());
   }
@@ -268,13 +214,6 @@ public:
   inline Sign operator()(const Site& p, const Site& q,
 			 const Site& t) const
   {
-#if PRED_PRINT
-    std::cout << "Incircle(p,q,t): " << std::endl;
-    std::cout << p << std::endl;
-    std::cout << q << std::endl;
-    std::cout << t << std::endl;
-#endif
-
     CGAL_assertion( !(p.is_segment() && q.is_segment()) );
 
     if ( p.is_point() && q.is_segment() ) {
@@ -546,23 +485,40 @@ private:
 			       const Site& r, const Site& s,
 			       const Site& t, Method_tag tag) const
   {
+    bool in_conflict(false);
+
     if ( p.is_point() && q.is_point() ) {
-      return
+      in_conflict =      
 	is_interior_in_conflict_both(p.point(), q.point(),
 				     r, s, t, tag);
     } else if ( p.is_segment() && q.is_segment() ) {
-      return
+      in_conflict =
 	is_interior_in_conflict_both(p.segment(), q.segment(),
 				     r, s, t, tag);
     } else if ( p.is_point() && q.is_segment() ) {
-      return
+      in_conflict =
 	is_interior_in_conflict_both(p.point(), q.segment(),
 				     r, s, t, tag);
     } else { // p is a segment and q is a point
-      return
+      in_conflict =
 	is_interior_in_conflict_both(p.segment(), q.point(),
 				     r, s, t, tag);
     }
+
+#if 0
+    CGAL::Object o = make_object(tag);
+
+    Svd_finite_edge_interior_2<K,Sqrt_field_tag>  P;
+
+    Sqrt_field_tag tag1;
+    if ( CGAL::assign(tag1, o) ) {
+    } else {
+      bool in_conflict2 = P(p, q, r, s, t, NEGATIVE);
+      CGAL_assertion( in_conflict == in_conflict2 );
+    }
+#endif
+
+    return in_conflict;
   }
 #endif
   //--------------------------------------------------------------------
@@ -1106,15 +1062,6 @@ private:
     if ( p.is_point() && q.is_segment() ) {
       Line lq = compute_supporting_line(q.segment());
     
-#if 0
-      std::cout << "p: " << p << std::endl;
-      std::cout << "q: " << q << std::endl;
-      std::cout << "r: " << r << std::endl;
-      std::cout << "s: " << s << std::endl;
-      std::cout << "t: " << t << std::endl;
-      std::cout << std::endl;
-#endif
-
       Comparison_result res =
 	compare_squared_distances_to_line(lq, p.point(), t.point());
 
@@ -1140,23 +1087,27 @@ private:
 
     Point tp = t.point();
 
+    bool in_conflict(false);
+
     if ( p.is_point() && q.is_point() ) {
-      return
+      in_conflict =
 	is_interior_in_conflict_none(p.point(), q.point(),
 				     r, s, tp, tag);
     } else if ( p.is_point() && q.is_segment() ) {
-      return
+      in_conflict =
 	is_interior_in_conflict_none(p.point(), q.segment(),
 				     r, s, tp, tag);
     } else if ( p.is_segment() && q.is_point() ) {
-      return
+      in_conflict =
 	is_interior_in_conflict_none(p.segment(), q.point(),
 				     r, s, tp, tag);
     } else { // both p and q are segments
-      return
+      in_conflict =
 	is_interior_in_conflict_none(p.segment(), q.segment(),
 				     r, s, tp, tag);
     }
+
+    return in_conflict;
   }
 #endif
 
@@ -1182,34 +1133,16 @@ private:
       return false;
     }
    
-#if 0
-    std::cout << "p: " << p << std::endl;
-    std::cout << "q: " << q << std::endl;
-    std::cout << "r: " << r << std::endl;
-    std::cout << "s: " << s << std::endl;
-    std::cout << "t: " << t << std::endl;
-#endif
-
     Line lq = compute_supporting_line(q);
 
     Site sp(p), sq(q);
     Voronoi_vertex vpqr(sp, sq, r);
     Voronoi_vertex vqps(sq, sp, s);
 
-#if 0
-    std::cout << "Vpqr: " << vpqr.point() << std::endl;
-    std::cout << "Vqps: " << vqps.point() << std::endl;
-#endif
-
     Line lperp = compute_perpendicular(lq, t);
 
     Oriented_side op = oriented_side_of_line(lq, p);
     Oriented_side ot = oriented_side_of_line(lq, t);
-
-#if 0
-    std::cout << "op: " << int(op) << std::endl;
-    std::cout << "ot: " << int(ot) << std::endl;
-#endif
 
     bool on_same_side =
       ((op == ON_POSITIVE_SIDE && ot == ON_POSITIVE_SIDE) ||
@@ -1218,24 +1151,12 @@ private:
     Comparison_result res =
       compare_squared_distances_to_line(lq, t, p);
 
-#if 0
-    std::cout << "res: " << res << std::endl;
-#endif
-
     Oriented_side opqr = vpqr.oriented_side(lperp, tag);
     Oriented_side oqps = vqps.oriented_side(lperp, tag);
 
     bool on_different_side =
       ((opqr == ON_POSITIVE_SIDE && oqps == ON_NEGATIVE_SIDE) ||
        (opqr == ON_NEGATIVE_SIDE && oqps == ON_POSITIVE_SIDE));
-
-
-#if 0
-    std::cout << "opqr: " << int(opqr) << std::endl;
-    std::cout << "oqps: " << int(oqps) << std::endl;
-
-    std::cout << std::endl;
-#endif
 
     return ( on_same_side && (res == SMALLER) && on_different_side );
   }
@@ -1519,25 +1440,6 @@ public:
   bool operator()(const Site& p, const Site& q, const Site& r,
 		  const Site& s, const Site& t, Sign sgn) const
   {
-#if PRED_PRINT
-    std::cout << "finite edge interior (p,q,r,s,t): " << std::endl;
-    std::cout << p << std::endl;
-    std::cout << q << std::endl;
-    std::cout << r << std::endl;
-    std::cout << s << std::endl;
-    std::cout << t << std::endl;
-    std::cout << sgn << std::endl;
-
-    Voronoi_vertex vpqr(p, q, r);
-    Voronoi_vertex vqps(q, p, s);
-
-    std::cout << "---" << std::endl;
-    std::cout << "Voronoi vertex pqr: " << vpqr.point() << std::endl;
-    std::cout << "Voronoi vertex qps: " << vqps.point() << std::endl;
-    std::cout << "---" << std::endl;
-
-#endif
-
     bool res;
     if ( sgn == POSITIVE ) {
       res = is_interior_in_conflict_none(p, q, r, s, t, Method_tag());
@@ -1546,9 +1448,6 @@ public:
     } else {
       res = is_interior_in_conflict_touch(p, q, r, s, t, Method_tag());
     }
-#if PRED_PRINT
-    std::cout << "result: " << res << std::endl;
-#endif
 
     if ( sgn == POSITIVE ) {
       return is_interior_in_conflict_none(p, q, r, s, t, Method_tag());
@@ -1564,44 +1463,20 @@ public:
   bool operator()(const Site& p, const Site& q, const Site& r,
 		  const Site& t, Sign sgn) const
   {
-#if PRED_PRINT
-    std::cout << "finite edge interior (p,q,r,t): " << std::endl;
-    std::cout << p << std::endl;
-    std::cout << q << std::endl;
-    std::cout << r << std::endl;
-    std::cout << t << std::endl;
-    std::cout << sgn << std::endl;
-#endif
-
-
-
     if ( t.is_point() ) {
-#if PRED_PRINT
-      std::cout << false << std::endl;
-#endif
       return ( sgn == NEGATIVE );
     }
 
     if ( sgn != NEGATIVE ) {
-#if PRED_PRINT
-      std::cout << false << std::endl;
-#endif
       return false;
     }
 
     if ( p.is_segment() || q.is_segment() ) {
-#if PRED_PRINT
-      std::cout << false << std::endl;
-#endif
       return false;
     }
 
     bool p_is_endpoint = (p.point() == t.source() || p.point() == t.target());
     bool q_is_endpoint = (q.point() == t.source() || q.point() == t.target());
-
-#if PRED_PRINT
-    std::cout << ( p_is_endpoint && q_is_endpoint ) << std::endl;
-#endif
 
     return ( p_is_endpoint && q_is_endpoint );
   }
@@ -1610,26 +1485,11 @@ public:
   bool operator()(const Site& p, const Site& q, const Site& t,
 		  Sign sgn) const
   {
-#if PRED_PRINT
-    std::cout << "finite edge interior (p,q,t): " << std::endl;
-    std::cout << p << std::endl;
-    std::cout << q << std::endl;
-    std::cout << t << std::endl;
-    std::cout << sgn << std::endl;
-#endif
-
-
     if ( sgn != ZERO ) {
-#if PRED_PRINT
-      std::cout << false << std::endl;
-#endif
       return false;
     }
 
     if ( p.is_segment() || q.is_segment()) {
-#if PRED_PRINT
-      std::cout << false << std::endl;
-#endif
       return false;
     }
 
@@ -1637,28 +1497,21 @@ public:
 
     if ( t.is_point() ) {
       RT dtpx = p.point().x() - t.point().x();
-      RT dtpy = p.point().y() - t.point().y();
+      RT minus_dtpy = -p.point().y() + t.point().y();
       RT dtqx = q.point().x() - t.point().x();
       RT dtqy = q.point().y() - t.point().y();
 
-      Sign s1 = sign_of_determinant2x2(dtpx, -dtpy, dtqy, dtqx);
+      Sign s1 = sign_of_determinant2x2(dtpx, minus_dtpy, dtqy, dtqx);
 
       //      Sign s1 = sign_of_determinant2x2(tp.x(), -tp.y(),
       //				       tq.y(), tq.x());
 
       CGAL_assertion( s1 != ZERO );
-#if PRED_PRINT
-      std::cout << ( s1 == NEGATIVE ) << std::endl;
-#endif
       return ( s1 == NEGATIVE );
     }
 
     bool bp = ( (p.point() == t.source()) || (p.point() == t.target()) );
     bool bq = ( (q.point() == t.source()) || (q.point() == t.target()) );
-
-#if PRED_PRINT
-    std::cout << ( bp && bq ) << std::endl;
-#endif
 
     return ( bp && bq );
   }
@@ -1688,17 +1541,6 @@ public:
   bool operator()(const Site& q, const Site& s, const Site& r,
 		  const Site& t, Sign sgn)
   {
-    
-#if PRED_PRINT
-    std::cout << "infinite edge interior(q, s, r): " << std::endl;
-    std::cout << q << std::endl;
-    std::cout << s << std::endl;
-    std::cout << r << std::endl;
-    std::cout << t << std::endl;
-    std::cout << sgn << std::endl;
-#endif
-
-
     if ( t.is_segment() ) {
 #if PRED_PRINT
       std::cout << false << std::endl;
@@ -1713,9 +1555,6 @@ public:
     }
 #endif
 
-#if PRED_PRINT
-    std::cout << ( sgn == NEGATIVE ) << std::endl;    
-#endif
     return ( sgn == NEGATIVE );
   }
 

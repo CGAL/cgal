@@ -13,6 +13,8 @@
 #include <CGAL/Parabola_2.h>
 #include <CGAL/Parabola_segment_2.h>
 
+#include <CGAL/leda_real.h>
+
 CGAL_BEGIN_NAMESPACE
 
 
@@ -100,12 +102,6 @@ private:
   void
   compute_pss(const Point& p, const Segment& q, const Segment& r)
   {
-#if 0
-    std::cout << "inside compute_pss" << std::endl;
-    std::cout << "p: " << p << std::endl;
-    std::cout << "q: " << q << std::endl;
-    std::cout << "r: " << r << std::endl;
-#endif
     v_type = PSS;
 
     _s = ZERO;
@@ -124,6 +120,7 @@ private:
       return;
     }
 
+
     RT a1, b1, c1, a2, b2, c2;
     compute_supporting_line(q, a1, b1, c1);
     compute_supporting_line(r, a2, b2, c2);
@@ -140,11 +137,6 @@ private:
 
     Sign sgn_c1_ = CGAL_NTS sign(c1_);
     Sign sgn_c2_ = CGAL_NTS sign(c2_);
-
-#if 0
-    std::cout << "sign of c1_: " << sgn_c1_ << std::endl;
-    std::cout << "sign of c2_: " << sgn_c2_ << std::endl;
-#endif
 
     if ( sgn_c1_ == NEGATIVE ) {
       a1 = -a1;  b1 = -b1;  c1_ = -c1_;
@@ -191,22 +183,6 @@ private:
       Line lr(a2, b2, c2_);
       compute_pll(p, lq, lr);
     }
-
-#if 0
-    std::cout << "inside compute_pss: " << std::endl;
-    std::cout << "reference point: " << p_ref() << std::endl;
-    std::cout << "Vx: " << x() << std::endl;
-    std::cout << "Vy: " << y() << std::endl;
-
-    _s = opposite(_s);
-    _r = opposite(_r);
-
-    std::cout << "Vx: " << x() << std::endl;
-    std::cout << "Vy: " << y() << std::endl;
-
-    _s = opposite(_s);
-    _r = opposite(_r);
-#endif
   }
 
 
@@ -250,11 +226,7 @@ private:
       RT e1 = a2 * b1 - a1 * b2;
       RT e2 = a1 * b2 + a2 * b1;
 
-      std::cout << "e1s: " << e1 << std::endl;
-      std::cout << "e2s: " << e2 << std::endl;
-
       _s = Sign(_s * CGAL_NTS sign(e1) * CGAL_NTS sign(e2));
-#else
 #endif
     }
 
@@ -275,18 +247,9 @@ private:
       RT e1 = a1 * b2 - a2 * b1;
       RT e2 = a1 * b2 + a2 * b1;
 
-      std::cout << "e1r: " << e1 << std::endl;
-      std::cout << "e2r: " << e2 << std::endl;
-
       _r = Sign(_r * CGAL_NTS sign(e1) * CGAL_NTS sign(e2));
-      
-#else
 #endif
     }
-
-    //    _s = opposite(_s);
-    //    _r = opposite(_r);
-
   }
 
 
@@ -381,17 +344,6 @@ private:
 		 Line(a[2], b[2], c[2])};
 
     int num_oriented(0);
-
-#if 0
-    std::cout << "l[0],q: " << is_on_positive_halfspace(l[0],q) << std::endl;
-    std::cout << "l[0],r: " << is_on_positive_halfspace(l[0],r) << std::endl;
-
-    std::cout << "l[1],p: " << is_on_positive_halfspace(l[1],p) << std::endl;
-    std::cout << "l[1],r: " << is_on_positive_halfspace(l[1],r) << std::endl;
-
-    std::cout << "l[2],p: " << is_on_positive_halfspace(l[2],p) << std::endl;
-    std::cout << "l[2],q: " << is_on_positive_halfspace(l[2],q) << std::endl;
-#endif
 
     if ( is_on_positive_halfspace(l[0], q) ||
 	 is_on_positive_halfspace(l[0], r) ) {
@@ -495,7 +447,17 @@ private:
     }
 
     
+#if 1
+    Sqrt_1 Zero(RT(0), RT(0), d[0]);
+    Sqrt_1 sqrt_D0(RT(0), RT(1), d[0]);
 
+    Sqrt_1 D1 = d[1] + Zero;
+    Sqrt_1 D2 = d[2] + Zero;
+
+    Sqrt_3 vz(z[0] * sqrt_D0, z[1] + Zero, z[2] + Zero, Zero, D1, D2);
+
+    Sign s_minus_vz = CGAL_NTS sign(vz);
+#else
 #if 0
     Sign s_minus_vz =
       sign_a_x_sqrt_d_plus_b_x_sqrt_e_plus_c_x_sqrt_f(z[0], z[1], z[2],
@@ -504,6 +466,7 @@ private:
     Sign s_minus_vz = CGAL_NTS sign( z[0] * CGAL_NTS sqrt(d[0]) +
 				     z[1] * CGAL_NTS sqrt(d[1]) +
 				     z[2] * CGAL_NTS sqrt(d[2]) );
+#endif
 #endif
     CGAL_assertion( s_minus_vz != ZERO );
 
@@ -516,13 +479,8 @@ private:
 
 
 #if 1
-      Sqrt_1 Zero(RT(0), RT(0), d[0]);
-      Sqrt_1 sqrt_D0(RT(0), RT(1), d[0]);
-
-      Sqrt_1 D1 = d[1] + Zero;
-      Sqrt_1 D2 = d[2] + Zero;
-
-      Sqrt_3 vz(z[0] * sqrt_D0, z[1] + Zero, z[2] + Zero, Zero, D1, D2);
+      vz =
+	Sqrt_3(z[0] * sqrt_D0, z[1] + Zero, z[2] + Zero, Zero, D1, D2);
 
       s_minus_vz = CGAL_NTS sign(vz);
 #else
@@ -554,13 +512,7 @@ private:
     z[(i_no+2)%3] = -z[(i_no+2)%3];
 
 #if 1
-    Sqrt_1 Zero(RT(0), RT(0), d[0]);
-    Sqrt_1 sqrt_D0(RT(0), RT(1), d[0]);
-
-    Sqrt_1 D1 = d[1] + Zero;
-    Sqrt_1 D2 = d[2] + Zero;
-
-    Sqrt_3 vz(z[0] * sqrt_D0, z[1] + Zero, z[2] + Zero, Zero, D1, D2);
+    vz = Sqrt_3(z[0] * sqrt_D0, z[1] + Zero, z[2] + Zero, Zero, D1, D2);
 
     Sign s_minus_vz_2 = CGAL_NTS sign(vz);
 #else
@@ -600,6 +552,7 @@ private:
       w[i] = -(a[(i+1)%3] * b[(i+2)%3] - a[(i+2)%3] * b[(i+1)%3]);
     }
 
+#if 0
     RT vx = RT(0), vy = RT(0), vw = RT(0);
 
     for (int i = 0; i < 3; i++) {
@@ -611,6 +564,30 @@ private:
 
     RT dist = vw * ( a[(i_no+1)%3] * vx + b[(i_no+1)%3] * vy +
 		     c[(i_no+1)%3] * vw );
+    
+#else
+    Sqrt_3 dist;
+    {
+      Sqrt_1 Zero(RT(0), RT(0), d[0]);
+      Sqrt_1 sqrt_D0(RT(0), RT(1), d[0]);
+
+      Sqrt_1 D1 = d[1] + Zero;
+      Sqrt_1 D2 = d[2] + Zero;
+
+      Sqrt_3 vx, vy, vw;
+
+      vx = Sqrt_3(x[0] * sqrt_D0, x[1], x[2], Zero, D1, D2);
+      vy = Sqrt_3(y[0] * sqrt_D0, y[1], y[2], Zero, D1, D2);
+      vw = Sqrt_3(w[0] * sqrt_D0, w[1], w[2], Zero, D1, D2);
+
+      Sqrt_1 a1(a[(i_no+1)%3], RT(0), d[0]);
+      Sqrt_1 b1(b[(i_no+1)%3], RT(0), d[0]);
+      Sqrt_1 c1(c[(i_no+1)%3], RT(0), d[0]);
+
+      dist = vw * ( a1 * vx + b1 * vy +	c1 * vw );
+    }
+#endif
+
 
     Sign sgn_dist = CGAL_NTS sign(dist);
 
@@ -732,14 +709,7 @@ private:
     compute_supporting_line(p, a[0], b[0], c[0]);
     compute_supporting_line(q, a[1], b[1], c[1]);
     compute_supporting_line(r, a[2], b[2], c[2]);
-#if 0
-    std::cout << "l1: " << a[0] << " " << b[0] << " "
-	      << c[0] << std::endl;
-    std::cout << "l2: " << a[1] << " " << b[1] << " "
-	      << c[1] << std::endl;
-    std::cout << "l3: " << a[2] << " " << b[2] << " "
-	      << c[2] << std::endl;
-#endif
+
     RT  d[3];
     for (int i = 0; i < 3; i++) {
       d[i] = CGAL_NTS square(a[i]) + CGAL_NTS square(b[i]);
@@ -789,8 +759,6 @@ private:
       if ( s_minus_vz == POSITIVE ) {
 	num_pos++;
 	is_ok[k] = is_consistent(p, q, r, al, bl, cl);
-	//	std::cout << "is consistent[" << k << "]: "
-	//		  << is_ok[k] << std::endl;
       }
     }
 
@@ -826,20 +794,8 @@ private:
 	    c[i] = -c[i];
 	  }
 	}
-#if 0
-	std::cout << "k: " << k << std::endl;
-	std::cout << "sgn: " <<  sgn[0] << " " << sgn[1]
-		  << " " << sgn[2] << std::endl;
-
-	std::cout << "l1: " << a[0] << " " << b[0] << " "
-		  << c[0] << std::endl;
-	std::cout << "l2: " << a[1] << " " << b[1] << " "
-		  << c[1] << std::endl;
-	std::cout << "l3: " << a[2] << " " << b[2] << " "
-		  << c[2] << std::endl;
-#endif
 	return;
-      }
+      } // end of outer-if
     }
 
   }
@@ -860,8 +816,6 @@ private:
       cy[i] = -(c[(i+1)%3] * a[(i+2)%3] - c[(i+2)%3] * a[(i+1)%3]);
       cz[i] = -(a[(i+1)%3] * b[(i+2)%3] - a[(i+2)%3] * b[(i+1)%3]);
       D[i] = CGAL_NTS square(a[i]) + CGAL_NTS square(b[i]);
-
-      //      cx[i] = -cx[i]; cy[i] = -cy[i];
     }
   }
 
@@ -887,17 +841,11 @@ private:
       pps_idx = 0;
 
     } else if ( s1.is_point() && s2.is_segment() && s3.is_segment() ) {
-      //      std::cout << "-------> point segment segment" << std::endl;
-
       compute_pss(s1.point(), s2.segment(), s3.segment());
-
     } else if ( s1.is_segment() && s2.is_point() && s3.is_segment() ) {
-      //      std::cout << "-------> segment point segment" << std::endl;
       compute_vertex(s2, s3, s1);
     } else if ( s1.is_segment() && s2.is_segment() && s3.is_point() ) {
-      //      std::cout << "-------> segment segment point" << std::endl;
       compute_vertex(s3, s1, s2);
-
     } else {
       compute_sss(s1.segment(), s2.segment(), s3.segment());
     }
@@ -1109,16 +1057,8 @@ private:
 
     FT r2 = squared_radius();
 
-#if 0
-    std::cout << "squared radius: " << r2 << std::endl;
-#endif
-
     FT d2 = CGAL_NTS square(x() - t.x()) +
       CGAL_NTS square(y() - t.y());
-
-#if 0
-    std::cout << "squared distance: " << d2 << std::endl;
-#endif
 
     return Sign( CGAL_NTS compare(d2, r2) );
   }
@@ -1141,7 +1081,7 @@ private:
     RT dy = p_ref().y() - t.y();
 
     Sqrt_1 Rs1 =
-      CGAL_NTS square(vx + dx * X) + CGAL_NTS square(vy + dy * X);
+      CGAL_NTS square(vx + RT(dx * X)) + CGAL_NTS square(vy + RT(dy * X));
 
     return CGAL_NTS sign(Rs1 - Rs);
   }
@@ -1177,10 +1117,24 @@ private:
 
     Sqrt_3 Rs = CGAL_NTS square(vx) + CGAL_NTS square(vy);
 
+
+#if 0
     Sqrt_3 dx((p_ref().x() - t.x()) * vz, Zero, Zero, Zero, u1, u2);
     Sqrt_3 dy((p_ref().y() - t.y()) * vz, Zero, Zero, Zero, u1, u2);
+#else
+    Sqrt_1 dxvz = RT((p_ref().x() - t.x())) * vz;
+    Sqrt_1 dyvz = RT((p_ref().y() - t.y())) * vz;
+    Sqrt_3 dx(dxvz, Zero, Zero, Zero, u1, u2);
+    Sqrt_3 dy(dyvz, Zero, Zero, Zero, u1, u2);
+#endif
 
+#if 0
+    Sqrt_3 vx_dx = vx + dx;
+    Sqrt_3 vy_dy = vy + dy;
+    Sqrt_3 Rs1 = CGAL_NTS square(vx_dx) + CGAL_NTS square(vy_dy);
+#else
     Sqrt_3 Rs1 = CGAL_NTS square(vx + dx) + CGAL_NTS square(vy + dy);
+#endif
 
     //    Sign s_vz = CGAL_NTS sign(vz);
     Sign s_Q = CGAL_NTS sign(Rs1 - Rs);
@@ -1219,21 +1173,6 @@ private:
     Sqrt_3 R1s = CGAL_NTS square(vx - tx * vz)
       + CGAL_NTS square(vy - ty * vz);
 
-
-#if 0
-    std::cout << R1s << std::endl;
-    std::cout << Ls << std::endl;
-    std::cout << Ns << std::endl;
-
-    double vzd = vz.to_double();
-
-    double R2 = R1s.to_double() / (CGAL_NTS square(vzd));
-
-    double d2 = (Ls.to_double() / Ns.to_double()) / (CGAL_NTS square(vzd));
-
-    std::cout << "squared radius: " << R2 << std::endl;
-    std::cout << "squared distance: " << d2 << std::endl;
-#endif
     return CGAL_NTS sign(R1s * Ns - Ls);
   }
 
@@ -1345,8 +1284,11 @@ private:
 
 #endif
 
-    Sqrt_3 dx((p_ref().x() - p.x()) * vz, Zero, Zero, Zero, u1, u2);
-    Sqrt_3 dy((p_ref().y() - p.y()) * vz, Zero, Zero, Zero, u1, u2);
+    RT dxx = p_ref().x() - p.x();
+    RT dyy = p_ref().y() - p.y();
+
+    Sqrt_3 dx(dxx * vz, Zero, Zero, Zero, u1, u2);
+    Sqrt_3 dy(dyy * vz, Zero, Zero, Zero, u1, u2);
 
     Sqrt_3 vx1 = vx + dx;
     Sqrt_3 vy1 = vy + dy;
@@ -1422,12 +1364,14 @@ private:
 
     Sqrt_1 Rs = CGAL_NTS square(vx) + CGAL_NTS square(vy);
 
-    Sqrt_1 vx1 = vx + p_ref().x() * X;
-    Sqrt_1 vy1 = vy + p_ref().y() * X;
+    Sqrt_1 vx1 = vx + RT(p_ref().x() * X);
+    Sqrt_1 vy1 = vy + RT(p_ref().y() * X);
     
     RT Ns = CGAL_NTS square(l.a()) + CGAL_NTS square(l.b());
 
-    Sqrt_1 Ls = CGAL_NTS square(l.a() * vx1 + l.b() * vy1 + l.c() * X);
+    Sqrt_1 Ls = CGAL_NTS square(RT(l.a()) * vx1
+				+ RT(l.b()) * vy1
+				+ RT(l.c() * X));
 
     return CGAL_NTS sign(Ls - Rs * Ns);
   }
@@ -1437,8 +1381,6 @@ private:
   {
     RT B = a1a2 + b1b2;
     Sqrt_1 vz(-B, RT(1), D1D2);
-
-    //    std::cout << "cp IL 1" << std::flush;
 
     RT A = a1a2 - b1b2;
     Sqrt_1 u1( c1c2 * A, c1c2, D1D2);
@@ -1460,8 +1402,6 @@ private:
     Sqrt_3 vy(Sqrt_1(I), Sqrt_1(0), Sqrt_1(-int(_r)), Sqrt_1(0), u1, u2);
 #endif
 
-    //    std::cout << " 2" << std::flush;
-
     Sqrt_3 Rs = CGAL_NTS square(vx) + CGAL_NTS square(vy);
 
     Sqrt_3 dx(p_ref().x() * vz, Zero, Zero, Zero, u1, u2);
@@ -1477,26 +1417,8 @@ private:
 
     Sqrt_1 Ns = CGAL_NTS square(a) + CGAL_NTS square(b);
 
-    //    std::cout << " 3" << std::flush;
-
     Sqrt_3 Ls = CGAL_NTS square(a * vx1 + b * vy1 + c * vz1);
 
-#if 0
-    std::cout << " 4" << std::flush;
-
-    std::cout << "vz: " << vz << std::endl;
-    std::cout << "vx: " << vx << std::endl;
-    std::cout << "vy: " << vy << std::endl;
-
-    std::cout << "dx: " << dx << std::endl;
-    std::cout << "dy: " << dy << std::endl;
-
-    std::cout << "Ls:    " << Ls << std::endl;
-    std::cout << "Rs Ns: " << (Rs * Ns) << std::endl;
-
-    std::cout << "Ls:    " << Ls.to_double() << std::endl;
-    std::cout << "Rs Ns: " << (Rs * Ns).to_double() << std::endl;
-#endif
     return CGAL_NTS sign(Ls - Rs * Ns);
   }
 
@@ -1558,9 +1480,11 @@ private:
 
     RT n2 = CGAL_NTS square(l.a()) + CGAL_NTS square(l.b());
 
-    RT d2 = CGAL_NTS square(l.a() * x() + l.b() * y() + l.c()) / n2;
+    RT d2 = CGAL_NTS square(l.a() * x() + l.b() * y() + l.c());
+    //    RT d2 = CGAL_NTS square(l.a() * x() + l.b() * y() + l.c()) / n2;
 
-    return Sign( CGAL_NTS compare(d2, r2) );
+    return Sign( CGAL_NTS compare(d2, r2 * n2) );
+    //    return Sign( CGAL_NTS compare(d2, r2) );
   }
 
 
@@ -1621,12 +1545,8 @@ private:
     //      change from passing a line to passing a triple of numbers
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    //    std::cout << "cp is1" << std::endl;
-
     Line l(a, b, c);
     Sign sl = incircle(l, type, tag);
-
-    //    std::cout << "cp is2" << std::endl;
 
     // this is the old code
     //    if ( sl == NEGATIVE ) { return sl; }
@@ -1634,8 +1554,6 @@ private:
 
     Oriented_side os1 = oriented_side(l, t.source(), type, tag);
     Oriented_side os2 = oriented_side(l, t.target(), type, tag);
-
-    //    std::cout << "cp is3" << std::endl;
 
     if ( sl == ZERO ) {
       if ( (os1 == ON_POSITIVE_SIDE && os2 == ON_NEGATIVE_SIDE) ||

@@ -5,7 +5,13 @@
 // includes for the default template arguments
 // of filtered traits
 #include <CGAL/Simple_cartesian.h>
+
+#ifdef CGAL_USE_GMP
+#include <CGAL/Gmpq.h>
+#else
 #include <CGAL/MP_Float.h>
+#endif
+
 #include <CGAL/Number_type_traits.h>
 
 
@@ -520,10 +526,29 @@ public:
 //-----------------------------------------------------------------------
 // the Traits class for a filtered kernel
 //-----------------------------------------------------------------------
+#ifdef CGAL_USE_GMP
+
+// THE FOLLOWING CODE IS AN ARTIFACT OF THE FACT THAT I USE THE
+// sqrt FUNCTION IN THE TRAITS CODE, EVEN IF THE Ring_tag IS SET
+// I HAVE TO REMOVE IT SOMEDAY
+
+namespace NTS {
+  Gmpq sqrt(const Gmpq& x)
+  {
+    return Gmpq(sqrt(to_double(x)));
+  }
+}
+
+template<class CK_, class EK_ = Simple_cartesian<Gmpq>,
+	 class FK_MTag = Sqrt_field_tag,
+	 class EK_MTag = Ring_tag,
+	 class C2E_ = Cartesian_converter<CK_, EK_> >
+#else
 template<class CK_, class EK_ = Simple_cartesian<MP_Float>,
 	 class FK_MTag = Sqrt_field_tag,
 	 class EK_MTag = Ring_tag,
 	 class C2E_ = Cartesian_converter<CK_, EK_> >
+#endif
 class Segment_Voronoi_diagram_filtered_traits_2
 {
 private:
