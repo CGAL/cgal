@@ -120,15 +120,17 @@ protected:
     mutable Pointlist_2_<R>    _pointlist;
 };
 
-template <class R>
-bool do_intersect(
-    const Triangle_2<R> &p1,
-    const Triangle_2<R> &p2)
-{
-    typedef Triangle_2_Triangle_2_pair<R> pair_t;
-    pair_t pair(&p1, &p2);
-    return pair.intersection_type() != pair_t::NO;
-}
+
+// template <class R>
+// inline bool do_intersect(
+//     const Triangle_2<R> &p1,
+//     const Triangle_2<R> &p2)
+// {
+//     typedef Triangle_2_Triangle_2_pair<R> pair_t;
+//     pair_t pair(&p1, &p2);
+//     return pair.intersection_type() != pair_t::NO;
+// }
+
 
 CGAL_END_NAMESPACE
 

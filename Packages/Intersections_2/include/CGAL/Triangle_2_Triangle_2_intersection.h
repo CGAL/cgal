@@ -25,6 +25,7 @@
 #define CGAL_TRIANGLE_2_TRIANGLE_2_INTERSECTION_H
 
 #include <CGAL/Object.h>
+#include <CGAL/Triangle_2_Triangle_2_do_intersect.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -32,9 +33,9 @@ template <class R>
 Object
 intersection(const Triangle_2<R> &tr1, const Triangle_2<R>&tr2);
 
-template <class R>
-bool
-do_intersect(const Triangle_2<R> &tr1, const Triangle_2<R>&tr2);
+// template <class R>
+// bool
+// do_intersect(const Triangle_2<R> &tr1, const Triangle_2<R>&tr2);
 
 CGAL_END_NAMESPACE
 
