@@ -86,7 +86,7 @@ private:
     {
       if(l_of_p->empty())
 	      QMessageBox::warning( widget, "There are no points in the list!",
-        "Generate some points first or add it with the 
+        "Generate some points first or add it with the \
          input tool before using this tool!");
       else{
         FT x=static_cast<FT>(widget->x_real(e->x()));
