@@ -22,12 +22,12 @@
 
 #include <cassert>
 
-template <class Cell>
+template <class Tds>
 void
-_test_cell_tds_3( const Cell &)
+_test_cell_tds_3(const Tds &)
 {
-  typedef typename Cell::Vertex            Vertex;
-  typedef typename Cell::Tds               Tds;
+  typedef typename Tds::Vertex            Vertex;
+  typedef typename Tds::Cell              Cell;
 
   std::cout << "   Cells Tds Constructors " << std::endl;
   int ind;

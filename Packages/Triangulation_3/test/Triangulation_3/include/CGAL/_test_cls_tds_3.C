@@ -47,7 +47,7 @@ _test_cls_tds_3( const Tds &)
   _test_vertex_tds_3(Vertex());
 
   std::cout << "    Test Cell " << std::endl;
-  _test_cell_tds_3(Cell());
+  _test_cell_tds_3(Tds());
 
   std::cout << "   Testing TDS " << std::endl;
   
