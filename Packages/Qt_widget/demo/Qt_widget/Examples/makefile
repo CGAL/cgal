@@ -42,7 +42,7 @@ hellosegment$(EXE_EXT): hellosegment$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)hellosegment hellosegment$(OBJ_EXT) $(LDFLAGS)
 
 standard_toolbar.moc:  standard_toolbar.C
-	$(QT_MOC) -o standard_toolbar.moc $<
+	$(QT_MOC) -o standard_toolbar.moc standard_toolbar.C
 
 standard_toolbar$(OBJ_EXT): standard_toolbar.moc
 
