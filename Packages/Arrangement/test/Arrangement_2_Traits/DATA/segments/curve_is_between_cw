@@ -54,12 +54,16 @@ curve_is_between_cw 0 2 1 0 TRUE.
 curve_is_between_cw 2 0 1 0 FALSE.
 curve_is_between_cw 2 1 0 0 TRUE.
 
+curve_is_between_cw 3 4 0 0 FALSE.
+curve_is_between_cw 3 0 4 0 FALSE.
+curve_is_between_cw 0 3 4 0 TRUE.
+
 curve_is_between_cw 3 4 5 0 FALSE.
 curve_is_between_cw 3 5 4 0 FALSE. 
 curve_is_between_cw 4 5 3 0 FALSE.
 curve_is_between_cw 4 3 5 0 FALSE.
-curve_is_between_cw 5 3 4 0 FALSE.
-curve_is_between_cw 5 4 3 0 FALSE.
+curve_is_between_cw 5 3 4 0 TRUE.
+curve_is_between_cw 5 4 3 0 TRUE.
 
 curve_is_between_cw 6 7 8 0 FALSE.
 curve_is_between_cw 6 8 7 0 FALSE.
