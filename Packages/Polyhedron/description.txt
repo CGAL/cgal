@@ -1,1 +1,1 @@
-Polyhedral surfaces in 3D in a halfedge data structure.
+Polyhedral surfaces in 3D based on HalfedgeDS, old and new design.

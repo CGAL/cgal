@@ -1,0 +1,47 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Polyhedron_operator_leftshift.tex
+% +------------------------------------------------------------------------+
+% | 09.09.2000   Lutz Kettner
+% | Package: Polyhedron
+% | 
+\RCSdef{\RCSPolyhedronoperatoristreamRev}{$Revision$}
+\RCSdefDate{\RCSPolyhedronoperatoristreamDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\ccHtmlNoClassLinks
+\begin{ccRefFunction}{operator<<}
+\label{refPolyhedron_operator_leftshift}
+
+\ccDefinition
+
+This operator writes the polyhedral surface $P$ to the output stream
+\ccc{out} using the Object File Format, OFF, with file extension 
+{\tt .off}, which is also understood by
+GeomView~\cite{p-gmgv15-94}. The output is in ASCII format. From the
+polyhedral surface, only the point coordinates and facets are
+written. Neither normal vectors nor color attributes are used.
+
+\ccInclude{CGAL/IO/Polyhedron_iostream.h}
+
+\ccGlobalFunction{template <class Traits>
+    ostream& operator<<( ostream& out, const CGAL::Polyhedron_3<Traits>& P);}
+  
+\ccSeeAlso
+
+\ccc{CGAL::Polyhedron_3},
+\lcTex{\ccc{operator>>}}
+\lcRawHtml{
+    <I><A HREF="Function_operator--.html">operator&gt;&gt;</A></I>
+}.
+
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

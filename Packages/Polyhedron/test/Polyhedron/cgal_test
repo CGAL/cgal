@@ -69,5 +69,6 @@ if [ $# -ne 0 ] ; then
   done
 else
   compile_and_run test_polyhedron
+  compile_and_run test_polyhedron_old
 fi
 

@@ -1,0 +1,21 @@
+// polyhedron_prog_simple.C
+// -----------------------------------------------------------
+#include <CGAL/Cartesian.h>
+#define CGAL_USE_POLYHEDRON_DESIGN_ONE 1
+#include <CGAL/Halfedge_data_structure_polyhedron_default_3.h>
+#include <CGAL/Polyhedron_default_traits_3.h>
+#include <CGAL/Polyhedron_3.h>
+
+typedef CGAL::Cartesian<double>                               R;
+typedef CGAL::Halfedge_data_structure_polyhedron_default_3<R> HDS;
+typedef CGAL::Polyhedron_default_traits_3<R>                  Traits;
+typedef CGAL::Polyhedron_3<Traits,HDS>                        Polyhedron;
+typedef Polyhedron::Halfedge_handle                           Halfedge_handle;
+
+int main() {
+    Polyhedron P;
+    Halfedge_handle h = P.make_tetrahedron();
+    if ( P.is_tetrahedron( h))
+	return 0;
+    return 1;
+}

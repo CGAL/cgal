@@ -1,28 +1,26 @@
 // polyhedron_prog_incr_builder.C
-// -----------------------------------------------------------
+// -----------------------------------------------
 #include <CGAL/Cartesian.h>
-#include <CGAL/Halfedge_data_structure_polyhedron_default_3.h>
 #include <CGAL/Polyhedron_default_traits_3.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Polyhedron_3.h>
 
-typedef CGAL::Cartesian<double>                                R;
-typedef CGAL::Halfedge_data_structure_polyhedron_default_3<R>  HDS;
-typedef CGAL::Polyhedron_default_traits_3<R>                   Traits;
-typedef CGAL::Polyhedron_3<Traits,HDS>                         Polyhedron;
+typedef CGAL::Cartesian<double>                R;
+typedef CGAL::Polyhedron_default_traits_3<R>   Traits;
+typedef CGAL::Polyhedron_3<Traits>             Polyhedron;
+typedef Polyhedron::HDS                        HDS;
 
-using CGAL::Modifier_base;
-
-// A modifier creating a triangle using the incremental builder.
-template < class HDS>
-class Build_triangle : public Modifier_base<HDS> {
+// A modifier creating a triangle with the incremental builder.
+template <class HDS>
+class Build_triangle : public CGAL::Modifier_base<HDS> {
 public:
     Build_triangle() {}
     void operator()( HDS& hds) {
         // Postcondition: `hds' is a valid polyhedral surface.
         CGAL::Polyhedron_incremental_builder_3<HDS> B( hds, true);
         B.begin_surface( 3, 1, 6);
-        typedef typename HDS::Point Point;
+        typedef typename HDS::Vertex   Vertex;
+        typedef typename Vertex::Point Point;
         B.add_vertex( Point( 0, 0, 0));
         B.add_vertex( Point( 1, 0, 0));
         B.add_vertex( Point( 0, 1, 0));

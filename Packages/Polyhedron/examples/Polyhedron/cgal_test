@@ -68,11 +68,19 @@ if [ $# -ne 0 ] ; then
     compile_and_run $file
   done
 else
+  compile_and_run polyhedron_prog_color
   compile_and_run polyhedron_prog_incr_builder
+  compile_and_run polyhedron_prog_incr_builder_old
   compile_and_run polyhedron_prog_normals
+  compile_and_run polyhedron_prog_normals_old
   compile_and_run polyhedron_prog_off
-  compile_and_run polyhedron_prog_point_iterator
+  compile_and_run polyhedron_prog_off_old
+  compile_and_run polyhedron_prog_point_iterator_old
   compile_and_run polyhedron_prog_simple
+  compile_and_run polyhedron_prog_simple_old
+  compile_and_run polyhedron_prog_subdiv
   compile_and_run polyhedron_prog_tetra
+  compile_and_run polyhedron_prog_tetra_old
+  compile_and_run polyhedron_prog_vector
 fi
 

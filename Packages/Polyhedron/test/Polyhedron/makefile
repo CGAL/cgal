@@ -38,13 +38,18 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                test_polyhedron 
+                test_polyhedron \
+                test_polyhedron_old
 
 test_polyhedron$(EXE_EXT): test_polyhedron$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_polyhedron test_polyhedron$(OBJ_EXT) $(LDFLAGS)
 
+test_polyhedron_old$(EXE_EXT): test_polyhedron_old$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_polyhedron_old test_polyhedron_old$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
-                   test_polyhedron.clean 
+                   test_polyhedron.clean \
+                   test_polyhedron_old.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules

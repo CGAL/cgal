@@ -1,28 +1,37 @@
 // polyhedron_prog_normals.C
-// -----------------------------------------------------------
+// ------------------------------------------
 #include <CGAL/Homogeneous.h>
-#include <iostream>
-#include <algorithm>
-#include <CGAL/Halfedge_data_structure_polyhedron_default_3.h>
 #include <CGAL/Polyhedron_default_traits_3.h>
 #include <CGAL/Polyhedron_3.h>
+#include <iostream>
+#include <algorithm>
 
-typedef CGAL::Homogeneous<int>                                R;
-typedef CGAL::Halfedge_data_structure_polyhedron_default_3<R> HDS;
-typedef CGAL::Polyhedron_default_traits_3<R>                  Traits;
-typedef CGAL::Polyhedron_3<Traits,HDS>                        Polyhedron;
-typedef Polyhedron::Point                                     Point;
-typedef Polyhedron::Plane                                     Plane;
-typedef Polyhedron::Halfedge_handle                           Halfedge_handle;
+struct Plane_equation {
+    template <class Facet>
+    void operator()( Facet& f) {
+        typedef typename Facet::Plane            Plane;
+        typedef typename Facet::Halfedge_handle  Halfedge_handle;
+        Halfedge_handle h = f.halfedge();
+        f.plane() = Plane( h->vertex()->point(),
+                           h->next()->vertex()->point(),
+                           h->next()->next()->vertex()->point());
+    }
+};
+
+typedef CGAL::Homogeneous<int>                R;
+typedef CGAL::Plane_3<R>                      Plane;
+typedef CGAL::Polyhedron_default_traits_3<R>  Traits;
+typedef CGAL::Polyhedron_3<Traits>            Polyhedron;
+typedef Polyhedron::Point                     Point;
+
+// The declaration of a plane iterator.
+#include <CGAL/Iterator_project.h>
+#include <CGAL/function_objects.h>
+
 typedef Polyhedron::Facet                                     Facet;
 typedef Polyhedron::Facet_iterator                            Facet_iterator;
-
-void compute_plane_equations( Facet& f) {
-    Halfedge_handle h = f.halfedge();
-    f.plane() = Plane( h->opposite()->vertex()->point(), 
-		       h->vertex()->point(),
-		       h->next()->vertex()->point());
-};
+typedef CGAL::Project_plane<Facet>                            Project_plane;
+typedef CGAL::Iterator_project<Facet_iterator, Project_plane> Plane_iterator;
 
 int main() {
     Point p( 1, 0, 0);
@@ -32,11 +41,11 @@ int main() {
 
     Polyhedron P;
     P.make_tetrahedron( p, q, r, s);
-    std::for_each( P.facets_begin(), P.facets_end(), compute_plane_equations);
+    std::for_each( P.facets_begin(), P.facets_end(), Plane_equation());
 
     CGAL::set_pretty_mode( std::cout);
-    Facet_iterator begin = P.facets_begin();
-    for ( ; begin != P.facets_end(); ++begin)
-        std::cout << begin->plane() << std::endl;
+    std::copy( Plane_iterator( P.facets_begin()), 
+               Plane_iterator( P.facets_end()),
+               std::ostream_iterator<Plane>( std::cout, "\n"));
     return 0;
 }

@@ -3,7 +3,7 @@ Polyhedron Package
 
 -  CGAL/Polyhedron_3.h
 
-     Polyhedral surfaces in 3D in a halfedge data structure.
+     Polyhedral surfaces in 3D based on HalfedgeDS.
 
 -  CGAL/Polyhedron_iterator_3.h
 
@@ -24,5 +24,10 @@ Polyhedron Package
 
      A modifier able of copying or appending polyhedral surfaces.
      (Not documented in the manual)
+
+-  CGAL/Polyhedron_old/*
+
+     Files for the old design. They are automatically included
+     from the files above in case the old design is selected.
 
 Lutz Kettner

@@ -1,5 +1,39 @@
 Polyhedron Package: Release changes:
 ---------------------------------------------------------------------
+3.5 (17 Jun 2001)
+
+     - Merged old design files and new design files into one package.
+       First internal release of new design. Old design disabled by 
+       default. Can be enabled using #define CGAL_USE_POLYHEDRON_DESIGN_ONE
+     - changed erase_all() to clear() for Polyhedron_3 class. Kept
+       erase_all() for backwards compatibility.
+     - Moved old manual and added manual for new design.
+
+3.4 (22 Sep 2000)
+
+     Included _Polyhedron_*_circ classes for backwards compatibility 
+     with Planar map etc.
+
+3.3 (21 Sep 2000)
+
+     Converted to std:: and CGAL:: namespaces and using new std 
+     header file name convention. The manual pages are separated into 
+     user manual pages and reference manual pages, but still in one 
+     chapter. Tested with g++ and MipsPro 7.3.
+
+3.2 (07 May 1999)
+
+     Bug in test-suite code fixed that caused the P.is_tetrahedron( g)
+     assertion to fail. Minor fixes in the examples and documentation.
+
+3.1 (26 Mar 1999)
+
+     Complete redesign of the HalfedgeDS. Incompatible to previous 
+     versions. The design provides much more flexibility and can 
+     support planar maps and other data structures more easily. 
+     The class interface is pretty much the same, basically only 
+     the template parameters have changed.
+
 2.10 (15 Jun 2001)
 
      Fixed warnings in test suite.

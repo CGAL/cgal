@@ -26,6 +26,18 @@
 
 #ifndef CGAL_POLYHEDRON_COPY_3_H
 #define CGAL_POLYHEDRON_COPY_3_H 1
+
+#include <CGAL/basic.h>
+// MS Visual C++ 6.0 does not work with the new design.
+#if defined( _MSC_VER) && (_MSC_VER <= 1200)
+#ifndef CGAL_USE_POLYHEDRON_DESIGN_TWO
+#define CGAL_USE_POLYHEDRON_DESIGN_ONE 1
+#endif
+#endif
+#ifndef CGAL_USE_POLYHEDRON_DESIGN_ONE
+#define CGAL_USE_POLYHEDRON_DESIGN_TWO 1
+#endif
+
 #ifndef CGAL_MODIFIER_BASE_H
 #include <CGAL/Modifier_base.h>
 #endif // CGAL_MODIFIER_BASE_H
@@ -39,8 +51,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class Poly, class HDS >
-class Polyhedron_copy_3
-    : public Modifier_base<HDS> {
+class Polyhedron_copy_3 : public Modifier_base<HDS> {
 protected:
     const Poly& source;
 public:
@@ -57,26 +68,30 @@ public:
 template < class Poly, class HDS>
 void
 Polyhedron_copy_3<Poly,HDS>:: operator()( HDS& target) {
-    typedef typename Poly::Vertex_const_iterator Vertex_const_iterator;
-    typedef typename Poly::Facet_const_iterator  Facet_const_iterator;
-    typedef Inverse_index< Vertex_const_iterator>  Index;
-    typedef typename HDS::Point                  Point;
+    typedef typename Poly::Vertex_const_iterator  Vertex_const_iterator;
+    typedef typename Poly::Facet_const_iterator   Facet_const_iterator;
+    typedef Inverse_index< Vertex_const_iterator> Index;
+    typedef typename HDS::Point                   Point;
 
+#ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
     target.delete_all();
+#else
+    target.clear();
+#endif
     Polyhedron_incremental_builder_3<HDS> B( target);
     B.begin_surface( source.size_of_vertices(),
                      source.size_of_facets(),
                      source.size_of_halfedges());
-    for( Vertex_const_iterator vi = source.vertices_begin();
-         vi != source.vertices_end();
-         ++vi) {
+    for ( Vertex_const_iterator vi = source.vertices_begin();
+          vi != source.vertices_end();
+          ++vi) {
         B.add_vertex( Point( vi->point()));
     }
     Index index( source.vertices_begin(), source.vertices_end());
 
-    for( Facet_const_iterator fi = source.facets_begin();
-         fi != source.facets_end();
-         ++fi) {
+    for ( Facet_const_iterator fi = source.facets_begin();
+          fi != source.facets_end();
+          ++fi) {
         B.begin_facet();
         typedef typename Poly::Halfedge_around_facet_const_circulator
             Halfedge_around_facet_const_circulator;
@@ -84,8 +99,12 @@ Polyhedron_copy_3<Poly,HDS>:: operator()( HDS& target) {
         Halfedge_around_facet_const_circulator hc_end = hc;
         CGAL_assertion( hc != NULL);
         do {
+#ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
             B.add_vertex_to_facet( index[ Vertex_const_iterator(
                 hc->vertex().ptr())]);
+#else
+            B.add_vertex_to_facet( index[ hc->vertex()]);
+#endif
             ++hc;
         } while( hc != hc_end);
         B.end_facet();
