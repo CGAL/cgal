@@ -405,8 +405,6 @@ minimum_enclosing_parallelogram_2(ForwardIterator f,
     t.construct_parallelogram_2_object()(
       *low, next_dir, *right, d_leftright, *upp, *left);
 
-  std::cout << para_so_far << std::endl;
-
   for (;;) {
     if (low_goes_next) {
       low = ln;
