@@ -24,7 +24,7 @@ typedef CGAL::Triangulation_data_structure_2<Vb,Fb > Tds;
 typedef CGAL::Triangulation_2<Gt,Tds> Triangulation;
 
 typedef Triangulation::Face_handle Face_handle;
-typedef Triangulation::Face_iterator Face_iterator;
+typedef Triangulation::Finite_faces_iterator Finite_faces_iterator;
 typedef Gt::Point_2  Point;
 
 int main() {
@@ -34,8 +34,8 @@ int main() {
   t.insert(Point(2,0));
   t.insert(Point(2,2));
  
-  Face_iterator fc = t.faces_begin();
-  for( ; fc != t.faces_end(); ++fc)  fc->color = CGAL::BLUE;
+  Finite_faces_iterator fc = t.finite_faces_begin();
+  for( ; fc != t.finite_faces_end(); ++fc)  fc->color = CGAL::BLUE;
 
   Point p(0.5,0.5);
   Face_handle fh = t.locate(p);
