@@ -14,7 +14,6 @@ int main(int, char*)
 #else
 
 #include <CGAL/basic.h>
-#include <iomanip> // TODO: remove this!
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_kernel.h>
@@ -43,13 +42,12 @@ int main(int, char*)
 
 #include <qapplication.h>
 #include <qmainwindow.h>
-#include <qhbox.h>
+#include <qlayout.h>
 #include <qvbox.h>
 #include <qstatusbar.h>
 #include <qfiledialog.h>
 #include <qinputdialog.h>
 #include <qstring.h>
-//#include <qmessagebox.h>
 #include <qpopupmenu.h>
 #include <qmenubar.h>
 #include <qtoolbar.h>
@@ -78,14 +76,6 @@ typedef K::Circle_2 Circle;
 typedef CGAL::Polygon_2<K> Polygon;
 
 typedef CGAL::Mesh_2<Tr> Mesh;
-
-// CGAL::Qt_widget& operator<< (CGAL::Qt_widget& w, const Mesh& mesh)
-// {
-//   w.lock();
-//   mesh.draw_triangulation(w);
-//   w.unlock();
-//   return w;
-// }
 
 template <class M>
 class Show_marked_faces : public CGAL::Qt_widget_layer
@@ -163,14 +153,23 @@ class MyWindow : public QMainWindow
 public:
   MyWindow() : is_mesh_initialized(false), traits(), mesh(traits)
     {
-      QHBox *hbox = new QHBox(this);
-      widget = new CGAL::Qt_widget(hbox,"Main widget");
-      setCentralWidget(hbox);
+      QFrame* mainframe = new QFrame(this); 
+      QHBoxLayout *hbox = new QHBoxLayout(mainframe);
+      hbox->setAutoAdd(true);
+      widget = new CGAL::Qt_widget(mainframe, "Main widget");
+      widget->setSizePolicy(QSizePolicy( QSizePolicy::Expanding,
+					 QSizePolicy::Expanding ));
+      setCentralWidget(mainframe);
       resize(700,500);
+      mainframe->show();
 
-      // we use layers instead of custom_redraw()
-//       connect(widget, SIGNAL(custom_redraw()),
-// 	      this, SLOT(redraw_win()));
+      QVBox* info = new QVBox(mainframe);
+//       QLabel* label = new QLabel("essai", info);
+//       new QLineEdit("prout", info);
+//       label->setText("Prout");
+//       label->show();
+      info->show();
+      info->adjustSize();
 
       // STATUSBAR
       statusBar();
@@ -316,7 +315,7 @@ public:
       QToolButton *pbShowSeeds
 	= new QToolButton(QPixmap( (const char**)seeds_xpm ),
 			  "Show seeds", "Display seeds that define the "
-			  "region to mesh",
+			  "region not to mesh",
 			  this, SLOT(fake_slot()), 
 			  toolbarLayers, "show points");
       pbShowSeeds->setToggleButton(true);
@@ -462,7 +461,6 @@ public slots:
 	      traits.set_point(p);
 	      if( (fh!=NULL) )
 		{
-		  std::cerr << "Face handle not null.\n";
 		  const Point&
 		    a = fh->vertex(0)->point(),
 		    b = fh->vertex(1)->point(),
@@ -535,7 +533,7 @@ public slots:
   void refineMesh()
     {
       saveTriangulationUrgently("last_input.edg");
-      mesh.refine();
+      mesh.refine(seeds.begin(), seeds.end());
       is_mesh_initialized=true;
       widget->redraw();
     }
@@ -601,6 +599,17 @@ public slots:
         return;
       std::ifstream f(s);
       mesh.read(f);
+
+      // compute bounds
+      FT xmin, xmax, ymin, ymax;
+      bounds(xmin, ymin, xmax, ymax);
+      
+      FT xspan = (xmax-xmin)/2,
+	yspan = (ymax-ymin)/2;
+
+      widget->set_window(xmin-1.1*xspan, xmax+1.1*xspan, 
+			 ymin-1.1*yspan, ymax+1.1*yspan);
+
       seeds.clear();
       is_mesh_initialized=false;
       widget->redraw();

@@ -223,40 +223,56 @@ private:
 public:
   void refine();
   void conform();
-  void init();
+  void init(bool mark=false);
   void mark_convex_hull();
 
 private: void propagate_marks(Face_handle, bool);
 public:
-  // It is an iterator of points
-  template <class It> void init(It begin, It end)
+  // In the two following functions, Seed_it is an iterator of
+  // points, representing seeds
+
+  template <class Seed_it>
+  void refine(Seed_it begin, Seed_it end, bool mark=false)
+    {
+      init(begin, end, mark);
+      while(! (c_edge_queue.empty() && Bad_faces.empty()) )
+	{
+	  conform();
+	  if ( !Bad_faces.empty() )
+	    process_one_face();
+	}
+    }
+
+  template <class Seed_it> 
+  void init(Seed_it begin, Seed_it end, bool mark=false)
     {
       cluster_map.clear();
       c_edge_queue.clear();
       Bad_faces.clear();
       
-      mark_facets(begin, end);
+      mark_facets(begin, end, mark);
       
       create_clusters();
       fill_edge_queue();
       fill_facette_map();
     }
 
-  template <class It> void mark_facets(It begin, It end)
+  template <class Seed_it>
+  void mark_facets(Seed_it begin, Seed_it end, bool mark=false)
     {
       if(begin!=end)
 	{
 	  for(All_faces_iterator it=all_faces_begin();
 	      it!=all_faces_end();
 	      ++it)
-	    it->set_marked(false);
+	    it->set_marked(!mark);
 	  
-	  for(It it=begin; it!=end; ++it)
+	  for(Seed_it it=begin; it!=end; ++it)
 	    {
 	      std::queue<Face_handle> face_queue;
 	      Face_handle fh=locate(*it);
 	      if(fh!=NULL)
-		propagate_marks(fh, true);
+		propagate_marks(fh, mark);
 	    }
 	}
       else
@@ -273,13 +289,13 @@ public:
 
   // Set the geom_traits and add the sequence [begin, end[ to the list
   // of bad faces.
-  // It is a iterator of Face_Handle
-  template <class It>
+  // Fh_it is a iterator of Face_Handle
+  template <class Fh_it>
   void set_geom_traits(const Geom_traits& gt,
-		       It begin, It end)
+		       Fh_it begin, Fh_it end)
   {
     _gt = gt;
-    for(It pfit=begin; pfit!=end; ++pfit)
+    for(Fh_it pfit=begin; pfit!=end; ++pfit)
       {
 	const Vertex_handle&
 	  va = (*pfit)->vertex(0),
@@ -1079,16 +1095,12 @@ shortest_edge_squared_length(Face_handle f)
 
 //the mesh refine function 
 template <class Tr>
+inline
 void Mesh_2<Tr>::
 refine()
 {
-  init();
-  while(! (c_edge_queue.empty() && Bad_faces.empty()) )
-    {
-      conform();
-      if ( !Bad_faces.empty() )
-	process_one_face();
-    }
+  std::list<Point> l;
+  refine(l.begin(), l.end());
 }
 
 template <class Tr>
@@ -1105,7 +1117,7 @@ conform()
 template <class Tr>
 inline
 void Mesh_2<Tr>::
-init()
+init(bool mark)
 {
   std::list<Point> l;
   init(l.end(), l.end());
