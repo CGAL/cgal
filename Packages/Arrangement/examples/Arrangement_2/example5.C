@@ -12,8 +12,10 @@
 typedef CGAL::Quotient<CGAL::MP_Float>                NT;
 typedef CGAL::Cartesian<NT>                           Kernel;
 typedef CGAL::Arr_segment_exact_traits<Kernel>        Traits;
+
 typedef Traits::Point                                 Point;
 typedef Traits::Curve                                 Curve;
+
 typedef CGAL::Arr_base_node<Curve>                    Base_node;
 typedef CGAL::Arr_2_default_dcel<Traits>              Dcel;
 typedef CGAL::Arrangement_2<Dcel,Traits,Base_node >   Arr_2;
