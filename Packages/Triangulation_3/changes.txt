@@ -1,3 +1,6 @@
+Version 1.19 (?? oct 99)
+Remove reference to Quotient, replaced by Homogeneous::FT.
+
 Version 1.18 (22 oct 99)
 display changes in the doc
 

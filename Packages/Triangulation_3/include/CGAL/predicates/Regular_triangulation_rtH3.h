@@ -26,7 +26,6 @@
 // This file contains the low level homogeneous predicates
 // used by the 3D regular triangulation.
 
-#include <CGAL/Quotient.h>
 #include <CGAL/predicates/Regular_triangulation_ftC3.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -77,43 +76,13 @@ power_testH3(
 	                                        dthx, dthy, dthz, dtz, dthw));
 }
 
-// The 2 following are not speed critical, and they are quite boring and error
-// prone to write, so we use the Cartesian version, using Quotient<RT>.
-
-template <class RT>
-Oriented_side
-power_testH3(
-    const RT &phx, const RT &phy, const RT &phz, const RT &phw, const RT &pwt,
-    const RT &qhx, const RT &qhy, const RT &qhz, const RT &qhw, const RT &qwt,
-    const RT &rhx, const RT &rhy, const RT &rhz, const RT &rhw, const RT &rwt,
-    const RT &thx, const RT &thy, const RT &thz, const RT &thw, const RT &twt)
-{
-    typedef Quotient<RT> Q;
-    return power_testC3(Q(phx,phw), Q(phy,phw), Q(phz,phw), Q(pwt),
-			Q(qhx,qhw), Q(qhy,qhw), Q(qhz,qhw), Q(qwt),
-			Q(rhx,rhw), Q(rhy,rhw), Q(rhz,rhw), Q(rwt),
-			Q(thx,thw), Q(thy,thw), Q(thz,thw), Q(twt));
-}
-
-template <class RT>
-Oriented_side
-power_testH3(
-    const RT &phx, const RT &phy, const RT &phz, const RT &phw, const RT &pwt,
-    const RT &qhx, const RT &qhy, const RT &qhz, const RT &qhw, const RT &qwt,
-    const RT &thx, const RT &thy, const RT &thz, const RT &thw, const RT &twt)
-{
-    typedef Quotient<RT> Q;
-    return power_testC3(Q(phx,phw), Q(phy,phw), Q(phz,phw), Q(pwt),
-			Q(qhx,qhw), Q(qhy,qhw), Q(qhz,qhw), Q(qwt),
-			Q(thx,thw), Q(thy,thw), Q(thz,thw), Q(twt));
-}
+// The 2 degenerate are not speed critical, and they are quite boring and error
+// prone to write, so we use the Cartesian version, using FT.
 
 CGAL_END_NAMESPACE
 
 #ifdef CGAL_ARITHMETIC_FILTER_H
-#ifndef CGAL_ARITHMETIC_FILTER_REGULAR_TRIANGULATION_RTH3_H
 #include <CGAL/Arithmetic_filter/predicates/Regular_triangulation_rtH3.h>
-#endif // CGAL_ARITHMETIC_FILTER_REGULAR_TRIANGULATION_RTH3_H
 #endif
 
 #endif // CGAL_REGULAR_TRIANGULATION_RTH3_H

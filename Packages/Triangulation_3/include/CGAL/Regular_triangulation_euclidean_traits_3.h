@@ -165,6 +165,9 @@ power_test(const Weighted_point<pt, Weight> &p,
                         t.hx(), t.hy(), t.hz(), t.hw(), RT(t.weight()));
 }
 
+// The 2 following call the cartesian version over FT, because an homogeneous
+// special version would be boring to write.
+
 template < class pt, class Weight >
 inline
 Oriented_side
@@ -174,11 +177,11 @@ power_test(const Weighted_point<pt, Weight> &p,
            const Weighted_point<pt, Weight> &t,
 	   Homogeneous_tag)
 {
-  typedef typename pt::RT RT;
-    return power_testH3(p.hx(), p.hy(), p.hz(), p.hw(), RT(p.weight()),
-                        q.hx(), q.hy(), q.hz(), q.hw(), RT(q.weight()),
-                        r.hx(), r.hy(), r.hz(), r.hw(), RT(r.weight()),
-                        t.hx(), t.hy(), t.hz(), t.hw(), RT(t.weight()));
+    typedef typename pt::FT FT;
+    return power_testH3(p.x(), p.y(), p.z(), FT(p.weight()),
+                        q.x(), q.y(), q.z(), FT(q.weight()),
+                        r.x(), r.y(), r.z(), FT(r.weight()),
+                        t.x(), t.y(), t.z(), FT(t.weight()));
 }
 
 template < class pt, class Weight >
@@ -189,12 +192,14 @@ power_test(const Weighted_point<pt, Weight> &p,
            const Weighted_point<pt, Weight> &t,
 	   Homogeneous_tag)
 {
-  typedef typename pt::RT RT;
-    return power_testH3(p.hx(), p.hy(), p.hz(), p.hw(), RT(p.weight()),
-                        q.hx(), q.hy(), q.hz(), q.hw(), RT(q.weight()),
-                        t.hx(), t.hy(), t.hz(), t.hw(), RT(t.weight()));
+    typedef typename pt::FT FT;
+    return power_testC3(p.x(), p.y(), p.z(), FT(p.weight()),
+                        q.x(), q.y(), q.z(), FT(q.weight()),
+                        t.x(), t.y(), t.z(), FT(t.weight()));
 }
 #endif // CGAL_HOMOGENEOUS_H
+
+// Kludges for M$.
 
 template < class pt, class Weight >
 inline
@@ -208,6 +213,7 @@ power_test(const Weighted_point<pt,Weight> &p,
   typedef typename pt::R::Rep_tag Tag;
   return( power_test(p,q,r,s,t, Tag()) );
 }
+
 template < class pt, class Weight >
 inline
 Oriented_side
@@ -219,6 +225,7 @@ power_test(const Weighted_point<pt,Weight> &p,
   typedef typename pt::R::Rep_tag Tag;
   return( power_test(p,q,r,t, Tag()) );
 }
+
 template < class pt, class Weight >
 inline
 Oriented_side
@@ -229,7 +236,6 @@ power_test(const Weighted_point<pt,Weight> &p,
   typedef typename pt::R::Rep_tag Tag;
   return( power_test(p,q,t, Tag()) );
 }
-
 
 CGAL_END_NAMESPACE
 
