@@ -175,6 +175,19 @@ public:
   }
 };
 
+#if (defined(__GNUC__) && (__GNUC__ >= 3))
+template < class IC>
+void
+Inverse_index< IC>::ini_idx( IC i, const IC& j, std::input_iterator_tag) {
+  std::size_t n = 0;
+  if ( ! is_empty_range( i, j)) {
+    do {
+      idx.insert(Item( &*i, n));
+      n++;
+    } while ((++i) != (j));
+  }
+}
+#else
 template < class IC>
 void
 Inverse_index< IC>::ini_idx( IC i, const IC& j, std::input_iterator_tag) {
@@ -187,6 +200,7 @@ Inverse_index< IC>::ini_idx( IC i, const IC& j, std::input_iterator_tag) {
     } while ((++i) != (j));
   }
 }
+#endif // (__GNUC__ >= 3)
 
 CGAL_END_NAMESPACE
 #endif // CGAL_INVERSE_INDEX_H //
