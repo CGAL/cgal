@@ -711,9 +711,11 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
   switch (dimension()) {
   case 3:
     {
-      // TODO :
-      // In case the point is completely equal (including weight), then we need
-      // to discard it (don't update the triangulation, nor hide it), right ?
+      // Case of same xyz coordinates, and same weight => point discarded.
+      if ( lt == Tr_Base::VERTEX &&
+           power_test(p, c->vertex(li)->point() ) == 0 )
+        return c->vertex(li);
+
       if (! in_conflict_3(p, c)) {  // new point is hidden
 	c->hide_point(p);
 	return Vertex_handle();
@@ -745,6 +747,11 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
       case Tr_Base::EDGE:
       case Tr_Base::VERTEX:
 	{
+          // Case of same xyz coordinates, and same weight => point discarded.
+          if ( lt == Tr_Base::VERTEX &&
+               power_test(p, c->vertex(li)->point() ) == 0 )
+            return c->vertex(li);
+
           if (! in_conflict_2(p, c, 3)) {  // new point is hidden
 	    c->hide_point (p); // remember the point
 	    return Vertex_handle();
@@ -785,6 +792,11 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
       case Tr_Base::EDGE:
       case Tr_Base::VERTEX:
 	{
+          // Case of same xyz coordinates, and same weight => point discarded.
+          if ( lt == Tr_Base::VERTEX &&
+               power_test(p, c->vertex(li)->point() ) == 0 )
+            return c->vertex(li);
+
           if (! in_conflict_1(p, c)) {  // new point is hidden
 	    c->hide_point (p); // remember the point
 	    return Vertex_handle();

@@ -1,3 +1,7 @@
+7 November 2004 Sylvain Pion
+- Regular::insert() : discard point when same xyz coordinates and
+  same weight as an existing vertex.
+
 6 November 2004 Sylvain Pion
 - Add move_point() to Regular_3 (not documented because not tested yet).
 - Add test-suite program test_regular_as_delaunay_3.
