@@ -53,11 +53,11 @@ sub unpack_results()
 	or die "to_zipped_format failed. Test collection not installed.\n";
 }
 
-sub notify()
+sub oldnotify()
 {
     my $resultfile;
     open NOTICE,
-    "|$mail_prog \"New test results ($cgal_version)\" 'cgal-develop-l\@postino.mpi-sb.mpg.de'";
+    "|$mail_prog \"New test results for $cgal_version\" 'geert\@cs.uu.nl'";
     print NOTICE <<"TOTHIER";
 Results for the following platforms have been installed on
 http://www.cs.uu.nl/CGAL/Members/Develop/testsuite/results.html 
@@ -70,6 +70,11 @@ TOTHIER
         print NOTICE $resultfile, "\n";
     }
     close NOTICE;
+}
+
+sub notify()
+{
+    my $resultfile;
 
 # new notification method
 

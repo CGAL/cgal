@@ -12,7 +12,7 @@ then
         for file in $files
         do
             base=`basename $file`
-            if $notify -s "New test results for release ${base}" 'geert@cs.uu.nl' < $file
+            if $notify -s "New test results (${base})" 'cgal-develop-l@postino.mpi-sb.mpg.de' < $file
 	    then
 	        rm -f $file
 	    fi
