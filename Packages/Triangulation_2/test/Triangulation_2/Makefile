@@ -20,7 +20,9 @@ CXXFLAGS = \
 	-I./include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS)\
-	-g 
+	-DCGAL_NO_PRECONDITIONS -DCGAL_NO_ASSERTIONS -DCGAL_NO_POSTCONDITIONS
+#	-O
+#	-g 
 #	-B$(UTIL)/Binutils/SunOS/bin/ 
 #	$(LONG_NAME_PROBLEM_CXXFLAGS) 
 #	-g \
@@ -62,6 +64,9 @@ test_terrain : test_terrain.o
 
 terr_trian : terr_trian.o
 	$(CGAL_CXX) -o terr_trian  terr_trian.o $(LDFLAGS)
+
+essai : essai.o
+	$(CGAL_CXX) -o essai  essai.o $(LDFLAGS)
 
 test_delaunay_triangulation_2: test_delaunay_triangulation_2.o
 	$(CGAL_CXX) -o test_delaunay_triangulation_2 test_delaunay_triangulation_2.o $(LDFLAGS)
