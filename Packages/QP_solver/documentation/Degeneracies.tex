@@ -462,8 +462,8 @@ polynomials in $\varepsilon$ of the following form in the perturbed problem
 \label{def:p_x_i_tilde}
  & = &
   \frac{\varepsilon^{i+1}
-  - \left(A_{B}^{-1}\tilde{A}_{\hat{N}}\right)_{x_{i}}
-  \epsilon_{\hat{N}}}{q_{x_{i}}}
+  - \left(A_{B}^{-1}\tilde{A}_{N \setminus \{j\}}\right)_{x_{i}}
+  \epsilon_{N \setminus \{j\}}}{q_{x_{i}}}
   + \varepsilon^{j+1}
 \end{eqnarray}
 Note, that always either $\tilde{p}_{x_{i_{1}}}^{(L)}
@@ -601,7 +601,7 @@ Definition~(\ref{def:p_x_i_tilde}),
 but for some shift in the indexing function.
 
  
-\subsection{Transition to phaseII}
+\subsection{Transition to PhaseII}
 For the sake of notational convenience we assume here that the index set of the
 artificial variables $art\setminus \{\tilde{a}^{s}\}$ is defined as
 $art\setminus \{\tilde{a}^{s}\}=\{l+1 \ldots l+\left|E\right| \}$,
@@ -665,124 +665,19 @@ $j \in S \setminus B_{S}$ such that
 holds, if $\tilde{a}^{s}$ appears in $k$-th position in the basis heading
 $B$. By Lemma~(\ref{lem:art_BxN_zero}) on the other hand we have
 \begin{equation*}
-\left(A_{B}^{-1}\tilde{A}_{\bullet,j}\right)_{k} = 0
-\end{equation*} 
+\left(A_{B}^{-1}\tilde{A}_{\bullet,j}\right)_{k} = 0,
+\end{equation*}
 so $ind(\tilde{a}^{s}) \in N$.
 
-\subsubsection{Removing nonbasic artificial variables}
-\marginpar{variable index issue: subsubsection adapted}
-In order to remove a nonbasic artificial variable \xe{j}, $j \in N \cap art$, we
-have to increase its value from its current value $-\varepsilon^{j+1}$ to zero,
-without the basic variables becoming infeasible.
-Since by feasibility
-\begin{equation*} 
-\frac{\xe{i}+ \varepsilon^{i+1}}
-{\left(\tilde{A}_{B}^{-1}\tilde{A}_{N}\right)_{i, j}}
-> 
-\varepsilon^{j+1},
-\quad \text{with} \quad \left(\tilde{A}_{B}^{-1}\tilde{A}_{N}\right)_{i, j} >0,
-%\quad i \in B, \quad j \in N, \quad i <j
-\end{equation*}
-holds for any $i \in B$ and $j \in N$ with $i < j$,
-by the requirement~(\ref{req:order_eps}) this increment is always possible
-with respect to basic variables \xe{i} with
-$i \in B \setminus art$, thus, the only variables
-that may become infeasible while increasing the value of some
-\xe{j} with $j \in N \cap art$ are the basic artificial variables
-\xe{i} with $i \in B \cap art$, $j<i$ and
-$(\tilde{A}_{B}^{-1}\tilde{A})_{i,j} >0$. So given a basis $B$, if we define
-\begin{eqnarray}
-l(N,art):=\min_{j \in N \cap art}j
-&&
-u(B, art):=\max_{i \in B \cap art}i
-\end{eqnarray}
-and
-\begin{eqnarray}
-\can{B}{N}{art}
-&:=&
-\{j \in N \cap art\left|\right. j < u(B, art)\} \\
-\cab{B}{N}{art}
-&:=&
-\{i \in B \cap art\left|\right. i > l(N, art)\}
-\end{eqnarray}
-then \xe{i} with $i \in B \cap art \setminus \cab{B}{N}{art}$
-remain feasible for
-any increase $\varepsilon^{j+1}$ for $x_{j}(\varepsilon)$ with
-$j \in N \cap art$ and \xe{j} with
-$j \in N \cap art \setminus \can{B}{N}{art}$
-may be increased to zero without rendering any basic variable
-\xe{i} with $i \in B \cap art$ infeasible. Thus critical regarding
-feasibility are increases by $\varepsilon^{j+1}$ of nonbasic variables
-\xe{j} with $j \in \can{B}{N}{art}$
-with respect to basic variables \xe{i} with
-$i \in \cab{B}{N}{art}$.
-
-Therefore we can increase the values of the variables \xe{j},
-$j \in N \cap art \setminus \can{B}{N}{art}$,
-from $-\varepsilon^{j+1}$ to zero and remove them without the basic feasible
-solution \xe{B} becoming infeasible.
-Let $B^{(0)}, N^{(0)}, art^{(0)}$ with $B=B^{(0)}$ denote the set of
-basic, nonbasic and artificial variables after this step.
-Consider the submatrix
-$(\tilde{A}_{B^{(0)}}^{-1}\tilde{A}_{N^{(0)}})_
-{\cab{B^{(0)}}{N^{(0)}}{art^{(0)}}, \can{B^{(0)}}{N^{(0)}}{art^{(0)}}}$
-and let $j_{1}$ denote the element of \can{B^{(0)}}{N^{(0)}}{art^{(0)}}
-with smallest index, 
-by feasibility for $i \in \cab{B^{(0)}}{N^{(0)}}{art^{(0)}}$ we have either
+\subsubsection{Removing artificial variables}
+By Lemma~(\ref{lem:art_BxN_zero})
 \begin{equation}
-(\tilde{A}_{B^{(0)}}^{-1}A_{N^{(0)}})_{i,j_{1}}=0 \quad i \in
-  \cab{B^{(0)}}{N^{(0)}}{art^{(0)}}
-\end{equation} 
-or there exist $i \in \cab{B^{(0)}}{N^{(0)}}{art^{(0)}}$ with
-\begin{equation}
-(\tilde{A}_{B^{(0)}}^{-1}A_{N^{(0)}})_{i,j_{1}}>0
+e_{i}^{T}A_{B}^{-1}\tilde{A}_{N \setminus art}=0, \quad i \in B_{O} \cap art
 \end{equation}
-thus either we can increase the value of \xe{j_{1}} to zero and remove the
-artificial variable \xe{j_{1}} or we can do a pivot with \xe{j_{1}} entering
-and some \xe{i_{k}} with $i_{k} \in \cab{B^{(0)}}{N^{(0)}}{art^{(0)}}$ leaving.
-Note, that in both cases
-\begin{equation}
-l(N^{(0)}, art^{(0)}) < l(N^{(1)}, art^{(1)})
-\quad
-u(B^{(0)}, art^{(0)}) \geq u(B^{(1)}, art^{(1)})
-\end{equation}
-holds, if $B^{(1)}, N^{(1)}, art^{(1)}$ denotes the set of basic, nonbasic and
-artificial variables after the step.
-We continue doing so until $u(B^{(k)}, art^{(k)}) < l(N^{(k)}, art^{(k)})$ for
-some $k$. We can then increase \xe{j} from $-\varepsilon^{j+1}$ to zero for
-$j \in N^{(k)} \cap art^{(k)}$ and remove it with $\xe{B^{(k)}}$ remaining
-feasible.
-If the basic feasible solution \xe{B^{(k+1)}} obtained in this way is optimal,
-we proceed with the removal of basic artificial variables described in the next
-subsubsection. In case the basic feasible solution is no longer optimal
-we optimize again, some basic
-artificial variables may be nonbasic in the optimal solution
-\xe{B^{(k+1)^{\prime}}} such that they cannot be removed without
-rendering \xe{B^{(k+1)^{\prime}}} infeasible, that is  
-\begin{equation}
-\emptyset
-\subset
-\can{B^{(k+1)^{\prime}}}{N^{(k+1)^{\prime}}}{art^{(k+1)^{\prime}}}
-\end{equation}
-such that we repeat the procedure described above until we obtain
-an optimal basic feasible solution $\xe{B}$ such that
-$\can{B}{N}{art}=\emptyset$.
-    
-\subsubsection{Removing basic artificial variables}
-\marginpar{variable index issue: subsubsection adapted}
-Let $B^{(k+1)}, N^{(k+1)}$ and $art^{(k+1)}$ with $B^{(k)}=B^{(k+1)}$
-denote the set of basic, nonbasic and artificial variables after the last step
-of the previous subsubsection.
-Because of Lemma~(\ref{lem:art_BxN_zero})
-the basic feasible solution \xe{B^{(k+1)}} then
-has \xe{i}=0 for $i \in B^{(k+1)} \cap art^{(k+1)}$, or put differently
-\begin{equation}
-\left(\tilde{A}_{B^{(k+1)}}^{-1}\tilde{A}_{N^{(k+1)}}\right)_{i,j}=0,
-\quad i \in B^{(k+1)} \cap art^{(k+1)}, j \in N^{(k+1)}
-\end{equation}
-holds, such that we can apply the same procedure that removes
-the artificial variables \xe{i}, $i \in B^{(k+1)} \cap art^{(k+1)}$ together
-with their constraints $\sigma(i) \in E$ in the unperturbed case. 
+holds for the optimal solution of the auxiliary problem, such that by the proof
+in \cite{Chvatal}, Chapter~8, the equality constraints
+$A_{i}$, $i \in J=\sigma(art \cap B_{O})$ are linear combinations of the equality
+constraints $A_{i}$, $i \in E \setminus J$.
 \subsection{The lexicographic method in phaseII}
 Since the nonbasic variables are no longer zero, the objective function as well as
 the values of the basic variables are no longer independent of the nonbasic
@@ -2121,7 +2016,8 @@ of the coefficient is obtained by scaling the subexpression with the factor
 $q_{x_{i}}^{-1}$.  
 We will distinguish the two
 possibilities $i \in B_{O}$ and $i \in B_{S}$ for $x_{i}$ as well as the
-various possibilities for $k \in \hat{N}$ in phaseI. 
+various possibilities for $k \in \hat{N}$ in phaseI.
+ 
 \subsubsection{LP/QP-case: $\tilde{p}_{x_{i}}^{(L)}(\varepsilon, B)$}
 \paragraph{$\mathbf{i \in B_{O}}$:}
 Assuming $i \in B_{O}$ we distinguish
@@ -2132,17 +2028,21 @@ following cases for $k \in \hat{N}$:
 \item $k \in \hat{N} \cap S$:
 \begin{eqnarray}
  (A_{B}^{-1}\tilde{A}_{k})_{x_{i}} &=&
-  (A_{B}^{-1})_{x_{i}, B_{O} \cup B_{S}}\tilde{A}_{C \cup S_{B}, k}
+  (A_{B}^{-1})_{x_{i}, C \cup S_{B}}\tilde{A}_{C \cup S_{B}, k}
   \nonumber \\
   &=&
-  (A_{B}^{-1})_{x_{i}, B_{O}}\tilde{A}_{C, k} +
-  (A_{B}^{-1})_{x_{i}, B_{S}}\tilde{A}_{S_{B}, k} 
+  (A_{B}^{-1})_{x_{i}, C}\tilde{A}_{C, k} +
+  (A_{B}^{-1})_{x_{i}, S_{B}}\tilde{A}_{S_{B}, k} 
+  \nonumber \\
+  &&\begin{minipage}{9cm}
+    because of $\tilde{A}_{S_{B},k}=0$ for $k \in \hat{N} \cap S$ this yields
+  \end{minipage}
   \nonumber \\
   &=&  
-  (A_{B}^{-1})_{x_{i}, B_{O}}\tilde{A}_{C, k} 
+  (A_{B}^{-1})_{x_{i}, C}\tilde{A}_{C, k} 
   \nonumber \\
   &=&
-  \left(\check{A}_{B}^{-1}\right)_{\beta_{O}(i)}\tilde{A}_{C, k}
+  \left(\check{A}_{B}^{-1}\right)_{\beta_{O}(i),C}\tilde{A}_{C, k}
   \nonumber \\
   &=&
   \left(\check{A}_{B}^{-1}\right)_{\beta_{O}(i), \gamma_{C}(\sigma(k))}
@@ -2151,17 +2051,22 @@ following cases for $k \in \hat{N}$:
 \item $k \in \hat{N} \cap art \setminus \{\tilde{a}^{s}\}$:
 \begin{eqnarray}
   (A_{B}^{-1}\tilde{A}_{k})_{x_{i}} &=&
-  (A_{B}^{-1})_{x_{i}, B_{O} \cup B_{S}}\tilde{A}_{C \cup S_{B}, k}
+  (A_{B}^{-1})_{x_{i}, C \cup S_{B}}\tilde{A}_{C \cup S_{B}, k}
   \nonumber \\
   &=&
-  (A_{B}^{-1})_{x_{i}, B_{O}}\tilde{A}_{C, k} +
-  (A_{B}^{-1})_{x_{i}, B_{S}}\tilde{A}_{S_{B}, k} 
+  (A_{B}^{-1})_{x_{i}, C}\tilde{A}_{C, k} +
+  (A_{B}^{-1})_{x_{i}, S_{B}}\tilde{A}_{S_{B}, k} 
+  \nonumber \\
+  &&\begin{minipage}{9cm}
+    because of $\tilde{A}_{S_{B},k}=0$ for
+    $k \in \hat{N} \cap art \setminus \{\tilde{a}^{s}\}$ this yields
+  \end{minipage}
+  \nonumber \\   
+  &=&
+  (A_{B}^{-1})_{x_{i}, C}\tilde{A}_{C, k} 
   \nonumber \\ 
   &=&
-  (A_{B}^{-1})_{x_{i}, B_{O}}\tilde{A}_{C, k} 
-  \nonumber \\ 
-  &=&
-  \left(\check{A}_{B}^{-1}\right)_{\beta_{O}(i)}\tilde{A}_{C, k}
+  \left(\check{A}_{B}^{-1}\right)_{\beta_{O}(i), C}\tilde{A}_{C, k}
   \nonumber \\
   &=&
   \left(\check{A}_{B}^{-1}\right)_{\beta_{O}(i), \gamma_{C}(\sigma(k))}
@@ -2170,21 +2075,30 @@ following cases for $k \in \hat{N}$:
 \item $\tilde{A}_{k}=\tilde{a}^{s}$:
 \begin{eqnarray}
   (A_{B}^{-1}\tilde{A}_{k})_{x_{i}} &=& 
-  (A_{B}^{-1})_{x_{i}, B_{O} \cup B_{S}} \tilde{a}_{C \cup S_{B}}^{s}
+  (A_{B}^{-1})_{x_{i}, C \cup S_{B}} \tilde{a}_{C \cup S_{B}}^{s}
   \nonumber \\
   &=&
-  (A_{B}^{-1})_{x_{i}, B_{O}}\tilde{a}_{C}^{s} +
-  (A_{B}^{-1})_{x_{i}, B_{S}}\tilde{a}_{S_{B}}^{s} 
+  (A_{B}^{-1})_{x_{i}, C}\tilde{a}_{C}^{s} +
+  (A_{B}^{-1})_{x_{i}, S_{B}}\tilde{a}_{S_{B}}^{s} 
+  \nonumber \\
+  &&\begin{minipage}{9cm}
+    by Equation~(\ref{eq:A_B_inv_exp})
+    $\left(A_{B}^{-1}\right)_{B_{O}, S_{B}}=0$ holds, so
+  \end{minipage}
   \nonumber \\
   &=&
-  (A_{B}^{-1})_{x_{i}, B_{O}}\tilde{a}_{C}^{s}
+  (A_{B}^{-1})_{x_{i}, C}\tilde{a}_{C}^{s}
   \nonumber \\
   &=&
-  \left(\check{A}_{B}^{-1}\right)_{\beta_{O}(i)}\tilde{a}_{C}^{s} 
+  \left(\check{A}_{B}^{-1}\right)_{\beta_{O}(i),C}\tilde{a}_{C}^{s} 
   \nonumber \\
   &=&
   \left(\check{A}_{B}^{-1}\right)_{\beta_{O}(i), E}\tilde{a}_{E}^{s}
   +\left(\check{A}_{B}^{-1}\right)_{\beta_{O}(i), S_{N}}\tilde{a}_{S_{N}}^{s}
+  \nonumber \\
+  &&\begin{minipage}{9cm}
+  because of $\tilde{a}^{s}_{E}=0$ this yields
+  \end{minipage}
   \nonumber \\
   &=&
   \left(\check{A}_{B}^{-1}\right)_{\beta_{O}(i), S_{N}}\tilde{a}_{S_N}^{s}
@@ -2192,17 +2106,22 @@ following cases for $k \in \hat{N}$:
 \item $k \in \hat{N} \cap O$:
 \begin{eqnarray}
   (A_{B}^{-1}\tilde{A}_{k})_{x_{i}} &=&
-  (A_{B}^{-1})_{x_{i}, B_{O} \cup B_{S}}\tilde{A}_{C \cup S_{B}, k}
+  (A_{B}^{-1})_{x_{i}, C \cup S_{B}}\tilde{A}_{C \cup S_{B}, k}
   \nonumber \\
   &=&
-  (A_{B}^{-1})_{x_{i}, B_{O}}\tilde{A}_{C, k} +
-  (A_{B}^{-1})_{x_{i}, B_{S}}\tilde{A}_{S_{B}, k}
+  (A_{B}^{-1})_{x_{i}, C}\tilde{A}_{C, k} +
+  (A_{B}^{-1})_{x_{i}, S_{B}}\tilde{A}_{S_{B}, k}
   \nonumber \\
-  &=&
-  (A_{B}^{-1})_{x_{i}, B_{O}}\tilde{A}_{C, k}
+  &&\begin{minipage}{9cm}
+    by Equation~(\ref{eq:A_B_inv_exp})
+    $\left(A_{B}^{-1}\right)_{B_{O}, S_{B}}=0$ holds, so
+  \end{minipage}
   \nonumber \\  
   &=&
-  \left(\check{A}_{B}^{-1}\right)_{\beta_{O}(i)}\tilde{A}_{C,k} 
+  (A_{B}^{-1})_{x_{i}, C}\tilde{A}_{C, k}
+  \nonumber \\  
+  &=&
+  \left(\check{A}_{B}^{-1}\right)_{\beta_{O}(i),C}\tilde{A}_{C,k} 
 \end{eqnarray}
 \end{enumerate}
 
@@ -2215,24 +2134,28 @@ the following cases for $k \in \hat{N}$:
 \item $k \in \hat{N} \cap S$:
 \begin{eqnarray}
   (A_{B}^{-1}\tilde{A}_{k})_{x_{i}} &=& 
-  (A_{B}^{-1})_{x_{i}, B_{O} \cup B_{S}}\tilde{A}_{C \cup S_{B}, k}
+  (A_{B}^{-1})_{x_{i}, C \cup S_{B}}\tilde{A}_{C \cup S_{B}, k}
   \nonumber \\
   &=& 
-  (A_{B}^{-1})_{x_{i}, B_{O}}\tilde{A}_{C, k} +
-  (A_{B}^{-1})_{x_{i}, B_{S}}\tilde{A}_{S_{B}, k}
+  (A_{B}^{-1})_{x_{i}, C}\tilde{A}_{C, k} +
+  (A_{B}^{-1})_{x_{i}, S_{B}}\tilde{A}_{S_{B}, k}
+  \nonumber \\
+  &&\begin{minipage}{9cm}
+  because of $\tilde{A}_{S_{B}, k}=0$ for $k \in \hat{N} \cap S$ this yields
+  \end{minipage}
   \nonumber \\
   &=&
-  (A_{B}^{-1})_{x_{i}, B_{O}}\tilde{A}_{C, k}
+  (A_{B}^{-1})_{x_{i}, C}\tilde{A}_{C, k}
   \nonumber \\ 
   &=&
-  -\left(\alpha\check{A}_{B}^{-1}\right)_{\beta_{S}(i)}\tilde{A}_{C, k}
+  \left(\alpha\check{A}_{B}^{-1}\right)_{\beta_{S}(i), C}\tilde{A}_{C, k}
   \nonumber \\
   &=&
-  -\left(\alpha\check{A}_{B}^{-1}\right)_{\beta_{S}(i), \gamma_{C}(\sigma(k))}
+  \left(\alpha\check{A}_{B}^{-1}\right)_{\beta_{S}(i), \gamma_{C}(\sigma(k))}
   \tilde{A}_{\sigma(k), k}
   \nonumber \\
   &=&
-  -\left(\alpha\right)_{\beta_{S}(i)}
+  \left(\alpha\right)_{\beta_{S}(i)}
   \left(\check{A}_{B}^{-1}\right)_{\bullet, \gamma_{C}(\sigma(k))}
   \tilde{A}_{\sigma(k), k}
   \nonumber
@@ -2248,24 +2171,29 @@ Using Equation~(\ref{eq:alpha_beta_S}) we obtain
 \item $k \in \hat{N} \cap art \setminus \{\tilde{a}^{s}\}$:
 \begin{eqnarray}
   (A_{B}^{-1}\tilde{A}_{k})_{x_{i}} &=& 
-  (A_{B}^{-1})_{x_{i}, B_{O} \cup B_{S}}\tilde{A}_{C \cup S_{B}, k}
+  (A_{B}^{-1})_{x_{i}, C \cup S_{B}}\tilde{A}_{C \cup S_{B}, k}
   \nonumber \\
   &=&
-  (A_{B}^{-1})_{x_{i}, B_{O}}\tilde{A}_{C, k} +
-  (A_{B}^{-1})_{x_{i}, B_{S}}\tilde{A}_{S_{B}, k} 
+  (A_{B}^{-1})_{x_{i}, C}\tilde{A}_{C, k} +
+  (A_{B}^{-1})_{x_{i}, S_{B}}\tilde{A}_{S_{B}, k} 
   \nonumber \\
+  &&\begin{minipage}{9cm}
+  because of $\tilde{A}_{S_{B}, k}=0$ for
+  $k \in \hat{N} \cap art \setminus \{ \tilde{a}^{s} \}$ this yields
+  \end{minipage}
+  \nonumber \\  
   &=&
-  (A_{B}^{-1})_{x_{i}, B_{O}}\tilde{A}_{C, k}
+  (A_{B}^{-1})_{x_{i}, C}\tilde{A}_{C, k}
   \nonumber \\ 
   &=&
-  -\left(\alpha\check{A}_{B}^{-1}\right)_{\beta_{S}(i)}\tilde{A}_{C, k}
+  \left(\alpha\check{A}_{B}^{-1}\right)_{\beta_{S}(i),C}\tilde{A}_{C, k}
   \nonumber \\
   &=&
-  -\left(\alpha\check{A}_{B}^{-1}\right)_{\beta_{S}(i), \gamma_{C}(\sigma(k))}
+  \left(\alpha\check{A}_{B}^{-1}\right)_{\beta_{S}(i), \gamma_{C}(\sigma(k))}
   \tilde{A}_{\sigma(k), k}
   \nonumber \\
   &=&
-  -\left(\alpha\right)_{\beta_{S}(i)}
+  \left(\alpha\right)_{\beta_{S}(i)}
   \left(\check{A}_{B}^{-1}\right)_{\bullet, \gamma_{C}(\sigma(k))}
   \tilde{A}_{\sigma(k), k}
   \nonumber
@@ -2280,24 +2208,28 @@ Using Equation~(\ref{eq:alpha_beta_S}) we obtain
 \item $\tilde{A}_{k}=\tilde{a}^{s}$:
 \begin{eqnarray}
   (A_{B}^{-1}\tilde{A}_{k})_{x_{i}} &=& 
-  (A_{B}^{-1})_{x_{i}, B_{O} \cup B_{S}}\tilde{a}_{C \cup S_{B}}^{s}
+  (A_{B}^{-1})_{x_{i}, C \cup S_{B}}\tilde{a}_{C \cup S_{B}}^{s}
   \nonumber \\
   &=&
-  (A_{B}^{-1})_{x_{i}, B_{O}}\tilde{a}_{C}^{s} +
-  (A_{B}^{-1})_{x_{i}, B_{S}}\tilde{a}_{S_{B}}^{s}
+  (A_{B}^{-1})_{x_{i}, C}\tilde{a}_{C}^{s} +
+  (A_{B}^{-1})_{x_{i}, S_{B}}\tilde{a}_{S_{B}}^{s}
   \nonumber \\
   &=&
-  -(\alpha\check{A}_{B}^{-1})_{\beta_{S}(i)}\tilde{a}_{C}^{s} +
-  (A_{S_{B}, B_{S}}^{T})_{\beta_{S}(i)}\tilde{a}_{S_{B}}^{s}
+  (\alpha\check{A}_{B}^{-1})_{\beta_{S}(i),C}\tilde{a}_{C}^{s}
+  +(A_{S_{B}, B_{S}}^{T})_{\beta_{S}(i), S_{B}}\tilde{a}_{S_{B}}^{s}
   \nonumber \\ 
   &=&
-  -(\alpha\check{A}_{B}^{-1})_{\beta_{S}(i), E}\tilde{a}_{E}^{s}
-  -(\alpha\check{A}_{B}^{-1})_{\beta_{S}(i), S_{N}}\tilde{a}_{S_{N}}^{s}
-  + \tilde{A}_{\sigma(i), i}\tilde{a}_{\sigma(i)}^{s}
+  (\alpha\check{A}_{B}^{-1})_{\beta_{S}(i), E}\tilde{a}_{E}^{s}
+  +(\alpha\check{A}_{B}^{-1})_{\beta_{S}(i), S_{N}}\tilde{a}_{S_{N}}^{s}
+  + \tilde{A}_{\sigma(i), i}\tilde{a}_{\gamma_{S_{B}}(\sigma(i))}^{s}
+  \nonumber \\
+  &&\begin{minipage}{9cm}
+  because of $\tilde{a}_{E}^{s}=0$ this yields
+  \end{minipage}
   \nonumber \\
   &=&
-  -(\alpha\check{A}_{B}^{-1})_{\beta_{S}(i), S_{N}}\tilde{a}_{S_{N}}^{s}
-  + \tilde{A}_{\sigma(i), i}\tilde{a}_{\sigma(i)}^{s}
+  (\alpha\check{A}_{B}^{-1})_{\beta_{S}(i), S_{N}}\tilde{a}_{S_{N}}^{s}
+  + \tilde{A}_{\sigma(i), i}\tilde{a}_{\gamma_{S_{B}}(\sigma(i))}^{s}
   \nonumber  
 \end{eqnarray}
 Using Equation~(\ref{eq:alpha_beta_S}) we obtain
@@ -2305,24 +2237,24 @@ Using Equation~(\ref{eq:alpha_beta_S}) we obtain
 (A_{B}^{-1}\tilde{A}_{k})_{x_{i}} =
 -\tilde{A}_{\sigma(i), i}\tilde{A}_{\sigma(i), B_{O}}
 \left(\check{A}_{B}^{-1}\right)_{\bullet, S_{N}}\tilde{a}_{S_{N}}^{s}
-+\tilde{A}_{\sigma(i), i}\tilde{a}_{\sigma(i)}^{s} 
++\tilde{A}_{\sigma(i), i}\tilde{a}_{\gamma_{S_{B}}(\sigma(i))}^{s} 
 \end{equation}
 \item $k \in \hat{N} \cap O$:
 \begin{eqnarray}
   (A_{B}^{-1}\tilde{A}_{k})_{x_{i}} &=& 
-  (A_{B}^{-1})_{x_{i}, B_{O} \cup B_{S}}\tilde{A}_{C \cup S_{B}, k}
+  (A_{B}^{-1})_{x_{i}, C \cup S_{B}}\tilde{A}_{C \cup S_{B}, k}
   \nonumber \\
   &=&
-  (A_{B}^{-1})_{x_{i}, B_{O}}\tilde{A}_{C, k} +
-  (A_{B}^{-1})_{x_{i}, B_{S}}\tilde{A}_{S_{B}, k}
+  (A_{B}^{-1})_{x_{i}, C}\tilde{A}_{C, k} +
+  (A_{B}^{-1})_{x_{i}, S_{B}}\tilde{A}_{S_{B}, k}
   \nonumber \\
   &=&
-  -(\alpha\check{A}_{B}^{-1})_{\beta_{S}(i)}\tilde{A}_{C, k}
-  + (A_{S_{B}, B_{S}}^{T})_{\beta_{S}(i)}\tilde{A}_{S_{B}, k}
+  (\alpha\check{A}_{B}^{-1})_{\beta_{S}(i),C}\tilde{A}_{C, k}
+  + (A_{S_{B}, B_{S}}^{T})_{\beta_{S}(i), S_{B}}\tilde{A}_{S_{B}, k}
   \nonumber \\
   &=&
-  -\left(\alpha\right)_{\beta_{S}(i)}\check{A}_{B}^{-1}\tilde{A}_{C,k}
-  +\tilde{A}_{\sigma(i),i}\tilde{A}_{\sigma(i),k}
+  \left(\alpha\right)_{\beta_{S}(i)}\check{A}_{B}^{-1}\tilde{A}_{C,k}
+  +\tilde{A}_{\sigma(i),i}\tilde{A}_{\gamma_{S_{B}}(\sigma(i)),k}
   \nonumber
 \end{eqnarray}
 Using Equation~(\ref{eq:alpha_beta_S}) we obtain
@@ -2330,7 +2262,7 @@ Using Equation~(\ref{eq:alpha_beta_S}) we obtain
   (A_{B}^{-1}\tilde{A}_{k})_{x_{i}} =
   -\tilde{A}_{\sigma(i), i}\tilde{A}_{\sigma(i), B_{O}}
   \check{A}_{B}^{-1}\tilde{A}_{C, k}
-  +\tilde{A}_{\sigma(i), i}\tilde{A}_{\sigma(i), k}
+  +\tilde{A}_{\sigma(i), i}\tilde{A}_{\gamma{S_{B}}(\sigma(i)), k}
 \end{equation}
 \end{enumerate}
 
@@ -2364,12 +2296,12 @@ p_{x_{i}}^{(Q_{1})}\left(\varepsilon, B\right) &:=&
 \frac{\varepsilon^{i+1} -
          \left(M_{B}^{-1}
            \left(\begin{array}{c}
-                    A_{\hat{N}}  \\
+                    A_{N \setminus \{j\}}  \\
 	            \hline
-	            2D_{B, \hat{N}}
+	            2D_{B, N \setminus \{j\}}
 	         \end{array}
 	   \right)
-         \right)_{x_{i}}\epsilon_{\hat{N}}}{q_{x_{i}}}
+         \right)_{x_{i}}\epsilon_{N \setminus \{j\}}}{q_{x_{i}}}
 + \varepsilon^{j+1}
 \end{eqnarray*}
 Again, we will only consider the coefficients of
@@ -2427,15 +2359,16 @@ the following cases for $k \in \hat{N}$:
 +2\left(M_{B}^{-1}\right)_{x_{i}, B_{S}}D_{B_{S}, k}
 \nonumber \\
 &&\begin{minipage}{9cm}
-because of $\left(M_{B}^{-1}\right)_{B_{O}, S_{B}}=0$, $D_{B_{O}, k}=0$
-for $k \in N \cap S$ and $D_{B_{S},k}=0$ this yields 
+by Equation~(\ref{eq:M_B_inv_exp}) $\left(M_{B}^{-1}\right)_{B_{O}, S_{B}}=0$,
+and because of $D_{B_{O}, k}=0$ for $k \in N \cap S$
+and $D_{B_{S},k}=0$ this yields 
 \end{minipage}
 \nonumber \\
 &=&
 \left(M_{B}^{-1}\right)_{x_{i}, C}A_{C, k}
 \nonumber \\
 &=&
-\left(\check{M}_{B}^{-1}\right)_{\beta_{O}(i)}A_{C, k}
+\left(\check{M}_{B}^{-1}\right)_{\beta_{O}(i),C}A_{C, k}
 \nonumber \\
 &=&
 \left(\check{M}_{B}^{-1}\right)_{\beta_{O}(i), \gamma_{C}(\sigma(k))}
@@ -2467,8 +2400,8 @@ for $k \in N \cap S$ and $D_{B_{S},k}=0$ this yields
 +2\left(M_{B}^{-1}\right)_{x_{i}, B_{S}}D_{B_{S}, k}
 \nonumber \\
 &&\begin{minipage}{9cm}
-because of $\left(M_{B}^{-1}\right)_{B_{O}, S_{B}}=0$ and
-$D_{B_{S},k}=0$ this yields 
+by Equation~(\ref{eq:M_B_inv_exp}) $\left(M_{B}^{-1}\right)_{B_{O}, S_{B}}=0$
+and because of $D_{B_{S},k}=0$ this yields 
 \end{minipage}
 \nonumber \\
 &=&
@@ -2476,8 +2409,8 @@ $D_{B_{S},k}=0$ this yields
 +2\left(M_{B}^{-1}\right)_{x_{i}, B_{O}}D_{B_{O}, k}
 \nonumber \\
 &=&
-\left(\check{M}_{B}^{-1}\right)_{\beta_{O}(i)}A_{C,k}
-+2\left(\check{M}_{B}^{-1}\right)_{\beta_{O}(i)}D_{B_{O}, k}
+\left(\check{M}_{B}^{-1}\right)_{\beta_{O}(i),C}A_{C,k}
++2\left(\check{M}_{B}^{-1}\right)_{\beta_{O}(i), B_{O}}D_{B_{O}, k}
 \nonumber \\
 &=&
 \left(\check{M}_{B}^{-1}\right)_{\beta_{O}(i)}
@@ -2530,7 +2463,7 @@ $k \in N \cap S$ and $D_{B_{S}, k}=0$ this yields
 \left(M_{B}^{-1}\right)_{x_{i}, C}A_{C, k}
 \nonumber \\
 &=&
-\left(\check{M}_{B}^{-1}\right)_{\beta_{S}(i)}A_{C, k}
+\left(\check{M}_{B}^{-1}\right)_{\beta_{S}(i), C}A_{C, k}
 \nonumber \\
 &=&
 \left(\check{M}_{B}^{-1}\right)_{\beta_{S}(i), \gamma_{C}(\sigma(k))}
@@ -2588,8 +2521,7 @@ because of $D_{B_{S}, k}=0$ this yields
 +A_{\sigma(i), i}A_{\gamma_{S_{B}}(\sigma(i)), k}
 \nonumber \\
 &=&
-\left(\alpha\right)_{\beta_{S}(i)}\left(\check{M}_{B}^{-1}\right)_{B_{O},
-  C \cup B_{O}}
+\left(\alpha\right)_{\beta_{S}(i)}\left(\check{M}_{B}^{-1}\right)_{B_{O}}
 \left(\begin{array}{c}
         A_{C,k} \\
 	\hline
@@ -2611,8 +2543,7 @@ Using Equation~(\ref{eq:alpha_beta_S}) we obtain
            \right)
 \right)_{x_{i}}
 &=&
--A_{\sigma(i),i}A_{\sigma(i), B_{O}}\left(\check{M}_{B}^{-1}\right)_{B_{O},
-  C \cup B_{O}}
+-A_{\sigma(i),i}A_{\sigma(i), B_{O}}\left(\check{M}_{B}^{-1}\right)_{B_{O}}
 \left(\begin{array}{c}
         A_{C,k} \\
 	\hline
@@ -2631,28 +2562,30 @@ For ease of reference, we restate the Definition~(\ref{def:p_mu_j_Q_1}),
 of \pmu{Q_{1}}{B}
 \begin{eqnarray*}
 \pmu{Q_{1}}{B} &:=& 
-  -\frac{2D_{j, \hat{N}} -
+  -\frac{2D_{j, N \setminus \{j\}} -
     \left(A_{j}^{T} \left| \right. 2D_{B, j}^{T} \right)
     M_{B}^{-1}
     \left(\begin{array}{c}
-            A_{\hat{N}} \\
+            A_{N \setminus \{j\}} \\
 	    \hline
-	    2D_{B,\hat{N}}
+	    2D_{B,N \setminus \{j\}}
 	  \end{array}
     \right)}{\nu}
-  \epsilon_{\hat{N}}
+  \epsilon_{N \setminus \{j\}}
+\\
+&&
   +\varepsilon^{j+1}
 \\
 &=&
-  -\frac{2D_{j, \hat{N}} -
+  -\frac{2D_{j, N \setminus \{j\}} -
     \left(q_{\lambda}^{T} \left| \right. q_{x}^{T} \right)
     \left(\begin{array}{c}
-            A_{\hat{N}} \\
+            A_{N \setminus \{j\}} \\
 	    \hline
-	    2D_{B,\hat{N}}
+	    2D_{B,N \setminus \{j\}}
 	  \end{array}
     \right)}{\nu}
-  \epsilon_{\hat{N}}
+  \epsilon_{N \setminus \{j\}}
   +\varepsilon^{j+1}
 \end{eqnarray*}
 Again, we will only consider the coefficients of
@@ -2693,9 +2626,9 @@ q_{\lambda_{C}}
 &&
 +2\left(M_{B}^{-1}\right)_{C, B_{S}}D_{B_{S}, j}
 \nonumber \\
-&&\begin{minipage}{8cm}
-because of $D_{B_{S},j}=0$ and $\left(M_{B}^{-1}\right)_{C, S_{B}}=0$ this
-yields
+&&\begin{minipage}{9cm}
+by Equation~(\ref{eq:M_B_inv_exp}) $\left(M_{B}^{-1}\right)_{C, S_{B}}=0$
+and because of $D_{B_{S},j}=0$ this yields
 \end{minipage}
 \nonumber \\
 &=&
@@ -2715,17 +2648,18 @@ yields
 \begin{eqnarray}
 q_{\lambda_{S_{B}}}
 &=&
-\left(M_{B}^{-1}\right)_{S_{B},C}A_{S_{B},j}
+\left(M_{B}^{-1}\right)_{S_{B},C}A_{C,j}
 +\left(M_{B}^{-1}\right)_{S_{B}, S_{B}}A_{S_{B}, j}
 +2\left(M_{B}^{-1}\right)_{S_{B}, B_{O}}D_{B_{O}, j}
 \nonumber \\
 &&
 +2\left(M_{B}^{-1}\right)_{S_{B}, B_{S}}D_{B_{S}, j}
 \nonumber \\
-&&\begin{minipage}{8cm}
-because of $D_{B_{S},j}=0$ and $\left(M_{B}^{-1}\right)_{S_{B}, C}=0$,
+&&\begin{minipage}{9cm}
+by Equation~(\ref{eq:M_B_inv_exp}) $\left(M_{B}^{-1}\right)_{S_{B}, C}=0$,
 $\left(M_{B}^{-1}\right)_{S_{B}, S_{B}}=0$ and 
 $\left(M_{B}^{-1}\right)_{S_{B}, B_{O}}=0$
+and because of $D_{B_{S},j}=0$ 
 this yields
 \end{minipage}
 \nonumber \\
@@ -2744,9 +2678,9 @@ q_{x_{B_{O}}}
 &&
 +2\left(M_{B}^{-1}\right)_{B_{O}, B_{S}}D_{B_{S}, j}
 \nonumber \\
-&&\begin{minipage}{8cm}
-because of $D_{B_{S},j}=0$ and $\left(M_{B}^{-1}\right)_{B_{O}, S_{B}}=0$,
-this yields
+&&\begin{minipage}{9cm}
+by Equation~(\ref{eq:M_B_inv_exp}) $\left(M_{B}^{-1}\right)_{B_{O}, S_{B}}=0$
+and because of $D_{B_{S},j}=0$ this yields
 \end{minipage}
 \nonumber \\
 &=&
@@ -2773,7 +2707,7 @@ q_{x_{B_{S}}}
 &&
 +2\left(M_{B}^{-1}\right)_{B_{S}, B_{S}}D_{B_{S}, j}
 \nonumber \\
-&&\begin{minipage}{8cm}
+&&\begin{minipage}{9cm}
 because of $D_{B_{S},j}=0$ this yields
 \end{minipage}
 \nonumber \\
@@ -2796,7 +2730,7 @@ because of $D_{B_{S},j}=0$ this yields
 Using the definition of $\alpha$ and $q_{x_{B_{O}}}$ this can be written as
 \begin{equation}
 q_{x_{B_{S}}}=
-A_{S_{B}, B_{S}}^{T}A_{S_{B}, B_{O}}q_{x_{B_{O}}}
+-A_{S_{B}, B_{S}}^{T}A_{S_{B}, B_{O}}q_{x_{B_{O}}}
 +A_{S_{B}, B_{S}}^{T}A_{S_{B}, j}
 \end{equation}
 We are now enabled to compute the coefficients of
@@ -2959,7 +2893,7 @@ Because of $D_{j,k}=0$ for $j \in S \cap N$
 2D_{j,k} - q_{\lambda_{C}}^{T}A_{C, k} - 2q_{x_{B_{O}}}^{T}D_{B_{O},k}
 \nonumber \\
 &&\begin{minipage}{5cm}
-Because of $D_{B_{O},k}=0$, $D_{j,k}=0$ for $k \in \hat{N} \cap S$
+Because of $D_{B_{O},k}=0$, $D_{j,k}=0$ for $j \in S \cap N$
 \end{minipage}
 \nonumber \\
 &=&
@@ -2978,12 +2912,12 @@ of $p_{x_{i}}^{(Q_{2})}(\varepsilon, \hat{B})$
   \frac{\varepsilon^{i+1} -
          \left(M_{\hat{B}}^{-1}
            \left(\begin{array}{c}
-                    A_{\hat{N}}  \\
+                    A_{N \setminus \{j\}}  \\
 	            \hline
-	            2D_{\hat{B}, \hat{N}}
+	            2D_{\hat{B}, N \setminus \{j\}}
 	         \end{array}
 	   \right)
-         \right)_{x_{i}}\epsilon_{\hat{N}}}{p_{x_{i}}}
+         \right)_{x_{i}}\epsilon_{N \setminus \{j\}}}{p_{x_{i}}}
 \end{eqnarray*}
 Again, we will only consider the coefficients of
 $\varepsilon^{k+1}$ for $k \in \hat{N}= N \setminus \{j\}$ in
