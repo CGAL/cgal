@@ -173,6 +173,7 @@ element_iterator begin()
 /*{\Mop returns the element iterator pointing to the first element 
 stored.}*/
 { return element_iterator(Base::first_item(),this); }
+
 element_iterator end() 
 /*{\Mop returns the element iterator pointing beyond the last element 
 stored.}*/
@@ -182,8 +183,9 @@ void statistics() const { Base::statistics(); }
 
 };
 
-/*{\Mimplementation |Hash_maps| are implemented via LEDA chained hashing
-scheme. Access operations |M[i]| take expected time $O(1)$. }*/
+/*{\Mimplementation |Hash_maps| are implemented via chained hashing
+scheme. Access operations |M[i]| take expected time $O(1)$. 
+The design was derived from the LEDA type map. }*/
 
 CGAL_END_NAMESPACE
 
