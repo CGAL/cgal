@@ -14,6 +14,353 @@
 
 \begin{ccRefClass}{Min_annulus_d<Traits>}
 
+\ccSaveThreeColumns
+\cgalMinAnnulusLayout
+
+% -----------------------------------------------------------------------------
+\ccDefinition
+
+An object of the class \ccRefName\ is the unique annulus (region between
+two concentric spheres with radii $r$ and $R$, $r \leq R$) enclosing a
+finite set of points in $d$-dimensional Euclidean space $\E_d$, where the
+difference $R^2-r^2$ is minimal. For a point set $P$ we denote by $ma(P)$
+the smallest annulus that contains all points of $P$.  Note that $ma(P)$
+can be degenerate, i.e.~$ma(P)=\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}}$
+if $P=\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}}$ and $ma(P)=\{p\}$ if
+$P=\{p\}$.
+
+An inclusion-minimal subset $S$ of $P$ with $ma(S)=ma(P)$ is called a
+\emph{support set}, the points in $S$ are the \emph{support points}.
+A support set has size at most $d+2$, and all its points lie on the
+boundary of $ma(P)$. In general, neither the support set nor its size
+are necessarily unique.
+
+The underlying algorithm can cope with all kinds of input, e.g.~$P$ may be
+empty or points may occur more than once. The algorithm computes a support
+set $S$ which remains fixed until the next set, insert, or clear operation.
+
+The class \ccRefName\ expects a model of the concept
+\ccc{Min_annulus_d_traits} as its template argument. We provide the
+models \ccc{Min_annulus_d_traits_2}, \ccc{Min_annulus_d_traits_3}, and
+\ccc{Min_annulus_d_traits_d} for two-, three-, and $d$-dimensional
+input points, respectively.
+
+\ccInclude{CGAL/Min_annulus_d.h}
+
+% -----------------------------------------------------------------------------
+\ccTypes
+
+\ccSetTwoColumns{\ccRefName:: Point}{}
+
+\ccNestedType{ Point}{ Typedef to \ccc{Traits::Point_d}.
+        Point type used to represent the input points.}
+
+\ccNestedType{ FT}{ Typedef to \ccc{Traits::FT}.
+        Number type used to return the squared radii of the smallest
+        enclosing annulus.}
+
+\ccNestedType{ ET}{ Typedef to \ccc{Traits::ET}.
+        Number type used to do the exact computations in the underlying
+        solver for quadratic programs (cf.~\textbf{Implementation}).}
+
+\ccNestedType{ Point_iterator}{
+        Non-mutable model of the \stl\ concept \emph{RandomAccessIterator}
+        with value type \ccc{Point}. Used to access the points
+        of the smallest enclosing annulus.}
+
+\ccNestedType{ Support_point_iterator}{
+        Non-mutable model of the \stl\ concept \emph{RandomAccessIterator}
+        with value type \ccc{Point}. Used to access the support points
+        of the smallest enclosing annulus.}
+
+\ccNestedType{ Center_coordinate_iterator}{
+        Non-mutable model of the \stl\ concept \emph{RandomAccessIterator}
+        with value type \ccc{ET}. Used to access the coordinates of
+        the center of the smallest enclosing annulus.}
+
+\ccPropagateThreeToTwoColumns
+
+% -----------------------------------------------------------------------------
+\ccCreation
+\ccCreationVariable{min_annulus}
+
+\ccConstructor{ Min_annulus_d( const Traits&  traits  = Traits(),
+                               int            verbose = 0,
+                               std::ostream&  stream  = std::cout);}{
+        creates a variable of type \ccRefName\ and initializes it
+        to $ma(\mbox{\ccTexHtml{$\emptyset$}{&Oslash;}})$.}
+
+\ccConstructor{ template < class InputIterator >
+                Min_annulus_d( InputIterator  first,
+                               InputIterator  last,
+                               const Traits&  traits = Traits(),
+                               int            verbose = 0,
+                               std::ostream&  stream  = std::cout);}{
+        creates a variable \ccVar\ of type \ccRefName.
+        It is initialized to $ma(P)$ with $P$ being the set of points
+        in the range [\ccc{first},\ccc{last}).
+        \ccPrecond  The value type of \ccc{InputIterator} is \ccc{Point},
+        and all points have the same dimension.}
+
+\begin{ccAdvanced}
+  If \ccc{verbose} is set to $1$, $2$, or $3$ then some, more, or full
+  verbose output of the underlying solver for linear programs is
+  written to \ccc{stream}, resp.
+\end{ccAdvanced}
+
+% -----------------------------------------------------------------------------
+\ccAccessFunctions
+
+\ccMemberFunction{ int  ambient_dimension( ) const;}{
+        returns the dimension of the points in $P$.
+        If \ccVar\ is empty, the ambient dimension is $-1$.}
+
+\ccMemberFunction{ int  number_of_points( ) const;}{
+        returns the number of points of \ccVar, i.e.~$|P|$.}
+
+\ccMemberFunction{ int  number_of_support_points( ) const;}{
+        returns the number of support points of \ccVar, i.e.~$|S|$.}
+
+\ccMemberFunction{ int  number_of_inner_support_points( ) const;}{
+        returns the number of support points of \ccVar{}
+        which lie on the inner sphere.}
+
+\ccMemberFunction{ int  number_of_outer_support_points( ) const;}{
+        returns the number of support points of \ccVar{}
+        which lie on the outer sphere.}
+
+\medskip
+\ccGlueBegin
+\ccMemberFunction{ Point_iterator  points_begin( ) const;}{
+        returns an iterator referring to the first point of \ccVar.}
+%
+\ccMemberFunction{ Point_iterator  points_end( ) const;}{
+        returns the corresponding past-the-end iterator.}
+\ccGlueEnd
+
+\medskip
+\ccGlueBegin
+\ccMemberFunction{ Support_point_iterator  support_points_begin( ) const;}{
+        returns an iterator referring to the first support point of \ccVar.}
+%
+\ccMemberFunction{ Support_point_iterator  support_points_end( ) const;}{
+        returns the corresponding past-the-end iterator.}
+\ccGlueEnd
+
+\medskip
+\ccGlueBegin
+\ccMemberFunction{ Support_point_iterator
+                   inner_support_points_begin( ) const;}{
+        returns an iterator referring to the first inner support point
+        of \ccVar.}
+%
+\ccMemberFunction{ Support_point_iterator
+                   inner_support_points_end( ) const;}{
+        returns the corresponding past-the-end iterator.}
+\ccGlueEnd
+
+\medskip
+\ccGlueBegin
+\ccMemberFunction{ Support_point_iterator
+                   outer_support_points_begin( ) const;}{
+        returns an iterator referring to the first outer support point
+        of \ccVar.}
+%
+\ccMemberFunction{ Support_point_iterator
+                   outer_support_points_end( ) const;}{
+        returns the corresponding past-the-end iterator.}
+\ccGlueEnd
+
+\ccMemberFunction{ const Point&  center( ) const;}{
+        returns the center of \ccVar.
+        \ccPrecond \ccVar\ is not empty and an implicit conversion
+        from \ccc{ET} to \ccc{RT} must be available.}
+
+\ccMemberFunction{ FT  squared_inner_radius( ) const;}{
+        returns the squared inner radius of \ccVar.
+        \ccPrecond  \ccVar\ is not empty and an implicit conversion
+        from \ccc{ET} to \ccc{RT} must be available.}
+
+\ccMemberFunction{ FT  squared_outer_radius( ) const;}{
+        returns the squared outer radius of \ccVar.
+        \ccPrecond  \ccVar\ is not empty and an implicit conversion
+        from \ccc{ET} to \ccc{RT} must be available.}
+
+\medskip
+\ccGlueBegin
+\ccMemberFunction{ Center_coordinate_iterator
+                   center_coordinates_begin() const;}{
+        returns an iterator referring to the coordinate of the first
+        coordinate of the center of \ccVar.
+        \ccCommentHeading{Note} The coordinates have a rational
+        representation, i.e.~the first $d$ elements of the iterator
+        range are the numerators and the $(d\!+\!1)$-st element is the
+        common denominator.}
+%
+\ccMemberFunction{ Center_coordinate_iterator
+                   center_coordinates_end() const;}{
+        returns the corresponding past-the-end iterator.}
+\ccGlueEnd
+
+\ccMemberFunction{ ET  squared_inner_radius_numerator( ) const;}{
+        returns the numerator of the squared inner radius of \ccVar.}
+
+\ccMemberFunction{ ET  squared_outer_radius_numerator( ) const;}{
+        returns the numerator of the squared inner radius of \ccVar.}
+
+\ccMemberFunction{ ET  squared_radii_denominator( ) const;}{
+        returns the denominator of the squared radii of \ccVar.}
+
+% -----------------------------------------------------------------------------
+\ccPredicates
+
+The bounded area of the smallest enclosing annulus lies between the inner
+and the outer sphere. The boundary is the union of both spheres. By
+definition, an empty annulus has no boundary and no bounded side, i.e.~its
+unbounded side equals the whole space $\E_d$.
+
+\ccMemberFunction{ \ccGlobalScope Bounded_side
+                   bounded_side( const Point& p) const;}{
+        returns \ccGlobalScope\ccc{ON_BOUNDED_SIDE},
+        \ccGlobalScope\ccc{ON_BOUNDARY}, or
+        \ccGlobalScope\ccc{ON_UNBOUNDED_SIDE} iff \ccc{p} lies
+        properly inside, on the boundary, or properly outside of
+        \ccVar, resp.
+        \ccPrecond  The dimension of \ccc{p} equals
+        \ccVar\ccc{.ambient_dimension()} if \ccVar\ is not empty.}
+
+\ccMemberFunction{ bool  has_on_bounded_side( const Point& p) const;}{
+        returns \ccc{true}, iff \ccc{p} lies properly inside \ccVar.
+        \ccPrecond  The dimension of \ccc{p} equals
+        \ccVar\ccc{.ambient_dimension()} if \ccVar\ is not empty.}
+
+\ccMemberFunction{ bool  has_on_boundary( const Point& p) const;}{
+        returns \ccc{true}, iff \ccc{p} lies on the boundary of \ccVar.
+        \ccPrecond  The dimension of \ccc{p} equals
+        \ccVar\ccc{.ambient_dimension()} if \ccVar\ is not empty.}
+
+\ccMemberFunction{ bool  has_on_unbounded_side( const Point& p) const;}{
+        returns \ccc{true}, iff \ccc{p} lies properly outside of \ccVar.
+        \ccPrecond  The dimension of \ccc{p} equals
+        \ccVar\ccc{.ambient_dimension()} if \ccVar\ is not empty.}
+
+\ccMemberFunction{ bool  is_empty( ) const;}{
+        returns \ccc{true}, iff \ccVar\ is empty (this implies degeneracy).}
+
+\ccMemberFunction{ bool  is_degenerate( ) const;}{
+        returns \ccc{true}, iff \ccVar\ is degenerate, i.e.~if \ccVar\
+        is empty or equal to a single point, equivalently if the
+        number of support points is less than 2.}
+
+% -----------------------------------------------------------------------------
+\ccModifiers
+
+\ccMemberFunction{ void  clear( );}{
+        resets \ccVar\ to $ma(\mbox{\ccTexHtml{$\emptyset$}{&Oslash;}})$.}
+
+\ccMemberFunction{ template < class InputIterator >
+                   void  set( InputIterator first,
+                              InputIterator last );}{
+        sets \ccVar\ to the $ma(P)$, where $P$ is the set of points in
+        the range [\ccc{first},\ccc{last}).
+        \ccPrecond  The value type of \ccc{InputIterator} is \ccc{Point},
+        and all points have the same dimension.}
+
+\ccMemberFunction{ void  insert( const Point& p);}{
+        inserts \ccc{p} into \ccVar.
+%  If \ccc{p} lies inside the current
+%  annulus, this is a constant-time operation, otherwise it might take
+%  longer, but in any case substantially less than recomputing the
+%  smallest enclosing annulus from scratch.
+        \ccPrecond  The dimension of \ccc{p} equals
+        \ccVar\ccc{.ambient_dimension()} if \ccVar\ is not empty.}
+
+\ccMemberFunction{ template < class InputIterator >
+                   void  insert( InputIterator  first,
+                                 InputIterator  last );}{
+        inserts the points in the range [\ccc{first},\ccc{last}) into
+        \ccVar\ and recomputes the smallest enclosing annulus.
+%  , by calling \ccc{insert} for all points in the range.
+        \ccPrecond  The value type of \ccc{InputIterator} is \ccc{Point},
+        and all points have the same dimension.
+        If \ccVar\ is not empty, this dimension must be equal to
+        \ccVar\ccc{.ambient_dimension()}.}
+
+% When applied to an empty \ccVar, \ccc{set( first, last)} and
+% \ccc{insert( first, last)} produce the same result. However, the
+% latter method is usually much slower, because it processes the
+% points on-line, while the \ccc{set} method takes advantage of
+% knowing the whole point set in advance.
+
+% -----------------------------------------------------------------------------
+\begin{ccAdvanced}
+  \nopagebreak
+  \ccHeading{Validity Check}
+
+  An object \ccVar\ is valid, iff
+  \begin{itemize}
+    \item \ccVar\ contains all points of its defining set $P$,
+    \item \ccVar\ is the smallest annulus containing its support set $S$, and
+    \item $S$ is minimal, i.e.\ no support point is redundant.
+  \end{itemize}
+
+  \ccMemberFunction{ bool is_valid( bool verbose = false,
+                                    int  level   = 0    ) const;}{
+        returns \ccc{true}, iff \ccVar\ is valid. If \ccc{verbose} is
+        \ccc{true}, some messages concerning the performed checks are
+        written to standard error stream. The second parameter
+        \ccc{level} is not used, we provide it only for consistency
+        with interfaces of other classes.}
+
+\end{ccAdvanced}
+
+% -----------------------------------------------------------------------------
+\ccHeading{Miscellaneous}
+
+\ccMemberFunction{ const Traits&  traits( ) const;}{
+        returns a const reference to the traits class object.}
+
+% -----------------------------------------------------------------------------
+\ccHeading{I/O}
+
+\ccFunction{ ostream& operator << ( ostream& os,
+                                   const Min_annulus_d<Traits>& min_annulus);}{
+        writes \ccVar\ to output stream \ccc{os}.
+        \ccPrecond  The output operator is defined for \ccc{Point_d}.}
+
+\ccFunction{ istream& operator >> ( istream& is,
+                                    Min_annulus_d<Traits>& min_annulus);}{
+        reads \ccVar\ from input stream \ccc{is}.
+        \ccPrecond  The input operator is defined for \ccc{Point_d}.}
+
+% -----------------------------------------------------------------------------
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Min_sphere_d<Traits>}\\[1ex]
+\ccRefIdfierPage{CGAL::Min_annulus_d_traits_2<R,ET,NT>}\\
+\ccRefIdfierPage{CGAL::Min_annulus_d_traits_3<R,ET,NT>}\\
+\ccRefIdfierPage{CGAL::Min_annulus_d_traits_d<R,ET,NT>}\\[1ex]
+\ccRefIdfierPage{Min_annulus_d_traits}
+
+% -----------------------------------------------------------------------------
+\ccImplementation
+
+The problem of finding the smallest enclosing annulus of a finite
+point set can be formulated as an optimization problem with linear
+constraints and a linear objective function. The solution is obtained
+using our exact solver for linear and quadratic
+programs~\cite{gs-eegqp-00}.
+
+The creation time is almost always linear in the number of points.
+Access functions and predicates take constant time, inserting a point
+might take up to linear time.
+%, but substantially less than computing
+%the new smallest enclosing annulus from scratch.
+The clear operation and the check for validity each take linear time.
+
+% -----------------------------------------------------------------------------
+
+\ccRestoreThreeColumns
 
 \end{ccRefClass}
 

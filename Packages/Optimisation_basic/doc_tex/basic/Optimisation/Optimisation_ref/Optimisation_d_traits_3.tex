@@ -14,6 +14,81 @@
 
 \begin{ccRefClass}{Min_annulus_d_traits_3<R,ET,NT>}
 
+% -----------------------------------------------------------------------------
+\ccDefinition
+
+The class \ccRefName\ is a traits class for \ccc{Min_annulus_d<Traits>}
+using the two-dimensional \cgal\ kernel.
+ 
+The first template argument is expected to be a \cgal\ representation class.
+The second and third template argument have default type \ccc{R::RT}.
+
+\ccInclude{CGAL/Min_annulus_d_traits_3.h}
+
+% -----------------------------------------------------------------------------
+\ccIsModel
+
+\ccRefIdfierPage{Min_annulus_d_traits}
+
+% -----------------------------------------------------------------------------
+\ccTypes
+
+\ccSaveThreeColumns
+\ccSetTwoColumns{Min_annulus_d_traits_3<R,ET,NT>:: Rep_tag}{}
+
+\ccNestedType{Point_d}{Typedef to \ccc{R::Point_3}.}
+
+\ccNestedType{Rep_tag}{Typedef to \ccc{R::Rep_tag}.}
+
+\ccNestedType{RT}{Typedef to \ccc{R::RT}.}
+\ccNestedType{FT}{Typedef to \ccc{R::FT}.}
+
+\ccNestedType{Access_dimension_d}{%
+  Typedef to \ccc{R::Access_dimension_3}.}
+\ccNestedType{Access_coordinates_begin_d}{%
+  Typedef to \ccc{R::Access_coordinates_begin_3}.}
+
+\ccNestedType{Construct_point_d}{%
+  Typedef to \ccc{R::Construct_point_3}.}
+
+\ccNestedType{ET}{Second template argument (default is \ccc{R::RT}).}
+\ccNestedType{NT}{Third  template argument (default is \ccc{R::RT}).}
+
+% -----------------------------------------------------------------------------
+\ccCreation
+\ccCreationVariable{traits}
+
+\ccConstructor{ Min_annulus_d_traits_3( );}{Default constructor.}
+\ccConstructor{ Min_annulus_d_traits_3(
+                   const Min_annulus_d_traits_3<R,ET,NT>&);}{Copy constructor.}
+
+% -----------------------------------------------------------------------------
+\ccOperations
+
+\ccSetThreeColumns{Access_coordinates_begin_d}{}{\hspace*{10cm}}
+
+The following functions just return the corresponding function class
+object.
+
+\ccMemberFunction{ Access_dimension_d
+                   access_dimension_d_object() const;}{}
+
+\ccMemberFunction{ Access_coordinates_begin_d
+                   access_coordinates_begin_d_object() const;}{}
+
+\ccMemberFunction{ Construct_point_d
+                   construct_point_d_object() const;}{}
+
+\ccRestoreThreeColumns
+
+% -----------------------------------------------------------------------------
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Min_annulus_d<Traits>}\\[1ex]
+\ccRefIdfierPage{CGAL::Min_annulus_d_traits_2<R,ET,NT>}\\
+\ccRefIdfierPage{CGAL::Min_annulus_d_traits_d<R,ET,NT>}
+
+% -----------------------------------------------------------------------------
 
 \end{ccRefClass}
 
