@@ -1,6 +1,21 @@
+Version 1.4 (29 May 01) [af]
+- removed member function get_biggest_rect
+- removed struct point_bigger as it was only needed in public_set
+- changed get_largest_empty_rectangle  to  get_largest_empty_iso_rectangle
+- Replaced functions copy_y_Point_data_to_list(Point_data_list) with STL copy
+- replaced NT min_x; with Point_2 min_x_p; The same for the other variables
+- added insert(InputIterator, InputIterator)
+- added a constructor that takes a bottom left and a top right point
+- added function get_left_bottom_right_top() that allows to retrieve the 
+  four input points that define the largest empty iso-rectangle
+- added a caching mechanism, as there are now two get_... methods
+- replaced bigger/biggest with larger/largest
+- replaced min_x_p, min_y_p with bl_p, and max_x_p, max_y_p with tr_p
+
+
 Version 1.3 (16 May 01) [af]
 - removed get_list_of_points
-- replaced NT x, y by Point_2 in nested class Point_data
+- replaced NT x, y   with  Point_2 in nested class Point_data
 - replaced all comparison functions with the ones from the kernel
 - changed Point_tpye: capitalized the type and uppercased the value constants
 - Moved the enum Point_type into class scope
