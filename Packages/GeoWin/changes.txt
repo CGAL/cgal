@@ -1,3 +1,6 @@
+1.2.3 (30 June 2001)
+- CGALarr demo: clear function called now instead of assigning empty arrangement
+
 1.2.2 (30 January 2001)
 - manual change (needed for html conversion)
 - some demo programs were changed

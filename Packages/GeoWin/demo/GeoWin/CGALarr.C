@@ -116,7 +116,7 @@ public:
  void update(const CGALSegmentlist& L, CGALSegmentlist& Sl)
  {  
   // clear Arrangement
-  arr = Arr_2();
+  arr.clear();
  
   // insert segments ...
   CGALSegmentlist::const_iterator it1= L.begin();
