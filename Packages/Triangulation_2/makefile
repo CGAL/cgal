@@ -6,7 +6,7 @@ WWW=/u/www/0/www/htdocs/files/equipes/prisme
 WWW_CGAL=$(WWW)/CGAL/DR:/Members
 WWW_dir=$(WWW_CGAL)/Triangulation_2
 TMP_file=/tmp/submit-mail
-CGAL_MAKEFILE=/u/alcor/0/prisme_util/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.13_g++-2.95.2_LEDA
+CGAL_MAKEFILE=/u/alcor/0/prisme_util/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.14_g++-2.95.2_LEDA
 MAINTAINER=Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 
 package: 
@@ -38,7 +38,7 @@ clean:
 	cd demo/Triangulation ; make clean
 
 $(PACKAGE).tar.gz: 
-	tar -zcvf $(Package).tar.gz \
+	tar -zcvf $(PACKAGE).tar.gz \
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile* \
 	--exclude=Makefilevc \
 	--exclude=TODO --exclude=run_testsuite --exclude=error.txt \
@@ -46,7 +46,7 @@ $(PACKAGE).tar.gz:
 	include doc_tex doc_ps test examples demo
 
 Submit: clean $(PACKAGE).tar.gz
-	cp -f Triangulation.tar.gz *.txt version $(WWW_dir)
+	cp -f $(PACKAGE).tar.gz *.txt version $(WWW_dir)
 	cp -rf doc_ps/* $(WWW_dir)/doc_ps/
 	cp -rf doc_html/* $(WWW_dir)/doc_html/
 
