@@ -510,7 +510,7 @@ blockintro      [\{][\\]((tt)|(em)|(it)|(sc)|(sl))
 		    yylval.string.len  = 0;
 	  	    return SPACE;
 }
-[\\]ccChapter((Author)|(SubTitle)){w}   {
+[\\]ccChapter((Author)|(Release)|(SubTitle)){w}   {
 		    return GOBBLEONEPARAM;
 }
 
@@ -538,13 +538,13 @@ blockintro      [\{][\\]((tt)|(em)|(it)|(sc)|(sl))
 
  /* Flexibility for HTML class files. */
  /* -------------------------------------------------------------- */
-<INITIAL,NestingMode>[\\]ccHtmlNoClassLinks/{noletter}   {
-		    skipspaces();
-}
 <INITIAL,NestingMode>[\\]ccHtmlNoClassFile/{noletter}    {
 		    skipspaces();
 }
-<INITIAL,NestingMode>[\\]ccHtmlNoClassIndex/{noletter}   {
+<INITIAL,NestingMode>[\\]ccHtmlNo((Class)?)Links/{noletter}   {
+		    skipspaces();
+}
+<INITIAL,NestingMode>[\\]ccHtmlNo((Class)?)Index/{noletter}   {
 		    skipspaces();
 }
 [\\]begin{w}[\{]ccHtmlClassFile[\}]{w}   {
