@@ -14,6 +14,7 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
+           -I/KM/usr/hachenb/CGAL2/Nef_S2/include \
            $(CGAL_CXXFLAGS) \
            -Iinclude \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
@@ -23,7 +24,9 @@ CXXFLAGS = \
 #                    linker flags
 #---------------------------------------------------------------------#
 
-CUSTOM_LDFLAGS = -lGLU
+ifdef CGAL_USE_QT
+  CUSTOM_LDFLAGS = -lGL -lGLU
+endif
 
 LIBPATH = \
           $(CGAL_WINDOW_LIBPATH)
