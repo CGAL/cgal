@@ -83,7 +83,7 @@ static const unsigned short CGAL_FPU_cw_down = 0x400   |  0x200    | 0x107f;
 #endif
 #ifdef __sparc
 #define SETFPCW(CW) asm volatile ("ld %0,%%fsr" : : "g" (CW))
-// Sparc:                                    rounding   | precision  | def. mask
+// Sparc:                                    rounding   | precision  |def. mask
 static const unsigned int CGAL_FPU_cw_zero = 0x40000000 | 0x20000000 | 0x1f;
 static const unsigned int CGAL_FPU_cw_near = 0x0        | 0x20000000 | 0x1f;
 static const unsigned int CGAL_FPU_cw_up   = 0x80000000 | 0x20000000 | 0x1f;
