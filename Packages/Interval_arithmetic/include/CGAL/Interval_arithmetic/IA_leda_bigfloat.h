@@ -46,7 +46,7 @@ convert_from_to (const Interval_nt_advanced&, const leda_bigfloat & z)
 	return result;
 }
 
-#ifndef CGAL_CFG_NO_PARTIAL_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template <>
 struct converter<Interval_nt_advanced,leda_bigfloat>
 {
@@ -55,7 +55,7 @@ struct converter<Interval_nt_advanced,leda_bigfloat>
 	return convert_from_to(Interval_nt_advanced(), z);
     }
 };
-#endif // CGAL_CFG_NO_PARTIAL_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 
 CGAL_END_NAMESPACE
 
