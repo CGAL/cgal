@@ -1,3 +1,14 @@
+1.3.23 - 11/03/2002 (rursu)
+-------------------
+	radu:
+	- Removed namespace CGAL from demos.
+	- fixed bug in output operator for Conic_2
+	- fixed warnings in couple projects: removed /Wp64 option
+	laurent:
+	- Qt_widget_show_mouse_coordinates no longer use sprintf
+	- Layers are QObject objects, with a parent and a name
+	- Fixed memory leak in src/CGALQt/Qt_widget_standard_toolbar.C (bug #37)
+
 1.3.22 - 26/02/2002 (rineau)
 -------------------
 	Rewritten the standard toolbar. See bug#49.
