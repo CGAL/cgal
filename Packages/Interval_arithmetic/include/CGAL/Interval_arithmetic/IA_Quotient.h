@@ -30,7 +30,7 @@ CGAL_BEGIN_NAMESPACE
 // overflow, but we can't do better than the following trivial conversion.
 
 template <class RT>
-struct converter
+struct converter<Interval_nt_advanced,Quotient<RT> >
 {
     static inline Interval_nt_advanced do_it (const Quotient<RT> & z)
     {
