@@ -27,11 +27,10 @@
 #ifndef CGAL_FILTER_H
 #define CGAL_FILTER_H
 
-#include <iostream.h>
+#include <iostream.h>	// Because we declare operator<< and >>.
+#include <CGAL/enum.h>  // Because we overload CGAL_{sign,compare,abs,min,max}
 #include <CGAL/IO/io_tags.h>            // For CGAL_io_Operator().
 #include <CGAL/number_type_tags.h>      // For CGAL_number_type_tag()
-#include <CGAL/enum.h>  // Because we overload CGAL_{sign,compare,abs,min,max}
-// #include <CGAL/number_utils.h>
 
 
 // CT = construction type (filtered)
@@ -51,8 +50,10 @@ struct CGAL_Filtering
   CT value;
 
   CGAL_Filtering () {}
-  CGAL_Filtering (const int i) : value(i)  {}
-  CGAL_Filtering (const CT ct) : value(ct) {}
+  template <class NT>
+  CGAL_Filtering (const NT nt)		: value(nt)  {}
+  // CGAL_Filtering (const double d)	: value(d)  {}
+  // CGAL_Filtering (const CT ct)		: value(ct) {}
 
   typedef CGAL_Filtering<CT,ET> Fil;
 
