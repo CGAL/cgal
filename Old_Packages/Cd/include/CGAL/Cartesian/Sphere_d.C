@@ -40,21 +40,21 @@ Sphere_repC3<R> *SphereC3<R CGAL_CTAG>::ptr() const
 }
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 SphereC3<R CGAL_CTAG>::SphereC3()
 {
   PTR = new Sphere_repC3<R>;
 }
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 SphereC3<R CGAL_CTAG>::
 SphereC3(const SphereC3<R CGAL_CTAG> &t)
   : Handle((Handle&)t)
 {}
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 SphereC3<R CGAL_CTAG>::
 SphereC3(const typename SphereC3<R CGAL_CTAG>::Point_3 &center,
          const typename R::FT &squared_radius,
@@ -67,7 +67,7 @@ SphereC3(const typename SphereC3<R CGAL_CTAG>::Point_3 &center,
 }
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 SphereC3<R CGAL_CTAG>::
 SphereC3(const typename SphereC3<R CGAL_CTAG>::Point_3 &center,
          const Orientation &orient = COUNTERCLOCKWISE)
@@ -78,7 +78,7 @@ SphereC3(const typename SphereC3<R CGAL_CTAG>::Point_3 &center,
 }
 
 template < class R >
-CGAL_KERNEL_CTOR_MEDIUM_INLINE
+CGAL_KERNEL_MEDIUM_INLINE
 SphereC3<R CGAL_CTAG>::
 SphereC3(const typename SphereC3<R CGAL_CTAG>::Point_3 &p,
          const typename SphereC3<R CGAL_CTAG>::Point_3 &q,
@@ -93,7 +93,7 @@ SphereC3(const typename SphereC3<R CGAL_CTAG>::Point_3 &p,
 }
 
 template < class R >
-CGAL_KERNEL_CTOR_MEDIUM_INLINE
+CGAL_KERNEL_MEDIUM_INLINE
 SphereC3<R CGAL_CTAG>::
 SphereC3(const typename SphereC3<R CGAL_CTAG>::Point_3 &p,
          const typename SphereC3<R CGAL_CTAG>::Point_3 &q,
@@ -110,7 +110,7 @@ SphereC3(const typename SphereC3<R CGAL_CTAG>::Point_3 &p,
 }
 
 template < class R >
-CGAL_KERNEL_CTOR_MEDIUM_INLINE
+CGAL_KERNEL_MEDIUM_INLINE
 SphereC3<R CGAL_CTAG>::
 SphereC3(const typename SphereC3<R CGAL_CTAG>::Point_3 &p,
          const typename SphereC3<R CGAL_CTAG>::Point_3 &q,

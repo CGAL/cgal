@@ -57,7 +57,7 @@ PointCd(const typename PointCd<R CGAL_CTAG>::Vector_d &v)
 }
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 PointCd<R CGAL_CTAG>::
 PointCd(int dim, const Origin &)
 {

@@ -96,14 +96,14 @@ CGAL_END_NAMESPACE
 CGAL_BEGIN_NAMESPACE
 
 template < class FT >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 PointCd<FT>::PointCd()
 {
   PTR = new _d_tuple<FT>();
 }
 
 template < class FT >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 PointCd<FT>::PointCd(int dim, const Origin &)
 {
   CGAL_kernel_precondition (dim>=0);
@@ -113,7 +113,7 @@ PointCd<FT>::PointCd(int dim, const Origin &)
 }
 
 template < class FT >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 PointCd<FT>::PointCd(const PointCd<FT> &p)
   : Handle(static_cast<const Handle&>(p))
 {}
