@@ -228,7 +228,12 @@ template <class CT, class ET, class Cache_t>
 inline
 std::istream &
 operator>> (std::istream &is, Filtered_exact<CT,ET,Cache_t>& d)
-{ return is >> d.value(); }
+{
+    CT e;
+    is >> e;
+    d = e; 
+    return is;
+}
 
 CGAL_END_NAMESPACE
 
