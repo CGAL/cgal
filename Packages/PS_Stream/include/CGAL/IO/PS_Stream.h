@@ -72,7 +72,7 @@ public:
   
   typedef Bbox_2 PS_BBox;
 
-   static const DashStyle SOLID;
+  static const DashStyle SOLID;
   static const DashStyle DASH1;
   static const DashStyle DASH2;
   static const DashStyle DASH3;
@@ -84,133 +84,133 @@ public:
   static const float POINT;
   
   enum OutputMode {READABLE, QUIET, READABLE_EPS, QUIET_EPS, GS_VIEW};
-   enum DotStyle {NONE, XCROSS, ICROSS, EDOT, FDOT, EBOX, FBOX};
+  enum DotStyle {NONE, XCROSS, ICROSS, EDOT, FDOT, EBOX, FBOX};
   
   
-class Axis {
-
-friend PS_Stream;
-friend PS_Stream & operator << (PS_Stream& ps, const Axis& g);
-
-public:
-  Axis(double x, double y, unsigned int t=0)
-    : _stepx(x), _stepy(y), _thick(t) {}
-  Axis(double xy, unsigned int t=0)
-    : _stepx(xy),_stepy(xy), _thick(t) {}
-  Axis(): _stepx(1.0), _stepy(1.0), _thick(0) {}
-
-  double stepx()     const { return _stepx;}
-  double stepy()     const { return _stepy;}
-  unsigned int thickness() const { return _thick;}
-protected:
-  double _stepx;
-  double _stepy;
-  unsigned int _thick;
-};
-
+  class Axis {
+    
+    friend PS_Stream;
+    friend PS_Stream & operator << (PS_Stream& ps, const Axis& g);
+    
+  public:
+    Axis(double x, double y, unsigned int t=0)
+      : _stepx(x), _stepy(y), _thick(t) {}
+    Axis(double xy, unsigned int t=0)
+      : _stepx(xy),_stepy(xy), _thick(t) {}
+    Axis(): _stepx(1.0), _stepy(1.0), _thick(0) {}
+    
+    double stepx()     const { return _stepx;}
+    double stepy()     const { return _stepy;}
+    unsigned int thickness() const { return _thick;}
+  protected:
+    double _stepx;
+    double _stepy;
+    unsigned int _thick;
+  };
+  
 class Grid {
-
-friend PS_Stream;
-friend PS_Stream & operator << (PS_Stream& ps, const Grid& g);
-      
+  
+  friend PS_Stream;
+  friend PS_Stream & operator << (PS_Stream& ps, const Grid& g);
+  
 public:
   Grid(double x, double y, DashStyle str="[1 5] 0")
     : _stepx(x), _stepy(y) {_style=strdup(str);}
   Grid(double xy, DashStyle str="[1 5] 0")
     : _stepx(xy), _stepy(xy) {_style=strdup(str);}
   Grid() : _stepx(1.0), _stepy(1.0), _style("[1 5] 0") {}
-
+  
   double    stepx() const { return _stepx;}
   double    stepy() const { return _stepy;}
   DashStyle style() const { return _style;}
-
+  
 protected:
   double _stepx;
   double _stepy;
   DashStyle _style;
 };
 
-class Label {
+  class Label {
+    
+    friend PS_Stream;
+    friend PS_Stream & operator << (PS_Stream& ps, const Label& txt);
+    
+  public:
+    Label(const char* txt) { _text=strdup(txt);}
+    Label() { _text="";}
+    const char* text() const { return _text;}
+    
+  protected:
+    const char* _text;
+    
+  };
+  
+  class Latex_Label {
+    
+    friend PS_Stream;
+    friend PS_Stream& operator << (PS_Stream& ps, Latex_Label& txt);
+  public:
+    // Only text can be define by user
+    Latex_Label(const char* txt) { _text=strdup(txt);posx=0;posy=0;}
+    Latex_Label() { _text="";posx=0;posy=0;}
+    
+    float xpos() const {return posx;}
+    float ypos() const {return posy;}
+    const char* text() const { return _text;}
+    
+  protected:
+    // These functions are private because the position of the string must never appears to the user
+    // Only stream modifiers will access these data
+    void setposition(float x, float y) { posx=x;posy=y;}
+    Latex_Label(const char* txt,float x, float y) {_text=strdup(txt);posx=x;posy=y;}
+    
+    
+    // Slots
+    const char* _text;
+    float posx;
+    float posy;
+  };
+  
+  typedef list<Latex_Label> List_Label;
+  
+  class Border {
+    
+    friend PS_Stream;
+    friend PS_Stream& operator << (PS_Stream &ps, const Border &b);
+    
+  public:
+    Border(int s=0) { _size=s;}
+    int size() const { return _size;}
+    
+  protected:
+    
+    int _size;
+  };
 
-friend PS_Stream;
-friend PS_Stream & operator << (PS_Stream& ps, const Label& txt);
-
-public:
-  Label(const char* txt) { _text=strdup(txt);}
-  Label() { _text="";}
-  const char* text() const { return _text;}
-
-protected:
-  const char* _text;
- 
-};
-      
-class Latex_Label {
-
-  friend PS_Stream;
-  friend PS_Stream& operator << (PS_Stream& ps, Latex_Label& txt);
-public:
-  // Only text can be define by user
-  Latex_Label(const char* txt) { _text=strdup(txt);posx=0;posy=0;}
-  Latex_Label() { _text="";posx=0;posy=0;}
-
-  float xpos() const {return posx;}
-  float ypos() const {return posy;}
-  const char* text() const { return _text;}
-
-protected:
-  // These functions are private because the position of the string must never appears to the user
-  // Only stream modifiers will access these data
-  void setposition(float x, float y) { posx=x;posy=y;}
-  Latex_Label(const char* txt,float x, float y) {_text=strdup(txt);posx=x;posy=y;}
-
- 
-  // Slots
-  const char* _text;
-  float posx;
-  float posy;
-};
-
-typedef list<Latex_Label> List_Label;
-
-class Border {
-
-  friend PS_Stream;
-  friend PS_Stream& operator << (PS_Stream &ps, const Border &b);
-
-public:
-  Border(int s=0) { _size=s;}
- int size() const { return _size;}
-
-protected:
- 
-  int _size;
-};
-
-class Context {
-
-friend PS_Stream;
-
-public:
-
-Context() : _border_color(Color(0,0,0)),
-  _fill_color(Color(0,0,0)),_dot_style(XCROSS),_dot_size(5),
-  _thickness(0),_line_style(SOLID),_fill(false),
-  _font("Helvetica"),_font_size(12), _anchor_point(Point_2<Cartesian <double> > (0,0))
-  {}
-
-Context(const Context& c)
-  :  _border_color(c.get_border_color()),_fill_color(c.get_fill_color()),
-     _dot_style(c.get_dot_style()), _dot_size(c.get_dot_size()),
-     _thickness(c.get_thickness()), _line_style(strdup(c.get_line_style())),
-     _fill(c.get_fill()), _font(strdup(c.get_font())), _font_size(c.get_font_size()),
-     _anchor_point(c.get_pos())
-  {};
+  class Context {
+    
+    friend PS_Stream;
+    
+  public:
+    
+    Context() : _border_color(Color(0,0,0)),
+      _fill_color(Color(0,0,0)),_dot_style(XCROSS),_dot_size(5),
+      _thickness(0),_line_style(SOLID),_fill(false),
+      _font("Helvetica"),_font_size(12), _anchor_point(Point_2<Cartesian <double> > (0,0))
+      {}
+    
+    Context(const Context& c)
+      :  _border_color(c.get_border_color()),_fill_color(c.get_fill_color()),
+	 _dot_style(c.get_dot_style()), _dot_size(c.get_dot_size()),
+	 _thickness(c.get_thickness()), _line_style(strdup(c.get_line_style())),
+	 _fill(c.get_fill()), _font(strdup(c.get_font())), _font_size(c.get_font_size()),
+	 _anchor_point(c.get_pos())
+      {};
 
 // Accessor
 
- Color   get_border_color()  const {return _border_color;}
- Color   get_fill_color() const {return _fill_color;}
+Color   get_border_color()  const {return _border_color;}
+Color   get_fill_color() const {return _fill_color;}
 DotStyle     get_dot_style() const {return _dot_style;}
 unsigned int get_dot_size()  const {return _dot_size;}
 unsigned int get_thickness()     const {return _thickness;}
@@ -234,9 +234,9 @@ void set_font(const char *font) {_font=strdup(font);}
 protected:
 
 // Store the current border color
- Color _border_color;
+Color _border_color;
 // Store the current fill color
- Color _fill_color;
+Color _fill_color;
 // Store the current dot style
 enum DotStyle _dot_style;
 // Store the current dot size
@@ -259,28 +259,28 @@ Point_2<Cartesian <double> > _anchor_point;
 };
 
 //Constructors used for PS_Stream 3D
-   PS_Stream(ostream& os,OutputMode = QUIET);
-   PS_Stream(const char* fname, OutputMode = QUIET);
-   PS_Stream(float H,ostream& os,OutputMode = QUIET);
-   PS_Stream(float H, const char* fname, OutputMode = QUIET);
+PS_Stream(ostream& os,OutputMode = QUIET);
+PS_Stream(const char* fname, OutputMode = QUIET);
+PS_Stream(float H,ostream& os,OutputMode = QUIET);
+PS_Stream(float H, const char* fname, OutputMode = QUIET);
 
-//Constructors
-   PS_Stream(const PS_BBox& bb, ostream& os,
-   OutputMode = QUIET);
-   PS_Stream(const PS_BBox& bb, const char* fname,
-   OutputMode = QUIET);
-   PS_Stream(const PS_BBox& bb,float H, ostream& os,
-   OutputMode = QUIET);
-   PS_Stream(const PS_BBox& bb,float H, const char* fname,
-   OutputMode = QUIET);
-   PS_Stream(const PS_BBox& bb,float L, float H, ostream& os,
-   OutputMode = QUIET);
-   PS_Stream(const PS_BBox& bb,float L, float H, const char* fname,
-   OutputMode = QUIET);
-   PS_Stream(const PS_BBox& bb,float L, float H);
+  //Constructors
+  PS_Stream(const PS_BBox& bb, ostream& os,
+	    OutputMode = QUIET);
+  PS_Stream(const PS_BBox& bb, const char* fname,
+	    OutputMode = QUIET);
+  PS_Stream(const PS_BBox& bb,float H, ostream& os,
+	    OutputMode = QUIET);
+  PS_Stream(const PS_BBox& bb,float H, const char* fname,
+	    OutputMode = QUIET);
+  PS_Stream(const PS_BBox& bb,float L, float H, ostream& os,
+	    OutputMode = QUIET);
+  PS_Stream(const PS_BBox& bb,float L, float H, const char* fname,
+	    OutputMode = QUIET);
+  PS_Stream(const PS_BBox& bb,float L, float H);
   
-   ~PS_Stream();
-
+  ~PS_Stream();
+  
   PS_Stream& set_border_color(const Color&);
   PS_Stream& set_fill_color(const Color&);
   PS_Stream& set_point_size(unsigned int);
@@ -298,7 +298,7 @@ Point_2<Cartesian <double> > _anchor_point;
   PS_Stream& put_border(unsigned int);
   PS_Stream& set_font(const char*);
   PS_Stream& set_font_size(unsigned int);
-
+  
 
   //Accessors
   ostream&        os()   {return _os;}
@@ -324,41 +324,41 @@ Point_2<Cartesian <double> > _anchor_point;
    bool is_eps();
    bool is_readable();
 
-  protected:
+protected:
   //   PS_Stream(const PS_BBox& bb);
-
+  
   // PS_Stream(const PS_BBox& bb,float H);
-
+  
   // PS_Stream(const PS_BBox& bb,float L, float H);
-
-
-// Manipulation du contexte.
+  
+  
+  // Manipulation du contexte.
   void setdefault();
   void setcontext();
-
+  
 // Pour inserer l'entete
   void insert_catalogue();
-
-// Define the scale.
-double _xratio;
-double _yratio;
-
+  
+  // Define the scale.
+  double _xratio;
+  double _yratio;
+  
 // Define the boounding box
-PS_BBox _bbox;
+  PS_BBox _bbox;
+  
+  // OutputMode
+  OutputMode _mode;
 
-// OutputMode
-OutputMode _mode;
-
-// Size of output.
-int _width;
-int _height;
-
-// Graphical Context
+  // Size of output.
+  int _width;
+  int _height;
+  
+  // Graphical Context
   Context ctxt;
 
-// The Output stream
+  // The Output stream
   //ifdef CGAL_WORKAROUND_016
-_IO_ostream_withassign& _os;
+  _IO_ostream_withassign& _os;
   //else
   //ostream_withassign& _os;
   //endif
