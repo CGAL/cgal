@@ -37,6 +37,7 @@
 #include <CGAL/Nef_3/SNC_SM_overlayer.h>
 #include <CGAL/Nef_S2/SM_point_locator.h>
 #include <CGAL/Nef_S2/SM_io_parser.h>
+#include <CGAL/Nef_3/SNC_io_parser.h>
 #include <CGAL/Nef_3/SNC_SM_explorer.h>
 #include <CGAL/Nef_polyhedron_S2.h>
 
@@ -94,7 +95,7 @@ class Nef_polyhedron_3_rep
   typedef CGAL::SM_const_decorator<Sphere_map>     SM_const_decorator;
   typedef CGAL::SNC_SM_overlayer<SM_decorator>     SM_overlayer;
   typedef CGAL::SM_point_locator<SNC_structure>    SM_point_locator;
-  typedef CGAL::SM_io_parser<SNC_structure>        SM_io_parser;
+  typedef CGAL::SM_io_parser<SM_decorator>         SM_io_parser;
 
 #ifdef CGAL_NEF3_SM_VISUALIZOR
   typedef CGAL::SNC_SM_visualizor<SNC_structure>       SM_visualizor;
@@ -163,6 +164,7 @@ protected:
   typedef typename Nef_rep::SNC_structure       SNC_structure;
  protected:
   typedef typename Nef_rep::SNC_decorator       SNC_decorator;
+  typedef typename Nef_rep::SNC_const_decorator SNC_const_decorator;
   typedef typename Nef_rep::SNC_constructor     SNC_constructor;
  //  typedef typename Nef_rep::SNC_binop           SNC_binop;
   //typedef typename Nef_rep::SNC_walker          SNC_walker;
@@ -325,7 +327,7 @@ protected:
     build_external_structure();
     simplify();
     set_snc(snc());
-    //    CGAL_assertion(orientation() == 1);
+    CGAL_assertion(orientation() == 1);
   }
   
  protected:  
@@ -334,14 +336,14 @@ protected:
     
     class Visitor {
 
-      const Object_index<Vertex_iterator>& VI;
+      const Object_index<Vertex_const_iterator>& VI;
       Polyhedron_incremental_builder_3<HDS>& B;
-      SNC_decorator& D;
+      SNC_const_decorator& D;
       
     public:
       Visitor(Polyhedron_incremental_builder_3<HDS>& BB,
-	      SNC_decorator& sd,
-	      Object_index<Vertex_iterator>& vi) : VI(vi), B(BB), D(sd){}
+	      SNC_const_decorator& sd,
+	      Object_index<Vertex_const_iterator>& vi) : VI(vi), B(BB), D(sd){}
 
       void visit(Halffacet_const_handle opposite_facet) {
 
@@ -356,7 +358,7 @@ protected:
 
 	B.begin_facet();
 	fc = f->facet_cycles_begin();
-	assign(se,fc);
+	se = SHalfedge_const_handle(fc);
 	CGAL_assertion(se!=0);
 	SHalfedge_around_facet_const_circulator hc_start(se);
 	SHalfedge_around_facet_const_circulator hc_end(hc_start);
@@ -376,46 +378,44 @@ protected:
 
   public:
 
-    SNC_structure& snc;
-    Object_index<Vertex_iterator> VI;
+    SNC_const_decorator& scd;
+    Object_index<Vertex_const_iterator> VI;
 
-    Build_polyhedron(SNC_structure& s) : 
-      snc(s), VI(s.vertices_begin(),s.vertices_end(),'V') {}
+    Build_polyhedron(SNC_const_decorator& s) : 
+      scd(s), VI(s.vertices_begin(),s.vertices_end(),'V') {}
     
     void operator()( HDS& hds) {
-
-      SNC_const_decorator D(snc);
 
       Polyhedron_incremental_builder_3<HDS> B(hds, true);
 
       int skip_volumes;
       if(Infi_box::extended_kernel()) {
-	B.begin_surface(D.number_of_vertices()-8, 
-			D.number_of_facets()-6,
-			D.number_of_edges()-12);
+	B.begin_surface(scd.number_of_vertices()-8, 
+			scd.number_of_facets()-6,
+			scd.number_of_edges()-12);
 	skip_volumes = 2;
       }
       else {
-	B.begin_surface(D.number_of_vertices(), 
-			D.number_of_facets(),
-			D.number_of_edges());
+	B.begin_surface(scd.number_of_vertices(), 
+			scd.number_of_facets(),
+			scd.number_of_edges());
 	skip_volumes = 1;
       }
       
       int vertex_index = 0;
-      Vertex_iterator v;
-      CGAL_forall_vertices(v,snc) {
+      Vertex_const_iterator v;
+      CGAL_forall_vertices(v,scd) {
 	if(Infi_box::is_standard(v->point())) {
 	  VI[v]=vertex_index++;
 	  B.add_vertex(v->point());
 	}
       }     
       
-      Visitor V(B,D,VI);
-      Volume_handle c;
-      CGAL_forall_volumes(c,snc)
+      Visitor V(B,scd,VI);
+      Volume_const_handle c;
+      CGAL_forall_volumes(c,scd)
 	if(skip_volumes-- <= 0)
-	  D.visit_shell_objects(SFace_const_handle(c->shells_begin()),V);
+	  scd.visit_shell_objects(SFace_const_handle(c->shells_begin()),V);
       B.end_surface();
     }
 
@@ -433,19 +433,23 @@ protected:
     
     // Find top-most vertex v_max (top-most also works fine for terrains)
     SNC_decorator D(snc());
-    Vertex_handle v_max = D.vertices_begin();
+    bool first = true;
+    Vertex_handle v_max;
     Vertex_handle vh;
     CGAL_forall_vertices(vh, D) {
       if (Infi_box::is_standard(D.point(vh)) && 
-	  D.point(vh).z() > D.point(v_max).z())
+	  (first || D.point(vh).z() > D.point(v_max).z())) {
+	first = false;
 	v_max = vh;
+      }
     }
+    CGAL_assertion_msg(!first, "off file is empty");
     SM_decorator SD(&*v_max);
 
     // Add up z-coord. of all normalized normal vectors of the incident facets
     
     double z=1.0;
-    bool first = true;
+    first = true;
     SFace_handle sf;
     CGAL_forall_sfaces(sf, SD) {
       if(D.volume(sf) != Infi_box::getNirvana(snc())) continue;
@@ -471,7 +475,7 @@ protected:
   typedef typename Polyhedron::HalfedgeDS HalfedgeDS;
   void convert_to_Polyhedron(Polyhedron& P) {
     CGAL_precondition(is_simple());
-    Build_polyhedron<HalfedgeDS> bp(snc());    
+    Build_polyhedron<HalfedgeDS> bp(*this);    
     P.delegate(bp);
   }
 
@@ -827,6 +831,46 @@ protected:
   bool operator>=(const Nef_polyhedron_3<Kernel,Items>& N1) const
   { return N1.difference(*this).is_empty(); } 
 
+ bool is_90degree_rotation(const Aff_transformation_3& aff) const {
+   if(aff.hm(0,3) != 0) return false;
+   if(aff.hm(1,3) != 0) return false;
+   if(aff.hm(2,3) != 0) return false;
+   if(CGAL_NTS abs(aff.hm(0,0)) + 
+      CGAL_NTS abs(aff.hm(0,1)) + 
+      CGAL_NTS abs(aff.hm(0,2)) != aff.hm(3,3)) return false;
+   if(CGAL_NTS abs(aff.hm(1,0)) + 
+      CGAL_NTS abs(aff.hm(1,1)) + 
+      CGAL_NTS abs(aff.hm(1,2)) != aff.hm(3,3)) return false;
+   if(CGAL_NTS abs(aff.hm(2,0)) + 
+      CGAL_NTS abs(aff.hm(2,1)) + 
+      CGAL_NTS abs(aff.hm(2,2)) != aff.hm(3,3)) return false;
+   if(CGAL_NTS abs(aff.hm(0,0)) + 
+      CGAL_NTS abs(aff.hm(1,0)) + 
+      CGAL_NTS abs(aff.hm(2,0)) != aff.hm(3,3)) return false;
+   if(CGAL_NTS abs(aff.hm(0,1)) + 
+      CGAL_NTS abs(aff.hm(1,1)) + 
+      CGAL_NTS abs(aff.hm(2,1)) != aff.hm(3,3)) return false;
+   if(CGAL_NTS abs(aff.hm(0,2)) + 
+      CGAL_NTS abs(aff.hm(1,2)) + 
+      CGAL_NTS abs(aff.hm(2,2)) != aff.hm(3,3)) return false;
+   return true;
+ }
+
+ bool is_scaling(const Aff_transformation_3& aff) const {
+   if(aff.hm(0,3) != 0) return false;
+   if(aff.hm(1,3) != 0) return false;
+   if(aff.hm(2,3) != 0) return false;   
+   if(aff.hm(0,1) != 0) return false;
+   if(aff.hm(0,2) != 0) return false;
+   if(aff.hm(1,0) != 0) return false;   
+   if(aff.hm(1,2) != 0) return false;
+   if(aff.hm(2,0) != 0) return false;
+   if(aff.hm(2,1) != 0) return false;
+   if(aff.hm(0,0) != aff.hm(1,1)) return false;
+   if(aff.hm(0,0) != aff.hm(2,2)) return false;
+   return true;
+ }
+
   void transform( const Aff_transformation_3& aff) {
     
     // precondition: the polyhedron as a bounded boundary
@@ -840,42 +884,188 @@ protected:
 				 aff.hm(2,0), aff.hm(2,1), aff.hm(2,2),
 				 aff.hm(3,3));
     
-    SNC_decorator deco( snc());
+    SNC_constructor cstr(snc());
     
+    std::list<Vertex_handle> vertex_list;
+    std::list<Vertex_handle> corner_list;
+    std::list<Vertex_handle> delete_list;
+    typename std::list<Vertex_handle>::iterator li;
+    typename std::list<Vertex_handle>::iterator li2;
+
+    bool ninety = is_90degree_rotation(aff);
+    bool scale = is_scaling(aff);
+
     Vertex_iterator vi;
     CGAL_forall_vertices( vi, snc()) {
       
       TRACEN("transform vertex ");
-      if (is_standard(vi)) {
+      if(scale) {
+	if(is_standard(vi))
+	  vi->point() = vi->point().transform( aff);
+	else if(!Infi_box::is_infibox_corner(vi->point())) {
+	  RT lx(vi->point().hx()[0]);
+	  RT ly(vi->point().hy()[0]);
+	  RT lz(vi->point().hz()[0]);
+	  RT hx(vi->point().hx()-lx);
+	  RT hy(vi->point().hy()-ly);
+	  RT hz(vi->point().hz()-lz);
+	  RT hw(vi->point().hw());
+	  Point_3 p(Point_3(lx,ly,lz,hw).transform(aff));
+	  vi->point() = Point_3(hx+p.hx(),hy+p.hy(),hz+p.hz(),hw);
+	}
+      } else if (!is_standard(vi) && !ninety) {
+	if(Infi_box::is_infibox_corner(vi->point()))
+	  corner_list.push_back(vi);
+	vertex_list.push_back(vi);
+      } else {
 	vi->point() = vi->point().transform( aff);
 	SM_decorator sdeco(&*vi);
 	sdeco.transform( linear);
       }
     }
 
-    Halffacet_iterator fi;
-    CGAL_forall_halffacets(fi,snc()) {
-      if ( deco.is_standard( fi))
-        fi->plane() = fi->plane().transform( aff);
-    }
 
-    if(aff.homogeneous(0,1) != 0 ||
-       aff.homogeneous(0,2) != 0 ||
-       aff.homogeneous(1,0) != 0 ||
-       aff.homogeneous(1,2) != 0 ||
-       aff.homogeneous(2,0) != 0 ||
-       aff.homogeneous(2,1) != 0 ||
-       aff.homogeneous(0,0) != aff.homogeneous(1,1) ||
-       aff.homogeneous(0,0) != aff.homogeneous(2,2)) {
+    if(!is_bounded() && !ninety && !scale) {
+      Unique_hash_map<Halffacet_handle, std::list<Point_3> > facet_cycle_map;
+      
+      Halffacet_iterator fi;
+      CGAL_forall_facets(fi, snc()) {
+	if(!is_standard(fi) || is_bounded(fi)) continue;
+	Plane_3 pt = fi->plane();
+	pt = pt.transform(aff);
+	std::list<Point_3> points(Infi_box::find_points_of_box_with_plane(cstr,pt));
+	facet_cycle_map[Halffacet_handle(fi)] = points;
+	std::list<Vertex_handle> newVertices;
+	newVertices = cstr.create_vertices_on_infibox(pt, points, fi->mark(), 
+						      fi->twin()->volume()->mark(), 
+						      fi->volume()->mark());
+
+	for(li = newVertices.begin(); li != newVertices.end(); ++li) {
+	  if(Infi_box::is_infibox_corner(point(*li))) {
+	    li2 = corner_list.begin();
+	    while(li2 != corner_list.end() && point(*li2) != point(*li)) ++li2;
+	    CGAL_assertion(li2 != corner_list.end());
+	    delete_list.push_back(*li2);
+	    *li2 = *li;
+	  }
+	}
+      }
+      
+      Unique_hash_map<Vertex_handle, Point_3> transform_vertex;
+      for(li = vertex_list.begin(); li != vertex_list.end();++li) {
+	SM_decorator SD(&**li);
+	if(Infi_box::is_complex_facet_infibox_intersection(**li)) {
+	  Halffacet_handle hf[2];
+	  int i=0;
+	  SHalfedge_iterator sei;
+	  CGAL_forall_sedges(sei,SD) {
+	    if(!Infi_box::is_sedge_on_infibox(sei)) {
+	      hf[i] = sei->incident_facet();
+	      if(hf[i]->is_twin()) hf[i] = hf[i]->twin();
+	      ++i;
+	    }
+	    if(i>1)
+	      break;
+	  }
+	  Point_3 tp(cstr.get_transformed_coords_of_vertex(point(*li).transform(aff),
+							   facet_cycle_map[hf[0]],
+							   facet_cycle_map[hf[1]]));
+	  transform_vertex[*li] = tp;
+	}
+      }
+
+      cstr.clear_external_structure();
+      for(li = vertex_list.begin(); li != vertex_list.end();++li){
+	if(Infi_box::is_complex_facet_infibox_intersection(**li)) {
+	  Vertex_handle v2;
+	  Vertex_handle v1 = cstr.create_for_infibox_overlay(*li);
+	  v1->point() = transform_vertex[*li];
+	  SM_decorator sdeco(&*v1);
+	  sdeco.transform(linear);	    
+	  switch(Infi_box::type_of_infibox_point(v1->point())) {
+	  case 1: 
+	    v2 = cstr.create_from_point_on_infibox_facet(v1->point()); 
+	    break;
+	  case 2: 
+	    v2 = cstr.create_from_point_on_infibox_edge(v1->point());
+	    break;
+	  case 3: 
+	    v2 = cstr.create_from_point_on_infibox_vertex(v1->point());
+	    li2 = corner_list.begin();
+	    while(li2 != corner_list.end() && point(*li2) != v2->point()) ++li2;
+	    if(li2 != corner_list.end())
+	      delete_list.push_back(*li2);
+	    break;
+	  default: CGAL_assertion_msg(false, "wrong value");
+	  }
+	  Vertex_handle v = snc().new_vertex(v1->point(), mark(*li));
+	  SM_overlayer O(&*v);
+	  O.subdivide(&*v1,&*v2);
+	  AND _and;
+	  O.select(_and);
+	  O.simplify();
+	  snc().delete_vertex(v1);
+	  snc().delete_vertex(v2);
+	  if(Infi_box::is_infibox_corner(v->point())) {
+	    li2 = corner_list.begin();
+	    while(li2 != corner_list.end() && point(*li2) != v->point()) ++li2;
+	    CGAL_assertion(li2 != corner_list.end());
+	    delete_list.push_back(*li2);
+	  }
+	}
+	
+	if(Infi_box::is_infibox_corner(point(*li))) {
+	  SM_decorator SD(&**li);
+	  if(SD.number_of_svertices() < 4)
+	    continue;
+	  li2 = corner_list.begin();
+	  while(li2 != corner_list.end() && point(*li2) != point(*li)) ++li2;
+	  CGAL_assertion(li2 != corner_list.end());
+	  if(*li == *li2) {
+	    delete_list.push_back(*li2);
+	    *li2 = cstr.create_from_point_on_infibox_vertex(point(*li));
+	  }
+	} else 
+	  snc().delete_vertex(*li);	  
+      }	
+
+      for(li = delete_list.begin(); li != delete_list.end(); ++li)
+	snc().delete_vertex(*li);
+ 
+      while(cstr.erase_redundant_vertices());
+      cstr.correct_infibox_sedge_marks();
+
+      build_external_structure();
+      cstr.correct_infibox_sface_marks();
 
       SNC_point_locator* old_pl = pl();
       pl() = pl()->clone();
       pl()->initialize(&snc());
       delete old_pl;   
-    }
-    else
-      pl()->transform(aff);
 
+    } else {
+      Halffacet_iterator fi;
+      CGAL_forall_halffacets(fi,snc()) {
+	if(is_standard(fi) || ninety)
+	  fi->plane() = fi->plane().transform( aff);
+      }    
+
+      if(aff.homogeneous(0,1) != 0 ||
+	 aff.homogeneous(0,2) != 0 ||
+	 aff.homogeneous(1,0) != 0 ||
+	 aff.homogeneous(1,2) != 0 ||
+	 aff.homogeneous(2,0) != 0 ||
+	 aff.homogeneous(2,1) != 0 ||
+	 aff.homogeneous(0,0) != aff.homogeneous(1,1) ||
+	 aff.homogeneous(0,0) != aff.homogeneous(2,2) ||
+	 !is_bounded()) {
+	   SNC_point_locator* old_pl = pl();
+	   pl() = pl()->clone();
+	   pl()->initialize(&snc());
+	   delete old_pl;   
+	 }
+      else pl()->transform(aff); 
+    }
   }
   
   /*{\Mtext \headerline{Exploration}
@@ -888,7 +1078,6 @@ protected:
 
   /*{\Mtypes 3}*/
     
-    typedef typename Nef_rep::SNC_const_decorator      SNC_const_decorator;
     typedef typename Nef_rep::SM_const_decorator       SM_const_decorator;
     typedef CGAL::SNC_SM_explorer<SM_const_decorator>  SM_explorer;
 

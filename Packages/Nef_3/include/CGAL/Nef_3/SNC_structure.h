@@ -495,7 +495,7 @@ public:
       if( is_boundary_object(sv)) 
 	undef_boundary_item(sv); 
       return; 
-    }
+    }  
   }
 
   void reset_sm_object_list(Object_list& L)
@@ -689,7 +689,7 @@ public:
   marked with |m|.}*/ {
     Halffacet_handle f1 = new_halffacet_only();
     Halffacet_handle f2 = new_halffacet_only();
-    f1->supporting_plane_ = h; f2->supporting_plane_ = h.opposite();
+    f1->plane() = h; f2->plane() = h.opposite();
     make_twins(f1,f2);
     f1->mark() = f2->mark() = m;
     return f1;
@@ -1106,7 +1106,7 @@ pointer_update(const SNC_structure<Kernel,Items>& D)
   // Halffacet update
   CGAL_forall_halffacets(f,*this) {
     f->twin() = FM[f->twin()];
-    f->volume_ = CM[f->volume_];
+    f->volume() = CM[f->volume()];
     Halffacet_cycle_iterator ftc;
     for(ftc = f->boundary_entry_objects().begin(); 
         ftc !=  f->boundary_entry_objects().end(); ++ftc) {

@@ -512,6 +512,8 @@ struct find_minimal_sface_of_shell : public SNC_decorator<T> {
   typedef typename T::Halfedge_handle  Halfedge_handle;
   typedef typename T::Halffacet_handle  Halffacet_handle;
   typedef typename T::SFace_handle  SFace_handle;
+  typedef typename T::SHalfedge_handle  SHalfedge_handle;
+  typedef typename T::SHalfloop_handle  SHalfloop_handle;
   typedef CGAL::Unique_hash_map<SFace_handle,bool> SFace_visited_hash;
 
   SFace_visited_hash& Done;
@@ -534,7 +536,9 @@ struct find_minimal_sface_of_shell : public SNC_decorator<T> {
   void visit(Vertex_handle h) {}
   void visit(Halfedge_handle h) {}
   void visit(Halffacet_handle h) {}
-  
+  void visit(SHalfedge_handle h) {}
+  void visit(SHalfloop_handle h) {}
+
   SFace_handle& minimal_sface() { return sf_min; }
 };
 
@@ -799,7 +803,7 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
   CGAL_forall_halffacets(fi, *sncp()){
     if(sorted) {
       plane(fi) = normalized(plane(fi));
-      fi->boundary_entry_objects_.sort(sort_facet_cycle_entries<Base>((Base) *this));
+      fi->boundary_entry_objects().sort(sort_facet_cycle_entries<Base>((Base) *this));
     }
     FL.push_back(fi);
   }
@@ -888,7 +892,7 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
 	  *fc = se;
 	}
       }
-      sfi->boundary_entry_objects_.sort(sort_sface_cycle_entries<Base>((Base) *this));
+      sfi->boundary_entry_objects().sort(sort_sface_cycle_entries<Base>((Base) *this));
     }
     SFL.push_back(sfi);
   }
@@ -1403,7 +1407,7 @@ read_facet(Halffacet_handle fh) {
   fh->volume() = Volume_of[index+addInfiBox];
   OK = OK && test_string("|");
   in >> a >> b >> c >> d;
-  fh->supporting_plane_ = Plane_3(a,b,c,d);
+  fh->plane() = Plane_3(a,b,c,d);
   OK = OK && test_string("}");
   in >> fh->mark();
 
@@ -1842,7 +1846,7 @@ void SNC_io_parser<EW>::add_infi_box() {
       hz = hy = 0;
     }
     hw = ((i%4) == 1 || (i%4) == 2) ? 1 : -1;
-    fh->supporting_plane_ = Infi_box::create_extended_plane(hx,hy,hz,hw);
+    fh->plane() = Infi_box::create_extended_plane(hx,hy,hz,hw);
     fh->mark() = 1;
   }
   

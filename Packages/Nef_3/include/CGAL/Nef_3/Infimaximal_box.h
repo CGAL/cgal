@@ -26,6 +26,8 @@
 #include <CGAL/Simple_homogeneous.h>
 #include <CGAL/Extended_homogeneous_3.h>
 
+#include <CGAL/Nef_3/SNC_intersection.h>
+
 // #include <CGAL/Nef_S2/Sphere_circle.h>
 // #include <CGAL/Nef_3/SM_decorator.h>
 
@@ -72,6 +74,10 @@ class Infimaximal_box {
     return true;
   }
 
+  static bool check_point_on_plane(Point_3 p, Plane_3 h) {
+    return (p.hx()*h.a()+p.hy()*h.b()+p.hz()*h.c()+p.hw()*h.d() == 0);
+  }
+
   static Point_3 simplify(Point_3& p) {
     return p;
   }
@@ -102,6 +108,19 @@ class Infimaximal_box {
     return p;
   }
 
+  static bool is_infibox_corner(const Point_3& p) {
+    return false;
+  }
+
+  template <typename Sphere_map>
+  static bool is_complex_facet_infibox_intersection(const Sphere_map& sm) {
+    return false;
+  }
+
+  static int type_of_infibox_point(const Point_3& p) {
+    return 0;
+  }
+
   template <typename SNC_structure>
   static typename SNC_structure::Volume_handle getNirvana(SNC_structure& snc) {
     return snc.volumes_begin();
@@ -111,6 +130,28 @@ class Infimaximal_box {
   static bool is_beyond_Infibox(typename SNC_structure::SFace_handle sf, 
 				SNC_structure& snc) {
     return false;
+  }
+
+  static bool x_on_box(const Point_3& p) {
+    return false;
+  }
+
+  static bool y_on_box(const Point_3& p) {
+    return false;
+  }
+
+  static bool z_on_box(const Point_3& p) {
+    return false;
+  }
+
+  template <typename SNC_constructor>
+  static std::list<Point_3> find_points_of_box_with_plane(SNC_constructor& C, const Plane_3& h) {
+    return std::list<Point_3>();
+  }
+
+  static typename std::list<Point_3>::const_iterator segment_on_side(int side_of_point, 
+							      const std::list<Point_3>& segs) {  
+    return segs.begin();
   }
 
   static Point_3 create_extended_point(NT x, NT y, NT z) {
@@ -169,6 +210,7 @@ class Infimaximal_box<Tag_true, Kernel> {
   typedef typename Kernel::Point_3               Point_3;
   typedef typename Kernel::Plane_3               Plane_3;
   typedef typename Kernel::Vector_3              Vector_3;
+  typedef typename Kernel::Segment_3             Segment_3;
   typedef typename Kernel::Direction_3           Direction_3;
 
   //  typedef typename SNC_structure::Sphere_point   Sphere_point;
@@ -194,6 +236,19 @@ class Infimaximal_box<Tag_true, Kernel> {
 
   static bool is_standard(const Plane_3& p) {
     return (p.d().degree() == 0);
+  }
+
+  static int type_of_infibox_point(const Point_3& p) {
+    int res = 0;
+    RT W(NT(0),p.hw()[0]);
+    if(CGAL_NTS abs(p.hx()) == W) ++res;
+    if(CGAL_NTS abs(p.hy()) == W) ++res;
+    if(CGAL_NTS abs(p.hz()) == W) ++res;
+    return res;
+  }
+
+  static bool is_infibox_corner(const Point_3& p) {
+    return type_of_infibox_point(p) == 3;
   }
 
   static Point_3 simplify(Point_3& p) {
@@ -227,6 +282,24 @@ class Infimaximal_box<Tag_true, Kernel> {
     return Point(RT(0,-1), RT(p.hy()[0]), RT(p.hz()[0]), RT(p.hw()[0]));
   }
 
+  static bool check_point_on_plane(Point_3 p, Plane_3 h) {
+    NT x(p.hx().eval_at(100));
+    NT y(p.hy().eval_at(100));
+    NT z(p.hz().eval_at(100));
+    NT w(p.hw().eval_at(100));
+    NT d(h.d().eval_at(100));
+    return (x*h.a()+y*h.b()+z*h.c()+w*d == 0);
+  }
+
+  /*
+  static Plane_3 plane_through(Point_3 p, Sphere_circle c) {
+    
+    Point_3
+    
+    
+  }
+  */
+
   static Standard_point standard_point(Point_3 p, NT d=1) {
     return Standard_point(p.hx().eval_at(d),
 			  p.hy().eval_at(d),
@@ -249,6 +322,18 @@ class Infimaximal_box<Tag_true, Kernel> {
 
   static void set_size_of_infimaximal_box(NT size) {
     RT::set_R(size);
+  }
+
+  static bool x_on_box(const Point_3& p) {
+    return CGAL_NTS abs(p.hx()) == RT(0,p.hw()[0]);
+  }
+
+  static bool y_on_box(const Point_3& p) {
+    return CGAL_NTS abs(p.hy()) == RT(0,p.hw()[0]);
+  }
+
+  static bool z_on_box(const Point_3& p) {
+    return CGAL_NTS abs(p.hz()) == RT(0,p.hw()[0]);
   }
 
   static Point_3 create_extended_point(NT x, NT y, NT z) {
@@ -278,6 +363,46 @@ class Infimaximal_box<Tag_true, Kernel> {
   template <typename SNC_constructor>
   static void create_vertices_of_box_with_plane(SNC_constructor& C, const Plane_3& h, bool b) {
     C.create_vertices_of_box_with_plane(h, b);
+  }
+
+  static typename std::list<Point_3>::const_iterator segment_on_side(int side_of_point, 
+								     const std::list<Point_3>& segs) {  
+
+    typename std::list<Point_3>::const_iterator s1,t1;
+    for(s1 = segs.begin(); s1 != segs.end(); ++s1) {
+      t1 = s1;
+      ++t1;
+      if(t1 == segs.end()) t1 = segs.begin();
+      switch(side_of_point) {
+      case  1: 
+	if( s1->hx()(1) != s1->hw()) continue; 
+	if( t1->hx()(1) != t1->hw()) continue;
+	return s1;
+      case -1: 
+	if(-s1->hx()(1) != s1->hw()) continue;
+	if(-t1->hx()(1) != t1->hw()) continue; 
+	return s1;
+      case  2: 
+	if( s1->hy()(1) != s1->hw()) continue;
+	if( t1->hy()(1) != t1->hw()) continue;
+	return s1;	break;
+      case -2: 
+	if(-s1->hy()(1) != s1->hw()) continue; 
+	if(-t1->hy()(1) != t1->hw()) continue; 
+	return s1;
+      case  3: 
+	if( s1->hz()(1) != s1->hw()) continue; 
+	if( t1->hz()(1) != t1->hw()) continue; 
+	return s1;
+      case -3: 
+	if(-s1->hz()(1) != s1->hw()) continue; 
+	if(-t1->hz()(1) != t1->hw()) continue; 
+	return s1;
+      default: CGAL_assertion_msg(false, "wrong value");
+      }
+    }
+    CGAL_assertion_msg(false, "this line of shall not be reached");
+    return s1;
   }
 
   template <typename SNC_constructor>
@@ -340,6 +465,26 @@ class Infimaximal_box<Tag_true, Kernel> {
 
     return false;
   }
+  
+  template <typename Sphere_map>
+  static bool is_complex_facet_infibox_intersection(const Sphere_map& sm) {
+    
+    typename Sphere_map::SHalfedge_const_iterator sei;
+    bool found = false;
+    CGAL_forall_sedges(sei, sm) {
+      if(!is_sedge_on_infibox(sei))
+	if(found)
+	  return true;
+	else
+	  found = true;
+    }
+    return false;
+  }
+
+  template <typename SNC_constructor>
+  static std::list<Point_3> find_points_of_box_with_plane(SNC_constructor& C, const Plane_3& h) {
+    return C.find_points_of_box_with_plane(h);
+  }
 
   template <typename Halfedge_handle>
   static bool is_type4(Halfedge_handle e) {
@@ -347,13 +492,13 @@ class Infimaximal_box<Tag_true, Kernel> {
     Point_3 p(e->center_vertex()->point());
     Direction_3 d(e->vector());
 
-    if((p.hx().degree() > 0 || 
+    if((CGAL_NTS abs(p.hx()) == CGAL_NTS abs(p.hw()) || 
 	d == Direction_3(1,0,0) ||
 	d == Direction_3(-1,0,0)) &&
-       (p.hy().degree() > 0 || 
+       (CGAL_NTS abs(p.hy()) == CGAL_NTS abs(p.hw()) || 
 	d == Direction_3(0,1,0) ||
 	d == Direction_3(0,-1,0)) &&
-       (p.hz().degree() > 0 || 
+       (CGAL_NTS abs(p.hz()) == CGAL_NTS abs(p.hw()) || 
 	d == Direction_3(0,0,1) ||
 	d == Direction_3(0,0,-1)))
       return true;
@@ -367,22 +512,21 @@ class Infimaximal_box<Tag_true, Kernel> {
     Direction_3 d(e->vector());
     
     if(d == Direction_3(1,0,0) || d == Direction_3(-1,0,0)) {
-      if(p.hy().degree()>1)
+      if(CGAL_NTS abs(p.hy()) == CGAL_NTS abs(p.hw()))
 	return true;
       return false;
     }
     if(d == Direction_3(0,1,0) || d == Direction_3(0,-1,0)) {
-      if(p.hx().degree()>1)
+      if(CGAL_NTS abs(p.hx()) == CGAL_NTS abs(p.hw()))
 	return true;
       return false;
     }
     if(d == Direction_3(0,0,1) || d == Direction_3(0,0,-1)) {
-      if(p.hx().degree()>1)
+      if(CGAL_NTS abs(p.hy()) == CGAL_NTS abs(p.hw()))
 	return true;
       return false;
     }
 
-    CGAL_assertion_msg(0,"this line shall not be reached");
     return false;
   }
 

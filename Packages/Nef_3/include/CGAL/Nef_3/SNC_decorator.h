@@ -302,7 +302,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   static Halffacet_handle twin(Halffacet_handle f)
   { return f->twin(); }
   static Volume_handle volume(Halffacet_handle f)
-    { return f->volume_; }
+    { return f->volume(); }
   /* Halffacet queries */
 
   SFace_handle adjacent_sface(Halffacet_handle f) const {
@@ -353,13 +353,13 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 
   template <typename H>
   void store_boundary_object(H h, Halffacet_handle f) const
-  { f->boundary_entry_objects_.push_back(Object_handle(h));
+  { f->boundary_entry_objects().push_back(Object_handle(h));
     sncp()->store_boundary_item(h, --(f->facet_cycles_end()));
   }
 
   template <typename H>
   void store_as_first_boundary_object(H h, Halffacet_handle f) const
-  { f->boundary_entry_objects_.push_front(Object_handle(h));
+  { f->boundary_entry_objects().push_front(Object_handle(h));
     sncp()->store_boundary_item(h, --(f->facet_cycles_end()));
   }
 
@@ -368,7 +368,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   { CGAL_assertion(sncp()->is_boundary_object(h));
     Halffacet_cycle_iterator it = sncp()->boundary_item(h);
     sncp()->undef_boundary_item(h);
-    f->boundary_entry_objects_.erase(it);
+    f->boundary_entry_objects().erase(it);
   }
 
   void link_as_facet_cycle(SHalfedge_handle e, Halffacet_handle f) const
@@ -394,7 +394,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   { CGAL_assertion(sncp()->is_boundary_object(h));
     Shell_entry_iterator it = sncp()->boundary_item(h);
     sncp()->undef_boundary_item(h);
-    c->shell_entry_objects_.erase(it);
+    c->shell_entry_objects().erase(it);
   }
 
   template <typename H>
@@ -432,7 +432,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   };
 
   void link_as_outer_shell( SFace_handle f, Volume_handle c ) const {
-    //    CGAL_assertion(c->shell_entry_objects_.size() == 0);
+    //    CGAL_assertion(c->shell_entry_objects().size() == 0);
     Shell_volume_setter Setter(*this);
     Setter.set_volume(c);
     visit_shell_objects( f, Setter );
@@ -441,7 +441,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   }
 
   void link_as_inner_shell( SFace_handle f, Volume_handle c ) const {
-    // CGAL_assertion(c->shell_entry_objects_.size() > 0);
+    // CGAL_assertion(c->shell_entry_objects().size() > 0);
     Shell_volume_setter Setter(*this);
     Setter.set_volume(c);
     visit_shell_objects( f, Setter );
@@ -452,7 +452,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   template <class H> void set_facet(H h, Halffacet_handle f) const 
     { h->incident_facet() = f; }
   void set_volume(Halffacet_handle h, Volume_handle c) const
-    { h->volume_ = c; }
+    { h->volume() = c; }
   void set_volume(SFace_handle h, Volume_handle c) const 
     { h->incident_volume() = c; }
 
@@ -986,7 +986,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 
     TRACEN("\nnumber of vertices (so far...) = "<< sncp()->number_of_vertices());
 
-    TRACEN("=> for all v0 in snc0, qualify v0 with respect snc1");
+    TRACEN("=> for all v0 in snc1, qualify v0 with respect snc2");
     CGAL_forall_vertices( v0, snc1) {
       //      v_qualifying++;
       CGAL_assertion(!ignore[v0]);
@@ -1255,14 +1255,14 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 	  SHalfedge_handle sheh = SHalfedge_handle(hfci);
 	  valid = valid && (sheh != SHalfedge_handle());
 	  SHalfedge_around_facet_circulator shec1(sheh), shec2(shec1);
-	  CGAL_For_all(shec1, shec2) {
+       	  CGAL_For_all(shec1, shec2) {
 	    SM_decorator SD(&*vertex(shec1));
 	    if(SEinUniqueFC[shec1])
 	      TRACEN("redundant facet " << point(vertex(shec1)) << " | " << SD.circle(shec1));
 	    CGAL_assertion(!SEinUniqueFC[shec1]);
 	    SEinUniqueFC[shec1] = true;
-
 	    Plane_3 p_ref(point(vertex(shec1)),SD.circle(shec1).opposite().orthogonal_vector());
+	    valid = valid && Infi_box::check_point_on_plane(point(vertex(shec1)), plane(hfi));
 	    valid = valid && (normalized(plane(hfi)) == normalized(p_ref));
 	  }
 	}

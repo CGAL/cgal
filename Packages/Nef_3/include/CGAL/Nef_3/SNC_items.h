@@ -50,21 +50,21 @@ class SNC_items {
     typedef void* GenPtr;
     typedef typename Refs::Mark  Mark;
     typedef typename Refs::Point_3 Point_3;
-    typedef typename Refs::Sphere_map Sphere_map;
+
+    typedef typename Refs::Vertex_handle Vertex_handle;
+    typedef typename Refs::SHalfloop_handle SHalfloop_handle;
+
+    typedef typename Refs::Vertex_iterator Vertex_iterator;
     typedef typename Refs::SVertex_iterator SVertex_iterator;
     typedef typename Refs::SHalfedge_iterator SHalfedge_iterator;
     typedef typename Refs::SHalfloop_iterator SHalfloop_iterator;
     typedef typename Refs::SFace_iterator SFace_iterator;
 
-    typedef typename Refs::Vertex_handle Vertex_handle;
-    typedef typename Refs::Vertex_iterator Vertex_iterator;
-    typedef typename Refs::SHalfloop_handle SHalfloop_handle;
-    typedef typename Refs::SHalfloop SHalfloop;
+    typedef typename Refs::Vertex_const_iterator Vertex_const_iterator;
     typedef typename Refs::SVertex_const_iterator SVertex_const_iterator;
     typedef typename Refs::SHalfedge_const_iterator SHalfedge_const_iterator;
     typedef typename Refs::SFace_const_iterator SFace_const_iterator;
     typedef typename Refs::SHalfloop_const_handle SHalfloop_const_handle;
-    typedef typename Refs::Vertex_const_iterator Vertex_const_iterator;
 
     typedef typename Refs::Size_type  Size_type;
 
@@ -378,13 +378,16 @@ class SNC_items {
     typedef void* GenPtr;
     typedef typename Refs::Mark  Mark;
     typedef typename Refs::Sphere_point  Sphere_point;
-    typedef typename Refs::Sphere_map Sphere_map;
-    friend class SM_decorator<Refs>;
     typedef typename Refs::Vertex_handle    Vertex_handle;
     typedef typename Refs::Halfedge_handle  Halfedge_handle;
     typedef typename Refs::SVertex_handle   SVertex_handle;
     typedef typename Refs::SHalfedge_handle SHalfedge_handle;
     typedef typename Refs::SFace_handle     SFace_handle;
+    typedef typename Refs::Vertex_const_handle    Vertex_const_handle;
+    typedef typename Refs::Halfedge_const_handle  Halfedge_const_handle;
+    typedef typename Refs::SVertex_const_handle   SVertex_const_handle;
+    typedef typename Refs::SHalfedge_const_handle SHalfedge_const_handle;
+    typedef typename Refs::SFace_const_handle     SFace_const_handle;
 
     Vertex_handle      center_vertex_;
     Mark               mark_;
@@ -430,7 +433,13 @@ class SNC_items {
     }
 
     Vertex_handle& center_vertex() { return center_vertex_; }
-    Vertex_handle center_vertex() const { return center_vertex_; }
+    Vertex_const_handle center_vertex() const { return center_vertex_; }
+
+    Vertex_handle& source() { return center_vertex_; }
+    Vertex_const_handle source() const { return center_vertex_; }
+
+    Vertex_handle& target() { return twin()->source(); }
+    Vertex_const_handle target() const { return twin()->source(); }
 
     Mark& mark() { return mark_; }
     const Mark& mark() const { return mark_; }
@@ -441,13 +450,15 @@ class SNC_items {
     const Sphere_point& point() const { return point_; }
 
     SVertex_handle& twin() { return twin_; }
-    SVertex_handle twin()  const { return twin_; }
+    SVertex_const_handle twin()  const { return twin_; }
 
     SHalfedge_handle& out_sedge() { return out_sedge_; }
-    SHalfedge_handle out_sedge() const { return out_sedge_; }
+    SHalfedge_const_handle out_sedge() const { return out_sedge_; }
 
     SFace_handle& incident_sface() { return incident_sface_; } 
-    SFace_handle incident_sface() const { return incident_sface_; } 
+    SFace_const_handle incident_sface() const { return incident_sface_; } 
+
+    bool is_isolated() const { return (out_sedge() == SHalfedge_handle()); }
 
     GenPtr& info() { return info_; }
     const GenPtr& info() const { return info_; }
@@ -494,18 +505,15 @@ class SNC_items {
     typedef void* GenPtr;
     typedef typename Refs::Mark  Mark;
     typedef typename Refs::Plane_3   Plane_3;
-    typedef typename Refs::Halffacet_handle   Halffacet_handle;
-    typedef typename Refs::Volume_handle  Volume_handle;
-    typedef typename Refs::SHalfedge_handle SHalfedge_handle;
-    typedef typename Refs::SHalfloop_handle SHalfloop_handle;
+    typedef typename Refs::Halffacet_handle         Halffacet_handle;
+    typedef typename Refs::Halffacet_const_handle   Halffacet_const_handle;
+    typedef typename Refs::Volume_handle            Volume_handle;
+    typedef typename Refs::Volume_const_handle      Volume_const_handle;
     typedef typename Refs::Object_list    Object_list;
-    typedef typename Refs::Object_const_iterator Object_iterator;
     typedef typename Refs::Halffacet_cycle_iterator
                                           Halffacet_cycle_iterator;
     typedef typename Refs::Halffacet_cycle_const_iterator
                                           Halffacet_cycle_const_iterator;
-  public: // TODO: TO REMOVE!!!
-
 
     Plane_3              supporting_plane_;
     Mark                 mark_;
@@ -548,13 +556,13 @@ class SNC_items {
     const Mark& mark() const { return mark_; }
 
     Halffacet_handle& twin() { return twin_; }
-    Halffacet_handle twin() const { return twin_; }
+    Halffacet_const_handle twin() const { return twin_; }
 
     Plane_3& plane() { return supporting_plane_; }
     const Plane_3& plane() const { return supporting_plane_; }
 
     Volume_handle& volume() { return volume_; }
-    Volume_handle volume() const { return volume_; }
+    Volume_const_handle volume() const { return volume_; }
 
     Object_list& boundary_entry_objects() { return boundary_entry_objects_; }
     const Object_list& boundary_entry_objects() const { return boundary_entry_objects_; }
@@ -603,8 +611,8 @@ class SNC_items {
   class Volume  {
     typedef void* GenPtr;
     typedef typename Refs::Mark  Mark;
-    typedef typename Refs::Object_handle  Object_handle;
     typedef typename Refs::Volume_handle  Volume_handle;
+    typedef typename Refs::Volume_const_handle  Volume_const_handle;
     typedef typename Refs::Object_list   Object_list;
     typedef typename Refs::Shell_entry_iterator
                                           Shell_entry_iterator;
@@ -681,23 +689,26 @@ class SNC_items {
     typedef void* GenPtr;
     typedef typename Refs::Mark  Mark;
     typedef typename Refs::Sphere_circle  Sphere_circle;
-    typedef typename Refs::Sphere_map Sphere_map;
+
     typedef typename Refs::Halfedge_handle Halfedge_handle;
+    typedef typename Refs::Halfedge_const_handle Halfedge_const_handle;
     typedef typename Refs::SVertex_handle SVertex_handle;
+    typedef typename Refs::SVertex_const_handle SVertex_const_handle;
     typedef typename Refs::SHalfedge_handle SHalfedge_handle;
     typedef typename Refs::SHalfedge_const_handle SHalfedge_const_handle;
     typedef typename Refs::SFace_handle SFace_handle;
+    typedef typename Refs::SFace_const_handle SFace_const_handle;
     typedef typename Refs::Halffacet_handle Halffacet_handle;
-    friend class SM_decorator<Refs>;
+    typedef typename Refs::Halffacet_const_handle Halffacet_const_handle;
 
     // Role within local graph:
-    SVertex_handle     source_;            
-    SHalfedge_handle   sprev_, snext_;      
-    SFace_handle       incident_sface_;     
-    SHalfedge_handle   twin_;              
+    SVertex_handle     source_;
+    SHalfedge_handle   sprev_, snext_;
+    SFace_handle       incident_sface_;
+    SHalfedge_handle   twin_;
     // Topology within global Nef structure:  
-    SHalfedge_handle   prev_, next_;     
-    Halffacet_handle       incident_facet_;    
+    SHalfedge_handle   prev_, next_;
+    Halffacet_handle   incident_facet_;
     GenPtr             info_;
     // temporary needed:
     Mark               mark_;
@@ -749,31 +760,44 @@ class SNC_items {
     const Mark& mark() const { return mark_; }
 
     SHalfedge_handle& twin() { return twin_; }
-    SHalfedge_handle twin() const { return twin_; }
+    SHalfedge_const_handle twin() const { return twin_; }
 
     SVertex_handle& source() { return source_; }
-    SVertex_handle source() const { return source_; }
+    SVertex_const_handle source() const { return source_; }
+
+    SVertex_handle& target() { return twin()->source(); }
+    SVertex_handle target() const { return twin()->source(); }
 
     SHalfedge_handle& prev() { return prev_; }
-    SHalfedge_handle prev() const { return prev_; }
+    SHalfedge_const_handle prev() const { return prev_; }
 
     SHalfedge_handle& next() { return next_; }
-    SHalfedge_handle next() const { return next_; }
+    SHalfedge_const_handle next() const { return next_; }
 
     SHalfedge_handle& sprev() { return sprev_; }
-    SHalfedge_handle sprev() const { return sprev_; }
+    SHalfedge_const_handle sprev() const { return sprev_; }
 
     SHalfedge_handle& snext() { return snext_; }
-    SHalfedge_handle snext() const { return snext_; }
+    SHalfedge_const_handle snext() const { return snext_; }
+
+    SHalfedge_handle& cyclic_adj_succ()
+      { return sprev()->twin(); }
+    SHalfedge_const_handle cyclic_adj_succ() const
+      { return sprev()->twin(); }
+
+    SHalfedge_handle& cyclic_adj_pred(SHalfedge_const_handle e)
+      { return e->twin()->snext(); }
+    SHalfedge_const_handle cyclic_adj_pred(SHalfedge_const_handle e) const
+      { return e->twin()->snext(); }
 
     Sphere_circle& circle() { return circle_; }
     const Sphere_circle& circle() const { return circle_; }
     
     SFace_handle& incident_sface() { return incident_sface_; }
-    SFace_handle incident_sface() const { return incident_sface_; }
+    SFace_const_handle incident_sface() const { return incident_sface_; }
 
     Halffacet_handle& incident_facet() { return incident_facet_; }
-    Halffacet_handle incident_facet() const { return incident_facet_; }
+    Halffacet_const_handle incident_facet() const { return incident_facet_; }
 
     GenPtr& info() { return info_; }
     const GenPtr& info() const { return info_; }
@@ -828,12 +852,12 @@ class SNC_items {
     typedef void* GenPtr;
     typedef typename Refs::Mark  Mark;
     typedef typename Refs::Sphere_circle  Sphere_circle;
-    typedef typename Refs::Vertex_handle Vertex_handle;
     typedef typename Refs::SHalfloop_handle SHalfloop_handle;
+    typedef typename Refs::SHalfloop_const_handle SHalfloop_const_handle;
     typedef typename Refs::SFace_handle SFace_handle;
+    typedef typename Refs::SFace_const_handle SFace_const_handle;
     typedef typename Refs::Halffacet_handle Halffacet_handle;
-    typedef typename Refs::Sphere_map Sphere_map;
-    friend class SM_decorator<Refs>;
+    typedef typename Refs::Halffacet_const_handle Halffacet_const_handle;
 
     SHalfloop_handle   twin_;
     SFace_handle       incident_sface_;
@@ -874,16 +898,16 @@ class SNC_items {
     const Mark& mark() const { return mark_; }
 
     SHalfloop_handle& twin() { return twin_; }
-    SHalfloop_handle twin() const { return twin_; }
+    SHalfloop_const_handle twin() const { return twin_; }
 
     Sphere_circle& circle() { return circle_; }
     const Sphere_circle& circle() const { return circle_; }
 
     SFace_handle& incident_sface() { return incident_sface_; }
-    SFace_handle incident_sface() const { return incident_sface_; }
+    SFace_const_handle incident_sface() const { return incident_sface_; }
 
     Halffacet_handle& incident_facet() { return incident_facet_; }
-    Halffacet_handle incident_facet() const { return incident_facet_; }
+    Halffacet_const_handle incident_facet() const { return incident_facet_; }
 
     GenPtr& info() { return info_; }
     const GenPtr& info() const { return info_; }
@@ -927,12 +951,12 @@ class SNC_items {
   class SFace { 
     typedef void* GenPtr;
     typedef typename Refs::Mark  Mark;
-    typedef typename Refs::Sphere_map Sphere_map;
-    friend class SM_decorator<Refs>;
     typedef typename Refs::Vertex_handle  Vertex_handle;
+    typedef typename Refs::Vertex_const_handle  Vertex_const_handle;
     typedef typename Refs::SFace_handle   SFace_handle;
-    typedef typename Refs::Object_handle Object_handle;
+    typedef typename Refs::SFace_const_handle   SFace_const_handle;
     typedef typename Refs::Volume_handle  Volume_handle;
+    typedef typename Refs::Volume_const_handle  Volume_const_handle;
     typedef typename Refs::Object_list   Object_list;
     typedef typename Refs::SFace_cycle_iterator 
                                           SFace_cycle_iterator;
@@ -985,10 +1009,10 @@ class SNC_items {
     const Mark& mark() const { return mark_; }
 
     Vertex_handle& center_vertex() { return center_vertex_; }
-    Vertex_handle center_vertex() const { return center_vertex_; }
+    Vertex_const_handle center_vertex() const { return center_vertex_; }
 
     Volume_handle& incident_volume() { return incident_volume_; }
-    Volume_handle incident_volume() const { return incident_volume_; }
+    Volume_const_handle incident_volume() const { return incident_volume_; }
 
     Object_list& boundary_entry_objects() { return boundary_entry_objects_; }
     const Object_list& boundary_entry_objects() const { return boundary_entry_objects_; }

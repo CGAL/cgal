@@ -316,7 +316,7 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
     SFace_iterator sf;
     CGAL_forall_sfaces( sf, *sncp()) {
       hash_sface[sf] = uf_sface.make_set(sf);
-      sncp()->reset_sm_object_list(sf->boundary_entry_objects_);
+      sncp()->reset_sm_object_list(sf->boundary_entry_objects());
     }
 
     /* 
@@ -351,7 +351,7 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
     
     CGAL_forall_halffacets( f, *sncp()) {
       hash_facet[f] = uf_facet.make_set(f);
-      sncp()->reset_object_list(f->boundary_entry_objects_);
+      sncp()->reset_object_list(f->boundary_entry_objects());
     }
     
     /* 
@@ -582,16 +582,16 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
       /* store the edge use at the lexicographicaly minimum facet vertex, as
 	 a cycle entry of f.  The outermost cycle is stored at first
 	 on the facet's cycles list. */
-      if( is_empty_range( f->boundary_entry_objects_.begin(),
-			  f->boundary_entry_objects_.end())) {
+      if( is_empty_range( f->boundary_entry_objects().begin(),
+			  f->boundary_entry_objects().end())) {
 	D.store_boundary_object( u_min, f);
 	TRACEN("new outer cycle min. vertex: "<<D.point(D.vertex(u_min)));
       }
       else {
 	SHalfedge_handle f_sedge;
 	CGAL_assertion( assign( f_sedge, 
-				     f->boundary_entry_objects_.front()));
-	assign( f_sedge, f->boundary_entry_objects_.front());
+				     f->boundary_entry_objects().front()));
+	assign( f_sedge, f->boundary_entry_objects().front());
 	if( lexicographically_xyz_smaller(D.point(D.vertex(u_min)), D.point(D.vertex(f_sedge))))
 	  D.store_as_first_boundary_object( u_min, f);
 	else

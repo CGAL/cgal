@@ -277,10 +277,21 @@ public:
     return (i == 6);
   }
 
-  static bool is_standard(const Vertex_const_handle v) {
+  static bool is_bounded(Halffacet_const_handle f) {
+    Halffacet_cycle_const_iterator fc = f->facet_cycles_begin();
+    CGAL_assertion(fc.is_shalfedge());
+    SHalfedge_const_handle sh(fc);
+    SHalfedge_around_facet_const_circulator fcc(sh), fend(fcc);
+    CGAL_For_all(fcc,fend)
+      if(!is_standard(fcc->source()->source()))
+	return false;
+    return true;
+  }
+
+  static bool is_standard(Vertex_const_handle v) {
     return Infi_box::is_standard(v->point());
   }
-  static bool is_standard(const Halffacet_const_handle f) {
+  static bool is_standard(Halffacet_const_handle f) {
     return Infi_box::is_standard(f->plane());
   }
   static bool is_standard_kernel() { return Infi_box::standard_kernel(); }

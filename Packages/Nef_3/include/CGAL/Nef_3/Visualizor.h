@@ -19,8 +19,8 @@
 //                 Miguel Granados <granados@mpi-sb.mpg.de>
 //                 Susan Hert      <hert@mpi-sb.mpg.de>
 //                 Lutz Kettner    <kettner@mpi-sb.mpg.de>
-#ifndef CGAL_VISUALIZOR_H
-#define CGAL_VISUALIZOR_H
+#ifndef CGAL_VISUALIZOR_OPENGL_3_H
+#define CGAL_VISUALIZOR_OPENGL_3_H
 
 #include <CGAL/basic.h>
 #include <CGAL/IO/Color.h>
@@ -797,7 +797,7 @@ static void start_viewer()
 // ----------------------------------------------------------------------------
 
 template<typename Nef_polyhedron>
-class Visualizor { 
+class Visualizor_OpenGL_3 { 
   typedef typename Nef_polyhedron::SNC_structure           SNC_structure;
   typedef CGAL::SNC_decorator<SNC_structure>               Base;
   typedef CGAL::SNC_FM_decorator<SNC_structure>            FM_decorator;
@@ -829,7 +829,7 @@ public:
 
   Nef_polyhedron N;
 
-  Visualizor(const Nef_polyhedron& Nef) : N(Nef) { 
+  Visualizor_OpenGL_3(const Nef_polyhedron& Nef) : N(Nef) { 
     ppoly_ = & CGAL::OGL::add_polyhedron(); 
   }
   
@@ -930,12 +930,12 @@ public:
     CGAL_forall_facets(f,*N.sncp()) draw(f);
   }
 
-}; // Visualizor
+}; // Visualizor_OpenGL_3
 
 
 
 
 
 CGAL_END_NAMESPACE
-#endif //CGAL_VISUALIZOR_H
+#endif //CGAL_VISUALIZOR_OPENGL_3_H
 

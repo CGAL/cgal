@@ -179,7 +179,6 @@ void SNC_SM_overlayer<Map>::simplify()
   }
 }
 
-
 CGAL_END_NAMESPACE
 #endif //CGAL_SNC_SM_OVERLAYER_H
 
