@@ -130,7 +130,7 @@ public:
     vtoolbar = new Layers_toolbar(widget, this, &tr1);
   
     *widget << CGAL::BackgroundColor (CGAL::BLACK);
-    *widget << CGAL::LineWidth(1);
+    *widget << CGAL::LineWidth(2);
 
     resize(w,h);
     widget->set_window(-1, 1, -1, 1);

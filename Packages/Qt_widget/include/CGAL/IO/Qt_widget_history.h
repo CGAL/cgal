@@ -10,7 +10,7 @@
 //
 // file          : include/CGAL/IO/Qt_widget_history.h
 // package       : Qt_widget
-// author(s)     : Laurent Rineau
+// author(s)     : Radu Ursu & Laurent Rineau
 // release       : 
 // release_date  : 
 //

@@ -11,7 +11,7 @@
 // file          : src/CGALQt/Qt_widget_history.C
 // package       : Qt_widget (1.3.21)
 // maintainer    : Laurent Rineau <rineau@clipper.ens.fr>
-// author(s)     : Laurent Rineau
+// author(s)     : Radu Ursu & Laurent Rineau
 // release       : 
 // release_date  : 
 //
