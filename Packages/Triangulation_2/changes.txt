@@ -1,6 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.50 (& july 00)
+add the missing test file _test_cls_triangulation_short_2.C
+file (due to previous operation)
+
 Ver 4.49 (6 July 00)
 Shortened the test suite of Triangulation.
 Fixed includes in Delaunay_triangulation_2.h
