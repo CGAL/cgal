@@ -1,3 +1,5 @@
+#line 160 "stl_extension.aw"
+#line 20 "cgal_header.awi"
 // ============================================================================
 //
 // Copyright (c) 1997, 1998, 1999 The CGAL Consortium
@@ -15,6 +17,7 @@
 // chapter       : $CGAL_Chapter: STL Extensions for CGAL $
 // package       : $CGAL_Package: STL_Extension $
 // source        : stl_extension.fw
+#line 37 "cgal_header.awi"
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
@@ -25,8 +28,10 @@
 // An iterator adaptor for the identity function.
 // ============================================================================
 
+#line 164 "stl_extension.aw"
 #ifndef CGAL_ITERATOR_IDENTITY_H
 #define CGAL_ITERATOR_IDENTITY_H 1
+#line 2136 "stl_extension.aw"
 #ifndef CGAL_CIRCULATOR_H
 #include <CGAL/circulator.h>
 #endif
@@ -168,5 +173,6 @@ operator+( D n, Iterator_identity<I,Ref,Ptr,Val,Dist,Ctg> i) {
 }
 
 CGAL_END_NAMESPACE
+#line 167 "stl_extension.aw"
 #endif // CGAL_ITERATOR_IDENTITY_H //
 // EOF //

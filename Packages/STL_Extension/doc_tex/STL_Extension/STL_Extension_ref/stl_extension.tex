@@ -401,10 +401,10 @@ random geometric objects\footnote{%
   The \stl\ release June 13, 1997, from SGI has a new function
   \ccc{copy_n} which is equivalent with \ccc{copy_n}.}.
 
-\ccInclude{CGAL/copy_n.h}
+\ccInclude{CGAL/algorithm.h}
 
 \ccFunction{template <class InputIterator, class Size, class OutputIterator>
-  OutputIterator copy_n( InputIterator first, Size n, 
+  OutputIterator copy_n(InputIterator first, Size n, 
   OutputIterator result);}
 {copies the first $n$ items from \ccc{first} to \ccc{result}.
     Returns the value of \ccc{result} after inserting the $n$ items.}
@@ -413,9 +413,98 @@ random geometric objects\footnote{%
 
 \ccc{Counting_iterator}.
 
+\subsection{Computing Minimal and Maximal Elements}
+\label{sectionMinmaxelement}
 
+\ccc{min_max_element()} computes the minimal and the maximal element of a
+range. It is modeled after the STL functions \ccc{min_element} and
+\ccc{max_element}. The advantage of \ccc{min_max_element} compared to calling
+both STL functions is that one only iterates once over the sequence. This is
+more efficient especially for large and/or complex sequences.
 
-% +=========================================================================+
+\ccInclude{CGAL/algorithm.h}
+
+\ccFunction{template < class ForwardIterator > std::pair< ForwardIterator,
+  ForwardIterator > min_max_element(ForwardIterator first, ForwardIterator
+  last);} {return a pair of iterators where the first component refers to the
+  minimal and the second component refers to the maximal element in the range
+  [\ccc{first}, \ccc{last}). The ordering is defined by the \ccc{operator<} on
+  the value type of \ccc{ForwardIterator}.}
+
+\ccFunction{template < class ForwardIterator, class CompareMin, class
+  CompareMax > std::pair< ForwardIterator, ForwardIterator >
+  min_max_element(ForwardIterator first, ForwardIterator last, CompareMin
+  comp_min, CompareMax comp_max);} {return a pair of iterators where the first
+  component refers to the minimal and the second component refers to the
+  maximal element in the range [\ccc{first}, \ccc{last}). \ccc{CompareMin} and
+  \ccc{CompareMax} are adaptable binary function objects:
+  \ccc{VT}~$\times$~\ccc{VT}~$\to$~\ccc{bool} where \ccc{VT} is the value type
+  of \ccc{ForwardIterator}.}
+
+\ccExample The following example program computes the minimal and maximal
+element of the sequence $(3,\,6,\,5)$. Hence the output is \ccc{min = 3, max =
+  6}.
+
+\ccIncludeVerbatim{min_max_element_example_noheader.C}
+
+\def\ccLongParamLayout{\ccTrue} 
+
+\subsection{Computing Minimal/Maximal Elements of Subsets}
+\label{sectionMinElementIf}
+
+\ccc{min_element_if()} and \ccc{min_element_if()} compute the minimum
+respectively maximum among the elements of a range which satisfy a certain
+predicate. They are modeled after the STL functions \ccc{min_element} and
+\ccc{max_element}.
+
+\ccInclude{CGAL/algorithm.h}
+
+\ccFunction{template < class ForwardIterator, class Predicate >
+  ForwardIterator min_element_if(ForwardIterator first, ForwardIterator last,
+  Predicate pred);}
+{return an iterator referring to the minimal element among those satifying the
+  predicate \ccc{pred} in the range [\ccc{first}, \ccc{last}). The ordering is
+  defined by the \ccc{operator<} on \ccc{VT} where \ccc{VT} is the value type
+  of \ccc{ForwardIterator}. \ccc{pred} is an unary function object:
+  \ccc{VT}~$\to$~\ccc{bool}.}
+
+\ccFunction{template < class ForwardIterator, class Predicate >
+  ForwardIterator max_element_if(ForwardIterator first, ForwardIterator last,
+  Predicate pred);}
+{return an iterator referring to the maximal element among those satifying the
+  predicate \ccc{pred} in the range [\ccc{first}, \ccc{last}). The ordering is
+  defined by the \ccc{operator<} on \ccc{VT} where \ccc{VT} is the value type
+  of \ccc{ForwardIterator}. \ccc{pred} is an unary function object:
+  \ccc{VT}~$\to$~\ccc{bool}.}
+
+\ccFunction{template < class ForwardIterator, class Compare, class Predicate >
+  ForwardIterator min_element_if(ForwardIterator first, ForwardIterator last,
+  Compare comp, Predicate pred);}
+{return an iterator referring to the minimal element among those satifying the
+  predicate \ccc{pred} in the range [\ccc{first}, \ccc{last}). The ordering is
+  defined by the binary function object \ccc{comp}:
+  \ccc{VT}~$\times$~\ccc{VT}~$\to$~\ccc{bool} where \ccc{VT} is the value type
+  of \ccc{ForwardIterator}. \ccc{pred} is an unary function object:
+  \ccc{VT}~$\to$~\ccc{bool}.}
+
+\ccFunction{template < class ForwardIterator, class Compare, class Predicate >
+  ForwardIterator max_element_if(ForwardIterator first, ForwardIterator last,
+  Compare comp, Predicate pred);}
+{return an iterator referring to the maximal element among those satifying the
+  predicate \ccc{pred} in the range [\ccc{first}, \ccc{last}). The ordering is
+  defined by the binary function object \ccc{comp}:
+  \ccc{VT}~$\times$~\ccc{VT}~$\to$~\ccc{bool} where \ccc{VT} is the value type
+  of \ccc{ForwardIterator}. \ccc{pred} is an unary function object:
+  \ccc{VT}~$\to$~\ccc{bool}.}
+
+\ccExample The following example program computes the minimal odd element of
+the sequence $(3,\,5,\,2)$. Hence the output is \ccc{min_odd = 3}.
+
+\ccIncludeVerbatim{min_element_if_example_noheader.C}
+
+  \def\ccLongParamLayout{\ccTrue}
+
+%% +=========================================================================+
 \newpage
 \section{Function Objects}
 % +=========================================================================+

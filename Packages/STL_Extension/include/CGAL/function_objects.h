@@ -1,3 +1,5 @@
+#line 99 "stl_extension.aw"
+#line 20 "cgal_header.awi"
 // ============================================================================
 //
 // Copyright (c) 1997, 1998, 1999 The CGAL Consortium
@@ -15,6 +17,7 @@
 // chapter       : $CGAL_Chapter: STL Extensions for CGAL $
 // package       : $CGAL_Package: STL_Extension $
 // source        : stl_extension.fw
+#line 37 "cgal_header.awi"
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
@@ -25,8 +28,10 @@
 // Function objects.
 // ============================================================================
 
+#line 103 "stl_extension.aw"
 #ifndef CGAL_FUNCTION_OBJECTS_H
 #define CGAL_FUNCTION_OBJECTS_H 1
+#line 1167 "stl_extension.aw"
 #ifndef CGAL_PROTECT_FUNCTIONAL
 #include <functional>
 #define CGAL_PROTECT_FUNCTIONAL
@@ -34,6 +39,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
+#line 1182 "stl_extension.aw"
 template < class Value>
 struct Identity {
   typedef Value argument_type;
@@ -172,6 +178,8 @@ struct Project_opposite_prev {
     return x->opposite()->prev();
   }
 };
+#line 1175 "stl_extension.aw"
+#line 1323 "stl_extension.aw"
 template < class Arg, class  Result >
 class Creator_1 {
 public:
@@ -355,6 +363,8 @@ public:
                       return Result(a1,a2,a3,a4,a5,a6,a7,a8,a9);
                     }
 };
+#line 1176 "stl_extension.aw"
+#line 1509 "stl_extension.aw"
 
 // Classes for composing function objects by Michael Hoffmann.
 
@@ -417,7 +427,9 @@ Binary_compose_2< Op1, Op2, Op3 >
 compose2_2( const Op1& op1, const Op2& op2, const Op3& op3) {
   return Binary_compose_2< Op1, Op2, Op3 >( op1, op2, op3);
 }
+#line 1177 "stl_extension.aw"
 
 CGAL_END_NAMESPACE
+#line 106 "stl_extension.aw"
 #endif // CGAL_FUNCTION_OBJECTS_H //
 // EOF //

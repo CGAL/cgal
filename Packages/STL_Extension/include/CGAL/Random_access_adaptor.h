@@ -1,3 +1,5 @@
+#line 268 "stl_extension.aw"
+#line 20 "cgal_header.awi"
 // ============================================================================
 //
 // Copyright (c) 1997, 1998, 1999 The CGAL Consortium
@@ -15,6 +17,7 @@
 // chapter       : $CGAL_Chapter: STL Extensions for CGAL $
 // package       : $CGAL_Package: STL_Extension $
 // source        : stl_extension.fw
+#line 37 "cgal_header.awi"
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
@@ -25,8 +28,10 @@
 // Random Access Adaptor provides random access for sequences.
 // ============================================================================
 
+#line 272 "stl_extension.aw"
 #ifndef CGAL_RANDOM_ACCESS_ADAPTOR_H
 #define CGAL_RANDOM_ACCESS_ADAPTOR_H 1
+#line 4240 "stl_extension.aw"
 #ifndef CGAL_PROTECT_VECTOR
 #include <vector>
 #define CGAL_PROTECT_VECTOR
@@ -149,5 +154,6 @@ Random_access_adaptor< IC>::init_index( IC i, const IC& j,
 }
 
 CGAL_END_NAMESPACE
+#line 275 "stl_extension.aw"
 #endif // CGAL_RANDOM_ACCESS_ADAPTOR_H //
 // EOF //

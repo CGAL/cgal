@@ -1,3 +1,5 @@
+#line 196 "stl_extension.aw"
+#line 20 "cgal_header.awi"
 // ============================================================================
 //
 // Copyright (c) 1997, 1998, 1999 The CGAL Consortium
@@ -15,6 +17,7 @@
 // chapter       : $CGAL_Chapter: STL Extensions for CGAL $
 // package       : $CGAL_Package: STL_Extension $
 // source        : stl_extension.fw
+#line 37 "cgal_header.awi"
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
@@ -25,8 +28,10 @@
 // An circulator adaptor performing a projection on the value type.
 // ============================================================================
 
+#line 200 "stl_extension.aw"
 #ifndef CGAL_CIRCULATOR_PROJECT_H
 #define CGAL_CIRCULATOR_PROJECT_H 1
+#line 3009 "stl_extension.aw"
 #ifndef CGAL_CIRCULATOR_H
 #include <CGAL/circulator.h>
 #endif
@@ -152,5 +157,6 @@ query_circulator_or_iterator(
 #endif // CGAL_CFG_NO_ITERATOR_TRAITS //
 
 CGAL_END_NAMESPACE
+#line 203 "stl_extension.aw"
 #endif // CGAL_CIRCULATOR_PROJECT_H //
 // EOF //

@@ -1,3 +1,5 @@
+#line 87 "stl_extension.aw"
+#line 20 "cgal_header.awi"
 // ============================================================================
 //
 // Copyright (c) 1997, 1998, 1999 The CGAL Consortium
@@ -15,6 +17,7 @@
 // chapter       : $CGAL_Chapter: STL Extensions for CGAL $
 // package       : $CGAL_Package: STL_Extension $
 // source        : stl_extension.fw
+#line 37 "cgal_header.awi"
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
@@ -25,8 +28,10 @@
 // A doubly linked list managing items in place.
 // ============================================================================
 
+#line 91 "stl_extension.aw"
 #ifndef CGAL_IN_PLACE_LIST_H
 #define CGAL_IN_PLACE_LIST_H 1
+#line 297 "stl_extension.aw"
 #ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
 #endif
@@ -65,6 +70,7 @@ CGAL_BEGIN_NAMESPACE
 //#define _In_place_list_iterator             _Ipli
 //#define _In_place_list_const_iterator       _Iplci
 
+#line 349 "stl_extension.aw"
 // Forward declarations
 template <class T> class _In_place_list_iterator;
 template <class T> class _In_place_list_const_iterator;
@@ -86,6 +92,8 @@ public:
   friend  class In_place_list<T,false>;
   friend  class In_place_list<T,true>;
 };
+#line 336 "stl_extension.aw"
+#line 377 "stl_extension.aw"
 template <class T>
 class _In_place_list_iterator {
   // protected:  // Made public for g++ 2.8 and egcs 2.90. They don't
@@ -732,11 +740,13 @@ void In_place_list<T,managed>::sort() {
   swap(counter[fill-1]);
 }
 
+#line 337 "stl_extension.aw"
 
 // Undef shorter names (g++/egcs)
 //#undef _In_place_list_iterator
 //#undef _In_place_list_const_iterator
 
 CGAL_END_NAMESPACE
+#line 94 "stl_extension.aw"
 #endif // CGAL_IN_PLACE_LIST_H //
 // EOF //

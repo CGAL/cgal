@@ -1,3 +1,5 @@
+#line 148 "stl_extension.aw"
+#line 20 "cgal_header.awi"
 // ============================================================================
 //
 // Copyright (c) 1997, 1998, 1999 The CGAL Consortium
@@ -15,6 +17,7 @@
 // chapter       : $CGAL_Chapter: STL Extensions for CGAL $
 // package       : $CGAL_Package: STL_Extension $
 // source        : stl_extension.fw
+#line 37 "cgal_header.awi"
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
@@ -25,8 +28,10 @@
 // Join_input_iterator.
 // ============================================================================
 
+#line 152 "stl_extension.aw"
 #ifndef CGAL_JOIN_INPUT_ITERATOR_H
 #define CGAL_JOIN_INPUT_ITERATOR_H 1
+#line 1721 "stl_extension.aw"
 #ifndef CGAL_CIRCULATOR_H
 #include <CGAL/circulator.h>
 #endif
@@ -429,5 +434,6 @@ public:
 };
 
 CGAL_END_NAMESPACE
+#line 155 "stl_extension.aw"
 #endif // CGAL_JOIN_INPUT_ITERATOR_H //
 // EOF //
