@@ -11,3 +11,6 @@
   write something about the perturbation scheme.
 - in the reference doc for the classes add the types for the template
   parameters.
+- rewrite some of the example programs to do deletions and nearest
+  neighbor queries.
+- write doc, code and example with the filtered traits.
