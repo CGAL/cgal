@@ -29,8 +29,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
-//CGAL_NO_FILTER_BEGIN
 template < class FT >
+/*CGAL_NO_FILTER*/
 CGAL_KERNEL_MEDIUM_INLINE
 Comparison_result
 compare_lexicographically_xyzC3(const FT &x1, const FT &y1, const FT &z1,
@@ -44,7 +44,6 @@ compare_lexicographically_xyzC3(const FT &x1, const FT &y1, const FT &z1,
   if (z2 < z1) return LARGER;
   return EQUAL;
 }
-//CGAL_NO_FILTER_END
 
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
@@ -78,8 +77,8 @@ orientationC3(const FT &px, const FT &py, const FT &pz,
                                             qz-pz,rz-pz,sz-pz));
 }
 
-//CGAL_NO_FILTER_BEGIN
 template < class FT >
+/*CGAL_NO_FILTER*/
 CGAL_KERNEL_MEDIUM_INLINE
 Orientation
 coplanar_orientationC3(const FT &qx, const FT &qy, const FT &qz,
@@ -99,6 +98,7 @@ coplanar_orientationC3(const FT &qx, const FT &qy, const FT &qz,
 }
 
 template < class FT >
+/*CGAL_NO_FILTER*/
 CGAL_KERNEL_MEDIUM_INLINE
 bool
 collinear_are_ordered_along_lineC3(
@@ -116,6 +116,7 @@ collinear_are_ordered_along_lineC3(
 }
 
 template < class FT >
+/*CGAL_NO_FILTER*/
 CGAL_KERNEL_MEDIUM_INLINE
 bool
 collinear_are_strictly_ordered_along_lineC3(
@@ -131,7 +132,6 @@ collinear_are_strictly_ordered_along_lineC3(
   if (qz < pz) return (rz < qz);
   return false; // p==q
 }
-//CGAL_NO_FILTER_END
 
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
@@ -220,8 +220,8 @@ cmp_dist_to_pointC3(const FT &px, const FT &py, const FT &pz,
                        squared_distanceC3(px,py,pz,rx,ry,rz));
 }
 
-//CGAL_NO_FILTER_BEGIN
 template < class FT >
+/*CGAL_NO_FILTER*/
 CGAL_KERNEL_MEDIUM_INLINE
 bool
 has_larger_dist_to_pointC3(const FT &px, const FT &py, const FT &pz,
@@ -232,6 +232,7 @@ has_larger_dist_to_pointC3(const FT &px, const FT &py, const FT &pz,
 }
 
 template < class FT >
+/*CGAL_NO_FILTER*/
 CGAL_KERNEL_MEDIUM_INLINE
 bool
 has_smaller_dist_to_pointC3(const FT &px, const FT &py, const FT &pz,
@@ -240,7 +241,6 @@ has_smaller_dist_to_pointC3(const FT &px, const FT &py, const FT &pz,
 {
   return cmp_dist_to_pointC3(px,py,pz,qx,qy,qz,rx,ry,rz) == SMALLER;
 }
-//CGAL_NO_FILTER_END
 
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
@@ -254,8 +254,8 @@ cmp_signed_dist_to_directionC3(
                        scaled_distance_to_directionC3(pa,pb,pc,qx,qy,qz));
 }
 
-//CGAL_NO_FILTER_BEGIN
 template < class FT >
+/*CGAL_NO_FILTER*/
 CGAL_KERNEL_MEDIUM_INLINE
 bool
 has_larger_signed_dist_to_directionC3(
@@ -267,6 +267,7 @@ has_larger_signed_dist_to_directionC3(
 }
 
 template < class FT >
+/*CGAL_NO_FILTER*/
 CGAL_KERNEL_MEDIUM_INLINE
 bool
 has_smaller_signed_dist_to_directionC3(
@@ -276,7 +277,6 @@ has_smaller_signed_dist_to_directionC3(
 {
   return cmp_signed_dist_to_directionC3(pa,pb,pc,px,py,pz,qx,qy,qz) == SMALLER;
 }
-//CGAL_NO_FILTER_END
 
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
@@ -294,8 +294,8 @@ cmp_signed_dist_to_planeC3(
 	      qx-px,   qy-py,   qz-pz));
 }
 
-//CGAL_NO_FILTER_BEGIN
 template < class FT >
+/*CGAL_NO_FILTER*/
 CGAL_KERNEL_MEDIUM_INLINE
 bool
 has_larger_signed_dist_to_planeC3(
@@ -310,6 +310,7 @@ has_larger_signed_dist_to_planeC3(
 }
 
 template < class FT >
+/*CGAL_NO_FILTER*/
 CGAL_KERNEL_MEDIUM_INLINE
 bool
 has_smaller_signed_dist_to_planeC3(
@@ -322,7 +323,6 @@ has_smaller_signed_dist_to_planeC3(
     return cmp_signed_dist_to_planeC3(ppx, ppy, ppz, pqx, pqy, pqz,
 	    prx, pry, prz, px, py, pz, qx, qy, qz) == SMALLER;
 }
-//CGAL_NO_FILTER_END
 
 CGAL_END_NAMESPACE
 
