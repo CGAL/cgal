@@ -30,7 +30,6 @@
 
 #include <CGAL/basic.h>
 
-#include <CGAL/Quotient.h>
 #include <CGAL/Point_3.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Triangle_3.h>
@@ -48,7 +47,7 @@ class Triangulation_geom_traits_3
 public:
 
   typedef Point_3<Repres>  Point;
-  typedef Point_2< Cartesian< Quotient<typename Repres::RT> > >  Point2;
+  typedef Point_2< Cartesian< typename Repres::FT> >  Point2;
   typedef Segment_3<Repres> Segment;
   typedef Triangle_3<Repres> Triangle;
   typedef Tetrahedron_3<Repres> Tetrahedron;
@@ -112,10 +111,10 @@ public:
     CGAL_triangulation_precondition( ! CGAL::collinear(q,r,s) );
     CGAL_triangulation_precondition( CGAL::orientation(p,q,r,s) == COPLANAR );
     // projection on the x,y-plane
-    Point2 P(p.hx(), p.hy(), p.hw());
-    Point2 Q(q.hx(), q.hy(), q.hw());
-    Point2 R(r.hx(), r.hy(), r.hw());
-    Point2 S(s.hx(), s.hy(), s.hw());
+    Point2 P(p.x(), p.y());
+    Point2 Q(q.x(), q.y());
+    Point2 R(r.x(), r.y());
+    Point2 S(s.x(), s.y());
     Orientation oxy_qrs = CGAL::orientation(Q,R,S);
 
     if ( oxy_qrs != COLLINEAR )
@@ -128,17 +127,17 @@ public:
     if ( ( Q.x() != R.x() ) || 
 	 ( Q.x() != S.x() ) ) {
       // projection on x,z-plane is ok
-      P = Point2(p.hx(), p.hz(), p.hw());
-      Q = Point2(q.hx(), q.hz(), q.hw());
-      R = Point2(r.hx(), r.hz(), r.hw());
-      S = Point2(s.hx(), s.hz(), s.hw());
+      P = Point2(p.x(), p.z());
+      Q = Point2(q.x(), q.z());
+      R = Point2(r.x(), r.z());
+      S = Point2(s.x(), s.z());
     }
     else
     { // projection on y,z-plane
-      P = Point2(p.hy(), p.hz(), p.hw());
-      Q = Point2(q.hy(), q.hz(), q.hw());
-      R = Point2(r.hy(), r.hz(), r.hw());
-      S = Point2(s.hy(), s.hz(), s.hw());
+      P = Point2(p.y(), p.z());
+      Q = Point2(q.y(), q.z());
+      R = Point2(r.y(), r.z());
+      S = Point2(s.y(), s.z());
     }
 
     return Orientation ( CGAL::orientation(Q,R,S) * CGAL::orientation(Q,R,P) );
