@@ -11,16 +11,15 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/Distance_2.h
-// source        : web/Distance_2.fw
+// file          : $RCSfile$
+// source        : $Source$
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Andreas Fabri
+// author(s)     : Mariette Yvinec
 //
-// coordinator   : Herve Bronnimann  <Herve.Bronnimann@sophia.inria.fr>
+// coordinator   : Mariette Yvinec  < Mariette Yvinec@sophia.inria.fr>
 //
 // ============================================================================
-
 
 #ifndef CGAL_DISTANCE_2_H
 #define CGAL_DISTANCE_2_H
