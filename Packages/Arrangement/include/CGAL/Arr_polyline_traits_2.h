@@ -37,6 +37,7 @@ class Arr_polyline_traits_2
 public:
 
   typedef Tag_true                                  Has_left_category;
+  typedef Tag_false                                 Has_reflect_category;
     
   typedef Segment_traits_                           Segment_traits_2;
   typedef typename Segment_traits_2::Kernel         Kernel;
