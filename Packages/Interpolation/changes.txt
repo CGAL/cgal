@@ -1,4 +1,7 @@
-29 September Andreas Fabri
+30 September 2004 Andreas Fabri
+- Replaced "return 1;" with "return 0;" in  the example interpolation.C 
+
+29 September 2004 Andreas Fabri
 - Don't use default values of parameters of _test_surface_neighbors_3_cube as VC7 has problems with it
 
 27 September 2004 Andreas Fabri
