@@ -1,4 +1,10 @@
 29 July 2004 Sylvain Pion
+- autotest_cgal :
+  - Add CGAL_TESTER_NAME and CGAL_TESTER_ADDRESS.
+  - Add TEST_DIR_ROOT which allows to use a local test directory which is not
+    under $CGAL and private to the testing machine (e.g. /tmp).
+
+29 July 2004 Sylvain Pion
 - changes to collect_cgal_testresults :
   - extract CGAL_VERSION only, not CGAL_VERSION_H and CGAL_VERSION_NR.
   - compute CGAL_DIR from CGAL_MAKEFILE instead of being hardcoded to "..",

@@ -32,6 +32,8 @@ GUNZIP="gunzip"
 COMPRESSOR="${GZIP}"
 SENDMAIL="mail"
 CGAL_TESTER=`whoami`
+CGAL_TESTER_NAME=`whoami`
+CGAL_TESTER_ADDRESS=`whoami`
 CONSOLE_OUTPUT="y"
 CGAL_ROOT=`pwd`
 FTP_SERVER="ftp-sop.inria.fr"
@@ -44,28 +46,17 @@ FTP="ftp"
 LOGS_DIR="${CGAL_ROOT}/AUTOTEST_LOGS"
 RSH="rsh"
 LOCK_FILE="${CGAL_ROOT}/autotest_cgal.lock"
+
+# Now loading autocgalrc.
 if [ -f $HOME/.autocgalrc ]; then
   . $HOME/.autocgalrc
 else
-#  if [ -f .autocgalrc ]; then
-#    . .autocgalrc
-#  else
-    echo "CONFIGURATION FILE .autocgalrc NOT FOUND";
-#  fi
+  echo "CONFIGURATION FILE .autocgalrc NOT FOUND";
 fi
 
 
 
 
-
-
-
-
-
-
-# ----------------------------------------------------
-# You probably don't need to change anything beyond
-# ----------------------------------------------------
 
 #
 # write to logfile
@@ -245,31 +236,38 @@ test_script()
 {
 	NUMBER_OF_PROCESSORS="`value_of PROCESSORS_${1}`"
 	cd ${CGAL_TEST_DIR}
-	mkdir ../test_${2}
-	cp -r * ../test_${2}
-	cd ../test_${2}
-	make_global_makefile
+	make_global_makefile # TODO: Should be moved to release building script
+	TEST_DIR_ROOT=${TEST_DIR_ROOT:-${CGAL_DIR}}
+	LOCAL_TEST_DIR=${TEST_DIR_ROOT}/test_${2}
 	log ${ACTUAL_LOGFILE}.${1} "Testing on ${1} with ${2}"
         if [ "${NUMBER_OF_PROCESSORS}" = "1" ] ; then
-          remote_command ${1} \
-                "CGAL_MAKEFILE=${CGAL_MAKE_DIR}/makefile_${2};
-                export CGAL_MAKEFILE;cd ${CGAL_DIR}/test_${2};
-                nice -19 make" >> ${ACTUAL_LOGFILE}.${1} 2>&1
-        else 
-	  remote_command ${1} \
-		"CGAL_MAKEFILE=${CGAL_MAKE_DIR}/makefile_${2};
-		export CGAL_MAKEFILE;cd ${CGAL_DIR}/test_${2}; 
-		nice -19 make -j ${NUMBER_OF_PROCESSORS}" \
-	        >> ${ACTUAL_LOGFILE}.${1} 2>&1 
+	  MAKE_OPTS=""
+        else
+	  MAKE_OPTS="-j ${NUMBER_OF_PROCESSORS}"
         fi
+        remote_command ${1} \
+                "CGAL_MAKEFILE=${CGAL_MAKE_DIR}/makefile_${2};
+		CGAL_TESTER=${CGAL_TESTER};
+		CGAL_TESTER_NAME=${CGAL_TESTER_NAME};
+		CGAL_TESTER_ADDRESS=${CGAL_TESTER_ADDRESS};
+                export CGAL_MAKEFILE;
+		export CGAL_TESTER CGAL_TESTER_NAME CGAL_TESTER_ADDRESS;
+		rm -rf ${LOCAL_TEST_DIR};
+		cp -r ${CGAL_TEST_DIR} ${LOCAL_TEST_DIR};
+		cd ${LOCAL_TEST_DIR};
+                nice -19 make ${MAKE_OPTS};
+		echo 'COLLECTING RESULTS';
+		./collect_cgal_testresults;
+		echo 'COPYING RESULTS';
+		cp results_${CGAL_TESTER}_${2}.tar.gz results_${CGAL_TESTER}_${2}.txt ${CGAL_TEST_DIR};
+		echo 'REMOVING LOCAL_TEST_DIR';
+		rm -rf ${LOCAL_TEST_DIR} " >> ${ACTUAL_LOGFILE}.${1} 2>&1
 	log_done ${ACTUAL_LOGFILE}.${1}
     #PLATFORM=`basename $CGAL_MAKEFILE | sed -e "s/makefile_//g"`
 	#
 	# collect results and put them on the web
 	#
-	log ${ACTUAL_LOGFILE}.${1} "COLLECTING AND PUTTING RESULTS ON THE WEB"
-	cd ${CGAL_DIR}/test_${2}
-	./collect_cgal_testresults >> ${ACTUAL_LOGFILE}.${1} 2>&1
+	log ${ACTUAL_LOGFILE}.${1} "PUTTING RESULTS ON THE WEB"
 	log ${ACTUAL_LOGFILE}.${1} "RESULTS COLLECTED "${2}"-"${1}
 	${TAR} cf test_results-${1}.tar "results_"$CGAL_TESTER"_"${2}".tar.gz" "results_"$CGAL_TESTER"_"${2}".txt"
 	${COMPRESSOR} -9f test_results-${1}.tar
@@ -290,13 +288,6 @@ test_script()
         printf "result collection::\n${FILENAME}\n" | ${SENDMAIL} -s "autohandle" ${i}
       done
     fi
-
-    
-    #removing test_platformname directories at the end 
-    #of the testsuite to save space
-    cd ${CGAL_DIR}
-    rm -rf test_${2}
-
 }
 
 
