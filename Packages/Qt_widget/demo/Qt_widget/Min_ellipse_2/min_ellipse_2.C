@@ -181,7 +181,7 @@ private slots:
   void about()
   {
     QMessageBox::about( this, my_title_string,
-		"This is a demo for Triangulation,\n"
+		"This is a demo for Minimum ellipse,\n"
   		"Copyright CGAL @2001");
   };
 
