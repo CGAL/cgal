@@ -124,21 +124,9 @@ $$
 \Rightarrow (X\ \mathcal{OP}\ Y) =false
 $$
 
-Otherwise, the comparison is not safe.  Then the behaviour is the following:
-\begin{itemize}
-\item By default, the exception
-    \ccc{Interval_nt_advanced::unsafe_comparison} is thrown.
-\item If you compile with the flag \ccc{-DCGAL_IA_NO_EXCEPTION}, the exception
-    is not thrown, but you get a warning instead.
-    The return value is unspecified.
-\item Moreover, you can also get rid of the warning by adding
-    \ccc{-DCGAL_IA_NO_WARNINGS} or \ccc{-DCGAL_NO_WARNINGS}.
-    The return value is unspecified too.
-\end{itemize}
-
-In all cases, you have access to a global counter of failures
-\ccc{Interval_nt_advanced::number_of_failures}, which is incremented
-for each unsafe comparison.
+Otherwise, the comparison is not safe, and we first increment the counter
+\ccc{Interval_nt_advanced::number_of_failures}, and then throw the exception
+\ccc{Interval_nt_advanced::unsafe_comparison}.
 
 \ccImplementation
 
@@ -343,7 +331,7 @@ following:
 The template definition of the low level predicates of {\cgal} are overloaded
 for the type \ccc{Filtered_exact<CT,ET>}.  It is a partial specialisation,
 which implies that this is not supported by the compilers that do not support
-this C++ feature (MipsPro 7.2).  A workaround is in place that allows to use
+this C++ feature.  A workaround is in place that allows to use
 one such filtered number type at once, by explicitely specializing the
 predicates for it.  To do so, just define the macros \ccc{CGAL_IA_CT} and
 \ccc{CGAL_IA_ET} to the corresponding number types before any inclusion of
