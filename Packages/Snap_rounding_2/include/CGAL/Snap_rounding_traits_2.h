@@ -16,8 +16,8 @@
 // $Name$
 //
 // author(s)     : Eli Packer <elip@post.tau.ac.il>
-#ifndef CGAL_SR_2_TRAITS_H
-#define CGAL_SR_2_TRAITS_H
+#ifndef CGAL_SNAP_ROUNDING_2_TRAITS_H
+#define CGAL_SNAP_ROUNDING_2_TRAITS_H
 
 #include <CGAL/basic.h>
 #include <map>
@@ -27,123 +27,145 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template<class base_rep>
+template<class Base_kernel>
 class Snap_rounding_traits_2 :
-    public CGAL::Arr_segment_cached_traits_2<base_rep> {
+  public CGAL::Arr_segment_cached_traits_2<Base_kernel> {
 
 public: // otherwise Segment_data cannot access the types
-typedef typename base_rep::FT                    NT;
-typedef typename base_rep::Point_2               Point_2;
-typedef typename base_rep::Segment_2             Segment_2;
-typedef typename base_rep::Iso_rectangle_2       Iso_rectangle_2;
+  typedef typename Base_kernel::FT                      NT;
+  typedef typename Base_kernel::Point_2                 Point_2;
+  typedef typename Base_kernel::Segment_2               Segment_2;
+  typedef typename Base_kernel::Iso_rectangle_2         Iso_rectangle_2;
 
+  typedef typename Base_kernel::Compare_y_2             Compare_y_2;
+  typedef typename Base_kernel::Compare_x_2             Compare_x_2;
+  typedef typename Base_kernel::Construct_vertex_2      Construct_vertex_2;
+  typedef typename Base_kernel::Construct_segment_2     Construct_segment_2;
+  typedef typename Base_kernel::Construct_iso_rectangle_2
+  Construct_iso_rectangle_2;
+
+  typedef CGAL::To_double<NT>                           To_double;
+  
 public:
+  /*! Functor */
+  class Snap_2 {
+  public:
+    void operator()(Point_2 p, NT pixel_size, NT &x, NT &y)
+    {
+      NT x_tmp = p.x() / pixel_size;
+      NT y_tmp = p.y() / pixel_size;
 
-/*! Functor
- */
-class Snap_2 {
- public:
-  void operator()(Point_2 p,NT pixel_size,NT &x,NT &y)
+      double x_floor = floor(CGAL::to_double(x_tmp));
+      double y_floor = floor(CGAL::to_double(y_tmp));
+      x = NT(x_floor) * pixel_size + pixel_size / NT(2.0);
+      y = NT(y_floor) * pixel_size + pixel_size / NT(2.0);
+    }
+  };
+
+  Snap_2 snap_2_object() const { return Snap_2(); }
+
+  /*! Functor */
+  class Integer_grid_point_2 {
+  public:
+    Point_2 operator()(Point_2 p,NT pixel_size)
+    {
+      NT x = (p.x() - pixel_size / NT(2.0)) / pixel_size;
+      NT y = (p.y() - pixel_size / NT(2.0)) / pixel_size;
+      Point_2 out_p(x,y);
+
+      return(out_p);
+    }
+  };
+
+  /*! */
+  Integer_grid_point_2 integer_grid_point_2_object() const
   {
-    NT x_tmp = p.x() / pixel_size;
-    NT y_tmp = p.y() / pixel_size;
-
-    x = NT(floor(to_double(x_tmp))) * pixel_size + pixel_size / NT(2.0);
-    y = NT(floor(to_double(y_tmp))) * pixel_size + pixel_size / NT(2.0);
-    //    x = floor(x_tmp.to_double()) * pixel_size + pixel_size / 2.0;
-    //    y = floor(y_tmp.to_double()) * pixel_size + pixel_size / 2.0;
-  }
-};
-
-Snap_2 snap_2_object() const { return Snap_2(); }
-
-/*! Functor
- */
-class Integer_grid_point_2 {
- public:
-  Point_2 operator()(Point_2 p,NT pixel_size)
-  {
-    NT x = (p.x() - pixel_size / NT(2.0)) / pixel_size;
-    NT y = (p.y() - pixel_size / NT(2.0)) / pixel_size;
-    Point_2 out_p(x,y);
-
-    return(out_p);
-  }
-};
-
-Integer_grid_point_2 integer_grid_point_2_object() const
-    { return Integer_grid_point_2(); }
-
-/*! Functor
- */
-
-class Minkowski_sum_with_pixel_2 {
- private:
-  const Snap_rounding_traits_2<base_rep>* _gt;
-  Minkowski_sum_with_pixel_2(
-      const Snap_rounding_traits_2<base_rep>* gt) : _gt(gt) {}
-
- public:
-  void operator()(std::list<Point_2>& points_list,
-                             Segment_2 s,
-                             NT unit_square)
-  {
-     Comparison_result cx =  _gt->compare_x_2_object()(s.source(),s.target());
-     Comparison_result cy =  _gt->compare_y_2_object()(s.source(),s.target());
-     NT x1 = s.source().x(),y1 = s.source().y(),x2 =
-       s.target().x(),y2 = s.target().y();
-     Point_2 ms1,ms2,ms3,ms4,ms5,ms6;// minkowski sum points
-
-     if(cx == SMALLER) {
-       if(cy == SMALLER) {
-         // we use unit_square instead of unit_square / 2 in order to
-         // find tangency points which are not supported by kd-tree
-         ms1 = Point_2(x1 - unit_square,y1 - unit_square);
-         ms2 = Point_2(x1 - unit_square,y1 + unit_square);
-         ms3 = Point_2(x1 + unit_square,y1 - unit_square);
-         ms4 = Point_2(x2 + unit_square,y2 - unit_square);
-         ms5 = Point_2(x2 + unit_square,y2 + unit_square);
-         ms6 = Point_2(x2 - unit_square,y2 + unit_square);
-       } else {
-         ms1 = Point_2(x1 - unit_square,y1 - unit_square);
-         ms2 = Point_2(x1 - unit_square,y1 + unit_square);
-         ms3 = Point_2(x1 + unit_square,y1 + unit_square);
-         ms4 = Point_2(x2 + unit_square,y2 - unit_square);
-         ms5 = Point_2(x2 + unit_square,y2 + unit_square);
-         ms6 = Point_2(x2 - unit_square,y2 - unit_square);
-       }
-     } else {
-       if(cy == SMALLER) {
-         ms1 = Point_2(x1 + unit_square,y1 - unit_square);
-         ms2 = Point_2(x1 + unit_square,y1 + unit_square);
-         ms3 = Point_2(x1 - unit_square,y1 - unit_square);
-         ms4 = Point_2(x2 + unit_square,y2 + unit_square);
-         ms5 = Point_2(x2 - unit_square,y2 + unit_square);
-         ms6 = Point_2(x2 - unit_square,y2 - unit_square);
-       } else {
-         ms1 = Point_2(x1 + unit_square,y1 - unit_square);
-         ms2 = Point_2(x1 + unit_square,y1 + unit_square);
-         ms3 = Point_2(x1 - unit_square,y1 + unit_square);
-         ms4 = Point_2(x2 + unit_square,y2 - unit_square);
-         ms5 = Point_2(x2 - unit_square,y2 - unit_square);
-         ms6 = Point_2(x2 - unit_square,y2 + unit_square);
-       }
-     }
-
-     points_list.push_back(ms1);
-     points_list.push_back(ms2);
-     points_list.push_back(ms3);
-     points_list.push_back(ms4);
-     points_list.push_back(ms5);
-     points_list.push_back(ms6);
+    return Integer_grid_point_2();
   }
 
-  friend class Snap_rounding_traits_2<base_rep>;
-};
+  /*! Functor */
+  class Minkowski_sum_with_pixel_2 {
+  private:
+    typedef Snap_rounding_traits_2<Base_kernel>         Traits;
+    typedef std::list<Point_2>                          Point_list;
 
-Minkowski_sum_with_pixel_2 minkowski_sum_with_pixel_2_object() const
-    {return Minkowski_sum_with_pixel_2(this); }
+    typedef typename Base_kernel::Compare_y_2           Compare_y_2;
+    typedef typename Base_kernel::Compare_x_2           Compare_x_2;
+    typedef typename Base_kernel::Construct_vertex_2    Construct_vertex_2;
+    
+    const Traits * m_gt;
 
+    Minkowski_sum_with_pixel_2(const Traits * gt) : m_gt(gt) {}
+
+  public:
+    void operator()(Point_list & points_list, Segment_2 s, NT unit_square)
+    {
+      Construct_vertex_2 construct_ver = m_gt->construct_vertex_2_object();
+      Compare_y_2 compare_y = m_gt->compare_y_2_object();
+      Compare_x_2 compare_x = m_gt->compare_x_2_object();
+
+      Point_2 src = construct_ver(s, 0);
+      Point_2 trg = construct_ver(s, 1);
+      Comparison_result cx = compare_x(src, trg);
+      Comparison_result cy = compare_y(src, trg);
+      NT x1 = src.x();
+      NT y1 = src.y();
+      NT x2 = trg.x();
+      NT y2 = trg.y();
+      Point_2 ms1, ms2, ms3, ms4, ms5, ms6;// minkowski sum points
+
+      if (cx == SMALLER) {
+        if (cy == SMALLER) {
+          // we use unit_square instead of unit_square / 2 in order to
+          // find tangency points which are not supported by kd-tree
+          ms1 = Point_2(x1 - unit_square, y1 - unit_square);
+          ms2 = Point_2(x1 - unit_square, y1 + unit_square);
+          ms3 = Point_2(x1 + unit_square, y1 - unit_square);
+          ms4 = Point_2(x2 + unit_square, y2 - unit_square);
+          ms5 = Point_2(x2 + unit_square, y2 + unit_square);
+          ms6 = Point_2(x2 - unit_square, y2 + unit_square);
+        } else {
+          ms1 = Point_2(x1 - unit_square, y1 - unit_square);
+          ms2 = Point_2(x1 - unit_square, y1 + unit_square);
+          ms3 = Point_2(x1 + unit_square, y1 + unit_square);
+          ms4 = Point_2(x2 + unit_square, y2 - unit_square);
+          ms5 = Point_2(x2 + unit_square, y2 + unit_square);
+          ms6 = Point_2(x2 - unit_square, y2 - unit_square);
+        }
+      } else {
+        if(cy == SMALLER) {
+          ms1 = Point_2(x1 + unit_square, y1 - unit_square);
+          ms2 = Point_2(x1 + unit_square, y1 + unit_square);
+          ms3 = Point_2(x1 - unit_square, y1 - unit_square);
+          ms4 = Point_2(x2 + unit_square, y2 + unit_square);
+          ms5 = Point_2(x2 - unit_square, y2 + unit_square);
+          ms6 = Point_2(x2 - unit_square, y2 - unit_square);
+        } else {
+          ms1 = Point_2(x1 + unit_square, y1 - unit_square);
+          ms2 = Point_2(x1 + unit_square, y1 + unit_square);
+          ms3 = Point_2(x1 - unit_square, y1 + unit_square);
+          ms4 = Point_2(x2 + unit_square, y2 - unit_square);
+          ms5 = Point_2(x2 - unit_square, y2 - unit_square);
+          ms6 = Point_2(x2 - unit_square, y2 + unit_square);
+        }
+      }
+
+      points_list.push_back(ms1);
+      points_list.push_back(ms2);
+      points_list.push_back(ms3);
+      points_list.push_back(ms4);
+      points_list.push_back(ms5);
+      points_list.push_back(ms6);
+    }
+
+    friend class Snap_rounding_traits_2<Base_kernel>;
+  };
+
+  /*! */
+  Minkowski_sum_with_pixel_2 minkowski_sum_with_pixel_2_object() const
+  {
+    return Minkowski_sum_with_pixel_2(this);
+  }
 };
 
 CGAL_END_NAMESPACE
