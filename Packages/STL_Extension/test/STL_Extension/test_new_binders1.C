@@ -7,6 +7,7 @@ using CGAL::bind_3;
 using CGAL::bind_4;
 using CGAL::bind_5;
 using CGAL::compose;
+using CGAL::compose_shared;
 using std::cout;
 using std::endl;
 
@@ -31,7 +32,7 @@ struct F2 {
 struct F3 {
   typedef CGAL::Arity_tag< 3 > Arity;
   typedef int result_type;
-  int operator()(int x, int y, int z) const { return (x-z)*y; }
+  int operator()(int x, int y, int z) const { return (x+z)*y; }
 };
 
 struct F4 {
@@ -159,6 +160,19 @@ int main()
   cout << compose(f3, f2, f2, f1)(2, 3, 4, 5, 6) << endl;
   cout << compose(f3, f2, f1, f2)(2, 3, 4, 5, 6) << endl;
   cout << compose(f3, f1, f2, f2)(2, 3, 4, 5, 6) << endl;
+
+  cout << compose_shared(f2, f5, f5)(2, 3, 4, 5, 6) << endl;
+  cout << compose_shared(f2, f4, f4)(2, 3, 4, 5) << endl;
+  cout << compose_shared(f2, f3, f3)(2, 3, 4) << endl;
+  cout << compose_shared(f2, f2, f2)(2, 3) << endl;
+  cout << compose_shared(f2, f1, f1)(2) << endl;
+  cout << compose_shared(f2, f0, f0)() << endl;
+  cout << compose_shared(f3, f5, f5, f5)(2, 3, 4, 5, 6) << endl;
+  cout << compose_shared(f3, f4, f4, f4)(2, 3, 4, 5) << endl;
+  cout << compose_shared(f3, f3, f3, f3)(2, 3, 4) << endl;
+  cout << compose_shared(f3, f2, f2, f2)(2, 3) << endl;
+  cout << compose_shared(f3, f1, f1, f1)(2) << endl;
+  cout << compose_shared(f3, f0, f0, f0)() << endl;
 
   return 0;
 }

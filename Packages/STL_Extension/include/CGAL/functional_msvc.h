@@ -453,6 +453,46 @@ protected:
   F3 f3;
 };
 
+template < class F1, class F2, class F3 >
+struct Compose_shared_2 {
+  typedef typename F1::result_type result_type;
+  typedef typename F2::Arity       Arity;
+
+  Compose_shared_2(const F1& f1_, const F2& f2_, const F3& f3_)
+  : f1(f1_), f2(f2_), f3(f3_)
+  {}
+
+  result_type operator()() const
+  { return f1(f2(), f3()); }
+
+  template < class A1 >
+  result_type operator()(const A1& a1) const
+  { return f1(f2(a1), f3(a1)); }
+
+  template < class A1, class A2 >
+  result_type operator()(const A1& a1, const A2& a2) const
+  { return f1(f2(a1, a2), f3(a1, a2)); }
+
+  template < class A1, class A2, class A3 >
+  result_type operator()(const A1& a1, const A2& a2, const A3& a3) const
+  { return f1(f2(a1, a2, a3), f3(a1, a2, a3)); }
+
+  template < class A1, class A2, class A3, class A4 >
+  result_type operator()(const A1& a1, const A2& a2, const A3& a3,
+                         const A4& a4 ) const
+  { return f1(f2(a1, a2, a3, a4), f3(a1, a2, a3, a4)); }
+
+  template < class A1, class A2, class A3, class A4, class A5 >
+  result_type operator()(const A1& a1, const A2& a2, const A3& a3,
+                         const A4& a4, const A5& a5) const
+  { return f1(f2(a1, a2, a3, a4, a5), f3(a1, a2, a3, a4, a5)); }
+
+protected:
+  F1 f1;
+  F2 f2;
+  F3 f3;
+};
+
 template < class F1, class R1, class F2, class R2,
            class F3, class R3, class F4, class R4 >
 struct Compose_3 {
@@ -866,6 +906,54 @@ protected:
   F3 f3;
   F4 f4;
 };
+
+template < class F1, class F2, class F3, class F4 >
+struct Compose_shared_3 {
+  typedef typename F1::result_type result_type;
+  typedef typename F2::Arity       Arity;
+
+  Compose_shared_3(const F1& f1_, const F2& f2_,
+                   const F3& f3_, const F4& f4_)
+  : f1(f1_), f2(f2_), f3(f3_), f4(f4_)
+  {}
+
+  result_type operator()() const
+  { return f1(f2(), f3(), f4()); }
+
+  template < class A1 >
+  result_type operator()(const A1& a1) const
+  { return f1(f2(a1), f3(a1), f4(a1)); }
+
+  template < class A1, class A2 >
+  result_type operator()(const A1& a1, const A2& a2) const
+  { return f1(f2(a1, a2), f3(a1, a2), f4(a1, a2)); }
+
+  template < class A1, class A2, class A3 >
+  result_type operator()(const A1& a1, const A2& a2, const A3& a3) const
+  { return f1(f2(a1, a2, a3), f3(a1, a2, a3), f4(a1, a2, a3)); }
+
+  template < class A1, class A2, class A3, class A4 >
+  result_type operator()(const A1& a1, const A2& a2, const A3& a3,
+                         const A4& a4 ) const
+  { return f1(f2(a1, a2, a3, a4),
+              f3(a1, a2, a3, a4),
+              f4(a1, a2, a3, a4)); }
+
+  template < class A1, class A2, class A3, class A4, class A5 >
+  result_type operator()(const A1& a1, const A2& a2, const A3& a3,
+                         const A4& a4, const A5& a5) const
+  { return f1(f2(a1, a2, a3, a4, a5),
+              f3(a1, a2, a3, a4, a5),
+              f4(a1, a2, a3, a4, a5)); }
+
+protected:
+  F1 f1;
+  F2 f2;
+  F3 f3;
+  F4 f4;
+};
+
+
 // ------------------------------------------------------------------------
 // Encapsulate the composition type ==> can be adapted
 // ------------------------------------------------------------------------
@@ -899,11 +987,28 @@ namespace CGALi {
                          F4, typename CGAL__Wrap_type< F4 >::Arity
                      > Type; };
   };
+
+  template < class F1, class F2, class F3, class F4 >
+  struct Compose_shared_helper {
+    template < class T > struct Help;
+
+    template <> struct Help< Arity_tag< 2 > >
+    { typedef Compose_shared_2< F1, F2, F3 > Type; };
+
+    template <> struct Help< Arity_tag< 3 > >
+    { typedef Compose_shared_3< F1, F2, F3, F4 > Type; };
+  };
 }
 
 template < class F1, class F2, class F3 = F2, class F4 = F2 >
 struct Compose {
   typedef typename CGALi::Compose_helper< F1, F2, F3, F4 >::Help<
+    typename CGALi::CGAL__Wrap_type< F1 >::Arity  >::Type Type;
+};
+
+template < class F1, class F2, class F3 = F2, class F4 = F2 >
+struct Compose_shared {
+  typedef typename CGALi::Compose_shared_helper< F1, F2, F3, F4 >::Help<
     typename CGALi::CGAL__Wrap_type< F1 >::Arity  >::Type Type;
 };
 // ------------------------------------------------------------------------
@@ -925,11 +1030,27 @@ compose(const F0& f0, const F1& f1, const F2& f2)
   return C(f0, f1, f2);
 }
 
+template < class F0, class F1, class F2 >
+inline typename Compose_shared< F0, F1, F2 >::Type
+compose_shared(const F0& f0, const F1& f1, const F2& f2)
+{
+  typedef typename Compose_shared< F0, F1, F2 >::Type C;
+  return C(f0, f1, f2);
+}
+
 template < class F0, class F1, class F2, class F3 >
 inline typename Compose< F0, F1, F2, F3 >::Type
 compose(const F0& f0, const F1& f1, const F2& f2, const F3& f3)
 {
   typedef typename Compose< F0, F1, F2, F3 >::Type C;
+  return C(f0, f1, f2, f3);
+}
+
+template < class F0, class F1, class F2, class F3 >
+inline typename Compose_shared< F0, F1, F2, F3 >::Type
+compose_shared(const F0& f0, const F1& f1, const F2& f2, const F3& f3)
+{
+  typedef typename Compose_shared< F0, F1, F2, F3 >::Type C;
   return C(f0, f1, f2, f3);
 }
 

@@ -41,7 +41,6 @@ all:            \
                 test_In_place_list$(EXE_EXT) \
                 test_composition$(EXE_EXT) \
                 test_new_binders1$(EXE_EXT) \
-                test_new_binders2$(EXE_EXT) \
                 test_stl_extension$(EXE_EXT) 
 
 test_In_place_list$(EXE_EXT): test_In_place_list$(OBJ_EXT)
@@ -53,9 +52,6 @@ test_composition$(EXE_EXT): test_composition$(OBJ_EXT)
 test_new_binders1$(EXE_EXT): test_new_binders1$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_new_binders1 test_new_binders1$(OBJ_EXT) $(LDFLAGS)
 
-test_new_binders2$(EXE_EXT): test_new_binders2$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_new_binders2 test_new_binders2$(OBJ_EXT) $(LDFLAGS)
-
 test_stl_extension$(EXE_EXT): test_stl_extension$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_stl_extension test_stl_extension$(OBJ_EXT) $(LDFLAGS)
 
@@ -63,7 +59,6 @@ clean: \
                    test_In_place_list.clean \
                    test_composition.clean \
                    test_new_binders1.clean \
-                   test_new_binders2.clean \
                    test_stl_extension.clean 
 
 #---------------------------------------------------------------------#

@@ -1180,12 +1180,13 @@
   \ccTypes 
   
   \ccTwo{Arity}{}
+  \ccNestedType{result_type}{return type of the functor.}
   \ccNestedType{Arity}{defines the arity of the functor, i.e. the
     number of arguments it takes. The class has to be a specialization
     of \ccc{CGAL::Arity_tag<int>}, where the template parameter
     corresponds to the arity of the functor, e.g.
     \ccc{CGAL::Arity_tag<2>} for binary functors.}
-
+  
   \ccOperations
   
   \ccTagFullDeclarations\ccCreationVariable{f}
@@ -1417,29 +1418,80 @@
 
   \ccInclude{CGAL/functional.h}
   
-  \ccFunction{template < class F0, class F1 > Compose< F0, F1 >::Type
-    compose(const F0& f0, const F1& f1);}{returns the functor
+  \ccFunction{template < class F0, class F1 > typename Compose< F0, F1
+    >::Type compose(const F0& f0, const F1& f1);}{returns the functor
     \ccc{f0}(\ccc{f1}($\cdot$)) with the same arity as \ccc{f1}.
     \ccCommentHeading{Requirements} \ccc{f0} is unary function
-    (arity~1).}
+    (arity~1). \ccc{f0} and \ccc{f1} are models for
+    \ccc{AdaptableFunctor}.}
   
-  \ccFunction{template < class F0, class F1, class F2 > Compose< F0,
-    F1, F2 >::Type compose(const F0& f0, const F1& f1, const F2&
-    f2);}{returns the functor
+  \ccFunction{template < class F0, class F1, class F2 > typename
+    Compose< F0, F1, F2 >::Type compose(const F0& f0, const F1& f1,
+    const F2& f2);}{returns the functor
     \ccc{f0}(\ccc{f1}($\cdot$),$\,$\ccc{f2}($\cdot$)) with arity equal
     to $ar(\ccc{f1})+ar(\ccc{f2})$. \ccCommentHeading{Requirements}
-    \ccc{f0} is binary function (arity~2).}
+    \ccc{f0} is binary function (arity~2). \ccc{f0}, \ccc{f1}, and
+    \ccc{f2} are models for \ccc{AdaptableFunctor}.}
   
   \ccFunction{template < class F0, class F1, class F2, class F3 >
-    Compose< F0, F1, F2, F3 >::Type compose(const F0& f0, const F1&
-    f1, const F2& f2, const F3& f3);}{returns the functor
+    typename Compose< F0, F1, F2, F3 >::Type compose(const F0& f0,
+    const F1& f1, const F2& f2, const F3& f3);}{returns the functor
     \ccc{f0}(\ccc{f1}($\cdot$),$\,$\ccc{f2}($\cdot$),$\,$\ccc{f3}($\cdot$))
     with arity equal to $ar(\ccc{f1})+ar(\ccc{f2})+ar(\ccc{f3})$.
     \ccCommentHeading{Requirements} \ccc{f0} is ternary function
-    (arity~3).}
+    (arity~3). \ccc{f0}, \ccc{f1}, \ccc{f2}, and \ccc{f3} are models
+    for \ccc{AdaptableFunctor}.}
   
   \ccSeeAlso
   \ccRefIdfierPage{CGAL::Compose<F0,F1,F2,F3>}\\
+  \ccRefIdfierPage{CGAL::compose_shared}\\
+  \ccRefConceptPage{AdaptableFunctor}
+  
+\end{ccRefFunction}
+
+\begin{ccRefFunction}{compose_shared}
+  \ccDefinition The function \ccRefName\ is used to compose functors
+  $f_0,\,\ldots,\,f_n$ into each other, thereby creating a new functor
+  $f$. The first argument $f_0$ always denotes the base functor, for
+  which the remaining functors $f_1,\,\ldots,\,f_n$ provide the
+  arguments. Contrary to the function \ccc{compose}, the arguments of
+  $f$ are not split among $f_1,\,\ldots,\,f_n$, but instead shared by
+  all the functors. Therefore, all the functors $f_1,\,\ldots,\,f_n$
+  must have the same arity, which is also the arity of the composed
+  functor $f$. Two or three functors can be composed into the base
+  functor, giving raise to a functor of arity at most five.
+  
+  As an example, consider a binary functor $f_0$ and two binary
+  functors $f_1$ and $f_2$. Composing $f_1$ and $f_2$ into $f_0$
+  yields a new binary functor
+  $$
+  f\::\: (x_0,\,x_1) \mapsto
+  f_0\left(f_1(x_0,\,x_1),\,f_2(x_0,\,x_1)\right)\;.
+  $$
+  
+  \ccInclude{CGAL/functional.h}
+  
+  \ccFunction{template < class F0, class F1, class F2 > typename
+    Compose_shared< F0, F1, F2 >::Type compose_shared(const F0& f0,
+    const F1& f1, const F2& f2);}{returns the functor
+    \ccc{f0}(\ccc{f1}($\cdot$),$\,$\ccc{f2}($\cdot$)) with the same
+    arity as $f1$ (and $f2$). \ccCommentHeading{Requirements} \ccc{f0}
+    is \ccc{AdaptableFunctor} of arity~2. \ccc{f1} and \ccc{f2} are
+    \ccc{AdaptableFunctor}s having the same arity.}
+  
+  \ccFunction{template < class F0, class F1, class F2, class F3 >
+    typename Compose_shared< F0, F1, F2, F3 >::Type
+    compose_shared(const F0& f0, const F1& f1, const F2& f2, const F3&
+    f3);}{returns the functor
+    \ccc{f0}(\ccc{f1}($\cdot$),$\,$\ccc{f2}($\cdot$),$\,$\ccc{f3}($\cdot$))
+    with the same arity as $f1$ (and $f2$, $f3$).
+    \ccCommentHeading{Requirements} \ccc{f0} is \ccc{AdaptableFunctor}
+    of arity~3. \ccc{f1}, \ccc{f2}, and \ccc{f3} are
+    \ccc{AdaptableFunctor}s having the same arity.}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Compose_shared<F0,F1,F2,F3>}\\
+  \ccRefIdfierPage{CGAL::compose}\\
   \ccRefConceptPage{AdaptableFunctor}
   
 \end{ccRefFunction}
@@ -1465,6 +1517,31 @@
 
   \ccSeeAlso
   \ccRefIdfierPage{CGAL::compose}\\
+  \ccRefConceptPage{AdaptableFunctor}
+  
+\end{ccRefClass}
+
+\begin{ccRefClass}{Compose_shared<F0,F1,F2,F3>}
+  \ccDefinition The class \ccRefName\ is used to specify the type of a
+  composed functor, i.e. the functor that results from composing
+  functors of type \ccc{F1}, \ccc{F2}, and \ccc{F3}, into a functor of
+  type \ccc{F0}. The arguments \ccc{F2} and \ccc{F3} are optional,
+  such that between two and four functors can participate in the
+  composition. The class is used in conjunction with the
+  \ccc{compose_shared} function; see there for an explanation on how
+  exactly the functors are combined.
+
+  \ccInclude{CGAL/functional.h}
+  
+  \ccTypes
+  \ccNestedType{Type}{type of the composed functor.}
+  
+  \ccHeading{Notes} This class encapsulates the differences in
+  implementation of the composers across various platforms. But in any
+  case, \ccc{Type} refers to a model of \ccc{AdaptableFunctor}.
+
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::compose_shared}\\
   \ccRefConceptPage{AdaptableFunctor}
   
 \end{ccRefClass}
