@@ -51,7 +51,7 @@ compile_and_run()
            TESTSUITE_LDFLAGS="\$TESTSUITE_LDFLAGS" \$1' ; then
     echo "   succesful compilation of \$1" >> \$ERRORFILE
   else
-    echo "   ERROR:     compilation of \$1" >> \$ERRORFILE
+    echo "   ERROR:    compilation of \$1" >> \$ERRORFILE
     SUCCES=""
   fi
 
@@ -73,7 +73,7 @@ compile_and_run()
       echo "   ERROR:    execution   of \$1" >> \$ERRORFILE
     fi
   else
-    echo "   ERROR: could not execute \$1" >> \$ERRORFILE
+    echo   "   ERROR:    not executed   \$1" >> \$ERRORFILE
   fi
 
   eval "2>&1 make CGAL_MAKEFILE=\$CGAL_MAKEFILE clean > /dev/null "

@@ -1,4 +1,9 @@
 //--------------------------------
+// 1.11
++Altered cgal_conditional_include_remove to work with headers not ending in .h
++Adapted output of cgreate_cgal_test to error.txt (formatted differently)
+
+//--------------------------------
 // 1.10
 +Added script cgal_conditional_include_remove which undoes the effects of
  cgal_conditional_inlude.
