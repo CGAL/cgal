@@ -1,5 +1,8 @@
 Changes done to the `Min_annulus_d' package
 
+Version 1.1.5 on 22-Mar-2002
+- Use Kernel_d.
+
 Version 1.1.4 on 18-Mar-2002
 - Added auxiliary typedefs for sunpro.
 

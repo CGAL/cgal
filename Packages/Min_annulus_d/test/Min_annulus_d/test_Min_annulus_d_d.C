@@ -27,27 +27,27 @@
 
 // includes and typedefs
 // ---------------------
-#include <CGAL/Cartesian.h>
+#include <CGAL/Cartesian_d.h>
 #include <CGAL/Min_annulus_d.h>
 #include <CGAL/Optimisation_d_traits_d.h>
 
 // test variant 1 (needs LEDA)
 #ifdef CGAL_USE_LEDA
 # include <CGAL/leda_integer.h>
-  typedef  CGAL::Cartesian<leda_integer>       K_1;
+  typedef  CGAL::Cartesian_d<leda_integer>       K_1;
   typedef  CGAL::Optimisation_d_traits_d<K_1>  Traits_1;
 # define TEST_VARIANT_1 \
-    "Optimisation_d_traits_d< Cartesian<leda_integer> >"
+    "Optimisation_d_traits_d< Cartesian_d<leda_integer> >"
   CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( leda_integer)
 #endif
 
 // test variant 2 (needs GMP)
 #ifdef CGAL_USE_GMP
 # include <CGAL/_QP_solver/Double.h>
-  typedef  CGAL::Cartesian< int >                                 K_2;
+  typedef  CGAL::Cartesian_d< int >                                 K_2;
   typedef  CGAL::Optimisation_d_traits_d<K_2,GMP::Double,double>  Traits_2;
 # define TEST_VARIANT_2 \
-    "Optimisation_d_traits_d< Cartesian<int>, GMP::Double, double >"
+    "Optimisation_d_traits_d< Cartesian_d<int>, GMP::Double, double >"
 #endif
 
 #include <CGAL/Random.h>
