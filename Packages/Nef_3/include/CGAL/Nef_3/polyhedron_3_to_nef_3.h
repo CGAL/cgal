@@ -1,4 +1,3 @@
-//#define CGAL_P2NEF3_USE_SM_OVERLAY
 // ============================================================================
 //
 // Copyright (c) 1997-2002 The CGAL Consortium
@@ -101,9 +100,6 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
   TRACEN("  calculating facet's planes...");
   std::transform( P.facets_begin(), P.facets_end(),
 		  P.planes_begin(), Facet_plane_3());
-  /* determine the plane of polyhedron's facet */
-  //std::copy( P.planes_begin(), P.planes_end(), 
-  //   std::ostream_iterator< typename Polyhedron::Plane_3>( std::cout, "\n"));
   SNC_decorator D(S);
     
   typename Polyhedron::Vertex_iterator pvi;
@@ -113,46 +109,6 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
     D.point(nv) = pv.point();
     D.mark(nv) = true;
     TRACEN("v "<<pv.point());
-
-#ifdef CGAL_P2NEF3_USE_SM_OVERLAY
-    std::list<Sphere_point> sp_list;
-    std::list<Sphere_segment> ss_list;
-    typename Polyhedron::Halfedge_around_vertex_const_circulator 
-      ph_edge = pv.vertex_begin();
-    if(ph_edge != 0) {
-	do {
-	  Point_3 
-	    ph_point(ph_edge++->opposite()->vertex()->point());
-	  Sphere_point sp(ph_point-pv.point());
-	  sp_list.push_back(sp);
-	}
-	while(ph_edge != pv.vertex_begin());
-	
-	std::list<Sphere_point>::iterator sp_prev, sp_cur;
-	ph_edge = pv.vertex_begin();
-	sp_cur = sp_list.begin();
-	sp_prev = sp_cur++;
-	while(sp_cur != sp_list.end()) {
-	    Sphere_circle
-	      ss_circle(ph_edge++->facet()->plane().opposite());
-	    CGAL_assertion(ss_circle.has_on(*sp_prev));
-	    CGAL_assertion(ss_circle.has_on(*sp_cur));
-	    ss_list.
-	      push_back(Sphere_segment(*sp_prev++,*sp_cur++,ss_circle));
-	  }
-	Sphere_circle
-	  ss_circle(ph_edge++->facet()->plane().opposite());
-	CGAL_assertion(ss_circle.has_on(*sp_prev));
-	CGAL_assertion(ss_circle.has_on(*(sp_list.begin())));
-	ss_list.
-	  push_back(Sphere_segment(*sp_prev,*(sp_list.begin()),ss_circle));
-	CGAL_assertion(ph_edge == pv.vertex_begin());
-      }
-    SM_overlayer O(nv);
-    O.create_from_segments(ss_list.begin(),ss_list.end());
-    /* why not? O.simplify(); */
-    
-#else // CGAL_P2NEF3_USE_SM_OVERLAY
 
     SM_decorator SM(nv);
     typename Polyhedron::Halfedge_around_vertex_const_circulator
@@ -195,10 +151,6 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
 	 pe_prev->facet()->plane().opposite().orthogonal_vector());
       Sphere_circle ss_circle(ss_plane);
 
-      //CGAL_assertion(!ss_plane.is_degenerate());
-      //CGAL_assertion(ss_plane.has_on(CGAL::ORIGIN));
-      //CGAL_assertion(ss_plane.has_on(sp_point));
-      //CGAL_assertion(ss_plane.has_on(SM.point(sv_prev));
       CGAL_assertion(ss_circle.has_on(sp));
       CGAL_assertion(ss_circle.has_on(SM.point(sv_prev)));
 
@@ -232,9 +184,6 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
        pe_prev->facet()->plane().opposite().orthogonal_vector());
     Sphere_circle ss_circle(ss_plane);
 
-    //CGAL_assertion(!ss_plane.is_degenerate());
-    //CGAL_assertion(ss_plane.has_on(CGAL::ORIGIN));
-    //CGAL_assertion(ss_plane.has_on(sp_point_0));
     CGAL_assertion(ss_plane.has_on(SM.point(sv_prev)));
     CGAL_assertion(ss_circle.has_on(sp_0));
     CGAL_assertion(ss_circle.has_on(SM.point(sv_prev)));
@@ -253,22 +202,8 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
     // mark facets properly...
     SM.mark(fint) = true;
     SM.mark(fext) = false;
-    SM.check_integrity_and_topological_planarity();
-    
-#endif // CGAL_P2NEF3_USE_SM_OVERLAY
-	
-#ifdef SM_VISUALIZOR
-    // CGAL::OGL::add_sphere();
-    // SMV V(nv, CGAL::OGL::spheres_.back());
-    // V.draw_map();
-#endif
+    SM.check_integrity_and_topological_planarity();    
   }
-
-#ifdef SM_VISUALIZOR
-  // CGAL::OGL::start_viewer();
-#endif
-
-  return;
 }
 
 CGAL_END_NAMESPACE
