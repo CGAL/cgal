@@ -61,6 +61,7 @@ Comparison_result
 compare_noinline (const MP_Float & a, const MP_Float & b);
 
 namespace NTS {
+inline
 Comparison_result
 compare (const MP_Float & a, const MP_Float & b)
 {
