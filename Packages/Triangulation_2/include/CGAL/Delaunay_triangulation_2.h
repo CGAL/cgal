@@ -286,7 +286,7 @@ look_nearest_neighbor(const Point& p,
 
 //DUALITY
 template<class Gt, class Tds>
-typename Gt::Point
+Delaunay_triangulation_2<Gt,Tds>::Point
 Delaunay_triangulation_2<Gt,Tds>::
 dual (Face_handle f) const
 {
