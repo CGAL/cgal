@@ -47,7 +47,7 @@ namespace CGAL {
     handtoolbut.deactivate();
     //set the widget
     widget = w;
-    widget->clear_history();
+    
 
 #if QT_VERSION < 300
   // for Qt 2.3 and before
@@ -60,49 +60,52 @@ namespace CGAL {
 		     DockTop, TRUE );
 #endif
 		
-  but[0] = new QToolButton(maintoolbar, "notool");
-  but[0]->setPixmap(QPixmap( (const char**)arrow_xpm ));
+    but[0] = new QToolButton(maintoolbar, "notool");
+    but[0]->setPixmap(QPixmap( (const char**)arrow_xpm ));
   
-  but[1] = new QToolButton(QPixmap( (const char**)back_xpm ),
-			     "Back", 
+    but[1] = new QToolButton(QPixmap( (const char**)back_xpm ),
+			     "History Back", 
 			     0, 
 			     this, 
 			     SLOT(back()), 
 			     maintoolbar, 
-			     "Back");
-  but[2] = new QToolButton(QPixmap( (const char**)forward_xpm ),
-			     "Forward", 
+			     "History Back");
+    but[2] = new QToolButton(QPixmap( (const char**)forward_xpm ),
+			     "History Forward", 
 			     0, 
 			     this, 
 			     SLOT(forward()), 
 			     maintoolbar, 
-			     "Forward");
+			     "History Forward");
 
   
-  but[3] = new QToolButton(QPixmap( (const char**)zoomin_xpm ),
+    but[3] = new QToolButton(QPixmap( (const char**)zoomin_xpm ),
 			     "Zoom in", 
 			     0, 
 			     this, 
 			     SLOT(zoomin()), 
 			     maintoolbar, 
 			     "Zoom in");
-  but[4] = new QToolButton(QPixmap( (const char**)zoomout_xpm ),
+    but[3]->setTextLabel("Scaling factor X2");
+    but[4] = new QToolButton(QPixmap( (const char**)zoomout_xpm ),
 			     "Zoom out", 
 			     0, 
 			     this, 
 			     SLOT(zoomout()), 
 			     maintoolbar, 
 			     "Zoom out");
+    but[4]->setTextLabel("Scaling factor 1/2");
   
-  but[5] = new QToolButton(maintoolbar, "focus");
-  but[5]->setPixmap(QPixmap( (const char**)focus_xpm ));
-  but[6] = new QToolButton(maintoolbar, "focus on region");
-  but[6]->setPixmap(QPixmap( (const char**)zoomin_rect_xpm ));
-  but[7] = new QToolButton(maintoolbar, "handtool");
-  but[7]->setPixmap(QPixmap( (const char**)hand_xpm ));
+    but[5] = new QToolButton(maintoolbar, "focus");
+    but[5]->setPixmap(QPixmap( (const char**)focus_xpm ));
+    but[5]->setTextLabel("Focus on point");
+    but[6] = new QToolButton(maintoolbar, "focus on region");
+    but[6]->setPixmap(QPixmap( (const char**)zoomin_rect_xpm ));
+    but[6]->setTextLabel("Focus on region");
+    but[7] = new QToolButton(maintoolbar, "handtool");
+    but[7]->setPixmap(QPixmap( (const char**)hand_xpm ));
+    but[7]->setTextLabel("Pan tool");
     
-
-	
     button_group = new QButtonGroup(0, "My_group");
     nr_of_buttons = 8;
     for(int i = 5; i<nr_of_buttons; i++){
@@ -126,6 +129,7 @@ namespace CGAL {
             but[1], SLOT(setEnabled(bool)));
     connect(widget, SIGNAL(set_forward_enabled(bool)),
             but[2], SLOT(setEnabled(bool)));
+    widget->clear_history();
   };
   void Qt_widget_standard_toolbar::zoomin()
   {

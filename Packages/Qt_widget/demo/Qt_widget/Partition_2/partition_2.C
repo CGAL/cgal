@@ -121,7 +121,6 @@ public:
 
     //application flag stuff
     old_state = 0;
-    widget->set_window(-1, 1, -1, 1);
   };
 
 private:
@@ -145,7 +144,8 @@ public slots:
 
 private slots:
   void gen_poly(){
-    widget->set_window(-1.1, 1.1, -1.1, 1.1); 
+    widget->clear_history();
+    widget->set_window(-1.1, 1.1, -1.1, 1.1);
 	// set the Visible Area to the Interval
     polygon.erase(polygon.vertices_begin(), polygon.vertices_end());
     CGAL::random_polygon_2(100,
