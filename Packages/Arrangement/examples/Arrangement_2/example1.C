@@ -20,8 +20,6 @@ typedef CGAL::Arr_base_node<Curve>                    Base_node;
 typedef CGAL::Arr_2_default_dcel<Traits>              Dcel;
 typedef CGAL::Arrangement_2<Dcel,Traits,Base_node >   Arr_2;
 
-using namespace std;
-
 int main() {
   
   Arr_2 arr;
@@ -33,10 +31,11 @@ int main() {
   //traversal of the curves
   Arr_2::Edge_iterator eit;
   for (cit=arr.curve_node_begin(); cit!=arr.curve_node_end(); ++cit) {
-    cout << "\nCurve level:\n" << cit->curve() << endl ;
-    cout << "Edge level:\n";
+    std::cout << std::endl << "Curve level:" << std::endl << cit->curve()
+	      << std::endl ;
+    std::cout << "Edge level:" << std::endl;
     for (eit=cit->edges_begin(); eit!=cit->edges_end(); ++eit) {
-      cout << eit->curve() << endl ;
+      std::cout << eit->curve() << std::endl ;
     }
   }
 

@@ -23,8 +23,6 @@ typedef CGAL::Arr_base_node<Curve>                    Base_node;
 typedef CGAL::Arr_2_default_dcel<Traits>              Dcel;
 typedef CGAL::Arrangement_2<Dcel,Traits,Base_node >   Arr_2;
 
-using namespace std;
-
 int main() {
    Arr_2 arr;  
 
@@ -34,10 +32,7 @@ int main() {
 
    //upward vertical ray shooting
    Arr_2::Locate_type lt;
-#ifndef CGAL_NO_ASSERTIONS // in order to avoid warnings
-   Arr_2::Halfedge_handle e=
-#endif
-     arr.vertical_ray_shoot(Point(-1,0),lt,true);
+   Arr_2::Halfedge_handle e=arr.vertical_ray_shoot(Point(-1,0),lt,true);
 
    CGAL_assertion(e->source()->point()==Point(3,4)); 
    CGAL_assertion(e->target()->point()==Point(-5,0));

@@ -20,16 +20,14 @@ typedef CGAL::Arr_base_node<Curve>                    Base_node;
 typedef CGAL::Arr_2_default_dcel<Traits>              Dcel;
 typedef CGAL::Arrangement_2<Dcel,Traits,Base_node >   Arr_2;
 
-using namespace std;
-
 //a base class for split functions
 struct Split_base {
-  virtual void operator()(const Curve& cv, list<Curve>& l)=0;
+  virtual void operator()(const Curve& cv, std::list<Curve>& l)=0;
 };
 
 struct Split_func : public Split_base {
   Split_func(double ratio) : r(ratio) {}
-  void operator()(const Curve& cv, list<Curve>& l) {
+  void operator()(const Curve& cv, std::list<Curve>& l) {
      Point s=cv.source(); //uses the knowledge of the curve functions
      Point t=cv.target();
      Point m1=s+(t-s)/r;

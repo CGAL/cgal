@@ -47,8 +47,6 @@ typedef CGAL::Pm_dcel<CGAL::Arr_2_vertex_base< Point >,
 
 typedef CGAL::Arrangement_2<Dcel,Traits,My_base_node >    Arr_2;
 
-using namespace std;
-
 int main() {
   Arr_2 arr;
   
@@ -68,10 +66,11 @@ int main() {
   //traversal of the curves
   Arr_2::Edge_iterator eit;
   for (cit=arr.curve_node_begin(); cit!=arr.curve_node_end(); ++cit) {
-    cout << "\nCurve level info:\n" << cit->info.num() << endl ;
-    cout << "Edge level info:\n";
+    std::cout << std::endl << "Curve level info:" << std::endl 
+	      << cit->info.num() << std::endl ;
+    std::cout << "Edge level info:" << std::endl;
     for (eit=cit->edges_begin(); eit!=cit->edges_end(); ++eit) {
-      cout << eit->info.num() << endl ;
+      std::cout << eit->info.num() << std::endl ;
     }
   }
   return 0;

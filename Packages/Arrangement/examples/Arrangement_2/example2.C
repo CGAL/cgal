@@ -17,7 +17,6 @@ typedef CGAL::Arr_base_node<Curve>                    Base_node;
 typedef CGAL::Arr_2_default_dcel<Traits> Dcel;
 typedef CGAL::Arrangement_2<Dcel,Traits,Base_node >   Arr_2;
 
-using namespace std;
 
 int main() {
    Arr_2 arr;
@@ -37,9 +36,11 @@ int main() {
      } while (++occ!=hit->overlap_edges());
 
    if (count == 1) 
-     cout << "Edge " << occ->curve() << " is covered by a single edge.\n";
+     std::cout << "Edge " << occ->curve() << " is covered by a single edge."
+	       << std::endl;
    else
-     cout << "Edge " << occ->curve() << " is covered by " << count << " edges.\n";
+     std::cout << "Edge " << occ->curve() << " is covered by " << count
+	       << " edges." << std::endl;
 
    }
 

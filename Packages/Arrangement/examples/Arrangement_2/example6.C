@@ -44,8 +44,9 @@ int main() {
   //traversal of the curves
   Arr_2::Edge_iterator eit;
   for (cit=arr.curve_node_begin(); cit!=arr.curve_node_end(); ++cit) {
-    std::cout << "\nCurve level:\n" << cit->curve() << std::endl ;
-    std::cout << "Edge level:\n";
+    std::cout << std::endl << "Curve level:" << std::endl << cit->curve() 
+	      << std::endl;
+    std::cout << "Edge level:" << std::endl;
     for (eit=cit->edges_begin(); eit!=cit->edges_end(); ++eit) {
       std::cout << eit->curve() << std::endl ;
     }

@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
     std::cout << "UNBOUNDED_FACE" << std::endl;
   }
   else {
-    std::cout << "The halfedge shot is :\n";
+    std::cout << "The halfedge shot is :" << std::endl;
     std::cout << "(Using homogeneous coordinates <hx, hy, hw>, ";
     std::cout << "where <x, y>=<hx/hw, hy/hw>)" << std::endl;
     std::cout << e->source()->point() << " -> " << e->target()->point();
