@@ -60,11 +60,22 @@ public:
   typedef typename R::Aff_transformation_3_base Aff_transformation_3;
 #endif
 
-  LineC3();
-  LineC3(const Point_3 &p, const Point_3 &q);
-  LineC3(const Segment_3 &s);
-  LineC3(const Ray_3 &r);
-  LineC3(const Point_3 &p, const Direction_3 &d);
+  LineC3()
+    : Line_handle_3(Line_ref_3()) {}
+
+  LineC3(const Point_3 &p, const Point_3 &q)
+    : Line_handle_3(Line_ref_3(p, (q-p).direction())) {}
+
+  LineC3(const Segment_3 &s)
+    : Line_handle_3(Line_ref_3(s.start(),
+		               (s.end() - s.start()).direction())) {}
+
+  LineC3(const Ray_3 &r)
+    : Line_handle_3(Line_ref_3(r.start(),
+	                       (r.point(1) - r.start()).direction())) {}
+
+  LineC3(const Point_3 &p, const Direction_3 &d)
+    : Line_handle_3(Line_ref_3(p, d)) {}
 
   bool        operator==(const Self &l) const;
   bool        operator!=(const Self &l) const;
@@ -88,45 +99,19 @@ public:
   bool        has_on(const Point_3 &p) const;
   bool        is_degenerate() const;
 
-  Self        transform(const Aff_transformation_3 &t) const;
+  Self        transform(const Aff_transformation_3 &t) const
+  {
+    return LineC3(t.transform(point()), t.transform(direction()));
+  }
 };
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-LineC3<R CGAL_CTAG>::LineC3()
-  : Line_handle_3(Line_ref_3() ) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-LineC3<R CGAL_CTAG>::LineC3(const typename LineC3<R CGAL_CTAG>::Point_3 &p,
-                            const typename LineC3<R CGAL_CTAG>::Point_3 &q)
-  : Line_handle_3(Line_ref_3(p, (q-p).direction())) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-LineC3<R CGAL_CTAG>::LineC3(const typename LineC3<R CGAL_CTAG>::Segment_3 &s)
-  : Line_handle_3(Line_ref_3(s.start(), (s.end() - s.start()).direction()))
-{}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-LineC3<R CGAL_CTAG>::LineC3(const typename LineC3<R CGAL_CTAG>::Ray_3 &r)
-  : Line_handle_3(Line_ref_3(r.start(),
-	                     (r.point(1) - r.start()).direction())) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-LineC3<R CGAL_CTAG>::
-LineC3(const typename LineC3<R CGAL_CTAG>::Point_3 &p,
-       const typename LineC3<R CGAL_CTAG>::Direction_3 &d)
-  : Line_handle_3(Line_ref_3(p, d)) {}
 
 template < class R >
 inline
 bool
 LineC3<R CGAL_CTAG>::operator==(const LineC3<R CGAL_CTAG> &l) const
 {
-  if ( identical(l) ) return true;
+  if (identical(l))
+      return true;
   return has_on(l.point()) && (direction() == l.direction());
 }
 
@@ -143,7 +128,7 @@ inline
 typename LineC3<R CGAL_CTAG>::Point_3
 LineC3<R CGAL_CTAG>::point(int i) const
 {
-  return point_on_line(i,*this);
+  return point_on_line(i, *this);
 }
 
 template < class R >
@@ -169,13 +154,14 @@ typename LineC3<R CGAL_CTAG>::Point_3
 LineC3<R CGAL_CTAG>::
 projection(const typename LineC3<R CGAL_CTAG>::Point_3 &p) const
 {
-  return projection_line(p,*this);
+  return projection_line(p, *this);
 }
 
 template < class R >
 inline
 bool
-LineC3<R CGAL_CTAG>::has_on(const typename LineC3<R CGAL_CTAG>::Point_3 &p) const
+LineC3<R CGAL_CTAG>::
+has_on(const typename LineC3<R CGAL_CTAG>::Point_3 &p) const
 {
   return collinear(point(), point()+direction().to_vector(), p);
 }
@@ -186,15 +172,6 @@ bool
 LineC3<R CGAL_CTAG>::is_degenerate() const
 {
   return direction() == Direction_3(0,0,0);
-}
-
-template < class R >
-inline
-LineC3<R CGAL_CTAG>
-LineC3<R CGAL_CTAG>::
-transform(const typename LineC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
-{
-  return LineC3<R CGAL_CTAG>( t.transform(point()), t.transform(direction()));
 }
 
 #ifndef CGAL_CARTESIAN_NO_OSTREAM_INSERT_LINEC3

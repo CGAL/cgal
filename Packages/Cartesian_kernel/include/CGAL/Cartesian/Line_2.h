@@ -63,12 +63,23 @@ public:
   typedef typename R::Circle_2_base             Circle_2;
 #endif
 
-  LineC2();
-  LineC2(const Point_2 &p, const Point_2 &q);
-  LineC2(const FT &a, const FT &b, const FT &c);
-  LineC2(const Segment_2 &s);
-  LineC2(const Ray_2 &r);
-  LineC2(const Point_2 &p, const Direction_2 &d);
+  LineC2()
+    : Line_handle_2(Line_ref_2()) {}
+
+  LineC2(const Point_2 &p, const Point_2 &q)
+    : Line_handle_2(line_from_points(p, q)) {}
+
+  LineC2(const FT &a, const FT &b, const FT &c)
+    : Line_handle_2(Line_ref_2(a, b, c)) {}
+
+  LineC2(const Segment_2 &s)
+    : Line_handle_2(line_from_points(s.source(), s.target())) {}
+
+  LineC2(const Ray_2 &r)
+    : Line_handle_2(line_from_points(r.point(0), r.point(1))) {}
+
+  LineC2(const Point_2 &p, const Direction_2 &d)
+    : Line_handle_2(line_from_point_direction(p, d)) {}
 
   bool            operator==(const Self &l) const;
   bool            operator!=(const Self &l) const;
@@ -108,50 +119,21 @@ public:
   bool            is_vertical() const;
   bool            is_degenerate() const;
 
-  Self            transform(const Aff_transformation_2 &t) const;
+  Self            transform(const Aff_transformation_2 &t) const
+  {
+    return LineC2<R CGAL_CTAG>(t.transform(point(0)),
+                               t.transform(direction()));
+  }
 };
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
-LineC2<R CGAL_CTAG>::LineC2()
-  : Line_handle_2(Line_ref_2()) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-LineC2<R CGAL_CTAG>::LineC2(const typename LineC2<R CGAL_CTAG>::Point_2 &p,
-                            const typename LineC2<R CGAL_CTAG>::Point_2 &q)
-  : Line_handle_2(line_from_points(p, q)) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-LineC2<R CGAL_CTAG>::LineC2(const typename LineC2<R CGAL_CTAG>::FT &a,
-                            const typename LineC2<R CGAL_CTAG>::FT &b,
-			    const typename LineC2<R CGAL_CTAG>::FT &c)
-  : Line_handle_2(Line_ref_2(a, b, c)) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-LineC2<R CGAL_CTAG>::LineC2(const typename LineC2<R CGAL_CTAG>::Segment_2 &s)
-  : Line_handle_2(line_from_points(s.source(), s.target())) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-LineC2<R CGAL_CTAG>::LineC2(const typename LineC2<R CGAL_CTAG>::Ray_2 &r)
-  : Line_handle_2(line_from_points(r.point(0), r.point(1))) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-LineC2<R CGAL_CTAG>::LineC2(const typename LineC2<R CGAL_CTAG>::Point_2 &p,
-                            const typename LineC2<R CGAL_CTAG>::Direction_2 &d)
-  : Line_handle_2(line_from_point_direction(p, d)) {}
-
-template < class R >
-CGAL_KERNEL_MEDIUM_INLINE
+CGAL_KERNEL_INLINE
 bool
 LineC2<R CGAL_CTAG>::operator==(const LineC2<R CGAL_CTAG> &l) const
 {
-  if ( identical(l) ) return true;
-  return equal_line(*this,l);
+  if (identical(l))
+      return true;
+  return equal_line(*this, l);
 }
 
 template < class R >
@@ -184,8 +166,8 @@ typename LineC2<R CGAL_CTAG>::FT
 LineC2<R CGAL_CTAG>::x_at_y(const typename LineC2<R CGAL_CTAG>::FT &y) const
 {
   CGAL_kernel_precondition_msg( ! is_horizontal(),
-  "Line::x_at_y(FT y) is undefined for horizontal line");
-  return line_x_at_y(*this,y);
+    "Line::x_at_y(FT y) is undefined for horizontal line");
+  return line_x_at_y(*this, y);
 }
 
 template < class R >
@@ -194,8 +176,8 @@ typename LineC2<R CGAL_CTAG>::FT
 LineC2<R CGAL_CTAG>::y_at_x(const typename LineC2<R CGAL_CTAG>::FT &x) const
 {
   CGAL_kernel_precondition_msg( ! is_vertical(),
-  "Line::y_at_x(FT x) is undefined for vertical line");
-  return line_y_at_x(*this,x);
+    "Line::y_at_x(FT x) is undefined for vertical line");
+  return line_y_at_x(*this, x);
 }
 
 template < class R >
@@ -216,11 +198,11 @@ LineC2<R CGAL_CTAG>::opposite() const
 }
 
 template < class R >
-CGAL_KERNEL_MEDIUM_INLINE
+CGAL_KERNEL_INLINE
 typename LineC2<R CGAL_CTAG>::Point_2
 LineC2<R CGAL_CTAG>::point(int i) const
 {
-  return line_get_point(*this,i);
+  return line_get_point(*this, i);
 }
 
 template < class R >
@@ -228,7 +210,7 @@ CGAL_KERNEL_INLINE
 typename LineC2<R CGAL_CTAG>::Point_2
 LineC2<R CGAL_CTAG>::point() const
 {
-  return line_get_point(*this,0);
+  return line_get_point(*this, 0);
 }
 
 template < class R >
@@ -254,7 +236,7 @@ Oriented_side
 LineC2<R CGAL_CTAG>::
 oriented_side(const typename LineC2<R CGAL_CTAG>::Point_2 &p) const
 {
-  return side_of_oriented_line(*this,p);
+  return side_of_oriented_line(*this, p);
 }
 
 template < class R >
@@ -290,16 +272,6 @@ bool
 LineC2<R CGAL_CTAG>::is_degenerate() const
 {
   return is_horizontal() && is_vertical();
-}
-
-template < class R >
-inline
-LineC2<R CGAL_CTAG>
-LineC2<R CGAL_CTAG>::
-transform(const typename LineC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
-{
-  return LineC2<R CGAL_CTAG>(t.transform(point(0)),
-                             t.transform(direction()));
 }
 
 #ifndef CGAL_NO_OSTREAM_INSERT_LINEC2
