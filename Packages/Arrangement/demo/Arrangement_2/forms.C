@@ -36,6 +36,14 @@ PropertiesForm::PropertiesForm(  QTabWidget * bar, QWidget* parent ,
   box3->setValue(2);
   arrLayout3->addWidget( box3 );
   optionsFormLayout->addLayout( arrLayout3 );
+
+  arrLayout8 = new QHBoxLayout( 0, 0, 6 );
+  textLabel8 = new QLabel( "Vertex Radius", this );
+  arrLayout8->addWidget( textLabel8 );
+  box8 = new QSpinBox( 1, 5, 1, this, "box8" );
+  box8->setValue(3);
+  arrLayout8->addWidget( box8 );
+  optionsFormLayout->addLayout( arrLayout8 );
   
   arrLayout4 = new QHBoxLayout( 0, 0, 6 );
   textLabel4 = new QLabel( "Scaling Factor", this );

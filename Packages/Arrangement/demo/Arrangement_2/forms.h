@@ -79,6 +79,7 @@ public:
   QLabel *textLabel5;
   QLabel *textLabel6;
   QLabel *textLabel7;
+  QLabel *textLabel8;
   QSpinBox *box1;
   QSpinBox *box2;
   QSpinBox *box3;
@@ -86,6 +87,7 @@ public:
   QComboBox *box5;
   QSpinBox *box6;
   QComboBox *box7;
+  QSpinBox *box8;
   QPushButton *okPushButton;
   QPushButton *cancelPushButton;
   
@@ -98,6 +100,7 @@ protected:
   QHBoxLayout *arrLayout5;
   QHBoxLayout *arrLayout6;
   QHBoxLayout *arrLayout7;
+  QHBoxLayout *arrLayout8;
   QHBoxLayout *buttonsLayout;
   
 private:

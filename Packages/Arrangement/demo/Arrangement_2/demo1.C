@@ -33,6 +33,8 @@ int main(int, char*)
 #include "icons/draw.xpm"
 #include "icons/snap.xpm"
 #include "icons/conic_types.xpm"
+#include "icons/merge.xpm"
+#include "icons/split.xpm"
 
 const QString my_title_string("Arrangement Demo with CGAL Qt_widget");
 
@@ -51,22 +53,21 @@ MyWindow::MyWindow(int w, int h)
   number_of_tabs = 0;
   testlayer = new Qt_layer( myBar );
   colors_flag = true;
-  
+
   statusBar();
   
-  colors[0] = Qt::green;
   colors[1] = Qt::blue;
-  colors[2] = Qt::black;
-  colors[3] = Qt::darkYellow;
+  colors[2] = Qt::gray;
+  colors[3] = Qt::green;
   colors[4] = Qt::cyan;
   colors[5] = Qt::magenta;
-  colors[6] = Qt::gray;
+  colors[6] = Qt::black;
   colors[7] = Qt::darkGreen;
   colors[8] = Qt::darkBlue;
   colors[9] = Qt::darkMagenta;
   colors[10] = Qt::darkCyan;
   colors[11] = Qt::yellow;
-  
+
   m_scailing_factor = 2;
   
   // Traits Group
@@ -130,7 +131,15 @@ MyWindow::MyWindow(int w, int h)
   dragMode = new QAction("Drag", QPixmap( (const char**)hand_xpm ),
                          "&Drag", 0 , modeGroup, "Drag" );
   dragMode->setToggleAction( TRUE );
-  
+
+  mergeMode = new QAction("Merge", QPixmap( (const char**)merge_xpm ),
+                         "&Merge", 0 , modeGroup, "Merge" );
+  mergeMode->setToggleAction( TRUE );
+
+  splitMode = new QAction("Split", QPixmap( (const char**)split_xpm ),
+                         "&Split", 0 , modeGroup, "Split" );
+  splitMode->setToggleAction( TRUE );
+
   // zoom in
   zoominBt = new QAction("Zoom in", QPixmap( (const char**)zoomin_xpm ),
                          "&Zoom in", 0 , this, "Zoom in" );
@@ -157,16 +166,16 @@ MyWindow::MyWindow(int w, int h)
                                  "&Ellipse", 0 ,conicTypeGroup,
                                  "Ellipse" );
   setEllipse->setToggleAction( TRUE );
-  setParabula = new QAction("Parabula",
+  setParabola = new QAction("Parabola",
                                  QPixmap( (const char**)parabula_xpm ),
-                                 "&Parabula", 0 ,conicTypeGroup,
-                                 "Parabula" );
-  setParabula->setToggleAction( TRUE );
-  setHyperbula = new QAction("Hyperbula",
+                                 "&Parabola", 0 ,conicTypeGroup,
+                                 "Parabola" );
+  setParabola->setToggleAction( TRUE );
+  setHyperbola = new QAction("Hyperbola",
                                  QPixmap( (const char**)hyperbula_xpm ),
-                                 "&Hyperbula", 0 ,conicTypeGroup,
-                                 "Hyperbula" );
-  setHyperbula->setToggleAction( TRUE );
+                                 "&Hyperbola", 0 ,conicTypeGroup,
+                                 "Hyperbola" );
+  setHyperbola->setToggleAction( TRUE );
   
   
 
@@ -210,6 +219,8 @@ MyWindow::MyWindow(int w, int h)
   pointLocationMode->addTo( mode );
   rayShootingMode->addTo( mode );
   dragMode->addTo( mode );
+  mergeMode->addTo( mode );
+  splitMode->addTo( mode );
   menuBar()->insertSeparator();
   
   // snap mode menu
@@ -255,6 +266,8 @@ MyWindow::MyWindow(int w, int h)
   dragMode->addTo( modeTools );
   pointLocationMode->addTo( modeTools );
   rayShootingMode->addTo( modeTools );
+  mergeMode->addTo( modeTools );
+  splitMode->addTo( modeTools );
   modeTools->addSeparator();
   
   QToolBar *snapModeTools = new QToolBar( this, "snapMode operations" );
@@ -285,8 +298,8 @@ MyWindow::MyWindow(int w, int h)
   setSegment->addTo( conicTypeTool );
   setCircle->addTo( conicTypeTool );
   setEllipse->addTo( conicTypeTool );
-  setParabula->addTo( conicTypeTool );
-  setHyperbula->addTo( conicTypeTool );
+  setParabola->addTo( conicTypeTool );
+  setHyperbola->addTo( conicTypeTool );
 
   
   connect( zoomoutBt, SIGNAL( activated () ) , 
@@ -582,10 +595,10 @@ void MyWindow::updateConicType( QAction *action )
     w_demo_p->conic_type = SEGMENT;
   else if ( action == setEllipse ) 
     w_demo_p->conic_type = ELLIPSE;
-  else if ( action == setParabula ) 
-    w_demo_p->conic_type = PARABULA;
-  else if ( action == setHyperbula ) 
-    w_demo_p->conic_type = HYPERBULA;
+  else if ( action == setParabola ) 
+    w_demo_p->conic_type = PARABOLA;
+  else if ( action == setHyperbola ) 
+    w_demo_p->conic_type = HYPERBOLA;
 }
 
 /*! change the buttons stste according to the traits type */
@@ -601,11 +614,11 @@ void MyWindow::setConicType( ConicType t )
    case ELLIPSE:
     setEllipse->setOn( TRUE );
     break;
-   case PARABULA:
-    setParabula->setOn( TRUE );
+   case PARABOLA:
+    setParabola->setOn( TRUE );
     break;
-   case HYPERBULA:
-    setHyperbula->setOn( TRUE );
+   case HYPERBOLA:
+    setHyperbola->setOn( TRUE );
     break;
   }
 }
@@ -709,6 +722,18 @@ void MyWindow::updateMode( QAction *action )
     w_demo_p->setCursor(QCursor( QPixmap( (const char**)hand_xpm)));
     something_changed();
   }
+  else if ( action == mergeMode ) 
+  {
+    w_demo_p->mode = MERGE;
+    w_demo_p->setCursor(Qt::IbeamCursor );
+    something_changed();
+  }
+  else if ( action == splitMode ) 
+  {
+    w_demo_p->mode = SPLIT;
+    w_demo_p->setCursor(Qt::SplitHCursor  );
+    something_changed();
+  }
 }
 
 /*! set the buttons state according to the current mode */
@@ -727,6 +752,8 @@ void MyWindow::setMode( Mode m )
    case POINT_LOCATION: pointLocationMode->setOn( TRUE ); break;
    case RAY_SHOOTING: rayShootingMode->setOn( TRUE ); break;
    case DRAG: dragMode->setOn( TRUE ); break;
+   case MERGE: mergeMode->setOn( TRUE ); break;
+   case SPLIT: splitMode->setOn( TRUE ); break;
   }
 }
 
@@ -774,6 +801,7 @@ void MyWindow::properties()
     m_width = optionsForm->box1->value();
     m_height = optionsForm->box2->value();
     w_demo_p->m_line_width = optionsForm->box3->value();
+	w_demo_p->m_vertex_width = optionsForm->box8->value();
     double new_factor = static_cast<double> (optionsForm->box4->value());
     QString paint_mode = optionsForm->box5->currentText();
     w_demo_p->cube_size = optionsForm->box6->value();
@@ -1694,10 +1722,10 @@ void MyWindow::conicType()
       w_demo_p->conic_type = SEGMENT;
 	else if (strcmp(type,"Ellipse") == 0)
       w_demo_p->conic_type = ELLIPSE;
-	else if (strcmp(type,"Parabula") == 0)
-      w_demo_p->conic_type = PARABULA;
-	else if (strcmp(type,"Hyperbula") == 0)
-      w_demo_p->conic_type = HYPERBULA;
+	else if (strcmp(type,"Parabola") == 0)
+      w_demo_p->conic_type = PARABOLA;
+	else if (strcmp(type,"Hyperbola") == 0)
+      w_demo_p->conic_type = HYPERBOLA;
   }
 }
 
@@ -1741,7 +1769,6 @@ void MyWindow::rayShootingDirection()
 	    w_demo_p->setCursor(
 	    QCursor(QPixmap((const char**)small_ray_shooting_down_xpm)));
 	}
-
   }
 }
 
@@ -1754,8 +1781,7 @@ int main(int argc, char **argv)
   widget.setCaption(my_title_string);
   widget.setMouseTracking(TRUE);
   widget.show();
-  return app.exec();
-  
+  return app.exec();  
 }
 
 #endif // CGAL_USE_QT

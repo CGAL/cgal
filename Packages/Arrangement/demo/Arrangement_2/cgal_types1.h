@@ -34,8 +34,9 @@
 
 enum TraitsType { SEGMENT_TRAITS, POLYLINE_TRAITS , CONIC_TRAITS};
 enum SnapMode   { NONE , GRID , POINT};
-enum Mode       { INSERT , DELETE , POINT_LOCATION , RAY_SHOOTING , DRAG };
-enum ConicType  { CIRCLE , SEGMENT ,ELLIPSE , PARABULA , HYPERBULA};
+enum Mode       { INSERT , DELETE , POINT_LOCATION , RAY_SHOOTING ,
+				  DRAG , MERGE , SPLIT};
+enum ConicType  { CIRCLE , SEGMENT ,ELLIPSE , PARABOLA , HYPERBOLA};
 
 // Coordinate related typedef - using inexact number type
 typedef float                                              Coord_type;

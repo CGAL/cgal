@@ -179,6 +179,10 @@ private:
 	QAction *rayShootingMode;
 	/*! drag mode action */
 	QAction *dragMode;
+	/*! merge mode action */
+	QAction *mergeMode;	
+	/*! split mode action */
+	QAction *splitMode;	
 	/*! zoomin button */
 	QAction *zoominBt;
 	/*! zoomout button */
@@ -215,10 +219,10 @@ private:
 	QAction *setSegment;
 	/*! ellipse conic type action */
 	QAction *setEllipse;
-	/*! parabula conic type action */
-	QAction *setParabula;
+	/*! parabola conic type action */
+	QAction *setParabola;
 	/*! hyperbula conic type action */
-	QAction *setHyperbula;
+	QAction *setHyperbola;
 	/*! conic type tool bar */
 	QToolBar *conicTypeTool;
 };

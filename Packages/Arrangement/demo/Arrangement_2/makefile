@@ -14,6 +14,7 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
+	   -I../../../Planar_map/include \
        -Iinclude \
        -I../../include \
        $(CGAL_CXXFLAGS) \
