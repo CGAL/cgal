@@ -33,7 +33,9 @@ template <class Tds>
 class  Triangulation_ds_vertex_3 
   : public Tds::Vertex_base
 {
-  typedef typename Tds::Vertex_base Vb;
+  typedef typename Tds::Vertex_base        Vb;
+  typedef typename Tds::Vertex_handle      Vertex_handle;
+  typedef typename Tds::Cell_handle        Cell_handle;
 public:
   typedef typename Tds::Vertex      Vertex;
   typedef typename Tds::Cell        Cell;
@@ -42,14 +44,14 @@ public:
     : Vb()
   { set_order_of_creation(); }
     
-  Cell* cell() const
+  Cell_handle cell() const
   {
     return (Cell *) (Vb::cell());
   }
     
-  void set_cell(Cell* c)
+  void set_cell(const Cell_handle c)
   {
-    Vb::set_cell(c);
+    Vb::set_cell(&*c);
   }
 
   bool is_valid(bool verbose = false, int level = 0) const;

@@ -47,6 +47,9 @@ class Triangulation_ds_cell_3
     } 
 
   typedef typename Tds::Cell_base Cb;
+
+  typedef typename Tds::Vertex_handle  Vertex_handle;
+  typedef typename Tds::Cell_handle    Cell_handle;
 public:
 
   typedef typename Tds::Vertex         Vertex;
@@ -60,68 +63,70 @@ public:
 
   // SETTING
 
-  void set_vertex(int i, Vertex* v)
+  void set_vertex(int i, const Vertex_handle v)
   {
-    Cb::set_vertex(i,v);
+    Cb::set_vertex(i, &*v);
   }
 
-  void set_neighbor(int i, Cell* n)
+  void set_neighbor(int i, const Cell_handle n)
   {
-    Cb::set_neighbor(i,n);
+    Cb::set_neighbor(i, &*n);
   }
 
-  void set_vertices(Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3)
+  void set_vertices(const Vertex_handle v0, const Vertex_handle v1,
+	            const Vertex_handle v2, const Vertex_handle v3)
   {
-    Cb::set_vertices(v0,v1,v2,v3);
+    Cb::set_vertices(&*v0, &*v1, &*v2, &*v3);
   }
 
-  void set_neighbors(Cell* n0, Cell* n1, Cell* n2, Cell* n3)
+  void set_neighbors(const Cell_handle n0, const Cell_handle n1,
+	             const Cell_handle n2, const Cell_handle n3)
   {
-    Cb::set_neighbors(n0,n1,n2,n3);
+    Cb::set_neighbors(&*n0, &*n1, &*n2, &*n3);
   }
 
   // VERTEX ACCESS
 
-  Vertex* vertex(int i) const
+  Vertex_handle vertex(int i) const
   {
-    return (Vertex*) (Cb::vertex(i));
+    return (Vertex_handle) (Vertex *) (Cb::vertex(i));
   } 
 
-  bool has_vertex(const Vertex* v) const
+  bool has_vertex(const Vertex_handle v) const
   {
-    return Cb::has_vertex(v);
+    return Cb::has_vertex(&*v);
   }
     
-  bool has_vertex(const Vertex* v, int & i) const
+  bool has_vertex(const Vertex_handle v, int & i) const
   {
-    return Cb::has_vertex(v,i);
+    return Cb::has_vertex(&*v,i);
   }
     
-  int index(const Vertex* v) const
+  int index(const Vertex_handle v) const
   {
-    return Cb::vertex_index(v);
+    return Cb::vertex_index(&*v);
   }
 
   // NEIGHBOR ACCESS
 
-  Cell* neighbor(int i) const
+  Cell_handle neighbor(int i) const
   {
-    return (Cell*) Cb::neighbor(i);
+    return (Cell_handle) (Cell *) Cb::neighbor(i);
   }
     
-  bool has_neighbor(const Cell* n) const
+  bool has_neighbor(const Cell_handle n) const
   {
-    return Cb::has_neighbor(n);
+    return Cb::has_neighbor(&*n);
   }
     
-  bool has_neighbor(const Cell* n, int & i) const
+  bool has_neighbor(const Cell_handle n, int & i) const
   {
-    return Cb::has_neighbor(n,i);
+    return Cb::has_neighbor(&*n, i);
   }
 
-  int index(const Cell* n) const
+  int index(const Cell_handle n) const
   {
-    return Cb::cell_index(n);
+    return Cb::cell_index(&*n);
   }
 
   int mirror_index(int i) const
@@ -130,7 +135,7 @@ public:
       return neighbor(i)->index(this);
   }
 
-  Vertex* mirror_vertex(int i) const
+  Vertex_handle mirror_vertex(int i) const
   {
       return neighbor(i)->vertex(mirror_index(i));
   }
@@ -153,14 +158,9 @@ private:
 
   unsigned char _in_conflict_flag;
 
-  void error_orient( Cell * , int i ) const
+  void error_orient(Cell_handle, int i) const
   {
     std::cerr << " pb orientation with neighbor " << i << std::endl;
-  }
-
-  void error_neighbor( Cell* , int , int ) const
-  {
-    std::cerr << "neighbor of c has not c as neighbor" << std::endl;
   }
 };
 
@@ -239,10 +239,10 @@ Triangulation_ds_cell_3<Tds>::is_valid
 
     case 1:
       {
-      Vertex* v0 = vertex(0); 
-      Vertex* v1 = vertex(1);
-      Cell* n0 = neighbor(0); 
-      Cell* n1 = neighbor(1);
+      Vertex_handle v0 = vertex(0); 
+      Vertex_handle v1 = vertex(1);
+      Cell_handle n0 = neighbor(0); 
+      Cell_handle n1 = neighbor(1);
 
       if ( v0 == NULL || v1 == NULL ) {
 	if (verbose)
@@ -286,14 +286,14 @@ Triangulation_ds_cell_3<Tds>::is_valid
 	return false;
       }
       
-      if ( this != n0->neighbor(1) ) {
+      if ( &*n0->neighbor(1) != this) {
 	if (verbose)
 	    std::cerr << "neighbor 0 does not have this as neighbor 1" 
 		      << std::endl;
 	CGAL_triangulation_assertion(false);
 	return false;
       }
-      if ( this != n1->neighbor(0) ) {
+      if ( &*n1->neighbor(0) != this) {
 	if (verbose)
 	    std::cerr << "neighbor 1 does not have this as neighbor 0" 
 		      << std::endl;
@@ -329,7 +329,7 @@ Triangulation_ds_cell_3<Tds>::is_valid
       }
 
       int in;
-      Cell* n;
+      Cell_handle n;
       for(int i = 0; i < 3; i++) {
 	n = neighbor(i);
 	if ( n == NULL ) {
@@ -346,7 +346,7 @@ Triangulation_ds_cell_3<Tds>::is_valid
 	  return false;
 	}
 	in = cw(in); 
-	if ( this != n->neighbor(in) ) {
+	if ( &*n->neighbor(in) != this) {
 	  if (verbose)
 	      std::cerr << "neighbor " << i
 		        << " does not have this as neighbor " 
@@ -380,7 +380,7 @@ Triangulation_ds_cell_3<Tds>::is_valid
 	}
 
 	for(i = 0; i < 4; i++) {
-	  Cell* n = neighbor(i);
+	  Cell_handle n = neighbor(i);
 	  if ( n == NULL ) {
 	    if (verbose)
 	      std::cerr << "neighbor " << i << " NULL" << std::endl;
@@ -389,9 +389,9 @@ Triangulation_ds_cell_3<Tds>::is_valid
 	  }
 
 	  int in;
-	  if ( ! n->has_neighbor(this,in) ) {
+	  if ( ! n->has_neighbor((Cell_handle)this,in) ) {
 	    if (verbose)
-	      error_neighbor(n,i,in); 
+              std::cerr << "neighbor of c has not c as neighbor" << std::endl;
 	    CGAL_triangulation_assertion(false);
 	    return false;
 	  }

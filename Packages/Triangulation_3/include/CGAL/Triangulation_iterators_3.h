@@ -41,8 +41,6 @@ class Triangulation_cell_iterator_3
 
   typedef typename Tr::Cell            Cell;
   typedef typename Tr::Vertex          Vertex;
-  typedef typename Tr::Vertex_handle   Vertex_handle;  
-  typedef typename Tr::Cell_handle     Cell_handle;
   typedef typename Tr::Cell_iterator   Cell_iterator;
 
 public:
@@ -64,7 +62,7 @@ public:
 	while ( // ( _ib != _tr->tds().cells_end() ) &&
 	       // useless : there must be at least one finite cell
 	       // since precond in _ib : dimension == 3
-	       _tr->is_infinite(Cell_handle( (Cell *) &(*(_ib)) )) )
+	       _tr->is_infinite(&*_ib) )
 	  { ++_ib; }
       }
     }
@@ -104,7 +102,7 @@ public:
       do {
 	++_ib; 
       } while ( ( _ib != _tr->tds().cells_end() )
-		&& _tr->is_infinite(Cell_handle( (Cell *) &(*(_ib)) )) );
+		&& _tr->is_infinite(&*_ib) );
     }
     return *this;   
   }
@@ -119,7 +117,7 @@ public:
       do {
 	--_ib;
       } while ( ( _ib != _tr->tds().cells_end() )
-		&& _tr->is_infinite(Cell_handle( (Cell *) &(*(_ib)) )) );
+		&& _tr->is_infinite(&*_ib) );
     }
     return *this;   
   }
@@ -167,7 +165,6 @@ class Triangulation_vertex_iterator_3
 
   typedef typename Tr::Cell            Cell;
   typedef typename Tr::Vertex          Vertex;
-  typedef typename Tr::Vertex_handle   Vertex_handle;  
   typedef typename Tr::Vertex_iterator Vertex_iterator;  
   typedef typename Tr::Cell_handle     Cell_handle;
   typedef typename Tr::Cell_iterator   Cell_iterator;
@@ -188,7 +185,7 @@ public:
     : _ib(tr->tds().vertices_begin()), _tr(tr), _inf(inf)
     { 
       if (! _inf) {
-	if ( _tr->is_infinite(Vertex_handle( (Vertex *) &(*(_ib)) )) ) {
+	if ( _tr->is_infinite(&*_ib) ) {
 	  ++_ib;
 	}
       }
@@ -225,7 +222,7 @@ public:
     ++_ib;
     if (!_inf
 	&& _ib != _tr->tds().vertices_end()
-        && _tr->is_infinite(Vertex_handle( (Vertex *) &(*(_ib)) )) )
+        && _tr->is_infinite(&*_ib) )
 	++_ib;
     return *this;   
   }
@@ -234,7 +231,7 @@ public:
   operator--()
   {
     --_ib;
-    if (!_inf && _tr->is_infinite(Vertex_handle( (Vertex *) &(*(_ib)) )) )
+    if (!_inf && _tr->is_infinite(&*_ib) )
 	--_ib;
     return *this;   
   }
@@ -304,8 +301,7 @@ public:
 	while ( // ( _ib != _tr->tds().cells_end() ) &&
 	   // useless : there must be at least one finite cell
 	   // since precond in _ib : dimension == 3
-	       _tr->is_infinite(make_triple(Cell_handle((Cell *)(*_ib).first),
-					    (*_ib).second, (*_ib).third )) )
+	       _tr->is_infinite(*_ib))
 	  { ++_ib; }
     }
   }
@@ -343,11 +339,7 @@ public:
     else {
       do {
 	++_ib; 
-      } while ( ( _ib != _tr->tds().edges_end() )
-		&& _tr->is_infinite(make_triple(Cell_handle
-						( (Cell *) (*_ib).first),
-						(*_ib).second,
-						(*_ib).third )) );
+      } while ( _ib != _tr->tds().edges_end() && _tr->is_infinite(*_ib));
     }
     return *this;   
   }
@@ -361,11 +353,7 @@ public:
     else{
       do {
 	--_ib;
-      } while ( ( _ib != _tr->tds().edges_end() )
-	      && _tr->is_infinite(make_triple(Cell_handle
-					      ( (Cell *) (*_ib).first),
-					      (*_ib).second,
-					      (*_ib).third )) );
+      } while ( ( _ib != _tr->tds().edges_end() ) && _tr->is_infinite(*_ib));
     }
     return *this;   
   }
@@ -388,12 +376,11 @@ public:
         
   Edge operator*() const
   {
-    Cell_handle ch = (Cell *)( (*_ib).first );
-    return make_triple( ch, (*_ib).second, (*_ib).third );
+    return *_ib;
   }
      
 private:
-  Iterator_base _ib ;
+  Iterator_base _ib;
   const Tr * _tr;
   bool _inf; // if _inf == true, traverses all edges
                // else only traverses finite edges
@@ -404,7 +391,6 @@ class Triangulation_facet_iterator_3
 {
   typedef typename Tr::Triangulation_data_structure Tds;
   typedef typename Tr::Facet Facet;
-  typedef typename Tr::Cell_handle Cell_handle;
   typedef typename Tr::Cell Cell;
 
   typedef typename Tds::Facet Ftds;
@@ -431,18 +417,16 @@ public:
       while ( // ( _ib != _tr->tds().cells_end() ) &&
 	     // useless : there must be at least one finite cell
 	     // since precond in _ib : dimension == 3
-	     _tr->is_infinite(std::make_pair(Cell_handle
-					     ( (Cell *) (*_ib).first),
-					     (*_ib).second )) )
+	     _tr->is_infinite(*_ib) )
 	{ ++_ib; }
     }
   }
-        
+
   Triangulation_facet_iterator_3(const Tr *tr)
     : _ib( &(tr->tds()), 1), _tr(tr), _inf(true)
   // _inf is initialized but should never be used
   {}
-       
+
   bool
   operator==(const Facet_iterator & fi) const
   {
@@ -472,9 +456,7 @@ public:
       do {
 	++_ib; 
       } while ( ( _ib != _tr->tds().facets_end() )
-		&& _tr->is_infinite(std::make_pair(Cell_handle
-						   ( (Cell *) (*_ib).first),
-						   (*_ib).second )) );
+		&& _tr->is_infinite(*_ib) );
     }
     return *this;   
   }
@@ -489,9 +471,7 @@ public:
       do {
 	--_ib;
       } while ( ( _ib != _tr->tds().facets_end() )
-		&& _tr->is_infinite(std::make_pair(Cell_handle
-						   ( (Cell *) (*_ib).first),
-						   (*_ib).second )) );
+		&& _tr->is_infinite(*_ib) );
     }
     return *this;   
   }
@@ -514,8 +494,7 @@ public:
         
   Facet operator*() const
   {
-    Cell_handle ch = (Cell *)( (*_ib).first );
-    return std::make_pair( ch, (*_ib).second );
+    return *_ib;
   }
      
 private:

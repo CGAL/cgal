@@ -32,7 +32,6 @@ class Triangulation_vertex_handle_3
   : public Pointer<CGAL_TYPENAME_MSVC_NULL Tr::Vertex>
 {
   typedef typename Tr::Vertex                        Vertex;
-  typedef typename Tr::Vertex_iterator               Vertex_iterator;
   typedef Pointer<Vertex>                            Ptr;
   typedef Triangulation_vertex_handle_3<Tr>          Vertex_handle;
 public:
@@ -41,12 +40,8 @@ public:
     : Ptr(NULL)
   {}
 
-  Triangulation_vertex_handle_3(Vertex * v)
-    : Ptr(v)
-  {}
-
-  Triangulation_vertex_handle_3(const Vertex_iterator & vit)
-    : Ptr(&(*vit))
+  Triangulation_vertex_handle_3(const Vertex * v)
+    : Ptr(const_cast<Vertex*>(v))
   {}
 
   Vertex_handle & operator=(Vertex * v)
@@ -67,8 +62,6 @@ class Triangulation_cell_handle_3
   : public Pointer<CGAL_TYPENAME_MSVC_NULL Tr::Cell>
 {
   typedef typename Tr::Cell                         Cell;
-  typedef typename Tr::Cell_iterator                Cell_iterator;
-  typedef typename Tr::Cell_circulator              Cell_circulator;
   typedef Pointer<Cell>                             Ptr;
   typedef Triangulation_cell_handle_3<Tr>           Cell_handle;
 public:
@@ -77,16 +70,8 @@ public:
     : Ptr(NULL)
   {}
 
-  Triangulation_cell_handle_3(Cell * c)
-    : Ptr(c)
-  {}
-
-  Triangulation_cell_handle_3(const Cell_iterator & cit)
-    : Ptr(&(*cit))
-  {}
-
-  Triangulation_cell_handle_3(const Cell_circulator & ccir)
-    : Ptr(&(*ccir))
+  Triangulation_cell_handle_3(const Cell * c)
+    : Ptr(const_cast<Cell*>(c))
   {}
 
   Cell_handle & operator=(Cell * c)

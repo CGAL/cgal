@@ -214,7 +214,7 @@ private:
 template < class H>
 class Delaunay_remove_tds_halfedge_compare_3_2 {
 public:
-  bool operator()(const H & x, const H & y) {
+  bool operator()(const H & x, const H & y) const {
     return ( x.first < y.first || 
 	     ( (x.first == y.first) && (x.second < y.second)) );
   }
@@ -246,6 +246,7 @@ public:
   typedef typename TDSUL2::Face_iterator Face_iterator;
   typedef quadruple<void*, void*, Face_3_2*, int> Halfedge;
 
+  // FIXME : similar to operator>>(), isn't it ?  Should we try to factorize ?
   Delaunay_remove_tds_3_2( std::vector<Facet> & boundhole ) {
 
     typedef typename std::vector<Facet>::iterator Facet_iterator;
@@ -315,8 +316,8 @@ public:
       for(int j = 0; j < 3; j++) {
 	void* v = f->vertex(j); 
 	void* w = f->vertex(cw(j));
-	halfedges[i] = (v < w)? make_quadruple(v, w, f, ccw(j))
-	                      : make_quadruple(w, v, f, ccw(j));
+	halfedges[i] = (v < w)? Halfedge(v, w, f, ccw(j))
+	                      : Halfedge(w, v, f, ccw(j));
 	i++;
       }
     }

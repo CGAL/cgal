@@ -36,7 +36,6 @@
 #include <CGAL/Triangulation_3.h>
 
 #include <CGAL/Delaunay_remove_tds_3.h>
-#include <CGAL/Triangulation_face_base_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -49,10 +48,10 @@ class Delaunay_triangulation_3 : public Triangulation_3<Gt,Tds>
   friend std::istream& operator >> CGAL_NULL_TMPL_ARGS
   (std::istream& is, Triangulation_3<Gt,Tds> &tr);
 
+  typedef Delaunay_triangulation_3<Gt, Tds> Self;
 public:
   typedef Tds Triangulation_data_structure;
   typedef Gt  Geom_traits;
-  typedef Delaunay_triangulation_3<Gt, Tds> Self;
 
   typedef typename Gt::Point_3       Point;
   typedef typename Gt::Segment_3     Segment;
@@ -184,7 +183,7 @@ public:
   }
 
   Vertex_handle insert(const Point & p, 
-		       Cell_handle start = Cell_handle(), 
+		       Cell_handle start = NULL, 
 		       Vertex_handle v = NULL);
 
   Vertex_handle push_back(const Point & p)
@@ -193,9 +192,6 @@ public:
   }
 
   bool remove(Vertex_handle v );
-
-  void print(Vertex_handle v) const;
-  void print(Cell_handle c) const;
 
   Bounded_side
   side_of_sphere( Cell_handle c, const Point & p) const;
@@ -308,7 +304,7 @@ insert(const Point & p, Cell_handle start, Vertex_handle v)
 	  return c->vertex(li);
 
       Conflict_tester_3 tester(p, this);
-      v = insert_conflict(&(*v), &(*c), tester); 
+      v = insert_conflict(v, c, tester); 
       v->set_point(p);
       return v;
     }// dim 3
@@ -324,7 +320,7 @@ insert(const Point & p, Cell_handle start, Vertex_handle v)
       case EDGE:
 	{
           Conflict_tester_2 tester(p, this);
-	  v = insert_conflict(&(*v), &(*c), tester); 
+	  v = insert_conflict(v, c, tester); 
 	  v->set_point(p);
 	  return v;
 	}
@@ -349,7 +345,7 @@ remove(Vertex_handle v)
 {
   CGAL_triangulation_precondition( v != Vertex_handle());
   CGAL_triangulation_precondition( !is_infinite(v));
-  CGAL_triangulation_expensive_precondition( _tds.is_vertex(&(*v)) );
+  CGAL_triangulation_expensive_precondition( _tds.is_vertex(v) );
 
   if ( dimension() <3 || test_dim_down(v) ) {
     // the triangulation is rebuilt...
@@ -360,17 +356,17 @@ remove(Vertex_handle v)
 
     _tds.set_number_of_vertices(0);
     _tds.set_dimension(-2);
-    _tds.insert_increase_dimension( &(*inf) );
+    _tds.insert_increase_dimension(inf);
     CGAL_triangulation_assertion( inf == infinite_vertex() );
 
     typename Tds::Vertex_iterator vit;
 
     for ( vit = _tds.vertices_begin(); vit != _tds.vertices_end(); ++vit ) 
-      if ( &*vit != (typename Tds::Vertex *) &(*inf) &&
-	   &*vit != (typename Tds::Vertex *) &(*v) ) 
-	insert( (&*vit)->point(), NULL, (Vertex *) &*vit );
+      if ( &*vit != &*inf &&
+	   &*vit != &*v ) 
+	insert( vit->point(), NULL, &*vit );
 
-    _tds.delete_vertex(&(*v));
+    _tds.delete_vertex(v);
 
     return true;
   }
@@ -386,7 +382,7 @@ remove(Vertex_handle v)
 
   bool filled = fill_hole_3D_ear(boundhole);
   if(filled){
-    _tds.delete_vertex(&(*v));
+    _tds.delete_vertex(v);
     _tds.delete_cells(hole.begin(), hole.end());
     set_number_of_vertices(number_of_vertices()-1);
   } else {
@@ -395,29 +391,6 @@ remove(Vertex_handle v)
 
   return filled;
 }
-
-//debug
-template < class Gt, class Tds >
-void 
-Delaunay_triangulation_3<Gt,Tds>::
-print( Vertex_handle v ) const
-{
-  if ( is_infinite( v ) )
-    std::cout << "inf" << "; ";
-  else 
-    std::cout << v->point() << "; ";
-}
-
-template < class Gt, class Tds >
-void 
-Delaunay_triangulation_3<Gt,Tds>::
-print( Cell_handle c ) const
-{
-  for(int i = 0; i < 4; i++)
-    print(c->vertex(i));
-  std::cout << std::endl;
-}
-// end debug
 
 template < class Gt, class Tds >
 Bounded_side
@@ -786,7 +759,7 @@ is_valid(bool verbose, int level) const
     return false;
   }
     
-  if ( &(*infinite_vertex()) == NULL ) {
+  if ( infinite_vertex() == NULL ) {
     if (verbose)
 	std::cerr << "no infinite vertex" << std::endl;
     CGAL_triangulation_assertion(false);
@@ -798,10 +771,9 @@ is_valid(bool verbose, int level) const
     {
       Cell_iterator it;
       for ( it = finite_cells_begin(); it != cells_end(); ++it ) {
-	is_valid_finite((*it).handle());
+	is_valid_finite(&*it);
 	for (int i=0; i<4; i++ ) {
-	  if ( side_of_sphere ( (*it).handle(), 
-		 it->vertex( (it->neighbor(i))->index((*it).handle() ) )
+	  if ( side_of_sphere (&*it, it->vertex(it->neighbor(i)->index(&*it))
 		 ->point() ) == ON_BOUNDED_SIDE ) {
 	    if (verbose)
 	      std::cerr << "non-empty sphere " << std::endl;
@@ -849,7 +821,7 @@ bool
 Delaunay_triangulation_3<Gt,Tds>::
 is_valid(Cell_handle c, bool verbose, int level) const
 {
-  if ( ! (&(*c))->is_valid(dimension(),verbose,level) ) {
+  if ( ! c->is_valid(dimension(),verbose,level) ) {
     if (verbose) { 
       std::cerr << "combinatorically invalid cell" ;
       for (int i=0; i <= dimension(); i++ )
@@ -915,10 +887,10 @@ make_hole_3D_ear( Vertex_handle v,
 
   for (typename Hole_cells::iterator cit = cells.begin();
        cit != cells.end(); ++cit) {
-    int indv = (*cit)->index(&(*v));
+    int indv = (*cit)->index(v);
     opp_cit = (*cit)->neighbor( indv );
     hole.push_back(*cit);    
-    boundhole.push_back( std::make_pair( opp_cit, opp_cit->index(*cit)) );
+    boundhole.push_back(Facet( opp_cit, opp_cit->index(*cit)) );
 
     for (int i=0; i<4; i++)
       if ( i != indv ) {
@@ -1063,32 +1035,24 @@ fill_hole_3D_ear( std::vector<Facet> & boundhole)
 	// none of the vertices violates the Delaunay property
 	// We are ready to plug a new cell
 
-        Cell_handle ch = (Cell *) _tds.create_cell(
-		                       (typename Tds::Vertex *) &(*v0),
-	                               (typename Tds::Vertex *) &(*v1),
-			               (typename Tds::Vertex *) &(*v2),
-			               (typename Tds::Vertex *) &(*v3));
+        Cell_handle ch = _tds.create_cell(v0, v1, v2, v3);
 	cells.push_back(ch);
 
 	// The new cell touches the faces that form the ear
 	Facet fac = n->info();
-	ch->set_neighbor(0, fac.first);
-	fac.first->set_neighbor(fac.second, ch);
+	_tds.set_adjacency(ch, fac.first, 0, fac.second);
 	fac = f->info();
-	ch->set_neighbor(3, fac.first);
-	fac.first->set_neighbor(fac.second, ch);
+	_tds.set_adjacency(ch, fac.first, 3, fac.second);
 
 	// It may touch another face, 
 	// or even two other faces if it is the last cell
 	if(neighbor_i) {
 	  fac = m_i->info();
-	  ch->set_neighbor(1, fac.first);
-	  fac.first->set_neighbor(fac.second, ch);
+	  _tds.set_adjacency(ch, fac.first, 1, fac.second);
 	}
 	if(neighbor_j) {
 	  fac = m_j->info();
-	  ch->set_neighbor(2, fac.first);
-	  fac.first->set_neighbor(fac.second, ch);
+	  _tds.set_adjacency(ch, fac.first, 2, fac.second);
 	}
 	
 	if((! neighbor_i) && (! neighbor_j)) {
@@ -1105,18 +1069,18 @@ fill_hole_3D_ear( std::vector<Facet> & boundhole)
 	  n->mark_edge(cw(fi), f);
 	  n->mark_edge(ccw(fi), f);
 
-	  f->set_info(std::make_pair(ch,2));
-	  n->set_info(std::make_pair(ch,1));
+	  f->set_info(Facet(ch,2));
+	  n->set_info(Facet(ch,1));
 	} else if (neighbor_i && (! neighbor_j)) {
 	  surface.remove_degree_3(f->vertex(j), f);
 	  // all three edges adjacent to f are 
 	  // candidate for an ear
 	  f->mark_adjacent_edges();
-	  f->set_info(std::make_pair(ch,2));
+	  f->set_info(Facet(ch,2));
 	} else if ((! neighbor_i) && neighbor_j)  {
 	  surface.remove_degree_3(f->vertex(i), f);
 	  f->mark_adjacent_edges();
-	  f->set_info(std::make_pair(ch,1));
+	  f->set_info(Facet(ch,1));
 	} else if (surface.number_of_vertices() != 4) {
 	  // this should not happen at all  => panic mode, 
 	  //clean up, and say that it didn't work

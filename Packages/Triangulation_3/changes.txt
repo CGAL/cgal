@@ -3,6 +3,9 @@ Version 1.87 (?? September 01)
 - Internal classes now templated either by Tds or Tr so they are more easily
   reusable.
 - New function TDS::delete_cells(begin, end).
+- TDS functions now use handles instead of pointers.
+- Triangulation::Vertex == TDS::Vertex.  Idem for Cell.
+- Handles can't be constructed from iterators/circulators : &* is needed.
 
 Version 1.86 (31 August 01)
 - Remove non default constructors in [ds_]vertex and [ds_]cell.

@@ -90,7 +90,7 @@ public:
   }
 
   Vertex_handle insert( const Weighted_point & p,
-	                Cell_handle start = Cell_handle(),
+	                Cell_handle start = NULL,
 			Vertex_handle v = NULL);
 
   Vertex_handle push_back(const Weighted_point &p)
@@ -366,7 +366,7 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
 	  return NULL;
       // Should I mark c's vertices too ?
       Conflict_tester_3 tester(p, this);
-      v = insert_conflict(&(*v), &(*c), tester);
+      v = insert_conflict(v, c, tester);
       v->set_point(p);
       for( typename std::vector<Vertex_handle>::iterator
 		it = tester.conflict_vector().begin();
@@ -376,7 +376,7 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
 	{
           // vertex has to be deleted
           set_number_of_vertices(number_of_vertices()-1);
-          _tds.delete_vertex( &(*(*it)));
+          _tds.delete_vertex(*it);
 	}
       }
       // a voir : comment compter les sommets redondants ? (***)
@@ -398,7 +398,7 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
 	  if (! in_conflict_2(p, c, 3))
 	      return NULL;
 	  Conflict_tester_2 tester(p, this);
-	  v = insert_conflict(&(*v), &(*c), tester);
+	  v = insert_conflict(v, c, tester);
 	  v->set_point(p);
           for( typename std::vector<Vertex_handle>::iterator
 		it = tester.conflict_vector().begin();
@@ -408,7 +408,7 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
 	    {
               // vertex has to be deleted
               set_number_of_vertices(number_of_vertices()-1);
-              _tds.delete_vertex( &(*(*it)));
+              _tds.delete_vertex(*it);
 	    }
 	  }
 	  return v;
@@ -434,22 +434,22 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
 	{
 	  if (! in_conflict_1(p, c) )
 	      return NULL;
-	  Vertex_handle v = (Vertex *) _tds.create_vertex();
+	  Vertex_handle v = _tds.create_vertex();
 	  v->set_point(p);
 	  set_number_of_vertices(number_of_vertices()+1);
 	  Cell_handle bound[2];
 	  Cell_handle n;
-	  std::set<Cell*> conflicts;
+	  std::set<Cell_handle> conflicts;
 
 	  for (int j =0; j<2; j++ ) {
 	    n = c;
 	    while ( ( ! is_infinite(n->vertex(1-j)) ) && 
 		      in_conflict_1( p, n->neighbor(j) ) ) {
 	      if (n!=c)
-		  (void) conflicts.insert( &(*n) );
+		  (void) conflicts.insert(n);
 // 		P = new Weighted_point( n->vertex(1-j)->point() );
 // 		(void) deleted_points.insert((void*) P);
-	      _tds.delete_vertex( &(*(n->vertex(1-j))) );
+	      _tds.delete_vertex( n->vertex(1-j) );
 	      set_number_of_vertices(number_of_vertices()-1);
 	      n = n->neighbor(j);
 	    }
@@ -457,17 +457,15 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
 	  }
 	  if ( bound[0] != bound[1] ) {
 	    if ( (c != bound[0]) && (c != bound[1]) )
-	      (void) conflicts.insert( &(*c) );
+	      (void) conflicts.insert(c);
 	    bound[0]->set_vertex(0,v);
 	    v->set_cell(bound[0]);
 	    bound[1]->set_vertex(1,v);
-	    bound[1]->set_neighbor(0,bound[0]);
-	    bound[0]->set_neighbor(1,bound[1]);
+	    _tds.set_adjacency(bound[0], bound[1], 1, 0);
 	  }
 	  else {
-	    bound[1] = (Cell *)
-		_tds.create_cell(&(*bound[0]->vertex(0)), &(*v), NULL, NULL,
-			 &(*bound[0]), &(*bound[0]->neighbor(1)), NULL, NULL);
+	    bound[1] = _tds.create_cell(bound[0]->vertex(0), v, NULL, NULL,
+			       bound[0], bound[0]->neighbor(1), NULL, NULL);
 	    bound[0]->neighbor(1)->set_neighbor(0,bound[1]);
 	    bound[0]->vertex(0)->set_cell(bound[1]);
 
@@ -510,7 +508,7 @@ is_valid(bool verbose, int level) const
     return false;
   }
 
-  if ( &(*infinite_vertex()) == NULL ) {
+  if ( infinite_vertex() == NULL ) {
     if (verbose)
 	std::cerr << "no infinite vertex" << std::endl;
     CGAL_triangulation_assertion(false);
@@ -523,10 +521,10 @@ is_valid(bool verbose, int level) const
     {
       Cell_iterator it;
       for ( it = finite_cells_begin(); it != cells_end(); ++it ) {
-	is_valid_finite((*it).handle());
+	is_valid_finite(&*it);
 	for ( i=0; i<4; i++ ) {
-	  if ( side_of_power_sphere ( (*it).handle(), 
-		 it->vertex( (it->neighbor(i))->index((*it).handle() ) )
+	  if ( side_of_power_sphere (&*it, 
+		 it->vertex( (it->neighbor(i))->index(&*it) )
 		 ->point() ) == ON_BOUNDED_SIDE ) {
 	    if (verbose)
 	      std::cerr << "non-empty sphere " << std::endl;

@@ -14,6 +14,10 @@ General
 - insure
 - virer le init() qui n'est plus necessaire, vu qu'on a le default ctor qui
   remarche ?
+- Faire ce qu'il faut pour pouvoir avoir : typedef Vertex * Vertex_handle;
+- Deriver Triangulation de TDS ?  Avant ca, il faudrait separer les types
+  d'iterateurs -> Finite_vertices_iterator.  Et verifier qu'il n'y a pas de
+  clash.
 
 TEST SUITE
 
@@ -25,10 +29,8 @@ Exemples - demo
 - en rajouter si bonnes idees...
 
 TDS
-- Unification de Triangulation::Vertex et TDS::Vertex.
 - comprendre bug dans ancienne version de is_edge de tds, dim 2 
 	(pb edge_iterator...? etonnant)
-- Why are the iterators friend in the ds_cell ?
 - set_number_of_vertices(number_of_vertices()+1);  devrait etre dans la TDS ?
 - insert_conflicts :
   y'a des utilisateurs (David, mesh...) qui ont besoin de connaitre l'ensemble

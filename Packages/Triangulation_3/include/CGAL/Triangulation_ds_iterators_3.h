@@ -26,7 +26,6 @@
 
 #include <CGAL/Triangulation_short_names_3.h>
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/triple.h>
 #include <CGAL/Triangulation_ds_circulators_3.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -45,14 +44,13 @@ public:
   typedef std::ptrdiff_t                         difference_type;
   typedef std::bidirectional_iterator_tag        iterator_category;
 
-  typedef typename Tds::Cell                     Cell;
   typedef typename Tds::Facet                    Facet;
   typedef Triangulation_ds_facet_iterator_3<Tds> Facet_iterator;
   typedef typename Tds::Cell_iterator            Cell_iterator;
 
   Triangulation_ds_facet_iterator_3()
     {}
-  
+
   Triangulation_ds_facet_iterator_3(const Tds * tds)
     : _tds(tds), index(0)
     {
@@ -92,7 +90,7 @@ public:
       do {
 	increment();
       } while ( pos != _tds->cell_container().end()
-	     && &(*pos) > pos->neighbor(index) );
+	     && &*pos > &*pos->neighbor(index) );
       // reports a facet when the current cell has a pointer inferior
       // to the pointer of the neighbor cell
       return *this;
@@ -122,7 +120,7 @@ public:
       else
 	  index--;
     } while ( pos != _tds->cell_container().end()
-	   && &(*pos) > pos->neighbor(index) );
+	   && &*pos > &*pos->neighbor(index) );
     // reports a facet when the current cell has a pointer inferior
     // to the pointer of the neighbor cell
     return *this;
@@ -156,7 +154,7 @@ public:
     {
       // case pos == NULL should not be accessed, there is no facet
       // when dimension <2 
-      return std::make_pair(&(*pos), index);
+      return Facet(&*pos, index);
     }
 
 private:
@@ -191,10 +189,10 @@ public:
   typedef std::ptrdiff_t                          difference_type;
   typedef std::bidirectional_iterator_tag         iterator_category;
 
-  typedef typename Tds::Cell                      Cell;
   typedef typename Tds::Edge                      Edge;
   typedef Triangulation_ds_edge_iterator_3<Tds>   Edge_iterator;
   typedef typename Tds::Cell_iterator             Cell_iterator;
+  typedef typename Tds::Cell_handle               Cell_handle;
   typedef Triangulation_ds_cell_circulator_3<Tds> Cell_circulator;
 
   Triangulation_ds_edge_iterator_3()
@@ -265,7 +263,7 @@ public:
 	do {
 	  increment2();
 	} while ( pos != _tds->cell_container().end() && 
-		  &(*pos) > pos->neighbor(3-b-e) );
+		  &*pos > &*pos->neighbor(3-b-e) );
 	break;
       }
     case 3:
@@ -315,7 +313,7 @@ public:
 	    e = b+1; // case b==2, e==0 forbids to write e--
 	  }
 	} while ( pos != _tds->cell_container().end() && 
-		  &(*pos) > pos->neighbor(3-b-e) );
+		  &*pos > &*pos->neighbor(3-b-e) );
 	break;
       }
     case 3:
@@ -343,8 +341,8 @@ public:
 	    Cell_circulator ccir = _tds->incident_cells(&(*pos),b,e);
 	    do {
 	      ++ccir;
-	    } while ( &(*ccir) > &(*pos) );
-	    if ( &(*ccir) == &(*pos) ) // pos is the cell with minimum pointer
+	    } while ( &*ccir > &*pos );
+	    if ( &*ccir == &*pos ) // pos is the cell with minimum pointer
 	      notfound = false;
 	  }
 	  else {
@@ -384,12 +382,12 @@ public:
     {
       return !(*this == ei);
     }
-    
+
   Edge operator*() const
     {
-      return make_triple(&(*pos), b, e);
+      return Edge(&*pos, b, e);
     }
-    
+
 private:
   const Tds*  _tds;
   Cell_iterator pos; // current "cell". Even if the dimension is <3 when 
@@ -431,7 +429,6 @@ private:
 	e++;
     }
   }
-
 };
 
 CGAL_END_NAMESPACE
