@@ -1,5 +1,8 @@
 CHANGES to the Geomview package.
 
+Ver 3.16 (19 June 2001)
+- Doc bug fix.
+
 Ver 3.15 (19 June 2001)
 - Added missing #includes for Triangulation and Polyhedrons.
 - Clarify the documentation for terrains.
