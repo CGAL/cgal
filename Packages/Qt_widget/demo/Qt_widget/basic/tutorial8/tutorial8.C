@@ -42,7 +42,8 @@ public:
     this->addToolBar(stoolbar->toolbar(), Top, FALSE);
     
     QToolBar  *tools_toolbar;
-    tools_toolbar = new QToolBar("Tools", this, QMainWindow::Top, TRUE, "Tools");
+    tools_toolbar = new QToolBar("Tools", this, 
+							QMainWindow::Top, TRUE, "Tools");
     addToolBar(tools_toolbar, Top, FALSE);
     get_point_but =  new QToolButton(QPixmap( (const char**)point_xpm ),
 				  "Point Tool", 
@@ -54,7 +55,8 @@ public:
     get_point_but->setToggleButton(TRUE);
     widget->attach(&v);
 
-    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), this, SLOT(get_object(CGAL::Object)));
+    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), 
+							this, SLOT(get_object(CGAL::Object)));
   }
   ~My_Window(){delete widget;}
 private slots:
@@ -81,7 +83,8 @@ private:
   CGAL::Qt_widget *widget;	//the instance of Qt_widget
   My_Layer v;		//an instance of a layer
   CGAL::Standard_toolbar *stoolbar; //the standard toolbar
-  CGAL::Qt_widget_get_point<Rep> get_point;   //the generic tool that creates Cgal points
+  CGAL::Qt_widget_get_point<Rep> get_point;   
+						//the generic tool that creates Cgal points
   QToolButton *get_point_but;	//the toolbar button
 };
 
