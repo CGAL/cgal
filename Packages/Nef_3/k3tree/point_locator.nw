@@ -52,6 +52,7 @@ protected:
 public: 
   typedef typename SNC_structure::Object_handle Object_handle;
   typedef typename SNC_structure::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename SNC_structure::Halffacet_const_handle Halffacet_const_handle;
   typedef typename SNC_structure::Halffacet_triangle_handle 
                                   Halffacet_triangle_handle;
   typedef typename SNC_structure::Point_3 Point_3;
@@ -137,6 +138,7 @@ public:
   
   typedef typename SNC_structure::Object_handle Object_handle;
   typedef typename SNC_structure::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename SNC_structure::Halffacet_const_handle Halffacet_const_handle; 
   typedef typename SNC_structure::Halffacet_triangle_handle 
                                   Halffacet_triangle_handle;	
   typedef typename SNC_structure::Point_3 Point_3;
@@ -416,7 +418,7 @@ public:
         if( is.does_intersect_internally( s, Segment_3(e0->source()->point(),
 	                                               e0->twin()->source()->point()), q)) {
           q = normalized(q);
-          call_back( e0, Object_handle(e), q);
+          call_back( e0, Object_handle(Halfedge_const_handle(e)), q);
           _TRACEN("edge intersects edge "<<' '<<&*e<< Segment_3(e->source()->point(),
                                                                 e->twin()->source()->point())<<" on "<<q);
         }
@@ -460,7 +462,7 @@ public:
         Point_3 q;
         if( is.does_intersect_internally( s, f, q) ) {
           q = normalized(q);
-          call_back( e0, Object_handle(f), q);
+          call_back( e0, Object_handle(Halffacet_const_handle(f)), q);
           _TRACEN("edge intersects facet on plane "<<plane(f)<<" on "<<q);
         }
       }
