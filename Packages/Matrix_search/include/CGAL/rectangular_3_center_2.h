@@ -849,7 +849,7 @@ rectangular_3_center_2_type2(
 
   // lower bound for the diameter (2 * radius)
   // also store the corresponding positions of q_t and q_r
-  FT rho_max = 0, rho_min = 0, q_t_q_r_cover_at_rho_min = 0;
+  FT rho_max = 0, rho_min = -1, q_t_q_r_cover_at_rho_min = 0;
   Point q_t_at_rho_max, q_r_at_rho_max, q_t_at_rho_min, q_r_at_rho_min;
   RandomAccessIterator s_at_rho_min = s, e_at_rho_min = s;
 
@@ -1259,18 +1259,18 @@ rectangular_3_center_2_type2(
     for (;;) {
       q_t_at_rho_max = q_t, q_r_at_rho_max = q_r;
 
+      if (t == s)
+        break;
+
       // these get uncovered now
       do {
         q_t_afap = op.update_x_square(q_t_afap, *t);
         q_r_afap = op.update_y_square(q_r_afap, *t);
       } while (t != s && op.delta()(*--t) == rho_max);
 
-      if (op.delta()(*t) == rho_max)
-        break;
-
       // try the next possible diameter value
       FT try_rho = op.delta()(*t);
-      CGAL_optimisation_assertion(try_rho < rho_max);
+      CGAL_optimisation_assertion(t == s || try_rho < rho_max);
       q_t = op.place_x_square(q_t_afap, r, try_rho);
       q_r = op.place_y_square(q_r_afap, r, try_rho);
 
@@ -1312,12 +1312,13 @@ rectangular_3_center_2_type2(
   //     cover Q_t and Q_r
   //   - the range [s_at_rho_min, e_at_rho_min) contains the points
   //     still to be covered
-  // rho_min corresponds to a covering with
-  //   - q_t_at_rho_min is the corr. position of q_t and
-  //   - q_r_at_rho_min is the corr. position of q_r.
+  // rho_max corresponds to a covering with
+  //   - q_t_at_rho_max is the corr. position of q_t and
+  //   - q_r_at_rho_max is the corr. position of q_r.
 
   // try rho_min
   CGAL_optimisation_assertion(rho_min <= rho_max);
+  CGAL_optimisation_assertion(rho_min >= 0);
   FT rad2 = q_t_q_r_cover_at_rho_min;
   typedef binder1st< Distance > Dist_bind;
   if (s_at_rho_min != e_at_rho_min) {
@@ -1337,7 +1338,7 @@ rectangular_3_center_2_type2(
   // if a covering with rho == 0 is possible,
   // it will be catched in the type1 functions
   Point q_t, q_r;
-  if (rad2 > rho_max || rho_min == 0) {
+  if (rad2 > rho_max || rho_min == -1) {
     // it is rho_max ...
     q_t = q_t_at_rho_max, q_r = q_r_at_rho_max;
     rad2 = rho_max;

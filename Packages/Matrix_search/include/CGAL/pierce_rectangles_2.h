@@ -860,7 +860,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
           Point_2 bottom = lessx(bottom_i.first, *lb) ? bottom_i.first : *lb;
     
           // check the shared x-intervall
-          if (d.is_x_greater_y()) {
+          if (!share.empty() && d.is_x_greater_y()) {
             // compute position of top in share
     #ifndef _MSC_VER
             while (shf != share.begin() && !lessx(*(shf - 1), top))
@@ -869,14 +869,6 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
                    !lessx(*(shf - 1), top))
     #endif
               --shf;
-            // make sure shared intervall is covered (left endpoint)
-    #ifndef _MSC_VER
-            if (shf != share.begin() && lessx(share.front(), bottom))
-    #else
-            if (shf != Citerator(share.begin()) &&
-                lessx(share.front(), bottom))
-    #endif
-              bottom = share.front();
     #ifndef _MSC_VER
             while (shl != share.begin() &&
     #else
@@ -884,6 +876,22 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
     #endif
                    sdistx(*(shl - 1), top) > FT(2) * d.r)
               --shl;
+    
+            // make sure shared intervall is covered (left endpoint)
+    #ifndef _MSC_VER
+           if ((shf != share.begin() || shl == share.end()) &&
+               lessx(share.front(), bottom))
+             bottom = share.front();
+           else if (shl != share.end() && lessx(*shl, bottom))
+             bottom = *shl;
+    #else
+           if ((shf != Citerator(share.begin()) ||
+                shl == Citerator(share.end())) &&
+               lessx(share.front(), bottom))
+             bottom = share.front();
+           else if (shl != Citerator(share.end()) && lessx(*shl, bottom))
+             bottom = *shl;
+    #endif
     
           }
     
@@ -915,28 +923,39 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
               Point_2 right = lessy(right_i.first, *br) ? right_i.first : *br;
     
               // check the shared y-intervall
-              if (!d.is_x_greater_y()) {
+              if (!share.empty() && !d.is_x_greater_y()) {
                 // compute position of left in share
     #ifndef _MSC_VER
-                while (shf != share.begin() && !lessy(*(shf - 1), left))
+                while (shf != share.begin() &&
+                       sdisty(left, *(shf - 1)) <= FT(2) * d.r)
     #else
                 while (shf != Citerator(share.begin()) &&
-                       !lessy(*(shf - 1), left))
+                       sdisty(left, *(shf - 1)) <= FT(2) * d.r)
     #endif
                   --shf;
-                // make sure shared intervall is covered (bottom endpoint)
     #ifndef _MSC_VER
-                if (shf != share.begin() && lessy(share.front(), right))
-                  right = share.front();
                 while (shl != share.begin() &&
     #else
-                if (shf != Citerator(share.begin()) &&
-                    lessy(share.front(), right))
-                  right = share.front();
                 while (shl != Citerator(share.begin()) &&
     #endif
-                       sdisty(*(shl - 1), left) > FT(2) * d.r)
+                       lessy(left, *(shl - 1)))
                   --shl;
+    
+                // make sure shared intervall is covered (bottom endpoint)
+    #ifndef _MSC_VER
+                if ((shf != share.begin() || shl == share.end()) &&
+                    lessy(share.front(), right))
+                  right = share.front();
+                else if (shl != share.end() && lessy(*shl, right))
+                  right = *shl;
+    #else
+                if ((shf != Citerator(share.begin()) ||
+                     shl == Citerator(share.end())) &&
+                    lessy(share.front(), right))
+                  right = share.front();
+                else if (shl != Citerator(share.end())  && lessy(*shl, right))
+                  right = *shl;
+    #endif
     
               }
     

@@ -288,16 +288,16 @@ rectangular_p_center_2_matrix_search(
 
   // typedefs:
 #ifndef CGAL_CFG_MATCHING_BUG_1
-  typedef typename Traits::FT       FT;
+  typedef typename Traits::FT        FT;
 #endif
-  typedef std::vector< FT >         FT_cont;
-  typedef FT_cont::iterator         FT_iterator;
+  typedef std::vector< FT >          FT_cont;
+  typedef typename FT_cont::iterator FT_iterator;
   typedef Cartesian_matrix_horizontally_flipped<
     MatrixOperator,
     FT_iterator,
     FT_iterator >
   Matrix;
-  typedef std::vector< Matrix >     MatrixContainer;
+  typedef std::vector< Matrix >      MatrixContainer;
   typedef
     Rectangular_p_center_matrix_search_traits_2< Traits, PiercingFunction >
   MSTraits;
