@@ -5,7 +5,6 @@ penser a enlever -I../../include\ dans demo/Triangulation_3/makefile
 changer le nom du fichier include pour Filtered_exact dans exemples et demos
 
 General
-- mettre a jour les noms d'auteurs
 - new Vertex/Cell
 - trouver une interface avec T_2 qui permette d'eviter de reprogrammer 
   tout le 2d dans le 3d
@@ -18,8 +17,7 @@ Doc
 - revoir les anciennes corrections de JF Dufourd
 
 Exemples - demo
-- rajouter exemples
-- ameliorer demo... (cf geomview...)
+- en rajouter si bonnes idees...
 
 TDS
 - Unification de Triangulation::Vertex et TDS::Vertex.
