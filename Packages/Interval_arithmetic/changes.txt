@@ -1,5 +1,10 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.115 on ?? August 2001
+- New class Profile_counter.
+
+========================== CGAL 2.3 =======================
+
 Version 4.114 on 1 August 2001
 - Add missing operators in Lazy_exact_nt.
 
