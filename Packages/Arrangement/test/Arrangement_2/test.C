@@ -17,11 +17,11 @@
 #define Td_traits Tdt
 #endif
 
-#include <fstream>
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_2_bases.h>
 #include <CGAL/Arr_2_default_dcel.h>
+#include <fstream>
 
 #define CGAL_SEGMENT_TRAITS        1
 #define CGAL_SEGMENT_LEDA_TRAITS   2
@@ -528,6 +528,10 @@ int main(int argc, char* argv[])
     std::cout << "usage: test data_file [reverse]" << std::endl;
     exit(1);
   }
+  
+  int test_seed = rand();
+  srand(test_seed); 
+  std::cout << "Seed chosen for this run is " << test_seed << std::endl;
 
   //reverse_order = (argc == 3 && 0 == strcmp(argv[2], "reverse"));
   if (argc == 3) {

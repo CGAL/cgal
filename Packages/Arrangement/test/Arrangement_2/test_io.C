@@ -611,6 +611,10 @@ int main(int argc, char* argv[])
   Arr_polyline_traits_test test;
   bool        reverse_order = false;
 
+  int test_seed = rand();
+  srand(test_seed); 
+  std::cout << "Seed chosen for this run is " << test_seed << std::endl;
+
   if (argc < 3) {
     std::cout << "usage: test data_file_io data_file" << std::endl;
     exit(1);
