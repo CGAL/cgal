@@ -1,3 +1,6 @@
+Version 2.14 (10 April 2002)
+- fixed main.tex in doc of  iostream packages
+
 Version 2.13 (10 April 2002)
 - created ref pages for Colors and iostream packages
 
