@@ -34,6 +34,7 @@
 #endif // CH_NO_POSTCONDITIONS
 
 #include <CGAL/ch_assertions.h>
+#include <CGAL/ch_selected_extreme_points_2.h>
 #include <CGAL/functional.h>
 #include <algorithm>
 
