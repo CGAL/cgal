@@ -170,6 +170,8 @@ sub print_static_infos {
 
   print FL map("double $predicate_class_name\::_epsilon_$_;\n", 0..$eps-1);
   print FL "double $predicate_class_name\::_bound = -1.0;\n\n";
+  print FL "unsigned $predicate_class_name\::number_of_updates = 0;\n\n";
+  print FL "unsigned $predicate_class_name\::number_of_failures = 0;\n\n";
 }
 
 # Print the epsilon variant of the function
@@ -201,7 +203,8 @@ sub print_predicate_struct {
 {
   static double _bound;
   static double $epsilon_list;
-  // static unsigned number_of_failures; // ?
+  static unsigned number_of_failures; // ?
+  static unsigned number_of_updates;
 
   $update_epsilon
 
@@ -209,6 +212,7 @@ sub print_predicate_struct {
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
+    number_of_updates++;
     // recompute the epsilons: \"just\" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon($bound_list$epsilon_list);
@@ -259,19 +263,20 @@ $fct_name($args_call)
   {
     return $predicate_class_name\::epsilon_variant($args_dbl,$args_epsilons);
   }
-  catch (${CGAL}Restricted_double::unsafe_comparison)
+  catch (...)
   {
+    $predicate_class_name\::number_of_failures++;
     return $fct_name($args_exact);
   }";
   } else {
     print FO "
-  bool re_adjusted = false;
+//   bool re_adjusted = false;
   const double SAF_bound = $predicate_class_name\::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
   if ($bounds_check)
   {
-re_adjust:
+// re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;$compute_new_bound
     // Re-adjust the context.
@@ -282,12 +287,13 @@ re_adjust:
   {
     return $predicate_class_name\::epsilon_variant($args_dbl,$args_epsilons);
   }
-  catch (${CGAL}Restricted_double::unsafe_comparison)
+  catch (...)
   {
-    if (!re_adjusted) {  // It failed, we re-adjust once.
-      re_adjusted = true;
-      goto re_adjust;
-    }
+    // if (!re_adjusted) {  // It failed, we re-adjust once.
+      // re_adjusted = true;
+      // goto re_adjust;
+    // }
+    $predicate_class_name\::number_of_failures++;
     return $fct_name($args_exact);
   }";
   }
