@@ -4,33 +4,27 @@
 % | 26.02.2004   Peter Hachenberger
 % | Package: Nef_3
 % | 
-\RCSdef{\RCSNef_3Rev}{$Revision$}
-\RCSdefDate{\RCSNef_3Date}{$Date$}
-% +------------------------------------------------------------------------+
-
-\ccRefPageBegin
-
-% RefPage: end of header, begin of main body
+\RCSdef{\RCSNefThreeRev}{$Revision$}
+\RCSdefDate{\RCSNefThreeDate}{$Date$}
 % +------------------------------------------------------------------------+
 
 \begin{ccRefClass}{Nef_polyhedron_3<Traits>}
 
 \ccDefinition
 
-A 3D Nef polyhedrono is a subset of the
-3-dimensional space that is the result of forming complements and intersections
-starting from a finite set \ccc{H} of
-3-dimensional halfspaces. Nef polyhedra are closed under all binary set
-operations, i.e. intersection, union, difference,
-complement, and under the topological operations boundary,
+A 3D Nef polyhedron is a subset of the 3-dimensional space that is the
+result of forming complements and intersections starting from a finite
+set \ccc{H} of 3-dimensional halfspaces. Nef polyhedra are closed
+under all binary set operations, i.e., intersection, union,
+difference, complement, and under the topological operations boundary,
 closure, and interior.
 
 A 3D Nef polyhedron can be represented by the local pyramids of the minimal
-elments of its incidence structure. Without going into to much detail, a local
+elements of its incidence structure. Without going into to much detail, a local
 pyramid essentially reflects the topologic and geometric situation at a certain
 location in a point set. For finite polyhedra the minimal elements 
 of the incidence structure are vertices only. This means, that it suffices to 
-model the topologic and geometric situation of the vertices. For 
+model the topological and geometric situation of the vertices. For 
 3D Nef polyhedra, the local pyramid of a vertex is represented by 
 a planar Nef polyhedra embedded on a sphere.
 
@@ -56,8 +50,9 @@ modeling \Z, or \ccc{Cartesian}, \ccc{Simple_cartesian},
 \ccc{Extended_cartesian_3} parametrized with \ccc{Gmpq}, \ccc{leda_rational},
 \ccc{Quotient<Gmpz>} or any other number type modeling \Q.
 
-The second parameter expects a model of the concept \ccc{Nef_polyhedronItems_3}.
-By default, the class \ccc{CGAL::SNC_items} is preseleted.
+The second parameter expects a model of the concept
+\ccc{Nef_polyhedronItems_3}.  The default is the \ccc{CGAL::SNC_items}
+class.
 
 \ccTypes
 
@@ -366,7 +361,5 @@ of the latter one is computeted and compared with the first one.
 \end{ccRefClass}
 
 % +------------------------------------------------------------------------+
-% RefPage: end of main body, begin of footer
-\ccRefPageEnd
 % EOF
 % +------------------------------------------------------------------------+

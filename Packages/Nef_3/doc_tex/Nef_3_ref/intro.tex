@@ -1,36 +1,39 @@
 % +------------------------------------------------------------------------+
-% | Cbp Reference Manual:  intro.tex
+% | CGAL Reference Manual:  intro.tex
 % +------------------------------------------------------------------------+
-% | Polyhedron reference manual pages
+% | Nef 3 reference manual pages
 % |
-% | 14.05.1998   Lutz Kettner
 \RCSdef{\polyhedronRefRev}{$Revision$}
 \RCSdefDate{\polyhedronRefDate}{$Date$}
 % +------------------------------------------------------------------------+
 
-\clearpage
 \chapter{3D Nef Polyhedron}
-%% \section{Reference Pages for Polyhedral Surface}
-\label{chapterPolyhedronRef}
-%% \ccChapterRelease{\polyhedronRefRev. \ \polyhedronRefDate}\\
-%% \ccChapterAuthor{Lutz Kettner}
+\ccChapterAuthor{Peter Hachenberger and Lutz Kettner}
+\label{chapterNef3Ref}
 
 % +------------------------------------------------------------------------+
 \section*{Summary}
 
-A Nef polyhedron in 3-dimensional space is
-any point set generated from a finite number of open halfspaces by set
-complement and set intersection operations. It is also closed under 
-all other binary set operations and under topological (unary) set operations. 
+A Nef polyhedron is any point set generated from a finite number of
+open halfspaces by set complement and set intersection operations.  In
+our implementation of Nef polyhedra in 3-dimensional space, we offer a
+B-rep data structures that is closed under boolean operations and with
+all their generality. Starting from halfspaces (and also directly from
+oriented 2-manifolds), we can work with set union, set intersection,
+set difference, set complement, interior, exterior, boundary, closure,
+and regularization operations. In essence, we can evaluate a CSG-tree
+with halfspaces as primitives and convert it into a B-rep
+representation.
 
-A 3D Nef polyhedron can be represented by the local pyramids of the minimal
-elments of its incidence structure. Without going into to much detail, a local
-pyramid essentially reflects the topologic and geometric situation at a certain
-location in a point set. For finite polyhedra the minimal elements 
-of the incidence structure are vertices only. This means, that it suffices to 
-model the topologic and geometric situation of the vertices. For 
-3D Nef polyhedra, the local pyramid of a vertex is represented by 
-a planar Nef polyhedra embedded on a sphere.
+In fact, we work with two data structures; one that represents the
+local neighborhoods of vertices, which is in itself already a complete
+description, and a data structure that connects these neighborhoods up
+to a global data structure with edges, facets, and volumes. We offer a
+rich interface to investigate these data structures, their different
+elements and their connectivity. We provide affine (rigid)
+tranformations and a point location query operation. We have a custom
+file format for storing and reading Nef polyhedra from files. We offer
+a simple OpenGL visualization for debugging and illustrations.
 
 \subsection*{Classes}
 
