@@ -41,6 +41,7 @@ int main(int, char*)
 
 #include <qapplication.h>
 #include <qmainwindow.h>
+#include <qtoolbutton.h>
 #include <qlayout.h>
 #include <qvbox.h>
 #include <qstatusbar.h>
@@ -245,7 +246,7 @@ public:
 
       // TOOLBARS
       // actions: bouding box and mesh
-      QToolBar *toolBarActions = new QToolBar("Actions",this);
+      QToolBar *toolBarActions = new QToolBar("Actions", this);
       QPushButton *pbBounding = 
 	new QPushButton("Insert bounding box", toolBarActions);
       connect(pbBounding, SIGNAL(clicked()), this,
