@@ -28,32 +28,27 @@
 
 This chapter describes routines for solving geometric optimisation problems.
 The first two sections contain algorithms for computing and updating the
-smallest enclosing circle (Section~\ref{sec:smallest_enclosing_circles})
-resp.\ ellipse (Section~\ref{sec:smallest_enclosing_ellipses}) of a finite
-point set.  Formally, the `smallest enclosing circle' is the boundary of the
-closed disk of minimum area covering the point set. It is known that this
-disk is unique.  We usually identify the disk with its bounding circle,
-allowing us to talk about points being on the boundary of the circle, etc.
-The same holds for the smallest enclosing ellipse. These algorithms work in
-an incremental manner. They are implemented as semi-dynamic data structures,
-thus allowing to insert points while maintaining the smallest enclosing
-circle resp.\ ellipse.
-
-The remaining sections describe algorithms for searching in matrices with
-specific properties and some applications. In particular, there are
-general implementations of
 \begin{itemize}
-  \item monotone matrix search (see Section~\ref{secMonotoneMatrixSearch}),
+  \item smallest enclosing circle
+    (Section~\ref{sec:smallest_enclosing_circles}) and the
+  \item smallest enclosing ellipse
+    (Section~\ref{sec:smallest_enclosing_ellipses}), respectively,
+\end{itemize}
+of a finite point set. The remaining sections describe algorithms for
+searching in matrices with specific properties and some applications.
+In particular, there are general implementations of
+\begin{itemize}
+  \item monotone matrix search (Section~\ref{secMonotoneMatrixSearch}),
     which can be applied to compute
     \begin{itemize}
       \item extremal polygons of a convex polygon
-        (see Section~\ref{secComputingExtremalPolygons}) \textit{or}
+        (Section~\ref{secComputingExtremalPolygons}) \textit{or}
       \item all furthest neighbors for the vertices of a convex polygon
-        (see Section~\ref{secAllFurthestNeighbors}),
+        (Section~\ref{secAllFurthestNeighbors}),
     \end{itemize}
-  \item and sorted matrix search (see Section~\ref{secSortedMatrixSearch}),
+  \item and sorted matrix search (Section~\ref{secSortedMatrixSearch}),
     which can be used to compute the $p$-centers of a planar point set
-    (see Section~\ref{sec_RectangularPCenters}).
+    (Section~\ref{sec_RectangularPCenters}).
 \end{itemize}
 
 \subsubsection*{Traits Class}
