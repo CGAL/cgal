@@ -1,3 +1,5 @@
+Version 11.43
+- new headers
 
 Version 11.42 [rursu]
 - Qt_help_window class is in the namespace CGAL
