@@ -3,6 +3,7 @@ constrained and regular triangulations with  tests and examples.
 
 Ver 5.02 
 - fixed a few details to avoid bcc warning like unused initial values...
+- fixed makefiles due to change in package names
 
 Ver 5.01 (20/6/01)
 - changed find_conflicts to get_conflicts
