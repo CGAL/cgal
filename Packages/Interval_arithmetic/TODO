@@ -35,6 +35,18 @@ Concerning the new stuff:
 
 Concerning the code itself:
 ---------------------------
+- Move the script to ~IA/scripts/, and remove ~IA/examples/.
+  Maybe it's the occasion to change the name of the script.
+  filtered_predicates_generator.pl ?
+- Look at "mutable" stuff, Stroustrup, page 232.
+- Optimize is_valid():
+  - do proper testing of all configurations.
+  - testing is_valid(inf) && is_valid(sup) should not be necessary, it should
+    be possible to combine them in the last unique test... ;)
+- Replace the NT wrapping, by Filtered_Cartesian<FT>, a new kernel ?
+  this would be cleaner, and won't rely on some optimizations in the compiler.
+  (same thing for Fixed)
+- Fix Michael's problem with max() and co.  At least add a testcase.
 - Get rid of convert_to() ?  This is a mess for nothing (benchmark first).
   Target convert_from_to (const Target, const Source) is fine.
   It could maybe be made better this way:

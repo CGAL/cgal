@@ -1,5 +1,25 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.23 on 7 October 1999
+- New file include/CGAL/Arithmetic_filter/dispatch.h which contains the list
+  of #include<> for the overloaded predicates, so that they are automatically
+  included.
+- Added <sign_of_determinant.h>, <Regular_triangulation_ftC3.h> and
+  <Regular_triangulation_rtH3.h> to the list of filtered files.
+- Removed references to CGAL_IA_NO_WARNING and CGAL_IA_NO_EXCEPTION, I think
+  it's not useful.  Documentation updated.
+- Removed Static_adaptative* and fused it in Filtered_exact<CT, ET, Static>.
+- Full template is now:
+  template < CT, ET, Type = Dynamic, Protection = Protected,
+             Cache = No_Filter_Cache >
+- New subdirectory and files Arithmetic_filter/static_infos/* that contains
+  the definition of the static variables.  It is sourced by
+  src/Interval_arithmetic.C.
+- The 4 types of filter are now mostly ready.
+- Simplified #if/#else/#elif stuff in _FPU.h, it should not break anything...
+- Changed ccClass to ccClassTemplate in the doc, at Susan's request.
+- predicates_ftC[23].h -> predicates/kernel_ftC[23].h.
+
 Version 4.22 on 2 August 1999
 - New class Static_filter_error (in Static_filter_error.h) that helps
   computing static errors for static filters.
