@@ -52,15 +52,18 @@
 
 /*
  * TODO (vaguely by decreasing priority):
- * - Interval rafinement functionnality ?
  * - The next step will be to replace Cartesian<Lazy_exact_nt<ET> > by a kernel
  *   similar to LOOK in functionality : Lazy_exact_Cartesian<FT,ET>.
+ * - Interval rafinement functionnality ?
  * - Predicates should use the filtered advanced version.
- *   [ done via Filtered_exact<Lazy_exact<X>, X>  :-) ]
+ *   [ done via Filtered_exact<Lazy_exact<X>, X>  ? ]
  * - Geometric constructions could use the interval_advanced.
  *   [ will be done via the filtered Kernel ]
  * - Separate the handle and the representation(s) in 2 files (?)
+ *   maybe not a good idea, better if everything related to one operation is
+ *   close together.
  * - Add a CT template parameter like Filtered_exact_nt<> ?
+ * - Have a traits class ?
  * - Add a string constant to provide an expression string (a la MetaCGAL) ?
  *   // virtual ostream operator<<() const = 0; // or string, like Core ?
  */
@@ -208,7 +211,7 @@ struct Lazy_exact_nt : public Handle
   typedef Lazy_exact_nt<ET> Self;
   typedef Lazy_exact_rep<ET> Self_rep;
 
-  Lazy_exact_nt () {}  // Note : this allocates 1 element
+  Lazy_exact_nt () {}
 
   Lazy_exact_nt (Self_rep *r)
   { PTR = r; }
@@ -232,7 +235,7 @@ struct Lazy_exact_nt : public Handle
   Self operator/ (const Self & a) const
   { return new Lazy_exact_Div<ET>(*this, a); }
 
-  Interval_nt<> approx() const  // throw() ?  Can help the compiler...
+  Interval_nt<> approx() const  // throw() ?
   { return ptr()->approx(); }
 
   Interval_nt_advanced approx_adv() const
@@ -241,7 +244,7 @@ struct Lazy_exact_nt : public Handle
   ET exact() const
   { return ptr()->exact(); }
 
-  // The other comparison operators are currently provided by STL.
+  // The other comparison operators are currently provided by the STL.
   bool operator< (const Self & a) const
   {
     try
@@ -257,6 +260,22 @@ struct Lazy_exact_nt : public Handle
 private:
   Self_rep * ptr() const { return (Self_rep*) PTR; }
 };
+
+template <typename ET>
+inline
+double
+to_double(const Lazy_exact_nt<ET> & a)
+{
+    return CGAL::to_double(a.approx());
+}
+
+template <typename ET>
+inline
+Interval_base
+to_interval(const Lazy_exact_nt<ET> & a)
+{
+    return a.approx();
+}
 
 // Note:  GCC 2.95 completely and silently ignores the catch block
 //        of _template_ function-try-blocks.  GCC 2.96 fixes the bug. 
