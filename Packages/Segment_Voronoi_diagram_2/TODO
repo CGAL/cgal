@@ -1,3 +1,6 @@
+- add swap method in hierarchy; verify that the swap method in the segment
+  Voronoi diagram class works correctly (does it swap the point container
+  correctly?)
 - make the intersectio tag in the traits to be the first template argument,
   thus no default value
 - change the return type of the do_intersect predicate (and potentially
