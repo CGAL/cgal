@@ -1390,10 +1390,10 @@ struct Static_Filtered_compare_y_at_xC2_5
   {
     typedef Static_filter_error FT;
   
-    Sign s = CGAL_NTS Static_Filtered_sign_1::update_epsilon(lb,
+    Sign s = CGAL::Static_Filtered_sign_1::update_epsilon(lb,
   		epsilon_0);
     CGAL_kernel_assertion( s != ZERO );
-    return Comparison_result (s * CGAL_NTS Static_Filtered_sign_1::update_epsilon(la*px + lb*py + lc,
+    return Comparison_result (s * CGAL::Static_Filtered_sign_1::update_epsilon(la*px + lb*py + lc,
   		epsilon_1));
   }
 
@@ -1419,10 +1419,10 @@ struct Static_Filtered_compare_y_at_xC2_5
   {
     typedef Restricted_double FT;
   
-    Sign s = CGAL_NTS Static_Filtered_sign_1::epsilon_variant(lb,
+    Sign s = CGAL::Static_Filtered_sign_1::epsilon_variant(lb,
   		epsilon_0);
     CGAL_kernel_assertion( s != ZERO );
-    return Comparison_result (s * CGAL_NTS Static_Filtered_sign_1::epsilon_variant(la*px + lb*py + lc,
+    return Comparison_result (s * CGAL::Static_Filtered_sign_1::epsilon_variant(la*px + lb*py + lc,
   		epsilon_1));
   }
 };
