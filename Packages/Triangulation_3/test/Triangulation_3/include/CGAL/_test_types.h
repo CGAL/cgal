@@ -39,6 +39,8 @@ typedef double my_NT;
 // #include <CGAL/_test_short_names_2.h>
 
 typedef CGAL::Cartesian<my_NT> Test_rep_cartesian;
+// #include <CGAL/leda_real.h>
+// typedef CGAL::Homogeneous<my_NT,leda_real> Test_rep_homogeneous;
 typedef CGAL::Homogeneous<my_NT> Test_rep_homogeneous;
 
 //the following define shorter names to make the (g++/egcs) linker work 
