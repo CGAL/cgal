@@ -88,8 +88,8 @@ class Side_of_bounded_orthogonalcircleC2
 public:
   typedef Bounded_side result_type;
   typedef Arity_tag< 3 >   Arity;
-  typedef typename K::Point T;
-  result_type operator()(const T& p, const T& q, const T& t)
+  typedef typename K::Point Point;
+  result_type operator()(const Point& p, const Point& q, const Point& t)
   {  
     typedef typename K::Coord_type FT;
     FT px(p.point().x());

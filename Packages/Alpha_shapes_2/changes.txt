@@ -1,3 +1,6 @@
+Version 11.44 [af]
+- Moved \chapter from alpha2.tex to main.tex
+
 Version 11.43
 - new headers
 
