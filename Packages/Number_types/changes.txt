@@ -1,3 +1,6 @@
+4.114 (27 August 2003)
+- Move test/NumberTypeSupport to test/Number_types
+
 4.113 (27 August 2003)
 - Change CGAL_NTS to be CGAL::, and change the number types accordingly.
 
