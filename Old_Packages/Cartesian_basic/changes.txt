@@ -1,3 +1,6 @@
+Version 3.9 (?? Juin 00)
+- Re-added headers, got rid of check_headers.pl [syl].
+
 Version 3.8 (15 Juin 00)
 - Fixed typo in Cartesian.h : Transform_2 -> Transform_3 [syl].
 

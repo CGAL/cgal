@@ -1,8 +1,8 @@
-#!/usr/local/bin/perl -w
+#!/usr/bin/perl -w
 
 use strict;
 #use Cwd;
-use File::Copy;
+#use File::Copy;
 #use File::Basename;
 #use File::Find;
 use Getopt::Std;
@@ -68,11 +68,11 @@ sub add_header($$$$$$$)
     print TEMPFILE "// ", '-' x 70,"\n";
     print TEMPFILE <<"END_OF_HEADER";
 //
-// release       : $version
-// release_date  : $date//
+// release       :
+// release_date  :
+//
 // file          : $full_filename
-// package       : $package
-$revision$revision_date$authors// coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann\@sophia.inria.fr)
+$revision$revision_date$authors// coordinator   : INRIA Sophia-Antipolis (Mariette.Yvinec\@sophia.inria.fr)
 //
 END_OF_HEADER
     print TEMPFILE "// ", '=' x 70,"\n";
