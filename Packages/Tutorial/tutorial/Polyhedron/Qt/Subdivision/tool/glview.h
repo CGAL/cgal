@@ -42,7 +42,8 @@ public:
 	bool m_Culling;
 	bool m_Antialiasing;
 	bool m_Lighting;
-	bool m_Superimpose;
+	bool m_Superimpose_edges;
+  bool m_Superimpose_vertices;
 	void changeMode(int mode);
 	void clearColor(float r,float g,float b);
 	void toggleCulling();
@@ -50,6 +51,7 @@ public:
 	void toggleLighting();
 	void toggleAntialiasing();
 	void toggleSuperimposing();
+  void toggleSuperimposeV();
   void toggleMode(Rendering_mode m);
 	void enableTexture(bool enable);
 	bool m_Texture;

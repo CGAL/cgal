@@ -18,13 +18,12 @@
 #ifndef _POLYHEDRON_DECORATOR_H_01282002
 #define _POLYHEDRON_DECORATOR_H_01282002
 
-#include "config.h"
-
-SURFLAB_BEGIN_NAMESPACE
-
-template <class _P>
+template <class _Poly>
 class Polyhedron_decorator {
-  typedef _P                                           Polyhedron;
+  typedef _Poly                                        Polyhedron;
+
+  typedef typename Polyhedron::Traits                  Traits;
+  typedef typename Traits::Kernel                      Kernel;
 
   typedef typename Polyhedron::Halfedge_data_structure HDS;
   typedef typename Polyhedron::Vertex                  Vertex;
@@ -46,7 +45,7 @@ class Polyhedron_decorator {
                                             Halfedge_around_vertex_circulator;
 
   typedef typename Polyhedron::Point_3                 Point;
-  typedef typename Polyhedron::FT                      FT;
+  typedef typename Kernel::FT                          FT;
 public:
   /** Insert a new vertex into an helfedge h (a--b)
 
@@ -137,9 +136,9 @@ private:
 //@}
 };
 
-template <class _P> 
-typename Polyhedron_decorator<_P>::Halfedge_handle 
-Polyhedron_decorator<_P>::insert_vertex_return_edge(Polyhedron& p,
+template <class _Poly> 
+typename Polyhedron_decorator<_Poly>::Halfedge_handle 
+Polyhedron_decorator<_Poly>::insert_vertex_return_edge(Polyhedron& p,
 						    Halfedge_handle h) {
   Halfedge_handle hopp = h->opposite();
   Halfedge_handle r = p.split_vertex(hopp->prev(), h);
@@ -150,9 +149,9 @@ Polyhedron_decorator<_P>::insert_vertex_return_edge(Polyhedron& p,
   return r->opposite();
 }
 
-template <class _P> 
-typename Polyhedron_decorator<_P>::Halfedge_handle 
-Polyhedron_decorator<_P>::insert_vertex_return_edge(Polyhedron& p,
+template <class _Poly> 
+typename Polyhedron_decorator<_Poly>::Halfedge_handle 
+Polyhedron_decorator<_Poly>::insert_vertex_return_edge(Polyhedron& p,
 						    Vertex_handle a, 
 						    Vertex_handle b) {
   Halfedge_around_vertex_circulator a_cir_begin = a->vertex_begin();
@@ -166,9 +165,9 @@ Polyhedron_decorator<_P>::insert_vertex_return_edge(Polyhedron& p,
 }
 
 
-template <class _P> 
-typename Polyhedron_decorator<_P>::Halfedge_handle 
-Polyhedron_decorator<_P>::insert_edge(Polyhedron& p,
+template <class _Poly> 
+typename Polyhedron_decorator<_Poly>::Halfedge_handle 
+Polyhedron_decorator<_Poly>::insert_edge(Polyhedron& p,
 				      Vertex_handle a, 
 				      Vertex_handle b) {
   Halfedge_around_vertex_circulator a_cir_begin = a->vertex_begin();
@@ -184,7 +183,5 @@ Polyhedron_decorator<_P>::insert_edge(Polyhedron& p,
   CGAL_precondition_msg(0, "vertex a and b must share the same face");  
   return Halfedge_handle(NULL);
 }
-
-SURFLAB_END_NAMESPACE
 
 #endif //_POLYHEDRON_DECORATOR_H_01282002

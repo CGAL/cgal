@@ -131,10 +131,10 @@ void ToolView::mouseReleaseEvent(QMouseEvent *event)
 	updateGL();
 }
 
-void ToolView::drawScene(bool superimpose,
+void ToolView::drawScene(bool superimposededges, bool superimposedvertices,
                          bool first)
 {
-  doc->drawScene(m_Move, superimpose, first, m_Smooth, m_Lighting,
+  doc->drawScene(m_Move, superimposededges, superimposedvertices, first, m_Smooth, m_Lighting,
     m_fore_color[0], m_fore_color[1], m_fore_color[2]);
 }
 

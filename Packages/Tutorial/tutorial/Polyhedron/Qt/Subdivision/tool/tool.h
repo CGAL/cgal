@@ -143,6 +143,7 @@ class ToolApp : public QMainWindow
     void slotRenderLighting();
     void slotRenderVertex();
     void slotRenderSuperimposing();
+    void slotRenderSuperimposedV();
 		void slotRenderAntialiasing();
 
     // SUBDIVISION
@@ -237,6 +238,7 @@ class ToolApp : public QMainWindow
 
     QActionGroup *windowAction;
     QActionGroup *renderActionGroup;
+    QActionGroup *subdivisionActionGroup;
     QAction *windowNewWindow;
     QAction *windowTile;
     QAction *windowCascade;
@@ -257,11 +259,13 @@ class ToolApp : public QMainWindow
     // RENDER
     QPopupMenu *pRenderMenu;
     QPopupMenu *pRenderModeMenu;
+    QPopupMenu *pRenderSuperimposeMenu;
     QAction *renderWireframe;
     QAction *renderVertex;
     QAction *renderFill;
     QAction *renderEdges;
     QAction *renderSuperimpose;
+    QAction *renderSuperimposeV;
     QAction *renderSmooth;
     QAction *renderCulling;
     QAction *renderLighting;

@@ -35,11 +35,14 @@
 #include "icons/wireframe.xpm"
 #include "icons/fill.xpm"
 #include "icons/superimposed_edges.xpm"
+#include "icons/superimposed_vertices.xpm"
 #include "icons/light.xpm"
 #include "icons/antialiasing.xpm"
 #include "icons/smooth.xpm"
 
 #include "icons/quadtriangle.xpm"
+#include "icons/sqrt3.xpm"
+#include "icons/sqrt3_twice.xpm"
 
 ToolApp::ToolApp()
 {
@@ -68,6 +71,7 @@ ToolApp::ToolApp()
   viewStatusBar->setOn(true);
   viewRenderingToolbar->setEnabled(false);
   renderActionGroup->setEnabled(false);
+  subdivisionActionGroup->setEnabled(false);
 }
 
 ToolApp::~ToolApp()
@@ -88,13 +92,16 @@ void ToolApp::initActions()
   QPixmap pointsIcon = QPixmap(points_xpm);
   QPixmap wireframeIcon = QPixmap(wireframe_xpm);
   QPixmap fillIcon = QPixmap(fill_xpm);
-  QPixmap superimposedeIcon = QPixmap(superimposed_edges_xpm);
+  QPixmap superimposededgesIcon = QPixmap(superimposed_edges_xpm);
+  QPixmap superimposedverticesIcon = QPixmap(superimposed_vertices_xpm);
   QPixmap lightIcon = QPixmap(light_xpm);
   QPixmap antialiasingIcon = QPixmap(antialiasing_xpm);
   QPixmap smoothIcon = QPixmap(smooth_xpm);
 
   // subdivision pixmaps
   QPixmap quadtriangleIcon = QPixmap(quadtriangle_xpm);
+  QPixmap sqrt3Icon = QPixmap(sqrt3_xpm);
+  QPixmap sqrt3_twiceIcon = QPixmap(sqrt3_twice_xpm);
 
   fileOpen = new QAction(tr("Open File"), openIcon, tr("&Open..."), 0, this);
   fileOpen->setStatusTip(tr("Opens an existing document"));
@@ -232,8 +239,11 @@ void ToolApp::initActions()
   renderAntialiasing = new QAction(tr("Antialiasing"), antialiasingIcon, tr("&Antialiasing"),QAccel::stringToKey("a"),this, 0, true);
   connect(renderAntialiasing,SIGNAL(activated()), this, SLOT(slotRenderAntialiasing()));
 
-  renderSuperimpose = new QAction(tr("Superimposing"), superimposedeIcon, tr("&Superimposing"),QAccel::stringToKey("s"),this, 0, true);
+  renderSuperimpose = new QAction(tr("Superimpose edges"), superimposededgesIcon, tr("&Superimpose edges"),QAccel::stringToKey("s"),this, 0, true);
   connect(renderSuperimpose,SIGNAL(activated()), this, SLOT(slotRenderSuperimposing()));
+
+  renderSuperimposeV = new QAction(tr("Superimpose vertices"), superimposedverticesIcon, tr("&Superimpose vertices"),QAccel::stringToKey("s"),this, 0, true);
+  connect(renderSuperimposeV, SIGNAL(activated()), this, SLOT(slotRenderSuperimposedV()));
 
   renderActionGroup = new QActionGroup(this, 0, false);
   renderActionGroup->add(renderWireframe);
@@ -244,15 +254,16 @@ void ToolApp::initActions()
   renderActionGroup->add(renderLighting);
   renderActionGroup->add(renderAntialiasing);
   renderActionGroup->add(renderSuperimpose);
+  renderActionGroup->add(renderSuperimposeV);
 
   // Subdivision schemes
   algoSubdivisionStamLoop = new QAction(tr("Quad/Triangle"), quadtriangleIcon, tr("&Quad/Triangle"), 0, this);
   connect(algoSubdivisionStamLoop, SIGNAL(activated()), this, SLOT(slotSubdivisionStamLoop()));
   
-  algoSubdivisionSqrt3 = new QAction(tr("Sqrt3"), "&Sqrt3", 0, this);
+  algoSubdivisionSqrt3 = new QAction(tr("Sqrt3"),  sqrt3Icon, tr("&Sqrt3"), 0, this);
   connect(algoSubdivisionSqrt3, SIGNAL(activated()), this, SLOT(slotSubdivisionSqrt3()));
 
-  algoSubdivisionSqrt3_twice = new QAction("Sqrt3 (apply twice)", "&Sqrt3 (apply twice)", 0, this);
+  algoSubdivisionSqrt3_twice = new QAction(tr("Sqrt3 (apply twice)"), sqrt3_twiceIcon, tr("&Sqrt3 (apply twice)"), 0, this);
   connect(algoSubdivisionSqrt3_twice, SIGNAL(activated()), this, SLOT(slotSubdivisionSqrt3_twice()));
 
   algoSubdivisionLoop = new QAction("Loop", "&Loop", 0, this);
@@ -263,6 +274,15 @@ void ToolApp::initActions()
 
   algoSubdivisionDooSabin = new QAction("Doo-Sabin", "&Doo-Sabin", 0, this);
   connect(algoSubdivisionDooSabin, SIGNAL(activated()), this, SLOT(slotSubdivisionDooSabin()));
+
+  subdivisionActionGroup = new QActionGroup(this, 0, false);
+  subdivisionActionGroup->add(algoSubdivisionStamLoop);
+  subdivisionActionGroup->add(algoSubdivisionSqrt3);
+  subdivisionActionGroup->add(algoSubdivisionSqrt3_twice);
+  subdivisionActionGroup->add(algoSubdivisionLoop);
+  subdivisionActionGroup->add(algoSubdivisionCatmullClark);
+  subdivisionActionGroup->add(algoSubdivisionDooSabin);
+
 }
 
 void ToolApp::initMenuBar()
@@ -297,8 +317,12 @@ void ToolApp::initMenuBar()
   ag1->add(renderWireframe);
   ag1->add(renderVertex);
   ag1->add(renderFill);
-  ag1->addTo(pRenderModeMenu);  
-  renderSuperimpose->addTo(pRenderMenu);
+  ag1->addTo(pRenderModeMenu);
+  
+  pRenderSuperimposeMenu = new QPopupMenu();
+  pRenderSuperimposeMenu->setCheckable(true);
+  renderSuperimpose->addTo(pRenderSuperimposeMenu);
+  renderSuperimposeV->addTo(pRenderSuperimposeMenu);
   renderAntialiasing->addTo(pRenderMenu);
   renderCulling->addTo(pRenderMenu);
   renderSmooth->addTo(pRenderMenu);
@@ -346,8 +370,9 @@ void ToolApp::initMenuBar()
   algoSubdivisionLoop->addTo(pAlgoMenu);
 
   // RENDERING OPTIONS
-  menuBar()->insertItem(tr("&Render"),     pRenderMenu);
-  pRenderMenu->insertItem(tr("&Mode"),     pRenderModeMenu);
+  menuBar()->insertItem(tr("&Render"),        pRenderMenu);
+  pRenderMenu->insertItem(tr("&Mode"),        pRenderModeMenu);
+  pRenderMenu->insertItem(tr("&Superimpose"), pRenderSuperimposeMenu);
 
   menuBar()->insertItem(tr("&View"),       pViewMenu);
   menuBar()->insertItem(tr("&Window"),     pWindowMenu);
@@ -370,17 +395,19 @@ void ToolApp::initToolBar()
   //////////////////////////////////////////////////////////////////
 
   renderingToolbar = new QToolBar(this, "rendering toolbar");
-  QLabel *l1 = new QLabel(renderingToolbar, "BG");
-  l1->setText("BG");
+  QLabel *l1 = new QLabel(renderingToolbar, "BgColor");
+  l1->setText("BgCol");
   bgcolor_button = new QToolButton(renderingToolbar, "bgcolor");
   bgcolor_button->setText("BG");
+  bgcolor_button->setTextLabel("Change background color");
   bgcolor_button->setPaletteBackgroundColor(QColor(0, 0, 0));
   bgcolor_button->setPaletteForegroundColor(QColor(0, 0, 0));
   connect(bgcolor_button, SIGNAL(clicked()), this, SLOT(slotSelectBgColor()));
   QLabel *l2 = new QLabel(renderingToolbar, "FG");
-  l2->setText("FG");
+  l2->setText("FaceCol");
   fgcolor_button = new QToolButton(renderingToolbar, "fgcolor");
   fgcolor_button->setText("FG");
+  fgcolor_button->setTextLabel("Change face color");
   fgcolor_button->setPaletteBackgroundColor(QColor(255, 255, 255));
   fgcolor_button->setPaletteForegroundColor(QColor(255, 255, 255));
   connect(fgcolor_button, SIGNAL(clicked()), this, SLOT(slotSelectFgColor()));
@@ -391,6 +418,7 @@ void ToolApp::initToolBar()
   renderFill->addTo(renderingToolbar);
   renderingToolbar->addSeparator();
   renderSuperimpose->addTo(renderingToolbar);
+  renderSuperimposeV->addTo(renderingToolbar);
   renderingToolbar->addSeparator();
   renderSmooth->addTo(renderingToolbar);
   renderLighting->addTo(renderingToolbar);
@@ -402,12 +430,12 @@ void ToolApp::initToolBar()
 
   subdivisionToolbar = new QToolBar(this,"subdivision toolbar");
   algoSubdivisionStamLoop->addTo(subdivisionToolbar);
-  //algoSubdivisionSqrt3->addTo(subdivisionToolbar);
-  //algoSubdivisionSqrt3_twice->addTo(subdivisionToolbar);
+  algoSubdivisionSqrt3->addTo(subdivisionToolbar);
+  algoSubdivisionSqrt3_twice->addTo(subdivisionToolbar);
+  algoSubdivisionDooSabin->addTo(subdivisionToolbar);
   //algoSubdivisionDooSabin->addTo(subdivisionToolbar);
-  //algoSubdivisionDooSabin->addTo(subdivisionToolbar);
-  //algoSubdivisionCatmullClark->addTo(subdivisionToolbar);
-  //algoSubdivisionLoop->addTo(subdivisionToolbar);
+  algoSubdivisionCatmullClark->addTo(subdivisionToolbar);
+  algoSubdivisionLoop->addTo(subdivisionToolbar);
 }
 
 void ToolApp::initStatusBar()
@@ -547,7 +575,7 @@ void ToolApp::slotFileOpen()
 {
   statusBar()->message(tr("Opening file..."));
 
-  QString fileName = QFileDialog::getOpenFileName(0,0,this);
+  QString fileName = QFileDialog::getOpenFileName("../../../data",0,this);
   if (!fileName.isEmpty())
   {
      openDocumentFile(fileName);
@@ -556,6 +584,7 @@ void ToolApp::slotFileOpen()
   viewRenderingToolbar->setEnabled(true);
   viewRenderingToolbar->setOn(true);
   renderActionGroup->setEnabled(true);
+  subdivisionActionGroup->setEnabled(true);
   statusBar()->message(tr("Ready."));
 }
 
@@ -798,7 +827,7 @@ void ToolApp::slotUpdateStates(ToolView* m){
       renderSmooth->setOn(true);
     else
       renderSmooth->setOn(false);
-    if(m->m_Superimpose)
+    if(m->m_Superimpose_edges)
       renderSuperimpose->setOn(true);
     else
       renderSuperimpose->setOn(false);
@@ -942,6 +971,18 @@ void ToolApp::slotRenderSuperimposing()
     doc->updateAllViews(NULL);
   }
 }
+
+void ToolApp::slotRenderSuperimposedV()
+{
+  ToolView* pView = (ToolView*)pWorkspace->activeWindow();
+  if(pView)
+  {
+    pView->toggleSuperimposeV();
+    ToolDoc* doc = pView->getDocument();
+    doc->updateAllViews(NULL);
+  }
+}
+
 
 void ToolApp::slotRenderVertex()
 {

@@ -276,26 +276,31 @@ bool ToolDoc::canCloseFrame(ToolView* pFrame)
 // drawScene
 //***********************************************
 void ToolDoc::drawScene(bool move,
-                        bool superimpose,
+                        bool superimposededges,
+                        bool superimposedvertices,
                         bool first,
                         bool smooth,
                         bool use_normals,
                         float r, float g, float b)
 {
   glColor3f(r, g, b); //set the foreground color
-  if(superimpose)
+  if(superimposededges || superimposedvertices)
   {
     ::glEnable(GL_POLYGON_OFFSET_FILL);
     ::glPolygonOffset(2.0,3.0);
   }
   m_pMesh->gl_draw(smooth, use_normals);
   
-  if(superimpose)
+  if(superimposededges || superimposedvertices)
     ::glDisable(GL_POLYGON_OFFSET_FILL);
 
-    glColor3f(0.0f,0.0f,0.0f);
-  if(superimpose)
+  glColor3f(0.0f,0.0f,0.0f);
+  if(superimposededges)
     m_pMesh->superimpose_edges();
+
+  glColor3f(1.0f,1.0f,0.0f);
+  if(superimposedvertices)
+    m_pMesh->superimpose_spheres(0.1);
   glColor3f(r, g, b); //restore the color
 }
 

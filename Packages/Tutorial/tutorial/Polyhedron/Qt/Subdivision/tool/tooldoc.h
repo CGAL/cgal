@@ -67,7 +67,7 @@ class ToolDoc : public QObject
     bool m_showNormals;
     bool m_normalsPerFace;
 
-    void drawScene( bool move, bool superimpose = false,
+    void drawScene( bool move, bool superimposededges = false, bool superimposedvertices = false,
                     bool first = true, bool smooth = false, bool use_normals = true,
                     float r = 1.0f, float g = 1.0f, float b = 1.0f);
 

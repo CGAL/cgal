@@ -80,7 +80,8 @@ class ToolView : public QGLView
 		void move(bool m) { m_Move = m; }
 
   public:
-  	void drawScene(bool superimpose = false,bool first = true);
+  	void drawScene(bool superimposededges = false, 
+      bool superimposedvertices = false, bool first = true);
 signals:
     void invalidate_view(ToolView*);
 };

@@ -29,7 +29,8 @@ QGLView::QGLView(const QGLFormat & format,
   m_Lighting = false;
   m_Texture = false;
   m_Smooth = false;
-  m_Superimpose = false;
+  m_Superimpose_edges = false;
+  m_Superimpose_vertices = false;
   m_clear_color[0] = 0.0f;
   m_clear_color[1] = 0.0f;
   m_clear_color[2] = 0.0f;
@@ -162,7 +163,13 @@ void QGLView::toggleLighting()
 void QGLView::toggleSuperimposing()
 {
   makeCurrent();
-  m_Superimpose = !m_Superimpose;
+  m_Superimpose_edges = !m_Superimpose_edges;
+}
+
+void QGLView::toggleSuperimposeV()
+{
+  makeCurrent();
+  m_Superimpose_vertices = !m_Superimpose_vertices;
 }
 
 void QGLView::toggleMode(Rendering_mode m)
@@ -212,9 +219,15 @@ void QGLView::paintGL()
   // paint scene
   ToolView *pView = (ToolView *)this;
 
-  if(m_Superimpose)
+  if(m_Superimpose_edges || m_Superimpose_vertices)
   {
-    pView->drawScene(true, true);
+    if(m_Superimpose_edges && m_Superimpose_vertices)
+      pView->drawScene(true, true, true);
+    else
+      if(m_Superimpose_edges)
+        pView->drawScene(true, false, true);
+      else
+        pView->drawScene(false, true, true);
 
     bool lighting = ::glIsEnabled(GL_LIGHTING);
     if(lighting)
@@ -223,7 +236,13 @@ void QGLView::paintGL()
       glDisable(GL_COLOR_MATERIAL);
     }
     
-    pView->drawScene(true, false);
+    if(m_Superimpose_edges && m_Superimpose_vertices)
+      pView->drawScene(true, true, false);
+    else
+      if(m_Superimpose_edges)
+        pView->drawScene(true, false, false);
+      else
+        pView->drawScene(false, true, false);
     
     if(lighting)
     {
@@ -233,7 +252,7 @@ void QGLView::paintGL()
   }
   else
   {
-    pView->drawScene(false);
+    pView->drawScene(false, false);
   }
 
   glPopMatrix();
