@@ -14,6 +14,7 @@ Version 6.0 (?? ????? 00)
 - There's now a Line_repC3<R>, instead of the dirty Twotuple<Point>.
   We now do the same reasonnable thing as in the homogeneous kernel.
 - Got rid of empty useless destructors.
+- Changed ptr-> access to Ptr()-> .
 - Various cleanups.
 
 --- CGAL 2.2 is out ---
