@@ -398,7 +398,7 @@
 \newcommand{\ccDollar    }{\$}
 
 % The sign for an empty parameter (i.e. of the type of the current class).
-\newcommand{\ccEmptyParameter}{$\diamondsuit$}
+% \newcommand{\ccEmptyParameter}{$\diamondsuit$}
 
 % Set the catcodes according to the C++ character set (including operators).
 \gdef\ccCatcode    {%
@@ -2067,7 +2067,7 @@
 % definition. It uses the \ccPureClassTemplateName to build a matching
 % pattern to detect a possible type name to be eliminated. Similar
 % solution as \ccReplacePrefix. 
-% If the function argument is empty, \ccEmptyParameter is printed.
+% If the function argument is empty, \ccPureClassTemplateName is printed.
 % The parameter has to be delimited with "<>\ccEnd".
 % Ignore leading spaces.
 \def\ccPrintOwnClassParameter #1#2<>\ccEnd{%
@@ -2110,11 +2110,11 @@
         \fi
     }%
     % local macro to remove the trailing \ccPureClassTemplateName.
-    % If the function argument is empty, print \ccEmptyParameter.
+    % If the function argument is empty, print \ccPureClassTemplateName.
     %     ##1 is the text before \ccPureClassTemplateName
     \def\ccRepOwnClassX ##1#1\ccEnd{%
         \isEmpty{##1}\ifnum\ccBool=\ccTrue
-            \ccEmptyParameter
+            \ccPrintTokens #1\ccEnd
         \else
             \ccPrintTokens ##1\ccEnd%  \ccRepOwnClassXX was superfluous here.
         \fi
