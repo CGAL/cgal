@@ -141,8 +141,8 @@ bool is_strongly_convex_3(Polyhedron& P, const Traits& traits)
   // side of each facet
   for (f_it++; f_it != P.facets_end(); f_it++)
   {
-    f_it = P.facets_begin();
     Plane_3 plane;
+    get_plane2(plane, f_it);
     if ( oriented_side(plane, inside_pt) != side ){
       return false;
     }
@@ -210,8 +210,8 @@ bool all_points_inside( ForwardIterator first,
       Facet_iterator f_it;
       for (f_it = P.facets_begin(); f_it != P.facets_end(); f_it++)
       {
-	f_it = P.facets_begin();
 	Plane_3 plane;
+	get_plane2(plane, f_it);
 	if (has_on_positive_side(plane,*p_it)){
              return false;
 	}

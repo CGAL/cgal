@@ -210,6 +210,19 @@ farthest_outside_point(Facet_handle f_handle, std::list<Point>& outside_set,
    return *farthest_it;
 }
 
+template <class Facet_handle>
+void compute_plane_equation(Facet_handle f) 
+{
+   typedef typename Facet_handle::value_type         Facet;
+   typedef typename Facet::Halfedge_handle           Halfedge_handle;
+   typedef typename Facet::Plane_3                   Plane_3;
+
+   Halfedge_handle h = (*f).halfedge();
+   (*f).plane() = Plane_3(h->opposite()->vertex()->point(),
+                          h->vertex()->point(),
+                          h->next()->vertex()->point());
+}
+
 
 template <class Plane, class Facet_handle>
 void get_plane(Plane& plane, Facet_handle f) 

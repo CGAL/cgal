@@ -129,7 +129,7 @@ public:
       const Point_3& hr = h.r();
       typename OldK::Less_signed_distance_to_plane_3 
 	less_signed_distance_to_plane_3;
-      return less_signed_distance_to_plane_3(hp, hq, hr, q, p);
+      return less_signed_distance_to_plane_3(hp, hq, hr, p, q);
     }
   };
 
