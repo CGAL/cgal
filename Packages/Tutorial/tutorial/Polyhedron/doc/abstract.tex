@@ -47,20 +47,15 @@
 % ------------------------------------------------------------------------
 \date{}
 \title{{\LARGE {\sffamily\bfseries A Tutorial on CGAL Polyhedron \\
-for Subdivision Algorithms}}}
+                                   for Subdivision Algorithms}}}
 
-% pierre: other suggestions for the title?
-%  Mesh Processing with CGAL Polyhedron
-%  Algorithms on Meshes with CGAL Polyhedron
-%  Getting started with CGAL Polyhedron
-% ?
 
 \author{\small
 \sffamily Le-Jeng Shiue\footnote{SurfLab, University of Florida}
 \and \small
 \sffamily Pierre Alliez\footnote{GEOMETRICA, INRIA Sophia-Antipolis}
 \and \small
-\sffamily Radu Ursu\footnote{GEOMETRICA, INRIA Sophia-Antipolis}
+\sffamily Radu Ursu\footnote{Geometry Factory, Sophia-Antipolis}
 \and \small
 \sffamily Lutz Kettner\footnote{MPII, Saarbr\"ucken}}
 \maketitle
@@ -73,27 +68,28 @@ for Subdivision Algorithms}}}
 We will present a tutorial on the CGAL polyhedron data structure
 assuming familiarity with the C++ template mechanism and the key
 concepts of the generic programming. The tutorial is organized around
-a mesh subdivision application.  It starts with a polyhedron viewer for a
-customized polyhedron.  The polyhedron viewer demonstrates the basic
-functionalities of the \cgalpoly\ and some extended functionalities such
-as file I/O, mesh superimposition, and trackball manipulation.  The
-tutorial also shows how to implement subdivision algorithms in three
-different approaches. These approaches are proposed with increasing
-level of sophistication and abstraction. The simplest approach uses
-the atomic operators of the combinatorial modifications to implement
-$\sqrt{3}$ subdivision scheme.  A second approach overloads the
-modifier, with the help of the incremental builder, to implement
-quad-triangle subdivision. The third approach abstracts the geometry
-operations from the refinements.  This approach specializes a
-subdivision with template geometry rules. Catmull-Clark, Loop and
-Doo-Sabin subdivisions are illustrated based on the third approach.  }
+a mesh subdivision application.  It starts with a polyhedron viewer
+for a customized polyhedron.  The polyhedron viewer demonstrates the
+basic functionalities of the \cgalpoly\ and some extended
+functionalities such as file I/O, mesh superimposition, and trackball
+manipulation.  The tutorial also shows how to implement subdivision
+algorithms in three different approaches. These approaches are
+proposed with increasing level of sophistication and abstraction. The
+simplest approach uses the atomic operators of the combinatorial
+modifications to implement $\sqrt{3}$ subdivision scheme.  A second
+approach overloads the modifier, with the help of the incremental
+builder, to implement quad-triangle subdivision. The third approach
+abstracts the geometry operations from the refinements.  It
+specializes a subdivision with template geometry rules. Catmull-Clark,
+Loop and Doo-Sabin subdivisions are illustrated based on this third
+approach.  }
 
 %%\vskip 3mm
 
 \begin{center} 
-  \includegraphics[width=\linewidth]{figs/teaser}\\
-{\scriptsize Demo application running on Windows. A polygon mesh is 
-   subdivided using the quad-triangle subdivision scheme.}
+  \includegraphics[width=\linewidth]{figs/teaser}\\ {\scriptsize Demo
+  application running on Windows. A coarse polygon mesh is subdivided
+  using the quad-triangle subdivision scheme.}
 \end{center}
 
 \subsection*{Generic Mesh Data Structure}
@@ -101,32 +97,35 @@ Doo-Sabin subdivisions are illustrated based on the third approach.  }
 Polyhedron data structures based on the concept of halfedges have been
 very successful for the design of general algorithms on meshes.
 Although making a preliminary version of a halfedge-based mesh data
-structure is as a fairly simple task and is often proposed as a
-programming exercise, the time has come where we should not write our
-own mesh data structure from scratch anymore. With the emerging of the
+structure (HDS) is as a fairly simple task and is often proposed as a
+programming exercise, there now exists a general purpose HDS available
+which is worth considering relying on. With the successful use of
 generic programming in C++, a set of reusable library components for
 graphics modeling and geometry processing are demanded by researchers
 and developers. \italic{Extensible algorithm} models based on a
 \italic{robust, efficient and customizable polyhedron data structure}
 will certainly speed up the research as well as the development cycle,
-and benefit the community of the graphics modeling and geometry
+and benefit the community of geometric computing and geometry
 processing.
 
-Most mesh algorithms employ a customized halfedge data structures
-and most of the customizations are specialized by customizing the
+Most mesh algorithms employ a customized halfedge data structures and
+most of the customizations are specialized by customizing the
 primitive data, which are the vertex positions, the facet normals or
-other algorithmic flags. \cgalpoly\ encapsulates a generic design of
-the halfedge data structure allowing users customize the \poly\ with
-the template parameters of the geometry primitives. There are several
-advantages employing the \poly\ as the core data structure of a
-mesh processing application: \\
+other data used for algorithmic purposes. \cgalpoly\ encapsulates a
+generic design of the halfedge data structure allowing users customize
+the \poly\ with the template parameters of the geometry
+primitives. There are several advantages employing the \poly\ as the
+core data structure of a mesh processing application: \\
 
 \indent $\bullet$ The \poly\ is a \italic{generic} data structure.\\
 \indent $\bullet$ The \poly\ is a \italic{robust} and \italic{optimized} 
-data structure.\\
-\indent $\bullet$ A complete set of the geometry entities and predications 
-is provided within CGAL.\\
-\indent $\bullet$ CGAL is standardized following the C++ STL.
+                  data structure.\\
+\indent $\bullet$ A complete set of geometric entities and predicates
+                  is provided within CGAL.\\
+\indent $\bullet$ CGAL is closely following the programming 
+                  style of the C++ STL.
+
+% todo: explain why polyhedron_3 is a generic data structure
 
 \subsection*{Demo Application}
 
@@ -155,8 +154,8 @@ viewer based on the default configuration of the \cgalpoly . This
 simple viewer demonstrates some basic functionalities of the
 \cgalpoly\ such as \italic{modifier} and \italic{incremental builder} 
 for initialization and the mesh traversal, i.e. the \italic{iterators}
-and the \italic{circulators}, for rendering or mesh exporting. Based on
-this simple viewer, we then show the readers how to
+and the \italic{circulators}, for rendering or mesh exporting. Based
+on this simple viewer, we then show the readers how to
 \italic{customize the \poly} to support certain functionalities. 
 An enriched polyhedron is proposed with the primitives specialized
 with algorithmic flags. This enriched polyhedron is used as the core
@@ -183,14 +182,14 @@ are first introduced to support the refinement: the \italic{atomic
 operators of the combinatorial modifications} (operator scheme) and
 the \italic{modifier mechanism} (modifier scheme).  The operator
 scheme reconfigures the connectivity with a combination of several
-combinatorial operators. The $\sqrt{3}$ subdivision is used to
-demonstrate this scheme. Though simple and efficient in some
+combinatorial operators. The $\sqrt{3}$ subdivision~\cite{sqrt3} is
+used to demonstrate this scheme. Though simple and efficient in some
 refinements, e.g.\ $\sqrt{3}$ subdivision, the correct combination of
 the operators is hard to find for some refinements, e.g.\ Doo-Sabin
-subdivision. The modifier scheme solves the problem by letting the
-programmers create their own combinatorial operators using the
-polyhedron incremental builder.  The Quad-Triangle subdivision is used
-to demonstrate this scheme.
+subdivision~\cite{ds}. The modifier scheme solves the problem by
+letting the programmers create their own combinatorial operators using
+the polyhedron incremental builder.  The Quad-Triangle
+subdivision~\cite{qts,l-pg-03} is used to demonstrate this scheme.
 
 \subsubsection*{Generic Subdivisions}
 
@@ -200,11 +199,12 @@ generalizes the subdivision by abstracting the smoothing rules from
 the refinement. The refinement is designed as a \italic{host function}
 that accepts a \italic{policy class} supporting the smoothing rules. A
 subdivision function is then a legal combination of the refinement and
-the smoothing rules.  For example, the Catmull-Clark subdivision can
-be declared as:
+the smoothing rules.  For example, the Catmull-Clark
+subdivision~\cite{cc} can be declared as:
 \begin{lstlisting}
 void CatmullClark_subdivision(Polyhedron& p) {    
-  quadralize_polyhedron<CatmullClark_rule<Polyhedron>>(p);  
+  quadralize_polyhedron
+   <CatmullClark_rule<Polyhedron>>(p);  
 }
 \end{lstlisting}
 
@@ -212,15 +212,20 @@ The \lstinline!quadralize_polyhedron<>! represents the refinement
 (host function) and the \lstinline!CatmullClark_rule<>! supports the
 geometry rules (policy).  This approach offers a convenient way to
 specialize a subdivision with the \italic{template smoothing rules}.
-Catmull-Clark, Loop and Doo-Sabin subdivisions are illustrated based
-on this approach.
+Catmull-Clark~\cite{cc}, Loop~\cite{loop} and Doo-Sabin~\cite{ds}
+subdivisions are illustrated based on this approach.
 
 \subsection*{Intended Audience}
 
 The intended audience of the tutorial are researchers, developers or
-students in the graphics community developing algorithms around
-meshes. Experience in advanced C++ design (i.e.\ generic programming
-using templates) and knowledge of the halfedge data structure and
-subdivisions are prerequisites.
+students developing algorithms around meshes. Experience in advanced
+C++ design (i.e.\ generic programming using templates) and knowledge
+of the halfedge data structure and subdivisions are prerequisites.
+
+% references
+{\footnotesize
+\bibliographystyle{alpha}
+\bibliography{abstract}
+}
 
 \end{document}
