@@ -31,7 +31,6 @@
 #include <pair.h>
 #include <CGAL/triple.h>
 #include <list.h>
-#include <vector.h>
 #include <map.h>
 
 #include <CGAL/triangulation_assertions.h>
@@ -46,6 +45,7 @@
 #include <CGAL/Triangulation_ds_iterators.h>
 #include <CGAL/Triangulation_ds_circulators.h>
 
+
 template <class Tds>
 class CGAL_Triangulation_ds_cell_iterator;
 template <class Tds>
@@ -54,6 +54,8 @@ template <class Tds>
 class CGAL_Triangulation_ds_vertex_iterator;
 template <class Tds>
 class CGAL_Triangulation_ds_cell_circulator;
+
+#include <vector.h>
 
 template <class Vb, class Cb>
 class CGAL_Triangulation_data_structure
@@ -96,13 +98,12 @@ public:
     : _dimension(-2), _number_of_vertices(0), _list_of_cells() 
   {}
 
-  // advanced - TBD
-//   CGAL_Triangulation_data_structure(Vertex * v)
-//     : _list_of_cells()
-//   {
-//     init(v);
-//     CGAL_triangulation_postcondition( is_valid() );
-//   }
+  CGAL_Triangulation_data_structure(const Vertex & v)
+    : _dimension(-2), _number_of_vertices(0), _list_of_cells()
+  {
+    insert_outside_affine_hull(&v);
+    //    CGAL_triangulation_postcondition( is_valid() );
+  }
 
   inline
   CGAL_Triangulation_data_structure(const Tds & tds)
@@ -167,7 +168,7 @@ public:
     // changes the dimension
 
     // if (reorient) the orientation of the cells is modified
-  {
+ {  // insert()
     CGAL_triangulation_precondition( v != NULL );
 
     Cell* c;
@@ -396,9 +397,8 @@ public:
   } 
   // end insert_outside_affine_hull
 
-  void insert_in_edge(Vertex* v, Cell* c, int i, int j)
-    // inserts v in the edge of cell c with vertices i and j
-  {
+  void insert_in_edge(Vertex* v, Cell* c, int i, int j)   
+  { // inserts v in the edge of cell c with vertices i and j
     CGAL_triangulation_precondition( v != NULL && c != NULL ); 
     CGAL_triangulation_precondition( i != j );
     CGAL_triangulation_precondition( dimension() >= 1 );
@@ -529,8 +529,8 @@ public:
   }// end insert_in_edge
 
   void insert_in_facet(Vertex* v, Cell* c, int i)
-    // inserts v in the facet opposite to vertex i of cell c
-  {
+  { // inserts v in the facet opposite to vertex i of cell c
+
     CGAL_triangulation_precondition( (v != NULL) && (c != NULL)); 
     CGAL_triangulation_precondition( dimension() >= 2 );
 
@@ -664,8 +664,8 @@ public:
   // end insert_in_facet
 
   void insert_in_cell(Vertex* v, Cell* c)
-    //insert in cell
-  {
+
+  { //insert in cell
     CGAL_triangulation_precondition( (v != NULL) && (c != NULL));
 //     c->insert_in_cell(v);
 
@@ -772,7 +772,7 @@ public:
 
   // CHECKING
   bool is_valid(bool verbose = false, int level = 0) const
-  {
+  { // is_valid()
     switch ( dimension() ) {
     case 3:
       {
@@ -869,7 +869,7 @@ public:
 	}
       } 
     } // end switch
-    
+    if (verbose) { cerr << "valid data structure" << endl; }
     return true;
   } // end is_valid
 
@@ -966,21 +966,17 @@ public:
   
   void swap(Tds &tds)
   {
-    list<Vertex*> fcv = _first_collinear_vertices();
-    //    Vertex*  iv = infinite_vertex();
-    int     nv = number_of_vertices();
-    bool lin = linear();
+    int dim = dimension();
+    int nb = number_of_vertices();
+    Cell *l = list_of_cells().next_cell;
 
-    //the class Geom_traits is required to have a pertinent operator=
-    set_first_collinear_vertices(tds.first_collinear_vertices());
-    //    set_infinite_vertex(tds.infinite_vertex());
+    set_dimension(tds.dimension());
     set_number_of_vertices(tds.number_of_vertices());
-    set_linear(tds.linear());
+    _list_of_cells.next_cell = tds.list_of_cells().next_cell;
 
-    tds.set_first_collinear_vertices(fv);
-    //    tds.set_infinite_vertex(iv);
-    tds.set_number_of_vertices(nv);
-    tds.set_linear(lin);
+    tds._dimension = dim;
+    tds._number_of_vertices = nb;
+    tds._list_of_cells.next_cell = l;
   }
 
   void clear()
@@ -1000,11 +996,11 @@ public:
       return;
     }
 
-    list<Vertex*> Vertices;
+    list<Vertex *> Vertices;
     {// creation of a list of all vertices
       Vertex_iterator it = vertices_begin(), done = vertices_end();
       do{
-	Vertices.push_front(&(*it));
+	Vertices.push_back(&(*it));
       } while(++it!=done);
     }
     
@@ -1019,6 +1015,8 @@ public:
       };
       // then _list_of_cells points on itself, nothing more to do
     }
+
+
 
     {// deletion of the vertices
       list<Vertex*>::iterator
@@ -1083,10 +1081,10 @@ private:
     Facet_iterator it = facets_begin();
     
     while(it != facets_end()) {
-//       if ( ! (*it).first->is_valid(dimension(),verbose, level) ) {
-// 	if (verbose) { cerr << "invalid facet" << endl;}
-// 	CGAL_triangulation_assertion(false); return false;
-//       }
+      if ( ! (*it).first->is_valid(dimension(),verbose, level) ) {
+	if (verbose) { cerr << "invalid facet" << endl;}
+	CGAL_triangulation_assertion(false); return false;
+      }
       ++i;
       ++it;
     }
@@ -1100,10 +1098,10 @@ private:
     Edge_iterator it = edges_begin();
     
     while(it != edges_end()) {
-//       if ( ! (*it).first->is_valid(dimension(),verbose, level) ) {
-// 	if (verbose) { cerr << "invalid edge" << endl;}
-// 	CGAL_triangulation_assertion(false); return false;
-//       }
+      if ( ! (*it).first->is_valid(dimension(),verbose, level) ) {
+	if (verbose) { cerr << "invalid edge" << endl;}
+	CGAL_triangulation_assertion(false); return false;
+      }
       ++i;
       ++it;
     }

@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1997 The CGAL Consortium
+// Copyright (c) 1998 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -25,7 +25,6 @@
 // Define shorter names to please linker (g++/egcs)
 #define CGAL_Triangulation_base_vertex CGAL_Tbv
 #define CGAL_Triangulation_base_cell CGAL_Tbc
-#define CGAL_Triangulation_geom_traits CGAL_Gt
 
 #define CGAL_Triangulation_ds_vertex CGAL_Tdsv
 #define CGAL_Triangulation_ds_cell CGAL_Tdsc
@@ -35,5 +34,18 @@
 #define CGAL_Triangulation_ds_vertex_iterator CGAL_Tdsvit
 #define CGAL_Triangulation_ds_facet_iterator CGAL_Tdsfit
 #define CGAL_Triangulation_ds_cell_circulator CGAL_Tdsccir
+
+#define CGAL_Triangulation_geom_traits CGAL_Gt
+
+#define CGAL_Triangulation CGAL_Tr
+#define CGAL_Triangulation_vertex CGAL_V
+#define CGAL_Triangulation_cell CGAL_C
+#define CGAL_Triangulation_vertex_handle CGAL_VH
+#define CGAL_Triangulation_cell_handle CGAL_CH
+
+#define CGAL_Triangulation_cell_iterator CGAL_cit
+#define CGAL_Triangulation_vertex_iterator CGAL_vit
+#define CGAL_Triangulation_facet_iterator CGAL_fit
+#define CGAL_Triangulation_cell_circulator CGAL_ccir
 
 #endif CGAL_TRIANGULATION_SHORT_NAMES_H

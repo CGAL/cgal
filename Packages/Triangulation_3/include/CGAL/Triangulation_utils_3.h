@@ -21,16 +21,16 @@
 #ifndef CGAL_TRIANGULATION_CW_2_H
 #define CGAL_TRIANGULATION_CW_2_H
 
-inline unsigned int ccw(const unsigned int i) const
+inline unsigned int ccw(const unsigned int i) 
 {
-  CGAL_precondition( i== 0 || i == 1 || i==2 );
+  CGAL_precondition( i < 3 );
   static const unsigned int tab_ccw[] = {1,2,0};
   return tab_ccw[i];
 }
 
-inline unsigned int cw(const unsigned int i) const
+inline unsigned int cw(const unsigned int i) 
 {
-  CGAL_precondition( i== 0 || i == 1 || i==2 );
+  CGAL_precondition( i < 3 );
   static const unsigned int tab_cw[] = {2,0,1};
   return tab_cw[i];
 }

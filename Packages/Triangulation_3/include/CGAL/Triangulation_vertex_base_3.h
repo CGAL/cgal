@@ -74,7 +74,10 @@ public:
   // the user of derived cell base classes 
   // to add their own purpose checking
   bool is_valid() const
-  { return true; }
+  { 
+    //return true; 
+    return( cell() != NULL );
+  }
 
 
 private:

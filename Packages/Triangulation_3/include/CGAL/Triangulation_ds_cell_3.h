@@ -25,10 +25,11 @@
 //
 // ============================================================================
 
-#ifndef CGAL_TETRAHEDRALIZATION_DS_CELL_H
-#define CGAL_TETRAHEDRALIZATION_DS_CELL_H
+#ifndef CGAL_TRIANGULATION_DS_CELL_H
+#define CGAL_TRIANGULATION_DS_CELL_H
 
 #include <CGAL/Triangulation_short_names.h>
+#include <CGAL/Triangulation_cw_2.h>
 
 template < class Vb, class Cb >
 class CGAL_Triangulation_ds_vertex;
@@ -359,7 +360,8 @@ public:
 
     case 3:
       {
-	for(int i = 0; i < 4; i++) {
+	int i;
+	for(i = 0; i < 4; i++) {
 	  if ( vertex(i) == NULL ) {
 	    if (verbose) { 
 	      cerr << "vertex " << i << " NULL" << endl;
@@ -368,7 +370,7 @@ public:
 	  }
 	}
 
-	for(int i = 0; i < 4; i++) {
+	for(i = 0; i < 4; i++) {
 	  Cell* n = neighbor(i);
 	  if ( n == NULL ) {
 	    if (verbose) { 
@@ -493,20 +495,6 @@ private:
 //     return (i+2) % 3;
 //   }
  
-  inline unsigned int ccw(const unsigned int i) const
-  {
-    CGAL_precondition( i== 0 || i == 1 || i==2 );
-    static const unsigned int tab_ccw[] = {1,2,0};
-    return tab_ccw[i];
-  }
-
-  inline unsigned int cw(const unsigned int i) const
-  {
-    CGAL_precondition( i== 0 || i == 1 || i==2 );
-    static const unsigned int tab_cw[] = {2,0,1};
-    return tab_cw[i];
-  }
-
 
   void error_orient( Cell * n, int i) const
   {

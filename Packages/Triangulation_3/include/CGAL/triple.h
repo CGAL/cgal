@@ -22,16 +22,9 @@
 #ifndef CGAL_TRIPLE_H
 #define CGAL_TRIPLE_H
 
-//#include <CGAL/circulator.h>
-
-// #ifdef __GNUG__
-// #define CGAL_NULL_TYPE const void*
-// #else // __GNUG__ //
-// #define CGAL_NULL_TYPE int
-// #endif // __GNUG__ //
-
 template <class T1, class T2, class T3>
-struct CGAL_triple {
+struct CGAL_triple 
+{
   T1 first;
   T2 second;
   T3 third;
@@ -41,18 +34,6 @@ struct CGAL_triple {
   CGAL_triple(const T1& a, const T2& b, const T3& c)
     : first(a), second(b), third(c) 
     {}
-
-//   bool operator==( CGAL_NULL_TYPE n ) const
-//   {
-//     CGAL_triangulation_assertion( n == NULL );
-//     return (first == NULL);
-//   }
-
-//   bool operator!=( CGAL_NULL_TYPE n ) const
-//   {
-//     return !(this == n);
-//   }
-
 };
 
 template <class T1, class T2, class T3>

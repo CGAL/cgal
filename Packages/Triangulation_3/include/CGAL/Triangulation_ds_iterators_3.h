@@ -51,7 +51,7 @@ public:
   // CONSTRUCTORS
 
   CGAL_Triangulation_ds_cell_iterator()
-    : pos(NULL), _tds(NULL)
+    : _tds(NULL), pos(NULL)
     {}
   
   CGAL_Triangulation_ds_cell_iterator(Tds * tds)
@@ -252,7 +252,7 @@ public:
       return !(*this == fi);
     }
     
-  inline Vertex& operator*() const
+  inline Vertex & operator*() const
     {
       // case pos == NULL should not be accessed, there is no vertex
       return *(pos->vertex(index));
