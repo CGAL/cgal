@@ -1,10 +1,10 @@
 Changes done to the Interval Arithmetic package.
 
-Version 4.115 on ?? August 2001
+Version 4.115 on 16 August 2001
 - New class Profile_counter.
 - Use it in the filtered predicates.
 - New traits class wrapper : Static_filters<>.
-- Try another workaround for sqrt() on VC++ using asm.  If it works OK, then
+- Try another workaround for sqrt() on VC++ using _asm.  If it works, then
   we will be able to get rid of some painful stuff in the installation.
 
 ========================== CGAL 2.3 =======================
