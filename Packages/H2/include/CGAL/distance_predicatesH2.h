@@ -32,9 +32,9 @@ CGAL_BEGIN_NAMESPACE
 template < class R>
 CGAL_KERNEL_MEDIUM_INLINE
 Comparison_result
-cmp_dist_to_point(const PointH2<R>& p,
-                       const PointH2<R>& q,
-                       const PointH2<R>& r)
+compare_distance_to_point(const PointH2<R>& p,
+                          const PointH2<R>& q,
+                          const PointH2<R>& r)
 {
   typedef typename R::RT RT;
 
@@ -84,6 +84,16 @@ cmp_dist_to_point(const PointH2<R>& p,
   {
       return (dosd < RT0) ? SMALLER : EQUAL;
   }
+}
+
+template < class R>
+inline
+Comparison_result
+cmp_dist_to_point(const PointH2<R>& p,
+                  const PointH2<R>& q,
+                  const PointH2<R>& r)
+{
+   return compare_distance_to_point(p, q, r);
 }
 
 template < class R>
