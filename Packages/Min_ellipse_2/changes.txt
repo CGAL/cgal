@@ -1,5 +1,9 @@
 Changes done to the `Min_ellipse_2' package.
 
+Version 3.5 on 17-Nov-1999
+- subdirectory `include/CGAL/Optimisation' introduced.
+- scope `CGAL::' added to `sqrt'.
+
 Version 3.4.1 on 09-Nov-1999
 - bug with `typename' removed (introduced in version 3.4).
 
