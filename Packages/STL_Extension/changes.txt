@@ -7,6 +7,7 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+ALL : Changed triple, quadruple -> Triple, Quadruple.
 ALL : Rejoined Inverse_index fix by Dima.
 ALL : Fixed sunpro 5.3 problems.
 DOCS: Added Filter_iterator suggested by Sylvain.
