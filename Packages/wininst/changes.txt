@@ -1,3 +1,6 @@
+18 Feb 2004 Sylvain Pion
+- Remove include/CGAL/config/msvc7/CGAL/cl_1300.h
+
 2.2.15 (18/01/04) Remove obsolete files :
                     include/CGAL/config/msvc7/iterator_specializations.h
                     include/CGAL/config/msvc7/stl_iterator_base.h

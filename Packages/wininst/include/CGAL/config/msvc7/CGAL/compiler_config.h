@@ -22,8 +22,10 @@
 // Author(s)     : Radu Ursu
 
 
-#if defined _MSC_VER && _MSC_VER == 1300
-	#include "cl_1300.h"
-#else
-	#include "cl_1310.h"
+#ifdef _MSC_VER
+#  if _MSC_VER < 1310
+#    error Unsupported version of VC++
+#  else
+#    include "cl_1310.h"
+#  endif
 #endif
