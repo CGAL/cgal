@@ -11,14 +11,13 @@
 // release       : 
 // release_date  : 
 // 
-// file          : Gmpz.h
+// file          : include/CGAL/Gmpz.h
 // package       : Number_types
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Andreas Fabri
-//                 Stefan Schirra
+// author(s)     : Andreas Fabri, Stefan Schirra, Sylvain Pion
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
  
 
@@ -26,6 +25,7 @@
 #define CGAL_GMPZ_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Handle_for.h>
 
 #ifndef CGAL_CFG_NO_LOCALE
 #  include <locale>
@@ -37,16 +37,15 @@
 
 CGAL_BEGIN_NAMESPACE
 
-class Gmpz_rep : public Rep
+class Gmpz_rep
 {
 public:
   mpz_t  mpZ;
 
   Gmpz_rep()
-  // { mpz_init_set_si(mpZ, 0); }
   { mpz_init(mpZ); }
 
-  Gmpz_rep(mpz_t  z)
+  Gmpz_rep(mpz_t z)
   { mpz_init_set(mpZ, z); }
 
   Gmpz_rep(int si)
@@ -61,41 +60,41 @@ public:
   Gmpz_rep(double d)
   { mpz_init_set_d(mpZ, d); }
 
-  Gmpz_rep(char* str)
+  Gmpz_rep(const char * const str)
   { mpz_init_set_str(mpZ, str, 10); }
 
-  Gmpz_rep(char* str, int base)
+  Gmpz_rep(const char * const str, int base)
   { mpz_init_set_str(mpZ, str, base); }
-
-  ~Gmpz_rep()
-  { mpz_clear(mpZ); }
 };
 
-class Gmpz : public Handle
+class Gmpz
+  : public Handle_for<Gmpz_rep>
 {
+  typedef Handle_for<Gmpz_rep> Base;
 public:
-  Gmpz();
+  Gmpz()
+    : Base(Gmpz_rep()) {}
 
-  Gmpz(const Gmpz &z);
+  Gmpz(mpz_t z)
+    : Base(Gmpz_rep(z)) {}
 
-  Gmpz(mpz_t z);
+  Gmpz(int i)
+    : Base(Gmpz_rep(i)) {}
 
-  Gmpz(int i);
+  Gmpz(long l)
+    : Base(Gmpz_rep(l)) {}
 
-  Gmpz(long l);
+  Gmpz(unsigned long l)
+    : Base(Gmpz_rep(l)) {}
 
-  Gmpz(unsigned long l);
+  Gmpz(double d)
+    : Base(Gmpz_rep(d)) {}
 
-  Gmpz(double d);
+  Gmpz(const char* const str)
+    : Base(Gmpz_rep(str)) {}
 
-  Gmpz(char* str);
-  Gmpz(char* str, int base);
-
-  Gmpz(Gmpz_rep* R);
-
-  ~Gmpz();
-
-  Gmpz &operator=(const Gmpz &z);
+  Gmpz(const char* const str, int base)
+    : Base(Gmpz_rep(str, base)) {}
 
   bool operator==(const Gmpz &z) const;
   bool operator==(int i) const;
@@ -145,125 +144,75 @@ public:
 
   size_t approximate_decimal_length() const;
 
-  Gmpz_rep* ptr() const;
   double to_double() const;
   Sign sign() const;
+
+  const mpz_t & mpz() const { return Ptr()->mpZ; }
+  mpz_t & mpz() { return ptr()->mpZ; }
+
+  ~Gmpz()
+  {
+      if (!is_shared())
+	  mpz_clear(mpz());
+  }
 };
 
 
 inline
-Gmpz_rep*
-Gmpz::ptr() const
-{ return static_cast<Gmpz_rep*>(PTR); }
-
-inline   // CGAL_KERNEL_CTOR_INLINE
-Gmpz::Gmpz()
-{ PTR = new Gmpz_rep(0); }
-
-inline   // CGAL_KERNEL_CTOR_INLINE
-Gmpz::Gmpz(const Gmpz &z)
-  : Handle(static_cast<const Handle&>(z))
-{}
-
-inline   // CGAL_KERNEL_CTOR_INLINE
-Gmpz::Gmpz(mpz_t z)
-{ std::cout << "OLD construction called"; PTR = new Gmpz_rep(z); }
-
-inline   // CGAL_KERNEL_CTOR_INLINE
-Gmpz::Gmpz(int i)
-{ PTR = new Gmpz_rep(i); }
-
-inline   // CGAL_KERNEL_CTOR_INLINE
-Gmpz::Gmpz(long l)
-{ PTR = new Gmpz_rep(l); }
-
-inline   // CGAL_KERNEL_CTOR_INLINE
-Gmpz::Gmpz(unsigned long l)
-{ PTR = new Gmpz_rep(l); }
-
-inline   // CGAL_KERNEL_CTOR_INLINE
-Gmpz::Gmpz(double d)
-{ PTR = new Gmpz_rep(d); }
-
-inline   // CGAL_KERNEL_CTOR_INLINE
-Gmpz::Gmpz(char* str)
-{ PTR = new Gmpz_rep(str); }
-
-inline   // CGAL_KERNEL_CTOR_INLINE
-Gmpz::Gmpz(char* str, int base)
-{ PTR = new Gmpz_rep(str, base); }
-
-inline   // CGAL_KERNEL_CTOR_INLINE
-Gmpz::Gmpz(Gmpz_rep* R)
-{ PTR = R; }
-
-inline
-Gmpz::~Gmpz()
-{}
-
-inline
-Gmpz &
-Gmpz::operator=(const Gmpz &z)
-{
-  Handle::operator=(z);
-  return *this;
-}
-
-inline
 bool
 Gmpz::operator==(const Gmpz &z) const
-{ return ( mpz_cmp(ptr()->mpZ, z.ptr()->mpZ) == 0 ); }
+{ return ( mpz_cmp(mpz(), z.mpz()) == 0 ); }
 
 inline
 bool
 Gmpz::operator<(const Gmpz &z) const
-{ return ( mpz_cmp(ptr()->mpZ, z.ptr()->mpZ) < 0 ); }
+{ return ( mpz_cmp(mpz(), z.mpz()) < 0 ); }
 
 inline
 bool
 Gmpz::operator<(int i) const
-{ return mpz_cmp_si(ptr()->mpZ, i) < 0; }
+{ return mpz_cmp_si(mpz(), i) < 0; }
 
 inline
-bool            /* XXX */
+bool
 Gmpz::operator<=(const Gmpz &z) const
-{ return ( mpz_cmp(ptr()->mpZ, z.ptr()->mpZ) <= 0 ); }
+{ return ( mpz_cmp(mpz(), z.mpz()) <= 0 ); }
 
 
 inline
 bool
 Gmpz::operator<=(int i) const
-{ return ( mpz_cmp_si(ptr()->mpZ, i) <= 0 ); }
+{ return ( mpz_cmp_si(mpz(), i) <= 0 ); }
 
 inline
-bool             /* XXX */
+bool
 Gmpz::operator>(const Gmpz &z) const
-{ return ( mpz_cmp(ptr()->mpZ, z.ptr()->mpZ) > 0 ); }
+{ return ( mpz_cmp(mpz(), z.mpz()) > 0 ); }
 
 inline
 bool
 Gmpz::operator>(int i) const
-{ return ( mpz_cmp_si(ptr()->mpZ, i) > 0 ); }
+{ return ( mpz_cmp_si(mpz(), i) > 0 ); }
 
 inline
-bool             /* XXX */
+bool
 Gmpz::operator>=(const Gmpz &z) const
-{ return ( mpz_cmp(ptr()->mpZ, z.ptr()->mpZ) >= 0 ); }
+{ return ( mpz_cmp(mpz(), z.mpz()) >= 0 ); }
 
 inline
 bool
 Gmpz::operator>=(int i) const
-{ return ( mpz_cmp_si(ptr()->mpZ, i) >= 0 ); }
+{ return ( mpz_cmp_si(mpz(), i) >= 0 ); }
 
 inline
-bool             /* XXX */
+bool
 Gmpz::operator!=(const Gmpz &z) const
 { return ! (*this == z); }
 
 inline
 bool
 Gmpz::operator==(int i) const
-{ return ( mpz_cmp_si(ptr()->mpZ, i) == 0 ); }
+{ return ( mpz_cmp_si(mpz(), i) == 0 ); }
 
 inline
 bool
@@ -274,18 +223,18 @@ inline
 Gmpz
 Gmpz::operator-() const
 {
-    Gmpz_rep* Res = new Gmpz_rep();
-    mpz_neg(Res->mpZ, ptr()->mpZ);
-    return Gmpz(Res);
+    Gmpz Res;
+    mpz_neg(Res.mpz(), mpz());
+    return Res;
 }
 
 inline
 Gmpz
 Gmpz::operator+(const Gmpz &z) const
 {
-    Gmpz_rep* Res = new Gmpz_rep();
-    mpz_add(Res->mpZ, ptr()->mpZ, z.ptr()->mpZ);
-    return Gmpz(Res);
+    Gmpz Res;
+    mpz_add(Res.mpz(), mpz(), z.mpz());
+    return Res;
 }
 
 inline
@@ -294,9 +243,9 @@ Gmpz::operator+(int i) const
 {
     if (i>0)
     {
-        Gmpz_rep* Res = new Gmpz_rep();
-        mpz_add_ui(Res->mpZ, ptr()->mpZ, i);
-        return Gmpz(Res);
+        Gmpz Res;
+        mpz_add_ui(Res.mpz(), mpz(), i);
+        return Res;
     }
     return *this + Gmpz(i);
 }
@@ -321,9 +270,9 @@ inline
 Gmpz
 Gmpz::operator-(const Gmpz &z) const
 {
-    Gmpz_rep* Res = new Gmpz_rep();
-    mpz_sub(Res->mpZ, ptr()->mpZ, z.ptr()->mpZ);
-    return Gmpz(Res);
+    Gmpz Res;
+    mpz_sub(Res.mpz(), mpz(), z.mpz());
+    return Res;
 }
 
 inline
@@ -331,9 +280,9 @@ Gmpz Gmpz::operator-(int i) const
 {
     if (i>0)
     {
-        Gmpz_rep* Res = new Gmpz_rep();
-        mpz_sub_ui(Res->mpZ, ptr()->mpZ, i);
-        return Gmpz(Res);
+        Gmpz Res;
+        mpz_sub_ui(Res.mpz(), mpz(), i);
+        return Res;
     }
     return *this - Gmpz(i);
 }
@@ -358,9 +307,9 @@ inline
 Gmpz
 Gmpz::operator*(const Gmpz &z) const
 {
-    Gmpz_rep* Res = new Gmpz_rep();
-    mpz_mul(Res->mpZ, ptr()->mpZ, z.ptr()->mpZ);
-    return Gmpz(Res);
+    Gmpz Res;
+    mpz_mul(Res.mpz(), mpz(), z.mpz());
+    return Res;
 }
 
 inline
@@ -369,9 +318,9 @@ Gmpz::operator*(int i) const
 {
     if (i>0)
     {
-        Gmpz_rep* Res = new Gmpz_rep();
-        mpz_mul_ui(Res->mpZ, ptr()->mpZ, i);
-        return Gmpz(Res);
+        Gmpz Res;
+        mpz_mul_ui(Res.mpz(), mpz(), i);
+        return Res;
     }
     return *this * Gmpz(i);
 }
@@ -396,18 +345,18 @@ inline
 Gmpz
 Gmpz::operator/(const Gmpz &z) const
 {
-    Gmpz_rep* Res = new Gmpz_rep();
-    mpz_tdiv_q(Res->mpZ, ptr()->mpZ, z.ptr()->mpZ);
-    return Gmpz(Res);
+    Gmpz Res;
+    mpz_tdiv_q(Res.mpz(), mpz(), z.mpz());
+    return Res;
 }
 
 inline
 Gmpz
 Gmpz::operator%(const Gmpz &z) const
 {
-    Gmpz_rep* Res = new Gmpz_rep();
-    mpz_tdiv_r(Res->mpZ, ptr()->mpZ, z.ptr()->mpZ);
-    return Gmpz(Res);
+    Gmpz Res;
+    mpz_tdiv_r(Res.mpz(), mpz(), z.mpz());
+    return Res;
 }
 
 inline
@@ -416,9 +365,9 @@ Gmpz::operator/(int i) const
 {
     if (i>0)
     {
-        Gmpz_rep* Res = new Gmpz_rep();
-        mpz_tdiv_q_ui(Res->mpZ, ptr()->mpZ, i);
-        return Gmpz(Res);
+        Gmpz Res;
+        mpz_tdiv_q_ui(Res.mpz(), mpz(), i);
+        return Res;
     }
     return *this / Gmpz(i);
 }
@@ -442,7 +391,7 @@ Gmpz::operator/=(int i)
 inline
 double
 Gmpz::to_double() const
-{ return mpz_get_d(ptr()->mpZ); }
+{ return mpz_get_d(mpz()); }
 
 inline
 io_Operator
@@ -452,7 +401,7 @@ io_tag(const Gmpz&)
 inline
 Sign
 Gmpz::sign() const
-{ return static_cast<Sign>(mpz_sgn(ptr()->mpZ)); }
+{ return static_cast<Sign>(mpz_sgn(mpz())); }
 
 inline
 Gmpz
@@ -498,18 +447,18 @@ inline
 Gmpz
 sqrt(const Gmpz &z)
 {
-  Gmpz_rep* Res = new Gmpz_rep();
-  mpz_sqrt(Res->mpZ, z.ptr()->mpZ);
-  return Gmpz(Res);
+  Gmpz Res;
+  mpz_sqrt(Res.mpz(), z.mpz());
+  return Res;
 }
 
 inline
 Gmpz
 gcd(const Gmpz &z1, const Gmpz &z2)
 {
-  Gmpz_rep* Res = new Gmpz_rep();
-  mpz_gcd(Res->mpZ, z1.ptr()->mpZ, z2.ptr()->mpZ);
-  return Gmpz(Res);
+  Gmpz Res;
+  mpz_gcd(Res.mpz(), z1.mpz(), z2.mpz());
+  return Res;
 }
 
 inline
@@ -518,9 +467,9 @@ gcd(const Gmpz &z, int i)
 {
   if (i > 0)
   {
-      Gmpz_rep* Res = new Gmpz_rep();
-      mpz_gcd_ui(Res->mpZ, z.ptr()->mpZ, i);
-      return Gmpz(Res);
+      Gmpz Res;
+      mpz_gcd_ui(Res.mpz(), z.mpz(), i);
+      return Res;
   }
   return gcd(z, Gmpz(i));
 }
@@ -529,30 +478,30 @@ inline
 Gmpz
 exact_division(const Gmpz &z1, const Gmpz &z2)
 {
-  Gmpz_rep* Res = new Gmpz_rep();
-  mpz_divexact(Res->mpZ, z1.ptr()->mpZ, z2.ptr()->mpZ);
+  Gmpz Res;
+  mpz_divexact(Res.mpz(), z1.mpz(), z2.mpz());
 #ifdef CGAL_CHECK_POSTCONDITIONS
   mpz_t prod;
   mpz_init(prod);
-  mpz_mul(prod, Res->mpZ, z2.ptr()->mpZ);
-  CGAL_kernel_postcondition_msg(mpz_cmp(prod, z1.ptr()->mpZ) == 0,
+  mpz_mul(prod, Res.mpz(), z2.mpz());
+  CGAL_kernel_postcondition_msg(mpz_cmp(prod, z1.mpz()) == 0,
                                 "exact_division failed\n");
   mpz_clear( prod);
 #endif // CGAL_CHECK_POSTCONDITIONS
-  return Gmpz(Res);
+  return Res;
 }
 
 inline
 size_t
 Gmpz::approximate_decimal_length() const
-{ return mpz_sizeinbase(ptr()->mpZ,10); }
+{ return mpz_sizeinbase(mpz(),10); }
 
 inline
 std::ostream&
 operator<<(std::ostream& os, const Gmpz &z)
 {
-  char *str = new char [mpz_sizeinbase(z.ptr()->mpZ,10) + 2];
-  str = mpz_get_str(str, 10, z.ptr()->mpZ);
+  char *str = new char [mpz_sizeinbase(z.mpz(),10) + 2];
+  str = mpz_get_str(str, 10, z.mpz());
   os << str ;
   delete[] str;
   return os;

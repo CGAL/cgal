@@ -1,3 +1,8 @@
+4.34	 (24 October 01)
+- Gmpz now uses Handle_for.
+- Missing std:: to ceil().
+- Move stuff from basic.h to number_type_basic.h.
+
 4.33	 (17 September 01)
 - Added missing #include <iterator> detected by GCC 3.1.
 

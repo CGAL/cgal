@@ -49,7 +49,7 @@ sqrt(double d)
 inline
 bool
 is_integral (const double d)
-{ return ceil(d) == d; }
+{ return std::ceil(d) == d; }
 
 inline
 Number_tag
