@@ -1,0 +1,42 @@
+// ============================================================================
+//
+// Copyright (c) 1998 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+// 
+// release       :
+// release_date  :
+// 
+// source        :
+// file          : test_delaunay_3_old_remove.C
+// revision      : 
+// revision_date : 
+// author(s)     : andreas Fabri
+//
+// coordinator   : INRIA Sophia-Antipolis
+// ============================================================================
+#define CGAL_DELAUNAY_3_OLD_REMOVE 1
+
+#include <CGAL/Delaunay_triangulation_3.h>
+
+bool del=true;
+
+#include <CGAL/_test_types.h>
+#include <CGAL/_test_cls_delaunay_3.C>
+
+int main()
+{
+  typedef CGAL::Delaunay_triangulation_3<K>  Cls;
+
+  _test_cls_delaunay_3( Cls() );
+
+  return 0;
+}
+
+// MipsPro prefers this after the other instantiations...
+// Explicit instantiation of the whole class :
+template class CGAL::Delaunay_triangulation_3<K>;
