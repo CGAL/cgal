@@ -1636,6 +1636,8 @@ bool
 Triangulation_2<Gt, Tds>::
 collinear_between(const Point& p, const Point& q, const Point& r) const
 {
+  // return true if point q is between p and r
+  // p,q and r are supposed to be colinear points
   Comparison_result c_pr = geom_traits().compare_x(p, r);
   Comparison_result c_pq;
   Comparison_result c_qr;

@@ -135,6 +135,7 @@ Triangulation_ds_vertex_2<Vb,Fb> *
 Triangulation_ds_face_2<Vb,Fb>::
 opposite_vertex(int i) const
 {
+  CGAL_triangulation_precondition ( neighbor(i) != NULL);
   return neighbor(i)->vertex(neighbor(i)->index(this));
 }
 
@@ -143,6 +144,7 @@ inline int
 Triangulation_ds_face_2<Vb,Fb>::
 opposite_index(int i) const
 {
+  CGAL_triangulation_precondition (neighbor(i) != NULL);
   return neighbor(i)->index(this);
 }
 
