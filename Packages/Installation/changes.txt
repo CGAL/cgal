@@ -1,3 +1,8 @@
+05/05/2003 (spion) 1.189
+- Update GMP to 4.1.2
+- Recognize GCC 3.3
+- Update documentation for -fsquangle.
+
 02/05/2003 (rursu) 1.188
 -----------
 	modified the install_cgal script: fixed libs names introduced in 1.187 (removed .lib from the end)

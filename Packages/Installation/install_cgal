@@ -155,7 +155,7 @@ LEDA_TEST_PASSED=''
 #
 
 # version of gmp shipped with CGAL:
-GMP_VERSION='gmp-4.1'
+GMP_VERSION='gmp-4.1.2'
 
 # toggles use of GMP ('' - no, '_GMP' - use it)
 GMP_SUPPORT=''
@@ -4159,9 +4159,7 @@ _set_support()
 	*GNU*)
 	    case `compiler_version` in
 		2.95*) CGAL_SUPPORT_COMPILER='y';;
-		3.0*) CGAL_SUPPORT_COMPILER='y';;
-		3.1*) CGAL_SUPPORT_COMPILER='y';;
-		3.2*) CGAL_SUPPORT_COMPILER='y';;
+		3.[0123]*) CGAL_SUPPORT_COMPILER='y';;
 	    esac
 	    ;;
 	*VC++*)

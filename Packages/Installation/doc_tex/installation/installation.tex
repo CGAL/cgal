@@ -119,7 +119,7 @@ that we could not work around all of them.
     \textbf{compiler}        & \textbf{operating system}\\\hline\hline
     \mipsprocc\ 7.3 (n32 and 64) \footnotemark[7] 
     & IRIX 6.5\\\hline
-    \Gcc{2.95.3, 3.0, 3.1, 3.2} \footnotemark[9]            
+    \Gcc{2.95.3, 3.0, 3.1, 3.2, 3.3} \footnotemark[9]            
     & IRIX 6.5 / Solaris 2.6+ / Linux 2.x / 
       \mswin\ 95/98/2000/XP/NT4\footnotemark[10]\\\hline
     \sunprocc{5.3} \footnotemark[11]                 
@@ -1351,9 +1351,9 @@ In contrast to Solaris, using the \gnu\ binutils does not work, since
 in the GCC
 faq\footnote{\path'http://gcc.gnu.org/cgi-bin/fom.cgi?file=41'} is to
 compile with the (experimental) option \texttt{-fsquangle}, that
-enables compression of symbol names. This option is experimental and
-likely to disappear in GCC3, but there the problem will hopefully be
-fixed by a new (standard) ABI.
+enables compression of symbol names. This option was experimental and
+has disappeared in GCC 3.0, where the ABI has been improved.  So this
+is only interesting for GCC 2.95.3.
 
 Citing from the above FAQ:
 
