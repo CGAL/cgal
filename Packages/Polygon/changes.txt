@@ -1,4 +1,10 @@
 //-----------------------------------------------------------------------//
+// 2.12
+
+Rewrote example Custompoint1.C. It does not use 'using namespace CGAL'
+anymore. This led to problems with max() being defined twice.
+
+//-----------------------------------------------------------------------//
 // 2.11
 
 In Polygon_2_algorithms.C:
