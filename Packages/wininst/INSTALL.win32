@@ -1,4 +1,4 @@
-$(CGALROOT)/INSTALLwin32.hlp
+$(CGALROOT)/INSTALL.win32
 This file describes how to install CGAL on MS Windows for VC++ 6 and 7
 For installation on Unix and on Cygwin, please see INSTALL.
 
@@ -20,6 +20,11 @@ To install CGAL, you should:
 
 To uninstall CGAL you should go to Start->Control Panel->Add/Remove Programms, 
 Uninstall CGAL-2.4 or you go to Start->Programms->CGAL-2.4->Uninstall.
+
+NOTE
+We no longer provide a batch file for Windows platform to create the CGAL library,
+but only the install_cgal script that runs under cygwin, and the Project files for VC6/7
+If you are a Borland compiler user, please install CGAL using cygwin.
 
 GMP
 Some examples and demos need gmp. In order to use it you have to copy gmp.dll from
