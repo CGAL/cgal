@@ -162,7 +162,8 @@ OutputIterator operator()(ForwardIterator first, ForwardIterator last,
   std::vector< Point_d > V(first,last);
   typename LA::Matrix M(d+1,V.size());
   typename LA::Vector b(d+1), x;
-  for (register int i=0; i<d; ++i) {
+  int i;
+  for (register i=0; i<d; ++i) {
     for (register int j=0; j<V.size(); ++j) 
       M(i,j)=V[j].cartesian(i);
     b[i] = p.cartesian(i);
@@ -172,7 +173,7 @@ OutputIterator operator()(ForwardIterator first, ForwardIterator last,
   b[d]=1;
   FT D;
   LA::linear_solver(M,b,x,D);
-  for (int i=0; i < x.dimension(); ++result, ++i) {
+  for (i=0; i < x.dimension(); ++result, ++i) {
     *result= x[i];
   }
   return result;

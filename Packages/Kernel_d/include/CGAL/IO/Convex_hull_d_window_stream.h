@@ -48,7 +48,7 @@ void d2_show(const Convex_hull_d<R>& C, CGAL::Window_stream& W);
 
 template <class R>
 void d3_surface_map(const Convex_hull_d<R>& C, 
-                    CGAL_LEDA_SCOPE::GRAPH< typename Convex_hull_d<R>::Point_d ,int>& G);
+          CGAL_LEDA_SCOPE::GRAPH< typename Convex_hull_d<R>::Point_d ,int>& G);
 /*{\Mfunc constructs the representation of the surface of |\Mvar| as a 
 bidirected LEDA graph |G|.\\ \precond |dim == 3|.}*/
 
@@ -83,7 +83,7 @@ void d2_show(const Convex_hull_d<R>& C, CGAL::Window_stream& W)
 
 template <class R> 
 void d3_surface_map(const Convex_hull_d<R>& C, 
-                    CGAL_LEDA_SCOPE::GRAPH< typename Convex_hull_d<R>::Point_d ,int>& G)
+           CGAL_LEDA_SCOPE::GRAPH< typename Convex_hull_d<R>::Point_d ,int>& G)
 { 
   typedef typename Convex_hull_d<R>::Vertex_const_handle  Vertex_handle;
   typedef typename Convex_hull_d<R>::Simplex_const_handle Simplex_handle;
