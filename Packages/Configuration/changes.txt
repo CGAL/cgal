@@ -1,3 +1,7 @@
+22 Feb 2004 Radu Ursu
+- added configuration test for SunPro called:
+    CGAL_CFG_MISSING_TEMPLATE_VECTOR_CONSTRUCTORS_BUG.C
+
 17 Feb 2004 Sylvain Pion
 - Remove CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION
 
