@@ -76,7 +76,7 @@ public:
       _p_minus_inf = _p_inf;
       _p_minus_inf--;
    
-      Self_iterator child = _p_minus_inf;
+      Self_iterator child;
       // make p_minus_inf a child of p_inf
       set_rightmost_child(_p_minus_inf, _p_inf); 
       child = begin();               // now points to p_0

@@ -179,7 +179,6 @@ OutputIterator partition_approx_convex_2(InputIterator first,
 
    Edge_circulator e_circ, first_e;
    Tri_vertex_iterator v_it;
-   int i;
 
 
    for (v_it = triangles.vertices_begin(); v_it != triangles.vertices_end(); 
@@ -194,7 +193,6 @@ OutputIterator partition_approx_convex_2(InputIterator first,
           first_e--;
        }
        e_circ = first_e;
-       i = 0;
        do 
        {
           if ((*e_circ).first->is_constrained((*e_circ).second))
@@ -242,10 +240,9 @@ OutputIterator partition_approx_convex_2(InputIterator first,
 #endif
              }
 #ifdef CGAL_PARTITION_APPROX_CONVEX_DEBUG
-             std::cout << "edge " << i << " is infinite " << std::endl;
+             std::cout << "edge is infinite " << std::endl;
 #endif
           }
-          i++;
        } while (++e_circ != first_e);
    }
 

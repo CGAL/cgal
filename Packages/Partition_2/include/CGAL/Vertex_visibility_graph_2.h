@@ -126,7 +126,10 @@ public:
       // push on p_0, the rightmost point
       stack.push(tree.rightmost_point_ref());   
    
-      Tree_iterator p, p_r, q, z;
+      Tree_iterator p, p_r, q;
+#ifdef CGAL_VISIBILITY_GRAPH_DEBUG
+      Tree_iterator z;
+#endif
       while (!stack.empty())
       {
          p = stack.top();
@@ -158,8 +161,8 @@ public:
 #endif
             handle(p,q,polygon,vertex_map);
          }
-         z = tree.left_sibling(q);
 #ifdef CGAL_VISIBILITY_GRAPH_DEBUG
+         z = tree.left_sibling(q);
          if (z != tree.end())
             std::cout << "z = " << *z << std::endl;
          else
