@@ -13,7 +13,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = -I./include \
+CXXFLAGS = -I./include -I../../include \
            $(CGAL_CXXFLAGS) \
            -Iinclude \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
@@ -35,10 +35,10 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                demo$(EXE_EXT) 
+                segment_Voronoi_diagram_2$(EXE_EXT) 
 
-demo.moc:  demo.C
-	$(QT_MOC) -o demo.moc  demo.C
+segment_Voronoi_diagram_2.moc:  segment_Voronoi_diagram_2.C
+	$(QT_MOC) -o segment_Voronoi_diagram_2.moc  segment_Voronoi_diagram_2.C
 
 qt_file_toolbar.moc:  qt_file_toolbar.h
 	$(QT_MOC) -o qt_file_toolbar.moc qt_file_toolbar.h
@@ -46,13 +46,15 @@ qt_file_toolbar.moc:  qt_file_toolbar.h
 qt_layers_toolbar.moc:  qt_layers_toolbar.h
 	$(QT_MOC) -o qt_layers_toolbar.moc qt_layers_toolbar.h
 
-demo$(OBJ_EXT): demo.moc qt_file_toolbar.moc qt_layers_toolbar.moc
+segment_Voronoi_diagram_2$(OBJ_EXT): segment_Voronoi_diagram_2.moc \
+	qt_file_toolbar.moc qt_layers_toolbar.moc
 
-demo$(EXE_EXT): demo$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo demo$(OBJ_EXT) $(LDFLAGS)
+segment_Voronoi_diagram_2$(EXE_EXT): segment_Voronoi_diagram_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)segment_Voronoi_diagram_2 \
+	segment_Voronoi_diagram_2$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                   demo.clean 
+                   segment_Voronoi_diagram_2.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules

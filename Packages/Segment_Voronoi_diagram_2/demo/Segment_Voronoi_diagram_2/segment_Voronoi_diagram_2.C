@@ -345,7 +345,7 @@ private slots:
 
 #include "qt_file_toolbar.moc"
 #include "qt_layers_toolbar.moc"
-#include "demo.moc"
+#include "segment_Voronoi_diagram_2.moc"
 
 int
 main(int argc, char* argv[])
@@ -362,7 +362,7 @@ main(int argc, char* argv[])
 }
 
 
-// moc_source_file: demo.C
+// moc_source_file: segment_Voronoi_diagram_2.C
 
 #else
 
