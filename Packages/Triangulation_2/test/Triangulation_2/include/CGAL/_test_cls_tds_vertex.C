@@ -56,6 +56,8 @@ _test_cls_tds_vertex( const Vertex &, const Gt & )
   
   // Test face()
   assert( v3.face() == &f3 );
+  // to avoid "unused variable warning
+  v3.set_face(&f3);
       
   // Test set_face()
   v2.set_face(&f3);
@@ -84,10 +86,12 @@ _test_cls_tds_vertex( const Vertex &, const Gt & )
   // v1 is chosen because its face() is NULL, 
   // the constructors calls function that crashes with those
   // incomplete data
-     Face_circulator   fc = v1.incident_faces(); assert( &fc == &fc);
-     Edge_circulator   ec = v1.incident_edges(); assert( &ec == &ec);
-     Vertex_circulator vc = v1.incident_vertices(); assert( &vc == &vc);
-
+     Face_circulator   fc = v1.incident_faces(); 
+     if (fc != 0) fc++;
+     Edge_circulator   ec = v1.incident_edges(); 
+     if (ec != 0) ec++;
+     Vertex_circulator vc = v1.incident_vertices(); 
+     if (vc != 0) vc++;
   // Test degree()
   assert( v1.degree() == 0 );
 }
