@@ -152,9 +152,9 @@ template <class PM_,
           class Map_overlay_change_notification_>
 class Map_overlay_sweep : public Map_overlay_base<PM_, Map_overlay_change_notification_>,
                           public Sweep_curves_base_2<
-std::list<typename Map_overlay_sweep_utils::X_curve_plus_id_handle<PM_> >::iterator,
-   typename PM_::Traits, Point_plus_handle<PM_>, 
-   Map_overlay_sweep_utils::X_curve_plus_id_handle<PM_> >
+typename std::list<Map_overlay_sweep_utils::X_curve_plus_id_handle<PM_> >::iterator,
+  typename PM_::Traits, Point_plus_handle<PM_>, 
+  Map_overlay_sweep_utils::X_curve_plus_id_handle<PM_> >
 {
 public:
   typedef PM_                                    PM;
@@ -217,7 +217,7 @@ public:
   typedef typename std::list<Curve_node>::iterator  list_Curve_node_iterator;
   
   typedef std::list<X_curve_plus>                   X_curve_plus_list;
-  typedef X_curve_plus_list::iterator               X_curve_plus_list_iterator;
+  typedef typename X_curve_plus_list::iterator               X_curve_plus_list_iterator;
   
   //typedef Curve_node::Points_iterator Points_iterator; typedef
   //Curve_node::Points_const_iterator Points_const_iterator; typedef
