@@ -1,6 +1,12 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.61 (29 August 00)
+added typedef fur dummy template parameter Vb and Fb in
+	Triangulation_default_data_structure_2<Gt,Vb,Fb> and
+	Triangulation_data_structure_using_list_2<Vb,Fb>
+make public the typedef for Point in Triangulation_hierarchy_vertex_base_2
+
 Ver 4.60 (22 August 00)
 fixes copy_tds() member functions in classes
 	Triangulation_default_data_structure_2<Gt,Vb,Fb> and
