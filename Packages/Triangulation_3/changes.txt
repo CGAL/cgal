@@ -1,6 +1,7 @@
 Version 1.71 (6 July 01)
-- a few corrections in the user manual
-- VC++ needs some macros for Filtered_exact<>.
+- minor corrections in the user manual suggested by Susan and Andreas
+in Dagtuhl
+- VC++ needs some macros for Filtered_exact<>, added in examples and demos
 - std::ostream & operator<< of T3 and copy_tds of TDS_3
 modified to respect the order in which vertices were created
 
