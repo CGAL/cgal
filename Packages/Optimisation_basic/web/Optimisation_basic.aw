@@ -1,9 +1,9 @@
 @! ============================================================================
 @! The CGAL Library
-@! Implementation: basic stuff for optimisation algorithms
+@! Implementation: Basic Stuff for Optimisation Algorithms
 @! ----------------------------------------------------------------------------
-@! file  : web/Optimisation/optimisation_basic.aw
-@! author: Sven Schönherr <sven@inf.fu-berlin.de>
+@! file  : web/Optimisation_basic.aw
+@! author: Sven Schönherr <sven@inf.ethz.ch>
 @! ----------------------------------------------------------------------------
 @! $CGAL_Chapter: Geometric Optimisation $
 @! $CGAL_Package: Optimisation_basic WIP $
@@ -15,49 +15,97 @@
 @usepackage[latin1]{inputenc}
 @usepackage{a4wide2}
 @usepackage{amssymb}
-@usepackage{cc_manual}
+@usepackage{cc_manual,cc_manual_index}
 @article
 
-\setlength{\parskip}{1ex}
-\renewcommand{\ccFont}{\tt}
-\renewcommand{\ccEndFont}{}
+\input{cprog.sty}
+\setlength{\skip\footins}{3ex}
+
+\pagestyle{headings}
+
+@! LaTeX macros
+\newcommand{\remark}[2]{[\textbf{#1:} \emph{#2}]}
+
+\newcommand{\linebreakByHand}{\ccTexHtml{\linebreak[4]}{}}
+\newcommand{  \newlineByHand}{\ccTexHtml{\\}{}}
+\newcommand{\SaveSpaceByHand}{}  %%%%% [2]{\ccTexHtml{#1}{#2}}
+
+\renewcommand{\sectionmark}[1]{\markboth{\uppercase{#1}}{}}
+
 
 @! ============================================================================
 @! Title
 @! ============================================================================
 
+\thispagestyle{empty}
+
 \RCSdef{\rcsRevision}{$Revision$}
 \RCSdefDate{\rcsDate}{$Date$}
 \newcommand{\cgalWIP}{{\footnotesize{} (\rcsRevision{} , \rcsDate) }}
 
-@t vskip 5 mm
-@t title titlefont centre "Basic Stuff for Optimisation Algorithms*"
-@t vskip 1 mm
+@t vskip 20 mm
+@t title titlefont centre "Basic Stuff for"
+@t vskip 0 mm
+@t title titlefont centre "Optimisation Algorithms*"
+@t vskip 10 mm
 @t title smalltitlefont centre "Sven Schönherr"
-\smallskip
+\begin{center}
+  \textbf{ETH Z{\"u}rich}
+\end{center}
+@t vskip 10 mm
+{\small
 \begin{center}
   \begin{tabular}{l}
-    \verb+$CGAL_Chapter: Geometric Optimisation $+ \\
     \verb+$CGAL_Package: Optimisation_basic WIP+\cgalWIP\verb+$+ \\
+    \verb+$CGAL_Chapter: Geometric Optimisation $+ \\
   \end{tabular}
 \end{center}
-@t vskip 1 mm
+}
+@t vskip 30 mm
 
 \renewcommand{\thefootnote}{\fnsymbol{footnote}}
 \footnotetext[1]{This work was supported by the ESPRIT IV LTR Projects
-  No.~21957 (CGAL) and No.~28155 (GALIA).}
+  No.~21957 (CGAL) and No.~28155 (GALIA), and by a grant from the Swiss
+  Federal Office for Education and Sciences for the latter.}
+\renewcommand{\thefootnote}{\arabic{footnote}}
+
+@! --------
+@! Abstract
+@! --------
+
+\begin{abstract}
+  We provide macros for checking assertions, pre- and postconditions and
+  warnings, for encapsulating code for debugging, and a failure function
+  for the checking functions of the optimisation algorithms.
+\end{abstract}
+
+@! --------
+@! Contents
+@! --------
+
+\clearpage
+
+\newlength{\defaultparskip}
+\setlength{\defaultparskip}{\parskip}
+\setlength{\parskip}{1ex}
+
+\tableofcontents
+
+\setlength{\parskip}{\defaultparskip}
+
 
 @! ============================================================================
-@! Introduction and Contents
+@! Introduction
 @! ============================================================================
 
-\section*{Introduction}
+\clearpage
+\markright{\uppercase{Introduction}}
+\section{Introduction}
 
 We provide macros for checking assertions, pre- and postconditions and
 warnings, for encapsulating code for debugging, and a failure function for the
 checking functions of the optimisation algorithms.
 
-\tableofcontents
 
 @! ============================================================================
 @! Macros
@@ -66,9 +114,9 @@ checking functions of the optimisation algorithms.
 \clearpage
 \section{Macros}
 
-@! --------
+@! ----------------------------------------------------------------------------
 @! Checking
-@! --------
+@! ----------------------------------------------------------------------------
 
 \subsection{Checking}
 
@@ -88,8 +136,8 @@ checks, exactness checks, expensive checks, and expensive exactness checks.
 
 @end
 
-@! Normal Checks
-\subsubsection*{Normal Checks}
+@! ----------------------------------------------------------------------------
+\subsubsection{Normal Checks}
 
 @macro<normal checks>(2) many = @begin
     #if (    defined( CGAL_OPTIMISATION_NO_@1) \
@@ -106,8 +154,8 @@ checks, exactness checks, expensive checks, and expensive exactness checks.
     #endif // optimisation @2s
 @end
 
-@! Exactness Checks
-\subsubsection*{Exactness Checks}
+@! ----------------------------------------------------------------------------
+\subsubsection{Exactness Checks}
 
 @macro<exactness checks>(2) many = @begin
     #if (    ! (    defined( CGAL_OPTIMISATION_CHECK_EXACTNESS) \
@@ -126,8 +174,8 @@ checks, exactness checks, expensive checks, and expensive exactness checks.
     #endif // optimisation exactness @2s
 @end
 
-@! Expensive Checks
-\subsubsection*{Expensive Checks}
+@! ----------------------------------------------------------------------------
+\subsubsection{Expensive Checks}
 
 @macro<expensive checks>(2) many = @begin
     #if (    ! (    defined( CGAL_OPTIMISATION_CHECK_EXPENSIVE) \
@@ -146,8 +194,8 @@ checks, exactness checks, expensive checks, and expensive exactness checks.
     #endif // optimisation expensive @2s
 @end
 
-@! Expensive Exactness Checks
-\subsubsection*{Expensive Exactness Checks}
+@! ----------------------------------------------------------------------------
+\subsubsection{Expensive Exactness Checks}
 
 @macro<expensive exactness checks>(2) many = @begin
     #if (    ! (    defined( CGAL_OPTIMISATION_CHECK_EXACTNESS) \
@@ -170,9 +218,9 @@ checks, exactness checks, expensive checks, and expensive exactness checks.
     #endif // optimisation expensive exactness @2s
 @end
 
-@! ---------
+@! ----------------------------------------------------------------------------
 @! Debugging
-@! ---------
+@! ----------------------------------------------------------------------------
 
 \subsection{Debugging}
 
@@ -260,7 +308,7 @@ stream \ccc{verr}.
 \clearpage
 \section{Files}
 
-@i ../namespace.awi
+@i share/namespace.awi
 
 @! ----------------------------------------------------------------------------
 @! assertions.h
@@ -421,7 +469,7 @@ stream \ccc{verr}.
 
 \subsection*{File Header}
 
-@i ../file_header.awi
+@i share/file_header.awi
  
 And here come two specific file headers for the product files of this
 web file.
@@ -431,7 +479,7 @@ web file.
     @<file name>(@1)
     @<file description>(
         "Geometric Optimisation",
-        "Optimisation_basic","Optimisation/optimisation_basic",
+        "Optimisation_basic","Optimisation_basic",
         "$Revision$","$Date$",
         "Sven Schönherr",
         "Sven Schönherr <sven@@inf.ethz.ch>",
