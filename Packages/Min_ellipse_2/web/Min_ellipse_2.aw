@@ -1159,6 +1159,10 @@ The class interface looks as follows.
     // ====================
 
       public:
+        // Constructor
+        // -----------
+        @<Optimisation_ellipse_2 constructor>
+        
         // Set functions
         // -------------
         @<Optimisation_ellipse_2 set functions>
@@ -1197,6 +1201,8 @@ section, so we do not comment on it here.
     in the class interface.
 
     // creation
+    Optimisation_ellipse_2( );
+
     void  set( );
     void  set( const Point& p);
     void  set( const Point& p,  const Point& q);
@@ -1261,6 +1267,17 @@ in-ellipse test.
     RT     dr, ds, dt, du, dv, dw;              // the gradient vector
 @end
 
+@! ----------------------------------------------------------------------------
+\subsubsection{Constructor}
+
+Only a default constructor is needed.
+
+@macro <Optimisation_ellipse_2 constructor> = @begin
+    inline
+    Optimisation_ellipse_2( )
+    { }
+@end
+    
 @! ----------------------------------------------------------------------------
 \subsubsection{Set Functions}
 
