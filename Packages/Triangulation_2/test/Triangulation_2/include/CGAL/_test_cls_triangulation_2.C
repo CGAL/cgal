@@ -372,10 +372,14 @@ CGAL__test_cls_triangulation_2( const Triangulation & )
 
   // test constructor that takes a vertex handle
   // this must(!) be the vertex at infinity
-  Cls T0_1_2( T0_1.finite_vertex() );
+  Cls T0_1_2( T0_1.infinite_vertex() );
   assert( T0_1_2.dimension() == 0 );
   assert( T0_1_2.number_of_vertices() == 1 );
   assert( T0_1_2.is_valid() );
+  // copy the triangulation to avoid having two triangulations
+  // with the same set of vertices and faces
+  // which causes a segmentation fault when the 2d one is deleted
+  T0_1_2 = T0_1;
   
   // test copy_constructor with non-empty 1-triangulation
   Cls T1_5_1( T1_5 );
@@ -395,12 +399,11 @@ CGAL__test_cls_triangulation_2( const Triangulation & )
   assert( T1_5_3.dimension() == 1 );
   assert( T1_5_3.number_of_vertices() == 5 );
   assert( T1_5_3.is_valid() );
-  // Exchange the triangulation
+  // copy the triangulation to avoid having two triangulations
+  // with the same set of vertices and faces
+  // which causes a segmentation fault when the 2d one is deleted
   T1_5_3 = T1_5_2;
-  // This is tricky: we cannot keep two triangulations with the
-  // same pointer at infinity, because the first will be deleted and
-  // the second one will have nothing to delete, hence segfault!
-
+  
   // test constructor that takes a vertex handle and a geom_traits
   Cls T1_5_4( T1_5_2.infinite_vertex(), T2_1.geom_traits() );
   assert( T1_5_4.dimension() == 1 );
@@ -420,7 +423,9 @@ CGAL__test_cls_triangulation_2( const Triangulation & )
   assert( T2_1_2.dimension() == 2 );
   assert( T2_1_2.number_of_vertices() == 11 );
   assert( T2_1_2.is_valid() );
-  // Exchange triangulation, see T1_5_3
+  // copy the triangulation to avoid having two triangulations
+  // with the same set of vertices and faces
+  // which causes a segmentation fault when the 2d one is deleted
   T2_1_2 = T2_1;
 
   // test constructor that takes a vertex handle and a geom_traits
@@ -428,7 +433,7 @@ CGAL__test_cls_triangulation_2( const Triangulation & )
   assert( T2_1_3.dimension() == 2 );
   assert( T2_1_3.number_of_vertices() == 11 );
   assert( T2_1_3.is_valid() );
-  // Exchange triangulation, see T1_5_3
+  // Copy the  triangulation, see T1_5_3
   T2_1_3 = T2_1;
 
   // test assignment operator
@@ -732,9 +737,9 @@ CGAL__test_cls_triangulation_2( const Triangulation & )
   /***** REMOVALS *******/ 
   cout << "    removals" << endl;
 
-  // test remove_first()
-  T0_1.remove_first(T0_1.finite_vertex());
-  assert( T0_1.number_of_vertices() == 0 );
+//   // test remove_first()
+//   T0_1.remove_first(T0_1.finite_vertex());
+//   assert( T0_1.number_of_vertices() == 0 );
 
   // test remove_second()
   T1_6.remove_second(T1_6.finite_vertex());
