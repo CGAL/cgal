@@ -751,7 +751,8 @@ remove_second(Vertex* v)
 //   return;
   CGAL_triangulation_precondition(number_of_vertices()== 2 &&
  				  dimension() == 0);
-  return remove_dim_down(v);
+  remove_dim_down(v);
+  return;
 }
 
     
@@ -769,7 +770,8 @@ remove_first(Vertex* v)
 //   return;
   CGAL_triangulation_precondition(number_of_vertices()== 1 && 
  				  dimension() == -1);
-  return remove_dim_down(v);
+  remove_dim_down(v);
+  return; 
 }
 
 template <class Vb, class Fb>
