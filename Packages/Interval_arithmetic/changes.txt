@@ -1,3 +1,7 @@
+13 September 2004 Sylvain Pion
+- Filtered_kernel : use converters C2E/C2F from the final kernel objects, and not
+  its Kernel_base.
+
 7 September 2004 Sylvain Pion
 - Make some types public in Filtered_kernel (FK, EK, C2E, C2F).
 

@@ -62,8 +62,12 @@ public:
     // Hardcoded for now.
     typedef Simple_cartesian<Quotient<MP_Float> >    EK;
     typedef Simple_cartesian<Interval_nt_advanced>   FK;
-    typedef Cartesian_converter<Kernel_base, EK>     C2E;
-    typedef Cartesian_converter<Kernel_base, FK,
+    typedef Cartesian_converter<Kernel, EK,
+                                // we need to specify the default arg otherwise
+                                // Kernel would be instantiated.
+                                NT_converter<typename Kernel_base::RT,
+                                             typename EK::RT> >     C2E;
+    typedef Cartesian_converter<Kernel, FK,
                                 To_interval<typename Kernel_base::RT> > C2F;
 
     template < typename Kernel2 >
