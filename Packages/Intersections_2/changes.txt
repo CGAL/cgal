@@ -1,3 +1,7 @@
+2.11.4 (29 October 2002)
+- Rename leftturn and co to left_turn and co.
+- Make it work with GMP++.
+
 2.11.2 (28 November 2001)
 Fixed typo in ray-ray intersection
 
