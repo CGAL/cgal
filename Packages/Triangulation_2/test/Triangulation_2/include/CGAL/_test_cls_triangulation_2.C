@@ -597,12 +597,19 @@ _test_cls_triangulation_2( const Triangulation & )
   assert(TT.dimension()==2);
   assert(TT.is_valid());
   assert(TT.number_of_vertices()==4);
-  f = TT.locate(Point(0,0));
+  f = TT.locate(Point(0,0),lt,li);
+  assert(lt == Cls::VERTEX);
+  Face_circulator fcc = TT.incident_faces(f->vertex(li),f);
+  while( TT.is_infinite(fcc)) ++fcc;
   fc = TT.line_walk(Point(0,0),Point(1,1));
-  fc2 = TT.line_walk(Point(0,0),Point(1,1),f);
+  fc2 = TT.line_walk(Point(0,0),Point(1,1),fcc);
   assert(fc==fc2);
+  //fc.print();
   n=0;
-  do {fc2++ ; n = n+1;} while (fc2 != fc);
+  do { 
+    //fc2.print(); 
+    fc2++ ; 
+    n = n+1;} while (fc2 != fc);
   assert(n==3);
 
   /*****************************/

@@ -66,6 +66,8 @@ _test_line_face_circulator( const Triangulation & )
  Point t7(-1,1,1);
  Point t8(-1,-1,1);
 
+ Point zz(1,1,2);
+
 
  std::vector<Point> p;
  p.push_back(p0); p.push_back(p1); p.push_back(p2); p.push_back(p3);
@@ -100,25 +102,24 @@ _test_line_face_circulator( const Triangulation & )
  }
  tr.is_valid();
 
+ Face_handle f1,f2;
+ assert(tr.is_face(v[0],v[1],v[2],f1));
+ assert(tr.is_face(v[1],v[2],v[3],f2));
+
  //test line face circulator from vertex
  Line_face_circulator lfc;
- lfc = Line_face_circulator(v[0],&tr,t0);  assert(lfc != 0);
+ lfc = Line_face_circulator(v[0],&tr,t0);  assert(f1 == lfc);
  lfc = Line_face_circulator(v[0],&tr,m4);  assert(lfc == 0);
  lfc = Line_face_circulator(v[0],&tr,t7);  assert(lfc == 0);
  lfc = Line_face_circulator(v[0],&tr,q1);  assert(lfc == 0);
  lfc = Line_face_circulator(v[0],&tr,t8);  assert(lfc != 0);
  lfc = Line_face_circulator(v[0],&tr,q2);  assert(lfc != 0);
  lfc = Line_face_circulator(v[0],&tr,t1);  assert(lfc == 0);
- lfc = Line_face_circulator(v[0],&tr,m1);  assert(lfc != 0);
+ lfc = Line_face_circulator(v[0],&tr,m1);  assert(f1 == lfc);
 
- lfc = Line_face_circulator(v[1],&tr,p2); assert(lfc != 0);
- assert( lfc->has_vertex(v[0]) && 
-	 lfc->has_vertex(v[1]) &&
-	 lfc->has_vertex(v[2]));
- lfc = Line_face_circulator(v[0],&tr,p1); assert(lfc != 0);
- assert( lfc->has_vertex(v[0]) && 
-	 lfc->has_vertex(v[1]) &&
-	 lfc->has_vertex(v[2]));
+ lfc = Line_face_circulator(v[1],&tr,p2); assert(f1 == lfc);
+ lfc = Line_face_circulator(v[0],&tr,p1); assert(f1 == lfc);
+
 
  //Locate vertices, middle points and edges tested the
  //line_face_circulator creator from a vertex_handle and a point
@@ -160,7 +161,6 @@ _test_line_face_circulator( const Triangulation & )
  lfc = tr.line_walk(p0,q2); assert(lfc != 0);
  lfc = tr.line_walk(p0,t1); assert(lfc == 0);
  lfc = tr.line_walk(p0,m1); assert(lfc != 0);
- return;
 
  lfc = tr.line_walk(p1,p2); assert(lfc != 0);
  assert( lfc->has_vertex(v[0]) && 
@@ -171,22 +171,52 @@ _test_line_face_circulator( const Triangulation & )
 	 lfc->has_vertex(v[1]) &&
 	 lfc->has_vertex(v[2]));
 
+ lfc = tr.line_walk(t0,p0); assert(lfc != 0);
+ lfc = tr.line_walk(m4,p0); assert(lfc != 0);
+ lfc = tr.line_walk(t5,p0); assert(lfc != 0);
+ lfc = tr.line_walk(q1,p0); assert(lfc != 0);
+ lfc = tr.line_walk(t8,p0); assert(lfc != 0);
+ lfc = tr.line_walk(q2,p0); assert(lfc == 0);
+ lfc = tr.line_walk(t1,p0); assert(lfc == 0);
+ lfc = tr.line_walk(m1,p0); assert(lfc == 0);
+
+ // test creator from two points with a hint
+ lfc = tr.line_walk(p0,t0,f1); assert(f1 == lfc);
+ lfc = tr.line_walk(p0,m4,f1); assert(lfc == 0);
+ lfc = tr.line_walk(p0,t5,f1); assert(f1 == lfc);
+ lfc = tr.line_walk(p0,q1,f1); assert(lfc == 0);
+ lfc = tr.line_walk(p0,t8,f1); assert(f1 == lfc);
+ lfc = tr.line_walk(p0,q2,f1); assert(f1 == lfc);
+ lfc = tr.line_walk(p0,t1,f1); assert(lfc == 0);
+ lfc = tr.line_walk(p0,m1,f1); assert(f1 == lfc);
+ lfc = tr.line_walk(t0,p0,f1); assert(f1 == lfc);
+ lfc = tr.line_walk(t0,p0,f2); assert(f2 == lfc);
+ lfc = tr.line_walk(m4,p0,f1); assert(f1 == lfc);
+ lfc = tr.line_walk(m3,p0,f2); assert(f2 == lfc);
+ lfc = tr.line_walk(m1,p0,f1); assert(lfc == 0);
+ lfc = tr.line_walk(p1,p2,f2); assert(f1 == lfc);
+ lfc = tr.line_walk(p1,p2,f1); assert(f1 == lfc);
+ lfc = tr.line_walk(t0,p2,f1); assert(f1 == lfc);
+ lfc = tr.line_walk(t0,p1,f1); assert(f2 == lfc);
+ lfc = tr.line_walk(zz,p1,f1); assert(f1 == lfc);
+ lfc = tr.line_walk(zz,m1,f1); assert(f1 == lfc);
+ lfc = tr.line_walk(zz,m3,f1); assert(f1 == lfc);
+
  // a few more tests for difficult cases (collinear edges on convex_hull)
  v.push_back(tr.insert(m1));
  v.push_back(tr.insert(m2));
  v.push_back(tr.insert(m3));
  v.push_back(tr.insert(m4));
- lfc = tr.line_walk(m1,p1); assert(lfc != 0);
- assert(lfc->has_vertex(v[0]));
+ assert(tr.is_face(v[0],v[4],v[7],f1));
+ assert(tr.is_face(v[3],v[6],v[5],f2));
+
+ lfc = tr.line_walk(m1,p1); assert(f1 == lfc);
  lfc = tr.line_walk(p1,m1); assert(lfc == 0);
 
-
- //test line_walk  from a given face
- Face_handle f1;
- assert(tr.is_face(v[0],v[4],v[7],f1));
- lfc = tr.line_walk(p0, p3, f1); assert( f1 == lfc);
- lfc = tr.line_walk(p0, p1, f1); assert( f1 == lfc);
- lfc = tr.line_walk(p0, p2, f1); assert( lfc == 0);
- lfc = tr.line_walk(p0, t8, f1); assert( f1 == lfc);
- lfc = tr.line_walk(p0, t1, f1); assert( f1 == lfc);
+ lfc = tr.line_walk(p0, p3, f1); assert(f1 == lfc);
+ lfc = tr.line_walk(p0, p1, f1); assert(f1 == lfc);
+ lfc = tr.line_walk(p0, p2, f1); assert(lfc == 0);
+ lfc = tr.line_walk(p0, t8, f1); assert(lfc != 0);
+ lfc = tr.line_walk(p0, t1, f1); assert(lfc == 0);
+ return;
 }
