@@ -1,5 +1,8 @@
 Changes done to the `Min_sphere_d_new' package
 
+Version 0.12.6 on 23-Sep-2003 [mh]
+- New file headers.
+
 Version 0.12.5 on 2-Sep-2003 [mh]
 - Fix CGAL_NTS.
 

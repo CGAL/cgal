@@ -1,5 +1,8 @@
 Changes done to the `Min_circle_2' package
 
+Version 3.24 on 23-Sep-2003
+- New file headers.
+
 Version 3.23  on 16-Sep-2003
 - Undo 17-Jun change, but protect the indexing commands by \lcTex.
 

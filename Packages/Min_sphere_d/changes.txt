@@ -127,3 +127,7 @@ Changes from 2.33
 
 Changes from 2.34
    - Undo last change, but protect the indexing commands by \lcTex.
+
+Changes from 2.35
+   - New file headers.
+
