@@ -22,7 +22,7 @@
 #pragma warning(once:4503)
 
 #ifdef _MSC_VER >= 1300
-#include <CGAL/config/msvc7/iterators_specializations.h>
+#include <CGAL/config/msvc7/iterator_specializations.h>
 #endif
 
 #include <cmath>
