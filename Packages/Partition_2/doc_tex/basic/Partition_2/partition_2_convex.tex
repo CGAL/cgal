@@ -50,10 +50,13 @@ given a monotone partition of a polygon, produces a convex partition in
 $O(n \log n)$ time and $O(n)$ space, is implemented
 by the function \ccc{greene_approx_convex_partition_2}%
 \ccIndexGlobalFunction{greene_approx_convex_partition_2}.  The function
-\ccc{y_monotone_partition} described in Section~\ref{partition_2_monotone}
+\ccc{y_monotone_partition} described in Section~\ref{sec:partition_2_monotone}
 is used to produce the monotone
 partition.  This algorithm provides the same worst-case approximation guarantee 
 as the algorithm of Hertel and Mehlhorn implemented with
 \ccc{approx_convex_partition_2} but can sometimes produce better
 results ({\em i.e.}, convex partitions with fewer pieces).
 \ccIndexSubitemEnd{polygon partitioning}{convex}
+
+Examples of the uses of all of these functions are provided with the
+corresponding reference pages.
