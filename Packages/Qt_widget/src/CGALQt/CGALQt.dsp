@@ -64,7 +64,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "Debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ /c
-# ADD CPP /nologo /W3 /GR /GX /I "$(CGALROOT)\stlport" /I "$(CGALROOT)\auxilary\wingmp\gmp-4.0.1" /I "$(CGALROOT)\include\cgal\config\msvc6" /I "$(CGALROOT)\include" /I "$(QTDIR)/include" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "CGAL_USE_GMP" /D "CGAL_USE_QT" /D "QT_DLL" /D "QT_THREAD_SUPPORT" /YX /FD /O /I /GZ /TP /Zm900 /c
+# ADD CPP /nologo /W3 /GR /GX /I "$(CGALROOT)\stlport" /I "$(CGALROOT)\auxilary\wingmp\gmp-4.0.1" /I "$(CGALROOT)\include\cgal\config\msvc6" /I "$(CGALROOT)\include" /I "$(QTDIR)/include" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "CGAL_USE_GMP" /D "CGAL_USE_QT" /D "QT_DLL" /D "QT_THREAD_SUPPORT" /FD /O /I /GZ /TP /Zm900 /c
 # ADD BASE RSC /l 0x40c /d "_DEBUG"
 # ADD RSC /l 0x40c /d "_DEBUG"
 BSC32=bscmake.exe
@@ -105,6 +105,14 @@ SOURCE=..\..\include\CGAL\IO\Qt_widget.h
 
 !IF  "$(CFG)" == "cgallib2 - Win32 Release"
 
+# Begin Custom Build
+InputPath=..\..\include\CGAL\IO\Qt_widget.h
+
+"Qt_widget.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)/bin/moc.exe $(CGALROOT)/include/CGAL/IO/Qt_widget.h -o Qt_widget.moc
+
+# End Custom Build
+
 !ELSEIF  "$(CFG)" == "cgallib2 - Win32 Debug"
 
 # Begin Custom Build
@@ -124,6 +132,14 @@ SOURCE=..\..\include\CGAL\IO\Qt_widget_layer.h
 
 !IF  "$(CFG)" == "cgallib2 - Win32 Release"
 
+# Begin Custom Build
+InputPath=..\..\include\CGAL\IO\Qt_widget_layer.h
+
+"Qt_widget_layer.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)/bin/moc.exe $(CGALROOT)/include/CGAL/IO/Qt_widget_layer.h -o Qt_widget_layer.moc
+
+# End Custom Build
+
 !ELSEIF  "$(CFG)" == "cgallib2 - Win32 Debug"
 
 # Begin Custom Build
@@ -142,6 +158,14 @@ InputPath=..\..\include\CGAL\IO\Qt_widget_layer.h
 SOURCE=..\..\include\CGAL\IO\Qt_widget_standard_toolbar.h
 
 !IF  "$(CFG)" == "cgallib2 - Win32 Release"
+
+# Begin Custom Build
+InputPath=..\..\include\CGAL\IO\Qt_widget_standard_toolbar.h
+
+"Qt_widget_standard_toolbar.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)/bin/moc.exe $(CGALROOT)/include/CGAL/IO/Qt_widget_standard_toolbar.h -o Qt_widget_standard_toolbar.moc
+
+# End Custom Build
 
 !ELSEIF  "$(CFG)" == "cgallib2 - Win32 Debug"
 
