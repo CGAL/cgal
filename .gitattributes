@@ -1416,7 +1416,7 @@ Packages/Nef_3/doc_tex/Nef_3/fig/shalfloop10.gif svneol=native#unset
 Packages/Nef_3/doc_tex/Nef_3/fig/shalfloop10.pdf svneol=native#unset
 Packages/Nef_3/doc_tex/Nef_3/fig/shells.eps -text svneol=unset#unset
 Packages/Nef_3/doc_tex/Nef_3/fig/shells.gif -text svneol=unset#unset
-Packages/Nef_3/doc_tex/Nef_3/fig/shells.pdf -text
+Packages/Nef_3/doc_tex/Nef_3/fig/shells.pdf -text svneol=unset#unset
 Packages/Nef_3/doc_tex/Nef_3/fig/snc.eps -text
 Packages/Nef_3/doc_tex/Nef_3/fig/snc.gif -text svneol=unset#unset
 Packages/Nef_3/doc_tex/Nef_3/fig/snc.pdf -text svneol=unset#unset
