@@ -1,16 +1,5 @@
-#if !defined(CGAL_USE_QT)
+#if defined(CGAL_USE_QT)
 
-#include <iostream>
-
-int main(int, char*)
-{
-  std::cout << "Sorry, this demo needs QT...";
-  std::cout << std::endl;
-  
-  return 0;
-}
-
-#else
 
 ////////////////////////////////////////////////////////////////////////
 
