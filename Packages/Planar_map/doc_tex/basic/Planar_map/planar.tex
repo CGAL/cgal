@@ -158,7 +158,7 @@ Let us make our simple example a bit more interesting, and draw
 the planar map. First, we must add the following include
 directives:
 
-\ccInclude{CGAL/IO/Window_stream.h}
+\ccInclude{CGAL/IO/Window_stream.h}\\
 \ccInclude{CGAL/IO/Pm_Window_stream.h}
 
 Now, we can send the planar map to a window stream after constructing
@@ -172,8 +172,8 @@ one, as exemplified in the code fragment below:
 
 \section{Architecture}
 The \ccc{Planar_map_2<Dcel,Traits>} class is parameterized with two
-objects. The \ccc{Dcel} object represents the underlying topological
-data structure and maintains a {\em doubly-connected edge list}. The
+objects. The \ccc{Dcel} object maintains a {\em doubly-connected edge list}
+that represents the underlying topological data structure. The
 \ccc{Traits} object provides the geometric functionality, and is
 tailored to handle a specific family of curves. It encapsulates the
 number type used and the coordinate representation. This package
@@ -208,7 +208,7 @@ parameter to the constructor. See section
 ~\ref{PM_sec:point_location}) for further information.
 
 \subsubsection{Modification}
-Once a planar has been constructed, you can insert an $x$-monotone
+Once a planar map has been constructed, you can insert an $x$-monotone
 curve or a collection of $x$-monotone curves into the map, remove a
 curve already in the map, split a curve already in the map into two
 curves, and merge two curves already in the map, given that the
@@ -438,7 +438,7 @@ boundary specified above.
 \item Lines beginning with '\#' serve as comments and are ignored.
 \item The format does not differentiate between spaces and new lines, 
 except new lines which belong to commented lines. 
-And hence, writing the planar in one single line having no comments is
+And hence, writing the planar map in one single line having no comments is
 also considered legal. If you would like to keep the commented
 lines, they may write all the components between two consecutive
 commented lines in one single line.
@@ -519,7 +519,7 @@ The planar map class is parameterized with the concept class
 \ccStyle{PlanarMapTraits_2} that defines the abstract interface
 between planar maps and the primitives they use. It must define two
 types of objects, namely \ccStyle{X_monotone_curve_2} and
-\ccStyle{Point_2}, where the type of the endpoints of a
+\ccStyle{Point_2}, where the type of the endpoints of an
 \ccStyle{X_monotone_curve_2}-type curve is \ccStyle{Point_2}. In
 addition, the traits class must provide a set of operations on these
 two types.
@@ -563,9 +563,9 @@ that you can use. These classes are described at the end of Chapter
 \label{PM_sec:point_location}
 Some of the basic operations on planar maps are queries such as ``what
 is the location of a point in the map?'', or ``which curve is
-vertically above the point?''. These geometric queries are supplied as
-part of this Planar Map class, with several algorithms available for
-you to choose from.
+vertically above the point?''. The answer to these geometric queries can
+be obtained through the use of the Planar Map package, along with several
+algorithms available for you to choose from.
 
 The \ccClassTemplateName\ class has a point location function
 (namely, the \ccc{locate} function that determines which feature of the map 
@@ -601,6 +601,7 @@ More details are give in sections
 % the \cgal\/ supplied class \ccc{Pm_point_location_base<Planar_map>}.
 
 \paragraph{Trade-off Issues}
+
 The main trade-off among the three strategies implemented, is between
 time and storage. Using the naive or walk strategies takes more
 time but saves storage space.
@@ -618,10 +619,10 @@ For example, when using the planar map to represent polygons (e.g., when
 computing boolean operations on polygons) it might be preferable to use
 the walk strategy with the specialized insertion functions. 
 
-There are two modes of the {\it default\/} strategy which enables the
+There are two modes of the {\it default\/} strategy which enables
 you to choose whether preprocessing should be performed or not (read
 more in the section stated above).
-There is a trade-off between the those two modes. If
+There is a trade-off between those two modes. If
 preprocessing is not used, the building of the structure is faster. However,
 for some input sequences the structure might be unbalanced and therefore 
 queries and updates might take longer, especially, if many removal and split 
@@ -715,11 +716,10 @@ turned on, significantly reduces running time.
 The following program creates a planar map from five curves (see figure
 ~\ref{PM_sec:example_pic}). It uses the interface class
 (\ccStyle{Pm_segment_traits_2<Kernel>}), where the injected kernel is the
-CGAL Cartesian Kernel templated with the field of quot ions of longs as the
-number type.
-The first part of the code initializes five segments. The next part inserts them
-into the map and checks the validity of the map. In the last part, vertical ray
-shooting is performed from the point $p$.
+CGAL Cartesian Kernel templated with the field of quotions of longs as the
+number type. The first part of the code initializes five segments. The next
+part inserts them into the map and checks the validity of the map. In the
+last part, vertical ray shooting is performed from the point $p$.
 
 \ccIncludeExampleCode{Planar_map/example1.C}
 
