@@ -265,36 +265,44 @@ $i,j \in \{0,1,2,3\}$ in dimension~3, $i,j \in \{0,1,2\}$ in dimension
 the triangulation. If \ccc{p} is found, the associated vertex \ccc{v}
 is given.}
 \ccGlue
+\ccMethod{bool is_vertex(Vertex_handle v) const;}
+{Tests whether \ccc{v} is a vertex of \ccVar.}
+
 \ccMethod{bool is_edge(Vertex_handle u, Vertex_handle v, 
 			Cell_handle & c, int & i, int & j) const;}
-{Tests whether \ccc{(u,v)} is an edge of \ccVar\ by locating the points 
-in the triangulation. If the edge is found,
+{Tests whether \ccc{(u,v)} is an edge of \ccVar. If the edge is found,
 it gives a cell \ccc{c} having this edge and the indices \ccc{i}
-and \ccc{j} of the vertices \ccc{u} and \ccc{v}, in this order.  
-\ccPrecond{\ccc{u} and \ccc{v} are vertices of \ccVar.}\\
-\textit{not yet implemented}}
-\ccGlue
+and \ccc{j} of the vertices \ccc{u} and \ccc{v} in \ccc{c}, in this order.  
+\ccPrecond{\ccc{u} and \ccc{v} are vertices of \ccVar.}}
+
 \ccMethod{bool is_facet(Vertex_handle u, Vertex_handle v, Vertex_handle w, 
 			Cell_handle & c, int & i, int & j, int & k) const;}
-{Tests whether \ccc{(u,v,w)} is a facet of \ccVar\ by locating the points 
-in the triangulation. If the facet is found,
+{Tests whether \ccc{(u,v,w)} is a facet of \ccVar. If the facet is found,
 it computes a cell \ccc{c} having this facet and the indices \ccc{i},
-\ccc{j} and \ccc{k} of the vertices \ccc{u}, \ccc{v} and \ccc{w}, in
-this order.  
-\ccPrecond{\ccc{u}, \ccc{v} and \ccc{w} are vertices of \ccVar.}\\
-\textit{not yet implemented}}
+\ccc{j} and \ccc{k} of the vertices \ccc{u}, \ccc{v} and \ccc{w} in \ccc{c}, 
+in this order.  
+\ccPrecond{\ccc{u}, \ccc{v} and \ccc{w} are vertices of \ccVar.}}
+
+\ccMethod{bool is_cell(Cell_handle c) const;}
+{Tests whether \ccc{c} is a cell of \ccVar.}
 \ccGlue
 \ccMethod{bool is_cell(Vertex_handle u, Vertex_handle v, 
 			Vertex_handle w, Vertex_handle x,
 			Cell_handle & c, 
 			int & i, int & j, int & k, int & l) const;}
-{Tests whether \ccc{(u,v,w,x)} is a cell of \ccVar\ by locating the points 
-in the triangulation. If the cell \ccc{c} is found, the method
+{Tests whether \ccc{(u,v,w,x)} is a cell of \ccVar. 
+If the cell \ccc{c} is found, the method
 computes the indices \ccc{i}, \ccc{j}, \ccc{k} and \ccc{l} of the
 vertices \ccc{u}, \ccc{v}, \ccc{w} and \ccc{x} in \ccc{c}, in this
 order. 
-\ccPrecond{\ccc{u}, \ccc{v}, \ccc{w} and \ccc{x} are vertices of \ccVar.}\\
-\textit{not yet implemented}}
+\ccPrecond{\ccc{u}, \ccc{v}, \ccc{w} and \ccc{x} are vertices of \ccVar.}}
+\ccGlue
+\ccMethod{bool is_cell(Vertex_handle u, Vertex_handle v, 
+			Vertex_handle w, Vertex_handle x,
+			Cell_handle & c) const;}
+{Tests whether \ccc{(u,v,w,x)} is a cell of \ccVar\ and computes 
+this cell \ccc{c}.
+\ccPrecond{\ccc{u}, \ccc{v}, \ccc{w} and \ccc{x} are vertices of \ccVar.}}
 
 There is a method \ccc{has_vertex} in the cell class. The analogous
 methods for facets are defined here.
@@ -804,29 +812,47 @@ Cell_handle start, int f) const;}
 of a given vertex} 
 
 \ccMethod{void incident_cells(Vertex_handle v, 
-		set<Cell*, less<Cell*> > & cells,
+		set<Cell_handle, less<Cell_handle> > & cells,
 		   Cell_handle c = NULL ) const;}
 {Computes the set \ccc{cells} of all cells incident to \ccc{v}. If
 \ccVar.\ccc{dimension()} $<3$ then the returned set is empty. The optional
-argument \ccc{c} will be used for initializing the set.\\
-\textit{This method computes a set of \ccc{Cell*}, whereas it should
-logically compute a set of \ccc{Cell_handle}. This is due to
-compilation problems with sets of \ccc{Cell_handle}. However, the user
-can recover a \ccc{Cell_handle} for each element of the set by using
-the method \ccc{handle()} defined for the \ccc{Cell} type.}
+argument \ccc{c} will be used for initializing the set.
 \ccPrecond{\ccc{v} $\neq$ \ccc{NULL}, \ccc{v} is a vertex of \ccVar\ 
 and the optional argument \ccc{c} is a cell having \ccc{v} as vertex.}}
 
+%\ccMethod{void incident_cells(Vertex_handle v, 
+%		set<Cell*, less<Cell*> > & cells,
+%		   Cell_handle c = NULL ) const;}
+%{Computes the set \ccc{cells} of all cells incident to \ccc{v}. If
+%\ccVar.\ccc{dimension()} $<3$ then the returned set is empty. The optional
+%argument \ccc{c} will be used for initializing the set.\\
+%\textit{This method computes a set of \ccc{Cell*}, whereas it should
+%logically compute a set of \ccc{Cell_handle}. This is due to
+%compilation problems with sets of \ccc{Cell_handle}. However, the user
+%can recover a \ccc{Cell_handle} for each element of the set by using
+%the method \ccc{handle()} defined for the \ccc{Cell} type.}
+%\ccPrecond{\ccc{v} $\neq$ \ccc{NULL}, \ccc{v} is a vertex of \ccVar\ 
+%and the optional argument \ccc{c} is a cell having \ccc{v} as vertex.}}
+
 \ccMethod{void incident_vertices(Vertex_handle v, 
-		set<Vertex*, less<Vertex*> > & vertices,
+		set<Vertex_handle, less<Vertex_handle> > & vertices,
 		Cell_handle c = NULL ) const;}
 {Computes the set \ccc{vertices} of all vertices adjacent to \ccc{v}. If
 \ccVar.\ccc{number_of_vertices()} $<1$ then the set is empty. The optional
-argument \ccc{c} will be used for finding a first vertex of the set.\\
-\textit{An analogous remark as for the previous method holds on the
-types within the set.}
+argument \ccc{c} will be used for finding a first vertex of the set.
 \ccPrecond{\ccc{v} $\neq$ \ccc{NULL}, \ccc{v} is a vertex of \ccVar\ and
 the optional argument \ccc{c} is a cell having \ccc{v} as vertex.}}
+
+%\ccMethod{void incident_vertices(Vertex_handle v, 
+%		set<Vertex*, less<Vertex*> > & vertices,
+%		Cell_handle c = NULL ) const;}
+%{Computes the set \ccc{vertices} of all vertices adjacent to \ccc{v}. If
+%\ccVar.\ccc{number_of_vertices()} $<1$ then the set is empty. The optional
+%argument \ccc{c} will be used for finding a first vertex of the set.\\
+%\textit{An analogous remark as for the previous method holds on the
+%types within the set.}
+%\ccPrecond{\ccc{v} $\neq$ \ccc{NULL}, \ccc{v} is a vertex of \ccVar\ and
+%the optional argument \ccc{c} is a cell having \ccc{v} as vertex.}}
 
 \begin{ccAdvanced}
 \ccHeading{Checking}
