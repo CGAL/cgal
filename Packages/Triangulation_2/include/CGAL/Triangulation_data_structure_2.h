@@ -341,7 +341,19 @@ public:
   Fourtuple split_vertex(Vertex_handle v, Face_handle f1, Face_handle g1);
 
   inline Vertex_handle join_vertices(Face_handle f, int i) {
-    return join_vertices(f, i, f->vertex( this->ccw(i) ));
+    return join_vertices(f, i, f->vertex( ccw(i) ));
+  }
+
+  inline Vertex_handle join_vertices(Edge e) {
+    return join_vertices(e.first, e.second);
+  }
+
+  inline Vertex_handle join_vertices(Edge_iterator eit) {
+    return join_vertices(*eit);
+  }
+
+  inline Vertex_handle join_vertices(Edge_circulator ec) {
+    return join_vertices(*ec);
   }
   
   // CHECKING

@@ -3,6 +3,11 @@ constrained and regular triangulations with  tests and examples.
 
 28 August 2004 Menelaos Karavelas
 - added code for join_vertices and split_vertex methods
+- added versions of join_vertices that take an Edge, an Edge_iterator and
+  an Edge_circulator
+- modified the TDS_2 user and ref manual in order to reflect the addition of
+  the join and split operations (added corresponding figures and
+  xfig source also)
 
 25 August 2004 Andreas Fabri
 - changes in doc_tex for pdflatex
