@@ -3582,18 +3582,12 @@ qt_dir_has_changed()
 #    fi
     if [ -z "${NEED_EXTRA_QT_IDIR}" ]; then
 	NEED_EXTRA_QT_IDIR='x'
-    else
-	NEED_EXTRA_QT_IDIR='y'
     fi
     if [ -z "${NEED_EXTRA_QT_LDIR}" ]; then
 	NEED_EXTRA_QT_LDIR='x'
-    else
-	NEED_EXTRA_QT_LDIR='y'
     fi
     if [ -z "${NEED_EXTRA_QTMOC}" ]; then
 	NEED_EXTRA_QTMOC='x'
-    else
-	NEED_EXTRA_QTMOC='y'
     fi
 }
 
