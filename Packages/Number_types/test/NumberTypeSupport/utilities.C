@@ -1,5 +1,4 @@
 #include <CGAL/basic.h>
-#include <CGAL/_test_utilities.h>
 
 #include <CGAL/Quotient.h> 
 #include <CGAL/MP_Float.h> 
@@ -34,6 +33,8 @@
 #  include <CGAL/long_long.h>
 #endif
 
+#include <CGAL/_test_utilities.h>
+
 typedef CGAL::Quotient<CGAL::MP_Float>            QMPF;
 
 // Exclude Filtered_exact tests with VC++ (lack of partial specialization)
@@ -65,12 +66,13 @@ int main()
   TESTIT(int, "int")
   TESTIT(long int, "long int")
   TESTIT(short int, "short int")
-  TESTIT(unsigned int, "unsigned int")
-  TESTIT(unsigned long int, "unsigned long int")
-  TESTIT(unsigned short int, "unsigned short int")
+  // Unsigned types are not appropriate for many things...
+  // TESTIT(unsigned int, "unsigned int")
+  // TESTIT(unsigned long int, "unsigned long int")
+  // TESTIT(unsigned short int, "unsigned short int")
 #ifdef CGAL_USE_LONG_LONG
   TESTIT(long long, "long long")
-  TESTIT(unsigned long long, "unsigned long long")
+  // TESTIT(unsigned long long, "unsigned long long")
 #endif
   TESTIT(float, "float")
   TESTIT(double, "double")

@@ -23,7 +23,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Quotient.h>
-#include <CGAL/_test_to_interval.h>
 
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_bigfloat.h>
@@ -41,6 +40,8 @@
 #include <CGAL/CLN/cl_integer.h>
 #include <CGAL/CLN/cl_rational.h>
 #endif
+
+#include <CGAL/_test_to_interval.h>
 
 int
 main()

@@ -1,3 +1,6 @@
+4.75      (20 January 03)
+- Test-suite changes for newer GCC.
+
 4.74      (17 January 03)
 - Added specialization for to_double(Quotient<Gmpz>)
 
