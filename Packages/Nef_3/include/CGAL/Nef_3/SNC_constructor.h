@@ -1271,7 +1271,7 @@ link_shalfedges_to_facet_cycles() const
            twin(Dt.source(cet)) == D.source(ce) ) 
           break;
 
-    //    DEBUG 
+    /*    DEBUG 
 
     if( Dt.circle(cet) != D.circle(ce).opposite() ) {
       TRACEN("assertion failed!");
@@ -1279,9 +1279,6 @@ link_shalfedges_to_facet_cycles() const
       TRACEN("vertices " << point(vertex(e)) << 
 	   "    "      << point(vertex(et)));
  
-
-      TRACEN(D.circle(ce) << ": " << D.circle(ce).check(Base(*this),ce));
-      TRACEN(Dt.circle(cet) << ": " << Dt.circle(cet).check(Base(*this),cet));
 
       SHalfedge_around_svertex_circulator sc(D.first_out_edge(e));
       SHalfedge_around_svertex_circulator sct(Dt.first_out_edge(et));
@@ -1308,7 +1305,7 @@ link_shalfedges_to_facet_cycles() const
       cin >> c;
 #endif
     }
-      //     DEBUG  
+    */
 
     CGAL_nef3_assertion( Dt.circle(cet) == D.circle(ce).opposite() ); 
     CGAL_nef3_assertion( twin(Dt.source(cet)) == D.source(ce)); 

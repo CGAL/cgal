@@ -75,15 +75,15 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
   typedef SNC_const_decorator<SNC_structure> Base;
   typedef SNC_const_decorator<SNC_structure> SNC_const_decorator;
 
-  typedef typename SNC_structure::SHalfedge         SHalfedge;
-  typedef typename SNC_structure::Halfedge_handle   Halfedge_handle;
-  typedef typename SNC_structure::Halffacet_handle  Halffacet_handle;
-  typedef typename SNC_structure::SHalfedge_handle  SHalfedge_handle;
-  typedef typename SNC_structure::SHalfloop_handle  SHalfloop_handle;
+  typedef typename SNC_structure::SHalfedge               SHalfedge;
+  typedef typename SNC_structure::Halfedge_handle         Halfedge_handle;
+  typedef typename SNC_structure::Halffacet_const_handle  Halffacet_const_handle;
+  typedef typename SNC_structure::SHalfedge_handle        SHalfedge_handle;
+  typedef typename SNC_structure::SHalfloop_handle        SHalfloop_handle;
   typedef typename SNC_structure::SHalfedge_around_facet_circulator 
                                   SHalfedge_around_facet_circulator;
-  typedef typename SNC_structure::Halffacet_cycle_iterator
-                                  Halffacet_cycle_iterator;
+  typedef typename SNC_structure::Halffacet_cycle_const_iterator
+                                  Halffacet_cycle_const_iterator;
 
   typedef typename SNC_structure::Point_3        Point_3;
   typedef typename SNC_structure::Vector_3       Vector_3;
@@ -104,7 +104,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
     return (r1 == opposite(r2));
   }
 
-  bool does_contain_internally( const Halffacet_handle f, 
+  bool does_contain_internally( const Halffacet_const_handle f, 
 				const Point_3& p) const {
     if( !plane(f).has_on(p))
       return false;
@@ -182,7 +182,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
 #endif // LINE3_LINE3_INTERSECTION
 
   bool does_intersect_internally( const Ray_3& seg,
-				  const Halffacet_handle f,
+				  const Halffacet_const_handle f,
 				  Point_3& p) const { 
     TRACEN("-> Intersection face - ray");
     Plane_3 h( plane(f));
@@ -221,14 +221,14 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
   }
 
   bool does_intersect_internally( const Segment_3& seg,
-				  const Halffacet_handle f,
+				  const Halffacet_const_handle f,
 				  Point_3& p) const { 
     return (does_intersect_internally(Ray_3(seg.source(),seg.target()),f,p)
 	    && seg.has_on(p));
   }
 
   Bounded_side locate_point_in_halffacet( const Point_3& p, 
-					  const Halffacet_handle f) const {
+					  const Halffacet_const_handle f) const {
     typedef Project_halfedge_point
       < SHalfedge, const Point_3, SNC_const_decorator> Project;
     typedef Circulator_project
@@ -238,7 +238,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
 
     Plane_3 h(plane(f));
     CGAL_nef3_assertion(h.has_on(p));
-    Halffacet_cycle_iterator fc = f->facet_cycles_begin();
+    Halffacet_cycle_const_iterator fc = f->facet_cycles_begin();
     SHalfedge_handle se;
     Bounded_side outer_bound_pos;
     if ( assign(se,fc) ) {
@@ -255,7 +255,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
     /* The point p is not in the relative interior of the outer face cycle
        so it is not necesary to know the possition of p with respect to the 
        inner face cycles */
-    Halffacet_cycle_iterator fe = f->facet_cycles_end();
+    Halffacet_cycle_const_iterator fe = f->facet_cycles_end();
     ++fc;
     if( fc == fe )
       return outer_bound_pos;
