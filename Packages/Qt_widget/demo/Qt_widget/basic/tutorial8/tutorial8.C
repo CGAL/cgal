@@ -8,6 +8,7 @@
 #include <qapplication.h>
 #include <qmainwindow.h>
 #include <qtoolbar.h>
+#include <qtoolbutton.h>
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_layer.h>
