@@ -1,3 +1,6 @@
+Version 4.123 on 10 October 2001
+- Forgot class declaration.
+
 Version 4.122 on 5 October 2001
 - Added Coplanar_side_of_bounded_circle_3 to Static_filters.
 

@@ -32,6 +32,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class R > class Static_filters;
+template < class Pt, class Or2 > class SF_Coplanar_orientation_3;
 
 template <class Point>
 class SF_Orientation_2
