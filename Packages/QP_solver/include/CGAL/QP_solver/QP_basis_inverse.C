@@ -35,20 +35,21 @@ CGAL_BEGIN_NAMESPACE
 // set-up
 template < class ET_, class Is_LP_ >
 void  QPE_basis_inverse<ET_,Is_LP_>::
-set( int n, int m, unsigned int  max_basis_size)
+set( int n, int m, int nr_equalities)
 {
     CGAL_qpe_precondition( n > 0);
     CGAL_qpe_precondition( m > 0);
     b = s = 0;
-    l = std::min( n, m);
+    // l is the maximum size of the basis in phase I
+    l = std::min( n+nr_equalities+1, m);
     if ( ! M.empty()) M.clear();
-    set( max_basis_size, Is_LP());
+    set( Is_LP());
     
     if ( ! x_l.empty()) x_l.clear();
     if ( ! x_x.empty()) x_x.clear();
-    if ( max_basis_size > l) x_x.reserve( max_basis_size);
+   
     x_l.insert( x_l.end(), l, et0);
-    x_x.insert( x_x.end(), l, et0);
+    x_x.insert( x_x.end(), nr_equalities+1, et0); // has to grow later
 }
 
 // update functions
