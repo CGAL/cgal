@@ -27,8 +27,6 @@
 // ============================================================================
 
 #include <CGAL/basic.h>
-#include <CGAL/Gmpz.h>
-#include <CGAL/leda_integer.h>
 #include <CGAL/Simple_homogeneous.h>
 #include <CGAL/Extended_homogeneous_3.h>
 #include <CGAL/Polyhedron_3.h>
@@ -40,6 +38,14 @@
 #include <CGAL/Nef_3/SNC_items.h>
 #include <CGAL/Timer.h>
 #include <fstream>
+
+#ifdef CGAL_USE_LEDA
+#include <CGAL/leda_integer.h>
+typedef leda_integer NT;
+#else
+#include <CGAL/Gmpz.h>
+typedef CGAL::Gmpz NT;
+#endif
 
 template<typename Kernel>
 class test {
@@ -168,10 +174,10 @@ private:
     char* fullname = new char[strlen(datadir)+strlen(name)+1];
     strcpy(fullname, datadir);
     strcat(fullname, name);
-    ifstream in(fullname);
+    std::ifstream input(fullname);
+    CGAL_assertion_msg(input,"could not open file");
     Nef_polyhedron tmp;
-    CGAL_assertion_msg(in,"could not open file");
-    in >> tmp;
+    input >> tmp;
     delete[] fullname;
     return tmp;
   }
@@ -1145,8 +1151,6 @@ template<typename Kernel>
 const char* test<Kernel>::datadir="data/";
 
 int main() {
-  //  typedef CGAL::Gmpz                         NT;
-  typedef leda_integer                       NT;
   typedef CGAL::Simple_homogeneous<NT>       SH_kernel;
   typedef CGAL::Extended_homogeneous_3<NT>   EH_kernel;
   
