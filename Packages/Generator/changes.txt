@@ -1,5 +1,8 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
+2.43 (31 Oct 2001)
+   - removed obsolete Simplicity_sweep.h file and added Random_polygon_2_sweep.h
+
 2.42 (30 Oct 2001)
    - updated to use of new polygon simplicity sweep and thus also to the
      use of kernel traits.
