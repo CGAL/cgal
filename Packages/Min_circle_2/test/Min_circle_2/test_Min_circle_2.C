@@ -16,8 +16,8 @@
 // chapter       : Geometric Optimisation
 //
 // source        : web/Min_circle_2.aw
-// revision      : 5.31
-// revision_date : 2001/03/21
+// revision      : $Revision$
+// revision_date : $Date$
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>, Bernd Gärtner
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
@@ -46,10 +46,10 @@
    typedef  CGAL::Quotient< CGAL::Gmpz >      Ft;
 #endif
 
-typedef  CGAL::Cartesian< Ft >                RepC;
-typedef  CGAL::Homogeneous< Rt >              RepH;
-typedef  CGAL::Min_circle_2_traits_2< RepC >  TraitsC;
-typedef  CGAL::Min_circle_2_traits_2< RepH >  TraitsH;
+typedef  CGAL::Cartesian< Ft >                KerC;
+typedef  CGAL::Homogeneous< Rt >              KerH;
+typedef  CGAL::Min_circle_2_traits_2< KerC >  TraitsC;
+typedef  CGAL::Min_circle_2_traits_2< KerH >  TraitsH;
 
 // code coverage test function
 // ---------------------------
@@ -265,25 +265,25 @@ class MyPointC2 {
   public:
     typedef  ::Ft  FT;
   private:
-    FT _x;
-    FT _y;
+    FT x_;
+    FT y_;
   public:
     MyPointC2( ) { }
-    MyPointC2( const FT& x, const FT& y) : _x( x), _y( y) { }
+    MyPointC2( const FT& x, const FT& y) : x_( x), y_( y) { }
 
-    const FT&  x( ) const { return( _x); }
-    const FT&  y( ) const { return( _y); }
+    const FT&  x( ) const { return( x_); }
+    const FT&  y( ) const { return( y_); }
 
     bool
     operator == ( const MyPointC2& p) const
     {
-        return( ( _x == p._x) && ( _y == p._y));
+        return( ( x_ == p.x_) && ( y_ == p.y_));
     }
 
     bool
     operator != ( const MyPointC2& p) const
     {
-        return( ( _x != p._x) || ( _y != p._y));
+        return( ( x_ != p.x_) || ( y_ != p.y_));
     }
 
     friend
@@ -296,19 +296,21 @@ class MyPointC2 {
 std::ostream&
 operator << ( std::ostream& os, const MyPointC2& p)
 {
-    return( os << p._x << ' ' << p._y);
+    return( os << p.x_ << ' ' << p.y_);
 }
 
 std::istream&
 operator >> ( std::istream& is, MyPointC2& p)
 {
-    return( is >> p._x >> p._y);
+    return( is >> p.x_ >> p.y_);
 }
 
 // 2D Cartesian point class data accessor
 class MyPointC2DA {
   public:
     typedef  ::Ft  FT;
+
+    MyPointC2DA( ) { }
 
     const FT&  get_x( const MyPointC2& p) const { return( p.x()); }
     const FT&  get_y( const MyPointC2& p) const { return( p.y()); }
@@ -338,28 +340,28 @@ class MyPointH2 {
   public:
     typedef  ::Rt  RT;
   private:
-    RT _hx;
-    RT _hy;
-    RT _hw;
+    RT hx_;
+    RT hy_;
+    RT hw_;
   public:
     MyPointH2( ) { }
     MyPointH2( const RT& hx, const RT& hy, const RT& hw = RT( 1))
-        : _hx( hx), _hy( hy), _hw( hw) { }
+        : hx_( hx), hy_( hy), hw_( hw) { }
 
-    const RT&  hx( ) const { return( _hx); }
-    const RT&  hy( ) const { return( _hy); }
-    const RT&  hw( ) const { return( _hw); }
+    const RT&  hx( ) const { return( hx_); }
+    const RT&  hy( ) const { return( hy_); }
+    const RT&  hw( ) const { return( hw_); }
 
     bool
     operator == ( const MyPointH2& p) const
     {
-        return( ( _hx*p._hw == p._hx*_hw) && ( _hy*p._hw == p._hy*_hw));
+        return( ( hx_*p.hw_ == p.hx_*hw_) && ( hy_*p.hw_ == p.hy_*hw_));
     }
 
     bool
     operator != ( const MyPointH2& p) const
     {
-        return( ( _hx*p._hw != p._hx*_hw) || ( _hy*p._hw != p._hy*_hw));
+        return( ( hx_*p.hw_ != p.hx_*hw_) || ( hy_*p.hw_ != p.hy_*hw_));
     }
 
     friend
@@ -372,19 +374,21 @@ class MyPointH2 {
 std::ostream&
 operator << ( std::ostream& os, const MyPointH2& p)
 {
-    return( os << p._hx << ' ' << p._hy << ' ' << p._hw);
+    return( os << p.hx_ << ' ' << p.hy_ << ' ' << p.hw_);
 }
 
 std::istream&
 operator >> ( std::istream& is, MyPointH2& p)
 {
-    return( is >> p._hx >> p._hy >> p._hw);
+    return( is >> p.hx_ >> p.hy_ >> p.hw_);
 }
 
 // 2D homogeneous point class data accessor
 class MyPointH2DA {
   public:
     typedef  ::Rt  RT;
+
+    MyPointH2DA( ) { }
 
     const RT&  get_hx( const MyPointH2& p) const { return( p.hx()); }
     const RT&  get_hy( const MyPointH2& p) const { return( p.hy()); }

@@ -16,8 +16,8 @@
 // chapter       : Geometric Optimisation
 //
 // source        : web/Min_circle_2.aw
-// revision      : 5.31
-// revision_date : 2001/03/21
+// revision      : $Revision$
+// revision_date : $Date$
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>, Bernd Gärtner
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
@@ -37,9 +37,9 @@ CGAL_BEGIN_NAMESPACE
 
 // I/O
 // ---
-template < class _R >
+template < class K_ >
 std::ostream&
-operator << ( std::ostream& os, const CGAL::Optimisation_circle_2<_R>& c)
+operator << ( std::ostream& os, const CGAL::Optimisation_circle_2<K_>& c)
 {
     switch ( CGAL::get_mode( os)) {
 
@@ -66,12 +66,12 @@ operator << ( std::ostream& os, const CGAL::Optimisation_circle_2<_R>& c)
     return( os);
 }
 
-template < class _R >
+template < class K_ >
 std::istream&
-operator >> ( std::istream& is, CGAL::Optimisation_circle_2<_R>& c)
+operator >> ( std::istream& is, CGAL::Optimisation_circle_2<K_>& c)
 {
-    typedef  CGAL::Optimisation_circle_2<_R>::Point     Point;
-    typedef  CGAL::Optimisation_circle_2<_R>::Distance  Distance;
+    typedef  CGAL::Optimisation_circle_2<K_>::Point     Point;
+    typedef  CGAL::Optimisation_circle_2<K_>::Distance  Distance;
 
     switch ( CGAL::get_mode( is)) {
 

@@ -16,8 +16,8 @@
 // chapter       : Geometric Optimisation
 //
 // source        : web/Min_circle_2.aw
-// revision      : 5.31
-// revision_date : 2001/03/21
+// revision      : $Revision$
+// revision_date : $Date$
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>, Bernd Gärtner
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
@@ -31,14 +31,14 @@ CGAL_BEGIN_NAMESPACE
 // ================================
 // I/O
 // ---
-template < class _Traits >
+template < class Traits_ >
 std::ostream&
 operator << ( std::ostream& os,
-              const Min_circle_2<_Traits>& min_circle)
+              const Min_circle_2<Traits_>& min_circle)
 {
     CGAL_USING_NAMESPACE_STD
 
-    typedef  Min_circle_2<_Traits>::Point  Point;
+    typedef  Min_circle_2<Traits_>::Point  Point;
     typedef  ostream_iterator<Point>       Os_it;
 
     switch ( CGAL::get_mode( os)) {
@@ -80,9 +80,9 @@ operator << ( std::ostream& os,
     return( os);
 }
 
-template < class _Traits >
+template < class Traits_ >
 std::istream&
-operator >> ( std::istream& is, CGAL::Min_circle_2<_Traits>& min_circle)
+operator >> ( std::istream& is, CGAL::Min_circle_2<Traits_>& min_circle)
 {
     CGAL_USING_NAMESPACE_STD
 
@@ -95,7 +95,7 @@ operator >> ( std::istream& is, CGAL::Min_circle_2<_Traits>& min_circle)
 
       case CGAL::IO::ASCII:
       case CGAL::IO::BINARY:
-        typedef  CGAL::Min_circle_2<_Traits>::Point  Point;
+        typedef  CGAL::Min_circle_2<Traits_>::Point  Point;
         typedef  istream_iterator<Point>            Is_it;
         min_circle.clear();
         min_circle.insert( Is_it( is), Is_it());

@@ -16,8 +16,8 @@
 // chapter       : Geometric Optimisation
 //
 // source        : web/Min_circle_2.aw
-// revision      : 5.31
-// revision_date : 2001/03/21
+// revision      : $Revision$
+// revision_date : $Date$
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>, Bernd Gärtner
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
@@ -56,18 +56,18 @@ CGAL_BEGIN_NAMESPACE
 
 // Class declaration
 // =================
-template < class _Traits >
+template < class Traits_ >
 class Min_circle_2;
 
 // Class interface
 // ===============
-template < class _Traits >
+template < class Traits_ >
 class Min_circle_2 {
   public:
     // types
-    typedef           _Traits                           Traits;
-    typedef typename  _Traits::Point                    Point;
-    typedef typename  _Traits::Circle                   Circle;
+    typedef           Traits_                           Traits;
+    typedef typename  Traits_::Point                    Point;
+    typedef typename  Traits_::Circle                   Circle;
     typedef typename  std::list<Point>::const_iterator  Point_iterator;
     typedef           const Point *                     Support_point_iterator;
     
@@ -142,9 +142,9 @@ class Min_circle_2 {
     
 
     // copying and assignment not allowed!
-    Min_circle_2( const Min_circle_2<_Traits>&);
-    Min_circle_2<_Traits>&
-        operator = ( const Min_circle_2<_Traits>&);
+    Min_circle_2( const Min_circle_2<Traits_>&);
+    Min_circle_2<Traits_>&
+        operator = ( const Min_circle_2<Traits_>&);
 
 // ============================================================================
 
@@ -625,13 +625,13 @@ class Min_circle_2 {
 // =====================
 // I/O
 // ---
-template < class _Traits >
+template < class Traits_ >
 std::ostream&
-operator << ( std::ostream& os, const Min_circle_2<_Traits>& mc);
+operator << ( std::ostream& os, const Min_circle_2<Traits_>& mc);
 
-template < class _Traits >
+template < class Traits_ >
 std::istream&
-operator >> ( std::istream& is,       Min_circle_2<_Traits>& mc);
+operator >> ( std::istream& is,       Min_circle_2<Traits_>& mc);
 
 CGAL_END_NAMESPACE
 

@@ -16,8 +16,8 @@
 // chapter       : Geometric Optimisation
 //
 // source        : web/Min_circle_2.aw
-// revision      : 5.31
-// revision_date : 2001/03/21
+// revision      : $Revision$
+// revision_date : $Date$
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>, Bernd Gärtner
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
@@ -37,10 +37,10 @@
 #ifndef CGAL_IO_WINDOW_STREAM_OPTIMISATION_CIRCLE_2
 #define CGAL_IO_WINDOW_STREAM_OPTIMISATION_CIRCLE_2
 
-template< class R >
+template< class K_ >
 CGAL::Window_stream&
 operator << ( CGAL::Window_stream &ws,
-              const CGAL::Optimisation_circle_2<R>& oc)
+              const CGAL::Optimisation_circle_2<K_>& oc)
 {
     double  cx( CGAL::to_double( oc.center().x()));
     double  cy( CGAL::to_double( oc.center().y()));
@@ -60,12 +60,12 @@ operator << ( CGAL::Window_stream &ws,
 #ifndef CGAL_IO_WINDOW_STREAM_MIN_CIRCLE_2
 #define CGAL_IO_WINDOW_STREAM_MIN_CIRCLE_2
 
-template< class R >
+template< class Traits_ >
 CGAL::Window_stream&
 operator << ( CGAL::Window_stream &ws,
-              const CGAL::Min_circle_2<R>& min_circle)
+              const CGAL::Min_circle_2<Traits_>& min_circle)
 {
-    typedef  CGAL::Min_circle_2<R>::Point_iterator  Point_iterator;
+    typedef  CGAL::Min_circle_2<Traits_>::Point_iterator  Point_iterator;
 
     Point_iterator  first( min_circle.points_begin());
     Point_iterator  last ( min_circle.points_end());

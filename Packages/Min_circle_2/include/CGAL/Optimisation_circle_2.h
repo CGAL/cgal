@@ -16,8 +16,8 @@
 // chapter       : Geometric Optimisation
 //
 // source        : web/Min_circle_2.aw
-// revision      : 5.31
-// revision_date : 2001/03/21
+// revision      : $Revision$
+// revision_date : $Date$
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>, Bernd Gärtner
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
@@ -43,18 +43,18 @@ CGAL_BEGIN_NAMESPACE
 
 // Class declaration
 // =================
-template < class _R >
+template < class K_ >
 class Optimisation_circle_2;
 
 // Class interface
 // ===============
-template < class _R >
+template < class K_ >
 class Optimisation_circle_2 {
   public:
     // types
-    typedef           _R                R;
-    typedef           CGAL::Point_2<R>  Point;
-    typedef typename  _R::FT            Distance;
+    typedef           K_                K;
+    typedef           CGAL::Point_2<K>  Point;
+    typedef typename  K_::FT            Distance;
     
     /**************************************************************************
     WORKAROUND: Some compilers are unable to match member functions defined
@@ -75,8 +75,8 @@ class Optimisation_circle_2 {
     const Distance&  squared_radius( ) const
     
     // equality tests
-    bool  operator == ( const Optimisation_circle_2<R>& c) const;
-    bool  operator != ( const Optimisation_circle_2<R>& c) const;
+    bool  operator == ( const Optimisation_circle_2<K>& c) const;
+    bool  operator != ( const Optimisation_circle_2<K>& c) const;
     
     // predicates
     CGAL::Bounded_side  bounded_side( const Point& p) const;
@@ -166,14 +166,14 @@ class Optimisation_circle_2 {
     // Equality tests
     // --------------
     bool
-    operator == ( const Optimisation_circle_2<R>& c) const
+    operator == ( const Optimisation_circle_2<K>& c) const
     {
         return( ( _center          == c._center        ) &&
                 ( _squared_radius  == c._squared_radius) );
     }
     
     bool
-    operator != ( const Optimisation_circle_2<R>& c) const
+    operator != ( const Optimisation_circle_2<K>& c) const
     {
         return( ! operator==( c));
     }
@@ -228,13 +228,13 @@ class Optimisation_circle_2 {
 // =====================
 // I/O
 // ---
-template < class _R >
+template < class K_ >
 std::ostream&
-operator << ( std::ostream&, const CGAL::Optimisation_circle_2<_R>&);
+operator << ( std::ostream&, const CGAL::Optimisation_circle_2<K_>&);
 
-template < class _R >
+template < class K_ >
 std::istream&
-operator >> ( std::istream&, CGAL::Optimisation_circle_2<_R>&);
+operator >> ( std::istream&, CGAL::Optimisation_circle_2<K_>&);
 
 CGAL_END_NAMESPACE
 

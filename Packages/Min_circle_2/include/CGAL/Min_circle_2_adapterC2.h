@@ -16,8 +16,8 @@
 // chapter       : Geometric Optimisation
 //
 // source        : web/Min_circle_2.aw
-// revision      : 5.31
-// revision_date : 2001/03/21
+// revision      : $Revision$
+// revision_date : $Date$
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>, Bernd Gärtner
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
@@ -37,26 +37,26 @@ CGAL_BEGIN_NAMESPACE
 
 // Class declarations
 // ==================
-template < class _Traits >
+template < class Traits_ >
 class Min_circle_2;
 
-template < class _PT, class _DA >
+template < class PT_, class DA_ >
 class Min_circle_2_adapterC2;
 
-template < class _PT, class _DA >
+template < class PT_, class DA_ >
 class _Min_circle_2_adapterC2__Circle;
 
 // Class interface and implementation
 // ==================================
-template < class _PT, class _DA >
+template < class PT_, class DA_ >
 class Min_circle_2_adapterC2 {
   public:
     // types
-    typedef  _PT  PT;
-    typedef  _DA  DA;
+    typedef  PT_  PT;
+    typedef  DA_  DA;
 
     // nested types
-    typedef  PT                                           Point;
+    typedef  PT                                            Point;
     typedef  CGAL::_Min_circle_2_adapterC2__Circle<PT,DA>  Circle;
 
   private:
@@ -74,7 +74,7 @@ class Min_circle_2_adapterC2 {
     CGAL::Orientation
     orientation( const Point& p, const Point& q, const Point& r) const
     {
-        typedef  typename _DA::FT  FT;
+        typedef  typename DA_::FT  FT;
     
         FT  px;
         FT  py;
@@ -93,24 +93,24 @@ class Min_circle_2_adapterC2 {
 };
 
 // Nested type `Circle'
-template < class _PT, class _DA >
+template < class PT_, class DA_ >
 std::ostream&
 operator << ( std::ostream&,
-              const CGAL::_Min_circle_2_adapterC2__Circle<_PT,_DA>&);
+              const CGAL::_Min_circle_2_adapterC2__Circle<PT_,DA_>&);
 
-template < class _PT, class _DA >
+template < class PT_, class DA_ >
 std::istream&
 operator >> ( std::istream&,
-              CGAL::_Min_circle_2_adapterC2__Circle<_PT,_DA>&);
+              CGAL::_Min_circle_2_adapterC2__Circle<PT_,DA_>&);
 
-template < class _PT, class _DA >
+template < class PT_, class DA_ >
 class _Min_circle_2_adapterC2__Circle {
   public:
     // typedefs
-    typedef  _PT  PT;
-    typedef  _DA  DA;
+    typedef  PT_  PT;
+    typedef  DA_  DA;
 
-    typedef  typename _DA::FT  FT;
+    typedef  typename DA_::FT  FT;
 
   private:
     // data members
@@ -130,10 +130,10 @@ class _Min_circle_2_adapterC2__Circle {
     }
 
     friend  std::ostream&  operator << CGAL_NULL_TMPL_ARGS ( std::ostream&,
-        const CGAL::_Min_circle_2_adapterC2__Circle<_PT,_DA>&);
+        const CGAL::_Min_circle_2_adapterC2__Circle<PT_,DA_>&);
 
     friend  std::istream&  operator >> CGAL_NULL_TMPL_ARGS ( std::istream&,
-        CGAL::_Min_circle_2_adapterC2__Circle<_PT,_DA>&);
+        CGAL::_Min_circle_2_adapterC2__Circle<PT_,DA_>&);
 
   public:
     // types
@@ -252,7 +252,7 @@ class _Min_circle_2_adapterC2__Circle {
     // additional operations for checking
     bool
     operator == (
-        const CGAL::_Min_circle_2_adapterC2__Circle<_PT,_DA>& c) const
+        const CGAL::_Min_circle_2_adapterC2__Circle<PT_,DA_>& c) const
     {
         return( ( center_x == c.center_x) &&
                 ( center_y == c.center_y) &&
@@ -261,7 +261,7 @@ class _Min_circle_2_adapterC2__Circle {
 
     bool
     operator != (
-        const CGAL::_Min_circle_2_adapterC2__Circle<_PT,_DA>& c) const
+        const CGAL::_Min_circle_2_adapterC2__Circle<PT_,DA_>& c) const
     {
         return( ! ( *this == c));
     }
@@ -282,10 +282,10 @@ class _Min_circle_2_adapterC2__Circle {
 };
 
 // I/O
-template < class _PT, class _DA >
+template < class PT_, class DA_ >
 std::ostream&
 operator << ( std::ostream& os,
-              const CGAL::_Min_circle_2_adapterC2__Circle<_PT,_DA>& c)
+              const CGAL::_Min_circle_2_adapterC2__Circle<PT_,DA_>& c)
 {
     switch ( CGAL::get_mode( os)) {
 
@@ -314,10 +314,10 @@ operator << ( std::ostream& os,
     return( os);
 }
 
-template < class _PT, class _DA >
+template < class PT_, class DA_ >
 std::istream&
 operator >> ( std::istream& is,
-              CGAL::_Min_circle_2_adapterC2__Circle<_PT,_DA>& c)
+              CGAL::_Min_circle_2_adapterC2__Circle<PT_,DA_>& c)
 {
     switch ( CGAL::get_mode( is)) {
 

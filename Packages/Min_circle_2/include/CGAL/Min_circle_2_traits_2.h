@@ -16,8 +16,8 @@
 // chapter       : Geometric Optimisation
 //
 // source        : web/Min_circle_2.aw
-// revision      : 5.31
-// revision_date : 2001/03/21
+// revision      : $Revision$
+// revision_date : $Date$
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>, Bernd Gärtner
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
@@ -43,33 +43,33 @@ CGAL_BEGIN_NAMESPACE
 
 // Class declarations
 // ==================
-template < class _Traits >
+template < class Traits_ >
 class Min_circle_2;
 
-template < class _R >
+template < class K_ >
 class Min_circle_2_traits_2;
 
 // Class interface and implementation
 // ==================================
-template < class _R >
+template < class K_ >
 class Min_circle_2_traits_2 {
   public:
     // types
-    typedef  _R                              R;
-    typedef  CGAL::Point_2<R>                Point;
-    typedef  CGAL::Optimisation_circle_2<R>  Circle;
+    typedef  K_                              K;
+    typedef  CGAL::Point_2<K>                Point;
+    typedef  CGAL::Optimisation_circle_2<K>  Circle;
 
 private:
     // data members
     Circle  circle;                                 // current circle
 
     // friends
-    friend  class CGAL::Min_circle_2< CGAL::Min_circle_2_traits_2< R > >;
+    friend  class CGAL::Min_circle_2< CGAL::Min_circle_2_traits_2<K> >;
 
   public:
     // creation (use default implementations)
     // CGAL::Min_circle_2_traits_2( );
-    // CGAL::Min_circle_2_traits_2( CGAL::Min_circle_2_traits_2<R> const&);
+    // CGAL::Min_circle_2_traits_2( CGAL::Min_circle_2_traits_2<K> const&);
 
     // operations
     inline
