@@ -8,12 +8,13 @@
 #include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/leda_real.h>
 #include <CGAL/IO/Conic_arc_2_Window_stream.h>
+#include <CGAL/Cartesian.h>
 #else
 #include <CGAL/leda_rational.h>
 #if defined(USE_LEDA_KERNEL)
 #include <CEP/Leda_rat_kernel/leda_rat_kernel_traits.h>
 #if defined(USE_INSERT_FAST)
-#include <CGAL/Arr_segment_traits_fast_2.h>
+#include <CGAL/Arr_segment_traits_tight_2.h>
 #else
 #include <CGAL/Arr_segment_traits_2.h>
 #endif
@@ -28,7 +29,9 @@
 #endif
 
 #if defined(USE_INSERT_FAST)
-#include <CGAL/Sweep_line_base_2.h>
+#include <CGAL/Sweep_line_2/Sweep_line_event.h>
+#include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
+#include <CGAL/Sweep_line_tight_2.h>
 #else
 #include <CGAL/Sweep_line_2.h>
 #endif
@@ -55,18 +58,24 @@ typedef leda_rational                                   NT;
 #endif
 
 #if defined(USE_CONIC_TRAITS)
-typedef CGAL::Arr_conic_traits<NT>                      Traits;
-#define PM_TYPE "Conics"
+typedef CGAL::Cartesian<NT>               Kernel;
+typedef CGAL::Arr_conic_traits_2<Kernel>  Traits;
+
+#if defined(USE_INSERT_FAST)
+#define PM_TYPE "Tight Sweep (conics)"
+#else
+#define PM_TYPE "Sweep       (conics)"
+#endif
 
 #else
 
 #if defined(USE_LEDA_KERNEL)
 typedef CGAL::leda_rat_kernel_traits                    Kernel;
 #if defined(USE_INSERT_FAST)
-#define PM_TYPE "Leda Kernel Fast"
-typedef CGAL::Arr_segment_traits_fast_2<Kernel>         Traits;
+#define PM_TYPE "Tight Sweep (seg)"
+typedef CGAL::Arr_segment_traits_tight_2<Kernel>         Traits;
 #else
-#define PM_TYPE "Leda Kernel"
+#define PM_TYPE "Sweep       (segs)"
 typedef CGAL::Arr_segment_traits_2<Kernel>              Traits;
 #endif
 
@@ -93,7 +102,11 @@ typedef CGAL::Bench_parse_args::StrategyId              StrategyId;
 typedef CGAL::Bench_parse_args::FormatId                FormatId;
 
 #if defined(USE_INSERT_FAST)
-typedef CGAL::Sweep_line_base_2<CurveListIter, Traits> SweepLine;
+typedef CGAL::Sweep_line_subcurve<Traits> CurveWrap;
+typedef CGAL::Sweep_line_event<Traits, CurveWrap> SweepEvent;
+
+typedef CGAL::Sweep_line_tight_2<CurveListIter, Traits, 
+                                SweepEvent, CurveWrap> SweepLine;
 #else
 typedef CGAL::Sweep_line_2<CurveListIter, Traits> SweepLine;
 #endif
@@ -236,12 +249,15 @@ int main(int argc, char * argv[])
   CGAL::Bench_base::setNameLength(nameLength);
   if (printHeader) CGAL::Bench_base::printHeader();
   
+
   // Construct Incrementaly
   TypeId typeId = CGAL::Bench_parse_args::TYPE_SUBCURVES;
   if (typeMask & (0x1 << typeId)) {
 
-    std::string name = std::string(parseArgs.getTypeName(typeId)) + " " +
-      "PMWX " + PM_TYPE + " (" + std::string(filename) + ")";
+    //std::string name = std::string(parseArgs.getTypeName(typeId)) + " " +
+    //  "SL " + PM_TYPE + " (" + std::string(filename) + ")";
+    std::string name = std::string(filename) + " - " + PM_TYPE + " " + std::string(parseArgs.getTypeName(typeId));
+
     Subcurves_sweep_bench benchInst(name, seconds, false);
     Subcurves_sweep & benchUser = benchInst.getBenchUser();
     runBench<Subcurves_sweep_bench, Subcurves_sweep>(benchInst, benchUser,
@@ -254,8 +270,9 @@ int main(int argc, char * argv[])
   typeId = CGAL::Bench_parse_args::TYPE_POINTS;
   if (typeMask & (0x1 << typeId)) {
 
-    std::string name = std::string(parseArgs.getTypeName(typeId)) + " " +
-      "PMWX " + PM_TYPE + " (" + std::string(filename) + ")";
+    // std::string name = std::string(parseArgs.getTypeName(typeId)) + " " +
+    //  "   SL " + PM_TYPE + " (" + std::string(filename) + ")";
+    std::string name = std::string(filename) + " - " + PM_TYPE + " " + std::string(parseArgs.getTypeName(typeId));
     Points_sweep_bench benchInst(name, seconds, false);
     Points_sweep & benchUser = benchInst.getBenchUser();
     runBench<Points_sweep_bench, Points_sweep>(benchInst, benchUser,
@@ -263,7 +280,7 @@ int main(int argc, char * argv[])
 					       samples, iterations,
 					       verbose);
   }
-    
+
   return 0;
 }
 
