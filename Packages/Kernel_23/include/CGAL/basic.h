@@ -102,7 +102,6 @@ namespace CGAL {
 #include <CGAL/Object.h>
 #include <CGAL/enum.h>
 #include <CGAL/tags.h>
-#include <CGAL/misc.h>
 #include <CGAL/number_type_basic.h>
 #include <CGAL/IO/io.h>
 #include <CGAL/kernel_basic.h>

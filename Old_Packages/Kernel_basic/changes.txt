@@ -1,3 +1,6 @@
+3.45   (?? June 2001)
+- Cleanup misc.h and don't include it from basic.h.
+
 3.44   (19 June 2001)
 - Change to support cgal_window instead of LEDA (CGAL_USE_CGAL_WINDOW).
 

@@ -25,23 +25,7 @@
 #ifndef CGAL_MISC_H
 #define CGAL_MISC_H
 
-#include <algorithm>
-
 CGAL_BEGIN_NAMESPACE
-
-
-/*
-template < class T >
-inline
-void
-swap(T& a, T& b)
-{
-  T c;
-  c = a;
-  a = b;
-  b = c;
-}
-*/
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 // A helper class:
