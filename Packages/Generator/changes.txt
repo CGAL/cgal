@@ -1,5 +1,7 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
+25 March 2004 Radu Ursu
+- made doc work with the new implementation of the Manual tools
 
 15 Mar 2004 Andreas Fabri
 - Added missing #include <CGAL/iterator.h>  and CGAL_BEGIN_NAMESPACE to point_generators_d.h
