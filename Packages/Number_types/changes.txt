@@ -1,5 +1,6 @@
 1 February 2005 Sylvain Pion
 - Fix fall out of long double support.
+- Re-implement nearbyint() because of too painful portability issues.
 
 29 January 2005 Sylvain Pion
 - Make "long double" a model of number type.

@@ -39,44 +39,25 @@ const MP_Float::V::size_type limbs_per_double = 2 + 53/log_limb;
 const double trunc_max = double(base)*(base/2-1)/double(base-1);
 const double trunc_min = double(-base)*(base/2)/double(base-1);
 
-inline
-int
-my_rint(float d)
+
+// We face portability issues with the ISO C99 functions "nearbyint",
+// so I re-implement it for my need.
+template < typename T >
+int my_nearbyint(const T& d)
 {
-#if defined __BORLANDC__ || defined _MSC_VER
-  return int(d<0 ? d-0.5f : d+0.5f);
-#elif defined __MWERKS__
-  return (int) std::rintf(d);
-#else
-  return (int) ::rintf(d);
-#endif
+  // Standard conversion from floating point to integral
+  // does truncation, so I add or subtract 0.5.
+  T dd = d < T(0) ? d - T(0.5) : d + T(0.5);
+  int z = int(dd);
+
+  // Then, we also need the round to even rule.
+  if (z&1 != 0 && T(z) == dd)
+    z = d < T(0) ? z+1 : z-1;
+
+  CGAL_assertion(CGAL::abs(T(z) - d) <= T(0.5));
+  return z;
 }
 
-inline
-int
-my_rint(double d)
-{
-#if defined __BORLANDC__ || defined _MSC_VER
-  return int(d<0 ? d-0.5 : d+0.5);
-#elif defined __MWERKS__
-  return (int) std::rint(d);
-#else
-  return (int) ::rint(d);
-#endif
-}
-
-inline
-int
-my_rint(const long double & d)
-{
-#if defined __BORLANDC__ || defined _MSC_VER
-  return int(d<0 ? d-0.5l : d+0.5l);
-#elif defined __MWERKS__
-  return (int) std::rintl(d);
-#else
-  return (int) ::rintl(d);
-#endif
-}
 
 template < typename T >
 inline
@@ -107,7 +88,7 @@ void MP_Float::construct_from_builtin_fp_type(T d)
     // Put them in v (in reverse order temporarily).
     T orig = d, sum = 0;
     while (true) {
-      v.push_back(my_rint(d));
+      v.push_back(my_nearbyint(d));
       if (d-v.back() >= T(base/2-1)/(base-1))
         ++v.back();
       // We used to do simply "d -= v.back();", but when the most significant
