@@ -9,6 +9,7 @@
 
 GLOB: src/Interval_arithmetic/workaround_4_ms.obj is no longer necessary.
 GLOB: Add -D_RWSTD__ALLOCATOR for SunPro.
+GLOB: Fixed qtlib option.
 GLOB: Fixed several things for qt-support. (<- Laurent)
 GLOB: Added CGAL_QT_LDFLAGS.
 GLOB: Some fixes for qt-moc.
