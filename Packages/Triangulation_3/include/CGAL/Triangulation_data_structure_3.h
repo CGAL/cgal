@@ -621,7 +621,8 @@ std::ostream& operator<<
 
 template < class Vb, class Cb>
 bool
-Triangulation_data_structure_3<Vb,Cb>::is_vertex(Vertex* v) const
+Triangulation_data_structure_3<Vb,Cb>::
+is_vertex(Vertex* v) const
     {
       Vertex_iterator it = vertices_begin();
       while (it != vertices_end()) {
@@ -633,9 +634,9 @@ Triangulation_data_structure_3<Vb,Cb>::is_vertex(Vertex* v) const
 
 template < class Vb, class Cb>
 bool
-Triangulation_data_structure_3<Vb,Cb>::is_edge
-(Vertex* u, Vertex* v, 
- Cell* & c, int & i, int & j) const
+Triangulation_data_structure_3<Vb,Cb>::
+is_edge(Vertex* u, Vertex* v, 
+	Cell* & c, int & i, int & j) const
     {
       Edge_iterator it = edges_begin();
       while ( it != edges_end() ) {
@@ -650,9 +651,9 @@ Triangulation_data_structure_3<Vb,Cb>::is_edge
 
 template < class Vb, class Cb>
 bool
-Triangulation_data_structure_3<Vb,Cb>::is_facet
-(Vertex* u, Vertex* v, Vertex* w, 
- Cell* & c, int & i, int & j, int & k) const
+Triangulation_data_structure_3<Vb,Cb>::
+is_facet(Vertex* u, Vertex* v, Vertex* w, 
+	 Cell* & c, int & i, int & j, int & k) const
     {
       Facet_iterator it = facets_begin();
       while ( it != facets_end() ) {
@@ -668,9 +669,9 @@ Triangulation_data_structure_3<Vb,Cb>::is_facet
 
 template < class Vb, class Cb>
 bool
-Triangulation_data_structure_3<Vb,Cb>::is_cell
-(Vertex* u, Vertex* v, Vertex* w, Vertex* t, 
- Cell* & c, int & i, int & j, int & k, int & l) const
+Triangulation_data_structure_3<Vb,Cb>::
+is_cell(Vertex* u, Vertex* v, Vertex* w, Vertex* t, 
+	Cell* & c, int & i, int & j, int & k, int & l) const
     {
       Cell_iterator it = cells_begin();
       while ( it != cells_end() ) {
@@ -688,16 +689,17 @@ Triangulation_data_structure_3<Vb,Cb>::is_cell
 
 // not documented
 template < class Vb, class Cb>
-std::istream& read_cells
-(std::istream& is,
- Triangulation_data_structure_3<Vb,Cb>  &tds,
- int n,
- // std::vector<void*> &V(n),
- std::map< int, Triangulation_data_structure_3<Vb,Cb>::Vertex*, less<int> > &V,
- // std::vector<void*> &C(m)
- int & m,
- std::map< int, Triangulation_data_structure_3<Vb,Cb>::Cell*, less<int> > &C
-)
+std::istream& 
+read_cells(std::istream& is,
+	   Triangulation_data_structure_3<Vb,Cb>  &tds,
+	   int n,
+	   // std::vector<void*> &V(n),
+	   std::map< int, Triangulation_data_structure_3<Vb,Cb>::Vertex*, 
+	                  less<int> > &V,
+	   // std::vector<void*> &C(m)
+	   int & m,
+	   std::map< int, Triangulation_data_structure_3<Vb,Cb>::Cell*, 
+	             less<int> > &C )
 {
   typedef Triangulation_data_structure_3<Vb,Cb> Tds;
   typedef  Tds::Vertex  Vertex;
@@ -809,12 +811,11 @@ std::istream& read_cells
 }
 // not documented
 template < class Vb, class Cb>
-std::ostream& print_cells
-(std::ostream& os, 
- const Triangulation_data_structure_3<Vb,Cb>  &tds,
- int n,
- std::map< void*, int, less<void*> > &V
-)
+std::ostream& 
+print_cells(std::ostream& os, 
+	    const Triangulation_data_structure_3<Vb,Cb>  &tds,
+	    int n,
+	    std::map< void*, int, less<void*> > &V )
 {
   typedef Triangulation_data_structure_3<Vb,Cb> Tds;
   typedef  Tds::Vertex  Vertex;
@@ -968,8 +969,8 @@ std::ostream& print_cells
 
 template <class Vb, class Cb >
 Triangulation_data_structure_3<Vb,Cb>::Vertex*
-Triangulation_data_structure_3<Vb,Cb>::insert_in_cell
-(const Vertex & w, Cell* c)
+Triangulation_data_structure_3<Vb,Cb>::
+insert_in_cell(const Vertex & w, Cell* c)
 { //insert in cell
   CGAL_triangulation_precondition( dimension() == 3 );
   CGAL_triangulation_precondition( (c != NULL) );
@@ -1016,8 +1017,8 @@ Triangulation_data_structure_3<Vb,Cb>::insert_in_cell
 
 template <class Vb, class Cb >
 Triangulation_data_structure_3<Vb,Cb>::Vertex*
-Triangulation_data_structure_3<Vb,Cb>::insert_in_facet
-(const Vertex & w, Cell* c, int i)
+Triangulation_data_structure_3<Vb,Cb>::
+insert_in_facet(const Vertex & w, Cell* c, int i)
 { // inserts v in the facet opposite to vertex i of cell c
 
   CGAL_triangulation_precondition( (c != NULL)); 
@@ -1132,8 +1133,8 @@ Triangulation_data_structure_3<Vb,Cb>::insert_in_facet
 
 template <class Vb, class Cb >
 Triangulation_data_structure_3<Vb,Cb>::Vertex*
-Triangulation_data_structure_3<Vb,Cb>::insert_in_edge
-(const Vertex & w, Cell* c, int i, int j)   
+Triangulation_data_structure_3<Vb,Cb>::
+insert_in_edge(const Vertex & w, Cell* c, int i, int j)   
 { // inserts v in the edge of cell c with vertices i and j
   CGAL_triangulation_precondition( c != NULL ); 
   CGAL_triangulation_precondition( i != j );
@@ -1273,10 +1274,10 @@ Triangulation_data_structure_3<Vb,Cb>::insert_in_edge
 
 template <class Vb, class Cb >
 Triangulation_data_structure_3<Vb,Cb>::Vertex*
-Triangulation_data_structure_3<Vb,Cb>::insert_increase_dimension
-(const Vertex & w, // new vertex
- Vertex* star = NULL,
- bool reorient = false) 
+Triangulation_data_structure_3<Vb,Cb>::
+insert_increase_dimension(const Vertex & w, // new vertex
+			  Vertex* star = NULL,
+			  bool reorient = false) 
   // star = vertex from which we triangulate the facet of the
   // incremented dimension  
   // ( geometrically : star = infinite vertex )
@@ -1530,8 +1531,9 @@ Triangulation_data_structure_3<Vb,Cb>::insert_increase_dimension
 
 template <class Vb, class Cb >
 void
-Triangulation_data_structure_3<Vb,Cb>::star_region
-( std::set<void*, less<void*> > & region, Vertex* v, Cell* c, int li )
+Triangulation_data_structure_3<Vb,Cb>::
+star_region( std::set<void*, less<void*> > & region, 
+	     Vertex* v, Cell* c, int li )
   // region is a set of connected cells
   // c belongs to region and has facet i on the boundary of region 
   // replaces the cells in region  
@@ -1552,8 +1554,9 @@ Triangulation_data_structure_3<Vb,Cb>::star_region
 
 template <class Vb, class Cb >
 Triangulation_data_structure_3<Vb,Cb>::Cell*
-Triangulation_data_structure_3<Vb,Cb>::create_star
-( std::set<void*, less<void*> > & region, Vertex* v, Cell* c, int li )
+Triangulation_data_structure_3<Vb,Cb>::
+create_star( std::set<void*, less<void*> > & region, 
+	     Vertex* v, Cell* c, int li )
   // creates the cells needed by star_region
 {
   Cell* cnew;
@@ -1655,9 +1658,9 @@ Triangulation_data_structure_3<Vb,Cb>::create_star
 
 template <class Vb, class Cb >
 void
-Triangulation_data_structure_3<Vb,Cb>::incident_cells
-(Vertex* v, std::set<Cell*, less<Cell*> > & cells,
- Cell* c = NULL ) const
+Triangulation_data_structure_3<Vb,Cb>::
+incident_cells(Vertex* v, std::set<Cell*, less<Cell*> > & cells,
+	       Cell* c = NULL ) const
 {
   CGAL_triangulation_precondition( v != NULL );
   CGAL_triangulation_precondition( is_vertex(v) );
@@ -1684,9 +1687,9 @@ Triangulation_data_structure_3<Vb,Cb>::incident_cells
   
 template <class Vb, class Cb >
 void
-Triangulation_data_structure_3<Vb,Cb>::incident_vertices
-(Vertex* v, std::set<Vertex*, less<Vertex*> > & vertices,
- Cell* c = NULL ) const
+Triangulation_data_structure_3<Vb,Cb>::
+incident_vertices(Vertex* v, std::set<Vertex*, less<Vertex*> > & vertices,
+		  Cell* c = NULL ) const
 {
   CGAL_triangulation_precondition( v != NULL );
   CGAL_triangulation_precondition( is_vertex(v) );
@@ -1724,8 +1727,8 @@ Triangulation_data_structure_3<Vb,Cb>::incident_vertices
 
 template <class Vb, class Cb >
 bool
-Triangulation_data_structure_3<Vb,Cb>::is_valid
-(bool verbose = false, int level = 0) const
+Triangulation_data_structure_3<Vb,Cb>::
+is_valid(bool verbose = false, int level = 0) const
 { // is_valid()
   switch ( dimension() ) {
   case 3:
@@ -1836,8 +1839,8 @@ Triangulation_data_structure_3<Vb,Cb>::is_valid
 
 template <class Vb, class Cb >
 Triangulation_data_structure_3<Vb,Cb>::Vertex*
-Triangulation_data_structure_3<Vb,Cb>::copy_tds
-(const Tds & tds, Vertex* vert = NULL)
+Triangulation_data_structure_3<Vb,Cb>::
+copy_tds(const Tds & tds, Vertex* vert = NULL)
   // returns the new vertex corresponding to vert in the new tds 
 {
   if ( vert != NULL ) {
@@ -1938,7 +1941,8 @@ Triangulation_data_structure_3<Vb,Cb>::copy_tds
 
 template <class Vb, class Cb >
 void
-Triangulation_data_structure_3<Vb,Cb>::swap(Tds & tds)
+Triangulation_data_structure_3<Vb,Cb>::
+swap(Tds & tds)
 {
   // tds and *this are supposed to be valid
   int dim = dimension();
@@ -1977,7 +1981,8 @@ Triangulation_data_structure_3<Vb,Cb>::swap(Tds & tds)
 
 template <class Vb, class Cb >
 void
-Triangulation_data_structure_3<Vb,Cb>::clear()
+Triangulation_data_structure_3<Vb,Cb>::
+clear()
 {
 
   if(number_of_vertices() == 0) {
@@ -2034,8 +2039,8 @@ Triangulation_data_structure_3<Vb,Cb>::clear()
 
 template <class Vb, class Cb >
 bool
-Triangulation_data_structure_3<Vb,Cb>::count_vertices
-(int & i, bool verbose = false, int level = 0) const
+Triangulation_data_structure_3<Vb,Cb>::
+count_vertices(int & i, bool verbose = false, int level = 0) const
   // counts AND checks the validity
 {
   i = 0;
@@ -2053,8 +2058,8 @@ Triangulation_data_structure_3<Vb,Cb>::count_vertices
 } 
 template <class Vb, class Cb >
 bool
-Triangulation_data_structure_3<Vb,Cb>::count_facets
-(int & i, bool verbose = false, int level = 0) const
+Triangulation_data_structure_3<Vb,Cb>::
+count_facets(int & i, bool verbose = false, int level = 0) const
   // counts but does not check
 {
   i = 0;
@@ -2073,8 +2078,8 @@ Triangulation_data_structure_3<Vb,Cb>::count_facets
 
 template <class Vb, class Cb >
 bool
-Triangulation_data_structure_3<Vb,Cb>::count_edges
-(int & i, bool verbose = false, int level = 0) const
+Triangulation_data_structure_3<Vb,Cb>::
+count_edges(int & i, bool verbose = false, int level = 0) const
   // counts but does not check
 {
   i = 0;
@@ -2093,8 +2098,8 @@ Triangulation_data_structure_3<Vb,Cb>::count_edges
 
 template <class Vb, class Cb >
 bool
-Triangulation_data_structure_3<Vb,Cb>::count_cells
-(int & i, bool verbose = false, int level = 0) const
+Triangulation_data_structure_3<Vb,Cb>::
+count_cells(int & i, bool verbose = false, int level = 0) const
   // counts AND checks the validity
 {
   i = 0;

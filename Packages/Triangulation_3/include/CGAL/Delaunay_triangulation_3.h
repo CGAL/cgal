@@ -196,7 +196,8 @@ public:
 
 template < class Gt, class Tds >
 Delaunay_triangulation_3<Gt,Tds>::Vertex_handle
-Delaunay_triangulation_3<Gt,Tds>::insert(const Point & p )
+Delaunay_triangulation_3<Gt,Tds>::
+insert(const Point & p )
 {
   Cell_handle start;
   if ( dimension() >= 1 ) {
@@ -212,7 +213,8 @@ Delaunay_triangulation_3<Gt,Tds>::insert(const Point & p )
 
 template < class Gt, class Tds >
 Delaunay_triangulation_3<Gt,Tds>::Vertex_handle
-Delaunay_triangulation_3<Gt,Tds>::insert(const Point & p, Cell_handle start)
+Delaunay_triangulation_3<Gt,Tds>::
+insert(const Point & p, Cell_handle start)
 {
   switch (dimension()) {
   case 3:
@@ -220,12 +222,12 @@ Delaunay_triangulation_3<Gt,Tds>::insert(const Point & p, Cell_handle start)
       Locate_type lt;
       int li, lj;
       Cell_handle c = locate( p, start, lt, li, lj);
-      switch (lt) {
-      case OUTSIDE_CONVEX_HULL:
-      case CELL:
-      case FACET:
-      case EDGE:
-	{
+      if ( lt == VERTEX ) return c->vertex(li);
+      else {
+//       case OUTSIDE_CONVEX_HULL:
+//       case CELL:
+//       case FACET:
+//       case EDGE:
 	  Vertex_handle v = new Vertex(p);
 	  set_number_of_vertices(number_of_vertices()+1);
 	  std::set<void*, less<void*> > conflicts;
@@ -234,11 +236,6 @@ Delaunay_triangulation_3<Gt,Tds>::insert(const Point & p, Cell_handle start)
 	  find_conflicts_3(conflicts,p,c,aconflict,ineighbor);
 	  _tds.star_region(conflicts,&(*v),&(*aconflict),ineighbor);
 	  return v;
-	}
-      case VERTEX:
-	return c->vertex(li);
-      default :
-	CGAL_triangulation_assertion(false);  // impossible
       }
       break;
     }// dim 3
@@ -282,9 +279,10 @@ Delaunay_triangulation_3<Gt,Tds>::insert(const Point & p, Cell_handle start)
 
 template < class Gt, class Tds >
 void
-Delaunay_triangulation_3<Gt,Tds>::find_conflicts_3
-(std::set<void*, less<void*> > & conflicts, const Point & p,
- Cell_handle c, Cell_handle & ac, int & i)
+Delaunay_triangulation_3<Gt,Tds>::
+find_conflicts_3(std::set<void*, less<void*> > & conflicts, 
+		 const Point & p,
+		 Cell_handle c, Cell_handle & ac, int & i)
   // 3d case
   // p is in conflict with c
   // finds the set conflicts of cells in conflict with p
@@ -292,9 +290,8 @@ Delaunay_triangulation_3<Gt,Tds>::find_conflicts_3
   // and the index i of its facet on the boundary
 {
   if ( ( conflicts.find( (void *) &(*c) ) ) != conflicts.end() )
-    {
-      return;   // c was already found
-    }
+    return;   // c was already found
+
   (void) conflicts.insert( (void *) &(*c) );
 
   for ( int j=0; j<4; j++ ) {
@@ -311,9 +308,10 @@ Delaunay_triangulation_3<Gt,Tds>::find_conflicts_3
 
 template < class Gt, class Tds >
 void
-Delaunay_triangulation_3<Gt,Tds>::find_conflicts_2
-(std::set<void*, less<void*> > & conflicts, const Point & p,
- Cell_handle c, Cell_handle & ac, int & i)
+Delaunay_triangulation_3<Gt,Tds>::
+find_conflicts_2(std::set<void*, less<void*> > & conflicts, 
+		 const Point & p,
+		 Cell_handle c, Cell_handle & ac, int & i)
   // 2d case
   // p is in conflict with c
   // finds the set conflicts of cells in conflict with p
@@ -321,9 +319,8 @@ Delaunay_triangulation_3<Gt,Tds>::find_conflicts_2
   // and the index i of its facet on the boundary
 {
   if ( ( conflicts.find( (void *) &(*c) ) ) != conflicts.end() )
-    {
       return;   // c was already found
-    }
+
   (void) conflicts.insert( (void *) &(*c) );
 
   for ( int j=0; j<3; j++ ) {
@@ -340,8 +337,8 @@ Delaunay_triangulation_3<Gt,Tds>::find_conflicts_2
 
 template < class Gt, class Tds >
 Bounded_side
-Delaunay_triangulation_3<Gt,Tds>::side_of_sphere
-(Cell_handle c, const Point & p) const
+Delaunay_triangulation_3<Gt,Tds>::
+side_of_sphere(Cell_handle c, const Point & p) const
 {
   CGAL_triangulation_precondition( dimension() == 3 );
   int i3;
@@ -402,8 +399,8 @@ Delaunay_triangulation_3<Gt,Tds>::side_of_sphere
 
 template < class Gt, class Tds >
 Bounded_side
-Delaunay_triangulation_3<Gt,Tds>::side_of_circle
-(Cell_handle c, int i, const Point & p) const
+Delaunay_triangulation_3<Gt,Tds>::
+side_of_circle(Cell_handle c, int i, const Point & p) const
   // precondition : dimension >=2
   // in dimension 3, - for a finite facet
   // returns ON_BOUNDARY if the point lies on the circle,
@@ -563,8 +560,8 @@ Delaunay_triangulation_3<Gt,Tds>::side_of_circle
 
 template < class Gt, class Tds >
 bool
-Delaunay_triangulation_3<Gt,Tds>::is_valid
-(bool verbose = false, int level = 0) const
+Delaunay_triangulation_3<Gt,Tds>::
+is_valid(bool verbose = false, int level = 0) const
 {
   if ( ! tds().is_valid(verbose,level) ) {
     if (verbose) { std::cerr << "invalid data structure" << std::endl; }

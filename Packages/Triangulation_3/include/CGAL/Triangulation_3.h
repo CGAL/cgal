@@ -135,8 +135,7 @@ protected:
   
   void init_tds()
     {
-      infinite = (Vertex*) _tds.insert_increase_dimension
-	(Vertex(Point(500,500,500)));
+      infinite = (Vertex*) _tds.insert_increase_dimension(Vertex());
       // forces the compiler to instanciate handle2pointer :
       handle2pointer( infinite ); 
       handle2pointer( Cell_handle() );
@@ -747,8 +746,8 @@ public:
 
 
 template < class GT, class Tds >
-std::istream& operator>>
-(std::istream& is, Triangulation_3<GT, Tds> &tr)
+std::istream & 
+operator>> (std::istream& is, Triangulation_3<GT, Tds> &tr)
   // reads
   // the dimension
   // the number of finite vertices
@@ -803,8 +802,8 @@ std::istream& operator>>
 }
     
 template < class GT, class Tds >
-std::ostream& operator<<
-(std::ostream& os, const Triangulation_3<GT, Tds> &tr)
+std::ostream & 
+operator<< (std::ostream& os, const Triangulation_3<GT, Tds> &tr)
   // writes :
   // the dimension
   // the number of finite vertices
@@ -1075,7 +1074,8 @@ std::ostream& operator<<
 
 template < class GT, class Tds >
 int
-Triangulation_3<GT,Tds>::number_of_finite_cells() const 
+Triangulation_3<GT,Tds>::
+number_of_finite_cells() const 
 { 
   if ( dimension() < 3 ) return 0;
 
@@ -1090,7 +1090,8 @@ Triangulation_3<GT,Tds>::number_of_finite_cells() const
   
 template < class GT, class Tds >
 int
-Triangulation_3<GT,Tds>::number_of_cells() const 
+Triangulation_3<GT,Tds>::
+number_of_cells() const 
 { 
   if ( dimension() < 3 ) return 0;
 
@@ -1105,7 +1106,8 @@ Triangulation_3<GT,Tds>::number_of_cells() const
 
 template < class GT, class Tds >
 int
-Triangulation_3<GT,Tds>::number_of_finite_facets() const
+Triangulation_3<GT,Tds>::
+number_of_finite_facets() const
 {
   if ( dimension() < 2 ) return 0;
 
@@ -1120,7 +1122,8 @@ Triangulation_3<GT,Tds>::number_of_finite_facets() const
 
 template < class GT, class Tds >
 int
-Triangulation_3<GT,Tds>::number_of_facets() const
+Triangulation_3<GT,Tds>::
+number_of_facets() const
 {
   if ( dimension() < 2 ) return 0;
 
@@ -1135,7 +1138,8 @@ Triangulation_3<GT,Tds>::number_of_facets() const
 
 template < class GT, class Tds >
 int
-Triangulation_3<GT,Tds>::number_of_finite_edges() const
+Triangulation_3<GT,Tds>::
+number_of_finite_edges() const
 {
   if ( dimension() < 1 ) return 0;
 
@@ -1150,7 +1154,8 @@ Triangulation_3<GT,Tds>::number_of_finite_edges() const
 
 template < class GT, class Tds >
 int
-Triangulation_3<GT,Tds>::number_of_edges() const
+Triangulation_3<GT,Tds>::
+number_of_edges() const
 {
   if ( dimension() < 1 ) return 0;
 
@@ -1165,7 +1170,8 @@ Triangulation_3<GT,Tds>::number_of_edges() const
 
 template < class GT, class Tds >
 Triangulation_3<GT,Tds>::Triangle
-Triangulation_3<GT,Tds>::triangle(const Cell_handle c, int i) const
+Triangulation_3<GT,Tds>::
+triangle(const Cell_handle c, int i) const
 { 
   switch ( dimension() ) {
   case 3:
@@ -1216,7 +1222,8 @@ Triangulation_3<GT,Tds>::triangle(const Cell_handle c, int i) const
 
 template < class GT, class Tds >
 Triangulation_3<GT,Tds>::Segment
-Triangulation_3<GT,Tds>::segment(const Cell_handle c, int i, int j) const
+Triangulation_3<GT,Tds>::
+segment(const Cell_handle c, int i, int j) const
 {
   CGAL_triangulation_precondition( i != j );
   switch ( dimension() ) {
@@ -1250,7 +1257,8 @@ Triangulation_3<GT,Tds>::segment(const Cell_handle c, int i, int j) const
 
 template < class GT, class Tds >
 bool
-Triangulation_3<GT,Tds>::is_infinite(const Cell_handle c, int i) const 
+Triangulation_3<GT,Tds>::
+is_infinite(const Cell_handle c, int i) const 
 {
   switch ( dimension() ) {
   case 3:
@@ -1294,7 +1302,8 @@ Triangulation_3<GT,Tds>::is_infinite(const Cell_handle c, int i) const
 
 template < class GT, class Tds >
 bool
-Triangulation_3<GT,Tds>::is_infinite(const Cell_handle c, int i, int j) const 
+Triangulation_3<GT,Tds>::
+is_infinite(const Cell_handle c, int i, int j) const 
 { 
   CGAL_triangulation_precondition( ! (i == j) );
   switch ( dimension() ) {
@@ -1328,7 +1337,8 @@ Triangulation_3<GT,Tds>::is_infinite(const Cell_handle c, int i, int j) const
 
 template < class GT, class Tds >
 bool
-Triangulation_3<GT,Tds>::is_vertex(const Point & p, Vertex_handle & v) const
+Triangulation_3<GT,Tds>::
+is_vertex(const Point & p, Vertex_handle & v) const
 {
   Locate_type lt;
   int li, lj;
@@ -1342,16 +1352,16 @@ Triangulation_3<GT,Tds>::is_vertex(const Point & p, Vertex_handle & v) const
 
 template < class GT, class Tds >
 Triangulation_3<GT,Tds>::Cell_handle
-Triangulation_3<GT,Tds>::locate(const Point & p) const
+Triangulation_3<GT,Tds>::
+locate(const Point & p) const
 {
   Locate_type lt;
   int li, lj;
   Cell_handle start;
   if ( dimension() >= 1 ) {
     // there is at least one finite "cell" (or facet or edge)
-    start = infinite_vertex()->cell()->neighbor( 
-						infinite_vertex()->cell()->index( infinite_vertex()) 
-						);
+    start = infinite_vertex()->cell()->neighbor
+      ( infinite_vertex()->cell()->index( infinite_vertex()) );
   }
   else {
     start = NULL;
@@ -1361,18 +1371,17 @@ Triangulation_3<GT,Tds>::locate(const Point & p) const
 
 template < class GT, class Tds >
 Triangulation_3<GT,Tds>::Cell_handle
-Triangulation_3<GT,Tds>::locate
-(const Point & p,
- Locate_type & lt,
- int & li,
- int & lj) const
+Triangulation_3<GT,Tds>::
+locate(const Point & p,
+       Locate_type & lt,
+       int & li,
+       int & lj) const
 {
   Cell_handle start;
   if ( dimension() >= 1 ) {
     // there is at least one finite "cell" (or facet or edge)
-    start = infinite_vertex()->cell()->neighbor( 
-						infinite_vertex()->cell()->index( infinite_vertex())
-						);
+    start = infinite_vertex()->cell()->neighbor
+      ( infinite_vertex()->cell()->index( infinite_vertex()) );
   }
   else {
     start = NULL;
@@ -1382,12 +1391,12 @@ Triangulation_3<GT,Tds>::locate
 
 template < class GT, class Tds >
 Triangulation_3<GT,Tds>::Cell_handle
-Triangulation_3<GT,Tds>::locate
-(const Point & p,
- Cell_handle start,
- Locate_type & lt,
- int & li,
- int & lj) const
+Triangulation_3<GT,Tds>::
+locate(const Point & p,
+       Cell_handle start,
+       Locate_type & lt,
+       int & li,
+       int & lj) const
   // returns the (finite or infinite) cell p lies in
   // starts at cell "start"
   // start must be non NULL and finite
@@ -1787,13 +1796,13 @@ Triangulation_3<GT,Tds>::locate
 	  
 template < class GT, class Tds >
 Bounded_side
-Triangulation_3<GT,Tds>::side_of_tetrahedron
-(const Point & p,
- const Point & p0, 
- const Point & p1,
- const Point & p2, 
- const Point & p3,
- Locate_type & lt, int & i, int & j ) const
+Triangulation_3<GT,Tds>::
+side_of_tetrahedron(const Point & p,
+		    const Point & p0, 
+		    const Point & p1,
+		    const Point & p2, 
+		    const Point & p3,
+		    Locate_type & lt, int & i, int & j ) const
   // p0,p1,p2,p3 supposed to be non coplanar
   // tetrahedron p0,p1,p2,p3 is supposed to be well oriented
   // returns :
@@ -1874,10 +1883,10 @@ Triangulation_3<GT,Tds>::side_of_tetrahedron
 
 template < class GT, class Tds >
 Bounded_side
-Triangulation_3<GT,Tds>::side_of_cell
-(const Point & p, 
- Cell_handle c,
- Locate_type & lt, int & i, int & j) const
+Triangulation_3<GT,Tds>::
+side_of_cell(const Point & p, 
+	     Cell_handle c,
+	     Locate_type & lt, int & i, int & j) const
   // returns
   // ON_BOUNDED_SIDE if p inside the cell
   // (for an infinite cell this means that p lies strictly in the half space
@@ -1980,12 +1989,12 @@ Triangulation_3<GT,Tds>::side_of_cell
 
 template < class GT, class Tds >
 Bounded_side
-Triangulation_3<GT,Tds>::side_of_triangle
-(const Point & p,
- const Point & p0, 
- const Point & p1,
- const Point & p2,
- Locate_type & lt, int & i, int & j ) const
+Triangulation_3<GT,Tds>::
+side_of_triangle(const Point & p,
+		 const Point & p0, 
+		 const Point & p1,
+		 const Point & p2,
+		 Locate_type & lt, int & i, int & j ) const
   // p0,p1,p2 supposed to define a plane
   // p supposed to lie on plane p0,p1,p2
   // triangle p0,p1,p2 defines the orientation of the plane
@@ -2053,10 +2062,10 @@ Triangulation_3<GT,Tds>::side_of_triangle
 
 template < class GT, class Tds >
 Bounded_side
-Triangulation_3<GT,Tds>::side_of_facet
-(const Point & p,
- Cell_handle c,
- Locate_type & lt, int & li, int & lj) const
+Triangulation_3<GT,Tds>::
+side_of_facet(const Point & p,
+	      Cell_handle c,
+	      Locate_type & lt, int & li, int & lj) const
   // supposes dimension 2 otherwise does not work for infinite facets
   // returns :
   // ON_BOUNDED_SIDE if p inside the facet
@@ -2198,11 +2207,11 @@ Triangulation_3<GT,Tds>::side_of_facet
 
 template < class GT, class Tds >
 Bounded_side
-Triangulation_3<GT,Tds>::side_of_segment
-(const Point & p,
- const Point & p0, 
- const Point & p1,
- Locate_type & lt, int & i ) const
+Triangulation_3<GT,Tds>::
+side_of_segment(const Point & p,
+		const Point & p0, 
+		const Point & p1,
+		Locate_type & lt, int & i ) const
   // p0, p1 supposed to be different
   // p supposed to be collinear to p0, p1
   // returns :
@@ -2257,10 +2266,10 @@ Triangulation_3<GT,Tds>::side_of_segment
 
 template < class GT, class Tds >
 Bounded_side
-Triangulation_3<GT,Tds>::side_of_edge
-(const Point & p,
- Cell_handle c,
- Locate_type & lt, int & li) const
+Triangulation_3<GT,Tds>::
+side_of_edge(const Point & p,
+	     Cell_handle c,
+	     Locate_type & lt, int & li) const
   // supposes dimension 1 otherwise does not work for infinite edges
   // returns :
   // ON_BOUNDED_SIDE if p inside the edge 
@@ -2269,8 +2278,7 @@ Triangulation_3<GT,Tds>::side_of_edge
   // ON_BOUNDARY if p equals one of the vertices
   // ON_UNBOUNDED_SIDE if p lies outside the edge
   // (for an infinite edge this means that p lies on the other half line)
-  // lt has a meaning when ON_BOUNDED_SIDE and ON_BOUNDARY
-  // li refer to indices in the cell c 
+  // lt has a meaning when ON_BOUNDED_SIDE and ON_BOUNDARY  // li refer to indices in the cell c 
 {//side_of_edge
   CGAL_triangulation_precondition( dimension() == 1 );
   if ( ! is_infinite(c,0,1) ) 
@@ -2279,18 +2287,13 @@ Triangulation_3<GT,Tds>::side_of_edge
 			   c->vertex(1)->point(),
 			   lt, li);
   // else infinite edge
-  if ( geom_traits().equal( p, c->vertex(0)->point() ) ) {
+  int inf = c->index(infinite);
+  if ( geom_traits().equal( p, c->vertex(1-inf)->point() ) ) {
     lt = VERTEX;
-    li = 0;
-    return ON_BOUNDARY;
-  }
-  if ( geom_traits().equal( p, c->vertex(1)->point() ) ) {
-    lt = VERTEX;
-    li = 1;
+    li = 1-inf;
     return ON_BOUNDARY;
   }
   // does not work in dimension > 2
-  int inf = c->index(infinite);
   Cell_handle n = c->neighbor(inf);
   int i_e = n->index(c);
   // we know that n is finite
@@ -2327,7 +2330,8 @@ Triangulation_3<GT,Tds>::side_of_edge
 
 template < class GT, class Tds >
 Triangulation_3<GT,Tds>::Vertex_handle
-Triangulation_3<GT,Tds>::insert(const Point & p )
+Triangulation_3<GT,Tds>::
+insert(const Point & p )
 {
   Locate_type lt;
   int li, lj;
@@ -2362,7 +2366,8 @@ Triangulation_3<GT,Tds>::insert(const Point & p )
 
 template < class GT, class Tds >
 Triangulation_3<GT,Tds>::Vertex_handle
-Triangulation_3<GT,Tds>::insert(const Point & p, Cell_handle start)
+Triangulation_3<GT,Tds>::
+insert(const Point & p, Cell_handle start)
 {
   Locate_type lt;
   int li, lj;
@@ -2388,7 +2393,8 @@ Triangulation_3<GT,Tds>::insert(const Point & p, Cell_handle start)
 
 template < class GT, class Tds >
 Triangulation_3<GT,Tds>::Vertex_handle
-Triangulation_3<GT,Tds>::insert_in_cell(const Point & p, Cell_handle c)
+Triangulation_3<GT,Tds>::
+insert_in_cell(const Point & p, Cell_handle c)
 {
   CGAL_triangulation_precondition( dimension() == 3 );
   CGAL_triangulation_precondition_code
@@ -2407,7 +2413,8 @@ Triangulation_3<GT,Tds>::insert_in_cell(const Point & p, Cell_handle c)
 
 template < class GT, class Tds >
 Triangulation_3<GT,Tds>::Vertex_handle
-Triangulation_3<GT,Tds>::insert_in_facet(const Point & p, Cell_handle c, int i)
+Triangulation_3<GT,Tds>::
+insert_in_facet(const Point & p, Cell_handle c, int i)
 {
   switch ( dimension() ) {
   case 3:
@@ -2446,8 +2453,8 @@ Triangulation_3<GT,Tds>::insert_in_facet(const Point & p, Cell_handle c, int i)
 
 template < class GT, class Tds >
 Triangulation_3<GT,Tds>::Vertex_handle
-Triangulation_3<GT,Tds>::insert_in_edge
-(const Point & p, Cell_handle c, int i, int j)
+Triangulation_3<GT,Tds>::
+insert_in_edge(const Point & p, Cell_handle c, int i, int j)
 {
   CGAL_triangulation_precondition( i != j );
   switch ( dimension() ) {
@@ -2499,10 +2506,10 @@ Triangulation_3<GT,Tds>::insert_in_edge
 				       ( j == 0 || j == 1 ) );
       CGAL_triangulation_precondition_code
 	( int li;
-	  Locate_type lt; )
-	CGAL_triangulation_precondition( side_of_edge(p,c,lt,li)
-					 == ON_BOUNDED_SIDE );
-	break;
+	  Locate_type lt; );
+      CGAL_triangulation_precondition( side_of_edge(p,c,lt,li)
+				       == ON_BOUNDED_SIDE );
+      break;
     }
   default:
     CGAL_triangulation_assertion( false );
@@ -2514,8 +2521,8 @@ Triangulation_3<GT,Tds>::insert_in_edge
   
 template < class GT, class Tds >
 Triangulation_3<GT,Tds>::Vertex_handle
-Triangulation_3<GT,Tds>::insert_outside_convex_hull
-(const Point & p, Cell_handle c)
+Triangulation_3<GT,Tds>::
+insert_outside_convex_hull(const Point & p, Cell_handle c)
   //			     int li, int lj=0)
   // c is an infinite cell containing p
   // whose facet li lies on the convex hull boundary
@@ -2632,7 +2639,8 @@ Triangulation_3<GT,Tds>::insert_outside_convex_hull
 
 template < class GT, class Tds >
 Triangulation_3<GT,Tds>::Cell_handle
-Triangulation_3<GT,Tds>::hat(Vertex_handle v, Cell_handle c)
+Triangulation_3<GT,Tds>::
+hat(Vertex_handle v, Cell_handle c)
   // recursive traversal of the set of facets of the convex hull
   // that are visible from v
   // v replaces infinite_vertex in these cells
@@ -2678,7 +2686,8 @@ Triangulation_3<GT,Tds>::hat(Vertex_handle v, Cell_handle c)
 
 template < class GT, class Tds >
 void
-Triangulation_3<GT,Tds>::link(Vertex_handle v, Cell_handle c)
+Triangulation_3<GT,Tds>::
+link(Vertex_handle v, Cell_handle c)
   // c belongs to the hat of v and has a facet on its boundary
   // traverses the boundary of the hat and finds adjacencies
   // traversal is done counterclockwise as seen from v
@@ -2733,7 +2742,8 @@ Triangulation_3<GT,Tds>::link(Vertex_handle v, Cell_handle c)
 
 template < class GT, class Tds >
 Triangulation_3<GT,Tds>::Vertex_handle
-Triangulation_3<GT,Tds>::insert_outside_affine_hull(const Point & p)
+Triangulation_3<GT,Tds>::
+insert_outside_affine_hull(const Point & p)
 {
   CGAL_triangulation_precondition( dimension() < 3 );
   bool reorient;
@@ -2779,9 +2789,10 @@ Triangulation_3<GT,Tds>::insert_outside_affine_hull(const Point & p)
 
 template < class GT, class Tds >
 void
-Triangulation_3<GT,Tds>::incident_cells(Vertex_handle v, 
-					std::set<Cell*, less<Cell*> > & cells,
-					Cell_handle c = NULL ) const
+Triangulation_3<GT,Tds>::
+incident_cells(Vertex_handle v, 
+	       std::set<Cell*, less<Cell*> > & cells,
+	       Cell_handle c = NULL ) const
 {
   CGAL_triangulation_precondition( &(*v) != NULL );
   CGAL_triangulation_precondition( _tds.is_vertex(&(*v)) );
@@ -2808,10 +2819,10 @@ Triangulation_3<GT,Tds>::incident_cells(Vertex_handle v,
 
 template < class GT, class Tds >
 void
-Triangulation_3<GT,Tds>::incident_vertices
-(Vertex_handle v, 
- std::set<Vertex*, less<Vertex*> > & vertices,
- Cell_handle c = NULL ) const
+Triangulation_3<GT,Tds>::
+incident_vertices(Vertex_handle v, 
+		  std::set<Vertex*, less<Vertex*> > & vertices,
+		  Cell_handle c = NULL ) const
 {
   CGAL_triangulation_precondition( &(*v) != NULL );
   CGAL_triangulation_precondition( _tds.is_vertex(&(*v)) );
@@ -2851,11 +2862,11 @@ Triangulation_3<GT,Tds>::incident_vertices
 
 template < class GT, class Tds >
 void
-Triangulation_3<GT,Tds>::util_incident_vertices
-(Vertex_handle v, 
- std::set<Vertex*, less<Vertex*> > & vertices,
- std::set<Cell*, less<Cell*> > & cells,
- Cell_handle c ) const
+Triangulation_3<GT,Tds>::
+util_incident_vertices(Vertex_handle v, 
+		       std::set<Vertex*, less<Vertex*> > & vertices,
+		       std::set<Cell*, less<Cell*> > & cells,
+		       Cell_handle c ) const
 {
   if ( cells.find( &(*c) ) != cells.end() ) {
     return; // c was already visited
@@ -2877,7 +2888,8 @@ Triangulation_3<GT,Tds>::util_incident_vertices
 
 template < class GT, class Tds >
 bool
-Triangulation_3<GT,Tds>::is_valid(bool verbose = false, int level = 0) const
+Triangulation_3<GT,Tds>::
+is_valid(bool verbose = false, int level = 0) const
 {
   if ( ! _tds.is_valid(verbose,level) ) {
     if (verbose) { std::cerr << "invalid data structure" << std::endl; }
@@ -2933,8 +2945,8 @@ Triangulation_3<GT,Tds>::is_valid(bool verbose = false, int level = 0) const
 
 template < class GT, class Tds >
 bool
-Triangulation_3<GT,Tds>::is_valid
-(Cell_handle c, bool verbose = false, int level = 0) const
+Triangulation_3<GT,Tds>::
+is_valid(Cell_handle c, bool verbose = false, int level = 0) const
 {
   int i;
   if ( ! (&(*c))->is_valid(t.dimension(),verbose,level) ) {
@@ -2956,8 +2968,9 @@ Triangulation_3<GT,Tds>::is_valid
 
 template < class GT, class Tds >
 bool
-Triangulation_3<GT,Tds>::is_valid_finite(Cell_handle c, 
-					 bool verbose = false, int level = 0) const
+Triangulation_3<GT,Tds>::
+is_valid_finite(Cell_handle c, 
+		bool verbose = false, int level = 0) const
 {
   switch ( dimension() ) {
   case 3:
