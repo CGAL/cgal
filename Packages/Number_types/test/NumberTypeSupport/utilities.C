@@ -30,6 +30,10 @@
 #include <CGAL/leda_real.h>
 #endif // CGAL_USE_LEDA
 
+#ifdef CGAL_USE_LONG_LONG
+#  include <CGAL/long_long.h>
+#endif
+
 typedef CGAL::Quotient<CGAL::MP_Float>            QMPF;
 
 // Exclude Filtered_exact tests with VC++ (lack of partial specialization)

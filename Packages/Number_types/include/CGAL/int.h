@@ -265,78 +265,8 @@ namespace NTS {
   inline unsigned short int abs(unsigned short int i) { return i; }
 } // namespace NTS
 
-#ifdef LONG_LONG
 
-// long long
-
-template <> struct Number_type_traits<long long> {
-  typedef Tag_true   Has_gcd;
-  typedef Tag_false  Has_division;
-  typedef Tag_false  Has_sqrt;
-};
-
-inline
-long long
-div(long long i1, long long i2)
-{ return i1 / i2; }
-
-inline
-double
-to_double(long long i)
-{ return static_cast<double>(i); }
-
-inline
-bool
-is_finite(long long)
-{ return true; }
-
-inline
-bool
-is_valid(long long)
-{ return true; }
-
-// unsigned long long 
-
-template <> struct Number_type_traits<unsigned long long> {
-  typedef Tag_true   Has_gcd;
-  typedef Tag_false  Has_division;
-  typedef Tag_false  Has_sqrt;
-};
-
-inline
-unsigned long long
-div(unsigned long long i1, unsigned long long i2)
-{ return i1 / i2; }
-
-inline
-double
-to_double(unsigned long long i)
-{ return static_cast<double>(i); }
-
-inline
-bool
-is_finite(unsigned long long)
-{ return true; }
-
-inline
-bool
-is_valid(unsigned long long)
-{ return true; }
-
-namespace NTS {
-  inline unsigned long long is_negative(unsigned long long i) 
-    { return false; }
-  
-  inline Sign sign(unsigned long long i) 
-    { return is_positive(i) ? POSITIVE : ZERO; }
-  
-  inline unsigned long long is_positive(unsigned long long i)
-    { return i != 0; }
-
-  inline unsigned long long abs(unsigned long long i) { return i; }
-} // namespace NTS
-
-#endif // LONG_LONG
+// Note : "long long" support is in <CGAL/long_long.h>
 
 CGAL_END_NAMESPACE
 
