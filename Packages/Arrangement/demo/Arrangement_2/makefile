@@ -20,7 +20,11 @@ CORE_LIB=-lcore
 else
 COREROOT_INC=
 COREROOT_LIB=
+ifdef CORE_LIB_DIR
 CORE_LIB=-lCore
+else
+CORE_LIB=
+endif
 endif
 
 CXXFLAGS = \
