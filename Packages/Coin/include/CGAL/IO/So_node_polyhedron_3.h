@@ -54,27 +54,48 @@
 #include <Inventor/nodes/SoNonIndexedShape.h>
 
 #include "So_polyhedron_detail.h"
+#include <qprogressdialog.h>
 
+#include <map>
+
+
+template<class Handle>
+class less{
+public:
+  bool operator()(const Handle& f1, const Handle& f2) const { return (&(*f1))<(&(*f2));}
+};
 
 template <class Polyhedron_3>
 class Node_polyhedron_3 : public SoNonIndexedShape{
   
-  //SO_NODE_HEADER(Node_polyhedron_3);  //defined in Inventor/nodes/SoSubNode.h
+  //SO_NODE_HEADER(Node_polyhedron_3);  
+  //defined in Inventor/nodes/SoSubNode.h
 
 public:
-  typedef typename Polyhedron_3                        Polyhedron;
-  typedef typename Polyhedron::Traits                  Traits;  
-  typedef typename Traits::Vector_3                    Vector_3;
-  typedef typename Polyhedron::Halfedge_handle         Halfedge_handle;
-  typedef typename Polyhedron::Facet                   Facet;
-  typedef typename Polyhedron::Facet_iterator          Facet_iterator;
-  typedef typename Polyhedron::Vertex_iterator         Vertex_iterator;
+  typedef typename Polyhedron_3                         Polyhedron;
+  typedef typename Polyhedron::Traits                   Traits;  
+  typedef typename Traits::Vector_3                     Vector_3;
+  typedef typename Polyhedron::Halfedge_handle          Halfedge_handle;
+  typedef typename Polyhedron::Facet                    Facet;
+  typedef typename Polyhedron::Facet_handle             Facet_handle;
+  typedef typename Polyhedron::Facet_const_handle       Facet_const_handle;
+  typedef typename Polyhedron::Vertex                   Vertex;
+  typedef typename Polyhedron::Vertex_handle            Vertex_handle;
+  typedef typename Polyhedron::Vertex_const_handle      Vertex_const_handle;
+  typedef typename Polyhedron::Facet_iterator           Facet_iterator;
+  typedef typename Polyhedron::Facet_const_iterator     Facet_const_iterator;
+  typedef typename Polyhedron::Vertex_iterator          Vertex_iterator;
   typedef typename Polyhedron::Halfedge_around_facet_circulator
                                 Halfedge_around_facet_circulator;
   typedef typename Polyhedron::Halfedge_around_vertex_circulator
                                 Halfedge_around_vertex_circulator;
-  typedef typename Traits::Point_3                     Point;
+  typedef typename Traits::Point_3                      Point;
+  typedef less<Vertex_handle>                     Vertex_handle_less;
+  typedef less<Facet_handle>                      Facet_handle_less;
+
   //typedef typename Polyhedron::Size                    Size;
+  
+  //friend bool less(Facet_handle&, Facet_handle&);
 
   static void initClass(){
     do {
@@ -100,7 +121,7 @@ public:
       } while (0);
     } while (0);
   };            // Initializes this class
-  Node_polyhedron_3() : p(p_temp){
+  Node_polyhedron_3() : p(p_temp), LOCK(0){
     do {
       Node_polyhedron_3::classinstances++;
       // Catch attempts to use a node class which has not been initialized.
@@ -118,12 +139,15 @@ public:
       this->isBuiltIn = FALSE;
     } while (0);
   };                // The constructor
-  Node_polyhedron_3(Polyhedron &P) : p(P){
+  Node_polyhedron_3(Polyhedron &P) : p(P), LOCK(0){
     do {
       Node_polyhedron_3::classinstances++;
       // Catch attempts to use a node class which has not been initialized.
       assert(Node_polyhedron_3::classTypeId != SoType::badType() && 
                 "you forgot init()!");
+
+      compute_normals_for_faces();
+      compute_normals_for_vertices();
       // Initialize a fielddata container for the class only once. 
       if (!Node_polyhedron_3::fieldData) {
         Node_polyhedron_3::fieldData =
@@ -136,6 +160,74 @@ public:
       this->isBuiltIn = FALSE;
     } while (0);
   };   // The constructor
+  
+  void compute_normals_for_faces(){
+    lock();    
+    faces_normals.erase(faces_normals.begin(), faces_normals.end());
+    QProgressDialog progress( "Computing normals for faces...", 
+      "Cancel computing", p.size_of_facets(), NULL, "progress", true );
+    progress.setMinimumDuration(0);
+    int faces_count = 0;
+    Facet_iterator fit;
+    for(fit = p.facets_begin(); fit != p.facets_end(); fit++){
+      progress.setProgress( faces_count );
+      Halfedge_around_facet_circulator h = (*fit).facet_begin();
+      Vector_3 normal = CGAL::cross_product(
+          h->next()->vertex()->point() - h->vertex()->point(),
+          h->next()->next()->vertex()->point() - 
+          h->next()->vertex()->point());
+      double sqnorm = normal * normal;
+      if(sqnorm != 0){
+        Vector_3 v_n = normal / std::sqrt(sqnorm);        
+        faces_normals[fit] = v_n;
+      }      
+      faces_count++;
+    }
+    
+    progress.setProgress( faces_count );
+    unlock();
+  }
+  void compute_normals_for_vertices(){
+    lock();    
+    //vertices_normals.erase(vertices_normals.begin(), vertices_normals.end());
+    QProgressDialog progress( "Computing normals for vertices...", 
+      "Cancel computing", p.size_of_vertices(), NULL, "progress", true );
+    progress.setMinimumDuration(0);
+    int vertices_count = 0;
+
+    Vertex_iterator vit;
+    for(vit = p.vertices_begin(); vit != p.vertices_end(); vit++){
+      progress.setProgress(vertices_count);
+      Halfedge_around_vertex_circulator vh = (*vit).vertex_begin();
+      unsigned int normals_count = 0;
+      Vector_3 normals_sum(0, 0, 0);
+      do{
+          Vector_3 normal = CGAL::cross_product(
+              vh->next()->vertex()->point() - vh->vertex()->point(),
+              vh->next()->next()->vertex()->point() - 
+              vh->next()->vertex()->point());
+          normals_sum = normals_sum + normal;
+          normals_count++;
+        }while(++vh != (*vit).vertex_begin());
+      normals_sum = normals_sum/normals_count;
+      double sqnorm = normals_sum * normals_sum;
+      if(sqnorm != 0){
+        Vector_3 v_n = normals_sum / std::sqrt(sqnorm);
+        vertices_normals[vit] = v_n;
+      }
+      vertices_count++;
+    }    
+    unlock();
+  }
+
+  void lock(){LOCK++;}
+  void unlock(){
+    if(LOCK>0)
+      LOCK--;
+    else
+      assert( LOCK != 0 && "lock is already 0. Be sure you have the same \
+      number of locks as the number of unlocks");
+  }
 
 public:
   static SoType getClassTypeId(void){
@@ -245,7 +337,7 @@ protected:
             double sqnorm = normals_sum * normals_sum;
             if(sqnorm != 0){
               Vector_3 v_n = normals_sum / std::sqrt(sqnorm);
-              Point pn = Point(0, 0, 0) + v_n;
+              Point pn = Point(0, 0, 0) + vertices_normals[h->vertex()];
               glNormal3f(pn.x(), pn.y(), pn.z());
             }
             Point point = h->vertex()->point();
@@ -260,25 +352,16 @@ protected:
       unsigned int complexity_count = 0;
       unsigned int complexity_step = (unsigned int)(1/complexity);
       while(fit != p.facets_end() && complexity_count < nr_of_facets){
-        Halfedge_around_facet_circulator h = (*fit).facet_begin();
-    
-        Vector_3 normal = CGAL::cross_product(
-          h->next()->vertex()->point() - h->vertex()->point(),
-          h->next()->next()->vertex()->point() - h->next()->vertex()->point());
-
-        glBegin(GL_POLYGON);
-        double sqnorm = normal * normal;
-        if(sqnorm != 0){
-          Vector_3 v_n = normal / std::sqrt(sqnorm);
-          Point pn = Point(0, 0, 0) + v_n;
+        glBegin(GL_POLYGON);        
+          Point pn = Point(0, 0, 0) + faces_normals[fit];
           glNormal3f(pn.x(), pn.y(), pn.z());
-        }
-        do{      
-          Point point = h->vertex()->point();
-          glVertex3f(point[0],point[1],point[2]);
-        }while(++h != (*fit).facet_begin());
+          Halfedge_around_facet_circulator h = (*fit).facet_begin();
+          do{      
+            Point point = h->vertex()->point();
+            glVertex3f(point[0],point[1],point[2]);
+          }while(++h != (*fit).facet_begin());
         glEnd();
-        for(int step_i = 0; step_i < complexity_step; step_i++)
+        for(unsigned int step_i = 0; step_i < complexity_step; step_i++)
           fit++;          
         complexity_count += complexity_step;
       }//end while
@@ -408,10 +491,15 @@ protected:
 
 private:
   virtual ~Node_polyhedron_3(){};       //The destructor
-
+  
+  std::map<Vertex_handle, Vector_3, Vertex_handle_less>
+                                      vertices_normals;  
+  std::map<Facet_handle, Vector_3, Facet_handle_less>
+                                      faces_normals;
   Polyhedron &p;
   Polyhedron p_temp;
-
+  int LOCK;   //used to secure rendering
+              //the node is rendered only when the data is ready
 };
 
 template<class Polyhedron_3>
