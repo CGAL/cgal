@@ -34,6 +34,8 @@
 #include <CGAL/Triangulation_ds_face_base_2.h>
 #include <CGAL/triangulation_assertions.h>
 
+
+
 CGAL_BEGIN_NAMESPACE
 
 
@@ -91,8 +93,8 @@ public:
   inline bool is_in_list(int i) const
   {
     CGAL_triangulation_assertion( i >= 0 && i <= 2 );
-    return (next_face_in_list[i] != NULL ||
-	    prev_face_in_list[i] != NULL);
+    return (next_edge_in_list[i].first != NULL ||
+	    prev_edge_in_list[i].first != NULL);
   }
 
   inline void set_next(int i, const Edge& next)
@@ -101,8 +103,7 @@ public:
     CGAL_triangulation_precondition( next.first == NULL ||
 				     (next.second >= 0 &&
 				      next.second <= 2) );
-    next_face_in_list[i] = next.first;
-    next_indx_in_list[i] = next.second;
+    next_edge_in_list[i] = next;
   }
 
   inline void set_previous(int i, const Edge&  prev)
@@ -111,36 +112,33 @@ public:
     CGAL_triangulation_precondition( prev.first == NULL ||
 				     (prev.second >= 0 &&
 				      prev.second <= 2) );
-    prev_face_in_list[i] = prev.first;
-    prev_indx_in_list[i] = prev.second;
+    prev_edge_in_list[i] = prev;
   }
 
   inline Edge next(int i) const
   {
     CGAL_triangulation_precondition( i >= 0 && i <= 2 );
-    return Edge(next_face_in_list[i], next_indx_in_list[i]);
+    return next_edge_in_list[i];
   }
 
   inline Edge previous(int i) const
   {
     CGAL_triangulation_precondition( i >= 0 && i <= 2 );
-    return Edge(prev_face_in_list[i], prev_indx_in_list[i]);
+    return prev_edge_in_list[i];
   }
 
 
 protected:
   // class variables
-  Face_handle next_face_in_list[3];
-  int         next_indx_in_list[3];
-  Face_handle prev_face_in_list[3];
-  int         prev_indx_in_list[3];
+  Edge next_edge_in_list[3];
+  Edge prev_edge_in_list[3];
 
 protected:
   // initialization of in-place list pointers
   inline void init() {
     for (int i = 0; i < 3; i++) {
-      next_face_in_list[i] = Face_handle(NULL);
-      prev_face_in_list[i] = Face_handle(NULL);
+      next_edge_in_list[i] = Edge(Face_handle(NULL),-1);
+      prev_edge_in_list[i] = Edge(Face_handle(NULL),-1);
     }
   }
 
