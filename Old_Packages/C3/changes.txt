@@ -1,3 +1,9 @@
+Version 3.3.1 (September 2 1999)
+- Added headers to *.C so that Utrecht cant complain
+
+Version 3.3 (September 2 1999)
+- The typename added in 3.2.3 crashes VC++, hence the #define typename for VC++
+
 Version 3.2.6 (September 2 1999)
 - removed #warning which is not standard-compliant and crashes on M$VC++
 

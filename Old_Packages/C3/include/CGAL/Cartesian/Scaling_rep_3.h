@@ -33,7 +33,7 @@
 #define CGAL_CARTESIAN_SCALING_REP_3_H
 
 #ifndef CGAL_CARTESIAN_REDEFINE_NAMES_3_H
-#include <CGAL/Cartesian/redefine_names_3.C>
+#include <CGAL/Cartesian/redefine_names_3.h>
 #endif
 
 CGAL_BEGIN_NAMESPACE

@@ -24,13 +24,13 @@
 #include <cassert>
 #include <CGAL/basic.h>
 #include <CGAL/leda_real.h>
-#include <CGAL/Cartesian_3.h>
+#include <CGAL/Cartesian.h>
 #include <CGAL/_test_mf_plane_3_to_2d.C>
 
 int
 main()
 {
-  typedef   CGAL::Cartesian_3<leda_real>     C_Cls;
+  typedef   CGAL::Cartesian<leda_real>     C_Cls;
   cout << "Testing with Cartesian<leda_real> :" << endl;
   _test_mf_plane_3_to_2d( C_Cls() );
 
