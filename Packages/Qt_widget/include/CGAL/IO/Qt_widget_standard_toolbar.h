@@ -23,32 +23,30 @@
 #define CGAL_QT_WIDGET_STANDARD_TOOLBAR_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
 
-
-// TODO: check if some of those includes shouldn't be in the .C file
-#include <CGAL/IO/Qt_widget.h>
-#include <CGAL/IO/Qt_widget_focus.h>
-#include <CGAL/IO/Qt_widget_zoomrect.h>
-#include <CGAL/IO/Qt_widget_handtool.h>
-#include <CGAL/IO/Qt_widget_show_mouse_coordinates.h>
-
-
-#include <qobject.h>
-#include <qtoolbutton.h>
 #include <qtoolbar.h>
-#include <qmainwindow.h>
-#include <qbuttongroup.h>
 
 namespace CGAL {
 
-class Qt_widget_standard_toolbar : public QObject
+class Qt_widget;
+
+class Qt_widget_standard_toolbar : public QToolBar
 {
 	Q_OBJECT
 public:
-  Qt_widget_standard_toolbar(Qt_widget *w, QMainWindow *mw);
-  QToolBar*	toolbar(){return maintoolbar;}
+  Qt_widget_standard_toolbar(Qt_widget *w,
+			     QMainWindow *mw,
+#if QT_VERSION < 300
+			     // for Qt 2.3 and before
+			     QMainWindow::ToolBarDock = QMainWindow::Top,
+#else
+			     // from Qt 3.0
+			     Dock = DockTop,
+#endif
+			     bool newLine = true,
+			     const char* name = 0);
 
+  QToolBar*	toolbar(){return this;} // for compatibility
 
 private slots:
   void zoomin();
@@ -57,17 +55,7 @@ private slots:
   void forward();
   
 private:
-  QToolBar        *maintoolbar;
-  QToolButton     *but[10];
   Qt_widget	  *widget;
-  QButtonGroup    *button_group;
-  int             nr_of_buttons;
-	
-  CGAL::Qt_widget_focus             zoombut;
-  CGAL::Qt_widget_zoomrect	    zoomrectbut;
-  CGAL::Qt_widget_handtool	    handtoolbut;
-  CGAL::Qt_widget_show_mouse_coordinates *show_coord;
-
 };//end class
 
 };//end namespace
