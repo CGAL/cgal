@@ -1,3 +1,6 @@
+Version 1.188 (?? January 04)
+- Remove useless friend declarations.
+
 Version 1.187 (07 January 04)
 - cleaning in demos and doc (#include for geomview)
 

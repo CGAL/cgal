@@ -44,9 +44,6 @@ template < class Gt,
                                    Triangulation_cell_base_3<Gt> > >
 class Delaunay_triangulation_3 : public Triangulation_3<Gt,Tds>
 {
-  friend std::istream& operator >> <>
-  (std::istream& is, Triangulation_3<Gt,Tds> &tr);
-
   typedef Delaunay_triangulation_3<Gt, Tds> Self;
   typedef Triangulation_3<Gt,Tds>           Tr_Base;
 
