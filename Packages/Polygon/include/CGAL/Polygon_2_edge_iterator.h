@@ -89,8 +89,8 @@ class Polygon_2_edge_iterator {
       ++second_vertex;
       if (second_vertex == container->end())
         second_vertex = container->begin();
-      typename Traits::Construct_segment_2 construct_segment_2 = 
-            Traits().construct_segment_2_object();
+      typename Traits_::Construct_segment_2 construct_segment_2 = 
+            Traits_().construct_segment_2_object();
       return construct_segment_2(*first_vertex, *second_vertex);
     }
     
