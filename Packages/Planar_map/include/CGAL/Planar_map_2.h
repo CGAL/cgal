@@ -18,9 +18,10 @@
 // revision      : 
 // revision_date : 
 // author(s)     : Iddo Hanniel <hanniel@math.tau.ac.il>
-//                 Eyal Flato
+//                 Eyal Flato <flato@post.tau.ac.il>
 //                 Oren Nechushtan <theoren@math.tau.ac.il>
 //                 Eti Ezra <estere@post.tau.ac.il>
+//                 Shai Hirsch <shaihi@post.tau.ac.il>
 //
 //
 // coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
@@ -32,6 +33,10 @@
 
 #ifndef CGAL_PLANAR_MAP_MISC_H
 #include <CGAL/Planar_map_2/Planar_map_misc.h>
+#endif
+
+#ifndef CGAL_PM_CHANGE_NOTIFICATION_H
+#include <CGAL/Planar_map_2/Pm_change_notification.h>
 #endif
 
 #ifndef CGAL_TOPOLOGICAL_MAP_H
@@ -140,6 +145,8 @@ public:
   
   typedef Pm_point_location_base<Self> Point_location_base;
   typedef Pm_bounding_box_base<Self> Bounding_box_base;
+  
+  typedef Pm_change_notification<Self>  Change_notification;
   
   typedef enum{ 
     VERTEX = 1, 
@@ -460,7 +467,9 @@ public:
   // Inserts a new curve cv in the interior of the face f.
   // Returns the halfedge which is directed in the same way as the curve cv
   // (i.e., traits->curve_source(cv) == h.source()).
-  Halfedge_handle insert_in_face_interior(const X_curve& cv, Face_handle f) 
+  Halfedge_handle insert_in_face_interior(const X_curve&       cv, 
+                                          Face_handle          f, 
+                                          Change_notification *en = NULL) 
   {
     Halfedge_handle h = Topological_map<Dcel>::insert_in_face_interior(f);
     h->set_curve(cv);  //should set the curve of the twin as well but for now
@@ -472,12 +481,19 @@ public:
 
     h->source()->set_point(traits->curve_source(cv));
     h->target()->set_point(traits->curve_target(cv));
+
+    if (en != NULL)
+      {
+        en->add_edge(cv, h, true, false);
+        en->add_hole(f, h);
+      }
 			
     return h;
   }
 		
   Halfedge_handle insert_from_vertex(const X_curve& cv, 
-				     Vertex_handle v1, bool source) 
+				     Vertex_handle v1, bool source, 
+                                     Change_notification *en = NULL) 
   {
     //find the previous of cv.
     Halfedge_around_vertex_circulator
@@ -516,11 +532,16 @@ public:
     else
       h->target()->set_point(traits->curve_source(cv));
 
+    if (en != NULL) 
+      en->add_edge(cv, h,true, false);
+
     return h;
   }
 		
-  Halfedge_handle insert_at_vertices(const X_curve& cv, 
-				     Vertex_handle v1, Vertex_handle v2) 
+  Halfedge_handle insert_at_vertices(const X_curve&      cv, 
+				     Vertex_handle       v1, 
+                                     Vertex_handle       v2, 
+                                     Change_notification *en = NULL) 
   {
     Size num_before=number_of_faces();
 			
@@ -602,14 +623,33 @@ public:
       }
 				
     }
-			
+	
+    // v1 should be the source of h.
     if (!prev1_before_prev2) h=h->twin();
 			
 			
     //pl->insert(h);
     //iddo - for arrangement
-    pl->insert(h,cv);
-			
+    pl->insert(h,cv);		
+    
+    // Notifying change.
+    if (en != NULL) {
+      Face_handle orig_face = (! prev1_before_prev2) ? h->face() : h->twin()->face();
+      
+      en->add_edge(cv, h, true, false);
+      
+      // After fixing the notifier we won't have to check that since h->face() will be surely the new face.
+      if (h->face() == orig_face)
+        en->split_face(h->face(), 
+                       h->twin()->face());
+      else
+        en->split_face(h->twin()->face(), 
+                       h->face());
+      
+      // we surely know h->face() is the new face.
+      //en->split_face(h->twin()->face(), h->face());
+    }
+    
     return h;
   }   
 		
@@ -741,7 +781,8 @@ private:
   
   
 public:
-  Halfedge_handle insert(const X_curve& cv) {
+  Halfedge_handle insert(const X_curve&       cv, 
+                         Change_notification *en = NULL) {
     CGAL_assertion(bb);
     bb->insert(cv);
     
@@ -778,18 +819,18 @@ public:
         lt1=VERTEX; 
       }		
     if (lt1==VERTEX && lt2==VERTEX) 
-      return insert_at_vertices(cv,h1->target(),h2->target()); 
+      return insert_at_vertices(cv,h1->target(),h2->target(), en); 
     
     if (lt1==VERTEX && lt2!=VERTEX)
-      return insert_from_vertex(cv,h1->target(),true); 
+      return insert_from_vertex(cv,h1->target(),true, en); 
     if (lt1!=VERTEX && lt2==VERTEX)
-      return insert_from_vertex(cv,h2->target(),false)->twin();
+      return insert_from_vertex(cv,h2->target(),false, en)->twin();
     
     if (lt1==UNBOUNDED_FACE)
-      return insert_in_face_interior(cv,unbounded_face());
+      return insert_in_face_interior(cv,unbounded_face(), en);
     
     if (lt1==FACE)
-      return insert_in_face_interior(cv,h1->face());
+      return insert_in_face_interior(cv,h1->face(), en);
     
     CGAL_postcondition(lt1==VERTEX||lt1==UNBOUNDED_FACE||lt1==FACE);
     return Halfedge_handle();
@@ -798,24 +839,27 @@ public:
   
   template <class X_curve_iterator>
   Halfedge_iterator insert(const X_curve_iterator& begin,
-			   const X_curve_iterator& end) {
+			   const X_curve_iterator& end,
+                           Change_notification    *en = NULL) {
     X_curve_iterator it=begin;
     Halfedge_iterator out;
     if (it!=end) 
       {
-        out=insert(*it);
+        out=insert(*it, en);
         it++;
       }
     while (it!=end)
       {
-        insert(*it);
+        insert(*it, en);
         it++;
       }
     return out;
   }
   
-  Halfedge_handle split_edge(Halfedge_handle e, 
-                             const X_curve& c1, const X_curve& c2)
+  Halfedge_handle split_edge(Halfedge_handle       e, 
+                             const X_curve       & c1, 
+                             const X_curve       & c2,
+                             Change_notification * en = NULL)
   {
     
     CGAL_precondition(traits->point_is_same(traits->curve_source(c2),
@@ -846,6 +890,9 @@ public:
       h->next_halfedge()->twin()->set_curve(c2);
       h->target()->set_point(traits->curve_target(c1));
       pl->split_edge(cv,h,h->next_halfedge(),c1,c2);
+
+      if (en != NULL) 
+        en->split_edge(h, h->next_halfedge(), c1, c2);	
     }
     else {
       h->set_curve(c2);
@@ -854,14 +901,22 @@ public:
       h->next_halfedge()->twin()->set_curve(c1);
       h->target()->set_point(traits->curve_target(c1));
       pl->split_edge(cv,h,h->next_halfedge(),c2,c1);
+      
+      if (en != NULL) 
+        en->split_edge(h, h->next_halfedge(), c2, c1);	
     }
 		
+    //if (en != NULL) 
+    //  en->split_edge(h, h->next_halfedge(), c1, c2);	
+
     return h;
   }
 	
 	
-  Halfedge_handle merge_edge(Halfedge_handle e1, Halfedge_handle e2, 
-			     const X_curve& cv) {
+  Halfedge_handle merge_edge(Halfedge_handle e1, 
+                             Halfedge_handle e2, 
+			     const X_curve& cv, 
+                             Change_notification * en = NULL) {
     CGAL_precondition( (traits->point_is_same(traits->curve_source(cv),
 					      e1->source()->point() )&&
 			traits->point_is_same(traits->curve_target(cv),
@@ -871,6 +926,9 @@ public:
 			traits->point_is_same(traits->curve_source(cv),
 					      e2->target()->point())) );
 		
+    // problematic: since we assume e1 will be the new merged halfedge after merging.
+    // en->merge(e1,e2,cv);
+    
     X_curve c1(e1->curve()), c2(e2->curve());
 		
     Halfedge_handle h = Topological_map<Dcel>::merge_edge(e1,e2); 
@@ -880,12 +938,19 @@ public:
     //pl->merge_edge(c1,c2,h);
     //iddo - for arrangement
     pl->merge_edge(c1,c2,h,cv);
-		
-		
+	
+    
+    // problematic: e2 does not exist anymore 
+    //if (en != NULL) 
+    //  en->merge_edge(h, e1, e2, cv);	
+
     return h;
   }
 	
   Face_handle remove_edge(Halfedge_handle e) {
+
+    // en->remove_edge(e);
+    
     pl->remove_edge(e);
 		
     //if a new hole can be created define geometrically the 
