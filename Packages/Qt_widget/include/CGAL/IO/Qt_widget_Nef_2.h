@@ -226,8 +226,8 @@ CGAL::Qt_widget& operator<<(CGAL::Qt_widget& ws, const Nef_polyhedron_2<T>& P)
         ws.setColor(bgcolor);
       if(D.is_standard(D.source(hit)) 
         && D.is_standard(D.target(hit)))
-      ws << Standard_segment_2(D.point(D.source(hit)),
-								D.point(D.target(hit)));
+          ws << Standard_segment_2(D.point(D.source(hit)),
+                                   D.point(D.target(hit)));
     }
     
     // draw points underlying vertices:

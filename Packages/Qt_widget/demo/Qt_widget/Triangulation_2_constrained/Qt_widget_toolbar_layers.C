@@ -50,7 +50,6 @@
 #include <CGAL/IO/pixmaps/points.xpm>
 #include <CGAL/IO/pixmaps/constrained.xpm>
 #include <CGAL/IO/pixmaps/triangulation.xpm>
-#include <CGAL/IO/pixmaps/mouse_coord.xpm>
 
 
 namespace CGAL {
@@ -59,18 +58,15 @@ namespace CGAL {
   {
     showT   = new Qt_layer_show_triangulation< CDT >(*t);
     showP   = new Qt_layer_show_points< CDT >(*t);
-    showMC  = new Qt_layer_mouse_coordinates(*mw);
     showC   = new Qt_layer_show_constraineds<CDT>(*t);
 
     //set the widget
     widget = w;
     window = mw;
-    window->statusBar();
 
     widget->attach(showT);    
     widget->attach(showC);
     widget->attach(showP);
-    widget->attach(showMC);
     
 
     maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
@@ -84,12 +80,9 @@ namespace CGAL {
     but[2] = new QToolButton(maintoolbar, "vertices");
     but[2]->setPixmap(QPixmap( (const char**)points_xpm ));
     but[2]->setTextLabel("Show Vertices");
-    but[3] = new QToolButton(maintoolbar, "mouse_coord");
-    but[3]->setPixmap(QPixmap( (const char**)mouse_coord_xpm ));
-    but[3]->setTextLabel("Mouse Coordinates");
 		
 
-    nr_of_buttons = 4;
+    nr_of_buttons = 3;
 	  button_group = new QButtonGroup(0, "nonexclusive");
     for(int i =0; i<nr_of_buttons; i++)
     {
@@ -106,8 +99,6 @@ namespace CGAL {
         showC, SLOT(stateChanged(int)));
     connect(but[2], SIGNAL(stateChanged(int)),
         showP, SLOT(stateChanged(int)));
-    connect(but[3], SIGNAL(stateChanged(int)),
-        showMC, SLOT(stateChanged(int)));
   }
   
 }//end namespace

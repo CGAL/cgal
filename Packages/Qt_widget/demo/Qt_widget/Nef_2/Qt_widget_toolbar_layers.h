@@ -46,7 +46,6 @@
 
 #include "cgal_types.h"
 #include "nef_2_layers.h"
-#include <CGAL/IO/Qt_layer_show_mouse_coordinates.h>
 
 #include <qobject.h>
 #include <qtoolbutton.h>
@@ -65,7 +64,6 @@ public:
                   Nef_polyhedron *n2);
   ~Layers_toolbar()
   {
-    delete showMC;
     delete showNR;
     delete showNG;
   };
@@ -79,7 +77,6 @@ private:
   QButtonGroup  *button_group;
   int           nr_of_buttons;
 	
-  CGAL::Qt_layer_mouse_coordinates        *showMC;
   CGAL::Qt_layer_nef_red<Nef_polyhedron>  *showNR;
   CGAL::Qt_layer_nef_gray<Nef_polyhedron> *showNG;
 };//end class

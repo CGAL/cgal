@@ -30,7 +30,6 @@
 #include "Qt_layer_show_triangulation.h"
 #include "Qt_layer_show_voronoi.h"
 #include "Qt_layer_show_points.h"
-#include <CGAL/IO/Qt_layer_show_mouse_coordinates.h>
 
 //Qt
 #include <qobject.h>
@@ -64,7 +63,6 @@ private:
 	CGAL::Qt_layer_show_triangulation < Delaunay >  *showT;
 	CGAL::Qt_layer_show_voronoi < Delaunay >        *showV;
 	CGAL::Qt_layer_show_points < Delaunay >         *showP;
-	CGAL::Qt_layer_mouse_coordinates                *showMC;
 };//end class
 
 };//end namespace

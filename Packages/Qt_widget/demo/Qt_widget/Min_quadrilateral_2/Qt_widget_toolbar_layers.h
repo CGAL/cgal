@@ -27,7 +27,6 @@
 #include <CGAL/IO/Qt_widget.h>
 
 #include "min_quadrilateral_layers.h"
-#include <CGAL/IO/Qt_layer_show_mouse_coordinates.h>
 
 #include <qobject.h>
 #include <qtoolbutton.h>
@@ -48,7 +47,6 @@ public:
   Layers_toolbar(Qt_widget *w, QMainWindow *mw, std::list<Point> *l_of_p);
   ~Layers_toolbar()
   {
-    delete showMC;
     delete showP;
     delete showPL;
     delete showLS;
@@ -64,7 +62,6 @@ private:
   QButtonGroup		*button_group;
   int			nr_of_buttons;
 	
-  CGAL::Qt_layer_mouse_coordinates  *showMC;
   Qt_layer_show_points<Rp>	    *showP;
   Qt_layer_show_parallelogram<Rp>   *showPL;
   Qt_layer_show_strip<Rp>	    *showLS;

@@ -50,7 +50,7 @@ namespace CGAL {
     handtoolbut.deactivate();
     //set the widget
     widget = w;
-    
+    mw->statusBar();
 
 #if QT_VERSION < 300
   // for Qt 2.3 and before

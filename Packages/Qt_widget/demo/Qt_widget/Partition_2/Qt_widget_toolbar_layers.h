@@ -55,7 +55,6 @@
 
 namespace CGAL {
 
-class Qt_layer_mouse_coordinates;
 template <class T> class Qt_layer_show_polygon;
 template <class T> class Qt_layer_show_greene_approx;
 template <class T> class Qt_layer_show_ymonotone;
@@ -72,16 +71,15 @@ public:
 
 private:
   QToolBar      *maintoolbar;
-  QToolButton		*but[10];
+  QToolButton	*but[10];
   Qt_widget     *widget;
-  QMainWindow		*window;
+  QMainWindow	*window;
   QButtonGroup	*button_group;
-  int			nr_of_buttons;
+  int		nr_of_buttons;
 
-  CGAL::Qt_layer_mouse_coordinates                  *showMC;
-  CGAL::Qt_layer_show_polygon <Cgal_Polygon>		    *showP;
+  CGAL::Qt_layer_show_polygon <Cgal_Polygon>		*showP;
   CGAL::Qt_layer_show_greene_approx <Cgal_Polygon >	*showGA;
-  CGAL::Qt_layer_show_ymonotone <Cgal_Polygon>      *showYM;
+  CGAL::Qt_layer_show_ymonotone <Cgal_Polygon>          *showYM;
   CGAL::Qt_layer_show_optimal_convex <Cgal_Polygon>	*showOC;
   CGAL::Qt_layer_show_polygon_points <Cgal_Polygon>	*showPP;
 

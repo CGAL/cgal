@@ -69,7 +69,7 @@ int main(int, char*)
 #include <CGAL/IO/Qt_widget_Polygon_2.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 #include "Qt_widget_toolbar.h"
-#include "Qt_widget_toolbar_layers.h"
+#include "nef_2_layers.h"
 
 #include <qapplication.h>
 #include <qfiledialog.h>
@@ -197,9 +197,14 @@ public:
     //the new tools toolbar
     newtoolbar = new CGAL::Tools_toolbar(widget, this);	
     //the layers toolbar
-    ltoolbar = new CGAL::Layers_toolbar(widget, this, 
-                                        &Nef_visible, &Nef_visible2);
-
+    //ltoolbar = new CGAL::Layers_toolbar(widget, this, 
+    //                                    &Nef_visible,
+    //                                    &Nef_visible2);
+    
+    nef_layer1 = new CGAL::Qt_layer_nef_red<Nef_polyhedron>(Nef_visible);
+    nef_layer2 = new CGAL::Qt_layer_nef_gray<Nef_polyhedron>(Nef_visible2);
+    widget->attach(nef_layer1);
+    widget->attach(nef_layer2);
     //boolean operations toolbar
     QToolBar *optoolbar = new QToolBar("operations", this, 
                                         QMainWindow::Right, true,"Operations");
@@ -235,7 +240,7 @@ public:
 
     this->addToolBar(stoolbar->toolbar(), Top, false);
     this->addToolBar(newtoolbar->toolbar(), Top, false);
-    this->addToolBar(ltoolbar->toolbar(), Top, false);
+    //this->addToolBar(ltoolbar->toolbar(), Top, false);
     this->addToolBar(optoolbar, Top, false);
   
     connect(list1, SIGNAL(delete_key(QListBoxItem*)), this, SLOT(sl_list1_delete_key_pressed(QListBoxItem*)));
@@ -651,7 +656,7 @@ private:
 
   CGAL::Qt_widget             *widget;		
   CGAL::Tools_toolbar         *newtoolbar;
-  CGAL::Layers_toolbar        *ltoolbar;
+  //CGAL::Layers_toolbar        *ltoolbar;
   CGAL::Qt_widget_standard_toolbar
                               *stoolbar;
   int                         old_state, 
@@ -660,6 +665,8 @@ private:
                               //used to give names to polyhedrons
   Nef_2_list_box              *list1, *list2;
   std::list<Nef_description>  nef_2_list;
+  CGAL::Qt_layer_nef_red<Nef_polyhedron>  *nef_layer1;
+  CGAL::Qt_layer_nef_gray<Nef_polyhedron> *nef_layer2;
 };
 
 #include "nef_2.moc"

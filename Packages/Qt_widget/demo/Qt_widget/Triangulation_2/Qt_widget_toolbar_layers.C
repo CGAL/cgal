@@ -28,7 +28,6 @@
 #include <CGAL/IO/pixmaps/nearest_vertex.xpm>
 #include <CGAL/IO/pixmaps/voronoi.xpm>
 #include <CGAL/IO/pixmaps/triangulation.xpm>
-#include <CGAL/IO/pixmaps/mouse_coord.xpm>
 
 /* XPM */
 static char *circum_circle_xpm[] = {
@@ -82,19 +81,16 @@ namespace CGAL {
     showV   = new Qt_layer_show_voronoi< Delaunay >(*t);
     showP   = new Qt_layer_show_points< Delaunay >(*t);
     showNV  = new Qt_layer_nearest_vertex< Delaunay >(*t);
-    showMC  = new Qt_layer_mouse_coordinates(*mw);
     showCC  = new Qt_layer_circum_circle< Delaunay >(*t);
 
     //set the widget
     widget = w;
     window = mw;
-    window->statusBar();
 
     widget->attach(showT);
     widget->attach(showV);
     widget->attach(showNV);
     widget->attach(showP);
-    widget->attach(showMC);
     widget->attach(showCC);
     showNV->deactivate();
     showCC->deactivate();
@@ -116,11 +112,8 @@ namespace CGAL {
     but[4] = new QToolButton(maintoolbar, "circles");
     but[4]->setPixmap(QPixmap( (const char**)circum_circle_xpm ));
     but[4]->setTextLabel("Circuscribed Circle");
-    but[5] = new QToolButton(maintoolbar, "mouse_coord");
-    but[5]->setPixmap(QPixmap( (const char**)mouse_coord_xpm ));
-    but[5]->setTextLabel("Mouse Coordinates");
 		
-    nr_of_buttons = 6;
+    nr_of_buttons = 5;
 	  button_group = new QButtonGroup(0, "nonexclusive");
     for(int i =0; i<nr_of_buttons; i++)
     {
@@ -143,9 +136,6 @@ namespace CGAL {
         showP, SLOT(stateChanged(int)));
     connect(but[4], SIGNAL(stateChanged(int)),
         showCC, SLOT(stateChanged(int)));
-    connect(but[5], SIGNAL(stateChanged(int)),
-        showMC, SLOT(stateChanged(int)));
-
 
   }
   

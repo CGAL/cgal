@@ -27,7 +27,6 @@
 
 #include <CGAL/IO/Qt_widget.h>
 
-#include <CGAL/IO/Qt_layer_show_mouse_coordinates.h>
 
 #include "Qt_layer_show_triangulation.h"
 #include "Qt_layer_show_voronoi.h"
@@ -58,7 +57,6 @@ public:
     delete showV;
     delete showP;
     delete showNV;
-    delete showMC;
   };
   QToolBar*	toolbar(){return maintoolbar;};
 
@@ -79,7 +77,6 @@ private:
   CGAL::Qt_layer_show_voronoi < Delaunay >	  *showV;
   CGAL::Qt_layer_show_points < Delaunay >	  *showP;
   CGAL::Qt_layer_nearest_vertex < Delaunay >	  *showNV;
-  CGAL::Qt_layer_mouse_coordinates		  *showMC;
   CGAL::Qt_layer_circum_circle < Delaunay>        *showCC;
 };//end class
 

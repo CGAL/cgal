@@ -28,7 +28,6 @@
 #include <CGAL/IO/pixmaps/line.xpm>
 #include <CGAL/IO/pixmaps/min_rectangle.xpm>
 #include <CGAL/IO/pixmaps/min_parallelogram.xpm>
-#include <CGAL/IO/pixmaps/mouse_coord.xpm>
 
 
 namespace CGAL {
@@ -36,16 +35,13 @@ namespace CGAL {
     widget(w), window(mw), nr_of_buttons(0)
   {
       
-    showMC  = new Qt_layer_mouse_coordinates(*mw);
     showPL  = new Qt_layer_show_parallelogram<Rp>(l_of_p);
     showP   = new Qt_layer_show_points<Rp>(l_of_p);
     showLS  = new Qt_layer_show_strip<Rp>(l_of_p);
     showR   = new Qt_layer_show_rectangle<Rp>(l_of_p);
     
     //set the widget
-    window->statusBar();
 
-    widget->attach(showMC);
     widget->attach(showR);
     widget->attach(showPL);
     widget->attach(showP);
@@ -53,18 +49,16 @@ namespace CGAL {
 
     maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
 
-    but[0] = new QToolButton(maintoolbar, "mouse_coord");
-    but[0]->setPixmap(QPixmap( (const char**)mouse_coord_xpm ));
-    but[1] = new QToolButton(maintoolbar, "points");
-    but[1]->setPixmap(QPixmap( (const char**)points_xpm ));
-    but[2] = new QToolButton(maintoolbar, "Minimum_parallelogram");
-    but[2]->setPixmap(QPixmap( (const char**)min_parallelogram_xpm ));
-    but[3] = new QToolButton(maintoolbar, "Show_lines");
-    but[3]->setPixmap(QPixmap( (const char**)line_xpm ));
-    but[4] = new QToolButton(maintoolbar, "Minimum_rectangle");
-    but[4]->setPixmap(QPixmap( (const char**)min_rectangle_xpm ));
+    but[0] = new QToolButton(maintoolbar, "points");
+    but[0]->setPixmap(QPixmap( (const char**)points_xpm ));
+    but[1] = new QToolButton(maintoolbar, "Minimum_parallelogram");
+    but[1]->setPixmap(QPixmap( (const char**)min_parallelogram_xpm ));
+    but[2] = new QToolButton(maintoolbar, "Show_lines");
+    but[2]->setPixmap(QPixmap( (const char**)line_xpm ));
+    but[3] = new QToolButton(maintoolbar, "Minimum_rectangle");
+    but[3]->setPixmap(QPixmap( (const char**)min_rectangle_xpm ));
 
-    nr_of_buttons = 5;
+    nr_of_buttons = 4;
     button_group = new QButtonGroup(0, "nonexclusive");	
     for(int i =0; i<nr_of_buttons; i++)
     {
@@ -72,15 +66,13 @@ namespace CGAL {
 	but[i]->toggle();
 	button_group->insert(but[i]);
     }
-    connect(but[0], SIGNAL(stateChanged(int)), 
-      showMC, SLOT(stateChanged(int)));
-    connect(but[1], SIGNAL(stateChanged(int)),
+    connect(but[0], SIGNAL(stateChanged(int)),
       showP, SLOT(stateChanged(int)));
-    connect(but[2], SIGNAL(stateChanged(int)), 
+    connect(but[1], SIGNAL(stateChanged(int)), 
       showPL, SLOT(stateChanged(int)));
-    connect(but[3], SIGNAL(stateChanged(int)), 
+    connect(but[2], SIGNAL(stateChanged(int)), 
       showLS, SLOT(stateChanged(int)));
-    connect(but[4], SIGNAL(stateChanged(int)), 
+    connect(but[3], SIGNAL(stateChanged(int)), 
       showR, SLOT(stateChanged(int)));
 
     connect(button_group, SIGNAL(clicked(int)),

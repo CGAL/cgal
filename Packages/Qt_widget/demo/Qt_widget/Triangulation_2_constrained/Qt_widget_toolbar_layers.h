@@ -46,7 +46,6 @@
 
 #include "cgal_types.h"
 #include <CGAL/IO/Qt_widget.h>
-#include <CGAL/IO/Qt_layer_show_mouse_coordinates.h>
 #include "Qt_layer_show_triangulation.h"
 #include "Qt_layer_show_constraineds.h"
 #include "Qt_layer_show_points.h"
@@ -71,7 +70,6 @@ public:
     delete showT;
     delete showP;
     delete showC;
-    delete showMC;
   };
   QToolBar*	toolbar(){return maintoolbar;};
 
@@ -91,7 +89,6 @@ private:
   CGAL::Qt_layer_show_triangulation < CDT>  *showT;  
   CGAL::Qt_layer_show_points < CDT >        *showP;  
   CGAL::Qt_layer_show_constraineds < CDT >  *showC;  
-  CGAL::Qt_layer_mouse_coordinates          *showMC;
 };//end class
 
 };//end namespace
