@@ -11,10 +11,14 @@
 \section*{Summary}
 
 The two dimensional point set is a class for geometric queries.
-It supports circular, triangular and iso rectangular range searches,
-nearest neighbor searches and the computation of the minimum spanning tree.
-The point set is a dynamic data structure supporting the insertion and
-deletion of points.
+It supports circular, triangular and iso rectangular range searches and
+nearest neighbor searches.
+The point set is inherited from the CGAL Delaunay triangulation data type.
+That means that it is a dynamic data structure supporting the insertion and
+deletion of points. Previous versions of the two dimensional point set class
+were inherited from the LEDA graph data type storing its own Delaunay triangulation,
+but to make the class independent from LEDA we switched to the 
+CGAL Delaunay triangulation data type.
 
 \subsection*{Concepts}
 \ccc{Point_set_traits}\\
@@ -22,5 +26,4 @@ deletion of points.
 \subsection*{Classes}
 \ccc{CGAL::Point_set_2}\\
 \ccc{CGAL::point_set_traits_2}\\
-\ccc{CGAL::point_set_leda_float_traits_2}\\
-\ccc{CGAL::point_set_leda_rat_traits_2}\\
+

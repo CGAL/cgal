@@ -2,46 +2,23 @@
 %---------------------------------------------
 % Point_set_2 data type
 %---------------------------------------------
-\begin{ccRefClass}{Point_set_2<Traits>}
+\begin{ccRefClass}{Point_set_2<T,Gt,Tds>}
 
 \ccDefinition
 
 \ccInclude{CGAL/Point_set_2.h}
 
-An instance $T$ of data type \ccRefName\  is a planar embedded bidirected
-graph representing the {\em Delaunay Triangulation} of its vertex set.
-The position of a vertex $v$ is given by $T.pos(v)$ and we use 
-$S = \{ T.pos(v) \mid v \in T \}$ to denote the underlying point set.
-Each face of $T$ (except for the outer face) is  a triangle whose 
-circumscribing circle does not contain any point of $S$ in its interior.
-For every edge $e$, the sequence 
-\[e, T.face\_cycle\_succ(e), T.face\_cycle\_succ(T.face\_cycle\_succ(e)),\ldots\]
-traces the boundary of the face to the left of $e$.
-The edges of the outer face of $T$ form the convex hull of $S$; the trace of 
-the convex hull is clockwise.
-The subgraph obtained from $T$ by removing all diagonals of
-co-circular quadrilaterals  is called the {\em Delaunay Diagram}
-of $S$.
+An instance $PS$ of the data type \ccRefName\  is a {\em Delaunay Triangulation}
+of its vertex set. The class \ccRefName\ is inherited from the CGAL Delaunay triangulation,
+and provides additional nearest neighbor query operations and range searching operations.
 
-The class \ccRefName\ provides operations for inserting and deleting points,
-point location, nearest neighbor searches, and navigation in both
-the triangulation and the diagram.
+The \ccRefName\ class of \cgal\ depends on template parameters standing for the
+geometric traits classes used by the point set (T), by the Delaunay triangulation (Gt)
+and for the triangulation data structure (Tds). 
+For the details of Gt and Tds see the chapter on 2d Triangulations of the CGAL manual.
 
-Note that the \ccRefName\ is derived from the \leda\ GRAPH class
-(Parameterized Graphs). That means that it provides all constant
-graph operations (like $reversal$, $all\_edges$, ...).
-See the \leda\ user manual or \leda\ book ~\cite{LEDAbook} for more details.
 
-Be aware that the nearest neighbor queries for a point (not for a node) and
-the range search queries for circles, triangles, and rectangles are non-const 
-operations and modify the underlying graph. The set of nodes and edges is 
-not changed; however, it is not guaranteed that the underlying Delaunay 
-triangulation is unchanged.
-
-The \ccRefName\ class of \cgal\ depends on a template parameter standing for a
-geometric traits class. This traits class has to provide the geometric objects needed
-in \ccRefName\ and geometric predicates on these objects.
-\ccCreationVariable{T}
+\ccCreationVariable{PS}
 
 
 \ccHtmlLinksOff
@@ -50,14 +27,14 @@ in \ccRefName\ and geometric predicates on these objects.
 \ccTypes
 \ccThree{typedef Traits::Point Point;}{the point type}{}
 \ccThreeToTwo
-\ccTypedef{typedef Traits::Point Point;}{the point type}{}
-\ccTypedef{typedef Traits::Segment Segment;}{the segment type}
-\ccTypedef{typedef Traits::Circle Circle;}{the circle type}
-\ccTypedef{typedef Traits::Line Line;}{the line type}
-\ccTypedef{typedef Traits::FT Numb_type;}{the field type of the representation class}
-\ccNestedType{Vertex}{the vertex type.}
-\ccNestedType{Edge}{the edge type.}
-
+\ccTypedef{typedef Gt::Rep Rep;}{the representation type}{}
+\ccTypedef{typedef Gt::Point_2 Point;}{the point type}{}
+\ccTypedef{typedef Gt::Segment_2 Segment;}{the segment type}
+\ccTypedef{typedef T::Circle Circle;}{the circle type}
+\ccTypedef{typedef Rep::FT Numb_type;}{the field type of the representation class}
+\ccNestedType{Triangulation::Vertex}{the vertex type of the underlying triangulation.}
+\ccNestedType{Triangulation::Edge}{the edge type of the underlying triangulation.}
+\ccNestedType{Triangulation::Vertex_handle }{handles to vertices.}
 
 \ccHtmlLinksOn
 
@@ -69,11 +46,10 @@ in \ccRefName\ and geometric predicates on these objects.
 
 \ccConstructor{Point_set_2(const std::list<Point>& S);}
 {creates a \ccRefName\ \ccVar\ of the points in $S$. 
-If $S$ contains multiple occurrences of points only the last 
-occurrence of each point is retained.}
+}
 
 \ccConstructor{template<class InputIterator>
-Point_set_2d(InputIterator first, InputIterator last);}
+Point_set_2(InputIterator first, InputIterator last);}
 {creates a \ccRefName\ \ccVar\ of the points in the range
 [$first$,$last$).}
 
@@ -98,7 +74,9 @@ of the sequence.}
 
 \ccMethod{template<class OutputIterator>
 OutputIterator segments(OutputIterator out);}
-{ places all segments of \ccVar\ as a sequence of objects of type
+{ places all segments (that means the segments constructed by the edges of the underlying
+Delaunay triangulation)
+of \ccVar\ as a sequence of objects of type
 $Segment$ in a container of value type of $out$,
 which points to the first object in the sequence. The function
 returns an output iterator pointing to the position beyond the end
@@ -108,147 +86,94 @@ of the sequence.}
 
 \ccMethod{template<class OutputIterator>
 OutputIterator vertices(OutputIterator out);}
-{ places all vertices of \ccVar\ as a sequence of objects of type
-Vertex in a container of value type of $out$,
+{ places all handles to vertices of \ccVar\ as a sequence of objects of type
+Vertex\_handle in a container of value type of $out$,
 which points to the first object in the sequence. The function
 returns an output iterator pointing to the position beyond the end
 of the sequence.} 
 
 \ccHtmlLinksOn
 
-
-\ccMethod{template<class OutputIterator>
-OutputIterator edges(OutputIterator out);}
-{ places all points of \ccVar\ as a sequence of objects of type
-$Edge$ in a container of value type of $out$,
-which points to the first object in the sequence. The function
-returns an output iterator pointing to the position beyond the end
-of the sequence.} 
-
-\ccMethod{Edge  d_face_cycle_succ(Edge e);}
-{ returns the face cycle successor of $e$ in the Delaunay diagram 
-of \ccVar . \ccPrecond  $e$ belongs to the Delaunay diagram.}
-
-\ccMethod{Edge  d_face_cycle_pred(Edge e);}
-{ returns the face cycle predecessor of $e$ in the Delaunay diagram 
-of \ccVar. \ccPrecond  $e$ belongs to the Delaunay diagram.}
+\ccMethod{bool  empty();}
+{ decides whether \ccVar\ is empty. }
 
 \ccMethod{bool  is_empty();}
 { decides whether \ccVar\ is empty. }
 
-\ccMethod{void  clear();}
-{ makes \ccVar\ empty. }
-
-\ccMethod{Edge  locate(Point p);}
-{ returns an edge $e$ of \ccVar\ that contains $p$ or that 
-borders the face that contains $p$. In the former case, 
-a hull edge is returned if $p$ lies on the boundary of the convex hull.
-In the latter case we have $T.orientation(e,p) > 0$ except if all points of
-$T$ are collinear and 
-$p$ lies on the induced line. In this case $target(e)$ is visible from 
-$p$. The function returns $NULL$ if $T$ has no edge.}
-
 
 \ccHtmlLinksOff
 
-\ccMethod{Vertex  lookup(Point p);}
+\ccMethod{Vertex\_handle  lookup(Point p);}
 { if \ccVar\ contains a Vertex $v$ with $|pos(v)| = p$ 
-the result is $v$ otherwise the result is $NULL$. }
-
-\ccMethod{Vertex  insert(Point p);}
-{ inserts point $p$ into \ccVar\ and returns the corresponding vertex. 
-More precisely, if there is already a vertex $v$ in \ccVar\ positioned 
-at $p$ then $pos(v)$ is made identical to $p$ and if there is no 
-such node then a new node $v$ with $pos(v) = p$ is added to $T$. 
-In either case, $v$ is returned.}
-
-\ccMethod{void del(Vertex v);}
-{ removes the vertex $v$ from \ccVar. \ccPrecond v is a vertex in \ccVar.}
+the result is a handle to $v$ otherwise the result is $NULL$. }
 
 \ccMethod{void del(Point p);}
 { removes the vertex $v$ with position $p$ from \ccVar. If there is
 no such vertex in \ccVar, the function returns without changing \ccVar. }
 
-\ccMethod{Vertex  nearest_neighbor(Point p);}
-{ computes a vertex $v$ of \ccVar\ that is closest to $p$.
+\ccMethod{Vertex\_handle  nearest_neighbor(Point p);}
+{ computes a handle to a vertex $v$ of \ccVar\ that is closest to $p$.
 If \ccVar\ is empty, $NULL$ is returned.
-This is a non-const operation.}
+}
 
-\ccMethod{Vertex  nearest_neighbor(Vertex v);}
-{ computes a vertex $w$ of \ccVar\ that is closest to $v$.
+\ccMethod{Vertex\_handle  nearest_neighbor(Vertex_handle v);}
+{ computes a handle to a vertex $w$ of \ccVar\ that is closest to $v$.
 If $v$ is the only vertex in \ccVar\ , $NULL$ is returned.
-\ccPrecond $v$ is a vertex in \ccVar.}
+}
 
 \ccMethod{template<class OutputIterator>
 OutputIterator   nearest_neighbors(Point p, int k, OutputIterator res);}
-{ computes the $k$ nearest neighbors of $p$, and places them as a sequence of objects of type
-Vertex in a container of value type of $res$
+{ computes the $k$ nearest neighbors of $p$ in \ccVar, and places the
+handles to the corresponding vertices as a sequence of objects of type
+Vertex\_handle in a container of value type of $res$
 which points to the first object in the sequence. The function
 returns an output iterator pointing to the position beyond the end
 of the sequence. }
 
 \ccMethod{template<class OutputIterator>  
-OutputIterator  nearest_neighbors(Vertex v, int k,OutputIterator res);}
+OutputIterator  nearest_neighbors(Vertex_handle v, int k,OutputIterator res);}
 { computes the $k$ nearest neighbors of $v$, and places them as a sequence of objects of type
-Vertex in a container of value type of $res$
+Vertex\_handle in a container of value type of $res$
 which points to the first object in the sequence. The function
 returns an output iterator pointing to the position beyond the end
 of the sequence. }
 
 \ccMethod{template<class OutputIterator>
 OutputIterator range_search(const Circle& C, OutputIterator res);}
-{ computes all vertices contained in the closure of disk $C$.
-\ccPrecond $C$ must be a proper circle (not a straight line). 
-The computed vertices will be placed as a sequence of objects in a container of value type
+{ computes handles to all vertices contained in the closure of disk $C$.
+The computed vertex handles will be placed as a sequence of objects in a container of value type
 of $res$
 which points to the first object in the sequence. The function
 returns an output iterator pointing to the position beyond the end
 of the sequence.
-This is a non-const operation.}
+}
 
 \ccMethod{template<class OutputIterator>
 OutputIterator range_search(const Point& a, const Point& b, const Point& c,OutputIterator res);}
-{ computes all vertices contained in the closure of the triangle $(a,b,c)$.\\
+{ computes handles to all vertices contained in the closure of the triangle $(a,b,c)$.\\
 \ccPrecond $a$, $b$, and $c$ must not be collinear. 
-The computed vertices will be placed as a sequence of objects in a container of value type
+The computed vertex handles will be placed as a sequence of objects in a container of value type
 of $res$
 which points to the first object in the sequence. The function
 returns an output iterator pointing to the position beyond the end
 of the sequence.
-This is a non-const operation.}
+}
 
 \ccMethod{template<class OutputIterator>
 OutputIterator range_search(const Point& a1, const Point& b1, const Point& c1,const Point&
 d1,OutputIterator res);}
-{ computes all vertices contained in the closure of the iso-rectangle $(a1,b1,c1,d1)$.\\
-\ccPrecond $a1$ is the lower left point, $b1$ the lower right, $c1$ the upper
-right and $d1$ the upper left point of the iso rectangle.
-The computed vertices will be placed as a sequence of objects in a container of value type
+{ computes handles to all vertices contained in the closure of the iso-rectangle $(a1,b1,c1,d1)$.\\
+\ccPrecond $a1$ is the upper left point, $b1$ the lower left, $c1$ the lower
+right and $d1$ the upper right point of the iso rectangle.
+The computed vertex handles will be placed as a sequence of objects in a container of value type
 of $res$
 which points to the first object in the sequence. The function
 returns an output iterator pointing to the position beyond the end
 of the sequence.
-This is a non-const operation.}
+}
 
-\ccMethod{template<class OutputIterator>
-OutputIterator minimum_spanning_tree(OutputIterator result);}
-{ places all edges of the minimum spanning tree of \ccVar\ as a sequence of objects of type
-$Edge$ in a container of type corresponding to the type of $out$
-which points to the first object in the sequence. The function
-returns an output iterator pointing to the position beyond the end
-of the sequence.}
-
-\ccMethod{bool  is_non_diagram_edge(Edge e);}
-{ checks whether $e$ is a non-diagram edge. }
-
-\ccMethod{Point pos(Vertex v);} 
+\ccMethod{Point pos(Vertex_handle v);} 
 { returns the position of $v$ in \ccVar.}
-
-\ccMethod{Vertex source(Edge e);}
-{ returns the source vertex of $e$.}
-
-\ccMethod{Vertex target(Edge e);}
-{ returns the target vertex of $e$.}
     
 \ccMethod{Point pos_source(Edge e);}
 { returns the position of the source of $e$ in \ccVar.}
@@ -260,31 +185,7 @@ of the sequence.}
 { returns the line segment corresponding to edge $e$ starting
 at $pos\_source(e)$.}
    
-\ccMethod{Line supporting_line(Edge e);} 
-{ returns the supporting line of edge $e$.}
-
-\ccMethod{int orientation(Edge e, Point p);}
-{ returns $orientation(T.pos\_source(e),T.pos\_target(e),p)$.}
-   
-\ccMethod{Edge  get_hull_edge();} 
-{ returns an edge of the outer face  of \ccVar\ (i.e., an edge of the convex hull). }
-    
-\ccMethod{bool  is_diagram_edge(Edge e);} 
-{returns true if $e$ is an edge of the Delaunay diagram, i.e., either
-an edge on the convex hull or an edge where the incident triangles have 
-distinct circumcircles.}
-    
-\ccMethod{bool is_hull_edge(Edge e);}
-{returns true if $e$ is an edge of the convex hull of \ccVar, i.e.,
-an edge on the face cycle of the outer face. }
 
 \ccHtmlLinksOn
-
-\ccMethod{int dim();}
-{returns $-1$ if \ccVar\ is empty, returns $0$ if \ccVar
-consists of only one point,     
-returns $1$ if \ccVar\ consists of at least two points 
-and all points in \ccVar\
-are collinear, and returns $2$ otherwise.}
 
 \end{ccRefClass} 

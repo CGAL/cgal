@@ -2,41 +2,19 @@
 
 \subsection{Requirements for the Point\_set traits class}
 
-A point set traits class has to provide some primitives that are used by the point set class.
+A point set traits class has to provide some primitives that are used by the point set class
+and that are not (yet) covered by the kernel traits.
 The following catalog lists the involved primitives.
 The types used in the traits class must have a copy constructor and an assignment operator.
 
 \ccCreationVariable{ps_traits}
 \ccTypes
 
-\ccNestedType{FT}%
-       {The field type of the representation class of the point, segment, circle and line types.}
-
 \ccNestedType{Point}%
        {The point type on which the point set operates.}
 
 \ccNestedType{Circle}%
        {The circle type on which the point set operates.}
-
-
-\ccHtmlLinksOff
-       
-\ccNestedType{Line}%
-       {The line type on which the point set operates.}
-       
-\ccHtmlLinksOn
-
-\ccNestedType{Segment}%
-       {The segment type on which the point set operates.}
-       
-\ccNestedType{Compare_xy_2}%
-       {The primitive must provide 
-	\ccc{int operator()(const Point& p1,const Point& p2) const}
-	and has to be derived from $leda\_cmp\_base<Point>$.
-	The operator has to compare the points $p1$ and $p2$ lexicographically in
-	$xy$ order. If $p1$ is smaller, the operator has to return -1, if $p1$
-        is larger, the operator has to return 1, 0 otherwise.
-       }
 
 \ccNestedType{Compare_dist_2}%
        {The primitive must provide 
@@ -45,45 +23,6 @@ The types used in the traits class must have a copy constructor and an assignmen
         The operator returns \ccc{SMALLER}, if $p2$ is closer (to $p1$), \ccc{LARGER} if $p3$ is closer,
         \ccc{EQUAL} otherwise.
        }      
-
- \ccNestedType{Orientation}%
-	{The primitive must provide 
-	\ccc{Orientation operator()(const Point& p1,const Point& p2,const Point& p3) const}.
-	This operator has to return \ccc{COLLINEAR} if the 3 points are collinear,
-	\ccc{LEFTTURN} if $p3$ lies on the left of the directed line through $p1$ and $p2$,
-	\ccc{RIGHTTURN} otherwise.
-	}
-	
- \ccNestedType{Side_of_oriented_circle_2}%
-	{The primitive must provide 
-	 \ccc{Oriented_side operator()(const Point& p1,const Point& p2,const Point& p3, const Point& p4) const}.
-	 This operator has to return \ccc{ON_POSITIVE_SIDE} if $p4$ lies on the positive side of the circle through
-	 the points $p1$,$p2$ and $p3$, \ccc{ON_NEGATIVE_SIDE} if $p4$ lies on the negative side of the circle,
-	 \ccc{ON_ORIENTED_BOUNDARY} otherwise.
-	}
-	
- \ccNestedType{Side_of_halfspace_2}%
-	{The primitive must provide
-	 \ccc{Orientation operator()(const Point& a,const Point& b, const Point& p3) const }.
-	 This operator has to return \ccc{LEFTTURN} if $p3$ lies in the open halfspace $h$ orthogonal to vector
-	 $b-a$ containing $b$ and having $a$ on its boundary, \ccc{COLLINEAR} if $p3$ is on the boundary of $h$ and
-	 \ccc{RIGHTTURN} otherwise.
-	}
-	
- \ccNestedType{Segment_has_on_2}%
-	{The primitive must provide
-	\ccc{bool operator()(const Segment& seg, const Point& p) const }.
-	This operator has to return true if $seg$ contains $p$, false otherwise.}
-	
- \ccNestedType{Squared_distance}%
-	{The primitive must provide 
-	\ccc{FT operator()(const Point& p1,const Point& p2) const}.
-	The operator has to return the squared distance from $p1$ to $p2$.}
-	
- \ccNestedType{Squared_distance_to_line}%
-	{The primitive must provide 
-	\ccc{FT operator()(const Line& l,const Point& p) const}.
-	The operator has to return the squared distance from $l$ to $p$.}
 	
  \ccNestedType{Circle_bounded_side_2}%
 	{The primitive must provide 
@@ -94,21 +33,6 @@ The types used in the traits class must have a copy constructor and an assignmen
  \ccNestedType{Circle_center_2}%
 	{The primitive must provide 
 	\ccc{Point operator()(const Circle& c) const}.
-	The operator has to return the center of $c$.}
-	
- \ccNestedType{Construct_circle_2}%
-	{This primitive constructs a circle. It must provide
-	\ccc{Circle operator()(const Point& p1,const Point& p2, const Point& p3) const }.
-	The points $p1$, $p2$ and $p3$ are on the boundary.} 
-	
- \ccNestedType{Construct_segment_2}%
-	{This primitive constructs a segment. It must provide
-	\ccc{Segment operator()(const Point& p1,const Point& p2) const}.
-	Point $p1$ is the source of the segment, $p2$ the target.}
-	
- \ccNestedType{Construct_line_2}%
-	{This primitive constructs a line. It must provide
-	\ccc{Line operator()(const Point& p1,const Point& p2) const}.
-	The line is constructed through $p1$ and $p2$.}
+	The operator has to return the center of $c$.}	
 
 \end{ccRefConcept}
