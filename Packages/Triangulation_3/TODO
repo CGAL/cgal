@@ -1,3 +1,5 @@
+- Write acknowledgment section in the doc as discussed at the meeting.
+
 General
 - mettre des locate_2D, locate_3D, insert idem, pour eviter les tests 
   redondants sur la dimension a chaque insertion.
