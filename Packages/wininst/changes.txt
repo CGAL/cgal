@@ -1,3 +1,5 @@
+2.1.23(18/02/03)  removed Triangulation_3.C from the CGAL project in src.
+
 2.1.22(10/02/03)  removed makefile.mak from examples and demos.
 
 2.1.21(03/02/03)  removed VC6 project files (cl version = 1200)
