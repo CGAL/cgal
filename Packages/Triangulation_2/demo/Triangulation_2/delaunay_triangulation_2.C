@@ -166,7 +166,7 @@ private slots:
   }
 	
   void get_new_object(CGAL::Object obj){
-    Point p;
+    Point_2 p;
     Segment s;
     Line l;
     if (CGAL::assign(l,obj))
@@ -270,7 +270,7 @@ private slots:
 
   void generate_triangulation(){
     tr1.clear();
-    CGAL::Random_points_in_disc_2<Point> g(0.5);
+    CGAL::Random_points_in_disc_2<Point_2> g(0.5);
     for(int count=0; count<200; count++)
       tr1.insert(*g++);
     Vertex_iterator it = tr1.vertices_begin();
@@ -337,7 +337,7 @@ private slots:
   }
 
 private:
-  void show_conflicts(Point p)
+  void show_conflicts(Point_2 p)
   {
     if(tr1.dimension()<2) return;
     std::list<Face_handle> conflict_faces;
@@ -384,8 +384,10 @@ main(int argc, char **argv)
   app.setMainWidget(&W);
   W.setCaption(my_title_string);
   W.setMouseTracking(TRUE);
+#if !defined (__POWERPC__)
   QPixmap cgal_icon = QPixmap((const char**)demoicon_xpm);
   W.setIcon(cgal_icon);
+#endif
   W.show();  
   W.init_coordinates();  
   current_state = -1;

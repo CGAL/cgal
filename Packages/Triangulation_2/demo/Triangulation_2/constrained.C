@@ -38,7 +38,7 @@ int main(int, char*)
 typedef double Coord_type;
 typedef CGAL::Cartesian<Coord_type>  K;
 
-typedef K::Point_2  Point;
+typedef K::Point_2  Point_2;
 typedef K::Segment_2  Segment;
 typedef K::Triangle_2  Triangle;
 
@@ -98,7 +98,7 @@ public:
     *widget << CGAL::BLUE;
   }
 
-  void draw_connected_component(const Point&  p)
+  void draw_connected_component(const Point_2&  p)
   {
     
     Face_handle fh = ct.locate(p);
@@ -155,7 +155,7 @@ public:
     int n;
     is >> n;
     qDebug("Reading %d constraints", n);
-    Point p,q;
+    Point_2 p,q;
     for(; n > 0; n--) {
       is >> p >> q;
       lc.push_back(std::make_pair(p,q));
@@ -182,7 +182,7 @@ public slots:
 
   void new_point(CGAL::Object obj)
   {
-    Point p;
+    Point_2 p;
     if (CGAL::assign(p,obj))
       {
 	widget->clear();

@@ -180,7 +180,7 @@ private slots:
 	
   void get_new_object(CGAL::Object obj)
   {
-    Point p;
+    Point_2 p;
     Segment s;
     Cgal_Polygon poly;
     if (CGAL::assign(s,obj))
@@ -195,11 +195,11 @@ private slots:
     } else if (CGAL::assign(poly, obj)) {
       typedef Cgal_Polygon::Vertex_const_iterator VI;
       VI i=poly.vertices_begin();
-      Point lp(i->x(), i->y()), lp1(lp);
+      Point_2 lp(i->x(), i->y()), lp1(lp);
       if(i!=poly.vertices_end()) {
         i++;
         for(;i!=poly.vertices_end();i++){
-          Point p(i->x(), i->y());
+          Point_2 p(i->x(), i->y());
           Vertex_handle vs = ct.insert(p);
           Vertex_handle vt = ct.insert(lp);
           ct.insert_constraint(vs, vt);
@@ -271,7 +271,7 @@ private slots:
   void generate_triangulation()
   {
     ct.clear();
-    CGAL::Random_points_in_disc_2<Point> g(0.5);
+    CGAL::Random_points_in_disc_2<Point_2> g(0.5);
     for(int count=0; count<200; count++)
       ct.insert(*g++);
     Vertex_iterator it = ct.vertices_begin();
@@ -356,7 +356,7 @@ private slots:
       progress->setTotalSteps(nedges);
       progress->show();
       for(int n = 0; n<nedges; n++) {
-        Point p1, p2;
+        Point_2 p1, p2;
         in >> p1 >> p2;
 	      if(n==0){
 	        xmin = xmax = p1.x();
@@ -390,22 +390,22 @@ private slots:
     } else if(s.right(4) == ".cst"){
       std::ifstream in(s);
       CGAL::set_ascii_mode(in);
-      std::istream_iterator<Point> it(in), done;
+      std::istream_iterator<Point_2> it(in), done;
       bool first(true);
       CGAL::Bbox_2 b;
  
       Vertex_handle p_vh;
-      Point p_q;
+      Point_2 p_q;
 
       while(it != done){
-        Point p(*it);
+        Point_2 p(*it);
         if(first){
           b = p.bbox();
         } else {
           b = b + p.bbox();
         }
         ++it;
-        Point q(*it);
+        Point_2 q(*it);
         b = b + q.bbox();
         ++it;
         if( (! first) && (p_q == p)){
@@ -450,8 +450,10 @@ main(int argc, char **argv)
   app.setMainWidget(&W);
   W.setCaption(my_title_string);
   W.setMouseTracking(TRUE);
+#if !defined (__POWERPC__)
   QPixmap cgal_icon = QPixmap((const char**)demoicon_xpm);
   W.setIcon(cgal_icon);
+#endif
   W.show();
   W.init_coordinates();  
   current_state = -1;

@@ -16,7 +16,7 @@ typedef CGAL::Simple_cartesian<Coord_type>      K1;
 typedef CGAL::Filtered_kernel<K1>               K2;
 struct Rep : public K2{} ;
 
-typedef Rep::Point_2                            Point;
+typedef Rep::Point_2                            Point_2;
 typedef Rep::Segment_2                          Segment;
 typedef Rep::Line_2                             Line;
 typedef Rep::Triangle_2                         Triangle;

@@ -198,13 +198,13 @@ private slots:
 
   void 
   get_new_object(CGAL::Object obj){
-    Point p;
+    Point_2 p;
     Circle c;
     if(CGAL::assign(p,obj)) {
       rt.insert(p);
       something_changed();
     } else if (CGAL::assign(c, obj)){
-      rt.insert(Gt::Weighted_point_2(Point(c.center()), c.squared_radius()));
+      rt.insert(Gt::Weighted_point_2(Point_2(c.center()), c.squared_radius()));
       something_changed();
     }
   }
@@ -244,8 +244,10 @@ main(int argc, char **argv)
   app.setMainWidget(&W);
   W.setCaption(title_string);
   W.setMouseTracking(TRUE);
+#if !defined (__POWERPC__)
   QPixmap cgal_icon = QPixmap((const char**)demoicon_xpm);
   W.setIcon(cgal_icon);
+#endif
   W.show();  
   W.init_coordinates();  
   current_state = -1;

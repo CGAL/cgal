@@ -9,7 +9,7 @@
 typedef double Coord_type;
 typedef CGAL::Cartesian<Coord_type>	    Rep;
 
-typedef CGAL::Point_2<Rep>                  Point;
+typedef CGAL::Point_2<Rep>                  Point_2;
 typedef CGAL::Segment_2<Rep>                Segment;
 typedef CGAL::Line_2<Rep>                   Line;
 typedef CGAL::Triangle_2<Rep>               Triangle;

@@ -4,7 +4,7 @@
 #include <CGAL/Regular_triangulation_2.h> 
 
 typedef CGAL::Simple_cartesian<double> Rp;
-typedef Rp::Point_2 Point;
+typedef Rp::Point_2 Point_2;
 typedef Rp::Circle_2 Circle;
 typedef double W;
 typedef CGAL::Regular_triangulation_euclidean_traits_2<Rp,W>  Gt;
