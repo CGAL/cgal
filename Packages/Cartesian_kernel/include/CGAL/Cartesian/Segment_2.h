@@ -63,8 +63,11 @@ public:
   typedef typename R::Circle_2_base             Circle_2;
 #endif
 
-  SegmentC2();
-  SegmentC2(const Point_2 &sp, const Point_2 &ep);
+  SegmentC2()
+    : Segment_handle_2(Segment_ref_2()) {}
+
+  SegmentC2(const Point_2 &sp, const Point_2 &ep)
+    : Segment_handle_2(Segment_ref_2(sp, ep)) {}
 
   bool        is_horizontal() const;
   bool        is_vertical() const;
@@ -97,30 +100,22 @@ public:
   Direction_2 direction() const;
   Line_2      supporting_line() const;
   Self        opposite() const;
-  Self        transform(const Aff_transformation_2 &t) const;
+  Self        transform(const Aff_transformation_2 &t) const
+  {
+    return SegmentC2(t.transform(source()), t.transform(target()));
+  }
 
   bool        is_degenerate() const;
   Bbox_2      bbox() const;
 };
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
-SegmentC2<R CGAL_CTAG>::SegmentC2()
-  : Segment_handle_2(Segment_ref_2() ) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-SegmentC2<R CGAL_CTAG>::
-SegmentC2(const typename SegmentC2<R CGAL_CTAG>::Point_2 &sp,
-          const typename SegmentC2<R CGAL_CTAG>::Point_2 &ep)
-  : Segment_handle_2(Segment_ref_2(sp, ep) ) {}
-
-template < class R >
 inline
 bool
 SegmentC2<R CGAL_CTAG>::operator==(const SegmentC2<R CGAL_CTAG> &s) const
 {
-  if ( identical(s) ) return true;
+  if (identical(s))
+      return true;
   return source() == s.source() && target() == s.target();
 }
 
@@ -218,15 +213,6 @@ SegmentC2<R CGAL_CTAG>
 SegmentC2<R CGAL_CTAG>::opposite() const
 {
   return SegmentC2<R CGAL_CTAG>(target(), source());
-}
-
-template < class R >
-inline
-SegmentC2<R CGAL_CTAG>
-SegmentC2<R CGAL_CTAG>::
-transform(const typename SegmentC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
-{
-  return SegmentC2<R CGAL_CTAG>(t.transform(source()), t.transform(target()));
 }
 
 template < class R >

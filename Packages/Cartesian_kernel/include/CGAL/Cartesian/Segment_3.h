@@ -52,8 +52,11 @@ public:
   typedef typename R::Aff_transformation_3_base Aff_transformation_3;
 #endif
 
-  SegmentC3();
-  SegmentC3(const Point_3 &sp, const Point_3 &ep);
+  SegmentC3()
+    : Segment_handle_3(Segment_ref_3()) {}
+
+  SegmentC3(const Point_3 &sp, const Point_3 &ep)
+    : Segment_handle_3(Segment_ref_3(sp, ep)) {}
 
   bool        has_on(const Point_3 &p) const;
   bool        collinear_has_on(const Point_3 &p) const;
@@ -84,23 +87,14 @@ public:
   Direction_3 direction() const;
   Line_3      supporting_line() const;
   Self        opposite() const;
-  Self        transform(const Aff_transformation_3 &t) const;
+  Self        transform(const Aff_transformation_3 &t) const
+  {
+    return SegmentC3(t.transform(source()), t.transform(target()));
+  }
 
   bool        is_degenerate() const;
   Bbox_3      bbox() const;
 };
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-SegmentC3<R CGAL_CTAG>::SegmentC3()
-  : Segment_handle_3(Segment_ref_3()) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-SegmentC3<R CGAL_CTAG>::
-SegmentC3(const typename SegmentC3<R CGAL_CTAG>::Point_3 &sp,
-          const typename SegmentC3<R CGAL_CTAG>::Point_3 &ep)
-  : Segment_handle_3(Segment_ref_3(sp, ep)) {}
 
 template < class R >
 inline
@@ -205,15 +199,6 @@ SegmentC3<R CGAL_CTAG>
 SegmentC3<R CGAL_CTAG>::opposite() const
 {
   return SegmentC3<R CGAL_CTAG>(target(), source());
-}
-
-template < class R >
-inline
-SegmentC3<R CGAL_CTAG>
-SegmentC3<R CGAL_CTAG>::
-transform(const typename SegmentC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
-{
-  return SegmentC3<R CGAL_CTAG>(t.transform(source()), t.transform(target()));
 }
 
 template < class R >

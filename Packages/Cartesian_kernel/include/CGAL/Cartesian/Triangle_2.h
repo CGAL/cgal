@@ -63,8 +63,11 @@ public:
   typedef typename R::Circle_2_base             Circle_2;
 #endif
 
-  TriangleC2();
-  TriangleC2(const Point_2 &p, const Point_2 &q, const Point_2 &r);
+  TriangleC2()
+    : Triangle_handle_2(Triangle_ref_2()) {}
+
+  TriangleC2(const Point_2 &p, const Point_2 &q, const Point_2 &r)
+    : Triangle_handle_2(Triangle_ref_2(p, q, r)) {}
 
   bool           operator==(const Self &s) const;
   bool           operator!=(const Self &s) const;
@@ -72,8 +75,13 @@ public:
   Point_2        vertex(int i) const;
   Point_2        operator[](int i) const;
 
-  Self           transform(const Aff_transformation_2 &t) const;
   Self           opposite() const;
+  Self           transform(const Aff_transformation_2 &t) const
+  {
+    return TriangleC2(t.transform(vertex(0)),
+                      t.transform(vertex(1)),
+                      t.transform(vertex(2)));
+  }
 
   Orientation    orientation() const;
   Oriented_side  oriented_side(const Point_2 &p) const;
@@ -93,24 +101,13 @@ public:
 };
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
-TriangleC2<R CGAL_CTAG>::TriangleC2()
-  : Triangle_handle_2(Triangle_ref_2()) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-TriangleC2<R CGAL_CTAG>::
-TriangleC2(const typename TriangleC2<R CGAL_CTAG>::Point_2 &p,
-           const typename TriangleC2<R CGAL_CTAG>::Point_2 &q,
-           const typename TriangleC2<R CGAL_CTAG>::Point_2 &r)
-  : Triangle_handle_2(Triangle_ref_2(p, q, r)) {}
-
-template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
 bool
 TriangleC2<R CGAL_CTAG>::operator==(const TriangleC2<R CGAL_CTAG> &t) const
 {
-  if ( identical(t) ) return true;
+  if (identical(t))
+      return true;
+
   int i;
   for(i=0; i<3; i++)
     if ( vertex(0) == t.vertex(i) )
@@ -262,18 +259,6 @@ Bbox_2
 TriangleC2<R CGAL_CTAG>::bbox() const
 {
   return vertex(0).bbox() + vertex(1).bbox() + vertex(2).bbox();
-}
-
-template < class R >
-inline
-TriangleC2<R CGAL_CTAG>
-TriangleC2<R CGAL_CTAG>::
-transform(const 
-	  typename TriangleC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
-{
-  return TriangleC2<R CGAL_CTAG>(t.transform(vertex(0)),
-                        t.transform(vertex(1)),
-                        t.transform(vertex(2)));
 }
 
 template < class R >

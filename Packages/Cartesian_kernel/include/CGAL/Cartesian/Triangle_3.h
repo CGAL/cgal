@@ -52,15 +52,23 @@ public:
   typedef typename R::Aff_transformation_3_base Aff_transformation_3;
 #endif
 
-  TriangleC3();
-  TriangleC3(const Point_3 &p, const Point_3 &q, const Point_3 &r);
+  TriangleC3()
+    : Triangle_handle_3(Triangle_ref_3()) {}
+
+  TriangleC3(const Point_3 &p, const Point_3 &q, const Point_3 &r)
+    : Triangle_handle_3(Triangle_ref_3(p, q, r)) {}
 
   bool       operator==(const Self &t) const;
   bool       operator!=(const Self &t) const;
 
   Plane_3    supporting_plane() const;
 
-  Self       transform(const Aff_transformation_3 &t) const;
+  Self       transform(const Aff_transformation_3 &t) const
+  {
+    return TriangleC3(t.transform(vertex(0)),
+                      t.transform(vertex(1)),
+                      t.transform(vertex(2)));
+  }
 
   bool       has_on(const Point_3 &p) const;
   bool       is_degenerate() const;
@@ -72,24 +80,12 @@ public:
 };
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
-TriangleC3<R CGAL_CTAG>::TriangleC3()
-  : Triangle_handle_3(Triangle_ref_3()) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-TriangleC3<R CGAL_CTAG>::
-TriangleC3(const typename TriangleC3<R CGAL_CTAG>::Point_3 &p,
-           const typename TriangleC3<R CGAL_CTAG>::Point_3 &q,
-           const typename TriangleC3<R CGAL_CTAG>::Point_3 &r)
-  : Triangle_handle_3(Triangle_ref_3(p, q, r)) {}
-
-
-template < class R >
 bool
 TriangleC3<R CGAL_CTAG>::operator==(const TriangleC3<R CGAL_CTAG> &t) const
 {
-  if ( identical(t) ) return true;
+  if (identical(t))
+      return true;
+
   int i;
   for(i=0; i<3; i++)
     if ( vertex(0) == t.vertex(i) )
@@ -138,18 +134,6 @@ Bbox_3
 TriangleC3<R CGAL_CTAG>::bbox() const
 {
   return vertex(0).bbox() + vertex(1).bbox() + vertex(2).bbox();
-}
-
-template < class R >
-inline
-TriangleC3<R CGAL_CTAG>
-TriangleC3<R CGAL_CTAG>::
-transform
-  (const typename TriangleC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
-{
-  return TriangleC3<R CGAL_CTAG>(t.transform(vertex(0)),
-                        t.transform(vertex(1)),
-                        t.transform(vertex(2)));
 }
 
 template < class R >
