@@ -53,10 +53,10 @@ struct CGAL_Filtered_exact
   CT value;
 
   CGAL_Filtered_exact () {}
-  CGAL_Filtered_exact (const CGAL_Filtered_exact<CT,ET> & fil)
-      : value(fil.value)  {}
   template <class NT>
   CGAL_Filtered_exact (const NT & nt) : value(nt)  {}
+  CGAL_Filtered_exact (const CGAL_Filtered_exact<CT,ET> & fil)
+      : value(fil.value)  {}
   // CGAL_Filtered_exact (const double & d)	: value(d)  {}
   // CGAL_Filtered_exact (const CT & ct)	: value(ct) {}
 
