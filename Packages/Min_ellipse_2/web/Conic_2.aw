@@ -1,4 +1,16 @@
+@! ============================================================================
+@! The CGAL Project
+@! Implementation: 2D Conic
+@! ----------------------------------------------------------------------------
+@! file  : web/Optimisation/Conic_2.aw
+@! author: Bernd Gärtner, Sven Schönherr (gaertner@inf.ethz.ch)
+@! ----------------------------------------------------------------------------
+@! $Revision$
+@! $Date$
+@! ============================================================================
+ 
 @documentclass[twoside]{article}
+@usepackage[latin1]{inputenc}
 @usepackage{a4wide2}
 @usepackage{epsf}
 @article
@@ -12,7 +24,7 @@
 @t vskip 5 mm
 @t title titlefont centre "A Conic Class"
 @t vskip 8 mm
-@t title smalltitlefont centre "Bernd Gaertner"
+@t title smalltitlefont centre "Bernd Gärtner"
 @t vskip 1 mm
 
 @thickline
@@ -1871,13 +1883,10 @@ zero, we know that the nonconvex side is empty, see subsection
 	switch (o) {
  	case CGAL_POSITIVE:
 	    return (CGAL_Convex_side)(-CGAL_sign (evaluate (p)));
-	    break;
 	case CGAL_NEGATIVE:
 	    return (CGAL_Convex_side)( CGAL_sign (evaluate (p)));
-	    break;
 	case CGAL_ZERO:
 	    return (CGAL_Convex_side)(-CGAL_sign (CGAL_abs (evaluate(p))));
-	    break;
         }
 	// keeps g++ happy
 	return( CGAL_Convex_side( 0));
@@ -1901,13 +1910,10 @@ zero, we know that the nonconvex side is empty, see subsection
 	switch (o) {
  	case CGAL_POSITIVE:
 	    return (CGAL_Convex_side)(-CGAL_sign (evaluate (p)));
-	    break;
 	case CGAL_NEGATIVE:
 	    return (CGAL_Convex_side)( CGAL_sign (evaluate (p)));
-	    break;
 	case CGAL_ZERO:
 	    return (CGAL_Convex_side)(-CGAL_sign (CGAL_abs (evaluate(p))));
-	    break;
         }
 	// keeps g++ happy
 	return( CGAL_Convex_side( 0));
@@ -3062,28 +3068,6 @@ nontrivial conic through the points.
 
 @macro <CGAL_ConicH2 I/O routines> = @begin
     template< class _PT, class _DA>
-    ostream& operator << ( ostream& os, CGAL_ConicC2<_PT,_DA> const& c)
-    {
-	return( os << c.r() << ' ' << c.s() << ' ' << c.t() << ' '
-		   << c.u() << ' ' << c.v() << ' ' << c.w());
-    }
-
-    template< class _PT, class _DA>
-    istream& operator >> ( istream& is, CGAL_ConicC2<_PT,_DA>& c)
-    {
-	typedef  CGAL_ConicC2<_PT,_DA>  Conic;
-	typedef	 _DA::FT		FT;
-
-	FT  r, s, t, u, v, w;
-	is >> r >> s >> t >> u >> v >> w;
-	c.set( r, s, t, u, v, w);
-
-	return( is);
-    }
-@end
-
-@macro <CGAL_ConicC2 I/O routines> = @begin
-    template< class _PT, class _DA>
     ostream& operator << ( ostream& os, CGAL_ConicH2<_PT,_DA> const& c)
     {
 	return( os << c.r() << ' ' << c.s() << ' ' << c.t() << ' '
@@ -3097,6 +3081,28 @@ nontrivial conic through the points.
 	typedef	 _DA::RT		RT;
 
 	RT  r, s, t, u, v, w;
+	is >> r >> s >> t >> u >> v >> w;
+	c.set( r, s, t, u, v, w);
+
+	return( is);
+    }
+@end
+
+@macro <CGAL_ConicC2 I/O routines> = @begin
+    template< class _PT, class _DA>
+    ostream& operator << ( ostream& os, CGAL_ConicC2<_PT,_DA> const& c)
+    {
+	return( os << c.r() << ' ' << c.s() << ' ' << c.t() << ' '
+		   << c.u() << ' ' << c.v() << ' ' << c.w());
+    }
+
+    template< class _PT, class _DA>
+    istream& operator >> ( istream& is, CGAL_ConicC2<_PT,_DA>& c)
+    {
+	typedef  CGAL_ConicC2<_PT,_DA>  Conic;
+	typedef	 _DA::FT		FT;
+
+	FT  r, s, t, u, v, w;
 	is >> r >> s >> t >> u >> v >> w;
 	c.set( r, s, t, u, v, w);
 
@@ -3118,7 +3124,9 @@ representation type @prg{R}. These are the declarations of the enumeration
 types @prg{CGAL_Conic_type} and @prg{CGAL_Convex_side}, the conic ouput
 function and the functions in connection with the solution of cubic equations.
 
-@file <include/Optimisation/CGAL/Conic_misc.h> = @begin
+@file <include/CGAL/Optimisation/CGAL/Conic_misc.h> = @begin
+@<Conic_2 header>("include/CGAL/Optimisation/CGAL/Conic_misc.h")
+
 #ifndef CONIC_MISC_H
 #define CONIC_MISC_H
 
@@ -3133,6 +3141,8 @@ function and the functions in connection with the solution of cubic equations.
 @<function CGAL_solve_cubic>
 
 #endif // CONIC_MISC_H
+
+@<end of file line>
 @end
 
 @!----------------------------------------------------------------------------
@@ -3144,7 +3154,9 @@ Depending on the loaded representation classes, the representation specific
 classes @prg{CGAL_ConicH2<PT,DA>} and/or  @prg{CGAL_ConicC2<PT,DA>} are
 included before that. 
 
-@file <include/Optimisation/CGAL/Conic_2.h> = @begin
+@file <include/CGAL/Optimisation/CGAL/Conic_2.h> = @begin
+@<Conic_2 header>("include/CGAL/Optimisation/CGAL/Conic_2.h")
+
 #ifndef CGAL_CONIC_2_H
 #define CGAL_CONIC_2_H
  
@@ -3169,6 +3181,8 @@ included before that.
 #endif // CGAL_NO_OSTREAM_INSERT_CONIC_2
 
 #endif // CGAL_CONIC_2_H
+
+@<end of file line>
 @end
 
 @!----------------------------------------------------------------------------
@@ -3177,11 +3191,17 @@ included before that.
 
 Here is the class @prg{CGAL_ConicH2<PT,DA>}\ldots
 
-@file <include/Optimisation/CGAL/ConicH2.h> = @begin
+@file <include/CGAL/Optimisation/CGAL/ConicH2.h> = @begin
+@<Conic_2 header>("include/CGAL/Optimisation/CGAL/ConicH2.h")
+
 #ifndef CGAL_CONICH2_H
 #define CGAL_CONICH2_H
 
 #include <CGAL/Conic_misc.h>
+
+#ifndef CGAL_OPTIMISATION_ASSERTIONS_H
+#  include <CGAL/optimisation_assertions.h>
+#endif
 
 @<CGAL_ConicH2 declaration>
 @<CGAL_ConicH2 interface and implementation>
@@ -3191,6 +3211,8 @@ Here is the class @prg{CGAL_ConicH2<PT,DA>}\ldots
 #endif // CGAL_NO_OSTREAM_INSERT_CONICH2
 
 #endif // CGAL_CONICH2_H
+
+@<end of file line>
 @end
 
 @!----------------------------------------------------------------------------
@@ -3200,12 +3222,18 @@ Here is the class @prg{CGAL_ConicH2<PT,DA>}\ldots
 \ldots and the class @prg{CGAL_ConicC2<PT,DA>}.
 
 
-@file <include/Optimisation/CGAL/ConicC2.h> = @begin
+@file <include/CGAL/Optimisation/CGAL/ConicC2.h> = @begin
+@<Conic_2 header>("include/CGAL/Optimisation/CGAL/ConicC2.h")
+
 // includes
 #ifndef CGAL_CONICC2_H
 #define CGAL_CONICC2_H
 
 #include <CGAL/Conic_misc.h>
+
+#ifndef CGAL_OPTIMISATION_ASSERTIONS_H
+#  include <CGAL/optimisation_assertions.h>
+#endif
 
 @<CGAL_ConicC2 declaration>
 @<CGAL_ConicC2 interface and implementation>
@@ -3215,5 +3243,19 @@ Here is the class @prg{CGAL_ConicH2<PT,DA>}\ldots
 #endif // CGAL_NO_OSTREAM_INSERT_CONICC2
 
 #endif // CGAL_CONICC2_H
+
+@<end of file line>
 @end
 
+@i ../file_header.awi
+ 
+@macro <Conic_2 header>(1) many = @begin
+    @<file header>("2D Conic",@1,
+                   "Optimisation/Conic_2",
+                   "Bernd Gärtner <gaertner@@inf.ethz.ch>",
+		   "Sven Schönherr",
+		   "ETH Zurich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
+                   "$Revision$","$Date$")
+@end
+
+@! ===== EOF ==================================================================
