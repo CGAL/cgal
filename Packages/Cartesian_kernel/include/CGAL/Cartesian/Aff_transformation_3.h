@@ -168,7 +168,7 @@ public:
   { return (*this->Ptr()) * (*t.Ptr()); }
 
 protected:
-  Aff_transformation_3        transpose() const { return this->Ptr()->transpose(); }
+  Aff_transformation_3  transpose() const { return this->Ptr()->transpose(); }
 };
 
 
