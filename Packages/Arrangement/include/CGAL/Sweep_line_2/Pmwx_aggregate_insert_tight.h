@@ -80,8 +80,8 @@ public:
   typedef typename Base::VerticalCurveListIter VerticalCurveListIter;
   typedef typename Base::StatusLineIter StatusLineIter;
   typedef typename Base::SubCurveListIter SubCurveListIter;
+  typedef typename Base::SweepLinePlanarmap SweepLinePlanarmap;
 
-  class  SweepLinePlanarmap {};
 
   Pmwx_aggregate_insert_tight() : 
     Base() {}
@@ -156,7 +156,6 @@ protected:
     to the right of the point, which means we attept to find intersections
     between them and their neighbours on the sweep line.
   */
-
   template <class _PM_, class Op>
   void Sweep(_PM_ &pm, Op tag)
   {
@@ -700,16 +699,16 @@ insertToPm(const X_curve_2 &cv, SubCurve *leftCurve,
     // we have a handle from the previous insert
     if ( hhandle != Halfedge_handle(NULL) ) {
       SL_DEBUG(std::cout << "  at vertices ";
-	       std::cout << h1->source()->point() << " " 
-	                 << h1->target()->point();
+	       std::cout << prev->source()->point() << " " 
+	                 << prev->target()->point();
 	       std::cout << hhandle->source()->point() << " " 
                          << hhandle->target()->point() << "\n";)
       res = pm.non_intersecting_insert_at_vertices(cv, prev, hhandle, 0);
     } else {
       // if this is the first left curve being inserted
       SL_DEBUG(std::cout << "  from vertex (2)";
-	       std::cout << h1->source()->point() << " " 
-	                 << h1->target()->point() << "\n";)
+	       std::cout << prev->source()->point() << " " 
+	                 << prev->target()->point() << "\n";)
       res = pm.non_intersecting_insert_from_vertex(cv, prev, 0);
     }
     
