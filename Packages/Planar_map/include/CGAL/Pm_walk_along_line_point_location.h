@@ -57,7 +57,6 @@ public:
   typedef typename Planar_map::Traits_wrap Traits_wrap;
   typedef typename Traits_wrap::Point Point;
   typedef typename Traits_wrap::X_curve X_curve;
-  typedef typename Traits_wrap::Curve_point_status Curve_point_status;
   typedef typename Planar_map::Locate_type Locate_type;
   typedef typename Planar_map::Vertex_handle Vertex_handle;
   typedef typename Planar_map::Halfedge_handle Halfedge_handle;

@@ -57,7 +57,6 @@ public:
   typedef typename Tr1::X_curve X_curve;
   typedef typename Tr1::Point_2 Point;
   typedef typename Tr1::Point_2 Point_2;
-  typedef typename Tr1::Curve_point_status Curve_point_status;
 
   Pm_traits_checker() : Tr1(),t(),b(),P() {};
   ~Pm_traits_checker() {}
@@ -85,11 +84,11 @@ public:
     }
 
 
-  Curve_point_status curve_get_point_status(const X_curve &cv, const Point & p)
-  const
+  Comparison_result curve_get_point_status (const X_curve &cv, 
+					    const Point & p) const
   {
-    CGAL_assertion((int)(t.curve_get_point_status(cv,p)) == 
-                   (int)(b.curve_get_point_status(P(cv),P(p))));
+    CGAL_assertion(t.curve_get_point_status(cv,p) == 
+                   b.curve_get_point_status(P(cv),P(p)));
     return t.curve_get_point_status(cv,p);
   }
   

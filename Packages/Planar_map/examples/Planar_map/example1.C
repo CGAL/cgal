@@ -52,7 +52,7 @@ int main()
   std::cout << "Upward vertical ray shooting from " << p << std::endl; 
   Planar_map::Halfedge_handle e = pm.vertical_ray_shoot(p, lt, true);
   std::cout << "returned the curve " << e->curve() << ", oriented toward " 
-            << e->target()->point() << std::endl; 
+  	    << e->target()->point() << std::endl; 
   return 0;
 }
 

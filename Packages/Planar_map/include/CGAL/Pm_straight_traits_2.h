@@ -131,14 +131,6 @@ public:
     CURVE_RIGHT = 1
   } Curve_status;
   
-  typedef enum
-  {
-    UNDER_CURVE = -1,
-    ABOVE_CURVE = 1,
-    ON_CURVE = 2,
-    CURVE_NOT_IN_RANGE = 0
-  } Curve_point_status;        
-
   /*
     typedef enum
     { 
@@ -478,58 +470,26 @@ public:
     }
   
   
-  Curve_point_status 
-    curve_get_point_status(const X_curve &cv, const Point & p) const
+  Comparison_result curve_get_point_status (const X_curve &cv, 
+					    const Point & p) const
     {
-      if (!curve_is_in_x_range(cv, p))
-        return CURVE_NOT_IN_RANGE;
+      CGAL_precondition (curve_is_in_x_range(cv, p));
+
       if (!curve_is_vertical(cv))
         {
-          int res = compare_y(p, curve_calc_point(cv, p));
-          if (res == SMALLER) return UNDER_CURVE;
-          if (res == LARGER)        return ABOVE_CURVE;
-          //if (res == EQUAL) 
-          return ON_CURVE;
+          return (compare_y(curve_calc_point(cv, p), p));
         }
       else
         {
           if (is_lower(p,lowest(curve_source(cv),curve_target(cv))))
-            return UNDER_CURVE;
+            return LARGER;
           if (is_higher(p,highest(curve_source(cv),curve_target(cv))))
-            return ABOVE_CURVE;
-          // if (curve_is_in_y_range(cv,p))
-          return ON_CURVE;
+            return SMALLER;
+	  else
+	    return EQUAL;
         }
     }
-  /*
-    Curve_point_status 
-    unbounded_curve_get_point_status(const X_curve &cv, const Point & p) const
-    {
-    if(cv.is_vertical())
-    {
-    if (is_same_x(cv.point(),p)) return 
-    
-    if (!unbounded_curve_is_in_x_range(cv, p))
-    return CURVE_NOT_IN_RANGE;
-    if (!curve_is_vertical(cv))
-    {
-    int res = compare_y(p, curve_calc_point(cv, p));
-    if (res == SMALLER) return UNDER_CURVE;
-    if (res == LARGER)        return ABOVE_CURVE;
-    //if (res == EQUAL) 
-    return ON_CURVE;
-    }
-    else
-    {
-    if (is_lower(p,lowest(curve_source(cv),curve_target(cv))))
-    return UNDER_CURVE;
-    if (is_higher(p,highest(curve_source(cv),curve_target(cv))))
-    return ABOVE_CURVE;
-    // if (curve_is_in_y_range(cv,p))
-    return ON_CURVE;
-    }
-    }
-  */          
+
   Comparison_result 
     curve_compare_at_x(const X_curve &cv1, const X_curve &cv2, const Point &q) 
     const 

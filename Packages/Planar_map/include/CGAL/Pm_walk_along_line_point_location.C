@@ -335,10 +335,13 @@ bool Pm_walk_along_line_point_location<Planar_map>::find_closest(
       const X_curve& cv = curr->curve(), &ecv = e->curve();   
       const Point& p1 = traits->curve_source(cv),
                  & p2 = traits->curve_target(cv);
-      Curve_point_status s = traits->curve_get_point_status(cv, p);
-      if ( s == (up ? Traits::UNDER_CURVE : Traits::ABOVE_CURVE)
-// && !traits->curve_is_vertical(cv)
-	) 
+      bool              in_x_range = traits->curve_is_in_x_range(cv, p);
+      Comparison_result res = EQUAL;
+
+      if (in_x_range)
+	res = traits->curve_get_point_status(cv, p);
+
+      if (res == (up ? LARGER : SMALLER)) 
         /* cv is a non vertical curve intersecting the vertical ray shoot 
                x
              / 
@@ -464,7 +467,7 @@ bool Pm_walk_along_line_point_location<Planar_map>::find_closest(
 #endif // CGAL_PM_DEBUG
 
         }
-      else if ( s == Traits::ON_CURVE )
+      else if (in_x_range && res == EQUAL)
 	{
 	  if (!including)
 	  /* The vertical ray shoot is not including p itself,
@@ -475,7 +478,8 @@ bool Pm_walk_along_line_point_location<Planar_map>::find_closest(
 	  */
 	    {
 	      if (traits->curve_is_vertical(cv) && 
-		  traits->point_is_right_top(traits->curve_righttop_most(cv),p))
+		  traits->point_is_right_top(traits->curve_righttop_most(cv),
+					     p))
 
 		/*
 		  x       x

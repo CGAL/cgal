@@ -117,8 +117,8 @@ public:
     typename Halfedges_list::const_iterator hit;
     for (hit=relevant_halfedges.begin(); hit!=relevant_halfedges.end(); ++hit) 
       {
-	if (traits->curve_get_point_status((*hit)->curve(),p) ==
-	    Traits::ON_CURVE) 
+	if (traits->curve_is_in_x_range((*hit)->curve(),p) &&
+	    traits->curve_get_point_status((*hit)->curve(),p) == EQUAL) 
 	  {
 	    lt = Planar_map::EDGE; 
 	    return *hit;
@@ -182,8 +182,9 @@ public:
 		
     typename Planar_map::Halfedge_iterator it, eit, closest_edge;
     bool first = false;
-    typename Traits::Curve_point_status point_above_under, r;
-    int curve_above_under;
+    Comparison_result point_above_under, res;
+    Comparison_result curve_above_under;
+    bool              in_x_range;
 		
     it = pm->halfedges_begin();
     eit = pm->halfedges_end();
@@ -194,12 +195,12 @@ public:
     // direction (up/down)
     if (up) 
       {
-	point_above_under = Traits::UNDER_CURVE;
+	point_above_under = LARGER;
 	curve_above_under = LARGER;
       } 
     else 
       {
-	point_above_under = Traits::ABOVE_CURVE;
+	point_above_under = SMALLER;
 	curve_above_under = SMALLER;
       }
 
@@ -208,8 +209,12 @@ public:
 	 rel_it != relevant_halfedges.end();) 
       {
 	it = *rel_it;
-	r = traits->curve_get_point_status(it->curve(), p);
-	if ( r == point_above_under ) 
+
+	in_x_range = traits->curve_is_in_x_range(it->curve(), p);
+	if (in_x_range)
+	  res = traits->curve_get_point_status(it->curve(), p);
+
+	if (in_x_range && (res == point_above_under)) 
 	  {
 	    if (!first) 
 	      {
@@ -218,16 +223,16 @@ public:
 	      } 
 	    else 
 	      {
-		if ( traits->curve_compare_at_x(closest_edge->curve(),
+		if (traits->curve_compare_at_x(closest_edge->curve(),
 						it->curve(), p) == 
-		     curve_above_under) 
+		    curve_above_under) 
 		  {
 		    closest_edge = it;
 		  }
 	      }
 	  }
-	if ( ( r == Traits::ON_CURVE) && 
-             (traits->curve_is_vertical(it->curve())) )
+	if (in_x_range && res == EQUAL  && 
+	    traits->curve_is_vertical(it->curve()))
         {
           // The vertical ray shoot is not including p itself,
           // thus we are interested only in vertical curves that

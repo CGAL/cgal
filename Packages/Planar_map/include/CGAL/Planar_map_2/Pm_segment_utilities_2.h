@@ -20,7 +20,7 @@
 // author(s)     : Shai Hirsch       <shaihi@post.tau.ac.il>
 //                 Efi Fogel         <efif@post.tau.ac.il>
 //
-// coordinator   : Tel-Aviv University (Dan Halperin halperin<@math.tau.ac.il>)
+// coordinator   : Tel-Aviv University (Dan Halperin <halperin@post.tau.ac.il>)
 //
 // ======================================================================
 

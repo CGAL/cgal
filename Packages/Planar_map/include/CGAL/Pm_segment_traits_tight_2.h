@@ -55,17 +55,6 @@ public:
   typedef Point_2                         Point;
   typedef X_curve_2                       X_curve;
 
-  // Currently, I leave this in the traits
-  // Maybe we can change the usage inside Planar_map_2
-  typedef enum
-  {
-    UNDER_CURVE        = -1,
-    CURVE_NOT_IN_RANGE =  0,
-    ABOVE_CURVE        =  1,
-    ON_CURVE           =  2
-
-  } Curve_point_status;	
-
 protected:
   // Functors:
   typedef typename Kernel::Is_vertical_2        Is_vertical_2;
@@ -229,17 +218,20 @@ public:
     return compare_slope_2_object()(cv1, cv2);
   }
     
-  /*! Return the curve-point status of the input objects
-   * \todo Remove curve_get_point_status() from wrapper. Verify that
-   * curve_is_in_x_range() and compare_y_at_x_2() are required in the
-   * traits, and use directly.
+  /*! Return the curve-point status of the input objects.
+   * \pre p must be in the x-range of cv.
    */
-  Curve_point_status 
-  curve_get_point_status(const X_curve_2 & cv, const Point_2 & p) const
+  Comparison_result curve_get_point_status (const X_curve_2 & cv, 
+					    const Point_2 & p) const
   {
+    CGAL_precondition(curve_is_in_x_range(cv, p));
+
     Comparison_result res = compare_y_at_x_2_object()(p, cv);
-    return ((res == LARGER) ? ABOVE_CURVE :
-            ((res == SMALLER) ? UNDER_CURVE : ON_CURVE));
+    if (res == SMALLER)
+      return (LARGER);
+    else if (res == LARGER)
+      return (SMALLER);
+    return (EQUAL);
   }
 
   /*! \todo replace indirect use curve_is_same() with equal_2()

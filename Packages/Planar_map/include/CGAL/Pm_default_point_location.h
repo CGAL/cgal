@@ -301,9 +301,9 @@ private:
   bool halfedge_represents_point_inside_face(const Halfedge_handle& h,
                                              const Point& p) const 
   {
-    return (traits->curve_get_point_status(h->curve(),p) ==
-            Pm_traits::ABOVE_CURVE) ==
-        traits->point_is_left(h->source()->point(),h->target()->point());
+    return (traits->curve_is_in_x_range(h->curve(),p) &&
+	    traits->curve_get_point_status(h->curve(),p) == SMALLER) ==
+      traits->point_is_left(h->source()->point(),h->target()->point());
   }
   Halfedge_handle halfedge_representing_unbounded_face() const
   {

@@ -50,7 +50,8 @@ Pm_naive_point_location<Planar_map>::locate(const Point & p,
 
   typename Planar_map::Halfedge_iterator hit=pm->halfedges_begin();
   for (; hit != pm->halfedges_end(); ++hit) {
-    if (traits->curve_get_point_status(hit->curve(),p)==Traits::ON_CURVE) {
+    if (traits->curve_is_in_x_range(hit->curve(),p) &&
+	traits->curve_get_point_status(hit->curve(),p) == EQUAL) {
       lt = Planar_map::EDGE; 
       return hit;
     }
@@ -98,18 +99,19 @@ typename Pm_naive_point_location<Planar_map>::Halfedge_handle
 Pm_naive_point_location<Planar_map>::
 vertical_ray_shoot(const Point & p, Locate_type & lt, bool up) const
 {
-  typename Traits::Curve_point_status point_above_under, r;
-  int curve_above_under;
+  Comparison_result point_above_under, res;
+  Comparison_result curve_above_under;
+  bool              in_x_range;
 
   lt = Planar_map::EDGE;
 
   // set the flags for comparison acording to the ray 
   // direction (up/down)
   if (up) {
-    point_above_under = Traits::UNDER_CURVE;
+    point_above_under = LARGER;
     curve_above_under = LARGER;
   } else {
-    point_above_under = Traits::ABOVE_CURVE;
+    point_above_under = SMALLER;
     curve_above_under = SMALLER;
   }
 
@@ -121,8 +123,11 @@ vertical_ray_shoot(const Point & p, Locate_type & lt, bool up) const
   while (it != eit) {
     // Find if p is in the x-range of the curve and above or below it
     // according to the direction of the shoot.
-    r = traits->curve_get_point_status(it->curve(), p);
-    if (r == point_above_under) {
+    in_x_range = traits->curve_is_in_x_range(it->curve(), p);
+    if (in_x_range)
+      res = traits->curve_get_point_status(it->curve(), p);
+
+    if (in_x_range && res == point_above_under) {
       // If the first curve in the x-range was not found yet
       if (!first) {
         closest_edge = it;
@@ -137,7 +142,8 @@ vertical_ray_shoot(const Point & p, Locate_type & lt, bool up) const
         }
       }
     }
-    if (( r == Traits::ON_CURVE ) && (traits->curve_is_vertical(it->curve())))
+    if (in_x_range && res == EQUAL &&
+	traits->curve_is_vertical(it->curve()))
     {
       // The vertical ray shoot is not including p itself,
       // thus we are interested only in vertical curves that
