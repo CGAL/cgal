@@ -20,8 +20,6 @@
 #ifndef CGAL_MIN_SPHERE_OF_SPHERES_D_TRAITS_2_H
 #define CGAL_MIN_SPHERE_OF_SPHERES_D_TRAITS_2_H
 
-#include <CGAL/Weighted_point.h>
-
 namespace CGAL {
 
   template<typename K_,                      // kernel
@@ -31,10 +29,10 @@ namespace CGAL {
   class Min_sphere_of_spheres_d_traits_2 {
   public: // types:
     typedef FT_ FT;
-    typedef FT_ Weight;
+    typedef FT_ Radius;
     typedef typename K_::Point_2 Point;
-    typedef CGAL::Weighted_point<Point,Weight> Sphere;
-    typedef typename Point::Cartesian_const_iterator Cartesian_const_iterator;
+    typedef std::pair<Point,Radius> Sphere;
+    typedef typename K_::Cartesian_const_iterator_2 Cartesian_const_iterator;
     typedef UseSqrt_ Use_square_roots;
     typedef Algorithm_ Algorithm;
 
@@ -42,13 +40,13 @@ namespace CGAL {
     static const int D = 2;                  // dimension
 
   public: // accessors:
-    static inline const FT radius(const Sphere& s) {
-      return s.weight();
+    static inline const FT& radius(const Sphere& s) {
+      return s.second;
     }
 
     static inline Cartesian_const_iterator
       center_cartesian_begin(const Sphere& s) {
-      return s.cartesian_begin();
+      return s.first.cartesian_begin();
     }
   };
 

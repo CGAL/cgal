@@ -11,9 +11,8 @@
 
 The class
 \ccc{Min_sphere_of_spheres_d_traits_3<K,FT,UseSqrt,Algorithm>} is a
-model for concept \ccc{MinSphereOfSpheresTraits}.  It uses the types
-\ccc{Point_3} and \ccc{Weighted_point} from {\cgal} to represent
-circles.
+model for concept \ccc{MinSphereOfSpheresTraits}.  It uses the {\cgal}
+type \ccc{Point_3} to represent circles.
 
 \ccIsModel
 \ccc{MinSphereOfSpheresTraits}
@@ -46,7 +45,7 @@ requirements of type \ccc{Use_square_roots} of concept
 \ccTypes
 In addition to the types required by the concept
 \ccc{MinSphereOfSpheresTraits}, this model also defines the types
-\ccc{Weight} and \ccc{Point}.  Here's the complete list of defined types:
+\ccc{Radius} and \ccc{Point}.  Here's the complete list of defined types:
 
 \ccNestedType{FT}{}
 
@@ -54,29 +53,29 @@ In addition to the types required by the concept
 
 \ccNestedType{Algorithm}{}
 
-\ccNestedType{Weight}{is a typedef to the template parameter \ccc{FT}}
+\ccNestedType{Radius}{is a typedef to the template parameter \ccc{FT}}
 
-\ccNestedType{Point}{is a typedef to \ccc{CGAL::Point_3<K>}.}
+\ccNestedType{Point}{is a typedef to \ccc{K::Point_3}.}
 
 \ccNestedType{Sphere}{is a typedef to
-  \ccc{CGAL::Weighted_point<Point,Weight>}.}
+  \ccc{std::pair<Point,Radius>}.}
 
 \ccNestedType{Cartesian_const_iterator}{is a typedef to
-\ccc{Point::Cartesian_const_iterator}.}
+\ccc{K::Cartesian_const_iterator_2}.}
 
 
 \ccAccessFunctions
 
 The class provides the access functions required by the model
 \ccc{MinSphereOfSpheresTraits}; they simply map to the corresponding
-routines of class \ccc{Weighted_point<Point,Weight>}:
+routines of class \ccc{K::Point_3}:
 
 \ccCreationVariable{traits}
 
 \ccMemberFunction{ FT radius(const
-Sphere& s);}{ maps to \ccc{s.weight()}.}
+Sphere& s);}{ maps to \ccc{s.second}.}
 
 \ccMemberFunction{ Cartesian_const_iterator center_cartesian_begin(const
-Sphere& s);}{ maps to \ccc{s.cartesian_begin()}.}
+Sphere& s);}{ maps to \ccc{s.first.cartesian_begin()}.}
 
 \end{ccRefClass}
