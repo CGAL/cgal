@@ -1,4 +1,9 @@
 //-----------------------------------------------------------------------//
+// Changes in 1.34
+Added STLport support for MSVC in include/CGAL/config.h
+Added testfile NO_LONGNAME_PROBLEM
+
+//-----------------------------------------------------------------------//
 // Changes in 1.33
 Updated include/CGAL/MSVC_standard_header_fixes.h
 (Added header and added abort, clock and clock_t to namespace std)
