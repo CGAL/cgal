@@ -1,5 +1,11 @@
+25 September 2004 Sylvain Pion
+- install_cgal : simplify by changing the default value of the variables :
+  CGAL_SHARED_LIB_CREATE, WINDOW_DIR, PRINT_STACKTRACE_PROGRAM.
+  Remove unused LEDA_LIB_OPT and LIB_CREATION_COMMANDS.
+
 20 September 2004 Andreas Fabri
-- Replaced -GX option with -EHsc as VC++-2005 issues warning about deprecated option
+- Replaced -GX option with -EHsc as VC++-2005 issues warning about deprecated
+  option.
 
 11 September 2004 Sylvain Pion
 - Replace test_stl_general() function by CGAL_CFG_NO_STL.C.

@@ -747,14 +747,13 @@ set_compiler_flags()
     CGAL_OBJ_PREFIX=""
     CGAL_SHARED_LIB_CXXFLAGS="-fpic"
     CGAL_SHARED_LIB_LDFLAGS=
-    CGAL_SHARED_LIB_CREATE="false"
     CGAL_WINLIB_CXXFLAGS=""
     CGAL_QT_CXXFLAGS=""
     WINDOW_INCLUDE=""
-    WINDOW_DIR="/usr/lib/X11"
+    WINDOW_DIR="/usr/X11R6/lib"
     XLIBS="-lX11"
     RUNTIME_LINKER_FLAG=''
-    PRINT_STACKTRACE_PROGRAM=
+    PRINT_STACKTRACE_PROGRAM="gdb"
     WINDOWS_COMPILER=""
     CYGWIN_COMPILER=""
     SUFFIX_LIST=
@@ -764,7 +763,6 @@ set_compiler_flags()
     SHARED_LIB_EXT=".so"
     REMOVE_EXT_LIST=".o"
     LIB_OPT=" -l"
-    LEDA_LIB_OPT=' -l'
     LIBPATH_OPT=" -L"
     DEBUG_OPT="-g"
     EXE_OPT="-o "
@@ -781,7 +779,7 @@ set_compiler_flags()
     SEPARATE_LIBPATH=""
     START_LD_OPT=""
     CGAL_CXX="`compiler_bin`"
-    LIB_CREATION_COMMANDS=""
+    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
     RANLIB="cat >/dev/null"
 
     case ${CGAL_OS_COMPILER} in
@@ -800,7 +798,6 @@ set_compiler_flags()
 	    LIB_SUFFIX=".lib"
 	    REMOVE_EXT_LIST=".obj .tds"
 	    LIB_OPT=""
-            LEDA_LIB_OPT="lib"
 	    DEBUG_OPT=""
 	    EXE_OPT="-e"
 	    SAVE_THE_BLANK=""
@@ -814,7 +811,6 @@ set_compiler_flags()
             MPFR_LIBNAME="mpfr.lib"
 	    MATH_LIB=""
 	    SEPARATE_LIBPATH="y"
-            LIB_CREATION_COMMANDS="tlib @borland_lib_creation"
 	    ;;
 	*ICL.*|*icl.*)
 	    #### settings Intel C++ compiler
@@ -834,7 +830,6 @@ set_compiler_flags()
 	    LIB_SUFFIX=".lib"
 	    REMOVE_EXT_LIST=".obj"
 	    LIB_OPT=""
-            LEDA_LIB_OPT="lib"
 	    LIBPATH_OPT="-LIBPATH:"
 	    DEBUG_OPT="-Z7"
 	    EXE_OPT="-Fe"
@@ -868,7 +863,6 @@ set_compiler_flags()
 	    LIB_SUFFIX=".lib"
 	    REMOVE_EXT_LIST=".obj"
 	    LIB_OPT=""
-            LEDA_LIB_OPT="lib"
 	    LIBPATH_OPT="-LIBPATH:"
 	    DEBUG_OPT="-Z7"
 	    EXE_OPT="-Fe"
@@ -888,9 +882,9 @@ set_compiler_flags()
 	    #### settings for sgi mipspro compiler on irix5
 	    CGAL_SHARED_LIB_CXXFLAGS=
 	    CGAL_SHARED_LIB_LDFLAGS="-lm"
-	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
 	    RUNTIME_LINKER_FLAG="-rpath "
 	    PRINT_STACKTRACE_PROGRAM="dbx"
+            WINDOW_DIR="/usr/lib/X11"
 	    ;;
 	*IRIX*6.*CC*7.3*)
 	    #### settings for sgi mipspro compiler V7.3 on irix6
@@ -898,26 +892,25 @@ set_compiler_flags()
 	    ADDITIONAL_LDFLAGS="-LANG:std"
 	    CGAL_LIB_CREATE="\$(CGAL_CXX) -ar -o''"
 	    CGAL_SHARED_LIB_CXXFLAGS=
-	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
 	    RUNTIME_LINKER_FLAG="-rpath "
 	    PRINT_STACKTRACE_PROGRAM="dbx"
+            WINDOW_DIR="/usr/lib/X11"
 	    ;;
 	*IRIX*6.*CC*)
 	    #### settings for sgi mipspro compiler on irix6
 	    CGAL_LIB_CREATE="\$(CGAL_CXX) -ar -o''"
 	    CGAL_SHARED_LIB_CXXFLAGS=
-	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
 	    RUNTIME_LINKER_FLAG="-rpath "
 	    PRINT_STACKTRACE_PROGRAM="dbx"
+            WINDOW_DIR="/usr/lib/X11"
 	    ;;
 	*IRIX*g++*)
 	    #### settings for gcc on irix
 	    ADDITIONAL_CXXFLAGS="-Wall"
 	    LONG_NAME_PROBLEM_LDFLAGS="-U -s"
 	    CGAL_SHARED_LIB_LDFLAGS="-lm"
-	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
 	    RUNTIME_LINKER_FLAG="-Xlinker -rpath -Xlinker "
-	    PRINT_STACKTRACE_PROGRAM="gdb"
+            WINDOW_DIR="/usr/lib/X11"
 	    ;;
 	*SunOS*5.*CC*)
 	    #### settings for sunpro compiler on solaris
@@ -932,7 +925,6 @@ set_compiler_flags()
 	    ;;
 	*SunOS*5.*g++*)
 	    #### settings for gcc on solaris
-	    #ADDITIONAL_CXXFLAGS="-Wall"
 	    LONG_NAME_PROBLEM_CXXFLAGS="-g"
 	    LONG_NAME_PROBLEM_LDFLAGS="-z nodefs -s"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
@@ -940,24 +932,17 @@ set_compiler_flags()
 	    WINDOW_INCLUDE="/usr/openwin/include"
 	    WINDOW_DIR="/usr/openwin/lib"
 	    RUNTIME_LINKER_FLAG="-R "
-	    PRINT_STACKTRACE_PROGRAM="gdb"
 	    ;;
-         *alpha*Linux*g++*)
-             #### settings for g++ on alpha-linux (special FPU handling)
-             #### LONG_NAME_PROBLEM is cured by disabling debugging
-             ADDITIONAL_CXXFLAGS="-Wall -mieee -mfp-rounding-mode=d"
-             CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
-             WINDOW_DIR="/usr/X11R6/lib"
-             RUNTIME_LINKER_FLAG='-Wl,-R'
-             PRINT_STACKTRACE_PROGRAM="gdb"
-             ;;
+        *alpha*Linux*g++*)
+            #### settings for g++ on alpha-linux (special FPU handling)
+            #### LONG_NAME_PROBLEM is cured by disabling debugging
+            ADDITIONAL_CXXFLAGS="-Wall -mieee -mfp-rounding-mode=d"
+            RUNTIME_LINKER_FLAG='-Wl,-R'
+            ;;
 	*Linux*g++*)
 	    #### settings for gcc on linux
 	    ADDITIONAL_CXXFLAGS="-Wall"
-	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
-	    WINDOW_DIR="/usr/X11R6/lib"
 	    RUNTIME_LINKER_FLAG='-Wl,-R'
-	    PRINT_STACKTRACE_PROGRAM="gdb"
 	    ;;
 	*Linux*icc*)
 	    #### settings for icc on linux
@@ -967,27 +952,21 @@ set_compiler_flags()
 	    ICCCOMPILERBIN=`compiler_bin`
 	    ICCREALDIRNAME=`echo ${ICCCOMPILERBIN} | ${_sed} 's#bin/icc##g'`
 	    ADDITIONAL_LDFLAGS="-Wl,-R${ICCREALDIRNAME}lib"
-	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
-	    WINDOW_DIR="/usr/X11R6/lib"
 	    RUNTIME_LINKER_FLAG='-Wl,-R'
 	    PRINT_STACKTRACE_PROGRAM="idb"
 	    ;;
 	*CYGWIN*g++*)
 	    #### settings for gcc on Cygwin
 	    ADDITIONAL_CXXFLAGS="-Wall"
-	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
 	    WINDOW_DIR=
 	    XLIBS="-luser32 -lgdi32 -lcomdlg32 -lshell32"
-	    PRINT_STACKTRACE_PROGRAM="gdb"
 	    EXE_EXT=".exe"
 	    ;;
 	*MINGW*g++*)
 	    #### settings for gcc on mingw
 	    ADDITIONAL_CXXFLAGS="-Wall"
-	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
 	    WINDOW_DIR=
 	    XLIBS="-luser32 -lgdi32 -lcomdlg32 -lshell32"
-	    PRINT_STACKTRACE_PROGRAM="gdb"
 	    EXE_EXT=".exe"
 	    ;;
 	*Darwin*g++*)
@@ -996,9 +975,7 @@ set_compiler_flags()
 	    CGAL_SHARED_LIB_CXXFLAGS=""
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -dynamiclib"
 	    SHARED_LIB_EXT=".dylib"
-	    WINDOW_DIR="/usr/X11R6/lib"
 	    RUNTIME_LINKER_FLAG=''
-	    PRINT_STACKTRACE_PROGRAM="gdb"
 	    RANLIB="ranlib"
 	    ;;
 	*mwcc.exe*|*MWCC*)
@@ -1021,14 +998,10 @@ set_compiler_flags()
             MPFR_LIBNAME="mpfr.lib"
 	    MATH_LIB=""
 	    SEPARATE_LIBPATH="y"
-	    LIB_CREATION_COMMANDS="mwld.exe"
 	    ;;
 	*Linux*pgCC*)
 	    #### settings for Portland Group Compiler on linux
-	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
-	    WINDOW_DIR="/usr/X11R6/lib"
 	    RUNTIME_LINKER_FLAG='-Wl,-R'
-	    PRINT_STACKTRACE_PROGRAM="gdb"
 	    # PGCC has long name problems with "-g".
 	    DEBUG_OPT=""
 	    ;;
