@@ -7,9 +7,9 @@
 % file  : doc_tex/basic/Optimisation/Min_circle_2.tex
 % author: Bernd Gärtner, Sven Schönherr (sven@inf.fu-berlin.de)
 % -----------------------------------------------------------------------------
+% $CGAL_Package: Min_circle_2 WIP $
 % $Revision$
 % $Date$
-% $CGAL_Package: Optimisation WIP $
 % =============================================================================
 
 \ccHtmlNoClassToc
@@ -23,7 +23,7 @@
 \ccDefinition
 
 An object of the class \ccClassTemplateName\ is the unique circle of
-smallest area enclosing a finite set of points in two-dimensional
+smallest area enclosing a finite set of points in the two-dimensional
 Euclidean plane $\E_2$. For a point set $P$ we denote by $mc(P)$ the
 smallest circle that contains all points of $P$. Note that $mc(P)$ can
 be degenerate, i.e.\ $mc(P)=\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}}$
@@ -367,23 +367,27 @@ and \ccc{list<Point>} and for the \stl\ input stream iterator
 % -----------------------------------------------------------------------------
 \ccSeeAlso
 
-\ccc{CGAL_Min_ellipse_2}
-  \ccTexHtml{(Section~\ref{sec:min_ellipse_2_spec})}{},
 \ccc{CGAL_Min_circle_2_traits_2}
   \ccTexHtml{(Section~\ref{sec:min_circle_2_traits_impl_2D_kernel})}{},
-\linebreakByHand
 \ccc{CGAL_Min_circle_2_adapterC2}
   \ccTexHtml{(Section~\ref{sec:min_circle_2_traits_adapterC2})}{},
+\linebreakByHand
 \ccc{CGAL_Min_circle_2_adapterH2}
-  \ccTexHtml{(Section~\ref{sec:min_circle_2_traits_adapterH2})}{}.
+  \ccTexHtml{(Section~\ref{sec:min_circle_2_traits_adapterH2})}{},
+\ccc{CGAL_Min_ellipse_2}
+  \ccTexHtml{(Section~\ref{sec:min_ellipse_2_spec})}{},
+\linebreakByHand
+\ccc{CGAL_Min_sphere_d}
+  \ccTexHtml{(Section~\ref{sec:min_sphere_d_spec})}{}.
 
 % -----------------------------------------------------------------------------
 \ccImplementation
 
 We implement the algorithm of Welzl, with move-to-front
-heuristic~\cite{w-sedbe-91a}. If randomization is chosen, the creation
-time is almost always linear in the number of points. Access functions
-and predicates take constant time, inserting a point might take up to
+heuristic~\cite{w-sedbe-91a}. The whole implementation is described
+in~\cite{gs-seceg-98}. If randomization is chosen, the creation time
+is almost always linear in the number of points. Access functions and
+predicates take constant time, inserting a point might take up to
 linear time, but substantially less than computing the new smallest
 enclosing circle from scratch. The clear operation and the check for
 validity each takes linear time.
