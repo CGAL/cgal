@@ -1,12 +1,12 @@
-To compule and run all these examples type :
+To compute and run all these examples type :
 ./cgal_test
-To compute and run only some of them type
+To compute and run only some of them type :
 ./cgal_test name-of_wanted_example
 
 triangulation_prog1:
 The following program creates a triangulation of 2D points using 
 a default kernel of CGAL  as geometric traits and the
-default instanciation of the triangulation data structure template
+default instantiation of the triangulation data structure template
 parameter.
  The input points are read from a file and inserted in the
 triangulation.  Finally points on the convex hull are written to {\tt
@@ -18,7 +18,7 @@ like e.g. a color stored in the faces or vertices
 of the triangulation.
 
 adding_handles
-Illustrate how  user can derive and plug in his own vertex_base 
+Illustrates how the user can derive and plug in his own vertex_base 
 or face_base when he would like to have  additionnal
 handles to other faces and vertices stored in the faces or vertices.
 
@@ -41,16 +41,16 @@ of constrained edges in the resulting triangulation.
 
 constrained_plus
 Same has above, but the  constrained Delaunay triangulation
-uses an exact number types and a constraint hierachy.
+uses an exact number types and a constraint hierarchy.
 
 hierarchy
 A standard use of a  triangulation hierarchy
 to enhance the efficiency
 of a Delaunay triangulation.
-The program output the number of vertices
+The program outputs the number of vertices
 at the different levels of the hierarchy
 
 hierarchy_plus
 The program shows how to use
-a triangulation hierachy in conjonction with a Constrained 
+a triangulation hierarchy in conjunction with a Constrained 
 triangulation plus.
