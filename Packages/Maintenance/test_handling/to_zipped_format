@@ -1,0 +1,71 @@
+#!/net/bin/perl5 -w
+
+use strict;
+
+sub usage {
+    print STDERR "$0: usage\n";
+    print STDERR "$0 result1.tar[.gz] ...\n";
+}
+
+sub make_tempdir()
+{
+    my $dirno = 1;
+    $::TMPDIR = "TMP$dirno";
+    while ( -f $::TMPDIR or -d $::TMPDIR ) {
+	++$dirno;
+	$::TMPDIR = "TMP$dirno";
+    }
+    mkdir($::TMPDIR,0770) or die "Cannot create temporary directory $::TMPDIR\n";
+}
+
+sub one_archive($)
+{
+    my $archive = shift;
+    make_tempdir();
+    if (! -f $archive) {
+	print STDERR "$archive is not a valid filename\n";
+	return 0;
+    }
+    if ( $archive =~ m/\.gz$/ ) {
+	system("/net/bin/gunzip", "$archive") == 0 or return 0;
+	$archive =~ s/\.gz$//;
+    }
+    if ( $archive =~ m/.*\.tgz$/ ) {
+	system("gunzip", "$archive") == 0 or return 0;
+	$archive =~ s/\.tgz$/.tar/;
+    }
+    if ( $archive !~ /\.tar$/) {
+	print STDERR "$0: $archive not a tar file\n";
+	return 0;
+    }
+    rename("$archive","$::TMPDIR/$archive") or die;
+    chdir("$::TMPDIR") or die;
+    system("tar", "xf", "$archive") == 0 or die;
+    unlink($archive);
+    system('gzip',glob("*/*"));
+    system('chmod','-R','a+r,og+w','.');
+    system('tar', 'cf', "../$archive", glob("*")) == 0 or die;
+    chdir('..') or die;
+    system('rm', '-rf', "$::TMPDIR")== 0 or die;
+    return 1;
+}
+
+sub all_archives() {
+    my $archive;
+    foreach $archive (@ARGV) {
+	if (one_archive($archive)) {
+	    print STDERR "$archive succesfully reformatted.\n";
+	} else {
+	    print STDERR "Could not reformat $archive\n";
+	}
+    }
+}
+
+if ($#ARGV < 0) {
+    usage;
+    exit 1;
+}
+
+all_archives();
+
+
