@@ -1,3 +1,6 @@
+Ver 1.7 (12 February 2001)
+- Fix thinko.
+
 Ver 1.6 (12 February 2001)
 - Removed long_description.txt. [syl]
 - Changed a few CGAL_assertion() to CGAL_kernel_assertion(). [syl]

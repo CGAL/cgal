@@ -67,7 +67,7 @@ class PointCd : public Handle
       bool operator==(const PointCd<FT> &p) const;
       bool operator!=(const PointCd<FT> &p) const;
 
-    int id() const;
+    unsigned long id() const;
 
     FT homogeneous (int i) const;
     FT cartesian (int i) const;
