@@ -97,8 +97,13 @@ CGAL_END_NAMESPACE
 
 #include <CGAL/Cartesian/global_operators_3.h>
 #include <CGAL/Cartesian/predicates_on_points_3.h>
+#include <CGAL/Cartesian/predicates_on_planes_3.h>
 #include <CGAL/Cartesian/distance_predicates_3.h>
-#include <CGAL/Cartesian/basic_constructions_3.h>
+
+#include <CGAL/Cartesian/constructions_on_points_3.h>
+#include <CGAL/Cartesian/constructions_on_vectors_3.h>
+#include <CGAL/Cartesian/constructions_on_planes_3.h>
+#include <CGAL/Cartesian/distance_computations_3.h>
 
 #include <CGAL/Cartesian/Point_2.C>
 #include <CGAL/Cartesian/Point_3.C>
