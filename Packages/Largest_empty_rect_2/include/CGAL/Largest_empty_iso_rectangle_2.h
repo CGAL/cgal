@@ -140,8 +140,8 @@ public:
 
   //! Retrieve largest empty iso rectangle.
 
-  /*! get_largest_empty_iso_rectangle() retrieve the largest empty iso
-   * rectangle exists inside the bounding box of the instance. An
+  /*! get_largest_empty_iso_rectangle() retrieves the largest empty iso
+   * rectangle which lies inside the bounding box of the instance. An
    * empty rectangle is defined as a rectangle that contains no points
    * inside its interior.
    * \return the largest empty iso rectangle.
