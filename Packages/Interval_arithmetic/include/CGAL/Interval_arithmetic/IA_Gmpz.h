@@ -32,27 +32,27 @@ CGAL_BEGIN_NAMESPACE
 // It should be much faster to have a low level function especially designed
 // for that using rounding to infinity.
 
-inline
-Interval_nt_advanced
-convert_to (const Gmpz &z, const Interval_nt_advanced &)
+template <>
+struct converter
 {
+    static inline Interval_nt_advanced do_it (const Gmpz & z)
+    {
 #ifdef CGAL_IA_DEBUG
-    CGAL_assertion(FPU_get_rounding_mode() == FPU_PLUS_INFINITY);
+	CGAL_assertion(FPU_get_rounding_mode() == FPU_PLUS_INFINITY);
 #endif
-    FPU_set_rounding_to_nearest();
-    double approx = to_double(z);
-    FPU_set_rounding_to_infinity();
-    const Interval_nt_advanced result =
-	Interval_nt_advanced (approx) +
-	Interval_nt_advanced::smallest;
+	FPU_set_rounding_to_nearest();
+	double approx = to_double(z);
+	FPU_set_rounding_to_infinity();
+	Interval_nt_advanced result = approx + Interval_nt_advanced::smallest;
 #ifdef CGAL_IA_DEBUG
-    FPU_set_rounding_to_nearest();
-    CGAL_assertion(	Gmpz(result.lower_bound()) <= z &&
+	FPU_set_rounding_to_nearest();
+	CGAL_assertion(	Gmpz(result.lower_bound()) <= z &&
 			Gmpz(result.upper_bound()) >= z);
-    FPU_set_rounding_to_infinity();
+	FPU_set_rounding_to_infinity();
 #endif
-    return result;
-}
+	return result;
+    }
+};
 
 CGAL_END_NAMESPACE
 

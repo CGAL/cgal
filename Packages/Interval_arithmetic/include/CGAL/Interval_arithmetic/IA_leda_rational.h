@@ -26,14 +26,15 @@
 
 CGAL_BEGIN_NAMESPACE
 
-// For this one, I hope that adding 3 ulps will be enough for an exact
+// For this one, I hope that adding 3 ulps will be enough for a safe
 // conversion.  Since LEDA types (except real) don't give information on the
 // precision of to_double(), we can't do much...
 
-inline
-Interval_nt_advanced
-convert_to (const leda_rational &z, const Interval_nt_advanced &)
+template <>
+struct converter
 {
+    static inline Interval_nt_advanced do_it (const leda_rational & z)
+    {
 #ifdef CGAL_IA_DEBUG
     CGAL_assertion(FPU_get_rounding_mode() == FPU_PLUS_INFINITY);
 #endif
@@ -41,14 +42,10 @@ convert_to (const leda_rational &z, const Interval_nt_advanced &)
     double approx = to_double(z);
     FPU_set_rounding_to_infinity();
 
-    const Interval_nt_advanced result =
-	((Interval_nt_advanced (approx)
-	  + Interval_nt_advanced::smallest)
-	  + Interval_nt_advanced::smallest)
-	  + Interval_nt_advanced::smallest;
-// The following is bad because overflow is highly probable with rationals.
-    // return convert_to<Interval_nt_advanced>(z.numerator())
-	// /  convert_to<Interval_nt_advanced>(z.denominator());
+    Interval_nt_advanced result = approx + Interval_nt_advanced::smallest;
+    // We play it safe:
+    result += Interval_nt_advanced::smallest;
+    result += Interval_nt_advanced::smallest;
 #ifdef CGAL_IA_DEBUG
     FPU_set_rounding_to_nearest();
     CGAL_assertion( leda_rational(result.lower_bound()) <= z &&
@@ -56,7 +53,8 @@ convert_to (const leda_rational &z, const Interval_nt_advanced &)
     FPU_set_rounding_to_infinity();
 #endif
     return result;
-}
+    }
+};
 
 CGAL_END_NAMESPACE
 
