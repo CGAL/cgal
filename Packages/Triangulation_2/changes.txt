@@ -4,8 +4,12 @@ constrained and regular triangulations with  tests and examples.
 
 Ver 5.19 (??)
 - fixed Side_of_oriented_circle_2 in Triangulation_2_traits_3.h
-- merge with the branch wi_branch which provided robust "filtered exact" 
-  constrained triangulation with intersections
+- merge with the branch wi_branch :
+  different versions of Constrained_triangulation_plus_2.h
+  are now provided for :
+  exact computations
+  exact predicates and approximate intersection construction
+  no support of constraint intersections
 
 Ver 5.18 (2/8/01)
 - Susan added missing .gif files in doc_tex/*_ref directories
