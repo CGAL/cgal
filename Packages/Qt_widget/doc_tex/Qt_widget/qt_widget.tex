@@ -450,6 +450,7 @@ Applications following this approach are only usefull when you quickly
 want to see how the output of a computation looks like.
 
 \subsection*{Tutorial 2}
+
 In this tutorial you can see a different method to draw on the window,
 and you'll pass over the limitations of the previous example.
 
@@ -460,31 +461,32 @@ advantage of this approach is that you can resize the window, the
 painting will not disappear.
 
 As you see the main entry point is the same as in the previous
-tutorial, but instead of using an instance of Qt\_widget class, you'll
-use an instance of a class derived from Qt\_widget.
+tutorial, but instead of using an instance of \ccStyle{Qt\_widget}
+class, you'll use an instance of a class derived from \ccStyle{Qt\_widget}.
 In this sense, we create a new class My\_Window as a child for
-Qt\_widget. The resize function has been moved into the constructor of
-My\_Window.
+\ccStyle{Qt\_widget}. The resize function has been moved into the
+constructor of My\_Window.
 
-We define a triangulation as a global variable:
-typedef CGAL::Cartesian<double>		    	Rep;
-typedef CGAL::Point_2<Rep>		    		Point;
-typedef CGAL::Delaunay_triangulation_2<Rep> 	Delaunay;
+We define a triangulation as a global variable:\\
+typedef CGAL::Cartesian$<$double$>$		 Rep;\\
+typedef CGAL::Point\_2$<$Rep$>$		    	 Point;\\
+typedef CGAL::Delaunay\_triangulation\_2$<$Rep$>$ Delaunay;
 
 Delaunay dt;
 
 The private member redraw() is used to output the triangulation on the screen. 
+\begin{ccExampleCode}
 private:
   void redraw()
   {
-    Qt_widget::redraw();
+    Qt\_widget::redraw();
     *this << dt;
   }
-
+\end{ccExampleCode}
 There is another line in the redraw():\\
 Qt\_widget::redraw();
 
-This line is meant to call the redraw() from the Qt_widget base class,
+This line is meant to call the redraw() from the Qt\_widget base class,
 used to draw the attached layers as you'll see later. This function
 also clears the screen. If you remove this line it's necessary to add
 clear() instead.
@@ -501,7 +503,7 @@ private:
     redraw();
   }
 \end{ccExampleCode}
-As you see the code inserts a point in the triangulation, and calls
+As you see, the code inserts a point in the triangulation, and calls
 redraw(). You can comment redraw() to see what happens: You'll see
 the results only when you'll resize the window.
 
