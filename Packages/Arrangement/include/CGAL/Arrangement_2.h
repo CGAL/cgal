@@ -569,7 +569,8 @@ public:
 #ifndef _MSC_VER
       return Vertex_const_handle(PmHalfedge::source()); 
 #else
-      return Vertex_const_handle( (static_cast<const PmHalfedge*>(this))->source()); 
+      return 
+	Vertex_const_handle( (static_cast<const PmHalfedge*>(this))->source());
 #endif
     }
     
@@ -586,7 +587,8 @@ public:
 #ifndef _MSC_VER
       return Vertex_const_handle(PmHalfedge::target());
 #else
-      return Vertex_const_handle( (static_cast<const PmHalfedge *>(this))->target());
+      return 
+	Vertex_const_handle((static_cast<const PmHalfedge *>(this))->target());
 #endif
     }
     
@@ -603,7 +605,7 @@ public:
 #ifndef _MSC_VER
       return Face_const_handle(PmHalfedge::face()); 
 #else
-      return Face_const_handle( (static_cast<const PmHalfedge*>(this))->face()); 
+      return Face_const_handle((static_cast<const PmHalfedge*>(this))->face());
 #endif
     }
     
@@ -620,7 +622,8 @@ public:
 #ifndef _MSC_VER
       return Halfedge_const_handle(PmHalfedge::twin());
 #else
-      return Halfedge_const_handle( (static_cast<const PmHalfedge*>(this))->twin());
+      return 
+	Halfedge_const_handle((static_cast<const PmHalfedge*>(this))->twin());
 #endif
   }
     
@@ -768,7 +771,8 @@ public:
 #ifndef _MSC_VER
     return Holes_const_iterator(PmFace::holes_begin());
 #else
-    return Holes_const_iterator( (static_cast<const PmFace *>(this))->holes_begin());
+    return 
+      Holes_const_iterator((static_cast<const PmFace *>(this))->holes_begin());
 #endif
   }
     
@@ -785,7 +789,8 @@ public:
 #ifndef _MSC_VER
     return Holes_const_iterator(PmFace::holes_end());
 #else
-    return Holes_const_iterator( (static_cast<const PmFace *>(this))->holes_end());
+    return 
+      Holes_const_iterator((static_cast<const PmFace *>(this))->holes_end());
 #endif
   }
 
@@ -1813,7 +1818,9 @@ void clear()
 {
   pm.clear();
 
-  for (Curve_iterator cv_iter = curve_node_begin(); cv_iter != curve_node_end(); cv_iter++){
+  for (Curve_iterator cv_iter = curve_node_begin(); 
+       cv_iter != curve_node_end(); 
+       cv_iter++){
     
     // destroying all subcurves levels.
     for (unsigned int i = 0; i < cv_iter->number_of_sc_levels(); i++)
@@ -1860,7 +1867,9 @@ void set_update(bool u) {
         scit->past_end_child=&(*(last_updated->edge_level.end())); 
       }
       else { //num==0, no subcurve level, insert Curve directly.
-	Arr_hierarchy_ops aho(this, last_updated->edge_level, &(*last_updated));
+	Arr_hierarchy_ops aho(this, 
+			      last_updated->edge_level, 
+			      &(*last_updated));
 	pm.insert(last_updated->curve(), &aho);
 	last_updated->past_end_child=&(*(last_updated->edge_level.end()));
         last_updated->begin_child=&(*(last_updated->edge_level.begin()));
@@ -2321,8 +2330,10 @@ bool  scan_arr (Scanner& scanner)
   typedef typename  Dcel::Face_const_iterator      D_face_const_iterator;
 
   typedef std::pair<std::size_t, std::size_t>      Index_pair;
-  
-  std::vector<Halfedge_handle> halfedges_vec;  // keeping a vector of halfedges (to access them easily by their indices).
+
+  // keeping a vector of halfedges (to access them easily by their indices).  
+  std::vector<Halfedge_handle> halfedges_vec;  
+
   
   if ( ! scanner.in()) {
     return false;
@@ -2335,7 +2346,9 @@ bool  scan_arr (Scanner& scanner)
     return false;
   }
 
-  for (Halfedge_iterator h_iter = halfedges_begin(); h_iter != halfedges_end(); h_iter++)
+  for (Halfedge_iterator h_iter = halfedges_begin(); 
+       h_iter != halfedges_end(); 
+       h_iter++)
     halfedges_vec.push_back(h_iter);
 
   std::list<std::list<Index_pair> > en_ovlp_child_indices_all_lists;
@@ -2371,7 +2384,8 @@ bool  scan_arr (Scanner& scanner)
       return false;
     }
 
-    std::vector<std::vector<std::size_t> > begin_child_indices_table, end_child_indices_table;
+    std::vector<std::vector<std::size_t> > begin_child_indices_table, 
+                                           end_child_indices_table;
     //std::vector<std::vector<Subcurve_node*> > scn_table;
     
     unsigned int j;
@@ -2427,7 +2441,8 @@ bool  scan_arr (Scanner& scanner)
 
         scn_list.push_back(*scn);
 
-        //scn_vec.push_back(scn);  // update the tmp vector for finding scn pointers according indices.
+	// update the tmp vector for finding scn pointers according indices.
+        //scn_vec.push_back(scn);  
       } 
       
       begin_child_indices_table.push_back(begin_child_indices_vec);
@@ -2454,7 +2469,8 @@ bool  scan_arr (Scanner& scanner)
       std::size_t   halfedge_index;
       std::size_t   cn_ovlp_index, en_ovlp_index;
 
-      // scanning the past to end child of edge node (this pointer indicates the overlapping edge nodes).
+      // scanning the past to end child of edge node 
+      // (this pointer indicates the overlapping edge nodes).
       scanner.scan_index(cn_ovlp_index);
       if ( ! scanner.in()){
         std::cerr << "can't read begin overlapping index"<<std::endl;
@@ -2471,7 +2487,8 @@ bool  scan_arr (Scanner& scanner)
         return false;
       }
       
-      en_ovlp_child_indices_list.push_back(Index_pair(cn_ovlp_index, en_ovlp_index));
+      en_ovlp_child_indices_list.push_back(Index_pair(cn_ovlp_index, 
+						      en_ovlp_index));
  
       scanner.scan_index(halfedge_index);
       if ( ! scanner.in()){
@@ -2489,9 +2506,8 @@ bool  scan_arr (Scanner& scanner)
         return false;
       }
 
-      // update the halfedge feild.
+      // update the halfedge field.
       en->hdg = halfedges_vec[halfedge_index];
-      //en->set_curve(halfedges_vec[halfedge_index]->curve());  // may change it later. (not generic).
       en->ftr = cn;
 
       // update the pointer in halfedge and its twin to edge_nodes.
@@ -2514,7 +2530,8 @@ bool  scan_arr (Scanner& scanner)
       cn->past_end_child = cn->edge_level.end().operator->();
     }
     
-    // now updating begin and past end children pointers of each subcurve node and also its pointer to its father.
+    // now updating begin and past end children pointers of each 
+    // subcurve node and also its pointer to its father.
     for (j = 0; j < number_of_levels; j++){
       unsigned int k = 0, l = 0, m = 0;
       Subcurve_iterator  scn_child_iter;
@@ -2523,16 +2540,23 @@ bool  scan_arr (Scanner& scanner)
       if (j+1 < number_of_levels)  // else - we use the en_child_iter.
         scn_child_iter = cn->level_begin(j+1);
 
-      for (Subcurve_iterator scn_iter = cn->level_begin(j); scn_iter != cn->level_end(j); scn_iter++, k++){
+      for (Subcurve_iterator scn_iter = cn->level_begin(j); 
+	   scn_iter != cn->level_end(j); 
+	   scn_iter++, k++){
         if (j+1 < number_of_levels){ // not including the last one.
           std::size_t begin_child_index = begin_child_indices_table[j][k];
           
-          for (; l < begin_child_index &&  scn_child_iter != cn->level_end(j+1); scn_child_iter++, l++);
+          for (;
+	       l < begin_child_index && scn_child_iter != cn->level_end(j+1);
+	       scn_child_iter++, l++);
           scn_iter->begin_child = &(*scn_child_iter);
 
           std::size_t past_end_child_index = end_child_indices_table[j][k];
           // running the pointer and also updating father field.
-          for (; l < past_end_child_index && scn_child_iter != cn->level_end(j+1); scn_child_iter++, l++){
+          for (;
+	       l < past_end_child_index && 
+		 scn_child_iter != cn->level_end(j+1);
+	       scn_child_iter++, l++){
             scn_child_iter->ftr = scn_iter.operator->();
           }
             
@@ -2542,12 +2566,16 @@ bool  scan_arr (Scanner& scanner)
         else { //the last one should point to the edge nodes.
           std::size_t begin_child_index = begin_child_indices_table[j][k];
           
-          for(; m < begin_child_index && en_child_iter != cn->edges_end();  en_child_iter++, m++) ;
+          for(;
+	      m < begin_child_index && en_child_iter != cn->edges_end();
+	      en_child_iter++, m++) ;
           scn_iter->begin_child = &(*en_child_iter);
 
           std::size_t past_end_child_index = end_child_indices_table[j][k];
           // running the pointer and also updating father field.
-          for(; m < past_end_child_index && en_child_iter != cn->edges_end();  en_child_iter++, m++){
+          for(;
+	      m < past_end_child_index && en_child_iter != cn->edges_end();
+	      en_child_iter++, m++){
             en_child_iter->ftr = scn_iter.operator->();
           }
           scn_iter->past_end_child = &(*en_child_iter);
@@ -2559,22 +2587,31 @@ bool  scan_arr (Scanner& scanner)
 
   // now updating edge node childs, which indicates overlapping edge nodes.
   Curve_iterator cn_iter = curve_node_begin();
-  std::list <std::list<Index_pair> >::iterator all_lists_iter = en_ovlp_child_indices_all_lists.begin();
+  std::list <std::list<Index_pair> >::iterator 
+    all_lists_iter = en_ovlp_child_indices_all_lists.begin();
 
-  for (;all_lists_iter != en_ovlp_child_indices_all_lists.end() && cn_iter != curve_node_end(); all_lists_iter++, cn_iter++){
+  for (;
+       all_lists_iter != en_ovlp_child_indices_all_lists.end() && 
+	 cn_iter != curve_node_end();
+       all_lists_iter++, cn_iter++){
     
     Edge_iterator en_iter = cn_iter->edges_begin();
-    for (std::list<Index_pair>::iterator  list_iter = (*all_lists_iter).begin(); list_iter !=  (*all_lists_iter).end() && 
-           en_iter != cn_iter->edges_end(); list_iter++, en_iter++){
+    for (std::list<Index_pair>::iterator list_iter = (*all_lists_iter).begin();
+	 list_iter !=  (*all_lists_iter).end() && 
+           en_iter != cn_iter->edges_end(); 
+	 list_iter++, en_iter++){
       std::size_t cn_ovlp_index = list_iter->first;
       std::size_t en_ovlp_index = list_iter->second;
       
       unsigned int j;
       Curve_iterator tmp_cn_iter;
-      for (tmp_cn_iter = curve_node_begin(), j = 0; tmp_cn_iter != curve_node_end() && j < cn_ovlp_index; tmp_cn_iter++, j++);
+      for (tmp_cn_iter = curve_node_begin(), j = 0;
+	   tmp_cn_iter != curve_node_end() && j < cn_ovlp_index;
+	   tmp_cn_iter++, j++);
       // now tmp_cn_iter is the cn_ovlp_index'th curve node.
       Edge_iterator tmp_en_iter;
-      for (tmp_en_iter = tmp_cn_iter->edges_begin(), j = 0; tmp_en_iter != tmp_cn_iter->edges_end() && j < en_ovlp_index; 
+      for (tmp_en_iter = tmp_cn_iter->edges_begin(), j = 0;
+	   tmp_en_iter != tmp_cn_iter->edges_end() && j < en_ovlp_index; 
            tmp_en_iter++, j++);
       // now tmp_en_iter is the en_ovlp_index'th edge node.
 
