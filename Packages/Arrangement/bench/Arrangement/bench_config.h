@@ -14,7 +14,7 @@
 #define SEGMENT_CACHED_TRAITS           1
 #define LEDA_SEGMENT_TRAITS             2
 #define POLYLINE_TRAITS                 3
-#define CACHED_POLYLINE_TRAITS          4
+#define POLYLINE_CACHED_TRAITS          4
 #define CONIC_TRAITS                    5
 #define EXACUS_CONIC_TRAITS             6
 #define CK_CONIC_TRAITS                 7

@@ -58,7 +58,7 @@ public:
       }
 
       Curve_2 polyline(points.begin(), points.end());
-      ++curves_out = curve;
+      ++curves_out = polyline;
 
 #if KERNEL == LEDA_KERNEL || KERNEL == MY_KERNEL
       CGAL::Bbox_2 curve_bbox(xmin, ymin, xmax, ymax);
