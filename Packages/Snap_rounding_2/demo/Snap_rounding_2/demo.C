@@ -49,7 +49,8 @@ void read_data(int argc,
   Number_Type x1,y1,x2,y2;
 
   if(argc > 4 || argc < 2) {
-    std::cerr << "syntex: demo <input file name> [do_isr = t][wait for a click = f]\n";
+    std::cerr << 
+      "syntex: demo <input file name> [do_isr = t][wait for a click = f]\n";
     std::cerr << "wait for a click: 0 - not wait, 1 - wait\n";
     exit(1);
   }
@@ -88,7 +89,8 @@ void read_data(int argc,
       is >> x2;
       is >> y2;
       seg.set_data(x1,y1,x2,y2);
-      seg_list.push_back(Segment_2(Point_2(seg.get_x1(),seg.get_y1()),Point_2(seg.get_x2(),seg.get_y2())));
+      seg_list.push_back(Segment_2(Point_2(seg.get_x1(),seg.get_y1()),
+                                   Point_2(seg.get_x2(),seg.get_y2())));
   }
 }
 
