@@ -1,0 +1,132 @@
+<ipe creator="ipe5toxml 2003/04/10">
+<page mediabox="-352.376 -417.719 242.624 424.281">
+<path stroke="black" pen="1.2">
+-95.6138 -61.9149 m
+-9.83015 -44.7582 l
+7.32658 23.8687 l
+-9.83015 92.4957 l
+-95.6138 92.4957 l
+-129.927 58.1822 l
+-147.084 23.8687 l
+-95.6138 -61.9149 l
+</path>
+<path stroke="black" pen="2" backarrow="7">
+-91.1986 -67.3022 m
+-13.5095 -51.0204 l
+</path>
+<path stroke="black" pen="2" backarrow="7">
+-18.0141 -40.42 m
+-89.2125 -55.04 l
+</path>
+<path stroke="black" fill="black" pen="0.8">
+2.3276 0 0 2.3276 -95.6138 -61.9149 e
+</path>
+<path stroke="black" fill="black" pen="0.8">
+2.3276 0 0 2.3276 -147.084 23.8687 e
+</path>
+<path stroke="black" fill="black" pen="0.8">
+2.3276 0 0 2.3276 -129.927 58.1822 e
+</path>
+<path stroke="black" fill="black" pen="0.8">
+2.3276 0 0 2.3276 -95.6138 92.4957 e
+</path>
+<path stroke="black" fill="black" pen="0.8">
+2.3276 0 0 2.3276 -9.83015 92.4957 e
+</path>
+<path stroke="black" fill="black" pen="0.8">
+2.3276 0 0 2.3276 7.32658 23.8687 e
+</path>
+<path stroke="black" fill="black" pen="0.8">
+2.3276 0 0 2.3276 -9.83015 -44.7582 e
+</path>
+<path stroke="black" dash="[1 3] 0" pen="0.8">
+-95.6138 -61.9149 m
+-140.221 -130.542 l
+</path>
+<path stroke="black" dash="[1 3] 0" pen="0.8">
+-146.275 22.8 m
+-182.275 22.8 l
+-182.275 22.8 l
+</path>
+<path stroke="black" dash="[1 3] 0" pen="0.8">
+-129.927 58.1822 m
+-153.947 85.633 l
+-153.947 85.633 l
+</path>
+<path stroke="black" dash="[1 3] 0" pen="0.8">
+-95.6138 92.4957 m
+-112.771 137.103 l
+-112.771 137.103 l
+</path>
+<path stroke="black" dash="[1 3] 0" pen="0.8">
+-9.83015 92.4957 m
+27.9147 137.103 l
+27.9147 137.103 l
+</path>
+<path stroke="black" dash="[1 3] 0" pen="0.8">
+7.32658 23.8687 m
+72.5222 20.4374 l
+</path>
+<path stroke="black" dash="[1 3] 0" pen="0.8">
+-9.83015 -44.7582 m
+41.64 -89.3657 l
+</path>
+<text stroke="black" pos="-72.3303 -42.0646" size="17" type="label" valign="bottom">$\vec{e}$</text>
+<text stroke="black" pos="-69.1469 -82.0226" size="17" type="label" valign="bottom">$Twin(\vec{e})$</text>
+<path stroke="black" pen="0.8">
+-85.3198 -7.01339 m
+-33.8496 17.006 l
+-75.0257 54.7508 l
+-85.3198 -7.01339 l
+</path>
+<path stroke="black" pen="2" backarrow="7">
+-78.2654 -8.96926 m
+-37.0571 9.47423 l
+</path>
+<path stroke="black" pen="2" backarrow="7">
+-35.5854 24.229 m
+-68.6992 54.4763 l
+</path>
+<path stroke="black" pen="2" backarrow="7">
+-80.473 50.0499 m
+-90.0392 -0.854127 l
+</path>
+<path stroke="black" fill="black" pen="0.8">
+2.3276 0 0 2.3276 -85.3198 -7.01339 e
+</path>
+<path stroke="black" fill="black" pen="0.8">
+2.3276 0 0 2.3276 -75.0257 54.7508 e
+</path>
+<path stroke="black" fill="black" pen="0.8">
+2.3276 0 0 2.3276 -33.8496 17.006 e
+</path>
+<path stroke="black" pen="2" backarrow="7">
+-94.4544 -53.2336 m
+-139.342 23.4913 l
+</path>
+<path stroke="black" pen="2" backarrow="7">
+-139.342 28.6555 m
+-125.361 54.4763 l
+</path>
+<path stroke="black" pen="2" backarrow="7">
+-122.417 58.165 m
+-93.7185 86.1991 l
+-93.7185 86.9369 l
+</path>
+<path stroke="black" pen="2" backarrow="7">
+-90.0392 88.4124 m
+-17.1888 88.4124 l
+</path>
+<path stroke="black" pen="2" backarrow="7">
+-14.9812 86.1991 m
+0.471932 27.18 l
+0.471932 27.9177 l
+</path>
+<path stroke="black" pen="2" backarrow="7">
+0.471932 19.8026 m
+-14.2453 -36.2656 l
+</path>
+<text stroke="black" pos="-181.443 -67.6243" size="17" type="label" valign="bottom">$Source(\vec{e})$</text>
+<text stroke="black" pos="-2.57344 -45.0357" size="17" type="label" valign="bottom">$Target(\vec{e})$</text>
+</page>
+</ipe>

@@ -1433,20 +1433,29 @@ Packages/Partition_2/doc_tex/Partition_2/Trier_opt_cvx.gif -text svneol=unset#un
 Packages/Partition_2/doc_tex/Partition_2/Trier_opt_cvx.pdf -text svneol=unset#unset
 Packages/Partition_2/doc_tex/Partition_2/Trier_opt_cvx.ps -text
 Packages/Planar_map/doc_tex/Planar_map/example_p.gif -text svneol=unset#unset
+Packages/Planar_map/doc_tex/Planar_map/example_p.pdf -text svneol=unset#unset
 Packages/Planar_map/doc_tex/Planar_map/example_p.ps -text
 Packages/Planar_map/doc_tex/Planar_map/face.gif -text svneol=unset#unset
 Packages/Planar_map/doc_tex/Planar_map/face.ipe -text
 Packages/Planar_map/doc_tex/Planar_map/insert_at.fig -text
 Packages/Planar_map/doc_tex/Planar_map/insert_at.gif -text svneol=unset#unset
+Packages/Planar_map/doc_tex/Planar_map/insert_at.pdf -text svneol=unset#unset
 Packages/Planar_map/doc_tex/Planar_map/insert_at.ps -text
 Packages/Planar_map/doc_tex/Planar_map/pm_ray_shoot.gif -text svneol=unset#unset
+Packages/Planar_map/doc_tex/Planar_map/pm_ray_shoot.pdf -text svneol=unset#unset
 Packages/Planar_map/doc_tex/Planar_map/pm_ray_shoot.ps -text
+Packages/Planar_map/doc_tex/Topological_map/dcel.eps -text
 Packages/Planar_map/doc_tex/Topological_map/dcel.gif -text svneol=unset#unset
 Packages/Planar_map/doc_tex/Topological_map/dcel.ipe -text
+Packages/Planar_map/doc_tex/Topological_map/dcel.pdf -text svneol=unset#unset
+Packages/Planar_map/doc_tex/Topological_map/my_face.eps -text
 Packages/Planar_map/doc_tex/Topological_map/my_face.gif -text svneol=unset#unset
 Packages/Planar_map/doc_tex/Topological_map/my_face.ipe -text
+Packages/Planar_map/doc_tex/Topological_map/my_face.pdf -text svneol=unset#unset
+Packages/Planar_map/doc_tex/Topological_map_ref/dcel.eps -text
 Packages/Planar_map/doc_tex/Topological_map_ref/dcel.gif -text svneol=unset#unset
 Packages/Planar_map/doc_tex/Topological_map_ref/dcel.ipe -text
+Packages/Planar_map/doc_tex/Topological_map_ref/dcel.pdf -text svneol=unset#unset
 Packages/Polygon/demo/Polygon/polygon_2.vcproj -text
 Packages/Polygon/doc_tex/Polygon/pgn_algos.gif -text svneol=unset#unset
 Packages/Polygon/doc_tex/Polygon/pgn_algos.ipe -text

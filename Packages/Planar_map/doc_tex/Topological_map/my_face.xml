@@ -1,0 +1,98 @@
+<ipe creator="ipe5toxml 2003/04/10">
+<page mediabox="-324.743 -408.825 270.257 433.176">
+<path stroke="black" fill="0.576471" pen="0.4">
+55.6396 -72.1701 m
+41.9327 4.12552 l
+-90.1515 -75.9019 l
+4.96579 -49.7788 l h
+</path>
+<path stroke="black" pen="0.4">
+42.3481 4.95479 m
+-21.2019 123.13 l
+-118.811 43.5173 l
+-90.9819 -74.6582 l
+</path>
+<path stroke="black" fill="0.576471" pen="0.4">
+0 0 0 0 -137.124 -157.95 e
+</path>
+<path stroke="black" fill="black" pen="0.4">
+1.7124 0 0 1.7124 -89.3205 -74.6582 e
+</path>
+<path stroke="black" fill="black" pen="0.4">
+1.7124 0 0 1.7124 4.96572 -50.1934 e
+</path>
+<path stroke="black" fill="black" pen="0.4">
+1.7124 0 0 1.7124 55.2242 -72.1701 e
+</path>
+<path stroke="black" fill="black" pen="0.4">
+1.7124 0 0 1.7124 42.3481 4.54016 e
+</path>
+<path stroke="black" fill="black" pen="0.4">
+1.7124 0 0 1.7124 -118.811 43.5173 e
+</path>
+<path stroke="black" fill="black" pen="0.4">
+2.34762 0 0 2.34762 -21.9417 122.392 e
+</path>
+<path stroke="black" pen="0.4">
+42.7634 4.54016 m
+-32.4166 40.6148 l
+-66.4761 3.71089 l
+</path>
+<path stroke="black" fill="black" pen="0.4">
+1.7124 0 0 1.7124 -65.0872 4.26804 e
+</path>
+<path stroke="black" fill="black" pen="0.4">
+1.7124 0 0 1.7124 -32.0012 39.7854 e
+</path>
+<path stroke="black" pen="0.4">
+42.3481 108.617 m
+42.3481 108.617 42.3481 108.617 42.2789 110.828 c
+42.2096 113.04 42.0712 117.463 34.3178 119.674 c
+26.5644 121.886 11.1961 121.886 3.51199 121.886 c
+-4.17215 121.886 -4.17215 121.886 -4.17215 121.886 c
+</path>
+<path stroke="black" pen="0.4">
+64.7773 50.981 m
+64.7773 50.981 64.7773 50.981 64.7081 53.1925 c
+64.6389 55.4039 64.5005 59.8269 56.7472 62.0383 c
+48.9938 64.2498 33.6256 64.2498 25.9414 64.2498 c
+18.2573 64.2498 18.2573 64.2498 18.2573 64.2498 c
+</path>
+<path stroke="black" pen="0.4">
+82.6379 -43.1444 m
+82.6379 -43.1444 82.6379 -43.1444 82.5687 -40.933 c
+82.4995 -38.7215 82.3611 -34.2987 74.6077 -32.0872 c
+66.8544 -29.8758 51.486 -29.8758 43.8019 -29.8758 c
+36.1177 -29.8758 36.1177 -29.8758 36.1177 -29.8758 c
+</path>
+<path stroke="black" fill="black" pen="0.4">
+-3.75679 118.983 m
+-3.75679 125.203 l
+-10.8179 121.886 l h
+</path>
+<path stroke="black" fill="black" pen="0.4">
+20.7494 61.3473 m
+20.7494 67.567 l
+13.6883 64.2498 l h
+</path>
+<path stroke="black" fill="black" pen="0.4">
+38.1945 -32.7784 m
+38.1945 -26.5586 l
+31.1334 -29.8758 l h
+</path>
+<text stroke="black" pos="74.3308 -52.2669" size="9" type="label" valign="bottom">Face</text>
+<text stroke="black" pos="56.8857 42.688" size="9" type="label" valign="bottom">Edge</text>
+<text stroke="black" pos="31.1334 101.983" size="9" type="label" valign="bottom">Vertex</text>
+<text stroke="black" pos="75.1545 182.301" size="14" type="label" valign="bottom"> 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+</text>
+</page>
+</ipe>
