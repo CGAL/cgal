@@ -374,6 +374,7 @@ public:
   bool is_Gabriel(Cell_handle c, int i, int j) const;
   bool is_Gabriel(const Facet& f)const ;
   bool is_Gabriel(const Edge& e) const;
+  bool is_Gabriel(Vertex_handle v) const {return true;}
 
 // Dual functions
   Point dual(Cell_handle c) const;

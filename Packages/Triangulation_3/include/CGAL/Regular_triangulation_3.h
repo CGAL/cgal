@@ -155,6 +155,7 @@ public:
   bool is_Gabriel(Cell_handle c, int i, int j) const;
   bool is_Gabriel(const Facet& f)const ;
   bool is_Gabriel(const Edge& e) const;
+  bool is_Gabriel(Vertex_handle v) const;
 
 
   // Dual functions
@@ -580,8 +581,8 @@ is_Gabriel(Cell_handle c, int i) const
  
   return true;
 }
-  
 
+  
 template < class Gt, class Tds >
 bool
 Regular_triangulation_3<Gt,Tds>::
@@ -618,7 +619,13 @@ is_Gabriel(Cell_handle c, int i, int j) const
   return true;
 }
 
-
+template < class Gt, class Tds >
+bool
+Regular_triangulation_3<Gt,Tds>::
+is_Gabriel(Vertex_handle v) const
+{
+  return nearest_power_vertex( v->point().point(), v->cell()) == v;
+}
 
 template < class Gt, class Tds >
 typename Regular_triangulation_3<Gt,Tds>::Vertex_handle

@@ -407,6 +407,21 @@ int main()
   assert(T4.is_edge(v2,v3,c,i,j));
   assert(!T4.is_Gabriel(c,i,j));
 
+  Weighted_point wwq0(q0,0.);
+  Weighted_point wwq1(q1,0.);
+  Weighted_point wwq2(q2,0.);
+  Weighted_point wwq3(q3,5.);
+  Cls T5;
+  v0 = T5.insert(wwq0);
+  v1 = T5.insert(wwq1);
+  v2 = T5.insert(wwq2);
+  v3 = T5.insert(wwq3);
+  assert(T5.nearest_power_vertex(v3->point().point()) == v3);
+  assert(T5.nearest_power_vertex(v0->point().point()) == v3);
+  assert(T5.is_Gabriel(v3));
+  assert(!T5.is_Gabriel(v0));
+
   std::cout << " quit " << std::endl;
   return 0;
 }
+

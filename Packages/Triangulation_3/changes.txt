@@ -1,3 +1,7 @@
+5 July 2004 Mariette
+- added member function : bool is_Gabriel(Vertex_handle v)
+ in  Delaunay_triangulation_3 and Regular_triangulation_3
+
 29 July 2004 Sylvain Pion
 - locate() cannot return CELL in 2D, so no need to test for it in insert.
 

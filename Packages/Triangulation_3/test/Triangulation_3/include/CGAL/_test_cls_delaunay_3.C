@@ -747,6 +747,7 @@ _test_cls_delaunay_3(const Triangulation &)
   assert(T4.is_Gabriel(e));
   assert(T4.is_edge(v2,v3,c,i,j));
   assert(T4.is_Gabriel(c,i,j));
+  assert(T4.is_Gabriel(v1));
   
   std::cout <<"   Test destructors and quit "<< std::endl;
 
