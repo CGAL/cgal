@@ -22,7 +22,7 @@ struct Input_traits<float> {
 
 /*! double */
 template <>
-struct Input_traits<double> {
+struct Input_traits<CGAL::Double> {
   typedef int                                   Input_int_type;
   typedef double                                Input_float_type;
   typedef double                                Input_rat_type;
