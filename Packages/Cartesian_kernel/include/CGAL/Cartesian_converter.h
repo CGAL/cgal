@@ -28,11 +28,6 @@
 // provided you give a NT converter from A to B.
 // There's a Homogeneous counterpart.
 
-// TODO :
-// - Probably we should use data accessors everywhere !
-// - Aff_transformation_[23] converters loose the internal type
-//   (translation...), so we loose a bit here.
-
 #include <CGAL/basic.h>
 #include <CGAL/NT_converter.h>
 
@@ -104,14 +99,6 @@ public:
     {
 	return k.construct_iso_rectangle_2_object()(operator()(a.min()),
 		                                    operator()(a.max()));
-    }
-
-    typename K2::Aff_transformation_2
-    operator()(const typename K1::Aff_transformation_2 &a) const
-    {
-	return k.construct_aff_transformation_2_object()(
-		c(a.cartesian(0,0)), c(a.cartesian(0,1)), c(a.cartesian(0,2)),
-		c(a.cartesian(1,0)), c(a.cartesian(1,1)), c(a.cartesian(1,2)));
     }
 
 
@@ -192,18 +179,6 @@ public:
     {
 	return k.construct_iso_cuboid_3_object()(operator()(a.min()),
 		                                 operator()(a.max()));
-    }
-
-    typename K2::Aff_transformation_3
-    operator()(const typename K1::Aff_transformation_3 &a) const
-    {
-	return k.construct_aff_transformation_3_object()(
-		c(a.cartesian(0,0)), c(a.cartesian(0,1)), c(a.cartesian(0,2)),
-		c(a.cartesian(0,3)),
-		c(a.cartesian(1,0)), c(a.cartesian(1,1)), c(a.cartesian(1,2)),
-		c(a.cartesian(1,3)),
-		c(a.cartesian(2,0)), c(a.cartesian(2,1)), c(a.cartesian(2,2)),
-		c(a.cartesian(2,3)));
     }
 
 private:

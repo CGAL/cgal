@@ -1,3 +1,6 @@
+Version 6.24 (25 July 2001)
+- Remove Aff_transformation_[23] from Cartesian_converter.
+
 Version 6.23 (23 July 2001)
 - renamed cmp_* to compare_* and *_dist_* to *_distance_* and
   leftturn, Leftturn, LEFTTURN to left_turn, Left_turn, LEFT_TURN and
