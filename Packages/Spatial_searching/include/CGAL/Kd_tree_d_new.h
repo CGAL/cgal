@@ -123,7 +123,7 @@ namespace CGAL {
 };
 
   //constructor 
-  Kdtree_interface_2d(unsigned int bucket_size=1, 
+  Kdtree_interface_2d(unsigned int bucket_size=100, 
 			     NT aspect_ratio=NT(3), 
 			     bool use_extended_nodes=true) {
 		Kd_tree_traits_point<Point>(bucket_size,aspect_ratio,use_extended_nodes);
@@ -179,7 +179,7 @@ template <class Point,
 };
 
   //constructor 
-  Kdtree_interface_3d(unsigned int bucket_size=1, 
+  Kdtree_interface_3d(unsigned int bucket_size=100, 
 			     NT aspect_ratio=NT(3), 
 			     bool use_extended_nodes=true) {
 		Kd_tree_traits_point<Point>(bucket_size,aspect_ratio,use_extended_nodes);
@@ -233,7 +233,7 @@ template <class Point,
 };
 
   //constructor 
-  Kdtree_interface(unsigned int bucket_size=1, 
+  Kdtree_interface(unsigned int bucket_size=100, 
 			     NT aspect_ratio=NT(3), 
 			     bool use_extended_nodes=true) {
 		Kd_tree_traits_point<Point>(bucket_size,aspect_ratio,use_extended_nodes);

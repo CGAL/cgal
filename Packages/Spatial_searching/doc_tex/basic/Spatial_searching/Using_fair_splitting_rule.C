@@ -16,6 +16,7 @@ typedef std::vector<TreeTraits::Point> Vector;
 int main() {
   
   const int data_point_number=1000;
+  const int bucket_size=5;
   
   typedef std::list<Point> point_list;
   point_list data_points;
@@ -25,7 +26,9 @@ int main() {
   CGAL::copy_n( g, data_point_number, std::back_inserter(data_points));
   
   typedef CGAL::Kd_tree<TreeTraits> Tree;
-  Tree d(data_points.begin(), data_points.end());
+  // set bucket size 
+  TreeTraits tr(bucket_size);
+  Tree d(data_points.begin(), data_points.end(),tr);
 
   // generate random query points
   const int query_point_number=5;

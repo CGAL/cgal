@@ -181,11 +181,14 @@ Finally, if the Euclidean distance is reported the square root is taken.
 
 \ccIncludeExampleCode{Nearest_neighbor_searching.C}
 
-\subsection{Example of selecting a splitting rule}
+\subsection{Example of selecting a splitting rule and setting the bucket size.}
 
-This example program illustrates selecting a splitting rule.
-The only difference with the previous example is the
-definition of the traits class, where Fair is selected as a splitting rule.
+This example program illustrates selecting a splitting rule and setting the maximal
+allowed bucket size.
+The only differences with the previous example are the
+definition of the traits class, where Fair is selected as a splitting rule,
+and the declaration of a variable \ccc{tr} of type TreeTraits, needed to set the 
+maximal allowed bucket size.
 
 \ccIncludeExampleCode{Using_fair_splitting_rule.C}
 
@@ -381,6 +384,9 @@ supports also range searching using the method \\
 Implementations for the concept \ccc{FuzzyQueryItem} are provided by
 the class \ccc{CGAL::Fuzzy_iso_box_d<Point, IsoBox_d>}  
 and the class \ccc{CGAL::Fuzzy_sphere_d<Point>}. 
+
+
+
 
 \section{Splitting Rules}
 \label{Spatial_Searching:Splitting_rule_section}

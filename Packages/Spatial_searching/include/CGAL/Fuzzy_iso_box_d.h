@@ -46,9 +46,6 @@ namespace CGAL {
 
     	// default constructor
     	Fuzzy_iso_box_d() {}
-		
-
-	
 
         // constructor
 	Fuzzy_iso_box_d(const Point& p, const Point& q, NT epsilon=NT(0)) :
@@ -62,7 +59,6 @@ namespace CGAL {
 		return true; 
         }
 
-        
 	bool inner_range_intersects(const Kd_tree_rectangle<NT>* rectangle) const {   
  		for (unsigned int i = 0; i < dim; ++i) {
         		if ( (box->max()[i]-eps < rectangle->min_coord(i)) 

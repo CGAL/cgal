@@ -57,10 +57,8 @@ int main() {
         data_points.push_front(Random_point);
   }
   
-  Traits tr;
- 
   typedef CGAL::Kd_tree<Traits> Tree;
-  Tree d(data_points.begin(), data_points.end(), tr);
+  Tree d(data_points.begin(), data_points.end());
 
   // define query item
   double q[dim];
