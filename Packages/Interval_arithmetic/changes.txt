@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 3.2 on 19 March 1999
+- Changed max<double> to std::max, idem for min().
+
 Version 3.1 on 12 March 1999
 - New functions FPU_get_cw() and FPU_set_cw() replace the old ones.
 - Major cleanup of _FPU.h.
