@@ -1,22 +1,35 @@
 #!/bin/sh
 
-for h in $1 ; do
+for h in $@ ; do
 if [ -d $h ]; then
   cd $h;
   echo "In " $h;
-  ../C2dsw > /text/$h.dsw; mv /text/$h.dsw .
+  if [ -e text ]; then
+    rm -r text;
+  fi
+  mkdir text;
+  ../C2dsw > ./text/$h.dsw; mv ./text/$h.dsw .
   if [ -e VC6 ]; then
     rm -r VC6;
   fi
   mkdir VC6;
  
+  if [ -e VC7 ]; then
+    rm -r VC7;
+  fi
+  mkdir VC7;
+
   for i in *.C ; do
-    j=`echo $i|sed -e "s/\.C/\.dsp/"`; 
+    j=`echo $i|sed -e "s/\.C/\.dsp/"`;
+    jp=`echo $i|sed -e "s/\.C/\.vcproj/"`;
     k=`echo $i|sed -e "s/\.C//"`; 
-    sed -e"s/master/$k/g" ../master.dsp > /text/$j; 
-    mv /text/$j VC6/; 
+    sed -e"s/master/$k/g" ../master.dsp > ./text/$j; 
+    mv ./text/$j VC6/; 
+    sed -e"s/master/$k/g" ../master.vcproj > ./text/$jp; 
+    mv ./text/$jp VC7/; 
   done
 
+  rm -r text
   cd ..;
 fi
 done

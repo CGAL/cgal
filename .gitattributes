@@ -1994,5 +1994,10 @@ Packages/wininst/demo/Triangulation_2/VC6/constrained.dsp -text
 Packages/wininst/demo/Triangulation_2/VC6/constrained_wi.dsp -text
 Packages/wininst/demo/Triangulation_2/VC6/demo.dsp -text
 Packages/wininst/demo/Triangulation_2/VC6/regular_demo.dsp -text
+Packages/wininst/demo/Triangulation_3/VC6/demo.dsp -text
+Packages/wininst/demo/Triangulation_3/VC6/demo_color.dsp -text
+Packages/wininst/demo/Triangulation_3/VC6/demo_remove.dsp -text
+Packages/wininst/demo/Triangulation_3/VC6/demo_voronoi.dsp -text
+Packages/wininst/demo/Window_stream/VC6/window_input.dsp -text
 Packages/wininst/src/cgallib.dsp -text
 Packages/wininst/src/cgallib.vcproj -text
