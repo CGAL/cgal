@@ -1,3 +1,6 @@
+17 December 2004 Sylvain Pion
+- Fix typos.
+
 17 November 2004 Andreas Fabri
 In doc_tex/Interpolation/interpolation.tex: Put back the equation after that Lutz implemented the $$ in the latex_to_html 
 
