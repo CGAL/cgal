@@ -74,9 +74,10 @@ main()
   std::vector<Segment> Vs;
   CGAL::copy_n( g, 30, std::back_inserter( Vs) );
   W << CGAL::GREEN;
+  cout << "Generating random segments." << endl;
   std::copy( Vs.begin(), Vs.end(),
              CGAL::Ostream_iterator<Segment,CGAL::Window_stream>( W) );
-
+  cout << "Click in the window to see the intersection points." << endl;
   W.read_mouse();
 
   std::vector<Point>   Vip;
@@ -90,6 +91,8 @@ main()
   std::copy( Vip.begin(), Vip.end(),
              CGAL::Ostream_iterator<Point,CGAL::Window_stream>( W) );
 
+  cout << "Click in the window to see the convex hull of the intersection"
+       << " points." << endl;
   W.read_mouse();
 
   Polygon Pol;
@@ -98,6 +101,6 @@ main()
   W << CGAL::RED;
   W.set_line_width(2);
   W << Pol;
-
+  cout << "Click in the window to exit." << endl; 
   W.read_mouse();
 }
