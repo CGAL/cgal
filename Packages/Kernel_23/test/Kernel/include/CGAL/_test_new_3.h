@@ -268,14 +268,14 @@ test_new_3(const R& rep)
   Bbox_3 bb5 = construct_bbox_3(sp1); // Sphere_3
   Bbox_3 bb6 = construct_bbox_3(iso1); // Iso_cuboid_3
 
-  typename R::Construct_cartesian_coordinate_const_iterator_3 
-    construct_cartesian_coordinate_const_iterator_3
-    = rep.construct_cartesian_coordinate_const_iterator_3_object();
+  typename R::Construct_cartesian_const_iterator_3 
+    construct_cartesian_const_iterator_3
+    = rep.construct_cartesian_const_iterator_3_object();
 
-  typename R::Cartesian_coordinate_const_iterator_3 cccit;
+  typename R::Cartesian_const_iterator_3 cccit;
 
-  cccit = construct_cartesian_coordinate_const_iterator_3(p1);
-  cccit = construct_cartesian_coordinate_const_iterator_3(p1,0);
+  cccit = construct_cartesian_const_iterator_3(p1);
+  cccit = construct_cartesian_const_iterator_3(p1,0);
   
 
 #ifndef CGAL_NO_DEPRECATED_CODE

@@ -48,15 +48,15 @@ packages of the basic library with a minimal model. Deprecated kernel
 functionality is not supported. All geometrical types (like the 2d/3d point or
 segment types) of \ccc{CGAL::Kernel_archetype} have copy constructors, default
 constructors and an assignment operator, and nothing else.  Comparison
-operators are by default not supported, but can be switched on by the flag {\em
-CGAL\_CONCEPT\_ARCHETYPE\_ALLOW\_COMPARISONS}.
+operators are by default not supported, but can be switched on by the flag \ccc{
+CGAL_CONCEPT_ARCHETYPE_ALLOW_COMPARISONS}.
 
 The geometrical types of the concept archetype encapsulate no data members, so
 runtime checks with the archetype are not very useful
 (\ccc{CGAL::Kernel_archetype} is only meant for compilation checks with a
 minimal model in the testsuites of \cgal\ packages).
 
-The header file for the concept archetype is {\em CGAL/Kernel\_archetype.h}.
+The header file for the concept archetype is \ccc{CGAL/Kernel_archetype.h}.
 
 The package supports the two- and three-dimensional part of the \cgal\ kernel
 concept. The d-dimensional part is not supported.
@@ -69,17 +69,17 @@ these cases testing with a model that offers only this (used and) documented
 subset makes sense. \ccc{CGAL::Kernel_archetype} normally offers the full
 functionality (all types, functors and constructions of a \cgal\ kernel model),
 but it is possible to restrict the interface.\\ If you want to do this, you
-have to define the macro {\em CGAL\_CA\_LIMITED\_INTERFACE} (before the
-inclusion of {\em CGAL/Kernel\_archetype.h}) for switching on the interface
+have to define the macro \ccc{CGAL_CA_LIMITED_INTERFACE} (before the
+inclusion of \ccc{CGAL/Kernel_archetype.h}) for switching on the interface
 limitation. Now you have to tell the kernel archetype what types have to be
 provided by it. For every type you have to define a macro.  The name of the
-macro is {\em CGAL\_CA\_NAME\_OF\_KERNEL\_TYPE}, where {\em
-NAME\_OF\_KERNEL\_TYPE} is the name of the kernel type (written in capitals)
+macro is \ccc{CGAL_CA_NAME_OF_KERNEL_TYPE}, where \ccc{
+NAME_OF_KERNEL_TYPE} is the name of the kernel type (written in capitals)
 that has to be provided by the kernel archetype for a specific package.  Lets
 have a look at a small example. The kernel archetype has to provide in some
 test suite a limited interface.  The interface has to offer type definitions
-for {\em Point\_3} and {\em Plane\_3} and the 3d orientation functor type
-definition {\em Orientation\_3}:
+for \ccc{Point_3} and \ccc{Plane_3} and the 3d \ccHtmlNoLinksFrom{orientation} functor type
+definition \ccc{Orientation_3}:
 
 \ccHtmlLinksOff
 

@@ -1,3 +1,6 @@
+1.71 (17 September 2003) [af]
+- Changed CartesianCoordinateConstIterator to CartesianConstIterator
+
 1.70 (14 September 2003) [af]
 - Added examples for extensible kernel
 - Added include statements in include/CGAL/Kernel/function_objects.h

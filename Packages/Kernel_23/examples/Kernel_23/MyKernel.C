@@ -11,11 +11,11 @@ typedef CGAL::Filtered_kernel<MK> K;
 typedef CGAL::Delaunay_triangulation_2<K> Delaunay_triangulation_2;
 
 
-typedef K::Point_2 Point;
-typedef K::Segment_2 Segment;
-typedef K::Ray_2 Ray;
-typedef K::Line_2 Line;
-typedef K::Triangle_2 Triangle;
+typedef K::Point_2         Point;
+typedef K::Segment_2       Segment;
+typedef K::Ray_2           Ray;
+typedef K::Line_2          Line;
+typedef K::Triangle_2      Triangle;
 typedef K::Iso_rectangle_2 Iso_rectangle;
 
 
@@ -42,6 +42,7 @@ int main()
 
   CGAL::Object o = intersection(s1, s2);
 
+  p.cartesian_begin();
   Line l1(a,b), l2(p, q);
   intersection(l1, l2);
 
