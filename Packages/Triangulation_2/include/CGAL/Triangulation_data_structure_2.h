@@ -524,7 +524,7 @@ number_of_full_dim_faces() const
 }
 
 template <class Vb, class Fb>
-bool inline
+inline bool
 Triangulation_data_structure_2<Vb,Fb>::
 is_vertex(const Vertex_handle v) const
 {
@@ -1516,7 +1516,7 @@ vrml_output( std::ostream& os, Vertex_handle v, bool skip_infinite) const
   }
 
   //other vertices
-  for( Vertex_iterator vit= vertices_begin(); vit != vertices_end() ; ++vit) {
+  for( vit= vertices_begin(); vit != vertices_end() ; ++vit) {
     if ( vit->handle() != v) {
       vmap[vit->handle()] = inum++;
       os << "\t\t\t\t" << vit->point() << std::endl;
