@@ -9,6 +9,7 @@
 
 GLOB: src/Interval_arithmetic/workaround_4_ms.obj is no longer necessary.
 GLOB: Add -D_RWSTD__ALLOCATOR for SunPro.
+GLOB: Some changes for Qt support on cygwin. (<- Radu)
 GLOB: Fixed gmp install for sunpro.
 GLOB: Fixed gmp installation.
 GLOB: Removed -Wall for g++ on Solaris. (<- GJ)
