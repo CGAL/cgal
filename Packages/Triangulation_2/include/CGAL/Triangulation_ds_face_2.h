@@ -119,15 +119,9 @@ public:
   }
     
   //Miscelleanous
-  inline int ccw(int i) const
-  {
-    return (i+1) % 3;
-  }
-    
-  inline int cw(int i) const
-  {
-    return (i+2) % 3;
-  }
+  //inline int ccw(int i) const
+  //  inline int cw(int i) const
+  inherited from Fb
 
   //Additionnal Operations
   void insert_in_face(Vertex*& v)
