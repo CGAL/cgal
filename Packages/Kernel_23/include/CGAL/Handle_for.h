@@ -60,9 +60,15 @@ template <class T, class Alloc = CGAL_ALLOCATOR(T) >
 class Handle_for
 {
     typedef Ref_counted2<T>                                     RefCounted;
-    typedef typename Alloc::template rebind<RefCounted>::other  Allocator;
 
+#ifndef CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD
+    typedef typename Alloc::template rebind<RefCounted>::other  Allocator;
   public:
+#else
+  public:
+    // For VC++, we must hardcode the default allocator.
+    typedef CGAL_ALLOCATOR(RefCounted)                          Allocator;
+#endif
 
     typedef T element_type;
 
