@@ -192,21 +192,19 @@ First, we must add the following include directives:
 \ccInclude{CGAL/IO/Pm_Window_stream.h}
 
 Next, we create a Qt widget:
-
 \begin{alltt}
   QApplication app(argc, argv);
   CGAL::Qt_widget widget;
-  app.setMainWidget(widget);
+  app.setMainWidget(&widget);
   widget.resize(400,400);
   widget.set_window(-0.5, 4.5, -0.5, 4.5);
   widget.show();
 \end{alltt}
-
 Now, we can send the planar map to a Qt widget after constructing
 one::
 
 \begin{alltt}
-  ws << pm;
+  widget << pm;
 \end{alltt}
 
 \section{Software Design}
