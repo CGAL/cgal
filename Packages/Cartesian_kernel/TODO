@@ -1,16 +1,18 @@
 Stuff to look at, as time permits:
 ----------------------------------
 
+- Tests :
+  - M$VC++ before submitting (especially for CGAL_TYPENAME_BUG).
+  - GCOV
+  - G++ 2.97.
+
 - Handles :
   - Having a proper Handle_for_virtual<> is becoming important...
-  - It must have the same interface than Handle_for<>
-  - Must use the allocator, see Stefan's mail.
+    - It must have the same interface than Handle_for<>
+    - Must use the allocator, see Stefan's mail.
   - Aff_tranformations can't use Handle_for<> yet.
   - Replace ptr by ptr() ?
   - Provide dummy_Handle_for<>.
-
-*** Before submitting : check the test-suite on M$, especially for
-  CGAL_TYPENAME_BUG stuff...
 
 - LineC3 stores a Twotuple<Point_3>, but the second point is in fact a vector,
   the direction of the line.  It's dirty, and should be changed to match
