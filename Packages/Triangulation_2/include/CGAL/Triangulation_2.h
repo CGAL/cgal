@@ -157,16 +157,18 @@ public:
   bool includes_edge(Vertex_handle va, Vertex_handle & vb,
 		     Face_handle& fr, int & i) const;
   //bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3) const;
-  //bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3
+  //bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,
   //     Face_handle &fr) const;
 
- // GEOMETRIC FEATURES
+ // GEOMETRIC FEATURES AND CONSTRUCTION
   Triangle triangle(const Face_handle& f) const;
   Segment segment(const Face_handle& f, int i) const;
   Segment segment(const Edge& e) const;
   Segment segment(const Edge_circulator& ec) const;
   Segment segment(const All_edges_iterator& ei) const;
   Segment segment(const Finite_edges_iterator& ei) const;
+  Point circumcenter(Face_handle  f) const; 
+
 
   //INSERTION - DELETION - Flip
 public:
@@ -265,9 +267,6 @@ public:
  bool 
  collinear_between(const Point& p, const Point& q, const Point& r)
    const;
-
-  // CONSTRUCTION
- Point circumcenter(Face_handle  f) const; 
 
 protected:
   void remove_1D(Vertex_handle v);
