@@ -1,4 +1,4 @@
-#!/net/bin/perl5 -w
+#!/sw/bin/perl5 -w
 
 use strict;
 
@@ -27,7 +27,7 @@ sub one_archive($)
 	return 0;
     }
     if ( $archive =~ m/\.gz$/ ) {
-	system("/net/bin/gunzip", "$archive") == 0 or return 0;
+	system("/sw/bin/gunzip", "$archive") == 0 or return 0;
 	$archive =~ s/\.gz$//;
     }
     if ( $archive =~ m/.*\.tgz$/ ) {

@@ -1,4 +1,4 @@
-#!/net/bin/perl5
+#!/sw/bin/perl5
 
 @source_files = glob("*.C");
 @object_files = map {substr($_, 0,-1) . "o"} @source_files;

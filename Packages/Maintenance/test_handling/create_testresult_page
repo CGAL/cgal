@@ -1,4 +1,4 @@
-#!/net/bin/perl5 -w
+#!/sw/bin/perl5 -w
 #
 # version: 3.0
 # author:  Geert-Jan Giezeman
@@ -231,6 +231,10 @@ EOF
 	    print OUTPUT "<TD>INRIA Sophia-Antipolis</TD>\n",
 		'<TD><A HREF="mailto:Sylvain.Pion\@sophia.inria.fr">',
 		"Sylvain Pion</A></TD>\n";
+	} elsif ($responsible eq 'Francois') {
+	    print OUTPUT "<TD>INRIA Sophia-Antipolis</TD>\n",
+		'<TD><A HREF="mailto:Francois.Rebufat\@sophia.inria.fr">',
+		"Fran&ccedil;ois Rebufat</A></TD>\n";
 	} elsif ($responsible eq 'Geert') {
 	    print OUTPUT "<TD>Utrecht University</TD>\n",
 		'<TD><A HREF="mailto:geert\@cs.uu.nl">',
@@ -239,6 +243,10 @@ EOF
 	    print OUTPUT "<TD>ETH Z&uuml;rich</TD>\n",
 		'<TD><A HREF="mailto:hoffmann\@inf.ethz.ch">',
 		"Michael Hoffmann</A></TD>\n";
+	} elsif ($responsible eq 'Stefan') {
+	    print OUTPUT "<TD>MPI Saarbr&uuml;cken</TD>\n",
+		'<TD><A HREF="mailto:stschirr\@mpi-sb.mpg.de">',
+		"Stefan Schirra</A></TD>\n";
 	} else {
 	    print STDERR "Unknown responsible person.\n";
 	    print OUTPUT "<TD>?</TD><TD>?</TD>\n";
@@ -336,6 +344,12 @@ EOF
 EOF
 
     }
+    if ( -r "announce.html" ) {
+	print OUTPUT<<"EOF";
+<LI><A HREF="$release_name/announce.html">Annoucement of this release</A></LI>
+EOF
+    }
+
     print OUTPUT<<'EOF';
 </OL>
 
@@ -396,16 +410,6 @@ sub main()
     system("chgrp cgal $WWWPAGE");
 }
 
-#@known_platforms = (
-#    'i686_Linux-2.0.29_eg++-egcs-2.90.27_LEDA', 'Sylvain',
-#    'i686_Linux-2.0.29_g++-2.8.1_LEDA', 'Sylvain',
-#    'mips_IRIX-5.3_g++-egcs-2.90.29_LEDA', 'Geert',
-#    'mips_IRIX64-6.2_CC-64-7.20_LEDA', 'Michael',
-#    'mips_IRIX-6.2_CC-n32-7.20_LEDA', 'Michael',
-#    'sparc_SunOS-5.5_CC-4.2_LEDA', 'Michael',
-#    'sparc_SunOS-5.5_g++-2.8.1_LEDA', 'Michael',
-#    'sparc_SunOS-5.5_g++-egcs-2.90.27_LEDA', 'Michael',
-#);
 
 @known_platforms = (
     'i686_Linux-2.0.29_eg++-egcs-2.90.27_LEDA', 'Sylvain',
@@ -414,20 +418,32 @@ sub main()
     'i686_Linux-2.0.29_eg++-egcs-2.91.57_LEDA', 'Sylvain',
     'mips_IRIX-5.3_g++-egcs-2.90.29_LEDA', 'Geert',
     'sparc_SunOS-5.5_g++-egcs-2.90.27_LEDA', 'Michael',
+    'sparc_SunOS-5.6_g++-egcs-2.91.57', 'Michael',
     'sparc_SunOS-5.6_g++-egcs-2.91.57_LEDA', 'Michael',
+    'sparc_SunOS-5.6_g++-egcs-2.91.60', 'Michael',
+    'sparc_SunOS-5.6_g++-egcs-2.91.60_LEDA', 'Michael',
+    'i686_Linux-2.0.35_g++-egcs-2.91.60_LEDA', 'Sylvain',
+    'i686_Linux-2.0.35_eg++-egcs-2.91.60_LEDA', 'Sylvain',
+    'i686_Linux-2.0.36_eg++-egcs-2.91.60_LEDA', 'Francois',
+    'mips_IRIX-5.3_g++-egcs-2.91.60_LEDA', 'Geert',
+    'i686_Linux-2.0.36_eg++-egcs-2.91.66_LEDA', 'Francois',
     'i686_Linux-2.0.29_g++-2.8.1_LEDA', 'Sylvain',
     'i686_Linux-2.0.35_g++-2.8.1_LEDA', 'Sylvain',
+    'i686_Linux-2.0.35_g++-2.8.1', 'Sylvain',
+    'i686_Linux-2.0.36_g++-2.8.1_LEDA', 'Francois',
     'sparc_SunOS-5.5_g++-2.8.1_LEDA', 'Michael',
     'sparc_SunOS-5.6_g++-2.8.1_LEDA', 'Michael',
     'mips_IRIX-6.2_CC-n32-7.20_LEDA', 'Michael',
     'mips_IRIX64-6.2_CC-n32-7.20_LEDA', 'Michael',
-
-'mips_IRIX64-6.2_CC-n32-7.2.1_LEDA', 'Michael',
-
+    'mips_IRIX-6.5_CC-n32-7.2.1.1m_LEDA', 'Michael',
+    'mips_IRIX64-6.5_CC-n32-7.2.1.2m_LEDA', 'Michael',
+    'mips_IRIX64-6.5_CC-n32-7.2.1.3m_LEDA', 'Michael',
+    'mips_IRIX-6.5_CC-n32-7.2.1.3m_LEDA', 'Michael',
     'mips_IRIX64-6.2_CC-64-7.20_LEDA', 'Michael',
     'sparc_SunOS-5.5_CC-4.2_LEDA', 'Michael',
     'sparc_SunOS-5.6_CC-4.2_LEDA', 'Michael',
+    'sparc_SunOS-5.6_CC-5.0', 'Stefan',
+    'i686_CYGWINNT-4.0-20.1_CL.EXE-12.00.8168', 'Geert'
 );
-
 main();
 

@@ -1,4 +1,4 @@
-#!/net/bin/perl5 -w
+#!/sw/bin/perl5 -w
 
 use strict;
 
@@ -6,13 +6,13 @@ my $treated_messages_log =
 	'/projects/CGAL/submissions/autohandle/data/treated_submit_messages';
 my $install_submission_program =
 #	'/projects/CGAL/submissions/install_www_submission';
-	'/projects/CGAL/submissions/autohandle/scripts/install_www_submission';
+	'/projects/CGAL/admin_scripts/install_www_submission';
 
 my $receive_testresult_program =
 	'/users/geert/tmp/echo_to_log';
 my $update_submissions_www_page_program =
-	'/projects/CGAL/submissions/create_update_page';
-my $MAIL_PROG='/local/bin/smtp-relay';
+	'/projects/CGAL/admin_scripts/create_packages_page';
+my $MAIL_PROG='/projects/CGAL/admin_scripts/send_cgal_mail';
 #my $MAIL_PROG='/usr/sbin/Mail';
 
 my $Sender;
@@ -75,7 +75,8 @@ sub treat_submission($)
     if ($URL eq "") {
 # mail $Sender that something went wrong.
 # do the same to maintainer.
-	    open NOTICE, "|$MAIL_PROG -s \"CGAL autohandle failure!\" $Sender";
+	    open NOTICE, "|$MAIL_PROG \"CGAL autohandle failure!\" $Sender
+	        $maintainer";
 	    print NOTICE <<"TOTHIER";
 Your submission (or one of your submissions) had an unrecognized URL.
 The URL should be on a separate line, directly following the line
@@ -92,7 +93,7 @@ close NOTICE;
 	return;
     }
     if (! is_trusted_url($URL)) {
-	    open NOTICE, "|$MAIL_PROG -s \"Untrusted URL!\" $maintainer";
+	    open NOTICE, "|$MAIL_PROG \"Untrusted URL!\" $maintainer";
 	    print NOTICE <<"TOTHIER";
 The submission by $Sender with URL
 $URL
@@ -118,7 +119,7 @@ sub treat_testresult($)
 	return;
     }
     if (! is_trusted_url($URL)) {
-	    open NOTICE, "|$MAIL_PROG -s \"Untrusted URL!\" $maintainer";
+	    open NOTICE, "|$MAIL_PROG \"Untrusted URL!\" $maintainer";
 	    print NOTICE <<"TOTHIER";
 The Testresult with URL
 $URL
@@ -172,7 +173,7 @@ sub main()
 	}
     }
     if (!is_trusted_sender($Sender)) {
-	    open NOTICE, "|$MAIL_PROG -s \"Untrusted sender!\" $maintainer";
+	    open NOTICE, "|$MAIL_PROG \"Untrusted sender!\" $maintainer";
 	    print NOTICE <<"TOTHIER";
 The submission with sender
 $Sender
@@ -204,7 +205,7 @@ close NOTICE;
 	system($update_submissions_www_page_program);
     }
     if (!$command_found) {
-	    open NOTICE, "|$MAIL_PROG -s \"CGAL autohandle warning\" $Sender";
+	    open NOTICE, "|$MAIL_PROG \"CGAL autohandle warning\" $Sender";
 	    print NOTICE <<"TOTHIER";
 Your submission did not contain any command.
 A command is e.g.

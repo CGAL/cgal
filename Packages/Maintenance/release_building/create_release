@@ -42,7 +42,7 @@ if ($TESTING) {
 }
 
 my $SCRIPTDIR=
-	'/users/www/CGAL/Members/Develop/scripts';
+	'/projects/CGAL/admin_scripts';
 my $MISCPACKAGEDIR=
 	'/users/www/CGAL/Members/Develop/updates/packages';
 my $LOCKCMD=
