@@ -65,24 +65,26 @@
 % ABSTRACT
 % ------------------------------------------------------------------------
 \abstract{
-We will present a tutorial on the CGAL polyhedron data structure
-assuming familiarity with the C++ template mechanism and the key
-concepts of the generic programming. The tutorial is organized around
-a mesh subdivision application.  It starts with a polyhedron viewer
-for a customized polyhedron.  The polyhedron viewer demonstrates the
+A tutorial on the CGAL polyhedron data structure
+is presented assuming familiarity with the C++ 
+template mechanism and the key concepts of the generic 
+programming. The tutorial is organized around
+a mesh subdivision application starting with a polyhedron viewer
+for a customized polyhedron. The polyhedron viewer demonstrates the
 basic functionalities of the \cgalpoly\ and some extended
 functionalities such as file I/O, mesh superimposition, and trackball
-manipulation.  The tutorial also shows how to implement subdivision
+manipulation. The tutorial also shows how to implement subdivision
 algorithms in three different approaches. These approaches are
 proposed with increasing level of sophistication and abstraction. The
-simplest approach uses the atomic operators of the combinatorial
-modifications to implement $\sqrt{3}$ subdivision scheme.  A second
+first approach uses the Euler operators to implement 
+$\sqrt{3}$ subdivision.  The second
 approach overloads the modifier, with the help of the incremental
-builder, to implement quad-triangle subdivision. The third approach
-abstracts the geometry operations from the refinements.  It
-specializes a subdivision with template geometry rules. Catmull-Clark,
-Loop and Doo-Sabin subdivisions are illustrated based on this third
-approach.  }
+builder, to implement Quad-Triangle subdivision. The third approach
+abstracts the geometry operations from the refinements. The refinements 
+are implementated based on the previous two approaches. A combinatorial 
+subdivision library, including Catmull-Clark, Loop, Doo-Sabin, $\sqrt{3}$
+and Quad-Triangle subdivision, is established by matching the refinements and
+the template geometry rules.}
 
 %%\vskip 3mm
 
@@ -165,55 +167,87 @@ the superimposition of the input mesh on the subdivided surfaces. A
 trackball function of the enriched polyhedron is also demonstrated in
 the tutorial.
 
+
 \subsubsection*{Subdivision Algorithms}
 
 The second part of the tutorial focuses on the design and the
-implementation of the subdivision algorithms.  In addition to the
-importance in surface modeling, we choose subdivision algorithms to
-demonstrate both the \italic{topology operation} (refinement) and the
-\italic{geometry operations} (smoothing). The topology and the geometry
-operations are the two basic operations required by most geometry
-algorithms. Our implementations of the subdivisions are designed to be
-a separated library that accepts any generic \poly\ as the input
-polyhedron (not just the enriched polyhedron we used in the polyhedron
-viewer). The key to implement a subdivision algorithm is to support
-the refinement, i.e.\ the connectivity modifications.  Two approaches
-are first introduced to support the refinement: the \italic{atomic
-operators of the combinatorial modifications} (operator scheme) and
-the \italic{modifier mechanism} (modifier scheme).  The operator
-scheme reconfigures the connectivity with a combination of several
-combinatorial operators. The $\sqrt{3}$ subdivision~\cite{sqrt3} is
+implementation of $\sqrt{3}$ subdivision (Figure \ref{fig:sqrt3}) 
+and Quad-Triangle subdivision (Figure \ref{fig:quad-triangle}).  
+
+\begin{figure}[htb]
+    \centering{\includegraphics[width=7.0cm]{figs/sqrt3}}
+    \caption{$\sqrt{3}$ subdivision of the mannequin mesh.}
+    \label{fig:sqrt3}
+    \vspace{0.5cm}
+    \centering{\includegraphics[width=7.0cm]{figs/quad-triangle}}
+    \caption{Quad-Triangle subdivision of the rhombicuboctahedron mesh.}
+    \label{fig:quad-triangle}
+\end{figure}
+
+In addition to its importance in the surface modeling, we 
+choose subdivision algorithms to demonstrate both the 
+\italic{topology operation} (refinement) and the
+\italic{geometry operations} (smoothing) of a
+CGAL Polyhedron. 
+%The topology and the geometry
+%operations are the two basic operations required by most geometry
+%algorithms. 
+The key to implement a subdivision algorithm is to effficiently support
+the refinement, i.e.\ the connectivity modifications. Two approaches
+are introduced to support the refinement: the \italic{
+Euler operators} (operator scheme) and
+the \italic{modifier callback mechanism} (modifier scheme). 
+The operator scheme reconfigures the connectivity with a 
+combination of Euler operators. $\sqrt{3}$ subdivision~\cite{sqrt3} is
 used to demonstrate this scheme. Though simple and efficient in some
 refinements, e.g.\ $\sqrt{3}$ subdivision, the correct combination of
 the operators is hard to find for some refinements, e.g.\ Doo-Sabin
 subdivision~\cite{ds}. The modifier scheme solves the problem by
-letting the programmers create their own combinatorial operators using
-the polyhedron incremental builder.  The Quad-Triangle
+letting the programmers create their own combinatorial operators 
+using the polyhedron incremental builder. Quad-Triangle
 subdivision~\cite{qts,l-pg-03} is used to demonstrate this scheme.
 
-\subsubsection*{Generic Subdivisions}
+\subsubsection*{Combinatorial Subdivision Library}
 
-Subdivisions can be represented as a combination of a refinement and a
-set of smoothing rules. Based on this observation, our third approach
-generalizes the subdivision by abstracting the smoothing rules from
-the refinement. The refinement is designed as a \italic{host function}
-that accepts a \italic{policy class} supporting the smoothing rules. A
-subdivision function is then a legal combination of the refinement and
-the smoothing rules.  For example, the Catmull-Clark
-subdivision~\cite{cc} can be declared as:
+A \italic{Combinatorial Subdivision Library} (CSL) is designed
+based on the \italic{policy-based design} \cite{Alexandrescu:2001:MCD}.
+The policy-based design assembles a class
+(called \emph{host}) with complex behavior out of many 
+small behaviors (called \emph{policies}).
+Each policy defines an interface for a
+specific behavior. CSL proposes a 
+generic subdivision solution as a \emph{refinement function\/}
+parameterized with the \emph{smoothing rules}.
+The refinement function refines the control mesh,
+maintains the correspondence between the control mesh and refined
+mesh, and applies the smoothing stencils provided by the policy
+class. For example, Catmull-Clark subdivision~\cite{cc} is structured
+as a quadralization function parameterized with the Catmull-Clark
+smoothing rules.
 \begin{lstlisting}
 void CatmullClark_subdivision(Polyhedron& p) {    
-  quadralize_polyhedron
-   <CatmullClark_rule<Polyhedron>>(p);  
+  quadralize_polyhedron<CatmullClark_rule<Polyhedron>>(p);  
 }
+class CatmullClark_rule {
+public:
+  void facet_rule(  Facet_handle  facet, Point& pt);
+  void edge_rule(Halfedge_handle   edge, Point& pt);
+  void vertex_rule(Vertex_handle vertex, Point& pt);
+};
 \end{lstlisting}
 
-The \lstinline!quadralize_polyhedron<>! represents the refinement
-(host function) and the \lstinline!CatmullClark_rule<>! supports the
-geometry rules (policy).  This approach offers a convenient way to
-specialize a subdivision with the \italic{template smoothing rules}.
-Catmull-Clark~\cite{cc}, Loop~\cite{loop} and Doo-Sabin~\cite{ds}
-subdivisions are illustrated based on this approach.
+\noindent The \CodeFmt{quadralize\_polyhedron<>()} 
+is the host function refining the input mesh
+and the \CodeFmt{CatmullClark\_rule} is the policy 
+class applying the Catmull-Clark stencils.
+This approach offers a convenient way to
+specialize a subdivision with the template smoothing rules.
+CSL currently supports Catmull-Clark~\cite{cc}, 
+Loop~\cite{loop} and Doo-Sabin~\cite{ds} subdivisions.
+CSL accepts a polyhedron mesh specialized from the
+CGAL Polyhedron. 
+%not just the enriched polyhedron we used in the polyhedron
+%viewer. 
 
 \subsection*{Intended Audience}
 

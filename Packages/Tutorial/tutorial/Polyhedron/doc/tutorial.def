@@ -22,3 +22,7 @@
 \def\cgalhds{\lstinline!CGAL::HalfedgeDS!}
 \def\hds{\lstinline!HalfedgeDS!}
 \def\hdsitem{\lstinline!PolyhedronItems!}
+
+
+\newcommand{\CodeFmt}[1]{{\small\texttt{#1}}}
+\def\cgalpoly{\CodeFmt{Polyhedron\_3}}
