@@ -1353,7 +1353,7 @@ march_locate_1D(const Point& t,
 					      t);
   if(pqt == RIGHTTURN || pqt == LEFTTURN) {
     lt = OUTSIDE_AFFINE_HULL;
-    //return f;
+    li = 4 ;// should not be used
     return Face_handle();
   }
 
@@ -1486,9 +1486,11 @@ locate(const Point& p,
   if( dimension() <= 0) {
     if(number_of_vertices() == 0) {
       lt = OUTSIDE_AFFINE_HULL;
+      li = 4; // li should not be used in this case
     } else { // number_of_vertices() == 1
       lt = geom_traits().compare(p,finite_vertex()->point()) ? 
 	VERTEX : OUTSIDE_AFFINE_HULL;
+      li = 4; // li should not be used in this case
     }
     return NULL;
   }
