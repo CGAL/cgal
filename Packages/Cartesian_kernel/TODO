@@ -82,8 +82,6 @@ Stuff to look at, as time permits:
   Was it useful when they derived from a virtual base having a virtual
   destructor, and thus needing this destructor ?  It's not the case anymore,
   so maybe it's time to gain a few lines :)
-- Eventually merge C2, C3, Cartesian_basic (Cd ?).  Ask if it's a problem for
-  others.  If not, merge them inside CVS, so that history won't be lost.
 - Factorize all the new kernel traits stuff of the different kernels in a
   separate .def file, included by all kernels ?
 - Orientation of Circle_2 and Sphere_3.  I wonder if it's used anywhere.
