@@ -33,9 +33,9 @@ private:
 int main( int argc, char **argv )
 {
     QApplication app( argc, argv );
-    My_Window W(600,600);
-    app.setMainWidget( &W );
-    W.set_window(0, 600, 0, 600);
-    W.show();
+    My_Window *W = new My_Window(600,600);
+    app.setMainWidget( W );
+    W->show();
+    W->set_window(0, 600, 0, 600);
     return app.exec();
 }
