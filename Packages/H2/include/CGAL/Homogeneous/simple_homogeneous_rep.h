@@ -27,7 +27,7 @@
 #include <CGAL/Threetuple.h>
 #include <CGAL/Fourtuple.h>
 
-#include <CGAL/RepH3.h>
+#include <CGAL/Homogeneous/RepH3.h>
 
 #include <CGAL/Quotient.h>
 

@@ -1,3 +1,6 @@
+2.43   (23 October 2001)
+- adding missing Homongeneous directory in include statement
+
 2.42   (23 October 2001)
 - moved *H2.h include files to include/CGAL/Homogeneous directory
 - replaced KERNEL_CTOR_* macros with KERNEL_* macros
