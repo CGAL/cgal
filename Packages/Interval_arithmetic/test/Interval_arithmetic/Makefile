@@ -13,13 +13,14 @@ include $(CGAL_MAKEFILE)
               # -L$(GMP_LIB_DIR) -lgmp -lm \
 
 CXXFLAGS = \
+	-I../../../H2/include \
 	-I../../../Kernel_basic/include \
 	-I../../../Cartesian_kernel/include \
 	-I../../../Number_types/include \
 	-I../../include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS) \
-	-g -Wreturn-type -W -Wold-style-casts # -O2 -mcpu=pentiumpro -march=pentiumpro -fstrict-aliasing -W -Wall # -pedantic
+	-g -W -Wold-style-casts # -O2 -mcpu=pentiumpro -march=pentiumpro -fstrict-aliasing -W -Wall # -pedantic
 	# -g -W -Wall -Winline
 	# -O2 -mcpu=pentiumpro -march=pentiumpro -W -Wall -DLOOPS=10000000
 	# -O2 -W -Winline -Wunused -malign-double

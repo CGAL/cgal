@@ -5,20 +5,33 @@
 #include <CGAL/basic.h>
 
 #include <CGAL/Cartesian.h>
+#include <CGAL/Homogeneous.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_kernel.h>
+#include <CGAL/Homogeneous_converter.h>
 
 #include <CGAL/Random.h>
 #include <CGAL/MP_Float.h>
+#include <CGAL/MP_Integer.h>
 
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Triangulation_geom_traits_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 
+#if 0
 typedef CGAL::Filtered_kernel<CGAL::Cartesian<double>,
                               CGAL::Simple_cartesian<CGAL::MP_Float> > Rep;
+#else
+typedef CGAL::Homogeneous<int> K1;
+typedef CGAL::Homogeneous<CGAL::MP_Integer> K2;
+typedef CGAL::Homogeneous<CGAL::Interval_nt_advanced> K3;
 
-typedef Rep::FT  NT;
+typedef CGAL::Filtered_kernel<K1, K2, K3,
+			      CGAL::Homogeneous_converter<K1, K2>,
+			      CGAL::Homogeneous_converter<K1, K3> > Rep;
+#endif
+
+typedef Rep::RT  NT;
 typedef CGAL::Triangulation_geom_traits_3<Rep> Gt3d;
 typedef CGAL::Triangulation_vertex_base_3<Gt3d> Vb3d;
 // typedef CGAL::Triangulation_vertex_base_pointer_3<Gt3d> Vb3d;
@@ -39,6 +52,8 @@ int main()
   for (int i=0; i<loops; i++)
     D.insert(K.construct_point_3_object()(NT(my_rand()),
                                           NT(my_rand()),
-                                          NT(my_rand())));
+                                          NT(my_rand()),
+                                          NT(my_rand()) // for homogeneous
+					  ));
   return 0;
 }
