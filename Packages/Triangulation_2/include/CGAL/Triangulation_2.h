@@ -287,19 +287,18 @@ public:
 				    const Point& q,
 				    Face_handle f = Face_handle()) const;
 
-// not documented
-
  // TO DEBUG
  void show_all();
  void show_face( typename Tds::Face_iterator fi);
 
+ //Predicates
  Oriented_side
  oriented_side(const Point &p0, const Point &p1,
-	      const Point &p2, const Point &p) const;
+	       const Point &p2, const Point &p) const;
     
  Bounded_side
  bounded_side(const Point &p0, const Point &p1,
-	     const Point &p2, const Point &p) const;
+	      const Point &p2, const Point &p) const;
     
  Oriented_side
  oriented_side(const Face_handle& f, const Point &p) const;
@@ -310,14 +309,14 @@ public:
 protected:
   void remove_1D(Vertex_handle v);
   void remove_2D(Vertex_handle v);
-  
+  void make_hole ( Vertex_handle v, std::list<Edge> & hole);
+  Vertex_handle file_input(std::istream& is);
+  void   file_output(std::ostream& os) const;
+
 private:
   Vertex_handle insert_outside_convex_hull_1(const Point& p, Face_handle f);
   Vertex_handle insert_outside_convex_hull_2(const Point& p, Face_handle f);
-  void   make_hole ( Vertex_handle v, std::list<Edge> & hole);
   void   fill_hole ( Vertex_handle v, std::list<Edge> & hole);
-  Vertex_handle file_input(std::istream& is);
-  void   file_output(std::ostream& os) const;
 
 };
 
@@ -444,22 +443,18 @@ is_valid(bool verbose = false, int level = 0) const
       (dimension()==1 && number_of_vertices() == 2 ) ) return result;
 
   if (dimension() == 1) {
-    // Finite_vertices_iterator it1 = finite_vertices_begin(),
-//                              it2(it1), it3(it1);
-//     ++it2;
-//     ++it3; ++it3;
-//     while( it3 != finite_vertices_end()) {
-//      Orientation s = geom_traits().orientation(it1->point(),
-// 					       it2->point(),
-// 					       it3->point()); 
-//      result = result && s == COLLINEAR ;
-//      CGAL_triangulation_assertion(result);
-//      result = result && collinear_between(it1->point(),
-// 					  it2->point(),
-// 					  it3->point());
-//      CGAL_triangulation_assertion(result);
-//      ++it1 ; ++it2; ++it3;
-//     }
+    Finite_vertices_iterator it1 = finite_vertices_begin(),
+                             it2(it1), it3(it1);
+    ++it2;
+    ++it3; ++it3;
+    while( it3 != finite_vertices_end()) {
+     Orientation s = geom_traits().orientation(it1->point(),
+					       it2->point(),
+					       it3->point()); 
+     result = result && s == COLLINEAR ;
+     CGAL_triangulation_assertion(result);
+     ++it1 ; ++it2; ++it3;
+    }
   }    
 
   else { //dimension() == 2
@@ -661,8 +656,7 @@ Triangulation_2<Gt,Tds>::Vertex_handle
 Triangulation_2<Gt,Tds>::
 insert_in_face(const Point& p, Face_handle f)
 {
-  CGAL_triangulation_precondition(oriented_side(f,p) == 
-				  ON_POSITIVE_SIDE);
+  CGAL_triangulation_precondition(oriented_side(f,p) ==   ON_POSITIVE_SIDE);
   Vertex_handle v= static_cast<Vertex*>
                      (_tds.insert_in_face( &(*f)));
   v->set_point(p);
@@ -1598,13 +1592,13 @@ template <class Gt, class Tds >
 Oriented_side
 Triangulation_2<Gt, Tds>::
 oriented_side(const Face_handle& f, const Point &p) const
-    {
-      CGAL_triangulation_precondition ( dimension()==2); 
-      return oriented_side(f->vertex(0)->point(),
-                             f->vertex(1)->point(),
-                             f->vertex(2)->point(),
-                             p);
-    }
+{
+  CGAL_triangulation_precondition ( dimension()==2); 
+  return oriented_side(f->vertex(0)->point(),
+		       f->vertex(1)->point(),
+		       f->vertex(2)->point(),
+		       p);
+}
 
 template <class Gt, class Tds >
 bool
@@ -1721,6 +1715,7 @@ std::istream&
 operator>>(std::istream& is, Triangulation_2<Gt, Tds> &tr)
 {
   tr.file_input(is);
+  CGAL_triangulation_assertion(tr.is_valid());
   return is;
 }
  
