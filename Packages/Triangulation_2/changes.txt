@@ -1,6 +1,13 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.30 (not yet submitted, nor tagged)
+Constrained and Constrained_Delaunay triangulations have been modified
+to deal with intersecting input constraints
+in Triangulation_2 class, member function includes_edge has been modified
+added a typedef for Segment and Triangle in Delaunay triangles
+
+
 Ver 4.29 (7 janvier 99)
 import figures from 2.0 for html doc
 
