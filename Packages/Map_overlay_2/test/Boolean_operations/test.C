@@ -97,7 +97,7 @@ public:
   typedef CGAL::Planar_map_2<Dcel, Traits>               Planar_map;
   typedef CGAL::Map_overlay_default_notifier<Planar_map> 
                                              MapOverlay_change_notification;
-  typedef CGAL::Map_overlay<Planar_map,MapOverlay_change_notification>  MapOverlay; 
+  typedef CGAL::Map_overlay_2<Planar_map,MapOverlay_change_notification>  MapOverlay; 
   typedef CGAL::Boolean_operations_2<MapOverlay>                        Bops;
   
   typedef Planar_map::Ccb_halfedge_circulator   Ccb_halfedge_circulator;
