@@ -36,7 +36,7 @@
 
 int main()
 {
-  std::cout << "Testing Delaunay Triangulation_2 "; 
+  std::cout << "Testing Delaunay Triangulation_2 " << std::endl; 
   std::cout << " with Euclidean cartesian points : " << std::endl;
   typedef CGAL::Triangulation_euclidean_traits_2<Test_rep_cartesian> Gt1;
   typedef CGAL::Triangulation_vertex_base_2<Gt1>                  Vb1;
@@ -47,7 +47,7 @@ int main()
   _test_cls_delaunay_triangulation_2( Cls1() );
 
 
-  std::cout  << "Testing Delaunay Triangulation_2 "; 
+  std::cout  << "Testing Delaunay Triangulation_2 "<< std::endl; 
   std::cout  << " with Euclidean homogeneous points : " << std::endl;
   typedef CGAL::Triangulation_euclidean_traits_2<Test_rep_homogeneous> Gt2;
   typedef CGAL::Triangulation_vertex_base_2<Gt2>                  Vb2;
@@ -58,7 +58,7 @@ int main()
   _test_cls_delaunay_triangulation_2( Cls2() );
 
 
-  std::cout << "Testing Delaunay Triangulation_2 "; 
+  std::cout << "Testing Delaunay Triangulation_2 "<< std::endl; 
   std::cout << " with Triangulation_test_traits : " << std::endl;
   typedef CGAL::_Triangulation_test_traits                       Gt;
   typedef CGAL::Triangulation_vertex_base_2<Gt>                  Vb;

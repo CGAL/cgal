@@ -60,6 +60,9 @@ test_triangulation_tdsul: test_triangulation_tdsul.o
 test_triangulation_2: test_triangulation_2.o
 	$(CGAL_CXX) -o test_triangulation_2 test_triangulation_2.o $(LDFLAGS)
 
+test_triangulation_2_bis: test_triangulation_2_bis.o
+	$(CGAL_CXX) -o test_triangulation_2_bis test_triangulation_2_bis.o $(LDFLAGS)
+
 test_delaunay_triangulation_2: test_delaunay_triangulation_2.o
 	$(CGAL_CXX) -o test_delaunay_triangulation_2 test_delaunay_triangulation_2.o $(LDFLAGS)
 
@@ -74,7 +77,8 @@ test_const_del_triangulation_2: test_const_del_triangulation_2.o
 
 clean:
 	- rm -f *.o  *.obj *.exe \
-	test_triangulation_geom_traits test_triangulation_2 \
+	test_triangulation_geom_traits \
+	test_triangulation_2 test_triangulation_2_bis\
 	test_triangulation_tds test_triangulation_tdsul \
 	test_delaunay_triangulation_2 core \
 	test_constrained_triangulation_2 test_regular_triangulation_2 \

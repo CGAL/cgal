@@ -23,7 +23,7 @@
 #include <iostream>
 //#include <vector>
 
-#include <CGAL/_test_cls_triangulation_2.C>
+#include <CGAL/_test_cls_triangulation_short_2.C>
 
 template <class Del>
 void
@@ -34,7 +34,7 @@ _test_cls_delaunay_triangulation_2( const Del & )
 
   /***********************/
   /***** SUBCLASSES ******/
-   _test_cls_triangulation_2( Delaunay() );
+   _test_cls_triangulation_short_2( Delaunay() );
 
   // Constructors
   std::cout << "    constructors(3)" << std::endl;

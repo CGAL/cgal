@@ -16,7 +16,7 @@
 // revision      : 
 // revision_date : 
 
-// author(s)     : Francois Rebufat
+// author(s)     : Francois Rebufat, Mariette Yvinec
 
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
@@ -134,14 +134,11 @@ _test_cls_reg_triangulation_2( const Triangulation & )
 
   std::list<WPoint> lw; lw.push_back(wp0);
   lw.push_back(wp1); lw.push_back(wp2); lw.push_back(wp3);
-  lw.push_back(wp4); lw.push_back(wp5); lw.push_back(wp6);
-  lw.push_back(wp7); lw.push_back(wp8); lw.push_back(wp9);
+ 
    
   std::vector<WPoint> vw; vw.push_back(wp0);
   vw.push_back(wp1); vw.push_back(wp2); vw.push_back(wp3);
-  vw.push_back(wp4); vw.push_back(wp5); vw.push_back(wp6);
-  vw.push_back(wp7); vw.push_back(wp8); vw.push_back(wp9);
-
+ 
 
   /*****************************/
   /***** CONSTRUCTORS (1) ******/
@@ -182,35 +179,6 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   // when there are several, we use T1_n_p
   std::cout << "    insertions 1-dim" << std::endl;
   
-  Cls T1_2;
-  Vertex_handle v1_2_1 = T1_2.insert(wp1);
-  Vertex_handle v1_2_2 = T1_2.insert(wp2);
-  assert( T1_2.dimension() == 1 );
-  assert( T1_2.number_of_vertices() == 2 );
-  // assert( T1_2.number_of_faces() == 0 );
-  assert( T1_2.is_valid() );
-  
-  // p1,p2,p3  [endpoints first]
-  Cls T1_3_0;
-  Vertex_handle v1_3_0_1 = T1_3_0.insert(wp1); assert( !v1_3_0_1.is_null() );
-  Vertex_handle v1_3_0_3 = T1_3_0.insert(wp3); assert( !v1_3_0_3.is_null() );
-  Vertex_handle v1_3_0_2 = T1_3_0.insert(wp2); assert( !v1_3_0_2.is_null() );
-  assert( T1_3_0.dimension() == 1 );
-  assert( T1_3_0.number_of_vertices() == 3 );
-  // assert( T1_3_0.number_of_faces() == 0 );
-  assert( T1_3_0.is_valid() );
-  
-  // p1,p2,p3  [middle point first]
-  Cls T1_3_1;
-  Vertex_handle v1_3_1_1 = T1_3_1.insert(wp2); assert( !v1_3_1_1.is_null() );
-  Vertex_handle v1_3_1_3 = T1_3_1.insert(wp1); assert( !v1_3_1_3.is_null() );
-  Vertex_handle v1_3_1_2 = T1_3_1.insert(wp3); assert( !v1_3_1_2.is_null() );
-  assert( T1_3_1.dimension() == 1 );
-  assert( T1_3_1.number_of_vertices() == 3 );
-  // assert( T1_3_1.number_of_faces() == 0 );
-  // assert( T1_3_0 == T1_3_1 ); // operator== is not defined!
-  assert( T1_3_1.is_valid() );
-
   Cls T1_5;
   Vertex_handle v1_5_1 = T1_5.insert(wp1);
   Vertex_handle v1_5_2 = T1_5.insert(wp2);
@@ -224,9 +192,6 @@ _test_cls_reg_triangulation_2( const Triangulation & )
 
   // test insert_second()
   Cls T1_6 = T0_2; 
-  //T1_6.insert_second(Vertex(p3).handle());
-  // the following statement cause a segmentation fault on Linux
-  // when the whole procedure is leaved
   T1_6.insert_second( wp3);
   assert( T1_6.dimension() == 1 );
   assert( T1_6.number_of_vertices() == 2 );
@@ -234,28 +199,6 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   
   /******** 2-dimensional triangulations ******/ 
   std::cout << "    insertions 2-dim" << std::endl;
-  
-  Cls T2_1;
-  Vertex_handle v2_1_0 = T2_1.insert(wp0);
-  Vertex_handle v2_1_1 = T2_1.insert(wp1);
-  Vertex_handle v2_1_2 = T2_1.insert(wp2);
-  Vertex_handle v2_1_3 = T2_1.insert(wp3);    // on the edge p1,p2, on the convex hull
-  Vertex_handle v2_1_4 = T2_1.insert(wp4);    // outside, with two visible collinear edges
-  Vertex_handle v2_1_5 = T2_1.insert(wp5); 
-  Vertex_handle v2_1_6 = T2_1.insert(wp6);    // outside, collinear with p2,p5
-  Vertex_handle v2_1_7 = T2_1.insert(wp7);    // outside with two visible collinear edges
-                      		             // but also collinear with and extending p0,p5 
-  Vertex_handle v2_1_8 = T2_1.insert(wp8); 
-  Vertex_handle v2_1_9 = T2_1.insert(wp9);    // inside, on the edge p6,p7
-  Vertex_handle v2_1_10 = T2_1.insert(wp10);  // inside the face p2,p4,p6
-  assert( T2_1.dimension() == 2 );
-  assert( T2_1.number_of_vertices() == 11 );
-  
-  // test is_valid for 2-triangulations
-  assert( T2_1.is_valid() );
-
-  // we now test the other insert functions
-  // more vicious, we insert all the points on a single line first
   Cls T2_3;
   Locate_type lt;
   Face_handle loc;
@@ -281,23 +224,23 @@ _test_cls_reg_triangulation_2( const Triangulation & )
  
   // test list iterator insert
   Cls T2_5;
-  assert( T2_5.insert(lw.begin(), lw.end()) == 10 );
+  assert( T2_5.insert(lw.begin(), lw.end()) == 4);
   assert( T2_5.dimension() == 2 );
-  assert( T2_5.number_of_vertices() == 10 );
+  assert( T2_5.number_of_vertices() == 4 );
   assert( T2_5.is_valid() );
 
   // test list iterator insert
   Cls T2_6;
-  assert( T2_6.insert(vw.begin(), vw.end()) == 10 );
+  assert( T2_6.insert(vw.begin(), vw.end()) == 4 );
   assert( T2_6.dimension() == 2 );
-  assert( T2_6.number_of_vertices() == 10 );
+  assert( T2_6.number_of_vertices() == 4 );
   assert( T2_6.is_valid() );
   
   // test grid insert and make sure push_back exists
   Cls T2_7;
   int m, p;
-  for (m=0; m<20; m++)
-    for (p=0; p<20; p++)
+  for (m=0; m<3; m++)
+    for (p=0; p<3; p++)
       T2_7.push_back( WPoint(Point(m*px+p*qx, m*py+p*qy), 1) );
   assert( T2_7.number_of_vertices() == m*p );
   assert( T2_7.is_valid() );
@@ -331,16 +274,16 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   assert( T1_5_2.is_valid() );
 
    // test copy_constructor with non-empty 2-triangulation
-  Cls T2_1_1( T2_1 );
-  assert( T2_1_1.dimension() == 2 );
-  assert( T2_1_1.number_of_vertices() == 11 );
-  assert( T2_1_1.is_valid() );
+  Cls T2_3_1( T2_3 );
+  assert( T2_3_1.dimension() == 2 );
+  assert( T2_3_1.number_of_vertices() == 11 );
+  assert( T2_3_1.is_valid() );
 
   // test assignment operator
-  Cls T2_1_4 = T2_1;
-  assert( T2_1_4.dimension() == 2 );
-  assert( T2_1_4.number_of_vertices() == 11 );
-  assert( T2_1_4.is_valid() );
+  Cls T2_3_4 = T2_3;
+  assert( T2_3_4.dimension() == 2 );
+  assert( T2_3_4.number_of_vertices() == 11 );
+  assert( T2_3_4.is_valid() );
   
   /*********************************************/
   /****** FINITE/INFINITE VERTICES/FACES *******/
@@ -348,12 +291,9 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   std::cout << "    finite/infinite vertices/faces" << std::endl;
   _test_fct_is_infinite( T0_0 );
   _test_fct_is_infinite( T0_1 );
-  _test_fct_is_infinite( T1_2 );
   _test_fct_is_infinite( T1_5 );
-  _test_fct_is_infinite( T2_1 );
   _test_fct_is_infinite( T2_3 );
-  _test_fct_is_infinite( T2_5 );
-  _test_fct_is_infinite( T2_6 );
+
 
 
 
@@ -389,45 +329,45 @@ _test_cls_reg_triangulation_2( const Triangulation & )
 
   // Check point location in 2-dimensional triangulations
   std::cout << "    point locations 2-dim" << std::endl;
-  loc = T2_1.locate(p0,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_1.xy_equal(loc->vertex(li)->point(), p0) );
-  loc = T2_1.locate(p1,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_1.xy_equal(loc->vertex(li)->point(), p1) );
-  loc = T2_1.locate(p2,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_1.xy_equal(loc->vertex(li)->point(), p2) );
-  loc = T2_1.locate(p3,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_1.xy_equal(loc->vertex(li)->point(), p3) );
-  loc = T2_1.locate(p4,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_1.xy_equal(loc->vertex(li)->point(), p4) );
-  loc = T2_1.locate(p5,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_1.xy_equal(loc->vertex(li)->point(), p5) );
-  loc = T2_1.locate(p6,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_1.xy_equal(loc->vertex(li)->point(), p6) );
-  loc = T2_1.locate(p7,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_1.xy_equal(loc->vertex(li)->point(), p7) );
-  loc = T2_1.locate(p8,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_1.xy_equal(loc->vertex(li)->point(), p8) );
-  loc = T2_1.locate(p9,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_1.xy_equal(loc->vertex(li)->point(), p9) );
-  loc = T2_1.locate(p10,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_1.xy_equal(loc->vertex(li)->point(), p10) );
+  loc = T2_3.locate(p0,lt,li); assert( lt == Cls::VERTEX );
+  assert( T2_3.xy_equal(loc->vertex(li)->point(), p0) );
+  loc = T2_3.locate(p1,lt,li); assert( lt == Cls::VERTEX );
+  assert( T2_3.xy_equal(loc->vertex(li)->point(), p1) );
+  loc = T2_3.locate(p2,lt,li); assert( lt == Cls::VERTEX );
+  assert( T2_3.xy_equal(loc->vertex(li)->point(), p2) );
+  loc = T2_3.locate(p3,lt,li); assert( lt == Cls::VERTEX );
+  assert( T2_3.xy_equal(loc->vertex(li)->point(), p3) );
+  loc = T2_3.locate(p4,lt,li); assert( lt == Cls::VERTEX );
+  assert( T2_3.xy_equal(loc->vertex(li)->point(), p4) );
+  loc = T2_3.locate(p5,lt,li); assert( lt == Cls::VERTEX );
+  assert( T2_3.xy_equal(loc->vertex(li)->point(), p5) );
+  loc = T2_3.locate(p6,lt,li); assert( lt == Cls::VERTEX );
+  assert( T2_3.xy_equal(loc->vertex(li)->point(), p6) );
+  loc = T2_3.locate(p7,lt,li); assert( lt == Cls::VERTEX );
+  assert( T2_3.xy_equal(loc->vertex(li)->point(), p7) );
+  loc = T2_3.locate(p8,lt,li); assert( lt == Cls::VERTEX );
+  assert( T2_3.xy_equal(loc->vertex(li)->point(), p8) );
+  loc = T2_3.locate(p9,lt,li); assert( lt == Cls::VERTEX );
+  assert( T2_3.xy_equal(loc->vertex(li)->point(), p9) );
+  loc = T2_3.locate(p10,lt,li); assert( lt == Cls::VERTEX );
+  assert( T2_3.xy_equal(loc->vertex(li)->point(), p10) );
 
-  loc = T2_1.locate(p11,lt,li); assert( lt == Cls::EDGE);
-  assert( (T2_1.xy_equal(loc->vertex(loc->ccw(li))->point(), p1)
-        && T2_1.xy_equal(loc->vertex(loc->cw(li))->point(), p0))
-       || (T2_1.xy_equal(loc->vertex(loc->ccw(li))->point(), p0)
-        && T2_1.xy_equal(loc->vertex(loc->cw(li))->point(), p1)));
-  loc = T2_1.locate(p12,lt,li); assert( lt == Cls::FACE );
-  assert( T2_1.oriented_side(loc,p12) == CGAL::ON_POSITIVE_SIDE );
-  loc = T2_1.locate(p13,lt,li,loc); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
-  li = loc->index(T2_1.infinite_vertex());
-  assert( _test_is_to_the_left(T2_1,p13,loc,li) );
-  loc = T2_1.locate(p14,lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
-  li = loc->index(T2_1.infinite_vertex());
-  assert( _test_is_to_the_left(T2_1,p14,loc,li) );
-  loc = T2_1.locate(p15,lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
-  li = loc->index(T2_1.infinite_vertex());
-  assert( _test_is_to_the_left(T2_1,p15,loc,li) );
+  loc = T2_3.locate(p11,lt,li); assert( lt == Cls::EDGE);
+  assert( (T2_3.xy_equal(loc->vertex(loc->ccw(li))->point(), p1)
+        && T2_3.xy_equal(loc->vertex(loc->cw(li))->point(), p0))
+       || (T2_3.xy_equal(loc->vertex(loc->ccw(li))->point(), p0)
+        && T2_3.xy_equal(loc->vertex(loc->cw(li))->point(), p1)));
+  loc = T2_3.locate(p12,lt,li); assert( lt == Cls::FACE );
+  assert( T2_3.oriented_side(loc,p12) == CGAL::ON_POSITIVE_SIDE );
+  loc = T2_3.locate(p13,lt,li,loc); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
+  li = loc->index(T2_3.infinite_vertex());
+  assert( _test_is_to_the_left(T2_3,p13,loc,li) );
+  loc = T2_3.locate(p14,lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
+  li = loc->index(T2_3.infinite_vertex());
+  assert( _test_is_to_the_left(T2_3,p14,loc,li) );
+  loc = T2_3.locate(p15,lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
+  li = loc->index(T2_3.infinite_vertex());
+  assert( _test_is_to_the_left(T2_3,p15,loc,li) );
 
 
   /*************************/
@@ -435,32 +375,16 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   std::cout << "    iterators" << std::endl;
   // _test_iterators(T0_0);
   // _test_iterators(T0_1);
-  _test_iterators(T1_2);
-  _test_iterators(T1_3_0);
-  _test_iterators(T1_3_1);
   _test_iterators(T1_5);
-  _test_iterators(T1_6);
-  _test_iterators(T2_1);
   _test_iterators(T2_3);
-  _test_iterators(T2_5);
-  _test_iterators(T2_6);
-  _test_iterators(T2_7);
+
 
   /***************************/
   /******* Circulators *******/
   std::cout << "    circulators" << std::endl;
-  // _test_circulators(T0_0);
-  // _test_circulators(T0_1);
-  _test_circulators(T1_2);
-  _test_circulators(T1_3_0);
-  _test_circulators(T1_3_1);
   _test_circulators(T1_5);
-  _test_circulators(T1_6);
-  _test_circulators(T2_1);
   _test_circulators(T2_3);
-  _test_circulators(T2_5);
-  _test_circulators(T2_6);
-  _test_circulators(T2_7);
+ 
 
 
   // Line_face_circulator
@@ -468,7 +392,7 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   typedef typename Cls::Line_face_circulator LFC;
   // here == operator needed for Point!
   // testing with the grid triangulation
-  LFC fc= T2_7.line_walk(p1,p10);
+  LFC fc= T2_3.line_walk(p1,p10);
   assert(fc.ptr()!=NULL);
   assert(!fc.is_empty());
   LFC fc2=fc;
@@ -478,9 +402,9 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   ++fc;
   --fc;
   Point pp(0,0.5,1);
-  loc = T2_7.locate(pp,lt,li);
-  assert(lt==Cls::VERTEX);
-  fc= T2_7.line_walk(pp,p10,loc);
+  loc = T2_3.locate(pp,lt,li);
+  // assert(lt==Cls::VERTEX); no longer true, I've changed the triangulation
+  fc= T2_3.line_walk(pp,p10,loc);
   fc2=fc;
   assert(fc==fc2);
   fc++;
@@ -529,74 +453,37 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   assert( T0_0.cw(2) == 1 );
 
   // the assert() are to avoid compiler warnings about unused variables
-  loc = T2_1.locate(p12,lt,li); // from section locate above
-  Triangle t = T2_1.triangle(loc); assert( &t == &t );
-  Segment  s = T2_1.segment(loc,0); assert( &s == &s );
-  s = T2_1.segment(Edge(loc,1)); assert( &s == &s );
-  s = T2_1.segment(v2_1_6->incident_edges()); assert( &s == &s );
-  s = T2_1.segment(T2_1.finite_edges_begin()); assert( &s == &s );
+  loc = T2_3.locate(p12,lt,li); // from section locate above
+  Triangle t = T2_3.triangle(loc); assert( &t == &t );
+  Segment  s = T2_3.segment(loc,0); assert( &s == &s );
+  s = T2_3.segment(Edge(loc,1)); assert( &s == &s );
+  s = T2_3.segment(v2_3_6->incident_edges()); assert( &s == &s );
+  s = T2_3.segment(T2_3.finite_edges_begin()); assert( &s == &s );
 
 
   /********************/
   /******** I/O *******/
   std::cout << "    output to a file" << std::endl;
-  std::ofstream of0_0("T00.triangulation", std::ios::out);
-  CGAL::set_ascii_mode(of0_0); 
-  of0_0 << T0_1; of0_0.close();
-  std::ofstream of0_1("T01.triangulation");
-  CGAL::set_ascii_mode(of0_1); 
-  of0_1 << T0_1; of0_1.close();
-  std::ofstream of1_2("T12.triangulation");
-  CGAL::set_ascii_mode(of1_2); 
-  of1_2 << T1_2; of1_2.close();
   std::ofstream of1_5("T15.triangulation");
   CGAL::set_ascii_mode(of1_5); 
   of1_5 << T1_5; of1_5.close();
-  std::ofstream of1_6("T16.triangulation");
-  CGAL::set_ascii_mode(of1_6); 
-  of1_6 << T1_6; of1_6.close();
-  std::ofstream of2_1("T21.triangulation");
-  CGAL::set_ascii_mode(of2_1); 
-  of2_1 << T2_1; of2_1.close();
   std::ofstream of2_3("T23.triangulation");
   CGAL::set_ascii_mode(of2_3); 
   of2_3 << T2_3; of2_3.close();
-  std::ofstream of2_5("T25.triangulation");
-  CGAL::set_ascii_mode(of2_5); 
-  of2_5 << T2_5; of2_5.close();
-  std::ofstream of2_6("T26.triangulation");
-  CGAL::set_ascii_mode(of2_6); 
-  of2_6 << T2_6; of2_6.close();
+  
 
   std::cout << "    input from a file" << std::endl;
-  std::ifstream if0_0("T00.triangulation"); CGAL::set_ascii_mode(if0_0);
-  Cls T0_0_copy;   if0_0 >> T0_0_copy;
-  // assert( T0_0_copy.number_of_vertices() == T0_0.number_of_vertices() );
-  std::ifstream if0_1("T01.triangulation"); CGAL::set_ascii_mode(if0_1);
-  Cls T0_1_copy; if0_1 >> T0_1_copy;
-  // assert( T0_1_copy.number_of_vertices() == T0_1.number_of_vertices() );
-  std::ifstream if1_2("T12.triangulation"); CGAL::set_ascii_mode(if1_2); 
-  Cls T1_2_copy; if1_2 >> T1_2_copy;
-  // assert( T1_2_copy.number_of_vertices() == T1_2.number_of_vertices() );
+  
   std::ifstream if1_5("T15.triangulation"); CGAL::set_ascii_mode(if1_5); 
   Cls T1_5_copy; if1_5 >> T1_5_copy;
-  // assert( T1_5_copy.number_of_vertices() == T1_5.number_of_vertices() );
-  std::ifstream if1_6("T16.triangulation"); CGAL::set_ascii_mode(if1_6);
-  Cls T1_6_copy; if1_6 >> T1_6_copy;
-  // assert( T1_6_copy.number_of_vertices() == T1_6.number_of_vertices() );
-  std::ifstream if2_1("T21.triangulation"); CGAL::set_ascii_mode(if2_1);
-  Cls T2_1_copy; if2_1 >> T2_1_copy;
-  // assert( T2_1_copy.number_of_vertices() == T2_1.number_of_vertices() );
+  assert( T1_5_copy.is_valid() &&
+	  T1_5_copy.number_of_vertices() == T1_5.number_of_vertices() );
+  
   std::ifstream if2_3("T23.triangulation"); CGAL::set_ascii_mode(if2_3);
   Cls T2_3_copy; if2_3 >> T2_3_copy;
-  // assert( T2_3_copy.number_of_vertices() == T2_3.number_of_vertices() );
-  std::ifstream if2_5("T25.triangulation"); CGAL::set_ascii_mode(if2_5); 
-  Cls T2_5_copy; if2_5 >> T2_5_copy;
-  // assert( T2_5_copy.number_of_vertices() == T2_5.number_of_vertices() );
-  std::ifstream if2_6("T26.triangulation"); CGAL::set_ascii_mode(if2_6);
-  Cls T2_6_copy; if2_6 >> T2_6_copy;
-  // assert( T2_6_copy.number_of_vertices() == T2_6.number_of_vertices() );
-
+  assert( T2_3_copy.is_valid() &&
+	  T2_3_copy.number_of_vertices() == T2_3.number_of_vertices() );
+  
   /**********************/
   /***** REMOVALS *******/ 
   std::cout << "    removals" << std::endl;
@@ -605,15 +492,7 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   T0_1.remove_first(T0_1.finite_vertex());
   assert( T0_1.number_of_vertices() == 0 );
 
-  // test remove_second()
-  T1_6.remove_second(T1_6.finite_vertex());
-  assert( T1_6.number_of_vertices() == 1 );
-
-  // remove from 1-dimensional triangulations
-  T1_2.remove(v1_2_1);
-  T1_2.remove(v1_2_2);
-  assert( T1_2.number_of_vertices() == 0 );
-
+   // remove from 1-dimensional triangulations
   T1_5.remove(v1_5_1);
   T1_5.remove(v1_5_2);
   T1_5.remove(v1_5_3);
@@ -622,19 +501,6 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   assert( T1_5.number_of_vertices() == 0 );
 
   // remove from 2-dimensional triangulations
-  T2_1.remove(v2_1_0);
-  T2_1.remove(v2_1_2);
-  T2_1.remove(v2_1_1);
-  T2_1.remove(v2_1_6);
-  T2_1.remove(v2_1_5);
-  T2_1.remove(v2_1_4);
-  T2_1.remove(v2_1_3);
-  T2_1.remove(v2_1_9);
-  T2_1.remove(v2_1_8);
-  T2_1.remove(v2_1_7);
-  T2_1.remove(v2_1_10);
-  assert( T2_1.number_of_vertices() == 0 );
-
   T2_3.remove(v2_3_0);
   T2_3.remove(v2_3_1);
   T2_3.remove(v2_3_9);
@@ -656,9 +522,7 @@ _test_cls_reg_triangulation_2( const Triangulation & )
     T2_6.remove(T2_6.finite_vertex());
   assert( T2_6.number_of_vertices() == 0 );
   
-  for (i=T2_7.number_of_vertices(); i>0; i--)
-    T2_7.remove(T2_7.finite_vertex());
-  assert( T2_7.number_of_vertices() == 0 );
+
 
   // test destructors and return
   std::cout << "    test destructors and return" << std::endl;
