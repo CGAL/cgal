@@ -51,16 +51,16 @@ struct Interval_nt_advanced
   struct unsafe_comparison {};		// Exception class.
   static unsigned number_of_failures;	// Counts the number of failures.
 
-  friend IA sqrt          (const IA &);
-  friend IA square        (const IA &);
-  friend IA abs           (const IA &);
-  friend IA min           (const IA &, const IA &);
-  friend IA max           (const IA &, const IA &);
-  friend double to_double (const IA &);
-  friend bool is_valid    (const IA &);
-  friend bool is_finite   (const IA &);
-  friend Comparison_result compare (const IA &, const IA &);
-  friend Sign sign        (const IA &);
+  friend inline IA sqrt          (const IA &);
+  friend inline IA square        (const IA &);
+  friend inline IA abs           (const IA &);
+  friend inline IA min           (const IA &, const IA &);
+  friend inline IA max           (const IA &, const IA &);
+  friend inline double to_double (const IA &);
+  friend inline bool is_valid    (const IA &);
+  friend inline bool is_finite   (const IA &);
+  friend inline Comparison_result compare (const IA &, const IA &);
+  friend inline Sign sign        (const IA &);
 
 private:
   static void overlap_action() throw (unsafe_comparison)
