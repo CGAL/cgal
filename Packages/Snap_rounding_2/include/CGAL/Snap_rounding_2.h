@@ -72,7 +72,6 @@ public:
   void determine_direction();
   bool equal(Segment_2 s);
   Segment_data(const Segment_data &other);
-  // !!!! need operator =
 };
 
 template<class Rep_>
@@ -135,6 +134,10 @@ typedef std::list<X_curve>              CurveContainer;
 typedef typename CurveContainer::iterator            CurveContainerIter;
 
 public:
+  friend class Segment_data<Rep>;
+  friend class Hot_Pixel<Rep>;
+  friend class hot_pixel_dir_cmp<Rep>;
+
   typedef CGAL::Segment_2<Rep> Segment_2;
   typedef CGAL::Point_2<Rep> Point_2;
   typedef std::list<Point_2> PointList;
@@ -148,13 +151,7 @@ public:
   typedef typename Segments_container::const_iterator Segment_const_iterator;
   typedef typename Segments_container::iterator Segment_iterator;
 
-  enum Direction {UP_RIGHT,UP_LEFT,DOWN_RIGHT,DOWN_LEFT,UP,DOWN,LEFT,
-                  RIGHT,POINT_SEG};
-
-  static Direction seg_dir;
   static bool erase_hp;
-  static inline Direction get_direction() {return(seg_dir);}
-  static inline void set_direction(Direction dir) {seg_dir = dir;}
   static inline bool get_erase_hp() {return(erase_hp);}
 
   //! A constructor
@@ -226,6 +223,10 @@ public:
   void output(Out &o);
 
 private:
+  enum Direction {UP_RIGHT,UP_LEFT,DOWN_RIGHT,DOWN_LEFT,UP,DOWN,LEFT,
+                  RIGHT,POINT_SEG};
+
+  static Direction seg_dir;
   // the next variable is for lazy evaluation:
   // it determines whether an isr/sr work has
   // to be done (at the beginning, after insertion, etc) 
@@ -256,6 +257,8 @@ private:
                    &seg_output,int number_of_intersections,bool first_time);
   void iterate();
   void copy(const Snap_rounding_2<Rep_>& other);
+  static inline Direction get_direction() {return(seg_dir);}
+  static inline void set_direction(Direction dir) {seg_dir = dir;}
 };
 
 // ctor
