@@ -17,7 +17,7 @@ int main()
    Regular_triangulation rt;
    std::ifstream in("data/regular.cin");
 
-   Gt::Weighted_point wp;
+   Regular_triangulation::Weighted_point wp;
    int count = 0;
    while(in >> wp){
        count++;

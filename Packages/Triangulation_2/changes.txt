@@ -1,6 +1,11 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+13 April 2004 Mariette Yvinec
+- fixed a typedef in examples/Triangulation_2/regular.C
+  (this bug was related to  changes in Regular_triangulation_euclidean_traits
+  made on March 31)
+
 8 April 2004 Andreas Fabri
 - Replaced in Triangulation_2::locate method walk along a straight line with zig zag walk
 
