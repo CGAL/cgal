@@ -1,5 +1,5 @@
-// file : examples/Nef_S2/simple.C
-
+// examples/Nef_S2/simple.C
+//-------------------------
 #include <CGAL/Gmpz.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Nef_polyhedron_S2.h>
@@ -13,6 +13,6 @@ int main()
 {
   Nef_polyhedron N1(Sphere_circle(1,0,0));
   Nef_polyhedron N2(Sphere_circle(0,1,0), Nef_polyhedron::EXCLUDED);
-  Nef_polyhedron N3 = N1 * N2; // line (*)
+  Nef_polyhedron N3 = N1 * N2;
   return 0;
 }
