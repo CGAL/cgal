@@ -106,11 +106,11 @@ Note the double occurrence of the factor @{wq@} in the latter definition.
 @$@<3D squared distance general utilities@>+=@{
 
 template <class R>
-R_RT_return(R)
+typename R::RT
 wdot(const Vector_3<R> &u,
     const Vector_3<R> &v)
 {
-    return  (R_RT_return(R))(u.hx()*v.hx() + u.hy()*v.hy() + u.hz()*v.hz());
+    return  (u.hx()*v.hx() + u.hy()*v.hy() + u.hz()*v.hz());
 }
 
 #ifdef CGAL_HOMOGENEOUS_H
@@ -278,7 +278,7 @@ of the difference vector.
 @$@<3D squared distance 0 header declarations@>+=@{@-
 
 template <class R>
-inline R_FT_return(R)
+inline typename R::FT
 squared_distance(
     const Point_3<R> & pt1,
     const Point_3<R> & pt2)
@@ -302,20 +302,15 @@ vector between the point and an arbitrary point on the plane.
 This specialised routine is used extensively in other routines.
 
 @$@<3D squared distance 0 header declarations@>+=@{@-
-
-template <class R>
-R_FT_return(R)
-squared_distance_to_plane(
-    const Vector_3<R> & normal,
-    const Vector_3<R> & diff);
+@<Point Plane distance implementation 1@>
 @}
 
 @C@<Implementation@>
 
-@$@<3D squared distance 0 outline definitions@>+=@{@-
+@$@<Point Plane distance implementation 1@>==@{@-
 
 template <class R>
-R_FT_return(R)
+typename R::FT
 squared_distance_to_plane(
     const Vector_3<R> & normal,
     const Vector_3<R> & diff)
@@ -324,7 +319,7 @@ squared_distance_to_plane(
     RT dot, squared_length;
     dot = wdot(normal, diff);
     squared_length = wdot(normal, normal);
-    return (R_FT_return(R))
+    return (typename R::FT)
         ((dot*dot) / wmult((R*)0, squared_length, diff.hw(), diff.hw()));
 }
 @}
@@ -339,15 +334,10 @@ normalised) of the line and the vector between the point and an arbitrary
 point on the line.
 
 @$@<3D squared distance header declarations@>+=@{@-
+@<Point Line distance implementation 2@>
 
 template <class R>
-extern R_FT_return(R)
-squared_distance(
-    const Point_3<R> &pt,
-    const Line_3<R> &line);
-
-template <class R>
-inline R_FT_return(R)
+inline typename R::FT
 squared_distance(
     const Line_3<R> & line,
     const Point_3<R> & pt)
@@ -357,12 +347,7 @@ squared_distance(
 @}
 
 @$@<3D squared distance 0 header declarations@>+=@{@-
-
-template <class R>
-R_FT_return(R)
-squared_distance_to_line(
-    const Vector_3<R> & dir,
-    const Vector_3<R> & diff);
+@<Point Line distance implementation 1@>
 @}
 
 @C@<Implementation@>
@@ -377,25 +362,25 @@ connecting a point on the line to the point. Now, the length of the cross
 product vector divided by the length of the base vector is the distance from
 the point to the line. Squaring everything, we get the square distance.
 
-@$@<3D squared distance 0 outline definitions@>+=@{
+@$@<Point Line distance implementation 1@>==@{@-
 
 template <class R>
-R_FT_return(R)
+typename R::FT
 squared_distance_to_line(
     const Vector_3<R> & dir,
     const Vector_3<R> & diff)
 {
     typedef typename R::RT RT;
     Vector_3<R> wcr = wcross(dir, diff);
-    return (R_FT_return(R))((wcr*wcr)/
+    return (typename R::FT)((wcr*wcr)/
         wmult((R*)0, RT(wdot(dir, dir)), diff.hw(), diff.hw()));
 }
 @}
 
-@$@<3D squared distance outline definitions@>+=@{
+@$@<Point Line distance implementation 2@>==@{
 
 template <class R>
-R_FT_return(R)
+typename R::FT
 squared_distance(
     const Point_3<R> &pt,
     const Line_3<R> &line)
@@ -411,15 +396,10 @@ squared_distance(
 @C@<Declarations@>
 
 @$@<3D squared distance header declarations@>+=@{@-
+@<Point Ray distance implementation@>
 
 template <class R>
-extern R_FT_return(R)
-squared_distance(
-    const Point_3<R> &pt,
-    const Ray_3<R> &ray);
-
-template <class R>
-inline R_FT_return(R)
+inline typename R::FT
 squared_distance(
     const Ray_3<R> & ray,
     const Point_3<R> & pt)
@@ -437,10 +417,10 @@ point to the supporting line of the ray. Otherwise we compute the squared
 distance from @{pt@} to the start point of the ray, as this is the closest
 point.
 
-@$@<3D squared distance outline definitions@>+=@{
+@$@<Point Ray distance implementation@>==@{
 
 template <class R>
-extern R_FT_return(R)
+extern typename R::FT
 squared_distance(
     const Point_3<R> &pt,
     const Ray_3<R> &ray)
@@ -448,7 +428,7 @@ squared_distance(
     Vector_3<R> diff = pt-ray.start();
     const Vector_3<R> &dir = ray.direction().vector();
     if (!is_acute_angle(dir,diff) )
-        return (R_FT_return(R))(diff*diff);
+        return (typename R::FT)(diff*diff);
     return squared_distance_to_line(dir, diff);
 }
 @}
@@ -456,16 +436,10 @@ squared_distance(
 @B@<Point Segment distance@>
 
 @$@<3D squared distance header declarations@>+=@{@-
+@<Point Segment distance implementation@>
 
 template <class R>
-extern R_FT_return(R)
-squared_distance(
-    const Point_3<R> &pt,
-    const Segment_3<R> &seg);
-
-
-template <class R>
-inline R_FT_return(R)
+inline typename R::FT
 squared_distance(
     const Segment_3<R> & seg,
     const Point_3<R> & pt)
@@ -489,10 +463,10 @@ segment start to segment end and the vector from segment start to the point.
 If this product is negative, the distance from the point to the start of the
 segment is taken.
 
-@$@<3D squared distance outline definitions@>+=@{
+@$@<Point Segment distance implementation@>==@{
 
 template <class R>
-R_FT_return(R)
+typename R::FT
 squared_distance(
     const Point_3<R> &pt,
     const Segment_3<R> &seg)
@@ -504,7 +478,7 @@ squared_distance(
     Vector_3<R> segvec = seg.end()-seg.start();
     RT d = wdot(diff,segvec);
     if (d <= (RT)0)
-        return (R_FT_return(R))(FT(diff*diff));
+        return (FT(diff*diff));
     RT e = wdot(segvec,segvec);
     if (wmult((R*)0 ,d, segvec.hw()) > wmult((R*)0, e, diff.hw()))
         return squared_distance(pt, seg.end());
@@ -517,12 +491,7 @@ squared_distance(
 @C@<Declarations@>
 
 @$@<3D squared distance header declarations@>+=@{@-
-
-template <class R>
-extern R_FT_return(R)
-squared_distance(
-    const Segment_3<R> &,
-    const Segment_3<R> &);
+@<Segment Segment distance implementation@>
 
 @}
 
@@ -541,7 +510,7 @@ taken.
 
 @$@<3D seg seg squared distance main routine start@>==@{@-
 template <class R>
-R_FT_return(R)
+typename R::FT
 squared_distance(
     const Segment_3<R> &seg1,
     const Segment_3<R> &seg2)
@@ -719,9 +688,7 @@ other segment and take the minimum.
         min2 = (dm < RT(0)) ?
             squared_distance(start2, seg1):
             squared_distance(end2, seg1);
-        return (min1 < min2)
-               ? (R_FT_return(R))(min1)
-               : (R_FT_return(R))(min2);
+        return (min1 < min2) ? min1 : min2;
     }
 }
 @}
@@ -766,7 +733,7 @@ to make the necessary decisions.
 @$@<3D segment segment squared distance parallel case@>+=@{
 
 template <class R>
-R_FT_return(R)
+typename R::FT
 squared_distance_parallel(
     const Segment_3<R> &seg1,
     const Segment_3<R> &seg2)
@@ -813,7 +780,7 @@ squared_distance_parallel(
 }
 @}
 
-@$@<3D squared distance outline definitions@>+=@{
+@$@<Segment Segment distance implementation@>==@{
 @<3D segment segment squared distance parallel case@>
 @<3D segment segment squared distance helper routine@>
 @<3D segment segment squared distance main routine@>
@@ -824,16 +791,10 @@ squared_distance_parallel(
 @C@<Declarations@>
 
 @$@<3D squared distance header declarations@>+=@{@-
+@<Ray Segment distance implementation@>
 
 template <class R>
-extern R_FT_return(R)
-squared_distance(
-    const Segment_3<R> &seg,
-    const Ray_3<R> &ray);
-
-
-template <class R>
-inline R_FT_return(R)
+inline typename R::FT
 squared_distance(
     const Ray_3<R> & ray,
     const Segment_3<R> & seg)
@@ -859,15 +820,15 @@ each other.  This is dealt with as a special case.
 
 @$@<3D ray segment squared distance computation@>+=@{
 template <class R>
-R_FT_return(R)
+typename R::FT
 squared_distance(
     const Segment_3<R> &seg,
     const Ray_3<R> &ray)
 {
     typedef typename R::RT RT;
     typedef typename R::FT FT;
-    const Point_3<R> & ss (seg.start());
-    const Point_3<R> & se (seg.end());
+    const Point_3<R> & ss = seg.start();
+    const Point_3<R> & se = seg.end();
     if (ss == se)
         return squared_distance(ss, ray);
     Vector_3<R> raydir, segdir, normal;
@@ -969,9 +930,7 @@ further commentary.
                  ? squared_distance(ss, ray)
                  : squared_distance(se, ray);
             min2 = squared_distance(ray.start(), seg);
-            return (min1 < min2)
-                ? (R_FT_return(R))(min1)
-                : (R_FT_return(R))(min2);
+            return (min1 < min2) ? min1 : min2;
         }
     }
 }
@@ -979,7 +938,7 @@ further commentary.
 
 @$@<3D ray segment squared distance parallel case@>==@{
 template <class R>
-R_FT_return(R)
+typename R::FT
 squared_distance_parallel(
     const Segment_3<R> &seg,
     const Ray_3<R> &ray)
@@ -1004,7 +963,7 @@ squared_distance_parallel(
 @}
 
 
-@$@<3D squared distance outline definitions@>+=@{
+@$@<Ray Segment distance implementation@>==@{
 
 @! @<3D ray segment squared distance helper routine@>
 @<3D ray segment squared distance parallel case@>
@@ -1016,16 +975,10 @@ squared_distance_parallel(
 @C@<Declarations@>
 
 @$@<3D squared distance header declarations@>+=@{@-
+@<3D line segment squared distance computation@>
 
 template <class R>
-extern R_FT_return(R)
-squared_distance(
-    const Segment_3<R> &seg,
-    const Line_3<R> &line);
-
-
-template <class R>
-inline R_FT_return(R)
+inline typename R::FT
 squared_distance(
     const Line_3<R> & line,
     const Segment_3<R> & seg)
@@ -1043,7 +996,7 @@ We do not repeat the comments of the code that is the same.
 
 @$@<3D line segment squared distance computation@>+=@{
 template <class R>
-R_FT_return(R)
+typename R::FT
 squared_distance(
     const Segment_3<R> &seg,
     const Line_3<R> &line)
@@ -1111,21 +1064,13 @@ Finally, we compute the squared distance, depending on which case applies.
 @}
 
 
-@$@<3D squared distance outline definitions@>+=@{
 
-@<3D line segment squared distance computation@>
-@}
 
 @B@<Ray Ray distance@>
 
 @C@<Declarations@>
 @$@<3D squared distance header declarations@>+=@{@-
-
-template <class R>
-extern R_FT_return(R)
-squared_distance(
-    const Ray_3<R> &ray1,
-    const Ray_3<R> &ray2);
+@<Ray Ray distance implementation@>
 
 @}
 
@@ -1140,15 +1085,15 @@ Look at that routine for comments.
 
 @$@<3D ray ray squared distance computation@>+=@{
 template <class R>
-R_FT_return(R)
+typename R::FT
 squared_distance(
     const Ray_3<R> &ray1,
     const Ray_3<R> &ray2)
 {
     typedef typename R::RT RT;
     typedef typename R::FT FT;
-    const Point_3<R> & s1 (ray1.start());
-    const Point_3<R> & s2 (ray2.start());
+    const Point_3<R> & s1 = ray1.start();
+    const Point_3<R> & s2 = ray2.start();
     Vector_3<R> dir1, dir2, normal;
     dir1 = ray1.direction().vector();
     dir2 = ray2.direction().vector();
@@ -1194,9 +1139,7 @@ squared_distance(
           FT min1, min2;
             min1 = squared_distance(ray1.start(), ray2);
             min2 = squared_distance(ray2.start(), ray1);
-            return (min1 < min2)
-                ? (R_FT_return(R))(min1)
-                : (R_FT_return(R))(min2);
+            return (min1 < min2) ? min1 : min2;
         }
     }
 }
@@ -1214,7 +1157,7 @@ line of the other.
 
 @$@<3D ray ray squared distance parallel case@>==@{
 template <class R>
-R_FT_return(R)
+typename R::FT
 ray_ray_squared_distance_parallel(
     const Vector_3<R> &ray1dir,
     const Vector_3<R> &ray2dir,
@@ -1238,13 +1181,13 @@ ray_ray_squared_distance_parallel(
                     (sign(ray1dir.hz()) == sign(ray2dir.hz()));
         }
         if (!same_direction)
-            return (R_FT_return(R))(s1_min_s2*s1_min_s2);
+            return (typename R::FT)(s1_min_s2*s1_min_s2);
     }
     return squared_distance_to_line(ray1dir, s1_min_s2);
 }
 @}
 
-@$@<3D squared distance outline definitions@>+=@{
+@$@<Ray Ray distance implementation@>==@{
 
 @<3D ray ray squared distance parallel case@>
 @<3D ray ray squared distance computation@>
@@ -1254,16 +1197,10 @@ ray_ray_squared_distance_parallel(
 
 @C@<Declarations@>
 @$@<3D squared distance header declarations@>+=@{@-
+@<Line Ray distance implementation@>
 
 template <class R>
-extern R_FT_return(R)
-squared_distance(
-    const Line_3<R> &line,
-    const Ray_3<R> &ray);
-
-
-template <class R>
-inline R_FT_return(R)
+inline typename R::FT
 squared_distance(
     const Ray_3<R> & ray,
     const Line_3<R> & line)
@@ -1279,16 +1216,16 @@ The computation of the squared distance a line and a ray goes along the same
 lines as the computation of the square distance between two segments. With
 fewer endpoints, things get ever simpler to compute.
 
-@$@<3D squared distance outline definitions@>+=@{
+@$@<Line Ray distance implementation@>==@{
 
 template <class R>
-extern R_FT_return(R)
+extern typename R::FT
 squared_distance(
     const Line_3<R> &line,
     const Ray_3<R> &ray)
 {
     typedef typename R::RT RT;
-    const Point_3<R> & rs (ray.start());
+    const Point_3<R> & rs =ray.start();
     Vector_3<R> raydir, linedir, normal;
     linedir = line.direction().vector();
     raydir = ray.direction().vector();
@@ -1324,12 +1261,7 @@ squared_distance(
 
 @C@<Declarations@>
 @$@<3D squared distance header declarations@>+=@{
-
-template <class R>
-extern R_FT_return(R)
-squared_distance(
-    const Line_3<R> &line1,
-    const Line_3<R> &line2);
+@<Line Line distance implementation@>
 @}
 
 @C@<Implementation@>
@@ -1341,10 +1273,10 @@ on one line to the other line.
 Otherwise, the problem can be reduced to the squared distance from a point to a
 plane.
 
-@$@<3D squared distance outline definitions@>+=@{
+@$@<Line Line distance implementation@>==@{
 
 template <class R>
-R_FT_return(R)
+typename R::FT
 squared_distance(
     const Line_3<R> &line1,
     const Line_3<R> &line2)
@@ -1368,15 +1300,10 @@ squared_distance(
 @C@<Declarations@>
 
 @$@<3D squared distance 2 header declarations@>+=@{@-
+@<Point Plane distance implementation@>
 
 template <class R>
-extern R_FT_return(R)
-squared_distance(
-    const Point_3<R> &pt,
-    const Plane_3<R> &plane);
-
-template <class R>
-inline R_FT_return(R)
+inline typename R::FT
 squared_distance(
     const Plane_3<R> & plane,
     const Point_3<R> & pt)
@@ -1387,10 +1314,10 @@ squared_distance(
 
 @C@<Implementation@>
 
-@$@<3D squared distance 2 outline definitions@>+=@{@-
+@$@<Point Plane distance implementation@>==@{@-
 
 template <class R>
-inline R_FT_return(R)
+inline typename R::FT
 squared_distance(
     const Point_3<R> & pt,
     const Plane_3<R> & plane)
@@ -1419,16 +1346,10 @@ contains_vector(const Plane_3<R> &pl, const Vector_3<R> &vec)
 
 @C@<Declarations@>
 @$@<3D squared distance 2 header declarations@>+=@{@-
+@<Line Plane distance implementation@>
 
 template <class R>
-extern R_FT_return(R)
-squared_distance(
-    const Line_3<R> &line,
-    const Plane_3<R> &plane);
-
-
-template <class R>
-inline R_FT_return(R)
+inline typename R::FT
 squared_distance(
     const Plane_3<R> & p,
     const Line_3<R> & line)
@@ -1442,10 +1363,10 @@ squared_distance(
 If the line is parallel to the plane, we can take the squared distance of an
 arbitrary point of the line to the plane. Otherwise the distance is zero.
 
-@$@<3D squared distance 2 outline definitions@>+=@{
+@$@<Line Plane distance implementation@>==@{@-
 
 template <class R>
-extern R_FT_return(R)
+extern typename R::FT
 squared_distance(
     const Line_3<R> &line,
     const Plane_3<R> &plane)
@@ -1453,7 +1374,7 @@ squared_distance(
     typedef typename R::FT FT;
     if (contains_vector(plane, line.direction().vector() ))
         return squared_distance(plane, line.point());
-    return (R_FT_return(R))(FT(0));
+    return FT(0);
 }
 @}
 
@@ -1462,16 +1383,10 @@ squared_distance(
 
 @C@<Declarations@>
 @$@<3D squared distance 2 header declarations@>+=@{@-
+@<Ray Plane distance implementation@>
 
 template <class R>
-extern R_FT_return(R)
-squared_distance(
-    const Ray_3<R> &ray,
-    const Plane_3<R> &plane);
-
-
-template <class R>
-inline R_FT_return(R)
+inline typename R::FT
 squared_distance(
     const Plane_3<R> & plane,
     const Ray_3<R> & ray)
@@ -1483,9 +1398,9 @@ squared_distance(
 @C@<Implementation@>
 
 
-@$@<3D squared distance 2 outline definitions@>+=@{
+@$@<Ray Plane distance implementation@>==@{@-
 template <class R>
-extern R_FT_return(R)
+extern typename R::FT
 squared_distance(
     const Ray_3<R> &ray,
     const Plane_3<R> &plane)
@@ -1503,14 +1418,14 @@ squared_distance(
     switch (sign(sdm_rs2pp)) {
     case -1:
         if (sdm_re2pp > RT(0))
-            return (R_FT_return(R))(FT(0));
+            return FT(0);
         return squared_distance_to_plane(normal, start_min_pp);
     case 0:
     default:
-        return (R_FT_return(R))(FT(0));
+        return FT(0);
     case 1:
         if (sdm_re2pp < RT(0))
-            return (R_FT_return(R))(FT(0));
+            return FT(0);
         return squared_distance_to_plane(normal, start_min_pp);
     }
 }
@@ -1520,16 +1435,10 @@ squared_distance(
 
 @C@<Declarations@>
 @$@<3D squared distance 2 header declarations@>+=@{@-
+@<Segment Plane distance implementation@>
 
 template <class R>
-extern R_FT_return(R)
-squared_distance(
-    const Segment_3<R> &seg,
-    const Plane_3<R> &plane);
-
-
-template <class R>
-inline R_FT_return(R)
+inline typename R::FT
 squared_distance(
     const Plane_3<R> & plane,
     const Segment_3<R> & seg)
@@ -1541,10 +1450,10 @@ squared_distance(
 @C@<Implementation@>
 
 
-@$@<3D squared distance 2 outline definitions@>+=@{
+@$@<Segment Plane distance implementation@>==@{@-
 
 template <class R>
-extern R_FT_return(R)
+extern typename R::FT
 squared_distance(
     const Segment_3<R> &seg,
     const Plane_3<R> &plane)
@@ -1564,17 +1473,17 @@ squared_distance(
     switch (sign(sdm_ss2pp)) {
     case -1:
         if (sdm_se2pp >= RT(0))
-            return (R_FT_return(R))(FT(0));
+            return FT(0);
         if (sdm_ss2pp >= sdm_se2pp)
             return squared_distance_to_plane(normal, start_min_pp);
         else
             return squared_distance_to_plane(normal, end_min_pp);
     case 0:
     default:
-        return (R_FT_return(R))(FT(0));
+        return FT(0);
     case 1:
         if (sdm_se2pp <= RT(0))
-            return (R_FT_return(R))(FT(0));
+            return FT(0);
         if (sdm_ss2pp <= sdm_se2pp)
             return squared_distance_to_plane(normal, start_min_pp);
         else
@@ -1601,28 +1510,6 @@ Saarbruecken@)
 #include <CGAL/Point_3.h>
 #endif // CGAL_POINT_3_H
 
-CGAL_BEGIN_NAMESPACE
-
-@<3D squared distance general utilities@>
-@<3D squared distance 0 header declarations@>
-
-CGAL_END_NAMESPACE
-
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#include <CGAL/squared_distance_3_0.C>
-#endif
-
-
-#endif
-@}
-
-@O@<../include/CGAL/squared_distance_3_0.C@>==@{@-
-@<cgal_heading@>@(@-
-include/CGAL/squared_distance_3_0.C@,@-
-sqdistance_3.fw@,@-
-Geert-Jan Giezeman@,@-
-Saarbruecken@)
-
 #ifndef CGAL_UTILS_H
 #include <CGAL/utils.h>
 #endif // CGAL_UTILS_H
@@ -1635,9 +1522,13 @@ Saarbruecken@)
 
 CGAL_BEGIN_NAMESPACE
 
-@<3D squared distance 0 outline definitions@>
+@<3D squared distance general utilities@>
+@<3D squared distance 0 header declarations@>
 
 CGAL_END_NAMESPACE
+
+
+#endif
 @}
 
 
@@ -1661,27 +1552,6 @@ Saarbruecken@)
 #include <CGAL/Ray_3.h>
 #endif // CGAL_RAY_3_H
 
-CGAL_BEGIN_NAMESPACE
-
-@<3D squared distance header declarations@>
-
-CGAL_END_NAMESPACE
-
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#include <CGAL/squared_distance_3_1.C>
-#endif
-
-
-#endif
-@}
-
-@O@<../include/CGAL/squared_distance_3_1.C@>==@{@-
-@<cgal_heading@>@(@-
-include/CGAL/squared_distance_3_1.C@,@-
-sqdistance_3.fw@,@-
-Geert-Jan Giezeman@,@-
-Saarbruecken@)
-
 #ifndef CGAL_UTILS_H
 #include <CGAL/utils.h>
 #endif // CGAL_UTILS_H
@@ -1700,10 +1570,12 @@ Saarbruecken@)
 
 CGAL_BEGIN_NAMESPACE
 
-@<3D squared distance outline definitions@>
+@<3D squared distance header declarations@>
 
 CGAL_END_NAMESPACE
 
+
+#endif
 @}
 
 
@@ -1730,26 +1602,6 @@ Saarbruecken@)
 #include <CGAL/Plane_3.h>
 #endif // CGAL_PLANE_3_H
 
-CGAL_BEGIN_NAMESPACE
-
-@<3D squared distance 2 header declarations@>
-
-CGAL_END_NAMESPACE
-
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#include <CGAL/squared_distance_3_2.C>
-#endif
-
-
-#endif
-@}
-
-@O@<../include/CGAL/squared_distance_3_2.C@>==@{@-
-@<cgal_heading@>@(@-
-include/CGAL/squared_distance_3_2.C@,@-
-sqdistance_3.fw@,@-
-Geert-Jan Giezeman@,@-
-Saarbruecken@)
 
 #ifndef CGAL_UTILS_H
 #include <CGAL/utils.h>
@@ -1773,10 +1625,12 @@ Saarbruecken@)
 CGAL_BEGIN_NAMESPACE
 
 @<3D squared distance general utilities 2@>
-@<3D squared distance 2 outline definitions@>
+@<3D squared distance 2 header declarations@>
 
 CGAL_END_NAMESPACE
 
+
+#endif
 @}
 
 @O@<../include/CGAL/squared_distance_3.h@>==@{@-
