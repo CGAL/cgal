@@ -303,7 +303,7 @@ class Ext_Chain_field {
 // Definition of static variable
 template< class PivotHandle,
           class Field_,
-          class CompareWrtoFiltration
+          class CompareWrtoFiltration>
 typename Ext_Chain_field< PivotHandle, Field_, CompareWrtoFiltration>::Chain
          Ext_Chain_field< PivotHandle, Field_, CompareWrtoFiltration>::temp;
 template< class PivotHandle, 
