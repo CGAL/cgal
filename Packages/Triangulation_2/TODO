@@ -1,7 +1,4 @@
-- add demo and examples with the Kernels
-       Exact_predicates_exact_constructions_kernel
-       Exact_predicates_exact_constructions_kernel_with_sqrt
-       Exact_predicates_inexact_constructions_kernel
+
 - Vertex_with_info done remains the doc
 - doc de la triangulation reguliere a mettre a jour
 - input output of regular triangulation
@@ -22,8 +19,6 @@
 - suppress function set_number_of_vertices(int )
 - Regular_triangulation_2 : remplacer degenerate_power_test_2(p,q,r)
   par power_test_2(p,q,r)
-- add examples for Triangulation hierarchy
-  and for the use of both Constrained_plus and triangulation hierarchy
 - corriger le figure "three_layers" dans la doc 
 
 - Check if copy constructor and assignement operator of
@@ -38,7 +33,6 @@
   les mettre dans un fichier separe
   pour ne pas etre oblige d'inclure iostream obligatoirement
 
-- constrained_triangulation_plus_2 plante sur Sun CC
 - Constraint_hierarchy_3 
   to be done or redone : copy swap and delete
 

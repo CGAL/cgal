@@ -1457,10 +1457,10 @@ file_output( std::ostream& os, Vertex_handle v, bool skip_first) const
 	V[vit] = inum++;
 	// os << vit->point();
 	os << *vit;
-	if(is_ascii(os)) os << std::endl;
+	if(is_ascii(os)) os << "\n";
     }
   }
-  //if(is_ascii(os)) os << "\n";
+  if(is_ascii(os)) os << "\n";
 
   // vertices of the faces
   inum = 0;
@@ -1468,25 +1468,23 @@ file_output( std::ostream& os, Vertex_handle v, bool skip_first) const
   for( Face_iterator ib = face_iterator_base_begin();
        ib != face_iterator_base_end(); ++ib) {
     F[ib] = inum++;
-    for(int j = 0; j < dim ; ++j){
+    for(int j = 0; j < dim ; ++j) {
       os << V[ib->vertex(j)];
-      if(is_ascii(os)){
-	if(j== dimension())   os << "\n";
-	else     os <<  ' ';
-      }
+      if(is_ascii(os)) os << " ";
     }
+    os << *ib ;
+    if(is_ascii(os)) os << "\n";
   }
+  if(is_ascii(os)) os << "\n";
     
   // neighbor pointers of the  faces
   for( Face_iterator it = face_iterator_base_begin();
        it != face_iterator_base_end(); ++it) {
     for(int j = 0; j < dimension()+1; ++j){
       os << F[it->neighbor(j)];
-      if(is_ascii(os)){
-	if(j== dimension()) os << "\n";
-	else    os <<  ' ';
-      }
+      if(is_ascii(os))  os << " ";
     }
+    if(is_ascii(os)) os << "\n";
   }
 
   return ;
@@ -1521,11 +1519,8 @@ file_input( std::istream& is, bool skip_first)
     ++i;
   }
   for( ; i < n; ++i) {
-    // typename Vertex_base::Point p;
-    // is >> p;
     V[i] = create_vertex();
     is >> *(V[i]);
-    //V[i]->set_point(p);
   }
   
   // Creation of the faces
@@ -1541,6 +1536,8 @@ file_input( std::istream& is, bool skip_first)
 	// but otherwise we had to use a further map
 	V[index]->set_face(F[i]);
       }
+      // read in non combinatorial info of the face
+      is >> *(F[i]) ;
     }
   }
 

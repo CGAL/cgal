@@ -1,6 +1,17 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+ver 8.10 (22/08/03)
+- plug the input-output operator for faces in file_input() file_ouput
+  of tds. Remains to be done in other I/0 member functions
+- fixed a bug in propagate_conflicts(..) of 
+    Constrained_Delaynay_triangulation_2
+- in Constrained triangulation :
+  deprecated   bool are_there_incident_constraints(Vertex_handle v, 
+				      OutputIterator out) const;
+  added OutputItEdges  incident_constraints(Vertex_handle v, 
+				      OutputItEdges out) const
+
 ver 8.09 (20/08/03)
 - fixes bugs in the doc
 

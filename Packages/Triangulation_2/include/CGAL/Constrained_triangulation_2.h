@@ -143,9 +143,9 @@ public:
   bool is_constrained(Edge e) const;
   bool are_there_incident_constraints(Vertex_handle v) const;
   bool is_valid(bool verbose = false, int level = 0) const;
-  // template<class OutputIterator>
-  // bool are_there_incident_constraints(Vertex_handle v, 
-  //                                     OutputIterator out) const;
+  // template<class OutputItEdges>
+  // OutputItEdges incident_constraints(Vertex_handle v, 
+  //                                     OutputItEdges out) const;
   
 
   class Less_edge 
@@ -237,7 +237,8 @@ public:
       return number_of_vertices() - n;
     }
 
-  template<class OutputIterator>
+  //deprecated
+ template<class OutputIterator>
   bool are_there_incident_constraints(Vertex_handle v, 
 				      OutputIterator out) const
     {
@@ -253,6 +254,19 @@ public:
       } while (ec != done);
       return are_there;
     }
+
+  
+ template<class OutputItEdges>
+ OutputItEdges  incident_constraints(Vertex_handle v, 
+				      OutputItEdges out) const {
+   Edge_circulator ec=incident_edges(v), done(ec);
+   if (ec == 0) return  out;
+   do {
+     if(is_constrained(*ec))    *out++ = *ec;
+     ec++;
+   } while (ec != done);
+   return out;
+ }
  
   // the following fonctions are overloaded 
   // to take care of constraint marks 

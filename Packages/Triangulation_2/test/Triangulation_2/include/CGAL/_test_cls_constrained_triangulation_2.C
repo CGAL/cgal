@@ -224,10 +224,18 @@ _test_cls_constrained_triangulation(const Triang &)
   fh  =  T1_2.locate(Point(6,4),lt,li); assert( lt == Triang::VERTEX );
   vha = fh->vertex(li);
   List_edges edges;
-  assert(T1_2.are_there_incident_constraints(vha, std::back_inserter(edges)));
+  assert(T1_2.are_there_incident_constraints(vha,
+					     std::back_inserter(edges)));
+  List_edges ic_edges;
+  std::back_insert_iterator<List_edges> inserter(ic_edges);
+  inserter  = T1_2.incident_constraints(vha, inserter);
+  assert(ic_edges.size() == 1); 
   T1_2.remove_incident_constraints(vha);
+  inserter = T1_2.incident_constraints(vha, inserter );
+  assert(ic_edges.size() == 1); 
   T1_2.remove(vha);
   assert(T1_2.is_valid());
+  
 
    // remove_constraint and remove 2 dim
   std::cout << "remove_constrained_edge and remove 2-dim " << std::endl;
@@ -246,12 +254,23 @@ _test_cls_constrained_triangulation(const Triang &)
   assert(T2_2.are_there_incident_constraints(vhb));
   T2_2.remove_incident_constraints(vhb);
   T2_2.remove(vhb);
+
+  m=15;
   fh  =  T2_2.locate(lpt[m],lt,li); assert( lt == Triang::VERTEX );
   vha = fh->vertex(li);
-   edges.clear();
+  edges.clear();
+  ic_edges.clear();
   assert(T2_2.are_there_incident_constraints(vha));
+  assert(T2_2.are_there_incident_constraints(vha, 
+					     std::back_inserter(edges)));
+  ic_edges.clear();
+  inserter = std::back_insert_iterator<List_edges>(ic_edges);
+  inserter  = T2_2.incident_constraints(vha,inserter);
+  assert(ic_edges.size() == 2); 
   T2_2.remove_incident_constraints(vha);
+  inserter = T2_2.incident_constraints(vha, inserter);
+  assert(ic_edges.size() == 2);
   T2_2.remove(vha);
   assert(T2_2.is_valid());
-
+  
 }
