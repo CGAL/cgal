@@ -12,6 +12,8 @@ use strict;
 use vars qw($opt_p);
 use Getopt::Std;
 
+my ($PLATFORMS_BESIDE_RESULTS, $PLATFORMS_REF_BETWEEN_RESULTS)=(1,1);
+
 my $SCRIPTDIR = '/projects/CGAL/admin_scripts';
 
 my $TEMPPAGE="tmp$$.html";
@@ -126,7 +128,24 @@ EOF
 
     print OUTPUT "</TR>\n";
     my $test_directory;
+    my $test_num = 0;
     foreach $test_directory (@test_directories) {
+    	if ($PLATFORMS_REF_BETWEEN_RESULTS) {
+	    $test_num++;
+	    if ($test_num == 15) {
+	    	$test_num = 0;
+	    	print OUTPUT "\n<TR>  <TD ALIGN=center COLSPAN=2 >\n";
+	    	print OUTPUT
+		    '<A HREF="#platforms">Platform Description</A>';
+	    	print OUTPUT "\n</TD>\n";
+    	    	$platform_num=0;
+	    	while ($platform_num < $platform_count) {
+		    ++$platform_num;
+		    print OUTPUT "<TD> <B> $platform_num</B></TD>\n";
+	    	}
+	    	print OUTPUT "\n</TR>\n";
+	    }
+	}
 	my $version;
 	if ( -r "$test_directory/version" ) {
 	    open(VERSION, "$test_directory/version");
@@ -173,43 +192,47 @@ sub print_resultpage()
     my $platform_count = scalar(@platforms_to_do);
     my $pc_plus_2 = $platform_count + 2;
 
-    print OUTPUT <<"EOF";
-<H2><A NAME="testresults">Test Results</A></H2>
+    print OUTPUT '<H2><A NAME="testresults">Test Results</A></H2>',"\n";
+    if ($PLATFORMS_BESIDE_RESULTS) {
+    	print OUTPUT <<"EOF";
 <TABLE BORDER=0 CELLSPACING=5 CELLPADDING=0>
 <TR ALIGN=CENTER>
 <TD>
 EOF
+    }
 
     print_result_table();
 
 
-    print OUTPUT <<"EOF";
+    if ($PLATFORMS_BESIDE_RESULTS) {
+    	print OUTPUT <<"EOF";
 </TD>
 <TD>
 <TABLE BORDER=0 CELLSPACING=2 CELLPADDING=0>
 EOF
-    if ($platform_count > 0) {
-    my $repeat_count = scalar(@test_directories)/$platform_count;
-	while ($repeat_count >= 1) {
-	    $repeat_count--;
-	    print OUTPUT <<"EOF";
+    	if ($platform_count > 0) {
+    	    my $repeat_count = scalar(@test_directories)/$platform_count;
+	    while ($repeat_count >= 1) {
+	    	$repeat_count--;
+	    	print OUTPUT <<"EOF";
 <TR>
 <TD>
 EOF
-            print_platforms();
-            print OUTPUT <<"EOF";
+                print_platforms();
+                print OUTPUT <<"EOF";
 </TD>
 </TR>
 EOF
+	    }
 	}
-    }
 
-    print OUTPUT <<"EOF";
+	print OUTPUT <<"EOF";
 </TABLE>
 </TD>
 </TR>
 </TABLE>
 EOF
+    }
 }
 
 sub choose_platforms()
@@ -395,10 +418,8 @@ on it.
 <B>N.B. The detection of warnings is not exact.
 Look at the output to be sure!</B>
 <OL>
+<LI><A HREF="#platforms">Platform Description</A> </LI>
 <LI><A HREF="#testresults">Test Results</A> </LI>
-EOF
-
-    print OUTPUT<<"EOF";
 <LI><A HREF="http://www.mpi-sb.mpg.de/~hert/CGAL/${release_name}.manual_test.html">
 The documentation of this release</A></LI>
 EOF
@@ -461,11 +482,11 @@ sub main()
     chdir $release_name or die;
     collect_results();
     print_header();
+    print OUTPUT
+     '<H2><A NAME="platforms">Platform Description and Summary</A></H2>',"\n";
     print_platform_descriptions();
     print OUTPUT "<P>\n";
     print_resultpage();
-    print OUTPUT "<P>\n";
-    print_platform_descriptions();
     print OUTPUT "<P>\n";
     print OUTPUT `$SCRIPTDIR/print_cgal_trailer`;
     close OUTPUT;
