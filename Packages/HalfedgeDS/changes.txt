@@ -8,6 +8,7 @@ HalfedgeDS Package: Release changes:
      - Changed pointer update in HalfedgeDS_list from std::map to
        CGAL::Unique_hash_map improving speed.
      - Proof read and formatted the documentation. 
+     - Changes static allocators to local member variables.
 
 3.14 (05 Jul 2001)
 

@@ -210,9 +210,10 @@ public:
     }
 
 protected:
-    static Vertex_allocator vertex_allocator;
-    static Edge_allocator   edge_allocator;  // allocates pairs of halfedges
-    static Face_allocator   face_allocator;
+    // Changed from static to local variable
+    Vertex_allocator vertex_allocator;
+    Edge_allocator   edge_allocator;  // allocates pairs of halfedges
+    Face_allocator   face_allocator;
     
     Vertex* get_vertex_node( const Vertex& t) {
         Vertex* p = vertex_allocator.allocate(1);
@@ -547,25 +548,18 @@ public:
 #define CGAL__HDS_IP_List HalfedgeDS_list::HDS
 #endif
 
-// init static member allocator objects
-template < class Traits_, class HalfedgeDSItems, class Alloc>
-typename CGAL__HDS_IP_List<Traits_, HalfedgeDSItems, Alloc>::Vertex_allocator
-CGAL__HDS_IP_List<Traits_, HalfedgeDSItems, Alloc>::vertex_allocator;
-
-template < class Traits_, class HalfedgeDSItems, class Alloc>
-typename CGAL__HDS_IP_List<Traits_, HalfedgeDSItems, Alloc>::Edge_allocator
-CGAL__HDS_IP_List<Traits_, HalfedgeDSItems, Alloc>::edge_allocator;
-
-template < class Traits_, class HalfedgeDSItems, class Alloc>
-typename CGAL__HDS_IP_List<Traits_, HalfedgeDSItems, Alloc>::Face_allocator
-CGAL__HDS_IP_List<Traits_, HalfedgeDSItems, Alloc>::face_allocator;
-
-
-// A class for comparing handles, used in the maps below.
-//template < class Handle>
-//struct CGAL__HDS_Cmp_handle {
-//    bool operator()( Handle a, Handle b) const { return &*a < &*b; }
-//};
+// init static member allocator objects (no longer static)
+//template < class Traits_, class HalfedgeDSItems, class Alloc>
+//typename CGAL__HDS_IP_List<Traits_, HalfedgeDSItems, Alloc>::Vertex_allocator
+//CGAL__HDS_IP_List<Traits_, HalfedgeDSItems, Alloc>::vertex_allocator;
+//
+//template < class Traits_, class HalfedgeDSItems, class Alloc>
+//typename CGAL__HDS_IP_List<Traits_, HalfedgeDSItems, Alloc>::Edge_allocator
+//CGAL__HDS_IP_List<Traits_, HalfedgeDSItems, Alloc>::edge_allocator;
+//
+//template < class Traits_, class HalfedgeDSItems, class Alloc>
+//typename CGAL__HDS_IP_List<Traits_, HalfedgeDSItems, Alloc>::Face_allocator
+//CGAL__HDS_IP_List<Traits_, HalfedgeDSItems, Alloc>::face_allocator;
 
 template < class Traits_, class HalfedgeDSItems, class Alloc>
 void
@@ -576,17 +570,6 @@ pointer_update( const CGAL__HDS_IP_List<Traits_,HalfedgeDSItems,Alloc>& hds) {
     typedef Unique_hash_map< Vertex_const_iterator, Vertex_iterator>     V_map;
     typedef Unique_hash_map< Halfedge_const_iterator, Halfedge_iterator> H_map;
     typedef Unique_hash_map< Face_const_iterator, Face_iterator>         F_map;
-
-
-//      typedef std::map< Vertex_const_handle,
-//                        Vertex_handle,
-//                        CGAL__HDS_Cmp_handle< Vertex_const_handle> >   V_map;
-//      typedef std::map< Halfedge_const_handle,
-//                        Halfedge_handle,
-//                        CGAL__HDS_Cmp_handle< Halfedge_const_handle > >H_map;
-//      typedef std::map< Face_const_handle,
-//                        Face_handle,
-//                        CGAL__HDS_Cmp_handle< Face_const_handle > >    F_map;
     // initialize maps.
     H_map h_map( hds.halfedges_begin(), hds.halfedges_end(),
                  halfedges_begin(), Halfedge_iterator(), 
