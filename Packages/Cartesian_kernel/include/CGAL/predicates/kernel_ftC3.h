@@ -295,6 +295,19 @@ side_of_bounded_sphereC3(const FT &px, const FT &py, const FT &pz,
 	                           + (tz-pz)*(qz-tz)) );
 }
 
+template < class FT >
+CGAL_KERNEL_INLINE
+Comparison_result
+cmp_dist_to_pointC3(const FT &px, const FT &py, const FT &pz,
+                    const FT &qx, const FT &qy, const FT &qz,
+                    const FT &rx, const FT &ry, const FT &rz)
+{
+  return CGAL_NTS compare(squared_distanceC3(px,py,pz,qx,qy,qz),
+                          squared_distanceC3(px,py,pz,rx,ry,rz));
+}
+
+// Because of the way the filtered predicates generator script works,
+// cmp_dist_to_pointC3() must be defined _before_ ths following one.
 template <class FT >
 CGAL_KERNEL_MEDIUM_INLINE
 Bounded_side
@@ -340,17 +353,6 @@ side_of_bounded_sphereC3(const FT &px, const FT &py, const FT &pz,
   return Bounded_side(cmp_dist_to_pointC3(num_x,    - num_y,  num_z,
 	                                  psx*den2, psy*den2, psz*den2,
 	                                  tsx*den2, tsy*den2, tsz*den2) );
-}
-
-template < class FT >
-CGAL_KERNEL_INLINE
-Comparison_result
-cmp_dist_to_pointC3(const FT &px, const FT &py, const FT &pz,
-                    const FT &qx, const FT &qy, const FT &qz,
-                    const FT &rx, const FT &ry, const FT &rz)
-{
-  return CGAL_NTS compare(squared_distanceC3(px,py,pz,qx,qy,qz),
-                          squared_distanceC3(px,py,pz,rx,ry,rz));
 }
 
 template < class FT >
