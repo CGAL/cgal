@@ -33,6 +33,7 @@
 #include <iostream>
 #include <CGAL/circulator.h>
 #include <CGAL/Indirect_less_xy_2.h>
+#include <cassert>
 
 namespace CGAL {
 
@@ -345,7 +346,7 @@ public:
        if (empty()) return result;
    
        Self_iterator m_it = begin();
-       Vertex_iterator v_it = (*m_it).first;
+       Vertex_iterator v_it;
        Vertex_iterator first_v_it;
        Vertex_iterator prev_v_it;
        Vertex_iterator next_v_it;
@@ -375,10 +376,9 @@ public:
        result++;
 
        // find the map iterator corresponding to the next vertex 
-       prev_v_it  = v_it;
+       prev_v_it  = (*m_it).first;
        v_it = next_v_it;
        m_it = find(v_it);
-       CGAL_assertion (m_it == end() || (*m_it).first == v_it);
        
        while (v_it != first_v_it && m_it != end())
        {
