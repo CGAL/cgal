@@ -182,8 +182,8 @@
       <benchPmwxCgalWindowCoreExprSimpleCartesianCoreConic/>
       <benchPmwxGmpqCartesianCkConic enable="false"/>
       <benchPmwxGmpqSimpleCartesianCkConic enable="false"/>
-      <benchPmwxNixLedaCartesianExacusConic enable="false"/>
-      <benchPmwxNixCoreCartesianExacusConic enable="false"/>
+      <benchPmwxNixLedaCartesianExacusConic/>
+      <benchPmwxNixCoreCartesianExacusConic/>
     </bench>
     <bench file="mix_20.dat" enable="true">
       <benchPmwxLedaRealCartesianConic/>
