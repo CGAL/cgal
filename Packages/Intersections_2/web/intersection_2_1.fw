@@ -55,9 +55,9 @@ public:
 protected:
     Bbox_2 const *      _bbox;
     Line_2< Rcart > _line;
-    bool                     _known;
-    Intersection_results     _result;
-    double                   _min, _max;
+    mutable bool                     _known;
+    mutable Intersection_results     _result;
+    mutable double                   _min, _max;
 };
 
 template <class R>
@@ -170,8 +170,7 @@ Once inline (which the g++ compiler wants because of a bug) and once outline.
     if (_known)
         return _result;
     // The non const this pointer is used to cast away const.
-    Bbox_2_Line_2_pair<R> *ncthis = (Bbox_2_Line_2_pair<R> *) this;
-    ncthis->_known = true;
+    _known = true;
     const Point_2< Cartesian<double> > &ref_point = _line.point();
     const Vector_2< Cartesian<double> > &dir =
                                _line.direction().to_vector();
@@ -179,11 +178,11 @@ Once inline (which the g++ compiler wants because of a bug) and once outline.
 // first on x value
     if (dir.x() == 0.0) {
         if (ref_point.x() < _bbox->xmin()) {
-            ncthis->_result = NO;
+            _result = NO;
             return _result;
         }
         if (ref_point.x() > _bbox->xmax()) {
-            ncthis->_result = NO;
+            _result = NO;
             return _result;
         }
     } else {
@@ -196,15 +195,15 @@ Once inline (which the g++ compiler wants because of a bug) and once outline.
             newmax = (_bbox->xmin()-ref_point.x())/dir.x();
         }
         if (to_infinity) {
-            ncthis->_min = newmin;
-            ncthis->_max = newmax;
+            _min = newmin;
+            _max = newmax;
         } else {
             if (newmin > _min)
-                ncthis->_min = newmin;
+                _min = newmin;
             if (newmax < _max)
-                ncthis->_max = newmax;
+                _max = newmax;
             if (_max < _min) {
-                ncthis->_result = NO;
+                _result = NO;
                 return _result;
             }
         }
@@ -213,11 +212,11 @@ Once inline (which the g++ compiler wants because of a bug) and once outline.
 // now on y value
     if (dir.y() == 0.0) {
         if (ref_point.y() < _bbox->ymin()) {
-            ncthis->_result = NO;
+            _result = NO;
             return _result;
         }
         if (ref_point.y() > _bbox->ymax()) {
-            ncthis->_result = NO;
+            _result = NO;
             return _result;
         }
     } else {
@@ -230,15 +229,15 @@ Once inline (which the g++ compiler wants because of a bug) and once outline.
             newmax = (_bbox->ymin()-ref_point.y())/dir.y();
         }
         if (to_infinity) {
-            ncthis->_min = newmin;
-            ncthis->_max = newmax;
+            _min = newmin;
+            _max = newmax;
         } else {
             if (newmin > _min)
-                ncthis->_min = newmin;
+                _min = newmin;
             if (newmax < _max)
-                ncthis->_max = newmax;
+                _max = newmax;
             if (_max < _min) {
-                ncthis->_result = NO;
+                _result = NO;
                 return _result;
             }
         }
@@ -246,10 +245,10 @@ Once inline (which the g++ compiler wants because of a bug) and once outline.
     }
     CGAL_kernel_assertion(!to_infinity);
     if (_max == _min) {
-        ncthis->_result = POINT;
+        _result = POINT;
         return _result;
     }
-    ncthis->_result = SEGMENT;
+    _result = SEGMENT;
     return _result;
 }
 @}
@@ -329,11 +328,11 @@ public:
 protected:
     Ray_2< Rcart >        _ray;
     Bbox_2 const *        _box;
-    bool                       _known;
-    Intersection_results       _result;
-    Point_2< Rcart >      _ref_point;
-    Vector_2< Rcart >     _dir;
-    double                     _min,
+    mutable bool                       _known;
+    mutable Intersection_results       _result;
+    mutable Point_2< Rcart >      _ref_point;
+    mutable Vector_2< Rcart >     _dir;
+    mutable double                     _min,
                                _max;
 };
 
@@ -395,8 +394,8 @@ Ray_2_Bbox_2_pair(Ray_2<R> const *ray, Bbox_2 const *box)
     _known = false;
     _box = box;
 // convert the ray to a ray parametrised by doubles.
-    Point_2<R> const &start(ray->start());
-    Vector_2<R> const &dir(ray->direction().to_vector());
+    Point_2<R> const &start=ray->start();
+    Vector_2<R> const &dir=ray->direction().to_vector();
     _ref_point = Point_2< Rcart >
                 ( to_double(start.x()), to_double(start.y()));
     double dx = to_double(dir.x());
@@ -446,17 +445,16 @@ CGAL_END_NAMESPACE
 {
     if (_known)
         return _result;
-    Ray_2_Bbox_2_pair<R> *ncthis = (Ray_2_Bbox_2_pair<R> *) this;
-    ncthis->_known = true;
+    _known = true;
     bool to_infinity = true;
 // first on x value
     if (_dir.x() == 0.0) {
         if (_ref_point.x() < _box->xmin()) {
-            ncthis->_result = NO;
+            _result = NO;
             return _result;
         }
         if (_ref_point.x() > _box->xmax()) {
-            ncthis->_result = NO;
+            _result = NO;
             return _result;
         }
     } else {
@@ -469,15 +467,15 @@ CGAL_END_NAMESPACE
             newmax = (_box->xmin()-_ref_point.x())/_dir.x();
         }
         if (newmin > _min)
-            ncthis->_min = newmin;
+            _min = newmin;
         if (to_infinity) {
-            ncthis->_max = newmax;
+            _max = newmax;
         } else {
             if (newmax < _max)
-                ncthis->_max = newmax;
+                _max = newmax;
         }
         if (_max < _min){
-            ncthis->_result = NO;
+            _result = NO;
             return _result;
         }
         to_infinity = false;
@@ -485,11 +483,11 @@ CGAL_END_NAMESPACE
 // now on y value
     if (_dir.y() == 0.0) {
         if (_ref_point.y() < _box->ymin()) {
-            ncthis->_result = NO;
+            _result = NO;
             return _result;
         }
         if (_ref_point.y() > _box->ymax()) {
-            ncthis->_result = NO;
+            _result = NO;
             return _result;
         }
     } else {
@@ -502,25 +500,25 @@ CGAL_END_NAMESPACE
             newmax = (_box->ymin()-_ref_point.y())/_dir.y();
         }
         if (newmin > _min)
-            ncthis->_min = newmin;
+            _min = newmin;
         if (to_infinity) {
-            ncthis->_max = newmax;
+            _max = newmax;
         } else {
             if (newmax < _max)
-                ncthis->_max = newmax;
+                _max = newmax;
         }
         if (_max < _min) {
-            ncthis->_result = NO;
+            _result = NO;
             return _result;
         }
         to_infinity = false;
     }
     CGAL_kernel_assertion(!to_infinity);
     if (_max == _min) {
-        ncthis->_result = POINT;
+        _result = POINT;
         return _result;
     }
-    ncthis->_result = SEGMENT;
+    _result = SEGMENT;
     return _result;
 }
 @}
@@ -586,9 +584,9 @@ public:
 protected:
     Line_2<R> const*   _line1;
     Line_2<R> const *  _line2;
-    bool                    _known;
-    Intersection_results    _result;
-    Point_2<R>         _intersection_point;
+    mutable bool                    _known;
+    mutable Intersection_results    _result;
+    mutable Point_2<R>         _intersection_point;
 };
 
 @<do_intersect macro@>@(Line_2@,Line_2@)
@@ -747,34 +745,33 @@ CGAL_END_NAMESPACE
         return _result;
     RT nom1, nom2, denom;
     // The non const this pointer is used to cast away const.
-    Line_2_Line_2_pair<R> *ncthis = (Line_2_Line_2_pair<R> *) this;
-    ncthis->_known = true;
+    _known = true;
     denom = _line1->a()*_line2->b() - _line2->a()*_line1->b();
     if (denom == RT(0)) {
         if (RT(0) == (_line1->a()*_line2->c() - _line2->a()*_line1->c()) &&
             RT(0) == (_line1->b()*_line2->c() - _line2->b()*_line1->c()))
-            ncthis->_result = LINE;
+            _result = LINE;
         else
-            ncthis->_result = NO;
+            _result = NO;
         return _result;
     }
     nom1 = (_line1->b()*_line2->c() - _line2->b()*_line1->c());
     if (!::CGAL::is_finite(nom1)) {
-        ncthis->_result = NO;
+        _result = NO;
         return _result;
     }
     nom2 = (_line2->a()*_line1->c() - _line1->a()*_line2->c());
     if (!::CGAL::is_finite(nom2)) {
-        ncthis->_result = NO;
+        _result = NO;
         return _result;
     }
     R dummyR;
-    if (!construct_if_finite(ncthis->_intersection_point,
+    if (!construct_if_finite(_intersection_point,
                             nom1, nom2, denom, dummyR)){
-        ncthis->_result = NO;
+        _result = NO;
         return _result;
     }
-    ncthis->_result = POINT;
+    _result = POINT;
     return _result;
 }
 @}
@@ -829,9 +826,9 @@ public:
 protected:
     Segment_2<R> const*_seg;
     Line_2<R> const *  _line;
-    bool                    _known;
-    Intersection_results     _result;
-    Point_2<R>         _intersection_point;
+    mutable bool                    _known;
+    mutable Intersection_results     _result;
+    mutable Point_2<R>         _intersection_point;
 };
 
 @<do_intersect macro@>@(Segment_2@,Line_2@)
@@ -949,22 +946,20 @@ CGAL_END_NAMESPACE
     if (_known)
         return _result;
     // The non const this pointer is used to cast away const.
-    Segment_2_Line_2_pair<R> *ncthis =
-            (Segment_2_Line_2_pair<R> *) this;
-    ncthis->_known = true;
+    _known = true;
     const Line_2<R> &l1 = _seg->supporting_line();
     Line_2_Line_2_pair<R> linepair(&l1, _line);
     switch ( linepair.intersection_type()) {
     case Line_2_Line_2_pair<R>::NO:
-        ncthis->_result = NO;
+        _result = NO;
         break;
     case Line_2_Line_2_pair<R>::POINT:
-        linepair.intersection(ncthis->_intersection_point);
-        ncthis->_result = (_seg->collinear_has_on(_intersection_point) )
+        linepair.intersection(_intersection_point);
+        _result = (_seg->collinear_has_on(_intersection_point) )
                 ? POINT : NO;
         break;
     case Line_2_Line_2_pair<R>::LINE:
-        ncthis->_result = SEGMENT;
+        _result = SEGMENT;
         break;
     }
     return _result;
@@ -1010,9 +1005,9 @@ public:
 protected:
     Segment_2<R> const*   _seg1;
     Segment_2<R> const *  _seg2;
-    bool                       _known;
-    Intersection_results       _result;
-    Point_2<R>            _intersection_point, _other_point;
+    mutable bool                       _known;
+    mutable Intersection_results       _result;
+    mutable Point_2<R>            _intersection_point, _other_point;
 };
 
 @<do_intersect macro@>@(Segment_2@,Segment_2@)
@@ -1116,11 +1111,9 @@ CGAL_END_NAMESPACE
     if (_known)
         return _result;
     // The non const this pointer is used to cast away const.
-    Segment_2_Segment_2_pair<R> *ncthis =
-                (Segment_2_Segment_2_pair<R> *) this;
-    ncthis->_known = true;
+    _known = true;
     if (!do_overlap(_seg1->bbox(), _seg2->bbox())) {
-        ncthis->_result = NO;
+        _result = NO;
         return _result;
     }
     Line_2<R> const &l1 = _seg1->supporting_line();
@@ -1128,11 +1121,11 @@ CGAL_END_NAMESPACE
     Line_2_Line_2_pair<R> linepair(&l1, &l2);
     switch ( linepair.intersection_type()) {
     case Line_2_Line_2_pair<R>::NO:
-        ncthis->_result = NO;
+        _result = NO;
         break;
     case Line_2_Line_2_pair<R>::POINT:
-        linepair.intersection(ncthis->_intersection_point);
-        ncthis->_result = (_seg1->collinear_has_on(_intersection_point)
+        linepair.intersection(_intersection_point);
+        _result = (_seg1->collinear_has_on(_intersection_point)
             && _seg2->collinear_has_on(_intersection_point)) ? POINT : NO;
         break;
     case Line_2_Line_2_pair<R>::LINE:
@@ -1193,17 +1186,17 @@ if (start2.@1() < end2.@1()) {
     }
 }
 if (maxpt->@1() < minpt->@1()) {
-    ncthis->_result = NO;
+    _result = NO;
     return _result;
 }
 if (maxpt->@1() == minpt->@1()) {
-    ncthis->_intersection_point = *minpt;
-    ncthis->_result = POINT;
+    _intersection_point = *minpt;
+    _result = POINT;
     return _result;
 }
-ncthis->_intersection_point = *minpt;
-ncthis->_other_point = *maxpt;
-ncthis->_result = SEGMENT;
+_intersection_point = *minpt;
+_other_point = *maxpt;
+_result = SEGMENT;
 return _result; @-
 @}
 
@@ -1257,9 +1250,9 @@ public:
 protected:
     Ray_2<R> const *   _ray;
     Line_2<R> const *  _line;
-    bool                    _known;
-    Intersection_results    _result;
-    Point_2<R>         _intersection_point;
+    mutable bool                    _known;
+    mutable Intersection_results    _result;
+    mutable Point_2<R>         _intersection_point;
 };
 
 @<do_intersect macro@>@(Ray_2@,Line_2@)
@@ -1378,22 +1371,20 @@ CGAL_END_NAMESPACE
     if (_known)
         return _result;
     // The non const this pointer is used to cast away const.
-    Ray_2_Line_2_pair<R> *ncthis =
-                (Ray_2_Line_2_pair<R> *) this;
-    ncthis->_known = true;
+    _known = true;
     const Line_2<R> &l1 = _ray->supporting_line();
     Line_2_Line_2_pair<R> linepair(&l1, _line);
     switch ( linepair.intersection_type()) {
     case Line_2_Line_2_pair<R>::NO:
-        ncthis->_result = NO;
+        _result = NO;
         break;
     case Line_2_Line_2_pair<R>::POINT:
-        linepair.intersection(ncthis->_intersection_point);
-        ncthis->_result = (_ray->collinear_has_on(_intersection_point) ) ?
+        linepair.intersection(_intersection_point);
+        _result = (_ray->collinear_has_on(_intersection_point) ) ?
                 POINT : NO;
         break;
     case Line_2_Line_2_pair<R>::LINE:
-        ncthis->_result = RAY;
+        _result = RAY;
         break;
     }
     return _result;
@@ -1450,9 +1441,9 @@ public:
 protected:
     Ray_2<R> const *   _ray;
     Segment_2<R> const *  _seg;
-    bool                    _known;
-    Intersection_results    _result;
-    Point_2<R>         _intersection_point, _other_point;
+    mutable bool                    _known;
+    mutable Intersection_results    _result;
+    mutable Point_2<R>         _intersection_point, _other_point;
 };
 
 @<do_intersect macro@>@(Ray_2@,Segment_2@)
@@ -1574,9 +1565,7 @@ CGAL_END_NAMESPACE
     if (_known)
         return _result;
     // The non const this pointer is used to cast away const.
-    Ray_2_Segment_2_pair<R> *ncthis =
-                (Ray_2_Segment_2_pair<R> *) this;
-    ncthis->_known = true;
+    _known = true;
 //    if (!do_overlap(_ray->bbox(), _seg->bbox()))
 //        return NO;
     const Line_2<R> &l1 = _ray->supporting_line();
@@ -1584,11 +1573,11 @@ CGAL_END_NAMESPACE
     Line_2_Line_2_pair<R> linepair(&l1, &l2);
     switch ( linepair.intersection_type()) {
     case Line_2_Line_2_pair<R>::NO:
-        ncthis->_result = NO;
+        _result = NO;
         return _result;
     case Line_2_Line_2_pair<R>::POINT:
-        linepair.intersection(ncthis->_intersection_point);
-        ncthis->_result = (_ray->collinear_has_on(_intersection_point)
+        linepair.intersection(_intersection_point);
+        _result = (_ray->collinear_has_on(_intersection_point)
                 && _seg->collinear_has_on(_intersection_point) )
             ? POINT :  NO;
         return _result;
@@ -1637,41 +1626,41 @@ if (start1.@1() < end1.@1()) {
 }
 if (_ray->direction().to_vector().@1() > FT(0)) {
     if (maxpt->@1() < start2.@1()) {
-        ncthis->_result = NO;
+        _result = NO;
         return _result;
     }
     if (maxpt->@1() == start2.@1()) {
-        ncthis->_intersection_point = *maxpt;
-        ncthis->_result = POINT;
+        _intersection_point = *maxpt;
+        _result = POINT;
         return _result;
     }
     if (minpt->@1() < start2.@1()) {
-        ncthis->_intersection_point = start2;
-        ncthis->_other_point = *maxpt;
+        _intersection_point = start2;
+        _other_point = *maxpt;
     } else {
-        ncthis->_intersection_point = _seg->start();
-        ncthis->_other_point = _seg->end();
+        _intersection_point = _seg->start();
+        _other_point = _seg->end();
     }
-    ncthis->_result = SEGMENT;
+    _result = SEGMENT;
     return _result;
 } else {
     if (minpt->@1() > start2.@1()) {
-        ncthis->_result = NO;
+        _result = NO;
         return _result;
     }
     if (minpt->@1() == start2.@1()) {
-        ncthis->_intersection_point = *minpt;
-        ncthis->_result = POINT;
+        _intersection_point = *minpt;
+        _result = POINT;
         return _result;
     }
     if (maxpt->@1() > start2.@1()) {
-        ncthis->_intersection_point = start2;
-        ncthis->_other_point = *maxpt;
+        _intersection_point = start2;
+        _other_point = *maxpt;
     } else {
-        ncthis->_intersection_point = _seg->start();
-        ncthis->_other_point = _seg->end();
+        _intersection_point = _seg->start();
+        _other_point = _seg->end();
     }
-    ncthis->_result = SEGMENT;
+    _result = SEGMENT;
     return _result;
 }@-
 @}
@@ -1720,9 +1709,9 @@ public:
 protected:
     Ray_2<R> const*    _ray1;
     Ray_2<R> const *   _ray2;
-    bool                    _known;
-    Intersection_results    _result;
-    Point_2<R>         _intersection_point, _other_point;
+    mutable bool                    _known;
+    mutable Intersection_results    _result;
+    mutable Point_2<R>         _intersection_point, _other_point;
 };
 
 @<do_intersect macro@>@(Ray_2@,Ray_2@)
@@ -1844,9 +1833,7 @@ CGAL_END_NAMESPACE
     if (_known)
         return _result;
     // The non const this pointer is used to cast away const.
-    Ray_2_Ray_2_pair<R> *ncthis =
-                (Ray_2_Ray_2_pair<R> *) this;
-    ncthis->_known = true;
+    _known = true;
 //    if (!do_overlap(_ray1->bbox(), _ray2->bbox()))
 //        return NO;
     const Line_2<R> &l1 = _ray1->supporting_line();
@@ -1854,11 +1841,11 @@ CGAL_END_NAMESPACE
     Line_2_Line_2_pair<R> linepair(&l1, &l2);
     switch ( linepair.intersection_type()) {
     case Line_2_Line_2_pair<R>::NO:
-        ncthis->_result = NO;
+        _result = NO;
         return _result;
     case Line_2_Line_2_pair<R>::POINT:
-        linepair.intersection(ncthis->_intersection_point);
-        ncthis->_result = (_ray1->collinear_has_on(_intersection_point)
+        linepair.intersection(_intersection_point);
+        _result = (_ray1->collinear_has_on(_intersection_point)
                 && _ray2->collinear_has_on(_intersection_point) )
             ? POINT :  NO;
         return _result;
@@ -1897,42 +1884,42 @@ parameter. Then a check is made to see if there is an overlapping interval.
 typedef typename R::FT FT;
 if (dir1.@1() > FT(0)) {
     if (dir2.@1() > FT(0)) {
-        ncthis->_intersection_point =
+        _intersection_point =
                 (_ray1->start().@1() < _ray2->start().@1())
                 ? _ray2->start() : _ray1->start();
-        ncthis->_result = RAY;
+        _result = RAY;
         return _result;
     } else {
         if (_ray1->start().@1() > _ray2->start().@1()) {
-            ncthis->_result = NO;
+            _result = NO;
             return _result;
         }
         if (_ray1->start().@1() == _ray2->start().@1()) {
-            ncthis->_intersection_point = _ray1->start();
-            ncthis->_result = POINT;
+            _intersection_point = _ray1->start();
+            _result = POINT;
             return _result;
         }
-        ncthis->_result = SEGMENT;
+        _result = SEGMENT;
         return _result;
     }
 } else {
     if (dir2.@1() < FT(0)) {
-        ncthis->_intersection_point =
+        _intersection_point =
                 (_ray1->start().@1() > _ray2->start().@1())
                 ? _ray2->start() : _ray1->start();
-        ncthis->_result = RAY;
+        _result = RAY;
         return _result;
     } else {
         if (_ray1->start().@1() < _ray2->start().@1()) {
-            ncthis->_result = NO;
+            _result = NO;
             return _result;
         }
         if (_ray1->start().@1() == _ray2->start().@1()) {
-            ncthis->_intersection_point = _ray1->start();
-            ncthis->_result = POINT;
+            _intersection_point = _ray1->start();
+            _result = POINT;
             return _result;
         }
-        ncthis->_result = SEGMENT;
+        _result = SEGMENT;
         return _result;
     }
 }

@@ -86,9 +86,9 @@ public:
 protected:
     Triangle_2<R> const*   _trian1;
     Triangle_2<R> const *  _trian2;
-    bool                    _known;
-    Intersection_results    _result;
-    _Pointlist_2<R>    _pointlist;
+    mutable bool                    _known;
+    mutable Intersection_results    _result;
+    mutable _Pointlist_2<R>    _pointlist;
 };
 
 @<do_intersect macro@>@(Triangle_2@,Triangle_2@)
@@ -403,14 +403,12 @@ CGAL_END_NAMESPACE
     if (_known)
         return _result;
 // The non const this pointer is used to cast away const.
-    Triangle_2_Triangle_2_pair<R> *ncthis =
-                (Triangle_2_Triangle_2_pair<R> *) this;
-    ncthis->_known = true;
+    _known = true;
     if (!do_overlap(_trian1->bbox(), _trian2->bbox())) {
-        ncthis->_result = NO;
+        _result = NO;
         return _result;
     }
-    _init_list(ncthis->_pointlist, *_trian1);
+    _init_list(_pointlist, *_trian1);
     if (_trian2->is_degenerate()) {
         // _not_implemented();
         CGAL_kernel_assertion(false);
@@ -418,35 +416,35 @@ CGAL_END_NAMESPACE
         Line_2<R> l(_trian2->vertex(0), _trian2->vertex(1));
         if (l.oriented_side(_trian2->vertex(2)) == ON_POSITIVE_SIDE) {
             // counterclockwise triangle
-            _cut_off(ncthis->_pointlist, l);
+            _cut_off(_pointlist, l);
             l = Line_2<R>(_trian2->vertex(1), _trian2->vertex(2));
-            _cut_off(ncthis->_pointlist, l);
+            _cut_off(_pointlist, l);
             l = Line_2<R>(_trian2->vertex(2), _trian2->vertex(0));
-            _cut_off(ncthis->_pointlist, l);
+            _cut_off(_pointlist, l);
         } else {
             l = l.opposite();
-            _cut_off(ncthis->_pointlist, l);
+            _cut_off(_pointlist, l);
             l = Line_2<R>(_trian2->vertex(0), _trian2->vertex(2));
-            _cut_off(ncthis->_pointlist, l);
+            _cut_off(_pointlist, l);
             l = Line_2<R>(_trian2->vertex(2), _trian2->vertex(1));
-            _cut_off(ncthis->_pointlist, l);
+            _cut_off(_pointlist, l);
         }
     }
     switch (_pointlist.size) {
     case 0:
-        ncthis->_result = NO;
+        _result = NO;
         break;
     case 1:
-        ncthis->_result = POINT;
+        _result = POINT;
         break;
     case 2:
-        ncthis->_result = SEGMENT;
+        _result = SEGMENT;
         break;
     case 3:
-        ncthis->_result = TRIANGLE;
+        _result = TRIANGLE;
         break;
     default:
-        ncthis->_result = POLYGON;
+        _result = POLYGON;
     }
     return _result;
 }
@@ -501,10 +499,10 @@ public:
 protected:
     Line_2<R> const*_line;
     Triangle_2<R> const *  _trian;
-    bool                    _known;
-    Intersection_results     _result;
-    Point_2<R>         _intersection_point;
-    Point_2<R>         _other_point;
+    mutable bool                    _known;
+    mutable Intersection_results     _result;
+    mutable Point_2<R>         _intersection_point;
+    mutable Point_2<R>         _other_point;
 };
 
 @<do_intersect macro@>@(Line_2@,Triangle_2@)
@@ -632,9 +630,7 @@ CGAL_END_NAMESPACE
     if (_known)
         return _result;
 // The non const this pointer is used to cast away const.
-    Line_2_Triangle_2_pair<R> *ncthis =
-                (Line_2_Triangle_2_pair<R> *) this;
-    ncthis->_known = true;
+    _known = true;
     Straight_2_<R> straight(*_line);
 Line_2<R> l(_trian->vertex(0), _trian->vertex(1));
 if (l.oriented_side(_trian->vertex(2)) == ON_POSITIVE_SIDE) {
@@ -655,24 +651,24 @@ if (l.oriented_side(_trian->vertex(2)) == ON_POSITIVE_SIDE) {
     }
     switch (straight.current_state()) {
     case Straight_2_<R>::EMPTY:
-        ncthis->_result = NO;
+        _result = NO;
         return _result;
     case Straight_2_<R>::POINT: {
-        straight.current(ncthis->_intersection_point);
-        ncthis->_result = POINT;
+        straight.current(_intersection_point);
+        _result = POINT;
         return _result;
         }
     case Straight_2_<R>::SEGMENT: {
         Segment_2<R> seg;
         straight.current(seg);
-        ncthis->_intersection_point = seg.start();
-        ncthis->_other_point = seg.end();
-        ncthis->_result = SEGMENT;
+        _intersection_point = seg.start();
+        _other_point = seg.end();
+        _result = SEGMENT;
         return _result;
         }
     default:  // should not happen.
         CGAL_kernel_assertion_msg(false, "Internal CGAL error.");
-        ncthis->_result = NO;
+        _result = NO;
         return _result;
     }
 }
@@ -723,10 +719,10 @@ public:
 protected:
     Ray_2<R> const* _ray;
     Triangle_2<R> const *  _trian;
-    bool                    _known;
-    Intersection_results     _result;
-    Point_2<R>         _intersection_point;
-    Point_2<R>         _other_point;
+    mutable bool                    _known;
+    mutable Intersection_results     _result;
+    mutable Point_2<R>         _intersection_point;
+    mutable Point_2<R>         _other_point;
 };
 
 @<do_intersect macro@>@(Ray_2@,Triangle_2@)
@@ -856,9 +852,7 @@ CGAL_END_NAMESPACE
     if (_known)
         return _result;
 // The non const this pointer is used to cast away const.
-    Ray_2_Triangle_2_pair<R> *ncthis =
-                (Ray_2_Triangle_2_pair<R> *) this;
-    ncthis->_known = true;
+    _known = true;
     Straight_2_<R> straight(*_ray);
 Line_2<R> l(_trian->vertex(0), _trian->vertex(1));
 if (l.oriented_side(_trian->vertex(2)) == ON_POSITIVE_SIDE) {
@@ -879,24 +873,24 @@ if (l.oriented_side(_trian->vertex(2)) == ON_POSITIVE_SIDE) {
     }
     switch (straight.current_state()) {
     case Straight_2_<R>::EMPTY:
-        ncthis->_result = NO;
+        _result = NO;
         return _result;
     case Straight_2_<R>::POINT: {
-        straight.current(ncthis->_intersection_point);
-        ncthis->_result = POINT;
+        straight.current(_intersection_point);
+        _result = POINT;
         return _result;
         }
     case Straight_2_<R>::SEGMENT: {
         Segment_2<R> seg;
         straight.current(seg);
-        ncthis->_intersection_point = seg.start();
-        ncthis->_other_point = seg.end();
-        ncthis->_result = SEGMENT;
+        _intersection_point = seg.start();
+        _other_point = seg.end();
+        _result = SEGMENT;
         return _result;
         }
     default:  // should not happen.
         CGAL_kernel_assertion_msg(false, "Internal CGAL error.");
-        ncthis->_result = NO;
+        _result = NO;
         return _result;
     }
 }
@@ -946,10 +940,10 @@ public:
 protected:
     Segment_2<R> const *  _seg;
     Triangle_2<R> const * _trian;
-    bool                       _known;
-    Intersection_results       _result;
-    Point_2<R>            _intersection_point;
-    Point_2<R>            _other_point;
+    mutable bool                       _known;
+    mutable Intersection_results       _result;
+    mutable Point_2<R>            _intersection_point;
+    mutable Point_2<R>            _other_point;
 };
 
 @<do_intersect macro@>@(Segment_2@,Triangle_2@)
@@ -1080,9 +1074,7 @@ CGAL_END_NAMESPACE
     if (_known)
         return _result;
 // The non const this pointer is used to cast away const.
-    Segment_2_Triangle_2_pair<R> *ncthis =
-                (Segment_2_Triangle_2_pair<R> *) this;
-    ncthis->_known = true;
+    _known = true;
     Straight_2_<R> straight(*_seg);
 Line_2<R> l(_trian->vertex(0), _trian->vertex(1));
 if (l.oriented_side(_trian->vertex(2)) == ON_POSITIVE_SIDE) {
@@ -1102,24 +1094,24 @@ if (l.oriented_side(_trian->vertex(2)) == ON_POSITIVE_SIDE) {
     }
     switch (straight.current_state()) {
     case Straight_2_<R>::EMPTY:
-        ncthis->_result = NO;
+        _result = NO;
         return _result;
     case Straight_2_<R>::POINT: {
-        straight.current(ncthis->_intersection_point);
-        ncthis->_result = POINT;
+        straight.current(_intersection_point);
+        _result = POINT;
         return _result;
         }
     case Straight_2_<R>::SEGMENT: {
         Segment_2<R> seg;
         straight.current(seg);
-        ncthis->_intersection_point = seg.start();
-        ncthis->_other_point = seg.end();
-        ncthis->_result = SEGMENT;
+        _intersection_point = seg.start();
+        _other_point = seg.end();
+        _result = SEGMENT;
         return _result;
         }
     default:  // should not happen.
         CGAL_kernel_assertion_msg(false, "Internal CGAL error.");
-        ncthis->_result = NO;
+        _result = NO;
         return _result;
     }
 }
@@ -1169,10 +1161,10 @@ public:
 protected:
     Point_2<R> const *    _pt;
     Triangle_2<R> const * _trian;
-    bool                       _known;
-    Intersection_results       _result;
-    Point_2<R>            _intersection_point;
-    Point_2<R>            _other_point;
+    mutable bool                       _known;
+    mutable Intersection_results       _result;
+    mutable Point_2<R>            _intersection_point;
+    mutable Point_2<R>            _other_point;
 };
 
 @<do_intersect macro@>@(Point_2@,Triangle_2@)
@@ -1285,13 +1277,11 @@ CGAL_END_NAMESPACE
     if (_known)
         return _result;
 // The non const this pointer is used to cast away const.
-    Point_2_Triangle_2_pair<R> *ncthis =
-                (Point_2_Triangle_2_pair<R> *) this;
-    ncthis->_known = true;
+    _known = true;
     if (_trian->has_on_unbounded_side(*_pt)) {
-        ncthis->_result = NO;
+        _result = NO;
     } else {
-        ncthis->_result = POINT;
+        _result = POINT;
     }
     return _result;
 /*
@@ -1300,7 +1290,7 @@ CGAL_END_NAMESPACE
         for (int i=0; i<3; i++) {
             if (line_t(_trian->vertex(i), _trian->vertex(i+1)).
                                 has_on_negative_side(*_pt)) {
-                ncthis->_result = NO;
+                _result = NO;
                 return _result;
             }
         }
@@ -1308,7 +1298,7 @@ CGAL_END_NAMESPACE
         for (int i=0; i<3; i++)
             if(line_t(_trian->vertex(i), _trian->vertex(i-1)).
                                 has_on_negative_side(*_pt)){
-                ncthis->_result = NO;
+                _result = NO;
                 return _result;
             }
     }
@@ -1363,9 +1353,9 @@ protected:
     Vector_2<R>            _dir;
     Point_2<R>             _isomin;
     Point_2<R>             _isomax;
-    bool                        _known;
-    Intersection_results        _result;
-    typename R::FT              _min, _max;
+    mutable bool                        _known;
+    mutable Intersection_results        _result;
+    mutable typename R::FT              _min, _max;
 };
 
 @<do_intersect macro@>@(Line_2@,Iso_rectangle_2@)
@@ -1499,9 +1489,7 @@ Once inline (which the g++ compiler wants because of a bug) and once outline.
     if (_known)
         return _result;
 // The non const this pointer is used to cast away const.
-    Line_2_Iso_rectangle_2_pair<R> *ncthis =
-                (Line_2_Iso_rectangle_2_pair<R> *) this;
-    ncthis->_known = true;
+    _known = true;
     typedef typename R::FT FT;
     typedef typename R::RT RT;
     bool all_values = true;
@@ -1509,11 +1497,11 @@ Once inline (which the g++ compiler wants because of a bug) and once outline.
     for (i=0; i< _ref_point.dimension(); i++) {
         if (_dir.homogeneous(i) == RT(0)) {
             if (_ref_point.cartesian(i) < _isomin.cartesian(i)) {
-                ncthis->_result = NO;
+                _result = NO;
                 return NO;
             }
             if (_ref_point.cartesian(i) > _isomax.cartesian(i)) {
-                ncthis->_result = NO;
+                _result = NO;
                 return NO;
             }
         } else {
@@ -1530,15 +1518,15 @@ Once inline (which the g++ compiler wants because of a bug) and once outline.
                     _dir.cartesian(i);
             }
             if (all_values) {
-                ncthis->_min = newmin;
-                ncthis->_max = newmax;
+                _min = newmin;
+                _max = newmax;
             } else {
                 if (newmin > _min)
-                    ncthis->_min = newmin;
+                    _min = newmin;
                 if (newmax < _max)
-                    ncthis->_max = newmax;
+                    _max = newmax;
                 if (_max < _min) {
-                    ncthis->_result = NO;
+                    _result = NO;
                     return NO;
                 }
             }
@@ -1547,10 +1535,10 @@ Once inline (which the g++ compiler wants because of a bug) and once outline.
     }
     CGAL_kernel_assertion(!all_values);
     if (_max == _min) {
-        ncthis->_result = POINT;
+        _result = POINT;
         return POINT;
     }
-    ncthis->_result = SEGMENT;
+    _result = SEGMENT;
     return SEGMENT;
 }
 @}
@@ -1575,8 +1563,8 @@ intersection_2_2.fw@,@-
 Geert-Jan Giezeman@,@-
 Saarbruecken@)
 
-#ifndef CGAL_RAY_2_BBOX_2_INTERSECTION_H
-#define CGAL_RAY_2_BBOX_2_INTERSECTION_H
+#ifndef CGAL_RAY_2_ISO_RECTANGLE_2_INTERSECTION_H
+#define CGAL_RAY_2_ISO_RECTANGLE_2_INTERSECTION_H
 
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Ray_2.h>
@@ -1608,13 +1596,13 @@ public:
     bool                       intersection(
                                     Segment_2<R> &result) const;
 protected:
-    bool                       _known;
-    Intersection_results       _result;
-    Point_2<R>            _ref_point;
-    Vector_2<R>           _dir;
-    Point_2<R>            _isomin;
-    Point_2<R>            _isomax;
-    typename R::FT                     _min,
+    mutable bool                       _known;
+    mutable Intersection_results       _result;
+    mutable Point_2<R>            _ref_point;
+    mutable Vector_2<R>           _dir;
+    mutable Point_2<R>            _isomin;
+    mutable Point_2<R>            _isomax;
+    mutable typename R::FT                     _min,
                                _max;
 };
 
@@ -1679,7 +1667,7 @@ intersection(const Iso_rectangle_2<R>&iso, const Ray_2<R>&ray)
 
 CGAL_END_NAMESPACE
 
-#endif
+#endif // CGAL_RAY_2_iSO_RECTANGLE_2_INTERSECTION_H
 @}
 
 
@@ -1749,18 +1737,16 @@ CGAL_END_NAMESPACE
     typedef typename R::FT FT;
     if (_known)
         return _result;
-    Ray_2_Iso_rectangle_2_pair<R> *ncthis =
-                (Ray_2_Iso_rectangle_2_pair<R> *) this;
-    ncthis->_known = true;
+    _known = true;
     bool to_infinity = true;
     for (int i=0; i<_ref_point.dimension(); i++) {
         if (_dir.homogeneous(i) == RT(0)) {
             if (_ref_point.cartesian(i) < _isomin.cartesian(i)) {
-                ncthis->_result = NO;
+                _result = NO;
                 return _result;
             }
             if (_ref_point.cartesian(i) > _isomax.cartesian(i)) {
-                ncthis->_result = NO;
+                _result = NO;
                 return _result;
             }
         } else {
@@ -1777,15 +1763,15 @@ CGAL_END_NAMESPACE
                     _dir.cartesian(i);
             }
             if (newmin > _min)
-                ncthis->_min = newmin;
+                _min = newmin;
             if (to_infinity) {
-                ncthis->_max = newmax;
+                _max = newmax;
             } else {
                 if (newmax < _max)
-                    ncthis->_max = newmax;
+                    _max = newmax;
             }
             if (_max < _min) {
-                ncthis->_result = NO;
+                _result = NO;
                 return _result;
             }
             to_infinity = false;
@@ -1793,10 +1779,10 @@ CGAL_END_NAMESPACE
     }
     CGAL_kernel_assertion(!to_infinity);
     if (_max == _min) {
-        ncthis->_result = POINT;
+        _result = POINT;
         return _result;
     }
-    ncthis->_result = SEGMENT;
+    _result = SEGMENT;
     return _result;
 }
 @}
@@ -1822,8 +1808,8 @@ intersection_2_2.fw@,@-
 Geert-Jan Giezeman@,@-
 Saarbruecken@)
 
-#ifndef CGAL_SEGMENT_2_BBOX_2_INTERSECTION_H
-#define CGAL_SEGMENT_2_BBOX_2_INTERSECTION_H
+#ifndef CGAL_SEGMENT_2_ISO_RECTANGLE_2_INTERSECTION_H
+#define CGAL_SEGMENT_2_ISO_RECTANGLE_2_INTERSECTION_H
 
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Segment_2.h>
@@ -1854,13 +1840,13 @@ public:
     bool                       intersection(
                                     Segment_2<R> &result) const;
 protected:
-    bool                       _known;
-    Intersection_results       _result;
-    Point_2<R>            _ref_point;
-    Vector_2<R>           _dir;
-    Point_2<R>            _isomin;
-    Point_2<R>            _isomax;
-    typename R::FT              _min,
+    mutable bool                       _known;
+    mutable Intersection_results       _result;
+    mutable Point_2<R>            _ref_point;
+    mutable Vector_2<R>           _dir;
+    mutable Point_2<R>            _isomin;
+    mutable Point_2<R>            _isomax;
+    mutable typename R::FT              _min,
                                _max;
 };
 
@@ -1927,7 +1913,7 @@ intersection(
 
 CGAL_END_NAMESPACE
 
-#endif
+#endif // CGAL_SEGMENT_2_ISO_RECTANGLE_2_INTERSECTION_H
 @}
 
 
@@ -2000,17 +1986,15 @@ CGAL_END_NAMESPACE
     typedef typename R::FT FT;
     if (_known)
         return _result;
-    Segment_2_Iso_rectangle_2_pair<R> *ncthis =
-                (Segment_2_Iso_rectangle_2_pair<R> *) this;
-    ncthis->_known = true;
+    _known = true;
     for (int i=0; i<_ref_point.dimension(); i++) {
         if (_dir.homogeneous(i) == RT(0)) {
             if (_ref_point.cartesian(i) < _isomin.cartesian(i)) {
-                ncthis->_result = NO;
+                _result = NO;
                 return _result;
             }
             if (_ref_point.cartesian(i) > _isomax.cartesian(i)) {
-                ncthis->_result = NO;
+                _result = NO;
                 return _result;
             }
         } else {
@@ -2027,20 +2011,20 @@ CGAL_END_NAMESPACE
                     _dir.cartesian(i);
             }
             if (newmin > _min)
-                ncthis->_min = newmin;
+                _min = newmin;
             if (newmax < _max)
-                ncthis->_max = newmax;
+                _max = newmax;
             if (_max < _min) {
-                ncthis->_result = NO;
+                _result = NO;
                 return _result;
             }
         }
     }
     if (_max == _min) {
-        ncthis->_result = POINT;
+        _result = POINT;
         return _result;
     }
-    ncthis->_result = SEGMENT;
+    _result = SEGMENT;
     return _result;
 }
 @}
