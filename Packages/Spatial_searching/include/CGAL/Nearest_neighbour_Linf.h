@@ -19,8 +19,8 @@
 //
 // ======================================================================
 
-#ifndef  NEAREST_NEIGHBOUR_L2_INF
-#define  NEAREST_NEIGHBOUR_L2_INF
+#ifndef  NEAREST_NEIGHBOUR_L2_INF_H
+#define  NEAREST_NEIGHBOUR_L2_INF_H
 
 #include <cstring>
 #include <list>

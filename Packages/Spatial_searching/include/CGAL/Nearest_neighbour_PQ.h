@@ -23,25 +23,29 @@
 //
 // ======================================================================
 
-#ifndef  NEAREST_NEIGHBOUR_PQ
-#define  NEAREST_NEIGHBOUR_PQ
+#ifndef  NEAREST_NEIGHBOUR_PQ_H
+#define  NEAREST_NEIGHBOUR_PQ_H
 
 #include <cstring>
 #include <list>
 #include <queue>
 #include <memory>
-#include "Extended_internal_node.hpp"
-#include "Kd_tree_traits_point.hpp"
-#include "box.hpp"
+#include <CGAL/Extended_internal_node.h>
+#include <CGAL/Box.h>
+
+// copy to example.cpp
+// #include <CGAL/Kd_tree_traits_point.h>
+// #include <CGAL/Weighted_Minkowski_distance.h>
 
 using std::list; // to avoid compiler crash on MSVC++
 
 namespace CGAL {
 
-typedef Search_traits_template<Tree_traits> Search_traits;
+// copy to example.cpp
+// typedef Search_traits_template<Tree_traits> Search_traits;
 
 template <class Tree_traits, class Search_traits>
-class Nearest_neighbour_Linf {
+class Nearest_neighbour_PQ {
 
     private:
 
@@ -91,13 +95,13 @@ class Nearest_neighbour_Linf {
     public:
 
     // constructor
-    Nearest_neighbour_Linf(Tree& tree, Item& q, NT Eps=0.0) {
-		start = new Iterator(tree,q,Eps);
-                past_the_end = new Iterator();
-	};
+    Nearest_neighbour_PQ(Tree& tree, Item& q, Search_traits& tr, NT Eps=0.0) {
+        start = new Iterator(tree,q,tr,Eps);
+        past_the_end = new Iterator();
+    };
 
     // destructor
-    ~Nearest_neighbour_Linf() {
+    ~Nearest_neighbour_PQ() {
 		delete start;
                 delete past_the_end;
     };
@@ -131,19 +135,14 @@ class Nearest_neighbour_Linf {
     }
 
     // constructor
-    class Iterator(Tree& tree, Item& q, NT eps=0.0) {
-        Ptr_implementation = new Iterator_implementation(tree, q, eps);
-        // std::cout << "called standard constructor" << std::endl;
-        // std::cout << "reference_count is" << Ptr_implementation->reference_count << std::endl;
+    class Iterator(Tree& tree, Item& q, Search_traits& tr, NT eps=0.0) {
+        Ptr_implementation = new Iterator_implementation(tree, q, tr, eps);
     }
 
     // copy constructor
     class Iterator(Iterator& Iter) {
-        // std::cout << "called copy constructor"  << std::endl;
-        // if (Iter.Ptr_implementation != 0) std::cout << "reference_count is" << Iter.Ptr_implementation->reference_count << std::endl;
         Ptr_implementation = Iter.Ptr_implementation;
         if (Ptr_implementation != 0) Ptr_implementation->reference_count++;
-        // if (Ptr_implementation != 0) std::cout << "new reference_count is" << Ptr_implementation->reference_count << std::endl;
     }
 
     Item_with_distance& operator* () {
@@ -178,27 +177,15 @@ class Nearest_neighbour_Linf {
     }
 
     ~Iterator() {
-        // std::cout << "called ~iterator"  << std::endl;
         if (Ptr_implementation != 0) {
-               //  std::cout << "reference_count is" << Ptr_implementation->reference_count << std::endl;
                 Ptr_implementation->reference_count--;
                 if (Ptr_implementation->reference_count==0) {
                         delete Ptr_implementation;
                         Ptr_implementation = 0;
                 }
-               // if (Ptr_implementation != 0) std::cout << "new reference_count is" << Ptr_implementation->reference_count << std::endl;
         }
-        // else std::cout << "Ptr_implementation is null" << std::endl;
     }
 
-    /*
-    Iterator begin() {
-        return Iterator(Ptr_tree,Ptr_q,epsilon);
-    }
-
-    Iterator end() {
-        return Iterator();
-    }*/
 
     class Iterator_implementation {
 
@@ -226,26 +213,28 @@ class Nearest_neighbour_Linf {
     std::priority_queue<Node_with_distance*, Node_with_distance_vector,
     Priority_higher> PriorityQueue;
 
-	public:
+    Search_traits* Search_traits_instance;
 
-	int reference_count;
+    public:
+
+    int reference_count;
 
     std::priority_queue<Item_with_distance*, Item_with_distance_vector,
     Distance_smaller> Item_PriorityQueue;
 
     // constructor
-    Iterator_implementation(Tree& tree, Item& q, NT Eps=0.0) {
+    Iterator_implementation(Tree& tree, Item& q, Search_traits& tr, NT Eps=0.0) {
 
         reference_count=1;
-
-        multiplication_factor=(1.0+Eps)*(1.0+Eps);
+        Search_traits_instance=&tr;
+        multiplication_factor=Search_traits_instance->Transformed_distance(1.0+Eps);
 
         max_distance=
-        Max_distance_linf_to_box<NT,Item>(q,*(tree.bounding_box()));
+        Search_traits_instance->Max_distance_to_box(q,*(tree.bounding_box()));
         distance_to_root=
-        Min_distance_linf_to_box<NT,Item>(q,*(tree.bounding_box()));
-        // std::cout << "squared_max_distance=" << squared_max_distance << std::endl;
-        ///std::cout << "distance_to_root=" << distance_to_root << std::endl;
+        Search_traits_instance->Min_distance_to_box(q,*(tree.bounding_box()));
+        std::cout << "max_distance=" << max_distance << std::endl;
+        std::cout << "distance_to_root=" << distance_to_root << std::endl;
 
         query_point = &q;
 
@@ -334,16 +323,18 @@ class Nearest_neighbour_Linf {
                         NT new_off =
                         (*query_point)[new_cut_dim] - N->separator()->cutting_value();
                         if (new_off < 0.0) {
-								if (-new_off > rd) new_rd=-new_off;
-								else new_rd=rd;
+								old_off= (*query_point)[new_cut_dim]-N->low_value();
+                                if (old_off>0.0) old_off=0.0;
+                                new_rd=Search_traits_instance->New_Distance(rd,old_off,new_off,new_cut_dim);
                                 Node_with_distance *Upper_Child =
                                 new Node_with_distance(N->upper(),new_rd);
                                 PriorityQueue.push(Upper_Child);
                                 N=N->lower();
                         }
                         else { // compute new distance
-							    if (new_off > rd) new_rd=new_off;
-                                else new_rd=rd;
+								old_off= N->high_value() - (*query_point)[new_cut_dim];
+                                if (old_off>0.0) old_off=0.0;
+                                new_rd=Search_traits_instance->New_Distance(rd,old_off,new_off,new_cut_dim);
                                 Node_with_distance *Lower_Child =
                                 new Node_with_distance(N->lower(),new_rd);
                                 PriorityQueue.push(Lower_Child);
@@ -354,11 +345,8 @@ class Nearest_neighbour_Linf {
                 number_of_leaf_nodes_visited++;
                 for (Item_iterator it=N->begin(); it != N->end(); it++) {
                         number_of_items_visited++;
-                        NT distance_to_query_point=0.0;
-                        for (int i=0; i< (*it)->dimension(); i++)       {
-                                if (fabs((*query_point)[i] - (*(*it))[i]) > distance_to_query_point)
-                                distance_to_query_point = fabs((*query_point)[i] - (*(*it))[i]);
-                        }
+                        NT distance_to_query_point=
+                        Search_traits_instance->Distance(*query_point,**it);
                         Item_with_distance *NN_Candidate=
                         new Item_with_distance(*it,distance_to_query_point);
                         Item_PriorityQueue.push(NN_Candidate);
@@ -383,14 +371,15 @@ class Nearest_neighbour_Linf {
 }; // class Iterator
 }; // class Nearest neighbour_L2
 
-template <class Traits>
-void swap (Nearest_neighbour_Linf<Traits>::Iterator& x,
-        Nearest_neighbour_Linf<Traits>::Iterator& y) {
-        Nearest_neighbour_Linf<Traits>::Iterator::Iterator_implementation
+template <class Tree_traits, class Search_traits>
+void swap (Nearest_neighbour_PQ<Tree_traits, Search_traits>::Iterator& x,
+        Nearest_neighbour_PQ<Tree_traits, Search_traits>::Iterator& y) {
+        Nearest_neighbour_PQ<Tree_traits, Search_traits>::Iterator::Iterator_implementation
         *tmp = x.Ptr_implementation;
         x.Ptr_implementation  = y.Ptr_implementation;
         y.Ptr_implementation = tmp;
-    }
+};
+
 } // namespace CGAL
 
 
