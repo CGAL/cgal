@@ -2825,6 +2825,9 @@ test_gmp()
     if [ -n "${GMP_SUPPORT}" ]; then
 	${_printf} "%s\n" '
 	#include <cstdio>
+	#ifdef __SUNPRO_CC
+	using std::printf;
+	#endif
 	#ifdef __BORLANDC__
 	#include <cstddef>
 	using std::size_t;
