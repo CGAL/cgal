@@ -7,6 +7,21 @@
 
 Concerning the main code:
 -------------------------
+- Policy for overlapping comparisons : another good (faster) solution
+  would be to set a static boolean variable to indicate a buggy comparison
+  happenned (a la IEEE inexact flags).  Drawback is that it's not thread safe,
+  but could be made safe with pthread_key_create()...
+  Clearly, all this stuff is policy.
+    struct overlap_throw {
+      void operator() const { throw(ce_qui_faut); }
+    };
+  Or :
+    class overlap_static {
+      static bool pipo = false;
+    public:
+      void operator() const { pipo = true; }
+      void reset() const { pipo = false; }
+    };
 - Pentium 4 : gcc -march=pentium4 -mfpmath=sse supports something like:
     #include <xmmintrin.h>
     #include <iostream>
@@ -15,8 +30,18 @@ Concerning the main code:
     {
       int i = _mm_getcsr();
       std::cout << i << std::endl;
+
+      x = _MM_GET_ROUNDING_MODE()
+      _MM_SET_ROUNDING_MODE(x)
       return 0;
     }
+  Faut juste bien faire gaffe a __SSE2__ pour savoir quelle unite est utilisee
+  pour les calculs (x87 ou SSE2).  Ca pourrait meme etre les deux (bonjour le
+  bordel...).
+  Avantage : y'a pas de risque d'overflow/underflow avec la SSE2, donc on peut
+  disabler le workaround.
+  Y'a peut-etre meme des instructions interessantes pour speeder l'IA avec la
+  SSE2.
 - Use expression templates for Interval_nt<> and Lazy_exact_nt<>.
 - Specializations for is_zero() and co, and make use of them in the kernel.
   [Filtered_exact<> doesn't define them either, it's a bug...]
