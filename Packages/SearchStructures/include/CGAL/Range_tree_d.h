@@ -64,7 +64,7 @@ struct range_tree_node: public tree_node_base
   protected:
   typedef Range_tree_d< C_Data,  C_Window,  C_Interface> rT_d;
 public:
-  friend class rT_d;
+  friend class Range_tree_d< C_Data,  C_Window,  C_Interface>;
   
   range_tree_node() 
   {
