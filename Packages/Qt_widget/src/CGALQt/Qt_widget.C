@@ -510,6 +510,8 @@ void Qt_widget::clear() {
       ptemp = painter;
       QPainter *painter_for_printer = new QPainter(printer);
       painter = painter_for_printer;
+      painter->setClipping(true);
+      painter->setClipRect(0, 0, width(), height());
       lock();
         std::list<Qt_widget_layer*>::iterator it;
 		    for(it = qt_layers.begin(); it!= qt_layers.end(); it++)
