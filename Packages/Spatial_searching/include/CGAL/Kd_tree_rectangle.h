@@ -1,4 +1,5 @@
 // ======================================================================
+//
 // Copyright (c) 2002 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
@@ -7,15 +8,15 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       :
-// release_date  :
+// release       : $CGAL_Revision: CGAL-2.5-I-99 $
+// release_date  : $CGAL_Date: 2003/05/23 $
 //
 // file          : include/CGAL/Kd_tree_rectangle.h
-// package       : ASPAS
+// package       : ASPAS (3.12)
+// maintainer    : Hans Tangelder <hanst@cs.uu.nl>
 // revision      : 2.4 
 // revision_date : 2003/02/01 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
-// maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
 // coordinator   : Utrecht University
 //
 // ======================================================================
@@ -233,7 +234,8 @@ namespace CGAL {
     return 1;
   } */
 
-  // checks whether an epsilon eroded iso rectangle r
+  // checks whether the an epsilon eroded iso rectangle r
+  // including the boundaries
   // intersects the kd_tree rectangle   
   template <class Rectangle>
   inline bool intersects_eroded_rectangle(
@@ -246,15 +248,16 @@ namespace CGAL {
     return 1;
   } 
 
-  // checks whether an epsilon dilated iso rectangle r 
+  // checks whether the interior of 
+  // an epsilon dilated iso rectangle r 
   // encloses the kd_tree rectangle
   template <class Rectangle>
   inline bool is_enclosed_by_dilated_rectangle(
 	const Rectangle& r, const NT eps) 
   {
     for (int i = 0; i < dim; ++i) {
-        if (  (r.max_coord(i)+eps < upper_[i]) 
-	|| (r.min_coord(i)-eps > lower_[i]) ) return 0;
+        if (  (r.max_coord(i)+eps <= upper_[i]) 
+	|| (r.min_coord(i)-eps >= lower_[i]) ) return 0;
     }
     return 1;
   } 

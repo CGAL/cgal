@@ -5,7 +5,7 @@
 #include <CGAL/point_generators_2.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/General_standard_search.h>
-#include <CGAL/Weighted_Minkowski_distance.h>
+#include <CGAL/Euclidean_distance.h>
 #include <CGAL/basic.h>
 
 #include <vector>
@@ -19,7 +19,7 @@ typedef CGAL::Kd_tree_rectangle<NT> Rectangle;
 typedef CGAL::Plane_separator<NT> Separator;
 
 typedef CGAL::Kd_tree_traits_point<Point> Traits;
-typedef CGAL::Weighted_Minkowski_distance<Point> Distance;
+typedef CGAL::Euclidean_distance<Point> Distance;
 typedef CGAL::General_standard_search<Traits, Point, Distance> 
 Neighbour_search;
   
@@ -46,10 +46,9 @@ int main() {
   
   Traits tr(bucket_size, 3.0, false);
 
-  Distance::Weight_vector w(4);
-  w[0]=1.0; w[1]=1.0; w[2]=1.0; w[3]=1.0;
+  
 
-  Distance tr_dist(2,dim,w);
+  Distance tr_dist;
 
   typedef CGAL::Kd_tree<Traits> Tree;
   Tree d(data_points.begin(), data_points.end(), tr);

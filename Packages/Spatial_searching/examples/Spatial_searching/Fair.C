@@ -182,7 +182,7 @@ typedef CGAL::Kd_tree_rectangle<double> Rectangle;
 typedef CGAL::Kd_tree_traits_point<Point,
 CGAL::Fair<Point> > Traits;
 
-typedef CGAL::Orthogonal_priority_search<Traits, Point, Point3D_distance> 
+typedef CGAL::Orthogonal_priority_search<Traits, Point3D_distance> 
 NN_priority_search;
 
 

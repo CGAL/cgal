@@ -8,15 +8,15 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       :
-// release_date  :
+// release       : $CGAL_Revision: CGAL-2.5-I-99 $
+// release_date  : $CGAL_Date: 2003/05/23 $
 //
 // file          : include/CGAL/Orthogonal_priority_search.h
-// package       : ASPAS
+// package       : ASPAS (3.12)
+// maintainer    : Hans Tangelder <hanst@cs.uu.nl>
 // revision      : 2.4 
 // revision_date : 2002/16/08 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
-// maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
 // coordinator   : Utrecht University
 //
 // ======================================================================
@@ -28,15 +28,19 @@
 #include <queue>
 #include <memory>
 #include <CGAL/Kd_tree_node.h>
+#include <CGAL/Euclidean_distance.h>
 
 namespace CGAL {
 
-template <class Traits, class Query_item, class Distance, class Tree=Kd_tree<Traits> >
+template <class Traits, 
+	  class Distance=Euclidean_distance<typename Traits::Item>, 
+	  class Tree=Kd_tree<Traits> >
 class Orthogonal_priority_search {
 
 public:
 
 typedef typename Traits::Item Item;
+typedef typename Traits::Item Query_item;
 typedef typename Traits::NT NT;
 typedef typename Tree::Item_iterator Item_iterator;
 typedef typename Tree::Node_handle Node_handle;
@@ -46,7 +50,6 @@ typedef std::pair<Node_handle,NT> Node_with_distance;
 
 // this forward declaration may cause problems for g++ 
 class iterator;
-
 
     typedef std::vector<Node_with_distance*> Node_with_distance_vector;
 
@@ -61,11 +64,10 @@ class iterator;
 
     // constructor
     Orthogonal_priority_search(Tree& tree,  
-	Query_item& q, Distance& tr, NT Eps = NT(0.0), 
-        bool search_nearest=true)
+	Query_item& q, const Distance& tr=Distance(), NT Eps = NT(0.0), 
+        bool search_nearest=true) 
     {
-	
-        start = new iterator(tree,q,tr,Eps,search_nearest);
+	start = new iterator(tree,q,tr,Eps,search_nearest);
         past_the_end = new iterator();
         
     };
@@ -110,7 +112,7 @@ class iterator;
     }
 
     // constructor
-    iterator(Tree& tree, Query_item& q, Distance& tr, NT eps=NT(0.0), 
+    iterator(Tree& tree, Query_item& q, const Distance& tr=Distance(), NT eps=NT(0.0), 
     bool search_nearest=true){
         Ptr_implementation =
         new Iterator_implementation(tree, q, tr, eps, search_nearest);
@@ -238,7 +240,7 @@ class iterator;
     std::priority_queue<Item_with_distance*, Item_with_distance_vector,
     Distance_smaller>* Item_PriorityQueue;
 
-    Distance* Orthogonal_Distance_instance;
+    Distance* Orthogonal_distance_instance;
 
     public:
 
@@ -247,7 +249,7 @@ class iterator;
     
 
     // constructor
-    Iterator_implementation(Tree& tree, Query_item& q, Distance& tr,
+    Iterator_implementation(Tree& tree, Query_item& q, const Distance& tr,
         NT Eps=NT(0.0), bool search_nearest=true)
     {
         PriorityQueue= new std::priority_queue<Node_with_distance*, 
@@ -262,16 +264,17 @@ class iterator;
        
         search_nearest_neighbour=search_nearest;
 	reference_count=1;
-        Orthogonal_Distance_instance=&tr;
+        Orthogonal_distance_instance= new Distance(tr);
         multiplication_factor=
-	Orthogonal_Distance_instance->transformed_distance(NT(1.0)+Eps);
+	Orthogonal_distance_instance->transformed_distance(NT(1.0)+Eps);
 
-        if (search_nearest) distance_to_root=
-	Orthogonal_Distance_instance->min_distance_to_queryitem(q,
+        // if (search_nearest) 
+	distance_to_root=
+	Orthogonal_distance_instance->min_distance_to_queryitem(q,
 						*(tree.bounding_box()));
-        else distance_to_root=
-   	Orthogonal_Distance_instance->max_distance_to_queryitem(q,
-						*(tree.bounding_box()));
+        // else distance_to_root=
+   	// Orthogonal_Distance_instance->max_distance_to_queryitem(q,
+	//					*(tree.bounding_box()));
 
         
         query_point = &q;
@@ -347,7 +350,7 @@ class iterator;
         };
         delete PriorityQueue;
         delete Item_PriorityQueue;
-        
+	delete Orthogonal_distance_instance;
     }
 
     private:
@@ -368,7 +371,7 @@ class iterator;
 		(multiplication_factor*rd > Item_PriorityQueue->top()->second);
         else
 		next_neighbour_found=
-		(multiplication_factor*rd < Item_PriorityQueue->top()->second);
+		(rd < multiplication_factor*Item_PriorityQueue->top()->second);
         }
         // otherwise browse the tree further
         while ((!next_neighbour_found) && (!PriorityQueue->empty())) {
@@ -376,7 +379,7 @@ class iterator;
                 Node_handle N= The_node_top->first;
                 PriorityQueue->pop();
                 delete The_node_top;
-
+		NT copy_rd=rd;
                 while (!(N->is_leaf())) { // compute new distance
                         number_of_internal_nodes_visited++;
                         int new_cut_dim=N->cutting_dimension();
@@ -384,32 +387,49 @@ class iterator;
                         NT new_off =
                         (*query_point)[new_cut_dim] -
                         N->cutting_value();
-                        if ( ((new_off < NT(0.0)) && 
-			(search_nearest_neighbour)) ||
-                        (( new_off >= NT(0.0)) && (!search_nearest_neighbour))  
-			) {
+                        if (new_off < NT(0.0)) {
 				old_off=
                                 (*query_point)[new_cut_dim]-N->low_value();
                                 if (old_off>NT(0.0)) old_off=NT(0.0);
                                 new_rd=
-                                Orthogonal_Distance_instance->
-                                new_distance(rd,old_off,new_off,new_cut_dim);
-                                Node_with_distance *Upper_Child =
-                                new Node_with_distance(N->upper(),new_rd);
-				PriorityQueue->push(Upper_Child);
-                                N=N->lower();
+                                Orthogonal_distance_instance->
+                                new_distance(copy_rd,old_off,new_off,new_cut_dim);
+				assert(new_rd >= copy_rd);
+				if (search_nearest_neighbour) {
+                                	Node_with_distance *Upper_Child =
+                                	new Node_with_distance(N->upper(), new_rd);
+					PriorityQueue->push(Upper_Child);
+                                	N=N->lower();
+				}
+				else {
+                                	Node_with_distance *Lower_Child =
+                                	new Node_with_distance(N->lower(), copy_rd);
+					PriorityQueue->push(Lower_Child);
+                                	N=N->upper();
+					copy_rd=new_rd;
+				}
 
                         }
                         else { // compute new distance
 				old_off= N->high_value() -
                                 (*query_point)[new_cut_dim];
                                 if (old_off>NT(0.0)) old_off=NT(0.0);
-                                new_rd=Orthogonal_Distance_instance->
-                                new_distance(rd,old_off,new_off,new_cut_dim);
-                                Node_with_distance *Lower_Child =
-                                new Node_with_distance(N->lower(),new_rd);
-                                PriorityQueue->push(Lower_Child);
-                                N=N->upper();
+                                new_rd=Orthogonal_distance_instance->
+                                new_distance(copy_rd,old_off,new_off,new_cut_dim);
+				assert(new_rd >= copy_rd);
+				if (search_nearest_neighbour) {
+                                	Node_with_distance *Lower_Child =
+                                	new Node_with_distance(N->lower(), new_rd);
+                                	PriorityQueue->push(Lower_Child);
+                                	N=N->upper();
+				}
+				else {
+                                	Node_with_distance *Upper_Child =
+                                	new Node_with_distance(N->upper(), copy_rd);
+                                	PriorityQueue->push(Upper_Child);
+                                	N=N->lower();
+					copy_rd=new_rd;
+				}
                         }
                 }
                 // n is a leaf
@@ -418,7 +438,7 @@ class iterator;
                   for (Item_iterator it=N->begin(); it != N->end(); it++) {
                         number_of_items_visited++;
                         NT distance_to_query_point=
-                        Orthogonal_Distance_instance->
+                        Orthogonal_distance_instance->
                         distance(*query_point,**it);
                         Item_with_distance *NN_Candidate=
                         new Item_with_distance(*it,distance_to_query_point);

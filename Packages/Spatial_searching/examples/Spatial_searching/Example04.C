@@ -52,43 +52,36 @@ public:
     vec[2]=z;
   }
 
-  inline
   int dimension() const
   {
     return  3;
   }
  
-  inline
   double x() const
   { 
 	return vec[ 0 ];
   }
 
-  inline
   double y() const
   { 
  	return vec[ 1 ];
   }
   
-  inline
   double z() const
   { 
 	return vec[ 2 ];
   }
 
-  inline
   void set_coord(int k, double x)
   {
     vec[ k ] = x;
   }
   
-  inline
   double  & operator[](int k)  
   {
     return  vec[ k ];
   }
 
-  inline
   double  operator[](int k) const
   {
     return  vec[ k ];
@@ -114,7 +107,7 @@ class Point3D_distance
 {
 public:
 
-inline double distance(const Point& p1, const Point& p2)
+double distance(const Point& p1, const Point& p2) const
 {
     double distx= p1.x()-p2.x();
     double disty= p1.y()-p2.y();
@@ -122,8 +115,8 @@ inline double distance(const Point& p1, const Point& p2)
     return distx*distx+disty*disty+distz*distz;
 }
 
-inline double min_distance_to_queryitem(const Point& p,
-                                        const CGAL::Kd_tree_rectangle<double>& b) 
+double min_distance_to_queryitem(const Point& p,
+                                        const CGAL::Kd_tree_rectangle<double>& b) const 
 {   double distance(0.0);
     double h;
     h=p.x();
@@ -138,8 +131,8 @@ inline double min_distance_to_queryitem(const Point& p,
     return distance;
 }
 
-inline double max_distance_to_queryitem(const Point& p,
-                                        const CGAL::Kd_tree_rectangle<double>& b) 
+double max_distance_to_queryitem(const Point& p,
+                                        const CGAL::Kd_tree_rectangle<double>& b) const
 {   double distance(0.0);
     double h;
     h=p.x();
@@ -160,16 +153,16 @@ inline double max_distance_to_queryitem(const Point& p,
     return distance;
 }
 
-inline double new_distance(double& dist, double old_off, double new_off,
-                int cutting_dimension)  {
+double new_distance(double& dist, double old_off, double new_off,
+                int cutting_dimension)  const {
                 return dist + new_off*new_off - old_off*old_off;
 }
 
-inline double transformed_distance(double d) {
+double transformed_distance(double d) const {
         return d*d;
 }
 
-inline double inverse_of_transformed_distance(double d) {
+double inverse_of_transformed_distance(double d) const {
         return sqrt(d);
 }
 
@@ -179,7 +172,7 @@ typedef CGAL::Creator_uniform_3<double,Point> Creator;
 
 typedef CGAL::Plane_separator<double> Separator;
 typedef CGAL::Kd_tree_traits_point<Point> Traits;
-typedef CGAL::Orthogonal_standard_search<Traits, Point, Point3D_distance> 
+typedef CGAL::Orthogonal_standard_search<Traits, Point3D_distance> 
 NN_orthogonal_search;
 typedef CGAL::General_standard_search<Traits, Point, Point3D_distance> 
 NN_general_search;

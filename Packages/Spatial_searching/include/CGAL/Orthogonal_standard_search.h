@@ -28,17 +28,19 @@
 #include <queue>
 #include <memory>
 #include <CGAL/Kd_tree_node.h>
-#include <CGAL/Kd_tree_traits_point.h>
-#include <CGAL/Weighted_Minkowski_distance.h>
+#include <CGAL/Euclidean_distance.h>
 
 namespace CGAL {
 
-template <class Traits, class Query_item, class Distance, class Tree=Kd_tree<Traits> >
+template <class Traits, 
+	  class Distance=Euclidean_distance<typename Traits::Item>, 
+	  class Tree=Kd_tree<Traits> >
 class Orthogonal_standard_search {
 
 public:
 
 typedef typename Traits::Item Item;
+typedef typename Traits::Item Query_item;
 typedef typename Traits::NT NT;
 typedef std::pair<Item*,NT> Item_with_distance;
 
@@ -68,6 +70,7 @@ typedef std::list<Item_with_distance> NN_list;
 NN_list l;
 int max_k;
 int actual_k;
+
 
 Distance* distance_instance;
 
@@ -117,25 +120,25 @@ Distance* distance_instance;
 
     // constructor
     Orthogonal_standard_search(Tree& tree, Query_item& q,  
-    Distance& d, int k, NT Eps, bool Search_nearest=true) {
-
-	distance_instance=&d;
+    const Distance& d=Distance(), int k=1, NT Eps=NT(0.0), bool Search_nearest=true) {
+   
+	distance_instance=new Distance(d);
 
 	multiplication_factor=
-	distance_instance->transformed_distance(1.0+Eps);
+	d.transformed_distance(1.0+Eps);
         
 	max_k=k;
 	actual_k=0;
 	search_nearest = Search_nearest; 
 		
-        if (search_nearest) 
+        // if (search_nearest) 
 		distance_to_root=
-        	distance_instance->min_distance_to_queryitem(q,
+        	d.min_distance_to_queryitem(q,
 						*(tree.bounding_box()));
-        else 
-		distance_to_root=
-        	distance_instance->max_distance_to_queryitem(q,
-						*(tree.bounding_box()));
+        // else 
+	//	distance_to_root=
+        //	distance_instance->max_distance_to_queryitem(q,
+	//					*(tree.bounding_box()));
 
         query_object = &q;
         dim=query_object->dimension();
@@ -165,6 +168,7 @@ Distance* distance_instance;
     // destructor
     ~Orthogonal_standard_search() { 
 		l.clear();  
+		delete distance_instance;
     };
 
     private:
@@ -194,7 +198,7 @@ Distance* distance_instance;
                                 }
                                 new_rd=
                                 distance_instance->
-                                new_distance(rd,old_off,new_off,new_cut_dim);
+				new_distance(rd,old_off,new_off,new_cut_dim);
 				if (branch(new_rd)) 
 				compute_neighbours_orthogonally(N->upper(),
 								new_rd);                               
@@ -204,16 +208,17 @@ Distance* distance_instance;
 				if (search_nearest) {
                                 	old_off= N->high_value() - 
 					(*query_object)[new_cut_dim];
-                                	//if (old_off>NT(0.0)) old_off=NT(0.0);
+                                	if (old_off>NT(0.0)) old_off=NT(0.0);
 				}
                                 else 
                                 {       
                                 	old_off= N->low_value() - 
 					(*query_object)[new_cut_dim];
-					//if (old_off<NT(0.0)) old_off=NT(0.0);
+					if (old_off<NT(0.0)) old_off=NT(0.0);
 				}  
-                                new_rd=distance_instance->
-                                new_distance(rd,old_off,new_off,new_cut_dim);
+                                new_rd=
+                                distance_instance->
+				new_distance(rd,old_off,new_off,new_cut_dim);
 				if (branch(new_rd)) 
 				compute_neighbours_orthogonally(N->lower(),
 								new_rd);       

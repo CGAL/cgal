@@ -16,6 +16,7 @@
 #include <CGAL/Kd_tree_traits_point.h>
 #include <CGAL/Random.h>
 #include <CGAL/Orthogonal_priority_search.h>
+
 #include <CGAL/algorithm.h>
 #include <CGAL/Splitters.h>
 
@@ -179,8 +180,9 @@ typedef CGAL::Plane_separator<double> Separator;
 typedef CGAL::Kd_tree_traits_point<Point,
 CGAL::Sliding_midpoint<Point> > Traits;
 
-typedef CGAL::Orthogonal_priority_search<Traits, Point, Point3D_distance> 
+typedef CGAL::Orthogonal_priority_search<Traits,Point3D_distance> 
 NN_priority_search;
+
 
 int main() {
 
@@ -189,7 +191,7 @@ int main() {
   int bucket_size=1;
   const int dim=3;
   
-  const int data_point_number=100;
+  const int data_point_number=100000; 
   const int nearest_neighbour_number=10;
   
   typedef std::list<Point> point_list;
@@ -222,14 +224,13 @@ int main() {
   std::vector<NN_priority_search::Item_with_distance> nearest_neighbours; 
   nearest_neighbours.reserve(nearest_neighbour_number);
 
-  NN_priority_search NN(d, query_item, tr_dist, 0.0, true);
+  NN_priority_search NN(d, query_item, tr_dist, 0.0, false);
 
   std::vector<NN_priority_search::Item_with_distance>::iterator 
   it = nearest_neighbours.begin();
 
   CGAL::copy_n(NN.begin(), nearest_neighbour_number, it);
- 
-  
+
   NN.statistics();
   
 

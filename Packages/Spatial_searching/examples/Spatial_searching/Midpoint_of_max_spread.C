@@ -179,7 +179,7 @@ typedef CGAL::Plane_separator<double> Separator;
 typedef CGAL::Kd_tree_traits_point<Point,
 CGAL::Midpoint_of_max_spread<Point> > Traits;
 
-typedef CGAL::Orthogonal_priority_search<Traits, Point, Point3D_distance> 
+typedef CGAL::Orthogonal_priority_search<Traits, Point3D_distance> 
 NN_priority_search;
 
 int main() {

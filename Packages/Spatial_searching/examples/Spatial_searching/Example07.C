@@ -30,7 +30,7 @@ typedef CGAL::Plane_separator<NT> Separator;
 
 typedef CGAL::Kd_tree_traits_point<Point> Traits;
 typedef CGAL::Weighted_Minkowski_distance<Point> Distance;
-typedef CGAL::Orthogonal_standard_search<Traits, Point, Distance> 
+typedef CGAL::Orthogonal_standard_search<Traits, Distance> 
 NN_standard_search;
   
 
@@ -59,9 +59,9 @@ int main() {
   Traits tr(bucket_size, 3.0, false);
 
   Distance::Weight_vector w(4);
-  w[0]=1.0; w[1]=1.0; w[2]=1.0; w[3]=1.0;
+  w[0]=1.0; w[1]=2.0; w[2]=3.0; w[3]=4.0;
 
-  Distance tr_dist(2,dim,w);
+  Distance tr_dist(3.14,dim,w);
 
   typedef CGAL::Kd_tree<Traits> Tree;
   Tree d(data_points.begin(), data_points.end(), tr);

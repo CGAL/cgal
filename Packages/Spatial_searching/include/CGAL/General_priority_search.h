@@ -8,15 +8,15 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       :
-// release_date  :
+// release       : $CGAL_Revision: CGAL-2.5-I-99 $
+// release_date  : $CGAL_Date: 2003/05/23 $
 //
 // file          : include/CGAL/General_priority_search.h
-// package       : ASPAS
+// package       : ASPAS (3.12)
+// maintainer    : Hans Tangelder <hanst@cs.uu.nl>
 // revision      : 2.4 
 // revision_date : 2002/16/08 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
-// maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
 // coordinator   : Utrecht University
 //
 // ======================================================================
@@ -400,7 +400,7 @@ class Distance_smaller
 		(multiplication_factor*rd > Item_PriorityQueue->top()->second);
         else
 		next_neighbour_found=
-		(multiplication_factor*rd < Item_PriorityQueue->top()->second);
+		(rd < multiplication_factor*Item_PriorityQueue->top()->second);
         }
         // otherwise browse the tree further
         while ((!next_neighbour_found) && (!PriorityQueue->empty())) {
