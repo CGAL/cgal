@@ -149,7 +149,9 @@ void window_input(TRIANGULATION &T,
         }
         if(b == MOUSE_BUTTON(1)){
             typename TRIANGULATION::Locate_type lt;
-            T.insert(p, lt);
+	    int li;
+	    Face_handle_ loc = T.locate(p, lt, li);
+            T.insert(p,lt, loc,li) ;
             if(opt.check){
                 T.is_valid();
             }
