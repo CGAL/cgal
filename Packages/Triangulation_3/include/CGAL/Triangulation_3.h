@@ -842,7 +842,8 @@ operator>> (std::istream& is, Triangulation_3<GT, Tds> &tr)
 
   std::map< int, TdsCell*, std::less<int> > C;
 
-  read_cells(is, tr._tds, n+1, V, m, C);
+  //  read_cells(is, tr._tds, n+1, V, m, C);
+  read_cells(is, tr._tds, V, m, C);
   for ( i=0 ; i<m; i++ ) {
     is >> *(C[i]);
   }

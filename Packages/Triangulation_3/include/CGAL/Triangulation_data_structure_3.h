@@ -638,7 +638,8 @@ std::istream& operator >>
   std::map< int, Cell*, std::less<int> > C;
   int m;
  
-  read_cells(is, tds, n, V, m, C);
+  //  read_cells(is, tds, n, V, m, C);
+  read_cells(is, tds, V, m, C);
   CGAL_triangulation_assertion( tds.is_valid(false) );
   return is;
 }
@@ -1165,7 +1166,7 @@ template < class Vb, class Cb>
 std::istream& 
 read_cells(std::istream& is,
 	   Triangulation_data_structure_3<Vb,Cb>  &tds,
-	   int n,
+	   //	   int n,
 	   // std::vector<void*> &V(n),
 	   std::map< int, 
 	             typename Triangulation_data_structure_3<Vb,Cb>::Vertex*, 
