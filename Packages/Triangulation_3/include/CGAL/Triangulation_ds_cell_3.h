@@ -66,7 +66,7 @@ public:
   // Triangulation_data_structure_3
   // private ?
   Triangulation_ds_cell_3()
-    : Cb(), _previous_cell(this), _next_cell(this)
+    : Cb(), _previous_cell(this), _next_cell(this), flags(0)
   {}
 
 //   Triangulation_ds_cell_3(Tds & tds)
@@ -76,19 +76,18 @@ public:
 //   { add_list(tds); }
 
   Triangulation_ds_cell_3(Cell* c)
-    : Cb(c->vertex(0),c->vertex(1),c->vertex(2),c->vertex(3),
-	 c->neighbor(0),c->neighbor(1),c->neighbor(2),c->neighbor(3))
+    : Cb(*c), flags(0)
   {}
     
   Triangulation_ds_cell_3(Vertex* v0, Vertex* v1, 
 			  Vertex* v2, Vertex* v3)
-    :  Cb(v0,v1,v2,v3)
+    :  Cb(v0,v1,v2,v3), flags(0)
   {}
 
   Triangulation_ds_cell_3(Vertex* v0, Vertex* v1, 
 			  Vertex* v2, Vertex* v3,
 			  Cell* n0, Cell* n1, Cell* n2, Cell* n3)
-    :  Cb(v0,v1,v2,v3,n0,n1,n2,n3)
+    :  Cb(v0,v1,v2,v3,n0,n1,n2,n3), flags(0)
   {}
 
   // not documented
@@ -96,7 +95,7 @@ public:
   Triangulation_ds_cell_3(Vertex* v0, Vertex* v1, 
 			  Vertex* v2, Vertex* v3,
 			  const Cell& old_cell)
-    :  Cb(old_cell)
+    :  Cb(old_cell), flags(0)
   {
     set_vertices(v0,v1,v2,v3);
   }
@@ -129,6 +128,16 @@ public:
   void set_neighbors(Cell* n0, Cell* n1, Cell* n2, Cell* n3)
   {
     Cb::set_neighbors(n0,n1,n2,n3);
+  }
+
+  void set_flags(int f)
+  {
+    flags = f;
+  }
+
+  int get_flags() const
+  {
+    return flags;
   }
 
   // VERTEX ACCESS
@@ -197,6 +206,7 @@ private:
   // to maintain the list of cells
   Cell* _previous_cell;
   Cell* _next_cell;
+  int flags;
   
 //   void add_list(Tds & tds)
 //   {
@@ -215,7 +225,7 @@ private:
   {
     std::cerr << "neighbor of c has not c as neighbor" << std::endl;
   }
-};
+}; // __attribute__((__aligned__(16))); // For GCC only
 
 template <class Vb, class Cb >
 bool

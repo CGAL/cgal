@@ -41,14 +41,12 @@ public:
   {
     set_vertices();
     set_neighbors();
-    set_flags();
   }
 
   Triangulation_cell_base_3(void* v0, void* v1, void* v2, void* v3)
   {
     set_vertices(v0, v1, v2, v3);
     set_neighbors();
-    set_flags();
   }
 
   Triangulation_cell_base_3(void* v0, void* v1, void* v2, void* v3,
@@ -56,7 +54,6 @@ public:
   {
     set_vertices(v0, v1, v2, v3);
     set_neighbors(n0, n1, n2, n3);
-    set_flags();
   }
 
   // ACCESS FUNCTIONS
@@ -162,21 +159,6 @@ public:
     N[3] = n3;
   }
 
-  void set_flags(int f)
-  {
-    flags = f;
-  }
-
-  void set_flags()
-  {
-    flags = 0;
-  }
-
-  int get_flags() const
-  {
-    return flags;
-  }
-
   // CHECKING
 
   // the following trivial is_valid allows
@@ -188,7 +170,6 @@ public:
 private:
   void* N[4];
   void* V[4];
-  int flags;
 };
 
 template < class GT >
