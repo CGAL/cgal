@@ -1,36 +1,29 @@
-// examples/Sweep_line/example2.C
+// examples/Sweep_line/example4.C
 // ------------------------------
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h> 
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Planar_map_2.h>
-#include <CGAL/sweep_to_construct_planar_map_2.h>
+#include <CGAL/Sweep_line_2.h> 
 #include <CGAL/Arr_polyline_traits.h>
-#include <CGAL/IO/Pm_iostream.h>
 #include <iostream>
 #include <vector>
 
-// #include <CGAL/IO/cgal_window.h>
-// #include <CGAL/IO/Pm_Window_stream.h>
-// #include <CGAL/IO/Arr_polyline_traits_Window_stream.h>
-
 typedef CGAL::Quotient<CGAL::MP_Float>       NT;
 typedef CGAL::Cartesian<NT>                  Kernel;
+
 typedef CGAL::Arr_polyline_traits<Kernel>    Traits;
 
 typedef Traits::Point_2                      Point_2;
 typedef Traits::Curve_2                      Curve_2;
 
-typedef CGAL::Pm_default_dcel<Traits>        Dcel;   
-typedef CGAL::Planar_map_2<Dcel, Traits>     PM;
-typedef CGAL::Pm_file_writer<PM>             Pm_writer;
-
 CGAL_BEGIN_NAMESPACE
 
-std::ostream & operator<<(std::ostream & os, const ::Curve_2 & cv)
+std::ostream & operator<<(std::ostream & os, const Curve_2 & cv)
 {
-  typedef ::Curve_2::const_iterator Points_iterator;
+  typedef Curve_2::const_iterator Points_iterator;
   
   os << cv.size() << std::endl;
   for (Points_iterator points_iter = cv.begin(); 
@@ -40,17 +33,18 @@ std::ostream & operator<<(std::ostream & os, const ::Curve_2 & cv)
   return os;
 }
 
-std::istream & operator>>(std::istream & in, ::Curve_2 & cv)
+std::istream & operator>>(std::istream & in, Curve_2 & cv)
 {
   std::size_t size;
+  std::cout << "enter number of points and then the (x,y) values for each point: ";
   in >> size;
 
   for (unsigned int i = 0; i < size; i++){
-    ::Point_2 p;
+    Traits::Point_2 p;
     in >> p;
     cv.push_back(p);  
   }
-  
+  std::cout << std::endl;
   return in;
 }
 
@@ -58,50 +52,42 @@ CGAL_END_NAMESPACE
 
 // Read polylines from the input
 
+typedef std::list<Curve_2> CurveList;
+typedef CurveList::iterator CurveListIter;
+typedef CGAL::Sweep_line_2<CurveListIter, Traits> Sweep_line;
+
 template <class Container>
-void read_polylines(Container& curves)
+void read_polylines(Container & curves)
 {
-  int num_polylines = 0;
+  int  num_polylines = 0;
 
   std::cin >> num_polylines;
   std::cout << "number of polylines is : " << num_polylines << std::endl;
 
   while (num_polylines--) {
     Curve_2 polyline;
-    
-    std::cin >> polyline;
+    std::cin>>polyline;
     curves.push_back(polyline);
+    polyline.clear();
   }
 }
-
 int main()
 {
-  PM                   pm;
-  std::vector<Curve_2> polylines;
-  
-  // Read input 
+  // Read input
+  std::list<Curve_2> polylines;
   read_polylines(polylines);
-
-  // Construct the planar map  
+  
+  // Use a sweep to create the sub curves  
   Traits traits;
-  CGAL::sweep_to_construct_planar_map_2(polylines.begin(), polylines.end(), 
-                                        traits, pm);
+  std::list<Curve_2> subcurves;
+  Sweep_line sl(&traits);
+  sl.get_subcurves(polylines.begin(),polylines.end(), 
+		   std::back_inserter(subcurves));
 
-  // Write output 
-  std::cout << " * * * Printing list of all halfedges of the resulting ";
-  std::cout << "Planar map" << std::endl;
-  
-  Pm_writer verbose_writer(std::cout, pm, true);
-  
-  verbose_writer.write_halfedges(pm.halfedges_begin(), pm.halfedges_end());
-
-  // Use a window visualization
-  // CGAL::Window_stream W(700, 700);
-  // W.init(-10, 150, -5);
-  // W.set_node_width(3);
-  // W.display();
-  // W << pm;
-  // W.read_mouse();
+  // Write output
+  for (std::list<Curve_2>::iterator scv_iter = subcurves.begin(); 
+       scv_iter != subcurves.end(); scv_iter++)    
+    std::cout << *scv_iter << std::endl;
 
   return 0;
 }

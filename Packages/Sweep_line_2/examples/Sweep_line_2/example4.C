@@ -1,86 +1,81 @@
-// examples/Sweep_line/example4.C
+// examples/Sweep_line/example6.C
 // ------------------------------
+
+#if defined(CGAL_CFG_NO_LONGNAME_PROBLEM) || defined(_MSC_VER)
+#define Quotient                        Qt
+#define Cartesian                       Cn
+#define Arr_segment_exact_traits        AST
+#define allocator                       All
+#define Sweep_curves_base_2             SCB
+#define Intersection_point_node         IPN
+#endif
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/MP_Float.h>
-#include <CGAL/Quotient.h> 
-#include <CGAL/Pm_default_dcel.h>
-#include <CGAL/Planar_map_2.h>
-#include <CGAL/sweep_to_produce_subcurves_2.h>
-#include <CGAL/Arr_polyline_traits.h>
+#include <CGAL/Quotient.h>
+#include <CGAL/Arr_segment_exact_traits.h>
+#include <CGAL/Sweep_line_2.h>
+
 #include <iostream>
 #include <vector>
 
-typedef CGAL::Quotient<CGAL::MP_Float>       NT;
-typedef CGAL::Cartesian<NT>                  Kernel;
+typedef CGAL::Quotient<CGAL::MP_Float>          NT;
+typedef CGAL::Cartesian<NT>                     Kernel;
+typedef CGAL::Arr_segment_exact_traits<Kernel>  Traits;
 
-typedef CGAL::Arr_polyline_traits<Kernel>    Traits;
+typedef Traits::Point_2                         Point_2;
+typedef Traits::Curve_2                         Curve_2;
 
-typedef Traits::Point_2                      Point_2;
-typedef Traits::Curve_2                      Curve_2;
+typedef std::vector<Curve_2>                    CurveList;
+typedef CurveList::iterator                     CurveListIter;
+typedef CGAL::Sweep_line_2<CurveListIter, Traits> Sweep_line;
 
-CGAL_BEGIN_NAMESPACE
-
-std::ostream & operator<<(std::ostream & os, const Curve_2 & cv)
-{
-  typedef Curve_2::const_iterator Points_iterator;
-  
-  os << cv.size() << std::endl;
-  for (Points_iterator points_iter = cv.begin(); 
-       points_iter != cv.end(); points_iter++)
-    os << " " << *points_iter;
-
-  return os;
-}
-
-std::istream & operator>>(std::istream & in, Curve_2 & cv)
-{
-  std::size_t size;
-  in >> size;
-
-  for (unsigned int i = 0; i < size; i++){
-    Traits::Point_2 p;
-    in >> p;
-    cv.push_back(p);  
-  }
-  return in;
-}
-
-CGAL_END_NAMESPACE
-
-// Read polylines from the input
-
-template <class Container>
-void read_polylines(Container & curves)
-{
-  int  num_polylines = 0;
-
-  std::cin >> num_polylines;
-  std::cout << "number of polylines is : " << num_polylines << std::endl;
-
-  while (num_polylines--) {
-    Curve_2 polyline;
-    std::cin>>polyline;
-    curves.push_back(polyline);
-    polyline.clear();
-  }
-}
 int main()
 {
-  // Read input
-  std::list<Curve_2> polylines;
-  read_polylines(polylines);
+  std::vector<Curve_2>  segments;
+  Sweep_line sl;
+
+  std::cout << "Demonstrating Sweep_line_2::do_curves_intersect " 
+	    << std::endl;
+
+  // case 1 
+  Curve_2 c1(Point_2(10,1), Point_2(20,1));
+  Curve_2 c2(Point_2(10, -4), Point_2(20,6));
+  segments.push_back(c1);
+  segments.push_back(c2);
+
+  bool b = sl.do_curves_intersect(segments.begin(),segments.end());
+
+  std::cout << "Curves: " << std::endl
+	    << segments[0] << std::endl
+	    << segments[1] << std::endl;
+
+  if (b)
+    std::cout << "Curves intersect"<<std::endl<<std::endl;
+  else
+    std::cout << "Curves do NOT intersect"<<std::endl<<std::endl;
+
+  // case 2  
+  segments.clear();
+  Curve_2 c3(Point_2(10,1), Point_2(20,1));
+  Curve_2 c4(Point_2(16, 2), Point_2(20,6));
+  segments.push_back(c3);
+  segments.push_back(c4);
+  b = sl.do_curves_intersect(segments.begin(), segments.end());
+
+  std::cout << "Curves: " << std::endl
+	    << segments[0] << std::endl
+	    << segments[1] << std::endl;
+
+  if (b)
+    std::cout << "Curves intersect"<<std::endl<<std::endl;
+  else
+    std::cout << "Curves do NOT intersect"<<std::endl<<std::endl;
   
-  // Use a sweep to create the sub curves  
-  Traits traits;
-  std::list<Curve_2> subcurves;
-  CGAL::sweep_to_produce_subcurves_2(polylines.begin(),polylines.end(), 
-                                     traits, std::back_inserter(subcurves));
-
-  // Write output
-  for (std::list<Curve_2>::iterator scv_iter = subcurves.begin(); 
-       scv_iter != subcurves.end(); scv_iter++)    
-    std::cout << *scv_iter << std::endl;
-
   return 0;
 }
+
+
+
+
+

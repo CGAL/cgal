@@ -1,27 +1,18 @@
 In this directory there are 5 example programs for the Sweep Line package.
 
-example1: Demonstate the use of the sweep line algorithm in order to
-          construct a planar map of line segments.
-          See comment at the end regarding graphical interface.
- 
-example2: Demonstate the use of the sweep line algorithm in order to
-          construct a planar map of polylines.
-          See comment at the end regarding graphical interface.     
-
-example3: Demonstate the use of the sweep line algorithm in order to
+example1: Demonstate the use of the sweep line algorithm to
           produce a collection of disjoint interior sub-segments.
  
-example4: Demonstate the use of the sweep line algorithm in order to
+example2: Demonstate the use of the sweep line algorithm to
           produce a collection of disjoint interior polyline sub-segments.
 
-example5: Demonstate the use of the sweep line algorithm in order to
-          produce a collection of all intersection points of the
-          given segments in the input.
+example3: Demonstate the use of the sweep line algorithm to get
+	  a list of all intersection points between the specified curves.
 
-Comment regarding graphical interface
-If you want to visualize the results of example1 and example2, uncomment
-the relevant lines in the source (#include directives and window related
-statements). You also need to link against the cgal_window library. This
-can be done by using a makefile that was generated with 
-`create_makefile -w'. Make sure you have a cgal window library installed.
-Consult with the installation manual if you are not sure.
+example4: Demonstate the use of the sweep line algorithm to determine
+	  whether any two curves in the given range intersect.
+
+example5: Demonstate the use of the sweep line algorithm to get the list
+	  of intersection points with references to the original curves.
+
+

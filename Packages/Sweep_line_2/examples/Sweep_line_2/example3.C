@@ -1,54 +1,67 @@
-// examples/Sweep_line/example3.C
+// examples/Sweep_line/example5.C
 // ------------------------------
+
+#if defined(CGAL_CFG_NO_LONGNAME_PROBLEM) || defined(_MSC_VER)
+#define Quotient                        Qt
+#define Cartesian                       Cn
+#define Arr_segment_exact_traits        AST
+#define allocator                       All
+#define Sweep_curves_to_subcurves_utils SCSU
+#define Sweep_curves_base_2             SCB
+#define Intersection_point_node         IPN
+#endif
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/Arr_segment_exact_traits.h>
-#include <CGAL/sweep_to_produce_subcurves_2.h>
+#include <CGAL/Sweep_line_2.h> 
+
 #include <iostream>
 #include <vector>
 
-typedef CGAL::Quotient<CGAL::MP_Float>         NT;
-typedef CGAL::Cartesian<NT>                    Kernel;
-typedef CGAL::Arr_segment_exact_traits<Kernel> Traits;
+typedef CGAL::Quotient<CGAL::MP_Float>          NT;
+typedef CGAL::Cartesian<NT>                     Kernel;
+typedef CGAL::Arr_segment_exact_traits<Kernel>  Traits;
 
-typedef Traits::Point_2                        Point_2;
-typedef Traits::Curve_2                        Curve_2;
+typedef Traits::Point_2                         Point_2;
+typedef Traits::Curve_2                         Curve_2;
 
+typedef std::vector<Curve_2> CurveList;
+typedef CurveList::iterator CurveListIter;
+typedef CGAL::Sweep_line_2<CurveListIter, Traits> Sweep_line;
 
 int main()
 {
-  // Read input
-  int                 num_segments;
-  std::list<Curve_2>  segments;
-  std::cin >> num_segments;
+  CurveList segments;
   
-  NT  x1, y1, x2, y2;
-  
-  while (num_segments--) 
-  {
-    std::cin >> x1 >> y1 >> x2 >> y2;
-    segments.push_back(Curve_2(Point_2(x1, y1), Point_2(x2, y2)));
-  }    
+  Curve_2 c1(Point_2(10,1), Point_2(20,1));
+  Curve_2 c2(Point_2(10, -4), Point_2(20,6));
 
-  // Use a sweep to create the sub curves  
-  Traits traits;
-  std::list<Curve_2> subcurves;
-  CGAL::sweep_to_produce_subcurves_2(segments.begin(), 
-                                     segments.end(), 
-                                     traits, 
-                                     std::back_inserter(subcurves));
-  
-  // Write output
+  segments.push_back(c1);
+  segments.push_back(c2);
 
-  std::cout <<"The number of disjoint interior sub segments is "
-            << subcurves.size();
-  std::cout << std::endl;
+  std::vector<Point_2> points;
+  Sweep_line sl;
+  sl.get_intersection_points(segments.begin(),
+			     segments.end(), 
+			     std::back_inserter(points), false);
+
+  // Write results...
+
+  std::cout << " Demonstrating Sweep_line_2::get_intersection_points " 
+	    << std::endl
+	    << " Curves: " << std::endl
+	    << " " << c1 << std::endl
+	    << " " << c2 << std::endl << std::endl;
   
-  for (std::list<Curve_2>::iterator scv_iter = subcurves.begin(); 
-       scv_iter != subcurves.end(); scv_iter++)
-    std::cout<< *scv_iter<< std::endl;
+  std::cout << " Intersection point (not including end points): " << std::endl;
+  
+  for (std::vector<Point_2>::iterator p_iter = points.begin();
+       p_iter != points.end(); ++p_iter)
+    std::cout<< " " << *p_iter << std::endl;
+
+  std::cout << std::endl << std::endl;
 
   return 0;
 }
