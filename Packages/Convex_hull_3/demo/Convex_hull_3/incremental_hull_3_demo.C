@@ -1,7 +1,7 @@
 // 
 // file: demo/Convex_hull_3/incremental_3_demo.C
 //
-#include <CGAL/Cartesian.h>
+#include <CGAL/Homogeneous.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Convex_hull_d.h>
 #include <CGAL/Convex_hull_d_traits_3.h>
@@ -29,7 +29,7 @@ typedef double RT;
 #endif
 
 
-typedef CGAL::Cartesian<RT>                    K;
+typedef CGAL::Homogeneous<RT>                  K;
 typedef K::Point_3                             Point_3;
 typedef CGAL::Polyhedron_default_traits_3<K>   PolyTraits;
 typedef CGAL::Polyhedron_3< PolyTraits >       Polyhedron_3;
