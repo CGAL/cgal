@@ -147,15 +147,18 @@ namespace CGAL {
     
     template<typename FT>
     inline bool isZero(const Pair<FT> p,const FT& d) {
-      // check whether a=-b*sqrt(d) (*):
-      if ((p.first>0) ^ (p.second<0))
-	return false;
-      
+      if (d != 0)
+        // check whether the sides of a=-b*sqrt(d) (*)
+        // have different signs:
+        if ((p.first>0) ^ (p.second<0))
+          return false;
+
       // Here we have either:
-      //   (i)  a>0,b<0
-      //   (ii) a<=0,b>=0
+      //   (i)   d=0, or
+      //   (ii)  a>0,b<0,d!=0, or
+      //   (iii) a<=0,b>=0,d!=0
       // Hence both sides of (*) are either positive or negative.
-      return CGAL_NTS square(p.first) == - CGAL_NTS square(p.second)*d;
+      return CGAL_NTS square(p.first) == CGAL_NTS square(p.second)*d;
     }
     
     template<typename FT>
