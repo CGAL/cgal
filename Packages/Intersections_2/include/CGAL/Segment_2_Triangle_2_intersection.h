@@ -81,8 +81,8 @@ public:
         case Straight_2_<K>::SEGMENT: {
             typename K::Segment_2 seg;
             straight.current(seg);
-            _intersection_point = seg.start();
-            _other_point = seg.end();
+            _intersection_point = seg.source();
+            _other_point = seg.target();
             _result = SEGMENT;
             return _result;
             }
@@ -179,8 +179,8 @@ if (l.oriented_side(_trian->vertex(2)) == ON_POSITIVE_SIDE) {
     case Straight_2_<K>::SEGMENT: {
         typename K::Segment_2 seg;
         straight.current(seg);
-        _intersection_point = seg.start();
-        _other_point = seg.end();
+        _intersection_point = seg.source();
+        _other_point = seg.target();
         _result = SEGMENT;
         return _result;
         }

@@ -78,10 +78,10 @@ public:
     case Line_2_Line_2_pair<K>::LINE:
         {
         typedef typename K::RT RT;
-        typename K::Point_2 const &start1 = _seg1->start();
-        typename K::Point_2 const &end1   = _seg1->end();
-        typename K::Point_2 const &start2 = _seg2->start();
-        typename K::Point_2 const &end2   = _seg2->end();
+        typename K::Point_2 const &start1 = _seg1->source();
+        typename K::Point_2 const &end1   = _seg1->target();
+        typename K::Point_2 const &start2 = _seg2->source();
+        typename K::Point_2 const &end2   = _seg2->target();
         typename K::Vector_2 diff1 = end1-start1;
         typename K::Point_2 const *minpt;
         typename K::Point_2 const *maxpt;
@@ -456,10 +456,10 @@ Segment_2_Segment_2_pair<K>::intersection_type() const
     case Line_2_Line_2_pair<K>::LINE:
         {
         typedef typename K::RT RT;
-        typename K::Point_2 const &start1 = _seg1->start();
-        typename K::Point_2 const &end1   = _seg1->end();
-        typename K::Point_2 const &start2 = _seg2->start();
-        typename K::Point_2 const &end2   = _seg2->end();
+        typename K::Point_2 const &start1 = _seg1->source();
+        typename K::Point_2 const &end1   = _seg1->target();
+        typename K::Point_2 const &start2 = _seg2->source();
+        typename K::Point_2 const &end2   = _seg2->target();
         typename K::Vector_2 diff1 = end1-start1;
         typename K::Point_2 const *minpt;
         typename K::Point_2 const *maxpt;

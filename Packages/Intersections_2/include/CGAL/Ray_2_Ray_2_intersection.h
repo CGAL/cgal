@@ -81,17 +81,17 @@ public:
             if (dir1.x() > FT(0)) {
                 if (dir2.x() > FT(0)) {
                     _intersection_point =
-                            (_ray1->start().x() < _ray2->start().x())
-                            ? _ray2->start() : _ray1->start();
+                            (_ray1->source().x() < _ray2->source().x())
+                            ? _ray2->source() : _ray1->source();
                     _result = RAY;
                     return _result;
                 } else {
-                    if (_ray1->start().x() > _ray2->start().x()) {
+                    if (_ray1->source().x() > _ray2->source().x()) {
                         _result = NO;
                         return _result;
                     }
-                    if (_ray1->start().x() == _ray2->start().x()) {
-                        _intersection_point = _ray1->start();
+                    if (_ray1->source().x() == _ray2->source().x()) {
+                        _intersection_point = _ray1->source();
                         _result = POINT;
                         return _result;
                     }
@@ -101,17 +101,17 @@ public:
             } else {
                 if (dir2.x() < FT(0)) {
                     _intersection_point =
-                            (_ray1->start().x() > _ray2->start().x())
-                            ? _ray2->start() : _ray1->start();
+                            (_ray1->source().x() > _ray2->source().x())
+                            ? _ray2->source() : _ray1->source();
                     _result = RAY;
                     return _result;
                 } else {
-                    if (_ray1->start().x() < _ray2->start().x()) {
+                    if (_ray1->source().x() < _ray2->source().x()) {
                         _result = NO;
                         return _result;
                     }
-                    if (_ray1->start().x() == _ray2->start().x()) {
-                        _intersection_point = _ray1->start();
+                    if (_ray1->source().x() == _ray2->source().x()) {
+                        _intersection_point = _ray1->source();
                         _result = POINT;
                         return _result;
                     }
@@ -125,17 +125,17 @@ public:
             if (dir1.y() > FT(0)) {
                 if (dir2.y() > FT(0)) {
                     _intersection_point =
-                            (_ray1->start().y() < _ray2->start().y())
-                            ? _ray2->start() : _ray1->start();
+                            (_ray1->source().y() < _ray2->source().y())
+                            ? _ray2->source() : _ray1->source();
                     _result = RAY;
                     return _result;
                 } else {
-                    if (_ray1->start().y() > _ray2->start().y()) {
+                    if (_ray1->source().y() > _ray2->source().y()) {
                         _result = NO;
                         return _result;
                     }
-                    if (_ray1->start().y() == _ray2->start().y()) {
-                        _intersection_point = _ray1->start();
+                    if (_ray1->source().y() == _ray2->source().y()) {
+                        _intersection_point = _ray1->source();
                         _result = POINT;
                         return _result;
                     }
@@ -145,17 +145,17 @@ public:
             } else {
                 if (dir2.y() < FT(0)) {
                     _intersection_point =
-                            (_ray1->start().y() > _ray2->start().y())
-                            ? _ray2->start() : _ray1->start();
+                            (_ray1->source().y() > _ray2->source().y())
+                            ? _ray2->source() : _ray1->source();
                     _result = RAY;
                     return _result;
                 } else {
-                    if (_ray1->start().y() < _ray2->start().y()) {
+                    if (_ray1->source().y() < _ray2->source().y()) {
                         _result = NO;
                         return _result;
                     }
-                    if (_ray1->start().y() == _ray2->start().y()) {
-                        _intersection_point = _ray1->start();
+                    if (_ray1->source().y() == _ray2->source().y()) {
+                        _intersection_point = _ray1->source();
                         _result = POINT;
                         return _result;
                     }
@@ -249,17 +249,17 @@ Ray_2_Ray_2_pair<K>::intersection_type() const
             if (dir1.x() > FT(0)) {
                 if (dir2.x() > FT(0)) {
                     _intersection_point =
-                            (_ray1->start().x() < _ray2->start().x())
-                            ? _ray2->start() : _ray1->start();
+                            (_ray1->source().x() < _ray2->source().x())
+                            ? _ray2->source() : _ray1->source();
                     _result = RAY;
                     return _result;
                 } else {
-                    if (_ray1->start().x() > _ray2->start().x()) {
+                    if (_ray1->source().x() > _ray2->source().x()) {
                         _result = NO;
                         return _result;
                     }
-                    if (_ray1->start().x() == _ray2->start().x()) {
-                        _intersection_point = _ray1->start();
+                    if (_ray1->source().x() == _ray2->source().x()) {
+                        _intersection_point = _ray1->source();
                         _result = POINT;
                         return _result;
                     }
@@ -269,17 +269,17 @@ Ray_2_Ray_2_pair<K>::intersection_type() const
             } else {
                 if (dir2.x() < FT(0)) {
                     _intersection_point =
-                            (_ray1->start().x() > _ray2->start().x())
-                            ? _ray2->start() : _ray1->start();
+                            (_ray1->source().x() > _ray2->source().x())
+                            ? _ray2->source() : _ray1->source();
                     _result = RAY;
                     return _result;
                 } else {
-                    if (_ray1->start().x() < _ray2->start().x()) {
+                    if (_ray1->source().x() < _ray2->source().x()) {
                         _result = NO;
                         return _result;
                     }
-                    if (_ray1->start().x() == _ray2->start().x()) {
-                        _intersection_point = _ray1->start();
+                    if (_ray1->source().x() == _ray2->source().x()) {
+                        _intersection_point = _ray1->source();
                         _result = POINT;
                         return _result;
                     }
@@ -293,17 +293,17 @@ Ray_2_Ray_2_pair<K>::intersection_type() const
             if (dir1.y() > FT(0)) {
                 if (dir2.y() > FT(0)) {
                     _intersection_point =
-                            (_ray1->start().y() < _ray2->start().y())
-                            ? _ray2->start() : _ray1->start();
+                            (_ray1->source().y() < _ray2->source().y())
+                            ? _ray2->source() : _ray1->source();
                     _result = RAY;
                     return _result;
                 } else {
-                    if (_ray1->start().y() > _ray2->start().y()) {
+                    if (_ray1->source().y() > _ray2->source().y()) {
                         _result = NO;
                         return _result;
                     }
-                    if (_ray1->start().y() == _ray2->start().y()) {
-                        _intersection_point = _ray1->start();
+                    if (_ray1->source().y() == _ray2->source().y()) {
+                        _intersection_point = _ray1->source();
                         _result = POINT;
                         return _result;
                     }
@@ -313,17 +313,17 @@ Ray_2_Ray_2_pair<K>::intersection_type() const
             } else {
                 if (dir2.y() < FT(0)) {
                     _intersection_point =
-                            (_ray1->start().y() > _ray2->start().y())
-                            ? _ray2->start() : _ray1->start();
+                            (_ray1->source().y() > _ray2->source().y())
+                            ? _ray2->source() : _ray1->source();
                     _result = RAY;
                     return _result;
                 } else {
-                    if (_ray1->start().y() < _ray2->start().y()) {
+                    if (_ray1->source().y() < _ray2->source().y()) {
                         _result = NO;
                         return _result;
                     }
-                    if (_ray1->start().y() == _ray2->start().y()) {
-                        _intersection_point = _ray1->start();
+                    if (_ray1->source().y() == _ray2->source().y()) {
+                        _intersection_point = _ray1->source();
                         _result = POINT;
                         return _result;
                     }
@@ -363,7 +363,7 @@ Ray_2_Ray_2_pair<K>::intersection(typename K::Segment_2 &result) const
         intersection_type();
     if (_result != SEGMENT)
         return false;
-    result = Segment_2(_ray1->start(), _ray2->start());
+    result = Segment_2(_ray1->source(), _ray2->source());
     return true;
 }
 

@@ -144,7 +144,7 @@ Straight_2_(typename K::Ray_2 const &ray)
     dir_sign_ =
         CGAL_NTS sign(support_.direction().to_vector().cartesian(main_dir_));
     bound_state_ = MAX_UNBOUNDED;
-    min_ = ray.start();
+    min_ = ray.source();
 }
 
 template <class K>
@@ -163,12 +163,12 @@ Straight_2_(typename K::Ray_2 const &ray_,bool cooriented)
     if (cooriented)
         {
             bound_state_ = MAX_UNBOUNDED;
-                min_ = ray.start();
+                min_ = ray.source();
         }
         else
         {
                 bound_state_ = MIN_UNBOUNDED;
-                max_ = ray.start();
+                max_ = ray.source();
         }
 }
 
@@ -182,8 +182,8 @@ Straight_2_(typename K::Segment_2 const &seg)
     dir_sign_ =
         CGAL_NTS sign(support_.direction().to_vector().cartesian(main_dir_));
     bound_state_ = NO_UNBOUNDED;
-    min_ = seg.start();
-    max_ = seg.end();
+    min_ = seg.source();
+    max_ = seg.target();
 }
 
 

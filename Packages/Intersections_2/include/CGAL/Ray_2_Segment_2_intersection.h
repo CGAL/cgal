@@ -72,9 +72,9 @@ public:
         return _result;
     case Line_2_Line_2_pair<K>::LINE: {
         typedef typename K::RT RT;
-        const typename K::Point_2 &start1 = _seg->start();
-        const typename K::Point_2 &end1 = _seg->end();
-        const typename K::Point_2 &start2 = _ray->start();
+        const typename K::Point_2 &start1 = _seg->source();
+        const typename K::Point_2 &end1 = _seg->target();
+        const typename K::Point_2 &start2 = _ray->source();
         const typename K::Point_2 *minpt,  *maxpt;
         typename K::Vector_2 diff1 = end1-start1;
         if (CGAL_NTS abs(diff1.x()) > CGAL_NTS abs(diff1.y())) {
@@ -100,8 +100,8 @@ public:
                     _intersection_point = start2;
                     _other_point = *maxpt;
                 } else {
-                    _intersection_point = _seg->start();
-                    _other_point = _seg->end();
+                    _intersection_point = _seg->source();
+                    _other_point = _seg->target();
                 }
                 _result = SEGMENT;
                 return _result;
@@ -119,8 +119,8 @@ public:
                     _intersection_point = start2;
                     _other_point = *maxpt;
                 } else {
-                    _intersection_point = _seg->start();
-                    _other_point = _seg->end();
+                    _intersection_point = _seg->source();
+                    _other_point = _seg->target();
                 }
                 _result = SEGMENT;
                 return _result;
@@ -148,8 +148,8 @@ public:
                     _intersection_point = start2;
                     _other_point = *maxpt;
                 } else {
-                    _intersection_point = _seg->start();
-                    _other_point = _seg->end();
+                    _intersection_point = _seg->source();
+                    _other_point = _seg->target();
                 }
                 _result = SEGMENT;
                 return _result;
@@ -167,8 +167,8 @@ public:
                     _intersection_point = start2;
                     _other_point = *maxpt;
                 } else {
-                    _intersection_point = _seg->start();
-                    _other_point = _seg->end();
+                    _intersection_point = _seg->source();
+                    _other_point = _seg->target();
                 }
                 _result = SEGMENT;
                 return _result;
@@ -255,9 +255,9 @@ Ray_2_Segment_2_pair<K>::intersection_type() const
         return _result;
     case Line_2_Line_2_pair<K>::LINE: {
         typedef typename K::RT RT;
-        const typename K::Point_2 &start1 = _seg->start();
-        const typename K::Point_2 &end1 = _seg->end();
-        const typename K::Point_2 &start2 = _ray->start();
+        const typename K::Point_2 &start1 = _seg->source();
+        const typename K::Point_2 &end1 = _seg->target();
+        const typename K::Point_2 &start2 = _ray->source();
         const typename K::Point_2 *minpt,  *maxpt;
         typename K::Vector_2 diff1 = end1-start1;
         if (CGAL_NTS abs(diff1.x()) > CGAL_NTS abs(diff1.y())) {
@@ -283,8 +283,8 @@ Ray_2_Segment_2_pair<K>::intersection_type() const
                     _intersection_point = start2;
                     _other_point = *maxpt;
                 } else {
-                    _intersection_point = _seg->start();
-                    _other_point = _seg->end();
+                    _intersection_point = _seg->source();
+                    _other_point = _seg->target();
                 }
                 _result = SEGMENT;
                 return _result;
@@ -302,8 +302,8 @@ Ray_2_Segment_2_pair<K>::intersection_type() const
                     _intersection_point = start2;
                     _other_point = *maxpt;
                 } else {
-                    _intersection_point = _seg->start();
-                    _other_point = _seg->end();
+                    _intersection_point = _seg->source();
+                    _other_point = _seg->target();
                 }
                 _result = SEGMENT;
                 return _result;
@@ -331,8 +331,8 @@ Ray_2_Segment_2_pair<K>::intersection_type() const
                     _intersection_point = start2;
                     _other_point = *maxpt;
                 } else {
-                    _intersection_point = _seg->start();
-                    _other_point = _seg->end();
+                    _intersection_point = _seg->source();
+                    _other_point = _seg->target();
                 }
                 _result = SEGMENT;
                 return _result;
@@ -350,8 +350,8 @@ Ray_2_Segment_2_pair<K>::intersection_type() const
                     _intersection_point = start2;
                     _other_point = *maxpt;
                 } else {
-                    _intersection_point = _seg->start();
-                    _other_point = _seg->end();
+                    _intersection_point = _seg->source();
+                    _other_point = _seg->target();
                 }
                 _result = SEGMENT;
                 return _result;

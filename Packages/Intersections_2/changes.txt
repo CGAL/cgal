@@ -1,3 +1,7 @@
+
+- Replaced start()/end() with source()/target() to reduce requirements on 
+  member functions of classes R::Segment_2 and R::Ray_2
+
 2.20 (2 September 2003)
 - Towards an extensible kernel [af]
 
