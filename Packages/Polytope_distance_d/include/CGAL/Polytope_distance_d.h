@@ -786,7 +786,7 @@ operator << ( std::ostream& os,
 {
     CGAL_USING_NAMESPACE_STD
 
-    typedef  Polytope_distance_d<Traits_>::Point  Point;
+    typedef  typename Polytope_distance_d<Traits_>::Point  Point;
     typedef  ostream_iterator<Point>       Os_it;
     typedef  typename Traits_::ET          ET;
     typedef  ostream_iterator<ET>          Et_it;

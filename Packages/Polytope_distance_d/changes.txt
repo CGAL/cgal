@@ -1,5 +1,8 @@
 Changes done to the `Polytope_distance_d' package
 
+Version 1.1.5 on 13-Apr-2002
+- Missing typename
+
 Version 1.1.4 on 26-Mar-2002
 - Fixed test program to use Kernel_d.
 
