@@ -73,6 +73,9 @@ class Partial_filtered_pricing
     typedef  typename Base::Tag_true    Tag_true;
     typedef  typename Base::Tag_false   Tag_false;
 
+    using Base::vout;
+    using Base::solver;
+
   private:
       // some constants
       NT  nt_0, nt_1, nt_2;
@@ -180,7 +183,7 @@ class Partial_filtered_pricing
         int  m = solve.number_of_constraints();
         int  b = solve.number_of_basic_variables();
         ET   d = solve.variables_common_denominator();
-        NT   nt_d = CGAL::to_double( d);
+        NT   nt_d = CGAL_NTS to_double( d);
     
         int   i, j, k, min_k  = -1, min_j = -1;
         NT    nt_mu, nt_min_mu =  0;

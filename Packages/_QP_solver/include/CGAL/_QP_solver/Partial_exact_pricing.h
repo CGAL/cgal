@@ -73,6 +73,9 @@ class Partial_exact_pricing
     typedef  typename Base::Tag_true    Tag_true;
     typedef  typename Base::Tag_false   Tag_false;
 
+    using Base::vout;
+    using Base::solver;
+
   private:
       // some constants
       ET  et_0, et_2;
