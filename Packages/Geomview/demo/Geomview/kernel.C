@@ -2,30 +2,22 @@
 //
 //  Sylvain Pion, 2000.
 
-#include <CGAL/basic.h>
+#include <CGAL/Cartesian.h>
 #include <iostream>
 
-#if !defined(__BORLANDC__) && !defined(_MSC_VER)
-
-#include <CGAL/Cartesian.h>
-
-#include <CGAL/Point_2.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/Segment_2.h>
-#include <CGAL/Segment_3.h>
-#include <CGAL/Triangle_2.h>
-#include <CGAL/Triangle_3.h>
-#include <CGAL/Tetrahedron_3.h>
-#include <CGAL/Sphere_3.h>
-
-#include <CGAL/Iso_rectangle_2.h>
-#include <CGAL/intersections.h>
-
-#include <CGAL/IO/Geomview_stream.h>
+#if defined(__BORLANDC__) || defined(_MSC_VER)
+int main() {
+  std::cout << "Geomview doesn't work on Windows, so..." << std::endl;
+  return 0;
+}
+#else
 
 #include <unistd.h>
 
-typedef CGAL::Cartesian<int> K;
+#include <CGAL/intersections.h>
+#include <CGAL/IO/Geomview_stream.h>
+
+typedef CGAL::Cartesian<double> K;
 
 int main()
 {
@@ -72,13 +64,6 @@ int main()
   std::cout << "Stopping in 1 minute" << std::endl;
   sleep(60);
 
-  return 0;
-}
-
-#else
-int main()
-{
-  std::cout << "Geomview doesn't work on Windows, so..." << std::endl;
   return 0;
 }
 #endif

@@ -1,59 +1,38 @@
-
-#include <CGAL/basic.h>
+#include <CGAL/Cartesian.h>
 #include <iostream>
 
-#if !defined(__BORLANDC__) && !defined(_MSC_VER)
+#if defined(__BORLANDC__) || defined(_MSC_VER)
+int main()
+{
+  std::cout << "Geomview doesn't work on Windows, so..." << std::endl;
+  return 0;
+}
+#else
 
 #include <fstream>
-#include <unistd.h> // sleep
+#include <unistd.h> // for sleep()
 
-#include <CGAL/Cartesian.h>
-
-#include <CGAL/Triangulation_euclidean_traits_2.h>
 #include <CGAL/Triangulation_euclidean_traits_xy_3.h>
 
-#include <CGAL/Triangulation_data_structure_using_list_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
-
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Triangulation_geom_traits_3.h>
-#include <CGAL/Triangulation_data_structure_3.h>
 
 #include <CGAL/IO/Geomview_stream.h>
 #include <CGAL/IO/Triangulation_geomview_ostream_2.h>
 #include <CGAL/IO/Triangulation_geomview_ostream_3.h>
 
-
-#include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/intersections.h>
 
-typedef double NT;
-typedef CGAL::Cartesian<NT>  Rep;
+typedef CGAL::Cartesian<double>  K;
 
-typedef CGAL::Triangulation_euclidean_traits_2<Rep> Gt2;
-typedef Gt2::Point Point2;
-typedef CGAL::Triangulation_euclidean_traits_xy_3<Rep> Gt3;
+typedef K::Point_2 Point2;
+typedef CGAL::Triangulation_euclidean_traits_xy_3<K> Gt3;
 typedef Gt3::Point Point3;
 
-typedef CGAL::Triangulation_geom_traits_3<Rep> Gt3d;
+typedef CGAL::Delaunay_triangulation_2<K>   Delaunay;
+typedef CGAL::Delaunay_triangulation_2<Gt3> Terrain;
 
-typedef CGAL::Triangulation_vertex_base_2<Gt2> Vb2;
-typedef CGAL::Triangulation_face_base_2<Gt2> Fb2;
-typedef CGAL::Triangulation_vertex_base_2<Gt3> Vb3;
-typedef CGAL::Triangulation_face_base_2<Gt3> Fb3;
-
-typedef CGAL::Triangulation_vertex_base_3<Gt3d> Vb3d;
-typedef CGAL::Triangulation_cell_base_3<Gt3d> Ce3d;
-
-typedef CGAL::Triangulation_data_structure_using_list_2<Vb2,Fb2> Tds2;
-typedef CGAL::Triangulation_data_structure_using_list_2<Vb3,Fb3> Tds3;
-
-typedef CGAL::Triangulation_data_structure_3<Vb3d,Ce3d> Tds3d;
-
-typedef CGAL::Delaunay_triangulation_2<Gt2, Tds2> Delaunay;
-typedef CGAL::Delaunay_triangulation_2<Gt3, Tds3> Terrain;
-
-typedef CGAL::Delaunay_triangulation_3<Gt3d, Tds3d> Delaunay3d;
+typedef CGAL::Delaunay_triangulation_3<K>   Delaunay3d;
 
 int main()
 {
@@ -123,13 +102,6 @@ int main()
   char ch;
   std::cin >> ch;
 
-  return 0;
-}
-
-#else
-int main()
-{
-  std::cout << "Geomview doesn't work on Windows, so..." << std::endl;
   return 0;
 }
 #endif

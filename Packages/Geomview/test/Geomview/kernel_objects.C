@@ -3,18 +3,7 @@
 //
 // Sylvain Pion, 2000.
 
-#include <CGAL/basic.h>
-
 #include <CGAL/Cartesian.h>
-
-#include <CGAL/Point_2.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/Segment_2.h>
-#include <CGAL/Segment_3.h>
-#include <CGAL/Triangle_2.h>
-#include <CGAL/Triangle_3.h>
-#include <CGAL/Tetrahedron_3.h>
-#include <CGAL/Sphere_3.h>
 
 #include <CGAL/IO/Geomview_stream.h>
 

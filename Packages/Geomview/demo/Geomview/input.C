@@ -2,13 +2,16 @@
 //
 //  Sylvain Pion, 2000.
 
-#include <CGAL/basic.h>
+#include <CGAL/Cartesian.h>
 #include <iostream>
 
-#if !defined(__BORLANDC__) && !defined(_MSC_VER)
+#if defined(__BORLANDC__) || defined(_MSC_VER)
+int main() {
+  std::cout << "Geomview doesn't work on Windows, so..." << std::endl;
+  return 0;
+}
+#else
 
-#include <CGAL/Cartesian.h>
-#include <CGAL/Point_3.h>
 #include <CGAL/IO/Geomview_stream.h>
 
 typedef CGAL::Cartesian<double> K;
@@ -26,13 +29,6 @@ int main()
   std::cout << "Here are the coordinates of the selected point : "
             << p << std::endl;
 
-  return 0;
-}
-
-#else
-int main()
-{
-  std::cout << "Geomview doesn't work on Windows, so..." << std::endl;
   return 0;
 }
 #endif
