@@ -68,10 +68,10 @@ letstry:
     // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(a00.value()) > SAF_bound ||
-        fabs(a01.value()) > SAF_bound ||
-        fabs(a10.value()) > SAF_bound ||
-        fabs(a11.value()) > SAF_bound)
+	fabs(a00.value()) > SAF_bound ||
+	fabs(a01.value()) > SAF_bound ||
+	fabs(a10.value()) > SAF_bound ||
+	fabs(a11.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return sign_of_determinant2x2_SAF(
@@ -182,15 +182,15 @@ letstry:
     // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(a00.value()) > SAF_bound ||
-        fabs(a01.value()) > SAF_bound ||
-        fabs(a02.value()) > SAF_bound ||
-        fabs(a10.value()) > SAF_bound ||
-        fabs(a11.value()) > SAF_bound ||
-        fabs(a12.value()) > SAF_bound ||
-        fabs(a20.value()) > SAF_bound ||
-        fabs(a21.value()) > SAF_bound ||
-        fabs(a22.value()) > SAF_bound)
+	fabs(a00.value()) > SAF_bound ||
+	fabs(a01.value()) > SAF_bound ||
+	fabs(a02.value()) > SAF_bound ||
+	fabs(a10.value()) > SAF_bound ||
+	fabs(a11.value()) > SAF_bound ||
+	fabs(a12.value()) > SAF_bound ||
+	fabs(a20.value()) > SAF_bound ||
+	fabs(a21.value()) > SAF_bound ||
+	fabs(a22.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return sign_of_determinant3x3_SAF(
@@ -344,22 +344,22 @@ letstry:
     // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(a00.value()) > SAF_bound ||
-        fabs(a01.value()) > SAF_bound ||
-        fabs(a02.value()) > SAF_bound ||
-        fabs(a03.value()) > SAF_bound ||
-        fabs(a10.value()) > SAF_bound ||
-        fabs(a11.value()) > SAF_bound ||
-        fabs(a12.value()) > SAF_bound ||
-        fabs(a13.value()) > SAF_bound ||
-        fabs(a20.value()) > SAF_bound ||
-        fabs(a21.value()) > SAF_bound ||
-        fabs(a22.value()) > SAF_bound ||
-        fabs(a23.value()) > SAF_bound ||
-        fabs(a30.value()) > SAF_bound ||
-        fabs(a31.value()) > SAF_bound ||
-        fabs(a32.value()) > SAF_bound ||
-        fabs(a33.value()) > SAF_bound)
+	fabs(a00.value()) > SAF_bound ||
+	fabs(a01.value()) > SAF_bound ||
+	fabs(a02.value()) > SAF_bound ||
+	fabs(a03.value()) > SAF_bound ||
+	fabs(a10.value()) > SAF_bound ||
+	fabs(a11.value()) > SAF_bound ||
+	fabs(a12.value()) > SAF_bound ||
+	fabs(a13.value()) > SAF_bound ||
+	fabs(a20.value()) > SAF_bound ||
+	fabs(a21.value()) > SAF_bound ||
+	fabs(a22.value()) > SAF_bound ||
+	fabs(a23.value()) > SAF_bound ||
+	fabs(a30.value()) > SAF_bound ||
+	fabs(a31.value()) > SAF_bound ||
+	fabs(a32.value()) > SAF_bound ||
+	fabs(a33.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return sign_of_determinant4x4_SAF(
@@ -570,31 +570,31 @@ letstry:
     // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(a00.value()) > SAF_bound ||
-        fabs(a01.value()) > SAF_bound ||
-        fabs(a02.value()) > SAF_bound ||
-        fabs(a03.value()) > SAF_bound ||
-        fabs(a04.value()) > SAF_bound ||
-        fabs(a10.value()) > SAF_bound ||
-        fabs(a11.value()) > SAF_bound ||
-        fabs(a12.value()) > SAF_bound ||
-        fabs(a13.value()) > SAF_bound ||
-        fabs(a14.value()) > SAF_bound ||
-        fabs(a20.value()) > SAF_bound ||
-        fabs(a21.value()) > SAF_bound ||
-        fabs(a22.value()) > SAF_bound ||
-        fabs(a23.value()) > SAF_bound ||
-        fabs(a24.value()) > SAF_bound ||
-        fabs(a30.value()) > SAF_bound ||
-        fabs(a31.value()) > SAF_bound ||
-        fabs(a32.value()) > SAF_bound ||
-        fabs(a33.value()) > SAF_bound ||
-        fabs(a34.value()) > SAF_bound ||
-        fabs(a40.value()) > SAF_bound ||
-        fabs(a41.value()) > SAF_bound ||
-        fabs(a42.value()) > SAF_bound ||
-        fabs(a43.value()) > SAF_bound ||
-        fabs(a44.value()) > SAF_bound)
+	fabs(a00.value()) > SAF_bound ||
+	fabs(a01.value()) > SAF_bound ||
+	fabs(a02.value()) > SAF_bound ||
+	fabs(a03.value()) > SAF_bound ||
+	fabs(a04.value()) > SAF_bound ||
+	fabs(a10.value()) > SAF_bound ||
+	fabs(a11.value()) > SAF_bound ||
+	fabs(a12.value()) > SAF_bound ||
+	fabs(a13.value()) > SAF_bound ||
+	fabs(a14.value()) > SAF_bound ||
+	fabs(a20.value()) > SAF_bound ||
+	fabs(a21.value()) > SAF_bound ||
+	fabs(a22.value()) > SAF_bound ||
+	fabs(a23.value()) > SAF_bound ||
+	fabs(a24.value()) > SAF_bound ||
+	fabs(a30.value()) > SAF_bound ||
+	fabs(a31.value()) > SAF_bound ||
+	fabs(a32.value()) > SAF_bound ||
+	fabs(a33.value()) > SAF_bound ||
+	fabs(a34.value()) > SAF_bound ||
+	fabs(a40.value()) > SAF_bound ||
+	fabs(a41.value()) > SAF_bound ||
+	fabs(a42.value()) > SAF_bound ||
+	fabs(a43.value()) > SAF_bound ||
+	fabs(a44.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return sign_of_determinant5x5_SAF(
@@ -876,42 +876,42 @@ letstry:
     // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(a00.value()) > SAF_bound ||
-        fabs(a01.value()) > SAF_bound ||
-        fabs(a02.value()) > SAF_bound ||
-        fabs(a03.value()) > SAF_bound ||
-        fabs(a04.value()) > SAF_bound ||
-        fabs(a05.value()) > SAF_bound ||
-        fabs(a10.value()) > SAF_bound ||
-        fabs(a11.value()) > SAF_bound ||
-        fabs(a12.value()) > SAF_bound ||
-        fabs(a13.value()) > SAF_bound ||
-        fabs(a14.value()) > SAF_bound ||
-        fabs(a15.value()) > SAF_bound ||
-        fabs(a20.value()) > SAF_bound ||
-        fabs(a21.value()) > SAF_bound ||
-        fabs(a22.value()) > SAF_bound ||
-        fabs(a23.value()) > SAF_bound ||
-        fabs(a24.value()) > SAF_bound ||
-        fabs(a25.value()) > SAF_bound ||
-        fabs(a30.value()) > SAF_bound ||
-        fabs(a31.value()) > SAF_bound ||
-        fabs(a32.value()) > SAF_bound ||
-        fabs(a33.value()) > SAF_bound ||
-        fabs(a34.value()) > SAF_bound ||
-        fabs(a35.value()) > SAF_bound ||
-        fabs(a40.value()) > SAF_bound ||
-        fabs(a41.value()) > SAF_bound ||
-        fabs(a42.value()) > SAF_bound ||
-        fabs(a43.value()) > SAF_bound ||
-        fabs(a44.value()) > SAF_bound ||
-        fabs(a45.value()) > SAF_bound ||
-        fabs(a50.value()) > SAF_bound ||
-        fabs(a51.value()) > SAF_bound ||
-        fabs(a52.value()) > SAF_bound ||
-        fabs(a53.value()) > SAF_bound ||
-        fabs(a54.value()) > SAF_bound ||
-        fabs(a55.value()) > SAF_bound)
+	fabs(a00.value()) > SAF_bound ||
+	fabs(a01.value()) > SAF_bound ||
+	fabs(a02.value()) > SAF_bound ||
+	fabs(a03.value()) > SAF_bound ||
+	fabs(a04.value()) > SAF_bound ||
+	fabs(a05.value()) > SAF_bound ||
+	fabs(a10.value()) > SAF_bound ||
+	fabs(a11.value()) > SAF_bound ||
+	fabs(a12.value()) > SAF_bound ||
+	fabs(a13.value()) > SAF_bound ||
+	fabs(a14.value()) > SAF_bound ||
+	fabs(a15.value()) > SAF_bound ||
+	fabs(a20.value()) > SAF_bound ||
+	fabs(a21.value()) > SAF_bound ||
+	fabs(a22.value()) > SAF_bound ||
+	fabs(a23.value()) > SAF_bound ||
+	fabs(a24.value()) > SAF_bound ||
+	fabs(a25.value()) > SAF_bound ||
+	fabs(a30.value()) > SAF_bound ||
+	fabs(a31.value()) > SAF_bound ||
+	fabs(a32.value()) > SAF_bound ||
+	fabs(a33.value()) > SAF_bound ||
+	fabs(a34.value()) > SAF_bound ||
+	fabs(a35.value()) > SAF_bound ||
+	fabs(a40.value()) > SAF_bound ||
+	fabs(a41.value()) > SAF_bound ||
+	fabs(a42.value()) > SAF_bound ||
+	fabs(a43.value()) > SAF_bound ||
+	fabs(a44.value()) > SAF_bound ||
+	fabs(a45.value()) > SAF_bound ||
+	fabs(a50.value()) > SAF_bound ||
+	fabs(a51.value()) > SAF_bound ||
+	fabs(a52.value()) > SAF_bound ||
+	fabs(a53.value()) > SAF_bound ||
+	fabs(a54.value()) > SAF_bound ||
+	fabs(a55.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return sign_of_determinant6x6_SAF(

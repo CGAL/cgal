@@ -154,22 +154,22 @@ letstry:
     // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(phx.value()) > SAF_bound ||
-        fabs(phy.value()) > SAF_bound ||
-        fabs(phw.value()) > SAF_bound ||
-        fabs(pwt.value()) > SAF_bound ||
-        fabs(qhx.value()) > SAF_bound ||
-        fabs(qhy.value()) > SAF_bound ||
-        fabs(qhw.value()) > SAF_bound ||
-        fabs(qwt.value()) > SAF_bound ||
-        fabs(rhx.value()) > SAF_bound ||
-        fabs(rhy.value()) > SAF_bound ||
-        fabs(rhw.value()) > SAF_bound ||
-        fabs(rwt.value()) > SAF_bound ||
-        fabs(thx.value()) > SAF_bound ||
-        fabs(thy.value()) > SAF_bound ||
-        fabs(thw.value()) > SAF_bound ||
-        fabs(twt.value()) > SAF_bound)
+	fabs(phx.value()) > SAF_bound ||
+	fabs(phy.value()) > SAF_bound ||
+	fabs(phw.value()) > SAF_bound ||
+	fabs(pwt.value()) > SAF_bound ||
+	fabs(qhx.value()) > SAF_bound ||
+	fabs(qhy.value()) > SAF_bound ||
+	fabs(qhw.value()) > SAF_bound ||
+	fabs(qwt.value()) > SAF_bound ||
+	fabs(rhx.value()) > SAF_bound ||
+	fabs(rhy.value()) > SAF_bound ||
+	fabs(rhw.value()) > SAF_bound ||
+	fabs(rwt.value()) > SAF_bound ||
+	fabs(thx.value()) > SAF_bound ||
+	fabs(thy.value()) > SAF_bound ||
+	fabs(thw.value()) > SAF_bound ||
+	fabs(twt.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return power_testH2_SAF(
@@ -394,18 +394,18 @@ letstry:
     // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(phx.value()) > SAF_bound ||
-        fabs(phy.value()) > SAF_bound ||
-        fabs(phw.value()) > SAF_bound ||
-        fabs(pwt.value()) > SAF_bound ||
-        fabs(qhx.value()) > SAF_bound ||
-        fabs(qhy.value()) > SAF_bound ||
-        fabs(qhw.value()) > SAF_bound ||
-        fabs(qwt.value()) > SAF_bound ||
-        fabs(thx.value()) > SAF_bound ||
-        fabs(thy.value()) > SAF_bound ||
-        fabs(thw.value()) > SAF_bound ||
-        fabs(twt.value()) > SAF_bound)
+	fabs(phx.value()) > SAF_bound ||
+	fabs(phy.value()) > SAF_bound ||
+	fabs(phw.value()) > SAF_bound ||
+	fabs(pwt.value()) > SAF_bound ||
+	fabs(qhx.value()) > SAF_bound ||
+	fabs(qhy.value()) > SAF_bound ||
+	fabs(qhw.value()) > SAF_bound ||
+	fabs(qwt.value()) > SAF_bound ||
+	fabs(thx.value()) > SAF_bound ||
+	fabs(thy.value()) > SAF_bound ||
+	fabs(thw.value()) > SAF_bound ||
+	fabs(twt.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return power_testH2_SAF(

@@ -101,15 +101,15 @@ letstry:
     // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(px.value()) > SAF_bound ||
-        fabs(py.value()) > SAF_bound ||
-        fabs(pw.value()) > SAF_bound ||
-        fabs(qx.value()) > SAF_bound ||
-        fabs(qy.value()) > SAF_bound ||
-        fabs(qw.value()) > SAF_bound ||
-        fabs(tx.value()) > SAF_bound ||
-        fabs(ty.value()) > SAF_bound ||
-        fabs(tw.value()) > SAF_bound)
+	fabs(px.value()) > SAF_bound ||
+	fabs(py.value()) > SAF_bound ||
+	fabs(pw.value()) > SAF_bound ||
+	fabs(qx.value()) > SAF_bound ||
+	fabs(qy.value()) > SAF_bound ||
+	fabs(qw.value()) > SAF_bound ||
+	fabs(tx.value()) > SAF_bound ||
+	fabs(ty.value()) > SAF_bound ||
+	fabs(tw.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return in_smallest_orthogonalcircleC2_SAF(

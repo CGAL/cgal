@@ -94,13 +94,13 @@ letstry:
     // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(px.value()) > SAF_bound ||
-        fabs(l1a.value()) > SAF_bound ||
-        fabs(l1b.value()) > SAF_bound ||
-        fabs(l1c.value()) > SAF_bound ||
-        fabs(l2a.value()) > SAF_bound ||
-        fabs(l2b.value()) > SAF_bound ||
-        fabs(l2c.value()) > SAF_bound)
+	fabs(px.value()) > SAF_bound ||
+	fabs(l1a.value()) > SAF_bound ||
+	fabs(l1b.value()) > SAF_bound ||
+	fabs(l1c.value()) > SAF_bound ||
+	fabs(l2a.value()) > SAF_bound ||
+	fabs(l2b.value()) > SAF_bound ||
+	fabs(l2c.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return compare_xC2_SAF(
@@ -256,18 +256,18 @@ letstry:
     // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(l1a.value()) > SAF_bound ||
-        fabs(l1b.value()) > SAF_bound ||
-        fabs(l1c.value()) > SAF_bound ||
-        fabs(l2a.value()) > SAF_bound ||
-        fabs(l2b.value()) > SAF_bound ||
-        fabs(l2c.value()) > SAF_bound ||
-        fabs(h1a.value()) > SAF_bound ||
-        fabs(h1b.value()) > SAF_bound ||
-        fabs(h1c.value()) > SAF_bound ||
-        fabs(h2a.value()) > SAF_bound ||
-        fabs(h2b.value()) > SAF_bound ||
-        fabs(h2c.value()) > SAF_bound)
+	fabs(l1a.value()) > SAF_bound ||
+	fabs(l1b.value()) > SAF_bound ||
+	fabs(l1c.value()) > SAF_bound ||
+	fabs(l2a.value()) > SAF_bound ||
+	fabs(l2b.value()) > SAF_bound ||
+	fabs(l2c.value()) > SAF_bound ||
+	fabs(h1a.value()) > SAF_bound ||
+	fabs(h1b.value()) > SAF_bound ||
+	fabs(h1c.value()) > SAF_bound ||
+	fabs(h2a.value()) > SAF_bound ||
+	fabs(h2b.value()) > SAF_bound ||
+	fabs(h2c.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return compare_xC2_SAF(
@@ -407,11 +407,11 @@ letstry:
     // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(px.value()) > SAF_bound ||
-        fabs(py.value()) > SAF_bound ||
-        fabs(la.value()) > SAF_bound ||
-        fabs(lb.value()) > SAF_bound ||
-        fabs(lc.value()) > SAF_bound)
+	fabs(px.value()) > SAF_bound ||
+	fabs(py.value()) > SAF_bound ||
+	fabs(la.value()) > SAF_bound ||
+	fabs(lb.value()) > SAF_bound ||
+	fabs(lc.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return compare_y_at_xC2_SAF(
@@ -532,13 +532,13 @@ letstry:
     // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(px.value()) > SAF_bound ||
-        fabs(l1a.value()) > SAF_bound ||
-        fabs(l1b.value()) > SAF_bound ||
-        fabs(l1c.value()) > SAF_bound ||
-        fabs(l2a.value()) > SAF_bound ||
-        fabs(l2b.value()) > SAF_bound ||
-        fabs(l2c.value()) > SAF_bound)
+	fabs(px.value()) > SAF_bound ||
+	fabs(l1a.value()) > SAF_bound ||
+	fabs(l1b.value()) > SAF_bound ||
+	fabs(l1c.value()) > SAF_bound ||
+	fabs(l2a.value()) > SAF_bound ||
+	fabs(l2b.value()) > SAF_bound ||
+	fabs(l2c.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return compare_y_at_xC2_SAF(
@@ -676,15 +676,15 @@ letstry:
     // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(l1a.value()) > SAF_bound ||
-        fabs(l1b.value()) > SAF_bound ||
-        fabs(l1c.value()) > SAF_bound ||
-        fabs(l2a.value()) > SAF_bound ||
-        fabs(l2b.value()) > SAF_bound ||
-        fabs(l2c.value()) > SAF_bound ||
-        fabs(ha.value()) > SAF_bound ||
-        fabs(hb.value()) > SAF_bound ||
-        fabs(hc.value()) > SAF_bound)
+	fabs(l1a.value()) > SAF_bound ||
+	fabs(l1b.value()) > SAF_bound ||
+	fabs(l1c.value()) > SAF_bound ||
+	fabs(l2a.value()) > SAF_bound ||
+	fabs(l2b.value()) > SAF_bound ||
+	fabs(l2c.value()) > SAF_bound ||
+	fabs(ha.value()) > SAF_bound ||
+	fabs(hb.value()) > SAF_bound ||
+	fabs(hc.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return compare_y_at_xC2_SAF(
@@ -851,18 +851,18 @@ letstry:
     // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(l1a.value()) > SAF_bound ||
-        fabs(l1b.value()) > SAF_bound ||
-        fabs(l1c.value()) > SAF_bound ||
-        fabs(l2a.value()) > SAF_bound ||
-        fabs(l2b.value()) > SAF_bound ||
-        fabs(l2c.value()) > SAF_bound ||
-        fabs(h1a.value()) > SAF_bound ||
-        fabs(h1b.value()) > SAF_bound ||
-        fabs(h1c.value()) > SAF_bound ||
-        fabs(h2a.value()) > SAF_bound ||
-        fabs(h2b.value()) > SAF_bound ||
-        fabs(h2c.value()) > SAF_bound)
+	fabs(l1a.value()) > SAF_bound ||
+	fabs(l1b.value()) > SAF_bound ||
+	fabs(l1c.value()) > SAF_bound ||
+	fabs(l2a.value()) > SAF_bound ||
+	fabs(l2b.value()) > SAF_bound ||
+	fabs(l2c.value()) > SAF_bound ||
+	fabs(h1a.value()) > SAF_bound ||
+	fabs(h1b.value()) > SAF_bound ||
+	fabs(h1c.value()) > SAF_bound ||
+	fabs(h2a.value()) > SAF_bound ||
+	fabs(h2b.value()) > SAF_bound ||
+	fabs(h2c.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return compare_y_at_xC2_SAF(
@@ -992,10 +992,10 @@ letstry:
     // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(px.value()) > SAF_bound ||
-        fabs(qx.value()) > SAF_bound ||
-        fabs(ry.value()) > SAF_bound ||
-        fabs(sy.value()) > SAF_bound)
+	fabs(px.value()) > SAF_bound ||
+	fabs(qx.value()) > SAF_bound ||
+	fabs(ry.value()) > SAF_bound ||
+	fabs(sy.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return compare_deltax_deltayC2_SAF(
@@ -1093,12 +1093,12 @@ letstry:
     // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(px.value()) > SAF_bound ||
-        fabs(py.value()) > SAF_bound ||
-        fabs(qx.value()) > SAF_bound ||
-        fabs(qy.value()) > SAF_bound ||
-        fabs(rx.value()) > SAF_bound ||
-        fabs(ry.value()) > SAF_bound)
+	fabs(px.value()) > SAF_bound ||
+	fabs(py.value()) > SAF_bound ||
+	fabs(qx.value()) > SAF_bound ||
+	fabs(qy.value()) > SAF_bound ||
+	fabs(rx.value()) > SAF_bound ||
+	fabs(ry.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return orientationC2_SAF(
@@ -1240,14 +1240,14 @@ letstry:
     // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(px.value()) > SAF_bound ||
-        fabs(py.value()) > SAF_bound ||
-        fabs(qx.value()) > SAF_bound ||
-        fabs(qy.value()) > SAF_bound ||
-        fabs(rx.value()) > SAF_bound ||
-        fabs(ry.value()) > SAF_bound ||
-        fabs(tx.value()) > SAF_bound ||
-        fabs(ty.value()) > SAF_bound)
+	fabs(px.value()) > SAF_bound ||
+	fabs(py.value()) > SAF_bound ||
+	fabs(qx.value()) > SAF_bound ||
+	fabs(qy.value()) > SAF_bound ||
+	fabs(rx.value()) > SAF_bound ||
+	fabs(ry.value()) > SAF_bound ||
+	fabs(tx.value()) > SAF_bound ||
+	fabs(ty.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return side_of_oriented_circleC2_SAF(
@@ -1376,14 +1376,14 @@ letstry:
     // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(px.value()) > SAF_bound ||
-        fabs(py.value()) > SAF_bound ||
-        fabs(qx.value()) > SAF_bound ||
-        fabs(qy.value()) > SAF_bound ||
-        fabs(rx.value()) > SAF_bound ||
-        fabs(ry.value()) > SAF_bound ||
-        fabs(tx.value()) > SAF_bound ||
-        fabs(ty.value()) > SAF_bound)
+	fabs(px.value()) > SAF_bound ||
+	fabs(py.value()) > SAF_bound ||
+	fabs(qx.value()) > SAF_bound ||
+	fabs(qy.value()) > SAF_bound ||
+	fabs(rx.value()) > SAF_bound ||
+	fabs(ry.value()) > SAF_bound ||
+	fabs(tx.value()) > SAF_bound ||
+	fabs(ty.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return side_of_bounded_circleC2_SAF(
@@ -1501,12 +1501,12 @@ letstry:
     // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(px.value()) > SAF_bound ||
-        fabs(py.value()) > SAF_bound ||
-        fabs(qx.value()) > SAF_bound ||
-        fabs(qy.value()) > SAF_bound ||
-        fabs(rx.value()) > SAF_bound ||
-        fabs(ry.value()) > SAF_bound)
+	fabs(px.value()) > SAF_bound ||
+	fabs(py.value()) > SAF_bound ||
+	fabs(qx.value()) > SAF_bound ||
+	fabs(qy.value()) > SAF_bound ||
+	fabs(rx.value()) > SAF_bound ||
+	fabs(ry.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return cmp_dist_to_pointC2_SAF(
@@ -1617,13 +1617,13 @@ letstry:
     // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(la.value()) > SAF_bound ||
-        fabs(lb.value()) > SAF_bound ||
-        fabs(lc.value()) > SAF_bound ||
-        fabs(px.value()) > SAF_bound ||
-        fabs(py.value()) > SAF_bound ||
-        fabs(qx.value()) > SAF_bound ||
-        fabs(qy.value()) > SAF_bound)
+	fabs(la.value()) > SAF_bound ||
+	fabs(lb.value()) > SAF_bound ||
+	fabs(lc.value()) > SAF_bound ||
+	fabs(px.value()) > SAF_bound ||
+	fabs(py.value()) > SAF_bound ||
+	fabs(qx.value()) > SAF_bound ||
+	fabs(qy.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return cmp_signed_dist_to_lineC2_SAF(
@@ -1741,14 +1741,14 @@ letstry:
     // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(px.value()) > SAF_bound ||
-        fabs(py.value()) > SAF_bound ||
-        fabs(qx.value()) > SAF_bound ||
-        fabs(qy.value()) > SAF_bound ||
-        fabs(rx.value()) > SAF_bound ||
-        fabs(ry.value()) > SAF_bound ||
-        fabs(sx.value()) > SAF_bound ||
-        fabs(sy.value()) > SAF_bound)
+	fabs(px.value()) > SAF_bound ||
+	fabs(py.value()) > SAF_bound ||
+	fabs(qx.value()) > SAF_bound ||
+	fabs(qy.value()) > SAF_bound ||
+	fabs(rx.value()) > SAF_bound ||
+	fabs(ry.value()) > SAF_bound ||
+	fabs(sx.value()) > SAF_bound ||
+	fabs(sy.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return cmp_signed_dist_to_lineC2_SAF(

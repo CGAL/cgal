@@ -126,18 +126,18 @@ letstry:
     // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(px.value()) > SAF_bound ||
-        fabs(py.value()) > SAF_bound ||
-        fabs(pwt.value()) > SAF_bound ||
-        fabs(qx.value()) > SAF_bound ||
-        fabs(qy.value()) > SAF_bound ||
-        fabs(qwt.value()) > SAF_bound ||
-        fabs(rx.value()) > SAF_bound ||
-        fabs(ry.value()) > SAF_bound ||
-        fabs(rwt.value()) > SAF_bound ||
-        fabs(tx.value()) > SAF_bound ||
-        fabs(ty.value()) > SAF_bound ||
-        fabs(twt.value()) > SAF_bound)
+	fabs(px.value()) > SAF_bound ||
+	fabs(py.value()) > SAF_bound ||
+	fabs(pwt.value()) > SAF_bound ||
+	fabs(qx.value()) > SAF_bound ||
+	fabs(qy.value()) > SAF_bound ||
+	fabs(qwt.value()) > SAF_bound ||
+	fabs(rx.value()) > SAF_bound ||
+	fabs(ry.value()) > SAF_bound ||
+	fabs(rwt.value()) > SAF_bound ||
+	fabs(tx.value()) > SAF_bound ||
+	fabs(ty.value()) > SAF_bound ||
+	fabs(twt.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return power_testC2_SAF(
@@ -315,15 +315,15 @@ letstry:
     // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(px.value()) > SAF_bound ||
-        fabs(py.value()) > SAF_bound ||
-        fabs(pwt.value()) > SAF_bound ||
-        fabs(qx.value()) > SAF_bound ||
-        fabs(qy.value()) > SAF_bound ||
-        fabs(qwt.value()) > SAF_bound ||
-        fabs(tx.value()) > SAF_bound ||
-        fabs(ty.value()) > SAF_bound ||
-        fabs(twt.value()) > SAF_bound)
+	fabs(px.value()) > SAF_bound ||
+	fabs(py.value()) > SAF_bound ||
+	fabs(pwt.value()) > SAF_bound ||
+	fabs(qx.value()) > SAF_bound ||
+	fabs(qy.value()) > SAF_bound ||
+	fabs(qwt.value()) > SAF_bound ||
+	fabs(tx.value()) > SAF_bound ||
+	fabs(ty.value()) > SAF_bound ||
+	fabs(twt.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return power_testC2_SAF(
