@@ -1,3 +1,7 @@
+4.55     (23 April 02)
+- Don't compile Filtered_Exact tests in utilities.C on VC++ (lack of partial
+  specialization).
+
 4.54     (28 March 02)
 - Added 3-arg min/max where using std::min/max does not work.
 
