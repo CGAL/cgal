@@ -280,22 +280,16 @@ public:
       // clears the structure
       Dt::clear();
 
-      _interval_cell_map.erase(_interval_cell_map.begin(),
-			       _interval_cell_map.end());
-      _interval_facet_map.erase(_interval_facet_map.begin(),
-				_interval_facet_map.end());
-      _interval_edge_map.erase(_interval_edge_map.begin(),
-			       _interval_edge_map.end());
-      _interval_vertex_map.erase(_interval_vertex_map.begin(),
-				 _interval_vertex_map.end());
+      _interval_cell_map.clear();
+      _interval_facet_map.clear();
+      _interval_edge_map.clear();
+      _interval_vertex_map.clear();
 
-      _alpha_spectrum.erase(_alpha_spectrum.begin(),
-			    _alpha_spectrum.end());
+      _alpha_spectrum.clear();
 
-      Alpha_shape_vertices_list.erase(Alpha_shape_vertices_list.begin(),
-				      Alpha_shape_vertices_list.end());
-      Alpha_shape_facets_list.erase(Alpha_shape_facets_list.begin(),
-				    Alpha_shape_facets_list.end());
+      Alpha_shape_vertices_list.clear();
+
+      Alpha_shape_facets_list.clear();
 
       set_alpha(0); 
       set_mode(REGULARIZED);
@@ -436,7 +430,7 @@ private:
   //---------------------------------------------------------------------
 public:
 
-  Alpha_shape_vertices_iterator Alpha_shape_vertices_begin()
+  Alpha_shape_vertices_iterator alpha_shape_vertices_begin()
     {
       Alpha_shape_vertices_list.erase(Alpha_shape_vertices_list.begin(), 
 				      Alpha_shape_vertices_list.end());
@@ -446,16 +440,25 @@ public:
       return Alpha_shape_vertices_list.begin();
     }
 
+  Alpha_shape_vertices_iterator Alpha_shape_vertices_begin()
+    {
+      return alpha_shape_vertices_begin();
+    }
   //---------------------------------------------------------------------
 
-  Alpha_shape_vertices_iterator Alpha_shape_vertices_end()
+  Alpha_shape_vertices_iterator alpha_shape_vertices_end()
     {
       return Alpha_shape_vertices_list.end();
     }
 
+  Alpha_shape_vertices_iterator Alpha_shape_vertices_end()
+    {
+      return alpha_shape_vertices_end();
+    }
+
   //---------------------------------------------------------------------
 
-  Alpha_shape_facets_iterator Alpha_shape_facets_begin()
+  Alpha_shape_facets_iterator alpha_shape_facets_begin()
     {
       Alpha_shape_facets_list.erase(Alpha_shape_facets_list.begin(), 
 				    Alpha_shape_facets_list.end());
@@ -465,12 +468,23 @@ public:
       return Alpha_shape_facets_list.begin();
     }
 
+  Alpha_shape_facets_iterator Alpha_shape_facets_begin()
+    {
+      return alpha_shape_facets_begin();
+    }
+
   //---------------------------------------------------------------------
 
-  Alpha_shape_facets_iterator Alpha_shape_facets_end()
+  Alpha_shape_facets_iterator alpha_shape_facets_end()
     {
       return Alpha_shape_facets_list.end();
     }
+
+  Alpha_shape_facets_iterator Alpha_shape_facets_end()
+    {
+      return alpha_shape_facets_end();
+    }
+
 
 public: 
   
@@ -967,13 +981,13 @@ Alpha_shape_3<Dt>::initialize_interval_facet_map()
 // 		  Interval3 interval3 = find_interval(const_facet(s, i));
 				
 // 		  alpha_mid_e = (interval3.first != UNDEFINED) ?
-// 		    min(alpha_mid_e, interval3.first): 
-// 		    min(alpha_mid_e, interval3.second); 
+// 		    CGAL::min(alpha_mid_e, interval3.first): 
+// 		    CGAL::min(alpha_mid_e, interval3.second); 
 			
 // 		  if (alpha_max_e != Infinity)
 // 		    {
 // 		      alpha_max_e = (interval3.third != Infinity) ?
-// 			max(alpha_max_e, interval3.third):
+// 			CGAL::max(alpha_max_e, interval3.third):
 // 			Infinity;
 // 		    }
 // 		}
@@ -1054,10 +1068,10 @@ Alpha_shape_3<Dt>::initialize_interval_vertex_map()
 // 		      alpha_s = find_interval(s);
 // 		      // if we define singular as not incident to a 
 // 		      // 3-dimensional cell
-// 		      alpha_mid_v = min(alpha_mid_v, alpha_s);
+// 		      alpha_mid_v = CGAL::min(alpha_mid_v, alpha_s);
 		    
 // 		      if (alpha_max_v != Infinity)
-// 			alpha_max_v = max(alpha_max_v, alpha_s);
+// 			alpha_max_v = CGAL::max(alpha_max_v, alpha_s);
 		    
 // 		    }
 // 		}
@@ -1086,10 +1100,10 @@ Alpha_shape_3<Dt>::initialize_interval_vertex_map()
 			alpha_s = find_interval(s);
 			// if we define singular as not incident to a
                         // 3-dimensional cell
-			alpha_mid_v = min(alpha_mid_v, alpha_s);
+			alpha_mid_v = CGAL::min(alpha_mid_v, alpha_s);
 		    
 			if (alpha_max_v != Infinity)
-			  alpha_max_v = max(alpha_max_v, alpha_s);
+			  alpha_max_v = CGAL::max(alpha_max_v, alpha_s);
 			
 		      }
 		  }
@@ -1837,7 +1851,7 @@ Alpha_shape_3<Dt>::find_alpha_solid() const
 // 	    {
 // 	    Cell_handle s = (*cell_circ);
 // 	    if (! is_infinite(s))
-// 	    alpha_min_v = min(find_interval(s),
+// 	    alpha_min_v = CGAL::min(find_interval(s),
 // 	    alpha_min_v);
 // 	    }
 // 	    while (++cell_circ != done);
@@ -1856,13 +1870,13 @@ Alpha_shape_3<Dt>::find_alpha_solid() const
 		{
 		  if (! is_infinite(s))
 		    {
-		      alpha_min_v = min(find_interval(s),
-					     alpha_min_v);
+		      alpha_min_v = CGAL::min(find_interval(s),
+					      alpha_min_v);
 		    }
 		}
 	    }
 	    
-	  alpha_solid = max(alpha_min_v, alpha_solid);
+	  alpha_solid = CGAL::max(alpha_min_v, alpha_solid);
 	}
     }
   return alpha_solid;

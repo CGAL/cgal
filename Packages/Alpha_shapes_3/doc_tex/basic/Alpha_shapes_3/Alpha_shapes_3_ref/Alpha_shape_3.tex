@@ -196,14 +196,14 @@ Returns the previous mode.}
 	get_mode(void) const;}
 {Returns whether \ccVar\ is general or regularized.}
 
-\ccMethod{Alpha_shape_vertices_iterator Alpha_shape_vertices_begin();}{Starts at
+\ccMethod{Alpha_shape_vertices_iterator alpha_shape_vertices_begin();}{Starts at
 an arbitrary finite vertex which belongs to the $\alpha$-shape for a fixed $\alpha$.}
-\ccMethod{Alpha_shape_vertices_iterator Alpha_shape_vertices_end();}{Past-the-end iterator.}
-\ccMethod{Alpha_shape_facets_iterator Alpha_shape_facets_begin();}{Starts at
+\ccMethod{Alpha_shape_vertices_iterator alpha_shape_vertices_end();}{Past-the-end iterator.}
+\ccMethod{Alpha_shape_facets_iterator alpha_shape_facets_begin();}{Starts at
 an arbitrary finite facet which belongs to the $\alpha$-shape for a fixed
 $\alpha$. In regularised mode, facets are represented as a pair (f,i), where f is 
 an interior cell of the $\alpha$-shape.}
-\ccMethod{Alpha_shape_facets_iterator Alpha_shape_facets_end();}{Past-the-end iterator.}
+\ccMethod{Alpha_shape_facets_iterator alpha_shape_facets_end();}{Past-the-end iterator.}
 
 %\ccMethod{template  < class OutputIterator >
 %	  OutputIterator get_alpha_shape_vertices(
@@ -306,13 +306,13 @@ is an internal format.
 {Inserts the alpha shape \ccVar\ for the current $\alpha$-value into the stream \ccc{os}.
 \ccPrecond The insert operator must be defined for \ccc{Point}.}
 
-\ccInclude{CGAL/IO/Window_stream.h}
+\ccInclude{CGAL/IO/Geomview_stream.h}
 
-\ccInclude{CGAL/IO/alpha_shapes_3_window_stream.h}
+\ccInclude{CGAL/IO/alpha_shape_geomview_ostream_3.h}
 
-\ccFunction{Window_stream& operator<<(Window_stream& W,
-                         const Alpha_shape_3<Dt>& A);}
-{Inserts the alpha shape \ccVar\ for the current $\alpha$-value into the window stream \ccc{W}.
+\ccFunction{Geomview_stream& operator<<(Geomview_stream& W,
+                         	const Alpha_shape_3<Dt>& A);}
+{Inserts the alpha shape \ccVar\ for the current $\alpha$-value into the Geomview stream \ccc{W}.
 \ccPrecond The insert operator must be defined for \ccc{Point} and \ccc{Triangle}.}
 
 \ccImplementation

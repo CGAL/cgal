@@ -45,23 +45,57 @@
 
 %----------------------------------------------------------------------
 
-\begin{ccRefClass}{Alpha_shape_cell_base_3<AlphaShapeTraits_3, 
-	                                   TriangulationCellBase_3>}
+\begin{ccRefConcept}{AlphaShapeVertex_3}
 
 \ccDefinition
 
-The class \ccRefName\ is the default  model for the concept
-\ccc{AlphaShapeCell_3}.
+\ccRefines
+\ccc{TriangulationVertexBase_3}.
+
+\ccCreationVariable{v}
+
+\ccTypes
+
+\ccNestedType{Coord_type}{A type to hold a coordinate type class. 
+The type must provide a copy constructor, assignment, comparison
+operators, negation, multiplication, division and allow the
+declaration and initialization with a small integer constant
+(cf. requirements for number types). An obvious choice would be
+coordinate type of the point class.
+\ccPrecond Let's us precise that \ccc{Coord_type} has to be the same as the one used by
+the \ccc{Gt}, already used by underlying triangulation \ccc{Dt}.}
+
+\ccCreation
+
+\begin{ccAdvanced}
+
+\ccConstructor{Alpha_shape_vertex_base_3();}{default constructor.}
+\ccGlue
+\ccConstructor{Alpha_shape_vertex_base_3(Point p);}{constructor setting
+the point associated to.}
+\ccGlue
+\ccConstructor{Alpha_shape_vertex_base_3(Point p, void* c);} 
+{constructor setting the point  associated to and an incident cell.}
+
+\end{ccAdvanced}
+
+\ccHeading{Access Functions}
+
+\ccMethod{std::pair< Coord_type, Coord_type > get_range();}
+{returns two alpha values $\alpha_1 \leq \alpha_2$, such as for
+$\alpha$ between $\alpha_1$ and $\alpha_2$, the vertex is attached but singular, and
+for $\alpha$ upper $\alpha_2$, the vertex is regular.}
 
 
-\ccInclude{Alpha_shape_cell_base_3.h}
+\ccModifiers
 
-\ccIsModel
-\ccc{AlphaShapeCell_3}
+\begin{ccAdvanced}
 
-\ccInheritsFrom
+\ccMethod{void set_range(std::pair< Coord_type, Coord_type > I);}
+{sets the alpha values $\alpha_1 \leq \alpha_2$, such as for
+$\alpha$ between $\alpha_1$ and $\alpha_2$, the vertex is attached but singular, and
+for $\alpha$ upper $\alpha_2$, the vertex is regular.}
 
-\ccc{TriangulationCellBase_3}
+\end{ccAdvanced}
 
-
-\end{ccRefClass}
+\end{ccRefConcept}

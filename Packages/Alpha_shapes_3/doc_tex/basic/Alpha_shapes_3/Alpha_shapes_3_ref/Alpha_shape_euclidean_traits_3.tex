@@ -45,23 +45,24 @@
 
 %----------------------------------------------------------------------
 
-\begin{ccRefClass}{Alpha_shape_cell_base_3<AlphaShapeTraits_3, 
-	                                   TriangulationCellBase_3>}
+\begin{ccRefClass} {Alpha_shape_euclidean_traits_3<K>}
+
+\ccCreationVariable{t}
 
 \ccDefinition
 
 The class \ccRefName\ is the default  model for the concept
-\ccc{AlphaShapeCell_3}.
+\ccc{AlphaShapeTraits_3} for the basic version of Alpha Shapes.
+\ccc{K} must be a kernel.
 
+\ccInclude{Alpha_shape_euclidean_traits_3.h}
 
-\ccInclude{Alpha_shape_cell_base_3.h}
+\ccRefines
+\ccc{Triangulation_euclidean_traits_3<K, typename K::FT> }
+
 
 \ccIsModel
-\ccc{AlphaShapeCell_3}
-
-\ccInheritsFrom
-
-\ccc{TriangulationCellBase_3}
+\ccc{AlphaShapeTraits_3}
 
 
 \end{ccRefClass}
