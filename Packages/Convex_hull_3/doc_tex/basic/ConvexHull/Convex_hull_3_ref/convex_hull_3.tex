@@ -1,0 +1,97 @@
+\begin{ccRefFunction}{convex_hull_3}
+\ccIndexMainItemBegin{convex hull, 3D}
+\ccIndexMainItemBegin{quickhull, 3D}
+\ccIndexSubitemBegin{convex hull, 3D}{quickhull}
+
+\ccDefinition
+
+The function \ccRefName\ computes the convex hull of a given set of 
+three-dimensional points 
+Two versions of this function 
+are available.  The first can be used when it is known that the result
+will be a polyhedron and the second when a degenerate hull
+may also be possible.
+
+\ccInclude{CGAL/convex_hull_3.h}
+
+\ccFunction{
+template <class InputIterator, class Polyhedron_3, class Traits>
+void convex_hull_3(InputIterator first, InputIterator last,
+                    Polyhedron_3& P,
+                    const Traits& ch_traits = Default_traits);
+}
+{
+computes the convex hull of the set of points in the range
+[\ccc{first}, \ccc{last}).  The polyhedron \ccc{P} is cleared, then
+the convex hull is stored in \ccc{P} 
+and the plane equations of each face are computed.
+\ccPrecond: There are at least four points in the range 
+[\ccc{first}, \ccc{last}) not all of which are collinear.
+}
+
+\ccFunction{
+template <class InputIterator, class Polyhedron_3, class Traits>
+void convex_hull_3(InputIterator first, InputIterator last,
+                    Object& ch_object,
+                    const Traits& ch_traits = Default_traits);
+}
+{
+computes the convex hull of the set of points in the range
+[\ccc{first}, \ccc{last}).  The result, which may be a point, a segment,
+a triangle, or a polyhedron, is stored in \ccc{ch_object}.  When
+the result is a polyhedron, the plane equations of each face are computed.
+}
+
+\ccHeading{Requirements}
+Both functions require the following:
+\begin{enumerate}
+   \item \ccc{InputIterator::value_type} is equivalent to \ccc{Traits::Point_3}.
+   \item \ccc{Traits} is a model of the concept ConvexHullTraits\_3
+         \ccIndexMainItem[c]{ConvexHullTraits_3}.  When it is known that
+         the input points are not all coplanar, the types \ccc{Traits_xy}, 
+         \ccc{Traits_yx}, and \ccc{Traits_yz} need not be provided.
+         For the purposes of checking the postcondition that the convex hull
+         is valid, \ccc{Traits} should also be a model of the concept
+         IsStronglyConvexTraits\_3.
+        %\ccIndexMainItem[c]{IsStronglyConvexTraits_3}
+\end{enumerate}
+
+Both functions have an additional requirement for the polyhedron that is
+to be constructed. For the first version this is that:
+\begin{itemize}
+  \item \ccc{Polyhedron_3} is a model of ConvexHullPolyhedron\_3,
+\end{itemize}
+and for the second, it is required that
+\begin{itemize}
+ \item \ccc{Traits} defines a type \ccc{Polyhedron_3} that is a model of 
+       ConvexHullPolyhedron\_3.
+\end{itemize}
+
+The default traits class for both versions of \ccc{convex_hull_3} is 
+\ccc{Convex_hull_traits_3<R>},%
+with the representation \ccc{R} determined by \ccc{InputIterator::value_type}.
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::convex_hull_incremental_3} \\
+\ccRefIdfierPage{CGAL::ch_eddy}  \\
+\ccRefIdfierPage{CGAL::convex_hull_2} 
+
+\ccImplementation
+The algorithm implemented by these functions is the quickhull algorithm of 
+Barnard \textit{et al.} \cite{bdh-qach-96}.  
+
+\ccExample
+
+The following program computes the convex hull of a set of 250 random
+points chosen from a sphere of radius 100.  It then determines if the resulting
+hull is a segment or a polyhedron.  Notice that the traits class is not
+necessary in the call to \ccc{convex_hull_3} but is used in the definition
+of \ccc{Polyhedron_3}.
+
+\ccIncludeExampleCode{Convex_hull_3/quickhull_3_ex.C}
+
+\ccIndexSubitemEnd{convex hull, 3D}{quickhull}
+\ccIndexMainItemEnd{quickhull, 3D}
+\ccIndexMainItemEnd{convex hull, 3D}
+\end{ccRefFunction}

@@ -1,0 +1,60 @@
+\begin{ccRefConcept}{ConvexHull3fromD_Rep}
+
+\ccDefinition
+Requirements of the representation class required for use as a 
+representation class with \ccc{Convex_hull_d_traits_3}.
+
+\ccTypes
+
+\ccAutoIndexingOff
+\ccNestedType{RT}{a ring type}
+\ccNestedType{FT}{a field type}
+\ccNestedType{Point_3}{a three-dimensional point}
+\ccNestedType{Plane_3}{a plane in three dimensions}
+\ccNestedType{Vector_3}{a vector in 3D}
+\ccNestedType{Ray_3}{a ray in 3D}
+
+\ccNestedType{Oriented_side_3}{Function object type that provides
+\ccc{Oriented_side operator()(Plane_3 h, Point_3 p)} that returns
+\ccStyle{ON_ORIENTED_BOUNDARY}, \ccStyle{ON_NEGATIVE_SIDE}, or 
+\ccStyle{ON_POSITIVE_SIDE}, depending on the position of $p$ relative to 
+the oriented plane $h$.}
+
+\ccNestedType{Has_on_positive_side_3}{Function object type that provides
+\ccc{bool operator()(Plane_3 h, Point_3 p)} that returns true iff \ccc{p}
+lies on the postive side of the halfspace \ccc{h}}
+
+\ccNestedType{Intersect_3}{Function object type that provides
+\ccc{Object operator()(Line_3 h, Plane_3 p)} that returns the object 
+representing the intersection between \ccc{h} and \ccc{p}}
+
+\ccNestedType{Construct_vector_3}{Function object type that provides
+\ccc{Vector_3 operator()(???)} that constructs and returns the vector ???}
+
+\ccNestedType{Construct_plane_3}{Function object type that provides
+\ccc{Plane_3 operator()(???)} that constructs and returns the plane ???}
+
+\ccNestedType{Construct_plane_3}{Function object type that provides
+\ccc{Plane_3 operator()(???)} that constructs and returns the plane ???}
+
+\ccCreation
+\ccCreationVariable{traits}
+
+A default constructor and copy constructor are required.
+
+\ccOperations
+
+For each of the above function object types above,
+\ccc{Func_obj_type}, a function must exist with the name 
+\ccc{func_obj_type_object} that creates an instance of the function or 
+predicate object type.  For example:
+
+\ccMethod{Oriented_side_3 oriented_side_3_object();}{}
+\ccAutoIndexingOn
+
+\ccHasModels
+\ccc{CGAL::Kernel_traits}
+
+%\ccSeeAlso
+
+\end{ccRefConcept}

@@ -1,3 +1,6 @@
+2.20    (?? July 2001)
+- changed doc to reflect split of convex hull into three chapters: 2D, 3D, dD
+
 2.19    (17 July 2001)
 - fixed number type problems in quickhull_test_3
 - removed some expensive assertions
