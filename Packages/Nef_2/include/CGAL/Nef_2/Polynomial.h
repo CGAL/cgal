@@ -13,14 +13,15 @@
 //
 // file          : include/CGAL/Nef_2/Polynomial.h
 // package       : Nef_2 (1.8)
-// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
+// maintainer    : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 // chapter       : Nef Polyhedra
 //
 // revision      : $Revision$
 // revision_date : $Date$
 //
 // author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
-// coordinator   : Michael Seel <seel@mpi-sb.mpg.de>
+//                 Andreas Fabri <Andreas.Fabri@geometryfactory.com>
+// coordinator   : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //
 // implementation: Polynomials in one variable
 // ======================================================================
@@ -105,7 +106,7 @@ where |++it == ite| and |NT| is the value type of |Forward_iterator|.
 
 
 
-template <class NT>  Polynomial<NT>
+template <class NT>  inline Polynomial<NT>
   operator - (const Polynomial<NT>&);
 template <class NT>  Polynomial<NT>
   operator + (const Polynomial<NT>&, const Polynomial<NT>&);
