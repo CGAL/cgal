@@ -379,7 +379,7 @@ void Qt_widget::zoom(double ratio)
 {
   zoom(ratio,
        xmin + (xmax - xmin) / 2 ,
-       xmin + (ymax - ymin) / 2 );
+       ymin + (ymax - ymin) / 2 );
 }
 
 #ifdef CGAL_USE_GMP
