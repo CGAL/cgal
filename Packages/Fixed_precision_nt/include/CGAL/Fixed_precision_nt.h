@@ -92,6 +92,8 @@ class Fixed_precision_nt
 {
 private:
   float _value;          // value of the number
+  // I put this function here so that GCC doesn't complain with -Winline.
+  void round() {_value = ( _value+ Fixed_SNAP ) - Fixed_SNAP ;}
   
 public:
   // constructors
@@ -115,7 +117,6 @@ public:
                         {_value/=f._value; return *this;}
   // access and parametrization of static members
   inline static bool init(float f);
-  void round() {_value = ( _value+ Fixed_SNAP ) - Fixed_SNAP ;}
   static float unit_value() {return Fixed_B0;}
   static float upper_bound(){return Fixed_B24;}
   static void perturb_incircle(){Fixed_incircle_perturb=true;}

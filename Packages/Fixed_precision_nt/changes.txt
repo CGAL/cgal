@@ -1,3 +1,6 @@
+2.27 (8 August 2001)
+- Move .round() before its calls so that it can be inlined.
+
 2.26 (8 August 2001)
 - main() properly returns an int and not a bool in the test programs.
 
