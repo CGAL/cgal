@@ -2,8 +2,8 @@
 // revision_date : $Date$
 // author(s)     : Andreas Fabri
 
-#ifndef CGAL_CARTESIAN_SPHERE_REP_3_H
-#define CGAL_CARTESIAN_SPHERE_REP_3_H
+#ifndef CGAL_CARTESIAN_SPHERER_EP_3_H
+#define CGAL_CARTESIAN_SPHERER_EP_3_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -33,4 +33,4 @@ public:
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_CARTESIAN_SPHERE_REP_3_H
+#endif // CGAL_CARTESIAN_SPHERER_EP_3_H

@@ -2,8 +2,8 @@
 // revision_date : $Date$
 // author(s)     : Herve Bronnimann
 
-#ifndef CGAL_CARTESIAN_AFF_TRANSFORMATION_REP_3_H
-#define CGAL_CARTESIAN_AFF_TRANSFORMATION_REP_3_H
+#ifndef CGAL_CARTESIAN_AFF_TRANSFORMATIONR_EP_3_H
+#define CGAL_CARTESIAN_AFF_TRANSFORMATIONR_EP_3_H
 
 #include <CGAL/Cartesian/redefine_names_3.h>
 
@@ -192,4 +192,4 @@ private:
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_CARTESIAN_AFF_TRANSFORMATION_REP_3_H
+#endif // CGAL_CARTESIAN_AFF_TRANSFORMATIONR_EP_3_H

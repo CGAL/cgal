@@ -2,12 +2,12 @@
 // revision_date : $Date$
 // author(s)     : Andreas Fabri
 
-#ifndef CGAL_CARTESIAN_RAY_3_C
-#define CGAL_CARTESIAN_RAY_3_C
+#ifndef CGAL_CARTESIANR_AY_3_C
+#define CGAL_CARTESIANR_AY_3_C
 
 #include <CGAL/Cartesian/distance_computations_3.h>
 
-#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_3_H
+#ifndef CGAL_CARTESIANR_EDEFINE_NAMES_3_H
 #define CGAL_CTAG
 #endif
 
@@ -197,7 +197,7 @@ collinear_has_on(const typename RayC3<R CGAL_CTAG>::Point_3 &p) const
   return true; // p == source()
 }
 
-#ifndef CGAL_NO_OSTREAM_INSERT_RAYC3
+#ifndef CGAL_NO_OSTREAM_INSERTR_AYC3
 template < class R >
 std::ostream &
 operator<<(std::ostream &os, const RayC3<R CGAL_CTAG> &r)
@@ -211,9 +211,9 @@ operator<<(std::ostream &os, const RayC3<R CGAL_CTAG> &r)
         return os << "RayC3(" << r.start() <<  ", " << r.direction() << ")";
     }
 }
-#endif // CGAL_NO_OSTREAM_INSERT_RAYC3
+#endif // CGAL_NO_OSTREAM_INSERTR_AYC3
 
-#ifndef CGAL_NO_ISTREAM_EXTRACT_RAYC3
+#ifndef CGAL_NO_ISTREAM_EXTRACTR_AYC3
 template < class R >
 std::istream &
 operator>>(std::istream &is, RayC3<R CGAL_CTAG> &r)
@@ -226,7 +226,7 @@ operator>>(std::istream &is, RayC3<R CGAL_CTAG> &r)
     r = RayC3<R CGAL_CTAG>(p, d);
     return is;
 }
-#endif // CGAL_NO_ISTREAM_EXTRACT_RAYC3
+#endif // CGAL_NO_ISTREAM_EXTRACTR_AYC3
 
 CGAL_END_NAMESPACE
 
@@ -234,4 +234,4 @@ CGAL_END_NAMESPACE
 #undef typename
 #endif
 
-#endif // CGAL_CARTESIAN_RAY_3_C
+#endif // CGAL_CARTESIANR_AY_3_C

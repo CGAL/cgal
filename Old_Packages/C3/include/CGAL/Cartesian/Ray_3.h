@@ -2,24 +2,24 @@
 // revision_date : $Date$
 // author(s)     : Andreas Fabri
 
-#ifndef CGAL_CARTESIAN_RAY_3_H
-#define CGAL_CARTESIAN_RAY_3_H
+#ifndef CGAL_CARTESIANR_AY_3_H
+#define CGAL_CARTESIANR_AY_3_H
 
 #include <CGAL/Cartesian/redefine_names_3.h>
 #include <CGAL/Twotuple.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template < class _R >
+template < class R_ >
 class RayC3
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
 // This is a partial specialization
-<_R,Cartesian_tag>
+<R_,Cartesian_tag>
 #endif
   : public Handle
 {
 public:
-  typedef _R                               R;
+  typedef R_                               R;
   typedef typename R::FT                   FT;
   typedef typename R::RT                   RT;
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
@@ -73,4 +73,4 @@ CGAL_END_NAMESPACE
 #include <CGAL/Cartesian/Ray_3.C>
 #endif 
 
-#endif // CGAL_CARTESIAN_RAY_3_H
+#endif // CGAL_CARTESIANR_AY_3_H

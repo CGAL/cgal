@@ -2,12 +2,12 @@
 // revision_date : $Date$
 // author(s)     : Herve Bronnimann
 
-#ifndef CGAL_CARTESIAN_SCALING_REP_3_H
-#define CGAL_CARTESIAN_SCALING_REP_3_H
+#ifndef CGAL_CARTESIAN_SCALINGR_EP_3_H
+#define CGAL_CARTESIAN_SCALINGR_EP_3_H
 
 #include <CGAL/Cartesian/redefine_names_3.h>
 
-#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_3_H
+#ifndef CGAL_CARTESIANR_EDEFINE_NAMES_3_H
 #define CGAL_CTAG
 #endif
 
@@ -144,4 +144,4 @@ CGAL_END_NAMESPACE
 #undef typename
 #endif
 
-#endif // CGAL_CARTESIAN_SCALING_REP_3_H
+#endif // CGAL_CARTESIAN_SCALINGR_EP_3_H
