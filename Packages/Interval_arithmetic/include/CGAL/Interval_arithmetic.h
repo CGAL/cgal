@@ -40,12 +40,12 @@
 #include <CGAL/Interval_arithmetic/_FPU.h>	// FPU rounding mode functions.
 
 
-class CGAL_Interval_nt_advanced
+struct CGAL_Interval_nt_advanced
 {
-  friend CGAL_Interval_nt_advanced sqrt(const CGAL_Interval_nt_advanced&);
-  friend CGAL_Interval_nt_advanced operator*
-      (const double &, const CGAL_Interval_nt_advanced&);
-  friend double CGAL_to_double(const CGAL_Interval_nt_advanced&);
+protected:
+        // "inf" stores the OPPOSITE of the lower bound.
+        // "sup" stores the upper bound of the interval.
+  double inf, sup;
 
 private:
   bool overlap(const CGAL_Interval_nt_advanced& d) const
@@ -59,6 +59,11 @@ private:
   }
 
 public:
+  friend CGAL_Interval_nt_advanced sqrt(const CGAL_Interval_nt_advanced&);
+  friend CGAL_Interval_nt_advanced operator*
+      (const double &, const CGAL_Interval_nt_advanced&);
+  friend double CGAL_to_double(const CGAL_Interval_nt_advanced&);
+
   // The constructors.
   CGAL_Interval_nt_advanced() {}
 
@@ -73,7 +78,8 @@ public:
       { CGAL_assertion(i<=s); }
 #endif
 
-  // The operators.
+  // The copy constructor: useless.
+  // It's supposed to be the default one, but it's faster.
   CGAL_Interval_nt_advanced& operator=(const CGAL_Interval_nt_advanced& d)
   {
     inf = d.inf;
@@ -129,11 +135,6 @@ public:
 
   double lower_bound() const { return -inf; }
   double upper_bound() const { return sup; }
-
-protected:
-        // "inf" stores the OPPOSITE of the lower bound.
-        // "sup" stores the upper bound of the interval.
-  double inf, sup;
 };
 
 
@@ -260,7 +261,7 @@ ostream& operator<<(ostream& os, const CGAL_Interval_nt_advanced& d)
 
 // The non-advanced class.
 
-class CGAL_Interval_nt : public CGAL_Interval_nt_advanced
+struct CGAL_Interval_nt : public CGAL_Interval_nt_advanced
 {
   friend CGAL_Interval_nt sqrt(const CGAL_Interval_nt&);
   friend CGAL_Interval_nt operator* (const double &, const CGAL_Interval_nt &);
@@ -274,8 +275,6 @@ public:
       : CGAL_Interval_nt_advanced(d) {}
   CGAL_Interval_nt(const double a, const double b)
       : CGAL_Interval_nt_advanced(a,b) {}
-  CGAL_Interval_nt(const CGAL_Interval_nt_advanced &d)
-      : CGAL_Interval_nt_advanced(d) {}
 
   // This particular one needs to be redefined, a pitty...
   CGAL_Interval_nt operator-() const 
@@ -294,6 +293,11 @@ public:
   CGAL_Interval_nt& operator-=(const CGAL_Interval_nt& d) ;
   CGAL_Interval_nt& operator*=(const CGAL_Interval_nt& d) ;
   CGAL_Interval_nt& operator/=(const CGAL_Interval_nt& d) ;
+
+private:
+  // Private constructor for casts.
+  CGAL_Interval_nt(const CGAL_Interval_nt_advanced &d)
+      : CGAL_Interval_nt_advanced(d) {}
 };
 
 // Here we use the GNU extension of "Named return value".
