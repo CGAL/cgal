@@ -6,7 +6,7 @@ cc_extract_html.o : ./html_error.h
 cc_extract_html.o : ./html_lex.h
 cc_extract_html.o : ./html_syntax.h
 cc_extract_html.o : ./internal_macros.h
-cc_extract_html.o : ./lex_include.h
+cc_extract_html.o : ./input.h
 cc_extract_html.o : ./macro_dictionary.h
 cc_extract_html.o : ./mstring.h
 cc_extract_html.o : ./output.h
@@ -34,7 +34,7 @@ html_error.o : ./basic.h
 html_error.o : ./buffer.h
 html_error.o : ./html_config.h
 html_error.o : ./html_error.h
-html_error.o : ./lex_include.h
+html_error.o : ./input.h
 html_error.o : ./mstring.h
 html_error.o : html_error.C
 html_lex.C:
@@ -45,7 +45,7 @@ html_lex.o : ./html_error.h
 html_lex.o : ./html_lex.h
 html_lex.o : ./html_syntax.tab.h
 html_lex.o : ./internal_macros.h
-html_lex.o : ./lex_include.h
+html_lex.o : ./input.h
 html_lex.o : ./lex_include_impl.h
 html_lex.o : ./macro_dictionary.h
 html_lex.o : ./mstring.h
@@ -60,7 +60,7 @@ html_syntax.o : ./html_error.h
 html_syntax.o : ./html_lex.h
 html_syntax.o : ./html_syntax.h
 html_syntax.o : ./internal_macros.h
-html_syntax.o : ./lex_include.h
+html_syntax.o : ./input.h
 html_syntax.o : ./macro_dictionary.h
 html_syntax.o : ./mstring.h
 html_syntax.o : ./string_conversion.h
@@ -73,7 +73,7 @@ internal_macros.o : ./html_config.h
 internal_macros.o : ./html_error.h
 internal_macros.o : ./html_lex.h
 internal_macros.o : ./internal_macros.h
-internal_macros.o : ./lex_include.h
+internal_macros.o : ./input.h
 internal_macros.o : ./macro_dictionary.h
 internal_macros.o : ./mstring.h
 internal_macros.o : ./output.h
@@ -85,7 +85,7 @@ macro_dictionary.o : ./buffer.h
 macro_dictionary.o : ./html_config.h
 macro_dictionary.o : ./html_error.h
 macro_dictionary.o : ./html_lex.h
-macro_dictionary.o : ./lex_include.h
+macro_dictionary.o : ./input.h
 macro_dictionary.o : ./macro_dictionary.h
 macro_dictionary.o : ./mstring.h
 macro_dictionary.o : ./string_conversion.h

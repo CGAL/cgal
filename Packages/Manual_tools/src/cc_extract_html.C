@@ -21,14 +21,13 @@
 
 #include <mstring.h>
 
-#include <lex_include.h>
 #include <macro_dictionary.h>
 #include <internal_macros.h>
-#include <buffer.h>
 #include <html_config.h>
 #include <html_syntax.h>
 #include <html_error.h>
 #include <string_conversion.h>
+#include <input.h>
 #include <output.h>
 
 using namespace std;
@@ -39,25 +38,6 @@ using namespace std;
 const string prog_name    = "cc_extract_html";
 const string prog_release = "$Revision$";
 
-// Path for the HTML conversion tools for the default configuration files.
-// This path will be compiled into the cc_extract_html program. It is set 
-// in the Makefile. The same variable has to be configured in the 
-// cc_manual_to_html script.
-#ifndef LATEX_CONVERTER_CONFIG
-#define LATEX_CONVERTER_CONFIG   ""
-#endif
-#ifndef LATEX_CONV_INPUTS
-#define LATEX_CONV_INPUTS   ""
-#endif
-string config_path    = LATEX_CONVERTER_CONFIG;
-string latex_conv_inputs   = LATEX_CONV_INPUTS;
-
-
-// Directory for the temporary files. A default is given.
-// This directory is the output directory for this program. Usually, 
-// the script cc_manual_to_html makes a own tmp directory and removes 
-// it afterwards. The path must terminate with a slash.
-string tmp_path       = "/usr/tmp/";
 
 /* Constant string used for referencing. */
 /* ===================================== */
@@ -75,6 +55,7 @@ Switch  line_switch        = NO_SWITCH;
 
 Switch  config_switch      = NO_SWITCH;
 Switch  quiet_switch       = NO_SWITCH;
+Switch  verbose_switch     = NO_SWITCH;
 Switch  macro_def_switch   = NO_SWITCH;
 Switch  macro_exp_switch   = NO_SWITCH;
 Switch  macro_def2_switch  = NO_SWITCH;
@@ -82,13 +63,10 @@ Switch  macro_exp2_switch  = NO_SWITCH;
 Switch  sty_macro_switch   = NO_SWITCH;
 Switch  stack_trace_switch = NO_SWITCH;
 
-Switch  noheader_switch    = NO_SWITCH;
-Switch  onlyheader_switch  = NO_SWITCH;
-
 
 /* Config filename:                  */
 /* ================================= */
-string sty_filename      = "default.sty";
+string sty_filename      = "latex.sty";
 
 
 /* Configurable command line options */
@@ -104,6 +82,7 @@ string manual_author;
 void init_commandline_args() {
     insertInternalGlobalMacro( "\\lciConfigPath",     config_path);
     insertInternalGlobalMacro( "\\lciTmpPath",        tmp_path);
+    insertInternalGlobalMacro( "\\lciExtractHtmlRelease", prog_release);
     insertInternalGlobalMacro( "\\lciReferenceIcon",  reference_icon);
     insertInternalGlobalMacro( "\\lciManualDate",     manual_date);
     insertInternalGlobalMacro( "\\lciManualRelease",  manual_release);
@@ -113,59 +92,14 @@ void init_commandline_args() {
 			       ? "\\lcTrue" : "\\lcFalse");
     insertInternalGlobalMacro( "\\lciIfQuietFlag",    quiet_switch
 			       ? "\\lcTrue" : "\\lcFalse");
+    insertInternalGlobalMacro( "\\lciIfVerboseFlag",  verbose_switch
+			       ? "\\lcTrue" : "\\lcFalse");
     insertInternalGlobalMacro( "\\lciIfMacroDefFlag", macro_def2_switch
 			       ? "\\lcTrue" : "\\lcFalse");
     insertInternalGlobalMacro( "\\lciIfMacroExpFlag", macro_exp2_switch 
 			       ? "\\lcTrue" : "\\lcFalse");
-    insertInternalGlobalMacro( "\\lciIfNoHeaderFlag", noheader_switch
-			       ? "\\lcTrue" : "\\lcFalse");
     insertInternalGlobalMacro( "\\lciOutputFilename", "<cout>");
     insertInternalGlobalMacro( "\\lciMainFilename",   "<cout>");
-}
-
-
-
-
-int text_block_length( const Buffer_list& T) {
-    int l = 0;
-    for ( Buffer_const_iterator words = T.begin(); words != T.end(); ++words) {
-        if ( (*words)->is_space())
-	    ++l;
-	else
-	    l += (*words)->size() - 1;
-    }
-    return l;
-}
-
-char* text_block_to_string( const Buffer_list& T) {
-    char* string = new char[ text_block_length(T) + 1];
-    string[0] = '\0';
-    for ( Buffer_const_iterator words = T.begin(); words != T.end(); ++words) {
-        if ( (*words)->is_space())
-	    strcat( string, " ");
-	else
-	    strcat( string, (*words)->begin());
-    }
-    return string;
-}
-
-bool is_text_block_empty( const Buffer_list& T) {
-    for ( Buffer_const_iterator words = T.begin(); words != T.end(); ++words) {
-        if ( ! (*words)->is_space())
-	    return false;
-    }
-    return true;
-}
-
-void print_html_text_block( ostream &out, const Buffer_list& T) {
-    for ( Buffer_const_iterator words = T.begin(); words != T.end(); ++words) {
-	const char* s = (*words)->begin();
-	while ( *s) {
-	    if ( *s != SEPARATOR)
-		out << *s;
-	    ++s;
-	}
-    }
 }
 
 
@@ -178,17 +112,6 @@ extern int HREF_counter;
 
 /* Taylored semantic functions used in syntax.y */
 /* ============================================ */
-
-void handleText( const Buffer_list& T) {
-    if ( ! current_ostream)
-	return;
-    print_html_text_block( *current_ostream, T);
-}
-
-void handleBuffer( const Buffer& TT) {
-    if ( current_ostream)
-	*current_ostream << TT.begin();
-}
 
 void handleString( const char* s) {
     if ( current_ostream)
@@ -340,19 +263,8 @@ main( int argc, char **argv) {
 	        nParameters = ErrParameters;
 	    }
         endDetect();
-	// The following block remains for compatibility.
-        detectSwitch( dummy_switch, "cgal_dir");
-            i++;
-            if ( i < argc) {
-		string s = argv[i];
-		assert_trailing_slash_in_path( s);
-		insertGlobalMacro( "\\lciHeaderPath", 
-				   "<command line option>", 0, s);
-	    } else {
-	        cerr << "*** Error: option -cgal_dir needs an additional "
-		        "parameter" << endl;
-	        nParameters = ErrParameters;
-	    }
+        detectSwitch( dummy_switch, "color");
+            enableColor();
         endDetect();
         detectSwitch( dummy_switch, "main");
             i++;
@@ -366,6 +278,8 @@ main( int argc, char **argv) {
         endDetect();
         detectSwitch( quiet_switch, "quiet");
         endDetect();
+        detectSwitch( verbose_switch, "v");
+        endDetect();
         detectSwitch( trace_switch, "trace");
         endDetect();
         detectSwitch( line_switch, "line");
@@ -378,15 +292,11 @@ main( int argc, char **argv) {
         endDetect();
         detectSwitch( stack_trace_switch, "stacktrace");
         endDetect();
-        detectSwitch( noheader_switch, "noheader");
-        endDetect();
-        detectSwitch( onlyheader_switch, "onlyheader");
-        endDetect();
 
         detectSwitch( V_switch, "V");
-	    cout << prog_name << " " << prog_release << " (c) Lutz Kettner" 
+	    cerr << prog_name << " " << prog_release << " (c) Lutz Kettner" 
 		 << endl;
-	    cout << "Using: ";
+	    cerr << "Using: ";
         endDetect();
         detectSwitch( help_switch, "h");
         endDetect();
@@ -439,16 +349,13 @@ main( int argc, char **argv) {
         cerr << "       -main     <file>    main filename for the part before"
                                            " any chapter." << endl;
         cerr << "       -sty      <style>   use style file." << endl;
-        cerr << "       -quiet              no output, no warnings for "
-                                            "unknown macros." << endl;
+        cerr << "       -quiet              no output." << endl;
+        cerr << "       -v                  verbose, gives more context in "
+                                           "error messages." << endl;
         cerr << "       -macrodef           trace macro definitions." << endl;
         cerr << "       -macroexp           trace macro expansions." << endl;
         cerr << "       -stymacro           trace style macros as well."<<endl;
         cerr << "       -stacktrace         stack trace for each error."<<endl;
-        cerr << "       -noheader           no HTML header for contents.html "
-                "and index." << endl;
-        cerr << "       -onlyheader         convert config files instead of "
-                "TeX-files." << endl;
         cerr << "       -trace              set `yydebug' for bison to true."
              << endl;
         cerr << "       -line               echo currently parsed line "
@@ -476,7 +383,7 @@ main( int argc, char **argv) {
     init_internal_macros();
     current_ostream  = 0;
 
-    if (!include_stack.push_tex_file_w_input_dirs(config_path + sty_filename))
+    if (! include_stack.push_file( config_path + sty_filename))
 	exit(1);
 
     yyparse();
@@ -488,31 +395,7 @@ main( int argc, char **argv) {
 
     main_stream   = &cout;
 
-    if ( onlyheader_switch) {
-	for ( i = 0; i < nParameters; i++)
-	    copy_config_file( parameters[i]);
-//	index_stream = open_file_for_write(tmp_path + 
-//					   macroX( "\\lciIndexFilename"));
-//	write_headers_to_index( *index_stream);
-//	assert_file_write( *index_stream, 
-//			   macroX( "\\lciIndexFilename"));
-//	delete index_stream;
-	if ( ! quiet_switch)
-	    cerr << ']' << endl;
-	return 0;
-    }
-
-    if ( ! noheader_switch) {
-	// Filter config files for the index.
-	copy_config_file( macroX( "\\lciIndexHeader"));
-	copy_config_file( macroX( "\\lciIndexFooter"));
-    }
-
     // Prepare several streams:
-    // anchor_stream = new ofstream( anchor_filename, ios::out | ios::app);
-    anchor_stream   = open_file_for_write( tmp_path +
-					   macroX( "\\lciAnchorFilename"));
-    
     contents_stream = open_file_for_write( tmp_path +
 					   macroX( "\\lciContentsFilename"));  
 
@@ -524,17 +407,17 @@ main( int argc, char **argv) {
     HREF_counter =  open_counter_file_for_read( tmp_path +  
                                            macroX("\\lciHREFCounterFilename"));
     
-/*
-    if ( ! noheader_switch)
-	copy_and_filter_config_file( macroX( "\\lciTocHeader"), 
-				     *contents_stream);
-*/
-
-
     if ( ! pre_main_filename.empty()) {
-	pre_stream = open_file_for_write( tmp_path + pre_main_filename);
-	current_filename = pre_main_filename;
-	open_html( *pre_stream);
+	pre_stream = open_file_for_write_with_path(tmp_path+pre_main_filename);
+	current_filename  = pre_main_filename;
+	pre_main_basename = basename_string( pre_main_filename);
+	pre_main_rootname = rootname_string( pre_main_basename);
+	current_basename  = pre_main_basename;
+	current_rootname  = pre_main_rootname;
+        pre_main_filepath = path_string( pre_main_filename);
+        pre_main_uppath   = uppath_string( pre_main_filepath);
+        current_filepath  = pre_main_filepath;
+        current_uppath    = pre_main_uppath;
     }
     
 
@@ -548,17 +431,36 @@ main( int argc, char **argv) {
 	if ( ! pre_main_filename.empty()) {
 	    main_stream      = pre_stream;
 	    main_filename    = pre_main_filename;
-	    current_ostream  = main_stream;
-	    current_filename = pre_main_filename;
-	    insertInternalGlobalMacro( "\\lciOutputFilename",current_filename);
+	    main_basename    = pre_main_basename;
+	    main_rootname    = pre_main_rootname;
+	    main_filepath    = pre_main_filepath;
+	    main_uppath      = pre_main_uppath;
 	    insertInternalGlobalMacro( "\\lciMainFilename",  main_filename);
+	    insertInternalGlobalMacro( "\\lciMainBasename",  main_basename);
+	    insertInternalGlobalMacro( "\\lciMainRootname",  main_rootname);
+	    insertInternalGlobalMacro( "\\lciMainPath",      main_filepath);
+	    insertInternalGlobalMacro( "\\lciMainUppath",    main_filepath);
 	} else {
 	    main_stream      = &cout;
-	    current_ostream  = main_stream;
-	    current_filename = main_filename;
-	    insertInternalGlobalMacro( "\\lciOutputFilename",current_filename);
 	}
-	if ( include_stack.push_tex_file_w_input_dirs( parameters[i]))
+        current_ostream  = main_stream;
+        current_filename = main_filename;
+        current_basename = main_basename;
+        current_rootname = main_rootname;
+        current_filepath = main_filepath;
+        current_uppath   = main_uppath;
+        insertInternalGlobalMacro( "\\lciOutputFilename",current_filename);
+        insertInternalGlobalMacro( "\\lciOutputBasename",current_basename);
+        insertInternalGlobalMacro( "\\lciOutputRootname",current_rootname);
+        insertInternalGlobalMacro( "\\lciOutputPath",    current_filepath);
+        insertInternalGlobalMacro( "\\lciOutputUppath",  current_uppath);
+
+        anchor_stream = open_file_for_write( tmp_path + 
+                                             macroX( "\\lciAnchorFilename"));
+        global_anchor_stream = anchor_stream;
+        main_anchor_stream   = anchor_stream;
+
+	if ( include_stack.push_file( parameters[i]))
 	    yyparse();
 
 	include_stack.push_string( "<end of conversion>", 
@@ -571,19 +473,42 @@ main( int argc, char **argv) {
 
 
 	assert_file_write( *main_stream, main_filename);
+
+        if ( anchor_stream != 0 && anchor_stream != main_anchor_stream
+             && anchor_stream != global_anchor_stream) {
+            assert_file_write( *anchor_stream, macroX( "\\lciAnchorFilename"));
+            delete anchor_stream;
+            anchor_stream = 0;
+        }
+        if ( main_anchor_stream != 0 
+             && main_anchor_stream != global_anchor_stream) {
+            assert_file_write( *main_anchor_stream, 
+                               macroX( "\\lciAnchorFilename"));
+            delete main_anchor_stream;
+            main_anchor_stream = 0;
+        }
+        if ( global_anchor_stream != 0) {
+            assert_file_write( *global_anchor_stream, 
+                               macroX( "\\lciAnchorFilename"));
+            delete global_anchor_stream;
+            global_anchor_stream = 0;
+        }
+ 
 	if ( main_stream != &cout && main_stream != pre_stream) {
-	    close_html( *main_stream);
 	    assert_file_write( *main_stream, main_filename);
 	    delete   main_stream;
 	    main_stream = &cout;
 	    main_filename = "<cout>";
+	    main_basename = main_filename;
+	    main_rootname = main_filename;
+	    main_filepath = string();
+	    main_uppath = string();
 	}
     }
     if ( ! quiet_switch)
 	cerr << ']' << endl;
 
     if ( ! pre_main_filename.empty()) {
-        close_html( *pre_stream);
 	assert_file_write( *pre_stream, pre_main_filename);
 	delete   pre_stream;
     } else
@@ -593,10 +518,6 @@ main( int argc, char **argv) {
     assert_file_write( *index_stream, macroX( "\\lciIndexFilename"));
     delete index_stream;
    
-    if ( ! noheader_switch)
-	copy_and_filter_config_file( macroX( "\\lciTocFooter"),
-				     *contents_stream);
-
     HREF_counter_stream = open_file_for_write( tmp_path +
                                  macroX( "\\lciHREFCounterFilename"));
     *HREF_counter_stream << HREF_counter;
@@ -609,15 +530,13 @@ main( int argc, char **argv) {
 		       macroX( "\\lciContentsFilename"));
     delete contents_stream;
 
-    assert_file_write( *anchor_stream, macroX( "\\lciAnchorFilename"));
-    delete anchor_stream;
- 
     assert_file_write( *HREF_stream, macroX( "\\lciHREFFilename"));
     delete HREF_stream;
 
 
 
-    return 0;
+    return firstError(); // reports non-zero return codes if there were 
+                         // non-aborting errors.
 }
 
 // EOF //

@@ -19,7 +19,7 @@
 #include <string_conversion.h>
 #include <macro_dictionary.h>
 #include <cpp_formatting.h>
-#include <lex_include.h>
+#include <input.h>
 #include <html_lex.h>
 #include <html_error.h>
 #include <html_config.h>
@@ -45,120 +45,24 @@ string handleHtmlCrossLink( string key, bool tmpl_class) {
     *anchor_stream << "[a-zA-Z0-9_]\"" << tmp_name
 		   << "\"    { ECHO; }" << endl;
     *anchor_stream << '"' << tmp_name
-		   << "\"/{noCCchar}    { wrap_anchor( \"" << current_filename
+		   << "\"/{noCCchar}    { wrap_anchor( \"" 
+                   << REPLACE_WITH_CURRENT_PATH_TOKEN << current_basename
 		   << "#Cross_link_anchor_" << cross_link_anchor_counter 
 		   << "\", yytext); }" << endl;
     if ( tmpl_class) {
         *anchor_stream << '"' << tmp_name
 		       << "\"{ws}\"&lt;\"{ws}{CCidfier}{ws}\"&gt;\"    {\n"
-		       << "        wrap_anchor( \"" << current_filename
+		       << "        wrap_anchor( \""
+                       << REPLACE_WITH_CURRENT_PATH_TOKEN << current_basename
 		       << "#Cross_link_anchor_" << cross_link_anchor_counter 
 		       << "\", yytext); }" << endl;
     }
-//     *anchor_stream << '"' << tmp_name
-// 		   << "\"/{noCCchar}    { fputs( \"<A HREF=\\\""
-// 		   << current_filename << "#Cross_link_anchor_" 
-// 		   << cross_link_anchor_counter << "\\\">"
-// 		   << tmp_name << "</A>\", stdout); }" 
-// 		   << endl;
-//     if ( tmpl_class) {
-//         *anchor_stream << '"' << tmp_name
-// 		       << "\"{ws}\"&lt;\"{ws}{CCidfier}{ws}\"&gt;\"    {\n"
-// 		       << "        fputs( \"<A HREF=\\\""
-// 		       << current_filename << "#Cross_link_anchor_" 
-// 		       << cross_link_anchor_counter << "\\\">\", stdout);\n" 
-// 		       << "        ECHO;\n"
-// 		       << "        fputs( \"</A>\", stdout); }\n"
-// 		       << endl;
-//     }
     delete[] tmp_name;
 
     return string("\n<A NAME=\"Cross_link_anchor_") 
 	 + int_to_string( cross_link_anchor_counter++) + "\"></A>\n";
 }
 
-
-// Chapter and Class Files
-// =================================================
-
-static int next_class_link_counter = 0;
-static int next_class_link_last    = 0;
-static int chapter_num = 0;
-
-string chapter_title;
-string part_title = "";
-
-
-void handleChapter(  const Buffer_list& T) {
-    next_class_link_last = 0;
-    chapter_num++;
-    //string new_main_filename = macroX( "\\lciInputPath")
-    //                         + macroX( "\\lciChapterPrefix")
-    //                         + macroX( "\\lciInputFilenameBase")
-    //                         + macroX( "\\lciHtmlSuffix");
-    string new_main_filename =  macroX( "\\lciChapterPrefix")
-                             + macroX( "\\lciInputFilenameBase")
-	                     + macroX( "\\lciHtmlSuffix");
-    if ( new_main_filename == main_filename) {
-        printErrorMessage( ChapterStructureError);
-	return;
-    }
-    chapter_title = string( text_block_to_string( T));
-    if ( main_stream != &cout && main_stream != pre_stream) {
-        // navigation footer
-        *main_stream << "<HR> Next chapter: <A HREF=\"" 
-		     << new_main_filename 
-		     << "\">" << chapter_title << "</A>" << endl;
- //new_main_filename+"\">" +chapter_title +"</A>" ;    
-        close_html( *main_stream);
-	assert_file_write( *main_stream, main_filename);
-	delete   main_stream;
-	main_stream = 0;
-    }
-    main_filename = new_main_filename;
-    main_stream = open_file_for_write( tmp_path + main_filename);
-    current_ostream  = main_stream;
-    current_filename = main_filename;
-    insertInternalGlobalMacro( "\\lciOutputFilename", current_filename);
-    insertInternalGlobalMacro( "\\lciMainFilename",   main_filename);
-    open_html( *main_stream);
-        
-
-    if (macroIsTrue("\\lciIfRef"))
-      *main_stream << "<TABLE WIDTH=100%> <TR> <TD ALIGN=LEFT VALIGN=TOP> <H1>" 
-             << chapter_title << "</H1> </TD>" << endl;
-    else
-      *main_stream << "<H1>" << chapter_title  << "</H1>" << endl;
-
-
-    // table of contents
-   
-    *contents_stream << "    <LI> <A HREF=\"" << main_filename
-		     << "\">" << chapter_title << "</A>" << endl;      
-}
-
-
-
-void handlePart(  const Buffer_list& T) {
-  
-
-    if (!part_title.empty()) // end previous part 
-    {
-       *contents_stream << "</OL>"  << endl;
-       *contents_stream << "<!-- End of manual part -->"  << endl;
-     //  chapter_num=0; 
-    }
-       
-    part_title = string( text_block_to_string( T));
-
-    // add new part title to table of contents
-    *contents_stream << "<!-- Start of new manual part -->"  << endl;
-    *contents_stream << "<H3>" << part_title << "</H3>" << endl; 
-    if ( macroIsTrue( "\\lciIfNumberChaptersByPart") )
-       *contents_stream << "<OL>" << endl;
-    else
-       *contents_stream << "<OL START=" << chapter_num+1 << ">" << endl;
-}
 
 // ========================================================================
 // Index
@@ -312,44 +216,10 @@ string name_for_ordering(string s) {
    return ord_s;
 }
 
-// list of modified entries
-
-typedef struct Lines{
-  string text;
-  int number; 
-  struct Lines *next;
-} sList, *pList;
-
-pList modifier_list=NULL;
-
-
-pList AddToList(pList list , string l, int n) {
-  if (list==NULL) {
-     list = new Lines;
-     list->text= l;
-     list->number= n;
-     list->next = NULL;
-  } else {
-     pList p = new Lines;
-     p->text= l;
-     p->number= n;
-     p->next = list;
-     list = p;
- }
- return list;
-}
-
-bool search(pList list, string l, int& number) {
-     if (list==NULL) return false;
-        while ((list!=NULL) ) {
-           if (list->text==l) {
-               number = list->number;
-               return true;
-           } else  list=list->next;
-        }
-     return false;
-} 
-
+// hash map of modified entries
+typedef hash_map< string, int> Modifier_map;
+typedef Modifier_map::iterator Modifier_map_iterator;
+Modifier_map modifier_map;
 
 
 void handleIndex() {
@@ -408,15 +278,17 @@ void handleIndex() {
 
   
    if (modifier=="") {
-         handleIndex2(ord_index_name+"@ ??? "+ index_name,sub_item ,sub_sub_item,
-                      0);
+         handleIndex2( ord_index_name+"@ ??? "+ index_name, sub_item,
+                       sub_sub_item, 0);
    }
    else { 
        int number;
-       if (search(modifier_list, modifier+index_name, number)) { 
+       Modifier_map_iterator mod_it = modifier_map.find( modifier+index_name);
+       if ( mod_it != modifier_map.end()) {
             handleIndex2(ord_index_name+" "+ord_modifier+"@ ??? "+index_name+ 
-                         ",  "+ modifier+"<A NAME=\""+ int_to_string(number) 
-                        +"\"></A>",sub_item,sub_sub_item,0);          
+                         ",  "+ modifier+"<A NAME=\""
+                         + int_to_string( mod_it->second) 
+                         +"\"></A>",sub_item,sub_sub_item,0);          
        } else {
             if (ord_modifier=="2D" || ord_modifier=="3D" || 
                  ord_modifier=="dD") {
@@ -429,15 +301,15 @@ void handleIndex() {
                     +ord_index_name+", "+ord_modifier+"@"+modifier
                     + "  "+index_name+", <I> see </I> ??? "+index_name
                     + ", "+modifier ,"","",2);
-                modifier_list = AddToList(modifier_list, 
-                                          modifier+index_name,HREF_counter-4);
+                modifier_map[ modifier+index_name] = HREF_counter-4;
             }
         }
    }
 } 
 
 
-void handleIndex2(string main_item, string sub_item, string sub_sub_item, int modifier) {
+void handleIndex2(string main_item, string sub_item, string sub_sub_item, 
+                  int modifier) {
    if (modifier==1) 
      *index_stream << "\\indexentry{" 
 		        << main_item<< "<A NAME=\""<<HREF_counter 
@@ -514,7 +386,8 @@ void TraitsClassTextParse(string s, string p) {
                   name_for_ordering(index_name)+"</I>"; 
    else index_name = name_for_ordering(index_name)+"@ ??? "+
                              name_for_ordering(index_name);
-   handleIndex2(index_name,"traits class@ ??? traits class",index_class_name,0);
+   handleIndex2( index_name, "traits class@ ??? traits class",
+                 index_class_name, 0);
 }
 
 
@@ -572,129 +445,65 @@ void handleIndexRefName() {
 }
 
 
-void handleBiblio(  const Buffer_list& T) {
-    
-    ostream* out = open_file_for_write( tmp_path + macroX("\\lciBibFilename"));
-    istream* in  = open_config_file( macroX( "\\lciBiblioHeader"));
-    filter_config_file( *in, *out);
-
-    print_html_text_block( *out, T);
-    *out << "</TD></TR>" << endl;
-
-    delete in;
-    in = open_config_file( macroX( "\\lciBiblioFooter"));
-    filter_config_file( *in, *out);
-
-    assert_file_write( *out, macroX( "\\lciBibFilename"));
-    delete in;
-    delete out;
-}
-
 // Opens a new classfile. Only a filename and a HTML formatted reference
 // text are given.
-void handleClassFile( const string& filename, 
-		      const string& formatted_reference) {
-    if ( next_class_link_last != 0) {
-        *anchor_stream << "\"<!Next_class_link_" << next_class_link_last
-		       << "!>\"    { fputs( \"<HR> <B>Next:</B> "
-		       << convert_to_C_printable( formatted_reference) 
-		       << "\\n\", stdout);}" << endl;
+void handleClassFile( string filename) { 
+//		      const string& formatted_anchor_text) {
+    string filepath = macroX( "\\lciInputPath");
+    if ( filepath[0] == '/' ) {
+        printErrorMessage( ClassAbsolutePathError);
+        filepath = main_filepath;
     }
-    class_filename = filename;
-    class_stream = open_file_for_write( tmp_path + class_filename);
-    open_html( *class_stream);
-    // Make a hyperlink in the chapter to the class file.
-    if ( main_stream != &cout) {
-           *main_stream  << "<UL><LI>\n" << formatted_reference
-		      << ".</UL>\n" << endl;
-    }
-
-    // table of contents
-    if ( macroIsTrue( "\\lciIfHtmlClassToc"))
-           *contents_stream << "<UL><LI> " <<  formatted_reference
-			 << "</UL> " << endl;
-
-
-    current_ostream  = class_stream;
+    filename = filepath + filename;
+    class_filename   = filename;
     current_filename = class_filename;
+    current_basename = basename_string(class_filename);
+    current_rootname = rootname_string(current_basename);
+    current_filepath = path_string(class_filename);
+    current_uppath   = uppath_string( current_filepath);
     insertInternalGlobalMacro( "\\lciOutputFilename", current_filename);
+    insertInternalGlobalMacro( "\\lciOutputBasename", current_basename);
+    insertInternalGlobalMacro( "\\lciOutputRootname", current_rootname);
+    insertInternalGlobalMacro( "\\lciOutputPath",     current_filepath);
+    insertInternalGlobalMacro( "\\lciOutputUppath",   current_uppath);
+
+    if ( current_filepath == "") {
+        anchor_stream = global_anchor_stream;
+    } else if ( current_filepath == main_filepath) {
+        anchor_stream = main_anchor_stream;
+    } else {
+        anchor_stream = open_file_for_append( tmp_path + current_filepath +
+                                              macroX( "\\lciAnchorFilename"));
+    }
+    class_stream = open_file_for_write_with_path( tmp_path + class_filename);
+    current_ostream  = class_stream;
+
 }
 
 void handleClassFileEnd( void) {
-    if ( class_stream != 0) {
-	// implements the link from one class to the next class
-	++next_class_link_counter;
-	next_class_link_last = next_class_link_counter;
-	*class_stream << "<!Next_class_link_" << next_class_link_counter 
-		      << "!>";
-        close_html( *class_stream);
-	assert_file_write( *class_stream, class_filename);
-	delete   class_stream;
-	class_filename = string();
-	class_stream = 0;
+    assert_file_write( *class_stream, class_filename);
+    delete   class_stream;
+    class_filename = string();
+    class_stream = 0;
+        
+    if ( anchor_stream != 0 && anchor_stream != main_anchor_stream
+         && anchor_stream != global_anchor_stream) {
+        assert_file_write( *anchor_stream, macroX( "\\lciAnchorFilename"));
+        delete anchor_stream;
     }
+    anchor_stream = main_anchor_stream;
     current_ostream  = main_stream;
     current_filename = main_filename;
+    current_basename = main_basename;
+    current_rootname = main_rootname;
+    current_filepath = main_filepath;
+    current_uppath   = main_uppath;
     insertInternalGlobalMacro( "\\lciOutputFilename", current_filename);
+    insertInternalGlobalMacro( "\\lciOutputBasename", current_basename);
+    insertInternalGlobalMacro( "\\lciOutputRootname", current_rootname);
+    insertInternalGlobalMacro( "\\lciOutputPath",     current_filepath);
+    insertInternalGlobalMacro( "\\lciOutputUppath",   current_uppath);
 }
-
-void handleClassEnvironment() {
-    string ref_scope_name = macroX("\\ccPureRefScope");
-    template_class_name = macroX("\\ccPureClassTemplateName");
-    string formatted_template_class_name = 
-	convert_C_to_html( template_class_name);
-    class_name = macroX( "\\ccPureClassName");
-
-    if ( macroIsTrue( "\\lciIfHtmlClassNotInline") &&
-	 macroIsTrue( "\\lciIfHtmlClassFile")) {
-	// Start a new class file.
-	string filename = replace_template_braces_and_colons(
-                            remove_font_commands( class_name))
-	                + macroX( "\\lciHtmlSuffix");
-        filename = replace_asterisks(filename);
-	string contents( " Class declaration of ");
-	contents += string("<A HREF=\"") + filename + "\">"
-	            + formatted_template_class_name + "</A> ";
-	handleClassFile( filename, contents);
-    }
-
-    if ( macroIsTrue( "\\lciIfHtmlClassIndex") &&
-         macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")
-         &&  macroIsTrue( "\\ccAutoIndex"))    // Index.
-            handleIndex2(class_name +"@ ??? "+
-                        convert_C_to_html(class_name),"","",0);
-
-
-    if ( macroIsTrue( "\\lciIfHtmlClassLinks") && 
-	 macroIsTrue( "\\lciIfHtmlLinks")) {   // Cross links.
-	// Generate a substitution rule for hyperlinking,
-        // but only if classname is longer than 1 character.
-	if ( class_name.size() > 1) 
-	   *current_ostream << handleHtmlCrossLink( class_name, true);
-    }
-}
-
-void handleClassNameEnd( void) {
-    class_name = string();
-    template_class_name = string();
-}
-
-void handleClassEnd( void) {
-    handleClassNameEnd();
-    if ( macroIsTrue( "\\lciIfHtmlClassNotInline") &&
-	 macroIsTrue( "\\lciIfHtmlClassFile"))
-	handleClassFileEnd();
-}
-
-void handleHtmlClassFile( const string& filename, const Buffer_list& T) {
-    char*  s = text_block_to_string( T);
-    string fixed_filename = replace_template_braces_and_colons(filename);
-    fixed_filename = replace_asterisks(fixed_filename);
-    string p = string("<A HREF=\"") + fixed_filename + "\">" + s + "</A>";
-    handleClassFile( fixed_filename, p);
-    delete[] s;    
-}
-
 
 
 
@@ -849,6 +658,32 @@ mult_to( const string&, string param[], size_t n, size_t opt) {
 }
 
 string
+div_to( const string&, string param[], size_t n, size_t opt) {
+    NParamCheck( 2, 0);
+    string macroname( param[0]);
+    crop_string( macroname);
+    remove_separator( macroname);
+    int prod = atoi( expandFirstMacro( macroname).c_str()) 
+             / atoi(param[1].c_str());
+    insertMacro( macroname, in_string->name(), in_string->line(),
+		 int_to_string( prod));
+    return string();
+}
+
+string
+mod_to( const string&, string param[], size_t n, size_t opt) {
+    NParamCheck( 2, 0);
+    string macroname( param[0]);
+    crop_string( macroname);
+    remove_separator( macroname);
+    int prod = atoi( expandFirstMacro( macroname).c_str()) 
+             % atoi(param[1].c_str());
+    insertMacro( macroname, in_string->name(), in_string->line(),
+		 int_to_string( prod));
+    return string();
+}
+
+string
 global_add_to( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 2, 0);
     string macroname( param[0]);
@@ -874,6 +709,32 @@ global_mult_to( const string&, string param[], size_t n, size_t opt) {
     return string();
 }
 
+string
+global_div_to( const string&, string param[], size_t n, size_t opt) {
+    NParamCheck( 2, 0);
+    string macroname( param[0]);
+    crop_string( macroname);
+    remove_separator( macroname);
+    int prod = atoi( expandFirstMacro( macroname).c_str()) 
+             / atoi(param[1].c_str());
+    insertGlobalMacro( macroname, in_string->name(), in_string->line(),
+		       int_to_string( prod));
+    return string();
+}
+
+string
+global_mod_to( const string&, string param[], size_t n, size_t opt) {
+    NParamCheck( 2, 0);
+    string macroname( param[0]);
+    crop_string( macroname);
+    remove_separator( macroname);
+    int prod = atoi( expandFirstMacro( macroname).c_str()) 
+             % atoi(param[1].c_str());
+    insertGlobalMacro( macroname, in_string->name(), in_string->line(),
+		       int_to_string( prod));
+    return string();
+}
+
 // String conversion
 // ======================================================================
 string 
@@ -885,6 +746,43 @@ string_to_upper( const string&, string param[], size_t n, size_t opt) {
     return s;
 }
 
+string 
+int_to_roman( const string&, string param[], size_t n, size_t opt) {
+    NParamCheck( 1, 0);
+    return int_to_roman_string( atoi( param[0].c_str()));
+}
+
+string 
+int_to_roman_upper( const string&, string param[], size_t n, size_t opt) {
+    NParamCheck( 1, 0);
+    string s = int_to_roman_string( atoi( param[0].c_str()));
+    for ( size_t i = 0; i < s.size(); i++)
+	s[i] = toupper( s[i]);
+    return s;
+}
+
+string 
+int_to_alpha( const string&, string param[], size_t n, size_t opt) {
+    NParamCheck( 1, 0);
+    int i = atoi( param[0].c_str());
+    if ( i < 1 || i > 27) {
+	printErrorMessage( AlphaOutOfBoundsError);
+        return string( "[Alpha digit out of bounds]");
+    }
+    return string( (const char)( 'a' + i - 1), 1);
+}
+
+string 
+int_to_alpha_upper( const string&, string param[], size_t n, size_t opt) {
+    NParamCheck( 1, 0);
+    int i = atoi( param[0].c_str());
+    if ( i < 1 || i > 27) {
+	printErrorMessage( AlphaOutOfBoundsError);
+        return string( "[Alpha digit out of bounds]");
+    }
+    return string( (const char)( 'A' + i - 1), 1);
+}
+
 // Error and message output
 // ======================================================================
 string 
@@ -893,7 +791,7 @@ html_error( const string&, string param[], size_t n, size_t opt) {
     if ( n != 1 && opt != 0)
 	printErrorMessage( MacroParamNumberError);
     else
-	cerr << endl << "*** Error: " << convert_quoted_string(param[0]) <<'.';
+	cerr << endl << "ERROR: " << convert_quoted_string(param[0]) <<'.';
     printErrorMessage( UserDefinedError);
     return string();
 }
@@ -904,6 +802,15 @@ html_message( const string&, string param[], size_t n, size_t opt) {
 	printErrorMessage( MacroParamNumberError);
     else if ( ! quiet_switch)
 	cerr << convert_quoted_string( param[0]);
+    return string();
+}
+
+string
+html_dump( const string&, string param[], size_t n, size_t opt) {
+    if ( n != 1 && opt != 0)
+	printErrorMessage( MacroParamNumberError);
+    else if ( ! quiet_switch)
+	cerr << convert_quoted_string_seps( param[0]);
     return string();
 }
 
@@ -925,6 +832,23 @@ string
 cc_parameter( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 0, 0);  // uses cc_string as parameter
     return cc_string;
+}
+
+string
+cache_class_name( const string&, string param[], size_t n, size_t opt) {
+    NParamCheck( 0, 0);
+    template_class_name = macroX("\\ccPureClassTemplateName");
+    class_name          = macroX( "\\ccPureClassName");
+    return string();
+}
+
+string
+store_file_name( const string&, string param[], size_t n, size_t opt) {
+    NParamCheck( 0, 0);
+    cc_filename = replace_asterisks( replace_template_braces_and_colons(
+                                         remove_font_commands( cc_string)));
+    insertInternalGlobalMacro( "\\lciNewFilename", cc_filename);
+    return string();
 }
 
 string
@@ -954,16 +878,16 @@ three_column_layout( const string&, string param[], size_t n, size_t opt) {
 // ======================================================================
 string
 html_index( const string&, string param[], size_t n, size_t opt) {
-    NParamCheck( 2, 0);  // param[0] is index category, param[1] is text
+    NParamCheck( 1, 0);  // param[0] is index text
     crop_string( param[0]);
+    handleIndex2( param[0] +"@ ??? "+ param[0],"","",0);
     return "";
 }
 
 string
 html_index_C( const string&, string param[], size_t n, size_t opt) {
-    NParamCheck( 1, 0);  // uses cc_string as index item, param[0] is
-                         // index category
-    crop_string( param[0]); 
+    NParamCheck( 1, 0);  // uses cc_string as index item, param[0] is dummy
+    handleIndex2( cc_string +"@ ??? "+ convert_C_to_html(cc_string),"","",0);
     return "";
 }
 
@@ -971,8 +895,131 @@ string
 cross_link( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 1, 0);  // uses cc_string as crosslink key, param[0] is
                          // used as dummy to avoid parsing of spaces.
-    return string( "\\lcRawHtml{") + handleHtmlCrossLink( cc_string) + '}';
+    return string( "\\lcRawHtml{") + handleHtmlCrossLink(cc_string,false)+ '}';
 }
+
+string
+cross_link_template( const string&, string param[], size_t n, size_t opt) {
+    NParamCheck( 1, 0);  // uses cc_string as crosslink key, param[0] is
+                         // used as dummy to avoid parsing of spaces.
+    return string( "\\lcRawHtml{") + handleHtmlCrossLink(cc_string,true) + '}';
+}
+
+// Chapter File Handling
+// ======================================================================
+
+string                // macro
+handle_chapter( const string&, string param[], size_t n, size_t opt) {
+    NParamCheck( 1, 0);
+    push_current_output();
+    string chapter_title( param[0]);
+    crop_string( chapter_title);
+    remove_separator( chapter_title);
+    string new_main_filename;
+    string new_main_filepath = macroX( "\\lciInputPath");
+    if ( new_main_filepath[0] == '/' ) {
+        printErrorMessage( ChapterAbsolutePathError);
+        new_main_filename =  macroX( "\\lciChapterPrefix")
+                           + macroX( "\\lciInputRootname")
+	                   + macroX( "\\lciHtmlSuffix");
+        new_main_filepath.clear();
+    } else {
+        new_main_filename = new_main_filepath
+                          + macroX( "\\lciChapterPrefix")
+                          + macroX( "\\lciInputRootname")
+                          + macroX( "\\lciHtmlSuffix");
+    }
+    if ( new_main_filename == main_filename) {
+        printErrorMessage( ChapterStructureError);
+	return string();
+    }
+    if ( main_stream != &cout && main_stream != pre_stream) {
+	assert_file_write( *main_stream, main_filename);
+	delete   main_stream;
+	main_stream = 0;
+    }
+    if ( anchor_stream != 0 && anchor_stream != main_anchor_stream
+         && anchor_stream != global_anchor_stream) {
+        assert_file_write( *anchor_stream, macroX( "\\lciAnchorFilename"));
+        delete anchor_stream;
+        anchor_stream = 0;
+    }
+    if ( main_anchor_stream != 0 
+         && main_anchor_stream != global_anchor_stream) {
+        assert_file_write( *main_anchor_stream, 
+                           macroX( "\\lciAnchorFilename"));
+        delete main_anchor_stream;
+        main_anchor_stream = 0;
+    }
+    main_filename = new_main_filename;
+    main_basename = basename_string( main_filename);
+    main_rootname = rootname_string( main_basename);
+    main_filepath = new_main_filepath;
+    main_uppath   = uppath_string( main_filepath);
+    main_stream = open_file_for_write_with_path( tmp_path + main_filename);
+    current_ostream  = main_stream;
+    current_filename = main_filename;
+    current_basename = main_basename;
+    current_rootname = main_rootname;
+    current_filepath = main_filepath;
+    current_uppath   = main_uppath;
+    insertInternalGlobalMacro( "\\lciOutputFilename", current_filename);
+    insertInternalGlobalMacro( "\\lciOutputRootname", current_rootname);
+    insertInternalGlobalMacro( "\\lciOutputBasename", current_basename);
+    insertInternalGlobalMacro( "\\lciOutputPath",     current_filepath);
+    insertInternalGlobalMacro( "\\lciOutputUppath",   current_uppath);
+    insertInternalGlobalMacro( "\\lciMainFilename",   main_filename);
+    insertInternalGlobalMacro( "\\lciMainBasename",   main_basename);
+    insertInternalGlobalMacro( "\\lciMainRootname",   main_rootname);
+    insertInternalGlobalMacro( "\\lciMainPath",       main_filepath);
+    insertInternalGlobalMacro( "\\lciMainUppath",     main_uppath);
+    if ( current_filepath == "") {
+        anchor_stream = global_anchor_stream;
+    } else {
+        anchor_stream = open_file_for_append( tmp_path + current_filepath +
+                                              macroX( "\\lciAnchorFilename"));
+    }
+    main_anchor_stream = anchor_stream;
+    return string();
+}
+
+// Reference page and class file handling
+// ======================================================================
+
+
+// File management
+// ======================================================================
+
+string
+if_file_exists( const string&, string param[], size_t n, size_t opt) {
+    NParamCheck( 1, 0);
+    string name( param[0]);
+    remove_separator( name);
+    if ( find_filename_with_suffix_w_input_dirs( name) != string(""))
+	return string("\\lcTrue");
+    return string("\\lcFalse");
+}
+
+string
+copy_file( const string&, string param[], size_t n, size_t opt) {
+    NParamCheck( 2, 0);
+    string source( param[0]);
+    string target( param[1]);
+    remove_separator( source);
+    remove_separator( target);
+    istream* in  = open_file_for_read_w_input_dirs( source);
+    ostream* out = open_file_for_write( target);
+    if ( in != 0 && out != 0) {
+        char c; // yes, probably slow, but then not that often used anyway
+        while( in->get(c)) {
+            out->put(c);
+        }
+    }
+    delete in;
+    delete out;
+    return string("");
+}
+
 
 string
 pop_output( const string&, string [], size_t n, size_t opt) {
@@ -989,32 +1036,49 @@ push_output( const string&, string param[], size_t n, size_t opt) {
 }
 
 string
-open_biblio( const string&, string param[], size_t n, size_t opt) {
-    NParamCheck( 0, 0);
+open_file( const string&, string param[], size_t n, size_t opt) {
+    NParamCheck( 1, 0);
+    remove_separator( param[0]);
     push_current_output();
-    current_filename = tmp_path + macroX("\\lciBibFilename");
-    current_ostream = open_file_for_write( current_filename);
-    istream* in  = open_config_file( macroX( "\\lciBiblioHeader"));
-    filter_config_file( *in, *current_ostream);
-    delete in;
+    push_current_output_w_filename( expandFirstMacro(param[0]));
     return string();
 }
 
 string
-close_biblio( const string&, string param[], size_t n, size_t opt) {
+close_file( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 0, 0);
-    *current_ostream << "</TD></TR>" << endl;
-    istream* in  = open_config_file( macroX( "\\lciBiblioFooter"));
-    filter_config_file( *in, *current_ostream);
-    assert_file_write( *current_ostream, macroX( "\\lciBibFilename"));
-    delete in;
     delete current_ostream;
     pop_current_output();
     return string();
 }
 
 string
-html_class_file_end( const string&, string param[], size_t n, size_t opt) {
+open_biblio( const string&, string param[], size_t n, size_t opt) {
+    NParamCheck( 0, 0);
+    push_current_output();
+    current_filename = tmp_path + macroX("\\lciBibFilename");
+    current_ostream = open_file_for_write( current_filename);
+    return string();
+}
+
+string
+close_biblio( const string&, string param[], size_t n, size_t opt) {
+    NParamCheck( 0, 0);
+    assert_file_write( *current_ostream, macroX( "\\lciBibFilename"));
+    delete current_ostream;
+    pop_current_output();
+    return string();
+}
+
+string
+open_reference_file( const string&, string param[], size_t n, size_t opt) {
+    NParamCheck( 0, 0);
+    handleClassFile( cc_filename);
+    return string();
+}
+
+string
+close_reference_file( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 0, 0);
     handleClassFileEnd();
     return string();
@@ -1045,29 +1109,52 @@ void init_internal_macros() {
     insertInternalGlobalMacro( "\\lciIfEqual", if_equal, 2);
     insertInternalGlobalMacro( "\\lciIfLess", if_less, 2);
     insertInternalGlobalMacro( "\\lciIfLessOrEqual", if_less_or_equal, 2);
-    insertInternalGlobalMacro( "\\lciAddTo", add_to, 2);
+    insertInternalGlobalMacro( "\\lciAddTo",  add_to, 2);
     insertInternalGlobalMacro( "\\lciMultTo", mult_to, 2);
-    insertInternalGlobalMacro( "\\lciGlobalAddTo", global_add_to, 2);
+    insertInternalGlobalMacro( "\\lciDivTo",  div_to, 2);
+    insertInternalGlobalMacro( "\\lciModTo",  mod_to, 2);
+    insertInternalGlobalMacro( "\\lciGlobalAddTo",  global_add_to, 2);
     insertInternalGlobalMacro( "\\lciGlobalMultTo", global_mult_to, 2);
-    insertInternalGlobalMacro( "\\lciToUpper", string_to_upper, 1);
-    insertInternalGlobalMacro( "\\lciError", html_error, 1);
-    insertInternalGlobalMacro( "\\lciMessage", html_message, 1);
+    insertInternalGlobalMacro( "\\lciGlobalDivTo",  global_div_to, 2);
+    insertInternalGlobalMacro( "\\lciGlobalModTo",  global_mod_to, 2);
 
-    insertInternalGlobalMacro( "\\lciStyle", cc_style, 1);
+    insertInternalGlobalMacro( "\\lciToUpper",      string_to_upper, 1);
+    insertInternalGlobalMacro( "\\lciToRoman",      int_to_roman, 1);
+    insertInternalGlobalMacro( "\\lciToRomanUpper", int_to_roman_upper, 1);
+    insertInternalGlobalMacro( "\\lciToAlpha",      int_to_alpha, 1);
+    insertInternalGlobalMacro( "\\lciToAlphaUpper", int_to_alpha_upper, 1);
+
+    insertInternalGlobalMacro( "\\lciError",   html_error, 1);
+    insertInternalGlobalMacro( "\\lciMessage", html_message, 1);
+    insertInternalGlobalMacro( "\\lciDump",    html_dump, 1);
+
+    insertInternalGlobalMacro( "\\lciCCStyle", cc_style, 1);
     insertInternalGlobalMacro( "\\lciCCParameter", cc_parameter, 0);
+    insertInternalGlobalMacro( "\\lciCacheClassName", cache_class_name, 0);
+    insertInternalGlobalMacro( "\\lciStoreFileName", store_file_name, 0);
 
     insertInternalGlobalMacro( "\\lciTwoColumnLayout",  two_column_layout,  1);
     insertInternalGlobalMacro( "\\lciThreeColumnLayout",three_column_layout,2);
 
-    insertInternalGlobalMacro( "\\lciHtmlIndex", html_index, 2);
+    insertInternalGlobalMacro( "\\lciHtmlIndex", html_index, 1);
     insertInternalGlobalMacro( "\\lciHtmlIndexC", html_index_C, 1);
     insertInternalGlobalMacro( "\\lciHtmlCrossLink", cross_link, 1);
-    insertInternalGlobalMacro( "\\lciHtmlClassFileEnd", html_class_file_end,0);
+    insertInternalGlobalMacro( "\\lciHtmlCrossLinkTemplate", 
+                                                       cross_link_template, 1);
+    insertInternalGlobalMacro( "\\lciOpenReferenceFile", 
+                                                       open_reference_file,0);
+    insertInternalGlobalMacro( "\\lciCloseReferenceFile", 
+                                                       close_reference_file,0);
+
+    insertInternalGlobalMacro( "\\lciIfFileExists", if_file_exists, 1);
+    insertInternalGlobalMacro( "\\lciCopyFile",     copy_file, 2);
+
+    insertInternalGlobalMacro( "\\lciChapter",    handle_chapter, 1);
 
     insertInternalGlobalMacro( "\\lciPopOutput",  pop_output,  0);
     insertInternalGlobalMacro( "\\lciPushOutput", push_output, 1);
-    insertInternalGlobalMacro( "\\lciOpenBibliography",  open_biblio, 0);
-    insertInternalGlobalMacro( "\\lciCloseBibliography", close_biblio, 0);
+    insertInternalGlobalMacro( "\\lciOpenFile",   open_file, 1);
+    insertInternalGlobalMacro( "\\lciCloseFile",  close_file, 0);
 
     insertInternalGlobalMacro( "\\lciLineNumber",  line_number,  0);
 }

@@ -72,7 +72,9 @@ public:
     Self&         insert (size_t pos, const charT* s);
     Self&         insert (size_t pos, charT c, size_t rep = 1);
 
-    Self&         remove (size_t pos = 0, size_t n = NPOS);
+    //Self&         remove (size_t pos = 0, size_t n = NPOS);
+    void?         clear();
+        
 
     Self&         replace (size_t pos1,
 		           size_t n1, 

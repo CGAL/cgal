@@ -19,14 +19,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <buffer.h>
 #include <html_config.h>
 #include <string_conversion.h>
 #include <internal_macros.h>
 #include <html_error.h>
 #include <html_syntax.tab.h>
 
-#include <lex_include.h>
+#include <input.h>
 #include <lex_include_impl.h>
 #include <macro_dictionary.h>
 
@@ -63,7 +62,8 @@ string current_parameter;
 
 // String to collect the result of a CCParameterMode parameter.
 string cc_string;
-// String to store the filename of ccHtmlClassFile intermediately
+// String to store the filename of ccReferenceFile intermediately
+// The filename is already processed to not contain illegal characters anymore.
 string cc_filename;
 
 /* Set this flag to 1 to switch back to old_state. */
@@ -167,7 +167,7 @@ inline char* next_digit( char* s) {
     --  EndTokenMode      parses LaTeX verbose environments until an
                           \end{envir} occurs. Another example is cprog.
 
-    --  IncludeMode       parses input/include filename,
+    --  IncludeMode       parses lciInclude filename,
 
     --  ParameterStart:   starts a (La)TeX macro parameter, i.e. 
                           comments, braces, brackets, and escaped symbols,
@@ -275,7 +275,7 @@ number          {digit}+
  /* Handle include files      */
  /* ------------------------- */
 
-<INITIAL,AllttMode>[\\]((include)|(input)){seps}[\{]{seps}   {  
+<INITIAL,AllttMode>[\\](lciInclude){seps}[\{]{seps}   {  
 		    old_state = YY_START;
 		    BEGIN ( IncludeMode);
 		    break;
@@ -293,7 +293,7 @@ number          {digit}+
 			yyterminate();
 		    }
 		    BEGIN( old_state);
-		    include_stack.push_tex_file_w_input_dirs( yytext);
+		    include_stack.push_file( yytext);
 		    break;
 }
 
@@ -805,19 +805,6 @@ number          {digit}+
                 }
 
 
- /* Chapter      */
- /* ------------ */
-<INITIAL,AllttMode>[\\]lciChapter[*]?{seps}  {
-		    return CHAPTER;
-}
-
- /* Part      */
- /* ------------ */
-<INITIAL,AllttMode>[\\]lciPart[*]?{seps}  {
-		    return PART;
-}
-
-
  /* Index      */
  /* ---------------------- */
 <INITIAL>[\\]lciOpenFileforIndex  {
@@ -843,38 +830,6 @@ number          {digit}+
 <INITIAL>[\\]lciIndexRefName  {
     handleIndexRefName();      
     break;
-}
-
-
-
- /* start of document      */
- /* ---------------------- */
-<INITIAL>[\\]lciStartToc  {
-    if ( ! noheader_switch)
-        copy_and_filter_config_file( macroX( "\\lciTocHeader"),
-                                     *contents_stream);
-    break;
-}
-
-
- /* Different keywords from the manual style triggering C++ formatting */
- /* ------------------------------------------------------------------ */
-<INITIAL,AllttMode>[\\]begin{seps}[\{]{seps}lciClass{seps}[\}]   {
-		    return BEGINCLASS;
-		}
-<INITIAL,AllttMode>[\\]end{seps}[\{]{seps}lciClass{seps}[\}]   {
-		    return ENDCLASS;
-		}
-
- /* Flexibility for HTML class files. */
- /* -------------------------------------------------------------- */
-<INITIAL,AllttMode>[\\]lciStoreHtmlFileName   {
-                    cc_filename = cc_string;
-		    break;
-}
-<INITIAL,AllttMode>[\\]lciHtmlFileNameBegin   {
-                    skiplimitedsepspaces();
-		    return HTMLBEGINCLASSFILE;
 }
 
  /* Special multicharacter sequences */
@@ -1203,13 +1158,7 @@ bool is_parameter_parsing_done( bool option, bool more_param) {
 // returns true if all went well. Return-value == false means return STRING.
 bool expand_macro() {
     if ( ! definedMacro( yytext)) {
-	if ( ! quiet_switch) {
-	    cerr << endl << "Unknown macro " << yytext
-		 << " in `" << in_string->name()
-		 << " in line " << in_string->line() << "'.";
-	    if ( stack_trace_switch)
-		printErrorMessage( MacroUndefinedError);
-	}
+        printErrorMessage( MacroUndefinedError, yytext);
 	yylval.text = yytext;
 	return false;    
     }

@@ -19,12 +19,23 @@
 #include <mstring.h>
 #include <basic.h>
 
+// Used in anchor rules to make anchor filter work for directory hierarchies
+#define REPLACE_WITH_CURRENT_PATH_TOKEN "REPLACE_WITH_CURRENT_PATH"
+
 using namespace std;
 
-#define OUT(x) if ( m_out) *m_out << x; return *this
+// Directory for the temporary files. A default is given.
+// This directory is the output directory for this program. Usually, 
+// the script cc_manual_to_html makes a own tmp directory and removes 
+// it afterwards. The path must terminate with a slash.
+extern string  tmp_path;
+
 
 // Output_file with stream operators
 // -------------------------------------
+
+#define OUT(x) if ( m_out) *m_out << x; return *this
+
 class Output_file {
     ostream* m_out;
     string   m_name;
@@ -80,14 +91,22 @@ void push_current_output();
 void pop_current_output();
 void set_current_output( const string& key);
 void push_current_output( const string& key);
+void push_current_output_w_filename( const string& filename);
 
 extern ostream* current_ostream;
 extern string   current_filename;
+extern string   current_basename;
+extern string   current_rootname;
+extern string   current_filepath;
+extern string   current_uppath;
+
+extern ostream* main_anchor_stream; // used in Chapter's
+extern ostream* global_anchor_stream; // used for global files like TOC
+extern ostream* anchor_stream; // the current, one of the above or class env.
 
 extern ostream* pre_stream;
 extern ostream* main_stream;
 extern ostream* class_stream;
-extern ostream* anchor_stream;
 extern ostream* contents_stream;
 extern ostream* index_stream;
 extern ostream* HREF_stream;
@@ -97,39 +116,33 @@ extern string  pre_main_filename;
 extern string  main_filename;
 extern string  class_filename;
 
-extern string  config_path;        // defined in cc_extract_html.C
-extern string  latex_conv_inputs;  // 
-extern string  tmp_path;           //
+extern string  pre_main_basename;
+extern string  main_basename;
+extern string  class_basename;
+
+extern string  pre_main_rootname;
+extern string  main_rootname;
+extern string  class_rootname;
+
+extern string  pre_main_filepath;
+extern string  main_filepath;
+extern string  class_filepath;
+
+extern string  pre_main_uppath;
+extern string  main_uppath;
+extern string  class_uppath;
+
 
 /* Auxiliary functions for stream handling */
 /* ======================================= */
 
-bool     exist_file( const string& name);
+bool     exist_file( const string& name); // also declared in input.h
 void     assert_file_write( ostream& out, const string& name);
-istream* open_file_for_read( const string& name);
-istream* open_file_for_read_w_input_dirs( const string& name);
 ostream* open_file_for_write( const string& name);
-int open_counter_file_for_read( const string& name);
-
-
-
-/* Filter a config file                    */
-/* ======================================= */
-/* Filtering means substituting of the variable names and */
-/* skipping of braces if the variable is undefined.       */
-
-void filter_config_file( istream& in, ostream& out);
-
-/* Auxiliary functions to handle config files */
-/* ========================================== */
-
-istream* open_config_file( const string& name);
-void     copy_and_filter_config_file( const string& name, ostream& out);
-void     copy_config_file( const string& name);
-
-void open_html( ostream& out);
-void close_html( ostream& out);
-
+ostream* open_file_for_write_with_path( const string& name);
+ostream* open_file_for_append( const string& name);
+ostream* open_file_for_append_with_path( const string& name);
+void     make_path( string path);
 
 
 #endif // OUTPUT_H //

@@ -19,7 +19,8 @@
 # Path to the configuration files of the latex_converter:
 # Used during installation to copy config files and compiled
 # into the cc_extract_html program as default config path.
-# The same variable is used in the cc_manual_to_html script.
+# The same variable is used in the cc_manual_to_html and
+# latex_to_html scripts.
 # LATEX_CONV_CONFIG = ${PUBLIC}/CGAL/Tools/latex_converter_config
 
 # Path where to copy/move the executables during installation:
@@ -31,14 +32,15 @@
 
 # C++ Compiler Options:
 # CXXFLAGS = -v
-CXXFLAGS = -O2
+CXXFLAGS = -g
 
 # C Compiler: Gnu gcc 2.6.3 (or above) or the usual system cc:
 # CC = gcc
 
 # C Preprocessor Flags: (e.g. -g or -O or STL include path)
 # CPPFLAGS = -g
-CPPFLAGS = -O2
+CPPFLAGS = -g
+
 
 # Linker Flags:
 # LDFLAGS = 
@@ -68,6 +70,7 @@ PROGRAM_FILES =		cc_extract			\
 # Files that will be copied into LATEX_CONV_BIN upon installation:
 SCRIPT_FILES  = 	cc_check			\
 			cc_manual_to_html		\
+			latex_to_html			\
 			cc_extract_include		\
 			cc_patch_anchor_pages		\
 			cc_patch_anchor_index		\
@@ -77,6 +80,7 @@ SCRIPT_FILES  = 	cc_check			\
 
 # Files that will be copied into LATEX_CONV_CONFIG upon installation:
 HTML_CONFIG_FILES =	latex_converter_config/html/*.sty	\
+		 	latex_converter_config/html/*.css	\
 			latex_converter_config/html/cc_*        \
 			latex_converter_config/html/*.mst
 GIF_CONFIG_FILES  =	latex_converter_config/gif/*.gif
@@ -123,8 +127,6 @@ cc_extract : ${OBJ} ${HEADER} cc_extract.o
 cc_build_checker : ${OBJ} ${HEADER} cc_build_checker.o
 	${CXX} ${CXXFLAGS} -o $@ $@.o ${OBJ} ${LDFLAGS}
 
-texinputs : texinputs.o
-	${CXX} ${CXXFLAGS} -o $@ $@.o ${LDFLAGS}
 
 # LaTeX Converter
 # ==========================
@@ -135,7 +137,6 @@ include Makefile_depend
 
 cc_extract_html.o : cc_extract_html.C
 	${CXX} -I. ${CPPFLAGS} ${CXXFLAGS} \
-	-DLATEX_CONVERTER_CONFIG=\"${LATEX_CONV_CONFIG}\" \
 	-c cc_extract_html.C
 
 # program
@@ -149,8 +150,16 @@ OBJHTML    = html_lex.o          \
              html_error.o        \
              string_conversion.o \
              cpp_formatting.o    \
+             input.o             \
              output.o            \
              cc_extract_html.o
+
+# configure input.C with the right parameters
+input.o: input.C
+	${CXX} -I. ${CPPFLAGS} ${CXXFLAGS} \
+		-DLATEX_CONVERTER_CONFIG=\"${LATEX_CONV_CONFIG}\" \
+		-c input.C
+
 
 cc_extract_html : $(OBJHTML)
 	${CXX} ${CXXFLAGS} -o $@ ${OBJHTML} ${LDFLAGS}
@@ -182,29 +191,26 @@ cc_index_link : cc_index_link.o
 # Installation Targets:
 # =====================================================================
 rminstall:
-	-rm -f ${LATEX_CONV_CONFIG}/*
-	-rm -f ${LATEX_CONV_CONFIG}/html/*
-	-rm -f ${LATEX_CONV_CONFIG}/gif/*
-	-rm -f ${LATEX_CONV_CONFIG}/ref_pages/*
+	test -d ${LATEX_CONV_CONFIG} || rm -fr ${LATEX_CONV_CONFIG}
 
 pathinstall:
-	-mkdir ${LATEX_CONV_CONFIG}
-	-mkdir ${LATEX_CONV_CONFIG}/html
-	-mkdir ${LATEX_CONV_CONFIG}/gif
-	-mkdir ${LATEX_CONV_CONFIG}/ref_pages
+	test -d ${LATEX_CONV_CONFIG}      || mkdir ${LATEX_CONV_CONFIG}
+	test -d ${LATEX_CONV_CONFIG}/html || mkdir ${LATEX_CONV_CONFIG}/html
+	test -d ${LATEX_CONV_CONFIG}/gif  || mkdir ${LATEX_CONV_CONFIG}/gif
+	test -d ${LATEX_CONV_CONFIG}/ref_pages|| mkdir ${LATEX_CONV_CONFIG}/ref_pages
 
 gifinstall:
-	-cp ${GIF_CONFIG_FILES}  ${LATEX_CONV_CONFIG}/gif
+	cp ${GIF_CONFIG_FILES}  ${LATEX_CONV_CONFIG}/gif
 
 refinstall:
-	-cp ${REF_CONFIG_FILES}  ${LATEX_CONV_CONFIG}/ref_pages
+	cp ${REF_CONFIG_FILES}  ${LATEX_CONV_CONFIG}/ref_pages
 
 cpinstall:
 	cp ${SCRIPT_FILES}  ${LATEX_CONV_BIN}
-	-cp ${HTML_CONFIG_FILES} ${LATEX_CONV_CONFIG}/html
+	cp ${HTML_CONFIG_FILES} ${LATEX_CONV_CONFIG}/html
 
-mvinstall:
-	mv -f ${PROGRAM_FILES} ${LATEX_CONV_BIN}
+mvinstall: ${PROGRAM_FILES}
+	cp ${PROGRAM_FILES} ${LATEX_CONV_BIN}
 
 install: rminstall pathinstall cpinstall mvinstall refinstall gifinstall
 
@@ -222,6 +228,7 @@ DEPENDSRC  = html_lex.C          \
              html_error.C        \
              string_conversion.C \
              cpp_formatting.C    \
+             input.C             \
              output.C            \
              cc_extract_html.C
 

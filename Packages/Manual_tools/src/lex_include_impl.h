@@ -52,9 +52,12 @@ Include_stack::push_file( FILE* in,
     in_file = in_string = &(m_stack.front());
     yyin = in;
     yy_switch_to_buffer( yy_create_buffer( yyin, YY_BUF_SIZE));
-    insertInternalGlobalMacro( "\\lciInputFilename",    name);
-    insertInternalGlobalMacro( "\\lciInputFilenameBase",basename_string(name));
-    insertInternalGlobalMacro( "\\lciInputPath",        path_string( name));
+    insertInternalGlobalMacro( "\\lciInputFilename", name);
+    insertInternalGlobalMacro( "\\lciInputBasename", basename_string(name));
+    insertInternalGlobalMacro( "\\lciInputRootname", rootname_string(name));
+    string path = path_string( name);
+    insertInternalGlobalMacro( "\\lciInputPath",     path);
+    insertInternalGlobalMacro( "\\lciInputUppath",   uppath_string( path));
     return true;
 }
 
@@ -62,75 +65,17 @@ Include_stack::push_file( FILE* in,
 bool
 Include_stack::push_file( const string& name, 
 			  size_t new_line_number) {
-    FILE* fin;
-    if ( (fin = fopen( name.c_str(), "r")) == NULL) {
-	cerr << ' ' << endl 
-	     << "*** Error: cannot open file `" << name << "' for reading.";
+    string filename = find_filename_with_suffix_w_input_dirs( name);
+    if ( filename == string("")) {
+        cerr << ' ' << endl << "ERROR: "
+             << prog_name << ": cannot open file `" << name
+             << "' for reading." << endl;
 	printErrorMessage( FileReadOpenError);
 	return false;
     }
-    return push_file( fin, name, new_line_number);
-}
-
-// Push current state. Open and init with new file plus optional
-// extension string (suffix) and new_line_number.
-bool
-Include_stack::push_tex_file( const string& name, 
-			      size_t new_line_number) {
-    FILE* fin;
-    string suffix = suffix_string( name);
-    if ( (suffix == "tex" || suffix == "sty") &&
-	 ( (fin = fopen( name.c_str(), "r")) != NULL))
-	return push_file( fin, name, new_line_number);
-    if ( (fin = fopen( (name + ".tex").c_str(), "r")) != NULL)
-	return push_file( fin, name + ".tex", new_line_number);
-    if ( (fin = fopen( (name + ".sty").c_str(), "r")) != NULL)
-	return push_file( fin, name + ".sty", new_line_number);
-    if ( (fin = fopen( name.c_str(), "r")) != NULL)
-	return push_file( fin, name, new_line_number);
-    return false;
-}
-
-
-
-bool
-Include_stack::push_tex_file_w_input_dirs( const string& name, 
-			                  size_t new_line_number)
-{
-    string::size_type first = 0;
-    string::size_type last = 0;
-    string dir;
-
-    // check for absolute path 
-    if (name[0] == '/') 
-      if (push_tex_file(name, new_line_number))
-      {
-        return true;
-      }
-      else
-      {
-         cerr << ' ' << endl 
-	      << "*** Error: cannot open file `" << name << "' for reading.";
-         printErrorMessage( FileReadOpenError);
-         return false;
-      }
-
-
-    while (last < latex_conv_inputs.size())
-    {
-       last = latex_conv_inputs.find(':', first);
-       if (last < latex_conv_inputs.size())
-          dir = latex_conv_inputs.substr(first, last-first);
-       else
-          dir = latex_conv_inputs.substr(first, latex_conv_inputs.size()-first);
-       assert_trailing_slash_in_path(dir);
-       first = last+1;
-       if (push_tex_file(dir+name, new_line_number)) return true;
-    }
-    cerr << ' ' << endl 
-	 << "*** Error: cannot open file `" << name << "' for reading.";
-    printErrorMessage( FileReadOpenError);
-    return false;
+    FILE* fin = fopen( filename.c_str(), "r");
+    CC_Assert( fin != NULL);
+    return push_file( fin, filename, new_line_number);
 }
 
 
@@ -178,10 +123,13 @@ Include_stack::pop() {
 		in_file = &*i;
 	    }
 	    insertInternalGlobalMacro( "\\lciInputFilename",  in_file->name());
-	    insertInternalGlobalMacro( "\\lciInputFilenameBase", 
+	    insertInternalGlobalMacro( "\\lciInputBasename", 
 				       basename_string( in_file->name()));
-	    insertInternalGlobalMacro( "\\lciInputPath", 
-				       path_string( in_file->name()));
+	    insertInternalGlobalMacro( "\\lciInputRootname", 
+				       rootname_string( in_file->name()));
+            string path = path_string( in_file->name());
+            insertInternalGlobalMacro( "\\lciInputPath",   path);
+            insertInternalGlobalMacro( "\\lciInputUppath",uppath_string(path));
 	}
     } else {
 	in_file = in_string = 0;

@@ -23,6 +23,9 @@
 
 string int_to_string( int i);
 
+// Returns the roman digit representation for a number i, 0 <= i <= 109.
+string int_to_roman_string( int i);
+
 void remove_leading_spaces( string& s);
 void remove_trailing_spaces( string& s);
 void crop_string( string& s);
@@ -46,8 +49,10 @@ string replace_asterisks( string name);
 // Removes the quoted font changing commands used in CCMode: \I\, \B\ ...
 string remove_font_commands( string name);
 
-string basename_string( string name);  // basename without path and suffix
+string basename_string( string name);  // basename without path
+string rootname_string( string name);  // basename without path and suffix
 string path_string( string name);      // path with trailing / (maybe empty)
+string uppath_string( string path);    // '../' type of path reversing 'path'
 string remove_suffix( string name);    // remove '.' separated suffix
 string suffix_string( string name);    // returns suffix behind '.'.
                                        // returns "" if no '.'.
@@ -56,6 +61,11 @@ void assert_trailing_slash_in_path( string& s);
 // Quoted strings use C string notation with \ as escape symbol.
 // Replaced sequences are: \\, \n, \t, \{, \}.
 string convert_quoted_string( string s);
+
+// Quoted strings use C string notation with \ as escape symbol.
+// Replaced sequences are: \\, \n, \t, \{, \}.
+// Makes SEPARATOR Explictly visible for debugging, see \lciDump.
+string convert_quoted_string_seps( string s);
 
 // Expands " and \ symbols with quotes.
 string convert_to_C_printable( string s);

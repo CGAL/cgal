@@ -133,15 +133,12 @@ Installation of the Supporting Tools:
 
 (5)  Installation:
 
-     Type 'gmake install' to move the programs and to copy the shell 
-     scripts to $LATEX_CONV_BIN and to copy all the configuration files
+     Type 'gmake install' to copy the programs and the shell scripts
+     to $LATEX_CONV_BIN and to copy all the configuration files
      to $LATEX_CONV_CONFIG. Note that the Perl scripts from the 
      `../scripts/' directory are not installed by this. If the 
      $LATEX_CONV_CONFIG directory exists already, the installation
-     tries to remove the old files therein. The installation process
-     will issue some error messages about that a directory cannot
-     be removed or that a mkdir failed. These error messages can 
-     be ignored.
+     process removes all old files therein.
 
 
 (6)  Cleanup:

@@ -383,11 +383,38 @@ if (-r cc_anchor_filter.o) rm cc_anchor_filter.o
 # Filtering all HTML files.
 # -------------------------
 if ( ! $quiet_switch) echo -n ", applying anchor filter"
-if ( $?DEBUG) echo "# Filtering all HTML files."
-foreach f (${new_tmp_path}/*.html)
+set CURRENT_DIR=$PWD
+cd ${out_path}
+set ABS_OUTPATH=$PWD
+cd ${CURRENT_DIR}
+cd ${new_tmp_path}
+# make sure we get all subdirectories
+if ( $?DEBUG) echo "# Create all subdirectories in output structure."
+foreach f ( `find . -type d -print | sed 's/^[.][/]//'`)
   if ( $?DEBUG) echo $f
-  ${new_tmp_path}/cc_anchor_filter < $f | cc_remove_unwanted_links > ${out_path}/$f:t
+  \test -d ${ABS_OUTPATH}/$f || \mkdir ${ABS_OUTPATH}/$f
 end
+if ( $?DEBUG) echo "# Copy all files listed in 'htmlfiles'"
+foreach f ( `find . -type d -print | sed 's/^[.][/]//'`)
+  if ( -r ${CURRENT_DIR}/${f}/htmlfiles ) then
+    if ( $?DEBUG) echo $f/htmlfiles
+    set tmp_dir=$PWD
+    cd ${CURRENT_DIR}/${f}
+    \cp `cat htmlfiles` ${ABS_OUTPATH}/${f}/
+    cd $tmp_dir
+  endif
+end
+if ( $?DEBUG) echo "# Filtering all HTML files."
+foreach f ( `find . -name '*.html' -print | sed 's/^[.][/]//'`)
+  if ( $?DEBUG) echo $f
+  ./cc_anchor_filter < $f | cc_remove_unwanted_links > ${ABS_OUTPATH}/$f
+end
+cd $CURRENT_DIR
+
+#foreach f (${new_tmp_path}/*.html)
+#  if ( $?DEBUG) echo $f
+#  ${new_tmp_path}/cc_anchor_filter < $f | cc_remove_unwanted_links > ${out_path}/$f:t
+#end
 
 # Converting the index.
 # ---------------------

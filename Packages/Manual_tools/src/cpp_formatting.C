@@ -61,13 +61,13 @@ double stretch_factor = 1.6;
 
 double estimate_html_size( const char* s) {
     if ( s == 0)
-	return 0;
+        return 0;
     int n = 0;
     while ( *s) {
-	if ( *s == '|' && isupper(s[1]) && s[2] == '|') {
-	    s += 2;
-	} else  if ( *s > ' ' || (*s > '\0' && s[1] > ' '))
-	    n++;
+        if ( *s == '|' && isupper(s[1]) && s[2] == '|') {
+            s += 2;
+        } else  if ( *s > ' ' || (*s > '\0' && s[1] > ' '))
+            n++;
         ++s;
     }
     return width_per_character * n; 
@@ -80,43 +80,43 @@ inline double estimate_html_size( const string& s) {
 void three_cols_html_begin( ostream& out, bool big_col1) {
     current_font = it_font;
     out << indent << indent << ind_newline
-	<< "<!3><TABLE BORDER=0 CELLSPACING=2 CELLPADDING=0 WIDTH="
-	<< table_width << ">" << ind_newline 
-	<< "<TR><TD ALIGN=LEFT VALIGN=TOP WIDTH="
-	<< table_first_col + (big_col1 ? (table_second_col+table_third_col) :0)
-	<< "%" << ( big_col1 ? " COLSPAN=3>" : " NOWRAP>")
-	<< ind_newline << "<I><NOBR>" << outdent << ind_newline;
+        << "<!3><TABLE BORDER=0 CELLSPACING=2 CELLPADDING=0 WIDTH="
+        << table_width << ">" << ind_newline 
+        << "<TR><TD ALIGN=LEFT VALIGN=TOP WIDTH="
+        << table_first_col + (big_col1 ? (table_second_col+table_third_col) :0)
+        << "%" << ( big_col1 ? " COLSPAN=3>" : " NOWRAP>")
+        << ind_newline << "<I><NOBR>" << outdent << ind_newline;
 }
 
 void three_cols_html_premature_end( ostream& out) {
     out << indent << ind_newline << store_remember_font() << "</I></NOBR>" 
-	<< ind_newline << "</TD></TR>" << ind_newline 
-	<< "</TABLE><!3>" << outdent << outdent << ind_newline;
+        << ind_newline << "</TD></TR>" << ind_newline 
+        << "</TABLE><!3>" << outdent << outdent << ind_newline;
 }
 
 void three_cols_html_second( ostream& out, bool big_col1, bool big_col2) {
     out << indent << ind_newline << store_remember_font() << "</I></NOBR>" 
-	<< ind_newline << "</TD>";
+        << ind_newline << "</TD>";
     if ( big_col1)
         out << "</TR><TR><TD WIDTH=" << table_first_col << "% NOWRAP></TD>";
     out << "<TD ALIGN=LEFT VALIGN=TOP WIDTH="
-	<< table_second_col + ( big_col2 ? table_third_col : 0)
-	<< "% NOWRAP" << ( big_col2 ? " COLSPAN=2>" : ">")
-	<< ind_newline << "<I><NOBR>" << get_remember_font() << outdent 
-	<< ind_newline;
+        << table_second_col + ( big_col2 ? table_third_col : 0)
+        << "% NOWRAP" << ( big_col2 ? " COLSPAN=2>" : ">")
+        << ind_newline << "<I><NOBR>" << get_remember_font() << outdent 
+        << ind_newline;
 }
 
 void three_cols_html_third( ostream& out, bool big_col2, bool empty_col3) {
     out << indent << ind_newline << store_remember_font() << "</I></NOBR>" 
-	<< ind_newline;
+        << ind_newline;
     if ( ! big_col2)
-	out << "</TD>";
+        out << "</TD>";
     if ( ! empty_col3) {
-	if ( big_col2)
-	    out << "</TR><TR><TD WIDTH=" << table_first_col 
-	        << "% NOWRAP></TD><TD WIDTH=" << table_second_col 
-		<< "% NOWRAP></TD>";
-	out << "<TD ALIGN=LEFT VALIGN=TOP WIDTH=" << table_third_col << "%>";
+        if ( big_col2)
+            out << "</TR><TR><TD WIDTH=" << table_first_col 
+                << "% NOWRAP></TD><TD WIDTH=" << table_second_col 
+                << "% NOWRAP></TD>";
+        out << "<TD ALIGN=LEFT VALIGN=TOP WIDTH=" << table_third_col << "%>";
     }
     out << outdent << ind_newline;
 }
@@ -126,7 +126,7 @@ void three_cols_html_end( ostream& out, bool empty_col3) {
     if ( ! empty_col3)
         out << "</TD>";
     out << "</TR>" << ind_newline 
-	<< "</TABLE><!3>" << outdent << outdent << ind_newline;
+        << "</TABLE><!3>" << outdent << outdent << ind_newline;
 }
 
 void three_cols_html_new_closing( ostream& out) {
@@ -136,39 +136,39 @@ void three_cols_html_new_closing( ostream& out) {
 void two_cols_html_begin( ostream& out) {
     current_font = it_font;
     out << indent << indent << ind_newline
-	<< "<!2><TABLE BORDER=0 CELLSPACING=2 CELLPADDING=0 WIDTH="
-	<< table_width << ">" << ind_newline 
-	<< "<TR><TD ALIGN=LEFT VALIGN=TOP WIDTH="
-	<< table_2c_first_col + table_2c_second_col << "% NOWRAP COLSPAN=2>"
-	<< ind_newline << "<I><NOBR>" << outdent << ind_newline;
+        << "<!2><TABLE BORDER=0 CELLSPACING=2 CELLPADDING=0 WIDTH="
+        << table_width << ">" << ind_newline 
+        << "<TR><TD ALIGN=LEFT VALIGN=TOP WIDTH="
+        << table_2c_first_col + table_2c_second_col << "% NOWRAP COLSPAN=2>"
+        << ind_newline << "<I><NOBR>" << outdent << ind_newline;
 }
 
 void two_cols_html_premature_end( ostream& out) {
     out << indent << ind_newline << store_remember_font() <<"</I></NOBR>" 
-	<< ind_newline << "</TD></TR>" << ind_newline 
-	<< "</TABLE><!2>" << outdent << outdent << ind_newline;
+        << ind_newline << "</TD></TR>" << ind_newline 
+        << "</TABLE><!2>" << outdent << outdent << ind_newline;
 }
 
 void two_cols_html_second( ostream& out, bool empty_col2) {
     out << indent << ind_newline << store_remember_font() << "</I></NOBR>" 
-	<< ind_newline << "</TD></TR>";
+        << ind_newline << "</TD></TR>";
     if ( ! empty_col2)
         out << "<TR><TD WIDTH=" << table_2c_first_col 
-	    << "% NOWRAP></TD><TD ALIGN=LEFT VALIGN=TOP WIDTH="
-	    << table_2c_second_col << "%>";
+            << "% NOWRAP></TD><TD ALIGN=LEFT VALIGN=TOP WIDTH="
+            << table_2c_second_col << "%>";
     out << outdent << ind_newline;
 }
 
 void two_cols_html_new_closing( ostream& out) {
     out << indent << ind_newline << store_remember_font() << "</I></NOBR>" 
-	<< ind_newline << "</TD></TR>" << outdent << outdent;
+        << ind_newline << "</TD></TR>" << outdent << outdent;
 }
 
 void two_cols_html_end( ostream& out, bool empty_col2) {
     out << indent << ind_newline;
     if ( ! empty_col2)    
         out << "</TD></TR>" << ind_newline;
-    out	<< "</TABLE><!2>" << outdent << outdent << ind_newline;
+    out << "</TABLE><!2>" << outdent << outdent << ind_newline;
 }
 
 
@@ -177,47 +177,47 @@ void two_cols_html_end( ostream& out, bool empty_col2) {
 /* It depends on the layout (2 or 3 columns)      */
 
 const char* handle_template_layout( ostream& out, 
-				    const char* decl, 
-				    bool three_col) {
+                                    const char* decl, 
+                                    bool three_col) {
     const char* new_pos = decl;
     const char* p = decl;
     while ( *p && isspace( *p))
         p++;
     if ( strncmp( "template", p, 8) == 0) {
         p += 8;
-	while ( *p && isspace( *p))
-	    p++;
-	if ( *p == '<') {
-	    p++;
-	    // Here we know that it is a template declaration. Now we
+        while ( *p && isspace( *p))
+            p++;
+        if ( *p == '<') {
+            p++;
+            // Here we know that it is a template declaration. Now we
             // look for the end of the template params using a nesting counter.
-	    int nesting = 1;
-	    while ( *p && nesting > 0) {
-	        if ( *p == '<') 
-		    nesting++;
-		else if ( *p == '>')
-		    nesting --;
-		p++;
-	    }
-	    new_pos = p;
-	    if ( ! macroIsTrue( "\\ccTagRmTemplate")) {
-		// Print the template declaration.
-		if ( three_col)
-		    three_cols_html_begin( out, true);
-		else
-		    two_cols_html_begin( out);
+            int nesting = 1;
+            while ( *p && nesting > 0) {
+                if ( *p == '<') 
+                    nesting++;
+                else if ( *p == '>')
+                    nesting --;
+                p++;
+            }
+            new_pos = p;
+            if ( ! macroIsTrue( "\\ccTagRmTemplate")) {
+                // Print the template declaration.
+                if ( three_col)
+                    three_cols_html_begin( out, true);
+                else
+                    two_cols_html_begin( out);
 
-		print_ascii_len_to_html( out, decl, p - decl);
+                print_ascii_len_to_html( out, decl, p - decl);
 
-		if ( three_col)
-		    three_cols_html_premature_end( out);
-		else
-		    two_cols_html_premature_end( out);
-		// Make the postprocessing glue the template keyword and list
-		// together with the declaration.
-		out << "<!GLUE>";
-	    }
-	}
+                if ( three_col)
+                    three_cols_html_premature_end( out);
+                else
+                    two_cols_html_premature_end( out);
+                // Make the postprocessing glue the template keyword and list
+                // together with the declaration.
+                out << "<!GLUE>";
+            }
+        }
     }
     return new_pos;
 }
@@ -237,17 +237,17 @@ const char* handle_template_layout( ostream& out,
 // For the special case of enumerators the last parameter enum_decl
 // changes the parsing to look for braces `{}' instead of parantheses `()'.
 void split_function_declaration( const char* signature, 
-				 char*& return_value, 
-				 char*& scope, 
-				 char*& function_name, 
-				 char*& parameter_list,
-				 const char*& rest,
-				 bool  enum_decl = false) {
+                                 char*& return_value, 
+                                 char*& scope, 
+                                 char*& function_name, 
+                                 char*& parameter_list,
+                                 const char*& rest,
+                                 bool  enum_decl = false) {
     char opening = '(';
     char closing = ')';
     if ( enum_decl) {
         opening = '{';
-	closing = '}';
+        closing = '}';
     }
     const char* s = signature + strlen( signature) - 1;
 
@@ -272,18 +272,18 @@ void split_function_declaration( const char* signature,
     int nesting = 0;
     while ( s != s_end && ( nesting || *s != opening)) {
         switch ( *s) {
-	case ')':
-	case '}':
-	case '>':
-	    ++nesting;
-	    break;
-	case '(':
-	case '{':
-	case '<':
-	    --nesting;
-	    break;
+        case ')':
+        case '}':
+        case '>':
+            ++nesting;
+            break;
+        case '(':
+        case '{':
+        case '<':
+            --nesting;
+            break;
 
-	}
+        }
         --s;
     }
     const char* p = s + 1;
@@ -302,7 +302,7 @@ void split_function_declaration( const char* signature,
         --s;
     if ( s == s_end || nesting) {
         printErrorMessage( MalformedFunctionDeclaration);
-	exit( 1);
+        exit( 1);
     }
     q = s;
 
@@ -325,13 +325,13 @@ void split_function_declaration( const char* signature,
     // operator A<int>(...)
     const char* pp = signature;
     while ( isspace( *pp))
-	pp++;
+        pp++;
     if ( strncmp( pp, "operator", 8) == 0)
-	s = pp - 1;
+        s = pp - 1;
     else {
-	if ( strncmp( s + 1, "operator", 8) != 0)
-	    // it's not the cast operator, restore old position
-	    s = p;
+        if ( strncmp( s + 1, "operator", 8) != 0)
+            // it's not the cast operator, restore old position
+            s = p;
     }
     if ( q - s) {
         function_name = new char[ q - s + 1];
@@ -346,10 +346,10 @@ void split_function_declaration( const char* signature,
     q = s;
     while ( (s - s_end) > 0 && *s == ':' && *(s-1) == ':') {
         s -= 2;
-	while ( s != s_end && *s <= ' ')
-	    --s;
-	while ( s != s_end && ( isalnum( *s) || *s == '_' || *s == '|'))
-	    --s;
+        while ( s != s_end && *s <= ' ')
+            --s;
+        while ( s != s_end && ( isalnum( *s) || *s == '_' || *s == '|'))
+            --s;
     }
     if ( q - s > 0) {
         scope = new char[ q - s + 1];
@@ -377,10 +377,10 @@ void split_function_declaration( const char* signature,
 // The scope might be empty, the return_value should not be empty. 
 // No fancy tricks like operators.
 void split_variable_declaration( const char* signature, 
-				 char*& return_value, 
-				 char*& scope, 
-				 char*& variable_name, 
-				 char*& rest) {
+                                 char*& return_value, 
+                                 char*& scope, 
+                                 char*& variable_name, 
+                                 char*& rest) {
     const char* s = signature + strlen( signature) - 1;
 
     // Note that the string processing pointer s can point one character
@@ -401,9 +401,9 @@ void split_variable_declaration( const char* signature,
     int nesting = 0;
     while ( s != s_end && ( nesting || *s != '=')) {
         if ( *s == '}' || *s == ')' || *s == ']' || *s == '>')
-	    ++nesting;
+            ++nesting;
         if ( *s == '{' || *s == '(' || *s == '[' || *s == '<')
-	    --nesting;
+            --nesting;
         --s;
     }
     if ( s != s_end) {
@@ -429,7 +429,7 @@ void split_variable_declaration( const char* signature,
     
     if ( s == s_end) {
         printErrorMessage( MalformedFunctionDeclaration);
-	exit( 1);
+        exit( 1);
     }
     q = s;
 
@@ -450,10 +450,10 @@ void split_variable_declaration( const char* signature,
     q = s;
     while ( (s - s_end) > 0 && *s == ':' && *(s-1) == ':') {
         s -= 2;
-	while ( s != s_end && *s <= ' ')
-	    --s;
-	while ( s != s_end && ( isalnum( *s) || *s == '_' || *s == '|'))
-	    --s;
+        while ( s != s_end && *s <= ' ')
+            --s;
+        while ( s != s_end && ( isalnum( *s) || *s == '_' || *s == '|'))
+            --s;
     }
     if ( q - s > 0) {
         scope = new char[ q - s + 1];
@@ -485,63 +485,63 @@ void remove_const_ref_pair( char* s) {
     int   nest;    // nesting level of recently found const
     while( *s) {
         switch( state) {
-	case 0:
-	    if ( *s == '(' || *s == '<' || *s == '[' || *s == '{')
-	        ++nesting;
-	    if ( *s == ')' || *s == '>' || *s == ']' || *s == '}')
-	        --nesting;
-	    if ( *s == 'c') {
-	        state = 1;
-		nest = nesting;
-		q = s;
-	    }
-	    ++s;
-	    break;
-	case 1:
-	    if ( *s == 'o') {
-	        ++s;
-		state = 2;
-	    } else
-	        state = 0;
-	    break;
-	case 2:
-	    if ( *s == 'n') {
-	        ++s;
-		state = 3;
-	    } else
-	        state = 0;
-	    break;
-	case 3:
-	    if ( *s == 's') {
-	        ++s;
-		state = 4;
-	    } else
-	        state = 0;
-	    break;
-	case 4:
-	    if ( *s == 't') {
-	        ++s;
-		state = 5;
-	    } else
-	        state = 0;
-	    break;
-	case 5:
-	    if ( *s == '(' || *s == '<' || *s == '[' || *s == '{')
-	        ++nesting;
-	    if ( *s == ')' || *s == '>' || *s == ']' || *s == '}')
-	        --nesting;
-	    if ( *s == '&' && nest == nesting) {
-	        q[0] = ' ';
-	        q[1] = ' ';
-	        q[2] = ' ';
-	        q[3] = ' ';
-	        q[4] = ' ';
-		s[0] = ' ';
-		return;
-	    }
-	    ++s;
-	    break;
-	}
+        case 0:
+            if ( *s == '(' || *s == '<' || *s == '[' || *s == '{')
+                ++nesting;
+            if ( *s == ')' || *s == '>' || *s == ']' || *s == '}')
+                --nesting;
+            if ( *s == 'c') {
+                state = 1;
+                nest = nesting;
+                q = s;
+            }
+            ++s;
+            break;
+        case 1:
+            if ( *s == 'o') {
+                ++s;
+                state = 2;
+            } else
+                state = 0;
+            break;
+        case 2:
+            if ( *s == 'n') {
+                ++s;
+                state = 3;
+            } else
+                state = 0;
+            break;
+        case 3:
+            if ( *s == 's') {
+                ++s;
+                state = 4;
+            } else
+                state = 0;
+            break;
+        case 4:
+            if ( *s == 't') {
+                ++s;
+                state = 5;
+            } else
+                state = 0;
+            break;
+        case 5:
+            if ( *s == '(' || *s == '<' || *s == '[' || *s == '{')
+                ++nesting;
+            if ( *s == ')' || *s == '>' || *s == ']' || *s == '}')
+                --nesting;
+            if ( *s == '&' && nest == nesting) {
+                q[0] = ' ';
+                q[1] = ' ';
+                q[2] = ' ';
+                q[3] = ' ';
+                q[4] = ' ';
+                s[0] = ' ';
+                return;
+            }
+            ++s;
+            break;
+        }
     }
     return;
 }
@@ -560,29 +560,29 @@ void remove_own_classname( char* s, const string& classname) {
     bool is_empty = true;
     for ( i = 0; i <= l; i++) {
         if ( strncmp( s, classname.c_str(), l2) == 0)
-	    break;
-	if ( ! isspace( *s))
-	    is_empty = false;
-	s++;
+            break;
+        if ( ! isspace( *s))
+            is_empty = false;
+        s++;
     }
     if ( i <= l) {
         // Classname found. Test if it is not part of a larger idfier.
-	if ( i < l && ( isalnum( s[l2]) || s[l2] == '_'))
-	    return;
-	if ( i > 0  && ( isalnum( s[-1]) || s[-1] == '_'))
-	    return;
+        if ( i < l && ( isalnum( s[l2]) || s[l2] == '_'))
+            return;
+        if ( i > 0  && ( isalnum( s[-1]) || s[-1] == '_'))
+            return;
         // Classname found. Test non-empty result.
-	char* p = s + l2;
-	while ( *p) {
-	    if ( ! isspace( *p))
-		is_empty = false;
-	    p++;
-	}
-	if ( ! is_empty) {
-	    // Remove it.
-	    for( ; l2 > 0; l2--)
-		*s++ = ' ';
-	}
+        char* p = s + l2;
+        while ( *p) {
+            if ( ! isspace( *p))
+                is_empty = false;
+            p++;
+        }
+        if ( ! is_empty) {
+            // Remove it.
+            for( ; l2 > 0; l2--)
+                *s++ = ' ';
+        }
     }
 }
 
@@ -598,24 +598,24 @@ int separate_parameter_list( char* s) {
     int nesting = 0;
     while( *s) {
         if ( *s == '(' || *s == '<' || *s == '[' || *s == '{')
-	    ++nesting;
-	if ( *s == ')' || *s == '>' || *s == ']' || *s == '}')
-	    --nesting;
-	if ( *s == ',' && nesting == 0) {
-	    ++n;
-	    // remove trailing spaces
-	    *s = ' ';
-	    char* q = s - 1;
-	    while ( q != s_start && *q && *q <= ' ')
-	        --q;
-	    ++q;
-	    *q = '\0';
-	}
-	++s;
+            ++nesting;
+        if ( *s == ')' || *s == '>' || *s == ']' || *s == '}')
+            --nesting;
+        if ( *s == ',' && nesting == 0) {
+            ++n;
+            // remove trailing spaces
+            *s = ' ';
+            char* q = s - 1;
+            while ( q != s_start && *q && *q <= ' ')
+                --q;
+            ++q;
+            *q = '\0';
+        }
+        ++s;
     }
     if ( nesting ) {
         printErrorMessage( MalformedFunctionDeclaration);
-	exit( 1);
+        exit( 1);
     }
     return n;
 }
@@ -634,12 +634,12 @@ int separate_parameter_list( char* s) {
 // neccessary to indicate that the postincrement is meant. (Hack!! ;--> )
 // Returns: false if failed, true for success.
 bool format_operators( int n, int& modifiable_n, 
-		       char* op,
-		       const char*& praefix, 
-		       const char*& infix, 
-		       const char*& postfix,
-		       double& exp_size, 
-		       bool& ignore_params) {
+                       char* op,
+                       const char*& praefix, 
+                       const char*& infix, 
+                       const char*& postfix,
+                       double& exp_size, 
+                       bool& ignore_params) {
     current_font = it_font;
     // Assume that the syntax is not malformed (error messages are
     // provided elsewhere, namely compiler or cc_manual.sty).
@@ -650,146 +650,146 @@ bool format_operators( int n, int& modifiable_n,
         return false;
     if ( op[1] <= ' ') {  // one character operators
         if ( n == 1) {        // with one parameter
-	    switch ( *op) {
-	    case '~':
-	    case '!':
-	    case '-':
-	    case '+':
-	    case '&':
-	    case '*':
-	        praefix = op;
-		break;
-	    default:
-		return false;
-	    }
-	} else if ( n == 2) {  // with two parameters
-	    switch ( *op) {
-	    case '*':
-	    case '/':
-	    case '%':
-	    case '+':
-	    case '-':
-	    case '<':
-	    case '>':
-	    case '&':
-	    case '^':
-	    case '|':
-	    case '=':
-	    case ',':
-	        infix = op;
-		break;
-	    default:
-		return false;
-	    }
-	} else
-	    return false;
+            switch ( *op) {
+            case '~':
+            case '!':
+            case '-':
+            case '+':
+            case '&':
+            case '*':
+                praefix = op;
+                break;
+            default:
+                return false;
+            }
+        } else if ( n == 2) {  // with two parameters
+            switch ( *op) {
+            case '*':
+            case '/':
+            case '%':
+            case '+':
+            case '-':
+            case '<':
+            case '>':
+            case '&':
+            case '^':
+            case '|':
+            case '=':
+            case ',':
+                infix = op;
+                break;
+            default:
+                return false;
+            }
+        } else
+            return false;
     } else if ( op[2] <= ' ') {  // two character operators
         if ( n == 1) {        // with one parameter
-	    switch ( *op) {
-	    case '-':
-	        if ( op[1] == '>')
-		    postfix = op;
-	        else if ( op[1] == '-')
-		    praefix = op;
-		else
-		    return false;
-		break;
-	    case '(':
-	        if ( op[1] == ')') {
-		    infix   = op;
-		} else
-		    return false;
-		break;
-	    case '+':
-	        if ( op[1] == *op)
-		    praefix = op;
-		else
-		    return false;
-		break;
-	    default:
-		return false;
-	    }
-	} else if ( n == 2) {  // with two parameters
-	    switch ( *op) {
-	    case '[':
-	        if ( op[1] == ']') {
-		    infix   = "[";
-		    postfix = "]";
-		}
-		else
-		    return false;
-		break;
-	    case '(':
-	        if ( op[1] == ')') {
-		    infix   = "(";
-		    postfix = ")";
-		}
-		else
-		    return false;
-		break;
-	    case '+':
-	    case '-':
-	        if ( op[1] == *op) {
-		    postfix = op;
-		    modifiable_n--;
-		    exp_size -= estimate_html_size( " int");
-		}
-	        else if ( op[1] == '=')
-		    infix = op;
-		else
-		    return false;
-		break;
-	    case '>':
-	    case '<':
-	    case '&':
-	    case '|':
-	        if ( op[1] == *op || op[1] == '=')
-		    infix = op;
-		else
-		    return false;
-		break;
-	    case '=':
-	    case '!':
-	    case '*':
-	    case '/':
-	    case '%':
-	    case '^':
-	        if ( op[1] == '=')
-		    infix = op;
-		else
-		    return false;
-		break;
-	    default:
-		return false;
-	    }
-	} else if (op[0] == '(' && op[1] == ')') {
-	    infix   = "(";
-	    postfix = ")";
-	} else
-	    return false;
+            switch ( *op) {
+            case '-':
+                if ( op[1] == '>')
+                    postfix = op;
+                else if ( op[1] == '-')
+                    praefix = op;
+                else
+                    return false;
+                break;
+            case '(':
+                if ( op[1] == ')') {
+                    infix   = op;
+                } else
+                    return false;
+                break;
+            case '+':
+                if ( op[1] == *op)
+                    praefix = op;
+                else
+                    return false;
+                break;
+            default:
+                return false;
+            }
+        } else if ( n == 2) {  // with two parameters
+            switch ( *op) {
+            case '[':
+                if ( op[1] == ']') {
+                    infix   = "[";
+                    postfix = "]";
+                }
+                else
+                    return false;
+                break;
+            case '(':
+                if ( op[1] == ')') {
+                    infix   = "(";
+                    postfix = ")";
+                }
+                else
+                    return false;
+                break;
+            case '+':
+            case '-':
+                if ( op[1] == *op) {
+                    postfix = op;
+                    modifiable_n--;
+                    exp_size -= estimate_html_size( " int");
+                }
+                else if ( op[1] == '=')
+                    infix = op;
+                else
+                    return false;
+                break;
+            case '>':
+            case '<':
+            case '&':
+            case '|':
+                if ( op[1] == *op || op[1] == '=')
+                    infix = op;
+                else
+                    return false;
+                break;
+            case '=':
+            case '!':
+            case '*':
+            case '/':
+            case '%':
+            case '^':
+                if ( op[1] == '=')
+                    infix = op;
+                else
+                    return false;
+                break;
+            default:
+                return false;
+            }
+        } else if (op[0] == '(' && op[1] == ')') {
+            infix   = "(";
+            postfix = ")";
+        } else
+            return false;
     } else {  // three or more character operators
         if ( strcmp( op, "->*") == 0)
-	    postfix = op;
-	else if ( strcmp( op, "<<=") == 0)
-	    infix   = op;
-	else if ( strcmp( op, ">>=") == 0)
-	    infix   = op;
-	else if ( strcmp( op, "new") == 0) {
-	    ignore_params = true;
-	    exp_size  = estimate_html_size( " new ");
-	    exp_size += estimate_html_size( template_class_name);
-	    praefix   = "new";
-	    infix     = template_class_name.c_str();
-	} else if ( strcmp( op, "delete") == 0) {
-	    ignore_params = true;
-	    exp_size  = estimate_html_size( " delete void*");
-	    praefix   = "delete void*";
-	} else if ( strcmp( op, "delete[]") == 0) {
-	    ignore_params = true;
-	    exp_size  = estimate_html_size( " delete[] void*");
-	    praefix   = "delete[] void*";
-	} else
-	    return false;
+            postfix = op;
+        else if ( strcmp( op, "<<=") == 0)
+            infix   = op;
+        else if ( strcmp( op, ">>=") == 0)
+            infix   = op;
+        else if ( strcmp( op, "new") == 0) {
+            ignore_params = true;
+            exp_size  = estimate_html_size( " new ");
+            exp_size += estimate_html_size( template_class_name);
+            praefix   = "new";
+            infix     = template_class_name.c_str();
+        } else if ( strcmp( op, "delete") == 0) {
+            ignore_params = true;
+            exp_size  = estimate_html_size( " delete void*");
+            praefix   = "delete void*";
+        } else if ( strcmp( op, "delete[]") == 0) {
+            ignore_params = true;
+            exp_size  = estimate_html_size( " delete[] void*");
+            praefix   = "delete[] void*";
+        } else
+            return false;
     }
     return true;
 }
@@ -798,15 +798,15 @@ bool format_operators( int n, int& modifiable_n,
 void print_rest( ostream& out, const char* txt){
     out << ' ';
     while( *txt && *txt != ';') {
-	if ( *txt == '|' && isupper(txt[1]) && txt[2] == '|') {
-	    out << new_remember_font( txt[1]);
-	    txt += 2;
-	} else if ( is_html_multi_character( *txt))
-	    out << html_multi_character( *txt);
-	else
-	    if ( *txt > ' ' || (*txt > '\0' && txt[1] > ' '))
-	        out << *txt;
-	++txt;
+        if ( *txt == '|' && isupper(txt[1]) && txt[2] == '|') {
+            out << new_remember_font( txt[1]);
+            txt += 2;
+        } else if ( is_html_multi_character( *txt))
+            out << html_multi_character( *txt);
+        else
+            if ( *txt > ' ' || (*txt > '\0' && txt[1] > ' '))
+                out << *txt;
+        ++txt;
     }
 }
 
@@ -823,7 +823,7 @@ void  make_index(string main_item, string sub_item, string sub_sub_item,
     *current_ostream << "\"></A>" << endl;
 
     *index_stream << "\\indexentry{" 
-		      << main_item <<"@ ??? " <<"<I>" << main_item << "</I>";
+                      << main_item <<"@ ??? " <<"<I>" << main_item << "</I>";
     if (sub_item!=""){
         *index_stream <<"! " << sub_item << "@ ??? "<<"<I>" 
                            << sub_item << "</I>";
@@ -865,7 +865,7 @@ void  make_index(string main_item, string sub_item, string sub_sub_item,
 // =====================================================
 
 void format_function( bool method, const char* signature, 
-		      bool is_empty_comment) {
+                      bool is_empty_comment) {
     current_font = it_font;
     char* return_value;
     char* scope;
@@ -882,33 +882,33 @@ void format_function( bool method, const char* signature,
         signature++;
 
     split_function_declaration( signature, 
-				return_value,
-				scope,
-				function_name,
-				parameter_list,
-				rest);
+                                return_value,
+                                scope,
+                                function_name,
+                                parameter_list,
+                                rest);
     // check function_name for operator
     if (     strncmp( function_name, "operator", 8) == 0
-	  && ! isalnum(function_name[8]) 
-	  && function_name[8] != '_') {
-	op_symbols = function_name + 8;
-	while ( *op_symbols && *op_symbols <= ' ')
-	    ++op_symbols;
+          && ! isalnum(function_name[8]) 
+          && function_name[8] != '_') {
+        op_symbols = function_name + 8;
+        while ( *op_symbols && *op_symbols <= ' ')
+            ++op_symbols;
         normal_operator     = (return_value != 0);
-	conversion_operator = (return_value == 0);
+        conversion_operator = (return_value == 0);
     }
       
     double exp_size_ret = 0.0;
     double exp_size = 0.0;
     if ( return_value) {
         remove_const_ref_pair( return_value);
-	exp_size_ret += estimate_html_size( return_value);
+        exp_size_ret += estimate_html_size( return_value);
     }
     if ( conversion_operator)
-	exp_size_ret += estimate_html_size( op_symbols);
+        exp_size_ret += estimate_html_size( op_symbols);
  
     three_cols_html_begin( *current_ostream, 
-			   exp_size_ret * stretch_factor > 
+                           exp_size_ret * stretch_factor > 
                            table_width*table_first_col/100.0);
     // ---------
     // index
@@ -917,8 +917,8 @@ void format_function( bool method, const char* signature,
           macroIsTrue( "\\ccAutoIndex") &&
           !(macroIsTrue( "\\ccIsRefFunction")  && 
           macroIsTrue( "\\ccIsFunctionTemplate"))) {
-       	char* formatted_function = convert_fontified_ascii_to_html( 
-	    function_name);
+        char* formatted_function = convert_fontified_ascii_to_html( 
+            function_name);
         string class_name; 
         if (macroIsTrue( "\\lciIfHtmlRefIndex"))
             class_name = macroX("\\ccPureClassName");
@@ -926,9 +926,9 @@ void format_function( bool method, const char* signature,
            class_name =  macroX("\\ccRefFilename");
 
         // Make a hyperlink. Types could be substituted
-	// according the rules.
+        // according the rules.
 
-	if (method) {
+        if (method) {
            if (!normal_operator)
                   make_index(formatted_function,class_name,"",signature,'f');  
         }
@@ -936,20 +936,20 @@ void format_function( bool method, const char* signature,
            if (!normal_operator)
                   make_index(formatted_function,"","",signature,'f'); 
         }               
-	delete[] formatted_function;
-	
+        delete[] formatted_function;
+        
     } 
     if ( !normal_operator && !method && macroIsTrue( "\\lciIfHtmlIndex") 
-	 && macroIsTrue( "\\lciIfHtmlRefIndex")  &&  macroIsTrue( "\\ccIndex") 
+         && macroIsTrue( "\\lciIfHtmlRefIndex")  &&  macroIsTrue( "\\ccIndex") 
          &&  macroIsTrue( "\\ccAutoIndex") && class_name.empty()  
          && !(macroIsTrue( "\\ccIsRefFunction")  && 
           macroIsTrue( "\\ccIsFunctionTemplate"))) {
 
-	char* formatted_function = convert_fontified_ascii_to_html( 
-	    function_name);
+        char* formatted_function = convert_fontified_ascii_to_html( 
+            function_name);
         make_index(formatted_function,"","",signature,'f'); 
       
-	delete[] formatted_function;
+        delete[] formatted_function;
     }
    
 
@@ -962,86 +962,86 @@ void format_function( bool method, const char* signature,
     if ( conversion_operator) 
         print_ascii_to_html_spc( *current_ostream, op_symbols);
      
-    char* full_parameter_list; 
+    char* full_parameter_list = 0; 
 
     // handle function body or operation signature
     // first, estimate size
     if ( method)
         exp_size = estimate_html_size( macroX( "\\ccPureVar")) + 
-	           width_per_character;
+                   width_per_character;
     int n = 0;
     if ( conversion_operator) {
         exp_size += estimate_html_size( op_symbols);
     } else  if ( parameter_list) {
-        full_parameter_list = strdup(parameter_list);
+        full_parameter_list = newstr(parameter_list);
         n = separate_parameter_list( parameter_list);
-	char* p = parameter_list;
-	int m = n;
-	while ( m--) {
-	    remove_const_ref_pair( p);
-	    remove_own_classname( p, template_class_name);
-	    exp_size += estimate_html_size( p) + width_per_character;
-	    p += strlen( p) + 1;  // skip to next parameter
-	}
+        char* p = parameter_list;
+        int m = n;
+        while ( m--) {
+            remove_const_ref_pair( p);
+            remove_own_classname( p, template_class_name);
+            exp_size += estimate_html_size( p) + width_per_character;
+            p += strlen( p) + 1;  // skip to next parameter
+        }
     }
     if (! macroIsTrue( "\\ccTagRmTrailingConst"))
         exp_size += estimate_html_size( rest);
 
     bool failed = false;
     if ( normal_operator) {
-	exp_size += estimate_html_size( op_symbols);
-	bool ignore_params = false;  // exception for new and delete operators
-	const char* praefix = "";
-	const char* infix   = "";
-	const char* postfix = "";  
+        exp_size += estimate_html_size( op_symbols);
+        bool ignore_params = false;  // exception for new and delete operators
+        const char* praefix = "";
+        const char* infix   = "";
+        const char* postfix = "";  
         char* op_symbols_for_index =  
                 convert_indexentry_for_makeindex( 
                                   convert_fontified_ascii_to_html(op_symbols));
 
 
                 
-	failed = ! format_operators( ( method ? n + 1 : n), n,
-				     op_symbols,
-				     praefix, infix, postfix,
-				     exp_size, ignore_params);
+        failed = ! format_operators( ( method ? n + 1 : n), n,
+                                     op_symbols,
+                                     praefix, infix, postfix,
+                                     exp_size, ignore_params);
         char* p = parameter_list; 
         int m=n;
 
-	if ( ! failed) {
-	    // print the operator
-	    three_cols_html_second(
-		    *current_ostream,
-		    exp_size_ret * stretch_factor > 
-		        table_width * table_first_col / 100.0,
-		    is_empty_comment || (exp_size * stretch_factor > 
+        if ( ! failed) {
+            // print the operator
+            three_cols_html_second(
+                    *current_ostream,
+                    exp_size_ret * stretch_factor > 
+                        table_width * table_first_col / 100.0,
+                    is_empty_comment || (exp_size * stretch_factor > 
                         table_width * table_second_col / 100.0)
-		);
-	    print_ascii_to_html_spc( *current_ostream, praefix);
-	    *current_ostream << " ";
-	    char* p = parameter_list;
+                );
+            print_ascii_to_html_spc( *current_ostream, praefix);
+            *current_ostream << " ";
+            char* p = parameter_list;
                   
-	    if ( ! ignore_params) {
-	        if ( method)
-		    print_ascii_to_html_spc(*current_ostream, 
-					    macroX( "\\ccPureVar"));
-		else if (n) {
-		    --n;
-		    print_ascii_to_html_spc(*current_ostream, p); 
-		    p += strlen( p) + 1;  // skip to next parameter
-		}
-	    }
-	    *current_ostream << " ";
-	    print_ascii_to_html_spc( *current_ostream, infix);
-	    *current_ostream << " ";
-	    if ( ! ignore_params && n) {
-	        while ( n--) {
-		    print_ascii_to_html_spc(*current_ostream, p); 
-		    p += strlen( p) + 1;  // skip to next parameter
-		    if ( n)
-		        *current_ostream << ", ";
-		}
-	    }
-	    print_ascii_to_html_spc( *current_ostream, postfix);
+            if ( ! ignore_params) {
+                if ( method)
+                    print_ascii_to_html_spc(*current_ostream, 
+                                            macroX( "\\ccPureVar"));
+                else if (n) {
+                    --n;
+                    print_ascii_to_html_spc(*current_ostream, p); 
+                    p += strlen( p) + 1;  // skip to next parameter
+                }
+            }
+            *current_ostream << " ";
+            print_ascii_to_html_spc( *current_ostream, infix);
+            *current_ostream << " ";
+            if ( ! ignore_params && n) {
+                while ( n--) {
+                    print_ascii_to_html_spc(*current_ostream, p); 
+                    p += strlen( p) + 1;  // skip to next parameter
+                    if ( n)
+                        *current_ostream << ", ";
+                }
+            }
+            print_ascii_to_html_spc( *current_ostream, postfix);
        } 
    
       // ---------
@@ -1082,14 +1082,16 @@ void format_function( bool method, const char* signature,
                     if (token==NULL) { // no second parameter so first 
                                     // parameter is used. This shouldn't happen.
                        q = p;
-                       char* k = strdup(q); 
+                       char* k = newstr(q); 
                        token = strtok(k," \t");
                        char* token1 = token;
                        while (token != NULL) {
                           token1 = token; 
                           token = strtok(NULL, " \t");
                        } 
-                       make_index(op_symbols_for_index,token1,"",signature,'f');   
+                       make_index(op_symbols_for_index,token1,"",
+                                  signature,'f');
+                       delete[] k;
                     }     
                     make_index(op_symbols_for_index,token,"",signature,'f');
                  }
@@ -1100,7 +1102,7 @@ void format_function( bool method, const char* signature,
                }        
             }  else 
                   make_index(op_symbols_for_index,
-            	           convert_fontified_ascii_to_html(class_name),"",
+                           convert_fontified_ascii_to_html(class_name),"",
                            signature,'f');
         }
         // end index
@@ -1111,93 +1113,93 @@ void format_function( bool method, const char* signature,
 
 
     if ( ! normal_operator || failed) {
-	if ( scope)
-	    exp_size += estimate_html_size( scope);
-	exp_size += estimate_html_size( function_name);
-	exp_size += 3 * width_per_character;  // for parameter list parantheses
+        if ( scope)
+            exp_size += estimate_html_size( scope);
+        exp_size += estimate_html_size( function_name);
+        exp_size += 3 * width_per_character;  // for parameter list parantheses
 
-	// then, do the printing
-	three_cols_html_second(
-		*current_ostream,
-		exp_size_ret  * stretch_factor > 
-		    table_width * table_first_col / 100.0,
-		is_empty_comment || (exp_size * stretch_factor > 
+        // then, do the printing
+        three_cols_html_second(
+                *current_ostream,
+                exp_size_ret  * stretch_factor > 
+                    table_width * table_first_col / 100.0,
+                is_empty_comment || (exp_size * stretch_factor > 
                     table_width * table_second_col / 100.0)
-	    );
-	if ( conversion_operator) {
-	    print_ascii_to_html_spc( *current_ostream, op_symbols);
-	    *current_ostream << " ( ";
-	    if ( ! definedMacro( "\\ccPureVar")) {
-		printErrorMessage( VariableUsedError);
-		*current_ostream << "*this";
-	    } else
-		print_ascii_to_html_spc( *current_ostream,
-					 macroX( "\\ccPureVar"));
-	    *current_ostream << ")";
-	} else {
-	    double dd_width = table_width * ( 1.0 - table_first_col / 100.0);
-	    dd_width /= stretch_factor;
-	    if ( exp_size > dd_width && parameter_list) {
-		*current_ostream << store_remember_font();
-	        *current_ostream << "<TABLE BORDER=0 CELLSPACING=0 "
-		  "CELLPADDING=0><TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP";
-		if ( macroIsTrue( "\\ccLongParamLayout") ||
-		     ! macroIsTrue( "\\ccAlternateThreeColumn"))
-		    *current_ostream << " COLSPAN=2";
-		*current_ostream << "><I>" << get_remember_font()
-				 << ind_newline;
-	    }
-	    if ( method) {
-		if ( ! definedMacro( "\\ccPureVar")) {
-		    printErrorMessage( VariableUsedError);
-		    *current_ostream << "*this";
-		} else
-		    print_ascii_to_html_spc(*current_ostream, 
-					    macroX( "\\ccPureVar"));
-		*current_ostream << '.';
-	    }
-	    if ( scope)
-		print_ascii_to_html_spc( *current_ostream, scope);
-	    print_ascii_to_html_spc( *current_ostream, function_name);
-	    if ( parameter_list) {
-		*current_ostream << " ( ";
-		if ( exp_size > dd_width) {
-		    *current_ostream << store_remember_font();
-		    *current_ostream << "</I></TD>";
-		    if ( macroIsTrue( "\\ccLongParamLayout") ||
-			 ! macroIsTrue( "\\ccAlternateThreeColumn"))
-			*current_ostream << "</TR><TR><TD WIDTH=" 
-					<< table_long_param_indent 
-					<< " NOWRAP></TD>";
-		    *current_ostream << "<TD ALIGN=LEFT VALIGN=TOP "
-		      "NOWRAP><I>";
-		    *current_ostream << get_remember_font() << ind_newline;
-		}
-		char* p = parameter_list;
-		while ( n--) {
-		    print_ascii_to_html_spc( *current_ostream, p);
-		    p += strlen( p) + 1;  // skip to next parameter
-		    if ( n) {
-			*current_ostream << ", ";
-			if ( exp_size > dd_width)
-			    *current_ostream << "<BR>" << ind_newline;
-		    }
-		}
-		*current_ostream << ")";
-		if ( exp_size > dd_width) {
-		    *current_ostream << store_remember_font();
-		    *current_ostream << "</I></TD></TR></TABLE>" <<ind_newline;
-		}
-	    } else
-		*current_ostream << " ()";
-	}
+            );
+        if ( conversion_operator) {
+            print_ascii_to_html_spc( *current_ostream, op_symbols);
+            *current_ostream << " ( ";
+            if ( ! definedMacro( "\\ccPureVar")) {
+                printErrorMessage( VariableUsedError);
+                *current_ostream << "*this";
+            } else
+                print_ascii_to_html_spc( *current_ostream,
+                                         macroX( "\\ccPureVar"));
+            *current_ostream << ")";
+        } else {
+            double dd_width = table_width * ( 1.0 - table_first_col / 100.0);
+            dd_width /= stretch_factor;
+            if ( exp_size > dd_width && parameter_list) {
+                *current_ostream << store_remember_font();
+                *current_ostream << "<TABLE BORDER=0 CELLSPACING=0 "
+                  "CELLPADDING=0><TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP";
+                if ( macroIsTrue( "\\ccLongParamLayout") ||
+                     ! macroIsTrue( "\\ccAlternateThreeColumn"))
+                    *current_ostream << " COLSPAN=2";
+                *current_ostream << "><I>" << get_remember_font()
+                                 << ind_newline;
+            }
+            if ( method) {
+                if ( ! definedMacro( "\\ccPureVar")) {
+                    printErrorMessage( VariableUsedError);
+                    *current_ostream << "*this";
+                } else
+                    print_ascii_to_html_spc(*current_ostream, 
+                                            macroX( "\\ccPureVar"));
+                *current_ostream << '.';
+            }
+            if ( scope)
+                print_ascii_to_html_spc( *current_ostream, scope);
+            print_ascii_to_html_spc( *current_ostream, function_name);
+            if ( parameter_list) {
+                *current_ostream << " ( ";
+                if ( exp_size > dd_width) {
+                    *current_ostream << store_remember_font();
+                    *current_ostream << "</I></TD>";
+                    if ( macroIsTrue( "\\ccLongParamLayout") ||
+                         ! macroIsTrue( "\\ccAlternateThreeColumn"))
+                        *current_ostream << "</TR><TR><TD WIDTH=" 
+                                        << table_long_param_indent 
+                                        << " NOWRAP></TD>";
+                    *current_ostream << "<TD ALIGN=LEFT VALIGN=TOP "
+                      "NOWRAP><I>";
+                    *current_ostream << get_remember_font() << ind_newline;
+                }
+                char* p = parameter_list;
+                while ( n--) {
+                    print_ascii_to_html_spc( *current_ostream, p);
+                    p += strlen( p) + 1;  // skip to next parameter
+                    if ( n) {
+                        *current_ostream << ", ";
+                        if ( exp_size > dd_width)
+                            *current_ostream << "<BR>" << ind_newline;
+                    }
+                }
+                *current_ostream << ")";
+                if ( exp_size > dd_width) {
+                    *current_ostream << store_remember_font();
+                    *current_ostream << "</I></TD></TR></TABLE>" <<ind_newline;
+                }
+            } else
+                *current_ostream << " ()";
+        }
     }
     if (! macroIsTrue( "\\ccTagRmTrailingConst"))
         print_rest( *current_ostream, rest);
     three_cols_html_third( *current_ostream, 
-			   exp_size  * stretch_factor> 
-			        table_width * table_second_col / 100.0,
-			   is_empty_comment);
+                           exp_size  * stretch_factor> 
+                                table_width * table_second_col / 100.0,
+                           is_empty_comment);
     delete[] return_value;
     delete[] scope;
     delete[] function_name; 
@@ -1206,8 +1208,8 @@ void format_function( bool method, const char* signature,
 }
 
 void format_variable( const char* signature, 
-		      bool is_empty_comment,
-		      bool is_typedef = false) {
+                      bool is_empty_comment,
+                      bool is_typedef = false) {
     current_font = it_font;
     char* return_value;
     char* scope;
@@ -1215,10 +1217,10 @@ void format_variable( const char* signature,
     char* rest;    // possibly including assignment
 
     split_variable_declaration( signature, 
-				return_value,
-				scope,
-				variable_name,
-				rest);
+                                return_value,
+                                scope,
+                                variable_name,
+                                rest);
     char* formatted_var = convert_fontified_ascii_to_html( variable_name);
     char* formatted_class = convert_fontified_ascii_to_html( template_class_name);
 
@@ -1226,38 +1228,39 @@ void format_variable( const char* signature,
     double exp_size     = 0.0;
     if ( return_value) {
         remove_const_ref_pair( return_value);
-	exp_size_ret += estimate_html_size( return_value);
+        exp_size_ret += estimate_html_size( return_value);
     }
  
     three_cols_html_begin( *current_ostream, 
-			   exp_size_ret * stretch_factor > 
-			       table_width*table_first_col/100.0);
+                           exp_size_ret * stretch_factor > 
+                               table_width*table_first_col/100.0);
    
     if ( class_name.empty()) {
-	if ( macroIsTrue( "\\lciIfHtmlLinks") && 
-	     macroIsTrue( "\\lciIfHtmlRefLinks") && 
-	     strlen(variable_name) > 1) {
-	    // generate a substitution rule for hyperlinking
-	    *anchor_stream << "[a-zA-Z0-9_]\"" << formatted_var
-			   << "\"    { ECHO; }" << endl;
-	    *anchor_stream << '"' << formatted_var
-			   << "\"/{noCCchar}    { wrap_anchor( \""
-			   << current_filename
-			   << (is_typedef ? "#Typedef_" :  "#Var_" );
-	    filter_for_index_anchor( *anchor_stream, variable_name);
-	    *anchor_stream << "\", yytext); }" << endl;
-	}
-	if ( macroIsTrue( "\\lciIfHtmlIndex") && 
-	     macroIsTrue( "\\lciIfHtmlRefIndex") && 
+        if ( macroIsTrue( "\\lciIfHtmlLinks") && 
+             macroIsTrue( "\\lciIfHtmlRefLinks") && 
+             strlen(variable_name) > 1) {
+            // generate a substitution rule for hyperlinking
+            *anchor_stream << "[a-zA-Z0-9_]\"" << formatted_var
+                           << "\"    { ECHO; }" << endl;
+            *anchor_stream << '"' << formatted_var
+                           << "\"/{noCCchar}    { wrap_anchor( \""
+                           << REPLACE_WITH_CURRENT_PATH_TOKEN 
+                           << current_rootname
+                           << (is_typedef ? "#Typedef_" :  "#Var_" );
+            filter_for_index_anchor( *anchor_stream, variable_name);
+            *anchor_stream << "\", yytext); }" << endl;
+        }
+        if ( macroIsTrue( "\\lciIfHtmlIndex") && 
+             macroIsTrue( "\\lciIfHtmlRefIndex") && 
              macroIsTrue( "\\ccIndex")  &&  macroIsTrue( "\\ccAutoIndex")) {
-	    // index
+            // index
             char p = (is_typedef ? 't' : 'v');
             make_index(formatted_var,"","",variable_name,p);
-	}
+        }
     } else  if ( macroIsTrue( "\\lciIfHtmlClassIndex") && 
-		 macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")
+                 macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")
                  &&  macroIsTrue( "\\ccAutoIndex")) {
-	// index
+        // index
         char p = (is_typedef ? 't' : 'v');
         make_index(string(variable_name),string(class_name),"",
                    variable_name,p);
@@ -1265,7 +1268,7 @@ void format_variable( const char* signature,
     }
 
     if ( !class_name.empty() && !macroIsTrue( "\\lciIfHtmlClassIndex") && 
-		 macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")
+                 macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")
                  &&  macroIsTrue( "\\ccAutoIndex")) {
             // index
             char p = (is_typedef ? 't' : 'v');
@@ -1274,11 +1277,11 @@ void format_variable( const char* signature,
     
 
     if ( macroIsTrue( "\\lciIfHtmlLinks") || 
-	 macroIsTrue( "\\lciIfHtmlIndex")) {
-	*current_ostream << "<A NAME=\""
-			<< (is_typedef ? "Typedef_" :  "Var_" );
-	filter_for_index_anchor( *current_ostream, variable_name);
-	*current_ostream << "\"></A>" << endl;
+         macroIsTrue( "\\lciIfHtmlIndex")) {
+        *current_ostream << "<A NAME=\""
+                        << (is_typedef ? "Typedef_" :  "Var_" );
+        filter_for_index_anchor( *current_ostream, variable_name);
+        *current_ostream << "\"></A>" << endl;
     }
     // end index
 
@@ -1295,11 +1298,11 @@ void format_variable( const char* signature,
 
     // then, do the printing
     three_cols_html_second(
-	    *current_ostream,
-	    exp_size_ret * stretch_factor> table_width * table_first_col/100.0,
-	    is_empty_comment || (exp_size  * stretch_factor> 
-				 table_width * table_second_col / 100.0)
-	);
+            *current_ostream,
+            exp_size_ret * stretch_factor> table_width * table_first_col/100.0,
+            is_empty_comment || (exp_size  * stretch_factor> 
+                                 table_width * table_second_col / 100.0)
+        );
     if ( scope)
         print_ascii_to_html_spc( *current_ostream, scope);
     print_ascii_to_html_spc( *current_ostream, variable_name);
@@ -1311,9 +1314,9 @@ void format_variable( const char* signature,
     *current_ostream << ';';
 
     three_cols_html_third( *current_ostream, 
-			   exp_size * stretch_factor >
-			       table_width * table_second_col / 100.0,
-			   is_empty_comment);
+                           exp_size * stretch_factor >
+                               table_width * table_second_col / 100.0,
+                           is_empty_comment);
     delete[] return_value;
     delete[] scope;
     delete[] formatted_var; 
@@ -1335,42 +1338,43 @@ void format_class_declaration( const char* signature) {
     char* rest;
 
     split_variable_declaration( signature, 
-				return_value,
-				scope,
-				struct_name,
-				rest);
+                                return_value,
+                                scope,
+                                struct_name,
+                                rest);
 
     char* formatted_struct = convert_fontified_ascii_to_html( struct_name);
     two_cols_html_begin( *current_ostream);
     if ( class_name.empty()) {
-	if ( macroIsTrue( "\\lciIfHtmlLinks") && strlen(struct_name) > 1) {
-	    // generate a substitution rule for hyperlinking
-	    *anchor_stream << "[a-zA-Z0-9_]\"" << formatted_struct
-			   << "\"    { ECHO; }" << endl;
-	    *anchor_stream << '"' << formatted_struct
-			   << "\"/{noCCchar}    { wrap_anchor( \""
-			   << current_filename << "#Struct_";
-	    filter_for_index_anchor( *anchor_stream, struct_name);
-	    *anchor_stream << "\", yytext); }" << endl;
-	}
-	if ( macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")
+        if ( macroIsTrue( "\\lciIfHtmlLinks") && strlen(struct_name) > 1) {
+            // generate a substitution rule for hyperlinking
+            *anchor_stream << "[a-zA-Z0-9_]\"" << formatted_struct
+                           << "\"    { ECHO; }" << endl;
+            *anchor_stream << '"' << formatted_struct
+                           << "\"/{noCCchar}    { wrap_anchor( \""
+                           << REPLACE_WITH_CURRENT_PATH_TOKEN 
+                           << current_rootname << "#Struct_";
+            filter_for_index_anchor( *anchor_stream, struct_name);
+            *anchor_stream << "\", yytext); }" << endl;
+        }
+        if ( macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")
                &&  macroIsTrue( "\\ccAutoIndex")) {
-	    // index
+            // index
             make_index(formatted_struct,"","",struct_name,'s');
-	}
+        }
     } else  if ( macroIsTrue( "\\lciIfHtmlClassIndex") && 
-		 macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")
+                 macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")
                  &&  macroIsTrue( "\\ccAutoIndex")) {
-	// index
+        // index
         make_index(string(struct_name),string(class_name),"",
                    struct_name,'s');
 
     }
     if ( macroIsTrue( "\\lciIfHtmlLinks") || 
-	 macroIsTrue( "\\lciIfHtmlIndex")) {
-	*current_ostream << "<A NAME=\"Struct_";
-	filter_for_index_anchor( *current_ostream, struct_name);
-	*current_ostream << "\"></A>" << endl;
+         macroIsTrue( "\\lciIfHtmlIndex")) {
+        *current_ostream << "<A NAME=\"Struct_";
+        filter_for_index_anchor( *current_ostream, struct_name);
+        *current_ostream << "\"></A>" << endl;
     }
     // end index
 
@@ -1395,53 +1399,54 @@ void format_struct( const char* signature) {
     const char* rest;
 
     split_function_declaration( signature, 
-				return_value,
-				scope,
-				struct_name,
-				parameter_list,
-				rest,
-				true);
+                                return_value,
+                                scope,
+                                struct_name,
+                                parameter_list,
+                                rest,
+                                true);
 
     char* formatted_struct = convert_fontified_ascii_to_html( struct_name);
     two_cols_html_begin( *current_ostream);
 
     if ( class_name.empty() || (! macroIsTrue( "\\lciIfHtmlClassIndex"))) {
-	if ( macroIsTrue( "\\lciIfHtmlLinks") && strlen(struct_name) > 1) {
-	    // generate a substitution rule for hyperlinking
-	    *anchor_stream << "[a-zA-Z0-9_]\"" << formatted_struct
-			   << "\"    { ECHO; }" << endl;
-	    *anchor_stream << '"' << formatted_struct
-			   << "\"/{noCCchar}    { wrap_anchor( \""
-			   << current_filename << "#Struct_";
-	    filter_for_index_anchor( *anchor_stream, struct_name);
-	    *anchor_stream << "\", yytext); }" << endl;
-	}
-	if ( macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")
+        if ( macroIsTrue( "\\lciIfHtmlLinks") && strlen(struct_name) > 1) {
+            // generate a substitution rule for hyperlinking
+            *anchor_stream << "[a-zA-Z0-9_]\"" << formatted_struct
+                           << "\"    { ECHO; }" << endl;
+            *anchor_stream << '"' << formatted_struct
+                           << "\"/{noCCchar}    { wrap_anchor( \""
+                           << REPLACE_WITH_CURRENT_PATH_TOKEN 
+                           << current_rootname << "#Struct_";
+            filter_for_index_anchor( *anchor_stream, struct_name);
+            *anchor_stream << "\", yytext); }" << endl;
+        }
+        if ( macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")
                 &&  macroIsTrue( "\\ccAutoIndex")) {
-	    // index
+            // index
             make_index(formatted_struct,"","",struct_name,'s');
-	}
+        }
     } else  if ( macroIsTrue( "\\lciIfHtmlClassIndex") &&
-		 macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")
+                 macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")
                  &&  macroIsTrue( "\\ccAutoIndex")) {
-	// index
+        // index
         make_index(string(struct_name),string(class_name),"",
                    struct_name,'s');
     }
     if ( macroIsTrue( "\\lciIfHtmlLinks") || 
-	 macroIsTrue( "\\lciIfHtmlIndex")) {
-	*current_ostream << "<A NAME=\"Struct_";
-	filter_for_index_anchor( *current_ostream, struct_name);
-	*current_ostream << "\"></A>" << endl;
+         macroIsTrue( "\\lciIfHtmlIndex")) {
+        *current_ostream << "<A NAME=\"Struct_";
+        filter_for_index_anchor( *current_ostream, struct_name);
+        *current_ostream << "\"></A>" << endl;
     }
     // end index
 
     // first, estimate size
     double exp_size = 0.0;
     if ( scope)
-	exp_size += estimate_html_size( scope);
+        exp_size += estimate_html_size( scope);
     if ( return_value)
-	exp_size += estimate_html_size( return_value);
+        exp_size += estimate_html_size( return_value);
 
 
     exp_size += estimate_html_size( formatted_struct) 
@@ -1450,54 +1455,54 @@ void format_struct( const char* signature) {
     if ( parameter_list) {
         exp_size += 2 * width_per_character;
         n = separate_parameter_list( parameter_list);
-	char* p = parameter_list;
-	int m = n;
-	while ( m--) {
-	    exp_size += estimate_html_size( p) + width_per_character;
-	    p += strlen( p) + 1;  // skip to next parameter
-	}
+        char* p = parameter_list;
+        int m = n;
+        while ( m--) {
+            exp_size += estimate_html_size( p) + width_per_character;
+            p += strlen( p) + 1;  // skip to next parameter
+        }
     }
     exp_size *= stretch_factor;
     if ( exp_size > table_width && parameter_list) {
       *current_ostream << store_remember_font();
       *current_ostream << "<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0>"
-	"<TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP";
+        "<TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP";
       //if ( tag_long_param_layout)
       //*current_ostream << " COLSPAN=2";
       *current_ostream << "><I>" << get_remember_font() << ind_newline;
     }
     if ( return_value) {
         print_ascii_to_html_spc( *current_ostream, return_value);
-	*current_ostream << ' ';
+        *current_ostream << ' ';
     }
     if ( scope)
         print_ascii_to_html_spc( *current_ostream, scope);
     *current_ostream << formatted_struct;
     if ( parameter_list) {
         *current_ostream << " { ";
-	if ( exp_size > table_width) {
-	    *current_ostream << store_remember_font();
-	    *current_ostream << "</TD><TD ALIGN=LEFT VALIGN=TOP NOWRAP>";
-	    *current_ostream << get_remember_font() << ind_newline;
-	}
-	char* p = parameter_list;
-	while ( n--) {
-	    while ( *p && *p <= ' ')
-	        ++p;
-	    print_ascii_to_html_spc( *current_ostream, p);
+        if ( exp_size > table_width) {
+            *current_ostream << store_remember_font();
+            *current_ostream << "</TD><TD ALIGN=LEFT VALIGN=TOP NOWRAP>";
+            *current_ostream << get_remember_font() << ind_newline;
+        }
+        char* p = parameter_list;
+        while ( n--) {
+            while ( *p && *p <= ' ')
+                ++p;
+            print_ascii_to_html_spc( *current_ostream, p);
 
-	    p += strlen( p) + 1;  // skip to next parameter
-	    if ( n) {
-	        *current_ostream << ", ";
-		if ( exp_size > table_width)
-		    *current_ostream << "<BR>" << ind_newline;
-	    }
-	}
+            p += strlen( p) + 1;  // skip to next parameter
+            if ( n) {
+                *current_ostream << ", ";
+                if ( exp_size > table_width)
+                    *current_ostream << "<BR>" << ind_newline;
+            }
+        }
         *current_ostream << "};";
-	if ( exp_size > table_width) {
-	    *current_ostream << store_remember_font();
-	    *current_ostream << "</TD></TR></TABLE>" << ind_newline;
-	}
+        if ( exp_size > table_width) {
+            *current_ostream << store_remember_font();
+            *current_ostream << "</TD></TR></TABLE>" << ind_newline;
+        }
     } else
         *current_ostream << ';';
 
@@ -1517,13 +1522,13 @@ void format_nested_type( const char* nested_type_name) {
     two_cols_html_begin( *current_ostream);
 
     if ( macroIsTrue( "\\lciIfHtmlClassIndex") && 
-	 macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")
+         macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")
          &&  macroIsTrue( "\\ccAutoIndex")) {
-	// index
-	if ( ! template_class_name.empty())
+        // index
+        if ( ! template_class_name.empty())
            make_index(string(nested_type_name),string(class_name),"",
                    nested_type_name,'n');
-	// end index
+        // end index
     }
 
     // first, estimate size
@@ -1557,57 +1562,63 @@ void format_enum( const char* signature) {
     const char* rest;
 
     split_function_declaration( signature, 
-				return_value,
-				scope,
-				enum_name,
-				parameter_list,
-				rest,
-				true);
+                                return_value,
+                                scope,
+                                enum_name,
+                                parameter_list,
+                                rest,
+                                true);
 
     char* formatted_enum = convert_fontified_ascii_to_html( enum_name);
 
     two_cols_html_begin( *current_ostream);
     if ( class_name.empty() || !(macroIsTrue( "\\lciIfHtmlClassIndex"))) {
-	if ( macroIsTrue( "\\lciIfHtmlLinks")  && strlen( enum_name) > 1) {
-	    // generate a substitution rule for hyperlinking
-	    *anchor_stream << "[a-zA-Z0-9_]\"" << formatted_enum
-			   << "\"    { ECHO; }" << endl;
-	    *anchor_stream << '"' << formatted_enum
-			   << "\"/{noCCchar}    { wrap_anchor( \""
-			   << current_filename << "#Enum_";
-	    filter_for_index_anchor( *anchor_stream, enum_name);
-	    *anchor_stream << "\", yytext); }" << endl;
-	}
-	if ( macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")
+        if ( macroIsTrue( "\\lciIfHtmlLinks")  && strlen( enum_name) > 1) {
+            // generate a substitution rule for hyperlinking
+            *anchor_stream << "[a-zA-Z0-9_]\"" << formatted_enum
+                           << "\"    { ECHO; }" << endl;
+            *anchor_stream << '"' << formatted_enum
+                           << "\"/{noCCchar}    { wrap_anchor( \""
+                           << REPLACE_WITH_CURRENT_PATH_TOKEN
+                           << current_rootname << "#Enum_";
+            filter_for_index_anchor( *anchor_stream, enum_name);
+            *anchor_stream << "\", yytext); }" << endl;
+        }
+        if ( macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")
             &&  macroIsTrue( "\\ccAutoIndex")) {
-	    // index
-            char* k = strdup(formatted_enum); 
-            k = strtok(k,"=");
-            if (k==NULL) 
-               make_index(formatted_enum,"","",enum_name,'e'); 
-            else    
-               make_index(k,"","",enum_name,'e');
-            delete[] k; 
-	}
+            // index
+            char* kk = newstr(formatted_enum); 
+            char* k = strtok(kk,"=");
+            if (k==NULL)
+                make_index(formatted_enum,"","",enum_name,'e'); 
+            else {
+                //   cerr << endl << "MMMMMMMMMMMMMMM" << endl
+                //     << formatted_enum << endl
+                //     << kk << endl
+                //     << k << endl << "===============" << endl;
+                make_index(k,"","",enum_name,'e');
+            }
+            delete[] kk;
+        }
     } else  if ( macroIsTrue( "\\lciIfHtmlClassIndex") &&
-		 macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")
+                 macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")
                  &&  macroIsTrue( "\\ccAutoIndex")) {
-	// index
-        char* k = strdup(formatted_enum); 
-        k = strtok(k,"=");
+        // index
+        char* kk = newstr(formatted_enum); 
+        char* k = strtok(kk,"=");
         if (k==NULL) 
            make_index(string(formatted_enum),string(class_name),
                    "",enum_name,'e'); 
         else    
            make_index(string(k),string(class_name),
                    "",enum_name,'e');
-        delete[] k;
+        delete[] kk;
     }
     if ( macroIsTrue( "\\lciIfHtmlLinks") || 
-	 macroIsTrue( "\\lciIfHtmlIndex")) {
-	*current_ostream << "<A NAME=\"Enum_";
-	filter_for_index_anchor( *current_ostream, enum_name);
-	*current_ostream << "\"></A>" << endl;
+         macroIsTrue( "\\lciIfHtmlIndex")) {
+        *current_ostream << "<A NAME=\"Enum_";
+        filter_for_index_anchor( *current_ostream, enum_name);
+        *current_ostream << "\"></A>" << endl;
     }
     // end index
 
@@ -1615,9 +1626,9 @@ void format_enum( const char* signature) {
     // first, estimate size
     double exp_size = 0.0;
     if ( scope)
-	exp_size += estimate_html_size( scope);
+        exp_size += estimate_html_size( scope);
     if ( return_value)
-	exp_size += estimate_html_size( return_value);
+        exp_size += estimate_html_size( return_value);
 
 
     exp_size += estimate_html_size( formatted_enum) 
@@ -1626,107 +1637,107 @@ void format_enum( const char* signature) {
     if ( parameter_list) {
         exp_size += 2 * width_per_character;
         n = separate_parameter_list( parameter_list);
-	char* p = parameter_list;
-	int m = n;
-	while ( m--) {
-	    exp_size += estimate_html_size( p) + width_per_character;
-	    p += strlen( p) + 1;  // skip to next parameter
-	}
+        char* p = parameter_list;
+        int m = n;
+        while ( m--) {
+            exp_size += estimate_html_size( p) + width_per_character;
+            p += strlen( p) + 1;  // skip to next parameter
+        }
     }
 
     exp_size *= stretch_factor;
     if ( exp_size > table_width && parameter_list) {
       *current_ostream << store_remember_font();
       *current_ostream << "<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0>"
-	"<TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP";
+        "<TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP";
       //if ( tag_long_param_layout)
       //*current_ostream << " COLSPAN=2";
       *current_ostream << "><I>" << get_remember_font() << ind_newline;
     }
     if ( return_value) {
         print_ascii_to_html_spc( *current_ostream, return_value);
-	*current_ostream << ' ';
+        *current_ostream << ' ';
     }
     if ( scope)
         print_ascii_to_html_spc( *current_ostream, scope);
     *current_ostream << formatted_enum;
     if ( parameter_list) {
         *current_ostream << " { ";
-	if ( exp_size > table_width) {
-	    *current_ostream << store_remember_font();
-	    *current_ostream << "</TD><TD ALIGN=LEFT VALIGN=TOP NOWRAP>";
-	    *current_ostream << get_remember_font() << ind_newline;
-	}
-	char* p = parameter_list;
-	while ( n--) {
-	    while ( *p && *p <= ' ')
-	        ++p;
-	    print_ascii_to_html_spc( *current_ostream, p);
+        if ( exp_size > table_width) {
+            *current_ostream << store_remember_font();
+            *current_ostream << "</TD><TD ALIGN=LEFT VALIGN=TOP NOWRAP>";
+            *current_ostream << get_remember_font() << ind_newline;
+        }
+        char* p = parameter_list;
+        while ( n--) {
+            while ( *p && *p <= ' ')
+                ++p;
+            print_ascii_to_html_spc( *current_ostream, p);
 
-	    if ( (class_name.empty() || 
+            if ( (class_name.empty() || 
                   !(macroIsTrue( "\\lciIfHtmlClassIndex"))) && 
                      macroIsTrue( "\\ccIndex") &&  
                      macroIsTrue( "\\ccAutoIndex")) {
-		if ( macroIsTrue( "\\lciIfHtmlIndex")) {
-		    // index: print enum tags with (possible) initializers
-                    char* k = strdup(p); 
-                    k = strtok(k,"=");
+                if ( macroIsTrue( "\\lciIfHtmlIndex")) {
+                    // index: print enum tags with (possible) initializers
+                    char* kk = newstr(p); 
+                    char* k = strtok(kk,"=");
                     if (k==NULL) 
                        make_index(p,"","",enum_name,'e'); 
                     else    
                        make_index(k,"","",enum_name,'e');
-                    delete[] k; 
-                }  		
-		if ( macroIsTrue( "\\lciIfHtmlLinks")) {
-		    // generate a substitution rule for hyperlinking
-		    // Here, the initializer has to be suppressed
-		    char* q = p;
-		    while( *q && *q != '=')
-			++q;
-		    while ( q>p && q[-1] <= ' ')
-			--q;
-		    char c_tmp = *q;
-		    *q = '\0';
-		    if ( strlen( p) > 1) {
-			char *tmp_param = convert_fontified_ascii_to_html( p);
-			*anchor_stream << "[a-zA-Z0-9_]\"" << tmp_param
-				  << "\"    { ECHO; }" << endl;
-			*anchor_stream << '"' << tmp_param
-				  << "\"/{noCCchar}    { wrap_anchor( \""
-				  << current_filename << "#Enum_";
-			filter_for_index_anchor( *anchor_stream, enum_name);
-			*anchor_stream << "\", yytext); }" << endl;
-			delete[] tmp_param;
-		    }
-		    *q = c_tmp; // restore initializer
-		}
+                    delete[] kk; 
+                }               
+                if ( macroIsTrue( "\\lciIfHtmlLinks")) {
+                    // generate a substitution rule for hyperlinking
+                    // Here, the initializer has to be suppressed
+                    char* q = p;
+                    while( *q && *q != '=')
+                        ++q;
+                    while ( q>p && q[-1] <= ' ')
+                        --q;
+                    char c_tmp = *q;
+                    *q = '\0';
+                    if ( strlen( p) > 1) {
+                        char *tmp_param = convert_fontified_ascii_to_html( p);
+                        *anchor_stream << "[a-zA-Z0-9_]\"" << tmp_param
+                                  << "\"    { ECHO; }" << endl;
+                        *anchor_stream << '"' << tmp_param
+                                  << "\"/{noCCchar}    { wrap_anchor( \""
+                                       << REPLACE_WITH_CURRENT_PATH_TOKEN
+                                       << current_rootname << "#Enum_";
+                        filter_for_index_anchor( *anchor_stream, enum_name);
+                        *anchor_stream << "\", yytext); }" << endl;
+                        delete[] tmp_param;
+                    }
+                    *q = c_tmp; // restore initializer
+                }
             } else  if ( macroIsTrue( "\\lciIfHtmlClassIndex") && 
-			 macroIsTrue( "\\lciIfHtmlIndex")  &&  
+                         macroIsTrue( "\\lciIfHtmlIndex")  &&  
                          macroIsTrue( "\\ccIndex")  &&  
                          macroIsTrue( "\\ccAutoIndex")) {
-		// index: print enum tags with their (possible) initializers
-                char* k = strdup(p);
-                k = strtok(p,"=");
-                if (k==NULL) 
-                       make_index(string(p), string(class_name) ,"", enum_name, 
-                                  'e'); 
+                // index: print enum tags with their (possible) initializers
+                char* kk = newstr(p);
+                char* k = strtok(kk,"=");
+                if (k==NULL)
+                    make_index(string(p), string(class_name) ,"", enum_name, 
+                               'e'); 
                 else
-                       make_index(string(k),string(class_name),"",enum_name, 
-                                  'e'); 
-                delete[] k;
-	    }
-	    p += strlen( p) + 1;  // skip to next parameter
-	    if ( n) {
-	        *current_ostream << ", ";
-		if ( exp_size > table_width)
-		    *current_ostream << "<BR>" << ind_newline;
-	    }
-	}
+                    make_index(string(k),string(class_name),"",enum_name, 'e');
+                delete[] kk;
+            }
+            p += strlen( p) + 1;  // skip to next parameter
+            if ( n) {
+                *current_ostream << ", ";
+                if ( exp_size > table_width)
+                    *current_ostream << "<BR>" << ind_newline;
+            }
+        }
         *current_ostream << "};";
-	if ( exp_size > table_width) {
-	    *current_ostream << store_remember_font();
-	    *current_ostream << "</TD></TR></TABLE>" << ind_newline;
-	}
+        if ( exp_size > table_width) {
+            *current_ostream << store_remember_font();
+            *current_ostream << "</TD></TR></TABLE>" << ind_newline;
+        }
     } else
         *current_ostream << ';';
 
@@ -1749,18 +1760,18 @@ void format_constructor( const char* signature) {
     const char* rest;
 
     split_function_declaration( signature, 
-				return_value,
-				scope,
-				function_name,
-				parameter_list,
-				rest);
+                                return_value,
+                                scope,
+                                function_name,
+                                parameter_list,
+                                rest);
 
     two_cols_html_begin( *current_ostream);
     // first, estimate size
     double exp_size = 1.0;
     // Of no use here!
     // if ( scope)
-    //	exp_size += estimate_html_size( scope);
+    //  exp_size += estimate_html_size( scope);
     exp_size += estimate_html_size( macroX( "\\ccPureVar")) 
               + estimate_html_size( template_class_name) 
               + width_per_character;
@@ -1768,23 +1779,23 @@ void format_constructor( const char* signature) {
     if ( parameter_list) {
         exp_size += 2 * width_per_character;
         n = separate_parameter_list( parameter_list);
-	char* p = parameter_list;
-	int m = n;
-	while ( m--) {
-	    remove_const_ref_pair( p);
-	    remove_own_classname( p, template_class_name);
-	    exp_size += estimate_html_size( p) + width_per_character;
-	    p += strlen( p) + 1;  // skip to next parameter
-	}
+        char* p = parameter_list;
+        int m = n;
+        while ( m--) {
+            remove_const_ref_pair( p);
+            remove_own_classname( p, template_class_name);
+            exp_size += estimate_html_size( p) + width_per_character;
+            p += strlen( p) + 1;  // skip to next parameter
+        }
     }
     exp_size *= stretch_factor;
     if ( exp_size > table_width && parameter_list) {
       *current_ostream << store_remember_font();
       *current_ostream << "<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0>"
-	"<TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP";
+        "<TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP";
       if ( macroIsTrue( "\\ccLongParamLayout") ||
-	   ! macroIsTrue( "\\ccAlternateThreeColumn"))
-	  *current_ostream << " COLSPAN=2";
+           ! macroIsTrue( "\\ccAlternateThreeColumn"))
+          *current_ostream << " COLSPAN=2";
       *current_ostream << "><I>" << get_remember_font() << ind_newline;
     }
     // Of no use here!
@@ -1796,33 +1807,33 @@ void format_constructor( const char* signature) {
 
     if ( parameter_list) {
         *current_ostream << " ( ";
-	if ( exp_size > table_width) {
-	  *current_ostream << store_remember_font();
-	  *current_ostream << "</I></TD>";
-	  if ( macroIsTrue( "\\ccLongParamLayout") ||
-	       ! macroIsTrue( "\\ccAlternateThreeColumn"))
-	      *current_ostream << "</TR><TR><TD WIDTH=" 
-			      << table_long_param_indent 
-			      << " NOWRAP></TD>";
-	  *current_ostream << "<TD ALIGN=LEFT VALIGN=TOP "
-	    "NOWRAP><I>";
-	  *current_ostream << get_remember_font() << ind_newline;
-	}
-	char* p = parameter_list;
-	while ( n--) {
-	    print_ascii_to_html_spc( *current_ostream, p);
-	    p += strlen( p) + 1;  // skip to next parameter
-	    if ( n) {
-	        *current_ostream << ", ";
-		if ( exp_size > table_width)
-		    *current_ostream << "<BR>" << ind_newline;
-	    }
-	}
+        if ( exp_size > table_width) {
+          *current_ostream << store_remember_font();
+          *current_ostream << "</I></TD>";
+          if ( macroIsTrue( "\\ccLongParamLayout") ||
+               ! macroIsTrue( "\\ccAlternateThreeColumn"))
+              *current_ostream << "</TR><TR><TD WIDTH=" 
+                              << table_long_param_indent 
+                              << " NOWRAP></TD>";
+          *current_ostream << "<TD ALIGN=LEFT VALIGN=TOP "
+            "NOWRAP><I>";
+          *current_ostream << get_remember_font() << ind_newline;
+        }
+        char* p = parameter_list;
+        while ( n--) {
+            print_ascii_to_html_spc( *current_ostream, p);
+            p += strlen( p) + 1;  // skip to next parameter
+            if ( n) {
+                *current_ostream << ", ";
+                if ( exp_size > table_width)
+                    *current_ostream << "<BR>" << ind_newline;
+            }
+        }
         *current_ostream << ");";
-	if ( exp_size > table_width) {
-	    *current_ostream << store_remember_font();
-	    *current_ostream << "</I></TD></TR></TABLE>" << ind_newline;
-	}
+        if ( exp_size > table_width) {
+            *current_ostream << store_remember_font();
+            *current_ostream << "</I></TD></TR></TABLE>" << ind_newline;
+        }
     } else
         *current_ostream << ';';
 
@@ -1840,47 +1851,47 @@ void format_constructor( const char* signature) {
 void handle_two_column_layout( char key, const char* decl) {
     if ( current_ostream) {
         decl = handle_template_layout( *current_ostream, decl, false);
-	switch ( key) {
-	case 'A':
-	    format_class_declaration( decl);
-	    break;
-	case 'B':
-	    format_struct( decl);
-	    break;
-	case 'C':
-	    format_nested_type( decl);
-	    break;
-	case 'D':
-	    format_enum( decl);
-	    break;
-	case 'E':
-	    format_constructor( decl);
-	    break;
-	default:
-	    printErrorMessage( UnknownKeyError);
-	}
+        switch ( key) {
+        case 'A':
+            format_class_declaration( decl);
+            break;
+        case 'B':
+            format_struct( decl);
+            break;
+        case 'C':
+            format_nested_type( decl);
+            break;
+        case 'D':
+            format_enum( decl);
+            break;
+        case 'E':
+            format_constructor( decl);
+            break;
+        default:
+            printErrorMessage( UnknownKeyError);
+        }
     }
 }
 
 void handle_three_column_layout( char key, const char* decl, bool empty) {
     if ( current_ostream) {
         decl = handle_template_layout( *current_ostream, decl, true);
-	switch ( key) {
-	case 'L':  // member function
-	    format_function( true, decl, empty);
-	    break;
-	case 'M':  // function
-	    format_function( false, decl, empty);
-	    break;
-	case 'N':
-	    format_variable( decl, empty);
-	    break;
-	case 'O': // typedef
-	    format_variable( decl, empty, true);
-	    break;
-	default:
-	    printErrorMessage( UnknownKeyError);
-	}
+        switch ( key) {
+        case 'L':  // member function
+            format_function( true, decl, empty);
+            break;
+        case 'M':  // function
+            format_function( false, decl, empty);
+            break;
+        case 'N':
+            format_variable( decl, empty);
+            break;
+        case 'O': // typedef
+            format_variable( decl, empty, true);
+            break;
+        default:
+            printErrorMessage( UnknownKeyError);
+        }
     }
 }
 

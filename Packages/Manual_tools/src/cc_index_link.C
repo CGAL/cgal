@@ -4,7 +4,7 @@
   cc_index_link.C
   =============================================================
   Project   : Tools for the CC manual writing task around cc_manual_index.sty.
-  Function  :adds links in HTML-index (combines manual.ind with HREF)
+  Function  : adds links in HTML-index (combines manual.ind with HREF)
   System    : C++ (g++)
   Author    : 2003 Renata Krysta
   Revision  : $Revision$
@@ -45,8 +45,6 @@ main( int argc, char **argv) {
       exit(1);
   }
 
-  std::cerr << "cc_index_link:" << std::endl;
-
   char* file_name1 = argv[1];
   char* file_name2 = argv[2];
   char* out_file_name = argv[3]; 
@@ -54,14 +52,10 @@ main( int argc, char **argv) {
   std::ofstream out_file(out_file_name);
   if (!out_file)
      std::cerr<<"*** Error: cannot open file "<< out_file_name <<'\n';
-  else
-    std::cerr << "  output file opened" << std::endl;
 
   std::ifstream in_file1(file_name1);
   if (!in_file1)
      std::cerr<<"*** Error: cannot open file "<< file_name1 <<'\n';
-  else 
-    std::cerr << "  first input file opened" << std::endl;
 
   std::list<Lines> list_of_lines;
   std::list<Lines>::const_iterator lli;
@@ -70,14 +64,12 @@ main( int argc, char **argv) {
   std::string link;
   while (in_file1) {
     in_file1 >> number >> link;
-    list_of_lines.push_front(Lines(number, link));                                         
+    list_of_lines.push_front(Lines(number, link));
   }
 
   std::ifstream in_file2(file_name2);
   if (!in_file2)
      std::cerr<<"*** Error: cannot open file "<< file_name2 <<'\n';
-  else
-    std::cerr << "  second input file opened" << std::endl;
  
   char ch;
   std::string name_link;
@@ -116,7 +108,8 @@ main( int argc, char **argv) {
                   }
                   if (page) {    //if link
                     in_file2 >> number;
-                    lli = find_if(list_of_lines.begin(), list_of_lines.end(), Lines_eq(number));
+                    lli = find_if(list_of_lines.begin(), list_of_lines.end(), 
+                                  Lines_eq(number));
 		    bool number_found = (lli != list_of_lines.end());
 		    if (number_found) {
 		      out_file <<"<A "<< lli->text <<">" <<tmp << "</A> ";
@@ -128,9 +121,13 @@ main( int argc, char **argv) {
 		      if (ch=='|') {
 			in_file2 >> number;
 			if (number_found) {
-			  lli = find_if(list_of_lines.begin(), list_of_lines.end(), Lines_eq(number)); 
-			  out_file << "<A "<< lli->text <<">" 
-				   << "<img SRC=\"" << "./index_arrow.gif\" ALT=\"reference\" WIDTH=\"14\" HEIGHT=\"12\" VALIGN=BOTTOM BORDER=0></A> ";
+			  lli = find_if(list_of_lines.begin(), 
+                                        list_of_lines.end(), 
+                                        Lines_eq(number));
+			  out_file << "<A "<< lli->text <<">" << "<img SRC=\""
+                                   << "./index_arrow.gif\" ALT=\"reference\" "
+                              "WIDTH=\"14\" HEIGHT=\"12\" VALIGN=BOTTOM "
+                              "BORDER=0></A> ";
 			}  
 		      }
 		    } 

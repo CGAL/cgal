@@ -15,7 +15,6 @@
 #if ! defined( MODULE_CONFIG)
 #define MODULE_CONFIG 1
 
-#include <buffer.h>
 #include <mstring.h>
 
 
@@ -32,6 +31,7 @@ extern Switch  line_switch;
 
 extern Switch  config_switch;
 extern Switch  quiet_switch;
+extern Switch  verbose_switch;
 extern Switch  macro_def_switch;
 extern Switch  macro_exp_switch;
 extern Switch  stack_trace_switch;
@@ -49,15 +49,7 @@ extern const string prog_release;
 extern const string reference_icon;
 
 
-// outdated
-int   text_block_length(     const Buffer_list& T);
-char* text_block_to_string(  const Buffer_list& T);
-bool  is_text_block_empty(   const Buffer_list& T);
-void  print_html_text_block( ostream &out, const Buffer_list& T);
 
-
-void handleText(   const Buffer_list& T);
-void handleBuffer( const Buffer&      TT);
 void handleString( const char*        s);
 void handleString( const string&      s);
 void handleChar(   char               c);

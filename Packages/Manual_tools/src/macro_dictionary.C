@@ -16,7 +16,7 @@
 
 #include <iostream>
 #include <html_lex.h>
-#include <lex_include.h>
+#include <input.h>
 #include <string_conversion.h>
 #include <html_error.h>
 #include <html_config.h>
@@ -309,6 +309,12 @@ string expandMacro( const string& macro,
 		else {
 		    int hash_len = 2;
 		    int j = i;
+		    bool glue_tag = false;
+		    if ( s[i+1] == 'G' && i + 2 < s.size()) {
+			glue_tag = true;
+			++i;
+			++hash_len;
+		    }
 		    bool expand_tag = false;
 		    if ( s[i+1] == 'X' && i + 2 < s.size()) {
 			expand_tag = true;
@@ -344,12 +350,19 @@ string expandMacro( const string& macro,
 			} else {
 			    string repl;
 			    if ( expand_tag) {
-				if ( index < cache_size && cache_valid[index])
-				    repl = expand_cache[index];
-				else {
-				    repl = expandFirstMacro(parameters[index]);
-				    expand_cache[index] = repl;
-				    cache_valid[index]  = true;
+                                if ( glue_tag) {
+                                    repl = parameters[index];
+                                    remove_separator( repl);
+                                    repl = expandFirstMacro( repl);
+                                } else {
+                                    if (index<cache_size && cache_valid[index])
+                                        repl = expand_cache[index];
+                                    else {
+                                        repl = expandFirstMacro(
+                                            parameters[index]);
+                                        expand_cache[index] = repl;
+                                        cache_valid[index]  = true;
+                                    }
 				}
 			    } else {
 				repl = parameters[index];
@@ -364,9 +377,22 @@ string expandMacro( const string& macro,
 				repl = int_to_string( repl.size());
 			    }
 			    if ( expand_tag || skip_tag || crop_tag 
-				 || length_tag) {
-				s.replace(j, hash_len, repl);
-				i = j - 1 + repl.size();
+				 || length_tag || glue_tag) {
+                                if ( glue_tag) {
+                                    //cerr << "AAA" << convert_quoted_string_seps(repl) << "BBB" << endl;
+                                    remove_separator( repl);
+                                    //cerr << "CCC" << convert_quoted_string_seps(repl) << "BBB" << endl;
+                                    while ( j > 0 && s[j-1] == SEPARATOR) {
+                                        --j;
+                                        ++hash_len;
+                                    }
+                                    while ( j + hash_len < s.size()
+                                            && s[j + hash_len] == SEPARATOR) {
+                                        ++hash_len;
+                                    }
+                                }
+                                s.replace(j, hash_len, repl);
+                                i = j - 1 + repl.size();
 			    } else {
 				s.replace(j, hash_len, repl + SEPARATOR);
 				i = j - 1 + repl.size() + 1;

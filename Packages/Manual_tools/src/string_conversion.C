@@ -16,8 +16,10 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <output.h>
+#include <input.h>
 #include <sstream>
 #include <html_config.h>
+#include <html_error.h>
 
 // New style conversion routines
 // =======================================
@@ -26,6 +28,33 @@ string int_to_string( int i) {
     ostringstream out;
     out << i;
     return out.str();
+}
+
+// Roman numbers up to 109
+static const char * const roman_numbers[110] = {
+    "0", "i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix",
+    "x", "xi", "xii", "xiii", "xiv", "xv", "xvi", "xvii", "xviii", "xix",
+    "xx","xxi","xxii","xxiii","xxiv","xxv","xxvi","xxvii","xxviii","xxix",
+    "xxx","xxxi","xxxii","xxxiii","xxxiv","xxxv","xxxvi","xxxvii",
+        "xxxviii","xxxix",
+    "xl","xli","xlii","xliii","xliv","xlv","xlvi","xlvii","xlviii","xlix",
+    "l","li","lii","liii","liv","lv","lvi","lvii","lviii","lix",
+    "lx","lxi","lxii","lxiii","lxiv","lxv","lxvi","lxvii","lxviii","lxix",
+    "lxx","lxxi","lxxii","lxxiii","lxxiv","lxxv","lxxvi","lxxvii","lxxviii",
+        "lxxix",
+    "lxxx","lxxxi","lxxxii","lxxxiii","lxxxiv","lxxxv","lxxxvi","lxxxvii",
+        "lxxxviii","lxxxix",
+    "xc","xci","xcii","xciii","xciv","xcv","xcvi","xcvii","xcviii","xcix",
+    "c","ci","cii","ciii","civ","cv","cvi","cvii","cviii","cix"
+};
+
+// Returns the roman digit representation for a number i, 0 <= i <= 109.
+string int_to_roman_string( int i) {
+    if ( i < 1 || i > 109) {
+	printErrorMessage( RomansOutOfBoundsError);
+        return string( "[Roman digits out of bounds]");
+    }
+    return string( roman_numbers[i]);
 }
 
 void remove_leading_spaces( string& s) {
@@ -126,6 +155,13 @@ string remove_suffix( string name) {
 }
 
 string basename_string( string name) {
+    string::size_type i = name.rfind( '/');
+    if ( i != string::npos)
+	name.replace( 0, i+1, "");
+    return name;
+}
+
+string rootname_string( string name) {
     name = remove_suffix(name);
     string::size_type i = name.rfind( '/');
     if ( i != string::npos)
@@ -133,12 +169,24 @@ string basename_string( string name) {
     return name;
 }
 
-string path_string( string name) {
+string path_string( string name) { // either empty or includes a trailing '/'
+    // remove leading './' component
+    if ( name[0] == '.' && name[1] == '/')
+        name.replace(0,2,"");
     string::size_type i = name.rfind( '/');
     if ( i == string::npos)
 	return string();
     name.replace( i+1, name.size() - i - 1, "");
     return name;
+}
+
+string uppath_string( string path) { // '../../' type of path reversing 'path'
+    std::size_t len = std::count( path.begin(), path.end(), '/');
+    string result( "");
+    for ( std::size_t i = 0; i < len; ++i) {
+        result += "../";
+    }
+    return result;
 }
 
 string suffix_string( string name) {
@@ -162,6 +210,39 @@ string convert_quoted_string( string s) {
 	if ( s[i] == SEPARATOR)
 	    s.replace( i, 1, "");
 	else {
+	    if ( s[i] == '\\' && i + 1 < s.size()) {
+		switch (s[i+1]) {
+		case '\\':
+		case '{':
+		case '}':
+		    s.replace( i, 1, "");
+		    break;
+		case 'n':
+		    s.replace( i, 2, "\n");
+		    break;
+		case 't':
+		    s.replace( i, 2, "\t");
+		    break;
+		default:
+		    break;
+		}
+	    }
+	    ++i;
+	}
+    }
+    return s;
+}
+
+// Quoted strings use C string notation with \ as escape symbol.
+// Replaced sequences are: \\, \n, \t, \{, \}.
+// Makes SEPARATOR Explictly visible for debugging, see \lciDump.
+string convert_quoted_string_seps( string s) {
+    size_t i = 0;
+    while (  i < s.size()) {
+	if ( s[i] == SEPARATOR) {
+	    s.replace( i, 1, "^A");
+            i += 2;
+	} else {
 	    if ( s[i] == '\\' && i + 1 < s.size()) {
 		switch (s[i+1]) {
 		case '\\':

@@ -14,15 +14,58 @@
 
 #include <html_error.h>
 #include <html_config.h>
-#include <lex_include.h>
+#include <input.h>
+#include <string_conversion.h>
 
 // external lex declaration
 void printScannerState( ostream& out);
 
 
+// Color attributes
+// ----------------
+string BlueColor;     // blue boldface
+string BoldColor;     // boldface
+string OkColor;       // green
+string ErrorColor;    // red boldface
+string WarnColor;     // magenta
+string ResetColor;    // black, reset attribute
+
+// Error and warning lead texts, terminate with ResetColor
+// -------------------------------------------------------
+string ErrorText( "ERROR: ");
+string WarnText( "WARNING: ");
+
+void enableColor() {
+    BlueColor  = string( "[1m[34m");    // blue boldface
+    BoldColor  = string( "[1m");          // boldface
+    OkColor    = string( "[32m");         // green
+    ErrorColor = string( "[1m[31m");    // red boldface
+    WarnColor  = string( "[35m");         // magenta
+    ResetColor = string( "[30m[00m");   // black, reset attribute
+
+    ErrorText  = ErrorColor + string( "ERROR: ");
+    WarnText   = WarnColor  + string( "WARNING: ");
+}
+
+// Error number reporting
+// ----------------------
+
+static ErrorNumber firstErrorVar = NoError;
+
+// Returns the first error number reported since program start or since
+// the last call to firstError(). Returns 'NoError' if no error was
+// reported yet. Resets firstError() to 'NoError'.
+ErrorNumber firstError() {
+    ErrorNumber result = firstErrorVar;
+    firstErrorVar = NoError;
+    return result;
+}
+
 // Functions belonging to the Error messages
 // -----------------------------------------
 const char* errorMessage( ErrorNumber n) {
+    if ( firstErrorVar == NoError)
+        firstErrorVar = n;
     switch ( n) {
     case NoError:
 	return "NO ERROR";
@@ -42,6 +85,10 @@ const char* errorMessage( ErrorNumber n) {
         return "The declaration does not end in a semicolon";
     case ChapterStructureError:
         return "Malformed chapter structure: one chapter per file";
+    case ChapterAbsolutePathError:
+        return "Input filename must be given with a relative path for files containing chapters";
+    case ClassAbsolutePathError:
+        return "Input filename must be given with a relative path for files containing class or reference page environments";
     case UnknownIndexCategoryError:
         return "Unknown index category in optional argument of \\ccHtmlIndex";
     case EmptyClassNameError:
@@ -55,7 +102,7 @@ const char* errorMessage( ErrorNumber n) {
     case ParamIndexError:
 	return "Index too large or illegal character behind # encountered";
     case MacroUndefinedError:
-	return "Macro is undefined";
+	return "Macro '%1' is undefined";
     case MacroDefUnknownError:
 	return "TeX style macro definition is not understandable";
     case MacroParamNumberError:
@@ -82,29 +129,61 @@ const char* errorMessage( ErrorNumber n) {
 	return "Internal error: Underflow of the include file and macro stack";
     case FileReadOpenError:
 	return "Open file for read failed";
+    case RomansOutOfBoundsError:
+	return "Conversion-to-Roman-digits parameter out of bounds";
+    case AlphaOutOfBoundsError:
+	return "Conversion-to-Alpha-digit parameter out of bounds";
     case UserDefinedError:
 	return "User defined error message";
     }
     return "UNKNOWN ERROR MESSAGE NUMBER";
 }
 
-void  printErrorMessage( ErrorNumber n){
-    cerr << endl;
+// Returns the formatted error message, where sequences of %<i> are 
+// replaced with the argument text arg<i> for 1 <= i <= 6.
+// Includes the leading ERROR: (incl. color), filename and linenumber.
+string formattedErrorMessage( ErrorNumber n,
+                              const string& arg1, const string& arg2,
+                              const string& arg3, const string& arg4,
+                              const string& arg5, const string& arg6) {
+    string err = errorMessage( n);
+    size_t i = 0;
+    while ( i+1 < err.size()) {
+        if ( err[i] == '%' && err[i+1] == '1') {
+            err.replace( i, 2, arg1);
+            i += arg1.size() - 1;
+        }
+        ++i;
+    }
+    string result = ErrorText;
     if ( in_file)
-	cerr << "*** Error " << int(n) << " in line " << in_file->line() 
-	     << " in `"  << in_file->name() << "': " << errorMessage( n) 
-	     << '.' << endl;
+        result = result + string("'") + in_file->name() + string( "' line ") 
+                 + int_to_string(in_file->line()) + string(": ");
     else
-	cerr << "*** Error " << int(n) << " at top level (no file): " 
-	     << errorMessage( n) << '.' << endl;
+	result = result + string( " at top level (no file): ");
+    result = result + err + string(".") + ResetColor;
+    return result;
+}
+
+void  printErrorMessage( ErrorNumber n, 
+                         string arg1, string arg2, string arg3,
+                         string arg4, string arg5, string arg6){
+    if ( firstErrorVar == NoError)
+        firstErrorVar = n;
+    cerr << endl  << formattedErrorMessage(n, arg1, arg2, arg3, arg4, 
+                                           arg5, arg6);
+    cerr << ErrorColor;
     if ( in_file != in_string)
-	cerr << "    while expanding macro `" << in_string->name() 
-	     << "' in line " << in_string->line() << '.' << endl;
+	cerr << "\n    while expanding macro '" << in_string->name() 
+             << "' line " << in_string->line() << '.';
+    if ( verbose_switch) {
+        cerr << "\n    (parser state: ";
+        printScannerState( cerr);
+        cerr << ')';
+    }
     if ( stack_trace_switch)
-	cerr << include_stack;
-    cerr << "Parser state: ";
-    printScannerState( cerr);
-    cerr << endl;
+	cerr << '\n' << include_stack;
+    cerr << ResetColor << endl;
 }
 
 int yyerror( char *s) {
