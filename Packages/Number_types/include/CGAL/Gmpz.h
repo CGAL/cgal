@@ -26,6 +26,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
+#include <CGAL/Quotient.h>
 
 #ifndef CGAL_CFG_NO_LOCALE
 #  include <locale>
@@ -606,6 +607,22 @@ namespace NTS {
   }
 }
 
+static
+double to_double(const Quotient<Gmpz>& quot)
+{
+  mpq_t  mpQ;
+  mpq_init(mpQ);
+  const Gmpz& n = quot.numerator();
+  const Gmpz& d = quot.denominator();
+  mpz_set(mpq_numref(mpQ), n.mpz());
+  mpz_set(mpq_denref(mpQ), d.mpz());
+    
+  mpq_canonicalize(mpQ);
+  
+  double ret = mpq_get_d(mpQ);
+  mpq_clear(mpQ);
+  return ret;
+}
 CGAL_END_NAMESPACE
 
 #endif // CGAL_GMPZ_H
