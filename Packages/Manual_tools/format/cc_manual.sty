@@ -11,7 +11,7 @@
   \cs\CCdate$Date$
 }
 
-\tracingmacros=1
+%\tracingmacros=1
 
 % +--------------------------------------------------------------------------
 % | Dimensions (from the LEDA Manual):
@@ -106,6 +106,21 @@
                }
 
 \def\classX #1{%
+                   \endgroup
+                   \classXX #1<\end}
+
+
+\def\classXX #1<#2\end{%
+                   \def\xparams{#2}\ifx\xparams\empty
+                       \classXXX{#1}%
+                   \else
+                       \errmessage{Template parameters are not allowed
+                         in a normal class. Use \begin{classtemplate}
+                         instead}>%
+                       \classXXX{#1<???>}%
+                   \fi}
+
+\def\classXXX #1{%
                    \gdef\pureclassname{#1}%
                    \gdef\puretemplatename{#1}%
                    \gdef\pureparameters{}%
@@ -113,7 +128,6 @@
                            \CCprintTokens #1\end\CCendfont}}}%
                    \gdef\classtemplatename{\hbox{{\CCfont
                            \CCprintTokens #1\end\CCendfont}}}%
-                   \endgroup
                }
 
 \newenvironment{classtemplate}{%
@@ -123,16 +137,27 @@
                    \gdef\pureclassname{}%
                }
 
-\def\classtemplateX #1#2{%
+\def\classtemplateX #1{%
+                   \endgroup
+                   \classtemplateXX #1<\end}
+
+\def\classtemplateXX #1<#2\end{%
+                   \def\xparams{#2}\ifx\xparams\empty
+                       \errmessage{Template parameters missed for
+                         class template}>%
+                       \classtemplateXXX{#1}<???><\end%
+                   \else
+                       \classtemplateXXX{#1}<#2\end%
+                   \fi}
+
+\def\classtemplateXXX #1#2<\end{%
                    \gdef\pureclassname{#1}%
-                   \gdef\puretemplatename{#1<#2>}%
+                   \gdef\puretemplatename{#1#2}%
                    \gdef\pureparameters{#2}%
                    \gdef\classname{\hbox{{\CCfont
                            \CCprintTokens #1\end\CCendfont}}}%
                    \gdef\classtemplatename{\hbox{{\CCfont
-                           \CCprintTokens #1\end}%
-                           \CCopenangle{\CCfont #2}\CCcloseangle}}%
-                   \endgroup
+                           \CCprintTokens #1#2\end\CCendfont}}}%
                }
 
 
@@ -214,26 +239,26 @@
 % | The style of the C++ formatting can be customized by redefining the 
 % | following macros.
 % +--------------------------------------------------------------------------
-\def\CCfont{\it}        % font or style changing command in which all C++
+\gdef\CCfont{\it}        % font or style changing command in which all C++
                         % tokens will be typeset, including the variable names.
-\def\CCendfont{\/}      % will be used after a C++ text. For slanted fonts,
+\gdef\CCendfont{\/}      % will be used after a C++ text. For slanted fonts,
                         % here should stay \/ macro. The C++ code will be
                         % grouped, so this macros has not to restore the old
                         % font.
 
 % The special characters in typical C++ declarations:
-\def\CCopenangle  {\CCendfont {\tt <}}
-\def\CCcloseangle {\CCendfont {\tt >}}
-\def\CCampersand  {\CCendfont {\tt \&}}
-\def\CCunderscore {\_}
-\def\CChat        {{\large $\;\,\hat{}\,\,$}}
-\def\CCtilde      {{\lower.3ex \hbox{\large$\,\tilde{}\,$}}}
+\gdef\CCopenangle  {\CCendfont {\tt <}}
+\gdef\CCcloseangle {\CCendfont {\tt >}}
+\gdef\CCampersand  {\CCendfont {\tt \&}}
+\gdef\CCunderscore {\_}
+\gdef\CChat        {{\large $\;\,\hat{}\,\,$}}
+\gdef\CCtilde      {{\lower.3ex \hbox{\large$\,\tilde{}\,$}}}
 
 % The sign for an empty parameter (i.e. of the type of the current class).
-\def\CCemptyParameter {$\;\Box$}
+\gdef\CCemptyParameter {$\diamondsuit$}
 
 % Set the catcodes according to the C++ character set (including operators).
-\def\CCcatcode    {%
+\gdef\CCcatcode    {%
                        \catcode`\~=12
                        \catcode`\_=12
                        \catcode`\^=12
@@ -244,7 +269,7 @@
 % +--------------------------------------------------------------------------
 % | Predicates:
 % |
-% | isEmpty, isLetter, hasLeadingSpace, isOperator, isParanthesesOperator
+% | isEmpty, isLetter, hasLeadingSpace, isOperator, isParenthesisOperator
 % |
 % | All predicates uses pattern matching of TeX. The original predicate uses
 % | a single parameter that should be in braces like in LaTeX. Internally,
@@ -316,10 +341,10 @@
     \fi}
 
 % This macro gets a complete C++ declaration for an operator and has to
-% decide weather it is the parantheses () operator declaration or not.
-\def\isParanthesesOperator #1{%
-    \isParanthesesOperatorX #1 ()\end}
-\def\isParanthesesOperatorX #1operator#2(#3)#4(#5)#6\end{%
+% decide weather it is the parenthesis () operator declaration or not.
+\def\isParenthesisOperator #1{%
+    \isParenthesisOperatorX #1 ()\end}
+\def\isParenthesisOperatorX #1operator#2(#3)#4(#5)#6\end{%
     % if and only if #6 is non empty, we have the () operator.
     \isEmpty{#6}\CCinvert}
     
@@ -335,7 +360,7 @@
                    \isEmpty{#2}\ifnum\CCbool=\CCtrue
                        \mbox{\classtemplatename\ \ \CCfont\purevar ;}%
                    \else\mbox{\classtemplatename
-                       \ \ {\CCfont \purevar(\CCprintParamList{#2});}}%
+                       \ \ {\CCfont \purevar( \CCprintParamList{#2});}}%
                    \fi\par }
 
 % This box contains the formatting result. Its width influences the
@@ -364,7 +389,7 @@
                        \def\CCextendedFormat{\ }% Switches ext. format OFF.
                        \isOperator{#2 #3(#4)#5}\ifnum\CCbool=\CCtrue
                            \CCseparateOperator #2 #3\end%
-                           \isParanthesesOperator{#2 #3(#4)#5}%
+                           \isParenthesisOperator{#2 #3(#4)#5}%
                            \ifnum\CCbool=\CCtrue
                                \setbox\functioncallbox=\hbox{{\CCfont 
                                    \CCprintParOperator #1#2 #3(#4)#5\end}}
@@ -376,9 +401,9 @@
                            \CCseparateFunction #2 #3::\end%
                            \setbox\functioncallbox=\hbox{{\CCfont
                                \ifnum#1=0 \purevar.\fi
-                               \unhcopy\functionnamebox(%
+                               \unhcopy\functionnamebox(% 
                                \isEmpty{#4}\ifnum\CCbool=\CCfalse
-                                   \CCprintParamList{#4}%
+                                   \ \CCprintParamList{#4}%
                                \fi)}}
                        \fi
                        \parbox[t]{\typewidth}{\sloppy 
@@ -533,7 +558,7 @@
                            \CCprintOperatorOne{#1}{}{#4}#3\end
                        \fi}
 
-% Formats a paranthese () operator declaration:
+% Formats a parenthesis () operator declaration:
 %   o  The first parameter contains a 0 for a method call, a 1 for a function.
 %   o  The second parameter contains the return type.
 %   o  The third parameter contains the operator name.
@@ -542,11 +567,11 @@
 % The declaration has to be terminated with "\end".
 \def\CCprintParOperator #1#2operator#3(#4)#5(#6)#7\end{%
                        \isEmpty{#3}\ifnum\CCbool=\CCfalse\errmessage{Malformed
-                           parantheses operator}\fi
+                           parenthesis operator}\fi
                        \isEmpty{#4}\ifnum\CCbool=\CCfalse\errmessage{Malformed
-                           parantheses operator}\fi
+                           parenthesis operator}\fi
                        \isEmpty{#5}\ifnum\CCbool=\CCfalse\errmessage{Malformed
-                           parantheses operator}\fi
+                           parenthesis operator}\fi
                        \ifnum#1=0
                            \CCprintOperatorOne{#1}{\purevar,}{#6}()\end
                        \else
@@ -627,8 +652,8 @@
                            \if+#1\if+#2\CCoperatorpraefix{#1\!#2}\fi\fi
                            \if-#1\if-#2\CCoperatorpraefix{#1\!#2}\fi\fi
                        \or                         @ 2 parameters
-                           \if[#1\if]#2\CCoperatorparXX{[}{]}\fi\fi
-                           \if(#1\if)#2\CCoperatorparXX{(}{)}\fi\fi
+                           \if[#1\if]#2\CCoperatorparXX{\CCendfont[ }{]}\fi\fi
+                           \if(#1\if)#2\CCoperatorparXX{( }{)}\fi\fi
                            \if+#1\if+#2\CCoperatorpostfix{#1\!#2}\fi\fi
                            \if-#1\if-#2\CCoperatorpostfix{#1\!#2}\fi\fi
                            \if>#1\if>#2\CCoperatorinfix{#1\!#2}\fi\fi
@@ -652,7 +677,7 @@
                            \if^#1\if=#2\CCoperatorinfix{\mbox{\CChat{}}\!\!
                                #2}\fi\fi
                        \else                       @ 3 parameters
-                           \if(#1\if)#2\CCoperatorparXXX{(}{)}\fi\fi
+                           \if(#1\if)#2\CCoperatorparXXX{( }{)}\fi\fi
                        \fi
                    \else
                        @ three or more character operations
