@@ -113,7 +113,6 @@ int generate_kd_tree(CGAL::Split_rule_enumeration::Split_rule s) {
   std::cout << "created kd tree using splitting rule " << s << " containing "  
   << data_point_number << " points. " << std::endl;
   d.statistics();
-
   return 0;
 };
 

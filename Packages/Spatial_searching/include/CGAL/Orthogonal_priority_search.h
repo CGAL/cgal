@@ -66,10 +66,10 @@ class iterator;
     // constructor
     Orthogonal_priority_search(Tree& tree,  
 	Query_item& q, Distance& tr, NT Eps = 0.0, 
-        bool Search_nearest=true)
+        bool search_nearest=true)
     {
 	
-        start = new iterator(tree,q,tr,Eps,Search_nearest);
+        start = new iterator(tree,q,tr,Eps,search_nearest);
         past_the_end = new iterator();
         
     };

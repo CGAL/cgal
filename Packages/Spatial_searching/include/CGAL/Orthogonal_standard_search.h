@@ -34,7 +34,6 @@
 namespace CGAL {
 
 template <class Traits, class Query_item, class Distance>
-
 class Orthogonal_standard_search {
 
 public:
@@ -46,10 +45,12 @@ typedef std::pair<Item*,NT> Item_with_distance;
 typedef Kd_tree_node<Traits> Node;
 typedef Kd_tree<Traits> Tree;
 
-private:
+//private:
 
 typedef Item** Item_iterator;
 typedef Kd_tree_rectangle<NT> Rectangle; 
+
+private:
 
 int number_of_internal_nodes_visited;
 int number_of_leaf_nodes_visited;
@@ -146,6 +147,20 @@ Distance* distance_instance;
        
     }
 
+    
+    // Print statistics of the standard search process.
+    void statistics () {
+    	std::cout << "Standard search statistics:" << std::endl;
+    	std::cout << "Number of internal nodes visited:" << number_of_internal_nodes_visited << std::endl;
+    	std::cout << "Number of leaf nodes visited:" << number_of_leaf_nodes_visited << std::endl;
+    	std::cout << "Number of items visited:" << number_of_items_visited << std::endl;
+    }
+
+    // destructor
+    ~Orthogonal_standard_search() { 
+		l.clear();  
+    };
+
     private:
    
     void compute_neighbours_orthogonally(Node* N, NT rd) {
@@ -206,20 +221,11 @@ Distance* distance_instance;
     }
 
     
-    public:
+    
 
-    // Print statistics of the standard search process.
-    void statistics () {
-    	std::cout << "Standard search statistics:" << std::endl;
-    	std::cout << "Number of internal nodes visited:" << number_of_internal_nodes_visited << std::endl;
-    	std::cout << "Number of leaf nodes visited:" << number_of_leaf_nodes_visited << std::endl;
-    	std::cout << "Number of items visited:" << number_of_items_visited << std::endl;
-    }
 
-    // destructor
-    ~Orthogonal_standard_search() { 
-		l.clear();  
-   };
+    
+   
 
 }; // class 
 

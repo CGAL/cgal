@@ -303,6 +303,7 @@ namespace CGAL {
         // assert(c.is_valid());
     }
 
+/*
 template <class Item_>
 	struct comp_coord_val {
     		int coord; 
@@ -311,11 +312,26 @@ template <class Item_>
       		return (*a)[coord] < (*b)[coord];
     		}
   	};
+*/ 
+// replaced by
+
+
+template <class Item_>
+	class comp_coord_val {
+        public:
+    		int coord; 
+    		comp_coord_val(const int i) : coord(i) {}
+    		bool operator() (const Item_ *a, const Item_ *b) {
+      		return (*a)[coord] < (*b)[coord];
+    		}
+  	};
+
 
 
       NT median(const int split_coord) {
         
-      p_list.sort(comp_coord_val<Item>(split_coord));
+      comp_coord_val<Item> Compare(split_coord);
+      p_list.sort(Compare);
       // }
       typename Point_list::iterator 
       median_point_ptr=p_list.begin();

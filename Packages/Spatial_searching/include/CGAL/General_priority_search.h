@@ -89,9 +89,9 @@ class iterator;
 
     // constructor
     General_priority_search(Tree& tree, Query_item& q, Distance& tr,
-    NT Eps=0.0)
+    NT Eps=0.0, bool search_nearest=true)
     {
-        start = new iterator(tree,q,tr,Eps);
+        start = new iterator(tree,q,tr,Eps,search_nearest);
         past_the_end = new iterator();
     };
 
@@ -134,9 +134,9 @@ class iterator;
     }
 
     // constructor
-    iterator(Tree& tree, Query_item& q, Distance& tr, NT eps=0.0){
+    iterator(Tree& tree, Query_item& q, Distance& tr, NT eps=0.0, bool search_nearest=true) {
         Ptr_implementation =
-        new Iterator_implementation(tree, q, tr, eps);
+        new Iterator_implementation(tree, q, tr, eps, search_nearest);
     }
 
     // copy constructor
