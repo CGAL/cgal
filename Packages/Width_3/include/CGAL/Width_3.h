@@ -1599,7 +1599,12 @@ class Width_3 {
       }
       DEBUGMSG(EXPENSIVE_CHECKS_OUTPUT,"All VF-pairs verified. "
 	       <<"Expensive Check successful.");
-      CGAL_assertion(dao.size_of_antipodal_vertices()==P.size_of_facets());
+//
+//    This assertion should not currently be true since the convex hull
+//    polyhedron is triangulated;  no postprocessing is done to merge coplanar
+//    neighboring facets.
+//
+//    CGAL_assertion(dao.size_of_antipodal_vertices()==int(P.size_of_facets()));
 #endif
       //Begin with phase 4. As long as the set of impassable edges is not empty
       //rotate one of the planes into the other sharing the impassable edge
