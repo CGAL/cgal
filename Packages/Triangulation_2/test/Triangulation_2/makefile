@@ -12,11 +12,9 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-          -I/u/alcor/0/prisme_util/CGAL/Local/C2/include \
            -I../../include \
           -I./include \
-          -I/u/alcor/0/prisme_util/CGAL/Local/C2/include \
-           $(CGAL_CXXFLAGS) \
+            $(CGAL_CXXFLAGS) \
            -g
 
 #---------------------------------------------------------------------#
