@@ -156,6 +156,7 @@ $tr->push_content($th_faces);
 $table->push_content($tr);
 
 # loop
+@cpus = ();
 open(LOGFILE, "$logFile") or die "Can't open file: $logFile\n";
 $cnt = 0;
 %days = (Sun => 0, Mon => 1, Tue => 2, Wed => 3, Thu => 4, Fri => 5, Sat => 6);
@@ -170,6 +171,28 @@ while ($line = <LOGFILE>) {
       $osName = $1;
     } elsif ($line =~ /^OS INFO: (.*)/) {
       $osInfo = $1;
+    } elsif ($line =~ /^PROCESSOR: (.*)/) {
+      $procId = $1;
+    } elsif ($line =~ /^CPU SPEED: (.*)/) {
+      $cpus[$procId]{'cpuSpeed'} = $1;
+    } elsif ($line =~ /^CPU TYPE: (.*)/) {
+      $cpus[$procId]{'cpuType'} = $1;
+    } elsif ($line =~ /^PRIMARY DATA CACHE: (.*)/) {
+      $cpus[$procId]{'primDataCache'} = $1;
+    } elsif ($line =~ /^SECONDARY DATA CACHE: (.*)/) {
+      $cpus[$procId]{'secDataCache'} = $1;
+    } elsif ($line =~ /^INSTRUCTION CACHE: (.*)/) {
+      $cpus[$procId]{'instCache'} = $1;
+    } elsif ($line =~ /^MEM SIZE: (.*)/) {
+      $memSize = $1;
+    } elsif ($line =~ /^GFX BOARD: (.*)/) {
+      $gfxBoard = $1;
+    } elsif ($line =~ /^CGAL VERSION: (.*)/) {
+      $cgalVersion = $1;
+    } elsif ($line =~ /^LEDA VERSION: (.*)/) {
+      $ledaVersion = $1;
+    } elsif ($line =~ /^QT VERSION: (.*)/) {
+      $qtVersion = $1;
     } elsif ($line =~ /^(Sun|Mon|Tue|Wed|Thu|Fri|Sat)/) {
       @words = split ' ', $line;
       if ($cnt == 0) {
@@ -274,60 +297,33 @@ $body->push_content($center);
 $p = HTML::Element->new('p');
 $body->push_content($p);
 
-$table = HTML::Element->new('table');
+$table = HTML::Element->new('table', 'border' => '1');
 $body->push_content($table);
 
 # bench duration
 benchDuration($table) if (defined(@startTime) && defined(@endTime) &&
 			  defined($endDay) && defined($startDay));
 
-# Operating System
-$tr = HTML::Element->new('tr');
-$td1 = HTML::Element->new('td');
-$td2 = HTML::Element->new('td');
-$b = HTML::Element->new('b');
-$b->push_content('Operating System');
-$td1->push_content($b);
-$td2->push_content($osName);
-$tr->push_content($td1);
-$tr->push_content($td2);
-$table->push_content($tr);
+addInfo($table, 'Operating System', $osName);
+addInfo($table, 'System Information', $osInfo);
+addInfo($table, 'Compiler name', $compilerName);
+addInfo($table, 'Compiler info', $compilerInfo);
+addInfo($table, 'Memory Size', $memSize);
+addInfo($table, 'Graphics Board', $gfxBoard);
+addInfo($table, 'CGAL Version', $cgalVersion);
+addInfo($table, 'LEDA Version', $ledaVersion);
+addInfo($table, 'QT Version', $qtVersion);
+addInfo($table, 'Number of CPU\'s', $#cpus+1);
 
-# System Information
-$tr = HTML::Element->new('tr');
-$td1 = HTML::Element->new('td');
-$td2 = HTML::Element->new('td');
-$b = HTML::Element->new('b');
-$b->push_content('System Information');
-$td1->push_content($b);
-$td2->push_content($osInfo);
-$tr->push_content($td1);
-$tr->push_content($td2);
-$table->push_content($tr);
-
-# compiler name
-$tr = HTML::Element->new('tr');
-$td1 = HTML::Element->new('td');
-$td2 = HTML::Element->new('td');
-$b = HTML::Element->new('b');
-$b->push_content('Compiler name');
-$td1->push_content($b);
-$td2->push_content($compilerName);
-$tr->push_content($td1);
-$tr->push_content($td2);
-$table->push_content($tr);
-
-# compiler info
-$tr = HTML::Element->new('tr');
-$td1 = HTML::Element->new('td');
-$td2 = HTML::Element->new('td');
-$b = HTML::Element->new('b');
-$b->push_content('Compiler info');
-$td1->push_content($b);
-$td2->push_content($compilerInfo);
-$tr->push_content($td1);
-$tr->push_content($td2);
-$table->push_content($tr);
+for $i (0 .. $#cpus) {
+  $cpuTable = HTML::Element->new('table');
+  addInfo($cpuTable, 'Speed', $cpus[$i]{'cpuSpeed'});
+  addInfo($cpuTable, 'Type', $cpus[$i]{'cpuType'});
+  addInfo($cpuTable, 'Primary Data Cache', $cpus[$i]{'primDataCache'});
+  addInfo($cpuTable, 'Secondary data Cache', $cpus[$i]{'secDataCache'});
+  addInfo($cpuTable, 'Instruction cache', $cpus[$i]{'instCache'});
+  addInfo($table, 'CPU ' . $i, $cpuTable);
+}
 
 $a2 = HTML::Element->new('a', href => '#top');
 $img = HTML::Element->new('img',
@@ -365,6 +361,23 @@ printf "  -databaseFile <file>\tset database xml file to <file>
     
   exit(0);
 }
+
+####
+sub addInfo
+{
+  my ($table,$name,$value) = @_;
+  $tr = HTML::Element->new('tr');
+  $td1 = HTML::Element->new('td');
+  $td2 = HTML::Element->new('td');
+  $b = HTML::Element->new('b');
+  $b->push_content($name);
+  $td1->push_content($b);
+  $td2->push_content($value);
+  $tr->push_content($td1);
+  $tr->push_content($td2);
+  $table->push_content($tr);
+}
+
 ####
 sub benchDuration {
   my ($table) = @_;
@@ -408,8 +421,8 @@ sub findLogFile {
   $month = 0;
   $year = 0;
   foreach $newLogFile (@logFiles) {
-    $date = $newLogFile;
-    $date =~ s/bcgal_(.*)%.*/$1/;
+    next if !($newLogFile =~ /bcgal_([^\.%]*)%[^\.]+\.log$/);
+    $date = $1;
     $newDay = substr($date, 0, 2);
     $newMonth = substr($date, 2, 2);
     $newYear = substr($date, 4, 2);
