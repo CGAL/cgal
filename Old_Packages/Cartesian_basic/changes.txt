@@ -1,3 +1,7 @@
+Version 3.3.7 (?? ?? 1999)
+- Added missing headers [syl].
+- Remove protect macros [syl].
+
 Version 3.3.6 (October 7 1999)
 - Removed  CVS conflict in Cartesian (was submitted in 3.3.5)
 
