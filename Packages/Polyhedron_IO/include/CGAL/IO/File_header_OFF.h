@@ -61,7 +61,7 @@ public:
     typedef  File_header_OFF           Self;
     typedef  File_header_extended_OFF  Base;
 
-    File_header_OFF( bool verbose = false);
+    explicit File_header_OFF( bool verbose = false);
     File_header_OFF( bool binary, bool noc, bool skel,
                      bool verbose = false);
     //File_header_OFF( int v, int h, int f, bool verbose = false);

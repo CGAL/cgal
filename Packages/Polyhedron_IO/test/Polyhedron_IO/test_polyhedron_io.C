@@ -47,22 +47,22 @@
 
 using namespace CGAL;
 
-char* triangle = "OFF\n"
-                 "3 1 0\n"
-                 "0 0 0\n"
-                 "1 0 0\n"
-                 "0 1 0\n"
-                 "3  0 1 2\n";
-char* tetra =    "OFF\n"
-                 "4 4 0\n"
-                 "0 0 0.707107\n"
-                 "1 1 0.707107\n"
-                 "0 1 0\n"
-                 "1 0 0\n"
-                 "3  1 3 0\n"
-                 "3  2 1 0\n"
-                 "3  3 2 0\n"
-                 "3  2 3 1\n";
+const char* triangle = "OFF\n"
+                       "3 1 0\n"
+                       "0 0 0\n"
+                       "1 0 0\n"
+                       "0 1 0\n"
+                       "3  0 1 2\n";
+const char* tetra =    "OFF\n"
+                       "4 4 0\n"
+                       "0 0 0.707107\n"
+                       "1 1 0.707107\n"
+                       "0 1 0\n"
+                       "1 0 0\n"
+                       "3  1 3 0\n"
+                       "3  2 1 0\n"
+                       "3  3 2 0\n"
+                       "3  2 3 1\n";
 
 
 void test_file_IO_OFF() {
@@ -86,7 +86,7 @@ void test_file_IO_OFF() {
         CGAL_assertion( P.is_triangle( P.halfedges_begin()));
 
         std::ostrstream out_new( buffer, 100000);
-        print_OFF( out_new, P, true);
+        print_polyhedron_OFF( out_new, P, true);
         out_new << '\0';
         std::istrstream bufin_new( buffer, 100000);
         P = Polyhedron();
@@ -95,7 +95,7 @@ void test_file_IO_OFF() {
         CGAL_assertion( P.is_triangle( P.halfedges_begin()));
         {
             std::ofstream out2( "triangle_binary.off");
-            print_OFF( out2, P, true);
+            print_polyhedron_OFF( out2, P, true);
         }
         std::ifstream filein( "triangle_binary.off");
         P = Polyhedron();
@@ -117,7 +117,7 @@ void test_file_IO_OFF() {
         CGAL_assertion( P.is_tetrahedron( P.halfedges_begin()));
         {
             std::ofstream out2( "tetra_binary.off");
-            print_OFF( out2, P, true);
+            print_polyhedron_OFF( out2, P, true);
         }
         std::ifstream filein( "tetra_binary.off");
         P = Polyhedron();

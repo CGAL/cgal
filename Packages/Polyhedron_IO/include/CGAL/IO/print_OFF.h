@@ -36,6 +36,30 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template <class Polyhedron>
+void print_polyhedron_with_header_OFF( std::ostream& out, 
+                                       const Polyhedron& P,
+                                       const File_header_OFF& header) {
+    File_writer_OFF  writer( header);
+    writer.header().set_polyhedral_surface( true);
+    writer.header().set_halfedges( P.size_of_halfedges());
+    generic_print_polyhedron( out, P, writer);
+}
+
+
+template <class Polyhedron>
+void print_polyhedron_OFF( std::ostream& out, 
+                           const Polyhedron& P,
+                           bool verbose = false) {
+    File_header_OFF header( verbose);
+    header.set_binary( is_binary( out));
+    header.set_no_comments( ! is_pretty( out));
+    print_polyhedron_with_header_OFF( out, P, header);
+}
+
+
+// Deprecated global functions, replaced with functions above
+
 #ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
 template <class Traits, class HDS>
 void

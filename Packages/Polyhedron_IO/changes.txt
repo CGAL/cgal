@@ -1,5 +1,15 @@
 Polyhedron_IO Package: Release changes:
 ---------------------------------------------------------------------
+
+3.11 (26 Apr 2002)
+
+     - Added print_polyhedron_ functions that match everything instead of
+       just Polyhedron_3 with its potential template template parameter.
+     - Different names for the two versions: print_polyhedron_OFF and
+       print_polyhedron_header_OFF
+     - Added const declarations in test_polyhedron_io[_old].C to
+       the char * string constants.
+
 3.10 (17 Dec 2001)
 
      - Fixed some warnings about double to float and int to bool conversions.

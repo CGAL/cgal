@@ -33,6 +33,14 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template <class Polyhedron>
+void print_polyhedron_inventor( std::ostream& out, const Polyhedron& P) {
+    Inventor_ostream os( out);
+    os << P;
+}
+
+// Deprecated global functions, replaced with functions above
+
 #ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
 template <class Traits, class HDS>
 void

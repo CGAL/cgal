@@ -35,6 +35,14 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template <class Polyhedron>
+void print_polyhedron_wavefront( std::ostream& out, const Polyhedron& P) {
+    File_writer_wavefront  writer;
+    generic_print_polyhedron( out, P, writer);
+}
+
+// Deprecated global functions, replaced with functions above
+
 #ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
 template <class Traits, class HDS>
 void
