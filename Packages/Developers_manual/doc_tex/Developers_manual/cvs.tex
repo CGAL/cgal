@@ -131,24 +131,9 @@ Here are the access rules:
     name and password.  Send your login name to 
     \ccAnchor{mailto:Sylvain.Pion@sophia.inria.fr}
     {\texttt{Sylvain.Pion@sophia.inria.fr}}, as well as your password,
-    encrypted by the Perl script~:
-\begin{verbatim}
-#!/usr/local/bin/perl
-#
-# Perl script that computes an encrypted password.
-# Taken from the book "Open Source development with CVS" by Karl Fogel.
-# Sylvain Pion, 2000.
-
-srand (time());
-my $randletter = "(int (rand(26)) + (int (rand(1) + .5) % 2 ? 65 : 97))";
-my $salt = sprintf ("%c%c", eval $randletter, eval $randletter);
-my $plaintext = shift;
-my $crypttext = crypt ($plaintext, $salt);
-
-print "${crypttext}\n";
-\end{verbatim}
-
-    and indicate for which packages you need write permission.
+    encrypted by the Perl script \texttt{developer\_scripts/crypt\_passwd}
+    (put your password in clear as command line argument).
+    Also, indicate for which packages you need write permission.
 \item
     To get the list of existing modules:
     \texttt{cvs -d :pserver:login\_name@cgal.inria.fr:/CVSROOT co -c}
