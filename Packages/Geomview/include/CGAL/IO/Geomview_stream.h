@@ -24,6 +24,7 @@
 #ifndef CGAL_GEOMVIEW_STREAM_H
 #define CGAL_GEOMVIEW_STREAM_H
 
+#include <CGAL/basic.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/IO/Color.h>
@@ -205,7 +206,7 @@ private:
     double radius;    // radius of vertices
     int in, out;      // file descriptors for input and output pipes
     int pid;          // the geomview process identification
-    std::map<const std::string, int> id; // used to get a unique ID per type.
+    std::map<std::string, int> id; // used to get a unique ID per type.
 };
 
 // Factorize code for Point_2 and Point_3.

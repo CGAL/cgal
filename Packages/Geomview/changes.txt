@@ -1,5 +1,8 @@
 CHANGES to the Geomview package.
 
+Ver 3.22 (15 August 2001)
+- Removed a "const" for SunPro.
+
 Ver 3.21 (15 August 2001)
 - Add missing #includes for SunPro.
 
