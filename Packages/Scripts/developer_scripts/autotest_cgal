@@ -251,8 +251,8 @@ test_script()
 	make_global_makefile
 	log ${ACTUAL_LOGFILE}.${1} "Testing on ${1} with ${2}"
 	remote_command ${1} \
-		"export CGAL_MAKEFILE=${CGAL_MAKE_DIR}/makefile_${2};
-		cd ${CGAL_DIR}/test_${2}; 
+		"CGAL_MAKEFILE=${CGAL_MAKE_DIR}/makefile_${2};
+		export CGAL_MAKEFILE;cd ${CGAL_DIR}/test_${2}; 
 		nice -19 make -j ${NUMBER_OF_PROCESSORS}" \
 	    >> ${ACTUAL_LOGFILE}.${1} 2>&1 
 	log_done ${ACTUAL_LOGFILE}.${1}

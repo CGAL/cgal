@@ -1,3 +1,8 @@
+04 May 2004 Radu Ursu
+- SUN has a problem when export is on the same call with the assignement,
+  so I had to split the call in autotest_cgal into 2 pieces: 
+  CGAL_MAKEFILE=...; export CGAL_MAKEFILE
+
 03 May 2004 Radu Ursu
 - moved install_cgal call from copy_old_stuff to $CGAL_DIR 
 
