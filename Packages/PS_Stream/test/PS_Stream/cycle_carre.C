@@ -11,14 +11,12 @@
 #include <CGAL/IO/PS_Stream_3.h>
 
 typedef CGAL::Cartesian<double> D;
-typedef CGAL::Cartesian<leda_real> R;
-typedef CGAL::Bbox_3 PS_BBox3;
-//typedef R::Direction_3 Direction;
-typedef D::Direction_3 Direction;
-typedef D::Point_3     Point3;
+typedef CGAL::Bbox_3            PS_BBox3;
+typedef D::Direction_3          Direction;
+typedef D::Point_3              Point3;
 
 
-int main(void)
+int main()
 {
   double x,y,z,lx,ly,lz;
   std::string filename;
