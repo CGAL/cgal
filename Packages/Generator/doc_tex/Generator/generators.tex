@@ -22,16 +22,16 @@ A variety of generators for geometric objects are provided in \cgal.
 They are useful as synthetic test data sets, e.g.~for testing
 algorithms on degenerate object sets and for performance analysis.
 
-Section~\ref{sectionRandomNumber} describes a class for generating
-random numbers.  Section~\ref{sectionGeneratorSupport} provides useful 
+Section~\ref{sec:random_numbers_generator} describes a class for generating
+random numbers.  Section~\ref{sec:generator_support} provides useful 
 generic functions related to random
-numbers like \ccc{random_selection()}. Section~\ref{sectionPointGenerators_2}
-documents generators for two-dimensional point sets and Section~\ref{sectionPointGenerators_3} for three-dimensional point sets. 
-Section~\ref{sectionSegmentExample} presents examples
+numbers like \ccc{random_selection()}. Section~\ref{sec:point_generators_2}
+documents generators for two-dimensional point sets and Section~\ref{sec:point_generators_3} for three-dimensional point sets. 
+Section~\ref{sec:segment_example} presents examples
 using functions from Section~\ref{sectionGenericFunctions} to generate
 composed objects, such as segments.  The generation of random convex sets
-is described in Section~\ref{section_BuildingRandomConvexSets} and
-Section~\ref{section_RandomSimplePolygons} presents a function for 
+is described in Section~\ref{sec:building_random_convex_sets} and
+Section~\ref{sec:random_simple_polygons} presents a function for 
 generating random simple polygson.  Note that the \stl\ algorithm
 \ccc{std::random_shuffle} is useful in this context to achieve random
 permutations for otherwise regular generators (e.g.~points on a grid
@@ -43,12 +43,12 @@ or segment).
 
 %\newpage
 \section{Support Functions for Generators}
-\label{sectionGeneratorSupport}
+\label{sec:generator_support}
 \ccThree{OutputIterator}{rand}{}
 
 
 \subsection{{\it random\_selection()}}
-\label{sectionRandomSelection}
+\label{sec:random_selection}
 
 \ccc{random_selection} chooses $n$ items at random from a random
 access iterator range which is useful to produce degenerate input data
@@ -74,7 +74,7 @@ sets with multiple entries of identical items.
 
 % +------------------------------------------------------------------------+
 \section{2D Point Generators}
-\label{sectionPointGenerators_2}
+\label{sec:point_generators_2}
 \lcTex{\ccIndexSubitemBegin[c]{generator}{2D point}}
 \lcTex{\ccIndexSubitemBegin[c]{point, 2D}{generator}}
 
@@ -441,7 +441,7 @@ for the example output.
 % +------------------------------------------------------------------------+
 \newpage
 \section{3D Point Generators}
-\label{sectionPointGenerators_3}
+\label{sec:point_generators_3}
 \lcTex{
 \ccIndexSubitemBegin[c]{generator}{3D point}
 \ccIndexSubitemBegin[c]{point, 3D}{generator}
@@ -542,7 +542,7 @@ include local type declarations including \ccc{value_type}, denoted by
 % +------------------------------------------------------------------------+
 %\newpage
 \section{Examples Generating Segments}
-\label{sectionSegmentExample}
+\label{sec:segment_example}
 \lcTex{\ccIndexSubitemBegin[c]{generator}{segment}}
 
 The following two examples illustrate the use of the generic functions
