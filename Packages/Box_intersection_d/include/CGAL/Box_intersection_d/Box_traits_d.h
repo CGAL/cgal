@@ -42,7 +42,7 @@ struct Box_traits_d {
     static NT        min_coord(Box b, int dim) { return b.min_coord( dim); }
     static NT        max_coord(Box b, int dim) { return b.max_coord( dim); }
     static Id_type   id(Box b)                 { return b.id(); }
-    static const int dimension()               { return Box_::dimension(); }
+    static int dimension()               { return Box_::dimension(); }
 };
 
 // box pointer traits
@@ -55,7 +55,7 @@ struct Box_traits_d<Box_*> {
     static NT        min_coord(Box b, int dim) { return b->min_coord(dim); }
     static NT        max_coord(Box b, int dim) { return b->max_coord(dim); }
     static Id_type   id(Box b)                 { return b->id();   }
-    static const int dimension()               { return Box_::dimension(); }
+    static int dimension()               { return Box_::dimension(); }
 };
 
 // box pointer traits
@@ -68,7 +68,7 @@ struct Box_traits_d<const Box_*> {
     static NT        min_coord(Box b, int dim) { return b->min_coord(dim); }
     static NT        max_coord(Box b, int dim) { return b->max_coord(dim); }
     static Id_type   id(Box b)                 { return b->id();   }
-    static const int dimension()               { return Box_::dimension(); }
+    static int dimension()               { return Box_::dimension(); }
 };
 
 

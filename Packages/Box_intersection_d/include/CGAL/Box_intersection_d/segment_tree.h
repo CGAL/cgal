@@ -32,6 +32,7 @@
 #include <cmath>
 #include <climits>
 #include <cassert>
+#include <cstddef>
 
 CGAL_BEGIN_NAMESPACE
 

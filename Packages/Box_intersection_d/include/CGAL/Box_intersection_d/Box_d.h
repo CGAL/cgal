@@ -85,7 +85,7 @@ public:
             hi[dim] = std::max( hi[dim], p[dim] );
         }
     }
-    static const int dimension() { return N; }
+    static int dimension() { return N; }
     NT min_coord(int dim) const { return lo[dim]; }
     NT max_coord(int dim) const { return hi[dim]; }
 };
@@ -124,7 +124,7 @@ public:
             std::max( bbx.xmax(), p[0]),
             std::max( bbx.ymax(), p[1]));
     }
-    static const int dimension() { return 2; }
+    static int dimension() { return 2; }
     NT min_coord(int dim) const { return (dim==0) ? bbx.xmin() : bbx.ymin();}
     NT max_coord(int dim) const { return (dim==0) ? bbx.xmax() : bbx.ymax();}
 };
@@ -165,7 +165,7 @@ public:
             std::max( bbx.ymax(), p[1]),
             std::max( bbx.zmax(), p[2]));
     }
-    static const int dimension() { return 3; }
+    static int dimension() { return 3; }
     NT min_coord(int dim) const { 
         return (dim==0) ? bbx.xmin() : ((dim==1) ? bbx.ymin() : bbx.zmin());
     }
