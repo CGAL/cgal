@@ -1,5 +1,7 @@
 Version 1.59 (?? June 01)
 - Test-suite cleanups.
+- Change prototype of tds::clear_cells_only() to avoid unnecessary vector
+  copy.
 
 Version 1.58 (7  June 01)
 - Cleanup vertex_3 and cell_3.

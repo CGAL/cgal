@@ -294,8 +294,8 @@ remove(Vertex_handle v)
 
     Vertex_handle inf = infinite_vertex();
 
-    std::vector< CGAL_TYPENAME_MSVC_NULL Tds::Vertex * > Vertices =
-      _tds.clear_cells_only(); 
+    std::vector< CGAL_TYPENAME_MSVC_NULL Tds::Vertex * > Vertices;
+    _tds.clear_cells_only(Vertices); 
 
     _tds.set_number_of_vertices(0);
     _tds.set_dimension(-2);

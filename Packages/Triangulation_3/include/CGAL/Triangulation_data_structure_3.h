@@ -602,7 +602,7 @@ public:
 
   void clear();
 
-  std::vector<Vertex *> clear_cells_only();
+  void clear_cells_only(std::vector<Vertex *> & Vertices);
 
 private:
   // in dimension i, number of vertices >= i+2 
@@ -2555,10 +2555,10 @@ swap(Tds & tds)
 }
 
 template <class Vb, class Cb >
-std::vector< CGAL_TYPENAME_MSVC_NULL
-             Triangulation_data_structure_3<Vb,Cb>::Vertex * > 
+void
 Triangulation_data_structure_3<Vb,Cb>::
-clear_cells_only()
+clear_cells_only(std::vector< CGAL_TYPENAME_MSVC_NULL
+             Triangulation_data_structure_3<Vb,Cb>::Vertex * > & Vertices)
 {
   CGAL_triangulation_assertion(_list_of_temporary_free_cells._next_cell
 	  == &_list_of_temporary_free_cells);
@@ -2584,7 +2584,6 @@ clear_cells_only()
   }
 
   // We must save all vertices because we're going to delete the cells.
-  std::vector<Vertex *> Vertices;
   Vertices.reserve(number_of_vertices());
 
   // deletion of the cells
@@ -2612,7 +2611,8 @@ void
 Triangulation_data_structure_3<Vb,Cb>::
 clear()
 {
-  std::vector<Vertex*> Vertices = clear_cells_only();
+  std::vector<Vertex*> Vertices;
+  clear_cells_only(Vertices);
 
   // deletion of the vertices
   for (typename std::vector<Vertex*>::iterator vit = Vertices.begin();
