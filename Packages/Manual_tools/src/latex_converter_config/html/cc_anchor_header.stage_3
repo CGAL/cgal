@@ -27,8 +27,14 @@
 #define YY_SKIP_YYWRAP 1
 #define yywrap() 1
 
+/* program return code: 0 = o.k., 1 = error, 2 = warning */
+int error_code = 0;
+
 /* Is used to count nesting levels during PARAMMODE */
 int nesting;
+
+/* Is used to count nesting levels during NOLINKMODE */
+int linknesting;
 
 /* find the next occurance of c in s or the '\0' character */
 const char* find_char( const char* s, char c) {
@@ -102,6 +108,11 @@ void wrap_anchor( const char* url, const char* body) {
 /* Count nesting parantheses and so forth.                           */
 %x PARAMMODE
 
+/* Possibly nested blocks where cross-linking is suppressed. Use     */
+/* carefully, since it blocks all kinds of replacements, such as     */
+/* links to chapters, citations, references etc.                     */
+%x NOLINKMODE
+
 /* Avoid substitutions while within an HTML Tag. */
 %x TAGMODE
 
@@ -123,6 +134,9 @@ par             {ws}("<"[pP]">"{ws})*
 glue            {ws}("<"[pP]">"{ws})*"<!GLUE>"{ws}("<"[pP]">"{ws})*
 head            "<"[hH][eE][aA][dD]
 endhead         "</"[hH][eE][aA][dD]">"
+nolinkbegin     "<!NoLinkBegin>"
+nolinkend       "<!NoLinkEnd>"
+nolinksync      "<!NoLinkSync>"
 
 %%
 
@@ -139,9 +153,11 @@ endhead         "</"[hH][eE][aA][dD]">"
 <PARAMMODE>[<(\{\[]    {   ++nesting; yymore(); }
 <PARAMMODE>[>)\}\]]    {   --nesting; 
 		           if ( nesting < 1) {
-			       fputs( "warning: mismatching <>(){}[] in template parameters : `", stderr);
+			       fputs( "\nwarning: mismatching <>(){}[] in template parameters : `", stderr);
 			       fputs( yytext, stderr);
 			       fputs( "'\n", stderr);
+                               if ( error_code == 0)
+                                   error_code = 2;
 			       BEGIN( INITIAL);
 			       ECHO;
 			       fputs( "</A>", stdout);
@@ -149,6 +165,21 @@ endhead         "</"[hH][eE][aA][dD]">"
 			       yymore();
                        }
 <PARAMMODE>.           {   yymore(); }
+
+{nolinkbegin}                  { BEGIN( NOLINKMODE); linknesting = 1; }
+{nolinkend}                    { fputs( "\nERROR: Found \\lcNoLinkEnd without a matching \\lcNoLinkBegin.\n", stderr); error_code = 1; }
+{nolinksync}                   { ;}
+<NOLINKMODE>{nolinkbegin}      { ++linknesting; }
+<NOLINKMODE>{nolinkend}        { --linknesting;
+                                 if ( ! linknesting) BEGIN( INITIAL);
+                               }
+<NOLINKMODE>{nolinksync}       { fputs( "\nERROR: \\lcNoLinkSync used in \\lcNoLinkBegin/End block, which indicates missing or runaway \\lcNoLinkEnd.\n", stderr); 
+                                 linknesting = 0;
+                                 BEGIN( INITIAL);
+                                 error_code = 1;
+}
+
+<NOLINKMODE>.                  { ECHO;}
 
 {head}(.|[\n])*{endhead}       { ECHO; /* Avoid substitutions in the head */ }
 

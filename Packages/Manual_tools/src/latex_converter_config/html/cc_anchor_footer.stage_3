@@ -26,5 +26,5 @@
 
 int main( void) {
     yylex();
-    return 0;
+    return error_code;
 }

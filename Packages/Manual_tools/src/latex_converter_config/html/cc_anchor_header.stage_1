@@ -27,8 +27,14 @@
 #define YY_SKIP_YYWRAP 1
 #define yywrap() 1
 
+/* program return code: 0 = o.k., 1 = error, 2 = warning */
+int error_code = 0;
+
 /* Is used to count nesting levels during PARAMMODE */
 int nesting;
+
+/* Is used to count nesting levels during NOLINKMODE */
+int linknesting;
 
 /* find the next occurance of c in s or the '\0' character */
 const char* find_char( const char* s, char c) {
@@ -102,6 +108,11 @@ void wrap_anchor( const char* url, const char* body) {
 /* Count nesting parantheses and so forth.                           */
 %x PARAMMODE
 
+/* Possibly nested blocks where cross-linking is suppressed. Use     */
+/* carefully, since it blocks all kinds of replacements, such as     */
+/* links to chapters, citations, references etc.                     */
+%x NOLINKMODE
+
 /* Avoid substitutions while within an HTML Tag. */
 %x TAGMODE
 
@@ -123,6 +134,9 @@ par             {ws}("<"[pP]">"{ws})*
 glue            {ws}("<"[pP]">"{ws})*"<!GLUE>"{ws}("<"[pP]">"{ws})*
 head            "<"[hH][eE][aA][dD]
 endhead         "</"[hH][eE][aA][dD]">"
+nolinkbegin     "<!NoLinkBegin>"
+nolinkend       "<!NoLinkEnd>"
+nolinksync      "<!NoLinkSync>"
 
 %%
 
@@ -150,6 +164,21 @@ endhead         "</"[hH][eE][aA][dD]">"
                        }
 <PARAMMODE>.           {   yymore(); }
 
+{nolinkbegin}                  { BEGIN( NOLINKMODE); ECHO; linknesting = 1; }
+{nolinkend}                    { error_code = 1; ECHO; }
+{nolinksync}                   { ECHO;}
+<NOLINKMODE>{nolinkbegin}      { ++linknesting; ECHO; }
+<NOLINKMODE>{nolinkend}        { --linknesting;
+                                 if ( ! linknesting) BEGIN( INITIAL);
+                                 ECHO;
+                               }
+<NOLINKMODE>{nolinksync}       { linknesting = 0;
+                                 BEGIN( INITIAL);
+                                 error_code = 1;
+                                 ECHO;
+}
+<NOLINKMODE>.                  { ECHO;}
+
 {head}(.|[\n])*{endhead}       { ECHO; /* Avoid substitutions in the head */ }
 
 "<"[aA][^0-9a-zA-Z]            { BEGIN( ANCHORMODE); ECHO;}
@@ -165,32 +194,39 @@ endhead         "</"[hH][eE][aA][dD]">"
 <TAGMODE>.                     { ECHO;}
 
 
-"</TABLE><!3>"{glue}"<!3><TABLE"[^>]*">"    { ; /* smooth adjacent tables */}
-"</TABLE><!2>"{glue}"<!2><TABLE"[^>]*">"    { ; /* smooth adjacent tables */}
-"</TABLE><!".">"{glue}"<!"."><TABLE"        { /* smooth other tables   */
+<INITIAL,NOLINKMODE>"</TABLE><!3>"{glue}"<!3><TABLE"[^>]*">"    {
+                               ; /* smooth adjacent tables */
+}
+<INITIAL,NOLINKMODE>"</TABLE><!2>"{glue}"<!2><TABLE"[^>]*">"    { 
+                               ; /* smooth adjacent tables */
+}
+<INITIAL,NOLINKMODE>"</TABLE><!".">"{glue}"<!"."><TABLE"        { 
+                               /* smooth other tables   */
                                fputs( "</TABLE>\n        <TABLE", stdout);
 }
-"</TABLE><!3>"{par}"<!3><TABLE"[^>]*">"     {
+<INITIAL,NOLINKMODE>"</TABLE><!3>"{par}"<!3><TABLE"[^>]*">"     {
                                /* smooth adjacent tables */
                                fputs( "<TR><TD><BR></TD></TR>", stdout);
 }
-"</TABLE><!2>"{par}"<!2><TABLE"[^>]*">"    {
+<INITIAL,NOLINKMODE>"</TABLE><!2>"{par}"<!2><TABLE"[^>]*">"    {
                                /* smooth adjacent tables */
                                fputs( "<TR><TD><BR></TD></TR>", stdout);
 }
-"</TABLE><!".">"{par}"<!"."><TABLE"        { /* smooth other tables   */
-                               fputs( "</TABLE>\n<P>\n\n        <TABLE", stdout);
+<INITIAL,NOLINKMODE>"</TABLE><!".">"{par}"<!"."><TABLE"        { 
+                               /* smooth other tables   */
+                             fputs( "</TABLE>\n<P>\n\n        <TABLE", stdout);
 }
-{ws}"<"[pP]">"{ws}("<"[pP]">"{ws})+  {   /* Reduce <P>'s to one <P> */
+<INITIAL,NOLINKMODE>{ws}"<"[pP]">"{ws}("<"[pP]">"{ws})+  {
+                               /* Reduce <P>'s to one <P> */
                                fputs( "\n<P>\n\n", stdout);
 }
-{ws}"<"[pP]">"{ws}         {   /* Pretty print single <P>'s */
+<INITIAL,NOLINKMODE>{ws}"<"[pP]">"{ws}         { /* Pretty print single <P> */
                                fputs( "\n<P>\n\n", stdout);
 }
-{ws}"<"[bB][rR]">"{ws}     {   /* Pretty print single <BR>'s */
+<INITIAL,NOLINKMODE>{ws}"<"[bB][rR]">"{ws}     { /* Pretty print single <BR> */
                                fputs( "<BR>\n\n", stdout);
 }
-"<!GLUE>"                  { ; /* remove superfluous glues */ }
-"<!3>"                     { ; /* remove superfluous table hints */ }
-"<!2>"                     { ; /* remove superfluous table hints */ }
+<INITIAL,NOLINKMODE>"<!GLUE>"  { ; /* remove superfluous glues */ }
+<INITIAL,NOLINKMODE>"<!3>"     { ; /* remove superfluous table hints */ }
+<INITIAL,NOLINKMODE>"<!2>"     { ; /* remove superfluous table hints */ }
 
