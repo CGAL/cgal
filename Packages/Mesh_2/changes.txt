@@ -1,3 +1,13 @@
+version 0.9.4
+--------------------------
+o All names have changed.
+o new concepts ConformingDelaunayTriangulationTraits_2 and
+  ConformingDelaunayTriangulationTraits_2
+o New internals and interface for Delaunay_mesh_2 and
+  Conforming_Delaunay_triangulation_2
+o updated documentation
+o various changes in examples/ and demo/
+
 version 0.9.3 (2003/05/10)
 --------------------------
 o internal release

@@ -42,22 +42,23 @@ public:
   typedef Seeds_iterator Seeds_const_iterator;
   //@}
 
+  /** \name Traits types */
+  //@{
+  typedef typename Geom_traits::Quality Quality;
+  //@}
+
   /** \name CONSTRUCTORS */
   //@{
   
   explicit Delaunay_mesh_2(const Geom_traits& gt = Geom_traits()):
-    Base(gt), initialized(false) {}
+    Base(gt) {}
 
   //@}
 
   /** \name ACCESS FUNCTION */
   //@{
-  bool is_bad(const Face_handle fh) const;
-
-  double squared_minimum_sine(const Face_handle fh) const;
-  double squared_minimum_sine(const Vertex_handle& va,
-			      const Vertex_handle& vb,
-			      const Vertex_handle& vc) const;
+  bool is_bad(const Face_handle fh, Quality& q) const;
+  bool is_bad(const Face_handle fh) const ;
 
   Seeds_const_iterator seeds_begin() const;
   Seeds_const_iterator seeds_end() const;
@@ -116,7 +117,7 @@ public:
   {
     bad_faces.clear();
     for(Fh_it pfit=begin; pfit!=end; ++pfit)
-      push_in_bad_faces(*pfit);
+      push_in_bad_faces(*pfit, Quality());
   }
 
   /** \name STEP BY STEP FUNCTIONS */
@@ -144,13 +145,11 @@ private:
 
   /** \name traits type */
   typedef typename Geom_traits::Is_bad Is_bad;
-  typedef typename Geom_traits::Compute_squared_minimum_sine_2 
-      Compute_squared_minimum_sine_2;
   typedef typename Geom_traits::Compute_squared_distance_2
       Compute_squared_distance_2;
 
   /** \name typedefs for private members types */
-  typedef CGAL::Double_map<Face_handle, double> Bad_faces;
+  typedef CGAL::Double_map<Face_handle, Quality> Bad_faces;
 
 private:
   /** \name PRIVATE MEMBER DATAS */
@@ -160,7 +159,6 @@ private:
   //  triangulation, that's why we need to be able to remoce faces
   //  from the map.
   Bad_faces bad_faces;
-  bool initialized;
 
   Seeds seeds;
   bool seeds_mark;
@@ -183,10 +181,7 @@ private:
 
   // auxiliary functions called to put a new face in the map, two
   // forms
-  void push_in_bad_faces(Face_handle fh);
-  void push_in_bad_faces(Vertex_handle va,
-			 Vertex_handle vb,
-			 Vertex_handle vc);
+  void push_in_bad_faces(Face_handle fh, const Quality& q);
  
   // scan all faces and put them if needed in the map
   void fill_facet_map();
@@ -202,7 +197,7 @@ private:
   // handle one face; call split_face or put in the edges_to_be_conformed the
   // list of edges that would be encroached by the circum_center of f
   // This function uses Shewchuk's terminator criteria.
-  void refine_face(Face_handle f);
+  void refine_face(Face_handle f, const Quality& q);
 
 
 
@@ -239,39 +234,23 @@ private:
 template <class Tr>
 inline
 bool Delaunay_mesh_2<Tr>::
-is_bad(const Face_handle f) const
+is_bad(const Face_handle f, typename Delaunay_mesh_2<Tr>::Quality& q) const
 {
   const Point
     & a = f->vertex(0)->point(),
     & b = f->vertex(1)->point(),
     & c = f->vertex(2)->point();
 
-  return geom_traits().is_bad_object()(a,b,c);
+  return geom_traits().is_bad_object()(a,b,c,q);
 }
 
 template <class Tr>
 inline
-double Delaunay_mesh_2<Tr>::
-squared_minimum_sine(const Vertex_handle& va, const Vertex_handle& vb,
-		     const Vertex_handle& vc) const
-{
-  Compute_squared_minimum_sine_2 squared_sine = 
-    geom_traits().compute_squared_minimum_sine_2_object();
-
-  return squared_sine(va->point(), vb->point(), vc->point());
-}
-
-template <class Tr>
-inline
-double Delaunay_mesh_2<Tr>::
-squared_minimum_sine(const Face_handle fh) const
-{
-  const Vertex_handle
-    & va = fh->vertex(0),
-    & vb = fh->vertex(1),
-    & vc = fh->vertex(2);
-
-  return squared_minimum_sine(va, vb, vc);
+bool Delaunay_mesh_2<Tr>::
+is_bad(const Face_handle f) const
+{ 
+  Quality q;
+  return is_bad(fh, q);
 }
 
 template <class Tr>
@@ -339,7 +318,7 @@ inline
 void Delaunay_mesh_2<Tr>::
 refine_mesh()
 {
-  if(!initialized) init();
+  if(get_initialized() != GABRIEL) init();
 
   while(!Conform::is_conforming_done() || !bad_faces.empty() )
     {
@@ -382,7 +361,7 @@ inline
 bool Delaunay_mesh_2<Tr>::
 refine_step()
 {
-  if( !step_by_step_conforming_Delaunay() ) // TODO, WARNING: changer ça!!!
+  if( !step_by_step_conforming_Gabriel() )
     if ( !bad_faces.empty() )
       process_one_face();
     else
@@ -432,21 +411,10 @@ propagate_marks(const Face_handle fh, bool mark)
 template <class Tr>
 inline
 void Delaunay_mesh_2<Tr>::
-push_in_bad_faces(Face_handle fh)
+push_in_bad_faces(Face_handle fh, const Quality& q)
 {
   CGAL_assertion(fh->is_marked());
-  bad_faces.insert(fh, squared_minimum_sine(fh));
-}
-
-template <class Tr>
-inline
-void Delaunay_mesh_2<Tr>::
-push_in_bad_faces(Vertex_handle va, Vertex_handle vb,
-		  Vertex_handle vc)
-{
-  Face_handle fh;
-  is_face(va, vb, vc, fh);
-  push_in_bad_faces(fh);
+  bad_faces.insert(fh, q);
 }
 
 //it is necessarry for process_facet_map
@@ -457,8 +425,11 @@ fill_facet_map()
   for(Finite_faces_iterator fit = finite_faces_begin();
       fit != finite_faces_end();
       ++fit)
-    if( is_bad(fit) && fit->is_marked() )
-      push_in_bad_faces(fit);
+    {
+      Quality q;
+      if( is_bad(fit, q) && fit->is_marked() )
+	push_in_bad_faces(fit, q);
+    }
 }
 
 template <class Tr>
@@ -467,9 +438,10 @@ compute_new_bad_faces(Vertex_handle v)
 {
   Face_circulator fc = v->incident_faces(), fcbegin(fc);
   do {
+    Quality q;
     if(!is_infinite(fc))
-      if( is_bad(fc) && fc->is_marked() )
-	push_in_bad_faces(fc);
+      if( is_bad(fc, q) && fc->is_marked() )
+	push_in_bad_faces(fc, q);
     fc++;
   } while(fc!=fcbegin);
 }
@@ -480,14 +452,15 @@ void Delaunay_mesh_2<Tr>::
 process_one_face()
 {
   Face_handle f = bad_faces.front()->second;
+  const Quality& q = bad_faces.front()->first;
   bad_faces.pop_front();
-  refine_face(f);
+  refine_face(f, q);
 }
 
 //split all the bad faces
 template <class Tr>
 void Delaunay_mesh_2<Tr>::
-refine_face(const Face_handle f)
+refine_face(const Face_handle f, const Quality& q)
 {
   Is_locally_conforming_Gabriel is_gabriel_conform;
 
@@ -554,21 +527,14 @@ refine_face(const Face_handle f)
     }; // after here edges encroached by pc are in the list of edges to
        // be conformed.
 
-
-  const Vertex_handle
-    & va = f->vertex(0),
-    & vb = f->vertex(1),
-    & vc = f->vertex(2);
-
   if(split_the_face)
     {
       CGAL_assertion(f->is_marked());
-      if(f->is_marked())
-	split_face(f, pc);
+      split_face(f, pc);
     }
   else
     if(keep_the_face_bad)
-      push_in_bad_faces(va, vb, vc);
+      push_in_bad_faces(f, q);
 }
 
 // # used by refine_face
@@ -578,6 +544,7 @@ void Delaunay_mesh_2<Tr>::
 split_face(const Face_handle& f, const Point& circum_center)
 {
   bool marked = f->is_marked();
+  CGAL_assertion(marked); // TODO: remove this
 
   List_of_face_handles zone_of_cc;
   List_of_edges zone_of_cc_boundary;
@@ -592,16 +559,11 @@ split_face(const Face_handle& f, const Point& circum_center)
     bad_faces.erase(*fh_it);
 
   // insert the point in the triangulation with star_hole
-  Vertex_handle v = star_hole(circum_center,
+  Vertex_handle v = Base::Triangulation::star_hole(circum_center,
 			      zone_of_cc_boundary.begin(),
 			      zone_of_cc_boundary.end(),
 			      zone_of_cc.begin(),
 			      zone_of_cc.end());
-
-  Face_circulator fc = incident_faces(v), fcbegin(fc);
-  do {
-    fc->set_marked(marked);
-  } while (++fc != fcbegin);
 
   compute_new_bad_faces(v);
 }
@@ -675,7 +637,7 @@ template <class Tr>
 bool Delaunay_mesh_2<Tr>::
 is_bad_faces_valid()
 {
-  typedef std::list<std::pair<double, Face_handle> > Bad_faces_list;
+  typedef std::list<std::pair<Quality, Face_handle> > Bad_faces_list;
   
   bool result = true;
 
@@ -683,7 +645,7 @@ is_bad_faces_valid()
 
   while(!bad_faces.empty())
     {
-      double d = bad_faces.front()->first;
+      Quality d = bad_faces.front()->first;
       Face_handle fh = bad_faces.front()->second;
       bad_faces.pop_front();
       

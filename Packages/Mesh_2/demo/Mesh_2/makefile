@@ -55,11 +55,14 @@ mesh_demo$(OBJ_EXT): mesh_demo.moc Show_clusters.moc \
 	../../include/CGAL/Double_map.h \
 	../../include/CGAL/Filter_circulator.h \
 	../../include/CGAL/Filtered_container.h \
+	../../include/CGAL/Conforming_Delaunay_triangulation_2.h \
 	../../include/CGAL/Delaunay_mesh_2.h \
-	../../include/CGAL/Mesh_default_traits_2.h \
-	../../include/CGAL/Mesh_face_base_2.h \
-	../../include/CGAL/Mesh_local_size_traits_2.h \
-	../../include/CGAL/Mesh_size_traits_2.h
+	../../include/CGAL/Delaunay_mesh_traits_2.h \
+	../../include/CGAL/Delaunay_mesh_face_base_2.h \
+	../../include/CGAL/Delaunay_mesh_local_size_traits_2.h \
+	../../include/CGAL/Delaunay_mesh_size_traits_2.h \
+	../../include/CGAL/Read_write.h
+
 
 mesh_demo$(EXE_EXT): mesh_demo$(OBJ_EXT) icons$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)mesh_demo \

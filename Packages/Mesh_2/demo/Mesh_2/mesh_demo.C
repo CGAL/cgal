@@ -25,8 +25,8 @@ int main(int, char*)
 #include <CGAL/Polygon_2.h>
 #define CGAL_MESH_2_USE_TIMERS
 #include <CGAL/Delaunay_mesh_2.h>
-#include <CGAL/Mesh_local_size_traits_2.h>
-#include <CGAL/Mesh_face_base_2.h>
+#include <CGAL/Delaunay_mesh_local_size_traits_2.h>
+#include <CGAL/Delaunay_mesh_face_base_2.h>
 
 #include <CGAL/Read_write.h>
 
@@ -83,9 +83,9 @@ struct K : public Kernel {};
 typedef K::FT                           FT;
 
 typedef CGAL::Triangulation_vertex_base_2<K> Vb;
-typedef CGAL::Mesh_face_base_2<K> Fb;
+typedef CGAL::Delaunay_mesh_face_base_2<K> Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb, Fb> Tds;
-typedef CGAL::Mesh_local_size_traits_2<K> Meshtraits;
+typedef CGAL::Delaunay_mesh_local_size_traits_2<K> Meshtraits;
 typedef CGAL::Constrained_Delaunay_triangulation_2<Meshtraits, Tds,
   CGAL::Exact_predicates_tag> Tr;
 
@@ -155,7 +155,7 @@ class MyWindow : public QMainWindow
 {
   Q_OBJECT
 public:
-  MyWindow() : is_mesh_initialized(false), traits()
+  MyWindow() : traits()
     {
       mesh = new Mesh(traits);
 
@@ -180,13 +180,11 @@ public:
 						     "infoframelayout");
       mainlayout->addWidget(infoframe);
 
-      // a 2x2 QGridLayout in the info frame (space=5)
+      // a 3x2 QGridLayout in the info frame (space=5)
       QGridLayout *numbers_layout = new QGridLayout(infoframelayout,
-						    2, 2, 
+						    3, 2, 
 						    5, // space
 						    "infolayout");
-      //      numbers_layout->setMargin(10);
-
       //   number of points
       numbers_layout->addWidget(new QLabel("Number of points: ",
 					   infoframe),
@@ -205,6 +203,15 @@ public:
 
       nb_of_clusters = new QLabel("", infoframe);
       numbers_layout->addWidget(nb_of_clusters, 1, 1,
+				AlignLeft | AlignTop );
+
+      //   initialization status
+      numbers_layout->addWidget(new QLabel("init: ", infoframe),
+				2, 0,
+				AlignRight | AlignTop );
+
+      init_status = new QLabel("no", infoframe);
+      numbers_layout->addWidget(init_status, 2, 1,
 				AlignLeft | AlignTop );
 
       // a vertical spacer in the info frame
@@ -567,24 +574,31 @@ signals:
   void insertedInput();
   void initializedMesh();
 
-public slots:
-
+private slots:
   void after_initialized_mesh()
   {
-    is_mesh_initialized = true;
     updatePointCounter();
+    switch( mesh->get_initialized() )
+      {
+      case Mesh::NONE: init_status->setText("no"); break;
+      case Mesh::DELAUNAY: init_status->setText("Delaunay"); break;
+      case Mesh::GABRIEL: init_status->setText("Gabriel"); break;
+      default: init_status->setText("unknown"); break;
+      }
     show_clusters->reinitClusters();
   }
 
   void after_inserted_input()
   {
-    is_mesh_initialized = false;
+    mesh->set_initialized(Mesh::NONE);
     nb_of_clusters_has_to_be_updated = true;
     mesh->mark_facets();
   }
 
+public slots:
+
   void get_cgal_object(CGAL::Object obj)
-    { // TODO: when inputs arise, seeds should be cleared
+    {
       Point p;
       CGALPolygon poly;
       
@@ -602,8 +616,9 @@ public slots:
 		  a = fh->vertex(0)->point(),
 		  b = fh->vertex(1)->point(),
 		  c = fh->vertex(2)->point();
-		  
-		if(traits.is_bad_object().operator()(a, b, c))
+
+		Mesh::Quality q;
+		if(traits.is_bad_object().operator()(a, b, c, q))
 		  l.push_back(fh);
 	      }
 	    mesh->set_geom_traits(traits);
@@ -670,7 +685,8 @@ public slots:
   void updatePointCounter()
     {
       nb_of_points->setNum(mesh->number_of_vertices());
-      if(nb_of_clusters_has_to_be_updated && is_mesh_initialized)
+      if(nb_of_clusters_has_to_be_updated &&
+	 mesh->get_initialized() != Mesh::NONE)
 	{
 	  nb_of_clusters_has_to_be_updated = false;
 	  nb_of_clusters->setNum(mesh->number_of_clusters_vertices());
@@ -681,42 +697,41 @@ public slots:
     {
       saveTriangulationUrgently("last_input.edg");
       mesh->refine_mesh();
-      is_mesh_initialized=true;
-      updatePointCounter();
+      emit initializedMesh();
       widget->redraw();
     }
 
   void conformMesh()
     {
-      if(!is_mesh_initialized)
+      if(mesh->get_initialized() != Mesh::GABRIEL)
 	{
 	  saveTriangulationUrgently("last_input.edg");
 	  mesh->init();
-	  is_mesh_initialized=true;
+	  initializedMesh();
 	}
-      mesh->make_conforming_Delaunay();
+      mesh->make_conforming_Gabriel();
       updatePointCounter();
       widget->redraw();
     }
 
   void refineMeshStep()
     {
+      mesh->is_valid(true); // TODO: remove this
       int counter = step_lenght;
-      if(!is_mesh_initialized)
+      if(mesh->get_initialized() != Mesh::GABRIEL)
 	{
 	  mesh->init_Gabriel();
-	  std::cerr << "mesh->init();"<< std::endl;
-	  is_mesh_initialized=true;
+	  initializedMesh();
 	  saveTriangulationUrgently("last_input.edg");
 	}
       while(counter>0)
 	{
+	  --counter;
 	  if(!mesh->refine_step())
 	    {
 	      pbMeshTimer->setOn(false);
 	      counter = 0;
 	    }
-	  --counter;
 	}
       updatePointCounter();
       widget->redraw();
@@ -763,13 +778,22 @@ public slots:
       widget->redraw();
     }
 
-  void openTriangulation()
+  void openTriangulation() { openTriangulation(QString()); }
+
+  void openTriangulation(QString filename)
     {
-      QString s( QFileDialog::getOpenFileName( QString::null,
-					       my_filters, this ) );
+      QString s;
+      if( filename.isEmpty() )
+	s = QFileDialog::getOpenFileName( QString::null,
+					  my_filters, this );
+      else
+	s = filename;
+
       if ( s.isEmpty() )
         return;
       std::ifstream f(s);
+      if (!f) return;
+
       if(s.right(5) == ".poly")
 	{
 	  read_poly(*mesh, f);
@@ -940,7 +964,6 @@ public slots:
 
 private:
   static const QString my_filters;
-  bool is_mesh_initialized;
   Meshtraits traits;
   Mesh* mesh;
 
@@ -973,6 +996,7 @@ private:
   Show_clusters<Mesh>* show_clusters;
 
   QLabel *nb_of_points;
+  QLabel *init_status;
   QLineEdit* angle_bound;
   QLineEdit* size_bound;
   QCheckBox* under_mouse;
@@ -1028,8 +1052,11 @@ int main(int argc, char** argv)
   app.setMainWidget(W);
   W->show();
 
-//   my_previous_failure_function = 
-//     CGAL::set_error_handler(cgal_with_exceptions_failure_handler);
+  //  if( argc == 1 )
+  //W->openTriangulation(argv[1]);
+
+  //  my_previous_failure_function = 
+  //CGAL::set_error_handler(cgal_with_exceptions_failure_handler);
 
   try {
     return app.exec();

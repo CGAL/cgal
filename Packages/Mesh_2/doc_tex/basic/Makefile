@@ -6,10 +6,10 @@ to_html:
 	LATEX_CONV_INPUTS=.:./Mesh_2_ref:./Mesh_2 cc_manual_to_html -o html manual.tex
 
 manual.ps:
-	TEXINPUTS=${TEXINPUTS}:${PWD}/Mesh_2_ref latex manual.tex
+	TEXINPUTS=${PWD}/Mesh_2_ref:./Mesh_2:${TEXINPUTS} latex manual.tex
 	makeindex manual
 	index_fix manual.ind
-	TEXINPUTS=${TEXINPUTS}:${PWD}/Mesh_2_ref latex manual.tex
+	TEXINPUTS=${PWD}/Mesh_2_ref:./Mesh_2:${TEXINPUTS} latex manual.tex
 	dvips -o manual.ps manual.dvi
 
 manual.ps.gz: manual.ps

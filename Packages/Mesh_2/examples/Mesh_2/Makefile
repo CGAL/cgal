@@ -38,7 +38,7 @@ all:            \
                 mesh$(EXE_EXT) 
 
 conform$(OBJ_EXT): ../../include/CGAL/Conforming_Delaunay_triangulation_2.h \
-                ../../include/CGAL/Mesh_default_traits_2.h \
+                ../../include/CGAL/Delaunay_mesh_traits_2.h \
 		../../include/CGAL/Double_map.h \
 		../../include/CGAL/Filter_circulator.h \
 		../../include/CGAL/Filtered_container.h
@@ -46,9 +46,9 @@ conform$(OBJ_EXT): ../../include/CGAL/Conforming_Delaunay_triangulation_2.h \
 conform$(EXE_EXT): conform$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)conform conform$(OBJ_EXT) $(LDFLAGS)
 
-mesh$(OBJ_EXT): ../../include/CGAL/Mesh_2.h \
-                ../../include/CGAL/Mesh_face_base_2.h \
-                ../../include/CGAL/Mesh_default_traits_2.h \
+mesh$(OBJ_EXT): ../../include/CGAL/Delaunay_mesh_2.h \
+                ../../include/CGAL/Delaunay_mesh_face_base_2.h \
+                ../../include/CGAL/Delaunay_mesh_traits_2.h \
 		../../include/CGAL/Double_map.h \
 		../../include/CGAL/Filter_circulator.h \
 		../../include/CGAL/Filtered_container.h \

@@ -60,6 +60,11 @@ public:
   typedef typename Tr::Point                  Point;
   //@}
 
+  /** \name Types needed to access member datas */
+  //@{
+  enum Initialization { NONE, CLUSTER, DELAUNAY, GABRIEL };
+  //@}
+
 protected:
   // typedefs for private members types
   typedef std::pair<Vertex_handle,Vertex_handle> Constrained_edge;
@@ -321,6 +326,12 @@ public:
   bool is_conforming_Gabriel()
   { return is_conforming(Is_locally_conforming_Gabriel()); }
 
+  /** Access to the private initialized member data. */
+  //@{
+  void set_initialized(Initialization init) { initialized = init; }
+  Initialization get_initialized() const { return initialized; }
+  //@}
+
   /** \name HELPING FUNCTIONS */
   //@{
   void clear();
@@ -340,8 +351,16 @@ public:
      (The call of this function is REQUIRED before any step by step
      operation).
   */
-  void init_Delaunay() { init(Is_locally_conforming_Delaunay());}
-  void init_Gabriel() { init(Is_locally_conforming_Gabriel()); }
+  void init_Delaunay()
+    { 
+      initialized = DELAUNAY;
+      init(Is_locally_conforming_Delaunay());
+    }
+  void init_Gabriel()
+    { 
+      initialized = GABRIEL;
+      init(Is_locally_conforming_Gabriel());
+    }
 
   /** Execute on step of the algorithm.
       init() should have been called before.
@@ -395,7 +414,7 @@ private:
 
   // tell if init has been called since the last insertion of a
   // constraint
-  bool initialized;
+  Initialization initialized;
 
   // --- PRIVATE MEMBER FUNCTIONS ---
 private: 
@@ -558,7 +577,7 @@ Conforming_Delaunay_triangulation_2(const Geom_traits& gt)
   : Tr(gt), is_really_a_constrained_edge(*this),
     edges_to_be_conformed(is_really_a_constrained_edge),
     cluster_map(),
-    initialized(false)
+    initialized(NONE)
 {};
 
 // --- ACCESS FUNCTIONS ---
@@ -608,7 +627,7 @@ inline
 void Conforming_Delaunay_triangulation_2<Tr>::
 make_conforming_Delaunay()
 {
-  if(!initialized) init(Is_locally_conforming_Delaunay());
+  if(initialized!=DELAUNAY) init_Delaunay();
   while( !edges_to_be_conformed.empty() )
     {
       process_one_edge(Is_locally_conforming_Delaunay());
@@ -620,7 +639,7 @@ inline
 void Conforming_Delaunay_triangulation_2<Tr>::
 make_conforming_Gabriel()
 {
-  if(!initialized) init(Is_locally_conforming_Gabriel());
+  if(initialized!=GABRIEL) init_Gabriel();
   while( !edges_to_be_conformed.empty() )
     {
       process_one_edge(Is_locally_conforming_Gabriel());	
@@ -638,7 +657,7 @@ init(const Is_locally_conform& is_loc_conf)
   edges_to_be_conformed.clear();
   create_clusters();
   fill_edge_queue(is_loc_conf);
-  initialized = true;
+  CGAL_assertion(initialized == GABRIEL || initialized == DELAUNAY);
 }
 
 template <class Tr>

@@ -1,12 +1,15 @@
-#include <CGAL/Mesh_size_traits_2.h>
+#ifndef CGAL_DELAUNAY_MESH_LOCAL_SIZE_TRAITS_2_H
+#define CGAL_DELAUNAY_MESH_LOCAL_SIZE_TRAITS_2_H
+
+#include <CGAL/Delaunay_mesh_size_traits_2.h>
 
 namespace CGAL {
 
 template <class K>
-class Mesh_local_size_traits_2 : public Mesh_size_traits_2<K>
+class Delaunay_mesh_local_size_traits_2 : public Delaunay_mesh_size_traits_2<K>
 {
 public:
-  typedef Mesh_size_traits_2<K> Base;
+  typedef Delaunay_mesh_size_traits_2<K> Base;
   typedef typename Base::Base PreviousBase;
   typedef typename K::FT FT;
   typedef typename K::Point_2 Point;
@@ -16,7 +19,7 @@ private:
   Point _p;
 
 public:
-  Mesh_local_size_traits_2(const double aspect_bound = 0.125, 
+  Delaunay_mesh_local_size_traits_2(const double aspect_bound = 0.125, 
 			   const double size_bound = 0,
 			   const bool is_local_size = false,
 			   const Point p = Point())
@@ -43,6 +46,8 @@ public:
     typedef typename Base::Base PreviousBase;
     typedef typename PreviousBase::Is_bad PreviousBaseclass;
 
+    typedef typename Base::Quality Quality;
+
   private:
     const bool local;
     const Point_2 p;
@@ -56,24 +61,28 @@ public:
 
     bool operator()(const Point_2& a,
 		    const Point_2& b,
-		    const Point_2& c) const
+		    const Point_2& c,
+		    Quality& q) const
     {
       if(!local)
-	return Base::Is_bad::operator()(a,b,c);
+	return Baseclass::operator()(a,b,c,q);
       else
 	{
 	  typename Traits::Orientation_2 orient = 
 	    Traits().orientation_2_object();
 	  
-	  if(PreviousBaseclass::operator()(a,b,c))
+	  bool is_non_locally_bad = Baseclass::operator()(a,b,c,q);
+
+	  if( q.first < B )
 	    return true;
+
 	  Orientation 
 	    o1 = orient(a,b,p),
 	    o2 = orient(b,c,p),
 	    o3 = orient(c,a,p);
 	  
 	  if((o1==o2) && (o2==o3))
-	    return Base::Is_bad::operator()(a,b,c);
+	    return is_non_locally_bad;
 	  else
 	    return false;
 	};
@@ -85,3 +94,5 @@ public:
 };
 
 }; //end namespace
+
+#endif

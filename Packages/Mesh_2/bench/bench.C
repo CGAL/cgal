@@ -10,9 +10,10 @@
 
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 
-#include <CGAL/Mesh_2.h>
-#include <CGAL/Mesh_face_base_2.h>
-#include <CGAL/Mesh_area_traits_2.h>
+#include <CGAL/Delaunay_mesh_2.h>
+#include <CGAL/Delaunay_mesh_face_base_2.h>
+#include <CGAL/Delaunay_mesh_area_traits_2.h>
+#include <CGAL/Read_write.h>
 
 typedef CGAL::Simple_cartesian<double> K1;
 typedef CGAL::Filtered_kernel<K1> K2;
@@ -24,13 +25,13 @@ struct K : public K1 {};
 #endif
 
 typedef CGAL::Triangulation_vertex_base_2<K> Vb;
-typedef CGAL::Mesh_face_base_2<K> Fb;
+typedef CGAL::Delaunay_mesh_face_base_2<K> Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb, Fb> Tds;
-typedef CGAL::Mesh_area_traits_2<K> Meshtraits;
+typedef CGAL::Delaunay_mesh_area_traits_2<K> Meshtraits;
 typedef CGAL::Constrained_Delaunay_triangulation_2<Meshtraits, Tds,
   CGAL::Exact_predicates_tag> Tr;
 
-typedef CGAL::Mesh_2<Tr> Mesh;
+typedef CGAL::Delaunay_mesh_2<Tr> Mesh;
 
 typedef K::Point_2 Point;
 
@@ -97,7 +98,7 @@ int main(int argc, char** argv)
       Mesh delaunay;
       CGAL::Timer t;
       t.start();
-      delaunay.read_poly(input);
+      CGAL::read_poly(delaunay, input);
       t.stop();
       if(terminal_output)
 	std::cout << "Delaunay time: " << t.time() << std::endl;
@@ -106,7 +107,7 @@ int main(int argc, char** argv)
       mesh->set_geom_traits(traits);
       
       t.reset(); t.start();
-      mesh->refine();
+      mesh->refine_mesh();
       t.stop();
       if(terminal_output)
 	std::cout << "Meshing time: " << t.time() << std::endl;
@@ -124,7 +125,7 @@ int main(int argc, char** argv)
   else
     {
       std::ofstream output(argv[arg_count+1]);
-      mesh->write_poly(output);
+      CGQL::write_poly(mesh, output);
     }
   if(terminal_output)
     std::cout 

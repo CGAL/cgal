@@ -29,14 +29,22 @@ Conform conform;
 
 void usage(char** argv)
 {
-  std::cerr << "Usage: " << std::endl
-	    << argv[0] << " [-Q] input.poly [output.poly]" << std::endl;
+  std::cerr << "Usage: " << argv[0]
+	    << " [-Q] [-D] [-v] input.poly [output.poly]" << std::endl
+	    << "Read a Shewchuk .poly file and output a conforming PSLG."
+	    << std::endl
+	    << "  -Q   Quiet" << std::endl
+	    << "  -D   Make conforming Delaunay, instead of"
+    " conforming Gabriel." << std::endl
+	    << "  -v   Verbose" << std::endl;
 }
 
 int main(int argc, char** argv)
 {
   int arg_count = 1;
   bool terminal_output = true;
+  bool delaunay = false;
+  bool verbose = false;
 
   if(argc < 2)
     {
@@ -48,6 +56,10 @@ int main(int argc, char** argv)
     {
       if(std::string(argv[arg_count]) == "-Q")
 	terminal_output = false;
+      else if(std::string(argv[arg_count]) == "-D")
+	delaunay = true;
+      else if(std::string(argv[arg_count]) == "-v")
+	verbose = true;
       else
 	{
 	  std::cerr << "Unknown option " << argv[arg_count] << std::endl;
@@ -70,7 +82,18 @@ int main(int argc, char** argv)
       read_poly(conform, input);
       Tr t;
       t.swap(conform);
-      CGAL::make_conforming_Delaunay_2(t);
+      if(delaunay)
+	{
+	  if(verbose)
+	    std::cerr << "Make conforming Delaunay..." << std::endl;
+	  CGAL::make_conforming_Delaunay_2(t);
+	}
+      else
+	{
+	  if(verbose)
+	    std::cerr << "Make conforming Gabriel..." << std::endl;
+	  CGAL::make_conforming_Gabriel_2(t);
+	}
       conform.swap(t);
     }
   else
