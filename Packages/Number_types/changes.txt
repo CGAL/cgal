@@ -1,3 +1,6 @@
+8 February 2005 Sylvain Pion
+- doc fix for Rational_traits<>.
+
 6 February 2005 Sylvain Pion
 - Add Number_type_checker<NT1, NT2, Comparator>.
 
