@@ -1,3 +1,6 @@
+3.65   (?? November 2001)
+- Darwin support.
+
 3.64   (19 November 2001)
 - Move assign() to a template member function of Object.
 
