@@ -30,6 +30,7 @@ SRC : Added std:: to vector in several places in extremal_polygon_2.h.
 SRC : Removed CGAL::sqrt (now in double.h/leda_real.h).
 SRC : New linear 2- and 3-center algorithm.
 SRC : Removed, --> Rectangular_p_center_traits_2.h.
+TEST: Fixed some MSVC #ifdefs.
 TEST: Removed "warning" from program output.
 TEST: Use Intervall_arithmetic number type.
 TEST: Added LONG_NAME_PROBLEM flags to makefile
