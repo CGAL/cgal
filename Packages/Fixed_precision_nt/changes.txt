@@ -1,3 +1,8 @@
+2.36 (12 August 2002)
+- replace LEFTTURN and relatives by LEFT_TURN and relatives
+
+============================== CGAL 2.4 ========================
+
 2.35 (29 April 2002)
 - split of reference manual
 
