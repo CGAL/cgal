@@ -1,27 +1,19 @@
-#include <CGAL/basic.h>
-#include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/Kd_tree.h>
-#include <CGAL/Kd_tree_traits_point.h>
-#include <CGAL/Random.h>
-#include <CGAL/Splitting_rules.h>
 #include <CGAL/Orthogonal_priority_search.h>
 #include <CGAL/Cartesian_d.h>
-#include <CGAL/Weighted_Minkowski_distance.h>
+#include <CGAL/Euclidean_distance.h>
 
-#include <vector>
+#include <vector>  
 #include <iostream>
 
 typedef CGAL::Cartesian_d<double> R;
-typedef CGAL::Point_d<R> Point;
+typedef R::Point_d Point;
 typedef Point::R::FT NT;
 
-typedef CGAL::Kd_tree_rectangle<NT> Rectangle;
-typedef CGAL::Plane_separator<NT> Separator;
+typedef CGAL::Kd_tree_traits_point<Point> Traits;
+typedef CGAL::Euclidean_distance<Point> Distance;
 
-typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
-typedef CGAL::Weighted_Minkowski_distance<Point, Point> Distance;
-
-typedef CGAL::Orthogonal_priority_search<Traits, Point, Distance> 
+typedef CGAL::Orthogonal_priority_search<Traits> 
 NN_priority_search;
 typedef NN_priority_search::iterator NN_iterator;
 
@@ -48,13 +40,12 @@ OutputIterator get_n_positive_elements( InputIterator first, Size& n,
   
 int main() {
 
-  int bucket_size=1;
   const int dim=4;
   
-  const int data_point_number=100;
+  const int data_point_number=20;
   
-  typedef std::list<Point> point_list;
-  point_list data_points;
+  typedef std::list<Point> Point_list;
+  Point_list data_points;
   
   // add random points of dimension dim to data_points
   CGAL::Random Rnd;
@@ -66,7 +57,7 @@ int main() {
         data_points.push_front(Random_point);
   }
   
-  Traits tr(bucket_size, CGAL::Split_rules::SLIDING_FAIR, 3.0, false);
+  Traits tr;
  
   typedef CGAL::Kd_tree<Traits> Tree;
   Tree d(data_points.begin(), data_points.end(), tr);
@@ -74,14 +65,11 @@ int main() {
   // define query item
   double q[dim];
   for (int i=0; i<dim; i++) {
-  	q[i]=0.5;
+  	q[i]=0.5; 
   }
   Point query_item(dim,q,q+dim);
 
-  Distance::Weight_vector w(4);
-  w[0]=1.0; w[1]=1.0; w[2]=1.0; w[3]=1.0;
-
-  Distance tr_dist(2,dim,w);
+  Distance tr_dist(dim);
   
   std::vector<NN_priority_search::Item_with_distance> elements_in_query; 
   elements_in_query.reserve(data_point_number);

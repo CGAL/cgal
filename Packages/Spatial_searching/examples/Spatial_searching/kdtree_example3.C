@@ -30,6 +30,7 @@ public:
   {
   public:
   	typedef double FT;
+        typedef double RT;
 	typedef Point_float_d Point_d;
   }; 
 

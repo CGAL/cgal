@@ -234,17 +234,17 @@ int main() {
      NN_orthogonal_search NN1(d1, query_points[i], tr_dist, 1, 0.0);
      std::cout << "neighbour searching statistics using extended nodes: " << std::endl;
      NN1.statistics();
-     NN1.the_k_neighbours(std::back_inserter(nearest_neighbours1));
+     NN1.the_k_neighbors(std::back_inserter(nearest_neighbours1));
      NN_general_search NN2(d2, query_points[i], tr_dist, 1, 0.0, false);
-     std::cout << "neighbour searching statistics using no extended nodes: " << std::endl;
+     std::cout << "neighbor searching statistics using no extended nodes: " << std::endl;
      NN2.statistics();
-     NN2.the_k_neighbours(std::back_inserter(nearest_neighbours2));
+     NN2.the_k_neighbors(std::back_inserter(nearest_neighbours2));
   }
   
-  std::cout << "results neighbour searching:" << std::endl;
+  std::cout << "results neighbor searching:" << std::endl;
 
   for (int j=0; j < query_point_number; ++j) { 
-     std::cout << " d(q,nearest neighbour)=" << nearest_neighbours1[j].second << 
+     std::cout << " d(q,nearest neighbor)=" << nearest_neighbours1[j].second << 
      " d(q,furthest neighbour)=" << nearest_neighbours2[j].second << std::endl; 
   } 
 

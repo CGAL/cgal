@@ -1,31 +1,22 @@
-#include <CGAL/basic.h>
-#include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/Kd_tree.h>
-#include <CGAL/Kd_tree_traits_point.h>
-#include <CGAL/Random.h>
-#include <CGAL/Splitting_rules.h>
 #include <CGAL/point_generators_3.h>
-#include <CGAL/algorithm.h>
 #include <CGAL/Orthogonal_standard_search.h>
-#include <CGAL/General_standard_search.h>
+#include <CGAL/Fuzzy_iso_box_d.h>
 
 #include <vector>
 #include <iostream>
 
 // create own Point type
- 
+
+template <class R_> 
 class Point
 {
 public:
-
-  class R
-  { 
-  public:
-    typedef double FT;
-  };
+    typedef R_ R;
+    typedef typename R::FT FT;
 
 private:
-  double   vec[ 3 ];
+  FT   vec[ 3 ];
   
 public: 
   
@@ -35,76 +26,91 @@ public:
       vec[ ind ] = 0;
   }
 
-  Point (double& x, double& y, double& z)
+  Point (FT& x, FT& y, FT& z)
   {
     vec[0]=x;
     vec[1]=y;
     vec[2]=z;
   }
 
-  inline
   int dimension() const
   {
     return  3;
   }
  
-  inline
-  double x() const
+  FT x() const
   { 
     return vec[ 0 ];
   }
 
-  inline
-  double y() const
+  FT y() const
   { 
     return vec[ 1 ];
   }
   
-  inline
-  double z() const
+  FT z() const
   { 
     return vec[ 2 ];
   }
 
-  inline
-  void set_coord(int k, double x)
+  void set_coord(int k, FT x)
   {
     vec[ k ] = x;
   }
   
-  inline
-  double  & operator[](int k)  
+  FT  & operator[](int k)  
   {
     return  vec[ k ];
   }
 
-  inline
-  double  operator[](int k) const
+  FT  operator[](int k) const
   {
     return  vec[ k ];
   }
 }; //end of class
 
+class R { // define representation class
+public:
+	typedef double FT;
+	typedef double RT;
+	typedef Point<R> Point_3;
+}; // end of class
+
 inline
 bool
-operator!=(const Point& p, const Point& q)
+operator!=(const Point<R>& p, const Point<R>& q)
 {
   return ( (p[0] != q[0]) || (p[1] != q[1]) || (p[2] != q[2]) ); 
 }
 
 inline
 bool
-operator==(const Point& p, const Point& q)
+operator==(const Point<R>& p, const Point<R>& q)
 {
   return ( (p[0] == q[0]) && (p[1] == q[1]) && (p[2] == q[2]) ) ;
 }
 
+// not essential by specification but nice to have
+std::ostream &operator<<(std::ostream &os, const Point<R> &p)
+{
+  std::cout << "(";
+  for(int i = 0; i < 3; i++)
+    {
+      std::cout << p[i] ;
+      if (i < p.dimension() - 1) std::cout << ", ";
+    }
+  std::cout << ")";
+  return os;
+}
+
 // create own distance class
+
+template <class Point>
 class Point3D_distance
 {
 public:
 
-inline double distance(const Point& p1, const Point& p2)
+double distance(const Point& p1, const Point& p2) const
 {
     double distx= p1.x()-p2.x();
     double disty= p1.y()-p2.y();
@@ -112,8 +118,8 @@ inline double distance(const Point& p1, const Point& p2)
     return distx*distx+disty*disty+distz*distz;
 }
 
-inline double min_distance_to_queryitem(const Point& p,
-                                        const CGAL::Kd_tree_rectangle<double>& b) 
+double min_distance_to_queryitem(const Point& p,
+                                        const CGAL::Kd_tree_rectangle<double>& b) const 
 {   double distance(0.0);
     double h;
     h=p.x();
@@ -121,15 +127,15 @@ inline double min_distance_to_queryitem(const Point& p,
     if (h > b.max_coord(0)) distance += (h-b.max_coord(0))*(h-b.max_coord(0));
     h=p.y();
     if (h < b.min_coord(1)) distance += (b.min_coord(1)-h)*(b.min_coord(1)-h);
-    if (h > b.max_coord(1)) distance += (h-b.max_coord(1))*(h-b.max_coord(1));
+    if (h > b.max_coord(1)) distance += (h-b.max_coord(1))*(h-b.min_coord(1));
     h=p.z();
     if (h < b.min_coord(2)) distance += (b.min_coord(2)-h)*(b.min_coord(2)-h);
     if (h > b.max_coord(2)) distance += (h-b.max_coord(2))*(h-b.max_coord(2));
     return distance;
 }
 
-inline double max_distance_to_queryitem(const Point& p,
-                                        const CGAL::Kd_tree_rectangle<double>& b) 
+double max_distance_to_queryitem(const Point& p,
+                                        const CGAL::Kd_tree_rectangle<double>& b) const 
 {   double distance(0.0);
     double h;
     h=p.x();
@@ -150,32 +156,28 @@ inline double max_distance_to_queryitem(const Point& p,
     return distance;
 }
 
-inline double new_distance(double& dist, double old_off, double new_off,
-                int cutting_dimension)  {
+double new_distance(double& dist, double old_off, double new_off,
+                int cutting_dimension) const {
                 return dist + new_off*new_off - old_off*old_off;
 }
 
-inline double transformed_distance(double d) {
+double transformed_distance(double d) const {
         return d*d;
 }
 
-inline double inverse_of_transformed_distance(double d) {
+double inverse_of_transformed_distance(double d) const {
         return sqrt(d);
 }
 
 }; // end of class
-  
-typedef CGAL::Creator_uniform_3<double,Point> Creator;
 
-typedef CGAL::Plane_separator<double> Separator;
-typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
-typedef CGAL::Orthogonal_standard_search<Traits, Point, Point3D_distance> 
+typedef R::Point_3 My_point;
+typedef CGAL::Creator_uniform_3<double,My_point> Creator;
+typedef CGAL::Kd_tree_traits_point<My_point> Traits;
+typedef CGAL::Orthogonal_standard_search<Traits, Point3D_distance<My_point> > 
 NN_orthogonal_search;
-typedef CGAL::General_standard_search<Traits, Point, Point3D_distance> 
-NN_general_search;
 
 typedef std::vector<Traits::Item> Vector;
-typedef std::vector<Point> Query_vector;
 
 int main() {
 
@@ -183,48 +185,48 @@ int main() {
   
   const int data_point_number=1000;
   
-  typedef std::list<Point> point_list;
-  point_list data_points;
+  typedef std::list<My_point> Point_list;
+  Point_list data_points, res;
 
   // generate random data points  
-  CGAL::Random_points_in_cube_3<Point,Creator> g( 1.0);
+  CGAL::Random_points_in_cube_3<My_point,Creator> g( 1.0);
   CGAL::copy_n( g, data_point_number, std::back_inserter(data_points));
   
-  Traits tr(bucket_size, CGAL::Split_rules::MEDIAN_OF_MAX_SPREAD, 3.0, true);
+  Traits tr(bucket_size);
   typedef CGAL::Kd_tree<Traits> Tree;
   Tree d(data_points.begin(), data_points.end(), tr);
 
   // generate random query points
   const int query_point_number=5;
-  CGAL::Random_points_in_cube_3<Point,Creator> h( 1.0);
-  Query_vector query_points;
+  CGAL::Random_points_in_cube_3<My_point,Creator> h( 1.0);
+  Vector query_points;
   CGAL::copy_n(h, query_point_number, std::back_inserter(query_points));
 
-  Point3D_distance tr_dist;
+  Point3D_distance<My_point> tr_dist;
 
   // nearest neighbour searching 
   std::vector<NN_orthogonal_search::Item_with_distance> nearest_neighbour;
-  nearest_neighbour.reserve(query_point_number);
   
-  // farthest neighbour searching 
-  std::vector<NN_general_search::Item_with_distance> farthest_neighbour;
-  farthest_neighbour.reserve(query_point_number);
+  // furthest neighbour searching 
+  std::vector<NN_orthogonal_search::Item_with_distance> furthest_neighbour;
   
   for (int i=0; i < query_point_number; i++) { 
      // nearest neighbour searching
-     NN_orthogonal_search NN1(d, query_points[i], tr_dist, 1, 0.0);
-     NN1.the_k_neighbours(std::back_inserter(nearest_neighbour));
+     NN_orthogonal_search NN1(d, query_points[i], tr_dist);
+     NN1.the_k_neighbors(std::back_inserter(nearest_neighbour));
      
-     // farthest neighbour searching
-     NN_general_search NN2(d, query_points[i], tr_dist, 1, 0.0, false);
-     NN2.the_k_neighbours(std::back_inserter(farthest_neighbour));
+     // furthest neighbour searching
+     NN_orthogonal_search NN2(d, query_points[i], tr_dist, 1, 0.0, false);
+     NN2.the_k_neighbors(std::back_inserter(furthest_neighbour));
   }
   
   std::cout << "results neighbour searching:" << std::endl;
 
   for (int j=0; j < query_point_number; j++) { 
-     std::cout << " d(q, nearest neighbour)=  " << nearest_neighbour[j].second << 
-     "    d(q, farthest neighbour)= " << farthest_neighbour[j].second << std::endl; 
+     std::cout << " d(q, nearest neighbour)=  " << 
+     tr_dist.inverse_of_transformed_distance(nearest_neighbour[j].second) << 
+     "    d(q, furthest neighbour)= " << 
+     tr_dist.inverse_of_transformed_distance(furthest_neighbour[j].second) << std::endl; 
   } 
 
   return 0;

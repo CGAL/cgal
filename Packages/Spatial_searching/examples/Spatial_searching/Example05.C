@@ -78,7 +78,7 @@ int main() {
   NN_standard_search NN(d, query_rectangle, tr_dist, nearest_neighbour_number, 0.0);
   std::cout << "neighbour searching statistics using no extended nodes: " << std::endl;
   NN.statistics();
-  NN.the_k_neighbours(std::back_inserter(nearest_neighbours));
+  NN.the_k_neighbors(std::back_inserter(nearest_neighbours));
 
   for (int j=0; j < nearest_neighbour_number; ++j) { 
      std::cout << " d(q,nn)= " << nearest_neighbours[j].second << 

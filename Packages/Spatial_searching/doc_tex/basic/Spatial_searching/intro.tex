@@ -39,9 +39,11 @@ from databases that assume that the data reside in secondary storage).
 
 \subsection{Spatial Searching}
 
-Spatial searching supports browsing through a collection of spatial objects
-stored in a spatial data structure on the basis of their distances to an arbitrary spatial
-query object.
+Spatial searching supports browsing through a collection of $d$-dimensional spatial objects
+stored in a spatial data structure on the basis of their distances to a
+query object. The query object may be a point or an arbitrary spatial object, e.g a 
+$d$-dimensional sphere. The objects in the spatial data structure are $d$-dimensional points.
+ 
 Spatial searching is supported in several ways. 
 The first approach is $k$-{\bf nearest neighbor searching} that makes use of a $k$-nearest neighbor
 algorithm, where $k$ is known prior to the invocation of the algorithm.
@@ -56,7 +58,7 @@ The incremental approach is useful when processing queries where
 one but not all of the conditions involves spatial proximity (e.g. the nearest city to Paris with
 population greater than a million).
 
-Spatial searching typically consists of a preprocssing phase and a searching phase. 
+Spatial searching typically consists of a preprocessing phase and a searching phase. 
 In the preprocessing phase one builds a search structure 
 and in the searching phase 
 one makes the queries. 
@@ -65,21 +67,31 @@ In the searching phase the user invokes a searching method to browse the spatial
 
 With relatively minor modifications, nearest neighbor searching algorithms can be
 used to find the furthest object from the query object. 
-Therefore, {\bf Furthest neighbor searching} is also supported
-by the approximate spatial searching package.
+Therefore, {\bf furthest neighbor searching} is also supported
+by the spatial searching package.
+
+The execution time for exact neighbor searching can be reduced by relaxing
+the requirement that the neighbors should be computed exactly.
+If the distances of two objects to the query object are approximately the same,
+instead of computing the nearest/furthest neighbor exactly, one of these objects may
+be returned as the approximate nearest/furthest neighbor. I.e., given some non-negative constant
+$\epsilon$ the distance of an object returned as an approximate $k$-nearest neighbor
+must not be larger than $(1+\epsilon)r$, where
+$r$ denotes the distance to the real $k^{th}$ nearest neighbor.
+Similar the distance of an approximate $k$-furthest neighbor must not be smaller than $r/(1+\epsilon)$. 
+Obviously, for $\epsilon=0$ we get the exact result, and the larger $\epsilon$ is, the less exact the result.
 
 {\bf Range searching}
-is supported for $d$-dimensional rectangles and spheres using incremental nearest neighbor search. 
-Rectangular range queries are supported by 
-using iso-rectangles as query item, and using a $L1$-distance between iso-rectangles and points.
-Spherical range queries are supported by using spheres as query item, and using a $L2$-distance
-between spheres and points.
-In both cases the distance is defined such that all points contained in a query item have distance zero
-to the query item. Hence, an incremental nearest neighbor search will report first all points
-contained in the query item.  
-
-{\bf Approximate searching}, is supported by
-specifying an approximation factor $\epsilon \geq 0$ with the query.
+is supported for range queries defined by $d$-dimensional objects enclosing a region. 
+Approximate range searching is supported using fuzzy $d$-dimensional objects. The fuzziness of the query object 
+is specified by a parameter $\epsilon$ denoting
+a maximal allowed distance to the boundary of a query object. 
+If the distance to the the boundary is at
+least $\epsilon$
+points inside the object
+are always reported and 
+points outside the object are never reported. Points within distance $\epsilon$ to the 
+boundary may be or may be not reported.  
 
 \subsection{The $k$-$d$ tree}
 \label{KDT_section}
@@ -107,7 +119,7 @@ Data points are only stored in the leaf nodes of the tree, not in the internal n
 Friedmann, Bentley and Finkel \cite{fbf-afbml-77} described the standard
 search algorithm to find the $k$th nearest neighbor by searching a $k$-$d$ tree recursively.
 
-When encountering a node of the  the algorithm first visits the child that is closest
+When encountering a node of the tree, the algorithm first visits the child that is closest
 to the query point. On return, if the rectangle containing  the other child lies within
 1/ (1+$\epsilon$) times the distance to the $k$th nearest neighbors so far, then
 the other child is visited recursively.
@@ -133,59 +145,59 @@ of square roots, squared distances are used instead of the Euclidean distance it
 
 We give five examples. 
 The first example illustrates nearest neighbor searching.
-Approximate searching is illustrated by the second example and range
+The second is an example of approximate furthest neighbor searching using a $d$-dimensional
+iso-rectangle as an query object.
+Approximate range
 searching is illustrated by the third example.
-The fourth example illustrates distance browsing and the last example illustrates using
+The fourth example illustrates distance browsing and the last example illustrates 
+nearest and furthest neighbour searching using
 a user defined point and distance class.
 
-\subsection{Example of Nearest neighbor Searching}
+\subsection{Example of Nearest Neighbor Searching}
 
 The first example illustrates nearest neighbor searching. The random data points are preprocessed
 in a $k$-$d$ tree. For each of the random query points its nearest neighbor is obtained.
-For the Euclidean distance used in this example \ccc{inverse_of_transformed_distance}
-implements taking the square root. (See also the last remark at the end of section~\ref{KDT_section}.)
+In this example
+the Euclidean distance is used by default. To avoid the expensive computation
+of square roots, the nearest neighbor searching algorithm computes
+squared distances instead of the Euclidean distance itself. 
+Finally, if the Euclidean distance is reported the square root is taken.
 
+\ccIncludeExampleCode{Nearest_neighbor_searching.C}
 
-\ccIncludeExampleCode{ExampleA.C}
+\subsection{Example of General Neighbor Searching}
 
-\subsection{Example of Approximate Nearest and Furthest neighbor Searching}
-
-The second example program illustrates approximate nearest neighbor searching
+The second example program illustrates approximate nearest and furthest neighbor searching
 using 4-dimensional Cartesian coordinates.
-In this example the \ccc{MEDIAN_OF_MAX_SPREAD} splitting rule instead of the default splitting
-rule is used to build the $k$-$d$ tree. Five approximate nearest and furthest neighbors of
-the query point (0.0, 0.0, 0.0, 0.0) are computed.
+Five approximate nearest and furthest neighbors of
+the query rectangle $[0.1,0.2]^4$ are computed.
  
-\ccIncludeExampleCode{ExampleB.C}
+\ccIncludeExampleCode{General_neighbor_searching.C}
 
 \subsection{Example of a Range Query}
 
-The third example program illustrates range querying using homogeneous 3-dimensional coordinates. 
-A range query is defined by an instance of \ccc {CGAL::Iso_cuboid_3}. 
-All items in a range query are retrieved by 
-\ccc{get_elements_in_query}, which computes all items in
-the range query by appling incremental nearest neighbor searching. 
+The third example program illustrates approximate range querying for
+4-dimensional fuzzy iso-rectangles and spheres
+using homogeneous coordinates.
 
-\ccIncludeExampleCode{ExampleC.C}
+\ccIncludeExampleCode{Fuzzy_range_query.C}
 
-The fourth example program illustrates browsing for $4$-dimensional points with
-a positive first coordinate using orthogonal priority search
-using the point class \ccc{CGAL::Point_d}
-and the distance class \ccc{CGAL::Weighted_Minkowski_distance}.
- 
+
 \subsection{Example of distance browsing}
 
-\ccIncludeExampleCode{ExampleD.C}
+The fourth example program illustrates distance browsing for $4$-dimensional points with
+a positive first coordinate using orthogonal priority search.
 
-This example illustrates distance browsing to find the first 10 nearest neighbors of which
-the first coordinate is positive. 
+ 
+\ccIncludeExampleCode{Distance_browsing.C}
+
 
 \subsection{Example illustrating use of user defined point and distance class}
 
 In this example the user provides an implementation of 3-dimensional points and an
 implementation of the Euclidean distance.
 
-\ccIncludeExampleCode{ExampleE.C}
+\ccIncludeExampleCode{User_defined_point_and_distance.C}
 
 \section{Classes}
 

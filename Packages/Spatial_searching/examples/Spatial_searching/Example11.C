@@ -29,7 +29,8 @@ int main() {
   int bucket_size=1;
   CGAL::Timer t;
   
-  const int data_point_number=1000000;
+  const int data_point_number=10000;
+  // const int data_point_number=1000000;
   
    
   typedef std::list<Point> point_list;

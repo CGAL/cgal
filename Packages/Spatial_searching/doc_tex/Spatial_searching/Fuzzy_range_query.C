@@ -1,19 +1,16 @@
-#include <CGAL/basic.h>
-#include <CGAL/Cartesian_d.h>
-#include <CGAL/constructions_d.h>
-#include <CGAL/Iso_rectangle_d.h>
+#include <CGAL/Homogeneous_d.h>
+#include <CGAL/MP_Float.h>
 #include <CGAL/Kd_tree.h>
-#include <CGAL/Kd_tree_traits_point.h>
-#include <CGAL/Random.h>
+#include <CGAL/Cartesian_d.h>
 #include <CGAL/Fuzzy_sphere_d.h>
 #include <CGAL/Fuzzy_iso_box_d.h>
 
 #include <vector>
 #include <iostream>
 
-typedef CGAL::Cartesian_d<double> R;
-typedef CGAL::Point_d<R> Point;
-typedef CGAL::Vector_d<R> Vector; // for square roots only
+typedef CGAL::Homogeneous_d<CGAL::MP_Float> R;
+typedef R::Point_d Point;
+
 typedef Point::R::FT NT;
 
 typedef CGAL::Iso_rectangle_d<R> Rectangle;
@@ -23,25 +20,16 @@ typedef CGAL::Kd_tree_traits_point<Point> Traits;
 typedef CGAL::Fuzzy_sphere_d<Point> Sphere;
 typedef CGAL::Fuzzy_iso_box_d<Point,Rectangle> Box;
 
-// after CGAL/Kernel/function_objectsHd.h
-
-/* 
-NT squared_distance(const Point& p, const Point& q) 
-{ Vector v = p-q; return v.squared_length(); };
-*/  
-
 int main() {
 
   int bucket_size=1;
   const int dim=4;
   
-  
-  typedef std::list<Point> point_list;
-  point_list data_points;
+  typedef std::list<Point> Point_list;
+  Point_list data_points;
   const int data_point_number=20;
   
-  typedef std::vector<Point> point_vector;
-  
+  typedef std::vector<Point> Point_vector;
 
   // add random points of dimension dim to data_points
   CGAL::Random Rnd;
@@ -49,43 +37,30 @@ int main() {
   for (int i1=0; i1<data_point_number; i1++) {
         double v[dim];
         for (int i2=0; i2<dim; i2++) v[i2]= Rnd.get_double(-1000.0,1000.0);
-        Point Random_point(dim,v,v+dim);
-        data_points.push_front(Random_point);
+        Point random_point(dim,v,v+dim,1.0);
+        data_points.push_front(random_point);
   }
   
-  Traits tr(bucket_size, 3, false);
+  Traits tr(bucket_size, NT(3), false);
 
   typedef CGAL::Kd_tree<Traits> Tree;
   Tree d(data_points.begin(), data_points.end(), tr);
 
-  point_vector points_in_rectangular_range_query;
-  point_vector points_in_spherical_range_query;
+  Point_vector points_in_rectangular_range_query;
+  Point_vector points_in_spherical_range_query;
 
-  point_vector points_in_tree;
-  
-  d.report_all_points(std::back_inserter(points_in_tree));
-  
   // define center point
   double c[dim];
   for (int i1=0; i1<dim; i1++) {
   	c[i1]=  300.0;
   }
   
-  Point C(dim,c,c+dim);
-  Sphere S(C,700.0,100.0);
-  d.search(std::back_inserter(points_in_spherical_range_query),S);
+  Point center(dim,c,c+dim,1.0);
+  Sphere s(center,700.0,100.0);
+  d.search(std::back_inserter(points_in_spherical_range_query),s);
 
-  std::cout << "all points are:" << std::endl;
-  
-  unsigned int points_in_tree_size=points_in_tree.size();
-  for (unsigned int j1=0; j1 < points_in_tree_size; ++j1) { 
-     std::cout << points_in_tree[j1] << "d(C,p)=" << sqrt(CGAL::squared_distance(points_in_tree[j1],C)) << std::endl; 
-  }
-  
-  
-  
-
-  std::cout << "points approximately in spherical range query are:" << std::endl;
+  std::cout << "points approximately in fuzzy range query" << std::endl; 
+  std::cout << "with center (300.0, 300.0, 300.0, 300.0) and fuzzy radius <200.0,400.0> are:" << std::endl;
   
   unsigned int points_in_spherical_range_query_size=points_in_spherical_range_query.size();
   for (unsigned int j2=0; j2 < points_in_spherical_range_query_size; ++j2) { 
@@ -100,16 +75,14 @@ int main() {
         q[i2]=  900.0;
   }
    
-  Point P(dim,p,p+dim);
-  Point Q(dim,q,q+dim);
+  Point pp(dim,p,p+dim,1.0);
+  Point qq(dim,q,q+dim,1.0);
 
-  // Rectangle query_rectangle(P,Q);
-  // Box query(query_rectangle,100.0);
-  Box query(P,Q,100.0);
+  Box query(pp,qq,100.0);
 
   d.search(std::back_inserter(points_in_rectangular_range_query),query);
 
-  std::cout << "points approximately in rectangular range query [-100,900]^4 are:" << std::endl;
+  std::cout << "points approximately in fuzzy range query [<-200,0>,<800,1000>]]^4 are:" << std::endl;
 
   unsigned int points_in_rectangular_range_query_size=points_in_rectangular_range_query.size();
   for (unsigned int j3=0; j3 < points_in_rectangular_range_query_size; ++j3) { 
