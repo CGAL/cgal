@@ -81,7 +81,8 @@ class Show_marked_faces : public CGAL::Qt_widget_layer
   M &mesh;
   CGAL::Color color;
 public:
-  Show_marked_faces(Mesh &m, CGAL::Color c=CGAL::GREEN) : mesh(m), color(c) {};
+  Show_marked_faces(Mesh &m, CGAL::Color c=CGAL::GREEN) : mesh(m),
+    color(c) {};
 
   typedef typename M::Finite_faces_iterator Face_iterator;
 
