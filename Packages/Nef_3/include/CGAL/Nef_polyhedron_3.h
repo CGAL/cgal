@@ -1215,7 +1215,7 @@ protected:
   /*{\Mexample Nef polyhedra are parameterized by a so called extended
   geometric kernel. There's currently only one such kernel based on a
   homogeneous representation of extended points called
-  |Extended_homogeneous_3<NT>|.  The kernel is parameterized by a
+  |Extended_homogeneous<NT>|.  The kernel is parameterized by a
   multiprecision integer type. The member types of |Nef_polyhedron_3<
   Extended_homogeneous_3<NT> >| map to corresponding types of the CGAL
   geometry kernel (e.g. |Nef_polyhedron::Plane_3| equals
@@ -1223,11 +1223,11 @@ protected:
   \begin{Mverb}
   #include <CGAL/basic.h>
   #include <CGAL/leda_integer.h>
-  #include <CGAL/Extended_homogeneous_3.h>
+  #include <CGAL/Extended_homogeneous.h>
   #include <CGAL/Nef_polyhedron_3.h>
 
   using namespace CGAL;
-  typedef  Extended_homogeneous_3<leda_integer> Extended_kernel;
+  typedef  Extended_homogeneous<leda_integer>   Extended_kernel;
   typedef  Nef_polyhedron_3<Extended_kernel>    Nef_polyhedron;
   typedef  Nef_polyhedron::Plane_3              Plane_3;
 

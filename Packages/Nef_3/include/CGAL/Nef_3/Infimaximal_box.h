@@ -23,13 +23,10 @@
 #define _DEBUG 191
 #include <CGAL/Nef_3/debug.h>
 
-#include <CGAL/Simple_homogeneous.h>
-#include <CGAL/Extended_homogeneous_3.h>
+#include <CGAL/Extended_cartesian.h>
+#include <CGAL/Extended_homogeneous.h>
 
 #include <CGAL/Nef_3/SNC_intersection.h>
-
-// #include <CGAL/Nef_S2/Sphere_circle.h>
-// #include <CGAL/Nef_3/SM_decorator.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -39,7 +36,12 @@ struct Is_extended_kernel {
 };
 
 template<class NT>
-struct Is_extended_kernel<Extended_homogeneous_3<NT> > {
+struct Is_extended_kernel<Extended_homogeneous<NT> > {
+       typedef Tag_true value_type;
+};
+
+template<class NT>
+struct Is_extended_kernel<Extended_cartesian<NT> > {
        typedef Tag_true value_type;
 };
 
