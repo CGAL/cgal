@@ -61,12 +61,11 @@ operator<<(leda_window& w, const Color& c)
   return w;
 }
 
-
 inline
 void
 cgalize(leda_window& w)
 {
-  w.set_frame_label("CGAL-2.1");
+  w.set_frame_label("CGAL-2.3");
   w.set_icon_label("CGAL");
   w.set_node_width( 3);
   w.set_line_width( 2);
@@ -87,7 +86,6 @@ create_demo_window( float w = 512.0, float h = 512.0,
   return Wptr;
 }
 
-
 inline
 leda_window*
 create_and_display_demo_window(float w = 512.0, float h = 512.0,
@@ -104,7 +102,6 @@ create_and_display_demo_window(float w = 512.0, float h = 512.0,
 }
 
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_LEDA_WINDOW_H
 
@@ -754,16 +751,9 @@ operator<<(leda_window& w, const Bbox_2& b)
 #endif // CGAL_LEDA_WINDOW_BBOX_2
 #endif // CGAL_BBOX_2_H
 
-
 CGAL_END_NAMESPACE
 
-#ifndef IO_TRIANGULATION_WINDOW_STREAM_H
 #include <CGAL/IO/triangulation_Window_stream.h>
-#endif  // IO_TRIANGULATION_WINDOW_STREAM_H
-#ifndef IO_OPTIMISATION_WINDOW_STREAM_H
 #include <CGAL/IO/optimisation_Window_stream.h>
-#endif // IO_OPTIMISATION_WINDOW_STREAM_H
-#ifndef IO_POLYGON_WINDOW_STREAM_H
 #include <CGAL/IO/polygon_Window_stream.h>
-#endif // IO_POLYGON_WINDOW_STREAM_H
 

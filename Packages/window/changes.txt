@@ -1,3 +1,7 @@
+2.8.2       (18 June 2001)
+- Update version string in leda_window to 2.3.
+- Minor fixes.
+
 2.8.1       (23 May 2001)
 - changed __USE_CGAL_WINDOW__ to the better name
   CGAL_USE_CGAL_WINDOW (suggested by Sylvain)

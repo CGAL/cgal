@@ -21,7 +21,6 @@
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
  
-
 #ifndef CGAL_LEDA_WINDOW_H
 #define CGAL_LEDA_WINDOW_H
 
@@ -29,9 +28,7 @@
 #include <CGAL/LEDA/window.h>
 #include <CGAL/IO/esprit_logo.xpm>
 
-
 CGAL_BEGIN_NAMESPACE
-
 
 typedef CGAL::window        Window_stream;
 
@@ -42,7 +39,6 @@ operator<<(CGAL::window& w, const Color& c)
   w.set_fg_color(CGAL::color(c.red(), c.green(), c.blue()));
   return w;
 }
-
 
 inline
 void
@@ -68,7 +64,6 @@ create_demo_window( float w = 512.0, float h = 512.0,
   Wptr->set_frame_label( str);
   return Wptr;
 }
-
 
 inline
 CGAL::window*

@@ -72,7 +72,7 @@ displays it at default position on the display. Returns a pointer to the window 
 the center of the window. 
 Returns a pointer to the window created.}
 
-\ccFunction{Window_stream* create_and_dislpay_demo_window( float width, float height, const char* str, double x_extension);}
+\ccFunction{Window_stream* create_and_display_demo_window( float width, float height, const char* str, double x_extension);}
 {creates a window of \ccStyle{width} $\times$ \ccStyle{height} pixels, sets the window label to
 \ccc{str}, and initializes the $x$-range in object space that is mapped to the physical window by
 [-\ccc{x_extension}, \ccc{x_extension}]. The $y$-range is initialized such that the origin is at
@@ -153,12 +153,13 @@ that get inserted to or extracted from the window stream.
 
 \begin{cprog}
 
+#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Segment_2.h>
 #include <CGAL/IO/Window_stream.h>
 
-typedef CGAL::Point_2< Cartesian<double> >     Point;
-typedef CGAL::Segment_2< Cartesian<double> >   Segment;
+typedef CGAL::Point_2< CGAL::Cartesian<double> >     Point;
+typedef CGAL::Segment_2< CGAL::Cartesian<double> >   Segment;
 
 int main()
 {
