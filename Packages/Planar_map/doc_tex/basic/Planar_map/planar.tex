@@ -36,7 +36,7 @@
 \def\bd{{\partial}}
 \def\dm{{\cal D}}
 
-\chapter{Planar Map}
+\chapter{2D Planar Maps}
 \label{I1_ChapterPlanarMap}
 
 % +========================================================================+
@@ -44,16 +44,23 @@
 % +========================================================================+
 \label{PM_sec:intro}
 
-In this chapter we introduce the \ccc{planar map} which is an
-embedding of a \ccc{topological map} into the plane.
-It is derived
-from the topological map class with additional geometric considerations
+In this chapter we introduce \ccc{planar maps} which are 
+embeddings of \ccc{topological maps} into the plane.
+The \ccc{Planar_map_2<Dcel,Traits>} class is derived
+from the \ccc{Topological_map<Dcel>} class with additional geometric considerations
 and functionalities (e.g., point location, bounding box). 
 In this section we briefly review
 the geometric concepts added in the planar map; the combinatorial concepts were
-reviewed in Chapter ~\ref{I1_ChapterTopologicalMap}, {\em Topological Map}.
+reviewed in Chapter ~\ref{I1_ChapterTopologicalMap}, {\em Topological Maps}.
 We also describe the additional functionality of \ccc{Planar_map_2<Dcel,Traits>}
 over that of \ccc{Topological_map<Dcel>}.
+
+\section{Terms and Software Design}
+
+   There are two template parameters, the \ccc{Dcel} which is the
+   underlying combinatorial data structure and the \ccc{Traits} which
+   is the underlying geometry, i.e. the number type used, the
+   coordinate represenation and the family of curves treated.
 
 \paragraph{Curve:}
 We will use the term {\it curve} to describe the image of a continuous
@@ -62,9 +69,9 @@ closed unit interval (arc), the open unit interval (unbounded curve),
 or the unit circle (closed curve). In all cases a curve is non
 self-intersecting. Segments, lines, rays, conic sections are examples for curves.
 
-\paragraph{$x$-Monotone curve:}
+\paragraph{$X$-monotone curve:}
 We
-use a convention2
+use a convention
 that a curve $c$ is $x$-monotone if $c$ either intersects 
 any vertical line in at most one point, or $c$ is a vertical
 segment. 
