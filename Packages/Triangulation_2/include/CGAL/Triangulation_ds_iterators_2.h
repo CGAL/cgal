@@ -602,8 +602,10 @@ bool associated_edge()
   {
     if (_tds->dimension() == 1) {return true;}
     int max = maximum(pos);
-    if (index == cw(max))  {return true; }
-    if (index == ccw(max)) { return false;}
+    if (index == cw(max))  {return false; }
+    if (index == ccw(max)) {return true;}
+    //if (index == cw(max))  {return true; }
+    //if (index == ccw(max)) { return false;}
     // index = maximun(pos)
     if ( pos->vertex(max) != _tds->infinite_vertex()){
       return ( _tds->geom_traits().compare_y(pos->vertex(cw(max))->point(),

@@ -112,7 +112,7 @@ public:
 
   CGAL_Triangulation_default_data_structure_2(Vertex * v, 
 					      const Geom_traits& gt)
-    : _infinite_vertex(NULL), _finite_vertex(NULL),
+    : _infinite_vertex(NULL), 
       _number_of_vertices(0), _geom_traits(gt)
   {
     init(v);
@@ -154,7 +154,7 @@ public:
   int  dimension() const { return _dimension;  }
   int number_of_vertices() const {return _number_of_vertices;}
   int number_of_faces() const {
-    return (number_of_vertices() <= 1) ? 0 : 2 * number_of_vertices() - 2;
+    return (number_of_vertices() <= 1) ? 0 : 2 * number_of_vertices() - 4;
   }
   const Geom_traits& geom_traits() const {return _geom_traits;}
 
@@ -854,11 +854,11 @@ public:
             Faces.push_front(&(*it));
             ++it;
         }
-        Face_circulator fc = infinite_vertex()->incident_faces(),
-            fcdone(fc);
-        do{
-            Faces.push_front(&(*fc));
-        }while(++fc != fcdone);
+        // Face_circulator fc = infinite_vertex()->incident_faces(),
+//             fcdone(fc);
+//         do{
+//             Faces.push_front(&(*fc));
+//         }while(++fc != fcdone);
     }
     CGAL_triangulation_assertion( number_of_faces() == (int) Faces.size());
      

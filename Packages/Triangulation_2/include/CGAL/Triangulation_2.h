@@ -179,7 +179,7 @@ public:
     int count = _tds.number_of_faces();
     Face_circulator fc= infinite_vertex()->incident_faces(),
       done(fc);
-    if (fc != NULL) {
+    if ( ! fc.is_empty() ) {
       do { 
 	--count; ++fc;
       }  while (fc != done);
@@ -201,7 +201,7 @@ public:
    
   Face_handle infinite_face() const
   {
-    CGAL_triangulation_precondition(infinite_vertex()->face() != NULL);
+    CGAL_triangulation_precondition( ! infinite_vertex()->face().is_null());
     return infinite_vertex()->face();
   }
 
@@ -485,7 +485,7 @@ void  insert_outside_convex_hull_2(Vertex_handle v, Face_handle f)
   infinite_vertex()->set_face(&(*fc));
 
   } 
-<<<<<<< Triangulation_2.h
+
 
 public :
 void  insert_outside_affine_hull(Vertex_handle v)
@@ -672,7 +672,6 @@ void remove_second(Vertex_handle v)
     return;
   }
 
-<<<<<<< Triangulation_2.h
 void remove(Vertex_handle  v)
   {
       CGAL_triangulation_precondition( ! v.is_null() );
@@ -712,6 +711,7 @@ protected:
       Face_iterator fit = faces_begin();
       while (dim1==true && fit != faces_end()) {
 	dim1 = dim1 && fit->has_vertex(v);
+	fit++;
       }
       Face_circulator fic = v->incident_faces();
       while (is_infinite(fic)) {++fic;}
@@ -752,22 +752,21 @@ void   make_hole ( Vertex_handle v, list<Edge> & hole)
       Face_handle  f, ff, fn;
       int i =0,ii =0, in =0;
       Vertex_handle  vv;
-      Point p = v->point();
-    
+      
       Face_circulator fc = v->incident_faces();
       Face_circulator done(fc);
        do {
-	 i = fc->index(v);
+	 f = (*fc).handle(); fc++;
+	 i = f->index(v);
 	 fn = f->neighbor(i);
 	 in = fn->index(f);
-	 vv = fc->vertex(cw(i));
+	 vv = f->vertex(cw(i));
 	 if( vv->face()==  f) vv->set_face(fn);
 	 vv = fc->vertex(ccw(i));
 	 if( vv->face()== f) vv->set_face(fn);
 	 fn->set_neighbor(in, NULL);
 	 hole.push_back(Edge(fn,in));
-	 to_delete.push_back(fc);
-	 fc++;
+	 to_delete.push_back(f);
        }
       while(fc != done);
 
@@ -1033,8 +1032,8 @@ Line_face_circulator(const Face_handle& face,
 		Face_circulator done = fc;
 
 		//cerr  << "(" << fc->vertex(0)->point() << ", "
-		//      <<fc->vertex(1)->point() << ", "
-		//      << fc->vertex(2)->point() << ")" << endl ;
+		//    <<fc->vertex(1)->point() << ", "
+		//     << fc->vertex(2)->point() << ")" << endl ;
 
 		int ic = fc->index(v);
 		Vertex_handle  vt= fc->vertex(ccw(ic));
@@ -1719,7 +1718,7 @@ Line_face_circulator(const Face_handle& face,
                 lt = OUTSIDE_AFFINE_HULL;
             } else { // number_of_vertices() == 1
                 lt = geom_traits().compare(p,finite_vertex()->point()) ? 
-							VERTEX : OUTSIDE;
+					   VERTEX : OUTSIDE_AFFINE_HULL;
             }
             return NULL;
         }

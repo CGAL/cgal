@@ -97,7 +97,7 @@ public:
 				       const Face_handle& f)
     : _bfc( &(*v), &(*f))
   {
-    if (v->face()==NULL  ||
+    if ( v->face().is_null()  ||
         v->face()->dimension() == 0 || 
 	v->face()->dimension() == 1) { _bfc = Base_face_circulator();}
   }
@@ -160,7 +160,7 @@ public:
   bool  operator==(CGAL_NULL_TYPE n) const
   {
     CGAL_triangulation_assertion( n == NULL);
-    return (_bfc == NULL);
+    return (_bfc.is_empty());
   }
         
   bool
@@ -233,7 +233,7 @@ public:
 				       const Face_handle& f)
     : _bvc( &(*v), &(*f))
   {
-    if (v->face()==NULL  ||
+    if ( v->face().is_null()  ||
         v->face()->dimension() == 0 )	 { _bvc = Base_vertex_circulator();}
   }
    
