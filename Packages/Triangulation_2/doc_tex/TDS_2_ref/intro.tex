@@ -21,24 +21,35 @@ of all combinatorial operation of the triangulation.
 
 The class \ccc{CGAL::Triangulation_data_structure_2<Vb,Fb>}
 is  a model of the concept \ccc{TriangulationDataStructure_2}.
-To ensure all the \textbf{flexibility} of class \ccc{Triangulation_2}
-described in \ccRefPage{CGAL::Triangulation_2<Traits,Tds>}
-and in Chapter~\ref{user_chapter_2D_Triangulations}, the  model 
+which includes the subconcepts
+\ccc{TriangulationDataStructure_2::Face} 
+and \ccc{TriangulationDataStructure_2::Vertex}.
+
+To ensure all the \textbf{flexibility} of  the triangulation
+classes, 
+described 
+and in Section~\ref{Section_2D_Triangulations_Flexibility}
+of
+Chapter~\ref{user_chapter_2D_Triangulations}, the  model 
  \ccc{CGAL::Triangulation_data_structure_2<Vb,Fb>}
+has two templates parameters.
+The 
 \ccRefName derives its \ccc{Vertex} and \ccc{Face} types
-from the two template parameters \ccc{Vb} and \ccc{Fb}.
-These parameters 
+from the two template parameters \ccc{Vb} and \ccc{Fb}. \\
+If the triangulation data structure
+is used alone, these parameters 
 have to be instantiated by models
-of the concepts describing the base classes
-for faces and vertices of a triangulation.
-
-Therefore, in addition to the
- data structure concept and default model,
-we described in this chapter,  different concepts  and models of the
-base classes for the vertices and faces of the different triangulations.
-
-
-
+of the concepts \ccc{TriangulationDSFaceBase_2} and 
+\ccc{TriangulationDSVertexBase_2}. These concepts
+are described in this chapter together with their
+default models \ccc{CGAL::Triangulation_ds_face_base_2<Tds>}
+and  \ccc{CGAL::Triangulation_ds_vertex_base_2<Tds>}. \\
+If the triangulation data structure
+is plugged into a triangulation class, the parameters
+have to be instantiated by models of different 
+refining concepts according to the actual type of the triangulation.
+These refining concepts and their models
+are described in Chapter~\ref{user_chapter_2D_Triangulations}
 
 
 \subsection*{Concepts}
@@ -46,19 +57,13 @@ base classes for the vertices and faces of the different triangulations.
 \ccRefConceptPage{TriangulationDataStructure_2::Face}\\
 \ccRefConceptPage{TriangulationDataStructure_2::Vertex}\\
 
-\ccRefConceptPage{TriangulationFaceBase_2}\\
-\ccRefConceptPage{TriangulationVertexBase_2}\\
-\ccRefConceptPage{ConstrainedTriangulationFaceBase_2}\\
-\ccRefConceptPage{RegularTriangulationFaceBase_2}\\
-\ccRefConceptPage{RegularTriangulationVertexBase_2}
+\ccRefConceptPage{TriangulationDSFaceBase_2}\\
+\ccRefConceptPage{TriangulationDSVertexBase_2}\\
 
 \subsection*{Classes}
 \ccRefIdfierPage{CGAL::Triangulation_data_structure_2<Vb,Fb>}\\
-\ccRefIdfierPage{CGAL::Triangulation_face_base_2<Traits>}\\
-\ccRefIdfierPage{CGAL::Triangulation_vertex_base_2<Traits>}\\
-\ccRefIdfierPage{CGAL::Regular_triangulation_face_base_2<Traits>}\\
-\ccRefIdfierPage{CGAL::Regular_triangulation_vertex_base_2<Traits>}\\
-\ccRefIdfierPage{CGAL::Constrained_triangulation_face_base_2<Traits>}\\
+\ccRefIdfierPage{CGAL::Triangulation_ds_face_base_2<Tds>}\\
+\ccRefIdfierPage{CGAL::Triangulation_ds_vertex_base_2<Tds>}\\
 
+\ccRefIdfierPage{CGAL::Triangulation_cw_ccw_2}
 
-\lcHtml{\subsection*{Links to the Reference Sections}}

@@ -20,11 +20,35 @@
 The concept \ccRefName\ describes the requirements  for
 the second template parameter of the basic triangulation class
 \ccc{Triangulation_2<Traits,Tds>}.
+
 The concept can be seen as a container for the 
 faces and vertices of the triangulation.
+The concept \ccRefName\  includes two subconcepts
+\ccc{TriangulationDataStructure_2::Vertex} and
+\ccc{TriangulationDataStructure_2::Face}
+\lcTex{described \ccRefPage{TriangulationDataStructure_2::Vertex}
+and \ccRefPage{TriangulationDataStructure_2::Face}}. 
+
 The \ccRefName\ 
 maintains incidence and adjacency relations
 among vertices and faces.
+
+Each triangular face gives access to its three incident vertices 
+and to its three adjacent faces. 
+Each vertex gives access to one of its incident faces
+and through that face to the circular list of its incident faces.
+
+The three vertices of a face are indexed with 0, 1 and 2.
+The neighbor of a face are also 
+indexed with 0,1,2 in such a way that the neighbor indexed by \ccc{i}
+is opposite to the vertex with the same index.
+
+Each edge has two implicit representations : the edge
+of a face \ccc{f}  which is opposed to the vertex indexed \ccc{i},
+can be represented as well as an edge of the \ccc{neighbor(i)} of 
+\ccc{f}. See Figure~\ref{2D_Triangulation_Fig_neighbors1}
+
+
 The triangulation data structure
  is responsible for  the combinatorial integrity of the triangulation
 (i. e. proper incidence and adjacency relations among vertices
@@ -38,25 +62,27 @@ and do not depend on the geometric embedding.
 
 
 \ccTypes
-%\ccTypedef{typedef  Vb Vertex_base;}{the \ccc{Vertex_base}}
-%\ccGlue
-%\ccTypedef{typedef  Fb Face_base;}{the \ccc{Face_base}}
-%\ccGlue
+\ccThree{typedef std::pair<Face_handle,int>xx}{Edge; }{}
+\ccThreeToTwo
+
 \ccNestedType{Vertex} { The vertex type. Requirements for this type
-are decribed in \ccRefPage{TriangulationDataStructure_2::Vertex}}
+are decribed in concept \ccc{TriangulationDataStructure_2::Vertex}
+\lcTex{\ccRefPage{TriangulationDataStructure_2::Vertex}}.}
 \ccGlue
 \ccNestedType{Face}{The face type. Requirements for this type
-are decribed in \ccRefPage{TriangulationDataStructure_2::Face}}
+are decribed in concept \ccc{TriangulationDataStructure_2::Face}
+\lcTex{\ccRefPage{TriangulationDataStructure_2::Face}}.}
 
 Vertices and cells are acessed  via \ccc{handles}.
 \ccc{handles} are trivial pointers supporting
 the two dereference operators \ccc{operator*} and \ccc{operator->}.
+
 \ccNestedType{Vertex_handle}{Handle to a vertex}
 \ccGlue
 \ccNestedType{Face_handle}{Handle to a face.}
 
 
-\ccTypedef{typedef std::pair<Face_handle,int> Edge;}{ The edge type.
+\ccTypedef{typedef std::pair<Face_handle,int> Edge;}{The edge type.
 The \ccc{Edge(f,i)} is edge common to faces \ccc{f} and 
 \ccc{f.neighbor(i)}. It is also the edge joining the vertices
 \ccc{vertex(cw(i))} and \ccc{vertex(ccw(i))} of \ccc{f}.}
@@ -66,6 +92,7 @@ The following iterators allow one to visit all the vertices, edges
 and  faces
 of a triangulation data structure. They are all
 bidirectional, non-mutable iterators.
+
 \ccNestedType{Face_iterator}{}
 \ccGlue
 \ccNestedType{Edge_iterator}{}
@@ -75,35 +102,56 @@ bidirectional, non-mutable iterators.
 
 The following circulators allow to visit all the edges or faces
 incident to a given vertex and all the vertices
-adjacent to a given vertex.  They are all bidirectional and non mutable.
+adjacent to a given vertex.  They are all bidirectional and non
+mutable.
+
 \ccNestedType{Face_circulator}{}
 \ccGlue
 \ccNestedType{Edge_circulator}{}
 \ccGlue
 \ccNestedType{Vertex_circulator}{}
  
+Iterators and circulators are convertible to the corresponding handles, thus
+they can be passed directly as argument
+to the functions expecting a handle.
 
 
 
 
 \ccCreation
 \ccCreationVariable{tds}  %% choose variable name
+\ccThree{TriangulationDataStructure_2& }{tds.swap}{}
+\ccThreeToTwo
 
 \ccConstructor{TriangulationDataStructure_2();}{default constructor.}
 
-\ccConstructor{TriangulationDataStructure_2( const Tds& tds1)}
+\ccConstructor{TriangulationDataStructure_2( const
+TriangulationDataStructure_2& tds1)}
 {Copy constructor. All the vertices and faces are duplicated.}
 
-\ccMethod{TriangulationDataStructure_2<Vb,Fb> operator=(TriangulationDataStructure_2<Vb,Fb> tds1);}
-{Assignation. All the vertices and faces are duplicated.}
+\ccMethod{TriangulationDataStructure_2& operator=( const
+TriangulationDataStructure_2& tds1);}
+{Assignation. All the vertices and faces of \ccc{tds1} are duplicated
+in \ccVar\ . Former faces and vertices of \ccVar\ , if any, are
+deleted}
 
-\ccMethod{void swap(TriangulationDataStructure_2<Vb,Fb> tds1);}
+\ccThree{Vertex_handle }{tds.insert_in_facet}{}
+
+\ccMethod{Vertex_handle
+copy_tds(const TriangulationDataStructure_3 & tds1, 
+         Vertex_handle v = Vertex_handle());}
+{\ccc{tds1} is copied into \ccVar. If $v\, !\!= NULL$, the vertex of \ccVar\ 
+corresponding to \ccc{v} is returned, otherwise \ccc{Vertex_handle()} 
+is returned.
+\ccPrecond{The optional argument \ccc{v} is a vertex of \ccc{tds1}.}}
+
+\ccMethod{void swap( TriangulationDataStructure_2 &  tds1);}
 {Swaps \ccVar\ and \ccc{tds1}. Should be preferred to \ccVar=\ccc{tds1} or \ccVar(\ccc{tds1})
 when tds1 is deleted after that.}
 \ccMethod{void clear();}{Deletes all faces and all finite vertices.}
-
+\ccGlue
 \ccModifierCrossRefOff
-\ccFunction{void ~TriangulationDataStructure_2<Vb,Fb> ();}
+\ccFunction{void ~TriangulationDataStructure_2();}
 {Destructor. All vertices and faces are deleted.}
 \ccModifierCrossRefOff
 
@@ -133,6 +181,8 @@ number of faces stored in the triangulation data structure.}
 \end{ccAdvanced}
 
 \ccHeading{Queries}
+\ccThree{bool}{is_edge(Face_handle fh, int i)}{}
+
 \ccMethod{bool is_vertex(Vertex_handle v) const;}{returns true if
 \ccc{v} is a vertex of \ccVar.}
 \ccGlue
@@ -153,8 +203,9 @@ of  the ordered edge \ccc{va vb}.}
 {Tests whether \ccc{fh} is a face of \ccVar. Answers \ccc{false} when
 \ccc{dimension()} $<2$ .}
 \ccGlue
-\ccMethod{bool is_face(Vertex_handle v1, Vertex_handle v2, const
-Vertex* v3) const;}{\ccc{true} if there is a face having \ccc{v1}, \ccc{v2} and\ccc{v3} 
+\ccMethod{bool is_face(Vertex_handle v1, Vertex_handle v2,
+Vertex_handle v3) 
+const;}{\ccc{true} if there is a face having \ccc{v1}, \ccc{v2} and\ccc{v3} 
 as vertices.}
 \ccGlue
 \ccMethod{bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,
@@ -176,18 +227,9 @@ as vertices.}
 \ccGlue
 \ccMethod{ Edge_iterator edges_end() const;}{}
 
-
+\ccThree{Vertex_circulator}{tds.number_of_faces()x}{}
 Three circulator classes allow to traverse the edges, and faces
 incident to a given vertex and the adjacent vertices.
-Note that infinite as well as finite incident edges and faces are visited.
- These circulators are bidirectional
-and their value types are respectively \ccc{Vertex}, \ccc{Edge}
-and \ccc{Face}.
-The  \ccc{operator++} moves the circulator
-counterclockwise around the vertex 
-and  the \ccc{operator--} moves the circulator
-clockwise. 
-
 A face circulator is invalidated by any modification of the face it
 points to. An edge circulator is invalidated
 by any modification of anyone of the two faces incident to the edge
@@ -225,7 +267,7 @@ and the crculators begins with the face
 The following modifier member functions  guarantee
 the combinatorial validity of the resulting triangulation.
 
-\ccThree{void}{tds.remove_second(Vertex_handle  v)x}{}
+\ccThree{void}{tds.flip(Face_handle f, int i);}{}
 \ccMethod{void flip(Face_handle f, int i);}{exchanges the edge incident to
 \ccc{f} and \ccc{f->neighbor(i)} with the other
 diagonal of the quadrilateral formed by \ccc{f} and  \ccc{f->neighbor(i)}.}
@@ -247,7 +289,7 @@ diagonal of the quadrilateral formed by \ccc{f} and  \ccc{f->neighbor(i)}.}
 \end{ccHtmlOnly} 
 \end{figure}
 
-
+\ccThree{Vertex_handle}{tds.insert_in_edge(Face_handle f, int i);}{}
 \ccMethod{Vertex_handle  insert_first();} {creates the first 
 vertex and returns a pointer to it.}
 \ccGlue
@@ -262,7 +304,9 @@ edge \ccc{i} of face \ccc{f}. Return a  pointer to \ccc{v}.}
 \ccc{f} in three. Face \ccc{f} is modified,
 two new faces are created. Return a  pointer to \ccc{v} }
 \ccGlue
-\ccMethod{Vertex_handle  insert_dim_up(Vertex_handle  w, bool orient=true);} {adds
+\ccMethod{Vertex_handle  insert_dim_up(Vertex_handle  w, bool
+orient=true);} 
+{adds
 a vertex \ccc{v}, increasing by one the dimension of the triangulation.
 Vertex \ccc{v} and the existing vertex \ccc{w} are linked to all 
 the vertices of the triangulation. 
@@ -285,7 +329,7 @@ faces. A pointer to vertex \ccc{v} is returned.
 \end{figure}
 
 
-
+\ccThree{void}{tds.remove_dim_down(Vertex_handle  v);}{}
 \ccMethod{void remove_degree_3(Vertex_handle  v, Face *f=NULL);}
 {removes a vertex of degree 3. Two of the incident faces are destroyed,
 the third one is modified.
@@ -316,6 +360,7 @@ user.
 They do not guarantee the combinatorial validity 
 of the resulting triangulation.
 
+\ccThree{Vertex_handle}{tds.star_hole( FaceIt face_begin,}{}
 \ccMethod{ template< class EdgeIt>
    Vertex_handle  star_hole(EdgeIt edge_begin,EdgeIt edge_end);}
 {creates a new vertex \ccc{v} and use it to star the hole 
@@ -399,6 +444,41 @@ and neighbors \ccc{f1}, \ccc{f2}, \ccc{f3}.}
 triangulation: call the \ccc{is_valid()} member function for each vertex and 
 each face, checks the number of vertices and the Euler relation
 between numbers of vertices, faces and edges.}
+
+\ccHeading{I/O}
+
+The information ouput  in the \ccc{iostream} is: 
+the dimension, the number of vertices, the number of faces,
+the vertices
+the indices of the vertices in  each face, 
+then the indices of the neighbors of each cell, 
+where the index of an item corresponds to its order in the ouput.
+When dimension $<$ 2, the same information is stored
+for faces of maximal dimension instead of faces.
+
+\ccThree{Vertex_handle}{tds.file_output( ostream& os)}{}
+\ccFunction{void tds.file_output( ostream& os,
+		   Vertex_handle v = Vertex_handle(),
+		   bool skip_first=false);}
+{writes \ccVar into the stream \ccc{os}. 
+If \ccc{v} is not a null handle, vertex \ccc{v}
+is output first or skipped if \ccc{skip_first} is true.}
+
+\ccFunction{Vertex_handle tds.file_input( istream& is, 
+                           bool skip_first=false);}
+{inputs \ccVar\ from file and returns a pointer to the first input vertex.
+  If \ccc{skip_first} is true, it is assumed that the first
+   vertex has been omitted when output.}
+
+\ccFunction{istream& operator>>
+	(istream& is, TriangulationDataStructure_3 & tds);}
+{reads a combinatorial triangulation from \ccc{is} and assigns it to \ccc{tds}}
+
+\ccFunction{ostream& operator<<
+	(ostream& os, const TriangulationDataStructure_3 & tds);}
+{writes \ccc{tds} into the stream \ccc{os}}
+
+
 
 
 \ccHasModels
