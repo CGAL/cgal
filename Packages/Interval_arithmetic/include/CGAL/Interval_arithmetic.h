@@ -42,7 +42,7 @@ class CGAL_Interval_nt_advanced
   friend double CGAL_to_double(const CGAL_Interval_nt_advanced& d);
 
 public:
-  inline CGAL_Interval_nt_advanced(const double i, const double s)
+  CGAL_Interval_nt_advanced(const double i, const double s)
   {
 #ifndef CGAL_NO_PRECONDITIONS
     CGAL_assertion(i<=s);
@@ -50,20 +50,18 @@ public:
     inf = -i; sup = s;
   }
 
-  inline CGAL_Interval_nt_advanced(const double d = 0.0)
+  CGAL_Interval_nt_advanced(const double d = 0.0)
   {
     inf = -d; sup = d;
   }
 
-  inline CGAL_Interval_nt_advanced&
-         operator=(const CGAL_Interval_nt_advanced& d)
+  CGAL_Interval_nt_advanced& operator=(const CGAL_Interval_nt_advanced& d)
   {
     inf = d.inf; sup = d.sup;
     return *this;
   }
 
-  inline CGAL_Interval_nt_advanced
-         operator+(const CGAL_Interval_nt_advanced& d) const
+  CGAL_Interval_nt_advanced operator+(const CGAL_Interval_nt_advanced& d) const
   {
     return CGAL_Interval_nt_advanced(-(inf + d.inf), sup + d.sup);
     // CGAL_Interval_nt_advanced tmp;
@@ -72,16 +70,14 @@ public:
     // return tmp;
   }
 
-  inline CGAL_Interval_nt_advanced&
-         operator+=(const CGAL_Interval_nt_advanced& d)
+  CGAL_Interval_nt_advanced& operator+=(const CGAL_Interval_nt_advanced& d)
   {
     inf += d.inf;
     sup += d.sup;
     return *this;
   }
 
-  inline CGAL_Interval_nt_advanced
-         operator-(const CGAL_Interval_nt_advanced& d) const
+  CGAL_Interval_nt_advanced operator-(const CGAL_Interval_nt_advanced& d) const
   {
     return CGAL_Interval_nt_advanced(-(inf + d.sup), sup + d.inf);
     // CGAL_Interval_nt_advanced tmp;
@@ -90,176 +86,104 @@ public:
     // return tmp;
   }
 
-  inline CGAL_Interval_nt_advanced&
-         operator-=(const CGAL_Interval_nt_advanced& d)
+  CGAL_Interval_nt_advanced& operator-=(const CGAL_Interval_nt_advanced& d)
   {
     inf += d.sup;
     sup += d.inf;
     return *this;
   }
 
-  inline CGAL_Interval_nt_advanced
-         operator*(const CGAL_Interval_nt_advanced& d) const
+  CGAL_Interval_nt_advanced operator*(const CGAL_Interval_nt_advanced& d) const
   {
-    // CGAL_Interval_nt_advanced tmp;
     if (inf<=0)                                   /* this>=0 */
     {
       if (d.inf<=0)                                 /* d>=0 */
-      {
 	return CGAL_Interval_nt_advanced(-((-inf)*d.inf), sup*d.sup);
-        // tmp.inf = (-inf)*d.inf;
-        // tmp.sup = sup*d.sup;
-      }
       else if (d.sup<=0)                            /* d<=0 */
-      {
 	return CGAL_Interval_nt_advanced(-(sup*d.inf), (-inf)*d.sup);
-        // tmp.inf = sup*d.inf;
-        // tmp.sup = (-inf)*d.sup;
-      }
       else                                        /* 0 \in d */
-      {
 	return CGAL_Interval_nt_advanced(-(sup*d.inf), sup*d.sup);
-        // tmp.inf = sup*d.inf;
-        // tmp.sup = sup*d.sup;
-      };
     }
     else if (sup<=0)                              /* this<=0 */
     {
       if (d.inf<=0)                                 /* d>=0 */
-      {
 	return CGAL_Interval_nt_advanced(-(inf*d.sup), sup*(-d.inf));
-        // tmp.inf = inf*d.sup;
-        // tmp.sup = sup*(-d.inf);
-      }
       else if (d.sup<=0)                            /* d<=0 */
-      {
 	return CGAL_Interval_nt_advanced(-((-sup)*d.sup), inf*d.inf);
-        // tmp.inf = (-sup)*d.sup;
-        // tmp.sup = inf*d.inf;
-      }
       else                                        /* 0 \in d */
-      {
 	return CGAL_Interval_nt_advanced(-(inf*d.sup), inf*d.inf);
-        // tmp.inf = inf*d.sup;
-        // tmp.sup = inf*d.inf;
-      };
     }
     else                                          /* 0 \in [inf;sup] */
     {
       if (d.inf<=0)                                 /* d>=0 */
-      {
 	return CGAL_Interval_nt_advanced(-(inf*d.sup), sup*d.sup);
-        // tmp.inf = inf*d.sup;
-        // tmp.sup = sup*d.sup;
-      }
       else if (d.sup<=0)                            /* d<=0 */
-      {
 	return CGAL_Interval_nt_advanced(-(sup*d.inf), inf*d.inf);
-        // tmp.inf = sup*d.inf;
-        // tmp.sup = inf*d.inf;
-      }
       else                                        /* 0 \in d */
       {
         double tmp1, tmp2, tmp3, tmp4;
         tmp1 = inf*d.sup;
         tmp2 = sup*d.inf;
-        // tmp.inf = (tmp1>tmp2) ? tmp1 : tmp2;
         tmp3 = inf*d.inf;
         tmp4 = sup*d.sup;
-        // tmp.sup = (tmp3>tmp4) ? tmp3 : tmp4;
 	return CGAL_Interval_nt_advanced(-((tmp1>tmp2) ? tmp1 : tmp2),
 					   (tmp3>tmp4) ? tmp3 : tmp4);
       };
     };
-    // return tmp;
   }
 
-  inline CGAL_Interval_nt_advanced &
-         operator*=(const CGAL_Interval_nt_advanced& d)
+  CGAL_Interval_nt_advanced & operator*=(const CGAL_Interval_nt_advanced& d)
   {
     *this = *this * d;
     return *this;
   }
 
-  inline CGAL_Interval_nt_advanced
-         operator/(const CGAL_Interval_nt_advanced& d) const
+  CGAL_Interval_nt_advanced operator/(const CGAL_Interval_nt_advanced& d) const
   {
-    // CGAL_Interval_nt_advanced tmp;
     if (d.inf<0.0)                            /* d>0 */
     {
       if (inf<=0.0)                         /* this>=0 */
-      {
 	return CGAL_Interval_nt_advanced(-(inf/d.sup), sup/(-d.inf));
-        // tmp.inf = inf/d.sup;
-        // tmp.sup = sup/(-d.inf);
-      }
       else if (sup<=0.0)                    /* this<=0 */
-      {
 	return CGAL_Interval_nt_advanced(-(inf/(-d.inf)), sup/d.sup);
-        // tmp.inf = inf/(-d.inf);
-        // tmp.sup = sup/d.sup;
-      }
       else                                /* 0 \in this */
-      {
 	return CGAL_Interval_nt_advanced(-(inf/(-d.inf)), sup/(-d.inf));
-        // tmp.inf = inf/(-d.inf);
-        // tmp.sup = sup/(-d.inf);
-      };
     }
     else if (d.sup<0.0)                       /* d<0 */
     {
       if (inf<=0.0)                         /* this>=0 */
-      {
 	return CGAL_Interval_nt_advanced(-(sup/(-d.sup)), inf/d.inf);
-        // tmp.inf = sup/(-d.sup);
-        // tmp.sup = inf/d.inf;
-      }
       else if (sup<=0.0)                    /* b<=0 */
-      {
 	return CGAL_Interval_nt_advanced(-(sup/d.inf), inf/(-d.sup));
-        // tmp.inf = sup/d.inf;
-        // tmp.sup = inf/(-d.sup);
-      }
       else                                /* 0 \in this */
-      {
 	return CGAL_Interval_nt_advanced(-(sup/(-d.sup)), inf/(-d.sup));
-        // tmp.inf = sup/(-d.sup);
-        // tmp.sup = inf/(-d.sup);
-      };
     }
     else                                  /* 0 \in [d.inf;d.sup] */
       return CGAL_Interval_nt_advanced(-(HUGE_VAL), HUGE_VAL);
-      // tmp.inf = tmp.sup = HUGE_VAL;           /* ]-oo;+oo[. */
-    // return tmp;
   }
 
-  inline CGAL_Interval_nt_advanced &
-         operator/=(const CGAL_Interval_nt_advanced& d)
+  CGAL_Interval_nt_advanced & operator/=(const CGAL_Interval_nt_advanced& d)
   {
     *this = *this / d;
     return *this;
   }
 
-  inline CGAL_Interval_nt_advanced operator-() const
+  CGAL_Interval_nt_advanced operator-() const
   {
     return CGAL_Interval_nt_advanced(-(sup), inf);
-    // CGAL_Interval_nt_advanced tmp;
-    // tmp.inf = sup;
-    // tmp.sup = inf;
-    // return tmp;
   }
 
-  inline bool is_valid() const
+  bool is_valid() const
   {
     return CGAL_is_valid(inf) && CGAL_is_valid(sup);
   }
 
-  inline bool is_finite() const
+  bool is_finite() const
   {
     return CGAL_is_finite(inf) && CGAL_is_finite(sup);
   }
 
-  inline bool operator==(const CGAL_Interval_nt_advanced& d) const
+  bool operator==(const CGAL_Interval_nt_advanced& d) const
   {
 #if !defined(CGAL_IA_NO_WARNINGS) && !defined(CGAL_NO_WARNINGS)
     CGAL_warning_msg(!overlap(d), " Comparison between overlapping intervals");
@@ -267,7 +191,7 @@ public:
     return overlap(d);
   }
 
-  inline bool operator!=(const CGAL_Interval_nt_advanced& d) const
+  bool operator!=(const CGAL_Interval_nt_advanced& d) const
   {
 #if !defined(CGAL_IA_NO_WARNINGS) && !defined(CGAL_NO_WARNINGS)
     CGAL_warning_msg(!overlap(d), " Comparison between overlapping intervals");
@@ -275,7 +199,7 @@ public:
     return !overlap(d);
   }
 
-  inline bool operator<(const CGAL_Interval_nt_advanced& d) const
+  bool operator<(const CGAL_Interval_nt_advanced& d) const
   {
 #if !defined(CGAL_IA_NO_WARNINGS) && !defined(CGAL_NO_WARNINGS)
     CGAL_warning_msg(!overlap(d), " Comparison between overlapping intervals");
@@ -283,7 +207,7 @@ public:
     return (sup < -d.inf);
   }
 
-  inline bool operator>(const CGAL_Interval_nt_advanced& d) const
+  bool operator>(const CGAL_Interval_nt_advanced& d) const
   {
 #if !defined(CGAL_IA_NO_WARNINGS) && !defined(CGAL_NO_WARNINGS)
     CGAL_warning_msg(!overlap(d), " Comparison between overlapping intervals");
@@ -291,28 +215,28 @@ public:
     return (d.sup < -inf);
   }
 
-  inline bool operator<=(const CGAL_Interval_nt_advanced& d) const
+  bool operator<=(const CGAL_Interval_nt_advanced& d) const
   {
     return !(*this > d);
   }
 
-  inline bool operator>=(const CGAL_Interval_nt_advanced& d) const
+  bool operator>=(const CGAL_Interval_nt_advanced& d) const
   {
     return !(*this < d);
   }
 
-  inline double lower_bound() const
+  double lower_bound() const
   {
     return -inf;
   }
 
-  inline double upper_bound() const
+  double upper_bound() const
   {
     return sup;
   }
 
 private:
-  inline bool overlap(const CGAL_Interval_nt_advanced& d) const
+  bool overlap(const CGAL_Interval_nt_advanced& d) const
   {
     return (sup >= -d.inf) && (d.sup >= -inf);
   }
@@ -330,15 +254,15 @@ class CGAL_Interval_nt : public CGAL_Interval_nt_advanced
 
 public:
 
-  inline CGAL_Interval_nt(const double d = 0.0)
+  CGAL_Interval_nt(const double d = 0.0)
       : CGAL_Interval_nt_advanced(d) {}
-  inline CGAL_Interval_nt(const double a, const double b)
+  CGAL_Interval_nt(const double a, const double b)
       : CGAL_Interval_nt_advanced(a,b) {}
 
-  inline CGAL_Interval_nt(const CGAL_Interval_nt_advanced &d)
+  CGAL_Interval_nt(const CGAL_Interval_nt_advanced &d)
     : CGAL_Interval_nt_advanced(d) {}
 
-  inline CGAL_Interval_nt operator+(const CGAL_Interval_nt& d) const
+  CGAL_Interval_nt operator+(const CGAL_Interval_nt& d) const
   {
     CGAL_Interval_nt tmp;
     CGAL_FPU_set_rounding_to_infinity();
@@ -347,7 +271,7 @@ public:
     return tmp;
   }
 
-  inline CGAL_Interval_nt& operator+=(const CGAL_Interval_nt& d)
+  CGAL_Interval_nt& operator+=(const CGAL_Interval_nt& d)
   {
     CGAL_FPU_set_rounding_to_infinity();
     *this = ((CGAL_Interval_nt_advanced) *this) + (CGAL_Interval_nt_advanced)d;
@@ -355,7 +279,7 @@ public:
     return *this;
   }
 
-  inline CGAL_Interval_nt operator-(const CGAL_Interval_nt& d) const
+  CGAL_Interval_nt operator-(const CGAL_Interval_nt& d) const
   {
     CGAL_Interval_nt tmp;
     CGAL_FPU_set_rounding_to_infinity();
@@ -364,7 +288,7 @@ public:
     return tmp;
   }
 
-  inline CGAL_Interval_nt& operator-=(const CGAL_Interval_nt& d)
+  CGAL_Interval_nt& operator-=(const CGAL_Interval_nt& d)
   {
     CGAL_FPU_set_rounding_to_infinity();
     *this = ((CGAL_Interval_nt_advanced) *this) - (CGAL_Interval_nt_advanced)d;
@@ -372,7 +296,7 @@ public:
     return *this;
   }
 
-  inline CGAL_Interval_nt operator*(const CGAL_Interval_nt& d) const
+  CGAL_Interval_nt operator*(const CGAL_Interval_nt& d) const
   {
     CGAL_Interval_nt tmp;
     CGAL_FPU_set_rounding_to_infinity();
@@ -381,7 +305,7 @@ public:
     return tmp;
   }
 
-  inline CGAL_Interval_nt& operator*=(const CGAL_Interval_nt& d)
+  CGAL_Interval_nt& operator*=(const CGAL_Interval_nt& d)
   {
     CGAL_FPU_set_rounding_to_infinity();
     *this = ((CGAL_Interval_nt_advanced) *this) * (CGAL_Interval_nt_advanced)d;
@@ -389,7 +313,7 @@ public:
     return *this;
   }
 
-  inline CGAL_Interval_nt operator/(const CGAL_Interval_nt& d) const
+  CGAL_Interval_nt operator/(const CGAL_Interval_nt& d) const
   {
     CGAL_Interval_nt tmp;
     CGAL_FPU_set_rounding_to_infinity();
@@ -398,7 +322,7 @@ public:
     return tmp;
   }
 
-  inline CGAL_Interval_nt& operator/=(const CGAL_Interval_nt& d)
+  CGAL_Interval_nt& operator/=(const CGAL_Interval_nt& d)
   {
     CGAL_FPU_set_rounding_to_infinity();
     *this = ((CGAL_Interval_nt_advanced) *this) / (CGAL_Interval_nt_advanced)d;
