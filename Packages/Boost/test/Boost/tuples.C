@@ -1,4 +1,8 @@
+// Test program for the Boost Tuples Library.
+//
+// Sylvain Pion.
 
+#include <CGAL/basic.h>
 #include <boost/tuple/tuple.hpp>
 #include <boost/tuple/tuple_comparison.hpp>
 

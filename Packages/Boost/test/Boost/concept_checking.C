@@ -2,6 +2,7 @@
 //
 // Sylvain Pion.
 
+#include <CGAL/basic.h>
 #include <boost/concept_check.hpp>
 #include <boost/concept_archetype.hpp>
 
