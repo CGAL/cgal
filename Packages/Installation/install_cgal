@@ -776,6 +776,7 @@ set_compiler_flags()
     OBJ_EXT=".o"
     OBJ_OPT="-c"
     LIB_SUFFIX=""
+    SHARED_LIB_EXT=".so"
     REMOVE_EXT_LIST=".o"
     LIB_OPT=" -l"
     LEDA_LIB_OPT=' -l'
@@ -1004,6 +1005,7 @@ set_compiler_flags()
 	    ADDITIONAL_CXXFLAGS="-Wall -fno-common"
 	    CGAL_SHARED_LIB_CXXFLAGS=""
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -dynamiclib"
+	    SHARED_LIB_EXT=".dylib"
 	    WINDOW_DIR="/usr/X11R6/lib"
 	    RUNTIME_LINKER_FLAG=''
 	    PRINT_STACKTRACE_PROGRAM="gdb"
@@ -2741,17 +2743,17 @@ check_GMP_LIB_DIR()
 {
     if [ -n "${GMP_LIB_DIR}" ]; then
 	if [ ! -r ${GMP_LIB_DIR}/${GMP_LIBNAME} -a \
-	     ! -r ${GMP_LIB_DIR}/libgmp.so ]; then 
+	     ! -r ${GMP_LIB_DIR}/libgmp${SHARED_LIB_EXT} ]; then 
 	    $1 "WARNING: GMP_LIB_DIR should contain"
-	    $1 "      libgmp.a, libgmp.so or gmp.lib." 
+	    $1 "      libgmp.a, libgmp${SHARED_LIB_EXT} or gmp.lib." 
 	else
 	    return 1
 	fi
 	if [ -n "${GMPXX_SUPPORT}" ]; then
 	    if [ ! -r ${GMP_LIB_DIR}/${GMPXX_LIBNAME} -a \
-	         ! -r ${GMP_LIB_DIR}/libgmpxx.so ]; then 
+	         ! -r ${GMP_LIB_DIR}/libgmpxx${SHARED_LIB_EXT} ]; then 
 	        $1 "WARNING: GMP_LIB_DIR should contain"
-	        $1 "      libgmpxx.a, libgmpxx.so or gmpxx.lib." 
+	        $1 "      libgmpxx.a, libgmpxx${SHARED_LIB_EXT} or gmpxx.lib." 
 	    else
 	        return 1
 	    fi
@@ -2849,9 +2851,9 @@ check_CLN_LIB_DIR()
 {
     if [ -n "${CLN_LIB_DIR}" ]; then
 	if [ ! -r ${CLN_LIB_DIR}/libcln.a -a \
-	     ! -r ${CLN_LIB_DIR}/libcln.so ]; then 
+	     ! -r ${CLN_LIB_DIR}/libcln${SHARED_LIB_EXT} ]; then 
 	    $1 "WARNING: CLN_LIB_DIR should contain"
-	    $1 "         libcln.a or libcln.so." 
+	    $1 "         libcln.a or libcln${SHARED_LIB_EXT}." 
 	else
 	    return 1
 	fi
@@ -2961,8 +2963,8 @@ check_QT_LIB_DIR()
 {
     if [ -n "${QT_LIB_DIR}" ]; then
 	if [ ! -r ${QT_LIB_DIR}/libqt.${LIB_SUFFIX} -a \
-	     ! -r ${QT_LIB_DIR}/libqt.so ]; then
-	     $1 "WARNING: QT_LIB_DIR should contain libqt.${LIB_SUFFIX} or libqt.so."
+	     ! -r ${QT_LIB_DIR}/libqt${SHARED_LIB_EXT} ]; then
+	     $1 "WARNING: QT_LIB_DIR should contain libqt.${LIB_SUFFIX} or libqt${SHARED_LIB_EXT}."
 	else
 	    return 1
 	fi
@@ -3059,8 +3061,8 @@ check_LEDA_LIB_DIR()
     if [ -n "${LEDA_LIB_DIR}" ]; then
 	if [ ! -r $LEDA_LIB_DIR/libL.a -a \
 	     ! -r $LEDA_LIB_DIR/libL${LIB_SUFFIX} -a \
-	     ! -r $LEDA_LIB_DIR/libL.so ]; then
-	    $1 "WARNING: LEDA_LIB_DIR should contain libL.${LIB_SUFFIX} or libL.so." 
+	     ! -r $LEDA_LIB_DIR/libL${SHARED_LIB_EXT} ]; then
+	    $1 "WARNING: LEDA_LIB_DIR should contain libL.${LIB_SUFFIX} or libL${SHARED_LIB_EXT}." 
 	else
 	    return 1
 	fi
@@ -5541,7 +5543,7 @@ install_gmp()
 {
     make_lib_dir
     if [ -r ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/${GMP_LIBNAME} -o \
-	 -r ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libgmp.so ]; then
+	 -r ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libgmp${SHARED_LIB_EXT} ]; then
 	if [ "${GMP_INSTALLATION}" != "c" ]; then
 	    GMP_INSTALLATION='c'
 	    GMP_TEST_PASSED=''
@@ -6330,7 +6332,7 @@ create_include_makefile()
   # 
   # CGAL_SHARED_LIB
   # 
-  ${_printf} "%s\n" "CGAL_SHARED_LIB = libCGAL.so" >> ${FILE}
+  ${_printf} "%s\n" "CGAL_SHARED_LIB = libCGAL${SHARED_LIB_EXT}" >> ${FILE}
 
   # 
   # CGAL_SHARED_LIB_CXXFLAGS
