@@ -1,3 +1,8 @@
+3.7  (22 Jan 2001)
+- Adapts to new simple cartesian kernel.
+- Remove redundant protect macros tests.
+- Added a few missing CGAL_ to the NO_?STREAM* macros.
+
 3.6   (30 Jul 2000)
 
 - id() removed

@@ -27,20 +27,15 @@
 
 #ifndef CGAL_REP_CLASS_DEFINED
 #error  no representation class defined
-#endif  // CGAL_REP_CLASS_DEFINED
+#endif
 
 #ifdef CGAL_HOMOGENEOUS_H
 #include <CGAL/Iso_cuboidH3.h>
-#endif // CGAL_HOMOGENEOUS_H
+#endif
 
-#ifdef CGAL_CARTESIAN_H
+#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
 #include <CGAL/Cartesian/Iso_cuboid_3.h>
-#endif // CGAL_CARTESIAN_H
-
-#ifdef CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/SimpleCartesian/Iso_cuboidS3.h>
-#endif // CGAL_SIMPLE_CARTESIAN_H
-
+#endif
 
 #include <CGAL/Point_3.h>
 
@@ -114,16 +109,16 @@ public:
 */
 };
 
-#ifndef NO_OSTREAM_INSERT_ISO_CUBOID_3
+#ifndef CGAL_NO_OSTREAM_INSERT_ISO_CUBOID_3
 template < class R >
 std::ostream&
 operator<<(std::ostream& os, const Iso_cuboid_3<R>& r)
 {
   typedef typename  R::Iso_cuboid_3_base  RIso_cuboid_3;
   return  os << (const RIso_cuboid_3& )r; }
-#endif // NO_OSTREAM_INSERT_ISO_CUBOID_3
+#endif // CGAL_NO_OSTREAM_INSERT_ISO_CUBOID_3
 
-#ifndef NO_ISTREAM_EXTRACT_ISO_CUBOID_3
+#ifndef CGAL_NO_ISTREAM_EXTRACT_ISO_CUBOID_3
 template < class R >
 std::istream&
 operator>>(std::istream& is, Iso_cuboid_3<R>& r)
@@ -132,9 +127,8 @@ operator>>(std::istream& is, Iso_cuboid_3<R>& r)
   is >> (RIso_cuboid_3& )r;
   return is;
 }
-#endif // NO_ISTREAM_EXTRACT_ISO_CUBOID_3
+#endif // CGAL_NO_ISTREAM_EXTRACT_ISO_CUBOID_3
 
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_ISO_CUBOID_3_H

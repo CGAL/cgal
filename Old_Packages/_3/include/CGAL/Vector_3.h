@@ -29,20 +29,12 @@
 #error  no representation class defined
 #endif  // CGAL_REP_CLASS_DEFINED
 
-#ifndef CGAL_POINT_3_H
 #include <CGAL/Point_3.h>
-#endif // CGAL_POINT_3_H
-
-
-#ifndef CGAL_DIRECTION_3_H
 #include <CGAL/Direction_3.h>
-#endif // CGAL_DIRECTION_3_H
 
 #ifdef VECTOR_WRAPPER
-#ifndef VECTOR_3_RFT_WRAPPER_H
 #include <CGAL/Vector_3_rft_wrapper.h>
-#endif // VECTOR_3_RFT_WRAPPER_H
-#endif // VECTOR_WRAPPER
+#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -155,7 +147,7 @@ No_number_tag number_type_tag(const Vector_3<R>& )
   return No_number_tag();
 }
 
-#ifndef NO_OSTREAM_INSERT_VECTOR_3
+#ifndef CGAL_NO_OSTREAM_INSERT_VECTOR_3
 template < class R >
 std::ostream&
 operator<<(std::ostream& os, const Vector_3<R>& v)
@@ -163,9 +155,9 @@ operator<<(std::ostream& os, const Vector_3<R>& v)
   typedef typename  R::Vector_3_base  RVector_3;
   return os << (const RVector_3& )v;
 }
-#endif // NO_OSTREAM_INSERT_VECTOR_3
+#endif // CGAL_NO_OSTREAM_INSERT_VECTOR_3
 
-#ifndef NO_ISTREAM_EXTRACT_VECTOR_3
+#ifndef CGAL_NO_ISTREAM_EXTRACT_VECTOR_3
 template < class R >
 std::istream&
 operator>>(std::istream& is, Vector_3<R>& p)
@@ -173,8 +165,7 @@ operator>>(std::istream& is, Vector_3<R>& p)
   typedef typename  R::Vector_3_base  RVector_3;
   return is >> (RVector_3& )p;
 }
-#endif // NO_ISTREAM_EXTRACT_VECTOR_3
-
+#endif // CGAL_NO_ISTREAM_EXTRACT_VECTOR_3
 
 template<class R>
 inline
@@ -186,6 +177,5 @@ cross_product(const Vector_3<R>& v, const Vector_3<R>& w)
 }
 
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_VECTOR_3_H

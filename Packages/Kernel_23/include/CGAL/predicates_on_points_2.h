@@ -27,28 +27,17 @@
 
 #ifndef CGAL_REP_CLASS_DEFINED
 #error  no representation class defined
-#endif  // CGAL_REP_CLASS_DEFINED
+#endif
 
 #ifdef CGAL_HOMOGENEOUS_H
-#ifndef CGAL_PREDICATES_ON_POINTSH2_H
 #include <CGAL/predicates_on_pointsH2.h>
-#endif // CGAL_PREDICATES_ON_POINTSH2_H
-#endif // CGAL_HOMOGENEOUS_H
+#endif
 
-#ifdef CGAL_CARTESIAN_H
-#ifndef CGAL_PREDICATES_ON_POINTSC2_H
+#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
 #include <CGAL/Cartesian/predicates_on_points_2.h>
-#endif // CGAL_PREDICATES_ON_POINTSC2_H
-#endif // CGAL_CARTESIAN_H
+#endif
 
-#ifdef CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/SimpleCartesian/predicates_on_pointsS2.h>
-#endif // CGAL_SIMPLE_CARTESIAN_H
-
-
-#ifndef CGAL_POINT_2_H
 #include <CGAL/Point_2.h>
-#endif // CGAL_POINT_2_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -360,6 +349,5 @@ side_of_bounded_circle(const Point_2<R>& p,
 }
 
 CGAL_END_NAMESPACE
-
 
 #endif  // CGAL_PREDICATES_ON_POINTS_2_H

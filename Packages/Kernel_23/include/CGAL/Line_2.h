@@ -29,28 +29,15 @@
 #endif  // CGAL_REP_CLASS_DEFINED
 
 #ifdef CGAL_HOMOGENEOUS_H
-#ifndef CGAL_LINEH2_H
 #include <CGAL/LineH2.h>
-#endif // CGAL_LINEH2_H
-#endif // CGAL_HOMOGENEOUS_H
+#endif
 
-#ifdef CGAL_CARTESIAN_H
-#ifndef CGAL_LINEC2_H
+#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
 #include <CGAL/Cartesian/Line_2.h>
-#endif // CGAL_LINEC2_H
-#endif // CGAL_CARTESIAN_H
+#endif
 
-#ifdef CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/SimpleCartesian/LineS2.h>
-#endif // CGAL_SIMPLE_CARTESIAN_H
-
-
-#ifndef CGAL_PREDICATES_ON_POINTS_2_H
 #include <CGAL/predicates_on_points_2.h>
-#endif // CGAL_PREDICATES_ON_POINTS_2_H
-#ifndef CGAL_VECTOR_2_H
 #include <CGAL/Vector_2.h>
-#endif // CGAL_VECTOR_2_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -219,7 +206,7 @@ public:
 
 
 
-#ifndef NO_OSTREAM_INSERT_LINE_2
+#ifndef CGAL_NO_OSTREAM_INSERT_LINE_2
 template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Line_2<R> &l)
@@ -227,9 +214,9 @@ operator<<(std::ostream &os, const Line_2<R> &l)
   typedef typename  R::Line_2_base  RLine_2;
   return os << (const RLine_2&)l;
 }
-#endif // NO_OSTREAM_INSERT_LINE_2
+#endif // CGAL_NO_OSTREAM_INSERT_LINE_2
 
-#ifndef NO_ISTREAM_EXTRACT_LINE_2
+#ifndef CGAL_NO_ISTREAM_EXTRACT_LINE_2
 template < class R >
 std::istream &
 operator>>(std::istream &is, Line_2<R> &p)
@@ -237,18 +224,11 @@ operator>>(std::istream &is, Line_2<R> &p)
   typedef typename  R::Line_2_base  RLine_2;
   return is >> (RLine_2&)p;
 }
-#endif // NO_ISTREAM_EXTRACT_LINE_2
-
-
+#endif // CGAL_NO_ISTREAM_EXTRACT_LINE_2
 
 CGAL_END_NAMESPACE
 
-
-#ifndef CGAL_SEGMENT_2_H
 #include <CGAL/Segment_2.h>
-#endif // CGAL_SEGMENT_2_H
-#ifndef CGAL_RAY_2_H
 #include <CGAL/Ray_2.h>
-#endif // CGAL_RAY_2_H
 
 #endif  // CGAL_LINE_2_H

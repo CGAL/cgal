@@ -30,21 +30,12 @@
 #endif  // CGAL_REP_CLASS_DEFINED
 
 #ifdef CGAL_HOMOGENEOUS_H
-#ifndef CGAL_POINTH3_H
 #include <CGAL/PointH3.h>
-#endif // CGAL_POINTH3_H
-#endif // CGAL_HOMOGENEOUS_H
+#endif
 
-#ifdef CGAL_CARTESIAN_H
-#ifndef CGAL_POINTC3_H
+#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
 #include <CGAL/Cartesian/Point_3.h>
-#endif // CGAL_POINTC3_H
-#endif // CGAL_CARTESIAN_H
-
-#ifdef CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/SimpleCartesian/PointS3.h>
-#endif // CGAL_SIMPLE_CARTESIAN_H
-
+#endif
 
 #include <CGAL/point_vector_declarations_3.h>
 
@@ -134,16 +125,9 @@ private:
 
 CGAL_END_NAMESPACE
 
-
-#ifndef CGAL_VECTOR_3_H
 #include <CGAL/Vector_3.h>
-#endif // CGAL_VECTOR_3_H
-
 #include <CGAL/point_vector_definitions_3.C>
-
-#ifndef CGAL_AFF_TRANSFORMATION_3_H
 #include <CGAL/Aff_transformation_3.h>
-#endif // CGAL_AFF_TRANSFORMATION_3_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -160,7 +144,7 @@ operator!=(const Origin& o, const Point_3<R>& p)
 { return p != o; }
 
 
-#ifndef NO_OSTREAM_INSERT_POINT_3
+#ifndef CGAL_NO_OSTREAM_INSERT_POINT_3
 
 template < class R >
 std::ostream&
@@ -169,18 +153,17 @@ operator<<(std::ostream& os, const Point_3<R>& p)
   typedef typename  R::Point_3_base  RPoint_3;
   return os << (const RPoint_3& )p;
 }
-#endif // NO_OSTREAM_INSERT_POINT_3
+#endif // CGAL_NO_OSTREAM_INSERT_POINT_3
 
-#ifndef NO_ISTREAM_EXTRACT_POINT_3
+#ifndef CGAL_NO_ISTREAM_EXTRACT_POINT_3
 template < class R >
 std::istream& operator>>(std::istream& is, Point_3<R>& p)
 {
   typedef typename  R::Point_3_base  RPoint_3;
   return is >> (RPoint_3& )p;
 }
-#endif // NO_ISTREAM_EXTRACT_POINT_3
+#endif // CGAL_NO_ISTREAM_EXTRACT_POINT_3
 
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_POINT_3_H

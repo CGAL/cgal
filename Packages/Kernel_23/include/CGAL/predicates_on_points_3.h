@@ -30,25 +30,14 @@
 #endif  // CGAL_REP_CLASS_DEFINED
 
 #ifdef CGAL_HOMOGENEOUS_H
-#ifndef PREDICATES_ON_POINTSH3_H
 #include <CGAL/predicates_on_pointsH3.h>
-#endif // PREDICATES_ON_POINTSH3_H
-#endif // CGAL_HOMOGENEOUS_H
+#endif
 
-#ifdef CGAL_CARTESIAN_H
-#ifndef CGAL_PREDICATES_ON_POINTSC3_H
+#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
 #include <CGAL/Cartesian/predicates_on_points_3.h>
-#endif // CGAL_PREDICATES_ON_POINTSC3_H
-#endif // CGAL_CARTESIAN_H
+#endif
 
-#ifdef CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/SimpleCartesian/predicates_on_pointsS3.h>
-#endif // CGAL_SIMPLE_CARTESIAN_H
-
-
-#ifndef CGAL_POINT_3_H
 #include <CGAL/Point_3.h>
-#endif // CGAL_POINT_3_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -274,6 +263,5 @@ side_of_oriented_sphere( const Point_3<R> &p,
 }
 
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_PREDICATES_ON_POINTS_3_H

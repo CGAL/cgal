@@ -24,6 +24,7 @@
 
 #ifndef CGAL_PREDICATES_CLASSES_2_H
 #define CGAL_PREDICATES_CLASSES_2_H
+
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/distance_predicates_2.h>
 #include <CGAL/predicates_on_lines_2.h>
@@ -384,8 +385,6 @@ struct Compare_y_implicit_points_same_line_2
        { return compare_y( l, h1, h2); }
 };
 
-
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_PREDICATES_CLASSES_2_H

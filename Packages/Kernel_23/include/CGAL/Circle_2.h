@@ -27,28 +27,17 @@
 
 #ifndef CGAL_REP_CLASS_DEFINED
 #error  no representation class defined
-#endif  // CGAL_REP_CLASS_DEFINED
+#endif
 
 #ifdef CGAL_HOMOGENEOUS_H
-#ifndef CGAL_CIRCLEH2_H
 #include <CGAL/CircleH2.h>
-#endif // CGAL_CIRCLEH2_H
-#endif // CGAL_HOMOGENEOUS_H
+#endif
 
-#ifdef CGAL_CARTESIAN_H
-#ifndef CGAL_CIRCLEC2_H
+#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
 #include <CGAL/Cartesian/Circle_2.h>
-#endif // CGAL_CIRCLEC2_H
-#endif // CGAL_CARTESIAN_H
+#endif
 
-#ifdef CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/SimpleCartesian/CircleS2.h>
-#endif // CGAL_SIMPLE_CARTESIAN_H
-
-
-#ifndef CGAL_POINT_2_H
 #include <CGAL/Point_2.h>
-#endif // CGAL_POINT_2_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -190,7 +179,7 @@ public:
 };
 
 
-#ifndef NO_OSTREAM_INSERT_CIRCLE_2
+#ifndef CGAL_NO_OSTREAM_INSERT_CIRCLE_2
 template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Circle_2<R> &c)
@@ -199,9 +188,9 @@ operator<<(std::ostream &os, const Circle_2<R> &c)
   return os << (const RCircle_2&)c;
 }
 
-#endif // NO_OSTREAM_INSERT_CIRCLE_2
+#endif // CGAL_NO_OSTREAM_INSERT_CIRCLE_2
 
-#ifndef NO_ISTREAM_EXTRACT_CIRCLE_2
+#ifndef CGAL_NO_ISTREAM_EXTRACT_CIRCLE_2
 template < class R >
 std::istream &
 operator>>(std::istream &is, Circle_2<R> &c)
@@ -209,9 +198,8 @@ operator>>(std::istream &is, Circle_2<R> &c)
   typedef typename R::Circle_2_base  RCircle_2;
   return is >> (RCircle_2&)c;
 }
-#endif // NO_ISTREAM_EXTRACT_CIRCLE_2
+#endif // CGAL_NO_ISTREAM_EXTRACT_CIRCLE_2
 
 CGAL_END_NAMESPACE
-
 
 #endif  // CGAL_CIRCLE_2_H

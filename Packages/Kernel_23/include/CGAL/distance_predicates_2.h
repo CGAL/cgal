@@ -27,31 +27,18 @@
 
 #ifndef CGAL_REP_CLASS_DEFINED
 #error  no representation class defined
-#endif  // CGAL_REP_CLASS_DEFINED
+#endif
 
 #ifdef CGAL_HOMOGENEOUS_H
-#ifndef CGAL_DISTANCE_PREDICATESH2_H
 #include <CGAL/distance_predicatesH2.h>
-#endif // CGAL_DISTANCE_PREDICATESH2_H
-#endif // CGAL_HOMOGENEOUS_H
+#endif
 
-#ifdef CGAL_CARTESIAN_H
-#ifndef CGAL_DISTANCE_PREDICATESC2_H
+#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
 #include <CGAL/Cartesian/distance_predicates_2.h>
-#endif // CGAL_DISTANCE_PREDICATESC2_H
-#endif // CGAL_CARTESIAN_H
+#endif
 
-#ifdef CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/SimpleCartesian/distance_predicatesS2.h>
-#endif // CGAL_SIMPLE_CARTESIAN_H
-
-
-#ifndef CGAL_POINT_2_H
 #include <CGAL/Point_2.h>
-#endif // CGAL_POINT_2_H
-#ifndef CGAL_LINE_2_H
 #include <CGAL/Line_2.h>
-#endif // CGAL_LINE_2_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -183,6 +170,5 @@ has_larger_signed_dist_to_line(const Point_2<R>& p,
 }
 
 CGAL_END_NAMESPACE
-
 
 #endif //CGAL_DISTANCE_PREDICATES_2_H

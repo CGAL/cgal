@@ -31,19 +31,13 @@
 
 #ifdef CGAL_HOMOGENEOUS_H
 #include <CGAL/SphereH3.h>
-#endif // CGAL_HOMOGENEOUS_H
+#endif
 
-#ifdef CGAL_CARTESIAN_H
+#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
 #include <CGAL/Cartesian/Sphere_3.h>
-#endif // CGAL_CARTESIAN_H
+#endif
 
-#ifdef CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/SimpleCartesian/SphereS3.h>
-#endif // CGAL_SIMPLE_CARTESIAN_H
-
-
-namespace CGAL {
-
+CGAL_BEGIN_NAMESPACE
 
 template <class R_>
 class Sphere_3 : public R_::Sphere_3_base
@@ -91,6 +85,6 @@ class Sphere_3 : public R_::Sphere_3_base
 
 };
 
-} // namespace CGAL
+CGAL_END_NAMESPACE
 
 #endif // CGAL_SPHERE_3_H

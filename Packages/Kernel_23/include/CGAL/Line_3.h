@@ -20,42 +20,25 @@
 //
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
- 
-
 
 #ifndef CGAL_LINE_3_H
 #define CGAL_LINE_3_H
 
 #ifndef CGAL_REP_CLASS_DEFINED
 #error  no representation class defined
-#endif  // CGAL_REP_CLASS_DEFINED
+#endif
 
 #ifdef CGAL_HOMOGENEOUS_H
-#ifndef CGAL_LINEH3_H
 #include <CGAL/LineH3.h>
-#endif // CGAL_LINEH3_H
-#endif // CGAL_HOMOGENEOUS_H
+#endif
 
-#ifdef CGAL_CARTESIAN_H
-#ifndef CGAL_LINEC3_H
+#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
 #include <CGAL/Cartesian/Line_3.h>
-#endif // CGAL_LINEC3_H
-#endif // CGAL_CARTESIAN_H
+#endif
 
-#ifdef CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/SimpleCartesian/LineS3.h>
-#endif // CGAL_SIMPLE_CARTESIAN_H
-
-
-#ifndef CGAL_SEGMENT_3_H
 #include <CGAL/Segment_3.h>
-#endif // CGAL_SEGMENT_3_H
-#ifndef CGAL_POINT_3_H
 #include <CGAL/Point_3.h>
-#endif // CGAL_POINT_3_H
-#ifndef CGAL_RAY_3_H
 #include <CGAL/Ray_3.h>
-#endif // CGAL_RAY_3_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -120,7 +103,7 @@ public:
   { return RLine_3::transform(t); }
 };
 
-#ifndef NO_OSTREAM_INSERT_LINE_3
+#ifndef CGAL_NO_OSTREAM_INSERT_LINE_3
 template < class R >
 std::ostream&
 operator<<(std::ostream& os, const Line_3<R>& l)
@@ -128,9 +111,9 @@ operator<<(std::ostream& os, const Line_3<R>& l)
   typedef typename  R::Line_3_base  RLine_3;
   return os << (const RLine_3& )l;
 }
-#endif // NO_OSTREAM_INSERT_LINE_3
+#endif // CGAL_NO_OSTREAM_INSERT_LINE_3
 
-#ifndef NO_ISTREAM_EXTRACT_LINE_3
+#ifndef CGAL_NO_ISTREAM_EXTRACT_LINE_3
 template < class R >
 std::istream&
 operator>>(std::istream & is, Line_3<R> & p)
@@ -139,13 +122,10 @@ operator>>(std::istream & is, Line_3<R> & p)
   is >> ( RLine_3&  )p;
   return is;
 }
-#endif // NO_ISTREAM_EXTRACT_LINE_3
+#endif // CGAL_NO_ISTREAM_EXTRACT_LINE_3
 
 CGAL_END_NAMESPACE
 
-
-#ifndef CGAL_PLANE_3_H
 #include <CGAL/Plane_3.h>
-#endif // CGAL_PLANE_3_H
 
 #endif // CGAL_LINE_3_H

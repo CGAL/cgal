@@ -30,25 +30,14 @@
 #endif  // CGAL_REP_CLASS_DEFINED
 
 #ifdef CGAL_HOMOGENEOUS_H
-#ifndef CGAL_SEGMENTH3_H
 #include <CGAL/SegmentH3.h>
-#endif // CGAL_SEGMENTH3_H
-#endif // CGAL_HOMOGENEOUS_H
+#endif
 
-#ifdef CGAL_CARTESIAN_H
-#ifndef CGAL_SEGMENTC3_H
+#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
 #include <CGAL/Cartesian/Segment_3.h>
-#endif // CGAL_SEGMENTC3_H
-#endif // CGAL_CARTESIAN_H
+#endif
 
-#ifdef CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/SimpleCartesian/SegmentS3.h>
-#endif // CGAL_SIMPLE_CARTESIAN_H
-
-
-#ifndef CGAL_LINE_3_H
 #include <CGAL/Line_3.h>
-#endif // CGAL_LINE_3_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -110,7 +99,7 @@ public:
 };
 
 
-#ifndef NO_OSTREAM_INSERT_SEGMENT_3
+#ifndef CGAL_NO_OSTREAM_INSERT_SEGMENT_3
 template < class R>
 std::ostream&
 operator<<(std::ostream& os, const Segment_3<R>& s)
@@ -118,9 +107,9 @@ operator<<(std::ostream& os, const Segment_3<R>& s)
   typedef typename  R::Segment_3_base  RSegment_3;
   return os << (const RSegment_3& )s;
 }
-#endif // NO_OSTREAM_INSERT_SEGMENT_3
+#endif // CGAL_NO_OSTREAM_INSERT_SEGMENT_3
 
-#ifndef NO_ISTREAM_EXTRACT_SEGMENT_3
+#ifndef CGAL_NO_ISTREAM_EXTRACT_SEGMENT_3
 template < class R>
 std::istream&
 operator>>(std::istream& is, Segment_3<R>& s)
@@ -128,10 +117,8 @@ operator>>(std::istream& is, Segment_3<R>& s)
   typedef typename  R::Segment_3_base  RSegment_3;
   return is >> (RSegment_3& )s;
 }
-#endif // NO_ISTREAM_EXTRACT_SEGMENT_3
-
+#endif // CGAL_NO_ISTREAM_EXTRACT_SEGMENT_3
 
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_SEGMENT_3_H

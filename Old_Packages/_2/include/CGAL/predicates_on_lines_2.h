@@ -27,37 +27,21 @@
 
 #ifndef CGAL_REP_CLASS_DEFINED
 #error  no representation class defined
-#endif  // CGAL_REP_CLASS_DEFINED
+#endif
 
 #ifdef CGAL_HOMOGENEOUS_H
-#ifndef CGAL_PREDICATES_ON_LINESH2_H
 #include <CGAL/predicates_on_linesH2.h>
-#endif // CGAL_PREDICATES_ON_LINESH2_H
-#endif // CGAL_HOMOGENEOUS_H
+#endif
 
-#ifdef CGAL_CARTESIAN_H
-#ifndef CGAL_PREDICATES_ON_LINESC2_H
+#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
 #include <CGAL/Cartesian/predicates_on_lines_2.h>
-#endif // CGAL_PREDICATES_ON_LINESC2_H
-#endif // CGAL_CARTESIAN_H
+#endif
 
-#ifdef CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/SimpleCartesian/predicates_on_linesS2.h>
-#endif // CGAL_SIMPLE_CARTESIAN_H
-
-
-#ifndef CGAL_POINT_2_H
 #include <CGAL/Point_2.h>
-#endif // CGAL_POINT_2_H
-#ifndef CGAL_PREDICATES_ON_POINTS_2_H
 #include <CGAL/predicates_on_points_2.h>
-#endif // CGAL_PREDICATES_ON_POINTS_2_H
-#ifndef CGAL_LINE_2_H
 #include <CGAL/Line_2.h>
-#endif // CGAL_LINE_2_H
 
 CGAL_BEGIN_NAMESPACE
-
 
 template < class R >
 inline
@@ -195,6 +179,5 @@ compare_y_at_x(const Line_2<R> &l1,
 }
 
 CGAL_END_NAMESPACE
-
 
 #endif  // CGAL_PREDICATES_ON_LINES_2_H

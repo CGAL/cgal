@@ -30,7 +30,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-
 template < class R >
 inline
 Vector_3<R>

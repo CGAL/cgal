@@ -29,27 +29,15 @@
 #error  no representation class defined
 #endif  // CGAL_REP_CLASS_DEFINED
 
-
 #ifdef CGAL_HOMOGENEOUS_H
-#ifndef CGAL_TRIANGLEH3_H
 #include <CGAL/TriangleH3.h>
-#endif // CGAL_TRIANGLEH3_H
-#endif // CGAL_HOMOGENEOUS_H
+#endif
 
-#ifdef CGAL_CARTESIAN_H
-#ifndef CGAL_TRIANGLEC3_H
+#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
 #include <CGAL/Cartesian/Triangle_3.h>
-#endif // CGAL_TRIANGLEC3_H
-#endif // CGAL_CARTESIAN_H
+#endif
 
-#ifdef CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/SimpleCartesian/TriangleS3.h>
-#endif // CGAL_SIMPLE_CARTESIAN_H
-
-
-#ifndef CGAL_PLANE_3_H
 #include <CGAL/Plane_3.h>
-#endif // CGAL_PLANE_3_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -106,7 +94,7 @@ public:
                       }
 };
 
-#ifndef NO_OSTREAM_INSERT_TRIANGLE_3
+#ifndef CGAL_NO_OSTREAM_INSERT_TRIANGLE_3
 template < class R >
 std::ostream&
 operator<<(std::ostream& os, const Triangle_3<R>& t)
@@ -114,9 +102,9 @@ operator<<(std::ostream& os, const Triangle_3<R>& t)
   typedef typename  R::Triangle_3_base  RTriangle_3;
   return os << (const RTriangle_3& )t;
 }
-#endif // NO_OSTREAM_INSERT_TRIANGLE_3
+#endif // CGAL_NO_OSTREAM_INSERT_TRIANGLE_3
 
-#ifndef NO_ISTREAM_EXTRACT_TRIANGLE_3
+#ifndef CGAL_NO_ISTREAM_EXTRACT_TRIANGLE_3
 template < class R >
 std::istream&
 operator>>(std::istream& is, Triangle_3<R>& t)
@@ -124,10 +112,8 @@ operator>>(std::istream& is, Triangle_3<R>& t)
   typedef typename  R::Triangle_3_base  RTriangle_3;
   return is >> (RTriangle_3& )t;
 }
-#endif // NO_ISTREAM_EXTRACT_TRIANGLE_3
-
+#endif // CGAL_NO_ISTREAM_EXTRACT_TRIANGLE_3
 
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_TRIANGLE_3_H

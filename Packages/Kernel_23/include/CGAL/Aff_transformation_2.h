@@ -34,25 +34,15 @@
 #define CGAL_NO_LINE_TRANSFORM_IN_AT
 #endif // CGAL_CFG_INCOMPLETE_TYPE_BUG_1
 
-#ifndef CGAL_LINE_2_H
 #include <CGAL/Line_2.h>
-#endif // CGAL_LINE_2_H
 
 #ifdef CGAL_HOMOGENEOUS_H
-#ifndef CGAL_AFF_TRANSFORMATIONH2_H
 #include <CGAL/Aff_transformationH2.h>
-#endif // CGAL_AFF_TRANSFORMATIONH2_H
-#endif // CGAL_HOMOGENEOUS_H
+#endif
 
-#ifdef CGAL_CARTESIAN_H
-#ifndef CGAL_AFF_TRANSFORMATIONC2_H
+#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
 #include <CGAL/Cartesian/Aff_transformation_2.h>
-#endif // CGAL_AFF_TRANSFORMATIONC2_H
-#endif // CGAL_CARTESIAN_H
-
-#ifdef CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/SimpleCartesian/Aff_transformationS2.h>
-#endif // CGAL_SIMPLE_CARTESIAN_H
+#endif
 
 
 CGAL_BEGIN_NAMESPACE
@@ -206,7 +196,7 @@ public:
   
 };
 
-#ifndef NO_OSTREAM_INSERT_AFF_TRANSFORMATION_2
+#ifndef CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATION_2
 template < class R >
 std::ostream &
 operator<<(std::ostream &os, const CGAL::Aff_transformation_2<R> &t)
@@ -214,9 +204,9 @@ operator<<(std::ostream &os, const CGAL::Aff_transformation_2<R> &t)
   typedef typename  R::Aff_transformation_2_base  RAff_transformation_2;
   return os << (const RAff_transformation_2&)t;
 }
-#endif // NO_OSTREAM_INSERT_AFF_TRANSFORMATION_2
+#endif // CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATION_2
 
-#ifndef NO_ISTREAM_EXTRACT_AFF_TRANSFORMATION_2
+#ifndef CGAL_NO_ISTREAM_EXTRACT_AFF_TRANSFORMATION_2
 template < class R >
 std::istream &
 operator>>(std::istream &is, CGAL::Aff_transformation_2<R> &t)
@@ -224,9 +214,8 @@ operator>>(std::istream &is, CGAL::Aff_transformation_2<R> &t)
   typedef typename  R::Aff_transformation_2_base  RAff_transformation_2;
   return is >> (RAff_transformation_2&)t;
 }
-#endif // NO_ISTREAM_EXTRACT_AFF_TRANSFORMATION_2
+#endif // CGAL_NO_ISTREAM_EXTRACT_AFF_TRANSFORMATION_2
 
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_AFF_TRANSFORMATION_2_H

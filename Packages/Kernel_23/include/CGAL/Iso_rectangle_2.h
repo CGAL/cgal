@@ -26,28 +26,17 @@
 
 #ifndef CGAL_REP_CLASS_DEFINED
 #error  no representation class defined
-#endif  // CGAL_REP_CLASS_DEFINED
+#endif
 
 #ifdef CGAL_HOMOGENEOUS_H
-#ifndef CGAL_ISO_RECTANGLEH2_H
 #include <CGAL/Iso_rectangleH2.h>
-#endif // CGAL_ISO_RECTANGLEH2_H
-#endif // CGAL_HOMOGENEOUS_H
+#endif
 
-#ifdef CGAL_CARTESIAN_H
-#ifndef CGAL_ISO_RECTANGLEC2_H
+#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
 #include <CGAL/Cartesian/Iso_rectangle_2.h>
-#endif // CGAL_ISO_RECTANGLEC2_H
-#endif // CGAL_CARTESIAN_H
+#endif
 
-#ifdef CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/SimpleCartesian/Iso_rectangleS2.h>
-#endif // CGAL_SIMPLE_CARTESIAN_H
-
-
-#ifndef CGAL_POINT_2_H
 #include <CGAL/Point_2.h>
-#endif // CGAL_POINT_2_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -145,7 +134,7 @@ public:
 
 };
 
-#ifndef NO_OSTREAM_INSERT_ISO_RECTANGLE_2
+#ifndef CGAL_NO_OSTREAM_INSERT_ISO_RECTANGLE_2
 template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Iso_rectangle_2<R> &r)
@@ -153,9 +142,9 @@ operator<<(std::ostream &os, const Iso_rectangle_2<R> &r)
   typedef typename R::Iso_rectangle_2_base  RIso_rectangle_2;
   return  os << (const RIso_rectangle_2&)r;
 }
-#endif // NO_OSTREAM_INSERT_ISO_RECTANGLE_2
+#endif // CGAL_NO_OSTREAM_INSERT_ISO_RECTANGLE_2
 
-#ifndef NO_ISTREAM_EXTRACT_ISO_RECTANGLE_2
+#ifndef CGAL_NO_ISTREAM_EXTRACT_ISO_RECTANGLE_2
 template < class R >
 std::istream &
 operator>>(std::istream &is, Iso_rectangle_2<R> &r)
@@ -164,9 +153,8 @@ operator>>(std::istream &is, Iso_rectangle_2<R> &r)
   is >> (RIso_rectangle_2&)r;
   return is;
 }
-#endif // NO_ISTREAM_EXTRACT_ISO_RECTANGLE_2
+#endif // CGAL_NO_ISTREAM_EXTRACT_ISO_RECTANGLE_2
 
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_ISO_RECTANGLE_2_H

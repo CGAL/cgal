@@ -24,6 +24,7 @@
 
 #ifndef CGAL_PREDICATES_CLASSES_3_H
 #define CGAL_PREDICATES_CLASSES_3_H
+
 #include <CGAL/predicates_on_points_3.h>
 
 CGAL_BEGIN_NAMESPACE

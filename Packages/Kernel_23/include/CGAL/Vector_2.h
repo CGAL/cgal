@@ -27,24 +27,14 @@
 
 #ifndef CGAL_REP_CLASS_DEFINED
 #error  no representation class defined
-#endif  // CGAL_REP_CLASS_DEFINED
+#endif
 
-#ifndef CGAL_POINT_2_H
 #include <CGAL/Point_2.h>
-#endif // CGAL_POINT_2_H
-
-
-#ifndef CGAL_DIRECTION_2_H
 #include <CGAL/Direction_2.h>
-#endif // CGAL_DIRECTION_2_H
-
-
 
 #ifdef VECTOR_WRAPPER
-#ifndef VECTOR_2_RFT_WRAPPER_H
 #include <CGAL/Vector_2_rft_wrapper.h>
-#endif // VECTOR_2_RFT_WRAPPER_H
-#endif // VECTOR_WRAPPER
+#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -181,7 +171,8 @@ template < class R >
 No_number_tag
 number_type_tag(const Vector_2<R> &)
 { return No_number_tag(); }
-#ifndef NO_OSTREAM_INSERT_VECTOR_2
+
+#ifndef CGAL_NO_OSTREAM_INSERT_VECTOR_2
 template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Vector_2<R> &v)
@@ -189,9 +180,9 @@ operator<<(std::ostream &os, const Vector_2<R> &v)
   typedef typename  R::Vector_2_base  RVector_2;
   return os << (const RVector_2&)v;
 }
-#endif // NO_OSTREAM_INSERT_VECTOR_2
+#endif // CGAL_NO_OSTREAM_INSERT_VECTOR_2
 
-#ifndef NO_ISTREAM_EXTRACT_VECTOR_2
+#ifndef CGAL_NO_ISTREAM_EXTRACT_VECTOR_2
 template < class R >
 std::istream &
 operator>>(std::istream &is, Vector_2<R> &p)
@@ -199,9 +190,8 @@ operator>>(std::istream &is, Vector_2<R> &p)
   typedef typename  R::Vector_2_base  RVector_2;
   return is >> (RVector_2&)p;
 }
-#endif // NO_ISTREAM_EXTRACT_VECTOR_2
+#endif // CGAL_NO_ISTREAM_EXTRACT_VECTOR_2
 
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_VECTOR_2_H

@@ -35,28 +35,15 @@
 #endif // CGAL_CFG_INCOMPLETE_TYPE_BUG_1
 
 #ifdef CGAL_HOMOGENEOUS_H
-#ifndef CGAL_PLANEH3_H
 #include <CGAL/PlaneH3.h>
-#endif // CGAL_PLANEH3_H
-#endif // CGAL_HOMOGENEOUS_H
+#endif
 
-#ifdef CGAL_CARTESIAN_H
-#ifndef CGAL_PLANEC3_H
+#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
 #include <CGAL/Cartesian/Plane_3.h>
-#endif // CGAL_PLANEC3_H
-#endif // CGAL_CARTESIAN_H
+#endif
 
-#ifdef CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/SimpleCartesian/PlaneS3.h>
-#endif // CGAL_SIMPLE_CARTESIAN_H
-
-
-#ifndef CGAL_LINE_3_H
 #include <CGAL/Line_3.h>
-#endif // CGAL_LINE_3_H
-#ifndef CGAL_POINT_2_H
 #include <CGAL/Point_2.h>
-#endif // CGAL_POINT_2_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -176,7 +163,7 @@ public:
   { return RPlane_3::is_degenerate(); }
 };
 
-#ifndef NO_OSTREAM_INSERT_PLANE_3
+#ifndef CGAL_NO_OSTREAM_INSERT_PLANE_3
 template < class R >
 std::ostream&
 operator<<(std::ostream& os, const Plane_3<R>& p)
@@ -184,9 +171,9 @@ operator<<(std::ostream& os, const Plane_3<R>& p)
   typedef typename  R::Plane_3_base  RPlane_3;
   return os << (const RPlane_3& )p;
 }
-#endif // NO_OSTREAM_INSERT_PLANE_3
+#endif // CGAL_NO_OSTREAM_INSERT_PLANE_3
 
-#ifndef NO_ISTREAM_EXTRACT_PLANE_3
+#ifndef CGAL_NO_ISTREAM_EXTRACT_PLANE_3
 template < class R >
 std::istream&
 operator>>(std::istream& is, Plane_3<R>& t)
@@ -194,10 +181,8 @@ operator>>(std::istream& is, Plane_3<R>& t)
   typedef typename  R::Plane_3_base  RPlane_3;
   return is >> (RPlane_3& )t;
 }
-#endif // NO_ISTREAM_EXTRACT_PLANE_3
-
+#endif // CGAL_NO_ISTREAM_EXTRACT_PLANE_3
 
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_PLANE_3_H

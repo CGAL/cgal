@@ -30,7 +30,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-
 template < class R >
 inline
 Vector_2<R>
@@ -76,6 +75,5 @@ inline
 Vector_2<R>
 operator-(const Origin& , const Point_2<R>& p);
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_POINT_VECTOR_DECLARATIONS_2_H

@@ -30,21 +30,12 @@
 #endif  // CGAL_REP_CLASS_DEFINED
 
 #ifdef CGAL_HOMOGENEOUS_H
-#ifndef CGAL_RAYH3_H
 #include <CGAL/RayH3.h>
-#endif // CGAL_RAYH3_H
-#endif // CGAL_HOMOGENEOUS_H
+#endif
 
-#ifdef CGAL_CARTESIAN_H
-#ifndef CGAL_RAYC3_H
+#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
 #include <CGAL/Cartesian/Ray_3.h>
-#endif // CGAL_RAYC3_H
-#endif // CGAL_CARTESIAN_H
-
-#ifdef CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/SimpleCartesian/RayS3.h>
-#endif // CGAL_SIMPLE_CARTESIAN_H
-
+#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -99,7 +90,7 @@ public:
   { return RRay_3::has_on(p); }
 };
 
-#ifndef NO_OSTREAM_INSERT_RAY_3
+#ifndef CGAL_NO_OSTREAM_INSERT_RAY_3
 template < class R >
 std::ostream&
 operator<<(std::ostream& os, const Ray_3<R>& r)
@@ -107,9 +98,9 @@ operator<<(std::ostream& os, const Ray_3<R>& r)
   typedef typename  R::Ray_3_base  RRay_3;
   return os << (const RRay_3& )r;
 }
-#endif // NO_OSTREAM_INSERT_RAY_3
+#endif // CGAL_NO_OSTREAM_INSERT_RAY_3
 
-#ifndef NO_ISTREAM_EXTRACT_RAY_3
+#ifndef CGAL_NO_ISTREAM_EXTRACT_RAY_3
 template < class R >
 std::istream&
 operator>>(std::istream& is, Ray_3<R>& r)
@@ -117,14 +108,10 @@ operator>>(std::istream& is, Ray_3<R>& r)
   typedef typename  R::Ray_3_base  RRay_3;
   return is >> (RRay_3& )r;
 }
-#endif // NO_ISTREAM_EXTRACT_RAY_3
-
+#endif // CGAL_NO_ISTREAM_EXTRACT_RAY_3
 
 CGAL_END_NAMESPACE
 
-
-#ifndef CGAL_LINE_3_H
 #include <CGAL/Line_3.h>
-#endif // CGAL_LINE_3_H
 
 #endif // CGAL_RAY_3_H

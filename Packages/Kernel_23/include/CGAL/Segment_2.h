@@ -26,28 +26,17 @@
 
 #ifndef CGAL_REP_CLASS_DEFINED
 #error  no representation class defined
-#endif  // CGAL_REP_CLASS_DEFINED
+#endif
 
 #ifdef CGAL_HOMOGENEOUS_H
-#ifndef CGAL_SEGMENTH2_H
 #include <CGAL/SegmentH2.h>
-#endif // CGAL_SEGMENTH2_H
-#endif // CGAL_HOMOGENEOUS_H
+#endif
 
-#ifdef CGAL_CARTESIAN_H
-#ifndef CGAL_SEGMENTC2_H
+#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
 #include <CGAL/Cartesian/Segment_2.h>
-#endif // CGAL_SEGMENTC2_H
-#endif // CGAL_CARTESIAN_H
+#endif
 
-#ifdef CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/SimpleCartesian/SegmentS2.h>
-#endif // CGAL_SIMPLE_CARTESIAN_H
-
-
-#ifndef CGAL_LINE_2_H
 #include <CGAL/Line_2.h>
-#endif // CGAL_LINE_2_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -155,7 +144,7 @@ public:
 
 };
 
-#ifndef NO_OSTREAM_INSERT_SEGMENT_2
+#ifndef CGAL_NO_OSTREAM_INSERT_SEGMENT_2
 template < class R>
 std::ostream &
 operator<<(std::ostream &os, const Segment_2<R> &s)
@@ -163,9 +152,9 @@ operator<<(std::ostream &os, const Segment_2<R> &s)
   typedef typename  R::Segment_2_base  RSegment_2;
   return os << (const RSegment_2&)s;
 }
-#endif // NO_OSTREAM_INSERT_SEGMENT_2
+#endif // CGAL_NO_OSTREAM_INSERT_SEGMENT_2
 
-#ifndef NO_ISTREAM_EXTRACT_SEGMENT_2
+#ifndef CGAL_NO_ISTREAM_EXTRACT_SEGMENT_2
 template < class R>
 std::istream &
 operator>>(std::istream &is, Segment_2<R> &s)
@@ -173,9 +162,8 @@ operator>>(std::istream &is, Segment_2<R> &s)
   typedef typename  R::Segment_2_base  RSegment_2;
   return is >> (RSegment_2&)s;
 }
-#endif // NO_ISTREAM_EXTRACT_SEGMENT_2
+#endif // CGAL_NO_ISTREAM_EXTRACT_SEGMENT_2
 
 CGAL_END_NAMESPACE
-
 
 #endif //  CGAL_SEGMENT_2_H

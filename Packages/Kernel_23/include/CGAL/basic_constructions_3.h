@@ -27,16 +27,11 @@
 
 #ifdef CGAL_HOMOGENEOUS_H
 #include <CGAL/basic_constructionsH3.h>
-#endif // CGAL_HOMOGENEOUS_H
+#endif
 
-#ifdef CGAL_CARTESIAN_H
+#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
 #include <CGAL/Cartesian/basic_constructions_3.h>
-#endif // CGAL_CARTESIAN_H
-
-#ifdef CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/SimpleCartesian/basic_constructionsS3.h>
-#endif // CGAL_SIMPLE_CARTESIAN_H
-
+#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -50,6 +45,7 @@ midpoint( const Point_3<R>& p,
     return( midpoint( static_cast<const RPoint_3&>(p),
                       static_cast<const RPoint_3&>(q)));
 }
+
 template < class R >
 inline
 Point_3<R>
@@ -64,7 +60,7 @@ circumcenter( const Point_3<R>& p,
                           static_cast<const RPoint_3&>(r),
                           static_cast<const RPoint_3&>(s)));
 }
-CGAL_END_NAMESPACE
 
+CGAL_END_NAMESPACE
 
 #endif // CGAL_BASIC_CONSTRUCTIONS_3_H

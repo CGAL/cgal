@@ -30,25 +30,14 @@
 #endif  // CGAL_REP_CLASS_DEFINED
 
 #ifdef CGAL_HOMOGENEOUS_H
-#ifndef CGAL_TETRAHEDRONH3_H
 #include <CGAL/TetrahedronH3.h>
-#endif // CGAL_TETRAHEDRONH3_H
-#endif // CGAL_HOMOGENEOUS_H
+#endif
 
-#ifdef CGAL_CARTESIAN_H
-#ifndef CGAL_TETRAHEDRONC3_H
+#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
 #include <CGAL/Cartesian/Tetrahedron_3.h>
-#endif // CGAL_TETRAHEDRONC3_H
-#endif // CGAL_CARTESIAN_H
+#endif
 
-#ifdef CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/SimpleCartesian/TetrahedronS3.h>
-#endif // CGAL_SIMPLE_CARTESIAN_H
-
-
-#ifndef CGAL_PLANE_3_H
 #include <CGAL/Plane_3.h>
-#endif // CGAL_PLANE_3_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -113,7 +102,7 @@ public:
                      { return RTetrahedron_3::is_degenerate(); }
 };
 
-#ifndef NO_OSTREAM_INSERT_TETRAHEDRON_3
+#ifndef CGAL_NO_OSTREAM_INSERT_TETRAHEDRON_3
 template < class R >
 std::ostream&
 operator<<(std::ostream& os, const Tetrahedron_3<R>& t)
@@ -121,9 +110,9 @@ operator<<(std::ostream& os, const Tetrahedron_3<R>& t)
   typedef typename  R::Tetrahedron_3_base  RTetrahedron_3;
   return os << (const RTetrahedron_3& )t;
 }
-#endif // NO_OSTREAM_INSERT_TETRAHEDRON_3
+#endif // CGAL_NO_OSTREAM_INSERT_TETRAHEDRON_3
 
-#ifndef NO_ISTREAM_EXTRACT_TETRAHEDRON_3
+#ifndef CGAL_NO_ISTREAM_EXTRACT_TETRAHEDRON_3
 template < class R >
 std::istream&
 operator>>(std::istream& is, Tetrahedron_3<R>& t)
@@ -131,10 +120,8 @@ operator>>(std::istream& is, Tetrahedron_3<R>& t)
   typedef typename  R::Tetrahedron_3_base  RTetrahedron_3;
   return is >> (RTetrahedron_3& )t;
 }
-#endif // NO_ISTREAM_EXTRACT_TETRAHEDRON_3
-
+#endif // CGAL_NO_ISTREAM_EXTRACT_TETRAHEDRON_3
 
 CGAL_END_NAMESPACE
-
 
 #endif  // CGAL_TETRAHEDRON_3_H

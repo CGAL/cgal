@@ -30,27 +30,14 @@
 #endif  // CGAL_REP_CLASS_DEFINED
 
 #ifdef CGAL_HOMOGENEOUS_H
-#ifndef CGAL_DISTANCE_PREDICATESH3_H
 #include <CGAL/distance_predicatesH3.h>
-#endif // CGAL_DISTANCE_PREDICATESH3_H
-#endif // CGAL_HOMOGENEOUS_H
+#endif
 
-#ifdef CGAL_CARTESIAN_H
-#ifndef CGAL_DISTANCE_PREDICATESC3_H
+#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
 #include <CGAL/Cartesian/distance_predicates_3.h>
-#endif // CGAL_DISTANCE_PREDICATESC3_H
-#endif // CGAL_CARTESIAN_H
+#endif
 
-#ifdef CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/SimpleCartesian/distance_predicatesS3.h>
-#endif // CGAL_SIMPLE_CARTESIAN_H
-
-
-#ifndef CGAL_POINT_3_H
 #include <CGAL/Point_3.h>
-#endif // CGAL_POINT_3_H
-#ifndef CGAL_PLANE_3_H
 #include <CGAL/Plane_3.h>
-#endif // CGAL_PLANE_3_H
 
 #endif //CGAL_DISTANCE_PREDICATES_3_H

@@ -24,15 +24,9 @@
 #ifndef CGAL_BBOX_3_H
 #define CGAL_BBOX_3_H
 
-#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
-#endif // CGAL_BASIC_H
-#ifndef CGAL_CARTESIAN_CLASSES_H
 #include <CGAL/cartesian_classes.h>
-#endif // CGAL_CARTESIAN_CLASSES_H
-#ifndef SIXTUPLE_H
 #include <CGAL/Sixtuple.h>
-#endif // SIXTUPLE_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -114,7 +108,8 @@ inline bool do_overlap(const Bbox_3& bb1, const Bbox_3& bb2)
         return false;
     return true;
 }
-#ifndef NO_OSTREAM_INSERT_BBOX_3
+
+#ifndef CGAL_NO_OSTREAM_INSERT_BBOX_3
 inline
 std::ostream&
 operator<<(std::ostream &os, const Bbox_3& b)
@@ -141,11 +136,9 @@ operator<<(std::ostream &os, const Bbox_3& b)
         return os;
   }
 }
-#endif // NO_OSTREAM_INSERT_BBOX_3
+#endif // CGAL_NO_OSTREAM_INSERT_BBOX_3
 
-
-
-#ifndef NO_ISTREAM_EXTRACT_BBOX_3
+#ifndef CGAL_NO_ISTREAM_EXTRACT_BBOX_3
 inline
 std::istream&
 operator>>(std::istream &is, Bbox_3& b)
@@ -170,10 +163,8 @@ operator>>(std::istream &is, Bbox_3& b)
   return is;
 }
 
-#endif // NO_ISTREAM_EXTRACT_BBOX_3
-
+#endif // CGAL_NO_ISTREAM_EXTRACT_BBOX_3
 
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_BBOX_3_H

@@ -26,28 +26,17 @@
 
 #ifndef CGAL_REP_CLASS_DEFINED
 #error  no representation class defined
-#endif  // CGAL_REP_CLASS_DEFINED
+#endif
 
-#ifndef CGAL_SEGMENT_2_H
 #include <CGAL/Segment_2.h>
-#endif // CGAL_SEGMENT_2_H
 
 #ifdef CGAL_HOMOGENEOUS_H
-#ifndef CGAL_RAYH2_H
 #include <CGAL/RayH2.h>
-#endif // CGAL_RAYH2_H
-#endif // CGAL_HOMOGENEOUS_H
+#endif
 
-#ifdef CGAL_CARTESIAN_H
-#ifndef CGAL_RAYC2_H
+#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
 #include <CGAL/Cartesian/Ray_2.h>
-#endif // CGAL_RAYC2_H
-#endif // CGAL_CARTESIAN_H
-
-#ifdef CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/SimpleCartesian/RayS2.h>
-#endif // CGAL_SIMPLE_CARTESIAN_H
-
+#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -137,7 +126,7 @@ public:
 
 };
 
-#ifndef NO_OSTREAM_INSERT_RAY_2
+#ifndef CGAL_NO_OSTREAM_INSERT_RAY_2
 template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Ray_2<R> &r)
@@ -145,9 +134,9 @@ operator<<(std::ostream &os, const Ray_2<R> &r)
   typedef typename  R::Ray_2_base  RRay_2;
   return os << (const RRay_2&)r;
 }
-#endif // NO_OSTREAM_INSERT_RAY_2
+#endif // CGAL_NO_OSTREAM_INSERT_RAY_2
 
-#ifndef NO_ISTREAM_EXTRACT_RAY_2
+#ifndef CGAL_NO_ISTREAM_EXTRACT_RAY_2
 template < class R >
 std::istream &
 operator>>(std::istream &is, Ray_2<R> &r)
@@ -155,9 +144,8 @@ operator>>(std::istream &is, Ray_2<R> &r)
   typedef typename  R::Ray_2_base  RRay_2;
   return is >> (RRay_2&)r;
 }
-#endif // NO_ISTREAM_EXTRACT_RAY_2
+#endif // CGAL_NO_ISTREAM_EXTRACT_RAY_2
 
 CGAL_END_NAMESPACE
-
 
 #endif  // CGAL_RAY_2_H
