@@ -455,7 +455,7 @@ private:
 					// Copy input boundary. We store the inner halfedges of the boundary, ie the opposite halfedges of the input boundary.
 					assert(m_boundary.empty());
 					for (InputIterator it = first_boundary_halfedge; it != last_boundary_halfedge; it++)
-						m_boundary.push_back((*it)->opposite());
+						m_boundary.push_back((*it)->next()->opposite());
 
 					// @@@ INONDER LA SURFACE ICI
 				}
