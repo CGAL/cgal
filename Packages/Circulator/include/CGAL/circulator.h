@@ -1028,7 +1028,7 @@ operator+=( typename Ctnr::difference_type n) {
     i = ctnr->begin() + j;
     return *this;
 }
-#endif _MSC_VER
+#endif // _MSC_VER
 // Note: TT, SS, and DD are here for backwards compatibility, they are
 // not used.
 template < class  I, class TT = int, class SS = int, class DD = int>
