@@ -53,6 +53,7 @@ EOF
   my ($i, $j);
   my $temp;
   $i = 0;
+  $j = 0;
   foreach $_ (glob("results-*.*-I-*\.html")) {
     $temp = $_;
     $temp =~ /results-(.)\.(.)-I-(.+)\.html/;
@@ -65,8 +66,10 @@ EOF
   #here we sort the array version_nr_vector, making the 
   #corresponding array version_name_vector look the same
 
-  for ($i = 0; $i<($#version_nr_vector + 1); $i++){
-    for ($j = 0; $j<($#version_nr_vector); $j++){
+  my $l_index;
+  $l_index = $#version_nr_vector; 
+  for ( my $i = 0; $i<($l_index + 1); $i++){
+    for ( my $j = 0; $j<$l_index; $j++){
 	if ( $version_nr_vector[$j] <= $version_nr_vector[$j+1]){
 	    $temp = $version_nr_vector[$j+1];
 	    $version_nr_vector[$j+1] = $version_nr_vector[$j];
