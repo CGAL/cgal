@@ -8,12 +8,17 @@
 //---------------------------------------------------------------------
 
 GLOB: Add -D_RWSTD__ALLOCATOR for SunPro.
+GLOB: Set "treat as C++ code"-flag for PC compilers.
+GLOB: Removed compiler version functions.
+GLOB: Added ADDITIONAL_CXXFLAGS to compile compiler_test.
 GLOB: Completely changed compiler version detection (now compile a file).
 GLOB: Added settings for Metrowerks compiler.
 GLOB: Make blank after EXE_OPT, except for msvc and borland.
 GLOB: Fixed test_gmp for sunpro 5.3.
 GLOB: Updated sunpro_version detection for 5.3.
 GLOB: Update CGAL version to 2.4.
+DOCS: fixed URLs containing \_ to please HTML covertor
+DOCS: updated URLs for Cygwin
 DOCS: fixed few misprints
 DOCS: Merged Dimas changed in.
 DOCS: Updated CGAL version to 2.4.

@@ -4,6 +4,16 @@
 
 
 //---------------------------------------------------------------------
+//	revision 1138
+//---------------------------------------------------------------------
+
+GLOB: Set "treat as C++ code"-flag for PC compilers.
+GLOB: Removed compiler version functions.
+GLOB: Added ADDITIONAL_CXXFLAGS to compile compiler_test.
+DOCS: fixed URLs containing \_ to please HTML covertor
+DOCS: updated URLs for Cygwin
+
+//---------------------------------------------------------------------
 //	revision 1137
 //---------------------------------------------------------------------
 
