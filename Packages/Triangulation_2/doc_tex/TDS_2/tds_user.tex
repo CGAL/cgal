@@ -150,11 +150,7 @@ see Figure~\ref{2D_TDS_Fig_insertion},\\
 \item[--] addition of a new vertex raising by one the dimension of a degenerate
 -- lower dimensional triangulation, \\
 \item[--] removal of a vertex incident to three faces, \\
-\item[--] removal of a vertex lowering the dimension of the triangulation,\\
-\item[--] join two vertices that are connected with an edge,\\
-\item[--] split a vertex into two vertices that are joined by an edge (this
-is the reverse of the above operation); see also
-Figure~\ref{fig-tds-user-split-join}.
+\item[--] removal of a vertex lowering the dimension of the triangulation\\
 \end{itemize}
 
 %\begin{figure}
@@ -188,34 +184,7 @@ Figure~\ref{fig-tds-user-split-join}.
 \end{ccHtmlOnly} 
 \end{figure}
 
-\begin{figure}[htb]
-\begin{ccTexOnly}
-\begin{center}
-\includegraphics[width=0.7\textwidth]{TDS_2_ref/join_split}
-\end{center}
-\end{ccTexOnly}
-\begin{ccHtmlOnly}
-<center>
-<img border=0 src="./join_split.gif" align=center
-alt="The join and split operations''
-title="The join and split operations">
-</center>
-\end{ccHtmlOnly}
-\begin{ccHtmlOnly}
-<br><font size=-1>
-\end{ccHtmlOnly}
-\caption{The join and split operations. Left to right:
-The vertex \ccc{v} is split into $v_1$ and $v_2$. The faces $f$ and
-$g$ are inserted after $f_1$ and $f_2$, respectively, in the
-counter-clockwise sense. The vertices $v_1$, $v_2$ and the faces $f$
-and $g$ are returned as a \ccc{boost} \ccc{tuple} in that order.
-Right to left: The edge \ccc{(f,i)} is collapsed, and thus the
-vertices $v_1$ and $v_2$ are joined. The vertex \ccc{v} is
-returned.}\label{fig-tds-user-split-join}
-\begin{ccHtmlOnly}
-</font>
-\end{ccHtmlOnly}
-\end{figure}
+
 
 
 \section{The Default Triangulation Data Structure}
