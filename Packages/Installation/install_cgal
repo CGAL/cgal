@@ -6326,6 +6326,21 @@ upgrade_copy()
     done
 }
 
+run_ranlib_for_libs()
+{
+    case ${SYST} in
+	*Darwin*)
+	    RANLIB="ranlib"
+	    for j in ${3}; do
+		for i in `${_find} ${UPGRADE_FROM}/${1} -follow -name "${j}" -print`; do
+		    newdir=`${_dirname} ${i} | ${_sed} "s${UPGRADE_FROM}/${1}${2}g"`
+		    if [ -e "${newdir}/${j}" ]; then `${RANLIB} ${newdir}/${j}`; fi
+		done
+	    done
+	;;
+    esac
+}
+
 upgrade()
 {
     _check_read ${UPGRADE_FROM}
@@ -6345,6 +6360,7 @@ upgrade()
     # copy gmp header and libs
     upgrade_copy "search/copy gmp header files" "include" "${CGAL_INCL_DIR}" "gmp.h gmpxx.h mpfr.h mpf2mpfr.h"
     upgrade_copy "search/copy gmp libs" "lib" "${CGAL_LIB_DIR}" "libgmp.* libgmpxx.* gmp.lib libmpfr.* mpfr.lib"
+    run_ranlib_for_libs "lib" "${CGAL_LIB_DIR}" "libgmp.a libgmpxx.a libmpfr.a"
     print_headline "D O N E"
     go_up_lines 1
     print_filled_line
