@@ -27,18 +27,18 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/IO/Qt_widget.h>
 
-USING(Vertex_const_handle);
 
 typedef CGAL::Cartesian<double>::Point_2 Draw_point;
 typedef CGAL::Cartesian<double>::Segment_2 Segment;
 
-//void draw(Vertex_const_handle v, CGAL::Qt_widget& ws) const;
-//void draw(Halfedge_const_handle e) const;
-//void draw(Face_const_handle f) const;
 
 namespace CGAL{
 
-template<typename T>
+template <typename T>
+void draw(CGAL::Qt_widget& ws, 
+	  Nef_polyhedron_2<T>::Vertex_const_iterator v);
+
+template <typename T>
 CGAL::Qt_widget& operator<<(CGAL::Qt_widget& ws, const Nef_polyhedron_2<T>& P)
 {
     typedef Nef_polyhedron_2<T> Polyhedron;
@@ -48,7 +48,22 @@ CGAL::Qt_widget& operator<<(CGAL::Qt_widget& ws, const Nef_polyhedron_2<T>& P)
                                     TExplorer;
 
 
-    TExplorer D = N1.explorer();
+    typedef Nef_polyhedron_2<T>::Vertex_const_handle
+      Vertex_const_handle;
+    typedef Nef_polyhedron_2<T>::Halfedge_const_handle
+      Halfedge_const_handle;
+    typedef Nef_polyhedron_2<T>::Face_const_handle
+      Face_const_handle;
+
+    typedef Nef_polyhedron_2<T>::Vertex_const_iterator
+      Vertex_const_iterator;
+    typedef Nef_polyhedron_2<T>::Halfedge_const_iterator
+      Halfedge_const_iterator;
+    typedef Nef_polyhedron_2<T>::Face_const_iterator
+      Face_const_iterator;
+
+
+    TExplorer D = P.explorer();
     const T& E = Polyhedron::EK;
 
     Standard_RT frame_radius = 100;
@@ -56,8 +71,25 @@ CGAL::Qt_widget& operator<<(CGAL::Qt_widget& ws, const Nef_polyhedron_2<T>& P)
 			     frame_radius);
     RT::set_R(frame_radius);
     
+    //Face_const_iterator 
+    //fit = D.faces_begin(), fend = D.faces_end();
+    // we don't draw the first face outside the box:
+    //for ( ++fit; fit != fend; ++fit) 
+    //  draw(fit);
+
+    // draw segments underlying halfedges: 
+    //Halfedge_const_iterator hit, hend = D.halfedges_end();
+    //for (hit = D.halfedges_begin(); hit != hend; ++(++hit)) 
+      // draw(hit);
+
+    // draw points underlying vertices:
+    Vertex_const_iterator vit, vend = D.vertices_end();
+    for (vit = D.vertices_begin(); vit != vend; ++vit) 
+      //ws << (*vit);
+    
     return ws;
 }
+
   
   //void draw(::Vertex_const_handle v, CGAL::Qt_widget& ws) const
 //{\Mop draws |v| according to the color and width specified by
@@ -134,28 +166,9 @@ void draw(Face_const_handle f) const
   _W.draw_box(x0,y0,x1,y1,c);
   _W.reset_clip_mask();
 }
-
-
-void draw_map() const
-//{\Mop draw the whole plane map.}
-{
-  Face_const_iterator 
-    fit = faces_begin(), fend = faces_end();
-  // we don't draw the first face outside the box:
-  for ( ++fit; fit != fend; ++fit) 
-    draw(fit);
-
-  // draw segments underlying halfedges: 
-  Halfedge_const_iterator hit, hend = halfedges_end();
-  for (hit = halfedges_begin(); hit != hend; ++(++hit)) 
-    draw(hit);
-
-  // draw points underlying vertices:
-  Vertex_const_iterator vit, vend = vertices_end();
-  for (vit = vertices_begin(); vit != vend; ++vit) 
-    draw(vit);
-}
 */
+
+
 }//end namespace CGAL
 
 #endif
