@@ -94,13 +94,13 @@ public:
 
   //creators
   CGAL_Triangulation_default_data_structure_2() 
-    : _infinite_vertex(NULL),_number_of_vertices(0)
+    :  _geom_traits(),_infinite_vertex(NULL),
+       _dimension(0),_number_of_vertices(0)
   { }
 
    CGAL_Triangulation_default_data_structure_2(const Geom_traits& gt) 
     : _geom_traits(gt), _infinite_vertex(NULL), 
-      _number_of_vertices(0), _dimension(0)
-      
+      _dimension(0), _number_of_vertices(0)      
   { }
 
   CGAL_Triangulation_default_data_structure_2(Vertex * v)
@@ -154,8 +154,15 @@ public:
   int  dimension() const { return _dimension;  }
   int number_of_vertices() const {return _number_of_vertices;}
   int number_of_faces() const {
-    return (number_of_vertices() <= 1) ? 0 : 2 * number_of_vertices() - 4;
-  }
+    if (number_of_vertices() < 2) return 0;
+    switch(dimension()){
+    case 0 : return 2;
+    case 1: return number_of_vertices();
+    case 2: return  2 * number_of_vertices() - 4;
+    }
+    CGAL_triangulation_assertion(false);
+    return -1;
+  }    
   const Geom_traits& geom_traits() const {return _geom_traits;}
 
 public:
@@ -167,8 +174,8 @@ public:
 private:
   Face* infinite_face() const
   {
-    CGAL_triangulation_precondition( number_of_vertices() >= 2  &&
-				     _infinite_vertex->face() != NULL );
+    //CGAL_triangulation_precondition( number_of_vertices() >= 2  &&
+    //				     _infinite_vertex->face() != NULL );
     return _infinite_vertex->face();
   }
 
@@ -723,35 +730,30 @@ public:
     Face* f2;
 
     int n = tds.number_of_vertices();
-    //non used?? int m = tds.number_of_faces();
-    set_number_of_vertices(n);
+    
+    _number_of_vertices = tds.number_of_vertices();
     _geom_traits = tds.geom_traits();
     //the class Geom_traits is required to have a pertinent operator=
-
-    // create the vertex at infinity
-    v2 = new Vertex();
-    V[tds.infinite_vertex()]=v2;
-    set_infinite_vertex(v2);
+    _dimension = tds.dimension();
+    
             
     if(n == 0){  return ;    }
 
-    if(n == 1) { 
-       v2 = new Vertex(tds.finite_vertex()->point());
-       V[tds.finite_vertex()]=v2;
-       set_finite_vertex(v2);
-       return;
-    }
-
-    // create the finite vertices
     {
       Vertex_iterator it=tds.vertices_begin();
       while (it != tds.vertices_end()) {
-	V[&(*it)] = new Vertex( it->point() );
+	//if ( & (*it) != infinite_vertex())
+	  {
+	  V[&(*it)] = new Vertex( it->point() );}
 	++it;
       }
     }
+
+    //set infinite_vertex
+    v2 = (Vertex*)V[tds.infinite_vertex()];
+    set_infinite_vertex(v2);
   
-     // create the finite faces
+     // create the faces
     {
       Face_iterator it = tds.faces_begin();
       while(it != tds.faces_end()){
@@ -761,22 +763,9 @@ public:
 	++(it);
         }
     }
+    
 
-    //create the infinite faces
-    {
-      Face_circulator fc = tds.infinite_vertex()->incident_faces();
-      Face_circulator done(fc);
-      do{
-	F[&(*fc)]=  new Face( (Vertex*) V[fc->vertex(0)],
-			      (Vertex*) V[fc->vertex(1)],
-			      (Vertex*) V[fc->vertex(2)] );
-      }while(++fc != done);
-    }
-
-    // link the infinite vertex to a triangle
-    infinite_vertex()->set_face( (Face*) F[tds.infinite_face()] );
-
-    // link the finite vertices to a triangle
+    // link each vertex to a face
     {
       Vertex_iterator it = tds.vertices_begin();
       while(it != tds.vertices_end()) {
@@ -786,7 +775,7 @@ public:
         }
     }
 
-    // hook neighbor pointers of the finite faces
+    // hook neighbor of the  faces
     {
         Face_iterator  it = tds.faces_begin();
         while(it != tds.faces_end()){
@@ -798,17 +787,6 @@ public:
         }
     }
 
-    // hook neighbor pointers of the infinite faces
-    {
-        Face_circulator  fc = tds.infinite_vertex()->incident_faces(),
-            done(fc);
-        do{
-          f2 = ((Face*) F[&(*fc)]);
-          for(int j = 0; j < 3; j++){
-            f2->set_neighbor(j, (Face*) F[fc->neighbor(j)] );
-          }
-        }while(++fc != done);
-    }
     CGAL_triangulation_postcondition( is_valid() );
     return;
 
@@ -861,11 +839,6 @@ public:
             Faces.push_front(&(*it));
             ++it;
         }
-        // Face_circulator fc = infinite_vertex()->incident_faces(),
-//             fcdone(fc);
-//         do{
-//             Faces.push_front(&(*fc));
-//         }while(++fc != fcdone);
     }
     CGAL_triangulation_assertion( number_of_faces() == (int) Faces.size());
      
@@ -989,7 +962,7 @@ operator<<(ostream& os,
 
   Vertex* v;
 
-    int n = tds.number_of_vertices() + 1;
+    int n = tds.number_of_vertices();
     int m = tds.number_of_faces();
     if(CGAL_is_ascii(os)){
         os << n << ' ' << m << ' ' << tds.dimension() << endl;
@@ -1009,39 +982,42 @@ operator<<(ostream& os,
         return os;
     }
 
-    // write the finite vertices
+    // write the other vertices
     {
         Vertex_iterator
           it = tds.vertices_begin();
 
         while(it != tds.vertices_end()){
+	  if ( &(*it) != infinite_vertex()) {
             V[&(*it)] = ++i;
             os << it->point();
             if(CGAL_is_ascii(os)){
                 os << ' ';
             }
-            ++it;
+	  }
+	  ++it;
         }
     }
+
     CGAL_triangulation_assertion( (i+1) == n );
     if(CGAL_is_ascii(os)){ os << "\n";}
 
-    if(n == 2){
+    if(n == 1){
         return os;
     }
 
     i = 0;
-    // vertices of the finite faces
+    // vertices of the faces
     {
         Face_iterator
           it = tds.faces_begin();
 
         while(it != tds.faces_end()){
             F[&(*it)] = i++;
-            for(int j = 0; j < 3; j++){
+            for(int j = 0; j < dimension()+1; j++){
                 os << V[it->vertex(j)];
                 if(CGAL_is_ascii(os)){
-                    if(j==2) {
+                    if(j==dimension()) {
                         os << "\n";
                     } else {
                         os <<  ' ';
@@ -1052,37 +1028,18 @@ operator<<(ostream& os,
         }
     }
 
-    // vertices of the infinite faces
-    {
-        Face_circulator
-            fc = tds.infinite_vertex()->incident_faces(),
-            done(fc);
-
-        do{
-            F[&(*fc)] = i++;
-            for(int j = 0; j < 3; j++){
-                os << V[fc->vertex(j)];
-                if(CGAL_is_ascii(os)){
-                    if(j==2) {
-                        os << "\n";
-                    } else {
-                        os <<  ' ';
-                    }
-                }
-            }
-        }while(++fc != done);
-    }
+   
     CGAL_triangulation_assertion( i == m );
 
-    // neighbor pointers of the finite faces
+    // neighbor pointers of the  faces
     {
         Face_iterator
             it = tds.faces_begin();
         while(it != tds.faces_end()){
-            for(int j = 0; j < 3; j++){
+            for(int j = 0; j < dimension()+1; j++){
                 os << F[&(* it->neighbor(j))];
                 if(CGAL_is_ascii(os)){
-                    if(j==2) {
+                    if(j== dimension()) {
                         os << "\n";
                     } else {
                         os <<  ' ';
@@ -1093,27 +1050,6 @@ operator<<(ostream& os,
         }
     }
 
-    // neighbor pointers of the infinite faces
-    {
-        Face_circulator
-            fc = tds.infinite_vertex()->incident_faces(),
-            done(fc);
-
-        do{
-            for(int j = 0; j < 3; j++){
-                os << F[fc->neighbor(j)];
-                if(CGAL_is_ascii(os)){
-                    if(j==2) {
-                        os << "\n";
-                    } else {
-                        os <<  ' ';
-                    }
-                }
-            }
-        }while(++fc != done);
-    }
-
-    
     return os;
 }
 

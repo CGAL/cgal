@@ -35,7 +35,7 @@ public:
 
 
   CGAL_Triangulation_vertex_base_2 ()
-        : _f(NULL)
+        : _p(),_f(NULL)
     {}
     
     CGAL_Triangulation_vertex_base_2(const Point & p)

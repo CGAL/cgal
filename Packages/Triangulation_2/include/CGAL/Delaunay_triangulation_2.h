@@ -149,15 +149,14 @@ public:
   }
 
   Vertex_handle
-  nearest_vertex(const Point& p, const Face_handle& f) const
+  nearest_vertex_2D(const Point& p) const
   {
+    CGAL_triangulation_precondition(dimension() == 2);
       Vertex_handle nn;
+      Face_handle f = locate(p);
       Distance closer(p,&geom_traits());
       int min;
       int i;
-  
-      if (number_of_vertices() == 0) return NULL;
-      if (number_of_vertices() == 1) return finite_vertex();
   
       i = ( ! is_infinite(f->vertex(0)) ) ? 0 : 1;
   
@@ -185,12 +184,45 @@ public:
       look_nearest_neighbor(p,f,2,min,nn,closer);
       return nn;
   }
+
+  Vertex_handle
+  nearest_vertex_1D(const Point& p) const
+    {
+      Vertex_handle nn;
+      Distance closer(p,&geom_traits());
+      int min;
+
+      Vertex_iterator vit=vertices_begin();
+      closer.set_point(1,vit->point());
+      min = 1;
+      nn = vit->handle();
+      do {
+	closer.set_point( 3-min, (++vit)->point());
+	if (  ( (min==1)? CGAL_LARGER : CGAL_SMALLER )
+                == closer.compare() ) {
+              min = 3-min;
+              nn=vit->handle();
+          }
+      }while( vit != vertices_end());
+      return nn;
+    }
   
   inline Vertex_handle
   nearest_vertex(const Point  &p) const
   {
-      Face_handle f = locate(p);
-      return nearest_vertex(p, f);
+    switch (dimension()) {
+    case 0:
+      if (number_of_vertices() == 0) return NULL;
+      if (number_of_vertices() == 1) return finite_vertex();
+      break;
+    case 1:
+      return nearest_vertex_1D(p);
+      break;      
+    case 2:
+      return nearest_vertex_2D(p);
+      break;
+    }
+    return NULL;
   }
 
    Vertex_handle
@@ -242,34 +274,11 @@ private:
     //CGAL_triangulation_precondition(v != (CGAL_NULL_TYPE) NULL);
     CGAL_triangulation_precondition(! v.is_null());
      CGAL_triangulation_precondition( !is_infinite(v));
-  
-       if  (number_of_vertices() == 1) {
-        CGAL_Triangulation_2<Gt,Tds>::remove(v);
-        return;
-      }
-       
-     //  take care of finite_vertex data member
-     if (finite_vertex() == v){
-       Face_handle f = v->face();
-       int i=f->index(v);
-       Vertex_handle vv= is_infinite(f->vertex(cw(i))) ?
-                          f->vertex(ccw(i)) : f->vertex(cw(i));
-       set_finite_vertex( vv);
-     }
-  
-     if (number_of_vertices() == 2) {
-      Face_handle f = v->face();
-      Face_handle ff = f->neighbor(0);
-      ff.Delete();
-      f.Delete();
-    }
-    else{
-      if ( dimension() == 1) remove_1D(v);
-      else  remove_2D(v);
-    }
-    v.Delete();
-    set_number_of_vertices(number_of_vertices()-1);
-    return;
+        
+     if ( dimension() <= 1) CGAL_Triangulation_2<Gt,Tds>::remove(v);
+     else  remove_2D(v);
+        
+     return;
    }
 
   bool is_valid(bool verbose = false, int level = 0) const
@@ -348,51 +357,59 @@ private:
   }
 
 
-  void remove_2D(Vertex_handle v )
+ void remove_2D(Vertex_handle v)
+    {
+      //test the dimensionality of the resulting triangulation
+      //it goes down to 1 iff
+      // 1) any finite face is incident to v
+      // 2) all vertices are colinear
+       bool  dim1 = true; 
+      Face_iterator fit = faces_begin();
+      while (dim1==true && fit != faces_end()) {
+	dim1 = dim1 && fit->has_vertex(v);
+	fit++;
+      }
+      Face_circulator fic = v->incident_faces();
+      while (is_infinite(fic)) {++fic;}
+      Face_circulator done(fic);
+      Face_handle start(fic); int iv = start->index(v);
+      Point p = start->vertex(cw(iv))->point(), q = start->vertex(ccw(iv))->point();
+       while ( dim1 && ++fic != done) {
+	 iv = fic->index(v);
+	 if (fic->vertex(ccw(iv)) != infinite_vertex()) {
+	   dim1 = dim1 &&
+	     geom_traits().orientation(p, q, fic->vertex(ccw(iv))->point()) 
+	    == CGAL_COLLINEAR; 
+	 }
+       }
+	       
+       if (dim1) { 
+	 _tds.remove_down(&(*v));
+       }
+       else {
+	 list<Edge> hole;
+	 make_hole(v, hole);
+	 fill_hole(v, hole);
+	 v.Delete();
+	 set_number_of_vertices(number_of_vertices()-1);
+       }
+       return;       
+    }
+
+
+void   fill_hole ( Vertex_handle v, list< Edge > & first_hole )
   {
-    // General case
-  
-    // remove incident faces
-    // set up list of faces neighboring the hole
-    // in ccw order around the hole
-  
-    // problem with gcc link
-    typedef pair<void *, int> Hole_neighbor;
-    //typedef pair<Face_handle  , int>  Hole_neighbor;
-    typedef list<Hole_neighbor> Hole;
+    
+    typedef Edge Hole_neighbor;
+    typedef list<Edge> Hole;
     typedef list<Hole> Hole_list;
-  
-    Hole hole;
-    Hole_list hole_list;
-    list<Face_handle> to_delete;
-  
+
     Face_handle  f, ff, fn;
     int i =0,ii =0, in =0;
-    Vertex_handle vv;
-  
-    Face_circulator fc = v->incident_faces();
-    Face_circulator done(fc);
-     do {
-       f = (*fc).handle(); fc++;
-        i  = f->index(v);
-        fn = f->neighbor(i);
-        vv = f->vertex(f->cw(i));
-        if( vv->face()== f) vv->set_face(fn);
-        vv = f->vertex(f->ccw(i));
-        if( vv->face()== f) vv->set_face(fn);
-        in = fn->index( f );
-        fn->set_neighbor(in, NULL);
-        hole.push_back(Hole_neighbor(&(*fn),in));
-        to_delete.push_back(f);
-      }
-    while(fc != done);
-
-       while (! to_delete.empty()){
-	 to_delete.front().Delete();
-	 to_delete.pop_front();
-       }
-      
-    hole_list.push_front(hole);
+    Hole_list hole_list;
+    Hole hole;
+        
+    hole_list.push_front(first_hole);
   
     while( ! hole_list.empty())
       {
@@ -402,19 +419,17 @@ private:
   
         // if the hole has only three edges, create the triangle
           if (hole.size() == 3) {
-          Face_handle  newf = new Face();
-          hit = hole.begin();
-          for(int j = 0;j<3;j++){
-            ff = (Face *) ((*hit).first);
-            ii = (*hit).second;
-            hit++;
-            ff->set_neighbor(ii,newf);
-            newf->set_neighbor(j,ff);
-            newf->set_vertex(newf->ccw(j),ff->vertex(ff->cw(ii)));
-  
-          }
-          continue;
-        }
+	    Face_handle  newf = new Face();
+	    hit = hole.begin();
+	    for(int j = 0;j<3;j++) {
+	      ff = (*hit).first;
+	      ii = (*hit).second;
+	      hit++;
+	      ff->set_neighbor(ii,newf);
+	      newf->set_neighbor(j,ff);
+	      newf->set_vertex(newf->ccw(j),ff->vertex(ff->cw(ii)));
+	    }
+	  }
   
         // else find an edge with two finite vertices
         // on the hole boundary
@@ -426,7 +441,7 @@ private:
           // is the first of the hole
        bool finite= false;
        while (!finite){
-          ff = (Face *) ((hole.front()).first);
+          ff = (hole.front()).first;
           ii = (hole.front()).second;
           if ( is_infinite(ff->vertex(cw(ii))) ||
                is_infinite(ff->vertex(ccw(ii)))) {
@@ -437,7 +452,7 @@ private:
         }
   
         // take the first neighboring face and pop it;
-        ff = (Face *) ((hole.front()).first);
+        ff = (hole.front()).first;
         ii =(hole.front()).second;
         hole.pop_front();
   
@@ -456,7 +471,7 @@ private:
         // stop at the before last face;
         hdone--;
         while( hit != hdone) {
-          fn = (Face *) ((*hit).first);
+          fn = (*hit).first;
           in = (*hit).second;
           vv = fn->vertex(ccw(in));
           if (is_infinite(vv)) {
@@ -488,7 +503,7 @@ private:
         // the hole remain a single hole
         // otherwise it is split in two holes
   
-        fn = (Face *) ((hole.front()).first);
+        fn = (hole.front()).first;
         in = (hole.front()).second;
         if (fn->has_vertex(v2, i) && i == fn->ccw(in)) {
           newf->set_neighbor(0,fn);
@@ -498,7 +513,7 @@ private:
           hole_list.push_front(hole);
         }
         else{
-          fn = (Face *) ((hole.back()).first);
+          fn = (hole.back()).first;
           in = (hole.back()).second;
           if (fn->has_vertex(v2, i) && i== fn->cw(in)) {
             newf->set_neighbor(1,fn);

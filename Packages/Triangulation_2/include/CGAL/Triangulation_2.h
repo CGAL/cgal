@@ -111,27 +111,17 @@ public:
        _gt(geom_traits)
   {}
 
-  CGAL_Triangulation_2(const Vertex_handle&  v, 
-		       const Geom_traits& geom_traits=Geom_traits())
-    : _tds(&(*v)), _gt(geom_traits)
-  { }
-
-
-
+  
   // copy constructor duplicates vertices and faces
   CGAL_Triangulation_2(const CGAL_Triangulation_2<Gt,Tds> &tr)
-    : _tds(tr._tds), _gt(tr._gt)
-  {}
-  
-
- 
-  
+    : _infinite_vertex(tr._infinite_vertex),_tds(tr._tds), _gt(tr._gt)
+    {} 
  
 
   //Assignement
   CGAL_Triangulation_2 &operator=(const CGAL_Triangulation_2 &tr)
   {
-     copy(tr);
+     copy_triangulation(tr);
      return *this;
   }
 
@@ -201,7 +191,7 @@ public:
    
   Face_handle infinite_face() const
   {
-    CGAL_triangulation_precondition( ! infinite_vertex()->face().is_null());
+    //CGAL_triangulation_precondition( ! infinite_vertex()->face().is_null());
     return infinite_vertex()->face();
   }
 
@@ -797,8 +787,6 @@ protected:
     }
 	 
     
-
-private :
 void   make_hole ( Vertex_handle v, list<Edge> & hole)
   {
    
@@ -834,7 +822,6 @@ void   make_hole ( Vertex_handle v, list<Edge> & hole)
   }
 
 						     
-private :
 void   fill_hole ( Vertex_handle v, list< Edge > & hole )
   {
     typedef list< Edge > Hole;

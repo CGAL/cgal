@@ -402,7 +402,7 @@ public:
 	  return *this;            // cannot advance past-the-end iterator
         }                          // include the case number_of_vertices() == 0
 	if (pos==(Face*)1){
-	  pos == NULL;             //number_of_vertices() == 1
+	  pos = NULL; index=0;          //number_of_vertices() == 1
 	  return *this; 
 	}
 
@@ -488,12 +488,20 @@ public:
     
   inline Vertex& operator*() const
   {
-        return *(pos->vertex(index));
+    CGAL_triangulation_assertion( pos != NULL);
+    if (pos == (Face*)1) {// only one vertex;
+      return *(_tds->infinite_vertex());
+    }
+    return *(pos->vertex(index));
   }
     
   inline Vertex*  operator->() const
   {
-        return pos->vertex(index);
+    CGAL_triangulation_assertion( pos != NULL);
+    if (pos == (Face*)1) {// only one vertex;
+      return _tds->infinite_vertex();
+    }
+    return pos->vertex(index);
   }
 
     

@@ -241,7 +241,8 @@ public:
   operator++()
   {
      ++_ib;
-     while ( _ib != Iterator_base(&(_tr->_tds),1) && _tr->is_infinite((Vertex *) &(*_ib))){
+     while ( _ib != Iterator_base(&(_tr->_tds),1) && 
+	     _tr->is_infinite((Vertex *) &(*_ib))){
       ++_ib;
     }
     return *this;   
@@ -251,7 +252,8 @@ public:
   operator--()
   {
     --_ib;
-    while ( _ib != Iterator_base(&(_tr->_tds),1) && _tr->is_infinite((Vertex *) &(*_ib))){
+    while ( _ib != Iterator_base(&(_tr->_tds),1) && 
+	    _tr->is_infinite((Vertex *) &(*_ib))){
       --_ib;
     }
     return *this;   
@@ -324,7 +326,8 @@ public:
       _ib = Iterator_base(&(tr->_tds),1);
       return;
     }
-    while ( _ib != Iterator_base(&(tr->_tds),1) && _tr->is_infinite((Face *)((*_ib).first), (*_ib).second)){
+    while ( _ib != Iterator_base(&(tr->_tds),1) && 
+	    _tr->is_infinite((Face *)((*_ib).first), (*_ib).second)){
       ++_ib;
     }
     return;
@@ -363,7 +366,8 @@ public:
   operator++()
   {
     ++_ib;
-    while ( _ib != Iterator_base(&(_tr->_tds),1) && _tr->is_infinite((Face *)((*_ib).first), (*_ib).second)){
+    while ( _ib != Iterator_base(&(_tr->_tds),1) && 
+	    _tr->is_infinite((Face *)((*_ib).first), (*_ib).second)){
       ++_ib;
     }
      return *this;   
@@ -373,7 +377,8 @@ public:
   operator--()
   {
     --_ib;
-    while ( _ib != Iterator_base(&(_tr->_tds),1) && _tr->is_infinite((Face *)((*_ib).first), *_ib.second)){
+    while ( _ib != Iterator_base(&(_tr->_tds),1) && 
+	    _tr->is_infinite((Face *)((*_ib).first), *_ib.second)){
       --_ib;
      }
      return *this;   
