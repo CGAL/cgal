@@ -28,7 +28,7 @@
 #include <iterator>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_2.h>
-#include <CGAL/Triangulation_iterator_adaptator.h>
+//#include <CGAL/Triangulation_iterator_adaptator.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -146,7 +146,7 @@ Triangulation_ds_edge_iterator_2<Tds> ::
 associated_edge()
 {
   if (_tds->dimension() == 1) {return true;}
-  return pos->handle() < pos->neighbor(edge.second);
+  return Face_handle(pos)  < pos->neighbor(edge.second);
 }
 
 template<class Tds>
@@ -205,7 +205,7 @@ typename Triangulation_ds_edge_iterator_2<Tds>::Edge*
 Triangulation_ds_edge_iterator_2<Tds> ::    
 operator->() const
 {
-  edge.first = pos->handle();
+  edge.first = pos;
   return &edge;
 }
 
@@ -215,7 +215,7 @@ typename Triangulation_ds_edge_iterator_2<Tds>::Edge&
 Triangulation_ds_edge_iterator_2<Tds> ::    
 operator*() const 
 {
-  edge.first = pos->handle();
+  edge.first = pos;
   return edge;
 }
 CGAL_END_NAMESPACE

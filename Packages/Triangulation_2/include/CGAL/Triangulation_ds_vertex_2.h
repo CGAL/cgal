@@ -46,33 +46,36 @@ public:
   Triangulation_ds_vertex_2() : Vb() {}
 
   //ACCESS
-  Vertex_handle handle() {return const_cast<Vertex*>(this); }
   int degree(); //should be const
 
+  //Deprecated access to circulators - for bacward compatibility
   // the following should be const
   // when Face_circulator, Vertex_circulator and Edge_circulator
   // are created from 
   // Face_const_handle and Face_const_vertex
   Vertex_circulator incident_vertices()     
-    {return Vertex_circulator(this);}
+    {return Vertex_circulator(handle());}
  
   Vertex_circulator incident_vertices( Face_handle f)  
-    {return Vertex_circulator(this,f);}
+    {return Vertex_circulator(handle(),f);}
   
   Face_circulator incident_faces()  
-    { return Face_circulator(this) ;}
+    { return Face_circulator(handle()) ;}
   
   Face_circulator incident_faces( Face_handle f)    
-    { return Face_circulator(this, f);}
+    { return Face_circulator(handle(), f);}
   
   Edge_circulator incident_edges()   
-    { return Edge_circulator(this);}
+    { return Edge_circulator(handle());}
   
   Edge_circulator incident_edges( Face_handle f)  
-    { return Edge_circulator(this, f);}
+    { return Edge_circulator(handle(), f);}
   
   bool is_valid(bool verbose = false, int level = 0);
 
+private:
+  // used to implement deprected access to circulators
+  Vertex_handle handle();
 };
 
 template <class Tds>
@@ -90,7 +93,17 @@ degree() //const
   return count;
 }
 
-
+template <class Tds>
+typename Triangulation_ds_vertex_2<Tds>::Vertex_handle
+Triangulation_ds_vertex_2 <Tds> ::
+handle()
+{
+  Face_handle fh = this->face();
+  for(int i = 0 ; i < 3 ; ++i){
+    if ( &*fh->vertex(i) == this) return fh->vertex(i);
+  }
+  return Vertex_handle();				    
+}
     
 template <class Vb>
 bool 
@@ -100,7 +113,9 @@ is_valid(bool verbose, int level)
   bool result = Vb::is_valid(verbose, level);
   CGAL_triangulation_assertion(result);
   if (face() != NULL) { // face==NULL if dim <0
-    result = result && face()->has_vertex(handle());
+    result = result && ( &*face()->vertex(0) == this ||
+			 &*face()->vertex(1) == this ||
+			 &*face()->vertex(2) == this );
   }
   return result;
 }

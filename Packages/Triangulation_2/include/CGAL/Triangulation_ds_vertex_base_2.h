@@ -56,10 +56,12 @@ public:
   bool is_valid(bool /*verbose*/=false, int /*level*/= 0) const
     {return face() != NULL;}
 
+    // For use by the Compact_container.
+  void *   for_compact_container() const { return _f.for_compact_container(); }
+  void * & for_compact_container()       { return _f.for_compact_container(); }
+
 private:
   Face_handle _f;
-  // FIXME : temporary cruft needed for DS_Container (sizeof() too small) :
-  int i;
 };
 
 // Specialization for void.

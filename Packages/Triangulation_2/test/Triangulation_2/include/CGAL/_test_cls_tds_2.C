@@ -50,8 +50,8 @@ _test_cls_tds_2( const Tds &)
 
   
   // Test subclasses
-  CGAL::_test_cls_tds_vertex( Vertex());
-  CGAL::_test_cls_tds_face( Face());
+  CGAL::_test_cls_tds_vertex( Tds());
+  CGAL::_test_cls_tds_face( Tds());
 
   // Test constructors
   std::cout << "    constructors" << std::endl;
@@ -128,7 +128,7 @@ _test_cls_tds_2( const Tds &)
   // Find the face  v4_1 v4_2 v4_3 for insertion
   Face_circulator fc= v4_1->incident_faces();
   while( ! (fc->has_vertex(v4_2) && fc->has_vertex(v4_3)) ) fc++;
-  Vertex_handle v4_4 = tds4.insert_in_face(&( *fc));
+  Vertex_handle v4_4 = tds4.insert_in_face(fc);
   assert(v4_4->degree() == 3);
   assert(tds4.is_valid() );
   // Find the edge v4_1v4_2 for insertion
@@ -136,7 +136,7 @@ _test_cls_tds_2( const Tds &)
   int ic;
   while(! (fc->has_vertex(v4_2, ic ) && ic == fc->ccw(fc->index(v4_1)))) 
     fc++;
-  Vertex_handle v4_5 = tds4.insert_in_edge(&(*fc), ic);
+  Vertex_handle v4_5 = tds4.insert_in_edge(fc, ic);
   assert(tds4.is_valid() );
   assert(tds4.dimension()== 2);
   assert(tds4.number_of_vertices() == 6);
@@ -211,7 +211,6 @@ _test_cls_tds_2( const Tds &)
   Tds tds2d;
   tds2d.swap(tds2c);
   assert(tds2d.is_valid() & tds2d.number_of_vertices()==2);
-//   tds2d.clear();
   Tds tds2e;
   Vertex_handle w2e= tds2e.copy_tds(tds2,w2);
   assert(tds2e.is_valid() && tds2e.is_vertex(w2e));
@@ -223,7 +222,6 @@ _test_cls_tds_2( const Tds &)
   Tds tds3d;
   tds3d.swap(tds3c);
   assert(tds3d.is_valid() & tds3d.number_of_vertices()==4);
-//   tds3d.clear();
   Tds tds3e;
   Vertex_handle w3e= tds3e.copy_tds(tds3,w3);
   assert(tds3e.is_valid()&& tds3e.is_vertex(w3e));
@@ -235,7 +233,6 @@ _test_cls_tds_2( const Tds &)
   Tds tds4d;
   tds4d.swap(tds4c);
   assert(tds4d.is_valid() && tds4d.number_of_vertices()==6);
-//      tds4d.clear();
   Tds tds4e;
   Vertex_handle w4e= tds4e.copy_tds(tds4,w4);
   assert(tds4e.is_valid() && tds4e.is_vertex(w4e));
@@ -357,7 +354,9 @@ _test_tds_circulators( const Tds&  tds)
   for( Vertex_iterator vit = tds.vertices_begin();
 	               vit != tds.vertices_end(); vit++) {
     
-    Face_circulator fc = vit->incident_faces(), fdone(fc);
+    Face_circulator fc = tds.incident_faces(vit), fdone(fc);
+    Face_circulator fc2 = vit->incident_faces();
+    assert(fc2 == fc);
     if (! fc.is_empty()) {
       do {
 	f = *fc;
@@ -367,7 +366,9 @@ _test_tds_circulators( const Tds&  tds)
       } while (++fc != fdone);
     }
 
-    Edge_circulator ec = vit->incident_edges(), edone(ec);
+    Edge_circulator ec = tds.incident_edges(vit), edone(ec);
+    Edge_circulator ec2 = vit->incident_edges();
+    if (! ec.is_empty()) assert( ec2 == ec);
     if (! ec.is_empty()) {
       do {
 	e = *ec;
@@ -377,7 +378,9 @@ _test_tds_circulators( const Tds&  tds)
     }
 
     countvv = 0;
-    Vertex_circulator vc = vit->incident_vertices(), vdone(vc);
+    Vertex_circulator vc = tds.incident_vertices(vit), vdone(vc);
+    Vertex_circulator vc2 = vit->incident_vertices();
+    if (! vc.is_empty()) assert( vc == vc2);
     if (! vc.is_empty()) {
       do {
 	v = *vc;

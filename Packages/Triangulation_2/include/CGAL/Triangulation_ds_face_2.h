@@ -66,8 +66,6 @@ public :
   Vertex_handle mirror_vertex(int i) const;
   int mirror_index(int i) const;
 
-  Face_handle handle() const {return const_cast<Face*>(this);}
-  Face_handle handle() {return const_cast<Face*>(this);}
   bool is_valid(bool verbose = false, int level = 0) const;
 
 };
@@ -90,7 +88,7 @@ mirror_index(int i) const
 {
   // return the index of opposite vertex in neighbor(i);
   CGAL_triangulation_precondition (neighbor(i) != NULL &&  dimension() >= 1);
-  if (dimension() == 1) return neighbor(i)->index(this->handle());
+  if (dimension() == 1) return 1 - (neighbor(i)->index(vertex(1-i)));
   return ccw( neighbor(i)->index(vertex(ccw(i))));
 }
 
@@ -107,19 +105,19 @@ is_valid(bool verbose, int level) const
     // is used to handle the cases of TDS allowing
     // two faces with two common edges
     int in;
-    if (dimension() == 0) in = n->index(this->handle());
-    else in = n->index(mirror_vertex(i));
-    result = result && ( this->handle() == n->neighbor(in) );
+    if (dimension() == 0) in = 0;
+    else in = mirror_index(i);
+    result = result && ( this == &*(n->neighbor(in)) );
     switch(dimension()) {
     case 0 : 
       break;
     case 1 :
       result = result &&  in == 1-i;
-      result = result && ( this->vertex(1-i) == n->vertex(1-in));
+      result = result && ( vertex(1-i) == n->vertex(1-in));
       break;
     case 2 :
-      result = result && ( this->vertex(cw(i)) == n->vertex(ccw(in)))
-	              && ( this->vertex(ccw(i)) == n->vertex(cw(in)));
+      result = result && ( vertex(cw(i))  == n->vertex(ccw(in)))
+	              && ( vertex(ccw(i)) == n->vertex(cw(in)));
       break;
     }
   }

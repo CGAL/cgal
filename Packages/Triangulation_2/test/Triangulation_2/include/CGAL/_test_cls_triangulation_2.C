@@ -111,8 +111,9 @@ _test_cls_triangulation_2( const Triangul & )
   
   /***********************/
   /***** SUBCLASSES ******/
-  _test_cls_triangulation_vertex(Vertex());
-  _test_cls_triangulation_face(Face());
+  // not needed anymore 
+  // _test_cls_triangulation_vertex(Vertex());
+  //  _test_cls_triangulation_face(Face());
   
   /*****************************/
   /***** CONSTRUCTORS (1) ******/

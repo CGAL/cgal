@@ -94,22 +94,39 @@ public:
   typedef typename Tds::Face_iterator          All_faces_iterator;
   typedef typename Tds::Edge_iterator          All_edges_iterator;
   typedef typename Tds::Vertex_iterator        All_vertices_iterator;
-  typedef Filter_iterator<All_faces_iterator, 
-                           Infinite_tester>
-                                               Finite_faces_iterator_base;
-  typedef Filter_iterator<All_vertices_iterator, 
-                           Infinite_tester>
-                                               Finite_vertices_iterator_base;
+ 
+  //We derive in order to add a conversion to handle.
+  class Finite_vertices_iterator :
+    public Filter_iterator<All_vertices_iterator, Infinite_tester> {
+    typedef Filter_iterator<All_vertices_iterator, Infinite_tester> Base; 
+    typedef Finite_vertices_iterator                          Self;
+  public:
+    Finite_vertices_iterator() : Base() {}
+    Finite_vertices_iterator(const Base &b) : Base(b) {}
+    Self & operator++() { Base::operator++(); return *this; }
+    Self & operator--() { Base::operator--(); return *this; }
+    Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
+    Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
+    operator Vertex_handle() const { return Base::base(); }
+ };
+
+  class Finite_faces_iterator
+    : public Filter_iterator<All_faces_iterator, Infinite_tester> {
+    typedef Filter_iterator<All_faces_iterator, Infinite_tester> Base;
+    typedef Finite_faces_iterator                           Self;
+  public:
+    Finite_faces_iterator() : Base() {}
+    Finite_faces_iterator(const Base &b) : Base(b) {}
+    Self & operator++() { Base::operator++(); return *this; }
+    Self & operator--() { Base::operator--(); return *this; }
+    Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
+    Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
+    operator Face_handle() const { return Base::base(); }
+  };
+  
   typedef Filter_iterator<All_edges_iterator, 
                            Infinite_tester>
                                                Finite_edges_iterator;
-  typedef Triangulation_iterator_handle_adaptor
-                 <Finite_faces_iterator_base, 
-                  Face_handle>                 Finite_faces_iterator;
-  typedef Triangulation_iterator_handle_adaptor
-              <Finite_vertices_iterator_base,
-		 Vertex_handle>
-                                               Finite_vertices_iterator;
   
   //for backward compatibility
   typedef Finite_faces_iterator                Face_iterator;
@@ -169,14 +186,11 @@ public:
   Infinite_tester infinite_tester() const;
   
   //SETTING
-  void set_number_of_vertices(int n) {_tds.set_number_of_vertices(n+1);}
   void set_infinite_vertex(const Vertex_handle& v) {_infinite_vertex=v;}
-  void set_dimension(int n) {_tds.set_dimension(n);}
-
+  
   // CHECKING
   bool is_valid(bool verbose = false, int level = 0) const;
  
-
   // TEST INFINITE FEATURES AND OTHER FEATURES
   bool is_infinite(Face_handle f) const;
   bool is_infinite(Vertex_handle v) const; 
@@ -376,10 +390,10 @@ private :
     Infinite_tester(const Triangulation_2 *tr)	  : t(tr) {}
 
     bool operator()(const All_vertices_iterator & vit) const  {
-	  return t->is_infinite(vit->handle());
+	  return t->is_infinite(vit);
     }
     bool operator()(const All_faces_iterator & fit ) const {
-      return t->is_infinite(fit->handle());
+      return t->is_infinite(fit);
     }
     bool operator()(const All_edges_iterator & eit) const {
       return t->is_infinite(eit);
@@ -453,7 +467,7 @@ Triangulation_2<Gt, Tds>::
 Triangulation_2(const Triangulation_2 &tr)
     : _gt(tr._gt)
 {
-  _infinite_vertex = _tds.copy_tds(tr._tds, &(*tr.infinite_vertex()));
+  _infinite_vertex = _tds.copy_tds(tr._tds, tr.infinite_vertex());
 } 
  
 
@@ -476,7 +490,7 @@ copy_triangulation(const Triangulation_2 &tr)
 {
   _tds.clear();
   _gt = tr._gt;
-  _infinite_vertex = _tds.copy_tds(tr._tds, &(*tr._infinite_vertex));
+  _infinite_vertex = _tds.copy_tds(tr._tds, tr._infinite_vertex);
 }
 
 template <class Gt, class Tds >
@@ -510,7 +524,7 @@ Triangulation_2<Gt, Tds>::
 number_of_faces() const
 {
   int count = _tds.number_of_faces();
-  Face_circulator fc= infinite_vertex()->incident_faces(),
+  Face_circulator fc = incident_faces(infinite_vertex()),
     done(fc);
   if ( ! fc.is_empty() ) {
     do { 
@@ -593,7 +607,7 @@ is_valid(bool verbose, int level) const
       result = result && ( s == LEFT_TURN );
     }
 
-    Vertex_circulator start = infinite_vertex()->incident_vertices();
+    Vertex_circulator start = incident_vertices(infinite_vertex());
     Vertex_circulator pc(start);
     Vertex_circulator qc(start); ++qc;
     Vertex_circulator rc(start); ++rc; ++rc;
@@ -698,7 +712,7 @@ includes_edge(Vertex_handle va, Vertex_handle vb,
   Vertex_handle v;
   Orientation orient;
   int indv;
-  Edge_circulator ec = va->incident_edges(), done(ec);
+  Edge_circulator ec = incident_edges(va), done(ec);
   if (ec != 0) {
     do { 
       //find the index of the other vertex of *ec
@@ -867,7 +881,6 @@ insert_in_edge(const Point& p, Face_handle f,int i)
 //                                    == COLLINEAR &&
 //       collinear_between(f->vertex(cw(i))->point(), p,
 // 			f->vertex(ccw(i))->point()) );
-  //  Vertex_handle v = _tds.insert_in_edge(&(*f), i);
   Vertex_handle v = _tds.insert_in_edge(f,i);
   v->set_point(p);
   return v;
@@ -934,25 +947,25 @@ insert_outside_convex_hull_2(const Point& p, Face_handle f)
   std::list<Face_handle> ccwlist;
   std::list<Face_handle> cwlist;
     
-  Face_circulator fc = infinite_vertex()->incident_faces(f);
+  Face_circulator fc = incident_faces(infinite_vertex(), f);
   bool done = false;
   while(! done) {
     fc--;
     li = fc->index(infinite_vertex());
     const Point& q = fc->vertex(ccw(li))->point();
     const Point& r = fc->vertex(cw(li))->point();
-    if(orientation(p,q,r) == LEFT_TURN ) { ccwlist.push_back(&(*fc)); }
+    if(orientation(p,q,r) == LEFT_TURN ) { ccwlist.push_back(fc); }
     else {done=true;}
   }
 
-  fc= infinite_vertex()->incident_faces(f);
+  fc = incident_faces(infinite_vertex(), f);
   done = false;
   while(! done){
     fc++;
     li = fc->index(infinite_vertex());
      const Point& q = fc->vertex(ccw(li))->point();
      const Point& r = fc->vertex(cw(li))->point();
-    if(orientation(p,q,r) == LEFT_TURN ) { cwlist.push_back(&(*fc));}
+    if(orientation(p,q,r) == LEFT_TURN ) { cwlist.push_back(fc);}
     else {done=true;}
   }
 
@@ -975,10 +988,9 @@ insert_outside_convex_hull_2(const Point& p, Face_handle f)
   }
 
   //reset infinite_vertex()->face();
-  fc = v->incident_faces();
-  while( ! is_infinite(&(*fc))) {
-    fc++;}
-  infinite_vertex()->set_face(&(*fc));
+  fc = incident_faces(v);
+  while( ! is_infinite(fc)) { fc++;}
+  infinite_vertex()->set_face(fc);
 
   return v;
 } 
@@ -1122,7 +1134,7 @@ test_dim_down(Vertex_handle v)
     dim1 = dim1 && fit->has_vertex(v);
     fit++;
   }
-  Face_circulator fic = v->incident_faces();
+  Face_circulator fic = incident_faces(v);
   while (is_infinite(fic)) {++fic;}
   Face_circulator done(fic);
   Face_handle start(fic); int iv = start->index(v);
@@ -1164,10 +1176,10 @@ make_hole ( Vertex_handle v, std::list<Edge> & hole)
   int i, in ;
    Vertex_handle  vv;
       
-  Face_circulator fc = v->incident_faces();
+  Face_circulator fc = incident_faces(v);
   Face_circulator done(fc);
   do {
-    f = (*fc).handle(); fc++;
+    f = fc; fc++;
     i = f->index(v);
     fn = f->neighbor(i);
     in = fn->index(f);
@@ -1421,7 +1433,7 @@ fill_hole_delaunay(std::list<Edge> & first_hole)
       if (fn->has_vertex(v2, i) && i == fn->ccw(in)) {
 	newf = create_face(ff,ii,fn,in);
 	hole.pop_front();
-	hole.push_front(Edge( &(*newf),1));
+	hole.push_front(Edge( newf,1));
 	hole_list.push_front(hole);
       }
       else{
@@ -1430,7 +1442,7 @@ fill_hole_delaunay(std::list<Edge> & first_hole)
 	if (fn->has_vertex(v2, i) && i== fn->cw(in)) {
 	  newf = create_face(fn,in,ff,ii);
 	  hole.pop_back();
-	  hole.push_back(Edge(&(*newf),1));
+	  hole.push_back(Edge(newf,1));
 	  hole_list.push_front(hole);
 	}
 	else{
@@ -1444,8 +1456,8 @@ fill_hole_delaunay(std::list<Edge> & first_hole)
               hole.pop_front();
             }
   
-	  hole.push_front(Edge( &(*newf),1));
-	  new_hole.push_front(Edge( &(*newf),0));
+	  hole.push_front(Edge( newf,1));
+	  new_hole.push_front(Edge( newf,0));
 	  hole_list.push_front(hole);
 	  hole_list.push_front(new_hole);
 	}
@@ -1629,7 +1641,7 @@ march_locate_2D(Face_handle start,
   if(lfc==0 || lfc.collinear_outside()){
     // point t lies outside or on the convex hull
     // we walk on the convex hull to find it out
-    Face_circulator fc = infinite_vertex()->incident_faces();
+    Face_circulator fc = incident_faces(infinite_vertex());
     Face_circulator done(fc);
     int ic = fc->index(infinite_vertex());
     if (xy_equal(t,fc->vertex(cw(ic))->point())){
@@ -1860,27 +1872,25 @@ typename Triangulation_2<Gt, Tds>::Face_circulator
 Triangulation_2<Gt, Tds>::
 incident_faces(Vertex_handle v, Face_handle f) const
 {
-  return Face_circulator(v,f);
+  return _tds.incident_faces(v,f);
 }  
 
 template <class Gt, class Tds >
 inline
 typename Triangulation_2<Gt, Tds>::Vertex_circulator
 Triangulation_2<Gt, Tds>::  
-incident_vertices(Vertex_handle v,
-		  Face_handle f) const
+incident_vertices(Vertex_handle v, Face_handle f) const
 {
-  return Vertex_circulator(v,f);
+  return _tds.incident_vertices(v,f);
 }
 
 template <class Gt, class Tds >
 inline
 typename Triangulation_2<Gt, Tds>::Edge_circulator
 Triangulation_2<Gt, Tds>::    
-incident_edges(Vertex_handle v,
-	       Face_handle f) const
+incident_edges(Vertex_handle v, Face_handle f) const
 {
-  return Edge_circulator(v,f);
+  return _tds.incident_edges(v,f);
 }
 
 template <class Gt, class Tds >

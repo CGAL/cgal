@@ -62,11 +62,11 @@ private:
 
 public:
   Triangulation_ds_face_circulator_2()
-    : _v(NULL), pos(NULL)
+    : _v(), pos()
   {}
   
   Triangulation_ds_face_circulator_2(Vertex_handle v, 
-				     Face_handle f = NULL);
+				     Face_handle f = Face_handle());
 
   // MK: added to satisfy the mips CC 7.40 compiler
   Face_circulator& operator=(const Face_circulator& other);
@@ -97,7 +97,7 @@ public:
     return &*pos;
   }
   
-  operator Face_handle() const {return (*this)->handle();}
+  Face_handle base()  const {return pos;}
   
 };
 
@@ -123,7 +123,7 @@ private:
   
 public:
   Triangulation_ds_vertex_circulator_2()
-    :  _v(NULL), pos(NULL)
+    :  _v(), pos()
   {}
                 
   Triangulation_ds_vertex_circulator_2(Vertex_handle v,
@@ -154,7 +154,7 @@ public:
     return &*(pos->vertex(_ri));
   }
 
-   operator Vertex_handle() const {return (*this)->handle();}
+   Vertex_handle base() const {return pos->vertex(_ri);}
 
 };
 
@@ -201,13 +201,13 @@ public:
   bool operator!=(CGAL_NULL_TYPE CGAL_triangulation_assertion_code(n)) const;
 
   Edge*  operator->() const { 
-    edge.first=pos->handle();
+    edge.first=pos;
     edge.second= _ri;
     return &edge;
   }
 
   Edge& operator*() const {
-    edge.first=pos->handle();
+    edge.first=pos;
     edge.second= _ri;
     return edge;
   }
@@ -246,7 +246,7 @@ operator++()
 {
   CGAL_triangulation_precondition( (pos != NULL) && (_v != NULL) );
   int i = pos->index(_v);
-  pos = &*(pos->neighbor(ccw(i)));
+  pos = pos->neighbor(ccw(i));
   return *this;
 }
 
@@ -382,7 +382,7 @@ operator--()
   int i = pos->index(_v);
     
   if (pos->dimension() == 1) { 
-    pos = &*(pos->neighbor(1-i));
+    pos = pos->neighbor(1-i);
     _ri = 1 - pos->index(_v);
   }
   else{
@@ -504,7 +504,7 @@ operator--()
     return *this;
   }
   else{
-    pos = &*(pos->neighbor(cw(i)));
+    pos = pos->neighbor(cw(i));
     i = pos->index(_v);
     _ri = ccw(i);
   }    

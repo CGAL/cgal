@@ -103,10 +103,6 @@ _test_cls_triangulation_short_2( const Triangul &)
   v.push_back(p1); v.push_back(p2); v.push_back(p3);
 
   
-  /***********************/
-  /***** SUBCLASSES ******/
-  _test_cls_triangulation_vertex(Vertex());
-  _test_cls_triangulation_face(Face());
   
   /*****************************/
   /***** CONSTRUCTORS (1) ******/

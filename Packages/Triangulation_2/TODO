@@ -1,8 +1,14 @@
+- DOC UPDATES
+  suppress from the doc the access to circulator from vertices 
+  (deprecated)
+  suppress settings function from Triangulation_2
+- find_conflict et al should return the Output Iterators
+- faire retourner  Edge au flip 2d
 - remove the  Direction_2 from the requirements for the traits class
   of Delaunay and Regular triangulations 
 - change the return of get_conflicts and find_conflict to
   an output iterator ?
-- doc de le triangulation reguliere a mettre a jour
+- doc de la triangulation reguliere a mettre a jour
   Julia a signale un bug sur le return des fonctions insert et remove
 - input output of regular triangulation
   (may be outputing for each face the hidden points
