@@ -1,6 +1,6 @@
-#Makefile for Geomwiew files
+# Makefile for the Geomwiew package.
 
-WWW_CGAL=$(WWW)/CGAL/DR:/Members
+WWW_CGAL=/net/servers/www-sop/prisme/CGAL/DR:/Members
 WWW_dir=$(WWW_CGAL)/Geomview
 TMP_file=/tmp/submit-mail
 

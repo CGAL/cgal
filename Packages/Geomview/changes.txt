@@ -1,6 +1,6 @@
 CHANGES to the Geomview package.
 
-Ver 3.0 (?? October 00)
+Ver 3.0 (16 October 00)
 - Added "\newpage" from Susan's changes for CGAL 2.2.
 - Put myself as maintainer. [syl]
 
