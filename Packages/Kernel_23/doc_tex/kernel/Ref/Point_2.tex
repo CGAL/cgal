@@ -1,4 +1,4 @@
-\begin{ccRefClass} {Point_2<R>}
+\begin{ccRefClass} {Point_2<Kernel>}
 
 \ccDefinition
 An object of the class \ccRefName\ is a point in the two-dimensional
@@ -18,7 +18,7 @@ equal to \ccStyle{Quotient<T>}.
 \ccHidden \ccConstructor{Point_2();}
              {introduces an uninitialized variable \ccVar.}
 
-\ccHidden \ccConstructor{Point_2(const Point_2<R> &q);}
+\ccHidden \ccConstructor{Point_2(const Point_2<Kernel> &q);}
  	    {copy constructor.}
 
 \ccConstructor{Point_2(const Origin &ORIGIN);}
@@ -35,15 +35,15 @@ equal to \ccStyle{Quotient<T>}.
 \ccOperations
 %\ccSetTwoOfThreeColumns{5cm}{4cm}
 
-\ccHidden \ccMethod{Point_2<R> & operator=(const Point_2<R> &q);}
+\ccHidden \ccMethod{Point_2<Kernel> & operator=(const Point_2<Kernel> &q);}
         {Assignment.}
 
-\ccMethod{bool operator==(const Point_2<R> &q) const;}
+\ccMethod{bool operator==(const Point_2<Kernel> &q) const;}
        {Test for equality. Two points are equal, iff their $x$ and $y$ 
         coordinates are equal. The point can be compared with
 		\ccc{ORIGIN}.}
 
-\ccMethod{bool operator!=(const Point_2<R> &q) const;}
+\ccMethod{bool operator!=(const Point_2<Kernel> &q) const;}
        {Test for inequality. The point can be compared with \ccc{ORIGIN}.}
 
 There are two sets of coordinate access functions, namely to the
@@ -93,7 +93,7 @@ Again they come in a \ccHtmlNoLinksFrom{Cartesian} and homogeneous flavor.
        {returns a bounding box containing \ccVar. Note that bounding boxes
         are not parameterized with whatsoever. }
 
-\ccMethod{Point_2<R>  transform(const Aff_transformation_2<R> &t) const;}
+\ccMethod{Point_2<Kernel>  transform(const Aff_transformation_2<Kernel> &t) const;}
        {returns the point obtained by applying $t$ on \ccVar.}
 
 
@@ -101,19 +101,19 @@ Again they come in a \ccHtmlNoLinksFrom{Cartesian} and homogeneous flavor.
 
 The following operations can be applied on points:
 
-\ccFunction{Vector_2<R> operator-(const Point_2<R> &p,
-                                  const Point_2<R> &q);}
+\ccFunction{Vector_2<Kernel> operator-(const Point_2<Kernel> &p,
+                                  const Point_2<Kernel> &q);}
        {returns the difference vector between \ccStyle{q} and \ccStyle{p}. 
         You can substitute \ccc{ORIGIN} for either \ccc{p} or \ccc{q},
         but not for both.}
 
-\ccFunction{Point_2<R> operator+(const Point_2<R> &p,
-                                 const Vector_2<R> &v);}
+\ccFunction{Point_2<Kernel> operator+(const Point_2<Kernel> &p,
+                                 const Vector_2<Kernel> &v);}
        {returns the point obtained by translating \ccStyle{p} by the 
         vector \ccStyle{v}.}
 
-\ccFunction{Point_2<R> operator-(const Point_2<R> &p,
-                                 const Vector_2<R> &v);}
+\ccFunction{Point_2<Kernel> operator-(const Point_2<Kernel> &p,
+                                 const Vector_2<Kernel> &v);}
        {returns the point obtained by translating \ccStyle{p} by the 
         vector -\ccStyle{v}.}
 

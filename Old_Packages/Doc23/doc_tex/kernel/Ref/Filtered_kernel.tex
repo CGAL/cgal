@@ -8,9 +8,9 @@
 \cite{bbp-iayea-98} to achieve a kernel with exact and efficient predicates
 given an exact kernel \ccc{EK} and a filtering kernel \ccc{FK}.  The geometric
 objects and constructions are exactly those of the kernel \ccc{CK}, which
-means that there is no type equality between, say \ccc{Point_2<R>} and
+means that there is no type equality between, say \ccc{Point_2<Kernel>} and
 \ccc{R::Point_2}, when \ccc{R} is \ccClassTemplateName, which means that you
-should always use \ccc{R::Point_2} instead of \ccc{Point_2<R>}.
+should always use \ccc{R::Point_2} instead of \ccc{Point_2<Kernel>}.
 
 This is achieved by converting the geometric objects of \ccc{CK} arguments of
 each predicate to the filtering kernel \ccc{FK} using \ccc{C2F}, then applying

@@ -1,4 +1,4 @@
-\begin{ccRefClass} {Triangle_3<R>}
+\begin{ccRefClass} {Triangle_3<Kernel>}
 
 \ccDefinition  An object $t$ of the class \ccRefName\ is a triangle in
 the three-dimensional Euclidean space $\E^3$. As the triangle is not
@@ -11,34 +11,34 @@ the triangle or not.
 \ccHidden \ccConstructor{Triangle_3();}
              {introduces an uninitialized variable \ccVar.}
 
-\ccHidden \ccConstructor{Triangle_3(const Triangle_3<R> &u);}
+\ccHidden \ccConstructor{Triangle_3(const Triangle_3<Kernel> &u);}
  	    {copy constructor.}
 
-\ccConstructor{Triangle_3(const Point_3<R> &p, 
-	                     const Point_3<R> &q, 
-	                     const Point_3<R> &r);}
+\ccConstructor{Triangle_3(const Point_3<Kernel> &p, 
+	                     const Point_3<Kernel> &q, 
+	                     const Point_3<Kernel> &r);}
             {introduces a triangle \ccVar\ with vertices $p$, $q$ and $r$.}
 
 \ccOperations
 
-\ccHidden \ccMethod{Triangle_3<R> & operator=(const Triangle_3<R> &t2);}
+\ccHidden \ccMethod{Triangle_3<Kernel> & operator=(const Triangle_3<Kernel> &t2);}
         {Assignment.}
 
-\ccMethod{bool operator==(const Triangle_3<R> &t2) const;}
+\ccMethod{bool operator==(const Triangle_3<Kernel> &t2) const;}
        {Test for equality: two triangles t and $t_2$ are equal, iff there 
         exists a cyclic permutation of the vertices of $t2$, such that 
         they are equal to the vertices of~\ccVar.}
 
-\ccMethod{bool operator!=(const Triangle_3<R> &t2) const;}
+\ccMethod{bool operator!=(const Triangle_3<Kernel> &t2) const;}
        {Test for inequality.}
 
-\ccMethod{Point_3<R> vertex(int i) const;}
+\ccMethod{Point_3<Kernel> vertex(int i) const;}
        {returns the i'th vertex modulo 3  of~\ccVar.}
 
-\ccMethod{Point_3<R> operator[](int i) const;}
+\ccMethod{Point_3<Kernel> operator[](int i) const;}
        {returns \ccStyle{vertex(int i)}.}
 
-\ccMethod{Plane_3<R> supporting_plane();}
+\ccMethod{Plane_3<Kernel> supporting_plane();}
        {returns the supporting plane of \ccVar, with same
        orientation.}
 
@@ -47,7 +47,7 @@ the triangle or not.
 \ccMethod{bool is_degenerate() const;}
        {{\ccVar} is degenerate if its vertices are collinear.}
 
-\ccMethod{bool has_on(const Point_3<R> &p) const;}
+\ccMethod{bool has_on(const Point_3<Kernel> &p) const;}
        {A point is on \ccVar, if it is on a vertex, an edge or the
         face of \ccVar.}
 
@@ -59,7 +59,7 @@ the triangle or not.
 \ccMethod{Bbox_3 bbox() const;}
        {returns a bounding box containing \ccVar.}
 
-\ccMethod{Triangle_3<R>  transform(const Aff_transformation_3<R> &at) const;}
+\ccMethod{Triangle_3<Kernel>  transform(const Aff_transformation_3<Kernel> &at) const;}
        {returns the triangle obtained by applying $at$ on the three
         vertices of~\ccVar.}
 

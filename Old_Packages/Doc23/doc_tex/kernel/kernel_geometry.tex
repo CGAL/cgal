@@ -40,21 +40,21 @@ Note that these constructions do not involve any performance overhead for
 the conversion with the currently available representation classes. 
 
 \section{Kernel Objects}
-Besides points (\ccc{Point_2<R>}, \ccc{Point_3<R>}, \ccc{Point_d<R>}), 
-vectors (\ccc{Vector_2<R>}, \ccc{Vector_3<R>}), and 
-directions (\ccc{Direction_2<R>}, \ccc{Direction_3<R>}), 
+Besides points (\ccc{Point_2<Kernel>}, \ccc{Point_3<Kernel>}, \ccc{Point_d<Kernel>}), 
+vectors (\ccc{Vector_2<Kernel>}, \ccc{Vector_3<Kernel>}), and 
+directions (\ccc{Direction_2<Kernel>}, \ccc{Direction_3<Kernel>}), 
 \cgal\ provides lines, rays, segments, planes,
 triangles, tetrahedra, iso-rectangles, iso-cuboids, circles and spheres.
 
-Lines  (\ccc{Line_2<R>}, \ccc{Line_3<R>}) in {\cgal} are oriented. In 
+Lines  (\ccc{Line_2<Kernel>}, \ccc{Line_3<Kernel>}) in {\cgal} are oriented. In 
 two-dimensional space, they induce a partition of the plane
 into a positive side and a negative side. 
 Any two points on a line induce an \ccHtmlNoLinksFrom{orientation}
 of this line. 
-A ray (\ccc{Ray_2<R>}, \ccc{Ray_3<R>}) is semi-infinite interval on a line, 
+A ray (\ccc{Ray_2<Kernel>}, \ccc{Ray_3<Kernel>}) is semi-infinite interval on a line, 
 and this line is oriented from the finite endpoint of this interval towards 
-any other point in this interval. A segment (\ccc{Segment_2<R>}, 
-\ccc{Segment_3<R>}) is a bounded interval on a directed line,
+any other point in this interval. A segment (\ccc{Segment_2<Kernel>}, 
+\ccc{Segment_3<Kernel>}) is a bounded interval on a directed line,
 and the endpoints are ordered so that they induce the same direction 
 as that of the line.  
 

@@ -21,7 +21,7 @@ field type of the defining kernel.
 \ccHidden \ccConstructor{Weighted_point_2();}
              {introduces an uninitialized variable \ccVar.}
 
-\ccHidden \ccConstructor{Weighted_point_2(const Weighted_point_2<R> &q);}
+\ccHidden \ccConstructor{Weighted_point_2(const Weighted_point_2<Kernel> &q);}
  	    {copy constructor.}
 
 \ccConstructor{Weighted_point_2(const Origin &ORIGIN, const Weight& w = 0);}
@@ -35,7 +35,7 @@ field type of the defining kernel.
              weight \ccc{w}.
 	     \ccPrecond \ccc{hw} $\neq$ \ccc{R::RT(0)} }
 
-\ccConstructor{Weighted_point_2(const Point_2<R> &p, const Weight& w = 0);}
+\ccConstructor{Weighted_point_2(const Point_2<Kernel> &p, const Weight& w = 0);}
             {introduces a variable \ccVar\ with \ccHtmlNoLinksFrom{Cartesian} 
              coordinates \ccc{(p.x(),p.y())} and weight \ccc{w}.}
 
@@ -44,14 +44,14 @@ field type of the defining kernel.
 %\ccSetTwoOfThreeColumns{5cm}{4cm}
 
 \ccHidden 
-\ccMethod{Weighted_point_2<R> & operator=(const Weighted_point_2<R> &q);}
+\ccMethod{Weighted_point_2<Kernel> & operator=(const Weighted_point_2<Kernel> &q);}
         {Assignment.}
 
-\ccMethod{bool operator==(const Weighted_point_2<R> &q) const;}
+\ccMethod{bool operator==(const Weighted_point_2<Kernel> &q) const;}
        {Test for equality. Two points are equal, iff their $x$ and $y$ 
         coordinates are equal and their weights are equal.}
 
-\ccMethod{bool operator!=(const Weighted_point_2<R> &q) const;}
+\ccMethod{bool operator!=(const Weighted_point_2<Kernel> &q) const;}
        {Test for inequality.}
 
 There are two sets of coordinate access functions, namely to the
@@ -101,7 +101,7 @@ Again they come in a \ccHtmlNoLinksFrom{Cartesian} and homogeneous flavor.
 \ccMethod{Bbox_2 bbox() const;}
        {returns a bounding box containing \ccVar.}
 
-\ccMethod{Weighted_point_2<R>  transform(const Aff_transformation_2<R> &t) const;}
+\ccMethod{Weighted_point_2<Kernel>  transform(const Aff_transformation_2<Kernel> &t) const;}
        {returns the point obtained by applying $t$ on \ccVar.}
 
 Here are the access functions for the components of the weighted point.
@@ -109,7 +109,7 @@ Here are the access functions for the components of the weighted point.
 \ccMethod{Weight weight() const;}
        {returns the weight associated with the point.}
 \ccGlue
-\ccMethod{Point_2<R> point() const;}
+\ccMethod{Point_2<Kernel> point() const;}
        {returns the unweighted point.}
 
 
@@ -119,13 +119,13 @@ Here are the access functions for the components of the weighted point.
 The following operations can be applied on points:
 
 
-\ccFunction{Weighted_point_2<R> operator+(const Weighted_point_2<R> &p,
-                                 const Vector_2<R> &v);}
+\ccFunction{Weighted_point_2<Kernel> operator+(const Weighted_point_2<Kernel> &p,
+                                 const Vector_2<Kernel> &v);}
        {returns the point obtained by translating \ccStyle{p} by the 
         vector \ccStyle{v}.}
 
-\ccFunction{Weighted_point_2<R> operator-(const Weighted_point_2<R> &p,
-                                 const Vector_2<R> &v);}
+\ccFunction{Weighted_point_2<Kernel> operator-(const Weighted_point_2<Kernel> &p,
+                                 const Vector_2<Kernel> &v);}
        {returns the point obtained by translating \ccStyle{p} by the 
         vector -\ccStyle{v}.}
 
@@ -145,7 +145,7 @@ The variable {\tt r} is uninitialized and should first be used on
 the left hand side of an assignment. 
 
 \ccSeeAlso
-\ccRefIdfierPage{CGAL::Point_2<R>} \\
-\ccRefIdfierPage{CGAL::Weighted_point_3<R>}
+\ccRefIdfierPage{CGAL::Point_2<Kernel>} \\
+\ccRefIdfierPage{CGAL::Weighted_point_3<Kernel>}
 
 \end{ccRefClass} 

@@ -1,4 +1,4 @@
-\begin{ccRefClass} {Iso_cuboid_3<R>}
+\begin{ccRefClass} {Iso_cuboid_3<Kernel>}
 
 \ccDefinition  An object $s$ of the data type \ccRefName\ is a
 cuboid in the Euclidean plane $\E^3$ with sides parallel to the $x$ and
@@ -22,11 +22,11 @@ the user.
 \ccHidden \ccConstructor{Iso_cuboid_3();}
              {introduces an uninitialized variable \ccVar.}
 
-\ccHidden \ccConstructor{Iso_cuboid_3(const Iso_cuboid_3<R> &u);}
+\ccHidden \ccConstructor{Iso_cuboid_3(const Iso_cuboid_3<Kernel> &u);}
  	    {copy constructor.}
 
-\ccConstructor{Iso_cuboid_3(const Point_3<R> &p, 
-	                    const Point_3<R> &q);}
+\ccConstructor{Iso_cuboid_3(const Point_3<Kernel> &p, 
+	                    const Point_3<Kernel> &q);}
             {introduces an iso-oriented cuboid \ccVar\ with diagonal
              opposite vertices $p$ and $q$. Note that the object is 
              brought in the canonical form.}
@@ -45,21 +45,21 @@ the user.
 
 
 \ccOperations
-\ccHidden \ccMethod{Iso_cuboid_3<R> & operator=(const Iso_cuboid_3<R> &q);}
+\ccHidden \ccMethod{Iso_cuboid_3<Kernel> & operator=(const Iso_cuboid_3<Kernel> &q);}
         {Assignment.}
 
-\ccMethod{bool operator==(const Iso_cuboid_3<R> &c2) const;}
+\ccMethod{bool operator==(const Iso_cuboid_3<Kernel> &c2) const;}
        {Test for equality: two iso-oriented cuboid are equal, iff their
         lower left and their upper right vertices are equal.}
 
-\ccMethod{bool operator!=(const Iso_cuboid_3<R> &c2) const;}
+\ccMethod{bool operator!=(const Iso_cuboid_3<Kernel> &c2) const;}
        {Test for inequality.}
 
-\ccMethod{Point_3<R> vertex(int i) const;}
+\ccMethod{Point_3<Kernel> vertex(int i) const;}
        {returns the i'th vertex modulo 8  of \ccVar.
         starting with the lower left vertex.}
 
-\ccMethod{Point_3<R> operator[](int i) const;}
+\ccMethod{Point_3<Kernel> operator[](int i) const;}
        {returns  \ccStyle{vertex(i)}, as indicated in the figure below:
        \lcTex{\epsfxsize=6cm\epsffile{IsoCuboid.eps}}}
 
@@ -70,11 +70,11 @@ the user.
 \end{ccHtmlOnly} 
 
 
-\ccMethod{Point_3<R> min() const;}
+\ccMethod{Point_3<Kernel> min() const;}
        {returns the smallest vertex of \ccVar\ (= \ccStyle{vertex(0)}).}
 
 
-\ccMethod{Point_3<R> max() const;}
+\ccMethod{Point_3<Kernel> max() const;}
        {returns the largest vertex of \ccVar\ (= \ccStyle{vertex(7)}).}
 \ccMethod{ FT  xmin() const;}{returns smallest \ccHtmlNoLinksFrom{Cartesian}
                               $x$-coordinate in \ccVar.}
@@ -113,19 +113,19 @@ the user.
         \ccVar\ is degenerate, if all vertices
         are collinear.}
 
-\ccMethod{Bounded_side bounded_side(const Point_3<R> &p) const;}
+\ccMethod{Bounded_side bounded_side(const Point_3<Kernel> &p) const;}
        {returns either \ccStyle{ON_UNBOUNDED_SIDE},
         \ccStyle{ON_BOUNDED_SIDE}, or the constant
         \ccStyle{ON_BOUNDARY}, 
         depending on where point $p$ is.}
 
-\ccMethod{bool has_on_boundary(const Point_3<R> &p) const;}
+\ccMethod{bool has_on_boundary(const Point_3<Kernel> &p) const;}
        {}
 \ccGlue
-\ccMethod{bool has_on_bounded_side(const Point_3<R> &p) const;}
+\ccMethod{bool has_on_bounded_side(const Point_3<Kernel> &p) const;}
        {}
 \ccGlue
-\ccMethod{bool has_on_unbounded_side(const Point_3<R> &p) const;}
+\ccMethod{bool has_on_unbounded_side(const Point_3<Kernel> &p) const;}
        {}
 
 \ccHeading{Miscellaneous}
@@ -136,7 +136,7 @@ the user.
 \ccMethod{Bbox bbox() const;}
        {returns a bounding box containing \ccVar. }
 
-\ccMethod{Iso_cuboid_3<R>  transform(const Aff_transformation_3<R> &t) const;}
+\ccMethod{Iso_cuboid_3<Kernel>  transform(const Aff_transformation_3<Kernel> &t) const;}
        {returns the iso-oriented cuboid obtained by applying $t$ on 
         the smallest and the largest of \ccVar.
         \ccPrecond The angle at a rotation must be a multiple of $\pi/2$,

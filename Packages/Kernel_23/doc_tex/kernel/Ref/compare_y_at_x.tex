@@ -1,7 +1,7 @@
 \begin{ccRefFunction}{compare_y_at_x}
 
-\ccFunction{Comparison_result compare_y_at_x(const Point_2<R> &p,
-                                             const Line_2<R> &h);}
+\ccFunction{Comparison_result compare_y_at_x(const Point_2<Kernel> &p,
+                                             const Line_2<Kernel> &h);}
         {compares the $y$-coordinates of $p$ and the vertical projection
          of \ccStyle{p} on \ccStyle{h}%
          \ccTexHtml{ (Figure~\ref{fig-compare2} (d))}{, see (d) in the figure 
@@ -19,9 +19,9 @@
 \end{figure} 
 \end{ccTexOnly} 
 
-\ccFunction{Comparison_result compare_y_at_x(const Point_2<R> &p,
-                                           const Line_2<R> &h1,
-                                           const Line_2<R> &h2);}
+\ccFunction{Comparison_result compare_y_at_x(const Point_2<Kernel> &p,
+                                           const Line_2<Kernel> &h1,
+                                           const Line_2<Kernel> &h2);}
 {compares the $y$-coordinates of the vertical projection 
  of \ccStyle{p} on \ccStyle{h1} and on \ccStyle{h2}%
  \ccTexHtml{ (Figure~\ref{fig-compare2} (e))}{, see (e) in the figure 
@@ -30,9 +30,9 @@
 }
 
 
-\ccFunction{Comparison_result compare_y_at_x(const Line_2<R> &l1,
-                                           const Line_2<R> &l2,
-                                           const Line_2<R> &h);}
+\ccFunction{Comparison_result compare_y_at_x(const Line_2<Kernel> &l1,
+                                           const Line_2<Kernel> &l2,
+                                           const Line_2<Kernel> &h);}
       {Let $p$ be the \ccHtmlNoLinksFrom{intersection} of lines $l1$ and $l2$.
        This function compares the $y$-coordinates of $p$ and 
        the vertical projection of \ccStyle{p} on \ccStyle{h}%
@@ -43,10 +43,10 @@
       }
 
 
-\ccFunction{Comparison_result compare_y_at_x(const Line_2<R> &l1,
-                                           const Line_2<R> &l2,
-                                           const Line_2<R> &h1,
-                                           const Line_2<R> &h2);}
+\ccFunction{Comparison_result compare_y_at_x(const Line_2<Kernel> &l1,
+                                           const Line_2<Kernel> &l2,
+                                           const Line_2<Kernel> &h1,
+                                           const Line_2<Kernel> &h2);}
 {Let $p$ be the \ccHtmlNoLinksFrom{intersection} of lines $l1$ and $l2$. This function 
  compares the $y$-coordinates of the vertical projection of \ccStyle{p} on 
  \ccStyle{h1} and on \ccStyle{h2}%
@@ -56,17 +56,17 @@
  \ccStyle{h2} are not vertical.
 }
 
-\ccFunction{Comparison_result compare_y_at_x(const Point_2<R> &p,
-                                             const Segment_2<R> &s);}
+\ccFunction{Comparison_result compare_y_at_x(const Point_2<Kernel> &p,
+                                             const Segment_2<Kernel> &s);}
 {compares the $y$-coordinates of $p$ and the vertical projection
  of \ccStyle{p} on \ccStyle{s}.  If \ccc{s} is vertical, then return
  \ccc{EQUAL} when \ccc{p} lies on \ccc{s}, \ccc{SMALLER} when \ccc{p} lies
  under {s}, and \ccc{LARGER} otherwise.
  \ccPrecond \ccStyle{p} is within the x range of \ccStyle{s}.}
 
-\ccFunction{Comparison_result compare_y_at_x(const Point_2<R> &p,
-                                           const Segment_2<R> &s1,
-                                           const Segment_2<R> &s2);}
+\ccFunction{Comparison_result compare_y_at_x(const Point_2<Kernel> &p,
+                                           const Segment_2<Kernel> &s1,
+                                           const Segment_2<Kernel> &s2);}
 {compares the $y$-coordinates of the vertical projection 
  of \ccStyle{p} on \ccStyle{s1} and on \ccStyle{s2}.  If \ccc{s1} or \ccc{s2}
  is vertical, then return \ccc{EQUAL} if they intersect, otherwise return

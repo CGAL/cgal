@@ -1,4 +1,4 @@
-\begin{ccRefClass} {Segment_2<R>}
+\begin{ccRefClass} {Segment_2<Kernel>}
 
 
 \ccDefinition  An object $s$ of the data type \ccRefName\ is a directed
@@ -20,10 +20,10 @@ number types, is expensive, and may be inexact.
 \ccHidden \ccConstructor{Segment_2();}
              {introduces an uninitialized variable \ccVar.}
 
-\ccHidden \ccConstructor{Segment_2(const Segment_2<R> &q);}
+\ccHidden \ccConstructor{Segment_2(const Segment_2<Kernel> &q);}
  	    {copy constructor.}
 
-\ccConstructor{Segment_2(const Point_2<R> &p, const Point_2<R> &q);}
+\ccConstructor{Segment_2(const Point_2<Kernel> &p, const Point_2<Kernel> &q);}
             {introduces a segment \ccVar\ with source $p$
              and target $q$. The segment is directed from the source towards
              the target.}
@@ -31,55 +31,55 @@ number types, is expensive, and may be inexact.
 
 \ccOperations
 %\ccSetTwoOfThreeColumns{5cm}{4cm}
-\ccSetThreeColumns{Direction_2<R> & }{}{\hspace*{7.5cm}}
+\ccSetThreeColumns{Direction_2<Kernel> & }{}{\hspace*{7.5cm}}
 
-\ccHidden \ccMethod{Segment_2<R> & operator=(const Segment_2<R> &q);}
+\ccHidden \ccMethod{Segment_2<Kernel> & operator=(const Segment_2<Kernel> &q);}
         {Assignment.}
 
-\ccMethod{bool operator==(const Segment_2<R> &q) const;}
+\ccMethod{bool operator==(const Segment_2<Kernel> &q) const;}
        {Test for equality: Two segments are equal, iff their sources and
         targets are equal.}
 
-\ccMethod{bool operator!=(const Segment_2<R> &q) const;}
+\ccMethod{bool operator!=(const Segment_2<Kernel> &q) const;}
        {Test for inequality.}
 
 
-\ccMethod{Point_2<R> source() const;}
+\ccMethod{Point_2<Kernel> source() const;}
        {returns the source of \ccVar.}
 
-\ccMethod{Point_2<R> target() const;}
+\ccMethod{Point_2<Kernel> target() const;}
        {returns the target of \ccVar.}
 \ccGlue
-\ccMethod{Point_2<R> min() const;}
+\ccMethod{Point_2<Kernel> min() const;}
        {returns the point of \ccVar\ with lexicographically smallest coordinate.}
 
-\ccMethod{Point_2<R> max() const;}
+\ccMethod{Point_2<Kernel> max() const;}
        {returns the point of \ccVar\ with lexicographically largest coordinate.}
 
 
-\ccMethod{Point_2<R> vertex(int i) const;}
+\ccMethod{Point_2<Kernel> vertex(int i) const;}
        {returns source or target   of \ccVar:   \ccStyle{vertex(0)} returns
         the source of \ccVar, \ccStyle{vertex(1)} returns the target of \ccVar. 
         The parameter \ccStyle{i} is taken modulo 2, which gives 
         easy access to the other vertex. }
 
-\ccMethod{Point_2<R> point(int i) const;}
+\ccMethod{Point_2<Kernel> point(int i) const;}
 	{returns \ccStyle{vertex(i)}.}
 
-\ccMethod{Point_2<R> operator[](int i) const;}
+\ccMethod{Point_2<Kernel> operator[](int i) const;}
        {returns \ccStyle{vertex(i)}.}
 
 \ccMethod{R::FT squared_length() const;}
        {returns the squared length of \ccVar. }
 
-\ccMethod{Direction_2<R> direction() const;}
+\ccMethod{Direction_2<Kernel> direction() const;}
        {returns the direction from source to target of \ccVar.}
 
 
-\ccMethod{Segment_2<R> opposite() const; }
+\ccMethod{Segment_2<Kernel> opposite() const; }
        {returns a segment with source and target point interchanged.}
 
-\ccMethod{Line_2<R> supporting_line() const;}
+\ccMethod{Line_2<Kernel> supporting_line() const;}
        {returns the line $l$ passing through \ccVar. Line $l$  has the
         same orientation as segment \ccVar.}
 
@@ -94,11 +94,11 @@ number types, is expensive, and may be inexact.
 \ccMethod{bool is_vertical() const;}
        {}
 
-\ccMethod{bool has_on(const Point_2<R> &p) const;}
+\ccMethod{bool has_on(const Point_2<Kernel> &p) const;}
        {A point is on \ccVar, iff it is equal to the source or target 
         of \ccVar, or if it is in the interior of \ccVar.}
 
-\ccMethod{bool collinear_has_on(const Point_2<R> &p) const;}
+\ccMethod{bool collinear_has_on(const Point_2<Kernel> &p) const;}
        {checks if point $p$ is on segment~\ccVar. This function is faster
         than function \ccStyle{has_on()}.
         \ccPrecond $p$ is on the supporting line of \ccVar.}
@@ -108,7 +108,7 @@ number types, is expensive, and may be inexact.
 \ccMethod{Bbox_2 bbox() const;}
        {returns a bounding box containing~\ccVar.}
 
-\ccMethod{Segment_2<R>  transform(const Aff_transformation_2<R> &t) const;}
+\ccMethod{Segment_2<Kernel>  transform(const Aff_transformation_2<Kernel> &t) const;}
        {returns the segment obtained by applying $t$ on the source
         and the target of \ccVar.}
 

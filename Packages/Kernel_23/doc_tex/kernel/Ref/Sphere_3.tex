@@ -1,4 +1,4 @@
-\begin{ccRefClass}{Sphere_3<R>}
+\begin{ccRefClass}{Sphere_3<Kernel>}
 
 \ccDefinition
 
@@ -20,7 +20,7 @@ sphere can be degenerated, i.e.\ the squared radius may be zero.
         introduces an uninitialized variable \ccVar\ of type
         \ccRefName.}
 
-\ccConstructor{ Sphere_3( Point_3<R>  const& center, 
+\ccConstructor{ Sphere_3( Point_3<Kernel>  const& center, 
                           R::FT  const& squared_radius,
                           Orientation const& orientation = COUNTERCLOCKWISE);}{
         introduces a variable \ccVar\ of type \ccRefName.
@@ -30,10 +30,10 @@ sphere can be degenerated, i.e.\ the squared radius may be zero.
         \ccPrecond \ccc{orientation} $\neq$ \ccc{COPLANAR}, and furthermore,
                    \ccc{squared_radius} $\geq$ 0.}
 
-\ccConstructor{ Sphere_3( Point_3<R> const& p,
-                          Point_3<R> const& q,
-                          Point_3<R> const& r,
-                          Point_3<R> const& s);}{
+\ccConstructor{ Sphere_3( Point_3<Kernel> const& p,
+                          Point_3<Kernel> const& q,
+                          Point_3<Kernel> const& r,
+                          Point_3<Kernel> const& s);}{
         introduces a variable \ccVar\ of type \ccRefName.
         It is initialized to the unique sphere which passes through
         the points \ccc{p}, \ccc{q}, \ccc{r} and \ccc{s}. The orientation of
@@ -42,9 +42,9 @@ sphere can be degenerated, i.e.\ the squared radius may be zero.
         \ccPrecond \ccc{p}, \ccc{q}, \ccc{r}, and \ccc{s} are not collinear.}
 
 
-\ccConstructor{ Sphere_3( Point_3<R> const& p,
-                          Point_3<R> const& q,
-                          Point_3<R> const& r,
+\ccConstructor{ Sphere_3( Point_3<Kernel> const& p,
+                          Point_3<Kernel> const& q,
+                          Point_3<Kernel> const& r,
                           const Orientation& o = COUNTERCLOCKWISE);}{
         introduces a variable \ccVar\ of type \ccRefName.
         It is initialized to the smallest sphere which passes through
@@ -52,8 +52,8 @@ sphere can be degenerated, i.e.\ the squared radius may be zero.
         the sphere is \ccc{o}. \ccPrecond \ccc{o} is not
         \ccc{COPLANAR}.}
 
-\ccConstructor{ Sphere_3( Point_3<R> const& p,
-                          Point_3<R> const& q,
+\ccConstructor{ Sphere_3( Point_3<Kernel> const& p,
+                          Point_3<Kernel> const& q,
                           const Orientation& o = COUNTERCLOCKWISE);}{
         introduces a variable \ccVar\ of type \ccRefName.
         It is initialized to the smallest sphere which passes through
@@ -62,7 +62,7 @@ sphere can be degenerated, i.e.\ the squared radius may be zero.
         \ccc{COPLANAR}.}
 
 
-\ccConstructor{ Sphere_3( Point_3<R>  const& center,
+\ccConstructor{ Sphere_3( Point_3<Kernel>  const& center,
                           Orientation const& orientation = COUNTERCLOCKWISE);}{
         introduces a variable \ccVar\ of type \ccRefName.
         It is initialized to the sphere with center \ccc{center}, squared
@@ -71,17 +71,17 @@ sphere can be degenerated, i.e.\ the squared radius may be zero.
         \ccPostcond \ccVar.\ccc{is_degenerate()} = \ccc{true}.}
 
 \ccHidden
-\ccConstructor{ Sphere_3( Sphere_3<R> const&);}{
+\ccConstructor{ Sphere_3( Sphere_3<Kernel> const&);}{
         copy constructor.}
 
 \ccHidden
-\ccMemberFunction{ Sphere_3<R>& operator = ( Sphere_3<R> const&);}{
+\ccMemberFunction{ Sphere_3<Kernel>& operator = ( Sphere_3<Kernel> const&);}{
         assignment.}
 
 % -----------------------------------------------------------------------------
 \ccAccessFunctions
 
-\ccMemberFunction{Point_3<R> const& center( ) const;}{
+\ccMemberFunction{Point_3<Kernel> const& center( ) const;}{
         returns the center of \ccVar.}
 \ccGlue
 \ccMemberFunction{ R::FT const& squared_radius( ) const;}{
@@ -92,12 +92,12 @@ sphere can be degenerated, i.e.\ the squared radius may be zero.
 
 % -----------------------------------------------------------------------------
 
-\ccHidden\ccMemberFunction{ bool operator == ( Sphere_3<R> const& sphere) const;}{
+\ccHidden\ccMemberFunction{ bool operator == ( Sphere_3<Kernel> const& sphere) const;}{
         returns \ccc{true}, iff \ccVar\ and \ccc{sphere} are equal,
         i.e.\ if they have the same center, same squared radius and
         same orientation.}
 
-\ccHidden\ccMemberFunction{ bool operator != ( Sphere_3<R> const& sphere) const;}{
+\ccHidden\ccMemberFunction{ bool operator != ( Sphere_3<Kernel> const& sphere) const;}{
         returns \ccc{true}, iff \ccVar\ and \ccc{sphere} are not equal.}
 
 % -----------------------------------------------------------------------------
@@ -108,7 +108,7 @@ sphere can be degenerated, i.e.\ the squared radius may be zero.
         if \ccVar\ has squared radius zero.}
 
 \ccMemberFunction{ Oriented_side
-                   oriented_side( Point_3<R> const& p) const;}{
+                   oriented_side( Point_3<Kernel> const& p) const;}{
         returns either the constant \ccc{ON_ORIENTED_BOUNDARY}, 
         \ccc{ON_POSITIVE_SIDE}, or \ccc{ON_NEGATIVE_SIDE},
         iff \ccc{p} lies on the boundary, properly on the
@@ -116,7 +116,7 @@ sphere can be degenerated, i.e.\ the squared radius may be zero.
         of \ccVar, resp.}
 
 \ccMemberFunction{ Bounded_side
-                   bounded_side( Point_3<R> const& p) const;}{
+                   bounded_side( Point_3<Kernel> const& p) const;}{
         returns \ccc{ON_BOUNDED_SIDE},
         \ccc{ON_BOUNDARY}, or \ccc{ON_UNBOUNDED_SIDE}
         iff \ccc{p} lies properly inside, on the boundary, or properly
@@ -140,31 +140,31 @@ sphere can be degenerated, i.e.\ the squared radius may be zero.
 %\ccMemberFunction{ bool
 %                   has_on_unbounded_side( Point const& p) const;}{
 %        returns \ccc{true}, iff \ccc{p} lies properly outside of \ccVar.}
-\ccMethod{bool has_on_positive_side(const Point_3<R> &p) const;}
+\ccMethod{bool has_on_positive_side(const Point_3<Kernel> &p) const;}
        {}
 \ccGlue
-\ccMethod{bool has_on_negative_side(const Point_3<R> &p) const;}
+\ccMethod{bool has_on_negative_side(const Point_3<Kernel> &p) const;}
        {}
 \ccGlue
-\ccMethod{bool has_on_boundary(const Point_3<R> &p) const;}
+\ccMethod{bool has_on_boundary(const Point_3<Kernel> &p) const;}
        {}
 \ccGlue
-\ccMethod{bool has_on_bounded_side(const Point_3<R> &p) const;}
+\ccMethod{bool has_on_bounded_side(const Point_3<Kernel> &p) const;}
        {} 
 \ccGlue
-\ccMethod{bool has_on_unbounded_side(const Point_3<R> &p) const;}
+\ccMethod{bool has_on_unbounded_side(const Point_3<Kernel> &p) const;}
        {}
 
 % -----------------------------------------------------------------------------
 \ccHeading{Miscellaneous}
 
-\ccMemberFunction{ Sphere_3<R> opposite() const;}{
+\ccMemberFunction{ Sphere_3<Kernel> opposite() const;}{
         returns the sphere with the same center and squared radius as
         \ccVar\, but with opposite orientation.}
 
 
-\ccMemberFunction{ Sphere_3<R> orthogonal_transform(
-                       Aff_transformation_3<R> const& at) const;}{
+\ccMemberFunction{ Sphere_3<Kernel> orthogonal_transform(
+                       Aff_transformation_3<Kernel> const& at) const;}{
         returns the sphere obtained by applying $at$ on \ccVar.
         \ccPrecond \ccc{at} is an orthogonal transformation.}
 

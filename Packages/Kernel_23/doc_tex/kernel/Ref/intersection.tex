@@ -4,7 +4,7 @@ The drawback of \ccc{<CGAL/intersections.h>} is that a lot is included,
 which results in long compilation times.
 It is also possible to include only the intersections that are of interest.
 The naming scheme of the header files is as follows.
-Intersections of types \ccStyle{Type1<R>} and \ccStyle{Type2<R>}
+Intersections of types \ccStyle{Type1<Kernel>} and \ccStyle{Type2<Kernel>}
 are declared in header file \ccc{CGAL/Type1_Type2_intersection.h}.
 So, intersection routines of segments and lines in 2D are declared in
 \ccc{<CGAL/Segment_2_Line_2_intersection.h>}. The order of the type names does not 
@@ -14,7 +14,7 @@ mentioned twice: \ccc{<CGAL/Segment_2_Segment_2_intersection.h>}
 }
 
 \ccUnchecked{
-\ccFunction{Object intersection(Type1<R> obj1, Type2<R> obj2);}
+\ccFunction{Object intersection(Type1<Kernel> obj1, Type2<Kernel> obj2);}
 {Two objects \ccStyle{obj1} and \ccStyle{obj2} intersect if there is a point
 \ccStyle{p} that is part of both \ccStyle{obj1} and \ccStyle{obj2}.
 The \ccHtmlNoLinksFrom{intersection} region of those two objects is defined as the set of all
@@ -301,11 +301,11 @@ The following example demonstrates the most common use of
 /* or #include <CGAL/intersections.h> */
 
 
-void foo(CGAL::Segment_2<R> seg, CGAL::Line_2<R> line)
+void foo(CGAL::Segment_2<Kernel> seg, CGAL::Line_2<Kernel> line)
 {
     CGAL::Object result;
-    CGAL::Point_2<R> ipoint;
-    CGAL::Segment_2<R> iseg;
+    CGAL::Point_2<Kernel> ipoint;
+    CGAL::Segment_2<Kernel> iseg;
 
     result = CGAL::intersection(seg, line);
     if (CGAL::assign(ipoint, result)) {

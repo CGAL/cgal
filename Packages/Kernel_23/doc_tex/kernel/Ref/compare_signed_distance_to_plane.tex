@@ -1,9 +1,9 @@
 \begin{ccRefFunction}{compare_signed_distance_to_plane}
 
 \ccFunction{Comparison_result
-compare_signed_distance_to_plane(const Plane_3<R>& h,
-                         const Point_3<R>& p,
-                         const Point_3<R>& q);}
+compare_signed_distance_to_plane(const Plane_3<Kernel>& h,
+                         const Point_3<Kernel>& p,
+                         const Point_3<Kernel>& q);}
           {returns \ccStyle{LARGER}
            iff the signed distance of \ccStyle{p} and 
            \ccStyle{h} is larger than the signed distance of \ccStyle{q}
@@ -11,11 +11,11 @@ compare_signed_distance_to_plane(const Plane_3<R>& h,
            and \ccStyle{EQUAL} iff both are equal.}
 
 \ccFunction{Comparison_result
-compare_signed_distance_to_plane(const Point_3<R>& p,
-                         const Point_3<R>& q,
-                         const Point_3<R>& r,
-                         const Point_3<R>& s,
-                         const Point_3<R>& t);}
+compare_signed_distance_to_plane(const Point_3<Kernel>& p,
+                         const Point_3<Kernel>& q,
+                         const Point_3<Kernel>& r,
+                         const Point_3<Kernel>& s,
+                         const Point_3<Kernel>& t);}
           {returns \ccStyle{LARGER}
            iff the signed distance of \ccStyle{s} and 
            \ccStyle{h} is larger than the signed distance of \ccStyle{t}

@@ -1,11 +1,11 @@
 \begin{ccRefFunction}{compare_y}
 
-\ccFunction{Comparison_result compare_y(const Point_2<R> &p,
-                            	        const Point_2<R> &q);}
+\ccFunction{Comparison_result compare_y(const Point_2<Kernel> &p,
+                            	        const Point_2<Kernel> &q);}
 	{compares Cartesian $y$-coordinates of $p$ and $q$.}
 
-\ccFunction{Comparison_result compare_y(const Point_3<R> &p,
-                            	        const Point_3<R> &q);}
+\ccFunction{Comparison_result compare_y(const Point_3<Kernel> &p,
+                            	        const Point_3<Kernel> &q);}
 	{compares Cartesian $y$-coordinates of $p$ and $q$.}
 
 \begin{ccHtmlOnly}
@@ -21,28 +21,28 @@ given) points in the boxes.\label{fig-compare13}}
 \end{figure} 
 \end{ccTexOnly} 
 
-\ccFunction{Comparison_result compare_y(const Point_2<R> &p,
-                                        const Line_2<R> &l1,
-                                        const Line_2<R> &l2);}
+\ccFunction{Comparison_result compare_y(const Point_2<Kernel> &p,
+                                        const Line_2<Kernel> &l1,
+                                        const Line_2<Kernel> &l2);}
         {compares the $y$-coordinates of $p$ and the \ccHtmlNoLinksFrom{intersection} of lines
          $l1$ and $l2$%
          \ccTexHtml{ (Figure~\ref{fig-compare13} (a))}{, see (a) in the figure 
          above}.}
 
 
-\ccFunction{Comparison_result compare_y(const Line_2<R> &l,
-                                        const Line_2<R> &h1,
-                                        const Line_2<R> &h2);}
+\ccFunction{Comparison_result compare_y(const Line_2<Kernel> &l,
+                                        const Line_2<Kernel> &h1,
+                                        const Line_2<Kernel> &h2);}
         {compares the $y$-coordinates of the \ccHtmlNoLinksFrom{intersection} of line $l$
          with line $h1$ and with line $h2$%
          \ccTexHtml{ (Figure~\ref{fig-compare13} (b))}{, see (b) in the figure 
          above}.}
 
 
-\ccFunction{Comparison_result compare_y(const Line_2<R> &l1,
-                                        const Line_2<R> &l2,
-                                        const Line_2<R> &h1,
-                                        const Line_2<R> &h2);}
+\ccFunction{Comparison_result compare_y(const Line_2<Kernel> &l1,
+                                        const Line_2<Kernel> &l2,
+                                        const Line_2<Kernel> &h1,
+                                        const Line_2<Kernel> &h2);}
         {compares the $y$-coordinates of the \ccHtmlNoLinksFrom{intersection} of lines $l1$
          and $l2$ and  the \ccHtmlNoLinksFrom{intersection} of lines $h1$ and $h2$ 
          \ccTexHtml{ (Figure~\ref{fig-compare13} (c))}{, see (c) in the figure 

@@ -1,4 +1,4 @@
-\begin{ccRefClass} {Tetrahedron_3<R>}
+\begin{ccRefClass} {Tetrahedron_3<Kernel>}
 
 \ccDefinition  An object $t$ of the class \ccRefName\ is an oriented
 tetrahedron in the three-dimensional Euclidean space $\E^3$. 
@@ -21,23 +21,23 @@ bounded one and an unbounded one.
 \ccHidden \ccConstructor{Tetrahedron_3();}
              {introduces an uninitialized variable \ccVar.}
 
-\ccHidden \ccConstructor{Tetrahedron_3(const Tetrahedron_3<R> &u);}
+\ccHidden \ccConstructor{Tetrahedron_3(const Tetrahedron_3<Kernel> &u);}
  	    {copy constructor.}
 
 
-\ccConstructor{Tetrahedron_3(const Point_3<R> &p0, 
-	                     const Point_3<R> &p1, 
-	                     const Point_3<R> &p2, 
-	                     const Point_3<R> &p3);}
+\ccConstructor{Tetrahedron_3(const Point_3<Kernel> &p0, 
+	                     const Point_3<Kernel> &p1, 
+	                     const Point_3<Kernel> &p2, 
+	                     const Point_3<Kernel> &p3);}
             {introduces a tetrahedron \ccVar\ with vertices $p_0$, $p_1$, $p_2$ and $p_3$.}
 
 
 \ccOperations
 
-\ccHidden \ccMethod{Tetrahedron_3<R> & operator=(const Tetrahedron_3<R> &t2);}
+\ccHidden \ccMethod{Tetrahedron_3<Kernel> & operator=(const Tetrahedron_3<Kernel> &t2);}
         {Assignment.}
 
-\ccMethod{bool operator==(const Tetrahedron_3<R> &t2) const;}
+\ccMethod{bool operator==(const Tetrahedron_3<Kernel> &t2) const;}
 %       {Test for equality: two tetrahedra are equal, iff there exists a 
 %        cyclic permutation of the vertices of $t2$, such that they are 
 %        equal to the vertices of~\ccVar.}
@@ -45,13 +45,13 @@ bounded one and an unbounded one.
         iff \ccVar\ and \ccc{t2} have the same orientation and 
         their sets (not sequences) of vertices are equal.}
 
-\ccMethod{bool operator!=(const Tetrahedron_3<R> &t2) const;}
+\ccMethod{bool operator!=(const Tetrahedron_3<Kernel> &t2) const;}
        {Test for inequality.}
 
-\ccMethod{Point_3<R> vertex(int i) const;}
+\ccMethod{Point_3<Kernel> vertex(int i) const;}
        {returns the i'th vertex modulo 4  of~\ccVar.}
 
-\ccMethod{Point_3<R> operator[](int i) const;}
+\ccMethod{Point_3<Kernel> operator[](int i) const;}
        {returns \ccStyle{vertex(int i)}.}
 
 \ccPredicates
@@ -63,27 +63,27 @@ bounded one and an unbounded one.
 \ccMethod{Orientation    orientation() const;}
        { }
 
-\ccMethod{Oriented_side  oriented_side(const Point_3<R> &p) const;}
+\ccMethod{Oriented_side  oriented_side(const Point_3<Kernel> &p) const;}
        {\ccPrecond: \ccVar\ is not degenerate.}
 
-\ccMethod{Bounded_side  bounded_side(const Point_3<R> &p) const;}
+\ccMethod{Bounded_side  bounded_side(const Point_3<Kernel> &p) const;}
        {\ccPrecond: \ccVar\ is not degenerate.}
 
 For convenience we provide the following boolean functions:
 
-\ccMethod{bool has_on_positive_side(const Point_3<R> &p) const;}
+\ccMethod{bool has_on_positive_side(const Point_3<Kernel> &p) const;}
        {}
 \ccGlue
-\ccMethod{bool has_on_negative_side(const Point_3<R> &p) const;}
+\ccMethod{bool has_on_negative_side(const Point_3<Kernel> &p) const;}
        {}
 \ccGlue
-\ccMethod{bool has_on_boundary(const Point_3<R> &p) const;}
+\ccMethod{bool has_on_boundary(const Point_3<Kernel> &p) const;}
        {}
 \ccGlue
-\ccMethod{bool has_on_bounded_side(const Point_3<R> &p) const;}
+\ccMethod{bool has_on_bounded_side(const Point_3<Kernel> &p) const;}
        {}
 \ccGlue
-\ccMethod{bool has_on_unbounded_side(const Point_3<R> &p) const;}
+\ccMethod{bool has_on_unbounded_side(const Point_3<Kernel> &p) const;}
        {}
 
 \ccHeading{Miscellaneous}
@@ -94,7 +94,7 @@ For convenience we provide the following boolean functions:
 \ccMethod{Bbox_3 bbox() const;}
        {returns a bounding box containing \ccVar.}
 
-\ccMethod{Tetrahedron_3<R>  transform(const Aff_transformation_3<R> &at) const;}
+\ccMethod{Tetrahedron_3<Kernel>  transform(const Aff_transformation_3<Kernel> &at) const;}
        {returns the tetrahedron obtained by applying $at$ on the three
         vertices of~\ccVar.}
 

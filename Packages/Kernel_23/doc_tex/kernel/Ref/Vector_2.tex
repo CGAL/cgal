@@ -1,4 +1,4 @@
-\begin{ccRefClass} {Vector_2<R>}
+\begin{ccRefClass} {Vector_2<Kernel>}
 
 \ccDefinition
 
@@ -19,10 +19,10 @@ instead of a vector initialized with zeros.
 \ccHidden\ccConstructor{Vector_2();}
              {introduces an uninitialized variable \ccVar.}
 
-\ccHidden \ccConstructor{Vector_2(const Vector_2<R> &w);}
+\ccHidden \ccConstructor{Vector_2(const Vector_2<Kernel> &w);}
  	    {copy constructor.}
 
-\ccConstructor{Vector_2(const Point_2<R> &a, const Point_2<R> &b);}
+\ccConstructor{Vector_2(const Point_2<Kernel> &a, const Point_2<Kernel> &b);}
  	    {introduces the vector $b-a$.}
 
 \ccConstructor{Vector_2(const Null_vector &NULL_VECTOR);}
@@ -37,15 +37,15 @@ instead of a vector initialized with zeros.
 
 \ccOperations
 
-\ccHidden \ccMethod{Vector_2<R> & operator=(const Vector_2<R> &w);}
+\ccHidden \ccMethod{Vector_2<Kernel> & operator=(const Vector_2<Kernel> &w);}
         {Assignment.}
 
-\ccMethod{bool operator==(const Vector_2<R> &w) const;}
+\ccMethod{bool operator==(const Vector_2<Kernel> &w) const;}
        {Test for equality: two vectors are equal, iff their $x$ and $y$ 
         coordinates are equal. You can compare a vector with the
         \ccStyle{NULL_VECTOR}.}
 
-\ccMethod{bool operator!=(const Vector_2<R> &w) const;}
+\ccMethod{bool operator!=(const Vector_2<Kernel> &w) const;}
        {Test for inequality. You can compare a vector with the
         \ccStyle{NULL_VECTOR}.}
 
@@ -92,13 +92,13 @@ Again they come in a \ccHtmlNoLinksFrom{Cartesian} and homogeneous flavor.
 \ccMethod{int dimension() const;}
        {returns the dimension (the constant 2).}
 
-\ccMethod{Direction_2<R> direction() const;}
+\ccMethod{Direction_2<Kernel> direction() const;}
        {returns the direction which passes through \ccVar.}
 
-\ccMethod{Vector_2<R>  transform(const Aff_transformation_2<R> &t) const;}
+\ccMethod{Vector_2<Kernel>  transform(const Aff_transformation_2<Kernel> &t) const;}
        {returns the vector obtained by applying $t$ on \ccVar.}
 
-\ccMethod{Vector_2<R>  perpendicular(const Orientation &o) const;}
+\ccMethod{Vector_2<Kernel>  perpendicular(const Orientation &o) const;}
        {returns the vector perpendicular to \ccVar\ in clockwise or
         counterclockwise orientation.}
 
@@ -106,33 +106,33 @@ Again they come in a \ccHtmlNoLinksFrom{Cartesian} and homogeneous flavor.
 
 The following operations can be applied on vectors:
 
-\ccMethod{Vector_2<R>        operator+(const Vector_2<R> &w) const;}
+\ccMethod{Vector_2<Kernel>        operator+(const Vector_2<Kernel> &w) const;}
        {Addition.}
 
-\ccMethod{Vector_2<R>        operator-(const Vector_2<R> &w) const;}
+\ccMethod{Vector_2<Kernel>        operator-(const Vector_2<Kernel> &w) const;}
        {Subtraction.}
 
-\ccMethod{Vector_2<R>        operator-() const;}
+\ccMethod{Vector_2<Kernel>        operator-() const;}
        {returns the opposite vector.}
 
-\ccMethod{R::FT                  operator*(const Vector_2<R> &w) const;}
+\ccMethod{R::FT                  operator*(const Vector_2<Kernel> &w) const;}
        {returns the scalar product (= inner product) of the two vectors.}
 
 
-\ccMethod{Vector_2<R> operator*(const R::RT &s) const;}
+\ccMethod{Vector_2<Kernel> operator*(const R::RT &s) const;}
        {Multiplication with a scalar from the right. Although it would
         be more natural, \cgal\ does not offer a multiplication with a 
         scalar from the left. (This is due to problems of some compilers.)}
 
-\ccMethod{Vector_2<R> operator*(const Quotient<RT> &s) const;}
+\ccMethod{Vector_2<Kernel> operator*(const Quotient<RT> &s) const;}
        {Multiplication with a scalar from the right.}
 
 
-%\ccFunction{Vector_2<R> operator*(const R::RT &s, 
-%	                           const Vector_2<R> &w);}
+%\ccFunction{Vector_2<Kernel> operator*(const R::RT &s, 
+%	                           const Vector_2<Kernel> &w);}
 %       {Multiplication with a scalar from the left.}
 
-\ccMethod{Vector_2<R>        operator/(const R::RT &s) const;}
+\ccMethod{Vector_2<Kernel>        operator/(const R::RT &s) const;}
        {Division by a scalar.}
 
 \ccSeeAlso

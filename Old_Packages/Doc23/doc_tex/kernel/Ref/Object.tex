@@ -79,7 +79,7 @@ The \ccHtmlNoLinksFrom{intersection} routine itself looks roughly as follows:
 \begin{cprog}
 
 template < class R >
-Object  intersection(Segment_2<R> s1, Segment_2<R> s2)
+Object  intersection(Segment_2<Kernel> s1, Segment_2<Kernel> s2)
 {
 \end{cprog} 
 \ccHtmlLinksOff%
@@ -88,7 +88,7 @@ Object  intersection(Segment_2<R> s1, Segment_2<R> s2)
 \end{cprog} 
 \ccHtmlLinksOn%
 \begin{cprog}
-       Point_2<R> p = ... ;
+       Point_2<Kernel> p = ... ;
        return make_object(p);
 \end{cprog} 
 \ccHtmlLinksOff%
@@ -97,7 +97,7 @@ Object  intersection(Segment_2<R> s1, Segment_2<R> s2)
 \end{cprog} 
 \ccHtmlLinksOn%
 \begin{cprog}
-       Segment_2<R> s = ... ;
+       Segment_2<Kernel> s = ... ;
        return make_object(s);
     }
     return Object();

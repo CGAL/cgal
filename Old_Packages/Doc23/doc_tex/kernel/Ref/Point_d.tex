@@ -1,4 +1,4 @@
-\begin{ccRefClass}{Point_d<R>}
+\begin{ccRefClass}{Point_d<Kernel>}
 \ccInclude{CGAL/Point_d.h}
 
 \ccDefinition
@@ -34,11 +34,11 @@ provides the following specialized constructor.
 % -----------------------------------------------------------------------------
 \ccOperations
 
-\ccMemberFunction{ bool operator == (const Point_d<R>& q) const;}
+\ccMemberFunction{ bool operator == (const Point_d<Kernel>& q) const;}
 	{Equality test. Two points are equal if they have the same
 	 dimension and agree in all coordinates.}
 
-\ccMemberFunction{ bool operator != (const Point_d<R>& q) const;}
+\ccMemberFunction{ bool operator != (const Point_d<Kernel>& q) const;}
 	{Test for inequality.}
 
 \ccMemberFunction{ R::RT homogeneous( int i) const;}

@@ -1,4 +1,4 @@
-\begin{ccRefClass}{Direction_3<R>}
+\begin{ccRefClass}{Direction_3<Kernel>}
 
 \ccDefinition
 An object of the class \ccRefName\ is a vector in the three-dimensional 
@@ -19,20 +19,20 @@ orthogonal to an oriented plane, or the direction of an oriented line.
 \ccHidden \ccConstructor{Direction_3();}
              {introduces an uninitialized direction \ccVar.}
 
-\ccHidden \ccConstructor{Direction_3(const Direction_3<R> &d);}
+\ccHidden \ccConstructor{Direction_3(const Direction_3<Kernel> &d);}
             {copy constructor.}
 
-\ccConstructor{Direction_3(const Vector_3<R> &v);}
+\ccConstructor{Direction_3(const Vector_3<Kernel> &v);}
             {introduces a direction \ccVar\ initialised with the 
              direction of vector $v$.}
 
-\ccConstructor{Direction_3(const Line_3<R> &l);}
+\ccConstructor{Direction_3(const Line_3<Kernel> &l);}
             {introduces the direction \ccVar\ of line $l$.}
 
-\ccConstructor{Direction_3(const Ray_3<R> &r);}
+\ccConstructor{Direction_3(const Ray_3<Kernel> &r);}
             {introduces the direction \ccVar\ of ray $r$.}
 
-\ccConstructor{Direction_3(const Segment_3<R> &s);}
+\ccConstructor{Direction_3(const Segment_3<Kernel> &s);}
             {introduces the direction \ccVar\ of segment $s$.}
 
 \ccConstructor{Direction_3(const R::RT &x, const R::RT &y, const R::RT &z);}
@@ -42,13 +42,13 @@ orthogonal to an oriented plane, or the direction of an oriented line.
 
 \ccOperations
 %\ccSetTwoOfThreeColumns{5cm}{4cm}
-\ccSetThreeColumns{Direction_3<R> & }{}{\hspace*{7.8cm}}
+\ccSetThreeColumns{Direction_3<Kernel> & }{}{\hspace*{7.8cm}}
 
-\ccHidden \ccMethod{Direction_3<R> & operator=(const Direction_3<R> &e);}
+\ccHidden \ccMethod{Direction_3<Kernel> & operator=(const Direction_3<Kernel> &e);}
         {Assignment.}
 
 \ccMethod{R::RT delta(int i) const;}
-       {returns values, such that \ccVar \ccc{== Direction_3<R>(delta(0),delta(1),delta(2))}.
+       {returns values, such that \ccVar \ccc{== Direction_3<Kernel>(delta(0),delta(1),delta(2))}.
         \ccPrecond: $0 \leq i \leq 2$.}
 
 \ccMethod{R::RT dx() const;}
@@ -61,20 +61,20 @@ orthogonal to an oriented plane, or the direction of an oriented line.
        {returns \ccc{delta(2)}.}
 
 
-\ccMethod{bool operator==(const Direction_3<R> &e) const;}
+\ccMethod{bool operator==(const Direction_3<Kernel> &e) const;}
        {Test for equality.}
 \ccGlue
-\ccMethod{bool operator!=(const Direction_3<R> &e) const;}
+\ccMethod{bool operator!=(const Direction_3<Kernel> &e) const;}
        {Test for inequality.}
 
 
-\ccMethod{Direction_3<R>  operator-() const;}
+\ccMethod{Direction_3<Kernel>  operator-() const;}
        {The direction opposite to \ccVar.}
 
-\ccMethod{Vector_3<R> vector() const;}
+\ccMethod{Vector_3<Kernel> vector() const;}
        {returns a vector that has the same direction as \ccVar.}
 
-\ccMethod{Direction_3<R>  transform(const Aff_transformation_3<R> &t) const;}
+\ccMethod{Direction_3<Kernel>  transform(const Aff_transformation_3<Kernel> &t) const;}
        {returns the direction obtained by applying $t$ on \ccVar.}
 
 \ccSeeAlso

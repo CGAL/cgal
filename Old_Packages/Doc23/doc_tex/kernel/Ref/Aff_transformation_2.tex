@@ -1,4 +1,4 @@
-\begin{ccRefClass}{Aff_transformation_2<R>}
+\begin{ccRefClass}{Aff_transformation_2<Kernel>}
 
 \ccDefinition
 The class \ccRefName\ represents two-dimensioanl affine transformations. 
@@ -43,11 +43,11 @@ the constructors.
             {introduces an identity transformation.}
 
 \ccConstructor{Aff_transformation_2(const Translation,
-                                    const Vector_2<R> &v);}
+                                    const Vector_2<Kernel> &v);}
             {introduces a translation by a vector $v$.}
 
 \ccConstructor{Aff_transformation_2(const Rotation,
-                             const Direction_2<R> &d,
+                             const Direction_2<Kernel> &d,
                              const R::RT &num,
                              const R::RT &den = RT(1));}
             {approximates the rotation over the angle indicated by direction 
@@ -123,49 +123,49 @@ the constructors.
 \ccOperations
 
 The main thing to do with transformations is to apply them on
-geometric objects. Each class \ccStyle{Class_2<R>} representing
+geometric objects. Each class \ccStyle{Class_2<Kernel>} representing
 a geometric object has a member function:
 
-\ccStyle{Class_2<R>  transform(Aff_transformation_2<R> t)}.
+\ccStyle{Class_2<Kernel>  transform(Aff_transformation_2<Kernel> t)}.
 
 
 The transformation classes provide a member function \ccStyle{transform()}
 for points, vectors, directions, and lines:
 
-\ccMethod{Point_2<R>  transform(const Point_2<R> &p) const;}
+\ccMethod{Point_2<Kernel>  transform(const Point_2<Kernel> &p) const;}
        {}
 \ccGlue
-\ccMethod{Vector_2<R>  transform(const Vector_2<R> &p) const;}
+\ccMethod{Vector_2<Kernel>  transform(const Vector_2<Kernel> &p) const;}
        {}
 \ccGlue
-\ccMethod{Direction_2<R>  transform(const Direction_2<R> &p) const;}
+\ccMethod{Direction_2<Kernel>  transform(const Direction_2<Kernel> &p) const;}
        {}
 \ccGlue
-\ccMethod{Line_2<R>  transform(const Line_2<R> &p) const;}
+\ccMethod{Line_2<Kernel>  transform(const Line_2<Kernel> &p) const;}
        {}
 
 \cgal\ provides function operators for these member functions:
 
-\ccMethod{Point_2<R>  operator()(const Point_2<R> &p) const;}
+\ccMethod{Point_2<Kernel>  operator()(const Point_2<Kernel> &p) const;}
        {}
 \ccGlue
-\ccMethod{Vector_2<R>  operator()(const Vector_2<R> &p) const;}
+\ccMethod{Vector_2<Kernel>  operator()(const Vector_2<Kernel> &p) const;}
        {}
 \ccGlue
-\ccMethod{Direction_2<R>  operator()(const Direction_2<R> &p) const;}
+\ccMethod{Direction_2<Kernel>  operator()(const Direction_2<Kernel> &p) const;}
        {}
 \ccGlue
-\ccMethod{Line_2<R>  operator()(const Line_2<R> &p) const;}
+\ccMethod{Line_2<Kernel>  operator()(const Line_2<Kernel> &p) const;}
        {}
 
 \ccHeading{Miscellaneous}
 
-\ccMethod{Aff_transformation_2<R> operator*(const Aff_transformation_2<R> &s) const;}{composes two affine transformations.}
+\ccMethod{Aff_transformation_2<Kernel> operator*(const Aff_transformation_2<Kernel> &s) const;}{composes two affine transformations.}
 
-\ccMethod{Aff_transformation_2<R>  inverse() const;}
+\ccMethod{Aff_transformation_2<Kernel>  inverse() const;}
        {gives the inverse transformation.}
 
-%\ccMethod{Aff_transformation_2<R>  transpose() const;}
+%\ccMethod{Aff_transformation_2<Kernel>  transpose() const;}
 %       {returns the affine transformation defined by transposing
 %       the linear transformation in \ccVar\ and setting the
 %       translational part to zero.}
@@ -179,11 +179,11 @@ for points, vectors, directions, and lines:
        {returns \ccStyle{true}, if the transformation is reflecting.}
 
 
-%\ccMethod{Aff_transformation_2<R>  general_form() const;}
+%\ccMethod{Aff_transformation_2<Kernel>  general_form() const;}
 %       {returns the affine transformation in matrix form.}
 
 The matrix entries of a matrix representation of a 
-\ccStyle{Aff_transformation_2<R>}
+\ccStyle{Aff_transformation_2<Kernel>}
 can be accessed trough the following member functions:
 
 \ccMethod{FT          cartesian(int i, int j) const;}
@@ -253,7 +253,7 @@ The same would have been achieved with
 \end{cprog} 
 
 \ccSeeAlso
-\ccRefIdfierPage{CGAL::Aff_transformation_3<R>} \\
+\ccRefIdfierPage{CGAL::Aff_transformation_3<Kernel>} \\
 \ccRefIdfierPage{CGAL::Identity_transformation} \\
 \ccRefIdfierPage{CGAL::Reflection} \\
 \ccRefIdfierPage{CGAL::Rotation} \\

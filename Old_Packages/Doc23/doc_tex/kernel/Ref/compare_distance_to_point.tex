@@ -1,9 +1,9 @@
 \begin{ccRefFunction}{compare_distance_to_point}
 
 \ccFunction{Comparison_result
-compare_distance_to_point(const Point_2<R>& p,
-                          const Point_2<R>& q,
-                          const Point_2<R>& r);}
+compare_distance_to_point(const Point_2<Kernel>& p,
+                          const Point_2<Kernel>& q,
+                          const Point_2<Kernel>& r);}
           {compares the distances of points \ccStyle{q} and
            \ccStyle{r} to point \ccStyle{p}.
           returns \ccStyle{SMALLER}, iff \ccStyle{q} is closer
@@ -12,9 +12,9 @@ compare_distance_to_point(const Point_2<R>& p,
           \ccStyle{EQUAL} otherwise.}
 
 \ccFunction{Comparison_result
-compare_distance_to_point(const Point_3<R>& p,
-                          const Point_3<R>& q,
-                          const Point_3<R>& r);}
+compare_distance_to_point(const Point_3<Kernel>& p,
+                          const Point_3<Kernel>& q,
+                          const Point_3<Kernel>& r);}
           {compares the distances of points \ccStyle{q} and
            \ccStyle{r} to point \ccStyle{p}.
           returns \ccStyle{SMALLER}, iff \ccStyle{q} is closer

@@ -1,7 +1,7 @@
 \begin{ccRefFunction}{compare_x_at_y}
 
-\ccFunction{Comparison_result compare_x_at_y(const Point_2<R> &p,
-                                             const Line_2<R> &h);}
+\ccFunction{Comparison_result compare_x_at_y(const Point_2<Kernel> &p,
+                                             const Line_2<Kernel> &h);}
         {compares the $x$-coordinates of $p$ and the horizontal projection
          of \ccStyle{p} on \ccStyle{h}%
          \ccTexHtml{ (Figure~\ref{fig-compare_x_at_y} (a))}{; see (a) in the 
@@ -18,9 +18,9 @@
 \end{figure} 
 \end{ccTexOnly} 
 
-\ccFunction{Comparison_result compare_x_at_y(const Point_2<R> &p,
-                                             const Line_2<R> &h1,
-                                             const Line_2<R> &h2);}
+\ccFunction{Comparison_result compare_x_at_y(const Point_2<Kernel> &p,
+                                             const Line_2<Kernel> &h1,
+                                             const Line_2<Kernel> &h2);}
 {This function compares the $x$-coordinates of the horizontal projection 
  of \ccStyle{p} on \ccStyle{h1} and on \ccStyle{h2}%
  \ccTexHtml{ (Figure~\ref{fig-compare_x_at_y} (b))}{; see (b) in the figure 
@@ -28,9 +28,9 @@
 \ccPrecond \ccStyle{h1} and \ccStyle{h2} are not horizontal.
 }
 
-\ccFunction{Comparison_result compare_x_at_y(const Line_2<R> &l1,
-                                           const Line_2<R> &l2,
-                                           const Line_2<R> &h);}
+\ccFunction{Comparison_result compare_x_at_y(const Line_2<Kernel> &l1,
+                                           const Line_2<Kernel> &l2,
+                                           const Line_2<Kernel> &h);}
       {Let $p$ be the \ccHtmlNoLinksFrom{intersection} of lines $l1$ and $l2$.
        This function compares the $x$-coordinates of $p$ and 
        the horizontal projection of \ccStyle{p} on \ccStyle{h}%
@@ -41,10 +41,10 @@
 }
 
 
-\ccFunction{Comparison_result compare_x_at_y(const Line_2<R> &l1,
-                                             const Line_2<R> &l2,
-                                             const Line_2<R> &h1,
-                                             const Line_2<R> &h2);}
+\ccFunction{Comparison_result compare_x_at_y(const Line_2<Kernel> &l1,
+                                             const Line_2<Kernel> &l2,
+                                             const Line_2<Kernel> &h1,
+                                             const Line_2<Kernel> &h2);}
 {Let $p$ be the \ccHtmlNoLinksFrom{intersection} of lines $l1$ and $l2$. This 
  function compares the $x$-coordinates of the horizontal projection of 
  \ccStyle{p} on \ccStyle{h1} and on \ccStyle{h2}%

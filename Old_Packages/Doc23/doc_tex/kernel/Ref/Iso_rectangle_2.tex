@@ -1,4 +1,4 @@
-\begin{ccRefClass} {Iso_rectangle_2<R>}
+\begin{ccRefClass} {Iso_rectangle_2<Kernel>}
 
 \ccDefinition  An object $s$ of the data type \ccRefName\ is a
 rectangle in the Euclidean plane $\E^2$ with sides parallel to the $x$ and
@@ -21,11 +21,11 @@ the user.
 \ccHidden \ccConstructor{Iso_rectangle_2();}
              {introduces an uninitialized variable \ccVar.}
 
-\ccHidden \ccConstructor{Iso_rectangle_2(const Iso_rectangle_2<R> &u);}
+\ccHidden \ccConstructor{Iso_rectangle_2(const Iso_rectangle_2<Kernel> &u);}
  	    {copy constructor.}
 
-\ccConstructor{Iso_rectangle_2(const Point_2<R> &p, 
-	                       const Point_2<R> &q);}
+\ccConstructor{Iso_rectangle_2(const Point_2<Kernel> &p, 
+	                       const Point_2<Kernel> &q);}
             {introduces an iso-oriented rectangle \ccVar\ with diagonal
              opposite vertices $p$ and $q$. Note that the object is 
              brought in the canonical form.}
@@ -40,28 +40,28 @@ the user.
              \ccPrecond \ccc{hw} $\neq$ \ccc{R::RT(0)} }
 
 \ccOperations
-\ccHidden \ccMethod{Iso_rectangle_2<R> & operator=(const Iso_rectangle_2<R> &q);}
+\ccHidden \ccMethod{Iso_rectangle_2<Kernel> & operator=(const Iso_rectangle_2<Kernel> &q);}
         {Assignment.}
 
-\ccMethod{bool operator==(const Iso_rectangle_2<R> &r2) const;}
+\ccMethod{bool operator==(const Iso_rectangle_2<Kernel> &r2) const;}
        {Test for equality: two iso-oriented rectangles are equal, iff their
         lower left and their upper right vertices are equal.}
 
-\ccMethod{bool operator!=(const Iso_rectangle_2<R> &r2) const;}
+\ccMethod{bool operator!=(const Iso_rectangle_2<Kernel> &r2) const;}
        {Test for inequality.}
 
-\ccMethod{Point_2<R> vertex(int i) const;}
+\ccMethod{Point_2<Kernel> vertex(int i) const;}
        {returns the i'th vertex modulo 4  of \ccVar\ in counterclockwise order, 
         starting with the lower left vertex.}
 
-\ccMethod{Point_2<R> operator[](int i) const;}
+\ccMethod{Point_2<Kernel> operator[](int i) const;}
        {returns  \ccStyle{vertex(i)}.}
 
-\ccMethod{Point_2<R> min() const;}
+\ccMethod{Point_2<Kernel> min() const;}
        {returns the lower left vertex of \ccVar\ (= \ccStyle{vertex(0)}).}
 
 
-\ccMethod{Point_2<R> max() const;}
+\ccMethod{Point_2<Kernel> max() const;}
        {returns the upper right vertex of \ccVar\ (= \ccStyle{vertex(2)}).}
 
 \ccMethod{FT xmin() const;}
@@ -95,19 +95,19 @@ the user.
         \ccVar\ is degenerate, if all vertices
         are collinear.}
 
-\ccMethod{Bounded_side bounded_side(const Point_2<R> &p) const;}
+\ccMethod{Bounded_side bounded_side(const Point_2<Kernel> &p) const;}
        {returns either \ccStyle{ON_UNBOUNDED_SIDE},
         \ccStyle{ON_BOUNDED_SIDE}, or the constant
         \ccStyle{ON_BOUNDARY}, 
         depending on where point $p$ is.}
 
-\ccMethod{bool has_on_boundary(const Point_2<R> &p) const;}
+\ccMethod{bool has_on_boundary(const Point_2<Kernel> &p) const;}
        {}
 \ccGlue
-\ccMethod{bool has_on_bounded_side(const Point_2<R> &p) const;}
+\ccMethod{bool has_on_bounded_side(const Point_2<Kernel> &p) const;}
        {}
 \ccGlue
-\ccMethod{bool has_on_unbounded_side(const Point_2<R> &p) const;}
+\ccMethod{bool has_on_unbounded_side(const Point_2<Kernel> &p) const;}
        {}
 
 \ccHeading{Miscellaneous}
@@ -118,7 +118,7 @@ the user.
 \ccMethod{Bbox bbox() const;}
        {returns a bounding box containing \ccVar. }
 
-\ccMethod{Iso_rectangle_2<R>  transform(const Aff_transformation_2<R> &t) const;}
+\ccMethod{Iso_rectangle_2<Kernel>  transform(const Aff_transformation_2<Kernel> &t) const;}
        {returns the iso-oriented rectangle obtained by applying $t$ on 
         the lower left and the upper right corner of \ccVar.
         \ccPrecond The angle at a rotation must be a multiple of $\pi/2$,

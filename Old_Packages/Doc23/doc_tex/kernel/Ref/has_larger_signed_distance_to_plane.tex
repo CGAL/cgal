@@ -1,19 +1,19 @@
 \begin{ccRefFunction}{has_larger_signed_distance_to_plane}
 
 \ccFunction{bool
-has_larger_signed_distance_to_plane(const Plane_3<R>& h,
-                                const Point_3<R>& p,
-                                const Point_3<R>& q);}
+has_larger_signed_distance_to_plane(const Plane_3<Kernel>& h,
+                                const Point_3<Kernel>& p,
+                                const Point_3<Kernel>& q);}
           {returns \ccStyle{true} iff the signed distance of \ccStyle{p}
            and \ccStyle{h} is larger than the signed distance of 
            \ccStyle{q} and \ccStyle{h}.}
 
 \ccFunction{bool
-has_larger_signed_distance_to_plane(const Point_3<R>& p,
-                                const Point_3<R>& q,
-                                const Point_3<R>& r,
-                                const Point_3<R>& s,
-                                const Point_3<R>& t);}
+has_larger_signed_distance_to_plane(const Point_3<Kernel>& p,
+                                const Point_3<Kernel>& q,
+                                const Point_3<Kernel>& r,
+                                const Point_3<Kernel>& s,
+                                const Point_3<Kernel>& t);}
           {returns \ccStyle{true} iff the signed distance of \ccStyle{s}
            and \ccStyle{h} is larger than the signed distance of 
            \ccStyle{t} and \ccStyle{h}, where \ccc{h} is the oriented

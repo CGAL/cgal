@@ -1,4 +1,4 @@
-\begin{ccRefClass}{Aff_transformation_3<R>}
+\begin{ccRefClass}{Aff_transformation_3<Kernel>}
 
 \ccDefinition
 The class \ccRefName\ represents three-dimensioanl affine transformations. 
@@ -35,7 +35,7 @@ therefore do not appear in the constructors.
 
 
 \ccConstructor{Aff_transformation_3(const Translation,
-                                    const Vector_3<R> &v);}
+                                    const Vector_3<Kernel> &v);}
             {introduces a translation by a vector $v$.}
  
 \ccConstructor{Aff_transformation_3(const Scaling,
@@ -101,50 +101,50 @@ therefore do not appear in the constructors.
 
 \ccOperations
 
-Each class \ccStyle{Class_3<R>} representing
+Each class \ccStyle{Class_3<Kernel>} representing
 a geometric object in 3D has a member function:
 
-\ccStyle{Class_3<R>  transform(Aff_transformation_3<R> t)}.
+\ccStyle{Class_3<Kernel>  transform(Aff_transformation_3<Kernel> t)}.
 
 
 The transformation classes provide a member function \ccStyle{transform()}
 for points, vectors, directions, and planes:
 
-\ccMethod{Point_3<R>  transform(const Point_3<R> &p) const;}
+\ccMethod{Point_3<Kernel>  transform(const Point_3<Kernel> &p) const;}
        {}
 \ccGlue
-\ccMethod{Vector_3<R>  transform(const Vector_3<R> &p) const;}
+\ccMethod{Vector_3<Kernel>  transform(const Vector_3<Kernel> &p) const;}
        {}
 \ccGlue
-\ccMethod{Direction_3<R>  transform(const Direction_3<R> &p) const;}
+\ccMethod{Direction_3<Kernel>  transform(const Direction_3<Kernel> &p) const;}
        {}
 \ccGlue
-\ccMethod{Plane_3<R>  transform(const Plane_3<R> &p) const;}
+\ccMethod{Plane_3<Kernel>  transform(const Plane_3<Kernel> &p) const;}
        {}
 
 \cgal\ provides four function operators for these member functions:
 
-\ccMethod{Point_3<R>  operator()(const Point_3<R> &p) const;}
+\ccMethod{Point_3<Kernel>  operator()(const Point_3<Kernel> &p) const;}
        {}
 \ccGlue
-\ccMethod{Vector_3<R>  operator()(const Vector_3<R> &p) const;}
+\ccMethod{Vector_3<Kernel>  operator()(const Vector_3<Kernel> &p) const;}
        {}
 \ccGlue
-\ccMethod{Direction_3<R>  operator()(const Direction_3<R> &p) const;}
+\ccMethod{Direction_3<Kernel>  operator()(const Direction_3<Kernel> &p) const;}
        {}
 \ccGlue
-\ccMethod{Plane_3<R>  operator()(const Plane_3<R> &p) const;}
+\ccMethod{Plane_3<Kernel>  operator()(const Plane_3<Kernel> &p) const;}
        {}
 
 
-\ccMethod{Aff_transformation_3<R> 
-          operator*(const Aff_transformation_3<R> &s) const;}
+\ccMethod{Aff_transformation_3<Kernel> 
+          operator*(const Aff_transformation_3<Kernel> &s) const;}
        {composes two affine transformations.}
 
-\ccMethod{Aff_transformation_3<R>  inverse() const;}
+\ccMethod{Aff_transformation_3<Kernel>  inverse() const;}
        {gives the inverse transformation.}
 
-%\ccMethod{Aff_transformation_3<R>  transpose() const;}
+%\ccMethod{Aff_transformation_3<Kernel>  transpose() const;}
 %       {returns the affine transformation defined by transposing
 %       the linear transformation in \ccVar\ and setting the
 %       translational part to zero.}
@@ -158,10 +158,10 @@ for points, vectors, directions, and planes:
        {returns \ccStyle{true}, if the transformation is reflecting.}
 
 
-%\ccMethod{Aff_transformation_3<R>  general_form() const;}
+%\ccMethod{Aff_transformation_3<Kernel>  general_form() const;}
 %       {returns the affine transformation in matrix form.}
 
-The matrix entries of a matrix representation of a \ccStyle{Aff_transformation_3<R>}
+The matrix entries of a matrix representation of a \ccStyle{Aff_transformation_3<Kernel>}
 can be accessed trough the following member functions:
 
 \ccMethod{FT          cartesian(int i, int j) const;}
@@ -179,7 +179,7 @@ can be accessed trough the following member functions:
 For affine transformations  no I/O operators are defined.
 
 \ccSeeAlso
-\ccRefIdfierPage{CGAL::Aff_transformation_2<R>} \\
+\ccRefIdfierPage{CGAL::Aff_transformation_2<Kernel>} \\
 \ccRefIdfierPage{CGAL::Identity_transformation} \\
 \ccRefIdfierPage{CGAL::Reflection} \\
 \ccRefIdfierPage{CGAL::Rotation} \\

@@ -1,18 +1,18 @@
 \begin{ccRefFunction}{has_larger_signed_distance_to_line}
 
 \ccFunction{bool
-has_larger_signed_distance_to_line(const Line_2<R>&  l,
-                               const Point_2<R>& p,
-                               const Point_2<R>& q);}
+has_larger_signed_distance_to_line(const Line_2<Kernel>&  l,
+                               const Point_2<Kernel>& p,
+                               const Point_2<Kernel>& q);}
           {returns \ccStyle{true} iff the signed distance of \ccStyle{p}
            and \ccStyle{l} is larger than the signed distance of 
            \ccStyle{q} and \ccStyle{l}.}
 
 \ccFunction{bool
-has_larger_signed_distance_to_line(const Point_2<R>& p,
-                               const Point_2<R>& q,
-                               const Point_2<R>& r,
-                               const Point_2<R>& s);}
+has_larger_signed_distance_to_line(const Point_2<Kernel>& p,
+                               const Point_2<Kernel>& q,
+                               const Point_2<Kernel>& r,
+                               const Point_2<Kernel>& s);}
           {returns \ccStyle{true} iff the signed distance of \ccStyle{r}
            and \ccStyle{l} is larger than the signed distance of 
            \ccStyle{s} and \ccStyle{l}, where \ccc{l} is the directed line

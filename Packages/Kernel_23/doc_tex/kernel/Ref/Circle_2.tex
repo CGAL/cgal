@@ -1,4 +1,4 @@
-\begin{ccRefClass}{Circle_2<R>}
+\begin{ccRefClass}{Circle_2<Kernel>}
 
 \ccDefinition
 
@@ -20,7 +20,7 @@ circle can be degenerated, i.e.\ the squared radius may be zero.
         introduces an uninitialized variable \ccVar\ of type
         \ccClassTemplateName.}
 
-\ccConstructor{ Circle_2( Point_2<R>  const& center, 
+\ccConstructor{ Circle_2( Point_2<Kernel>  const& center, 
                                R::FT  const& squared_radius,
                                Orientation const& ori = COUNTERCLOCKWISE);}{
         introduces a variable \ccVar\ of type \ccClassTemplateName.
@@ -30,9 +30,9 @@ circle can be degenerated, i.e.\ the squared radius may be zero.
         \ccPrecond \ccc{ori} $\neq$ \ccc{COLLINEAR}, and further,
                    \ccc{squared_radius} $\geq$ 0.}
 
-\ccConstructor{ Circle_2( Point_2<R> const& p,
-                          Point_2<R> const& q,
-                          Point_2<R> const& r);}{
+\ccConstructor{ Circle_2( Point_2<Kernel> const& p,
+                          Point_2<Kernel> const& q,
+                          Point_2<Kernel> const& r);}{
         introduces a variable \ccVar\ of type \ccClassTemplateName.
         It is initialized to the unique circle which passes through
         the points \ccc{p}, \ccc{q} and \ccc{r}. The \ccHtmlNoLinksFrom{orientation} of
@@ -40,8 +40,8 @@ circle can be degenerated, i.e.\ the squared radius may be zero.
         \ccc{q}, \ccc{r}.
         \ccPrecond \ccc{p}, \ccc{q}, and \ccc{r} are not collinear.}
 
-\ccConstructor{ Circle_2( Point_2<R>  const& p, 
-                               Point_2<R>  const& q,
+\ccConstructor{ Circle_2( Point_2<Kernel>  const& p, 
+                               Point_2<Kernel>  const& q,
                                Orientation const& ori 
                                                     = COUNTERCLOCKWISE);}{
         introduces a variable \ccVar\ of type \ccClassTemplateName.
@@ -50,7 +50,7 @@ circle can be degenerated, i.e.\ the squared radius may be zero.
         and \ccHtmlNoLinksFrom{orientation} \ccc{ori}.
         \ccPrecond \ccc{ori} $\neq$ \ccc{COLLINEAR}.}
 
-\ccConstructor{ Circle_2( Point_2<R>  const& center,
+\ccConstructor{ Circle_2( Point_2<Kernel>  const& center,
                                Orientation const& ori
                                                     = COUNTERCLOCKWISE);}{
         introduces a variable \ccVar\ of type \ccClassTemplateName.
@@ -60,17 +60,17 @@ circle can be degenerated, i.e.\ the squared radius may be zero.
         \ccPostcond \ccVar.\ccc{is_degenerate()} = \ccc{true}.}
 
 \ccHidden
-\ccConstructor{ Circle_2( Circle_2<R> const&);}{
+\ccConstructor{ Circle_2( Circle_2<Kernel> const&);}{
         copy constructor.}
 
 \ccHidden
-\ccMemberFunction{ Circle_2<R>& operator = ( Circle_2<R> const&);}{
+\ccMemberFunction{ Circle_2<Kernel>& operator = ( Circle_2<Kernel> const&);}{
         assignment.}
 
 % -----------------------------------------------------------------------------
 \ccAccessFunctions
 
-\ccMemberFunction{Point_2<R> const& center( ) const;}{
+\ccMemberFunction{Point_2<Kernel> const& center( ) const;}{
         returns the center of \ccVar.}
 \ccGlue
 \ccMemberFunction{ R::FT const& squared_radius( ) const;}{
@@ -81,12 +81,12 @@ circle can be degenerated, i.e.\ the squared radius may be zero.
 
 % -----------------------------------------------------------------------------
 
-\ccHidden\ccMemberFunction{ bool operator == ( Circle_2<R> const& circle2) const;}{
+\ccHidden\ccMemberFunction{ bool operator == ( Circle_2<Kernel> const& circle2) const;}{
         returns \ccc{true}, iff \ccVar\ and \ccc{circle2} are equal,
         i.e.\ if they have the same center, same squared radius and
         same \ccHtmlNoLinksFrom{orientation}.}
 
-\ccHidden\ccMemberFunction{ bool operator != ( Circle_2<R> const& circle2) const;}{
+\ccHidden\ccMemberFunction{ bool operator != ( Circle_2<Kernel> const& circle2) const;}{
         returns \ccc{true}, iff \ccVar\ and \ccc{circle2} are not equal.}
 
 % -----------------------------------------------------------------------------
@@ -97,7 +97,7 @@ circle can be degenerated, i.e.\ the squared radius may be zero.
         if \ccVar\ has squared radius zero.}
 
 \ccMemberFunction{ Oriented_side
-                   oriented_side( Point_2<R> const& p) const;}{
+                   oriented_side( Point_2<Kernel> const& p) const;}{
         returns either the constant \ccc{ON_ORIENTED_BOUNDARY}, 
         \ccc{ON_POSITIVE_SIDE}, or \ccc{ON_NEGATIVE_SIDE},
         iff \ccc{p} lies on the boundary, properly on the
@@ -105,7 +105,7 @@ circle can be degenerated, i.e.\ the squared radius may be zero.
         of \ccVar, resp.}
 
 \ccMemberFunction{ Bounded_side
-                   bounded_side( Point_2<R> const& p) const;}{
+                   bounded_side( Point_2<Kernel> const& p) const;}{
         returns \ccc{ON_BOUNDED_SIDE},
         \ccc{ON_BOUNDARY}, or \ccc{ON_UNBOUNDED_SIDE}
         iff \ccc{p} lies properly inside, on the boundary, or properly
@@ -129,31 +129,31 @@ circle can be degenerated, i.e.\ the squared radius may be zero.
 %\ccMemberFunction{ bool
 %                   has_on_unbounded_side( Point const& p) const;}{
 %        returns \ccc{true}, iff \ccc{p} lies properly outside of \ccVar.}
-\ccMethod{bool has_on_positive_side(const Point_2<R> &p) const;}
+\ccMethod{bool has_on_positive_side(const Point_2<Kernel> &p) const;}
        {}
 \ccGlue
-\ccMethod{bool has_on_negative_side(const Point_2<R> &p) const;}
+\ccMethod{bool has_on_negative_side(const Point_2<Kernel> &p) const;}
        {}
 \ccGlue
-\ccMethod{bool has_on_boundary(const Point_2<R> &p) const;}
+\ccMethod{bool has_on_boundary(const Point_2<Kernel> &p) const;}
        {}
 \ccGlue
-\ccMethod{bool has_on_bounded_side(const Point_2<R> &p) const;}
+\ccMethod{bool has_on_bounded_side(const Point_2<Kernel> &p) const;}
        {} 
 \ccGlue
-\ccMethod{bool has_on_unbounded_side(const Point_2<R> &p) const;}
+\ccMethod{bool has_on_unbounded_side(const Point_2<Kernel> &p) const;}
        {}
 
 % -----------------------------------------------------------------------------
 \ccHeading{Miscellaneous}
 
-\ccMemberFunction{ Circle_2<R> opposite() const;}{
+\ccMemberFunction{ Circle_2<Kernel> opposite() const;}{
         returns the circle with the same center and squared radius as
         \ccVar\, but with \ccHtmlNoLinksFrom{opposite} \ccHtmlNoLinksFrom{orientation}.}
 
 
-\ccMemberFunction{ Circle_2<R> orthogonal_transform(
-                       Aff_transformation_2<R> const& at) const;}{
+\ccMemberFunction{ Circle_2<Kernel> orthogonal_transform(
+                       Aff_transformation_2<Kernel> const& at) const;}{
         returns the circle obtained by applying $at$ on \ccVar.
         \ccPrecond \ccc{at} is an orthogonal transformation.}
 

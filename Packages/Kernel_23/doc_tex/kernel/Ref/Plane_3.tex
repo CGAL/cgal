@@ -1,4 +1,4 @@
-\begin{ccRefClass} {Plane_3<R>}
+\begin{ccRefClass} {Plane_3<Kernel>}
 
 \ccDefinition
 An object \ccStyle{h} of the data type \ccRefName\ is an oriented
@@ -28,7 +28,7 @@ negative side, iff \ccTexHtml{$a\, px +b\, py\, +c\, pz + d < 0$}{a px + b py +c
 \ccHidden \ccConstructor{Plane_3();}
              {introduces an uninitialized variable \ccVar.}
 
-\ccHidden \ccConstructor{Plane_3(const Plane_3<R> &h);}
+\ccHidden \ccConstructor{Plane_3(const Plane_3<Kernel> &h);}
             {copy constructor.}
 
 \ccConstructor{Plane_3(const R::RT &a, 
@@ -39,9 +39,9 @@ negative side, iff \ccTexHtml{$a\, px +b\, py\, +c\, pz + d < 0$}{a px + b py +c
  \ccTexHtml{$a\, px +b\, py +c\, pz + d = 0$}{a px + b py + c pz + d = 0}.
 Notice that \ccVar\ is degenerate if \ccTexHtml{$a = b = c$}{a = b = c}.}
 
-\ccConstructor{Plane_3(const Point_3<R> &p,
-                       const Point_3<R> &q,
-                       const Point_3<R> &r);}
+\ccConstructor{Plane_3(const Point_3<Kernel> &p,
+                       const Point_3<Kernel> &q,
+                       const Point_3<Kernel> &r);}
 {creates a plane \ccVar\ passing through the points \ccStyle{p},
  \ccStyle{q} and \ccStyle{r}. The plane is oriented such that \ccStyle{p}, 
  \ccStyle{q} and \ccStyle{r} are oriented in a positive sense 
@@ -49,35 +49,35 @@ Notice that \ccVar\ is degenerate if \ccTexHtml{$a = b = c$}{a = b = c}.}
 Notice that \ccVar\ is degenerate if the points are collinear.}
 
 
-\ccConstructor{Plane_3(const Point_3<R> &p,
-                          const Direction_3<R>&d)}
+\ccConstructor{Plane_3(const Point_3<Kernel> &p,
+                          const Direction_3<Kernel>&d)}
 {introduces a plane \ccVar\ that passes through point \ccStyle{p} and
  that has as an orthogonal direction equal to \ccStyle{d}.}
 
-\ccConstructor{Plane_3(const Line_3<R> &l,
-                          const Point_3<R> &p)}
+\ccConstructor{Plane_3(const Line_3<Kernel> &l,
+                          const Point_3<Kernel> &p)}
 {introduces a plane \ccVar\ that is defined through the  three points 
  \ccStyle{l.point(0)}, \ccStyle{l.point(1)} and \ccStyle{p}.}
 
-\ccConstructor{Plane_3(const Ray_3<R> &r,
-                          const Point_3<R> &p)}
+\ccConstructor{Plane_3(const Ray_3<Kernel> &r,
+                          const Point_3<Kernel> &p)}
 {introduces a plane \ccVar\ that is defined through the  three points 
  \ccStyle{r.point(0)}, \ccStyle{r.point(1)} and \ccStyle{p}.}
 
-\ccConstructor{Plane_3(const Segment_3<R> &s,
-                          const Point_3<R> &p)}
+\ccConstructor{Plane_3(const Segment_3<Kernel> &s,
+                          const Point_3<Kernel> &p)}
 {introduces a plane \ccVar\ that is defined through the  three points 
  \ccStyle{s.source()}, \ccStyle{s.target()} and \ccStyle{p}.}
 
 \ccOperations
-\ccHidden \ccMethod{Plane_3<R> & operator=(const Plane_3<R> &h);}
+\ccHidden \ccMethod{Plane_3<Kernel> & operator=(const Plane_3<Kernel> &h);}
         {Assignment.}
 
-\ccMethod{bool operator==(const Plane_3<R> &h2) const;}
+\ccMethod{bool operator==(const Plane_3<Kernel> &h2) const;}
        {Test for equality: two planes are equal, iff they have a non 
         empty intersection and the same orientation.}
 
-\ccMethod{bool operator!=(const Plane_3<R> &h2) const;}
+\ccMethod{bool operator!=(const Plane_3<Kernel> &h2) const;}
        {Test for inequality.}
 
 \ccMethod{R::RT a() const;}
@@ -92,33 +92,33 @@ Notice that \ccVar\ is degenerate if the points are collinear.}
 \ccMethod{R::RT d() const;}
        {returns the fourth coefficient of \ccVar.}
 
-\ccMethod{Line_3<R> perpendicular_line(const Point_3<R> &p) const;}
+\ccMethod{Line_3<Kernel> perpendicular_line(const Point_3<Kernel> &p) const;}
        {returns the line that is perpendicular to \ccVar\ and that
         passes through point \ccStyle{p}. The line is oriented from
         the negative to the positive side of \ccVar.}
 
-\ccMethod{Point_3<R>    projection(const Point_3<R> &p) const;}
+\ccMethod{Point_3<Kernel>    projection(const Point_3<Kernel> &p) const;}
        {returns the orthogonal projection of $p$ on \ccVar.}
 
-\ccMethod{Plane_3<R>      opposite() const;}
+\ccMethod{Plane_3<Kernel>      opposite() const;}
        {returns the plane with opposite orientation.}
 
-\ccMethod{Point_3<R> point() const;}
+\ccMethod{Point_3<Kernel> point() const;}
        {returns an arbitrary point on \ccVar.}
 
-\ccMethod{Vector_3<R> orthogonal_vector() const;}
+\ccMethod{Vector_3<Kernel> orthogonal_vector() const;}
        {returns a vector that is orthogonal to \ccVar\ and that
         is directed to the positive side of \ccVar.}
 
-\ccMethod{Direction_3<R> orthogonal_direction() const;}
+\ccMethod{Direction_3<Kernel> orthogonal_direction() const;}
        {returns the direction that is orthogonal to \ccVar\ and that
         is directed to the positive side of \ccVar.}
 
-\ccMethod{Vector_3<R>      base1() const;}
+\ccMethod{Vector_3<Kernel>      base1() const;}
        {returns a vector orthogonal to 
         \ccStyle{orthogonal_vector()}.}
 
-\ccMethod{Vector_3<R>      base2() const;}
+\ccMethod{Vector_3<Kernel>      base2() const;}
        {returns a vector that is both orthogonal to \ccStyle{base1()},
         and to \ccStyle{orthogonal_vector()}, and such that the result of 
         \ccStyle{orientation( point(), point() + base1(), 
@@ -131,18 +131,18 @@ The following functions provide conversion between a plane and
 not necessarily an isometry. This means, the transformation preserves
 combinatorics, but not distances.
 
-\ccMethod{Point_2<R>       to_2d(const Point_3<R> &p) const;}
+\ccMethod{Point_2<Kernel>       to_2d(const Point_3<Kernel> &p) const;}
        {returns the image point of the projection of \ccStyle{p} 
        under an affine transformation, which maps \ccVar\ onto the 
        $xy$-plane, with the $z$-coordinate removed.}
 
-\ccMethod{Point_3<R>       to_3d(const Point_2<R> &p) const;}
+\ccMethod{Point_3<Kernel>       to_3d(const Point_2<Kernel> &p) const;}
        {returns a point $q$, such that \ccStyle{to_2d( to_3d( p ))}
         is equal to \ccStyle{p}.}
 
 \ccPredicates
 
-\ccMethod{Oriented_side oriented_side(const Point_3<R> &p) const;}
+\ccMethod{Oriented_side oriented_side(const Point_3<Kernel> &p) const;}
        {returns either \ccStyle{ON_ORIENTED_BOUNDARY}, or
         the constant \ccStyle{ON_POSITIVE_SIDE}, or the con\-stant
         \ccStyle{ON_NEGATIVE_SIDE}, 
@@ -151,22 +151,22 @@ combinatorics, but not distances.
 
 For convenience we provide the following boolean functions:
 
-\ccMethod{bool has_on(const  Point_3<R> &p) const;}
+\ccMethod{bool has_on(const  Point_3<Kernel> &p) const;}
        {}
 %%\ccGlue
-%%\ccMethod{bool has_on_boundary(const  Point_3<R> &p) const;}
+%%\ccMethod{bool has_on_boundary(const  Point_3<Kernel> &p) const;}
 %%       {}
 \ccGlue
-\ccMethod{bool has_on_positive_side(const  Point_3<R> &p) const;}
+\ccMethod{bool has_on_positive_side(const  Point_3<Kernel> &p) const;}
        {}
 \ccGlue
-\ccMethod{bool has_on_negative_side(const  Point_3<R> &p) const;}
+\ccMethod{bool has_on_negative_side(const  Point_3<Kernel> &p) const;}
        {}
 
-\ccMethod{bool has_on(const  Line_3<R> &l) const;}
+\ccMethod{bool has_on(const  Line_3<Kernel> &l) const;}
        {}
 %%\ccGlue
-%%\ccMethod{bool has_on_boundary(const  Line_3<R> &l) const;}
+%%\ccMethod{bool has_on_boundary(const  Line_3<Kernel> &l) const;}
 %%       {}
 
 \ccMethod{bool is_degenerate() const;}
@@ -175,7 +175,7 @@ For convenience we provide the following boolean functions:
 
 \ccHeading{Miscellaneous}
 
-\ccMethod{Plane_3<R>  transform(const Aff_transformation_3<R> &t) const;}
+\ccMethod{Plane_3<Kernel>  transform(const Aff_transformation_3<Kernel> &t) const;}
        {returns the plane obtained by applying $t$ on a point of \ccVar\ 
         and the orthogonal direction of \ccVar.}
 
