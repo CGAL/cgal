@@ -1,22 +1,22 @@
 #ifndef CGAL_MESH_H
 #define CGAL_MESH_H
+#include <CGAL/basic.h>
 #include <list>
 #include <map>
 #include <cmath>
-#include <iostream.h>
-#include <fstream.h>
+#include <iostream>
+#include <fstream>
 //#include <qwidget.h>
-#include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Triangulation_2.h>
+//nclude <CGAL/Cartesian.h>
+//#include <CGAL/Triangulation_2.h>
 //#include <CGAL/Triangulation_vertex_2.h>
-#include <CGAL/Constrained_triangulation_2.h>
+//#include <CGAL/Constrained_triangulation_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 //#include <CGAL/predicate_classes_2.h>
 //#include <CGAL/Triangulation_circulators_2.h>
 
-//CGAL_BEGIN_NAMESPACE
-using namespace CGAL;
+CGAL_BEGIN_NAMESPACE
+//using namespace CGAL;
 
 #define INVALID_EDGE Edge(NULL, -1);
 
@@ -31,7 +31,7 @@ using namespace CGAL;
 
 template <class Gt, class Tds, class Mtraits = void>
 class Mesh:
-public Constrained_Delaunay_triangulation_2 <Gt, Tds>
+public Constrained_Delaunay_triangulation_2 <Gt, Tds, Exact_predicates_tag >
 {
 
 public:
@@ -44,8 +44,9 @@ public:
   typedef FT      Square_length;
 
   typedef CGAL::Triangulation_2<Gt, Tds>                Tr;
-  typedef CGAL::Constrained_triangulation_2<Gt, Tds>   Ct;
-  typedef CGAL::Constrained_Delaunay_triangulation_2<Gt, Tds>     CDt;
+  typedef CGAL::Constrained_triangulation_2<Gt, Tds, Exact_predicates_tag>   Ct; // used for 
+  // special_insert_in_edge TODO: is it necessar?
+  typedef CGAL::Constrained_Delaunay_triangulation_2<Gt, Tds, Exact_predicates_tag>     CDt;
   //  typedef typename CDt::Constraint             Constraint;
   typedef typename CDt::Vertex                 Vertex;
   typedef typename CDt::Edge                   Edge;
@@ -72,16 +73,16 @@ public:
   void write(ostream &f);
   void read(istream &f);
   void reset() {
-  cluster_map.clear();
-  clear();
-}
+    cluster_map.clear();
+    clear();
+  }
 
 private:
   int current_time;
   std::multimap<FT, Face_handle>    Bad_faces;
   std::list<Constrained_edge>       c_edge_queue;
-  std::map<Vertex_handle, int>      insertion_time;
-  std::map<Vertex_handle, FT>       insertion_radius_map;
+  //  std::map<Vertex_handle, int>      insertion_time;
+  //  std::map<Vertex_handle, FT>       insertion_radius_map;
   std::multimap<Vertex_handle, Cluster>  cluster_map;
 
 public:
@@ -94,7 +95,7 @@ public:
 
 
     
-  Mesh(const Geom_traits& gt=Geom_traits()):CDt(gt){};
+  Mesh(/*const Geom_traits& gt=Geom_traits()*/):CDt(/*gt*/){};
 
     Mesh(List_constraints& lc, const Geom_traits& gt=Geom_traits()):CDt(gt)
     {
@@ -107,8 +108,8 @@ public:
     }
 
     template <class InputIterator>
-    Mesh(InputIterator first, InputIterator last, const Geom_traits&
-	 gt=Gt()):CDt(gt)
+    Mesh(InputIterator first, InputIterator last/*, const Geom_traits&
+						  gt=Gt()*/):CDt(/*gt*/)
     {
       while(first != last){
 	insert((*first).first, (*first).second);
@@ -167,12 +168,12 @@ private:
   Vertex_handle nearest_incident_vertex(Vertex_handle v);
   bool find_cluster(Vertex_handle va, Vertex_handle vb, Cluster &c);
   inline Vertex_circulator incr(Vertex_circulator &c) {
-  c++;
-  if(Vertex_handle(c) == infinite_vertex()) {
     c++;
+    if(Vertex_handle(c) == infinite_vertex()) {
+      c++;
+    }
+    return c;
   }
-  return c;
-}
 
 inline Vertex_circulator incr_constraint(Vertex_handle v, Vertex_circulator &c)
 {
@@ -262,7 +263,7 @@ bool is_infinite(Edge e) {
   return false;
 }
 
-};
+}; // end of Mesh
 
 template <class Gt, class Tds, class Mtraits>
 bool Mesh<Gt, Tds, Mtraits>::
@@ -443,6 +444,7 @@ refine_edge(Vertex_handle va, Vertex_handle vb)
     return;
   }
   else if (is_cluster(va,vb) && is_cluster(vb,va)) {
+    // cluster at both ends
     Vertex_handle vm = insert_middle(va,vb);
     update_c_edge_queue(va, vb, vm);
     update_facette_map(vm);
@@ -465,10 +467,10 @@ refine_face(Face_handle f)
 {
   Point pc; 
   Vertex_handle v;
-  //check if the face still exists
+  // //check if the face still exists
   pc = circumcenter(f);
   list<Constrained_edge> conflicts;
-  list<Constrained_edge>::iterator out_conflicts=c_edge_queue.begin();
+  //  list<Constrained_edge>::iterator out_conflicts=c_edge_queue.begin();
   if(get_conflicting_edges(pc, c_edge_queue))
     {
       if(!c_edge_queue.empty()){
@@ -508,10 +510,10 @@ refine_face(Face_handle f)
       }
       else
 	{
-	  Face_handle start;
-	  int li;
-	  Locate_type lt;
-	  Face_handle fh = locate(pc,lt,li, start);
+ 	  Face_handle start;
+ 	  int li;
+ 	  Locate_type lt;
+ 	  /*Face_handle fh = */locate(pc,lt,li, start);
 	  if(lt!=OUTSIDE_CONVEX_HULL) {
 	    v = insert(pc);
 	    update_facette_map(v);
@@ -520,7 +522,7 @@ refine_face(Face_handle f)
   }
   // UPDATE; 
   current_time++; 
-  insertion_time[v] = current_time; 
+  //  insertion_time[v] = current_time; 
   //flip_around(v);  
 }
 
@@ -596,7 +598,7 @@ template <class Gt, class Tds, class Mtraits>
 void Mesh<Gt, Tds, Mtraits>::
 show_clusters()
 {
-  multimap<Vertex_handle, Cluster>::iterator cmit = cluster_map.begin();
+  /*  multimap<Vertex_handle, Cluster>::iterator cmit = cluster_map.begin();
   while(cmit != cluster_map.end()) {
     Vertex_handle v = (*cmit).first;
     map<Vertex_handle, Length>::iterator cit = (*cmit).second.vertices.begin();
@@ -606,6 +608,7 @@ show_clusters()
     }
     cmit++;
   }
+  */
 }
 
 //refine the cluster
@@ -1120,7 +1123,7 @@ void Mesh<Gt, Tds, Mtraits>::
 refine_mesh(/* QWidget *w */)
 {
   //  viewer = w;
-  // bounding_box();
+  bounding_box();
   create_clusters();
   show_clusters();
 
@@ -1131,7 +1134,7 @@ refine_mesh(/* QWidget *w */)
   
 }
 
-//CGAL_END_NAMESPACE
+CGAL_END_NAMESPACE
 
 
 #endif
