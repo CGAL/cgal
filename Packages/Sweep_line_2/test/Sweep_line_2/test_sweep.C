@@ -15,6 +15,7 @@
 #define CGAL_POLYLINE_TRAITS         11
 #define CGAL_POLYLINE_LEDA_TRAITS    12
 #define CGAL_SEGMENT_CIRCLE_TRAITS   21
+#define CGAL_CONIC_TRAITS            31
 
 // Picking a default Traits class (this, with the 
 // PL flag enables the running of the test independently of cgal_make.)
@@ -62,6 +63,10 @@ int main()
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS
 #include <CGAL/leda_real.h>
 #include <CGAL/Arr_segment_circle_traits.h>
+#elif CGAL_ARR_TEST_TRAITS == CGAL_CONIC_TRAITS
+#include <CGAL/Cartesian.h>
+#include <CGAL/leda_real.h>
+#include <CGAL/Arr_conic_traits_2.h>
 #else
 #error No traits defined for test
 #endif
@@ -98,6 +103,10 @@ int main()
   typedef CGAL::Arr_segment_circle_traits<NT>           Traits;
   typedef Traits::Segment                               Segment;
   typedef Traits::Circle                                Circle;
+#elif CGAL_ARR_TEST_TRAITS == CGAL_CONIC_TRAITS
+typedef leda_real                                       NT;
+typedef CGAL::Cartesian<NT>                             Kernel;
+typedef CGAL::Arr_conic_traits_2<Kernel>                Traits;
 #endif
 
 typedef Traits::Point_2                     Point_2;
@@ -167,6 +176,10 @@ int main(int argc, char * argv[])
 			     std::back_inserter(points_without_ends_list_out), false);
   //std::cout << mypointlist2.size() << " points (internal)\n";
 
+  // check the do_curves_intersecting method
+  CGAL::Sweep_line_tight_2<CurveListIter, Traits, Event, SubCurve> sl4;
+  bool do_intersect = sl4.do_curves_intersect(curves.begin(), curves.end());
+
 
   // read curves and points from file
   CurveList curves_no_overlap_list;
@@ -194,6 +207,9 @@ int main(int argc, char * argv[])
     return -1;
 
   if ( !IsPointListIdentical(points_without_ends_list_out, points_without_ends_list))
+    return -1;
+
+  if ( (points_without_ends_list.size()!=0) != do_intersect )
     return -1;
 
   return 0;
