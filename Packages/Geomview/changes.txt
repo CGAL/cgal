@@ -1,5 +1,8 @@
 CHANGES to the Geomview package.
 
+Ver 3.2 (24 November 2000)
+- Forgot to submit the test/ directory.
+
 Ver 3.1 (24 November 2000)
 - Removed obsolete constructor.
 - Added a sleep(1) at initialization, to wait for Geomview to be ready
