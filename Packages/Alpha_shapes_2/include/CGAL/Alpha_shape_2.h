@@ -236,9 +236,6 @@ public:
 
       int n =  Dt::insert(first, last);
  
-#ifdef DEBUG
-      std::cout << "Triangulation computed" << std::endl;
-#endif
       if (dimension() == 2)
 	{   
 	  // Compute the associated _interval_face_map
@@ -1035,7 +1032,7 @@ Alpha_shape_2<Dt>::update_alpha_shape_vertex_list()const {
 	//const typename Alpha_shape_2<Dt>::Interval2* pInterval2;
 	const Interval2* pInterval2;
 	Vertex_handle v;
-	     
+	Alpha_shape_vertices_list.clear();
 	// write the regular vertices
 
 	for (vertex_alpha_it = _interval_vertex_map.begin(); 
@@ -1080,6 +1077,7 @@ template < class Dt >
 void
 Alpha_shape_2<Dt>::update_alpha_shape_edges_list() const 
 {
+
   // Writes the edges of the alpha shape `A' for the current $\alpha$-value
   // to the container where 'out' refers to. Returns an output iterator 
   // which is the end of the constructed range.
@@ -1088,7 +1086,7 @@ Alpha_shape_2<Dt>::update_alpha_shape_edges_list() const
 
   //const typename Alpha_shape_2<Dt>::Interval3* pInterval;
   const Interval3* pInterval;
-  
+  Alpha_shape_edges_list.clear();
   if (get_mode() == REGULARIZED) 
     {
       // it is much faster looking at the sorted intervals 
@@ -1338,12 +1336,12 @@ Alpha_shape_2<Dt>::find_optimal_alpha(int nb_components)
       half = len / 2;
       middle = first + half;
 
-#ifdef DEBUG
+#ifdef CGAL_DEBUG_ALPHA_SHAPE_2
       std::cout << "first : " << *first << " last : " << *(first+len)
 		<< " mid : " << *middle 
 		<< " nb comps : " << number_of_solid_components(*middle) 
 		<< std::endl;
-#endif // DEBUG
+#endif // CGAL_DEBUG_ALPHA_SHAPE_2
 
       if (number_of_solid_components(*middle) > nb_components) 
 	{
@@ -1434,14 +1432,14 @@ Alpha_shape_2<Dt>::op_ostream(std::ostream& os) const
 
 	  pInterval2 = &(*vertex_alpha_it).first;
 
-#ifdef DEBUG
+#ifdef CGAL_DEBUG_ALPHA_SHAPE_2
 	  typename Alpha_shape_2<Dt>::Coord_type alpha =
 	    get_alpha();
 	  typename Alpha_shape_2<Dt>::Coord_type alpha_mid = 
 	    pInterval2->first;
 	  typename Alpha_shape_2<Dt>::Coord_type alpha_max = 
 	    pInterval2->second;
-#endif // DEBUG
+#endif // CGAL_DEBUG_ALPHA_SHAPE_2
 
 	  if((pInterval2->second >= get_alpha()
 	      || pInterval2->second == Infinity)) 
@@ -1572,7 +1570,7 @@ Alpha_shape_2<Dt>::op_ostream(std::ostream& os) const
 
 	  pInterval = &(*edge_alpha_it).first;
 
-#ifdef DEBUG
+#ifdef CGAL_DEBUG_ALPHA_SHAPE_2
 	  typename Alpha_shape_2<Dt>::Coord_type alpha =
 	    get_alpha();
 	  typename Alpha_shape_2<Dt>::Coord_type alpha_min = 
@@ -1581,7 +1579,7 @@ Alpha_shape_2<Dt>::op_ostream(std::ostream& os) const
 	    pInterval->second;
 	  typename Alpha_shape_2<Dt>::Coord_type alpha_max = 
 	    pInterval->third;
-#endif // DEBUG
+#endif // CGAL_DEBUG_ALPHA_SHAPE_2
 	  
 	  if(pInterval->third >= get_alpha()
 	     || pInterval->third == Infinity) 
