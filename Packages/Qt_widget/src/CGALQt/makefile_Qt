@@ -38,6 +38,7 @@ lib_no_install: $(CGAL_OBJECTS)
 	$(CGAL_LIB_CREATE)$(CGAL_QT_LIB) \
 	`ls *$(OBJ_EXT) | awk '{for (i=1; i<=NF;++i){printf "$(CGAL_OBJ_PREFIX)";print $$i}}'`\
 		$(CGAL_LIB_LDFLAGS)
+	$(RANLIB) $(CGAL_QT_LIB)
 	rm $(CGAL_OBJECTS) 
 
 clean:

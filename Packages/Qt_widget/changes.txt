@@ -1,3 +1,6 @@
+6 May 2004 Menelaos Karavelas
+- added call to ranlib in makefile_Qt; needed for Darwin
+
 25 March 2004 Radu Ursu
 - made doc work with the new implementation of the Manual tools
 
