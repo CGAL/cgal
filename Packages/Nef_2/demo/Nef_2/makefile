@@ -39,13 +39,16 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:    \
-	Nef_polyhedron_2-demo 
+	Nef_polyhedron_2-demo Simple-demo
 
 Nef_polyhedron_2-demo$(EXE_EXT): Nef_polyhedron_2-demo$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Nef_polyhedron_2-demo Nef_polyhedron_2-demo$(OBJ_EXT) $(LDFLAGS)
 
+Simple-demo$(EXE_EXT): Simple-demo$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Simple-demo Simple-demo$(OBJ_EXT) $(LDFLAGS)
+
 clean:  \
-	Nef_polyhedron_2-demo.clean 
+	Nef_polyhedron_2-demo.clean Simple-demo.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
