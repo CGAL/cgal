@@ -1,9 +1,13 @@
-#ifndef CGAL_USE_CLN
-#  error You need to have CLN installed in order to run this example
-#endif
-
 #include <CGAL/basic.h>
 #include <iostream>
+
+#ifndef CGAL_USE_CLN
+int main ()
+{
+  std::cout << "CGAL was installed with no CLN support." << std::endl;
+  return 0;
+}
+#else // CGAL_USE_CLN
 
 #include <CGAL/CLN/cl_integer.h>
 
@@ -24,3 +28,5 @@ main ()
     cout << p << " == " << 31*75 << endl;
     return (ok) ? 0 : -1;
 }
+
+#endif // CGAL_USE_CLN
