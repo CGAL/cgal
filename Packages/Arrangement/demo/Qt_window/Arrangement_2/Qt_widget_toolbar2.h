@@ -64,7 +64,8 @@ class Tools_toolbar : public QToolBar
 {
   Q_OBJECT
 public:
-  Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, std::list<Cgal_Polygon> *l1);
+  Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, std::list<Cgal_Polygon>
+                *l1);
   ~Tools_toolbar(){};
 
 signals:

@@ -327,7 +327,8 @@ private slots:
     {
       Point p1(*g++), p2(*g++);
       NT scale(2);
-      Segment s( Point(p1.x()*scale,p1.y()*scale)  , Point(p2.x()*scale,p2.y()*scale) );
+      Segment s( Point(p1.x()*scale,p1.y()*scale)  ,
+                 Point(p2.x()*scale,p2.y()*scale) );
       list_of_segments.push_back(s);
       arr.insert(s);
     }

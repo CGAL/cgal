@@ -121,11 +121,14 @@ public:
 	Arr::Ccb_halfedge_circulator cc=f->outer_ccb();
 	do {
 	  CGAL::Polyline_2<Seg_traits>::const_iterator points_iter;
-	  for (points_iter = cc->curve().begin(); points_iter != cc->curve().end(); ) 
+	  for (points_iter = cc->curve().begin();
+               points_iter != cc->curve().end(); ) 
 	  {
-	    CGAL::Polyline_2<Seg_traits>::const_iterator source_point = points_iter;
+	    CGAL::Polyline_2<Seg_traits>::const_iterator source_point =
+              points_iter;
 	    points_iter++;
-    	    CGAL::Polyline_2<Seg_traits>::const_iterator target_point = points_iter;
+    	    CGAL::Polyline_2<Seg_traits>::const_iterator target_point =
+              points_iter;
     
 	    if (target_point == cc->curve().end())
 	      break;
@@ -144,11 +147,14 @@ public:
 	do 
 	{
 	  CGAL::Polyline_2<Seg_traits>::const_iterator points_iter;
-	  for (points_iter = cc->curve().begin(); points_iter != cc->curve().end(); ) 
+	  for (points_iter = cc->curve().begin();
+               points_iter != cc->curve().end(); ) 
 	  {
-	    CGAL::Polyline_2<Seg_traits>::const_iterator source_point = points_iter;
+	    CGAL::Polyline_2<Seg_traits>::const_iterator source_point =
+              points_iter;
 	    points_iter++;
-    	    CGAL::Polyline_2<Seg_traits>::const_iterator target_point = points_iter;
+    	    CGAL::Polyline_2<Seg_traits>::const_iterator target_point =
+              points_iter;
     
 	    if (target_point == cc->curve().end())
 	      break;
@@ -210,11 +216,14 @@ public:
 	bool found=false;
 
 	CGAL::Polyline_2<Seg_traits>::const_iterator points_iter;
-	for (points_iter = ci->curve().begin(); points_iter != ci->curve().end(); ) 
+	for (points_iter = ci->curve().begin();
+             points_iter != ci->curve().end(); ) 
 	{
-	  CGAL::Polyline_2<Seg_traits>::const_iterator source_point = points_iter;
+	  CGAL::Polyline_2<Seg_traits>::const_iterator source_point =
+            points_iter;
 	  points_iter++;
-	  CGAL::Polyline_2<Seg_traits>::const_iterator target_point = points_iter;
+	  CGAL::Polyline_2<Seg_traits>::const_iterator target_point =
+            points_iter;
 	    
 	  if (target_point == ci->curve().end())
 	    break;
