@@ -1,6 +1,10 @@
 Union_find Package: Release changes
 ----------------------------------------------------------------------
 
+1.4 (11 Apr 2002)
+
+     - Added #include <cstddef> whereever std::size_t is used.
+
 1.3 (09 Apr 2002)
 
     - Added CGAL_MSVC_DUMMY_ARGUMENT to find function.
