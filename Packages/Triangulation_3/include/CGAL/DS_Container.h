@@ -163,7 +163,8 @@ public:
 	Free_elt * ret = free_list.next();
 	free_list.set_next(ret->next());
 	ret->unmark_free();
-	alloc.construct((Elt *) ret, Elt());
+	// alloc.construct((Elt *) ret, Elt()); // Creates/copies temporary :(
+	new ((void *) ret) Elt();
 	return (Elt *) ret;
     }
 
