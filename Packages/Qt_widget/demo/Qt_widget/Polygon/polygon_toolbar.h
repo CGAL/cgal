@@ -26,6 +26,7 @@
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_get_simple_polygon.h>
 #include <CGAL/IO/Qt_widget_get_polygon.h>
+#include <CGAL/IO/Qt_widget_get_point.h>
 
 #include <qobject.h>
 #include <qmainwindow.h>
@@ -47,6 +48,7 @@ private:
 	
   CGAL::Qt_widget_get_simple_polygon<Cgal_Polygon> getsimplepoly;
   CGAL::Qt_widget_get_polygon<Cgal_Polygon>        getpoly;
+  CGAL::Qt_widget_get_point<Rep>                   getpoint;
 };//end class
 
 #endif

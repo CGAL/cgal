@@ -39,11 +39,11 @@ int main(int, char*){
 
 #include <qapplication.h>
 #include <qmainwindow.h>
-#include <qstatusbar.h>
 #include <qfiledialog.h>
 #include <qmessagebox.h>
 #include <qpopupmenu.h>
 #include <qmenubar.h>
+#include <qtextbrowser.h>
 #include <qtoolbutton.h>
 #include <qtoolbar.h>
 #include <qtimer.h>
@@ -56,8 +56,10 @@ int main(int, char*){
 
 
 //global flags and variables
-int current_state;
+bool         is_point_visible = false;
+int          current_state;
 Cgal_Polygon polygon;
+Point        point;
 
 const QString my_title_string("Polygon Demo with"
 			      " CGAL Qt_widget");
@@ -75,6 +77,9 @@ public:
       *widget << CGAL::LineWidth(1);
       *widget << CGAL::WHITE;
       *widget << polygon;
+      *widget << CGAL::GREEN;
+      if(is_point_visible)
+        *widget << point;
     widget->unlock();
   };
 };//end class 
@@ -113,7 +118,10 @@ public:
     menuBar()->insertItem( "&Edit", draw );
     draw->insertItem("Generate Polygon", this, SLOT(gen_poly()),
 		     CTRL+Key_G);
-    draw->insertItem("Show Information", this, SLOT(show_info()), CTRL+Key_I);
+    draw->insertItem("Show Polygon Information", this,
+		     SLOT(show_info()), CTRL+Key_I);
+    draw->insertItem("Show Point Information", this,
+		     SLOT(show_pinfo()), CTRL+Key_F);
 
     // help menu
     QPopupMenu * help = new QPopupMenu( this );
@@ -128,7 +136,9 @@ public:
     //the polygon_toolbar
     pt = new Polygon_toolbar(widget, this);
 
-    *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::BLACK);
+    *widget << CGAL::LineWidth(2) << CGAL::PointSize(6) 
+	    <<CGAL::PointStyle(CGAL::DISC)
+	    << CGAL::BackgroundColor (CGAL::BLACK);
   
     resize(w,h);
     widget->set_window(-1, 1, -1, 1);
@@ -143,6 +153,10 @@ public:
 
     //layers
     widget->attach(&testlayer);
+
+    qte = new QTextBrowser(NULL, "INFO");
+    qte->setCaption("Information Window");
+    //    qte->setTextFormat(PlainText);
   };
 
 private:
@@ -174,13 +188,40 @@ private slots:
 
   void get_new_object(CGAL::Object obj)
   {
-    Cgal_Polygon p;
-    if(CGAL::assign(p,obj)) {
-      polygon = p;
+    Cgal_Polygon poly;
+    Point p;
+    if(CGAL::assign(poly, obj)) {
+      polygon = poly;
+      something_changed();
+      show_info();
+    } else if(CGAL::assign(p, obj)) {
+      point = p;
+      is_point_visible = true;
+      show_pinfo();
       something_changed();
     }
   };
 
+
+void show_pinfo(){
+  qte->resize(300, 100);
+  qte->show();
+  qte->setText("Information on point");
+
+  if(!polygon.is_simple()){
+    qte->append("  The polygon is not simple!");
+    return;
+  }
+  CGAL::Bounded_side bside   = polygon.bounded_side(point);
+  switch (bside) {
+    case CGAL::ON_BOUNDED_SIDE:
+      qte->append("  The point is inside the polygon"); break;
+    case CGAL::ON_BOUNDARY:
+      qte->append("  The point is on the boundary of the polygon"); break;
+    case CGAL::ON_UNBOUNDED_SIDE:
+      qte->append("  The point is outside the polygon"); break;
+  }
+}
 
 //--------------------------------------------------------------------------//
 //                   PrintPolygonInfo
@@ -189,36 +230,61 @@ private slots:
 
 void show_info()
 {
-  Cgal_Polygon P(polygon);
-  cerr << std::endl << "Polygon information:" << std::endl;
-  if(P.is_empty())
-    {std::cerr << "  P is empty" << std::endl; return;}
-  cerr << "  P.size()               = " << P.size() << std::endl;
-  cerr << "  P.is_empty()           = " << int(P.is_empty()) << std::endl;
+  QString s("%1");
+  qte->resize(300, 300);
+  qte->show();
+  qte->setText("Polygon Information");
 
-  cerr << "  P.is_simple()          = " << int(P.is_simple()) << std::endl;
-  cerr << "  P.is_convex()          = " << int(P.is_convex()) << std::endl;
+  if(polygon.is_empty())
+    {qte->resize(300, 100); qte->append("P is empty!"); return;}
+  s.setNum(polygon.size(), 10);
+  qte->append("P.size() = " + s);
+  s.setNum(polygon.is_empty(), 10);
+  qte->append("P.is_empty() = " + s);
+  s.setNum(polygon.is_simple(), 10);
+  qte->append("P.is_simple() = " + s);
+  s.setNum(polygon.is_convex(), 10);
+  qte->append("P.is_convex() = " + s);
 
-  if(P.is_simple()){
-    CGAL::Orientation o = P.orientation();
-    cerr << "  P.orientation()        = ";
+  if(polygon.is_simple()){
+    CGAL::Orientation o = polygon.orientation();
     switch (o) {
-      case CGAL::CLOCKWISE       : cerr << "clockwise" << std::endl; break;
-      case CGAL::COUNTERCLOCKWISE: cerr << "counter clockwise" <<
-				     std::endl; break;
-      case CGAL::COLLINEAR       : cerr << "collinear" << std::endl; break;
+      case CGAL::CLOCKWISE:
+          qte->append("P.orientation() = CLOCKWISE");
+	  break;
+      case CGAL::COUNTERCLOCKWISE:
+          qte->append("P.orientation() = COUNTERCLOCKWISE");
+          break;
+      case CGAL::COLLINEAR:
+          qte->append("P.orientation() = COLLINEAR");
+          break;
     }
   }
+  QString s1, s2, s3, s4;
+  s1.setNum(polygon.bbox().xmin());
+  s2.setNum(polygon.bbox().ymin());
+  s3.setNum(polygon.bbox().xmax());
+  s4.setNum(polygon.bbox().ymax());
+  s = "xmin:" + s1 + ", ymin:" + s2 + ", xmax:" + s3 + ", ymax:" + s4;
+  qte->append("P.bbox(): " + s);
+  s.setNum(float(polygon.area()));
+  qte->append("P.area() = " + s);
 
-  cerr << "  P.bbox()               = " << P.bbox() << std::endl;
-  cerr << "  P.area()               = " << P.area() << std::endl;
-  cerr << "  P.left_vertex()        = " << *P.left_vertex() << std::endl;
-  cerr << "  P.right_vertex()       = " << *P.right_vertex() << std::endl;
-  cerr << "  P.top_vertex()         = " << *P.top_vertex() << std::endl;
-  cerr << "  P.bottom_vertex()      = " << *P.bottom_vertex() << std::endl;
+  s1.setNum(float((*(polygon.left_vertex())).x()));
+  s2.setNum(float((*(polygon.left_vertex())).y()));
+  s = s1 + ", " + s2;
+  qte->append("P.left_vertex() = " + s);
+/*
+  s.setNum(polygon.left_vertex(), 10);
+
+  s.setNum(polygon.right_vertex(), 10);
+  qte->append("P.right_vertex() = " + s);
+  s.setNum(polygon.top_vertex(), 10);
+  qte->append("P.top_vertex() = " + s);
+  s.setNum(polygon.bottom_vertex(), 10);
+  qte->append("P.bottom_vertex() = " + s);*/
+
 }
-
-
 
 
   void about()
@@ -290,7 +356,7 @@ private:
   Polygon_toolbar        *pt;
   int                    old_state;
   Qt_layer_show_polygon  testlayer;
-  //  CGAL::Qt_widget_get_polygon<Cgal_Polygon> getpoly;
+  QTextBrowser           *qte;
 };
 
 #include "polygon.moc"

@@ -37,6 +37,7 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw) :
     //set the widget
     widget = w;
     widget->attach(&getsimplebut);
+    getsimplebut.deactivate();
 
     QIconSet set0(QPixmap( (const char**)arrow_small_xpm ),
                   QPixmap( (const char**)arrow_xpm ));
