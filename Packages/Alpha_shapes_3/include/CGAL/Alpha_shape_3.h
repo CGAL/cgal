@@ -561,7 +561,8 @@ public:
 	case EDGE              : return classify(pCell, i, j, alpha);
 	case FACE              : return classify(pCell, i, alpha);
 	case CELL              : return classify(pCell, alpha);
-	case OUTSIDE           : return EXTERIOR;
+	case OUTSIDE_CONVEX_HULL : return EXTERIOR;
+	case OUTSIDE_AFFINE_HULL : return EXTERIOR;
 	default                : return EXTERIOR;
 	};
     }
