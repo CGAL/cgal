@@ -1,0 +1,125 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: surface_neighbor_coordinates_3.tex
+% +------------------------------------------------------------------------+
+% | 
+% | August 2003  Julia Floetotto
+% | Package:   Interpolation
+% | 
+% |
+% +------------------------------------------------------------------------+
+
+%\renewcommand{\ccRefPageBegin}{\begin{ccAdvanced}}
+%\renewcommand{\ccRefPageEnd}{\end{ccAdvanced}}
+\begin{ccRefFunction}{surface_neighbor_coordinates_3}  %% add template arg's if necessary
+\ccIndexSubitemBegin{interpolation}{surface_neighbor_coordinates_3}
+
+\ccDefinition
+  
+The function \ccRefName\ computes natural neighbor coordinates for
+surface points associated to a finite set of sample points issued from
+the surface. The coordinates are computed from the intersection of the
+Voronoi cell of the query point \ccc{p} with the tangent plane to the
+surface at \ccc{p}. If the sampling is sufficiently dense, the
+coordinate systems meets the properties described in the manual pages
+and in \cite{bf-lcss-02},\cite{prisme-these-flototto}.  The query
+point \ccc{p} needs to lie inside the convex hull of the projection of
+the sample points onto the tangent plane at \ccc{p}.
+
+\ccInclude{CGAL/surface_neighbor_coordinates_3.h}
+
+\ccFunction{template <class OutputIterator, class InputIterator, class
+  Kernel> std::pair< OutputIterator, typename Kernel::FT >
+  surface_neighbor_coordinates_3(InputIterator first, InputIterator
+  beyond, const typename Kernel::Point_3& p, const typename
+  Kernel::Vector_3& normal, OutputIterator out, const Kernel& K);}{
+  The sample points $\mathcal{P}$ are provided in the range
+  $\left[\right.$\ccc{first}, \ccc{beyond}$\left.\right)$.
+  \ccc{InputIterator::value_type} is the point type
+  \ccc{Kernel::Point_3}. The tangent plane is defined by the point
+  \ccc{p} and the vector \ccc{normal}.  The
+  parameter \ccc{K} determines the kernel type. \\
+  The natural neighbor coordinates for \ccc{p} are computed in the
+  power diagram that results from the intersection of the $3D$ Voronoi
+  diagram of $\mathcal{P}$ with the tangent plane. The sequence of
+  point-coordinate pairs that is computed by the function is placed
+  starting at \ccc{out}. The function returns a pair with an iterator
+  that is placed past-the-end of the resulting sequence of
+  point-coordinate pairs and the normalization factor of the
+  coordinates.
+  \ccPrecond %
+  \ccc{p} lies in the convex hull of the projection of the points
+  $\mathcal{P}$ onto the tangent plane.}
+
+
+\ccFunction{template <class OutputIterator, class InputIterator, class
+  ITraits> std::pair< OutputIterator, typename ITraits::FT >
+  surface_neighbor_coordinates_3(InputIterator first, InputIterator beyond,
+  const typename ITraits::Point_2& p,OutputIterator out, 
+  const ITraits& traits);}{ the same as above only that the traits
+  class must be instantiated by the user. \ccc{ITraits} must be a
+  model of \ccc{VoronoiIntersection2Traits3}.}
+
+The next function allows to filter some potential neighbors of the
+query point \ccc{p} from $\mathcal{P}$ via its three-dimensioal
+Delaunay triangulation. All surface neighbors of \ccc{p} are
+necessarily neighbors in the Delaunay triangulation of $\mathcal{P}
+\cup \{p\}$.  \ccFunction{template < class Dt, class OutputIterator >
+  std::pair< OutputIterator, typename Dt::Geom_traits::FT >
+  surface_neighbor_coordinates_3(const Dt& dt, const typename
+  Dt::Geom_traits::Point_2& p, const typename
+  Dt::Geom_traits::Vector_3& normal, OutputIterator out, typename
+  Dt::Face_handle start = typename Dt::Face_handle(NULL));} {computes
+  the surface neighbor coordinates with respect to the points that are
+  vertices of the Delaunay triangulation \ccc{dt}. The type \ccc{Dt}
+  must be equivalent to \ccc{Delaunay_triangulation_3<Gt, Tds>}. The
+  optional parameter \ccc{start} is used for the used as a starting
+  place for the search of the conflict zone. It may be the result of
+  the call \ccc{dt.locate(p)}. This function instantiates the template
+  parameter \ccc{ITraits} to be
+  \ccc{Voronoi_intersection_2_traits_3<Dt::Geom_traits>}.}
+
+
+\ccFunction{template < class Dt, class OutputIterator,
+  class ITraits> std::pair< OutputIterator, typename
+  Dt::Geom_traits::FT > surface_neighbor_coordinates_3(const Dt& dt,
+  const typename Dt::Geom_traits::Point_2& p, OutputIterator out,
+  const ITraits& traits, typename Dt::Face_handle start = typename
+  Dt::Face_handle(NULL));}
+%
+{The same as above only that the geometric traits class must be
+  instantiated by the user with an instance of a model of
+  \ccc{VoronoiIntersection2Traits3}.}
+
+
+\ccHeading{Requirements}
+\begin{enumerate}
+\item \ccc{Dt} is equivalent to the class
+  \ccc{Delaunay_triangulation_3}.
+\item \ccc{OutputIterator::value_type} is equivalent to
+  \ccc{std::pair<Dt::Point_3, Dt::Geom_traits::FT>}, i.e.\ a pair
+  asscociating a point and its natural neighbor coordinate.
+\item  \ccc{ITraits} is quivalent to the class \ccc{Voronoi_intersection_2_traits_3<K>}.
+\end{enumerate}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::linear_interpolation} \\
+\ccRefIdfierPage{CGAL::sibson_c1_interpolation}\\ 
+\ccRefIdfierPage{CGAL::farin_c1_interpolation}\\ 
+\ccRefIdfierPage{CGAL::natural_neighbor_coordinates_3} \\
+\ccRefIdfierPage{CGAL::regular_neighbor_coordinates_2} 
+
+\ccImplementation This function computes the areas stolen from the
+Voronoi cells of points in \ccc{dt} by the insertion of \ccc{p}. The
+total area of the Voronoi cell of \ccc{p} is also computed and
+returned by the function.
+
+\ccIndexSubitemEnd{Interpolation}{surface_neighbor_coordinates_3}
+\end{ccRefFunction}
+%\renewcommand{\ccRefPageBegin}{}
+%\renewcommand{\ccRefPageEnd}{}
+
+% +------------------------------------------------------------------------+
+% RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
