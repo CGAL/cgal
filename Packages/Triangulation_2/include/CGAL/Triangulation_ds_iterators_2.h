@@ -42,18 +42,18 @@ class Triangulation_ds_face_iterator_2
   : public Tds::Iterator_base
 {
 public:
-  typedef typename Tds::Iterator_base          Iterator_base;
-  typedef typename Tds::Face_handle            Face_handle;
+  typedef typename Tds::Iterator_base           Base;
+  typedef typename Tds::Face_handle             Face_handle;
   typedef Triangulation_ds_face_iterator_2<Tds> Face_iterator;
 
-  Triangulation_ds_face_iterator_2() : Iterator_base() {}
+  Triangulation_ds_face_iterator_2() : Base() {}
    
   Triangulation_ds_face_iterator_2(const Tds * tds) 
-    : Iterator_base(tds->face_container().begin())
+    : Base(tds->face_container().begin())
     {}
 
   Triangulation_ds_face_iterator_2(const Tds* tds, int i)
-    : Iterator_base(tds->face_container().end())
+    : Base(tds->face_container().end())
     {}
 
   operator Face_handle() const {return (*this)->handle();}
