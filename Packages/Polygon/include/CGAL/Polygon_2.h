@@ -52,7 +52,7 @@ CGAL_BEGIN_NAMESPACE
 //                          Polygon_2
 //-----------------------------------------------------------------------//
 
-#ifdef CGAL_POLYGON_2_CONST_ITER
+#if defined(CGAL_POLYGON_2_CACHED) && !defined(CGAL_POLYGON_2_MOD_ITER)
 
 template <class It>
 inline
@@ -107,7 +107,7 @@ private:
     It m_it;
 };
 
-#endif // CGAL_POLYGON_2_CONST_ITER
+#endif // defined(...CACHED)
 
 template <class Traits_P, class Container_P
         = std::vector<CGAL_TYPENAME_MSVC_NULL Traits_P::Point_2> >
@@ -138,16 +138,16 @@ class Polygon_2 {
     typedef typename Container_P::const_iterator const_iterator;
     //-------------------------------------------------------//
 
-#ifdef CGAL_POLYGON_2_CONST_ITER
+#if defined(CGAL_POLYGON_2_CACHED) && !defined(CGAL_POLYGON_2_MOD_ITER)
     typedef Polygon_vertex_iterator_2<typename Container::iterator>
              Vertex_iterator;
     typename Container::iterator get_container_iterator(Vertex_iterator vit)
     {return vit.implementation_it();}
-#else // CGAL_POLYGON_2_CONST_ITER
+#else // defined(...CACHED)
     typedef typename Container::iterator Vertex_iterator;
     typename Container::iterator get_container_iterator(Vertex_iterator vit)
     {return vit;}
-#endif // CGAL_POLYGON_2_CONST_ITER
+#endif // defined(...CACHED)
     typedef Vertex_iterator Vertex_const_iterator;
 
 //    typedef Bidirectional_circulator_from_container<Container_P>
@@ -524,8 +524,13 @@ class Polygon_2 {
     mutable Orientation m_orientation:2;
     void invalidate_cache() { m_flags = CF_EMPTY;}
     bool is_cached(Cache_flags f) const { return m_flags & f;}
+#if defined(CGAL_POLYGON_2_CACHED)
     void mark_cached(Cache_flags f) const
        { m_flags = Cache_flags((m_flags & ~f) | f); }
+#else
+    void mark_cached(Cache_flags ) const
+       {}
+#endif
 };
 
 //-----------------------------------------------------------------------//
