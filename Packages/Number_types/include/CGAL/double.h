@@ -19,7 +19,6 @@
 //
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
- 
 
 #ifndef CGAL_DOUBLE_H
 #define CGAL_DOUBLE_H 1
@@ -30,11 +29,9 @@
 #include <CGAL/IEEE_754_unions.h>
 #ifdef __sgi
 #include <fp_class.h>
-#endif // __sgi
-#include <CGAL/Interval_base.h>
+#endif
 
 CGAL_BEGIN_NAMESPACE
-
 
 inline
 double
@@ -198,14 +195,7 @@ double
 abs(const double& d)
 { return CGAL_CLIB_STD::fabs(d); }
 
-
 #endif // CGAL_NO_NTS_NAMESPACE
-
-inline
-Interval_base
-to_interval (const double& z)
-{ return Interval_base(z); }
-
 
 CGAL_END_NAMESPACE
 

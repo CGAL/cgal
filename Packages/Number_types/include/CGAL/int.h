@@ -25,24 +25,16 @@
 #ifndef CGAL_INT_H
 #define CGAL_INT_H
 
-#ifndef CGAL_NUMBER_TYPE_TAGS_H
 #include <CGAL/number_type_tags.h>
-#endif // CGAL_NUMBER_TYPE_TAGS_H
-
-// int
 
 CGAL_BEGIN_NAMESPACE
 
+// int
 
 inline
 double
 to_double(int i)
 { return (double)i; }
-
-inline
-Interval_base
-to_interval(int i)
-{ return CGAL::to_interval(double(i)); }
 
 inline
 Number_tag
@@ -72,17 +64,6 @@ to_double(long int i)
 { return (double)i; }
 
 inline
-Interval_base
-to_interval(long int i)
-{
-  // actually we would like to compare number of mantissa bits,
-  // this seems to be a sufficient approximation
-  CGAL_kernel_assertion( sizeof( double) > sizeof( long));
-  // need something else for 64 bits longs.
-  return CGAL::to_interval(double(i));
-}
-
-inline
 Number_tag
 number_type_tag(long int)
 { return Number_tag(); }
@@ -108,11 +89,6 @@ inline
 double
 to_double(short int i)
 { return (double)i; }
-
-inline
-Interval_base
-to_interval(short int i)
-{ return CGAL::to_interval(double(i)); }
 
 inline
 Number_tag
@@ -142,17 +118,6 @@ inline
 double
 to_double(long long i)
 { return (double)i; }
-
-inline
-Interval_base
-to_interval(long int i)
-{
-  // actually we would like to compare number of mantissa bits,
-  // this seems to be a sufficient approximation
-  CGAL_kernel_assertion( sizeof( double) > sizeof( long long));
-  // need something else for 64 bits longs.
-  return CGAL::to_interval(double(i));
-}
 
 inline
 Number_tag
@@ -192,6 +157,5 @@ io_tag(unsigned long)
 { return io_Operator(); }
 
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_INT_H

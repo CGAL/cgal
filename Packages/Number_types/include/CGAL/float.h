@@ -25,15 +25,12 @@
 #define CGAL_FLOAT_H 1
 
 #include <CGAL/basic.h>
-#ifndef CGAL_TAGS_H
 #include <CGAL/tags.h>
-#endif // CGAL_TAGS_H
 #include <cmath>
 #include <CGAL/IEEE_754_unions.h>
 #ifdef __sgi
 #include <fp_class.h>
 #endif
-#include <CGAL/Interval_base.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -140,8 +137,6 @@ is_valid( const float& flt)
   return !is_nan_by_mask_float( p->c );
 }
 
-
-
 #else
 
 inline
@@ -163,12 +158,6 @@ inline
 io_Operator
 io_tag(float)
 { return io_Operator(); }
-
-inline
-Interval_base
-to_interval (const float& z)
-{ return Interval_base(z); }
-
 
 CGAL_END_NAMESPACE
 
