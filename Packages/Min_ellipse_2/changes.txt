@@ -1,5 +1,9 @@
 Changes done to the `Min_ellipse_2' package.
 
+Version 3.10.1 on 18-Sep-2000
+- updated/fixed usage of namespace `std'.
+- fixed layout problems.
+
 Version 3.10 on 15-Sep-2000
 - added indexing command.
 

@@ -1,5 +1,8 @@
 Changes done to the `Min_circle_2' package
 
+Version 3.10.1 on 18-Sep-2000
+- updated/fixed usage of namespace `std'.
+
 Version 3.10 on 15-Sep-2000
 - added indexing command.
 
