@@ -1,3 +1,5 @@
+- Fixed typos in examples
+
 1.73 (18 September 2003)
 - Again.
 
