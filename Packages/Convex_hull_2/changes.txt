@@ -1,3 +1,6 @@
+13 August 2004 Sylvain Pion
+- Doc : fix typo in #include <CGAL/ch_akl_toussaint.h>.
+
 04 May 2004 Andreas Fabri
 - Added #include <CGAL/IO/Tee_for_output_iterator.h>  to ch_akl_toussaint.C
 
