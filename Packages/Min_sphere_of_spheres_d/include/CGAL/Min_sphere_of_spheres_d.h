@@ -95,7 +95,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
   public: // some short hands:
     typedef typename Traits::Sphere Sphere;
     typedef typename Traits::FT FT;
-    typedef typename Selector<FT>::Coordinate Coordinate;
+    typedef typename Selector<FT>::Result Result;
     typedef typename Selector<FT>::Is_exact Is_exact;
     typedef typename Traits::Use_square_roots Use_sqrt;
     typedef typename Traits::Algorithm Algorithm;
@@ -116,7 +116,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     #endif
   
   public: // iterators:
-    typedef const Coordinate *Coordinate_iterator; // coordinate iterator
+    typedef const Result *Coordinate_iterator; // coordinate iterator
   
     class Support_iterator {
       typedef typename std::vector<const Sphere*>::const_iterator It;
@@ -176,11 +176,11 @@ namespace CGAL_MINIBALL_NAMESPACE {
   public: // predicates and accessors:
     inline bool is_empty() const;
   
-    inline const Coordinate& radius() const;
+    inline const Result& radius() const;
   
     inline Coordinate_iterator center_begin() const;
   
-    inline const FT& disc() const;
+    inline const FT& discriminant() const;
   
     inline Support_iterator support_begin() const;
   
@@ -251,7 +251,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
   }
 
   template<class Traits>
-  const typename Min_sphere_of_spheres_d<Traits>::Coordinate&
+  const typename Min_sphere_of_spheres_d<Traits>::Result&
     Min_sphere_of_spheres_d<Traits>::radius() const {
     CGAL_MINIBALL_ASSERT(!is_empty());
     return ss.radius();
@@ -265,7 +265,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
 
   template<class Traits>
   const typename Min_sphere_of_spheres_d<Traits>::FT&
-    Min_sphere_of_spheres_d<Traits>::disc() const {
+    Min_sphere_of_spheres_d<Traits>::discriminant() const {
     return ss.disc();
   }
 

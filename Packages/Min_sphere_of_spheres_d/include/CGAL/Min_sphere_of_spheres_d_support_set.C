@@ -167,7 +167,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
   template<class Traits>
   bool Support_set<Traits>::is_spanning() {
     CGAL_MINIBALL_DO_DEBUG(is_spanning_was_called = true);
-    Coordinate beta[D+1];
+    Result beta[D+1];
   
     // make sure at least one ball got pushed:
     CGAL_MINIBALL_ASSERT(m > 0);
@@ -185,9 +185,9 @@ namespace CGAL_MINIBALL_NAMESPACE {
       // check whether the ball with center center and
       // radius sol[m] coincides with the miniball of the
       // pushed balls:
-      Coordinate gamma[D+1];
-      Coordinate mingamma(0);
-      Coordinate gamma0(1);
+      Result gamma[D+1];
+      Result mingamma(0);
+      Result gamma0(1);
       
       for (int i=m-1; i>0; --i) {
         gamma[i] = beta[i];

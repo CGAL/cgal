@@ -77,13 +77,13 @@ void atomicTest(const int no,const std::string& name,Perturbation perturb,
   using std::setprecision;
   fd << D << std::endl;
   ed << D << std::endl;
-  PairToDouble p2d(mb.disc());
+  PairToDouble p2d(mb.discriminant());
   fd << setprecision(18) << p2d(mb.radius());
-  writePair(mb.radius(),ed,mb.disc());
+  writePair(mb.radius(),ed,mb.discriminant());
   typename Minsphere::Coordinate_iterator it=mb.center_begin();
   for (int i=0; i<D; ++i) {
     fd << ' ' << setprecision(18) << p2d(*it);
-    writePair(*it,ed,mb.disc());
+    writePair(*it,ed,mb.discriminant());
   }
   std::cout << "    [" << setprecision(18) << p2d(mb.radius()) << ']';
 

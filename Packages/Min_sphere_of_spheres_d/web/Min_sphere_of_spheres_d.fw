@@ -438,7 +438,7 @@ miniball of a set~$S$ of balls, you check in the balls by calling
 \code{insert()}, followed by a call to \code{update()} which computes the
 miniball.  In order to query the miniball you can use the routines
 \code{is\_empty()}, \code{radius()}, \code{center\_begin()},
-\code{support\_begin()} and \code{disc()}.\par\medskip
+\code{support\_begin()} and \code{discriminant()}.\par\medskip
 %
 %
 For approximate computation the routines \code{radius()} and
@@ -448,14 +448,14 @@ exact number type, these routines cannot simply return numbers of type
 \code{T::FT}, for the exact miniball might have irrational center
 coordinates and radius.  Consequently, the routines \code{radius()}
 and \code{center\_begin()} produce instances of type
-\code{Min\_\-sphere\_\-of\_\-spheres\_d\angl{T}::Min\_\-sphere\_\-coor\-di\-nate}.
+\code{Min\_\-sphere\_\-of\_\-spheres\_d\angl{T}::Re\-sult\-FT}.
 When the exact miniball is computed, this type is a subclass (i.e.\ a
 derived class) of \code{std::pair\angl{\code{FT},\code{FT}}}: Denoting
 the first component of a pair by~$a$ and its second by~$b$, an
-instance of class \code{Coordinate} then represents
+instance of class \code{Result} then represents
 the number~$a+b\sqrt{t}$.  Here, $t$ is the discriminant of the
 miniball (see page~\pageref{disc}), which you obtain by calling
-\code{disc()}.\par\medskip
+\code{discriminant()}.\par\medskip
 %
 Here are more detailed descriptions of the constructors, accessors and
 predicates of class \code{Min\_sphere\_of\_spheres\_d\angl{T}}:
@@ -566,7 +566,7 @@ center.
 %
 %
 The value type of the returned iterator is
-\code{Min\_\-sphere\_\-of\_\-spheres\_d\angl{T}::Coordinate},
+\code{Min\_\-sphere\_\-of\_\-spheres\_d\angl{T}::Result},
 which coincides with \code{double} or \code{float} for approximate
 computation and which is a pair (as described above) otherwise.\par
 %
@@ -834,7 +834,7 @@ $B'$ is contained in~$B$ if and only if $\ex_B(B')\le
 The rest of this document is structured as follows.  We first provide
 the heavily used primtives \code{contains()} and
 \code{find\_farthest()}, and discuss the type
-\code{Coordinate} used to represent the radius and the
+\code{Result} used to represent the radius and the
 coordinates of the exact miniball.  Next comes the abstract data type
 \code{Support\_set} which is used to compute the coordinates and the
 radius of the miniball, once a basis is given.  Then we use this data
@@ -844,7 +844,7 @@ miniball~$\MB(C)$, a basis of~$C\cup\{D\}$.  With these primitives at
 hand, we will then be able to formulate the mentioned LP-algorithm and
 heuristic.
 %
-\subsection{The type \code{Coordinate}}
+\subsection{The type \code{Result}}
 %
 As has been mentioned in the introduction, the radius and the center
 coordinates of the miniball can all be represented as
@@ -855,27 +855,27 @@ instances of class \code{Pair\angl{\code{FT}}} discussed below; the
 number~$d$ is stored just once.  During approximate computation we
 will store the numbers $a_i+b_i\sqrt{d}$ as machine floating-point
 numbers.  The following template takes a number type and returns a
-structure whose type \code{Coordinate} is either
+structure whose type \code{Result} is either
 \code{Pair\angl{\code{FT}}} in case we do the exact computation, or
 which coincides with \code{FT} otherwise.\par\medskip
 %
 %
-@$@<type-selector for type Coordinate@>==@{@-
+@$@<type-selector for type Result@>==@{@-
 template<typename FT>
 struct Selector {
-  typedef Pair<FT> Coordinate;
+  typedef Pair<FT> Result;
   typedef Tag_true Is_exact;
 };
 
 template<>
 struct Selector<float> {
-  typedef float Coordinate;
+  typedef float Result;
   typedef Tag_false Is_exact;
 };
 
 template<>
 struct Selector<double> {
-  typedef double Coordinate;
+  typedef double Result;
   typedef Tag_false Is_exact;
 };@}\par\medskip%
 %
@@ -1469,7 +1469,7 @@ template<class Traits>
 class Support_set {
 private: // some short hands:
   typedef typename Traits::FT FT;
-  typedef typename Selector<FT>::Coordinate Coordinate;
+  typedef typename Selector<FT>::Result Result;
   typedef typename Selector<FT>::Is_exact Is_exact;
   typedef typename Traits::Use_square_roots Use_sqrt;
   typedef typename Traits::Sphere Sphere;
@@ -1480,8 +1480,8 @@ public: // constructor:
   inline Support_set(Traits& traits);
 
 public: // access:
-  inline const Coordinate& radius() const;
-  inline const Coordinate *begin() const;
+  inline const Result& radius() const;
+  inline const Result *begin() const;
   inline const FT& disc() const;
 
 public: // containment test:
@@ -2212,7 +2212,7 @@ invariants the \e{device}.\par\medskip
 @$@<member fields of class Support_set@>==@{@-
 int m;                    // number of pushed balls
 const Sphere *b[D+1];     // pointers to pushed balls
-Coordinate center[D+1];   // contains, when is_spanning() returns true,
+Result center[D+1];       // contains, when is_spanning() returns true,
                           // the center of the miniball
 
 // variables of the device:
@@ -2229,7 +2229,7 @@ FT chi[D+1];
 FT psi[D+1];
 FT omega[D+1];
 FT tau[D][D+1];
-Coordinate sol[D+2];
+Result sol[D+2];
 FT discrim[D+2];
 FT maxradius[D+1];@-
 @}\par\medskip%
@@ -2474,8 +2474,8 @@ bool Support_set<Traits>::find_radius(const Tag_false is_exact) {
   FT sd = std::sqrt(discrim[m+1]);
   if (psi[m] > 0)
     sd = -sd;
-  Coordinate sols[2] = { (sd-psi[m])     / (FT(2)*chi[m]),
-                          FT(2)*omega[m] / (sd-psi[m]) };
+  Result sols[2] = { (sd-psi[m])     / (FT(2)*chi[m]),
+                      FT(2)*omega[m] / (sd-psi[m]) };
 
   // order the solutions (*):
   if (sols[1] < sols[0])
@@ -2507,7 +2507,7 @@ bool Support_set<Traits>::find_radius(const Tag_true is_exact) {
 
   // calculate the two solutions:
   const FT tmp = FT(-1)/(FT(2)*chi[m]);
-  Coordinate sols[2] = {
+  Result sols[2] = {
     Pair<FT>(psi[m]*tmp, tmp),
     Pair<FT>(psi[m]*tmp,-tmp)
   };
@@ -2555,7 +2555,7 @@ $i=1,\ldots,m-1$) in the variable \code{beta[$i$]}.  (Variable
 template<class Traits>
 bool Support_set<Traits>::is_spanning() {
   CGAL_MINIBALL_DO_DEBUG(is_spanning_was_called = true);
-  Coordinate beta[D+1];
+  Result beta[D+1];
 
   // make sure at least one ball got pushed:
   CGAL_MINIBALL_ASSERT(m > 0);
@@ -2589,9 +2589,9 @@ equation~(\ref{coeffsgamma}) from the $\beta_i$'s and $\tau_{ij}$'s)
 and check wether all $\gamma_i\ge 0$.\par\medskip
 %
 @$@<check whether the center lies in the convex hull@>==@{@-
-Coordinate gamma[D+1];
-Coordinate mingamma(0);
-Coordinate gamma0(1);
+Result gamma[D+1];
+Result mingamma(0);
+Result gamma0(1);
 
 for (int i=m-1; i>0; --i) {
   gamma[i] = beta[i];
@@ -2744,7 +2744,7 @@ bool Min_sphere_of_spheres_d<Traits>::pivot(const int D) {
   using namespace Min_sphere_of_spheres_d_impl;
 
   // remember old radius:
-  const Coordinate old = ss.radius();
+  const Result old = ss.radius();
 
   // reset basis to {D}:
   ss.reset();
@@ -2940,7 +2940,7 @@ class Min_sphere_of_spheres_d {
 public: // some short hands:
   typedef typename Traits::Sphere Sphere;
   typedef typename Traits::FT FT;
-  typedef typename Selector<FT>::Coordinate Coordinate;
+  typedef typename Selector<FT>::Result Result;
   typedef typename Selector<FT>::Is_exact Is_exact;
   typedef typename Traits::Use_square_roots Use_sqrt;
   typedef typename Traits::Algorithm Algorithm;
@@ -2961,7 +2961,7 @@ private: // for internal consisteny checks:
   #endif
 
 public: // iterators:
-  typedef const Coordinate *Coordinate_iterator; // coordinate iterator
+  typedef const Result *Coordinate_iterator; // coordinate iterator
 
   class Support_iterator {
     typedef typename std::vector<const Sphere*>::const_iterator It;
@@ -3021,11 +3021,11 @@ public: // construction and destruction:
 public: // predicates and accessors:
   inline bool is_empty() const;
 
-  inline const Coordinate& radius() const;
+  inline const Result& radius() const;
 
   inline Coordinate_iterator center_begin() const;
 
-  inline const FT& disc() const;
+  inline const FT& discriminant() const;
 
   inline Support_iterator support_begin() const;
 
@@ -3656,8 +3656,7 @@ namespace std {
 // Fixes for GCC series 2.95.  (This fix is necessary for 2.95.2 at
 // least.  But I guess it is needed for any version of the 2.95
 // series.)  Apparently, GCC doesn't come with a bitset and sstream
-// implementation.  This is why we provide these files (in directory
-// _spheres_d/gcc-2-95-fix/) and include them here if appropriate:
+// implementation, that's why we (try to) include them here.
 #if defined(__GNUC__) && __GNUC__==2 && \
   __GNUC_MINOR__==95 && __GNUC_PATCHLEVEL__ <= 2
   #include <gcc-2-95-fix/bitset>
@@ -3728,7 +3727,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
   }
 
   template<class Traits>
-  const typename Min_sphere_of_spheres_d<Traits>::Coordinate&
+  const typename Min_sphere_of_spheres_d<Traits>::Result&
     Min_sphere_of_spheres_d<Traits>::radius() const {
     CGAL_MINIBALL_ASSERT(!is_empty());
     return ss.radius();
@@ -3742,7 +3741,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
 
   template<class Traits>
   const typename Min_sphere_of_spheres_d<Traits>::FT&
-    Min_sphere_of_spheres_d<Traits>::disc() const {
+    Min_sphere_of_spheres_d<Traits>::discriminant() const {
     return ss.disc();
   }
 
@@ -3882,7 +3881,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
 
   @<definition of class Pair@>
 
-  @<type-selector for type Coordinate@>
+  @<type-selector for type Result@>
 
   @<useful functors@>
   @<definition of class Support_set@>
@@ -3901,14 +3900,14 @@ namespace CGAL_MINIBALL_NAMESPACE {
   }
 
   template<class Traits>
-  const typename Support_set<Traits>::Coordinate&
+  const typename Support_set<Traits>::Result&
     Support_set<Traits>::radius() const {
     CGAL_MINIBALL_ASSERT(is_spanning_was_called);
     return sol[m];
   }
 
   template<class Traits>
-  const typename Support_set<Traits>::Coordinate
+  const typename Support_set<Traits>::Result
     *Support_set<Traits>::begin() const {
     CGAL_MINIBALL_ASSERT(is_spanning_was_called);
     return center;

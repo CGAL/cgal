@@ -104,8 +104,8 @@ int main(int,char **) {
        << endl;
   
   // for the fun of it, output the radius:
-  Minsphere::Coordinate radius = mb.radius();
-  cout << "Done.  (Radius: " << to_double(radius,mb.disc()) << ')' << endl;
+  Minsphere::Result radius = mb.radius();
+  cout << "(Radius: " << to_double(radius,mb.discriminant()) << ')' << endl;
 
   // check whether the computed ball is indeed the minsphere:
   bool valid = mb.is_valid();

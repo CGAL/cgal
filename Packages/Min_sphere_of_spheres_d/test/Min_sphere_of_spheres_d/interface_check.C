@@ -104,7 +104,7 @@ void checkRelError(const double exact,
 template<int D,typename Sphere,typename FT>
 void compare(const FT& tol,const Sphere& m1,const Sphere& m2,
 	     const CGAL::Tag_true is_exact) {
-  typedef typename Sphere::Coordinate Pair;
+  typedef typename Sphere::Result Pair;
   typedef typename Sphere::Coordinate_iterator CIt;
 
   // check radii:

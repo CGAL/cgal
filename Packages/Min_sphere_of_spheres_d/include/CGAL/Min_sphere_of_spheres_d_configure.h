@@ -124,8 +124,7 @@ namespace std {
 // Fixes for GCC series 2.95.  (This fix is necessary for 2.95.2 at
 // least.  But I guess it is needed for any version of the 2.95
 // series.)  Apparently, GCC doesn't come with a bitset and sstream
-// implementation.  This is why we provide these files (in directory
-// _spheres_d/gcc-2-95-fix/) and include them here if appropriate:
+// implementation, that's why we (try to) include them here.
 #if defined(__GNUC__) && __GNUC__==2 && \
   __GNUC_MINOR__==95 && __GNUC_PATCHLEVEL__ <= 2
   #include <gcc-2-95-fix/bitset>

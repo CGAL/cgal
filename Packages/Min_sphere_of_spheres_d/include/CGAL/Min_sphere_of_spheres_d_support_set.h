@@ -215,19 +215,19 @@ namespace CGAL_MINIBALL_NAMESPACE {
 
   template<typename FT>
   struct Selector {
-    typedef Pair<FT> Coordinate;
+    typedef Pair<FT> Result;
     typedef Tag_true Is_exact;
   };
   
   template<>
   struct Selector<float> {
-    typedef float Coordinate;
+    typedef float Result;
     typedef Tag_false Is_exact;
   };
   
   template<>
   struct Selector<double> {
-    typedef double Coordinate;
+    typedef double Result;
     typedef Tag_false Is_exact;
   };
 
@@ -277,7 +277,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
   class Support_set {
   private: // some short hands:
     typedef typename Traits::FT FT;
-    typedef typename Selector<FT>::Coordinate Coordinate;
+    typedef typename Selector<FT>::Result Result;
     typedef typename Selector<FT>::Is_exact Is_exact;
     typedef typename Traits::Use_square_roots Use_sqrt;
     typedef typename Traits::Sphere Sphere;
@@ -288,8 +288,8 @@ namespace CGAL_MINIBALL_NAMESPACE {
     inline Support_set(Traits& traits);
   
   public: // access:
-    inline const Coordinate& radius() const;
-    inline const Coordinate *begin() const;
+    inline const Result& radius() const;
+    inline const Result *begin() const;
     inline const FT& disc() const;
   
   public: // containment test:
@@ -359,7 +359,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
   private: // member fields:
     int m;                    // number of pushed balls
     const Sphere *b[D+1];     // pointers to pushed balls
-    Coordinate center[D+1];   // contains, when is_spanning() returns true,
+    Result center[D+1];       // contains, when is_spanning() returns true,
                               // the center of the miniball
     
     // variables of the device:
@@ -376,7 +376,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     FT psi[D+1];
     FT omega[D+1];
     FT tau[D][D+1];
-    Coordinate sol[D+2];
+    Result sol[D+2];
     FT discrim[D+2];
     FT maxradius[D+1];
   };
@@ -396,14 +396,14 @@ namespace CGAL_MINIBALL_NAMESPACE {
   }
 
   template<class Traits>
-  const typename Support_set<Traits>::Coordinate&
+  const typename Support_set<Traits>::Result&
     Support_set<Traits>::radius() const {
     CGAL_MINIBALL_ASSERT(is_spanning_was_called);
     return sol[m];
   }
 
   template<class Traits>
-  const typename Support_set<Traits>::Coordinate
+  const typename Support_set<Traits>::Result
     *Support_set<Traits>::begin() const {
     CGAL_MINIBALL_ASSERT(is_spanning_was_called);
     return center;
@@ -444,8 +444,8 @@ namespace CGAL_MINIBALL_NAMESPACE {
     FT sd = std::sqrt(discrim[m+1]);
     if (psi[m] > 0)
       sd = -sd;
-    Coordinate sols[2] = { (sd-psi[m])     / (FT(2)*chi[m]),
-                            FT(2)*omega[m] / (sd-psi[m]) };
+    Result sols[2] = { (sd-psi[m])     / (FT(2)*chi[m]),
+                        FT(2)*omega[m] / (sd-psi[m]) };
   
     // order the solutions (*):
     if (sols[1] < sols[0])
@@ -477,7 +477,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
   
     // calculate the two solutions:
     const FT tmp = FT(-1)/(FT(2)*chi[m]);
-    Coordinate sols[2] = {
+    Result sols[2] = {
       Pair<FT>(psi[m]*tmp, tmp),
       Pair<FT>(psi[m]*tmp,-tmp)
     };

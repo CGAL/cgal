@@ -70,7 +70,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     using namespace Min_sphere_of_spheres_d_impl;
   
     // remember old radius:
-    const Coordinate old = ss.radius();
+    const Result old = ss.radius();
   
     // reset basis to {D}:
     ss.reset();

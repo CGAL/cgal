@@ -1,2 +1,4 @@
 test_extensive
 web
+doc_tex/basic/makefile
+doc_tex/basic/wrapper.tex
