@@ -48,14 +48,13 @@ triangulation_2_toolbar_layers$(OBJ_EXT): triangulation_2_toolbar_layers.C \
 triangulation_2_toolbar_layers.moc: triangulation_2_toolbar_layers.h
 	$(QT_MOC) -o triangulation_2_toolbar_layers.moc triangulation_2_toolbar_layers.h
 
-Qt_widget_move_point$(OBJ_EXT): Qt_widget_move_point.C Qt_widget_move_point.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_move_point.C
+triangulation_2_edit_vertex$(OBJ_EXT): triangulation_2_edit_vertex.C triangulation_2_edit_vertex.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) triangulation_2_edit_vertex.C
 
-Qt_widget_move_point.moc: Qt_widget_move_point.h
-	$(QT_MOC) -o Qt_widget_move_point.moc Qt_widget_move_point.h
+triangulation_2_edit_vertex.moc: triangulation_2_edit_vertex.h
+	$(QT_MOC) -o triangulation_2_edit_vertex.moc triangulation_2_edit_vertex.h
 
-
-triangulation_2.moc: triangulation_2.C Qt_widget_move_point$(OBJ_EXT) \
+triangulation_2.moc: triangulation_2.C triangulation_2_edit_vertex$(OBJ_EXT) \
 			triangulation_2_toolbar$(OBJ_EXT) \
 			triangulation_2_toolbar_layers$(OBJ_EXT)
 	${QT_MOC} -o triangulation_2.moc triangulation_2.C
@@ -64,12 +63,12 @@ triangulation_2$(OBJ_EXT): triangulation_2.C triangulation_2.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) triangulation_2.C
 
 triangulation_2$(EXE_EXT): triangulation_2$(OBJ_EXT)
-	$(CGAL_CXX) $(EXE_OPT)triangulation_2 triangulation_2$(OBJ_EXT)  Qt_widget_move_point$(OBJ_EXT) triangulation_2_toolbar$(OBJ_EXT) triangulation_2_toolbar_layers$(OBJ_EXT) $(LDFLAGS)
+	$(CGAL_CXX) $(EXE_OPT)triangulation_2 triangulation_2$(OBJ_EXT)  triangulation_2_edit_vertex$(OBJ_EXT) triangulation_2_toolbar$(OBJ_EXT) triangulation_2_toolbar_layers$(OBJ_EXT) $(LDFLAGS)
 
 clean: triangulation_2.clean \
        triangulation_2_toolbar_layers.clean \
        triangulation_2_toolbar.clean \
-       Qt_widget_move_point.clean
+       triangulation_2_edit_vertex.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
