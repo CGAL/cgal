@@ -82,15 +82,15 @@ struct Interval_nt : public Interval_base
   IA operator+ (const IA &d) const
   {
     Protect_FPU_rounding<Protected> P;
-    return Interval_nt<Protected>(-CGAL_IA_FORCE_TO_DOUBLE((-_inf) - d._inf),
-	                           CGAL_IA_FORCE_TO_DOUBLE( _sup + d._sup));
+    return IA(-CGAL_IA_FORCE_TO_DOUBLE((-_inf) - d._inf),
+	       CGAL_IA_FORCE_TO_DOUBLE( _sup + d._sup));
   }
 
   IA operator- (const IA &d) const
   {
     Protect_FPU_rounding<Protected> P;
-    return Interval_nt<Protected>(-CGAL_IA_FORCE_TO_DOUBLE(d._sup - _inf),
-	                           CGAL_IA_FORCE_TO_DOUBLE(_sup - d._inf));
+    return IA(-CGAL_IA_FORCE_TO_DOUBLE(d._sup - _inf),
+	       CGAL_IA_FORCE_TO_DOUBLE(_sup - d._inf));
   }
 
   IA operator* (const IA &) const;
@@ -106,15 +106,13 @@ struct Interval_nt : public Interval_base
   // The (join, union, ||) operator.
   IA operator|| (const IA & d) const
   {
-    return Interval_nt<Protected>(std::min(_inf, d._inf),
-                                  std::max(_sup, d._sup));
+    return IA(std::min(_inf, d._inf), std::max(_sup, d._sup));
   }
 
   // The (meet, intersection, &&) operator.  Valid if intervals overlap.
   IA operator&& (const IA & d) const
   {
-    return Interval_nt<Protected>(std::max(_inf, d._inf),
-		                  std::min(_sup, d._sup));
+    return IA(std::max(_inf, d._inf), std::min(_sup, d._sup));
   }
 };
 
