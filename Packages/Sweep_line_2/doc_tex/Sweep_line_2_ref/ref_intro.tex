@@ -1,0 +1,32 @@
+\chapter{Sweep line}
+
+\subsection*{Introduction}
+%The construction of a planar map can be done using a sweep line
+%technique rather than iteratively, inserting one curve after another.
+%The sweep line algorithm performs better, but is done statically and
+%therefore requires the list of curves in advance.  Due to the sweep
+%line technique, inserting curves which are interior intersect,
+%overlap or non $x$-monotone is supported. 
+
+Given a collection $C$ of possibly intersecting 
+(not necessarily $x$-monotone) curves in the plane, 
+the \ccStyle{Sweep_line_2} class can calculate the intersection points between 
+the curves of $C$. It can also calculate the disjoint-interior subcurves
+induced by $C$, or rather return an indication whether any two curves in 
+$C$ intersect.
+
+In order to use the sweep line algorithm, an instance of the 
+\ccStyle{Sweep_line_2} class is to be constructed. 
+
+The sweep line algorithm is also used in 
+\ccc{Planar_map_with_intersections_2<Planar_map>}. 
+
+\begin{ccTexOnly}
+
+\subsection*{Concepts}
+\ccRefConceptPage{SweepLineTraits_2}
+
+\subsection*{Functions}
+
+\end{ccTexOnly}    
+
