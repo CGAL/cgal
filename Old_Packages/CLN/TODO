@@ -1,6 +1,5 @@
 TODO:
 ----
-- Make sure the documentation will make it into the main tree...
 - operator/(cl_I, cl_I) is not provided.
 - Factorize the common code of these files in a separate file ?
   (is_valid, etc... ?)

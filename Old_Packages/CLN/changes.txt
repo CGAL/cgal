@@ -1,5 +1,10 @@
 Changes done to the CLN package.
 
+Version 1.4 on 7 October 1999.
+- Doc updates about installation, and IOs.
+- The tests don't fail anymore when CLN is not installed.
+  (it's easier to spot the "n" in the test suite if it's not a false alarm)
+
 Version 1.3 on 19 August 1999.
 - Added src/CLN.C that initializes the printing base to "10".
   It's done by default, but a bug somewhere prevents this on Solaris...
