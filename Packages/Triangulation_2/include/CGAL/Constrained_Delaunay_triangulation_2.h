@@ -245,8 +245,7 @@ private:
  propagate_conflicts (const Point  &p,
 		      Face_handle fh, 
 		      int i,
-		      std::pair<OutputItFaces,OutputItBoundaryEdges>
-		      pit)  const {
+		      std::pair<OutputItFaces,OutputItBoundaryEdges>  pit)  const {
    Face_handle fn = fh->neighbor(i);
    OutputItFaces fit = pit.first;
    OutputItBoundaryEdges eit = pit.second;
@@ -260,6 +259,93 @@ private:
    pit = propagate_conflicts(p,fn,cw(j), pit);
    return pit;
  }
+
+
+public:
+ template <class OutputItFaces>
+ OutputItFaces
+ propagating_flip(List_edges & edges, 
+		  OutputItFaces out = Emptyset_iterator()) {
+  // makes the triangulation Delaunay by flipping 
+  // List edges contains an initial list of edges to be flipped
+  // Precondition : the output triangulation is Delaunay if the list 
+  // edges contains all edges of the input triangulation that need to be
+  // flipped (plus possibly others)
+  int i, ii, indf, indn;
+  Face_handle ni, f,ff;
+  Edge ei,eni; 
+  typename Ctr::Edge_set edge_set;
+  typename Ctr::Less_edge less_edge;
+  Edge e[4];
+  typename List_edges::iterator itedge=edges.begin();
+
+  // initialization of the set of edges to be flip
+  while (itedge != edges.end()) {
+    f=(*itedge).first;
+    i=(*itedge).second;
+    if (is_flipable(f,i)) {
+      eni=Edge(f->neighbor(i),f->mirror_index(i));
+      if (less_edge(*itedge,eni)) edge_set.insert(*itedge);
+      else edge_set.insert(eni);
+    }
+    ++itedge;
+  }
+
+  // flip edges and updates the set of edges to be flipped
+  while (!(edge_set.empty())) {
+    f=(*(edge_set.begin())).first;
+    indf=(*(edge_set.begin())).second;
+ 
+    // erase from edge_set the 4 edges of the wing of the edge to be
+    // flipped (edge_set.begin) , i.e. the edges of the faces f and
+    // f->neighbor(indf) that are distinct from the edge to be flipped
+
+    ni = f->neighbor(indf); 
+    indn=f->mirror_index(indf);
+    ei= Edge(f,indf);
+    edge_set.erase(ei);
+    e[0]= Edge(f,cw(indf));
+    e[1]= Edge(f,ccw(indf));
+    e[2]= Edge(ni,cw(indn));
+    e[3]= Edge(ni,ccw(indn));
+
+    for(i=0;i<4;i++) { 
+      ff=e[i].first;
+      ii=e[i].second;
+      eni=Edge(ff->neighbor(ii),ff->mirror_index(ii));
+      if (less_edge(e[i],eni)) {edge_set.erase(e[i]);}
+      else { edge_set.erase(eni);} 
+    } 
+
+    // here is the flip 
+    *out++ = f;
+    *out++ = f->neighbor(indf);
+    flip(f, indf); 
+    
+
+    //insert in edge_set the 4 edges of the wing of the edge that
+    //have been flipped 
+    e[0]= Edge(f,indf);
+    e[1]= Edge(f,cw(indf));
+    e[2]= Edge(ni,indn);
+    e[3]= Edge(ni,cw(indn));
+
+    for(i=0;i<4;i++) { 
+      ff=e[i].first;
+      ii=e[i].second;
+      if (is_flipable(ff,ii)) {
+	eni=Edge(ff->neighbor(ii),ff->mirror_index(ii));
+	if (less_edge(e[i],eni)) { 
+	  edge_set.insert(e[i]);}
+	else {
+	  edge_set.insert(eni);} 
+      }
+    } 
+  }
+  return out;
+ }
+
+
 };
 
 
@@ -349,7 +435,7 @@ template < class Gt, class Tds, class Itag >
 void 
 Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
 propagating_flip(Face_handle& f,int i)
-  // similar to the corresponding function in Delaunay_triangulation_2.h 
+// similar to the corresponding function in Delaunay_triangulation_2.h 
 { 
   if (!is_flipable(f,i)) return;
   Face_handle ni = f->neighbor(i); 
@@ -359,90 +445,13 @@ propagating_flip(Face_handle& f,int i)
   propagating_flip(ni,i); 
 } 
 
+ template < class Gt, class Tds, class Itag > 
+ void  
+ Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>:: 
+ propagating_flip(List_edges & edges) {
+    propagating_flip(edges,Emptyset_iterator());
+ }
 
-template < class Gt, class Tds, class Itag >
-void 
-Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
-propagating_flip(List_edges & edges)
-  // makes the triangulation Delaunay by flipping 
-  // List edges contains an initial list of edges to be flipped
-  // Precondition : the output triangulation is Delaunay if the list 
-  // edges contains all edges of the input triangulation that need to be
-  // flipped (plus possibly others)
-{
-  int i, ii, indf, indn;
-  Face_handle ni, f,ff;
-  Edge ei,eni; 
-  typename Ctr::Edge_set edge_set;
-  typename Ctr::Less_edge less_edge;
-  Edge e[4];
-  typename List_edges::iterator itedge=edges.begin();
-
-  // initialization of the set of edges to be flip
-  while (itedge != edges.end()) {
-    f=(*itedge).first;
-    i=(*itedge).second;
-    if (is_flipable(f,i)) {
-      eni=Edge(f->neighbor(i),f->mirror_index(i));
-      if (less_edge(*itedge,eni)) edge_set.insert(*itedge);
-      else edge_set.insert(eni);
-    }
-    ++itedge;
-  }
-
-  // flip edges and updates the set of edges to be flipped
-  while (!(edge_set.empty())) {
-    f=(*(edge_set.begin())).first;
-    indf=(*(edge_set.begin())).second;
- 
-    // erase from edge_set the 4 edges of the wing of the edge to be
-    // flipped (edge_set.begin) , i.e. the edges of the faces f and
-    // f->neighbor(indf) that are distinct from the edge to be flipped
-
-    ni = f->neighbor(indf); 
-    indn=f->mirror_index(indf);
-    ei= Edge(f,indf);
-    edge_set.erase(ei);
-    e[0]= Edge(f,cw(indf));
-    e[1]= Edge(f,ccw(indf));
-    e[2]= Edge(ni,cw(indn));
-    e[3]= Edge(ni,ccw(indn));
-
-    for(i=0;i<4;i++) { 
-      ff=e[i].first;
-      ii=e[i].second;
-      if (is_flipable(ff,ii)) {
-	eni=Edge(ff->neighbor(ii),ff->mirror_index(ii));
-	if (less_edge(e[i],eni)) { 
-	  edge_set.erase(e[i]);}
-	else {
-	  edge_set.erase(eni);} 
-      }
-    } 
-
-    // here is the flip 
-    flip(f, indf); 
-
-    //insert in edge_set the 4 edges of the wing of the edge that
-    //have been flipped 
-    e[0]= Edge(f,indf);
-    e[1]= Edge(f,cw(indf));
-    e[2]= Edge(ni,indn);
-    e[3]= Edge(ni,cw(indn));
-
-    for(i=0;i<4;i++) { 
-      ff=e[i].first;
-      ii=e[i].second;
-      if (is_flipable(ff,ii)) {
-	eni=Edge(ff->neighbor(ii),ff->mirror_index(ii));
-	if (less_edge(e[i],eni)) { 
-	  edge_set.insert(e[i]);}
-	else {
-	  edge_set.insert(eni);} 
-      }
-    } 
-  }  
-}
 
 template < class Gt, class Tds, class Itag >
 inline bool

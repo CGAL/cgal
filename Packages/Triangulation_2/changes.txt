@@ -1,6 +1,13 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+14 october 2004 Mariette
+- add an output iterator to get flipped facets
+  in propogating_flip(List_edges) of 
+  Constrained_Delaunay_triangulation_2
+- removed an unusefull test in propogating_flip(List_edges) of 
+  Constrained_Delaunay_triangulation_2
+
 11 october 2004 Mariette
 - fixed include og figure in html version of the doc
 
