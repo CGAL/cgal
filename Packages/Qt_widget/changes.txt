@@ -1,3 +1,8 @@
+1.2.45
+-------
+	patched Triangulation_2_constrained for Windows
+	clear_history() calls now configure_history_buttons()
+	
 1.2.44
 -------
 	patched couple files that were not tested under Linux for the previous modifs 1.2.43
