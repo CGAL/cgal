@@ -160,7 +160,6 @@ void faces_along_line(Triangulation &T)
 {
     Point p(0.2, 0.6), q(0.7, 0.4);
 
-    cin >> p >> q;
     Face_handle f = T.locate(p);
     Line_face_circulator lfc = T.line_walk(p, q, f),
                          done(lfc);
