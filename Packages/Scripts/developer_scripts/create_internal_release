@@ -25,7 +25,7 @@ Exactly one of the options -h or -r must be present.
     -l lockfile, default is releasedir/release_creation.lock
     -p packagesfile, default is releasedir/include_in_release
 
-   The version number is stored in include/CGAL/config.h.
+   The version number is stored in include/CGAL/version.h.
    The RELEASEDIR is the place where the new release will be created.
    The ALLPACKAGESDIR is the directory that contains the checked out packages
        from the CVS. Could be a taged version (<<current_submission>>) or some
@@ -197,33 +197,39 @@ sub install_packages() {
   unlink 'temppack.tar', 'description.txt', 'long_description.txt', 'changes.txt', 'submission_info', 'long_description.txt.old';
 }
 
+
 #-----------------------------------------------------------------------#
-# set the version information in the include/CGAL/config.h include file.#
+# set the version information in the include/CGAL/version.h             #
 #-----------------------------------------------------------------------#
 
-sub set_version_in_config()
+sub create_version_file()
 {
     chdir "$RELEASEDIR/$VERSION/include/CGAL" or die;
-    open(SOURCE_FILE, '<config.h') or die "Error opening config.h: $!";
     open(TEMPFILE, ">tempfile") or die;
+
+#if VERSION starts with CGAL-, we remove "CGAL-" from version   
+#the $newver variable will store the right version
     if ($result = $VERSION =~ /CGAL-(.*)/){
-	$newver = $1;
+        $newver = $1;
     } else {
-	$newver = $VERSION;
+        $newver = $VERSION;
     }
-    while ( <SOURCE_FILE> ) {
-	s|^\s*\#\s*define\s+CGAL_VERSION\b.*$|#define CGAL_VERSION $newver|;
-	s|^\s*\#\s*define\s*CGAL_VERSION_NR\b.*$|#define CGAL_VERSION_NR $VERSION_NR|;
-	print TEMPFILE $_;
-    }
-    close SOURCE_FILE || die "Error closing config.h_with_dir: $!";
+
+    print TEMPFILE << 'EOF';
+// This file is automatically created by create_internal_release.
+// Do not edit manually.
+
+#ifndef CGAL_VERSION_H
+#define CGAL_VERSION_H
+
+EOF
+    print TEMPFILE "#define CGAL_VERSION $newver\n";
+    print TEMPFILE "#define CGAL_VERSION_NR $VERSION_NR\n\n#endif\n";
+
     close TEMPFILE || die "Error closing temporary file: $!\n";
-#    rename($TEMPFILE, 'config.h' );
-    system('mv', "tempfile", 'config.h');
-#    || warn "Could not update file config.h";
+    system('mv', "tempfile", 'version.h');
     chdir '../..' or die;
 }
-
 
 sub make_src_makefiles(){
   chdir "$RELEASEDIR/$VERSION" or die;
@@ -921,7 +927,7 @@ install_packages();
 CreateConfigurationTestdir();
 CreateDemoTestDirs();
 CreateExampleTestDirs();
-set_version_in_config();
+create_version_file();
 make_testscripts();
 set_file_headers();
 make_src_makefiles();

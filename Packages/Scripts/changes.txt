@@ -1,3 +1,8 @@
+26 February 2004 Radu Ursu
+- replaced set_version_in_config with create_version_file 
+   in create_internal_release script.
+  the script creates a new version.h file with every new release 
+
 30/01/2004 Sylvain Pion
 - Remove cgal_submit
 
