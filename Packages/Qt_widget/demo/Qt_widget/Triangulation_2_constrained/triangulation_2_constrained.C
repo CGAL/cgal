@@ -169,7 +169,8 @@ private slots:
     widget->clear();
     widget->clear_history();
     ct.clear();
-    widget->set_window(-1.1, 1.1, -1.1, 1.1); // set the Visible Area to the Interval
+    widget->set_window(-1.1, 1.1, -1.1, 1.1); 
+	// set the Visible Area to the Interval
     widget->unlock();
     something_changed();
   }
@@ -222,7 +223,8 @@ private slots:
     ct.clear();
     widget->clear_history();
     widget->lock();
-    widget->set_window(-1.1, 1.1, -1.1, 1.1); // set the Visible Area to the Interval
+    widget->set_window(-1.1, 1.1, -1.1, 1.1); 
+	// set the Visible Area to the Interval
 
     // send resizeEvent only on show.
     widget->unlock();
