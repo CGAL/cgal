@@ -411,7 +411,7 @@ class Coplanar
     { return coplanar(p,q,r,s); }
 };
 
-class Coplanar_orientation 
+class Coplanar_orientation
 {
   public:
     typedef Orientation  result_type;
@@ -420,6 +420,17 @@ class Coplanar_orientation
     Orientation
     operator()(const P& p, const P& q, const P& r, const V& v) const
     { return coplanar_orientation(p,q,r,v); }
+};
+
+class Coplanar_side_of_oriented_circle
+{
+  public:
+    typedef Oriented_side  result_type;
+
+    template <class P>
+    Oriented_side
+    operator()(const P& p, const P& q, const P& r, const P& t) const
+    { return coplanar_side_of_oriented_circle(p,q,r,t); }
 };
 
 class Side_of_oriented_circle

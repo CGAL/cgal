@@ -387,6 +387,8 @@ compare_distance_to_point_3_object(const Point_3& p) const
 typedef CGALi::Collinear                               Collinear_3;
 typedef CGALi::Coplanar                                Coplanar_3 ;
 typedef CGALi::Coplanar_orientation                    Coplanar_orientation_3;
+typedef CGALi::Coplanar_side_of_oriented_circle
+                                           Coplanar_side_of_oriented_circle_3;
 typedef CGAL ::p_Orientation<Point_3>                  Orientation_3;
 typedef CGALi::Call_is_degenerate                      Is_degenerate_3;
 typedef CGALi::Call_has_on                             Has_on_3;
@@ -409,6 +411,8 @@ typedef CGALi::Side_of_bounded_sphere        Side_of_bounded_sphere_3;
 CGAL_Kernel_obj(Collinear_3, collinear_3_object)
 CGAL_Kernel_obj(Coplanar_3, coplanar_3_object)
 CGAL_Kernel_obj(Coplanar_orientation_3, coplanar_orientation_3_object)
+CGAL_Kernel_obj(Coplanar_side_of_oriented_circle_3,
+	        coplanar_side_of_oriented_circle_3_object)
 CGAL_Kernel_obj(Orientation_3, orientation_3_object)
 CGAL_Kernel_obj(Is_degenerate_3, is_degenerate_3_object)
 CGAL_Kernel_obj(Has_on_3, has_on_3_object)
