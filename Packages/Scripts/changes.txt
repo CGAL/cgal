@@ -1,4 +1,8 @@
 //--------------------------------
+// 1.9
++Adapted run_testsuite. It now checks if cgal_test returns succesfully.
+
+//--------------------------------
 // 1.8
 +Changed the script test/collect_cgal_testresults
  The tester name becomes part of the result file name.
