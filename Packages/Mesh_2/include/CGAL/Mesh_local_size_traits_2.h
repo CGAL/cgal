@@ -7,7 +7,7 @@ class Mesh_local_size_traits_2 : public Mesh_size_traits_2<K>
 {
 public:
   typedef Mesh_size_traits_2<K> Base;
-  typedef Base::Base PreviousBase;
+  typedef typename Base::Base PreviousBase;
   typedef typename K::FT FT;
   typedef typename K::Point_2 Point;
 
