@@ -917,7 +917,7 @@ inside_out( Tag_false) {
         Halfedge_handle d = c;
         do {
             CGAL_assertion( c != Halfedge_handle());
-            if ( h > c)
+            if ( &*h > &*c)
                 is_min = false;
             c = c->next();
         } while ( c != d && is_min);
