@@ -150,9 +150,9 @@ public:
  void init_visualization(const std::list<Point>& L)
  {
    less_rotate_ccw_counter = 0; less_rotate_ccw_counter = 0;   
-   less_rotate_ccw_it = CGAL::attach(CGAL::Predicate_leda_rat_less_rotate_ccw_2::ev_leda_rat_point, \
+   less_rotate_ccw_it = CGAL::attach(CGAL::Predicate_leda_rat_less_rotate_ccw_2<K>::ev_leda_rat_point, \
                                      *this, &geo_hull::less_rotate_ccw_occurence);
-   less_xy_it         = CGAL::attach(CGAL::Predicate_leda_rat_less_xy_2::ev_leda_rat_point, \
+   less_xy_it         = CGAL::attach(CGAL::Predicate_leda_rat_less_xy_2<K>::ev_leda_rat_point, \
                                      *this, &geo_hull::less_xy_occurence);				     
    w.clear();
    w.set_redraw(new_redraw);

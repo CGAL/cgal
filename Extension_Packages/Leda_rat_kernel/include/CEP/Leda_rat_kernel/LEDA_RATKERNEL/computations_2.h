@@ -61,9 +61,7 @@ public:
      CGAL::Quotient<leda_integer> result = compute(conv(l), CGAL::Quotient<leda_integer>(x.numerator(), x.denominator()) );
      return leda_rational(result.numerator(), result.denominator());  
   }
-
 };
-
 
 
 /*
@@ -537,37 +535,47 @@ public:
 
 */
 
+template<class K>
 class Compute_leda_rat_squared_length_2 {
+
+  typedef typename K::Segment_2   Segment_2;
+  typedef typename K::FT          FT;
+
 public:
   typedef Arity_tag< 1 > Arity;
-  typedef leda_rational           result_type;
+  typedef FT             result_type;
 
-  leda_rational operator()(const leda_rat_segment& s) const
+  FT operator()(const Segment_2& s) const
   {
     return s.sqr_length();  
   }
 };
 
+template<class K>
 class Compute_leda_rat_squared_radius_2 {
+
+  typedef typename K::Point_2     Point_2;
+  typedef typename K::FT          FT;
+
 public:
-  typedef leda_rational           result_type;
+  typedef FT             result_type;
   typedef Arity_tag< 1 > Arity;  
 
 #if defined(CGAL_COMPATIBLE_CIRCLES)
-  leda_rational operator()(const LEDA_NAMESPACE_NAME::cgal_rat_circle& C) const
+  FT operator()(const LEDA_NAMESPACE_NAME::cgal_rat_circle& C) const
   {
     return C.sqr_radius();
   }
 #else
   // use LEDA circles ... 
 
-  leda_rational operator()(const leda_rat_circle& C) const
+  FT operator()(const leda_rat_circle& C) const
   {
     return C.sqr_radius();
   }
 #endif  
   
-  leda_rational operator()(const leda_rat_point& p1, const leda_rat_point& p2, const leda_rat_point& p3) const
+  FT operator()(const Point_2& p1, const Point_2& p2, const Point_2& p3) const
   {
     leda_rat_circle C(p1,p2,p3);
     return C.sqr_radius();  
@@ -575,27 +583,32 @@ public:
   
   //this is not needed for the general kernel traits, but for the
   //Alpha shape traits ...
-  leda_rational operator()(const leda_rat_point& p1, const leda_rat_point& p2) const
+  FT operator()(const Point_2& p1, const Point_2& p2) const
   {
     // compute squared radius of circle with diameter (p1,p2)
-    leda_rat_point m = LEDA_NAMESPACE_NAME::midpoint(p1,p2);
+    Point_2 m = LEDA_NAMESPACE_NAME::midpoint(p1,p2);
     
     return p1.sqr_dist(m);
   }
 };
 
-
+template<class K>
 class Compute_leda_rat_area_2 {
-public:
-  typedef Arity_tag< 1 > Arity;
-  typedef leda_rational  result_type;
 
-  leda_rational operator()(const leda_rat_rectangle& r) const
+  typedef typename K::Triangle_2  Triangle_2;
+  typedef typename K::Iso_rectangle_2  Iso_rectangle_2;
+  typedef typename K::FT          FT;
+
+public:
+  typedef Arity_tag< 1 >          Arity;
+  typedef FT                      result_type;
+
+  FT operator()(const Iso_rectangle_2& r) const
   {
     return r.area();
   }
   
-  leda_rational operator()(const leda_rat_triangle& t) const
+  FT operator()(const Triangle_2& t) const
   {
     return t.area();  
   }  

@@ -137,9 +137,9 @@ public:
  
  void init_visualization(const std::list<Point>& L)
  {
-   left_turn_it       = CGAL::attach(CGAL::Predicate_leda_rat_leftturn_2::ev_leda_rat_point, \
+   left_turn_it       = CGAL::attach(CGAL::Predicate_leda_rat_leftturn_2<K>::ev_leda_rat_point, \
                                      *this, &geo_hull::left_turn_occurence);
-   less_xy_it         = CGAL::attach(CGAL::Predicate_leda_rat_less_xy_2::ev_leda_rat_point, \
+   less_xy_it         = CGAL::attach(CGAL::Predicate_leda_rat_less_xy_2<K>::ev_leda_rat_point, \
                                      *this, &geo_hull::less_xy_occurence);				     
    w.clear();
    w.set_redraw(new_redraw);

@@ -80,8 +80,8 @@ struct geo_triang : public geowin_update<std::list<Point>, std::list<Segment> >
  // --------------------------------------------------------------------------------------------------  
  void init_visualization(const std::list<Point>& L)
  {
-   orientation_it             = CGAL::attach(CGAL::Predicate_leda_rat_orientation_2::ev_leda_rat_point, \
-                                     *this, &geo_triang::orientation_occurence);	
+   orientation_it   = CGAL::attach(CGAL::Predicate_leda_rat_orientation_2<K>::ev_leda_rat_point, \
+                                   *this, &geo_triang::orientation_occurence);	
 				     				     			     
    w.clear();
    input_set = &L;

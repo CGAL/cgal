@@ -45,7 +45,7 @@ public:
 };
 
 // computations of 2d intersections ...
-// attention - we need the rigth conversion for special segments ...
+// attention - we need the correct conversion for special segments ...
 
 template<class HELP_KERNEL>
 class CGAL_intersect_leda_rat_2 {
@@ -54,6 +54,25 @@ public:
   typedef CGAL::Object       result_type;
   
   typedef typename HELP_KERNEL::Intersect_2  Intersect_2;
+  
+  // for segments (uses LEDA directly) ...
+  CGAL::Object operator()(const leda_rat_segment& s1, const leda_rat_segment& s2) const
+  {
+    CGAL::Object obj;    
+    leda_rat_segment result;    
+    bool bi = s1.intersection(s2, result);    
+    if (bi) {
+      //result.normalize();
+    
+      if (result.start() == result.end()) {
+        obj = CGAL::make_object(result.start()); // only a point ...
+      }
+      else obj = CGAL::make_object(result); // segment ...
+    }    
+    return obj;
+  }     
+  
+  // this one uses the CGAL kernel ...
   
   template<class T1, class T2>
   CGAL::Object operator()(const T1& obj1, const T2& obj2) const

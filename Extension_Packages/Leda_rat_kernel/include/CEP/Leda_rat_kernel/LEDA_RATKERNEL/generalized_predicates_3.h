@@ -11,22 +11,27 @@
 
 CGAL_BEGIN_NAMESPACE
 
-
+template<class K>
 class Predicate_leda_d3_rat_angle {
+
+  typedef typename K::Point_3      Point_3;
+  typedef typename K::Vector_3     Vector_3;
+  typedef typename K::FT           FT;
+
 public:
   typedef Arity_tag< 3 > Arity;
   typedef CGAL::Angle    result_type;
   
   // we just return the sign of the dot product ...
   
-  CGAL::Angle operator()(const leda_d3_rat_point& p1,const leda_d3_rat_point& p2,
-                         const leda_d3_rat_point& p3)
+  CGAL::Angle operator()(const Point_3& p1,const Point_3& p2,
+                         const Point_3& p3)
   {
     // get vectors from p2-p1 and from p2-p3
-    leda_rat_vector v1 = p1-p2;
-    leda_rat_vector v2 = p3-p2;
+    Vector_3 v1 = p1-p2;
+    Vector_3 v2 = p3-p2;
   
-    leda_rational s_prod = v1*v2;
+    FT s_prod = v1*v2;
   
     if (s_prod == 0) return CGAL::RIGHT;
     if (s_prod >  0) return CGAL::ACUTE;
@@ -34,37 +39,50 @@ public:
   }
 };
 
-
+template<class K>
 class Predicate_leda_d3_rat_equal {
+
+  typedef typename K::Point_3      Point_3;
+  typedef typename K::Vector_3     Vector_3;
+  typedef typename K::Line_3       Line_3;
+  typedef typename K::Direction_3  Direction_3;
+  typedef typename K::Plane_3      Plane_3; 
+  typedef typename K::Ray_3        Ray_3;
+  typedef typename K::Triangle_3   Triangle_3;
+  typedef typename K::Tetrahedron_3  Tetrahedron_3;
+  typedef typename K::Segment_3    Segment_3;     
+  typedef typename K::Iso_cuboid_3 Iso_cuboid_3;      
+  typedef typename K::FT           FT;
+
 public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
 
-  bool operator()(const leda_d3_rat_point& p1, const leda_d3_rat_point& p2) const
+  bool operator()(const Point_3& p1, const Point_3& p2) const
   {
     return ( p1 == p2 );
   }
 
-  bool operator()(const leda_rat_vector& v1, const leda_rat_vector& v2) const
+  bool operator()(const Vector_3& v1, const Vector_3& v2) const
   {
     return ( v1 == v2 );
   }
   
-  bool operator()(LEDA_NAMESPACE_NAME::rat_direction& d1, LEDA_NAMESPACE_NAME::rat_direction& d2) const
+  bool operator()(const Direction_3& d1, const Direction_3& d2) const
   {
-    leda_rat_vector v1 = d1.get_vector();
-    leda_rat_vector v2 = d2.get_vector();
+    Vector_3 v1 = d1.get_vector();
+    Vector_3 v2 = d2.get_vector();
     
     CGAL_precondition( (v1.dim()==3) && (v2.dim()==3));
     
-    leda_rational xc1 = v1[0];
-    leda_rational xc2 = v2[0];
-    leda_rational yc1 = v1[1];
-    leda_rational yc2 = v2[1];
-    leda_rational zc1 = v1[2];
-    leda_rational zc2 = v2[2];    
+    FT xc1 = v1[0];
+    FT xc2 = v2[0];
+    FT yc1 = v1[1];
+    FT yc2 = v2[1];
+    FT zc1 = v1[2];
+    FT zc2 = v2[2];    
     
-    leda_rational q1,q2,q3;
+    FT q1,q2,q3;
     
     // equal directions ???    
     if (xc2==0) {
@@ -89,40 +107,40 @@ public:
     return false;
   }
   
-  bool operator()(const leda_d3_rat_line& l1, const leda_d3_rat_line& l2) const
+  bool operator()(const Line_3& l1, const Line_3& l2) const
   {
     if (! (l1 == l2)) return false;
     
     // same direction ???
-    leda_rat_vector v1 = l1.to_vector();
-    leda_rat_vector v2 = l2.to_vector();
+    Vector_3 v1 = l1.to_vector();
+    Vector_3 v2 = l2.to_vector();
     
     // compare directions ...
-    LEDA_NAMESPACE_NAME::rat_direction d1(v1);
-    LEDA_NAMESPACE_NAME::rat_direction d2(v2);
+    Direction_3 d1(v1);
+    Direction_3 d2(v2);
     return this->operator()(d1,d2);
   }    
   
-  bool operator()(const leda_d3_rat_plane& p1, const leda_d3_rat_plane& p2) const
+  bool operator()(const Plane_3& p1, const Plane_3& p2) const
   {
     return (p1 == p2);
   }
   
-  bool operator()(const leda_d3_rat_ray& r1, const leda_d3_rat_ray& r2) const
+  bool operator()(const Ray_3& r1, const Ray_3& r2) const
   {
     if (r1.point1() != r2.point1()) return false;
     
     // compare directions ...
-    leda_rat_vector v1 = r1.to_vector();
-    leda_rat_vector v2 = r2.to_vector();
+    Vector_3 v1 = r1.to_vector();
+    Vector_3 v2 = r2.to_vector();
     
     // compare directions ...
-    LEDA_NAMESPACE_NAME::rat_direction d1(v1);
-    LEDA_NAMESPACE_NAME::rat_direction d2(v2);
+    Direction_3 d1(v1);
+    Direction_3 d2(v2);
     return this->operator()(d1,d2);    
   }  
 
-  bool operator()(const leda_d3_rat_segment& s1, const leda_d3_rat_segment& s2) const
+  bool operator()(const Segment_3& s1, const Segment_3& s2) const
   {
     return (s1 == s2);
   }  
@@ -137,34 +155,34 @@ public:
   bool operator()(const leda_d3_rat_sphere& s1, const leda_d3_rat_sphere& s2) const
   {
     if (s1.is_degenerate() && s2.is_degenerate()) return true;
-    leda_d3_rat_point a1 = s1.point1();
-    leda_d3_rat_point a2 = s1.point2();
-    leda_d3_rat_point a3 = s1.point3();
-    leda_d3_rat_point a4 = s1.point4();
+    Point_3 a1 = s1.point1();
+    Point_3 a2 = s1.point2();
+    Point_3 a3 = s1.point3();
+    Point_3 a4 = s1.point4();
     
     if (s2.contains(a1) && s2.contains(a2) && s2.contains(a3) && s2.contains(a4)) return true;
     return false;
   }   
 #endif
 
-  bool operator()(const leda_d3_rat_triangle& t1, const leda_d3_rat_triangle& t2) const
+  bool operator()(const Triangle_3& t1, const Triangle_3& t2) const
   {
     return (t1 == t2);
   }  
   
-  bool operator()(const LEDA_NAMESPACE_NAME::d3_rat_simplex& s1,
-                  const LEDA_NAMESPACE_NAME::d3_rat_simplex& s2) const
+  bool operator()(const Tetrahedron_3& s1,
+                  const Tetrahedron_3& s2) const
   {
     return (s1 == s2);
   }   
   
-  bool operator()(const LEDA_NAMESPACE_NAME::d3_rat_iso_cuboid& ic1,
-                  const LEDA_NAMESPACE_NAME::d3_rat_iso_cuboid& ic2) const
+  bool operator()(const Iso_cuboid_3& ic1,
+                  const Iso_cuboid_3& ic2) const
   {
-     leda_d3_rat_point lower_left1 = ic1.vertex(0);
-     leda_d3_rat_point lower_left2 = ic2.vertex(0);    
-     leda_d3_rat_point upper_right1 = ic1.vertex(7);
-     leda_d3_rat_point upper_right2 = ic2.vertex(7);  
+     Point_3 lower_left1 = ic1.vertex(0);
+     Point_3 lower_left2 = ic2.vertex(0);    
+     Point_3 upper_right1 = ic1.vertex(7);
+     Point_3 upper_right2 = ic2.vertex(7);  
      
      if (lower_left1==lower_left2 && upper_right1==upper_right2) return true;
      return false;       
@@ -172,224 +190,294 @@ public:
    
 };
 
+template<class K>
 class Predicate_leda_d3_rat_equal_x {
+
+  typedef typename K::Point_3      Point_3;
+
 public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
 
-   bool operator()(const leda_d3_rat_point& p1, const leda_d3_rat_point& p2) const
+   bool operator()(const Point_3& p1, const Point_3& p2) const
    {
      if (LEDA_NAMESPACE_NAME::identical(p1,p2)) return true;
-     if (leda_d3_rat_point::cmp_x(p1,p2) == 0) return true;
+     if (Point_3::cmp_x(p1,p2) == 0) return true;
      return false;
    }
 };
 
+template<class K>
 class Predicate_leda_d3_rat_equal_y {
+
+  typedef typename K::Point_3      Point_3;
+
 public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
 
-   bool operator()(const leda_d3_rat_point& p1, const leda_d3_rat_point& p2) const
+   bool operator()(const Point_3& p1, const Point_3& p2) const
    {
      if (LEDA_NAMESPACE_NAME::identical(p1,p2)) return true;   
-     if (leda_d3_rat_point::cmp_y(p1,p2) == 0) return true;
+     if (Point_3::cmp_y(p1,p2) == 0) return true;
      return false;
    }
 };
 
+template<class K>
 class Predicate_leda_d3_rat_equal_z {
+
+  typedef typename K::Point_3      Point_3;
+
 public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
 
-   bool operator()(const leda_d3_rat_point& p1, const leda_d3_rat_point& p2) const
+   bool operator()(const Point_3& p1, const Point_3& p2) const
    {
      if (LEDA_NAMESPACE_NAME::identical(p1,p2)) return true;   
-     if (leda_d3_rat_point::cmp_z(p1,p2) == 0) return true;
+     if (Point_3::cmp_z(p1,p2) == 0) return true;
      return false;
    }
 };
 
+template<class K>
 class Predicate_leda_d3_rat_equal_xy {
+
+  typedef typename K::Point_3      Point_3;
+
 public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
 
-   bool operator()(const leda_d3_rat_point& p1, const leda_d3_rat_point& p2) const
+   bool operator()(const Point_3& p1, const Point_3& p2) const
    {
      if (LEDA_NAMESPACE_NAME::identical(p1,p2)) return true;   
-     if (leda_d3_rat_point::cmp_x(p1,p2) == 0 && leda_d3_rat_point::cmp_y(p1,p2) == 0) return true;
+     if (Point_3::cmp_x(p1,p2) == 0 && Point_3::cmp_y(p1,p2) == 0) return true;
      return false;
    }
 };
 
+template<class K>
 class Predicate_leda_d3_rat_equal_xyz {
+
+  typedef typename K::Point_3      Point_3;
+
 public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
 
-   bool operator()(const leda_d3_rat_point& p1, const leda_d3_rat_point& p2) const
+   bool operator()(const Point_3& p1, const Point_3& p2) const
    {
      if (LEDA_NAMESPACE_NAME::identical(p1,p2)) return true;   
-     if (leda_d3_rat_point::cmp_xyz(p1,p2) == 0) return true;
+     if (Point_3::cmp_xyz(p1,p2) == 0) return true;
      return false;
    }
 };
 
+template<class K>
 class Predicate_leda_d3_rat_less_x {
+
+  typedef typename K::Point_3      Point_3;
+
 public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
 
-   bool operator()(const leda_d3_rat_point& p1, const leda_d3_rat_point& p2) const
+   bool operator()(const Point_3& p1, const Point_3& p2) const
    {
-     if (leda_d3_rat_point::cmp_x(p1,p2) == -1) return true;
+     if (Point_3::cmp_x(p1,p2) == -1) return true;
      return false;
    }
 };
 
+template<class K>
 class Predicate_leda_d3_rat_less_y {
+
+  typedef typename K::Point_3      Point_3;
+
 public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
 
-   bool operator()(const leda_d3_rat_point& p1, const leda_d3_rat_point& p2) const
+   bool operator()(const Point_3& p1, const Point_3& p2) const
    {
-     if (leda_d3_rat_point::cmp_y(p1,p2) == -1) return true;
+     if (Point_3::cmp_y(p1,p2) == -1) return true;
      return false;
    }
 };
 
+template<class K>
 class Predicate_leda_d3_rat_less_z {
+
+  typedef typename K::Point_3      Point_3;
+
 public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
 
-   bool operator()(const leda_d3_rat_point& p1, const leda_d3_rat_point& p2) const
+   bool operator()(const Point_3& p1, const Point_3& p2) const
    {
-     if (leda_d3_rat_point::cmp_z(p1,p2) == -1) return true;
+     if (Point_3::cmp_z(p1,p2) == -1) return true;
      return false;
    }
 };
 
+template<class K>
 class Predicate_leda_d3_rat_less_xy {
+
+  typedef typename K::Point_3      Point_3;
+
 public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
 
-   bool operator()(const leda_d3_rat_point& p1, const leda_d3_rat_point& p2) const
+   bool operator()(const Point_3& p1, const Point_3& p2) const
    {
-     int cmx = leda_d3_rat_point::cmp_x(p1,p2);
+     int cmx = Point_3::cmp_x(p1,p2);
      
      if (cmx == -1) return true;
      else {
-      if (cmx==0 && leda_d3_rat_point::cmp_y(p1,p2) == -1) return true;
+      if (cmx==0 && Point_3::cmp_y(p1,p2) == -1) return true;
      }
      return false;
    }
 };
 
+template<class K>
 class Predicate_leda_d3_rat_less_xyz {
+
+  typedef typename K::Point_3      Point_3;
+
 public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
 
-   bool operator()(const leda_d3_rat_point& p1, const leda_d3_rat_point& p2) const
+   bool operator()(const Point_3& p1, const Point_3& p2) const
    {
-     if (leda_d3_rat_point::cmp_xyz(p1,p2) == -1) return true;
+     if (Point_3::cmp_xyz(p1,p2) == -1) return true;
      return false;   
    }
 };
 
+template<class K>
 class Predicate_leda_d3_rat_compare_x {
+
+  typedef typename K::Point_3      Point_3;
+
 public:
   typedef Arity_tag< 2 > Arity;
   typedef Comparison_result       result_type;
 
-  Comparison_result operator()(const leda_d3_rat_point& p1, const leda_d3_rat_point& p2) const
+  Comparison_result operator()(const Point_3& p1, const Point_3& p2) const
   {
-     return ( (Comparison_result) leda_d3_rat_point::cmp_x(p1,p2));     
+     return ( (Comparison_result) Point_3::cmp_x(p1,p2));     
   }
 };
 
+template<class K>
 class Predicate_leda_d3_rat_compare_y {
+
+  typedef typename K::Point_3      Point_3;
+
 public:
   typedef Arity_tag< 2 > Arity;
   typedef Comparison_result       result_type;
 
-  Comparison_result operator()(const leda_d3_rat_point& p1, const leda_d3_rat_point& p2) const
+  Comparison_result operator()(const Point_3& p1, const Point_3& p2) const
   {
-     return ( (Comparison_result) leda_d3_rat_point::cmp_y(p1,p2));     
+     return ( (Comparison_result) Point_3::cmp_y(p1,p2));     
   }
 };
 
+template<class K>
 class Predicate_leda_d3_rat_compare_z {
+
+  typedef typename K::Point_3      Point_3;
+
 public:
   typedef Arity_tag< 2 > Arity;
   typedef Comparison_result       result_type;
 
-  Comparison_result operator()(const leda_d3_rat_point& p1, const leda_d3_rat_point& p2) const
+  Comparison_result operator()(const Point_3& p1, const Point_3& p2) const
   {
-     return ( (Comparison_result) leda_d3_rat_point::cmp_z(p1,p2));     
+     return ( (Comparison_result) Point_3::cmp_z(p1,p2));     
   }
 };
 
+template<class K>
 class Predicate_leda_d3_rat_compare_xy {
+
+  typedef typename K::Point_3      Point_3;
+
 public:
   typedef Arity_tag< 2 > Arity;
   typedef Comparison_result       result_type;
 
-  Comparison_result operator()(const leda_d3_rat_point& p1, const leda_d3_rat_point& p2) const
+  Comparison_result operator()(const Point_3& p1, const Point_3& p2) const
   {
-     int cmx = leda_d3_rat_point::cmp_x(p1,p2);    
+     int cmx = Point_3::cmp_x(p1,p2);    
      if (cmx != 0) return  ((Comparison_result) cmx);
-     int cmy = leda_d3_rat_point::cmp_y(p1,p2);
+     int cmy = Point_3::cmp_y(p1,p2);
           
      return ( (Comparison_result) cmy);     
   }
 };
 
+template<class K>
 class Predicate_leda_d3_rat_compare_xyz {
+
+  typedef typename K::Point_3      Point_3;
+
 public:
   typedef Arity_tag< 2 > Arity;
   typedef Comparison_result       result_type;
 
-  Comparison_result operator()(const leda_d3_rat_point& p1, const leda_d3_rat_point& p2) const
+  Comparison_result operator()(const Point_3& p1, const Point_3& p2) const
   {
-     return ( (Comparison_result) leda_d3_rat_point::cmp_xyz(p1,p2));     
+     return ( (Comparison_result) Point_3::cmp_xyz(p1,p2));     
   }
 };
 
 
 // filter this later ...
+
+template<class K>
 class Predicate_leda_d3_rat_less_signed_distance_to_plane {
+
+  typedef typename K::Point_3      Point_3; 
+  typedef typename K::Plane_3      Plane_3; 
+  typedef typename K::FT           FT;  
+
 public:
   typedef Arity_tag< 3 > Arity;
   typedef bool       result_type;
 
-  bool operator()(const leda_d3_rat_plane& pl,
-                  const leda_d3_rat_point& p1, 
-	          const leda_d3_rat_point& p2) const
+  bool operator()(const Plane_3& pl,
+                  const Point_3& p1, 
+	          const Point_3& p2) const
   {
      int ori1 = pl.side_of(p1);
      int ori2 = pl.side_of(p2);
   
-     leda_rational d1 = (pl.sqr_dist(p1))*ori1;
-     leda_rational d2 = (pl.sqr_dist(p2))*ori2;     
+     FT d1 = (pl.sqr_dist(p1))*ori1;
+     FT d2 = (pl.sqr_dist(p2))*ori2;     
      return (d1 < d2);
   }   
 };
 
 
-
+template<class K>
 class Predicate_leda_d3_rat_less_distance_to_point {
+
+  typedef typename K::Point_3      Point_3;
+
 public:
   typedef Arity_tag< 3 > Arity;
   typedef bool       result_type;
 
-   bool operator()(const leda_d3_rat_point& p1, const leda_d3_rat_point& p2,
-                   const leda_d3_rat_point& p3) const
+   bool operator()(const Point_3& p1, const Point_3& p2,
+                   const Point_3& p3) const
    {
      int res = LEDA_NAMESPACE_NAME::cmp_distances(p1,p2,p1,p3);
      
@@ -398,63 +486,81 @@ public:
    }
 };
 
+template<class K>
 class Predicate_leda_d3_rat_compare_distance {
+
+  typedef typename K::Point_3      Point_3;
+
 public:
   typedef Arity_tag< 3 > Arity;
   typedef Comparison_result       result_type;
 
-  Comparison_result operator()(const leda_d3_rat_point& p1, const leda_d3_rat_point& p2,
-                               const leda_d3_rat_point& p3) const
+  Comparison_result operator()(const Point_3& p1, const Point_3& p2,
+                               const Point_3& p3) const
   {
      return ( (Comparison_result) LEDA_NAMESPACE_NAME::cmp_distances(p1,p2,p1,p3));     
   }  
 };
 
-
+template<class K>
 class Predicate_leda_d3_rat_collinear {
+
+  typedef typename K::Point_3      Point_3;
+
 public:
   typedef Arity_tag< 3 > Arity;
   typedef bool       result_type;
 
-   bool operator()(const leda_d3_rat_point& p1, const leda_d3_rat_point& p2,
-                   const leda_d3_rat_point& p3) const
+   bool operator()(const Point_3& p1, const Point_3& p2,
+                   const Point_3& p3) const
    {
       return LEDA_NAMESPACE_NAME::collinear(p1,p2,p3);
    }
 };
 
+template<class K>
 class Predicate_leda_d3_rat_coplanar {
+
+  typedef typename K::Point_3      Point_3;
+
 public:
   typedef Arity_tag< 4 > Arity;
   typedef bool       result_type;
 
-   bool operator()(const leda_d3_rat_point& p1, const leda_d3_rat_point& p2,
-                   const leda_d3_rat_point& p3, const leda_d3_rat_point& p4) const
+   bool operator()(const Point_3& p1, const Point_3& p2,
+                   const Point_3& p3, const Point_3& p4) const
    {
       return LEDA_NAMESPACE_NAME::coplanar(p1,p2,p3,p4);   
    }
 };
 
-
+template<class K>
 class Predicate_leda_d3_rat_orientation {
+
+  typedef typename K::Point_3      Point_3;
+
 public:
   typedef Arity_tag< 4 > Arity;
   typedef Orientation       result_type;
 
-  Orientation operator()(const leda_d3_rat_point& p1, const leda_d3_rat_point& p2, 
-                         const leda_d3_rat_point& p3, const leda_d3_rat_point& p4) const
+  Orientation operator()(const Point_3& p1, const Point_3& p2, 
+                         const Point_3& p3, const Point_3& p4) const
   {
      return (Orientation) LEDA_NAMESPACE_NAME::orientation(p1,p2,p3,p4);
   }
 };
 
+template<class K>
 class Predicate_leda_d3_rat_coplanar_orientation {
+
+  typedef typename K::Point_3      Point_3;
+
 public:
   typedef Orientation       result_type;
   typedef Arity_tag< 3 >          Arity;
 
-  Orientation operator()(const leda_d3_rat_point& p1, const leda_d3_rat_point& p2, 
-                         const leda_d3_rat_point& p3) const
+  Orientation operator()(const Point_3& p1, const Point_3& p2, 
+                         const Point_3& p3) const
   {
      if (LEDA_NAMESPACE_NAME::collinear(p1,p2,p3)) return CGAL::COLLINEAR;
      
@@ -469,8 +575,8 @@ public:
      return (Orientation) (LEDA_NAMESPACE_NAME::orientation_yz(p1,p2,p3));       
   }
 
-  Orientation operator()(const leda_d3_rat_point& p1, const leda_d3_rat_point& p2, 
-                         const leda_d3_rat_point& p3, const leda_d3_rat_point& p4) const
+  Orientation operator()(const Point_3& p1, const Point_3& p2, 
+                         const Point_3& p3, const Point_3& p4) const
   {
      // Preconditions:
      CGAL_precondition(! LEDA_NAMESPACE_NAME::collinear(p1,p2,p3));
@@ -485,7 +591,7 @@ public:
 
     // we have to project onto another plane :
 
-    if ((leda_d3_rat_point::cmp_x(p1,p2) != 0) || (leda_d3_rat_point::cmp_x(p1,p3) != 0))
+    if ((Point_3::cmp_x(p1,p2) != 0) || (Point_3::cmp_x(p1,p3) != 0))
     {
       // projection into (x,z)-plane is ok
       return Orientation ( LEDA_NAMESPACE_NAME::orientation_xz(p1,p2,p3) * 
@@ -499,23 +605,27 @@ public:
   }
 };
 
+template<class K>
 class Predicate_leda_d3_rat_coplanar_side_of_bounded_circle {
+
+  typedef typename K::Point_3      Point_3;
+
 public:
   typedef Arity_tag< 4 > Arity;
   typedef Bounded_side       result_type;
 
-  Bounded_side operator()(const leda_d3_rat_point& p1, const leda_d3_rat_point& p2, 
-                          const leda_d3_rat_point& p3, const leda_d3_rat_point& test) const
+  Bounded_side operator()(const Point_3& p1, const Point_3& p2, 
+                          const Point_3& p3, const Point_3& test) const
   {
     // Preconditions:
     CGAL_precondition(! LEDA_NAMESPACE_NAME::collinear(p1,p2,p3));
     CGAL_precondition(LEDA_NAMESPACE_NAME::coplanar(p1,p2,p3,test));
 
-    leda_d3_rat_point t1(0,0,0), t2(1,0,0), t3(0,1,0), t4(0,0,1);     
+    Point_3 t1(0,0,0), t2(1,0,0), t3(0,1,0), t4(0,0,1);     
     
     // find a 4. point for the sphere ...
     int ori;
-    leda_d3_rat_point p4 = ((ori = LEDA_NAMESPACE_NAME::orientation(p1,p2,p3,t1)) != 0) ? t1:
+    Point_3 p4 = ((ori = LEDA_NAMESPACE_NAME::orientation(p1,p2,p3,t1)) != 0) ? t1:
               ((ori = LEDA_NAMESPACE_NAME::orientation(p1,p2,p3,t2)) != 0) ? t2:
               ((ori = LEDA_NAMESPACE_NAME::orientation(p1,p2,p3,t3)) != 0) ? t3: 
               ((ori = LEDA_NAMESPACE_NAME::orientation(p1,p2,p3,t4)) != 0) ? t4: t4;
@@ -528,28 +638,35 @@ public:
   }
 };
 
+template<class K>
 class Predicate_leda_d3_rat_side_of_oriented_sphere {
-public:
-  typedef Arity_tag< 5 > Arity;
-  typedef Oriented_side       result_type;
 
-  Oriented_side operator()(const leda_d3_rat_point& p1, const leda_d3_rat_point& p2, 
-                           const leda_d3_rat_point& p3, const leda_d3_rat_point& p4,
-			   const leda_d3_rat_point& test) const
+  typedef typename K::Point_3      Point_3;
+
+public:
+  typedef Arity_tag< 5 >  Arity;
+  typedef Oriented_side   result_type;
+
+  Oriented_side operator()(const Point_3& p1, const Point_3& p2, 
+                           const Point_3& p3, const Point_3& p4,
+			   const Point_3& test) const
   {
      return (Oriented_side) LEDA_NAMESPACE_NAME::side_of_sphere(p1,p2,p3,p4,test);
   }
 };
 
-
+template<class K>
 class Predicate_leda_d3_rat_side_of_bounded_sphere {
+
+  typedef typename K::Point_3      Point_3;
+
 public:
   typedef Bounded_side       result_type;
   typedef Arity_tag< 5 >     Arity;
 
-  Bounded_side operator()(const leda_d3_rat_point& p1, const leda_d3_rat_point& p2, 
-                          const leda_d3_rat_point& p3, const leda_d3_rat_point& p4,
-			  const leda_d3_rat_point& test) const
+  Bounded_side operator()(const Point_3& p1, const Point_3& p2, 
+                          const Point_3& p3, const Point_3& p4,
+			  const Point_3& test) const
   {
      int res = LEDA_NAMESPACE_NAME::region_of_sphere(p1,p2,p3,p4,test);
      if (res==0) return CGAL::ON_BOUNDARY;
@@ -558,22 +675,22 @@ public:
   }
 
   // center of sphere must be in plane through p1,p2,p3 ...
-  Bounded_side operator()(const leda_d3_rat_point& p1, const leda_d3_rat_point& p2, 
-                          const leda_d3_rat_point& p3, const leda_d3_rat_point& test) const
+  Bounded_side operator()(const Point_3& p1, const Point_3& p2, 
+                          const Point_3& p3, const Point_3& test) const
   {
-     leda_d3_rat_point m = leda_support::construct_circle_center_3(p1,p2,p3);
+     Point_3 m = leda_support::construct_circle_center_3(p1,p2,p3);
      int res = LEDA_NAMESPACE_NAME::cmp_distances(m,p1,m,test);
      if (res==0) return CGAL::ON_BOUNDARY;
      if (res==-1) return CGAL::ON_UNBOUNDED_SIDE;
      return CGAL::ON_BOUNDED_SIDE;     
   }
   
-  Bounded_side operator()(const leda_d3_rat_point& p1, const leda_d3_rat_point& p2, 
-                          const leda_d3_rat_point& test) const
+  Bounded_side operator()(const Point_3& p1, const Point_3& p2, 
+                          const Point_3& test) const
   {
-     // compute midpoint of sphere with diamater p1p2; then compare distances
+     // compute midpoint of sphere with diameter p1p2; then compare distances
      // we could filter this later ...
-     leda_d3_rat_point m = LEDA_NAMESPACE_NAME::midpoint(p1,p2);
+     Point_3 m = LEDA_NAMESPACE_NAME::midpoint(p1,p2);
      int res = LEDA_NAMESPACE_NAME::cmp_distances(m,p1,m,test);
      if (res==0) return CGAL::ON_BOUNDARY;
      if (res==-1) return CGAL::ON_UNBOUNDED_SIDE;
@@ -582,38 +699,48 @@ public:
 
 };
 
+template<class K>
 class Predicate_leda_d3_rat_is_degenerate {
+
+  typedef typename K::Line_3       Line_3;
+  typedef typename K::Plane_3      Plane_3; 
+  typedef typename K::Ray_3        Ray_3;
+  typedef typename K::Triangle_3   Triangle_3;
+  typedef typename K::Tetrahedron_3  Tetrahedron_3;
+  typedef typename K::Segment_3    Segment_3;     
+  typedef typename K::Iso_cuboid_3 Iso_cuboid_3;  
+
 public:
   typedef Arity_tag< 1 > Arity;
   typedef bool       result_type;
 
-  bool operator()(const LEDA_NAMESPACE_NAME::d3_rat_iso_cuboid& c) const
+  bool operator()(const Iso_cuboid_3& c) const
   {
     // are the vertices collinear ???
     return LEDA_NAMESPACE_NAME::collinear(c.vertex(0),c.vertex(5),c.vertex(7));
   }
   
-  bool operator()(const leda_d3_rat_line& l) const
+  bool operator()(const Line_3& l) const
   {
     return (l.point1() == l.point2());
   }
   
-  bool operator()(const leda_d3_rat_plane& pl) const
+  bool operator()(const Plane_3& pl) const
   {
 #if (__LEDA__ >= 440)      
     return ((pl.A() == 0) && (pl.B() == 0) && (pl.C() == 0));
 #else
-    leda_rat_vector n = pl.normal();
+    Vector_3 n = pl.normal();
     return ((n.X() == 0) && (n.Y() == 0) && (n.Z() == 0));
 #endif    
   }
   
-  bool operator()(const leda_d3_rat_ray& r) const
+  bool operator()(const Ray_3& r) const
   {
     return (r.point1() == r.point2());
   }    
   
-  bool operator()(const leda_d3_rat_segment& seg) const
+  bool operator()(const Segment_3& seg) const
   {
     return (seg.source() == seg.target());
   }
@@ -630,48 +757,57 @@ public:
   }
 #endif  
   
-  bool operator()(const LEDA_NAMESPACE_NAME::d3_rat_simplex& s) const
+  bool operator()(const Tetrahedron_3& s) const
   {
     return s.is_degenerate();
   }
   
-  bool operator()(const leda_d3_rat_triangle& t) const
+  bool operator()(const Triangle_3& t) const
   {
     return t.is_degenerate();  
   }            
 };
 
+template<class K>
 class Predicate_leda_d3_rat_has_on {
+
+  typedef typename K::Point_3      Point_3;
+  typedef typename K::Line_3       Line_3;
+  typedef typename K::Plane_3      Plane_3; 
+  typedef typename K::Ray_3        Ray_3;
+  typedef typename K::Triangle_3   Triangle_3;
+  typedef typename K::Segment_3    Segment_3;     
+
 public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
 
-   bool operator()(const leda_d3_rat_line& l, const leda_d3_rat_point& p) const
+   bool operator()(const Line_3& l, const Point_3& p) const
    {
      return l.contains(p);
    }
    
-   bool operator()(const leda_d3_rat_ray& r, const leda_d3_rat_point& p) const
+   bool operator()(const Ray_3& r, const Point_3& p) const
    {
      return r.contains(p);
    }   
    
-   bool operator()(const leda_d3_rat_segment& s, const leda_d3_rat_point& p) const
+   bool operator()(const Segment_3& s, const Point_3& p) const
    {
      return s.contains(p);  
    }     
    
-   bool operator()(const leda_d3_rat_plane& pl, const leda_d3_rat_point& p) const
+   bool operator()(const Plane_3& pl, const Point_3& p) const
    {
      return pl.contains(p);  
    }     
 
-   bool operator()(const leda_d3_rat_triangle& t, const leda_d3_rat_point& p) const
+   bool operator()(const Triangle_3& t, const Point_3& p) const
    {
      // coplanar ?
-     leda_d3_rat_point p1 = t.point1();
-     leda_d3_rat_point p2 = t.point2();
-     leda_d3_rat_point p3 = t.point3();
+     Point_3 p1 = t.point1();
+     Point_3 p2 = t.point2();
+     Point_3 p3 = t.point3();
       
      if (! LEDA_NAMESPACE_NAME::coplanar(p1,p2,p3,p)) return false;
      
@@ -682,10 +818,10 @@ public:
 	  return false;
 	}
 	// segment
-	leda_d3_rat_segment seg(p1,p2);
+	Segment_3 seg(p1,p2);
 	if (! seg.contains(p3)){  // we need p3 ...
-	  seg = leda_d3_rat_segment(p1,p3);
-	  if (! seg.contains(p2)) seg = leda_d3_rat_segment(p2,p3);
+	  seg = Segment_3(p1,p3);
+	  if (! seg.contains(p2)) seg = Segment_3(p2,p3);
 	}
 	
 	return seg.contains(p);
@@ -717,30 +853,37 @@ public:
    }   
 };
 
+template<class K>
 class Predicate_leda_d3_rat_has_on_bounded_side {
+
+  typedef typename K::Point_3      Point_3;
+  typedef typename K::Tetrahedron_3  Tetrahedron_3;
+  typedef typename K::Iso_cuboid_3 Iso_cuboid_3;  
+  typedef typename K::FT           FT;    
+
 public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
 
 #if defined(CGAL_COMPATIBLE_SPHERES)
-  bool operator()(const LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere& s, const leda_d3_rat_point& p) const
+  bool operator()(const LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere& s, const Point_3& p) const
   {
-     leda_d3_rat_point center = s.center();
-     leda_rational sq      = s.squared_radius();
-     leda_rational d       = center.sqr_dist(p);
+     Point_3 center = s.center();
+     FT sq      = s.squared_radius();
+     FT d       = center.sqr_dist(p);
      
      if (d < sq) return true;
      return false;
       
   }
 #else
-   bool operator()(const leda_d3_rat_sphere& s, const leda_d3_rat_point& p) const
+   bool operator()(const leda_d3_rat_sphere& s, const Point_3& p) const
    {
      return s.inside(p);
    }
 #endif   
 
-   bool operator()(const LEDA_NAMESPACE_NAME::d3_rat_simplex& s, const leda_d3_rat_point& p) const
+   bool operator()(const Tetrahedron_3& s, const Point_3& p) const
    {
      // inside returns true if p is inside or on s ...
      
@@ -748,10 +891,10 @@ public:
      if (! inside) return false;
      
      // is the point ON the simplex ???
-     leda_d3_rat_point p1 = s.point1();
-     leda_d3_rat_point p2 = s.point2();
-     leda_d3_rat_point p3 = s.point3();
-     leda_d3_rat_point p4 = s.point4();   
+     Point_3 p1 = s.point1();
+     Point_3 p2 = s.point2();
+     Point_3 p3 = s.point3();
+     Point_3 p4 = s.point4();   
      
      if (LEDA_NAMESPACE_NAME::coplanar(p1,p2,p3,p) ||  LEDA_NAMESPACE_NAME::coplanar(p1,p2,p4,p) ||
          LEDA_NAMESPACE_NAME::coplanar(p2,p3,p4,p) ||  LEDA_NAMESPACE_NAME::coplanar(p3,p1,p4,p)) return false; 
@@ -759,53 +902,60 @@ public:
      return true;
    }   
    
-   bool operator()(const LEDA_NAMESPACE_NAME::d3_rat_iso_cuboid& ic, const leda_d3_rat_point& p) const
+   bool operator()(const Iso_cuboid_3& ic, const Point_3& p) const
    {
-     leda_d3_rat_point min = ic.vertex(0);
-     leda_d3_rat_point max = ic.vertex(7);
+     Point_3 min = ic.vertex(0);
+     Point_3 max = ic.vertex(7);
      
      // compare with x/y/z coordinates ...
-     if (leda_d3_rat_point::cmp_x(p,min) != 1 || leda_d3_rat_point::cmp_x(p,max) != -1) return false;
-     if (leda_d3_rat_point::cmp_y(p,min) != 1 || leda_d3_rat_point::cmp_y(p,max) != -1) return false;
-     if (leda_d3_rat_point::cmp_z(p,min) != 1 || leda_d3_rat_point::cmp_z(p,max) != -1) return false;     
+     if (Point_3::cmp_x(p,min) != 1 || Point_3::cmp_x(p,max) != -1) return false;
+     if (Point_3::cmp_y(p,min) != 1 || Point_3::cmp_y(p,max) != -1) return false;
+     if (Point_3::cmp_z(p,min) != 1 || Point_3::cmp_z(p,max) != -1) return false;     
           
      return true;     
    }      
 };
 
+template<class K>
 class Predicate_leda_d3_rat_has_on_unbounded_side {
+
+  typedef typename K::Point_3      Point_3;
+  typedef typename K::Tetrahedron_3  Tetrahedron_3;
+  typedef typename K::Iso_cuboid_3 Iso_cuboid_3;  
+  typedef typename K::FT           FT;    
+
 public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
 
 #if defined(CGAL_COMPATIBLE_SPHERES)
-  bool operator()(const LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere& s, const leda_d3_rat_point& p) const
+  bool operator()(const LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere& s, const Point_3& p) const
   {
-     leda_d3_rat_point center = s.center();
-     leda_rational sq      = s.squared_radius();
-     leda_rational d       = center.sqr_dist(p);
+     Point_3 center = s.center();
+     FT sq      = s.squared_radius();
+     FT d       = center.sqr_dist(p);
      
      if (d > sq) return true;
      return false;
       
   }
 #else
-   bool operator()(const leda_d3_rat_sphere& s, const leda_d3_rat_point& p) const
+   bool operator()(const leda_d3_rat_sphere& s, const Point_3& p) const
    {
      return s.outside(p);
    }
 #endif
 
-   bool operator()(const LEDA_NAMESPACE_NAME::d3_rat_simplex& s, const leda_d3_rat_point& p) const
+   bool operator()(const Tetrahedron_3& s, const Point_3& p) const
    {
      bool inside = s.in_simplex(p);
      if (inside) return false;
      
      // is the point ON the simplex ???
-     leda_d3_rat_point p1 = s.point1();
-     leda_d3_rat_point p2 = s.point2();
-     leda_d3_rat_point p3 = s.point3();
-     leda_d3_rat_point p4 = s.point4();   
+     Point_3 p1 = s.point1();
+     Point_3 p2 = s.point2();
+     Point_3 p3 = s.point3();
+     Point_3 p4 = s.point4();   
      
      if (LEDA_NAMESPACE_NAME::coplanar(p1,p2,p3,p) ||  LEDA_NAMESPACE_NAME::coplanar(p1,p2,p4,p) ||
          LEDA_NAMESPACE_NAME::coplanar(p2,p3,p4,p) ||  LEDA_NAMESPACE_NAME::coplanar(p3,p1,p4,p)) return false; 
@@ -813,60 +963,68 @@ public:
      return true;
    }   
    
-   bool operator()(const LEDA_NAMESPACE_NAME::d3_rat_iso_cuboid& ic, const leda_d3_rat_point& p) const
+   bool operator()(const Iso_cuboid_3& ic, const Point_3& p) const
    {
-     leda_d3_rat_point min = ic.vertex(0);
-     leda_d3_rat_point max = ic.vertex(7);
+     Point_3 min = ic.vertex(0);
+     Point_3 max = ic.vertex(7);
      
      // compare with x/y/z coordinates ...
-     if (leda_d3_rat_point::cmp_x(p,min) != 1 || leda_d3_rat_point::cmp_x(p,max) != -1) return true;
-     if (leda_d3_rat_point::cmp_y(p,min) != 1 || leda_d3_rat_point::cmp_y(p,max) != -1) return true;
-     if (leda_d3_rat_point::cmp_z(p,min) != 1 || leda_d3_rat_point::cmp_z(p,max) != -1) return true;     
+     if (Point_3::cmp_x(p,min) != 1 || Point_3::cmp_x(p,max) != -1) return true;
+     if (Point_3::cmp_y(p,min) != 1 || Point_3::cmp_y(p,max) != -1) return true;
+     if (Point_3::cmp_z(p,min) != 1 || Point_3::cmp_z(p,max) != -1) return true;     
           
      return false;     
    }      
 };
 
+template<class K>
 class Predicate_leda_d3_rat_has_on_boundary {
+
+  typedef typename K::Point_3      Point_3;
+  typedef typename K::Plane_3      Plane_3;
+  typedef typename K::Tetrahedron_3  Tetrahedron_3;
+  typedef typename K::Iso_cuboid_3 Iso_cuboid_3;  
+  typedef typename K::FT           FT;    
+
 public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
   
   // undocumented
-  bool operator()(const leda_d3_rat_plane& pl, const leda_d3_rat_point& p) const
+  bool operator()(const Plane_3& pl, const Point_3& p) const
   {
       return pl.contains(p);
   }  
 
 #if defined(CGAL_COMPATIBLE_SPHERES)
-  bool operator()(const LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere& s, const leda_d3_rat_point& p) const
+  bool operator()(const LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere& s, const Point_3& p) const
   {
-     leda_d3_rat_point center = s.center();
-     leda_rational sq      = s.squared_radius();
-     leda_rational d       = center.sqr_dist(p);
+     Point_3 center = s.center();
+     FT sq      = s.squared_radius();
+     FT d       = center.sqr_dist(p);
      
      if (d == sq) return true;
      return false;
       
   }
 #else
-   bool operator()(const leda_d3_rat_sphere& s, const leda_d3_rat_point& p) const
+   bool operator()(const leda_d3_rat_sphere& s, const Point_3& p) const
    {
      return s.contains(p);
    }
 #endif
 
-   bool operator()(const LEDA_NAMESPACE_NAME::d3_rat_simplex& s, const leda_d3_rat_point& p) const
+   bool operator()(const Tetrahedron_3& s, const Point_3& p) const
    {
      // s.inside returns true if p is in or on the simplex !!!!
      bool inside = s.in_simplex(p);
      if (! inside) return false;
      
      // is the point really ON the simplex ???
-     leda_d3_rat_point p1 = s.point1();
-     leda_d3_rat_point p2 = s.point2();
-     leda_d3_rat_point p3 = s.point3();
-     leda_d3_rat_point p4 = s.point4();   
+     Point_3 p1 = s.point1();
+     Point_3 p2 = s.point2();
+     Point_3 p3 = s.point3();
+     Point_3 p4 = s.point4();   
      
      if (LEDA_NAMESPACE_NAME::coplanar(p1,p2,p3,p) ||  LEDA_NAMESPACE_NAME::coplanar(p1,p2,p4,p) ||
          LEDA_NAMESPACE_NAME::coplanar(p2,p3,p4,p) ||  LEDA_NAMESPACE_NAME::coplanar(p3,p1,p4,p)) return true; 
@@ -874,25 +1032,25 @@ public:
      return false;
    }   
    
-   bool operator()(const LEDA_NAMESPACE_NAME::d3_rat_iso_cuboid& ic, const leda_d3_rat_point& p) const
+   bool operator()(const Iso_cuboid_3& ic, const Point_3& p) const
    {
-     leda_d3_rat_point min = ic.vertex(0);
-     leda_d3_rat_point max = ic.vertex(7);
+     Point_3 min = ic.vertex(0);
+     Point_3 max = ic.vertex(7);
      
      // compare with x/y/z coordinates ...
      // we need at least one zero in the cmp results;
-     int res1 = leda_d3_rat_point::cmp_x(p,min);
-     int res2 = leda_d3_rat_point::cmp_x(p,max);
+     int res1 = Point_3::cmp_x(p,min);
+     int res2 = Point_3::cmp_x(p,max);
      
      if (res1 == -1 || res2 == 1) return false;
      
-     int res3 = leda_d3_rat_point::cmp_y(p,min);
-     int res4 = leda_d3_rat_point::cmp_y(p,max);     
+     int res3 = Point_3::cmp_y(p,min);
+     int res4 = Point_3::cmp_y(p,max);     
      
      if (res3 == -1 || res4 == 1) return false;
      
-     int res5 = leda_d3_rat_point::cmp_z(p,min);
-     int res6 = leda_d3_rat_point::cmp_z(p,max);        
+     int res5 = Point_3::cmp_z(p,min);
+     int res6 = Point_3::cmp_z(p,max);        
      
      if (res5 == -1 || res6 == 1) return false;     
           
@@ -903,12 +1061,19 @@ public:
    }      
 };
 
+template<class K>
 class Predicate_leda_d3_rat_has_on_positive_side {
+
+  typedef typename K::Point_3      Point_3;
+  typedef typename K::Plane_3      Plane_3;   
+  typedef typename K::Tetrahedron_3  Tetrahedron_3;
+  typedef typename K::FT           FT;  
+
 public:
   typedef Arity_tag< 2 > Arity;
-  typedef bool       result_type;
+  typedef bool           result_type;
 
-   bool operator()(const leda_d3_rat_plane& pl, const leda_d3_rat_point& p) const
+   bool operator()(const Plane_3& pl, const Point_3& p) const
    {
      int res = pl.side_of(p);
      if (res == 1) return true;
@@ -916,12 +1081,12 @@ public:
    }
 
 #if defined(CGAL_COMPATIBLE_SPHERES)
-  bool operator()(const LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere& s, const leda_d3_rat_point& p) const
+  bool operator()(const LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere& s, const Point_3& p) const
   {
-     leda_d3_rat_point center = s.center();
+     Point_3 center = s.center();
      CGAL::Orientation ori = s.orientation();  
-     leda_rational sq      = s.squared_radius();
-     leda_rational d       = center.sqr_dist(p);
+     FT sq      = s.squared_radius();
+     FT d       = center.sqr_dist(p);
      
      bool res;
      if (d < sq) res = true;
@@ -933,7 +1098,7 @@ public:
      return res; 
   }
 #else
-   bool operator()(const leda_d3_rat_sphere& s, const leda_d3_rat_point& p) const
+   bool operator()(const leda_d3_rat_sphere& s, const Point_3& p) const
    {
      int res = LEDA_NAMESPACE_NAME::side_of_sphere(s.point1(),s.point2(),s.point3(),s.point4() ,p);
      if (res == 1) return true;
@@ -943,7 +1108,7 @@ public:
    
 //  welche Seite von Tetrahedron ist positive, welche ist die negative ? Dok. ist etwas unklar ...   
 
-   bool operator()(const LEDA_NAMESPACE_NAME::d3_rat_simplex& s, const leda_d3_rat_point& p) const
+   bool operator()(const Tetrahedron_3& s, const Point_3& p) const
    {
        // orientation * bounded side
        int ori = LEDA_NAMESPACE_NAME::orientation(s.point1(), s.point2(), s.point3(), s.point4());
@@ -961,12 +1126,19 @@ public:
    
 };
 
+template<class K>
 class Predicate_leda_d3_rat_has_on_negative_side {
+
+  typedef typename K::Point_3      Point_3;
+  typedef typename K::Plane_3      Plane_3;   
+  typedef typename K::Tetrahedron_3  Tetrahedron_3;
+  typedef typename K::FT           FT;  
+
 public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
 
-   bool operator()(const leda_d3_rat_plane& pl, const leda_d3_rat_point& p) const
+   bool operator()(const Plane_3& pl, const Point_3& p) const
    {
      int res = pl.side_of(p);
      if (res == -1) return true;
@@ -974,12 +1146,12 @@ public:
    }
 
 #if defined(CGAL_COMPATIBLE_SPHERES)
-  bool operator()(const LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere& s, const leda_d3_rat_point& p) const
+  bool operator()(const LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere& s, const Point_3& p) const
   {
-     leda_d3_rat_point center = s.center();
+     Point_3 center = s.center();
      CGAL::Orientation ori = s.orientation();  
-     leda_rational sq      = s.squared_radius();
-     leda_rational d       = center.sqr_dist(p);
+     FT sq      = s.squared_radius();
+     FT d       = center.sqr_dist(p);
      
      bool res;
      if (d > sq) res = true;
@@ -991,7 +1163,7 @@ public:
      return res; 
   }
 #else
-   bool operator()(const leda_d3_rat_sphere& s, const leda_d3_rat_point& p) const
+   bool operator()(const leda_d3_rat_sphere& s, const Point_3& p) const
    {
      int res = LEDA_NAMESPACE_NAME::side_of_sphere(s.point1(),s.point2(),s.point3(),s.point4() ,p);
      if (res == -1) return true;
@@ -1001,7 +1173,7 @@ public:
    
 //  welche Seite von Tetrahedron ist positive, welche ist die negative ? Dok. ist etwas unklar ...   
 
-   bool operator()(const LEDA_NAMESPACE_NAME::d3_rat_simplex& s, const leda_d3_rat_point& p) const
+   bool operator()(const Tetrahedron_3& s, const Point_3& p) const
    {
        // orientation * bounded side
        int ori = LEDA_NAMESPACE_NAME::orientation(s.point1(), s.point2(), s.point3(), s.point4());
@@ -1019,24 +1191,31 @@ public:
    
 };
 
+template<class K>
 class Predicate_leda_d3_rat_oriented_side {
+
+  typedef typename K::Point_3      Point_3;
+  typedef typename K::Plane_3      Plane_3;   
+  typedef typename K::Tetrahedron_3  Tetrahedron_3;
+  typedef typename K::FT           FT;  
+
 public:
   typedef Arity_tag< 2 > Arity;
   typedef Oriented_side       result_type;
 
-   Oriented_side operator()(const leda_d3_rat_plane& pl, const leda_d3_rat_point& p) const
+   Oriented_side operator()(const Plane_3& pl, const Point_3& p) const
    {
      return (Oriented_side) (pl.side_of(p));
    }
 
 #if defined(CGAL_COMPATIBLE_SPHERES)
   CGAL::Oriented_side operator()(const LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere& s,
-                                 const leda_d3_rat_point& p) const
+                                 const Point_3& p) const
   {
-     leda_d3_rat_point center = s.center();
+     Point_3 center = s.center();
      CGAL::Orientation ori = s.orientation();  
-     leda_rational sq      = s.squared_radius();
-     leda_rational d       = center.sqr_dist(p);
+     FT sq      = s.squared_radius();
+     FT d       = center.sqr_dist(p);
      
      if (d == sq) return CGAL::ON_ORIENTED_BOUNDARY;
      
@@ -1051,12 +1230,12 @@ public:
      return CGAL::ON_NEGATIVE_SIDE; 
   }
 #else   
-   Oriented_side operator()(const leda_d3_rat_sphere& s, const leda_d3_rat_point& p) const
+   Oriented_side operator()(const leda_d3_rat_sphere& s, const Point_3& p) const
    {
-     leda_d3_rat_point p1 = s.point1();
-     leda_d3_rat_point p2 = s.point2();
-     leda_d3_rat_point p3 = s.point3();
-     leda_d3_rat_point p4 = s.point4();     
+     Point_3 p1 = s.point1();
+     Point_3 p2 = s.point2();
+     Point_3 p3 = s.point3();
+     Point_3 p4 = s.point4();     
      return (Oriented_side) (LEDA_NAMESPACE_NAME::side_of_sphere(p1,p2,p3,p4,p));
    } 
 #endif
@@ -1064,7 +1243,7 @@ public:
 //  welche Seite von Tetrahedron ist positive, welche ist die negative ? Dok. ist etwas unklar ...  
 //  precondition seems to be that the tetrahedron is not degenerate ...
  
-   Oriented_side operator()(const LEDA_NAMESPACE_NAME::d3_rat_simplex& s, const leda_d3_rat_point& p) const
+   Oriented_side operator()(const Tetrahedron_3& s, const Point_3& p) const
    {
        // orientation * bounded side
        int ori = LEDA_NAMESPACE_NAME::orientation(s.point1(), s.point2(), s.point3(), s.point4());
@@ -1081,29 +1260,36 @@ public:
   
 };
 
+template<class K>
 class Predicate_leda_d3_rat_bounded_side {
+
+  typedef typename K::Point_3      Point_3; 
+  typedef typename K::Tetrahedron_3  Tetrahedron_3;
+  typedef typename K::Iso_cuboid_3 Iso_cuboid_3;        
+  typedef typename K::FT           FT;  
+
 public:
   typedef Arity_tag< 2 > Arity;
   typedef Bounded_side   result_type;
 
 #if defined(CGAL_COMPATIBLE_SPHERES)
-  Bounded_side operator()(const LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere& s, const leda_d3_rat_point& p) const
+  Bounded_side operator()(const LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere& s, const Point_3& p) const
   {
-     leda_d3_rat_point center = s.center();
-     leda_rational sq      = s.squared_radius();
-     leda_rational d       = center.sqr_dist(p);
+     Point_3 center = s.center();
+     FT sq      = s.squared_radius();
+     FT d       = center.sqr_dist(p);
      
      if (d==sq) return CGAL::ON_BOUNDARY;
      if (d <sq) return CGAL::ON_BOUNDED_SIDE;
      return CGAL::ON_UNBOUNDED_SIDE;
   }
 #else
-   Bounded_side operator()(const leda_d3_rat_sphere& s, const leda_d3_rat_point& test) const
+   Bounded_side operator()(const leda_d3_rat_sphere& s, const Point_3& test) const
    {
-     leda_d3_rat_point p1 = s.point1();
-     leda_d3_rat_point p2 = s.point2();     
-     leda_d3_rat_point p3 = s.point3();
-     leda_d3_rat_point p4 = s.point4();     
+     Point_3 p1 = s.point1();
+     Point_3 p2 = s.point2();     
+     Point_3 p3 = s.point3();
+     Point_3 p4 = s.point4();     
        
      int res = LEDA_NAMESPACE_NAME::region_of_sphere(p1,p2,p3,p4,test);
      if (res==0) return CGAL::ON_BOUNDARY;
@@ -1112,7 +1298,7 @@ public:
    }
 #endif   
   
-   Bounded_side operator()(const LEDA_NAMESPACE_NAME::d3_rat_simplex& s, const leda_d3_rat_point& p) const
+   Bounded_side operator()(const Tetrahedron_3& s, const Point_3& p) const
    {
      // inside returns true if p is inside or on s ...
      
@@ -1120,10 +1306,10 @@ public:
      if (! inside) return CGAL::ON_UNBOUNDED_SIDE;
      
      // is the point ON the simplex ???
-     leda_d3_rat_point p1 = s.point1();
-     leda_d3_rat_point p2 = s.point2();
-     leda_d3_rat_point p3 = s.point3();
-     leda_d3_rat_point p4 = s.point4();   
+     Point_3 p1 = s.point1();
+     Point_3 p2 = s.point2();
+     Point_3 p3 = s.point3();
+     Point_3 p4 = s.point4();   
      
      if (LEDA_NAMESPACE_NAME::coplanar(p1,p2,p3,p) ||  LEDA_NAMESPACE_NAME::coplanar(p1,p2,p4,p) ||
          LEDA_NAMESPACE_NAME::coplanar(p2,p3,p4,p) ||  LEDA_NAMESPACE_NAME::coplanar(p3,p1,p4,p)) return CGAL::ON_BOUNDARY; 
@@ -1131,25 +1317,25 @@ public:
      return CGAL::ON_BOUNDED_SIDE;
    }   
    
-   Bounded_side operator()(const LEDA_NAMESPACE_NAME::d3_rat_iso_cuboid& ic, const leda_d3_rat_point& p) const
+   Bounded_side operator()(const Iso_cuboid_3& ic, const Point_3& p) const
    {
-     leda_d3_rat_point min = ic.vertex(0);
-     leda_d3_rat_point max = ic.vertex(7);
+     Point_3 min = ic.vertex(0);
+     Point_3 max = ic.vertex(7);
      
      // compare with x/y/z coordinates ...
      // we need at least one zero in the cmp results;
-     int res1 = leda_d3_rat_point::cmp_x(p,min);
-     int res2 = leda_d3_rat_point::cmp_x(p,max);
+     int res1 = Point_3::cmp_x(p,min);
+     int res2 = Point_3::cmp_x(p,max);
      
      if (res1 == -1 || res2 == 1) return CGAL::ON_UNBOUNDED_SIDE;
      
-     int res3 = leda_d3_rat_point::cmp_y(p,min);
-     int res4 = leda_d3_rat_point::cmp_y(p,max);     
+     int res3 = Point_3::cmp_y(p,min);
+     int res4 = Point_3::cmp_y(p,max);     
      
      if (res3 == -1 || res4 == 1) return CGAL::ON_UNBOUNDED_SIDE;
      
-     int res5 = leda_d3_rat_point::cmp_z(p,min);
-     int res6 = leda_d3_rat_point::cmp_z(p,max);        
+     int res5 = Point_3::cmp_z(p,min);
+     int res6 = Point_3::cmp_z(p,max);        
      
      if (res5 == -1 || res6 == 1) return CGAL::ON_UNBOUNDED_SIDE;     
           
@@ -1161,25 +1347,33 @@ public:
      
 };
 
+template<class K>
 class Predicate_leda_d3_rat_are_ordered_along_line {
+
+  typedef typename K::Point_3      Point_3;
+  typedef typename K::Segment_3    Segment_3;    
+
 public:
   typedef Arity_tag< 3 > Arity;
   typedef bool       result_type;
 
-  bool operator()(const leda_d3_rat_point& p, const leda_d3_rat_point& q, const leda_d3_rat_point& r) const
-  {
-      return leda_d3_rat_segment(p,r).contains(q);  
-  }
+  bool operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
+  { return Segment_3(p,r).contains(q); }
 };
 
+template<class K>
 class Predicate_leda_d3_rat_are_strictly_ordered_along_line {
+
+  typedef typename K::Point_3      Point_3;
+  typedef typename K::Segment_3    Segment_3;  
+
 public:
   typedef Arity_tag< 3 > Arity;
   typedef bool       result_type;
 
-  bool operator()(const leda_d3_rat_point& p, const leda_d3_rat_point& q, const leda_d3_rat_point& r) const
+  bool operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
   {
-      return (leda_d3_rat_segment(p,r).contains(q) && ( q != p ) && ( q != r ));   
+      return (Segment_3(p,r).contains(q) && ( q != p ) && ( q != r ));   
   }
 };
 
@@ -1187,36 +1381,55 @@ public:
 // (because the collinearity check in contains is not necessary -
 // collinearity is a precondition) 
 
+template<class K>
 class Predicate_leda_d3_rat_collinear_are_ordered_along_line {
+
+  typedef typename K::Point_3      Point_3;
+  typedef typename K::Segment_3    Segment_3;  
+
 public:
   typedef Arity_tag< 3 > Arity;
   typedef bool       result_type;
 
-  bool operator()(const leda_d3_rat_point& p, const leda_d3_rat_point& q, const leda_d3_rat_point& r) const
+  bool operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
   {
-      return leda_d3_rat_segment(p,r).contains(q);  
+      return Segment_3(p,r).contains(q);  
   }
 };
 
+template<class K>
 class Predicate_leda_d3_rat_collinear_are_strictly_ordered_along_line {
+
+  typedef typename K::Point_3      Point_3;
+  typedef typename K::Segment_3    Segment_3;  
+
 public:
   typedef Arity_tag< 3 > Arity;
   typedef bool       result_type;
 
-  bool operator()(const leda_d3_rat_point& p, const leda_d3_rat_point& q, const leda_d3_rat_point& r) const
+  bool operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
   {
-      return (leda_d3_rat_segment(p,r).contains(q) && ( q != p ) && ( q != r ));   
+      return (Segment_3(p,r).contains(q) && ( q != p ) && ( q != r ));   
   }
 };
 
+template<class K>
 class Predicate_leda_d3_rat_do_intersect {
+
+  typedef typename K::Point_3      Point_3;
+  typedef typename K::Line_3       Line_3;
+  typedef typename K::Plane_3      Plane_3; 
+  typedef typename K::Ray_3        Ray_3;
+  typedef typename K::Segment_3    Segment_3;     
+  typedef typename K::FT           FT;
+
 public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
 
 // intersection tests with 3d plane ...
 
-  bool operator()(const leda_d3_rat_plane& pl, const leda_d3_rat_plane& pl2) const
+  bool operator()(const Plane_3& pl, const Plane_3& pl2) const
   {
      if (pl.parallel(pl2)) return false;
      
@@ -1224,10 +1437,10 @@ public:
      return true;
   }
   
-  bool operator()(const leda_d3_rat_plane& pl, const leda_d3_rat_line& l) const
+  bool operator()(const Plane_3& pl, const Line_3& l) const
   {
-    leda_d3_rat_point p1 = l.point1();
-    leda_d3_rat_point p2 = l.point2();
+    Point_3 p1 = l.point1();
+    Point_3 p2 = l.point2();
   
     int s1 = pl.side_of(p1);
     int s2 = pl.side_of(p2);
@@ -1245,15 +1458,15 @@ public:
     return true;
   }
   
-  bool operator()(const leda_d3_rat_line& l, const leda_d3_rat_plane& pl) const
+  bool operator()(const Line_3& l, const Plane_3& pl) const
   {
      return this->operator()(pl, l);
   }  
 
-  bool operator()(const leda_d3_rat_plane& pl, const leda_d3_rat_ray& r) const
+  bool operator()(const Plane_3& pl, const Ray_3& r) const
   {
-    leda_d3_rat_point p1 = r.point1(); // source
-    leda_d3_rat_point p2 = r.point2(); // target
+    Point_3 p1 = r.point1(); // source
+    Point_3 p2 = r.point2(); // target
   
     int s1 = pl.side_of(p1);
     int s2 = pl.side_of(p2);
@@ -1262,19 +1475,19 @@ public:
     if (s1 != s2) return true;  
     
     // source and other point are on same side ...
-    leda_rational r1 = pl.sqr_dist(p1);
-    leda_rational r2 = pl.sqr_dist(p2); 
+    FT r1 = pl.sqr_dist(p1);
+    FT r2 = pl.sqr_dist(p2); 
     
     if (r1 <= r2) return false; // the ray is going away from the plane
     return true;  
   }  
 
-  bool operator()(const leda_d3_rat_ray& r, const leda_d3_rat_plane& pl) const
+  bool operator()(const Ray_3& r, const Plane_3& pl) const
   {
      return this->operator()(pl, r);  
   }  
 
-  bool operator()(const leda_d3_rat_plane& pl, const leda_d3_rat_segment& s) const
+  bool operator()(const Plane_3& pl, const Segment_3& s) const
   {
     int s1 = pl.side_of(s.source());
     int s2 = pl.side_of(s.target());
@@ -1284,7 +1497,7 @@ public:
     return false;
   }  
   
-  bool operator()(const leda_d3_rat_segment& s, const leda_d3_rat_plane& pl) const
+  bool operator()(const Segment_3& s, const Plane_3& pl) const
   {
      return this->operator()(pl, s);    
   }  

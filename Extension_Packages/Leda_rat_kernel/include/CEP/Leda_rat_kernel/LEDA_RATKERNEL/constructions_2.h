@@ -28,11 +28,16 @@
 
 CGAL_BEGIN_NAMESPACE
 
-
+template<class K>
 class Construct_leda_rat_point {
+
+  typedef typename K::Point_2    Point_2;
+  typedef typename K::FT         FT;
+  typedef typename K::RT         RT;    
+
 public:
   typedef Arity_tag< 1 > Arity;
-  typedef leda_rat_point           result_type;
+  typedef Point_2           result_type;
   
 #if defined(CGAL_GEOMETRY_EVENTS)
   static CGAL::event ev_leda_rational;
@@ -42,51 +47,58 @@ public:
   
   //----------------------------------------------------------------------------------
   //undocumented
-  leda_rat_point operator()() const
+  Point_2 operator()() const
   { 
-   leda_rat_point p;
+   Point_2 p;
    return p;
   } 
   
-  leda_rat_point operator()(const leda_rational& x, const leda_rational& y) const
+  Point_2 operator()(const FT& x, const FT& y) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rational&,const leda_rational&>(Construct_leda_rat_point::ev_leda_rational, x, y);
+    CGAL::occur<const FT&,const FT&>(Construct_leda_rat_point::ev_leda_rational, x, y);
 #endif     
-    leda_rat_point p(x,y);
+    Point_2 p(x,y);
     return p;
   }  
   
-  leda_rat_point operator()(const leda_integer& x, const leda_integer& y, const leda_integer& w) const
+  Point_2 operator()(const RT& x, const RT& y, const RT& w) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_integer&,const leda_integer&, const leda_integer&> \
+    CGAL::occur<const RT&,const RT&, const RT&> \
        (Construct_leda_rat_point::ev_leda_integer, x, y, w);
 #endif   
-    leda_rat_point p(x,y,w);
+    Point_2 p(x,y,w);
     return p;
   } 
   
   //---------------------------------------------------------------------------------- 
-  leda_rat_point operator()(const CGAL::Origin& orig) const
+  Point_2 operator()(const CGAL::Origin& orig) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
     CGAL::occur<const CGAL::Origin&> \
        (Construct_leda_rat_point::ev_origin, orig);
 #endif    
-    return leda_rat_point(0,0,1); 
+    return Point_2(0,0,1); 
   }
 };
 
 #if defined(CGAL_GEOMETRY_EVENTS)
-CGAL::event Construct_leda_rat_point::ev_leda_rational;
-CGAL::event Construct_leda_rat_point::ev_leda_integer;
-CGAL::event Construct_leda_rat_point::ev_origin;
+template<class K> CGAL::event Construct_leda_rat_point<K>::ev_leda_rational;
+template<class K> CGAL::event Construct_leda_rat_point<K>::ev_leda_integer;
+template<class K> CGAL::event Construct_leda_rat_point<K>::ev_origin;
 #endif   
 
+template<class K>
 class Construct_leda_rat_vector {
+
+  typedef typename K::Point_2    Point_2;
+  typedef typename K::Vector_2   Vector_2; 
+  typedef typename K::FT         FT;
+  typedef typename K::RT         RT;       
+
 public:
-  typedef leda_rat_vector           result_type;
+  typedef Vector_2           result_type;
   typedef Arity_tag< 2 > Arity;
   
 #if defined(CGAL_GEOMETRY_EVENTS)
@@ -98,63 +110,73 @@ public:
 
   //----------------------------------------------------------------------------------   
   //undocumented
-  leda_rat_vector operator()() const
+  Vector_2 operator()() const
   { 
-   leda_rat_vector v(2);
+   Vector_2 v(2);
    return v;
   }  
   
-  leda_rat_vector operator()(const leda_rational& x, const leda_rational& y) const
+  Vector_2 operator()(const FT& x, const FT& y) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rational&,const leda_rational&>(Construct_leda_rat_vector::ev_leda_rational, x, y);
+    CGAL::occur<const FT&,const FT&>(Construct_leda_rat_vector::ev_leda_rational, x, y);
 #endif   
-    leda_rat_vector v(x,y);
+    Vector_2 v(x,y);
     return v;
   }  
   
-  leda_rat_vector operator()(const leda_integer& x, const leda_integer& y, const leda_integer& w) const
+  Vector_2 operator()(const RT& x, const RT& y, const RT& w) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_integer&,const leda_integer&> \
+    CGAL::occur<const RT&,const RT&,const RT&> \
       (Construct_leda_rat_vector::ev_leda_integer, x, y, w);
 #endif    
-    leda_rat_vector v(x,y,w);
+    Vector_2 v(x,y,w);
     return v;
   } 
   
   //----------------------------------------------------------------------------------   
 
-  leda_rat_vector operator()(const leda_rat_point& a, const leda_rat_point& b) const
+  Vector_2 operator()(const Point_2& a, const Point_2& b) const
   { 
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rat_point&,const leda_rat_point&> \
+    CGAL::occur<const Point_2&,const Point_2&> \
       (Construct_leda_rat_vector::ev_leda_rat_point, a, b);
 #endif   
     return b-a; 
   }
    
-  leda_rat_vector operator()(const CGAL::Null_vector& nv) const
+  Vector_2 operator()(const CGAL::Null_vector& nv) const
   { 
 #if defined(CGAL_GEOMETRY_EVENTS)
     CGAL::occur<const CGAL::Null_vector&> \
       (Construct_leda_rat_vector::ev_null_vector, nv);
 #endif     
-    return leda_rat_vector(2); 
+    return Vector_2(2); 
   }
 };
 
 #if defined(CGAL_GEOMETRY_EVENTS)
-CGAL::event Construct_leda_rat_vector::ev_leda_rational;
-CGAL::event Construct_leda_rat_vector::ev_leda_integer;
-CGAL::event Construct_leda_rat_vector::ev_leda_rat_point;
-CGAL::event Construct_leda_rat_vector::ev_null_vector;
+template<class K> CGAL::event Construct_leda_rat_vector<K>::ev_leda_rational;
+template<class K> CGAL::event Construct_leda_rat_vector<K>::ev_leda_integer;
+template<class K> CGAL::event Construct_leda_rat_vector<K>::ev_leda_rat_point;
+template<class K> CGAL::event Construct_leda_rat_vector<K>::ev_null_vector;
 #endif   
 
+template<class K>
 class Construct_leda_rat_direction {
+
+  typedef typename K::Direction_2  Direction_2;
+  typedef typename K::Vector_2   Vector_2; 
+  typedef typename K::FT         FT;
+  typedef typename K::RT         RT; 
+  typedef typename K::Line_2     Line_2;
+  typedef typename K::Ray_2      Ray_2;
+  typedef typename K::Segment_2  Segment_2;          
+
 public:
   typedef Arity_tag< 1 > Arity;
-  typedef LEDA_NAMESPACE_NAME::rat_direction           result_type;
+  typedef Direction_2           result_type;
   
 #if defined(CGAL_GEOMETRY_EVENTS)
   static CGAL::event ev_leda_rational;
@@ -165,107 +187,118 @@ public:
 #endif   
   
   //undocumented
-  LEDA_NAMESPACE_NAME::rat_direction operator()() const
+  Direction_2 operator()() const
   { 
-   LEDA_NAMESPACE_NAME::rat_direction d(2);
+   Direction_2 d(2);
    return d;
   } 
   
-  LEDA_NAMESPACE_NAME::rat_direction operator()(const leda_rational& x, const leda_rational& y) const
+  Direction_2 operator()(const FT& x, const FT& y) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rational&,const leda_rational&> \
+    CGAL::occur<const FT&,const FT&> \
       (Construct_leda_rat_direction::ev_leda_rational, x, y);
 #endif   
-    LEDA_NAMESPACE_NAME::rat_direction d(x,y);
+    Direction_2 d(x,y);
     return d;
   }        
 
-  LEDA_NAMESPACE_NAME::rat_direction operator()(const leda_rat_vector& v) const
+  Direction_2 operator()(const Vector_2& v) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rat_vector&> \
+    CGAL::occur<const Vector_2&> \
       (Construct_leda_rat_direction::ev_leda_rat_vector, v);
 #endif   
-    return LEDA_NAMESPACE_NAME::rat_direction(v); 
+    return Direction_2(v); 
   }
     
-  LEDA_NAMESPACE_NAME::rat_direction operator()(const leda_rat_line& l) const
+  Direction_2 operator()(const Line_2& l) const
   {   
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rat_line&> \
+    CGAL::occur<const Line_2&> \
       (Construct_leda_rat_direction::ev_leda_rat_line, l);
 #endif   
-      leda_rat_vector v = l.point2()-l.point1();
-      return LEDA_NAMESPACE_NAME::rat_direction(v); 
+      Vector_2 v = l.point2()-l.point1();
+      return Direction_2(v); 
   }
     
-  LEDA_NAMESPACE_NAME::rat_direction operator()(const leda_rat_ray& r) const
+  Direction_2 operator()(const Ray_2& r) const
   {  
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rat_ray&> \
+    CGAL::occur<const Ray_2&> \
       (Construct_leda_rat_direction::ev_leda_rat_ray, r);
 #endif   
-     leda_rat_vector v = r.point2()-r.point1(); 
-     return LEDA_NAMESPACE_NAME::rat_direction(v);
+     Vector_2 v = r.point2()-r.point1(); 
+     return Direction_2(v);
   }
     
-  LEDA_NAMESPACE_NAME::rat_direction operator()(const leda_rat_segment& s) const
+  Direction_2 operator()(const Segment_2& s) const
   { 
 #if defined(CGAL_GEOMETRY_EVENTS)
-     CGAL::occur<const leda_rat_segment&>(Construct_leda_rat_direction::ev_leda_rat_segment, s);
+     CGAL::occur<const Segment_2&>(Construct_leda_rat_direction::ev_leda_rat_segment, s);
 #endif  
-    leda_rat_vector v = s.end()-s.start();
-    return LEDA_NAMESPACE_NAME::rat_direction(v); 
+    Vector_2 v = s.end()-s.start();
+    return Direction_2(v); 
   }            
 };
 
 #if defined(CGAL_GEOMETRY_EVENTS)
-CGAL::event  Construct_leda_rat_direction::ev_leda_rational;
-CGAL::event  Construct_leda_rat_direction::ev_leda_rat_vector;
-CGAL::event  Construct_leda_rat_direction::ev_leda_rat_line;
-CGAL::event  Construct_leda_rat_direction::ev_leda_rat_ray;    
-CGAL::event  Construct_leda_rat_direction::ev_leda_rat_segment;
+template<class K> CGAL::event  Construct_leda_rat_direction<K>::ev_leda_rational;
+template<class K> CGAL::event  Construct_leda_rat_direction<K>::ev_leda_rat_vector;
+template<class K> CGAL::event  Construct_leda_rat_direction<K>::ev_leda_rat_line;
+template<class K> CGAL::event  Construct_leda_rat_direction<K>::ev_leda_rat_ray;    
+template<class K> CGAL::event  Construct_leda_rat_direction<K>::ev_leda_rat_segment;
 #endif
 
 
-// attention - we need a special functor for special segments ...
-// member template is here not possible ...
-
+template<class K>
 class Construct_leda_rat_segment {
+
+  typedef typename K::Point_2   Point_2;
+  typedef typename K::Segment_2 Segment_2;  
+
 public:
   typedef Arity_tag< 2 > Arity;
-  typedef leda_rat_segment           result_type;
+  typedef Segment_2      result_type;
   
 #if defined(CGAL_GEOMETRY_EVENTS)
   static CGAL::event ev_leda_rat_point;
 #endif    
   
   //undocumented
-  leda_rat_segment operator()() const
+  Segment_2 operator()() const
   { 
-   leda_rat_segment s;
+   Segment_2 s;
    return s;
   }   
 
-  leda_rat_segment operator()(const leda_rat_point& p1, const leda_rat_point& p2) const
+  Segment_2 operator()(const Point_2& p1, const Point_2& p2) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rat_point&, const leda_rat_point&> \
+    CGAL::occur<const Point_2&, const Point_2&> \
       (Construct_leda_rat_segment::ev_leda_rat_point, p1, p2);
 #endif    
-    return leda_rat_segment(p1,p2); 
+    return Segment_2(p1,p2); 
   }
 };
 
 #if defined(CGAL_GEOMETRY_EVENTS)
-CGAL::event Construct_leda_rat_segment::ev_leda_rat_point;
+template<class K> CGAL::event Construct_leda_rat_segment<K>::ev_leda_rat_point;
 #endif   
 
+template<class K>
 class Construct_leda_rat_line {
+
+  typedef typename K::Point_2   Point_2;
+  typedef typename K::Line_2    Line_2; 
+  typedef typename K::RT        RT;
+  typedef typename K::Direction_2  Direction_2;
+  typedef typename K::Segment_2 Segment_2;
+  typedef typename K::Ray_2     Ray_2;         
+
 public:
-  typedef leda_rat_line           result_type;
-  typedef Arity_tag< 2 >          Arity;
+  typedef Line_2           result_type;
+  typedef Arity_tag< 2 >   Arity;
   
 #if defined(CGAL_GEOMETRY_EVENTS)
   static CGAL::event ev_leda_integer;
@@ -276,87 +309,92 @@ public:
 #endif   
   
   //undocumented
-  leda_rat_line operator()() const
+  Line_2 operator()() const
   { 
-   leda_rat_line l;
+   Line_2 l;
    return l;
   }    
 
-  leda_rat_line operator()(const leda_integer& a, const leda_integer& b, const leda_integer& c) const
+  Line_2 operator()(const RT& a, const RT& b, const RT& c) const
   { 
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_integer&, const leda_integer&, const leda_integer&> \
+    CGAL::occur<const RT&, const RT&, const RT&> \
       (Construct_leda_rat_line::ev_leda_integer, a, b, c);
 #endif   
   
       if (b == 0){ // par. to y - axis
-       leda_rat_point p1(-c,1,a);
-       leda_rat_point p2(-c,0,a);
-       return leda_rat_line(p1,p2);      
+       Point_2 p1(-c,1,a);
+       Point_2 p2(-c,0,a);
+       return Line_2(p1,p2);      
       }
       if (a == 0){ // par. to x - axis
-       leda_rat_point p1(0,-c,b);
-       leda_rat_point p2(1,-c,b); 
-       return leda_rat_line(p1,p2);        
+       Point_2 p1(0,-c,b);
+       Point_2 p2(1,-c,b); 
+       return Line_2(p1,p2);        
       }
       // a == 0 and c == 0 not allowed
       
-      leda_rat_point p1(0,-c,b);
-      leda_rat_point p2(-c,0,a);
+      Point_2 p1(0,-c,b);
+      Point_2 p2(-c,0,a);
       
-      return leda_rat_line(p1,p2);
+      return Line_2(p1,p2);
   }
 
-  leda_rat_line operator()(const leda_rat_point& p1, const leda_rat_point& p2) const
+  Line_2 operator()(const Point_2& p1, const Point_2& p2) const
   { 
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rat_point&, const leda_rat_point&> \
+    CGAL::occur<const Point_2&, const Point_2&> \
       (Construct_leda_rat_line::ev_leda_rat_point, p1, p2);
 #endif  
-    return leda_rat_line(p1,p2); 
+    return Line_2(p1,p2); 
   }
 
-  leda_rat_line operator()(const leda_rat_point& p1, const LEDA_NAMESPACE_NAME::rat_direction& dir) const
+  Line_2 operator()(const Point_2& p1, const Direction_2& dir) const
   { 
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rat_point&, const LEDA_NAMESPACE_NAME::rat_direction&> \
+    CGAL::occur<const Point_2&, const Direction_2&> \
       (Construct_leda_rat_line::ev_leda_rat_point_direction, p1, dir);
 #endif  
-    return leda_rat_line(p1, dir.get_vector()); 
+    return Line_2(p1, dir.get_vector()); 
   }
 
-  leda_rat_line operator()(const leda_rat_segment& s) const
+  Line_2 operator()(const Segment_2& s) const
   { 
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rat_segment&> \
+    CGAL::occur<const Segment_2&> \
       (Construct_leda_rat_line::ev_leda_rat_segment, s);
 #endif    
-    return leda_rat_line(s.start(), s.end()); 
+    return Line_2(s.start(), s.end()); 
   }
 
-  leda_rat_line operator()(const leda_rat_ray& r) const
+  Line_2 operator()(const Ray_2& r) const
   { 
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rat_ray&> \
+    CGAL::occur<const Ray_2&> \
       (Construct_leda_rat_line::ev_leda_rat_ray, r);
 #endif     
-    return leda_rat_line(r); 
+    return Line_2(r); 
   }
 };
 
 #if defined(CGAL_GEOMETRY_EVENTS)
-CGAL::event Construct_leda_rat_line::ev_leda_integer;
-CGAL::event Construct_leda_rat_line::ev_leda_rat_point; 
-CGAL::event Construct_leda_rat_line::ev_leda_rat_point_direction; 
-CGAL::event Construct_leda_rat_line::ev_leda_rat_segment;
-CGAL::event Construct_leda_rat_line::ev_leda_rat_ray;      
+template<class K> CGAL::event Construct_leda_rat_line<K>::ev_leda_integer;
+template<class K> CGAL::event Construct_leda_rat_line<K>::ev_leda_rat_point; 
+template<class K> CGAL::event Construct_leda_rat_line<K>::ev_leda_rat_point_direction; 
+template<class K> CGAL::event Construct_leda_rat_line<K>::ev_leda_rat_segment;
+template<class K> CGAL::event Construct_leda_rat_line<K>::ev_leda_rat_ray;      
 #endif 
 
-
+template<class K>
 class Construct_leda_rat_ray {
+
+  typedef typename K::Point_2   Point_2;
+  typedef typename K::Direction_2  Direction_2;
+  typedef typename K::Ray_2     Ray_2; 
+
 public:
-  typedef Arity_tag< 2 > Arity;
-  typedef leda_rat_ray           result_type;
+  typedef Arity_tag< 2 >  Arity;
+  typedef Ray_2           result_type;
   
 #if defined(CGAL_GEOMETRY_EVENTS)
   static CGAL::event ev_leda_rat_point; 
@@ -364,40 +402,45 @@ public:
 #endif    
   
   //undocumented
-  leda_rat_ray operator()() const
+  Ray_2 operator()() const
   { 
-   leda_rat_ray r;
+   Ray_2 r;
    return r;
   }    
 
-  leda_rat_ray operator()(const leda_rat_point& p1, const leda_rat_point& p2) const
+  Ray_2 operator()(const Point_2& p1, const Point_2& p2) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rat_point&, const leda_rat_point&> \
+    CGAL::occur<const Point_2&, const Point_2&> \
       (Construct_leda_rat_ray::ev_leda_rat_point, p1, p2);
 #endif        
-    return leda_rat_ray(p1,p2); 
+    return Ray_2(p1,p2); 
   }
     
-  leda_rat_ray operator()(const leda_rat_point& p1, const LEDA_NAMESPACE_NAME::rat_direction& dir) const
+  Ray_2 operator()(const Point_2& p1, const Direction_2& dir) const
   { 
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rat_point&, const LEDA_NAMESPACE_NAME::rat_direction&> \
+    CGAL::occur<const Point_2&, const Direction_2&> \
       (Construct_leda_rat_ray::ev_leda_rat_point_direction, p1, dir);
 #endif    
-    return leda_rat_ray(p1, dir.get_vector()); 
+    return Ray_2(p1, dir.get_vector()); 
   }    
 };
 
 
 #if defined(CGAL_GEOMETRY_EVENTS)
-CGAL::event Construct_leda_rat_ray::ev_leda_rat_point; 
-CGAL::event Construct_leda_rat_ray::ev_leda_rat_point_direction;      
+template<class K> CGAL::event Construct_leda_rat_ray<K>::ev_leda_rat_point; 
+template<class K> CGAL::event Construct_leda_rat_ray<K>::ev_leda_rat_point_direction;      
 #endif 
 
 
 #if defined(CGAL_COMPATIBLE_CIRCLES)
+template<class K>
 class Construct_leda_rat_circle {
+
+  typedef typename K::Point_2   Point_2;
+  typedef typename K::FT        FT;
+
 public:
   typedef LEDA_NAMESPACE_NAME::cgal_rat_circle           result_type;
   typedef Arity_tag< 3 >          Arity;  
@@ -416,28 +459,28 @@ public:
    return c;
   }      
     
-    LEDA_NAMESPACE_NAME::cgal_rat_circle operator()(const leda_rat_point& center, 
-                                                    const leda_rational&  sqrad, 
+    LEDA_NAMESPACE_NAME::cgal_rat_circle operator()(const Point_2& center, 
+                                                    const FT&  sqrad, 
 						    CGAL::Orientation ori = CGAL::COUNTERCLOCKWISE) const
     {
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rat_point&, const leda_rational&, CGAL::Orientation> \
+    CGAL::occur<const Point_2&, const FT&, CGAL::Orientation> \
       (Construct_leda_rat_circle::ev_leda_rat_point_rational_orientation, center, sqrad, ori);
 #endif    
       return LEDA_NAMESPACE_NAME::cgal_rat_circle(center,sqrad,ori);
     }    
 
-    LEDA_NAMESPACE_NAME::cgal_rat_circle operator()(const leda_rat_point& p1, 
-                                                    const leda_rat_point& p2, 
-						    const leda_rat_point& p3) const
+    LEDA_NAMESPACE_NAME::cgal_rat_circle operator()(const Point_2& p1, 
+                                                    const Point_2& p2, 
+						    const Point_2& p3) const
     {
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rat_point&, const leda_rat_point&, const leda_rat_point&> \
+    CGAL::occur<const Point_2&, const Point_2&, const Point_2&> \
       (Construct_leda_rat_circle::ev_leda_rat_point_point_point, p1, p2, p3);
 #endif    
      int ori = LEDA_NAMESPACE_NAME::orientation(p1,p2,p3);
      leda_rat_circle C(p1,p2,p3);
-     leda_rat_point  center = C.center();
+     Point_2  center = C.center();
      
      CGAL::Orientation cg_ori;
      switch(ori){
@@ -450,23 +493,23 @@ public:
     }
     
     // diameter version ...    
-    LEDA_NAMESPACE_NAME::cgal_rat_circle operator()(const leda_rat_point& p1, const leda_rat_point& p2, 
+    LEDA_NAMESPACE_NAME::cgal_rat_circle operator()(const Point_2& p1, const Point_2& p2, 
                                                     CGAL::Orientation ori = CGAL::COUNTERCLOCKWISE) const
     {
 #if defined(CGAL_GEOMETRY_EVENTS)
-     CGAL::occur<const leda_rat_point&, const leda_rat_point&, CGAL::Orientation> \
+     CGAL::occur<const Point_2&, const Point_2&, CGAL::Orientation> \
       (Construct_leda_rat_circle::ev_leda_rat_point_point_orientation, p1, p2, ori);
 #endif        
-     leda_rat_point m = LEDA_NAMESPACE_NAME::midpoint(p1,p2);
+     Point_2 m = LEDA_NAMESPACE_NAME::midpoint(p1,p2);
      
      return LEDA_NAMESPACE_NAME::cgal_rat_circle(m,p1,ori);
     }
     
-    LEDA_NAMESPACE_NAME::cgal_rat_circle operator()(const leda_rat_point& p1, 
+    LEDA_NAMESPACE_NAME::cgal_rat_circle operator()(const Point_2& p1, 
                                                     CGAL::Orientation ori = CGAL::COUNTERCLOCKWISE) const
     {
 #if defined(CGAL_GEOMETRY_EVENTS)
-     CGAL::occur<const leda_rat_point&, CGAL::Orientation> \
+     CGAL::occur<const Point_2&, CGAL::Orientation> \
       (Construct_leda_rat_circle::ev_leda_rat_point_orientation, p1, ori);
 #endif     
      return LEDA_NAMESPACE_NAME::cgal_rat_circle(p1,ori);
@@ -474,10 +517,10 @@ public:
 };
 
 #if defined(CGAL_GEOMETRY_EVENTS)
-CGAL::event Construct_leda_rat_circle::ev_leda_rat_point_rational_orientation; 
-CGAL::event Construct_leda_rat_circle::ev_leda_rat_point_point_point; 
-CGAL::event Construct_leda_rat_circle::ev_leda_rat_point_point_orientation;
-CGAL::event Construct_leda_rat_circle::ev_leda_rat_point_orientation;       
+template<class K> CGAL::event Construct_leda_rat_circle<K>::ev_leda_rat_point_rational_orientation; 
+template<class K> CGAL::event Construct_leda_rat_circle<K>::ev_leda_rat_point_point_point; 
+template<class K> CGAL::event Construct_leda_rat_circle<K>::ev_leda_rat_point_point_orientation;
+template<class K> CGAL::event Construct_leda_rat_circle<K>::ev_leda_rat_point_orientation;       
 #endif 
 
 
@@ -485,9 +528,14 @@ CGAL::event Construct_leda_rat_circle::ev_leda_rat_point_orientation;
 // use LEDA circles ...
 // in this case we cannot provide some constructions ...
 
+template<class K>
 class Construct_leda_rat_circle {
+
+  typedef typename K::Point_2   Point_2;
+  typedef typename K::FT        FT;
+
 public:
-  typedef leda_rat_circle           result_type;
+  typedef leda_rat_circle         result_type;
   typedef Arity_tag< 3 >          Arity;  
 
 #if defined(CGAL_GEOMETRY_EVENTS)
@@ -503,23 +551,23 @@ public:
    return c;
   }   
 
-    leda_rat_circle operator()(const leda_rat_point& p1, const leda_rat_point& p2, const leda_rat_point& p3) const
+    leda_rat_circle operator()(const Point_2& p1, const Point_2& p2, const Point_2& p3) const
     {
 #if defined(CGAL_GEOMETRY_EVENTS)
-     CGAL::occur<const leda_rat_point&, const leda_rat_point&, const leda_rat_point&> \
+     CGAL::occur<const Point_2&, const Point_2&, const Point_2&> \
       (Construct_leda_rat_circle::ev_leda_rat_point_point_point, p1, p2, p3);
 #endif     
      return leda_rat_circle(p1,p2,p3);
     }
     
-    leda_rat_circle operator()(const leda_rat_point& p1, const leda_rat_point& p2, CGAL::Orientation ori = CGAL::COUNTERCLOCKWISE) const
+    leda_rat_circle operator()(const Point_2& p1, const Point_2& p2, CGAL::Orientation ori = CGAL::COUNTERCLOCKWISE) const
     {
 #if defined(CGAL_GEOMETRY_EVENTS)
-     CGAL::occur<const leda_rat_point&, const leda_rat_point&, CGAL::Orientation> \
+     CGAL::occur<const Point_2&, const Point_2&, CGAL::Orientation> \
       (Construct_leda_rat_circle::ev_leda_rat_point_point_orientation, p1, p2, ori);
 #endif    
      // p1p2 is the diameter ...
-     leda_rat_point m = LEDA_NAMESPACE_NAME::midpoint(p1,p2);
+     Point_2 m = LEDA_NAMESPACE_NAME::midpoint(p1,p2);
      leda_rat_circle C(m,p1);
      
      // check circle orientation ...
@@ -531,10 +579,10 @@ public:
      return C;
     }
     
-    leda_rat_circle operator()(const leda_rat_point& p1, CGAL::Orientation ori = CGAL::COUNTERCLOCKWISE) const
+    leda_rat_circle operator()(const Point_2& p1, CGAL::Orientation ori = CGAL::COUNTERCLOCKWISE) const
     {
 #if defined(CGAL_GEOMETRY_EVENTS)
-     CGAL::occur<const leda_rat_point&, CGAL::Orientation> \
+     CGAL::occur<const Point_2&, CGAL::Orientation> \
       (Construct_leda_rat_circle::ev_leda_rat_point_orientation, p1, ori);
 #endif     
      return leda_rat_circle(p1,p1);
@@ -542,78 +590,88 @@ public:
 };
 
 #if defined(CGAL_GEOMETRY_EVENTS)
-CGAL::event Construct_leda_rat_circle::ev_leda_rat_point_point_point; 
-CGAL::event Construct_leda_rat_circle::ev_leda_rat_point_point_orientation;
-CGAL::event Construct_leda_rat_circle::ev_leda_rat_point_orientation;       
+template<class K> CGAL::event Construct_leda_rat_circle<K>::ev_leda_rat_point_point_point; 
+template<class K> CGAL::event Construct_leda_rat_circle<K>::ev_leda_rat_point_point_orientation;
+template<class K> CGAL::event Construct_leda_rat_circle<K>::ev_leda_rat_point_orientation;       
 #endif
 
 #endif
 
+template<class K>
 class Construct_leda_rat_triangle {
+
+  typedef typename K::Point_2     Point_2;
+  typedef typename K::Triangle_2  Triangle_2;
+
 public:
   typedef Arity_tag< 3 > Arity;
-  typedef leda_rat_triangle           result_type;
+  typedef Triangle_2     result_type;
   
 #if defined(CGAL_GEOMETRY_EVENTS)
   static CGAL::event ev_leda_rat_point; 
 #endif    
 
   //undocumented
-  leda_rat_triangle operator()() const
+  Triangle_2 operator()() const
   { 
-   leda_rat_triangle  t;
+   Triangle_2  t;
    return t;
   }  
 
-  leda_rat_triangle operator()(const leda_rat_point& p1, const leda_rat_point& p2, const leda_rat_point& p3) const
+  Triangle_2 operator()(const Point_2& p1, const Point_2& p2, const Point_2& p3) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rat_point&, const leda_rat_point&, const leda_rat_point&> \
+    CGAL::occur<const Point_2&, const Point_2&, const Point_2&> \
       (Construct_leda_rat_triangle::ev_leda_rat_point, p1, p2, p3);
 #endif   
-   return leda_rat_triangle(p1,p2,p3);
+   return Triangle_2(p1,p2,p3);
   }
 };
 
 #if defined(CGAL_GEOMETRY_EVENTS)
-CGAL::event Construct_leda_rat_triangle::ev_leda_rat_point; 
+template<class K> CGAL::event Construct_leda_rat_triangle<K>::ev_leda_rat_point; 
 #endif 
 
+template<class K>
 class Construct_leda_rat_rectangle {
+
+  typedef typename K::Point_2          Point_2;
+  typedef typename K::Iso_rectangle_2  Iso_rectangle_2;
+
 public:
-  typedef Arity_tag< 2 > Arity;
-  typedef leda_rat_rectangle           result_type;
+  typedef Arity_tag< 2 >    Arity;
+  typedef Iso_rectangle_2   result_type;
 
 #if defined(CGAL_GEOMETRY_EVENTS)
   static CGAL::event ev_leda_rat_point; 
 #endif    
 
   //undocumented
-  leda_rat_rectangle operator()() const
+  Iso_rectangle_2 operator()() const
   { 
-   leda_rat_rectangle r;
+   Iso_rectangle_2 r;
    return r;
   }  
 
-  leda_rat_rectangle operator()(const leda_rat_point& p1, const leda_rat_point& p2) const
+  Iso_rectangle_2 operator()(const Point_2& p1, const Point_2& p2) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rat_point&, const leda_rat_point&> \
+    CGAL::occur<const Point_2&, const Point_2&> \
       (Construct_leda_rat_rectangle::ev_leda_rat_point, p1, p2);
 #endif   
-   return leda_rat_rectangle(p1,p2);
+   return Iso_rectangle_2(p1,p2);
   }     
 };
 
 #if defined(CGAL_GEOMETRY_EVENTS)
-CGAL::event Construct_leda_rat_rectangle::ev_leda_rat_point; 
+template<class K> CGAL::event Construct_leda_rat_rectangle<K>::ev_leda_rat_point; 
 #endif  
+
 
 class Construct_leda_rat_object {
 public:
   typedef Arity_tag< 1 > Arity;
   typedef CGAL::Object           result_type;
-
 
   template<class T>
   CGAL::Object operator()(const T& obj) const
@@ -622,55 +680,67 @@ public:
   }     
 };
 
+template<class K>
 class Construct_leda_rat_scaled_vector_2 {
+
+  typedef typename K::Vector_2  Vector_2;
+  typedef typename K::RT        RT;
+  typedef typename K::FT        FT;  
+
 public:
   typedef Arity_tag< 2 > Arity;
-  typedef leda_rat_vector           result_type;
+  typedef Vector_2       result_type;
   
 #if defined(CGAL_GEOMETRY_EVENTS)
   static CGAL::event ev_leda_rat_vector_integer;
   static CGAL::event ev_leda_rat_vector_quotient;   
 #endif     
 
-  leda_rat_vector operator()(const leda_rat_vector& v, const leda_integer& scale) const
+  Vector_2 operator()(const Vector_2& v, const RT& scale) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rat_vector&, const leda_integer&> \
+    CGAL::occur<const Vector_2&, const RT&> \
       (Construct_leda_rat_scaled_vector_2::ev_leda_rat_vector_integer, v, scale);
 #endif   
   
    return scale * v;
   }      
 
-  leda_rat_vector operator()(const leda_rat_vector& v, const CGAL::Quotient<leda_integer>& scale) const
+  Vector_2 operator()(const Vector_2& v, const CGAL::Quotient<RT>& scale) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rat_vector&, const CGAL::Quotient<leda_integer>& > \
+    CGAL::occur<const Vector_2&, const CGAL::Quotient<RT>& > \
       (Construct_leda_rat_scaled_vector_2::ev_leda_rat_vector_quotient, v, scale);
 #endif  
-   leda_rational fkt(scale.numerator(), scale.denominator());
+   FT fkt(scale.numerator(), scale.denominator());
    return fkt * v;
   } 
 };
 
 #if defined(CGAL_GEOMETRY_EVENTS)
-CGAL::event Construct_leda_rat_scaled_vector_2::ev_leda_rat_vector_integer;
-CGAL::event Construct_leda_rat_scaled_vector_2::ev_leda_rat_vector_quotient;   
+template<class K> CGAL::event Construct_leda_rat_scaled_vector_2<K>::ev_leda_rat_vector_integer;
+template<class K> CGAL::event Construct_leda_rat_scaled_vector_2<K>::ev_leda_rat_vector_quotient;   
 #endif 
 
+
+template<class K>
 class Construct_leda_rat_translated_point_2 {
+
+  typedef typename K::Point_2       Point_2;
+  typedef typename K::Vector_2      Vector_2;  
+
 public:
   typedef Arity_tag< 2 > Arity;
-  typedef leda_rat_point           result_type;
+  typedef Point_2        result_type;
 
 #if defined(CGAL_GEOMETRY_EVENTS)
   static CGAL::event ev_leda_rat_point_vector;
 #endif 
 
-  leda_rat_point operator()(const leda_rat_point& p, const leda_rat_vector& v) const
+  Point_2 operator()(const Point_2& p, const Vector_2& v) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rat_point&, const leda_rat_vector&> \
+    CGAL::occur<const Point_2&, const Vector_2&> \
       (Construct_leda_rat_translated_point_2::ev_leda_rat_point_vector, p, v);
 #endif     
     return p.translate(v);
@@ -678,14 +748,22 @@ public:
 };
 
 #if defined(CGAL_GEOMETRY_EVENTS)
-CGAL::event Construct_leda_rat_translated_point_2::ev_leda_rat_point_vector;
+template<class K> CGAL::event Construct_leda_rat_translated_point_2<K>::ev_leda_rat_point_vector;
 #endif 
 
-
+template<class K>
 class Construct_leda_rat_point_on_2 {
+
+  typedef typename K::Point_2       Point_2;
+  typedef typename K::Vector_2      Vector_2;  
+  typedef typename K::Line_2        Line_2;
+  typedef typename K::Ray_2         Ray_2;  
+  typedef typename K::Segment_2     Segment_2; 
+  typedef typename K::RT            RT;     
+
 public:
   typedef Arity_tag< 2 > Arity;
-  typedef leda_rat_point           result_type;
+  typedef Point_2           result_type;
   
 #if defined(CGAL_GEOMETRY_EVENTS)
   static CGAL::event ev_leda_rat_line_int;
@@ -693,32 +771,32 @@ public:
   static CGAL::event ev_leda_rat_segment_int;    
 #endif   
 
-  leda_rat_point operator()(const leda_rat_line& l, int i =0) const
+  Point_2 operator()(const Line_2& l, int i = 0) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rat_line&, int> \
+    CGAL::occur<const Line_2&, int> \
       (Construct_leda_rat_point_on_2::ev_leda_rat_line_int, l, i);
 #endif   
-    leda_rat_segment s = l.seg();
-    leda_rat_vector  v = s.to_vector();
+    Segment_2 s = l.seg();
+    Vector_2  v = s.to_vector();
       
-    return s.start() + (leda_integer(i) * v);   
+    return s.start() + (RT(i) * v);   
   }
 
-  leda_rat_point operator()(const leda_rat_ray& r, int i) const
+  Point_2 operator()(const Ray_2& r, int i) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rat_ray&, int> \
+    CGAL::occur<const Ray_2&, int> \
       (Construct_leda_rat_point_on_2::ev_leda_rat_ray_int, r, i);
 #endif    
     if (i==0) return r.source();
     return r.point2(); // return a point different from the source ...
   }
     
-  leda_rat_point operator()(const leda_rat_segment& s, int i) const
+  Point_2 operator()(const Segment_2& s, int i) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rat_segment&, int> \
+    CGAL::occur<const Segment_2&, int> \
       (Construct_leda_rat_point_on_2::ev_leda_rat_segment_int, s, i);
 #endif    
     i = i % 2;
@@ -730,40 +808,53 @@ public:
 };
 
 #if defined(CGAL_GEOMETRY_EVENTS)
-CGAL::event Construct_leda_rat_point_on_2::ev_leda_rat_line_int;
-CGAL::event Construct_leda_rat_point_on_2::ev_leda_rat_ray_int;
-CGAL::event Construct_leda_rat_point_on_2::ev_leda_rat_segment_int;    
+template<class K> CGAL::event Construct_leda_rat_point_on_2<K>::ev_leda_rat_line_int;
+template<class K> CGAL::event Construct_leda_rat_point_on_2<K>::ev_leda_rat_ray_int;
+template<class K> CGAL::event Construct_leda_rat_point_on_2<K>::ev_leda_rat_segment_int;    
 #endif   
 
+template<class K> 
 class Construct_leda_rat_projected_point_2 {
+
+  typedef typename K::Point_2       Point_2;
+  typedef typename K::Line_2        Line_2;
+  typedef typename K::Segment_2     Segment_2; 
+
 public:
   typedef Arity_tag< 2 > Arity;
-  typedef leda_rat_point           result_type;
+  typedef Point_2        result_type;
 
 #if defined(CGAL_GEOMETRY_EVENTS)
   static CGAL::event ev_leda_rat_line_point; 
 #endif  
 
   // orthogonal projection of p onto l
-  leda_rat_point operator()(const leda_rat_line& l, const leda_rat_point& p) const
+  Point_2 operator()(const Line_2& l, const Point_2& p) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rat_line&, const leda_rat_point&> \
+    CGAL::occur<const Line_2&, const Point_2&> \
       (Construct_leda_rat_projected_point_2::ev_leda_rat_line_point, l, p);
 #endif  
-    leda_rat_segment s = l.perpendicular(p);
+    Segment_2 s = l.perpendicular(p);
     return s.end();
   }
 };
 
 #if defined(CGAL_GEOMETRY_EVENTS)
-CGAL::event Construct_leda_rat_projected_point_2::ev_leda_rat_line_point; 
+template<class K> CGAL::event Construct_leda_rat_projected_point_2<K>::ev_leda_rat_line_point; 
 #endif
 
+template<class K>
 class Construct_leda_rat_vertex_2 {
+
+  typedef typename K::Point_2       Point_2;
+  typedef typename K::Triangle_2    Triangle_2;
+  typedef typename K::Segment_2     Segment_2; 
+  typedef typename K::Iso_rectangle_2  Iso_rectangle_2;
+
 public:
   typedef Arity_tag< 2 > Arity;
-  typedef leda_rat_point           result_type;
+  typedef Point_2        result_type;
   
 #if defined(CGAL_GEOMETRY_EVENTS)
   static CGAL::event ev_leda_rat_triangle_int;
@@ -771,10 +862,10 @@ public:
   static CGAL::event ev_leda_rat_segment_int;    
 #endif    
 
-  leda_rat_point operator()(const leda_rat_segment& s, int i) const
+  Point_2 operator()(const Segment_2& s, int i) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rat_segment&, int> \
+    CGAL::occur<const Segment_2&, int> \
       (Construct_leda_rat_vertex_2::ev_leda_rat_segment_int, s, i);
 #endif   
     i = i % 2;
@@ -783,20 +874,20 @@ public:
     return s.end();
   }
     
-  leda_rat_point operator()(const leda_rat_rectangle& r, int i) const
+  Point_2 operator()(const Iso_rectangle_2& r, int i) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rat_rectangle&, int> \
+    CGAL::occur<const Iso_rectangle_2&, int> \
       (Construct_leda_rat_vertex_2::ev_leda_rat_rectangle_int, r, i);
 #endif   
     i = i % 4;
     return r[i+1];
   }
     
-  leda_rat_point operator()(const leda_rat_triangle& t, int i) const
+  Point_2 operator()(const Triangle_2& t, int i) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rat_triangle&, int> \
+    CGAL::occur<const Triangle_2&, int> \
       (Construct_leda_rat_vertex_2::ev_leda_rat_triangle_int, t, i);
 #endif    
     i = i % 3;
@@ -805,63 +896,73 @@ public:
 };
 
 #if defined(CGAL_GEOMETRY_EVENTS)
-CGAL::event Construct_leda_rat_vertex_2::ev_leda_rat_triangle_int;
-CGAL::event Construct_leda_rat_vertex_2::ev_leda_rat_rectangle_int;
-CGAL::event Construct_leda_rat_vertex_2::ev_leda_rat_segment_int;    
+template<class K> CGAL::event Construct_leda_rat_vertex_2<K>::ev_leda_rat_triangle_int;
+template<class K> CGAL::event Construct_leda_rat_vertex_2<K>::ev_leda_rat_rectangle_int;
+template<class K> CGAL::event Construct_leda_rat_vertex_2<K>::ev_leda_rat_segment_int;    
 #endif 
 
+template<class K>
 class Construct_leda_rat_supporting_line_2 {
+
+  typedef typename K::Line_2        Line_2;
+  typedef typename K::Ray_2         Ray_2;
+  typedef typename K::Segment_2     Segment_2; 
+
 public:
   typedef Arity_tag< 1 > Arity;
-  typedef leda_rat_line  result_type;
+  typedef Line_2  result_type;
   
 #if defined(CGAL_GEOMETRY_EVENTS)
   static CGAL::event ev_leda_rat_ray;
   static CGAL::event ev_leda_rat_segment;    
 #endif    
 
-  leda_rat_line operator()(const leda_rat_ray& r) const
+  Line_2 operator()(const Ray_2& r) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rat_ray&> \
+    CGAL::occur<const Ray_2&> \
       (Construct_leda_rat_supporting_line_2::ev_leda_rat_ray, r);
 #endif    
-     return leda_rat_line(r.point1(), r.point2());
+     return Line_2(r.point1(), r.point2());
   }
     
-  leda_rat_line operator()(const leda_rat_segment& s) const
+  Line_2 operator()(const Segment_2& s) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rat_segment&> \
+    CGAL::occur<const Segment_2&> \
       (Construct_leda_rat_supporting_line_2::ev_leda_rat_segment, s);
 #endif   
-     return leda_rat_line(s.start(), s.end());
+     return Line_2(s.start(), s.end());
   }
 };
 
 #if defined(CGAL_GEOMETRY_EVENTS)
-CGAL::event Construct_leda_rat_supporting_line_2::ev_leda_rat_ray;
-CGAL::event Construct_leda_rat_supporting_line_2::ev_leda_rat_segment;    
+template<class K> CGAL::event Construct_leda_rat_supporting_line_2<K>::ev_leda_rat_ray;
+template<class K> CGAL::event Construct_leda_rat_supporting_line_2<K>::ev_leda_rat_segment;    
 #endif 
 
+template<class K>
 class Construct_leda_rat_perpendicular_direction_2 {
+
+  typedef typename K::Direction_2        Direction_2;
+  typedef typename K::Vector_2           Vector_2;
+
 public:
   typedef Arity_tag< 2 > Arity;
-  typedef LEDA_NAMESPACE_NAME::rat_direction   result_type;
+  typedef Direction_2    result_type;
   
 #if defined(CGAL_GEOMETRY_EVENTS)
   static CGAL::event ev_leda_rat_direction_orientation;   
 #endif    
 
-  LEDA_NAMESPACE_NAME::rat_direction operator()(const LEDA_NAMESPACE_NAME::rat_direction& d,
-                                                CGAL::Orientation ori) const
+  Direction_2 operator()(const Direction_2& d, CGAL::Orientation ori) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
-      CGAL::occur<const LEDA_NAMESPACE_NAME::rat_direction&, CGAL::Orientation> \
+      CGAL::occur<const Direction_2&, CGAL::Orientation> \
         (Construct_leda_rat_perpendicular_direction_2::ev_leda_rat_direction_orientation, d, ori);
 #endif  
   
-      leda_rat_vector v = d.get_vector();
+      Vector_2 v = d.get_vector();
   
       if (ori == CGAL::COUNTERCLOCKWISE)
       {
@@ -872,27 +973,31 @@ public:
       }
       
       // collinear is not allowed
-      return LEDA_NAMESPACE_NAME::rat_direction(v);
+      return Direction_2(v);
   }
 };
 
 #if defined(CGAL_GEOMETRY_EVENTS)
-CGAL::event Construct_leda_rat_perpendicular_direction_2::ev_leda_rat_direction_orientation;   
+template<class K> CGAL::event Construct_leda_rat_perpendicular_direction_2<K>::ev_leda_rat_direction_orientation;   
 #endif
 
+template<class K>
 class Construct_leda_rat_perpendicular_vector_2 {
+
+  typedef typename K::Vector_2           Vector_2;
+
 public:
   typedef Arity_tag< 2 > Arity;
-  typedef leda_rat_vector           result_type;
+  typedef Vector_2       result_type;
   
 #if defined(CGAL_GEOMETRY_EVENTS)
   static CGAL::event ev_leda_rat_vector_orientation;   
 #endif  
 
-  leda_rat_vector operator()(const leda_rat_vector& v, CGAL::Orientation ori) const
+  Vector_2 operator()(const Vector_2& v, CGAL::Orientation ori) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
-      CGAL::occur<const leda_rat_vector&, CGAL::Orientation> \
+      CGAL::occur<const Vector_2&, CGAL::Orientation> \
         (Construct_leda_rat_perpendicular_vector_2::ev_leda_rat_vector_orientation, v, ori);
 #endif  
   
@@ -910,22 +1015,28 @@ public:
 };
 
 #if defined(CGAL_GEOMETRY_EVENTS)
-CGAL::event Construct_leda_rat_perpendicular_vector_2::ev_leda_rat_vector_orientation;   
+template<class K> CGAL::event Construct_leda_rat_perpendicular_vector_2<K>::ev_leda_rat_vector_orientation;   
 #endif
 
+template<class K>
 class Construct_leda_rat_perpendicular_line_2 {
+
+  typedef typename K::Line_2           Line_2;
+  typedef typename K::Point_2          Point_2;
+  typedef typename K::Segment_2        Segment_2;    
+
 public:
   typedef Arity_tag< 2 > Arity;
-  typedef leda_rat_line           result_type;
+  typedef Line_2         result_type;
   
 #if defined(CGAL_GEOMETRY_EVENTS)
   static CGAL::event ev_leda_rat_line_point;   
 #endif 
 
-  leda_rat_line operator()(const leda_rat_line& l, const leda_rat_point& p) const
+  Line_2 operator()(const Line_2& l, const Point_2& p) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
-      CGAL::occur<const leda_rat_line&, const leda_rat_point&> \
+      CGAL::occur<const Line_2&, const Point_2&> \
         (Construct_leda_rat_perpendicular_line_2::ev_leda_rat_line_point, l, p);
 #endif  
   
@@ -936,33 +1047,38 @@ public:
       return l.rotate90(p,1);
     }
       
-    leda_rat_segment s = l.perpendicular(p);
+    Segment_2 s = l.perpendicular(p);
       
     if (ori == +1){
-      return leda_rat_line(s.reverse());
+      return Line_2(s.reverse());
     }
       
-    return leda_rat_line(s);    
+    return Line_2(s);    
   }
 };
 
 #if defined(CGAL_GEOMETRY_EVENTS)
-CGAL::event Construct_leda_rat_perpendicular_line_2::ev_leda_rat_line_point;   
+template<class K> CGAL::event Construct_leda_rat_perpendicular_line_2<K>::ev_leda_rat_line_point;   
 #endif
 
+template<class K>
 class Construct_leda_rat_midpoint_2 {
+
+  typedef typename K::Point_2          Point_2;
+  typedef typename K::Segment_2        Segment_2;    
+
 public:
   typedef Arity_tag< 2 > Arity;
-  typedef leda_rat_point           result_type;
+  typedef Point_2           result_type;
   
 #if defined(CGAL_GEOMETRY_EVENTS)
   static CGAL::event ev_leda_rat_point;   
 #endif  
 
-  leda_rat_point operator()(const leda_rat_point& p1, const leda_rat_point& p2) const
+  Point_2 operator()(const Point_2& p1, const Point_2& p2) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
-     CGAL::occur<const leda_rat_point&, const leda_rat_point&> \
+     CGAL::occur<const Point_2&, const Point_2&> \
        (Construct_leda_rat_midpoint_2::ev_leda_rat_point, p1, p2);
 #endif  
      return LEDA_NAMESPACE_NAME::midpoint(p1,p2);
@@ -970,20 +1086,24 @@ public:
 };    
 
 #if defined(CGAL_GEOMETRY_EVENTS)
-CGAL::event Construct_leda_rat_midpoint_2::ev_leda_rat_point;   
+template<class K> CGAL::event Construct_leda_rat_midpoint_2<K>::ev_leda_rat_point;   
 #endif  
 
+template<class K>
 class Construct_leda_rat_center_2 {
+
+  typedef typename K::Point_2          Point_2;
+
 public:
   typedef Arity_tag< 1 > Arity;
-  typedef leda_rat_point           result_type;
+  typedef Point_2        result_type;
   
 #if defined(CGAL_GEOMETRY_EVENTS)
   static CGAL::event ev_leda_rat_circle;   
 #endif  
 
 #if defined(CGAL_COMPATIBLE_CIRCLES)
-  leda_rat_point operator()(const LEDA_NAMESPACE_NAME::cgal_rat_circle& C) const
+  Point_2 operator()(const LEDA_NAMESPACE_NAME::cgal_rat_circle& C) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
      CGAL::occur<const LEDA_NAMESPACE_NAME::cgal_rat_circle&> \
@@ -992,7 +1112,7 @@ public:
      return C.center();
   }
 #else
-  leda_rat_point operator()(const leda_rat_circle& C) const
+  Point_2 operator()(const leda_rat_circle& C) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
      CGAL::occur<const leda_rat_circle&> \
@@ -1004,67 +1124,76 @@ public:
 };  
 
 #if defined(CGAL_GEOMETRY_EVENTS)
-CGAL::event Construct_leda_rat_center_2::ev_leda_rat_circle;   
+template<class K> CGAL::event Construct_leda_rat_center_2<K>::ev_leda_rat_circle;   
 #endif 
 
+template<class K>
 class Construct_leda_rat_centroid_2 {
+
+  typedef typename K::Point_2          Point_2;
+  typedef typename K::FT               FT;
+
 public:
-  typedef leda_rat_point           result_type;
-  typedef Arity_tag< 3 >          Arity;  
+  typedef Point_2           result_type;
+  typedef Arity_tag< 3 >    Arity;  
   
 #if defined(CGAL_GEOMETRY_EVENTS)
   static CGAL::event ev_leda_rat_point_point_point;   
   static CGAL::event ev_leda_rat_point_point_point_point;     
 #endif  
 
-  leda_rat_point operator()(const leda_rat_point& p1, const leda_rat_point& p2, const leda_rat_point& p3) const
+  Point_2 operator()(const Point_2& p1, const Point_2& p2, const Point_2& p3) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
-     CGAL::occur<const leda_rat_point&, const leda_rat_point&, const leda_rat_point&> \
+     CGAL::occur<const Point_2&, const Point_2&, const Point_2&> \
        (Construct_leda_rat_centroid_2::ev_leda_rat_point_point_point, p1, p2, p3);
 #endif   
   
      // sum up coordinates, divide by 3
-     leda_rational x = (p1.xcoord() + p2.xcoord() + p3.xcoord() )/ leda_rational(3.0);
-     leda_rational y = (p1.ycoord() + p2.ycoord() + p3.ycoord() )/ leda_rational(3.0);
+     FT x = (p1.xcoord() + p2.xcoord() + p3.xcoord() )/ FT(3.0);
+     FT y = (p1.ycoord() + p2.ycoord() + p3.ycoord() )/ FT(3.0);
        
-     return leda_rat_point(x,y);
+     return Point_2(x,y);
   }
 
-  leda_rat_point operator()(const leda_rat_point& p1, const leda_rat_point& p2, 
-                            const leda_rat_point& p3, const leda_rat_point& p4) const
+  Point_2 operator()(const Point_2& p1, const Point_2& p2, 
+                     const Point_2& p3, const Point_2& p4) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
-     CGAL::occur<const leda_rat_point&, const leda_rat_point&, const leda_rat_point&, const leda_rat_point&> \
+     CGAL::occur<const Point_2&, const Point_2&, const Point_2&, const Point_2&> \
        (Construct_leda_rat_centroid_2::ev_leda_rat_point_point_point_point, p1, p2, p3, p4);
 #endif     
   
      // sum up coordinates, divide by 4
-     leda_rational x = (p1.xcoord() + p2.xcoord() + p3.xcoord() + p4.xcoord() )/ leda_rational(4.0);
-     leda_rational y = (p1.ycoord() + p2.ycoord() + p3.ycoord() + p4.ycoord() )/ leda_rational(4.0);
+     FT x = (p1.xcoord() + p2.xcoord() + p3.xcoord() + p4.xcoord() )/ FT(4.0);
+     FT y = (p1.ycoord() + p2.ycoord() + p3.ycoord() + p4.ycoord() )/ FT(4.0);
        
-     return leda_rat_point(x,y);       
+     return Point_2(x,y);       
   }
 }; 
 
 #if defined(CGAL_GEOMETRY_EVENTS)
-CGAL::event Construct_leda_rat_centroid_2::ev_leda_rat_point_point_point;   
-CGAL::event Construct_leda_rat_centroid_2::ev_leda_rat_point_point_point_point;     
+template<class K> CGAL::event Construct_leda_rat_centroid_2<K>::ev_leda_rat_point_point_point;   
+template<class K> CGAL::event Construct_leda_rat_centroid_2<K>::ev_leda_rat_point_point_point_point;     
 #endif  
 
+template<class K>
 class Construct_leda_rat_circumcenter_2 {
+
+  typedef typename K::Point_2          Point_2;
+
 public:
   typedef Arity_tag< 3 > Arity;
-  typedef leda_rat_point           result_type;
+  typedef Point_2        result_type;
 
 #if defined(CGAL_GEOMETRY_EVENTS)
   static CGAL::event ev_leda_rat_point;   
 #endif
 
-  leda_rat_point operator()(const leda_rat_point& p1, const leda_rat_point& p2, const leda_rat_point& p3) const
+  Point_2 operator()(const Point_2& p1, const Point_2& p2, const Point_2& p3) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
-     CGAL::occur<const leda_rat_point&, const leda_rat_point&, const leda_rat_point&> \
+     CGAL::occur<const Point_2&, const Point_2&, const Point_2&> \
        (Construct_leda_rat_circumcenter_2::ev_leda_rat_point, p1, p2, p3);
 #endif  
   
@@ -1074,22 +1203,27 @@ public:
 };
 
 #if defined(CGAL_GEOMETRY_EVENTS)
-CGAL::event Construct_leda_rat_circumcenter_2::ev_leda_rat_point;   
+template<class K> CGAL::event Construct_leda_rat_circumcenter_2<K>::ev_leda_rat_point;   
 #endif
 
+template<class K>
 class Construct_leda_rat_bisector_2 {
+
+  typedef typename K::Point_2          Point_2;
+  typedef typename K::Line_2           Line_2;
+
 public:
   typedef Arity_tag< 2 > Arity;
-  typedef leda_rat_line           result_type;
+  typedef Line_2         result_type;
 
 #if defined(CGAL_GEOMETRY_EVENTS)
   static CGAL::event ev_leda_rat_point;   
 #endif
 
-  leda_rat_line operator()(const leda_rat_point& p1, const leda_rat_point& p2) const
+  Line_2 operator()(const Point_2& p1, const Point_2& p2) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
-     CGAL::occur<const leda_rat_point&, const leda_rat_point&> \
+     CGAL::occur<const Point_2&, const Point_2&> \
        (Construct_leda_rat_bisector_2::ev_leda_rat_point, p1, p2);
 #endif   
      return LEDA_NAMESPACE_NAME::p_bisector(p1,p2);
@@ -1097,10 +1231,15 @@ public:
 };
 
 #if defined(CGAL_GEOMETRY_EVENTS)
-CGAL::event Construct_leda_rat_bisector_2::ev_leda_rat_point;   
+template<class K> CGAL::event Construct_leda_rat_bisector_2<K>::ev_leda_rat_point;   
 #endif
 
+template<class K>
 class Construct_leda_rat_opposite_direction_2 {
+
+  typedef typename K::Vector_2         Vector_2;
+  typedef typename K::Direction_2      Direction_2;
+
 public:
 
 #if defined(CGAL_GEOMETRY_EVENTS)
@@ -1108,38 +1247,40 @@ public:
 #endif  
 
   typedef Arity_tag< 1 > Arity;
-  typedef LEDA_NAMESPACE_NAME::rat_direction           result_type;
+  typedef Direction_2    result_type;
 
-  LEDA_NAMESPACE_NAME::rat_direction operator()(const LEDA_NAMESPACE_NAME::rat_direction& dir) const
+  Direction_2 operator()(const Direction_2& dir) const
   { 
 #if defined(CGAL_GEOMETRY_EVENTS)
-      CGAL::occur<const LEDA_NAMESPACE_NAME::rat_direction&>(Construct_leda_rat_opposite_direction_2::ev_leda_rat_direction, dir);
+      CGAL::occur<const Direction_2&>(Construct_leda_rat_opposite_direction_2::ev_leda_rat_direction, dir);
 #endif    
-      leda_rat_vector v = dir.get_vector(); 
-      return LEDA_NAMESPACE_NAME::rat_direction(-v);
+      Vector_2 v = dir.get_vector(); 
+      return Direction_2(-v);
   }
 };
 
 #if defined(CGAL_GEOMETRY_EVENTS)
-CGAL::event  Construct_leda_rat_opposite_direction_2::ev_leda_rat_direction;
+template<class K> CGAL::event  Construct_leda_rat_opposite_direction_2<K>::ev_leda_rat_direction;
 #endif
 
-// attention - we need a special functor for a special segment ...
-// (for result type)
 
+template<class K>
 class Construct_leda_rat_opposite_segment_2 {
+
+  typedef typename K::Segment_2  Segment_2;
+
 public:
   typedef Arity_tag< 1 > Arity;
-  typedef leda_rat_segment           result_type;
+  typedef Segment_2      result_type;
 
 #if defined(CGAL_GEOMETRY_EVENTS)
   static CGAL::event ev_leda_rat_segment;   
 #endif
   
-  leda_rat_segment operator()(const leda_rat_segment& s) const
+  Segment_2 operator()(const Segment_2& s) const
   { 
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rat_segment&> \
+    CGAL::occur<const Segment_2&> \
        (Construct_leda_rat_opposite_segment_2::ev_leda_rat_segment, s);
 #endif 
     return s.reverse(); 
@@ -1147,22 +1288,26 @@ public:
 };
 
 #if defined(CGAL_GEOMETRY_EVENTS)
-CGAL::event Construct_leda_rat_opposite_segment_2::ev_leda_rat_segment;   
+template<class K> CGAL::event Construct_leda_rat_opposite_segment_2<K>::ev_leda_rat_segment;   
 #endif
 
+template<class K>
 class Construct_leda_rat_opposite_ray_2 {
+
+  typedef typename K::Ray_2  Ray_2;
+
 public:
   typedef Arity_tag< 1 > Arity;
-  typedef leda_rat_ray           result_type;
+  typedef Ray_2          result_type;
 
 #if defined(CGAL_GEOMETRY_EVENTS)
   static CGAL::event ev_leda_rat_ray;   
 #endif
 
-  leda_rat_ray operator()(const leda_rat_ray& r) const
+  Ray_2 operator()(const Ray_2& r) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rat_ray&> \
+    CGAL::occur<const Ray_2&> \
        (Construct_leda_rat_opposite_ray_2::ev_leda_rat_ray, r);
 #endif   
     return r.reverse(); 
@@ -1170,22 +1315,26 @@ public:
 };
 
 #if defined(CGAL_GEOMETRY_EVENTS)
-CGAL::event Construct_leda_rat_opposite_ray_2::ev_leda_rat_ray;   
+template<class K> CGAL::event Construct_leda_rat_opposite_ray_2<K>::ev_leda_rat_ray;   
 #endif
 
+template<class K>
 class Construct_leda_rat_opposite_line_2 {
+
+  typedef typename K::Line_2  Line_2;
+
 public:
   typedef Arity_tag< 1 > Arity;
-  typedef leda_rat_line           result_type;
+  typedef Line_2         result_type;
 
 #if defined(CGAL_GEOMETRY_EVENTS)
   static CGAL::event ev_leda_rat_line;   
 #endif
 
-  leda_rat_line operator()(const leda_rat_line& l) const
+  Line_2 operator()(const Line_2& l) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rat_line&> \
+    CGAL::occur<const Line_2&> \
        (Construct_leda_rat_opposite_line_2::ev_leda_rat_line, l);
 #endif    
     return l.reverse(); 
@@ -1193,22 +1342,26 @@ public:
 };
 
 #if defined(CGAL_GEOMETRY_EVENTS)
-CGAL::event Construct_leda_rat_opposite_line_2::ev_leda_rat_line;   
+template<class K> CGAL::event Construct_leda_rat_opposite_line_2<K>::ev_leda_rat_line;   
 #endif
 
+template<class K>
 class Construct_leda_rat_opposite_triangle_2 {
+
+  typedef typename K::Triangle_2   Triangle_2;
+
 public:
   typedef Arity_tag< 1 > Arity;
-  typedef leda_rat_triangle       result_type;
+  typedef Triangle_2     result_type;
 
 #if defined(CGAL_GEOMETRY_EVENTS)
   static CGAL::event ev_leda_rat_triangle;   
 #endif
 
-  leda_rat_triangle operator()(const leda_rat_triangle& t) const
+  Triangle_2 operator()(const Triangle_2& t) const
   {
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rat_triangle&> \
+    CGAL::occur<const Triangle_2&> \
        (Construct_leda_rat_opposite_triangle_2::ev_leda_rat_triangle, t);
 #endif   
     return t.reverse(); 
@@ -1216,10 +1369,15 @@ public:
 };
 
 #if defined(CGAL_GEOMETRY_EVENTS)
-CGAL::event Construct_leda_rat_opposite_triangle_2::ev_leda_rat_triangle;   
+template<class K> CGAL::event Construct_leda_rat_opposite_triangle_2<K>::ev_leda_rat_triangle;   
 #endif
 
+template<class K>
 class Construct_leda_rat_opposite_circle_2 {
+
+  typedef typename K::Point_2  Point_2;
+  typedef typename K::FT       FT;
+
 public:
   typedef Arity_tag< 1 > Arity;
   
@@ -1236,8 +1394,8 @@ public:
     CGAL::occur<const LEDA_NAMESPACE_NAME::cgal_rat_circle&> \
        (Construct_leda_rat_opposite_circle_2::ev_leda_rat_circle, c);
 #endif  
-    leda_rat_point p  = c.center();
-    leda_rational  sq = c.sqr_radius();
+    Point_2 p  = c.center();
+    FT  sq = c.sqr_radius();
     CGAL::Orientation ori = c.orientation();
     
     ori = reverse_orientation(ori);
@@ -1259,22 +1417,26 @@ public:
 };
 
 #if defined(CGAL_GEOMETRY_EVENTS)
-CGAL::event Construct_leda_rat_opposite_circle_2::ev_leda_rat_circle;   
+template<class K> CGAL::event Construct_leda_rat_opposite_circle_2<K>::ev_leda_rat_circle;   
 #endif 
 
+template<class K>
 class Construct_leda_rat_opposite_vector_2 {
+
+  typedef typename K::Vector_2 Vector_2;
+
 public:
   typedef Arity_tag< 1 > Arity;
-  typedef leda_rat_vector         result_type;
+  typedef Vector_2       result_type;
 
 #if defined(CGAL_GEOMETRY_EVENTS)
   static CGAL::event ev_leda_rat_vector;   
 #endif
 
-  leda_rat_vector operator()(const leda_rat_vector& v) const
+  Vector_2 operator()(const Vector_2& v) const
   { 
 #if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const leda_rat_vector&> \
+    CGAL::occur<const Vector_2&> \
        (Construct_leda_rat_opposite_vector_2::ev_leda_rat_vector, v);
 #endif  
     return -v; 
@@ -1282,7 +1444,7 @@ public:
 };
 
 #if defined(CGAL_GEOMETRY_EVENTS)
-CGAL::event Construct_leda_rat_opposite_vector_2::ev_leda_rat_vector;   
+template<class K> CGAL::event Construct_leda_rat_opposite_vector_2<K>::ev_leda_rat_vector;   
 #endif
 
 CGAL_END_NAMESPACE

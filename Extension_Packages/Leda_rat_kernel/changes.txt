@@ -1,1 +1,6 @@
+0.9.2 faster segment intersection
+      small fixes
+      most LEDA kernel functors are now templates
+      (this helps supporting kernel type replacement)
+
 0.9.1 missing files checked in
