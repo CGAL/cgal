@@ -46,41 +46,61 @@ CGAL_VERSION='0.9'
 # ---------------------------------------------
 CGAL_INSTALL_VERSION='$Revision$'
 # ---------------------------------------------
-CGAL_DIR=`pwd`
-# ---------------------------------------------
-CGAL_EXAMPLE_DIR=${CGAL_DIR}/examples
-# ---------------------------------------------
-CGAL_INCL_DIR=${CGAL_DIR}/include
-# ---------------------------------------------
-CGAL_INCL_CONF_DIR=${CGAL_INCL_DIR}/CGAL/config
-# ---------------------------------------------
-CGAL_LIB_DIR=${CGAL_DIR}/lib
-# ---------------------------------------------
-CGAL_MAKE_DIR=${CGAL_DIR}/make
-# ---------------------------------------------
-CGAL_SRC_DIR=${CGAL_DIR}/src
-# ---------------------------------------------
-CGAL_TEST_DIR=${CGAL_DIR}/test
-# ---------------------------------------------
-CGAL_CONF_DIR=${CGAL_DIR}/config
-# ---------------------------------------------
-CGAL_INSTALL_CONF_DIR=${CGAL_CONF_DIR}/install
-# ---------------------------------------------
 CGAL_INSTALL_CONF_VERSION='1.1'
-# ---------------------------------------------
-CGAL_TEST_CONF_DIR=${CGAL_CONF_DIR}/testfiles
-# ---------------------------------------------
-CGAL_AUX_DIR=${CGAL_DIR}/auxiliary
 # ---------------------------------------------
 CGAL_LIB_NAME='libCGAL'
 # ---------------------------------------------
-CGAL_DIRFILE=${CGAL_DIR}/make/CGAL_directories
-# ---------------------------------------------
-CGAL_TESTFILE=${CGAL_TEST_DIR}/run_testsuite
+CGAL_DIR=`pwd`
 
-# ---------------------------------------------
-# logfile for testsuite:
-TEST_LOGFILE=${CGAL_TEST_DIR}/error.txt
+# -------------------------------------------------------
+# several directories depend on the setting of CGAL_DIR
+# we put these into a function that can be called in case
+# that CGAL_DIR is changed later
+# -------------------------------------------------------
+set_dirs_dependant_on_cgal_dir()
+{
+    CGAL_EXAMPLE_DIR=${CGAL_DIR}/examples
+    CGAL_INCL_DIR=${CGAL_DIR}/include
+    CGAL_INCL_CONF_DIR=${CGAL_INCL_DIR}/CGAL/config
+    CGAL_LIB_DIR=${CGAL_DIR}/lib
+    CGAL_MAKE_DIR=${CGAL_DIR}/make
+    CGAL_SRC_DIR=${CGAL_DIR}/src
+    CGAL_TEST_DIR=${CGAL_DIR}/test
+    CGAL_CONF_DIR=${CGAL_DIR}/config
+    CGAL_AUX_DIR=${CGAL_DIR}/auxiliary
+    CGAL_INSTALL_CONF_DIR=${CGAL_CONF_DIR}/install
+    CGAL_TEST_CONF_DIR=${CGAL_CONF_DIR}/testfiles
+    CGAL_DIRFILE=${CGAL_MAKE_DIR}/CGAL_directories
+    CGAL_TESTFILE=${CGAL_TEST_DIR}/run_testsuite
+
+    # ---------------------------------------------
+    # logfile for testsuite:
+    TEST_LOGFILE=${CGAL_TEST_DIR}/error.txt
+
+    # ---------------------------------------------
+    # internal variables
+    # ---------------------------------------------
+
+    # installation logfile (verbose)
+    INSTALL_LOGFILE="${CGAL_DIR}/install.log"
+
+    # installation logfile (only completed compile/test runs)
+    # (Really Important Stuff)
+    INSTALL_RIS_LOGFILE=${CGAL_DIR}/install.completed
+    
+    # compilation logfile
+    COMPILE_LOGFILE=${CGAL_DIR}/compile.log
+    
+    # logfile for temporary use (e.g. compiler tests)
+    TMP_LOGFILE=${CGAL_DIR}/tmptmp.log
+    
+    # temporary file for confidence tests
+    TMP_CXX_FILE=${CGAL_DIR}/tmp_test
+}
+
+# initialize once
+set_dirs_dependant_on_cgal_dir
+
 
 # ---------------------------------------------
 # set to non-empty, if you want to view the logs of 
@@ -179,21 +199,8 @@ _MENU_WIDTH=6
 _LEFTSPACE='  '             
 
 # installation logfile (verbose)
-INSTALL_LOGFILE="${CGAL_DIR}/install.log"
 INSTALL_LOGFILE_REDIRECTION='>/dev/null'
 
-# installation logfile (only completed compile/test runs)
-# (Really Important Stuff)
-INSTALL_RIS_LOGFILE=${CGAL_DIR}/install.completed
-
-# compilation logfile
-COMPILE_LOGFILE=${CGAL_DIR}/compile.log
-
-# logfile for temporary use (e.g. compiler tests)
-TMP_LOGFILE=${CGAL_DIR}/tmptmp.log
-
-# temporary file for confidence tests
-TMP_CXX_FILE=${CGAL_DIR}/tmp_test
 
 # compiler to be used 
 # This is a string defined as follows:
@@ -234,7 +241,7 @@ Please read the documentation.
 usage: `basename $0` [-leda] [-gmp] [--verbose] 
       [--help | --version | -i | --interactive |
        -ni <comp> | --non-interactive <comp> | -os <comp>]
-      [--STL_DIR <dir>]
+      [--CGAL_DIR <dir>] [--STL_DIR <dir>]
       [--leda-sys-incl] [--leda-sys-lib]
       [--LEDA_INCL_DIR <dir>] [--LEDA_LIB_DIR <dir>]
       [--GMP_INCL_DIR <dir>] [--GMP_LIB_DIR <dir>]
@@ -247,7 +254,7 @@ usage: `basename $0` [-leda] [-gmp] [--verbose]
   --version    prints `basename $0` version number
   --interactive  
                runs the script in interactive mode
-               (other options are ignored)
+               (other options - except for --CGAL_DIR - are ignored)
   --non-interactive <comp>   
                runs the script in non-interactive mode
                i.e. makefiles are generated for C++ compiler
@@ -714,7 +721,7 @@ set_compiler_flags()
 	    CGAL_SHARED_LIB_LDFLAGS=""
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -Xlinker -shared"
 	    WINDOW_DIR="/usr/lib/X11"
-	    RUNTIME_LINKER_FLAG=''
+	    RUNTIME_LINKER_FLAG='-Wl,-R'
 	    ;;
 	*)
 	    #### settings for unknown compiler 
@@ -2627,7 +2634,6 @@ _set_tmp_to_not_or_not()
     fi
 }
 
-
 # ---------------------------------------------------------------------
 # compiler_menu to setup compiler and STL options
 #
@@ -3012,6 +3018,10 @@ install_gmp()
     make_lib_dir
     if [ -r ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libgmp.a -o \
 	 -r ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libgmp.so ]; then
+	if [ "${GMP_INSTALLATION}" != "c" ]; then
+	    GMP_INSTALLATION='c'
+	    GMP_TEST_PASSED=''
+	fi
 	go_down_lines 2
 	print_line "There already exists a GMP installation"
 	print_line "for this os/compiler in the CGAL tree."
@@ -3769,13 +3779,22 @@ set_variable_from_command_line()
 
 _WHAT_TO_DO=''
 _CONFLICT=''
+_ANY_OPT=''
 _check_for_sysutil printf y
 _check_for_sysutil awk y
 _check_for_sysutil rm y
 initial_check
-while [ $# -gt 0 ]; do
-    case $* in
+while [ ${#} -gt 0 ]; do
+    case ${*} in
+	--cgal_dir*|--CGAL_DIR*|-CGAL_DIR*|-cgal_dir*)
+	    if set_variable_from_command_line 'CGAL_DIR' "$1" "$2"; then
+		shift
+	    fi
+	    set_dirs_dependant_on_cgal_dir
+	    initial_check
+	    ;;
 	--stl_dir*|--STL_DIR*|-STL_DIR*|-stl_dir*)
+	    _ANY_OPT='y'
 	    if set_variable_from_command_line 'STL_DIR' "$1" "$2"; then
 		shift
 	    fi
@@ -3783,39 +3802,47 @@ while [ $# -gt 0 ]; do
 	    ;;
 	--leda_sys_incl*|--LEDA_SYS_INCL*|--leda-sys-incl*|--LEDA-SYS-INCL*|\
 -leda_sys_incl*|-LEDA_SYS_INCL*|-leda-sys-incl*|-LEDA-SYS-INCL*)
+	    _ANY_OPT='y'
 	    NEED_EXTRA_LEDA_IDIR=''
 	    ;;
 	--leda_incl_dir*|--LEDA_INCL_DIR*|-LEDA_INCL_DIR*|-leda_incl_dir*)
+	    _ANY_OPT='y'
 	    if set_variable_from_command_line 'LEDA_INCL_DIR' "$1" "$2"; then
 		shift
 	    fi
 	    ;;
 	--leda_sys_lib*|--LEDA_SYS_LIB*|--leda-sys-lib*|--LEDA-SYS-LIB*|\
 -leda_sys_lib*|-LEDA_SYS_LIB*|-leda-sys-lib*|-LEDA-SYS-LIB*)
+	    _ANY_OPT='y'
 	    NEED_EXTRA_LEDA_LDIR=''
 	    ;;
 	--leda_lib_dir*|--LEDA_LIB_DIR*|-LEDA_LIB_DIR*|-leda_lib_dir*)
+	    _ANY_OPT='y'
 	    if set_variable_from_command_line 'LEDA_LIB_DIR' "$1" "$2"; then
 		shift
 	    fi
 	    ;;
 	--gmp_incl_dir*|--GMP_INCL_DIR*|-GMP_INCL_DIR*|-gmp_incl_dir*)
+	    _ANY_OPT='y'
 	    if set_variable_from_command_line 'GMP_INCL_DIR' "$1" "$2"; then
 		shift
 	    fi
 	    GMP_INSTALLATION='e'
 	    ;;
 	--gmp_lib_dir*|--GMP_LIB_DIR*|-GMP_LIB_DIR*|-gmp_lib_dir*)
+	    _ANY_OPT='y'
 	    if set_variable_from_command_line 'GMP_LIB_DIR' "$1" "$2"; then
 		shift
 	    fi
 	    GMP_INSTALLATION='e'
 	    ;;
 	-LEDA*|-leda*|--leda*|--LEDA*)
+	    _ANY_OPT='y'
 	    LEDA_SUPPORT='_LEDA'
 	    write_buffer "${_LEFTSPACE}Enable LEDA support.\n"
 	    ;;
 	-gmp*|-GMP*|--gmp*|--GMP*)
+	    _ANY_OPT='y'
 	    GMP_SUPPORT='_GMP'
 	    write_buffer "${_LEFTSPACE}Enable GMP support.\n"
 	    ;;
@@ -3930,9 +3957,9 @@ case ${_WHAT_TO_DO} in
 	${_printf} "starting interactive mode - one moment, please\n"
 	INSTALL_INTERACTIVE='y'
 	INSTALL_LOGFILE_REDIRECTION=">>${INSTALL_LOGFILE}"
-	if [ -n "${_BUF}" ]; then
+	if [ -n "${_ANY_OPT}" ]; then
 	    ${_printf} "\nWARNING: In interactive mode all command line options\n"
-	    ${_printf} "  except for \"-i\" are ignored.\n\n"
+	    ${_printf} "  except for \"-i\" and \"--CGAL_DIR\" are ignored.\n\n"
 	    clear_buffer
 	fi
 	init_logfiles
