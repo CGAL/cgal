@@ -422,7 +422,8 @@ public:
             )
         {
           std::cerr << "\nleft=" << left() << " right=" << right()
-                    << " bottom=" << bottom() << " top=" << top() << std::flush;
+                    << " bottom=" << bottom() << " top=" << top()
+                    << std::flush;
           CGAL_warning(!(right_top_neighbour() &&
                          !right_top_neighbour()->is_active()));
           CGAL_warning(!(left_top_neighbour() &&
@@ -456,7 +457,8 @@ public:
           CGAL_warning((!is_right_unbounded()));
           return false;
         }
-        if(!(traits->curve_get_point_status(bottom(),left())==Traits::ON_CURVE))
+        if (!(traits->curve_get_point_status(bottom(),left()) ==
+              Traits::ON_CURVE))
         {
           std::cerr << "\nbottom()==" << bottom() << std::flush;
           std::cerr << "\nleft()==" << left() << std::flush;
@@ -465,8 +467,8 @@ public:
                                               left()) == Traits::ON_CURVE);
           return false;
         }
-        if(!(traits->curve_get_point_status(bottom(),
-                                            right()) == Traits::ON_CURVE))
+        if (!(traits->curve_get_point_status(bottom(),
+                                             right()) == Traits::ON_CURVE))
         {
           std::cerr << "\nbottom()==" << bottom() << std::flush;
           std::cerr << "\nright()==" << right() << std::flush;
@@ -475,7 +477,8 @@ public:
                                               right()) == Traits::ON_CURVE);
           return false;
         }
-        if(!(traits->curve_get_point_status(top(), left()) == Traits::ON_CURVE))
+        if(!(traits->curve_get_point_status(top(), left()) ==
+             Traits::ON_CURVE))
         {
           std::cerr << "\ntop()==" << top() << std::flush;
           std::cerr << "\nleft()==" << left() << std::flush;
@@ -497,8 +500,9 @@ public:
         {
           if (right_top_neighbour()&&!right_top_neighbour()->is_active()||
             //!left_top_neighbour()||!left_top_neighbour()->is_active()||
-              right_bottom_neighbour()&&!right_bottom_neighbour()->is_active()||
-              left_bottom_neighbour()&&!left_bottom_neighbour()->is_active()
+              right_bottom_neighbour() &&
+              !right_bottom_neighbour()->is_active()||
+              left_bottom_neighbour() && !left_bottom_neighbour()->is_active()
               )
           {
             CGAL_warning(!right_top_neighbour() ||
@@ -536,9 +540,11 @@ public:
             //CGAL_warning(!left_top_neighbour() ||
             //!traits->is_degenerate_curve(*left_top_neighbour()));
             CGAL_warning(!right_bottom_neighbour() ||
-                         traits->is_degenerate_curve(*right_bottom_neighbour()));
+                         traits->
+                         is_degenerate_curve(*right_bottom_neighbour()));
             CGAL_warning(!left_bottom_neighbour() ||
-                         traits->is_degenerate_curve(*left_bottom_neighbour()));
+                         traits->
+                         is_degenerate_curve(*left_bottom_neighbour()));
             return false;
           }
         }
@@ -553,7 +559,8 @@ public:
             CGAL_warning(!right_top_neighbour() ||
                          traits->is_degenerate_curve(*right_top_neighbour()));
             CGAL_warning(!left_bottom_neighbour() ||
-                         traits->is_degenerate_curve(*left_bottom_neighbour()));
+                         traits->
+                         is_degenerate_curve(*left_bottom_neighbour()));
             return false;
           }
           if (right_top_neighbour()&&!right_top_neighbour()->is_active()||
