@@ -352,9 +352,55 @@ public:
                       return Result(a1,a2,a3,a4,a5,a6,a7,a8,a9);
                     }
 };
+template < class Op1, class Op2 >
+class Unary_compose_1
+: public CGAL_STD::unary_function< typename Op2::argument_type,
+                                   typename Op1::result_type >
+{
+protected:
+  Op1 op1;
+  Op2 op2;
+public:
+  typedef typename Op2::argument_type   argument_type;
+  typedef typename Op1::result_type     result_type;
 
-// Classes for composing function objects by Michael Hoffmann.
+  Unary_compose_1(const Op1& x, const Op2& y) : op1(x), op2(y) {}
 
+  result_type
+  operator()(const argument_type& x) const
+  { return op1(op2(x)); }
+};
+
+template < class Op1, class Op2 >
+inline Unary_compose_1< Op1, Op2 >
+compose1_1(const Op1& op1, const Op2& op2)
+{ return Unary_compose_1< Op1, Op2 >(op1, op2); }
+
+template < class Op1, class Op2, class Op3 >
+class Binary_compose_1
+: public CGAL_STD::unary_function< typename Op2::argument_type,
+                                   typename Op1::result_type >
+{
+protected:
+  Op1 op1;
+  Op2 op2;
+  Op3 op3;
+public:
+  typedef typename Op2::argument_type  argument_type;
+  typedef typename Op1::result_type    result_type;
+
+  Binary_compose_1(const Op1& x, const Op2& y, const Op3& z)
+  : op1(x), op2(y), op3(z) {}
+
+  result_type
+  operator()(const argument_type& x) const
+  { return op1(op2(x), op3(x)); }
+};
+
+template < class Op1, class Op2, class Op3 >
+inline Binary_compose_1< Op1, Op2, Op3 >
+compose2_1(const Op1& op1, const Op2& op2, const Op3& op3)
+{ return Binary_compose_1< Op1, Op2, Op3 >(op1, op2, op3); }
 template < class Op1, class Op2 >
 class Unary_compose_2
 : public CGAL_STD::binary_function< typename Op2::first_argument_type,
@@ -369,20 +415,18 @@ public:
   typedef typename Op2::second_argument_type  second_argument_type;
   typedef typename Op1::result_type           result_type;
 
-  Unary_compose_2( const Op1& x, const Op2& y) : op1(x), op2(y) {}
+  Unary_compose_2(const Op1& x, const Op2& y) : op1(x), op2(y) {}
 
   result_type
-  operator()( const first_argument_type& x,
-              const second_argument_type& y) const {
-                return op1( op2(x, y));
-              }
+  operator()(const first_argument_type& x,
+             const second_argument_type& y) const
+  { return op1(op2(x, y)); }
 };
 
 template < class Op1, class Op2 >
-Unary_compose_2< Op1, Op2 >
-compose1_2( const Op1& op1, const Op2& op2) {
-  return Unary_compose_2< Op1, Op2 >( op1, op2);
-}
+inline Unary_compose_2< Op1, Op2 >
+compose1_2(const Op1& op1, const Op2& op2)
+{ return Unary_compose_2< Op1, Op2 >(op1, op2); }
 
 template < class Op1, class Op2, class Op3 >
 class Binary_compose_2
@@ -399,21 +443,20 @@ public:
   typedef typename Op3::argument_type  second_argument_type;
   typedef typename Op1::result_type    result_type;
 
-  Binary_compose_2( const Op1& x, const Op2& y, const Op3& z)
+  Binary_compose_2(const Op1& x, const Op2& y, const Op3& z)
   : op1(x), op2(y), op3(z) {}
 
   result_type
-  operator()( const first_argument_type& x,
-              const second_argument_type& y) const {
-                return op1( op2( x), op3( y));
-              }
+  operator()(const first_argument_type& x,
+             const second_argument_type& y) const
+  { return op1(op2(x), op3(y)); }
 };
 
 template < class Op1, class Op2, class Op3 >
-Binary_compose_2< Op1, Op2, Op3 >
-compose2_2( const Op1& op1, const Op2& op2, const Op3& op3) {
-  return Binary_compose_2< Op1, Op2, Op3 >( op1, op2, op3);
-}
+inline Binary_compose_2< Op1, Op2, Op3 >
+compose2_2(const Op1& op1, const Op2& op2, const Op3& op3)
+{ return Binary_compose_2< Op1, Op2, Op3 >(op1, op2, op3); }
+
 
 CGAL_END_NAMESPACE
 #endif // CGAL_FUNCTION_OBJECTS_H //

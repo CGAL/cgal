@@ -268,15 +268,11 @@ public:
   typedef std::size_t     size_type;
   typedef std::ptrdiff_t  difference_type;
 
-  typedef _In_place_list_iterator<T>        iterator;
-  typedef _In_place_list_const_iterator<T>  const_iterator;
+  typedef _In_place_list_iterator<T>              iterator;
+  typedef _In_place_list_const_iterator<T>        const_iterator;
 
-  typedef std::reverse_bidirectional_iterator<
-    iterator, value_type, reference, difference_type
-  > reverse_iterator;
-  typedef std::reverse_bidirectional_iterator<
-    const_iterator, value_type, const_reference, difference_type
-  > const_reverse_iterator;
+  typedef std::reverse_iterator< iterator >       reverse_iterator;
+  typedef std::reverse_iterator< const_iterator > const_reverse_iterator;
 
   typedef In_place_list<T,managed>  Self;
 
@@ -379,8 +375,16 @@ public:
     CGAL_assertion( length > 0);
     (*((*i.node).prev_link)).next_link = (*i.node).next_link;
     (*((*i.node).next_link)).prev_link = (*i.node).prev_link;
+#ifdef __BORLANDC__
+#pragma warn -8008
+#pragma warn -8066
+#endif
     if (managed)
       put_node(i.node);
+#ifdef __BORLANDC__
+#pragma warn .8008
+#pragma warn .8066
+#endif
     --length;
   }
   void erase(T* pos)  { erase( iterator( pos)); }
