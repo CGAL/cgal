@@ -1,3 +1,6 @@
+14 Mar 2004 Sylvain Pion
+- Kill warning when -DNDEBUG.
+
 21 Feb 2004 Sylvain Pion
 - Move successor() and predecessor() to STL_Extension.
 

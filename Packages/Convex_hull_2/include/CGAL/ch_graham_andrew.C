@@ -135,10 +135,13 @@ ch__ref_graham_andrew_scan( BidirectionalIterator first,
   typedef  typename Traits::Less_xy_2    Less_xy;
   typedef  typename Traits::Point_2      Point_2;
   typedef  typename Traits::Left_turn_2  Left_turn;
+
+  CGAL_ch_precondition_code(
   typedef  typename Traits::Equal_2      Equal_2;
-  
-  Left_turn    left_turn    = ch_traits.left_turn_2_object();
   Equal_2      equal_points = ch_traits.equal_2_object();
+  )
+
+  Left_turn    left_turn    = ch_traits.left_turn_2_object();
 
   std::vector< BidirectionalIterator >    S;
   BidirectionalIterator              alpha;
