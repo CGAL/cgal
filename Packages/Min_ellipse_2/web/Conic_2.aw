@@ -1248,7 +1248,7 @@ a @prg{case} statement.
     void analyse( ) 
     {
         RT d = det();
-        type = (Conic_type)(CGAL::sign(d));
+        type = (Conic_type)(CGAL_NTS sign(d));
         switch (type) {
         case HYPERBOLA: 
             {
@@ -1275,7 +1275,7 @@ a @prg{case} statement.
     void analyse( ) 
     {
         FT d = det();
-        type = (Conic_type)(CGAL::sign(d));
+        type = (Conic_type)(CGAL_NTS sign(d));
         switch (type) {
         case HYPERBOLA: 
             { 
@@ -1360,7 +1360,7 @@ this, we get the equivalent condition $r>0$.
 @macro <analyse hyperbola, homogeneous case> = @begin
     trivial = empty = false;
     RT z_prime = d*w() - u()*u()*s() - v()*v()*r() + u()*v()*t();
-    o = (CGAL::Orientation)(CGAL::sign (z_prime));
+    o = (CGAL::Orientation)(CGAL_NTS sign (z_prime));
     degenerate = (o == CGAL::ZERO);
 
 @end
@@ -1369,7 +1369,7 @@ this, we get the equivalent condition $r>0$.
 @macro <analyse hyperbola, Cartesian case> = @begin
     trivial = empty = false;
     FT z_prime = d*w() - u()*u()*s() - v()*v()*r() + u()*v()*t();
-    o = (CGAL::Orientation)(CGAL::sign (z_prime));
+    o = (CGAL::Orientation)(CGAL_NTS sign (z_prime));
     degenerate = (o == CGAL::ZERO);
 
 @end
@@ -1378,28 +1378,28 @@ this, we get the equivalent condition $r>0$.
 @macro <analyse ellipse, homogeneous case> = @begin
     trivial = false;
     RT z_prime = d*w() - u()*u()*s() - v()*v()*r() + u()*v()*t();  
-    if (CGAL::is_positive (r())) {
-        empty = CGAL::is_positive(CGAL::sign (z_prime));
+    if (CGAL_NTS is_positive (r())) {
+        empty = CGAL_NTS is_positive(CGAL_NTS sign (z_prime));
         empty ? o = CGAL::POSITIVE : o = CGAL::NEGATIVE;
     } else {
-        empty = CGAL::is_negative(CGAL::sign (z_prime));
+        empty = CGAL_NTS is_negative(CGAL_NTS sign (z_prime));
         empty ? o = CGAL::NEGATIVE : o = CGAL::POSITIVE;
     }
-    degenerate = empty || CGAL::is_zero (z_prime);
+    degenerate = empty || CGAL_NTS is_zero (z_prime);
 
 @end
 
 @macro <analyse ellipse, Cartesian case> = @begin
     trivial = false;
     FT z_prime = d*w() - u()*u()*s() - v()*v()*r() + u()*v()*t();
-    if (CGAL::is_positive (r())) {
-        empty = CGAL::is_positive(CGAL::sign (z_prime));
+    if (CGAL_NTS is_positive (r())) {
+        empty = CGAL_NTS is_positive(CGAL_NTS sign (z_prime));
         empty ? o = CGAL::POSITIVE : o = CGAL::NEGATIVE;
     } else {
-        empty = CGAL::is_negative(CGAL::sign (z_prime));
+        empty = CGAL_NTS is_negative(CGAL_NTS sign (z_prime));
         empty ? o = CGAL::NEGATIVE : o = CGAL::POSITIVE;
     }
-    degenerate = empty || CGAL::is_zero (z_prime);
+    degenerate = empty || CGAL_NTS is_zero (z_prime);
 
 @end
 
@@ -1452,20 +1452,20 @@ then also $\r(p)>0$, $p$ a convex combination of $p_1,p_2$. This means
 that the positive side is a convex set, thus equal to the convex side.
                
 @macro <analyse parabola, homogeneous case> = @begin
-    if (!CGAL::is_zero (r())) {
+    if (!CGAL_NTS is_zero (r())) {
         trivial         = false;
         degenerate      = (t()*u() == RT(2)*r()*v());
         if (degenerate) {
             CGAL::Sign discr = (CGAL::Sign)
-                                CGAL::sign(u()*u()-RT(4)*r()*w());
+                            CGAL_NTS sign(u()*u()-RT(4)*r()*w());
             switch (discr) {
                 case CGAL::NEGATIVE:
                     empty = true;
-                    o = (CGAL::Orientation)(CGAL::sign (w()));
+                    o = (CGAL::Orientation)(CGAL_NTS sign (w()));
                     break;
                 case CGAL::ZERO:
                     empty = false;
-                    o = (CGAL::Orientation)(CGAL::sign (r()));
+                    o = (CGAL::Orientation)(CGAL_NTS sign (r()));
                     break;
                 case CGAL::POSITIVE:
                     empty = false;
@@ -1474,22 +1474,22 @@ that the positive side is a convex set, thus equal to the convex side.
             }
         } else {
             empty = false;
-            o = (CGAL::Orientation)(-CGAL::sign (r()));
+            o = (CGAL::Orientation)(-CGAL_NTS sign (r()));
         }
-    } else if (!CGAL::is_zero (s())) {
+    } else if (!CGAL_NTS is_zero (s())) {
         trivial         = false;
         degenerate      = (t()*v() == RT(2)*s()*u());
         if (degenerate) {
             CGAL::Sign discr = (CGAL::Sign)
-                                CGAL::sign(v()*v()-RT(4)*s()*w());
+                            CGAL_NTS sign(v()*v()-RT(4)*s()*w());
             switch (discr) {
                 case CGAL::NEGATIVE:
                     empty = true;
-                    o = (CGAL::Orientation)(CGAL::sign (w()));
+                    o = (CGAL::Orientation)(CGAL_NTS sign (w()));
                     break;
                 case CGAL::ZERO:
                     empty = false;
-                    o = (CGAL::Orientation)(CGAL::sign (s()));
+                    o = (CGAL::Orientation)(CGAL_NTS sign (s()));
                     break;
                 case CGAL::POSITIVE:
                     empty = false;
@@ -1498,15 +1498,16 @@ that the positive side is a convex set, thus equal to the convex side.
             }
         } else {
             empty = false;
-            o = (CGAL::Orientation)(-CGAL::sign (s()));
+            o = (CGAL::Orientation)(-CGAL_NTS sign (s()));
         }
     } else { // r=0, s=0 
         degenerate      = true;
-        bool uv_zero  = CGAL::is_zero (u()) && CGAL::is_zero (v());
-        trivial         = uv_zero && CGAL::is_zero (w());
+        bool uv_zero    =    CGAL_NTS is_zero (u())
+                          && CGAL_NTS is_zero (v());
+        trivial         = uv_zero && CGAL_NTS is_zero (w());
         empty           = uv_zero && !trivial;
         if (empty)
-            o = (CGAL::Orientation)(CGAL::sign (w()));
+            o = (CGAL::Orientation)(CGAL_NTS sign (w()));
         else if (trivial)
             o = CGAL::POSITIVE;
         else
@@ -1516,20 +1517,20 @@ that the positive side is a convex set, thus equal to the convex side.
 @end
 
 @macro <analyse parabola, Cartesian case> = @begin
-    if (!CGAL::is_zero (r())) {
+    if (!CGAL_NTS is_zero (r())) {
         trivial         = false;
         degenerate      = (t()*u() == FT(2)*r()*v());
         if (degenerate) {
             CGAL::Sign discr = (CGAL::Sign)
-                                CGAL::sign(u()*u()-FT(4)*r()*w());
+                            CGAL_NTS sign(u()*u()-FT(4)*r()*w());
             switch (discr) {
                 case CGAL::NEGATIVE:
                     empty = true;
-                    o = (CGAL::Orientation)(CGAL::sign (w()));
+                    o = (CGAL::Orientation)(CGAL_NTS sign (w()));
                     break;
                 case CGAL::ZERO:
                     empty = false;
-                    o = (CGAL::Orientation)(CGAL::sign (r()));
+                    o = (CGAL::Orientation)(CGAL_NTS sign (r()));
                     break;
                 case CGAL::POSITIVE:
                     empty = false;
@@ -1538,22 +1539,22 @@ that the positive side is a convex set, thus equal to the convex side.
             }
         } else {
             empty = false;
-            o = (CGAL::Orientation)(-CGAL::sign (r()));
+            o = (CGAL::Orientation)(-CGAL_NTS sign (r()));
         }
-    } else if (!CGAL::is_zero (s())) {
+    } else if (!CGAL_NTS is_zero (s())) {
         trivial         = false;
         degenerate      = (t()*v() == FT(2)*s()*u());
         if (degenerate) {
             CGAL::Sign discr = (CGAL::Sign)
-                                CGAL::sign(v()*v()-FT(4)*s()*w());
+                            CGAL_NTS sign(v()*v()-FT(4)*s()*w());
             switch (discr) {
                 case CGAL::NEGATIVE:
                     empty = true;
-                    o = (CGAL::Orientation)(CGAL::sign (w()));
+                    o = (CGAL::Orientation)(CGAL_NTS sign (w()));
                     break;
                 case CGAL::ZERO:
                     empty = false;
-                    o = (CGAL::Orientation)(CGAL::sign (s()));
+                    o = (CGAL::Orientation)(CGAL_NTS sign (s()));
                     break;
                 case CGAL::POSITIVE:
                     empty = false;
@@ -1562,15 +1563,16 @@ that the positive side is a convex set, thus equal to the convex side.
             }
         } else {
             empty = false;
-            o = (CGAL::Orientation)(-CGAL::sign (s()));
+            o = (CGAL::Orientation)(-CGAL_NTS sign (s()));
         }
     } else { // r=0, s=0 
         degenerate      = true;
-        bool uv_zero  = CGAL::is_zero (u()) && CGAL::is_zero (v());
-        trivial         = uv_zero && CGAL::is_zero (w());
+        bool uv_zero    =    CGAL_NTS is_zero (u())
+                          && CGAL_NTS is_zero (v());
+        trivial         = uv_zero && CGAL_NTS is_zero (w());
         empty           = uv_zero && !trivial;
         if (empty)
-            o = (CGAL::Orientation)(CGAL::sign (w()));
+            o = (CGAL::Orientation)(CGAL_NTS sign (w()));
         else if (trivial)
             o = CGAL::POSITIVE;
         else
@@ -1847,27 +1849,27 @@ positive resp. negative side iff $\r(p)>0$ resp. $\r(p)<0$.
 @macro <ConicHPA2 public member functions> += @begin
     CGAL::Oriented_side oriented_side (const PT& p) const
     {
-        return (CGAL::Oriented_side)(CGAL::sign (evaluate (p)));
+        return (CGAL::Oriented_side)(CGAL_NTS sign (evaluate (p)));
     }
 
     bool has_on_positive_side (const PT& p) const
     {    
-        return (CGAL::is_positive (evaluate(p)));
+        return (CGAL_NTS is_positive (evaluate(p)));
     }
 
     bool has_on_negative_side (const PT& p) const
     {
-        return (CGAL::is_negative (evaluate(p)));
+        return (CGAL_NTS is_negative (evaluate(p)));
     }
 
     bool has_on_boundary (const PT& p) const
     {
-       return (CGAL::is_zero (evaluate(p)));
+       return (CGAL_NTS is_zero (evaluate(p)));
     }
 
     bool has_on (const PT& p) const
     {
-       return (CGAL::is_zero (evaluate(p)));
+       return (CGAL_NTS is_zero (evaluate(p)));
     }
 
 @end
@@ -1875,27 +1877,27 @@ positive resp. negative side iff $\r(p)>0$ resp. $\r(p)<0$.
 @macro <ConicCPA2 public member functions> += @begin
     CGAL::Oriented_side oriented_side (const PT& p) const
     {
-        return (CGAL::Oriented_side)(CGAL::sign (evaluate (p)));
+        return (CGAL::Oriented_side)(CGAL_NTS sign (evaluate (p)));
     }
 
     bool has_on_positive_side (const PT& p) const
     {    
-        return (CGAL::is_positive (evaluate(p)));
+        return (CGAL_NTS is_positive (evaluate(p)));
     }
 
     bool has_on_negative_side (const PT& p) const
     {
-        return (CGAL::is_negative (evaluate(p)));
+        return (CGAL_NTS is_negative (evaluate(p)));
     }
 
     bool has_on_boundary (const PT& p) const
     {
-       return (CGAL::is_zero (evaluate(p)));
+       return (CGAL_NTS is_zero (evaluate(p)));
     }
 
     bool has_on (const PT& p) const
     {
-       return (CGAL::is_zero (evaluate(p)));
+       return (CGAL_NTS is_zero (evaluate(p)));
     }
 
 
@@ -1911,11 +1913,11 @@ zero, we know that the non-convex side is empty, see subsection
     {
         switch (o) {
         case CGAL::POSITIVE:
-            return (Convex_side)( CGAL::sign (evaluate (p)));
+            return (Convex_side)( CGAL_NTS sign (evaluate (p)));
         case CGAL::NEGATIVE:
-            return (Convex_side)(-CGAL::sign (evaluate (p)));
+            return (Convex_side)(-CGAL_NTS sign (evaluate (p)));
         case CGAL::ZERO:
-            return (Convex_side)( CGAL::sign (CGAL::abs (evaluate(p))));
+            return (Convex_side)( CGAL_NTS sign (CGAL_NTS abs (evaluate(p))));
         }
         // keeps g++ happy
         return( Convex_side( 0));
@@ -1938,11 +1940,11 @@ zero, we know that the non-convex side is empty, see subsection
     {
         switch (o) {
         case CGAL::POSITIVE:
-            return (Convex_side)( CGAL::sign (evaluate (p)));
+            return (Convex_side)( CGAL_NTS sign (evaluate (p)));
         case CGAL::NEGATIVE:
-            return (Convex_side)(-CGAL::sign (evaluate (p)));
+            return (Convex_side)(-CGAL_NTS sign (evaluate (p)));
         case CGAL::ZERO:
-            return (Convex_side)( CGAL::sign (CGAL::abs (evaluate(p))));
+            return (Convex_side)( CGAL_NTS sign (CGAL_NTS abs (evaluate(p))));
         }
         // keeps g++ happy
         return( Convex_side( 0));
@@ -1971,22 +1973,22 @@ We provide tests for equality and inequality of two conics.
     {
         // find coefficient != 0
         RT  factor1;
-        if ( ! CGAL::is_zero( r())) factor1 = r(); else
-        if ( ! CGAL::is_zero( s())) factor1 = s(); else
-        if ( ! CGAL::is_zero( t())) factor1 = t(); else
-        if ( ! CGAL::is_zero( u())) factor1 = u(); else
-        if ( ! CGAL::is_zero( v())) factor1 = v(); else
-        if ( ! CGAL::is_zero( w())) factor1 = w(); else
+        if ( ! CGAL_NTS is_zero( r())) factor1 = r(); else
+        if ( ! CGAL_NTS is_zero( s())) factor1 = s(); else
+        if ( ! CGAL_NTS is_zero( t())) factor1 = t(); else
+        if ( ! CGAL_NTS is_zero( u())) factor1 = u(); else
+        if ( ! CGAL_NTS is_zero( v())) factor1 = v(); else
+        if ( ! CGAL_NTS is_zero( w())) factor1 = w(); else
         CGAL_optimisation_assertion_msg( false, "all coefficients zero");
 
         // find coefficient != 0
         RT  factor2;
-        if ( ! CGAL::is_zero( c.r())) factor2 = c.r(); else
-        if ( ! CGAL::is_zero( c.s())) factor2 = c.s(); else
-        if ( ! CGAL::is_zero( c.t())) factor2 = c.t(); else
-        if ( ! CGAL::is_zero( c.u())) factor2 = c.u(); else
-        if ( ! CGAL::is_zero( c.v())) factor2 = c.v(); else
-        if ( ! CGAL::is_zero( c.w())) factor2 = c.w(); else
+        if ( ! CGAL_NTS is_zero( c.r())) factor2 = c.r(); else
+        if ( ! CGAL_NTS is_zero( c.s())) factor2 = c.s(); else
+        if ( ! CGAL_NTS is_zero( c.t())) factor2 = c.t(); else
+        if ( ! CGAL_NTS is_zero( c.u())) factor2 = c.u(); else
+        if ( ! CGAL_NTS is_zero( c.v())) factor2 = c.v(); else
+        if ( ! CGAL_NTS is_zero( c.w())) factor2 = c.w(); else
         CGAL_optimisation_assertion_msg( false, "all coefficients zero");
 
         return(    ( r()*factor2 == c.r()*factor1)
@@ -2004,22 +2006,22 @@ We provide tests for equality and inequality of two conics.
     {
         // find coefficient != 0
         FT  factor1;
-        if ( ! CGAL::is_zero( r())) factor1 = r(); else
-        if ( ! CGAL::is_zero( s())) factor1 = s(); else
-        if ( ! CGAL::is_zero( t())) factor1 = t(); else
-        if ( ! CGAL::is_zero( u())) factor1 = u(); else
-        if ( ! CGAL::is_zero( v())) factor1 = v(); else
-        if ( ! CGAL::is_zero( w())) factor1 = w(); else
+        if ( ! CGAL_NTS is_zero( r())) factor1 = r(); else
+        if ( ! CGAL_NTS is_zero( s())) factor1 = s(); else
+        if ( ! CGAL_NTS is_zero( t())) factor1 = t(); else
+        if ( ! CGAL_NTS is_zero( u())) factor1 = u(); else
+        if ( ! CGAL_NTS is_zero( v())) factor1 = v(); else
+        if ( ! CGAL_NTS is_zero( w())) factor1 = w(); else
         CGAL_optimisation_assertion_msg( false, "all coefficients zero");
 
         // find coefficient != 0
         FT  factor2;
-        if ( ! CGAL::is_zero( c.r())) factor2 = c.r(); else
-        if ( ! CGAL::is_zero( c.s())) factor2 = c.s(); else
-        if ( ! CGAL::is_zero( c.t())) factor2 = c.t(); else
-        if ( ! CGAL::is_zero( c.u())) factor2 = c.u(); else
-        if ( ! CGAL::is_zero( c.v())) factor2 = c.v(); else
-        if ( ! CGAL::is_zero( c.w())) factor2 = c.w(); else
+        if ( ! CGAL_NTS is_zero( c.r())) factor2 = c.r(); else
+        if ( ! CGAL_NTS is_zero( c.s())) factor2 = c.s(); else
+        if ( ! CGAL_NTS is_zero( c.t())) factor2 = c.t(); else
+        if ( ! CGAL_NTS is_zero( c.u())) factor2 = c.u(); else
+        if ( ! CGAL_NTS is_zero( c.v())) factor2 = c.v(); else
+        if ( ! CGAL_NTS is_zero( c.w())) factor2 = c.w(); else
         CGAL_optimisation_assertion_msg( false, "all coefficients zero");
 
         return(    ( r()*factor2 == c.r()*factor1)
@@ -2103,14 +2105,14 @@ The following macros define this determinant (the Cartesian version is
 obtained by setting $h_i=1,i=1\ldots 3$). 
 
 @macro <h_orientation>(3) many = @begin
-    (CGAL::Orientation)(CGAL::sign
+    (CGAL::Orientation)(CGAL_NTS sign
       (-h@1*x@3*y@2+h@3*x@1*y@2
        +h@1*x@2*y@3-h@2*x@1*y@3
        +h@2*x@3*y@1-h@3*x@2*y@1))
 @end
 
 @macro <c_orientation>(3) many = @begin
-    (CGAL::Orientation)(CGAL::sign
+    (CGAL::Orientation)(CGAL_NTS sign
       (-x@3*y@2+x@1*y@2
        +x@2*y@3-x@1*y@3
        +x@3*y@1-x@2*y@1))
@@ -2354,7 +2356,7 @@ $a_1,a_0,b_1,b_0$ from above.
                 -u()*u()*s()-v()*v()*r()+u()*v()*t(),
            c0 = -RT(2)*a0*b1 + RT(3)*a1*b0;
 
-        return CGAL::Sign (-CGAL::sign (c0)*o);
+        return CGAL::Sign (-CGAL_NTS sign (c0)*o);
     }
 
 @end
@@ -2373,7 +2375,7 @@ $a_1,a_0,b_1,b_0$ from above.
           -u()*u()*s()-v()*v()*r()+u()*v()*t(),
            c0 = -FT(2)*a0*b1 + FT(3)*a1*b0;
 
-        return CGAL::Sign (-CGAL::sign (c0)*o);
+        return CGAL::Sign (-CGAL_NTS sign (c0)*o);
     }
 
 @end
@@ -2565,7 +2567,7 @@ to find the roots, so we can directly evaluate the determinant, using
            c1 = -RT(4)*a0*b2 + a1*b1 + RT(6)*a2*b0,
            c0 = -RT(2)*a0*b1 + RT(3)*a1*b0;
 
-           if (c0 == 0) return 0;  // E(0) is the smallest ellipse
+           if ( CGAL_NTS is_zero( c0)) return 0;// E(0) is the smallest ellipse
 
            double roots[3];
            int nr_roots = solve_cubic 
@@ -2604,7 +2606,7 @@ to find the roots, so we can directly evaluate the determinant, using
            c1 = -FT(4)*a0*b2 + a1*b1 + FT(6)*a2*b0,
            c0 = -FT(2)*a0*b1 + FT(3)*a1*b0;
 
-           if ( CGAL::is_zero( c0)) return 0;  // E(0) is the smallest ellipse
+           if ( CGAL_NTS is_zero( c0)) return 0;// E(0) is the smallest ellipse
 
            double roots[3];
            int nr_roots = solve_cubic
@@ -2917,7 +2919,7 @@ was positive, we still need to flip the representation.
 
         // precondition: p1, p2, p3 not collinear
         RT det = -h1*x3*y2+h3*x1*y2+h1*x2*y3-h2*x1*y3+h2*x3*y1-h3*x2*y1;
-        CGAL_optimisation_precondition (!CGAL::is_zero (det));
+        CGAL_optimisation_precondition (!CGAL_NTS is_zero (det));
 
         RT x1x1 = x1*x1, y1y1 = y1*y1,
            x2x2 = x2*x2, y2y2 = y2*y2,
@@ -2958,7 +2960,7 @@ was positive, we still need to flip the representation.
         type = ELLIPSE;
         degenerate = trivial = empty = false;
         o = CGAL::NEGATIVE;
-        if (CGAL::is_positive (det)) set_opposite (); 
+        if (CGAL_NTS is_positive (det)) set_opposite (); 
         
     }
 
@@ -2977,7 +2979,7 @@ $h_1,h_2,h_3$ to 1.
 
         // precondition: p1, p2, p3 not collinear
         FT det = -x3*y2+x1*y2+x2*y3-x1*y3+x3*y1-x2*y1;
-        CGAL_optimisation_precondition (!CGAL::is_zero (det));
+        CGAL_optimisation_precondition (!CGAL_NTS is_zero (det));
 
         FT x1x1 = x1*x1, y1y1 = y1*y1,
            x2x2 = x2*x2, y2y2 = y2*y2,
@@ -3012,7 +3014,7 @@ $h_1,h_2,h_3$ to 1.
         type = ELLIPSE;
         degenerate = trivial = empty = false;
         o = CGAL::NEGATIVE;
-        if (CGAL::is_positive (det)) set_opposite();
+        if (CGAL_NTS is_positive (det)) set_opposite();
     }
 
 @end

@@ -865,7 +865,7 @@ $0$.
 
 @macro <Min_circle_2 check one support point> = @begin
     if ( ( circle().center() != support_point( 0)    ) ||
-         ( ! CGAL::is_zero( circle().squared_radius())) )
+         ( ! CGAL_NTS is_zero( circle().squared_radius())) )
         return( CGAL::_optimisation_is_valid_fail( verr,
                     "circle differs from the circle \
                      spanned by its single support point."));
@@ -1385,7 +1385,7 @@ emptiness and degeneracy, resp.
     CGAL::Bounded_side
     bounded_side( const Point& p) const
     {
-        return( CGAL::Bounded_side( CGAL::sign(
+        return( CGAL::Bounded_side( CGAL_NTS sign(
             _squared_radius - CGAL::squared_distance( p, _center))));
     }
 
@@ -1523,7 +1523,7 @@ emptiness and degeneracy, resp.
         double  cy( CGAL::to_double( oc.center().y()));
         double  sr( CGAL::to_double( oc.squared_radius()));
 
-        if ( ! CGAL::is_negative( sr))
+        if ( ! CGAL_NTS is_negative( sr))
             ws.draw_circle( cx, cy, CGAL::sqrt( sr));
         return( ws);
     }
@@ -1675,7 +1675,7 @@ it is declared \ccc{friend}.
         dao.get( r, rx, ry);
 
         return( static_cast< CGAL::Orientation>(
-                    CGAL::sign( ( px-rx) * ( qy-ry) - ( py-ry) * ( qx-rx))));
+                  CGAL_NTS sign( ( px-rx) * ( qy-ry) - ( py-ry) * ( qx-rx))));
     }
 @end
 
@@ -1797,7 +1797,7 @@ it is declared \ccc{friend}.
             FT  py;
             dao.get( p, px, py);
             return( CGAL::Bounded_side( 
-                CGAL::sign( sqr_rad - sqr_dist( px, py, center_x, center_y))));
+             CGAL_NTS sign( sqr_rad - sqr_dist( px, py, center_x, center_y))));
         }
 
         bool
@@ -2024,8 +2024,8 @@ it is declared \ccc{friend}.
         dao.get( r, rhx, rhy, rhw);
 
         return( static_cast< CGAL::Orientation>(
-                    CGAL::sign( ( phx*rhw - rhx*phw) * ( qhy*rhw - rhy*qhw)
-                             - ( phy*rhw - rhy*phw) * ( qhx*rhw - rhx*qhw))));
+                 CGAL_NTS sign( ( phx*rhw - rhx*phw) * ( qhy*rhw - rhy*qhw)
+                              - ( phy*rhw - rhy*phw) * ( qhx*rhw - rhx*qhw))));
     }
 @end
 
@@ -2169,7 +2169,7 @@ it is declared \ccc{friend}.
             RT  phy;
             RT  phw;
             dao.get( p, phx, phy, phw);
-            return( CGAL::Bounded_side( CGAL::sign(
+            return( CGAL::Bounded_side( CGAL_NTS sign(
                 sqr_rad - sqr_dist( phx, phy, phw,
                                     center_hx, center_hy, center_hw))));
         }

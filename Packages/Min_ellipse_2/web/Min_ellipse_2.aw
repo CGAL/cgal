@@ -1464,7 +1464,7 @@ one.
                 return( c.convex_side( p)); }
             else {
                 int tau_star = c.vol_derivative( dr, ds, dt, du, dv, dw);
-                return( CGAL::Bounded_side( CGAL::sign( tau_star))); } }
+                return( CGAL::Bounded_side( CGAL_NTS sign( tau_star))); } }
           default:
             CGAL_optimisation_assertion( ( n_boundary_points >= 0) &&
                                          ( n_boundary_points <= 5) ); }
@@ -1795,7 +1795,7 @@ it is declared \ccc{friend}.
         dao.get( r, rx, ry);
 
         return( static_cast< CGAL::Orientation>(
-                    CGAL::sign( ( px-rx) * ( qy-ry) - ( py-ry) * ( qx-rx))));
+                   CGAL_NTS sign( ( px-rx) * ( qy-ry) - ( py-ry) * ( qx-rx))));
     }
 @end
 
@@ -1925,7 +1925,7 @@ it is declared \ccc{friend}.
                     return( c.convex_side( p)); }
                 else {
                     int tau_star = c.vol_derivative( dr, ds, dt, du, dv, dw);
-                    return( CGAL::Bounded_side( CGAL::sign( tau_star))); } }
+                    return( CGAL::Bounded_side( CGAL_NTS sign( tau_star))); } }
               default:
                 CGAL_optimisation_assertion( ( n_boundary_points >= 0) &&
                                              ( n_boundary_points <= 5) ); }
@@ -2194,8 +2194,8 @@ it is declared \ccc{friend}.
         dao.get( r, rhx, rhy, rhw);
 
         return( static_cast< CGAL::Orientation>(
-                    CGAL::sign( ( phx*rhw - rhx*phw) * ( qhy*rhw - rhy*qhw)
-                             - ( phy*rhw - rhy*phw) * ( qhx*rhw - rhx*qhw))));
+                 CGAL_NTS sign( ( phx*rhw - rhx*phw) * ( qhy*rhw - rhy*qhw)
+                              - ( phy*rhw - rhy*phw) * ( qhx*rhw - rhx*qhw))));
     }
 @end
 
@@ -2325,7 +2325,7 @@ it is declared \ccc{friend}.
                     return( c.convex_side( p)); }
                 else {
                     int tau_star = c.vol_derivative( dr, ds, dt, du, dv, dw);
-                    return( CGAL::Bounded_side( CGAL::sign( tau_star))); } }
+                    return( CGAL::Bounded_side( CGAL_NTS sign( tau_star))); } }
               default:
                 CGAL_optimisation_assertion( ( n_boundary_points >= 0) &&
                                              ( n_boundary_points <= 5) ); }
@@ -3287,7 +3287,7 @@ end of each file.
         da.get( r, rx, ry);
 
         // p,q,r collinear?
-        if ( ! CGAL::is_zero( ( px-rx) * ( qy-ry) - ( py-ry) * ( qx-rx)))
+        if ( ! CGAL_NTS is_zero( ( px-rx) * ( qy-ry) - ( py-ry) * ( qx-rx)))
             return( false);
 
         // p,q,r vertical?
@@ -3363,8 +3363,8 @@ end of each file.
         da.get( r, rhx, rhy, rhw);
 
         // p,q,r collinear?
-        if ( ! CGAL::is_zero(   ( phx*rhw - rhx*phw) * ( qhy*rhw - rhy*qhw)
-                              - ( phy*rhw - rhy*phw) * ( qhx*rhw - rhx*qhw)))
+        if ( ! CGAL_NTS is_zero(  ( phx*rhw - rhx*phw) * ( qhy*rhw - rhy*qhw)
+                                - ( phy*rhw - rhy*phw) * ( qhx*rhw - rhx*qhw)))
             return( false);
 
         // p,q,r vertical?
