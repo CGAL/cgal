@@ -35,13 +35,16 @@ diff -ru CGAL-2.3-I-6/include/CGAL/SimpleCartesian/CircleS2.h CGAL-2.3-I-6-new/i
  }
  #endif // CGAL_NO_ISTREAM_EXTRACT_CIRCLES2
 
-- Fix problems with VC++ like Dima suggested : put ctors definitions in the
-  class body.
+ See his e-mails.
+
+- Remove include/CGAL/Kernel/* ?  It's used nowhere...
+  Try to guess what it was supposed to be used for.
 - Use CGAL_TYPENAME_MSVC_NULL instead of "#define typename".
   Only in the template parameters, right ?
 - Iso_rectangleC2 should store a twotuple of _non_ ref-counted points ?
   whereas now it's a twotuple of ref-counted points, which is a pure lost.
   (all local, temporary objects don't need any ref-counting)
+  Well, when you ask for the point outside, you get a handled point, so...
 - ::bbox() robustness issues : it's not robust, since basically, we use
   to_double().
   The homogeneous kernel uses an epsilon to get this right, in the case
