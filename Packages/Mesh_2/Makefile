@@ -1,8 +1,8 @@
-.PHONY: all run test clean update
+.PHONY: all run test clean update diff
 
 
-all:
-	${MAKE} -C demo/Mesh_2 mesh_demo
+all: test
+	${MAKE} -C demo/Mesh_2
 
 run: all
 	demo/Mesh_2/mesh_demo
@@ -16,6 +16,7 @@ edit:
 # clean all object files
 clean: 
 	${MAKE} -C demo/Mesh_2 clean
+	${MAKE} -C test/Mesh_2 clean
 
 # make update: update the working directory
 update:
