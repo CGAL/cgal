@@ -177,24 +177,6 @@ int main(int argc,char *argv[])
         automatic_show = true;
         show_biggest_rec(empty_rectangle,W);
         biggest_rect_shown = true;
-
-	// *********************************************
-	// The next two lines are only for checking
-	// cctor and operator + . Should be removed later
-	// Largest_empty_rect empty_rectangle2(empty_rectangle);
-	// b = empty_rectangle2.get_largest_empty_iso_rectangle();
-	// std::cout << "\nCCTOR :\n   buttom-left point - ("
-	// << b.min().x() << ":" << b.min().y()
-	// << ")\n   top-right point   - (" << b.max().x()
-	// << ":" << b.max().y() << ")\n";
-	// empty_rectangle2 = empty_rectangle;
-	// b = empty_rectangle2.get_largest_empty_iso_rectangle();
-	// std::cout << "\noperator= :\n   buttom-left point - ("
-	// << b.min().x() << ":" << b.min().y()
-	// << ")\n   top-right point   - (" << b.max().x()
-	// << ":" << b.max().y() << ")\n";
-	// *********************************************
-
       } else if(mouse_input == 4) {
         // change to manual mode
         automatic_show = false;
