@@ -1,4 +1,4 @@
-1.43 (14 October 2003) [af]
+1.52 (14 October 2003) [af]
 - Moved \chapter from Apollonius_2.tex to main.tex
 
 1.42 (4 Septemer 2003) [rursu]
