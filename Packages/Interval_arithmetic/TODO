@@ -1,0 +1,11 @@
+Concerning the code itself:
+
+- add operators like (double * Interval) -> Interval.
+  (double * double) -> Interval, is not overloadable, and doesn't gain much.
+- shall I protect ostream operator<<() by CGAL_FPU... ?
+- template by float/double ? (=> must provide CGAL_FPU... for floats...)
+
+Concerning the test-suite:
+
+- test cast functions.
+- benchs.
