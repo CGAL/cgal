@@ -25,13 +25,13 @@ class tetrahedron_generator {
  private:
   std::list<Point_3> points;
   std::ostream& out;
+  Point_source P(CGAL::to_double(s)/2);
 
   void transform(Point_3& p, int sx, int sy, int sz, RT& s) {
     p = p.transform(Aff_transformation_3(CGAL::TRANSLATION, Vector_3(sx*2*s+s,sy*2*s+s,sz*2*s+s,2)));
   }
   
   void create_tetra(int sx, int sy, int sz, RT s) {
-    Point_source P(CGAL::to_double(s)/2);
     Point_3 ps[4];
 
     for(int i=0; i<4; ++i) {
@@ -268,14 +268,23 @@ class tetrahedron_generator {
  public:
   tetrahedron_generator(std::ostream& o) : out(o) {}
 
-  void create_tetrahedra(int nx, int ny, int nz, RT s) {
+    void create_tetrahedra(int nx, int ny, int nz, RT s, unsigned int seed) {
+      P = Point_source(s,seed);
+      for(int dx=0; dx < nx; ++dx)
+	for(int dy=0; dy < ny; ++dy)
+	  for(int dz=0; dz < nz; ++dz) 
+	    create_tetra(dx,dy,dz,s);
+      print();
+    }
 
-    for(int dx=0; dx < nx; ++dx)
-      for(int dy=0; dy < ny; ++dy)
-	for(int dz=0; dz < nz; ++dz) 
-	  create_tetra(dx,dy,dz,s);
-    print();
-  }
+    void create_tetrahedra(int nx, int ny, int nz, RT s) {
+      P = Point_source(s);
+      for(int dx=0; dx < nx; ++dx)
+	for(int dy=0; dy < ny; ++dy)
+	  for(int dz=0; dz < nz; ++dz) 
+	    create_tetra(dx,dy,dz,s);
+      print();
+    }
 };
 
 template <typename K>
