@@ -1,28 +1,33 @@
+8 February 2005 Sylvain Pion
+- Change "CGAL::" to "CGAL" in section name.
+
+=========================  CGAL 3.1 =============================
+
 24 November 2004 Sylvain Pion
 - Remove bib entry bdty-tcgal-00 already in geom.bib.
 
-(9 Aug 2004) [mk]
+9 Aug 2004 Menelaos Karavelas
 - added one more missing reference for the segment Voronoi diagram package
 
-(7 Aug 2004) [mk]
+7 Aug 2004 Menelaos Karavelas
 - fixed typos in the references added on Aug. 4th
 
-(4 Aug 2004) [mk]
+4 Aug 2004 Menelaos Karavelas
 - added missing references for the Segment Voronoi diagram and Apollonius
   graph packages
 
-(8 Jan 2004)
+8 Jan 2004
 - Remove one cruft from "Handle and Circulators" kludge in one script.
 
 =========================  CGAL 3.0 =============================
 
-(16 October 2003) [af]
+16 October 2003 Andreas Fabri
 - Added SpatialSearching, and Interval_skip_list, and removed kdtree.
 - Put polygon partition right after polygon.
 - Changed order in file doc_tex_skel/basic/docdirs
 - Changed order in file doc_tex_skel/support/docdirs
 
 
-(16 October 2003) [af]
+16 October 2003 Andreas Fabri
 - Removed 'GeoWin' from file doc_tex_skel/support/docdirs
   as  this will become an extension package
