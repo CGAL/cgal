@@ -221,5 +221,5 @@ void Qt_widget_OpenGL::slotPerspective() {
   perspective = !perspective;
 }
 
-#include "QT_widget_OpenGL.moc"
+#include "Qt_widget_OpenGL.moc"
 #endif
