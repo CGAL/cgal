@@ -48,11 +48,11 @@
 
 CGAL_BEGIN_NAMESPACE
 template < class Matrix >
-class _Padded_matrix {
+class Padded_matrix {
 public:
   typedef typename Matrix::Value Value;
 
-  _Padded_matrix( const Matrix& m) : matrix( &m) {}
+  Padded_matrix( const Matrix& m) : matrix( &m) {}
 
   Value
   operator()( int x, int y) const
@@ -85,11 +85,11 @@ private:
   const Matrix* matrix;
 };
 template < class PaddedMatrix >
-class _Matrix_cell {
+class Matrix_cell {
 public:
   typedef typename PaddedMatrix::Value Value;
 
-  _Matrix_cell( PaddedMatrix m, int xpos = 0, int ypos = 0)
+  Matrix_cell( PaddedMatrix m, int xpos = 0, int ypos = 0)
   : base_matrix( m), x( xpos), y( ypos)
   {}
 
@@ -153,31 +153,9 @@ private:
 };
 
 
-#ifdef CGAL_CFG_RETURN_TYPE_BUG_1
-template < class T >
-struct Traits_value_bug_fix1
-{
-  typedef typename T::Value Value;
-  Traits_value_bug_fix1( Value xt)
-  { _xt = xt; }
-
-  operator Value() const
-  { return _xt; }
-
-private:
-  Value _xt;
-};
-#endif
-
 template < class InputIterator, class Traits >
-#ifndef CGAL_CFG_RETURN_TYPE_BUG_1
 typename Traits::Value
-#else
-Traits_value_bug_fix1< Traits >
-#endif
-sorted_matrix_search( InputIterator f,
-                           InputIterator l,
-                           Traits t)
+sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
 {
   #ifndef CGAL_CFG_NO_NAMESPACE
   using std::max;
@@ -193,17 +171,14 @@ sorted_matrix_search( InputIterator f,
   
   typedef typename Traits::Matrix            Matrix;
   typedef typename Traits::Value             Value;
-  typedef _Padded_matrix< Matrix >           PaddedMatrix;
-  typedef _Matrix_cell< PaddedMatrix >       Cell;
+  typedef Padded_matrix< Matrix >           PaddedMatrix;
+  typedef Matrix_cell< PaddedMatrix >       Cell;
   typedef std::vector< Cell >                Cell_container;
   typedef typename Cell_container::iterator  Cell_iterator;
   typedef typename Cell_container::reverse_iterator
     Cell_reverse_iterator;
   
   Cell_container active_cells;
-  #ifdef CGAL_SORTED_MATRIX_SEARCH_TRACE
-  cerr << "insert a cell for every matrix" << endl;
-  #endif
   
   // set of input matrices must not be empty:
   CGAL_precondition( f != l);
@@ -222,9 +197,6 @@ sorted_matrix_search( InputIterator f,
   }
   CGAL_precondition( maxdim > 0);
   
-  #ifdef CGAL_SORTED_MATRIX_SEARCH_TRACE
-  cerr << "\ncomputing ccd" << endl;
-  #endif
   
   // current cell dimension:
   int ccd( 1);
@@ -233,23 +205,11 @@ sorted_matrix_search( InputIterator f,
     ccd <<= 1;
   
   /*
-  #ifdef CGAL_SORTED_MATRIX_SEARCH_TRACE
-  for ( Cell_iterator j( active_cells.begin());
-  j != active_cells.end();
-  ++j) {
-    (*j).output( cerr, ccd);
-    cerr << "-------------------------------------\n";
-  }
-  cerr << "ccd is " << ccd << endl;
-  #endif
   */
   
   
 
   // now start the search:
-  #ifdef CGAL_SORTED_MATRIX_SEARCH_TRACE
-  cerr << "start search ..." << endl;
-  #endif
 
   for (;;) {
     if ( ccd > 1) {
@@ -257,9 +217,6 @@ sorted_matrix_search( InputIterator f,
       // divide cells:
       ccd >>= 1;
     
-      #ifdef CGAL_SORTED_MATRIX_SEARCH_TRACE
-      cerr << "divide cells" << endl;
-      #endif
     
       // reserve is required here!
       // otherwise one of the insert operations might cause
@@ -303,28 +260,9 @@ sorted_matrix_search( InputIterator f,
     // there has to be at least one cell left:
     CGAL_assertion( active_cells.size() > 0);
     
-    #ifdef CGAL_SORTED_MATRIX_SEARCH_TRACE
-    cerr << "\ncurrently there are " << active_cells.size()
-         << " cells\n=======================================\n";
-    
-    /*
-    cerr << "listing active cells:\n";
-    for ( Cell_iterator j( active_cells.begin());
-    j != active_cells.end();
-    ++j) {
-      cerr << "------------------------------\n";
-      (*j).output( cerr, ccd);
-    }
-    */
-    
-    cerr << "\nccd is " << ccd << endl;
-    #endif
     // ------------------------------------------------------
     // compute medians of smallest and largest elements:
     
-    #ifdef CGAL_SORTED_MATRIX_SEARCH_TRACE
-    cerr << "compute medians" << endl;
-    #endif
     
     int lower_median_rank = ( active_cells.size() - 1) >> 1;
     int upper_median_rank = ( active_cells.size() >> 1);
@@ -358,13 +296,6 @@ sorted_matrix_search( InputIterator f,
     // test feasibility of medians and remove cells accordingly:
     Cell_iterator new_end;
     
-    #ifdef CGAL_SORTED_MATRIX_SEARCH_TRACE
-    cerr << "lower_median is " << lower_median << " and " <<
-      ( t.is_feasible( lower_median) ? "f" : "inf") <<
-      "easible" << "\nupper median is " << upper_median << " and " <<
-      ( t.is_feasible( upper_median) ? "f" : "inf") <<
-      "easible" << endl;
-    #endif
     
     if ( t.is_feasible( lower_median))
       if ( t.is_feasible( upper_median)) {
@@ -479,6 +410,7 @@ sorted_matrix_search( InputIterator f,
 
   return (*active_cells.begin()).min();
 }
+
 CGAL_END_NAMESPACE
 
 #endif // ! (CGAL_SORTED_MATRIX_SEARCH_H)

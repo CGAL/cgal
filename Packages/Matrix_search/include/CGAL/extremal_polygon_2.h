@@ -262,12 +262,6 @@ CGAL_maximum_inscribed_rooted_k_gon(
   for (;;) {
     CGAL_assertion( gon[0] == 0);
     gon[i] = number_of_points - 1;
-  #ifdef CGAL_EXTREMAL_POLYGONS_TRACE
-    cerr << "GON: ";
-    for ( int oo( 0); oo <= i; ++oo)
-      cerr << gon[oo] << " & ";
-    cerr << endl;
-  #endif
     if ( ++i >= k)
       break;
     CGAL_maximum_inscribed_rooted_k_gon(
@@ -412,33 +406,8 @@ CGAL_maximum_inscribed_rooted_k_gon(
     last_vertex[i] = root;
   }
   
-  #ifdef CGAL_EXTREMAL_POLYGONS_TRACE
-  {
-    int oo;
-    cerr << "left: ";
-    for ( oo = 0; oo < size_of_gon; ++oo)
-      cerr << left_c_begin[oo] << " - ";
-    cerr << endl;
-    cerr << "right: ";
-    for ( oo = 0; oo < size_of_gon; ++oo)
-      cerr << right_c_begin[oo] << " - ";
-    cerr << endl;
-    cerr << "diff: ";
-    for ( oo = 0; oo < size_of_gon; ++oo)
-      cerr << iterator_distance(
-        points_begin + left_c_begin[oo],
-        points_begin + right_c_begin[oo] + 1) << " - ";
-      cerr << endl;
-  }
-  #endif
   
   for ( i = 1; i < size_of_gon; ++i) {
-  #ifdef CGAL_EXTREMAL_POLYGONS_TRACE
-    cerr << "[" << left_c_begin[i-1] << ", " << right_c_begin[i-1]
-         << "] x [" << left_c_begin[i] << ", " << right_c_begin[i]
-         << "]" << endl;
-    cerr << "**********************************************" << endl;
-  #endif
   
   #ifndef CGAL_CFG_NO_ITERATOR_TRAITS
     monotone_matrix_search(
@@ -497,16 +466,9 @@ CGAL_maximum_inscribed_rooted_k_gon(
   max_area = area[maxi];
   
   // construct gon:
-  #ifdef CGAL_EXTREMAL_POLYGONS_TRACE
-  cerr << "MAXGON(" << size_of_gon << "): ";
-  cerr << maxi << " + ";
-  #endif
   *o++ = maxi;
   maxi = last_vertex[maxi];
   for ( i = size_of_gon - 1; i > 0; --i) {
-  #ifdef CGAL_EXTREMAL_POLYGONS_TRACE
-    cerr << maxi << "[" << right_c_begin[i-1] << "] + ";
-  #endif
     // We must not place the "*o++ = maxi" here,
     // since o might be the same as left_c_begin + i ...
     if ( maxi != right_c_begin[i-1]) {
@@ -516,14 +478,8 @@ CGAL_maximum_inscribed_rooted_k_gon(
     else {
       *o++ = maxi;
       maxi = right_c_begin[i-2];
-  #ifdef CGAL_EXTREMAL_POLYGONS_TRACE
-      cerr << "(l) ";
-  #endif
     }
   } // for ( i = size_of_gon - 1; i > 0; --i)
-  #ifdef CGAL_EXTREMAL_POLYGONS_TRACE
-  cerr << endl;
-  #endif
   
   *o++ = root;
   return o;
@@ -636,9 +592,6 @@ CGAL_maximum_inscribed_k_gon(
     return o;
   }
   // compute k-gon rooted at points_begin[0]
-  #ifdef CGAL_EXTREMAL_POLYGONS_TRACE
-  cerr << "compute " << k << "-gon at 0:" << endl;
-  #endif
   Index_cont P_0( k + 1);
   FT area_0;
   CGAL_maximum_inscribed_rooted_k_gon(
@@ -651,9 +604,6 @@ CGAL_maximum_inscribed_k_gon(
   P_0[k] = number_of_points - 1;
   CGAL_assertion( P_0[0] == 0);
   // compute k-gon rooted at points_begin[P_0[1]]
-  #ifdef CGAL_EXTREMAL_POLYGONS_TRACE
-  cerr << "compute " << k << "-gon at 1:" << endl;
-  #endif
   Index_cont P_1( k);
   FT area_1;
   
@@ -671,16 +621,6 @@ CGAL_maximum_inscribed_k_gon(
   
   CGAL_assertion( P_1[0] == P_0[1]);
   
-  #ifdef CGAL_EXTREMAL_POLYGONS_TRACE
-  {
-    cerr << "start recursion\n"
-         << "^^^^^^^^^^^^^^^\n"
-         << "P_0 = ";
-    for ( int uu( 0); uu < k; ++uu)
-      cerr << P_0[uu] << " * ";
-    cerr << endl;
-  }
-  #endif
   
   // start recursive computation:
   FT area_r( 0);
@@ -701,9 +641,6 @@ CGAL_maximum_inscribed_k_gon(
       t);
   }
   
-  #ifdef CGAL_EXTREMAL_POLYGONS_TRACE
-  cerr << "end recursion" << endl;
-  #endif
   if ( area_r > area_0)
     if ( area_r > area_1)
       // recursive is maximum
@@ -817,10 +754,6 @@ CGAL_maximum_inscribed_k_gon(
       CGAL_expensive_precondition( left_c_begin[i] <= right_c_begin[i]);
     })
 
-  #ifdef CGAL_EXTREMAL_POLYGONS_TRACE
-  cerr << "$indices: [" << left_index << " : " <<
-    right_index << "]" << endl;
-  #endif
 
   int middle_index( (left_index + right_index) >> 1);
   Index_cont P_m( k);

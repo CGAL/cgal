@@ -38,8 +38,7 @@ public:
   typedef std::less< Value >       Compare_strictly;
   typedef std::less_equal< Value > Compare_non_strictly;
 
-  Sorted_matrix_search_traits_adaptor(
-    const FeasibilityTest& ft)
+  Sorted_matrix_search_traits_adaptor(FeasibilityTest ft)
   : _ft( ft)
   {}
 
@@ -52,7 +51,7 @@ public:
   { return Compare_non_strictly(); }
 
   bool
-  is_feasible( Value a)
+  is_feasible(Value a)
   { return _ft( a); }
 
 protected:
@@ -64,12 +63,11 @@ protected:
 template < class FeasibilityTest, class Matrix >
 Sorted_matrix_search_traits_adaptor<
   FeasibilityTest, Matrix >
-sorted_matrix_search_traits_adaptor(
-  const FeasibilityTest& f, const Matrix&)
+sorted_matrix_search_traits_adaptor(FeasibilityTest f, const Matrix&)
 {
   typedef Sorted_matrix_search_traits_adaptor<
     FeasibilityTest, Matrix > Traits;
-  return Traits( f);
+  return Traits(f);
 } // sorted_matrix_search_traits_adaptor( ... )
 
 CGAL_END_NAMESPACE

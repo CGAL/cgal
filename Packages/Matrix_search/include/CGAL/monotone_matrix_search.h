@@ -27,9 +27,7 @@
 #if ! (CGAL_MONOTONE_MATRIX_SEARCH_H)
 #define CGAL_MONOTONE_MATRIX_SEARCH_H 1
 
-#ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #include <CGAL/optimisation_assertions.h>
-#endif // CGAL_OPTIMISATION_ASSERTIONS_H
 #ifndef CGAL_PROTECT_VECTOR
 #include <vector>
 #define CGAL_PROTECT_VECTOR
@@ -75,9 +73,6 @@ monotone_matrix_search(
   // divide
   // ------
   // get even rows of M:
-  #ifdef CGAL_MON_SEARCH_TRACE
-  cerr << "construct new matrix" << endl;
-  #endif
   Matrix* M_new = M.extract_all_even_rows();
   CGAL_optimisation_assertion(
     M_new->number_of_columns() == M.number_of_columns());
@@ -85,24 +80,8 @@ monotone_matrix_search(
     M_new->number_of_rows() == 0 ||
       M_new->number_of_rows() == ( M.number_of_rows() + 1) >> 1);
   
-  #ifdef CGAL_MON_SEARCH_TRACE
-  {
-    for ( int i1( 0); i1 < M_new->number_of_rows(); ++i1) {
-      for ( int i2( 0); i2 < M_new->number_of_columns(); ++i2) {
-        cerr << i1 << " - " << i2 << endl;
-        cout.width( 4);
-        cout << (*M_new)( i1, i2) << "  ";
-      }
-      cout << endl;
-    }
-    cout << "----------------------" << endl;
-  }
-  #endif
 
   // reduce M_new to a quadratic matrix:
-  #ifdef CGAL_MON_SEARCH_TRACE
-  cerr << "reduce" << endl;
-  #endif
   
   // table to store the reduction permutation:
   // (incl. sentinel)
@@ -116,23 +95,6 @@ monotone_matrix_search(
     CGAL_optimisation_assertion(
       M_new->number_of_columns() == M_new->number_of_rows());
   
-    #ifdef CGAL_MON_SEARCH_TRACE
-    {
-      int i1;
-      for ( i1 = 0; i1 < M_new->number_of_rows(); ++i1) {
-        for ( int i2( 0); i2 < M_new->number_of_columns(); ++i2) {
-          cout.width( 4);
-          cout << (*M_new)( i1, i2) << "  ";
-        }
-        cout << endl;
-      }
-      cout << "----------------------\n reduction table:" << endl;
-      for ( i1 = 0; i1 < M_new->number_of_rows(); ++i1) {
-        cout << reduction_table[i1] << ", ";
-      }
-      cout << "\n----------------------" << endl;
-    }
-    #endif
   } // if ( M_new->number_of_rows() < M_new->number_of_columns())
   else {
     // no reduction -> reduction_table is identity table:
@@ -155,9 +117,6 @@ monotone_matrix_search(
   int* t_new = new int[M_new->number_of_rows() + 1];
   t_new[M_new->number_of_rows()] = M_new->number_of_columns();
   
-  #ifdef CGAL_MON_SEARCH_TRACE
-  cerr << "recursive call" << endl;
-  #endif
   if ( M_new->number_of_rows() == 1)
     // recursion anchor:
     // we have just one element ==> no choice
@@ -165,48 +124,20 @@ monotone_matrix_search(
   else
     monotone_matrix_search( *M_new, t_new);
   
-  #ifdef CGAL_MON_SEARCH_TRACE
-  cerr << "maximum entries:\n";
-  int i = 0;
-  while ( i < M_new->number_of_rows())
-    cerr << t_new[i++] << "  ";
-  cerr << endl;
-  #endif
 
   // and conquer
   // -----------
-  #ifdef CGAL_MON_SEARCH_TRACE
-  {
-    cerr << "find maxima in odd rows" << endl;
-    for ( int i1( 0); i1 < M.number_of_rows(); ++i1) {
-      for ( int i2( 0); i2 < M.number_of_columns(); ++i2) {
-        cout.width( 4);
-        cout << M( i1, i2) << "  ";
-      }
-      cout << endl;
-    }
-    cout << "----------------------" << endl;
-  }
-  #endif
   
   int j( 0);       // actual index in t
   int j_new( 0);   // actual index in t_new
   do {
     // even row ==> we know
     *(t+j) = reduction_table[t_new[j_new++]];
-    #ifdef CGAL_MON_SEARCH_TRACE
-    cerr << " # maximum of row " << j << " was at " << *(t+j) << endl;
-    #endif
     if ( ++j >= M.number_of_rows())
       break;
   
     // odd row
     // search *(t+j) between *(t+j-1) and t_new[j_new]:
-    #ifdef CGAL_MON_SEARCH_TRACE
-    cerr << "search row " << j << " between " <<
-      *(t+j-1) << " and " <<
-      reduction_table[t_new[j_new]] << endl;
-    #endif
     *(t+j) = reduction_table[t_new[j_new]];
     int j_tmp( *(t+j-1));
     while ( j_tmp < reduction_table[t_new[j_new]]) {

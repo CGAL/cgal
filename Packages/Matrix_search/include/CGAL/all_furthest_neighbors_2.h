@@ -27,25 +27,15 @@
 #if ! (CGAL_ALL_FURTHEST_NEIGHBORS_2_H)
 #define CGAL_ALL_FURTHEST_NEIGHBORS_2_H 1
 
-#ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #include <CGAL/optimisation_assertions.h>
-#endif // CGAL_OPTIMISATION_ASSERTIONS_H
 
 #ifdef CGAL_REP_CLASS_DEFINED
-#ifndef CGAL_ALL_FURTHEST_NEIGHBORS_TRAITS_2_H
 #include <CGAL/All_furthest_neighbors_traits_2.h>
-#endif // CGAL_ALL_FURTHEST_NEIGHBORS_TRAITS_2_H
 #endif // CGAL_REP_CLASS_DEFINED
 
-#ifndef CGAL_CARTESIAN_MATRIX_H
 #include <CGAL/Cartesian_matrix.h>
-#endif // CGAL_CARTESIAN_MATRIX_H
-#ifndef CGAL_DYNAMIC_MATRIX_H
 #include <CGAL/Dynamic_matrix.h>
-#endif // CGAL_DYNAMIC_MATRIX_H
-#ifndef CGAL_MONOTONE_MATRIX_SEARCH_H
 #include <CGAL/monotone_matrix_search.h>
-#endif // CGAL_MONOTONE_MATRIX_SEARCH_H
 #include <functional>
 #include <algorithm>
 

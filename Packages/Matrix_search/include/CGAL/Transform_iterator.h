@@ -27,9 +27,7 @@
 #if ! (CGAL_TRANSFORM_ITERATOR_H)
 #define CGAL_TRANSFORM_ITERATOR_H 1
 
-#ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #include <CGAL/optimisation_assertions.h>
-#endif // CGAL_OPTIMISATION_ASSERTIONS_H
 #ifndef CGAL_CIRCULATOR_BASES_H
 #include <CGAL/circulator_bases.h>
 #endif // CGAL_CIRCULATOR_BASES_H
