@@ -116,11 +116,12 @@ collect_data( std::ifstream& is ){
   char one_line[128];
   int  n_curves, n_points;
   NT x,y;
+  int i;
 
   skip_comments( is, one_line );
   std::istrstream strLine( one_line, 128 );
   strLine >> n_curves;
-  for( int i = 0; i < n_curves; i++ ){
+  for( i = 0; i < n_curves; i++ ){
     Curve cv;
     read_curve( is, cv );
     all_curves_vec.push_back( cv );
@@ -128,7 +129,7 @@ collect_data( std::ifstream& is ){
   skip_comments( is, one_line );
   std::istrstream strLine2( one_line, 128 );
   strLine2 >> n_points;
-  for( int i = 0; i < n_points; i++ ){
+  for( i = 0; i < n_points; i++ ){
     skip_comments( is, one_line );
     std::istrstream strLine( one_line, 128 );
     strLine >> x >> y;
