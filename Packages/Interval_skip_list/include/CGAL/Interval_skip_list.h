@@ -126,7 +126,8 @@ class Interval_for_container : public Interval_
     Random rand;
 
     Compact_container<Interval_for_container<Interval> > container;
-    typedef Compact_container<Interval_for_container<Interval> >::iterator Interval_handle;
+    typedef Compact_container<Interval_for_container<Interval> >::iterator 
+      Interval_handle;
 
 
 #ifdef CCC
@@ -290,7 +291,8 @@ class Interval_for_container : public Interval_
     void print(std::ostream& os) const;
     void printOrdered(std::ostream& os) const;
 
-    typedef typename Compact_container<Interval_for_container<Interval> >::iterator iterator;
+    typedef typename 
+    Compact_container<Interval_for_container<Interval> >::iterator iterator;
     typedef const iterator const_iterator;
 
     const_iterator begin() const
@@ -312,7 +314,8 @@ class Interval_for_container : public Interval_
     typedef Interval_ Interval;
     typedef typename Interval::Value Value;
     //typedef Interval* Interval_handle;
-    typedef Compact_container<Interval_for_container<Interval> >::iterator Interval_handle;
+    typedef Compact_container<Interval_for_container<Interval> >::iterator 
+      Interval_handle;
     
 #ifdef CCC
     typedef Compact_container<IntervalListElt<Interval> >::iterator ILE_handle;
@@ -402,7 +405,8 @@ class Interval_for_container : public Interval_
   class IntervalListElt
   {
     typedef Interval_ Interval;
-    typedef Compact_container<Interval_for_container<Interval> >::iterator Interval_handle;
+    typedef Compact_container<Interval_for_container<Interval> >::iterator 
+      Interval_handle;
 #ifdef CCC
     typedef Compact_container<IntervalListElt<Interval> >::iterator ILE_handle;
 #else
@@ -653,7 +657,7 @@ template <class Interval>
 
     for(i=0; (i<= x->level() - 2) && x->forward[i+1]!=0; i++) {
       IntervalList<Interval>* markList = update[i]->markers[i];
-      for(m = markList->get_first(); m != NULL ; m = markList->get_next(m)) { // af: NULL
+      for(m = markList->get_first(); m != NULL ; m = markList->get_next(m)) {
 	if(m->getInterval()->contains_interval(x->key,x->forward[i+1]->key)) { 
 	  // promote m
 	  
