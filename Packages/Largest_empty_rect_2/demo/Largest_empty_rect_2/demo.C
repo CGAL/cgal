@@ -17,9 +17,7 @@ int main()
 #include <CGAL/Segment_2.h>
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/squared_distance_2.h>
-#include <CGAL/Polygon_2.h>
 #include <CGAL/IO/Window_stream.h>
-//#include <CGAL/IO/cgal_window_redefine.h>
 #include <CGAL/Largest_empty_iso_rectangle_2.h>
 
 #define MIN_X 0
@@ -27,15 +25,13 @@ int main()
 #define MAX_X 10
 #define MAX_Y 10
 
-typedef double                                Number_Type;
-
-typedef CGAL::Cartesian<Number_Type>             K;
+typedef double                          Number_Type;
+typedef CGAL::Cartesian<Number_Type>    K;
 typedef K::Point_2                      Point; 
 typedef K::Vector_2                     Vector; 
-typedef K::Segment_2                   Segment;
+typedef K::Segment_2                    Segment;
 typedef K::Iso_rectangle_2              Iso_rectangle_2;
 
-typedef CGAL::Polygon_2<K> Polygon;
 typedef CGAL::Largest_empty_iso_rectangle_2<K> Largest_empty_rect;
 typedef CGAL::Window_stream  Window_stream;
 
