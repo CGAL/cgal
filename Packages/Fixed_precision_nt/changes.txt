@@ -1,3 +1,6 @@
+2.39 (25 July 2003)
+- Remove demo (uses LEDA window and is useless).
+
 2.38 (11 May 2003) [af]
 - Removed Interval_base
 - Function to_interval returns std::pair<double,double>
