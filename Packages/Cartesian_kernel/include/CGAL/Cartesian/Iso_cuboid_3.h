@@ -22,7 +22,6 @@
 #ifndef CGAL_CARTESIAN_ISO_CUBOID_3_H
 #define CGAL_CARTESIAN_ISO_CUBOID_3_H
 
-#include <CGAL/Bbox_3.h>
 #include <CGAL/Cartesian/predicates_on_points_3.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -49,9 +48,21 @@ public:
   typedef typename R::Aff_transformation_3_base Aff_transformation_3;
 #endif
 
-public:
-  Iso_cuboidC3();
-  Iso_cuboidC3(const Point_3& p, const Point_3& q);
+  Iso_cuboidC3()
+    : Iso_cuboid_handle_3(Iso_cuboid_ref_3()) {}
+
+  Iso_cuboidC3(const Point_3 &p, const Point_3 &q)
+  {
+    FT minx, maxx, miny, maxy, minz, maxz;
+    if (p.x() < q.x()) { minx = p.x(); maxx = q.x(); }
+    else               { minx = q.x(); maxx = p.x(); }
+    if (p.y() < q.y()) { miny = p.y(); maxy = q.y(); }
+    else               { miny = q.y(); maxy = p.y(); }
+    if (p.z() < q.z()) { minz = p.z(); maxz = q.z(); }
+    else               { minz = q.z(); maxz = p.z(); }
+    initialize_with(Iso_cuboid_ref_3(Point_3(minx, miny, minz),
+				     Point_3(maxx, maxy, maxz)));
+  }
 
   bool operator==(const Self& s) const;
   bool operator!=(const Self& s) const;
@@ -67,7 +78,11 @@ public:
   Point_3 vertex(int i) const;
   Point_3 operator[](int i) const;
 
-  Self         transform(const Aff_transformation_3& t) const;
+  Self         transform(const Aff_transformation_3 &t) const
+  {
+    return Self(t.transform(min()), t.transform(max()));
+  }
+
   Bounded_side bounded_side(const Point_3& p) const;
   bool         has_on(const Point_3& p) const;
   bool         has_on_boundary(const Point_3& p) const;
@@ -84,33 +99,12 @@ public:
 };
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
-Iso_cuboidC3<R CGAL_CTAG>::Iso_cuboidC3()
-  : Iso_cuboid_handle_3(Iso_cuboid_ref_3()) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_LARGE_INLINE
-Iso_cuboidC3<R CGAL_CTAG>::
-Iso_cuboidC3(const Iso_cuboidC3<R CGAL_CTAG>::Point_3& p,
-             const Iso_cuboidC3<R CGAL_CTAG>::Point_3& q)
-{
-  FT minx, maxx, miny, maxy, minz, maxz;
-  if (p.x() < q.x()) { minx = p.x(); maxx = q.x(); }
-  else               { minx = q.x(); maxx = p.x(); }
-  if (p.y() < q.y()) { miny = p.y(); maxy = q.y(); }
-  else               { miny = q.y(); maxy = p.y(); }
-  if (p.z() < q.z()) { minz = p.z(); maxz = q.z(); }
-  else               { minz = q.z(); maxz = p.z(); }
-  initialize_with(Iso_cuboid_ref_3(Point_3(minx, miny, minz),
-				   Point_3(maxx, maxy, maxz)) );
-}
-
-template < class R >
 CGAL_KERNEL_INLINE
 bool
 Iso_cuboidC3<R CGAL_CTAG>::operator==(const Iso_cuboidC3<R CGAL_CTAG>& r) const
 {
-  if ( identical(r) ) return true;
+  if (identical(r))
+      return true;
   return min() == r.min() && max() == r.max();
 }
 
@@ -262,15 +256,6 @@ Bbox_3
 Iso_cuboidC3<R CGAL_CTAG>::bbox() const
 {
   return min().bbox() + max().bbox();
-}
-
-template < class R >
-CGAL_KERNEL_INLINE
-Iso_cuboidC3<R CGAL_CTAG>
-Iso_cuboidC3<R CGAL_CTAG>::
-transform(const Iso_cuboidC3<R CGAL_CTAG>::Aff_transformation_3&t) const
-{
-  return Self(t.transform(min()), t.transform(max()) );
 }
 
 #ifndef NO_OSTREAM_INSERT_ISO_CUBOIDC3

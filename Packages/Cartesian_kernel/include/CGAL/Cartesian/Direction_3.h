@@ -48,15 +48,24 @@ public:
   typedef typename R::Aff_transformation_3_base Aff_transformation_3;
 #endif
 
-  DirectionC3();
-  DirectionC3(const Vector_3 &v);
-  DirectionC3(const FT &x, const FT &y, const FT &z);
+  DirectionC3()
+    : Direction_handle_3(Direction_ref_3()) {}
+
+  DirectionC3(const Vector_3 &v)
+    : Direction_handle_3(v) {}
+
+  DirectionC3(const FT &x, const FT &y, const FT &z)
+    : Direction_handle_3(Direction_ref_3(x, y, z)) {}
 
   bool           operator==(const Self &d) const;
   bool           operator!=(const Self &d) const;
 
   Vector_3       to_vector() const;
-  Self           transform(const Aff_transformation_3 &t) const;
+  Self           transform(const Aff_transformation_3 &t) const
+  {
+    return t.transform(*this);
+  }
+
   Self           operator-() const;
 
   FT delta(int i) const;
@@ -92,30 +101,12 @@ public:
 };
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
-DirectionC3<R CGAL_CTAG>::DirectionC3()
-  : Direction_handle_3(Direction_ref_3() ) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-DirectionC3<R CGAL_CTAG>::
-DirectionC3(const typename DirectionC3<R CGAL_CTAG>::Vector_3 &v)
-  : Direction_handle_3(v) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-DirectionC3<R CGAL_CTAG>::
-DirectionC3(const typename DirectionC3<R CGAL_CTAG>::FT &x,
-            const typename DirectionC3<R CGAL_CTAG>::FT &y,
-            const typename DirectionC3<R CGAL_CTAG>::FT &z)
-  : Direction_handle_3(Direction_ref_3(x, y, z) ) {}
-
-template < class R >
 inline
 bool
 DirectionC3<R CGAL_CTAG>::operator==(const DirectionC3<R CGAL_CTAG> &d) const
 {
-  if ( identical(d) ) return true;
+  if (identical(d))
+      return true;
   return equal_directionC3(dx(), dy(), dz(), d.dx(), d.dy(), d.dz());
 }
 
@@ -133,16 +124,6 @@ typename DirectionC3<R CGAL_CTAG>::Vector_3
 DirectionC3<R CGAL_CTAG>::to_vector() const
 {
   return Vector_3(*this);
-}
-
-template < class R >
-inline
-DirectionC3<R CGAL_CTAG>
-DirectionC3<R CGAL_CTAG>::
-transform
-  (const typename DirectionC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
-{
-  return t.transform(*this);
 }
 
 template < class R >

@@ -64,13 +64,49 @@ public:
   typedef typename R::Aff_transformation_2_base Aff_transformation_2;
 #endif
 
-  CircleC2();
+  CircleC2()
+    : Circle_handle_2() {}
+
   CircleC2(const Point_2 &center, const FT &squared_radius = FT(0),
-           const Orientation &orient = COUNTERCLOCKWISE); // Is this new?
-  CircleC2(const Point_2 &center, const Orientation &orient); // Is this new?
+           const Orientation &orient = COUNTERCLOCKWISE) // Is this new?
+  {
+    CGAL_kernel_precondition( ( squared_radius >= FT(0) ) &&
+                              ( orient    != COLLINEAR) );
+
+    initialize_with(Circle_ref_2(center, squared_radius, orient));
+  }
+
+  CircleC2(const Point_2 &center, const Orientation &orient) // Is this new?
+  {
+    CGAL_kernel_precondition( orient != COLLINEAR );
+
+    initialize_with(Circle_ref_2(center, FT(0), orient));
+  }
+
   CircleC2(const Point_2 &p, const Point_2 &q,
-           const Orientation &orient = COUNTERCLOCKWISE); // And this too?
-  CircleC2(const Point_2 &p, const Point_2 &q, const Point_2 &r);
+           const Orientation &orient = COUNTERCLOCKWISE) // And this too?
+  {
+    CGAL_kernel_precondition( orient != COLLINEAR);
+
+    if (p != q) {
+      Point_2 center = midpoint(p, q);
+      FT      squared_radius = squared_distance(p, center);
+
+      initialize_with(Circle_ref_2(center, squared_radius, orient));
+    } else
+      initialize_with(Circle_ref_2(p, FT(0), orient));
+  }
+
+  CircleC2(const Point_2 &p, const Point_2 &q, const Point_2 &r)
+  {
+    Orientation orient = CGAL::orientation(p, q, r);
+    CGAL_kernel_precondition( orient != COLLINEAR);
+
+    Point_2 center = circumcenter(p, q, r);
+    FT      squared_radius = squared_distance(p, center);
+
+    initialize_with(Circle_ref_2(center, squared_radius, orient));
+  }
 
   bool           operator==(const Self &s) const;
   bool           operator!=(const Self &s) const;
@@ -102,74 +138,12 @@ public:
 };
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
-CircleC2<R CGAL_CTAG>::CircleC2()
-  : Circle_handle_2() {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-CircleC2<R CGAL_CTAG>::
-CircleC2(const typename CircleC2<R CGAL_CTAG>::Point_2 &center,
-         const typename CircleC2<R CGAL_CTAG>::FT &squared_radius,
-         const Orientation &orient)
-{
-  CGAL_kernel_precondition( ( squared_radius >= FT(0) ) &&
-                            ( orient    != COLLINEAR) );
-
-  initialize_with(Circle_ref_2(center, squared_radius, orient));
-}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-CircleC2<R CGAL_CTAG>::
-CircleC2(const typename CircleC2<R CGAL_CTAG>::Point_2 &center,
-         const Orientation &orient)
-{
-  CGAL_kernel_precondition( orient != COLLINEAR );
-
-  initialize_with(Circle_ref_2(center, FT(0), orient));
-}
-
-template < class R >
-CGAL_KERNEL_CTOR_MEDIUM_INLINE
-CircleC2<R CGAL_CTAG>::
-CircleC2(const typename CircleC2<R CGAL_CTAG>::Point_2 &p,
-         const typename CircleC2<R CGAL_CTAG>::Point_2 &q,
-         const Orientation &orient)
-{
-  CGAL_kernel_precondition( orient != COLLINEAR);
-
-  if ( p != q) {
-    Point_2 center = midpoint(p,q);
-    FT      squared_radius = squared_distance(p,center);
-
-    initialize_with(Circle_ref_2(center, squared_radius, orient));
-  } else
-    initialize_with(Circle_ref_2(p, FT(0), orient));
-}
-
-template < class R >
-CGAL_KERNEL_CTOR_MEDIUM_INLINE
-CircleC2<R CGAL_CTAG>::
-CircleC2(const typename CircleC2<R CGAL_CTAG>::Point_2 &p,
-         const typename CircleC2<R CGAL_CTAG>::Point_2 &q,
-         const typename CircleC2<R CGAL_CTAG>::Point_2 &r)
-{
-  Orientation orient = CGAL::orientation(p,q,r);
-  CGAL_kernel_precondition( orient != COLLINEAR);
-
-  Point_2 center = circumcenter(p,q,r);
-  FT      squared_radius = squared_distance(p,center);
-
-  initialize_with(Circle_ref_2(center, squared_radius, orient));
-}
-
-template < class R >
 CGAL_KERNEL_INLINE
 bool
 CircleC2<R CGAL_CTAG>::operator==(const CircleC2<R CGAL_CTAG> &c) const
 {
-  if ( identical(c) ) return true;
+  if (identical(c))
+      return true;
   return center() == c.center() &&
          squared_radius() == c.squared_radius() &&
          orientation() == c.orientation();
@@ -232,7 +206,8 @@ bool
 CircleC2<R CGAL_CTAG>::
 has_on_boundary(const typename CircleC2<R CGAL_CTAG>::Point_2 &p) const
 {
-  return squared_distance(center(),p) == squared_radius();
+    // FIXME: predicate
+  return squared_distance(center(), p) == squared_radius();
 }
 
 template < class R >
@@ -263,6 +238,7 @@ bool
 CircleC2<R CGAL_CTAG>::
 has_on_bounded_side(const typename CircleC2<R CGAL_CTAG>::Point_2 &p) const
 {
+    // FIXME: predicate
   return squared_distance(center(),p) < squared_radius();
 }
 
@@ -272,6 +248,7 @@ bool
 CircleC2<R CGAL_CTAG>::
 has_on_unbounded_side(const typename CircleC2<R CGAL_CTAG>::Point_2 &p) const
 {
+    // FIXME: predicate
   return squared_distance(center(),p) > squared_radius();
 }
 
@@ -280,6 +257,7 @@ inline
 bool
 CircleC2<R CGAL_CTAG>::is_degenerate() const
 {
+    // FIXME: predicate
   return CGAL_NTS is_zero(squared_radius());
 }
 

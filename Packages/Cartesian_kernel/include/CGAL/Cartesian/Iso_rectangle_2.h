@@ -62,8 +62,19 @@ public:
   typedef typename R::Circle_2_base             Circle_2;
 #endif
 
-  Iso_rectangleC2();
-  Iso_rectangleC2(const Point_2 &p, const Point_2 &q);
+  Iso_rectangleC2()
+    : Iso_rectangle_handle_2(Iso_rectangle_ref_2()) {}
+
+  Iso_rectangleC2(const Point_2 &p, const Point_2 &q)
+  {
+    FT minx, maxx, miny, maxy;
+    if (p.x() < q.x()) { minx = p.x(); maxx = q.x(); }
+    else               { minx = q.x(); maxx = p.x(); }
+    if (p.y() < q.y()) { miny = p.y(); maxy = q.y(); }
+    else               { miny = q.y(); maxy = p.y(); }
+    initialize_with(Iso_rectangle_ref_2(Point_2(minx, miny),
+	                                Point_2(maxx, maxy)));
+  }
 
   bool            operator==(const Self &s) const;
   bool            operator!=(const Self &s) const;
@@ -79,7 +90,14 @@ public:
   Point_2 vertex(int i) const;
   Point_2 operator[](int i) const;
 
-  Self            transform(const Aff_transformation_2 &t) const;
+  Self transform(const Aff_transformation_2 &t) const
+  {
+      // FIXME
+    // We need a precondition like this!!!
+    // CGAL_kernel_precondition(t.is_axis_preserving());
+    return Iso_rectangleC2(t.transform(vertex(0)),
+                           t.transform(vertex(2)));
+  }
 
   Bounded_side    bounded_side(const Point_2 &p) const;
   bool            has_on_boundary(const Point_2 &p) const;
@@ -95,26 +113,6 @@ public:
   FT              xmax() const;
   FT              ymax() const;
 };
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-Iso_rectangleC2<R CGAL_CTAG>::Iso_rectangleC2()
-  : Iso_rectangle_handle_2(Iso_rectangle_ref_2()) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-Iso_rectangleC2<R CGAL_CTAG>::
-Iso_rectangleC2(const typename Iso_rectangleC2<R CGAL_CTAG>::Point_2 &p,
-                const typename Iso_rectangleC2<R CGAL_CTAG>::Point_2 &q)
-{
-  FT minx, maxx, miny, maxy;
-  if (p.x() < q.x()) { minx = p.x(); maxx = q.x(); }
-  else               { minx = q.x(); maxx = p.x(); }
-  if (p.y() < q.y()) { miny = p.y(); maxy = q.y(); }
-  else               { miny = q.y(); maxy = p.y(); }
-  initialize_with(Iso_rectangle_ref_2(Point_2(minx, miny),
-	                              Point_2(maxx, maxy)) );
-}
 
 template < class R >
 inline
@@ -250,19 +248,6 @@ Bbox_2 Iso_rectangleC2<R CGAL_CTAG>::bbox() const
 {
   return Bbox_2(CGAL::to_double(xmin()), CGAL::to_double(ymin()),
                 CGAL::to_double(xmax()), CGAL::to_double(ymax()));
-}
-
-template < class R >
-inline
-Iso_rectangleC2<R CGAL_CTAG>
-Iso_rectangleC2<R CGAL_CTAG>::
-transform(const typename Iso_rectangleC2<R CGAL_CTAG>::Aff_transformation_2 &t)
-    const
-{
-  // We need a precondition like this!!!
-  // CGAL_kernel_precondition(t.is_axis_preserving());
-  return Iso_rectangleC2<R CGAL_CTAG>(t.transform(vertex(0)),
-                             t.transform(vertex(2)));
 }
 
 #ifndef CGAL_NO_OSTREAM_INSERT_ISO_RECTANGLEC2

@@ -62,9 +62,14 @@ public:
   typedef typename R::Circle_2_base             Circle_2;
 #endif
 
-  DirectionC2();
-  DirectionC2(const Vector_2 &v);
-  DirectionC2(const FT &x, const FT &y);
+  DirectionC2()
+    : Direction_handle_2(Direction_ref_2()) {}
+
+  DirectionC2(const Vector_2 &v)
+    : Direction_handle_2(v) {}
+
+  DirectionC2(const FT &x, const FT &y)
+    : Direction_handle_2(Direction_ref_2(x, y)) {}
 
   bool operator==(const Self &d) const;
   bool operator!=(const Self &d) const;
@@ -77,7 +82,10 @@ public:
   Vector_2 to_vector() const;
 
   Self perpendicular(const Orientation &o) const;
-  Self transform(const Aff_transformation_2 &t) const;
+  Self transform(const Aff_transformation_2 &t) const
+  {
+    return t.transform(*this);
+  }
 
   Self operator-() const;
 
@@ -93,29 +101,12 @@ public:
 };
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
-DirectionC2<R CGAL_CTAG>::DirectionC2()
-  : Direction_handle_2(Direction_ref_2()) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-DirectionC2<R CGAL_CTAG>::
-DirectionC2(const typename DirectionC2<R CGAL_CTAG>::Vector_2 &v)
- : Direction_handle_2(v) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-DirectionC2<R CGAL_CTAG>::
-DirectionC2(const typename DirectionC2<R CGAL_CTAG>::FT &x,
-            const typename DirectionC2<R CGAL_CTAG>::FT &y)
- : Direction_handle_2(Direction_ref_2(x, y)) {}
-
-template < class R >
 inline
 bool
 DirectionC2<R CGAL_CTAG>::operator==(const DirectionC2<R CGAL_CTAG> &d) const
 {
-  if ( identical(d) ) return true;
+  if (identical(d))
+      return true;
   return equal_direction(*this, d);
 }
 
@@ -132,7 +123,7 @@ CGAL_KERNEL_MEDIUM_INLINE
 bool
 DirectionC2<R CGAL_CTAG>::operator<(const DirectionC2<R CGAL_CTAG> &d) const
 {
-  return compare_angle_with_x_axis(*this,d) == SMALLER;
+  return compare_angle_with_x_axis(*this, d) == SMALLER;
 }
 
 template < class R >
@@ -148,7 +139,7 @@ CGAL_KERNEL_INLINE
 bool
 DirectionC2<R CGAL_CTAG>::operator>=(const DirectionC2<R CGAL_CTAG> &d) const
 {
-  return compare_angle_with_x_axis(*this,d) != SMALLER;
+  return compare_angle_with_x_axis(*this, d) != SMALLER;
 }
 
 template < class R >
@@ -156,7 +147,7 @@ CGAL_KERNEL_INLINE
 bool
 DirectionC2<R CGAL_CTAG>::operator<=(const DirectionC2<R CGAL_CTAG> &d) const
 {
-  return compare_angle_with_x_axis(*this,d) != LARGER;
+  return compare_angle_with_x_axis(*this, d) != LARGER;
 }
 
 template < class R >
@@ -198,16 +189,6 @@ DirectionC2<R CGAL_CTAG>::perpendicular(const Orientation &o) const
 }
 
 template < class R >
-CGAL_KERNEL_INLINE
-DirectionC2<R CGAL_CTAG>
-DirectionC2<R CGAL_CTAG>::
-transform(const typename DirectionC2<R CGAL_CTAG>::Aff_transformation_2 &t)
-    const
-{
-  return t.transform(*this);
-}
-
-template < class R >
 inline
 DirectionC2<R CGAL_CTAG>
 DirectionC2<R CGAL_CTAG>::operator-() const
@@ -223,7 +204,6 @@ DirectionC2<R CGAL_CTAG>::delta(int i) const
   CGAL_kernel_precondition( ( i == 0 ) || ( i == 1 ) );
   return (i==0) ? dx() : dy();
 }
-
 
 #ifndef CGAL_NO_OSTREAM_INSERT_DIRECTIONC2
 template < class R >
