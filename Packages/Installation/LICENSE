@@ -10,7 +10,8 @@ specified in each file of CGAL which license applies to it.
 It is possible to obtain commercial licenses from GeometryFactory
 (www.geometryfactory.com) for all or parts of CGAL.
 
-The directory "auxiliary/" contains external libraries such as GMP.
-The directory "src/Core/" contains the CORE library.
-These libraries are not part of CGAL and have their own license.
-
+Distributed along with CGAL (for the users' convenience), but not part of CGAL,
+are the following libraries, available under their own licenses :
+- GMP, in the directory "auxiliary/", under the LGPL (see LICENSE.LGPL)
+- CORE, in the directory "src/Core/", under the QPL (see LICENSE.QPL)
+- Boost, in the directory "include/boost/", under the BSL (see LICENSE.BSL)
