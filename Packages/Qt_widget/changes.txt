@@ -1,3 +1,9 @@
+1.1.1
+=====
+Add of Qt_Windon_Get_point.h (input of points)
+contrained demo uses it
+several other changes
+
 1.1.0
 =====
 NEW: tool system for inputs
