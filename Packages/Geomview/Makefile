@@ -1,39 +1,34 @@
 # Makefile for the Geomwiew package.
 
-.PHONY: test demo version doc
+.PHONY: demo doc submit test Version
 
+Package:=$(shell basename `cat CVS/Repository`)
+TAG_VERSION:=v$(shell echo $(VERSION) | sed -e "s/\./_/g")
+CGAL_VERSION:="$(VERSION) ($(shell date '+%e %b %Y'))"
 WWW_CGAL=/net/servers/www-sop/prisme/CGAL/DR:/Members
-WWW_dir=$(WWW_CGAL)/Geomview
+WWW_dir=$(WWW_CGAL)/$(Package)
 TMP_file=/tmp/submit-mail
 
-package:
+all:
 	@echo "----------------------------------"
-	@echo "------------ Penser à: -----------"
-	@echo "----------------------------------"
-	@echo "---- make test -------------- ----"
-	@echo "---- editer changes.txt  ---------"
-	@echo "---- cvs update; cvs commit ------"
-	@echo "---- more version ----------------"
-	@echo "---- make doc --------------------"
-	@echo "---- make VERSION=X.Y version ----"
-	@echo "---- cvs commit ------------------"
-	@echo "---- make VERSION=X.Y tag --------"
-	@echo "---- make submit -----------------"
+	@echo "---- edit changes.txt ------------"
+	@echo "---- make VERSION=X.Y submit -----"
 	@echo "----------------------------------"
 
-version:
+Version:
 	echo "$(VERSION) (`date '+%e %b %Y'`)" > version
+	cvs commit -m "- Bump for $(CGAL_VERSION)" version
+	cvs tag -c $(TAG_VERSION)
 
-tag:
-	cvs tag v`echo $(VERSION) | sed -e "s/\./_/g"`
-
-submit:	
-	rm -rf Geomview.tar.gz
-	tar -zcvf Geomview.tar.gz\
+$(Package).tar.gz: doc
+	$(MAKE) clean
+	tar -zcvf $(Package).tar.gz --exclude="*".swp \
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
 	version maintainer description.txt changes.txt \
 	demo include src test doc_tex doc_ps
-	cp -f Geomview.tar.gz version doc_ps/Geomview.ps.gz *.txt $(WWW_dir)
+
+submit: Version $(Package).tar.gz
+	cp -f $(Package).tar.gz version doc_ps/$(Package).ps.gz *.txt $(WWW_dir)
 	echo > $(TMP_file)
 	echo "submission::" >> $(TMP_file)
 	echo "http://www-sop.inria.fr/prisme/CGAL/DR:/Members" >> $(TMP_file)
