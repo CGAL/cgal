@@ -1,3 +1,6 @@
+17 April 2004 Sylvain Pion
+- Shorten symbol name CC_iterator -> CCit.
+
 26 March 2004 Radu Ursu
 -made doc work with the current implementation of the Manual tools
 

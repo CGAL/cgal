@@ -103,8 +103,10 @@ struct Compact_container_traits {
 };
 
 namespace CGALi {
+  // We use a short name (was CC_iterator before) because this symbol
+  // shows up really often.
   template < class DSC, class Ptr, class Ref >
-  class CC_iterator;
+  class CCit;
 }
 
 template < class T, class Allocator = CGAL_ALLOCATOR(T) >
@@ -121,15 +123,15 @@ public:
   typedef typename Allocator::const_pointer         const_pointer;
   typedef typename Allocator::size_type             size_type;
   typedef typename Allocator::difference_type       difference_type;
-  typedef CGALi::CC_iterator<Self, pointer, reference>
+  typedef CGALi::CCit<Self, pointer, reference>
     iterator;
-  typedef CGALi::CC_iterator<Self, const_pointer, const_reference>
+  typedef CGALi::CCit<Self, const_pointer, const_reference>
     const_iterator;
   typedef std::reverse_iterator<iterator>           reverse_iterator;
   typedef std::reverse_iterator<const_iterator>     const_reverse_iterator;
 
-  friend class CGALi::CC_iterator<Self, pointer, reference>;
-  friend class CGALi::CC_iterator<Self, const_pointer, const_reference>;
+  friend class CGALi::CCit<Self, pointer, reference>;
+  friend class CGALi::CCit<Self, const_pointer, const_reference>;
 
   explicit Compact_container(const Allocator &a = Allocator())
   : alloc(a)
@@ -633,10 +635,10 @@ bool operator>=(const Compact_container<T, Allocator> &lhs,
 namespace CGALi {
 
   template < class DSC, class Ptr, class Ref >
-  class CC_iterator
+  class CCit
   {
     typedef typename DSC::iterator                    iterator;
-    typedef CC_iterator<DSC, Ptr, Ref>                Iterator;
+    typedef CCit<DSC, Ptr, Ref>                       Iterator;
   public:
     typedef Ptr                                       pointer;
     typedef Ref                                       reference;
@@ -646,15 +648,15 @@ namespace CGALi {
     typedef std::bidirectional_iterator_tag           iterator_category;
 
     // the initialization with NULL is required by our Handle concept.
-    CC_iterator() : p(NULL) {}
+    CCit() : p(NULL) {}
 
     // Either a harmless copy-ctor,
     // or a conversion from iterator to const_iterator.
-    CC_iterator(const iterator &it)
+    CCit(const iterator &it)
     : p(&*it) {}
 
     // Same for assignment operator (otherwise MipsPro warns)
-    CC_iterator & operator=(const iterator &it)
+    CCit & operator=(const iterator &it)
     {
       p = it.p;
       return *this;
@@ -665,7 +667,7 @@ namespace CGALi {
     // our code without the feature, but we want to keep it forever
     // for backward compatibility.
     // Construction from NULL
-    CC_iterator(CGAL_NULL_TYPE CGAL_assertion_code(n))
+    CCit(CGAL_NULL_TYPE CGAL_assertion_code(n))
     : p(NULL)
     {
       CGAL_assertion( n == NULL);
@@ -680,7 +682,7 @@ namespace CGALi {
     friend class Compact_container<value_type, typename DSC::allocator_type>;
 
     // For begin()
-    CC_iterator(pointer ptr, int, int)
+    CCit(pointer ptr, int, int)
     : p(ptr)
     {
       if (p == NULL) // empty container.
@@ -690,7 +692,7 @@ namespace CGALi {
         increment();
     }
     // Construction from raw pointer and for end().
-    CC_iterator(pointer ptr, int)
+    CCit(pointer ptr, int)
     : p(ptr) {}
 
     // NB : in case empty container, begin == end == NULL.
@@ -745,7 +747,7 @@ namespace CGALi {
 
 #ifndef CGAL_NO_DEPRECATED_CODE
     // For std::less...
-    bool operator<(const CC_iterator& other) const
+    bool operator<(const CCit& other) const
     {
       return p < other.p;
     }
@@ -762,38 +764,38 @@ namespace CGALi {
 
   template < class DSC, class Ptr, class Ref >
   inline
-  bool operator==(const CC_iterator<DSC, Ptr, Ref> &rhs,
-                  const CC_iterator<DSC, Ptr, Ref> &lhs)
+  bool operator==(const CCit<DSC, Ptr, Ref> &rhs,
+                  const CCit<DSC, Ptr, Ref> &lhs)
   { return &*rhs == &*lhs; }
 
   template < class DSC, class Val >
   inline
-  bool operator==(const CC_iterator<DSC, Val*, Val&> &rhs,
-                  const CC_iterator<DSC, const Val*, const Val&> &lhs)
+  bool operator==(const CCit<DSC, Val*, Val&> &rhs,
+                  const CCit<DSC, const Val*, const Val&> &lhs)
   { return &*rhs == &*lhs; }
 
   template < class DSC, class Val >
   inline
-  bool operator==(const CC_iterator<DSC, const Val*, const Val&> &rhs,
-                  const CC_iterator<DSC, Val*, Val&> &lhs)
+  bool operator==(const CCit<DSC, const Val*, const Val&> &rhs,
+                  const CCit<DSC, Val*, Val&> &lhs)
   { return &*rhs == &*lhs; }
 
   template < class DSC, class Ptr, class Ref >
   inline
-  bool operator!=(const CC_iterator<DSC, Ptr, Ref> &rhs,
-                  const CC_iterator<DSC, Ptr, Ref> &lhs)
+  bool operator!=(const CCit<DSC, Ptr, Ref> &rhs,
+                  const CCit<DSC, Ptr, Ref> &lhs)
   { return &*rhs != &*lhs; }
 
   template < class DSC, class Val >
   inline
-  bool operator!=(const CC_iterator<DSC, Val*, Val&> &rhs,
-                  const CC_iterator<DSC, const Val*, const Val&> &lhs)
+  bool operator!=(const CCit<DSC, Val*, Val&> &rhs,
+                  const CCit<DSC, const Val*, const Val&> &lhs)
   { return &*rhs != &*lhs; }
 
   template < class DSC, class Val >
   inline
-  bool operator!=(const CC_iterator<DSC, const Val*, const Val&> &rhs,
-                  const CC_iterator<DSC, Val*, Val&> &lhs)
+  bool operator!=(const CCit<DSC, const Val*, const Val&> &rhs,
+                  const CCit<DSC, Val*, Val&> &lhs)
   { return &*rhs != &*lhs; }
 
   // This is marked as deprecated in order to be able to test
@@ -802,7 +804,7 @@ namespace CGALi {
 #ifndef CGAL_NO_DEPRECATED_CODE
   template < class DSC, class Ptr, class Ref >
   inline
-  bool operator==(const CC_iterator<DSC, Ptr, Ref> &rhs,
+  bool operator==(const CCit<DSC, Ptr, Ref> &rhs,
 		  CGAL_NULL_TYPE CGAL_assertion_code(n))
   {
     CGAL_assertion( n == NULL);
@@ -811,7 +813,7 @@ namespace CGALi {
 
   template < class DSC, class Val >
   inline
-  bool operator==(const CC_iterator<DSC, Val*, Val&> &rhs,
+  bool operator==(const CCit<DSC, Val*, Val&> &rhs,
 		  CGAL_NULL_TYPE CGAL_assertion_code(n))
   {
     CGAL_assertion( n == NULL);
@@ -821,7 +823,7 @@ namespace CGALi {
 
   template < class DSC, class Val >
   inline
-  bool operator==(const CC_iterator<DSC, const Val*, const Val&> &rhs,
+  bool operator==(const CCit<DSC, const Val*, const Val&> &rhs,
 		  CGAL_NULL_TYPE CGAL_assertion_code(n))
   {
     CGAL_assertion( n == NULL);
@@ -830,7 +832,7 @@ namespace CGALi {
 
   template < class DSC, class Ptr, class Ref >
   inline
-  bool operator!=(const CC_iterator<DSC, Ptr, Ref> &rhs,
+  bool operator!=(const CCit<DSC, Ptr, Ref> &rhs,
 		  CGAL_NULL_TYPE CGAL_assertion_code(n))
   {
     CGAL_assertion( n == NULL);
@@ -839,7 +841,7 @@ namespace CGALi {
 
   template < class DSC, class Val >
   inline
-  bool operator!=(const CC_iterator<DSC, Val*, Val&> &rhs,
+  bool operator!=(const CCit<DSC, Val*, Val&> &rhs,
                   CGAL_NULL_TYPE CGAL_assertion_code(n))
   {
     CGAL_assertion( n == NULL);
@@ -848,7 +850,7 @@ namespace CGALi {
 
   template < class DSC, class Val >
   inline
-  bool operator!=(const CC_iterator<DSC, const Val*, const Val&> &rhs,
+  bool operator!=(const CCit<DSC, const Val*, const Val&> &rhs,
                   CGAL_NULL_TYPE CGAL_assertion_code(n))
   {
     CGAL_assertion( n == NULL);
@@ -859,16 +861,16 @@ namespace CGALi {
 #else
   template < class DSC, class Ptr1, class Ref1, class Ptr2, class Ref2 >
   inline
-  bool operator==(const CC_iterator<DSC, Ptr1, Ref1> &rhs,
-                  const CC_iterator<DSC, Ptr2, Ref2> &lhs)
+  bool operator==(const CCit<DSC, Ptr1, Ref1> &rhs,
+                  const CCit<DSC, Ptr2, Ref2> &lhs)
   {
     return &*rhs == &*lhs;
   }
 
   template < class DSC, class Ptr1, class Ref1, class Ptr2, class Ref2 >
   inline
-  bool operator!=(const CC_iterator<DSC, Ptr1, Ref1> &rhs,
-                  const CC_iterator<DSC, Ptr2, Ref2> &lhs)
+  bool operator!=(const CCit<DSC, Ptr1, Ref1> &rhs,
+                  const CCit<DSC, Ptr2, Ref2> &lhs)
   {
     return &*rhs != &*lhs;
   }
@@ -879,7 +881,7 @@ namespace CGALi {
 #ifndef CGAL_NO_DEPRECATED_CODE
   template < class DSC, class Ptr1, class Ref1>
   inline
-  bool operator==(const CC_iterator<DSC, Ptr1, Ref1> &rhs,
+  bool operator==(const CCit<DSC, Ptr1, Ref1> &rhs,
                   CGAL_NULL_TYPE CGAL_assertion_code(n))
   {
     CGAL_assertion( n == NULL);
@@ -888,7 +890,7 @@ namespace CGALi {
 
   template < class DSC, class Ptr1, class Ref1>
   inline
-  bool operator!=(const CC_iterator<DSC, Ptr1, Ref1> &rhs,
+  bool operator!=(const CCit<DSC, Ptr1, Ref1> &rhs,
 		  CGAL_NULL_TYPE CGAL_assertion_code(n))
   {
     CGAL_assertion( n == NULL);
