@@ -1248,7 +1248,7 @@ a @prg{case} statement.
     void analyse( ) 
     {
         RT d = det();
-        type = (Conic_type)(sign(d));
+        type = (Conic_type)(CGAL::sign(d));
         switch (type) {
         case HYPERBOLA: 
             {
@@ -1275,7 +1275,7 @@ a @prg{case} statement.
     void analyse( ) 
     {
         FT d = det();
-        type = (Conic_type)(sign(d));
+        type = (Conic_type)(CGAL::sign(d));
         switch (type) {
         case HYPERBOLA: 
             { 
@@ -2481,8 +2481,8 @@ $p(\tau)$ is not a constant function.
                 return 1;
             }
             // two real roots
-            r1 = (-c1 + sqrt(D))/(2.0*c2);
-            r2 = (-c1 - sqrt(D))/(2.0*c2);
+            r1 = (-c1 + CGAL::sqrt(D))/(2.0*c2);
+            r2 = (-c1 - CGAL::sqrt(D))/(2.0*c2);
             return 2;
         }
 
@@ -2506,7 +2506,7 @@ $p(\tau)$ is not a constant function.
         NT D  = a*a*a/27.0 + b*b/4.0;
         if (D >= 0.0) {
             // real case
-            NT u = cbrt(-b/2.0 + sqrt(D)),
+            NT u = cbrt(-b/2.0 + CGAL::sqrt(D)),
                    alpha = 1.0 - a/(3.0*u*u);
             if (D == 0) {
                 // two distinct real roots
@@ -2519,14 +2519,14 @@ $p(\tau)$ is not a constant function.
             return 1;
         }
         // complex case
-        NT r_prime   = sqrt(-a/3),
+        NT r_prime   = CGAL::sqrt(-a/3),
            phi_prime = acos (-b/(2.0*r_prime*r_prime*r_prime))/3.0,
            u_R       = r_prime * cos (phi_prime),
            u_I       = r_prime * sin (phi_prime);
         // three distinct real roots
         r1 = 2.0*u_R - g2/3.0;
-        r2 = -u_R + u_I*sqrt(3.0) - g2/3.0;
-        r3 = -u_R - u_I*sqrt(3.0) - g2/3.0;
+        r2 = -u_R + u_I*CGAL::sqrt(3.0) - g2/3.0;
+        r3 = -u_R - u_I*CGAL::sqrt(3.0) - g2/3.0;
         return 3;
     }
                     
