@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/Node.h
+// file          : include/CGAL/Binary_node.h
 // package       : ASPAS
 // revision      : 1.4 
 // revision_date : 2002/16/08 
@@ -65,7 +65,7 @@ namespace CGAL {
 
 	// constructor for leaf node
         Binary_node(Points_container<Item>& c) :
-    		n(c.size()), data(new Item*[n]) {
+    		n(c.size()), data(new Item*[c.size()]) {
 		the_node_type=LEAF;
     		std::copy(c.begin(), c.end(), data);
   	};
