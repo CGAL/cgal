@@ -12,7 +12,11 @@
 #include <CGAL/leda_rational.h>
 #if defined(USE_LEDA_KERNEL)
 #include <CEP/Leda_rat_kernel/leda_rat_kernel_traits.h>
+#if defined(USE_INSERT_FAST)
+#include <CGAL/Arr_segment_traits_fast_2.h>
+#else
 #include <CGAL/Arr_segment_traits_2.h>
+#endif
 #else
 #if defined(USE_MY_KERNEL)
 #include <CGAL/Arr_leda_segment_exact_traits.h>
@@ -53,16 +57,21 @@ typedef leda_rational                                   NT;
 #if defined(USE_CONIC_TRAITS)
 typedef CGAL::Arr_conic_traits<NT>                      Traits;
 #define PM_TYPE "Conics"
+
 #else
+
 #if defined(USE_LEDA_KERNEL)
 typedef CGAL::leda_rat_kernel_traits                    Kernel;
-typedef CGAL::Arr_segment_exact_traits<Kernel>          Traits;
 #if defined(USE_INSERT_FAST)
 #define PM_TYPE "Leda Kernel Fast"
+typedef CGAL::Arr_segment_traits_fast_2<Kernel>         Traits;
 #else
 #define PM_TYPE "Leda Kernel"
+typedef CGAL::Arr_segment_exact_traits<Kernel>          Traits;
 #endif
+
 #else
+
 #if defined(USE_MY_KERNEL)
 typedef CGAL::Arr_leda_segment_exact_traits             Traits;
 #define PM_TYPE "My Leda Kernel"
