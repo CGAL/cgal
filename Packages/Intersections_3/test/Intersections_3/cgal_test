@@ -9,6 +9,7 @@ one_run()
     goodresult=RESULT/${base}/`basename ${datafile}`
     if "./${base}" < ${datafile} >output
     then
+        cat output >> ProgramOutput.${base}.$PLATFORM
 	if [ -r ${goodresult} ]
 	then
 	    if diff output ${goodresult} > /dev/null
@@ -88,6 +89,8 @@ fi
 for file in ${sourcefiles}
 do
     base=`basename ${file} .C`
+    rm -f ProgramOutput.${base}.$PLATFORM
+    touch -f ProgramOutput.${base}.$PLATFORM
     xdatafiles="DATA/${base}.x.*"
 #    idatafiles="DATA/${base}.i.*"
 #    ixdatafiles="DATA/${base}.ix.*"
@@ -101,11 +104,13 @@ do
     fi
     if [  "${datafiles}" ]
     then
+        echo "TESTR=1" >> ProgramOutput.${base}.$PLATFORM
 	make_and_execute 1;
     fi
 #    datafiles="${xdatafiles} ${ixdatafiles}"
     if [  "${datafiles}" ]
     then
+        echo "TESTR=5" >> ProgramOutput.${base}.$PLATFORM
 	make_and_execute 5;
     fi
 done
