@@ -287,7 +287,7 @@ is an internal format.
 \ccInclude{CGAL/IO/alpha_shapes_2_window_stream.h}
 
 \ccFunction{Window_stream& operator<<(Window_stream& W,
-                         const Alpha_shape_2<Gt,Tds>& T);}
+                         const Alpha_shape_2<Gt,Tds>& A);}
 {Inserts the alpha shape \ccVar\ for the current $\alpha$-value into the window stream \ccStyle{W}.
 \ccPrecond The insert operator must be defined for \ccStyle{Point} and \ccStyle{Segment}.}
 \end{ccClassTemplate}
@@ -400,7 +400,7 @@ They are listed below as such.
 \begin{ccClass}{Alpha_shape_vertex_base}
 \ccCreationVariable{v}
 \ccCreation
-\ccConstructor{Alpha_shape_vertex_base()};{default constructor.}
+\ccConstructor{Alpha_shape_vertex_base();}{default constructor.}
 \ccGlue
 \ccConstructor{Alpha_shape_vertex_base(Point p);}{constructor setting
 th point associated to.}
@@ -730,7 +730,7 @@ is an internal format.
 \ccInclude{CGAL/IO/alpha_shapes_2_window_stream.h}
 
 \ccFunction{Window_stream& operator<<(Window_stream& W,
-                         const Weighted_alpha_shape_2<Gt,Tds>& T);}
+                         const Weighted_alpha_shape_2<Gt,Tds>& A);}
 {Inserts the weighted alpha shape \ccVar\ for the current $\alpha$-value into the window stream \ccStyle{W}.
 \ccPrecond The insert operator must be defined for \ccStyle{Weighted_point} and \ccStyle{Segment}.}
 \end{ccClassTemplate}
@@ -776,6 +776,9 @@ addition to the requirements for the Regular triangulation traits
 class.
 
 \ccTypes
+
+\ccNestedType{Point}{A type to hold a weighted point type
+(cf. requirements for the \ccc{Weighted_point} class).}
 
 \ccNestedType{Coord_type}{A type to hold a coordinate type class. 
 The type must provide a copy constructor, assignment, comparison
