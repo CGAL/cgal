@@ -81,14 +81,15 @@ CGAL_BEGIN_NAMESPACE
 
 #ifdef __i386__
 // The GNU libc version (cf powerpc) is nicer, but doesn't work on libc 5 :(
+// This one also works with CygWin.
 #define CGAL_IA_SETFPCW(CW) __asm__ volatile ("fldcw %0" : :"m" (CW))
 #define CGAL_IA_GETFPCW(CW) __asm__ volatile ("fstcw %0" : "=m" (CW))
 typedef unsigned short FPU_CW_t;
 enum {
-    FPU_cw_near = _FPU_RC_NEAREST | 0x127f,
-    FPU_cw_zero = _FPU_RC_ZERO    | 0x127f,
-    FPU_cw_up   = _FPU_RC_UP      | 0x127f,
-    FPU_cw_down = _FPU_RC_DOWN    | 0x127f
+    FPU_cw_near = 0x000 | 0x127f,
+    FPU_cw_zero = 0xc00 | 0x127f,
+    FPU_cw_up   = 0x800 | 0x127f,
+    FPU_cw_down = 0x400 | 0x127f
 };
 #endif // __i386__
 
