@@ -1,5 +1,8 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
+2.70 (10 Sep 2003) [rursu]
+   - Qt_help_window class is in the namespace CGAL
+
 2.69 (07 Sep 2003)
    - [rursu] demo use now the new Qt_help_window class instead of HelpWindow
    - [rursu] demo use new icon demoicon
