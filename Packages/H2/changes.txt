@@ -1,4 +1,7 @@
 29 Feb 2004 Sylvain Pion
+- Replace TriangleH2 by Cartesian's TriangleC2 !
+
+29 Feb 2004 Sylvain Pion
 - Replace SegmentH3 by Cartesian's SegmentC3 !
 
 29 Feb 2004 Sylvain Pion

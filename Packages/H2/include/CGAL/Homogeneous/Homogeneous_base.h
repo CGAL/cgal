@@ -37,7 +37,7 @@
 #include <CGAL/Homogeneous/PointH2.h>
 #include <CGAL/Homogeneous/RayH2.h>
 #include <CGAL/Cartesian/Segment_2.h>
-#include <CGAL/Homogeneous/TriangleH2.h>
+#include <CGAL/Cartesian/Triangle_2.h>
 #include <CGAL/Homogeneous/VectorH2.h>
 #include <CGAL/Homogeneous/Data_accessorH2.h>
 #include <CGAL/ConicHPA2.h>
@@ -90,7 +90,7 @@ struct Homogeneous_base
     typedef LineH2<Kernel>                          Line_2;
     typedef RayH2<Kernel>                           Ray_2;
     typedef CircleH2<Kernel>                        Circle_2;
-    typedef TriangleH2<Kernel>                      Triangle_2;
+    typedef TriangleC2<Kernel>                      Triangle_2;
     typedef Iso_rectangleH2<Kernel>                 Iso_rectangle_2;
     typedef Aff_transformationH2<Kernel>            Aff_transformation_2;
 
