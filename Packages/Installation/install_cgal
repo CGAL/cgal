@@ -861,8 +861,9 @@ set_compiler_flags()
 	    #### settings for egcs/gcc2.8 on linux
 	    ADDITIONAL_CXXFLAGS="-Wall -ftemplate-depth-25 -D__STL_NO_DRAND48"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -Xlinker -shared"
+	    WINDOW_DIR=
+	    XLIBS="user32 gdi32 comdlg32 shell32"
 	    WINDOW_DIR="/usr/X11R6/lib"
-	    RUNTIME_LINKER_FLAG='-Wl,-R'
 	    PRINT_STACKTRACE_PROGRAM="gdb"
 	    EXE_EXT=".exe"
 	    ;;
@@ -4479,7 +4480,7 @@ _do_compile()
     fi
     ${_rm} -f *${OBJ_EXT}
     MAKE_OPTION="-k"
-    if [ -n "${INTERNAL_RELEASE}" ]; then
+    if [ -n "${INTERNAL_RELEASE}" -a "$1" != "sharedlib" ]; then
 	MAKE_OPTION="-i"
     fi
     if make ${MAKE_OPTION} -f makefile_$1 >${COMPILE_LOGFILE} 2>&1; then
