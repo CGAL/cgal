@@ -1285,7 +1285,11 @@ libpath_option()
 
 leda_lib_option()
 {
-    ${_printf} "${LIB_OPT}lib%s${LIB_SFX} " "$*"
+    if [ -z "${WINDOWS_COMPILER}" ]; then
+        ${_printf} "${LIB_OPT}%s${LIB_SFX} " "$*"
+    else
+        ${_printf} "${LIB_OPT}lib%s${LIB_SFX} " "$*"
+    fi
 }
 
 lib_option()
