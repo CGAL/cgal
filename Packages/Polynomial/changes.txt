@@ -1,3 +1,7 @@
+20 June 2004 Sylvain Pion
+- Replace "CGAL_NTS gcd" by "CGAL::gcd", since we know the type is int
+  (allows to define CGAL_NTS as empty)
+
 18 Feb 2004 Sylvain Pion
 - Added missing this-> required by g++ 3.4.
 

@@ -93,7 +93,7 @@ Polynomial<int> Polynomial<int>::gcd(
   Polynomial<int> f2 = p2.abs();
   int f1c = f1.content(), f2c = f2.content();
   f1 /= f1c; f2 /= f2c;
-  int F = CGAL_NTS gcd(f1c,f2c);
+  int F = CGAL::gcd(f1c,f2c);
   Polynomial<int> q,r; int M=1,D;
   bool first = true;
   while ( ! f2.is_zero() ) { 
