@@ -1,3 +1,7 @@
+2.6.1 (18 May 2000)
++ Qualified calls of sign with CGAL::
+
+----
 2.6 (17 Apr 2000)
 + Made a few chnges to Straight_2.
 
