@@ -56,8 +56,8 @@ int main()
   {
     std::cout << "================================================"
 	      << std::endl << std::endl;
-    n_iterator ni_begin(v.begin(), v.end(), v.begin());
-    n_iterator ni_end(v.begin(), v.end(), v.end());
+    n_iterator ni_begin(v.end(), v.begin());
+    n_iterator ni_end(v.end(), v.end());
 
 
     std::cout << "Nested iterator:" << std::endl;
@@ -97,8 +97,8 @@ int main()
       std::cout << std::endl;
     }
 
-    n_iterator ni_begin(v.begin(), v.end(), v.begin());
-    n_iterator ni_end(v.begin(), v.end(), v.end());
+    n_iterator ni_begin(v.end(), v.begin());
+    n_iterator ni_end(v.end(), v.end());
     
     std::cout << "Nested iterator:" << std::endl;
     n_iterator ni_it;
@@ -145,8 +145,8 @@ int main()
       std::cout << std::endl;
     }
 
-    n_iterator ni_begin(v.begin(), v.end(), v.begin());
-    n_iterator ni_end(v.begin(), v.end(), v.end());
+    n_iterator ni_begin(v.end(), v.begin());
+    n_iterator ni_end(v.end(), v.end());
     
     std::cout << "Nested iterator:" << std::endl;
     n_iterator ni_it;
@@ -194,8 +194,8 @@ int main()
       std::cout << std::endl;
     }
 
-    n_iterator ni_begin(v.begin(), v.end(), v.begin());
-    n_iterator ni_end(v.begin(), v.end(), v.end());
+    n_iterator ni_begin(v.end(), v.begin());
+    n_iterator ni_end(v.end(), v.end());
     
     std::cout << "Nested iterator:" << std::endl;
     for (n_iterator ni_it = ni_begin; ni_it != ni_end; ++ni_it) {

@@ -4,6 +4,12 @@
 
 
 //---------------------------------------------------------------------
+//      revision 300
+//---------------------------------------------------------------------
+- remove the useless "b_" field in Filter_iterator, and update the interface
+  accordingly.  Update Nested_iterator accordingly.
+
+//---------------------------------------------------------------------
 //      revision 299
 //---------------------------------------------------------------------
 - introduced Creator_uniform_d in the function_objects.h header and documented

@@ -66,10 +66,9 @@ namespace CGALi {
   public:    
     FI_w_begin_end() : F_iterator() {}
 
-    FI_w_begin_end(Base_iterator it1,
-		   Base_iterator it2,
+    FI_w_begin_end(Base_iterator it2,
 		   Base_iterator it3)
-      : F_iterator(it1, it2, Predicate(), it3) {}
+      : F_iterator(it2, Predicate(), it3) {}
 
     Iterator begin(Base_iterator it)
     {
@@ -121,11 +120,9 @@ public:
 
 public:
   Nested_iterator() : Filter_base_iterator(), nested_it_() {}
-  Nested_iterator(Base_iterator base_it_begin,
-		  Base_iterator base_it_end,
+  Nested_iterator(Base_iterator base_it_end,
 		  Base_iterator base_it_cur)
-    : Filter_base_iterator(base_it_begin, base_it_end, base_it_cur),
-      nested_it_()
+    : Filter_base_iterator(base_it_end, base_it_cur), nested_it_()
   {
     if ( !this->is_end() ) {
       nested_it_ = this->begin( this->base() );
@@ -224,5 +221,3 @@ bool operator!=(const Nested_iterator<Base_it,Traits>& it1,
 CGAL_END_NAMESPACE
 
 #endif // CGAL_NESTED_ITERATOR_H
-
-	

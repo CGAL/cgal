@@ -289,10 +289,10 @@
   
   \ccConstructor{Filter_iterator();}{}
   
-  \ccConstructor{Filter_iterator(Iterator b, Iterator e, Predicate p,
-    Iterator c = b);}{creates an iterator for the range $[\ccc{b},e)$
-    that filters with respect to \ccc{p} and initialize it to \ccc{c}.
-    \ccPrecond \ccc{c} is from the range $[\ccc{b},e]$.}
+  \ccConstructor{Filter_iterator(Iterator e, Predicate p, Iterator c = e);}
+   {creates an iterator which filters values according to \ccc{p}.
+    Initializes by taking the first valid iterator (according to \ccc{p}),
+    starting at \ccc{c}, and stopping at \ccc{e} if none is found.}
 
 \end{ccRefClass}
 

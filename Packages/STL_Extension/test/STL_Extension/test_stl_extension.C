@@ -7873,7 +7873,7 @@ void test_Filter_iterator()
     l.push_back(6); l.push_back(4); l.push_back(7); l.push_back(9);
     Filt1 fi;
 
-    FI1 f1(l.begin(), l.end(), fi);
+    FI1 f1(l.end(), fi, l.begin());
     ++f1;
     f1++;
     CGAL_assertion(*f1 == 9);
@@ -7882,8 +7882,8 @@ void test_Filter_iterator()
     f1 = f;
     CGAL_assertion(
       6 ==
-      std::distance(filter_iterator(l.begin(), l.end(), fi),
-                    filter_iterator(l.begin(), l.end(), fi, l.end())));
+      std::distance(filter_iterator(l.end(), fi, l.begin()),
+                    filter_iterator(l.end(), fi, l.end())));
   }
   {
     typedef std::list< Filtest > Cont;
@@ -7894,12 +7894,11 @@ void test_Filter_iterator()
     Filtest f1(3), f2(4), f3(5), f4(6);
     l.push_back(f1); l.push_back(f2); l.push_back(f3); l.push_back(f4);
     Filt2 fi;
-    FI1 f(l.begin(), l.end(), fi);
+    FI1 f(l.end(), fi, l.begin());
     // next line just to get rid of "unused variable f" warning
-    if (f == filter_iterator(l.begin(), l.end(), fi)) f1 = 3;
-    CGAL_assertion(
-      1 ==
-      std::distance(f, filter_iterator(l.begin(), l.end(), fi, l.end())));
+    if (f == filter_iterator(l.end(), fi, l.begin())) f1 = 3;
+    CGAL_assertion( 1 ==
+      std::distance(f, filter_iterator(l.end(), fi, l.end())));
   }
 }
 void test_Inverse_index() {

@@ -21,7 +21,7 @@
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 //                 Lutz Kettner <kettner@mpi-sb.mpg.de>
-//                 Sylvain Pion <Sylvain.Pion@mpi-sb.mpg.de>
+//                 Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 
 
 #ifndef CGAL_ITERATOR_H
@@ -426,22 +426,18 @@ struct Filter_iterator {
   typedef typename  C_S_Traits::size_type               size_type;
 
 protected:
-  Iterator b_, e_;   // The range.
+  Iterator e_;       // past-the-end position.
   Iterator c_;       // current position.
   Predicate p_;      // Leave out x <==> p_(x).
 public:
 
   Filter_iterator() {}
 
-  Filter_iterator(Iterator b, Iterator e, const Predicate& p)
-  : b_(b), e_(e), c_(b), p_(p)
-  {
-    while (c_ != e_ && p_(c_))
-      ++c_;
-  }
+  Filter_iterator(Iterator e, const Predicate& p)
+  : e_(e), c_(e), p_(p) {}
 
-  Filter_iterator(Iterator b, Iterator e, const Predicate& p, Iterator c)
-  : b_(b), e_(e), c_(c), p_(p)
+  Filter_iterator(Iterator e, const Predicate& p, Iterator c)
+  : e_(e), c_(c), p_(p)
   {
     while (c_ != e_ && p_(c_))
       ++c_;
@@ -453,10 +449,9 @@ public:
   }
 
   Self& operator--() {
-    if (c_ != b_)
-      do {
-        --c_;
-      } while (c_ != b_ && p_(c_));
+    do {
+      --c_;
+    } while (p_(c_));
     return *this;
   }
 
@@ -484,25 +479,27 @@ public:
 
 template < class I, class P >
 inline Filter_iterator< I, P >
-filter_iterator(I b, I e, const P& p)
-{ return Filter_iterator< I, P >(b, e, p); }
+filter_iterator(I e, const P& p)
+{ return Filter_iterator< I, P >(e, p); }
 
 template < class I, class P >
 inline Filter_iterator< I, P >
-filter_iterator(I b, I e, const P& p, I c)
-{ return Filter_iterator< I, P >(b, e, p, c); }
+filter_iterator(I e, const P& p, I c)
+{ return Filter_iterator< I, P >(e, p, c); }
 
 template < class I, class P >
+inline
 bool operator==(const Filter_iterator<I,P>& it1,
-              const Filter_iterator<I,P>& it2)
+                const Filter_iterator<I,P>& it2)
 {
-  CGAL_precondition(it1.b_ == it2.b_ && it1.e_ == it2.e_);
+  CGAL_precondition(it1.e_ == it2.e_);
   return it1.base() == it2.base();
 }
 
 template < class I, class P >
+inline
 bool operator!=(const Filter_iterator<I,P>& it1,
-              const Filter_iterator<I,P>& it2)
+                const Filter_iterator<I,P>& it2)
 { return !(it1 == it2); }
 
 
