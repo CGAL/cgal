@@ -428,7 +428,9 @@ transition( )
 	vout4 << std::endl << "basis-inverse:" << std::endl;
     }
     transition( Is_linear());
-    check_basis_inverse();
+    CGAL_qpe_debug {
+        check_basis_inverse();
+    }
 
     // initialize exact version of `-qp_c' (implicit conversion to ET)
     C_by_index_accessor  c_accessor( qp_c);
@@ -498,7 +500,7 @@ QPE_solver<Rep_>::
 pivot_step( )
 {
     ++m_pivots;
-
+std::cout << "pivots: " <<  m_pivots << std::endl;
     // diagnostic output
     CGAL_qpe_debug {
         vout2 << std::endl
@@ -532,6 +534,7 @@ pivot_step( )
 	    // optimal solution found
 	    m_phase  = 3;
             m_status = OPTIMAL;
+print_solution();  
             CGAL_qpe_debug {
                 vout1 << "  ";
 		vout2 << std::endl;
@@ -971,7 +974,9 @@ update_1( )
 
     // update basis & basis inverse
     update_1( Is_linear());
-    check_basis_inverse();
+    CGAL_qpe_debug {
+        check_basis_inverse();
+    }
 
     // compute current solution
     compute_solution();
@@ -991,8 +996,9 @@ update_2( Tag_false)
 
     // leave variable from basis
     leave_variable();
-    check_basis_inverse();
-
+    CGAL_qpe_debug {
+        check_basis_inverse();
+    }
     // compute current solution
     compute_solution();
 }
@@ -2070,13 +2076,109 @@ is_solution_optimal_aux()
     return true;     
 }
 
+template < class Rep_ >
+bool QPE_solver<Rep_>::
+is_solution_unbounded()
+{
+
+    Index_iterator i_it, M_i_it;
+    Value_iterator v_it;
+    Indices        M;
+    bool           unbounded, basic_vars_nonpos;
+    int sl_ind;
+    
+    CGAL_expensive_precondition(is_solution_feasible());
+    
+    //check nonpositivity of q
+    Values q(qp_n, et0);
+    basic_vars_nonpos = true;
+    v_it = q_x_O.begin();
+    for (i_it = B_O.begin(); i_it != B_O.end(); ++v_it, ++i_it) {
+        basic_vars_nonpos = basic_vars_nonpos && ((*v_it) <= et0);
+	q[*i_it] = *v_it;
+    }
+    v_it = q_x_S.begin();
+    for (i_it = B_S.begin(); i_it != B_S.end(); ++v_it, ++i_it) {
+        basic_vars_nonpos = basic_vars_nonpos && ((*v_it) <= et0);
+    }
+
+    //check A|A_S_BxB_S*q=0
+    Values lhs_col(qp_m, et0);
+    //initialize M
+    for (int i = 0; i < qp_m; ++i) {
+        M.push_back(i);
+    }
+    v_it = q_x_O.begin();
+    for (i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++v_it) {
+        A_by_index_accessor  a_accessor( qp_A[*i_it]);
+	for (M_i_it = M.begin(); M_i_it != M.end(); ++M_i_it) {
+	    lhs_col[*M_i_it] += (*v_it)
+	        * (*A_by_index_iterator( M_i_it, a_accessor));
+	}
+    }
+    v_it = q_x_S.begin();
+    for (i_it = B_S.begin(); i_it != B_S.end(); ++i_it, ++v_it) {
+        sl_ind = *i_it - qp_n;
+	if (slack_A[sl_ind].second) {
+	    lhs_col[slack_A[sl_ind].first] -= *v_it;
+	} else {
+	    lhs_col[slack_A[sl_ind].first] += *v_it;
+	}
+    }    
+    if (j < qp_n) {  // entering variable original
+        A_by_index_accessor  a_accessor( qp_A[j]);
+        for (M_i_it = M.begin(); M_i_it != M.end(); ++M_i_it) {
+	    lhs_col[*M_i_it] -= d
+	        * (*A_by_index_iterator( M_i_it, a_accessor));
+        }
+    } else { // entering variable slack
+        sl_ind = j - qp_n;
+	lhs_col[slack_A[sl_ind].first] -= d;
+    }  
+    unbounded = basic_vars_nonpos;    
+    for (int row = 0; row < qp_m; ++row) {
+        unbounded = unbounded && (lhs_col[row] == et0); 
+    }
+    
+    // check q^T * D * q = 0
+    Values D_q(qp_n, et0);
+    for (int row = 0; row < qp_n; ++row) {
+       v_it = q_x_O.begin();
+       if (j < qp_n) D_q[row] = -qp_D[row][j];
+       for (i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++v_it) {
+           D_q[row] += qp_D[row][*i_it] * (*v_it);
+       }    
+    }
+    ET sum = et0;
+    v_it =q_x_O.begin();
+    for (i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++v_it) {
+	sum += (*v_it) * D_q[*i_it];
+    }
+    if (j < qp_n) sum -= D_q[j];
+    unbounded = unbounded && (sum == et0);
+    
+    //check c*q + 2 * x'^T * D * q > 0
+    sum = et0;
+    v_it = x_B_O.begin();
+    for (i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++v_it) { 
+        sum += (*v_it) * D_q[*i_it];
+    }
+    sum *= et2;
+    v_it = q_x_O.begin();
+    for (i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++v_it) {
+        sum += (*v_it) * qp_c[*i_it];
+    }
+    if (j < qp_n) sum -= qp_c[j] * d;
+    unbounded = unbounded && (sum > et0);
+    return unbounded;
+}
 
 
 template < class Rep_ >
 bool QPE_solver<Rep_>::
 is_solution_valid()
 {
-    bool f, o, aux_positive;
+    bool f, o, u, aux_positive;
     switch(this->m_status) {
     case UPDATE: 	return false;
     case OPTIMAL:  	f = this->is_solution_feasible();
@@ -2096,7 +2198,13 @@ is_solution_valid()
 			        aux_positive << std::endl;
 			}
     			return (f && o && aux_positive);
-    case UNBOUNDED:	return false;
+    case UNBOUNDED:	f = this->is_solution_feasible();
+    			u = this->is_solution_unbounded();
+			CGAL_qpe_debug {
+			    vout << "feasible: " << f << std::endl;
+			    vout << "unbounded: " << u << std::endl;
+			}
+    			return (f && u);
     default: 		return false;
     }
 }

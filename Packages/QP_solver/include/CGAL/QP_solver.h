@@ -711,6 +711,7 @@ private:
     bool is_solution_optimal();
     bool is_solution_optimal_aux();
     bool is_solution_valid();
+    bool is_solution_unbounded();
 
 // ----------------------------------------------------------------------------
 
