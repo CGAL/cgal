@@ -27,11 +27,15 @@
 // It is not optimized for speed, but for simplicity.
 
 #include <CGAL/basic.h>
+#include <CGAL/Interval_arithmetic.h>
 #include <iostream>
 #include <vector>
 #include <utility>
+#include <functional>
 
 // TODO :
+// - Have a typedef Exact_Integer defined to Lazy<MP_Integer/leda_integer/Gmpz>
+// - Idem for rational.
 // - add "explicit" for the ctors ?
 // - the non-inline stuff must go in src/MP_Integer.C.
 // - Use iterators instead of operator[], it should be faster and cleaner.
@@ -44,13 +48,18 @@ CGAL_BEGIN_NAMESPACE
 
 class MP_Integer
 {
-  friend std::ostream & operator<< (std::ostream &, const MP_Integer &);
+public:
 
-  // limb2 needs to be twice the sizeof limb.
   typedef short limb;
   typedef int   limb2;
 
-public:
+  static const unsigned log_limb = 8*sizeof(limb);
+  static const limb2    base     = 1<<log_limb;
+
+  typedef std::vector<limb>  V;
+  typedef V::const_iterator  const_iterator;
+  typedef V::iterator        iterator;
+
   MP_Integer()
   {
     CGAL_assertion(sizeof(limb2) == 2*sizeof(limb));
@@ -79,13 +88,39 @@ public:
   MP_Integer operator*(const MP_Integer &) const;
   MP_Integer operator/(const MP_Integer &) const;
 
+  MP_Integer& operator+=(const MP_Integer &a)
+  {
+    *this = *this + a;
+    return *this;
+  }
+
+  MP_Integer& operator-=(const MP_Integer &a)
+  {
+    *this = *this - a;
+    return *this;
+  }
+
+  MP_Integer& operator*=(const MP_Integer &a)
+  {
+    *this = *this * a;
+    return *this;
+  }
+
+  MP_Integer& operator/=(const MP_Integer &a)
+  {
+    *this = *this / a;
+    return *this;
+  }
+
   bool operator<(const MP_Integer &) const;
   bool operator==(const MP_Integer &b) const
   {
-    return b.v == v;
+    return v == b.v;
   }
-
-private:
+  bool operator!=(const MP_Integer &b) const
+  {
+    return v != b.v;
+  }
 
   void remove_leading_zeros()
   {
@@ -93,77 +128,80 @@ private:
       v.pop_back();
   }
 
-  unsigned int size() const
-  {
-    return v.size();
-  }
-
-  limb operator[](unsigned i) const
-  {
-    return i<size() ? v[i] : 0;
-  }
-
   // Accessory function : Given a limb2, this returns the higher limb.
   // The lower limb is simply obtained by casting to a limb.
   static
   limb higher_limb(limb2 l)
   {
-    return (l - (limb) l) >> (8*sizeof(limb));
+    return (l - (limb) l) >> log_limb;
   }
 
-  std::vector<limb> v;
+  V v;
 };
 
-// The following must go in src/MP_Integer.C
+
+namespace NTS {
+
+Comparison_result
+compare (const MP_Integer & a, const MP_Integer & b)
+{
+  if (a.v.size() > b.v.size())
+    return (a.v.back() > 0) ? LARGER : SMALLER;
+  if (a.v.size() < b.v.size())
+    return (b.v.back() < 0) ? LARGER : SMALLER;
+
+  for (int i=a.v.size()-1; i>=0; i--)
+  {
+      if (a.v[i] > b.v[i])
+	  return LARGER;
+      if (a.v[i] < b.v[i])
+	  return SMALLER;
+  }
+  return EQUAL;
+}
+
+} // namespace NTS
 
 bool
 MP_Integer::operator<(const MP_Integer & b) const
 {
-  for (int i=std::max(size(), b.size()); i>=0; i--)
-  {
-      if ((*this)[i] < b[i])
-	  return true;
-      if ((*this)[i] > b[i])
-	  return false;
-  }
-  return false;
+  return CGAL_NTS compare(*this, b) == SMALLER;
 }
 
-// Maybe we can merge the 2 following functions using STL's Add/Sub function
-// objects and an accessory function ?  Maybe even the function above ?
-MP_Integer
-MP_Integer::operator+(const MP_Integer &b) const
+// Common code for operator+ and operator-.
+template <class BinOp>
+void
+Add_Sub(MP_Integer &r, const MP_Integer &a, const MP_Integer &b)
 {
-  unsigned nsize = std::max(size(), b.size());
-  MP_Integer r;
+  unsigned nsize = std::max(a.v.size(), b.v.size());
   r.v.resize(nsize);
-  limb2 carry = 0;
+  MP_Integer::limb2 carry = 0;
   for(unsigned i=0; i<nsize; i++)
   {
-    limb2 tmp = carry + (limb2) (*this)[i] + (limb2) b[i];
+    MP_Integer::limb2 tmp = carry + BinOp()(i<a.v.size() ? a.v[i] : 0,
+                                            i<b.v.size() ? b.v[i] : 0);
     r.v[i] = tmp;
-    carry = higher_limb(tmp);
+    carry = MP_Integer::higher_limb(tmp);
   }
   if (carry != 0)
     r.v.push_back(carry);
+  else
+    r.remove_leading_zeros();
+}
+
+MP_Integer
+MP_Integer::operator+(const MP_Integer &b) const
+{
+  MP_Integer r;
+  Add_Sub<std::plus<limb2> >(r, *this, b);
   return r;
 }
 
 MP_Integer
 MP_Integer::operator-(const MP_Integer &b) const
 {
-  unsigned nsize = std::max(size(), b.size());
   MP_Integer r;
-  r.v.resize(nsize);
-  limb2 carry = 0;
-  for(unsigned i=0; i<nsize; i++)
-  {
-    limb2 tmp = carry + (limb2) (*this)[i] - (limb2) b[i];
-    r.v[i] = tmp;
-    carry = higher_limb(tmp);
-  }
-  if (carry != 0)
-    r.v.push_back(carry);
+  Add_Sub<std::minus<limb2> >(r, *this, b);
   return r;
 }
 
@@ -171,14 +209,15 @@ MP_Integer
 MP_Integer::operator*(const MP_Integer &b) const
 {
   MP_Integer r;
-  r.v.assign(size() + b.size(),0);
-  for(unsigned i=0; i<size(); i++)
+  r.v.assign(v.size() + b.v.size(),0);
+  for(unsigned i=0; i<v.size(); i++)
   {
     unsigned j;
     limb2 carry = 0;
-    for(j=0; j<b.size(); j++)
+    for(j=0; j<b.v.size(); j++)
     {
-      limb2 tmp = carry + (limb2) r.v[i+j] + (limb2) v[i] * (limb2) b.v[j];
+      limb2 tmp = carry + (limb2) r.v[i+j]
+                        + std::multiplies<limb2>()(v[i], b.v[j]);
       r.v[i+j] = tmp;
       carry = higher_limb(tmp);
     }
@@ -188,6 +227,7 @@ MP_Integer::operator*(const MP_Integer &b) const
   return r;
 }
 
+#if 1 // Should I define the following or not ?
 MP_Integer
 MP_Integer::operator/(const MP_Integer &) const
 {
@@ -199,23 +239,76 @@ MP_Integer::operator/(const MP_Integer &) const
 MP_Integer
 sqrt(const MP_Integer &)
 {
-  CGAL_assertion(false, "Sorry, MP_Integer square root not implemented");
+  CGAL_assertion_msg(false, "Sorry, MP_Integer square root not implemented");
   abort();
   return MP_Integer();
 }
+#endif
+
+double
+to_double(const MP_Integer &b)
+{
+  if (b == 0)
+    return 0;
+  // Linear complexity.  Could be made constant time.
+  double d=0;
+  for (MP_Integer::const_iterator i = b.v.end()-1; i >= b.v.begin(); i--)
+    d = d*MP_Integer::base + *i;
+  return d;
+}
+
+Interval_base
+to_interval(const MP_Integer &b)
+{
+  if (b == 0)
+    return 0;
+  // Linear complexity.  Could be made constant time.
+  Protect_FPU_rounding<true> P;
+  Interval_nt_advanced d=0;
+  for (MP_Integer::const_iterator i = b.v.end()-1; i >= b.v.begin(); i--)
+    d = d*MP_Integer::base + *i;
+  return d;
+}
+
+bool is_finite(const MP_Integer &)
+{
+  return true;
+}
+
+bool is_valid(const MP_Integer &)
+{
+  return true;
+}
+
+inline
+io_Operator
+io_tag(const MP_Integer&)
+{ return io_Operator(); }
+
+inline
+Number_tag
+number_type_tag(const MP_Integer& )
+{ return Number_tag(); }
 
 std::ostream &
 operator<< (std::ostream & os, const MP_Integer &b)
 {
-  if (b.size() == 0)
+  // Binary format would be nice and not hard to have too.
+  if (b == 0)
     return os << 0;
 
-  for (int i=b.size()-1; i>=0; i--)
+  MP_Integer::const_iterator i = b.v.begin();
+  unsigned exp = 0;
+
+  os << *i;
+
+  for (i++; i != b.v.end(); i++)
   {
-    os << "(" << b[i] << ")"; // parenthesis are here for negatives...
-    if (i!=0)
-      os << "* 2^" << (8*sizeof(MP_Integer::limb))*i << " + ";
+    exp += MP_Integer::log_limb;
+
+    os << ((*i > 0) ? " +" : " ") << *i << " * 2^" << exp;
   }
+
   return os;
 }
 
