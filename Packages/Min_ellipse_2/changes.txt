@@ -1,5 +1,8 @@
 Changes done to the `Min_ellipse_2' package.
 
+Version 3.7.1 on 06-Jul-2000
+- added default constructor to `Optimisation_ellipse_2' (fix for Borland)
+
 Version 3.7 on 23-Feb-2000
 - ported to Borland C++ compiler.
 - field 'maintainer' added to file header.
