@@ -6,26 +6,25 @@ triangulation conforming to the Delaunay or Gabriel criteria. For average
 uses, consider using the global fonctions \ccc{make_conforming_Gabriel_2}
 and \ccc{make_conforming_Delaunay_2} defined in the same header.
 
-The template parameter \ccc{CDT}, from which this class derives, has to be a
-\cgal\ constrained Delaunay triangulation, and it geometric traits class of
-has to be a model of the concept
+The template parameter \ccc{CDT}, from which this class derives, has to be
+a \cgal\ constrained Delaunay triangulation, and it geometric traits class
+of has to be a model of the concept
 \ccc{ConformingDelaunayTriangulationTraits_2} or
 \ccc{ConformingGabrielTriangulationTraits}. This traits class provides
 constructors and predicates needed by the conforming algorithm.
 
-A \ccRefName{} object is only a constrained Delaunay triangulation, in
-which one can insert points and constrained segments and apply very
-\ccc{CDT}'s availlable operations, until we call one of the conforming
-methods. After a call to one of these methods, the constrained edges of the
-CDT are guaranteed to be conform, in a sens that depends from the
-conforming method called.  If one inserts points or constrained segments in
-the \ccRefName{} object after that, the edges are no longer guaranteed to
-be conform.
+A \ccRefName{} object is a constrained Delaunay triangulation, in which one
+can insert points and constrained segments and apply very \ccc{CDT}'s
+availlable operations. After a call to one of the conforming methods, the
+constrained edges of the CDT are guaranteed to be conforming to the
+Delaunay or the Gabriel criteria (which depends from the conforming method
+called). If one inserts points or constrained segments in the \ccRefName{}
+object after that, the edges are no longer guaranteed to be conform.
 
-The conforming methods insert points into constrained edges, splitting 
-them into sub-constraints. If you want to have access to inserted
-constraints, use \ccc{CGAL::Constrained_triangulation_plus_2<CDT>} as
-template parameter.
+The conforming methods insert points into constrained edges, splitting them
+into sub-constraints. You can have access to inserted constraints if you
+use \ccc{CGAL::Constrained_triangulation_plus_2<CDT>} as template
+parameter.
 
 \ccInclude{CGAL/Conforming_Delaunay_triangulation_2.h}
 

@@ -13,7 +13,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = \
+CXXFLAGS = -I../../include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
@@ -33,9 +33,29 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all:            
+all:            \
+                conform$(EXE_EXT) \
+                mesh_class$(EXE_EXT) \
+                mesh_global$(EXE_EXT) \
+                polygon2poly$(EXE_EXT) 
 
-clean: 
+conform$(EXE_EXT): conform$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)conform conform$(OBJ_EXT) $(LDFLAGS)
+
+mesh_class$(EXE_EXT): mesh_class$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)mesh_class mesh_class$(OBJ_EXT) $(LDFLAGS)
+
+mesh_global$(EXE_EXT): mesh_global$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)mesh_global mesh_global$(OBJ_EXT) $(LDFLAGS)
+
+polygon2poly$(EXE_EXT): polygon2poly$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)polygon2poly polygon2poly$(OBJ_EXT) $(LDFLAGS)
+
+clean: \
+                   conform.clean \
+                   mesh_class.clean \
+                   mesh_global.clean \
+                   polygon2poly.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules

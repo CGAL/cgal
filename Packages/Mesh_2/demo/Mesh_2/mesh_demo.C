@@ -40,7 +40,7 @@ int main(int, char*)
 #include "Qt_layer_show_triangulation_constraints.h"
 #include "Qt_layer_show_circles.h"
 #include "Show_clusters.h"
-#include <CGAL/IO/Qt_layer_show_mouse_coordinates.h>
+#include <CGAL/IO/Qt_widget_show_mouse_coordinates.h>
 
 
 #include <qapplication.h>
@@ -332,7 +332,7 @@ public:
 	(mesh, CGAL::RED, 1);
       show_circles = 
 	new CGAL::Qt_layer_show_circles<Mesh>(mesh, CGAL::GRAY, 1);
-      show_mouse = new CGAL::Qt_layer_mouse_coordinates(*this);
+      show_mouse = new CGAL::Qt_widget_show_mouse_coordinates(*this);
 
       show_clusters = new Show_clusters<Mesh>(*mesh,
 					      CGAL::BLACK,3,CGAL::RECT,
@@ -1028,7 +1028,7 @@ private:
   CGAL::Qt_layer_show_triangulation<Mesh>* show_triangulation;
   CGAL::Qt_layer_show_triangulation_constraints<Mesh>* show_constraints;
   CGAL::Qt_layer_show_circles<Mesh>* show_circles;
-  CGAL::Qt_layer_mouse_coordinates* show_mouse;
+  CGAL::Qt_widget_show_mouse_coordinates* show_mouse;
   Show_marked_faces<Mesh>* show_marked;
 
   bool nb_of_clusters_has_to_be_updated;

@@ -1,41 +1,29 @@
 \begin{ccRefClass}{Delaunay_mesh_2<CDT>}
 
-The class \ccRefName{} derives
-from \ccc{Conforming_Delaunay_triangulation_2<CDT>}. The template parameter \ccc{CDT} has to be a \cgal\ 
-constrained Delaunay triangulation. Its geometric traits class
-must be a model of the concept \ccc{DelaunayMeshTraits_2} and also to the
-usual model of the geometric traits class of triangulations \ccc{CDT}.
-This traits class provides not only constructors and predicates needed
-by the mesh algorithm, but also defines the geometric constraints on
-the triangles of the mesh. The meshing procedure is not sure to finish
-if predicates are inexact.
+The class \ccRefName{} derives from
+\ccc{Conforming_Delaunay_triangulation_2<CDT>}. The template parameter
+\ccc{CDT} has to be a \cgal\ constrained Delaunay triangulation and its
+geometric traits class must be a model of the concept
+\ccc{DelaunayMeshTraits_2}. This traits class provides not only
+constructors and predicates needed by the mesh algorithm, but also defines
+the geometric constraints on the triangles of the mesh.
 
-A \ccRefName{} object acts like a \ccc{CDT} CDT, in which one can
-insert points and constrained segments and every \ccc{CDT}'s availlable
-operations, until we call one of the meshing methods. After a call to
-one of these methods, the CDT is meshed according to the geometric
-constraints defined in the traits class.
+A \ccRefName{} object is a \ccc{CDT} CDT, in which one can insert points
+and constrained segments and every \ccc{CDT}'s availlable operations. After
+a call to one of meshing methods, the CDT is meshed according to the
+geometric constraints defined in the traits class.
 
 Before the first call to a meshing method, one can insert points and
-constrained segments in the \ccRefName{} object, like in a CDT. When
-meshing methods are used, the CDT must be segment bounded. This can be
-achieved by inserting a bounding box in it. Meshing methods will then
-mesh the CDT by refining triangles that are in the interior of the
-CDT.  Triangles that are connected to the infinite vertex will not be
-refined. If the CDT is not segment bounded, no triangle at all will be
-refined. The refinement process needs to know which faces have to be
-refined, that's why the base face of the triangulation \ccc{CDT} has to
-be a model of the concept \ccc{MeshFaceBase_2}.
-
-One can also define a zone of the CDT's interior by specifying some
-\textit{seeds}. Seeds are points that define segment bounded zones
-that will not be refined. In all case, the zone of the infinite vertex
-will never be refined.
+constrained segments in the \ccRefName{} object, like in a CDT. Meshing
+methods will mesh the CDT by refining triangles that are in the default
+domain or the domain defined by the seeds. The refinement process needs to
+know which faces have to be refined, that's why the base face of the
+triangulation \ccc{CDT} has to be a model of the concept
+\ccc{MeshFaceBase_2}.
 
 Once a meshing method is called, the CDT is meshed according to
-contraints until points or constrained segments are inserted again in
-the CDT. Then the \ccRefName{} object acts again as a normal \ccc{CDT}
-CDT. \todo{Pas facile a expliquer, ce truc!}.
+contraints. If points or constrained segments are inserted again in
+the CDT, the criterias on shape or size are no longer garanted.
 
 \ccInclude{CGAL/Delaunay_mesh_2.h}
 

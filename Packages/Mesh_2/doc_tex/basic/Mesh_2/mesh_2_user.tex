@@ -1,52 +1,161 @@
 \chapter{2D meshes}
+\label{user_chapter_2D_Meshes}
+
 
 \minitoc
 
 \section{Introduction}
+\label{sec:Mesh_2_introduction}
 
-This package implements Shewchuk's algorithm to construct 2D quality
-meshes.
+This package implements Shewchuk's algorithm to construct conforming
+triangulations and 2D quality meshes.
 
-\todo{definition of a quality mesh.}
+After several definitions in section~\ref{sec:Mesh_2_definitions}, Conforming
+triangulations will be described in the
+section~\ref{sec:Mesh_2_conforming_triangulation} and quality meshes in the
+section~\ref{sec:Mesh_2_quality_meshes}.
 
-This package implements 2D unstructured triangular meshes. Given a
-domain, with constraints, it constructs a triangulation conforming the
-domain and satisfying shape and size constraints. Hence, this package 
-use \cgal\ 2D triangulations\footnote{See \ccTexHtml{the \cgal\ Manual.}
-{<a href="http://www.cgal.org/Manual/doc_html/basic_lib/Triangulation_2/Chapter_triangulation_user.html">the CGAL Manual</a>.}}.
+
+\section{Definitions}
+\label{sec:Mesh_2_definitions}
+
+\begin{description}
+
+\item[Conforming triangulation] A conforming triangulation is a refinement
+  of a constrained triangulation, obtained by inserting points (named
+  \emph{Steiner points}) on constrained segments, so that the resulting
+  triangulation is a \emph{Delaunay} or a \emph{Gabriel}
+  triangulation. Delaunay triangulations are defined in the \cgal\ user
+  manual of \ccc{Triangulation_2} package. A Gabriel triangulation of a
+  sets of points and constrained segments is a constrained Delaunay
+  triangulation with the extra following \emph{Gabriel property}: the
+  \emph{diametral circle} of each constrained segments contains no point in
+  its interior. The Gabriel property is stronger that the Delaunay property:
+  a conforming Gabriel triangulation is also a conforming Delaunay
+  triangulation.
+\item[Quality mesh] In this package, a quality mesh is a contrained
+  Delaunay triangulation of a domain containing only triangles whose shapes
+  and sizes satisfy several criterias.
+\end{description}
+
+
+\section{Conforming triangulations}
+\label{sec:Mesh_2_conforming_triangulation}
+
+Conforming triangulations can be obtained by two global functions:
+\ccc{template<class CDT> void make_conforming_Delaunay_2 (CDT& t)} and
+\ccc{template<class CDT> void make_conforming_Gabriel_2 (CDT& t)}. The
+parameter \ccc{t} must be a \cgal\ constrained triangulation. It
+can be for example a \ccc{Contrained_triangulation_2}, or a
+\ccc{Constrained_triangulation_plus_2} or a \ccc{Triangulation_hierarchy_2}
+templated by a constrained triangulation.
+
+The triangulation \ccc{t} is passed by reference and is made conforming
+Delaunay or Gabriel by modifying it. If you want to keep the original
+triangulation, please make a copy of it.
+
+In other to test the Delaunay or the Gabriel property, and to construct
+Steiner points, the geometric traits class of \ccc{CDT} has to be a model of
+\ccc{ConformingDelaunayTriangulationTraits_2}. It can be, for example, any
+\cgal\ kernel.
+
+\subsection{Example: making a triangulation conforming Delaunay and then
+  conforming Gabriel}
+\label{sec:Mesh_2_example_making_conforming}
+
+This example inserts several segments in a contrained triangulation, mades
+it conforming Delaunay, and then conforming Gabriel. At each step, the
+number of points is printed.
+
+\ccIncludeExampleCode{Mesh_2/conform.C}
+
+\section{Quality meshes}
+\label{sec:Mesh_2_quality_meshes}
+
+Quality meshes can be obtained by a global function \ccc{template<class CDT>
+ void refine_Delaunay_mesh_2 (CDT &t, typename CDT::Geom_traits gt)}. It can
+ also be obtained by using the class \ccc{Delaunay_mesh_2<CDT>}. In both
+ cases, the template parameter \ccc{CDT} has to be a \cgal\ constrained
+ triangulation. The class \ccc{Delaunay_mesh_2<CDT>} derives from \ccc{CDT}
+ and has several member functions to define the domain
+ (see~\ref{sec:Mesh_2_domains}) and mesh it.
+
+\subsection{Geometric traits class}
+\label{sec:Mesh_2_geomtraits}
+
+The geometric traits class of the template parameter \ccc{CDT} should not
+only provide geometric objects and predicates for the triangulation, as
+usual, but also define the geometric constraints that the triangles have to
+satisfy. That is why it has to be a model of
+\ccc{DelaunayMeshTraits_2}.
+
+\subsection{Domains}
+\label{sec:Mesh_2_domains}
 
 Domains that can be meshed are \emph{planar straight line graphes}
 (PSLG), which are sets of of vertices and segments such that all
 endpoints of every segments are in the set and that segments intersect
-only at end-points. Such a domain can represented by a \cgal\ 
+only at end-points. Such a domain can represented by a \cgal\
 constrained triangulation, whose constrained segment are the segments
 of the domain.
 
-The mesh class depends on one template parameter. It stands for a
-\cgal\ constrained Delaunay triangulation (CDT) which represents the
-PSLG and becomes the base class. Its geometric traits class should not
-only provide geometric objects and predicates for the triangulation,
-as usual, but also define the geometric constraints that the triangles
-have to satisfy.
+By default, the domain to be meshed is the whole plane but the connected
+component of the infinite vertex. If the constrained triangulation is not
+bounded by a polyline of constrained segments, this domain can be empty and
+the algorithm will not do anything.
 
-The algorithm used to compute the mesh is the \emph{Delaunay
-  refinement}~\cite{s-mgdsa-00}. After having conformed the CDT,
-triangles that do not satisfy geometric constraints will be destroyed
-by inserting their circumcenters in the CDT. At all time, the algorithm
-insures that segments of the CDT have Gabriel property: their diametral
-circles do not contain any point.
+However, if the class \ccc{Delaunay_mesh_2<CDT>} is used, the domain to be
+meshed can be defined more precisely, by setting \ccc{seeds}. Seeds are
+a set of points, that are not in the set of points of the
+triangulation. The member function \ccc{template<class InputIterator> void
+  set_seeds(InputIterator b, InputIterator e, bool mark = false)} sets a
+list of seeds and a boolean marker. This marker tells if the seeds are in
+the domain or not, and the connected component of each seed is marked the
+same way. Anyway, the connected component of the infinite vertex is always
+marked as the exterior of the domain.
 
-The shape constraint on triangles should be that the circumradius is
+\subsection{Shape and size criteria}
+
+The shape criteria on triangles should be that the circumradius is
 lower than a bound $B$ times the shortest edge of the triangle. This is
 equivalent to say that the minimum angle of the triangle is greater
 than $\arcsin{\frac{1}{2B}}$. If not angles are smaller than $\theta$,
 then no angles are greater than $\pi - \theta$. Unfortunalty, the
 algorithm will terminate at all time only if $B \ge \sqrt{2}$. This
 package cannot, for the moment, insure that angles of meshes are
-greater than $20.7$~degres. The size constraint can be any constraint
-that tends to prefere small triangles. Both types of constraints are
+greater than $20.7$~degres. The size criteria can be any criteria
+that tends to prefere small triangles. Both types of criterias are
 defined in a nested type \ccc{Is_bad} of the geometric traits class.
 
+\subsection{Garanties on the resulting mesh}
+
+If all angles between contrained segments of the initial triangulation are
+greater than $60$~degres, the criterias on angles and size are garanted to
+be fulfilled.
+
+If some input incident segments forme an angle smaller than $60$~degres,
+these segments formed a \textit{cluster}. Near clusters, the algorithm
+cannot garanty the shape criterias. See~\cite{s-mgdsa-00} for details.
+
+\subsection{Example using the global function and shape and size default
+  criterias}
+
+The following example inserts several segments in a contrained
+triangulation, then mesh it using the global function
+\ccc{refine_Delaunay_mesh_2} and the default traits class.
+
+\ccIncludeExampleCode{Mesh_2/mesh_global.C}
+
+\subsection{Example using the class \ccc{Delaunay_mesh_2<CDT>} and several
+  criterias}
+
+This example uses the class \ccc{Delaunay_mesh_2<CDT>} in order to refine
+the mesh with new criterias, after the first meshing. One can use
+\ccc{refine_Delaunay_mesh_2} twice, with different geometric traits class,
+but it is less efficient, because some internal structures needed by the
+algorithm are calculated twice.
+
+\ccIncludeExampleCode{Mesh_2/mesh_class.C}
 
 %%% For emacs/AucTeX:
 %%% Local Variables: ***
