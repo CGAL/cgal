@@ -28,8 +28,6 @@
 #include <Inventor/SoPrimitiveVertex.h>
 #include <Inventor/SbName.h>
 
-
-
 template <class Polyhedron_3>
 class SoPolyhedronDetail : public SoDetail{
   typedef SoDetail inherited;  
@@ -42,6 +40,8 @@ public:
   typedef typename Polyhedron_3::Facet_iterator     Facet_iterator;
   typedef typename Polyhedron::Halfedge_around_facet_circulator
                                               Halfedge_around_facet_circulator;
+  typedef typename Polyhedron::Traits               Traits;  
+  typedef typename Traits::Point_3                  Point;
   //typedef typename Polyhedron_3::Point_iterator          Point_iterator;
 
   SoPolyhedronDetail() : p(p_temp){};
@@ -82,32 +82,36 @@ public:
     return &vertex[i];
   }
 
-  Facet_handle find_face(){    
-    Facet_iterator fit = p.facets_begin();    
+  Facet_handle find_face(){
+    Facet_iterator fit = p.facets_begin();
+    int number_of_matching_vertices;
     while(fit != p.facets_end())
     {      
-      int index = 0;
       Halfedge_around_facet_circulator haf = (*fit).facet_begin ();
-      bool found = false; //all are equal at the beginning
+      bool found_one_equal = false;
+      number_of_matching_vertices = 0;
       do{
         Vertex_handle vh = (*haf).vertex();
-        const SbVec3f v = vertex[index].getPoint();
-        if( static_cast<float>((*vh).point().x()) != v[0] ||
-            static_cast<float>((*vh).point().y()) != v[1] ||
-            static_cast<float>((*vh).point().z()) != v[2])
+        found_one_equal = false;
+        for(int i=0; i<3; i++)
         {
-          found = true; //if there is at least one different
-        }
-
-        if(index == 2 && !found){          
-          return (fit);
+          const SbVec3f v = vertex[i].getPoint();
+          float x = static_cast<float>((*vh).point().x());
+          float y = static_cast<float>((*vh).point().y());
+          float z = static_cast<float>((*vh).point().z());
+          if( x == v[0])
+            if( y == v[1])
+              if( z == v[2]){
+                found_one_equal = true;
+                number_of_matching_vertices++;
+              }
         }
         haf++;
-        index++;
-      }while (haf != (*fit).facet_begin() && !found);
-
+      }while(found_one_equal && haf != (*fit).facet_begin());
+      if(number_of_matching_vertices == 3) //all are equal
+        return (fit);
       fit++;
-    }
+    }    
     exit(1);
   }
 
