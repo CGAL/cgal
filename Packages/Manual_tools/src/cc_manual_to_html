@@ -393,7 +393,12 @@ end
 # ---------------------
 if ( $?DEBUG) echo "# Converting the index."
 
-makeindex -s ${config_html}/html_index.mst ${new_tmp_path}/manual.hidx
+if ( $quiet_switch) then
+    makeindex -q -s ${config_html}/html_index.mst ${new_tmp_path}/manual.hidx
+else
+    echo "makeindex -s ${config_html}/html_index.mst ${new_tmp_path}/manual.hidx"
+    makeindex -s ${config_html}/html_index.mst ${new_tmp_path}/manual.hidx
+endif
 cc_index_link ${new_tmp_path}/HREF ${new_tmp_path}/manual.ind ${new_tmp_path}/cc_index
 \cat ${new_tmp_path}/cc_index_header ${new_tmp_path}/cc_index ${new_tmp_path}/cc_index_footer > ${out_path}/manual_index.html
 \cat ${config_gif}/index_arrow.gif > ${out_path}/index_arrow.gif    
@@ -601,7 +606,12 @@ foreach f ($in_files $ref_files)
     \cat ${new_tmp_path}/$f:h/manual.hidx >> ${new_tmp_path}/manual.hidx
     \cat ${new_tmp_path}/$f:h/HREF >> ${new_tmp_path}/HREF
 end
-makeindex -s ${config_html}/html_index.mst ${new_tmp_path}/manual.hidx
+if ( $quiet_switch) then
+    makeindex -q -s ${config_html}/html_index.mst ${new_tmp_path}/manual.hidx
+else
+    echo "makeindex -s ${config_html}/html_index.mst ${new_tmp_path}/manual.hidx"
+    makeindex -s ${config_html}/html_index.mst ${new_tmp_path}/manual.hidx
+endif
 cc_index_link ${new_tmp_path}/HREF ${new_tmp_path}/manual.ind ${new_tmp_path}/manual_index
 \cat ${new_tmp_path}/cc_index_header ${new_tmp_path}/manual_index ${new_tmp_path}/cc_index_footer > ${out_path}/manual_index.html
 \cat ${config_gif}/index_arrow.gif > ${out_path}/index_arrow.gif
