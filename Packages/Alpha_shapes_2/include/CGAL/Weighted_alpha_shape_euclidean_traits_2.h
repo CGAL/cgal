@@ -26,16 +26,8 @@
 #define CGAL_WEIGHTED_ALPHA_SHAPE_EUCLIDEAN_TRAITS_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
-
-//#include <CGAL/Homogeneous.h>
-//#include <CGAL/Integer.h>
-//#include <CGAL/Rational.h>
-//#include <CGAL/Fixed.h>
 
 #include <CGAL/squared_distance_2.h>
-#include <CGAL/Triangle_2.h>
-#include <CGAL/Segment_2.h>
 
 #include <CGAL/in_smallest_orthogonalcircleC2.h>
 #include <CGAL/squared_radius_smallest_orthogonalcircleC2.h>
