@@ -341,8 +341,25 @@ supported or not.
 \ccMethod{const Traits& traits() const;}{returns the traits class.}
 
 % +-----------------------------------+
-\ccHeading{Geometric Predicates}
+\ccHeading{Combinatorial Predicates}
 \ccThree{Halfedge_handle}{P.split_f}{}
+
+\ccMethod{bool is_pure_bivalent() const;}{returns \ccc{true} if all
+    vertices have exactly two incident edges.}
+
+\ccMethod{bool is_pure_trivalent() const;}{returns \ccc{true} if all
+    vertices have exactly three incident edges.}
+
+\ccMethod{bool is_pure_triangle() const;}{returns \ccc{true} if all
+    facets are triangles.}
+
+\ccMethod{bool is_pure_quad() const;}{returns \ccc{true} if all 
+    facets are quadrilaterals.}
+
+
+% +-----------------------------------+
+%\ccHeading{Geometric Predicates}
+%\ccThree{Halfedge_handle}{P.split_f}{}
 
 \ccMethod{bool is_triangle( Halfedge_const_handle h) const;}{\ccc{true}
     iff the connected component denoted by $h$ is a triangle.}

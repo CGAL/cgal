@@ -188,9 +188,22 @@ function \ccc{prev()}, otherwise they are of the forward category.
 
 \ccMethod{std::size_t vertex_degree() const;}{the degree of the 
   incident vertex, i.e., number of edges emanating from this vertex.}
+\ccGlue
+\ccMethod{bool is_bivalent() const;}{returns \ccc{true} if the
+  incident vertex has exactly two incident edges.}
+\ccGlue
+\ccMethod{bool is_trivalent() const;}{returns \ccc{true} if the
+  incident vertex has exactly three incident edges.}
+
 
 \ccMethod{std::size_t facet_degree() const;}{the degree of the
   incident facet, i.e., number of edges on the boundary of this facet.}
+\ccGlue
+\ccMethod{bool is_triangle() const;}{returns \ccc{true} if the 
+  incident facet is a triangle.}
+\ccGlue
+\ccMethod{bool is_quad() const;}{returns \ccc{true} if the 
+  incident facet is a quadrilateral.}
 
 
 \ccHeading{Operations available if \ccc{Supports_halfedge_vertex} $\equiv$ 

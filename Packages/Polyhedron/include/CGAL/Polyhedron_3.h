@@ -120,6 +120,12 @@ public:
     std::size_t vertex_degree() const { return halfedge()->vertex_degree(); }
     size_type degree() const { return vertex_degree(); } //backwards compatible
 
+    // returns true if the vertex has exactly two incident edges
+    bool is_bivalent() const { return  halfedge()->is_bivalent(); }
+
+    // returns true if the vertex has exactly three incident edges
+    bool is_trivalent() const { return  halfedge()->is_trivalent(); }
+
     // No longer hidden. Now the restricted version with precondition.
     // sets incident halfedge to h. Precondition: h is incident, i.e.,
     // h->vertex() == v.
@@ -295,6 +301,35 @@ public:
         return circulator_size( facet_begin()); 
     }
 
+    // returns true if the incident vertex has exactly two incident edges
+    bool is_bivalent() const { 
+        CGAL_precondition( this != &* (next()->opposite()));
+        return  (this == &* (next()->opposite()->next()->opposite()));
+    }
+
+    // returns true if the incident vertex has exactly three incident edges
+    bool is_trivalent() const {
+        CGAL_precondition( this != &* (next()->opposite()));
+        return  (   this != &* (next()->opposite()->next()->opposite())
+                 && this == &* (next()->opposite()->next()->opposite()
+                                ->next()->opposite()));
+    }
+
+    // returns true if the incident facet is a triangle.
+    bool is_triangle() const {
+        CGAL_precondition( this != &* (next()));
+        CGAL_precondition( this != &* (next()->next()));
+        return  (this == &* (next()->next()->next()));
+    }
+
+    // returns true if the incident facet is a quadrilateral.
+    bool is_quad()     const {
+        CGAL_precondition( this != &* (next()));
+        CGAL_precondition( this != &* (next()->next()));
+        return  (this == &* (next()->next()->next()->next()));
+    }
+
+
 private:
     // Hide some other functions of H.
     void  set_next( Halfedge_handle hh)  { Base::set_next(hh);}
@@ -382,6 +417,12 @@ public:
     // facet
     std::size_t facet_degree() const { return halfedge()->facet_degree(); }
     size_type size() const { return facet_degree(); } // backwards compatible
+
+    // returns true if the facet is a triangle.
+    bool is_triangle() const { return halfedge()->is_triangle(); }
+
+    // returns true if the facet is a quadrilateral.
+    bool is_quad()     const { return halfedge()->is_quad(); }
 
     // No longer hidden. Now the restricted version with precondition.
     // sets incident halfedge to h. Precondition: h is incident, i.e.,
@@ -831,6 +872,97 @@ public:
 
     Traits&       traits()       { return m_traits; }
     const Traits& traits() const { return m_traits; }
+
+
+// Combinatorial Predicates
+
+private:
+    bool is_pure_bivalent( Tag_true) const { 
+        for ( Vertex_const_iterator i = vertices_begin();
+              i != vertices_end(); ++i)
+            if ( ! i->is_bivalent())
+                return false;
+        return true;
+    }
+    bool is_pure_bivalent( Tag_false) const { 
+        for ( Halfedge_const_iterator i = halfedges_begin();
+              i != halfedges_end(); ++i)
+            if ( ! i->is_bivalent())
+                return false;
+        return true;
+    }
+
+public:
+    // returns true if all vertices have exactly two incident edges
+    bool is_pure_bivalent() const { 
+        return is_pure_bivalent( Supports_vertex_halfedge());
+    }
+
+private:
+    bool is_pure_trivalent( Tag_true) const { 
+        for ( Vertex_const_iterator i = vertices_begin();
+              i != vertices_end(); ++i)
+            if ( ! i->is_trivalent())
+                return false;
+        return true;
+    }
+    bool is_pure_trivalent( Tag_false) const { 
+        for ( Halfedge_const_iterator i = halfedges_begin();
+              i != halfedges_end(); ++i)
+            if ( ! i->is_trivalent())
+                return false;
+        return true;
+    }
+
+public:
+    // returns true if all vertices have exactly three incident edges
+    bool is_pure_trivalent() const { 
+        return is_pure_trivalent( Supports_vertex_halfedge());
+    }
+
+private:
+    bool is_pure_triangle( Tag_true) const { 
+        for ( Facet_const_iterator i = facets_begin();
+              i != facets_end(); ++i)
+            if ( ! i->is_triangle())
+                return false;
+        return true;
+    }
+    bool is_pure_triangle( Tag_false) const { 
+        for ( Halfedge_const_iterator i = halfedges_begin();
+              i != halfedges_end(); ++i)
+            if ( ! i->is_border() && ! i->is_triangle())
+                return false;
+        return true;
+    }
+
+public:
+    // returns true if all facets are triangles
+    bool is_pure_triangle() const { 
+        return is_pure_triangle( Supports_facet_halfedge());
+    }
+
+private:
+    bool is_pure_quad( Tag_true) const { 
+        for ( Facet_const_iterator i = facets_begin();
+              i != facets_end(); ++i)
+            if ( ! i->is_quad())
+                return false;
+        return true;
+    }
+    bool is_pure_quad( Tag_false) const { 
+        for ( Halfedge_const_iterator i = halfedges_begin();
+              i != halfedges_end(); ++i)
+            if ( ! i->is_border() && ! i->is_quad())
+                return false;
+        return true;
+    }
+
+public:
+    bool is_pure_quad() const { 
+        return is_pure_quad( Supports_facet_halfedge());
+    }
+
 
 // Geometric Predicates
 

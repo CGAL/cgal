@@ -22,6 +22,8 @@ The class \ccRefName\ is a model of the \ccc{PolyhedronItems_3}
 concept.  It provides definitions for vertices with points, halfedges,
 and faces with plane equations. The polyhedron traits class must
 provide the respective types for the point and the plane equation.
+Vertices and facets both contain a halfedge handle to an incident
+halfedge.
 
 \ccInclude{CGAL/Polyhedron_items_3.h}
 
@@ -63,6 +65,7 @@ Supported as required by the \ccc{PolyhedronItems_3} concept.
 \ccSeeAlso
 
 \ccRefIdfierPage{CGAL::Polyhedron_3<Traits>}\\
+\ccRefIdfierPage{CGAL::Polyhedron_min_items_3}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_min_items}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_items_2}
 
