@@ -6,6 +6,8 @@
 #include <fstream.h>
 #include <strstream.h>
 
+#include <list.h>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_3.h>
 
@@ -130,6 +132,21 @@ void affiche_aretes_plus(TRIANGULATION& T)
 {
   cout << "aretes plus : " << endl ;
   Edge_iterator eit = T.all_edges_begin(), edone = T.edges_end();
+  if ( eit == edone ) { cout << "debut=fin" << endl ;}
+  else {
+    while(eit != edone) {
+      cout << (*eit).first->vertex((*eit).second)->point() << ", "
+	   << (*eit).first->vertex((*eit).third)->point() << endl;
+      ++eit;
+    }
+  }
+  cout << endl;
+}
+template<class TRIANGULATION>
+void affiche_aretes_finies(TRIANGULATION& T)
+{
+  cout << "aretes plus : " << endl ;
+  Edge_iterator eit = T.finite_edges_begin(), edone = T.edges_end();
   if ( eit == edone ) { cout << "debut=fin" << endl ;}
   else {
     while(eit != edone) {
@@ -369,21 +386,21 @@ void insere(CGAL_Geomview_stream & os, TRIANGULATION & T, Point p)
   cout << "validite " << T.is_valid(true) << endl;
 }
 
-// CGAL_Geomview_stream gv(CGAL_Bbox_3(0,0,0, 2, 2, 2));
-//  Delaunay* D;
+CGAL_Geomview_stream gv(CGAL_Bbox_3(0,0,0, 2, 2, 2));
+Delaunay* D;
 
 int main(int argc, char* argv[])
 {
 
   //  Cell essaicell;
 
-//   //  CGAL_Geomview_stream gv(CGAL_Bbox_3(0,0,0, 2, 2, 2));
-//   gv.set_line_width(4);
-//   gv.set_trace(false);
-//   gv.set_bg_color(CGAL_Color(200, 200, 200));
-//   gv.set_face_color(CGAL_RED);
-//   gv.set_edge_color(CGAL_GREEN);
-//   gv.set_vertex_color(CGAL_BLUE);
+  //  CGAL_Geomview_stream gv(CGAL_Bbox_3(0,0,0, 2, 2, 2));
+  gv.set_line_width(4);
+  gv.set_trace(false);
+  gv.set_bg_color(CGAL_Color(200, 200, 200));
+  gv.set_face_color(CGAL_RED);
+  gv.set_edge_color(CGAL_GREEN);
+  gv.set_vertex_color(CGAL_BLUE);
 
   Point p0(0,0,0);
   //  pp_point(p0);
@@ -396,7 +413,68 @@ int main(int argc, char* argv[])
   
   //  Delaunay T;
   //  D = &T;
+
   Triangulation_3 T;
+  T.insert(p0);
+  T.insert(px);
+  T.insert(py);
+  T.insert(pz);
+
+  affiche_validite(T);
+//   list<Point> l;
+//   T.insert(l.begin(),l.end());
+//   affiche_validite(T);
+//   affiche_aretes_finies(T);
+
+//   TDS tds=T.tds();
+//   TDSVertex_iterator vit;
+//   for ( vit = tds.vertices_begin(); vit != tds.vertices_end(); ++vit ) {
+//     cout << "vertex ";
+//     pp_tds_vertex(&(*vit));
+
+//     set<TDSCell*,less<TDSCell*> > C;
+//     tds.incident_cells(&(*vit), C);
+//     set<TDSCell*, less<TDSCell*> >::const_iterator it;
+//     cout << "incident cells " << endl ;
+//     for ( it = C.begin(); it != C.end(); ++it ) {
+//       pp_tds_cell(*it);
+//     }
+    
+//     set<TDSVertex*,less<TDSVertex*> > V;
+//     tds.incident_vertices(&(*vit), V);
+//     set<TDSVertex*, less<TDSVertex*> >::const_iterator itv;
+//     cout << "incident vertices " << endl ;
+//     for ( itv = V.begin(); itv != V.end(); ++itv ) {
+//       pp_tds_vertex(*itv);
+//     }
+//   }
+
+  Vertex_iterator tvit;
+  for ( tvit = T.all_vertices_begin(); tvit != T.vertices_end(); ++tvit ) {
+    cout << "vertex ";
+    pp_vertex(&(*tvit));
+
+    set<Cell*,less<Cell*> > Ch;
+    T.incident_cells(&(*tvit), Ch);
+    set<Cell*, less<Cell*> >::const_iterator ith;
+    cout << "incident cells " << endl ;
+    for ( ith = Ch.begin(); ith != Ch.end(); ++ith ) {
+      pp_cell((*ith)->handle());
+    }
+
+    set<Vertex*,less<Vertex*> > Vh;
+    T.incident_vertices(&(*tvit), Vh);
+    set<Vertex*, less<Vertex*> >::const_iterator itvh;
+    cout << "incident vertices " << endl ;
+    for ( itvh = Vh.begin(); itvh != Vh.end(); ++itvh ) {
+      pp_vertex((*itvh)->handle());
+    }
+  }
+//   T.insert(Point(0,0,1));
+//   T.insert(Point(0,0,2));
+//   T.insert(Point(0,0,3));
+//   affiche_validite(T);
+//   affiche_sommets(T);
 
   // test dim 3
   //  Triangulation_3 T(p0,px,py,pz);
@@ -535,56 +613,56 @@ int main(int argc, char* argv[])
 //   CGAL_set_ascii_mode(is);
 //   is >> nouv;
   
-  Triangulation_3 T2;
-  int x,y,z=0;
-  for (z=0 ; z<2 ; z++)
-    for (y=0 ; y<5 ; y++)
-      for (x=0 ; x<5 ; x++) {
-	T2.insert(Point(x,y,z));
-	assert(T2.is_valid(true));
-      }
-  //   assert(T2.number_of_vertices()==125);
-  //   assert(T2.dimension()==3);
+//   Triangulation_3 T2;
+//   int x,y,z=0;
+//   for (z=0 ; z<2 ; z++)
+//     for (y=0 ; y<5 ; y++)
+//       for (x=0 ; x<5 ; x++) {
+// 	T2.insert(Point(x,y,z));
+// 	assert(T2.is_valid(true));
+//       }
+//   //   assert(T2.number_of_vertices()==125);
+//   //   assert(T2.dimension()==3);
   
-  affiche_aretes_plus(T2);
-  affiche_aretes_minus(T2);
+//   affiche_aretes_plus(T2);
+//   affiche_aretes_minus(T2);
   
-  affiche_faces_plus(T2);
-  affiche_faces_minus(T2);
+//   affiche_faces_plus(T2);
+//   affiche_faces_minus(T2);
    
-//   Point nouv;
+  Point nouv;
 
-//   cout << "point ? " << endl;
-//   cin >> nouv ;
+  cout << "point ? " << endl;
+  cin >> nouv ;
 
-//   while ( nouv.x() != 3000 ) {
-//     insere(gv,T,nouv);
-//     gv.clear();
-//     switch (T.dimension()) {
-//     case 0:
-//       {
-// 	visu_sommets(gv,T);
-// 	break;
-//       }
-//     case 1:
-//       {
-// 	visu_aretes(gv,T);
-// 	break;
-//       }
-//     case 2:
-//       {
-// 	visu_faces(gv,T);
-// 	break;
-//       }
-//     case 3:
-//       {
-// 	visu_cellules(gv,T);
-// 	break;
-//       }
-//     }
-//     cout << "point ? " << endl;
-//     cin >> nouv ;
-//   }
+  while ( nouv.x() != 3000 ) {
+    insere(gv,T,nouv);
+    gv.clear();
+    switch (T.dimension()) {
+    case 0:
+      {
+	visu_sommets(gv,T);
+	break;
+      }
+    case 1:
+      {
+	visu_aretes(gv,T);
+	break;
+      }
+    case 2:
+      {
+	visu_faces(gv,T);
+	break;
+      }
+    case 3:
+      {
+	visu_cellules(gv,T);
+	break;
+      }
+    }
+    cout << "point ? " << endl;
+    cin >> nouv ;
+  }
 
 //   cout << "copy constructeur" << endl;
 //   cout << "validite T " << T.is_valid(true) << endl;
@@ -755,6 +833,7 @@ int main(int argc, char* argv[])
 //   affiche_sommets(tds6);
 
   char ch;
+  cout << "donner caractere de fin" << endl;
   cin >> ch;
 
   return 1;
