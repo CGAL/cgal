@@ -2,6 +2,9 @@
 //	Revision History for package Min_quadrilateral_2
 //=====================================================================
 
+19 December 2004 Andreas Fabri
+- Updated file headers in the demos
+
 22 June 2004  Sylvain Pion
 - Add some missing "using base::member;" and others for g++ 3.4.
 
