@@ -1,13 +1,19 @@
-In this directory there are 4 example program for the Sweep line package.
+In this directory there are 5 example program for the Sweep Line package.
 
-example1: demonstate the use of the sweep line in order to construct a planar map of segments.
+example1: Demonstate the use of the sweep line algorithm in order to
+          construct a planar map of line segments.
  
-example2: demonstate the use of the sweep line in order to construct a planar map of polyline  segment.
+example2: Demonstate the use of the sweep line algorithm in order to
+          construct a planar map of polylines.
+     
+example3: Demonstate the use of the sweep line algorithm in order to
+          produce a collection of disjoint interior sub-segments.
  
-example3: demonstate the use of the sweep line in order to construct a container of disjoint interior subsegments.
- 
-example4: demonstate the use of the sweep line in order to construct a container of disjoint interior polyline subsegments.
+example4: Demonstate the use of the sweep line algorithm in order to
+          produce a collection of disjoint interior polyline sub-segments.
 
-example5: demonstate the use of the sweep line in order to construct a container of all intersection points of the given segments in the input.
+example5: Demonstate the use of the sweep line algorithm in order to
+          produce a collection of all intersection points of the
+          given segments in the input.
 
 
