@@ -1,5 +1,11 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.32 on 22 October 1999
+- Enable the sqrt workaround for Cygwin/GCC too.
+- New flag CGAL_IA_NO_INLINE which makes static instead of inline the
+  operator* and operator/ over intervals.  It reduces code size and can speed
+  up algorithms which use large predicates (but slow down the others).
+
 Version 4.31 on 20 October 1999
 - Removed Lazy_exact_nt.C from the test-suite (it's experimental stuff).
 - New experimental filter stuff is now protected with
@@ -21,7 +27,7 @@ Version 4.30 on 19 October 1999
 - force_ieee_double_precision() does the same things on VC++ and Borland, as
   on Linux/x86.
 - Don't submit test files for the experimental stuff [yet].
-- Lazy_nt_exact<> is now supposed to work ;)
+- Lazy_exact_nt<> is now supposed to work ;)
 
 Version 4.29 on 13 October 1999
 - Added headers to the automaticaly generated static_infos files.

@@ -45,7 +45,6 @@ Concerning the main code:
 - Replace the NT wrapping, by Filtered_Cartesian<FT>, a new kernel ?
   this would be cleaner, and won't rely on some optimizations in the compiler.
   (same thing for Fixed)
-- Fix Michael's problem with min/max/sqrt() and co.  At least add a testcase.
 - Get rid of convert_to() ?  This is a mess for nothing (benchmark first).
   Target convert_from_to (const Target, const Source) is fine ?
   It could maybe be made better this way:
@@ -65,6 +64,7 @@ Concerning the main code:
   required between ldfsr and next FBfcc; nops inserted
 ? See the C++ Standard numeric_limits<>, section 18.2.
 ? convert_to à faire pour: long double, long long (CGAL..._64), CLN.
+- Should IA_nt _privately_ derive from IA_nt_advanced ?
 
 Concerning the script:
 ----------------------
