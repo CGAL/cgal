@@ -14,8 +14,6 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-	   -I/KM/usr/hachenb/CGAL2/Nef_3/include \
-	   -I/KM/usr/hachenb/CGAL2/Nef_S2/include \
 	   $(CGAL_CXXFLAGS) \
            -Iinclude \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
