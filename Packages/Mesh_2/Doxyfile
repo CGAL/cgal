@@ -4,7 +4,7 @@
 # Project related configuration options
 #---------------------------------------------------------------------------
 PROJECT_NAME           = Mesh_2
-PROJECT_NUMBER         = 0.9.4alpha
+PROJECT_NUMBER         = 1.1alpha1
 OUTPUT_DIRECTORY       = doxygen/
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
@@ -186,7 +186,7 @@ SKIP_FUNCTION_MACROS   = YES
 # Configuration::additions related to external references   
 #---------------------------------------------------------------------------
 TAGFILES               = 
-GENERATE_TAGFILE       = 
+GENERATE_TAGFILE       = /users/algo2/rineau/CGAL/Mesh_2/Mesh_2.tags.xml
 ALLEXTERNALS           = NO
 EXTERNAL_GROUPS        = YES
 PERL_PATH              = /usr/bin/perl

@@ -1,23 +1,3 @@
-// ============================================================================
-//
-// Copyright (c) 1997-2000 The CGAL Consortium
-//
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
-//
-// ----------------------------------------------------------------------------
-//
-// file          : 
-// package       : Mesh_2
-// author(s)     : Laurent Rineau
-// release       : 
-// release_date  : 
-//
-//
-//
-// ============================================================================
-
 #ifndef MESH_2_SHOW_CLUSTERS_H
 #define MESH_2_SHOW_CLUSTERS_H
 

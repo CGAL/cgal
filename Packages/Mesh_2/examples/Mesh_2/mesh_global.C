@@ -2,9 +2,9 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Delaunay_mesh_2.h>
+#include <CGAL/Delaunay_mesher_2.h>
 #include <CGAL/Delaunay_mesh_face_base_2.h>
-#include <CGAL/Delaunay_mesh_traits_2.h>
+#include <CGAL/Delaunay_mesh_criteria_2.h>
 
 #include <iostream>
 
@@ -12,9 +12,9 @@ struct K : public CGAL::Exact_predicates_inexact_constructions_kernel {};
 typedef CGAL::Triangulation_vertex_base_2<K> Vb;
 typedef CGAL::Delaunay_mesh_face_base_2<K> Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb, Fb> Tds;
-typedef CGAL::Delaunay_mesh_traits_2<K> Meshtraits;
-typedef CGAL::Constrained_Delaunay_triangulation_2<Meshtraits, Tds,
+typedef CGAL::Constrained_Delaunay_triangulation_2<K, Tds,
   CGAL::Exact_predicates_tag> CDT;
+typedef CGAL::Delaunay_mesh_criteria_2<CDT> Criteria;
 
 typedef CDT::Vertex_handle Vertex_handle;
 typedef CDT::Point Point;
@@ -39,7 +39,7 @@ int main()
 
   std::cout << "Meshing the triangulation with default criterias..."
             << std::endl;
-  CGAL::refine_Delaunay_mesh_2(cdt);
+  CGAL::refine_Delaunay_mesh_2(cdt, Criteria());
 
   std::cout << "Number of vertices: " << cdt.number_of_vertices() 
             << std::endl;

@@ -1,4 +1,4 @@
-// Copyright (c) 2001-2004  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003-2004  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -96,9 +96,6 @@ public:
   typedef typename Tr::Geom_traits Geom_traits;
   typedef typename Tr::Triangulation_data_structure Tds;
 
-  typedef typename Geom_traits::FT FT;
-  typedef FT      Squared_length; /**<This typedef is used to remind that
-                                     the lenght is squared. */
   typedef typename Tr::Vertex                 Vertex;
   typedef typename Tr::Vertex_handle          Vertex_handle;
   typedef typename Tr::Vertex_circulator      Vertex_circulator;
@@ -115,7 +112,6 @@ public:
   typedef typename Tr::Locate_type            Locate_type;
 
   typedef typename Tr::Point                  Point;
-
 
   /** \name Types needed to access member datas */
 

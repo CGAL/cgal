@@ -20,8 +20,8 @@ void refine_Delaunay_mesh_2 (CDT &t, const Criteria& criteria = Criteria()); }
 \ccFunction{ template <class CDT, class Criteria, class InputIterator>
 void refine_Delaunay_mesh_2(CDT& t,
                        InputIterator begin, InputIterator end,
-                       bool mark = false,
-                       const Criteria& criteria = Criteria()); }
+                       const Criteria& criteria = Criteria(),
+                       bool mark = false); }
                      { Same a the previous function, but the sequence
                        [\ccc{begin}, \ccc{end}] gives a set of
                        seeds points, that defines the domain to be

@@ -1,4 +1,4 @@
-// Copyright (c) 2001-2004  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003-2004  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -17,31 +17,33 @@
 //
 // Author(s)     : Laurent RINEAU
 
-#ifndef CGAL_DELAUNAY_MESH_LOCAL_SIZE_TRAITS_2_H
-#define CGAL_DELAUNAY_MESH_LOCAL_SIZE_TRAITS_2_H
+#ifndef CGAL_DELAUNAY_MESH_LOCAL_SIZE_CRITERIA_2_H
+#define CGAL_DELAUNAY_MESH_LOCAL_SIZE_CRITERIA_2_H
 
-#include <CGAL/Delaunay_mesh_size_traits_2.h>
+#include <CGAL/Delaunay_mesh_size_criteria_2.h>
 
 namespace CGAL {
 
-template <class K>
-class Delaunay_mesh_local_size_traits_2 : public Delaunay_mesh_size_traits_2<K>
+template <class CDT>
+class Delaunay_mesh_local_size_criteria_2
+  : public Delaunay_mesh_size_criteria_2<CDT>
 {
 public:
-  typedef Delaunay_mesh_size_traits_2<K> Base;
+  typedef Delaunay_mesh_size_criteria_2<CDT> Base;
   typedef typename Base::Base PreviousBase;
-  typedef typename K::FT FT;
-  typedef typename K::Point_2 Point;
+  typedef typename CDT::Geom_traits Geom_traits;
+  typedef typename Geom_traits::FT FT;
+  typedef typename Geom_traits::Point_2 Point;
 
 private:
   bool local;
   Point _p;
 
 public:
-  Delaunay_mesh_local_size_traits_2(const double aspect_bound = 0.125, 
-			   const double size_bound = 0,
-			   const bool is_local_size = false,
-			   const Point p = Point())
+  Delaunay_mesh_local_size_criteria_2(const double aspect_bound = 0.125, 
+                                      const double size_bound = 0,
+                                      const bool is_local_size = false,
+                                      const Point p = Point())
     : Base(aspect_bound, size_bound), local(is_local_size), _p(p) {};
 
   inline
@@ -61,9 +63,9 @@ public:
   public:
     typedef typename Base::Is_bad Baseclass;
     typedef typename Baseclass::Point_2 Point_2;
-    typedef typename Baseclass::Traits Traits;
     typedef typename Base::Base PreviousBase;
     typedef typename PreviousBase::Is_bad PreviousBaseclass;
+    typedef Geom_traits Traits;
 
     typedef typename Base::Quality Quality;
 
@@ -78,22 +80,24 @@ public:
 	   const Point_2 _p)
       : Base::Is_bad(aspect_bound, size_bound), local(l), p(_p) {};
 
-    bool operator()(const Point_2& a,
-		    const Point_2& b,
-		    const Point_2& c,
+    bool operator()(const Face_handle& fh,
 		    Quality& q) const
     {
       if(!local)
-	return Baseclass::operator()(a,b,c,q);
+	return Baseclass::operator()(fh,q);
       else
 	{
-	  typename Traits::Orientation_2 orient = 
-	    Traits().orientation_2_object();
+	  typename Geom_traits::Orientation_2 orient = 
+	    Geom_traits().orientation_2_object();
 	  
-	  bool is_non_locally_bad = Baseclass::operator()(a,b,c,q);
+	  bool is_non_locally_bad = Baseclass::operator()(f,q);
 
 	  if( q.first < B )
 	    return true;
+
+          const Point_2& a = fh->vertex(0);
+          const Point_2& b = fh->vertex(1);
+          const Point_2& c = fh->vertex(2);
 
 	  Orientation 
 	    o1 = orient(a,b,p),

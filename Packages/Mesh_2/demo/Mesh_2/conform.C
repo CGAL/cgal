@@ -9,7 +9,8 @@
 
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 
-#include <CGAL/Conforming_Delaunay_triangulation_2.h>
+#include <CGAL/Conforming_Delaunay_triangulation_maker_2.h>
+#include <CGAL/IO/File_poly.h>
 
 typedef CGAL::Simple_cartesian<double> K1;
 typedef CGAL::Filtered_kernel<K1> K2;
@@ -79,7 +80,7 @@ int main(int argc, char** argv)
   if(input)
     {
       Tr t;
-      CGAL::read_poly(t, input);
+      CGAL::read_triangle_poly_file(t, input);
       if(delaunay)
 	{
 	  if(verbose)
@@ -96,12 +97,12 @@ int main(int argc, char** argv)
       if(argc==arg_count+1)
 	{
 	  if(terminal_output)
-	    CGAL::write_poly(t, std::cout);
+	    CGAL::write_triangle_poly_file(t, std::cout);
 	}
       else
 	{
 	  std::ofstream output(argv[arg_count+1]);
-	  CGAL::write_poly(t, output);
+	  CGAL::write_triangle_poly_file(t, output);
 	}
 
       if(terminal_output)

@@ -24,8 +24,8 @@ int main(int, char*)
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Polygon_2.h>
 #define CGAL_MESH_2_USE_TIMERS
-#include <CGAL/Delaunay_mesh_2.h>
-#include <CGAL/Delaunay_mesh_local_size_traits_2.h>
+#include <CGAL/Delaunay_mesher_2.h>
+#include <CGAL/Delaunay_mesh_local_size_criteria_2.h>
 #include <CGAL/Delaunay_mesh_face_base_2.h>
 
 #include <CGAL/IO/Qt_widget.h>
@@ -83,16 +83,16 @@ typedef K::FT                           FT;
 typedef CGAL::Triangulation_vertex_base_2<K> Vb;
 typedef CGAL::Delaunay_mesh_face_base_2<K> Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb, Fb> Tds;
-typedef CGAL::Delaunay_mesh_local_size_traits_2<K> Meshtraits;
-typedef CGAL::Constrained_Delaunay_triangulation_2<Meshtraits, Tds,
+typedef CGAL::Constrained_Delaunay_triangulation_2<K, Tds,
   CGAL::Exact_predicates_tag> Tr;
+typedef CGAL::Delaunay_mesh_local_size_criteria_2<Tr> Criteria;
 
 typedef K::Point_2 Point_2;
 typedef K::Circle_2 Circle;
 typedef CGAL::Polygon_2<K> CGALPolygon;
 
-typedef CGAL::Delaunay_mesh_2<Tr> Mesh;
-typedef Mesh::Vertex Vertex;
+typedef CGAL::Delaunay_mesher_2<Tr, Criteria> Mesher;
+typedef Tr::Vertex Vertex;
 
 template <class CDT>
 void
@@ -136,27 +136,27 @@ write_constraints(const CDT& t, std::ostream &f)
       }
 }
 
-template <class M>
+template <class Tr>
 class Show_marked_faces : public CGAL::Qt_widget_layer
 {
-  M *&mesh;
+  Tr *&tr;
   CGAL::Color color;
 public:
-  Show_marked_faces(M *&m, CGAL::Color c=CGAL::GREEN) : mesh(m),
+  Show_marked_faces(Tr *&t, CGAL::Color c=CGAL::GREEN) : tr(t),
     color(c) {};
 
-  typedef typename M::Finite_faces_iterator Face_iterator;
+  typedef typename Tr::Finite_faces_iterator Face_iterator;
 
   void draw()
   {
     QColor old_fill_color = widget->fillColor();
     int old_line_width = widget->lineWidth();
     *widget << CGAL::FillColor(CGAL::GREEN) << CGAL::LineWidth(0);
-    for(Face_iterator fit=mesh->finite_faces_begin();
-        fit!=mesh->finite_faces_end();
+    for(Face_iterator fit=tr.finite_faces_begin();
+        fit!=tr.finite_faces_end();
         ++fit)
       if(fit->is_marked())
-        *widget << mesh->triangle(fit);
+        *widget << tr.triangle(fit);
     widget->setFillColor(old_fill_color);
     widget->setLineWidth(old_line_width);
   }
@@ -195,9 +195,9 @@ class MyWindow : public QMainWindow
 {
   Q_OBJECT
 public:
-  MyWindow() : traits()
+  MyWindow() : criteria()
     {
-      mesh = new Mesh(traits);
+      mesher = new Mesher(criteria);
 
       // --- DEMO WINDOW'S LAYOUT ---
       // a main frame, with a QHBoxLayout (border=0, space=0)
@@ -311,30 +311,30 @@ public:
       // --- LAYERS ---
 
       show_points =
-        new Show_points_from_triangulation(mesh,
-                                           &Mesh::finite_vertices_begin,
-                                           &Mesh::finite_vertices_end,
+        new Show_points_from_triangulation(tr,
+                                           &Tr::finite_vertices_begin,
+                                           &Tr::finite_vertices_end,
                                            CGAL::BLACK, 2);
 
-      show_seeds = new Show_seeds(mesh,
-                                  &Mesh::seeds_begin,
-                                  &Mesh::seeds_end,
+      show_seeds = new Show_seeds(mesher,
+                                  &Mesher::seeds_begin,
+                                  &Mesher::seeds_end,
                                   CGAL::BLUE,
                                   5,
                                   CGAL::CROSS);
       show_triangulation =
-        new CGAL::Qt_layer_show_triangulation<Mesh>(mesh,
+        new CGAL::Qt_layer_show_triangulation<Tr>(tr,
                                                     CGAL::BLUE,1);
       show_marked =
-        new Show_marked_faces<Mesh>(mesh, CGAL::GREEN);
+        new Show_marked_faces<Tr>(tr, CGAL::GREEN);
       show_constraints =
-        new CGAL::Qt_layer_show_triangulation_constraints<Mesh>
-        (mesh, CGAL::RED, 1);
+        new CGAL::Qt_layer_show_triangulation_constraints<Tr>
+        (tr, CGAL::RED, 1);
       show_circles =
-        new CGAL::Qt_layer_show_circles<Mesh>(mesh, CGAL::GRAY, 1);
+        new CGAL::Qt_layer_show_circles<Tr>(tr, CGAL::GRAY, 1);
       show_mouse = new CGAL::Qt_widget_show_mouse_coordinates(*this);
 
-      show_clusters = new Show_clusters<Mesh>(*mesh,
+      show_clusters = new Show_clusters<Mesher>(*mesher,
                                               CGAL::BLACK,3,CGAL::RECT,
                                               CGAL::BLACK,2);
 
@@ -596,11 +596,11 @@ public:
   void bounds(FT &xmin, FT &ymin,
               FT &xmax, FT &ymax)
     {
-      Mesh::Finite_vertices_iterator vi=mesh->finite_vertices_begin();
+      Tr::Finite_vertices_iterator vi=tr.finite_vertices_begin();
       xmin=xmax=vi->point().x();
       ymin=ymax=vi->point().y();
       vi++;
-      while(vi != mesh->finite_vertices_end())
+      while(vi != tr.finite_vertices_end())
         {
           if(vi->point().x() < xmin) xmin=vi->point().x();
           if(vi->point().x() > xmax) xmax=vi->point().x();
@@ -650,7 +650,7 @@ public slots:
             std::list<Face_handle> l;
 
             Face_handle fh = mesh->locate(p);
-            traits.set_point(p);
+            criteria.set_point(p);
             if( (fh!=NULL) && (!mesh->is_infinite(fh)) && fh->is_marked() )
               {
                 const Point_2&
@@ -659,10 +659,10 @@ public slots:
                   c = fh->vertex(2)->point();
 
                 Mesh::Quality q;
-                if(traits.is_bad_object().operator()(a, b, c, q))
+                if(criteria.is_bad_object().operator()(a, b, c, q))
                   l.push_back(fh);
               }
-            mesh->set_geom_traits(traits);
+            mesh->set_criteria(criteria);
             mesh->set_bad_faces(l.begin(), l.end());
             while( mesh->step_by_step_refine_mesh() );
           }
@@ -973,23 +973,23 @@ public slots:
 
   void setBound(const QString& bound)
     {
-      traits.set_bound(bound.toDouble());
+      criteria.set_bound(bound.toDouble());
       if( mesh != 0 )
-        mesh->set_geom_traits(traits);
+        mesh->set_criteria(criteria);
     }
 
   void setSizeBound(const QString& size_bound)
     {
-      traits.set_size_bound(size_bound.toDouble());
+      criteria.set_size_bound(size_bound.toDouble());
       if ( mesh != 0 )
-        mesh->set_geom_traits(traits);
+        mesh->set_criteria(criteria);
     }
 
   void setLocal(bool checked)
     {
-      traits.set_local_size(checked);
-      mesh->set_geom_traits(traits);
-      if(traits.is_local_size())
+      criteria.set_local_size(checked);
+      mesh->set_criteria(criteria);
+      if(criteria.is_local_size())
         follow_mouse->activate();
       else
         follow_mouse->deactivate();
@@ -1005,7 +1005,8 @@ public slots:
 
 private:
   static const QString my_filters;
-  Meshtraits traits;
+  Criteria criteria;
+  Tr tr;
   Mesh* mesh;
 
   QPopupMenu *pmCriteria;
@@ -1017,24 +1018,24 @@ private:
   CGAL::Qt_widget_get_polygon<CGALPolygon>* get_polygon;
   Follow_mouse* follow_mouse;
 
-  typedef CGAL::Qt_layer_show_points<Mesh, Mesh::Finite_vertices_iterator,
+  typedef CGAL::Qt_layer_show_points<Tr, Tr::Finite_vertices_iterator,
   Vertex_to_point>
     Show_points_from_triangulation;
 
-  typedef CGAL::Qt_layer_show_points<Mesh, Mesh::Seeds_const_iterator>
+  typedef CGAL::Qt_layer_show_points<Tr, Tr::Seeds_const_iterator>
     Show_seeds;
 
   Show_points_from_triangulation* show_points;
   Show_seeds* show_seeds;
-  CGAL::Qt_layer_show_triangulation<Mesh>* show_triangulation;
-  CGAL::Qt_layer_show_triangulation_constraints<Mesh>* show_constraints;
-  CGAL::Qt_layer_show_circles<Mesh>* show_circles;
+  CGAL::Qt_layer_show_triangulation<Tr>* show_triangulation;
+  CGAL::Qt_layer_show_triangulation_constraints<Tr>* show_constraints;
+  CGAL::Qt_layer_show_circles<Tr>* show_circles;
   CGAL::Qt_widget_show_mouse_coordinates* show_mouse;
-  Show_marked_faces<Mesh>* show_marked;
+  Show_marked_faces<Tr>* show_marked;
 
   bool nb_of_clusters_has_to_be_updated;
   QLabel *nb_of_clusters;
-  Show_clusters<Mesh>* show_clusters;
+  Show_clusters<Mesher>* show_clusters;
 
   QLabel *nb_of_points;
   QLabel *init_status;

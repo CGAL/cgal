@@ -1,4 +1,4 @@
-// Copyright (c) 2001-2004  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003-2004  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -17,26 +17,27 @@
 //
 // Author(s)     : Laurent RINEAU
 
-#ifndef CGAL_DELAUNAY_MESH_SIZE_TRAITS_2_H
-#define CGAL_DELAUNAY_MESH_SIZE_TRAITS_2_H
+#ifndef CGAL_DELAUNAY_MESH_SIZE_CRITERIA_2_H
+#define CGAL_DELAUNAY_MESH_SIZE_CRITERIA_2_H
 
-#include <CGAL/Delaunay_mesh_traits_2.h>
+#include <CGAL/Delaunay_mesh_criteria_2.h>
 #include <utility>
 #include <ostream>
 
 namespace CGAL {
 
-template <class K>
-class Delaunay_mesh_size_traits_2 : public virtual Delaunay_mesh_traits_2<K>
+template <class CDT>
+class Delaunay_mesh_size_criteria_2 : 
+    public virtual Delaunay_mesh_criteria_2<CDT>
 {
 protected:
   double sizebound;
 
 public:
-  typedef Delaunay_mesh_traits_2<K> Base;
+  typedef Delaunay_mesh_criteria_2<CDT> Base;
 
-  Delaunay_mesh_size_traits_2(const double aspect_bound = 0.125, 
-		     const double size_bound = 0)
+  Delaunay_mesh_size_criteria_2(const double aspect_bound = 0.125, 
+                                const double size_bound = 0)
     : Base(aspect_bound), sizebound(size_bound) {};
 
   inline
@@ -80,37 +81,44 @@ public:
     const double SB; // squared size bound on edge length
   public:
     typedef typename Base::Is_bad::Point_2 Point_2;
-    typedef typename Base::Is_bad::Traits Traits;
 
     Is_bad(const double aspect_bound,
 	   const double size_bound)
       : Base::Is_bad(aspect_bound), SB(size_bound * size_bound) {};
 
-    bool operator()(const typename Base::Point_2& pa,
-		    const typename Base::Point_2& pb,
-		    const typename Base::Point_2& pc,
+    bool operator()(const typename CDT::Face_handle& fh,
 		    Quality& q) const
     {
-      typedef typename K::Point_2 Point_2;
-      typedef typename K::Triangle_2 Triangle_2;
-      typedef typename K::Compute_area_2 Compute_area_2;
-      typedef typename K::Compute_squared_distance_2
+      typedef typename CDT::Geom_traits Geom_traits;
+      typedef typename Geom_traits::Triangle_2 Triangle_2;
+      typedef typename Geom_traits::Compute_area_2 Compute_area_2;
+      typedef typename Geom_traits::Compute_squared_distance_2
 	Compute_squared_distance_2;
-      typedef typename K::FT FT;
+      typedef typename Geom_traits::Construct_triangle_2
+	Construct_triangle_2;
+      typedef typename Geom_traits::FT FT;
 
-      K k;
-      Compute_area_2 area_2 = k.compute_area_2_object();
+      Geom_traits traits;
+
+      Compute_area_2 area_2 = 
+        traits.compute_area_2_object();
       Compute_squared_distance_2 squared_distance = 
-	k.compute_squared_distance_2_object();
-      
-      Triangle_2 t = k.construct_triangle_2_object()(pa,pb,pc);
+	traits.compute_squared_distance_2_object();
+      Construct_triangle_2 triangle =
+        traits.construct_triangle_2_object();
+
+      const Point_2& pa = fh->vertex(0)->point();
+      const Point_2& pb = fh->vertex(1)->point();
+      const Point_2& pc = fh->vertex(2)->point();
+
+      Triangle_2 t = triangle(pa,pb,pc);
       double area = 2*CGAL::to_double(area_2(t));
-      area=area*area; // squared area
-      
+      area=area*area;
+
       double
 	a = CGAL::to_double(squared_distance(pb, pc)),
 	b = CGAL::to_double(squared_distance(pc, pa)),
-	  c = CGAL::to_double(squared_distance(pa, pb));
+	c = CGAL::to_double(squared_distance(pa, pb));
       
       double min_sine; // squared minimum sine
       double max_lenght; // squared max edge length
@@ -145,6 +153,6 @@ public:
   { return Is_bad(bound(), size_bound()); }
 };
 
-} //end namespace
+} // end namespace CGAL
 
 #endif

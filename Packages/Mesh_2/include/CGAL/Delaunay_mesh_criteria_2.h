@@ -1,4 +1,4 @@
-// Copyright (c) 2001-2004  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003-2004  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -17,18 +17,19 @@
 //
 // Author(s)     : Laurent RINEAU
 
-#ifndef CGAL_DELAUNAY_MESH_TRAITS_2_H
-#define CGAL_DELAUNAY_MESH_TRAITS_2_H
+#ifndef CGAL_DELAUNAY_MESH_CRITERIA_2_H
+#define CGAL_DELAUNAY_MESH_CRITERIA_2_H
 
 namespace CGAL {
 
-template <class K>
-class Delaunay_mesh_traits_2 : public K
+template <class Tr>
+class Delaunay_mesh_criteria_2
 {
   double B;
 public:
+  typedef typename Tr::Face_handle Face_handle;
 
-  Delaunay_mesh_traits_2(const double bound = 0.125) : B(bound) {};
+  Delaunay_mesh_criteria_2(const double bound = 0.125) : B(bound) {};
 
   typedef double Quality;
 
@@ -43,29 +44,36 @@ public:
   protected:
     const double B;
   public:
-    typedef typename K::Point_2 Point_2;
-    typedef Delaunay_mesh_traits_2<K> Traits;
+    typedef typename Tr::Point Point_2;
       
     Is_bad(const double bound) : B(bound) {};
       
-    bool operator()(const Point_2& pa,
-		    const Point_2& pb,
-		    const Point_2& pc,
-		    Quality& q) const
+    bool operator()(const Face_handle& fh,
+                    Quality& q) const
     {
-      typedef typename K::Point_2 Point_2;
-      typedef typename K::Triangle_2 Triangle_2;
-      typedef typename K::Compute_area_2 Compute_area_2;
-      typedef typename K::Compute_squared_distance_2
+      typedef typename Tr::Geom_traits Geom_traits;
+      typedef typename Geom_traits::Triangle_2 Triangle_2;
+      typedef typename Geom_traits::Compute_area_2 Compute_area_2;
+      typedef typename Geom_traits::Compute_squared_distance_2
 	Compute_squared_distance_2;
-      typedef typename K::FT FT;
+      typedef typename Geom_traits::Construct_triangle_2
+	Construct_triangle_2;
+      typedef typename Geom_traits::FT FT;
 
-      K k;
-      Compute_area_2 area_2 = k.compute_area_2_object();
+      Geom_traits traits;
+
+      Compute_area_2 area_2 = 
+        traits.compute_area_2_object();
       Compute_squared_distance_2 squared_distance = 
-	k.compute_squared_distance_2_object();
+	traits.compute_squared_distance_2_object();
+      Construct_triangle_2 triangle =
+        traits.construct_triangle_2_object();
 
-      Triangle_2 t = k.construct_triangle_2_object()(pa,pb,pc);
+      const Point_2& pa = fh->vertex(0)->point();
+      const Point_2& pb = fh->vertex(1)->point();
+      const Point_2& pc = fh->vertex(2)->point();
+
+      Triangle_2 t = triangle(pa,pb,pc);
       double area = 2*CGAL::to_double(area_2(t));
       area=area*area;
 

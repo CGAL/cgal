@@ -4,7 +4,7 @@
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Delaunay_mesher_2.h>
 #include <CGAL/Delaunay_mesh_face_base_2.h>
-#include <CGAL/Delaunay_mesh_size_traits_2.h>
+#include <CGAL/Delaunay_mesh_size_criteria_2.h>
 
 #include <iostream>
 
@@ -12,10 +12,10 @@ struct K : public CGAL::Exact_predicates_inexact_constructions_kernel {};
 typedef CGAL::Triangulation_vertex_base_2<K> Vb;
 typedef CGAL::Delaunay_mesh_face_base_2<K> Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb, Fb> Tds;
-typedef CGAL::Delaunay_mesh_size_traits_2<K> Meshtraits;
-typedef CGAL::Constrained_Delaunay_triangulation_2<Meshtraits, Tds,
+typedef CGAL::Constrained_Delaunay_triangulation_2<K, Tds,
   CGAL::Exact_predicates_tag> CDT;
-typedef CGAL::Delaunay_mesher_2<CDT> Mesher;
+typedef CGAL::Delaunay_mesh_size_criteria_2<CDT> Criteria;
+typedef CGAL::Delaunay_mesher_2<CDT, Criteria> Mesher;
 
 typedef CDT::Vertex_handle Vertex_handle;
 typedef CDT::Point Point;
@@ -51,7 +51,7 @@ int main()
   // 0.125 is the default shape bound. It corresponds to abound 20.6°.
   // 0.5 is the upper bound on the length of the longuest edge.
   // See reference manual for Delaunay_mesh_size_traits_2<K>.
-  cdt.set_geom_traits(Meshtraits(0.125, 0.5));
+  mesher.set_criteria(Criteria(0.125, 0.5));
   mesher.refine_mesh();
 
   std::cout << "Number of vertices: " << cdt.number_of_vertices() 

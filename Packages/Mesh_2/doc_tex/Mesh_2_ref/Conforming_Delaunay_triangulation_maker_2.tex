@@ -76,7 +76,8 @@ conforming algorithm step by step, using the following methods. They
 exist in two versions, depending on whether you want the triangulation to
 be conforming Delaunay or conforming Gabriel, respectively. Any call to a
 \ccc{step_by_step_conforming_XX} function requires a previous call to
-the corresponding of \ccc{init_XX}.
+the corresponding of \ccc{init_XX} and Gabriel and Delaunay methods can not
+be mixed between two calls of \ccc{init_XX}.
 
 \ccMethod{ void init_Delaunay(); }
 { The method must be called after all points and constrained segments
@@ -85,16 +86,14 @@ the corresponding of \ccc{init_XX}.
   method must be called again. }
 
 \ccMethod{ bool step_by_step_conforming_Delaunay (); }
-{ Applies one step of the algorithm. At one step of the algorithm,
-  only one point is inserted. However, the algorithm sometimes does not
-  insert a point at some steps. Anyway, internal data of the \ccRefName{}
-  object are modified at each step, until \ccc{c.is_conforming_done()}
-  returns \ccc{true}. Returns \ccc{true} iff the algorithm is not done.}
+{ Applies one step of the algorithm, by inserting one point, if the
+  algorithm is not done. Returns \ccc{false} iff no point has been inserted
+  because the algorithm is done. }
 
 \ccMethod{ void init_Gabriel(); }{Analog to
     \ccc{init_Delaunay} for Gabriel conforming.}
 
-\ccMethod{ void step_by_step_conforming_Gabriel (); }{Analog to
+\ccMethod{ bool step_by_step_conforming_Gabriel (); }{Analog to
   \ccc{step_by_step_conforming_Delaunay()} for Gabriel conforming.}
 
 \ccMethod{ bool is_conforming_done(); }
