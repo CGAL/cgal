@@ -23,6 +23,7 @@
 #define CGAL_CARTESIAN_CIRCLE_2_H
 
 #include <CGAL/utility.h>
+#include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Cartesian/predicates_on_points_2.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -231,14 +232,21 @@ CircleC2<R>::opposite() const
 template < class R >
 CGAL_KERNEL_INLINE
 Bbox_2
-CircleC2<R>::bbox() const // FIXME : to_interval()
+CircleC2<R>::bbox() const
 {
-  // Robustness problems.
-  double cx = CGAL::to_double(center().x());
-  double cy = CGAL::to_double(center().y());
-  double radius = CGAL::sqrt(CGAL::to_double(squared_radius()));
+  Bbox_2 b = center().bbox();
 
-  return Bbox_2(cx - radius, cy - radius, cx + radius, cy + radius);
+  Interval_nt<> x (b.xmin(), b.xmax());
+  Interval_nt<> y (b.ymin(), b.ymax());
+
+  Interval_nt<> sqr = CGAL::to_interval(squared_radius());
+  Interval_nt<> r = CGAL::sqrt(sqr);
+  Interval_nt<> minx = x-r;
+  Interval_nt<> maxx = x+r;
+  Interval_nt<> miny = y-r;
+  Interval_nt<> maxy = y+r;
+
+  return Bbox_2(minx.inf(), miny.inf(), maxx.sup(), maxy.sup());
 }
 
 template < class R >
