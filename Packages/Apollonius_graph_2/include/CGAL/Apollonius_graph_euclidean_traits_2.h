@@ -205,7 +205,11 @@ public:
 };
 
 
-
+#if 0
+// I AM REMOVING THE FILTERED KERNEL STUFF SO THAT I DON'T GET ANY
+// PROBLEMS WITH PARTIAL SPECIALIZATION AND ALSO BECAUSE THE CURRENT
+// DEFINITION OF FILTERED KERNEL DOES NOT SUPPORT MORE THAN ONE
+// TEMPLATE ARGUMENT
 
 //-----------------------------------------------------------------------
 // the Traits class for a filtered kernel
@@ -445,6 +449,8 @@ public:
   }
 
 };
+#endif
+
 
 CGAL_END_NAMESPACE
 

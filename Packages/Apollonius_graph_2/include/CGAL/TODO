@@ -1,0 +1,4 @@
+- remove the #if 0/#endif compiler directives from the filtered kernel
+  part of the euclidean traits once the filtered kernel is fixed.
+- make sure that there is no problem the way insertion deletion is
+  done for less than 4 vertices...
