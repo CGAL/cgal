@@ -61,7 +61,7 @@ public:
       ++curves_out = curve;
 
       // Update the bounding box of the arrangement.
-#if KERNEL == LEDA_KERNEL || KERNEL == MY_KERNEL
+#if BENCH_KERNEL == LEDA_KERNEL || BENCH_KERNEL == MY_KERNEL
       double xmin, ymin, xmax, ymax;
       if (p1.xcoord() < p2.xcoord()) {
         xmin = CGAL::to_double(p1.xcoord());

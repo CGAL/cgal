@@ -152,6 +152,7 @@ double_cached_seg_inst:
 
 #
 seg_std_inst: leda_rat_cartesian_seg_inst \
+	leda_kernel_seg_inst \
         leda_rat_simple_cartesian_seg_inst \
 	quotient_mp_float_seg_inst \
 	quotient_cgal_gmpz_seg_inst \
@@ -161,9 +162,8 @@ seg_std_inst: leda_rat_cartesian_seg_inst \
 	lazy_cgal_gmpq_seg_inst \
 	double_seg_inst
 
-#	leda_kernel_seg_inst \
-
 seg_cached_inst: leda_rat_cartesian_cached_seg_inst \
+	cached_seg_leda_kernel_inst \
         leda_rat_simple_cartesian_cached_seg_inst \
 	quotient_mp_float_cached_seg_inst \
 	quotient_cgal_gmpz_cached_seg_inst \
@@ -172,6 +172,4 @@ seg_cached_inst: leda_rat_cartesian_cached_seg_inst \
 	cgal_gmpq_cached_seg_inst \
 	lazy_cgal_gmpq_cached_seg_inst \
 	double_cached_seg_inst
-
-#	cached_seg_leda_kernel_inst \
 
