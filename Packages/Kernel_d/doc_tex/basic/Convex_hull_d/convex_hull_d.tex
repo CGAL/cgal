@@ -1,0 +1,26 @@
+% file doc_tex/basic/ConvexHull/convex_hull_d.tex
+\section{dD Convex Hull}
+\begin{ccPackage}{convex hull, dD}
+  
+The class \ccc{CGAL::Convex_hull_d<R>} is used to represent the
+convex hull of a set of points in $d$-dimensional space.  This class
+supports incremental construction of hulls, and provides a rich
+interface for exploration. There are also output routines for hulls
+of dimension 2 and 3.
+
+The convex hull class is parameterized by a traits class that provides 
+$d$-dimensional data types and predicates.  The class 
+\ccc{Convex_hull_d_traits_3} adapts any low-dimensional standard kernel 
+model \textit{e.g.}, \ccc{Homogeneous<RT>} or \ccc{Cartesian<FT>} for use 
+with \ccc{Convex_hull_d}, where the dimension is fixed to three.
+The validity of the computed convex hull can be checked using the
+member funciton \ccc{is_valid}, which implements the algorithm
+of Mehlhorn \textit{et al.}\cite{mnssssu-cgpvg-96} to determine if
+the vertices of a given polytope constitute a strongly convex point
+set or not.
+  
+The implementation follows the papers \cite{cms:fourresults-93} and
+\cite{BMS:degeneracy-94}.  
+
+\end{ccPackage}
+

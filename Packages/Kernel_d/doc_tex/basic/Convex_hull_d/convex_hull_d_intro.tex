@@ -1,0 +1,21 @@
+\section{Introduction}
+
+A subset $S \subseteq \R^d$ is convex if for any two points $p$ and $q$
+in the set the line segment with endpoints $p$ and $q$ is contained
+in $S$. The convex hull\ccIndexMainItemDef{convex hull} of a set $S$
+is the smallest convex set containing
+$S$. The convex hull of a set of points $P$ is a convex
+polytope with vertices in $P$. A point in $P$ is an extreme point
+(with respect to $P$)\ccIndexMainItemDef{extreme point} if it is a vertex of
+the convex hull of $P$.  A set of points is said to be strongly convex %
+\ccIndexMainItemDef{strongly convex} if it consist of only extreme points.
+
+This chapter describes the class provided in \cgal\ for producing convex 
+hull in arbitrary dimensions. There is an intimate relationship between 
+the Delaunay triangulation of a point set $S$ and the convex hull of 
+\ccc{lift(S)}: The nearest site
+Delaunay triangulation is the projection of the lower hull and the
+furthest site Delaunay triangulation is the upper hull.  Here we also 
+describe the companion class to the convex hull class that computes 
+nearest and furthest site Delaunay triangulations.
+
