@@ -36,5 +36,6 @@
 #include <CGAL/Point_2_Ray_2_intersection.h>
 #include <CGAL/Point_2_Segment_2_intersection.h>
 #include <CGAL/Point_2_Point_2_intersection.h>
+#include <CGAL/Point_2_Triangle_2_intersection.h>
 
 #endif

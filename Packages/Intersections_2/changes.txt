@@ -1,5 +1,6 @@
 22 June 2004 Sylvain Pion
 - Typo spotted by g++ 3.4.
+- Add missing #include<> spotted by g++ 3.4.
 
 20 June 2004 Sylvain Pion
 - Change CGAL::is_finite to CGAL_NTS is_finite.
