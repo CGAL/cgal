@@ -20,12 +20,13 @@
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch> and
 //                 Emo Welzl <emo@inf.ethz.ch>
 //
-// coordinator   : ETH Zurich (Bernd Gaertner <gaertner@inf.ethz.ch>)
+// maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
+// coordinator   : ETH
 //
 // Test Program: Computing minimum enclosing quadrilaterals
 // ============================================================================
 
-#include <CGAL/minimum_enclosing_quadrilateral_2.h>
+#include <CGAL/min_quadrilateral_2.h>
 #include <CGAL/predicates/kernel_ftC2.h>
 #include <functional>
 #include <vector>
@@ -90,12 +91,12 @@ private:
        d.dd.yd * (d.pp1.xc - d.pp3.xc)) *
       (d.dd.yd * (d.pp2.yc - d.pp4.yc) +
        d.dd.xd * (d.pp2.xc - d.pp4.xc)) *
-      (CGAL::square(e.dd.xd) + CGAL::square(e.dd.yd)) <
+      (CGAL_NTS square(e.dd.xd) + CGAL_NTS square(e.dd.yd)) <
       (e.dd.xd * (e.pp3.yc - e.pp1.yc) +
        e.dd.yd * (e.pp1.xc - e.pp3.xc)) *
       (e.dd.yd * (e.pp2.yc - e.pp4.yc) +
        e.dd.xd * (e.pp2.xc - e.pp4.xc)) *
-      (CGAL::square(d.dd.xd) + CGAL::square(d.dd.yd));
+      (CGAL_NTS square(d.dd.xd) + CGAL_NTS square(d.dd.yd));
     }
   };
   struct Area_less_parallelogram_2
@@ -124,9 +125,9 @@ private:
     {
       return
       (d.dd.xd * (d.pp2.yc - d.pp1.yc) + d.dd.yd * (d.pp1.xc - d.pp2.xc)) *
-        (CGAL::square(e.dd.xd) + CGAL::square(e.dd.yd)) <
+        (CGAL_NTS square(e.dd.xd) + CGAL_NTS square(e.dd.yd)) <
       (e.dd.xd * (e.pp2.yc - e.pp1.yc) + e.dd.yd * (e.pp1.xc - e.pp2.xc)) *
-        (CGAL::square(d.dd.xd) + CGAL::square(d.dd.yd));
+        (CGAL_NTS square(d.dd.xd) + CGAL_NTS square(d.dd.yd));
     }
   };
   struct Rotate_direction_by_multiple_of_pi_2
@@ -278,11 +279,11 @@ int main()
 {
   MyTraits t;
   Data d;
-  CGAL::minimum_enclosing_rectangle_2(
+  CGAL::min_rectangle_2(
     d.i.begin(), d.i.end(), std::back_inserter(d.o), t);
-  CGAL::minimum_enclosing_parallelogram_2(
+  CGAL::min_parallelogram_2(
     d.i.begin(), d.i.end(), std::back_inserter(d.o), t);
-  CGAL::minimum_enclosing_strip_2(
+  CGAL::min_strip_2(
     d.i.begin(), d.i.end(), std::back_inserter(d.o), t);
   return 0;
 }

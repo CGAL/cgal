@@ -20,7 +20,8 @@
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch> and
 //                 Emo Welzl <emo@inf.ethz.ch>
 //
-// coordinator   : ETH Zurich (Bernd Gaertner <gaertner@inf.ethz.ch>)
+// maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
+// coordinator   : ETH
 //
 // Demo Program: Computing minimum enclosing quadrilaterals
 // ============================================================================
@@ -37,12 +38,12 @@
 #include <CGAL/Polygon_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/random_convex_set_2.h>
-#include <CGAL/minimum_enclosing_quadrilateral_2.h>
+#include <CGAL/min_quadrilateral_2.h>
 #include <vector>
 #include <iostream>
 
 
-using CGAL::to_double;
+//using CGAL::to_double;
 #include <CGAL/Segment_2.h>
 #include <CGAL/Circle_2.h>
 #include <CGAL/Vector_2.h>
@@ -71,9 +72,9 @@ using CGAL::Polygon_traits_2;
 using CGAL::Creator_uniform_2;
 using CGAL::Random_points_in_square_2;
 using CGAL::random_convex_set_2;
-using CGAL::minimum_enclosing_rectangle_2;
-using CGAL::minimum_enclosing_parallelogram_2;
-using CGAL::minimum_enclosing_strip_2;
+using CGAL::min_rectangle_2;
+using CGAL::min_parallelogram_2;
+using CGAL::min_strip_2;
 using std::back_inserter;
 using std::vector;
 using std::cout;
@@ -120,15 +121,30 @@ public geowin_update< CGALPointlist, list< leda_polygon > > {
     Polygon_2 p;
     convex_hull_points_2(
       pts.vertices_begin(), pts.vertices_end(), back_inserter(p));
+    cout << "convex hull area " << CGAL::to_double(p.area()) << endl;
+    CGAL_assertion(p.is_simple());
+    CGAL_assertion(p.is_convex());
 
     Polygon_2 kg;
     Timer t;
     t.start();
-    minimum_enclosing_rectangle_2(
+    min_rectangle_2(
       p.vertices_begin(), p.vertices_end(), back_inserter(kg));
     t.stop();
-    cout << "min_rectangle area " << to_double(kg.area())
-         << " [time: " << t.time() << " sec.]" << endl;
+    cout << "min_rectangle area "
+         << CGAL::to_double(kg.area())
+         << " [time: " << t.time() << " sec.]"
+         << endl;
+    {
+      CGAL_assertion(kg.is_simple());
+      CGAL_assertion(kg.is_convex());
+      for (Polygon_2::iterator ii = p.vertices_begin();
+           ii != p.vertices_end();
+           ++ii)
+        CGAL_assertion(!kg.has_on_unbounded_side(*ii));
+      CGAL_assertion(kg.area() >= p.area());
+      cout << "convex hull area 2 " << CGAL::to_double(p.area()) << endl;
+    }
     leda_list< leda_point > HLP;
     for (int i = 0; i < kg.size(); ++i)
       HLP.append(convert_to_leda(kg.container()[i]));
@@ -159,15 +175,30 @@ public geowin_update< CGALPointlist, list< leda_polygon > > {
     Polygon_2 p;
     convex_hull_points_2(
       pts.vertices_begin(), pts.vertices_end(), back_inserter(p));
+    cout << "convex hull area " << CGAL::to_double(p.area()) << endl;
+    CGAL_assertion(p.is_simple());
+    CGAL_assertion(p.is_convex());
 
     Polygon_2 kg;
     Timer t;
     t.start();
-    minimum_enclosing_parallelogram_2(
+    min_parallelogram_2(
       p.vertices_begin(), p.vertices_end(), back_inserter(kg));
     t.stop();
-    cout << "min_parallelogram area " << to_double(kg.area())
-         << " [time: " << t.time() << " sec.]" << endl;
+    cout << "min_parallelogram area "
+         << CGAL::to_double(kg.area())
+         << " [time: " << t.time() << " sec.]"
+         << endl;
+    {
+      CGAL_assertion(kg.is_simple());
+      CGAL_assertion(kg.is_convex());
+      for (Polygon_2::iterator ii = p.vertices_begin();
+           ii != p.vertices_end();
+           ++ii)
+        CGAL_assertion(!kg.has_on_unbounded_side(*ii));
+      CGAL_assertion(kg.area() >= p.area());
+      cout << "convex hull area 2 " << CGAL::to_double(p.area()) << endl;
+    }
     leda_list< leda_point > HLP;
     for (int i = 0; i < kg.size(); ++i)
       HLP.append(convert_to_leda(kg.container()[i]));
@@ -203,22 +234,22 @@ public geowin_update< CGALPointlist, list< leda_line > > {
     Linelist ll;
     Timer t;
     t.start();
-    minimum_enclosing_strip_2(
+    min_strip_2(
       p.vertices_begin(), p.vertices_end(), back_inserter(ll));
     t.stop();
     cout << "min_strip width^2 ";
     if (ll.size() > 1)
-      cout << to_double(squared_distance(ll[0], ll[1]));
+      cout << CGAL::to_double(squared_distance(ll[0], ll[1]));
     else
       cout << "undef";
     cout << " [time: " << t.time() << " sec.]" << endl;
     for (Linelist::iterator i = ll.begin(); i != ll.end(); ++i)
       lines.push_back(
         leda_line(
-          leda_point(to_double(i->point(0).x()),
-                     to_double(i->point(0).y())),
-          leda_point(to_double(i->point(1).x()),
-                     to_double(i->point(1).y()))));
+          leda_point(CGAL::to_double(i->point(0).x()),
+                     CGAL::to_double(i->point(0).y())),
+          leda_point(CGAL::to_double(i->point(1).x()),
+                     CGAL::to_double(i->point(1).y()))));
   } // update(pts, lines)
 };
 

@@ -20,7 +20,8 @@
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch> and
 //                 Emo Welzl <emo@inf.ethz.ch>
 //
-// coordinator   : ETH Zurich (Bernd Gaertner <gaertner@inf.ethz.ch>)
+// maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
+// coordinator   : ETH
 //
 // Example Program: Computing a minimum enclosing rectangle
 // ============================================================================
@@ -30,13 +31,13 @@
 #include <CGAL/Polygon_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/random_convex_set_2.h>
-#include <CGAL/minimum_enclosing_quadrilateral_2.h>
+#include <CGAL/min_quadrilateral_2.h>
 #include <vector>
 #include <iostream>
 
 using CGAL::Random_points_in_square_2;
 using CGAL::random_convex_set_2;
-using CGAL::minimum_enclosing_rectangle_2;
+using CGAL::min_rectangle_2;
 using std::back_inserter;
 using std::cout;
 using std::endl;
@@ -59,7 +60,7 @@ int main()
 
   // compute the minimal enclosing rectangle p_m of p
   Polygon_2 p_m;
-  minimum_enclosing_rectangle_2(
+  min_rectangle_2(
     p.vertices_begin(), p.vertices_end(), back_inserter(p_m));
   cout << p_m << endl;
 

@@ -20,7 +20,8 @@
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch> and
 //                 Emo Welzl <emo@inf.ethz.ch>
 //
-// coordinator   : ETH Zurich (Bernd Gaertner <gaertner@inf.ethz.ch>)
+// maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
+// coordinator   : ETH
 //
 // Example Program: Computing a minimum enclosing strip
 // ============================================================================
@@ -30,13 +31,13 @@
 #include <CGAL/Polygon_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/random_convex_set_2.h>
-#include <CGAL/minimum_enclosing_quadrilateral_2.h>
+#include <CGAL/min_quadrilateral_2.h>
 #include <vector>
 #include <iostream>
 
 using CGAL::Random_points_in_square_2;
 using CGAL::random_convex_set_2;
-using CGAL::minimum_enclosing_strip_2;
+using CGAL::min_strip_2;
 using std::back_inserter;
 using std::cout;
 using std::endl;
@@ -59,8 +60,7 @@ int main()
 
   // compute the minimal enclosing strip p_m of p
   Line_2 p_m[2];
-  minimum_enclosing_strip_2(
-    p.vertices_begin(), p.vertices_end(), p_m);
+  min_strip_2(p.vertices_begin(), p.vertices_end(), p_m);
   cout << p_m[0] << "\n" << p_m[1] << endl;
 
   return 0;

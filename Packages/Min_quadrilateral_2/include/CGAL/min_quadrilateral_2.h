@@ -356,22 +356,6 @@ min_parallelogram_2(ForwardIterator f,
   // initialised to the points defining the bounding box
   convex_bounding_box_2(f, l, curr, t);
 
-#ifdef CGAL_TRACE
-  /*
-  ForwardIterator mmix = std::min_element(f, l, t.less_x_2_object());
-  ForwardIterator mmax = std::max_element(f, l, t.less_x_2_object());
-  ForwardIterator mmiy = std::min_element(f, l, t.less_y_2_object());
-  ForwardIterator mmay = std::max_element(f, l, t.less_y_2_object());
-  CGAL_assertion(!t.less_x_2_object()(*mmix, *(curr[0])));
-  CGAL_assertion(!t.less_x_2_object()(*(curr[0]), *mmix));
-  CGAL_assertion(!t.less_x_2_object()(*mmax, *(curr[2])));
-  CGAL_assertion(!t.less_x_2_object()(*(curr[2]), *mmax));
-  CGAL_assertion(!t.less_y_2_object()(*mmiy, *(curr[1])));
-  CGAL_assertion(!t.less_y_2_object()(*(curr[1]), *mmiy));
-  CGAL_assertion(!t.less_y_2_object()(*mmay, *(curr[3])));
-  CGAL_assertion(!t.less_y_2_object()(*(curr[3]), *mmay));
-  */
-#endif
 
   ForwardIterator low   = curr[1];
   ForwardIterator upp   = curr[3];
@@ -501,75 +485,12 @@ min_parallelogram_2(ForwardIterator f,
       t.construct_parallelogram_2_object()(
         *low, next_dir, *right, d_leftright, *upp, *left);
 
-#ifdef CGAL_TRACE
-    {
-      typedef typename
-        std::iterator_traits< ForwardIterator >::value_type Point;
-      typedef Polygon_traits_2< typename Traits::R > P_traits;
-      typedef std::vector< Point >                   Cont;
-      typedef CGAL::Polygon_2< P_traits, Cont >      Polygon_2;
-      Polygon_2 p;
-      t.copy_parallelogram_vertices_2(test_para, std::back_inserter(p));
-      CGAL_assertion(p.is_simple());
-      CGAL_assertion(p.is_convex());
-      cout << "p_area = " << p.area() << endl;
-      for (ForwardIterator ii = f; ii != l; ++ii)
-        CGAL_assertion(!p.has_on_unbounded_side(*ii));
-    }
-#endif // CGAL_TRACE
 
     if (t.area_less_parallelogram_2_object()(test_para, para_so_far))
       para_so_far = test_para;
 
   } // for (;;)
 
-#ifdef CGAL_TRACE
-   typedef typename
-     std::iterator_traits< ForwardIterator >::value_type Point;
-   Point p[4];
-   t.copy_parallelogram_vertices_2(para_so_far, p);
-   leda_window w;
-   w.init(-50, 450, -35);
-   w.display();
-   Ostream_iterator< Point, leda_window > oip(w);
-   //std::ostream_iterator< Point > oipc(std::cerr, "\n");
-   std::copy(f, l, oip);
-   w << YELLOW;
-   w.set_node_width(7);
-   {
-     ForwardIterator ii = curr[0];
-     while (ii != curr[2]) {
-       *oip++ = *ii;
-       if (++ii == l) ii = f;
-     }
-     *oip++ = *ii;
-   }
-   w.set_node_width(5);
-   w << GREEN << para_so_far.p1 << para_so_far.p2
-     << para_so_far.p3 << para_so_far.p4;
-   {
-     typedef typename Traits::Line_2 Line_2;
-     Line_2 l1(para_so_far.p1, para_so_far.d1);
-     Line_2 l2(para_so_far.p2, para_so_far.d2);
-     Line_2 l3(para_so_far.p3, para_so_far.d1);
-     Line_2 l4(para_so_far.p4, para_so_far.d2);
-     if (l1 == l2) cout << "l1 == l2" << endl;
-     if (l1 == l3) cout << "l1 == l3" << endl;
-     if (l1 == l4) cout << "l1 == l4" << endl;
-     w << BLUE << l1 << l2 << l3 << l4;
-   }
-   w.set_node_width(3);
-   w << RED << p[0] << p[1] << p[2] << p[3];
-   w.read_mouse();
-   std::cerr << "ZAP" << std::endl;
-   *o++ = p[0];
-   *o++ = p[1];
-   *o++ = p[2];
-   *o++ = p[3];
-   return o;
- #else
-   return t.copy_parallelogram_vertices_2(para_so_far, o);
- #endif
 
  } // min_parallelogram_2(f, l, o , t)
 template < class ForwardIterator, class OutputIterator, class Traits >

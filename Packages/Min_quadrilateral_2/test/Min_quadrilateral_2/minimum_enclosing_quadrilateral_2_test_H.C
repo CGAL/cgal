@@ -20,7 +20,8 @@
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch> and
 //                 Emo Welzl <emo@inf.ethz.ch>
 //
-// coordinator   : ETH Zurich (Bernd Gaertner <gaertner@inf.ethz.ch>)
+// maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
+// coordinator   : ETH
 //
 // Test Program: Computing minimum enclosing quadrilaterals
 // ============================================================================
@@ -30,7 +31,7 @@
 #include <CGAL/Polygon_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/random_convex_set_2.h>
-#include <CGAL/minimum_enclosing_quadrilateral_2.h>
+#include <CGAL/min_quadrilateral_2.h>
 #include <vector>
 #include <iostream>
 
@@ -39,9 +40,9 @@ using CGAL::Polygon_traits_2;
 using CGAL::Creator_uniform_2;
 using CGAL::Random_points_in_square_2;
 using CGAL::random_convex_set_2;
-using CGAL::minimum_enclosing_rectangle_2;
-using CGAL::minimum_enclosing_parallelogram_2;
-using CGAL::minimum_enclosing_strip_2;
+using CGAL::min_rectangle_2;
+using CGAL::min_parallelogram_2;
+using CGAL::min_strip_2;
 using std::back_inserter;
 using std::vector;
 using std::cout;
@@ -68,20 +69,19 @@ int main()
 
   // compute the minimal enclosing rectangle p_m of p
   Polygon_2 p_r;
-  minimum_enclosing_rectangle_2(
+  min_rectangle_2(
     p.vertices_begin(), p.vertices_end(), back_inserter(p_r));
   cout << "Min_rectangle:\n" << p_r << endl;
 
   // compute the minimal enclosing parallelogram p_p of p
   Polygon_2 p_p;
-  minimum_enclosing_parallelogram_2(
+  min_parallelogram_2(
     p.vertices_begin(), p.vertices_end(), back_inserter(p_p));
   cout << "Min_parallelogram:\n" << p_p << endl;
 
   // compute the minimal enclosing strip p_s of p
   Line_2 lines[2];
-  minimum_enclosing_strip_2(
-    p.vertices_begin(), p.vertices_end(), lines);
+  min_strip_2(p.vertices_begin(), p.vertices_end(), lines);
   cout << "Min_strip:\n" << lines[0] << "\n" << lines[1] << endl;
 
   return 0;
