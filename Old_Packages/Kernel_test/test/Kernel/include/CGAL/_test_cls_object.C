@@ -26,6 +26,25 @@
 
 #include <CGAL/_test_cls_object.h>
 
+// Test that we can derive from Object.
+ 
+class Object_handle
+  : public CGAL::Object
+{
+  typedef CGAL::Object Base;
+public:
+  Object_handle() : Base() {}
+  Object_handle(const CGAL::Object& o) : Base(o) {}
+  Object_handle(const Object_handle& h) : Base(h) {}
+};
+ 
+Object_handle return_obj()
+{
+  Object_handle o;
+  return o;
+}
+
+
 template <class R>
 bool
 _test_cls_object(const R&)
@@ -79,6 +98,10 @@ _test_cls_object(const R&)
   o3 = CGAL::make_object(l31);
   assert(   CGAL::assign( l32, o3 ) );
   assert( ! CGAL::assign( p32, o3 ) );
+
+  // Test that deriving from Object works.
+  Object_handle o;
+  o = return_obj();
 
   std::cout << "done" << std::endl;
   return true;
