@@ -1,6 +1,7 @@
 - Remove the requirement to have a ./.geomview file with (echo "started")
   inside.  Synchronization can probably be done with select() ?
   There are other problems (sleep(1) is needed), so maybe don't touch...
+  It must be backward-compatible...
 - Why not use the OOGL library coming with Geomview to parse stuff ?
 - The remote geomview (with rsh) facility probably doesn't work.
   But is it useful ?
@@ -13,7 +14,10 @@
 - le gv << Triangulation_2 utilise gv << Point_[23] et z=0 le cas echeant.
   Maybe by putting the stream is a state "raw".
 - What to do for Circle_2 ?  Maybe there's some code somewhere, or ask the
-  geomview list.
+  geomview list.  Or do the discretisation ourselves, maybe it's the kernel's
+  job ?  Discretisation for Sphere and Circle should be configurable for the
+  stream.
+- Add test programs for operator<< (Polyhedron, T2D, T3D).
 
 - Make a testsuite (words from Herve):
 <<<<<<<<<<<<<<<<
@@ -38,7 +42,5 @@ Any volunteers?
 --Herve 
 >>>>>>>>>>>>>>>
 
-- Now I think that testing compilation for all kernel (and others) objects
-  output may be already nice, and simple.
-  Maybe we can start geomview with no single window via command line options
-  of environement variables ?
+- Maybe we can start geomview with no single window via command line options
+  of environement variables ?  Let's see how it runs...
