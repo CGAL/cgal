@@ -821,12 +821,6 @@ Packages/ExternalMemoryStructures/doc_tex/ExternalMemoryStructures/ExternalMemor
 Packages/ExternalMemoryStructures/doc_tex/ExternalMemoryStructures/rtree-classes4.eps -text
 Packages/ExternalMemoryStructures/doc_tex/ExternalMemoryStructures/rtree-classes4.fig -text
 Packages/ExternalMemoryStructures/doc_tex/ExternalMemoryStructures/rtree-classes4.gif -text svneol=unset#unset
-Packages/ExternalMemoryStructures/doc_tex/basic/ExternalMemoryStructures/ExternalMemoryStructures_ref/rtree-classes4.eps -text
-Packages/ExternalMemoryStructures/doc_tex/basic/ExternalMemoryStructures/ExternalMemoryStructures_ref/rtree-classes4.fig -text
-Packages/ExternalMemoryStructures/doc_tex/basic/ExternalMemoryStructures/ExternalMemoryStructures_ref/rtree-classes4.gif -text svneol=unset#unset
-Packages/ExternalMemoryStructures/doc_tex/basic/ExternalMemoryStructures/rtree-classes4.eps -text
-Packages/ExternalMemoryStructures/doc_tex/basic/ExternalMemoryStructures/rtree-classes4.fig -text
-Packages/ExternalMemoryStructures/doc_tex/basic/ExternalMemoryStructures/rtree-classes4.gif -text svneol=unset#unset
 Packages/Generator/demo/Generator/generator.vcproj -text
 Packages/Generator/doc_tex/Generator/Segment_generator_prog1.gif -text svneol=unset#unset
 Packages/Generator/doc_tex/Generator/Segment_generator_prog1.ps -text
@@ -869,30 +863,12 @@ Packages/HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/euler_loop.ips -text
 Packages/HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.ips -text
 Packages/HalfedgeDS/doc_tex/HalfedgeDS_ref/hds_optional.gif -text svneol=unset#unset
 Packages/HalfedgeDS/doc_tex/HalfedgeDS_ref/hds_optional_small.gif -text svneol=unset#unset
-Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS/fig/halfedge.ips -text
-Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS/fig/hds_design.ips -text
-Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS/fig/loop.ips -text
-Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS/halfedge.gif -text svneol=unset#unset
-Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS/halfedge_small.gif -text svneol=unset#unset
-Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS/hds_design_col.gif -text svneol=unset#unset
-Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS/loop.gif -text svneol=unset#unset
-Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS_ref/euler_center.gif -text svneol=unset#unset
-Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS_ref/euler_face.gif -text svneol=unset#unset
-Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS_ref/euler_loop.gif -text svneol=unset#unset
-Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS_ref/euler_vertex.gif -text svneol=unset#unset
-Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS_ref/fig/euler_center.ips -text
-Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS_ref/fig/euler_hds.ips -text
-Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS_ref/fig/euler_loop.ips -text
-Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS_ref/fig/hds_optional.ips -text
-Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS_ref/hds_optional.gif -text svneol=unset#unset
-Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS_ref/hds_optional_small.gif -text svneol=unset#unset
 Packages/Installation/doc_tex/installation/Fig/a-simp.ipe -text
 Packages/Installation/doc_tex/installation/Fig/c-simp.ipe -text
 Packages/Installation/doc_tex/installation/Fig/g-simp.ipe -text
 Packages/Installation/doc_tex/installation/Fig/l-simp.ipe -text
 Packages/Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#unset
 Packages/Interpolation/doc_tex/Interpolation/nn_coords.ipe -text
-Packages/Interpolation/doc_tex/basic/Interpolation/nn_coords.gif svneol=native#unset
 Packages/Kernel_23/doc_tex/kernel/IsoCuboid.eps -text
 Packages/Kernel_23/doc_tex/kernel/IsoCuboid.gif -text svneol=unset#unset
 Packages/Kernel_23/doc_tex/kernel/arrlinthree.gif -text svneol=unset#unset
@@ -1244,8 +1220,6 @@ Packages/Manual_tools/src/latex_converter_config/gif/index_arrow.gif -text svneo
 Packages/Manual_tools/src/mstring.doc -text
 Packages/Map_overlay_2/doc_tex/Map_overlay_2/overlay_example.eps -text
 Packages/Map_overlay_2/doc_tex/Map_overlay_2/simple_overlay.eps -text
-Packages/Map_overlay_2/doc_tex/basic/Map_overlay_2/overlay_example.eps -text
-Packages/Map_overlay_2/doc_tex/basic/Map_overlay_2/simple_overlay.eps -text
 Packages/Matrix_search/demo/Matrix_search/max_k-gon.vcproj -text
 Packages/Matrix_search/demo/Matrix_search/rectangular_p_center_2.vcproj -text
 Packages/Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_pcenter1.gif -text svneol=unset#unset
@@ -1261,19 +1235,6 @@ Packages/Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_totmon2.gif -text s
 Packages/Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_totmon3.gif -text svneol=unset#unset
 Packages/Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_totmon4.gif -text svneol=unset#unset
 Packages/Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_totmon5.gif -text svneol=unset#unset
-Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_pcenter1.gif -text svneol=unset#unset
-Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_pcenter2.gif -text svneol=unset#unset
-Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_pcenter3.gif -text svneol=unset#unset
-Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_pcenter4.gif -text svneol=unset#unset
-Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_sorted1.gif -text svneol=unset#unset
-Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_sorted2.gif -text svneol=unset#unset
-Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_sorted3.gif -text svneol=unset#unset
-Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_sorted4.gif -text svneol=unset#unset
-Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_totmon1.gif -text svneol=unset#unset
-Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_totmon2.gif -text svneol=unset#unset
-Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_totmon3.gif -text svneol=unset#unset
-Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_totmon4.gif -text svneol=unset#unset
-Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_totmon5.gif -text svneol=unset#unset
 Packages/Mesh_2/bench/data/square-deforme.poly -text
 Packages/Mesh_2/bench/data/square.poly -text
 Packages/Mesh_2/demo/Mesh_2/contraints.xpm -text
@@ -1283,7 +1244,6 @@ Packages/Mesh_2/demo/Mesh_2/marked.xpm -text
 Packages/Mesh_2/demo/Mesh_2/seeds.xpm -text
 Packages/Mesh_2/doc_tex/Mesh_2_ref/part_of_a_cluster.eps -text
 Packages/Mesh_2/doc_tex/Mesh_2_ref/part_of_a_cluster.gif -text svneol=unset#unset
-Packages/Mesh_2/doc_tex/basic/Mesh_2_ref/part_of_a_cluster.gif svneol=native#unset
 Packages/Min_circle_2/demo/Min_circle_2/min_circle_2.vcproj -text
 Packages/Min_ellipse_2/demo/Min_ellipse_2/min_ellipse_2.vcproj -text
 Packages/Min_quadrilateral_2/demo/Min_quadrilateral_2/min_quadrilateral_2.vcproj -text
@@ -1342,12 +1302,6 @@ Packages/Nef_2/doc_tex/Nef_2/halfplane.gif -text svneol=unset#unset
 Packages/Nef_2/doc_tex/Nef_2/halfplane.ps -text
 Packages/Nef_2/doc_tex/Nef_2_ref/extsegs.eps -text
 Packages/Nef_2/doc_tex/Nef_2_ref/extsegs.gif -text svneol=unset#unset
-Packages/Nef_2/doc_tex/basic/Nef_2/complex.gif -text svneol=unset#unset
-Packages/Nef_2/doc_tex/basic/Nef_2/complex.ps -text
-Packages/Nef_2/doc_tex/basic/Nef_2/halfplane.gif -text svneol=unset#unset
-Packages/Nef_2/doc_tex/basic/Nef_2/halfplane.ps -text
-Packages/Nef_2/doc_tex/basic/Nef_2_ref/extsegs.eps -text
-Packages/Nef_2/doc_tex/basic/Nef_2_ref/extsegs.gif -text svneol=unset#unset
 Packages/Nef_3/demo/Nef_3/cube.off -text
 Packages/Nef_3/demo/Nef_3/cube2.off -text
 Packages/Nef_3/demo/Nef_3/cube3.off -text
@@ -1363,10 +1317,6 @@ Packages/Nef_S2/doc_tex/Nef_S2/complex.gif -text svneol=unset#unset
 Packages/Nef_S2/doc_tex/Nef_S2/complex.ps -text
 Packages/Nef_S2/doc_tex/Nef_S2/halfspace.gif -text svneol=unset#unset
 Packages/Nef_S2/doc_tex/Nef_S2/halfspace.ps -text
-Packages/Nef_S2/doc_tex/basic/Nef_S2/complex.gif -text svneol=unset#unset
-Packages/Nef_S2/doc_tex/basic/Nef_S2/complex.ps -text
-Packages/Nef_S2/doc_tex/basic/Nef_S2/halfspace.gif -text svneol=unset#unset
-Packages/Nef_S2/doc_tex/basic/Nef_S2/halfspace.ps -text
 Packages/Optimisation_doc/doc_tex/Optimisation/annulus.eps -text
 Packages/Optimisation_doc/doc_tex/Optimisation/annulus.gif -text svneol=unset#unset
 Packages/Optimisation_doc/doc_tex/Optimisation/ball.eps -text
@@ -1379,18 +1329,6 @@ Packages/Optimisation_doc/doc_tex/Optimisation/pcenter.eps -text
 Packages/Optimisation_doc/doc_tex/Optimisation/pcenter.gif -text svneol=unset#unset
 Packages/Optimisation_doc/doc_tex/Optimisation/polydist.eps -text
 Packages/Optimisation_doc/doc_tex/Optimisation/polydist.gif -text svneol=unset#unset
-Packages/Optimisation_doc/doc_tex/basic/Optimisation/annulus.eps -text
-Packages/Optimisation_doc/doc_tex/basic/Optimisation/annulus.gif -text svneol=unset#unset
-Packages/Optimisation_doc/doc_tex/basic/Optimisation/ball.eps -text
-Packages/Optimisation_doc/doc_tex/basic/Optimisation/ball.gif -text svneol=unset#unset
-Packages/Optimisation_doc/doc_tex/basic/Optimisation/largestEmptyRect.eps -text
-Packages/Optimisation_doc/doc_tex/basic/Optimisation/largestEmptyRect.gif -text svneol=unset#unset
-Packages/Optimisation_doc/doc_tex/basic/Optimisation/max_triangle.eps -text
-Packages/Optimisation_doc/doc_tex/basic/Optimisation/max_triangle.gif -text svneol=unset#unset
-Packages/Optimisation_doc/doc_tex/basic/Optimisation/pcenter.eps -text
-Packages/Optimisation_doc/doc_tex/basic/Optimisation/pcenter.gif -text svneol=unset#unset
-Packages/Optimisation_doc/doc_tex/basic/Optimisation/polydist.eps -text
-Packages/Optimisation_doc/doc_tex/basic/Optimisation/polydist.gif -text svneol=unset#unset
 Packages/PS_Stream/doc_tex/PS_Stream/exemple.ps -text
 Packages/PS_Stream/doc_tex/PS_Stream/style.ps -text
 Packages/PS_Stream/doc_tex/support/PS_Stream/exemple.ps -text
@@ -1400,10 +1338,6 @@ Packages/Partition_2/doc_tex/Partition_2/Idar-Oberstein.appx_cvx.gif -text svneo
 Packages/Partition_2/doc_tex/Partition_2/Idar-Oberstein.appx_cvx.ps -text
 Packages/Partition_2/doc_tex/Partition_2/Trier.opt_cvx.gif -text svneol=unset#unset
 Packages/Partition_2/doc_tex/Partition_2/Trier.opt_cvx.ps -text
-Packages/Partition_2/doc_tex/basic/Partition_2/Idar-Oberstein.appx_cvx.gif -text svneol=unset#unset
-Packages/Partition_2/doc_tex/basic/Partition_2/Idar-Oberstein.appx_cvx.ps -text
-Packages/Partition_2/doc_tex/basic/Partition_2/Trier.opt_cvx.gif -text svneol=unset#unset
-Packages/Partition_2/doc_tex/basic/Partition_2/Trier.opt_cvx.ps -text
 Packages/Planar_map/doc_tex/Planar_map/example_p.gif -text svneol=unset#unset
 Packages/Planar_map/doc_tex/Planar_map/example_p.ps -text
 Packages/Planar_map/doc_tex/Planar_map/face.gif -text svneol=unset#unset
@@ -1419,26 +1353,9 @@ Packages/Planar_map/doc_tex/Topological_map/my_face.gif -text svneol=unset#unset
 Packages/Planar_map/doc_tex/Topological_map/my_face.ipe -text
 Packages/Planar_map/doc_tex/Topological_map_ref/dcel.gif -text svneol=unset#unset
 Packages/Planar_map/doc_tex/Topological_map_ref/dcel.ipe -text
-Packages/Planar_map/doc_tex/basic/Planar_map/example_p.gif -text svneol=unset#unset
-Packages/Planar_map/doc_tex/basic/Planar_map/example_p.ps -text
-Packages/Planar_map/doc_tex/basic/Planar_map/face.gif -text svneol=unset#unset
-Packages/Planar_map/doc_tex/basic/Planar_map/face.ipe -text
-Packages/Planar_map/doc_tex/basic/Planar_map/insert_at.fig -text
-Packages/Planar_map/doc_tex/basic/Planar_map/insert_at.gif -text svneol=unset#unset
-Packages/Planar_map/doc_tex/basic/Planar_map/insert_at.ps -text
-Packages/Planar_map/doc_tex/basic/Planar_map/pm_ray_shoot.gif -text svneol=unset#unset
-Packages/Planar_map/doc_tex/basic/Planar_map/pm_ray_shoot.ps -text
-Packages/Planar_map/doc_tex/basic/Topological_map/dcel.gif -text svneol=unset#unset
-Packages/Planar_map/doc_tex/basic/Topological_map/dcel.ipe -text
-Packages/Planar_map/doc_tex/basic/Topological_map/my_face.gif -text svneol=unset#unset
-Packages/Planar_map/doc_tex/basic/Topological_map/my_face.ipe -text
-Packages/Planar_map/doc_tex/basic/Topological_map_ref/dcel.gif -text svneol=unset#unset
-Packages/Planar_map/doc_tex/basic/Topological_map_ref/dcel.ipe -text
 Packages/Polygon/demo/Polygon/polygon_2.vcproj -text
 Packages/Polygon/doc_tex/Polygon/pgn_algos.gif -text svneol=unset#unset
 Packages/Polygon/doc_tex/Polygon/pgn_algos.ipe -text
-Packages/Polygon/doc_tex/basic/Polygon/pgn_algos.gif -text svneol=unset#unset
-Packages/Polygon/doc_tex/basic/Polygon/pgn_algos.ipe -text
 Packages/Polyhedron/doc_tex/Polyhedron/fig/add_facet.ips -text
 Packages/Polyhedron/doc_tex/Polyhedron/fig/euler.ips -text
 Packages/Polyhedron/doc_tex/Polyhedron/fig/euler_center.ips -text
@@ -1479,46 +1396,6 @@ Packages/Polyhedron/doc_tex/Polyhedron_ref/halfedge.gif -text svneol=unset#unset
 Packages/Polyhedron/doc_tex/Polyhedron_ref/halfedge_small.gif -text svneol=unset#unset
 Packages/Polyhedron/doc_tex/Polyhedron_ref/poly_optional.gif -text svneol=unset#unset
 Packages/Polyhedron/doc_tex/Polyhedron_ref/poly_optional_small.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/basic/Polyhedron/fig/add_facet.ips -text
-Packages/Polyhedron/doc_tex/basic/Polyhedron/fig/euler.ips -text
-Packages/Polyhedron/doc_tex/basic/Polyhedron/fig/euler_center.ips -text
-Packages/Polyhedron/doc_tex/basic/Polyhedron/fig/euler_loop.ips -text
-Packages/Polyhedron/doc_tex/basic/Polyhedron/fig/halfedge.ips -text
-Packages/Polyhedron/doc_tex/basic/Polyhedron/fig/make_cube.ips -text
-Packages/Polyhedron/doc_tex/basic/Polyhedron/fig/poly_optional.ips -text
-Packages/Polyhedron/doc_tex/basic/Polyhedron/fig/shark.ps -text
-Packages/Polyhedron/doc_tex/basic/Polyhedron/fig/subdiv.ppm -text
-Packages/Polyhedron/doc_tex/basic/Polyhedron/fig/subdiv.ps -text
-Packages/Polyhedron/doc_tex/basic/Polyhedron/halfedge.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/basic/Polyhedron/halfedge_small.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/basic/Polyhedron/idraw/add_facet.ips -text
-Packages/Polyhedron/doc_tex/basic/Polyhedron/idraw/euler.ips -text
-Packages/Polyhedron/doc_tex/basic/Polyhedron/idraw/euler_loop.ips -text
-Packages/Polyhedron/doc_tex/basic/Polyhedron/idraw/halfedge.ips -text
-Packages/Polyhedron/doc_tex/basic/Polyhedron/idraw/halfedge_methods.ips -text
-Packages/Polyhedron/doc_tex/basic/Polyhedron/idraw/poly_optional.ips -text
-Packages/Polyhedron/doc_tex/basic/Polyhedron/idraw/polyhedron.ips -text
-Packages/Polyhedron/doc_tex/basic/Polyhedron/idraw/shark.ps -text
-Packages/Polyhedron/doc_tex/basic/Polyhedron/make_cube.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/basic/Polyhedron/shark.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/basic/Polyhedron/subdiv.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/basic/Polyhedron/subdiv_small.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/add_facet1.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/add_facet2.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/euler_center.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/euler_facet.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/euler_loop.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/euler_vertex.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/fig/add_facet.ips -text
-Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/fig/euler.ips -text
-Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/fig/euler_center.ips -text
-Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/fig/euler_loop.ips -text
-Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/fig/halfedge.ips -text
-Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/fig/poly_optional.ips -text
-Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/halfedge.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/halfedge_small.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/poly_optional.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/poly_optional_small.gif -text svneol=unset#unset
 Packages/Polyhedron/examples/Polyhedron/corner.off -text
 Packages/Polyhedron/examples/Polyhedron/corner_with_hole.off -text
 Packages/Polyhedron/examples/Polyhedron/corner_with_sharp_edge.off -text
@@ -1592,48 +1469,20 @@ Packages/SearchStructures/doc_tex/SearchStructures_ref/segment_ex2.eps -text
 Packages/SearchStructures/doc_tex/SearchStructures_ref/segment_ex2.gif -text svneol=unset#unset
 Packages/SearchStructures/doc_tex/SearchStructures_ref/segment_ex4.eps -text
 Packages/SearchStructures/doc_tex/SearchStructures_ref/segment_ex4.gif -text svneol=unset#unset
-Packages/SearchStructures/doc_tex/basic/SearchStructures/d-range.eps -text
-Packages/SearchStructures/doc_tex/basic/SearchStructures/d-range.gif -text svneol=unset#unset
-Packages/SearchStructures/doc_tex/basic/SearchStructures/d-segment.eps -text
-Packages/SearchStructures/doc_tex/basic/SearchStructures/d-segment.gif -text svneol=unset#unset
-Packages/SearchStructures/doc_tex/basic/SearchStructures/range2.eps -text
-Packages/SearchStructures/doc_tex/basic/SearchStructures/range2.gif -text svneol=unset#unset
-Packages/SearchStructures/doc_tex/basic/SearchStructures/rangesegmentdesign.eps -text
-Packages/SearchStructures/doc_tex/basic/SearchStructures/rsd.eps -text
-Packages/SearchStructures/doc_tex/basic/SearchStructures/rsd.gif -text svneol=unset#unset
-Packages/SearchStructures/doc_tex/basic/SearchStructures/segment2.eps -text
-Packages/SearchStructures/doc_tex/basic/SearchStructures/segment2.gif -text svneol=unset#unset
-Packages/SearchStructures/doc_tex/basic/SearchStructures/segment_ex2.eps -text
-Packages/SearchStructures/doc_tex/basic/SearchStructures/segment_ex2.gif -text svneol=unset#unset
-Packages/SearchStructures/doc_tex/basic/SearchStructures/segment_ex4.eps -text
-Packages/SearchStructures/doc_tex/basic/SearchStructures/segment_ex4.gif -text svneol=unset#unset
-Packages/SearchStructures/doc_tex/basic/SearchStructures_ref/segment_ex2.eps -text
-Packages/SearchStructures/doc_tex/basic/SearchStructures_ref/segment_ex2.gif -text svneol=unset#unset
-Packages/SearchStructures/doc_tex/basic/SearchStructures_ref/segment_ex4.eps -text
-Packages/SearchStructures/doc_tex/basic/SearchStructures_ref/segment_ex4.gif -text svneol=unset#unset
 Packages/Segment_Voronoi_diagram_2/demo/Segment_Voronoi_diagram_2/filenew.xpm -text
 Packages/Segment_Voronoi_diagram_2/demo/Segment_Voronoi_diagram_2/fileopen.xpm -text
 Packages/Segment_Voronoi_diagram_2/demo/Segment_Voronoi_diagram_2/fileprint.xpm -text
 Packages/Segment_Voronoi_diagram_2/demo/Segment_Voronoi_diagram_2/filesave.xpm -text
 Packages/Segment_Voronoi_diagram_2/doc_tex/Segment_Voronoi_diagram_2_ref/join_split.gif svneol=native#unset
-Packages/Segment_Voronoi_diagram_2/doc_tex/basic/Segment_Voronoi_diagram_2_ref/join_split.gif svneol=native#unset
 Packages/Snap_rounding_2/doc_tex/Snap_rounding_2/isr_vs_sr.gif -text svneol=unset#unset
 Packages/Snap_rounding_2/doc_tex/Snap_rounding_2/isr_vs_sr.ps -text
 Packages/Snap_rounding_2/doc_tex/Snap_rounding_2/sr1.gif -text svneol=unset#unset
 Packages/Snap_rounding_2/doc_tex/Snap_rounding_2/sr1.ps -text
-Packages/Snap_rounding_2/doc_tex/basic/Snap_rounding_2/isr_vs_sr.gif -text svneol=unset#unset
-Packages/Snap_rounding_2/doc_tex/basic/Snap_rounding_2/isr_vs_sr.ps -text
-Packages/Snap_rounding_2/doc_tex/basic/Snap_rounding_2/sr1.gif -text svneol=unset#unset
-Packages/Snap_rounding_2/doc_tex/basic/Snap_rounding_2/sr1.ps -text
 Packages/Spatial_searching/demo/Spatial_searching/spatial_searching.vcproj -text
 Packages/Spatial_searching/doc_tex/Spatial_searching/Fig1.gif -text svneol=unset#unset
 Packages/Spatial_searching/doc_tex/Spatial_searching/Fig1.ps -text
-Packages/Spatial_searching/doc_tex/basic/Spatial_searching/Fig1.gif -text svneol=unset#unset
-Packages/Spatial_searching/doc_tex/basic/Spatial_searching/Fig1.ps -text
 Packages/Sweep_line_2/doc_tex/Sweep_line_2/sl_simple.gif -text svneol=unset#unset
 Packages/Sweep_line_2/doc_tex/Sweep_line_2/sl_simple.ps -text
-Packages/Sweep_line_2/doc_tex/basic/Sweep_line_2/sl_simple.gif -text svneol=unset#unset
-Packages/Sweep_line_2/doc_tex/basic/Sweep_line_2/sl_simple.ps -text
 Packages/Triangulation_2/demo/Triangulation_2/constrained_delaunay_triangulation_2.vcproj -text
 Packages/Triangulation_2/demo/Triangulation_2/delaunay_triangulation_2.vcproj -text
 Packages/Triangulation_2/demo/Triangulation_2/help/cinput_point_layer.gif -text svneol=unset#unset
@@ -1727,88 +1576,6 @@ Packages/Triangulation_2/doc_tex/Triangulation_2_ref/insert3.gif -text svneol=un
 Packages/Triangulation_2/doc_tex/Triangulation_2_ref/neighbors.gif -text svneol=unset#unset
 Packages/Triangulation_2/doc_tex/Triangulation_2_ref/remove.gif -text svneol=unset#unset
 Packages/Triangulation_2/doc_tex/Triangulation_2_ref/walk.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/TDS_2/Flip.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/TDS_2/Three.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/TDS_2/flip.ltex -text
-Packages/Triangulation_2/doc_tex/basic/TDS_2/insert.ltex -text
-Packages/Triangulation_2/doc_tex/basic/TDS_2/rep_bis.eps -text
-Packages/Triangulation_2/doc_tex/basic/TDS_2/rep_bis.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/TDS_2/threelevels2.eps -text
-Packages/Triangulation_2/doc_tex/basic/TDS_2/threelevels2.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/TDS_2_ref/Flip.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/TDS_2_ref/Three.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/Embedding.ipe -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/Flip.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/Flip.ipe -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/Infinite_circles.ipe -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/Infinite_triangles.ipe -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/Infinite_vertices.ipe -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/Linfinity.ipe -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/Neighbor_number.ipe -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/Three.ipe -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/Two.ipe -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/cc_advanced_begin.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/cc_advanced_end.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/cc_ref_up_arrow.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/constraints.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/constraints.ipe -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/degenerate.ipe -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/del_poisson.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/del_poisson.ps -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/derivation_tree.eps -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/derivation_tree.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/dt1.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/dt1.ps -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/dt2.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/empty.ipe -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/flip.ltex -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/incident_fc.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/infinite.eps -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/infinite.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/insert.ltex -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/insert1.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/insert1.ltex -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/insert2.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/insert2.ltex -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/insert3.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/insert3.ltex -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/map.ipe -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/neighbor.ipe -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/neighbor2.ipe -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/neighbors.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/neighbors.ltex -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/point.ipe -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/poisson.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/poisson.ps -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/polygon.ipe -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/remove.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/remove.ltex -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/rep_bis.eps -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/rep_bis.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/threelevels.eps -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/threelevels.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/threelevels2.eps -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/threelevels2.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/tr1.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/tr1.ps -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/trapezoid.ipe -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/valid1.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/valid1.ipe -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/valid2.ipe -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/valid3.ipe -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/vertical.ipe -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/walk.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/walk.ipe -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/walls.ipe -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2_ref/constraints.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2_ref/infinite_vertex.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2_ref/infinite_vertex.ipe -text
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2_ref/insert1.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2_ref/insert2.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2_ref/insert3.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2_ref/neighbors.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2_ref/remove.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2_ref/walk.gif -text svneol=unset#unset
 Packages/Triangulation_3/doc_tex/TriangulationDS_3/comborient.eps -text
 Packages/Triangulation_3/doc_tex/TriangulationDS_3/comborient.gif -text svneol=unset#unset
 Packages/Triangulation_3/doc_tex/TriangulationDS_3/comborient.ipe -text
@@ -1880,77 +1647,6 @@ Packages/Triangulation_3/doc_tex/Triangulation_3_ref/insert_outside_convex_hull.
 Packages/Triangulation_3/doc_tex/Triangulation_3_ref/insert_outside_convex_hull.gif -text svneol=unset#unset
 Packages/Triangulation_3/doc_tex/Triangulation_3_ref/sidedim2.eps -text
 Packages/Triangulation_3/doc_tex/Triangulation_3_ref/sidedim2.gif -text svneol=unset#unset
-Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/comborient.eps -text
-Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/comborient.gif -text svneol=unset#unset
-Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/comborient.ipe -text
-Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/design_tds.eps -text
-Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/design_tds.fig -text
-Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/design_tds.gif -text svneol=unset#unset
-Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/flips.eps -text
-Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/flips.gif -text svneol=unset#unset
-Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/flips.ipe -text
-Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/repres.eps -text
-Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/repres.gif -text svneol=unset#unset
-Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/repres.ipe -text
-Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/topo-simplex2.eps -text
-Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/topo-simplex2.gif -text svneol=unset#unset
-Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/topo-simplex2.ipe -text
-Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/topo-simplex3.eps -text
-Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/topo-simplex3.gif -text svneol=unset#unset
-Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/topo-simplex3.ipe -text
-Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/topo-simplex4.eps -text
-Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/topo-simplex4.gif -text svneol=unset#unset
-Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/topo-simplex4.ipe -text
-Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3_ref/flips.eps -text
-Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3_ref/flips.gif -text svneol=unset#unset
-Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3_ref/topo-insert_outside_affine_hull.eps -text
-Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3_ref/topo-insert_outside_affine_hull.gif -text svneol=unset#unset
-Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3_ref/topo-insert_outside_affine_hull.ipe -text
-Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3_ref/utils.eps -text
-Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3_ref/utils.gif -text svneol=unset#unset
-Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3_ref/utils.ipe -text
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3/concept_hierarchy.eps -text
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3/concept_hierarchy.fig -text
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3/concept_hierarchy.gif -text svneol=unset#unset
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3/derivation.eps -text
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3/derivation.fig -text
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3/derivation.gif -text svneol=unset#unset
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3/design.eps -text
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3/design.fig -text
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3/design.gif -text svneol=unset#unset
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3/grid.eps -text
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3/grid.gif -text svneol=unset#unset
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3/insert_outside_affine_hull.eps -text
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3/insert_outside_affine_hull.gif -text svneol=unset#unset
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3/insert_outside_affine_hull.ipe -text
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3/insert_outside_convex_hull.eps -text
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3/insert_outside_convex_hull.gif -text svneol=unset#unset
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3/insert_outside_convex_hull.ipe -text
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3/orient.eps -text
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3/orient.gif -text svneol=unset#unset
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3/orient.ipe -text
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3/ortho.eps -text
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3/ortho.gif -text svneol=unset#unset
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3/ortho.ipe -text
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3/remimpos.eps -text
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3/remimpos.gif -text svneol=unset#unset
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3/remimpos.ipe -text
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3/sidedim2.eps -text
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3/sidedim2.gif -text svneol=unset#unset
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3/sidedim2.ipe -text
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3/sphere.eps -text
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3/sphere.gif -text svneol=unset#unset
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3/topo-insert_outside_affine_hull.eps -text
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3/topo-insert_outside_affine_hull.gif -text svneol=unset#unset
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3/topo-insert_outside_affine_hull.ipe -text
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3_ref/flips.eps -text
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3_ref/flips.gif -text svneol=unset#unset
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3_ref/insert_outside_affine_hull.eps -text
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3_ref/insert_outside_affine_hull.gif -text svneol=unset#unset
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3_ref/insert_outside_convex_hull.eps -text
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3_ref/insert_outside_convex_hull.gif -text svneol=unset#unset
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3_ref/sidedim2.eps -text
-Packages/Triangulation_3/doc_tex/basic/Triangulation_3_ref/sidedim2.gif -text svneol=unset#unset
 Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/.xvpics/rock.bmp -text svneol=unset#unset
 Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/antialiasing.ico -text svneol=unset#unset
 Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/antialiasing.xpm -text
