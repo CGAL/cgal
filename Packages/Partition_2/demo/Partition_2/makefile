@@ -14,7 +14,7 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
            -I./include \
-           -pedantic -I../../include \
+           -pedantic \
            $(CGAL_CXXFLAGS) \
            -g
 
