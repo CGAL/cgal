@@ -439,7 +439,7 @@ operator+( typename N_step_adaptor_derived<I,N>::difference_type n,
 template < class I, class P, class Ref, class Ptr,
            class Val, class Dist, class Ctg >
 #else
-#ifdef __SUNPRO_CC
+#ifndef __SUNPRO_CC
 template < class I,
            class P,
            class Ref  = CGAL_TYPENAME_MSVC_NULL
