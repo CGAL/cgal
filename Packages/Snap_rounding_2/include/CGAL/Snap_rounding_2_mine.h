@@ -313,6 +313,8 @@ private:
   NT delta;
   // @@@@ end for isrs
 
+  int NUMBER_OF_HP;
+
   void find_hot_pixels_and_create_kd_trees();
 
   //@@@@ next functions for isrs
@@ -338,6 +340,7 @@ private:
         std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list);
   bool negative_slope(const Segment_2& s);
   bool positive_slope(const Segment_2& s);
+  bool not_hot_pixel(Hot_Pixel<Rep_> *hp,std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list);
   void heat_pixel_up_right(const Point_2& p,const Segment_2& s,std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list);
   void heat_pixel_down_right(const Point_2& p,const Segment_2& s,std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list);
   void heat_pixel_up_left(const Point_2& p,const Segment_2& s,std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list);
@@ -1093,6 +1096,19 @@ bool Snap_rounding_2<Rep_>::triangle_empty_down_left(const Segment_2& s,const Po
 
 // @@@@ a function for ISRS
 template<class Rep_>
+bool Snap_rounding_2<Rep_>::not_hot_pixel(Hot_Pixel<Rep_> *hp,std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list)
+{
+  for(typename std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >::const_iterator iter = hot_pixels_list.begin();
+      iter != hot_pixels_list.end();++iter) {
+    if(hp->get_center() == iter->first)
+      return(false);
+  }
+
+  return(true);
+}
+
+// @@@@ a function for ISRS
+template<class Rep_>
 void Snap_rounding_2<Rep_>::heat_pixel_up_right(const Point_2& p,const Segment_2& s,std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list)
 {
   Object result;
@@ -1121,11 +1137,15 @@ void Snap_rounding_2<Rep_>::heat_pixel_up_right(const Point_2& p,const Segment_2
       #endif
       // heat the resective pixel and insert it to hot_pixels_list
       Hot_Pixel<Rep_> *hp = new Hot_Pixel<Rep_>(inter_p,pixel_size);
-      hot_pixels_list.push_back(std::pair<Point_2,Hot_Pixel<Rep_> *>(
- 				hp->get_center(),hp));
+      if(not_hot_pixel(hp,hot_pixels_list)) {
+        hot_pixels_list.push_back(std::pair<Point_2,Hot_Pixel<Rep_> *>(
+ 	  			hp->get_center(),hp));
+        ++NUMBER_OF_HP;
+      } else
+        delete hp;
     } else {
       std::cout << "error 31\n";
-      exit(-1);
+      //exit(-1);
     }
   } else {
     std::cout << "error 4\n";
@@ -1163,11 +1183,15 @@ void Snap_rounding_2<Rep_>::heat_pixel_down_right(const Point_2& p,const Segment
       #endif
       // heat the resective pixel and insert it to hot_pixels_list
       Hot_Pixel<Rep_> *hp = new Hot_Pixel<Rep_>(inter_p,pixel_size);
-      hot_pixels_list.push_back(std::pair<Point_2,Hot_Pixel<Rep_> *>(
- 				hp->get_center(),hp));
+      if(not_hot_pixel(hp,hot_pixels_list)) {
+        hot_pixels_list.push_back(std::pair<Point_2,Hot_Pixel<Rep_> *>(
+ 	  			hp->get_center(),hp));
+        ++NUMBER_OF_HP;
+      } else
+        delete hp;
     } else {
       std::cout << "error 31\n";
-      exit(-1);
+      //exit(-1);
     }
   } else {
     std::cout << "error 4\n";
@@ -1205,11 +1229,16 @@ void Snap_rounding_2<Rep_>::heat_pixel_up_left(const Point_2& p,const Segment_2&
       #endif
       // heat the resective pixel and insert it to hot_pixels_list
       Hot_Pixel<Rep_> *hp = new Hot_Pixel<Rep_>(inter_p,pixel_size);
-      hot_pixels_list.push_back(std::pair<Point_2,Hot_Pixel<Rep_> *>(
+      if(not_hot_pixel(hp,hot_pixels_list)) {
+        hot_pixels_list.push_back(std::pair<Point_2,Hot_Pixel<Rep_> *>(
  				hp->get_center(),hp));
+        ++NUMBER_OF_HP;
+      } else
+        delete hp;
+
     } else {
-      std::cout << "error 32\n";
-      exit(-1);
+      std::cout << "error 321\n";
+      //exit(-1);
     }
   } else {
     std::cout << "error 4\n";
@@ -1224,7 +1253,7 @@ void Snap_rounding_2<Rep_>::heat_pixel_down_left(const Point_2& p,const Segment_
   Object result;
   Point_2 inter_p;  
 
-  // find the intersction to the right on s
+  // find the intersction to the left on s
   Segment_2 t(p,Point_2(s.min().x(),p.y()));
   result = intersection(t,s);
   if(assign(inter_p,result)) {
@@ -1247,11 +1276,16 @@ void Snap_rounding_2<Rep_>::heat_pixel_down_left(const Point_2& p,const Segment_
       #endif
       // heat the resective pixel and insert it to hot_pixels_list
       Hot_Pixel<Rep_> *hp = new Hot_Pixel<Rep_>(inter_p,pixel_size);
-      hot_pixels_list.push_back(std::pair<Point_2,Hot_Pixel<Rep_> *>(
+      if(not_hot_pixel(hp,hot_pixels_list)) {
+        hot_pixels_list.push_back(std::pair<Point_2,Hot_Pixel<Rep_> *>(
  				hp->get_center(),hp));
+        ++NUMBER_OF_HP;
+      } else
+        delete hp;
+
     } else {
-      std::cout << "error 32\n";
-      exit(-1);
+      std::cout << "error 322\n";
+      //exit(-1);
     }
   } else {
     std::cout << "error 4\n";
@@ -1317,6 +1351,8 @@ void Snap_rounding_2<Rep_>::produce_extra_hot_pixels(std::list<std::pair<Point_2
     Point_2 p_center = iter->first;
     Point_2 query_point = Point_2(p_center.x(),p_center.y() + pixel_size);
     bool done = false;
+
+    // UP RIGHT
     while(!done) {
       bool found;
       NT sq_dis;
@@ -1416,6 +1452,9 @@ void Snap_rounding_2<Rep_>::produce_extra_hot_pixels(std::list<std::pair<Point_2
 	 done = true;
     }
   }
+
+  std::cout << "number of new hp is " << NUMBER_OF_HP << std::endl;
+  std::cout << "total number of hp is " << hot_pixels_list.size() << std::endl;
 
   // below is the ray shooting code
   //typename std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >::const_iterator iter;
@@ -1633,6 +1672,7 @@ Snap_rounding_2<Rep_>::Snap_rounding_2(
   NT inp_delta)
   {
     // @@@@ for isrs
+    NUMBER_OF_HP = 0;
     if(inp_delta < 2 * inp_pixel_size) {
       std::cout << "small delta " << delta << " exit\n";
       exit(-1);
@@ -1670,21 +1710,21 @@ Snap_rounding_2<Rep_>::Snap_rounding_2(
 template<class Rep_>
 void Snap_rounding_2<Rep_>::copy(const Snap_rounding_2<Rep_>& other)
 {
-    // @@@@ for isrs
-    delta = other.delta;
+  // @@@@ for isrs
+  NUMBER_OF_HP = other.NUMBER_OF_HP;
+  delta = other.delta;
 
-    erase_hp = false;
-    wheteher_to_do_isr = other.wheteher_to_do_isr;
-    // @@@@ next
-    wheteher_to_do_isrs = other.wheteher_to_do_isrs;
-    int_output = other.int_output;
-    pixel_size = other.pixel_size;
-    number_of_segments = other.number_of_segments;
-    number_of_kd_trees = other.number_of_kd_trees;
-    need_sr = true;
-    seg_list = other.seg_list;
-    seg_2_list = other.seg_2_list;
-
+  erase_hp = false;
+  wheteher_to_do_isr = other.wheteher_to_do_isr;
+  // @@@@ next
+  wheteher_to_do_isrs = other.wheteher_to_do_isrs;
+  int_output = other.int_output;
+  pixel_size = other.pixel_size;
+  number_of_segments = other.number_of_segments;
+  number_of_kd_trees = other.number_of_kd_trees;
+  need_sr = true;
+  seg_list = other.seg_list;
+  seg_2_list = other.seg_2_list;
 }
 
 // cctor
@@ -1714,6 +1754,7 @@ Snap_rounding_2<Rep_>::Snap_rounding_2(
   NT inp_delta)
   {
     // @@@@ for isrs
+    NUMBER_OF_HP = 0;
     if(inp_delta < 2 * inp_pixel_size) {
       std::cout << "small delta " << delta << " exit\n";
       exit(-1);
