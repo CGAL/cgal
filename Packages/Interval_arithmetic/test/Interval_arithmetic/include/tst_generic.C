@@ -154,11 +154,12 @@ int multiplication_test()
 {
   const IA a (-2,-1), b (-1,1);
   const IA d (-2,2), e (1,2), f (-2,-1);
-  IA c, g, h, i;
+  IA c, g, h, i, j;
   c = a * b;
   g = d * e;
   h = d * f;
   i = a * e;
+  j = j;
 
   return -1;
 }
