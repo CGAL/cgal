@@ -33,7 +33,7 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: demo
+all: planar_map
 
 Qt_widget_toolbar$(OBJ_EXT): Qt_widget_toolbar.C Qt_widget_toolbar.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar.C
@@ -41,19 +41,19 @@ Qt_widget_toolbar$(OBJ_EXT): Qt_widget_toolbar.C Qt_widget_toolbar.moc
 Qt_widget_toolbar.moc: Qt_widget_toolbar.h
 	$(QT_MOC) -o Qt_widget_toolbar.moc Qt_widget_toolbar.h
 
-demo$(OBJ_EXT): demo.C demo.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) demo.C
+planar_map$(OBJ_EXT): planar_map.C planar_map.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) planar_map.C
 
-demo.moc: demo.C
-	${QT_MOC} -o demo.moc demo.C
+planar_map.moc: planar_map.C
+	${QT_MOC} -o planar_map.moc planar_map.C
 
-demo$(EXE_EXT): demo$(OBJ_EXT) Qt_widget_toolbar$(OBJ_EXT) 
+planar_map$(EXE_EXT): planar_map$(OBJ_EXT) Qt_widget_toolbar$(OBJ_EXT) 
 	$(CGAL_CXX) $(EXE_OPT)demo \
-	demo$(OBJ_EXT) \
+	planar_map$(OBJ_EXT) \
 	 Qt_widget_toolbar$(OBJ_EXT) \
 	$(LDFLAGS)
 
-clean: demo.clean \
+clean: planar_map.clean \
        Qt_widget_toolbar.clean
 
 #---------------------------------------------------------------------#

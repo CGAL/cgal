@@ -40,8 +40,9 @@ int main(int, char*)
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_Polygon_2.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
-#include <CGAL/IO/Qt_widget_helpwindow.h>
+#include <CGAL/IO/Qt_help_window.h>
 #include <CGAL/IO/Qt_widget_layer.h>
+#include <CGAL/IO/pixmaps/demoicon.xpm>
 
 #include <qplatinumstyle.h>
 #include <qapplication.h>
@@ -302,7 +303,8 @@ private slots:
   {
     QString home;
     home = "help/index.html";
-    HelpWindow *help = new HelpWindow(home, ".", 0, "help viewer");
+    CGAL::Qt_help_window *help = new 
+      CGAL::Qt_help_window(home, ".", 0, "help viewer");
     help->resize(400, 400);
     help->setCaption("Demo HowTo");
     help->show();
@@ -357,7 +359,7 @@ private:
   Qt_layer_show_ch testlayer;
 };
 
-#include "demo.moc"
+#include "planar_map.moc"
 
 int main(int argc, char *argv[])
 {
@@ -366,6 +368,8 @@ int main(int argc, char *argv[])
   app.setMainWidget(&widget);
   widget.setCaption(my_title_string);
   widget.setMouseTracking(TRUE);
+  QPixmap cgal_icon = QPixmap((const char**)demoicon_xpm);
+  widget.setIcon(cgal_icon);
   widget.show();
   current_state = -1;
   return app.exec();
