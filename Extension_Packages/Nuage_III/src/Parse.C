@@ -26,7 +26,7 @@ void usage(char* program)
 	    << "     -in fname      : reads points from file ./fname" << std::endl
 	    << "     -sect_in fname : reads points from sections file ./fname" << std::endl
 	    << "     -out fname     : writes points to file ./fname" << std::endl
-	    << "     -out_format -of: choose file format for output (iv, vrml, oogl, medit," << std::endl
+	    << "     -out_format -of: choose file format for output (iv, wrl, oogl, medit," << std::endl
 	    << "                                                     ply, all, none)" << std::endl
 	    << "     All options can be abbreviated by their first character" << std::endl;
 }
@@ -156,7 +156,7 @@ parse(int argc, char* argv[], Options &opt)
       std::cout << "-o " << opt.foutname << " ";
     }
     else if ((!AF_CGAL_CLIB_STD::strcmp(argv[0], "-of")) || (!AF_CGAL_CLIB_STD::strcmp(argv[0], "-out_format"))) {
-      if (!AF_CGAL_CLIB_STD::strcmp(argv[1], "vrml"))
+      if (!AF_CGAL_CLIB_STD::strcmp(argv[1], "wrl"))
 	opt.out_format = 0;
       else if (!AF_CGAL_CLIB_STD::strcmp(argv[1], "oogl"))
 	opt.out_format = 1;
