@@ -30,10 +30,6 @@
 
 #include <CGAL/basic.h>
 
-#include <CGAL/Point_3.h>
-#include <CGAL/Triangle_3.h>
-#include <CGAL/Tetrahedron_3.h>
-
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_3.h>
 
