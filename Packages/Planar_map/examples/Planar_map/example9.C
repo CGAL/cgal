@@ -21,22 +21,22 @@
 typedef leda_rational                      NT;
 typedef CGAL::Cartesian<NT>                R;
 typedef CGAL::Pm_segment_exact_traits<R>   Traits;
-typedef CGAL::Pm_default_dcel<Traits>                  Dcel;
-typedef CGAL::Planar_map_2<Dcel,Traits>                PM;
+typedef CGAL::Pm_default_dcel<Traits>      Dcel;
+typedef CGAL::Planar_map_2<Dcel,Traits>    PM;
 
 int main()
 { 
   PM pm;
 
-  std::cout<<"demononstrating a trivial using of IO function"<<std::endl;
+  std::cout<<"Demonstrating a trivial use of IO functions"<<std::endl;
   std::cin >> pm;
   std::cout << pm;
     
-  std::cout<<"Presenting the use of verbode format"<<std::endl;
+  std::cout<<"Presenting the use of verbose format"<<std::endl;
   CGAL::Pm_file_writer<PM>  verbose_writer(cout, pm, true);
   write_pm(pm, verbose_writer, cout);
   
-  std::cout<<"Demonstarating the use of the writer class interface."<<std::endl;
+  std::cout<<"Demonstrating the use of the writer class interface."<<std::endl;
   std::cout<<"Printing all halfedges in non verbose format"<<std::endl;
   CGAL::Pm_file_writer<PM>  writer(cout, pm);
   writer.write_halfedges(pm.halfedges_begin(), pm.halfedges_end());
