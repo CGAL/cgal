@@ -48,9 +48,10 @@ public:
 //  typedef  typename I::Info_edge       Info_edge;
 //  typedef  typename I::Info_face       Info_face;
   
-  typedef PlanarMapTraits_2      Base;
-  typedef typename Base::X_curve X_curve;
-  typedef typename Base::Point_2 Point_2;
+  typedef PlanarMapTraits_2          Base;
+  typedef typename Base::X_curve     X_curve;
+  typedef typename Base::Point_2     Point_2;
+  typedef typename Base::Direction_2 Direction_2;
   //typedef  typename PlanarMapTraits_2::Point_2 Point; // for backward compat.
   
   Planar_map_traits_wrap() : Base()
@@ -78,6 +79,8 @@ public:
     return construct_vertex_2_object()(cv, 1);
   }
 
+  // Predicate functions
+  // -------------------
   // Answers true iff the curve is vertical.
   bool curve_is_vertical(const X_curve & cv) const 
   {
@@ -90,8 +93,47 @@ public:
   {
     return compare_x_at_y_2_objects(q, cv1, cv2);
   }
-  // Predicate functions
-  // -------------------
+
+  bool curve_is_between_cw(const X_curve &cv, 
+                           const X_curve &first, 
+                           const X_curve &second, 
+                           const Point_2 &point) const
+  {
+    Direction_2 d  = construct_direction_2_object()(cv,     point);
+    Direction_2 d1 = construct_direction_2_object()(first , point);
+    Direction_2 d2 = construct_direction_2_object()(second, point);
+
+    if ( construct_vertex_2_object()(cv, 0)      != point ) 
+      d = construct_opposite_direction_2_object()(d);
+    if (  construct_vertex_2_object()(first, 0)  != point )
+      d1 = construct_opposite_direction_2_object()(d1);
+    if (  construct_vertex_2_object()(second, 0) != point )
+      d2 = construct_opposite_direction_2_object()(d2);
+
+    return counterclockwise_in_between_2_object()(d, d1, d2);
+  }
+
+  // Compares the x value of two points
+  Comparison_result compare_x(const Point_2 &p1, const Point_2 &p2) const
+  { return compare_x_2_object()(p1, p2); }
+
+  // Compares the y value of two points
+  Comparison_result compare_y(const Point_2 &p1, const Point_2 &p2) const
+  { return compare_y_2_object()(p1, p2); }
+
+  bool curve_is_same(const X_curve & cv1,const X_curve & cv2) const
+  { return equal_2_object()(cv1, cv2); }
+
+  // Intorduce Is_in_x_range_2 / Is_in_x_closed_range_2 ?
+  // This can be implemented on the traits_wrap level by using other
+  // simpler predicated from the Kernel / traits.
+  // Used in the Bounding Box, but there it probably get it from
+  // the Pm's Traits_wrap
+  bool curve_is_in_x_range(const X_curve & cv, const Point_2 & q) const
+  { 
+    return !( is_right(q, rightmost(cv.source(), cv.target())) ||
+              is_left(q, leftmost(cv.source(), cv.target()))	 );
+  }
 
   /*
   typedef enum
@@ -108,28 +150,16 @@ public:
   typename Base::Curve_point_status 
   curve_get_point_status(const X_curve &cv, const Point_2 & p) const
   {
-    if ( ! curve_is_in_x_range(cv, p))
+    if ( ! curve_is_in_x_range(cv, p) )
       return CURVE_NOT_IN_RANGE;
-    if ( ! curve_is_vertical(cv))
-      {
-	// Calculate vertical projection on curve
-	const Point_2 & proj = 
-	  construct_vertical_projected_point_2_object(cv, p);
-	int res = compare_y_2_object()(p, proj);
-	if (res == SMALLER) return UNDER_CURVE;
-	if (res == LARGER)	return ABOVE_CURVE;
-
-	return ON_CURVE;
-      }
-    else
-      {
-	if (is_lower(p,lowest(curve_source(cv),curve_target(cv))))
-	  return UNDER_CURVE;
-	if (is_higher(p,highest(curve_source(cv),curve_target(cv))))
-	  return ABOVE_CURVE;
-
-	return ON_CURVE;
-      }
+    
+    Comparison_result res =
+      compare_y_at_x_2_object()(p, cv);
+    
+    if ( res == LARGER ) return ABOVE_CURVE;
+    else if ( res == SMALLER ) return UNDER_CURVE;
+    
+    return ON_CURVE;
   }
   
   bool point_is_left( const Point_2  & p1, const Point_2  & p2 ) const

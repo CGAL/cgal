@@ -42,6 +42,21 @@ public Kernel_::Compare_y_at_x_2
       typename Kernel::Line_2 l2 = construct_line(cv2);
       return Base::operator()(q, l1, l2);
     }
+
+  Comparison_result 
+  operator()( const Point_2 & q, const X_curve &cv) const 
+    {
+      /*
+      if ( is_vertical_2_object()(cv) )
+	{
+	  const Point & src = construct_vertex_2_object()(cv, 0);
+	  const Point & trg = construct_vertex_2_object()(cv, 1);
+	  
+	}
+      */
+      typename Kernel::Line_2 l = construct_line(cv);
+      return Base::operator()(q, l);
+    }
   
   Construct_line_2 construct_line;
 
@@ -132,36 +147,6 @@ public:
 
   Pm_segment_traits(const Kernel& kernel) : m_kernel(kernel) {}
   
-  /*
-  // Returns the curve-point status of the input objects
-  Curve_point_status 
-  curve_get_point_status(const X_curve &cv, const Point_2 & p) const
-  {
-    if ( ! curve_is_in_x_range(cv, p))
-      return CURVE_NOT_IN_RANGE;
-    if ( ! curve_is_vertical(cv))
-      {
-	// Calculate vertical projection on curve
-	const Point_2 & proj = 
-	  construct_vertical_projected_point_2_object(cv, p);
-	int res = m_kernel.compare_y_2_object()(p, proj);
-	if (res == SMALLER) return UNDER_CURVE;
-	if (res == LARGER)	return ABOVE_CURVE;
-
-	return ON_CURVE;
-      }
-    else
-      {
-	if (is_lower(p,lowest(curve_source(cv),curve_target(cv))))
-	  return UNDER_CURVE;
-	if (is_higher(p,highest(curve_source(cv),curve_target(cv))))
-	  return ABOVE_CURVE;
-
-	return ON_CURVE;
-      }
-  }
-  */
-
   // Compare the y value of two curves in an epsilon environment to
   // the left of the x value of the input point
   Comparison_result 
@@ -207,49 +192,6 @@ public:
     return compare_slope_2_object()(cv1, cv2);
   }
   
-  // done
-  // (Check what happens if cv == first, if first == second 
-  // and if both.)
-  bool curve_is_between_cw(const X_curve &cv, 
-                           const X_curve &first, 
-                           const X_curve &second, 
-                           const Point_2 &point) const
-  {
-    Direction_2 d  = construct_direction_2_object()(cv,     point);
-    Direction_2 d1 = construct_direction_2_object()(first , point);
-    Direction_2 d2 = construct_direction_2_object()(second, point);
-
-    if ( construct_vertex_2_object()(cv, 0)      != point ) 
-      d = construct_opposite_direction_2_object()(d);
-    if (  construct_vertex_2_object()(first, 0)  != point )
-      d1 = construct_opposite_direction_2_object()(d1);
-    if (  construct_vertex_2_object()(second, 0) != point )
-      d2 = construct_opposite_direction_2_object()(d2);
-
-    return m_kernel.counterclockwise_in_between_2_object()(d, d1, d2);
-  }
-
-  // Compares the x value of two points
-  Comparison_result compare_x(const Point_2 &p1, const Point_2 &p2) const
-  { return m_kernel.compare_x_2_object()(p1, p2); }
-
-  // Compares the y value of two points
-  Comparison_result compare_y(const Point_2 &p1, const Point_2 &p2) const
-  { return m_kernel.compare_y_2_object()(p1, p2); }
-
-  bool curve_is_same(const X_curve & cv1,const X_curve & cv2) const
-  { return m_kernel.equal_2_object()(cv1, cv2); }
-
-  // Intorduce Is_in_x_range_2 / Is_in_x_closed_range_2 ?
-  // This can be implemented on the traits_wrap level by using other
-  // simpler predicated from the Kernel / traits.
-  // Used in the Bounding Box, but there it probably get it from
-  // the Pm's Traits_wrap
-  bool curve_is_in_x_range(const X_curve & cv, const Point_2 & q) const
-  { 
-    return !( is_right(q, rightmost(cv.source(), cv.target())) ||
-              is_left(q, leftmost(cv.source(), cv.target()))	 );
-  }
 
 protected:
   // constructs the opposite segment (with the source and target
@@ -290,23 +232,6 @@ protected:
   const Point_2& highest(const Point_2 &p1, const Point_2 &p2) const
   { return (is_higher(p1, p2) ? p1 : p2); }
   
-  Point_2 construct_vertical_projected_point_2_object(const X_curve &cv, const Point_2 & q) const
-    {
-      if ( ! curve_is_in_x_range(cv, q) )
-	return cv.source();
-      
-      if (is_vertical_2_object()(cv))
-	return cv.source();
-      
-      const Point_2 & a = cv.source();
-      const Point_2 & b = cv.target();
-      return Point_2 ((b.hx() * a.hw() - a.hx() * b.hw()) * q.hx() * a.hw(),
-		      (b.hx() * a.hw() - a.hx() * b.hw()) * q.hw() * a.hy() + 
-		      (b.hy() * a.hw() - a.hy() * b.hw()) * 
-		      (q.hx() * a.hw() - a.hx() * q.hw()),  
-		      (b.hx() * a.hw() - a.hx() * b.hw()) * q.hw() * a.hw());
-    }
-
 };
 
 CGAL_END_NAMESPACE
