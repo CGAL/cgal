@@ -1,3 +1,5 @@
+2.2.3  chapter name changed
+
 2.2.2  some deprecated functions removed from Point_set_2.h 
        and from manual
        small changes to examples and demos
