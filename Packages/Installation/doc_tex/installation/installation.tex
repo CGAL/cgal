@@ -61,8 +61,6 @@
 
 %% macros for WWW pages
 \newcommand{\cgalhomepage}{\path'http://www.cgal.org'}
-\newcommand{\sgistlpage}{\path'http://www.sgi.com/tech/stl/'}
-\newcommand{\stlportpage}{\path'http://www.stlport.org/'}
 \newcommand{\ledapage}{\path'http://www.mpi-sb.mpg.de/LEDA'}
 \newcommand{\gmppage}{\path'http://www.gnu.org/software/gmp'}
 \newcommand{\trolltechpage}{\path'http://www.trolltech.com'}
@@ -94,14 +92,9 @@ toolkit.
 \section{Prerequisites}\label{sec:prerequisites}
 
 In order to build the \cgal\ libraries you need a \CC\ compiler.
-Currently only a small number of recent compilers on Unix platforms
-and \mswin\ are supported. The reason is that most compilers do not
-conform to the ISO 14882 standard for \lcTex{\CC\footnote{see e.g.
-    \path'http://www.research.att.com/~austern/csc/faq.html\#PartB'
-    for information}} \lcHtml{\CC\footnote{see e.g.
-    \path'http://www.research.att.com/~austern/csc/faq.html\#PartB'
-    for information}} and some of them have so many limitations/bugs
-that we could not work around all of them.
+Most recent compilers on Unix platforms and \mswin\ are supported,
+provided that they reasonnably conform to the ISO 14882 standard
+(\CC\ standard).
 
 \cgaldir\ supports the following compilers/operating systems:
 
@@ -149,17 +142,10 @@ compiler version you have installed. It should read
 \end{center}
 or later.
 
-%%\msvc{5.0} and prior is not supported and there are no plans to
-%%support it in future releases.  
-%%The \sunprocc{4.2} compiler is not
-%%supported anymore, please stay with \cgal-1.2 if you have to use it.
-%%Support for \sunprocc{} will be reconsidered as soon as an acceptable
-%%degree of standard-conformance is reached. 
 Note that \Gcc{2.96/97} are not official \texttt{gcc} releases that
 are neither supported by the \texttt{GCC}
 team\footnote{\path'http://gcc.gnu.org/gcc-2.96.html'} nor by \cgal.
 Please upgrade to \Gcc{3}, if you happen to have this compiler.
-%%Support for \icl{4.0} will be considered.
 
 \section{Getting \cgal} \label{sec:gettingcgal}
 \index{CGAL@\cgal!getting}\index{getting \cgal} 
@@ -186,7 +172,6 @@ decompression program by itself.
 In both cases the directory \cgaldir\ will be created. This directory
 contains the following subdirectories:\index{directories!structure}
 
-%%\footnotetext[14]{\stlportpage}\addtocounter{footnote}{1}
 \begin{center}
   \renewcommand{\arraystretch}{1.3}
   \gdef\lcTabularBorder{2}
@@ -215,7 +200,7 @@ Most of these use \ccc{CGAL::Qt_widget}, a widget and some helper
 classes that allow to interact with two dimensional \cgal\ objects in
 \qt\ based applications.\index{visualization!Qt}
 
-If you have \leda\ installed, you might wan to use
+If you have \leda\ installed, you might want to use
 \ccc{CGAL::Window_stream} as an interface between two dimensional
 \cgal\ objects and a \ccc{leda_window}. To be able to use the
 \ccc{Window_stream}, you need do nothing more than compile \cgal\ with
@@ -823,7 +808,7 @@ containing the GMP header files (``\texttt{--GMP\_INCL\_DIR}
 By default there is no support for GMPXX, GMP's built-in C++ interface, but
 you can change this easily by use of the command line option
 ``\texttt{-gmpxx}''.  The only requirement for this to work is that GMP
-support is enable correctly.
+support is enabled correctly.
 
 \subsection{Setting up support for Qt}\label{sec:qt-setup}
 \index{Qt!enable support}
@@ -1122,8 +1107,8 @@ instance, if \texttt{D:} is mounted on
 translates to \texttt{/ddrive/Mystuff/Mydir/LEDA}.
 
 \paragraph{Upper/lower case and spaces in file names}
-Behavour of Cygwin in this regard might be different from the \mswin\ 
-behaviour. In particular, using spaces in filenames should better be
+Behavior of Cygwin in this regard might be different from the \mswin\ 
+behavior. In particular, using spaces in filenames should better be
 avoided.
 
 \paragraph{Links, shortcuts, etc} should be avoided as well.
@@ -1203,15 +1188,8 @@ system. Depending on the version of \msvc{} you might have to replace
 \item The registration functions needed to interact with a
   \texttt{leda\_geowin} are defined for all geometric objects from the
   \cgal\ kernel.
-\item \cgal\ defines the following \leda-related compiler flags:
-\begin{itemize}
-\item When \leda\ is used, the flags \texttt{CGAL\_USE\_LEDA} and
-  \texttt{LEDA\_PREFIX} will be set.
-\item When \leda\ is used, the \leda\ handles and memory management
-  will be used in \cgal.  This can be turned off by setting the flag
-  \texttt{CGAL\_NO\_LEDA\_HANDLE}. In that case, \cgal\ handles will
-  be used (see \texttt{<CGAL/Handle.h>}).
-\end{itemize}
+\item \cgal\ defines the following \leda-related compiler flags when
+      \leda\ is used: \texttt{CGAL\_USE\_LEDA} and \texttt{LEDA\_PREFIX}.
 \end{enumerate}
 
 The include makefiles in the \texttt{\cgaldir/make} directory
@@ -1224,8 +1202,8 @@ corresponding to \leda\ can be recognized by the suffix
 In \cgal, a number of compiler flags is defined. All of them start
 with the prefix \texttt{CGAL\_CFG}. These flags are used to work
 around compiler bugs and limitations. For example, the flag
-\texttt{CGAL\_CFG\_NO\_MUTABLE} denotes that the compiler does not
-know the keyword \texttt{mutable}.
+\texttt{CGAL\_CFG\_NO\_LONG\_LONG} denotes that the compiler does not
+know the type \texttt{long long}.
 
 For each compiler a file \texttt{<CGAL/compiler\_config.h>}
 \index{files!\texttt{compiler\_config.h}} is defined, with the correct
@@ -1307,13 +1285,13 @@ a look at the \cgal\ homepage:
 \begin{alltt}
 \cgalhomepage
 \end{alltt}
-or send an email to \texttt{cgal@cs.uu.nl}.
+or send an email to \texttt{contact@cgal.org}.
 
 \subsection{The ``Long-Name-Problem'' on IRIX6}\label{sec:longnameirix}
 \index{problems with long names}\index{long name problem}
 
 The system assembler and linker on IRIX6 cannot handle symbols with
-more than 4096 characters. But this number can be exceeded where one
+more than 4096 characters. But this number can be exceeded when one
 starts nesting templates into each other. So if you encounter strange
 assembler or linker errors like
 \begin{alltt}
@@ -1442,26 +1420,9 @@ executables, choose one of these that have the name ending with
 
 \subsubsection{\msvc{6.0}}
 
-\cgal\ uses a modified drop-in replacement for STL, STLPort, version
-3.2.1. Our modifications included
-\begin{itemize}
-\item modifying the code to enable
-the use of \texttt{std::iterator\_traits} template, where possible;
-\item providing \texttt{std::vector} class that does not use
-a plain C pointer as \texttt{vector\_iterator}.
-\end{itemize}
-The latter allows using the full power of STL algorithms on
-\texttt{std::vector} without the limitation given by the absence
-of the support for partial specialization of template parameters.
+This compiler version is no longer supported starting with \cgal\ 3.0.
 
-Always make sure that the subdirectory
-\texttt{\$(CGAL\_ROOT)/stlport/} %$
-comes first in the list of additional include directories for \msvc.
-This is handled automatically if you use \cgal-supplied (or \cgal-generated)
-makefiles.
-
-\subsubsection{\msvc{6.0} and \msvc{7.0}
-  (\textsc{.NET})}
+\subsubsection{\msvc{7.0} (\textsc{.NET})}
 
 \paragraph{\texttt{std::iterator\_traits}} is only partially
 supported, due to absence of partial specialization support in \msvc.
@@ -1482,7 +1443,7 @@ See e.g. \nonlinkedpath'examples/Getting_started/advanced_hull.C'
 for an example of using this macro.
 
 Note that this macro does not have any effect when other than
-\msvc{6.0} compiler is used, so it can be safely left in the source code. 
+\msvc{7.0} compiler is used, so it can be safely left in the source code. 
 \medskip
 
 \textbf{Other problems.}
@@ -1510,24 +1471,6 @@ lookup. That is, it does not search in the namespace of the arguments for
 the function. See
 \texttt{config/testfiles/CGAL\_CFG\_NO\_KOENIG\_LOOKUP.C}. \label{msvc::koenig}
 %
-\item A scope operator in  parameter types of a member function only
-works when the function is defined inline. See
-\texttt{config/testfiles/CGAL\_CFG\_NO\_SCOPE\_MEMBER\_FUNCTION\_PARAMETERS.C}. 
-\label{msvc::scopememberfunc}
-%
-\item Passing a dependant type as template parameter cannot be done
-with \texttt{typename} keyword on \msvc. Replace \texttt{typename}
-by \texttt{CGAL\_TYPENAME\_MSVC\_NULL} in such places.\\ 
-See \texttt{config/testfiles/CGAL\_CFG\_TYPENAME\_BUG.C}. \label{msvc::typename}
-%
-\item Template \texttt{friend} declarations must not contain $<>$.
-Replace $<>$  by \texttt{CGAL\_NULL\_TMPL\_ARGS}.\\
-See \texttt{config/testfiles/CGAL\_CFG\_NO\_TEMPLATE\_FRIEND\_DISTINCTION}.
-\label{msvc::friend}
-%
-\item Using non-class template parameters often gives internal
-  compiler errors.
-%
 \item Internal compiler errors can sometimes be avoided by increasing
   the amount of memory available to the compiler. Use \texttt{-Zm<number>}
 option. In \cgal\ makefiles it is set to \texttt{-Zm900}, meaning
@@ -1540,9 +1483,8 @@ option. In \cgal\ makefiles it is set to \texttt{-Zm900}, meaning
     package}. The only workaround we know is to redefine the macro
   \texttt{\_VIRTUAL} in \texttt{<xlocnum>}\footnote{Yes, in the \msvc\ 
     header! You need not edit the actual file though. Copy it to
-    \cgaldir\texttt{/stlport/} and edit it there. As
-    \cgaldir\texttt{/stlport/} is searched by the compiler ahead of
-    the other directories, your updates will be used.  DISCLAIMER:
+    a directory that is searched ahead of the other directories.
+    DISCLAIMER:
     {\em We do not know if the actions described in this footnote are
       legal in your country. You are on your own here.}}
   to be empty. Search for\\

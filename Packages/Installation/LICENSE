@@ -37,9 +37,6 @@ The CGAL software falls under the license below:
 The directory auxiliary contains the gmp library. This library is not part of
 CGAL and has its own license.
 
-The directory stlport contains an stl library, patched by cgal. This library
-has its own license.
-
 The CGAL Qt widget (with source code in src/CGALQt and 
 include/CGAL/IO/Qt_widget*.h) is distributed under the Q Public License 
 (QPL). See http://www.trolltech.com/developer/licensing/qpl.html.

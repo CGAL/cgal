@@ -7,6 +7,9 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: removed stlport from LICENSE
+GLOB: update installation.tex wrt outdated stuff
+GLOB: document more options in install_cgal's --help option.
 GLOB: added licensing information about Qt widget stuff
 GLOB: removed stlport from README
 GLOB: updated for release 2.4

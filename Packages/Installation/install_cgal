@@ -324,7 +324,7 @@ print_usage_information()
        --upgrade <dir> | --build-all | --rebuild-all |
        --build <config> | --rebuild <config> |
        -ni <comp> | --non-interactive <comp> | -os <comp>]
-      [-leda] [-gmp] [-gmpxx] [-cln] [-qt] [--verbose]
+      [-leda] [-gmp] [-gmpxx] [-qt] [--verbose]
       [--CGAL_DIR <dir>] [--leda-sys-incl] [--leda-sys-lib]
       [--LEDA_INCL_DIR <dir>] [--LEDA_LIB_DIR <dir>]
       [--GMP_INCL_DIR <dir>] [--GMP_LIB_DIR <dir>]
@@ -340,10 +340,12 @@ print_usage_information()
                (not generally recommended)
   --help       gives this message
   --version    prints ${CGAL_INSTALL_CGAL} version number
-  --interactive  
+  --CGAL_DIR <dir>
+               specifies an explicit path to use for the CGAL directory
+  --interactive or -i
                runs the script in interactive mode
                (other options - except for --CGAL_DIR - are ignored)
-  --upgrade <dir>
+  --upgrade <dir> or -u <dir>
                runs the script in upgrade mode
 	       Use this option, if you upgrade from CGAL-1.*/2.*
 	       and supply the directory where CGAL is installed
@@ -364,13 +366,17 @@ print_usage_information()
 	       (Re)build the compiler configuration file and libraries
 	       for the compiler specified by its configuration file
                config/install/<config>.
-  --non-interactive <comp>   
+  --non-interactive <comp> or -ni <comp>
                runs the script in non-interactive mode
                i.e. makefiles are generated for C++ compiler
                specified by <comp>.
                For the rest you are on your own.
                (Have a look at the README file.)
-  -os <comp>   prints architecture/os/compiler spec"
+  -os <comp>   prints architecture/os/compiler spec
+  --CUSTOM_CXXFLAGS <flags>
+               pass the specified <flags> to the compiler
+  --CUSTOM_LDFLAGS  <flags>
+               pass the specified <flags> to the linker"
 }
 
 # ---------------------------------------------------------------------
@@ -996,9 +1002,8 @@ set_compiler_flags()
     esac
     # version specific adjustments for msvc
     case ${CGAL_OS_COMPILER} in
-	*CL.*-1300*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS}";;
+	*CL.*|*cl.*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS}";;
 	*ICL.*|*icl.*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} `include_dir_option D:/vc7/include`";;
-	*CL.*|*cl.*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} `include_dir_option ${CGAL_DIR}/stlport`";;
     esac
 }
 
