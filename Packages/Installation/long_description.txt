@@ -4,6 +4,26 @@
 
 
 //---------------------------------------------------------------------
+//	revision 1196
+//---------------------------------------------------------------------
+
+ALL : Updated compiler support.
+
+//---------------------------------------------------------------------
+//	revision 1195
+//---------------------------------------------------------------------
+
+GLOB: Undid the changes:
+GLOB: removed warning -link for microsoft compilers
+GLOB: It was a mistake due to Menelaos information. :)
+
+//---------------------------------------------------------------------
+//	revision 1194
+//---------------------------------------------------------------------
+
+GLOB: removed warning -link for microsoft compilers
+
+//---------------------------------------------------------------------
 //	revision 1193
 //---------------------------------------------------------------------
 
@@ -259,6 +279,7 @@ GLOB: Qt license updates
 //	revision 1158
 //---------------------------------------------------------------------
 
+DOCS: Updated compiler support.
 DOCS: - Update GMP to 4.1.2.
 DOCS: - Recognize GCC 3.3.
 DOCS: - Update documentation for -fsquangle.

@@ -57,6 +57,10 @@ GLOB: - Document --build-all
 GLOB: Fixes for QT.
 GLOB: src/Interval_arithmetic/workaround_4_ms.obj is no longer necessary.
 GLOB: Add -D_RWSTD__ALLOCATOR for SunPro.
+ALL : Updated compiler support.
+GLOB: Undid the changes:
+GLOB: removed warning -link for microsoft compilers
+GLOB: It was a mistake due to Menelaos information. :)
 GLOB: Changed order of CL and ICL compiler flags in case.
 GLOB: Added -Zc:forScope for intel.
 GLOB: Added echo dummymoc if qt support is disabled.
