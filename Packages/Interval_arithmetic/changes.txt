@@ -1,5 +1,16 @@
 Changes done to the Interval Arithmetic package.
 
+Version 2.7 on 22 December 1998
+- Hopefully the last fixes for the 1.2 release.
+- Added CGAL_square(), and benchmark for it.
+- Added lots of checks enabled with CGAL_IA_DEBUG.
+- Updated rtH2 predicates.
+- Fixed CGAL_convert_to<>() functions with respect to rounding mode, and
+  template<>.
+- Assembly for Mips disabled.
+- Added CGAL_FPU_get_rounding_mode() and CGAL_FPU_set_rounding_mode().  Not
+  documented for the moment.  And test program tst0.C for that.
+
 Version 2.6 on 10 December 1998
 - Big renaming that does:
   - /Filter/            -> /Arithmetic_filter/
