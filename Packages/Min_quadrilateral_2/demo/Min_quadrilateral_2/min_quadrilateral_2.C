@@ -73,7 +73,7 @@ int main(int, char*)
 //typedefs CGAL
 typedef double Coord_type;
 typedef CGAL::Cartesian<Coord_type>   Rep;
-typedef CGAL::Point_2<Rep>	      Point;
+typedef CGAL::Point_2<Rep>	      Point_2;
 typedef CGAL::Segment_2<Rep>	      Segment;
 
 
@@ -83,7 +83,7 @@ const QString my_title_string("Minimum Enclosed Quadrilateral with"
 
 //global flags and variables
 int current_state;
-std::list<Point>	  list_of_points;
+std::list<Point_2>	  list_of_points;
 
 
 
@@ -165,7 +165,7 @@ public slots:
 private slots:
   void get_new_object(CGAL::Object obj)
   {
-    Point p;
+    Point_2 p;
     if(CGAL::assign(p,obj)) {
       list_of_points.push_back(p);
       something_changed();
@@ -218,7 +218,7 @@ private slots:
 	// set the Visible Area to the Interval
 
     // send resizeEvent only on show.
-    CGAL::Random_points_in_disc_2<Point> g(0.5);
+    CGAL::Random_points_in_disc_2<Point_2> g(0.5);
     for(int count=0; count<200; count++) {
       list_of_points.push_back(*g++);
     }

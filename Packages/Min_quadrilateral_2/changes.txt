@@ -2,6 +2,10 @@
 //	Revision History for package Min_quadrilateral_2
 //=====================================================================
 
+May 17 2004:  Menelaos Karavelas
+- replaced Point by Point_2 in the demo in order to resolve clash with
+  the Mac version of Qt
+
 Version 132 (10 February 2004) [rursu]
 - Updated headers in examples
 

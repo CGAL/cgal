@@ -56,7 +56,7 @@ static char * lines_small_xpm[] = {
 
 
 Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw,
-			       std::list<Point>	*l_of_p) :
+			       std::list<Point_2> *l_of_p) :
   QToolBar(mw, "LT"), widget(w), window(mw), nr_of_buttons(0)
   {
       

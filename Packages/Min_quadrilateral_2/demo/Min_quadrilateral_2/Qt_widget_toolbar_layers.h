@@ -37,13 +37,13 @@
 
 typedef double Coord_type;
 typedef CGAL::Cartesian<Coord_type>  Rp;
-typedef Rp::Point_2   Point;
+typedef Rp::Point_2   Point_2;
 
 class Layers_toolbar : public QToolBar
 {
   Q_OBJECT
 public:
-  Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, std::list<Point> *l_of_p);
+  Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, std::list<Point_2> *l_of_p);
   ~Layers_toolbar()
   {
     delete showP;
