@@ -65,4 +65,4 @@ test: $(TEST_RUN)
 
 clean:
 	rm -f *.o $(PROGRAMS) *.bb *.bbg *.da *.gcov core *.rpo .pure
-	rm -f *.obj *.exe
+	rm -f *.obj *.exe test_io.tmp
