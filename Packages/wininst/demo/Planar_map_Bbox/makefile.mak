@@ -4,6 +4,8 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
+OBJ_EXT = .wrong_cgal_makefile
+
 #CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 !include $(CGAL_MAKEFILE)
 
@@ -35,7 +37,7 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all:	demo$(EXE_EXT) voronoi$(EXE_EXT)
+all:	demo voronoi
 
 demo$(EXE_EXT): demo$(OBJ_EXT) draw_map$(OBJ_EXT) 
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo demo$(OBJ_EXT) draw_map$(OBJ_EXT) $(LDFLAGS)
@@ -191,21 +193,25 @@ voronoi$(OBJ_EXT): voronoi.C $(voronoi_h) $(draw_map_h)
 .C$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 
-clean:
-	demo.clean \
-	demo.float.rebuild.clean \
-	demo.rational.rebuild.clean \
-	demo.leda.rational.rebuild.clean \
-	demo.float.no-rebuild.clean \
-	demo.rational.no-rebuild.clean \
-	demo.leda.rational.no-rebuild.clean \
-	demo.float.walk.clean \
-	demo.rational.walk.clean \
-	demo.leda.rational.walk.clean \
-	demo.float.naive.clean \
-	demo.rational.naive.clean \
-	demo.leda.rational.naive.clean \
-	voronoi.clean \
-	helputil.clean
+clean: voronoi.clean demo.clean draw_map.clean
+
+cleanall:
+	rm -f -r *$(OBJ_EXT) demo$(EXE_EXT) \
+	demo.float.rebuild$(EXE_EXT) \
+	demo.rational.rebuild$(EXE_EXT) \
+	demo.leda.rational.rebuild$(EXE_EXT) \
+	demo.float.no-rebuild$(EXE_EXT) \
+	demo.rational.no-rebuild$(EXE_EXT) \
+	demo.leda.rational.no-rebuild$(EXE_EXT) \
+	demo.float.walk$(EXE_EXT) \
+	demo.rational.walk$(EXE_EXT) \
+	demo.leda.rational.walk$(EXE_EXT) \
+	demo.float.naive$(EXE_EXT) \
+	demo.rational.naive$(EXE_EXT) \
+	demo.leda.rational.naive$(EXE_EXT) \
+	voronoi$(EXE_EXT) \
+	helputil$(EXE_EXT) \
+	ii_files \
+	core
 
 # note - we use many compile flag dependent executables for optimization
