@@ -31,7 +31,7 @@ public:
     int ix, iy;
     std::vector<Point_2> points;
     int i, j;
-#if defined(USE_LEDA_KERNEL) || defined(USE_MY_KERNEL)
+#if KERNEL == LEDA_KERNEL || KERNEL == MY_KERNEL
     int xmin = 0, xmax = 0, ymin = 0, ymax = 0;
 #endif
 
@@ -44,7 +44,7 @@ public:
       {
         file >> ix >> iy;
 
-#if defined(USE_LEDA_KERNEL) || defined(USE_MY_KERNEL)
+#if KERNEL == LEDA_KERNEL || KERNEL == MY_KERNEL
         if (j == 0) {
           xmin = xmax = ix;
           ymin = ymax = iy;
@@ -61,7 +61,7 @@ public:
       Curve_2 polyline(points.begin(), points.end());
       curves.push_back(polyline);
 
-#if defined(USE_LEDA_KERNEL) || defined(USE_MY_KERNEL)
+#if KERNEL == LEDA_KERNEL || KERNEL == MY_KERNEL
       CGAL::Bbox_2 curve_bbox(xmin, ymin, xmax, ymax);
 #else
       CGAL::Bbox_2 curve_bbox = polyline.bbox();

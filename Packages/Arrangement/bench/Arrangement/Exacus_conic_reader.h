@@ -1,5 +1,5 @@
-#ifndef EXACUS_CONIX_READER_H
-#define EXACUS_CONIX_READER_H
+#ifndef EXACUS_CONIC_READER_H
+#define EXACUS_CONIC_READER_H
 
 #include <CGAL/Bench_parse_args.h>
 #include <iostream>
@@ -59,4 +59,4 @@ public:
     }
 };
 
-#endif // EXACUS_CONIX_READER
+#endif // EXACUS_CONIC_READER

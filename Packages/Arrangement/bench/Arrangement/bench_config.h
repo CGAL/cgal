@@ -24,6 +24,8 @@
 #define LAZY_GMPQ_NT                    6
 #define LAZY_QUOTIENT_MP_FLOAT_NT       7
 #define LEDA_REAL_NT                    8
+#define NIX_LEDA_FIELD_WITH_SQRT_NT     9
+#define NIX_CORE_FIELD_WITH_SQRT_NT     10
 
 // Default value based on dependencies:
 #if BENCH_KERNEL == LEDA_KERNEL
@@ -59,6 +61,16 @@
 #endif
 #if !defined(BENCH_NT)
 #define BENCH_NT LEDA_REAL_NT
+#endif
+#endif
+
+#if BENCH_TRAITS == EXACUS_CONIC_TRAITS
+#if !defined(BENCH_NT)
+#if LiS_HAVE_LEDA
+#define BENCH_NT NIX_LEDA_FIELD_WITH_SQRT_NT
+#else
+#define BENCH_NT NIX_CORE_FIELD_WITH_SQRT_NT
+#endif
 #endif
 #endif
 
@@ -107,6 +119,20 @@
 #if BENCH_TRAITS == LEDA_SEGMENT_TRAITS && BENCH_KERNEL != LEDA_KERNEL && \
     BENCH_KERNEL != MY_KERNEL
 #error "Leda segment traits implies leda kernel or my kernel!"
+#endif
+
+#if !LiS_HAVE_LEDA && (BENCH_NT == NIX_LEDA_FIELD_WITH_SQRT_NT)
+#error "Leda not supported"
+#endif
+
+#if !LiS_HAVE_CORE && (BENCH_NT == NIX_CORE_FIELD_WITH_SQRT_NT)
+#error "Core not supported!"
+#endif
+
+#if (BENCH_NT == NIX_LEDA_FIELD_WITH_SQRT_NT || \
+     BENCH_NT == NIX_CORE_FIELD_WITH_SQRT_NT) && \
+    BENCH_TRAITS != EXACUS_CONIC_TRAITS
+#error "NIX number type implies EXACUS conic traits!"
 #endif
 
 #endif

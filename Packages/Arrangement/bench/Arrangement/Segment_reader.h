@@ -50,7 +50,7 @@ public:
         return -1;
       }
 
-#if defined(USE_LAZY_RATIONAL_NT) || defined(USE_LAZY_QUOTIENT_MP_FLOAT_NT)
+#if NT == LAZY_LEDA_RAT_NT || NT == LAZY_QUOTIENT_MP_FLOAT_NT
       WNT lazy_exact_x0(x0);
       WNT lazy_exact_x1(x1);
       WNT lazy_exact_y0(y0);
@@ -66,7 +66,7 @@ public:
       curveList.push_back(curve);
 
       // Update the bounding box of the arrangement.
-#if defined(USE_LEDA_KERNEL) || defined(USE_MY_KERNEL)
+#if KERNEL == LEDA_KERNEL || KERNEL == MY_KERNEL
       double xmin, ymin, xmax, ymax;
       if (p1.xcoord() < p2.xcoord()) {
         xmin = CGAL::to_double(p1.xcoord());

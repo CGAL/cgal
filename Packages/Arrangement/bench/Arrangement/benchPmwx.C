@@ -58,7 +58,6 @@
 // Exacus Conics:
 #elif BENCH_TRAITS == EXACUS_CONIC_TRAITS
 #include <EXACUS/SweepX/GAPS/CGAL_Pmwx_for_GAPS.h>
-#include <NiX/Arithmetic_traits.h>
 #include <CnX/Conic_sweep_traits_2.h>
 #include <CnX/Conic_segment_v2_2.h>
 
@@ -181,10 +180,7 @@ typedef CGAL::Arr_conic_traits_2<Kernel>                Traits;
 
 // Exacus Conics:
 #elif BENCH_TRAITS == EXACUS_CONIC_TRAITS
-typedef NiX::Arithmetic_traits AT;
-// typedef NiX::LEDA_arithmetic_traits AT;
-// typedef NiX::CORE_arithmetic_traits AT;
-typedef CnX::Conic_sweep_traits_2< AT>                  CST;
+typedef CnX::Conic_sweep_traits_2<Arithmetic_traits>    CST;
 typedef CnX::Conic_segment_2< CST>                      Input_segment;
 typedef SoX::CGAL_Pmwx_2_for_GAPS_traits< Input_segment, CST> Traits;
 

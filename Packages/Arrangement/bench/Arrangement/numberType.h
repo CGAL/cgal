@@ -39,6 +39,15 @@
 #elif BENCH_NT == DOUBLE_NT
 #include "Double.h"
 
+// #elif BENCH_NT == NIX_ARITHMETIC_TRAITS_NT
+// #include <NiX/Arithmetic_traits.h>
+
+#elif BENCH_NT == NIX_LEDA_FIELD_WITH_SQRT_NT
+#include <NiX/Arithmetic_traits.h>
+
+#elif BENCH_NT == NIX_CORE_FIELD_WITH_SQRT_NT
+#include <NiX/Arithmetic_traits.h>
+
 #else
 #error No Number Type (NT) specified! 
 #endif
@@ -87,6 +96,29 @@ typedef CGAL::Lazy_exact_nt<NT>                         WNT;
 typedef CGAL::Double                                    NT;
 typedef NT                                              WNT;
 #define NUMBER_TYPE "Double"
+
+// #elif BENCH_NT == NIX_ARITHMETIC_TRAITS_NT
+// typedef NiX::Arithmetic_traits                       Arithmetic_traits;
+// #if LiS_HAVE_LEDA
+// typedef NiX::LEDA_arithmetic_traits Arithmetic_traits;
+// #define NUMBER_TYPE "LEDA_arithmetic_traits"
+// #else
+// #if LiS_HAVE_CORE
+// typedef NiX::CORE_arithmetic_traits Arithmetic_traits;
+// #define NUMBER_TYPE "CORE_arithmetic_traits"
+// #endif
+// typedef Arithmetic_traits::Field_with_sqrt              NT;
+// typedef NT                                              WNT;
+
+#elif BENCH_NT == NIX_LEDA_FIELD_WITH_SQRT_NT
+typedef NiX::LEDA_arithmetic_traits                     Arithmetic_traits;
+typedef Arithmetic_traits::Field_with_sqrt              NT;
+typedef NT                                              WNT;
+
+#elif BENCH_NT == NIX_CORE_FIELD_WITH_SQRT_NT
+typedef NiX::CORE_arithmetic_traits                     Arithmetic_traits;
+typedef Arithmetic_traits::Field_with_sqrt              NT;
+typedef NT                                              WNT;
 
 #else
 #error No Number Type (NT) Specified
