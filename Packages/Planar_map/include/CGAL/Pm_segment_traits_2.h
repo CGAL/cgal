@@ -113,17 +113,20 @@ public:
   {
 #if 1
     Construct_vertex_2 construct_vertex = construct_vertex_2_object();
-    const Point_2 & source = construct_vertex(cv, 0);
-    const Point_2 & target = construct_vertex(cv, 1);
-    Less_x_2 less_x = less_x_2_object();
-    return !((less_x(source, q) && less_x(target, q)) ||
-             (less_x(q, source) && less_x(q, target)));
+    Compare_x_2 compare_x = compare_x_2_object();
+    Comparison_result res1 = compare_x(construct_vertex(cv, 0), q);
+    Comparison_result res2 = compare_x(construct_vertex(cv, 1), q);
+
+    // We check if x(p) equals the x value of one of the end-points.
+    // If not, we check whether one end-point is to p's left and the other is
+    // to its right.
+    return ((res1 == EQUAL) || (res2 == EQUAL) || (res1 != res2));
 #else
     // \todo use this code instead, after the calls it uses are supported
     // in the LEDA kernel.
     Compare_x_2 compare_x = compare_x_2_object();
     Comparison_result res1 = compare_x(cv, 0, q);
-    Comparison_result res2 = compare_x (cv, 1, q);
+    Comparison_result res2 = compare_x(cv, 1, q);
 
     // We check if x(p) equals the x value of one of the end-points.
     // If not, we check whether one end-point is to p's left and the other is
