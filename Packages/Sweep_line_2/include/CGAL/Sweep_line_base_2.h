@@ -132,7 +132,10 @@ public:
   typedef typename Event::VerticalXPointListIter VerticalXPointListIter;
 
   typedef std::list<Event *> EventList;
-  typedef EventList::iterator EventListIter;
+  typedef typename EventList::iterator EventListIter;
+
+  typedef std::list<X_curve_2> CurveList;
+  typedef typename CurveList::iterator CurveListIter;
 
   class  SweepLineGetSubCurves {};
   class  SweepLineGetPoints {};
@@ -166,6 +169,7 @@ public:
       PrintSubCurves();
       PrintEventQueue();
     )
+    m_overlapping = overlapping;
     Sweep(subcurves, SweepLineGetSubCurves());
   }
 
@@ -250,6 +254,8 @@ protected:
       m_currentPos = *p;
       referencePoint = *p;
       m_verticals.clear();
+      m_verticalSubCurves.clear();
+
       while (eventIter != m_queue->end() && 
              m_traits->compare_x(eventIter->first, referencePoint) == EQUAL) {
         p = &(eventIter->first);
@@ -429,8 +435,9 @@ protected:
       VerticalXPointList &pointList = m_currentEvent->getVerticalXPointList();
       if ( pointList.empty() )
       {
-	*out = vcurve->getCurve();
-	++out;
+	AddVerticalCurveToOutput(out, vcurve->getCurve());
+	//*out = vcurve->getCurve();
+	//++out;
 	++vciter;
 	continue;
       }
@@ -451,20 +458,70 @@ protected:
 	SL_DEBUG(std::cout << " yes! \n";)
 	m_traits->curve_split(a, b, c, *i);
 	if ( vcurve->isSourceLeftToTarget()) {
-	  *out = b; ++out;
+	  AddVerticalCurveToOutput(out, b);
+	  //*out = b; ++out;
 	  a = c;
 	} else {
-	  *out = c; ++out;
+	  AddVerticalCurveToOutput(out, c);
+	  //*out = c; ++out;
 	  a = b;
 	}
       }
       if ( vcurve->isSourceLeftToTarget() ) {
-	*out = c; ++out;
+	AddVerticalCurveToOutput(out, c);
+	//*out = c; ++out;
       }
       else {
-	*out = b; ++out;
+	AddVerticalCurveToOutput(out, b);
+	//*out = b; ++out;
       }
       ++vciter;
+    }
+  }
+
+  /*! Adds a new curve to the output list. If the overlapping flag is false,
+      each unique curve is reported only once.
+
+      @param out an iterator to the output container
+      @param cv the curve to be added
+  */
+  template <class OutpoutIterator>
+  void AddCurveToOutput(OutpoutIterator out, 
+			const X_curve_2 &cv, Subcurve *curve)
+  {
+    static Subcurve *prevCurve = 0;
+    static X_curve_2 prevXCv;
+
+    if ( m_overlapping ) {
+      *out = cv;
+      ++out;
+    } else {
+      if ( prevCurve && SimilarCurves(cv, prevXCv)) {
+	std::cout << " curve already reported... " << std::endl;
+	return;
+      }
+      prevCurve = curve;
+      prevXCv = cv;
+      *out = cv;
+      ++out;
+    }
+  }
+
+  template <class OutpoutIterator>
+  void AddVerticalCurveToOutput(OutpoutIterator out, 
+				const X_curve_2 &cv)
+  {
+    if ( m_overlapping ) {
+      *out = cv;
+      ++out;
+    } else {
+      if ( VerticalSubCurveExists(cv)) {
+	std::cout << " curve already reported... " << std::endl;
+	return;
+      }
+      m_verticalSubCurves.push_back(cv);
+      *out = cv;
+      ++out;
     }
   }
 
@@ -584,9 +641,10 @@ protected:
         {
           X_curve_2 a,b;
           m_traits->curve_split(cv, a, b, lastPoint);
-          *out = a; ++out;
+          AddCurveToOutput(out, a, leftCurve);
+	  //*out = a; ++out;
         } else {
-          *out = cv; ++out;
+          AddCurveToOutput(out, cv, leftCurve);
         }
       } else if ( leftCurve->isTarget(eventPoint))
       {
@@ -594,27 +652,27 @@ protected:
         {
           X_curve_2 a,b;
           m_traits->curve_split(cv, a, b, lastPoint);
-          *out = b; ++out;
+          AddCurveToOutput(out, b, leftCurve);
         } else {
-          *out = cv; ++out;
+          AddCurveToOutput(out, cv, leftCurve);
         }
 
       } else { 
         X_curve_2 a,b;
         if ( leftCurve->isSource(lastPoint)) {
           m_traits->curve_split(cv, a, b, eventPoint);
-          *out = a; ++out;
+          AddCurveToOutput(out, a, leftCurve);
         } else if ( leftCurve->isTarget(lastPoint)) {
           m_traits->curve_split(cv, b, a, eventPoint);
-          *out = a; ++out;
+          AddCurveToOutput(out, a, leftCurve);
         } else {
           const X_curve_2 &lastCurve = leftCurve->getLastCurve();
           if ( leftCurve->isSourceLeftToTarget() ) {
             m_traits->curve_split(lastCurve, a, b, eventPoint);
-            *out = a; ++out;
+            AddCurveToOutput(out, a, leftCurve);
           } else {
             m_traits->curve_split(lastCurve, b, a, eventPoint);
-            *out = a; ++out;
+            AddCurveToOutput(out, a, leftCurve);
           }
         }
         leftCurve->setLastPoint(eventPoint);
@@ -746,6 +804,8 @@ protected:
   } 
 
   bool DoCurvesOverlap(Subcurve *c1, Subcurve *c2);
+  bool SimilarCurves(const X_curve_2 &a, const X_curve_2 &b);
+  bool VerticalSubCurveExists(const X_curve_2 &a);
 
   void PrintEventQueue();
   void PrintSubCurves();
@@ -758,6 +818,10 @@ protected:
 
   /*! an indication to whether the traits should be deleted in the distructor */
   bool m_traitsOwner;
+
+  /*! if false, overlapping subcurves are reported only one. 
+    Otherwise, they are reported as many times as they appeard. */
+  bool m_overlapping;
 
   /*! used to hold all event, processed or not, so that they can 
 `     all be deleted at the end */
@@ -796,6 +860,7 @@ protected:
   /*! a list of vertical curves at the x coordinate of the current event 
       point.*/
   SubCurveList m_verticals;
+  CurveList m_verticalSubCurves;
 
   /*! a counter the is used to assign unique ids to the curves. */
   int m_curveId;
@@ -1715,6 +1780,33 @@ DoCurvesOverlap(Subcurve *c1, Subcurve *c2)
   return false;
 }
 
+template <class CurveInputIterator,  class SweepLineTraits_2,
+         class SweepEvent, class CurveWrap>
+inline bool
+Sweep_line_base_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
+SimilarCurves(const X_curve_2 &a, const X_curve_2 &b)
+{
+  if ( m_traits->curve_is_same(a, b))
+    return true;
+  if ( m_traits->curve_is_same(m_traits->curve_flip(a), b))
+    return true;
+  return false;
+}
+
+template <class CurveInputIterator,  class SweepLineTraits_2,
+          class SweepEvent, class CurveWrap>
+inline bool
+Sweep_line_base_2<CurveInputIterator, SweepLineTraits_2,SweepEvent,CurveWrap>::
+VerticalSubCurveExists(const X_curve_2 &a)
+{
+  for ( std::list<X_curve_2>::iterator iter = m_verticalSubCurves.begin() ;
+	iter != m_verticalSubCurves.end() ; ++iter)
+  {
+    if (SimilarCurves(*iter, a)) 
+      return true;
+  }
+  return false;
+}
 
 
 
