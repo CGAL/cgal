@@ -1,3 +1,7 @@
+Version 1.25 (10 dec 99)
+change in the doc:
+\begin{ccClass}{Traits} --> \begin{ccClass}{Triangulation_3_traits}
+
 Version 1.24 (2 dec 99)
 changes for Borland
 makefile in demo changed for M$
