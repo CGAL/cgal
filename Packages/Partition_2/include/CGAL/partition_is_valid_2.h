@@ -223,7 +223,7 @@ partition_is_valid_2 (InputIterator point_first, InputIterator point_last,
 {
    typedef typename std::iterator_traits<InputIterator>::value_type   Point_2;
    typedef typename Kernel_traits<Point_2>::Kernel     K;
-   typedef Partition_traits_2<R>                       Traits;
+   typedef Partition_traits_2<K>                       Traits;
    typedef Is_vacuously_valid<Traits>                  Is_valid;
 
    Partition_is_valid_traits_2<Traits, Is_valid>   validity_traits;
@@ -290,7 +290,7 @@ y_monotone_partition_is_valid_2(InputIterator point_first,
    typedef typename Kernel_traits<Point_2>::Kernel   K;
    return y_monotone_partition_is_valid_2(point_first, point_last, 
                                           poly_first, poly_last,
-                                          Partition_triats_2<K>());
+                                          Partition_traits_2<K>());
 }
 
 }

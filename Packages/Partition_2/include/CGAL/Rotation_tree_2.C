@@ -27,7 +27,6 @@
 // ============================================================================
 
 #include <iostream>
-#include <CGAL/ch_utils.h>
 
 namespace CGAL {
 

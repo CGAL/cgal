@@ -275,7 +275,8 @@ OutputIterator partition_approx_convex_2(InputIterator first,
 {
    typedef typename std::iterator_traits<InputIterator>::value_type Point_2;
    typedef typename Kernel_traits<Point_2>::Kernel K;
-   return partition_approx_convex_2(first, beyond, result,  K());
+   return partition_approx_convex_2(first, beyond, result,  
+                                    Partition_traits_2<K>());
 }
 
 }

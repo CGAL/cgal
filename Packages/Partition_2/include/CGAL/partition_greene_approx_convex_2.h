@@ -836,9 +836,9 @@ OutputIterator partition_greene_approx_convex_2(InputIterator first,
                                                 OutputIterator result)
 {
    typedef typename std::iterator_traits<InputIterator>::value_type Point_2;
-   typedef tpyename Kernel_traits<Point_2>::Kernel   K;
+   typedef typename Kernel_traits<Point_2>::Kernel   K;
    return partition_greene_approx_convex_2(first, beyond, result,  
-                                           Partition_triats_2<K>());
+                                           Partition_traits_2<K>());
 }
 
 }
