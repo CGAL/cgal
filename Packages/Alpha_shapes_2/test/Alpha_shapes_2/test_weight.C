@@ -95,7 +95,7 @@ bool
 file_input(std::list<Point>& L)
 {
 
-  ifstream is("./data/fin", ios::in, filebuf::openprot);
+  std::ifstream is("./data/fin", std::ios::in);
 
   if(is.fail())
     {
@@ -122,9 +122,10 @@ file_input(std::list<Point>& L)
 
 int main(int argc,  char* argv[])
 {
- std::list<Point> L;
- file_input(L);
- std::vector<Gt::Segment> V =
-   Construst_Alpha_shape(L,10000.0,Alpha_shape_2::GENERAL);
- std::cout << "Weighted Alpha Shape computed" << std::endl;
+  std::list<Point> L;
+  file_input(L);
+  std::vector<Gt::Segment> V =
+    Construst_Alpha_shape(L,10000.0,Alpha_shape_2::GENERAL);
+  std::cout << "Weighted Alpha Shape computed" << std::endl;
+  return 0;
 }

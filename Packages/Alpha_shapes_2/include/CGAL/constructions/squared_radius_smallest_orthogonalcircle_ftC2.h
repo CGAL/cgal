@@ -36,9 +36,9 @@ template< class FT >
 CGAL_MEDIUM_INLINE
 FT
 squared_radius_smallest_orthogonalcircleC2(
-               const FT &px, const FT &py, const FT  &pw,
-	       const FT &qx, const FT &qy, const FT  &qw,  
-	       const FT &rx, const FT &ry, const FT  &rw)
+  const FT &px, const FT &py, const FT  &pw,
+  const FT &qx, const FT &qy, const FT  &qw,  
+  const FT &rx, const FT &ry, const FT  &rw)
 
 {
   FT FT4(4);
@@ -62,8 +62,8 @@ template< class FT >
 CGAL_MEDIUM_INLINE
 FT
 squared_radius_smallest_orthogonalcircleC2(
-               const FT &px, const FT &py, const FT  &pw,
-	       const FT &qx, const FT &qy, const FT  &qw)
+  const FT &px, const FT &py, const FT  &pw,
+  const FT &qx, const FT &qy, const FT  &qw)
 
 {
   FT FT4(4);

@@ -43,9 +43,9 @@ template< class FT >
 inline
 FT 
 squared_radius_smallest_orthogonalcircle(
-               const Weighted_point<Point_2< Cartesian<FT> >, FT> &p,
-	       const Weighted_point<Point_2< Cartesian<FT> >, FT> &q,
-	       const Weighted_point<Point_2< Cartesian<FT> >, FT> &r) 
+  const Weighted_point<Point_2< Cartesian<FT> >, FT> &p,
+  const Weighted_point<Point_2< Cartesian<FT> >, FT> &q,
+  const Weighted_point<Point_2< Cartesian<FT> >, FT> &r) 
 {
    
   FT px(p.point().x());
@@ -67,8 +67,8 @@ template< class FT >
 inline
 FT 
 squared_radius_smallest_orthogonalcircle(
-               const Weighted_point<Point_2< Cartesian<FT> >, FT> &p,
-	       const Weighted_point<Point_2< Cartesian<FT> >, FT> &q) 
+   const Weighted_point<Point_2< Cartesian<FT> >, FT> &p,
+   const Weighted_point<Point_2< Cartesian<FT> >, FT> &q) 
 {
 
   FT px(p.point().x());

@@ -43,9 +43,9 @@ template< class FT >
 inline
 Oriented_side
 in_smallest_orthogonalcircle(
-            const Weighted_point<Point_2< Cartesian<FT> >, FT > &p,
-	    const Weighted_point<Point_2< Cartesian<FT> >, FT > &q,
-	    const Weighted_point<Point_2< Cartesian<FT> >, FT > &t) 
+			     const Weighted_point<Point_2< Cartesian<FT> >, FT > &p,
+			     const Weighted_point<Point_2< Cartesian<FT> >, FT > &q,
+			     const Weighted_point<Point_2< Cartesian<FT> >, FT > &t) 
 {
 
  

@@ -15,10 +15,9 @@ include $(CGAL_MAKEFILE)
 # rajouter CGAL_LOCAL_CXXFLAGS si on veut les packages de Local
 
 CXXFLAGS = $(CGAL_CXXFLAGS) \
-	   -mcpu=ultrasparc -mtune=ultrasparc -DNDEBUG \
-           -B /u/alcor/0/prisme_util/Binutils/SunOS/bin/
+	   -mcpu=ultrasparc -mtune=ultrasparc -DDEBUG \
 
-#-mcpu=ultrasparc -mtune=ultrasparc -O2 -DNDEBUG
+#-mcpu=ultrasparc -mtune=ultrasparc -O2 -DDEBUG
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
@@ -29,17 +28,18 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-
-clean:
-	/bin/rm -f *.o \
-                   demo_alpha demo_weight \
-                   core
+all: demo_alpha demo_weight
 
 demo_alpha: demo_alpha.o
 	$(CGAL_CXX) -o demo_alpha demo_alpha.o $(CGAL_WINDOW_LDFLAGS)
 
 demo_weight: demo_weight.o
 	$(CGAL_CXX) -o demo_weight demo_weight.o $(CGAL_WINDOW_LDFLAGS)
+
+clean:
+	\rm -f *.o  *.obj *.exe \
+                   demo_alpha  demo_weight \
+                   core
 
 
 #---------------------------------------------------------------------#

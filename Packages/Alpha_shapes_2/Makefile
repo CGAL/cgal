@@ -48,7 +48,7 @@ example:
 	$(MAKE) -C examples/$(Package) example_alpha example_weight
 
 clean:
-	$(MAKE) -C doc_tex/basic/ clean
+	$(MAKE) -C doc_tex/basic/$(Package) clean
 	$(MAKE) -C test/$(Package) clean
 	$(MAKE) -C examples/$(Package) clean	
 	rm -f $(Package).tar.gz
@@ -60,13 +60,14 @@ clean:
 
 $(Package).tar.gz:
 	tar -zcvf $(Package).tar.gz \
-	--exclude=CVS --exclude=wrapper.tex --exclude=main.tex \
-	--exclude=Makefile --exclude=*5000* --exclude=*.o \
+	--exclude=CVS --exclude=wrapper.tex \
+	--exclude=Makefile* --exclude=*5000* --exclude=*.o \
+        --exclude=*.obj --exclude=*.exe --exclude=*~ \
 	version description.txt changes.txt \
 	include doc_tex doc_ps test examples demo
 
 doc: doc_ps/$(Package).ps
 
-doc_ps/$(Package).ps: doc_tex/basic/alpha.tex
-	$(MAKE) -C doc_tex/basic all
-	cp doc_tex/basic/$(Package).ps doc_ps/
+doc_ps/$(Package).ps: doc_tex/basic/$(Package)/alpha.tex
+	$(MAKE) -C doc_tex/basic/$(Package) all
+	cp doc_tex/basic/$(Package)/$(Package).ps doc_ps/
