@@ -36,7 +36,7 @@ $(Package).tar.gz:
 	tar -zcvf $(Package).tar.gz \
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
 	--exclude=TODO --exclude="*~" --exclude="*.old" \
-	version maintainer description.txt changes.txt include src
+	version maintainer description.txt changes.txt include
 
 clean:
 	rm -f $(Package).tar.gz
