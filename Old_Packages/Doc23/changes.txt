@@ -1,8 +1,10 @@
-2.10    (? Mar 2001)
+2.10    (16 Mar 2001)
 - Added constructor Vector(Point, Point).
 - Fix copy-paste bug in Compute_squared_distance that prevented compilation.
 - Rename Kernel::* to Kernel_*.
 - Replace operator*.tex by operatorStar.tex.
+- Add documentation for Side_of_bounded_circle(p,q,t) and
+  Side_of_bounded_sphere(p,q,t) and Side_of_bounded_sphere(p,q,r,t).
 
 2.9     (6 Mar 2001)
 - Add Construct_cross_product_vector_3.
