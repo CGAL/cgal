@@ -20,18 +20,19 @@ typedef CGAL::Simple_cartesian<double> CK;
 // exact kernel
 typedef CGAL::Simple_cartesian<CGAL::MP_Float> EK;
 
-// SAME COMMENT HERE; I WILL RESTORE IT WHEN FILTERED KERNEL WORKS
-//typedef CGAL::Filtered_kernel<CK,EK>  Kernel;
-typedef CGAL::Filtered_kernel<CK>  Kernel;
-
-
 
 // typedefs for the traits and the algorithm
 
 #include <CGAL/Apollonius_graph_hierarchy_2.h>
 #include <CGAL/Apollonius_graph_traits_2.h>
 
-typedef CGAL::Apollonius_graph_traits_2<Kernel> Traits;
+
+// using filtered traits with two different methods for computing the
+// predicates
+typedef
+CGAL::Apollonius_graph_filtered_traits_2<CK, CGAL::Sqrt_field_tag,
+					 EK, CGAL::Ring_tag>
+Traits;
 
 // now we use the Apollonius graph hierarchy.
 // the hierarchy is faster for inputs consisting of about more than

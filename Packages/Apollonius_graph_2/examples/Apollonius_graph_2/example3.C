@@ -17,14 +17,7 @@
 #include <CGAL/Simple_cartesian.h>
 
 // inexact kernel
-typedef CGAL::Simple_cartesian<double> CK;
-
-// exact kernel
-typedef CGAL::Simple_cartesian<CGAL::MP_Float> EK;
-
-
-typedef CGAL::Filtered_kernel<CK>  Kernel;
-
+typedef CGAL::Simple_cartesian<double> Kernel;
 
 // typedefs for the traits and the algorithm
 
@@ -34,7 +27,8 @@ typedef CGAL::Filtered_kernel<CK>  Kernel;
 #include <CGAL/Apollonius_graph_face_base_2.h>
 #include <CGAL/Apollonius_graph_traits_2.h>
 
-typedef CGAL::Apollonius_graph_traits_2<Kernel> Traits;
+// using filtered traits
+typedef CGAL::Apollonius_graph_filtered_traits_2<Kernel> Traits;
 
 // with the second template argument in the vertex base class being
 // false, we indicate that there is no need to store the hidden
