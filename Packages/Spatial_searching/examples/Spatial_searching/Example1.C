@@ -1,173 +1,112 @@
+// example using nearest_neighbour_iterator for L2
+// benchmark example using 10000 data points and 2000 query points
+// both generated with Random_points_in_cube_3<Point_3>
+
 #include <CGAL/compiler_config.h>
 
+#include <CGAL/basic.h>
 
 #include <vector>
 #include <numeric>
 #include <cassert>
 
 #include <iostream>
-#include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Point_d.h>
+
+#include <CGAL/Cartesian_d.h>
+#include <CGAL/Point_3.h>
 #include <CGAL/Binary_search_tree.h>
 #include <CGAL/Kd_tree_traits_point.h>
-#include <CGAL/Nearest_neighbour_Linf.h>
+#include <CGAL/Nearest_neighbour_L2.h>
 #include <CGAL/Search_nearest_neighbour.h>
-#include <CGAL/Random.h>
-
-#pragma hdrstop
-
-#include <CGAL/point_generators_2.h>
+#include <CGAL/Point_generators_3.h>
+#include <CGAL/Timer.h>
 #include <CGAL/algorithm.h>
 
-
-// example illustrating the computation of a fixed number of nearest neighbours using copy_n
-
-// as well as the computation of a fixed number of next nearest neighbours using an iterator
-void example1_using_nearest_neighbour_Linf() {
+int test_benchmark_nearest_neighbour_L2() {
 
 typedef CGAL::Cartesian<double> R;
-typedef CGAL::Point_d<R> Point;
-typedef Point::FT NT;
-typedef CGAL::Plane_separator<NT> Separator;
+typedef CGAL::Point_3<R> Point;
+typedef CGAL::Creator_uniform_3<double,Point> Creator;
+typedef std::vector<Point> Vector;
+
+typedef CGAL::Plane_separator<double> Separator;
 typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
-typedef CGAL::Nearest_neighbour_Linf<Traits,CGAL::Search_nearest_neighbour>::iterator NNN_Iterator;
+typedef CGAL::Nearest_neighbour_L2<Traits,CGAL::Search_nearest_neighbour>::iterator NNN_Iterator;
 
-// define constants
-int dim=2;
-int point_number=1000;
-int nearest_neighbour_number=4;
-int bucket_size=10;
-double eps=0.1;
+  CGAL::Timer t;
+  int dim=3;
+  int point_number=10000;
+  int query_point_number=2000;
+  int bucket_size=1;
+  double eps=0.0;
+
+  std::cout << "benchmark example, version 1, July 2002" << std::endl;
+  std::cout << "test parameters: d=" << dim << " point_number=" << point_number << std::endl;
+  std::cout << "query_point_number=" << query_point_number << " bucket_size="
+  << bucket_size << " eps=" << eps << std::endl;
+
+  // generate 10000 data points
+  // Prepare a vector for 10000 points.
+    
+  // Vector data_points;
+  // data_points.reserve(point_number);
+
+  typedef std::list<Point> point_list;
+  point_list data_points;
+  
+  // Create 10000 points within a cube.
+  CGAL::Random_points_in_cube_3<Point,Creator> g( 1.0);
+  CGAL::copy_n( g, point_number, std::back_inserter(data_points));
+
+  // generate 10000 data points
+  // Prepare a vector for 10000 points.
+    
+  
+  Vector query_points;
+  query_points.reserve(2000);
+
+  // Create 2000 query points within the same cube.
+  CGAL::copy_n( g, query_point_number, std::back_inserter(query_points));
+
+  t.reset(); t.start();
+  
+  Traits tr(bucket_size, CGAL::SLIDING_MIDPOINT, 3.0, true);
+  typedef CGAL::Binary_search_tree<Traits> Tree;
+  Tree d(data_points.begin(), data_points.end(), tr);
+  t.stop();
+
+  std::cout << "created binary search tree containing" << std::endl
+  << point_number << " random points in the 3-dim unit cube in time " << t.time() <<
+  " seconds " << std::endl;
+  d.statistics();
+
+  // end of building binary search tree
 
 
-// create a list of random points in the unit square
-typedef std::list<Point> listd;
+ 
+  
+  std::vector<Traits::Item_with_distance> nearest_neighbours(query_point_number);
 
-listd lpt;
-CGAL::Random Rnd;
+  t.reset(); t.start();
+  for (int i=0; i < query_point_number; i++) {
+  
+    NNN_Iterator NNN_Iterator1(d,query_points[i],0.0);
+    nearest_neighbours[i]=*NNN_Iterator1;
+  };
+  t.stop();
+   
+  std::cout << "computed" << std::endl
+  << query_point_number << " queries in time " << t.time() <<
+  " seconds " << std::endl;
 
-for (int i1=0; i1<point_number; i1++) {
-        std::vector<double> vec(dim);
-        for (int j=0; j<dim; j++) vec[j]=Rnd.get_double(-1.0,1.0);
-        Point Random_point(dim, vec.begin(), vec.end());
-        lpt.push_front(Random_point);
-}
-
-
-Traits t(bucket_size, CGAL::MEDIAN_OF_BOX, 2.0, true);
-
-
-
-// store the points from the list in a binary search tree.
-typedef CGAL::Binary_search_tree<Traits> Tree;
-Tree d(lpt.begin(), lpt.end(), t);
-
-
-// define query point
-std::vector<double> v(dim);
-for (int i2=0; i2<dim; i2++) v[i2]=1.0;
-v[0]=2.0;
-Point q(dim,v.begin(),v.end());
-std::cout << "query point is " << q << std::endl;
-
-
-
-// define iterator for browsing the binary search tree d.
-NNN_Iterator NNN_Iterator1(d,q,eps);
-
-
-// define vector to store the results
-std::vector<Traits::Item_with_distance> result1(nearest_neighbour_number);
-
-// compute the nearest neighbours
-std::vector<Traits::Item_with_distance>::iterator it = result1.begin();
-CGAL::copy_n(NNN_Iterator1, nearest_neighbour_number, it);
-
-// compute exact distances
-double distance_to_q;
-std::vector<double> distance_array(point_number);
-
-int i3=0;
-
-for (listd::iterator pli=lpt.begin(); pli != lpt.end(); pli++) {
-
-        distance_to_q=0.0;
-
-        for (int i=0; i<dim; i++)
-
-        if ( fabs(q[i]-(*pli)[i]) > distance_to_q )
-
-        distance_to_q = fabs(q[i]-(*pli)[i]);
-
-        distance_array[i3]=distance_to_q;
-
-        i3++;
-
+return 0;
 };
-
-
-// compare exact and approximate distances
-
-std::partial_sort(&distance_array[0],
-
-                    &distance_array[2*nearest_neighbour_number],
-
-                    &distance_array[point_number]);
-
-
-std::cout <<
-"comparison of approximate nearest neighbour distances and real distances"
-<< std::endl;
-
-
-std::cout << std::endl;
-
-for (int i4=0; i4<nearest_neighbour_number; i4++) {
-        std::cout << "dist[" << i4 << "]= " << result1[i4].second << std::endl;
-        std::cout << "distance_array[" << i4 << "]= " <<
-        distance_array[i4] << std::endl;
-        std::cout << "result[" << i4 << "]= "
-
-        << *(result1[i4].first) << std::endl;
-
-        std::cout << "approximation factor= "
-
-        << result1[i4].second/distance_array[i4] - 1.0;
-
-        std::cout << std::endl;
-};
-
-// compute the next k nearest neighbours using iterators
-std::cout << "testing iterator started computing next "
-<< nearest_neighbour_number << " nearest neighbours" << std::endl;
-std::vector<Traits::Item_with_distance> result2(nearest_neighbour_number);
-std::cout << std::endl;
-for (int i5=0; i5 < nearest_neighbour_number; i5++) {
-        result2[i5] = *NNN_Iterator1; ++NNN_Iterator1;
-        std::cout << "dist[" << i5 << "]= " << result2[i5].second
-        << std::endl;
-        std::cout << "distance_array[" << nearest_neighbour_number+i5 << "]= "
-        << distance_array[nearest_neighbour_number+i5] << std::endl;
-        std::cout << "result[" << i5 << "]= "
-
-        << *(result2[i5].first) << std::endl;
-
-        std::cout << "approximation factor = "
-
-        << result1[i5].second/distance_array[i5] - 1.0;
-
-        std::cout << std::endl;
-};
-
-
-};
-
 
 int main() {
-  example1_using_nearest_neighbour_Linf();
+  test_benchmark_nearest_neighbour_L2();
+  
+
   return 0;
 };
-
 
 
