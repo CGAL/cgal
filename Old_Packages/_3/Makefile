@@ -5,7 +5,7 @@
 Package:=$(shell basename `cat CVS/Repository`)
 TAG_VERSION:=v$(shell echo $(VERSION) | sed -e "s/\./_/g")
 CGAL_VERSION:='$(VERSION) ($(shell date '+%e %b %Y'))'
-WWW_base=/net/servers/www-sop/prisme/CGAL/DR:/Members
+WWW_base=/www/pub/homepage/hert/CGAL/submissions
 WWW_dir=$(WWW_base)/$(Package)
 TMP_file=/tmp/submit-mail
 
@@ -24,16 +24,17 @@ Version:
 	cvs tag -F -c current_submission
 
 submit: clean Version $(Package).tar.gz
+	mkdir -p $(WWW_dir)
 	cp $(Package).tar.gz $(WWW_dir)
 	echo > $(TMP_file)
 	echo "submission::" >> $(TMP_file)
-	echo "http://www-sop.inria.fr/prisme/CGAL/DR:/Members" >> $(TMP_file)
+	echo "http://www.mpi-sb.mpg.de/~hert/CGAL/submissions" >> $(TMP_file)
 	echo "/$(Package)/$(Package).tar.gz" >> $(TMP_file)
-	mail -s autohandle cgal-submit@cs.uu.nl $(USER) < $(TMP_file)
+	Mail -s"autohandle" cgal-submit@cs.uu.nl $(USER) < $(TMP_file)
 	rm -f $(TMP_file)
 
 $(Package).tar.gz:
-	tar -zcvf $(Package).tar.gz \
+	gtar -zcvf $(Package).tar.gz \
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
 	--exclude=TODO --exclude="*~" --exclude="*.old" \
 	version maintainer description.txt changes.txt include
