@@ -291,17 +291,22 @@ private:
       return CGAL_ON_UNBOUNDED_SIDE;
     case CGAL_ZERO:
       {
-	return ( (CGAL_Bounded_side) 
-		 geom_traits().side_of_oriented_circle
-		 ( c->vertex(i0)->point(),
-		   c->vertex(i1)->point(),
-		   c->vertex(i2)->point(),
-		   p ) ); 
+	CGAL_Oriented_side s = 
+	  geom_traits().side_of_oriented_circle
+	  ( c->vertex(i0)->point(),
+	    c->vertex(i1)->point(),
+	    c->vertex(i2)->point(),
+	    p );
+	return ( (s == CGAL_ON_NEGATIVE_SIDE) ? CGAL_ON_UNBOUNDED_SIDE :
+		 (s == CGAL_ON_POSITIVE_SIDE) ? CGAL_ON_BOUNDED_SIDE :
+		 CGAL_ON_BOUNDARY );
+// return ( (CGAL_Bounded_side) 
+// 		 geom_traits().side_of_oriented_circle
+// 		 ( c->vertex(i0)->point(),
+// 		   c->vertex(i1)->point(),
+// 		   c->vertex(i2)->point(),
+// 		   p ) ); 
       }
-    default :
-      // impossible
-      CGAL_triangulation_assertion(false);
-      return CGAL_ON_UNBOUNDED_SIDE;
     }
     return CGAL_ON_UNBOUNDED_SIDE;// to avoid warning with egcs
   }// end side of sphere
