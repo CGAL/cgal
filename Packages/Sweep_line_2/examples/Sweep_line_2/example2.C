@@ -6,7 +6,6 @@
 #include <CGAL/Sweep_line_2.h> 
 #include <CGAL/Arr_segment_cached_traits_2.h>
 #include <CGAL/Arr_polyline_traits_2.h>
-#include <CGAL/IO/Arr_polyline_traits_iostream.h>
 #include <iostream>
 #include <vector>
 #include <list>

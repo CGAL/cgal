@@ -1320,11 +1320,18 @@ inline Stream_ & operator<<(Stream_ & os,
  */
 template <class Segment_traits_>
 inline std::ostream & operator<<(std::ostream & os,
-                                 const Polyline_2<Segment_traits_> & cv)
+                                 const Polyline_2<Segment_traits_> & pl)
 {
-  os << cv.points() << " ";
-  typename Polyline_2<Segment_traits_>::const_iterator it;
-  for (it = cv.begin(); it != cv.end(); it++) os << (*it);
+  typedef Polyline_2<Segment_traits_>  Curve_2;
+  typename Curve_2::const_iterator it;
+
+  // Print out the number of points in the polyline.
+  os << pl.points();
+
+  // Print out the polyline points.
+  for (it = pl.begin(); it != pl.end(); it++) 
+    os << " " << (*it);
+
   return (os);
 }
 
@@ -1333,19 +1340,30 @@ inline std::ostream & operator<<(std::ostream & os,
  */
 template <class Segment_traits_, class Stream_>
 inline Stream_ & operator>>(Stream_ & is,
-                            const Polyline_2<Segment_traits_> & cv)
+                            const Polyline_2<Segment_traits_> & pl)
 {
-  int n_points;
-  is >> n_points;
-  typename Segment_traits_::Point_2 point;
-  std::vector<typename Segment_traits_::Point_2> points;
-  for (int i=0; i<n_points; i++)
+  typedef Polyline_2<Segment_traits_>  Curve_2;
+  typedef typename Curve_2::Point_2    Point_2;
+
+  // Read the number of input points.
+  int    n_pts;
+
+  is >> n_pts;
+
+  // Read n_pts points to a list.
+  Point_2              p;
+  ::std::list<Point_2> pts;
+  int                  i;
+
+  for (i = 0; i < n_pts; i++)
   {
-    is >> point;
-    points.push_back(point);
+    is >> p;
+    pts.push_back(p);
   }
-  //const Polyline_2<Segment_traits_> & pol(points.begin(), points.end());
-  //cv = pol;
+
+  // Create the polyline curve.
+  pl = Curve_2 (pts.begin(), pts.end());
+
   return (is);
 }
 

@@ -23,7 +23,6 @@ int main(int argc, char* argv[])
 #include <CGAL/Map_overlay_default_dcel.h>
 //#include <CGAL/leda_rational.h>
 #include <CGAL/Arr_polyline_traits.h>
-//#include <CGAL/IO/Arr_polyline_traits_iostream.h>
 
 // Quotient is included anyway, because it is used to read
 // data files. Quotient can read both integers and fractions.
