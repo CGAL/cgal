@@ -194,18 +194,19 @@ Segment_2_Line_2_pair<K>::intersection(typename K::Segment_2 &result) const
 } // namespace CGALi
 
 template <class K>
-inline bool do_intersect(const Segment_2<K> &seg,
-			 const Line_2<K> &line)
+inline bool
+do_intersect(const Segment_2<K> &seg, const Line_2<K> &line)
 {
   typedef typename K::Do_intersect_2 Do_intersect;
   return Do_intersect()(seg, line);
 }
+
 template <class K>
-inline bool do_intersect(const Line_2<K> &line,
-			 const Segment_2<K> &seg)
+inline bool
+do_intersect(const Line_2<K> &line, const Segment_2<K> &seg)
 {
   typedef typename K::Do_intersect_2 Do_intersect;
-  return Do_intersect_2(line, seg);
+  return Do_intersect(line, seg);
 }
 
 template <class K>
@@ -215,6 +216,7 @@ intersection(const Line_2<K> &line, const Segment_2<K> &seg)
   typedef typename K::Intersect_2 Intersect;
   return Intersect()(seg, line);
 }
+
 template <class K>
 inline Object
 intersection(const Segment_2<K> &seg, const Line_2<K> &line)
@@ -222,8 +224,7 @@ intersection(const Segment_2<K> &seg, const Line_2<K> &line)
   typedef typename K::Intersect_2 Intersect;
   return Intersect()(line, seg);
 }
+
 CGAL_END_NAMESPACE
-
-
 
 #endif

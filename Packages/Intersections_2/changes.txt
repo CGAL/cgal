@@ -1,3 +1,8 @@
+29 March 2005 Sylvain Pion
+- Fix typo in do_intersect(Line_2, Segment_2) spotted by Baruch.
+
+============================= CGAL 3.1 ===========================
+
 22 June 2004 Sylvain Pion
 - Typo spotted by g++ 3.4.
 - Add missing #include<> spotted by g++ 3.4.
