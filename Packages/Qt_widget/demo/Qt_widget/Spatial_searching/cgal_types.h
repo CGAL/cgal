@@ -6,6 +6,7 @@
 #include <CGAL/algorithm.h>
 #include <CGAL/Orthogonal_standard_search.h>
 #include <CGAL/Weighted_Minkowski_distance.h>
+#include <CGAL/Euclidean_distance.h>
 
 #include <vector>
 #include <iostream>
@@ -20,9 +21,8 @@ typedef R::Circle_2                                     Circle_2;
 typedef CGAL::Creator_uniform_2<FT, Point>              Creator;
 typedef CGAL::Plane_separator<FT>                       Separator;
 typedef CGAL::Kd_tree_traits_point<Point>               Traits;
-typedef CGAL::Weighted_Minkowski_distance<Point>        Distance;
-typedef CGAL::Orthogonal_standard_search<Traits, Point, Distance>
-                                                        Neighbour_search;
+typedef CGAL::Euclidean_distance<Point>                 Distance;
+typedef CGAL::Orthogonal_standard_search<Traits>        Neighbour_search;
 
 typedef std::vector<Traits::Item>                       Vector;
 typedef std::vector<Point>                              Query_vector;

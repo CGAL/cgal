@@ -245,7 +245,7 @@ private slots:
     for (int i=0; i < query_point_number; i++) { 
      
      Neighbour_search N(d, query_points[i], tr_dist, 1, 0.0);
-     N.the_k_neighbours(std::back_inserter(nearest_neighbour));
+     N.the_k_neighbors(std::back_inserter(nearest_neighbour));
     }
     
     for (int j=0; j < query_point_number; j++) {
@@ -255,8 +255,6 @@ private slots:
       *widget << query_points[j];
     }
     widget->unlock();
-    
-    
   }
 	
 
