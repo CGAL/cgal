@@ -11,7 +11,7 @@ cprog.sty, nonlinkedpath.sty and test documents. The directory structure is:
 
     cc_manual.sty         macros for the manual.
     cc_manual_index.sty   macros for indexing the manual.
-    latex_converter.sty   new macros supporting the HTML conversion.
+    latex_to_html.sty     new macros supporting the HTML conversion.
     cprog.sty             an environment to format C programs.
     cprog.old.sty         the original cprog.sty (with some bugs).
 

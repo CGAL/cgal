@@ -792,13 +792,13 @@ limited numbers of arguments (0 to 9), we allow also the small letters
 \end{tabbing}
 
 The extensions have to be given in the order shown in this table. An
-example of a useful combination is {\tt \#CX1} that gives the cropped
-expansion of {\tt \#1}. The length is useful for some internal macros
-that accept as the first parameter the actual length of the second
-parameter.  These internal macros just do not parse the second
-argument and ignore therefore block braces therein, which is what one
-needs for verbatim output. The skip option is useful to get rid of
-unwanted prefixes, for example a `{\tt \Backslash}'.
+example of a useful combination is {\tt \#XC1} that skips whitespaces
+before expanding a possible macro. The length is useful for some
+internal macros that accept as the first parameter the actual length
+of the second parameter.  These internal macros just do not parse the
+second argument and ignore therefore block braces therein, which is
+what one needs for verbatim output. The skip option is useful to get
+rid of unwanted prefixes, for example a `{\tt \Backslash}'.
 
 We continue with a short description of the internal macros recognized
 by the converter without reading any style file. After some initial

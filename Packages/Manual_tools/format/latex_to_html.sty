@@ -1,14 +1,13 @@
 % ___________________________________________________________________________
 % |#########################################################################|
 % |                                                                         |
-% | Latex Converter Style File: latex_converter.sty                         |
+% | Latex Converter Style File: latex_to_html.sty                           |
 % | ------------------------------------------------------------------      |
 % | TeX Macros provided on conjunction with the LaTeX converter.            |
 % |                                                                         |
-% | 24.07.1998   Lutz Kettner   kettner@acm.org                             |
-% | Zurich, Switzerland                                                     |
-% | 23.09.1999   Susan Hert     hert@mpi-sb.mpg.de                          |
-% | Saarbruecken, Germany                                                   |
+% | (c) 1998   Lutz Kettner                                                 |
+% |     1999   Susan Hert                                                   |
+% |     2004   Lutz Kettner                                                 |
 % | $Revision$                                                       |
 % | $Date$                                            |
 % |_________________________________________________________________________|
@@ -17,6 +16,7 @@
 % | Table of Contents:                                                      |
 % |                                                                         |
 % |   o   Release Number Support                                            |
+% |   o   Style Selection                                                   |
 % |   o   Boolean Values and Control Structures                             |
 % |   o   HTML Output and Conversion Macros                                 |
 % |   o   Separation of TeX, HTML and ASCII Parts                           |
@@ -77,8 +77,17 @@
 \catcode`\@=11\relax
 \newwrite\@unused
 \def\typeout#1{{\let\protect\string\immediate\write\@unused{#1}}}
-\typeout{latex_converter.sty: \lcRevision. \lcDate.}
+\typeout{latex_to_html.sty: \lcRevision. \lcDate.}
 \catcode`\@=12\relax
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   Style Selection                       
+% |
+% ###########################################################################
+
+\newcommand{\lcStyle}[1]{}
 
 % ___________________________________________________________________________
 % ###########################################################################
