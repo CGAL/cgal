@@ -32,6 +32,9 @@
    $Id$
  ************************************** */
 
+#ifndef CORE_STURM_H
+#define CORE_STURM_H
+
 #include <CORE/BigFloat.h>
 #include <CORE/poly/Poly.h>
 
@@ -698,3 +701,4 @@ int Sturm<NT>:: N_STOP_ITER = 10000;	// stop IterE after this many loops
   					// Reset this as needed
 CORE_END_NAMESPACE
 
+#endif
