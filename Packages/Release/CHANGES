@@ -150,8 +150,7 @@ Known problems:
     - On CC (on Irix 6.5) sweep line with polyline traits does not compile
       (mind that the so-called leda polyline traits does compile).
     - On g++ (on Irix 6.5) the segment-circle (Arr_segment_circle_traits_2)
-      traits does not compile for either of the above packages.
-  
+      traits does not compile for any of the above packages.
 
    
 ----------------------------- Release 2.3 ------------------------------------
