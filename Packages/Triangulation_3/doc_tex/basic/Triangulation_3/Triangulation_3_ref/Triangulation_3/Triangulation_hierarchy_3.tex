@@ -44,6 +44,15 @@ and \ccc{TriangulationCellBase_3}.
 Most of them (point location, insertion, removal\ldots) are overloaded to
 improve their efficiency by using the hierarchic structure. 
 
+Note that, since the algorithms that are provided are randomized, the
+running time of constructing a triangulation with a hierarchy may be
+improved when shuffling the data points.
+
+However, the I/0 operations are not overloaded. So, writing a
+hierarchy into a file will lose the hierarchic structure and reading
+it from the file will result in an ordinary triangulation whose
+efficiency will be the same as \ccc{Tr}.
+
 %\ccTypes
 %The class \ccRefName\ inherits the types from its base triangulation
 %class \ccc{Tr}.
