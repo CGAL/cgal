@@ -853,15 +853,37 @@ void
 Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>::   
 copy(const Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag> &svd)
 {
-  std::map< Vertex_handle, Vertex_handle > V;
+#ifndef CGAL_NO_ASSERTIONS
+  for (unsigned int i = 1; i < svd_hierarchy_2__maxlevel; ++i) {
+    CGAL_assertion( hierarchy[i]->pc_.size() == 0 );
+    CGAL_assertion( hierarchy[i]->isc_.size() == 0 );
+
+    CGAL_assertion( svd.hierarchy[i]->pc_.size() == 0 );
+    CGAL_assertion( svd.hierarchy[i]->isc_.size() == 0 );
+  }
+#endif
+
+  // first copy the point container and input point container
+  this->pc_ = svd.pc_;
+
+  // first create a map between the old point handles and the new ones
+  Handle_map hm;
+
+  Point_handle it_other = svd.hierarchy[0]->pc_.begin();
+  Point_handle it_this = hierarchy[0]->pc_.begin();
+  for (; it_other != svd.hierarchy[0]->pc_.end(); ++it_other, ++it_this) {
+    hm.insert( Point_handle_pair(it_other, it_this) );
+  }
+
   {
     for(unsigned int i = 0; i < svd_hierarchy_2__maxlevel; ++i) {
-      *(hierarchy[i]) = *svd.hierarchy[i];
+      hierarchy[i]->copy(*svd.hierarchy[i], hm);
     }
   }
 
   //up and down have been copied in straightforward way
   // compute a map at lower level
+  std::map< Vertex_handle, Vertex_handle > V;
   {
     for(Finite_vertices_iterator it = hierarchy[0]->finite_vertices_begin(); 
 	it != hierarchy[0]->finite_vertices_end(); ++it) {

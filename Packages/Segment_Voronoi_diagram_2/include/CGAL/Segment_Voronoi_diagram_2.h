@@ -107,10 +107,13 @@ namespace CGALi {
     typedef Site                   result_type;
     Site& operator()(const Node& x) const {
       static Site s;
-      if ( x.third ) { // it is a point
-	s = Site::construct_site_2(*x.first);
+      if ( boost::tuples::get<2>(x) /*x.third*/ ) { // it is a point
+	//	s = Site::construct_site_2(*x.first);
+	s = Site::construct_site_2( *boost::tuples::get<0>(x) );
       } else {
-	s = Site::construct_site_2(*x.first, *x.second);
+	//	s = Site::construct_site_2(*x.first, *x.second);
+	s = Site::construct_site_2
+	  (*boost::tuples::get<0>(x), *boost::tuples::get<1>(x));
       }
       return s;
     }
@@ -213,17 +216,32 @@ protected:
 
   typedef CGALi::Svd_point_2_less_than<Modified_traits> Point_2_less_than;
 
-  typedef std::set<Point_2,Point_2_less_than>    PC;
+  //  typedef std::set<Point_2,Point_2_less_than>    PC;
+  typedef std::set<Point_2>                      PC;
   //  typedef std::list<Point_2>                     PC;
   typedef typename PC::iterator                  PH;
 
 
   // these containers should have point handles and should replace the
   // point container...
-  typedef Triple<PH,PH,bool>                     Site_rep_2;
+  typedef boost::tuples::tuple<PH,PH,bool>       Site_rep_2;
+  //  typedef Triple<PH,PH,bool>                     Site_rep_2;
 
   struct Site_rep_less_than {
     // less than for site representations
+#if 1
+    bool operator()(const Site_rep_2& s1, const Site_rep_2& s2) const
+    {
+      if ( &(*boost::tuples::get<0>(s1)) ==
+	   &(*boost::tuples::get<0>(s2)) ) {
+	return &(*boost::tuples::get<1>(s1)) <
+	  &(*boost::tuples::get<1>(s2));
+      } else {
+	return &(*boost::tuples::get<0>(s1)) <
+	  &(*boost::tuples::get<0>(s2));
+      }
+    }
+#else
     bool operator()(const Site_rep_2& s1, const Site_rep_2& s2) const
     {
       if ( &(*s1.first) == &(*s2.first) ) {
@@ -232,9 +250,11 @@ protected:
 	return &(*s1.first) < &(*s2.first);
       }
     }
+#endif
   };
 
-  typedef std::set<Site_rep_2,Site_rep_less_than>   Input_sites_container;
+  //  typedef std::set<Site_rep_2,Site_rep_less_than>   Input_sites_container;
+  typedef std::list<Site_rep_2>                    Input_sites_container;
   typedef typename Input_sites_container::const_iterator
   All_inputs_iterator;
 
@@ -579,7 +599,10 @@ protected:
   inline Point_handle register_input_site(const Point_2& p)
   {
     std::pair<PH,bool> it = pc_.insert(p);
-    isc_.insert( Site_rep_2(it.first, it.first, true) );
+    Site_rep_2 rep(it.first, it.first, true);
+    //    isc_.insert( rep );
+    isc_.push_back( rep );
+    //    isc_.insert( Site_rep_2(it.first, it.first, true) );
     return it.first;
   }
 
@@ -588,7 +611,9 @@ protected:
   {
     std::pair<PH,bool> it1 = pc_.insert(p0);
     std::pair<PH,bool> it2 = pc_.insert(p1);
-    isc_.insert( Site_rep_2(it1.first, it2.first, false) );
+    Site_rep_2 rep(it1.first, it2.first, false);
+    //    isc_.insert( rep );
+    isc_.push_back( rep );
     return Point_handle_pair(it1.first, it2.first);
   }
 
@@ -765,6 +790,7 @@ protected:
 		    Handle_map& hm, const Tag_true&);
 
   void copy(Segment_Voronoi_diagram_2& other);
+  void copy(Segment_Voronoi_diagram_2& other, Handle_map& hm);
 
 protected:
   // HELPER METHODS FOR COMBINATORIAL OPERATIONS ON THE DATA STRUCTURE

@@ -1,4 +1,10 @@
-18 August 2004: Menelaos Karavelas
+20 August 2004:  Menelaos Karavelas
+- fixed bugs in copy constructor/assignment operator for the segment
+  Voronoi diagram and segment Voronoi diagram hierarchy classes
+- using std::list instead of std::set for the input sites container
+- using replaced Triple by boost tuple in Site_rep_2
+
+18 August 2004:  Menelaos Karavelas
 - updated TODO list
 - the input site container now contains handles instead of points: this
   reduces memory usage

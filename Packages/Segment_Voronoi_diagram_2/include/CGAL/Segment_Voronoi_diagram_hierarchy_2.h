@@ -97,6 +97,7 @@ public:
   typedef typename Base::Point_handle              Point_handle;
 
 protected:
+  typedef typename Base::Handle_map                Handle_map;
   typedef typename Base::Point_handle_pair         Point_handle_pair;
 
 public:
@@ -297,7 +298,13 @@ protected:
 				       const Site_2& t,
 				       Vertex_handle v,
 				       int level, Tag_false itag, Tag) {
+#if defined(__POWERPC__) && \
+  defined(__GNUC__) && (__GNUC__ == 3) && (__GNUC_MINOR__ == 4)
+    // hack to avoid nasty warning for G++ 3.4 on Darwin
+    static int i;
+#else
     static int i = 0;
+#endif
     if ( i == 0 ) {
       i = 1;
       print_error_message();

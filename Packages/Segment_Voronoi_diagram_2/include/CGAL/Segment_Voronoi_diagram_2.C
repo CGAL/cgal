@@ -1750,8 +1750,37 @@ copy(Segment_Voronoi_diagram_2& other)
 {
   // first copy the point container and input point container
   pc_ = other.pc_;
-  isc_ = other.isc_;
 
+  // first create a map between the old point handles and the new ones
+  Handle_map hm;
+
+  Point_handle it_other = other.pc_.begin();
+  Point_handle it_this = pc_.begin();
+  for (; it_other != other.pc_.end(); ++it_other, ++it_this) {
+    hm.insert( Point_handle_pair(it_other, it_this) );
+  }
+
+  copy(other, hm);
+}
+
+template<class Gt, class DS, class LTag>
+void
+Segment_Voronoi_diagram_2<Gt,DS,LTag>::
+copy(Segment_Voronoi_diagram_2& other, Handle_map& hm)
+{
+  // second, copy the site representation info for the input sites
+  // using the correct handles (i.e., the handles from the new point
+  // container
+  isc_.clear();
+  typename Input_sites_container::iterator iit_other = other.isc_.begin();
+  for (; iit_other != other.isc_.end(); ++iit_other) {
+    Site_rep_2 old_srep = *iit_other;
+    Site_rep_2 new_srep( hm[boost::tuples::get<0>(old_srep)],
+			 hm[boost::tuples::get<1>(old_srep)],
+			 boost::tuples::get<2>(old_srep) );
+    isc_.push_back( new_srep );
+  }
+  
   CGAL_assertion( pc_.size() == other.pc_.size() );
   CGAL_assertion( isc_.size() == other.isc_.size() );
 
@@ -1770,15 +1799,6 @@ copy(Segment_Voronoi_diagram_2& other)
 
   // now we have to update the sotrage sites in each vertex of the
   // diagram and also update the 
-
-  // first create a map between the old point handles and the new ones
-  Handle_map hm;
-
-  Point_handle it_other = other.pc_.begin();
-  Point_handle it_this = pc_.begin();
-  for (; it_other != other.pc_.end(); ++it_other, ++it_this) {
-    hm.insert( Point_handle_pair(it_other, it_this) );
-  }
 
   // then update the storage sites for each vertex
   Intersections_tag itag;

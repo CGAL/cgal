@@ -58,7 +58,7 @@ bool test_svd(InputStream& is, const SVD&)
   Site_2 s3 = Site_2::construct_site_2(p3,p4);
   Site_2 s4 = Site_2::construct_site_2(p4,p1);
 
-  Site_2 t5 = Site_2::construct_site_2(p5);
+  //  Site_2 t5 = Site_2::construct_site_2(p5);
 
   std::vector<Site_2> site_list;
   {
