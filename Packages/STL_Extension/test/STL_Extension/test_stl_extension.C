@@ -8107,17 +8107,22 @@ struct My_to_bool   { operator bool() const { return true; } };
 
 void test_Triple()
 {
-  typedef CGAL::Triple<int,double,bool> T1;
-  typedef CGAL::Triple<T1,double,bool>  T2;
-  typedef CGAL::Triple<T1,T2,bool>      T3;
+  typedef CGAL::Triple<int,double,bool>                    T1;
+  typedef CGAL::Triple<T1,double,bool>                     T2;
+  typedef CGAL::Triple<T1,T2,bool>                         T3;
+  typedef CGAL::Triple<My_to_int,My_to_double,My_to_bool>  T4;
 
   T1 x1;
   x1 = CGAL::make_triple(1, 1.5, true);
+
   My_to_int mti;
   My_to_double mtd;
   My_to_bool mtb;
   T1 xx(mti, mtd, mtb);
   CGAL_assertion(xx.first == 2);
+  T4 x4(mti, mtd, mtb);
+  x1 = x4;
+  CGAL_assertion(x1.first == 2);
   T2 x2;
   T3 x3;
   T1 y1(2, 2.2, true);
@@ -8135,10 +8140,11 @@ void test_Triple()
 }
 void test_Quadruple()
 {
-  typedef CGAL::Quadruple<int,float,double,bool> T1;
-  typedef CGAL::Quadruple<T1,float,double,bool>  T2;
-  typedef CGAL::Quadruple<T1,T2,double,bool>     T3;
-  typedef CGAL::Quadruple<T1,T2,T3,bool>         T4;
+  typedef CGAL::Quadruple<int,float,double,bool>                         T1;
+  typedef CGAL::Quadruple<T1,float,double,bool>                          T2;
+  typedef CGAL::Quadruple<T1,T2,double,bool>                             T3;
+  typedef CGAL::Quadruple<T1,T2,T3,bool>                                 T4;
+  typedef CGAL::Quadruple<My_to_int,My_to_float,My_to_double,My_to_bool> T5;
 
   T1 x1;
   x1 = CGAL::make_quadruple(1, 2.5f, 1.5, true);
@@ -8148,6 +8154,10 @@ void test_Quadruple()
   My_to_bool mtb;
   T1 xx(mti, mtf, mtd, mtb);
   CGAL_assertion(xx.first == 2);
+  T5 x5(mti, mtf, mtd, mtb);
+  x1 = x5;
+  CGAL_assertion(x1.first == 2);
+  x1 = CGAL::make_quadruple(1, 2.5f, 1.5, true);
   T2 x2;
   T3 x3;
   T4 x4;

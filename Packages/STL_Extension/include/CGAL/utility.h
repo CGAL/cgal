@@ -58,6 +58,14 @@ struct Triple
   Triple(const U& a, const V& b, const W& c)
   : first(a), second(b), third(c)
   {}
+
+  template <class U, class V, class W>
+  Triple& operator=(const Triple<U, V, W> &t) {
+    first = t.first;
+    second = t.second;
+    third = t.third;
+    return *this;
+  }
 };
 
 template <class T1, class T2, class T3>
@@ -113,6 +121,15 @@ struct Quadruple
   Quadruple(const U& a, const V& b, const W& c, const X& d)
   : first(a), second(b), third(c), fourth(d)
   {}
+
+  template <class U, class V, class W, class X>
+  Quadruple& operator=(const Quadruple<U, V, W, X> &q) {
+    first = q.first;
+    second = q.second;
+    third = q.third;
+    fourth = q.fourth;
+    return *this;
+  }
 };
 
 template <class T1, class T2, class T3, class T4>

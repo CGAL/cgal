@@ -1,3 +1,6 @@
+2.44
+- Also update test/Configuration/CGAL_CFG_NO_ITERATOR_TRAITS.C.
+
 2.43
 - Fix CGAL_CFG_NO_ITERATOR_TRAITS.C for SUNPRO (cf 2.41).
 
