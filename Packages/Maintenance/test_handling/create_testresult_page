@@ -237,6 +237,34 @@ EOF
     }
 }
 
+sub parse_platform($)
+{
+    my ($pf) = @_;
+    $pf =~ s/_LEDA$//;
+    my @list = split /_/, $pf;
+    return @list;
+}
+
+sub parse_platform_2($)
+{
+    my ($pf) = @_;
+    my @list = parse_platform($pf);
+    if (@list > 3) {
+        splice(@list,0,@list-3);
+    }
+    while (@list < 3) {
+    	push(@list,'?');
+    }
+    return @list;
+}
+
+sub short_pfname($)
+{
+    my @pflist = parse_platform_2($_[0]);
+    my $shortpf = join('_', $pflist[2], $pflist[1]);
+    return $shortpf;
+}
+
 sub choose_platforms()
 {
     my (%platform_index, $pf);
@@ -252,27 +280,28 @@ sub choose_platforms()
 # and add those platforms at the end of the list of known platforms.
     foreach (@available_platforms) {
 	$pf = $_;
+	my @pflist = parse_platform_2($pf);
+	my $shortpf = join('_', $pflist[2], $pflist[1]);
 	$pf =~ s/^[^_]*_//;
 	$pf =~ s/_LEDA$//;
-	if (!exists $platform_index{$pf}) {
+	if (!exists $platform_index{$shortpf}) {
 	    print STDERR
 		"Warning: Platform $_ is unknown!\n";
-	    $platform_index{$pf} = 1;
-	    push(@known_platforms,$pf); # ???
-    	    $platform_short_names{$pf} = $pf;
+	    $platform_index{$shortpf} = 1;
+	    push(@known_platforms,$shortpf); # ???
+    	    $platform_short_names{$shortpf} = $shortpf;
 	}
     }
 
 # Make a list of all the platforms that are to be treated, in the order they
 # appear in the list of known_platforms.
     @platforms_to_do = ();
+    @known_platforms = sort(@known_platforms);
     for ($index=0; $index < @known_platforms; $index += 1) {
 	$pf = $known_platforms[$index];
 	my $ind2 = 0;
 	foreach (@available_platforms) {
-	    my $apf = $_;
-	    $apf =~ s/^[^_]*_//;
-	    $apf =~ s/_LEDA$//;
+	    my $apf = short_pfname($_);
 	    if ($apf eq $pf) {
 	    	push(@platforms_to_do, $_);
 	    }
@@ -301,9 +330,7 @@ EOF
     foreach $pf (@platforms_to_do) {
 	print OUTPUT "<TR>\n<TD>$pf_no</TD>\n";
 	$pf_no++;
-	my $pf_short = $pf;
-	$pf_short =~ s/^[^_]*_//;
-	$pf_short =~ s/_LEDA$//;
+	my $pf_short = join('_',parse_platform_2($pf));
 	print OUTPUT "<TD NOWRAP>$pf_short</TD>\n";
         if (open (PLATFORM_INFO, "results_${pf}.info")) {
 	    $_ = <PLATFORM_INFO>;
@@ -345,9 +372,7 @@ EOF
     foreach $pf (@platforms_to_do) {
 	print OUTPUT "<TR>\n<TD>$pf_no</TD>\n";
 	$pf_no++;
-	my $pf_short = $pf;
-	$pf_short =~ s/^[^_]*_//;
-	$pf_short =~ s/_LEDA$//;
+	my $pf_short = short_pfname($pf);
 	print OUTPUT "<TD NOWRAP>$platform_short_names{$pf_short}</TD>\n";
 	print OUTPUT "</TR>\n";
     }
@@ -575,8 +600,9 @@ sub init_known_platforms()
     @known_platforms = ();
     while(<PLATFORMS>) {
         ($short_name, $full_name) =split;
+	$full_name = short_pfname($full_name);
 	push(@known_platforms,$full_name);
-    	$platform_short_names{$full_name} = $short_name;
+    	$platform_short_names{$full_name} = $full_name;
     }
     close(PLATFORMS);
 }
