@@ -1,3 +1,6 @@
+Version 3.3.4 (September 17 1999)
+- Corrected template paramter of PointCd
+
 Version 3.3.3 (September 17 1999)
 - Added Point_d_base in Cartesian
 

@@ -58,9 +58,9 @@ struct Cartesian_base_dynamic_d
     // Because of partial specialization, CGAL::Point_d<R> is selected as
     // CGAL::Point_d<Cartesian_d<FT>,Cartesian_tag>
     // CAUTION: This is not yet done, so we revert to the old class PointCd
-    typedef PointCd<R>                          Point_d;
+    typedef PointCd<FT>                          Point_d;
 #else
-    typedef PointCd<R>                          Point_d;
+    typedef PointCd<FT>                          Point_d;
 #endif // CGAL_CFG_NO_ADVANCED_KERNEL
 };
 
