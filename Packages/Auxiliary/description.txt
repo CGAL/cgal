@@ -1,0 +1,3 @@
+The directory auxiliary (with gmp-4).
+It has Cygwin related patch applied.
+As well, precompiled libs for MSVC and Borland are packaged here.
