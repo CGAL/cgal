@@ -5,8 +5,8 @@
 #                    include platform specific settings
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
-#CGAL_MAKEFILE = c:/cgal/CGAL-3.1-I-145/make/makefile_i686_CYGWINNT-5.1-1.5.6_CL.EXE-1310
-CGAL_MAKEFILE = c:/cgal/CGAL-3.1-I-145/make/makefile_i686_CYGWINNT-5.1-1.5.6_ICL.EXE-8
+
+# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -37,9 +37,9 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: demo_arr$(EXE_EXT)
+all: arrangements_2$(EXE_EXT)
 
-MyWindow$(OBJ_EXT): MyWindow.C cgal_types.h demo_tab.h
+MyWindow$(OBJ_EXT): MyWindow.C MyWindow.moc cgal_types.h demo_tab.h
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) MyWindow.C
 
 MyWindow_files$(OBJ_EXT): MyWindow_files.C cgal_types.h demo_tab.h
@@ -51,34 +51,29 @@ MyWindow_overlay$(OBJ_EXT): MyWindow_overlay.C cgal_types.h demo_tab.h
 MyWindow_operations$(OBJ_EXT): MyWindow_operations.C cgal_types.h demo_tab.h
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) MyWindow_operations.C
 
-moc_MyWindow$(OBJ_EXT): moc_MyWindow.C 
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) moc_MyWindow.C
+MyWindow.moc: MyWindow.h
+	$(QT_MOC) $< -o MyWindow.moc
 
-moc_MyWindow.C: MyWindow.h
-	$(QT_MOC) $< -o $@
-
-forms$(OBJ_EXT): forms.C 
+forms$(OBJ_EXT): forms.C  forms.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) forms.C
 
-moc_forms$(OBJ_EXT): moc_forms.C 
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) moc_forms.C
 
-moc_forms.C: forms.h
-	$(QT_MOC) $< -o $@
+forms.moc: forms.h
+	$(QT_MOC) $< -o forms.moc
 
 qt_layer$(OBJ_EXT): qt_layer.C 
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) qt_layer.C
 
-demo_arr$(EXE_EXT): MyWindow$(OBJ_EXT) MyWindow_files$(OBJ_EXT) MyWindow_overlay$(OBJ_EXT) \
-    MyWindow_operations$(OBJ_EXT) moc_MyWindow$(OBJ_EXT) forms$(OBJ_EXT) moc_forms$(OBJ_EXT) \
+arrangements_2$(EXE_EXT): MyWindow$(OBJ_EXT) MyWindow_files$(OBJ_EXT) MyWindow_overlay$(OBJ_EXT) \
+    MyWindow_operations$(OBJ_EXT)  forms$(OBJ_EXT)  \
 	qt_layer$(OBJ_EXT)
-	$(CGAL_CXX) $(EXE_OPT)demo_arr MyWindow$(OBJ_EXT) MyWindow_files$(OBJ_EXT) \
-	MyWindow_overlay$(OBJ_EXT) MyWindow_operations$(OBJ_EXT) moc_MyWindow$(OBJ_EXT) \
-	forms$(OBJ_EXT) moc_forms$(OBJ_EXT) \
+	$(CGAL_CXX) $(EXE_OPT)arrangements_2 MyWindow$(OBJ_EXT) MyWindow_files$(OBJ_EXT) \
+	MyWindow_overlay$(OBJ_EXT) MyWindow_operations$(OBJ_EXT)  \
+	forms$(OBJ_EXT)  \
 	qt_layer$(OBJ_EXT) $(LDFLAGS)
 
 clean: MyWindow.clean MyWindow_files.clean MyWindow_overlay.clean MyWindow_operations.clean forms.clean qt_layer.clean
-	rm -rf moc_forms.* moc_MyWindow.* demo_arr
+	rm -rf *.moc arrangements_2
 
 #---------------------------------------------------------------------#
 #                    suffix rules

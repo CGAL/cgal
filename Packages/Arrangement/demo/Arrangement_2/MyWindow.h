@@ -1,3 +1,5 @@
+#ifndef MYWINDOW_H
+#define MYWINDOW_H
 /////////////////////////////////////////////////////////////////////////////////////////
 // the demo program includs several calsses:
 // 1. MyWindow - main window, create thw window properties (tool bar, menu bar)
@@ -242,3 +244,4 @@ private:
 	QAction *color_dialog_bt;
 };
 
+#endif // MYWINDOW_H

@@ -501,4 +501,5 @@ RayShootingOptionsForm::RayShootingOptionsForm( QWidget* parent ,
   
 }
 
+#include "forms.moc"
 #endif

@@ -368,6 +368,9 @@ MyWindow::MyWindow(int w, int h)
 MyWindow::~MyWindow()
 {}
 
+#include "MyWindow.moc"
+
+
 /*! main */
 int main(int argc, char **argv)
 {
@@ -379,6 +382,20 @@ int main(int argc, char **argv)
   widget.setMouseTracking(TRUE);
   widget.show();
   return app.exec();  
+}
+
+#else 
+
+#include <iostream>
+
+
+int main(int, char*)
+{
+
+  std::cout << "Sorry, this demo needs QT...";
+  std::cout << std::endl;
+
+  return 0;
 }
 
 

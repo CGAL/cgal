@@ -1,3 +1,6 @@
+#ifndef FORMS_H
+#define FORMS_H
+
 /*! the forms.h and forms.C files contains all the program 
  *  dialog forms and drag-drop class.
  */
@@ -255,3 +258,5 @@ protected:
   QHBoxLayout *buttonsLayout;
   
 }; 
+
+#endif // FORMS_H
