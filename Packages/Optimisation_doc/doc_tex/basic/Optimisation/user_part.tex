@@ -44,8 +44,10 @@ then we obtain the smallest enclosing sphere problem already mentioned
 above.
 
 In the following example a smallest enclosing circle
-(\ccc{Min_circle_2<Traits>}) is constructed from point data read from
-standard input and then shown in a \cgal\ window.
+(\ccc{Min_circle_2<Traits>}) is constructed from points 
+on a line and written to standard output. The example
+shows that it is advisable to switch on random shuffling 
+in order to deal with a `bad' order of the input points. 
 %%The default traits class is used here.
 
 \ccIncludeVerbatim{Min_circle_2_simple_demo.C}

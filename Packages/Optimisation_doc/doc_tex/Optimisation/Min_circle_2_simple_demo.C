@@ -1,28 +1,35 @@
-// file: demo/Min_circle_2/Min_circle_2_simple_demo.C
-
-#include <CGAL/Cartesian.h>
+#include <CGAL/Homogeneous.h>
 #include <CGAL/Min_circle_2.h>
 #include <CGAL/Min_circle_2_traits_2.h>
-#include <CGAL/IO/Window_stream.h>
+#include <CGAL/Gmpz.h>
+#include <iostream>
 
-typedef CGAL::Cartesian<double>              K;
-typedef CGAL::Min_circle_2_traits_2<K>       Traits;
-typedef CGAL::Min_circle_2<Traits>           Min_circle;
+// typedefs
+typedef  CGAL::Gmpz                      NT;
+typedef  CGAL::Homogeneous<NT>           K;
+typedef  CGAL::Min_circle_2_traits_2<K>  Traits;
+typedef  CGAL::Min_circle_2<Traits>      Min_circle;
 
-int main ()
+typedef  K::Point_2                      Point;
+
+// main
+int
+main( int, char**)
 {
-    std::istream_iterator<K::Point_2>  in_start(std::cin);
-    std::istream_iterator<K::Point_2>  in_end;
+    int     n = 100;
+    Point*  P = new Point[ n];
 
-    Min_circle  mc (in_start, in_end);   // smallest enclosing circle
+    for ( int i = 0; i < n; ++i)
+	P[ i] = Point( (i%2 == 0 ? i : -i), 0);
+    // (0,0), (-1,0), (2,0), (-3,0), ...
 
-    CGAL::Window_stream  W;
-    W.init(-256.0, 255.0, -256.0);
-    W.display();    
-    W << CGAL::BLACK << mc;              // output circle + points
-    W << CGAL::GREEN << mc.circle();     // output circle
+    Min_circle  mc1( P, P+n, false);    // very slow
+    Min_circle  mc2( P, P+n, true);     // fast
 
-    W.read_mouse();                      // wait for mouse click in window
-    return 0;
+    CGAL::set_pretty_mode( std::cout);
+    std::cout << mc2;
+
+    delete[] P;
+
+    return( 0);
 }
-
