@@ -1,0 +1,7 @@
+A structure that supports 2D arrangements. The data structure maintains a
+planar map and curve hierarchy trees. Given a collection C of planar curves,
+the arrangement A(c) is the partition of the plane to vertices, edges and faces
+induced by the curves of C.
+	
+The package contains the Arrangement header files, default traits classes, 
+dcel class, examples, and a demo directory with a graphic demo.
