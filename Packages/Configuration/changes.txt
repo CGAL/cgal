@@ -1,3 +1,6 @@
+20 May 2004 Sylvain Pion
+- Add CGAL_CFG_CONVERSION_OPERATOR_BUG.C to detect the bug in g++ 3.3.0.
+
 9 May 2004 Sylvain Pion
 - Add CGAL_CFG_NO_PRAGMA_FENV_ACCESS.C
 
