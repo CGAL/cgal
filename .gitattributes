@@ -1842,7 +1842,6 @@ Packages/Visibility_complex/doc_tex/fig/points.gif -text svneol=unset#unset
 Packages/Visibility_complex/doc_tex/fig/vis-complex.eps -text
 Packages/Visibility_complex/doc_tex/fig/vis-complex.fig -text
 Packages/Visibility_complex/doc_tex/fig/vis-complex.gif -text svneol=unset#unset
-Packages/Visibility_complex/doc_tex/manual.ps.gz svneol=native#unset
 Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/a_annulus_21.xbm -text
 Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/circle_21.xbm -text
 Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/dice_21.xbm -text
