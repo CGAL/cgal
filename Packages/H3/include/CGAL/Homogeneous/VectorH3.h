@@ -94,6 +94,7 @@ public:
   FT       operator*( const VectorH3 &v) const;
   Vector_3 operator*( const RT &f) const;
   Vector_3 operator*( const FT &f) const;
+  FT squared_length() const;
   Vector_3 operator/( const RT &f) const;
   Vector_3 operator/( const FT &f) const;
 };
@@ -205,6 +206,19 @@ VectorH3<R>::operator*(const VectorH3<R>& v) const
   CGAL_kernel_assertion( hw() != RT(0) );
   return ( FT( hx()*v.hx() + hy()*v.hy() + hz()*v.hz() ) /
            FT( hw()*v.hw() ) );
+}
+
+template <class R>
+CGAL_KERNEL_INLINE
+typename VectorH3<R>::FT
+VectorH3<R>::squared_length() const
+{
+  typedef typename R::FT FT;
+  return 
+    FT( CGAL_NTS square(hx()) + 
+	CGAL_NTS square(hy()) + 
+	CGAL_NTS square(hz()) ) / 
+    FT( CGAL_NTS square(hw()) );
 }
 
 template <class R>

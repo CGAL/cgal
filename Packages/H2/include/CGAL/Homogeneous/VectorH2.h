@@ -107,6 +107,7 @@ public:
    Vector_2 opposite() const;
    Vector_2 operator*(const RT &f) const;
    Vector_2 operator*(const FT &f) const;
+   FT squared_length() const;
    Vector_2 operator/(const RT &f) const;
    Vector_2 operator/(const FT &f) const;
 
@@ -227,6 +228,17 @@ VectorH2<R>::operator*(const VectorH2<R>& v) const
   typedef typename R::RT RT;
   typedef typename R::FT FT;
   return FT( RT(hx()*v.hx() + hy()*v.hy()) ) / FT( RT(hw()*v.hw() ) );
+}
+
+template <class R>
+CGAL_KERNEL_INLINE
+typename VectorH2<R>::FT
+VectorH2<R>::squared_length() const
+{
+  typedef typename R::FT FT;
+  return 
+    FT( CGAL_NTS square(hx()) + CGAL_NTS square(hy()) ) / 
+    FT( CGAL_NTS square(hw()) );
 }
 
 template <class R>
