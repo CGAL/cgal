@@ -12,10 +12,10 @@
 // release_date  : 
 //
 // file          : include/CGAL/geowin_support.h
-// package       : GeoWin (1.3.9)
+// package       : GeoWin (1.4)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 1.3.9
-// revision_date : 12 Feb 2002 
+// revision      : 1.4
+// revision_date : 12 March 2002 
 // author(s)     : Matthias Baesken, Ulrike Bartuschka, Stefan Naeher
 //
 // coordinator   : Matthias Baesken, Trier  (<baesken@informatik.uni-trier.de>)
@@ -139,6 +139,17 @@ typedef std::list<CGALTetrahedron_3>    CGALTetrahedron_3_list;
 #else
 #  define GEOWIN_BEGIN_NAMESPACE
 #  define GEOWIN_END_NAMESPACE
+#endif
+
+
+// LEDA namespace support
+#if !defined(LEDA_BEGIN_NAMESPACE)
+#define LEDA_BEGIN_NAMESPACE 
+#endif
+
+
+#if !defined(LEDA_END_NAMESPACE)
+#define LEDA_END_NAMESPACE 
 #endif
 
 
@@ -333,6 +344,8 @@ leda_polygon convert_to_leda(const CGAL::Tetrahedron_3<REP>& obj)
   return pol;  
 }
 
+LEDA_BEGIN_NAMESPACE 
+
 template<class REP>
 ps_file& operator<<(ps_file& F,const CGAL::Point_2<REP>& o) { F << convert_to_leda(o); return F; }
 
@@ -419,6 +432,8 @@ ps_file& operator<<(ps_file& F,const CGAL::Tetrahedron_3<REP>& obj)
   return F;
 }
 
+
+LEDA_END_NAMESPACE 
 
 static void geowin_generate_circle_segments(leda_list<leda_segment>& LS, leda_circle C, int n)
 {
