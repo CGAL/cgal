@@ -1142,7 +1142,7 @@
        \else \ccBool=\ccFalse \fi}
 
 % This macro test wheather its argument starts (after leading spaces)
-% with a valid C++ letter.
+% with a valid C++ letter (incl. digits and '_').
 \def\isLetter #1{%
     \def\qparams{#1}\ifx\qparams\empty\ccBool=\ccFalse 
         \else\isLetterX #1\ccEnd\fi}
@@ -1155,6 +1155,7 @@
     \fi\fi}
 
 % Test for a leading underscore, either _ with changed catcode, or \_
+% (after leading spaces)
 \def\isUnderscore #1{%
     \def\qparams{#1}\ifx\qparams\empty\ccBool=\ccFalse 
         \else\isUnderscoreX #1\ccEnd\fi}
@@ -1164,7 +1165,8 @@
         \if#1_\ccBool=\ccTrue \fi
     \fi}
 
-% Test for a leading underscore, either _ with changed catcode, or \_
+% Test for a '[' which indicates an optional argument in LaTeX.
+% (after leading spaces)
 \def\isOptionalArg #1{%
     \def\qparams{#1}\ifx\qparams\empty\ccBool=\ccFalse 
         \else\isOptionalArgX #1\ccEnd\fi}
@@ -1236,6 +1238,21 @@
             \isLastAlphaX #1\ccEnd \ccInvert
         \fi
     \fi}
+
+% Check the first character in the parameter. If it is a character (or _) 
+% return \ccTrue, else return \ccFalse. (It takes spaces into account
+% and returns \ccFalse if the parameter starts with a space.)
+\def\isFirstAlpha #1{%
+    \isEmpty{#1}\ifnum\ccBool=\ccTrue
+        \ccInvert
+    \else
+        \hasLeadingSpace{#1}\ifnum\ccBool=\ccTrue
+            \ccInvert
+        \else
+            \isLetter{#1}%
+        \fi
+    \fi
+}
 
 % Check the last character in the parameter. If it is a character (or _) 
 % return \ccTrue, else return \ccFalse. 
@@ -2178,7 +2195,7 @@
 % | If the type contains a "const ... &" pair, it is removed. If the
 % | the type is similar to the class that is currently declared, it is
 % | also removed. (In that case it might result in an empty parameter
-% | if no variable name is given. Then, a dummy "#" is printed instead.
+% | if no variable name is given. Then, the type is not removed.
 % |
 % | The return type of a method or function has no `variable name', so
 % | only "const ... &" removal is done and no classname elimination.
@@ -2203,7 +2220,8 @@
             \ccPrintTokens #1#2\ccEnd%
         \else
         \isEmpty{#2}\ifnum\ccBool=\ccTrue
-            \ccPrintTokens #1\ccEnd%  A complete hack. Necessary to work together
+            \ccPrintTokens #1\ccEnd%  A complete hack. 
+            % Necessary to work together
             % with the operator example. Otherwise a def is not working
             % (totally obscure errormessage). However, I do not understand
             % what is going on, I assume that the special case of a member 
@@ -2231,7 +2249,18 @@
             \ccPrintTokens ##1\ccEnd%
         \else
             % \ccPureClassTemplateName is in the argument.
-            \ccRepOwnClassX ##1##2\ccEnd%
+            % Check that neither ##1 ends with character nor ##2 starts 
+            % with a character. Otherwise, \ccPureClassTemplateName
+            % would be only a part of a longer idfier.
+            \isLastAlpha{##1}\ifnum\ccBool=\ccTrue
+                \ccRepOwnClassX ##1#1##2\ccEnd%
+            \else
+                \isFirstAlpha{##2}\ifnum\ccBool=\ccTrue
+                    \ccRepOwnClassX ##1#1##2\ccEnd%
+                \else
+                    \ccRepOwnClassX ##1##2\ccEnd%
+                \fi
+            \fi
         \fi
     }%
     % local macro to remove the trailing \ccPureClassTemplateName.

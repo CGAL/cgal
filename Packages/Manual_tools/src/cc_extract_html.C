@@ -1819,6 +1819,11 @@ void remove_own_classname( char* s, const char* classname) {
 	s++;
     }
     if ( i <= l) {
+        // Classname found. Test if it is not part of a larger idfier.
+	if ( i < l && ( isalnum( s[l2]) || s[l2] == '_'))
+	    return;
+	if ( i > 0  && ( isalnum( s[-1]) || s[-1] == '_'))
+	    return;
         // Classname found. Test non-empty result.
 	char* p = s + l2;
 	while ( *p) {
