@@ -8,6 +8,10 @@ LINK="ln -f -s"
 # 2. if they include Class_2<R> in Michael's design, we'd like them to
 # include Cartesian/Class_2<R> instead
 
+# because it's been fixed in Stefan's deisgn, these scripts are only useful for
+# the brave who want to try out Michael's design (CGAL_CFG_NO_ADVANCED_KERNEL
+# not set)
+
 cd .. ;
 
 # to solve problems related to #1
@@ -28,7 +32,6 @@ $LINK Cartesian/predicates_on_lines_2.h predicates_on_linesC2.h
 $LINK Cartesian/predicates_on_points_2.h predicates_on_pointsC2.h
 
 # to solve problems related to #2
-# only when using Michael's design (CGAL_CFG_NO_ADVANCED_KERNEL not set)
 $LINK Cartesian/Aff_transformation_2.h Aff_transformation_2.h
 $LINK Cartesian/Circle_2.h Circle_2.h
 $LINK Cartesian/Circle_rep_2.h Circle_rep_2.h
