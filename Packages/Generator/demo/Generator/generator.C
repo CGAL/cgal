@@ -160,7 +160,7 @@ public:
     //the standard toolbar
     stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this, "ST");
   
-    *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::BLACK);
+    *widget << CGAL::LineWidth(1) << CGAL::BackgroundColor (CGAL::BLACK);
   
     resize(w,h);
     widget->set_window(-1, 1, -1, 1);
@@ -229,8 +229,8 @@ private slots:
   }	
 
   void in_square(){
-    stoolbar->clear_history();
-    widget->set_window(-1.1, 1.1, -1.1, 1.1); 
+    //stoolbar->clear_history();
+    //widget->set_window(-1.1, 1.1, -1.1, 1.1); 
     // set the Visible Area to the Interval
     CGAL::Random_points_in_square_2<Point> g(1);
     for(int count=0; count<200; count++) {
@@ -241,8 +241,8 @@ private slots:
 
   void in_disc()
   {
-    stoolbar->clear_history();
-    widget->set_window(-1.1, 1.1, -1.1, 1.1); 
+    //stoolbar->clear_history();
+    //widget->set_window(-1.1, 1.1, -1.1, 1.1); 
     // set the Visible Area to the Interval
 
     CGAL::Random_points_in_disc_2<Point> g(1);
@@ -255,8 +255,8 @@ private slots:
 
   void on_square()
   {
-    stoolbar->clear_history();
-    widget->set_window(-1.1, 1.1, -1.1, 1.1); 
+    //stoolbar->clear_history();
+    //widget->set_window(-1.1, 1.1, -1.1, 1.1); 
     // set the Visible Area to the Interval
 
     CGAL::Random_points_on_square_2<Point> g(1);
@@ -268,11 +268,11 @@ private slots:
 
   void on_square_grid()
   {
-    stoolbar->clear_history();
-    widget->set_window(-1.1, 1.1, -1.1, 1.1); 
+    //    stoolbar->clear_history();
+    //widget->set_window(-1.1, 1.1, -1.1, 1.1); 
     // set the Visible Area to the Interval
 
-    CGAL::points_on_square_grid_2(1, 100, 
+    CGAL::points_on_square_grid_2(2, 100, 
 				  std::back_inserter(list_of_points), 
 				  Creator());
 
@@ -281,11 +281,11 @@ private slots:
 
   void on_circle()
   {
-    stoolbar->clear_history();
-    widget->set_window(-1.1, 1.1, -1.1, 1.1); 
+    //stoolbar->clear_history();
+    //widget->set_window(-1.1, 1.1, -1.1, 1.1); 
     // set the Visible Area to the Interval
 
-    CGAL::Random_points_on_circle_2<Point> g(1);
+    CGAL::Random_points_on_circle_2<Point> g(0.7);
     for(int count=0; count<200; count++) {
       list_of_points.push_back(*g++);
     }
@@ -302,7 +302,7 @@ private slots:
 
     // Prepare point generator for the horizontal segment, length 200.
     typedef  CGAL::Random_points_on_segment_2<Point,Creator>  P1;
-    P1 p1( Point(-1,0), Point(1,0));
+    P1 p1( Point(-0.1,0), Point(0.4,0));
 
     // Prepare point generator for random points on circle, radius 250.
     typedef  CGAL::Random_points_on_circle_2<Point,Creator>  P2;
