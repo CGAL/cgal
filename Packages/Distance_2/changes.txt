@@ -1,4 +1,4 @@
-2.12 (10 September 2003)
+2.13 (10 September 2003)
 * Added specializations for Cartesian and homogeneous kernels
 
 2.11 (7 September 2003)
