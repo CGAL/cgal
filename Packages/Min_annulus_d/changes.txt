@@ -1,5 +1,8 @@
 Changes done to the `Min_annulus_d' package
 
+Version 1.1.4 on 18-Mar-2002
+- Added auxiliary typedefs for sunpro.
+
 Version 1.1.3 on 5-Feb-2002
 - Add typenames for GCC 3.1.
 
