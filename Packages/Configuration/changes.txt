@@ -1,3 +1,8 @@
+2.59
+- Added two new tests for cl1300:
+	- CGAL_CFG_USING_NAMESPACE_BUG
+	- CGAL_CFG_EARLY_INSTANTIATION_BUG
+
 2.58
 - Refine CGAL_CFG_NO_LIMITS for MipsPro.
 
