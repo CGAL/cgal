@@ -1,3 +1,6 @@
+4.17     (5 June 01)
+- Add constructor from a double to Quotient<>.
+
 4.16     (29 May 01)
 - Fix to_interval(leda_integer).
 

@@ -263,17 +263,17 @@ class Quotient
   typedef NumberType NT;
   
   Quotient() : num( NT(0) ), den( NT(1) ) {}
-  
+
   Quotient(const NT& n) : num(n), den( NT(1) ) {}
-  
+
   Quotient(int i) : num(NT(i)), den( NT(1) ) {}
-  
+
+  Quotient(double d) : num(NT(d)), den( NT(1) ) {}
+
   Quotient(const NT& n, const NT& d) : num(n), den(d)
   { CGAL_kernel_precondition( d!= NT(0) ); }
   
   Quotient(const Quotient<NT>& r) : num(r.num), den(r.den) {}
-  
-  ~Quotient() {}
   
   Quotient<NT>& operator+= (const Quotient<NT>& r);
   Quotient<NT>& operator-= (const Quotient<NT>& r);
