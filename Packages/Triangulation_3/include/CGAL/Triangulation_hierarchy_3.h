@@ -272,7 +272,7 @@ is_valid() const
 	result = result && hierarchy[i]->is_valid();
 
   //verify that lower level has no down pointers
-  for( it = hierarchy[0]->finite_vertices_begin(); 
+  for( Vertex_iterator it = hierarchy[0]->finite_vertices_begin(); 
        it != hierarchy[0]->vertices_end(); ++it) 
     result = result && ( it->down() == 0 );
 
