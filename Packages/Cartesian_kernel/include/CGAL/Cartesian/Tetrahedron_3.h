@@ -90,15 +90,6 @@ public:
   FT         volume() const;
 };
 
-// We cannot reuse it from CGAL/predicate_classes_3.h, because of
-// problems with file inclusions...
-template < class Point_3 >
-struct Less_xyzC3 {
-  bool operator() (Point_3 const &p, Point_3 const &q) {
-      return lexicographically_xyz_smaller_or_equal(p,q);
-    }
-};
-
 #ifdef CGAL_CFG_TYPENAME_BUG
 #define typename
 #endif
@@ -120,8 +111,9 @@ operator==(const TetrahedronC3<R CGAL_CTAG> &t) const
   int k;
   for ( k=0; k < 4; k++) V1.push_back( vertex(k));
   for ( k=0; k < 4; k++) V2.push_back( t.vertex(k));
-  std::sort(V1.begin(), V1.end(), Less_xyzC3<Point_3>());
-  std::sort(V2.begin(), V2.end(), Less_xyzC3<Point_3>());
+  typename R::Less_xyz_3 Less_object = R().less_xyz_3_object();
+  std::sort(V1.begin(), V1.end(), Less_object);
+  std::sort(V2.begin(), V2.end(), Less_object);
   uniq_end1 = std::unique( V1.begin(), V1.end());
   uniq_end2 = std::unique( V2.begin(), V2.end());
   V1.erase( uniq_end1, V1.end());
