@@ -157,8 +157,8 @@ CGAL_KERNEL_INLINE
 Bbox_2
 PointC2<R>::bbox() const
 {
-  std::pair<double,double> xp = CGAL::to_interval(x());
-  std::pair<double,double> yp = CGAL::to_interval(y());
+  std::pair<double,double> xp = CGAL_NTS to_interval(x());
+  std::pair<double,double> yp = CGAL_NTS to_interval(y());
   return Bbox_2(xp.first, yp.first,  xp.second, yp.second);
 }
 

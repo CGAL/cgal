@@ -288,7 +288,7 @@ SphereC3<R>::bbox() const
   Interval_nt<> y (b.ymin(), b.ymax());
   Interval_nt<> z (b.zmin(), b.zmax());
 
-  Interval_nt<> sqr = CGAL::to_interval(squared_radius());
+  Interval_nt<> sqr = CGAL_NTS to_interval(squared_radius());
   Interval_nt<> r = CGAL::sqrt(sqr);
   Interval_nt<> minx = x-r;
   Interval_nt<> maxx = x+r;

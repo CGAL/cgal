@@ -1,3 +1,6 @@
+20 June 2004 Sylvain Pion
+- Change some CGAL:: to CGAL_NTS.
+
 20 May 2004 Sylvain Pion
 - Add forgotten #include<CGAL/Bbox_[23].h>.
 

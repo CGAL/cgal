@@ -163,9 +163,9 @@ template < class R >
 Bbox_3
 PointC3<R>::bbox() const
 {
-  std::pair<double,double> xp = CGAL::to_interval(x());
-  std::pair<double,double> yp = CGAL::to_interval(y());
-  std::pair<double,double> zp = CGAL::to_interval(z());
+  std::pair<double,double> xp = CGAL_NTS to_interval(x());
+  std::pair<double,double> yp = CGAL_NTS to_interval(y());
+  std::pair<double,double> zp = CGAL_NTS to_interval(z());
   return Bbox_3(xp.first, yp.first, zp.first, xp.second, yp.second, zp.second);
 }
 
