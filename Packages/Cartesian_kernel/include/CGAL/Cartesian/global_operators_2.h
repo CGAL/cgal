@@ -53,15 +53,6 @@ operator-(const Origin &, const VectorC2<K> &v)
 template < class K >
 inline
 typename K::Vector_2
-operator-(const PointC2<K> &p, const PointC2<K> &q)
-{
-  //return K().construct_vector_2_object()(p, q);
-  return typename K::Vector_2(p.x() - q.x(), p.y() - q.y());
-}
-
-template < class K >
-inline
-typename K::Vector_2
 operator-(const PointC2<K> &p, const Origin &)
 {
   return typename K::Vector_2(p.x(), p.y());

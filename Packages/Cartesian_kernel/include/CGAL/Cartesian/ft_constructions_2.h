@@ -70,17 +70,6 @@ line_x_at_y(const LineC2<K> &l, const typename K::FT &y)
   return line_y_at_xC2(l.b(), l.a(), l.c(), y);
 }
 
-template <class R>
-CGAL_KERNEL_LARGE_INLINE
-typename R::FT
-area(const PointC2<R>& p, const PointC2<R>& q, const PointC2<R>& r)
-{
-  typedef typename R::FT  FT;
-  typename R::Vector_2 v1 = q - p;
-  typename R::Vector_2 v2 = r - p;
-  return det2x2_by_formula(v1.x(), v1.y(), v2.x(), v2.y())/FT(2);
-}
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CARTESIAN_FT_CONSTRUCTIONS_2_H

@@ -33,6 +33,37 @@ namespace CGALi {
 
 template <typename K>
 inline
+Angle
+angle(const typename CGAL_WRAP(K)::Point_3 &p,
+      const typename CGAL_WRAP(K)::Point_3 &q,
+      const typename CGAL_WRAP(K)::Point_3 &r, const K &k)
+{
+  return k.angle_3_object()(p, q, r);
+}
+
+template < class K >
+inline
+bool
+are_ordered_along_line(const typename CGAL_WRAP(K)::Point_3 &p,
+                       const typename CGAL_WRAP(K)::Point_3 &q,
+                       const typename CGAL_WRAP(K)::Point_3 &r, const K& k)
+{
+  return k.are_ordered_along_line_3_object()(p, q, r);
+}
+
+template < class K >
+inline
+bool
+are_strictly_ordered_along_line(const typename CGAL_WRAP(K)::Point_3 &p,
+                                const typename CGAL_WRAP(K)::Point_3 &q,
+                                const typename CGAL_WRAP(K)::Point_3 &r,
+                                const K& k)
+{
+  return k.are_strictly_ordered_along_line_3_object()(p, q, r);
+}
+
+template <typename K>
+inline
 typename K::Plane_3
 bisector(const typename CGAL_WRAP(K)::Point_3 &p,
          const typename CGAL_WRAP(K)::Point_3 &q, const K &k)
@@ -84,6 +115,62 @@ typename K::Point_3
 circumcenter(const typename CGAL_WRAP(K)::Triangle_3 &t, const K& k)
 {
   return k.construct_circumcenter_3_object()(t);
+}
+
+template < class K >
+inline
+bool
+collinear(const typename CGAL_WRAP(K)::Point_3 &p,
+          const typename CGAL_WRAP(K)::Point_3 &q,
+          const typename CGAL_WRAP(K)::Point_3 &r,
+          const K& k)
+{
+  return k.collinear_3_object()(p, q, r);
+}
+
+template < class K >
+inline
+bool
+collinear_are_strictly_ordered_along_line(
+          const typename CGAL_WRAP(K)::Point_3 &p,
+          const typename CGAL_WRAP(K)::Point_3 &q,
+          const typename CGAL_WRAP(K)::Point_3 &r,
+          const K& k)
+{
+  return k.collinear_are_strictly_ordered_along_line_3_object()(p, q, r);
+}
+
+template < class K >
+inline
+Orientation
+coplanar_orientation(const typename CGAL_WRAP(K)::Point_3 &p,
+                     const typename CGAL_WRAP(K)::Point_3 &q,
+                     const typename CGAL_WRAP(K)::Point_3 &r,
+                     const typename CGAL_WRAP(K)::Point_3 &s, const K& k)
+{
+  return k.coplanar_orientation_3_object()(p, q, r, s);
+}
+
+template < class K >
+inline
+Orientation
+coplanar_orientation(const typename CGAL_WRAP(K)::Point_3 &p,
+                     const typename CGAL_WRAP(K)::Point_3 &q,
+                     const typename CGAL_WRAP(K)::Point_3 &r, const K& k)
+{
+  return k.coplanar_orientation_3_object()(p, q, r);
+}
+
+template < class K >
+inline
+Bounded_side
+coplanar_side_of_bounded_circle(const typename CGAL_WRAP(K)::Point_3 &p,
+                                const typename CGAL_WRAP(K)::Point_3 &q,
+                                const typename CGAL_WRAP(K)::Point_3 &r,
+                                const typename CGAL_WRAP(K)::Point_3 &t,
+                                const K& k)
+{
+  return k.coplanar_side_of_bounded_circle_3_object()(p, q, r, t);
 }
 
 template < class K >

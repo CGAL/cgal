@@ -35,6 +35,34 @@ CGAL_BEGIN_NAMESPACE
 
 template <typename K>
 inline
+Angle
+angle(const Point_3<K> &p, const Point_3<K> &q, const Point_3<K> &r)
+{
+  return CGALi::angle(p, q, r, K());
+}
+
+template < class K >
+inline
+bool
+are_ordered_along_line(const Point_3<K> &p,
+                       const Point_3<K> &q,
+                       const Point_3<K> &r)
+{
+  return CGALi::are_ordered_along_line(p, q, r, K());
+}
+
+template < class K >
+inline
+bool
+are_strictly_ordered_along_line(const Point_3<K> &p,
+                                const Point_3<K> &q,
+                                const Point_3<K> &r)
+{
+  return CGALi::are_strictly_ordered_along_line(p, q, r, K());
+}
+
+template <typename K>
+inline
 typename K::Plane_3
 bisector(const Point_3<K> &p, const Point_3<K> &q)
 {
@@ -82,6 +110,56 @@ typename K::Point_3
 circumcenter(const Triangle_3<K> &t)
 {
   return CGALi::circumcenter(t, K());
+}
+
+template < class K >
+CGAL_KERNEL_INLINE
+bool
+collinear(const Point_3<K> &p, const Point_3<K> &q, const Point_3<K> &r)
+{
+  return CGALi::collinear(p, q, r, K());
+}
+
+template < class K >
+inline
+bool
+collinear_are_strictly_ordered_along_line(const Point_3<K> &p,
+                                          const Point_3<K> &q,
+                                          const Point_3<K> &r)
+{
+  return CGALi::collinear_are_strictly_ordered_along_line(p, q, r, K());
+}
+
+template < class K >
+inline
+Orientation
+coplanar_orientation(const Point_3<K> &p,
+                     const Point_3<K> &q,
+                     const Point_3<K> &r,
+                     const Point_3<K> &s)
+{
+  return CGALi::coplanar_orientation(p, q, r, s, K());
+}
+
+template < class K >
+inline
+Orientation
+coplanar_orientation(const Point_3<K> &p,
+                     const Point_3<K> &q,
+                     const Point_3<K> &r)
+{
+  return CGALi::coplanar_orientation(p, q, r, K());
+}
+
+template < class K >
+inline
+Bounded_side
+coplanar_side_of_bounded_circle(const Point_3<K> &p,
+                                const Point_3<K> &q,
+                                const Point_3<K> &r,
+                                const Point_3<K> &t)
+{
+  return CGALi::coplanar_side_of_bounded_circle(p, q, r, t, K());
 }
 
 template < class K >
@@ -186,6 +264,14 @@ typename K::FT
 operator*(const Vector_3<K> &v, const Vector_3<K> &w)
 {
   return K().compute_scalar_product_3_object()(v, w);
+}
+
+template < class K >
+inline
+typename K::Vector_3
+operator-(const Point_3<K> &p, const Point_3<K> &q)
+{
+  return K().construct_vector_3_object()(q, p);
 }
 
 // parallel() functions are in Kernel/global_functions.h

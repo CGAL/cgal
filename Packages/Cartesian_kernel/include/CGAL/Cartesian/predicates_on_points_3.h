@@ -206,16 +206,6 @@ dominance(const PointC3<K> &p,
 
 template < class K >
 inline
-bool
-collinear(const PointC3<K> &p,
-          const PointC3<K> &q,
-          const PointC3<K> &r)
-{
-    return K().collinear_3_object()(p, q, r);
-}
-
-template < class K >
-inline
 Orientation
 orientation(const PointC3<K> &p,
             const PointC3<K> &q,
@@ -227,16 +217,6 @@ orientation(const PointC3<K> &p,
 
 template < class K >
 inline
-Angle
-angle(const PointC3<K> &p,
-      const PointC3<K> &q,
-      const PointC3<K> &r)
-{
-  return K().angle_3_object()(p, q, r);
-}
-
-template < class K >
-inline
 bool
 coplanar(const PointC3<K> &p,
          const PointC3<K> &q,
@@ -244,38 +224,6 @@ coplanar(const PointC3<K> &p,
          const PointC3<K> &s)
 {
   return K().coplanar_3_object()(p, q, r, s);
-}
-
-template < class K >
-inline
-Orientation
-coplanar_orientation(const PointC3<K> &p,
-                     const PointC3<K> &q,
-                     const PointC3<K> &r,
-                     const PointC3<K> &s)
-{
-  return K().coplanar_orientation_3_object()(p, q, r, s);
-}
-
-template < class K >
-inline
-Orientation
-coplanar_orientation(const PointC3<K> &p,
-                     const PointC3<K> &q,
-                     const PointC3<K> &r)
-{
-  return K().coplanar_orientation_3_object()(p, q, r);
-}
-
-template < class K >
-inline
-Bounded_side
-coplanar_side_of_bounded_circle(const PointC3<K> &p,
-                                const PointC3<K> &q,
-                                const PointC3<K> &r,
-                                const PointC3<K> &t)
-{
-  return K().coplanar_side_of_bounded_circle_3_object()(p, q, r, t);
 }
 
 template < class K>
@@ -303,41 +251,11 @@ are_negative_oriented(const PointC3<K>& p,
 template < class K >
 inline
 bool
-are_ordered_along_line(const PointC3<K> &p,
-                       const PointC3<K> &q,
-                       const PointC3<K> &r)
-{
-  return K().are_ordered_along_line_3_object()(p, q, r);
-}
-
-template < class K >
-inline
-bool
 collinear_are_ordered_along_line(const PointC3<K> &p,
                                  const PointC3<K> &q,
                                  const PointC3<K> &r)
 {
   return K().collinear_are_ordered_along_line_3_object()(p, q, r);
-}
-
-template < class K >
-inline
-bool
-are_strictly_ordered_along_line(const PointC3<K> &p,
-                                const PointC3<K> &q,
-                                const PointC3<K> &r)
-{
-  return K().are_strictly_ordered_along_line_3_object()(p, q, r);
-}
-
-template < class K >
-inline
-bool
-collinear_are_strictly_ordered_along_line(const PointC3<K> &p,
-                                          const PointC3<K> &q,
-                                          const PointC3<K> &r)
-{
-  return K().collinear_are_strictly_ordered_along_line_3_object()(p, q, r);
 }
 
 template <class K >

@@ -275,16 +275,6 @@ operator-(const PointH2<R>& p, const VectorH2<R>& v)
                              p.hw()*v.hw() );
 }
 
-template <class R>
-CGAL_KERNEL_INLINE
-typename R::Vector_2
-operator-(const PointH2<R>& p, const PointH2<R>& q)
-{
-  return typename R::Vector_2(p.hx()*q.hw() - q.hx()*p.hw(),
-                              p.hy()*q.hw() - q.hy()*p.hw(),
-                              p.hw()*q.hw() );
-}
-
 template < class R >
 CGAL_KERNEL_INLINE
 typename R::Vector_2

@@ -1,3 +1,11 @@
+13 Mar 2004 Sylvain Pion
+- Move the following to the new scheme :
+  area(3 Point_2), operator-(2 Point_[23]), collinear(3 Point_3),
+  angle(3 Point_3), coplanar_orientation([34] Point_3),
+  coplanar_side_of_bounded_circle(4 Point_3), are_ordered_along_line(3 Point_3),
+  are_strictly_ordered_along_line(3 Point_3),
+  collinear_are_strictly_ordered_along_line(3 Point_3)
+
 29 Feb 2004 Sylvain Pion
 - Replace SegmentH3 by Cartesian's SegmentC3 !
 

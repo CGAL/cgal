@@ -37,6 +37,7 @@ namespace HomogeneousKernelFunctors {
   using CartesianKernelFunctors::Are_parallel_2;
   using CartesianKernelFunctors::Are_parallel_3;
   using CartesianKernelFunctors::Compute_squared_area_3;
+  using CartesianKernelFunctors::Collinear_3;
 
   template <typename K>
   class Angle_2
@@ -381,26 +382,6 @@ namespace HomogeneousKernelFunctors {
       
       return ( det == RT0 );
     }
-  };
-
-  template <typename K>
-  class Collinear_3
-  {
-    typedef typename K::Point_3      Point_3;
-    typedef typename K::Direction_3  Direction_3;
-  public:
-    typedef bool             result_type;
-    typedef Arity_tag< 3 >   Arity;
-
-    bool
-    operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
-    {
-      Direction_3 dir_pq = (p - q).direction();
-      Direction_3 dir_rq = (r - q).direction();
-      
-      return ( dir_pq == dir_rq ) || (dir_pq == -dir_rq)
-	|| ( p == q ) || ( p == r ) || ( q == r ) ;
-    } // FIXME
   };
 
   template <typename K>
@@ -1095,6 +1076,41 @@ namespace HomogeneousKernelFunctors {
     Comparison_result
     operator()( const Point_3& p, const Point_3& q) const
     { return CGAL_NTS compare(p.hz() * q.hw(), q.hz() * p.hw() ); }
+  };
+
+  template <typename K>
+  class Compute_area_2
+  {
+    typedef typename K::RT                RT;
+    typedef typename K::FT                FT;
+    typedef typename K::Iso_rectangle_2   Iso_rectangle_2;
+    typedef typename K::Triangle_2        Triangle_2;
+    typedef typename K::Point_2           Point_2;
+    typedef typename K::Vector_2          Vector_2;
+    typedef typename K::Construct_vector_2 Construct_vector_2;
+    Construct_vector_2 co;
+  public:
+    typedef FT               result_type;
+    typedef Arity_tag< 1 >   Arity;
+
+    FT
+    operator()( const Point_2& p, const Point_2& q, const Point_2& r ) const
+    {
+      Vector_2 v1 = co(p, q);
+      Vector_2 v2 = co(p, r);
+
+      RT num = v1.hx()*v2.hy() - v2.hx()*v1.hy();
+      RT den = RT(2) * v1.hw() * v2.hw();
+      return FT(num)/FT(den);
+    }
+
+    FT
+    operator()( const Iso_rectangle_2& r ) const
+    { return r.area(); }
+
+    FT
+    operator()( const Triangle_2& t ) const
+    { return t.area(); }
   };
 
   template <typename K>

@@ -65,6 +65,14 @@ are_strictly_ordered_along_line(const Point_2<K> &p,
   return CGALi::are_strictly_ordered_along_line(p, q, r, K());
 }
 
+template < class K >
+inline
+typename K::FT
+area(const Point_2<K> &p, const Point_2<K> &q, const Point_2<K> &r)
+{
+  return CGALi::area(p, q, r, K());
+}
+
 template <typename K>
 inline
 typename K::Line_2
@@ -595,6 +603,14 @@ typename K::Point_2
 operator+(const Point_2<K> &p, const Vector_2<K> &v)
 {
   return K().construct_translated_point_2_object()(p, v);
+}
+
+template < class K >
+inline
+typename K::Vector_2
+operator-(const Point_2<K> &p, const Point_2<K> &q)
+{
+  return K().construct_vector_2_object()(q, p);
 }
 
 template <typename K>

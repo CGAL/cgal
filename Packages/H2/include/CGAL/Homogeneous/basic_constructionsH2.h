@@ -70,23 +70,6 @@ squared_distance( const PointH2<R>& p, const PointH2<R>& q )
   return FT( sq_dist_numerator ) / FT( sq_dist_denominator );
 }
 
-template <class R>
-CGAL_KERNEL_LARGE_INLINE
-typename R::FT
-area(const PointH2<R>& p, const PointH2<R>& q, const PointH2<R>& r)
-{
-    typedef typename R::Vector_2  Vector_2;
-    typedef typename R::RT        RT;
-    typedef typename R::FT        FT;
-
-    Vector_2 v1 = q - p;
-    Vector_2 v2 = r - p;
-
-    RT num = v1.hx()*v2.hy() - v2.hx()*v1.hy();
-    RT den = RT(2) * v1.hw() * v2.hw();
-    return FT(num)/FT(den);
-}
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_BASIC_CONSTRUCTIONSH2_H

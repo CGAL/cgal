@@ -66,6 +66,17 @@ are_strictly_ordered_along_line(const typename CGAL_WRAP(K)::Point_2 &p,
   return k.are_strictly_ordered_along_line_2_object()(p, q, r);
 }
 
+template < class K >
+inline
+typename K::FT
+area(const typename CGAL_WRAP(K)::Point_2 &p,
+     const typename CGAL_WRAP(K)::Point_2 &q,
+     const typename CGAL_WRAP(K)::Point_2 &r,
+     const K& k)
+{
+  return k.compute_area_2_object()(p, q, r);
+}
+
 template <typename K>
 inline
 typename K::Line_2

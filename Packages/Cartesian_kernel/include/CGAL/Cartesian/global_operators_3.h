@@ -61,15 +61,6 @@ operator-(const Origin &, const VectorC3<K> &v)
 template < class K >
 inline
 typename K::Vector_3
-operator-(const PointC3<K> &p, const PointC3<K> &q)
-{
-  return VectorC3<K>(p.x() - q.x(), p.y() - q.y(), p.z() - q.z());
-  //return K().construct_vector_3_object()(q, p);
-}
-
-template < class K >
-inline
-typename K::Vector_3
 operator-(const PointC3<K> &p, const Origin &)
 {
   return VectorC3<K>(p.x(), p.y(), p.z());

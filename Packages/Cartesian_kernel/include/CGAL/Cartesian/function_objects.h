@@ -656,6 +656,36 @@ namespace CartesianKernelFunctors {
   };
 
   template <typename K>
+  class Compute_area_2
+  {
+    typedef typename K::FT                FT;
+    typedef typename K::Iso_rectangle_2   Iso_rectangle_2;
+    typedef typename K::Triangle_2        Triangle_2;
+    typedef typename K::Point_2           Point_2;
+  public:
+    typedef FT               result_type;
+    typedef Arity_tag< 1 >   Arity;
+
+    FT
+    operator()( const Point_2& p, const Point_2& q, const Point_2& r ) const
+    {
+      FT v1x = q.x() - p.x();
+      FT v1y = q.y() - p.y();
+      FT v2x = r.x() - p.x();
+      FT v2y = r.y() - p.y();
+      return det2x2_by_formula(v1x, v1y, v2x, v2y)/2;
+    }
+
+    FT
+    operator()( const Iso_rectangle_2& r ) const
+    { return r.area(); }
+
+    FT
+    operator()( const Triangle_2& t ) const
+    { return t.area(); }
+  };
+
+  template <typename K>
   class Compute_scalar_product_2
   {
     typedef typename K::FT                FT;

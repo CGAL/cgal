@@ -285,44 +285,6 @@ CGAL_END_NAMESPACE
 
 CGAL_BEGIN_NAMESPACE
 
-template < class R>
-CGAL_KERNEL_MEDIUM_INLINE
-Angle
-angle( const PointH3<R>& p,
-       const PointH3<R>& q,
-       const PointH3<R>& r)
-{
-  return (Angle) CGAL_NTS sign((p-q)*(r-q));
-}
-
-template < class R >
-CGAL_KERNEL_INLINE
-bool
-collinear(const PointH3<R> &p,
-          const PointH3<R> &q,
-          const PointH3<R> &r)
-{
-  DirectionH3<R> dir_pq = (p - q).direction();
-  DirectionH3<R> dir_rq = (r - q).direction();
-
-  return    ( dir_pq == dir_rq ) || (dir_pq == -dir_rq)
-         || ( p == q ) || ( p == r ) || ( q == r ) ;
-}
-
-template < class R >
-CGAL_KERNEL_INLINE
-bool
-are_ordered_along_line(const PointH3<R> &p,
-                            const PointH3<R> &q,
-                            const PointH3<R> &r)
-{
-  if (!collinear(p, q, r))
-  {
-       return false;
-  }
-  return collinear_are_ordered_along_line(p, q, r);
-}
-
 template < class R >
 CGAL_KERNEL_INLINE
 bool
@@ -389,31 +351,6 @@ collinear_are_ordered_along_line(const PointH3<R> &p,
   }
   // p == r
   return  ((rqx == qrx) && (rqy == qry) && (rqz == qrz));
-}
-
-template < class R >
-CGAL_KERNEL_INLINE
-bool
-are_strictly_ordered_along_line(const PointH3<R> &p,
-                                     const PointH3<R> &q,
-                                     const PointH3<R> &r)
-{
-  if ( ! collinear(p, q, r) ) return false;
-  return collinear_are_strictly_ordered_along_line( p, q, r);
-}
-
-template < class R >
-CGAL_KERNEL_INLINE
-bool
-collinear_are_strictly_ordered_along_line(const PointH3<R> &p,
-                                               const PointH3<R> &q,
-                                               const PointH3<R> &r)
-{
-  CGAL_kernel_exactness_precondition( collinear(p, q, r) );
-  if ( p == r) return false;
-  DirectionH3<R> dir_pq = (p - q).direction();
-  DirectionH3<R> dir_rq = (r - q).direction();
-  return (dir_pq == -dir_rq);
 }
 
 template < class R >
@@ -529,20 +466,6 @@ side_of_bounded_sphere(const PointH3<R> &p,
     }
   }
   return ON_BOUNDARY;  // Pls, no warnings anylonger
-}
-
-template < class R >
-CGAL_KERNEL_MEDIUM_INLINE
-Bounded_side
-coplanar_side_of_bounded_circle(const PointH3<R> &p,
-                                const PointH3<R> &q,
-                                const PointH3<R> &r,
-                                const PointH3<R> &t)
-{
-    CGAL_kernel_precondition( coplanar(p,q,r,t) );
-    CGAL_kernel_precondition( !collinear(p,q,r) );
-    return (Bounded_side)
-	   side_of_oriented_sphere(p, q, r, t+cross_product(q-p, r-p), t);
 }
 
 CGAL_END_NAMESPACE
