@@ -1,4 +1,12 @@
 -----
+* 2.3 *
++ Intersections involving bounding boxes now include Cartesian.h.
+  They are not included by <CGAL/intersections_2.h> anymore.
+  Instead, there is a file <CGAL/Bbox_2_intersections.h>
++ The guards around include directives are removed (for modern compilers
+  there is no increase in compilation speed, so readability prevails).
+
+-----
 * 2.2.2 *
 + cgal_test now reports diff of program output and expected output.
 
