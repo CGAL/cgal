@@ -9,6 +9,8 @@ Illustrates features of the  basic triangulation and of Delaunay Triangulation
 CGAL_Delaunay_triangulation_2<Gt,Tds>)
 It makes use of graphical IO and needs LEDA to be installed.
 
+regular_demo
+a demo for regular triangulations
 
 More demos about Constrained and Regular triangulation 
 will be provided soon.

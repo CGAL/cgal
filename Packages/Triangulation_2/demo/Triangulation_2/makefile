@@ -34,15 +34,19 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all :            \
-	demo
+	demo regular_demo
 
 
 demo$(EXE_EXT): demo$(OBJ_EXT) parse$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo demo$(OBJ_EXT) parse$(OBJ_EXT) $(LDFLAGS)
 
+regular_demo$(EXE_EXT): regular_demo$(OBJ_EXT) 
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)regular_demo regular_demo$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
 	demo.clean \
-	parse.clean
+	parse.clean \
+	regular_demo.clean
 
 
 
