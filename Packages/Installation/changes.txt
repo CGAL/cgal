@@ -1,3 +1,7 @@
+
+29 September 2004 Andreas Fabri
+- Added CGAL_OPENGL_LIBS in install_cgal
+
 28 September 2004 Andreas Fabri
 - install_cgal: Added -Op to the ADDITIONAL_CXXFLAGS  in order to enable better floating-point precision
 
