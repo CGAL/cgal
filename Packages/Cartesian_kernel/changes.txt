@@ -1,3 +1,6 @@
+Version 6.80 (21 February 2003)
+- True kernel extensibility.
+
 Version 6.79 (19 February 2003)
 - Fix Type_equality_wrapper<> for SunPro/MipsPro.
 

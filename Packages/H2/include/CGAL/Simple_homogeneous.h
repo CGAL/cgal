@@ -26,33 +26,25 @@
 #include <CGAL/Homogeneous/Homogeneous_base.h>
 #include <CGAL/Simple_Handle_for.h>
 #include <CGAL/Kernel/Type_equality_wrapper.h>
-#include <CGAL/Kernel/function_objects.h>
-
 #include <CGAL/Quotient.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template < typename RT_, typename FT_ = Quotient<RT_> >
-class Simple_homogeneous
-  : public Type_equality_wrapper<
-              Homogeneous_base< Simple_homogeneous<RT_, FT_> >,
-              Simple_homogeneous<RT_, FT_> >
+template < typename RT_, typename FT_, typename Kernel >
+struct Homogeneous_base_no_ref_count
+  : public Homogeneous_base< Kernel >
 {
-    typedef Simple_homogeneous<RT_, FT_>                  Kernel;
-public:
-
     typedef RT_                                           RT;
     typedef FT_                                           FT;
 
     // The mecanism that allows to specify reference-counting or not.
     template < typename T >
-    struct Handle {
-        typedef Simple_Handle_for<T>    type;
-    };
+    struct Handle { typedef Simple_Handle_for<T>    type; };
 
-    // Undocumented stuff.
-    typedef Data_accessorH2<Kernel>                       Data_accessor_2;
-    typedef CGAL::Conic_2<Kernel>                         Conic_2;
+    template < typename Kernel2 >
+    struct base {
+        typedef Homogeneous_base_no_ref_count<RT_,FT_,Kernel2> other;
+    };
 
     // TODO: cleanup (use Rational_traits<> instead)
     static FT make_FT(const RT & num, const RT& denom)
@@ -66,15 +58,15 @@ public:
 
     static RT FT_denominator(const FT &r)
     { return r.denominator(); }
-
-    // Functors types and access functions.
-#define CGAL_Kernel_pred(Y,Z) typedef CGALi::Y<Kernel> Y; \
-                              Y Z() const { return Y(); }
-#define CGAL_Kernel_cons(Y,Z) CGAL_Kernel_pred(Y,Z)
-
-#include <CGAL/Kernel/interface_macros.h>
-
 };
+
+template < typename RT_, typename FT_ = Quotient<RT_> >
+struct Simple_homogeneous
+  : public Type_equality_wrapper<
+                Homogeneous_base_no_ref_count<RT_, FT_,
+                                              Simple_homogeneous<RT_, FT_> >,
+                Simple_homogeneous<RT_, FT_> >
+{};
 
 CGAL_END_NAMESPACE
 

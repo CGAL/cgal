@@ -68,6 +68,7 @@
 #include <CGAL/Cartesian/basic_constructions_3.h>
 
 #include <CGAL/representation_tags.h>
+#include <CGAL/Kernel/function_objects.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -107,6 +108,17 @@ struct Cartesian_base
     typedef Iso_cuboidC3<Kernel>                        Iso_cuboid_3;
     typedef SphereC3<Kernel>                            Sphere_3;
     typedef Aff_transformationC3<Kernel>                Aff_transformation_3;
+
+    // Undocumented stuff.
+    typedef Data_accessorC2<Kernel>                       Data_accessor_2;
+
+    // Functors types and access functions.
+#define CGAL_Kernel_pred(Y,Z) typedef CGALi::Y<Kernel> Y; \
+                              Y Z() const { return Y(); }
+#define CGAL_Kernel_cons(Y,Z) CGAL_Kernel_pred(Y,Z)
+
+#include <CGAL/Kernel/interface_macros.h>
+
 };
 
 CGAL_END_NAMESPACE

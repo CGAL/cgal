@@ -1,3 +1,6 @@
+2.81 (21 February 2003)
+- True kernel extensibility.
+
 2.80 (19 February 2003)
 - removed a const to make an Sgi CC warning disappear
 
