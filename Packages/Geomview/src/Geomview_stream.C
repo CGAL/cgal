@@ -1,4 +1,4 @@
-// Copyright (c) 1999,2000,2001  Utrecht University (The Netherlands),
+// Copyright (c) 1999-2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -550,6 +550,15 @@ Geomview_stream::get_new_id(const std::string & s)
     return str.str();
 }
 
+CGAL_END_NAMESPACE
+
+#else
+
+// Add a dummy symbol to prevent warnings of empty translation unit.
+CGAL_BEGIN_NAMESPACE
+namespace {
+int dummy;
+}
 CGAL_END_NAMESPACE
 
 #endif // CGAL_USE_GEOMVIEW
