@@ -18,6 +18,7 @@
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
 #include <CGAL/Cartesian.h>
+#include <CGAL/Kernel_traits.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/rectangular_p_center_2.h>
 #include <CGAL/Random.h>
@@ -38,6 +39,7 @@
 using std::vector;
 using std::back_inserter;
 using CGAL::Cartesian;
+using CGAL::Kernel_traits;
 using CGAL::Creator_uniform_2;
 using CGAL::Random_points_in_square_2;
 using CGAL::Random;
@@ -70,7 +72,7 @@ typedef Random_points_in_square_2< Point, Creator >
                                            Point_generator;
 template < class P,
            class Creator =
-           CGAL::Creator_uniform_2< typename P::R::FT, P > >
+           CGAL::Creator_uniform_2< typename Kernel_traits<P>::Kernel::FT, P > >
 class Random_p_clusters_2 : public CGAL::Random_generator_base< P > {
   void generate_point() {
     typedef typename P::R::FT FT;
