@@ -1,4 +1,5 @@
-2.58    (?)
+2.58    (20 December 2002)
+- Replace R (and representation class) by Kernel
 - List more models for number type concepts.
 - Introduce SqrtFieldNumberType.
 
