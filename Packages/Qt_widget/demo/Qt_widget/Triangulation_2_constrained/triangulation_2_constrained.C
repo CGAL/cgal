@@ -117,7 +117,7 @@ public:
 		      SLOT(save_triangulation()), CTRL+Key_S);
     file->insertSeparator();
     file->insertItem("&Load Constraints", this, 
-		      SLOT(load_constraints()), CTRL+Key_L);
+		      SLOT(load_constraints()), CTRL+Key_C);
     file->insertItem("&Save Constraints", this,
 		      SLOT(save_constraints()), CTRL+Key_T);
     file->insertSeparator();
