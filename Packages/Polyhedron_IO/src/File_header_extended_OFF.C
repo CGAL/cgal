@@ -25,36 +25,16 @@
 // Extended file header information of an object file format (OFF) file
 // ============================================================================
 
-#ifndef CGAL_IO_FILE_HEADER_EXTENDED_OFF_H
 #include <CGAL/IO/File_header_extended_OFF.h>
-#endif // CGAL_IO_FILE_HEADER_EXTENDED_OFF_H
-#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
-#endif // CGAL_BASIC_H
-#ifndef CGAL_PROTECT_CSTDLIB
+
 #include <cstdlib>
-#define CGAL_PROTECT_CSTDLIB
-#endif
-#ifndef CGAL_PROTECT_CCTYPE
 #include <cctype>
-#define CGAL_PROTECT_CCTYPE
-#endif
-#ifndef CGAL_PROTECT_CSTRING
 #include <cstring>
-#define CGAL_PROTECT_CSTRING
-#endif
-#ifndef CGAL_PROTECT_IOSTREAM
 #include <iostream>
-#define CGAL_PROTECT_IOSTREAM
-#endif
-#ifndef CGAL_PROTECT_STRSTREAM
-#include <strstream>
-#define CGAL_PROTECT_STRSTREAM
-#endif
-#ifndef CGAL_PROTECT_ALGORITHM
+#include <sstream>
 #include <algorithm>
-#define CGAL_PROTECT_ALGORITHM
-#endif
+
 
 CGAL_BEGIN_NAMESPACE
 
@@ -87,47 +67,47 @@ is_TRNn() const { return ( terrain() ? is_CBPn() : 0); }
 
 
 // The proper file suffix with respect to file format.
-const char* File_header_extended_OFF::
+std::string File_header_extended_OFF::
 suffix() const {
     if ( is_TRNn()) {
-        std::ostrstream out( (char*)m_suffix, 20);
+        std::ostringstream out;
         out << "trn" << m_rounded_bits << '\0';
-        return m_suffix;
+        return out.str();
     }
     if ( is_TRN())
-        return "trn";
+        return std::string("trn");
     if ( is_CBPn()) {
-        std::ostrstream out( (char*)m_suffix, 20);
+        std::ostringstream out;
         out << "cbp" << m_rounded_bits << '\0';
-        return m_suffix;
+        return out.str();
     }
     if ( is_CBP())
-        return "cbp";
+        return std::string("cbp");
     if ( is_POL())
-        return "pol";
-    return "off";
+        return std::string("pol");
+    return std::string("off");
 }
 
 // The proper format name.
-const char* File_header_extended_OFF::
+std::string File_header_extended_OFF::
 format_name() const {
     if ( is_TRNn()) {
-        std::ostrstream out( (char*)m_format_name, 20);
+        std::ostringstream out;
         out << "TRN" << m_rounded_bits << '\0';
-        return m_format_name;
+        return out.str();
     }
     if ( is_TRN())
-        return "TRN";
+        return std::string("TRN");
     if ( is_CBPn()) {
-        std::ostrstream out( (char*)m_format_name, 20);
+        std::ostringstream out;
         out << "CBP" << m_rounded_bits << '\0';
-        return m_format_name;
+        return out.str();
     }
     if ( is_CBP())
-        return "CBP";
+        return std::string("CBP");
     if ( is_POL())
-        return "POL";
-    return "OFF";
+        return std::string("POL");
+    return std::string("OFF");
 }
 
 File_header_extended_OFF& File_header_extended_OFF::

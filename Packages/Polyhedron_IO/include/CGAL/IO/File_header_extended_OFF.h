@@ -30,10 +30,10 @@
 #ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
 #endif
-#ifndef CGAL_PROTECT_IOSTREAM
+
 #include <iostream>
-#define CGAL_PROTECT_IOSTREAM
-#endif
+#include <string>
+
 
 CGAL_BEGIN_NAMESPACE
 
@@ -49,8 +49,6 @@ class  File_header_extended_OFF {
     bool     m_rounded;
     int      m_rounded_bits;
     bool     m_off_header;
-    char     m_suffix[20];
-    char     m_format_name[20];
 public:
     typedef  File_header_extended_OFF  Self;
     File_header_extended_OFF( bool verbose = false)
@@ -87,9 +85,9 @@ public:
     int    is_CBPn()              const;
     int    is_TRNn()              const;
     // The proper file suffix with respect to file format.
-    const char* suffix() const;
+    std::string suffix() const;
     // The proper format name.
-    const char* format_name() const;
+    std::string format_name() const;
     // Set values:
     void   set_verbose( bool b)              { m_verbose            = b; }
     void   set_polyhedral_surface( bool b)   { m_polyhedral_surface = b; }
