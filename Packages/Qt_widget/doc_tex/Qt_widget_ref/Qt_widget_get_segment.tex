@@ -9,7 +9,7 @@
 % +------------------------------------------------------------------------+
 
 % +-----------------------------------------------------+
-\begin{ccRefClass}{Qt_widget_get_segment}
+\begin{ccRefClass}{Qt_widget_get_segment<T>}
 
 \ccDefinition
 An object of type \ccRefName\ creates a \cgal\ segment in this 
@@ -18,13 +18,14 @@ of the segment will be considered at the coordinates where the left
 mouse button is pressed for the second time.
 
 \ccInclude{CGAL/IO/Qt_widget_get_segment.h}
+
 \ccParameters
 
-The full template declaration of \ccClassTemplateName\ states one parameter:
+The full template declaration of \ccc{Qt_widget_get_segment} states one parameter:
 
 \begin{tabbing}
-\ccc{template <} \=\ccc{class T>}\\
-	\ccc{class \ccClassTemplateName;}
+\ccc{template <} \=\ccc{class T >}\\
+	\ccc{class Qt_widget_get_segment;}
 \end{tabbing}
 
 If T is one of the \cgal\ kernels you don't need additional types. If
