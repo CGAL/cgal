@@ -649,16 +649,44 @@ public:
   bool operator()(const Site_2& p, const Site_2& q, const Site_2& t,
 		  Sign sgn) const
   {
+#if 1
+    std::cout << "inside finite edge interior top "
+	      << "level operator()" << std::endl;
+    std::cout << "p: " << p << std::endl;
+    std::cout << "q: " << q << std::endl;
+    std::cout << "t: " << t << std::endl;
+    std::cout << "sgn: " << sgn << std::endl;
+#endif
+#if 0
+    // MK::ERROR: NEW STUFF; but not necessary ?
+    if ( p.is_point() && q.is_point() && t.is_point() ) {
+      if ( sgn == NEGATIVE ) { return true; }
+
+      RT dtpx = p.point().x() - t.point().x();
+      RT minus_dtpy = -p.point().y() + t.point().y();
+      RT dtqx = q.point().x() - t.point().x();
+      RT dtqy = q.point().y() - t.point().y();
+      
+      Sign s1 = sign_of_determinant2x2(dtpx, minus_dtpy, dtqy, dtqx);
+
+      std::cout << "s1: " << int(s1) << std::endl;
+
+      CGAL_assertion( s1 != ZERO );
+      return ( s1 == NEGATIVE );
+    }
+#endif
+
+#if 0
     if ( sgn != ZERO ) {
       return false;
     }
+#endif
 
     if ( p.is_segment() || q.is_segment()) {
       return false;
     }
 
     // both p and q are points
-
     if ( t.is_point() ) {
       RT dtpx = p.point().x() - t.point().x();
       RT minus_dtpy = -p.point().y() + t.point().y();
@@ -667,12 +695,12 @@ public:
 
       Sign s1 = sign_of_determinant2x2(dtpx, minus_dtpy, dtqy, dtqx);
 
+      std::cout << "s1: " << int(s1) << std::endl;
+
       CGAL_assertion( s1 != ZERO );
       return ( s1 == NEGATIVE );
     }
 
-    //    bool bp = ( (p.point() == t.source()) || (p.point() == t.target()) );
-    //    bool bq = ( (q.point() == t.source()) || (q.point() == t.target()) );
     bool bp =
       are_same(p, t.source_site()) || are_same(p, t.target_site());
     bool bq =

@@ -164,7 +164,9 @@ private:
 
       if ( !filtered ) {
 	// MK::ERROR: here I should call a kernel object, not a
-	// function...
+	// function...; actually here (and everywhere in this class)
+	// use the orientation predicate for sites; it does some
+	// geometric filtering...
 	o = orientation(pp, qp, tp);
       }
 
@@ -369,6 +371,14 @@ public:
       }
     }
 #endif
+#if 1
+    std::cout << "+++++++++++++++++++++++++++++++++++++" << std::endl;
+    std::cout << "inside vertex conflict top "
+	      << "level operator()" << std::endl;
+    std::cout << "p: " << p << " exact? " << p.is_exact() << std::endl;
+    std::cout << "q: " << q << " exact? " << q.is_exact() << std::endl;
+    std::cout << "t: " << t << " exact? " << t.is_exact() << std::endl;
+#endif
 
     CGAL_assertion( !(p.is_segment() && q.is_segment()) );
 
@@ -383,9 +393,18 @@ public:
     }
 
     if ( t.is_point() ) {
+#if 1
+      std::cout << "incircle: " << incircle_p(p, q, t) << std::endl;
+      std::cout << "-------------------------------------" <<	std::endl;
+#endif
       return incircle_p(p, q, t);
     }
 
+#if 1
+    std::cout << "incircle: " << incircle_s(p, q, t) << std::endl;
+    std::cout << "-------------------------------------" <<	std::endl;
+#endif
+    // MK::ERROR: do geometric filtering when orientation is called.
     return incircle_s(p, q, t);
   }
 
