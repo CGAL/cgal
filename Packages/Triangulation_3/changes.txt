@@ -3,6 +3,7 @@ Version 1.84 (?? August 01)
 - Commonize code between operator=() and copy_triangulation().
 - Test iterators/circulators for Delaunay too.
 - New cell container in DS_Container.h.
+- TDS uses DS_Container.
 
 Version 1.83 (3 August 01)
 - Susan added missing .gif and .eps files in the doc_tex/*_ref directories
