@@ -63,6 +63,9 @@ template < class Gt, class STag = Tag_false,
 class Segment_Voronoi_diagram_hierarchy_2
   : public Segment_Voronoi_diagram_2<Gt,DS,LTag>
 {
+protected:
+  typedef Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>  Self;
+
 public:
   // PUBLIC TYPES
   //-------------
@@ -125,13 +128,20 @@ protected:
 public:
   // CONSTRUCTORS
   //-------------
-  Segment_Voronoi_diagram_hierarchy_2
-  (const Geom_traits& traits = Geom_traits());
-  Segment_Voronoi_diagram_hierarchy_2
-  (const Segment_Voronoi_diagram_hierarchy_2& svd);
+  Segment_Voronoi_diagram_hierarchy_2(const Gt& gt = Gt());
 
-  Segment_Voronoi_diagram_hierarchy_2 &operator=
-  (const  Segment_Voronoi_diagram_hierarchy_2& svd);
+  template<class Input_iterator>
+  Segment_Voronoi_diagram_hierarchy_2(Input_iterator first,
+				      Input_iterator beyond,
+				      const Gt& gt=Gt())
+    : Base(gt), random((long)0)
+  {
+    init_hierarchy(gt);
+    insert(first, beyond);
+  }
+
+  Segment_Voronoi_diagram_hierarchy_2(const Self& svd);
+  Self& operator=(const Self& svd);
 
   // DESTRUCTOR
   //-----------
@@ -317,8 +327,9 @@ protected:
 public:
   // MISCELLANEOUS
   //--------------
-  void copy_triangulation
-  (const Segment_Voronoi_diagram_hierarchy_2& svdh);
+  void init_hierarchy(const Geom_traits& gt);
+
+  void copy(const Segment_Voronoi_diagram_hierarchy_2& svdh);
 
   void swap(Segment_Voronoi_diagram_hierarchy_2& svdh);
   void clear();
@@ -326,7 +337,7 @@ public:
 public:
   // VALIDITY CHECK
   //---------------
-  bool is_valid(bool verbose = true, int level = 1) const;
+  bool is_valid(bool verbose = false, int level = 1) const;
 
 protected:
   // LOCAL HELPER METHODS

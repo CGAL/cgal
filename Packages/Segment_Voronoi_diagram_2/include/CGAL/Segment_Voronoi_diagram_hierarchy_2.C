@@ -33,14 +33,24 @@ CGAL_BEGIN_NAMESPACE
 //  constructors
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
+
+template<class Gt, class STag, class DS, class LTag>
+void
+Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>::
+init_hierarchy(const Geom_traits& gt)
+{
+  hierarchy[0] = this; 
+  for(unsigned int i = 1; i < svd_hierarchy_2__maxlevel; ++i) {
+    hierarchy[i] = new Base(gt);
+  }
+}
+
 template<class Gt, class STag, class DS, class LTag>
 Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>::
-Segment_Voronoi_diagram_hierarchy_2(const Geom_traits& traits)
-  : Base(traits), random((long)0)
+Segment_Voronoi_diagram_hierarchy_2(const Gt& gt)
+  : Base(gt), random((long)0)
 { 
-  hierarchy[0] = this; 
-  for(unsigned int i = 1; i < svd_hierarchy_2__maxlevel; ++i)
-    hierarchy[i] = new Base(traits);
+  init_hierarchy(gt);
 }
 
 
@@ -49,13 +59,11 @@ template<class Gt, class STag, class DS, class LTag>
 Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>::
 Segment_Voronoi_diagram_hierarchy_2
 (const Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag> &svd)
-    : Base(), random((long)0)
+    : Base(svd.geom_traits()), random((long)0)
 { 
   // create an empty triangulation to be able to delete it !
-  hierarchy[0] = this; 
-  for(int i = 1; i < svd_hierarchy_2__maxlevel; ++i)
-    hierarchy[i] = new Base(svd.geom_traits());
-  copy_triangulation(svd);
+  init_hierarchy(svd.geom_traits());
+  copy(svd);
 } 
 
 //---------------------------------------------------------------------------
@@ -83,7 +91,9 @@ Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag> &
 Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>::
 operator=(const Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag> &svd)
 {
-  copy_triangulation(svd);
+  if ( this != &svd ) {
+    copy(svd);
+  }
   return *this;
 }
 
@@ -843,12 +853,11 @@ nearest_neighbor(const Site_2& t,
 template<class Gt, class STag, class DS, class LTag>
 void
 Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>::   
-copy_triangulation
-(const Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag> &svd)
+copy(const Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag> &svd)
 {
   std::map< Vertex_handle, Vertex_handle > V;
   {
-    for(int i = 0; i < svd_hierarchy_2__maxlevel; ++i) {
+    for(unsigned int i = 0; i < svd_hierarchy_2__maxlevel; ++i) {
       *(hierarchy[i]) = *svd.hierarchy[i];
     }
   }
@@ -856,17 +865,17 @@ copy_triangulation
   //up and down have been copied in straightforward way
   // compute a map at lower level
   {
-    for(All_vertices_iterator it = hierarchy[0]->all_vertices_begin(); 
-	it != hierarchy[0]->all_vertices_end(); ++it) {
+    for(Finite_vertices_iterator it = hierarchy[0]->finite_vertices_begin(); 
+	it != hierarchy[0]->finite_vertices_end(); ++it) {
       if ( it->up() != Vertex_handle() ) {
 	V[ it->up()->down() ] = it;
       }
     }
   }
   {
-    for(int i = 1; i < svd_hierarchy_2__maxlevel; ++i) {
-      for(All_vertices_iterator it = hierarchy[i]->all_vertices_begin(); 
-	  it != hierarchy[i]->all_vertices_end(); ++it) {
+    for(unsigned int i = 1; i < svd_hierarchy_2__maxlevel; ++i) {
+      for(Finite_vertices_iterator it = hierarchy[i]->finite_vertices_begin(); 
+	  it != hierarchy[i]->finite_vertices_end(); ++it) {
 	// down pointer goes in original instead in copied triangulation
 	it->set_down(V[it->down()]);
 	// make reverse link
@@ -879,9 +888,10 @@ copy_triangulation
     }
   }
 
-  // copy the point container
-  hierarchy[0]->pc_ = svd.hierarchy[0]->pc_;
-  hierarchy[0]->isc_ = svd.hierarchy[0]->isc_;
+  // the point container and the input sites container are copied by
+  // the operator= of the one-level classes
+  //  hierarchy[0]->pc_ = svd.hierarchy[0]->pc_;
+  //  hierarchy[0]->isc_ = svd.hierarchy[0]->isc_;
 }
 
 template<class Gt, class STag, class DS, class LTag>
@@ -894,6 +904,19 @@ clear()
   }
 }
 
+template<class Gt, class STag, class DS, class LTag>
+void
+Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>:: 
+swap(Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>& other)
+{
+  Base* temp;
+  Base::swap(other);
+  for(unsigned int i = 1; i < svd_hierarchy_2__maxlevel; ++i) {
+    temp = hierarchy[i];
+    hierarchy[i] = other.hierarchy[i];
+    other.hierarchy[i]= temp;
+  }
+}
 
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
