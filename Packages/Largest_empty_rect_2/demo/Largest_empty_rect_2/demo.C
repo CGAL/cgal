@@ -1,4 +1,3 @@
-// !!!! change k to kernel and t to traits
 #include <fstream>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Segment_2.h>
@@ -50,7 +49,6 @@ void redraw(Largest_empty_rect &empty_rectangle,CGAL::Window_stream &W)
 
   display_bounding_box(empty_rectangle,W);
 
-  // !!!! changed: do nor draw points, needed to be fixed
   /* for(Largest_empty_rect::const_iterator iter = empty_rectangle.begin();
       iter != empty_rectangle.end();
       ++iter)

@@ -55,9 +55,23 @@ It is invalidated by any insertion or removal of a point.
 
 \ccConstructor{Largest_empty_iso_rectangle_2<Traits>
 (const Iso_rectangle_2 &b);}
-{Constructor. The iso-rectangle \ccc{b} is the one in which the largest ist computed.} 
+{Constructor. The iso-rectangle \ccc{b} is the one in which the largest rectangle is computed.} 
 
-\ccFunction{void ~Largest_empty_iso_rectangle_2<Traits>();}
+\ccConstructor{Largest_empty_iso_rectangle_2<Traits>
+(const Point_2 p,const Point_2 q);}
+{Constructor. The iso-rectangle whose lower left and upper right points are \ccc{p} and
+\ccc{q} respectively is the one in which the largest rectangle is computed.} 
+
+\ccConstructor{Largest_empty_iso_rectangle_2<Traits>
+();}
+{Constructor. The iso-rectangle whose lower left point and upper right points are (0,0) 
+and (1,1) respectively is the one in which the largest rectangle is computed.} 
+
+\ccConstructor{Largest_empty_iso_rectangle_2<Traits>
+(const Largest_empty_iso_rectangle_2<Traits> tr);}
+{Copy constructor.} 
+
+\ccConstructor{void ~Largest_empty_iso_rectangle_2<Traits>();}
 {Destructor.}
 
 \ccOperations
@@ -129,7 +143,7 @@ Returns false, iff \ccc{p} is not in the point set. }
 
 \ccImplementation
 
-The algorithm is an implementation of \cite{}. The runtime of an
+The algorithm is an implementation of \cite{o-naler-90}. The runtime of an
 insertion and a removal is $O(\log n)$. A query takes $O(n^2)$ worst
 case time and $O(n \log n)$ expected time. The working storage is $
 O(n)$.
@@ -143,6 +157,9 @@ O(n)$.
 %\ccExample
 
 %%\ccIncludeExampleCode{examples/Triangulation3/example1.C}
+
+\bibliography{Largest_empty_iso_rectangle_2}
+\bibliographystyle{abbrv}
 
 \end{ccRefClass}
 
