@@ -67,16 +67,44 @@ friend class HyperplaneCd<FT,LA>;
 VectorCd(int d = 0) : Base( Tuple(d) ) {}
 VectorCd(int d, Null_vector NULL_VECTOR) : Base( Tuple(d) ) {}
 
+#ifndef CGAL_SIMPLE_INTERFACE
+
 template <class InputIterator>
 VectorCd(int d, InputIterator first, InputIterator last) 
-  : Base( Tuple(d,first,last) ) {}
+  : Base( Tuple(d,first,last) ) 
+{ if ( first == last ) return; 
+  // else first specifies common denominator:
+  CGAL_assertion_msg(*first!=FT(0),
+    "VectorCd::constructor: denominator must be nonzero.");
+  for (register int i=0; i<d; ++i) entry(i)/=*first;
+}
 
 template <class InputIterator>
 VectorCd(int d, InputIterator first, InputIterator last, 
          const FT& D) : Base( Tuple(d,first,last) )
-{ CGAL_assertion_msg(D!=0, "VectorCd::constructor: D must be nonzero.");
+{ CGAL_assertion_msg(D!=FT(0), "VectorCd::constructor: D must be nonzero.");
   for (register int i=0; i<d; ++i) entry(i)/=D;
 }
+
+#else
+#define FIXVECCD(I) \
+VectorCd(int d, I first, I last) : Base( Tuple(d,first,last) ) \
+{ if ( first == last ) return; \
+  CGAL_assertion_msg(*first!=FT(0), \
+    "VectorCd::constructor: denominator must be nonzero."); \
+  for (register int i=0; i<d; ++i) entry(i)/=*first; \
+} \
+VectorCd(int d, I first, I last, const FT& D):Base( Tuple(d,first,last) )\
+{ CGAL_assertion_msg(D!=FT(0), "VectorCd::constructor: D must be nonzero.");\
+  for (register int i=0; i<d; ++i) entry(i)/=D;\
+}
+
+FIXVECCD(int*)
+FIXVECCD(const int*)
+FIXVECCD(RT*)
+FIXVECCD(const RT*)
+#undef FIXVECCD
+#endif
 
 VectorCd(Base_vector, int d, int i) : Base( Tuple(d) )
 { if ( d == 0 ) return;
@@ -221,9 +249,9 @@ FT x()  const { return cartesian(0); }
 FT y()  const { return cartesian(1); }
 FT z()  const { return cartesian(2); }
 
-friend std::istream& operator>> <> 
+friend std::istream& operator>> CGAL_NULL_TMPL_ARGS
   (std::istream& I, VectorCd<FT,LA>& v);
-friend std::ostream& operator<< <> 
+friend std::ostream& operator<< CGAL_NULL_TMPL_ARGS
   (std::ostream& O, const VectorCd<FT,LA>& v);
 
 }; // end of class VectorCd

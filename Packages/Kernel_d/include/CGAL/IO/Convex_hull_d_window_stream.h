@@ -164,7 +164,7 @@ void d3_surface_map(const Convex_hull_d<R>& C,
   int facet_num = 0;
 
   std::list<Facet_handle> Surface = C.all_facets();
-  std::list<Facet_handle>::iterator it;
+  typename std::list<Facet_handle>::iterator it;
   for(it = Surface.begin(); it != Surface.end(); ++it) {
     f = *it;
     ++facet_num;

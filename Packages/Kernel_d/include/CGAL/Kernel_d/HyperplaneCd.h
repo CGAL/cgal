@@ -53,19 +53,32 @@ typedef typename Tuple::const_iterator Coefficient_const_iterator;
 
 HyperplaneCd(int d = 0) : Base( Tuple(d+1) ) {}
 
+#ifndef CGAL_SIMPLE_INTERFACE
+
 template <class InputIterator>
-HyperplaneCd(int d, InputIterator first, InputIterator last, FT D)
+HyperplaneCd(int d, InputIterator first, InputIterator last, const FT& D)
   : Base( Tuple(d+1,first,last,D) ) {}
 
 template <class InputIterator>
 HyperplaneCd(int d, InputIterator first, InputIterator last)
   : Base( Tuple(d+1,first,last) ) {}
 
-template <class ForwardIterator>
-HyperplaneCd(ForwardIterator first, ForwardIterator last, 
-             const PointCd<FT,LA>& o,
-             Oriented_side side = Oriented_side(0)) 
-  : Base( Tuple(o.dimension()+1) ) 
+#else
+#define FIXHYPCD(I)\
+HyperplaneCd(int d, I first, I last) : Base( Tuple(d+1,first,last) ) {}\
+HyperplaneCd(int d, I first, I last, const FT& D) \
+  : Base(Tuple(d+1,first,last,D)) {}
+FIXHYPCD(int*)
+FIXHYPCD(const int*)
+FIXHYPCD(RT*)
+FIXHYPCD(const RT*)
+#undef FIXHYPCD
+#endif
+
+template <class ForwardIterator> 
+void
+construct_from_points(ForwardIterator first, ForwardIterator last, 
+		      const PointCd<FT,LA>& o, Oriented_side side)
 { 
   // inline due to template parameter
   TUPLE_DIM_CHECK(first,last,hyperplane::construction);
@@ -107,6 +120,40 @@ HyperplaneCd(ForwardIterator first, ForwardIterator last,
        CGAL_NTS sign(sum) < 0 && side == ON_POSITIVE_SIDE)
     invert_rep();
 }
+
+#ifndef CGAL_SIMPLE_INTERFACE
+
+template <class ForwardIterator>
+HyperplaneCd(ForwardIterator first, ForwardIterator last, 
+             const PointCd<FT,LA>& o,
+             Oriented_side side = Oriented_side(0))
+  : Base( Tuple(o.dimension()+1) ) 
+{ construct_from_points(first,last,o,side); }
+
+#else
+
+HyperplaneCd(const PointCd<FT,LA>* first, const PointCd<FT,LA>* last, 
+             const PointCd<FT,LA>& o,
+             Oriented_side side = Oriented_side(0))
+  : Base( Tuple(o.dimension()+1) ) 
+{ construct_from_points(first,last,o,side); }
+
+typedef typename std::vector<PointCd<FT,LA> >::iterator vecpntit;
+typedef typename std::vector<PointCd<FT,LA> >::const_iterator vecpntcit;
+
+HyperplaneCd(vecpntit first, vecpntit last, 
+             const PointCd<FT,LA>& o,
+             Oriented_side side = Oriented_side(0))
+  : Base( Tuple(o.dimension()+1) ) 
+{ construct_from_points(first,last,o,side); }
+
+HyperplaneCd(vecpntcit first, vecpntcit last, 
+             const PointCd<FT,LA>& o,
+             Oriented_side side = Oriented_side(0))
+  : Base( Tuple(o.dimension()+1) ) 
+{ construct_from_points(first,last,o,side); }
+
+#endif
 
 HyperplaneCd(const PointCd<FT,LA>& p, const DirectionCd<FT,LA>& dir) 
   : Base( Tuple(p.dimension()+1) ) 
@@ -207,9 +254,9 @@ bool operator==(const HyperplaneCd<FT,LA>& h2) const
 bool operator!=(const HyperplaneCd<FT,LA>& h2) const
 { return !operator==(h2); }
 
-friend std::istream& operator>> <> 
+friend std::istream& operator>> CGAL_NULL_TMPL_ARGS 
   (std::istream&, HyperplaneCd<FT,LA>&);
-friend std::ostream& operator<< <> 
+friend std::ostream& operator<< CGAL_NULL_TMPL_ARGS 
   (std::ostream&, const HyperplaneCd<FT,LA>&);
 
 }; // end of class HyperplaneCd

@@ -42,8 +42,8 @@ cmp(const DirectionCd<FT,LA>& h1,
 { 
   if (h1.identical(h2)) return EQUAL; 
   int i, d = h1.dimension(); 
-  for (i = 0; i < d && h1.delta(i)==0 && 
-                       h2.delta(i)==0; ++i) ; // no body
+  for (i = 0; i < d && h1.delta(i)==FT(0) && 
+                       h2.delta(i)==FT(0); ++i) ; // no body
   int c1 = CGAL_NTS sign(h1.delta(i));
   int c2 = CGAL_NTS sign(h2.delta(i));
   if (c1 != c2) return CGAL_NTS compare(c1,c2);

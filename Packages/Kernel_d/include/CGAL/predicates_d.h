@@ -77,8 +77,8 @@ This is the sign of the determinant
   \precond |size [first,last) == d+1| and |A[i].dimension() == d| 
   $\forall 0 \leq i \leq d$
   and the value type of |ForwardIterator| is |Point_d<R>|.}*/
-{ typedef typename std::iterator_traits<ForwardIterator>::value_type Point_d;
-  typedef typename Point_d::R R;
+{ typedef typename std::iterator_traits<ForwardIterator>::value_type PointD;
+  typedef typename PointD::R R;
   typename R::Orientation_d or_; return or_(first,last); }
 
 template <class R, class ForwardIterator>
@@ -142,8 +142,8 @@ template <class ForwardIterator>
 int affine_rank(ForwardIterator first, ForwardIterator last)
 /*{\Mfunc computes the affine rank of the points in |A = tuple [first,last)|.
 \precond value type of |ForwardIterator| is |Point_d<R>|.}*/
-{ typedef typename std::iterator_traits<ForwardIterator>::value_type Point_d;
-  typedef typename Point_d::R R;
+{ typedef typename std::iterator_traits<ForwardIterator>::value_type PointD;
+  typedef typename PointD::R R;
   typename R::Affine_rank_d rank; 
   return rank(first,last); }
 
@@ -152,8 +152,8 @@ bool affinely_independent(ForwardIterator first, ForwardIterator last)
 /*{\Mfunc decides whether the points in |A = tuple [first,last)| are 
 affinely independent. 
 \precond value type of |ForwardIterator| is |Point_d<R>|.}*/
-{ typedef typename std::iterator_traits<ForwardIterator>::value_type Point_d;
-  typedef typename Point_d::R R;
+{ typedef typename std::iterator_traits<ForwardIterator>::value_type PointD;
+  typedef typename PointD::R R;
   typename R::Affinely_independent_d ind; 
   return ind(first,last); }
 

@@ -14,28 +14,42 @@
 
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
-#include <CGAL/leda_real.h>
-typedef leda_integer RT;
-typedef leda_real FT;
+#include <CGAL/leda_rational.h>
+typedef leda_integer  RT_;
+typedef leda_rational FT_;
 #else
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
-typedef CGAL::Gmpz RT;
-typedef double FT;
+#include <CGAL/Quotient.h>
+typedef CGAL::Gmpz RT_;
+typedef CGAL::Quotient<RT_> FT_;
 #else
-typedef double RT;
-typedef double FT;
+typedef double RT_;
+typedef double FT_;
 #endif
 #endif
 
+#ifdef _MSC_VER
+typedef CGAL::Homogeneous_d<RT_> HKernel;
+typedef CGAL::Point_d<HKernel> HPNT;
+typedef CGAL::Vector_d<HKernel> HVEC;
+typedef CGAL::Cartesian_d<RT_>   CKernel;
+typedef CGAL::Point_d<CKernel> CPNT;
+typedef CGAL::Vector_d<CKernel> CVEC;
+CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(HPNT)
+CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(HVEC)
+CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(CPNT)
+CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(CVEC)
+#endif
 
 int main()
 { SETDTHREAD(2);
   CGAL::set_pretty_mode ( std::cerr );
   CGAL_TEST_START;
 { // Homogeneous Kernel
-  typedef CGAL::Homogeneous_d<RT> Kernel;
-  typedef Kernel::FT             NT;
+  typedef CGAL::Homogeneous_d<RT_> Kernel;
+  typedef Kernel::RT             RT;
+  typedef Kernel::FT             FT;
   typedef Kernel::LA             LA;
   typedef CGAL::Point_d<Kernel>      Point;
   typedef CGAL::Vector_d<Kernel>     Vector;
@@ -64,18 +78,20 @@ int main()
     CGAL_TEST(p4.dimension()!=Point(3).dimension()); // dimension()
 
     /* some input and access test */
-    CGAL_TEST(p1.hx()==1 && p1.hy()==0 && p1.hw()!=0); // hx,hy,hw
+    CGAL_TEST(p1.hx()==RT(1) && p1.hy()==RT(0) && p1.hw()!=RT(0));
     CGAL_TEST(p1.hx()==p1.homogeneous(0) && 
               p1.hy()==p1.homogeneous(1) && 
               p1.hw()==p1.homogeneous(2)); // hx,hy,hw
-    CGAL_TEST(p1.x()==NT(1) && p1.y()==NT(0)); // x(),y()
+    CGAL_TEST(p1.x()==FT(1) && p1.y()==FT(0)); // x(),y()
     CGAL_TEST(p1.x()==p1[0] && p1.y()==p1[1]); // x(),y()
     CGAL_TEST(p1.x()==p1.cartesian(0) && p1.y()==p1.cartesian(1)); // x(),y()
-    IVector iv3(p1.homogeneous_begin(),p1.homogeneous_end());
-    CGAL_TEST(iv1==iv3);
+    Point::Homogeneous_const_iterator hcit; int i;
+    for (i=0, hcit = p1.homogeneous_begin(); 
+         hcit != p1.homogeneous_end(); ++i, ++hcit)
+      CGAL_TEST(*hcit == iv1[i]);
 
     Point::Homogeneous_const_iterator hit;
-    Point::Cartesian_const_iterator cit; int i;
+    Point::Cartesian_const_iterator cit; 
     for (i=0,hit=p1.homogeneous_begin(),cit=p1.cartesian_begin(); 
          i<p1.dimension(); ++hit,++cit,++i) {
       CGAL_TEST(p1.homogeneous(i)==*hit);
@@ -150,11 +166,11 @@ int main()
     CGAL_TEST(CGAL::compare_lexicographically(p0,p1)==CGAL::SMALLER);
     CGAL_TEST(CGAL::compare_lexicographically(p3,p0)==CGAL::LARGER);
 
-    CGAL_TEST(p1.cartesian(0)==(NT)1);
-    CGAL_TEST(p1[1]==(NT)0);
+    CGAL_TEST(p1.cartesian(0)==FT(1));
+    CGAL_TEST(p1[1]==FT(0));
     CGAL_TEST(p1.homogeneous(0)==Kernel::RT(1));
     CGAL_TEST( (p1 - CGAL::ORIGIN) == e1);
-    CGAL_TEST(CGAL::squared_distance(Point(1,1,1,1),p0)==NT(3));
+    CGAL_TEST(CGAL::squared_distance(Point(1,1,1,1),p0)==FT(3));
 
     CGAL_TEST(p1-p0==e1);
     CGAL_TEST(p1+e1==Point(2,0,0,1));
@@ -237,11 +253,11 @@ int main()
     CGAL_TEST(a2.dimension()==a3.dimension());
     CGAL_TEST(a3.dimension()!=a4.dimension());
 
-    CGAL_TEST(a4.hx()==1 && a4.hy()==0 && a4.hw()!=0);
-    CGAL_TEST(a4.x()==NT(1) && a4.y()==NT(0));
-    CGAL_TEST(Kernel::make_FT(a3.homogeneous(1),a3.homogeneous(3))==NT(2));
-    CGAL_TEST(a3.cartesian(1)==NT(2));
-    CGAL_TEST(a3[0]==NT(3));
+    CGAL_TEST(a4.hx()==RT(1) && a4.hy()==RT(0) && a4.hw()!=RT(0));
+    CGAL_TEST(a4.x()==FT(1) && a4.y()==FT(0));
+    CGAL_TEST(Kernel::make_FT(a3.homogeneous(1),a3.homogeneous(3))==FT(2));
+    CGAL_TEST(a3.cartesian(1)==FT(2));
+    CGAL_TEST(a3[0]==FT(3));
     CGAL_TEST(a3.direction()==Direction(3,2,1));
 
     Vector::Homogeneous_const_iterator hit; 
@@ -274,8 +290,8 @@ int main()
     a7/=4;
     CGAL_TEST(a1==a7);
     
-    CGAL_TEST(a4*a4==NT(1));
-    CGAL_TEST(a4.squared_length()==NT(1));
+    CGAL_TEST(a4*a4==FT(1));
+    CGAL_TEST(a4.squared_length()==FT(1));
     CGAL_TEST(a1+a2==Vector(4,4,4,1));
     CGAL_TEST(a1-a2==Vector(-2,0,2,1));
 
@@ -326,7 +342,7 @@ int main()
     CGAL_TEST(d1.dy()==d1.delta(1));
     CGAL_TEST(d1.dz()==d1.delta(2));
     CGAL_TEST(d1.dy()==d1[1]);
-    CGAL_TEST(d4.delta(0)==0 && d4.delta(2)==1);
+    CGAL_TEST(d4.delta(0)==RT(0) && d4.delta(2)==RT(1));
     CGAL_TEST(d4==-Direction(0,0,-1));
     CGAL_TEST(d4==Direction(0,0,-1).opposite());
     CGAL_TEST(Direction::cmp(d0,d2)==CGAL::SMALLER);
@@ -367,13 +383,13 @@ int main()
     CGAL_TEST((h1!=h0 && h7!=h6));
     CGAL_TEST((h2.dimension()==h5.dimension() && 
                h2.dimension()!=h6.dimension()));
-    CGAL_TEST((h5.coefficient(1)==2 && h5[2]==3));
+    CGAL_TEST((h5.coefficient(1)==RT(2) && h5[2]==RT(3)));
     CGAL_TEST((vi1 == h0.coefficient_vector()));
-    CGAL_TEST(h2.orthogonal_vector()*(p2-p1) == NT(0) );
+    CGAL_TEST(h2.orthogonal_vector()*(p2-p1) == FT(0) );
     CGAL_TEST(h2.orthogonal_direction()==dir);
-    CGAL_TEST(h2.value_at(o)<0);
-    CGAL_TEST(h2.value_at(p3)==0);
-    CGAL_TEST(h2.value_at(p3+dir.vector())>0);
+    CGAL_TEST(h2.value_at(o)<FT(0));
+    CGAL_TEST(h2.value_at(p3)==FT(0));
+    CGAL_TEST(h2.value_at(p3+dir.vector())>FT(0));
     CGAL_TEST(h2.oriented_side(o)==CGAL::ON_NEGATIVE_SIDE);
     CGAL_TEST(h2.oriented_side(p3)==CGAL::ON_ORIENTED_BOUNDARY);
     CGAL_TEST(h2.oriented_side(p3+dir.vector())==CGAL::ON_POSITIVE_SIDE);
@@ -468,7 +484,7 @@ int main()
 
     s6 = Segment(Point(0,0),Point(10,10));
     Point p3(10,0);
-    CGAL_TEST(s6.squared_length()==NT(200));
+    CGAL_TEST(s6.squared_length()==FT(200));
     CGAL_TEST(s6.has_on(Point(5,5)));
     CGAL_TEST(Segment(Point(1,1),Point(1,1)).is_degenerate());
     CGAL_TEST(CGAL::weak_equality(s1,s1.opposite()));
@@ -527,8 +543,9 @@ int main()
 
 }
 { // Cartesian Kernel
-  typedef CGAL::Cartesian_d<FT> Kernel;
-  typedef Kernel::FT             NT;
+  typedef CGAL::Cartesian_d<FT_> Kernel;
+  typedef Kernel::FT             FT;
+  typedef Kernel::RT             RT;
   typedef Kernel::LA             LA;
   typedef CGAL::Point_d<Kernel>      Point;
   typedef CGAL::Vector_d<Kernel>     Vector;
@@ -557,18 +574,20 @@ int main()
     CGAL_TEST(p4.dimension()!=Point(3).dimension()); // dimension()
 
     /* some input and access test */
-    CGAL_TEST(p1.hx()==1 && p1.hy()==0 && p1.hw()!=0); // hx,hy,hw
+    CGAL_TEST(p1.hx()==RT(1) && p1.hy()==RT(0) && p1.hw()!=RT(0));
     CGAL_TEST(p1.hx()==p1.homogeneous(0) && 
               p1.hy()==p1.homogeneous(1) && 
               p1.hw()==p1.homogeneous(2)); // hx,hy,hw
-    CGAL_TEST(p1.x()==NT(1) && p1.y()==NT(0)); // x(),y()
+    CGAL_TEST(p1.x()==FT(1) && p1.y()==FT(0)); // x(),y()
     CGAL_TEST(p1.x()==p1[0] && p1.y()==p1[1]); // x(),y()
     CGAL_TEST(p1.x()==p1.cartesian(0) && p1.y()==p1.cartesian(1)); // x(),y()
-    IVector iv3(p1.homogeneous_begin(),p1.homogeneous_end());
-    CGAL_TEST(iv1==iv3);
+    Point::Homogeneous_const_iterator hcit; int i;
+    for (i=0, hcit = p1.homogeneous_begin(); 
+         hcit != p1.homogeneous_end(); ++i, ++hcit)
+      CGAL_TEST(*hcit == iv1[i]);
 
     Point::Homogeneous_const_iterator hit;
-    Point::Cartesian_const_iterator cit; int i;
+    Point::Cartesian_const_iterator cit; 
     for (i=0,hit=p1.homogeneous_begin(),cit=p1.cartesian_begin(); 
          i<p1.dimension(); ++hit,++cit,++i) {
       CGAL_TEST(p1.homogeneous(i)==*hit);
@@ -643,11 +662,11 @@ int main()
     CGAL_TEST(CGAL::compare_lexicographically(p0,p1)==CGAL::SMALLER);
     CGAL_TEST(CGAL::compare_lexicographically(p3,p0)==CGAL::LARGER);
 
-    CGAL_TEST(p1.cartesian(0)==(NT)1);
-    CGAL_TEST(p1[1]==(NT)0);
+    CGAL_TEST(p1.cartesian(0)==FT(1));
+    CGAL_TEST(p1[1]==FT(0));
     CGAL_TEST(p1.homogeneous(0)==Kernel::RT(1));
     CGAL_TEST( (p1 - CGAL::ORIGIN) == e1);
-    CGAL_TEST(CGAL::squared_distance(Point(1,1,1,1),p0)==NT(3));
+    CGAL_TEST(CGAL::squared_distance(Point(1,1,1,1),p0)==FT(3));
 
     CGAL_TEST(p1-p0==e1);
     CGAL_TEST(p1+e1==Point(2,0,0,1));
@@ -730,11 +749,11 @@ int main()
     CGAL_TEST(a2.dimension()==a3.dimension());
     CGAL_TEST(a3.dimension()!=a4.dimension());
 
-    CGAL_TEST(a4.hx()==1 && a4.hy()==0 && a4.hw()!=0);
-    CGAL_TEST(a4.x()==NT(1) && a4.y()==NT(0));
-    CGAL_TEST(Kernel::make_FT(a3.homogeneous(1),a3.homogeneous(3))==NT(2));
-    CGAL_TEST(a3.cartesian(1)==NT(2));
-    CGAL_TEST(a3[0]==NT(3));
+    CGAL_TEST(a4.hx()==RT(1) && a4.hy()==RT(0) && a4.hw()!=RT(0));
+    CGAL_TEST(a4.x()==FT(1) && a4.y()==FT(0));
+    CGAL_TEST(Kernel::make_FT(a3.homogeneous(1),a3.homogeneous(3))==FT(2));
+    CGAL_TEST(a3.cartesian(1)==FT(2));
+    CGAL_TEST(a3[0]==FT(3));
     CGAL_TEST(a3.direction()==Direction(3,2,1));
 
     Vector::Homogeneous_const_iterator hit; 
@@ -767,8 +786,8 @@ int main()
     a7/=4;
     CGAL_TEST(a1==a7);
     
-    CGAL_TEST(a4*a4==NT(1));
-    CGAL_TEST(a4.squared_length()==NT(1));
+    CGAL_TEST(a4*a4==FT(1));
+    CGAL_TEST(a4.squared_length()==FT(1));
     CGAL_TEST(a1+a2==Vector(4,4,4,1));
     CGAL_TEST(a1-a2==Vector(-2,0,2,1));
 
@@ -819,7 +838,7 @@ int main()
     CGAL_TEST(d1.dy()==d1.delta(1));
     CGAL_TEST(d1.dz()==d1.delta(2));
     CGAL_TEST(d1.dy()==d1[1]);
-    CGAL_TEST(d4.delta(0)==0 && d4.delta(2)==1);
+    CGAL_TEST(d4.delta(0)==RT(0) && d4.delta(2)==RT(1));
     CGAL_TEST(d4==-Direction(0,0,-1));
     CGAL_TEST(d4==Direction(0,0,-1).opposite());
     CGAL_TEST(Direction::cmp(d0,d2)==CGAL::SMALLER);
@@ -860,13 +879,13 @@ int main()
     CGAL_TEST((h1!=h0 && h7!=h6));
     CGAL_TEST((h2.dimension()==h5.dimension() && 
                h2.dimension()!=h6.dimension()));
-    CGAL_TEST((h5.coefficient(1)==2 && h5[2]==3));
+    CGAL_TEST((h5.coefficient(1)==RT(2) && h5[2]==RT(3)));
     CGAL_TEST((vi1 == h0.coefficient_vector()));
-    CGAL_TEST(h2.orthogonal_vector()*(p2-p1) == NT(0) );
+    CGAL_TEST(h2.orthogonal_vector()*(p2-p1) == FT(0) );
     CGAL_TEST(h2.orthogonal_direction()==dir);
-    CGAL_TEST(h2.value_at(o)<0);
-    CGAL_TEST(h2.value_at(p3)==0);
-    CGAL_TEST(h2.value_at(p3+dir.vector())>0);
+    CGAL_TEST(h2.value_at(o)<FT(0));
+    CGAL_TEST(h2.value_at(p3)==FT(0));
+    CGAL_TEST(h2.value_at(p3+dir.vector())>FT(0));
     CGAL_TEST(h2.oriented_side(o)==CGAL::ON_NEGATIVE_SIDE);
     CGAL_TEST(h2.oriented_side(p3)==CGAL::ON_ORIENTED_BOUNDARY);
     CGAL_TEST(h2.oriented_side(p3+dir.vector())==CGAL::ON_POSITIVE_SIDE);
@@ -961,7 +980,7 @@ int main()
 
     s6 = Segment(Point(0,0),Point(10,10));
     Point p3(10,0);
-    CGAL_TEST(s6.squared_length()==NT(200));
+    CGAL_TEST(s6.squared_length()==FT(200));
     CGAL_TEST(s6.has_on(Point(5,5)));
     CGAL_TEST(Segment(Point(1,1),Point(1,1)).is_degenerate());
     CGAL_TEST(CGAL::weak_equality(s1,s1.opposite()));

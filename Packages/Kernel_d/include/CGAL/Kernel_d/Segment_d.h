@@ -180,8 +180,10 @@ bool operator==(const Segment_d<R>& t) const
 bool operator!=(const Segment_d<R>& t) const 
 { return !operator==(t); }
 
-friend std::istream& operator>> <> (std::istream&, Segment_d<R>&);
-friend std::ostream& operator<< <> (std::ostream&, const Segment_d<R>&);
+friend std::istream& operator>> CGAL_NULL_TMPL_ARGS 
+(std::istream&, Segment_d<R>&);
+friend std::ostream& operator<< CGAL_NULL_TMPL_ARGS 
+(std::ostream&, const Segment_d<R>&);
 
 };  // end of class
 

@@ -442,7 +442,7 @@ public:
     Vertex_handle z;
     Forward_iterator it(first);
     std::list< Point_d > OtherPoints;
-    std::list< Point_d >::iterator pit, pred;
+    typename std::list< Point_d >::iterator pit, pred;
     while ( it != last ) {
       Point_d x = *it++;
       if ( current_dimension() == -1 ) {
@@ -531,7 +531,7 @@ public:
       ++num_of_vertices; 
       Vertex_handle z = new_vertex(p);
       std::list<Simplex_handle> NewSimplices;
-      std::list<Facet_handle>::iterator it;
+      typename std::list<Facet_handle>::iterator it;
       CGAL_assertion(OtherPoints.empty());
       for (it = VisibleFacets.begin(); it != VisibleFacets.end(); ++it) {
         OtherPoints.splice(OtherPoints.end(),PointsOf[*it]);

@@ -48,7 +48,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(__BORLANDC__) 
 #define CGAL_SIMPLE_INTERFACE
 #endif
 
@@ -67,7 +67,6 @@ Ivector(T f, T l) \
 #define ERROR_HANDLER(n,s) CGAL_assertion_msg(!(n),s)
 
 /*{\Msubst
-<>#
 <_NT,_ALLOC>#<NT>
 Ivector#Vector
 Imatrix#Matrix
@@ -241,7 +240,7 @@ Ivector(Forward_iterator first, Forward_iterator last)
 private:
 void init(int d, const NT& x0, const NT& x1, const NT& x2=0, const NT& x3=0)
 { dim = d; allocate_vec_space(v,dim);
-  v[0]=x0; v[1]=x1; ( d>2 ? (v[2]=x2) : 0); ( d>3 ? (v[3]=x3) : 0);
+  v[0]=x0; v[1]=x1; if ( d>2 ) v[2]=x2; if ( d>3 ) v[3]=x3;
 }
 public:
 

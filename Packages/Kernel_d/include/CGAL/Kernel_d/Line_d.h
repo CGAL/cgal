@@ -160,8 +160,10 @@ bool operator==(const Line_d<R>& l1) const
 bool operator!=(const Line_d<R>& l1) const
 { return !operator==(l1); }
 
-friend std::istream& operator>> <> (std::istream&, Line_d<R>&);
-friend std::ostream& operator<< <> (std::ostream&, const Line_d<R>&);
+friend std::istream& operator>> CGAL_NULL_TMPL_ARGS 
+(std::istream&, Line_d<R>&);
+friend std::ostream& operator<< CGAL_NULL_TMPL_ARGS 
+(std::ostream&, const Line_d<R>&);
 
 }; // end of class
 

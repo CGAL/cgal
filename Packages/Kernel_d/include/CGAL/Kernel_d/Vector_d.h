@@ -34,6 +34,7 @@ class Vector_d : public pR::Vector_d_base
   typedef typename R::RT RT;
   typedef typename R::FT FT;
   typedef typename R::LA LA;
+  typedef typename Base::Base_vector Base_vector;
 
   Vector_d(int d=0) : Base(d) {}
   Vector_d(int d, Null_vector v) : Base(d,v) {}
@@ -43,8 +44,10 @@ class Vector_d : public pR::Vector_d_base
   Vector_d(int a, int b, int c, int d) : Base(a,b,c,d) {}
   Vector_d(const RT& a, const RT& b, const RT& c, const RT& d) :
     Base(a,b,c,d) {}
-  Vector_d(typename Base::Base_vector, int d, int i) :
-    Base(typename Base::Base_vector(), d,i) {}
+  Vector_d(Base_vector, int d, int i) :
+    Base(Base_vector(), d,i) {}
+
+#ifndef CGAL_SIMPLE_INTERFACE
 
   template <class InputIterator>
   Vector_d (int d, InputIterator first, InputIterator last)
@@ -52,6 +55,19 @@ class Vector_d : public pR::Vector_d_base
   template <class InputIterator>
   Vector_d (int d, InputIterator first, InputIterator last, const RT& D)
     : Base (d, first, last, D) {}
+
+#else
+#define FIXVECD(I) \
+Vector_d (int d, I first, I last) : Base (d, first, last) {} \
+Vector_d(int d, I first, I last, const RT& D)  : Base (d, first, last, D) {}
+
+FIXVECD(int*)
+FIXVECD(const int*)
+FIXVECD(RT*)
+FIXVECD(const RT*)
+#undef FIXVECD
+#endif
+
   Vector_d(const Self& v) : Base(v) {}
   Vector_d(const Base& v) : Base(v) {}
 

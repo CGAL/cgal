@@ -315,11 +315,11 @@ Aff_transformationHd(int d, const DirectionHd<RT,LA>& dir,
       lower_ok    = (common_part + diff_part > rhs);
 
       if ( lower_ok && upper_ok ) {
-         if ( CGAL_NTS square(p)%2 + CGAL_NTS square(q)%2 > 1) {
+         if ( CGAL_NTS square(p)%RT(2) + CGAL_NTS square(q)%RT(2) > 1) {
              sin = p*q;
-             cos = (CGAL_NTS square(q) - CGAL_NTS square(p))/2;     
+             cos = (CGAL_NTS square(q) - CGAL_NTS square(p))/RT(2);     
 	     // exact division
-             denom = (CGAL_NTS square(p) + CGAL_NTS square(q))/2;   
+             denom = (CGAL_NTS square(p) + CGAL_NTS square(q))/RT(2);   
 	     // exact division
          } else {
              cos = CGAL_NTS square(q) - CGAL_NTS square(p);

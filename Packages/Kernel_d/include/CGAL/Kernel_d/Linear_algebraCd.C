@@ -188,10 +188,10 @@ inverse(const Matrix &M, Matrix &I, FT &D, Vector &c)
   typename Matrix::row_iterator rit, wit;
   for (rank=0; rank<I.column_dimension(); ++rank)
     for ( wit = I.row_begin(rank), rit = Uinv.row_begin(cq[rank]); 
-          rit != Uinv.row_end(cq[rank]); ++wit, ++rit ) *wit = *rit;
-  /* does not work with MS:
-    std::copy(Uinv.row_begin(cq[rank]), Uinv.row_end(cq[rank]),
-              I.row_begin(rank)); */
+          rit != Uinv.row_end(cq[rank]); ++wit, ++rit ) *wit = *rit; 
+    // does not work with MS:
+    // std::copy(Uinv.row_begin(cq[rank]), Uinv.row_end(cq[rank]),
+    //          I.row_begin(rank)); 
   D = FT(1);
   return true;
 }

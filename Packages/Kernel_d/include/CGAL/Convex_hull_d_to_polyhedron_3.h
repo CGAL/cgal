@@ -35,7 +35,7 @@ void operator()(HDS& hds )
   // Chull available other than print_statistics()
   Hash_map<Vertex_handle, int> index( -1);
   std::list<Facet_handle> L = ch.all_facets();
-  std::list<Facet_handle>::iterator fit;
+  typename std::list<Facet_handle>::iterator fit;
   Facet_handle f;
   Vertex_handle v;
   int i = 0;

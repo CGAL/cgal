@@ -135,11 +135,16 @@ public:
   Tuple_d(const NT& a, const NT& b, const NT& c, const NT& d) : v(4)
   { v[0]=a; v[1]=b; v[2]=c; v[3]=d; }
 
+#ifndef CGAL_SIMPLE_INTERFACE
+
   template <typename I>
-  Tuple_d(int d, I start, I end) : v(d) 
+  Tuple_d(int d, I& start, I end) : v(d) 
   { int i(0); 
     while ( i < d && start != end ) v[i++] = *start++; 
-  }
+  } 
+  /* this constructor returns the final position of start 
+     to offer access to a possible common denominator as
+     part of the tuple range */
 
   template <typename I>
   Tuple_d(int d, I start, I end, NT D) : v(d) 
@@ -148,8 +153,20 @@ public:
     v[d-1] = D; 
   }
 
-  // Tuple_d(const Self& t) : v(t.v) {}
-  // Self& operator=(const Self& t) { v.operator=(t.v); return *this; }
+#else // provide instantiated constructors:
+#define FIXTUPLE(I) \
+Tuple_d(int d, I& start, I end) : v(d) \
+{ int i(0); while ( i < d && start != end ) v[i++] = *start++; } \
+Tuple_d(int d, I start, I end, NT D) : v(d) \
+{ int i(0); while ( i < d && start != end ) v[i++] = *start++; v[d-1] = D; }
+
+FIXTUPLE(int*)
+FIXTUPLE(const int*)
+FIXTUPLE(NT*)
+FIXTUPLE(const NT*)
+
+#undef FIXTUPLE
+#endif
 
   int size() const { return v.dimension(); }
   const_iterator begin() const { return v.begin(); }

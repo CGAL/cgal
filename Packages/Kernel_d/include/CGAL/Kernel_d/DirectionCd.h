@@ -61,9 +61,21 @@ DirectionCd(int d = 0) : Base( Tuple(d) ) {}
 
 DirectionCd(const VectorCd<FT,LA>& v);
 
+#ifndef CGAL_SIMPLE_INTERFACE
+
 template <class InputIterator>
 DirectionCd(int d, InputIterator first, InputIterator last) : 
   Base( Tuple(d,first,last) ) {}
+
+#else
+#define FIXDIRCD(I) \
+DirectionCd(int d, I first, I last) : Base( Tuple(d,first,last) ) {}
+FIXDIRCD(int*)
+FIXDIRCD(const int*)
+FIXDIRCD(RT*)
+FIXDIRCD(const RT*)
+#undef FIXDIRCD
+#endif
 
 DirectionCd(Base_direction, int d, int i) : Base( Tuple(d) )
 { if ( d==0 ) return;
@@ -126,9 +138,9 @@ FT dx() const { return delta(0); }
 FT dy() const { return delta(1); }
 FT dz() const { return delta(2); }
 
-friend std::istream& operator>> <> 
+friend std::istream& operator>> CGAL_NULL_TMPL_ARGS 
   (std::istream& I, DirectionCd<FT,LA>& d);
-friend std::ostream& operator<< <> 
+friend std::ostream& operator<< CGAL_NULL_TMPL_ARGS 
   (std::ostream& O, const DirectionCd<FT,LA>& d);
 
 }; // end of class DirectionCd

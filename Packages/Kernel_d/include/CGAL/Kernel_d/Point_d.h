@@ -45,12 +45,27 @@ class Point_d : public pR::Point_d_base
   Point_d(const RT& a, const RT& b, const RT& c, const RT& d) :
     Base(a,b,c,d) {}
 
+#ifndef CGAL_SIMPLE_INTERFACE
+
   template <class InputIterator>
   Point_d (int d, InputIterator first, InputIterator last)
     : Base (d, first, last) {}
   template <class InputIterator>
   Point_d(int d, InputIterator first, InputIterator last, const RT& D)
     : Base (d, first, last, D) {}
+
+#else
+#define FIXPNTD(I) \
+Point_d (int d, I first, I last) : Base (d, first, last) {} \
+Point_d(int d, I first, I last, const RT& D)  : Base (d, first, last, D) {}
+
+FIXPNTD(int*)
+FIXPNTD(const int*)
+FIXPNTD(RT*)
+FIXPNTD(const RT*)
+#undef FIXPNTD
+#endif
+
   Point_d(const Self &p) : Base(p) {}
   Point_d(const Base& p) : Base(p) {}
  

@@ -1,4 +1,3 @@
-HYPERPLANE = HyperplaneHd.h HyperplaneHd.C
 AFFTRAFO = Aff_transformationHd.h Aff_transformationHd.C
 PREDS = 
 INTERSECTIONOBJS = intersection_objectsHd.h intersection_objectsCd.h \
@@ -13,9 +12,6 @@ KERNELTESTDIR = ../test/Kernel_d/
 
 tests : $(KERNELTESTS)
 	cp $(KERNELTESTS) $(KERNELTESTDIR)
-
-hyperplane : $(HYPERPLANE)
-	cp $(HYPERPLANE) $(KERNELSUB)
 
 intobjs : $(INTERSECTIONOBJS)
 	cp $(INTERSECTIONOBJS) $(KERNELSUB)
@@ -36,9 +32,6 @@ function_objectsHd.h : function_objectsHd.lw
 	notangle -R$@ $< > $@
 
 function_objectsCd.h : function_objectsCd.lw
-	notangle -R$@ $< > $@
-
-$(HYPERPLANE) : HyperplaneHd.lw
 	notangle -R$@ $< > $@
 
 $(AFFTRAFO) : Aff_transformationHd.lw

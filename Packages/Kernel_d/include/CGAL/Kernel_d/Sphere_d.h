@@ -37,7 +37,8 @@ class  Sphere_d_rep : public Ref_counted {
   typedef typename R::Point_d Point_d;
 
   friend class Sphere_d<R>;
-  friend bool equal_as_sets <> (const Sphere_d<R>&, const Sphere_d<R>&);
+  friend bool equal_as_sets CGAL_NULL_TMPL_ARGS
+    (const Sphere_d<R>&, const Sphere_d<R>&);
 
   std::vector< Point_d > P; // d+1 defining points, index range 0-d
   Orientation orient;       // orientation(P)
@@ -156,9 +157,28 @@ non-zero or if they are all equal.}*/
   return true;
 }
 
-Point_d center()  const;
+Point_d center() const
 /*{\Mop  returns the center of |\Mvar|. \precond The orientation 
 of |\Mvar| is non-zero. }*/
+{ 
+  if (ptr->cp == 0) {
+    if (ptr->orient == 0) {
+      const std::vector< Point_d >& A = ptr->P;
+      Point_d po = A[0];
+      for (int i = 1; i < int(A.size()); ++i) 
+        if (A[i] != po)
+          CGAL_assertion_msg(0,"Sphere_d::center(): points are illegal.");
+      ptr->cp = new Point_d(A[0]); 
+      return *(ptr->cp);
+    }
+    typename R::Center_of_sphere_d center_of_sphere_;
+    ptr->cp = new Point_d(center_of_sphere_(points_begin(),points_end()));
+  }
+  return *(ptr->cp);
+}
+
+
+
 FT squared_radius() const
 /*{\Mop returns the squared radius of the sphere.}*/
 { if (is_degenerate()) return 0;
@@ -301,28 +321,6 @@ p_{dj}p_{id}) \] for the homogeneous coordinates of the points and the
 center. We may tentatively assume that $c_d = 1$, solve the
 corresponding linear system, and then define the center.
 */
-
-
-template <class R>
-typename R::Point_d 
-Sphere_d<R>::center() const
-{ 
-  if (ptr->cp == 0) {
-    if (ptr->orient == 0) {
-      const std::vector< Point_d >& A = ptr->P;
-      Point_d po = A[0];
-      for (int i = 1; i < int(A.size()); ++i) 
-        if (A[i] != po)
-          CGAL_assertion_msg(0,"Sphere_d::center(): points are illegal.");
-      ptr->cp = new Point_d(A[0]); 
-      return *(ptr->cp);
-    }
-    typename R::Center_of_sphere_d center_of_sphere;
-    ptr->cp = new Point_d(center_of_sphere(points_begin(),points_end()));
-  }
-  return *(ptr->cp);
-}
-
 
 CGAL_END_NAMESPACE
 

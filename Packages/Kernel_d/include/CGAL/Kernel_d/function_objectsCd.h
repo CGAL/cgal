@@ -139,7 +139,7 @@ bool operator()(const Point_d& p, const Point_d& s, const Point_d& t,
     lnum_i = (p.cartesian(i) - s.cartesian(i)); 
     lden_i = (t.cartesian(i) - s.cartesian(i)); 
     if (lnum*lden_i != lnum_i*lden) return false; 
-    if (lden_i != 0) { den = lden_i; num = lnum_i; }
+    if (lden_i != FT(0)) { den = lden_i; num = lnum_i; }
   }
   l = num/den; return true; 
 }
@@ -305,7 +305,7 @@ bool operator()(ForwardIterator first, ForwardIterator last,
   typename LA::Vector lambda; 
   if ( LA::linear_solver(M,b,lambda,D) ) { 
     for (int j = 0; j < k; j++) { 
-      if (lambda[j] < 0) return false; 
+      if (lambda[j] < FT(0)) return false;
     }
     return true;
   }
@@ -382,8 +382,9 @@ bool operator()(ForwardIterator first, ForwardIterator last)
 template <class R>
 struct Compare_lexicographicallyCd {
 typedef typename R::Point_d Point_d;
+typedef typename R::Point_d PointD; //MSVC hack
 Comparison_result operator()(const Point_d& p1, const Point_d& p2)
-{ return Point_d::cmp(p1,p2); }
+{ return PointD::cmp(p1,p2); }
 };
 
 template <class R>

@@ -106,6 +106,8 @@ VectorHd(int d, Null_vector NULL_VECTOR) : Base( Tuple(d+1) )
 $d$-dimensional space.}*/
 { if ( d > 0 ) entry(d) = 1; }
 
+#ifndef CGAL_SIMPLE_INTERFACE
+
 template <class InputIterator>
 VectorHd(int d, InputIterator first, InputIterator last) :
   Base( Tuple(d+1,first,last) )
@@ -117,8 +119,10 @@ homogeneous coordinates $|H = set [first,last)| = (\pm h_0, \pm h_1, \ldots,
 \precond |d| is nonnegative, |[first,last)| has |d| or |d+1| elements where the
 last has to be non-zero, and the value type of |InputIterator| is |RT|.}*/
 { RT D = entry(d);
-  CGAL_assertion_msg(D!=0, "VectorHd::constructor: denom must be nonzero.");
-  if (D < 0) invert_rep();
+  CGAL_assertion_msg(first!=last || D!=RT(0),
+    "VectorHd::constructor: denominator must be nonzero.");
+  if ( D == RT(0) ) entry(d) = 1;
+  if ( D < RT(0) ) invert_rep();
 }
 
 template <class InputIterator>
@@ -130,9 +134,29 @@ coordinates as defined by |H = set [first,last)| and |D|:
 $(\pm |H[0]|, \pm|H[1]|, \ldots, \pm|H[d-1]|, \pm|D|)$. The sign chosen 
 is the sign of $D$. \precond |D| is non-zero, the iterator range defines 
 a $d$-tuple of |RT|, and the value type of |InputIterator| is |RT|. }*/
-{ CGAL_assertion_msg(D!=0, "VectorHd::constructor: D must be nonzero.");
-  if (D < 0) invert_rep();
+{ CGAL_assertion_msg(D!=RT(0), "VectorHd::constructor: D must be nonzero.");
+  if (D < RT(0)) invert_rep();
 }
+
+#else
+#define FIXVECHD(I) \
+VectorHd(int d, I first, I last) : Base( Tuple(d+1,first,last) ) \
+{ RT D = entry(d); \
+  CGAL_assertion_msg(first!=last || D!=RT(0),\
+    "VectorHd::constructor: denominator must be nonzero.");\
+  if ( D == RT(0) ) entry(d) = 1; if ( D < RT(0) ) invert_rep();\
+} \
+VectorHd(int d, I first, I last, const RT& D):Base(Tuple(d+1,first,last,D))\
+{ CGAL_assertion_msg(D!=RT(0), "VectorHd::constructor: D must be nonzero.");\
+  if (D < RT(0)) invert_rep();\
+}
+
+FIXVECHD(int*)
+FIXVECHD(const int*)
+FIXVECHD(RT*)
+FIXVECHD(const RT*)
+#undef FIXVECHD
+#endif
 
 VectorHd(Base_vector, int d, int i) : Base( Tuple(d+1) )
 /*{\Mcreate returns a variable |\Mvar| of type |\Mname| initialized  
@@ -378,9 +402,9 @@ Quotient<RT> x()  const { return Quotient<RT>(hx(),hw());}
 Quotient<RT> y()  const { return Quotient<RT>(hy(),hw());}
 Quotient<RT> z()  const { return Quotient<RT>(hz(),hw());}
 
-friend std::istream& operator>> <> 
+friend std::istream& operator>> CGAL_NULL_TMPL_ARGS 
   (std::istream& I, VectorHd<RT,LA>& v);
-friend std::ostream& operator<< <> 
+friend std::ostream& operator<< CGAL_NULL_TMPL_ARGS 
   (std::ostream& O, const VectorHd<RT,LA>& v);
 
 }; // end of class VectorHd

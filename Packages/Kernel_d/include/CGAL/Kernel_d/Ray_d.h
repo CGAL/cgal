@@ -157,8 +157,10 @@ bool operator==(const Ray_d<R>& r1) const
 bool operator!=(const Ray_d<R>& r1)
 { return !operator==(r1); }
 
-friend std::istream& operator>> <> (std::istream&, Ray_d<R>&);
-friend std::ostream& operator<< <> (std::ostream&, const Ray_d<R>&); 
+friend std::istream& operator>> CGAL_NULL_TMPL_ARGS 
+(std::istream&, Ray_d<R>&);
+friend std::ostream& operator<< CGAL_NULL_TMPL_ARGS 
+(std::ostream&, const Ray_d<R>&); 
 
 }; // end of class
 

@@ -382,8 +382,9 @@ bool operator()(ForwardIterator first, ForwardIterator last)
 template <class R>
 struct Compare_lexicographicallyHd {
 typedef typename R::Point_d Point_d;
-Comparison_result operator()(const Point_d& p1, const Point_d& p2) 
-{ return Point_d::cmp(p1,p2); }
+typedef typename R::Point_d PointD; //MSVC hack
+Comparison_result operator()(const Point_d& p1, const Point_d& p2)
+{ return PointD::cmp(p1,p2); }
 };
 
 template <class R>
