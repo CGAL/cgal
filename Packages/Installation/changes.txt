@@ -7,6 +7,7 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: Document --build-all (<- Sylvain)
 GLOB: Fixes for QT.
 GLOB: src/Interval_arithmetic/workaround_4_ms.obj is no longer necessary.
 GLOB: Add -D_RWSTD__ALLOCATOR for SunPro.

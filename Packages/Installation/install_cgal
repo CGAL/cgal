@@ -338,6 +338,9 @@ print_usage_information()
 	       on your system.
 	       The config/install files and GMP installations will 
 	       be copied from there.
+  --build-all
+	       Build libraries for all compilers for which a
+               config/install file exists.
   --rebuild-all
 	       (Re)build compiler configuration files and libraries
 	       for all compilers for which a config/install file
