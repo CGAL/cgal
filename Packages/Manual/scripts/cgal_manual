@@ -132,6 +132,7 @@ Bibtex="bibtex -terse"
 MakeIndex="makeindex -q"
 DvipsA4="dvips -q -D 600 -t a4 -P pdf -G0"
 Gzip="gzip"
+GnuTar="tar"
 LatexToHtml="latex_to_html"
 Sendmail=mail
 
@@ -658,7 +659,7 @@ check_index_warn() {
 #---------------------------------------------------------------------#
 # testsuite_entry <exit-code> <log-filename>
 #     - writes a single <td> cell in HTML report table to stdout
-#     - reports exit code results: 0 = ok, 1 = error, 2 = warning, 3 = n.a.
+#     - reports exit-code results: 0 = ok, 1 = error, 2 = warning, 3 = n.a.
 #---------------------------------------------------------------------#
 
 SP="&nbsp;&nbsp;&nbsp;&nbsp;"
@@ -1006,6 +1007,9 @@ run_html() {
     # first run
     if [ $MakeTestSuiteResult -eq 1 ]; then 
         ${LatexToHtml} -quiet -o testsuite/$1 $1
+        cd testsuite
+        ${GnuTar} czf $1.tgz $1
+        cd ..
     else
         ${LatexToHtml} -quiet -o ../doc_html/$1 $1
     fi
@@ -1262,6 +1266,7 @@ make_manual() {
         echo "  <td align=\"center\" class=\"manual\"><a href=\"${WrapperRootName}.ps.gz\">PS</a></td>" >> testsuite/index.html
         echo "  <td align=\"center\" class=\"manual\"><a href=\"${WrapperRootName}.pdf\">PDF</a></td>" >> testsuite/index.html
         echo "  <td align=\"center\" class=\"manual\"><a href=\"${WrapperRootName}/contents.html\">HTML</a></td>" >> testsuite/index.html
+        echo "  <td align=\"center\" class=\"manual\"><a href=\"${WrapperRootName}.tgz\">tgz</a></td>" >> testsuite/index.html
         echo "</tr>" >> testsuite/index.html
     fi
 
@@ -1392,7 +1397,7 @@ problems to Lutz Kettner and Peter Hachenberger.</b></p>
 <tr align="center">
   <td rowspan="2" align="left"><b>Module</b></td>
   <td colspan="6" align="center"><b>Click to see Logfile</b></td>
-  <td colspan="3" align="center"><b>Manuals</b></td>
+  <td colspan="4" align="center"><b>Manuals</b></td>
 </tr>
 <tr align="center">
   <td><b>Sum-<br>mary</b></td>
@@ -1404,6 +1409,7 @@ problems to Lutz Kettner and Peter Hachenberger.</b></p>
   <td><b>PS</b></td>
   <td><b>PDF</b></td>
   <td><b>HTML</b></td>
+  <td><b>HTML<br>tgz</b></td>
 </tr>
 EOF
 }
@@ -1426,7 +1432,7 @@ testsuite_middle () {
 <tr align="center">
   <td rowspan="2" align="left"><b>Package</b></td>
   <td colspan="6" align="center"><b>Click to see Logfile</b></td>
-  <td colspan="3" align="center"><b>Manuals</b></td>
+  <td colspan="4" align="center"><b>Manuals</b></td>
 </tr>
 <tr align="center">
   <td><b>Sum-<br>mary</b></td>
@@ -1438,6 +1444,7 @@ testsuite_middle () {
   <td><b>PS</b></td>
   <td><b>PDF</b></td>
   <td><b>HTML</b></td>
+  <td><b>HTML<br>tgz</b></td>
 </tr>
 EOF
 }
@@ -1468,6 +1475,7 @@ testsuite_middle_header () {
   <td><b>PS</b></td>
   <td><b>PDF</b></td>
   <td><b>HTML</b></td>
+  <td><b>HTML<br>tgz</b></td>
 </tr>
 EOF
   fi
