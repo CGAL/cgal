@@ -33,11 +33,11 @@ namespace CGAL {
   class Level_interval
   {
   public:
-    typedef FaceHandle::value_type Face;
-    typedef Face::Vertex Vertex;
-    typedef Vertex::Point Point;
+    typedef typename FaceHandle::value_type Face;
+    typedef typename Face::Vertex Vertex;
+    typedef typename Vertex::Point Point;
     typedef Kernel_traits<Point>::Kernel K;
-    typedef K::FT Value;
+    typedef typename K::FT Value;
 
 
   private:
