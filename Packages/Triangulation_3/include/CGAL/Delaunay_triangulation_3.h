@@ -587,7 +587,7 @@ make_hole_2D(Vertex_handle v, std::list<Edge_2D> & hole)
   // We ->set_cell() pointers to cells outside the hole.
   // We push the Edges_2D of the boundary (seen from outside) in "hole".
   do {
-    Cell_handle f = fc->handle();
+    Cell_handle f = fc;
     int i = f->index(v);
     Cell_handle fn = f->neighbor(i);
     int in = fn->index(f);
@@ -1056,10 +1056,10 @@ is_valid(bool verbose, int level) const
     {
       Finite_cells_iterator it;
       for ( it = finite_cells_begin(); it != finite_cells_end(); ++it ) {
-	is_valid_finite(it->handle());
+	is_valid_finite(it);
 	for (int i=0; i<4; i++ ) {
-	  if ( side_of_sphere (it->handle(),
-		    it->vertex(it->neighbor(i)->index(it->handle()))->point())
+	  if ( side_of_sphere (it,
+		    it->vertex(it->neighbor(i)->index(it))->point())
 		  == ON_BOUNDED_SIDE ) {
 	    if (verbose)
 	      std::cerr << "non-empty sphere " << std::endl;
@@ -1178,6 +1178,7 @@ make_hole_3D_ear( Vertex_handle v,
   }
 }
 
+// obsolete
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_3<Gt,Tds>::
@@ -1212,7 +1213,7 @@ fill_hole_3D_ear(const std::vector<Facet> & boundhole)
 
   Surface surface(boundhole);
 
-  Face_handle_3_2 f = &* surface.faces_begin();
+  Face_handle_3_2 f = surface.faces_begin();
   Face_handle_3_2 last_op = f; // This is where the last ear was inserted
 
   int k = -1;

@@ -408,6 +408,8 @@ public:
     return ! (*this == ccir);
   }
 
+  operator Cell_handle() const { return (*this)->handle(); }
+
 private:
   Vertex_handle _s;    // source vertex
   Cell_handle pos;     // current cell

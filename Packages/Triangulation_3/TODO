@@ -1,8 +1,15 @@
 -------------- POUR LA RELEASE
 
+- .triangle(Facet) devrait retourner un triangle oriente 
+  (cf mail sur cgal-discuss-l).
+
 - bien tester le output_stream de T_3 et le copy_tds (ordre de creation des
   sommets). 
 - Verifier qu'il n'y a pas d'autres operations du meme style a modifier. 
+
+-------------- APRES LA RELEASE
+
+- grep obsolete et deprecated et virer
 
 -------------- POUR DES QU'ON PEUT
 
@@ -18,11 +25,9 @@ General
 - trouver une interface avec T_2 qui permette d'eviter de reprogrammer 
   tout le 2d dans le 3d
 - insure
-- virer le init() qui n'est plus necessaire, vu qu'on a le default ctor qui
-  remarche ?
-- Can we have : typedef Vertex * Vertex_handle; ?
-  Problem is const-correctness (see HDS and its Vertex_const_handle...).
-- Virer les fonctions marquees "obsoletes" apres la release.
+- Pointer -> Comparable_iterator quand Comparable_iterator sera mis dans 
+  STL extensions
+- virer ->handle() pour les iterateurs et circulateurs
 
 TEST SUITE
 - faire tourner GCOV sur la test-suite, et rajouter ce qu'il faut pour
@@ -31,7 +36,6 @@ TEST SUITE
 Doc
 - (optional) sphere et grille en couleur version eps
 - (revoir les anciennes corrections de JF Dufourd)
-- note pour faire remarquer que Delaunay depend de l'ordre d'insertion
 
 Exemples - demo
 - en rajouter si bonnes idees...
@@ -40,27 +44,27 @@ Exemples - demo
 TDS
 - virer le truc infame dans DS_Container (le magic machin).
 - reflechir a un support de facettes explicites (cf papier de Giesen)
-- comprendre bug dans ancienne version de is_edge de tds, dim 2 
-	(pb edge_iterator...? etonnant)
+- nettoyer les trucs 2d only (face_circulator etc)
 
 T3
 - virer push_back (qui n'est deja plus documente, mais il manque des trucs
   dans STL_extensions pour pouvoir le virer completement).
-- .triangle(Facet) devrait retourner un triangle oriente 
-  (cf mail sur cgal-discuss-l).
-- nettoyer flips/is_flippable (code duplique)
-- incident_facets, incident_cells (vieille demande de Frank a
-  rediscuter).  Heu, on peut avoir un peu plus de precisions ?
 - is_valid devrait verifier l'enveloppe convexe
 - prevoir differentes sorties : geomview (ameliorer le rendu pour
   donner un effet de perspective), vrml, viewer_3...
   cf Polyhedron_3, file I/O.
 
 Delaunay
+- remplacer les create_face du remove2D par des create_cell et virer 
+  les create_face de la tds
+- perturbation ne dependant plus de l'ordre d'insertion 
+  (et enlever note a ce propos dans la doc)
 - le numero de vertex necessaire au remove devrait etre un requirement de
   Delaunay sur VertexBase, et le compteur, un data member de Delaunay.
+  (question sans objet si la perturbation change)
 - optimiser remove :
-  - algo d'Olivier (?)
+  - algo d'Olivier si constructions filtrees disponibles (cf Olivier
+	rappel de la reunion a ce sujet)
   - pour la creation de la TDS_2, on devrait pouvoir faire plus simple,
     sachant que le trou n'est pas quelconque, mais etoile, et donc on peut
     profiter de ca pour avoir les adjacences directement (peut-etre en
@@ -75,7 +79,7 @@ Regular :
 - la cell_base speciale qui stocke une liste de points caches ou pas (et un
   tag qui dit si oui ou non elle stocke les points caches ou pas), et un
   iterator pour y acceder.
-- remove devrait etre pareil que pour delaunay (a part les points caches a
+- remove - devrait etre pareil que pour delaunay (a part les points caches a
   re-inserer apres coup).
 - faire marcher la hierarchie avec.  Le probleme est qu'on delete des
   vertex, et donc la hierarchie est perdue avec ses pointeurs up/down qui

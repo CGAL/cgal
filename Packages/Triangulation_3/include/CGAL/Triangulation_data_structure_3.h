@@ -279,7 +279,7 @@ public:
   void delete_cells(InputIterator begin, InputIterator end)
   {
       for(; begin != end; ++begin)
-	  delete_cell((*begin)->handle());
+	  delete_cell(*begin);
   }
 
   // QUERIES
@@ -406,26 +406,13 @@ public:
   void reorient()
   {
       CGAL_triangulation_precondition(dimension() >= 1);
-      for (Iterator_base i = iterator_base_begin();
-	      i != iterator_base_end(); ++i)
-	  change_orientation(i->handle());
+      for (Cell_iterator i = cell_container().begin();
+	      i != cell_container().end(); ++i)
+	  change_orientation(i);
   }
 
   // ITERATOR METHODS
 
-private:
-  // This private iterator gives the possibility to iterate over all cells
-  // independently of the dimension.
-  typedef Cell_iterator Iterator_base;
-
-  Iterator_base iterator_base_begin() const {
-    return cell_container().begin();
-  }
-  Iterator_base iterator_base_end() const {
-    return cell_container().end();
-  }
-
-public:
   Cell_iterator cells_begin() const
   {
     if ( dimension() < 3 )
@@ -981,7 +968,7 @@ is_edge(Cell_handle c, int i, int j) const
   if ((i>3) || (j>3)) return false;
 
   for(Cell_iterator cit = cell_container().begin(); cit != cells_end(); ++cit)
-    if (cit->handle() == c)
+    if (c == cit)
 	return true;
   return false;
 }
@@ -1747,11 +1734,11 @@ insert_in_edge(Cell_handle c, int i, int j)
       cells.reserve(32);
       Cell_circulator ccir = incident_cells(c, i, j);
       do {
-	  Cell_handle cc = ccir->handle();
+	  Cell_handle cc = ccir;
 	  cells.push_back(cc);
 	  cc->set_in_conflict_flag(1);
 	  ++ccir;
-      } while (ccir->handle() != c);
+      } while (c != ccir);
 
       return _insert_in_hole(cells.begin(), cells.end(), c, i);
     }
@@ -1936,7 +1923,7 @@ insert_increase_dimension(Vertex_handle star)
       Cell_iterator it = cells_begin();
       // allowed since the dimension has already been set to 3
 
-      v->set_cell(it->handle()); // ok since there is at least one ``cell''
+      v->set_cell(it); // ok since there is at least one ``cell''
       for(; it != cells_end(); ++it) {
 	// Here we must be careful since we create_cells in a loop controlled
 	// by an iterator.  So we first take care of the cells newly created
@@ -1948,7 +1935,7 @@ insert_increase_dimension(Vertex_handle star)
 	if ( ! it->has_vertex(star) ) {
 	  Cell_handle cnew = create_cell( it->vertex(0), it->vertex(2),
 			                  it->vertex(1), star);
-	  set_adjacency(cnew, 3, it->handle(), 3);
+	  set_adjacency(cnew, 3, it, 3);
 	  cnew->set_neighbor(0, NULL);
 	  new_cells.push_back(cnew);
 	}
@@ -2003,12 +1990,12 @@ remove_decrease_dimension(Vertex_handle v)
         // the other cells are deleted
         std::vector<Cell_handle> to_delete, to_downgrade;
 
-        for (Iterator_base ib = iterator_base_begin();
-            ib != iterator_base_end(); ++ib) {
+        for (Cell_iterator ib = cell_container().begin();
+            ib != cell_container().end(); ++ib) {
             if ( ib->has_vertex(v) )
-	        to_downgrade.push_back(ib->handle());
+	        to_downgrade.push_back(ib);
             else
-	        to_delete.push_back(ib->handle());
+	        to_delete.push_back(ib);
         }
 
         typename std::vector<Cell_handle>::iterator lfit=to_downgrade.begin();
@@ -2426,7 +2413,7 @@ copy_tds(const Tds & tds, Vertex_handle vert )
 
   for (Vertex_iterator vit = tds.vertices_begin();
        vit != tds.vertices_end(); ++vit)
-    TV[i++] = vit->handle(); 
+    TV[i++] = vit; 
   
   CGAL_triangulation_assertion( i == n ); 
   std::sort(TV.begin(), TV.end(), 
@@ -2443,23 +2430,23 @@ copy_tds(const Tds & tds, Vertex_handle vert )
   // Create the cells.
   for (Cell_iterator cit = tds.cell_container().begin();
 	  cit != tds.cells_end(); ++cit) {
-      F[cit->handle()] = create_cell(cit->handle());
-      F[cit->handle()]->set_vertices(V[cit->vertex(0)],
-			       V[cit->vertex(1)],
-			       V[cit->vertex(2)],
-			       V[cit->vertex(3)]);
+      F[cit] = create_cell(cit);
+      F[cit]->set_vertices(V[cit->vertex(0)],
+			   V[cit->vertex(1)],
+			   V[cit->vertex(2)],
+			   V[cit->vertex(3)]);
   }
 
   // Link the vertices to a cell.
   for (Vertex_iterator vit2 = tds.vertices_begin();
        vit2 != tds.vertices_end(); ++vit2)
-    V[vit2->handle()]->set_cell( F[vit2->cell()] );
+    V[vit2]->set_cell( F[vit2->cell()] );
 
   // Hook neighbor pointers of the cells.
   for (Cell_iterator cit2 = tds.cell_container().begin();
 	  cit2 != tds.cells_end(); ++cit2) {
     for (int j = 0; j < 4; j++)
-      F[cit2->handle()]->set_neighbor(j, F[cit2->neighbor(j)] );
+      F[cit2]->set_neighbor(j, F[cit2->neighbor(j)] );
   }
 
   CGAL_triangulation_postcondition( is_valid() );

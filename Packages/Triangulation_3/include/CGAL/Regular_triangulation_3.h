@@ -522,10 +522,10 @@ is_valid(bool verbose, int level) const
     {
       Finite_cells_iterator it;
       for ( it = finite_cells_begin(); it != finite_cells_end(); ++it ) {
-	is_valid_finite(it->handle());
+	is_valid_finite(it);
 	for ( i=0; i<4; i++ ) {
-	  if ( side_of_power_sphere (it->handle(), 
-		 it->vertex(it->neighbor(i)->index(it->handle()))->point() )
+	  if ( side_of_power_sphere (it, 
+		 it->vertex(it->neighbor(i)->index(it))->point() )
 		  == ON_BOUNDED_SIDE ) {
 	    if (verbose)
 	      std::cerr << "non-empty sphere " << std::endl;

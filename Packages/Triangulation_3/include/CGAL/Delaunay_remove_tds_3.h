@@ -346,7 +346,7 @@ public:
     for( Face_iterator fit2 = faces_begin(); fit2 != faces_end(); ++fit2) {
       f->set_n(&*fit2);
       fit2->set_p(&*f);
-      f = &*fit2;
+      f = fit2;
       for(int i = 0; i < 3; i++) {
 	// we mark an edge only on one side
 	f->set_edge(i, (f < (f->neighbor(i))));

@@ -74,7 +74,7 @@ public:
       case 3:
 	pos = _tds->cell_container().begin();
 	while (// there must be at least one facet
-	       pos->neighbor(facet.second) < pos->handle() ) {
+	       pos->neighbor(facet.second) < pos ) {
 	  increment();
 	}
 	return;
@@ -103,7 +103,7 @@ public:
       do {
 	increment();
       } while ( pos != _tds->cell_container().end()
-	     && pos->neighbor(facet.second) < pos->handle());
+	     && pos->neighbor(facet.second) < pos );
       // reports a facet when the current cell has a pointer inferior
       // to the pointer of the neighbor cell
       return *this;
@@ -133,7 +133,7 @@ public:
       else
 	  --facet.second;
     } while ( pos != _tds->cell_container().end()
-	   && pos->neighbor(facet.second) < pos->handle() );
+	   && pos->neighbor(facet.second) < pos );
     // reports a facet when the current cell has a pointer inferior
     // to the pointer of the neighbor cell
     return *this;
@@ -166,13 +166,13 @@ public:
 
   reference operator*() const
     {
-      facet.first = pos->handle();
+      facet.first = pos;
       return facet;
     }
 
   pointer operator->() const
     {
-      facet.first = pos->handle();
+      facet.first = pos;
       return &facet;
     }
 
@@ -235,7 +235,7 @@ public:
 	{
 	  pos = _tds->cell_container().begin();
 	  while ( // there must be at least one edge
-		 pos->neighbor(3-edge.second-edge.third) < pos->handle() ) {
+		 pos->neighbor(3-edge.second-edge.third) < pos ) {
 	    increment2();
 	  }
 	  return;
@@ -246,7 +246,7 @@ public:
 	  bool notfound = true;
 	  while ( // there must be at least one edge
 		 notfound ) {
-	    edge.first = pos->handle();
+	    edge.first = pos;
 	    Cell_circulator ccir = _tds->incident_cells(edge);
 	    do {
 	      ++ccir;
@@ -290,7 +290,7 @@ public:
 	do {
 	  increment2();
 	} while ( pos != _tds->cell_container().end() && 
-		  pos->neighbor(3-edge.second-edge.third) < pos->handle() );
+		  pos->neighbor(3-edge.second-edge.third) < pos );
 	break;
       }
     case 3:
@@ -299,7 +299,7 @@ public:
 	do {
 	  increment3();
 	  if (pos != _tds->cell_container().end()) {
-	    edge.first = pos->handle();
+	    edge.first = pos;
 	    Cell_circulator ccir = _tds->incident_cells(edge);
 	    do {
 	      ++ccir;
@@ -343,7 +343,7 @@ public:
 	    // case edge.second==2, edge.third==0 forbids to write edge.third--
 	  }
 	} while ( pos != _tds->cell_container().end() && 
-		  pos->neighbor(3-edge.second-edge.third) < pos->handle() );
+		  pos->neighbor(3-edge.second-edge.third) < pos );
 	break;
       }
     case 3:
@@ -368,7 +368,7 @@ public:
 	      --edge.third;
 	  }
 	  if (pos != _tds->cell_container().end()) {
-	    edge.first = pos->handle();
+	    edge.first = pos;
 	    Cell_circulator ccir = _tds->incident_cells(edge);
 	    do {
 	      ++ccir;
@@ -418,13 +418,13 @@ public:
 
   reference operator*() const
     {
-      edge.first = pos->handle();
+      edge.first = pos;
       return edge;
     }
 
   pointer operator->() const
     {
-      edge.first = pos->handle();
+      edge.first = pos;
       return &edge;
     }
 

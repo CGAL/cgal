@@ -1029,7 +1029,7 @@ operator<< (std::ostream& os, const Triangulation_3<GT, Tds> &tr)
   // same - important for remove 
 
   for (Vertex_iterator it=tr.vertices_begin(); it!=tr.vertices_end(); ++it)
-    TV[i++] = it->handle();
+    TV[i++] = it;
 
   CGAL_triangulation_assertion( i == n+1 ); 
 
@@ -2229,7 +2229,7 @@ flip( Cell_handle c, int i, int j )
   Cell_circulator ccir = incident_cells(c,i,j);
   Cell_circulator cdone = ccir;
   do {
-    if ( is_infinite(ccir->handle()) ) return false;
+    if ( is_infinite(ccir) ) return false;
     ++degree;
     ++ccir;
   } while ( ccir != cdone );
@@ -2272,7 +2272,7 @@ flip_flippable( Cell_handle c, int i, int j )
   Cell_circulator ccir = incident_cells(c,i,j);
   Cell_circulator cdone = ccir;
   do {
-    CGAL_triangulation_precondition( ! is_infinite(ccir->handle()) );
+    CGAL_triangulation_precondition( ! is_infinite(ccir) );
     ++degree;
     ++ccir;
   } while ( ccir != cdone );
@@ -2520,7 +2520,7 @@ is_valid(bool verbose, int level) const
     {
       Finite_cells_iterator it;
       for ( it = finite_cells_begin(); it != finite_cells_end(); ++it )
-	is_valid_finite(it->handle(), verbose, level);
+	is_valid_finite(it, verbose, level);
       break;
     }
   case 2:
