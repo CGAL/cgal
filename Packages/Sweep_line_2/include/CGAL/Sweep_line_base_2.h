@@ -146,9 +146,8 @@ public:
    *                     in the input range. Defaults to false.
    */
   template <class OutpoutIterator>
-  void  get_subcurves(CurveInputIterator begin, 
-		      CurveInputIterator end, 
-		      OutpoutIterator subcurves)
+  void  get_subcurves(CurveInputIterator begin, CurveInputIterator end, 
+		      OutpoutIterator subcurves, bool overlapping = false)
   { 
     Init(begin, end);
     SL_DEBUG(
@@ -636,7 +635,7 @@ protected:
   void PrintSubCurves();
   void PrintStatusLine();
 
-private:
+protected:
   /*! a pointer to a traits object */
   Traits *m_traits;
 
@@ -838,7 +837,6 @@ FirstPass()
       if ( m_traits->curve_get_point_status((*prev)->getCurve(), p) ==
 	   Traits::ON_CURVE && !(*prev)->isEndPoint(p))
       {
-	std::cout << "here\n";
 	m_currentEvent->addCurveToRight(*prev);
 	m_currentEvent->addCurveToLeft(*prev, m_prevPos);
 	m_currentEvent->markInternalIntersectionPoint();
@@ -849,7 +847,6 @@ FirstPass()
       if ( m_traits->curve_get_point_status((*next)->getCurve(), p) ==
 	   Traits::ON_CURVE && !(*next)->isEndPoint(p))
       {
-	std::cout << "here\n";
 	m_currentEvent->addCurveToRight(*next);
 	m_currentEvent->addCurveToLeft(*next, m_prevPos);
 	m_currentEvent->markInternalIntersectionPoint();
@@ -857,7 +854,6 @@ FirstPass()
     } 
     ++rightIter;
   }
-
   SL_DEBUG(std::cout << "First pass - done\n" ;)
 }
 
@@ -906,7 +902,6 @@ HandleVerticalCurveBottom(SweepLineGetSubCurves &tag)
   assert(topEndEventIter!=m_queue->end());
   Event *topEndEvent = topEndEventIter->second;
 
-  std::cout << "before while\n";
   while ( slIter != m_statusLine->end() &&
 	  m_traits->curve_get_point_status((*slIter)->getCurve(), topEnd) 
 	  != Traits::UNDER_CURVE &&
@@ -955,7 +950,6 @@ HandleVerticalCurveBottom(SweepLineGetSubCurves &tag)
     topEndEvent->addVerticalCurveXPoint(p);
     ++slIter;
   }    
-  std::cout << "after while \n";
 
   SL_DEBUG(std::cout<<"Done Handling vertical\n";)
 }
@@ -1345,6 +1339,7 @@ isInternalXPoint(const Point_2 &p)
     ++itt;
   }
   assert(0);
+  return false;
 }
 
 /*!
