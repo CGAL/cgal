@@ -1,10 +1,13 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
+1.30 (18 Jun 2003) [af]
+     - Added Rational in Nef polyhedron testsuite, in the LEDA case
+
 1.29 (12 Jun 2003) [af]
      - Removed unused variables in Filtered_extended_homogeneous
      - Removed SNIHACK in Polynomial
      - Replaced Polynomial constructor with two iterators by
-       an std::pair of iterators to solve the mating problem.
+       an std::pair of iterators to solve the matching problems.
 
 
 1.28 (6 May 2003)
