@@ -1,5 +1,8 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
+0.9.90 (29 August 2003)
+- Fixed basic includes in Iso_box_d.
+
 0.9.89 (28 August 2003)
 - Added Iso_box_d.
 
