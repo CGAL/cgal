@@ -11,7 +11,7 @@
 // release       : 
 // release_date  : 
 //
-// file          : include/CGAL/Apollonius_graph_euclidean_traits_wrapper_2.h
+// file          : include/CGAL/Apollonius_graph_traits_wrapper_2.h
 // package       : Apollonius_graph_2
 // source        : $RCSfile$
 // revision      : $Revision$
@@ -24,21 +24,22 @@
 
 
 
-#ifndef CGAL_APOLLONIUS_GRAPH_EUCLIDEAN_TRAITS_WRAPPER_2_H
-#define CGAL_APOLLONIUS_GRAPH_EUCLIDEAN_TRAITS_WRAPPER_2_H
+#ifndef CGAL_APOLLONIUS_GRAPH_TRAITS_WRAPPER_2_H
+#define CGAL_APOLLONIUS_GRAPH_TRAITS_WRAPPER_2_H
 
 CGAL_BEGIN_NAMESPACE
 
 
 template<class Gt_base>
-class Apollonius_graph_gt_wrapper : public Gt_base
+class Apollonius_graph_traits_wrapper_2 : public Gt_base
 {
 public:
-  struct Segment_2  {};
+  //  struct Segment_2  {};
   struct Triangle_2 {};
 
-  Apollonius_graph_gt_wrapper() {}
-  Apollonius_graph_gt_wrapper(const Gt_base& gtb) : Gt_base(gtb) {}
+  Apollonius_graph_traits_wrapper_2() {}
+  Apollonius_graph_traits_wrapper_2(const Gt_base& gtb)
+    : Gt_base(gtb) {}
 
 };
 
@@ -48,4 +49,4 @@ public:
 CGAL_END_NAMESPACE
 
 
-#endif // CGAL_APOLLONIUS_GRAPH_EUCLIDEAN_TRAITS_WRAPPER_2_H
+#endif // CGAL_APOLLONIUS_GRAPH_TRAITS_WRAPPER_2_H

@@ -38,7 +38,7 @@
 #include <CGAL/Apollonius_graph_vertex_base_2.h>
 
 #include <CGAL/in_place_edge_list.h>
-#include <CGAL/Apollonius_graph_euclidean_traits_wrapper_2.h>
+#include <CGAL/Apollonius_graph_traits_wrapper_2.h>
 
 #include <CGAL/Apollonius_graph_constructions_C2.h>
 
@@ -65,7 +65,7 @@ template < class Gt,
                Apollonius_graph_vertex_base_2<Gt,true>,
                Apollonius_graph_face_base_2<Gt> > >
 class Apollonius_graph_2
-  : private Triangulation_2< Apollonius_graph_gt_wrapper<Gt>, Agds >
+  : private Triangulation_2<Apollonius_graph_traits_wrapper_2<Gt>,Agds>
 {
 private:
   // types and access methods needed for visualization
@@ -117,7 +117,7 @@ private:
 
 protected:
   // some local types
-  typedef Apollonius_graph_gt_wrapper<Gt>        Modified_traits;
+  typedef Apollonius_graph_traits_wrapper_2<Gt>  Modified_traits;
   typedef Triangulation_2<Modified_traits,Agds>  DG;
 
   typedef DG                                 Delaunay_graph;
