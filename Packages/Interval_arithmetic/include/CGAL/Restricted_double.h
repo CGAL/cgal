@@ -38,6 +38,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
+#ifdef CGAL_IA_CHECK_RESTRICT
 struct Restricted_double
 {
   typedef Restricted_double Self;
@@ -70,16 +71,21 @@ private:
 inline
 Restricted_double
 sqrt(const Restricted_double &f)
-{
-    return std::sqrt(f.dbl());
-}
+{ return std::sqrt(f.dbl()); }
 
 inline
 Restricted_double
 abs(const Restricted_double &f)
-{
-    return std::fabs(f.dbl());
-}
+{ return std::fabs(f.dbl()); }
+
+inline
+double
+to_double(const Restricted_double &f)
+{ return f.dbl(); }
+
+#else
+typedef double Restricted_double;
+#endif
 
 CGAL_END_NAMESPACE
 
