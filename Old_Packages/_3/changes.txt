@@ -1,4 +1,4 @@
-3.15   (? Mar 2001)
+3.15 (17 Mar 2001)
 - Added constructor Vector(Point, Point). 
 
 3.14 (19 Feb 2001)
