@@ -1110,6 +1110,7 @@ public:
   
   void swap(Tds & tds)
   {
+    // tds and *this are supposed to be valid
     int dim = dimension();
     int nb = number_of_vertices();
     Cell *l = list_of_cells()._next_cell;
@@ -1119,9 +1120,8 @@ public:
     set_number_of_vertices(tds.number_of_vertices());
 
     if ( tds.list_of_cells()._next_cell == &(tds.list_of_cells()) ) {
-      list_of_cells()._next_cell =
-	list_of_cells()._previous_cell =
-	&(list_of_cells());
+      list_of_cells()._next_cell = list_of_cells()._previous_cell 
+	= &( list_of_cells() );
     }
     else {
       _list_of_cells._next_cell = tds.list_of_cells()._next_cell;
@@ -1134,9 +1134,8 @@ public:
     tds._number_of_vertices = nb;
 
     if ( l == &(list_of_cells()) ) {
-      tds._list_of_cells._next_cell = 
-	tds._list_of_cells._previous_cell =
-	&( tds._list_of_cells );
+      tds._list_of_cells._next_cell = tds._list_of_cells._previous_cell 
+	= &( tds._list_of_cells );
     }
     else {
       tds._list_of_cells._next_cell = l;
