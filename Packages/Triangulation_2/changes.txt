@@ -1,7 +1,8 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-Ver 4.94 (??/?/01)
+Ver 4.94 (7/6/01)
+- suppress the typedef Point in Triangulation_data_structure_using_list_2
 - GCC 3.0 fixes.
 
 Ver 4.93 (29/5/01)
