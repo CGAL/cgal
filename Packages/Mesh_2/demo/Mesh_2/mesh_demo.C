@@ -25,7 +25,8 @@ int main(int, char*)
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 #include <CGAL/IO/Qt_widget_get_point.h>
-#include <CGAL/IO/Qt_widget_get_polygon.h>
+//#include <CGAL/IO/Qt_widget_get_polygon.h>
+#include "Qt_widget_get_polygon.h"
 
 #include <CGAL/IO/pixmaps/polygon.xpm>
 #include <CGAL/IO/pixmaps/point.xpm>
@@ -37,7 +38,8 @@ int main(int, char*)
 #include "Qt_layer_show_points.h"
 #include "Qt_layer_show_triangulation.h"
 #include "Qt_layer_show_triangulation_constraints.h"
-#include "Qt_layer_show_circles.h"
+#include "Qt_layer_show_circles2.h"
+#include <CGAL/IO/Qt_layer_show_mouse_coordinates.h>
 
 
 #include <qapplication.h>
@@ -52,6 +54,7 @@ int main(int, char*)
 #include <qpushbutton.h>
 #include <qbuttongroup.h>
 #include <qradiobutton.h>
+#include <qlabel.h>
 
 typedef CGAL::Simple_cartesian<double>  K1;
 typedef CGAL::Filtered_kernel<K1>       Kernel;
@@ -67,7 +70,7 @@ typedef CGAL::Constrained_Delaunay_triangulation_2<K, Tds,
 typedef K::Point_2 Point;
 typedef CGAL::Polygon_2<K> Polygon;
 
-typedef CGAL::Mesh<Tr> Mesh1;
+typedef CGAL::Mesh_2<Tr> Mesh1;
 struct Mesh: public Mesh1 {};
 
 CGAL::Qt_widget& operator<< (CGAL::Qt_widget& w, const Mesh& mesh)
@@ -88,20 +91,31 @@ public:
       setCentralWidget(widget);
       resize(700,500);
 
+      // we use layers instead of custom_redraw()
+//       connect(widget, SIGNAL(custom_redraw()),
+// 	      this, SLOT(redraw_win()));
+
+      // STATUSBAR
+      statusBar();
+
+      aspect_ratio_label = new QLabel(statusBar(), "aspect_ratio");
+      statusBar()->addWidget(aspect_ratio_label, 0, true);
 
       // LAYERS
       show_points = new CGAL::Qt_layer_show_points<Mesh>(mesh);
-      show_triangulation = new
-	CGAL::Qt_layer_show_triangulation<Mesh>(mesh);
-      show_constraints = new
-	CGAL::Qt_layer_show_triangulation_constraints<Mesh>(mesh);
-      show_circles = new CGAL::Qt_layer_show_circles<Mesh>(mesh);
+      show_triangulation = 
+	new CGAL::Qt_layer_show_triangulation<Mesh>(mesh);
+      show_constraints = 
+	new CGAL::Qt_layer_show_triangulation_constraints<Mesh>(mesh);
+      show_circles = 
+	new CGAL::Qt_layer_show_circles<Mesh>(mesh, *aspect_ratio_label);
+      show_mouse = new CGAL::Qt_layer_mouse_coordinates(*this);
       widget->attach(show_triangulation);
       widget->attach(show_constraints);
       widget->attach(show_circles);
       widget->attach(show_points);
-   
-      // TOOLBARS
+      widget->attach(show_mouse);
+
       get_point = new CGAL::Qt_widget_get_point<K>();
       widget->attach(get_point);
       get_point->deactivate();
@@ -112,8 +126,6 @@ public:
 
       connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),
 	      this, SLOT(get_cgal_object(CGAL::Object)));
-//       connect(widget, SIGNAL(custom_redraw()),
-// 	      this, SLOT(redraw_win()));
 
 
       // TOOLBARS
@@ -238,10 +250,8 @@ public:
       pmMesh->insertItem("&Quit", qApp, SLOT(closeAllWindows()),
 			 CTRL+Key_Q );
 
-      // STATUSBAR
-      statusBar();
-
       widget->set_window(0.,1000.,0.,1000.);
+      widget->setMouseTracking(TRUE);
     };
 
   // compute bounds of the mesh
@@ -381,6 +391,9 @@ private:
   CGAL::Qt_layer_show_triangulation<Mesh>* show_triangulation;
   CGAL::Qt_layer_show_triangulation_constraints<Mesh>* show_constraints;
   CGAL::Qt_layer_show_circles<Mesh>* show_circles;
+  CGAL::Qt_layer_mouse_coordinates* show_mouse;
+
+  QLabel* aspect_ratio_label;
 };
 
 

@@ -83,7 +83,7 @@ typedef CGAL::Constrained_Delaunay_triangulation_2<K, Tds,
 */
 typedef CGAL::Constrained_triangulation_2<K, Tds> Tr;
 
-typedef CGAL::Mesh<Tr> Msh;
+typedef CGAL::Mesh_2<Tr> Msh;
 
 class TrViewer : public QWidget {
   Q_OBJECT

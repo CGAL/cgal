@@ -44,12 +44,6 @@ public:
     typedef Cartesian<double>::Point_2 Point_double;
 
     widget->lock();
-    QColor oldcolor = widget->color();
-    int oldwidth = widget->lineWidth();
-
-    *widget << CGAL::GRAY;
-    *widget << LineWidth(1);
-
     for(Finite_faces_iterator it=tr.finite_faces_begin();
 	it!=tr.finite_faces_end();
 	it++)
@@ -64,11 +58,9 @@ public:
 	y=to_double(c.y());
 	Point_double cd(x,y);
 
+
 	*widget << Circle_double(cd,squared_distance(vd,cd));
       }
-
-    widget->setColor(oldcolor);
-    widget->setLineWidth(oldwidth);
     widget->unlock();
   };
 private:

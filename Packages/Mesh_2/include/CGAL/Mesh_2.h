@@ -7,15 +7,131 @@
 #include <iostream>
 #include <fstream>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/Threetuple.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Tr, class Mtraits = void>
-class Mesh: public Tr
+// auxiliary classes
+// # TODO: use this Filtred_iterator usable by Filtred_container, so
+// that it erase bad elements. It will need a pointer to the container.
+template <class In, class Pred>
+class Filtred_iterator : public In
 {
+  Pred test;
+  In _end;
+public:
+  typedef Pred Predicate;
+  typedef In InputIterator;
+  typedef Filtred_iterator<In,Pred> Self;
 
+  Filtred_iterator(In current, In end): test(), _end(end) {
+    while(!(*this==_end) & !test(*this))
+      this->In::operator++();
+  };
+  
+  Self& operator++() {
+    do {
+      this->In::operator++();
+    } while(!(*this==_end) & !test(*this));
+    return *this;
+  }
+
+  Self  operator++(int) {
+    Self tmp = *this;
+    ++*this;
+    return tmp;
+  }
+};
+
+// template <class Cont, class Pred>
+// class Filtred_back_insert_iterator {
+// protected:
+//   Cont _c;
+//   Pred test;
+// public:
+//   typedef Cont                container_type;
+//   typedef output_iterator_tag iterator_category;
+//   typedef void                value_type;
+//   typedef void                difference_type;
+//   typedef void                pointer;
+//   typedef void                reference;
+//   typedef Filtred_back_insert_iterator<Cont, Pred> Self;
+  
+//   explicit Filtred_back_insert_iterator(Cont& c, Pred p) : _c(c),
+//     test(p) {}
+
+//   Self&
+//   operator=(const typename Cont::value_type& value) { 
+//     container->push_back(value);
+//     return *this;
+//   }
+
+//   Self& operator*() { return *this; }
+//   Self& operator++() { return *this; }
+//   Self& operator++(int) { return *this; }
+// };
+
+template <class Cont, class Pred>
+class Filtred_container : public Cont
+{
+  Pred test;
+public:
+  Filtred_container(Pred p) : Cont(), test(p) {};
+  Filtred_container(Cont& c, Pred p) : Cont(c), test(p) {};
+
+  typedef typename Cont::reference reference;
+  typedef typename Cont::iterator iterator;
+
+  inline
+  reference front()
+    {
+      iterator r=begin();
+      while(!test(*r))
+	{
+	  erase(r);
+	  r=begin();
+	}
+      return *r;
+    }
+
+  inline
+  bool empty()
+    {
+      if(Cont::empty())
+	return true;
+      else
+	{
+	  while(!Cont::empty())
+	    {
+	      iterator r=begin();
+	    if(!test(*r))
+	      pop_front();
+	    else
+	      return false;
+	    }
+	  return true;
+	}
+    }
+
+  inline
+  void pop_front()
+    {
+      erase(begin());
+    }
+};
+
+
+// Tr is a Delaunay constrained triangulation
+// Mtraits is a mesh trait
+template <class Tr, class Mtraits = void>
+class Mesh_2: public Tr
+{
 public:
   typedef Tr Triangulation;
+  typedef Mtraits  Mesh_2_traits;
+  typedef Mesh_2<Triangulation, Mesh_2_traits> Self;
+  
+  
   typedef typename Tr::Geom_traits Geom_traits;
   typedef typename Tr::Triangulation_data_structure Tds;
   typedef typename Geom_traits::FT FT;
@@ -38,15 +154,14 @@ public:
 
   typedef typename Tr::Locate_type            Locate_type;
   
-  typedef std::pair<Vertex_handle,Vertex_handle> Constrained_edge;
+  typedef std::pair<Vertex_handle,Vertex_handle>
+                                              Constrained_edge;
 
   typedef typename Tr::Point                  Point;
 
   typedef typename Tr::Constraint             Constraint;
   typedef typename Tr::List_constraints       List_constraints;
 
-  typedef Mtraits  Mesh_traits;
-  
   enum Cluster_status {REDUCED,NON_REDUCED};
   struct Cluster {
     Cluster_status status;
@@ -63,33 +178,84 @@ public:
   }
 
 private:
+  // PRIVATE FUNCTIONS
+
+  // PRIVATE MEMBERS
+
   // Bad_faces: list of bad finite faces
-  // # warning: some faces could be recycled during insertion in the
-  //  triangulation
-  // # TODO: create a const iterator that give real bad faces
-  std::multimap<FT, Face_handle>    Bad_faces;
+  // warning: some faces could be recycled during insertion in the
+  //  triangulation, that's why I use a wrapper around the map
+  typedef CGAL::Threetuple<Vertex_handle> Threevertices;
+  class Is_really_bad {
+    Self& _m;
+  public:
+    Is_really_bad(Self& m) : _m(m) {};
+    inline
+    bool operator()(const std::pair<FT, Threevertices>& p) const
+      {
+	const Threevertices& t=p.second;
+	const Vertex_handle&
+	  va = t.e0,
+	  vb = t.e1,
+	  vc = t.e2;
+	Face_handle f;
+	return( _m.is_face(va,vb,vc,f) && _m.is_bad(f));
+      }
+  };
+
+  const Is_really_bad test_is_bad;
+  typedef std::multimap<FT, Threevertices> 
+                                              Bad_faces_container_primal_type;
+  CGAL::Filtred_container<Bad_faces_container_primal_type, 
+    Is_really_bad> Bad_faces;
+  // TODO: put in the traits a type Mtraits::Faces_criteria and an
+  // object class to compare two elements of that type
 
   // c_edge_queue: list of encroached constrained edges
-  //  warning: some edges could be destroyed
-  // # TODO: idem const iterator
-  std::list<Constrained_edge>       c_edge_queue;
+  //  warning: some edges could be destroyed, use the same wrapper
+  class Is_really_an_encroached_edge {
+    const Self& _m;
+  public:
+    explicit Is_really_an_encroached_edge(const Self& m) : _m(m) {};
+    inline
+    bool operator()(const Constrained_edge& ce) const
+      {
+	Face_handle fh;
+	int i;
+	return _m.is_edge( ce.first, ce.second, fh,i) &&
+	  fh->is_constrained(i) && _m.is_encroached(ce.first, ce.second);
+      }
+  };
 
-  //  std::map<Vertex_handle, int>      insertion_time;
-  //  std::map<Vertex_handle, FT>       insertion_radius_map;
+  const Is_really_an_encroached_edge test_is_encroached;
+  typedef std::list<Constrained_edge> List_of_constraints;
+  CGAL::Filtred_container<List_of_constraints,
+    Is_really_an_encroached_edge>       c_edge_queue;
+
   std::multimap<Vertex_handle, Cluster>  cluster_map;
+  // each vertex can have several clusters
 
 public:
   //INSERTION-REMOVAL
   void refine_mesh();
   // TODO: refine_mesh_step(), that do a step of refinment
-  void bounds(FT &xmin, FT &ymin, 
-	      FT &xmax, FT &ymax,
-	      FT &xcenter, FT &ycenter);
-  void bounding_box();
 
-  Mesh():Tr(){};
+  //CHECK
+  bool is_encroached(const Vertex_handle va, 
+		     const Vertex_handle vb,
+		     Point p) const;
+  bool is_encroached(const Vertex_handle va, 
+		     const Vertex_handle vb) const;
 
-    Mesh(List_constraints& lc, const Geom_traits& gt=Geom_traits()):Tr(gt)
+  bool is_bad(const Face_handle f);
+  FT aspect_ratio(Face_handle f); // r^2/l^2
+
+  Mesh_2() : Tr(), test_is_bad(*this), Bad_faces(test_is_bad),
+    test_is_encroached(*this), c_edge_queue(test_is_encroached) {};
+
+  Mesh_2(List_constraints& lc, const Geom_traits& gt=Geom_traits())
+    : Tr(gt), test_is_bad(*this), Bad_faces(test_is_bad),
+    test_is_encroached(*this), c_edge_queue(test_is_encroached)
     {
       typename List_constraints::iterator lcit=lc.begin();
       for( ; lcit != lc.end(); ++lcit)
@@ -98,10 +264,12 @@ public:
 	}
       CGAL_triangulation_postcondition(is_valid());
     }
-
-    template <class InputIterator>
-    Mesh(InputIterator first, InputIterator last, const Geom_traits&
-						  gt=Geom_traits()):Tr(gt)
+  
+  template <class InputIterator>
+  Mesh_2(InputIterator first, InputIterator last, const Geom_traits&
+       gt=Geom_traits()) : Tr(gt), test_is_bad(*this),
+	 Bad_faces(test_is_bad), test_is_encroached(*this), 
+	 c_edge_queue(test_is_encroached)
     {
       while(first != last){
 	insert((*first).first, (*first).second);
@@ -110,23 +278,19 @@ public:
       CGAL_triangulation_postcondition(is_valid());
     }
 
-
- 
 private:
   void refine_face(Face_handle f);
   void refine_edge(Vertex_handle va, Vertex_handle vb);
+  void split_face(const Face_handle& f, const Point& circum_center);
   void create_clusters();
   void create_clusters_of_vertex(Vertex_handle v);
-  //  void show_clusters();
-  Vertex_handle insert_middle(Vertex_handle va, Vertex_handle vb);
-  void cut_cluster(Vertex_handle va, Vertex_handle vb);
-  void cut_reduced_cluster(Vertex_handle va, Vertex_handle vb);
+  Vertex_handle insert_middle(Face_handle f, int i);
   void cut_cluster_edge(Vertex_handle va, Vertex_handle vb);
   Vertex_handle insert_in_c_edge(Vertex_handle va, Vertex_handle vb, Point p);
   void fill_edge_queue();
   void fill_facette_map();
-  void process_edge_queue();
-  void process_facette_map();
+//   void process_edge_queue();
+//   void process_facette_map();
   void update_c_edge_queue(Vertex_handle va,
 			   Vertex_handle vb,
 			   Vertex_handle vm);
@@ -136,11 +300,6 @@ private:
 
  
 
-  //CHECK
-  bool is_encroached(Vertex_handle va, Vertex_handle vb, Point p);
-  bool is_encroached(Vertex_handle va, Vertex_handle vb);
-  //  bool min_insertion_radius(Vertex_handle v, Cluster &c);
-  bool is_bad(Face_handle f);
   bool is_small_angle(Vertex_handle vleft, 
 		      Vertex_handle vmiddle, 
 		      Vertex_handle vright);
@@ -155,8 +314,6 @@ private:
   // HELPING functions
   Square_length shortest_edge_squared_lenght(Face_handle f);
   FT cosinus_of_angle(Vertex_handle vleft, Vertex_handle vmiddle, Vertex_handle vright);
-  FT aspect_ratio(Face_handle f); // r^2/l^2
-  //  FT insertion_radius(Vertex_handle v);
   Vertex_handle nearest_incident_vertex(Vertex_handle v);
   bool find_cluster(Vertex_handle va, Vertex_handle vb, Cluster &c);
 
@@ -171,6 +328,7 @@ private:
 inline Vertex_circulator incr_constraint(Vertex_handle v, Vertex_circulator &c)
 {
   // TODO: create a finite_contraints_circulator
+  // TODO: throw away this awfull edge_between!!
   Vertex_circulator cbegin = c;
   incr(c);
   while(!edge_between(v, c).first->is_constrained(edge_between(v, c).second) 
@@ -179,86 +337,17 @@ inline Vertex_circulator incr_constraint(Vertex_handle v, Vertex_circulator &c)
   }
   return c;
 }
-	
+
 inline Vertex_circulator succ_constraint(Vertex_handle v, 
 					 Vertex_circulator c) 
 {
   return incr_constraint(v, c); 
 }
-inline bool get_conflicting_edges(const Point &p,
-				  list<Constrained_edge> &cel)
-{ //cel = constrained edges list
-  int li;
-  Locate_type lt;
-  Face_handle fh = locate(p,lt,li);
-  switch(lt) {
-  case OUTSIDE_AFFINE_HULL:
-  case VERTEX:
-    return false;
-  case FACE:
-  case EDGE:
-  case OUTSIDE_CONVEX_HULL:
-    propagate_conflicting_edges(p,fh,0,cel);
-    propagate_conflicting_edges(p,fh,1,cel);
-    propagate_conflicting_edges(p,fh,2,cel);
-    return true;    
-  }
-  CGAL_triangulation_assertion(false);
-  return false;
-}
-//private:
 
-
-	inline void propagate_conflicting_edges (const Point  &p,
-				    Face_handle fh, 
-				    int i, 
-				    list<Constrained_edge> &cel)
-  {
-    if(is_infinite(make_pair(fh,i))) return;
-    Face_handle fn = fh->neighbor(i);
-    Edge e(fh,i);
-    if(!is_encroached(e.first->vertex(cw(e.second)), 
-		      e.first->vertex(ccw(e.second)), p)) {
-      return;
-    }
-    if ( fh->is_constrained(i)) {// || ! test_conflict(p,fn)) {
-      cel.push_back(Constrained_edge(e.first->vertex(cw(e.second)), 
-				e.first->vertex(ccw(e.second))));//Edge(fn, fn->index(fh));
-      return;
-    }
-    
-    int j = fn->index(fh);
-    propagate_conflicting_edges(p,fn,ccw(j),cel);
-    propagate_conflicting_edges(p,fn,cw(j),cel);
-    return;
-  }
-
-bool is_infinite(Face_handle fh) {
-  Vertex_handle va, vb, vc;
-  va=fh->vertex(0);
-  vb=fh->vertex(1);
-  vc=fh->vertex(2);
-  if(va==infinite_vertex() || vb==infinite_vertex() || 
-     vc==infinite_vertex()) return true;
-  //check whether the face still exists...
-  if(!is_face(va, vb, vc)) return true;
-  return false;
-}
-
-bool is_infinite(Edge e) {
-  Vertex_handle va, vb;
-  va=e.first->vertex(cw(e.second));
-  vb=e.first->vertex(ccw(e.second));
-  if(va==infinite_vertex() || vb==infinite_vertex()) return true;
-  //check whether the face still exists...
-  if(!is_edge(va, vb)) return true;
-  return false;
-}
-
-}; // end of Mesh
+}; // end of Mesh_2
 
 template <class Tr, class Mtraits>
-bool Mesh<Tr, Mtraits>::
+bool Mesh_2<Tr, Mtraits>::
 find_cluster(Vertex_handle va, Vertex_handle vb, Cluster &c)
 {
     // check if vb is in any cluster of va 
@@ -279,7 +368,7 @@ find_cluster(Vertex_handle va, Vertex_handle vb, Cluster &c)
 
 //the function that writes a file
 template <class Tr, class Mtraits>
-void Mesh<Tr, Mtraits>::
+void Mesh_2<Tr, Mtraits>::
 write(ostream &f)
 {
   int nedges = 0;
@@ -305,7 +394,7 @@ write(ostream &f)
 
 //the function that reads a file
 template <class Tr, class Mtraits>
-void Mesh<Tr, Mtraits>::
+void Mesh_2<Tr, Mtraits>::
 read(istream &f)
 {
   int nedges = 0;
@@ -319,192 +408,125 @@ read(istream &f)
 }
 
 template <class Tr, class Mtraits>
-void Mesh<Tr, Mtraits>::
+void Mesh_2<Tr, Mtraits>::
 fill_edge_queue()
 {
   for(Finite_edges_iterator ei = finite_edges_begin();
       ei != finite_edges_end();
-      ei++)
+      ++ei)
     {
       Vertex_handle va = (*ei).first->vertex(cw((*ei).second));
       Vertex_handle vb = (*ei).first->vertex(ccw((*ei).second));
       if((*ei).first->is_constrained((*ei).second) && 
 	 is_encroached(va, vb))
-	c_edge_queue.push_back(make_pair(va, vb));
+	{
+	  c_edge_queue.push_back(make_pair(va, vb));
+	}
     }
 }
 
 //it is necessarry for process_facette_map
 template <class Tr, class Mtraits>
-void Mesh<Tr, Mtraits>::
+void Mesh_2<Tr, Mtraits>::
 fill_facette_map()
 {
   for(Finite_faces_iterator fit = finite_faces_begin();
       fit != finite_faces_end();
-      fit++)
+      ++fit)
     {
       if( is_bad(fit))
-	Bad_faces.insert(make_pair(
-	   aspect_ratio(fit), fit));
-    }
-}
-
-
-//is used by process_edge_queue
-template <class Tr, class Mtraits>
-void Mesh<Tr, Mtraits>::
-process_edge_queue()
-{
-  while(! c_edge_queue.empty() )
-    {
-      Constrained_edge ce;
-      do {// if ce is not an edge, choose another. should be more robust
-	ce=c_edge_queue.front();
-	c_edge_queue.pop_front();
-      }
-      while(!is_edge(ce.first, ce.second) && !c_edge_queue.empty());
-
-      Face_handle fh;
-      int i;
-      if ( is_edge( ce.first, ce.second, fh,i))
 	{
-	  if(fh->is_constrained(i) &&
-	     is_encroached(ce.first, ce.second))
-	    refine_edge(ce.first, ce.second);
+	  const Vertex_handle&
+	    va=fit->vertex(0),
+	    vb=fit->vertex(1),
+	    vc=fit->vertex(2);
+	  Bad_faces.insert(make_pair(aspect_ratio(fit),
+				     Threevertices(va,vb,vc)));
 	}
     }
 }
-
-template <class Tr, class Mtraits>
-void Mesh<Tr, Mtraits>::
-process_facette_map()
-{
-  while( !Bad_faces.empty())
-    {
-      Face_handle Bf = (*(Bad_faces.begin())).second;
-//       while(!is_face(Bf)) {
-// 	Bad_faces.erase(Bad_faces.begin());
-// 	if(Bad_faces.empty()) return;
-// 	Bf = (*(Bad_faces.begin())).second;
-//       }
-      Bad_faces.erase(Bad_faces.begin());
-      Vertex_handle va, vb, vc;
-      va = Bf->vertex(0);
-      vb = Bf->vertex(1);
-      vc = Bf->vertex(2);
-      if( is_face(va,vb,vc )&&is_bad(Bf))
-	{
-	  refine_face(Bf);
-	}
-    }
-}
-
 
 //this function split all the segments that are encroached
 template <class Tr, class Mtraits>
-void Mesh<Tr, Mtraits>::
+void Mesh_2<Tr, Mtraits>::
 refine_edge(Vertex_handle va, Vertex_handle vb)
 {
-  // UPDATE;
   Face_handle f;
   int i;
-  is_edge(va, vb, f, i);
-  if( !is_cluster(va,vb) && 
-      !is_cluster(vb,va) && 
-      f->is_constrained(i)) {
-    Vertex_handle vm = insert_middle(va,vb);
-    update_c_edge_queue(va, vb, vm);
-    update_facette_map(vm);
-    return;
-  }
-  else if (is_cluster(va,vb) && is_cluster(vb,va)) {
-    // cluster at both ends
-    Vertex_handle vm = insert_middle(va,vb);
-    update_c_edge_queue(va, vb, vm);
-    update_facette_map(vm);
-
-    CGAL_assertion(!vm.is_null());
-
-    update_cluster(va,vb,vm);
-    update_cluster(vb,va,vm);
-    return;
-  }
-  Vertex_handle vaa = is_cluster(va,vb) ? va : vb;
-  Vertex_handle vbb = is_cluster(va,vb) ? vb : va;
-  cut_cluster_edge(vaa,vbb);
-}
+  is_edge(va, vb, f, i); // get the edge (f,i)
+  CGAL_assertion(f->is_constrained(i));
+  
+  if( is_cluster(va,vb) )
+    if( is_cluster(vb,va) )
+      { // both ends are clusters
+	Vertex_handle vm = insert_middle(f,i);
+	update_cluster(va,vb,vm);
+	update_cluster(vb,va,vm);
+      }
+    else
+      // va only is a cluster
+      cut_cluster_edge(va,vb);
+  else
+    if( is_cluster(vb,va) )
+      // vb only is a cluster
+      cut_cluster_edge(vb,va);
+    else
+      // no cluster
+      insert_middle(f,i);
+};
 
  //split all the bad faces
 template <class Tr, class Mtraits>
-void Mesh<Tr, Mtraits>::
+void Mesh_2<Tr, Mtraits>::
 refine_face(Face_handle f)
 {
-  Point pc; 
-  Vertex_handle v;
-  // //check if the face still exists
-  pc = circumcenter(f);
-  //  list<Constrained_edge> conflicts;
-  //  list<Constrained_edge>::iterator out_conflicts=c_edge_queue.begin();
-  if(get_conflicting_edges(pc, c_edge_queue))
+  Point pc = circumcenter(f);
+
+  typedef std::list<Edge> List_of_edges;
+  typedef std::list<Face_handle> List_of_face_handles;
+  List_of_edges zone_of_pc_boundary;
+  List_of_face_handles zone_of_pc;
+
+  // find conflicts around pc (starting from f as hint)
+  get_conflicts_and_boundary(pc, 
+			    std::back_inserter(zone_of_pc), 
+			    std::back_inserter(zone_of_pc_boundary), 
+			    f);
+  // For the moment, we don'u use the zone_of_pc.
+  // It will be used when we will destroyed old bad faces in Bad_faces
+
+  for(List_of_edges::iterator it=zone_of_pc_boundary.begin();
+      it!=zone_of_pc_boundary.end();
+      it++)
     {
-      if(!c_edge_queue.empty()){
-	while(! c_edge_queue.empty() )
-	  {
-	    Constrained_edge ce;
-	    ce=c_edge_queue.front();
-	    c_edge_queue.pop_front();
-	    while(!is_edge(ce.first, ce.second) && !c_edge_queue.empty()) {
-	      ce=c_edge_queue.front();
-	      c_edge_queue.pop_front();
-	    }
-	    Face_handle fh;
-	    int i;
-	    if ( is_edge( ce.first, ce.second, fh,i))
-	      {
-		if(	fh->is_constrained(i) &&
-			is_encroached(ce.first, ce.second))
-		  {
-		    Vertex_handle va = ce.first;
-		    Vertex_handle vb = ce.second;
-		    Square_length rg = shortest_edge_squared_lenght(f);
-		    Cluster cluster;
-		    Vertex_handle vaa = is_cluster(va,vb) ? va : vb;
-		    Vertex_handle vbb = is_cluster(va,vb) ? vb : va;
-		    find_cluster(vaa, vbb, cluster);
-		    Length rmin = shortest_edge_of_cluster(vaa,
-							   cluster);
+      const Vertex_handle&
+	va=it->first->vertex(cw(it->second)),
+	vb=it->first->vertex(ccw(it->second));
+      if(is_encroached(va,vb,pc))
+	c_edge_queue.push_back(Constrained_edge(va,vb));
+    }; // after here c_edge_queue contains edges encroached by pc
 
-
-		    // PROBLEM!!
-		    CGAL_assertion(rmin <= rg);
-
-		    refine_edge(ce.first, ce.second);
-
-		  }
-		      		//c_edge_queue.pop_front();
-	      }
-	  }  
-      }
-      else
-	{
- 	  int li;
- 	  Locate_type lt;
- 	  /*Face_handle fh = */locate(pc,lt,li);
-	  if(lt!=OUTSIDE_CONVEX_HULL) {
-	    v = insert(pc);
-	    update_facette_map(v);
-	  }
-	}
-  }
-  // UPDATE; 
-  //  current_time++; 
-  //  insertion_time[v] = current_time; 
-  //flip_around(v);  
+  if(c_edge_queue.empty())
+    {
+      int li;
+      Locate_type lt;
+      locate(pc,lt,li,f);
+      if(lt!=OUTSIDE_CONVEX_HULL)
+	split_face(f, pc);
+    }
 }
 
+template <class Tr, class Mtraits>
+inline
+void Mesh_2<Tr, Mtraits>::
+split_face(const Face_handle& f, const Point& circum_center)
+{
+  Vertex_handle v = insert(circum_center,f);
+  update_facette_map(v);
+}
 
 template <class Tr, class Mtraits>
-void Mesh<Tr, Mtraits>::
+void Mesh_2<Tr, Mtraits>::
 create_clusters()
 {
   for(Vertex_iterator vit = vertices_begin();
@@ -514,11 +536,14 @@ create_clusters()
 }
 
 template <class Tr, class Mtraits>
-void Mesh<Tr, Mtraits>::
+void Mesh_2<Tr, Mtraits>::
 create_clusters_of_vertex(Vertex_handle v)
 {
-  // prerequisite: at least too vertices must exist in the triangulation
+  // prerequisite: at least too vertices must exist in the
+  // triangulation (NO)
+  
   Vertex_circulator vcirc = incident_vertices(v);
+  if( vcirc == 0) return; // if there is only one vertex
   
   incr_constraint(v, vcirc);
   Vertex_circulator vbegin = vcirc;
@@ -567,71 +592,27 @@ create_clusters_of_vertex(Vertex_handle v)
   }
 }
 
-
-
-// template <class Tr, class Mtraits>
-// void Mesh<Tr, Mtraits>::
-// show_clusters()
-// {
-//   multimap<Vertex_handle, Cluster>::iterator cmit = cluster_map.begin();
-//   while(cmit != cluster_map.end()) {
-//     Vertex_handle v = (*cmit).first;
-//     map<Vertex_handle, Length>::iterator cit = (*cmit).second.vertices.begin();
-//     while(cit != (*cmit).second.vertices.end()) {
-//       Vertex_handle v1 = (*cit).first;
-//       cit++;
-//     }
-//     cmit++;
-//   }
-// }
-
-//refine the cluster
-template <class Tr, class Mtraits>
-void Mesh<Tr, Mtraits>::
-cut_cluster(Vertex_handle va, Vertex_handle vb)
-{
-  Cluster c;
-  find_cluster(va, vb, c);
-  check_cluster_status(c);
-  if( !is_cluster_reduced(c))
-    {
-      cut_cluster_edge(va, vb);
-    }
-  else
-    {
-      cut_reduced_cluster(va, vb);
-    }
-}
-
-
-//refine the reduced_cluster
-template <class Tr, class Mtraits>
-void Mesh<Tr, Mtraits>::
-cut_reduced_cluster(Vertex_handle va, Vertex_handle vb)
-{
-  Cluster c;
-  find_cluster(va, vb, c);
-  Vertex_handle vm;
-  if(is_cluster_reduced(c))
-    {
-      // WHY IS IT COMMENTED??
-      // vm = insert_in_c_edge(va, vb, va->point() + (vb->point() - va->point())/2.0);
-    }
-  update_c_edge_queue(va, vb, vm);
-  update_facette_map(vm);
-}
-
-
 //refine the cluster edges
 template <class Tr, class Mtraits>
-void Mesh<Tr, Mtraits>::
+void Mesh_2<Tr, Mtraits>::
 cut_cluster_edge(Vertex_handle va, Vertex_handle vb)
 {
-  //seulement les constraints
+  // What Shewchuck says:
+  // - If the cluster is not reduced (all segments don't have the same
+  // length as [va,vb]), then split the edge (at midpoint)
+  // - Else, let rmin be the minimun insertion radius introduced by the
+  // potential split, let T be the triangle whose circumcenter
+  // encroaches [va,vb] and let rg be the length of the shortest edge
+  // of T. If rmin >= rg, then split the edge.
+
   Cluster c;
   find_cluster(va, vb, c);
   Square_length l2 = 2.0; //shortest_edge_of_cluster(va, c)/1.001;
   Square_length L2 = squared_distance(va->point(), vb->point());
+
+  // # WARNING, TODO: what will append if a edge already has a power
+  // of two length??
+
   if(L2 > l2)
     {
       FT rapport = pow(2.0, rint(0.5*log(L2/l2)/log(2.0)))*::sqrt(l2/(L2*4));
@@ -646,18 +627,27 @@ cut_cluster_edge(Vertex_handle va, Vertex_handle vb)
 
 
 template <class Tr, class Mtraits>
-Mesh<Tr, Mtraits>::Vertex_handle Mesh<Tr, Mtraits>::
-insert_middle(Vertex_handle va, Vertex_handle vb)
+Mesh_2<Tr, Mtraits>::Vertex_handle
+Mesh_2<Tr, Mtraits>::insert_middle(Face_handle f, int i)
 {
-  Point midpoint;
-  midpoint = va->point() + (vb->point() - va->point())/2.0 ;
- return insert_in_c_edge(va,vb, midpoint);
+  Vertex_handle
+    va=f->vertex(cw(i)),
+    vb=f->vertex(ccw(i));
+
+  Point mp = midpoint(va->point(), vb->point());
+
+  Vertex_handle vm = special_insert_in_edge(mp, f, i);
+  // WARNING: special_insert_in_edge is not robust!
+  // We should deconstrained the constrained edge, 
+  update_c_edge_queue(va, vb, vm);
+  update_facette_map(vm);
+  return vm;
 }
 
-
 //insert in constraint edge the middle
+// # used by: cut_cluster_edge
 template <class Tr, class Mtraits>
-Mesh<Tr, Mtraits>::Vertex_handle Mesh<Tr, Mtraits>::
+Mesh_2<Tr, Mtraits>::Vertex_handle Mesh_2<Tr, Mtraits>::
 insert_in_c_edge(Vertex_handle va, Vertex_handle vb, Point p)
 {
   Face_handle f;
@@ -666,39 +656,29 @@ insert_in_c_edge(Vertex_handle va, Vertex_handle vb, Point p)
   Vertex_handle v = special_insert_in_edge(p, f, i);
   // WARNING: special_insert_in_edge is not robust!
   // We should deconstrained the constrained edge, 
-  // 
-  //  flip_around(v) ; // no longer necessar, because
-  //  special_insert_in_edge does it for Constrained_Delaunay_triangulation_2
   update_c_edge_queue(va, vb, v);
   return v;
 }
 
-
-
-
 //update the encroached segments list
+// # TODO: rewrite this!!
 template <class Tr, class Mtraits>
-void Mesh<Tr, Mtraits>::
+void Mesh_2<Tr, Mtraits>::
 update_c_edge_queue(Vertex_handle va, Vertex_handle vb, Vertex_handle vm)
 {
-  Face_circulator fc = incident_faces(vm);
-  Face_circulator fcbegin = fc;
-  if(fc.is_empty()) return;
+  Face_circulator fc = incident_faces(vm), fcbegin(fc);
+
   do {
-    int i;
-    for(i=0; i<3; i++) {
-      Edge e=Edge(fc, i);
-      Vertex_handle v1=e.first->vertex(cw(i));
-      Vertex_handle v2=e.first->vertex(ccw(i));
-      if(is_encroached(v1, v2)&&
-	 e.first->is_constrained(i)&&
-	 v1!=infinite_vertex()&&v2!=infinite_vertex()) 
-	{
-	  c_edge_queue.push_back(Constrained_edge(v1, v2));
-	}
+    for(int i=0; i<3; i++) {
+      Vertex_handle v1=fc->vertex(cw(i));
+      Vertex_handle v2=fc->vertex(ccw(i));
+      if( fc->is_constrained(i) && !is_infinite(v1) &&
+	  !is_infinite(v2) && is_encroached(v1, v2) )
+	c_edge_queue.push_back(Constrained_edge(v1, v2));
     }
-    fc++;
+    ++fc;
   } while(fc != fcbegin);
+
   if(is_encroached(va, vm)) {
     c_edge_queue.push_back(Constrained_edge(va, vm));
   }
@@ -711,16 +691,19 @@ update_c_edge_queue(Vertex_handle va, Vertex_handle vb, Vertex_handle vm)
 }
 
 template <class Tr, class Mtraits>
-void Mesh<Tr, Mtraits>::
+void Mesh_2<Tr, Mtraits>::
 update_facette_map(Vertex_handle v)
 {
-  Face_circulator fc = v->incident_faces();
-  Face_circulator fcbegin = fc;
+  Face_circulator fc = v->incident_faces(), fcbegin(fc);
   do {
     if(!is_infinite(fc)) {
       if(is_bad(fc)) {
-	Bad_faces.insert(make_pair(
-	  aspect_ratio(fc), fc));
+	const Vertex_handle&
+	  va=fc->vertex(0),
+	  vb=fc->vertex(1),
+	  vc=fc->vertex(2);
+	Bad_faces.insert(make_pair(aspect_ratio(fc),
+				   Threevertices(va,vb,vc)));
       }
     }
     fc++;
@@ -730,7 +713,7 @@ update_facette_map(Vertex_handle v)
 
 //ok
 template <class Tr, class Mtraits>
-void Mesh<Tr, Mtraits>::
+void Mesh_2<Tr, Mtraits>::
 update_cluster(Vertex_handle va, Vertex_handle vb, Vertex_handle vm)
 {
   multimap<Vertex_handle, Cluster>::iterator it_va_cluster =
@@ -772,8 +755,8 @@ update_cluster(Vertex_handle va, Vertex_handle vb, Vertex_handle vm)
 // == is_edge ???????????????
 // used by: incr_constraint
 template <class Tr, class Mtraits>
-inline Mesh<Tr, Mtraits>::Edge 
-Mesh<Tr, Mtraits>::edge_between(Vertex_handle va, Vertex_handle vb) {
+inline Mesh_2<Tr, Mtraits>::Edge 
+Mesh_2<Tr, Mtraits>::edge_between(Vertex_handle va, Vertex_handle vb) {
   Edge_circulator ec = va->incident_edges();
   Edge_circulator ecbegin = ec;
   do {
@@ -788,6 +771,7 @@ Mesh<Tr, Mtraits>::edge_between(Vertex_handle va, Vertex_handle vb) {
     ec++;
   } while(ec != ecbegin);
   CGAL_assertion(false); // invalid edge
+  return *ec; // return to please compilers
 }
 
 //CHECK
@@ -795,9 +779,12 @@ Mesh<Tr, Mtraits>::edge_between(Vertex_handle va, Vertex_handle vb) {
 
 // TO IMPLEMENT WITH A SINGLE SCALAR PRODUCT!
 // ->traits
+// # what should go in the trait? the scalar product of the function
+// is_encroached?
 template <class Tr, class Mtraits>
-bool Mesh<Tr, Mtraits>::
-is_encroached(Vertex_handle va, Vertex_handle vb, Point p)
+bool Mesh_2<Tr, Mtraits>::
+is_encroached(const Vertex_handle va, const Vertex_handle vb,
+	      const Point p) const
 {
    Point pm=midpoint(va->point(), vb->point());
    if(2.0*::sqrt(squared_distance(pm, p)) < ::sqrt(squared_distance(va->point(), vb->point())))
@@ -809,8 +796,8 @@ is_encroached(Vertex_handle va, Vertex_handle vb, Point p)
 
 // NOT ALL VERTICES, ONLY THE TWO NEIGHBORS
 template <class Tr, class Mtraits>
-bool Mesh<Tr, Mtraits>::
-is_encroached(Vertex_handle va, Vertex_handle vb)
+bool Mesh_2<Tr, Mtraits>::
+is_encroached(const Vertex_handle va, const Vertex_handle vb) const
 {
   Vertex_iterator vi=vertices_begin();
   while(vi!=vertices_end())
@@ -829,9 +816,10 @@ is_encroached(Vertex_handle va, Vertex_handle vb)
 
 // ?????????????
 // ->traits
-//the measure of faces quality
+// the measure of faces quality
+// # We can add here other contraints, such as a bound on the size
 template <class Tr, class Mtraits>
-bool Mesh<Tr, Mtraits>::
+bool Mesh_2<Tr, Mtraits>::
 is_bad(Face_handle f)
 {
   FT quality = aspect_ratio(f); // recall: r^2/l^2
@@ -858,7 +846,7 @@ is_bad(Face_handle f)
 
 // -> traits?
 template <class Tr, class Mtraits>
-bool Mesh<Tr, Mtraits>::
+bool Mesh_2<Tr, Mtraits>::
 is_small_angle(Vertex_handle vleft,
 	       Vertex_handle vmiddle,
 	       Vertex_handle vright)
@@ -877,7 +865,7 @@ is_small_angle(Vertex_handle vleft,
 
 // # used by: cut_cluster, cut_reduced_cluster
 template <class Tr, class Mtraits>
-bool Mesh<Tr, Mtraits>::
+bool Mesh_2<Tr, Mtraits>::
 is_cluster_reduced(const Cluster& c)
 {
   return c.status == REDUCED;
@@ -886,7 +874,7 @@ is_cluster_reduced(const Cluster& c)
 
 
 template <class Tr, class Mtraits>
-bool Mesh<Tr, Mtraits>::
+bool Mesh_2<Tr, Mtraits>::
 is_cluster(Vertex_handle va, Vertex_handle vb)
 {
   // check if vb is in any cluster of va 
@@ -906,7 +894,7 @@ is_cluster(Vertex_handle va, Vertex_handle vb)
 
 
 template <class Tr, class Mtraits>
-typename Mesh<Tr, Mtraits>::FT Mesh<Tr, Mtraits>::
+typename Mesh_2<Tr, Mtraits>::FT Mesh_2<Tr, Mtraits>::
 shortest_edge_of_cluster(Vertex_handle v, Cluster &cluster)
 { 
   map<Vertex_handle, Length>::iterator vit = cluster.vertices.begin();
@@ -925,8 +913,10 @@ shortest_edge_of_cluster(Vertex_handle v, Cluster &cluster)
 }
 
 // look if all edges have the same lenght
+// # A reduced cluster is a cluster wherein all edges have the same
+// lenght
 template <class Tr, class Mtraits>
-void Mesh<Tr, Mtraits>:: 
+void Mesh_2<Tr, Mtraits>:: 
 check_cluster_status( Cluster& cluster)
 {
   Length initl;
@@ -958,7 +948,7 @@ check_cluster_status( Cluster& cluster)
 // ->traits?
 //the angle that are between 2 edges from the triangulation
 template <class Tr, class Mtraits>
-typename Mesh<Tr, Mtraits>::FT Mesh<Tr, Mtraits>::
+typename Mesh_2<Tr, Mtraits>::FT Mesh_2<Tr, Mtraits>::
 cosinus_of_angle(Vertex_handle vleft, Vertex_handle vmiddle, Vertex_handle vright)
 {
   Point 
@@ -977,7 +967,7 @@ cosinus_of_angle(Vertex_handle vleft, Vertex_handle vmiddle, Vertex_handle vrigh
 //the shortest edge that are in a triangle
 // # used by: refine_face, aspect_ratio
 template <class Tr, class Mtraits>
-typename Mesh<Tr, Mtraits>::FT Mesh<Tr, Mtraits>::
+typename Mesh_2<Tr, Mtraits>::FT Mesh_2<Tr, Mtraits>::
 shortest_edge_squared_lenght(Face_handle f)
 {
   Point 
@@ -997,7 +987,7 @@ shortest_edge_squared_lenght(Face_handle f)
 //aspect_ratio value
 // # used by: fill_facette_map, update_facette_map, is_bad
 template <class Tr, class Mtraits>
-typename Mesh<Tr, Mtraits>::FT Mesh<Tr, Mtraits>::
+typename Mesh_2<Tr, Mtraits>::FT Mesh_2<Tr, Mtraits>::
 aspect_ratio(Face_handle f)
 {
   Point p;
@@ -1008,20 +998,9 @@ aspect_ratio(Face_handle f)
   return (radius/sh_edge);
 }
 
-
-// //insertion radius: the definition
-// template <class Tr, class Mtraits>
-// typename Mesh<Tr, Mtraits>::FT Mesh<Tr, Mtraits>::
-// insertion_radius(Vertex_handle v)
-// {
-//   Vertex_handle v1 = nearest_incident_vertex(v);
-//   return (squared_distance(v->point(), v1->point()));
-// }
-
-
 //this function must compute the vertex that are so close to our vertex.
 template <class Tr, class Mtraits>
-Mesh<Tr, Mtraits>::Vertex_handle Mesh<Tr, Mtraits>::
+Mesh_2<Tr, Mtraits>::Vertex_handle Mesh_2<Tr, Mtraits>::
 nearest_incident_vertex(Vertex_handle v)
 {
   Vertex_handle vbegin, vcurrent, vnearest;
@@ -1040,21 +1019,36 @@ nearest_incident_vertex(Vertex_handle v)
   return vnearest;
 }
 
-
 //the mesh refine function 
 template <class Tr, class Mtraits>
-void Mesh<Tr, Mtraits>::
+void Mesh_2<Tr, Mtraits>::
 refine_mesh()
 {
-  //  viewer = w;
-  //  bounding_box();
   create_clusters();
 
   fill_edge_queue();
   fill_facette_map();
-  process_edge_queue();
-  process_facette_map();
-  
+  while(! (c_edge_queue.empty() && Bad_faces.empty()) )
+    {
+      while( !c_edge_queue.empty() )
+	{
+	  Constrained_edge ce=c_edge_queue.front();
+	  c_edge_queue.pop_front();
+	  refine_edge(ce.first, ce.second);
+	};
+      while( !Bad_faces.empty() )
+	{
+	  const Threevertices& t = Bad_faces.front().second;
+	  const Vertex_handle&
+	    va = t.e0,
+	    vb = t.e1,
+	    vc = t.e2;
+	  Face_handle f;
+	  is_face(va,vb,vc,f);
+	  Bad_faces.pop_front();
+	  refine_face(f);
+	}
+    }
 }
 
 CGAL_END_NAMESPACE
