@@ -456,6 +456,7 @@ else {
                 // n is a leaf
                 delete B;
                 number_of_leaf_nodes_visited++;
+                if (N->size() > 0)
                 for (Item_iterator it=N->begin(); it != N->end(); it++) {
                         number_of_items_visited++;
                         NT distance_to_query_point=

@@ -67,6 +67,8 @@ template < class NT> class Plane_separator {
     return *this;
   }
 
+  ~Plane_separator() {}
+
   //  template <class P>
   //  Separator_d(void (*s)(Points_container<P>&, Separator_d<NT>*), 
   //	      Points_container<P>& c) { s(c, this);  }

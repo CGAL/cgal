@@ -2,6 +2,7 @@
 // Example illustrating for each separate splitting rule 
 // building a kd-tree 
 
+
 #include <vector>
 #include <numeric>
 #include <cassert>
@@ -17,7 +18,6 @@
 #include <CGAL/Splitting_rules.h>
 #include <CGAL/Orthogonal_priority_search.h>
 #include <CGAL/algorithm.h>
-
 
 
   // create own Point type (adapted from example3.C from kdtree and Point_3.h)
@@ -182,6 +182,8 @@ NN_priority_search;
 
 int test_range_searching(CGAL::Split_rule_enumeration::Split_rule s) {
 
+  std::cout << "test started" << std::endl;
+
   int bucket_size=1;
   const int dim=3;
   
@@ -202,12 +204,14 @@ int test_range_searching(CGAL::Split_rule_enumeration::Split_rule s) {
   }
   
   
-  Traits tr(bucket_size, s, 3.0, false);
+  Traits tr(bucket_size, s, 3.0, true);
 
   Point3D_distance tr_dist;
 
+  std::cout << "constructing tree started" << std::endl;
   typedef CGAL::Kd_tree<Traits> Tree;
   Tree d(data_points.begin(), data_points.end(), tr);
+  std::cout << "constructing tree ready" << std::endl;
 
   double q[dim];
   q[0]=0.5; q[1]=0.5; q[2]=0.5;
@@ -216,14 +220,14 @@ int test_range_searching(CGAL::Split_rule_enumeration::Split_rule s) {
   std::vector<NN_priority_search::Item_with_distance> nearest_neighbours; 
   nearest_neighbours.reserve(nearest_neighbour_number);
 
-  NN_priority_search NN(d, query_item, tr_dist, 0.0, false);
+  NN_priority_search NN(d, query_item, tr_dist, 0.0, true);
 
   std::vector<NN_priority_search::Item_with_distance>::iterator 
   it = nearest_neighbours.begin();
 
   CGAL::copy_n(NN.begin(), nearest_neighbour_number, it);
  
-  std::cout << "neighbour searching statistics using extended nodes: " << std::endl;
+  
   NN.statistics();
   
 
@@ -236,12 +240,11 @@ int test_range_searching(CGAL::Split_rule_enumeration::Split_rule s) {
      nearest_neighbours[i].first->z()  << " " 
      << std::endl; 
   }
-  
+  std::cout << "test ready" << std::endl;
+
   return 0;
 }; 
   
- 
-
 int main() {
   
   test_range_searching(CGAL::Split_rule_enumeration::MEDIAN_OF_MAX_SPREAD); 

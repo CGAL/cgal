@@ -344,7 +344,9 @@ template <class Item_>
     };
 
 
-    ~Point_container() { p_list.clear(); }
+    ~Point_container() { 
+			p_list.clear(); 
+    }
 
     inline bool empty() const { return p_list.size() == 0;}
      

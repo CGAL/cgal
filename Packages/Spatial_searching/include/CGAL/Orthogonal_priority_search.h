@@ -75,7 +75,7 @@ class iterator;
     };
 
     // destructor
-    Orthogonal_priority_search() {
+    ~Orthogonal_priority_search() {
 		delete start;
                 delete past_the_end;
     };
@@ -333,7 +333,7 @@ class iterator;
     //destructor
     ~Iterator_implementation() {
 
-        // std::cout << "called destructor" << std::endl;
+        // std::cout << "called iterator implementation destructor" << std::endl;
 	while (PriorityQueue->size()>0) {
                 Node_with_distance* The_top=PriorityQueue->top();
                 PriorityQueue->pop();
@@ -346,6 +346,7 @@ class iterator;
         };
         delete PriorityQueue;
         delete Item_PriorityQueue;
+        // std::cout << "iterator implementation destructor ready " << std::endl;
     }
 
     private:
@@ -410,6 +411,7 @@ class iterator;
                 }
                 // n is a leaf
                 number_of_leaf_nodes_visited++;
+                if (N->size() > 0)
                 for (Item_iterator it=N->begin(); it != N->end(); it++) {
                         number_of_items_visited++;
                         NT distance_to_query_point=

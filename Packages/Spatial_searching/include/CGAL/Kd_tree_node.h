@@ -64,12 +64,19 @@ namespace CGAL {
 	Kd_tree_node() {};
 
 	// constructor for leaf node
+        /*
         Kd_tree_node(Point_container<Item>& c) :
     		n(c.size()), data(new Item*[c.size()]) {
 		the_node_type=LEAF;
     		std::copy(c.begin(), c.end(), data);
-  	};
+  	}; */
 
+        Kd_tree_node(Point_container<Item>& c) :
+    		n(c.size()) {
+                if (n>0) data=new Item*[n];
+		the_node_type=LEAF;
+    		std::copy(c.begin(), c.end(), data);
+  	};
 	// constructor for internal node or extended internal node;
 	Kd_tree_node(Point_container<Item>& c, Traits& t, bool use_extension) {
 		
@@ -126,7 +133,7 @@ namespace CGAL {
         ~Kd_tree_node() {switch (the_node_type) {
 
 			case LEAF: {
-				delete []data;}
+				if (n>0) delete []data;}
 			     	break;
 
 			case INTERNAL: { 

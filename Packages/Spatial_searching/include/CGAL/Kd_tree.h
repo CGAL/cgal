@@ -73,7 +73,8 @@ public:
   }
 
     ~Kd_tree() {
-                  delete tree_root; delete bbox;
+                  delete tree_root; 
+		  delete bbox;
 	};
 
 
