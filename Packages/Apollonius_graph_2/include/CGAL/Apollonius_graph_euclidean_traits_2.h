@@ -89,32 +89,33 @@ public:
   typedef typename Kernel::Line_2                       Line_2;
   typedef typename Kernel::Ray_2                        Ray_2;
   typedef typename Kernel::Segment_2                    Segment_2;
-  typedef Parabola_segment_2<Bare_point,Weight,Line_2>  Parabola_segment_2;
-  typedef Hyperbola_2<Bare_point,Weight>                Hyperbola_2;
-  typedef Hyperbola_ray_2<Bare_point,Weight>            Hyperbola_ray_2;
-  typedef Hyperbola_segment_2<Bare_point,Weight>        Hyperbola_segment_2;
+  typedef CGAL::Parabola_segment_2<Bare_point,Weight,Line_2>
+  /*                                                 */ Parabola_segment_2;
+  typedef CGAL::Hyperbola_2<Bare_point,Weight>          Hyperbola_2;
+  typedef CGAL::Hyperbola_ray_2<Bare_point,Weight>      Hyperbola_ray_2;
+  typedef CGAL::Hyperbola_segment_2<Bare_point,Weight>  Hyperbola_segment_2;
 
 public:
   // CONSTRUCTIONS
   //--------------
   // vertex and weighted point
-  typedef CGAL::Construct_Apollonius_vertex_2<R>
+  typedef CGAL::Construct_Apollonius_vertex_2<Kernel>
   /*                                      */ Construct_Apollonius_vertex_2;
-  typedef CGAL::Construct_Apollonius_weighted_point_2<R>
+  typedef CGAL::Construct_Apollonius_weighted_point_2<Kernel>
   /*                              */ Construct_Apollonius_weighted_point_2;
 
   // bisectors and subsets
-  typedef CGAL::Construct_Apollonius_bisector_2<R>
+  typedef CGAL::Construct_Apollonius_bisector_2<Kernel>
   /*                                    */ Construct_Apollonius_bisector_2;
-  typedef CGAL::Construct_Apollonius_bisector_ray_2<R>
+  typedef CGAL::Construct_Apollonius_bisector_ray_2<Kernel>
   /*                                */ Construct_Apollonius_bisector_ray_2;
-  typedef CGAL::Construct_Apollonius_bisector_segment_2<R>
+  typedef CGAL::Construct_Apollonius_bisector_segment_2<Kernel>
   /*                            */ Construct_Apollonius_bisector_segment_2;
 
   // primal edges
-  typedef CGAL::Construct_Apollonius_primal_ray_2<R> 
+  typedef CGAL::Construct_Apollonius_primal_ray_2<Kernel> 
   /*                                   */ Construct_Apollonius_primal_ray_2;
-  typedef CGAL::Construct_Apollonius_primal_segment_2<R>
+  typedef CGAL::Construct_Apollonius_primal_segment_2<Kernel>
   /*                               */ Construct_Apollonius_primal_segment_2;
 
 
@@ -122,17 +123,17 @@ public:
   //-----------
   typedef typename Kernel::Compare_x_2                  Compare_x_2;
   typedef typename Kernel::Compare_y_2                  Compare_y_2;
-  typedef CGAL::Compare_weight_2<R>                     Compare_weight_2;
+  typedef CGAL::Compare_weight_2<Kernel>                Compare_weight_2;
   typedef typename Kernel::Orientation_2                Orientation_2;
-  typedef CGAL::Is_hidden_2<R,MTag>                     Is_hidden_2;
-  typedef CGAL::Oriented_side_of_bisector_2<R,MTag> 
+  typedef CGAL::Is_hidden_2<Kernel,MTag>                Is_hidden_2;
+  typedef CGAL::Oriented_side_of_bisector_2<Kernel,MTag> 
   /*                                          */ Oriented_side_of_bisector_2;
-  typedef CGAL::Vertex_conflict_2<R,MTag >              Vertex_conflict_2;
-  typedef CGAL::Finite_edge_interior_conflict_2<R,MTag >
+  typedef CGAL::Vertex_conflict_2<Kernel,MTag >            Vertex_conflict_2;
+  typedef CGAL::Finite_edge_interior_conflict_2<Kernel,MTag >
   /*                                      */ Finite_edge_interior_conflict_2;
-  typedef CGAL::Infinite_edge_interior_conflict_2<R,MTag>
+  typedef CGAL::Infinite_edge_interior_conflict_2<Kernel,MTag>
   /*                                    */ Infinite_edge_interior_conflict_2;
-  typedef CGAL::Is_degenerate_edge_2<R,MTag>            Is_degenerate_edge_2;
+  typedef CGAL::Is_degenerate_edge_2<Kernel,MTag>       Is_degenerate_edge_2;
 
 
 public:

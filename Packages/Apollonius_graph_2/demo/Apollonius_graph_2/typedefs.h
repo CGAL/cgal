@@ -1,7 +1,7 @@
 #ifndef _MK___TYPEDEFS_H
 #define _MK___TYPEDEFS_H
 
-#if 0
+#if 1
 
 //-------- choosing number type --- start ---------
 #include <CGAL/MP_Float.h>
