@@ -25,6 +25,8 @@
 //
 // ============================================================================
 
+// OBSOLETE !!!!!!!!!!!!!!!!!
+
 #ifndef CGAL_TRIANGULATION_GEOM_TRAITS_3_H
 #define CGAL_TRIANGULATION_GEOM_TRAITS_3_H
 
@@ -39,6 +41,11 @@ template < class Repres >
 class Triangulation_geom_traits_3 : public Repres
 {
 public:
+  Triangulation_geom_traits_3()
+  {
+    bool The_class_Triangulation_geom_traits_3_is_obsolete;
+  }
+
   typedef Repres Rep;
 
   typedef typename Rep::Object_3       Object_3;
