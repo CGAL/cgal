@@ -136,8 +136,8 @@ void
 Random_points_in_square_2<P,Creator>::
 generate_point() {
     Creator creator;
-    d_item = creator( int(d_range * (2 * _rnd.get_double() - 1.0)),
-                      int(d_range * (2 * _rnd.get_double() - 1.0)));
+    d_item = creator( d_range * (2 * _rnd.get_double() - 1.0),
+                      d_range * (2 * _rnd.get_double() - 1.0));
 }
 
 
