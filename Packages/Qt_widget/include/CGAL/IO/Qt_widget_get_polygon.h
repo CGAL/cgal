@@ -23,6 +23,7 @@
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_layer.h>
+#include <qcursor.h>
 #include <list>
 
 namespace CGAL {
@@ -58,8 +59,8 @@ public:
       if (active)
       {
 	RasterOp old_rasterop=widget->rasterOp();
-	widget->painter().setRasterOp(NotROP);
-	widget->painter().drawPolyline(qpoints_old);
+	widget->get_painter().setRasterOp(NotROP);
+	widget->get_painter().drawPolyline(qpoints_old);
 	widget->setRasterOp(old_rasterop);
 	widget->do_paint();
 	FT
@@ -68,9 +69,7 @@ public:
 	poly.push_back(Point_2(x, y));
 	widget->new_object(make_object(poly));
 
-	// TODO: have we something better to clear a polygon?
-	while(!poly.is_empty())
-	  poly.erase(--poly.vertices_end());
+	poly.erase(poly.vertices_begin(),poly.vertices_end());
 
 	qpoints.resize(0);
 	qpoints_old.resize(0);
@@ -90,11 +89,11 @@ public:
 	if ((lastx != x) || (lasty != y)) {
 	  widget->lock();
 	  RasterOp old_rasterop=widget->rasterOp();
-	  widget->painter().setRasterOp(NotROP);
+	  widget->get_painter().setRasterOp(NotROP);
 	  qpoints.putPoints(num_points,1,x,y);
-	  widget->painter().drawPolyline(qpoints);
+	  widget->get_painter().drawPolyline(qpoints);
 	  // Erase old polyline
-	  widget->painter().drawPolyline(qpoints_old);
+	  widget->get_painter().drawPolyline(qpoints_old);
 	  widget->setRasterOp(old_rasterop);
 	  widget->unlock();
 	  lastx= x;
@@ -121,6 +120,8 @@ protected:
   Polygon poly;
   QPointArray qpoints;
   QPointArray qpoints_old;
+private:
+  QCursor oldcursor;
 };
 
 } // namespace CGAL
