@@ -326,7 +326,10 @@ public:
     Point_2 rq = point_reflect_in_x_and_y(q);
     X_curve_2 rcv1 = curve_reflect_in_x_and_y(cv1);
     X_curve_2 rcv2 = curve_reflect_in_x_and_y(cv2);
-    return curve_compare_at_x_right(rcv1, rcv2, rq);
+    Comparison_result cr = curve_compare_at_x_right(rcv1, rcv2, rq);
+    if (cr == SMALLER) return LARGER;
+    if (cr == LARGER) return SMALLER;
+    return EQUAL;
   }
 };
 
