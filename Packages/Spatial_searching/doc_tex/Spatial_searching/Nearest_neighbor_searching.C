@@ -1,3 +1,4 @@
+#include <CGAL/Cartesian.h>
 #include <CGAL/Kd_tree.h>
 
 #include <vector>

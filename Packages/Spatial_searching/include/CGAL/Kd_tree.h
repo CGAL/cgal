@@ -20,7 +20,6 @@
 #ifndef CGAL_KD_TREE_H
 #define CGAL_KD_TREE_H
 #include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
 #include <CGAL/Kd_tree_traits_point.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/algorithm.h>
