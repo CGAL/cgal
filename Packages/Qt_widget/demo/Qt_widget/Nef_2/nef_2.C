@@ -192,7 +192,8 @@ public:
     file->insertSeparator();
     file->insertItem("Load Nef_2", this, SLOT(sl_load_nef()), CTRL+Key_L);
     file->insertItem("Save Nef_2", this, SLOT(sl_save_nef()), CTRL+Key_S);
-    file->insertItem("Load Polygon_2", this, SLOT(sl_load_polygon()), CTRL+Key_O);
+    file->insertItem("Load Polygon_2", this, 
+                     SLOT(sl_load_polygon()), CTRL+Key_O);
     file->insertSeparator();
     file->insertItem("Print", widget, SLOT(print_to_ps()), CTRL+Key_P);
     file->insertSeparator();
@@ -221,25 +222,43 @@ public:
     //boolean operations toolbar
     QToolBar *optoolbar = new QToolBar("operations", this, 
                                         QMainWindow::Right, true,"Operations");
-    QToolButton *but_intersection = new QToolButton(QPixmap( (const char**)intersection_xpm ),
-      "INTERSECTION", "BOOLEAN OPERATIONS", this, SLOT(sl_intersect()), optoolbar, "intersection");
-    QToolButton *but_union = new QToolButton(QPixmap( (const char**)union_xpm ), 
-      "UNION", "BOOLEAN OPERATIONS", this, SLOT(sl_join()), optoolbar, "union");
-    QToolButton *but_difference = new QToolButton(QPixmap( (const char**)difference_xpm ), 
-      "DIFFERENCE", "BOOLEAN OPERATIONS", this, SLOT(sl_difference()), optoolbar, "difference");
-    QToolButton *but_symm_difference = new QToolButton(QPixmap( (const char**)symmetric_difference_xpm ), 
-      "SYMMETRIC DIFFERENCE", "BOOLEAN OPERATIONS", this, SLOT(sl_symm_difference()), optoolbar, "symm_difference");
+    QToolButton *but_intersection = new QToolButton(
+       QPixmap( (const char**)intersection_xpm ),
+       "INTERSECTION", "BOOLEAN OPERATIONS", this, 
+       SLOT(sl_intersect()), optoolbar, "intersection");
+    QToolButton *but_union = new QToolButton(
+       QPixmap( (const char**)union_xpm ), 
+       "UNION", "BOOLEAN OPERATIONS", this, 
+       SLOT(sl_join()), optoolbar, "union");
+    QToolButton *but_difference = new QToolButton(
+       QPixmap( (const char**)difference_xpm ), 
+       "DIFFERENCE", "BOOLEAN OPERATIONS", this, 
+       SLOT(sl_difference()), optoolbar, "difference");
+    QToolButton *but_symm_difference = new QToolButton(
+       QPixmap( (const char**)symmetric_difference_xpm ), 
+       "SYMMETRIC DIFFERENCE", "BOOLEAN OPERATIONS", this, 
+       SLOT(sl_symm_difference()), optoolbar, "symm_difference");
     
-    QToolButton *but_complement = new QToolButton(QPixmap( (const char**)complement_xpm ), 
-      "COMPLEMENT", "BOOLEAN OPERATIONS", this, SLOT(sl_complement()), optoolbar, "complement");
-    QToolButton *but_interior = new QToolButton(QPixmap( (const char**)interior_xpm ), 
-      "INTERIOR", "BOOLEAN OPERATIONS", this, SLOT(sl_interior()), optoolbar, "interior");
-    QToolButton *but_closure = new QToolButton(QPixmap( (const char**)closure_xpm ), 
-      "CLOSURE", "BOOLEAN OPERATIONS", this, SLOT(sl_closure()), optoolbar, "closure");
-    QToolButton *but_boundary = new QToolButton(QPixmap( (const char**)boundary_xpm ), 
-      "BOUNDARY", "BOOLEAN OPERATIONS", this, SLOT(sl_boundary()), optoolbar, "boundary");
-    QToolButton *but_regularization = new QToolButton(QPixmap( (const char**)regularization_xpm ), 
-      "REGULARIZATION", "BOOLEAN OPERATIONS", this, SLOT(sl_regularization()), optoolbar, "regularization");
+    QToolButton *but_complement = new QToolButton(
+       QPixmap( (const char**)complement_xpm ), 
+       "COMPLEMENT", "BOOLEAN OPERATIONS", this, 
+       SLOT(sl_complement()), optoolbar, "complement");
+    QToolButton *but_interior = new QToolButton(
+       QPixmap( (const char**)interior_xpm ), 
+       "INTERIOR", "BOOLEAN OPERATIONS", this, 
+       SLOT(sl_interior()), optoolbar, "interior");
+    QToolButton *but_closure = new QToolButton(
+       QPixmap( (const char**)closure_xpm ), 
+       "CLOSURE", "BOOLEAN OPERATIONS", this, 
+       SLOT(sl_closure()), optoolbar, "closure");
+    QToolButton *but_boundary = new QToolButton(
+       QPixmap( (const char**)boundary_xpm ), 
+       "BOUNDARY", "BOOLEAN OPERATIONS", this, 
+       SLOT(sl_boundary()), optoolbar, "boundary");
+    QToolButton *but_regularization = new QToolButton(
+       QPixmap( (const char**)regularization_xpm ), 
+       "REGULARIZATION", "BOOLEAN OPERATIONS", this, 
+       SLOT(sl_regularization()), optoolbar, "regularization");
     
     but_intersection->setOn(true);
     but_union->setOn(true);
@@ -256,8 +275,10 @@ public:
     //this->addToolBar(ltoolbar->toolbar(), Top, false);
     this->addToolBar(optoolbar, Top, false);
   
-    connect(list1, SIGNAL(delete_key(QListBoxItem*)), this, SLOT(sl_list1_delete_key_pressed(QListBoxItem*)));
-    connect(list2, SIGNAL(delete_key(QListBoxItem*)), this, SLOT(sl_list2_delete_key_pressed(QListBoxItem*)));
+    connect(list1, SIGNAL(delete_key(QListBoxItem*)), 
+            this, SLOT(sl_list1_delete_key_pressed(QListBoxItem*)));
+    connect(list2, SIGNAL(delete_key(QListBoxItem*)), 
+            this, SLOT(sl_list2_delete_key_pressed(QListBoxItem*)));
 
     Line l1(Point(0, 0), Point(0, 2));
     Nef_polyhedron N1(l1, Nef_polyhedron::INCLUDED);
@@ -267,7 +288,8 @@ public:
     Nef_polyhedron N2(l2, Nef_polyhedron::INCLUDED);
     Nef_visible2 = N2;
 
-    insert_in_list(N1, QString("LeftHalf"));insert_in_list(N2, QString("TopHalf"));
+    insert_in_list(N1, QString("LeftHalf"));
+    insert_in_list(N2, QString("TopHalf"));
 
     *widget << CGAL::BackgroundColor (CGAL::BLACK);
   
@@ -313,42 +335,41 @@ public slots:
 
 
   void  sl_load_nef()
-	{
-		QString s( QFileDialog::getOpenFileName( QString::null,
+  {
+    QString s( QFileDialog::getOpenFileName( QString::null,
 		    "CGAL files (*.cgal)", this ) );
-		if ( s.isEmpty() )
-			return;
-		std::ifstream in(s);
-		CGAL::set_ascii_mode(in);
-		
-		Nef_polyhedron N_temp(Nef_polyhedron::EMPTY);
-		Nef_visible = N_temp;
-		in >> Nef_visible;
+    if ( s.isEmpty() )
+      return;
+    std::ifstream in(s);
+    CGAL::set_ascii_mode(in);
+    Nef_polyhedron N_temp(Nef_polyhedron::EMPTY);
+    Nef_visible = N_temp;
+    in >> Nef_visible;
     insert_in_list(Nef_visible, "loaded");
     list1->setSelected(list1->count()-1, true);
-		something_changed();
-	}
+    something_changed();
+  }
 
   void  sl_save_nef()
-	{
-		QString fileName = 
-		QFileDialog::getSaveFileName( "nef_2.cgal", 
-				  "Cgal files (*.cgal)", this );
-		if ( !fileName.isNull() ) {
-			// got a file name
-			std::ofstream out(fileName);
-			CGAL::set_ascii_mode(out);
-			out << Nef_visible << std::endl;    
-		}
-	}//end save_nef()
+  {
+    QString fileName = 
+          QFileDialog::getSaveFileName( "nef_2.cgal", 
+                       "Cgal files (*.cgal)", this );
+    if ( !fileName.isNull() ) {
+      // got a file name
+      std::ofstream out(fileName);
+      CGAL::set_ascii_mode(out);
+      out << Nef_visible << std::endl;    
+    }
+  }//end save_nef()
 
   void  sl_load_polygon(){
     QString s( QFileDialog::getOpenFileName( QString::null,
 		    "CGAL files (*.cgal)", this ) );
-		if ( s.isEmpty() )
-			return;
-		std::ifstream in(s);
-		CGAL::set_ascii_mode(in);
+    if ( s.isEmpty() )
+      return;
+    std::ifstream in(s);
+    CGAL::set_ascii_mode(in);
 
     Polygon_2_double poly;
     in >> poly;
@@ -364,14 +385,16 @@ public slots:
         l_of_p.push_back(p1);
         it++;
       }
-      Nef_polyhedron Nt(l_of_p.begin(), l_of_p.end(), Nef_polyhedron::INCLUDED);
+      Nef_polyhedron Nt(l_of_p.begin(), l_of_p.end(), 
+                        Nef_polyhedron::INCLUDED);
       Nef_visible = Nt;
       char tnr[10];
       sprintf(tnr, "%d", poly.size());
       strcat(tnr, "gon");
       insert_in_list(Nt, tnr);
       list1->setSelected(list1->count()-1, true);
-      widget->set_window(poly.bbox().xmin(), poly.bbox().xmax(), poly.bbox().ymin(), poly.bbox().ymax());
+      widget->set_window(poly.bbox().xmin(), poly.bbox().xmax(), 
+                         poly.bbox().ymin(), poly.bbox().ymax());
       something_changed();
   }
 private slots:
@@ -413,7 +436,8 @@ private slots:
         l_of_p.push_back(p1);
         it++;
       }
-      Nef_polyhedron Nt(l_of_p.begin(), l_of_p.end(), Nef_polyhedron::INCLUDED);
+      Nef_polyhedron Nt(l_of_p.begin(), l_of_p.end(), 
+                        Nef_polyhedron::INCLUDED);
       Nef_visible = Nt;
       char tnr[10];
       sprintf(tnr, "%d", poly.size());
@@ -428,9 +452,12 @@ private slots:
       RT wsy = wsyq.numerator() * wsxq.denominator(); 
       RT wsh  = wsxq.denominator() * wsyq.denominator(); 
       */
-      RT wsx = line.point(0).x().numerator() * line.point(0).y().denominator(); 
-      RT wsy = line.point(0).y().numerator() * line.point(0).x().denominator(); 
-      RT wsh  = line.point(0).x().denominator() * line.point(0).y().denominator(); 
+      RT wsx = line.point(0).x().numerator() 
+               * line.point(0).y().denominator(); 
+      RT wsy = line.point(0).y().numerator() 
+               * line.point(0).x().denominator(); 
+      RT wsh  = line.point(0).x().denominator() 
+               * line.point(0).y().denominator(); 
       Point p1(wsx, wsy, wsh);
       /*
       wsxq = double_to_quotient<RT>(line.point(1).x());
@@ -441,7 +468,8 @@ private slots:
       */
       wsx = line.point(1).x().numerator() * line.point(1).y().denominator(); 
       wsy = line.point(1).y().numerator() * line.point(1).x().denominator(); 
-      wsh  = line.point(1).x().denominator() * line.point(1).y().denominator(); 
+      wsh  = line.point(1).x().denominator() 
+             * line.point(1).y().denominator(); 
       Point p2(wsx, wsy, wsh);
 
       Nef_polyhedron Nt(Line(p1, p2), Nef_polyhedron::INCLUDED);
@@ -532,10 +560,12 @@ private slots:
     }
   }
   void  sl_intersect(){
-    if( list1->isSelected(list1->currentItem()) && list2->isSelected(list2->currentItem()) ){
+    if( list1->isSelected(list1->currentItem()) 
+        && list2->isSelected(list2->currentItem()) ){
       //if there is something selected
       Nef_polyhedron NT = Nef_visible.intersection(Nef_visible2);
-      QString s = "AND(" + list1->currentText() + ", " + list2->currentText() + ")";
+      QString s = "AND(" + list1->currentText() + ", " 
+                  + list2->currentText() + ")";
       insert_in_list(NT, s);
       Nef_visible = NT;
       Nef_visible2 = Nef_polyhedron(Nef_polyhedron::EMPTY);
@@ -545,10 +575,12 @@ private slots:
     }
   }
   void  sl_join(){
-    if( list1->isSelected(list1->currentItem()) && list2->isSelected(list2->currentItem()) ){
+    if( list1->isSelected(list1->currentItem()) 
+        && list2->isSelected(list2->currentItem()) ){
       //if there is something selected
       Nef_polyhedron NT = Nef_visible.join(Nef_visible2);
-      QString s = "OR(" + list1->currentText() + ", " + list2->currentText() + ")";
+      QString s = "OR(" + list1->currentText() + ", " 
+                  + list2->currentText() + ")";
       insert_in_list(NT, s);
       Nef_visible = NT;
       Nef_visible2 = Nef_polyhedron(Nef_polyhedron::EMPTY);
@@ -558,10 +590,12 @@ private slots:
     }
   }
   void  sl_difference(){
-    if( list1->isSelected(list1->currentItem()) && list2->isSelected(list2->currentItem()) ){
+    if( list1->isSelected(list1->currentItem()) 
+        && list2->isSelected(list2->currentItem()) ){
       //if there is something selected
       Nef_polyhedron NT = Nef_visible.difference(Nef_visible2);
-      QString s = "Dif(" + list1->currentText() + ", " + list2->currentText() + ")";
+      QString s = "Dif(" + list1->currentText() + ", " 
+                  + list2->currentText() + ")";
       insert_in_list(NT, s);
       Nef_visible = NT;
       Nef_visible2 = Nef_polyhedron(Nef_polyhedron::EMPTY);
@@ -574,7 +608,8 @@ private slots:
     if( list1->isSelected(list1->currentItem()) && list2->isSelected(list2->currentItem()) ){
       //if there is something selected
       Nef_polyhedron NT = Nef_visible.symmetric_difference(Nef_visible2);
-      QString s = "SYM_DIF(" + list1->currentText() + ", " + list2->currentText() + ")";
+      QString s = "SYM_DIF(" + list1->currentText() + ", " 
+                  + list2->currentText() + ")";
       insert_in_list(NT, s);
       Nef_visible = NT;
       Nef_visible2 = Nef_polyhedron(Nef_polyhedron::EMPTY);
