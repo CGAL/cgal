@@ -22,6 +22,8 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/MP_Float.h>
+#include <functional>
+#include <cmath>
 
 CGAL_BEGIN_NAMESPACE
 

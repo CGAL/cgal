@@ -17,7 +17,7 @@
 // revision_date : $Date$
 // author(s)     : Andreas Fabri
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
  
 
@@ -26,18 +26,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/LEDA_basic.h>
-
-/*
-#if !defined(LEDA_ROOT_INCL_ID)
-#define LEDA_ROOT_INCL_ID 349115
-#include <LEDA/REDEFINE_NAMES.h>
-#endif
-*/
-
-#ifndef CGAL_PROTECT_LEDA_RATIONAL_H
 #include <LEDA/rational.h>
-#define CGAL_PROTECT_LEDA_RATIONAL_H
-#endif // CGAL_PROTECT_LEDA_RATIONAL_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -56,6 +45,7 @@ struct Rational_traits<leda_rational> {
  leda_rational make_rational(const RT & n, const RT & d) const
  { return leda_rational(n, d); } 
 };
+
 #ifndef CGAL_NO_NAMESPACE
 inline
 double
@@ -99,13 +89,5 @@ to_interval (const leda_rational & z)
 }
 
 CGAL_END_NAMESPACE
-
-
-/*
-#if LEDA_ROOT_INCL_ID == 349115
-#undef LEDA_ROOT_INCL_ID
-#include <LEDA/UNDEFINE_NAMES.h>
-#endif
-*/
 
 #endif  // CGAL_LEDA_RATIONAL_H

@@ -17,28 +17,15 @@
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-//
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
  
-
-#ifndef CGAL_REAL_H
-#define CGAL_REAL_H
-
-/*
-#if !defined(LEDA_ROOT_INCL_ID)
-#define LEDA_ROOT_INCL_ID 349117
-#include <LEDA/REDEFINE_NAMES.h>
-#endif
-*/
+#ifndef CGAL_LEDA_REAL_H
+#define CGAL_LEDA_REAL_H
 
 #include <CGAL/basic.h>
 #include <CGAL/LEDA_basic.h>
-
-#ifndef CGAL_PROTECT_LEDA_REAL_H
 #include <LEDA/real.h>
-#define CGAL_PROTECT_LEDA_REAL_H
-#endif // CGAL_PROTECT_LEDA_REAL_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -112,19 +99,4 @@ namespace NTS {
 
 CGAL_END_NAMESPACE
 
-
-#if ( __LEDA__ < 362 )
-inline
-leda_real
-operator/= (leda_real&x, const leda_real&y)
-{ x = x / y; return x; }
-#endif // __LEDA__ < 362
-
-/*
-#if LEDA_ROOT_INCL_ID == 349117
-#undef LEDA_ROOT_INCL_ID
-#include <LEDA/UNDEFINE_NAMES.h>
-#endif
-*/
-
-#endif // CGAL_REAL_H
+#endif // CGAL_LEDA_REAL_H

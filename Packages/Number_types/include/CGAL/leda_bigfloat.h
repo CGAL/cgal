@@ -18,20 +18,16 @@
 // author(s)     : Stefan Schirra
 //
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
  
 
-#ifndef CGAL_BIGFLOAT_H
-#define CGAL_BIGFLOAT_H
+#ifndef CGAL_LEDA_BIGFLOAT_H
+#define CGAL_LEDA_BIGFLOAT_H
 
 #include <CGAL/basic.h>
 #include <CGAL/LEDA_basic.h>
-
-#ifndef CGAL_PROTECT_LEDA_BIGFLOAT_H
 #include <LEDA/bigfloat.h>
-#define CGAL_PROTECT_LEDA_BIGFLOAT_H
-#endif // CGAL_PROTECT_LEDA_BIGFLOAT_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -76,4 +72,4 @@ to_interval (const leda_bigfloat & z)
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_BIGFLOAT_H
+#endif // CGAL_LEDA_BIGFLOAT_H

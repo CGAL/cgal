@@ -27,8 +27,6 @@
 #include <CGAL/Interval_arithmetic.h>
 #include <iostream>
 #include <vector>
-#include <functional>
-#include <cmath>
 
 // MP_Float : multiprecision scaled integers.
 
