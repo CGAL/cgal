@@ -1,3 +1,10 @@
+31 August 2004 Lutz Kettner
+- Moved all sources to doc_tex/Developers_manual/* such that the manual
+  can be tested and build with the automatic manual test suite. All
+  figures in *.eps, *.pdf, and *.gif format are now in  
+  doc_tex/Developers_manual/fig/* . There is no separate html and examples
+  directory anymore.
+
 29 July 2004 Sylvain Pion
 - autotest_cgal : Document CGAL_TESTER_NAME, CGAL_TESTER_ADDRESS and
   TEST_DIR_ROOT.
