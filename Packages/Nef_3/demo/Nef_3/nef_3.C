@@ -25,23 +25,23 @@
 // Demo program maintaining a stack of Nef polyhedra in the space and
 // a manipulation language for stack ops, file loading and saving, etc.
 // ============================================================================
-
-// set this macro if you have the OpenGL and glut based visualization
-#define CGAL_NEF3_VISUALIZOR
-
 #include <CGAL/basic.h>
 #include <CGAL/Gmpz.h>
 #include <CGAL/leda_integer.h>
 #include <CGAL/Simple_homogeneous.h>
 #include <CGAL/Extended_homogeneous_3.h>
+#include <CGAL/Extended_cartesian_3.h>
 #include <CGAL/rational_rotation.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
-#include <CGAL/Nef_3/Visualizor.h>
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/Nef_3/Decomposition_mark.h>
 #include <CGAL/Nef_3/SNC_items.h>
+
+#ifdef CGAL_USE_QT
+#include <CGAL/IO/Qt_widget_Nef_3.h>
+#endif
 
 #include <iostream>
 #include <fstream>
@@ -68,6 +68,7 @@ typedef CGAL::Gmpz NT;
 
 #ifdef CGAL_USE_EXTENDED_KERNEL
 typedef CGAL::Extended_homogeneous_3<NT>   Kernel;
+//typedef CGAL::Extended_cartesian_3<NT>   Kernel;
 const char *kernelversion = "Extended homogeneous 3d kernel.";
 #else // #elif CGAL_USE_SIMPLE_KERNEL
 // typedef CGAL::Lazy_exact_nt<NT>  LNT;
@@ -82,9 +83,6 @@ typedef CGAL::Nef_polyhedron_3<Kernel,CGAL::SNC_items>     Nef_polyhedron;
 // typedef Nef_polyhedron::Explorer           Explorer;
 typedef std::vector< Nef_polyhedron>       Nef_vector;
 typedef Nef_vector::iterator               Iterator;
-#ifdef CGAL_NEF3_VISUALIZOR
-typedef CGAL::Visualizor_OpenGL_3<Nef_polyhedron>         Visualizor;
-#endif 
 
 // Global data
 Nef_vector nef;  // contains stack of Nef_polyhedron
@@ -357,13 +355,15 @@ int eval( int argc, char* argv[]) {
                 error = 2;
                 continue;
             }
-#ifdef CGAL_NEF3_VISUALIZOR
-	    Visualizor V(nef.back());
-	    V.draw();
-	    CGAL::OGL::start_viewer();
+
+#ifdef CGAL_USE_QT
+	    QApplication a(argc, argv);
+	    Qt_widget_Nef_3* w = new Qt_widget_Nef_3(nef.back());
+	    a.setMainWidget(w);
+	    w->show();
+	    return a.exec();
 #else
-            cout << "Sorry, visualization has not been compiled into this "
-                    "program version. " << endl;
+	    std::cout << "Sorry, this demo needs QT..." << std::endl;
 #endif
         } else if ( strcmp( argv[i], "trans") == 0) {
             if ( nef.size() == 0) {
