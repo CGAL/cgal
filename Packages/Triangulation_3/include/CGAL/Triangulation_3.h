@@ -627,6 +627,7 @@ protected:
 	                   facet.first, facet.second);
   }
 
+private:
   // Here are the conflit tester function objects passed to
   // insert_conflict() by insert_outside_convex_hull().
   class Conflict_tester_outside_convex_hull_3
