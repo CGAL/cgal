@@ -16,11 +16,11 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-	-I../../include \
 	-I./include \
+	-I../../include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS)\
-	-g 
+	-g -pedantic
 
 
 #---------------------------------------------------------------------#
@@ -41,9 +41,6 @@ all: test_triangulation_geom_traits test_triangulation_tds \
 test_triangulation_geom_traits: test_triangulation_geom_traits.o
 	$(CGAL_CXX) -o test_triangulation_geom_traits test_triangulation_geom_traits.o $(LDFLAGS)
 
-test_regular_triangulation_2: test_regular_triangulation_2.o
-	$(CGAL_CXX) -o test_regular_triangulation_2 test_regular_triangulation_2.o $(LDFLAGS)
-
 test_triangulation_tds: test_triangulation_tds.o
 	$(CGAL_CXX) -o test_triangulation_tds test_triangulation_tds.o $(LDFLAGS)
 
@@ -56,8 +53,14 @@ test_triangulation_2: test_triangulation_2.o
 test_delaunay_triangulation_2: test_delaunay_triangulation_2.o
 	$(CGAL_CXX) -o test_delaunay_triangulation_2 test_delaunay_triangulation_2.o $(LDFLAGS)
 
+test_regular_triangulation_2: test_regular_triangulation_2.o
+	$(CGAL_CXX) -o test_regular_triangulation_2 test_regular_triangulation_2.o $(LDFLAGS)
+
 test_constrained_triangulation_2: test_constrained_triangulation_2.o	
 	$(CGAL_CXX) -o test_constrained_triangulation_2 test_constrained_triangulation_2.o $(LDFLAGS)
+
+test_const_del_triangulation_2: test_const_del_triangulation_2.o
+	$(CGAL_CXX) -o test_const_del_triangulation_2 test_const_del_triangulation_2.o $(LDFLAGS)
 
 clean:
 	- rm -f *.o  *.obj *.exe \
@@ -65,6 +68,7 @@ clean:
 	test_triangulation_tds test_triangulation_tdsul \
 	test_delaunay_triangulation_2 core \
 	test_constrained_triangulation_2 test_regular_triangulation_2 \
+	test_const_del_triangulation_2 \
 	T??.triangulation  file_tds? 
 
 realclean: clean

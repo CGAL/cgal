@@ -25,6 +25,7 @@
 
 #include <CGAL/Triangulation_vertex_base_2.h>
 #include <CGAL/Constrained_triangulation_face_base_2.h>
+#include <CGAL/Triangulation_euclidean_traits_2.h>
 #include <CGAL/Triangulation_default_data_structure_2.h>
 #include <CGAL/Triangulation_data_structure_using_list_2.h>
 #include <CGAL/Constrained_triangulation_2.h>
@@ -35,9 +36,12 @@
 int main()
 {
   std::cout << "Testing constrained_triangulation "<< std::endl;
-  std::cout << " with Triangulation_test_traits : " << std::endl;
-  std::cout << " this uses double type coordinates " << std::endl;
-  typedef CGAL::_Triangulation_test_traits                       Gt;
+  std::cout << " with Triangulation_euclidean_traits_2 : " << std::endl;
+  std::cout << " and double coordinates " << std::endl;
+  
+  typedef double coord_type;
+  typedef CGAL::Cartesian<coord_type>  Rep;
+  typedef CGAL::Triangulation_euclidean_traits_2<Rep>            Gt;
   typedef CGAL::Triangulation_vertex_base_2<Gt>                  Vb;
   typedef CGAL::Constrained_triangulation_face_base_2<Gt>        CFb;
   typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,CFb> Tds;
@@ -50,6 +54,6 @@ int main()
   typedef CGAL::Triangulation_data_structure_using_list_2<Vb,CFb> Tds1;
   typedef CGAL::Constrained_triangulation_2<Gt,Tds1>              CCls1;
 
-  // _test_cls_constrained_triangulation(CCls1());
+  _test_cls_constrained_triangulation(CCls1());
  return 0;
 }
