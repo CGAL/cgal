@@ -61,7 +61,30 @@ in_smallest_orthogonalsphereC3(
         +Lambda*(dpx*dtx+dpy*dty+dpz*dtz)+Mu*(dqx*dtx+dqy*dty+dqz*dtz)));
 }
 
-//-------------------------------------------------------------------
+
+template< class FT >
+Bounded_side
+in_smallest_orthogonalsphereC3(
+ const FT &px, const FT &py, const FT &pz, const FT  &pw,
+ const FT &qx, const FT &qy, const FT &qz, const FT  &qw,
+ const FT &rx, const FT &ry, const FT &rz, const FT  &rw)
+{
+  FT FT2(2);
+  FT FT4(4);
+  FT dpx = px - qx;
+  FT dpy = py - qy;
+  FT dpz = pz - qz;
+  FT dpw = pw - qw;
+  FT dp2 = CGAL_NTS square(dpx) + CGAL_NTS square(dpy) + CGAL_NTS square(dpz); 
+  FT drx = rx - (px + qx)/FT2;
+  FT dry = ry - (py + qy)/FT2;
+  FT drz = rz - (pz + qz)/FT2;
+  FT drw = rw - (pw + qw)/FT2
+  FT dr2 = CGAL_NTS square(drx) + CGAL_NTS square(dry) + CGAL_NTS square(drz); 
+  FT dpr = dpx*drx + dpy*dry +dpz*drz;
+  return Bounded_side(CGAL_NTS sign (dr2 - dp2/FT4 + dpr*dpw/dp2 + drw ));
+}
+//------------------------------------------------------------------- 
 CGAL_END_NAMESPACE
 //-------------------------------------------------------------------
 
