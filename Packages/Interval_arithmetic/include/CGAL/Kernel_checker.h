@@ -26,9 +26,9 @@
 // This file contains the definition of a kernel traits checker.
 //
 // TODO:
-// - have a look at the PM_checker from Tel-Aviv, and Stefan's NT checker.
 // - At the moment, only predicates are checked.  To handle constructions as
-//   well, the best approach is probably to have objects be pairs.
+//   well, the best approach is probably to have objects be pairs, and do
+//   everything in parallel.
 //   So the template parameter will be a comparator, not a converter.
 
 #include <CGAL/basic.h>
@@ -37,9 +37,6 @@
 CGAL_BEGIN_NAMESPACE
 
 // Class used by Kernel_checker.
-// This works only for predicates.
-// Something else must be done to handle the constructions.
-// Maybe the solution is to store pairs of objects ?
 template <class O1, class O2, class Conv>
 class Predicate_checker
 {
@@ -147,7 +144,6 @@ class Kernel_checker
 
     Kernel2 k2;
 
-    // typedef Comp   Comparator;
     typedef Conv   c;
 
     // typedef std::pair<K1::Point_2, K2::Point_2>  Point_2;
