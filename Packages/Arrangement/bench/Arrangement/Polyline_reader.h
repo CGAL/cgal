@@ -9,11 +9,10 @@
 #include <list>
 
 #include "numberType.h"
+#include "Input_traits.h"
 
 template <class Traits>
-class Polyline_reader
-{
-
+class Polyline_reader {
 public:
   typedef typename Traits::Point_2    Point_2;
   typedef typename Traits::Curve_2    Curve_2;
@@ -26,22 +25,37 @@ public:
   {
     std::ifstream file(filename);
 
-    int num_polylines, num_segments;
-    int ix, iy;
-    std::vector<Point_2> points;
-    int i, j;
 #if KERNEL == LEDA_KERNEL || KERNEL == MY_KERNEL
     int xmin = 0, xmax = 0, ymin = 0, ymax = 0;
 #endif
 
+    unsigned int num_polylines;
     file >> num_polylines;
-    for (i = 0; i < num_polylines; i++) 
-    {
-      file >> num_segments;
+    for (unsigned int i = 0; i < num_polylines; i++) {
+      unsigned int num_points;
+      file >> num_points;
+      std::vector<Point_2> points;
       points.clear();
-      for (j = 0; j < num_segments; j++)
-      {
-        file >> ix >> iy;
+      for (unsigned int j = 0; j < num_points; j++) {
+        WNT x, y;
+        if (format == CGAL::Bench_parse_args::FORMAT_RAT) {
+          Input_traits<WNT>::Input_rat_type ix, iy;
+          file >> ix >> iy;
+          x = ix; y = iy;
+        } else if (format == CGAL::Bench_parse_args::FORMAT_INT) {
+          Input_traits<WNT>::Input_int_type ix, iy;
+          file >> ix >> iy;
+          x = (WNT) ix; y = (WNT) iy;
+        } else if (format == CGAL::Bench_parse_args::FORMAT_FLT) {
+          Input_traits<WNT>::Input_float_type ix, iy;
+          file >> ix >> iy;
+          x = (WNT) ix; y = (WNT) iy;
+        } else {
+          std::cerr << "Illegal format!" << std::endl;
+          return -1;
+        }
+        Point_2 p(x, y);
+        points.push_back(p);
 
 #if KERNEL == LEDA_KERNEL || KERNEL == MY_KERNEL
         if (j == 0) {
@@ -54,7 +68,6 @@ public:
           if (iy > ymax) ymax = iy;
         }
 #endif
-        points.push_back (Point_2(NT(ix),NT(iy)));
       }
 
       Curve_2 polyline(points.begin(), points.end());
