@@ -17,7 +17,7 @@ struct Rep : public CGAL::Simple_cartesian<double> {};
 // typedefs for the traits and the algorithm
 
 #include <CGAL/Segment_Voronoi_diagram_hierarchy_2.h>
-#include <CGAL/Segment_Voronoi_diagram_traits_2.h>
+#include <CGAL/Segment_Voronoi_diagram_filtered_traits_2.h>
 
 struct Gt
   : public CGAL::Segment_Voronoi_diagram_filtered_traits_2<Rep> {};
