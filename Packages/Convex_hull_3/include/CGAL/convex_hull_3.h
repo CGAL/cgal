@@ -460,7 +460,8 @@ void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
   for (f_it = P.facets_begin(); f_it != P.facets_end(); f_it++)
      if (!outside_sets[f_it].empty())
        pending_facets.push_back(f_it);
-  ch_quickhull_3_scan<Polyhedron_3, Traits>(P, pending_facets, outside_sets, traits);
+  ch_quickhull_3_scan<Polyhedron_3, Traits>(P, pending_facets, outside_sets, 
+                                            traits);
 
   CGAL_ch_expensive_postcondition(all_points_inside(points.begin(),
                                                     points.end(),P,traits));
