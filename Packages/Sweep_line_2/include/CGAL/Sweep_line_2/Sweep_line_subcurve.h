@@ -61,6 +61,7 @@ public:
   typedef typename Traits::Curve_2 Curve_2;
 
   typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
+
   typedef Sweep_line_subcurve<Traits> Self;
   typedef Status_line_curve_less_functor<Traits, Self> StatusLineCurveLess;
 
@@ -69,14 +70,36 @@ public:
 
   typedef Sweep_line_event<Traits, Self> Event;
 
-  Sweep_line_subcurve(int id, X_monotone_curve_2 &curve, Point_2 *reference, 
-		      SweepLineTraits_2 *traits);
+  Sweep_line_subcurve(){}
+
+  Sweep_line_subcurve(X_monotone_curve_2 &curve ,SweepLineTraits_2 *traits);
+
+  void init(X_monotone_curve_2 &curve ,SweepLineTraits_2 *traits)
+  {
+    m_traits = traits;
+    m_curve = curve;
+    m_source = traits->curve_source(curve);
+    m_target = traits->curve_target(curve);
+    Comparison_result res = traits->compare_xy(m_source, m_target);
+    if ( res  == LARGER )
+    {
+      m_lastPoint = m_target; 
+      m_isRightSide = false;
+    }
+    else //if ( res == SMALLER )
+    { 
+      CGAL_assertion(res == SMALLER); //curves cannot be a degenerate point
+      m_lastPoint = m_source; 
+      m_isRightSide = true;
+    }
+    m_lastCurve = curve;
+  }
 
   virtual ~Sweep_line_subcurve() {}
 
-  int getId() const {
+  /*int getId() const {
     return m_id;
-  }
+  }*/
 
   /*!
     @return a reference to the curve 
@@ -85,10 +108,10 @@ public:
     return m_curve;
   }
 
-  /*! @return  the pointer to the reference point */
-  const Point_2 *get_reference_point() const { 
-    return m_referencePoint;
-  }
+  ///*! @return  the pointer to the reference point */
+  //const Point_2 *get_reference_point() const { 
+  //  return m_referencePoint;
+  //}
 
   /*! 
     @return a reference to the rightmost intersection point 
@@ -106,11 +129,19 @@ public:
   }
 
   /*!
-    @return a reference to the last intersecing curve so far
+    @return a const reference to the last intersecing curve so far
   */
   const X_monotone_curve_2 &get_last_curve() const { 
     return m_lastCurve; 
   }
+
+  /*!
+    @return a reference to the last intersecing curve so far
+  */
+  X_monotone_curve_2 &get_last_curve_ref() { 
+    return m_lastCurve; 
+  }
+
   /*! 
     updates the last intersecting curve so far.
     @param cv a reference to the curve
@@ -122,6 +153,11 @@ public:
   const X_monotone_curve_2 &get_last_subcurve() const { 
     return m_lastSubCurve; 
   }
+
+ /* X_monotone_curve_2 &get_last_subcurve_ref()  { 
+    return m_lastSubCurve; 
+  }*/
+
   void set_last_subcurve(const X_monotone_curve_2 &cv) { 
     m_lastSubCurve = cv; 
   }
@@ -179,7 +215,7 @@ public:
     return false;
   }
 
-  bool is_bottom_end(const Point_2 &p) {
+  /*bool is_bottom_end(const Point_2 &p) {
     CGAL_assertion(m_traits->curve_is_vertical(m_curve)==true);
     return is_left_end(p);
   }
@@ -187,7 +223,7 @@ public:
   bool is_top_end(const Point_2 &p) {
     CGAL_assertion(m_traits->curve_is_vertical(m_curve)==true);
     return is_right_end(p);
-  }
+  }*/
 
   const Point_2 &get_right_end() const {
     if ( is_source_left_to_target() )
@@ -201,7 +237,7 @@ public:
     return m_target;
   }
 
-  const Point_2 &get_top_end() const {
+  /*const Point_2 &get_top_end() const {
     CGAL_assertion(m_traits->curve_is_vertical(m_curve)==true);
     return get_right_end();
   }
@@ -209,20 +245,22 @@ public:
   const Point_2 &get_bottom_end() const {
     CGAL_assertion(m_traits->curve_is_vertical(m_curve)==true);
     return get_left_end();
-  }
+  }*/
 
   // returns true if the point is in the range of the curve and is not
   // one of its ends
   bool is_point_in_range(const Point_2 &p)
   {
     if (! m_traits->point_in_x_range(m_curve, p) ||
-	m_traits->curve_compare_y_at_x(p, m_curve) != EQUAL)
+        m_traits->curve_compare_y_at_x(p, m_curve) != EQUAL)
       return false;
     if ( is_end_point(p) )
       return false;
     return true;
   }
 
+
+  template <class StatusLineIter>
   void set_hint(StatusLineIter hint) 
   {
     m_hint = hint;
@@ -239,7 +277,7 @@ public:
 
 private:
 
-  int m_id;
+  //int m_id;
 
   /*! a pointer to the traits object */
   Traits *m_traits;
@@ -250,7 +288,7 @@ private:
   /* a pointer to a point that is used as a reference point when two 
      curves are compared. This is used when inserting and erasing 
      curves from the status line. */
-  Point_2 *m_referencePoint;
+ // Point_2 *m_referencePoint;
 
   /*! the rightmost point handled so far on the curve. It is initialized 
     to the left end of the curve and is updated with every intersection 
@@ -280,11 +318,11 @@ private:
 
 template<class SweepLineTraits_2>
 inline Sweep_line_subcurve<SweepLineTraits_2>::
-Sweep_line_subcurve(int id, X_monotone_curve_2 &curve, Point_2 *reference, 
-		    SweepLineTraits_2 *traits)  : m_id(id), m_traits(traits)
+Sweep_line_subcurve( X_monotone_curve_2 &curve,
+                    SweepLineTraits_2 *traits)  :  m_traits(traits)
 {
   m_curve = curve;
-  m_referencePoint = reference;
+ // m_referencePoint = reference;
   m_source = traits->curve_source(curve);
   m_target = traits->curve_target(curve);
   Comparison_result res = traits->compare_xy(m_source, m_target);
@@ -293,11 +331,11 @@ Sweep_line_subcurve(int id, X_monotone_curve_2 &curve, Point_2 *reference,
     m_lastPoint = m_target; 
     m_isRightSide = false;
   }
-  else if ( res == SMALLER )
-  {
+  else //if ( res == SMALLER )
+  { 
+    CGAL_assertion(res == SMALLER); //curves cannot be a degenerate point
     m_lastPoint = m_source; 
     m_isRightSide = true;
-
   }
   m_lastCurve = curve;
 }
@@ -308,8 +346,8 @@ void
 Sweep_line_subcurve<SweepLineTraits_2>::
 Print() const
 {
-  std::cout << "Curve " << m_id << "  (" << m_curve << ") "
-	    << "last P = (" << m_lastPoint << ")" << std::endl;
+  std::cout << "Curve " << this << "  (" << m_curve << ") "
+            << "last P = (" << m_lastPoint << ")" << std::endl;
   
 }
 
