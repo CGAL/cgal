@@ -1,3 +1,6 @@
+6 May 2000 Laurent Rineau
+- workaround for CC-5.xx, in include/CGAL/Delaunay_mesh_2.h
+
 3 April 2004 Sylvain Pion
 - Regenerate demo/example makefiles to remove debug options,
   which makes PGCC pass.

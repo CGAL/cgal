@@ -725,11 +725,15 @@ shortest_edge_squared_length(Face_handle f)
 }
 
 // --- GLOBAL FUNCTIONS ---
+
+template <class Tr>
+struct Refine_mesh_2_default_argument_helper : public Tr::Geom_traits {};
+
 template <class Tr>
 void
 refine_Delaunay_mesh_2(Tr& t,
 		       const typename Tr::Geom_traits& gt
-		       = typename Tr::Geom_traits() )
+		       = Refine_mesh_2_default_argument_helper<Tr>() )
 {
   typedef Delaunay_mesh_2<Tr> Mesh;
 
@@ -740,13 +744,13 @@ refine_Delaunay_mesh_2(Tr& t,
   t.swap(mesh);
 }
 
-template <class Tr, class InputIterator>
+template <class Tr, typename InputIterator>
 void
 refine_Delaunay_mesh_2(Tr& t,
 		       InputIterator b, InputIterator e,
 		       bool mark = false,
 		       const typename Tr::Geom_traits& gt
-		       = typename Tr::Geom_traits())
+		       = Refine_mesh_2_default_argument_helper<Tr>())
 {
   typedef Delaunay_mesh_2<Tr> Mesh;
 
