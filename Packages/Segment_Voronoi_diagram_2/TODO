@@ -24,17 +24,7 @@
   a point intersecting an existing segment.
 
 **************** OLD COMMENTS (with self-answers) ************************
-- write a different class for the construction of the Voronoi vertex
-  that does internal filtering
-  ----> this should already have been done; look at Filtered_construction
 - in the traits class add Object_2 and Assign_2 as in the case of the
   Apollonius graph
 - check whether it makes sense to use the fact that FG is a perfect square in
   the computations of the PSS Voronoi vertex
-- modify the traits so that Compare_xy_2 is used instead of Compare_x_2 and
-  Compare_y_2; remove the Are_same_points_2 predicate; add the
-  necessary predicates so that the finite and infinite edge conflict
-  predicates take a boolean instead of a sign as their argument
-  ----> removing the sign seems difficult; using Compare_xy_2 is not
-  needed; in fact, I believe that even Compare_x_2 and Compare_y_2 are
-  not needed...
