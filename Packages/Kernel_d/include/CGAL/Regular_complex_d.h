@@ -42,6 +42,7 @@
 #include <CGAL/In_place_list.h>
 #include <vector>
 #include <list>
+#include <cstddef>
 
 #undef _DEBUG
 #define _DEBUG 93
