@@ -1,0 +1,79 @@
+-------------------------------------------------------------------------------
+
+NAME     
+./super_test     - surface extension -
+
+
+OPTIONS
+     -contours      : display contours
+     -no_border -nb : set K = infinity
+     -delta x       : set the delta angle constant
+     -ki x y        : set the K interval (default : [1.1  5])
+     -ks x          : set the K step (default : .1)
+     -k  x          : set the K constant (only one pass)
+     -number_of_points x                : set a number of points for a sub-sample
+     -max_of_connected_components x     : set the max of connected components
+                                          (default : non-active)
+     -post x        : set a maximum contour size for the post process
+     -in fname      : reads points from file ./fname
+     -sect_in fname : reads points from sections file ./fname
+     -out fname     : writes points to file ./fname
+     -out_format -of: choose file format for output (vrml, oogl, medit,
+                                                     ply, all, none)
+     All options can be abbreviated by their first character
+
+-------------------------------------------------------------------------------
+
+Some command line examples
+NB: visualiser le resultats avec "Sceneviewer foutput.vrml"
+
+# borders + and more than one connected component
+
+./nuage -c -m 1 -ki 1.01 8 -ks .01 -i ../Donnees/Dassault/Models-ascii/Tomo.ascii
+
+# surfaces with border
+
+./nuage -c -m 1 -k 200 -i ../Donnees/British_Museum/British_Museum.asc
+./nuage -c -m 2 -k 50  -i ../Donnees/Dassault/Models-ascii/Robinet.ascii
+./nuage -c -m 1 -k 200 -i ../Donnees/British_Museum/British_Museum.asc
+./nuage -c -m 2 -k 50  -i ../Donnees/Dassault/Models-ascii/Robinet.ascii
+./nuage -c -m 2 -k 200 -i ../Donnees/Dassault/Models-ascii/DryerBody.ascii
+./nuage -c -m 1 -k 200 -i ../Donnees/Dassault/Models-ascii/DryerHandle1.ascii
+./nuage -c -m 1 -k 100 -i ../Donnees/Dassault/Models-ascii/DryerHandle2.ascii
+./nuage -c -m 1 -i ../Donnees/Dassault/Models-ascii/Rth.ascii
+./nuage -c -m 1 -k 200 -i ../Donnees/Dassault/Models-ascii-2/BootSki.xyz
+./nuage -c -m 1 -i ../Donnees/Dassault/Models-ascii-2/foundry.xyz
+./nuage -c -m 1 -i ../Donnees/HHoppes/moeller.xyz
+./nuage -c -m 1 -i ../Donnees/HHoppes/oilpmp.xyz
+./nuage -c -m 1 -i ../Donnees/HHoppes/skidoo_red.xyz
+./nuage -c -m 1 -k 200 -i ../Donnees/HHoppes/NewData/new_Mannequin.12772.pts
+./nuage -c -m 5 -k 30 -i ../Donnees/HHoppes/NewData/new_cactus.3337.pts
+./nuage -c -m 5  -k 1.5 -p 0 -i ../Donnees/HHoppes/NewData/new_cat10.10000.pts 
+./nuage -c -m 5 -k 8 -i ../Donnees/HHoppes/NewData/new_engine.11444.pts
+
+# without border
+
+./nuage -c -m 1 -nb -i ../Donnees/Gatech/horse.xyz
+./nuage -c -m 1 -i ../Donnees/Dassault/Models-ascii/Culbu.ascii
+./nuage -c -m 1 -nb -i ../Donnees/Dassault/Models-ascii/Mechanic.ascii
+./nuage -c -m 1 -nb -i ../Donnees/Alpha_shapes/bunny_random.xyz
+./nuage -c -m 1 -i ../Donnees/Dassault/Models-ascii-2/Fish.xyz
+./nuage -c -m 5 -nb -i ../Donnees/OCoulaud/papaine1.vert.pno.xyz
+./nuage -c -m 5 -nb -i ../Donnees/OCoulaud/papaine2.vert.pno.xyz
+./nuage -c -m 5 -nb -i ../Donnees/HHoppes/NewData/new_club71.16864.pts 
+./nuage -c -m 5 -nb -i ../Donnees/HHoppes/NewData/new_distcap.12745.pts
+./nuage -c -m 5 -nb -i ../Donnees/HHoppes/NewData/new_fandisk2.sampled.pts
+./nuage -c -m 5 -nb -i ../Donnees/HHoppes/NewData/new_knot108s.10000.pts
+./nuage -c -m 5 -nb -i ../Donnees/HHoppes/NewData/new_mechpart.4102.pts
+./nuage -c -m 1 -i ../Donnees/HHoppes/NewData/new_oilPMP.30937.pts
+
+# large models (> 100000 pts) without border + a visualiser avec "medit" de Gamma
+
+./nuage -c -of medit -m 1 -nb -i ../Donnees/Dassault/Models-ascii-2/volume_Inria.xyz
+./nuage -c -of medit -m 1 -k 1.5 -i ../Donnees/Gatech/blade.xyz
+./nuage -c -of medit -m 1 -k 1.5 -i ../Donnees/Stanford/dragon.xyz
+./nuage -c -of medit -m 1 -nb -i ../Donnees/Stanford/hand.xyz
+./nuage -c -of medit -m 1 -k 1.5 -i ../Donnees/PlGeorge/api1.xyz
+
+--
+Frank DA.
