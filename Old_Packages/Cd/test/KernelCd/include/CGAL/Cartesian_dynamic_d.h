@@ -151,17 +151,17 @@ struct Cartesian_dynamic_d
     // Point_d in the current namespace (nested within CGAL) and
     // CGAL::Point_d< Cartesian_d<FT> > (which is in the CGAL namespace)
 
-    typedef Point_d<Self>                       Point_d;
-    typedef Vector_d<Self>                      Vector_d;
-    typedef Direction_d<Self>                   Direction_d;
-    typedef Plane_d<Self>                       Plane_d;
-    typedef Line_d<Self>                        Line_d;
-    typedef Ray_d<Self>                         Ray_d;
-    typedef Segment_d<Self>                     Segment_d;
-    typedef Triangle_d<Self>                    Triangle_d;
-    typedef Tetrahedron_d<Self>                 Tetrahedron_d;
-    typedef Simplex_d<Self>                     Simplex_d;
-    typedef Aff_transformation_d<Self>          Aff_transformation_d;
+    typedef CGAL::Point_d<Self>                 Point_d;
+    typedef CGAL::Vector_d<Self>                Vector_d;
+    typedef CGAL::Direction_d<Self>             Direction_d;
+    typedef CGAL::Plane_d<Self>                 Plane_d;
+    typedef CGAL::Line_d<Self>                  Line_d;
+    typedef CGAL::Ray_d<Self>                   Ray_d;
+    typedef CGAL::Segment_d<Self>               Segment_d;
+    typedef CGAL::Triangle_d<Self>              Triangle_d;
+    typedef CGAL::Tetrahedron_d<Self>           Tetrahedron_d;
+    typedef CGAL::Simplex_d<Self>               Simplex_d;
+    typedef CGAL::Aff_transformation_d<Self>    Aff_transformation_d;
 
     // TODO: cleanup
     static   FT make_FT(const RT & num, const RT& denom) { return num/denom;}
