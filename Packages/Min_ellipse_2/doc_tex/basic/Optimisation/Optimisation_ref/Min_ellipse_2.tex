@@ -1,7 +1,8 @@
 % =============================================================================
 % The CGAL Reference Manual
 % Chapter: Optimisation
-% Section: 2D Smallest Enclosing Ellipse
+% Section: Smallest Enclosing Ellipses
+% Subsec.: 2D Smallest Enclosing Ellipse
 % -----------------------------------------------------------------------------
 % file:   doc_tex/basic/Optimisation/Min_ellipse_2.tex
 % author: Bernd Gärtner, Sven Schönherr (sven@inf.fu-berlin.de)
@@ -11,7 +12,7 @@
 % =============================================================================
 
 \begin{ccClassTemplate}{CGAL_Min_ellipse_2<Traits>}
-\ccSection{2D Smallest Enclosing Ellipse}
+\ccSubsection{2D Smallest Enclosing Ellipse}
 \label{sec:min_ellipse_2_spec}
 
 \cgalSetMinEllipseLayout
@@ -324,25 +325,26 @@ and \ccc{list<Point>} and for the \stl\ input stream iterator
         \ccPostcond  \ccVar\ccc{.is_empty()} = \ccc{true}.}
 
 % -----------------------------------------------------------------------------
-\ccHeading{Validity Check}
-
-An object \ccVar\ is valid, iff
-\begin{itemize}
-  \item \ccVar\ contains all points of its defining set $P$,
-  \item \ccVar\ is the smallest ellipse spanned by its support set $S$, and
-  \item $S$ is minimal, i.e.\ no support point is redundant.
-\end{itemize}
-\emph{Note:} In this release only the first item is considered by the
-validity check.
-
-Using the traits class implementation for the \cgal\ kernel with exact
-arithmetic as described in
-Section~\ref{sec:min_ellipse_2_traits_impl_2D_kernel} guarantees
-validity of \ccVar. The following function is mainly intended for
-debugging user supplied traits classes but also for convincing the
-anxious user that the traits class implementation is correct.
 \begin{ccAdvanced}
-\ccMemberFunction{ bool is_valid( bool verbose = false,
+  \ccHeading{Validity Check}
+
+  An object \ccVar\ is valid, iff
+  \begin{itemize}
+    \item \ccVar\ contains all points of its defining set $P$,
+    \item \ccVar\ is the smallest ellipse spanned by its support set $S$, and
+    \item $S$ is minimal, i.e.\ no support point is redundant.
+  \end{itemize}
+  \emph{Note:} In this release only the first item is considered by the
+  validity check.
+
+  Using the traits class implementation for the \cgal\ kernel with
+  exact arithmetic as described in
+  Section~\ref{sec:min_ellipse_2_traits_impl_2D_kernel} guarantees
+  validity of \ccVar. The following function is mainly intended for
+  debugging user supplied traits classes but also for convincing the
+  anxious user that the traits class implementation is correct.
+
+  \ccMemberFunction{ bool is_valid( bool verbose = false,
                                   int  level   = 0    ) const;}{
         returns \ccc{true}, iff \ccVar\ contains all points of its
         defining set $P$. If \ccc{verbose} is \ccc{true}, some
@@ -449,17 +451,5 @@ int main()
 % -----------------------------------------------------------------------------
 
 \end{ccClassTemplate}
-
-% =============================================================================
-
-\input{Min_ellipse_2_traits_2}
-
-\input{Min_ellipse_2_adapterC2}
-\input{Min_ellipse_2_adapterH2}
-
-\input{requirements_adapterC2}
-\input{requirements_adapterH2}
-
-\input{requirements_Min_ellipse_2}
 
 % ===== EOF ===================================================================
