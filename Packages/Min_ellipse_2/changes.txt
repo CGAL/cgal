@@ -1,5 +1,8 @@
 Changes done to the `Min_ellipse_2' package.
 
+Version 3.16 on 23-Nov-2001
+- Put spion in maintainer file in order to be able to submit...
+
 Version 3.15 on 21-Nov-2001
 - Fix Conic_2.
 
