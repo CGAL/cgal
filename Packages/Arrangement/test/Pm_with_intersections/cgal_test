@@ -145,10 +145,10 @@ else
 
   # Uncomment when leda polyline traits is fully debugged
   # run test with leda polyline traits
-  #  (compile_and_run test_pmwx $TRAP   $CGAL_POLYLINE_LEDA_TRAITS)
-  #  (compile_and_run test_pmwx $NAIVE  $CGAL_POLYLINE_LEDA_TRAITS)
-  #  (compile_and_run test_pmwx $WALK   $CGAL_POLYLINE_LEDA_TRAITS)
-  #  (compile_and_run test_pmwx $SIMPLE $CGAL_POLYLINE_LEDA_TRAITS)
+    (compile_and_run test_pmwx $TRAP   $CGAL_POLYLINE_LEDA_TRAITS)
+    (compile_and_run test_pmwx $NAIVE  $CGAL_POLYLINE_LEDA_TRAITS)
+    (compile_and_run test_pmwx $WALK   $CGAL_POLYLINE_LEDA_TRAITS)
+    (compile_and_run test_pmwx $SIMPLE $CGAL_POLYLINE_LEDA_TRAITS)
 fi
 
 
