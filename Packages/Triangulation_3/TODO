@@ -1,6 +1,12 @@
 -------------- POUR LA RELEASE
 
-- bien tester le output_stream de T_3 et le copy_tds (ordre de creation des sommets). 
+- Priorite (sinon on n'est pas 100% backward-compatible) :
+  mettre des conversion operators circulator/iterator -> handles.
+  et virer les appels a handle() dans la test-suite pour verifier si ca
+  marche.  Pour les iterators, il faudra surement deriver simplement de
+  celui du DS_container.
+- bien tester le output_stream de T_3 et le copy_tds (ordre de creation des
+  sommets). 
 - Verifier qu'il n'y a pas d'autres operations du meme style a modifier. 
 
 -------------- POUR DES QU'ON PEUT
@@ -52,7 +58,13 @@ T3
 Delaunay
 - le numero de vertex necessaire au remove devrait etre un requirement de
   Delaunay sur VertexBase, et le compteur, un data member de Delaunay.
-- optimiser remove
+- optimiser remove :
+  - algo d'Olivier (?)
+  - pour la creation de la TDS_2, on devrait pouvoir faire plus simple,
+    sachant que le trou n'est pas quelconque, mais etoile, et donc on peut
+    profiter de ca pour avoir les adjacences directement (peut-etre en
+    squattant le flag des cellules pour y mettre un pointeur vers la facette
+    2d correspondante).
 - For Delaunay, we can use the visibility (non stochastic) walk.  How to
   choose ?  Is it worth the complexity (benchmark first) ?
 - nearest neighbor
