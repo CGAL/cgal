@@ -252,11 +252,11 @@ private slots:
       counter++;
       if ( counter % 500 == 0 ) {
 	std::cout << "\r" << counter
-		  << " sites haved been inserted..." << std::flush;
+		  << " sites have been inserted..." << std::flush;
       }
     }
     std::cout << "\r" << counter 
-	      << " sites haved been inserted... Done!"
+	      << " sites have been inserted... Done!"
 	      << std::endl;
     assert( ag.is_valid(false, 1) );
     widget->redraw();
