@@ -1,3 +1,6 @@
+Version 6.44 (21 December 2001)
+- Just resubmit.
+
 Version 6.43 (21 December 2001)
 - compare_y_at_x for segments.
 
