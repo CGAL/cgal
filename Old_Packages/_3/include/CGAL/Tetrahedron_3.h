@@ -71,11 +71,13 @@ public:
                      { return RTetrahedron_3::operator==(t); }
   bool               operator!=(const CGAL::Tetrahedron_3<R>& t) const
                      { return !(*this == t); }
-  Bbox_3        bbox() const
+  Bbox_3             bbox() const
                      {
                        return vertex(0).bbox() + vertex(1).bbox()
                             + vertex(2).bbox() + vertex(3).bbox();
                      }
+  FT                 volume() const
+                     {  return RTetrahedron_3::volume(); }
   CGAL::Tetrahedron_3<R>
                      transform(const CGAL::Aff_transformation_3<R>& t) const
                      {

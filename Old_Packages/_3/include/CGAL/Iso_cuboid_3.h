@@ -92,6 +92,8 @@ public:
   CGAL::Point_3<R>
            operator[](int i) const
            { return vertex(i); }
+  FT       volume() const
+           { return RIso_cuboid_3::volume(); }
   Bounded_side
            bounded_side(const CGAL::Point_3<R>& p) const
            { return RIso_cuboid_3::bounded_side(p); }

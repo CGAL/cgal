@@ -87,12 +87,14 @@ public:
                       { return RTriangle_3::vertex(i); }
   CGAL::Point_3<R>     operator[](int i) const
                       { return vertex(i); }
-  Bbox_3         bbox() const
+  Bbox_3              bbox() const
                       {
                         return vertex(0).bbox()
                              + vertex(1).bbox()
                              + vertex(2).bbox();
                       }
+  FT                  squared_area() const
+                      { return RTriangle_3::squared_area(); }
 };
 
 #ifndef CGAL_NO_OSTREAM_INSERT_TRIANGLE_3
