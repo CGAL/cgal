@@ -4,6 +4,12 @@
 
 
 //---------------------------------------------------------------------
+//	revision 1202
+//---------------------------------------------------------------------
+
+DOCS: Fixed reference to non-existing \gmpxx macro.
+
+//---------------------------------------------------------------------
 //	revision 1201
 //---------------------------------------------------------------------
 
@@ -312,6 +318,7 @@ GLOB: Qt license updates
 //	revision 1158
 //---------------------------------------------------------------------
 
+DOCS: Fixed reference to non-existing \gmpxx macro.
 DOCS: Fixed typo in \texttt.
 DOCS: Remove CGALWin.
 DOCS: Document standard header replacements.
