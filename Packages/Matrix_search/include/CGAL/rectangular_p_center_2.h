@@ -29,7 +29,7 @@
 #define CGAL_RECTANGULAR_P_CENTER_2_H 1
 
 #include <CGAL/pierce_rectangles_2.h>
-#include <CGAL/function_objects.h>
+#include <CGAL/functional.h>
 #include <CGAL/sorted_matrix_search.h>
 #include <CGAL/rectangular_3_center_2.h>
 #include <algorithm>
@@ -127,17 +127,6 @@ cartesian_matrix_horizontally_flipped(
     RandomAccessIC_column >
   ( r_f, r_l, c_f, c_l, o);
 }
-#if defined(__GNUC__) && (__GNUC__ == 2) && (__GNUC_MINOR__ <= 91)
-// gcc-2.91 gives funny ices when I try to do this with
-// bind/compose adaptors
-template < class NT >
-struct Pcenter_gcc291_operation
-: public CGAL_STD::binary_function< NT, NT, NT >
-{
-  NT operator()(const NT& n1, const NT& n2) const
-  { return max(NT(0), n1 - n2); }
-};
-#endif // defined(__GNUC__) && (__GNUC__ == 2) && (__GNUC_MINOR__ <= 91)
 /*
 template < class ForwardIterator,
            class OutputIterator,
@@ -283,7 +272,6 @@ rectangular_p_center_2_matrix_search(
 
 #ifndef CGAL_CFG_NO_NAMESPACE
   using std::minus;
-  using std::bind1st;
   using std::sort;
 #endif
 
@@ -390,7 +378,6 @@ rectangular_p_center_2_matrix_search(
 #endif
 #ifndef CGAL_CFG_NO_NAMESPACE
   using std::minus;
-  using std::bind1st;
 #endif
 
   return rectangular_p_center_2_matrix_search(
@@ -400,14 +387,7 @@ rectangular_p_center_2_matrix_search(
     r,
     pf,
     t,
-#if defined(__GNUC__) && (__GNUC__ == 2) && (__GNUC_MINOR__ <= 91)
-    // gcc-2.91 gives funny ices when I try to do this with
-    // bind/compose adaptors
-    Pcenter_gcc291_operation< FT >()
-#else
-    compose1_2(bind1st(Max< FT >(), 0), minus< FT >())
-#endif // defined(__GNUC__) && (__GNUC__ == 2) && (__GNUC_MINOR__ <= 91)
-    );
+    compose(bind_1(Max< FT >(), 0), minus< FT >()));
 
 } // Pcenter_matrix_search( ... )
 

@@ -26,7 +26,6 @@
 // ============================================================================
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/Point_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/rectangular_p_center_2.h>
 #include <CGAL/IO/Ostream_iterator.h>
@@ -39,14 +38,13 @@ using namespace std;
 using CGAL::set_pretty_mode;
 using CGAL::rectangular_p_center_2;
 
-typedef double                                   FT;
-typedef CGAL::Cartesian< FT >                    R;
-typedef CGAL::Point_2< R >                       Point;
-typedef std::vector< Point >                     Cont;
-typedef CGAL::Creator_uniform_2< FT, Point >     Creator;
-typedef CGAL::Random_points_in_square_2< Point, Creator >
-  Point_generator;
-typedef CGAL::Ostream_iterator< Point, ostream > Ostream_iterator_point;
+typedef double                                             FT;
+typedef CGAL::Cartesian< FT >                              K;
+typedef K::Point_2                                         Point;
+typedef std::vector< Point >                               Cont;
+typedef CGAL::Creator_uniform_2< FT, Point >               Creator;
+typedef CGAL::Random_points_in_square_2< Point, Creator >  Point_generator;
+typedef CGAL::Ostream_iterator< Point, ostream >    Ostream_iterator_point;
 
 int main() {
 

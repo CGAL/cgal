@@ -29,15 +29,11 @@
 #define CGAL_ALL_FURTHEST_NEIGHBORS_2_H 1
 
 #include <CGAL/Optimisation/assertions.h>
-
-#ifdef CGAL_REP_CLASS_DEFINED
-#include <CGAL/All_furthest_neighbors_traits_2.h>
-#endif // CGAL_REP_CLASS_DEFINED
-
 #include <CGAL/Cartesian_matrix.h>
 #include <CGAL/Dynamic_matrix.h>
 #include <CGAL/monotone_matrix_search.h>
-#include <functional>
+#include <CGAL/Polygon_2_algorithms.h>
+#include <CGAL/functional.h>
 #include <algorithm>
 
 CGAL_BEGIN_NAMESPACE
@@ -122,16 +118,16 @@ all_furthest_neighbors_2( RandomAccessIC points_begin,
 #ifndef CGAL_CFG_NO_NAMESPACE
   using std::vector;
   using std::transform;
-  using std::bind2nd;
   using std::modulus;
 #endif
 
 #ifndef CGAL_CFG_TYPENAME_BUG
-  typedef All_furthest_neighbor_matrix< typename Traits::Distance,
-                                        RandomAccessIC >
+  typedef All_furthest_neighbor_matrix<
+    typename Traits::Compute_squared_distance_2, RandomAccessIC >
   Afn_matrix;
 #else
-  typedef All_furthest_neighbor_matrix< Traits::Distance, RandomAccessIC >
+  typedef All_furthest_neighbor_matrix<
+    Traits::Compute_squared_distance_2, RandomAccessIC >
     Afn_matrix;
 #endif // CGAL_CFG_TYPENAME_BUG
 
@@ -140,10 +136,9 @@ all_furthest_neighbors_2( RandomAccessIC points_begin,
     iterator_distance( points_begin, points_end));
   CGAL_optimisation_precondition( number_of_points > 0);
   CGAL_optimisation_expensive_precondition(
-    t.is_convex( points_begin, points_end));
+    is_convex_2( points_begin, points_end, t));
 
   // prepare random access container:
-  //vector< int > v( number_of_points, 0);
   vector< int > v;
   v.reserve( number_of_points);
   for (int i = 0; i < number_of_points; ++i)
@@ -152,22 +147,22 @@ all_furthest_neighbors_2( RandomAccessIC points_begin,
   // compute maxima:
   monotone_matrix_search(
     dynamic_matrix(
-      Afn_matrix(points_begin, points_end, t.distance_object())),
+      Afn_matrix(points_begin,
+                 points_end,
+                 t.compute_squared_distance_2_object())),
     v.begin());
 
   // output result:
   return transform( v.begin(),
                     v.end(),
                     o,
-                    bind2nd( modulus< int >(), number_of_points));
+                    bind_2( modulus< int >(), number_of_points));
 } // all_furthest_neighbors_2( ... )
 
 #if !defined(CGAL_CFG_NO_ITERATOR_TRAITS) && \
 !defined(CGAL_CFG_MATCHING_BUG_2)
 
-template < class RandomAccessIC,
-           class OutputIterator,
-           class Traits >
+template < class RandomAccessIC, class OutputIterator, class Traits >
 OutputIterator
 all_furthest_neighbors_2( RandomAccessIC points_begin,
                           RandomAccessIC points_end,
@@ -177,11 +172,12 @@ all_furthest_neighbors_2( RandomAccessIC points_begin,
                           std::random_access_iterator_tag)
 {
 #ifndef CGAL_CFG_TYPENAME_BUG
-  typedef All_furthest_neighbor_matrix< typename Traits::Distance,
-                                        RandomAccessIC >
+  typedef All_furthest_neighbor_matrix<
+    typename Traits::Compute_squared_distance_2, RandomAccessIC >
   Afn_matrix;
 #else
-  typedef All_furthest_neighbor_matrix< Traits::Distance, RandomAccessIC >
+  typedef All_furthest_neighbor_matrix<
+    Traits::Compute_squared_distance_2, RandomAccessIC >
     Afn_matrix;
 #endif // CGAL_CFG_TYPENAME_BUG
 
@@ -190,7 +186,7 @@ all_furthest_neighbors_2( RandomAccessIC points_begin,
     iterator_distance( points_begin, points_end));
   CGAL_optimisation_precondition( number_of_points > 0);
   CGAL_optimisation_expensive_precondition(
-    t.is_convex( points_begin, points_end));
+    is_convex_2( points_begin, points_end, t));
 
   // compute maxima:
   monotone_matrix_search(
@@ -218,6 +214,26 @@ all_furthest_neighbors_2( RandomAccessIC points_begin,
 } // all_furthest_neighbors_2( ... )
 
 #endif // !CGAL_CFG_NO_ITERATOR_TRAITS && !CGAL_CFG_MATCHING_BUG_2
+
+template < class RandomAccessIC, class OutputIterator >
+inline
+OutputIterator
+all_furthest_neighbors_2( RandomAccessIC points_begin,
+                          RandomAccessIC points_end,
+                          OutputIterator o)
+{
+  typedef typename std::iterator_traits< RandomAccessIC >::value_type::R R;
+  return all_furthest_neighbors_2( points_begin, points_end, o, R());
+} // all_furthest_neighbors_2( ... )
+
+// backwards compatibility
+template < class RandomAccessIC, class OutputIterator >
+inline
+OutputIterator
+all_furthest_neighbors( RandomAccessIC points_begin,
+                        RandomAccessIC points_end,
+                        OutputIterator o)
+{ return all_furthest_neighbors_2( points_begin, points_end, o); }
 
 CGAL_END_NAMESPACE
 

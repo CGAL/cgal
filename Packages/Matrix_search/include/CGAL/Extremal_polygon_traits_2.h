@@ -31,61 +31,40 @@
 #include <CGAL/Optimisation/assertions.h>
 #include <CGAL/squared_distance_2.h>
 #include <CGAL/Polygon_2.h>
-#include <CGAL/function_objects.h>
+#include <CGAL/functional.h>
 
 CGAL_BEGIN_NAMESPACE
-template < class R > inline
-#ifndef CGAL_CFG_RETURN_TYPE_BUG_1
-typename R::FT
-#else
-R_FT_return(R)
-#endif
-Kgon_triangle_area( const Point_2< R >& p,
-                         const Point_2< R >& q,
-                         const Point_2< R >& r)
-{
-  return CGAL_NTS abs( p.x() * ( q.y() - r.y()) +
-                         q.x() * ( r.y() - p.y()) +
-                         r.x() * ( p.y() - q.y()));
-}
+template < class K_ >
+struct Extremal_polygon_area_traits_2 {
+  typedef          K_                                K;
+  typedef typename K::FT                             FT;
+  typedef typename K::Point_2                        Point_2;
+#ifdef CGAL_OPTIMISATION_EXPENSIVE_PRECONDITION_TAG
+  typedef typename K::Less_xy_2                      Less_xy_2;
+  typedef typename K::Orientation_2                  Orientation_2;
+#endif // CGAL_OPTIMISATION_EXPENSIVE_PRECONDITION_TAG
 
-template < class R_ >
-class Kgon_area_operator
-: public CGAL_STD::binary_function< Point_2< R_ >,
-                                    Point_2< R_ >,
-                                    typename R_::FT >
-{
-public:
-  typedef R_                 R;
-  typedef Point_2< R >  Point_2;
-  typedef typename R::FT     FT;
+  struct Kgon_triangle_area {
+    typedef Arity_tag< 3 >  Arity;
+    typedef FT              result_type;
+  
+    Kgon_triangle_area(const K& k_) : k(k_) {}
+  
+    result_type
+    operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
+    { return CGAL_NTS abs(k.compute_area_2_object()(
+      k.construct_triangle_2_object()(p, q, r))); }
+  protected:
+    K k;
+  };
 
-  Kgon_area_operator( const Point_2& p)
-  : root( p)
-  {}
+  typedef Kgon_triangle_area                         Baseop;
+  typedef typename Bind< Baseop, Point_2, 3 >::Type  Operation;
 
-  FT
-  operator()( const Point_2& p, const Point_2& q) const
-  { return Kgon_triangle_area( p, q, root); }
+  Extremal_polygon_area_traits_2() {}
+  Extremal_polygon_area_traits_2(const K& k_) : k(k_) {}
 
-private:
-  const Point_2& root;
-};
-
-
-
-template < class R_ >
-class Extremal_polygon_area_traits_2
-{
-public:
-  typedef          R_              R;
-  typedef          Point_2< R >    Point_2;
-  typedef typename R::FT           FT;
-  typedef Kgon_area_operator< R >  Operation;
-
-  int
-  min_k() const
-  { return 3; }
+  int min_k() const { return 3; }
 
   FT
   init( const Point_2&, const Point_2&) const
@@ -93,7 +72,7 @@ public:
 
   Operation
   operation( const Point_2& p) const
-  { return Operation( p); }
+  { return bind_3(Baseop(k), p); }
 
 #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
   template < class RandomAccessIC, class OutputIterator >
@@ -164,24 +143,15 @@ public:
     return o;
   } // compute_min_k_gon( ... )
 
-  #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
-  template < class RandomAccessIC >
-  #endif
-  bool
-  is_convex( RandomAccessIC points_begin,
-             RandomAccessIC points_end) const
-  // PRE: value_type of RandomAccessIC is Point_2
-  // POST: return true, iff the points [ points_begin, points_end)
-  //   form a convex chain.
-  {
-    typedef Polygon_traits_2< R >        P_traits;
-    typedef std::vector< Point_2 >       Cont;
-    typedef Polygon_2< P_traits, Cont >  Polygon_2;
-  
-    Polygon_2 p( points_begin, points_end);
-    return p.is_convex();
-  } // is_convex( points_begin, points_end)
+#ifdef CGAL_OPTIMISATION_EXPENSIVE_PRECONDITION_TAG
+  Less_xy_2 less_xy_2_object() const { return k.less_xy_2_object(); }
 
+  Orientation_2 orientation_2_object() const
+  { return k.orientation_2_object(); }
+#endif // CGAL_OPTIMISATION_EXPENSIVE_PRECONDITION_TAG
+
+protected:
+  K k;
 };
 
 CGAL_END_NAMESPACE
@@ -195,50 +165,45 @@ CGAL_BEGIN_NAMESPACE
 template < class FT_ >
 struct Sqrt : public CGAL_STD::binary_function< FT_, FT_, FT_ >
 {
+  typedef Arity_tag< 1 > Arity;
   typedef FT_  FT;
   FT operator()(const FT& x) const { return CGAL_NTS sqrt(x); }
 };
-template < class R_ >
-class Kgon_perimeter_operator
-: public CGAL_STD::binary_function< Point_2< R_ >,
-                                    Point_2< R_ >,
-                                    typename R_::FT >
-{
-public:
-  typedef R_              R;
-  typedef Point_2< R >    Point_2;
-  typedef typename R::FT  FT;
+template < class K_ >
+struct Extremal_polygon_perimeter_traits_2 {
+  typedef          K_                                K;
+  typedef typename K::FT                             FT;
+  typedef typename K::Point_2                        Point_2;
+#ifdef CGAL_OPTIMISATION_EXPENSIVE_PRECONDITION_TAG
+  typedef typename K::Less_xy_2                    Less_xy_2;
+  typedef typename K::Orientation_2                Orientation_2;
+#endif // CGAL_OPTIMISATION_EXPENSIVE_PRECONDITION_TAG
 
-  Kgon_perimeter_operator( const Point_2& p)
-  : root( p)
-  {}
+  struct Kgon_triangle_perimeter {
+    typedef Arity_tag< 3 >  Arity;
+    typedef FT              result_type;
+  
+    Kgon_triangle_perimeter(const K& k_): k(k_) {}
+  
+    result_type
+    operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
+    { return dist(p, r) + dist(p, q) - dist(q, r); }
+  
+  private:
+    result_type dist(const Point_2& p, const Point_2& q) const
+    { return CGAL_NTS sqrt(k.compute_squared_distance_2_object()(p, q)); }
+  
+  protected:
+    K k;
+  };
 
-  FT
-  operator()( const Point_2& p, const Point_2& q) const
-  { return dist( p, root) + dist( p, q) - dist( q, root); }
+  typedef Kgon_triangle_perimeter                    Baseop;
+  typedef typename Bind< Baseop, Point_2, 3 >::Type  Operation;
 
-private:
-  static
-  FT
-  dist( const Point_2& p, const Point_2& q)
-  { return CGAL_NTS sqrt( squared_distance( p, q)); }
+  Extremal_polygon_perimeter_traits_2() {}
+  Extremal_polygon_perimeter_traits_2(const K& k_) : k(k_) {}
 
-  const Point_2& root;
-};
-
-
-template < class R_ >
-class Extremal_polygon_perimeter_traits_2
-{
-public:
-  typedef          R_                    R;
-  typedef          Point_2< R >          Point_2;
-  typedef typename R::FT                 FT;
-  typedef Kgon_perimeter_operator< R >   Operation;
-
-  int
-  min_k() const
-  { return 2; }
+  int min_k() const { return 2; }
 
   FT
   init( const Point_2& p, const Point_2& r) const
@@ -246,7 +211,7 @@ public:
 
   Operation
   operation( const Point_2& p) const
-  { return Operation( p); }
+  { return bind_3( Baseop(k), p); }
 
 #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
   template < class RandomAccessIC, class OutputIterator >
@@ -276,7 +241,6 @@ public:
   //  for the range (== o + min_k()).
   {
 #ifndef CGAL_CFG_NO_NAMESPACE
-    using std::bind2nd;
     using std::less;
     using std::max_element;
 #endif
@@ -292,10 +256,10 @@ public:
       max_element(
         points_begin + 1,
         points_end,
-        compose2_2(
+        compose(
           less< FT >(),
-          bind2nd(operation(points_begin[0]), points_begin[0]),
-          bind2nd(operation(points_begin[0]), points_begin[0]))));
+          bind_2(operation(points_begin[0]), points_begin[0]),
+          bind_2(operation(points_begin[0]), points_begin[0]))));
     
     // give result:
     max_perimeter = operation(*points_begin)(*maxi, *points_begin);
@@ -305,24 +269,15 @@ public:
     return o;
   } // compute_min_k_gon( ... )
 
-  #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
-  template < class RandomAccessIC >
-  #endif
-  bool
-  is_convex( RandomAccessIC points_begin,
-             RandomAccessIC points_end) const
-  // PRE: value_type of RandomAccessIC is Point_2
-  // POST: return true, iff the points [ points_begin, points_end)
-  //   form a convex chain.
-  {
-    typedef Polygon_traits_2< R >        P_traits;
-    typedef std::vector< Point_2 >       Cont;
-    typedef Polygon_2< P_traits, Cont >  Polygon_2;
-  
-    Polygon_2 p( points_begin, points_end);
-    return p.is_convex();
-  } // is_convex( points_begin, points_end)
+#ifdef CGAL_OPTIMISATION_EXPENSIVE_PRECONDITION_TAG
+  Less_xy_2 less_xy_2_object() const { return k.less_xy_2_object(); }
 
+  Orientation_2 orientation_2_object() const
+  { return k.orientation_2_object(); }
+#endif // CGAL_OPTIMISATION_EXPENSIVE_PRECONDITION_TAG
+
+protected:
+  K k;
 };
 
 

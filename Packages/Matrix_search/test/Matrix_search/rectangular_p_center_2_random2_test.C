@@ -26,9 +26,6 @@
 // ============================================================================
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/Point_2.h>
-#include <CGAL/Vector_2.h>
-#include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/rectangular_p_center_2.h>
 #include <CGAL/Random.h>
@@ -70,10 +67,10 @@ typedef leda_real                          FT;
 typedef double                             FT;
 #endif // CGAL_USE_LEDA
 
-typedef Cartesian< FT >                    R;
-typedef CGAL::Point_2< R >                 Point;
-typedef CGAL::Vector_2< R >                Vector;
-typedef CGAL::Iso_rectangle_2< R >         Square_2;
+typedef Cartesian< FT >                    K;
+typedef K::Point_2                         Point;
+typedef K::Vector_2                        Vector;
+typedef K::Iso_rectangle_2                 Square_2;
 typedef vector< Point >                    PCont;
 typedef PCont::iterator                    iterator;
 typedef Creator_uniform_2< FT, Point >     Creator;
@@ -235,7 +232,7 @@ main(int argc, char* argv[])
 
 #ifdef CGAL_USE_LEDA
       // check that all points are covered
-      CGAL::Infinity_distance_2< R > dist;
+      CGAL::Infinity_distance_2< K > dist;
       #ifdef _MSC_VER
       {
       #endif
@@ -260,8 +257,8 @@ main(int argc, char* argv[])
       
       // check that there is at least one square with two points
       // on opposite sides
-      CGAL::Signed_x_distance_2< R > xdist;
-      CGAL::Signed_y_distance_2< R > ydist;
+      CGAL::Signed_x_distance_2< K > xdist;
+      CGAL::Signed_y_distance_2< K > ydist;
       bool boundary = false;
       #ifdef _MSC_VER
       {

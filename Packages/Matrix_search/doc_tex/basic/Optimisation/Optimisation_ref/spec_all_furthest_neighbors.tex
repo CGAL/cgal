@@ -22,10 +22,10 @@
 
   \def\ccLongParamLayout{\ccTrue} 
   
-  \ccGlobalFunction{ template < class RandomAccessIC, class
+  \ccGlobalFunction{ template < class RandomAccessIterator, class
     OutputIterator, class Traits > OutputIterator
-    all_furthest_neighbors_2( RandomAccessIC points_begin,
-    RandomAccessIC points_end, OutputIterator o, Traits t =
+    all_furthest_neighbors_2( RandomAccessIterator points_begin,
+    RandomAccessIterator points_end, OutputIterator o, Traits t =
     Default_traits);}
   
   computes all furthest neighbors for the vertices of the convex
@@ -42,23 +42,22 @@
   
   The geometric types and operations to be used for the computation
   are specified by the traits class parameter \ccc{t}. This parameter
-  can be omitted if \ccc{RandomAccessIC} refers to a point type from
-  the 2D-Kernel. In this case, a default traits class
-  (\ccc{All_furthest_neighbors_default_traits_2<R>}) is used.
+  can be omitted if \ccc{RandomAccessIterator} refers to a point type
+  from a \ccc{Kernel}. In this case, the kernel is used as default
+  traits class.
   
   \ccRequire
   \begin{enumerate}
   \item If \ccc{t} is specified explicitly, \ccc{Traits} is a model
     for \ccc{AllFurthestNeighborsTraits_2}.
-  \item Value type of \ccc{RandomAccessIC} is \ccc{Traits::Point_2} or
-    -- if \ccc{t} is not specified explicitly -- \ccc{Point_2<R>} for
-    some representation class \ccc{R}.
+  \item Value type of \ccc{RandomAccessIterator} is
+    \ccc{Traits::Point_2} or -- if \ccc{t} is not specified explicitly
+    -- \ccc{K::Point_2} where \ccc{K} is a model for \ccc{Kernel}.
   \item \ccc{OutputIterator} accepts \ccc{int} as value type.
   \end{enumerate}
   
   \ccSeeAlso
   \ccRefConceptPage{AllFurthestNeighborsTraits_2}\\
-  \ccRefIdfierPage{CGAL::All_furthest_neighbors_default_traits_2<R>}\\
   \ccRefIdfierPage{CGAL::monotone_matrix_search}
  
   \ccImplementation The implementation uses monotone matrix
@@ -76,49 +75,6 @@
   \ccIncludeVerbatim{Optimisation_ref/all_furthest_neighbors_2_example_nohead.C}
 \end{ccRefFunction}
 
-\begin{ccRefClass}{All_furthest_neighbors_default_traits_2<R>}
-  \ccCreationVariable{t}\ccTagFullDeclarations
-  
-  \ccDefinition The class \ccClassName\ provides the types and
-  operations needed to compute all furthest neighbors for the vertices
-  of a convex polygon.
-  
-  \ccRequirements
-  The template parameter \ccc{R} is a model for \ccc{Kernel}.
-
-  \ccIsModel 
-  \ccRefConceptPage{AllFurthestNeighborsTraits_2}
-
-  \ccTypes
-  
-  \ccNestedType{Point_2}{typedef to \ccc{R::Point_2}.}
-  
-  \ccNestedType{FT}{typedef to \ccc{R::FT}.}
-  
-  \ccNestedType{Distance}{AdaptableBinaryFunction class: \ccc{Point_2}
-    $\times$ \ccc{Point_2} $\rightarrow$ \ccc{FT} computing the
-    squared Euclidean distance between two points.}
-
-  \ccOperations
-  
-  \ccMemberFunction{Distance distance_object();}{returns the
-    function object for computing distances.}
-  
-  \ccMemberFunction{template < class RandomAccessIC > bool is_convex(
-    RandomAccessIC points_begin, RandomAccessIC points_end)
-    const;}{returns true, iff the points [\ccc{points_begin},
-    \ccc{points_end}) form a convex chain.}
-  
-  \ccSeeAlso
-  \ccRefIdfierPage{CGAL::all_furthest_neighbors_2}
-
-  \ccHeading{Notes}
-  \begin{itemize}
-  \item \ccClassName\ccc{::is_convex} is used for precondition
-    checking only.
-  \end{itemize}
-\end{ccRefClass}
-
 \begin{ccRefConcept}{AllFurthestNeighborsTraits_2}
   \ccCreationVariable{t}\ccTagFullDeclarations
   
@@ -128,36 +84,45 @@
   
   \ccTypes
   
-  \ccNestedType{Point_2}{class used for representing the input
-    points.}
+  \ccNestedType{FT}{model for \ccRefConceptPage{FieldNumberType}.}
   
-  \ccNestedType{FT}{class used for doing computations on point
-    coordinates; it has to be a model for \ccc{FieldNumberType}.}
+  \ccNestedType{Point_2}{model for
+    \ccRefConceptPage{Kernel::Point_2}.}
   
-  \ccNestedType{Distance}{AdaptableBinaryFunction class: \ccc{Point_2}
-    $\times$ \ccc{Point_2} $\rightarrow$ \ccc{FT} computing the
-    squared Euclidean distance between two points.}
-
-  \ccOperations
+  \ccNestedType{Compute_squared_distance_2}{model for
+    \ccRefConceptPage{Kernel::Compute_squared_distance_2}.}
   
-  \ccMemberFunction{Distance distance_object();}{returns the
-    function object for computing distances.}
+  \ccNestedType{Less_xy_2}{model for
+    \ccRefConceptPage{Kernel::Less_xy_2}.}
   
-  \ccMemberFunction{template < class RandomAccessIC > bool is_convex(
-    RandomAccessIC points_begin, RandomAccessIC points_end)
-    const;}{returns true, iff the points [\ccc{points_begin},
-    \ccc{points_end}) form a convex chain.}
+  \ccNestedType{Orientation_2}{model for
+    \ccRefConceptPage{Kernel::Orientation_2}.}
+  
+  \ccOperations The following member functions return function objects
+  of the types listed above.
+  
+  \ccGlue\ccMemberFunction{Compute_squared_distance_2
+    compute_squared_distance_2_object();}{}
+  
+  \ccGlue\ccMemberFunction{Less_xy_2 less_xy_2_object();}{}
+  
+  \ccGlue\ccMemberFunction{Orientation_2 orientation_2_object();}{}
   
   \ccHasModels 
-  \ccRefIdfierPage{CGAL::All_furthest_neighbors_default_traits_2<R>}
+  \ccRefIdfierPage{Cartesian<FieldNumberType>},
+  \ccRefIdfierPage{Homogeneous<RingNumberType>},
+  \ccRefIdfierPage{Simple_cartesian<FieldNumberType>},
+  \ccRefIdfierPage{Simple_homogeneous<RingNumberType>}.
 
   \ccSeeAlso
   \ccRefIdfierPage{CGAL::all_furthest_neighbors_2}
 
   \ccHeading{Notes}
   \begin{itemize}
-  \item \ccClassName\ccc{::is_convex} is used for precondition
-    checking only.
+  \item \ccClassName\ccc{::Less_xy_2} and
+    \ccClassName\ccc{::Orientation_2} are used for (expensive)
+    precondition checking only. Therefore, they need not to be
+    specified, in case that precondition checking is disabled.
   \end{itemize}
 \end{ccRefConcept}
 

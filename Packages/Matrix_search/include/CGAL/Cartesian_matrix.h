@@ -39,8 +39,6 @@ template < class Operation,
 class Cartesian_matrix {
 public:
   typedef typename Operation::result_type           Value;
-  typedef typename Operation::first_argument_type   RowValue;
-  typedef typename Operation::second_argument_type  ColumnValue;
 
   Cartesian_matrix(RandomAccessIC_row r_f,
                    RandomAccessIC_row r_l,

@@ -26,7 +26,6 @@
 // ============================================================================
 
 #include <CGAL/Random.h>
-#include <CGAL/function_objects.h>
 #include <CGAL/Cartesian_matrix.h>
 #include <CGAL/sorted_matrix_search.h>
 #include <vector>
@@ -68,7 +67,7 @@ int main() {
       &M,
       &M + 1,
       sorted_matrix_search_traits_adaptor(
-        bind2nd( greater_equal< Value >(), bound),
+        bind_2( greater_equal< Value >(), bound),
         M)));
   cout << "upper bound for " << bound << " is "
        << upper_bound << endl;

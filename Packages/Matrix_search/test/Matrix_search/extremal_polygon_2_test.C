@@ -26,7 +26,6 @@
 // ============================================================================
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/Point_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/random_convex_set_2.h>
 #include <CGAL/extremal_polygon_2.h>
@@ -51,10 +50,10 @@ using CGAL::maximum_perimeter_inscribed_k_gon_2;
 // typedefs:
 typedef double                             FT;
 //typedef leda_real                        FT;
-typedef Cartesian< FT >                    R;
-typedef CGAL::Point_2< R >                 Point;
-typedef Polygon_traits_2< R >              P_traits;
-typedef vector< Point >                  Cont;
+typedef Cartesian< FT >                    K;
+typedef K::Point_2                         Point;
+typedef Polygon_traits_2< K >              P_traits;
+typedef vector< Point >                    Cont;
 typedef CGAL::Polygon_2< P_traits, Cont >  Polygon;
 
 // do random convex set generation always with double
@@ -146,15 +145,6 @@ brute_force_area_4( RandomAccessIC b,
 
 } // brute_force_4( b, e, o)
 
-
-/*
-struct D2R : public unary_function< Point_double, Point >
-{
-  Point
-  operator()( const Point_double& p)
-  { return Point( p.x(), p.y()); }
-};
-*/
 
 int main() {
   // set_pretty_mode( cout);

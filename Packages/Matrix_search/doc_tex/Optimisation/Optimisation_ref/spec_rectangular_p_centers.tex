@@ -125,26 +125,16 @@
   
   \ccNestedType{Iso_rectangle_2}{typedef to \ccc{R::Iso_rectangle_2}.}
   
-  \ccNestedType{Less_x_2}{adaptable binary function class:
-    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{bool}
-    returns true, iff the first point has smaller x-coordinate than
-    the second.}
+  \ccNestedType{Less_x_2}{typedef to \ccc{R::Less_x_2}.}
+ 
+  \ccNestedType{Less_y_2}{typedef to \ccc{R::Less_y_2}.}
   
-  \ccNestedType{Less_y_2}{adaptable binary function class:
-    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{bool}
-    returns true, iff the first point has smaller y-coordinate than
-    the second.}
+  \ccNestedType{Construct_vertex_2}{typedef to
+    \ccc{R::Construct_vertex_2}.}
   
-  \ccNestedType{Greater_x_2}{adaptable binary function class:
-    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{bool}
-    returns true, iff the first point has greater x-coordinate than
-    the second.}
-  
-  \ccNestedType{Greater_y_2}{adaptable binary function class:
-    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{bool}
-    returns true, iff the first point has greater y-coordinate than
-    the second.}
-  
+  \ccNestedType{Construct_iso_rectangle_2}{typedef to
+    \ccc{R::Construct_iso_rectangle_2}.}
+    
   \ccNestedType{Signed_x_distance_2}{adaptable binary function
     class: \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$
     \ccc{FT} returns the signed distance of two points'
@@ -165,31 +155,6 @@
     $\rightarrow$ \ccc{FT} returns the signed $||\cdot||_{\infty}$
     distance of two points.}
   
-  \ccNestedType{Construct_min_point_2}{adaptable unary function
-    class: \ccc{Iso_rectangle_2} $\rightarrow$ \ccc{Point_2} returns
-    the lower-left corner of a rectangle.}
-  
-  \ccNestedType{Construct_max_point_2}{adaptable unary function class:
-    \ccc{Iso_rectangle_2} $\rightarrow$ \ccc{Point_2} returns the
-    upper-right corner of a rectangle.}
-  
-  \ccNestedType{Construct_corner_2}{adaptable binary function class:
-    \ccc{Iso_rectangle_2} $\times$ \ccc{unsigned int} $\rightarrow$
-    \ccc{Point_2} returns the i-th (starting from lower-left and then
-    counterclockwise) corner of a rectangle.}
-  
-  \ccNestedType{Construct_projection_onto_horizontal_implicit_line_2}{
-    adaptable binary function class: \ccc{Point_2} $\times$
-    \ccc{Point_2} $\rightarrow$ \ccc{Point_2} returns the
-    (orthogonal) projection of the first point onto the horizontal
-    line through the second point.}
-  
-  \ccNestedType{Construct_iso_rectangle_2}{4-argument function class:
-    \ccc{Point_2} $\times$ \ccc{Point_2} $\times$ \ccc{Point_2}
-    $\times$ \ccc{Point_2} $\rightarrow$ \ccc{Iso_rectangle_2} returns
-    the rectangle with point $i$ on the left, bottom, right, top resp.
-    side.}
-    
   \ccNestedType{Construct_point_2_below_left_implicit_point_2}{
     3-argument function class: \ccc{Point_2} $\times$ \ccc{Point_2}
     $\times$ \ccc{FT} $\rightarrow$ \ccc{Point_2}. For arguments
@@ -222,24 +187,6 @@
     intersection of the vertical line through $p$ and the horizontal
     line through $q$.}
 
-  \ccHeading{These can be derived from \ccc{Less} and \ccc{Greater}:}
-  
-  \ccNestedType{Min_x_2}{adaptable binary function class:
-    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{Point_2}
-    returns the point with smaller x-coordinate.}
-  
-  \ccNestedType{Max_x_2}{adaptable binary function class:
-    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{Point_2}
-    returns the point with greater x-coordinate.}
-  
-  \ccNestedType{Min_y_2}{adaptable binary function class:
-    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{Point_2}
-    returns the point with smaller y-coordinate.}
-  
-  \ccNestedType{Max_y_2}{adaptable binary function class:
-    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{Point_2}
-    returns the point with greater y-coordinate.}
-
   \ccOperations
   
   For every function class listed above there is a member function
@@ -249,21 +196,11 @@
   \ccGlue\ccMemberFunction{Signed_inf_distance_2
     signed_inf_distance_2_object() const;}{}
   
-  \ccGlue\ccMemberFunction{Construct_min_point_2
-    construct_min_point_2_object() const;}{}
-  
-  \ccGlue\ccMemberFunction{Construct_max_point_2
-    construct_max_point_2_object() const;}{}
-  
-  \ccGlue\ccMemberFunction{Construct_corner_2 construct_corner_2_object()
-    const;}{}
+  \ccGlue\ccMemberFunction{Construct_vertex_2
+    construct_vertex_2_object() const;}{}
   
   \ccGlue\ccMemberFunction{Construct_iso_rectangle_2
     construct_iso_rectangle_2_object() const;}{}
-  
-  \ccGlue\ccMemberFunction{Construct_projection_onto_horizontal_implicit_line_2
-    construct_projection_onto_horizontal_implicit_line_2_object()
-    const;}{}
   
   \ccGlue\ccMemberFunction{Construct_iso_rectangle_2_below_left_point_2
     construct_iso_rectangle_2_below_left_point_2_object() const;}{}
@@ -276,14 +213,6 @@
   
   \ccGlue\ccMemberFunction{Construct_iso_rectangle_2_above_right_point_2
     construct_iso_rectangle_2_above_right_point_2_object() const;}{}
-  
-  \ccGlue\ccMemberFunction{Min_x_2 min_x_2_object() const;}{}
-  
-  \ccGlue\ccMemberFunction{Max_x_2 max_x_2_object() const;}{}
-  
-  \ccGlue\ccMemberFunction{Min_y_2 min_y_2_object() const;}{}
-  
-  \ccGlue\ccMemberFunction{Max_y_2 max_y_2_object() const;}{}
   
   \ccSeeAlso
   \ccRefIdfierPage{CGAL::rectangular_p_center_2}
@@ -299,35 +228,26 @@
   
   \ccTypes 
     
-  \ccNestedType{FT}{class used for doing computations on point
-    coordinates; it has to be a model for \ccc{FieldNumberType}.}
+  \ccNestedType{FT}{model for \ccRefConceptPage{FieldNumberType}.}
   
-  \ccNestedType{Point_2}{class used for representing the input
-    points.}
+  \ccNestedType{Point_2}{model for
+    \ccRefConceptPage{Kernel::Point_2}.}
   
-  \ccNestedType{Iso_rectangle_2}{class used for representing
-    axis-parallel rectangles.}
+  \ccNestedType{Iso_rectangle_2}{model for
+    \ccRefConceptPage{Kernel::Iso_rectangle_2}.}
   
-  \ccNestedType{Less_x_2}{adaptable binary function class:
-    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{bool}
-    returns true, iff the first point has smaller x-coordinate than
-    the second.}
+  \ccNestedType{Less_x_2}{model for
+    \ccRefConceptPage{Kernel::Less_x_2}.}
   
-  \ccNestedType{Less_y_2}{adaptable binary function class:
-    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{bool}
-    returns true, iff the first point has smaller y-coordinate than
-    the second.}
+  \ccNestedType{Less_y_2}{model for
+    \ccRefConceptPage{Kernel::Less_y_2}.}
   
-  \ccNestedType{Greater_x_2}{adaptable binary function class:
-    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{bool}
-    returns true, iff the first point has greater x-coordinate than
-    the second.}
+  \ccNestedType{Construct_vertex_2}{model for
+    \ccRefConceptPage{Kernel::Construct_vertex_2}.}
   
-  \ccNestedType{Greater_y_2}{adaptable binary function class:
-    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{bool}
-    returns true, iff the first point has greater y-coordinate than
-    the second.}
-  
+  \ccNestedType{Construct_iso_rectangle_2}{model for
+    \ccRefConceptPage{Kernel::Construct_iso_rectangle_2}.}
+    
   \ccNestedType{Signed_x_distance_2}{adaptable binary function
     class: \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$
     \ccc{FT} returns the signed distance of two points'
@@ -348,31 +268,6 @@
     $\rightarrow$ \ccc{FT} returns the signed $||\cdot||_{\infty}$
     distance of two points.}
   
-  \ccNestedType{Construct_min_point_2}{adaptable unary function
-    class: \ccc{Iso_rectangle_2} $\rightarrow$ \ccc{Point_2} returns
-    the lower-left corner of a rectangle.}
-  
-  \ccNestedType{Construct_max_point_2}{adaptable unary function class:
-    \ccc{Iso_rectangle_2} $\rightarrow$ \ccc{Point_2} returns the
-    upper-right corner of a rectangle.}
-  
-  \ccNestedType{Construct_corner_2}{adaptable binary function class:
-    \ccc{Iso_rectangle_2} $\times$ \ccc{unsigned int} $\rightarrow$
-    \ccc{Point_2} returns the i-th (starting from lower-left and then
-    counterclockwise) corner of a rectangle.}
-  
-  \ccNestedType{Construct_projection_onto_horizontal_implicit_line_2}{
-    adaptable binary function class: \ccc{Point_2} $\times$
-    \ccc{Point_2} $\rightarrow$ \ccc{Point_2} returns the
-    (orthogonal) projection of the first point onto the horizontal
-    line through the second point.}
-  
-  \ccNestedType{Construct_iso_rectangle_2}{4-argument function class:
-    \ccc{Point_2} $\times$ \ccc{Point_2} $\times$ \ccc{Point_2}
-    $\times$ \ccc{Point_2} $\rightarrow$ \ccc{Iso_rectangle_2} returns
-    the rectangle with point $i$ on the left, bottom, right, top resp.
-    side.}
-    
   \ccNestedType{Construct_point_2_below_left_implicit_point_2}{
     3-argument function class: \ccc{Point_2} $\times$ \ccc{Point_2}
     $\times$ \ccc{FT} $\rightarrow$ \ccc{Point_2}. For arguments
@@ -405,24 +300,6 @@
     intersection of the vertical line through $p$ and the horizontal
     line through $q$.}
 
-  \ccHeading{These can be derived from \ccc{Less} and \ccc{Greater}:}
-  
-  \ccNestedType{Min_x_2}{adaptable binary function class:
-    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{Point_2}
-    returns the point with smaller x-coordinate.}
-  
-  \ccNestedType{Max_x_2}{adaptable binary function class:
-    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{Point_2}
-    returns the point with greater x-coordinate.}
-  
-  \ccNestedType{Min_y_2}{adaptable binary function class:
-    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{Point_2}
-    returns the point with smaller y-coordinate.}
-  
-  \ccNestedType{Max_y_2}{adaptable binary function class:
-    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{Point_2}
-    returns the point with greater y-coordinate.}
-
   \ccOperations
   
   For every function class listed above there is a member function
@@ -432,21 +309,11 @@
   \ccGlue\ccMemberFunction{Signed_inf_distance_2
     signed_inf_distance_2_object() const;}{}
   
-  \ccGlue\ccMemberFunction{Construct_min_point_2
-    construct_min_point_2_object() const;}{}
-  
-  \ccGlue\ccMemberFunction{Construct_max_point_2
-    construct_max_point_2_object() const;}{}
-  
-  \ccGlue\ccMemberFunction{Construct_corner_2 construct_corner_2_object()
-    const;}{}
+  \ccGlue\ccMemberFunction{Construct_vertex_2
+    construct_vertex_2_object() const;}{}
   
   \ccGlue\ccMemberFunction{Construct_iso_rectangle_2
     construct_iso_rectangle_2_object() const;}{}
-  
-  \ccGlue\ccMemberFunction{Construct_projection_onto_horizontal_implicit_line_2
-    construct_projection_onto_horizontal_implicit_line_2_object()
-    const;}{}
   
   \ccGlue\ccMemberFunction{Construct_iso_rectangle_2_below_left_point_2
     construct_iso_rectangle_2_below_left_point_2_object() const;}{}
@@ -459,14 +326,6 @@
   
   \ccGlue\ccMemberFunction{Construct_iso_rectangle_2_above_right_point_2
     construct_iso_rectangle_2_above_right_point_2_object() const;}{}
-  
-  \ccGlue\ccMemberFunction{Min_x_2 min_x_2_object() const;}{}
-  
-  \ccGlue\ccMemberFunction{Max_x_2 max_x_2_object() const;}{}
-  
-  \ccGlue\ccMemberFunction{Min_y_2 min_y_2_object() const;}{}
-  
-  \ccGlue\ccMemberFunction{Max_y_2 max_y_2_object() const;}{}
   
   \ccHasModels
   \ccRefIdfierPage{CGAL::Rectangular_p_center_default_traits_2<R>}

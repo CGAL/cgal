@@ -26,7 +26,6 @@
 // ============================================================================
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/Point_2.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/random_convex_set_2.h>
@@ -39,9 +38,9 @@ using CGAL::random_convex_set_2;
 using CGAL::maximum_area_inscribed_k_gon_2;
 
 typedef double                                FT;
-typedef CGAL::Cartesian< FT >                 R;
-typedef CGAL::Point_2< R >                    Point;
-typedef CGAL::Polygon_traits_2< R >           P_traits;
+typedef CGAL::Cartesian< FT >                 K;
+typedef K::Point_2                            Point;
+typedef CGAL::Polygon_traits_2< K >           P_traits;
 typedef vector< Point >                       Cont;
 typedef CGAL::Polygon_2< P_traits, Cont >     Polygon;
 typedef CGAL::Creator_uniform_2< FT, Point >  Creator;

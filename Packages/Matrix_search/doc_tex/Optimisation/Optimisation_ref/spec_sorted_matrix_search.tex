@@ -58,9 +58,10 @@
 
     \def\ccLongParamLayout{\ccTrue} 
     
-    \ccGlobalFunction{template < class RandomAccessIC, class Traits >
-      Traits::Value sorted_matrix_search( RandomAccessIC f,
-      RandomAccessIC l, const Traits& t);}
+    \ccGlobalFunction{template < class RandomAccessIterator, class
+      Traits > Traits::Value sorted_matrix_search(
+      RandomAccessIterator f, RandomAccessIterator l, const Traits&
+      t);}
 
     returns the element \ccc{x} in one of the sorted matrices from the
     range $\left[ f,\, l \right)$, for which \ccc{t.is_feasible( x)}
@@ -81,7 +82,8 @@
     \begin{enumerate}
     \item \ccc{Traits} is a model for
       \ccc{SortedMatrixSearchTraits}.
-    \item Value type of \ccc{RandomAccessIC} is \ccc{Traits::Matrix}.
+    \item Value type of \ccc{RandomAccessIterator} is
+      \ccc{Traits::Matrix}.
     \end{enumerate}
     
     \ccSeeAlso

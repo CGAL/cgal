@@ -26,7 +26,6 @@
 // ============================================================================
 
 #include <CGAL/Random.h>
-#include <CGAL/function_objects.h>
 #include <CGAL/Cartesian_matrix.h>
 #include <CGAL/sorted_matrix_search.h>
 #include <vector>
@@ -59,10 +58,10 @@ using std::sort;
 using std::less;
 using std::greater_equal;
 using std::max;
-using std::bind2nd;
 using std::cerr;
 using std::endl;
 using CGAL::Cartesian_matrix;
+using CGAL::bind_2;
 using CGAL::Random;
 using CGAL::default_random;
 using CGAL::sorted_matrix_search;
@@ -193,7 +192,7 @@ main( int argc, char* argv[])
       matrices.begin(),
       matrices.end(),
       sorted_matrix_search_traits_adaptor(
-        bind2nd( greater_equal< Value >(),
+        bind_2( greater_equal< Value >(),
                  bound),
         *(matrices.begin()))));
   

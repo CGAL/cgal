@@ -26,10 +26,11 @@
 // ============================================================================
 
 
-#ifdef CGAL_USE_LEDA
+#include <CGAL/basic.h>
+
+#if (defined(CGAL_USE_LEDA) || defined(CGAL_USE_CGAL_WINDOW))
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/Point_2.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/random_convex_set_2.h>
@@ -54,7 +55,9 @@ using CGAL::all_furthest_neighbors_2;
 using CGAL::cgalize;
 using CGAL::RED;
 
+
 typedef double                                 FT;
+typedef CGAL::Window_stream                    Window;
 typedef Cartesian< FT >                              R;
 typedef CGAL::Point_2< R >                           Point;
 typedef Polygon_traits_2< R >                        P_traits;
@@ -64,19 +67,23 @@ typedef CGAL::Polygon_2< P_traits, Point_cont >      Polygon;
 typedef Creator_uniform_2< FT, Point >               Creator;
 typedef Random_points_in_square_2< Point, Creator >  Point_generator;
 void
-wait_for_button_release( leda_window& W)
+wait_for_button_release( Window& W)
 {
   // wait until mouse button is released
   double x, y;
   int v;
   do {}
+#ifdef CGAL_USE_LEDA
   while ( W.read_event( v, x, y) != button_release_event);
+#else
+  while ( W.read_event( v, x, y) != CGAL::button_release_event);
+#endif // CGAL_USE_LEDA
 }
 
 int
 main()
 {
-  leda_window W;
+  Window W;
   cgalize(W);
   W.init(-1.25, 1.25, -1.25);
   W.display();
@@ -104,8 +111,12 @@ main()
     p.vertices_end(),
     back_inserter( neighbors));
   // output solution:
+  #ifdef CGAL_USE_LEDA
   W.set_mode(leda_xor_mode);
-  W.set_fg_color(leda_blue);
+  #else
+  W.set_mode(CGAL::xor_mode);
+  #endif // CGAL_USE_LEDA
+  W << CGAL::BLUE;
   // first click, no need to clear old query from screen:
   int last_button;
   int nearest = 0;

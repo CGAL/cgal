@@ -32,6 +32,7 @@
 #include <CGAL/monotone_matrix_search.h>
 #include <CGAL/Dynamic_matrix.h>
 #include <CGAL/Transform_iterator.h>
+#include <CGAL/Polygon_2_algorithms.h>
 #include <vector>
 #include <functional>
 #include <algorithm>
@@ -45,7 +46,8 @@ template < class Array, class Index, class Element >
 struct Index_operator
 : public CGAL_STD::binary_function< Array, Index, Element >
 {
-public:
+  typedef Arity_tag< 2 > Arity;
+
   Element&
   operator()( Array& a, const Index& i) const
   { return a[i]; }
@@ -517,7 +519,7 @@ extremal_polygon_2(
       iterator_distance( points_begin, points_end));)
   CGAL_optimisation_precondition( number_of_points >= t.min_k());
   CGAL_optimisation_expensive_precondition(
-    t.is_convex( points_begin, points_end));
+    is_convex_2( points_begin, points_end, t));
 
   typedef typename Traits::Point_2 Point_2;
   return CGAL_maximum_inscribed_k_gon_2(

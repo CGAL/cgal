@@ -26,7 +26,9 @@
 // ============================================================================
 
 
-#ifdef CGAL_USE_LEDA
+#include <CGAL/basic.h>
+
+#if (defined(CGAL_USE_LEDA) || defined(CGAL_USE_CGAL_WINDOW))
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/squared_distance_2.h>
@@ -37,7 +39,7 @@
 #include <CGAL/point_generators_2.h>
 #include <CGAL/random_convex_set_2.h>
 #include <CGAL/Timer.h>
-#include <CGAL/IO/leda_window.h>
+#include <CGAL/IO/Window_stream.h>
 #include <iostream>
 #include <cstdlib>
 #include <cstdio>
@@ -47,9 +49,11 @@ using CGAL::cgalize;
 using CGAL::Timer;
 using CGAL::has_smaller_dist_to_point;
 using CGAL::RED;
+using CGAL::BLUE;
 using std::back_inserter;
 using std::copy;
 using std::max;
+typedef CGAL::Window_stream Window;
 
 using std::vector;
 using CGAL::Cartesian;
@@ -63,14 +67,13 @@ using CGAL::Creator_uniform_2;
 using CGAL::random_convex_set_2;
 
 typedef double                                    FT;
-typedef Cartesian< FT >                           RepClass;
-typedef CGAL::Point_2< RepClass >                 Point;
-typedef CGAL::Segment_2< RepClass >               Segment;
+typedef Cartesian< FT >                           K;
+typedef K::Point_2                                Point;
+typedef K::Segment_2                              Segment;
 typedef vector< Point >                           PointCont;
 typedef PointCont::iterator                       PointIter;
 typedef vector< PointIter >                       PointIterCont;
 typedef PointIterCont::iterator                   PointIterIter;
-typedef RepClass::FT                              FT;
 typedef PointCont                                 Polygon;
 typedef PointCont::iterator                       Vertex_iterator;
 typedef Random_access_circulator_from_container< Polygon >
@@ -81,19 +84,23 @@ typedef Vertex_iteratorCont::iterator             Vertex_iteratorIter;
 
 
 void
-wait_for_button_release( leda_window& W)
+wait_for_button_release( Window& W)
 {
   // wait until mouse button is released
   double x, y;
   int v;
   do {}
+#ifdef CGAL_USE_LEDA
   while ( W.read_event( v, x, y) != button_release_event);
+#else
+  while ( W.read_event( v, x, y) != CGAL::button_release_event);
+#endif // CGAL_USE_LEDA
 }
 
 int
 main()
 {
-  leda_window W( 650, 650);
+  Window W( 650, 650);
   int k( 3);
   W.int_item( "k", k, 2, 12, "#vertices of polygon to inscribe");
   int n( 3);
@@ -151,8 +158,7 @@ main()
     if ( !p.empty()) {
       Vertex_const_iterator i( p.begin());
       for (;;) {
-        W << RED << *i;
-        W.set_fg_color( leda_blue);
+        W << RED << *i << BLUE;
     #ifndef _MSC_VER
         if ( (i+1) == p.end())
     #else
@@ -198,7 +204,7 @@ main()
         t.stop();
         cout << "[time: " << t.time() << " msec]" << endl;
 #endif // EXTREMAL_POLYGON_MEASURE
-        W.set_fg_color(leda_green);
+        W << CGAL::GREEN;
         if ( !p.empty()) {
           PointIter i( k_gon.begin());
           while ( ++i != k_gon.end())
@@ -231,7 +237,7 @@ main()
       t.stop();
       cout << "[time: " << t.time() << " msec]" << endl;
 #endif // EXTREMAL_POLYGON_MEASURE
-      W.set_fg_color( leda_orange);
+      W << CGAL::ORANGE;
       if ( !p.empty()) {
         PointIter i( k_gon.begin());
         while ( ++i != k_gon.end())
@@ -259,8 +265,13 @@ main()
         // test for snapping:
         if ( squared_distance( *nearest, Point( x, y)) < FT( 0.05)) {
           int v( 0);
+        #ifdef CGAL_USE_LEDA
           leda_drawing_mode old_drawing_mode( W.set_mode( leda_xor_mode));
           leda_color old_color( W.set_color( leda_grey1));
+        #else
+          CGAL::drawing_mode old_drawing_mode = W.set_mode( CGAL::xor_mode);
+          CGAL::color old_color = W.set_color( CGAL::grey1);
+        #endif // CGAL_USE_LEDA
           x = (*nearest).x();
           y = (*nearest).y();
           do {
@@ -312,8 +323,12 @@ main()
             // set new point:
             *nearest = Point( x, y);
         
-          } while ( W.read_event( v, x, y) != button_release_event);
-        
+          }
+        #ifdef CGAL_USE_LEDA
+          while ( W.read_event( v, x, y) != button_release_event);
+        #else
+          while ( W.read_event( v, x, y) != CGAL::button_release_event);
+        #endif // CGAL_USE_LEDA
         
           // restore parameters of W:
           W.set_mode( old_drawing_mode);

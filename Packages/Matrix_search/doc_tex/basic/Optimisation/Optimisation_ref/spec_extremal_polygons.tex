@@ -29,11 +29,11 @@
   \def\ccLongParamLayout{\ccTrue} 
   
   \ccGlobalFunction{
-    template < class RandomAccessIC, class OutputIterator >
+    template < class RandomAccessIterator, class OutputIterator >
     OutputIterator
     maximum_area_inscribed_k_gon_2(
-    RandomAccessIC points_begin,
-    RandomAccessIC points_end,
+    RandomAccessIterator points_begin,
+    RandomAccessIterator points_end,
     int k,
     OutputIterator o);}
   
@@ -52,17 +52,17 @@
   
   \ccRequire
   \begin{enumerate}
-  \item Value type of \ccc{RandomAccessIC} is \ccc{Point_2<R>} for
-    some representation class \ccc{R}.
+  \item Value type of \ccc{RandomAccessIterator} is \ccc{K::Point_2}
+    where \ccc{K} is a model for \ccc{Kernel}.
   \item \ccc{OutputIterator} accepts the value type of
-    \ccc{RandomAccessIC} as value type.
+    \ccc{RandomAccessIterator} as value type.
   \end{enumerate}
 
   \ccSeeAlso
   \ccRefIdfierPage{CGAL::maximum_perimeter_inscribed_k_gon_2}\\
   \ccRefConceptPage{ExtremalPolygonTraits_2}\\
-  \ccRefIdfierPage{CGAL::Extremal_polygon_area_traits_2<R>}\\
-  \ccRefIdfierPage{CGAL::Extremal_polygon_perimeter_traits_2<R>}\\
+  \ccRefIdfierPage{CGAL::Extremal_polygon_area_traits_2<K>}\\
+  \ccRefIdfierPage{CGAL::Extremal_polygon_perimeter_traits_2<K>}\\
   \ccRefIdfierPage{CGAL::extremal_polygon_2}\\
   \ccRefIdfierPage{CGAL::monotone_matrix_search}
   
@@ -78,7 +78,7 @@
   \ccIncludeVerbatim{Optimisation_ref/extremal_polygon_2_example_area.C}
 
 \end{ccRefFunction}
-    
+
 \begin{ccRefFunction}{maximum_perimeter_inscribed_k_gon_2}
   \ccIndexMainItem[t]{largest inscribed polygon}
   \ccIndexSubitem[t]{polygon}{largest inscribed}
@@ -99,11 +99,11 @@
 
   \def\ccLongParamLayout{\ccTrue}
   \ccGlobalFunction{
-    template < class RandomAccessIC, class OutputIterator >
+    template < class RandomAccessIterator, class OutputIterator >
     OutputIterator
     maximum_perimeter_inscribed_k_gon_2(
-    RandomAccessIC points_begin,
-    RandomAccessIC points_end,
+    RandomAccessIterator points_begin,
+    RandomAccessIterator points_end,
     int k,
     OutputIterator o);}
   
@@ -122,12 +122,12 @@
 
   \ccRequire
   \begin{enumerate}
-  \item Value type of \ccc{RandomAccessIC} is \ccc{CGAL::Point_2<R>}
-    for some representation class \ccc{R}.
-  \item There is a global function \ccc{R::FT CGAL::sqrt(R::FT)}
+  \item Value type of \ccc{RandomAccessIterator} is \ccc{K::Point_2}
+    where \ccc{K} is a model for \ccc{Kernel}.
+  \item There is a global function \ccc{K::FT CGAL::sqrt(K::FT)}
     defined that computes the squareroot of a number.
   \item \ccc{OutputIterator} accepts the value type of
-    \ccc{RandomAccessIC} as value type.
+    \ccc{RandomAccessIterator} as value type.
   \end{enumerate}
 
   \ccTagDefaults
@@ -135,8 +135,8 @@
   \ccSeeAlso
   \ccRefIdfierPage{CGAL::maximum_area_inscribed_k_gon_2}\\
   \ccRefConceptPage{ExtremalPolygonTraits_2}\\
-  \ccRefIdfierPage{CGAL::Extremal_polygon_area_traits_2<R>}\\
-  \ccRefIdfierPage{CGAL::Extremal_polygon_perimeter_traits_2<R>}\\
+  \ccRefIdfierPage{CGAL::Extremal_polygon_area_traits_2<K>}\\
+  \ccRefIdfierPage{CGAL::Extremal_polygon_perimeter_traits_2<K>}\\
   \ccRefIdfierPage{CGAL::extremal_polygon_2}\\
   \ccRefIdfierPage{CGAL::monotone_matrix_search}
   
@@ -155,7 +155,7 @@
 
 \begin{ccRefFunction}{extremal_polygon_2}
   \begin{ccAdvanced}
-  
+    
     \ccDefinition The function \ccRefName\ computes a maximal $k$-gon
     that can be inscribed into a given convex polygon. The criterion
     for maximality and some basic operations have to be specified in
@@ -166,11 +166,11 @@
     \def\ccLongParamLayout{\ccTrue} 
     
     \ccGlobalFunction{
-      template < class RandomAccessIC, class OutputIterator, class Traits >
+      template < class RandomAccessIterator, class OutputIterator, class Traits >
       OutputIterator
       extremal_polygon_2(
-      RandomAccessIC points_begin,
-      RandomAccessIC points_end,
+      RandomAccessIterator points_begin,
+      RandomAccessIterator points_end,
       int k,
       OutputIterator o,
       const Traits& t);}
@@ -191,7 +191,7 @@
     \ccRequire
     \begin{enumerate}
     \item \ccc{Traits} is a model for \ccc{ExtremalPolygonTraits_2}.
-    \item Value type of \ccc{RandomAccessIC} is \ccc{Traits::Point_2}.
+    \item Value type of \ccc{RandomAccessIterator} is \ccc{Traits::Point_2}.
     \item \ccc{OutputIterator} accepts \ccc{Traits::Point_2} as value
       type.
     \end{enumerate}
@@ -201,7 +201,7 @@
     \ccRefIdfierPage{CGAL::maximum_perimeter_inscribed_k_gon_2}\\
     \ccRefConceptPage{ExtremalPolygonTraits_2}\\
     \ccRefIdfierPage{CGAL::monotone_matrix_search}
-  
+    
     \ccImplementation The implementation uses monotone matrix search
     \cite{akmsw-gamsa-87} and has a worst case running time of $O(k
     \cdot n + n \cdot \log n)$, where $n$ is the number of vertices in
@@ -209,7 +209,7 @@
   \end{ccAdvanced}
 \end{ccRefFunction}
 
-\begin{ccRefClass}{Extremal_polygon_area_traits_2<R>}
+\begin{ccRefClass}{Extremal_polygon_area_traits_2<K>}
   \begin{ccAdvanced}
     \ccCreationVariable{t}\ccTagFullDeclarations
     
@@ -218,7 +218,7 @@
     be inscribed into a given convex polygon $P$ using the function
     \ccc{extremal_polygon_2}.
     
-    \ccRequirements The template parameter \ccc{R} is a model for
+    \ccRequirements The template parameter \ccc{K} is a model for
     \ccc{Kernel}.
     
     \ccIsModel
@@ -226,10 +226,14 @@
 
     \ccTypes 
     
-    \ccNestedType{Point_2}{typedef to \ccc{R::Point_2}.}
-  
-    \ccNestedType{FT}{typedef to \ccc{R::FT}.}
-  
+    \ccNestedType{FT}{typedef to \ccc{K::FT}.}
+    
+    \ccNestedType{Point_2}{typedef to \ccc{K::Point_2}.}
+    
+    \ccNestedType{Less_xy_2}{typedef to \ccc{K::Less_xy_2}.}
+    
+    \ccNestedType{Orientation_2}{typedef to \ccc{K::Orientation_2}.}
+    
     \ccNestedType{Operation}{AdaptableBinaryFunction class \ccc{op}:
       \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{FT}.
       For a fixed \ccc{Point_2} $root$, \ccc{op}$(p,\,q)$ returns
@@ -246,30 +250,29 @@
       const;}{returns \ccc{Operation} where \ccc{p} is the fixed
       $root$ point.}
     
-    \ccMemberFunction{template < class RandomAccessIC, class
+    \ccMemberFunction{template < class RandomAccessIterator, class
       OutputIterator > OutputIterator compute_min_k_gon(
-      RandomAccessIC points_begin, RandomAccessIC points_end, FT&
+      RandomAccessIterator points_begin, RandomAccessIterator points_end, FT&
       max_area, OutputIterator o) const;}{writes the vertices of
       [\ccc{points_begin}, \ccc{points_end}) forming a maximum area
       triangle rooted at \ccc{points_begin[0]} to o and returns the
       past-the-end iterator for that sequence (== \ccc{o + 3}).}
     
-    \ccMemberFunction{template < class RandomAccessIC > bool
-      is_convex( RandomAccessIC points_begin, RandomAccessIC
-      points_end) const;}{returns true, iff the points
-      [\ccc{points_begin}, \ccc{points_end}) form a convex chain.}
+    \ccMemberFunction{Less_xy_2 less_xy_2_object();}{}
+    
+    \ccGlue\ccMemberFunction{Orientation_2 orientation_2_object();}{}
     
     \ccSeeAlso
     \ccRefIdfierPage{CGAL::maximum_area_inscribed_k_gon_2}\\
     \ccRefIdfierPage{CGAL::maximum_perimeter_inscribed_k_gon_2}\\
     \ccRefIdfierPage{CGAL::extremal_polygon_2}\\
-    \ccRefIdfierPage{CGAL::Extremal_polygon_perimeter_traits_2<R>}\\
+    \ccRefIdfierPage{CGAL::Extremal_polygon_perimeter_traits_2<K>}\\
     \ccRefConceptPage{ExtremalPolygonTraits_2}
 
   \end{ccAdvanced}
 \end{ccRefClass}    
 
-\begin{ccRefClass}{Extremal_polygon_perimeter_traits_2<R>}
+\begin{ccRefClass}{Extremal_polygon_perimeter_traits_2<K>}
   \begin{ccAdvanced}
     \ccCreationVariable{t}\ccTagFullDeclarations
     
@@ -278,7 +281,7 @@
     that can be inscribed into a given convex polygon $P$ using the
     function \ccc{extremal_polygon_2}.
     
-    \ccRequirements The template parameter \ccc{R} is a model for
+    \ccRequirements The template parameter \ccc{K} is a model for
     \ccc{Kernel}.
     
     \ccIsModel
@@ -286,10 +289,14 @@
 
     \ccTypes 
     
-    \ccNestedType{Point_2}{typedef to \ccc{R::Point_2}.}
-  
-    \ccNestedType{FT}{typedef to \ccc{R::FT}.}
-  
+    \ccNestedType{FT}{typedef to \ccc{K::FT}.}
+    
+    \ccNestedType{Point_2}{typedef to \ccc{K::Point_2}.}
+    
+    \ccNestedType{Less_xy_2}{typedef to \ccc{K::Less_xy_2}.}
+    
+    \ccNestedType{Orientation_2}{typedef to \ccc{K::Orientation_2}.}
+    
     \ccNestedType{Operation}{AdaptableBinaryFunction class \ccc{op}:
       \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{FT}.
       For a fixed \ccc{Point_2} $root$, \ccc{op}$(p,\,q)$ returns
@@ -308,9 +315,9 @@
       const;}{returns \ccc{Operation} where \ccc{p} is the fixed
       $root$ point.}
     
-    \ccMemberFunction{template < class RandomAccessIC, class
+    \ccMemberFunction{template < class RandomAccessIterator, class
       OutputIterator > OutputIterator compute_min_k_gon(
-      RandomAccessIC points_begin, RandomAccessIC points_end, FT&
+      RandomAccessIterator points_begin, RandomAccessIterator points_end, FT&
       max_area, OutputIterator o) const;}{writes the pair
       (\ccc{points_begin[0]}, \ccc{p}) where \ccc{p} is drawn from
       [\ccc{points_begin}, \ccc{points_end}) such that the Euclidean
@@ -318,16 +325,15 @@
       2-gon rooted at \ccc{points_begin[0]}) to o and returns the
       past-the-end iterator for that sequence (== \ccc{o + 2}).}
     
-    \ccMemberFunction{template < class RandomAccessIC > bool
-      is_convex( RandomAccessIC points_begin, RandomAccessIC
-      points_end) const;}{returns true, iff the points
-      [\ccc{points_begin}, \ccc{points_end}) form a convex chain.}
+    \ccMemberFunction{Less_xy_2 less_xy_2_object();}{}
+    
+    \ccGlue\ccMemberFunction{Orientation_2 orientation_2_object();}{}
     
     \ccSeeAlso
     \ccRefIdfierPage{CGAL::maximum_area_inscribed_k_gon_2}\\
     \ccRefIdfierPage{CGAL::maximum_perimeter_inscribed_k_gon_2}\\
     \ccRefIdfierPage{CGAL::extremal_polygon_2}\\
-    \ccRefIdfierPage{CGAL::Extremal_polygon_area_traits_2<R>}\\
+    \ccRefIdfierPage{CGAL::Extremal_polygon_area_traits_2<K>}\\
     \ccRefConceptPage{ExtremalPolygonTraits_2}
 
   \end{ccAdvanced}
@@ -340,14 +346,19 @@
     \ccDefinition The concept \ccRefName\ provides the types and
     operations needed to compute a maximal $k$-gon that can be
     inscribed into a given convex polygon.
-  
+    
     \ccTypes 
     
-    \ccNestedType{Point_2}{class used for representing the input
-      points.}
+    \ccNestedType{FT}{model for \ccRefConceptPage{FieldNumberType}.}
     
-    \ccNestedType{FT}{class used for doing computations on point
-      coordinates; it has to be a model for \ccc{FieldNumberType}.}
+    \ccNestedType{Point_2}{model for
+      \ccRefConceptPage{Kernel::Point_2}.}
+    
+    \ccNestedType{Less_xy_2}{model for
+      \ccRefConceptPage{Kernel::Less_xy_2}.}
+    
+    \ccNestedType{Orientation_2}{model for
+      \ccRefConceptPage{Kernel::Orientation_2}.}
     
     \ccNestedType{Operation}{AdaptableBinaryFunction class \ccc{op}:
       \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{FT}.
@@ -375,30 +386,30 @@
       const;}{return \ccc{Operation} where \ccc{p} is the fixed $root$
       point.}
     
-    \ccMemberFunction{template < class RandomAccessIC, class
+    \ccMemberFunction{template < class RandomAccessIterator, class
       OutputIterator > OutputIterator compute_min_k_gon(
-      RandomAccessIC points_begin, RandomAccessIC points_end, FT&
-      max_area, OutputIterator o) const;}{writes the points of
-      [\ccc{points_begin}, \ccc{points_end}) forming a
+      RandomAccessIterator points_begin, RandomAccessIterator
+      points_end, FT& max_area, OutputIterator o) const;}{writes the
+      points of [\ccc{points_begin}, \ccc{points_end}) forming a
       \ccc{min_k()}-gon rooted at \ccc{points_begin[0]} of maximal
       value to o and returns the past-the-end iterator for that
       sequence (== \ccc{o + min_k()}).}
     
-    \ccMemberFunction{template < class RandomAccessIC > bool
-      is_convex( RandomAccessIC points_begin, RandomAccessIC
-      points_end) const;}{returns true, iff the points
-      [\ccc{points_begin}, \ccc{points_end}) form a convex chain.}
+    \ccMemberFunction{Less_xy_2 less_xy_2_object();}{}
+    
+    \ccGlue\ccMemberFunction{Orientation_2 orientation_2_object();}{}
     
     \ccHeading{Notes}
     \begin{itemize}
-    \item \ccClassName\ccc{::is_convex} is only used for precondition
-      checking. Therefore it needs not to be specified, in case that
-      precondition checking is disabled.
+    \item \ccClassName\ccc{::Less_xy_2} and
+      \ccClassName\ccc{::Orientation_2} are used for (expensive)
+      precondition checking only. Therefore, they need not to be
+      specified, in case that precondition checking is disabled.
     \end{itemize}
     
     \ccHasModels
-    \ccRefIdfierPage{CGAL::Extremal_polygon_area_traits_2<R>}\\
-    \ccRefIdfierPage{CGAL::Extremal_polygon_perimeter_traits_2<R>}
+    \ccRefIdfierPage{CGAL::Extremal_polygon_area_traits_2<K>}\\
+    \ccRefIdfierPage{CGAL::Extremal_polygon_perimeter_traits_2<K>}
 
     \ccSeeAlso
     \ccRefIdfierPage{CGAL::maximum_area_inscribed_k_gon_2}\\
