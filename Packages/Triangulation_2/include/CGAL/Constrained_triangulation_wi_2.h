@@ -396,6 +396,8 @@ insert(const Vertex_handle & va,
        List_vertices & new_vertices)
   // Inserts line segment ab as a constraint (i.e. an edge) in
   // triangulation t
+  // The constraint will be subdivided in smaller parts
+  // if it intersects other constrained edges
   // Precondition : the algorithm assumes that a and b are vertices of t
   // walks in t along ab, removes the triangles intersected by ab and
   // creates new ones
@@ -541,8 +543,8 @@ find_conflicts(Vertex_handle va, Vertex_handle  vb,
   // If segment ab contains a vertex c, 
   // c becomes the new vertex vbb and 
   // only triangles intersected by ac are reported.
-  // // If segment ab intersect a constrained edge,
-  // // this constraint is splitted and the new vertex becomes vbb.
+  // If segment ab intersect a constrained edge,
+  // this constraint is splitted and the new vertex becomes vbb.
   // The new edges created by the split which are not constrained 
   // and some of the constrained ones are inserted in new_edges.
   // The new vertex is inserted in new_vertices.
@@ -556,30 +558,30 @@ find_conflicts(Vertex_handle va, Vertex_handle  vb,
   Point a=va->point(), b=vb->point();
   Line_face_circulator current_face=line_walk(vaa->point(),b, vaa->face());
   int ind=current_face->index(vaa);
-  //Vertex_handle vh; 
-  // Face_handle fh;
-  //int ih;
+  Vertex_handle vh; 
+  Face_handle fh;
+  int ih;
     
-// if(current_face->is_constrained(ind)) {
-//     // to deal with the case where the first crossed edge
-//     // is constrained
-//     vh = current_face->mirror_vertex(ind);
-//     Point pi  ;
-//     Object result;
-//     result = intersection(segment(current_face,ind),
-// 			  Segment(a,b));
-//     assert(assign(pi, result));
-//     Vertex_handle vi = special_insert_in_edge(pi,current_face,ind);
+  if(current_face->is_constrained(ind)) {
+    // to deal with the case where the first crossed edge
+    // is constrained
+    vh = current_face->mirror_vertex(ind);
+    Point pi  ;
+    Object result;
+    result = intersection(segment(current_face,ind),
+			  Segment(a,b));
+    assert(assign(pi, result));
+    Vertex_handle vi = special_insert_in_edge(pi,current_face,ind);
 
-//     // to set the edge vaa vi as constrained
-//     assert(is_edge(vi,vaa,fh,ih));
-//     fh->set_constraint(ih,true);
-//     (fh->neighbor(ih))->set_constraint(fh->mirror_index(ih),true);
-//     new_vertices.push_back(vi);
-//     update_new_edges(a,b,vi,vh,new_edges);
-//     return vi;
-//   }
-  assert( !current_face->is_constrained(ind));
+    // to set the edge vaa vi as constrained
+    assert(is_edge(vi,vaa,fh,ih));
+    fh->set_constraint(ih,true);
+    (fh->neighbor(ih))->set_constraint(fh->mirror_index(ih),true);
+    new_vertices.push_back(vi);
+    update_new_edges(a,b,vi,vh,new_edges);
+    return vi;
+  }
+
   Vertex_handle vbb=vb;
   Face_handle lf= current_face->neighbor(ccw(ind)); 
   Face_handle rf= current_face->neighbor(cw(ind));
@@ -614,37 +616,36 @@ find_conflicts(Vertex_handle va, Vertex_handle  vb,
 	i1 = cw(ind) ; //index of second intersected edge of current_face
 	i2 = ccw(ind); //index of non intersected edge of current_face
       }
-//       if(current_face->is_constrained(i1)) {
-// 	vh = current_face->mirror_vertex(i1);
-// 	Point pi  ;
-// 	Object result;
-//         result = intersection(segment(current_face,i1),
-// 			      Segment(a,b));
-// 	assert(assign(pi, result));
-// 	Vertex_handle vi=special_insert_in_edge(pi,current_face,i1);
-// 	new_vertices.push_back(vi);
-// 	update_new_edges(a,b,vi,vh,new_edges);
-// 	update_new_edges(a,b,vi,current_vertex,new_edges);
+      if(current_face->is_constrained(i1)) {
+	vh = current_face->mirror_vertex(i1);
+	Point pi  ;
+	Object result;
+        result = intersection(segment(current_face,i1),
+			      Segment(a,b));
+	assert(assign(pi, result));
+	Vertex_handle vi=special_insert_in_edge(pi,current_face,i1);
+	new_vertices.push_back(vi);
+	update_new_edges(a,b,vi,vh,new_edges);
+	update_new_edges(a,b,vi,current_vertex,new_edges);
 
-// 	current_face=line_walk(vi->point(),a,vi->face());
-//  	// a essayer
-//  	// current_face=Line_face_circulator(vi,this,a);
-// 	current_vertex = vi;
-// 	ind = current_face->index(current_vertex);
-// 	vbb = vi; // new endpoint of the constraint
-//       }
-//       else {
-      assert( !current_face->is_constrained(i1));
-      lf= current_face->neighbor(i2);	
-      if (orient == LEFTTURN) 
-	list_ab.push_back(Edge(lf, lf->index(current_face)));
-      else // orient == RIGHTTURN
-	list_ba.push_front(Edge(lf, lf->index(current_face)));
-      previous_face=current_face;
-      ++current_face;
-      ind=current_face->index(previous_face); 
-      current_vertex=current_face->vertex(ind);
-//      }
+	current_face=line_walk(vi->point(),a,vi->face());
+ 	// a essayer
+ 	// current_face=Line_face_circulator(vi,this,a);
+	current_vertex = vi;
+	ind = current_face->index(current_vertex);
+	vbb = vi; // new endpoint of the constraint
+      }
+      else {
+	lf= current_face->neighbor(i2);	
+	if (orient == LEFTTURN) 
+	  list_ab.push_back(Edge(lf, lf->index(current_face)));
+	else // orient == RIGHTTURN
+	  list_ba.push_front(Edge(lf, lf->index(current_face)));
+	previous_face=current_face;
+	++current_face;
+	ind=current_face->index(previous_face); 
+	current_vertex=current_face->vertex(ind);
+      }
       break;
     }
   }
