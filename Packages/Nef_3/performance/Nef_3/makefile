@@ -14,9 +14,8 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-	   $(ADDITIONAL_CXXFLAGS) \
-           -DCGAL_NEF3_USE_LEDA_INTEGER \
-           -DCGAL_NEF3_USE_HOMOGENEOUS \
+	   $(OPTIMIZATION_FLAGS) \
+           $(KERNEL_FLAGS) \
            -DCGAL_NEF3_DUMP_STATISTICS \
            -DCGAL_NEF3_TIMER_INITIALIZE_KDTREE \
            -DCGAL_NEF3_TIMER_PLUECKER \
@@ -61,7 +60,8 @@ all:            \
                 abdruck$(EXE_EXT) \
                 complex_sphere_map$(EXE_EXT) \
                 complex_facet$(EXE_EXT) \
-                point_location$(EXE_EXT)
+                point_location$(EXE_EXT) \
+		create_complex_sphere_map_data$(EXE_EXT)
 
 union_of_rotated_cylinders$(EXE_EXT): union_of_rotated_cylinders$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)union_of_rotated_cylinders union_of_rotated_cylinders$(OBJ_EXT) $(LDFLAGS)
@@ -91,6 +91,8 @@ complex_facet$(EXE_EXT): complex_facet$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)complex_facet complex_facet$(OBJ_EXT) $(LDFLAGS)
 point_location$(EXE_EXT): point_location$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)point_location point_location$(OBJ_EXT) $(LDFLAGS)
+create_complex_sphere_map_data$(EXE_EXT): create_complex_sphere_map_data$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)create_complex_sphere_map_data create_complex_sphere_map_data$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
                    union_of_rotated_cylinders.clean \
@@ -106,7 +108,8 @@ clean: \
 	           abdruck.clean \
 	           complex_sphere_map.clean \
 	           complex_facet.clean \
-	           point_location.clean
+	           point_location.clean \
+	           create_complex_sphere_map_data.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
