@@ -87,15 +87,17 @@ private:
 };
 
 
-/* We derive the face class, 
-   - because we want an additional pointer,
-   - because we want to manage the order of the list of the faces
-     in the triangulation datastructure,
-   - because we want to look at each 'edge' only once. If two 
-     triangles are neighbors, then the triangle with the smaller 
-     address has the edge.
+/* We derive the face class, because we need additional pointers to 
+   a successor and precessor. This is already realized in the TDS, 
+   but there we cannot change the order of the list. 
+ 
+   We want to change the order to avoid looking at faces too often.
+   When we make an operation (flip of an edge / removal of a vertex)
+   we mark the adjacent four / three edges and move them right
+   after the current face of the traversal. As they are marked
+   they must be considered later, and no faces with unmarked edges
+   are traversed to reach them.
 */
-
 
 template < class Gt,class I >
 class Delaunay_remove_tds_face_3_2 :public Triangulation_face_base_2<Gt> {
@@ -120,103 +122,142 @@ public:
   }
 
   //Handling the doubly connected list of faces
-  void* 
-  p() const {return _p;}
+  // These functions should not be public, but private
+  // and the tds should be declared friend. 
 
-  void* 
+  // Returns the sucessor
+  Delaunay_remove_tds_face_3_2* 
   n() const {return _n;}
 
+
+  // Returns the predecessor
+  Delaunay_remove_tds_face_3_2* 
+  p() const {return _p;}
+
   void  
-  set_p(void* f) {_p = f;};
+  set_p(Delaunay_remove_tds_face_3_2* f) {_p = f;};
 
   void
-  set_n(void* f) {_n = f;};
+  set_n(Delaunay_remove_tds_face_3_2* f) {_n = f;};
 
+ private:
   // Remove this face from the list
   void 
-  unlink() {
+  remove_from_list() {
+    // Q: Can't we be sure that there is always a predecessor
+    // and successor?? This might pose a problem when we
+    // remove the final tetrahedron, that is we have to 
+    // check whether that one still performs the
+    // Surface::remove_vertex_3() method
+ 
     if(_p) {
-      ((Delaunay_remove_tds_face_3_2*)_p)->set_n(_n);
+      _p->set_n(_n);
     }
     if(_n) {
-      ((Delaunay_remove_tds_face_3_2*)_n)->set_p(_p);
+      _n->set_p(_p);
     }
   }
-
-  // Remove neighbor i from the list
+ public:
+  // Remove neighbor cw(i) and ccw(i) from the list
   void 
-  unlink(int i) {
+  remove_neighbors_from_list(int i) {
     Delaunay_remove_tds_face_3_2 * n = 
       (Delaunay_remove_tds_face_3_2*)neighbor(cw(i));
-    n->unlink();
+    n->remove_from_list();
     n = (Delaunay_remove_tds_face_3_2*)neighbor(ccw(i));
-    n->unlink();
+    n->remove_from_list();
   }
 
-  // Move a given face after this
-private:
-  void 
-  move_after_this(Delaunay_remove_tds_face_3_2* f) {
-    if(_n == f) {
-      return;
-    }
-    Delaunay_remove_tds_face_3_2 *p = (Delaunay_remove_tds_face_3_2*)f->p();
-    Delaunay_remove_tds_face_3_2 *n = (Delaunay_remove_tds_face_3_2*)f->n();
-    p->set_n(n);
-    n->set_p(p);
-    
-    n = (Delaunay_remove_tds_face_3_2*)_n;
-    _n = f;
-    f->set_n(n);
-    n->set_p(f);
-    f->set_p(this);
-  }
 
 public:
-  // Note that when we set an edge, the face gets moved
-  // so that it gets considered later.
+  // Marks edge i, that is marks one of the two half-edges,
+  // namely the one in the face with the smaller address,
+  // of the faces this and neighbor(i)
+  //
+  // Additionally, this face is then moved right behind face h,
+  // because it is a candidate for an ear.
   void
-  set_edge(int i, Delaunay_remove_tds_face_3_2* f) {
+  mark_edge(int i, Delaunay_remove_tds_face_3_2* h) {
     Delaunay_remove_tds_face_3_2 *n = 
       (Delaunay_remove_tds_face_3_2*)neighbor(i);
     if(n < this) {
-      n->set_edge(n->face_index(this), true);
-      set_edge(i, false);
-      f->move_after_this(n);
+      n->mark_halfedge(n->face_index(this));
+      unmark_halfedge(i);
+      h->move_after_this(n);
     } else {
-      n->set_edge(n->face_index(this), false);
-      set_edge(i, true);
+      n->unmark_halfedge(n->face_index(this));
+      mark_halfedge(i);
+      if(h != this) {
+	h->move_after_this(this);
+      }
     }      
   }
 
-  void 
-  set_edge(int i) {
-    set_edge(i, this);
+  // unmarks the two halfedges
+  void
+  unmark_edge(int i) {
+    Delaunay_remove_tds_face_3_2 *n = 
+      (Delaunay_remove_tds_face_3_2*)neighbor(i);
+
+    unmark_halfedge(i);
+    int fi = n->face_index(this);
+    n->unmark_halfedge(fi);
   }
 
+  // marks all edges adjacent to the face
   void 
-  set_edge() {
+  mark_adjacent_edges() {
     for(int i = 0; i < 3; i++) {
-      set_edge(i, this);
+      mark_edge(i, this);
     }
   }
+
+  bool 
+  is_halfedge_marked(int i) const {
+    return _edge[i];
+  }
+    
 
   void 
   set_edge(int i, bool b) {
     _edge[i] = b;
   }
 
-
-  bool 
-  edge(int i) const {
-    return _edge[i];
-  }
-    
 private:
+
+  // Move face f after this.
+  void 
+  move_after_this(Delaunay_remove_tds_face_3_2* f) {
+    if(_n == f) {
+      return;
+    }
+    Delaunay_remove_tds_face_3_2 *p = f->p();
+    Delaunay_remove_tds_face_3_2 *n = f->n();
+    p->set_n(n);
+    n->set_p(p);
+    
+    n = _n;
+    _n = f;
+    f->set_n(n);
+    n->set_p(f);
+    f->set_p(this);
+  }
+
+  void
+  unmark_halfedge(int i) {
+    _edge[i] = false;
+  }
+
+  void
+  mark_halfedge(int i) {
+    _edge[i] = true;
+  }
+
+
   I inf;
  
-  void* _p;
-  void* _n;
+  Delaunay_remove_tds_face_3_2* _p;
+  Delaunay_remove_tds_face_3_2* _n;
 
   bool _edge[3];
 
@@ -368,22 +409,34 @@ public:
     // with advanced functions
     set_dimension(2);
 
-    Face_3_2 * dummy = new Face_3_2();;
+    Face_3_2 dummy;
 
-    Face_3_2 *f = dummy;
+    Face_3_2 *f = &dummy;
 
     for( Face_iterator fit = faces_begin(); fit != faces_end(); ++fit) {
       f->set_n(&(*fit));
       fit->set_p(f);
       f = &(*fit);
       for(int i = 0; i < 3; i++) {
+	// we mark an edge only on one side
 	f->set_edge(i, (f < (f->neighbor(i))));
       }
     }
     // f points to the last face
-    f->set_n(dummy->n());
-    ((Face_3_2*)dummy->n())->set_p(f);
-    delete(dummy);
+    f->set_n(dummy.n());
+    ((Face_3_2*)dummy.n())->set_p(f);
+  }
+
+
+  void
+  remove_degree_3(Vertex_3_2* v, Face_3_2* f) 
+  {
+    int i = f->index(v);
+    // As f->neighbor(cw(i)) and f->neighbor(ccw(i)) will be removed,
+    // we first remove it from the list we maintain.
+    f->remove_neighbors_from_list(i);
+    // we are ready to call the method of the base class
+    TDSUL2::remove_degree_3(v,f);
   }
 };
 

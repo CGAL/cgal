@@ -1455,6 +1455,7 @@ remove_3D_ear(Vertex_handle v)
 		   hole);
 
 
+  std::cout << "fill" << std::endl;
   bool filled = fill_hole_3D_ear(boundary);
   if(filled){
     delete( &(*v) );
@@ -1549,7 +1550,7 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
   // This is a loop over the halfedges of the surface of the hole
   // As edges are not explicitely there, we loop over the faces instead,
   // and an index. 
-  // The current face is f, The current index is k = 0,1,2
+  // The current face is f, The current index is k = -1, 0, 1, 2
   for(;;){
     k++;
     if(k == 3) {
@@ -1567,8 +1568,8 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 
     // The edges are marked, if they are a candidate for an ear.
     // This saves time, for example an edge gets not considered
-    // from both sides.
-    if(f->edge(k)) {
+    // from both adjacent faces.
+    if(f->is_halfedge_marked(k)) {
       Vertex_3_2 *w0, *w1, *w2, *w3;
       Vertex *v0, *v1, *v2, *v3;
       int i = ccw(k);
@@ -1585,7 +1586,7 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
       if( is_infinite(Vertex_handle(v1)) || is_infinite(Vertex_handle(v2)) ){
 	// there will be another ear, so let's ignore this one,
 	// because it is complicated to treat
-	goto next_ear;
+	goto next_edge;
       }       
       w0 = f->vertex(k);
       w3 = n->vertex(fi);
@@ -1602,7 +1603,7 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
       const Point & p3 = v3->point();
 
       if( inf_0 || inf_3 || (orientation(p0, p1, p2, p3) == POSITIVE) ) {
-	// the two faces form a concavity, in which we might plug a tetrahedron
+	// the two faces form a concavity, in which we might plug a cell
 
 	std::set<Vertex_3_2*> cospheric_vertices;
 	bool on_unbounded_side = false;
@@ -1625,7 +1626,7 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 	      bs = Bounded_side( side_of_oriented_sphere(p0, p1, p2, p3, p) );
 	    }
 
-	    if(bs == ON_BOUNDED_SIDE) { goto next_ear; }
+	    if(bs == ON_BOUNDED_SIDE) { goto next_edge; }
 
 	    if((bs == ON_BOUNDARY)) {
 	      cospheric_vertices.insert(&(*vit));
@@ -1656,7 +1657,7 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 		if((&(*vc) != w0) && (&(*vc) != w3)) { // infinite loop
 		const Point & pc = vc->info()->point();
 
-		if(orientation(p0,p2,p3,pc) == COPLANAR) { goto next_ear; }
+		if(orientation(p0,p2,p3,pc) == COPLANAR) { goto next_edge; }
 		}
 	    } while( ++vc != done );
 
@@ -1668,7 +1669,7 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 	      //if( ! (cospheric_vertices.find(&(*vc)) == not_found) ) {
 	      if((&(*vc) != w0) && (&(*vc) != w3)) {
 		const Point & pc = vc->info()->point();
-		if(orientation(p0,p1,p3,pc) == COPLANAR) { goto next_ear; }
+		if(orientation(p0,p1,p3,pc) == COPLANAR) {goto next_edge; }
 	      }
 	    } while( ++vc != done );
 	    
@@ -1684,13 +1685,15 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 		  const Point & pc = vc->info()->point();
 		  if((orientation(p0,p3,pc, pit) == COPLANAR) 
 		     && (coplanar_orientation(p0,p3,pc, pit) == NEGATIVE)) {
-		    goto next_ear;
+		    goto next_edge;
 		  }
 		}
 	      } while( ++vc != done);
 	    }
 	  }
 	} // test more
+
+	// end of cospheric tests
 
 	Face_3_2 *m_i = f->neighbor(i);
 	Face_3_2 *m_j = f->neighbor(j); 
@@ -1701,11 +1704,11 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 	       && surface.is_edge(f->vertex(k), n->vertex(fi)))) {
 	  // We are in the flip case:
 	  // The edge that would get introduced is on the surface
-	  goto next_ear;
+	  goto next_edge;
 	}
 	
 	// none of the vertices violates the Delaunay property
-	// We are ready to plug the tetrahedron
+	// We are ready to plug a new cell
 
 	Cell_handle ch = create_cell(Vertex_handle(v0), 
 				     Vertex_handle(v1), 
@@ -1714,7 +1717,7 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 				     NULL, NULL, NULL, NULL);
 	cells.push_back(ch);
 
-	// The new tetrahedron touches the faces that form the ear
+	// The new cell touches the faces that form the ear
 	Facet fac = n->info();
 	ch->set_neighbor(0, fac.first);
 	fac.first->set_neighbor(fac.second, ch);
@@ -1723,7 +1726,7 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 	fac.first->set_neighbor(fac.second, ch);
 
 	// It may touch another face, 
-	// or even two other faces if it is the last tetrahedron
+	// or even two other faces if it is the last cell
 	if(neighbor_i) {
 	  fac = m_i->info();
 	  ch->set_neighbor(1, fac.first);
@@ -1737,43 +1740,34 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 	
 	if((! neighbor_i) && (! neighbor_j)) {
 	  surface.flip(f,k);
+	  int fi = n->index(f);
 	  int ni = f->index(n);
 	  // The flipped edge is not a concavity
-	  f->set_edge(ni, false);
+	  f->unmark_edge(ni);
 	  // The adjacent edges may be a concavity
 	  // that is they are candidates for an ear
 	  // In the list of faces they get moved behind f
-	  f->set_edge(cw(ni));
-	  f->set_edge(ccw(ni));
-	  
-	  int fi = n->index(f);
-	  // The flipped edge is not a concavity
-	  n->set_edge(fi, false);
-	  // The adjacent edges may be a concavity
-	  // that is they are candidates for an ear
-	  // In the list of faces they get moved behind f
-	  n->set_edge(cw(fi), f);
-	  n->set_edge(ccw(fi), f);
+	  f->mark_edge(cw(ni), f);
+	  f->mark_edge(ccw(ni), f);
+	  n->mark_edge(cw(fi), f);
+	  n->mark_edge(ccw(fi), f);
+
 	  f->set_info(std::make_pair(ch,2));
 	  n->set_info(std::make_pair(ch,1));
 	} else if (neighbor_i && (! neighbor_j)) {
-	  // Before removing a face we remove it from the
-	  // list of candidates. This would better be
-	  // part of the remove_degree_3() function,
-	  // but the Triangulation datastructure does not
-	  // know about this. Alternatively we could derive from
-	  // the TDS and overwrite this function.
-	  f->unlink(j);
 	  surface.remove_degree_3(f->vertex(j), f);
-	  f->set_edge();
+	  // all three edges adjacent to f are 
+	  // candidate for an ear
+	  f->mark_adjacent_edges();
 	  f->set_info(std::make_pair(ch,2));
 	} else if ((! neighbor_i) && neighbor_j)  {
-	  f->unlink(i);
 	  surface.remove_degree_3(f->vertex(i), f);
-	  f->set_edge();
+	  f->mark_adjacent_edges();
 	  f->set_info(std::make_pair(ch,1));
 	} else {
 	  if(surface.number_of_vertices() != 4) {
+	    // this should not happen at all  => panic mode, 
+	    //clean up, and say that it didn't work
 	    delete_cells(cells);
 	    return false;
 	  } else {
@@ -1782,10 +1776,13 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 	    return true;
 	  }
 	}
-	last_op = f; k = -1;
+	// we successfully inserted a cell
+	last_op = f; 
+	// we have to reconsider all edges incident to f
+	k = -1;
       } // else if (inf_0 ...
     }// if(f->edge(k))
-  next_ear: ;
+  next_edge: ;
   } // for(;;)
 }
 
