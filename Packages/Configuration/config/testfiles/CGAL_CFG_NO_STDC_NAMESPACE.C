@@ -107,6 +107,7 @@ using std::isspace;
 using std::isupper;
 using std::isxdigit;
 
+#if 0
 #include <cwctype>
 using std::wctrans_t;
 using std::wctype_t;
@@ -128,6 +129,7 @@ using std::towlower;
 using std::towupper;
 using std::wctrans;
 using std::wctype;
+#endif
 
 #include <cstring>
 using std::size_t;
@@ -143,7 +145,7 @@ using std::strcoll;
 using std::strcpy;
 using std::strcspn;
 using std::strerror;
-using std::strlen;
+// using std::strlen;
 using std::strncat;
 using std::strncmp;
 using std::strncpy;
@@ -350,6 +352,7 @@ using std::size_t;
 
 int main()
 {
+  std::strlen("a");
   return 0;
 }
 
