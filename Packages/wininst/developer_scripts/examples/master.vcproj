@@ -70,7 +70,8 @@
 				PreprocessorDefinitions="WIN32;NDEBUG"
 				MinimalRebuild="FALSE"
 				RuntimeTypeInfo="TRUE"
-				WarningLevel="2"/>
+				WarningLevel="2"
+				CompileAsManaged="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
