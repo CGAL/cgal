@@ -11,7 +11,7 @@
 // release       : 
 // release_date  : 
 //
-// file          : include/CGAL/Triangulation_ds_iterators_2.h
+// file          : include/CGAL/Triangulation_dsul_iterators_2.h
 // package       : Triangulation 
 // source        : $RCSfile$
 // revision      : $Revision$
@@ -288,7 +288,8 @@ Triangulation_dsul_iterator_base_2<Tds>&
 Triangulation_dsul_iterator_base_2<Tds> ::
 operator--()
 {
-  CGAL_triangulation_precondition( pos != NULL && pos != _tds->dummy().next()); 
+  CGAL_triangulation_precondition( pos != NULL && 
+				   pos != _tds->dummy().next()); 
   decrement();
   return *this;
 }
@@ -406,7 +407,8 @@ Triangulation_dsul_vertex_iterator_2<Tds> ::
 increment()
 {
   if (_tds->dimension()== -1) {// there is only one vertex
-    CGAL_triangulation_assertion(pos == _tds->past_end()->next() && index==0);
+    CGAL_triangulation_assertion(pos == _tds->past_end()->next() && 
+				 index==0);
     pos = _tds->past_end();
     return;
   }
