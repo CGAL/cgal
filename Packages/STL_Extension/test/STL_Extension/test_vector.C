@@ -171,20 +171,19 @@ int main() {
     vector V7(7, X(7));
     vector V8(7, X(8));
     V7.swap(V8);
-    for(unsigned int i = 0; i< V7.size(); i++) {
+    for( unsigned int i = 0; i< V7.size(); i++) {
         assert( V7[i] == X(8));
     }
     for( unsigned int i = 0; i< V8.size(); i++) {
         assert( V8[i] == X(7));
     }
+    assert( V7.size() == 7);
     it = V7.begin();
     it++;
     V7.insert( it, V8.begin(), V8.end());
-
-    // If we do not resize we get a core dump with bcc and g++
-    // Is that correct??? No.
-    V7.resize( 100);
+    assert( V7.size() == 14);
     V7.insert( V7.begin(), vector::size_type(2), X(9));
+    assert( V7.size() == 16);
     std::cout << V7[0] << " " << V7[1] << " " << V7[2] << " " << V7[3]
               << std::endl;
     assert( V7[0] == X(9));

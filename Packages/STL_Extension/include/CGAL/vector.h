@@ -28,32 +28,6 @@
 // with templates.
 // ============================================================================
 
-/*
- *
- * Copyright (c) 1994
- * Hewlett-Packard Company
- *
- * Permission to use, copy, modify, distribute and sell this software
- * and its documentation for any purpose is hereby granted without fee,
- * provided that the above copyright notice appear in all copies and
- * that both that copyright notice and this permission notice appear
- * in supporting documentation.  Hewlett-Packard Company makes no
- * representations about the suitability of this software for any
- * purpose.  It is provided "as is" without express or implied warranty.
- *
- *
- * Copyright (c) 1996
- * Silicon Graphics Computer Systems, Inc.
- *
- * Permission to use, copy, modify, distribute and sell this software
- * and its documentation for any purpose is hereby granted without fee,
- * provided that the above copyright notice appear in all copies and
- * that both that copyright notice and this permission notice appear
- * in supporting documentation.  Silicon Graphics makes no
- * representations about the suitability of this software for any
- * purpose.  It is provided "as is" without express or implied warranty.
- */
-
 #ifndef CGAL_VECTOR_H
 #define CGAL_VECTOR_H 1
 
@@ -63,13 +37,6 @@
 #include <algorithm>
 #include <memory>
 
-#ifdef CGAL_USE_EXCEPTIONS
-#define CGAL_TRY try
-#define CGAL_UNWIND(action) catch(...) { action; throw; }
-#else // CGAL_USE_EXCEPTIONS
-#define CGAL_TRY
-#define CGAL_UNWIND(action)
-#endif // CGAL_USE_EXCEPTIONS
 
 CGAL_BEGIN_NAMESPACE
 
@@ -439,11 +406,14 @@ protected:
 
     iterator allocate_and_fill( size_type n, const T& x) {
         iterator result = iterator( alloc.allocate(n));
-        CGAL_TRY {
+        try {
             std::uninitialized_fill_n( result, n, x);
             return result;
         }
-        CGAL_UNWIND( alloc.deallocate( &*result, n));
+        catch(...) { 
+            alloc.deallocate( &*result, n);
+            throw;
+        }
     }
 
     template <class ForwardIterator>
@@ -451,11 +421,14 @@ protected:
                                 ForwardIterator first,
                                 ForwardIterator last) {
         iterator result = iterator( alloc.allocate(n));
-        CGAL_TRY {
+        try {
             std::uninitialized_copy( first, last, result);
             return result;
         }
-        CGAL_UNWIND( alloc.deallocate( &*result, n));
+        catch(...) { 
+            alloc.deallocate( &*result, n);
+            throw;
+        }
     }
 
     template <class InputIterator>
@@ -566,19 +539,17 @@ void vector<T, Alloc>::insert_aux( iterator position, const T& x) {
         const size_type len = old_size != 0 ? 2 * old_size : 1;
         iterator new_start = iterator( alloc.allocate(len));
         iterator new_finish = new_start;
-        CGAL_TRY {
+        try {
             new_finish = std::uninitialized_copy( start, position, new_start);
             construct( new_finish, x);
             ++new_finish;
             new_finish = std::uninitialized_copy(position, finish, new_finish);
         }
-#       ifdef CGAL_USE_EXCEPTIONS 
         catch(...) {
             destroy( new_start, new_finish); 
             alloc.deallocate( &*new_start, len);
             throw;
         }
-#       endif /*CGAL_USE_EXCEPTIONS */
         destroy( begin(), end());
         deallocate();
         start = new_start;
@@ -612,20 +583,18 @@ void vector<T, Alloc>::insert( iterator position, size_type n, const T& x) {
             const size_type len = old_size + std::max(old_size, n);
             iterator new_start = iterator( alloc.allocate(len));
             iterator new_finish = new_start;
-            CGAL_TRY {
+            try {
                 new_finish = std::uninitialized_copy( start, position,
                                                       new_start);
-                /*new_finish =*/ std::uninitialized_fill_n( new_finish, n, x);
+                new_finish = std::uninitialized_fill_n( new_finish, n, x);
                 new_finish = std::uninitialized_copy( position, finish,
                                                       new_finish);
             }
-#           ifdef CGAL_USE_EXCEPTIONS 
             catch(...) {
                 destroy( new_start, new_finish);
                 alloc.deallocate( &*new_start, len);
                 throw;
             }
-#           endif /*CGAL_USE_EXCEPTIONS */
             destroy( start, finish);
             deallocate();
             start = new_start;
