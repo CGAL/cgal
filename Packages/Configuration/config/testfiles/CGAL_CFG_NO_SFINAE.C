@@ -49,35 +49,28 @@ public:
 };
 
 // Traits class determining if a type is a 2D vector.
-template < typename T >
-struct IsVector_2 {
-  enum { value = false };  // By default, a type is not a 2D vector.
-};
-
-template <>
-struct IsVector_2 <My_vector> {
-  enum { value = true };   // But My_vector is a 2D vector.
-};
+template < typename > struct IsVector_2            { enum { value = false }; };
+template <>           struct IsVector_2<My_vector> { enum { value = true  }; };
 
 // Traits class determining if a type is a 2D point.
-template < typename T >
-struct IsPoint_2 {
-  enum { value = false };  // By default, a type is not a 2D point.
-};
+template < typename > struct IsPoint_2             { enum { value = false }; };
+template <>           struct IsPoint_2 <My_point>  { enum { value = true  }; };
 
-template <>
-struct IsPoint_2 <My_point> {
-  enum { value = true };   // But My_point is a 2D point.
-};
 
 // Enable_if : tool for SFINAE
 template < typename T, typename, bool = T::value >
 struct Enable_if;
 
 template < typename T, typename R >
-struct Enable_if <T, R, true> {
-  typedef R type;
-};
+struct Enable_if <T, R, true> { typedef R type; };
+
+// Workaround for making the following signature slightly different
+// on the arguments (otherwise g++ 3.2 barfs on it).
+template < typename T >
+struct Same { typedef T type; };
+#define SAME(T) typename Same<T>::type
+// #define SAME(T) T
+
 
 template < typename Vector_2 >
 typename Enable_if< IsVector_2<Vector_2>, Vector_2 >::type
@@ -85,9 +78,16 @@ operator-(Vector_2 const &v, Vector_2 const &w) {
   return Vector_2(v.x() - w.x(), v.y() - w.y());
 }
 
+template < typename Vector_2 >
+typename Enable_if< IsVector_2<Vector_2>, Vector_2 >::type
+operator+(Vector_2 const &v, Vector_2 const &w) {
+  return Vector_2(v.x() + w.x(), v.y() + w.y());
+}
+
+
 template < typename Point_2 >
-typename Enable_if< IsPoint_2<Point_2>, typename Point_2::Vector_2 >::type
-operator-(Point_2 const &p, Point_2 const &q) {
+typename Enable_if< IsPoint_2<Point_2>, Point_2 >::type::Vector_2
+operator-(Point_2 const &p, SAME(Point_2) const &q) {
   typedef typename Point_2::Vector_2 Vector_2;
   return Vector_2(p.x() - q.x(), p.y() - q.y());
 }
@@ -95,13 +95,13 @@ operator-(Point_2 const &p, Point_2 const &q) {
 int main() {
   My_vector v(1,2), w(3,4);
   My_vector z = v - w;   // OK
-  (void) z;
+  My_vector y = v + w;   // OK
 
   My_point p(1,2), q(3,4);
+  My_vector r = p - q;   // OK
   // My_point s = p + q; // error :
                          // no match for `My_point& + My_point&' operator
-  My_vector r = p - q;   // OK
-  (void) r;
 
+  (void) z; (void) y; (void) r;
   return 0;
 }
