@@ -22,7 +22,6 @@
 #ifndef CGAL_CARTESIAN_CIRCLE_CONSTRUCTIONS_2_H
 #define CGAL_CARTESIAN_CIRCLE_CONSTRUCTIONS_2_H
 
-#include <utility>
 #include <CGAL/Cartesian/redefine_names_2.h>
 #include <CGAL/Cartesian/Point_2.h>
 
