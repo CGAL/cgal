@@ -9,8 +9,8 @@
 #include <CGAL/Pm_default_dcel.h>
 
 #if TESTR == 1
-  #error We dont support epsilon traits anymore (shaihi 2000-03-19) 
-  //#include <CGAL/Pm_segment_epsilon_traits.h>
+#include <CGAL/Pm_straight_traits.h>
+#include <CGAL/IO/Straight_2_stream.h>
 #else
 #include <CGAL/Pm_segment_traits_2.h>
 #endif
@@ -28,10 +28,10 @@
 #include "numrep2.h"
 
 
-typedef CGAL::Pm_default_dcel< Traits > Dcel;
-typedef CGAL::Planar_map_2< Dcel, Traits >  Planar_map;
-typedef Traits::Point Point;
-typedef Traits::X_curve Curve;
+typedef CGAL::Pm_default_dcel<Traits>   Dcel;
+typedef CGAL::Planar_map_2<Dcel,Traits> Planar_map;
+typedef Traits::Point_2                 Point_2;
+typedef Traits::X_curve                 X_curve_2;
 
 typedef Planar_map::Halfedge_handle Halfedge_handle;
 typedef Planar_map::Face_iterator Face_iterator;
@@ -56,28 +56,38 @@ int main(int argc, char *argv[])
   while (n--) {
     inputt x1, y1, x2, y2;
     std::cin >> x1 >> y1 >> x2 >> y2;
-    std::cout << "Inserted (";
-    std::cout << (Pm.insert(Curve(Point(x1,y1),Point(x2,y2))))->curve();
-    std::cout <<")" << std::endl;
+    Halfedge_handle h =
+#if TESTR == 1
+      Pm.insert(X_curve_2(Segment_2(Point_2(x1,y1),Point_2(x2,y2))));
+#else
+      Pm.insert(X_curve_2(Point_2(x1,y1),Point_2(x2,y2)));
+#endif
+    std::cout << "Inserted (" << h->curve() << ")" << std::endl;
   }
 
   assert(Pm.is_valid());
 
-  Curve seg = (Pm.halfedges_begin())->curve();
+  X_curve_2 seg = (Pm.halfedges_begin())->curve();
 
   std::cout << "\nseg = " << seg << std::endl;
 
-  Point s=seg.source();
-  Point t=seg.target();
-  Point mid_point=s+(t-s)/TestR::RT(2);
+  Point_2 s = seg.source();
+  Point_2 t = seg.target();
+  Point_2 mid_point = s + (t-s)/TestR::RT(2);
   
   std::cout << "\nmid_point = " << mid_point << std::endl;
 
   std::cout << "\nsplitting edge " << (Pm.halfedges_begin())->curve();
   std::cout << " ... " ; 
 
-  Halfedge_handle h = Pm.split_edge(Pm.halfedges_begin(),
-                                    Curve(s,mid_point),Curve(mid_point,t));
+  Halfedge_handle h =
+#if TESTR == 1
+      Pm.split_edge(Pm.halfedges_begin(), X_curve_2(Segment_2(s, mid_point)),
+                    X_curve_2(Segment_2(mid_point, t)));
+#else
+      Pm.split_edge(Pm.halfedges_begin(), X_curve_2(s, mid_point),
+                    X_curve_2(mid_point, t));
+#endif
   assert(Pm.is_valid());
   std::cout << "map valid" << std::endl;
 

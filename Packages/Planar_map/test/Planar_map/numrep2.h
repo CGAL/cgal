@@ -66,13 +66,13 @@ typedef TestR::RT inputt;
 
 #if BBOX == 1
 #if TESTR == 1
-  #error We dont support epsilon traits anymore (shaihi 2000-03-19)
-  //typedef CGAL::Pm_segment_epsilon_traits< TestR > Traits;
+typedef CGAL::Pm_straight_traits<TestR>         Traits;
+typedef Traits::X_bounded_curve                 Segment_2;
 #else
-typedef CGAL::Pm_segment_traits_2< TestR > Traits;
+typedef CGAL::Pm_segment_traits_2<TestR>        Traits;
 #endif
 #else
-typedef CGAL::Pm_straight_exact_traits< TestR > Traits;
+typedef CGAL::Pm_straight_traits_2<TestR>       Traits;
 #endif
 
 

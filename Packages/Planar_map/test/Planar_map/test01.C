@@ -9,8 +9,8 @@
 #include <CGAL/Pm_default_dcel.h>
 
 #if TESTR == 1
-  #error We dont support epsilon traits anymore (shaihi 2000-03-19) 
-  //#include <CGAL/Pm_segment_epsilon_traits.h>
+#include <CGAL/Pm_straight_traits.h>
+#include <CGAL/IO/Straight_2_stream.h>
 #else
 #include <CGAL/Pm_segment_traits_2.h>
 #endif
@@ -38,12 +38,13 @@
 #include <CGAL/Planar_map_2.h>
 
 #include "numrep2.h"
-typedef CGAL::Pm_default_dcel< Traits >     Dcel;
-typedef CGAL::Planar_map_2< Dcel, Traits >  Planar_map;
-typedef Traits::Point                       Point;
-typedef Traits::X_curve                     Curve;
-typedef Planar_map::Halfedge_handle         Halfedge_handle;
-typedef Planar_map::Locate_type             Locate_type;
+
+typedef CGAL::Pm_default_dcel<Traits>   Dcel;
+typedef CGAL::Planar_map_2<Dcel,Traits> Planar_map;
+typedef Traits::Point_2                 Point_2;
+typedef Traits::X_curve_2               X_curve_2;
+typedef Planar_map::Halfedge_handle     Halfedge_handle;
+typedef Planar_map::Locate_type         Locate_type;
 #endif // VOID_TEST
 
 int main(int argc, char *argv[])
@@ -65,8 +66,13 @@ int main(int argc, char *argv[])
   while (n--) {
     inputt x1, y1, x2, y2;
     std::cin >> x1 >> y1 >> x2 >> y2;
-    Halfedge_handle hh = Pm.insert(Curve(Point(x1,y1),Point(x2,y2)));
-    std::cout << "Inserted ("<< hh->curve() <<")"<<std::endl;
+    Halfedge_handle hh =
+#if TESTR == 1
+      Pm.insert(X_curve_2(Segment_2(Point_2(x1,y1),Point_2(x2,y2))));
+#else
+      Pm.insert(X_curve_2(Point_2(x1,y1),Point_2(x2,y2)));
+#endif
+    std::cout << "Inserted (" << hh->curve() << ")"<< std::endl;
   }
   assert(Pm.is_valid());
 
@@ -92,7 +98,7 @@ int main(int argc, char *argv[])
   while (n-->0) {
     inputt x,y;
     std::cin >> x >> y;
-    Point p(x,y);
+    Point_2 p(x,y);
     std::cout << "Locate " << p <<std::endl;
 
     Locate_type lt;
@@ -112,7 +118,7 @@ int main(int argc, char *argv[])
   while (n-->0) {
     inputt x, y;
     std::cin >> x >> y;
-    Point p(x,y);
+    Point_2 p(x,y);
     std::cout << "Vertical ray shoot " << p <<std::endl;
 
     Locate_type lt;

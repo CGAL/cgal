@@ -9,8 +9,8 @@
 #include <CGAL/Pm_default_dcel.h>
 
 #if TESTR == 1
-  #error We dont support epsilon traits anymore (shaihi 2000-03-19) 
-  //#include <CGAL/Pm_segment_epsilon_traits.h>
+#include <CGAL/Pm_straight_traits.h>
+#include <CGAL/IO/Straight_2_stream.h>
 #else
 #include <CGAL/Pm_segment_traits_2.h>
 #endif
@@ -27,10 +27,10 @@
 
 #include "numrep2.h"
 
-typedef CGAL::Pm_default_dcel< Traits >     Dcel;
-typedef CGAL::Planar_map_2< Dcel, Traits >  Planar_map;
-typedef Traits::Point                       Point;
-typedef Traits::X_curve                     Curve;
+typedef CGAL::Pm_default_dcel<Traits>       Dcel;
+typedef CGAL::Planar_map_2<Dcel,Traits>     Planar_map;
+typedef Traits::Point_2                     Point_2;
+typedef Traits::X_curve_2                   X_curve_2;
 
 typedef Planar_map::Vertex_handle           Vertex_handle;
 typedef Planar_map::Halfedge_handle         Halfedge_handle;
@@ -67,7 +67,12 @@ int main(int argc, char *argv[])
   while (n--) {
     inputt x1, y1, x2, y2;
     std::cin >> x1 >> y1 >> x2 >> y2;
-    e = Pm.insert(Curve(Point(x1,y1),Point(x2,y2)));
+    e =
+#if TESTR == 1
+      Pm.insert(X_curve_2(Segment_2(Point_2(x1,y1),Point_2(x2,y2))));
+#else
+      Pm.insert(X_curve_2(Point_2(x1,y1),Point_2(x2,y2)));
+#endif
     v = e->source();
     std::cout << "Inserted "<< e->curve() << std::endl;
   }
