@@ -1,3 +1,9 @@
+Version 1.40 (2 aug 00)
+- * replaced by _handle in Triangulation_3:: incident_vertices and
+incindet_cells for a given vertex
+- is_edge and analogous methods implemented
+- doc updated
+
 Version 1.39 (1 aug 00)
 added missing CGAL_NTS in the test_suite
 
