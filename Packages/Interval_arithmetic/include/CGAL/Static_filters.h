@@ -38,6 +38,7 @@
 #include <CGAL/Static_filters/Side_of_oriented_circle_2.h>
 #include <CGAL/Static_filters/Side_of_oriented_sphere_3.h>
 #include <CGAL/Static_filters/Coplanar_orientation_3.h>
+#include <CGAL/Static_filters/Coplanar_side_of_bounded_circle_3.h>
 
 // This traits class gathers optimized predicates written by hand, using
 // a few steps of filtering.  It should work if the initial traits has
@@ -78,6 +79,8 @@ public :
   typedef SF_Side_of_oriented_sphere_3<Point_3>     Side_of_oriented_sphere_3;
   typedef SF_Coplanar_orientation_3<Point_3, Orientation_2>
                                                     Coplanar_orientation_3;
+  typedef SF_Side_of_bounded_circle_3<Point_3>
+                                            Coplanar_side_of_bounded_circle_3;
 
   const Orientation_2 &
   orientation_2_object() const
@@ -98,6 +101,10 @@ public :
   const Coplanar_orientation_3 &
   coplanar_orientation_3_object() const
   { return _coplanar_orientation_3; }
+
+  const Coplanar_side_of_bounded_circle_3 &
+  coplanar_side_of_bounded_circle_3_object() const
+  { return _coplanar_side_of_bounded_circle_3; }
 
   // These should not be const, but unfortunately Triangulation_?.geom_traits()
   // only give a const& access (should this be changed ?).
@@ -134,6 +141,7 @@ public :
           _orientation_3.update(max3x, max3y, max3z);
           _side_of_oriented_sphere_3.update(max3x, max3y, max3z);
 	  _coplanar_orientation_3.update(max3x, max3y, max3z);
+	  _coplanar_side_of_bounded_circle_3.update(max3x, max3y, max3z);
       }
   }
 
@@ -144,11 +152,12 @@ private:
 
   // A data member for each predicate.
   // Their state is related to the state of *this.
-  mutable Orientation_2                 _orientation_2;
-  mutable Orientation_3                 _orientation_3;
-  mutable Side_of_oriented_circle_2     _side_of_oriented_circle_2;
-  mutable Side_of_oriented_sphere_3     _side_of_oriented_sphere_3;
-  mutable Coplanar_orientation_3        _coplanar_orientation_3;
+  mutable Orientation_2                     _orientation_2;
+  mutable Orientation_3                     _orientation_3;
+  mutable Side_of_oriented_circle_2         _side_of_oriented_circle_2;
+  mutable Side_of_oriented_sphere_3         _side_of_oriented_sphere_3;
+  mutable Coplanar_orientation_3            _coplanar_orientation_3;
+  mutable Coplanar_side_of_bounded_circle_3 _coplanar_side_of_bounded_circle_3;
 };
 
 CGAL_END_NAMESPACE

@@ -1,29 +1,24 @@
 
 #define CGAL_PROFILE
 
-#include <CGAL/Random.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Static_filters.h>
+#include <CGAL/point_generators_2.h>
+#include <CGAL/point_generators_3.h>
 
 typedef CGAL::Simple_cartesian<double> K;
+typedef CGAL::Random_points_in_square_2<K::Point_2> Rand_2;
 
-CGAL::Random R;
-
-K::Point_3 prand()
-{
-  return K::Point_3(R.get_double(), R.get_double(), R.get_double());
-}
-
-K::Point_2 prand2()
-{
-  return K::Point_2(R.get_double(), R.get_double());
-}
-
-CGAL::Orientation ooo;
+CGAL::Orientation   oo;
 CGAL::Oriented_side os;
+CGAL::Bounded_side  bs;
 
 int main()
 {
+  CGAL::Random_points_in_square_2<K::Point_2> Rand_2(1000.0);
+  CGAL::Random_points_in_cube_3<K::Point_3>   Rand_3(1000.0);
   CGAL::Static_filters<K> k;
+
   const CGAL::Static_filters<K>::Orientation_3 & my_o3 =
         k.orientation_3_object();
   const CGAL::Static_filters<K>::Orientation_2 & my_o2 =
@@ -34,32 +29,31 @@ int main()
         k.side_of_oriented_sphere_3_object();
   const CGAL::Static_filters<K>::Coplanar_orientation_3 & my_co3 =
         k.coplanar_orientation_3_object();
+  const CGAL::Static_filters<K>::Coplanar_side_of_bounded_circle_3 & my_cobc3 =
+        k.coplanar_side_of_bounded_circle_3_object();
+
+  // my_cobc3.cir_3();
 
   for (int i=0; i<100; ++i) {
-    K::Point_3 p(prand()), q(prand()), r(prand()), s(prand()), t(prand());
-    K::Point_2 p2(prand2()), q2(prand2()), r2(prand2()), s2(prand2());
-    k.register_object(p);
-    k.register_object(q);
-    k.register_object(r);
-    k.register_object(s);
-    k.register_object(t);
-    k.register_object(p2);
-    k.register_object(q2);
-    k.register_object(r2);
-    k.register_object(s2);
-    // CGAL::Protect_FPU_rounding<false> Z;
+    K::Point_3 p = *Rand_3++; k.register_object(p);
+    K::Point_3 q = *Rand_3++; k.register_object(q);
+    K::Point_3 r = *Rand_3++; k.register_object(r);
+    K::Point_3 s = *Rand_3++; k.register_object(s);
+    K::Point_3 t = *Rand_3++; k.register_object(t);
+
+    K::Point_2 p2 = *Rand_2++; k.register_object(p2);
+    K::Point_2 q2 = *Rand_2++; k.register_object(q2);
+    K::Point_2 r2 = *Rand_2++; k.register_object(r2);
+    K::Point_2 s2 = *Rand_2++; k.register_object(s2);
+
     for (int j=0; j<1000; ++j) {
-      // assert( my_o(p, q, r, s) == ore(pe, qe, re, se) );
-      ooo = my_o3(p, q, r, s);      //  2.62 s -> 2.22 s
-      ooo = my_o2(p2, q2, r2);      //  2.62 s -> 2.22 s
+      oo = my_o3(p, q, r, s);
+      oo = my_o2(p2, q2, r2);
       os = my_c2(p2, q2, r2, s2);
       os = my_s3(p, q, r, s, t);
-      ooo = my_co3(p, q, r);
-      ooo = my_co3(p, q, r, s);
-
-      // ooo = ore(pe, qe, re, se);   // 15.07 s  (!prot:13.5) static: 4.35 s (!p:3 -> 1.45)
-      // ooo = orf(pf, qf, rf, sf);   // 0.68 s -> 0.85 s
-      // ooo = inexact_o(p, q, r, s); //  1.66 s -> 0.20 s
+      oo = my_co3(p, q, r);
+      oo = my_co3(p, q, r, s);
+      bs = my_cobc3(p, q, r, s);
     }
   }
 
