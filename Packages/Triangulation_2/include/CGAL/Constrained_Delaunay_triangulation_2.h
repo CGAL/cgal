@@ -211,13 +211,14 @@ public:
     return std::make_pair(fit,eit);
   } 
 
-
-  template <class OutputItFaces> 
+  template <class OutputItFaces>
   OutputItFaces
   get_conflicts (const Point  &p, 
 		 OutputItFaces fit, 
 		 Face_handle start= Face_handle(NULL)) const {
-    return get_conflicts_and_boundary(p,fit,Emptyset_iterator(),start).first;
+    std::pair<OutputItFaces,Emptyset_iterator> pp = 
+      get_conflicts_and_boundary(p,fit,Emptyset_iterator(),start);
+    return pp.first;
   }
 
   template <class OutputItBoundaryEdges> 
@@ -225,8 +226,12 @@ public:
   get_boundary_of_conflicts(const Point  &p, 
 			    OutputItBoundaryEdges eit, 
 			    Face_handle start= Face_handle(NULL)) const {
-    return get_conflicts_and_boundary(p,Emptyset_iterator(),eit,start).second;
+    std::pair<Emptyset_iterator, OutputItBoundaryEdges> pp = 
+      get_conflicts_and_boundary(p,Emptyset_iterator(),eit,start);
+    return pp.second;
   }
+
+
 
 private:
  template <class OutputItFaces, class OutputItBoundaryEdges> 

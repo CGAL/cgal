@@ -14,11 +14,11 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-	-g \
 	-I../Triangulation_2/include \
 	-I../../include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS)\
+	-pedantic \
 	-g -DCGAL_NO_CONCEPT_CHECKING
 
 
