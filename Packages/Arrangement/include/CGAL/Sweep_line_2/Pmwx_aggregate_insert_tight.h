@@ -220,7 +220,7 @@ protected:
 
 
     Halfedge_handle h(NULL);
-
+    m_use_hint_for_erase = false;
     while ( leftCurveIter != m_currentEvent->leftCurvesEnd() )  // ** fix here
     {
       SubCurve *leftCurve = *leftCurveIter; 
@@ -273,6 +273,7 @@ protected:
 
       // before deleting check new neighbors that will become after deletion
       RemoveCurveFromStatusLine(leftCurve);
+      m_use_hint_for_erase = true;
 
       m_currentPos = m_prevPos;
       ++leftCurveIter;
@@ -692,13 +693,19 @@ private:
       
       // we have a handle from the previous insert
       if ( hhandle != Halfedge_handle(NULL) ) {
-	SL_DEBUG(std::cout << "  at vertices ";
+	SL_DEBUG(std::cout << "  at vertices";
 		 std::cout << prev->source()->point() << " " 
 		           << prev->target()->point();
 		 std::cout << hhandle->source()->point() << " " 
                            << hhandle->target()->point() << "\n";)
-	res = pm.non_intersecting_insert_at_vertices(cv, prev, hhandle, 
-						     m_change_not);
+	  //res = pm.non_intersecting_insert_at_vertices(cv, prev, hhandle, 
+	  //				     m_change_not);
+	  X_curve_2 flipped = m_traits->curve_flip(cv);
+	  res = pm.non_intersecting_insert_at_vertices(flipped, 
+						       hhandle,
+						       prev,
+						       m_change_not);
+	  res = res->twin();
       } else {
 	// if this is the first left curve being inserted
 	SL_DEBUG(std::cout << "  from vertex (2)";
@@ -776,7 +783,7 @@ insertToPmV(const X_curve_2 &cv, SubCurve *origCurve,
       }	
     } else 
     {
-      SL_DEBUG(std::cout << "  from vertex (2)";
+      SL_DEBUG(std::cout << "  from vertex (1) ";
 	       std::cout << bottomII->getHalfedgeHandle()->source()->point() 
 	                 << bottomII->getHalfedgeHandle()->target()->point()
 	                 << "\n";)
@@ -788,7 +795,7 @@ insertToPmV(const X_curve_2 &cv, SubCurve *origCurve,
   {
     if ( bottomII->getHalfedgeHandle() == Halfedge_handle(NULL))
     {
-      SL_DEBUG(std::cout << "  from vertex (2)";
+      SL_DEBUG(std::cout << "  from vertex (2) ";
 	       std::cout << topII->getHalfedgeHandle()->source()->point() 
 	                 << topII->getHalfedgeHandle()->target()->point() 
                          << "\n";)
@@ -798,7 +805,7 @@ insertToPmV(const X_curve_2 &cv, SubCurve *origCurve,
       res = res->twin();
     } else 
     {
-      SL_DEBUG(std::cout << "  at vertices ";
+      SL_DEBUG(std::cout << "  at vertices";
 	       std::cout << bottomII->getHalfedgeHandle()->source()->point();
 	       std::cout << bottomII->getHalfedgeHandle()->target()->point();
 	       std::cout << topII->getHalfedgeHandle()->source()->point();
