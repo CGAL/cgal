@@ -31,50 +31,6 @@
 
 namespace CGAL {
 
-/*
-template<class Traits>
-template<class ForwardIterator>
-Rotation_tree_2<Traits>::Rotation_tree_2(ForwardIterator first, 
-                                         ForwardIterator beyond)
-{
-   typedef typename Traits::R                               R;
-   typedef typename Traits::R::FT                           FT;
-   typedef typename Traits::Less_xy_2                       Less_xy_2;
-   typedef ch_Binary_predicate_reversor<Point_2, Less_xy_2> Greater_xy_2;
-
-   for (ForwardIterator it = first; it != beyond; it++)
-      push_back(*it);
-
-   sort(Greater_xy_2(Traits().less_xy_2_object()));
-   unique();
-
-   // b is the point with the largest x coordinate
-   Node largest_x = front();
-      
-   // push the point p_minus_infinity
-   push_front(Point_2( CGAL::to_double(largest_x.x())+1, 
-                      -CGAL::to_double(largest_x.y()))); 
-
-   // push the point p_infinity
-   push_front(Point_2(CGAL::to_double(largest_x.x())+1, 
-                      CGAL::to_double(largest_x.y())));
-
-   _p_inf = begin();  // record the iterators to these extreme points
-   _p_minus_inf = begin(); _p_minus_inf++;
-
-   Self_iterator root = begin();     // p_infinity
-   Self_iterator child = root;
-   child++;                          // now points to p_minus_inf
-   set_rightmost_child(child, root); // make p_minus_inf a child of p_inf
-   root++;                           // now points to p_minus_inf
-   child++;                          // now points to p_0
-   while (child != end())  // make all points children of p_minus_inf
-   {
-      set_rightmost_child(child,root);
-      child++;
-   }
-}
-*/
 
 // makes *p the rightmost child of *q
 template<class Traits>
