@@ -83,9 +83,10 @@
 
 CGAL_BEGIN_NAMESPACE
 
-class Free_elt {
-    static const unsigned magic0;
+// Global instead of static const member, because of VC++ bug.
+const unsigned int Free_elt_magic0 = 0xc9a1c9a1;
 
+class Free_elt {
     unsigned key;
     Free_elt * ptr;
 public:
@@ -99,7 +100,7 @@ public:
     }
 
     void mark_free() {
-	key = magic0;
+	key = Free_elt_magic0;
     }
 
     void unmark_free() {
@@ -107,11 +108,9 @@ public:
     }
 
     bool seems_free() const {
-	return key == magic0;
+	return key == Free_elt_magic0;
     }
 };
-
-const unsigned Free_elt::magic0 = 0xc9a1c9a1;
 
 const int DS_Container_allocation_size = 1024;
 // const int DS_Container_allocation_size = 8192;

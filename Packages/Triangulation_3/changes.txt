@@ -1,3 +1,7 @@
+Version 1.111 (12 April 02)
+- Fix link problem in DS_Container.
+- Remove include dependency order in Regular_euclidian_traits_3.h.
+
 Version 1.110 (10 April 02)
 - method Triangulation_3<GT,Tds>::triangle returns a triangle oriented 
 towards the outside of the cell c for facet (c,i)
