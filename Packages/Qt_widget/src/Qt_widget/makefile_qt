@@ -5,17 +5,13 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-#CGAL_MAKEFILE = /cygdrive/d/CGAL_RELEASES_7/CGAL-2.4-I-47/make/makefile_i686_CYGWINNT-5.0-1.3.2_CL.EXE-1300
-
-
 #this 2 will desappear in the package submission
 CGAL_QT_LIB=CGALQt.lib
 
-CGAL_MAKEFILE = ~/CGAL-2.4-I-47/make/makefile_sparc_SunOS-5.6_g++-2.95
+CGAL_MAKEFILE = /cygdrive/d/testqt/CGAL-2.4-I-47/make/makefile_i686_CYGWINNT-5.0-1.3.2_CL.EXE-1200
 
 include $(CGAL_MAKEFILE)
 
-#include "d:/CGAL_RELEASES_6/CGAL-2.4-I-47/make/makefile_i686_CYGWINNT-5.0-1.3.2_CL.EXE-1200"
 
 #---------------------------------------------------------------------#
 #                    compiler flags
@@ -53,19 +49,19 @@ clean:
 #                    suffix rules
 #---------------------------------------------------------------------#
 Qt_widget$(OBJ_EXT):
-	$(QTDIR)/bin/moc ../../include/CGAL/IO/Qt_widget.h -o Qt_widget.moc
+	$(QT_MOC) ../../include/CGAL/IO/Qt_widget.h -o Qt_widget.moc
 	$(CGAL_CXX) $(CXXFLAGS) -c Qt_widget.C
 
 Qt_widget_tool$(OBJ_EXT):
-	$(QTDIR)/bin/moc ../../include/CGAL/IO/Qt_widget_tool.h -o Qt_widget_tool.moc
+	$(QT_MOC) ../../include/CGAL/IO/Qt_widget_tool.h -o Qt_widget_tool.moc
 	$(CGAL_CXX) $(CXXFLAGS) -c Qt_widget_tool.C
 
 Qt_widget_view$(OBJ_EXT):
-	$(QTDIR)/bin/moc ../../include/CGAL/IO/Qt_widget_view.h -o Qt_widget_view.moc
+	$(QT_MOC) ../../include/CGAL/IO/Qt_widget_view.h -o Qt_widget_view.moc
 	$(CGAL_CXX) $(CXXFLAGS) -c Qt_widget_view.C
 
 Qt_widget_standard_toolbar$(OBJ_EXT):
-	$(QTDIR)/bin/moc ../../include/CGAL/IO/Qt_widget_standard_toolbar.h -o Qt_widget_standard_toolbar.moc
+	$(QT_MOC) ../../include/CGAL/IO/Qt_widget_standard_toolbar.h -o Qt_widget_standard_toolbar.moc
 	$(CGAL_CXX) $(CXXFLAGS) -c Qt_widget_standard_toolbar.C
 
 .C$(OBJ_EXT):
