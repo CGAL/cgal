@@ -4940,12 +4940,14 @@ install_gmp_sub()
     _opts="${_opts} --prefix=${CGAL_DIR}/GMP"
     _opts="${_opts} --libdir=${CGAL_LIB_DIR}/`full_ostype`"
     _opts="${_opts} --includedir=${CGAL_INCL_DIR}"
-    case `compiler_description` in
-	*SUNPRO*) 
+    case ${SYST} in 
+        *SunOS*)
 	    if [ "`uname -r`" != "5.6" ]; then
 	        _opts="${_opts} ABI=32"
 	    fi
-	    _opts="${_opts} CFLAGS=\"-xarch=v8plus\""
+            case `compiler_description` in
+	        *SUNPRO*) _opts="${_opts} CFLAGS=\"-xarch=v8plus\"" ;;
+            esac
 	;;
     esac
     if [ -n "${GMPXX_SUPPORT}" ]; then
