@@ -1,8 +1,11 @@
+29 April 2004 Mariette Yvinec
+- removed an old test file which I had forgotten to remove from cvs
+
 28 April 2004 Mariette Yvinec
 - major changes in the implementation of Alpha_shapes_3.h
-  New implementation should result in true full generalized mode
-  allowing negative alpha-value.
-  Still to be done: fix the doc + improve efficiency
+  New implementation should result in a true GENERAL  mode
+  allowing null and negative alpha-values.
+  Still to be done: fix the doc + improve efficiency.
   
 2 April 2004 Mariette Yvinec
 - fixes in Weighted_alpha_shape_euclidean_traits_3.h
