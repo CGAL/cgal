@@ -45,14 +45,15 @@ public:
   typedef  It  Base;
   typedef  _Arr_face_circ<Node,It,Ctg> Self;
 
-  typedef  Ctg                iterator_category;
-  typedef  Node               value_type;
-  typedef  ptrdiff_t          difference_type;
-  typedef  size_t             size_type;
-  typedef  value_type&        reference;
-  typedef  const value_type&  const_reference;
-  typedef  value_type*        pointer;
-  typedef  const value_type*  const_pointer;
+  typedef  Ctg                      iterator_category;
+  typedef  Node                     value_type;
+  // Metrowerks expects std:: before ptrdiff_t
+  typedef  CGAL_CLIB_STD::ptrdiff_t difference_type;
+  typedef  size_t                   size_type;
+  typedef  value_type&              reference;
+  typedef  const value_type&        const_reference;
+  typedef  value_type*              pointer;
+  typedef  const value_type*        const_pointer;
 
 
 // CREATION
@@ -135,14 +136,15 @@ public:
   typedef  It  Base;
   typedef  _Arr_face_const_circ<Node,It,Ctg> Self;
 
-  typedef  Ctg                iterator_category;
-  typedef  Node               value_type;
-  typedef  ptrdiff_t          difference_type;
-  typedef  size_t             size_type;
-  typedef  value_type&        reference;
-  typedef  const value_type&  const_reference;
-  typedef  value_type*        pointer;
-  typedef  const value_type*  const_pointer;
+  typedef  Ctg                          iterator_category;
+  typedef  Node                         value_type;
+  // Metrowerks expects std:: before ptrdiff_t
+  typedef  CGAL_CLIB_STD::ptrdiff_t     difference_type;
+  typedef  size_t                       size_type;
+  typedef  value_type&                  reference;
+  typedef  const value_type&            const_reference;
+  typedef  value_type*                  pointer;
+  typedef  const value_type*            const_pointer;
 
   // CREATION
   // --------
@@ -220,14 +222,15 @@ public:
   typedef  It  Base;
   typedef  _Arr_vertex_circ<Node,It,Ctg> Self;
 
-  typedef  Ctg                iterator_category;
-  typedef  Node               value_type;
-  typedef  ptrdiff_t          difference_type;
-  typedef  size_t             size_type;
-  typedef  value_type&        reference;
-  typedef  const value_type&  const_reference;
-  typedef  value_type*        pointer;
-  typedef  const value_type*  const_pointer;
+  typedef  Ctg                      iterator_category;
+  typedef  Node                     value_type;
+  // Metrowerks expects std:: before ptrdiff_t
+  typedef  CGAL_CLIB_STD::ptrdiff_t difference_type;
+  typedef  size_t                   size_type;
+  typedef  value_type&              reference;
+  typedef  const value_type&        const_reference;
+  typedef  value_type*              pointer;
+  typedef  const value_type*        const_pointer;
 
   // CREATION
   // --------
@@ -309,14 +312,15 @@ public:
   typedef  It  Base;
   typedef  _Arr_vertex_const_circ<Node,It,Ctg> Self;
 
-  typedef  Ctg                iterator_category;
-  typedef  Node               value_type;
-  typedef  ptrdiff_t          difference_type;
-  typedef  size_t             size_type;
-  typedef  value_type&        reference;
-  typedef  const value_type&  const_reference;
-  typedef  value_type*        pointer;
-  typedef  const value_type*  const_pointer;
+  typedef  Ctg                      iterator_category;
+  typedef  Node                     value_type;
+  // Metrowerks expects std:: before ptrdiff_t
+  typedef  CGAL_CLIB_STD::ptrdiff_t difference_type;
+  typedef  size_t                   size_type;
+  typedef  value_type&              reference;
+  typedef  const value_type&        const_reference;
+  typedef  value_type*              pointer;
+  typedef  const value_type*        const_pointer;
 
   // CREATION
   // --------
@@ -401,14 +405,15 @@ public:
   typedef  It  Base;
   typedef  Arr_overlap_circulator<Node,It,Ctg> Self;
 
-  typedef  Ctg                iterator_category;
-  typedef  Node               value_type;
-  typedef  ptrdiff_t          difference_type;
-  typedef  size_t             size_type;
-  typedef  value_type&        reference;
-  typedef  const value_type&  const_reference;
-  typedef  value_type*        pointer;
-  typedef  const value_type*  const_pointer;
+  typedef  Ctg                      iterator_category;
+  typedef  Node                     value_type;
+  // Metrowerks expects std:: before ptrdiff_t
+  typedef  CGAL_CLIB_STD::ptrdiff_t difference_type;
+  typedef  size_t                   size_type;
+  typedef  value_type&              reference;
+  typedef  const value_type&        const_reference;
+  typedef  value_type*              pointer;
+  typedef  const value_type*        const_pointer;
 
 // CREATION
 // --------
@@ -490,14 +495,15 @@ public:
   typedef  It  Base;
   typedef  Arr_overlap_const_circulator<Node,It,Ctg> Self;
 
-  typedef  Ctg                iterator_category;
-  typedef  Node               value_type;
-  typedef  ptrdiff_t          difference_type;
-  typedef  size_t             size_type;
-  typedef  value_type&        reference;
-  typedef  const value_type&  const_reference;
-  typedef  value_type*        pointer;
-  typedef  const value_type*  const_pointer;
+  typedef  Ctg                      iterator_category;
+  typedef  Node                     value_type;
+  // Metrowerks expects std:: before ptrdiff_t
+  typedef  CGAL_CLIB_STD::ptrdiff_t difference_type;
+  typedef  size_t                   size_type;
+  typedef  value_type&              reference;
+  typedef  const value_type&        const_reference;
+  typedef  value_type*              pointer;
+  typedef  const value_type*        const_pointer;
 
   // CREATION
   // --------
@@ -596,7 +602,8 @@ public:
   //typedef typename  Fct::result_type       value_type;
   typedef Fct       value_type;
   //typedef typename  C::difference_type     difference_type;
-  typedef ptrdiff_t     difference_type;
+  // Metrowerks expects std:: before ptrdiff_t
+  typedef CGAL_CLIB_STD::ptrdiff_t     difference_type;
   //typedef typename  C::size_type           size_type;
   typedef size_t           size_type;
   //typedef           Ref                    reference;
