@@ -148,6 +148,8 @@ private slots:
 	void conicType();
 	/*! set backGround Color */
 	void backGroundColor();
+	/*! set vertexColor Color */
+	void changePmColor();	
 	/*! choose the ray shoot diraction */
 	void rayShootingDirection();
 	/*! change the conic type of current tab */
@@ -204,8 +206,6 @@ private:
 	int m_width;
 	/*! hand tool layer for dragging the planar map */
 	CGAL::Qt_widget_handtool *handtoollayer;
-	/*! array of colors */
-	QColor colors[20];
 	/*! status bar label */
 	QLabel *insert_label;
 	/*! status bar label */

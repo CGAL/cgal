@@ -36,11 +36,14 @@ LDFLAGS = \
 
 all: demo_arr
 
-demo1$(OBJ_EXT): demo1.C 
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) demo1.C
+demoA$(OBJ_EXT): demoA.C cgal_types1.h demo_tab.h
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) demoA.C
 
-moc_demo1$(OBJ_EXT): moc_demo1.C 
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) moc_demo1.C
+demoB$(OBJ_EXT): demoB.C cgal_types1.h demo_tab.h
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) demoB.C
+
+demoC$(OBJ_EXT): demoC.C cgal_types1.h demo_tab.h
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) demoC.C
 
 moc_demo1.C: demo1.h
 	$(QT_MOC) $< -o $@
@@ -57,17 +60,16 @@ moc_forms.C: forms.h
 qt_layer$(OBJ_EXT): qt_layer.C 
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) qt_layer.C
 
-demo_arr$(EXE_EXT): demo1$(OBJ_EXT) moc_demo1$(OBJ_EXT) \
-	forms$(OBJ_EXT) moc_forms$(OBJ_EXT) \
+demo_arr$(EXE_EXT): demoA$(OBJ_EXT) demoB$(OBJ_EXT) demoC$(OBJ_EXT) \
+    moc_demo1$(OBJ_EXT)	forms$(OBJ_EXT) moc_forms$(OBJ_EXT) \
 	qt_layer$(OBJ_EXT)
-	$(CGAL_CXX) $(EXE_OPT)demo_arr demo1$(OBJ_EXT) moc_demo1$(OBJ_EXT) \
+	$(CGAL_CXX) $(EXE_OPT)demo_arr demoA$(OBJ_EXT) demoB$(OBJ_EXT) \
+	demoC$(OBJ_EXT) moc_demo1$(OBJ_EXT) \
 	forms$(OBJ_EXT) moc_forms$(OBJ_EXT) \
 	qt_layer$(OBJ_EXT) $(LDFLAGS)
 
-clean: demo1.clean forms.clean qt_layer.clean
+clean: demoA.clean demoB.clean demoC.clean forms.clean qt_layer.clean
 	rm -rf moc_forms.* moc_demo1.* demo_arr
-
-demo1.o : cgal_types1.h demo_tab.h
 
 #---------------------------------------------------------------------#
 #                    suffix rules

@@ -7,6 +7,7 @@
 
 #include <qrect.h>
 #include <qcursor.h>
+#include <qmessagebox.h> 
 
 #include "cgal_types1.h"
 #include <CGAL/IO/pixmaps/hand.xpm>
@@ -33,6 +34,7 @@ public:
     bbox(CGAL::Bbox_2(-10, -10, 10, 10)),
     wasrepainted(true), 
     on_first(false),
+	change_pm_color(false),
     snap(false),
     grid(false),
     conic_type(SEGMENT),
@@ -58,6 +60,8 @@ public:
     colors[9] = Qt::darkMagenta;
     colors[10] = Qt::darkCyan;
     colors[11] = Qt::yellow;
+
+	pm_color = colors[index];
   }
   
   /*! current_state - indecates when a tab state is changed */
@@ -92,6 +96,10 @@ public:
   bool    on_first;
   /*! array of colors */
   QColor colors[20];
+  /*! vertex color */
+  QColor pm_color;
+  /*! flag to know that pm color has changed */
+  bool change_pm_color;
   /*! snap flag */
   bool snap;
   /*! grid flag */
@@ -187,8 +195,13 @@ public:
     for (Edge_iterator ei = m_curves_arr.edges_begin(); 
          ei != m_curves_arr.edges_end(); ++ei) 
     {
-      int i = (ei->curve()).get_data().m_index;
-      setColor(colors[i]);
+	  if (change_pm_color)
+	    setColor(pm_color);
+	  else
+	  {
+        int i = (ei->curve()).get_data().m_index;
+        setColor(colors[i]);
+	  }
       m_tab_traits.draw_xcurve(this , ei->curve() );
     }
     
@@ -234,7 +247,10 @@ public:
         
 		if (eit == first && draw_vertex)
 		{
-		  setColor(colors[ind1]);
+		  if (change_pm_color)
+	        setColor(pm_color);
+	      else
+	        setColor(colors[ind2]);
 		  const Pm_point_2& p = (*vit).point();
           *this << p;
 		}
@@ -365,7 +381,7 @@ public:
   /*! draw_grid - draw the grid */
   void draw_grid()
   {
-    (*this) << CGAL::DEEPBLUE;
+	setColor(Qt::white);
     (*this) << CGAL::LineWidth(1);
     // get the edge coordinate
     int min_x = static_cast<int> (x_min());
@@ -704,7 +720,19 @@ public:
       RasterOp old_raster = rasterOp();//save the initial raster mode
       setRasterOp(XorROP);
       lock();
-      
+    
+	  /*colors[1] = Qt::blue;
+    colors[2] = Qt::gray;
+    colors[3] = Qt::green;
+    colors[4] = Qt::cyan;
+    colors[5] = Qt::magenta;
+    colors[6] = Qt::black;
+    colors[7] = Qt::darkGreen;
+    colors[8] = Qt::darkBlue;
+    colors[9] = Qt::darkMagenta;
+    colors[10] = Qt::darkCyan;
+    colors[11] = Qt::yellow;*/
+
       setColor(Qt::green);
       
       if(!first_time)
@@ -1821,6 +1849,12 @@ public:
                                                     Pm_conic_point_2(x1,y1)));
         break;
        case ELLIPSE:
+		if (y == y1 || x == x1)
+		{
+		  QMessageBox::information( w, "Insert Ellipse", "Invalid Ellipse");
+		  w->active = false;
+          return;
+        }
         a = abs(x1 - x)/2;
         b = abs(y1 - y)/2;
         a_sq = a*a;
@@ -1838,6 +1872,8 @@ public:
         cv = new Pm_base_conic_2(r, s, t, u, v, ww);
         break;
        case PARABOLA:
+	    if (x == x1)
+		  return;
         if (x > x1)
         {
           temp = x1;
@@ -1863,30 +1899,42 @@ public:
        case HYPERBOLA:
         if (first_time_hyperbula)
         {
+		  if (m_p1.y() == p.y() || m_p1.x() == p.x())
+		  {
+		    QMessageBox::information( w, "Insert Hyperbola", "Invalid Hyperbola");
+		    w->active = false;
+            return;
+          }
+		  int c = abs(static_cast<int>(m_p1.x()) - static_cast<int>(p.x()));
+          if (w->snap_mode == GRID && (c == w->cube_size  || 
+			                           c == w->cube_size*2))
+		  {
+		    QMessageBox::information( w, "Insert Hyperbola", "Invalid Hyperbola");
+		    w->active = false;
+            return;
+          }
           *w << CGAL::RED;
           *w << Coord_segment( Coord_point(m_p1.x(),(m_p1.y() + p.y())/2) ,
-                               Coord_point(p.x()   ,(m_p1.y() + p.y())/2) );   
+			                   Coord_point(p.x()   ,(m_p1.y() + p.y())/2) );   
           first_time_hyperbula = false;
           m_p3 = m_p2;
 
-          *w << CGAL::DISC;
-          *w << m_p1;
-          *w << m_p2;
           return;
         }
         else
-        {                        /*  x,y             */
-          x1 = m_p3.x();         /*     \    /       */
-          y1 = m_p3.y();         /*      \  /        */
-          /*  x0,y0\/         */
+        {		  
+		  x1 = m_p3.x();         /*  x,y             */
+          y1 = m_p3.y();         /*     \    /       */
+                                 /*      \  /        */
+		                         /*       \/         */
           x0 = (x + x1)/2;       /*       /\         */
           y0 = (y + y1)/2;       /*      /  \        */
                                  /*     /    \       */
           a = abs(x0 - p.x());   /*           x1,y1  */
           b = ((y - y1)/(x - x1))*a;
           
-          if (p.x() == x0 || (p.x() < x && x < x1 ) || (p.x() > x && x > x1 )
-              || (p.x() < x1 && x1 < x ) || (p.x() > x1 && x1 > x ))
+          if (p.x() == x0 || (p.x() <= x && x < x1 ) || (p.x() >= x && x > x1 )
+              || (p.x() <= x1 && x1 < x ) || (p.x() >= x1 && x1 > x ))
             return; // p is out of rectangle bounds
           r = b*b;
           s = -1*a*a;
@@ -1901,7 +1949,7 @@ public:
           y2 = (-1*v + root)/(2*s);
           y3 = (-1*v - root)/(2*s);
 
-          if (x1 > x && p.x() > x0)
+		  if (x1 > x && p.x() > x0)
             cv = new Pm_base_conic_2(r, s, t, u, v, ww, 
                                      Pm_conic_point_2(x1,y3),
                                      Pm_conic_point_2(x1,y2));	
@@ -1967,9 +2015,12 @@ public:
 	    case PARABOLA:
 	    {
  	  	  *w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p2 );
-		  *w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p1 );
-		  *w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p2 );
-		  *w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p1 );
+		  if (m_p1.y() != m_p2.y())
+		  {
+		    *w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p1 );
+		    *w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p2 );
+		    *w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p1 );
+		  }
 		  break;
 	    }		
 	    case HYPERBOLA:
