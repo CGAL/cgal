@@ -1,3 +1,6 @@
+4.101  (22 June 2003) [af]
+- Adaptions so that it works with Core_v1.6
+
 4.100  (19 June 2003)
 - Add an assertion for division by zero in MP_Float.
 
