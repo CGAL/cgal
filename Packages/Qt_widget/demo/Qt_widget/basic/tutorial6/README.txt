@@ -30,7 +30,7 @@ In My_Window class an instance of My_Tool is created :
 
 In the constructor of My_Window we attach the tool:
 
-	widget->attach(t);
+	widget->attach(&t);
 
 To receive the object that the tool creates, in the constructor of My_Window, 
 we connect:

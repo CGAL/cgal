@@ -24,7 +24,7 @@ In the class My_Window, it is declared as a private member:
 	CGAL::Qt_widget_get_point<Rep> get_point;
 
 In the constructor of My_Window also we attached this generic tool:
-	    widget->attach(get_point);
+	    widget->attach(&get_point);
 
 The connect is still there in the constructor, the good news is that
 no matter how many tools you use, you will have to connect only once

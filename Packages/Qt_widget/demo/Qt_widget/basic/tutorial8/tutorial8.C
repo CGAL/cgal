@@ -61,7 +61,7 @@ private slots:
   //this function is called every time the toolbar button is pressed
   void pointtool(){
     if (get_point_but->isOn())
-      widget->attach(get_point);
+      widget->attach(&get_point);
     else
       widget->detach_current_tool();
   }
