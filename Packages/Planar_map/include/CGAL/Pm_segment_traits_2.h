@@ -27,6 +27,7 @@
 #define CGAL_PM_SEGMENT_TRAITS_2_H
 
 #include <CGAL/tags.h>
+#include <CGAL/assertions.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -67,6 +68,7 @@ protected:
   typedef typename Kernel::Construct_vertex_2   Construct_vertex_2;
   typedef typename Kernel::Less_x_2             Less_x_2;
   typedef typename Kernel::Equal_2              Equal_2;
+  typedef typename Kernel::Comparison_result    Comparison_result;
 
     
 public:
