@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
 #include <CGAL/Arr_polyline_traits.h>
 //#include <CGAL/IO/Arr_polyline_traits_iostream.h>
 #elif CGAL_ARR_TEST_TRAITS==CGAL_POLYLINE_LEDA_TRAITS
-#error Currently not supported (July 2000)
+//#error Currently not supported (July 2000)
 #include <CGAL/leda_rational.h>
 #include <CGAL/Arr_leda_polyline_traits.h>
 //#include <CGAL/IO/Arr_leda_polyline_traits_iostream.h>
