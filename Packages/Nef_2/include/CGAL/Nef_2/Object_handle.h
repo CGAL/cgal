@@ -11,9 +11,9 @@
 // release       : $CGAL_Revision: CGAL-2.4-I-33 $
 // release_date  : $CGAL_Date: 2001/12/04 $
 //
-// file          : include/CGAL/Object.h
-// package       : Kernel_basic (3.68)
-// maintainer    : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
+// file          : include/CGAL/Object_handle.h
+// package       : Nef_2
+// maintainer    : Michael Seel
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
@@ -21,8 +21,6 @@
 //                 Geert-Jan Giezeman
 //                 Michael Seel
 //                 Sylvain Pion
-//
-// coordinator   : MPI Saarbruecken, Germany 
 //
 // ======================================================================
 
