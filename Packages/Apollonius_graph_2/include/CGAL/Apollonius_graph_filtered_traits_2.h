@@ -74,15 +74,14 @@ template<class CK_t,
 	 class CK_MTag = Ring_tag,
 	 class EK_t    = Simple_cartesian< MP_Float >,
 	 class EK_MTag = CK_MTag,
-	 class FK_t    = Simple_cartesian< Interval_nt_advanced >,
+	 class FK_t    = Simple_cartesian< Interval_nt<false> >,
 	 class FK_MTag = CK_MTag,
          class C2E_t   = Cartesian_converter<CK_t, EK_t>,
 #if defined(__sun) && defined(__SUNPRO_CC)
          class C2F_t   = CGALi::AG_SUNPRO_CC_Interval_converter<CK_t, FK_t> >
 #else
-         class C2F_t   = Cartesian_converter<CK_t, FK_t,
-	                                     To_interval<typename CK_t::RT> > 
->
+         class C2F_t   =
+         Cartesian_converter<CK_t, FK_t, To_interval<typename CK_t::RT> > >
 #endif
 class Apollonius_graph_filtered_traits_2
 {
