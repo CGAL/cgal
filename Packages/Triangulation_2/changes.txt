@@ -1,7 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-Ver 5.24 ()
+Ver 5.24 (14/1/01)
+- overloaded star_hole() in Constrained_triangulation_2 to restore
+  constraint status of edges
 - fixes demo Delaunay
 - fixes a bug in star_hole() 
 
