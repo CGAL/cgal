@@ -2,15 +2,17 @@
 #include <CGAL/kernel_basic.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/predicates_on_ftC2.h>
-#include <CGAL/Gmpz.h>
+// #include <CGAL/Gmpz.h>
 #include <CGAL/leda_real.h>
+// #include <CGAL/leda_bigfloat.h>
 #include <CGAL/Filter.h>
-#define CGAL_IA_NO_WARNINGS
-#include <CGAL/Interval_arithmetic.h>
+// #define CGAL_IA_NO_WARNINGS
+// #include <CGAL/Interval_arithmetic.h>
 
 // Don't be stupid, CGAL_Gmpz can only store integers !!!
 // typedef CGAL_Filtering<double, CGAL_Gmpz> NT;
 typedef CGAL_Filtering<double, leda_real> NT;
+// typedef CGAL_Filtering<double, leda_bigfloat> NT;
 // typedef double NT;
 
 // The predicate code is 100% generic.
