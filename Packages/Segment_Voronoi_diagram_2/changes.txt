@@ -6,6 +6,7 @@
 - pvd_typedefs.h: replaced SVD_data_structure_2 by AG_data_structure_2
 - Square_root_{1,2}: fixes for g++-3.4 (essentially kept the code under
   CGAL_USE_ADL_FOR_NT and removed the alternative code)
+- documentation: added chapter author
 
 30 August 2004:  Menelaos Karavelas
 - SVD_kernel_wrapper_2 : removed unused variable (it was creating warnings
