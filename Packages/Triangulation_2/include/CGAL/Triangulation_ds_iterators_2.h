@@ -218,7 +218,8 @@ Triangulation_ds_edge_iterator_2<Tds>&
 Triangulation_ds_edge_iterator_2<Tds> ::
 operator--()
 {
-  // CGAL_triangulation_precondition(pos != Iterator_base() && *this != Edge_iterator(_tds));
+  // CGAL_triangulation_precondition(pos != Iterator_base() 
+  //                          && *this != Edge_iterator(_tds));
   do      decrement();
   while ( !associated_edge() && *this != Edge_iterator(_tds) ); 
   return *this;
