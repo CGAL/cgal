@@ -21,7 +21,7 @@
 // ============================================================================
 
 #include <iostream>
-#include <vector>
+//#include <vector>
 
 #include <CGAL/_test_cls_triangulation_2.C>
 
