@@ -2234,7 +2234,7 @@ Subcurve_iterator replace(Subcurve_iterator sc,
   //finish on the stitches
 
   //number of levels in the new subtree is the same as in the old one  :
-  assert((unsigned int)i==level_begin.size()); 
+  CGAL_assertion((unsigned int)i==level_begin.size()); 
 
   Subcurve_node* return_value = &(*levels[0].begin());
 
