@@ -326,6 +326,15 @@ public:
 
 };
 
+template<class K>
+typename Svd_basic_predicates_C2<K>::RT_Has_sqrt
+Svd_basic_predicates_C2<K>::rt_has_sqrt =
+Svd_basic_predicates_C2<K>::RT_Has_sqrt();
+
+template<class K>
+typename Svd_basic_predicates_C2<K>::FT_Has_sqrt
+Svd_basic_predicates_C2<K>::ft_has_sqrt =
+Svd_basic_predicates_C2<K>::FT_Has_sqrt();
 
 CGAL_END_NAMESPACE
 
