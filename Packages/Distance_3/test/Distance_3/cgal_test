@@ -50,8 +50,7 @@ make_and_execute()
 	    purify -log-file="%v.$1.%p.plog" ${base}
 	    mv ${base}.pure ${base}
 	fi
-	for datafile
-	    in ${datafiles}
+	for datafile in ${datafiles}
 	do
 	    if [ -r ${datafile} ]
 	    then
@@ -66,7 +65,7 @@ make_and_execute()
 
 echo ${CGAL_LIB_DIR}
 
-/bin/rm -f $OUTPUTFILE
+rm -f $OUTPUTFILE
 touch $OUTPUTFILE
 
 if [ $# -ne 0 ]
@@ -77,8 +76,7 @@ else
 fi
 
 
-for file
-    in ${sourcefiles}
+for file in ${sourcefiles}
 do
     base=`basename ${file} .C`
     datafiles="ls DATA/${base}/ix*"
