@@ -1,5 +1,6 @@
 1.7     (?? June 2001)
 - Get rid of #include <LEDA/rat_point.h>, and use Cartesian_converter<>.
+- Remove demo/Robustness/include/CGAL/kernel_to_kernel.h, as it's in CGAL.
 
 1.6     (20 June 2001)
 - Update to new header style, and simplify code.
