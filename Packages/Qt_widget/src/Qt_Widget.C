@@ -392,7 +392,6 @@ void Qt_widget::redraw()
       for(it = qt_scenes.begin(); it!= qt_scenes.end(); it++)
 	(*it)->draw_scene(*this);
       
-      emit(redrawed());
       unlock();
       if (has_tool())
 	current_tool->widget_repainted();

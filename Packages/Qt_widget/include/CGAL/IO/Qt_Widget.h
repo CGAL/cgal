@@ -167,9 +167,8 @@ signals:
   void mouseReleased(QMouseEvent *e);
   void mouseMoved(QMouseEvent *e);
   void resized();
-  void redrawed(); // some programers may want to paint something on scenes
   void new_cgal_object(CGAL::Object);	//this signal is emited every time an
-																			//attached tool constructed an object
+					//attached tool constructed an object
 
 protected:
   void paintEvent(QPaintEvent *e);
