@@ -4,7 +4,6 @@ WWW=/u/www/0/www/htdocs/files/equipes/prisme
 WWW_CGAL=$(WWW)/CGAL/DR:/Members
 WWW_dir=$(WWW_CGAL)/Stream_support
 TMP_file=/tmp/submit-mail
-MAINTAINER=Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 
 package:
 	@echo "----------------------------------"
@@ -23,7 +22,6 @@ package:
 
 Version:
 	echo "$(VERSION) (`date '+%e %b %Y'`)" > version
-	echo  "maintainer : $(MAINTAINER)" >> version
 
 tag:
 	cvs tag v`echo $(VERSION) | sed -e "s/\./_/g"`
@@ -44,7 +42,7 @@ submit:
 	echo "submission::" >> $(TMP_file)
 	echo "http://www-sop.inria.fr/prisme/CGAL/DR:/Members" >> $(TMP_file)
 	echo "/Stream_support/Stream_support.tar.gz" >> $(TMP_file)
-	mail -s autohandle cgal-submit@cs.uu.nl yvinec < $(TMP_file)
+	mail -s autohandle cgal-submit@cs.uu.nl $(USER) < $(TMP_file)
 	rm -f $(TMP_file)
 
 
