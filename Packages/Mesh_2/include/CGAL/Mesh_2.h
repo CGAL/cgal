@@ -912,6 +912,9 @@ construct_cluster(Vertex_handle v,
 		  const Constrained_vertex_circulator& end,
 		  Cluster c)
 {
+  Compute_squared_distance_2 squared_distance = 
+    geom_traits().compute_squared_distance_2_object();
+
   if(c.vertices.empty())
     {
       c.reduced = false;
@@ -931,9 +934,6 @@ construct_cluster(Vertex_handle v,
 
   Point& vp = v->point();
   
-  Compute_squared_distance_2 squared_distance = 
-    geom_traits().compute_squared_distance_2_object();
-
   FT greatest_cosine = 
     squared_cosine_of_angle_times_4(c.smallest_angle.first->point(),
 				    v->point(),
