@@ -229,7 +229,8 @@ int main()
   // cout << hex << rd_mode << endl;
 
 #ifdef ADVANCED
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   cout << "Stress-testing the class Interval_nt_advanced.\n";
 #else
   cout << "Stress-testing the class Interval_nt.\n";
@@ -318,7 +319,7 @@ cout << is_finite(d.upper_bound()) << is_valid(d.upper_bound())<<endl;
   cout << (int) (0.0 < IA_nt(1)) << endl;
 
 #ifdef ADVANCED
-  FPU_set_rounding_to_nearest();
+  FPU_set_cw(backup);
 #endif
 
   return !flag;

@@ -133,7 +133,8 @@ void bench()
 int main()
 {
 #ifdef ADVANCED
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   cout << "Benching the class Interval_nt_advanced.\n";
 #else
   cout << "Benching the class Interval_nt.\n";
@@ -156,7 +157,7 @@ int main()
 #endif
 
 #ifdef ADVANCED
-  FPU_set_rounding_to_nearest();
+  FPU_set_cw(backup);
 #endif
 
   return 0;
