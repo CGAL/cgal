@@ -27,9 +27,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 // A helper class:
-// ---------------------
+
 template <class Target, class Source>
 struct converter
 {
@@ -42,21 +41,6 @@ inline
 Target
 convert_to (const Source& s)
 { return converter<Target, Source>::do_it(s); }
-
-/*
-template <class Target, class Source>
-inline
-Target
-convert_to( const Source& s)
-{ return Target(s); }
-*/
-#endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
-
-template <class Target, class Source>
-inline
-Target
-convert_from_to( const Target& t, const Source& s)
-{ return Target(s); }
 
 CGAL_END_NAMESPACE
 
