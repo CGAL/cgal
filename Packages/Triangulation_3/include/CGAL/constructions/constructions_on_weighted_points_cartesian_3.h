@@ -369,6 +369,50 @@ radical_axisC3(const RT &px, const RT &py, const RT &pz, const We &pw,
   c= RT(1)*det2x2_by_formula(dqx, dqy, drx, dry);
 }
 
+// function used in critical_squared_radiusC3
+// power ( t, tw) with respect to 
+// circle orthogonal (p,pw), (q,qw), (r,rw), (s,sw)
+template < class FT>
+FT
+power_to_orthogonal_sphereC3(
+                const FT &px, const FT &py, const FT &pz, const FT &pw,
+                const FT &qx, const FT &qy, const FT &qz, const FT &qw,
+                const FT &rx, const FT &ry, const FT &rz, const FT &rw,
+                const FT &sx, const FT &sy, const FT &sz, const FT &sw,
+                const FT &tx, const FT &ty, const FT &tz, const FT &tw)
+{
+   //to get the value of the determinant
+   // We translate the points so that t  becomes the origin.
+    FT dpx = px - tx;
+    FT dpy = py - ty;
+    FT dpz = pz - tz;
+    FT dpt = CGAL_NTS square(dpx) + CGAL_NTS square(dpy) + 
+             CGAL_NTS square(dpz) - pw + tw ;
+    FT dqx = qx - tx;
+    FT dqy = qy - ty;
+    FT dqz = qz - tz;
+    FT dqt = CGAL_NTS square(dqx) + CGAL_NTS square(dqy) +
+             CGAL_NTS square(dqz) - qw + tw;
+    FT drx = rx - tx;
+    FT dry = ry - ty;
+    FT drz = rz - tz;
+    FT drt = CGAL_NTS square(drx) + CGAL_NTS square(dry) + 
+             CGAL_NTS square(drz) - rw + tw;
+    FT dsx = sx - tx;
+    FT dsy = sy - ty;
+    FT dsz = sz - tz;
+    FT dst = CGAL_NTS square(dsx) + CGAL_NTS square(dsy) + 
+             CGAL_NTS square(dsz) - sw + tw;
+
+    return det4x4_by_formula(dpx, dpy, dpz, dpt,
+			     dqx, dqy, dqz, dqt,
+			     drx, dry, drz, drt,
+			     dsx, dsy, dsz, dst);
+
+}
+
+
+
 // compute the critical weight tw 
 // where weighted point t is orthogonal to weighted points p, q,r,s
 template < class FT>
@@ -381,47 +425,22 @@ critical_squared_radiusC3(
                 const FT &tx, const FT &ty, const FT &tz, const FT &  )
 {
   // the 5x5 det  is a linear function of tw ff(tw)= ff(0) + tw ff(1) 
-  // the critical value for tw is  - ff(0)/ff(1)
+  // the critical value for tw is  - ff(0)/( ff(1) - ff(0))
 
-   //to get the value of the determinant
-   // We translate the points so that t  becomes the origin.
-    FT dpx = px - tx;
-    FT dpy = py - ty;
-    FT dpz = pz - tz;
-    FT dpt = CGAL_NTS square(dpx) + CGAL_NTS square(dpy) + 
-             CGAL_NTS square(dpz) - pw;
-    FT dqx = qx - tx;
-    FT dqy = qy - ty;
-    FT dqz = qz - tz;
-    FT dqt = CGAL_NTS square(dqx) + CGAL_NTS square(dqy) +
-             CGAL_NTS square(dqz) - qw;
-    FT drx = rx - tx;
-    FT dry = ry - ty;
-    FT drz = rz - tz;
-    FT drt = CGAL_NTS square(drx) + CGAL_NTS square(dry) + 
-             CGAL_NTS square(drz) - rw;
-    FT dsx = sx - tx;
-    FT dsy = sy - ty;
-    FT dsz = sz - tz;
-    FT dst = CGAL_NTS square(dsx) + CGAL_NTS square(dsy) + 
-             CGAL_NTS square(dsz) - sw;
 
-    FT num =  det4x4_by_formula(dpx, dpy, dpz, dpt,
-				dqx, dqy, dqz, dqt,
-				drx, dry, drz, drt,
-				dsx, dsy, dsz, dst);
+    FT ff0 =  power_to_orthogonal_sphereC3(px, py, pz, pw,
+					   qx, qy, qz, qw,
+					   rx, ry, rz, rw,
+					   sx, sy, sz, sw,
+					   tx, ty, tz, FT(0));
     
-    dpt = dpt - 1;
-    dqt = dqt - 1;
-    drt = drt - 1;
-    dst = dst - 1;
+    FT ff1 = power_to_orthogonal_sphereC3(px, py, pz, pw,
+					    qx, qy, qz, qw,
+					    rx, ry, rz, rw,
+					    sx, sy, sz, sw,
+					    tx, ty, tz, FT(1));
 
-    FT denum = det4x4_by_formula(dpx, dpy, dpz, dpt,
-				 dqx, dqy, dqz, dqt,
-				 drx, dry, drz, drt,
-				 dsx, dsy, dsz, dst);
-    
-    return  - num/denum;
+    return   -ff0/(ff1 - ff0);
 }
 
 
