@@ -1045,8 +1045,8 @@ void Nef_polyhedron_3<T>::extract_complement() {
     D.mark(v) = !D.mark(v); 
     SM_decorator SM(v);
     SM.extract_complement();
-    SM.mark_of_halfsphere(-1) = !SM.mark_of_halfsphere(-1);    
-    SM.mark_of_halfsphere(+1) = !SM.mark_of_halfsphere(+1);    
+    //    SM.mark_of_halfsphere(-1) = !SM.mark_of_halfsphere(-1);    
+    //    SM.mark_of_halfsphere(+1) = !SM.mark_of_halfsphere(+1);    
   }
   Halffacet_iterator f;
   CGAL_nef3_forall_facets(f,D) D.mark(f) = !D.mark(f); 
@@ -1085,7 +1085,7 @@ void Nef_polyhedron_3<T>::extract_boundary() {
     D.mark(v) = true;
     SM_decorator SM(v);
     SM.extract_boundary();
-    SM.mark_of_halfsphere(-1) = SM.mark_of_halfsphere(+1) = false;
+    //    SM.mark_of_halfsphere(-1) = SM.mark_of_halfsphere(+1) = false;
   }
   Halffacet_iterator f;
   CGAL_nef3_forall_facets(f,D) D.mark(f) = true;
