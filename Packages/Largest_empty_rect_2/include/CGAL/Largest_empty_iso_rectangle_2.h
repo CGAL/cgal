@@ -1308,10 +1308,14 @@ Largest_empty_iso_rectangle_2<T>::get_largest_empty_iso_rectangle()
   }
   update();
   return(Iso_rectangle_2(
-           less_xy_point(left_p.x_part,right_p.x_part) ? left_p.x_part : right_p.x_part,
-           less_xy_point(left_p.x_part,right_p.x_part) ? right_p.x_part : left_p.x_part,
-           less_yx_point(bottom_p.x_part,top_p.x_part) ? bottom_p.y_part : top_p.y_part,
-           less_yx_point(bottom_p.x_part,top_p.x_part) ? top_p.y_part : bottom_p.y_part));
+           less_xy_point(left_p.x_part,right_p.x_part) ?
+                 left_p.x_part : right_p.x_part,
+           less_xy_point(left_p.x_part,right_p.x_part) ?
+                 right_p.x_part : left_p.x_part,
+           less_yx_point(bottom_p.x_part,top_p.x_part) ?
+                 bottom_p.y_part : top_p.y_part,
+           less_yx_point(bottom_p.x_part,top_p.x_part) ?
+                 top_p.y_part : bottom_p.y_part));
 }
 
 template<class T>
