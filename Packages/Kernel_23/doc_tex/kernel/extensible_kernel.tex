@@ -203,10 +203,12 @@ made robust by plugging it in the \ccc{Filtered_kernel}.
 \ccHtmlLinksOn
 
 
-\subsection{Limitations}
+\section{Limitations}
 
 The point class must have member functions \ccc{x()} and \ccc{y()}
-(and \ccc{z()} for the 3d point). We work on that.
+(and \ccc{z()} for the 3d point). We will probably
+introduce function objects that take care of coordinate
+access.
 
 Global functions operating on, for example
 \ccc{CGAL::Orientation(CGAL::Point_2<K>, CGAL::Point_2<K>,
