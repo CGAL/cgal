@@ -14,6 +14,7 @@
 // file          : demo/Optimisation/demo_Min_circle_2.C
 // revision      : $Revision$
 // revision_date : $Date$
+// package       : $CGAL_Package: Optimisation WIP $
 // author(s)     : Sven Schönherr <sven@inf.fu-berlin.de>
 //
 // coordinator   : ETH Zurich (Bernd Gärtner <gaertner@inf.ethz.ch>)
@@ -33,14 +34,14 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Point_2.h>
-#include <CGAL/Optimisation_traits_2.h>
 #include <CGAL/Min_circle_2.h>
+#include <CGAL/Min_circle_2_traits_2.h>
 #include <CGAL/IO/Window_stream.h>
 
 // typedefs
 typedef  CGAL_Homogeneous< double >         Rep;
 typedef  CGAL_Point_2< Rep >                Point;
-typedef  CGAL_Optimisation_traits_2< Rep >  Traits;
+typedef  CGAL_Min_circle_2_traits_2< Rep >  Traits;
 typedef  CGAL_Min_circle_2< Traits >        Min_circle;
 
 // main
