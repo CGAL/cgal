@@ -3,7 +3,7 @@
 //=====================================================================
 
 //---------------------------------------------------------------------
-//      revision 
+//      revision 296
 //---------------------------------------------------------------------
 - Compact_container::iterator can now be initialized with and compared to NULL 
   This is an undocumented feature needed for speeding up the triangulation code
