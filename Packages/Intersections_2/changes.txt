@@ -1,4 +1,9 @@
 -----
+* 2.2 *
++Replaced dir.vector() by dir.to_vector() in several places to avoid a bug in
+ egcs 2.91.66 compiler.
+
+-----
 * 2.1.8 *
 +Replaced using declarations by explicit qualification in test files.
  So, instead of using std::cout; , use std::cout everywhere.
