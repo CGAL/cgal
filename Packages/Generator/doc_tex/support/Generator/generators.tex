@@ -39,38 +39,43 @@ permutations (e.g.~for points on a grid).
 \section{Support Functions for Generators}
 \ccThree{OutputIterator}{rand}{}
 
-Two support functions are provided. \ccc{CGAL_ncopy()} copies $n$
+Two support functions are provided. \ccc{CGAL_copy_n()} copies $n$
 items from an input iterator to an output iterator which is useful for
-possibly infinite sequnces of random geometric objects.
+possibly infinite sequences of random geometric objects\footnote{%
+The STL release June 13, 1997, from SGI has a new function \ccc{copy_n} which is equivalent with \ccc{CGAL_copy_n}.}.
 \ccc{CGAL_random_selection} chooses $n$ items at random from a random
 access iterator range which is useful to produce degenerate input data
 sets with multiple entries of identical items.
 
-\subsection{{\it CGAL\_ncopy()}}
-\label{sectionNCopy}
+\subsection{{\it CGAL\_copy\_n()}}
+\label{sectionCopyN}
 
-\ccInclude{CGAL/ncopy.h}
+\ccInclude{CGAL/copy_n.h}
 
-\ccFunction{template <class InputIterator, class OutputIterator>
-  OutputIterator CGAL_ncopy( InputIterator first, size_t n, 
-  OutputIterator first2);}
-{copies the first $n$ elements from \ccc{first} to \ccc{first2}.}
+\ccFunction{template <class InputIterator, class Size, class OutputIterator>
+  OutputIterator CGAL_copy_n( InputIterator first, Size n, 
+  OutputIterator result);}
+{copies the first $n$ items from \ccc{first} to \ccc{result}.
+    Returns the value of \ccc{result} after inserting the $n$ items.}
 
 \subsection{{\it CGAL\_random\_selection()}}
 \label{sectionRandomSelection}
 
 \ccInclude{CGAL/random_selection.h}
 
-\ccFunction{template <class RandomAccessIterator, class OutputIterator>
+\ccFunction{template <class RandomAccessIterator, class Size, 
+                      class OutputIterator, class Random>
     OutputIterator CGAL_random_selection( RandomAccessIterator first,
         RandomAccessIterator last, 
-        size_t n, OutputIterator first2, CGAL_Random& rnd = CGAL_random);}
+        Size n, OutputIterator result, Random& rnd = CGAL_random);}
 { choose a random item from the range $[\ccc{first},\ccc{last})$ and
-    write it to \ccc{first2}, each item from the range with equal
+    write it to \ccc{result}, each item from the range with equal
     probability. Repeat this $n$ times, thus writing $n$ items to
-    \ccc{first2}.
+    \ccc{result}.
     A single random number is needed from \ccc{rnd} for each item.
-    Returns the value of \ccc{first2} after inserting the $n$ items.
+    Returns the value of \ccc{result} after inserting the $n$ items.
+    \ccPrecond \ccc{Random} is a random number generator type as provided 
+    by the STL or by \ccc{CGAL_Random}.
 }
 
 
@@ -116,8 +121,8 @@ The random point generators are implemented as classes that satisfies
 the requirements for input iterators. They represent the possibly
 infinite sequence of randomly generated points. Each call to the
 \ccc{operator*} returns a new point. To create a finite sequence in a
-container, the function \ccc{CGAL_ncopy()} could be used, see
-Section~\ref{sectionNCopy}.
+container, the function \ccc{CGAL_copy_n()} could be used, see
+Section~\ref{sectionCopyN}.
 
 \ccHtmlNoClassFile
 \begin{ccClassTemplate}{CGAL_Random_points_in_disc_2<P>}
@@ -352,7 +357,7 @@ two endpoints.  \ccClassTemplateName\ satisfies the requirements for
 an input iterator. It represents the possibly infinite sequence of
 generated segments. Each call to the \ccc{operator*} returns a new
 segment. To create a finite sequence in a container, the function
-\ccc{CGAL_ncopy()} could be used, see Section~\ref{sectionNCopy}.
+\ccc{CGAL_copy_n()} could be used, see Section~\ref{sectionCopyN}.
 
 \ccInclude{CGAL/Segment_generator_2.h}
 
