@@ -244,7 +244,7 @@ CGAL_maximum_inscribed_rooted_k_gon(
     iterator_distance( points_begin, points_end));
   CGAL_precondition( number_of_points > k);
 
-  typedef vector< int > Index_cont;
+  typedef std::vector< int > Index_cont;
 
   if ( k == t.min_k())
     // compute min_k gon:
@@ -394,8 +394,8 @@ CGAL_maximum_inscribed_rooted_k_gon(
   #else
   typedef _FT                               FT;
   #endif
-  typedef vector< FT >                      FT_cont;
-  typedef vector< int >                     Index_cont;
+  typedef std::vector< FT >                 FT_cont;
+  typedef std::vector< int >                Index_cont;
   typedef typename Traits::Operation        Operation;
   //!!! static ???
   // area container:
@@ -628,7 +628,7 @@ CGAL_maximum_inscribed_k_gon(
 #endif
 
   typedef typename Traits::FT   FT;
-  typedef vector< int >         Index_cont;
+  typedef std::vector< int >    Index_cont;
 
   if ( number_of_points <= k) {
     for ( int j( k - 1); j >= 0; --j)
@@ -788,7 +788,7 @@ CGAL_maximum_inscribed_k_gon(
 #else
   typedef _FT                               FT;
 #endif
-  typedef vector< int >       Index_cont;
+  typedef std::vector< int >        Index_cont;
 
 #ifndef CGAL_CFG_NO_NAMESPACE
   using std::copy;
