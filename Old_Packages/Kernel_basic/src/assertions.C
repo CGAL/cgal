@@ -100,11 +100,11 @@ assertion_fail( const char* expr,
     (*_error_handler)("assertion", expr, file, line, msg);
     switch (_error_behaviour) {
     case ABORT:
-        abort();
+        CGAL_CLIB_STD::abort();
     case EXIT:
-        exit(1);  // EXIT_FAILURE
+        CGAL_CLIB_STD::exit(1);  // EXIT_FAILURE
     case EXIT_WITH_SUCCESS:
-        exit(0);  // EXIT_SUCCESS
+        CGAL_CLIB_STD::exit(0);  // EXIT_SUCCESS
     case CONTINUE:
         ;
     }
@@ -119,11 +119,11 @@ precondition_fail( const char* expr,
     (*_error_handler)("precondition", expr, file, line, msg);
     switch (_error_behaviour) {
     case ABORT:
-        abort();
+        CGAL_CLIB_STD::abort();
     case EXIT:
-        exit(1);  // EXIT_FAILURE
+        CGAL_CLIB_STD::exit(1);  // EXIT_FAILURE
     case EXIT_WITH_SUCCESS:
-        exit(0);  // EXIT_SUCCESS
+        CGAL_CLIB_STD::exit(0);  // EXIT_SUCCESS
     case CONTINUE:
         ;
     }
@@ -138,11 +138,11 @@ postcondition_fail(const char* expr,
     (*_error_handler)("postcondition", expr, file, line, msg);
     switch (_error_behaviour) {
     case ABORT:
-        abort();
+        CGAL_CLIB_STD::abort();
     case EXIT:
-        exit(1);  // EXIT_FAILURE
+        CGAL_CLIB_STD::exit(1);  // EXIT_FAILURE
     case EXIT_WITH_SUCCESS:
-        exit(0);  // EXIT_SUCCESS
+        CGAL_CLIB_STD::exit(0);  // EXIT_SUCCESS
     case CONTINUE:
         ;
     }
@@ -160,11 +160,11 @@ warning_fail( const char* expr,
     (*_warning_handler)("warning", expr, file, line, msg);
     switch (_warning_behaviour) {
     case ABORT:
-        abort();
+        CGAL_CLIB_STD::abort();
     case EXIT:
-        exit(1);  // EXIT_FAILURE
+        CGAL_CLIB_STD::exit(1);  // EXIT_FAILURE
     case EXIT_WITH_SUCCESS:
-        exit(0);  // EXIT_SUCCESS
+        CGAL_CLIB_STD::exit(0);  // EXIT_SUCCESS
     case CONTINUE:
         ;
     }
