@@ -118,8 +118,8 @@ class Arr_conic_traits_2
   // Decide wether curve1 is above, below or equal to curve2 at the
   // x co-ordinate of the given point.
   Comparison_result curve_compare_at_x (const X_curve_2& curve1, 
-				        const X_curve_2& curve2, 
-				        const Point_2& p) const
+                                        const X_curve_2& curve2, 
+                                        const Point_2& p) const
   {
     CGAL_precondition(is_x_monotone(curve1));
     CGAL_precondition(is_x_monotone(curve2));
@@ -133,24 +133,24 @@ class Arr_conic_traits_2
       // curve1 is a vertical segment.
       if (compare_x (curve1.source(), p) != EQUAL)
       {
-	// The curve's x co-ordinate is different than p's.
-	return (EQUAL);
+        // The curve's x co-ordinate is different than p's.
+        return (EQUAL);
       }
       else
       {
-	// Both the source and target of the curve has the same x co-ordinate
-	// as p. Make sure that ps1[0] has a smaller y value than ps1[1].
-	n1 = 2;
-	if (compare_y (curve1.source(), curve1.target()) == SMALLER)
-	{
-	  ps1[0] = curve1.source();
-	  ps1[1] = curve1.target();
-	}
-	else
-	{
-	  ps1[0] = curve1.target();
-	  ps1[1] = curve1.source();
-	}
+        // Both the source and target of the curve has the same x co-ordinate
+        // as p. Make sure that ps1[0] has a smaller y value than ps1[1].
+        n1 = 2;
+        if (compare_y (curve1.source(), curve1.target()) == SMALLER)
+        {
+          ps1[0] = curve1.source();
+          ps1[1] = curve1.target();
+        }
+        else
+        {
+          ps1[0] = curve1.target();
+          ps1[1] = curve1.source();
+        }
       }
     }
     else
@@ -159,7 +159,7 @@ class Arr_conic_traits_2
       n1 = curve1.get_points_at_x (p, ps1);
 
       if (n1 == 0)    // p is not in the x-range of curve1.
-	return (EQUAL);
+        return (EQUAL);
 
       CGAL_assertion(n1 == 1);
     }
@@ -173,24 +173,24 @@ class Arr_conic_traits_2
       // curve2 is a vertical segment.
       if (compare_x (curve2.source(), p) != EQUAL)
       {
-	// The curve's x co-ordinate is different than p's.
-	return (EQUAL);
+        // The curve's x co-ordinate is different than p's.
+        return (EQUAL);
       }
       else
       {
-	// Both the source and target of the curve has the same x co-ordinate
-	// as p. Make sure that ps2[0] has a smaller y value than ps2[1].
-	n2 = 2;
-	if (compare_y (curve2.source(), curve2.target()) == SMALLER)
-	{
-	  ps2[0] = curve2.source();
-	  ps2[1] = curve2.target();
-	}
-	else
-	{
-	  ps2[0] = curve2.target();
-	  ps2[1] = curve2.source();
-	}
+        // Both the source and target of the curve has the same x co-ordinate
+        // as p. Make sure that ps2[0] has a smaller y value than ps2[1].
+        n2 = 2;
+        if (compare_y (curve2.source(), curve2.target()) == SMALLER)
+        {
+          ps2[0] = curve2.source();
+          ps2[1] = curve2.target();
+        }
+        else
+        {
+          ps2[0] = curve2.target();
+          ps2[1] = curve2.source();
+        }
       }
     }
     else
@@ -199,7 +199,7 @@ class Arr_conic_traits_2
       n2 = curve2.get_points_at_x (p, ps2);
 
       if (n2 == 0)    // p is not in the x-range of curve2.
-	return (EQUAL);
+        return (EQUAL);
 
       CGAL_assertion(n2 == 1);
     }
@@ -209,27 +209,27 @@ class Arr_conic_traits_2
     {
       // Check if the vertical segment curve1 contains ps2[0] or ps2[1].
       if (compare_y (ps1[0], ps2[0]) != LARGER && 
-	  compare_y (ps1[1], ps2[0]) != SMALLER)
+          compare_y (ps1[1], ps2[0]) != SMALLER)
       {
-	return (EQUAL);
+        return (EQUAL);
       }
 
       if (n2 == 2)
       {
-	if (compare_y (ps1[0], ps2[1]) != LARGER && 
-	    compare_y (ps1[1], ps2[1]) != SMALLER)
-	{
-	  return (EQUAL);
-	}
+        if (compare_y (ps1[0], ps2[1]) != LARGER && 
+            compare_y (ps1[1], ps2[1]) != SMALLER)
+        {
+          return (EQUAL);
+        }
       }
     }
     else if (n2 == 2)
     {
       // Check if the vertical segment curve2 contains ps1[0].
       if (compare_y (ps2[0], ps1[0]) != LARGER && 
-	  compare_y (ps2[1], ps1[0]) != SMALLER)
+          compare_y (ps2[1], ps1[0]) != SMALLER)
       {
-	return (EQUAL);
+        return (EQUAL);
       }
     }
     
@@ -242,8 +242,8 @@ class Arr_conic_traits_2
   // Decide wether curve1 is above, below or equal to curve2 immediately to
   // the left of the x co-ordinate of the given point.
   Comparison_result curve_compare_at_x_left (const X_curve_2& curve1, 
-					     const X_curve_2& curve2,
-					     const Point_2& p) const
+                                             const X_curve_2& curve2,
+                                             const Point_2& p) const
   {
     CGAL_precondition(is_x_monotone(curve1));
     CGAL_precondition(is_x_monotone(curve2));
@@ -321,9 +321,9 @@ class Arr_conic_traits_2
       Comparison_result fac2 = curve2.facing();
 
       if (fac1 == LARGER && fac2 == SMALLER)
-	return (LARGER);
+        return (LARGER);
       else if (fac1 == SMALLER && fac2 == LARGER)
-	return (SMALLER);
+        return (SMALLER);
     }
 
     // Otherwise, the two curves do intersect at p_int = ps1[0] = ps2[0]:
@@ -345,22 +345,22 @@ class Arr_conic_traits_2
       // The two curves have derivatives at p_int: use it to determine which
       // one is above the other (the one with a smaller slope in above). 
       Comparison_result  slope_res = /*CGAL::compare*/ 
-	eps_compare<APNT>(TO_APNT(slope2_numer*slope1_denom), 
-			  TO_APNT(slope1_numer*slope2_denom));
+        eps_compare<APNT>(TO_APNT(slope2_numer*slope1_denom), 
+                          TO_APNT(slope1_numer*slope2_denom));
             
       if (slope_res != EQUAL)
-	return (slope_res);
+        return (slope_res);
 
       // Use the second order derivative.
       curve1.derive_by_x_at (p_int, 2, slope1_numer, slope1_denom);
       curve2.derive_by_x_at (p_int, 2, slope2_numer, slope2_denom);
 
       slope_res = /*CGAL::compare*/
-	eps_compare<APNT> (TO_APNT(slope2_numer*slope1_denom), 
-			   TO_APNT(slope1_numer*slope2_denom));
+        eps_compare<APNT> (TO_APNT(slope2_numer*slope1_denom), 
+                           TO_APNT(slope1_numer*slope2_denom));
 
       CGAL_assertion(slope_res != EQUAL);
-	
+        
       return ((slope_res == LARGER) ? SMALLER : LARGER);
     }
     else if (!is_vertical_slope2)
@@ -390,29 +390,29 @@ class Arr_conic_traits_2
       Comparison_result fac2 = curve2.facing();
 
       if (fac1 == LARGER && fac2 == SMALLER)
-	return (LARGER);
+        return (LARGER);
       else if (fac1 == SMALLER && fac2 == LARGER)
-	return (SMALLER);
+        return (SMALLER);
 
       // Compute the second order derivative by y and act according to it.
       curve1.derive_by_y_at (p_int, 2, slope1_numer, slope1_denom);
       curve2.derive_by_y_at (p_int, 2, slope2_numer, slope2_denom);
 
       Comparison_result  slope_res = /*CGAL::compare*/
-	eps_compare<APNT> (TO_APNT(slope2_numer*slope1_denom), 
-			   TO_APNT(slope1_numer*slope2_denom));
+        eps_compare<APNT> (TO_APNT(slope2_numer*slope1_denom), 
+                           TO_APNT(slope1_numer*slope2_denom));
 
       CGAL_assertion(slope_res != EQUAL);
 
       if (fac1 == LARGER && fac2 == LARGER)
       {
-	// Both are facing up.
-	return ((slope_res == LARGER) ? SMALLER : LARGER);
+        // Both are facing up.
+        return ((slope_res == LARGER) ? SMALLER : LARGER);
       }
       else
       {
-	// Both are facing down.
-	return (slope_res);
+        // Both are facing down.
+        return (slope_res);
       }
     }
 
@@ -424,8 +424,8 @@ class Arr_conic_traits_2
   // Decide wether curve1 is above, below or equal to curve2 immediately to
   // the right of the x co-ordinate of the given point.
   Comparison_result curve_compare_at_x_right (const X_curve_2& curve1, 
-					      const X_curve_2& curve2,
-					      const Point_2& p) const
+                                              const X_curve_2& curve2,
+                                              const Point_2& p) const
   {
     CGAL_precondition(is_x_monotone(curve1));
     CGAL_precondition(is_x_monotone(curve2));
@@ -503,9 +503,9 @@ class Arr_conic_traits_2
       Comparison_result fac2 = curve2.facing();
 
       if (fac1 == LARGER && fac2 == SMALLER)
-	return (LARGER);
+        return (LARGER);
       else if (fac1 == SMALLER && fac2 == LARGER)
-	return (SMALLER);
+        return (SMALLER);
     }
 
     // Otherwise, the two curves do intersect at p_int = ps1[0] = ps2[0]:
@@ -527,22 +527,22 @@ class Arr_conic_traits_2
       // The two curves have derivatives at p_int: use it to determine which
       // one is above the other (the one with a larger slope is below).
       Comparison_result  slope_res = /*CGAL::compare*/
-	eps_compare<APNT> (TO_APNT(slope1_numer*slope2_denom), 
-			   TO_APNT(slope2_numer*slope1_denom));
+        eps_compare<APNT> (TO_APNT(slope1_numer*slope2_denom), 
+                           TO_APNT(slope2_numer*slope1_denom));
       
       if (slope_res != EQUAL)
-	return (slope_res);
+        return (slope_res);
 
       // Use the second order derivative.
       curve1.derive_by_x_at (p_int, 2, slope1_numer, slope1_denom);
       curve2.derive_by_x_at (p_int, 2, slope2_numer, slope2_denom);
 
       slope_res = /*CGAL::compare*/
-	eps_compare<APNT> (TO_APNT(slope1_numer*slope2_denom), 
-			   TO_APNT(slope2_numer*slope1_denom));
+        eps_compare<APNT> (TO_APNT(slope1_numer*slope2_denom), 
+                           TO_APNT(slope2_numer*slope1_denom));
 
       CGAL_assertion(slope_res != EQUAL);
-	
+        
       return (slope_res);
     }
     else if (!is_vertical_slope2)
@@ -572,29 +572,29 @@ class Arr_conic_traits_2
       Comparison_result fac2 = curve2.facing();
 
       if (fac1 == LARGER && fac2 == SMALLER)
-	return (LARGER);
+        return (LARGER);
       else if (fac1 == SMALLER && fac2 == LARGER)
-	return (SMALLER);
+        return (SMALLER);
 
       // Compute the second order derivative by y and act according to it.
       curve1.derive_by_y_at (p_int, 2, slope1_numer, slope1_denom);
       curve2.derive_by_y_at (p_int, 2, slope2_numer, slope2_denom);
 
       Comparison_result  slope_res = /*CGAL::compare*/
-	eps_compare<APNT> (TO_APNT(slope1_numer*slope2_denom), 
-			   TO_APNT(slope2_numer*slope1_denom));
+        eps_compare<APNT> (TO_APNT(slope1_numer*slope2_denom), 
+                           TO_APNT(slope2_numer*slope1_denom));
 
       CGAL_assertion(slope_res != EQUAL);
 
       if (fac1 == LARGER && fac2 == LARGER)
       {
-	// Both are facing up.
-	return ((slope_res == LARGER) ? SMALLER : LARGER);
+        // Both are facing up.
+        return ((slope_res == LARGER) ? SMALLER : LARGER);
       }
       else
       {
-	// Both are facing down.
-	return (slope_res);
+        // Both are facing down.
+        return (slope_res);
       }
     }
 
@@ -613,23 +613,23 @@ class Arr_conic_traits_2
     if (curve.is_vertical_segment())
     {
       if (compare_x (curve.source(), p) != EQUAL)
-	return (CURVE_NOT_IN_RANGE);
+        return (CURVE_NOT_IN_RANGE);
 
       // In case p has the same x c-ordinate of the vertical segment, compare
       // it to the segment endpoints to determine its position.
       if (compare_y (curve.source(), p) == SMALLER &&
-	  compare_y (curve.target(), p) == SMALLER)
+          compare_y (curve.target(), p) == SMALLER)
       {
-	return (ABOVE_CURVE);
+        return (ABOVE_CURVE);
       }
       else if (compare_y (curve.source(), p) == LARGER &&
-	       compare_y (curve.target(), p) == LARGER)
+               compare_y (curve.target(), p) == LARGER)
       {
-	return (UNDER_CURVE);
+        return (UNDER_CURVE);
       }
       else
       {
-	return (ON_CURVE);
+        return (ON_CURVE);
       }
     }
 
@@ -671,8 +671,8 @@ class Arr_conic_traits_2
   // clockwise direction from p from c1 to c2.
   // Notice that all three curves share the same end-point p.
   bool curve_is_between_cw (const X_curve_2& curve,
-			    const X_curve_2& c1, const X_curve_2& c2,
-			    const Point_2& p) const
+                            const X_curve_2& c1, const X_curve_2& c2,
+                            const Point_2& p) const
   {
     CGAL_precondition(is_x_monotone(curve));
     CGAL_precondition(is_x_monotone(c1));
@@ -715,24 +715,24 @@ class Arr_conic_traits_2
 
     // Make sure no two curves overlap.
     if (c1.has_same_base_conic (c2) &&
-	(p1_flip * c1.conic().orientation() == 
-	 p2_flip * c2.conic().orientation()) &&
-	(c1.contains_point(*p2_P) ||
-	 c2.contains_point(*p1_P)))
+        (p1_flip * c1.conic().orientation() == 
+         p2_flip * c2.conic().orientation()) &&
+        (c1.contains_point(*p2_P) ||
+         c2.contains_point(*p1_P)))
       return (false);
 
     if (c1.has_same_base_conic(curve) &&
-	(p1_flip * c1.conic().orientation() == 
-	 pv_flip * curve.conic().orientation()) &&
-	(c1.contains_point(*pv_P) ||
-	 curve.contains_point(*p1_P)))
+        (p1_flip * c1.conic().orientation() == 
+         pv_flip * curve.conic().orientation()) &&
+        (c1.contains_point(*pv_P) ||
+         curve.contains_point(*p1_P)))
       return (false);
 
     if (curve.has_same_base_conic(c2) &&
-	(pv_flip * curve.conic().orientation() == 
-	 p2_flip * c2.conic().orientation()) &&
-	(curve.contains_point(*p2_P) ||
-	 c2.contains_point(*pv_P)))
+        (pv_flip * curve.conic().orientation() == 
+         p2_flip * c2.conic().orientation()) &&
+        (curve.contains_point(*p2_P) ||
+         c2.contains_point(*pv_P)))
       return (false);
 
     // Decide whether each arc is defined to the left or to the right of p.
@@ -756,45 +756,45 @@ class Arr_conic_traits_2
       // c1 is a vertical segment:
       if (c2_vertical != 0)
       {
-	// Both c1 and c2 are vertical segments:
-	if ((c1_vertical == 1) && (c2_vertical == -1))
-	  return (!curve_is_left);
-	else if ((c1_vertical == -1) && (c2_vertical == 1))
-	  return (curve_is_left);
-	else
-	  return (false);
+        // Both c1 and c2 are vertical segments:
+        if ((c1_vertical == 1) && (c2_vertical == -1))
+          return (!curve_is_left);
+        else if ((c1_vertical == -1) && (c2_vertical == 1))
+          return (curve_is_left);
+        else
+          return (false);
       }
       
       if (c1_vertical == 1)
       {
-	// c1 is a vertical segment going up:
-	if (c2_is_left)
-	{
-	  return ((!curve_is_left) ||
-		  (curve_is_left &&
-		   curve_compare_at_x_left (c2, curve, p) == LARGER));
-	}
-	else
-	{
-	  return (!curve_is_left &&
-		  curve_compare_at_x_right (c2, curve, p) == SMALLER);
-	}
+        // c1 is a vertical segment going up:
+        if (c2_is_left)
+        {
+          return ((!curve_is_left) ||
+                  (curve_is_left &&
+                   curve_compare_at_x_left (c2, curve, p) == LARGER));
+        }
+        else
+        {
+          return (!curve_is_left &&
+                  curve_compare_at_x_right (c2, curve, p) == SMALLER);
+        }
       }
       else
       {
-	// c1 is a vertical segment going down:
-	if (c2_is_left)
-	{
-	  return (curve_is_left &&
-		  curve_compare_at_x_left (c2, curve, p) == LARGER);
-	}
-	else
-	{
-	  return ((curve_is_left) ||
-		  (curve_vertical == 1) ||
-		  (!curve_is_left &&
-		   curve_compare_at_x_right (c2, curve, p) == SMALLER));
-	}
+        // c1 is a vertical segment going down:
+        if (c2_is_left)
+        {
+          return (curve_is_left &&
+                  curve_compare_at_x_left (c2, curve, p) == LARGER);
+        }
+        else
+        {
+          return ((curve_is_left) ||
+                  (curve_vertical == 1) ||
+                  (!curve_is_left &&
+                   curve_compare_at_x_right (c2, curve, p) == SMALLER));
+        }
       }
     }
 
@@ -803,35 +803,35 @@ class Arr_conic_traits_2
       // Only c2 is a vertical segment:
       if (c2_vertical == 1)
       {
-	// c2 is a vertical segment going up:
-	if (c1_is_left)
-	{
-	  return (curve_is_left &&
-		  curve_compare_at_x_left (c1, curve, p) == SMALLER);
-	}
-	else
-	{
-	  return ((curve_is_left) ||
-		  (curve_vertical == -1) ||
-		  (!curve_is_left &&
-		   curve_compare_at_x_right (c1, curve, p) == LARGER));
-	}
+        // c2 is a vertical segment going up:
+        if (c1_is_left)
+        {
+          return (curve_is_left &&
+                  curve_compare_at_x_left (c1, curve, p) == SMALLER);
+        }
+        else
+        {
+          return ((curve_is_left) ||
+                  (curve_vertical == -1) ||
+                  (!curve_is_left &&
+                   curve_compare_at_x_right (c1, curve, p) == LARGER));
+        }
       }
       else
       {
-	// c2 is a vertical segment going down:
-	if (c1_is_left)
-	{
-	  return ((!curve_is_left) ||
-		  (curve_vertical == 1) ||
-		  (curve_is_left &&
-		   curve_compare_at_x_left (c1, curve, p) == SMALLER));
-	}
-	else
-	{
-	  return ((!curve_is_left) &&
-		  curve_compare_at_x_right (c1, curve, p) == LARGER);
-	}
+        // c2 is a vertical segment going down:
+        if (c1_is_left)
+        {
+          return ((!curve_is_left) ||
+                  (curve_vertical == 1) ||
+                  (curve_is_left &&
+                   curve_compare_at_x_left (c1, curve, p) == SMALLER));
+        }
+        else
+        {
+          return ((!curve_is_left) &&
+                  curve_compare_at_x_right (c1, curve, p) == LARGER);
+        }
       }
     }
 
@@ -840,23 +840,23 @@ class Arr_conic_traits_2
       // Only curve is a vertical segment:
       if (curve_vertical == 1)
       {
-	// curve is a vertical segment going up:
-	if (c1_is_left && !c2_is_left)
-	  return (true);
-	else if (c1_is_left && c2_is_left)
-	  return (curve_compare_at_x_left(c1, c2, p) == LARGER);
-	else if (!c1_is_left && !c2_is_left)
-	  return (curve_compare_at_x_right(c1, c2, p) == SMALLER);
+        // curve is a vertical segment going up:
+        if (c1_is_left && !c2_is_left)
+          return (true);
+        else if (c1_is_left && c2_is_left)
+          return (curve_compare_at_x_left(c1, c2, p) == LARGER);
+        else if (!c1_is_left && !c2_is_left)
+          return (curve_compare_at_x_right(c1, c2, p) == SMALLER);
       }
       else
       {
-	// curve is a vertical segment going down:
-	if (!c1_is_left && c2_is_left)
-	  return (true);
-	else if (c1_is_left && c2_is_left)
-	  return (curve_compare_at_x_left(c1, c2, p) == LARGER);
-	else if (!c1_is_left && !c2_is_left)
-	  return (curve_compare_at_x_right(c1, c2, p) == SMALLER);
+        // curve is a vertical segment going down:
+        if (!c1_is_left && c2_is_left)
+          return (true);
+        else if (c1_is_left && c2_is_left)
+          return (curve_compare_at_x_left(c1, c2, p) == LARGER);
+        else if (!c1_is_left && !c2_is_left)
+          return (curve_compare_at_x_right(c1, c2, p) == SMALLER);
       }
 
       return (false);
@@ -869,13 +869,13 @@ class Arr_conic_traits_2
       // Case 1: Both c1 and c2 are defined to the left of p.
       if (curve_compare_at_x_left (c1, c2, p) == LARGER)
       { 
-	// c1 is above c2:
+        // c1 is above c2:
         return (!(curve_compare_at_x_left (c2, curve, p) == SMALLER &&
                   curve_compare_at_x_left (c1, curve, p) == LARGER));
       }
       else
       { 
-	// c2 is above c1:
+        // c2 is above c1:
         return (curve_compare_at_x_left (c1, curve, p) == SMALLER &&
                 curve_compare_at_x_left (c2, curve, p) == LARGER);
       }
@@ -885,13 +885,13 @@ class Arr_conic_traits_2
       // Case 2: Both c1 and c2 are defined to the right of p.
       if (curve_compare_at_x_right (c1, c2, p) == LARGER)
       {
-	// c1 is above c2:
+        // c1 is above c2:
         return (curve_compare_at_x_right (c2, curve, p) == SMALLER &&
                 curve_compare_at_x_right (c1, curve, p) == LARGER);
       }
       else
       { 
-	// c2 is above c1:
+        // c2 is above c1:
         return (!(curve_compare_at_x_right (c1, curve, p) == SMALLER &&
                   curve_compare_at_x_right (c2, curve, p) == LARGER));
       }
@@ -929,15 +929,15 @@ class Arr_conic_traits_2
     {
       // Same orientation:
       return (curve1.has_same_base_conic(curve2) &&
-	      curve1.source().equals(curve2.source()) &&
-	      curve1.target().equals(curve2.target()));
+              curve1.source().equals(curve2.source()) &&
+              curve1.target().equals(curve2.target()));
     }
     else
     {
       // Check the flip case:
       return (curve1.has_same_base_conic(curve2) &&
-	      curve1.source().equals(curve2.target()) &&
-	      curve1.target().equals(curve2.source()));
+              curve1.source().equals(curve2.target()) &&
+              curve1.target().equals(curve2.source()));
     }
   }
 
@@ -956,15 +956,13 @@ class Arr_conic_traits_2
   Point_2 point_to_left (const Point_2& p) const
   {
     NT   x = CGAL::to_double(p.x()) - 1;
-    return (Point_2(x , p.y(),
-		  Point_2::User_defined));
+    return (Point_2(x , p.y(), Curve_2::Point::User_defined));
   }
 
   Point_2 point_to_right (const Point_2& p) const
   {
     NT   x = CGAL::to_double(p.x()) + 1;
-    return (Point_2(x , p.y(),
-		  Point_2::User_defined));
+    return (Point_2(x , p.y(), Curve_2::Point::User_defined));
   }
 
   // Reflect a point in y.
@@ -1001,7 +999,7 @@ class Arr_conic_traits_2
 
   // Cut the curve to several x-monotone sub-curves.
   void make_x_monotone (const Curve_2& curve, 
-			std::list<X_curve_2>& x_curves) const
+                        std::list<X_curve_2>& x_curves) const
   {
     CGAL_precondition(!is_x_monotone(curve));
 
@@ -1035,57 +1033,57 @@ class Arr_conic_traits_2
 
       if (n == 1)
       {
-	// Split the arc into two x-monotone sub-curves: one going from the
-	// arc source to ps[0], and the other from ps[0] to the target. 
-	_curve_split (curve, 
-	              sub_curve1, sub_curve2, 
+        // Split the arc into two x-monotone sub-curves: one going from the
+        // arc source to ps[0], and the other from ps[0] to the target. 
+        _curve_split (curve, 
+                      sub_curve1, sub_curve2, 
                       ps[0]);
 
-	x_curves.push_back(sub_curve1);
-	x_curves.push_back(sub_curve2);
+        x_curves.push_back(sub_curve1);
+        x_curves.push_back(sub_curve2);
       }
       else if (n == 2)
       {
-	// Split the arc into three x-monotone sub-curves: one going from the
-	// arc source to ps[0], one from ps[0] to ps[1], and the last one
-	// from ps[1] to the target.
-	// Notice that ps[0] and ps[1] might switch places.
-	X_curve_2    temp;
+        // Split the arc into three x-monotone sub-curves: one going from the
+        // arc source to ps[0], one from ps[0] to ps[1], and the last one
+        // from ps[1] to the target.
+        // Notice that ps[0] and ps[1] might switch places.
+        X_curve_2    temp;
 
-	_curve_split (curve, 
-	              sub_curve1, sub_curve2, 
+        _curve_split (curve, 
+                      sub_curve1, sub_curve2, 
                       ps[0]);
 
-	if (sub_curve2.contains_point(ps[1]))
-	{
-	  temp = sub_curve2;
-	  _curve_split (temp,
-		        sub_curve2, sub_curve3,
-		        ps[1]);
-	}
-	else if (sub_curve1.contains_point(ps[1]))
-	{
-	  // Actually we switch between ps[0] and ps[1].
-	  temp = sub_curve1;
-	  sub_curve3 = sub_curve2;
-	  _curve_split (temp,
-		        sub_curve1, sub_curve2,
-		        ps[1]);
-	}
-	else
-	{
-	  // We should never reach here:
-	  CGAL_assertion(false);
-	}
+        if (sub_curve2.contains_point(ps[1]))
+        {
+          temp = sub_curve2;
+          _curve_split (temp,
+                        sub_curve2, sub_curve3,
+                        ps[1]);
+        }
+        else if (sub_curve1.contains_point(ps[1]))
+        {
+          // Actually we switch between ps[0] and ps[1].
+          temp = sub_curve1;
+          sub_curve3 = sub_curve2;
+          _curve_split (temp,
+                        sub_curve1, sub_curve2,
+                        ps[1]);
+        }
+        else
+        {
+          // We should never reach here:
+          CGAL_assertion(false);
+        }
 
-	x_curves.push_back(sub_curve1);
-	x_curves.push_back(sub_curve2);
-	x_curves.push_back(sub_curve3);		    	
+        x_curves.push_back(sub_curve1);
+        x_curves.push_back(sub_curve2);
+        x_curves.push_back(sub_curve3);                            
       }
       else
       {
-	// We should never reach here:
-	CGAL_assertion(false);
+        // We should never reach here:
+        CGAL_assertion(false);
       }
     }
 
@@ -1094,7 +1092,7 @@ class Arr_conic_traits_2
 
   // Split the given curve into two sub-curves at the given point.
   void curve_split (const X_curve_2& curve, 
-		    X_curve_2& sub_curve1, X_curve_2& sub_curve2, 
+                    X_curve_2& sub_curve1, X_curve_2& sub_curve2, 
                     const Point_2& p) const 
   {
     CGAL_precondition(is_x_monotone(curve));
@@ -1106,8 +1104,8 @@ class Arr_conic_traits_2
 
     // Split the curve.
     _curve_split (curve,
-		  sub_curve1, sub_curve2,
-		  p);
+                  sub_curve1, sub_curve2,
+                  p);
     return;
   }
 
@@ -1131,7 +1129,7 @@ class Arr_conic_traits_2
       // Check if at least one end-point of the overlapping curve is to the
       // right of p.
       return (ovlp_arcs[0].source().compare_lex_xy(p) == LARGER ||
-	      ovlp_arcs[0].target().compare_lex_xy(p) == LARGER);
+              ovlp_arcs[0].target().compare_lex_xy(p) == LARGER);
     }
 
     // In case there are no overlaps and the base conics are the same,
@@ -1140,17 +1138,17 @@ class Arr_conic_traits_2
     if (curve1.has_same_base_conic(curve2))
     {
       if ((curve1.source().equals(curve2.source()) ||
-	   curve1.source().equals(curve2.target())) &&
-	  curve1.source().compare_lex_xy(p) == LARGER)
+           curve1.source().equals(curve2.target())) &&
+          curve1.source().compare_lex_xy(p) == LARGER)
       {
-	return (true);
+        return (true);
       }
 
       if ((curve1.target().equals(curve2.source()) ||
-	   curve1.target().equals(curve2.target())) &&
-	  curve1.target().compare_lex_xy(p) == LARGER)
+           curve1.target().equals(curve2.target())) &&
+          curve1.target().compare_lex_xy(p) == LARGER)
       {
-	return (true);
+        return (true);
       }
       
       // No overlaps at all: the two curves do not intersect.
@@ -1170,7 +1168,7 @@ class Arr_conic_traits_2
     for (int i = 0; i < n; i++)
     {
       if (ps[i].compare_lex_xy(p) == LARGER)
-	return (true);
+        return (true);
     }
 
     return (false);
@@ -1198,7 +1196,7 @@ class Arr_conic_traits_2
       // Check if at least one end-point of the overlapping curve is to the
       // left of p.
       return (ovlp_arcs[0].source().compare_lex_xy(p) == SMALLER ||
-	      ovlp_arcs[0].target().compare_lex_xy(p) == SMALLER);
+              ovlp_arcs[0].target().compare_lex_xy(p) == SMALLER);
     }
 
     // In case there are no overlaps and the base conics are the same,
@@ -1207,17 +1205,17 @@ class Arr_conic_traits_2
     if (curve1.has_same_base_conic(curve2))
     {
       if ((curve1.source().equals(curve2.source()) ||
-	   curve1.source().equals(curve2.target())) &&
-	  curve1.source().compare_lex_xy(p) == SMALLER)
+           curve1.source().equals(curve2.target())) &&
+          curve1.source().compare_lex_xy(p) == SMALLER)
       {
-	return (true);
+        return (true);
       }
 
       if ((curve1.target().equals(curve2.source()) ||
-	   curve1.target().equals(curve2.target())) &&
-	  curve1.target().compare_lex_xy(p) == SMALLER)
+           curve1.target().equals(curve2.target())) &&
+          curve1.target().compare_lex_xy(p) == SMALLER)
       {
-	return (true);
+        return (true);
       }
       
       // No overlaps at all: the two curves do not intersect.
@@ -1237,7 +1235,7 @@ class Arr_conic_traits_2
     for (int i = 0; i < n; i++)
     {
       if (ps[i].compare_lex_xy(p) == SMALLER)
-	return (true);
+        return (true);
     }
 
     return (false);
@@ -1249,8 +1247,8 @@ class Arr_conic_traits_2
   // In case of an overlap, p1 and p2 are the source and destination of the
   // overlapping curve. Otherwise p1=p2 is the calculated intersection point.
   bool nearest_intersection_to_right (const X_curve_2& curve1,
-				      const X_curve_2& curve2,
-				      const Point_2& p,
+                                      const X_curve_2& curve2,
+                                      const Point_2& p,
                                       Point_2& p1,
                                       Point_2& p2) const
   {
@@ -1270,33 +1268,33 @@ class Arr_conic_traits_2
       Point_2  ovlp_target = ovlp_arcs[0].target();
 
       if (ovlp_source.compare_lex_xy(p) == LARGER &&
-	  ovlp_target.compare_lex_xy(p) == LARGER)
+          ovlp_target.compare_lex_xy(p) == LARGER)
       {
-	// The entire overlapping arc is to the right of p:
-	p1 = ovlp_source;
-	p2 = ovlp_target;
-	return (true);
+        // The entire overlapping arc is to the right of p:
+        p1 = ovlp_source;
+        p2 = ovlp_target;
+        return (true);
       }
       else if (ovlp_source.compare_lex_xy(p) != LARGER &&
-	       ovlp_target.compare_lex_xy(p) == LARGER)
+               ovlp_target.compare_lex_xy(p) == LARGER)
       {
-	// The source is to the left of p, and the traget is to its right.
-	p1 = p;
-	p2 = ovlp_target;
-	return (true);
+        // The source is to the left of p, and the traget is to its right.
+        p1 = p;
+        p2 = ovlp_target;
+        return (true);
       }
       else if (ovlp_source.compare_lex_xy(p) == LARGER &&
-	       ovlp_target.compare_lex_xy(p) != LARGER)
+               ovlp_target.compare_lex_xy(p) != LARGER)
       {
-	// The source is to the right of p, and the traget is to its left.
-	p1 = ovlp_source;
-	p2 = p;
-	return (true);
+        // The source is to the right of p, and the traget is to its left.
+        p1 = ovlp_source;
+        p2 = p;
+        return (true);
       }
       else
       {
-	// The entire overlapping arc is to the left of p:
-	return (false);
+        // The entire overlapping arc is to the left of p:
+        return (false);
       }
     }
 
@@ -1308,33 +1306,33 @@ class Arr_conic_traits_2
       const Point_2    *nearest_end_P = NULL;
 
       if ((curve1.source().equals(curve2.source()) ||
-	   curve1.source().equals(curve2.target())) &&
-	  curve1.source().compare_lex_xy(p) == LARGER)
+           curve1.source().equals(curve2.target())) &&
+          curve1.source().compare_lex_xy(p) == LARGER)
       {
-	nearest_end_P = &(curve1.source());
+        nearest_end_P = &(curve1.source());
       }
 
       if ((curve1.target().equals(curve2.source()) ||
-	   curve1.target().equals(curve2.target())) &&
-	  curve1.target().compare_lex_xy(p) == LARGER)
+           curve1.target().equals(curve2.target())) &&
+          curve1.target().compare_lex_xy(p) == LARGER)
       {
-	if (nearest_end_P == NULL ||
-	    nearest_end_P->compare_lex_xy (curve1.target()) == LARGER)
-	{
-	  nearest_end_P = &(curve1.target());
-	}
+        if (nearest_end_P == NULL ||
+            nearest_end_P->compare_lex_xy (curve1.target()) == LARGER)
+        {
+          nearest_end_P = &(curve1.target());
+        }
       }
 
       if (nearest_end_P != NULL)
       {
-	// A common end point was found:
-	p1 = p2 = *nearest_end_P;
-	return (true);
+        // A common end point was found:
+        p1 = p2 = *nearest_end_P;
+        return (true);
       }
       else
       {
-	// No intersection:
-	return (false);
+        // No intersection:
+        return (false);
       }
     }
 
@@ -1354,12 +1352,12 @@ class Arr_conic_traits_2
       // Check if the current point is to the right of p.
       if (ps[i].compare_lex_xy(p) == LARGER)
       {
-	  // Compare with the nearest point so far.
-	if (nearest_inter_P == NULL ||
-	    nearest_inter_P->compare_lex_xy (ps[i]) == LARGER)	
-	{
-	    nearest_inter_P = &(ps[i]);
-	}
+          // Compare with the nearest point so far.
+        if (nearest_inter_P == NULL ||
+            nearest_inter_P->compare_lex_xy (ps[i]) == LARGER)        
+        {
+            nearest_inter_P = &(ps[i]);
+        }
       }
     }
 
@@ -1381,10 +1379,10 @@ class Arr_conic_traits_2
   // In case of an overlap, p1 and p2 are the source and destination of the
   // overlapping curve. Otherwise p1=p2 is the calculated intersection point.
   bool nearest_intersection_to_left (const X_curve_2& curve1,
-				     const X_curve_2& curve2,
-				     const Point_2& p,
-				     Point_2& p1,
-				     Point_2& p2) const
+                                     const X_curve_2& curve2,
+                                     const Point_2& p,
+                                     Point_2& p1,
+                                     Point_2& p2) const
   {
     CGAL_precondition(is_x_monotone(curve1));
     CGAL_precondition(is_x_monotone(curve2));
@@ -1402,33 +1400,33 @@ class Arr_conic_traits_2
       Point_2  ovlp_target = ovlp_arcs[0].target();
 
       if (ovlp_source.compare_lex_xy(p) == SMALLER &&
-	  ovlp_target.compare_lex_xy(p) == SMALLER)
+          ovlp_target.compare_lex_xy(p) == SMALLER)
       {
-	// The entire overlapping arc is to the left of p:
-	p1 = ovlp_source;
-	p2 = ovlp_target;
-	return (true);
+        // The entire overlapping arc is to the left of p:
+        p1 = ovlp_source;
+        p2 = ovlp_target;
+        return (true);
       }
       else if (ovlp_source.compare_lex_xy(p) != SMALLER &&
-	       ovlp_target.compare_lex_xy(p) == SMALLER)
+               ovlp_target.compare_lex_xy(p) == SMALLER)
       {
-	// The source is to the right of p, and the traget is to its left.
-	p1 = p;
-	p2 = ovlp_target;
-	return (true);
+        // The source is to the right of p, and the traget is to its left.
+        p1 = p;
+        p2 = ovlp_target;
+        return (true);
       }
       else if (ovlp_source.compare_lex_xy(p) == SMALLER &&
-	       ovlp_target.compare_lex_xy(p) != SMALLER)
+               ovlp_target.compare_lex_xy(p) != SMALLER)
       {
-	// The source is to the left of p, and the traget is to its right.
-	p1 = ovlp_source;
-	p2 = p;
-	return (true);
+        // The source is to the left of p, and the traget is to its right.
+        p1 = ovlp_source;
+        p2 = p;
+        return (true);
       }
       else
       {
-	// The entire overlapping arc is to the right of p:
-	return (false);
+        // The entire overlapping arc is to the right of p:
+        return (false);
       }
     }
 
@@ -1440,33 +1438,33 @@ class Arr_conic_traits_2
       const Point_2    *nearest_end_P = NULL;
 
       if ((curve1.source().equals(curve2.source()) ||
-	   curve1.source().equals(curve2.target())) &&
-	  curve1.source().compare_lex_xy(p) == SMALLER)
+           curve1.source().equals(curve2.target())) &&
+          curve1.source().compare_lex_xy(p) == SMALLER)
       {
-	nearest_end_P = &(curve1.source());
+        nearest_end_P = &(curve1.source());
       }
 
       if ((curve1.target().equals(curve2.source()) ||
-	   curve1.target().equals(curve2.target())) &&
-	  curve1.target().compare_lex_xy(p) == SMALLER)
+           curve1.target().equals(curve2.target())) &&
+          curve1.target().compare_lex_xy(p) == SMALLER)
       {
-	if (nearest_end_P == NULL ||
-	    nearest_end_P->compare_lex_xy (curve1.target()) == SMALLER)
-	{
-	  nearest_end_P = &(curve1.target());
-	}
+        if (nearest_end_P == NULL ||
+            nearest_end_P->compare_lex_xy (curve1.target()) == SMALLER)
+        {
+          nearest_end_P = &(curve1.target());
+        }
       }
 
       if (nearest_end_P != NULL)
       {
-	// A common end point was found:
-	p1 = p2 = *nearest_end_P;
-	return (true);
+        // A common end point was found:
+        p1 = p2 = *nearest_end_P;
+        return (true);
       }
       else
       {
-	// No intersection:
-	return (false);
+        // No intersection:
+        return (false);
       }
     }
 
@@ -1486,12 +1484,12 @@ class Arr_conic_traits_2
       // Check if the current point is to the right of p.
       if (ps[i].compare_lex_xy(p) == SMALLER)
       {
-	  // Compare with the nearest point so far.
-	if (nearest_inter_P == NULL ||
-	    nearest_inter_P->compare_lex_xy (ps[i]) == SMALLER)	
-	{
-	    nearest_inter_P = &(ps[i]);
-	}
+          // Compare with the nearest point so far.
+        if (nearest_inter_P == NULL ||
+            nearest_inter_P->compare_lex_xy (ps[i]) == SMALLER)        
+        {
+            nearest_inter_P = &(ps[i]);
+        }
       }
     }
 
@@ -1525,8 +1523,8 @@ class Arr_conic_traits_2
   // Split the given curve into two sub-curves at the given point.
   // Since this is a private function, there are no preconditions.
   void _curve_split (const X_curve_2& curve, 
-		     X_curve_2& sub_curve1, X_curve_2& sub_curve2, 
-		     const Point_2& p) const
+                     X_curve_2& sub_curve1, X_curve_2& sub_curve2, 
+                     const Point_2& p) const
   {
     // Split the curve to source->p and p->target.
     sub_curve1 = X_curve_2(curve, curve.source(), p, false);

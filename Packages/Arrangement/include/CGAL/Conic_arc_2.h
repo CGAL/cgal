@@ -71,31 +71,29 @@ public:
 
   // Constructors.
   Point_2_ex () :
-    Point_2<R>(),
+    Base(),
     _type(User_defined),
     conic_id1(0),
     conic_id2(0)
   {}
 
-  Point_2_ex (const RT& hx, const RT& hy, const RT& hz,
-	      const Type& type) :
+  Point_2_ex (const RT & hx, const RT & hy, const RT& hz, const Type & type) :
     Base(hx,hy,hz),
     _type(type),
     conic_id1(0),
     conic_id2(0)
   {}
 
-  Point_2_ex (const RT& hx, const RT& hy,
-	      const Type& type,
-	      const int& id1 = 0, const int& id2 = 0) :
-    Point_2<R>(hx,hy),
+  Point_2_ex (const RT & hx, const RT & hy, const Type & type,
+              const int & id1 = 0, const int & id2 = 0) :
+    Base(hx,hy),
     _type(type),
     conic_id1(id1),
     conic_id2(id2)
   {}
 
   Point_2_ex (const RT& hx, const RT& hy) :
-    Point_2<R>(hx,hy),
+    Base(hx,hy),
     _type(User_defined),
     conic_id1(0),
     conic_id2(0)
@@ -104,8 +102,7 @@ public:
   // Check if the point is approximate.
   bool is_approximate () const
   {
-    return (_type == Intersection_approx ||
-	    _type == Ray_shooting_approx);
+    return (_type == Intersection_approx || _type == Ray_shooting_approx);
   }
 
   // Check if the given conic generates the points.
@@ -135,10 +132,10 @@ public:
   {
     if (is_approximate() || p.is_approximate())
       return (eps_compare<APNT>(TO_APNT(x()), TO_APNT(p.x())) == EQUAL &&
-	      eps_compare<APNT>(TO_APNT(y()), TO_APNT(p.y())) == EQUAL);
+              eps_compare<APNT>(TO_APNT(y()), TO_APNT(p.y())) == EQUAL);
     
     return (CGAL::compare (x(), p.x()) == EQUAL &&
-	    CGAL::compare (y(), p.y()) == EQUAL);
+            CGAL::compare (y(), p.y()) == EQUAL);
   }
 
   Comparison_result compare_lex_xy (const Point_2_ex<R>& p) const
@@ -260,9 +257,9 @@ class Conic_arc_2
   }
 
   // Private constructor.
-  Conic_arc_2 (const Conic_arc_2& arc,
-	       const Point& source, const Point& target,
-	       const bool& is_full) :
+  Conic_arc_2 (const Conic_arc_2 & arc,
+               const Point & source, const Point & target,
+               const bool & is_full) :
     _conic(arc._conic),
     _conic_id(arc._conic_id),
     _source(source),
@@ -285,9 +282,9 @@ class Conic_arc_2
       Comparison_result facing_res = arc.facing();
 
       if (facing_res != EQUAL)
-	_info = _info | (facing_res == LARGER ? FACING_UP : FACING_DOWN);
+          _info = _info | (facing_res == LARGER ? FACING_UP : FACING_DOWN);
       else if ((_info & DEGREE_MASK) == DEGREE_2)
-	_set_facing();
+          _set_facing();
     }
     else
     {
@@ -338,9 +335,9 @@ class Conic_arc_2
   // not be the same.
   // If the error epsilon is provided and > 0, the endpoints of the conic may
   // be slightly modified (by epsilon) so they are located on the boundary.
-  Conic_arc_2 (const Conic& conic,
-	       const Point& source, const Point& target,
-	       const double& error_eps = 0) :
+  Conic_arc_2 (const Conic & conic,
+               const Point & source, const Point & target,
+               const double & error_eps = 0) :
     _conic(conic),
     _conic_id(0),
     _source(source),
@@ -385,29 +382,28 @@ class Conic_arc_2
 
       for (i = 0; i < 2; i++)
       {
-	if (! conic.has_on_boundary(*(p_ps[i])))
-	{
-	  // If the current endpoint is not located on the conic boundary,
-	  // try to find a y co-ordinate of a point on the conic boundary
-	  // that has the same x co-ordinate which is epsilon away for the 
-	  // original y.
-	  const NT x = (p_ps[i])->x();
-	  NT       ys[2];
-	  int      n_ys;
-	  int      j;
-	  
-	  n_ys = _conic_get_y_coordinates (x, ys);
+        if (! conic.has_on_boundary(*(p_ps[i])))
+        {
+          // If the current endpoint is not located on the conic boundary,
+          // try to find a y co-ordinate of a point on the conic boundary
+          // that has the same x co-ordinate which is epsilon away for the 
+          // original y.
+          const NT x = (p_ps[i])->x();
+          NT       ys[2];
+          int      n_ys;
+          int      j;
 
-	  for (j = 0; j < n_ys; j++)
-	  {
-	    if (fabs(CGAL::to_double((p_ps[i])->y() - ys[j])) < error_eps)
-	    {
-	      *(p_ps[i]) = Point (x, ys[j], 
-				  Point::User_defined);
-	      break;
-	    }
-	  }
-	}
+          n_ys = _conic_get_y_coordinates (x, ys);
+
+          for (j = 0; j < n_ys; j++)
+          {
+            if (fabs(CGAL::to_double((p_ps[i])->y() - ys[j])) < error_eps)
+            {
+              *(p_ps[i]) = Point (x, ys[j], Point::User_defined);
+              break;
+            }
+          }
+        }
       }
     }
 
@@ -430,7 +426,7 @@ class Conic_arc_2
     {   
       const NT    _two = 2;
       const Point p_mid ((source.x() + target.x()) / _two,
-	                 (source.y() + target.y()) / _two);
+                         (source.y() + target.y()) / _two);
       Point       ps[2];
 
       bool  finite_at_x = (this->get_points_at_x(p_mid, ps) > 0);
@@ -443,12 +439,12 @@ class Conic_arc_2
     _conic_id = _get_new_conic_id();
 
     _source = Point (_source.x(), _source.y(), 
-		     Point::User_defined,
-		     _conic_id);
+                     Point::User_defined,
+                     _conic_id);
 
     _target = Point (_target.x(), _target.y(), 
-		     Point::User_defined,
-		     _conic_id);
+                     Point::User_defined,
+                     _conic_id);
 
     // Check whether the conic is x-monotone.
     if (is_x_monotone())
@@ -457,7 +453,7 @@ class Conic_arc_2
 
       // In case the conic is od degree 2, determine where is it facing.
       if ((_info & DEGREE_MASK) == DEGREE_2)
-	_set_facing();
+        _set_facing();
     }
     else
     {
@@ -641,9 +637,9 @@ class Conic_arc_2
     for (i = 0; i < n_tps; i++)
     {
       if (CGAL::to_double(tps[i].x()) < x_min)
-	x_min = CGAL::to_double(tps[i].x());
+        x_min = CGAL::to_double(tps[i].x());
       if (CGAL::to_double(tps[i].x()) > x_max)
-	x_max = CGAL::to_double(tps[i].x());
+        x_max = CGAL::to_double(tps[i].x());
     }
 
     // Go over the horizontal tangency points and try to update the y-points.
@@ -651,9 +647,9 @@ class Conic_arc_2
     for (i = 0; i < n_tps; i++)
     {
       if (CGAL::to_double(tps[i].y()) < y_min)
-	y_min = CGAL::to_double(tps[i].y());
+        y_min = CGAL::to_double(tps[i].y());
       if (CGAL::to_double(tps[i].y()) > y_max)
-	y_max = CGAL::to_double(tps[i].y());
+        y_max = CGAL::to_double(tps[i].y());
     }
     
     // Return the resulting bounding box.
@@ -665,8 +661,8 @@ class Conic_arc_2
   { 
     // Check whether the conic contains the point (x,y).
     if (p.is_generating_conic_id(_conic_id) ||
-	(p.is_approximate() && _conic_has_approx_point_on_boundary (p)) ||
-	_conic.has_on_boundary(p))
+      (p.is_approximate() && _conic_has_approx_point_on_boundary (p)) ||
+        _conic.has_on_boundary(p))
     {
       // If the point is on the conic boundary, it is contained in the arc
       // either if the arc is a full conic, or if it is between the two
@@ -686,8 +682,7 @@ class Conic_arc_2
   int vertical_tangency_points (Point* vpts) const
   {
     // No vertical tangency points for segments or for x-monotone curves:
-    if ((_info & DEGREE_MASK) < 2 ||
-	(_info & X_MON_UNDEFINED) == X_MONOTONE)
+    if ((_info & DEGREE_MASK) < 2 || (_info & X_MON_UNDEFINED) == X_MONOTONE)
       return (0);
 
     // Calculate the vertical tangency points of the conic.
@@ -703,8 +698,8 @@ class Conic_arc_2
     {
       if (is_full_conic() || _is_strictly_between_endpoints(ps[i]))
       {
-	vpts[m] = ps[i];
-	m++;
+        vpts[m] = ps[i];
+        m++;
       }
     }
 
@@ -734,8 +729,8 @@ class Conic_arc_2
     {
       if (is_full_conic() || _is_strictly_between_endpoints(ps[i]))
       {
-	hpts[m] = ps[i];
-	m++;
+        hpts[m] = ps[i];
+        m++;
       }
     }
 
@@ -782,12 +777,12 @@ class Conic_arc_2
     for (int i = 0; i < n; i++)
     {
       ps[m] = Point (p.x(), ys[i], 
-		     p.is_approximate() ? Point::Ray_shooting_approx :
-		                          Point::Ray_shooting_exact,
-		     _conic_id);
+                     p.is_approximate() ? Point::Ray_shooting_approx :
+                     Point::Ray_shooting_exact,
+                     _conic_id);
 
       if (is_full_conic() || _is_between_endpoints(ps[m]))
-	m++;
+        m++;
     }
 
     // Return the number of points on the arc.
@@ -815,12 +810,12 @@ class Conic_arc_2
     for (int i = 0; i < n; i++)
     {
       ps[m] = Point (xs[i], p.y(),
-		     p.is_approximate() ? Point::Ray_shooting_approx :
-		                          Point::Ray_shooting_exact,
-		     _conic_id);
+                     p.is_approximate() ? Point::Ray_shooting_approx :
+                     Point::Ray_shooting_exact,
+                     _conic_id);
 
       if (is_full_conic() || _is_between_endpoints(ps[m]))
-	m++;
+        m++;
     }
 
     // Return the number of points on the arc.
@@ -831,12 +826,8 @@ class Conic_arc_2
   Conic_arc_2 reflect_in_y () const
   {
     // Reflect the base conic in y:
-    Conic   ref_conic (  _conic.r(),
-		         _conic.s(),
-		       - _conic.t(),
-		       - _conic.u(),
-		         _conic.v(),
-		         _conic.w());
+    Conic ref_conic (_conic.r(), _conic.s(), - _conic.t(),
+                     - _conic.u(), _conic.v(), _conic.w());
 
     // Create the reflected curve:
     Conic_arc_2 ref_arc;
@@ -864,12 +855,8 @@ class Conic_arc_2
   Conic_arc_2 reflect_in_x_and_y () const
   {
     // Reflect the base conic in x and y:
-    Conic   ref_conic (  _conic.r(),
-		         _conic.s(),
-		         _conic.t(),
-		       - _conic.u(),
-		       - _conic.v(),
-		         _conic.w());
+    Conic ref_conic (_conic.r(), _conic.s(), _conic.t(),
+                     - _conic.u(), - _conic.v(), _conic.w());
 
     // Create the reflected curve:
     Conic_arc_2 ref_arc;
@@ -897,7 +884,7 @@ class Conic_arc_2
   // Get the i'th order derivative by x of the conic at the point p=(x,y).
   // Note that i should be either 1 (first order) or 2 (second order).
   void derive_by_x_at (const Point& p, const int& i,
-		       NT& slope_numer, NT& slope_denom) const
+                       NT& slope_numer, NT& slope_denom) const
   {
     // Make sure i is either 1 or 2.
     CGAL_precondition(i == 1 || i == 2);
@@ -921,13 +908,13 @@ class Conic_arc_2
     {
       if (sl_denom > 0)
       {
-	slope_numer = -sl_numer;
-	slope_denom = sl_denom;
+        slope_numer = -sl_numer;
+        slope_denom = sl_denom;
       }
       else
       {
-	slope_numer = sl_numer;
-	slope_denom = -sl_denom;
+        slope_numer = sl_numer;
+        slope_denom = -sl_denom;
       }
 
       return;
@@ -961,7 +948,7 @@ class Conic_arc_2
   // Get the i'th order derivative by y of the conic at the point p=(x,y).
   // Note that i should be either 1 (first order) or 2 (second order).
   void derive_by_y_at (const Point& p, const int& i,
-		       NT& slope_numer, NT& slope_denom) const
+                       NT& slope_numer, NT& slope_denom) const
   {
     // Make sure i is either 1 or 2.
     CGAL_precondition(i == 1 || i == 2);
@@ -985,13 +972,13 @@ class Conic_arc_2
     {
       if (sl_denom > 0)
       {
-	slope_numer = -sl_numer;
-	slope_denom = sl_denom;
+        slope_numer = -sl_numer;
+        slope_denom = sl_denom;
       }
       else
       {
-	slope_numer = sl_numer;
-	slope_denom = -sl_denom;
+        slope_numer = sl_numer;
+        slope_denom = -sl_denom;
       }
 
       return;
@@ -1025,12 +1012,11 @@ class Conic_arc_2
   // Calculate the intersection points between the arc and the given arc.
   // ps must be allocated at the size of 4.
   // The function returns the number of the actual intersection points.
-  int intersections_with (const Conic_arc_2<NT>& arc,
-			  Point* ps
+  int intersections_with (const Conic_arc_2<NT> & arc, Point * ps
 #ifdef CGAL_CONIC_ARC_USE_CACHING
-			  ,std::list<Intersections> *inter_list_P = NULL
+                          ,std::list<Intersections> *inter_list_P = NULL
 #endif
-			  ) const
+                          ) const
   {
 #ifdef CGAL_CONIC_ARC_USE_BOUNDING_BOX
     // Perform quick rejections, if possible.
@@ -1039,8 +1025,8 @@ class Conic_arc_2
 #endif
 
     // First make sure that (this->degree) is >= than (arc.degree).
-    if ((arc._info & DEGREE_MASK) == DEGREE_2 && 
-	(_info & DEGREE_MASK) == DEGREE_1)
+    if ((arc._info & DEGREE_MASK) == DEGREE_2 &&
+        (_info & DEGREE_MASK) == DEGREE_1)
     {
       return (arc.intersections_with (*this, ps));
     }
@@ -1055,8 +1041,8 @@ class Conic_arc_2
     {
       if (is_vertical_segment())
       {
-	// Two vertical segments intersect only if they overlap.
-	return (0);
+        // Two vertical segments intersect only if they overlap.
+        return (0);
       }
       
       // Find all points on our arc that have the same x co-ordinate as
@@ -1070,15 +1056,15 @@ class Conic_arc_2
       
       for (j = 0; j < n_ys; j++)
       {
-	// Store this point only if it is contained on the other arc.
-	if (arc.contains_point(xps[j]))
-	{
-	  // Return an exact point:
-	  ps[n] = Point (xps[j].x(), xps[j].y(),
-			 Point::Intersection_exact,
-			 _conic_id, arc._conic_id);
-	  n++;
-	}
+        // Store this point only if it is contained on the other arc.
+        if (arc.contains_point(xps[j]))
+        {
+          // Return an exact point:
+          ps[n] = Point (xps[j].x(), xps[j].y(),
+                         Point::Intersection_exact,
+                         _conic_id, arc._conic_id);
+          n++;
+        }
       }
       
       return (n);
@@ -1096,15 +1082,15 @@ class Conic_arc_2
       
       for (j = 0; j < n_ys; j++)
       {
-	// Store this point only if it is contained on the other arc.
-	if (contains_point(xps[j]))
-	{
-	  // Return an exact point:
-	  ps[n] = Point (xps[j].x(), xps[j].y(),
-			 Point::Intersection_exact,
-			 _conic_id, arc._conic_id);
-	  n++;
-	}
+        // Store this point only if it is contained on the other arc.
+        if (contains_point(xps[j]))
+        {
+          // Return an exact point:
+          ps[n] = Point (xps[j].x(), xps[j].y(),
+                         Point::Intersection_exact,
+                         _conic_id, arc._conic_id);
+          n++;
+        }
       }
       
       return (n);
@@ -1119,8 +1105,7 @@ class Conic_arc_2
     Intersections inter;
     int           k;
 
-    if (inter_list_P != NULL &&
-	(_info & DEGREE_MASK) != DEGREE_1)
+    if (inter_list_P != NULL && (_info & DEGREE_MASK) != DEGREE_1)
     {
       int           id1 = _conic_id;
       int           id2 = arc._conic_id;
@@ -1131,14 +1116,14 @@ class Conic_arc_2
       typename std::list<Intersections>::iterator iter;
       for (iter = inter_list_P->begin(); iter != inter_list_P->end(); iter++)
       {
-	if ((*iter).id1 == inter.id1 && (*iter).id2 == inter.id2)
-	{
-	  n_points = (*iter).n_points;
+        if ((*iter).id1 == inter.id1 && (*iter).id2 == inter.id2)
+        {
+          n_points = (*iter).n_points;
   
-	  for (k = 0; k < n_points; k++)
-	    ipts[k] = (*iter).ps[k];
-	  calc_points = false;
-	}
+          for (k = 0; k < n_points; k++)
+            ipts[k] = (*iter).ps[k];
+          calc_points = false;
+        }
       }
     }
 #endif // (of ifdef CGAL_CONIC_ARC_USE_CACHING)
@@ -1161,90 +1146,90 @@ class Conic_arc_2
 
       if (_conic.s() == _zero && arc._conic.s() != _zero)
       {
-	n_xs = arc._x_coordinates_of_intersections_with (*this,
-							 xs,
-							 n_approx_xs);
+        n_xs = arc._x_coordinates_of_intersections_with (*this,
+                                                         xs,
+                                                         n_approx_xs);
       }
       else
       {
-	n_xs = _x_coordinates_of_intersections_with (arc,
-						     xs,
-						     n_approx_xs);
+        n_xs = _x_coordinates_of_intersections_with (arc,
+                                                     xs,
+                                                     n_approx_xs);
       }
 
       if (_conic.r() == _zero && arc._conic.r() != _zero)
       {
-	n_ys = arc._y_coordinates_of_intersections_with (*this,
-							 ys, 
-							 n_approx_ys);
+        n_ys = arc._y_coordinates_of_intersections_with (*this,
+                                                         ys, 
+                                                         n_approx_ys);
       }
       else
       {
-	n_ys = _y_coordinates_of_intersections_with (arc,
-						     ys, 
-						     n_approx_ys);
+        n_ys = _y_coordinates_of_intersections_with (arc,
+                                                     ys, 
+                                                     n_approx_ys);
       }
     
       for (i = 0; i < n_xs && n_points < 4; i++)
       {
-	x_approx = i >= (n_xs - n_approx_xs);
+        x_approx = i >= (n_xs - n_approx_xs);
 
-	for (j = 0; j < n_ys && n_points < 4; j++)
-	{
-	  y_approx = j >= (n_ys - n_approx_ys);
+        for (j = 0; j < n_ys && n_points < 4; j++)
+        {
+          y_approx = j >= (n_ys - n_approx_ys);
 
-	  //if (b_print)
-	  //  cout << "(" << CGAL::to_double(xs[i]) << ","
-	  //	 << CGAL::to_double(ys[j]) << ") : ";
+          //if (b_print)
+          //  cout << "(" << CGAL::to_double(xs[i]) << ","
+          //         << CGAL::to_double(ys[j]) << ") : ";
 
-	  if (x_approx || y_approx)
-	  {
-	    // At least one co-ordinate is approximate:
-	    // Create an approximate intersection point and check whether
-	    // it really lies on both base conics.
-	    ipts[n_points] = Point (xs[i], ys[j],
-				    Point::Intersection_approx,
-				    _conic_id, arc._conic_id);
+          if (x_approx || y_approx)
+          {
+            // At least one co-ordinate is approximate:
+            // Create an approximate intersection point and check whether
+            // it really lies on both base conics.
+            ipts[n_points] = Point (xs[i], ys[j],
+                                    Point::Intersection_approx,
+                                    _conic_id, arc._conic_id);
 
-	    if (_conic_has_approx_point_on_boundary(ipts[n_points]) &&
-		arc._conic_has_approx_point_on_boundary(ipts[n_points]))
-	    {
-	      //if (b_print) cout << "Approximated, OK !!!" << endl;
-	      n_points++;
-	    }
-	    //else
-	    //  if (b_print) cout << "Approximated, no." << endl;
-	  }
-	  else
-	  {
-	    // Both co-ordinates are exact:
-	    // Create an exact intersection point and check whether
-	    // it really lies on both base conics.
-	    ipts[n_points] = Point (xs[i], ys[j],
-				    Point::Intersection_exact,
-				    _conic_id, arc._conic_id);
+            if (_conic_has_approx_point_on_boundary(ipts[n_points]) &&
+                arc._conic_has_approx_point_on_boundary(ipts[n_points]))
+            {
+              //if (b_print) cout << "Approximated, OK !!!" << endl;
+              n_points++;
+            }
+            //else
+            //  if (b_print) cout << "Approximated, no." << endl;
+          }
+          else
+          {
+            // Both co-ordinates are exact:
+            // Create an exact intersection point and check whether
+            // it really lies on both base conics.
+            ipts[n_points] = Point (xs[i], ys[j],
+                                    Point::Intersection_exact,
+                                    _conic_id, arc._conic_id);
 
-	    if (_conic.has_on_boundary(ipts[n_points]) &&
-		arc._conic.has_on_boundary(ipts[n_points]))
-	    {
-	      //if (b_print) cout << "Exact, OK !!!" << endl;
-	      n_points++;
-	    }
-	    //else
-	    //  if (b_print) cout << "Exact, no." << endl;
-	  }
-	}
+            if (_conic.has_on_boundary(ipts[n_points]) &&
+                arc._conic.has_on_boundary(ipts[n_points]))
+            {
+              //if (b_print) cout << "Exact, OK !!!" << endl;
+              n_points++;
+            }
+            //else
+            //  if (b_print) cout << "Exact, no." << endl;
+          }
+        }
       }
 
 #ifdef CGAL_CONIC_ARC_USE_CACHING
       if (inter_list_P != NULL &&
-	  (_info & DEGREE_MASK) != DEGREE_1)
+          (_info & DEGREE_MASK) != DEGREE_1)
       {
-	inter.n_points = n_points;
-	
-	for (k = 0; k < n_points; k++)
-	  inter.ps[k] = ipts[k];
-	inter_list_P->push_front(inter);
+        inter.n_points = n_points;
+        
+        for (k = 0; k < n_points; k++)
+          inter.ps[k] = ipts[k];
+        inter_list_P->push_front(inter);
       }
     
 #endif // (of ifdef CGAL_CONIC_ARC_USE_CACHING)
@@ -1259,25 +1244,25 @@ class Conic_arc_2
     {
       if (ipts[i].is_approximate())
       {
-	// Check for an approximate point.
-	if ((is_full_conic() ||
-	     _is_approximate_between_endpoints(ipts[i])) &&
-	    (arc.is_full_conic() ||
-	     arc._is_approximate_between_endpoints(ipts[i])))
-	{
-	  ps[n] = ipts[i];
-	  n++;
-	}
+        // Check for an approximate point.
+        if ((is_full_conic() ||
+             _is_approximate_between_endpoints(ipts[i])) &&
+            (arc.is_full_conic() ||
+             arc._is_approximate_between_endpoints(ipts[i])))
+        {
+          ps[n] = ipts[i];
+          n++;
+        }
       }
       else
       {
-	// Check for an exact point.
-	if (contains_point(ipts[i]) &&
-	    arc.contains_point(ipts[i]))
-	{
-	  ps[n] = ipts[i];
-	  n++;
-	}
+        // Check for an exact point.
+        if (contains_point(ipts[i]) &&
+            arc.contains_point(ipts[i]))
+        {
+          ps[n] = ipts[i];
+          n++;
+        }
       }
     }
 
@@ -1288,7 +1273,7 @@ class Conic_arc_2
   // The function computes the number of overlapping arcs (2 at most), and
   // return their number (0 means there is no overlap).
   int overlaps (const Conic_arc_2<NT>& arc,
-		Conic_arc_2<NT>* ovlp_arcs) const
+                Conic_arc_2<NT>* ovlp_arcs) const
   {
     // Two arcs can overlap only if their base conics are identical.
     if (_conic != arc._conic)
@@ -1306,8 +1291,8 @@ class Conic_arc_2
       // That mean both arcs are really segments, so they are identical
       // if their endpoints are the same.
       if ((_source.equals(arc._source) && _target.equals(arc._target)) ||
-	  (_source.equals(arc._target) && _target.equals(arc._source)))
-	identical = true;
+          (_source.equals(arc._target) && _target.equals(arc._source)))
+        identical = true;
     }
     else
     {
@@ -1315,10 +1300,10 @@ class Conic_arc_2
       // are identical only if their source and target are the same and the
       // orientation is the same, or vice-versa if the orientation is opposite.
       if ((same_or && 
-	   _source.equals(arc._source) && _target.equals(arc._target)) ||
-	  (!same_or && 
-	   _source.equals(arc._target) && _target.equals(arc._source)))
-	identical = true;
+           _source.equals(arc._source) && _target.equals(arc._target)) ||
+          (!same_or && 
+           _source.equals(arc._target) && _target.equals(arc._source)))
+        identical = true;
     }
 
     if (identical)
@@ -1347,10 +1332,10 @@ class Conic_arc_2
 
     if (orient1 == 0)
       orient1 = (_source.compare_lex_xy(_target) 
-		 == LARGER) ? 1 : -1;
+                 == LARGER) ? 1 : -1;
     if (orient2 == 0)
       orient2 = (arc._source.compare_lex_xy(arc._target) 
-		 == LARGER) ? 1 : -1;
+                 == LARGER) ? 1 : -1;
 
     // Check the overlap cases:
     if (orient1 == orient2)
@@ -1368,30 +1353,30 @@ class Conic_arc_2
     {
       if (_is_strictly_between_endpoints(*arc_targetP))
       {
-	// Check the next special case (when there are 2 overlapping arcs):
-	if (arc._is_strictly_between_endpoints(_source) &&
+        // Check the next special case (when there are 2 overlapping arcs):
+        if (arc._is_strictly_between_endpoints(_source) &&
             arc._is_strictly_between_endpoints(_target))
-	{
-	  ovlp_arcs[0] = Conic_arc_2<NT>(*this,_source, *arc_targetP, false);
-	  ovlp_arcs[1] = Conic_arc_2<NT>(*this, *arc_sourceP, _target, false);
-	  //ovlp_arcs[0] = Conic_arc_2<NT>(_conic, _source, *arc_targetP);
-	  //ovlp_arcs[1] = Conic_arc_2<NT>(_conic, *arc_sourceP, _target);
-	  return (2);
-	}
+        {
+          ovlp_arcs[0] = Conic_arc_2<NT>(*this,_source, *arc_targetP, false);
+          ovlp_arcs[1] = Conic_arc_2<NT>(*this, *arc_sourceP, _target, false);
+          //ovlp_arcs[0] = Conic_arc_2<NT>(_conic, _source, *arc_targetP);
+          //ovlp_arcs[1] = Conic_arc_2<NT>(_conic, *arc_sourceP, _target);
+          return (2);
+        }
 
-	// Case 1 - *this:     +----------->     
+        // Case 1 - *this:     +----------->     
         //            arc:       +=====>
-	ovlp_arcs[0] = Conic_arc_2<NT>(*this, *arc_sourceP,*arc_targetP, false);
-	//ovlp_arcs[0] = Conic_arc_2<NT>(_conic, *arc_sourceP,*arc_targetP);
-	return (1);
+        ovlp_arcs[0] = Conic_arc_2<NT>(*this, *arc_sourceP,*arc_targetP, false);
+        //ovlp_arcs[0] = Conic_arc_2<NT>(_conic, *arc_sourceP,*arc_targetP);
+        return (1);
       }
       else
       {
-	// Case 2 - *this:     +----------->     
+        // Case 2 - *this:     +----------->     
         //            arc:               +=====>
-	ovlp_arcs[0] = Conic_arc_2<NT>(*this, *arc_sourceP, _target, false);
-	//ovlp_arcs[0] = Conic_arc_2<NT>(_conic, *arc_sourceP, _target);
-	return (1);
+        ovlp_arcs[0] = Conic_arc_2<NT>(*this, *arc_sourceP, _target, false);
+        //ovlp_arcs[0] = Conic_arc_2<NT>(_conic, *arc_sourceP, _target);
+        return (1);
       }
     }
     else if (_is_strictly_between_endpoints(*arc_targetP))
@@ -1404,7 +1389,7 @@ class Conic_arc_2
     }
     else if (arc._is_between_endpoints(_source) &&
              arc._is_between_endpoints(_target) &&
-	     (arc._is_strictly_between_endpoints(_source) ||
+             (arc._is_strictly_between_endpoints(_source) ||
               arc._is_strictly_between_endpoints(_target)))
     {
       // Case 4 - *this:     +----------->     
@@ -1416,7 +1401,7 @@ class Conic_arc_2
     // If we reached here, there are no overlaps:
     return (0);
   }
-	
+        
   // Check whether the arc is facing up (LARGER is then returned),
   // facing down (SMALLER is then returned).
   // At any other case the function returns EQUAL.
@@ -1467,15 +1452,15 @@ class Conic_arc_2
       // sin(2*phi) == 0, so phi = 0 or phi = PI/2
       if (cos_2phi > _zero)
       {
-	// phi = 0.
-	sin_phi = _zero;
-	cos_phi = _one;
+        // phi = 0.
+        sin_phi = _zero;
+        cos_phi = _one;
       }
       else
       {
-	// phi = PI.
-	sin_phi = _zero;
-	cos_phi = -_one;
+        // phi = PI.
+        sin_phi = _zero;
+        cos_phi = -_one;
       }
     }
     else if (t > _zero)
@@ -1553,9 +1538,9 @@ class Conic_arc_2
   bool _is_approximate_between_endpoints (const Point& p) const
   {
     if ((eps_compare<APNT> (TO_APNT(_source.x()), TO_APNT(p.x())) == EQUAL &&
-	 eps_compare<APNT> (TO_APNT(_source.y()), TO_APNT(p.y())) == EQUAL) ||
-	(eps_compare<APNT> (TO_APNT(_target.x()), TO_APNT(p.x())) == EQUAL &&
-	 eps_compare<APNT> (TO_APNT(_target.y()), TO_APNT(p.y())) == EQUAL))
+         eps_compare<APNT> (TO_APNT(_source.y()), TO_APNT(p.y())) == EQUAL) ||
+        (eps_compare<APNT> (TO_APNT(_target.x()), TO_APNT(p.x())) == EQUAL &&
+         eps_compare<APNT> (TO_APNT(_target.y()), TO_APNT(p.y())) == EQUAL))
       return (true);
     else
       return (_is_strictly_between_endpoints(p));
@@ -1576,7 +1561,7 @@ class Conic_arc_2
     if (_hyper_data_P != NULL)
     {
       if (_hyperbolic_arc_side(p) != _hyper_data_P->side)
-	return (false);
+        return (false);
     }
 
     // Act according to the conic degree.
@@ -1584,24 +1569,24 @@ class Conic_arc_2
     {
       if (is_vertical_segment())
       {
-	// In case of a vertical segment - just check whether the y co-ordinate
-	// of p is between those of the source's and of the target's.
-	Comparison_result r1 = compare_y (p, _source);
-	Comparison_result r2 = compare_y (p, _target);
+        // In case of a vertical segment - just check whether the y co-ordinate
+        // of p is between those of the source's and of the target's.
+        Comparison_result r1 = compare_y (p, _source);
+        Comparison_result r2 = compare_y (p, _target);
 
-	return ((r1 == SMALLER && r2 == LARGER) ||
-		(r1 == LARGER && r2 == SMALLER));
+        return ((r1 == SMALLER && r2 == LARGER) ||
+                (r1 == LARGER && r2 == SMALLER));
       }
       else
       {
-	// Otherwise, since the segment is x-monotone, just check whether the
-	// x co-ordinate of p is between those of the source's and of the 
-	// target's.
-	Comparison_result r1 = compare_x (p, _source);
-	Comparison_result r2 = compare_x (p, _target);
+        // Otherwise, since the segment is x-monotone, just check whether the
+        // x co-ordinate of p is between those of the source's and of the 
+        // target's.
+        Comparison_result r1 = compare_x (p, _source);
+        Comparison_result r2 = compare_x (p, _target);
 
-	return ((r1 == SMALLER && r2 == LARGER) ||
-		(r1 == LARGER && r2 == SMALLER));
+        return ((r1 == SMALLER && r2 == LARGER) ||
+                (r1 == LARGER && r2 == SMALLER));
       }
     }
     else
@@ -1609,9 +1594,9 @@ class Conic_arc_2
       // In case of a conic of degree 2, make a decision based on the conic's
       // orientation and whether (source,p,target) is a right or a left turn.
       if (_conic.orientation() == 1)
-	return (leftturn<R>(_source, p, _target));
+        return (leftturn<R>(_source, p, _target));
       else
-	return (rightturn<R>(_source, p, _target));
+        return (rightturn<R>(_source, p, _target));
     }
   }
 
@@ -1622,9 +1607,9 @@ class Conic_arc_2
     // Solve the quadratic equation for a given x and find the y values:
     //  s*y^2 + (t*x + v)*y + (r*x^2 + u*x + w) = 0
     return (solve_quadratic_eq (_conic.s(),
-				x*_conic.t() + _conic.v(),
-				x*(x*_conic.r() + _conic.u()) + _conic.w(),
-				ys));
+                                x*_conic.t() + _conic.v(),
+                                x*(x*_conic.r() + _conic.u()) + _conic.w(),
+                                ys));
   }
 
   // Find the x-coordinates of the conic at a given y-coordinate.
@@ -1634,9 +1619,9 @@ class Conic_arc_2
     // Solve the quadratic equation for a given y and find the x values:
     //  r*x^2 + (t*y + u)*x + (s*y^2 + v*y + w) = 0
     return (solve_quadratic_eq (_conic.r(),
-				y*_conic.t() + _conic.u(),
-				y*(y*_conic.s() + _conic.v()) + _conic.w(),
-				xs));
+                                y*_conic.t() + _conic.u(),
+                                y*(y*_conic.s() + _conic.v()) + _conic.w(),
+                                xs));
   }
   
   // Find the vertical tangency points of the conic.
@@ -1667,9 +1652,9 @@ class Conic_arc_2
     NT       y;
 
     n = solve_quadratic_eq (t*t - _four*r*s,
-			    _two*t*v - _four*s*u,
-			    v*v - _four*s*w,
-			    xs);
+                            _two*t*v - _four*s*u,
+                            v*v - _four*s*w,
+                            xs);
 
     for (int i = 0; i < n; i++)
     {
@@ -1678,8 +1663,8 @@ class Conic_arc_2
       y = -(t*xs[i] + v) / (_two*s);
 
       ps[i] = Point (xs[i], y,
-		     Point::Tangency,
-		     _conic_id);
+                     Point::Tangency,
+                     _conic_id);
     }
       
     return (n);
@@ -1713,9 +1698,9 @@ class Conic_arc_2
     NT       x;
 
     n = solve_quadratic_eq (t*t - _four*r*s,
-			    _two*t*u - _four*r*v,
-			    u*u - _four*r*w,
-			    ys);
+                            _two*t*u - _four*r*v,
+                            u*u - _four*r*w,
+                            ys);
 
     for (int i = 0; i < n; i++)
     {
@@ -1724,8 +1709,8 @@ class Conic_arc_2
       x = -(t*ys[i] + u) / (_two*r);
 
       ps[i] = Point (x, ys[i],
-		     Point::Tangency,
-		     _conic_id);
+                     Point::Tangency,
+                     _conic_id);
     }
       
     return (n);
@@ -1786,13 +1771,13 @@ class Conic_arc_2
   // Calculate all x co-ordinates of intersection points between the two
   // base curves of (*this) and the given arc.
   int _x_coordinates_of_intersections_with (const Conic_arc_2<NT>& arc,
-					    NT* xs, int& n_approx) const
+                                            NT* xs, int& n_approx) const
   {
     static const NT _zero = 0;
     int             n_roots;         // The number of distinct x values.
 
     if ((_info & DEGREE_MASK) == DEGREE_1 && 
-	(arc._info & DEGREE_MASK) == DEGREE_1)
+        (arc._info & DEGREE_MASK) == DEGREE_1)
     {
       // The two conics are: u*x + v*y + w = 0
       //                and: u'*x + v'*y + w' = 0
@@ -1802,13 +1787,13 @@ class Conic_arc_2
 
       if (numer == _zero)
       {
-	n_roots = 0;
+        n_roots = 0;
       }
       else
       {
-	xs[0] = denom / numer;
-	n_roots = 1;
-	n_approx = 0;
+        xs[0] = denom / numer;
+        n_roots = 1;
+        n_approx = 0;
       }
     }
     else if ((arc._info & DEGREE_MASK) == DEGREE_1)
@@ -1827,13 +1812,13 @@ class Conic_arc_2
       const NT w = _conic.w();
 
       n_roots = solve_quadratic_eq (a*a*s + b*b*r - a*b*t,
-				    2*a*c*s + b*b*u - a*b*v - b*c*t,
-				    c*c*s + b*b*w - b*c*v,
-				    xs);      
+                                    2*a*c*s + b*b*u - a*b*v - b*c*t,
+                                    c*c*s + b*b*w - b*c*v,
+                                    xs);      
       n_approx = 0;
     }
     else if (_conic.s() == _zero && _conic.t() == _zero &&
-	     arc._conic.s() == _zero && arc._conic.t() == _zero)
+             arc._conic.s() == _zero && arc._conic.t() == _zero)
     {
       // Special treatment for canonic parabolas whose axes are parallel
       // to the y axis.
@@ -1847,7 +1832,7 @@ class Conic_arc_2
       c[0] = _conic.w()*arc._conic.v() - _conic.v()*arc._conic.w();
 
       n_roots = solve_quadratic_eq (c[2], c[1], c[0],
-				    xs);      
+                                    xs);      
       n_approx = 0;
     }
     else
@@ -1870,21 +1855,21 @@ class Conic_arc_2
 
       if (arc._conic.s() != _zero)
       {
-	const NT s_tag = arc._conic.s();
+        const NT s_tag = arc._conic.s();
 
-	A = s_tag*r - s*arc._conic.r();
-	B = s_tag*u - s*arc._conic.u();
-	C = s_tag*w - s*arc._conic.w();
-	D = s_tag*t - s*arc._conic.t();
-	E = s_tag*v - s*arc._conic.v();
+        A = s_tag*r - s*arc._conic.r();
+        B = s_tag*u - s*arc._conic.u();
+        C = s_tag*w - s*arc._conic.w();
+        D = s_tag*t - s*arc._conic.t();
+        E = s_tag*v - s*arc._conic.v();
       }
       else
       {
-	A = arc._conic.r();
-	B = arc._conic.u();
-	C = arc._conic.w();
-	D = arc._conic.t();
-	E = arc._conic.v();
+        A = arc._conic.r();
+        B = arc._conic.u();
+        C = arc._conic.w();
+        D = arc._conic.t();
+        E = arc._conic.v();
       }
 
       // Now we have:
@@ -1901,26 +1886,26 @@ class Conic_arc_2
 
       if (t == _zero && arc._conic.t() == _zero)
       {
-	c[4] = s*A*A;
-	c[3] = _two*s*A*B;
-	c[2] = r*E*E + _two*s*A*C + s*B*B - v*A*E;
-	c[1] = u*E*E + _two*s*B*C - v*B*E;
-	c[0] = w*E*E + s*C*C - v*C*E;
+        c[4] = s*A*A;
+        c[3] = _two*s*A*B;
+        c[2] = r*E*E + _two*s*A*C + s*B*B - v*A*E;
+        c[1] = u*E*E + _two*s*B*C - v*B*E;
+        c[0] = w*E*E + s*C*C - v*C*E;
       }
       else
       {
-	const NT F = t*E + v*D;
-	
-	c[4] = r*D*D + s*A*A - t*A*D;
-	c[3] = _two*r*D*E + u*D*D + _two*s*A*B - t*B*D - F*A;
-	c[2] = r*E*E + _two*u*D*E + w*D*D + 
-	       _two*s*A*C + s*B*B - t*C*D - F*B - v*A*E;
-	c[1] = u*E*E + _two*w*D*E + _two*s*B*C - F*C - v*B*E;
-	c[0] = w*E*E + s*C*C - v*C*E;
+        const NT F = t*E + v*D;
+        
+        c[4] = r*D*D + s*A*A - t*A*D;
+        c[3] = _two*r*D*E + u*D*D + _two*s*A*B - t*B*D - F*A;
+        c[2] = r*E*E + _two*u*D*E + w*D*D + 
+               _two*s*A*C + s*B*B - t*C*D - F*B - v*A*E;
+        c[1] = u*E*E + _two*w*D*E + _two*s*B*C - F*C - v*B*E;
+        c[0] = w*E*E + s*C*C - v*C*E;
       }
 
       n_roots = solve_quartic_eq (c[4], c[3], c[2], c[1], c[0],
-				  xs, n_approx);
+                                  xs, n_approx);
     }
 
     return (n_roots);
@@ -1929,13 +1914,13 @@ class Conic_arc_2
   // Calculate all y co-ordinates of intersection points between the two
   // base curves of (*this) and the given arc.
   int _y_coordinates_of_intersections_with (const Conic_arc_2<NT>& arc,
-					    NT* ys, int& n_approx) const
+                                            NT* ys, int& n_approx) const
   {
     static const NT _zero = 0;
     int             n_roots;         // The number of distinct y values.
 
     if ((_info & DEGREE_MASK) == DEGREE_1 && 
-	(arc._info & DEGREE_MASK) == DEGREE_1)
+        (arc._info & DEGREE_MASK) == DEGREE_1)
     {
       // The two conics are: u*x + v*y + w = 0
       //                and: u'*x + v'*y + w' = 0
@@ -1945,13 +1930,13 @@ class Conic_arc_2
 
       if (numer == _zero)
       {
-	n_roots = 0;
+        n_roots = 0;
       }
       else
       {
-	ys[0] = denom / numer;
-	n_roots = 1;
-	n_approx = 0;
+        ys[0] = denom / numer;
+        n_roots = 1;
+        n_approx = 0;
       }
     }
     else if ((arc._info & DEGREE_MASK) == DEGREE_1)
@@ -1970,13 +1955,13 @@ class Conic_arc_2
       const NT w = _conic.w();
 
       n_roots = solve_quadratic_eq (b*b*r + a*a*s - a*b*t,
-				    2*b*c*r + a*a*v - a*b*u - a*c*t,
-				    c*c*r + a*a*w - a*c*u,
-				    ys);      
+                                    2*b*c*r + a*a*v - a*b*u - a*c*t,
+                                    c*c*r + a*a*w - a*c*u,
+                                    ys);      
       n_approx = 0;
     }
     else if (_conic.r() == _zero && _conic.t() == _zero &&
-	     arc._conic.r() == _zero && arc._conic.t() == _zero)
+             arc._conic.r() == _zero && arc._conic.t() == _zero)
     {
       // Special treatment for canonic parabolas whose axes are parallel
       // to the x axis.
@@ -1990,7 +1975,7 @@ class Conic_arc_2
       c[0] = _conic.w()*arc._conic.u() - _conic.u()*arc._conic.w();
 
       n_roots = solve_quadratic_eq (c[2], c[1], c[0],
-				    ys);      
+                                    ys);      
       n_approx = 0;
     }
     else
@@ -2013,21 +1998,21 @@ class Conic_arc_2
 
       if (arc._conic.r() != _zero)
       {
-	const NT r_tag = arc._conic.r();
+        const NT r_tag = arc._conic.r();
 
-	A = r_tag*s - r*arc._conic.s();
-	B = r_tag*v - r*arc._conic.v();
-	C = r_tag*w - r*arc._conic.w();
-	D = r_tag*t - r*arc._conic.t();
-	E = r_tag*u - r*arc._conic.u();
+        A = r_tag*s - r*arc._conic.s();
+        B = r_tag*v - r*arc._conic.v();
+        C = r_tag*w - r*arc._conic.w();
+        D = r_tag*t - r*arc._conic.t();
+        E = r_tag*u - r*arc._conic.u();
       }
       else
       {
-	A = arc._conic.s();
-	B = arc._conic.v();
-	C = arc._conic.w();
-	D = arc._conic.t();
-	E = arc._conic.u();
+        A = arc._conic.s();
+        B = arc._conic.v();
+        C = arc._conic.w();
+        D = arc._conic.t();
+        E = arc._conic.u();
       }
 
       // Now we have:
@@ -2044,26 +2029,26 @@ class Conic_arc_2
 
       if (t == _zero && arc._conic.t() == _zero)
       {
-	c[4] = r*A*A;
-	c[3] = _two*r*A*B;
-	c[2] = s*E*E + _two*r*A*C + r*B*B - u*A*E;
-	c[1] = v*E*E + _two*r*B*C - u*B*E;
-	c[0] = w*E*E + r*C*C - u*C*E;
+        c[4] = r*A*A;
+        c[3] = _two*r*A*B;
+        c[2] = s*E*E + _two*r*A*C + r*B*B - u*A*E;
+        c[1] = v*E*E + _two*r*B*C - u*B*E;
+        c[0] = w*E*E + r*C*C - u*C*E;
       }
       else
       {
-	const NT F = t*E + u*D;
-	
-	c[4] = s*D*D + r*A*A - t*A*D;
-	c[3] = _two*s*D*E + v*D*D + _two*r*A*B - t*B*D - F*A;
-	c[2] = s*E*E + _two*v*D*E + w*D*D + 
-	       _two*r*A*C + r*B*B - t*C*D - F*B - u*A*E;
-	c[1] = v*E*E + _two*w*D*E + _two*r*B*C - F*C - u*B*E;
-	c[0] = w*E*E + r*C*C - u*C*E;
+        const NT F = t*E + u*D;
+        
+        c[4] = s*D*D + r*A*A - t*A*D;
+        c[3] = _two*s*D*E + v*D*D + _two*r*A*B - t*B*D - F*A;
+        c[2] = s*E*E + _two*v*D*E + w*D*D + 
+               _two*r*A*C + r*B*B - t*C*D - F*B - u*A*E;
+        c[1] = v*E*E + _two*w*D*E + _two*r*B*C - F*C - u*B*E;
+        c[0] = w*E*E + r*C*C - u*C*E;
       }
 
       n_roots = solve_quartic_eq (c[4], c[3], c[2], c[1], c[0],
-				  ys, n_approx);
+                                  ys, n_approx);
     }
 
     return (n_roots);
