@@ -18,10 +18,10 @@ called.
 
 \subsubsection{Sibson's $C^1$ continuous interpolant}
 In \cite{s-bdnni-81}, Sibson describes a second interpolation method
-that is $C^1$ continuous with gradient $\mathbf{g_i}$ at
-$\mathbf{p_i}$. It
-re-produces spherical quadrics of the form $\Phi(\mathbf{x}) =a +
-\mathbf{b}^t \mathbf{x} +\gamma\ \mathbf{x}^t\mathbf{x}$ exactly. The
+that relies also on the function gradient $\mathbf{g_i}$ for all $\mathbf{p_i} \in \mathcal{P}$. It is $C^1$ continuous with gradient $\mathbf{g_i}$ at
+$\mathbf{p_i}$. Spherical quadrics of the form $\Phi(\mathbf{x}) =a +
+\mathbf{b}^t \mathbf{x} +\gamma\ \mathbf{x}^t\mathbf{x}$ are reproduced 
+exactly. The
 proof relies on the barycentric coordinate property of the natural
 neighbor coordinates and assumes that the gradient of $\Phi$ at the
 data points is known or approximated from the function values as
@@ -100,7 +100,7 @@ defined. For spherical quadrics, the result is exact.
 
 \cgal\ provides functions to approximate the gradients of all data
 points that are inside the convex hull. There is one function for each
-type of coordinate computation.
+type of natural neighbor coordinate (i.e.\ \ccc{natural_neighbor_coordinates_2}, \ccc{regular_neighbor_coordinates_2}).
 %\begin{ccAdvanced}
 %\end{ccAdvanced}
 
