@@ -24,11 +24,14 @@
 // signature in a friend declaration.
 // This program is used by cgal_configure.
 // The following documentation will be pasted in the generated configfile.
+// Perhaps this file should be called CGAL_CFG_NO_EMPTY_TEMPLATE_ARGUMENT_LIST
 // ---------------------------------------------------------------------
 
 //| If a compiler doesn't distinguish a template instantiation and 
 //| a non-templated function with the same signature, 
 //| CGAL_CFG_NO_TEMPLATE_FRIEND_DISTINCTION is set.
+
+double y( int i) { return (double)i; }
 
 template < class T >
 int y( const T& t) {
