@@ -20,6 +20,9 @@ quotient_mp_float_cached_pol_inst:
 leda_kernel_cached_pol_inst:
 	$(MAKEF) "BENCH_PM=$(PLANAR_MAP_WITH_INTERSECTIONS)" "BENCH_NT=$(LEDA_RAT_NT)" "BENCH_KERNEL=$(LEDA_KERNEL)" "BENCH_TRAITS=$(POLYLINE_CACHED_TRAITS)" install
 
+cgal_gmpq_cached_pol_inst:
+	$(MAKEF) "BENCH_PM=$(PLANAR_MAP_WITH_INTERSECTIONS)" "BENCH_NT=$(CGAL_GMPQ_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(POLYLINE_CACHED_TRAITS)" install
+
 pol_std_inst: leda_rat_cartesian_pol_inst \
         leda_rat_simple_cartesian_pol_inst \
 	quotient_mp_float_pol_inst \
