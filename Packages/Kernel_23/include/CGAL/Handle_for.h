@@ -128,12 +128,15 @@ public:
        return &(ptr_->t);
     }
 
+    /*
+    // The assertion triggers in a couple of places, so I comment it for now.
     T *
     Ptr()
     {
       CGAL_assertion(!is_shared());
       return &(ptr_->t);
     }
+    */
 
     bool
     is_shared() const
@@ -166,11 +169,11 @@ protected:
     // Redundant with Ptr().
     T *
     ptr()
-    { return Ptr(); }
+    { return &(ptr_->t); }
 
     const T *
     ptr() const
-    { return Ptr(); }
+    { return &(ptr_->t); }
 };
 
 

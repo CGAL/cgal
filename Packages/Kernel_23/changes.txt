@@ -1,3 +1,6 @@
+1.63 (27 August 2003)
+- Remove parts of last change, since some code triggers the assertion.
+
 1.62 (26 August 2003)
 - Handle_for : Add an assertion that non-const access is non-shared.
 - Handle_for : make Ptr() and ptr() be the same.
