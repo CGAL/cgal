@@ -3,13 +3,13 @@
 CVS_MODULE_NAME=Cartesian_basic
 Package=Cartesian_basic
 
-.PHONY: Package Test Submit Version Rtag
+.PHONY: package test submit version rtag
 
 WWW_base=/u/www/0/www/htdocs/files/equipes/prisme/CGAL/DR:/Members
 WWW_dir=$(WWW_base)/$(Package)
 TMP_file=/tmp/submit-mail
 
-Package: clean $(Package).tar.gz
+package: clean $(Package).tar.gz
 	@echo "----------------------------------"
 	@echo "------------ Penser à: -----------"
 	@echo "----------------------------------"
@@ -22,16 +22,16 @@ Package: clean $(Package).tar.gz
 	@echo "---- make Submit              ----"
 	@echo "----------------------------------"
 
-Version:
+version:
 	echo "$(VERSION) (" `date +"%e %b %Y"` ")" > version
 
-Commit:
+commit:
 	cvs commit
 
-Rtag:
+rtag:
 	cvs rtag v`echo $(VERSION) | sed -e "s/\./_/g"` $(CVS_MODULE_NAME)
 
-Submit: Package
+submit: package
 	cp $(Package).tar.gz version description.txt changes.txt \
 	   $(WWW_dir)
 	echo > $(TMP_file)

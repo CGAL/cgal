@@ -98,9 +98,9 @@ struct Cartesian_base :
 
 CGAL_END_NAMESPACE
 
-// #include <CGAL/Kernel/Construction_objects_2.h>
-// #include <CGAL/Kernel/Predicate_objects_2.h>
-// #include <CGAL/Kernel/function_objects.h>
+#include <CGAL/Kernel/Construction_objects_2.h>
+#include <CGAL/Kernel/Predicate_objects_2.h>
+#include <CGAL/Kernel/function_objects.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -838,5 +838,7 @@ side_of_bounded_sphere_3_object() const
 };
 
 CGAL_END_NAMESPACE
+
+#include <CGAL/iterator_traits_pointer_specs_for_cartesian_kernel.h>
 
 #endif // CGAL_CARTESIAN_H

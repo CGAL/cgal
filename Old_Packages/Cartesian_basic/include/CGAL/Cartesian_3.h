@@ -111,6 +111,12 @@ CGAL_END_NAMESPACE
 #include <CGAL/Cartesian/Point_3.h>
 #include <CGAL/Cartesian/Vector_3.h>
 #include <CGAL/Cartesian/Direction_3.h>
+
+#include <CGAL/Cartesian/Point_2.C>
+#include <CGAL/Cartesian/Point_3.C>
+#include <CGAL/Cartesian/Vector_3.C>
+#include <CGAL/Cartesian/Direction_3.C>
+
 #include <CGAL/Cartesian/Line_3.h>
 #include <CGAL/Cartesian/Plane_3.h>
 #include <CGAL/Cartesian/Ray_3.h>
@@ -129,10 +135,6 @@ CGAL_END_NAMESPACE
 #include <CGAL/Cartesian/constructions_on_planes_3.h>
 #include <CGAL/Cartesian/distance_computations_3.h>
 
-#include <CGAL/Cartesian/Point_2.C>
-#include <CGAL/Cartesian/Point_3.C>
-#include <CGAL/Cartesian/Vector_3.C>
-#include <CGAL/Cartesian/Direction_3.C>
 #include <CGAL/Cartesian/Line_3.C>
 #include <CGAL/Cartesian/Plane_3.C>
 #include <CGAL/Cartesian/Ray_3.C>
