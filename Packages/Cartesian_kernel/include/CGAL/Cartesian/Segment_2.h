@@ -225,7 +225,7 @@ inline
 bool
 SegmentC2<R>::is_degenerate() const
 {
-  return R().equal_y_2_object()(source(), target());
+  return R().equal_2_object()(source(), target());
 }
 
 template < class R >
@@ -250,9 +250,9 @@ bool
 SegmentC2<R>::
 has_on(const typename SegmentC2<R>::Point_2 &p) const
 {
-  return R().collinear_are_ordered_along_line_2_object()(source(), 
-							 p, 
-							 target());
+  return R().are_ordered_along_line_2_object()(source(), 
+					       p, 
+					       target());
 }
 
 template < class R >
