@@ -1,5 +1,8 @@
 CHANGES to the Geomview package.
 
+Ver 3.4 (?? ???????? 2000)
+- Removed the cruft about "ascii" and "binary" function pointers (beurk !).
+
 Ver 3.3 (29 November 2000)
 - to_double -> CGAL::to_double.
 - char * -> string.
