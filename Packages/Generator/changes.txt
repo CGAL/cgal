@@ -1,5 +1,10 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
+2.38 (16 July 2001)
+   - added missing std's in some programs
+   - made doc. include programs in examples directory
+   - converted examples and demos to new kernel
+
 2.37 (12 July 2001)
    added example program for random polygon
 
