@@ -26,11 +26,10 @@
 
 #include <locale>
 
-using namespace std;
 
 int main()
 {
-  return isspace(' ', locale::classic()) ? 0 : 1;
+  return std::isspace(' ', std::locale::classic()) ? 0 : 1;
 }
 
 
