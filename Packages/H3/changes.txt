@@ -1,4 +1,4 @@
-2.37   (? October 2001)
+2.37   (16 October 2001)
 - Replace Handle/Rep by Handle_for/Ref_counted.
 - Hardcoded dependencies between classes removed.
 - Point, Vector, Direction classes now in their own files
