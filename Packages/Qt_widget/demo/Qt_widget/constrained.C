@@ -1,3 +1,18 @@
+// if QT is not installed, a message will be issued in runtime.
+#ifndef CGAL_USE_QT
+#include <iostream>
+
+int main(int argc, char* argv[])
+{
+
+  std::cout << "Sorry, this demo needs QT...";
+  std::cout << std::endl;
+
+  return 0;
+}
+
+#else
+
 #include <fstream>
 #include <stack>
 #include <set>
@@ -222,3 +237,5 @@ main(int argc, char **argv)
   // because Qt send resizeEvent only on show.
   return app.exec();
 }
+
+#endif // CGAL_USE_QT

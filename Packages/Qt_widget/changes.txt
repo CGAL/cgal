@@ -1,3 +1,16 @@
+1.0.6 (22 May 2001)
+=====
+Added a #ifdef CGAL_USE_QT also in demos.
+
+1.0.5 (22 May 2001)
+=====
+Added few missing fields in headers
+
+1.0.4 (22 May 2001)
+=====
+Added a #ifdef CGAL_USE_QT to avoid crashing CGAL installation when QT is 
+not installed
+
 1.0.3 (21 May 2001)
 =====
 Great modifications in other to follow CGAL packages requirements

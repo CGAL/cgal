@@ -1,3 +1,18 @@
+// if QT is not installed, a message will be issued in runtime.
+#ifndef CGAL_USE_QT
+#include <iostream>
+
+int main(int argc, char* argv[])
+{
+
+  std::cout << "Sorry, this demo needs QT...";
+  std::cout << std::endl;
+
+  return 0;
+}
+
+#else
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Segment_2.h>
@@ -92,3 +107,5 @@ int main( int argc, char **argv )
     W << Segment(Point(200,350),Point(400,250));
     return app.exec();
 }
+
+#endif // CGAL_USE_QT
