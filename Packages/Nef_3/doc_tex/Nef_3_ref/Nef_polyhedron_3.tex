@@ -51,12 +51,10 @@ modeling \Z, or \ccc{Cartesian}, \ccc{Simple_cartesian},
 \ccc{Extended_cartesian_3} parametrized with \ccc{Gmpq}, \ccc{leda_rational},
 \ccc{Quotient<Gmpz>} or any other number type modeling \Q.
 
-The second parameter expects a model of the concept
-\ccc{Nef_polyhedronItems_3}. The default is the \ccc{CGAL::SNC_items}
-class.
-
-The third parameter expects a model of the concept \ccc{Nef_polyhedronMarks}.
-The default is the basic type \ccc{bool}.
+The second parameter and the third parameter are for future considerations.
+Neither \ccc{Nef_polyhedronItems_3} nor \ccc{Nef_polyhedronMarks_3} is
+specifed, yet. Do not use other than the default types for these two 
+template parameters.
 
 \ccTypes
 
@@ -64,9 +62,8 @@ The default is the basic type \ccc{bool}.
 
 \ccNestedType{Traits}{traits class selected for \ccc{Nef_polyhedronTraits_3}.}
 \ccGlue
-\ccNestedType{Items}{items class selected for \ccc{Nef_polyhedronItems_3}.}
-\ccGlue
-\ccNestedType{Mark}{mark class selected for \ccc{Nef_polyhedronMarks_3}.}
+\ccNestedType{Mark}{All object (vertices, edges, etc.) are attributed by a Mark. 
+  Mark equals bool.} 
 
 \ccNestedType{Size_type}{size type of \ccc{Nef_polyhedron_3}.}
 
@@ -132,8 +129,6 @@ The default is the basic type \ccc{bool}.
   where each function returns \ccc{true} iff the assignment to
   \ccc{h} could be accomplished. }
 
-\ccTwo{Nef_polyhedron_3<Traits>::SHalfedge_const_iterator}{}
-
 \ccNestedType{Point_3}{location of vertices.}
 \ccGlue
 \ccNestedType{Segment_3}{segment represented by a halfedge.}
@@ -180,13 +175,13 @@ The default is the basic type \ccc{bool}.
 
 \ccHeading{Access Member Functions}
 
-\ccThree{bool}{N.operator==();}{}
+\ccThree{Nef_polyhedron_3<Traits>}{N.number_of_halffacets();}{}
 
 \ccMethod{bool is_simple() const;}{returns true, if \ccVar\ is a 2-manifold.}
 \ccGlue
 \ccMethod{bool is_valid() const;}{checks the integrity of \ccVar\ .}
 
-\ccThree{Size_type}{N.number_of_halffacets();}{}
+%\ccThree{Size_type}{N.number_of_halffacets();}{}
 
 \ccMethod{Size_type number_of_vertices() const;}
 {returns the number of vertices.}
@@ -205,8 +200,6 @@ The default is the basic type \ccc{bool}.
 \ccGlue
 \ccMethod{Size_type number_of_volumes() const;}
 {returns the number of volumes.}   
-
-\ccThree{Halffacet_const_iterator}{N.halffacets_begin();}{}
 
 \ccMethod{Vertex_const_iterator   vertices_begin() const;}{iterator over all vertices.}
 \ccGlue

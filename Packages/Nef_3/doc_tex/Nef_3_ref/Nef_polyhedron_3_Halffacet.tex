@@ -57,7 +57,7 @@ provides an entry element for each halffacet cycle of a halffacet.
 \ccInclude{CGAL/Nef_polyhedron_3.h}
 
 \ccTypes
-\ccThree{Halfedge_const_handle}{h.halfedge() const;;}{}
+\ccThree{Halffacet_const_handle}{facet_cycles_begin();;}{}
 \ccThreeToTwo
 
 \ccNestedType{Mark}{type of mark.}
@@ -80,6 +80,8 @@ provides an entry element for each halffacet cycle of a halffacet.
 
 \ccConstructor{Halffacet(const Plane_3& h, Mark m);}
 {creates Halffacet with initial values for its mark and supporting plane.}
+
+\ccThree{Halffacet_cycle_const_iterator}{facet_cycles_begin();;}{}
 
 \ccOperations
 

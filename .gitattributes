@@ -1393,13 +1393,40 @@ Packages/Nef_3/demo/Nef_3/cube.off -text
 Packages/Nef_3/demo/Nef_3/cube2.off -text
 Packages/Nef_3/demo/Nef_3/cube3.off -text
 Packages/Nef_3/doc_tex/Nef_3/fig/closeup.eps -text svneol=unset#unset
+Packages/Nef_3/doc_tex/Nef_3/fig/closeup.gif -text svneol=unset#unset
+Packages/Nef_3/doc_tex/Nef_3/fig/closeup.pdf -text svneol=unset#unset
+Packages/Nef_3/doc_tex/Nef_3/fig/complex2.gif svneol=native#unset
+Packages/Nef_3/doc_tex/Nef_3/fig/complex2.pdf svneol=native#unset
+Packages/Nef_3/doc_tex/Nef_3/fig/halfedge.gif svneol=native#unset
+Packages/Nef_3/doc_tex/Nef_3/fig/halfedge.pdf svneol=native#unset
 Packages/Nef_3/doc_tex/Nef_3/fig/halfloop.eps svneol=native#unset
+Packages/Nef_3/doc_tex/Nef_3/fig/halfloop.gif svneol=native#unset
+Packages/Nef_3/doc_tex/Nef_3/fig/halfloop.pdf svneol=native#unset
 Packages/Nef_3/doc_tex/Nef_3/fig/nef_example.eps -text
+Packages/Nef_3/doc_tex/Nef_3/fig/nef_example.gif -text svneol=unset#unset
+Packages/Nef_3/doc_tex/Nef_3/fig/nef_example.pdf -text svneol=unset#unset
+Packages/Nef_3/doc_tex/Nef_3/fig/nef_non_manifold3a.gif -text svneol=unset#unset
+Packages/Nef_3/doc_tex/Nef_3/fig/nef_non_manifold3a.pdf -text svneol=unset#unset
 Packages/Nef_3/doc_tex/Nef_3/fig/nef_non_manifold3a.ps -text
 Packages/Nef_3/doc_tex/Nef_3/fig/nef_pyramids.eps -text
+Packages/Nef_3/doc_tex/Nef_3/fig/nef_pyramids.gif -text svneol=unset#unset
+Packages/Nef_3/doc_tex/Nef_3/fig/nef_pyramids.pdf -text svneol=unset#unset
+Packages/Nef_3/doc_tex/Nef_3/fig/shalfedge.gif svneol=native#unset
+Packages/Nef_3/doc_tex/Nef_3/fig/shalfedge.pdf svneol=native#unset
+Packages/Nef_3/doc_tex/Nef_3/fig/shalfloop.gif svneol=native#unset
+Packages/Nef_3/doc_tex/Nef_3/fig/shalfloop10.gif svneol=native#unset
+Packages/Nef_3/doc_tex/Nef_3/fig/shalfloop10.pdf svneol=native#unset
 Packages/Nef_3/doc_tex/Nef_3/fig/shalfloopB.eps svneol=native#unset
+Packages/Nef_3/doc_tex/Nef_3/fig/shalfloopB.gif svneol=native#unset
+Packages/Nef_3/doc_tex/Nef_3/fig/shalfloopB.pdf svneol=native#unset
 Packages/Nef_3/doc_tex/Nef_3/fig/shells.eps -text svneol=unset#unset
+Packages/Nef_3/doc_tex/Nef_3/fig/shells.gif -text svneol=unset#unset
+Packages/Nef_3/doc_tex/Nef_3/fig/shells.pdf -text
 Packages/Nef_3/doc_tex/Nef_3/fig/snc.eps -text
+Packages/Nef_3/doc_tex/Nef_3/fig/snc.gif -text svneol=unset#unset
+Packages/Nef_3/doc_tex/Nef_3/fig/snc.pdf -text svneol=unset#unset
+Packages/Nef_3/doc_tex/Nef_3/fig/visualization_SNC.gif -text svneol=unset#unset
+Packages/Nef_3/doc_tex/Nef_3/fig/visualization_SNC.pdf -text svneol=unset#unset
 Packages/Nef_3/doc_tex/Nef_3/fig/visualization_SNC.png -text svneol=unset#unset
 Packages/Nef_3/doc_tex/Nef_3/fig/visualization_SNC.ps -text
 Packages/Nef_3/test/Nef_3/data/2_cycles_on_halfsphere.off -text

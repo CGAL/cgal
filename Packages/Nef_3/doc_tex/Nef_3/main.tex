@@ -76,7 +76,7 @@ the tunnel, or the edge connecting the ``roof'' with the cube are
 non-manifold situations.
 
 In our implementation of Nef polyhedra in 3D, we offer a B-rep data
-structures that is closed under boolean operations and with all their
+structure that is closed under boolean operations and with all their
 generality. Starting from halfspaces (and also directly from oriented
 2-manifolds), we can work with set union, set intersection, set
 difference, set complement, interior, exterior, boundary, closure, and
@@ -91,7 +91,7 @@ rich interface to investigate these data structures, their different
 elements and their connectivity. We provide affine (rigid)
 transformations and a point location query operation. We have a custom
 file format for storing and reading Nef polyhedra from files. We offer
-a simple OpenGL visualization for debugging and illustrations.
+a simple OpenGL-based visualizer for debugging and illustrations.
 
 
 % +------------------------------------------------------------------------+
@@ -302,8 +302,8 @@ dimension.
         traversal in a visitor design pattern to the user.
     \item[volumes:]
         A volume is defined by a set of shells, one outer shell containing
-        the volume and several (or maybe none) inner shells excluding voids
-        from the volume.
+        the volume and several (or maybe none) inner shells separating voids
+        which are excluded from the volume.
 \end{description}
 
 For each face we store a label, e.g., a set-selection mark, which
@@ -350,9 +350,9 @@ kernels---\ccc{CGAL::Extended_cartesian} and
 with a polynomial type as coordinate number type.
 
 As long as an extended kernel is used, the full functionality provided
-by the \ccc{CGAL::Nef_polyhedron_3} class is available. If another
-kernel is used, which does not use polynomials to represent
-coordinates, it is not possible to create or load unbounded Nef
+by the \ccc{CGAL::Nef_polyhedron_3} class is available. If kernel that 
+does not use polynomial to represent coordinates is used, it is not 
+possible to create or load unbounded Nef
 polyhedra, but all other operations work as expected. We provided both
 possibilities, since the restriction to bounded Nef polyhedra improves
 considerably space requirements (plain number type instead of
