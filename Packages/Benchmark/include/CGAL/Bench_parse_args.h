@@ -306,7 +306,8 @@ private:
         case BENCH_TN: if (getType_name_param(value) < 0) return -1; break;
 
         case BENCH_STRATEGY_NAME:
-        case BENCH_SN: if (get_strategy_name_param(value) < 0) return -1; break;
+        case BENCH_SN:
+         if (get_strategy_name_param(value) < 0) return -1; break;
           
         case BENCH_TYPE_MASK:
         case BENCH_TM:
