@@ -110,7 +110,7 @@ letstry:
 		l2c.value(),
 		Filter_epsilon_compare_xC2_7_0,
 		Filter_epsilon_compare_xC2_7_1);
-  } 
+  }
   catch (Static_adaptatif_filter::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
@@ -280,7 +280,7 @@ letstry:
 		Filter_epsilon_compare_xC2_12_0,
 		Filter_epsilon_compare_xC2_12_1,
 		Filter_epsilon_compare_xC2_12_2);
-  } 
+  }
   catch (Static_adaptatif_filter::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
@@ -413,7 +413,7 @@ letstry:
 		lc.value(),
 		Filter_epsilon_compare_y_at_xC2_5_0,
 		Filter_epsilon_compare_y_at_xC2_5_1);
-  } 
+  }
   catch (Static_adaptatif_filter::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
@@ -540,7 +540,7 @@ letstry:
 		Filter_epsilon_compare_y_at_xC2_7_0,
 		Filter_epsilon_compare_y_at_xC2_7_1,
 		Filter_epsilon_compare_y_at_xC2_7_2);
-  } 
+  }
   catch (Static_adaptatif_filter::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
@@ -682,7 +682,7 @@ letstry:
 		Filter_epsilon_compare_y_at_xC2_9_0,
 		Filter_epsilon_compare_y_at_xC2_9_1,
 		Filter_epsilon_compare_y_at_xC2_9_2);
-  } 
+  }
   catch (Static_adaptatif_filter::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
@@ -859,7 +859,7 @@ letstry:
 		Filter_epsilon_compare_y_at_xC2_12_1,
 		Filter_epsilon_compare_y_at_xC2_12_2,
 		Filter_epsilon_compare_y_at_xC2_12_3);
-  } 
+  }
   catch (Static_adaptatif_filter::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
@@ -978,7 +978,7 @@ letstry:
 		ry.value(),
 		sy.value(),
 		Filter_epsilon_compare_deltax_deltayC2_4_0);
-  } 
+  }
   catch (Static_adaptatif_filter::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
@@ -1080,7 +1080,7 @@ letstry:
 		rx.value(),
 		ry.value(),
 		Filter_epsilon_orientationC2_6_0);
-  } 
+  }
   catch (Static_adaptatif_filter::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
@@ -1228,7 +1228,7 @@ letstry:
 		tx.value(),
 		ty.value(),
 		Filter_epsilon_side_of_oriented_circleC2_8_0);
-  } 
+  }
   catch (Static_adaptatif_filter::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
@@ -1362,7 +1362,7 @@ letstry:
 		ty.value(),
 		Filter_epsilon_side_of_bounded_circleC2_8_0,
 		Filter_epsilon_side_of_bounded_circleC2_8_1);
-  } 
+  }
   catch (Static_adaptatif_filter::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
@@ -1479,7 +1479,7 @@ letstry:
 		rx.value(),
 		ry.value(),
 		Filter_epsilon_cmp_dist_to_pointC2_6_0);
-  } 
+  }
   catch (Static_adaptatif_filter::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
@@ -1594,7 +1594,7 @@ letstry:
 		qx.value(),
 		qy.value(),
 		Filter_epsilon_cmp_signed_dist_to_lineC2_7_0);
-  } 
+  }
   catch (Static_adaptatif_filter::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
@@ -1717,7 +1717,7 @@ letstry:
 		sx.value(),
 		sy.value(),
 		Filter_epsilon_cmp_signed_dist_to_lineC2_8_0);
-  } 
+  }
   catch (Static_adaptatif_filter::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).

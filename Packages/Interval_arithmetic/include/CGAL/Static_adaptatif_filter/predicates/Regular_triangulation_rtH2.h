@@ -187,7 +187,7 @@ letstry:
 		thw.value(),
 		twt.value(),
 		Filter_epsilon_power_testH2_16_0);
-  } 
+  }
   catch (Static_adaptatif_filter::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
@@ -417,7 +417,7 @@ letstry:
 		twt.value(),
 		Filter_epsilon_power_testH2_12_0,
 		Filter_epsilon_power_testH2_12_1);
-  } 
+  }
   catch (Static_adaptatif_filter::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).

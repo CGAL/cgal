@@ -120,7 +120,7 @@ letstry:
 		ty.value(),
 		tw.value(),
 		Filter_epsilon_in_smallest_orthogonalcircleC2_9_0);
-  } 
+  }
   catch (Static_adaptatif_filter::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).

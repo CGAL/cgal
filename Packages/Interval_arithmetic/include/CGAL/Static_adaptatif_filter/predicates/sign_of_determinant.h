@@ -79,7 +79,7 @@ letstry:
 		a10.value(),
 		a11.value(),
 		Filter_epsilon_sign_of_determinant2x2_4_0);
-  } 
+  }
   catch (Static_adaptatif_filter::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
@@ -200,7 +200,7 @@ letstry:
 		a21.value(),
 		a22.value(),
 		Filter_epsilon_sign_of_determinant3x3_9_0);
-  } 
+  }
   catch (Static_adaptatif_filter::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
@@ -373,7 +373,7 @@ letstry:
 		a32.value(),
 		a33.value(),
 		Filter_epsilon_sign_of_determinant4x4_16_0);
-  } 
+  }
   catch (Static_adaptatif_filter::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
@@ -614,7 +614,7 @@ letstry:
 		a43.value(),
 		a44.value(),
 		Filter_epsilon_sign_of_determinant5x5_25_0);
-  } 
+  }
   catch (Static_adaptatif_filter::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
@@ -939,7 +939,7 @@ letstry:
 		a54.value(),
 		a55.value(),
 		Filter_epsilon_sign_of_determinant6x6_36_0);
-  } 
+  }
   catch (Static_adaptatif_filter::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).

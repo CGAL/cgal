@@ -130,7 +130,7 @@ letstry:
 		Filter_epsilon_collinearC3_9_0,
 		Filter_epsilon_collinearC3_9_1,
 		Filter_epsilon_collinearC3_9_2);
-  } 
+  }
   catch (Static_adaptatif_filter::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
@@ -283,7 +283,7 @@ letstry:
 		sy.value(),
 		sz.value(),
 		Filter_epsilon_orientationC3_12_0);
-  } 
+  }
   catch (Static_adaptatif_filter::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
@@ -492,7 +492,7 @@ letstry:
 		ty.value(),
 		tz.value(),
 		Filter_epsilon_side_of_oriented_sphereC3_15_0);
-  } 
+  }
   catch (Static_adaptatif_filter::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
@@ -694,7 +694,7 @@ letstry:
 		tz.value(),
 		Filter_epsilon_side_of_bounded_sphereC3_15_0,
 		Filter_epsilon_side_of_bounded_sphereC3_15_1);
-  } 
+  }
   catch (Static_adaptatif_filter::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
@@ -847,7 +847,7 @@ letstry:
 		ry.value(),
 		rz.value(),
 		Filter_epsilon_cmp_dist_to_pointC3_9_0);
-  } 
+  }
   catch (Static_adaptatif_filter::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
@@ -986,7 +986,7 @@ letstry:
 		qy.value(),
 		qz.value(),
 		Filter_epsilon_cmp_signed_dist_to_planeC3_10_0);
-  } 
+  }
   catch (Static_adaptatif_filter::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
@@ -1163,7 +1163,7 @@ letstry:
 		qy.value(),
 		qz.value(),
 		Filter_epsilon_cmp_signed_dist_to_planeC3_15_0);
-  } 
+  }
   catch (Static_adaptatif_filter::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
