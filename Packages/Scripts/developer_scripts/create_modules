@@ -53,10 +53,10 @@ if [ ! -r ${CVSDIR} ]; then
   exit
 fi
 
-if [ ! -r create_internal_module ]; then
-  printf "create_internal_module file could not be found ... EXITING\n"
-  exit
-fi
+#if [ ! -r create_internal_module ]; then
+#  printf "create_internal_module file could not be found ... EXITING\n"
+#  exit
+#fi
 
 
 cd ${CVSDIR} || return
@@ -66,7 +66,14 @@ if [ "${UPDATING}" = "y" ]; then
     cvs -q update -P Installation
   else
     printf "Checking out package Installation to get the modules list ...\n"
-    cvs co -P ${j}
+    cvs co -P Installation
+  fi
+  if [ -r "Scripts" ]; then
+    printf "Updating package Scripts to get the right scripts ...\n"
+    cvs -q update -P Scripts
+  else
+    printf "Checking out package Scripts to get the right scripts ...\n"
+    cvs co -P Scripts
   fi
 fi
 
@@ -95,7 +102,7 @@ do
         fi
       done
     fi
-    ./create_internal_module -m ${MAIN_NAME} -r ${RELEASE_VERSION} -n ${RELEASE_NUMBER} -a ${CVSDIR} -p ${i} -s "${CVSDIR}/Scripts/scripts"
+    ${CVSDIR}/Scripts/developer_scripts/create_internal_module -m ${MAIN_NAME} -r ${RELEASE_VERSION} -n ${RELEASE_NUMBER} -a ${CVSDIR} -p ${i} -s "${CVSDIR}/Scripts/scripts"
     tar -cf "${MAIN_NAME}.tar" ${MAIN_NAME}
     gzip "${MAIN_NAME}.tar"
     mv "${MAIN_NAME}.tar.gz" ${INSTALLATION_DIR}

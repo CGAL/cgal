@@ -1,3 +1,6 @@
+28 June 2004 Radu Ursu
+- create_internal_module script is taken from CVSDIR rather then the same directory as create_modules 
+
 24 June 2004 Radu Ursu
 - create_modules script exits if create_new_module is not found in the same 
   directory 
