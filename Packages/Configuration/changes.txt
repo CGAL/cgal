@@ -1,3 +1,8 @@
+2.61 (rursu) 06/06/2003
+-----------------------
+  -added config/testfiles/CGAL_CFG_NET2003_MATCHING_BUG_3.C
+
+
 2.60
 - Removed CGAL_CFG_NO_STANDARD_HEADERS.C as it is not used anymore.
 - Various config.h cleanups.
