@@ -66,7 +66,7 @@ public:
     strategy(_straregy)
   {
     static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(2) <<
-      CGAL::BackgroundColor (CGAL::WHITE);
+      CGAL::BackgroundColor (CGAL::BLACK);
     set_window(0, 700, 0, 700);
    
     setMouseTracking(TRUE);
@@ -76,7 +76,7 @@ public:
     colors[3] = Qt::green;
     colors[4] = Qt::cyan;
     colors[5] = Qt::magenta;
-    colors[6] = Qt::black;
+    colors[6] = Qt::darkRed;
     colors[7] = Qt::darkGreen;
     colors[8] = Qt::darkBlue;
     colors[9] = Qt::darkMagenta;
@@ -450,11 +450,13 @@ public:
     if ( mode == FILLFACE ) 
     {
       Locate_type lt;
+      Face_handle f;
       Pm_point_2 temp_p (pl_point.x(), pl_point.y());
       Halfedge_handle e = m_curves_arr->locate(temp_p, lt);
-      
-      //color the outer face 
-      Face_handle f = e->face();
+      if(lt == Curves_arr::UNBOUNDED_FACE )
+        f = m_curves_arr->unbounded_face();
+      else
+        f = e->face();
       
       set_face_color(f,fill_face_color);
     }
@@ -721,7 +723,7 @@ public:
   {  
     f->set_info(c);
     if( ! f->does_outer_ccb_exist() || empty)
-      set_unbounded_face_color(c);  
+      set_unbounded_face_color(c); 
   }
 
   /*!
@@ -1597,8 +1599,25 @@ public:
       (*w) << pgn ;  // draw the polyong 
       w->setFilled(false);       
       w->get_painter().setPen(old_penstyle);
-    }// if
-  }// fill face
+    }
+    else
+    {
+      Coord_point points[4];
+      points[0] = (Coord_point(w->x_min(),w->y_min()));
+      points[1] = (Coord_point(w->x_min(),w->y_max()));
+      points[2] = (Coord_point(w->x_max(),w->y_max()));
+      points[3] = (Coord_point(w->x_max(),w->y_min()));
+     
+      w->setFilled(true);
+      w->setFillColor(w->unbounded_face_color());
+      
+      QPen old_penstyle = w->get_painter().pen();
+      w->get_painter().setPen(Qt::NoPen);
+      (*w)<<Polygon(points , points +4 );
+      w->setFilled(false);
+       w->get_painter().setPen(old_penstyle);
+    }
+  }
 
 
   /*! draw_xcurve - use Qt_Widget operator to draw 
@@ -2035,7 +2054,24 @@ public:
       (*w) << pgn ;  // draw the polyong 
       w->setFilled(false);  
       w->get_painter().setPen(old_penstyle);
-    }  
+    }
+    else
+    {
+      Coord_point points[4];
+      points[0] = (Coord_point(w->x_min(),w->y_min()));
+      points[1] = (Coord_point(w->x_min(),w->y_max()));
+      points[2] = (Coord_point(w->x_max(),w->y_max()));
+      points[3] = (Coord_point(w->x_max(),w->y_min()));
+     
+      w->setFilled(true);
+      w->setFillColor(w->unbounded_face_color());
+      
+      QPen old_penstyle = w->get_painter().pen();
+      w->get_painter().setPen(Qt::NoPen);
+      (*w)<<Polygon(points , points +4 );
+      w->setFilled(false);
+       w->get_painter().setPen(old_penstyle);
+    }
   }
   
   /*! draw_xcurve - go over the polyline parts and use Qt_Widget operator
@@ -2629,7 +2665,24 @@ public:
       (*w) << pgn ;  // draw the polyong 
       w->get_painter().setPen(old_penstyle);
       w->setFilled(false);
-    }// if
+    }
+    else
+    {
+      Coord_point points[4];
+      points[0] = (Coord_point(w->x_min(),w->y_min()));
+      points[1] = (Coord_point(w->x_min(),w->y_max()));
+      points[2] = (Coord_point(w->x_max(),w->y_max()));
+      points[3] = (Coord_point(w->x_max(),w->y_min()));
+     
+      w->setFilled(true);
+      w->setFillColor(w->unbounded_face_color());
+      
+      QPen old_penstyle = w->get_painter().pen();
+      w->get_painter().setPen(Qt::NoPen);
+      (*w)<<Polygon(points , points +4 );
+      w->setFilled(false);
+       w->get_painter().setPen(old_penstyle);
+    }
   }
    
   /*! draw_xcurve - same as draw_curve

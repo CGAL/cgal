@@ -293,6 +293,7 @@ void MyWindow::add_segment_tab()
     new Qt_widget_demo_tab<Segment_tab_traits>
     (SEGMENT_TRAITS ,strategy , this, tab_number);
   init(widget);
+  widget->draw();
 }
 
 /*! add a tab widget with polyline traits */
@@ -302,6 +303,7 @@ void MyWindow::add_polyline_tab()
     new Qt_widget_demo_tab<Polyline_tab_traits>
     (POLYLINE_TRAITS ,strategy, this, tab_number);
   init(widget);
+  widget->draw();
 }
 
 /*! add a tab widget with conic traits */
@@ -311,6 +313,7 @@ void MyWindow::add_conic_tab()
     new Qt_widget_demo_tab<Conic_tab_traits>
     (CONIC_TRAITS ,strategy, this , tab_number);
   init(widget);
+  widget->draw();
 
   //widget->set_window(widget->x_pixel(widget->x_min()), widget->x_pixel(widget->x_max()), 
     //                 widget->x_pixel(widget->y_min()), widget->x_pixel(widget->y_max()));

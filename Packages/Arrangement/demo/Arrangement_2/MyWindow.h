@@ -248,4 +248,6 @@ private:
     Strategy strategy;
 };
 
+
+
 #endif // MYWINDOW_H
