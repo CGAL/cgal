@@ -110,40 +110,40 @@ int main()
 //#define  CGAL_PMWX_TEST_SWEEP 
 
 #if CGAL_ARR_TEST_TRAITS==CGAL_SEGMENT_TRAITS 
-  typedef CGAL::Quotient<int>                  NT;
-  typedef CGAL::Cartesian<NT>                  R;
-  typedef CGAL::Arr_segment_exact_traits<R>    Traits;
+  typedef CGAL::Quotient<int>                   NT;
+  typedef CGAL::Cartesian<NT>                   R;
+  typedef CGAL::Arr_segment_traits_2<R>         Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
-  typedef leda_rational                                 NT;
-  typedef CGAL::leda_rat_kernel_traits                  Kernel;
-  typedef CGAL::Arr_segment_exact_traits<Kernel>        Traits;
+  typedef leda_rational                         NT;
+  typedef CGAL::leda_rat_kernel_traits          Kernel;
+  typedef CGAL::Arr_segment_traits_2<Kernel>    Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
-  typedef CGAL::Quotient<int>                  NT;
-  typedef CGAL::Cartesian<NT>                  R;
-  typedef CGAL::Arr_polyline_traits<R>         Traits;
+  typedef CGAL::Quotient<int>                   NT;
+  typedef CGAL::Cartesian<NT>                   R;
+  typedef CGAL::Arr_polyline_traits<R>          Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
-  typedef leda_rational                        NT;
-  typedef CGAL::Arr_leda_polyline_traits<NT>     Traits;
+  typedef leda_rational                         NT;
+  typedef CGAL::Arr_leda_polyline_traits<NT>    Traits;
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS
-  typedef leda_real                            NT;
-  typedef CGAL::Arr_segment_circle_traits<NT>  Traits;
-  typedef Traits::Segment                      Segment;
-  typedef Traits::Circle                       Circle;
+  typedef leda_real                             NT;
+  typedef CGAL::Arr_segment_circle_traits<NT>   Traits;
+  typedef Traits::Segment                       Segment;
+  typedef Traits::Circle                        Circle;
 #endif
 
-typedef Traits::Point                          Point;
-typedef Traits::X_curve                        X_curve;
-typedef Traits::Curve                          Curve;
-typedef CGAL::Pm_default_dcel<Traits>          Dcel;   
-typedef CGAL::Planar_map_2<Dcel, Traits>       PM;
+typedef Traits::Point_2                         Point;
+typedef Traits::X_curve_2                       X_curve;
+typedef Traits::Curve_2                         Curve;
+typedef CGAL::Pm_default_dcel<Traits>           Dcel;   
+typedef CGAL::Planar_map_2<Dcel, Traits>        PM;
 typedef CGAL::Planar_map_with_intersections_2<PM> Pmwx;
-typedef Pmwx::Pmwx_change_notification         Notifier;
+typedef Pmwx::Pmwx_change_notification          Notifier;
  
 // we use the namespace std for compatability with MSVC
-typedef std::list<Point>                     Point_list;
+typedef std::list<Point>                        Point_list;
 
 // Defining IO operators for polyline curves.
 #if (CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS || CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS)
