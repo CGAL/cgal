@@ -3475,11 +3475,11 @@ web file.
     @<copyright notice>
     @<file name>(@1)
     @<file description>(
+        "Min_ellipse_2",
         "Geometric Optimisation",
-        "Min_ellipse_2","Min_ellipse_2",
+        "Min_ellipse_2",
         "$Revision$","$Date$",
-        "Sven Schönherr, Bernd Gärtner",
-        "Sven Schönherr <sven@@inf.ethz.ch>",
+        "Sven Schönherr <sven@@inf.ethz.ch>, Bernd Gärtner",
         "ETH Zürich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
         "@2")
 @end

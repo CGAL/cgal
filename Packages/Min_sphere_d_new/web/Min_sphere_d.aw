@@ -1944,11 +1944,11 @@ web file.
     @<copyright notice>
     @<file name>(@1)
     @<file description>(
+        "Min_sphere_d_new",
         "Geometric Optimisation",
-        "Min_sphere_d_new", "Min_sphere_d",
+        "Min_sphere_d",
         "$Revision$","$Date$",
-        "Bernd Gärtner, Sven Schönherr",
-        "Sven Schönherr <sven@@inf.ethz.ch>",
+        "Bernd Gärtner, Sven Schönherr <sven@@inf.ethz.ch>",
         "ETH Zürich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
         "@2")
 @end
