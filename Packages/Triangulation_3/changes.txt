@@ -1,3 +1,6 @@
+Version 1.154 (11 June 03)
+- Made derivation from Triangulation_cw_ccw_2 public
+
 Version 1.153 (10 June 03)
 - Passing to the new design of Triangulation_2 in remove vertex
 
