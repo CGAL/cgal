@@ -85,7 +85,7 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
 	if (dup2(pipe_in[1], 1) != 1)
 	    std::cerr << "Connect pipe to stdout failed." << std::endl;
 
-        if (machine && (::strlen(machine)>0)) {
+        if (machine && (std::strlen(machine)>0)) {
 	    std::string s (" rgeomview ");
 	    s += machine;
 	    s += ":0.0";
@@ -140,20 +140,20 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
         *this << "(echo \"CGAL-3D\")";
 
         char inbuf[10];
-        ::read(in, inbuf, 7);
+        std::read(in, inbuf, 7);
 
-        if (::strncmp(inbuf, "started", 7) == 0)
+        if (std::strncmp(inbuf, "started", 7) == 0)
         {
             // std::cerr << "You still have a .geomview file with the\n"
                    // << "(echo \"started\") command. Note that this is not\n"
                    // << "compulsory anymore, since CGAL 2.3" << std::endl;
 
             // Then the next one is supposed to be CGAL-3D.
-            ::read(in, inbuf, 7);
-            if (::strncmp(inbuf, "CGAL-3D", 7) != 0)
+            std::read(in, inbuf, 7);
+            if (std::strncmp(inbuf, "CGAL-3D", 7) != 0)
                 std::cerr << "Unexpected string from Geomview !" << std::endl;
         }
-        else if (::strncmp(inbuf, "CGAL-3D", 7) == 0)
+        else if (std::strncmp(inbuf, "CGAL-3D", 7) == 0)
         {
             // std::cerr << "Good, you don't have a .geomview file with the\n"
                       // << "(echo \"started\") command" << std::endl;
@@ -167,7 +167,7 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
         // Old original version
         char inbuf[10];
         // Waits for "started" from the .geomview file.
-        ::read(in, inbuf, 7);
+        std::read(in, inbuf, 7);
 #endif
 
         std::cout << "done." << std::endl;
@@ -209,7 +209,7 @@ Geomview_stream::look_recenter()
 Geomview_stream&
 Geomview_stream::operator<<(std::string s)
 {
-    if ((int)s.length() != ::write(out, s.data(), s.length())) {
+    if ((int)s.length() != std::write(out, s.data(), s.length())) {
         std::cerr << "write problem in the pipe while sending data to geomview"
              << std::endl;
         exit(-1);
@@ -227,7 +227,7 @@ Geomview_stream::operator<<(int i)
         // we write raw binary data to the stream.
         int num = i;
         _swap_to_big_endian(num);
-        ::write(out, (char*)&num, sizeof(num));
+        std::write(out, (char*)&num, sizeof(num));
         trace(i);
     } else {
         // transform the int in a character sequence and put whitespace around
@@ -246,7 +246,7 @@ Geomview_stream::operator<<(double d)
     if (get_binary_mode()) {
         float num = d;
         _swap_to_big_endian(num);
-        ::write(out, (char*)&num, sizeof(num));
+        std::write(out, (char*)&num, sizeof(num));
         trace(f);
     } else {
         // 'copy' the float in a string and append a blank
@@ -433,13 +433,13 @@ Geomview_stream::operator>>(char *expr)
 {
     // Skip whitespaces
     do {
-      ::read(in, expr, 1);
+      std::read(in, expr, 1);
     } while (expr[0] != '(');
 
     int pcount = 1;
     int i = 1;
     while (1) {
-        ::read(in, &expr[i], 1);
+        std::read(in, &expr[i], 1);
         if (expr[i] == ')'){
             pcount--;
         } else if (expr[i] == '('){

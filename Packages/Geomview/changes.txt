@@ -1,5 +1,8 @@
 CHANGES to the Geomview package.
 
+Ver 3.11 (30 May 2001)
+- Use std:: for C library functions for GCC 3.
+
 Ver 3.10 (23 May 2001)
 - Don't compile the demos at all on Windows.
 
