@@ -32,7 +32,7 @@
 #include <CGAL/memory.h>
 #include <cassert>
 
-#ifndef _MSC_VER
+#ifdef _MSC_VER
 #define CGAL_UNION_FIND_NO_ALLOCATOR
 #endif
 
