@@ -52,7 +52,13 @@ public:
   { mpz_init_set(mpZ, g.mpZ); }
 
   Gmpz_rep & operator= (const Gmpz_rep & g)
-  { mpz_init_set(mpZ, g.mpZ); return *this; }
+  {
+      if (&g != this) {
+	  mpz_clear(mpZ);
+	  mpz_init_set(mpZ, g.mpZ);
+      }
+      return *this;
+  }
 
   Gmpz_rep(int si)
   { mpz_init_set_si(mpZ, si); }
