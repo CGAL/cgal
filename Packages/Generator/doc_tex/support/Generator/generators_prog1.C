@@ -9,7 +9,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/point_generators_2.h>
-#include <CGAL/ncopy.h>
+#include <CGAL/copy_n.h>
 #include <CGAL/random_selection.h>
 #include <CGAL/IO/Window_stream.h>  /* only for visualization used */
 
@@ -24,7 +24,7 @@ int main()
 
     /* Create 600 points within a disc of radius 150. */
     CGAL_Random_points_in_disc_2<Point> g( 150.0);
-    CGAL_ncopy( g, 600, back_inserter( points));
+    CGAL_copy_n( g, 600, back_inserter( points));
 
     /* Create 200 points from a 15 x 15 grid. */
     CGAL_points_on_square_grid_2( 500.0, 200, back_inserter(points),(Point*)0);

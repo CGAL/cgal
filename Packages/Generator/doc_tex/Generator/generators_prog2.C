@@ -20,7 +20,7 @@ Point& CGAL_build_point( double x, double y, Point& p) {
 }
 
 #include <CGAL/point_generators_2.h>
-#include <CGAL/ncopy.h>
+#include <CGAL/copy_n.h>
 #include <CGAL/IO/Window_stream.h>  /* only for visualization used */
 
 
@@ -45,7 +45,7 @@ int main()
 
     /* Create 250 points within a disc of radius 150. */
     CGAL_Random_points_in_disc_2<Point> g( 150.0);
-    CGAL_ncopy( g, 250, back_inserter( points));
+    CGAL_copy_n( g, 250, back_inserter( points));
 
     /* Check that we have really created 500 points. */
     assert( points.size() == 500);

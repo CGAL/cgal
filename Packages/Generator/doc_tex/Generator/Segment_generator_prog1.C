@@ -11,7 +11,7 @@
 #include <CGAL/Segment_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Segment_generator.h>
-#include <CGAL/ncopy.h>
+#include <CGAL/copy_n.h>
 #include <CGAL/IO/Window_stream.h>  /* only for visualization used */
 
 typedef CGAL_Cartesian<double>  R;
@@ -34,7 +34,7 @@ int main()
     
     /* Create 200 segments. */
     CGAL_Segment_generator<Segment, P1, P2> g( p1, p2);
-    CGAL_ncopy( g, 200, back_inserter( segs));
+    CGAL_copy_n( g, 200, back_inserter( segs));
 
     /* Visualize segments. Can be omitted, see example programs */
     /* in the CGAL source code distribution. */
