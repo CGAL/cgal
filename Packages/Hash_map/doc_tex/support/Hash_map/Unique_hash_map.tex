@@ -13,7 +13,7 @@ however keys cannot be individually deleted.
 An object \ccc{hash} of the type \ccc{UniqueHashFunction} returns a
 unique integer index \ccc{hash(key)} of type \ccc{std::size_t} for all
 objects $key$ stored in \ccVar. The template parameter has as default
-the \ccc{Handle_hash_function} that hashes all type of pointers, handles,
+the \ccc{Handle_hash_function} that hashes all types of pointers, handles,
 iterators, and circulators.
 
 All variables are initialized to \ccc{default_data}, a value
@@ -30,8 +30,8 @@ of type \ccc{Data} specified in the definition of \ccVar.
 \ccGlue
 \ccNestedType{Hash_function}{the unique hash function type.}
 
-In compliance with \stl\ the types \ccc{key_type}, \ccc{data_type}, and
-hasher are defined as well.
+In compliance with \stl, the types \ccc{key_type}, \ccc{data_type}, and
+\ccc{hasher} are defined as well.
 
 \ccCreation
 \ccThree{Hash_functi}{mained;}{}
@@ -56,7 +56,7 @@ hasher are defined as well.
     passes the \ccc{table_size} as argument to the internal implementation,
     initializes the hash function with \ccc{fct}, and inserts all keys 
     from the range \ccc{[first1,beyond1)}. The data variable for each
-    inserted \ccc{key} is initilized with the corresponding value from
+    inserted \ccc{key} is initialized with the corresponding value from
     the range \ccc{[first2, first2 + (beyond1-first1))}.
     \ccPrecond\ The increment operator must be defined for values
         of type \ccc{Key} and for values of type \ccc{Data}. \ccc{beyond1}
@@ -72,7 +72,7 @@ hasher are defined as well.
 
 \ccMethod{bool is_defined( const Key& key);}{returns true if $key$ is
     defined in \ccVar. Note that there can be keys defined that have not
-    been inserted explicitly. Their variable are initialized to
+    been inserted explicitly. Their variables are initialized to
     \ccc{default_value}.}
 
 %%\ccMethod{element_iterator begin();}{
@@ -123,13 +123,13 @@ hasher are defined as well.
 
 \ccImplementation
 
-\ccc{Unique_hash_map} is implemented via chained hashing scheme. Access
+\ccc{Unique_hash_map} is implemented via a chained hashing scheme. Access
 operations \ccVar\ccc{[i]} take expected time $O(1)$. The \ccc{table_size}
 parameter passed to chained hashing can be used to avoid unnecessary 
-rehashing when set the number of expected elements in the map.
+rehashing when set to the number of expected elements in the map.
 The design is derived from the \stl\ \ccc{hash_map} and the \leda\ type
 \ccc{map}. Its specialization on insertion only and unique hash values 
-allow for a more time and space efficient implementation, see also
+allow for a more time- and space-efficient implementation, see also
 \cite[Chapter 5]{mn-lpcgc-00}. This implementation makes also use
 of sentinels that lead to defined keys that have not been inserted.
 
