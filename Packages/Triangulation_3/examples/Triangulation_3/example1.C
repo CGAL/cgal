@@ -23,22 +23,19 @@
 #include <iostream>
 #include <fstream>
 
-#include <assert.h>
+#include <cassert>
 #include <list>
 #include <vector>
 
 #include <CGAL/Cartesian.h>
 
-#include <CGAL/Triangulation_cell_base_3.h>
-#include <CGAL/Triangulation_vertex_base_3.h>
-#include <CGAL/Triangulation_data_structure_3.h>
-#include <CGAL/Triangulation_geom_traits_3.h>
 #include <CGAL/Triangulation_3.h>
 
-// for this simple example, using doubles is ok
-//
-typedef double NT;
+////////////////////// 
+// chosing the number type
+////////////////////// 
 
+// for this simple example, using doubles is ok
 // for more complicated examples with degenerate configurations,
 // using Filtered_exact number type is advised :
 // 
@@ -47,14 +44,17 @@ typedef double NT;
 // 
 // typedef CGAL::Filtered_exact<double, CGAL::MP_Float> NT;
 
-typedef CGAL::Cartesian<NT> Repr;
-typedef CGAL::Triangulation_geom_traits_3<Repr> Gt;
+typedef double NT;
 
-typedef CGAL::Triangulation_vertex_base_pointer_3<Gt> Vb;
-typedef CGAL::Triangulation_cell_base_3<Gt>  Cb;
+////////////////////// 
+// chosing the representation (cartesian or homogeneous)
+////////////////////// 
 
-typedef CGAL::Triangulation_data_structure_3<Vb,Cb> TDS;
-typedef CGAL::Triangulation_3<Gt,TDS> Triangulation;
+typedef CGAL::Cartesian<NT> Gt;
+
+////////////////////// 
+
+typedef CGAL::Triangulation_3<Gt> Triangulation;
 
 typedef Triangulation::Cell_handle Cell_handle;
 typedef Triangulation::Vertex_handle Vertex_handle;

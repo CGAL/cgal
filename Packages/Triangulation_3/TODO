@@ -2,19 +2,21 @@ negocier la doc de Filtered_exact...
 
 General
 - parametres template par defaut
+- virer geom_traits exemples - demos - testsuite
+- void a la place de GT dans cell_base
 - new Vertex/Cell
 	create_cell T3 pour remove
 	etc
 - trouver une interface avec T_2 qui permette d'eviter de reprogrammer 
   tout le 2d dans le 3d
-- virer geom_traits
 - purify
 
 TEST SUITE
 
 Doc
 - revoir tous les insert...(...)
-- traits class
+- traits class : Cartesian model of T_traits_3
+- parametres template
 - ameliorer user manual
 - verifier requirements sur la cell_base pour output/input stream 
 - revoir les anciennes corrections de JF Dufourd
