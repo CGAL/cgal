@@ -423,6 +423,7 @@ void
 Delaunay_triangulation_3<Gt,Tds>::
 remove_2D(Vertex_handle v)
 {
+    CGAL_triangulation_precondition(dimension() == 2);
     std::list<Edge_2D> hole;
     make_hole_2D(v, hole);
     fill_hole_delaunay_2D(hole);
@@ -616,44 +617,20 @@ remove(Vertex_handle v)
 				   f.first->vertex(2)->point()) == NEGATIVE)
 	      _tds.reorient();
       }
-      CGAL_triangulation_postcondition(is_valid());
+      CGAL_triangulation_expensive_postcondition(is_valid());
       return true;
   }
 
   if (dimension() == 1) {
       _tds.remove_from_simplex(v);
-      CGAL_triangulation_postcondition(is_valid());
+      CGAL_triangulation_expensive_postcondition(is_valid());
       return true;
   }
 
-  if (dimension() < 3) {
-    CGAL_triangulation_precondition(dimension() == 2);
-
-#if 1
-    remove_2D(v);
-#else
-    // the triangulation is rebuilt...
-
-    Vertex_handle inf = infinite_vertex();
-
-    _tds.clear_cells_only();
-
-    _tds.set_dimension(-2);
-    _tds.insert_increase_dimension(inf);
-    CGAL_triangulation_assertion( inf == infinite_vertex() );
-
-    typename Tds::Vertex_iterator vit;
-
-    for ( vit = _tds.vertices_begin(); vit != _tds.vertices_end(); ++vit ) 
-      if ( vit->handle() != inf &&
-	   vit->handle() != v ) 
-	insert( vit->point(), NULL, vit->handle() );
-
-    _tds.delete_vertex(v);
-#endif
-
-    CGAL_triangulation_postcondition(is_valid());
-    return true;
+  if (dimension() == 2) {
+      remove_2D(v);
+      CGAL_triangulation_expensive_postcondition(is_valid());
+      return true;
   }
 
   CGAL_triangulation_assertion( dimension() == 3 );

@@ -695,8 +695,6 @@ public:
 
   void clear();
 
-  void clear_cells_only();
-
   void set_adjacency(Cell_handle c0, int i0, Cell_handle c1, int i1) const
   {
       CGAL_triangulation_assertion(i0 >= 0 && i0 <= dimension());
@@ -2506,14 +2504,6 @@ clear()
 
   set_number_of_vertices(0);
   set_dimension(-2);
-}
-
-template <class Vb, class Cb >
-void
-Triangulation_data_structure_3<Vb,Cb>::
-clear_cells_only()
-{
-  cell_container().clear();
 }
 
 template <class Vb, class Cb >
