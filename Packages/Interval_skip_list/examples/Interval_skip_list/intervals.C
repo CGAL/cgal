@@ -1,6 +1,7 @@
 #include <CGAL/Interval_skip_list.h>
 #include <CGAL/Interval_skip_list_interval.h>
 #include <vector>
+#include <list>
 #include <iostream>
 
 typedef CGAL::Interval_skip_list_interval<double> Interval;
@@ -11,7 +12,9 @@ int main()
   Interval_skip_list isl;
   int i, n, d;
 
-  std::cin >> n >> d;
+  n = 10;
+  d = 3;
+  //std::cin >> n >> d;
   std::vector<Interval> intervals(n);
   for(i = 0; i < n; i++) {
     intervals[i] = Interval('[', i, i+d, ']');

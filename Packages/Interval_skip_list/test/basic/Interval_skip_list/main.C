@@ -13,7 +13,9 @@ fct()
   Interval_skip_list isl;
   int i, n, d;
 
-  std::cin >> n >> d;
+  n = 10;
+  d = 3;
+  //std::cin >> n >> d;
   std::vector<Interval> intervals(n);
   for(i = 0; i < n; i++) {
     intervals[i] = Interval((double)i,(double)i+d);
