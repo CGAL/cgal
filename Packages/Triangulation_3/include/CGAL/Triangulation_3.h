@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -1063,7 +1063,8 @@ template < class GT, class Tds >
 int
 Triangulation_3<GT,Tds>::number_of_finite_cells() const 
 { 
-  CGAL_triangulation_precondition( dimension() == 3 );
+  if ( dimension() < 3 ) return 0;
+
   int i=0;
   Cell_iterator it = finite_cells_begin();
   while(it != cells_end()) {
@@ -1077,7 +1078,8 @@ template < class GT, class Tds >
 int
 Triangulation_3<GT,Tds>::number_of_cells() const 
 { 
-  CGAL_triangulation_precondition( dimension() == 3 );
+  if ( dimension() < 3 ) return 0;
+
   int i=0;
   Cell_iterator it = all_cells_begin();
   while(it != cells_end()) {
@@ -1091,8 +1093,9 @@ template < class GT, class Tds >
 int
 Triangulation_3<GT,Tds>::number_of_finite_facets() const
 {
+  if ( dimension() < 2 ) return 0;
+
   int i=0;
-  CGAL_triangulation_precondition( dimension() >= 2 );
   Facet_iterator it = finite_facets_begin();
   while(it != facets_end()) {
     ++i;
@@ -1105,8 +1108,9 @@ template < class GT, class Tds >
 int
 Triangulation_3<GT,Tds>::number_of_facets() const
 {
+  if ( dimension() < 2 ) return 0;
+
   int i=0;
-  CGAL_triangulation_precondition( dimension() >= 2 );
   Facet_iterator it = all_facets_begin();
   while(it != facets_end()) {
     ++i;
@@ -1119,8 +1123,9 @@ template < class GT, class Tds >
 int
 Triangulation_3<GT,Tds>::number_of_finite_edges() const
 {
+  if ( dimension() < 1 ) return 0;
+
   int i=0;
-  CGAL_triangulation_precondition( dimension() >= 1 );
   Edge_iterator it = finite_edges_begin();
   while(it != edges_end()) {
     ++i;
@@ -1133,8 +1138,9 @@ template < class GT, class Tds >
 int
 Triangulation_3<GT,Tds>::number_of_edges() const
 {
+  if ( dimension() < 1 ) return 0;
+
   int i=0;
-  CGAL_triangulation_precondition( dimension() >= 1 );
   Edge_iterator it = all_edges_begin();
   while(it != edges_end()) {
     ++i;
@@ -2065,69 +2071,23 @@ Triangulation_3<GT,Tds>::side_of_facet
     // 					 == COPLANAR );
     //	int i0, i1, i2; // indices in the considered facet
     Bounded_side side;
-    /* 	switch (i) { */
-    /* 	case 0: */
-    /* 	  { */
-    /* 	    i0 = 1; */
-    /* 	    i1 = 2; */
-    /* 	    i2 = 3; */
-    /* 	    break; */
-    /* 	  } */
-    /* 	case 1: */
-    /* 	  { */
-    /* 	    i0 = 0; */
-    /* 	    i1 = 2; */
-    /* 	    i2 = 3; */
-    /* 	    break; */
-    /* 	  } */
-    /* 	case 2: */
-    /* 	  { */
-    /* 	    i0 = 0; */
-    /* 	    i1 = 1; */
-    /* 	    i2 = 3; */
-    /* 	    break; */
-    /* 	  } */
-    /* 	case 3: */
-    /* 	  { */
-    /* 	    i0 = 0; */
-    /* 	    i1 = 1; */
-    /* 	    i2 = 2; */
-    /* 	    break; */
-    /* 	  } */
-    /* 	default: */
-    /* 	  { */
-    /* 	    // impossible */
-      /* 	    CGAL_triangulation_assertion( false ); */
-      /* 	    // to avoid warning at compile time : */
-      /* 	    return side_of_triangle(p, */
-      /* 				    c->vertex(1)->point(), */
-      /* 				    c->vertex(2)->point(), */
-      /* 				    c->vertex(3)->point(), */
-      /* 				    lt, li, lj); */
-      /* 	  } */
-      /* 	} */
-      int i_t, j_t;
-      /* 	side = side_of_triangle(p, */
-      /* 				c->vertex(i0)->point(), */
-      /* 				c->vertex(i1)->point(), */
-      /* 				c->vertex(i2)->point(), */
-      /* 				lt, i_t, j_t); */
-      side = side_of_triangle(p,
-			      c->vertex(0)->point(),
-			      c->vertex(1)->point(),
-			      c->vertex(2)->point(),
-			      lt, i_t, j_t);
-      // indices in the original cell :
-      li = ( i_t == 0 ) ? 0 :
+    int i_t, j_t;
+    side = side_of_triangle(p,
+			    c->vertex(0)->point(),
+			    c->vertex(1)->point(),
+			    c->vertex(2)->point(),
+			    lt, i_t, j_t);
+    // indices in the original cell :
+    li = ( i_t == 0 ) ? 0 :
       ( i_t == 1 ) ? 1 :
       2;
-      lj = ( j_t == 0 ) ? 0 :
+    lj = ( j_t == 0 ) ? 0 :
       ( j_t == 1 ) ? 1 :
       2;
-      return side;
+    return side;
   }
-  else { // infinite facet
-    int inf = c->index(infinite);
+  // else infinite facet
+  int inf = c->index(infinite);
     // The following precondition is useless because it is written
     // in side_of_facet  
     // 	CGAL_triangulation_precondition( geom_traits().orientation
@@ -2136,86 +2096,89 @@ Triangulation_3<GT,Tds>::side_of_facet
     // 					  c->neighbor(inf)->vertex(1)->point(),
     // 					  c->neighbor(inf)->vertex(2)->point())
     // 					 == COPLANAR );
-    int i1,i2; // indices in the facet
-    // TBD: replace using nextposaroundij
-    if ( 3 == ((inf+1)&3) ) {
-      i1 = (inf+2)&3;
-      i2 = (inf+3)&3;
-    }
-    else {
-      if ( 3 == ((inf+2)&3) ) {
-	i1 = (inf+3)&3;
-	i2 = (inf+1)&3;
-      }
-      else {
-	i1 = (inf+1)&3;
-	i2 = (inf+2)&3;
-      }
-    }
-    Vertex_handle 
-      v1 = c->vertex(i1),
-      v2 = c->vertex(i2);
+  int i1,i2; // indices in the facet
+//     if ( 3 == ((inf+1)&3) ) {
+//       i1 = (inf+2)&3;
+//       i2 = (inf+3)&3;
+//     }
+//     else {
+//       if ( 3 == ((inf+2)&3) ) {
+// 	i1 = (inf+3)&3;
+// 	i2 = (inf+1)&3;
+//       }
+//       else {
+// 	i1 = (inf+1)&3;
+// 	i2 = (inf+2)&3;
+//       }
+//     }
+  // replaced using nextposaroundij
+  i2 = nextposaround(inf,3);
+  i1 = 3-inf-i2;
+  Vertex_handle 
+    v1 = c->vertex(i1),
+    v2 = c->vertex(i2);
 	
-    // does not work in dimension 3
-    Cell_handle n = c->neighbor(inf);
-    // n must be a finite cell
-    Orientation o =
-      geom_traits().orientation_in_plane
-      ( v1->point(), 
-	v2->point(), 
-	n->vertex(n->index(c))->point(),
-	p );
-    switch (o) {
-    case POSITIVE:
-      // p lies on the same side of v1v2 as vn, so not in f
-      {
-	return ON_UNBOUNDED_SIDE;
-      }
-    case NEGATIVE:
-      // p lies in f
-      { 
-	lt = FACET;
-	li = 3;
-	return ON_BOUNDED_SIDE;
-      }
-    case ZERO:
-      // p collinear with v1v2
-      {
-	int i_e;
-	Bounded_side side = 
-	  side_of_segment( p,
-			   v1->point(), v2->point(),
-			   lt, i_e );
-	switch (side) {
-	  // computation of the indices inthe original cell
-	case ON_BOUNDED_SIDE:
-	  {
-	    // lt == EDGE ok
-	    li = i1;
-	    lj = i2;
-	    return ON_BOUNDARY;
-	  }
-	case ON_BOUNDARY:
-	  {
-	    // lt == VERTEX ok
-	    li = ( i_e == 0 ) ? i1 : i2;
-	    return ON_BOUNDARY;
-	  }
-	case ON_UNBOUNDED_SIDE:
-	  {
-	    // p lies on the line defined by the finite edge
-	    return ON_UNBOUNDED_SIDE;
-	  }
-	default:
-	  {
-	    // cannot happen. only to avoid warning with eg++
-	    return ON_UNBOUNDED_SIDE;
-	  }
-	} 
-      }// case ZERO
-    }// switch o
-  }// end infinite facet
+  // does not work in dimension 3
+  Cell_handle n = c->neighbor(inf);
+  // n must be a finite cell
+  Orientation o =
+    geom_traits().orientation_in_plane
+    ( v1->point(), 
+      v2->point(), 
+      n->vertex(n->index(c))->point(),
+      p );
+  switch (o) {
+  case POSITIVE:
+    // p lies on the same side of v1v2 as vn, so not in f
+    {
+      return ON_UNBOUNDED_SIDE;
+    }
+  case NEGATIVE:
+    // p lies in f
+    { 
+      lt = FACET;
+      li = 3;
+      return ON_BOUNDED_SIDE;
+    }
+  case ZERO:
+    // p collinear with v1v2
+    {
+      int i_e;
+      Bounded_side side = 
+	side_of_segment( p,
+			 v1->point(), v2->point(),
+			 lt, i_e );
+      switch (side) {
+	// computation of the indices inthe original cell
+      case ON_BOUNDED_SIDE:
+	{
+	  // lt == EDGE ok
+	  li = i1;
+	  lj = i2;
+	  return ON_BOUNDARY;
+	}
+      case ON_BOUNDARY:
+	{
+	  // lt == VERTEX ok
+	  li = ( i_e == 0 ) ? i1 : i2;
+	  return ON_BOUNDARY;
+	}
+      case ON_UNBOUNDED_SIDE:
+	{
+	  // p lies on the line defined by the finite edge
+	  return ON_UNBOUNDED_SIDE;
+	}
+      default:
+	{
+	  // cannot happen. only to avoid warning with eg++
+	  return ON_UNBOUNDED_SIDE;
+	}
+      } 
+    }// case ZERO
+  }// switch o
+  // end infinite facet
   // cannot happen. only to avoid warning with eg++
+  CGAL_triangulation_assertion(false);
   return ON_UNBOUNDED_SIDE;
 }
 
@@ -2296,61 +2259,56 @@ Triangulation_3<GT,Tds>::side_of_edge
   // li refer to indices in the cell c 
 {//side_of_edge
   CGAL_triangulation_precondition( dimension() == 1 );
-  if ( ! is_infinite(c,0,1) ) {
+  if ( ! is_infinite(c,0,1) ) 
     return side_of_segment(p,
 			   c->vertex(0)->point(),
 			   c->vertex(1)->point(),
 			   lt, li);
+  // else infinite edge
+  if ( geom_traits().equal( p, c->vertex(0)->point() ) ) {
+    lt = VERTEX;
+    li = 0;
+    return ON_BOUNDARY;
   }
-  else { // infinite edge
-    if ( geom_traits().equal( p, c->vertex(0)->point() ) ) {
-      lt = VERTEX;
-      li = 0;
-      return ON_BOUNDARY;
-    }
-    if ( geom_traits().equal( p, c->vertex(1)->point() ) ) {
-      lt = VERTEX;
-      li = 1;
-      return ON_BOUNDARY;
-    }
-    // does not work in dimension > 2
-    int inf = c->index(infinite);
-    Cell_handle n = c->neighbor(inf);
-    int i_e = n->index(c);
-    // we know that n is finite
-    Vertex_handle
-      v0 = n->vertex(0),
-      v1 = n->vertex(1);
-    Comparison_result c = geom_traits().compare_x
-      (v0->point(), v1->point());
-    Comparison_result cp;
-    if ( c == EQUAL ) {
-      c = geom_traits().compare_y(v0->point(),
-				  v1->point());
-      if ( i_e == 0 ) {
-	cp = geom_traits().compare_y( v1->point(), p );
-      }
-      else {
-	cp = geom_traits().compare_y( p, v0->point() );
-      }
+  if ( geom_traits().equal( p, c->vertex(1)->point() ) ) {
+    lt = VERTEX;
+    li = 1;
+    return ON_BOUNDARY;
+  }
+  // does not work in dimension > 2
+  int inf = c->index(infinite);
+  Cell_handle n = c->neighbor(inf);
+  int i_e = n->index(c);
+  // we know that n is finite
+  Vertex_handle
+    v0 = n->vertex(0),
+    v1 = n->vertex(1);
+  Comparison_result c01 = 
+    geom_traits().compare_x(v0->point(), v1->point());
+  Comparison_result cp;
+  if ( c01 == EQUAL ) {
+    c01 = geom_traits().compare_y(v0->point(),v1->point());
+    if ( i_e == 0 ) {
+      cp = geom_traits().compare_y( v1->point(), p );
     }
     else {
-      if ( i_e == 0 ) {
-	cp = geom_traits().compare_x( v1->point(), p );
-      }
-      else {
-	cp = geom_traits().compare_x( p, v0->point() );
-      }
-    }
-    if ( c == cp ) {
-      // p lies on the same side of n as infinite
-      lt = EDGE;
-      return ON_BOUNDED_SIDE;
-    }
-    else {
-      return ON_UNBOUNDED_SIDE;
+      cp = geom_traits().compare_y( p, v0->point() );
     }
   }
+  else {
+    if ( i_e == 0 ) {
+      cp = geom_traits().compare_x( v1->point(), p );
+    }
+    else {
+      cp = geom_traits().compare_x( p, v0->point() );
+    }
+  }
+  if ( c01 == cp ) {
+    // p lies on the same side of n as infinite
+    lt = EDGE;
+    return ON_BOUNDED_SIDE;
+  }
+  return ON_UNBOUNDED_SIDE;
 }
 
 template < class GT, class Tds >

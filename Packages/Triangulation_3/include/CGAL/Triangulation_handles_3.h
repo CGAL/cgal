@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -23,6 +23,12 @@
 #ifndef CGAL_TRIANGULATION_HANDLES_3_H
 #define CGAL_TRIANGULATION_HANDLES_3_H
 
+#include <CGAL/Pointer.h>
+#include <CGAL/Triangulation_vertex_3.h>
+#include <CGAL/Triangulation_cell_3.h>
+#include <CGAL/Triangulation_iterators_3.h>
+#include <CGAL/Triangulation_circulators_3.h>
+  
 CGAL_BEGIN_NAMESPACE
 
 template < class Gt, class Tds >
@@ -39,10 +45,6 @@ class Triangulation_vertex_iterator_3;
 
 template <  class Gt, class Tds>
 class Triangulation_cell_circulator_3;
-
-//template <  class Gt, class Tds>
-//class Triangulation_vertex_circulator_3;
-
 
 template < class Gt, class Tds>
 class Triangulation_vertex_handle_3

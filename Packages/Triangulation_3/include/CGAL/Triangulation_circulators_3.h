@@ -1,7 +1,7 @@
 
 // ============================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -28,6 +28,8 @@
 #include <CGAL/circulator.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_ds_circulators_3.h>
+#include <CGAL/Triangulation_vertex_3.h>
+#include <CGAL/Triangulation_cell_3.h>
 
 CGAL_BEGIN_NAMESPACE
 

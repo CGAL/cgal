@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -345,15 +345,19 @@ Delaunay_triangulation_3<Gt,Tds>::side_of_sphere
 {
   CGAL_triangulation_precondition( dimension() == 3 );
   int i3;
-  if ( ! c->has_vertex( infinite_vertex(), i3 ) ) {
-    Oriented_side
-      o = geom_traits().side_of_oriented_sphere(c->vertex(0)->point(),
-						c->vertex(1)->point(),
-						c->vertex(2)->point(),
-						c->vertex(3)->point(),p);
-    return Bounded_side(o);
-  }
-  // infinite cell :
+  if ( ! c->has_vertex( infinite_vertex(), i3 ) ) 
+    return Bounded_side( geom_traits().side_of_oriented_sphere
+			 (c->vertex(0)->point(),
+			  c->vertex(1)->point(),
+			  c->vertex(2)->point(),
+			  c->vertex(3)->point(),p) );
+//     Oriented_side
+//       o = geom_traits().side_of_oriented_sphere(c->vertex(0)->point(),
+// 						c->vertex(1)->point(),
+// 						c->vertex(2)->point(),
+// 						c->vertex(3)->point(),p);
+//     return Bounded_side(o);
+  // else infinite cell :
   int i0,i1,i2;
   if ( (i3%2) == 1 ) {
     i0 = (i3+1)&3;
@@ -376,23 +380,22 @@ Delaunay_triangulation_3<Gt,Tds>::side_of_sphere
   case NEGATIVE:
     return ON_UNBOUNDED_SIDE;
   case ZERO:
-    {
-      Oriented_side s = 
-	geom_traits().side_of_oriented_circle
-	( c->vertex(i0)->point(),
-	  c->vertex(i1)->point(),
-	  c->vertex(i2)->point(),
-	  p );
-      return ( (s == ON_NEGATIVE_SIDE) ? ON_UNBOUNDED_SIDE :
-	       (s == ON_POSITIVE_SIDE) ? ON_BOUNDED_SIDE :
-	       ON_BOUNDARY );
-      // return ( (Bounded_side) 
-      // 		 geom_traits().side_of_oriented_circle
-      // 		 ( c->vertex(i0)->point(),
-      // 		   c->vertex(i1)->point(),
-      // 		   c->vertex(i2)->point(),
-      // 		   p ) ); 
-    }
+    return Bounded_side( geom_traits().side_of_oriented_circle
+			 ( c->vertex(i0)->point(), 
+			   c->vertex(i1)->point(),
+			   c->vertex(i2)->point(),
+			   p ) );
+//     {
+//       Oriented_side s = 
+// 	geom_traits().side_of_oriented_circle
+// 	( c->vertex(i0)->point(),
+// 	  c->vertex(i1)->point(),
+// 	  c->vertex(i2)->point(),
+// 	  p );
+//       return ( (s == ON_NEGATIVE_SIDE) ? ON_UNBOUNDED_SIDE :
+// 	       (s == ON_POSITIVE_SIDE) ? ON_BOUNDED_SIDE :
+// 	       ON_BOUNDARY );
+//     }
   }
   return ON_UNBOUNDED_SIDE;// to avoid warning with egcs
 }// end side of sphere
@@ -420,18 +423,22 @@ Delaunay_triangulation_3<Gt,Tds>::side_of_circle
 
   if ( dimension() == 2 ) {
     CGAL_triangulation_precondition( i == 3 );
-    if ( ! c->has_vertex( infinite_vertex(), i3 ) ) {
-      Oriented_side
-	o = geom_traits().side_of_oriented_circle(c->vertex(0)->point(),
-						  c->vertex(1)->point(),
-						  c->vertex(2)->point(),
-						  p);
-      // the triangulation is supposed to be valid, ie the facet
-      // with vertices 0 1 2 in this order is positively oriented
-      return ( (o == ON_NEGATIVE_SIDE) ? ON_UNBOUNDED_SIDE :
-	       (o == ON_POSITIVE_SIDE) ? ON_BOUNDED_SIDE :
-	       ON_BOUNDARY );
-    }
+    // the triangulation is supposed to be valid, ie the facet
+    // with vertices 0 1 2 in this order is positively oriented
+    if ( ! c->has_vertex( infinite_vertex(), i3 ) ) 
+      return Bounded_side( geom_traits().side_of_oriented_circle
+			   (c->vertex(0)->point(),
+			    c->vertex(1)->point(),
+			    c->vertex(2)->point(),
+			    p) );
+//       Oriented_side
+// 	o = geom_traits().side_of_oriented_circle(c->vertex(0)->point(),
+// 						  c->vertex(1)->point(),
+// 						  c->vertex(2)->point(),
+// 						  p);
+//       //       return ( (o == ON_NEGATIVE_SIDE) ? ON_UNBOUNDED_SIDE :
+// 	       (o == ON_POSITIVE_SIDE) ? ON_BOUNDED_SIDE :
+// 	       ON_BOUNDARY );
     // else infinite facet
     // v1, v2 finite vertices of the facet such that v1,v2,infinite
     // is positively oriented
@@ -463,23 +470,18 @@ Delaunay_triangulation_3<Gt,Tds>::side_of_circle
       {
 	int i_e;
 	Locate_type lt;
-	Bounded_side side = 
-	  side_of_segment( p,
-			   v1->point(), v2->point(),
-			   lt, i_e );
-	switch (side) {
-	case ON_UNBOUNDED_SIDE:
-	  {
-	    // p lies on the line defined by the finite edge, but
-	    // not in edge v1v2
-	    return ON_UNBOUNDED_SIDE;
-	  }
-	default :
-	  {
-	    // p lies in edge v1v2 (including v1 or v2)
-	    return ON_BOUNDARY;
-	  }
-	}
+// 	Bounded_side side = 
+// 	  side_of_segment( p,
+// 			   v1->point(), v2->point(),
+// 			   lt, i_e );
+	if ( side_of_segment( p,
+			      v1->point(), v2->point(),
+			      lt, i_e ) == ON_UNBOUNDED_SIDE )
+	  // p lies on the line defined by the finite edge, but
+	  // not in edge v1v2
+	  return ON_UNBOUNDED_SIDE;
+	// else p lies in edge v1v2 (including v1 or v2)
+	return ON_BOUNDARY;
       }
     }// switch o
   }// dim 2
@@ -498,63 +500,64 @@ Delaunay_triangulation_3<Gt,Tds>::side_of_circle
 				      c->vertex(i1)->point(),
 				      c->vertex(i2)->point(),
 				      p) == COPLANAR );
-    Oriented_side
-      o = geom_traits().side_of_oriented_circle(c->vertex(i0)->point(),
-						c->vertex(i1)->point(),
-						c->vertex(i2)->point(),
-						p);
-    return ( (o == ON_NEGATIVE_SIDE) ? ON_UNBOUNDED_SIDE :
-	     (o == ON_POSITIVE_SIDE) ? ON_BOUNDED_SIDE :
-	     ON_BOUNDARY );
+    return Bounded_side ( geom_traits().side_of_oriented_circle
+			  (c->vertex(i0)->point(),
+			   c->vertex(i1)->point(),
+			   c->vertex(i2)->point(),
+			   p) );
+//     Oriented_side
+//       o = geom_traits().side_of_oriented_circle(c->vertex(i0)->point(),
+// 						c->vertex(i1)->point(),
+// 						c->vertex(i2)->point(),
+// 						p);
+//     return ( (o == ON_NEGATIVE_SIDE) ? ON_UNBOUNDED_SIDE :
+// 	     (o == ON_POSITIVE_SIDE) ? ON_BOUNDED_SIDE :
+// 	     ON_BOUNDARY );
   }
-  else {//infinite facet
-    // v1, v2 finite vertices of the facet such that v1,v2,infinite
-    // is positively oriented
-    Vertex_handle 
-      v1 = c->vertex( nextposaround(i3,i) ),
-      v2 = c->vertex( nextposaround(i,i3) );
-    Orientation o =
-      geom_traits().orientation_in_plane( v1->point(),
-					  v2->point(),
-					  c->vertex(i)->point(),
-					  p );
-    // then the code is duplicated from 2d case
-    switch (o) {
-    case POSITIVE:
-      // p lies on the same side of v1v2 as c->vertex(i), so not in f
-      {
+
+  //else infinite facet
+  // v1, v2 finite vertices of the facet such that v1,v2,infinite
+  // is positively oriented
+  Vertex_handle 
+    v1 = c->vertex( nextposaround(i3,i) ),
+    v2 = c->vertex( nextposaround(i,i3) );
+  Orientation o =
+    geom_traits().orientation_in_plane( v1->point(),
+					v2->point(),
+					c->vertex(i)->point(),
+					p );
+  // then the code is duplicated from 2d case
+  switch (o) {
+  case POSITIVE:
+    // p lies on the same side of v1v2 as c->vertex(i), so not in f
+    {
+      return ON_UNBOUNDED_SIDE;
+    }
+  case NEGATIVE:
+    // p lies in f
+    { 
+      return ON_BOUNDED_SIDE;
+    }
+  case ZERO:
+    // p collinear with v1v2
+    {
+      int i_e;
+      Locate_type lt;
+//       Bounded_side side = 
+// 	side_of_segment( p,
+// 			 v1->point(), v2->point(),
+// 			 lt, i_e );
+      if ( side_of_segment( p,
+			    v1->point(), v2->point(),
+			    lt, i_e ) == ON_UNBOUNDED_SIDE )
+	// p lies on the line defined by the finite edge, but
+	// not in edge v1v2
 	return ON_UNBOUNDED_SIDE;
-      }
-    case NEGATIVE:
-      // p lies in f
-      { 
-	return ON_BOUNDED_SIDE;
-      }
-    case ZERO:
-      // p collinear with v1v2
-      {
-	int i_e;
-	Locate_type lt;
-	Bounded_side side = 
-	  side_of_segment( p,
-			   v1->point(), v2->point(),
-			   lt, i_e );
-	switch (side) {
-	case ON_UNBOUNDED_SIDE:
-	  {
-	    // p lies on the line defined by the finite edge, but
-	    // not in edge v1v2
-	    return ON_UNBOUNDED_SIDE;
-	  }
-	default :
-	  {
-	    // p lies in edge v1v2 (including v1 or v2)
-	    return ON_BOUNDARY;
-	  }
-	}
-      }
-    }// switch o
-  }// infinite facet
+      // else p lies in edge v1v2 (including v1 or v2)
+      return ON_BOUNDARY;
+    }
+  }// switch o
+  // end infinite facet
   return ON_BOUNDARY; // to avoid warning with egcs
 }// side_of_circle
 
