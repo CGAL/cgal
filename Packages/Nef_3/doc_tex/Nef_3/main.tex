@@ -15,10 +15,17 @@
 \ccChapterRelease{\NefpolyhedronRev. \ \NefpolyhedronDate}\\
 \ccChapterAuthor{Peter Hachenberger and Lutz Kettner}
 
-\catcode`@=11
-\newcommand{\pyr}{\mathop{\operator@font Pyr}\nolimits}
-\newcommand{\aff}{\mathop{\operator@font aff}\nolimits}
-\catcode`@=12
+
+\begin{lcTexBlock}
+  \catcode`@=11
+  \gdef\pyr{\mathop{\operator@font Pyr}\nolimits}
+  \gdef\aff{\mathop{\operator@font aff}\nolimits}
+  \catcode`@=12
+\end{lcTexBlock}
+\lcHtml{
+  \newcommand{\pyr}{Pyr}
+  \newcommand{\aff}{aff}
+}
 
 \minitoc
 
@@ -29,7 +36,7 @@
     \vspace*{-20mm}
     \begin{flushright}
       \parbox{0.3\textwidth}{%
-          \includegraphics[width=0.3\textwidth]{Nef_3/fig/nef_non_manifold3a.ps}%
+          \includegraphics[width=0.3\textwidth]{Nef_3/fig/nef_non_manifold3a}%
       }%
     \end{flushright}
 \end{ccTexOnly}
@@ -38,7 +45,6 @@ In solid modeling, two major representation schemes are used:
 \emph{constructive solid geometry} (CSG) and \emph{boundary
   representations} (B-rep). Both have inherent strengths and
 weaknesses, see \ref{cgal:h-gsmi-89} for a discussion.
-
 
 In CSG a solid is represented as a set-theoretic boolean combination
 of primitive solid objects, such as blocks, prisms, cylinders, or
@@ -81,7 +87,7 @@ In fact, we work with two data structures; one that represents the
 local neighborhoods of vertices, which is in itself already a complete
 description, and a data structure that connects these neighborhoods up
 to a global data structure with edges, facets, and volumes. We offer a
-rhich interface to investigate these data structures, their different
+rich interface to investigate these data structures, their different
 elements and their connectivity. We provide affine (rigid)
 tranformations and a point location query operation. We have a custom
 file format for storing and reading Nef polyhedra from files. We offer
@@ -92,9 +98,8 @@ a simple OpenGL visualization for debugging and illustrations.
 \section{Definition}
 
 The theory of Nef polyhedra has been developed for arbitrary
-dimensions. The class \ccc{Nef_polyhedron_3} implements a
-representation for the 3-dimensional case.
-
+dimensions. The class \ccc{CGAL::Nef_polyhedron_3} implements a
+boundary representation for the 3-dimensional case.
 
 \vspace{2ex}{\bf Definition:}\quad
     A \emph{Nef-poly\-he\-dron} in dimension $d$ is a point set $P \subseteq
@@ -166,8 +171,8 @@ open} sets, e.g., an edge does not contain its end-vertices.
 \begin{minipage}[t]{0.5\textwidth}
 \begin{ccTexOnly}
     \begin{center}
-      \parbox{0.5\textwidth}{%
-          \includegraphics[width=0.50\textwidth]{Nef_3/fig/nef_example}%
+      \parbox{0.7\textwidth}{%
+          \includegraphics[width=0.70\textwidth]{Nef_3/fig/nef_example}%
       }
     \end{center}
 \end{ccTexOnly}
@@ -181,8 +186,8 @@ open} sets, e.g., an edge does not contain its end-vertices.
 \begin{minipage}[t]{0.5\textwidth}
 \begin{ccTexOnly}
     \begin{center}
-      \parbox{0.5\textwidth}{%
-          \includegraphics[width=0.50\textwidth]{Nef_3/fig/nef_pyramids}%
+      \parbox{0.8\textwidth}{%
+          \includegraphics[width=0.80\textwidth]{Nef_3/fig/nef_pyramids}%
       }
     \end{center}
 \end{ccTexOnly}
@@ -194,20 +199,20 @@ open} sets, e.g., an edge does not contain its end-vertices.
 \end{ccHtmlOnly}
 \end{minipage}
 
-    The left figure illustrates the polyhedron with
-    its partially closed and partially open boundary, i.e., vertex 
-    $v_4, v_5, v_6$, and edges $e_4$ and $e_5$ are not part of $P$.
-    The local pyramids for the faces are $\pyr_P(f_1) = \emptyset$
-    and $\pyr_P(f_2) = \R^2$. Examples for the local pyramids of edges
-    are the closed halfspace $h_2$ for the edge $e_1$, $\pyr_P(e_1) = h_2$,
-    and the open halfspace that is the complement of $h_4$ for the 
-    edge $e_5$, $\pyr_P(e_5) =
-    \{(x,y) | x - y < 1\}$. The edge $e_3$ consists actually of two
-    disconnected parts, both with the same local pyramid $\pyr_P(e_3) = h_1$.
-    In our data structure, we will represent the two connected
-    components of the edge $e_3$ separately.
-    The figure on the right  
-    lists all local pyramids for this example.
+The left figure illustrates the polyhedron with
+its partially closed and partially open boundary, i.e., vertex 
+$v_4, v_5, v_6$, and edges $e_4$ and $e_5$ are not part of $P$.
+The local pyramids for the faces are $\pyr_P(f_1) = \emptyset$
+and $\pyr_P(f_2) = \R^2$. Examples for the local pyramids of edges
+are the closed halfspace $h_2$ for the edge $e_1$, $\pyr_P(e_1) = h_2$,
+and the open halfspace that is the complement of $h_4$ for the 
+edge $e_5$, $\pyr_P(e_5) =
+\{(x,y) | x - y < 1\}$. The edge $e_3$ consists actually of two
+disconnected parts, both with the same local pyramid $\pyr_P(e_3) = h_1$.
+In our data structure, we will represent the two connected
+components of the edge $e_3$ separately.
+The figure on the right  
+lists all local pyramids for this example.
 
 
 The local pyramids of each vertex are represented by
@@ -304,151 +309,177 @@ dimension.
 For each face we store a label, e.g., a set-selection mark, which
 indicates whether the face is part of the solid or if it is
 excluded. We call the resulting data structure \emph{Selective Nef
-Complex}, \emph{SNC} for short. A detailed definition can be found 
-in~\cite{cgal:ghhkm-bosnc-03}.
+Complex}, \emph{SNC} for short~\cite{cgal:ghhkm-bosnc-03}. However, in
+\cgal\ we identify the names and call the \emph{SNC} data structure
+\ccc{CGAL::Nef_polyhedron_3}. 
 
 % +------------------------------------------------------------------------+
 \section{Infimaximal Box}
 \label{sectionNef_3InfiBox}
 
-Using a boundary representation an infinite point set either is the complement
-of a finite or of an infinite point set. In the first case, its boundary is
-bounded, in the latter case it is not. Further on we will denote a Nef polyhedron
-with a bounded boundary as \emph{bounded} and as \emph{unbounded} otherwise.
-Obviously, a finite point set always is bounded.
+We call a Nef polyhedron \emph{bounded} if its boundary is bounded,
+i.e., finite, and \emph{unbounded} otherwise. Note that unbounded
+point sets can have a bounded boundary, for example, the complement of
+a cube has an unbounded outer volume, but its boundary remains bounded.
 
-Using a boundary representation, it is convenient
-(conceptually and in our implementation) to consider bounded Nef polyhedra only.
-Bounded Nef polyhedra are closed also closed under boolean set operations, but
-it there are no natural primitives to start the construction with. 
+Using a boundary representation, it is convenient (conceptually and in
+our implementation) to consider bounded Nef polyhedra only.  Bounded
+Nef polyhedra are also closed under boolean set operations. However, one
+needs to start with bounded primitives; the conceptually nice
+halfspaces cannot be used. Instead, we offer a construction from oriented
+2-manifolds represented in a  \ccc{CGAL::Polyhedron}, see
+Section~\ref{subsectionNef_3Polyhedron} below.
 
-To overcome the difference between bounded and 
-unbounded Nef polyhedra, we intersect Nef polyhedra with a
-bounding volume of size $[-R,R]^3$, where $R$ is a symbolical unspecified finite 
-value, which is larger than the value of any concrete real number. As a result,
-each Nef polyhedron becomes bounded.
-We call the boundary of the bounding volume the infimaximal 
-box~\cite{cgal:sm-iftml-00}.
+In order to handle unbounded Nef polyhedra concpetually in the same
+way as we handle bounded Nef polyhedra, we intersect them with a
+bounding volume of size $[-R,R]^3$, where $R$ is a symbolical
+unspecified value, which is finite but larger than all coordinate
+values that may occur in the bounded part of the polyhedron. As a
+result, each Nef polyhedron becomes bounded.  We call the boundary of
+the bounding volume the \emph{infimaximal
+  box}~\cite{cgal:sm-iftml-00}.
 
-Clipping lines and rays at the infimaximal box leads to non-standard points,
-i.e. points whose coordinates are $-R$ or $R$ for at least one axis, and
-linear functions $f(R)$ for the other coordinates. For this purpose, extended
-kernels - \ccc{Extended_cartesian} and \ccc{Extended_homogeneous} - are provided. 
-Their design is the same as for other \cgal\ kernels, but the coordinates are
-polynomials.
+We clip lines and rays at the infimaximal box. The intersection points
+with the infimaximal box are called \emph{non-standard points}, which
+are points whose coordinates are $-R$ or $R$ in at least one
+dimension, and linear functions $f(R)$ for the other dimensions. Such
+extended points (and developed from there also extended segments etc)
+are provided in \cgal\ with extended
+kernels---\ccc{CGAL::Extended_cartesian} and
+\ccc{CGAL::Extended_homogeneous}.  They are regular \cgal\ kernels
+with a polynomial type as coordinate number type.
 
-As long as an extended kernel is used, the full functionality provided 
-by the class \ccc{Nef_polyhedron_3} is available. If another kernel is
-used, which does not use polynomials to represent coordinates, it is not
-possible to create or load bounded Nef polyhedra. We provided both 
-possibilities, since the use of an extended kernel slows down the algorithms
-considerably.
+As long as an extended kernel is used, the full functionality provided
+by the \ccc{CGAL::Nef_polyhedron_3} class is available. If another
+kernel is used, which does not use polynomials to represent
+coordinates, it is not possible to create or load unbounded Nef
+polyhedra, but all other operations work as expected. We provided both
+possibilities, since the restriction to bounded Nef polyhedra improves
+considerably space requirements (plain number type instead of
+polynomial), and runtime performance.
+
 
 % +========================================================================+%
 \section{Regularized Set Operations}
 % +========================================================================+
 
-Since manifolds are not closed under boolean operations, Requicha proposes to 
-use \emph{regularized set operations}~\cite{cgal:km-st-76, cgal:r-rrstm-80}. 
-A set is 
-\emph{regular}, if it equals the closure of its interior. A regularized set 
-operation is defined, as the regularization, i.e. the closure of the interior, 
-of the result of the respective standard boolean set operation. For example, the 
-regularized union of $X$ and $Y$ is defined as the regularization of the union
-of $X$ and $Y$. Regularized sets are closed under regularized set operations. 
+Since manifolds are not closed under boolean operations, Requicha
+proposes to use \emph{regularized set operations}~\cite{cgal:km-st-76,
+  cgal:r-rrstm-80}.  A set is \emph{regular}, if it equals the closure
+of its interior. A regularized set operation is defined as the 
+standard set operation followed by a regularization of the result.
+Regularized sets are closed under regularized set operations.
+
+Regularized set operations are important since they simplify the class
+of solids to exclude lower dimensional features and the boundary
+belongs to the point set. These properties are considered to reflect
+the nature of physical solids more closely.
 
 Regularized polyhedral sets are a subclass of Nef polyhedra. We provide the
-operation \ccc{regularization} as a shortcut for the consecutive execution
-of \ccc{interior} and \ccc{closure}.
+\ccc{regularization} operation as a shortcut for the consecutive execution
+of the \ccc{interior} and the \ccc{closure} operations.
 
 % +========================================================================+
 \section{Example Programs}
 % +========================================================================+
 
-The following example gives a first impression of how to instantiate and use
-\ccc{Nef_polyhedron_3}. The \cgal\ kernel \ccc{Cartesian} is used as the traits
-class. All cartesian and homogeneous \cgal\ kernels are appropriate, too, as 
-long as a proper number type is used. Using a cartesian kernel, the number
-type has to model the concept \ccc{CGAL::FieldNumberType}. If a homogeneous
-kernel is used, the number
-type has to model the concept \ccc{CGAL::RingNumberType}.
+The following example gives a first impression of how to instantiate
+and use \ccc{Nef_polyhedron_3}. We use the \ccc{CGAL::Cartesian}
+kernel.  All Cartesian and homogeneous kernels of \cgal\ are suitable
+if the number type parameter follows the usual requirements of being a
+model of the \ccc{CGAL::FieldNumberType} concept for the Cartesian
+kernels, or the \ccc{CGAL::RingNumberType} concept for the homogeneous
+kernels, respectively. Note however, that in the current state, the
+Nef polyhedron works only with \cgal\ kernels. The implementationt
+makes use of \cgal\ specific functions in kernel objects, and does not
+yet offer a designed interface to a clean kernel concept that could be
+offered by an external kernel as well.
 
-The example creates two Nef polyhedra - \ccc{N0} is the empty set, while 
-\ccc{N1} is the set of all points in the 3-dimensional space. The assertion assures
-that the empty set is the complement of the complete space.
+The example creates two Nef polyhedra---\ccc{N0} is the empty set,
+while \ccc{N1} represents the full space, i.e., the set of all points
+in the 3-dimensional space. The assertion assures that the empty set
+is the complement of the full space.
 
 \ccIncludeExampleCode{Nef_3/simple.C}
 
 % +------------------------------------------------------------------------+
 \subsection{Construction and Comparison}
 
-This example shows the various constructors. We can create the empty set, which
-also is the default constructor, and the full space, i.e. all points of
-$\mathbb{R}^3$ belong to the polyhedron. We can creates a halfspace
-defined by the plane bounding it. It is only available if an extended kernel is
-used. This constructor has a second parameter which
-specifies whether the defining plane belongs to the point set 
-(\ccc{Nef_polyhedron::INCLUDED}) or not (\ccc{Nef_polyhedron::EXCLUDED}). The 
-default value for this parameter is \ccc{Nef_polyhedron::INCLUDED}. Additionally,
-we can create a \ccc{Nef_polyhedron_3} from a \ccc{Polyhedron} 
-(see Subsection \ref{subsectionNef_3Polyhedron}).
+This example shows the various constructors. We can create the empty
+set, which is also the default constructor, and the full space, i.e.
+all points of $\mathbb{R}^3$ belong to the polyhedron. We can create a
+halfspace defined by a plane bounding it. It is only available if an
+extended kernel is used. The halfspace constructor has a second
+parameter that specifies whether the defining plane belongs to the
+point set (\ccc{Nef_polyhedron::INCLUDED}) or not
+(\ccc{Nef_polyhedron::EXCLUDED}). The default value is
+\ccc{Nef_polyhedron::INCLUDED}. Additionally, we can create a
+\ccc{Nef_polyhedron_3} from a \ccc{Polyhedron_3}, see the Section
+\ref{subsectionNef_3Polyhedron} below.
 
-The point sets of two Nef polyhedra can be compared. The operators \ccc{==}, 
-\ccc{!=},
-\ccc{<=}, \ccc{>=}, \ccc{<} and \ccc{>} 
-are provided. The first two test whether the point sets 
-are equal or different. The others test whether one point set is a (proper) 
-subset of the other one.
+We can compate the point sets of two Nef polyhedra for equality and
+proper subset relationships. We offer the usual comparison operators
+\ccc{==}, \ccc{!=}, \ccc{<=}, \ccc{>=}, \ccc{<} and \ccc{>}. 
+
+Nef polyhedra have the important feature that a representation that is
+called the \emph{reduced W\"urzburg structure} is unique, i.e., two
+point sets of Nef polyhedra are equal if and only if the
+representations are equal. The proof for the reduced W\"urzburg
+structure carries over to our representation and the comparison
+operators are therefore trivial to implement.
 
 \ccIncludeExampleCode{Nef_3/construction.C}
 
 % +------------------------------------------------------------------------+
 \subsection{Point Set Operations}
 
-As explained in the introduction, Nef polyhedra are closed under all boolean 
-set operations. The class \ccc{Nef_polyhedron_3} provides functions and
-operators for the most common ones: complement (\ccc{operator!}), union (\ccc{operator+}), 
-difference (\ccc{operator-}), intersection (\ccc{operator*}) and 
-symmetric difference (\ccc{operator^}). Additionally, the operators 
-\ccc{*=}, \ccc{-=}, \ccc{*=} and \ccc{^=} are defined.
+As explained in the introduction, Nef polyhedra are closed under all
+boolean set operations. The class \ccc{Nef_polyhedron_3} provides
+functions and operators for the most common ones: complement
+(\ccc{operator!}), union (\ccc{operator+}), difference
+(\ccc{operator-}), intersection (\ccc{operator*}) and symmetric
+difference (\ccc{operator^}). Additionally, the operators \ccc{*=},
+\ccc{-=}, \ccc{*=} and \ccc{^=} are defined.
 
-\ccc{Nef_polyhedron_3} also provides
-the topological operations \ccc{interior()}, \ccc{closure()} and 
-\ccc{boundary()}. \ccc{interior()} deselects all boundary items, 
-\ccc{boundary()} deselects all volumes and \ccc{closure()} selects all
-boundary items. 
+\ccc{Nef_polyhedron_3} also provides the topological operations
+\ccc{interior()}, \ccc{closure()} and \ccc{boundary()}. With
+\ccc{interior()} one deselects all boundary items, with
+\ccc{boundary()} one deselects all volumes, and with \ccc{closure()}
+one selects all boundary items.
 
 \ccIncludeExampleCode{Nef_3/point_set_operations.C}
 
 % +------------------------------------------------------------------------+
 \subsection{Transformation}
 
-Using the \ccc{transform} function, a Nef polyhedron can be translated, 
+Using the \ccc{std::transform} function, a Nef polyhedron can be translated, 
 rotated and scaled. The usage is shown in the following example:
 
 \ccIncludeExampleCode{Nef_3/transformation.C}
 
 % +------------------------------------------------------------------------+
-\subsection{The Interface between \ccc{Polyhedron} and \ccc{Nef_polyhedron_3}}
+\subsection{The Interface between \ccc{Polyhedron_3} and 
+    \ccc{Nef_polyhedron_3}}
 \label{sectionNef_3Polyhedron}
 
-\ccc{Nef_polyhedron_3} provides an interface for conversion 
-between polyhedral surfaces
-represented by the \cgal\ class \ccc{Polyhedron} and \ccc{Nef_polyhedron_3}. 
-\ccc{Polyhedron} represents 2-manifold objects. The surface can either be
-closed or have holes.
+\ccc{Nef_polyhedron_3} provides an interface for the conversion between
+polyhedral surfaces represented with the \ccc{CGAL::Polyhedron_3} class
+and \ccc{Nef_polyhedron_3}.  \ccc{Polyhedron_3} represents orientable
+2-manifold objects with boundaries. However, we exclude surfaces with
+boundaries from the conversion to \ccc{Nef_polyhedron_3} since they
+have no properly defined volume.
 
-Both conversions between \ccc{Polyhedron} and \ccc{Nef_polyhedron_3} can only 
-be performed if the object represents a closed 2-manifold. 
-\ccc{Nef_polyhedron_3} provides the function \ccc{is_simple()} and 
-\ccc{Polyhedron} provides the function \ccc{is_closed()} to test for 
+Both conversion directions can only be performed if the boundary of
+the point set is an oriented closed 2-manifold.
+\ccc{Nef_polyhedron_3} provides the function \ccc{is_simple()} and
+\ccc{Polyhedron_3} provides the function \ccc{is_closed()} to test for
 this property. The usage is illustrated by the example program below.
 
-The conversion gives us the possibility to use several file formats. 
-\ccc{Polyhedron} can read
-the ({\tt .off}) file format and can write the ({\tt .off}),
-OpenInventor ({\tt .iv}), VRML 1.0 and 2.0 ({\tt .wrl}) and Wavefront Advanced
-Visualizer object format ({\tt .obj}), see Section~\ref{sectionPolyIO}. 
+The conversion gives us the possibility to use several file formats.
+\ccc{Polyhedron_3} can read the ({\tt .off}) file format and can write
+the ({\tt .off}), OpenInventor ({\tt .iv}), VRML 1.0 and 2.0 ({\tt
+  .wrl}) and Wavefront Advanced Visualizer object format ({\tt .obj}),
+see Section~\ref{sectionPolyIO}.
 
 \ccIncludeExampleCode{Nef_3/interface_polyhedron.C}
 
@@ -462,7 +493,8 @@ parametrized by that number type.
 
 The example iterates all vertices of a given Nef polyhedron and decides whether
 it is an standard vertex or a vertex on the infimaximal box. Furthermore, it 
-tests whether any of the vertices is at (R,R,R). 
+tests whether any of the vertices is at $(R,R,R)$. Recall that $R$ was
+the symbolical value, large but finite, for the size of the infimaximal box. 
 
 \ccIncludeExampleCode{Nef_3/extended_kernel.C}
 
@@ -471,22 +503,22 @@ tests whether any of the vertices is at (R,R,R).
 % +========================================================================+
 \label{sectionNef_3IO}
 
-\ccc{Nef_polyhedron_3} provides an input and an output operator 
-for a proprietary file format. It includes the 
-complete incidence structure, the geometric data, and the marks of each item.
-The output depends on the output operators of the geometric primitives 
-provided by the traits class, and on the output operators of the used
-number type. Therefore, it is necessary to use the same kernel and
-the same number type for input and output operations.  
+\ccc{Nef_polyhedron_3} provides an input and an output operator for a
+proprietary file format. It includes the complete incidence structure,
+the geometric data, and the marks of each item.  The output depends on
+the output operators of the geometric primitives provided by the
+traits class, and on the output operators of the used number type.
+Therefore, it is necessary to use the same kernel and the same number
+type for input and output operations.
 
-We recommend
-to use the \cgal kernels \ccc{Homogeneous}, \ccc{Simple_homogeneous}, or 
-\ccc{Extended_homogeneous}. We provide compatibility between the input
-and output of these kernels. Especially, it is possible to to write a 
-bounded Nef polyhedron using the \ccc{Extended_homogeneous} kernel and 
-reading it afterwards using one of the two others. 
+We recommend to use the \cgal\ kernels \ccc{Homogeneous},
+\ccc{Simple_homogeneous}, or \ccc{Extended_homogeneous}. We provide
+compatibility between the input and output of these kernels.
+Especially, it is possible to write a bounded Nef polyhedron using the
+\ccc{Extended_homogeneous} kernel and to read it afterwards using one
+of the two others.
 
-Using \cgal stream modifiers the following output formats can be chosen: 
+Using \cgal\ stream modifiers the following output formats can be chosen: 
 ASCII(\ccc{set_ascii_mode}), binary(\ccc{set_binary_mode}) or 
 pretty(\ccc{set_pretty_mode}). The mandatory format is the ASCII format. It 
 is recommended to use this format for file input and output.
@@ -513,11 +545,11 @@ is shown in the following example.
 % +------------------------------------------------------------------------+
 \subsection{Exploring Shells}
 
-A \emph{shell} of a Nef polyhedron is connected part of the surface incident
-to a certain volume, i.e. to a certain full-dimensional feature. 
-Each Halffacet, SFace and SHalfedge belongs to a single
-shell. The figure below illustrates the notion of a shell. It shows a Nef
-polyhedron with two volumes and three shells. 
+A \emph{shell} of a Nef polyhedron is the connected part of the
+surface incident to a certain volume, i.e. to a certain
+full-dimensional feature.  Each Halffacet, SFace and SHalfedge belongs
+to a single shell. The figure below illustrates the notion of a shell.
+It shows a Nef polyhedron with two volumes and three shells.
 
 \begin{ccTexOnly}
     \begin{center}
@@ -534,19 +566,18 @@ polyhedron with two volumes and three shells.
 \end{ccHtmlOnly}
 
 
-The first volume is the outer
-volume and the second is inside of the cube. The first shell constitutes the
-whole plane on the left side. The boundary of the cube with the antenna
-forms two shells further on denoted as the inner and the outer shell. 
-Both have the following items in common: 
-the eight vertices of the cube plus the one where the cube
-and the antenna meet, and 
-the twelve edges (24 halfedges) belonging to the cube. Additionally,
-the shell incident to the inner volume includes the six halffacets of the 
-cube which are oriented to the inside of the cube together with the shalfedges
-and the shalfloops on their facets cycles, and the sfaces incident to those
-shalfedges and shalfloops. The other vertex, halffacets, shalfedges, shalfloop
-and sfaces belong to the outer shell.
+The first volume is the outer volume and the second volume is the
+interior of the cube. The first shell constitutes the whole plane on
+the left side.  The boundary of the cube with the antenna forms two
+shells further on denoted as the inner and the outer shell.  Both have
+the following items in common: the eight vertices of the cube plus the
+one where the cube and the antenna meet, and the twelve edges (24
+halfedges) belonging to the cube. Additionally, the shell incident to
+the inner volume includes the six halffacets of the cube which are
+oriented to the inside of the cube together with the shalfedges and
+the shalfloops on their facets cycles, and the sfaces incident to
+those shalfedges and shalfloops. The other vertex, halffacets,
+shalfedges, shalfloop and sfaces belong to the outer shell.
 
  \ccc{Nef_polyhedron_3} offers a visitor interface to explore a shell.
 The Interface is illustrated by the following example.
