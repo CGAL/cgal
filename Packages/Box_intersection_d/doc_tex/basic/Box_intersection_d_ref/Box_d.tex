@@ -11,8 +11,9 @@ Default generic bounding box implementation. Subtypes of this class can be
 used as a template parameter to \ccc{BoxTraits_d}.
 
 \ccInclude{CGAL/Box_intersection_d/box_traits.h}
-\ccTypes
-\ccNestedType{NT}  {Number type of the box vector components.}
+
+\ccIsModel
+\ccRefConceptPage{Box_d}
 
 \ccCreation
 \ccCreationVariable{box}
@@ -22,15 +23,10 @@ used as a template parameter to \ccc{BoxTraits_d}.
 \ccConstructor{Box_d(NT lo[N], NT hi[N]);}{Explicitly initializes box intervals.}
 
 \ccOperations
-For all methods that require a dimension parameter, obviously \ccc{dim < get_dim()} must hold. Otherwise, results are undefined.
-
 \ccMethod{void init (bool complete = false);}{see constructors.}
 \ccMethod{void extend(NT point[N]);}{\ccPostcond box contains point.}
 
-\ccMethod{NT get_lo(unsigned int dim) const;}{returns interval starting point in dimension dim.}
-\ccMethod{NT get_hi(unsigned int dim) const;}{returns interval end point in dimension dim.}
-\ccMethod{static T get_id(Box b);} {returns a unique box id. T must be less-than comparable.}
-\ccMethod{static NT get_dim();}{returns N.}
+\ccMethod{static unsigned int get_id(Box b);} {returns a unique box id.}
 
 \end{ccRefClass}
 
