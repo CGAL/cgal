@@ -96,11 +96,10 @@ class Triangulation_3
 
 public:
 
-  typedef typename GT::Point_3 Point_3;
-  typedef Point_3 Point;
-  typedef typename GT::Segment Segment;
-  typedef typename GT::Triangle Triangle;
-  typedef typename GT::Tetrahedron Tetrahedron;
+  typedef typename GT::Point_3 Point;
+  typedef typename GT::Segment_3 Segment;
+  typedef typename GT::Triangle_3 Triangle;
+  typedef typename GT::Tetrahedron_3 Tetrahedron;
 
   typedef Triangulation_cell_handle_3<GT,Tds> Cell_handle;
   typedef Triangulation_vertex_handle_3<GT,Tds> Vertex_handle;
