@@ -301,10 +301,11 @@ void MyWindow::make_overlay( std::list<int> indexes ,
 	 if (! all_pm_are_empty)//..//
 	 {
        w_demo_p_new->m_curves_arr.insert(seg_list.begin(),seg_list.end());
-       w_demo_p_new->update_colors(ubf_colors);   
+       w_demo_p_new->update_colors(ubf_colors); 
+       Seg_notification  seg_notif;
        std::list<Pm_seg_2>::iterator it;
        for (it = antenna_list.begin(); it != antenna_list.end(); it++)
-         w_demo_p_new->m_curves_arr.insert( *it );
+         w_demo_p_new->m_curves_arr.insert( *it, &seg_notif );
  
        w_demo_p_new->empty = false;
 
@@ -407,9 +408,10 @@ void MyWindow::make_overlay( std::list<int> indexes ,
        w_demo_p_new->m_curves_arr.insert(
                                        pol_list.begin(),pol_list.end());
        w_demo_p_new->update_colors(ubf_colors);   
+       Pol_notification pol_notif;
        std::list<Pm_pol_2>::iterator it;
        for (it = antenna_list.begin(); it != antenna_list.end(); it++)
-         w_demo_p_new->m_curves_arr.insert( *it );
+         w_demo_p_new->m_curves_arr.insert( *it , &pol_notif );
 
           
        if (!colors_flag)
@@ -454,7 +456,7 @@ void MyWindow::make_overlay( std::list<int> indexes ,
 	 QCursor old = w_demo_p_new->cursor();
      w_demo_p_new->setCursor(Qt::WaitCursor);
      w_demo_p_new->setCursor(Qt::WaitCursor);
-
+    
    std::vector<QColor> ubf_colors(20) ; // vector of colors of the unbounded faces od the planar maps //..//
 	 Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p;
      std::list<Pm_conic_2> antenna_list;
@@ -502,10 +504,11 @@ void MyWindow::make_overlay( std::list<int> indexes ,
 	    {
         //w_demo_p_new->m_curves_arr.insert(seg_list.begin(),seg_list.end());
         // update the colors of the faces of the new PM //..//
-  	    w_demo_p_new->update_colors(ubf_colors);   
+  	    w_demo_p_new->update_colors(ubf_colors);  
+        Conic_notification conic_notif;
         std::list<Pm_conic_2>::iterator it;
         for (it = antenna_list.begin(); it != antenna_list.end(); it++)
-          w_demo_p_new->m_curves_arr.insert( *it );
+          w_demo_p_new->m_curves_arr.insert( *it , &conic_notif );
 
         w_demo_p_new->empty = false;
 
