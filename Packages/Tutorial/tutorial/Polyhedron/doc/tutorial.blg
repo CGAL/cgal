@@ -2,52 +2,54 @@ This is BibTeX, Version 0.99c (Web2C 7.3.1)
 The top-level auxiliary file: tutorial.aux
 The style file: alpha.bst
 Database file #1: tutorial.bib
-Warning--I didn't find a database entry for "siggraph1998notes"
+Warning--I didn't find a database entry for "hds"
+Warning--I didn't find a database entry for "cgalmanul"
+Warning--I didn't find a database entry for "???"
 Warning--I didn't find a database entry for "cc"
 Warning--I didn't find a database entry for "loop"
 Warning--I didn't find a database entry for "ds"
 Warning--I didn't find a database entry for "sqrt3"
 Warning--I didn't find a database entry for "sqt"
-Warning--I didn't find a database entry for "43"
-You've used 6 entries,
+Warning--I didn't find a database entry for "siggraph1998notes"
+You've used 0 entries,
             2543 wiz_defined-function locations,
-            602 strings with 5271 characters,
-and the built_in function-call counts, 2345 in all, are:
-= -- 230
-> -- 97
-< -- 4
-+ -- 31
-- -- 31
-* -- 155
-:= -- 391
-add.period$ -- 19
-call.type$ -- 6
-change.case$ -- 35
-chr.to.int$ -- 6
-cite$ -- 6
-duplicate$ -- 96
-empty$ -- 181
-format.name$ -- 39
-if$ -- 483
+            566 strings with 4483 characters,
+and the built_in function-call counts, 24 in all, are:
+= -- 0
+> -- 0
+< -- 0
++ -- 0
+- -- 0
+* -- 2
+:= -- 10
+add.period$ -- 0
+call.type$ -- 0
+change.case$ -- 0
+chr.to.int$ -- 0
+cite$ -- 0
+duplicate$ -- 0
+empty$ -- 1
+format.name$ -- 0
+if$ -- 2
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 6
-newline$ -- 35
-num.names$ -- 18
-pop$ -- 38
+missing$ -- 0
+newline$ -- 3
+num.names$ -- 0
+pop$ -- 0
 preamble$ -- 1
-purify$ -- 42
+purify$ -- 0
 quote$ -- 0
-skip$ -- 78
+skip$ -- 2
 stack$ -- 0
-substring$ -- 135
-swap$ -- 16
-text.length$ -- 4
-text.prefix$ -- 3
+substring$ -- 0
+swap$ -- 0
+text.length$ -- 0
+text.prefix$ -- 0
 top$ -- 0
-type$ -- 44
+type$ -- 0
 warning$ -- 0
-while$ -- 22
-width$ -- 11
-write$ -- 81
-(There were 7 warnings)
+while$ -- 0
+width$ -- 0
+write$ -- 2
+(There were 9 warnings)
