@@ -1,6 +1,10 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
 
+1.8 (17 Apr 2002)
+     - removed test for MSVC version around certain macros so the
+       macros get defined for VC7 as well.
+
 1.7 (16 Apr 2002)
      - added typedef (and typename) of Has_gcd tag to get rid of problem for 
        g++ 3.0
