@@ -58,12 +58,15 @@ int main(int argc, char *argv[])
 
 typedef CGAL::Arr_leda_segment_exact_traits            Traits;
 
-typedef Traits::Point                                  Point;
+typedef Traits::Point                                  IPoint;
+typedef CGAL::Cartesian<double>                        K;
+typedef K::Point_2                                     Point;
+typedef K::Segment_2                                   Segment;
 typedef Traits::X_curve                                X_curve;
 
-typedef CGAL::Arr_base_node<X_curve>                Base_node;
-typedef CGAL::Arr_2_default_dcel<Traits>            Dcel;
-typedef CGAL::Arrangement_2<Dcel,Traits,Base_node > Arr_2;
+typedef CGAL::Arr_base_node<X_curve>                   Base_node;
+typedef CGAL::Arr_2_default_dcel<Traits>               Dcel;
+typedef CGAL::Arrangement_2<Dcel,Traits,Base_node >    Arr_2;
 
 typedef CGAL::Arrangement_2<Dcel,Traits,Base_node >::Curve_iterator  Curve_iterator;
 typedef CGAL::Arrangement_2<Dcel,Traits,Base_node >::Vertex_iterator Vertex_iterator;
@@ -71,14 +74,12 @@ typedef CGAL::Arrangement_2<Dcel,Traits,Base_node >::Vertex          Vertex;
 
 #include <CGAL/geowin_support.h>
 
-
 Arr_2 arr;
 
-
-class geo_locate : public geowin_update<std::list<CGALPoint>,std::list<CGALSegment> >
+class geo_locate : public geowin_update<std::list<Point>,std::list<Segment> >
 {
 public:
- void update(const CGALPointlist& LP, CGALSegmentlist& Sl)
+ void update(const std::list<Point>& LP, std::list<Segment>& Sl)
  {
   Sl.clear();
   
@@ -91,12 +92,12 @@ public:
   Arr_2::Locate_type lt;
   Arr_2::Halfedge_handle e;  
     
-  CGALPointlist::const_iterator pit= LP.begin();
+  std::list<Point>::const_iterator pit= LP.begin();
   
   for(;pit != LP.end(); ++pit){
-    CGALPoint pt = *pit;
+    Point pt = *pit;
     
-    e = arr.locate(Point(pt.x(), pt.y()),lt);
+    e = arr.locate(IPoint(pt.x(), pt.y()),lt);
 
     //color the face on the screen
     Arr_2::Face_handle f=e->face();
@@ -104,7 +105,7 @@ public:
       Arr_2::Ccb_halfedge_circulator cc=f->outer_ccb();
       do {
         leda_segment seg = (cc->curve()).to_float();
-	CGALSegment cseg(CGALPoint(seg.xcoord1(),seg.ycoord1()), CGALPoint(seg.xcoord2(),seg.ycoord2()) );   
+	Segment cseg(Point(seg.xcoord1(),seg.ycoord1()), Point(seg.xcoord2(),seg.ycoord2()) );   
       
         Sl.push_back(cseg);
       } while (++cc != f->outer_ccb());
@@ -116,7 +117,7 @@ public:
       Arr_2::Ccb_halfedge_circulator cc=*hit; 
       do {
         leda_segment seg = (cc->curve()).to_float();
-	CGALSegment cseg(CGALPoint(seg.xcoord1(),seg.ycoord1()), CGALPoint(seg.xcoord2(),seg.ycoord2()) );
+	Segment cseg(Point(seg.xcoord1(),seg.ycoord1()), Point(seg.xcoord2(),seg.ycoord2()) );
 	
         Sl.push_back(cseg);
       } while (++cc != *hit);
@@ -126,12 +127,12 @@ public:
 };
 
 
-class geo_seg_arr : public geowin_update<std::list<CGALSegment>,std::list<CGALSegment> >,
+class geo_seg_arr : public geowin_update<std::list<Segment>,std::list<Segment> >,
                     public geowin_redraw
 {
 public:
 
- bool insert(const CGALSegment& seg)
+ bool insert(const Segment& seg)
  {
   leda_rat_segment ls(convert_to_leda(seg));
   arr.insert(X_curve(ls.start(), ls.end() ));
@@ -152,16 +153,16 @@ public:
     W.set_color(cold);
  } 
 
- void update(const CGALSegmentlist& L, CGALSegmentlist& Sl)
+ void update(const std::list<Segment>& L, std::list<Segment>& Sl)
  {  
   // clear Arrangement
   arr.clear();
  
   // insert segments ...
-  CGALSegmentlist::const_iterator it1= L.begin();
+  std::list<Segment>::const_iterator it1= L.begin();
   
   for(;it1 != L.end(); ++it1){
-    const CGALSegment& s1= *it1;
+    const Segment& s1= *it1;
     leda_rat_segment ls(convert_to_leda(s1));
     arr.insert(X_curve(ls.start(), ls.end() ));
   }
@@ -170,11 +171,11 @@ public:
 
 int main()
 {
-  geowin_init_default_type((CGALSegmentlist*)0, leda_string("CGALSegmentList"));
-  geowin_init_default_type((CGALPointlist*)0, leda_string("CGALPointList"));
+  geowin_init_default_type((std::list<Segment>*)0, leda_string("CGALSegmentList"));
+  geowin_init_default_type((std::list<Point>*)0, leda_string("CGALPointList"));
  
-  std::list<CGALSegment> L;
-  std::list<CGALPoint>   LP;
+  std::list<Segment> L;
+  std::list<Point>   LP;
 
   GeoWin GW("CGAL - Segment Arrangements and locate operations");
  

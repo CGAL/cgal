@@ -57,88 +57,85 @@ int main(int argc, char *argv[])
 #include <CGAL/Min_ellipse_2.h>
 #include <CGAL/Min_ellipse_2_traits_2.h>
 #include <CGAL/IO/Window_stream.h>
-#include <CGAL/squared_distance_2.h> 
-#include <CGAL/Point_2.h>
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/predicate_objects_on_points_2.h>
 #include <CGAL/Triangulation_euclidean_traits_2.h>
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
-
-typedef CGAL::Cartesian<double>  Rep;
-typedef CGAL::Point_2<Rep>  Point;
-typedef CGAL::Segment_2<Rep>  Segment;
-typedef CGAL::Ray_2<Rep> Ray;
-
-typedef  CGAL::Min_circle_2_traits_2<Rep>  Circ_Traits;
-typedef  CGAL::Min_circle_2<Circ_Traits>   Min_circle;
-typedef  Min_circle::Circle                OptCircle;
-
-typedef  CGAL::Min_ellipse_2_traits_2<Rep> Ell_Traits;
-typedef  CGAL::Min_ellipse_2<Ell_Traits>   Min_ellipse;
-
-typedef CGAL::Triangulation_euclidean_traits_2<Rep> Gt;
-typedef CGAL::Triangulation_vertex_base_2<Gt> Vb;
-typedef CGAL::Triangulation_face_base_2<Gt>  Fb;
-typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
-typedef CGAL::Triangulation_2<Gt,Tds>  Triangulation_2;
-typedef CGAL::Delaunay_triangulation_2<Gt,Tds> Delaunay_triangulation_2;
-
-typedef Triangulation_2::Edge Edge;
-typedef Triangulation_2::Locate_type Locate_type;
-typedef Triangulation_2::Face_handle   Face_handle;
-typedef Triangulation_2::Edge_iterator  Edge_iterator;
-typedef Triangulation_2::Face_circulator  Face_circulator;
-typedef Triangulation_2::Face_iterator  Face_iterator;
-
-typedef CGAL::p_Less_xy<Point> Point_compare;
-
-#include <CGAL/Object.h>
-#include <CGAL/convex_hull_2.h>
 #include <CGAL/Polygon_2_algorithms.h>
 #include <CGAL/geowin_support.h>
 #include <set>
 
-class geo_hull : public geowin_update<std::list<CGALPoint>, std::list<CGALSegment> >
+typedef CGAL::Cartesian<double>                                   K;
+typedef K::Point_2                                                Point;
+typedef K::Segment_2                                              Segment;
+typedef K::Circle_2                                               Circle;
+typedef K::Ray_2                                                  Ray;
+
+typedef  CGAL::Min_circle_2_traits_2<K>                           Circ_Traits;
+typedef  CGAL::Min_circle_2<Circ_Traits>                          Min_circle;
+typedef  Min_circle::Circle                                       OptCircle;
+
+typedef  CGAL::Min_ellipse_2_traits_2<K>                          Ell_Traits;
+typedef  CGAL::Min_ellipse_2<Ell_Traits>                          Min_ellipse;
+
+typedef CGAL::Triangulation_euclidean_traits_2<K>                 Gt;
+typedef CGAL::Triangulation_vertex_base_2<Gt>                     Vb;
+typedef CGAL::Triangulation_face_base_2<Gt>                       Fb;
+typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb>    Tds;
+typedef CGAL::Triangulation_2<Gt,Tds>                             Triangulation_2;
+typedef CGAL::Delaunay_triangulation_2<Gt,Tds>                    Delaunay_triangulation_2;
+
+typedef Triangulation_2::Edge                                     Edge;
+typedef Triangulation_2::Locate_type                              Locate_type;
+typedef Triangulation_2::Face_handle                              Face_handle;
+typedef Triangulation_2::Edge_iterator                            Edge_iterator;
+typedef Triangulation_2::Face_iterator                            Face_iterator;
+
+typedef CGAL::p_Less_xy<Point>                                    Point_compare;
+
+
+
+class geo_hull : public geowin_update<std::list<Point>, std::list<Segment> >
 {
 public:
- void update(const CGALPointlist& L, CGALSegmentlist& Slst)
+ void update(const std::list<Point>& L, std::list<Segment>& Slst)
  {
   Slst.clear();
-  CGALPointlist out;
+  std::list<Point> out;
   CGAL::convex_hull_points_2(L.begin(),L.end(), std::back_inserter(out));   
 
   // build the segment list ...
   if( out.size() > 1 ) {
-    CGALPoint pakt,prev,pstart;
+    Point pakt,prev,pstart;
 
-    std::list<CGALPoint>::const_iterator it;
+    std::list<Point>::const_iterator it;
     it=out.begin();
     prev= *it; pstart=prev;
     it++;
 
     for(; it != out.end(); ++it) {
        pakt= *it;
-       Slst.push_back(CGALSegment(prev,pakt));
+       Slst.push_back(Segment(prev,pakt));
        prev=pakt;
     }
-    Slst.push_back(CGALSegment(pakt,pstart));
+    Slst.push_back(Segment(pakt,pstart));
   }
  }
  
 };
 
-class geo_triang : public geowin_update<std::list<CGALPoint>, std::list<CGALSegment> >
+class geo_triang : public geowin_update<std::list<Point>, std::list<Segment> >
 {
 public:
- void update(const CGALPointlist& L, CGALSegmentlist& Sl)
+ void update(const std::list<Point>& L, std::list<Segment>& Sl)
  {
   Triangulation_2 tr;    
   Sl.clear();      
                    
-  std::list<CGALPoint>::const_iterator it;
+  std::list<Point>::const_iterator it;
   it= L.begin();
-  CGALPoint pakt;
+  Point pakt;
  
   for (; it != L.end() ; ++it) {
         pakt= *it;
@@ -157,10 +154,10 @@ public:
  }
 };
 
-class geo_crust : public geowin_update<CGALPointlist, CGALSegmentlist >
+class geo_crust : public geowin_update<std::list<Point>, std::list<Segment> >
 {
 public:
- void update(const CGALPointlist& L, CGALSegmentlist& Sl)
+ void update(const std::list<Point>& L, std::list<Segment>& Sl)
  {
   Delaunay_triangulation_2 dt;    
   Sl.clear();      
@@ -190,7 +187,7 @@ public:
 };
 
 #if !defined(_MSC_VER)
-class geo_ellipse : public geowin_redraw, public geowin_update<CGALPointlist, CGALPointlist >
+class geo_ellipse : public geowin_redraw, public geowin_update<std::list<Point>, std::list<Point> >
 {
 public:
   virtual ~geo_ellipse() {}
@@ -200,15 +197,15 @@ public:
   void draw(leda_window& W, leda_color c1, leda_color c2,double x1,double y1,double x2,double y2)
   {  W.set_color(c1); W << min_ell.ellipse(); }  
 
-  void update(const CGALPointlist& L, CGALPointlist& LP)
+  void update(const std::list<Point>& L, std::list<Point>& LP)
   {  min_ell.clear(); min_ell.insert(L.begin(),L.end()); }
 };
 #endif
 
-class geo_circ : public geowin_update<std::list<CGALPoint>,std::list<CGALCircle> >
+class geo_circ : public geowin_update<std::list<Point>,std::list<Circle> >
 {
 public:
- void update(const CGALPointlist& L, CGALCirclelist& Cl)
+ void update(const std::list<Point>& L,std::list<Circle>& Cl)
  {
    Cl.clear();
    if (L.size() < 2) return;
@@ -217,28 +214,28 @@ public:
    OptCircle ci= mc1.circle();
 
    Point ctp=ci.center();
-   CGALCircle conv(ctp,ci.squared_radius());
+   Circle conv(ctp,ci.squared_radius());
    Cl.push_back(conv); 
  }
 };
 
 Delaunay_triangulation_2 mydt;
 
-class geo_delaunay_triang : public geowin_update<std::list<CGALPoint>, std::list<CGALSegment> >,
+class geo_delaunay_triang : public geowin_update<std::list<Point>, std::list<Segment> >,
                             public geowin_redraw
 {
 public:
 
- bool insert(const CGALPoint& p)
+ bool insert(const Point& p)
  {
-  std::cout << "insert:" << p << "\n";
+  //std::cout << "insert:" << p << "\n";
   mydt.insert(p);
   return true; 
  }
  
- bool del(const CGALPoint& p)
+ bool del(const Point& p)
  {
-  std::cout << "del:" << p << "\n";
+  //std::cout << "del:" << p << "\n";
   Delaunay_triangulation_2::Vertex_handle vh = mydt.nearest_vertex(p);
   mydt.remove(vh);
   return true;  
@@ -257,43 +254,38 @@ public:
   }    
  }
 
- void update(const CGALPointlist& L, CGALSegmentlist&)
+ void update(const std::list<Point>& L, std::list<Segment>&)
  {
-  std::cout << "recompute!\n";
+  //std::cout << "recompute!\n";
   mydt.clear();
   mydt.insert(L.begin(),L.end());  
  }
 };
 
-class geo_locate : public geowin_update<std::list<CGALPoint>, std::list<CGALCircle> >
+class geo_locate : public geowin_update<std::list<Point>, std::list<Circle> >
 {
 public:
- void update(const CGALPointlist& L, CGALCirclelist& Sl)
+ void update(const std::list<Point>& L, std::list<Circle>& Sl)
  {
     Sl.clear();
     Locate_type lt;
     int li;
 
-    typedef Delaunay_triangulation_2::Vertex_handle DT_Vertex_handle;
-    typedef Delaunay_triangulation_2::Face_handle DT_Face_handle;
-    typedef Delaunay_triangulation_2::Vertex DT_Vertex;
-    typedef Delaunay_triangulation_2::Face DT_Face;
-    typedef Delaunay_triangulation_2::Edge_iterator DT_Edge_iterator;
-    typedef Delaunay_triangulation_2::Locate_type   DT_Locate_type;
-                 
-    std::list<CGALPoint>::const_iterator it;
+    typedef Delaunay_triangulation_2::Face_handle   DT_Face_handle;
+ 
+    std::list<Point>::const_iterator it;
     it= L.begin();
-    CGALPoint pakt;
+    Point pakt;
  
     for (; it != L.end() ; ++it) {
       pakt = *it;
       DT_Face_handle f = mydt.locate(pakt,lt, li);
-      CGALCircle c;
+      Circle c;
       if (lt==Delaunay_triangulation_2::FACE) {
-        CGALPoint p0=f->vertex(0)->point();
-        CGALPoint p1=f->vertex(1)->point();
-        CGALPoint p2=f->vertex(2)->point();
-        c=CGALCircle(p0,p1,p2);
+        Point p0=f->vertex(0)->point();
+        Point p1=f->vertex(1)->point();
+        Point p2=f->vertex(2)->point();
+        c=Circle(p0,p1,p2);
 	Sl.push_back(c);
       }
     }
@@ -302,10 +294,10 @@ public:
 
 geo_scene res2;
 
-class geo_voro1 : public geowin_update<std::list<CGALPoint>, std::list<CGALSegment> >
+class geo_voro1 : public geowin_update<std::list<Point>, std::list<Segment> >
 {
 public:
- void update(const CGALPointlist& L, CGALSegmentlist& Sl)
+ void update(const std::list<Point>& L, std::list<Segment>& Sl)
  {
   GeoWin* gw = GeoWin::get_call_geowin();
  
@@ -331,10 +323,10 @@ public:
  }
 };
 
-class geo_voro2 : public geowin_update<std::list<CGALPoint>, std::list<CGALRay> >
+class geo_voro2 : public geowin_update<std::list<Point>, std::list<Ray> >
 {
 public:
- void update(const CGALPointlist& L, CGALRaylist& Sl)
+ void update(const std::list<Point>& L, std::list<Ray>& Sl)
  {
   GeoWin* gw = GeoWin::get_call_geowin();
  
@@ -364,9 +356,9 @@ public:
 
 int main()
 {
-  geowin_init_default_type((CGALPointlist*)0, leda_string("CGALPointList"));
+  geowin_init_default_type((std::list<Point>*)0, leda_string("CGALPointList"));
 
-  CGALPointlist L, L2;
+  std::list<Point> L, L2;
 
   GeoWin GW("CGAL - 2d geometry demo");
   // help for the user ...

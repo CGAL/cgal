@@ -54,11 +54,6 @@ int main(int argc, char *argv[])
 #include <CGAL/Pm_segment_epsilon_traits.h>
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Planar_map_2.h>
-
-#include <CGAL/Point_2.h>
-#include <CGAL/Segment_2.h>
-#include <CGAL/Circle_2.h>
-#include <CGAL/Vector_2.h>
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/Polygon_2_algorithms.h>
 #include<list>
@@ -66,82 +61,86 @@ int main(int argc, char *argv[])
 #include <CGAL/geowin_support.h>
 #include <CGAL/distance_predicates_2.h>
 
-CGALPointlist L;
-CGALPointlist shoot;
-CGALSegmentlist Lseg;
-CGALPointlist Loc;
 
-typedef double                                          number_type;
-typedef CGAL::Cartesian<number_type>                      coord_t;
-typedef CGAL::Pm_segment_epsilon_traits<coord_t>          pmtraits;
-typedef pmtraits::Point                                   point;
-typedef pmtraits::X_curve                                 curve;
+typedef double                                            number_type;
+typedef CGAL::Cartesian<number_type>                      K;
+typedef CGAL::Pm_segment_epsilon_traits<K>                pmtraits;
+typedef K::Point_2                                        Point;
+typedef K::Segment_2                                      Segment;
+typedef CGAL::Polygon_traits_2<K>                         PTraits;
+typedef CGAL::Polygon_2<PTraits,std::list<Point> >        Polygon;
+typedef pmtraits::X_curve                                 Curve;
 typedef CGAL::Pm_default_dcel<pmtraits>                   pmdcel;
 
 typedef CGAL::Planar_map_2<pmdcel, pmtraits>	          planar_map;
 typedef planar_map::Locate_type                           loc_type;
 typedef planar_map::Halfedge_handle                       halfedge_handle;
 
+std::list<Point>   L;
+std::list<Point>   shoot;
+std::list<Segment> Lseg;
+std::list<Point>   Loc;
 
-bool snap_to_points(CGALSegment& seg)
+
+bool snap_to_points(Segment& seg)
 {
  if (L.size() < 2) return false;
- CGALPoint ps = seg.source();
- CGALPoint pt = seg.target();
+ Point ps = seg.source();
+ Point pt = seg.target();
 
- std::list<CGALPoint>::const_iterator it = L.begin();
- CGALPoint psnew=*it, ptnew=*it;
+ std::list<Point>::const_iterator it = L.begin();
+ Point psnew=*it, ptnew=*it;
 
  for(; it != L.end(); ++it) {
-  CGALPoint pakt= *it;
+  Point pakt= *it;
   if (CGAL::has_smaller_dist_to_point(ps,pakt,psnew)) psnew=pakt;
  }
  it=L.begin();
  for(; it != L.end(); ++it) {
-  CGALPoint pakt= *it;
+  Point pakt= *it;
   if (CGAL::has_smaller_dist_to_point(pt,pakt,ptnew)) ptnew=pakt;
  }
  
- seg=CGALSegment(psnew,ptnew);
+ seg=Segment(psnew,ptnew);
  if (seg.is_degenerate()) return false; 
  else return true;
 }
 
 
-bool segment_add_changer(GeoWin& gw, const CGALSegment& segold, CGALSegment& segnew)
+bool segment_add_changer(GeoWin& gw, const Segment& segold, Segment& segnew)
 {
  segnew=segold;
  bool b = snap_to_points(segnew);
  return b;
 }
 
-bool segment_start_change(GeoWin& gw, const CGALSegment& segold)
+bool segment_start_change(GeoWin& gw, const Segment& segold)
 { return false; }
-bool point_start_change(GeoWin& gw, const CGALPoint& p)
+bool point_start_change(GeoWin& gw, const Point& p)
 { return false; }
 
 CGAL::Planar_map_2<pmdcel, pmtraits>* pm;
 
-class geo_shoot : public geowin_redraw, public geowin_update<CGALPointlist, CGALPointlist >
+class geo_shoot : public geowin_redraw, public geowin_update<std::list<Point>, std::list<Point> >
 {
 public:
   virtual ~geo_shoot() {}
   
-  std::list<CGALPoint>     PT;
-  std::list<CGALSegment>   PSEG;
+  std::list<Point>     PT;
+  std::list<Segment>   PSEG;
 
   virtual void draw(leda_window& W, leda_color c1, leda_color c2,double x1,double y1,double x2,double y2)
   {
     leda_color cold = W.set_color(leda_blue);
     int lwold = W.set_line_width(3);
     
-    CGALSegmentlist::const_iterator it = PSEG.begin();
-    CGALPointlist::const_iterator pit  = PT.begin();
+    std::list<Segment>::const_iterator it = PSEG.begin();
+    std::list<Point>::const_iterator pit  = PT.begin();
     
     for(; it != PSEG.end(); it++, pit++){
       W << *it;
       //draw shooting arrow ...
-      CGALPoint src = *pit;
+      Point src = *pit;
       double x1,y1,x2,y2,m,n;
       x1 = (*it).source().x(); x2 = (*it).target().x();
       y1 = (*it).source().y(); y2 = (*it).target().y();
@@ -157,10 +156,10 @@ public:
     W.set_line_width(lwold);    
   }
 
-  virtual void update(const CGALPointlist& L, CGALPointlist&)
+  virtual void update(const std::list<Point>& L, std::list<Point>&)
   {
     PT.clear(); PSEG.clear(); 
-    CGALPointlist::const_iterator it = L.begin();
+    std::list<Point>::const_iterator it = L.begin();
     loc_type lt;
     
     for(;it != L.end(); it++){
@@ -170,9 +169,9 @@ public:
 	  break;
 	}
 	case 2: {   //Edge
-          point pt1 = (*he).source()->point();
-	  point pt2 = (*he).target()->point();
-	  PSEG.push_back(CGALSegment(pt1,pt2));
+          Point pt1 = (*he).source()->point();
+	  Point pt2 = (*he).target()->point();
+	  PSEG.push_back(Segment(pt1,pt2));
 	  PT.push_back(*it);
 	  break;
 	}
@@ -182,28 +181,28 @@ public:
   }
 };
 
-class geo_plmap : public geowin_redraw, public geowin_update<CGALSegmentlist, CGALPointlist >
+class geo_plmap : public geowin_redraw, public geowin_update<std::list<Segment>, std::list<Point> >
 {
 public:
 
-  CGALPolygonlist CPL;
-  CGALPointlist  red;    //for location...
-  CGALPointlist  green;
-  CGALPointlist  white;
+  std::list<Polygon> CPL;
+  std::list<Point>  red;    //for location...
+  std::list<Point>  green;
+  std::list<Point>  white;
 
   virtual ~geo_plmap() {}
 
   virtual void draw(leda_window& W, leda_color c1, leda_color c2,double x1,double y1,double x2,double y2)
   {     
-    CGALPolygonlist::const_iterator it = CPL.begin();
+    std::list<Polygon>::const_iterator it = CPL.begin();
     int cnt = 0;
     for(; it != CPL.end(); ++it, cnt ++) {    
        W.set_fill_color(cnt % 7 + 6);
-       CGALPolygon pol= *it;
+       Polygon pol= *it;
        if (pol.is_simple()) W << convert_to_leda(pol); 
     }
     // output the lists for location ...
-    std::list<CGALPoint>::const_iterator rt;
+    std::list<Point>::const_iterator rt;
 
     W.set_color(leda_red);
     for (rt=red.begin(); rt != red.end(); rt++) W.draw_disc((*rt).x(),(*rt).y(),5);
@@ -215,11 +214,11 @@ public:
   
   virtual bool write_postscript(ps_file& PS, leda_color c1, leda_color c2)
   {     
-    CGALPolygonlist::const_iterator it = CPL.begin();
+    std::list<Polygon>::const_iterator it = CPL.begin();
     int cnt = 0;
     for(; it != CPL.end(); ++it, cnt ++) {    
        PS.set_fill_color(cnt % 7 + 6);
-       CGALPolygon pol= *it;
+       Polygon pol= *it;
        if (pol.is_simple()) PS << convert_to_leda(pol); 
     }
     // output the lists for location ...
@@ -235,16 +234,16 @@ public:
   }
 
 
-  virtual void update(const CGALSegmentlist& L, CGALPointlist&)
+  virtual void update(const std::list<Segment>& L, std::list<Point>&)
   {
      CPL.clear();
      pm->clear();
      
-     std::list<CGALSegment>::const_iterator it = L.begin();
+     std::list<Segment>::const_iterator it = L.begin();
 
      for(; it != L.end(); ++it) {
-        CGALSegment sakt= *it;
-        pm->insert(curve(sakt.source(),sakt.target()));
+        Segment sakt= *it;
+        pm->insert(Curve(sakt.source(),sakt.target()));
      }
 
      if (! pm->is_valid()) std::cout << "not a valid map!\n";
@@ -260,16 +259,16 @@ public:
            CGAL::Planar_map_2<pmdcel, pmtraits>::Halfedge_handle he, he_next;
            he= fc.halfedge_on_outer_ccb();
 	   he_next = he;
-	   std::list<CGALPoint> pcon;
+	   std::list<Point> pcon;
 
 	   do {
-             point pt = (*he_next).source()->point();
+             Point pt = (*he_next).source()->point();
              pcon.push_back(pt);
 	     he_next = (*he_next).next_halfedge();
              
 	   } while (he!=he_next);
            
-           CGALPolygon poly(pcon.begin(), pcon.end());
+           Polygon poly(pcon.begin(), pcon.end());
            CPL.push_back(poly);
         }
 
@@ -278,7 +277,7 @@ public:
 
      green.clear(); red.clear(); white.clear();
 
-     std::list<CGALPoint>::const_iterator loc_it = Loc.begin();
+     std::list<Point>::const_iterator loc_it = Loc.begin();
      loc_type lt;
 
      for(; loc_it != Loc.end(); ++loc_it) {
@@ -293,8 +292,8 @@ public:
 
 int main()
 {
-  geowin_init_default_type((CGALPointlist*)0, leda_string("CGALPointList"));
-  geowin_init_default_type((CGALSegmentlist*)0, leda_string("CGALSegmentList"));
+  geowin_init_default_type((std::list<Point>*)0, leda_string("CGALPointList"));
+  geowin_init_default_type((std::list<Segment>*)0, leda_string("CGALSegmentList"));
   
   CGAL::Planar_map_2<pmdcel, pmtraits> pmap;
   pm = &pmap;
@@ -304,8 +303,8 @@ int main()
 
   geo_scene point_scene   = GW.new_scene(L);  
 
-  GeoEditScene<std::list<CGAL::Point_2<CGAL::Cartesian<double> > > >* PTR1 =
-       (GeoEditScene<std::list<CGAL::Point_2<CGAL::Cartesian<double> > > >*)point_scene;
+  GeoEditScene<std::list<Point> >* PTR1 =
+       (GeoEditScene<std::list<Point> >*)point_scene;
   GW.set_start_change_handler(PTR1, point_start_change);
   
   // vertical ray shooting scene ...
@@ -315,8 +314,8 @@ int main()
  
   geo_scene segment_scene = GW.new_scene(Lseg); 
 
-  GeoEditScene<std::list<CGAL::Segment_2<CGAL::Cartesian<double> > > >* PTR2 =
-       (GeoEditScene<std::list<CGAL::Segment_2<CGAL::Cartesian<double> > > >*)segment_scene;
+  GeoEditScene<std::list<Segment> >* PTR2 =
+       (GeoEditScene<std::list<Segment> >*)segment_scene;
 
   GW.set_pre_add_change_handler(PTR2,segment_add_changer);
   GW.set_start_change_handler(PTR2,segment_start_change);

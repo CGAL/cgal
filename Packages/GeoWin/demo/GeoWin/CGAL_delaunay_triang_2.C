@@ -51,51 +51,49 @@ int main(int argc, char *argv[])
 #else 
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/squared_distance_2.h>   
-#include <CGAL/Point_2.h>
-#include <CGAL/predicates_on_points_2.h>
+//#include <CGAL/squared_distance_2.h>   
+//#include <CGAL/predicates_on_points_2.h>
 #include <CGAL/Triangulation_euclidean_traits_2.h>
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/geowin_support.h>
 
 typedef double coord_type;
-typedef CGAL::Cartesian<coord_type>  Rep;
-typedef CGAL::Point_2<Rep>  Point;
-typedef CGAL::Segment_2<Rep>  Segment;
+typedef CGAL::Cartesian<coord_type>                            K;
+typedef K::Point_2                                             Point;
+typedef K::Segment_2                                           Segment;
+typedef K::Line_2                                              Line;
+typedef K::Triangle_2                                          Triangle;
 
-typedef CGAL::Triangulation_euclidean_traits_2<Rep> Gt;
-typedef CGAL::Triangulation_vertex_base_2<Gt> Vb;
-typedef CGAL::Triangulation_face_base_2<Gt>  Fb;
+typedef CGAL::Triangulation_euclidean_traits_2<K>              Gt;
+typedef CGAL::Triangulation_vertex_base_2<Gt>                  Vb;
+typedef CGAL::Triangulation_face_base_2<Gt>                    Fb;
 typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
-typedef CGAL::Triangulation_2<Gt,Tds>  Triang_2;
-typedef CGAL::Delaunay_triangulation_2<Gt,Tds> Delaunay_triang_2;
+typedef CGAL::Triangulation_2<Gt,Tds>                          Triang_2;
+typedef CGAL::Delaunay_triangulation_2<Gt,Tds>                 Delaunay_triang_2;
+typedef Delaunay_triang_2::Face::Face_handle                   Face_handle;
+typedef Delaunay_triang_2::Line_face_circulator                Line_face_circulator;
 
-typedef Delaunay_triang_2::Face::Face_handle Face_handle;
-typedef Delaunay_triang_2::Line_face_circulator Line_face_circulator;
-
-typedef Triang_2::Face  Face;
-typedef Triang_2::Vertex Vertex;
-typedef Triang_2::Edge Edge;
-typedef Triang_2::Vertex_handle Vertex_handle;
-typedef Triang_2::Edge_iterator  Edge_iterator;
+typedef Triang_2::Edge                                         Edge;
+typedef Triang_2::Vertex_handle                                Vertex_handle;
+typedef Triang_2::Edge_iterator                                Edge_iterator;
 
 Delaunay_triang_2 dt;
 
 
-class geo_delau : public geowin_update<std::list<CGALPoint>,std::list<CGALSegment> > ,
+class geo_delau : public geowin_update<std::list<Point>,std::list<Segment> > ,
                   public geowin_redraw
 {
 public:
  // support for incremental operations ...
- bool insert(const CGALPoint& p)
+ bool insert(const Point& p)
  {
   std::cout << "insert:" << p << "\n";
   dt.insert(p);
   return true; 
  }
  
- bool del(const CGALPoint& p)
+ bool del(const Point& p)
  {
   std::cout << "del:" << p << "\n";
   Delaunay_triang_2::Vertex_handle vh = dt.nearest_vertex(p);
@@ -116,7 +114,7 @@ public:
   }    
  }
 
- void update(const CGALPointlist& L, CGALSegmentlist&)
+ void update(const std::list<Point>& L, std::list<Segment>&)
  {
   dt.clear();    
   dt.insert(L.begin(),L.end());
@@ -124,17 +122,16 @@ public:
 };
 
 
-class geo_nearest : public geowin_redraw, public geowin_update<CGALPointlist, CGALPointlist >
+class geo_nearest : public geowin_redraw, public geowin_update<std::list<Point>, std::list<Point> >
 {
 public:
-
-  CGALPointlist pls,plt;
+  std::list<Point> pls,plt;
 
   virtual ~geo_nearest() {}
   
   virtual void draw(leda_window& W, leda_color c1, leda_color c2,double x1,double y1,double x2,double y2)
   { 
-   CGALPointlist::const_iterator iter = pls.begin(), iter2 = plt.begin();
+   std::list<Point>::const_iterator iter = pls.begin(), iter2 = plt.begin();
    for(;iter != pls.end();iter++,iter2++){
       W.draw_arrow((*iter).x(),(*iter).y(),(*iter2).x(),(*iter2).y(),c1);
    }
@@ -142,17 +139,17 @@ public:
 
   virtual bool write_postscript(ps_file& PS,leda_color c1,leda_color c2)
   {
-   CGALPointlist::const_iterator iter = pls.begin(), iter2 = plt.begin();
+   std::list<Point>::const_iterator iter = pls.begin(), iter2 = plt.begin();
    for(;iter != pls.end();iter++,iter2++){
       PS.draw_arrow((*iter).x(),(*iter).y(),(*iter2).x(),(*iter2).y(),c1);
    }  
    return false;
   }
   
-  virtual void update(const CGALPointlist& L, CGALPointlist&)
+  virtual void update(const std::list<Point>& L, std::list<Point>&)
   { 
     pls.clear(); plt.clear();
-    CGALPointlist::const_iterator iter = L.begin();
+    std::list<Point>::const_iterator iter = L.begin();
     
     for(;iter != L.end(); iter++){
       Vertex_handle vh = dt.nearest_vertex(*iter);
@@ -163,18 +160,17 @@ public:
 };
 
 
-class geo_triangles : public geowin_redraw, public geowin_update<CGALPointlist, CGALPointlist >
+class geo_triangles : public geowin_redraw, public geowin_update<std::list<Point>, std::list<Point> >
 {
 public:
-
-  CGALTrianglelist LT;
+  std::list<Triangle> LT;
   geo_scene lines;
 
   virtual ~geo_triangles() {}
 
   virtual void draw(leda_window& W, leda_color c1, leda_color c2,double x1,double y1,double x2,double y2)
   {  
-    std::list<CGALTriangle>::const_iterator it   = LT.begin(), stop = LT.end();
+    std::list<Triangle>::const_iterator it   = LT.begin(), stop = LT.end();
     leda_color old = W.set_fill_color(leda_green);
     while( it != stop )
     {
@@ -186,7 +182,7 @@ public:
   
   virtual bool write_postscript(ps_file& PS,leda_color c1,leda_color c2)
   {
-    std::list<CGALTriangle>::const_iterator it   = LT.begin(), stop = LT.end();
+    std::list<Triangle>::const_iterator it   = LT.begin(), stop = LT.end();
     leda_color old = PS.set_fill_color(leda_green);
     while( it != stop )
     {
@@ -197,7 +193,7 @@ public:
     return false;
   }  
 
-  virtual void update(const CGALPointlist& L, CGALPointlist&)
+  virtual void update(const std::list<Point>& L, std::list<Point>&)
   { 
     LT.clear();
 
@@ -205,12 +201,12 @@ public:
 
     GeoWin* gw = get_geowin(lines);
 
-    CGALLinelist LST;
+    std::list<Line> LST;
     gw->get_objects(lines,LST);
 
-    std::list<CGALLine>::const_iterator it;
-    CGALLine lakt;
-    CGALPoint p1,p2; 
+    std::list<Line>::const_iterator it;
+    Line lakt;
+    Point p1,p2; 
 
     for(it=LST.begin(); it != LST.end(); ++it) { 
        lakt= *it;
@@ -231,18 +227,17 @@ public:
 };
 
 
-class geo_triangles2 : public geowin_redraw, public geowin_update<CGALPointlist, CGALPointlist >
+class geo_triangles2 : public geowin_redraw, public geowin_update<std::list<Point>, std::list<Point> >
 {
 public:
-
-  CGALTrianglelist LT;
+  std::list<Triangle> LT;
   geo_scene locate_points;
 
   virtual ~geo_triangles2() {}
 
   virtual void draw(leda_window& W, leda_color c1, leda_color c2,double x1,double y1,double x2,double y2)
   {  
-    std::list<CGALTriangle>::const_iterator it   = LT.begin(), stop = LT.end();
+    std::list<Triangle>::const_iterator it   = LT.begin(), stop = LT.end();
     leda_color old = W.set_fill_color(leda_red);
     while( it != stop )
     {
@@ -254,7 +249,7 @@ public:
   
   virtual bool write_postscript(ps_file& PS,leda_color c1,leda_color c2)
   {
-    std::list<CGALTriangle>::const_iterator it   = LT.begin(), stop = LT.end();
+    std::list<Triangle>::const_iterator it   = LT.begin(), stop = LT.end();
     leda_color old = PS.set_fill_color(leda_red);
     while( it != stop )
     {
@@ -265,7 +260,7 @@ public:
     return false;
   }  
 
-  virtual void update(const CGALPointlist& L, CGALPointlist&)
+  virtual void update(const std::list<Point>& L, std::list<Point>&)
   { 
     LT.clear();
 
@@ -273,11 +268,11 @@ public:
 
     GeoWin* gw = get_geowin(locate_points);   
 
-    CGALPointlist LST;
+    std::list<Point> LST;
     gw->get_objects(locate_points,LST);
 
-    std::list<CGALPoint>::const_iterator it;
-    CGALPoint lakt;
+    std::list<Point>::const_iterator it;
+    Point lakt;
 
     for(it=LST.begin(); it != LST.end(); ++it) { 
        lakt= *it;
@@ -290,11 +285,11 @@ public:
 
 int main()
 {
-  geowin_init_default_type((CGALPointlist*)0, leda_string("CGALPointList"));
-  geowin_init_default_type((CGALLinelist*)0, leda_string("CGALLineList"));
+  geowin_init_default_type((std::list<Point>*)0, leda_string("CGALPointList"));
+  geowin_init_default_type((std::list<Line>*)0, leda_string("CGALLineList"));
 
-  CGALPointlist L, LOC, NN;
-  CGALLinelist  CGLL;
+  std::list<Point>  L, LOC, NN;
+  std::list<Line>   CGLL;
 
   GeoWin GW("CGAL - Delaunay triangulation demo");
   GW.add_help_text(leda_string("CGAL_delaunay_triang_2"));

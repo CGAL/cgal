@@ -54,18 +54,22 @@ int main(int argc, char *argv[])
 #include <CGAL/Segment_2_Segment_2_intersection.h>
 #include <CGAL/geowin_support.h>
 
-class geo_segint : public geowin_update<std::list<CGALSegment>,std::list<CGALPoint> >
+typedef CGAL::Cartesian<double>   K;
+typedef K::Segment_2              Segment;
+typedef K::Point_2                Point;
+
+class geo_segint : public geowin_update<std::list<Segment>,std::list<Point> >
 {
 public:
- void update(const CGALSegmentlist& L, CGALPointlist& Sl)
+ void update(const std::list<Segment>& L, std::list<Point>& Sl)
  {
   Sl.clear();
   if (L.size() <2) return;
   int cnt=0;
-  CGALSegment s1,s2;
-  CGALSegmentlist::const_iterator it1= L.begin(), it2;
+  Segment s1,s2;
+  std::list<Segment>::const_iterator it1= L.begin(), it2;
   CGAL::Object result;
-  CGALPoint pt;
+  Point pt;
 
   for(;it1 != L.end(); ++it1){
    for(it2=L.begin() ;it2 != L.end(); ++it2){
@@ -79,9 +83,9 @@ public:
 
 int main()
 {
-  geowin_init_default_type((CGALSegmentlist*)0, leda_string("CGALSegmentList"));
+  geowin_init_default_type((std::list<Segment>*)0, leda_string("CGALSegmentList"));
  
-  CGALSegmentlist L;
+  std::list<Segment> L;
 
   GeoWin GW("CGAL - Segment Intersection");
  

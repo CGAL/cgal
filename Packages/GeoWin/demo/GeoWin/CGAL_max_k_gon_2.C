@@ -52,10 +52,6 @@ int main(int argc, char *argv[])
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/extremal_polygon_2.h>
-#include <CGAL/Point_2.h>
-#include <CGAL/Segment_2.h>
-#include <CGAL/Circle_2.h>
-#include <CGAL/Vector_2.h>
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/Polygon_2_algorithms.h>
 #include <LEDA/list.h>
@@ -63,24 +59,25 @@ int main(int argc, char *argv[])
 #include<vector>
 #include <CGAL/geowin_support.h>
 
-typedef CGAL::Cartesian<double> R;
-typedef CGAL::Polygon_traits_2<R> Traits;
-typedef Traits::Point_2 Point;
-typedef std::vector<Point> Container;
+typedef CGAL::Cartesian<double>           K;
+typedef CGAL::Polygon_traits_2<K>         Traits;
+typedef K::Segment_2                      Segment;
+typedef Traits::Point_2                   Point;
+typedef std::vector<Point>                Container;
 typedef CGAL::Polygon_2<Traits,Container> Polygonvec;
 
 
-class k_gon_5 : public geowin_update<CGALPointlist, std::list<leda_polygon> >
+class k_gon_5 : public geowin_update<std::list<Point>, std::list<leda_polygon> >
 {
 public:
 
- void update(const CGALPointlist& L, std::list<leda_polygon>& Sl)
+ void update(const std::list<Point>& L, std::list<leda_polygon>& Sl)
  {
   Sl.clear();
   Polygonvec p;
 
   // building convex polygon...
-   CGAL::convex_hull_points_2(L.begin(),L.end(), std::back_inserter(p));   
+  CGAL::convex_hull_points_2(L.begin(),L.end(), std::back_inserter(p));   
 
   Polygonvec kg;
   if (p.size()>2) {
@@ -89,7 +86,7 @@ public:
      leda_list<leda_point> HLP;
      int i;
 
-     std::vector<CGALPoint> CT = kg.container();
+     std::vector<Point> CT = kg.container();
 
      for (i=0;i<kg.size();i++){
        leda_point lakt(convert_to_leda(CT[i]));
@@ -101,17 +98,17 @@ public:
  }
 };
 
-class k_gon_3 : public geowin_update<CGALPointlist, std::list<leda_polygon> >
+class k_gon_3 : public geowin_update<std::list<Point>, std::list<leda_polygon> >
 {
 public:
 
- void update(const CGALPointlist& L, std::list<leda_polygon>& Sl)
+ void update(const std::list<Point>& L, std::list<leda_polygon>& Sl)
  { 
   Sl.clear();
   Polygonvec p;
 
   // building convex polygon...
-   CGAL::convex_hull_points_2(L.begin(),L.end(), std::back_inserter(p));   
+  CGAL::convex_hull_points_2(L.begin(),L.end(), std::back_inserter(p));   
 
   Polygonvec kg;
   if (p.size()>2) {
@@ -120,7 +117,7 @@ public:
      leda_list<leda_point> HLP;
      int i;
 
-     std::vector<CGALPoint> CT = kg.container();
+     std::vector<Point> CT = kg.container();
 
      for (i=0;i<kg.size();i++){
        leda_point lakt(convert_to_leda(CT[i]));
@@ -132,43 +129,42 @@ public:
  }
 };
 
-class conv_hull_seg : public geowin_update<std::list<CGALPoint>,std::list<CGALSegment> >
+class conv_hull_seg : public geowin_update<std::list<Point>,std::list<Segment> >
 {
 public:
 
- void update(const CGALPointlist& L, CGALSegmentlist& Sl)
+ void update(const std::list<Point>& L, std::list<Segment>& Sl)
  {
   Sl.clear();
-  CGALPointlist out;
+  std::list<Point> out;
 
    CGAL::convex_hull_points_2(L.begin(),L.end(), std::back_inserter(out));   
 
   // building the segment list ...
   if( out.size() > 1 ) {
-    CGALPoint pakt,prev,pstart;
+    Point pakt,prev,pstart;
 
-    std::list<CGALPoint>::const_iterator it;
+    std::list<Point>::const_iterator it;
     it=out.begin();
     prev= *it; pstart=prev;
     it++;
 
     for(; it != out.end(); ++it) {
        pakt= *it;
-       Sl.push_back(CGALSegment(prev,pakt));
+       Sl.push_back(Segment(prev,pakt));
        prev=pakt;
     }
 
-    Sl.push_back(CGALSegment(pakt,pstart));
-
+    Sl.push_back(Segment(pakt,pstart));
   }
  }
 };
 
 int main()
 {
-  geowin_init_default_type((CGALPointlist*)0, leda_string("CGALPointList"));
+  geowin_init_default_type((std::list<Point>*)0, leda_string("CGALPointList"));
 
-  CGALPointlist L;
+  std::list<Point> L;
 
   GeoWin GW("CGAL - Maximum Area inscribed k-gon of a convex polygon");
  

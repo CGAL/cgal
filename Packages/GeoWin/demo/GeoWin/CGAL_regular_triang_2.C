@@ -54,42 +54,39 @@ int main(int argc, char *argv[])
 #include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/Regular_triangulation_2.h>
 
-typedef CGAL::Cartesian<double>  Rep;
-typedef CGAL::Circle_2<Rep>       Circle;
-typedef CGAL::Point_2<Rep>        Point;
+typedef CGAL::Cartesian<double>   K;
+typedef K::Circle_2               Circle;
+typedef K::Segment_2              Segment;
+typedef K::Point_2                Point;
 
 typedef double W;
 
-typedef CGAL::Regular_triangulation_euclidean_traits_2<Rep,W> Gt;
-typedef CGAL::Triangulation_vertex_base_2<Gt> Vb;
-typedef CGAL::Regular_triangulation_face_base_2<Gt>  Fb;
+typedef CGAL::Regular_triangulation_euclidean_traits_2<K,W>    Gt;
+typedef CGAL::Triangulation_vertex_base_2<Gt>                  Vb;
+typedef CGAL::Regular_triangulation_face_base_2<Gt>            Fb;
 typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
-typedef CGAL::Triangulation_2<Gt,Tds>  Triangulation_2;
-typedef CGAL::Regular_triangulation_2<Gt,Tds> Regular_triangulation_2;
+typedef CGAL::Triangulation_2<Gt,Tds>                          Triangulation_2;
+typedef CGAL::Regular_triangulation_2<Gt,Tds>                  Regular_triangulation_2;
 
-typedef Gt::Weighted_point Weighted_point;
-
-typedef Regular_triangulation_2::Edge Edge;
-typedef Regular_triangulation_2::Locate_type Locate_type;
-typedef Regular_triangulation_2::Edge_iterator  Edge_iterator;
+typedef Gt::Weighted_point                                     Weighted_point;
+typedef Regular_triangulation_2::Edge                          Edge;
+typedef Regular_triangulation_2::Edge_iterator                 Edge_iterator;
 
 #include <CGAL/geowin_support.h>
 
-class geo_reg_triang : public geowin_update<std::list<CGALCircle>, std::list<CGALSegment> >
+class geo_reg_triang : public geowin_update<std::list<Circle>, std::list<Segment> >
 {
 public:
- void update(const CGALCirclelist& L, CGALSegmentlist& Sl)
+ void update(const std::list<Circle>& L, std::list<Segment>& Sl)
  {
   Regular_triangulation_2 tr;    
   Sl.clear();      
                    
-  std::list<CGALCircle>::const_iterator it;
-  it= L.begin();
-  CGALCircle cakt;
+  std::list<Circle>::const_iterator it = L.begin();
+  Circle cakt;
  
   for (; it != L.end() ; ++it) { 
     cakt= *it; 
-    //std::cout << Weighted_point(cakt.center(),cakt.squared_radius()) << "\n";
     tr.insert(Weighted_point(cakt.center(),cakt.squared_radius())); 
   }
 
@@ -107,9 +104,9 @@ public:
 
 int main()
 {
-  geowin_init_default_type((CGALCirclelist*)0, leda_string("CGALCircleList"));
+  geowin_init_default_type((std::list<Circle>*)0, leda_string("CGALCircleList"));
 
-  CGALCirclelist L;
+  std::list<Circle> L;
 
   GeoWin GW("CGAL - Regular Triangulation demo");
 

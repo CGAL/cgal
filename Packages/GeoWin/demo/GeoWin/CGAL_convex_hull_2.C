@@ -55,29 +55,32 @@ int main(int argc, char *argv[])
 #include <CGAL/Polygon_2_algorithms.h>
 #include <CGAL/geowin_support.h>
 
-class geo_hull : public geowin_update<std::list<CGALPoint>, std::list<CGALSegment> >
+typedef CGAL::Cartesian<double>                                 K;
+typedef K::Point_2                                              Point;
+typedef K::Segment_2                                            Segment;
+
+class geo_hull : public geowin_update<std::list<Point>, std::list<Segment> >
 {
 public:
- void update(const CGALPointlist& L, CGALSegmentlist& Sl)
+ void update(const std::list<Point>& L, std::list<Segment>& Sl)
  {
   Sl.clear();
-  CGALPointlist out;
+  std::list<Point> out;
   CGAL::convex_hull_points_2(L.begin(),L.end(), std::back_inserter(out));   
 
   if( out.size() > 1 ) {
-    CGALPoint pakt,prev,pstart;
+    Point pakt,prev,pstart;
 
-    std::list<CGALPoint>::const_iterator it;
-    it=out.begin();
+    std::list<Point>::const_iterator it=out.begin();
     prev= *it; pstart=prev;
     it++;
 
     for(; it != out.end(); ++it) {
        pakt= *it;
-       Sl.push_back(CGALSegment(prev,pakt));
+       Sl.push_back(Segment(prev,pakt));
        prev=pakt;
     }
-    Sl.push_back(CGALSegment(pakt,pstart));
+    Sl.push_back(Segment(pakt,pstart));
   }
  }
  
@@ -85,12 +88,11 @@ public:
 
 int main()
 {
-  geowin_init_default_type((CGALPointlist*)0, leda_string("CGALPointList"));
+  geowin_init_default_type((std::list<Point>*)0, leda_string("CGALPointList"));
  
-  CGALPointlist L;
-  CGALPointlist out;
+  std::list<Point> L;
 
-  GeoWin GW("CGALTEST - convex hull");
+  GeoWin GW("2d convex hull");
 
   geo_hull update_obj;
   geo_scene my_scene= GW.new_scene(L);  

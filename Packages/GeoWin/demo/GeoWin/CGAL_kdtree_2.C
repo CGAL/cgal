@@ -55,45 +55,50 @@ int main(int argc, char *argv[])
 #include <CGAL/geowin_support.h>
 #include  <CGAL/kdtree_d.h>
 
-typedef CGAL::Kdtree_interface_2d<CGALPoint>  kd_interface;
+typedef CGAL::Cartesian<double>               K;
+typedef K::Point_2                            Point;
+typedef K::Circle_2                           Circle;
+typedef K::Iso_rectangle_2                    Rectangle;
+
+typedef CGAL::Kdtree_interface_2d<Point>      kd_interface;
 typedef CGAL::Kdtree_d<kd_interface>          kd_tree;
 typedef kd_tree::Box                          box;
 
 geo_scene rec_scene;
 
-class geo_rs : public geowin_update<std::list<CGALPoint>,std::list<CGALCircle> >
+class geo_rs : public geowin_update<std::list<Point>,std::list<Circle> >
 {
- void update(const CGALPointlist& L, CGALCirclelist& Outcl)
+ void update(const std::list<Point>& L, std::list<Circle>& Outcl)
  {
     GeoWin* gw = get_geowin(rec_scene);
-    CGALRectanglelist rects;
+    std::list<Rectangle> rects;
     gw->get_objects(rec_scene,rects);
      
     Outcl.clear();
     CGAL::Kdtree_d<kd_interface>  tree(2);
-    tree.build((CGALPointlist&)L); 
-    std::list<CGALPoint> Out;
-    std::list<CGALRectangle>::const_iterator it = rects.begin();
-    std::list<CGALPoint>::const_iterator pit;
+    tree.build((std::list<Point>&)L); 
+    std::list<Point> Out;
+    std::list<Rectangle>::const_iterator it = rects.begin();
+    std::list<Point>::const_iterator pit;
 
     for (; it != rects.end(); it++) {
       box B(it->min(), it->max(), 2);
-      std::list<CGALPoint> res;
+      std::list<Point> res;
       tree.search( std::back_inserter( res ), B );
       std::copy(res.begin(), res.end(), std::back_inserter(Out));    
     }
     pit=Out.begin();
-    for (; pit != Out.end(); pit++) Outcl.push_back(CGALCircle(*pit,3.0));
+    for (; pit != Out.end(); pit++) Outcl.push_back(Circle(*pit,3.0));
  }
 };
 
 int main()
 {
-  geowin_init_default_type((CGALPointlist*)0, leda_string("CGALPointList"));
-  geowin_init_default_type((CGALRectanglelist*)0, leda_string("CGALRectangleList"));
+  geowin_init_default_type((std::list<Point>*)0, leda_string("CGALPointList"));
+  geowin_init_default_type((std::list<Rectangle>*)0, leda_string("CGALRectangleList"));
  
-  CGALPointlist L;
-  CGALRectanglelist RL;
+  std::list<Point>     L;
+  std::list<Rectangle> RL;
 
   GeoWin GW("CGALTEST - 2d tree");
   GW.message("Activate rectangle scene to perform rectangular range searches on the input point set");

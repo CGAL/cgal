@@ -53,20 +53,29 @@ int main(int argc, char *argv[])
 #include <CGAL/Cartesian.h>
 #include <CGAL/geowin_support.h>
 
+typedef CGAL::Cartesian<double>                      K;
+typedef K::Point_2                                   Point;
+typedef K::Segment_2                                 Segment;
+typedef K::Circle_2                                  Circle;
+typedef K::Line_2                                    Line;
+typedef K::Ray_2                                     Ray;
+typedef K::Triangle_2                                Triangle;
+typedef K::Iso_rectangle_2                           Iso_rectangle;
+typedef K::Point_3                                   Point_3;
+typedef CGAL::Polygon_traits_2<K>                    PTraits;
+typedef CGAL::Polygon_2<PTraits,std::list<Point> >   Polygon;
+
 int main()
 {
-
-  geowin_init_default_type((CGALPointlist*)0, leda_string("CGALPointList"));
-  geowin_init_default_type((CGALSegmentlist*)0, leda_string("CGALSegmentList"));
-  geowin_init_default_type((CGALCirclelist*)0, leda_string("CGALCircleList"));
-  geowin_init_default_type((CGALLinelist*)0, leda_string("CGALLineList"));
-  geowin_init_default_type((CGALRaylist*)0, leda_string("CGALRayList"));
-  geowin_init_default_type((CGALTrianglelist*)0, leda_string("CGALTriangleList"));
-  geowin_init_default_type((CGALRectanglelist*)0, leda_string("CGALRectangleList"));
-
-  geowin_init_default_type((CGALPolygonlist*)0, leda_string("CGALPolygonList"));
-
-  geowin_init_default_type((CGALPoint_3_list*)0, leda_string("CGALPoint_3_List")); 
+  geowin_init_default_type((std::list<Point>*)0, leda_string("CGALPointList"));
+  geowin_init_default_type((std::list<Segment>*)0, leda_string("CGALSegmentList"));
+  geowin_init_default_type((std::list<Circle>*)0, leda_string("CGALCircleList"));
+  geowin_init_default_type((std::list<Line>*)0, leda_string("CGALLineList"));
+  geowin_init_default_type((std::list<Ray>*)0, leda_string("CGALRayList"));
+  geowin_init_default_type((std::list<Triangle>*)0, leda_string("CGALTriangleList"));
+  geowin_init_default_type((std::list<Iso_rectangle>*)0, leda_string("CGALRectangleList"));
+  geowin_init_default_type((std::list<Polygon>*)0, leda_string("CGALPolygonList"));
+  geowin_init_default_type((std::list<Point_3>*)0, leda_string("CGALPoint_3_List")); 
 
   GeoWin GW("GeoWin Demo using CGAL objects");
   GW.edit();

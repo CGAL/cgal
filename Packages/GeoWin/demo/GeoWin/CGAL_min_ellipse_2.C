@@ -56,12 +56,12 @@ int main(int argc, char *argv[])
 #include <CGAL/IO/Window_stream.h>
 #include <CGAL/geowin_support.h>
 
-typedef  CGAL::Cartesian<double>           R;
-typedef  CGAL::Point_2<R>                    Point;
-typedef  CGAL::Min_ellipse_2_traits_2< R >   Traits;
+typedef  CGAL::Cartesian<double>             K;
+typedef  K::Point_2                          Point;
+typedef  CGAL::Min_ellipse_2_traits_2<K>     Traits;
 typedef  CGAL::Min_ellipse_2< Traits >       Min_ellipse;
 
-class geo_ellipse : public geowin_redraw, public geowin_update<CGALPointlist, CGALPointlist >
+class geo_ellipse : public geowin_redraw, public geowin_update<std::list<Point>,std::list<Point> >
 {
 public:
   virtual ~geo_ellipse() {}
@@ -71,15 +71,15 @@ public:
   virtual void draw(leda_window& W, leda_color c1, leda_color c2,double x1,double y1,double x2,double y2)
   {  W.set_color(c1); W << min_ell.ellipse(); }  
 
-  virtual void update(const CGALPointlist& L, CGALPointlist&)
+  virtual void update(const std::list<Point>& L, std::list<Point>&)
   {  min_ell.clear(); min_ell.insert(L.begin(),L.end()); }
 };
 
 int main()
 {
-  geowin_init_default_type((CGALPointlist*)0, leda_string("CGALPointList"));
+  geowin_init_default_type((std::list<Point>*)0, leda_string("CGALPointList"));
 
-  CGALPointlist L;
+  std::list<Point> L;
   GeoWin GW("CGAL - Optimisation demo - minimal enclosing ellipse");
 
   geo_scene my_scene= GW.new_scene(L);  

@@ -55,16 +55,17 @@ int main(int argc, char *argv[])
 #include <CGAL/Min_circle_2_traits_2.h>
 #include <CGAL/geowin_support.h>
 
-typedef  CGAL::Cartesian<double>       R;
-typedef  CGAL::Point_2<R>                Point;
-typedef  CGAL::Min_circle_2_traits_2<R>  Traits;
+typedef  CGAL::Cartesian<double>         K;
+typedef  K::Point_2                      Point;
+typedef  K::Circle_2                     Circle;
+typedef  CGAL::Min_circle_2_traits_2<K>  Traits;
 typedef  CGAL::Min_circle_2<Traits>      Min_circle;
 typedef  Min_circle::Circle              OptCircle;
 
-class geo_circ : public geowin_update<std::list<CGALPoint>,std::list<CGALCircle> >
+class geo_circ : public geowin_update<std::list<Point>,std::list<Circle> >
 {
 public:
- void update(const CGALPointlist& L, CGALCirclelist& Cl)
+ void update(const std::list<Point>& L, std::list<Circle>& Cl)
  {
    Cl.clear();
    if (L.size() < 2) return;
@@ -73,16 +74,16 @@ public:
    OptCircle ci= mc1.circle();
 
    Point ctp=ci.center();
-   CGALCircle conv(ctp,ci.squared_radius());
+   Circle conv(ctp,ci.squared_radius());
    Cl.push_back(conv); 
  }
 };
 
 int main()
 {
-  geowin_init_default_type((CGALPointlist*)0, leda_string("CGALPointList"));
+  geowin_init_default_type((std::list<Point>*)0, leda_string("CGALPointList"));
 
-  CGALPointlist L;
+  std::list<Point> L;
   GeoWin GW("CGAL - Optimisation demo");
   GW.message("We compute the minimum enclosing circle of the input point set");
 

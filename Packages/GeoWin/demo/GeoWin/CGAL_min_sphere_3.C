@@ -61,28 +61,27 @@ int main(int argc, char *argv[])
 #include <LEDA/geowin.h>
 #include <LEDA/graph.h>
 #include <LEDA/d3_sphere.h>
-
 #include <LEDA/d3_hull.h>
 
 using namespace std;
 
-#if !defined(_MSC_VER)
-#define USE_RAT
-#endif
+//#if !defined(_MSC_VER)
+//#define USE_RAT
+//#endif
 
 #if defined(USE_RAT)
-typedef leda_rational                    NT;
-typedef leda_integer                     NT2;
+typedef leda_rational                         NT;
+typedef leda_integer                          NT2;
 #else
-typedef double                         NT;
-typedef double                         NT2;
+typedef double                                NT;
+typedef double                                NT2;
 #endif
 
-typedef CGAL::Cartesian<NT>               R;
-typedef CGAL::Optimisation_d_traits_d<R>       Traits;
+typedef CGAL::Cartesian<NT>                    K;
+typedef CGAL::Optimisation_d_traits_d<K>       Traits;
 typedef CGAL::Min_sphere_d<Traits>             Min_sphere;
-typedef CGAL::Point_3<R>                       Point;
-typedef CGAL::Point_d<R>                       Pointd;
+typedef K::Point_3                             Point;
+typedef K::Point_d                             Pointd;
 
 // dimension
 const int dim = 3; 
@@ -247,14 +246,13 @@ void generate_sphere_graph(const leda_d3_sphere& Sph, GRAPH<leda_d3_point,int>& 
 
 // --------------------------------------------
 
-
 #undef list
 
 GRAPH<leda_d3_point,int> SPHGR;
 
 // d3 output function
 
-static void show_d3_points(geo_scene sc, leda_d3_window& W, GRAPH<leda_d3_point,int>& H)
+void show_d3_points(geo_scene sc, leda_d3_window& W, GRAPH<leda_d3_point,int>& H)
 {
  GeoEditScene<std::list<Point> >* esc = (GeoEditScene<std::list<Point> > *) sc;
  std::list<Point>& L= esc->get_objref();
@@ -263,8 +261,8 @@ static void show_d3_points(geo_scene sc, leda_d3_window& W, GRAPH<leda_d3_point,
  Point p;
  std::list<Point>::const_iterator it = L.begin();
  
- Pointd*   P = new Pointd[L.size()];    
- NT2        coord[dim];
+ Pointd*  P = new Pointd[L.size()];    
+ NT2      coord[dim];
  int      i=0;
  
  for(; it != L.end();++it,i++) { 

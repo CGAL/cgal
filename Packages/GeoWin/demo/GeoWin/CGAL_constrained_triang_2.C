@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 #include <CGAL/Constrained_triangulation_face_base_2.h>
 #include <CGAL/Triangulation_default_data_structure_2.h>
 #include <CGAL/Constrained_triangulation_2.h>
-
+#include <CGAL/geowin_support.h>
 #include <CGAL/leda_rational.h>
 
 //#if !defined(_MSC_VER)
@@ -67,24 +67,20 @@ int main(int argc, char *argv[])
 typedef double coord_type;
 //#endif
 
-typedef CGAL::Cartesian<coord_type>  Rep;
+typedef CGAL::Cartesian<coord_type>                             K;
+typedef K::Point_2                                              Point;
+typedef K::Segment_2                                            Segment;
 
-typedef CGAL::Point_2<Rep>  Point;
-typedef CGAL::Segment_2<Rep>  Segment;
-
-typedef CGAL::Triangulation_euclidean_traits_2<Rep> Gt;
-typedef CGAL::Triangulation_vertex_base_2<Gt> Vb;
-typedef CGAL::Triangulation_face_base_2<Gt>  Fb;
-typedef CGAL::Constrained_triangulation_face_base_2<Gt>        CFb;
+typedef CGAL::Triangulation_euclidean_traits_2<K>               Gt;
+typedef CGAL::Triangulation_vertex_base_2<Gt>                   Vb;
+typedef CGAL::Triangulation_face_base_2<Gt>                     Fb;
+typedef CGAL::Constrained_triangulation_face_base_2<Gt>         CFb;
 typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,CFb> Tds;
-typedef CGAL::Constrained_triangulation_2<Gt,Tds> Constr_triangulation_2;
-typedef Constr_triangulation_2::Constraint  Constraint;
-  
-typedef Constr_triangulation_2::Edge Edge;
-typedef Constr_triangulation_2::Face_handle  Face_handle;
-typedef Constr_triangulation_2::Edge_iterator  Edge_iterator;
+typedef CGAL::Constrained_triangulation_2<Gt,Tds>               Constr_triangulation_2;
+typedef Constr_triangulation_2::Constraint                      Constraint;
+typedef Constr_triangulation_2::Edge                            Edge;
+typedef Constr_triangulation_2::Edge_iterator                   Edge_iterator;
 
-#include <CGAL/geowin_support.h>
 
 class constr_tria : public geowin_update<std::list<Segment>, std::list<Segment> >
 {

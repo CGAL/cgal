@@ -54,19 +54,25 @@ int main(int argc, char *argv[])
 #include <CGAL/Polygon_2_algorithms.h>
 #include <CGAL/geowin_support.h>
 
-class geo_poly_loc : public geowin_redraw, public geowin_update<CGALPolygonlist, CGALPointlist >
+typedef CGAL::Cartesian<double>                      K;
+typedef K::Point_2                                   Point;
+typedef CGAL::Polygon_traits_2<K>                    PTraits;
+typedef CGAL::Polygon_2<PTraits,std::list<Point> >   Polygon;
+
+
+class geo_poly_loc : public geowin_redraw, public geowin_update<std::list<Polygon>, std::list<Point> >
 {
 public:
   geo_scene input_points; 
-  std::list<CGALPoint> in; 
-  std::list<CGALPoint> out;
-  std::list<CGALPoint> bound;
+  std::list<Point> in; 
+  std::list<Point> out;
+  std::list<Point> bound;
 
   virtual ~geo_poly_loc() {}
 
   virtual bool write_postscript(ps_file& PS,leda_color c1,leda_color c2) 
   { 
-   std::list<CGALPoint>::const_iterator rt;
+   std::list<Point>::const_iterator rt;
 
    PS.set_color(c1);
    for (rt=in.begin(); rt != in.end(); rt++) PS.draw_disc((*rt).x(),(*rt).y(),5);
@@ -79,7 +85,7 @@ public:
 
   virtual void draw(leda_window& W, leda_color c1, leda_color c2,double x1,double y1,double x2,double y2)
   {  
-   std::list<CGALPoint>::const_iterator rt;
+   std::list<Point>::const_iterator rt;
 
    W.set_color(c1);
    for (rt=in.begin(); rt != in.end(); rt++) W.draw_disc((*rt).x(),(*rt).y(),5);
@@ -88,18 +94,18 @@ public:
    for (rt=bound.begin(); rt != bound.end(); rt++) W.draw_disc((*rt).x(),(*rt).y(),5);
   }
 
-  virtual void update(const CGALPolygonlist& L, CGALPointlist&)
+  virtual void update(const std::list<Polygon>& L, std::list<Point>&)
   { 
     if (L.empty()) return;
-    CGALPolygon polygon = (*(L.begin()));
+    Polygon polygon = (*(L.begin()));
     in.clear(); out.clear(); bound.clear();
 
     GeoWin* gw= get_geowin(input_points);
-    CGALPointlist LST;
+    std::list<Point> LST;
     gw->get_objects(input_points,LST);
  
-    std::list<CGALPoint>::const_iterator it;
-    CGALPoint lakt;
+    std::list<Point>::const_iterator it;
+    Point lakt;
 
     for(it=LST.begin(); it != LST.end(); ++it) { 
       lakt=*it;
@@ -122,11 +128,11 @@ public:
 
 int main()
 {
-  geowin_init_default_type((CGALPointlist*)0, leda_string("CGALPointList"));
-  geowin_init_default_type((CGALPolygonlist*)0, leda_string("CGALPolygonList"));
+  geowin_init_default_type((std::list<Point>*)0, leda_string("CGALPointList"));
+  geowin_init_default_type((std::list<Polygon>*)0, leda_string("CGALPolygonList"));
  
-  CGALPolygonlist L;
-  CGALPointlist L2;
+  std::list<Polygon>  L;
+  std::list<Point>    L2;
 
   GeoWin GW("CGAL - inside polygon test");
  

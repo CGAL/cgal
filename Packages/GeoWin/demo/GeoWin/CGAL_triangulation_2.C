@@ -51,27 +51,25 @@ int main(int argc, char *argv[])
 #else 
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/squared_distance_2.h> 
-#include <CGAL/Point_2.h>
-#include <CGAL/predicates_on_points_2.h>
+//#include <CGAL/squared_distance_2.h> 
+//#include <CGAL/predicates_on_points_2.h>
 #include <CGAL/Triangulation_euclidean_traits_2.h>
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 
-typedef CGAL::Cartesian<double>  Rep;
-typedef CGAL::Point_2<Rep>  Point;
-typedef CGAL::Segment_2<Rep>  Segment;
-typedef CGAL::Ray_2<Rep> Ray;
+typedef CGAL::Cartesian<double>      K;
+typedef K::Point_2                   Point;
+typedef K::Segment_2                 Segment;
+typedef K::Ray_2                     Ray;
 
-typedef CGAL::Triangulation_euclidean_traits_2<Rep> Gt;
-typedef CGAL::Triangulation_vertex_base_2<Gt> Vb;
-typedef CGAL::Triangulation_face_base_2<Gt>  Fb;
+typedef CGAL::Triangulation_euclidean_traits_2<K>              Gt;
+typedef CGAL::Triangulation_vertex_base_2<Gt>                  Vb;
+typedef CGAL::Triangulation_face_base_2<Gt>                    Fb;
 typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
-typedef CGAL::Triangulation_2<Gt,Tds>  Triangulation_2;
-typedef CGAL::Delaunay_triangulation_2<Gt,Tds> Delaunay_triangulation_2;
+typedef CGAL::Triangulation_2<Gt,Tds>                          Triangulation_2;
+typedef CGAL::Delaunay_triangulation_2<Gt,Tds>                 Delaunay_triangulation_2;
 
 typedef Triangulation_2::Edge Edge;
-typedef Triangulation_2::Locate_type Locate_type;
 typedef Triangulation_2::Edge_iterator  Edge_iterator;
 
 #include <CGAL/Object.h>
@@ -79,17 +77,17 @@ typedef Triangulation_2::Edge_iterator  Edge_iterator;
 #include <CGAL/Polygon_2_algorithms.h>
 #include <CGAL/geowin_support.h>
 
-class geo_triang : public geowin_update<std::list<CGALPoint>, std::list<CGALSegment> >
+class geo_triang : public geowin_update<std::list<Point>, std::list<Segment> >
 {
 public:
- void update(const CGALPointlist& L, CGALSegmentlist& Sl)
+ void update(const std::list<Point>& L, std::list<Segment>& Sl)
  {
   Triangulation_2 tr;    
   Sl.clear();      
                    
   std::list<CGALPoint>::const_iterator it;
   it= L.begin();
-  CGALPoint pakt;
+  Point pakt;
  
   for (; it != L.end() ; ++it) {
         pakt= *it;
@@ -110,10 +108,10 @@ public:
 
 Delaunay_triangulation_2 dt;
 
-class geo_delaunay_triang : public geowin_update<std::list<CGALPoint>, std::list<CGALSegment> >
+class geo_delaunay_triang : public geowin_update<std::list<Point>, std::list<CGALSegment> >
 {
 public:
- void update(const CGALPointlist& L, CGALSegmentlist& Sl)
+ void update(const std::list<Point>& L, std::list<Segment>& Sl)
  {
   dt.clear();    
   Sl.clear();      
@@ -134,11 +132,10 @@ public:
 
 geo_scene res2;
 
-
-class geo_voro1 : public geowin_update<std::list<CGALPoint>, std::list<CGALSegment> >
+class geo_voro1 : public geowin_update<std::list<Point>, std::list<Segment> >
 {
 public:
- void update(const CGALPointlist& L, CGALSegmentlist& Sl)
+ void update(const std::list<Point>& L, std::list<Segment>& Sl)
  {
   GeoWin* gw = GeoWin::get_call_geowin();
  
@@ -164,10 +161,10 @@ public:
  }
 };
 
-class geo_voro2 : public geowin_update<std::list<CGALPoint>, std::list<CGALRay> >
+class geo_voro2 : public geowin_update<std::list<Point>, std::list<Ray> >
 {
 public:
- void update(const CGALPointlist& L, CGALRaylist& Sl)
+ void update(const std::list<Point>& L, std::list<Ray>& Sl)
  {
   GeoWin* gw = GeoWin::get_call_geowin();
  
@@ -196,9 +193,9 @@ public:
 
 int main()
 {
-  geowin_init_default_type((CGALPointlist*)0, leda_string("CGALPointList"));
+  geowin_init_default_type((std::list<Point>*)0, leda_string("std::list<Point>"));
 
-  CGALPointlist L;
+  std::list<Point> L;
 
   GeoWin GW("CGAL - Triangulation demo");
   GW.add_help_text(leda_string("CGAL_triangulation_2"));

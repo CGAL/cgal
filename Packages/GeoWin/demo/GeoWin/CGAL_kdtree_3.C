@@ -56,7 +56,12 @@ int main(int argc, char *argv[])
 #include <CGAL/geowin_support.h>
 #include  <CGAL/kdtree_d.h>
 
-typedef CGAL::Kdtree_interface_3d<CGALPoint_3>  kd_interface;
+typedef CGAL::Cartesian<double>                 K;
+typedef K::Point_3                              Point;
+typedef K::Point_2                              Point_2;
+typedef K::Iso_rectangle_2                      Rectangle;
+
+typedef CGAL::Kdtree_interface_3d<Point>        kd_interface;
 typedef CGAL::Kdtree_d<kd_interface>            kd_tree;
 typedef kd_tree::Box                            box;
 
@@ -65,28 +70,28 @@ geo_scene rec_scene;
 static void show_d3(geo_scene sc, leda_d3_window& W, GRAPH<leda_d3_point,int>& H)
 {
  GeoWin* gw = get_geowin(sc);
- CGALPoint_3_list L;
+ std::list<Point> L;
  gw->get_objects(sc,L);
- CGALRectanglelist rects;
+ std::list<Rectangle> rects;
  gw->get_objects(rec_scene,rects);
 
- CGALPoint_3 p;
- CGALPoint_3_list::const_iterator itp = L.begin();
+ Point p;
+ std::list<Point>::const_iterator itp = L.begin();
 
  CGAL::Kdtree_d<kd_interface>  tree(3);
  tree.build(L);    
 
- std::list<CGALPoint_3> Out;
- std::list<CGALRectangle>::const_iterator it = rects.begin();
- CGALPoint_3 left,right;
- CGALPoint lhelp,rhelp;
+ std::list<Point> Out;
+ std::list<Rectangle>::const_iterator it = rects.begin();
+ Point left,right;
+ Point_2 lhelp,rhelp;
 
  for (; it != rects.end(); it++) {
       lhelp= it->min(); rhelp= it->max();
-      left = CGALPoint_3(lhelp.x(),lhelp.y(),-1000.0);
-      right= CGALPoint_3(rhelp.x(),rhelp.y(), 1000.0);
+      left = Point(lhelp.x(),lhelp.y(),-1000.0);
+      right= Point(rhelp.x(),rhelp.y(), 1000.0);
       box B(left,right, 3);
-      std::list<CGALPoint_3> res;
+      std::list<Point> res;
       tree.search( std::back_inserter( res ), B );
       std::copy(res.begin(), res.end(), std::back_inserter(Out));    
  }
@@ -101,11 +106,11 @@ static void show_d3(geo_scene sc, leda_d3_window& W, GRAPH<leda_d3_point,int>& H
 
 int main()
 {
-  geowin_init_default_type((CGALPoint_3_list*)0, leda_string("CGALPoint_3_List"));
-  geowin_init_default_type((CGALRectanglelist*)0, leda_string("CGALRectangleList"));
+  geowin_init_default_type((std::list<Point>*)0, leda_string("CGALPoint_3_List"));
+  geowin_init_default_type((std::list<Rectangle>*)0, leda_string("CGALRectangleList"));
 
-  CGALPoint_3_list L;
-  CGALRectanglelist RL;
+  std::list<Point> L;
+  std::list<Rectangle> RL;
 
   GeoWin GW("CGALTEST - 3d tree");
  

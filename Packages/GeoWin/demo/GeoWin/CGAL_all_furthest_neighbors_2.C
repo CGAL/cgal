@@ -61,34 +61,35 @@ int main(int argc, char *argv[])
 #include <vector>
 #include <CGAL/geowin_support.h>
 
-typedef CGAL::Cartesian<double> R;
-typedef CGAL::Polygon_traits_2<R> Traits;
-typedef Traits::Point_2 Point;
-typedef std::vector<Point> Container;
-typedef CGAL::Polygon_2<Traits,Container> CGALVecPolygon;
+typedef CGAL::Cartesian<double>           K;
+typedef CGAL::Polygon_traits_2<K>         Traits;
+typedef Traits::Point_2                   Point;
+typedef Traits::Segment_2                 Segment;
+typedef std::vector<Point>                Container;
+typedef CGAL::Polygon_2<Traits,Container> Polygon;
 
-class geo_all_furthest_nb : public geowin_update<std::list<CGALPoint>,std::list<CGALSegment> >,
+class geo_all_furthest_nb : public geowin_update<std::list<Point>,std::list<Segment> >,
                             public geowin_redraw
 {
 public:
- CGALSegmentlist ST;
+ std::list<Segment> ST;
  
  virtual ~geo_all_furthest_nb() {}
 
  void draw(leda_window& W,leda_color c1,leda_color c2,double x1,double y1,double x2,double y2)
  {
-  std::list<CGALSegment>::const_iterator it;
+  std::list<Segment>::const_iterator it;
   
   for (it=ST.begin(); it != ST.end(); it++){
-    CGALSegment seg = *it;
+    Segment seg = *it;
     W.draw_arrow(seg.source().x(), seg.source().y(), seg.target().x(), seg.target().y(), c1);
   } 
  }
 
- void update(const CGALPointlist& L, CGALSegmentlist& Sl)
+ void update(const std::list<Point>& L, std::list<Segment>& Sl)
  {
   ST.clear();
-  CGALVecPolygon P;
+  Polygon P;
 
   // building convex polygon...
   CGAL::convex_hull_points_2(L.begin(),L.end(), std::back_inserter(P));   
@@ -102,54 +103,54 @@ public:
   std::list<int>::const_iterator lit= il.begin();
   int z=0;
   
-  std::vector<CGALPoint> CT = P.container();
+  std::vector<Point> CT = P.container();
 
   for(; lit != il.end(); ++lit) {
-     CGALPoint p1= CT[z];
-     CGALPoint p2= CT[*lit]; 
+     Point p1= CT[z];
+     Point p2= CT[*lit]; 
 
-     ST.push_back(CGALSegment(p1,p2));
+     ST.push_back(Segment(p1,p2));
      z++;
   }
  }
 };
 
-class conv_hull_seg : public geowin_update<std::list<CGALPoint>,std::list<CGALSegment> >
+class conv_hull_seg : public geowin_update<std::list<Point>,std::list<Segment> >
 {
 public:
 
- void update(const CGALPointlist& L, CGALSegmentlist& Sl)
+ void update(const std::list<Point>& L, std::list<Segment>& Sl)
  {
   Sl.clear();
-  CGALPointlist out;
+  std::list<Point> out;
 
-   CGAL::convex_hull_points_2(L.begin(),L.end(), std::back_inserter(out));   
+  CGAL::convex_hull_points_2(L.begin(),L.end(), std::back_inserter(out));   
 
   // building the segment list ...
   if( out.size() > 1 ) {
-    CGALPoint pakt,prev,pstart;
+    Point pakt,prev,pstart;
 
-    std::list<CGALPoint>::const_iterator it;
+    std::list<Point>::const_iterator it;
     it=out.begin();
     prev= *it; pstart=prev;
     it++;
 
     for(; it != out.end(); ++it) {
        pakt= *it;
-       Sl.push_back(CGALSegment(prev,pakt));
+       Sl.push_back(Segment(prev,pakt));
        prev=pakt;
     }
 
-    Sl.push_back(CGALSegment(pakt,pstart));
+    Sl.push_back(Segment(pakt,pstart));
   }
  }
 };
 
 int main()
 {
-  geowin_init_default_type((CGALPointlist*)0, leda_string("CGALPointList"));
+  geowin_init_default_type((std::list<Point>*)0, leda_string("CGALPointList"));
  
-  CGALPointlist L;
+  std::list<Point> L;
 
   GeoWin GW("CGAL - All furthest neighbors");
 
