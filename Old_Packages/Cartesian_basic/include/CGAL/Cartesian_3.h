@@ -98,6 +98,7 @@ CGAL_END_NAMESPACE
 #include <CGAL/Cartesian/Segment_3.h>
 #include <CGAL/Cartesian/Triangle_3.h>
 #include <CGAL/Cartesian/Tetrahedron_3.h>
+#include <CGAL/Cartesian/Iso_cuboid_3.h>
 #include <CGAL/Cartesian/Aff_transformation_3.h>
 
 #include <CGAL/Cartesian/global_operators_3.h>
@@ -116,6 +117,7 @@ CGAL_END_NAMESPACE
 #include <CGAL/Cartesian/Segment_3.C>
 #include <CGAL/Cartesian/Triangle_3.C>
 #include <CGAL/Cartesian/Tetrahedron_3.C>
+#include <CGAL/Cartesian/Iso_cuboid_3.C>
 #include <CGAL/Cartesian/Aff_transformation_3.C>
  
 // #include <CGAL/Kernel/Construction_objects_3.h>
