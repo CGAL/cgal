@@ -34,7 +34,7 @@ int
 main()
 {
   
-  std::cout << "Testing Triangulation_defaut_data_structure_2" << endl;
+  std::cout << "Testing Triangulation_defaut_data_structure_2" << std::endl;
   typedef CGAL::_Triangulation_test_traits Gt;
   typedef CGAL::Triangulation_vertex_base_2<Gt> Vb;
   typedef CGAL::Triangulation_face_base_2<Gt>  Fb;
