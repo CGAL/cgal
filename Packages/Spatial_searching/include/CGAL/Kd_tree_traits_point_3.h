@@ -37,7 +37,6 @@ namespace CGAL {
     typedef typename K::Cartesian_const_iterator_3 Cartesian_const_iterator;
     typedef typename K::Construct_cartesian_const_iterator_3 Construct_cartesian_const_iterator;
     typedef typename K::Point_3 Point;
-    typedef Point** Point_iterator;
     typedef typename K::FT NT;
  
   };

@@ -95,7 +95,10 @@ namespace CGAL {
 	inline NT low_value() const { return low_val; }
   	inline NT high_value() const { return high_val; }
        
-        
+
+	  Separator& separator() {
+	    return sep;
+	  }
 	
 
 	unsigned int num_items() {

@@ -127,9 +127,9 @@ private:
     Point_container
       c_low = Point_container(c.dimension());
     
-    split(nh->sep, c, c_low);
+    split(nh->separator(), c, c_low);
 	        
-    int cd  = nh->sep.cutting_dimension();
+    int cd  = nh->separator().cutting_dimension();
     
     nh->low_val = c_low.bounding_box().min_coord(cd);
    
@@ -138,8 +138,8 @@ private:
     nh->high_val = c.bounding_box().max_coord(cd);
 
     
-    assert(nh->sep.cutting_value() >= nh->low_val);
-    assert(nh->sep.cutting_value() <= nh->high_val);
+    assert(nh->separator().cutting_value() >= nh->low_val);
+    assert(nh->separator().cutting_value() <= nh->high_val);
 
     
 
@@ -171,7 +171,7 @@ private:
     Point_container
     c_low = Point_container(c.dimension());
     
-    split(nh->sep, c, c_low);
+    split(nh->separator(), c, c_low);
 	        
     if (c_low.size() > split.bucket_size())
       nh->lower_ch = create_internal_node(c_low);
@@ -200,7 +200,7 @@ template <class InputIterator>
 	    Splitter s = Splitter()) : split(s) {
     assert(first != beyond);
     std::copy(first, beyond, std::back_inserter(pts));
-    Point p = *pts.begin();
+    const Point& p = *pts.begin();
     typename GeomTraits::Construct_cartesian_const_iterator ccci;
     int dim = std::distance(ccci(p), ccci(p,0)); 
 

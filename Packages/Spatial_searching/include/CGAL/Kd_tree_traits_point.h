@@ -35,7 +35,6 @@ namespace CGAL {
     typedef CartesianCoordinateIterator Cartesian_const_iterator;
     typedef ConstructCartesianCoordinateIterator Construct_cartesian_const_iterator;
     typedef Point_ Point;
-    typedef Point** Point_iterator;
     typedef NT_ NT;
     
   };
