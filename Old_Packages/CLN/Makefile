@@ -1,45 +1,24 @@
-#  Makefile for CGAL's CLN package. [Sylvain Pion]
+# Makefile for a CGAL package.
 
-.PHONY: doc package test submit version tag
+.PHONY: doc test submit
 
 Package:=$(shell basename `cat CVS/Repository`)
 TAG_VERSION:=v$(shell echo $(VERSION) | sed -e "s/\./_/g")
-CGAL_VERSION:="$(VERSION) ($(shell date '+%e %b %Y'))"
-WWW_base=/net/servers/www-sop/prisme/CGAL/DR:/Members
-WWW_dir=$(WWW_base)/$(Package)
-TMP_file=/tmp/submit-mail
+CGAL_VERSION:='$(VERSION) ($(shell date '+%e %b %Y'))'
 
-package: doc clean $(Package).tar.gz
-	@echo "----------------------------------"
-	@echo "------------ Penser à: -----------"
-	@echo "----------------------------------"
-	@echo "---- changes.txt              ----"
-	@echo "---- make test                ----"
-	@echo "---- make VERSION=1.0 version ----"
-	@echo "---- cvs commit               ----"
-	@echo "---- make VERSION=1.0 tag     ----"
-	@echo "---- make package             ----"
-	@echo "---- make submit              ----"
-	@echo "----------------------------------"
+all:
+	@echo "-----------------------------------"
+	@echo "---- edit changes.txt          ----"
+	@echo -n "---- the current version file contains : "
+	@cat version
+	@echo "---- make VERSION=X.XX submit  ----"
+	@echo "-----------------------------------"
 
-version:
+submit:
 	echo $(CGAL_VERSION) > version
-
-tag:
+	cvs commit -m "Bump for $(CGAL_VERSION)" version
 	cvs tag -c $(TAG_VERSION)
 	cvs tag -F -c current_submission
-
-submit: package
-	cp $(Package).tar.gz doc_ps/$(Package).ps version description.txt \
-	   changes.txt $(WWW_dir)
-	rm -f $(WWW_dir)/$(Package).ps.gz
-	gzip -9 $(WWW_dir)/$(Package).ps
-	echo > $(TMP_file)
-	echo "submission::" >> $(TMP_file)
-	echo "http://www-sop.inria.fr/prisme/CGAL/DR:/Members" >> $(TMP_file)
-	echo "/$(Package)/$(Package).tar.gz" >> $(TMP_file)
-	mail -s autohandle cgal-submit@cs.uu.nl $(USER) < $(TMP_file)
-	rm -f $(TMP_file)
 
 test:
 	$(MAKE) -C test/$(Package)
@@ -47,14 +26,6 @@ test:
 clean:
 	$(MAKE) -C doc_tex/support/NumberTypeSupport clean
 	$(MAKE) -C test/$(Package) clean
-	rm -f $(Package).tar.gz
-
-$(Package).tar.gz:
-	tar -zcvf $(Package).tar.gz \
-	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile --exclude=TODO \
-	--exclude="*".swp \
-	version description.txt changes.txt maintainer \
-	doc_tex doc_ps include examples test
 
 doc:
 	$(MAKE) -C doc_tex/support/NumberTypeSupport
