@@ -1,3 +1,7 @@
+2.5.4 (29 October 2002)
+- rename leftturn and co to left_turn and co.
+- make it work with GMP++.
+
 2.5.3 (17 January 2002)
 + Put some member functions inside the class definition to avoid bugs of
   the MSVC 6 compiler.
