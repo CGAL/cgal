@@ -1,0 +1,93 @@
+#! /net/bin/perl5 -T
+
+use strict;
+
+#--------------------------------------------------------------#
+# This script scans through the mail box $::MAILBOX, using procmail.
+# If a message contains a line with the format
+#
+# package: <URL>
+#
+# this package will be automatically downloaded, and the sender of
+# the message will be notified.
+#--------------------------------------------------------------#
+
+# the amount of time between subsequent scans of the mailbox
+#$::INCREMENT="30 minutes";
+
+# the mail boxes
+
+$::LOCKFILE='/projects/CGAL/submissions/autohandle/data/collect_submission.lock';
+$::MAIL_IN='/users/geert/PUBLIC/CGAL-submit/incoming-mail';
+#$::MAIL_OUT='/users/geert/tmp/handled-mail';
+$::MAIL_TMP='/users/geert/PUBLIC/CGAL-submit/temp-mail';
+$::SCRIPT='/projects/CGAL/submissions/autohandle/scripts/collect_submissions';
+$::MAINTAINER='cgal-submit@cs.uu.nl';
+
+# program locations
+$::FORMAIL='/projects/CGAL/submissions/autohandle/scripts/formail';
+$::treat_one_mail_program =
+'/projects/CGAL/submissions/autohandle/scripts/treat_submit_mail';
+$::LOCKCMD='/projects/CGAL/submissions/autohandle/scripts/lockfile';
+
+# the log file
+$::LOGFILE='/projects/CGAL/submissions/autohandle/data/collect_submissions.log';
+
+# 
+$::seconds_between_invocations=600;
+$::max_tries_between_warning= int 21600/$::seconds_between_invocations;
+
+$ENV{PATH}='/sbin:/usr/sbin:/usr/bsd:/bin:/usr/bin';
+
+$::please_die=0;
+
+sub termination_signal_handler {
+    $::please_die=1;
+    
+}
+
+$::tries = 1;
+while (1) {
+    $SIG{INT} = \&termination_signal_handler;
+    $SIG{TERM} = \&termination_signal_handler;
+    if ( system("$::LOCKCMD", "-r", '10', "$::LOCKFILE") != 0) {
+	--$::tries;
+	if ($::tries < 0) {
+	    open NOTICE, "|Mail -s \"Collect_submissions locked!\" $::MAINTAINER";
+	    print NOTICE <<"TOTHIER";
+The script $::SCRIPT could not proceed because
+it could not acquire the needed lock on file $::LOCKFILE.
+TOTHIER
+	    close NOTICE;
+	    $::tries = $::max_tries_between_warning;
+	}
+    } else {
+	$::tries = $::max_tries_between_warning;
+	open LOGFILE, ">>$::LOGFILE";
+	print LOGFILE "$$: Executing script on ", `date`, "\n";
+	close LOGFILE;
+    
+	if ( -f $::MAIL_TMP ) {
+	    open NOTICE, "|Mail -s \"Mail box $::MAIL_TMP was not emptied!\" $::MAINTAINER";
+print NOTICE <<"TOTHIER";
+	The script $::SCRIPT has been stopped!
+TOTHIER
+	    close NOTICE;
+	    unlink $::LOCKFILE;
+	    exit 1;
+	}
+	if ( -f $::MAIL_IN ) {
+	    rename($::MAIL_IN, $::MAIL_TMP);
+	    if (system("$::FORMAIL -ns $::treat_one_mail_program < $::MAIL_TMP")== 0 )
+	    {
+		unlink $::MAIL_TMP;
+	    }
+	}
+	unlink $::LOCKFILE;
+    }
+    $SIG{INT} = 'DEFAULT';
+    $SIG{TERM} = 'DEFAULT';
+    exit 1 if $::please_die;
+    sleep $::seconds_between_invocations;
+}
+

@@ -1,0 +1,377 @@
+#! /net/bin/perl5 -w
+
+use strict;
+use File::Find;
+use Cwd;
+# install_submission <sender> <url1> <url2> ...
+
+
+$::TESTING=0;
+
+
+umask 002;
+
+if ($::TESTING) {
+$::packagedir='/users/geert/tmp/inst_www/packages';
+$::oldpackagedir='/users/geert/tmp/inst_www/old_packages';
+$::download_dir='/users/geert/tmp/inst_www/download';
+$::maintainer='geert@cs.uu.nl';
+$::CONSOLE_OUTPUT=1;
+} else {
+$::packagedir='/users/www/CGAL/Members/Develop/updates/packages';
+$::oldpackagedir='/users/www/CGAL/Members/Develop/updates/old_packages';
+$::download_dir='/projects/CGAL/submissions/download';
+$::maintainer='geert@cs.uu.nl';
+$::CONSOLE_OUTPUT=0;
+}
+
+$ENV{PATH}=
+'/net/bin:/net/unsupported/bin:/sbin:/usr/sbin:/usr/bsd:/bin:/usr/bin:/usr/bin/X11';
+
+
+
+# logfile
+$::ACTUAL_LOGFILE='install_www_submission.log';
+
+# ----------------------------------------------------
+# program for getting files via http/ftp
+# GNU wget (see http://sunsite.auc.dk/ftp/pub/infosystems/wget/)
+
+$::WGET="/users/wieger/local/bin/wget -Y off -nd -P $::download_dir";
+
+
+
+# ----------------------------------------------------
+# You probably don't need to change anything beyond
+# ----------------------------------------------------
+#
+# write to logfile
+#
+
+sub log_header($)
+{
+    if ( $::CONSOLE_OUTPUT ) {
+        print "$_[0] ...\n";
+    }
+    print LOGFILE "-------------------------------------------------------\n";
+    print LOGFILE "  $_[0] ...\n";
+    printf LOGFILE "-------------------------------------------------------\n";
+}
+
+sub log_msg($)
+{
+    if ( $::CONSOLE_OUTPUT ) {
+        print  "$_[0] ...\n";
+    }
+    printf LOGFILE "  $_[0] ...\n";
+}
+
+sub log_done()
+{
+    if ( $::CONSOLE_OUTPUT ) {
+        print  " done\n-------------------------------------------------------\n"
+    }
+    print LOGFILE "-------------------------------------------------------\n";
+    print LOGFILE "  DONE\n";
+    print LOGFILE "-------------------------------------------------------\n";
+}
+
+sub print_usage()
+{
+    print STDERR "usage: $0 <sender> <url1> \n";
+}
+
+#sub strip_version()
+#{
+#  echo $* | $AWK '/^C2$/ { print; exit } \
+#                  /^C3$/ { print; exit } \
+#                  /^H2$/ { print; exit } \
+#                  /^H3$/ { print; exit } \
+#                  /^_2$/ { print; exit } \
+#                  /^_3$/ { print; exit } \
+#                  /^Convex_hull_3$/ { print; exit } \
+#                  /^Opti.*doc.*/ { print "Optimisation_doc"; exit } \
+#                  /^Opti.*imp.*/ { print "Optimisation_imp"; exit } \
+#                  { gsub("([0-9]|\\.)+[a-zA-Z]?$", ""); print; exit }'
+#}
+
+sub make_package_name($)
+{
+    $_ = $_[0];
+# remove the directory path
+    s|.*/||;
+# remove trailing blanks
+    s|\s*$||;
+# remove suffixes
+    s|\.gz$||;
+    s|\.tar$||;
+    s|\.zip$||;
+    s|\.tgz$||;
+# remove version
+#    s|([-\.\d]+)+[a-zA-Z]?$||;
+# or should that be
+    s|([-\.]\d+)+[a-zA-Z]?$||;
+    return $_;
+}
+
+sub create_package_dir()
+{
+    $::tempdir="$::packagedir/TMP$$";
+    mkdir($::tempdir, 0775) ;
+}
+
+sub unpack_package($)
+{
+    my ($full_file_name);
+    $full_file_name = shift;
+    chdir $::tempdir;
+    if ( $full_file_name =~ /\.tar\s*$/) {
+	system 'tar', 'xf', "$full_file_name";
+    } elsif ($full_file_name =~ /\.zip\s*$/) {
+	system('unzip', '-oqq', "$full_file_name");
+    } elsif ($full_file_name =~ /\.tgz\s*$/ or $full_file_name =~ /\.tar.gz\s*$/) {
+	system("gunzip -c $full_file_name | tar xf -");
+    } else {
+	return 0;
+    }
+    return !$?;
+}
+
+sub gzip_if_psfile
+{
+    if ($_ =~ /\.ps\s*/ and -f $_) {
+	system('gzip',"$_");
+    }
+}
+
+sub compress_psfiles()
+{
+    if (-d 'doc_ps') {
+	find(\&gzip_if_psfile, "doc_ps");
+    }
+}
+
+sub get_version($)
+{
+    open VERSION, $_[0] or return ();
+    while (<VERSION>) {
+	next if (/^\s*$/);
+	if ( /^\s*(\d+(?:[\.]\d+)*)\s*\((.*)\)\s*$/ ) {
+	    close VERSION;
+	    return ($1,$2);
+	}
+	close VERSION;
+	return ();
+    }
+    close VERSION;
+    return ();
+}
+
+sub check_version($)
+{
+    my $package_name = shift;
+    my ($new_version_string, $new_date, $old_version_string, $old_date, @nversion, @oversion);
+    ($new_version_string, $new_date) = get_version('version');
+    if (!defined($new_version_string)) {
+	log_msg "Failed to parse version file";
+	return 0;
+    }
+    ($old_version_string, $old_date) =
+	get_version("$::packagedir/$package_name/version");
+    if (!defined($old_version_string)) {
+	log_msg "No previous version";
+	return 1;
+    }
+    my ($new_nr,$old_nr);
+    @nversion = split /\./, $new_version_string;
+    @oversion = split /\./, $old_version_string;
+    while (@nversion) {
+	$new_nr = shift @nversion;
+	$old_nr = shift @oversion;
+	$old_nr = 0 if !defined($old_nr);
+	if ($new_nr < $old_nr) {
+	    log_msg "Version $new_version_string is not bigger than $old_version_string";
+	    return 0;
+	}
+	if ($new_nr > $old_nr) {
+	    return 1;
+	}
+    }
+    log_msg "Version $new_version_string is not bigger than $old_version_string";
+    return 0;
+}
+
+sub check_package($)
+{
+    if ( ! -f 'version' ) {
+	log_msg "ERROR: File version is missing!";
+	return 0;
+    }
+    if (!check_version($_[0]) ) {
+	log_msg "ERROR: version file does not pass the checks!";
+	return 0;
+    }
+    if ( ! -f 'description.txt' ) {
+	log_msg "WARNING: File description.txt is missing!";
+    }
+    
+    if ( ! -f 'changes.txt' ) {
+	log_msg "WARNING: File changes.txt is missing!";
+    }
+
+  # checks for correct headers, etc.
+    return 1;
+}
+
+sub compress_package($)
+{
+    my $package_name = shift;
+    compress_psfiles;
+    system 'zip', '-q', '-r', $package_name, glob("*");
+    return !$?;
+}
+
+sub remove_files()
+{
+    my ($file);
+    opendir THISDIR, "." or die;
+    foreach $file (readdir THISDIR) {
+	if (-d $file) {
+	    next if $file eq '.';
+	    next if $file eq '..';
+	    system 'rm', '-rf', "$file";
+	} elsif (-f $file) {
+	    next if $file =~ /\.zip$/;
+	    next if $file eq 'doc_ps';
+	    next if $file eq 'version';
+	    next if $file eq 'description.txt';
+	    next if $file eq 'long_description.txt';
+	    next if $file eq 'changes.txt';
+	    unlink $file;
+	}
+    }
+    closedir THISDIR;
+}
+
+sub move_packagedir($)
+{
+    my $package_name = shift;
+  # first remove the earlier version (if it exists)
+    if ( -d "$::oldpackagedir/$package_name" ) {
+#    log_msg "removing directory $::oldpackagedir/$package_name"
+	system('rm', '-rf', "$::oldpackagedir/$package_name");
+    }
+
+  # move existing version to old packages
+  if ( -d "$::packagedir/$package_name" ) {
+#    log_msg "moving directory $::packagedir/$package_name to $::oldpackagedir/$package_name"
+	rename("$::packagedir/$package_name",
+	    "$::oldpackagedir/$package_name") or die;
+    }
+
+#  log_msg "moving directory $::tempdir to $::packagedir/$package_name"
+    rename($::tempdir, "$::packagedir/$package_name") or die;
+
+    system 'chgrp', '-R', 'cgal', "$::packagedir/$package_name";
+    system 'chmod', '-R', 'ug+w', "$::packagedir/$package_name" ;
+}
+
+sub install_submission($)
+{
+    my ($file_name, $file_pathname, $package_name);
+    $file_name = shift;
+    $file_pathname = "$::download_dir/$file_name";
+    $package_name = make_package_name($file_name);
+    if ($package_name !~ /^[a-zA-Z_]\w*$/) {
+	log_msg "Filename $file_name was turned into the illegal package name $package_name";
+	return 0;
+    }
+
+    chdir($::tempdir);
+    if (! unpack_package( $file_pathname) ) {
+	log_msg("Failed to unpack $file_pathname");
+	return 0;
+    }
+
+    if (!check_package($package_name)) {
+	return 0;
+    }
+
+    if (!compress_package($package_name)) {
+	log_msg "ERROR: Failed to compress $file_name";
+	return 0;
+    }
+
+    remove_files;
+    move_packagedir($package_name);
+    return 1;
+}
+
+sub do_submission($)
+{
+    my ($url, $url_with_password,$FILE);
+    $url = shift;
+    $url_with_password = $url;
+    $url_with_password =~ s|http://|http://member1:cg4any1@|;
+
+    unlink glob("$::download_dir/*") if (! $::TESTING);
+    log_header "downloading $url";
+    system("$::WGET $url_with_password >> $::ACTUAL_LOGFILE 2>&1") if (! $::TESTING);
+    ($FILE) = ($url =~ m|^.*/(.*?)\s*$|);
+    if ( ! -f "$::download_dir/$FILE" ) {
+	log_msg "ERROR: download failed!";
+	return 0;
+    } 
+    
+    if (install_submission("$FILE") ) {
+	log_header "Package was successfully installed!";
+    } else {
+	log_header "ERROR: Installation of the package failed!";
+	return 0;
+    }
+    return 1;
+}
+
+
+#-----------------------------------
+#
+# main loop
+#
+#-----------------------------------
+
+$SIG{INT}='IGNORE';
+$SIG{QUIT} = 'IGNORE';
+$SIG{TERM} = 'IGNORE';
+
+unlink $::ACTUAL_LOGFILE;
+system("echo >$::ACTUAL_LOGFILE");
+open LOGFILE, ">$::ACTUAL_LOGFILE";
+
+if ($#ARGV < 1) {
+    print_usage;
+    exit 1;
+}
+
+$::SENDER=shift;
+$::starting_directory = cwd();
+foreach $::submission ( @ARGV) {
+    if (!create_package_dir) {
+	log_msg "Failed to create temporary directory";
+	exit 1;
+    }
+    do_submission($::submission);
+    chdir($::starting_directory);
+    if (-d "$::tempdir") {
+	system('rm', '-rf', "$::tempdir");
+    }
+}
+
+close LOGFILE;
+system "cat $::ACTUAL_LOGFILE | Mail -s \"CGAL submissions @ARGV\" $::maintainer" if !$::TESTING;
+system "cat $::ACTUAL_LOGFILE | Mail -s \"CGAL submission @ARGV\" $::SENDER";
+
+unlink $::ACTUAL_LOGFILE;
+
+exit 0;
+
+

@@ -1,0 +1,417 @@
+#!/net/bin/perl5 -w
+
+use strict;
+use Cwd;
+use File::Copy;
+use File::Basename;
+use File::Find;
+#
+# This script creates an internal release for CGAL.
+
+#----------------------------------------------------------------#
+#                     initialization                             #
+#----------------------------------------------------------------#
+
+$::CURRENT_DIR=cwd();
+#$::FTPDIR='/users/ftp/CGAL';
+#$::DIRNAME=dirname($0);
+$::TEMPFILE="TEMPFILE.$$";
+$::PACKAGEDIR='/users/www/CGAL/Members/Develop/updates/packages';
+$::MISCPACKAGEDIR='/users/www/CGAL/Members/Develop/updates/packages';
+$::SCRIPTDIR='/users/www/CGAL/Members/Develop/scripts';
+$::ALL_RESULTS_DIR='/users/www/CGAL/Members/Develop/testsuite';
+#$::VERSION="";
+#$::VERSION_NR=0;
+
+#$::PACKAGEDIR='/users/geert/CGAL/tmp/packages';
+#$::ALL_RESULTS_DIR='/users/geert/CGAL/tmp/results';
+
+$::LOCKFILE='/projects/CGAL/submissions/autohandle/data/collect_submission.lock';
+$::LOCKCMD='/projects/CGAL/submissions/autohandle/scripts/lockfile';
+
+$::last_version_file = '/projects/CGAL/lib/last_internal_release'; 
+
+#----------------------------------------------------------------#
+#                     unzip_files                                #
+#----------------------------------------------------------------#
+#
+# unzip_files <zipfile> <directories>
+#
+
+sub unzip_files($@)
+{
+    my $package = shift;
+    my ($ITEM, @zip_contents,@to_unzip,$zipped_file);
+    @zip_contents = `unzip -l $package`;
+    shift @zip_contents;
+    shift @zip_contents;
+    pop @zip_contents;
+    pop @zip_contents;
+    foreach $ITEM (@_) {
+	foreach $zipped_file (@zip_contents) {
+	    if ( $zipped_file =~ m|(\b$ITEM.*\b)| ) {
+		push(@to_unzip,($1));
+	    }
+	}
+    }
+    system('unzip', '-qq', $package, @to_unzip);
+}
+
+#----------------------------------------------------------------#
+#                     get_file_type                              #
+#----------------------------------------------------------------#
+
+sub get_file_type($)
+{
+    open SOURCE_FILE, shift;
+    while ( <SOURCE_FILE> ) {
+	if ( /^Copyright \(c\) 1997|8 The CGAL Consortium/ ) {
+	    return 1;
+	}
+	if ( /^\/\/ Copyright \(c\) 1997|8 The CGAL Consortium/ ) {
+	    return 2;
+	}
+    }
+    return 0;
+}
+
+#----------------------------------------------------------------#
+#                     set_filename                               #
+#----------------------------------------------------------------#
+
+sub set_filename($$)
+{
+    my $filename = shift;
+    my $filename_with_dir = shift;
+    unlink $::TEMPFILE;
+    open SOURCE_FILE, "<$filename" || die "Error opening $filename_with_dir: $!\n";
+    open TEMPFILE, ">$::TEMPFILE" || die;
+    while ( <SOURCE_FILE> ) {
+	s|^\s*//\s*file\s*:.*|// file          : $filename_with_dir|;
+	print TEMPFILE $_;
+    }
+    close SOURCE_FILE || die "Error closing $filename_with_dir: $!";
+    close TEMPFILE || die "Error closing temporary file: $!\n";
+    rename($::TEMPFILE, $filename )
+    || system('mv', "$::TEMPFILE", "$filename")
+    || warn "Could not update file $filename_with_dir\n";
+}
+
+#----------------------------------------------------------------#
+#                     set_file_headers                           #
+#----------------------------------------------------------------#
+#
+# replace the old style headers with new ones
+#
+
+#sub set_header($)
+#{
+#    my $filename = shift;
+#    unlink $::TEMPFILE
+#    awk -f ../$DIRNAME/set_header.awk $FILE > $TEMPFILE
+#    rename $::TEMPFILE, $FILE
+#}
+
+sub set_file_headers()
+{
+    chdir $::CURRENT_DIR;
+    find(\&file_header_setting, 'include', 'src',
+        glob("config/testfiles/CGAL_CFG*"));
+}
+
+sub file_header_setting
+{
+    my ($filename,$dev,$ino,$mode,$nlink,$uid,$gid,$filetype);
+    $filename = $_;
+    if ( ! /\.[h|C]$/ ||
+	! (($dev,$ino,$mode,$nlink,$uid,$gid) = lstat($filename)) ||
+	! -f _ ) {
+	return;
+    }
+    $filetype = get_file_type($filename);
+    if ($filetype == 0)
+	{warn "$filename has unrecognized header.\n"; }
+    elsif ($filetype == 0)
+	{ warn "$filename has old style header.\n"; }
+    else {
+	set_filename($filename, $File::Find::name);
+	system("$::SCRIPTDIR/create_internal_release_file2 $filename $::VERSION");
+    }
+}
+
+#---------------------------------------------------------------#
+# set the headers
+#---------------------------------------------------------------#
+
+sub SetFileHeaders()
+{
+    print "Setting file headers...\n";
+    chdir $::CURRENT_DIR;
+    set_file_headers;
+    unlink(glob("include/CGAL/*.bak"));
+    unlink (glob("include/CGAL/*/*.bak"));
+    unlink (glob("src/*.bak"));
+    unlink (glob("config/testfiles/*.bak"));
+}
+
+#---------------------------------------------------------------#
+# set the version information in the config.h include file.
+#---------------------------------------------------------------#
+
+sub set_version_in_config()
+{
+    my $V = substr($::VERSION,5);
+    chdir "$::CURRENT_DIR/include/CGAL" or die;
+    open(SOURCE_FILE, '<config.h') or die "Error opening config.h: $!";
+    open(TEMPFILE, ">$::TEMPFILE") or die;
+    while ( <SOURCE_FILE> ) {
+	s|^\s*\#\s*define\s+CGAL_VERSION\b.*$|#define CGAL_VERSION $V|;
+	s|^\s*\#\s*define\s*CGAL_VERSION_NR\b.*$|#define CGAL_VERSION_NR $::VERSION_NR|;
+	print TEMPFILE $_;
+    }
+    close SOURCE_FILE || die "Error closing config.h_with_dir: $!";
+    close TEMPFILE || die "Error closing temporary file: $!\n";
+    rename($::TEMPFILE, 'config.h' )
+    || system('mv', "$::TEMPFILE", 'config.h')
+    || warn "Could not update file config.h";
+    chdir '../..' or die;
+}
+
+#---------------------------------------------------------------#
+# CreateExampleTestDirs
+#---------------------------------------------------------------#
+
+sub CreateExampleTestDirs()
+{
+    my $DIR;
+    print "Creating example test directories ...\n";
+    chdir 'examples' or return;
+    foreach $DIR (glob("*")) {
+	print "$DIR\n";
+	if ( -d $DIR ) {
+	    system('cp', '-r', "$DIR", "../test/Examples$DIR");
+#	    mkdir("$::THIS_RELEASE_RESULTS/Examples$DIR", 0775);
+#	    if ( -f 'version' ) {
+#		copy('version', $::THIS_RELEASE_RESULTS/Examples$DIR);
+#	    }
+	}
+    }
+    chdir '..';
+}
+
+#---------------------------------------------------------------#
+# list_test_directories
+#---------------------------------------------------------------#
+# list_test_directories <package>
+#
+# drukt de testdirectories af die in de submission aanwezig zijn
+
+sub list_test_directories($)
+{
+    my $filename = shift;
+    my (@zip_contents,$zipped_file,%test_dirs);
+    @zip_contents = `unzip -l $filename`;
+    shift @zip_contents;
+    shift @zip_contents;
+    pop @zip_contents;
+    pop @zip_contents;
+    foreach $zipped_file (@zip_contents) {
+	if ( $zipped_file =~ m|\btest/([^/\n]+)| ) {
+	    $test_dirs{$1} = 1;
+	}
+    }
+    return keys %test_dirs;
+}
+
+#---------------------------------------------------------------#
+# install_packages
+#---------------------------------------------------------------#
+# install_packages
+
+sub install_packages()
+{
+    my ($filenaam, $direc);
+    @_ = glob("$::PACKAGEDIR/*/*.zip");
+#really should use readdir and exlude certain directories that are marked as
+#such.
+    print "Installing packages ...\n";
+    foreach $filenaam (@_) {
+	print "$filenaam\n";
+        unzip_files("$filenaam", "include", "test", "examples", "demo", "src", "version","doc_tex");
+	foreach $direc ( list_test_directories($filenaam)) {
+	    if ( -f 'version' && -d "test/$direc" && ! -f "test/$direc/version") {
+		copy('version', "test/$direc");
+#		mkdir("$::THIS_RELEASE_RESULTS/$direc", 0775);
+#		copy('version', "$::THIS_RELEASE_RESULTS/$direc");
+	    }
+	    if ( -f 'version' && -d "examples/$direc"
+		&& ! -f "examples/$direc/version") {
+		copy('version', "examples/$direc");
+	    }
+	}
+	unlink 'version';
+    }
+}
+
+#---------------------------------------------------------------#
+# install_misc
+#---------------------------------------------------------------#
+
+sub install_misc()
+{
+  system 'unzip', '-o', "$::MISCPACKAGEDIR/Auxiliary/Auxiliary.zip";
+  system 'unzip', '-o', "$::MISCPACKAGEDIR/Configuration/Configuration.zip";
+  system 'unzip', '-o', "$::MISCPACKAGEDIR/Installation/Installation.zip";
+  system 'unzip', '-o', "$::MISCPACKAGEDIR/Scripts/Scripts.zip";
+
+  unlink 'version', 'description.txt', 'long_description.txt', 'changes.txt';
+}
+
+#---------------------------------------------------------------#
+# make_testscripts
+#---------------------------------------------------------------#
+
+sub make_testscripts()
+{
+    my ($DIR, $BASEDIR);
+    $BASEDIR = cwd();
+print "In make_testscripts\n";
+    chdir 'test';
+    foreach $DIR (glob("*")) {
+	if ( -d $DIR ) {
+	    print "checking makefile and cgal_test in $DIR\n";
+	    chdir $DIR;
+	    if ( ! -f 'makefile' ) {
+		print "creating makefile ...\n";
+		system("$::SCRIPTDIR/create_makefile", '-t');
+	    }
+	    if ( ! -f 'cgal_test' ) {
+		print "creating cgal_test ...\n";
+		system("$::SCRIPTDIR/create_cgal_test");
+	    }
+	    chdir '..';
+	}
+    }
+    chdir $BASEDIR;
+}
+
+
+#---------------------------------------------------------------#
+# make_results_page
+# Create a directory (with subdirectories) where the results are to be put.
+# Copy the version files of the packages used for this release to
+# the result directories.
+#---------------------------------------------------------------#
+
+sub make_results_page()
+{
+    my $direc;
+    $::THIS_RELEASE_RESULTS = "$::ALL_RESULTS_DIR/$::VERSION";
+    mkdir "$::THIS_RELEASE_RESULTS", 0775
+    || die "Cannot create test results directory";
+    chdir ("$::CURRENT_DIR/test") or return;
+    foreach $direc (glob("*")) {
+	if ( -d "$direc" &&  -f "$direc/version" ) {
+	    mkdir("$::THIS_RELEASE_RESULTS/$direc", 0775);
+	    copy("$direc/version", "$::THIS_RELEASE_RESULTS/$direc")
+	    or warn "Could not copy test/$direc/version to $::THIS_RELEASE_RESULTS/$direc $!";
+	}
+    }
+}
+
+#---------------------------------------------------------------#
+# check_call
+#
+# checks if this program is called with the right arguments,
+# in particular if the version number is high enough.
+#---------------------------------------------------------------#
+
+sub wrong_usage()
+{
+    print STDERR "usage: $0  <version-no>\n";
+    print STDERR "   where version-no is <major>-<minor>-<internal>\n";
+    print STDERR "   E.g.: $0 2-3-12\n";
+}
+
+sub check_call()
+{
+    my ($major, $minor, $internal);
+    if ($#ARGV !=0) {
+	wrong_usage();
+	exit(1);
+    }
+    if ( ($major, $minor, $internal) =
+	    ($ARGV[0] =~ m/^(\d{1,3})-(\d{1,3})-(\d{1,2})$/)) {
+	$major = $major + 0;
+	$minor = $minor + 0;
+	$internal = $internal + 0;
+	$::VERSION_NR = ((1000 + $major)*1000 + $minor)*1000 + $internal;
+	$::VERSION = "CGAL-$major.$minor-I-$internal";
+    } else {
+	wrong_usage();
+	die "Illegal version number $ARGV[0]";
+    }
+    print "Version: $::VERSION ($::VERSION_NR)\n";
+    open VERSION, $::last_version_file or return;
+    $_ = <VERSION>;
+    defined($_) or die "corrupted file $::last_version_file";
+    close VERSION;
+    /\s*(\d+)\s*(\d+)\s*(\d+)\s*$/ or die "corrupted file $::last_version_file";
+    die "major version number too low" if ( $major < $1);
+    if ($major == $1) {
+	die "minor version number too low" if ( $minor < $2);
+	if ($minor == $2) {
+	    die "internal version number too low" if ( $internal <= $3);
+	}
+    }
+    open VERSION, ">$::last_version_file" or die;
+    print VERSION "$major $minor $internal\n" or die;
+    close VERSION or die;
+}
+
+sub termination_signal_handler {
+    unlink $::LOCKFILE;
+    exit 1;
+}
+
+sub lock()
+{
+    if (system("$::LOCKCMD", "-r", '10', "$::LOCKFILE") != 0) {
+	print STDERR <<"TOTHIER";
+The script could not proceed because
+it could not acquire the needed lock on file $::LOCKFILE.
+TOTHIER
+	exit 1;
+    }
+    $SIG{INT} = \&termination_signal_handler;
+    $SIG{TERM} = \&termination_signal_handler;
+}
+
+sub unlock()
+{
+    unlink $::LOCKFILE;
+    $SIG{INT} = 'DEFAULT';
+    $SIG{TERM} = 'DEFAULT';
+}
+
+
+
+umask(002);
+if ($::CURRENT_DIR ne '/private') {
+    die "$0 should only be called from directory /private on goya.\n";
+}
+check_call;
+mkdir "$::VERSION",0775 or die;
+chdir $::VERSION or die;
+$::CURRENT_DIR=cwd();
+lock;
+
+install_packages();
+install_misc;
+unlock;
+CreateExampleTestDirs;
+make_testscripts;
+SetFileHeaders;
+set_version_in_config;
+make_results_page;
+

@@ -1,0 +1,227 @@
+#!/net/bin/perl5 -w
+
+use strict;
+
+$::treated_messages_log =
+	'/projects/CGAL/submissions/autohandle/data/treated_submit_messages';
+$::install_submission_program =
+#	'/projects/CGAL/submissions/install_www_submission';
+	'/projects/CGAL/submissions/autohandle/scripts/install_www_submission';
+
+$::receive_testresult_program =
+	'/users/geert/tmp/echo_to_log';
+$::update_submissions_www_page_program =
+	'/projects/CGAL/submissions/create_update_page';
+$::maintainer= 'geert@cs.uu.nl';
+$::no_of_succesful_submissions = 0;
+
+@::trusted_hosts = ('cs.uu.nl','inria.fr','risc.uni-linz.ac.at',
+'inf.ethz.ch','mpi-sb.mpg.de','inf.fu-berlin.de','math.tau.ac.il');
+
+sub get_url()
+{
+    my $html_address="";
+    while (<>) {
+	chomp;
+	if (/^\s*$/) {
+	    return $html_address;
+	}
+	s/\s//g;
+	$html_address .= $_;
+	if ($html_address =~ /\.tar\.gz$/) {
+	    return $html_address;
+	}
+	if ($html_address =~ /\.tgz$/) {
+	    return $html_address;
+	}
+	if ($html_address =~ /\.zip$/) {
+	    return $html_address;
+	}
+    }
+    return "";
+}
+
+sub is_trusted_url($)
+{
+    my $URL = shift;
+    foreach (@::trusted_hosts) {
+	if ($URL =~ m|^\s*http://www.$_/|) {
+	    return 1;
+	}
+    }
+    return 0;
+}
+
+sub is_trusted_sender($)
+{
+    my $sender = shift;
+    foreach (@::trusted_hosts) {
+	if ($sender =~ m|$_\s*$|) {
+	    return 1;
+	}
+    }
+    return 0;
+}
+
+sub is_trusted_url_1($)
+{
+    my $URL = shift;
+    if ($URL =~ m|^\s*http://www.cs.uu.nl/|) {
+	return 1;
+    }
+    elsif ($URL =~ m|^\s*http://www.inria.fr/|) {
+	return 1;
+    }
+    elsif ($URL =~ m|^\s*http://www.risc.uni-linz.ac.at/|) {
+	return 1;
+    }
+    elsif ($URL =~ m|^\s*http://www.inf.ethz.ch/|) {
+	return 1;
+    }
+    elsif ($URL =~ m|^\s*http://www.mpi-sb.mpg.de/|) {
+	return 1;
+    }
+    elsif ($URL =~ m|^\s*http://www.inf.fu-berlin.de/|) {
+	return 1;
+    }
+    elsif ($URL =~ m|^\s*http://www.math.tau.ac.il/|) {
+	return 1;
+    }
+    return 0;
+}
+
+sub treat_submission($)
+{
+    my ($URL,$option);
+    $option = shift;
+    $URL = get_url;
+    if ($URL eq "") {
+# mail $::Sender that something went wrong.
+# do the same to maintainer.
+	    open NOTICE, "|Mail -s \"CGAL autohandle failure!\" $::Sender";
+	    print NOTICE <<"TOTHIER";
+Your submission (or one of your submissions) had an unrecognized URL.
+The URL should be on a separate line, directly following the line
+with the submission keyword, e.g as in:
+
+submission::
+http://www.mysite.mycountry/mypackage.zip
+
+Please resend your request or send a message to cgal-submit asking for more
+information.
+
+TOTHIER
+close NOTICE;
+	return;
+    }
+    if (! is_trusted_url($URL)) {
+	    open NOTICE, "|Mail -s \"Untrusted URL!\" $::maintainer";
+	    print NOTICE <<"TOTHIER";
+The submission with URL
+$URL
+is not trusted and did not proceed.
+Please take manual action.
+
+TOTHIER
+close NOTICE;
+	return;
+    }
+    if (system("$::install_submission_program", "$::Sender", "$URL") == 0)
+    {     ++$::no_of_succesful_submissions; }
+}
+
+sub treat_testresult($)
+{
+    my ($URL,$release);
+    $release = shift;
+    $URL = get_url;
+    if (!$URL) {
+# mail $::Sender that something went wrong.
+# do the same to maintainer.
+	return;
+    }
+    if (! is_trusted_url($URL)) {
+	    open NOTICE, "|Mail -s \"Untrusted URL!\" $::maintainer";
+	    print NOTICE <<"TOTHIER";
+The Testresult with URL
+$URL
+is not trusted and did not proceed.
+Please take manual action.
+
+TOTHIER
+close NOTICE;
+	return;
+    }
+    system("$::receive_testresult_program", "$release", "$::Sender", "$URL");
+}
+
+sub message_processed($)
+{
+    my $message_id = shift;
+    open(TREATED_MESSAGES, "<$::treated_messages_log");
+    while (<TREATED_MESSAGES>) {
+	chomp;
+	if ($message_id eq $_) {
+	    close TREATED_MESSAGES;
+	    return 1;
+	}
+    }
+    close TREATED_MESSAGES;
+    open(TREATED_MESSAGES, ">>$::treated_messages_log");
+    print TREATED_MESSAGES "$message_id\n";
+    close TREATED_MESSAGES;
+    return 0;
+}
+
+sub main()
+{
+    my ($from);
+    $_ = <>;
+    chomp;
+    ($from, $::Sender) = split;
+    if ($from ne "From") {
+	exit 1;
+    }
+    
+    $::Sender =~ s/\s*//g;
+    if (!is_trusted_sender($::Sender)) {
+	    open NOTICE, "|Mail -s \"Untrusted sender!\" $::maintainer";
+	    print NOTICE <<"TOTHIER";
+The submission with sender
+$::Sender
+is not trusted and did not proceed.
+-------------- start of message --------------
+TOTHIER
+    while(<>) {
+	print NOTICE $_;
+    }
+    print NOTICE "-------------- end of message --------------\n";
+close NOTICE;
+	exit 1;
+    }
+
+    while(<>) {
+	if (/^\s*Message-ID\s*:\s*(.*?)\s*$/) {
+	    last if message_processed($1);
+	}
+	elsif (/^\s*submission\s*:\s*([^:]*?)\s*:\s*$/) {
+	    treat_submission($1);
+	}
+	elsif (/^\s*testresult\s*:\s*([^:]*?)\s*:\s*$/){
+	    treat_testresult($1);
+	}
+    }
+    if ($::no_of_succesful_submissions > 0) {
+	system($::update_submissions_www_page_program);
+    }
+}
+
+# don't break off processing of a message
+
+$SIG{INT}='IGNORE';
+$SIG{QUIT} = 'IGNORE';
+$SIG{TERM} = 'IGNORE';
+
+main;
+exit 0;
+
