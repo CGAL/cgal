@@ -51,7 +51,7 @@ public:
 	    dbc = to_double(distance(b,c)),
 	    dca = to_double(distance(c,a));
 
-	  return ((dab > SB) || (dbc > SB) || (dca > SB));
+	  return ((dab > SB*SB) || (dbc > SB*SB) || (dca > SB*SB));
 	}
     };
   };
