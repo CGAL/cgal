@@ -47,7 +47,7 @@
 
 \chapter{Alpha-Shapes} \label{I1_ChapterAlphashapes}
 
-\ccChapterSubTitle{\alphashapeRevision, \alphashapeDate}
+%\ccChapterSubTitle{\alphashapeRevision, \alphashapeDate}
 
 \section{Introduction}
 
@@ -460,12 +460,11 @@ the points \ccc{p0, p1}, using the same metric as \ccc{Dt}.}
 
 \section*{Triangulation Data Structure Class (\mbox{\it Tds}) for an Alpha-Shape}
 
-The class \ccc{Alpha_shape_2<Dt>} parameterized with a
-triangulation data structure class \ccc{Tds}, that has exactly the same
-requirements as the triangulation data structure class for a simple
-triangulation.  
+The underlying triangulation \ccc{Dt} is parameterized with her
+triangulation data structure class \ccc{Tds}, that has no additional
+requirements. In fact, the requirements are on the \ccc{Tds} parameters.
 
-But, she requires to be templated by special \ccc{Alpha_shape_vertex_base} and
+She requires to be templated by special \ccc{Alpha_shape_vertex_base} and
 \ccc{Alpha_shape_face_base<Df>}, to store the alpha values associated. Thus, we need to
 define the requirements of such \ccc{Alpha_shape_vertex_base} and
 \ccc{Alpha_shape_face_base<Df>} classes.
