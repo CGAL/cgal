@@ -1,7 +1,12 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-Ver 4,42 (8 June 00)
+Ver 4.43 (15 June 00)
+Fixed the predicates 
+ oriented_side(...) and  bounded_side(...)
+in Triangulation_2.h. They were wrong when the query point was a vertex.
+
+Ver 4.42 (8 June 00)
 Changed the traits classes to make them agree with the Kernel traits.
 Separate the Constrained_triangulation class dealing with
 intersecting constraints from the version which do not.
