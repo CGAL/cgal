@@ -37,9 +37,11 @@ public:
   class Is_bad: public Base::Is_bad
   {
   public:
-    typedef Base::Is_bad::Point_2 Point_2;
-    typedef Base::Is_bad::Traits Traits;
-    typedef Base::Base PreviousBase;
+    typedef typename Base::Is_bad Baseclass;
+    typedef typename Baseclass::Point_2 Point_2;
+    typedef typename Baseclass::Traits Traits;
+    typedef typename Base::Base PreviousBase;
+    typedef typename PreviousBase::Is_bad PreviousBaseclass;
 
   private:
     const bool local;
@@ -63,7 +65,7 @@ public:
 	  typename Traits::Orientation_2 orient = 
 	    Traits().orientation_2_object();
 	  
-	  if(PreviousBase::Is_bad::operator()(a,b,c))
+	  if(PreviousBaseclass::operator()(a,b,c))
 	    return true;
 	  Orientation 
 	    o1 = orient(a,b,p),

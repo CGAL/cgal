@@ -40,8 +40,9 @@ public:
   typedef typename T::Finite_faces_iterator Finite_faces_iterator;
   typedef typename T::Locate_type     Locate_type;
   typedef typename T::Face_handle     Face_handle;
-  typedef typename T::Geom_traits::Circle_2 Circle;
-  typedef typename T::Geom_traits::FT		FT;
+  typedef typename T::Geom_traits GT;
+  typedef typename GT::Circle_2 Circle;
+  typedef typename GT::FT		FT;
 
   Qt_layer_show_circles(T &t, QLabel& l) : tr(t), label(l),
     do_erase(false) {};

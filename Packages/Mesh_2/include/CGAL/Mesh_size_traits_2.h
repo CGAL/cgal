@@ -34,9 +34,9 @@ public:
 	   const double size_bound)
       : Base::Is_bad(aspect_bound), SB(size_bound) {};
 
-    bool operator()(const Point_2& a,
-		    const Point_2& b,
-		    const Point_2& c) const
+    bool operator()(const typename Base::Point_2& a,
+		    const typename Base::Point_2& b,
+		    const typename Base::Point_2& c) const
     {
       if(Base::Is_bad::operator()(a,b,c))
 	return true;
