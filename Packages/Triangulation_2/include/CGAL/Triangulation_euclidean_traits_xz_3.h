@@ -80,14 +80,13 @@ public:
         return CGAL_orientationC2(x(p), y(p), x(q), y(q), x(r), y(r));
       }
     
-    
-    CGAL_Orientation extremal(const Point &p,
+     CGAL_Orientation extremal(const Point &p,
                               const Point &q,
                               const Point &r) const
       {
-        if (p==q) return CGAL_COLLINEAR;
-        if (p==r) return CGAL_COLLINEAR;
-        if (r==q) return CGAL_COLLINEAR;
+        if (compare(p,q)) return CGAL_COLLINEAR;
+        if (compare(p,r)) return CGAL_COLLINEAR;
+        if (compare(r,q)) return CGAL_COLLINEAR;
     
         return CGAL_orientationC2(x(p), y(p), x(q), y(q), x(r), y(r));
       }
@@ -97,16 +96,16 @@ public:
                                                const Point &r,
                                                const Point &s) const
       {
-        if (p==s) return CGAL_ON_ORIENTED_BOUNDARY;
-        if (q==s) return CGAL_ON_ORIENTED_BOUNDARY;
-        if (r==s) return CGAL_ON_ORIENTED_BOUNDARY;
+        if (compare(p,s)) return CGAL_ON_ORIENTED_BOUNDARY;
+        if (compare(q,s)) return CGAL_ON_ORIENTED_BOUNDARY;
+        if (compare(r,s)) return CGAL_ON_ORIENTED_BOUNDARY;
     
         return CGAL_side_of_oriented_circleC2(x(p), y(p),
                                               x(q), y(q),
                                               x(r), y(r),
                                               x(s), y(s));
       }
-    
+        
     
     class Distance : public CGAL_Distance_2<Traits> {
     public:
