@@ -1,5 +1,6 @@
 // examples/Pm_with_intersections/example4
 // ---------------------------------------
+#include <CGAL/basic.h>
 #include <algorithm>
 #include <list>
 #include <iostream>
@@ -9,7 +10,6 @@
 
 #include "short_names.h"
 
-#include <CGAL/basic.h>
 
 #define CGAL_SEGMENT_TRAITS          1
 #define CGAL_SEGMENT_LEDA_TRAITS     2
