@@ -1,3 +1,6 @@
+2.50    (17 Apr 2002)
+- corrected doc of LessSignedDistanceToLine_2
+
 2.49    (17 Apr 2002)
 - added sentence in Choosing a kernel about Filtered_kernel and fixed typos
   in number type concepts.
