@@ -33,7 +33,6 @@ _test_fct_coplanar_3(const R& )
 {
   typedef typename R::RT     RT;
   typedef CGAL::Point_3<R>   Point;
-  typedef CGAL::Vector_3<R>  Vector;
     RT RT0(0);
     RT RT1(1);
     RT RT2(2);
@@ -47,9 +46,15 @@ _test_fct_coplanar_3(const R& )
   Point r = Point( RT3, RT1, RT3, RT6);
   Point s = p + (q - r);
   assert( CGAL::coplanar( p,q,r,s));
-  assert( CGAL::coplanar_orientation( p,q,r,s) == CGAL::NEGATIVE);
+  assert( CGAL::coplanar_orientation( p,q,r,s) == CGAL::NEGATIVE );
   assert( CGAL::coplanar_orientation( p,q,s,r) == CGAL::NEGATIVE );
   assert( CGAL::coplanar_orientation( p,q,r,r) == CGAL::POSITIVE );
+  assert( CGAL::coplanar_side_of_oriented_circle( p,q,r,s) ==
+          CGAL::ON_NEGATIVE_SIDE );
+  assert( CGAL::coplanar_side_of_oriented_circle( q,p,r,s) ==
+          CGAL::ON_NEGATIVE_SIDE );
+  assert( CGAL::coplanar_side_of_oriented_circle( r,q,p,s) ==
+          CGAL::ON_NEGATIVE_SIDE );
   s = p + RT2*( q - p);
   assert( CGAL::coplanar_orientation( p,q,r,s) == CGAL::COLLINEAR );
   s = p - (q - r);

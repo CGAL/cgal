@@ -412,6 +412,11 @@ test_new_3(const R& rep)
         = rep.coplanar_orientation_3_object();
   Orientation tmp30a = coplanar_orientation(p7,p8,p9,p10);
 
+  typename R::Coplanar_side_of_oriented_circle_3
+           coplanar_side_of_oriented_circle
+        = rep.coplanar_side_of_oriented_circle_3_object();
+  Oriented_side tmp30b = coplanar_side_of_oriented_circle(p7,p8,p9,p10);
+
   typename R::Orientation_3 orientation
         = rep.orientation_3_object();
   Orientation tmp31 = orientation(p2,p3,p4,p5);
@@ -496,7 +501,7 @@ test_new_3(const R& rep)
   use(tmp29); use(tmp27); use(tmp25); use(tmp24); use(tmp23); use(tmp22);
   use(tmp15); use(tmp14); use(tmp13); use(tmp12b); use(tmp12a);
   use(tmp16); use(tmp17); use(tmp18); use(tmp19); use(tmp20); use(tmp21);
-  use(tmp26); use(tmp28); use(tmp30a); use(tmp34ab); 
+  use(tmp26); use(tmp28); use(tmp30a); use(tmp30b); use(tmp34ab); 
   
 
   return true;

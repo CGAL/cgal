@@ -1,3 +1,6 @@
+3.17   (13 Apr 2001)
+- coplanar_side_of_oriented_circle(p,q,r,t).
+
 3.16   (23 Mar 2001)
 - Add Construct_center_[23].
 
