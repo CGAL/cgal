@@ -35,11 +35,7 @@ Concerning the new stuff:
 
 Concerning the code itself:
 ---------------------------
-- Look at "mutable" stuff, Stroustrup, page 232.
-- Optimize is_valid():
-  - do proper testing of all configurations.
-  - testing is_valid(inf) && is_valid(sup) should not be necessary, it should
-    be possible to combine them in the last unique test... ;)
+- Mark the cache as "mutable" (see Stroustrup, page 232) ?
 - Replace the NT wrapping, by Filtered_Cartesian<FT>, a new kernel ?
   this would be cleaner, and won't rely on some optimizations in the compiler.
   (same thing for Fixed)
@@ -49,7 +45,6 @@ Concerning the code itself:
   It could maybe be made better this way:
     void convert_from_to(Target &, const Source &) ?
   Suggest that to Stefan for misc.h ?
-- Handle new predicates/kernel_ftC?.h files.
 ? GYGWIN square_root_test() bug: it disappears with -O2.  It's a bug in the
   non-inline version of std::sqrt().  Hopefully it is fixed in CygWin 2.95.
 - Essayer "attribute(noreturn)" pour overlap_action().
@@ -69,7 +64,6 @@ Concerning the code itself:
 ? convert_to à faire pour: long double, long long (CGAL..._64), CLN.
 - Use friend functions for operator+(IA,IA), because this way, there's no need
   for a special version for double...
-- Mark the cache as "mutable" ?
 - Have a look at the "function-try-blocks" ?
 
 Concerning the script:

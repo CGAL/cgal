@@ -78,10 +78,10 @@ bool overflow_test()
   IA_nt c (-2,2), d(-2.1,2.1);
   IA_nt e (-2,2), f(2), g(-2);
 
-  DEBUG( std::cout << "+infinity = " << HUGE_VAL; )
-  DEBUG( std::cout << "  maxdouble = " << CGAL_IA_MAX_DOUBLE << std::endl; )
-  DEBUG( std::cout << "largest = " << CGAL_IA_LARGEST << std::endl; )
-  DEBUG( std::cout << "smallest = " << CGAL_IA_SMALLEST << std::endl; )
+  DEBUG( std::cout << "+infinity = " << HUGE_VAL << std::endl; )
+  DEBUG( std::cout << "maxdouble = " << CGAL_IA_MAX_DOUBLE << std::endl; )
+  DEBUG( std::cout << "largest   = " << CGAL_IA_LARGEST << std::endl; )
+  DEBUG( std::cout << "smallest  = " << CGAL_IA_SMALLEST << std::endl; )
   for (i=0; i<20; i++)
   {
     a *= a;

@@ -20,6 +20,7 @@ Version 4.23 on 7 October 1999
 - Changed ccClass to ccClassTemplate in the doc, at Susan's request.
 - predicates_ftC[23].h -> predicates/kernel_ftC[23].h.
 - Removed examples/ directory.  Put the script in scripts/.
+- Optimize is_valid(Interval_nt).
 
 Version 4.22 on 2 August 1999
 - New class Static_filter_error (in Static_filter_error.h) that helps
