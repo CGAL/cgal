@@ -194,6 +194,88 @@ compare_angle_with_x_axisC2(const FT &dx1, const FT &dy1,
 }
 
 template < class FT >
+CGAL_KERNEL_MEDIUM_INLINE
+Comparison_result
+compare_slopesC2(const FT &l1a, const FT &l1b, const FT &l2a, const FT &l2b) 
+{
+   if (l1a == FT(0))  // l1 is horizontal
+    return l2b == FT(0) ? SMALLER : Comparison_result(CGAL_NTS sign(l2a*l2b));
+   if (l2a == FT(0)) // l2 is horizontal
+    return l1b == FT(0) ? LARGER : Comparison_result(-CGAL_NTS sign(l1a*l1b));
+   if (l1b == FT(0)) return l2b == FT(0) ? EQUAL : LARGER;
+   if (l2b == FT(0)) return SMALLER;
+   int l1_sign = CGAL_NTS sign(-l1a * l1b);
+   int l2_sign = CGAL_NTS sign(-l2a * l2b);
+
+   if (l1_sign < l2_sign) return SMALLER;
+   if (l1_sign > l2_sign) return LARGER;
+
+   if (l1_sign > 0)
+     return Comparison_result( CGAL_NTS sign ( CGAL_NTS abs(l1a * l2b) -
+                                               CGAL_NTS abs(l2a * l1b) ) );
+
+   return Comparison_result( CGAL_NTS sign ( CGAL_NTS abs(l2a * l1b) -
+                                             CGAL_NTS abs(l1a * l2b) ) );
+}
+
+template < class FT >
+CGAL_KERNEL_MEDIUM_INLINE
+Comparison_result
+compare_slopesC2(const FT &s1_src_x, const FT &s1_src_y, const FT &s1_tgt_x, 
+                 const FT &s1_tgt_y, const FT &s2_src_x, const FT &s2_src_y, 
+                 const FT &s2_tgt_x, const FT &s2_tgt_y) 
+{
+   Comparison_result cmp_y1 = CGAL_NTS compare(s1_src_y, s1_tgt_y);
+   if (cmp_y1 == EQUAL) // horizontal
+   {
+      Comparison_result cmp_x2 = CGAL_NTS compare(s2_src_x, s2_tgt_x);
+
+      if (cmp_x2 == EQUAL) return SMALLER;
+      return Comparison_result ( CGAL_NTS sign((s2_src_y - s2_tgt_y) *
+                                               (s2_src_x - s2_tgt_x)) );
+   }
+
+   Comparison_result cmp_y2 = CGAL_NTS compare(s2_src_y, s2_tgt_y);
+   if (cmp_y2 == EQUAL)
+   {
+      Comparison_result cmp_x1 = CGAL_NTS compare(s1_src_x, s1_tgt_x);
+
+      if (cmp_x1 == EQUAL) return LARGER;
+      return Comparison_result ( CGAL_NTS sign((s1_src_y - s1_tgt_y) *
+                                               (s1_src_x - s1_tgt_x)) );
+   }
+
+   Comparison_result cmp_x1 = CGAL_NTS compare(s1_src_x, s1_tgt_x);
+   Comparison_result cmp_x2 = CGAL_NTS compare(s2_src_x, s2_tgt_x);
+
+   if (cmp_x1 == EQUAL) return cmp_x2 == EQUAL ? EQUAL : LARGER;
+
+   if (cmp_x2 == EQUAL) return SMALLER;
+
+   FT s1_xdiff = s1_src_x - s1_tgt_x;
+   FT s1_ydiff = s1_src_y - s1_tgt_y;
+   FT s2_xdiff = s2_src_x - s2_tgt_x;
+   FT s2_ydiff = s2_src_y - s2_tgt_y;
+   Sign s1_sign = CGAL_NTS sign(s1_ydiff * s1_xdiff);
+   Sign s2_sign = CGAL_NTS sign(s2_ydiff * s2_xdiff);
+
+   if (s1_sign < s2_sign) return SMALLER;
+   if (s1_sign > s2_sign) return LARGER;
+
+   if (s1_sign > 0)
+     return Comparison_result(
+             CGAL_NTS sign ( CGAL_NTS abs(s1_ydiff * s2_xdiff) -
+                             CGAL_NTS abs(s2_ydiff * s1_xdiff)) );
+
+   return Comparison_result(
+            CGAL_NTS sign ( CGAL_NTS abs(s2_ydiff * s1_xdiff) -
+                            CGAL_NTS abs(s1_ydiff * s2_xdiff)) );
+}
+
+
+
+
+template < class FT >
 inline
 Comparison_result
 compare_deltax_deltayC2(const FT &px, const FT &qx,

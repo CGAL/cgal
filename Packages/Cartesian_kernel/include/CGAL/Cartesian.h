@@ -54,6 +54,7 @@
 #include <CGAL/Cartesian/predicates_on_points_2.h>
 #include <CGAL/Cartesian/predicates_on_directions_2.h>
 #include <CGAL/Cartesian/predicates_on_lines_2.h>
+#include <CGAL/Cartesian/predicates_on_segments_2.h>
 #include <CGAL/Cartesian/distance_predicates_2.h>
 
 #include <CGAL/Cartesian/basic_constructions_2.h>

@@ -187,6 +187,14 @@ compare_x_at_y(const LineC2<R CGAL_CTAG> &l1,
 }
 
 template < class R >
+Comparison_result
+compare_slopes(const LineC2<R CGAL_CTAG> &l1,
+               const LineC2<R CGAL_CTAG> &l2)
+{
+   return compare_slopesC2(l1.a(), l1.b(), l2.a(), l2.b());
+}
+
+template < class R >
 inline
 Oriented_side
 side_of_oriented_line(const LineC2<R CGAL_CTAG> &l,
