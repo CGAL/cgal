@@ -35,7 +35,7 @@
 
 /* Define an empty macro with parameter
    Used by create_makefile */
-#define CGAL_MOC_FROM(filename)
+//#define CGAL_MOC_FROM(filename)
 
 namespace CGAL {
 
