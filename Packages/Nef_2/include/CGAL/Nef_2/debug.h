@@ -27,6 +27,10 @@
 #define CGAL_NEF_DEBUG 0
 #endif
 
+#ifndef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 0
+#endif
+
 #ifndef NDEBUG
   static int debugthread=1;
 #endif
@@ -68,13 +72,13 @@
 #define CGAL_NEF_TRACEN(t)
 #endif
 
-#if CGAL_NEF_DEBUG>0
+#ifndef NDEBUG
 #define CGAL_NEF_CTRACE(b,t) if(b) std::cerr<<" "<<t; else std::cerr<<" 0"
 #else
 #define CGAL_NEF_CTRACE(b,t) 
 #endif
 
-#if CGAL_NEF_DEBUG>0
+#ifndef NDEBUG
 #define CGAL_NEF_CTRACEN(b,t) if(b) std::cerr<<" "<<t<<"\n"; else std::cerr<<" 0\n"
 #else
 #define CGAL_NEF_CTRACEN(b,t) 
