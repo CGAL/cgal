@@ -18,29 +18,26 @@
 
 \ccDefinition
  
-The class \ccc{Qt_widget_Nef_3} uses the OpenGL interface of QT to display a
+The class \ccc{Qt_widget_Nef_3} uses the OpenGL interface of Qt to display a
 \ccc{Nef_polyhedron_3}. Its purpose is to provide an easy to use viewer for 
 \ccc{Nef_polyhedron_3}. There are no means provided to enhance the 
 functionality of the viewer.
 
-In addition to the functions inherited from the Qt class \ccc{OGLWidget} via 
-\ccc{Qt_widget_OpenGL}, \ccc{Qt_widget_Nef_3} only has a single public 
+In addition to the functions inherited from the Qt class \ccc{OGLWidget} via,
+ \ccc{Qt_widget_Nef_3} only has a single public 
 constructor. For the usage of \ccc{Qt_widget_Nef_3} see the example 
-below and section  in the User Manual.
+below.
 
 \ccInclude{CGAL/IO/Qt_widget_Nef_3.h}
 
 \ccParameters
 The template parameter expects an instantiation of \ccc{Nef_polyhedron_3<Traits>}.
- 
-\ccInheritsFrom
-\ccc{Qt_widget_OpenGL}
 
 \ccCreation
 \ccCreationVariable{W}
 
 \ccConstructor{Qt_widget_Nef_3(const Nef_polyhedron_3& N);}
-{a widget \ccVar\ for displaying the 3D Nef polyhedron N.}
+{Creates a widget \ccVar\ for displaying the 3D Nef polyhedron N.}
 
 \ccSeeAlso
 
