@@ -1,3 +1,6 @@
+1.43 (12 Apr 2003)
+  - comment is_valid() since it's not finished and breaks g++ 3.4.
+
 1.42 (4 Nov 2002)
   - fix return type in indirect traits
 

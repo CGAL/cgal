@@ -301,6 +301,7 @@ public:
          return edges.find(Point_pair(edge.second, edge.first)) != edges.end();
    }
 
+#if 0
 // ??? need to finish this ???
    template <class ForwardIterator>
    bool is_valid(ForwardIterator first, ForwardIterator beyond)
@@ -323,6 +324,7 @@ public:
       //
       // ??? how do you check if there are missing edges ???
    }
+#endif
 
 
 private:
