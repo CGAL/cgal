@@ -1,3 +1,7 @@
+2.5 (14 February 2001)
++ Added flags for the SIMPLE kernels.
++ Rewrote wdot in terms of wmult.
+
 2.4.5 (19 June 2000)
 + Qualified call to 'abs' and 'sign' by CGAL_NTS
 
