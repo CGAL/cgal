@@ -41,7 +41,7 @@ int main()
 #include <CGAL/Cartesian.h>
 #elif CGAL_PM_TEST_TRAITS==CGAL_SEGMENT_LEDA_TRAITS
 #include <CGAL/leda_rational.h>
-#include <CGAL/Pm_segment_traits_leda_kernel_2.h>
+#include <CEP/Leda_rat_kernel/leda_rat_kernel_traits.h>
 #else
   #error No traits defined for test
 #endif
@@ -78,7 +78,7 @@ typedef CGAL::Quotient<int>                             NT;
 typedef CGAL::Cartesian<NT>                             Kernel;
 #elif CGAL_PM_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
 typedef leda_rational                                   NT;
-typedef CGAL::Pm_segment_traits_leda_kernel_2<NT>       Kernel;
+typedef CGAL::leda_rat_kernel_traits                    Kernel;
 #endif
 
 typedef CGAL::Pm_segment_traits_2<Kernel>               Traits;
