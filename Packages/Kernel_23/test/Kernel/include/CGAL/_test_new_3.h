@@ -27,6 +27,11 @@
 #include <CGAL/intersections.h>
 #include <CGAL/squared_distance_3.h>
 
+#ifndef CGAL__TEST_NEW_2_H
+// To kill "unused" warnings.
+template < typename T >
+void use(const T&) {}
+#endif
 
 template <class R>
 bool
@@ -657,6 +662,16 @@ test_new_3(const R& rep)
         = rep.angle_3_object();
   Angle tmp46 = angle(p2,p3,p4);
   (void) tmp46;
+  
+  // kill warnings ...
+  use(v1); use(d1); use(s1); use(l1); use(l4); use(l5);
+  use(l6); use(d4); use(d5); use(d6); use(d7); use(r1);
+  use(h1); use(h4); use(h5); use(h6); 
+  use(sp4); use(sp5); use(sp6); use(sp7); use(sp8);
+  use(t1); use(th1); use(iso2); 
+  use(tmp8a); use(tmp8b); use(tmp3); use(tmp3a);
+  use(tmp9); use(tmp14a); use(tmp5); use(tmp6);
+  use(tmp7); use(tmp71); use(sp1a); use(tmp72);
 
   return true;
 }

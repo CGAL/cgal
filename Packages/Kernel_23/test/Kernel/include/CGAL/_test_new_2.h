@@ -583,6 +583,16 @@ test_new_2(const R& rep)
   typename R::Angle_2 angle
         = rep.angle_2_object();
   Angle tmp58 = angle(p2,p3,p4);
+  
+  use(v1); use(v4); use(r1);
+  use(d4); use(d5);
+  use(c4); use(c11);
+  use(rec3);
+  use(tmp8a); use(tmp8b);
+  use(tmp9); use(tmp10); use(tmp11); use(tmp12); use(tmp12a);
+  use(tmp14); use(tmp14a); use(tmp15); use(tmp16);
+  use(tmp16); use(tmp17); use(tmp19); use(tmp19a); use(tmp22a);
+  use(tmp22b); use(tmp23);
 
   use(tmp58);
   use(tmp57); use(tmp56); use(tmp55); use(tmp54); use(tmp53b); use(tmp53a);
