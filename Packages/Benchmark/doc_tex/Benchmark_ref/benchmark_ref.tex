@@ -1,0 +1,171 @@
+\section*{Summary}
+This document describes a practical toolkit to evaluate the status of code. It
+can be used to create programs that measure performance, known as benchmarks,
+and other various tests, execute them, and analyze their results. With little
+effort a user of this toolkit can detect inefficiencies, bottlenecks, and loss
+of functionality or performance degradation, compare various techniques,
+algorithms, and different implementations, and measure progress. A user, can
+then, present the results in a comprehensible way. The information produced
+also includes the precise description of the execution environment to allow
+the reproduction of the results.
+
+% \subsection*{Concepts}
+% \subsection*{Classes}
+% \subsection*{Functions}
+
+\begin{ccRefConcept}{Benchanble}
+
+  \ccCreationVariable{benchable} 
+
+  \ccCreation
+  \ccConstructor{Benchanble();}
+  {A default constructor.}
+
+  \ccOperations
+
+  \ccMethod{void init(void);}
+  {this function is invoked once before the function that tests target
+    operation is invoked. It is used to initialize all the data members that
+    are operands consumed by the target operation. This allows for accurate
+    measure of the target-operation performance, through timing of the function
+    that performs the target operation.}
+  
+  \ccMethod{void clean(void);}
+  {this function is invoked once after the function that tests the target
+    operation returns. It is used to clean up the data members in general and
+    the results in particular produced by the target operation.}
+  
+  \ccMethod{void op(void);}
+  {this function performs the target operation
+    repeatedly in loop constrained, either by a maximum number of repetitions,
+    or by by a limit on the time period alloted for the target operation,
+    depending on the bench configuration.}
+
+  \ccMethod{void sync(void);}
+  {this function synchronizes between the target operation and the measure of
+    its time consumption. It is called once after initialization and before the
+    starting time is sampled, and once again after the target operation is
+    performed in a loop and before the ending time is sampled. In many cases
+    the \ccc{sync} function is empty, as there is no need to synchronize
+    anything. On the other hand, suppose that the performance of a sequence of
+    commands in pipeline architecture is to be measured. In this case the
+    \ccc{sync} function can be used to flush the pipeline and force all pending
+    commands to complete before the ending time is sampled. This situation
+    manifests itself when the performance of some {\textbf openGl} (see cite)
+    commands is to be measured. The \ccc{sync} function can be implemented to
+    call {\textbf glFlush} to cause all issued commands trapped in intermediate
+    buffers of the pipeline to be executed as quickly as they are accepted by
+    the actual rendering engine before they are assumed to complete.}
+
+\end{ccRefConcept}
+
+\begin{ccRefClass}{Bench}
+    
+  \ccDefinition
+  \ccStyle{Bench} is a utility class that performs the bench. The benchmark is
+  configured during construction of the \ccc{Bench} class or through
+  some modifiers.
+
+  \ccInclude{CGAL/Bench.h}
+
+  % \ccInheritsFrom
+  
+  \ccCreationVariable{bench}
+
+  \ccCreation
+    
+  \ccConstructor{Bench<Benchable>(std::string name = "",
+                                  int seconds = 1,
+				  bool printHeader = true);}
+  {constructs an instance of the \ccStyle{Bench} class.}
+
+  \ccModifiers
+  \ccMethod{void set_iterations(int iterations);}
+  {}
+  
+  \ccMethod{void set_seconds(int seconds);}
+  {}
+  
+  \ccMethod{void set_samples(int samples);}
+  {}
+
+  \ccQueryFunctions
+  \ccMethod{int get_iterations() const;}
+  {}
+
+  \ccMethod{int get_seconds() const;}
+  {}
+  
+  \ccMethod{int get_samples() const;}
+  {}
+  
+  \ccMethod{Benchable & get_bench_user();}
+  {}
+
+  \ccMethod{void print_results();}
+  {}
+
+  \ccMethod{void operator()();}
+  {}
+  
+\end{ccRefClass}
+
+
+\begin{ccRefClass}{Bench_parse_args}
+
+  \ccDefinition
+
+  \ccInclude{CGAL/Bench_parse_args.h}
+
+  % \ccInheritsFrom
+  
+  \ccCreationVariable{bench_parse_args}
+
+  \ccCreation
+    
+  \ccConstructor{Bench_parse_args(int argc, char * argv[]);}
+  {constructs an instance of the \ccStyle{Bench_parse_args} class.}
+
+  % \ccModifiers
+  
+  \ccQueryFunctions
+  \ccMethod{unsigned int get_Type_mask() const;}
+  {}
+  
+  \ccMethod{unsigned int get_Strategy_mask() const;}
+  {}
+  
+  \ccMethod{bool get_verbose() const;}
+  {}
+  
+  \ccMethod{FormatId get_input_format() const;}
+  {}
+  
+  \ccMethod{int get_samples() const;}
+  {}
+  
+  \ccMethod{int get_iterations() const;}
+  {}
+  
+  \ccMethod{int get_seconds() const;}
+  {}
+
+  \ccMethod{bool get_print_header() const;}
+  {}
+  
+  \ccMethod{int get_name_length() const;}
+  {}
+  
+  \ccMethod{const char * get_filename() const;}
+  {}
+  
+  \ccMethod{const char * get_fullname() const;}
+  {}
+  
+  \ccMethod{const char * get_type_name(TypeId id) const;}
+  {}
+    
+  \ccMethod{const char * get_strategy_name(StrategyId id) const;}
+  {}
+
+\end{ccRefClass}
