@@ -23,7 +23,7 @@
 #include <CGAL/basic.h>
 #include <utility>
 #include <list>
-#include <vector>
+//#include <vector>
 
 #include <CGAL/_test_types.h>
 
