@@ -229,11 +229,12 @@ is_valid(bool verbose = false, int level = 0) const
     case 0 : 
       break;
     case 1 :
+      result = result &&  in == 1-i;
       result = result && ( this->vertex(1-i) == n->vertex(1-in));
       break;
     case 2 :
       result = result && ( this->vertex(cw(i)) == n->vertex(ccw(in)))
-	&& ( this->vertex(ccw(i)) == n->vertex(cw(in)));
+	              && ( this->vertex(ccw(i)) == n->vertex(cw(in)));
       break;
     }
   }

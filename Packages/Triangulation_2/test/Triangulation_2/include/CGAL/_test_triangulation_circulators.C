@@ -21,9 +21,9 @@
 // ============================================================================
 
 
-#include <CGAL/_test_cls_vertex_circulator.C>
-#include <CGAL/_test_cls_edge_circulator.C>
-#include <CGAL/_test_cls_face_circulator.C>
+//#include <CGAL/_test_cls_vertex_circulator.C>
+//#include <CGAL/_test_cls_edge_circulator.C>
+//#include <CGAL/_test_cls_face_circulator.C>
 
 template < class Triangulation >
 void
@@ -78,18 +78,22 @@ _test_circulators( const Triangulation &T )
   //Traverse convex_hull- this count infinite
   int nch = 0;
   fc = fc0 = T.incident_faces(T.infinite_vertex());
-  do {
-    fc++; nch++;
-  } while (fc != fc0);
+  if( !fc.is_empty()){
+    do {
+      fc++; nch++;
+    } while (fc != fc0);
+  }
   
-  //Total number of faces and vertices and edges (by Euler)
-  int m = T.number_of_faces() + nch;
-  int n = T.number_of_vertices() +1;
-  int ne = 3*n-6;
-  assert( m = 2*n-4);
-  
-  assert ( nvi ==  nei == 2*ne);
-  assert ( nfi == 3*m);
+  //Check Total 
+  int mf = T.number_of_faces() + nch;
+  int mv = T.number_of_vertices() +1;
+  int me ;
+  if (T.dimension() <= 0) me=0;
+  else me = T.dimension() == 1 ? mv : 3*mv-6 ;
+    
+  assert ( nvi ==  nei);
+  assert ( nvi == 2*me);
+  assert ( nfi == 3*mf);
  
 }
 

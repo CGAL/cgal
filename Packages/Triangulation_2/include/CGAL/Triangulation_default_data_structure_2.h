@@ -152,12 +152,13 @@ public:
   void file_output(std::ostream& os,
 		   Vertex* v = infinite_vertex()) const;
 
-private:
-  // SETTING
+
+  // SETTING (had to make them public for use in remove from Triangulations)
   void set_number_of_vertices(int n) {_number_of_vertices = n;}
   void set_dimension (int n) {_dimension = n ;}
   void set_infinite_vertex(Vertex*  v) { _infinite_vertex = v;}
 
+private:
    // INFINITE FEATURES
   Vertex* infinite_vertex() const  {return _infinite_vertex;  }
   Face* infinite_face() const { return _infinite_vertex->face();}
@@ -609,8 +610,8 @@ remove_dim_down(Vertex* v)
 {
 
   CGAL_triangulation_precondition ( 
-				   (dimension() == 1 &&  number_of_vertices() == 3) ||
-				   (dimension() == 2 && number_of_vertices() > 3) );
+			    (dimension() == 1 &&  number_of_vertices() == 3) ||
+			    (dimension() == 2 && number_of_vertices() > 3) );
   // the faces incident to v are down graded one dimension
   // the other faces are deleted
   list<Face* > to_delete;
@@ -640,7 +641,7 @@ remove_dim_down(Vertex* v)
 	f->set_vertex(0, f->vertex(1));
 	f->set_vertex(1, f->vertex(2));
 	f->set_neighbor(0, f->neighbor(1));
-	f->set_neighbor(2, f->neighbor(2));
+	f->set_neighbor(1, f->neighbor(2));
 	break;
       case 1 :
 	f->set_vertex(1, f->vertex(0));
@@ -873,7 +874,7 @@ copy_tds(const Tds &tds, const Vertex* v)
   std::map< const void*, void*, less<const void*> > V;
   std::map< const void*, void*, less<const void*> > F;
 
-  Vertex*  v2;
+  Vertex*  v2,* v_inf;
   Face* f2;
 
   // create the vertices
@@ -882,8 +883,8 @@ copy_tds(const Tds &tds, const Vertex* v)
     V[&(*it)] = new Vertex( it->point() );
   }
   //set infinite_vertex
-  v2 = static_cast<Vertex*>(V[v]);
-  set_infinite_vertex(v2);
+  v_inf = static_cast<Vertex*>(V[v]);
+  set_infinite_vertex(v_inf);
   
   // create the faces
   for(Iterator_base ib = tds.iterator_base_begin();
@@ -910,7 +911,7 @@ copy_tds(const Tds &tds, const Vertex* v)
  }
 
   CGAL_triangulation_postcondition( is_valid() );
-  return v2;
+  return v_inf;
 }
 
 template < class Gt , class Vb, class Fb>
@@ -1133,7 +1134,7 @@ std::ostream&
 operator<<(std::ostream& os, 
 	   const Triangulation_default_data_structure_2<Gt,Vb,Fb>  &tds) 
 {
-   tds.file_output(os,tds.infinite_vertex());
+   tds.file_output(os, tds.infinite_vertex());
    return os;
 }
 

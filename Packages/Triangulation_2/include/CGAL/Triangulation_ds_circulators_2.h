@@ -463,7 +463,7 @@ Triangulation_ds_edge_circulator_2<Vertex,Face> ::
 operator*() const
 {
    CGAL_triangulation_precondition( (pos != NULL) && (_v != NULL) );
-   return std::make_pair(pos, _ri);
+   return std::make_pair(const_cast<Face*>(pos), _ri);
 }
 
 

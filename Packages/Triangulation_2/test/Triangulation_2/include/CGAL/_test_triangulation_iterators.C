@@ -33,7 +33,14 @@ _test_iterators( const Triangulation &T )
   int ne = _test_cls_edge_iterator(T);
   int nf = _test_cls_face_iterator(T);
   // cout << "Euler's relation: " << nv -ne + nf << endl;
-  assert( nv -ne + nf == 1); // Euler's relation
+  switch (T.dimension()) {
+  case 0 : 
+  case -1 : assert( nv == T.number_of_vertices() && ne == 0 && nf == 0);
+    break;
+  case 1 : assert ( nv == T.number_of_vertices() && ne == nv-1 && nf == 0);
+    break;
+  case 2: assert ( nv == T.number_of_vertices() && nv - ne + nf == 1);
+  }
 }
 
 template < class Triangulation >

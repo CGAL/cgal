@@ -339,16 +339,16 @@ public:
   Triangulation_edge_circulator_2(const Vertex_handle& v)
     : _bec(&(*v))
   {
-    if (v->face()==NULL  ||
+    if (v->face().is_null()  ||
         v->face()->dimension() == 0 )	 { _bec = Base_face_circulator();}
   }
 
   Triangulation_edge_circulator_2(const Vertex_handle& v,
-				       const Face_handle& f)
+				  const Face_handle& f)
     : _bec( &(*v), &(*f))
   {
-    if (v->face()==NULL  ||
-        v->face()->dimension() == 0 )	 { _bec = Base_face_circulator();}
+    if (v->face().is_null()  ||
+        v->face()->dimension() == 0 ) { _bec = Base_edge_circulator();}
   }
    
    Triangulation_edge_circulator_2(const Edge_circulator &ec)

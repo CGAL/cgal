@@ -114,7 +114,7 @@ public:
 
   Triangulation_ds_face_iterator_2() : Iterator_base() {}
    
-  Triangulation_ds_face_iterator_2(Tds * tds) : Iterator_base(tds)
+  Triangulation_ds_face_iterator_2(const Tds * tds) : Iterator_base(tds)
     {
       if (tds->dimension() <2) pos=NULL;
     }
@@ -159,7 +159,7 @@ public:
     : Iterator_base(), index(0)
     {}
     
-  Triangulation_ds_vertex_iterator_2(const Tds * tds);
+  Triangulation_ds_vertex_iterator_2(const Tds* tds);
    
   Triangulation_ds_vertex_iterator_2(const Tds* tds, int i)
     : Iterator_base(tds,i), index(0)
@@ -778,7 +778,7 @@ typename Tds::Edge
 Triangulation_ds_edge_iterator_2<Tds> ::     
 operator*() const
 {
-  return make_pair(pos, index);
+  return make_pair(const_cast<Face*>(pos), index);
 }
 
 

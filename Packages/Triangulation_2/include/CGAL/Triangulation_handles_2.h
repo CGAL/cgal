@@ -36,10 +36,16 @@ template <  class Gt, class Tds >
 class Triangulation_vertex_2;
 
 template <  class Gt, class Tds>
-class Triangulation_face_iterator_2;
+class Triangulation_all_faces_iterator_2;
 
 template <  class Gt, class Tds>
-class Triangulation_vertex_iterator_2;
+class Triangulation_all_vertices_iterator_2;
+
+template <  class Gt, class Tds>
+class Triangulation_finite_faces_iterator_2;
+
+template <  class Gt, class Tds>
+class Triangulation_finite_vertices_iterator_2;
 
 template <  class Gt, class Tds>
 class Triangulation_face_circulator_2;
@@ -53,45 +59,49 @@ class Triangulation_face_handle_2
   :public Pointer<Triangulation_face_2<Gt,Tds> > 
 {
 public:
-  typedef Pointer<Triangulation_face_2<Gt,Tds> > Pointer;
-  typedef Triangulation_face_2<Gt,Tds> Face;
-  typedef Triangulation_face_handle_2<Gt,Tds> Face_handle;
+  typedef Pointer<Triangulation_face_2<Gt,Tds> >        Pointer;
+  typedef Triangulation_face_2<Gt,Tds>                  Face;
+  typedef Triangulation_face_handle_2<Gt,Tds>           Face_handle;
   
-  typedef Triangulation_face_iterator_2<Gt,Tds>      Face_iterator;
-  typedef Triangulation_face_circulator_2<Gt,Tds>    Face_circulator;
+  typedef Triangulation_all_faces_iterator_2<Gt,Tds>    All_faces_iterator;
+  typedef Triangulation_finite_faces_iterator_2<Gt,Tds> Finite_faces_iterator;
+  typedef Triangulation_face_circulator_2<Gt,Tds>       Face_circulator;
   
-  inline 
   Triangulation_face_handle_2()
     : Pointer(NULL)
-  {}
+    {}
 
-  inline  
   Triangulation_face_handle_2(const Face* p)
-    : Pointer((Face*)p)
-  {}
+    : Pointer(p)
+    {}
 
-  inline Face_handle& operator=(const Face*& p)
+  Triangulation_face_handle_2(const Face_handle& p)
+    : Pointer(p.ptr())
+    {}
+
+  Triangulation_face_handle_2(const Finite_faces_iterator& fit)
+    : Pointer(&(*fit))
+    {}
+  
+  Triangulation_face_handle_2(const All_faces_iterator& fit)
+    : Pointer(&(*fit))
+    {}
+
+  Triangulation_face_handle_2(const Face_circulator& fc)
+    : Pointer(&(*fc))
+    {}
+
+  Face_handle& operator=(Face* p)
     {
-        ptr() = p ;
-        return *this;
+      ptr() = p ;
+      return *this;
     }
     
-    inline Face_handle& operator=(const Face_handle& p)
+  Face_handle& operator=(const Face_handle& p)
     {
-        ptr() = p.ptr();
-        return *this;
+      ptr() = p.ptr();
+      return *this;
     }
-  
-   inline  
-    Triangulation_face_handle_2(const Face_iterator& fit)
-        : Pointer(&(*fit))
-    {}
-  
-
-  inline  
-   Triangulation_face_handle_2(const Face_circulator& fc)
-        : Pointer(&(*fc))
-    {}
 };
 
 template < class Gt, class Tds>
@@ -99,47 +109,53 @@ class Triangulation_vertex_handle_2
   :public Pointer<Triangulation_vertex_2<Gt,Tds> > 
 {
 public:
-  typedef Pointer<Triangulation_vertex_2<Gt,Tds> > Pointer;
-  typedef Triangulation_vertex_2<Gt,Tds> Vertex;
-  typedef Triangulation_vertex_handle_2<Gt,Tds> Vertex_handle;
+  typedef Pointer<Triangulation_vertex_2<Gt,Tds> >  Pointer;
+  typedef Triangulation_vertex_2<Gt,Tds>            Vertex;
+  typedef Triangulation_vertex_handle_2<Gt,Tds>     Vertex_handle;
   
-  typedef Triangulation_vertex_iterator_2<Gt,Tds>      Vertex_iterator;
-  typedef Triangulation_vertex_circulator_2<Gt,Tds>    Vertex_circulator;
+  typedef Triangulation_all_vertices_iterator_2<Gt,Tds> 
+                                                    All_vertices_iterator;
+  typedef Triangulation_finite_vertices_iterator_2<Gt,Tds> 
+                                                    Finite_vertices_iterator;
+  typedef Triangulation_vertex_circulator_2<Gt,Tds> Vertex_circulator;
   
-  inline 
   Triangulation_vertex_handle_2()
     : Pointer(NULL)
-  {}
-
-  inline  
-  Triangulation_vertex_handle_2(const Vertex* p)
-        : Pointer((Vertex*)p)
     {}
 
-  inline Vertex_handle& operator=(const Vertex*& p)
+  Triangulation_vertex_handle_2(const Vertex* p)
+    : Pointer(p)
+    {}
+
+  Triangulation_vertex_handle_2(const Vertex_handle& p)
+    : Pointer(p.ptr())
+    {}
+
+  Triangulation_vertex_handle_2(const Finite_vertices_iterator& vit)
+    : Pointer(&(*vit))
+    {}
+  
+  Triangulation_vertex_handle_2(const All_vertices_iterator& vit)
+    : Pointer(&(*vit))
+    {}
+
+  Triangulation_vertex_handle_2(const Vertex_circulator& vc)
+    : Pointer(&(*vc))
+    {}
+  
+  Vertex_handle& operator=(Vertex* p)
     {
         ptr() = p ;
         return *this;
     }
     
-    inline Vertex_handle& operator=(const Vertex_handle& p)
+  Vertex_handle& operator=(const Vertex_handle& p)
     {
         ptr() = p.ptr();
         return *this;
     }
   
-   inline  
-   Triangulation_vertex_handle_2(const Vertex_iterator& vit)
-        : Pointer(&(*vit))
-    {}
-
-  
-  inline  
-   Triangulation_vertex_handle_2(const Vertex_circulator& vc)
-        : Pointer(&(*vc))
-    {}
-  
-};
+ };
 
 CGAL_END_NAMESPACE
 

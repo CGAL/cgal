@@ -47,20 +47,6 @@ public:
 };
 
 
-template < class Triangulation, class Point, class Face_handle >
-bool
-_test_is_to_the_left( const Triangulation &T,
-                           const Point &p,
-		           const Face_handle &f,
-		           const int li)
-{
-  return( T.geom_traits().orientation
-              (f->vertex(f->ccw(li))->point(),
-	       f->vertex(f->cw(li))->point(),
-	       p)
-	  == CGAL::LEFTTURN );
-}
-
 template <class Triangulation>
 void
 _test_cls_triangulation_2( const Triangulation & )
@@ -320,8 +306,8 @@ _test_cls_triangulation_2( const Triangulation & )
   // test grid insert
   Cls T2_7;
   int m, p;
-  for (m=0; m<20; m++)
-    for (p=0; p<20; p++)
+  for (m=0; m<5; m++)
+    for (p=0; p<5; p++)
       T2_7.insert( Point(m*px+p*qx, m*py+p*qy, 1) );
   assert( T2_7.number_of_vertices() == m*p );
   assert( T2_7.is_valid() );
@@ -419,23 +405,13 @@ _test_cls_triangulation_2( const Triangulation & )
        || (T1_3_2.geom_traits().compare(f->vertex(f->ccw(li))->point(), p2)
         && T1_3_2.geom_traits().compare(f->vertex(f->cw(li))->point(), p1)));
   f = T1_3_2.locate(p8,lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
-  //assert( T1_3_2.geom_traits().compare(f->vertex(li)->point(), p9) );
-  assert(T1_3_2.is_infinite(f->vertex(li)));
+    assert(T1_3_2.is_infinite(f->vertex(li)));
   f = T1_3_2.locate(p0,lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL );
-  //li = f->index(T1_3_2.infinite_vertex());
-  //assert( _test_is_to_the_left(T1_3_2,p0,f,li) );
   f = T1_3_2.locate(p7,lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL );
-  //li = f->index(T1_3_2.infinite_vertex());
-  //assert( _test_is_to_the_left(T1_3_2,p7,f,li) );
   f = T1_3_2.locate(p5,lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL );
-  //li = f->index(T1_3_2.infinite_vertex());
-  //assert( _test_is_to_the_left(T1_3_2,p5,f,li) );
   f = T1_3_2.locate(p4,lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL );
-  //li = f->index(T1_3_2.infinite_vertex());
-  //assert( _test_is_to_the_left(T1_3_2,p4,f,li) );
   f = T1_3_2.locate(p6,lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL );
-  //li = f->index(T1_3_2.infinite_vertex());
-  //assert( _test_is_to_the_left(T1_3_2,p6,f,li) );
+ 
 
   // Check point location in 2-dimensional triangulations
   cout << "    point locations 2-dim" << endl;
@@ -469,25 +445,31 @@ _test_cls_triangulation_2( const Triangulation & )
   f = T2_1.locate(p12,lt,li); assert( lt == Cls::FACE );
   assert( T2_1.oriented_side(f,p12) == CGAL::ON_POSITIVE_SIDE );
   f = T2_1.locate(p13,lt,li,f); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
-  li = f->index(T2_1.infinite_vertex());
-  assert( _test_is_to_the_left(T2_1,p13,f,li) );
+  assert( T2_1.geom_traits().orientation(p13,
+					 f->vertex(f->ccw(li))->point(),
+					 f->vertex(f->cw(li))->point())
+	    == CGAL::COUNTERCLOCKWISE);
   f = T2_1.locate(p14,lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
-  li = f->index(T2_1.infinite_vertex());
-  assert( _test_is_to_the_left(T2_1,p14,f,li) );
+  assert( T2_1.geom_traits().orientation(p14,
+					 f->vertex(f->ccw(li))->point(),
+					 f->vertex(f->cw(li))->point())
+	    == CGAL::COUNTERCLOCKWISE);
   f = T2_1.locate(p15,lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
-  li = f->index(T2_1.infinite_vertex());
-  assert( _test_is_to_the_left(T2_1,p15,f,li) );
+  assert( T2_1.geom_traits().orientation(p15,
+					 f->vertex(f->ccw(li))->point(),
+					 f->vertex(f->cw(li))->point())
+	    == CGAL::COUNTERCLOCKWISE);
 
   // test grid locate
-  for (m=0; m<20; m++)
-    for (p=0; p<20; p++)
+  for (m=0; m<5; m++)
+    for (p=0; p<5; p++)
       {
 	Point q= Point(m*px+p*qx, m*py+p*qy, 1);
        	f = T2_7.locate(q,lt,li); assert( lt == Cls::VERTEX );
   	assert( T2_7.geom_traits().compare(f->vertex(li)->point(), q) );
       }
-  for (m=0; m<20; m+=19)
-    for (p=0; p<19; p++)
+  for (m=0; m<5; m+=4)
+    for (p=0; p<4; p++)
       {
 	Point q= Point(2*m*px+(2*p+1)*qx, 2*m*py+(2*p+1)*qy, 2);
 	Point r= Point(m*px+p*qx, m*py+p*qy, 1);
@@ -499,8 +481,8 @@ _test_cls_triangulation_2( const Triangulation & )
               && T2_7.geom_traits().compare(f->vertex(f->cw(li))->point(), r)));
 
       }
-  for (m=0; m<19; m++)
-    for (p=0; p<19; p++)
+  for (m=0; m<4; m++)
+    for (p=0; p<4; p++)
       {
 	Point q= Point((50*m+1)*px+(50*p+1)*qx, (50*m+1)*py+(50*p+1)*qy, 50);
        	f = T2_7.locate(q,lt,li); assert( lt == Cls::FACE );
@@ -510,8 +492,8 @@ _test_cls_triangulation_2( const Triangulation & )
   /*************************/
   /******* Iterators *******/
   cout << "    iterators" << endl;
-  // _test_iterators(T0_0);
-  // _test_iterators(T0_1);
+  _test_iterators(T0_0);
+  _test_iterators(T0_1);
   _test_iterators(T1_2);
   _test_iterators(T1_3_0);
   _test_iterators(T1_3_1);
@@ -526,8 +508,8 @@ _test_cls_triangulation_2( const Triangulation & )
   /***************************/
   /******* Circulators *******/
   cout << "    circulators" << endl;
-  // _test_circulators(T0_0);
-  // _test_circulators(T0_1);
+  _test_circulators(T0_0);
+  _test_circulators(T0_1);
   _test_circulators(T1_2);
   _test_circulators(T1_3_0);
   _test_circulators(T1_3_1);
@@ -535,7 +517,7 @@ _test_cls_triangulation_2( const Triangulation & )
   _test_circulators(T1_6);
   _test_circulators(T2_1);
   _test_circulators(T2_3);
-  _test_circulators (T2_5);
+  _test_circulators(T2_5);
   _test_circulators(T2_6);
   _test_circulators(T2_7);
   
@@ -621,7 +603,7 @@ _test_cls_triangulation_2( const Triangulation & )
   cout << "    output to a file" << endl;
   ofstream of0_0("T00.triangulation", ios::out);
   CGAL::set_ascii_mode(of0_0); 
-  of0_0 << T0_1; of0_0.close();
+  of0_0 << T0_0; of0_0.close();
   ofstream of0_1("T01.triangulation");
   CGAL::set_ascii_mode(of0_1); 
   of0_1 << T0_1; of0_1.close();
@@ -650,31 +632,40 @@ _test_cls_triangulation_2( const Triangulation & )
   cout << "    input from a file" << endl;
   ifstream if0_0("T00.triangulation"); CGAL::set_ascii_mode(if0_0);
   Cls T0_0_copy;   if0_0 >> T0_0_copy;
-  // assert( T0_0_copy.number_of_vertices() == T0_0.number_of_vertices() );
+  assert( T0_0_copy.is_valid() &&
+	  T0_0_copy.number_of_vertices() == T0_0.number_of_vertices() );
   ifstream if0_1("T01.triangulation"); CGAL::set_ascii_mode(if0_1);
   Cls T0_1_copy; if0_1 >> T0_1_copy;
-  // assert( T0_1_copy.number_of_vertices() == T0_1.number_of_vertices() );
+  assert( T0_1_copy.is_valid() &&
+	  T0_1_copy.number_of_vertices() == T0_1.number_of_vertices() );
   ifstream if1_2("T12.triangulation"); CGAL::set_ascii_mode(if1_2); 
   Cls T1_2_copy; if1_2 >> T1_2_copy;
-  // assert( T1_2_copy.number_of_vertices() == T1_2.number_of_vertices() );
+  assert( T1_2_copy.is_valid() &&
+	  T1_2_copy.number_of_vertices() == T1_2.number_of_vertices() );
   ifstream if1_5("T15.triangulation"); CGAL::set_ascii_mode(if1_5); 
   Cls T1_5_copy; if1_5 >> T1_5_copy;
-  // assert( T1_5_copy.number_of_vertices() == T1_5.number_of_vertices() );
+  assert( T1_5_copy.is_valid() &&
+	  T1_5_copy.number_of_vertices() == T1_5.number_of_vertices() );
   ifstream if1_6("T16.triangulation"); CGAL::set_ascii_mode(if1_6);
   Cls T1_6_copy; if1_6 >> T1_6_copy;
-  // assert( T1_6_copy.number_of_vertices() == T1_6.number_of_vertices() );
+  assert( T1_6_copy.is_valid() &&
+	  T1_6_copy.number_of_vertices() == T1_6.number_of_vertices() );
   ifstream if2_1("T21.triangulation"); CGAL::set_ascii_mode(if2_1);
   Cls T2_1_copy; if2_1 >> T2_1_copy;
-  // assert( T2_1_copy.number_of_vertices() == T2_1.number_of_vertices() );
+  assert( T2_1_copy.is_valid() &&
+	  T2_1_copy.number_of_vertices() == T2_1.number_of_vertices() );
   ifstream if2_3("T23.triangulation"); CGAL::set_ascii_mode(if2_3);
   Cls T2_3_copy; if2_3 >> T2_3_copy;
-  // assert( T2_3_copy.number_of_vertices() == T2_3.number_of_vertices() );
+  assert( T2_3_copy.is_valid() &&
+	  T2_3_copy.number_of_vertices() == T2_3.number_of_vertices() );
   ifstream if2_5("T25.triangulation"); CGAL::set_ascii_mode(if2_5); 
   Cls T2_5_copy; if2_5 >> T2_5_copy;
-  // assert( T2_5_copy.number_of_vertices() == T2_5.number_of_vertices() );
+  assert( T2_5_copy.is_valid() &&
+	  T2_5_copy.number_of_vertices() == T2_5.number_of_vertices() );
   ifstream if2_6("T26.triangulation"); CGAL::set_ascii_mode(if2_6);
   Cls T2_6_copy; if2_6 >> T2_6_copy;
-  // assert( T2_6_copy.number_of_vertices() == T2_6.number_of_vertices() );
+  assert( T2_6_copy.is_valid() &&
+	  T2_6_copy.number_of_vertices() == T2_6.number_of_vertices() );
 
   
 
@@ -688,14 +679,17 @@ _test_cls_triangulation_2( const Triangulation & )
 
   // test remove_second()
   T1_6.remove_second(T1_6.finite_vertex());
+  assert( T1_6.is_valid());
   assert( T1_6.number_of_vertices() == 1 );
 
   // remove from 1-dimensional triangulations
   T1_2.remove(v1_2_1);
+  assert( T1_2.is_valid());
   T1_2.remove(v1_2_2);
   assert( T1_2.number_of_vertices() == 0 );
 
   T1_5.remove(v1_5_1);
+  assert( T1_5.is_valid());
   T1_5.remove(v1_5_2);
   T1_5.remove(v1_5_3);
   T1_5.remove(v1_5_8);
@@ -703,20 +697,21 @@ _test_cls_triangulation_2( const Triangulation & )
   assert( T1_5.number_of_vertices() == 0 );
 
   // remove from 2-dimensional triangulations
-  T2_1.remove(v2_1_0);
-  T2_1.remove(v2_1_2);
-  T2_1.remove(v2_1_1);
-  T2_1.remove(v2_1_6);
-  T2_1.remove(v2_1_5);
-  T2_1.remove(v2_1_4);
-  T2_1.remove(v2_1_3);
+  T2_1.remove(v2_1_10); assert( T2_1.is_valid());
   T2_1.remove(v2_1_9);
   T2_1.remove(v2_1_8);
   T2_1.remove(v2_1_7);
-  T2_1.remove(v2_1_10);
+  T2_1.remove(v2_1_6);
+  T2_1.remove(v2_1_5);
+  T2_1.remove(v2_1_4);
+  T2_1.remove(v2_1_3); assert(T2_1.is_valid());
+  T2_1.remove(v2_1_0);
+  assert(T2_1.is_valid());
+  T2_1.remove(v2_1_2); assert(T2_1.is_valid());
+  T2_1.remove(v2_1_1); assert(T2_1.is_valid());
   assert( T2_1.number_of_vertices() == 0 );
 
-  T2_3.remove(v2_3_0);
+  T2_3.remove(v2_3_0); assert(T2_3.is_valid());
   T2_3.remove(v2_3_1);
   T2_3.remove(v2_3_9);
   T2_3.remove(v2_3_8);
@@ -724,23 +719,23 @@ _test_cls_triangulation_2( const Triangulation & )
   T2_3.remove(v2_3_3);
   T2_3.remove(v2_3_4);
   T2_3.remove(v2_3_2);
-  T2_3.remove(v2_3_6);
-  T2_3.remove(v2_3_7);
-  T2_3.remove(v2_3_10);
+  T2_3.remove(v2_3_6); assert(T2_3.is_valid());
+  T2_3.remove(v2_3_7); assert(T2_3.is_valid()); 
+  T2_3.remove(v2_3_10); assert(T2_3.is_valid());
   assert( T2_3.number_of_vertices() == 0 );
 
   int i;
-#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
   for (i=T2_4.number_of_vertices(); i>0; i--)
     T2_4.remove(T2_4.finite_vertex());
   assert( T2_4.number_of_vertices() == 0 );
-#endif
   
   T2_5.clear();
   assert( T2_5.number_of_vertices() == 0 );
 
-  for (i=T2_6.number_of_vertices(); i>0; i--)
+  for (i=T2_6.number_of_vertices(); i>0; i--) {
+    assert(T2_6.is_valid());
     T2_6.remove(T2_6.finite_vertex());
+  }
   assert( T2_6.number_of_vertices() == 0 );
   
   for (i=T2_7.number_of_vertices(); i>0; i--)

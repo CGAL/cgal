@@ -33,51 +33,51 @@ CGAL_BEGIN_NAMESPACE
 template <class T>
 struct Pointer
 {
-    typedef T value_type;
+  typedef T value_type;
 
-    Pointer(const T* p = NULL) : _pointer((T*)p) {}
+  Pointer(const T* p = NULL) : _pointer((T*)p) {}
 
-    Pointer& operator=(const T*& p)
+  Pointer& operator=(const T* p)
     {
-        ptr() = p;
-        return *this;
+      ptr() = p;
+      return *this;
     }
 
-    Pointer& operator=(const Pointer& p)
+  Pointer& operator=(const Pointer& p)
     {
-        ptr() = p.ptr();
-        return *this;
+      ptr() = p.ptr();
+      return *this;
     }
 
-    T& operator*() const { return *ptr(); }
-    T* operator->() const { return ptr(); }
+  T& operator*() const { return *ptr(); }
+  T* operator->() const { return ptr(); }
 
-    void clear() { ptr() = NULL; }
+  void clear() { ptr() = NULL; }
 
-    void Delete()
+  void Delete()
     {
-        delete ptr();
-        clear();
+      delete ptr();
+      clear();
     }
 
-    bool is_null() const { return ptr() == NULL; }
+  bool is_null() const { return ptr() == NULL; }
 
-    bool operator==(const Pointer& p) const { return ptr() == p.ptr(); }
-    bool operator!=(const Pointer& p) const { return !(*this == p); }
+  bool operator==(const Pointer& p) const { return ptr() == p.ptr(); }
+  bool operator!=(const Pointer& p) const { return !(*this == p); }
 
-    bool operator==(CGAL_NULL_TYPE n) const
+  bool operator==(CGAL_NULL_TYPE n) const
     {
-        CGAL_assertion(n == 0);
-        return ptr() == NULL;
+      CGAL_assertion(n == 0);
+      return ptr() == NULL;
     }
 
-    bool operator!=(CGAL_NULL_TYPE n) const { return !(*this == n); }
+  bool operator!=(CGAL_NULL_TYPE n) const { return !(*this == n); }
  
-    T*& ptr()       { return _pointer; }
-    T*  ptr() const { return _pointer; }
+  T*& ptr()       { return _pointer; }
+  T*  ptr() const { return _pointer; }
 
 private:
-    T* _pointer;
+  T* _pointer;
 };
 
 CGAL_END_NAMESPACE
