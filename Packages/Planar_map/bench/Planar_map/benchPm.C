@@ -17,6 +17,7 @@
 #include <CGAL/Planar_map_2.h>
 #include <CGAL/Pm_segment_traits_2.h>
 #include <CGAL/IO/Pm_iostream.h>
+#include <CGAL/IO/Window_stream.h>
 #include "CGAL/bench.h"
 #include <iostream>
 #include <fstream>
@@ -52,7 +53,8 @@ class Basic_Pm {
 public:
   /*
    */
-  Basic_Pm() : m_filename(0), m_verbose(false) {}
+  Basic_Pm() : m_filename(0), m_verbose(false),
+    m_x0(0), m_x1(0), m_y0(0), m_y1(0) {}
   virtual ~Basic_Pm() {}
   
   /*
@@ -75,6 +77,19 @@ public:
     for (i = 0; i < count; i++) {
       NT x, y;
       inp >> x >> y;
+      double dx = CGAL::to_double(x);
+      double dy = CGAL::to_double(y);
+      if (i == 0) {
+        m_x0 = dx;
+        m_y0 = dy;
+        m_x1 = dx;
+        m_y1 = dy;
+      } else {
+        if (dx < m_x0) m_x0 = dx;
+        if (dy < m_y0) m_y0 = dy;
+        if (m_x1 < dx) m_x1 = dx;
+        if (m_y1 < dy) m_y1 = dy;
+      }
       Point p1(x,y);
       inp >> x >> y;
       Point p2(x,y);
@@ -84,7 +99,7 @@ public:
     }
     inp.close();
     if (m_verbose) std::cout << m_curveList.size() << std::endl;
-    
+
     return 0;
   }
 
@@ -100,6 +115,11 @@ protected:
   const char * m_filename;
   CurveList m_curveList;
   bool m_verbose;
+
+  double m_x0;
+  double m_x1;
+  double m_y0;
+  double m_y1;
 };
 
 /*!
@@ -118,6 +138,88 @@ public:
 };
 
 typedef CGAL::Bench<Construct_Pm> ConstructPmBench;
+
+/*!
+ */
+void redraw(leda_window * wp, double x0, double y0, double x1, double y1) 
+{ wp->flush_buffer(x0,y0,x1,y1); }
+
+/*!
+ */
+class Display_Pm : public Basic_Pm {
+private:
+  typedef CGAL::Window_stream           Window_stream;
+  typedef Planar_map::Vertex_iterator   Vertex_iterator;
+  typedef Planar_map::Edge_iterator     Edge_iterator;
+
+public:
+  /*!
+   */
+  virtual void op()
+  {
+    Planar_map pm;
+    pm.insert(m_curveList.begin(), m_curveList.end());
+    m_window->set_flush(0);
+    Vertex_iterator vi;
+    for (vi = pm.vertices_begin(); vi != pm.vertices_end(); vi++) {
+      (*m_window) << CGAL::GREEN;
+      (*m_window) << (*vi).point();
+    }
+
+    Edge_iterator ei;
+    for (ei = pm.edges_begin(); ei != pm.edges_end(); ei++) {
+      (*m_window) << CGAL::BLUE;
+      (*m_window) << ((*ei).curve());
+    }
+
+    m_window->set_flush(1);
+    m_window->flush();
+  }
+
+  /*!
+   */
+  int init()
+  {
+    int rc;
+    if (rc = Basic_Pm::init() < 0) return rc;
+
+    float x_range = m_x1 - m_x0;
+    float y_range = m_y1 - m_y0;
+    float width = 640;
+    float height = (y_range * width) / x_range;
+    
+    m_window = new Window_stream(width, height);
+    if (!m_window) return -1;
+
+    float min_range = (x_range < y_range) ? x_range : y_range;
+    float x_margin = min_range / 4;
+    float y_margin = (height * x_margin) / width;
+        
+    float x0 = m_x0 - x_margin;
+    float x1 = m_x1 + x_margin;
+    float y0 = m_y0 - y_margin;
+    m_window->init(x0, x1, y0);   // logical window size 
+
+    m_window->set_redraw(redraw);
+    m_window->set_mode(leda_src_mode);
+    m_window->set_node_width(3);
+    m_window->display(leda_window::center, leda_window::center);
+    return 0;
+  }
+
+  /*!
+   */
+  void clean()
+  {
+    Basic_Pm::init();
+    delete m_window;
+  }
+  
+private:
+  Window_stream * m_window;
+};
+
+typedef CGAL::Bench<Display_Pm> DisplayPmBench;
 
 /*!
  */
@@ -164,12 +266,20 @@ int main(int argc, char * argv[])
   }
   const char * filename = argv[optind];
 
+#if 0
   ConstructPmBench bench(std::string("Construct PM (") +
                          std::string(filename) + std::string(")"));
   Construct_Pm & construct_pm = bench.getBenchUser();
   construct_pm.setFilename(filename);
   construct_pm.setVerbose(verbose);
-
+#else
+  DisplayPmBench bench(std::string("Display PM (") +
+                       std::string(filename) + std::string(")"));
+  Display_Pm & display_pm = bench.getBenchUser();
+  display_pm.setFilename(filename);
+  display_pm.setVerbose(verbose);
+#endif
+  
   if (samples > 0) bench.setSamples(samples);
   if (seconds > 0) bench.setSeconds(seconds);
 
