@@ -91,7 +91,7 @@ public:
 					const Point & r,
 					const Point & s) const
     // p,q,r,s supposed to be coplanar
-    // q,r,s supposed to be a positively oriented triangle
+    // q,r,s supposed to be non collinear
     // tests whether p is on the same side of q,r as s
     // returns :
     // CGAL_COLLINEAR if pqr collinear
@@ -99,6 +99,7 @@ public:
     // CGAL_NEGATIVE if qrp and qrs have opposite orientations
   {
     // should be used only when p,q,r,s are coplanar
+    CGAL_triangulation_precondition( ! collinear(q,r,s) );
     CGAL_triangulation_precondition( orientation(p,q,r,s) ==
 				     CGAL_COPLANAR );
     // projection on the x,y-plane
