@@ -20,8 +20,15 @@ my $Sender;
 my $maintainer= 'geert@cs.uu.nl';
 my $no_of_succesful_submissions = 0;
 
-my @trusted_hosts = ('cs.uu.nl','inria.fr','informatik.uni-halle.de',
-'inf.ethz.ch','mpi-sb.mpg.de','inf.fu-berlin.de','math.tau.ac.il');
+my @trusted_hosts = (
+	'cs.uu.nl',
+	'inria.fr',
+	'informatik.uni-halle.de',
+	'inf.ethz.ch',
+	'mpi-sb.mpg.de',
+	'inf.fu-berlin.de',
+	'cs.unc.edu',
+	'math.tau.ac.il');
 #'risc.uni-linz.ac.at'
 sub get_url()
 {
