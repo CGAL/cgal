@@ -72,6 +72,7 @@ public:
     set_constraints(c0,c1,c2);
   }
 
+
   bool is_constrained(int i) const ;
   void set_constraints(bool c0, bool c1, bool c2) ;
   void set_constraint(int i, bool b);

@@ -54,8 +54,10 @@ public:
     :  Fb(v0,v1,v2,n0,n1,n2)
   {}
 
-  Triangulation_ds_face_2( const Face * f);
- 
+  Triangulation_ds_face_2( const Face & f)
+    : Fb(f)
+    {}
+
   //setting
   void set_vertex(int i, Vertex* v) { Fb::set_vertex(i,v);}
   void set_neighbor(int i, Face* n) { Fb::set_neighbor(i,n);}
@@ -84,14 +86,6 @@ public:
 };
 
 
-template < class Vb, class Fb >
-Triangulation_ds_face_2<Vb,Fb>::
-Triangulation_ds_face_2(const Face * f)
-  :  Fb()
-{
-  set_vertices(f->vertex(0), f->vertex(1), f->vertex(2));
-  set_neighbors(f->neighbor(0), f->neighbor(1), f->neighbor(2));
-}
 
 template < class Vb, class Fb >
 inline void 

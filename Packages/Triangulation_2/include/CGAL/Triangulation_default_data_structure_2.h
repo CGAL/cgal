@@ -559,7 +559,7 @@ insert_dim_up(Vertex *w, bool orient)
 
   for ( ; lfit != faces_list.end() ; ++lfit) {
     f = * lfit;
-    g = new Face( f);
+    g = new Face( *f);
     f->set_vertex(i,v); f->set_neighbor(i,g);
     g->set_vertex(i,w); g->set_neighbor(i,f);
     if (f->has_vertex(w)) to_delete.push_back(g); // flat face to be deleted 

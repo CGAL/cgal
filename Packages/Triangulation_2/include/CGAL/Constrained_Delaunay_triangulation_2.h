@@ -842,7 +842,7 @@ refine(List_edges & list_of_constraints,
   // refine all bad triangles
 
    while (!(set_of_bad_faces.empty())) {
-     std::cerr << set_of_bad_faces.size() << std::endl;
+     //std::cerr << set_of_bad_faces.size() << std::endl;
      f=set_of_bad_faces.front();
      set_of_bad_faces.pop_front();
      if (is_bad(f, lmax, lmin, angmin)) {
