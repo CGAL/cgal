@@ -42,12 +42,10 @@ namespace CGAL {
 #define PIS(s) (s->first())
 #endif
 
-template <typename CONT, typename PMDEC, typename GEOM>
+template <typename IT, typename PMDEC, typename GEOM>
 class leda_seg_overlay_traits {
 public:
-  typedef CONT                             CONTAINER;
-  typedef typename CONTAINER::iterator     ITERATOR;
-  typedef ITERATOR                         IT;
+  typedef IT                               ITERATOR;
   typedef std::pair<IT,IT>                 INPUT;
   typedef PMDEC                            OUTPUT;
   typedef typename PMDEC::Vertex_handle    Vertex_handle;
@@ -63,7 +61,6 @@ public:
 
 
   // types interfacing the generic sweep frame:
-  CONTAINER dummy;
   ITERATOR its, ite;
   OUTPUT&  GO;
   const GEOMETRY& K;
@@ -256,7 +253,7 @@ public:
       if (sit == nil) 
         {
           Segment_2 s_sweep = K.construct_segment(p_sweep,p_sweep);
-          seg_pair sp(s_sweep,dummy.end());
+          seg_pair sp(s_sweep,ITERATOR());
           sit_succ = YS.locate( &sp );
           if ( sit_succ != YS.max_item() && 
                orientation(sit_succ,p_sweep) == 0 ) 
@@ -433,12 +430,10 @@ public:
 
 namespace CGAL {
 
-template <typename CONT, typename PMDEC, typename GEOM>
+template <typename IT, typename PMDEC, typename GEOM>
 class stl_seg_overlay_traits {
 public:
-  typedef CONT                             CONTAINER;
-  typedef typename CONTAINER::iterator     ITERATOR;
-  typedef ITERATOR                         IT;
+  typedef IT                               ITERATOR;
   typedef std::pair<IT,IT>                 INPUT;
   typedef PMDEC                            OUTPUT;
   typedef typename PMDEC::Vertex_handle    Vertex_handle;
@@ -454,7 +449,6 @@ public:
 
 
   // types interfacing the generic sweep frame
-  CONTAINER dummy;
   ITERATOR its, ite;
   OUTPUT&  GO;
   const GEOMETRY& K;
@@ -654,7 +648,7 @@ public:
     Vertex_handle v = GO.new_vertex(p_sweep);
     ss_iterator sit_succ, sit_pred, sit_first, sit;
     Segment_2 s_sweep = K.construct_segment(p_sweep,p_sweep);
-    seg_pair sp(s_sweep,dummy.end());
+    seg_pair sp(s_sweep,ITERATOR());
     sit_succ = YS.upper_bound(&sp);
     sit = sit_succ; --sit;
 
