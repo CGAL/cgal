@@ -108,7 +108,7 @@ public:
   bool is_defined () const { return defined_; }
   bool is_point () const { return defined_ && point_; }
   bool is_segment () const { return defined_ && !point_; }
-  bool is_exact() const { return input_; }
+  bool is_exact() const { return defined_ && input_; }
   bool is_exact(unsigned int i) const {
     CGAL_precondition( is_segment() && i < 2 );
     return is_exact_[i];

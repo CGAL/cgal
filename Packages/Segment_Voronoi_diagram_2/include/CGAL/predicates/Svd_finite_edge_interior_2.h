@@ -10,7 +10,6 @@ CGAL_BEGIN_NAMESPACE
 
 //-----------------------------------------------------------------------------
 
-
 template<class K, class Method_tag>
 class Svd_finite_edge_interior_2
   : public Svd_basic_predicates_C2<K>
@@ -157,8 +156,7 @@ private:
     if ( t.is_point() ) {
       return is_interior_in_conflict_both_ps_p(p, q, r, s, t, tag);
     }
-    return is_interior_in_conflict_both_ps_s(p.point(), q.segment(),
-					     r, s, t.segment(), tag);
+    return is_interior_in_conflict_both_ps_s(p, q, r, s, t, tag);
   }
 
   //--------------------------------------------------------------------
@@ -209,6 +207,7 @@ private:
 
     if ( are_same(sp, st.source_site()) ||
 	 are_same(sp, st.target_site()) ) {
+
       Line_2 lqperp = compute_perpendicular(lq, p);
 
       Voronoi_vertex_2 vpqr(sp, sq, r);
@@ -238,7 +237,6 @@ private:
 	return true;
       }
 	     
-
       Comparison_result res =
 	compare_squared_distances_to_line(lq, p, t1);
 
@@ -248,7 +246,6 @@ private:
     if ( oriented_side_of_line(lt, p) == ON_NEGATIVE_SIDE ) {
       lt = opposite_line(lt);
     }
-
 
     Comparison_result res =
       CGAL::compare(lt.a() * lq.b(), lt.b() * lq.a());
@@ -283,7 +280,6 @@ private:
     //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     //>>>>>>>>>> HERE I NEED TO CHECK THE BOUNDARY CASES <<<<<<
     //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
     Line_2 lqperp = compute_perpendicular(lq, p);
 
     Oriented_side opqr = vpqr.oriented_side(lqperp);
@@ -338,7 +334,6 @@ private:
     // checks if interior of voronoi edge is in conflict if both extrema 
     // of the voronoi edge touch the corresponding circles.
     // return true if interior is in conflict; false otherwise
-
     if ( t.is_segment() ) { return false; }
 
     if ( (p.is_point() && q.is_point()) ||

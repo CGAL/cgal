@@ -334,18 +334,21 @@ public:
   }
 
   Vertex_handle  insert(const Point& p) {
-    return insert(Site(p), Vertex_handle(NULL));
+    return insert(Site(p), Vertex_handle(NULL), true);
   }
 
   Vertex_handle  insert(const Segment& s) {
-    return insert(Site(s), Vertex_handle(NULL));
+    return insert(Site(s), Vertex_handle(NULL), true);
   }
 
   Vertex_handle  insert(const Site& t) {
-    return insert(t, Vertex_handle(NULL));
+    return insert(t, Vertex_handle(NULL), true);
   }
 
-  Vertex_handle  insert(const Site& t, Vertex_handle vnear);
+  Vertex_handle  insert(const Site& t, Vertex_handle vnear)
+  {
+    return insert(t, vnear, true);
+  }
 
 public:
   // REMOVAL
@@ -741,6 +744,7 @@ protected:
   Vertex_handle  insert_third(const Site& t);
   Vertex_handle insert_intersecting_segment(const Site_2& t,
 					    Vertex_handle v);
+  Vertex_handle insert(const Site_2& t, Vertex_handle vnear, bool);
 
   // methods for insertion
   void initialize_conflict_region(const Face_handle& f, List& l);

@@ -30,7 +30,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/enum.h>
 
-//#include <CGAL/predicates/Segment_Voronoi_diagram_vertex_C2.h>
 #include <CGAL/predicates/Segment_Voronoi_diagram_vertex_2.h>
 
 #include <CGAL/Parabola_2.h>
@@ -60,7 +59,9 @@ public:
   typedef typename K::Point_2               Point_2;
 
   typedef Point_2                           result_type;
-  
+
+  struct Arity {};
+
 public:
   Point_2 operator()(const Site_2& s1, const Site_2& s2,
 		     const Site_2& s3) const
@@ -137,11 +138,11 @@ template<class Gt, class M >
 class Construct_svd_bisector_ray_2
 {
 public:
-  typedef typename Gt::Site_2             Site_2;
-  typedef typename Gt::Point_2            Point_2;
-  typedef typename Gt::Line_2             Line_2;
-  typedef typename Gt::Ray_2              Ray_2;
-  typedef Construct_svd_vertex_2<Gt,M>    Construct_svd_vertex_2;
+  typedef typename Gt::Site_2                   Site_2;
+  typedef typename Gt::Point_2                  Point_2;
+  typedef typename Gt::Line_2                   Line_2;
+  typedef typename Gt::Ray_2                    Ray_2;
+  typedef typename Gt::Construct_svd_vertex_2   Construct_svd_vertex_2;
 
   Ray_2 operator()(const Site_2& p, const Site_2& q,
 		   const Site_2& r) const
@@ -180,15 +181,15 @@ template<class Gt, class M>
 class Construct_svd_bisector_segment_2
 {
 public:
-  typedef typename Gt::Site_2                 Site_2;
-  typedef typename Gt::Point_2                Point_2;
-  typedef typename Gt::Line_2                 Line_2;
-  typedef typename Gt::Ray_2                  Ray_2;
-  typedef typename Gt::Segment_2              Segment_2;
-  typedef CGAL::Parabola_segment_2<Gt>        Parabola_segment_2;
+  typedef typename Gt::Site_2                  Site_2;
+  typedef typename Gt::Point_2                 Point_2;
+  typedef typename Gt::Line_2                  Line_2;
+  typedef typename Gt::Ray_2                   Ray_2;
+  typedef typename Gt::Segment_2               Segment_2;
+  typedef CGAL::Parabola_segment_2<Gt>         Parabola_segment_2;
 
-  typedef Construct_svd_vertex_2<Gt,M>        Construct_svd_vertex_2;
-  typedef typename Gt::Are_same_points_2      Are_same_points_2;
+  typedef typename Gt::Construct_svd_vertex_2  Construct_svd_vertex_2;
+  typedef typename Gt::Are_same_points_2       Are_same_points_2;
 
   Object operator()(const Site_2& p, const Site_2& q,
 		    const Site_2& r, const Site_2& s) const

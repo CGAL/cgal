@@ -306,12 +306,8 @@ private slots:
       }
     }
 
-    
-
-    //    std::cout << "insertion done..." << std::endl;
-    svd.is_valid(true,1);
-    //    assert( svd.is_valid(true,1) );
-    std::cout << std::endl;
+    //    svd.is_valid(true,1);
+    //    std::cout << std::endl;
     widget->redraw();
   }
 

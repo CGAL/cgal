@@ -494,7 +494,7 @@ do_intersect(const Site& t, Vertex_handle v) const
 template< class Gt, class Svdds >
 typename Segment_Voronoi_diagram_2<Gt,Svdds>::Vertex_handle
 Segment_Voronoi_diagram_2<Gt,Svdds>::
-insert(const Site& t, Vertex_handle vnear)
+insert(const Site& t, Vertex_handle vnear, bool insert_endpoints)
 {
   if ( t.is_segment() && is_degenerate_segment(t) ) {
     // MK: this may be buggy; does it work when the segment is not an
@@ -529,10 +529,12 @@ insert(const Site& t, Vertex_handle vnear)
   Vertex_handle vnearest;
   if ( t.is_point() ) {
     vnearest = nearest_neighbor( t, vnear );
-  } else {
+  } else if ( insert_endpoints ) {
     // if we insert a segment, insert the endpoints first
     vnearest = insert( t.source_site(), vnear );
     insert( t.target_site(), Vertex_handle(NULL) );
+  } else {
+    vnearest = vnear;
   }
 
   CGAL_assertion( vnearest != Vertex_handle(NULL) );
@@ -548,6 +550,20 @@ insert(const Site& t, Vertex_handle vnear)
 
   // find the first conflict
 
+  // first look if there are intersections...
+  Vertex_circulator vc = vnearest->incident_vertices();
+  Vertex_circulator vc_start = vc;
+  do {
+    Vertex_handle vv(vc);
+    if ( do_intersect(t, vv) ) {
+      if ( t.is_segment() ) {
+	return insert_intersecting_segment(t, vv);
+	//	return Vertex_handle(NULL);
+      }
+    }
+    ++vc;
+  } while ( vc != vc_start );
+
   // first look for conflict with vertex
   Face_circulator fc_start = vnearest->incident_faces();
   Face_circulator fc = fc_start;
@@ -558,15 +574,6 @@ insert(const Site& t, Vertex_handle vnear)
 
   do {
     Face_handle f(fc);
-    for (int i = 0; i < 3; i++) {
-      Vertex_handle vf = f->vertex(i);
-      if ( do_intersect(t, vf) ) {
-	if ( t.is_segment() ) {
-	  return insert_intersecting_segment(t, vf);
-	  //	return Vertex_handle(NULL);
-	}
-      }
-    }
 
     s = incircle(f, t);
 
@@ -769,8 +776,8 @@ insert_intersecting_segment(const Site_2& t, Vertex_handle v)
   std::cout << "===" << std::endl;
 #endif
 
-  insert(s3, vsx);
-  insert(s4, vsx);
+  insert(s3, vsx, false);
+  insert(s4, vsx, false);
 
   return vsx;
   //  return v1;

@@ -22,10 +22,12 @@ struct Rep : public CGAL::Simple_cartesian<CGAL::Gmpq> {};
 //struct Rep : public CGAL::Simple_cartesian<NT> {};
 
 namespace CGAL {
+
   CGAL::Gmpq sqrt(const CGAL::Gmpq& x)
   {
-    return CGAL::Gmpq( sqrt(x.to_double()) );
+    return CGAL::Gmpq(  sqrt( CGAL::to_double(x) )  );
   }
+
 }
 #endif
 

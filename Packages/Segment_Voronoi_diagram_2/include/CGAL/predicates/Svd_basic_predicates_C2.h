@@ -29,6 +29,7 @@
 
 
 #include <CGAL/enum.h>
+#include <CGAL/Number_type_traits.h>
 #include <CGAL/predicates/Square_root_1.h>
 #include <CGAL/predicates/Square_root_2.h>
 
@@ -55,6 +56,11 @@ public:
   typedef CGAL::Square_root_2<RT>       Sqrt_2;
   typedef CGAL::Square_root_2<Sqrt_1>   Sqrt_3;
 
+  typedef typename Number_type_traits<RT>::Has_sqrt  RT_Has_sqrt;
+  typedef typename Number_type_traits<FT>::Has_sqrt  FT_Has_sqrt;
+
+  static RT_Has_sqrt rt_has_sqrt;
+  static FT_Has_sqrt ft_has_sqrt;
 
   class Line_2
   {
@@ -104,18 +110,31 @@ public:
   // CONVERSIONS
   //-------------------------------------------------------------------
 
+  static FT compute_sqrt(const FT& x, Tag_true)
+  {
+    return CGAL::sqrt( x );
+  }
+
+  static FT compute_sqrt(const FT& x, Tag_false)
+  {
+    return FT(  CGAL::sqrt( CGAL::to_double(x) )  );
+  }
+
   static
   FT to_ft(const Sqrt_1& x)
   {
-    FT sqrt_c = CGAL::sqrt(x.c());
+    //    FT sqrt_c = CGAL::sqrt(x.c());
+    FT sqrt_c = compute_sqrt( x.c(), ft_has_sqrt );
     return x.a() + x.b() * sqrt_c;
   }
 
   static
   FT to_ft(const Sqrt_3& x)
   {
-    FT sqrt_e = CGAL::sqrt( to_ft(x.e()) );
-    FT sqrt_f = CGAL::sqrt( to_ft(x.f()) );
+    //    FT sqrt_e = CGAL::sqrt( to_ft(x.e()) );
+    //    FT sqrt_f = CGAL::sqrt( to_ft(x.f()) );
+    FT sqrt_e = compute_sqrt( to_ft(x.e()), ft_has_sqrt );
+    FT sqrt_f = compute_sqrt( to_ft(x.f()), ft_has_sqrt );
     FT sqrt_ef = sqrt_e * sqrt_f;
     return to_ft(x.a()) + to_ft(x.b()) * sqrt_e
       + to_ft(x.c()) * sqrt_f + to_ft(x.d()) * sqrt_ef;

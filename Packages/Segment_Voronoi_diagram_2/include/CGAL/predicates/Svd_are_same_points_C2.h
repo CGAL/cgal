@@ -22,27 +22,35 @@ private:
       compare_x_2(p, q) == EQUAL && compare_y_2(p, q) == EQUAL;
   }
 
+  bool are_same(const Segment_2& s, const Segment_2& t) const
+  {
+    return
+      ( are_same(s.source(), t.source()) &&
+	are_same(s.target(), t.target()) ) ||
+      ( are_same(s.source(), t.target()) &&
+	are_same(s.target(), t.source()) );
+  }
+
 public:
   bool operator()(const Site_2& p, const Site_2& q) const
   {
     CGAL_precondition( p.is_point() && q.is_point() );
 
     if ( !p.is_exact() && !q.is_exact() ) {
-      Segment_2 p_supp[2] = { p.supporting_segment(0),
-			      p.supporting_segment(1) };
-      Segment_2 q_supp[2] = { q.supporting_segment(0),
-			      q.supporting_segment(1) };
+      Segment_2 s[2] = { p.supporting_segment(0),
+			 p.supporting_segment(1) };
+      Segment_2 t[2] = { q.supporting_segment(0),
+			 q.supporting_segment(1) };
+#if 0
       bool b[2][2];
       for (int i = 0; i < 2; i++) {
 	for (int j = 0; j < 2; j++) {
-	  b[i][j] =
-	    (  are_same( p_supp[i].source(), q_supp[j].source() ) &&
-	       are_same( p_supp[i].target(), q_supp[j].target() )  ) ||
-	    (  are_same( p_supp[i].source(), q_supp[j].target() ) &&
-	       are_same( p_supp[i].target(), q_supp[j].source() )  );
+	  b[i][j] = are_same(s[i], t[j]);
 	}
       }
-      return (b[0][0] && b[1][1]) || (b[0][1] && b[1][0]);
+#endif
+      return ( are_same(s[0], t[0]) && are_same(s[1], t[1]) ) ||
+	( are_same(s[0], t[1]) && are_same(s[1], t[0]) );
     }
 
     return are_same(p.point(), q.point());

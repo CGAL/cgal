@@ -30,7 +30,7 @@
 
 #include <CGAL/enum.h>
 #include <CGAL/predicates/Svd_basic_predicates_C2.h>
-
+#include <CGAL/predicates/Svd_are_same_points_C2.h>
 
 
 CGAL_BEGIN_NAMESPACE
@@ -64,11 +64,21 @@ public:
   typedef typename Base::Homogeneous_point_2 Homogeneous_point_2;
 
 private:
+  typedef Svd_are_same_points_C2<K>   Are_same_points_C2;
+
+  Are_same_points_C2  are_same;
+
+private:
   //--------------------------------------------------------------------------
 
   void
-  compute_ppp(const Point_2& p, const Point_2& q, const Point_2& r)
+  compute_ppp(const Site_2& sp, const Site_2& sq, const Site_2& sr)
   {
+    CGAL_precondition( sp.is_point() && sq.is_point() &&
+		       sr.is_point() );
+
+    Point_2 p = sp.point(), q = sq.point(), r = sr.point();
+
     v_type = PPP;
 
     RT np = CGAL::square(p.x()) + CGAL::square(p.y());
@@ -87,29 +97,37 @@ private:
   //--------------------------------------------------------------------------
 
   void
-  compute_pss(const Point_2& p, const Segment_2& q, const Segment_2& r)
+  compute_pss(const Site_2& p, const Site_2& q, const Site_2& r)
   {
+    CGAL_precondition( p.is_point() && q.is_segment() &&
+		       r.is_segment() );
+
     v_type = PSS;
 
-    bool pq = (p == q.source() || p == q.target());
-    bool pr = (p == r.source() || p == r.target());
+    bool pq =
+      are_same(p, q.source_site()) || are_same(p, q.target_site());
+    bool pr =
+      are_same(p, r.source_site()) || are_same(p, r.target_site());
+
+    Point_2 pp = p.point();
 
     if ( pq && pr ) {
       Sqrt_1 One(RT(1), RT(0), RT(0));
 
-      ux = Sqrt_3(p.x() * One);
-      uy = Sqrt_3(p.y() * One);
+      ux = Sqrt_3(pp.x() * One);
+      uy = Sqrt_3(pp.y() * One);
       uz = Sqrt_3(One);
       return;
     }
 
+    
 
     RT a1, b1, c1, a2, b2, c2;
-    compute_supporting_line(q, a1, b1, c1);
-    compute_supporting_line(r, a2, b2, c2);
+    compute_supporting_line(q.supporting_segment(), a1, b1, c1);
+    compute_supporting_line(r.supporting_segment(), a2, b2, c2);
 
-    RT c1_ = a1 * p.x() + b1 * p.y() + c1;
-    RT c2_ = a2 * p.x() + b2 * p.y() + c2;
+    RT c1_ = a1 * pp.x() + b1 * pp.y() + c1;
+    RT c2_ = a2 * pp.x() + b2 * pp.y() + c2;
 
     if ( pq ) {
       c1_ = RT(0);
@@ -125,13 +143,15 @@ private:
     if ( sgn_c1_ == NEGATIVE ) {
       a1 = -a1;  b1 = -b1;  c1_ = -c1_;
     } else if ( sgn_c1_ == ZERO ) {
+#if 0
       if ( !pq ) {
 	std::cout << "p: " << p << std::endl;
 	std::cout << "q: " << q << std::endl;
 	std::cout << "r: " << r << std::endl;
       }
+#endif
       CGAL_assertion( pq );
-      if ( p == q.target() ) {
+      if ( are_same(p, q.target_site()) ) {
 	a1 = -a1;  b1 = -b1;  c1_ = -c1_;
       }
     }
@@ -140,7 +160,7 @@ private:
       a2 = -a2;  b2 = -b2;  c2_ = -c2_;
     } else if ( sgn_c2_ == ZERO ) {
       CGAL_assertion( pr );
-      if ( p == r.source() ) {
+      if ( are_same(p, r.source_site()) ) {
 	a2 = -a2;  b2 = -b2;  c2_ = -c2_;
       }
     }
@@ -158,9 +178,9 @@ private:
 
       Sqrt_1 vz(-a1 * a2 - b1 * b2, RT(1), D1D2);
 
-      ux = Sqrt_3(J + p.x() * vz,
+      ux = Sqrt_3(J + pp.x() * vz,
 		  Zero, Zero, Zero, Zero, Zero);
-      uy = Sqrt_3(I + p.y() * vz,
+      uy = Sqrt_3(I + pp.y() * vz,
 		  Zero, Zero, Zero, Zero, Zero);
       uz = Sqrt_3(vz, Zero, Zero, Zero, Zero, Zero);
     } else if ( pr ) {
@@ -176,15 +196,15 @@ private:
 
       Sqrt_1 vz(-a1 * a2 - b1 * b2, RT(1), D1D2);
 
-      ux = Sqrt_3(J + p.x() * vz,
+      ux = Sqrt_3(J + pp.x() * vz,
 		  Zero, Zero, Zero, Zero, Zero);
-      uy = Sqrt_3(I + p.y() * vz,
+      uy = Sqrt_3(I + pp.y() * vz,
 		  Zero, Zero, Zero, Zero, Zero);
       uz = Sqrt_3(vz, Zero, Zero, Zero, Zero, Zero);
     } else {
       Line_2 lq(a1, b1, c1_);
       Line_2 lr(a2, b2, c2_);
-      compute_pll(p, lq, lr);
+      compute_pll(pp, lq, lr);
     }
   }
 
@@ -279,21 +299,28 @@ private:
 
 
   void
-  compute_pps(const Point_2& p, const Point_2& q, const Segment_2& r)
+  compute_pps(const Site_2& p, const Site_2& q, const Site_2& r)
   {
+    CGAL_precondition( p.is_point() && q.is_point() &&
+		       r.is_segment() );
+
     v_type = PPS;
 
     RT a, b, c;
-    compute_supporting_line(r, a, b, c);
+    compute_supporting_line(r.supporting_segment(), a, b, c);
 
-    RT c_ = a * p.x() + b * p.y() + c;
-    RT cq_ = a * q.x() + b * q.y() + c;
+    Point_2 pp = p.point(), qq = q.point();
+
+    RT c_ = a * pp.x() + b * pp.y() + c;
+    RT cq_ = a * qq.x() + b * qq.y() + c;
 
 
-    if ( p == r.source() || p == r.target() ) {
+    if ( are_same(p, r.source_site()) ||
+	 are_same(p, r.target_site()) ) {
       c_ = RT(0);
     }
-    if ( q == r.source() || q == r.target() ) {
+    if ( are_same(q, r.source_site()) ||
+	 are_same(q, r.target_site()) ) {
       cq_ = RT(0);
     }
 
@@ -312,8 +339,8 @@ private:
 
     RT nl = CGAL::square(a) + CGAL::square(b);
 
-    RT x_ = q.x() - p.x();
-    RT y_ = q.y() - p.y();
+    RT x_ = qq.x() - pp.x();
+    RT y_ = qq.y() - pp.y();
     RT n_ = CGAL::square(x_) + CGAL::square(y_);
 
 
@@ -325,8 +352,8 @@ private:
       RT I = nl * (b * n_ + RT(4) * c_ * y_) - RT(4) * b * e1;
       RT X = RT(8) * nl * c_;
 
-      ux_pps = Sqrt_1(J + p.x() * X);
-      uy_pps = Sqrt_1(I + p.y() * X);
+      ux_pps = Sqrt_1(J + pp.x() * X);
+      uy_pps = Sqrt_1(I + pp.y() * X);
       uz_pps = Sqrt_1(X);
       return;
     }
@@ -342,14 +369,15 @@ private:
     RT J = a * e3 - y_ * e4;
     RT S = n_ * nl * c_ * cq_;
 
-    ux_pps = Sqrt_1(J + p.x() * X, RT(-2) * y_, S);
-    uy_pps = Sqrt_1(I + p.y() * X, RT( 2) * x_, S);
+    ux_pps = Sqrt_1(J + pp.x() * X, RT(-2) * y_, S);
+    uy_pps = Sqrt_1(I + pp.y() * X, RT( 2) * x_, S);
     uz_pps = Sqrt_1(X, RT(0), S);
   }
 
 
   //--------------------------------------------------------------------------
 
+#if 0
   bool
   is_consistent(const Segment_2& p, const Segment_2& q,
 		const Segment_2& r, RT a[], RT b[], RT c[]) const
@@ -376,17 +404,23 @@ private:
 
     return ( num_oriented >= 2 );
   }
+#endif
 
   void
-  orient_lines(const Segment_2& p, const Segment_2& q,
-	       const Segment_2& r, RT a[], RT b[], RT c[]) const 
+  orient_lines(const Site_2& sp, const Site_2& sq,
+	       const Site_2& sr, RT a[], RT b[], RT c[]) const 
   {
+    CGAL_precondition( sp.is_segment() && sq.is_segment() &&
+		       sr.is_segment() );
+
     Line_2 l[3];
-    l[0] = compute_supporting_line(p);
-    l[1] = compute_supporting_line(q);
-    l[2] = compute_supporting_line(r);
+    l[0] = compute_supporting_line(sp.supporting_segment());
+    l[1] = compute_supporting_line(sq.supporting_segment());
+    l[2] = compute_supporting_line(sr.supporting_segment());
     
     bool is_oriented[3] = {false, false, false};
+
+    Segment_2 p = sp.segment(), q = sq.segment(), r = sr.segment();
 
     if ( is_on_positive_halfspace(l[0], q) ||
 	 is_on_positive_halfspace(l[0], r) ) {
@@ -545,8 +579,11 @@ private:
 
 
   void
-  compute_sss(const Segment_2& p, const Segment_2& q, const Segment_2& r)
+  compute_sss(const Site_2& p, const Site_2& q, const Site_2& r)
   {
+    CGAL_precondition( p.is_segment() && q.is_segment() &&
+		       r.is_segment() );
+
     v_type = SSS;
 
     RT a[3], b[3], c[3];
@@ -580,7 +617,7 @@ private:
   compute_vertex(const Site_2& s1, const Site_2& s2, const Site_2& s3)
   {
     if ( s1.is_point() && s2.is_point() && s3.is_point() ) {
-      compute_ppp(s1.point(), s2.point(), s3.point());
+      compute_ppp(s1, s2, s3);
 
     } else if ( s1.is_segment() && s2.is_point() && s3.is_point() ) {
       compute_vertex(s2, s3, s1);
@@ -591,17 +628,17 @@ private:
       pps_idx = 2;
 
     } else if ( s1.is_point() && s2.is_point() && s3.is_segment() ) {
-      compute_pps(s1.point(), s2.point(), s3.segment());
+      compute_pps(s1, s2, s3);
       pps_idx = 0;
 
     } else if ( s1.is_point() && s2.is_segment() && s3.is_segment() ) {
-      compute_pss(s1.point(), s2.segment(), s3.segment());
+      compute_pss(s1, s2, s3);
     } else if ( s1.is_segment() && s2.is_point() && s3.is_segment() ) {
       compute_vertex(s2, s3, s1);
     } else if ( s1.is_segment() && s2.is_segment() && s3.is_point() ) {
       compute_vertex(s3, s1, s2);
     } else {
-      compute_sss(s1.segment(), s2.segment(), s3.segment());
+      compute_sss(s1, s2, s3);
     }
 
   }
@@ -609,17 +646,20 @@ private:
 
   //--------------------------------------------------------------------------
 
+#if 0
   bool are_identical(const Point_2& p, const Point_2& q) const
   {
     return (p == q);
   }
+#endif
 
   //--------------------------------------------------------------------------
 
-  bool is_endpoint_of(const Point_2& p, const Segment_2& s) const
+  bool is_endpoint_of(const Site_2& p, const Site_2& s) const
   {
-    return ( are_identical(p, s.source()) ||
-	     are_identical(p, s.target()) );
+    CGAL_precondition( p.is_point() && s.is_segment() );
+    return ( are_same(p, s.source_site()) ||
+	     are_same(p, s.target_site()) );
   }
   
 
@@ -695,20 +735,22 @@ private:
   //--------------------------------------------------------------------------
 
   Sign
-  check_easy_degeneracies(const Point_2& t, PPS_Type,
+  check_easy_degeneracies(const Site_2& t, PPS_Type,
 			  bool& use_result) const
   {
+    CGAL_precondition( t.is_point() );
+
     use_result = false;
-    if (  ( p_.is_point() && are_identical(p_.point(),t) ) ||
-	  ( q_.is_point() && are_identical(q_.point(),t) ) ||
-	  ( r_.is_point() && are_identical(r_.point(),t) )  ) {
+    if (  ( p_.is_point() && are_same(p_, t) ) ||
+	  ( q_.is_point() && are_same(q_, t) ) ||
+	  ( r_.is_point() && are_same(r_, t) )  ) {
       use_result = true;
       return ZERO;
     }
 
-    if (  ( p_.is_segment() && is_endpoint_of(t, p_.segment()) ) || 
-	  ( q_.is_segment() && is_endpoint_of(t, q_.segment()) ) ||
-	  ( r_.is_segment() && is_endpoint_of(t, r_.segment()) )  ) {
+    if (  ( p_.is_segment() && is_endpoint_of(t, p_) ) || 
+	  ( q_.is_segment() && is_endpoint_of(t, q_) ) ||
+	  ( r_.is_segment() && is_endpoint_of(t, r_) )  ) {
       use_result = true;
       return POSITIVE;
     }
@@ -717,16 +759,20 @@ private:
   }
 
   Sign
-  check_easy_degeneracies(const Point_2& t, PSS_Type,
+  check_easy_degeneracies(const Site_2& t, PSS_Type,
 			  bool& use_result) const
   {
+    CGAL_precondition( t.is_point() );
+
     return check_easy_degeneracies(t, PPS_Type(), use_result);
   }
 
   Sign
-  check_easy_degeneracies(const Point_2& t, SSS_Type,
+  check_easy_degeneracies(const Site_2& t, SSS_Type,
 			  bool& use_result) const
   {
+    CGAL_precondition( t.is_point() );
+
     use_result = false;
 
     // ADD THE CASES WHERE t IS AN ENDPOINT OF ONE OF THE SEGMENTS
@@ -735,8 +781,12 @@ private:
 
   //--------------------------------------------------------------------------
 
-  Sign incircle(const Point_2& t, PPP_Type) const
+  Sign incircle_p(const Site_2& st, PPP_Type) const
   {
+    CGAL_precondition( st.is_point() );
+
+    Point_2 t = st.point();
+
     Oriented_side os =
       side_of_oriented_circle(p_.point(), q_.point(), r_.point(), t);
     if ( os == ON_POSITIVE_SIDE ) { return NEGATIVE; }
@@ -747,14 +797,20 @@ private:
   //--------------------------------------------------------------------------
 
   
-  Sign incircle(const Point_2& t, PPS_Type type) const
+  Sign incircle_p(const Site_2& st, PPS_Type type) const
   {
+    CGAL_precondition( st.is_point() );
+
     bool use_result(false);
-    Sign s = check_easy_degeneracies(t, type, use_result);
+    Sign s = check_easy_degeneracies(st, type, use_result);
     if ( use_result ) { return s; }
 
-    Sqrt_1 vx = ux_pps - p_ref().x() * uz_pps;
-    Sqrt_1 vy = uy_pps - p_ref().y() * uz_pps;
+    Point_2 t = st.point();
+
+    Point_2 pref = p_ref().point();
+
+    Sqrt_1 vx = ux_pps - pref.x() * uz_pps;
+    Sqrt_1 vy = uy_pps - pref.y() * uz_pps;
 
     Sqrt_1 Rs = CGAL::square(vx) + CGAL::square(vy);
 
@@ -766,16 +822,22 @@ private:
 
   //--------------------------------------------------------------------------
 
-  Sign incircle(const Point_2& t, PSS_Type type) const
+  Sign incircle_p(const Site_2& st, PSS_Type type) const
   {
+    CGAL_precondition( st.is_point() );
+
     bool use_result(false);
-    Sign s = check_easy_degeneracies(t, type, use_result);
+    Sign s = check_easy_degeneracies(st, type, use_result);
     if ( use_result ) { return s; }
+
+    Point_2 t = st.point();
 
     Sqrt_1 Zero(RT(0), RT(0), ux.a().c());
 
-    Sqrt_1 xref = p_ref().x() + Zero;
-    Sqrt_1 yref = p_ref().y() + Zero;
+    Point_2 pref = p_ref().point();
+
+    Sqrt_1 xref = pref.x() + Zero;
+    Sqrt_1 yref = pref.y() + Zero;
 
     Sqrt_3 vx = ux - xref * uz;
     Sqrt_3 vy = uy - yref * uz;
@@ -798,16 +860,20 @@ private:
 
   //--------------------------------------------------------------------------
 
-  Sign incircle(const Point_2& t, SSS_Type type) const
+  Sign incircle_p(const Site_2& st, SSS_Type type) const
   {
+    CGAL_precondition( st.is_point() );
+
     bool use_result(false);
-    Sign s = check_easy_degeneracies(t, type, use_result);
+    Sign s = check_easy_degeneracies(st, type, use_result);
     if ( use_result ) { return s; }
+
+    Point_2 t = st.point();
 
     Sqrt_1 Zero(RT(0), RT(0), ux.a().c());
 
     RT a1, b1, c1;
-    compute_supporting_line(p_.segment(), a1, b1, c1);
+    compute_supporting_line(p_.supporting_segment(), a1, b1, c1);
 
     RT ns = CGAL::square(a1) + CGAL::square(b1);
 
@@ -832,7 +898,7 @@ private:
   //--------------------------------------------------------------------------
   //--------------------------------------------------------------------------
 
-  Sign incircle(const Point_2& t) const 
+  Sign incircle_p(const Site_2& t) const 
   {
     if ( is_degenerate_Voronoi_circle() ) {
       return POSITIVE;
@@ -841,16 +907,16 @@ private:
     Sign s(ZERO);
     switch ( v_type ) {
     case PPP:
-      s = incircle(t, PPP_Type());
+      s = incircle_p(t, PPP_Type());
       break;
     case PPS:
-      s = incircle(t, PPS_Type());
+      s = incircle_p(t, PPS_Type());
       break;
     case PSS:
-      s = incircle(t, PSS_Type());
+      s = incircle_p(t, PSS_Type());
       break;
     case SSS:
-      s = incircle(t, SSS_Type());
+      s = incircle_p(t, SSS_Type());
       break;
     }
 
@@ -923,13 +989,16 @@ private:
   }
 
   //--------------------------------------------------------------------------
+  //--------------------------------------------------------------------------
 
   
   Sign incircle(const Line_2& l, PPP_Type) const
   {
+    Point_2 pref = p_ref().point();
+
     RT a1 = CGAL::square(l.a()) + CGAL::square(l.b());
-    RT a2 = CGAL::square(ux_ppp - p_ref().x() * uz_ppp) +
-      CGAL::square(uy_ppp - p_ref().y() * uz_ppp);
+    RT a2 = CGAL::square(ux_ppp - pref.x() * uz_ppp) +
+      CGAL::square(uy_ppp - pref.y() * uz_ppp);
 
     RT a3 =
       CGAL::square(l.a() * ux_ppp + l.b() * uy_ppp + l.c() * uz_ppp);
@@ -945,8 +1014,10 @@ private:
 
   Sign incircle(const Line_2& l, PPS_Type) const
   {
-    Sqrt_1 vx = ux_pps - p_ref().x() * uz_pps;
-    Sqrt_1 vy = uy_pps - p_ref().y() * uz_pps;
+    Point_2 pref = p_ref().point();
+
+    Sqrt_1 vx = ux_pps - pref.x() * uz_pps;
+    Sqrt_1 vy = uy_pps - pref.y() * uz_pps;
 
     Sqrt_1 Rs = CGAL::square(vx) + CGAL::square(vy);
     
@@ -965,8 +1036,10 @@ private:
   {
     Sqrt_1 Zero(RT(0), RT(0), ux.a().c());
 
-    Sqrt_3 vx = ux - (p_ref().x() + Zero) * uz;
-    Sqrt_3 vy = uy - (p_ref().y() + Zero) * uz;
+    Point_2 pref = p_ref().point();
+
+    Sqrt_3 vx = ux - (pref.x() + Zero) * uz;
+    Sqrt_3 vy = uy - (pref.y() + Zero) * uz;
 
     Sqrt_3 Rs = CGAL::square(vx) + CGAL::square(vy);
 
@@ -990,7 +1063,7 @@ private:
     Sqrt_1 Zero(RT(0), RT(0), ux.a().c());
 
     RT a1, b1, c1;
-    compute_supporting_line(p_.segment(), a1, b1, c1);
+    compute_supporting_line(p_.supporting_segment(), a1, b1, c1);
 
     Sqrt_1 a = a1 + Zero;
     Sqrt_1 b = b1 + Zero;
@@ -1018,49 +1091,48 @@ private:
 
 
   template<class Type>
-  Sign incircle(const Segment_2& t, Type type) const
+  Sign incircle_s(const Site_2& t, Type type) const
   {
+    CGAL_precondition( t.is_segment() );
+
     if ( v_type == PPP || v_type == PPS ) {
       if (  p_.is_point() && q_.is_point() &&
-	    is_endpoint_of(p_.point(), t) &&
-	    is_endpoint_of(q_.point(), t)  ) {
+	    is_endpoint_of(p_, t) && is_endpoint_of(q_, t)  ) {
 	return NEGATIVE;
       }
 
       if (  p_.is_point() && r_.is_point() &&
-	    is_endpoint_of(p_.point(), t) &&
-	    is_endpoint_of(r_.point(), t)  ){
+	    is_endpoint_of(p_, t) && is_endpoint_of(r_, t)  ){
 	return NEGATIVE;
       }
 
       if (  q_.is_point() && r_.is_point() &&
-	    is_endpoint_of(q_.point(), t) &&
-	    is_endpoint_of(r_.point(), t)  ){
+	    is_endpoint_of(q_, t) && is_endpoint_of(r_, t)  ){
 	return NEGATIVE;
       }
     }
 
     Sign d1, d2;
-    if (  ( p_.is_point() && are_identical(p_.point(), t.source()) ) ||
-	  ( q_.is_point() && are_identical(q_.point(), t.source()) ) ||
-	  ( r_.is_point() && are_identical(r_.point(), t.source()) )  ) {
+    if (  ( p_.is_point() && are_same(p_, t.source_site()) ) ||
+	  ( q_.is_point() && are_same(q_, t.source_site()) ) ||
+	  ( r_.is_point() && are_same(r_, t.source_site()) )  ) {
       d1 = ZERO;
     } else {
-      d1 = incircle(t.source());
+      d1 = incircle_p(t.source_site());
     }
     if ( d1 == NEGATIVE ) { return NEGATIVE; }
 
-    if (  ( p_.is_point() && are_identical(p_.point(), t.target()) ) ||
-	  ( q_.is_point() && are_identical(q_.point(), t.target()) ) ||
-	  ( r_.is_point() && are_identical(r_.point(), t.target()) )  ) {
+    if (  ( p_.is_point() && are_same(p_, t.target_site()) ) ||
+	  ( q_.is_point() && are_same(q_, t.target_site()) ) ||
+	  ( r_.is_point() && are_same(r_, t.target_site()) )  ) {
       d2 = ZERO;
     } else {
-      d2 = incircle(t.target());
+      d2 = incircle_p(t.target_site());
     }
     if ( d2 == NEGATIVE ) { return NEGATIVE; }
 
 
-    Line_2 l = compute_supporting_line(t);
+    Line_2 l = compute_supporting_line(t.supporting_segment());
     Sign sl = incircle(l, type);
 
     // this is the old code
@@ -1082,46 +1154,50 @@ private:
 
   //--------------------------------------------------------------------------
 
-  Sign incircle(const Segment_2& t) const 
+  Sign incircle_s(const Site_2& t) const 
   {
+    CGAL_precondition( t.is_segment() );
+
     if ( is_degenerate_Voronoi_circle() ) {
       // case 1: the new segment is not adjacent to the center of the
       //         degenerate Voronoi circle
-      if (  !are_identical( p_ref(), t.source() ) &&
-	    !are_identical( p_ref(), t.target() )  ) {
+      if (  !are_same( p_ref(), t.source_site() ) &&
+	    !are_same( p_ref(), t.target_site() )  ) {
 	return POSITIVE;
       }
 
-      if (  ( r_.is_point() && are_identical(p_ref(),r_.point()) ) ||
-	    ( q_.is_point() && are_identical(p_ref(),q_.point()) ) ||
-	    ( p_.is_point() && are_identical(p_ref(),p_.point()) )  ) {
-	Point_2 pr;
-	Segment_2 sp, sq;
+      if (  ( r_.is_point() && are_same(p_ref(), r_) ) ||
+	    ( q_.is_point() && are_same(p_ref(), q_) ) ||
+	    ( p_.is_point() && are_same(p_ref(), p_) )  ) {
+	Site_2 pr;
+	Site_2 sp, sq;
 	if ( p_.is_point() ) {
 	  CGAL_assertion( q_.is_segment() && r_.is_segment() );
-	  pr = p_.point();
-	  sp = q_.segment();
-	  sq = r_.segment();
+	  pr = p_;
+	  sp = q_;
+	  sq = r_;
 	} else if ( q_.is_point() ) {
 	  CGAL_assertion( r_.is_segment() && p_.is_segment() );
-	  pr = q_.point();
-	  sp = r_.segment();
-	  sq = p_.segment();
+	  pr = q_;
+	  sp = r_;
+	  sq = p_;
 	} else {
 	  CGAL_assertion( p_.is_segment() && q_.is_segment() );
-	  pr = r_.point();
-	  sp = p_.segment();
-	  sq = q_.segment();
+	  pr = r_;
+	  sp = p_;
+	  sq = q_;
 	}
 
 	Point_2 pq = sq.source(), pp = sp.source(), pt = t.source();
 
-	if ( are_identical(sp.source(),pr) ) { pp = sp.target(); }
-	if ( are_identical(sq.source(),pr) ) { pq = sq.target(); }
-	if ( are_identical( t.source(),pr) ) { pt =  t.target(); }
+	if ( are_same(sp.source_site(), pr) ) { pp = sp.target(); }
+	if ( are_same(sq.source_site(), pr) ) { pq = sq.target(); }
+	if ( are_same( t.source_site(), pr) ) { pt =  t.target(); }
 
-	if ( CGAL::orientation(pr, pp, pt) == LEFT_TURN &&
-	     CGAL::orientation(pr, pq, pt) == RIGHT_TURN ) {
+	Point_2 pr_ = pr.point();
+
+	if ( CGAL::orientation(pr_, pp, pt) == LEFT_TURN &&
+	     CGAL::orientation(pr_, pq, pt) == RIGHT_TURN ) {
 	  return NEGATIVE;
 	}
 	return ZERO;
@@ -1131,16 +1207,16 @@ private:
     Sign s(ZERO);
     switch ( v_type ) {
     case PPP:
-      s = incircle(t, PPP_Type());
+      s = incircle_s(t, PPP_Type());
       break;
     case PPS:
-      s = incircle(t, PPS_Type());
+      s = incircle_s(t, PPS_Type());
       break;
     case PSS:
-      s = incircle(t, PSS_Type());
+      s = incircle_s(t, PSS_Type());
       break;
     case SSS:
-      s = incircle(t, SSS_Type());
+      s = incircle_s(t, SSS_Type());
       break;
     }
 
@@ -1158,15 +1234,12 @@ public:
     if ( v_type != PSS ) { return false; }
 
     if ( p_.is_point() ) {
-      return ( is_endpoint_of(p_.point(), q_.segment()) &&
-	       is_endpoint_of(p_.point(), r_.segment()) );
+      return ( is_endpoint_of(p_, q_) && is_endpoint_of(p_, r_) );
     } else if ( q_.is_point() ) {
-      return ( is_endpoint_of(q_.point(), p_.segment()) &&
-	       is_endpoint_of(q_.point(), r_.segment()) );
+      return ( is_endpoint_of(q_, p_) && is_endpoint_of(q_, r_) );
     } else {
       CGAL_assertion( r_.is_point() );
-      return ( is_endpoint_of(r_.point(), p_.segment()) &&
-	       is_endpoint_of(r_.point(), q_.segment()) );
+      return ( is_endpoint_of(r_, p_) && is_endpoint_of(r_, q_) );
     }
   }
 
@@ -1195,23 +1268,23 @@ private:
   //  the reference point (valid if v_type != SSS)
   //--------------------------------------------------------------------------
 
-  Point_2 p_ref() const
+  Site_2 p_ref() const
   {
     CGAL_precondition ( v_type != SSS );
 
     if ( v_type == PPS ) {
-      if ( pps_idx == 0 ) { return p_.point(); }
-      if ( pps_idx == 1 ) { return q_.point(); }
-      return r_.point();
+      if ( pps_idx == 0 ) { return p_; }
+      if ( pps_idx == 1 ) { return q_; }
+      return r_;
     }
 
     if ( p_.is_point() ) {
-      return p_.point();
+      return p_;
     } else if ( q_.is_point() ) {
-      return q_.point();
+      return q_;
     } else {
       CGAL_assertion( r_.is_point() );
-      return r_.point();
+      return r_;
     }
   }
 
@@ -1249,24 +1322,15 @@ public:
     switch (v_type) {
     case PPP:    case PPS:    case PSS:
       {
-	Point_2 p_ref;
-	if ( p_.is_point() ) {
-	  p_ref = p_.point();
-	} else if ( q_.is_point() ) {
-	  p_ref = q_.point();
-	} else {
-	  CGAL_assertion( r_.is_point() );
-	  p_ref = r_.point();
-	}
-
-	FT dx2 = CGAL::square(x() - p_ref.x());
-	FT dy2 = CGAL::square(y() - p_ref.y());
+	Point_2 pref = p_ref().point();
+	FT dx2 = CGAL::square(x() - pref.x());
+	FT dy2 = CGAL::square(y() - pref.y());
 	return dx2 + dy2;
       }
       break;
     case SSS:
       {
-	Line_2 l = compute_supporting_line(p_.segment());
+	Line_2 l = compute_supporting_line(p_.supporting_segment());
 	Homogeneous_point_2 q = compute_projection(l, point());
 
 	FT dx2 = CGAL::square(x() - q.x());
@@ -1281,7 +1345,7 @@ public:
 
   Point_2 point() const {
     if ( is_degenerate_Voronoi_circle() ) {
-      return p_ref();
+      return degenerate_point();
     }
     
     return Point_2(x(), y());
@@ -1291,7 +1355,7 @@ public:
   Point_2 degenerate_point() const
   {
     CGAL_precondition( is_degenerate_Voronoi_circle() );
-    return p_ref();
+    return p_ref().point();
   }
 
 
@@ -1319,9 +1383,9 @@ public:
     Sign s;
 
     if ( t.is_point() ) {
-      s = incircle(t.point());
+      s = incircle_p(t);
     } else {
-      s = incircle(t.segment());
+      s = incircle_s(t);
     }
 
     return s;

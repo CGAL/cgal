@@ -12,7 +12,7 @@ class Filtered_construction
 {
 private:
   EC Exact_construction;
-  FC Filtered_construction;
+  FC Filter_construction;
   C2E To_Exact;
   C2F To_Filtered;
   E2C From_Exact;
@@ -36,7 +36,7 @@ public:
     try
     {
       Protect_FPU_rounding<Protection> P;
-      return From_Filtered( Filtered_construction(To_Filtered(a1)) );
+      return From_Filtered( Filter_construction(To_Filtered(a1)) );
     }
     catch (Interval_nt_advanced::unsafe_comparison)
     {
@@ -51,8 +51,8 @@ public:
     try
     {
       Protect_FPU_rounding<Protection> P;
-      return From_Filtered( Filtered_construction(To_Filtered(a1),
-						  To_Filtered(a2)) );
+      return From_Filtered( Filter_construction(To_Filtered(a1),
+						To_Filtered(a2)) );
     }
     catch (Interval_nt_advanced::unsafe_comparison)
     {
@@ -69,9 +69,9 @@ public:
     try
     {
       Protect_FPU_rounding<Protection> P;
-      return From_Filtered( Filtered_construction(To_Filtered(a1),
-						  To_Filtered(a2),
-						  To_Filtered(a3)) );
+      return From_Filtered( Filter_construction(To_Filtered(a1),
+						To_Filtered(a2),
+						To_Filtered(a3)) );
     }
     catch (Interval_nt_advanced::unsafe_comparison)
     {
