@@ -143,7 +143,7 @@ private:
         }              // if we would have a const_pointer, see the cast
         return r;      // in the fct. below. We keep the mutable as reminder.
     }
-    const_pointer find( const_pointer p) const {
+    const_pointer find( const_pointer p  CGAL_MSVC_DUMMY_ARGUMENT) const {
         return find( const_cast<pointer>(p));
     }
     bool is_valid(const_handle v) const { return v != const_handle(0); }
@@ -186,10 +186,13 @@ public:
     }
 
     handle       find( handle p)       const { return find(p.ptr()); }
-    const_handle find( const_handle p) const { return find(p.ptr()); }
+
+    const_handle find( const_handle p  CGAL_MSVC_DUMMY_ARGUMENT) const {
     // returns a canonical handle of the set that contains |p|,
     // i.e., |P.same_set(p,q)| iff  |P.find(p)| and |P.find(q)| return
     // the same handle. Precond: |p| is a handle in the union find structure.
+        return find(p.ptr());
+    }
 
     void unify_sets(handle p, handle q);
     // unites the sets of partition containing $p$ and $q$.
