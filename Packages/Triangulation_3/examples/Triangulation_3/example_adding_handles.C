@@ -2,6 +2,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Triangulation_vertex_base_3.h>
 
 template < class GT, class Vb = CGAL::Triangulation_vertex_base_3<GT> >
 class My_vertex_base
@@ -10,12 +11,21 @@ class My_vertex_base
 public:
   typedef typename Vb::Vertex_handle  Vertex_handle;
   typedef typename Vb::Cell_handle    Cell_handle;
+  typedef typename Vb::Point          Point;
 
   template < class TDS2 >
   struct Rebind_TDS {
     typedef typename Vb::template Rebind_TDS<TDS2>::Other  Vb2;
     typedef My_vertex_base<GT, Vb2>                        Other;
   };
+
+  My_vertex_base() {}
+
+  My_vertex_base(const Point& p)
+    : Vb(p) {}
+
+  My_vertex_base(const Point& p, Cell_handle c)
+    : Vb(p, c) {}
 
   Vertex_handle   vh;
   Cell_handle     ch;
