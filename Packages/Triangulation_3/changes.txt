@@ -1,3 +1,6 @@
+Version 1.186 (01 January 04 :-)
+- Added operator== for Triangulation_3.
+
 Version 1.185 (17 December 03)
 - Triangulation_hierarchy_3 : move the global "const int" parameters to
   nested enums (equivalent to static const int).

@@ -257,6 +257,12 @@ _test_cls_triangulation_3(const Triangulation &)
   assert(T1.dimension() == 3);
   assert(T1.number_of_vertices() == 4);
   assert(T1.is_valid());
+
+  std::cout << "    Testing operator==" << std::endl;
+  assert(T0 == T0);
+  assert(T0 == T1);
+  assert(T1 == T0);
+  assert(T1 == T1);
    
   T1.clear();
   assert(T1.dimension() == -1);
@@ -287,7 +293,7 @@ _test_cls_triangulation_3(const Triangulation &)
   assert(T0.is_valid());
   assert(T1.dimension() == -1);
 
-     // Building some psychotics triangulations :
+     // Building some psychotic triangulations :
   std::cout << "    Constructor6 " << std::endl;
   // triangulation 1-dimensional : vertical line.
   Cls T1_0;
