@@ -39,7 +39,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Iterator_project.h>
-#include <CGAL/In_place_list.h>
 #include <vector>
 #include <list>
 #include <cstddef>
@@ -62,8 +61,7 @@ for(x = (RC).simplices_begin(); x != (RC).simplices_end(); ++x)
 
 
 template <class Refs>
-class RC_vertex_d : public 
-  CGAL::In_place_list_base< RC_vertex_d<Refs> >
+class RC_vertex_d 
 
 { typedef RC_vertex_d<Refs> Self;
   typedef typename Refs::Point_d Point_d;
@@ -100,8 +98,7 @@ public:
 
 
 template <class Refs>
-class RC_simplex_d : public 
-  CGAL::In_place_list_base< RC_simplex_d<Refs> >
+class RC_simplex_d 
 { typedef RC_simplex_d<Refs>  Self;
   typedef typename Refs::Point_d Point_d;
   typedef typename Refs::Vertex_handle Vertex_handle;
@@ -326,7 +323,8 @@ public:
 typedef R_ R;
 
 typedef RC_vertex_d<Self> Vertex;
-typedef CGAL::In_place_list<Vertex,false> Vertex_list;
+
+  typedef std::list<Vertex> Vertex_list;
 
 typedef typename Vertex_list::iterator       Vertex_handle;
 /*{\Mtypemember the handle type for vertices of the complex.}*/
@@ -337,7 +335,7 @@ typedef typename Vertex_list::iterator       Vertex_iterator;
 typedef typename Vertex_list::const_iterator Vertex_const_iterator;
 
 typedef RC_simplex_d<Self> Simplex;
-typedef CGAL::In_place_list<Simplex,false>    Simplex_list;
+typedef std::list<Simplex>    Simplex_list;
 
 typedef typename Simplex_list::iterator       Simplex_handle;
 /*{\Mtypemember the handle type for simplices of the complex.}*/
@@ -368,7 +366,10 @@ private:
   Regular_complex_d& operator=(const Regular_complex_d<R>& ); 
 
   void clean_dynamic_memory()
-  { vertices_.destroy(); simplices_.destroy(); }
+  { 
+    vertices_.clear();
+    simplices_.clear();
+}
 
 public:
 
@@ -491,21 +492,31 @@ void set_current_dimension(int d) { dcur = d; }
 Simplex_handle new_simplex() 
 /*{\Mop adds a new simplex to |\Mvar| and returns it. The new simplex
 has no vertices yet.}*/
-//{ simplices_.push_back(* new Simplex(dcur) ); return --simplices_end(); }
-{ simplices_.push_back(* new Simplex(dmax) ); return --simplices_end(); }
+{ 
+  Simplex s(dmax);
+  simplices_.push_back(s);
+  return --simplices_end(); 
+}
 
 Vertex_handle  new_vertex() 
 /*{\Mop adds a new vertex to |\Mvar| and returns it. The new vertex
         has no associated simplex nor index yet. The associated point
         is the point |Regular_complex_d::nil_point| which is a static
         member of class |Regular_complex_d.|}*/
-{ vertices_.push_back(* new Vertex(nil_point) ); return --vertices_end(); }
+{ 
+  Vertex v(nil_point);
+  vertices_.push_back(v);
+  return --vertices_end(); 
+}
 
 Vertex_handle  new_vertex(const Point_d& p) 
 /*{\Mop adds a new vertex to |\Mvar| and returns it. The new vertex
         has |p| as the associated point, but is has no associated
         simplex nor index yet.}*/
-{ vertices_.push_back(* new Vertex(p) ); return --vertices_end(); }
+{ 
+  Vertex v(p);
+  vertices_.push_back(v);
+  return --vertices_end(); }
 
 void associate_vertex_with_simplex(Simplex_handle s, int i, Vertex_handle v)
 /*{\Mop sets the $i$-th vertex of |s| to |v| and records this fact in
