@@ -68,39 +68,31 @@ returns a polymorphic object that wraps the result of the intersection
 operation.
 
 The class \ccc{Object} provides the polymorphic abstraction.  An
-object \ccStyle{obj} of the class \ccc{Object} can represent an
-arbitrary class. The only operations it provides is to make copies and
+object \ccStyle{obj} of type \ccc{Object} can represent an arbitrary
+class. The only operations it provides is to make copies and
 assignments, so that you can put them in lists or arrays. Note that
 \ccc{Object} is NOT a common base class for the elementary classes.
 Therefore, there is no automatic conversion from these classes to
 \ccc{Object} Rather this is done with the global function
 \ccc{make_object()}. This encapsulation mechanism requires the use of
-\ccc{assign} to use the functionality of the encapsulated class.
+\ccc{assign} to unwrap the encapsulated class.
 
 \ccExample 
-In the following example, the object class is used as return value for
+In the following example, the object type is used as a return value for
 the \ccHtmlNoLinksFrom{intersection} computation, as there are
 possibly different return values.
-
-\begin{cprog}
-{
-    Point_d< Cartesian_d<double> > p;
-    Segment_d< Cartesian_d<double> > s, s1, s2;
-
-    std::cin >> s1 >> s2;
-
-    Object obj = intersection(s1, s2);
-
-    if (assign(p, obj)) {
-        /* do something with p */
-    } else if ((assign(s, obj)) {
-        /* do something with s */
-    }
-\end{cprog}
 \ccHtmlLinksOff%
 \begin{cprog}
-    /*  there was no intersection */
-}
+  Point_d< Cartesian_d<double> > p;
+  Segment_d< Cartesian_d<double> > s, s1, s2;
+  std::cin >> s1 >> s2;
+  Object obj = intersection(s1, s2);
+  if ( assign(p, obj) ) {
+    /* do something with p */
+  } else if ( (assign(s, obj) ) {
+    /* do something with s */
+  }
+  /*  there was no intersection */
 \end{cprog}
 \ccHtmlLinksOn%
 
