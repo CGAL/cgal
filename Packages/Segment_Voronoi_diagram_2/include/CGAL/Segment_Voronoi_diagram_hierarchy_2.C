@@ -723,7 +723,7 @@ is_valid(bool verbose, int level) const
   //verify that lower level has no down pointers
   for( Finite_vertices_iterator it = hierarchy[0]->finite_vertices_begin(); 
        it != hierarchy[0]->finite_vertices_end(); ++it) {
-    result = result && ( it->down() == 0 );
+    result = result && ( it->down() == Vertex_handle() );
   }
 
   //verify that other levels has down pointer and reciprocal link is fine
