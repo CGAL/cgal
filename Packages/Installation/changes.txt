@@ -1,3 +1,6 @@
+20 January 2005 Sylvain Pion
+- Identify Intel C++ minor version number.
+
 14 January 2005 Sylvain Pion
 - install_cgal : proper computation of PGCC version number.
 

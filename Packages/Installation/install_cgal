@@ -1806,7 +1806,9 @@ int main()
   // Intel Compiler for linux
   // it has to be checked before the g++ compiler since it also
   // defines __GNUC__
-  CGAL_STDCOUT << "ICC@" << __INTEL_COMPILER / 100;
+  int intel_version_major = __INTEL_COMPILER / 100;
+  int intel_version_minor = (__INTEL_COMPILER - intel_version_major * 100) / 10;
+  CGAL_STDCOUT << "ICC@" << intel_version_major << "." << intel_version_minor;
   CGAL_STDCOUT << CGAL_STDENDL;
 #elif defined(__GNUC__)
   // GNU cc
