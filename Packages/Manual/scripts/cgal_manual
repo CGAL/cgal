@@ -159,11 +159,11 @@ TestSuiteResultPath=/www/pub/www.cgal.org/Members/Manual_test
 
 # Number of older test-suite results kept. Test-suite results beyond this 
 # number are deleted.
-TestSuiteHistory=4
+TestSuiteHistory=8
 
 # Number of older test-suites for which the full results will be kept. Older
 # test suites will have their manuals removed to save space.
-TestSuiteFullHistory=2
+TestSuiteFullHistory=3
 
 # Determines if we currently make a Module or Package manual.
 # Only one is set to 1.
