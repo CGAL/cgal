@@ -36,7 +36,7 @@
 
 // TODO: check if some of those includes shouldn't be in the .C file
 #include <CGAL/IO/Qt_widget.h>
-//#include "Qt_widget_move_point.h"
+#include "Qt_widget_move_point.h"
 #include <CGAL/IO/Qt_widget_get_point.h>
 
 #include <qobject.h>
@@ -53,7 +53,6 @@ typedef CGAL::Triangulation_face_base_2<Gt>	  Df;
 typedef CGAL::Alpha_shape_face_base_2<Gt, Df>	  Fb;
 typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
 typedef CGAL::Delaunay_triangulation_2<Gt,Tds> Delaunay;
-
 
 namespace CGAL {
 
@@ -77,6 +76,7 @@ private:
   int			nr_of_buttons;
 	
   CGAL::Qt_widget_get_point<Rp>	    pointbut;
+  CGAL::Qt_widget_movepoint<Delaunay> movepointbut;
 };//end class
 
 };//end namespace

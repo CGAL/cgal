@@ -69,10 +69,9 @@ public:
 
 
 private:
-	QToolBar      *maintoolbar;
-	
-  QToolButton   *but[10];
-  QButtonGroup  *button_group;
+	QToolBar      *maintoolbar;	
+        QToolButton   *but[10];
+        QButtonGroup  *button_group;
 	Qt_widget     *widget;
 	QMainWindow   *window;
 	//Delaunay      *dt;

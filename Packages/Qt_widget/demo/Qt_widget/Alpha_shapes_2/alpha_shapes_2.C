@@ -249,7 +249,7 @@ private slots:
     bool ok = FALSE;
     double res = QInputDialog::getDouble( 
 		 tr( "Please enter a decimal number" ),
-		 "Between 0 and 1", 0.001, 0, 1, 3, &ok, this );
+		 "Between 0 and 1", alpha_index, 0, 1, 3, &ok, this );
     if ( ok ){
       alpha_index = res;
       win.redraw();

@@ -26,7 +26,7 @@
 // icons
 #include <CGAL/IO/pixmaps/point.xpm>
 #include <CGAL/IO/pixmaps/arrow.xpm>
-
+#include <CGAL/IO/pixmaps/movepoint.xpm>
 
 namespace CGAL {
   Tools_toolbar::Tools_toolbar(Qt_widget *w, 
@@ -37,7 +37,10 @@ namespace CGAL {
     //set the widget
     widget = w;
     w->attach(&pointbut);
+    w->attach(&movepointbut);
+    movepointbut.set_Delaunay(t);
     pointbut.deactivate();
+    movepointbut.deactivate();
 
 
 #if QT_VERSION < 300
@@ -55,9 +58,11 @@ namespace CGAL {
   but[0]->setPixmap(QPixmap( (const char**)arrow_xpm ));
   but[1] = new QToolButton(maintoolbar, "pointtool");
   but[1]->setPixmap(QPixmap( (const char**)point_xpm ));
+  but[2] = new QToolButton(maintoolbar, "movepoint");
+  but[2]->setPixmap(QPixmap( (const char**)movepoint_xpm ));
 
   
-  nr_of_buttons = 2;
+  nr_of_buttons = 3;
 
   button_group = new QButtonGroup(0, "My_group");
   for(int i = 0; i<nr_of_buttons; i++) {
@@ -68,6 +73,8 @@ namespace CGAL {
   
   connect(but[1], SIGNAL(stateChanged(int)),
         &pointbut, SLOT(stateChanged(int)));
+  connect(but[2], SIGNAL(stateChanged(int)),
+        &movepointbut, SLOT(stateChanged(int)));
 };
   
 
