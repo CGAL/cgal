@@ -47,7 +47,6 @@
 #define Delaunay_triangulation_3                    DT3
 #define Delaunay_remove_tds_face_3_2                DRf32
 #define Delaunay_remove_tds_vertex_3_2              DRv32
-#define Delaunay_remove_tds_halfedge_compare_3_2    DRthc32
 
 #define Regular_triangulation_euclidean_traits_3    R_gt3
 #define Regular_triangulation_3                     RT3
