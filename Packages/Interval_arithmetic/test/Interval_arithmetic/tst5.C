@@ -8,14 +8,14 @@
 #ifdef CGAL_CFG_MATCHING_BUG_2
 #define CGAL_IA_CT double
 #define CGAL_IA_PROTECTED true
-#ifdef CGAL_USE_LEDA
-#define CGAL_IA_ET leda_real
-#elif defined CGAL_USE_GMP
-#define CGAL_IA_ET CGAL::Quotient<CGAL::Gmpz>
-#else
-#define CGAL_IA_ET double
-#endif
 #define CGAL_IA_CACHE No_Filter_Cache
+#ifdef CGAL_USE_LEDA
+#  define CGAL_IA_ET leda_real
+#elif defined CGAL_USE_GMP
+#  define CGAL_IA_ET CGAL::Quotient<CGAL::Gmpz>
+#else
+#  define CGAL_IA_ET double
+#endif
 #endif
 
 #include <CGAL/misc.h>
