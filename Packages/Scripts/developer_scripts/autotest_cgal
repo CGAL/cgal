@@ -334,39 +334,9 @@ unzip_cgal()
 copy_old_stuff()
 {
     # copy config install files
-    log ${ACTUAL_LOGFILE} "copy config install files"
-    cp -r ${OLD_CGAL_DIR}/config/install ${CGAL_DIR}/config
-    log_done ${ACTUAL_LOGFILE}
 
-    # copy gmp header and libs
-    log ${ACTUAL_LOGFILE} "copy gmp header"
-    cp -r ${OLD_CGAL_INCL_DIR}/CGAL/config/* ${CGAL_INCL_DIR}/CGAL/config
-    log_done ${ACTUAL_LOGFILE}
-    log ${ACTUAL_LOGFILE} "copy gmp libs"
-    printf "\n" >> ${ACTUAL_LOGFILE}
-    for i in `find ${OLD_CGAL_LIB_DIR} -name "libgmp.a" -print`; do
-	printf "."
-	printf "copying ${i}\n" >> ${ACTUAL_LOGFILE}
-	newdir=`dirname ${i} | \
-	    sed "s%${OLD_CGAL_LIB_DIR}%${CGAL_LIB_DIR}%g"`
-	mkdir -p ${newdir}
-	if [ ${?} != 0 ]; then
-	    error "Could not mkdir ${newdir}"
-	fi
-	cp ${i} ${newdir}
-    done
-    for i in `find ${OLD_CGAL_LIB_DIR} -name "gmp.lib" -print`; do
-        printf "."
-        printf "copying ${i}\n" >> ${ACTUAL_LOGFILE}
-        newdir=`dirname ${i} | \
-            sed "s%${OLD_CGAL_LIB_DIR}%${CGAL_LIB_DIR}%g`
-	echo $newdir
-        mkdir -p ${newdir}
-        if [ ${?} != 0 ]; then
-            error "Could not mkdir ${newdir}"
-        fi
-        cp ${i} ${newdir}
-    done
+    ${CGAL_DIR}/install_cgal --upgrade ${OLD_CGAL_DIR} >> ${ACTUAL_LOGFILE}
+
     log_done ${ACTUAL_LOGFILE}
 }
 
