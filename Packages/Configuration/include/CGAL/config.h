@@ -28,6 +28,19 @@
 #define CGAL_VERSION 1.1-I-01
 #define CGAL_VERSION_NR 1001100001
 
+//----------------------------------------------------------------------//
+//             STLport fix for MSVC
+//----------------------------------------------------------------------//
+
+#ifdef _MSC_VER
+
+#define CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT 1
+#define __STL_DEBUG
+
+#include <stl_config.h>
+#include <stl_iterator_base.h>
+
+#endif // _MSC_VER
 
 //----------------------------------------------------------------------//
 //             include platform specific workaround flags (CGAL_CFG_...)
