@@ -70,7 +70,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/cgallib.lib"/>
+				OutputFile="../lib/msvc7/CGAL.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
