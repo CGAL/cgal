@@ -107,6 +107,7 @@ void bench()
 int test()
 {
   NT px, py, la, lb, lc;
+  NT a (1);
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
   Filtered_exact< Quotient<Gmpz>, Quotient<Gmpz> > qq (3,5);
   cout << (int) compare_y_at_xC2(qq,qq,qq,qq,qq);
@@ -123,5 +124,6 @@ int test()
   px=1.1; py=1.7; la=1.3; lb=1.5; lc=-3.98;
   cout << "Result 2nd test: " << (int)compare_y_at_xC2(px, py, la, lb, lc);
   cout << " ( == 0 ) (not sure, it depends of the first approx)\n";
+  cout << a << endl;
   return 0;
 }
