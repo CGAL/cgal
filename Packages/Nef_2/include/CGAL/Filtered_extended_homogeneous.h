@@ -693,18 +693,16 @@ line_equation(RT& a, RT& b, SPolynomial<RT>& c) const
   { p = _p2; }
   else if (!sstandard && tstandard) 
   { p = _p1; correct_orientation=false; }
-  RT x1 = p.nx(), y1 = p.ny();               // R==0
-  RT x2 = p.mx()+p.nx(), y2 = p.my()+p.ny(); // R==1
   RT w = p.hw();
   RT ci;
   if ( correct_orientation ) {
-    a = -p.my(); // (y1*w-w*y2)/w
-    b =  p.mx(); // (x2*w-w*x1)/w
-    ci = (p.nx()*p.my()-p.ny()*p.mx())/w; // (x1*y2-x2*y1)/w;
+    a = -p.my();
+    b =  p.mx();
+    ci = (p.nx()*p.my()-p.ny()*p.mx())/w;
   } else {
-    a =  p.my(); // (y2*w-w*y1)
-    b = -p.mx(); // (x1*w-w*x2)
-    ci = (p.ny()*p.mx()-p.nx()*p.my())/w; // (x2*y1-x1*y2)/w;
+    a =  p.my();
+    b = -p.mx();
+    ci = (p.ny()*p.mx()-p.nx()*p.my())/w;
   }
   c = SPolynomial<RT>(ci);
 
