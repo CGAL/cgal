@@ -1,0 +1,37 @@
+Special TODO list for the static filters.
+-----------------------------------------
+It's lot's of work here for a "minor" optimization, so it's "low" priority,
+except we could share stuff with Olivier's Fixed !
+
+- Known problems with the current approach:
+  - Match operator<(a,b) and co...
+  - What to do with branches (e.g. collinearC3() and power_test()):
+    - The epsilon computation type should return ZERO/EQUAL as default.
+      This way, collinearC3() works.
+    - The user can provide the epsilon variant inside the source code,
+      delimited by special symbols /*CGAL_FILTER_BODY ... */.  That's the
+      solution for CGAL.
+    - Checks that the epsilons have been updated (which will not prove that
+      it's correct, but is better than nothing).
+- Or use G++'s interface as a parser ?  See gcc mail archives, 15 aout 2000,
+  "XML output for GCC".
+- /*DEGREE=2*/ attribute to the arguments ?
+- # of bounds  : one per predicate, or one per argument ?  give choice.
+- # of epsilons: one per predicate, or one set per sub-predicate ?  choice.
+- Check that the compiler optimizes the epsilon computation (use
+  __attribute__((const)) for Static_filter_error operators) ?
+- As Fred pointed out: the scheme is not thread safe.
+- Remove the assertions in the original code.
+- In case there are loops, we must take the max() of the epsilons.  This should
+  not happen often, imho...  Wait and see.
+- Move static_infos in src/.
+- Have a global ::number_of_failure for the static filters too.  (don't use
+  IA_nt's one)
+- Replace: NEW_bound = max(NEW_bound, fabs(px.to_double())); by: if (NEW_bound
+  < fabs(px.to_double())) NEW_bound = fabs(px.to_double()); or even, using a
+  .bound() member function: if (NEW_bound < px.bound()) NEW_bound = px.bound();
+  Moreover, to_double() is not exact, we should use abs(to_interval(x)).sup() !
+- Member function access for generic type should be (?): .dbl_approx()
+  .bound()      (basically a bound on: fabs(.dbl_approx())) .error()
+- Add a "number of bits" field in Static_filter_error ?  (so that we get the
+  same thing as Fixed for 24 bits)
