@@ -74,7 +74,7 @@ triangulation is modified. In order to keep the original
 triangulation, the user has to make a copy of it.
 
 The algorithm used by \ccc{make_conforming_Delaunay_2} and
-\ccc{make_conforming_Gabriel_2} build internal data that would be
+\ccc{make_conforming_Gabriel_2} builds internal data that would be
 computed twice if the two functions are called consecutively on the same
 triangulation. In order to avoid these data to be constructed twice, the
 advanced user can use the class \ccc{Triangulation_conformer_2<CDT>} to
@@ -182,9 +182,8 @@ Meshes are obtained from
 constrained Delaunay triangulations by calling the global function \\
 \ccc{template<class CDT> void refine_Delaunay_mesh_2 (CDT &t, typename
   CDT::Geom_traits gt)}. \\
-They can also be obtained by using the class \ccc{Delaunay_mesher_2<CDT>}.
-In both cases, the template parameter \ccc{CDT} must be instantiated by a
-constrained Delaunay triangulation class that is a model of the concept
+The template parameter \ccc{CDT} must be instantiated by a constrained
+Delaunay triangulation class that is a model of the concept
 \ccc{ConstrainedDelaunayTriangulation_2}.
 
 The geometric traits class of \ccc{CDT} has to be a
@@ -198,6 +197,12 @@ adding the geometric criteria that the triangles have to satisfy.
 \item \ccc{Delaunay_mesh_size_traits<K>}, that adds to the previous one a
   bound on the maximum edge length.
 \end{itemize}
+
+If the fonction \ccc{refine_Delaunay_mesh_2} is called several times on the
+same triangulation with different criteria, the algorithm will rebuild used
+internal data at every call. In order to avoid that, the advanced user can
+use the class \ccc{Delaunay_mesher_2<CDT>}. That class provides also step
+by step functions. Those functions insert one point at a time.
 
 Any object of type \ccc{Delaunay_mesher_2<CDT>} is constructed from a
 reference to a \ccc{CDT} and it has several member functions to define the
