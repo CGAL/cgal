@@ -1,3 +1,5 @@
+2.3.8  and still more handle()s and *(& removed
+
 2.3.5  Vertex::handle() no longer exists
 
 2.3.4  second template parameter of Point_set_2 has now a default value
