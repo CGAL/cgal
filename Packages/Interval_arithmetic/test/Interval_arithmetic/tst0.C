@@ -4,6 +4,22 @@
 
 using namespace CGAL;
 
+// 5 temporary functions to test the inlining of the compiler.
+bool triv_test_1 ()
+{ return Interval_nt_advanced(1.0) < Interval_nt_advanced(2.0); }
+
+bool triv_test_2 ()
+{ return true; }
+
+Interval_nt_advanced triv_mul_1 (Interval_nt_advanced x)
+{ return x * Interval_nt_advanced(1.0); }
+
+Interval_nt_advanced triv_1_mul (Interval_nt_advanced x)
+{ return Interval_nt_advanced(1.0) * x; }
+
+Interval_nt_advanced triv (Interval_nt_advanced x)
+{ return x; }
+
 // Rounding mode empiric testing.
 
 // The results of 1-epsilon and -1+epsilon are enough
@@ -31,6 +47,17 @@ FPU_CW_t FPU_empiric_test ()
     return FPU_cw_zero;
 }
 
+void print_rounding_name (FPU_CW_t r)
+{
+  switch (r) {
+  case FPU_cw_near: cout << "FPU_cw_near\n"; break;
+  case FPU_cw_down: cout << "FPU_cw_down\n"; break;
+  case FPU_cw_up:   cout << "FPU_cw_up\n"; break;
+  case FPU_cw_zero: cout << "FPU_cw_zero\n"; break;
+  default:          cout << "unknown !\n";
+  }
+}
+
 int main()
 {
    bool flag = true;
@@ -42,26 +69,31 @@ int main()
    FPU_set_cw(FPU_get_cw());
    flag = flag && (FPU_empiric_test() == FPU_cw_near);
    cout << "get/set: " << (int) flag << endl;
+   if (!flag) print_rounding_name(FPU_empiric_test());
 
    // Rounding to zero.
    FPU_set_cw(FPU_cw_zero);
    flag = flag && (FPU_empiric_test() == FPU_cw_zero);
    cout << "zero   : " << (int) flag << endl;
+   if (!flag) print_rounding_name(FPU_empiric_test());
 
    // Rounding to infinity.
    FPU_set_cw(FPU_cw_up);
    flag = flag && (FPU_empiric_test() == FPU_cw_up);
    cout << "+inf   : " << (int) flag << endl;
+   if (!flag) print_rounding_name(FPU_empiric_test());
 
    // Rounding to minus infinity.
    FPU_set_cw(FPU_cw_down);
    flag = flag && (FPU_empiric_test() == FPU_cw_down);
    cout << "-inf   : " << (int) flag << endl;
+   if (!flag) print_rounding_name(FPU_empiric_test());
 
    // Rounding to nearest.
    FPU_set_cw(FPU_cw_near);
    flag = flag && (FPU_empiric_test() == FPU_cw_near);
    cout << "near   : " << (int) flag << endl;
+   if (!flag) print_rounding_name(FPU_empiric_test());
 
    return (int) !flag;
 }
