@@ -25,7 +25,9 @@
 
 #include <iostream>
 
-#ifndef CGAL_ENUM_H
+//#ifndef CGAL_ENUM_H
+#include <CGAL/Cartesian.h>
+#include <CGAL/Quotient.h>
 #include <CGAL/enum.h>
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/Random.h>
@@ -33,7 +35,7 @@
 #include <CGAL/point_generators_2.h>
 #include <CGAL/intersection_2.h>
 
-#endif
+//#endif
 
 //#include <CGAL/Sweep_line_tight_2.h>
 #include <CGAL/Sweep_line_2.h>
@@ -56,18 +58,18 @@ typedef CGAL::Segment_2<Rep>                Segment_2;
 typedef CGAL::Point_2<Rep>                  Point_2;
 
 private:
-  NT x1;
-  NT y1;
-  NT x2;
-  NT y2;
+ Point_2 p;
+ Point_2 q;
 
 public:
   Segment_data();
-  Segment_data(NT inp_x1,NT inp_y1,NT inp_x2,NT inp_y2);
-  NT get_x1();
-  NT get_y1();
-  NT get_x2();
-  NT get_y2();
+  Segment_data(Point_2 p_inp,Point_2 q_inp);
+  Point_2 source() const {return(p);}
+  Point_2 target() const {return(q);}
+  NT get_x1() const;
+  NT get_y1() const;
+  NT get_x2() const;
+  NT get_y2() const;
   inline void set_data(NT inp_x1,NT inp_y1,NT inp_x2,NT inp_y2);
   void determine_direction();
   bool equal(Segment_2 s);
@@ -125,7 +127,8 @@ struct hot_pixel_dir_cmp
 template<class Rep_>
 class Snap_rounding_2 {
 
-  typedef CGAL::Arr_segment_traits_2<Rep_ >            Traits;// !!!! remove
+typedef CGAL::Arr_segment_traits_2<Rep_ >            Traits;// !!!! remove
+
 typedef Rep_                                         Rep;
 typedef typename Rep::FT                             NT;
 typedef typename Traits::X_curve                     X_curve;
@@ -136,7 +139,7 @@ typedef typename CurveContainer::iterator            CurveContainerIter;
 public:
   friend class Segment_data<Rep>;
   friend class Hot_Pixel<Rep>;
-  friend class hot_pixel_dir_cmp<Rep>;spolylines_end
+  friend class hot_pixel_dir_cmp<Rep>;
 
   typedef CGAL::Segment_2<Rep> Segment_2;
 
@@ -268,54 +271,52 @@ private:
 template<class Rep_>
 Segment_data<Rep_>::Segment_data() {}
 template<class Rep_>
-Segment_data<Rep_>::Segment_data(NT inp_x1,NT inp_y1,NT inp_x2,NT inp_y2) :
-                    x1(inp_x1),y1(inp_y1),x2(inp_x2),y2(inp_y2) {}
+Segment_data<Rep_>::Segment_data(Point_2 p_inp,Point_2 q_inp) :
+                    p(p_inp), q(q_inp) {}
 
 // cctor
 template<class Rep_>
 Segment_data<Rep_>::Segment_data(const Segment_data& other)
 {
-  x1 = other.x1;
-  y1 = other.y1;
-  x2 = other.x2;
-  y2 = other.y2;
+  p = other.p;
+  q = other.q;
 }
 
 template<class Rep_>
-typename Rep_::FT Segment_data<Rep_>::get_x1() {return(x1);}
+typename Rep_::FT Segment_data<Rep_>::get_x1() const {return(p.x());}
 
 template<class Rep_>
-typename Rep_::FT Segment_data<Rep_>::get_y1() {return(y1);}
+typename Rep_::FT Segment_data<Rep_>::get_y1() const {return(p.y());}
 
 template<class Rep_>
-typename Rep_::FT Segment_data<Rep_>::get_x2() {return(x2);}
+typename Rep_::FT Segment_data<Rep_>::get_x2() const {return(q.x());}
 
 template<class Rep_>
-typename Rep_::FT Segment_data<Rep_>::get_y2() {return(y2);}
+typename Rep_::FT Segment_data<Rep_>::get_y2() const {return(q.y());}
 
 template<class Rep_>
 inline void Segment_data<Rep_>::set_data(NT inp_x1,NT inp_y1,NT inp_x2,
             NT inp_y2)
 {
-   x1 = inp_x1;
-   y1 = inp_y1;
-   x2 = inp_x2;
-   y2 = inp_y2;
+  p = Point_2(inp_x1,inp_y1);
+  q = Point_2(inp_x2,inp_y2);
 }
 
 template<class Rep_>
 bool Segment_data<Rep_>::equal(Segment_2 s)
 {
   return(
-	 s.source().x() == x1 &
-	 s.source().y() == y1 &
-	 s.target().x() == x2 &
-	 s.target().y() == y2);
+	 s.source().x() == p.x() &
+	 s.source().y() == p.y() &
+	 s.target().x() == q.x() &
+	 s.target().y() == q.y());
 }
 
 template<class Rep_>
 void Segment_data<Rep_>::determine_direction()
 {
+  NT x1 = p.x(),y1 = p.y(),x2 = q.x(),y2 = q.y();
+
   if(x1 < x2) {
     if(y1 < y2)
       Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::UP_RIGHT);
@@ -590,7 +591,7 @@ void Snap_rounding_2<Rep_>::find_hot_pixels_and_create_kd_trees()
 					  traits, 
 					  subcurves);*/
 
-    /*// get subcurves with overlapping
+    /*// get subcurves with overlapping ********** 
 //    CGAL::Sweep_line_tight_2<CurveContainerIter, Traits, Event, SubCurve> sl;
     CGAL::Sweep_line_2<CurveContainerIter, Traits> sl;
     sl.get_subcurves(segments.begin(), segments.end(),
@@ -611,23 +612,6 @@ void Snap_rounding_2<Rep_>::find_hot_pixels_and_create_kd_trees()
       hot_pixels_list.push_back(std::pair<std::pair<NT,NT>,Hot_Pixel<Rep_> *>(
             std::pair<NT,NT>(hp->get_x(),hp->get_y()),hp));
     }
-
-    /*    for(list<X_curve>::iterator v_iter = subcurves.begin();
-        v_iter != subcurves.end();
-        ++v_iter) {
-      hp = new Hot_Pixel<Rep_>(v_iter->source().x(),
-                               v_iter->source().y(),
-                               pixel_size);
-      if(hp_set.insert(hp).second)
-        hot_pixels_list.push_back(pair<pair<NT,NT>,Hot_Pixel<Rep_> *>(
-            pair<NT,NT>(hp->get_x(),hp->get_y()),hp));
-      hp = new Hot_Pixel<Rep_>(v_iter->target().x(),
-                               v_iter->target().y(),
-                               pixel_size);
-      if(hp_set.insert(hp).second)
-        hot_pixels_list.push_back(pair<pair<NT,NT>,Hot_Pixel<Rep_> *>(
-            pair<NT,NT>(hp->get_x(),hp->get_y()),hp));
-	    }*/
 
     // create kd multiple tree
     // create simple_list from seg_list
@@ -786,9 +770,8 @@ Snap_rounding_2<Rep_>::Snap_rounding_2(Segment_const_iterator
     need_sr = true;
     // copy segments list
     while(begin != end) {
-      seg_list.push_back(Segment_data<Rep_>(begin->source().x(),
-                         begin->source().y(),begin->target().x(),
-                         begin->target().y()));
+      seg_list.push_back(Segment_data<Rep_>(begin->source(),
+                                            begin->target()));
       seg_2_list.push_back(*begin);
       ++number_of_segments;
       ++begin;
@@ -844,10 +827,8 @@ bool Snap_rounding_2<Rep_>::insert(Segment_2 seg)
   {
     need_sr = true;
     seg_list.push_back(Segment_data<Rep_>(
-                         seg.source().x(),
-                         seg.source().y(),
-                         seg.target().x(),
-                         seg.target().y()));
+			 seg.source(),
+                         seg.target()));
 
     seg_2_list.push_back(seg);
     ++number_of_segments;
