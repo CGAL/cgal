@@ -25,6 +25,7 @@
 #define CGAL_STATIC_FILTERS_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Static_filters/tools.h>
 #include <CGAL/Static_filters/Orientation_2.h>
 #include <CGAL/Static_filters/Orientation_3.h>
 #include <CGAL/Static_filters/Side_of_oriented_circle_2.h>
@@ -41,13 +42,6 @@
 // If it should be provided again, it should probably be separate.
 
 CGAL_BEGIN_NAMESPACE
-
-// Utility function to check a posteriori that a subtraction was performed
-// without rounding error.
-inline bool diff_was_exact(double a, double b, double ab)
-{
-    return ab+b == a && a-ab == b;
-}
 
 template < class K_base >
 class Static_filters : public K_base

@@ -1,4 +1,7 @@
 20 June 2004 Sylvain Pion
+- Put diff_was_exact() in a separate file.
+
+20 June 2004 Sylvain Pion
 - Use CGAL_NTS instead of CGAL::.
 
 13 June 2004 Sylvain Pion
