@@ -1,6 +1,8 @@
 2.10    (? Mar 2001)
 - Added constructor Vector(Point, Point).
 - Fix copy-paste bug in Compute_squared_distance that prevented compilation.
+- Rename Kernel::* to Kernel_*.
+- Replace operator*.tex by operatorStar.tex.
 
 2.9     (6 Mar 2001)
 - Add Construct_cross_product_vector_3.
