@@ -1,5 +1,5 @@
 1.86 (28 October 2003)
-- Add test for bisector().
+- Document and test bisector().
 
 1.85 (22 October 2003)
 - resubmit
