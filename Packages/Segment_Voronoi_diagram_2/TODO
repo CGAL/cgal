@@ -1,3 +1,8 @@
+- rewrite the insert method that takes two iterators and a bool as
+  a template method templated by the iterator and Tag_{true,false};
+  this way insert can be called with Tag_false, with out the restriction that
+  the iterator is a random access iterator; finally add a default method
+  that does not take a tag and which does not shuffling.
 - add two different storage sites, one for the case of intersecting
   segments and one for the case of non-intersecting segments
 - add boolean parameter in Segment_Voronoi_diagram_2 class that indicates
