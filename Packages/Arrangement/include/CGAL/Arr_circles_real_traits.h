@@ -616,7 +616,7 @@ public:
 
       // If we switched the orientation, we have to switch back
       if ( switch_orientation ) {
-	for (typename list<Curve>::iterator lit = l.begin(); 
+	for (typename std::list<Curve>::iterator lit = l.begin(); 
 	     lit != l.end(); 
 	     lit++) {
  	  *lit = curve_flip(*lit);
@@ -631,8 +631,8 @@ public:
     CGAL_postcondition_code(
 			    if ( switch_orientation ) l.reverse();
 			    Orientation cv_or = cv.circle().orientation();
-			    typename list<Curve>::iterator lit;
-			    typename list<Curve>::iterator next_it; );
+			    typename std::list<Curve>::iterator lit;
+			    typename std::list<Curve>::iterator next_it; );
     // Check consistency of end points
     CGAL_postcondition( l.begin()->source() == cv.source() );
     CGAL_postcondition_code( lit = l.end(); lit--; );
