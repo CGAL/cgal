@@ -133,6 +133,7 @@ int main(int argc,char *argv[])
     W.set_node_width(3);
   }
 
+  CGAL::cgalize(W);
   W.text_box(-1.5,-1,10,"manual");
   W.text_box(-1.5,-1,9.5,"add points");
 
