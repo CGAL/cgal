@@ -37,11 +37,16 @@ CGAL_BEGIN_NAMESPACE
 template < class I, class Ref, class Ptr, class Val, class Dist, class Ctg>
 #else
 template < class I,
-           class Ref  = typename std::iterator_traits<I>::reference,
-           class Ptr  = typename std::iterator_traits<I>::pointer,
-           class Val  = typename std::iterator_traits<I>::value_type,
-           class Dist = typename std::iterator_traits<I>::difference_type,
-           class Ctg = typename std::iterator_traits<I>::iterator_category>
+           class Ref  = CGAL_TYPENAME_MSVC_NULL
+                        std::iterator_traits<I>::reference,
+           class Ptr  = CGAL_TYPENAME_MSVC_NULL
+                        std::iterator_traits<I>::pointer,
+           class Val  = CGAL_TYPENAME_MSVC_NULL
+                        std::iterator_traits<I>::value_type,
+           class Dist = CGAL_TYPENAME_MSVC_NULL
+                        std::iterator_traits<I>::difference_type,
+           class Ctg = CGAL_TYPENAME_MSVC_NULL
+                        std::iterator_traits<I>::iterator_category>
 #endif
 class Iterator_identity {
 protected:
