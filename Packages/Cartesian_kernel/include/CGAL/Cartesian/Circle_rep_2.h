@@ -29,11 +29,7 @@ class Simple_Circle_repC2
 {
 public:
   typedef typename R::FT                        FT;
-#ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-  typedef typename R::Point_2                   Point_2;
-#else
-  typedef typename R::Point_2_base              Point_2;
-#endif
+  typedef typename R::Kernel_base::Point_2                   Point_2;
 
   Simple_Circle_repC2() {}
 
@@ -50,11 +46,7 @@ class Circle_repC2 : public Ref_counted
 {
 public:
   typedef typename R::FT                        FT;
-#ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-  typedef typename R::Point_2                   Point_2;
-#else
-  typedef typename R::Point_2_base              Point_2;
-#endif
+  typedef typename R::Kernel_base::Point_2                   Point_2;
 
   Circle_repC2() {}
 

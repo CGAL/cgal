@@ -35,15 +35,9 @@ class TriangleC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   typedef typename R_::Triangle_handle_2         base;
   typedef typename base::element_type            rep;
 
-#ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-  typedef typename R_::Point_2                   Point_2;
-  typedef typename R_::Vector_2                  Vector_2;
-  typedef typename R_::Aff_transformation_2      Aff_transformation_2;
-#else
-  typedef typename R_::Point_2_base              Point_2;
-  typedef typename R_::Vector_2_base             Vector_2;
-  typedef typename R_::Aff_transformation_2_base Aff_transformation_2;
-#endif
+  typedef typename R_::Kernel_base::Point_2              Point_2;
+  typedef typename R_::Kernel_base::Vector_2             Vector_2;
+  typedef typename R_::Kernel_base::Aff_transformation_2 Aff_transformation_2;
 
 public:
   typedef R_                                    R;

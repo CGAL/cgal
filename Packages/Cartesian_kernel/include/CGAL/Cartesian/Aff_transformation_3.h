@@ -53,19 +53,10 @@ public:
   typedef typename R::FT                   FT;
   typedef Aff_transformation_rep_baseC3<R> Aff_t_base;
 
-#ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-  typedef Aff_transformationC3<R,Cartesian_tag> Self;
-  typedef typename R::Point_3              Point_3;
-  typedef typename R::Vector_3             Vector_3;
-  typedef typename R::Direction_3          Direction_3;
-  typedef typename R::Plane_3              Plane_3;
-#else
-  typedef Aff_transformationC3<R>          Self;
-  typedef typename R::Point_3_base         Point_3;
-  typedef typename R::Vector_3_base        Vector_3;
-  typedef typename R::Direction_3_base     Direction_3;
-  typedef typename R::Plane_3_base         Plane_3;
-#endif
+  typedef typename R::Kernel_base::Point_3              Point_3;
+  typedef typename R::Kernel_base::Vector_3             Vector_3;
+  typedef typename R::Kernel_base::Direction_3          Direction_3;
+  typedef typename R::Kernel_base::Plane_3              Plane_3;
 
   Aff_transformationC3()
   {
@@ -161,7 +152,7 @@ public:
   operator()(const Plane_3& p) const
   { return transform(p); } // FIXME : not compiled by the test-suite !
 
-  Self inverse() const { return ptr()->inverse(); }
+  Aff_transformationC3 inverse() const { return ptr()->inverse(); }
   
   bool is_even() const { return ptr()->is_even(); }
   bool is_odd() const { return  ! (ptr()->is_even()); }
@@ -171,10 +162,11 @@ public:
   FT m(int i, int j) const { return cartesian(i,j); }
   FT hm(int i, int j) const { return cartesian(i,j); }
 
-  Self operator*(const Self &t) const { return (*ptr()) * (*t.ptr()); }
+  Aff_transformationC3 operator*(const Aff_transformationC3 &t) const
+  { return (*ptr()) * (*t.ptr()); }
 
 protected:
-  Self        transpose() const { return ptr()->transpose(); }
+  Aff_transformationC3        transpose() const { return ptr()->transpose(); }
 
 private:
   Aff_t_base* ptr() const { return static_cast<Aff_t_base*>(PTR); }

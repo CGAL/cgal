@@ -33,17 +33,10 @@ class Aff_transformation_rep_baseC3
 public:
   typedef typename R::FT                        FT;
 
-#ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-  typedef typename R::Point_3                   Point_3;
-  typedef typename R::Vector_3                  Vector_3;
-  typedef typename R::Direction_3               Direction_3;
-  typedef typename R::Aff_transformation_3      Aff_transformation_3;
-#else
-  typedef typename R::Point_3_base              Point_3;
-  typedef typename R::Vector_3_base             Vector_3;
-  typedef typename R::Direction_3_base          Direction_3;
-  typedef typename R::Aff_transformation_3_base Aff_transformation_3;
-#endif
+  typedef typename R::Kernel_base::Point_3              Point_3;
+  typedef typename R::Kernel_base::Vector_3             Vector_3;
+  typedef typename R::Kernel_base::Direction_3          Direction_3;
+  typedef typename R::Kernel_base::Aff_transformation_3 Aff_transformation_3;
 
   virtual ~Aff_transformation_rep_baseC3(){}
 

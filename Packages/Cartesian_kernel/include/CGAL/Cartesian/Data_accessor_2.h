@@ -28,14 +28,10 @@ CGAL_BEGIN_NAMESPACE
 template < class R_ >
 class Data_accessorC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
 {
+    typedef typename R_::FT                   FT;
+    typedef typename R_::Kernel_base::Point_2 Point;
 public:
     typedef R_                           R;
-    typedef typename R::FT               FT;
-#ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-    typedef  typename R::Point_2          Point;
-#else
-    typedef  typename R::Point_2_base     Point;
-#endif
 
     FT  get_x( const Point &p) const { return( p.x()); }
     FT  get_y( const Point &p) const { return( p.y()); }

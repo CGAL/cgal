@@ -33,17 +33,10 @@ class RayC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   typedef typename R_::Ray_handle_2              base;
   typedef typename base::element_type            rep;
 
-#ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-  typedef typename R_::Point_2                   Point_2;
-  typedef typename R_::Direction_2               Direction_2;
-  typedef typename R_::Line_2                    Line_2;
-  typedef typename R_::Aff_transformation_2      Aff_transformation_2;
-#else
-  typedef typename R_::Point_2_base              Point_2;
-  typedef typename R_::Direction_2_base          Direction_2;
-  typedef typename R_::Line_2_base               Line_2;
-  typedef typename R_::Aff_transformation_2_base Aff_transformation_2;
-#endif
+  typedef typename R_::Kernel_base::Point_2              Point_2;
+  typedef typename R_::Kernel_base::Direction_2          Direction_2;
+  typedef typename R_::Kernel_base::Line_2               Line_2;
+  typedef typename R_::Kernel_base::Aff_transformation_2 Aff_transformation_2;
 
 public:
   typedef R_                                     R;
