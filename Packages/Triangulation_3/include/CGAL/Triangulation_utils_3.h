@@ -33,8 +33,6 @@ template < class T = void >
 struct Triangulation_utils_base_3
 {
   static const char tab_next_around_edge[4][4];
-
-  static unsigned int random_value, count, val;
 };
 
 template < class T >
@@ -43,16 +41,6 @@ const char Triangulation_utils_base_3<T>::tab_next_around_edge[4][4] = {
       {3, 5, 0, 2},
       {1, 3, 5, 0},
       {2, 0, 1, 5} };
-
-template < class T >
-unsigned int Triangulation_utils_base_3<T>::random_value = 0;
-
-template < class T >
-unsigned int Triangulation_utils_base_3<T>::count = 0;
-
-template < class T >
-unsigned int Triangulation_utils_base_3<T>::val;
-
 
 // We derive from Triangulation_cw_ccw_2 because we still use cw() and ccw()
 // in the 2D part of the code.  Ideally, this should go away when we re-use
@@ -70,28 +58,6 @@ struct Triangulation_utils_3
 		                     ( j >= 0 && j < 4 ) &&
 		                     ( i != j ) );
     return tab_next_around_edge[i][j];
-  }
-
-  // rand_4() outputs pseudo random unsigned ints < 4.
-  // We compute random 16 bit values, that we slice/shift to make it faster.
-  static unsigned int rand_4()
-  {
-      if (count==0)
-      {
-          count = 16;
-          random_value = (421 * random_value + 2073) % 32749;
-          val = random_value;
-      }
-      count--;
-      unsigned int ret = val & 3;
-      val = val >> 1;
-      return ret;
-  }
-
-  static unsigned int rand_3()
-  {
-      unsigned int i = rand_4();
-      return i==3 ? 0 : i;
   }
 };
 

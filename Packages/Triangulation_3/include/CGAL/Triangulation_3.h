@@ -41,6 +41,7 @@
 #include <CGAL/function_objects.h>
 #include <CGAL/functional.h>
 #include <CGAL/Iterator_project.h>
+#include <CGAL/Random.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -204,6 +205,7 @@ protected:
   Tds _tds;
   GT  _gt;
   Vertex_handle infinite; //infinite vertex
+  mutable Random rng;
  
   Comparison_result
   compare_xyz(const Point &p, const Point &q) const
@@ -1464,8 +1466,8 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
 	}
 
 	// FIXME: do more benchmarks.
-	i = rand_4(); // For the (remembering) stochastic walk
-	// i = 0; // For the (remembering) visibility walk. Ok for Delaunay only
+	i = rng.template get_bits<2>(); // For the remembering stochastic walk
+	// i = 0; // For the remembering visibility walk. Ok for Delaunay only
 
         Orientation test_or = (i&1)==0 ? NEGATIVE : POSITIVE;
 	const Point & p1 = c->vertex( (i+1)&3 )->point();
@@ -1607,7 +1609,7 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
 	// else c is finite
 	// we test its edges in a random order until we find a
 	// neighbor to go further
-	i = rand_3();
+	i = rng.get_int(0, 3);
 	const Point & p0 = c->vertex( i )->point();
 	const Point & p1 = c->vertex( ccw(i) )->point();
 	const Point & p2 = c->vertex( cw(i) )->point();

@@ -11,6 +11,7 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
+	-I../../../All/Random_numbers/include \
 	-I../../include \
 	-I./include \
 	 $(CGAL_CXXFLAGS) \
