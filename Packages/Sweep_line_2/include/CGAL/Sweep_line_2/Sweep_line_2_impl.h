@@ -2054,12 +2054,12 @@ Intersect(Subcurve *c1, Subcurve *c2)
     {
       SL_DEBUG(std::cout << "event already exists,updating.. (" << xp <<")\n";)
       e = eqi->second;
-      if ( !scv1->isEndPoint(xp)) {
-	e->addCurveToLeft(c1, m_sweepLinePos);
+      e->addCurveToLeft(c1, m_sweepLinePos);
+      if ( !scv1->isEndPoint(xp)) { 
 	e->addCurveToRight(c1);
       }
+      e->addCurveToLeft(c2, m_sweepLinePos);
       if ( !scv2->isEndPoint(xp) ) {
-	e->addCurveToLeft(c2, m_sweepLinePos);
 	e->addCurveToRight(c2);
       }
       SL_DEBUG(e->Print();)

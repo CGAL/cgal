@@ -160,8 +160,8 @@ public:
       } else {
 	UpdateRightmostPoint(curve);
       }
-    } else if ( !curve->isEndPoint(m_point) ) {
 
+    } else if ( !curve->isEndPoint(m_point) ) {
       m_isInternalIntersectionPoint = true;
     }
 
@@ -227,11 +227,7 @@ public:
     }
     
     // insert the curve. If the curve is already in the list, it is not added
-    if ( iter == m_leftCurves->end() ||
-	 (*iter)->getId() !=  curve->getId())
-    {
-      m_leftCurves->insert(iter, curve);
-    } 
+    m_leftCurves->insert(iter, curve);
   }
 
 
