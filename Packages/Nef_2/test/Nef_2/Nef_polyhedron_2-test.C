@@ -11,9 +11,12 @@ typedef leda_integer Integer;
 #else
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
+#include <CGAL/Gmpq.h>
 typedef CGAL::Gmpz Integer;
+typedef CGAL::Gmpq Rational;
 #else
 typedef long Integer;
+typedef double Rational;
 #endif
 #endif
 
@@ -281,7 +284,6 @@ int main()
 
 
 {
-  typedef double Rational;
   typedef  CGAL::Extended_cartesian<Rational> EKernel;
   typedef  CGAL::Nef_polyhedron_2<EKernel> Nef_polyhedron;
   typedef  Nef_polyhedron::Point     Point;
