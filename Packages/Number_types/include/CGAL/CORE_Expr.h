@@ -1,4 +1,4 @@
-// Copyright (c) 2002  Utrecht University (The Netherlands),
+// Copyright (c) 2002-2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -90,6 +90,8 @@ to_interval (const CORE::Expr & e)
 {
   std::pair<double,double> result;
   e.doubleInterval(result.first, result.second);
+  CGAL_expensive_assertion(result.first <= e);
+  CGAL_expensive_assertion(result.second >= e);
   return result;
 }
 

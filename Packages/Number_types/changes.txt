@@ -1,3 +1,6 @@
+10 Apr 2004 Sylvain Pion
+- Added expensive_assertions in to_interval(CORE::Expr) since it was buggy.
+
 9 Apr 2004 Sylvain Pion
 - PGCC workarounds.
 
