@@ -1,3 +1,6 @@
+Version 5.5 (19 October 2000)
+- Added "#define typename" for M$VC++.  Hopefully that'll fix it for good.
+
 Version 5.4 (14 October 2000)
 - Removed default argument value duplication for SphereC3 ctors.
 
