@@ -96,6 +96,9 @@ a representation class \ccc{R}.
 
 A default constructor and copy constructor are defined.
 
+\ccConstructor{Partition_traits_2();}{}
+\ccConstructor{Partition_traits_2(Partition_traits_2& tr);}{}
+
 \ccOperations
 
 For each predicate object type \ccc{Pred_object_type} listed above
@@ -118,60 +121,6 @@ Returns an instance of \ccc{Pred_object_type}.
 }
 \ccAutoIndexingOn
 
-In addition, the following functions are defined:
-
-\ccMemberFunction{
-    Comparison_result compare_x(const Point_2 &p, const Point_2 &q) const;
-}
-{
-  Returns \ccc{Compare_x_2()(p, q)}.
-}
-
-\ccMemberFunction{
-    Comparison_result compare_y(const Point_2 &p, const Point_2 &q) const;
-}
-{
-  Returns \ccc{Compare_y_2()(p, q)}.
-}
-
-\ccSetThreeColumns{Comarison_resultxx}{traits.cross_product_2xx}{}
-\ccMemberFunction{FT
-    cross_product_2(const Vector_2& p, const Vector_2& q) const;
-}{ Returns \ccc{p.x() * q.y() - q.x() * p.y()}.}
-
-\ccMemberFunction{
-    bool do_intersect(const Point_2& p1,
-                      const Point_2& q1,
-                      const Point_2& p2,
-                      const Point_2& q2) const;
-}
-{
-  Returns \ccc{do_intersect(Segment_2(p1,q1), Segment_2(p2,q2)}.
-}
-
-\ccMemberFunction{
-    bool have_equal_direction(const Vector_2& v1,
-                              const Vector_2& v2 ) const;
-}
-{
-  Returns the value of the comparison \ccc{R::Direction_2(v1) == R::Direction_2(v2)}.
-}
-
-\ccMemberFunction{
-    Orientation orientation(const Point_2& p,
-                                 const Point_2& q,
-                                 const Point_2& r) const;
-}
-{
-   Returns \ccc{Orientation_2()(p,q,r)}.
-}
-
-\ccMemberFunction{
-    bool lexicographically_xy_smaller(const Point_2& p, const Point_2& q) const;
-}
-{
-Returns \ccc{Less_xy_2()(p,q)}.
-}
 
 \ccSeeAlso
 
