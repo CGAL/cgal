@@ -9,7 +9,7 @@ characters on devices as a console, a file, or a pipe. In \cgal\
 we distinguish between  a raw {\sc Ascii}, a raw binary and a 
 pretty printing format. 
 
-\ccEnum{CGAL_IO::Mode = {ASCII = 0, BINARY, PRETTY};}{}
+\ccEnum{IO::Mode = {ASCII = 0, BINARY, PRETTY};}{}
 
 
 The first one just writes number, e.g.\ the coordinates of a point or
@@ -19,36 +19,36 @@ as a sequence of four byte. The format depends on the machine. The
 last one serves mainly for debugging as the type of the geometric
 object is written, as well as the data defining the object. For example
 for a point at the origin with Cartesian double coordinates, the output
-would be \ccc{CGAL_PointC2(0.0, 0.0)}.  At the moment \cgal\ does not
+would be \ccc{PointC2(0.0, 0.0)}.  At the moment \cgal\ does not
 provide input operations for pretty printed data. By default a stream
 is in {\sc Ascii} mode.
 
-\ccThree{CGAL_IO::Mode}{CGAL_set_mode(ios& s, CGAL_IO::Mode m);}{}
+\ccThree{IO::Mode}{set_mode(std::ios& s, IO::Mode m);}{}
 
 \cgal\ provides the following functions to modify the mode of an IO stream.
 
-\ccFunction{CGAL_IO::Mode  CGAL_set_mode(ios& s, CGAL_IO::Mode m);}{}
+\ccFunction{IO::Mode  set_mode(std::ios& s, IO::Mode m);}{}
 
-\ccFunction{CGAL_IO::Mode  CGAL_set_ascii_mode(ios& s);}{}
+\ccFunction{IO::Mode  set_ascii_mode(std::ios& s);}{}
 \ccGlue
-\ccFunction{CGAL_IO::Mode  CGAL_set_binary_mode(ios& s);}{}
+\ccFunction{IO::Mode  set_binary_mode(std::ios& s);}{}
 \ccGlue
-\ccFunction{CGAL_IO::Mode  CGAL_set_pretty_mode(ios& s);}{}
+\ccFunction{IO::Mode  set_pretty_mode(std::ios& s);}{}
 
 The following functions allow to test whether a stream is in a certain mode.
 
-\ccFunction{CGAL_IO::Mode  CGAL_get_mode(ios& s);}{}
+\ccFunction{IO::Mode  get_mode(std::ios& s);}{}
 
-\ccFunction{bool CGAL_is_ascii(ios& s);}{}
+\ccFunction{bool is_ascii(std::ios& s);}{}
 \ccGlue
-\ccFunction{bool CGAL_is_binary(ios& s);}{}
+\ccFunction{bool is_binary(std::ios& s);}{}
 \ccGlue
-\ccFunction{bool CGAL_is_pretty(ios& s);}{}
+\ccFunction{bool is_pretty(std::ios& s);}{}
 
 
 \newpage
 
-\ccThree{ostream&}{operator<<( const CGAL_Class &c);}{}
+\ccThree{ostream&}{operator<<( const Class &c);}{}
 
 \begin{ccClass} {ostream}
 \ccSection{Output Streams}
@@ -61,9 +61,9 @@ as \ccStyle{cout} or \ccStyle{cerr}, as well as to strstreams
 and fstreams. Let \ccVar\  be an output stream.
 
 \ccOperations
-The output operator is defined for all classes in the \cgal\ kernel and for the class \ccc{CGAL_Color} as well.
+The output operator is defined for all classes in the \cgal\ kernel and for the class \ccc{Color} as well.
 
-\ccMethod{ostream& operator<<( const CGAL_Class &c);}
+\ccMethod{ostream& operator<<( const Class &c);}
 {Inserts object \ccStyle{c} in the stream. }
 
 
@@ -71,25 +71,26 @@ The output operator is defined for all classes in the \cgal\ kernel and for the 
 
 \begin{cprog}
 
-#include <iostream.h>
-#include <fstream.h>
+#include <CGAL/config.h>
+#include <iostream>
+#include <fstream>
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Segment_2.h>
 
-typedef CGAL_Point_2< CGAL_Cartesian<double> >     Point;
-typedef CGAL_Segment_2< CGAL_Cartesian<double> >   Segment;
+typedef CGAL::Point_2< CGAL::Cartesian<double> >     Point;
+typedef CGAL::Segment_2< CGAL::Cartesian<double> >   Segment;
 
 int main()
 {
     Point p(0,1), q(2,2);
     Segment s(p,q);
 
-    CGAL_set_pretty_mode(cout);
-    cout << p << endl << q  << endl;
+    CGAL::set_pretty_mode(std::cout);
+    std::cout << p << std::endl << q  << std::endl;
 
-    ofstream f("data.txt");
-    CGAL_set_binary_mode(f);
+    std::ofstream f("data.txt");
+    CGAL::set_binary_mode(f);
     f << s << p ;
 
     return 1;
@@ -113,7 +114,7 @@ Let \ccVar\ be an input stream.
 
 The input operator is defined for all classes in the \cgal\ kernel.
 
-\ccMethod{istream& operator>>(CGAL_Class c);}
+\ccMethod{istream& operator>>(Class c);}
 {Extracts object \ccStyle{c} from the stream.}
 
 
@@ -121,14 +122,15 @@ The input operator is defined for all classes in the \cgal\ kernel.
 
 \begin{cprog}
 
-#include <iostream.h>
-#include <fstream.h>
+#include <CGAL/config.h>
+#include <iostream>
+#include <fstream>
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Segment_2.h>
 
-typedef CGAL_Point_2< CGAL_Cartesian<double> >     Point;
-typedef CGAL_Segment_2< CGAL_Cartesian<double> >   Segment;
+typedef CGAL::Point_2< CGAL::Cartesian<double> >     Point;
+typedef CGAL::Segment_2< CGAL::Cartesian<double> >   Segment;
 
 int
 main()
@@ -136,11 +138,11 @@ main()
     Point p, q;
     Segment s;
 
-    CGAL_set_ascii_mode(cin);
-    cout >> p >> q;
+    CGAL::set_ascii_mode(std::cin);
+    std::cin >> p >> q;
 
-    ofstream f("data.txt");
-    CGAL_set_binary_mode(f);
+    std::ifstream f("data.txt");
+    CGAL::set_binary_mode(f);
     f >> s >> p;
 
     return 1;
