@@ -45,6 +45,8 @@ example: example.o
 voronoi: voronoi.o
 	$(CGAL_CXX) -o voronoi voronoi.o $(LDFLAGS)
 
+colored_face : colored_face.o
+	$(CGAL_CXX) -o colored_face colored_face.o $(LDFLAGS)
 
 clean:
 	rm -rf *~ *.o core tr
