@@ -101,9 +101,10 @@ VectorHd(int d = 0) : Base( Tuple(d+1) )
 $d$-dimensional space.}*/
 { if ( d > 0 ) entry(d) = 1; }
 
-VectorHd(int d, Null_vector NULL_VECTOR) : Base( Tuple(d+1) )  
+VectorHd(int d, Null_vector) : Base( Tuple(d+1) )  
 /*{\Mcreate introduces the zero vector |\Mvar| of type |\Mname| in 
-$d$-dimensional space.}*/
+$d$-dimensional space. There is a constant |CGAL::NULL_VECTOR| that
+can be used for the second argument.}*/
 { if ( d > 0 ) entry(d) = 1; }
 
 #ifndef CGAL_SIMPLE_INTERFACE
@@ -158,7 +159,7 @@ FIXVECHD(const RT*)
 #undef FIXVECHD
 #endif
 
-VectorHd(Base_vector, int d, int i) : Base( Tuple(d+1) )
+VectorHd(int d, Base_vector, int i) : Base( Tuple(d+1) )
 /*{\Mcreate returns a variable |\Mvar| of type |\Mname| initialized  
 to the $i$-th base vector of dimension $d$. }*/
 { entry(d) = 1;
@@ -411,7 +412,7 @@ friend std::ostream& operator<< CGAL_NULL_TMPL_ARGS
 
 
 template <class RT, class LA>
-VectorHd<RT,LA> operator*(int n, const VectorHd<RT,LA>& v) 
+VectorHd<RT,LA> operator*(const int& n, const VectorHd<RT,LA>& v) 
 { return v.scale(n,1); }
 
 template <class RT, class LA>

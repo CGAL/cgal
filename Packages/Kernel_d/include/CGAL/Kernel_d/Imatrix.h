@@ -130,7 +130,7 @@ protected:
   inline void allocate_mat_space(vector_pointer*& vi, int d)
   { vi = new vector_pointer[d]; }
 
-  inline void deallocate_mat_space(vector_pointer*& vi, int d)
+  inline void deallocate_mat_space(vector_pointer*& vi, int)
   { delete[] vi;
     vi = (vector_pointer*)0; }
 
@@ -265,9 +265,6 @@ Vector to_vector() const
   return column(0); 
 }
 
-friend Ivector<_NT,_ALLOC> to_vector(const Imatrix<NT,_ALLOC>& M)
-{ return M.to_vector(); }
-
 Ivector<_NT,_ALLOC>& operator[](int i) const  
 { 
   CGAL_LA_PRECOND((0<=i && i<d1), 
@@ -286,7 +283,7 @@ NT& operator()(int i, int j)
   return elem(i,j); 
 }
 
-NT  operator()(int i, int j) const
+NT operator()(int i, int j) const
 { 
   CGAL_LA_PRECOND((0<=i && i<d1), 
     "Imatrix::operator(): row index out of range.")
@@ -548,6 +545,10 @@ column(int i)  const
   while (j--) result.v[j] = elem(j,i); 
   return result; 
 }
+
+template <class NT, class A>
+Ivector<NT,A> to_vector(const Imatrix<NT,A>& M)
+{ return M.to_vector(); }
 
 template <class NT, class A>
 bool Imatrix<NT,A>::

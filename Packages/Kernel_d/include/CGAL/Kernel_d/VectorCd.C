@@ -49,7 +49,7 @@ transform(const Aff_transformationCd<FT,LA>& t) const
 }
 
 template <class FT, class LA>
-VectorCd<FT,LA> operator*(int n, const VectorCd<FT,LA>& v) 
+VectorCd<FT,LA> operator*(const int& n, const VectorCd<FT,LA>& v) 
 { return v.scale(n); }
 
 template <class FT, class LA>

@@ -44,7 +44,7 @@ CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(CVEC)
 
 
 int main()
-{ CGAL::set_pretty_mode ( std::cerr );  
+{ 
   CGAL_TEST_START;
 { 
   typedef CGAL::Homogeneous_d<RT_> Kernel;
@@ -64,7 +64,7 @@ int main()
   typedef CGAL::Aff_transformation_d<Kernel> Afftrafo;
 
   { 
-    Vector e1 = Vector(Vector::Base_vector(),3,0);
+    Vector e1 = Vector(3,Vector::Base_vector(),0);
     IVector iv1(1,0,1,1), iv2(0,0,1);
     Point p0(3), p1(p0 + e1), p2(3,iv1.begin(),iv1.end()), 
           p3(3,iv2.begin(),iv2.end(),1), p4(3);
@@ -229,7 +229,7 @@ int main()
 
 
   { 
-    Vector e1 = Vector(Vector::Base_vector(),3,0);
+    Vector e1 = Vector(3,Vector::Base_vector(),0);
     IVector iv1(1,0,1,1), iv2(0,0,1);
     Point p0(3), p1(p0 + e1), p2(3,iv1.begin(),iv1.end()), 
           p3(3,iv2.begin(),iv2.end(),1), p4(3);

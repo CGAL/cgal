@@ -175,7 +175,7 @@ int main(int argc, char* argv[])
         b[i] = CGAL::default_random.get_int(-mat_dim,mat_dim); 
       }
 
-      for (double f = 1.0; f > 0.0; f = f-=0.1) {
+      for (double f = 1.0; f > 0.0; f-=0.1) {
         Matrix E = C;
         for (i = 0; i< mat_dim; ++i)
           for (j = 0; j < mat_dim; ++j)

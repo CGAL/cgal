@@ -72,7 +72,7 @@ public:
 Ray_d(int d = 0)  
 /*{\Mcreate introduces some ray in $d$-dimensional space }*/
  : Base( Pair(Point_d<R>(d), Point_d<R>(d)+
-         Vector_d<R>(Base_vector(),d,0)) ) {}
+         Vector_d<R>(d,Base_vector(),0)) ) {}
 
 Ray_d(const Point_d<R>& p, const Point_d<R>& q)
 /*{\Mcreate introduces a ray through |p| and |q| and starting at |p|.

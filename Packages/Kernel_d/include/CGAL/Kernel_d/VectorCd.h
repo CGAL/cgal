@@ -65,7 +65,7 @@ friend class DirectionCd<FT,LA>;
 friend class HyperplaneCd<FT,LA>; 
 
 VectorCd(int d = 0) : Base( Tuple(d) ) {}
-VectorCd(int d, Null_vector NULL_VECTOR) : Base( Tuple(d) ) {}
+VectorCd(int d, Null_vector) : Base( Tuple(d) ) {}
 
 #ifndef CGAL_SIMPLE_INTERFACE
 
@@ -106,7 +106,7 @@ FIXVECCD(const RT*)
 #undef FIXVECCD
 #endif
 
-VectorCd(Base_vector, int d, int i) : Base( Tuple(d) )
+VectorCd(int d, Base_vector, int i) : Base( Tuple(d) )
 { if ( d == 0 ) return;
   CGAL_assertion_msg((0<=i&&i<d),"VectorCd::base: index out of range.");
   entry(i) = 1;

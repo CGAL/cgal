@@ -50,9 +50,10 @@ invariant under translations.
 $d$-dimensional space. 
 }
 
-\ccConstructor{Vector_d<R>(int d, Null_vector NULL_VECTOR)}{introduces the zero vector \ccc{v} of type \ccc{Vector_d<R>} in 
-$d$-dimensional space. 
-}
+\ccConstructor{Vector_d<R>(int d, Null_vector)}{
+introduces the zero vector \ccc{v} of type \ccc{Vector_d<R>} in 
+$d$-dimensional space. For the creation flag \ccc{CGAL::NULL_VECTOR}
+can be used.}
 
 \ccConstructor{template <class InputIterator>
 Vector_d<R>(int d, InputIterator first, InputIterator last)}{introduces a variable \ccc{v} of type \ccc{Vector_d<R>} in dimension \ccc{d}.
@@ -73,7 +74,8 @@ is the sign of $D$. \ccPrecond \ccc{D} is non-zero, the iterator range defines
 a $d$-tuple of \ccc{RT}, and the value type of \ccc{InputIterator} is \ccc{RT}.  
 }
 
-\ccConstructor{Vector_d<R>(Base_vector, int d, int i)}{returns a variable \ccc{v} of type \ccc{Vector_d<R>} initialized  
+\ccConstructor{Vector_d<R>(int d, Base_vector, int i)}{
+returns a variable \ccc{v} of type \ccc{Vector_d<R>} initialized  
 to the $i$-th base vector of dimension $d$.  
 }
 

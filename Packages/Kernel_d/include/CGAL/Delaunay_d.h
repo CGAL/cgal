@@ -978,8 +978,9 @@ range_search(const Sphere_d& C) const
     kernel().point_of_sphere_d_object();
   for (int i = 0; i <= d; i++)  
     P[i] = lift(point_of_sphere(C,i));
+  typedef typename Lifted_vector_d::Base_vector Base_vector;
   Lifted_point_d o = P[0] - 
-    Lifted_vector_d(typename Lifted_vector_d::Base_vector(),d+1,d);
+    Lifted_vector_d(d+1,Base_vector(),d);
   typename Lifted_R::Construct_hyperplane_d hyperplane_trough =
     lifted_kernel().construct_hyperplane_d_object();
   Lifted_hyperplane_d h = 

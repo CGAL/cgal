@@ -200,7 +200,7 @@ components.
 {  
   /* some construction test */
   Point p0(3); // the origin
-  Vector e1 = Vector(Vector::Base_vector(),3,0);
+  Vector e1 = Vector(3,Vector::Base_vector(),0);
   IVector iv1(0,1,0,1), iv2(0,0,1);
   // the first unit vector
 
@@ -353,7 +353,7 @@ components.
 
   std::vector<Vector> P12 = make_vector(a1,a2); 
   CGAL_TEST(CGAL::contained_in_linear_hull(P12.begin(),P12.end(),a1+a2));
-  Vector z_off = a1 + Vector(Vector::Base_vector(),3,2);
+  Vector z_off = a1 + Vector(3,Vector::Base_vector(),2);
   CGAL_TEST(!CGAL::contained_in_linear_hull(P12.begin(),P12.end(),z_off));
 
   std::vector<Vector> NLI = make_vector(a1,a2,a1+a2),
@@ -408,9 +408,9 @@ components.
   IVector vi2(-4,-3,-2); 
   // two ivec inits
 
-  Point p1(CGAL::ORIGIN + Vector(Vector::Base_vector(),3,0)), 
-        p2(CGAL::ORIGIN + Vector(Vector::Base_vector(),3,1)),
-        p3(CGAL::ORIGIN + Vector(Vector::Base_vector(),3,2));
+  Point p1(CGAL::ORIGIN + Vector(3,Vector::Base_vector(),0)), 
+        p2(CGAL::ORIGIN + Vector(3,Vector::Base_vector(),1)),
+        p3(CGAL::ORIGIN + Vector(3,Vector::Base_vector(),2));
   // one three point init
 
   Direction dir(1,1,1);
@@ -692,7 +692,7 @@ typedef CGAL::Aff_transformation_d<Kernel> Afftrafo;
 
 <<3d simple transformations>>=
 { 
-  Vector e1 = Vector(Vector::Base_vector(),3,0);
+  Vector e1 = Vector(3,Vector::Base_vector(),0);
   IVector iv1(1,0,1,1), iv2(0,0,1);
   Point p0(3), p1(p0 + e1), p2(3,iv1.begin(),iv1.end()), 
         p3(3,iv2.begin(),iv2.end(),1), p4(3);

@@ -89,6 +89,14 @@ Let |j = C.index_of_vertex_in_opposite_facet(f,i)|. Then
 
 CGAL_BEGIN_NAMESPACE
 
+template <typename H1, typename H2>
+struct list_collector {
+  std::list<H1>& L_;
+  list_collector(std::list<H1>& L) : L_(L) {}
+  void operator()(H2 f) const
+  { L_.push_back(static_cast<H1>(f)); }
+};
+
 
 template <class R_>
 class Convex_hull_d : public Regular_complex_d<R_>
@@ -710,25 +718,19 @@ public:
   std::list<Simplex_const_handle> all_simplices() const
   { return Base::all_simplices(); }
 
-  template <typename H>
-  struct list_collector {
-    std::list<H>& L_;
-    list_collector(std::list<H>& L) : L_(L) {}
-    void operator()(Facet_handle f) const
-    { L_.push_back(static_cast<H>(f)); }
-  };
+
 
   std::list<Facet_handle>  all_facets() 
   /*{\Mop returns a list of all facets of |\Mvar|.}*/
   { std::list<Facet_handle> L;
-    list_collector<Facet_handle> visitor(L);
+    list_collector<Facet_handle,Facet_handle> visitor(L);
     visit_all_facets(visitor);
     return L;
   }
 
   std::list<Facet_const_handle>  all_facets() const
   { std::list<Facet_const_handle> L;
-    list_collector<Facet_const_handle> visitor(L);
+    list_collector<Facet_const_handle,Facet_handle> visitor(L);
     visit_all_facets(visitor);
     return L;
   }
@@ -825,11 +827,21 @@ template <class R>
 void Convex_hull_d<R>::
 compute_equation_of_base_facet(Simplex_handle S)
 { 
+  #ifndef CGAL_SIMPLE_INTERFACE
   typename R::Construct_hyperplane_d hyperplane_through_points =
     kernel().construct_hyperplane_d_object();
   S->set_hyperplane_of_base_facet( hyperplane_through_points(
     S->points_begin()+1, S->points_begin()+1+current_dimension(),
     center(), ON_NEGATIVE_SIDE)); // skip the first point !
+  #else
+  typename R::Construct_hyperplane_d hyperplane_through_points =
+    kernel().construct_hyperplane_d_object();
+  std::vector<Point_d> V(current_dimension());
+  for (int i=0; i<current_dimension(); ++i) 
+    V[i] = point_of_simplex(S,i+1); // skip the first point !
+  S->set_hyperplane_of_base_facet( 
+   hyperplane_through_points(V.begin(),V.end(),center(),ON_NEGATIVE_SIDE)); 
+  #endif
 
   #ifdef CGAL_CHECK_EXPENSIVE
   { /* Let us check */

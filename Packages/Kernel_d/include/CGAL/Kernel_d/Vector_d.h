@@ -44,8 +44,8 @@ class Vector_d : public pR::Vector_d_base
   Vector_d(int a, int b, int c, int d) : Base(a,b,c,d) {}
   Vector_d(const RT& a, const RT& b, const RT& c, const RT& d) :
     Base(a,b,c,d) {}
-  Vector_d(Base_vector, int d, int i) :
-    Base(Base_vector(), d,i) {}
+  Vector_d(int d, Base_vector, int i) :
+    Base(d,Base_vector(),i) {}
 
 #ifndef CGAL_SIMPLE_INTERFACE
 

@@ -111,7 +111,7 @@ PointCd(int x, int y, int w = 1) : Base( Tuple((FT)x,(FT)y) )
 
 PointCd(const FT& x, const FT& y, const FT& w = 1) 
   : Base( Tuple(x,y) )
-{ CGAL_assertion_msg(w!=0,"PointCd::construction: w == 0."); 
+{ CGAL_assertion_msg(w!=FT(0),"PointCd::construction: w == 0."); 
   vector_rep()/=w; }
 
 PointCd(int x, int y, int z, int w) : 
@@ -121,7 +121,7 @@ PointCd(int x, int y, int z, int w) :
 
 PointCd(const FT& x, const FT& y, const FT& z, const FT& w) 
   : Base( Tuple(x,y,z) )
-{ CGAL_assertion_msg(w!=0,"PointCd::construction: w == 0.");
+{ CGAL_assertion_msg(w!=FT(0),"PointCd::construction: w == 0.");
   vector_rep()/=w; }
 
 PointCd(const PointCd<FT,LA>& p) : Base(p) {}

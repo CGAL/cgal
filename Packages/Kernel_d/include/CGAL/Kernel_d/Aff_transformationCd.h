@@ -70,8 +70,8 @@ Aff_transformationCd(const Matrix& M) : Base( Rep(M) )
 { CGAL_assertion_msg((M.row_dimension()==M.column_dimension()),
   "Aff_transformationCd:: initialization matrix not quadratic.");
   int d = M.row_dimension(),i;
-  for (i=0; i<d-1; ++i) CGAL_assertion(M(d-1,i)==0);
-  CGAL_assertion(M(d-1,d-1)==1);
+  for (i=0; i<d-1; ++i) CGAL_assertion(M(d-1,i)==FT(0));
+  CGAL_assertion(M(d-1,d-1)==FT(1));
 }
 
 #ifndef CGAL_SIMPLE_INTERFACE
@@ -188,7 +188,7 @@ Aff_transformationCd<RT,LA> inverse() const
   Vector dummy;
   if ( !LA::inverse(matrix(),Inv.ptr->M_,D,dummy) ) 
   CGAL_assertion_msg(0,"Aff_transformationCd::inverse: not invertible."); 
-  if ( D < 0 ) Inv.ptr->M_ = -Inv.ptr->M_;
+  if ( D < FT(0) ) Inv.ptr->M_ = -Inv.ptr->M_;
   return Inv;
 }
   

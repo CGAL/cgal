@@ -156,7 +156,7 @@ int main()
   {  
     /* some construction test */
     Point p0(3); // the origin
-    Vector e1 = Vector(Vector::Base_vector(),3,0);
+    Vector e1 = Vector(3,Vector::Base_vector(),0);
     IVector iv1(0,1,0,1), iv2(0,0,1);
     // the first unit vector
 
@@ -308,7 +308,7 @@ int main()
 
     std::vector<Vector> P12 = make_vector(a1,a2); 
     CGAL_TEST(CGAL::contained_in_linear_hull(P12.begin(),P12.end(),a1+a2));
-    Vector z_off = a1 + Vector(Vector::Base_vector(),3,2);
+    Vector z_off = a1 + Vector(3,Vector::Base_vector(),2);
     CGAL_TEST(!CGAL::contained_in_linear_hull(P12.begin(),P12.end(),z_off));
 
     std::vector<Vector> NLI = make_vector(a1,a2,a1+a2),
@@ -361,9 +361,9 @@ int main()
     IVector vi2(-4,-3,-2); 
     // two ivec inits
 
-    Point p1(CGAL::ORIGIN + Vector(Vector::Base_vector(),3,0)), 
-          p2(CGAL::ORIGIN + Vector(Vector::Base_vector(),3,1)),
-          p3(CGAL::ORIGIN + Vector(Vector::Base_vector(),3,2));
+    Point p1(CGAL::ORIGIN + Vector(3,Vector::Base_vector(),0)), 
+          p2(CGAL::ORIGIN + Vector(3,Vector::Base_vector(),1)),
+          p3(CGAL::ORIGIN + Vector(3,Vector::Base_vector(),2));
     // one three point init
 
     Direction dir(1,1,1);
@@ -652,7 +652,7 @@ int main()
   {  
     /* some construction test */
     Point p0(3); // the origin
-    Vector e1 = Vector(Vector::Base_vector(),3,0);
+    Vector e1 = Vector(3,Vector::Base_vector(),0);
     IVector iv1(0,1,0,1), iv2(0,0,1);
     // the first unit vector
 
@@ -804,7 +804,7 @@ int main()
 
     std::vector<Vector> P12 = make_vector(a1,a2); 
     CGAL_TEST(CGAL::contained_in_linear_hull(P12.begin(),P12.end(),a1+a2));
-    Vector z_off = a1 + Vector(Vector::Base_vector(),3,2);
+    Vector z_off = a1 + Vector(3,Vector::Base_vector(),2);
     CGAL_TEST(!CGAL::contained_in_linear_hull(P12.begin(),P12.end(),z_off));
 
     std::vector<Vector> NLI = make_vector(a1,a2,a1+a2),
@@ -857,9 +857,9 @@ int main()
     IVector vi2(-4,-3,-2); 
     // two ivec inits
 
-    Point p1(CGAL::ORIGIN + Vector(Vector::Base_vector(),3,0)), 
-          p2(CGAL::ORIGIN + Vector(Vector::Base_vector(),3,1)),
-          p3(CGAL::ORIGIN + Vector(Vector::Base_vector(),3,2));
+    Point p1(CGAL::ORIGIN + Vector(3,Vector::Base_vector(),0)), 
+          p2(CGAL::ORIGIN + Vector(3,Vector::Base_vector(),1)),
+          p3(CGAL::ORIGIN + Vector(3,Vector::Base_vector(),2));
     // one three point init
 
     Direction dir(1,1,1);

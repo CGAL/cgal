@@ -38,6 +38,7 @@
 #define CGAL_REGULAR_COMPLEX_D_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Iterator_project.h>
 #include <CGAL/In_place_list.h>
 #include <vector>
 #include <list>
@@ -158,6 +159,26 @@ protected:
   //------ only for convex hulls ------------------
 
 public:
+  typedef typename std::vector<Vertex_handle>::const_iterator 
+          VIV_iterator;
+  struct Point_from_VIV_iterator {
+    typedef Vertex_handle argument_type;
+    typedef Point_d      result_type;
+    result_type& operator()(argument_type& x) const 
+    { return x->point(); }
+    const result_type& operator()(const argument_type& x) const 
+    { return x->point(); }
+  };
+
+  typedef CGAL::Iterator_project<VIV_iterator,Point_from_VIV_iterator,
+    const Point_d&, const Point_d*> Point_const_iterator;
+
+  Point_const_iterator points_begin() const 
+  { return Point_const_iterator(vertices.begin()); }
+  Point_const_iterator points_end() const 
+  { return Point_const_iterator(vertices.end()); }
+
+  #if 0
   struct Point_const_iterator {
     typedef Point_const_iterator self;
     typedef std::random_access_iterator_tag iterator_category;
@@ -202,6 +223,8 @@ public:
   { return Point_const_iterator(vertices.begin()); }
   Point_const_iterator points_end() const 
   { return Point_const_iterator(vertices.end()); }
+
+  #endif
           
 
   RC_simplex_d() {}

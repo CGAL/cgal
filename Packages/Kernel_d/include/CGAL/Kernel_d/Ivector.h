@@ -48,7 +48,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#if defined(_MSC_VER) || defined(__BORLANDC__) 
+#if defined(_MSC_VER) || defined(__BORLANDC__)
 #define CGAL_SIMPLE_INTERFACE
 #endif
 
@@ -151,22 +151,13 @@ protected:
 
   inline void allocate_vec_space(NT*& vi, int di)
   {
-  /* We use this procedure to allocate memory. We first get an appropriate
-     piece of memory from the allocator and then initialize each cell
-     by an inplace new. */
-
     vi = new NT[di];
     NT* p = vi + di - 1;
     while (p >= vi) { *p = NT(0);  p--; }
   }
 
-  inline void deallocate_vec_space(NT*& vi, int di)
+  inline void deallocate_vec_space(NT*& vi, int)
   {
-  /* We use this procedure to deallocate memory. We have to free it by
-     the allocator scheme. We first call the destructor for type NT for each
-     cell of the array and then return the piece of memory to the memory
-     manager. */
-
     delete [] vi;
     vi = (NT*)0;
   }
