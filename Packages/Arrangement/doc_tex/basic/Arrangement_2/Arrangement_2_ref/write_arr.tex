@@ -1,0 +1,51 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: write_arr.tex (Arrangement)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: arr (Arrangement)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+%write_arr
+
+\begin{ccRefFunction}{write_arr<Arrangement,Writer>(Arrangement arr, Writer& writer, ostream& o);}
+
+\ccCreationVariable{write_arr}
+
+\ccDefinition
+\ccc{write_arr} is a global function defined for writing an \ccc{Arrangement} object. 
+The function is templated with the \ccc{Arrangement} class, and the \ccStyle{Writer} class.  
+This function uses the functions defined in the \ccStyle{Writer} class, and prints the 
+\ccc{Arrangement} object in the format discussed in \ccRefPage{Arr_IO_format}. 
+The operator defined for writing an \ccc{Arrangement} object to an output stream uses 
+this function when parameterize \ccStyle{Writer} with an object instanciated from \ccc{Arr_file_writer}.
+
+\ccInclude{CGAL/IO/write_arr.h}
+
+\end{ccRefFunction} % writer_arr
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+
+
+
+
+
+
+
+
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "Pm_file_scanner"
+%%% End: 
