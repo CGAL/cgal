@@ -1,4 +1,8 @@
 //-----------------------------------------------------------------------//
+// 1.52
++ Removed assertions from testfiles. Replaced them by booleans.
+
+//-----------------------------------------------------------------------//
 // 1.51
 + MSVC_standard_header_fixes.h: added strcmp, sscanf and sprintf to std::
 
