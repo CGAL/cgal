@@ -18,7 +18,9 @@
 #ifndef CGAL_ARR_POLYLINE_TRAITS_WINDOW_STREAM_H  
 #include <CGAL/IO/Arr_polyline_traits_Window_stream.h>
 #endif
+
 #include <CGAL/IO/cgal_window.h>  //used for visualization.
+#include <CGAL/IO/cgal_window_redefine.h>
 
 typedef CGAL::Quotient<CGAL::MP_Float>       NT;
 typedef CGAL::Cartesian<NT>                  Kernel;
@@ -114,7 +116,7 @@ int main()
   
   CGAL::Window_stream W(700, 700);
   W.init(-10, 10, -10);
-  W.set_mode(CGAL::src_mode);
+  W.set_mode(leda_src_mode);
   W.set_node_width(3);
   W.button("finish",2);
   W.display();

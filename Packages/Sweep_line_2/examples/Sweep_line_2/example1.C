@@ -14,6 +14,7 @@
 
 #include <CGAL/IO/Pm_Window_stream.h>
 #include <CGAL/IO/cgal_window.h>  //used for visualization.
+#include <CGAL/IO/cgal_window_redefine.h>
 
 typedef CGAL::Quotient<CGAL::MP_Float>           NT;
 typedef CGAL::Cartesian<NT>                      Kernel;
@@ -38,7 +39,6 @@ int main()
 
 
   // Read input
-
   std::cin >> num_segments;
   
   NT x1, y1, x2, y2;
@@ -47,16 +47,15 @@ int main()
   {
     std::cin >> x1 >> y1 >> x2 >> y2;
     
-    segments.push_back(Curve(Point(x1,y1), Point(x2,y2)));
+    segments.push_back(Curve(Point(x1, y1), Point(x2, y2)));
   }    
 
   // Construct the planar map  
   Traits traits;
-  CGAL::sweep_to_construct_planar_map_2(segments.begin(),segments.end(),
+  CGAL::sweep_to_construct_planar_map_2(segments.begin(), segments.end(),
 					traits, pm);
 
   // Write output 
-  
   std::cout << " * * * Printing list of all halfedges of the resulting Planar";
   std::cout << " map" << std::endl;
 
@@ -64,10 +63,9 @@ int main()
   verbose_writer.write_halfedges(pm.halfedges_begin(), pm.halfedges_end());
 
   // Use a window visualization
-  
   CGAL::Window_stream W(700, 700);
   W.init(-10, 10, -10);
-  W.set_mode(CGAL::src_mode);
+  W.set_mode(leda_src_mode);
   W.set_node_width(3);
   W.display();
   W << pm;
