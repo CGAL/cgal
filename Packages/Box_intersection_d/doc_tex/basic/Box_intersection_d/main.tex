@@ -1,8 +1,30 @@
-\chapter*{Bounding Box Intersection}
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual:  Box_intersection_d/main.tex
+% +------------------------------------------------------------------------+
+% | Fast iso-box intersections
+% |
+% | 2003, 2004   Lutz Kettner, Andreas Meyer, Afra Zomorodian
+% | 
+\RCSdef{\BoxIntersectionRev}{$Revision$}
+\RCSdefDate{\BoxIntersectionDate}{$Date$}
+% +------------------------------------------------------------------------+
 
-\section*{Introduction}
-This chapter describes the functions provided in \cgal{}
-to test large numbers of bounding boxes for intersection.
+\ccParDims
+
+\chapter{Fast Intersection of Iso-oriented Boxes}
+\label{chapterBoxIntersection}
+\ccChapterRelease{\BoxIntersectionRev. \ \BoxIntersectionDate}\\
+\ccChapterAuthor{Lutz Kettner}
+\ccChapterAuthor{Andreas Meyer}
+\ccChapterAuthor{Afra Zomorodian}
+
+
+% +------------------------------------------------------------------------+
+\section{Introduction}
+
+We provide an efficient algorithm~\cite{ze-fsbi-02} for finding all
+intersecting pairs for large numbers of iso-oriented boxes, i.e.,
+typically these will be bounding boxes of more complicated geometries
 
 Computing information about complex geometric primitives is often
 expensive. While researchers in computational geometry have discovered
@@ -24,41 +46,54 @@ self-intersection, intersection of two different objects and
 performing proximity queries.
 
 
-\section*{Bounding Box Intersection}
-\subsection*{Bounding Box}
+% +------------------------------------------------------------------------+
+\section{Iso-oriented Box}
 
-Bounding boxes can have any dimension. In each dimension, an interval
-defines the size of the box in that dimension. For the starting point
-and end point of the interval, any number type can be used.
+The iso-oriented box, or bounding box, can have arbitrary dimension.
+An interval specifies the size of the box in each dimension. The
+number type used to represent the interval boundaries is a template
+parameter of the box. Useful instantiations are with the builtin
+\texttt{double} or \texttt{float} type.
 
-Depending on your problem, the box can be half open or closed. A
-bounding box is half open, if in each dimension the interval $[lo,hi)$
-is also half open. Similarly, a closed bounding box contains only
-closed intervals $[lo,hi]$ in each dimension. Closed intervals allow
-for zero-width boxes and for intersections at the boundary of objects.
-The distinction between closed or half open intervals does not require
-a different representation of boxes, but instead a different
-interpretation when comparing boxes. This is handled inside the traits
-class.
+We offer two topological interpretations of the box; it can be a
+half-open set or a closed set. The box is half open if its intervals
+$[lo_i,hi_i)$ are half open in each dimension $i$. Analogously, a box
+is closed if its intervals $[lo_i,hi_i]$ are closed in each dimension
+$i$. Note that closed boxes support zero-width boxes and they can
+intersect at their boundaries, while half-open boxes always have a
+positive volume and they only intersect iff their interiors overlap.
+The distinction between closed or half-open boxes does not require a
+different representation of boxes, just a different interpretation
+when comparing boxes. This is handled flexible inside the traits class
+parameter passed to the intersection algorithm.
 
-There has to be an arbitrary fixed order between boxes, for example by
-assigning unique numbers to each box. If boxes are allocated on the
-heap, also the memory location could define such an order.
+We need an arbitrary fixed order on the boxes to guarantee that a pair
+of intersecting boxes is reported only once in the algorithm, in
+particular, this is needed for the self-intersection test, i.e., when
+we use the algorithm to find all intersections in one set of boxes. In
+that case we need a second copy of the boxes that is distinguishable
+from the first set of boxes. We can achieve the fixed order, for
+example, by assigning unique numbers to each box. Assuming boxes are
+allocated at distinct memory locations we can use their memory address
+to define such unique numbers. However, that does not suffice in the
+self-intersection case where we would need an explicit second copy to
+get distinct memory addresses.
 
-The default bounding box
+We offer a default box that
 \begin{itemize}
-  \item implements a standard bounding box
+  \item implements a standard bounding box,
   \item is generic in terms of number type and dimension: \\
-  \texttt{template< class T, unsigned int DIM > struct Default\_box\_d}
-  \item provides unique numbering
+  \texttt{template< class T, unsigned int DIM > struct Default\_box\_d},
+  \item provides an explicit unique numbering, and
   \item can be used as a base class to derive a user defined box with
-  additional information, for example, an exact geometric primitive
+  additional information, for example, the exact geometry
   that was approximated with the bounding box.
 \end{itemize}
 
-All boxes need to be assignable.
+As a minimal requirement we require the box type to be assignable.
+All other requirements are factored in
 
-\subsection*{Box Traits}
+\subsection{Box Traits}
 Bounding box access is exclusively done using a box traits class, which serves as an adapter. This adapter hides the specific interface a box may have. A model of a box adapter may look as follows:
 \begin{ccExampleCode}
 template< class Box_ >
@@ -90,7 +125,7 @@ Box adapter requirements:
  \item \texttt{get\_dim} returns the number of dimensions, starting with dimension one.
 \end{itemize}
 
-\subsection*{Box Predicate Traits}
+\subsection{Box Predicate Traits}
 The box predicate traits class specifies predicates between boxes. It propagates number type, box type, dimension and all other fields from the box adapter to the actual implementation of bounding box intersection. Some of the predicates it defines are:
 \begin{ccExampleCode}
     static bool is_lo_less_lo(Box a, Box b, unsigned int dim) {
@@ -118,7 +153,7 @@ Usually, the default predicates need not be changed. Detailed requirements for b
 Box access is required inside the predefined predicates, therefore a box traits class (which models an adapter) has to be given to the default predicate traits class. The boolean constant \texttt{closed} chooses between closed and half open box interpretation.
 
 
-\subsection*{Usage}
+\subsection{Usage}
 First, for each geometric primitive, a bounding box has to be computed. Any bounding box class can be used, as long as a box adapter exists for it. The bounding box sets have to be supplied to the algorithm by pairs of \ccc{Random Access Iterators}. While checking, each bounding box intersection is written to an output iterator as two boxes. The input box sets need not be sorted in any order.
 
 If the used box class is derived from the default bounding box (or at least has the same fields), there is no need to specify a box adapter. When no box adapter is given, it is assumed that the default box adapter can be used to access the supplied boxes. A minimal example using just the defaults demonstrates the invocation:
@@ -145,20 +180,22 @@ In general:
 
 Of course, in the complete case $n+m$ has to be substituted with $n$.
 
-\section*{Examples}
+% +------------------------------------------------------------------------+
+\section{Examples}
 All examples use closed boxes. No cutoff parameter is specified, so the default of 10 is used. 
 
-\subsection*{Custom Box}
+\subsection{Custom Box}
 This shows how to use a custom box, together with the default box traits. For simplicity, the custom box inherits from the default box. A primitive field is added. Primitives intersect each other with a certain fixed probability. The point here is, that the box traits class need not be specified. If pointers to the custom box were stored inside the box container, the pointer specialization of the box traits template is used automatically, with the custom box as the template parameter.
 
 \ccIncludeExampleCode{../../../examples/Box_intersection_d/custombox.cc}
 
-\subsection*{Custom Box Traits }
+\subsection{Custom Box Traits }
 Here, a bounding box is a cube. This saves some space at the expense of precision. The custom box only contains a vector to the minimal point plus a size for all three dimensions. The primitive class is the same as in the custom box example above. Invocation differs only where the box traits must be supplied as an argument.
 \ccIncludeExampleCode{../../../examples/Box_intersection_d/customadapter.cc}
 
+% +------------------------------------------------------------------------+
 \newpage
-\section*{Implementation}
+\section{Implementation}
 \cgal{} makes liberal use of exact number types, which often has a significant impact on performance. Many algorithms depend on the usage of exact number types. However, 
 the bounding box intersection presented here only approximates some geometric primitives, and as such does not rely on exact representation of numbers. An important consequence is that \ccc{float} and \ccc{double} number types can be used, which are much faster, also because of hardware implementation. To demonstrate that box intersection can be done quite fast, different box sets are intersected in the range between 4 and 800000 boxes. Here, the size is the sum both set's sizes. Only plain default boxes are used, without carrying additional data fields. Boxes use closed topology, are of dimension three and as number type 32 bit \ccc{floats} are used. All boxes are stored as plain structures, not as pointers. Hardware used is a Xeon 2.4GHz equipped with 4GB of memory.
 

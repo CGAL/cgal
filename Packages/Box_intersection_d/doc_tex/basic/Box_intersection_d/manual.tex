@@ -1,8 +1,7 @@
 % +------------------------------------------------------------------------+
-% | manual.tex
+% | CGAL Reference Manual:  wrapper.tex
 % +------------------------------------------------------------------------+
-% | includes the usual suspects (LaTeX style files), sets necessary
-% | options, illustrates some optional options, and includes main.tex.
+% | Main TeX file for testing CGAL packages.
 % +------------------------------------------------------------------------+
 
 \documentclass{book}
@@ -14,18 +13,22 @@
 \usepackage{amssymb}         % some more math symbols, needed for \mathbb
 \usepackage{path}            % for URL's (WWW addresses)
 \usepackage{graphicx}        % for PostScript figures
-%\usepackage{ipe}             % for IPE figures
+\usepackage{ipe}             % for IPE figures
 \usepackage{makeidx}         % for the index
+\usepackage{minitoc}
 
-% page dimensions, for example as used for the CGAL manuals
-% ---------------------------------------------------------
-\textwidth 15.6cm
+% \usepackage{cprog}  %% outdated
+
+% page dimensions
+% ---------------
+\textwidth 15.6cm 
 \textheight 23 cm
-\topmargin -14mm
-\evensidemargin 3mm
+\topmargin -14mm       
+\evensidemargin 3mm 
 \oddsidemargin 3mm
 \sloppy
 
+\dominitoc                   % make minitoc creation effective
 \makeindex                   % so the indexing commands have some effect
 
 % New manual style including tab markers on the side margins
@@ -67,7 +70,12 @@
 
 \begin{document}
 \input{main}
+
+\bibliographystyle{alpha}
+\bibliography{geom,cgal}
+
 \printindex        %places the index in the PostScript document
+
 \end{document}
 
 %% EOF %%
