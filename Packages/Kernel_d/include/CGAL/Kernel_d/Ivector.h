@@ -33,43 +33,36 @@
 // debugging and templatization: M. Seel
 //---------------------------------------------------------------------
 
-#ifndef LINALG_IVECTOR_H
-#define LINALG_IVECTOR_H
+#ifndef CGAL_IVECTOR_H
+#define CGAL_IVECTOR_H
 
 #include <CGAL/basic.h>
 #include <CGAL/memory.h>
+#include <CGAL/Kernel_d/d_utils.h>
+
 #include <cmath>
 #include <memory>
 #include <new>
 #include <iostream>
 #include <vector>
 
-#define LA_BEGIN_NAMESPACE namespace CGAL {
-#define LA_END_NAMESPACE   } // namespace CGAL
+CGAL_BEGIN_NAMESPACE
 
-LA_BEGIN_NAMESPACE
-
-template <class RT, class A = CGAL_ALLOCATOR(RT) > 
+template <class NT, class A = CGAL_ALLOCATOR(NT) > 
   class Imatrix;
-template <class RT, class A = CGAL_ALLOCATOR(RT) > 
+template <class NT, class A = CGAL_ALLOCATOR(NT) > 
   class Ivector;
 
-#if 0
-#define LA_PRECOND(cond,s)\
-if (!(cond)) {\
-  std::cout << "precondition " << #cond << " failed" << std::endl;\
-  std::cout << s << std::endl; exit(1); }
-#define ERROR_HANDLER(n,s)(std::cerr << s << std::endl, exit(n))
-#else
-#define LA_PRECOND(cond,s) CGAL_assertion_msg((cond),s);
+#define CGAL_LA_PRECOND(cond,s) CGAL_assertion_msg((cond),s);
 #define ERROR_HANDLER(n,s) CGAL_assertion_msg(!(n),s)
-#endif
-  
+
 /*{\Msubst
 <>#
-<_RT,_ALLOC>#<RT,LA>
+<_NT,_ALLOC>#<NT>
+Ivector#Vector
+Imatrix#Matrix
 }*/
-
+/*{\Moptions print_title=yes}*/
 /*{\Moptions outfile=Ivector.man}*/
 
 /*{\Mtext \headerline{Common Notation}
@@ -84,25 +77,23 @@ iterators to input iterators.  If we index the tuple as above then we
 require that $|++|^{(d)}|first == last|$ (note that |last| points
 beyond the last element to be accepted).}*/
 
-/*{\Manpage {Ivector}{RT}{Vectors with RT Entries}{v}}*/
+/*{\Manpage {Vector}{NT}{Vectors with NT Entries}{v}}*/
 
-template <class _RT, class _ALLOC> 
+template <class _NT, class _ALLOC> 
 class Ivector
 {
-
 /*{\Mdefinition An instance of data type |Ivector| is a vector of
-variables of type |RT|, the so-called ring type.  Together with the
-type |Imatrix| it realizes the basic operations of linear
-algebra. Internal correctness tests are executed if compiled with the
-flag [[CGAL_LA_SELFTEST]].}*/
+variables of number type |NT|.  Together with the type |Imatrix| it
+realizes the basic operations of linear algebra. Internal correctness
+tests are executed if compiled with the flag [[CGAL_LA_SELFTEST]].}*/
 
 public:
 
 /*{\Mtypes 5.5}*/
-typedef _RT*       pointer;
-typedef const _RT* const_pointer;
+typedef _NT*       pointer;
+typedef const _NT* const_pointer;
 
-typedef _RT    RT;
+typedef _NT    NT;
 /*{\Mtypemember the ring type of the components.}*/ 
 
 typedef pointer iterator;
@@ -115,45 +106,42 @@ class Initialize {};
 /*{\Mtypemember a tag class for homogeneous initialization}*/
 
 protected:
-
-  friend class Imatrix<_RT,_ALLOC>;
-  RT* v;
+  friend class Imatrix<_NT,_ALLOC>;
+  NT* v;
   int dim;
-
   typedef _ALLOC allocator_type;
   static allocator_type MM;
 
-  inline void allocate_vec_space(RT*& vi, int di)
+  inline void allocate_vec_space(NT*& vi, int di)
   {
   /* We use this procedure to allocate memory. We first get an appropriate 
      piece of memory from the allocator and then initialize each cell 
      by an inplace new. */
 
     vi = MM.allocate(di);
-    RT* p = vi + di - 1;
-    while (p >= vi) { new (p) RT(0);  p--; }   
+    NT* p = vi + di - 1;
+    while (p >= vi) { new (p) NT(0);  p--; }   
   }
 
-  inline void deallocate_vec_space(RT*& vi, int di)
+  inline void deallocate_vec_space(NT*& vi, int di)
   {
   /* We use this procedure to deallocate memory. We have to free it by
-     the allocator scheme. We first call the destructor for type RT for each
+     the allocator scheme. We first call the destructor for type NT for each
      cell of the array and then return the piece of memory to the memory
      manager. */
 
-    RT* p = vi + di - 1;
-    while (p >= vi)  { p->~RT(); p--; }
+    NT* p = vi + di - 1;
+    while (p >= vi)  { p->~NT(); p--; }
     MM.deallocate(vi, di);
-    vi = (RT*)0;
+    vi = (NT*)0;
   }
 
   inline void 
-  check_dimensions(const Ivector<_RT,_ALLOC>& vec) const
+  check_dimensions(const Ivector<_NT,_ALLOC>& vec) const
   { 
-    LA_PRECOND((dim == vec.dim), "Ivector::check_dimensions:\
+    CGAL_LA_PRECOND((dim == vec.dim), "Ivector::check_dimensions:\
     object dimensions disagree.")
   }
-
 
 public:
 
@@ -163,22 +151,23 @@ Ivector(int d = 0)
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname|. 
 |\Mvar| is initialized to a vector of dimension $d$.}*/ 
 { 
-  LA_PRECOND( d >= 0 , "Ivector::constructor: negative dimension.") 
+  CGAL_LA_PRECOND( d >= 0 , 
+    "Ivector::constructor: negative dimension.") 
   dim = d; 
-  v = (RT*)0;
+  v = (NT*)0;
   if (dim > 0){ 
     allocate_vec_space(v,dim);
-    while (d--) v[d] = RT(0);
+    while (d--) v[d] = NT(0);
   }
 }
 
-Ivector(int d, const Initialize&, const RT& x) 
+Ivector(int d, const Initialize&, const NT& x) 
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname|. 
 |\Mvar| is initialized to a vector of dimension $d$ with entries |x|.}*/ 
 { 
-  LA_PRECOND( d >= 0 , "Ivector::constructor: negative dimension.") 
+  CGAL_LA_PRECOND( d >= 0 , "Ivector::constructor: negative dimension.") 
   dim = d; 
-  v = (RT*)0;
+  v = (NT*)0;
   if (dim > 0){ 
     allocate_vec_space(v,dim);
     while (d--) v[d] = x;
@@ -189,7 +178,7 @@ template <class Forward_iterator>
 Ivector(Forward_iterator first, Forward_iterator last)
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname|; 
 |\Mvar| is initialized to the vector with entries
-|set [first,last)|. \precond |Forward_iterator| has value type |RT|.}*/
+|set [first,last)|. \precond |Forward_iterator| has value type |NT|.}*/
 { dim = std::distance(first,last);
   allocate_vec_space(v,dim);
   iterator it = begin();
@@ -197,22 +186,22 @@ Ivector(Forward_iterator first, Forward_iterator last)
 }
 
 private:
-void init(int d, const RT& x0, const RT& x1, const RT& x2=0, const RT& x3=0)
+void init(int d, const NT& x0, const NT& x1, const NT& x2=0, const NT& x3=0)
 { dim = d; allocate_vec_space(v,dim);
   v[0]=x0; v[1]=x1; ( d>2 ? (v[2]=x2) : 0); ( d>3 ? (v[3]=x3) : 0);
 }
 public:
 
-Ivector(const RT& a, const RT& b) { init(2,a,b); }
+Ivector(const NT& a, const NT& b) { init(2,a,b); }
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname|.
 |\Mvar| is initialized to the two-dimensional vector $(a,b)$.}*/
 
-Ivector(const RT& a, const RT& b, const RT& c) { init(3,a,b,c); }
+Ivector(const NT& a, const NT& b, const NT& c) { init(3,a,b,c); }
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname|. 
 |\Mvar| is initialized to the three-dimensional vector 
 $(a,b,c)$.}*/
 
-Ivector(const RT& a, const RT& b, const RT& c, const RT& d) 
+Ivector(const NT& a, const NT& b, const NT& c, const NT& d) 
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname|; 
 |\Mvar| is initialized to the four-dimensional vector 
 $(a,b,c,d)$.}*/
@@ -223,15 +212,15 @@ Ivector(int a, int b, int c) { init(3,a,b,c); }
 Ivector(int a, int b, int c, int d) { init(4,a,b,c,d); }
 
  
-Ivector(const Ivector<_RT,_ALLOC>& p)
+Ivector(const Ivector<_NT,_ALLOC>& p)
 { dim = p.dim;
   if (dim > 0) allocate_vec_space(v,dim);
-  else         v = (RT*)0;
+  else         v = (NT*)0;
   for(int i=0; i<dim; i++) { v[i] = p.v[i]; }
 }
 
 
-Ivector<_RT,_ALLOC>& operator=(const Ivector<_RT,_ALLOC>& vec)
+Ivector<_NT,_ALLOC>& operator=(const Ivector<_NT,_ALLOC>& vec)
 { 
   register int n = vec.dim;
   if (n != dim) { 
@@ -239,7 +228,7 @@ Ivector<_RT,_ALLOC>& operator=(const Ivector<_RT,_ALLOC>& vec)
     dim=n;
   }
   if (n > 0) allocate_vec_space(v,n);
-  else       v = (RT*)0;
+  else       v = (NT*)0;
 
   while (n--) v[n] = vec.v[n];
   return *this;
@@ -250,47 +239,51 @@ Ivector<_RT,_ALLOC>& operator=(const Ivector<_RT,_ALLOC>& vec)
 
 /*{\Moperations 3 3}*/
 
-
 int  dimension() const { return dim; }
 /*{\Mop returns the dimension of |\Mvar|.}*/ 
+
+bool is_zero() const 
+/*{\Mop returns true iff |\Mvar| is the zero vector.}*/ 
+{ for(int i=0; i<dim; ++i) if (v[i]!=NT(0)) return false; 
+  return true; }
   
-RT& operator[](int i)
+NT& operator[](int i)
 /*{\Marrop returns $i$-th component of |\Mvar|.\\
            \precond $0\le i \le |v.dimension()-1|$. }*/
-{ LA_PRECOND((0<=i && i<dim), 
+{ CGAL_LA_PRECOND((0<=i && i<dim), 
     "Ivector::operator[]: index out of range.")
   return v[i];
 }
   
-RT operator[](int i) const
-{ LA_PRECOND((0<=i && i<dim), 
+NT operator[](int i) const
+{ CGAL_LA_PRECOND((0<=i && i<dim), 
     "Ivector::operator[]: index out of range.")
   return v[i];
 }
 
-Ivector<_RT,_ALLOC>& operator+=(const Ivector<_RT,_ALLOC>& v1);
+Ivector<_NT,_ALLOC>& operator+=(const Ivector<_NT,_ALLOC>& v1);
 /*{\Mbinop Addition plus assignment. \precond\\
            |v.dimension() == v1.dimension()|.}*/
 
-Ivector<_RT,_ALLOC>& operator-=(const Ivector<_RT,_ALLOC>& v1);
+Ivector<_NT,_ALLOC>& operator-=(const Ivector<_NT,_ALLOC>& v1);
 /*{\Mbinop Subtraction plus assignment. \precond\\ 
            |v.dimension() == v1.dimension()|.}*/
  
-Ivector<_RT,_ALLOC>  operator+(const Ivector<_RT,_ALLOC>& v1) const;
+Ivector<_NT,_ALLOC>  operator+(const Ivector<_NT,_ALLOC>& v1) const;
 /*{\Mbinop Addition. \precond\\ 
            |v.dimension() == v1.dimension()|.}*/
 
-Ivector<_RT,_ALLOC>  operator-(const Ivector<_RT,_ALLOC>& v1) const;
+Ivector<_NT,_ALLOC>  operator-(const Ivector<_NT,_ALLOC>& v1) const;
 /*{\Mbinop Subtraction. \precond\\ 
            |v.dimension() = v1.dimension()|.}*/
 
-RT operator*(const Ivector<_RT,_ALLOC>& v1) const;
+NT operator*(const Ivector<_NT,_ALLOC>& v1) const;
 /*{\Mbinop Inner Product. \precond\\ 
            |v.dimension() = v1.dimension()|.}*/
 
-Ivector<_RT,_ALLOC>  compmul(const RT& r) const;
+Ivector<_NT,_ALLOC>  compmul(const NT& r) const;
 
-Ivector<_RT,_ALLOC>  operator-() const;
+Ivector<_NT,_ALLOC>  operator-() const;
 /*{\Munopfunc Negation.}*/
 
 /*{\Mtext We provide component access via |iterator| and |const_iterator|
@@ -301,43 +294,43 @@ const_iterator begin() const { return v; }
 const_iterator end() const { return v+dim; }
 
 
-bool     operator==(const Ivector<_RT,_ALLOC>& w) const;
-bool     operator!=(const Ivector<_RT,_ALLOC>& w) const 
+bool     operator==(const Ivector<_NT,_ALLOC>& w) const;
+bool     operator!=(const Ivector<_NT,_ALLOC>& w) const 
 { return !(*this == w); }
 
-static int  compare(const Ivector<_RT,_ALLOC>&, 
-                    const Ivector<_RT,_ALLOC>&);
+static int  compare(const Ivector<_NT,_ALLOC>&, 
+                    const Ivector<_NT,_ALLOC>&);
 
 };
 
 
 /*{\Mimplementation Vectors are implemented by arrays of type
-|RT|. All operations on a vector |v| take time $O(|v.dimension()|)$,
+|NT|. All operations on a vector |v| take time $O(|v.dimension()|)$,
 except for |dimension()| and $[\ ]$ which take constant time. The space
 requirement is $O(|v.dimension()|)$. }*/
 
 
-template <class RT, class A> 
-Ivector<RT,A> operator*(const RT& r, const Ivector<RT,A>& v)
+template <class NT, class A> 
+Ivector<NT,A> operator*(const NT& r, const Ivector<NT,A>& v)
 /*{\Mbinopfunc Componentwise multiplication with number $r$.}*/
 { return v.compmul(r); } 
 
-template <class RT, class A> 
-Ivector<RT,A> operator*(const Ivector<RT,A>& v, const RT& r)
+template <class NT, class A> 
+Ivector<NT,A> operator*(const Ivector<NT,A>& v, const NT& r)
 /*{\Mbinopfunc Componentwise multiplication with number $r$.}*/
 { return v.compmul(r); }
 
-template <class RT, class A> 
-Ivector<RT,A> operator*(int r, const Ivector<RT,A>& v)
+template <class NT, class A> 
+Ivector<NT,A> operator*(int r, const Ivector<NT,A>& v)
 { return v.compmul(r); } 
 
-template <class RT, class A> 
-Ivector<RT,A> operator*(const Ivector<RT,A>& v, int r)
+template <class NT, class A> 
+Ivector<NT,A> operator*(const Ivector<NT,A>& v, int r)
 { return v.compmul(r); }
 
-template <class RT, class A> 
-Ivector<RT,A>& Ivector<RT,A>::
-operator+=(const Ivector<RT,A>& vec)
+template <class NT, class A> 
+Ivector<NT,A>& Ivector<NT,A>::
+operator+=(const Ivector<NT,A>& vec)
 { 
   check_dimensions(vec);
   register int n = dim;
@@ -345,9 +338,9 @@ operator+=(const Ivector<RT,A>& vec)
   return *this;
 }
 
-template <class RT, class A> 
-Ivector<RT,A>& Ivector<RT,A>::
-operator-=(const Ivector<RT,A>& vec)
+template <class NT, class A> 
+Ivector<NT,A>& Ivector<NT,A>::
+operator-=(const Ivector<NT,A>& vec)
 { 
   check_dimensions(vec);
   register int n = dim;
@@ -355,64 +348,64 @@ operator-=(const Ivector<RT,A>& vec)
   return *this;
 }
 
-template <class RT, class A> 
-Ivector<RT,A> Ivector<RT,A>::
-operator+(const Ivector<RT,A>& vec) const
+template <class NT, class A> 
+Ivector<NT,A> Ivector<NT,A>::
+operator+(const Ivector<NT,A>& vec) const
 { 
   check_dimensions(vec);
   register int n = dim;
-  Ivector<RT,A> result(n);
+  Ivector<NT,A> result(n);
   while (n--) result.v[n] = v[n]+vec.v[n];
   return result;
 }
 
-template <class RT, class A> 
-Ivector<RT,A> Ivector<RT,A>::
-operator-(const Ivector<RT,A>& vec) const
+template <class NT, class A> 
+Ivector<NT,A> Ivector<NT,A>::
+operator-(const Ivector<NT,A>& vec) const
 { 
   check_dimensions(vec);
   register int n = dim;
-  Ivector<RT,A> result(n);
+  Ivector<NT,A> result(n);
   while (n--) result.v[n] = v[n]-vec.v[n];
   return result;
 }
 
-template <class RT, class A> 
-Ivector<RT,A> Ivector<RT,A>::
+template <class NT, class A> 
+Ivector<NT,A> Ivector<NT,A>::
 operator-() const  // unary minus
 { 
   register int n = dim;
-  Ivector<RT,A> result(n);
+  Ivector<NT,A> result(n);
   while (n--) result.v[n] = -v[n];
   return result;
 }
 
 
-template <class RT, class A> 
-Ivector<RT,A> Ivector<RT,A>::
-compmul(const RT& x) const
+template <class NT, class A> 
+Ivector<NT,A> Ivector<NT,A>::
+compmul(const NT& x) const
 { 
   int n = dim;
-  Ivector<RT,A> result(n);
+  Ivector<NT,A> result(n);
   while (n--) result.v[n] = v[n] * x;
   return result;
 }
 
 
-template <class RT, class A> 
-RT Ivector<RT,A>::
-operator*(const Ivector<RT,A>& vec) const
+template <class NT, class A> 
+NT Ivector<NT,A>::
+operator*(const Ivector<NT,A>& vec) const
 { 
   check_dimensions(vec);
-  RT result=0;
+  NT result=0;
   register int n = dim;
   while (n--) result = result+v[n]*vec.v[n];
   return result;
 }
 
-template <class RT, class A> 
-bool Ivector<RT,A>::
-operator==(const Ivector<RT,A>& vec)  const
+template <class NT, class A> 
+bool Ivector<NT,A>::
+operator==(const Ivector<NT,A>& vec)  const
 { 
   if (vec.dim != dim) return false;
   int i = 0;
@@ -420,9 +413,9 @@ operator==(const Ivector<RT,A>& vec)  const
   return (i==dim);
 }
 
-template <class RT, class A> 
-int Ivector<RT,A>::
-compare(const Ivector<RT,A>& v1, const Ivector<RT,A>& v2)
+template <class NT, class A> 
+int Ivector<NT,A>::
+compare(const Ivector<NT,A>& v1, const Ivector<NT,A>& v2)
 { 
   register int i;
   v1.check_dimensions(v2);
@@ -431,34 +424,45 @@ compare(const Ivector<RT,A>& v1, const Ivector<RT,A>& v2)
   return (v1[i] < v2[i]) ?  -1 : 1;
 }
 
-template <class _RT, class _ALLOC> 
-std::ostream& operator<<(std::ostream& O, const Ivector<_RT,_ALLOC>& v)
+template <class _NT, class _ALLOC> 
+std::ostream& operator<<(std::ostream& os, const Ivector<_NT,_ALLOC>& v)
 /*{\Xbinopfunc  writes |\Mvar| componentwise to the output stream $O$.}*/
 {
   /* syntax: d x_0 x_1 ... x_d-1 */
-  O << v.dimension() << ' '; 
-  for (register int i = 0; i < v.dimension(); i++) O << v[i] << ' ';
-  return O;
+  CGAL::print_d<_NT> prt(&os);
+  if (os.iword(IO::mode)==IO::PRETTY) os << "LA::Vector(";
+  prt(v.dimension());
+  if (os.iword(IO::mode)==IO::PRETTY) { os << " ["; prt.reset(); }
+  std::for_each(v.begin(),v.end(),prt);
+  if (os.iword(IO::mode)==IO::PRETTY) os << "])";
+  return os;
 }
 
-template <class _RT, class _ALLOC> 
-std::istream& operator>>(std::istream& in, Ivector<_RT,_ALLOC>& v)
+template <class _NT, class _ALLOC> 
+std::istream& operator>>(std::istream& is, Ivector<_NT,_ALLOC>& v)
 /*{\Xbinopfunc  reads |\Mvar| componentwise from the input stream $I$.}*/
 { 
   /* syntax: d x_0 x_1 ... x_d-1 */
-  int dim = 0;
-  in >> dim;
-  if (v.dimension() != dim) v = Ivector<_RT,_ALLOC>(dim);
-  
-  int i=0; while (i < v.dimension() && in >> v[i++]);
-  return in;
+  int dim;
+  switch (is.iword(IO::mode)) {
+    case IO::ASCII :
+    case IO::BINARY :
+      is >> dim;
+      v = Ivector<_NT,_ALLOC>(dim);
+      std::copy_n(std::istream_iterator<_NT>(is),dim,v.begin());
+      break;
+    default:
+      std::cerr<<"\nStream must be in ascii or binary mode"<<std::endl;
+      break;
+  }
+  return is;
 }
 
 
-template <class RT, class A>
-Ivector<RT,A>::allocator_type Ivector<RT,A>::MM;
+template <class NT, class A>
+Ivector<NT,A>::allocator_type Ivector<NT,A>::MM;
 
 
-LA_END_NAMESPACE
-#endif // LINALG_IVECTOR_H
+CGAL_END_NAMESPACE
+#endif // CGAL_IVECTOR_H
 

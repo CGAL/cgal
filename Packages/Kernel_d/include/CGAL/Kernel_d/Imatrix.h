@@ -33,48 +33,46 @@
 // debugging and templatization: M. Seel
 //---------------------------------------------------------------------
 
-#ifndef LINALG_IMATRIX_H
-#define LINALG_IMATRIX_H
+#ifndef CGAL_IMATRIX_H
+#define CGAL_IMATRIX_H
 
 #include <math.h>
 #include <CGAL/Kernel_d/Ivector.h>
 
+CGAL_BEGIN_NAMESPACE
+
 /*{\Msubst
-<>#
-<_RT,_ALLOC>#<RT,LA>
+<_NT,_ALLOC>#<NT>
+Ivector#Vector
+Imatrix#Matrix
 }*/
+/*{\Moptions print_title=yes}*/
+/*{\Moptions outfile=Imatrix.man}*/
+/*{\Manpage {Matrix}{NT}{Matrices with NT Entries}{M}}*/
 
-LA_BEGIN_NAMESPACE
-
-/*{\Moptions 
-outfile=Imatrix.man
-}*/
-/*{\Manpage {Imatrix} {RT} {Matrices with RT Entries} {M}}*/
-
-template <class _RT, class _ALLOC>
+template <class _NT, class _ALLOC>
 class Imatrix 
 { 
-/*{\Mdefinition
-An instance of data type |Imatrix| is a matrix of variables of type
-|RT|, the so-called ring type. The arithmetic type |RT| is required to
-behave like integers in the mathematical sense.
+/*{\Mdefinition An instance of data type |\Mname| is a matrix of
+variables of number type |NT|. The types |\Mname| and |Ivector|
+together realize many functions of basic linear algebra.  All
+functions on integer matrices compute the exact result, i.e., there is
+no rounding error. |\Mname| offers all simple matrix operations. The
+more sophisticated ones are provided by the class |Linear_algebra|.
+Preconditions are checked by default and can be switched off by the
+compile flag [[CGAL_LA_PRECOND_OFF]].}*/
 
-The types |Imatrix| and |Ivector| together realize many functions of
-basic linear algebra.  All functions on integer matrices compute the
-exact result, i.e., there is no rounding error. |\Mname| offers all
-simple matrix operations. The more sophisticated ones are provided by
-the class |Linear_algebra|.  Preconditions are checked by default and
-can be switched off by the compile flag [[LA_PRECOND_OFF]].}*/ public:
+public:
 
 /*{\Mtypes 5.5}*/
 
-typedef Ivector<_RT,_ALLOC>* vector_pointer;
-typedef const Ivector<_RT,_ALLOC>* const_vector_pointer;
+typedef Ivector<_NT,_ALLOC>* vector_pointer;
+typedef const Ivector<_NT,_ALLOC>* const_vector_pointer;
 
-typedef _RT    RT;
+typedef _NT NT;
 /*{\Mtypemember the ring type of the components.}*/ 
 
-typedef Ivector<_RT,_ALLOC> Vector;
+typedef Ivector<_NT,_ALLOC> Vector;
 /*{\Mtypemember the vector type used.}*/ 
 
 typedef vector_pointer iterator;
@@ -82,6 +80,10 @@ typedef vector_pointer iterator;
 
 typedef const_vector_pointer const_iterator;
 /*{\Mtypemember the const iterator type for accessing rows.}*/ 
+
+typedef NT* Row_iterator;
+/*{\Xtypemember accessing row entries.}*/ 
+typedef const NT& Row_const_iterator;
 
 class Identity {};
 /*{\Mtypemember a tag class for identity initialization}*/
@@ -94,7 +96,7 @@ protected:
   int  d1; 
   int  d2; 
 
-  RT&  elem(int i, int j) const { return v[i]->v[j]; }
+  NT&  elem(int i, int j) const { return v[i]->v[j]; }
   #ifndef _MSC_VER
   typedef typename _ALLOC::template rebind<vector_pointer>::other 
           allocator_type;
@@ -133,9 +135,9 @@ protected:
 
   #endif
 
-  inline void check_dimensions(const Imatrix<_RT,_ALLOC>& mat) const
+  inline void check_dimensions(const Imatrix<_NT,_ALLOC>& mat) const
   { 
-    LA_PRECOND((d1 == mat.d1 && d2 == mat.d2), 
+    CGAL_LA_PRECOND((d1 == mat.d1 && d2 == mat.d2), 
       "Imatrix::check_dimensions: incompatible matrix dimensions.") 
   }
 
@@ -153,11 +155,12 @@ dimension $n \times n$ initialized to the zero matrix.}*/
 Imatrix(int n, int m); 
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname| of 
 dimension $n \times m$ initialized to the zero matrix.}*/
-Imatrix(int n , const Identity&, const RT& x = RT(1) ); 
+Imatrix(std::pair<int,int> p); 
+Imatrix(int n , const Identity&, const NT& x = NT(1) ); 
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname| of
 dimension $n \times n$ initialized to the identity matrix
 (times |x|).}*/
-Imatrix(int n, int m, const Initialize&, const RT& x); 
+Imatrix(int n, int m, const Initialize&, const NT& x); 
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname| of 
 dimension $n \times m$ initialized to the matrix with |x|
 entries.}*/
@@ -187,7 +190,8 @@ void range_initialize(RAIterator first, RAIterator last,
 template <class InputIterator>
 void range_initialize(InputIterator first, InputIterator last, 
                  std::forward_iterator_tag) 
-{ typedef typename std::iterator_traits<InputIterator>::value_type value_type;
+{ typedef typename std::iterator_traits<InputIterator>::value_type 
+    value_type;
   std::vector<value_type> V(first,last);
   range_initialize(V.begin(),V.end(),std::random_access_iterator_tag());
 }
@@ -200,7 +204,7 @@ by the iterator range |[first,last)|.  |\Mvar| is initialized to an $n
 \times m$ matrix with the columns as specified by $S$.  \precond
 |Forward_iterator| has a value type |V| from which we require to
 provide a iterator type |V::const_iterator|, to have |V::value_type ==
-RT|.\\ Note that |Ivector| or |std::vector<RT,LA>| fulfill these
+NT|.\\ Note that |Ivector| or |std::vector<NT,LA>| fulfill these
 requirements.}*/
 { range_initialize(first,last,
   std::iterator_traits<Forward_iterator>::iterator_category()); }
@@ -210,82 +214,110 @@ Imatrix(const std::vector< Vector >& A)
             be an array of $m$ column-vectors of common dimension $n$. 
             |\Mvar| is initialized to an $n \times m$ matrix with the 
             columns as specified by $A$. }*/
-{ range_initialize(A.begin(),A.end(),std::random_access_iterator_tag()); }
+{ range_initialize(A.begin(),A.end(),
+    std::random_access_iterator_tag()); }
 
-Imatrix(const Imatrix<_RT,_ALLOC>&); 
+Imatrix(const Imatrix<_NT,_ALLOC>&); 
 
-Imatrix(const Ivector<_RT,_ALLOC>&); 
+Imatrix(const Vector&); 
 /* creates a $d \times 1$ matrix */
-Imatrix(int, int, RT**); 
-Imatrix<_RT,_ALLOC>& operator=(const Imatrix<_RT,_ALLOC>&); 
+
+Imatrix(int, int, NT**); 
+
+Imatrix<_NT,_ALLOC>& operator=(const Imatrix<_NT,_ALLOC>&); 
+
 ~Imatrix(); 
 
 /*{\Moperations 1.7 3.5}*/
 
 int row_dimension()  const {  return d1; }
-/*{\Mop  returns $n$, the number of rows of |\Mvar|. }*/
+/*{\Mop returns $n$, the number of rows of |\Mvar|.}*/
 
 int column_dimension()  const { return d2; }
-/*{\Mop  returns $m$, the number of columns of |\Mvar|. }*/
+/*{\Mop returns $m$, the number of columns of |\Mvar|.}*/
+
+std::pair<int,int> dimension() const 
+/*{\Mop returns $(m,n)$, the dimension pair of |\Mvar|.}*/
+{ return std::pair<int,int>(d1,d2); }
 
 Vector& row(int i) const
 /*{\Mop  returns the $i$-th row of |\Mvar| (an $m$ - vector).\\
          \precond  $0 \le i \le n - 1$. }*/
 { 
-  LA_PRECOND((0<=i && i<d1), "Imatrix::row: index out of range.")
+  CGAL_LA_PRECOND((0<=i && i<d1), "Imatrix::row: index out of range.")
   return *v[i]; 
 }
 
-Vector  column(int i) const; 
+inline Vector column(int i) const; 
 /*{\Mop  returns the $i$-th column of |\Mvar| (an $n$ - vector).\\
          \precond  $0 \le i \le m - 1$. }*/
-Ivector<_RT,_ALLOC> to_vector() const 
+
+Vector to_vector() const 
 { 
-  LA_PRECOND((d2==1), 
+  CGAL_LA_PRECOND((d2==1), 
     "Imatrix::to_vector: cannot make vector from matrix.") 
   return column(0); 
 }
 
-friend Ivector<_RT,_ALLOC>  to_vector(const Imatrix<RT,_ALLOC>& M)
+friend Ivector<_NT,_ALLOC> to_vector(const Imatrix<NT,_ALLOC>& M)
 { return M.to_vector(); }
 
-Ivector<_RT,_ALLOC>& operator[](int i) const  
+Ivector<_NT,_ALLOC>& operator[](int i) const  
 { 
-  LA_PRECOND((0<=i && i<d1), 
+  CGAL_LA_PRECOND((0<=i && i<d1), 
     "Imatrix::operator[]: index out of range.")
   return row(i); 
 }
 
-RT& operator()(int i, int j)
+NT& operator()(int i, int j)
 /*{\Mfunop returns $M_{ i,j }$. \\
-   \precond $0\le i\le n - 1$ and $0\le j\le m - 1$. }*/
+\precond $0\le i\le n - 1$ and $0\le j\le m - 1$. }*/
 { 
-  LA_PRECOND((0<=i && i<d1), 
+  CGAL_LA_PRECOND((0<=i && i<d1), 
     "Imatrix::operator(): row index out of range.")
-  LA_PRECOND((0<=j && j<d2), 
+  CGAL_LA_PRECOND((0<=j && j<d2), 
     "Imatrix::operator(): column index out of range.") 
   return elem(i,j); 
 }
 
-RT  operator()(int i, int j) const
+NT  operator()(int i, int j) const
 { 
-  LA_PRECOND((0<=i && i<d1), 
+  CGAL_LA_PRECOND((0<=i && i<d1), 
     "Imatrix::operator(): row index out of range.")
-  LA_PRECOND((0<=j && j<d2), 
+  CGAL_LA_PRECOND((0<=j && j<d2), 
     "Imatrix::operator(): column index out of range.")
   return elem(i,j); 
 }
 
-bool  operator==(const Imatrix<_RT,_ALLOC>& M1)  const; 
+void swap_columns(int i, int j) 
+/*{\Mop swaps columns $i$ and $j$.}*/
+{ CGAL_assertion(0<=i && i<d2 && 0<=j && j<d2);
+  for(int l = 0; l < d1; l++) std::swap(elem(l,i),elem(l,j)); 
+}
+
+void swap_rows(int i, int j)
+/*{\Mop swaps rows $i$ and $j$.}*/
+{ CGAL_assertion(0<=i && i<d1 && 0<=j && j<d1);
+  std::swap(v[i],v[j]); 
+}
+
+Row_iterator row_begin(int i) { return v[i]->begin(); }
+Row_iterator row_end(int i)   { return v[i]->end(); }
+
+Row_const_iterator row_begin(int i) const { return v[i]->begin(); }
+Row_const_iterator row_end(int i)   const { return v[i]->end(); }
+
+
+bool  operator==(const Imatrix<_NT,_ALLOC>& M1)  const; 
 /*{\Mbinop Test for equality. }*/
 
-bool  operator!=(const Imatrix<_RT,_ALLOC>& M1)  const 
+bool  operator!=(const Imatrix<_NT,_ALLOC>& M1)  const 
 /*{\Mbinop Test for inequality. }*/
 { return !(*this == M1); }
 
 /*{\Mtext \headerline{Arithmetic Operators}}*/
 /*{\Mtext
-\settowidth{\typewidth}{|Imatrix<RT,LA>m|}
+\settowidth{\typewidth}{|Imatrix<NT,LA>m|}
 \addtolength{\typewidth}{\colsep}
 \callwidth2cm
 \computewidths
@@ -295,60 +327,60 @@ bool  operator!=(const Imatrix<_RT,_ALLOC>& M1)  const
 }
 }*/
 
-Imatrix<_RT,_ALLOC> operator+ (const Imatrix<_RT,_ALLOC>& M1); 
+Imatrix<_NT,_ALLOC> operator+ (const Imatrix<_NT,_ALLOC>& M1); 
 /*{\Mbinop Addition. \precond \dimeq.}*/
 
-Imatrix<_RT,_ALLOC> operator- (const Imatrix<_RT,_ALLOC>& M1); 
+Imatrix<_NT,_ALLOC> operator- (const Imatrix<_NT,_ALLOC>& M1); 
 /*{\Mbinop Subtraction. \precond \dimeq.}*/
 
-Imatrix<_RT,_ALLOC> operator-(); // unary
+Imatrix<_NT,_ALLOC> operator-(); // unary
 /*{\Munop Negation.}*/
 
-Imatrix<_RT,_ALLOC>& operator-=(const Imatrix<_RT,_ALLOC>&); 
+Imatrix<_NT,_ALLOC>& operator-=(const Imatrix<_NT,_ALLOC>&); 
 
-Imatrix<_RT,_ALLOC>& operator+=(const Imatrix<_RT,_ALLOC>&); 
+Imatrix<_NT,_ALLOC>& operator+=(const Imatrix<_NT,_ALLOC>&); 
 
-Imatrix<_RT,_ALLOC> 
-operator*(const Imatrix<_RT,_ALLOC>& M1) const; 
+Imatrix<_NT,_ALLOC> 
+operator*(const Imatrix<_NT,_ALLOC>& M1) const; 
 /*{\Mbinop Multiplication. \precond \\ 
            |\Mvar.column_dimension() = M1.row_dimension()|. }*/
 
-Ivector<_RT,_ALLOC> 
-operator*(const Ivector<_RT,_ALLOC>& vec) const
-{  return ((*this) * Imatrix<_RT,_ALLOC>(vec)).to_vector(); }
+Ivector<_NT,_ALLOC> 
+operator*(const Ivector<_NT,_ALLOC>& vec) const
+{  return ((*this) * Imatrix<_NT,_ALLOC>(vec)).to_vector(); }
 /*{\Mbinop  Multiplication with vector. \precond \\
-            |\Mvar.column_dimension() = vec.dimension()|.}*/
+|\Mvar.column_dimension() = vec.dimension()|.}*/
 
-Imatrix<_RT,_ALLOC> compmul(const RT& x) const; 
+Imatrix<_NT,_ALLOC> compmul(const NT& x) const; 
 
-static int compare(const Imatrix<_RT,_ALLOC>& M1, 
-                   const Imatrix<_RT,_ALLOC>& M2);
+static int compare(const Imatrix<_NT,_ALLOC>& M1, 
+                   const Imatrix<_NT,_ALLOC>& M2);
 
 }; // end of class
 
 /*{\Xtext \headerline{Input and Output}}*/
 
-template <class RT, class A> 
-std::ostream&  operator<<(std::ostream& os, const Imatrix<RT,A>& M);
+template <class NT, class A> 
+std::ostream&  operator<<(std::ostream& os, const Imatrix<NT,A>& M);
 /*{\Xbinopfunc writes matrix |\Mvar| row by row to the output stream |os|.}*/
 
-template <class RT, class A> 
-std::istream&  operator>>(std::istream& is, Imatrix<RT,A>& M);
+template <class NT, class A> 
+std::istream&  operator>>(std::istream& is, Imatrix<NT,A>& M);
 /*{\Xbinopfunc reads matrix |\Mvar| row by row from the input stream |is|.}*/
 
 
 /*{\Mimplementation 
 The data type |\Mname| is implemented by two-dimensional arrays of
-variables of type |RT|. The memory layout is row oriented. Operation
+variables of type |NT|. The memory layout is row oriented. Operation
 |column| takes time $O(n)$, |row|, |dim1|, |dim2| take constant time,
 and all other operations take time $O(nm)$.  The space requirement is
 $O(nm)$.}*/
 
-template <class RT, class A>
-Imatrix<RT,A>::
+template <class NT, class A>
+Imatrix<NT,A>::
 Imatrix(int dim) : d1(dim),d2(dim)
 { 
-  LA_PRECOND((dim >= 0), "Imatrix::constructor: negative dimension.") 
+  CGAL_LA_PRECOND((dim >= 0), "Imatrix::constructor: negative dimension.") 
   if (d1 > 0) { 
     allocate_mat_space(v,d1);
     for (int i=0; i<d1; i++) 
@@ -357,11 +389,11 @@ Imatrix(int dim) : d1(dim),d2(dim)
     v = (Vector**)0; 
 }
 
-template <class RT, class A>
-Imatrix<RT,A>::
+template <class NT, class A>
+Imatrix<NT,A>::
 Imatrix(int dim1, int dim2) : d1(dim1),d2(dim2)
 { 
-  LA_PRECOND((dim1>=0 && dim2>=0), 
+  CGAL_LA_PRECOND((dim1>=0 && dim2>=0), 
     "Imatrix::constructor: negative dimension.") 
 
   if (d1 > 0) { 
@@ -372,26 +404,41 @@ Imatrix(int dim1, int dim2) : d1(dim1),d2(dim2)
     v = (Vector**)0; 
 }
 
-template <class RT, class A>
-Imatrix<RT,A>::
-Imatrix(int dim, const Identity&, const RT& x) : d1(dim),d2(dim)
+template <class NT, class A>
+Imatrix<NT,A>::
+Imatrix(std::pair<int,int> p) : d1(p.first),d2(p.second)
 { 
-  LA_PRECOND((dim >= 0), "Imatrix::constructor: negative dimension.") 
+  CGAL_LA_PRECOND((d1>=0 && d2>=0), 
+    "Imatrix::constructor: negative dimension.") 
   if (d1 > 0) { 
     allocate_mat_space(v,d1);
     for (int i=0; i<d1; i++) 
       v[i] = new Vector(d2); 
-    if (x!=RT(0)) for (int i=0; i<d1; i++) elem(i,i)=x;
   } else 
     v = (Vector**)0; 
 }
 
-template <class RT, class A>
-Imatrix<RT,A>::
-Imatrix(int dim1, int dim2, const Initialize&, const RT& x) : 
+template <class NT, class A>
+Imatrix<NT,A>::
+Imatrix(int dim, const Identity&, const NT& x) : d1(dim),d2(dim)
+{ 
+  CGAL_LA_PRECOND((dim >= 0),
+    "matrix::constructor: negative dimension.") 
+  if (d1 > 0) { 
+    allocate_mat_space(v,d1);
+    for (int i=0; i<d1; i++) 
+      v[i] = new Vector(d2); 
+    if (x!=NT(0)) for (int i=0; i<d1; i++) elem(i,i)=x;
+  } else 
+    v = (Vector**)0; 
+}
+
+template <class NT, class A>
+Imatrix<NT,A>::
+Imatrix(int dim1, int dim2, const Initialize&, const NT& x) : 
   d1(dim1),d2(dim2)
 { 
-  LA_PRECOND((dim1>=0 && dim2>=0), 
+  CGAL_LA_PRECOND((dim1>=0 && dim2>=0), 
     "Imatrix::constructor: negative dimension.") 
 
   if (d1 > 0) { 
@@ -402,10 +449,9 @@ Imatrix(int dim1, int dim2, const Initialize&, const RT& x) :
     v = (Vector**)0; 
 }
 
-
-template <class RT, class A>
-Imatrix<RT,A>::
-Imatrix(const Imatrix<RT,A>& p) : d1(p.d1),d2(p.d2)
+template <class NT, class A>
+Imatrix<NT,A>::
+Imatrix(const Imatrix<NT,A>& p) : d1(p.d1),d2(p.d2)
 { 
   if (d1 > 0) {  
     allocate_mat_space(v,d1);
@@ -413,43 +459,45 @@ Imatrix(const Imatrix<RT,A>& p) : d1(p.d1),d2(p.d2)
       v[i] = new Vector(*p.v[i]); 
   }
   else 
-    v = (Ivector<RT,A>**)0; 
+    v = (Ivector<NT,A>**)0; 
 }
 
-template <class RT, class A>
-Imatrix<RT,A>::
-Imatrix(const Ivector<RT,A>& vec) : d1(vec.dim),d2(1)
+template <class NT, class A>
+Imatrix<NT,A>::
+Imatrix(const Vector& vec) : d1(vec.dim),d2(1)
 {   
   if (d1>0)
     allocate_mat_space(v,d1);
   else
-    v = (Ivector<RT,A>**)0; 
+    v = (Ivector<NT,A>**)0; 
   for(int i = 0; i < d1; i++) { 
     v[i] = new Vector(1); 
     elem(i,0) = vec[i]; 
   }
 }
 
-template <class RT, class A>
-Imatrix<RT,A>::
-Imatrix(int dim1, int dim2, RT** p) : d1(dim1),d2(dim2)
+
+template <class NT, class A>
+Imatrix<NT,A>::
+Imatrix(int dim1, int dim2, NT** p) : d1(dim1),d2(dim2)
 { 
-  LA_PRECOND((dim1 >= 0 && dim2 >= 0), 
+  CGAL_LA_PRECOND((dim1 >= 0 && dim2 >= 0), 
     "Imatrix::constructor: negative dimension.")
   if (d1 > 0) {
     allocate_mat_space(v,d1);
     for(int i=0; i<d1; i++) { 
-      v[i] = new Ivector<RT,A>(d2); 
+      v[i] = new Ivector<NT,A>(d2); 
       for(int j=0; j<d2; j++) 
         elem(i,j) = p[i][j]; 
     }
   } else 
-    v = (Ivector<RT,A>**)0; 
+    v = (Ivector<NT,A>**)0; 
 }
 
-template <class RT, class A>
-Imatrix<RT,A>& Imatrix<RT,A>::
-operator=(const Imatrix<RT,A>& mat)
+
+template <class NT, class A>
+Imatrix<NT,A>& Imatrix<NT,A>::
+operator=(const Imatrix<NT,A>& mat)
 { 
   register int i,j; 
   if (d1 != mat.d1 || d2 != mat.d2) { 
@@ -470,8 +518,8 @@ operator=(const Imatrix<RT,A>& mat)
 }
 
 
-template <class RT, class A>
-Imatrix<RT,A>::
+template <class NT, class A>
+Imatrix<NT,A>::
 ~Imatrix()  
 { 
   if (v) {
@@ -481,13 +529,11 @@ Imatrix<RT,A>::
   }
 }
 
-
-
-template <class RT, class A>
-Ivector<RT,A> Imatrix<RT,A>::
+template <class NT, class A>
+Ivector<NT,A> Imatrix<NT,A>::
 column(int i)  const
 { 
-  LA_PRECOND((i>=0 && i<d2), 
+  CGAL_LA_PRECOND((i>=0 && i<d2), 
     "Imatrix::column: index out of range.") 
 
   Vector result(d1); 
@@ -496,9 +542,9 @@ column(int i)  const
   return result; 
 }
 
-template <class RT, class A>
-bool Imatrix<RT,A>::
-operator==(const Imatrix<RT,A>& x) const
+template <class NT, class A>
+bool Imatrix<NT,A>::
+operator==(const Imatrix<NT,A>& x) const
 { 
   register int i,j; 
   if (d1 != x.d1 || d2 != x.d2) 
@@ -511,47 +557,47 @@ operator==(const Imatrix<RT,A>& x) const
   return true; 
 }
 
-template <class RT, class A>
-Imatrix<RT,A> Imatrix<RT,A>::
-operator+ (const Imatrix<RT,A>& mat)
+template <class NT, class A>
+Imatrix<NT,A> Imatrix<NT,A>::
+operator+ (const Imatrix<NT,A>& mat)
 { 
   register int i,j; 
   check_dimensions(mat); 
-  Imatrix<RT,A> result(d1,d2); 
+  Imatrix<NT,A> result(d1,d2); 
   for(i=0; i<d1; i++)
     for(j=0; j<d2; j++)
       result.elem(i,j) = elem(i,j) + mat.elem(i,j); 
   return result; 
 }
 
-template <class RT, class A>
-Imatrix<RT,A> Imatrix<RT,A>::
-operator- (const Imatrix<RT,A>& mat)
+template <class NT, class A>
+Imatrix<NT,A> Imatrix<NT,A>::
+operator- (const Imatrix<NT,A>& mat)
 { 
   register int i,j; 
   check_dimensions(mat); 
-  Imatrix<RT,A> result(d1,d2); 
+  Imatrix<NT,A> result(d1,d2); 
   for(i=0; i<d1; i++)
     for(j=0; j<d2; j++)
       result.elem(i,j) = elem(i,j) - mat.elem(i,j); 
   return result; 
 }
 
-template <class RT, class A>
-Imatrix<RT,A> Imatrix<RT,A>::
+template <class NT, class A>
+Imatrix<NT,A> Imatrix<NT,A>::
 operator- ()  // unary
 { 
   register int i,j; 
-  Imatrix<RT,A> result(d1,d2); 
+  Imatrix<NT,A> result(d1,d2); 
   for(i=0; i<d1; i++)
     for(j=0; j<d2; j++)
       result.elem(i,j) = -elem(i,j); 
   return result; 
 }
 
-template <class RT, class A>
-Imatrix<RT,A>& Imatrix<RT,A>::
-operator-= (const Imatrix<RT,A>& mat) 
+template <class NT, class A>
+Imatrix<NT,A>& Imatrix<NT,A>::
+operator-= (const Imatrix<NT,A>& mat) 
 { 
   register int i,j; 
   check_dimensions(mat); 
@@ -561,9 +607,9 @@ operator-= (const Imatrix<RT,A>& mat)
   return *this; 
 }
 
-template <class RT, class A>
-Imatrix<RT,A>& Imatrix<RT,A>::
-operator+= (const Imatrix<RT,A>& mat) 
+template <class NT, class A>
+Imatrix<NT,A>& Imatrix<NT,A>::
+operator+= (const Imatrix<NT,A>& mat) 
 { 
   register int i,j; 
   check_dimensions(mat); 
@@ -573,14 +619,14 @@ operator+= (const Imatrix<RT,A>& mat)
   return *this; 
 }
 
-template <class RT, class A>
-Imatrix<RT,A> Imatrix<RT,A>::
-operator*(const Imatrix<RT,A>& mat) const
+template <class NT, class A>
+Imatrix<NT,A> Imatrix<NT,A>::
+operator*(const Imatrix<NT,A>& mat) const
 { 
-  LA_PRECOND((d2==mat.d1), 
+  CGAL_LA_PRECOND((d2==mat.d1), 
     "Imatrix::operator*: incompatible matrix types.") 
   
-  Imatrix<RT,A> result(d1, mat.d2); 
+  Imatrix<NT,A> result(d1, mat.d2); 
   register int i,j; 
 
   for (i=0; i<mat.d2; i++)
@@ -589,12 +635,12 @@ operator*(const Imatrix<RT,A>& mat) const
   return result; 
 }
 
-template <class RT, class A>
-Imatrix<RT,A> Imatrix<RT,A>::
-compmul(const RT& f) const
+template <class NT, class A>
+Imatrix<NT,A> Imatrix<NT,A>::
+compmul(const NT& f) const
 { 
   register int i,j; 
-  Imatrix<RT,A> result(d1,d2); 
+  Imatrix<NT,A> result(d1,d2); 
   for(i=0; i<d1; i++)
     for(j=0; j<d2; j++)
       result.elem(i,j) = elem(i,j) *f; 
@@ -602,28 +648,28 @@ compmul(const RT& f) const
 }
 
 
-template <class RT, class A>
-Imatrix<RT,A>  operator*(const Imatrix<RT,A>& M, const RT& x)
+template <class NT, class A>
+Imatrix<NT,A>  operator*(const Imatrix<NT,A>& M, const NT& x)
 { return M.compmul(x); }
 /*{\Mbinopfunc Multiplication of every entry with |x|. }*/
 
-template <class RT, class A>
-Imatrix<RT,A>  operator*(const Imatrix<RT,A>& M, int x)
+template <class NT, class A>
+Imatrix<NT,A>  operator*(const Imatrix<NT,A>& M, int x)
 { return M.compmul(x); }
 
-template <class RT, class A>
-Imatrix<RT,A>  operator*(const RT& x, const Imatrix<RT,A>& M)
+template <class NT, class A>
+Imatrix<NT,A>  operator*(const NT& x, const Imatrix<NT,A>& M)
 { return M.compmul(x); }
 /*{\Mbinopfunc Multiplication of every entry with |x|. }*/
 
-template <class RT, class A>
-Imatrix<RT,A>  operator*(int x, const Imatrix<RT,A>& M)
+template <class NT, class A>
+Imatrix<NT,A>  operator*(int x, const Imatrix<NT,A>& M)
 { return M.compmul(x); }
 
 
-template <class RT, class A> 
-int Imatrix<RT,A>::
-compare(const Imatrix<RT,A>& M1, const Imatrix<RT,A>& M2) 
+template <class NT, class A> 
+int Imatrix<NT,A>::
+compare(const Imatrix<NT,A>& M1, const Imatrix<NT,A>& M2) 
 { 
   register int i;
   int res;
@@ -634,49 +680,63 @@ compare(const Imatrix<RT,A>& M1, const Imatrix<RT,A>& M2)
 }
 
 
-template <class RT, class A> 
-std::ostream&  operator<<(std::ostream& O, const Imatrix<RT,A>& M)
+template <class NT, class A> 
+std::ostream&  operator<<(std::ostream& os, const Imatrix<NT,A>& M)
 { 
   /* syntax: d1 d2 
              x_0,0  ... x_0,d1-1
                   d2-times
              x_d2,0 ... x_d2,d1-1 */
-  O << M.row_dimension() << ' ' << M.column_dimension() << std::endl;
-  for (register int i=0; i < M.row_dimension(); i++) {
-    for (register int j=0; j < M.column_dimension(); j++) 
-      O << M(i,j) << " ";
-    O << std::endl;
+
+  CGAL::print_d<NT> prt(&os);
+  if (os.iword(IO::mode)==IO::PRETTY) os << "LA::Matrix(";
+  prt(M.row_dimension());
+  prt(M.column_dimension());
+  if (os.iword(IO::mode)==IO::PRETTY) { os << " [\n"; prt.reset(); }
+  for (register int i=0; i<M.row_dimension(); i++) {
+    std::for_each(M.row(i).begin(),M.row(i).end(),prt);
+    if (i != M.row_dimension() && os.iword(IO::mode)==IO::PRETTY) 
+    { prt.reset(); os << ",\n";}
   }
-  return O; 
+  if (os.iword(IO::mode)==IO::PRETTY) os << "])";
+  return os;
 }
 
-template <class RT, class A> 
-std::istream&  operator>>(std::istream& in, Imatrix<RT,A>& M) 
+template <class NT, class A> 
+std::istream&  operator>>(std::istream& is, Imatrix<NT,A>& M) 
 { 
   /* syntax: d1 d2 
              x_0,0  ... x_0,d1-1
                   d2-times
              x_d2,0 ... x_d2,d1-1 */
 
-  int dim1 = 0, dim2 = 0;
-  if (!(in >> dim1 >> dim2)) 
-    return in;
-  if (M.row_dimension() != dim1 || M.column_dimension() != dim2)
-    M = Imatrix<RT,A>(dim1,dim2);
-
-  for (register int i=0; i<dim1; i++)
-    for (register int j=0; j<dim2; j++) 
-      if (!(in >> M(i,j)))
-        return in;
-  return in; 
+  int cdim, rdim;
+  switch(is.iword(IO::mode)) {
+    case IO::BINARY : 
+      CGAL::read(is,rdim);
+      CGAL::read(is,cdim);
+      for (register int i=0; i<rdim*cdim; ++i)
+        CGAL::read(is,M(i/rdim,i%cdim));
+      break;
+    case IO::ASCII :
+      is >> rdim >> cdim;
+      M = Imatrix<NT,A>(rdim,cdim);
+      for (register int i=0; i<rdim*cdim; ++i)
+        is >> M(i/rdim,i%cdim);
+      break; 
+    default:
+      std::cerr<<"\nStream must be in ascii or binary mode"<<std::endl;
+      break;
+  }
+  return is;
 }
 
 #ifndef _MSC_VER
-template <class RT, class A>
-Imatrix<RT,A>::allocator_type Imatrix<RT,A>::MM;
+template <class NT, class A>
+Imatrix<NT,A>::allocator_type Imatrix<NT,A>::MM;
 #endif
 
 
-LA_END_NAMESPACE
-#endif // LINALG_IMATRIX_H
+CGAL_END_NAMESPACE
+#endif // CGAL_IMATRIX_H
 

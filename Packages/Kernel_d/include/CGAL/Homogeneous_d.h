@@ -8,7 +8,7 @@
 #include <CGAL/Kernel/function_objects.h>
 #include <vector>
 #endif
-#include <CGAL/Linear_algebra.h>
+#include <CGAL/Linear_algebraHd.h>
 #include <CGAL/Kernel_d/PointHd.h>
 #include <CGAL/Kernel_d/VectorHd.h>
 #include <CGAL/Kernel_d/DirectionHd.h>
@@ -34,7 +34,7 @@ template <class R> class Ray_d;
 template <class R> class Line_d;
 template <class R> class Aff_transformation_d;
 
-template <class pRT, class pLA = Linear_algebra<pRT> >
+template <class pRT, class pLA = Linear_algebraHd<pRT> >
 class Homogeneous_d 
 {
 public:
