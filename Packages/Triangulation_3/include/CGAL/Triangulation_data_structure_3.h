@@ -270,6 +270,13 @@ public:
   }
 
   template <class InputIterator>
+  void delete_vertices(InputIterator begin, InputIterator end)
+  {
+      for(; begin != end; ++begin)
+	  delete_vertex(*begin);
+  }
+
+  template <class InputIterator>
   void delete_cells(InputIterator begin, InputIterator end)
   {
       for(; begin != end; ++begin)

@@ -467,7 +467,12 @@ into the triangulation data structure.}
 {Removes the cell from the triangulation data structure.
 \ccPrecond{The cell is a cell of \ccVar.}}
 
-\ccMethod{template <class CellIt> void delete_cells(CellIt begin, CellIt end);}
+\ccMethod{template <class VertexIt>
+          void delete_vertices(VertexIt first, VertexIt last);}
+{Calls \ccc{delete_vertex} over an iterator range.}
+
+\ccMethod{template <class CellIt>
+          void delete_cells(CellIt first, CellIt last);}
 {Calls \ccc{delete_cell} over an iterator range.}
 
 \end{ccAdvanced}
