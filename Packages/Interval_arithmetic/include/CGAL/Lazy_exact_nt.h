@@ -42,71 +42,54 @@
  * - virtual functions to denote the various operators.
  */
 
-// Voir comment font:
-// ------------------
-// - CGAL::Handle
-// - leda_handle
-// - leda_real
-// - Lazy/LEA
-// - Core/Real/Expr
-// - APU
-// - MetaCGAL
-// - C++:
-//   - types dynamiques
-//   - ordre de deletion des objets
+/*
+ * We could also add a string constant to store the variable name, and
+ * recursively compute an expression string (a la MetaCGAL).
+ */
 
-// Deux gros problèmes:
-// - mémoire dynamique nécessaire pour le DAG.
-// - type dynamique nécessaire pour les opérations.
+/*
+ * Other packages with similar functionalities:
+ * - CGAL::Handle
+ * - leda_handle
+ * - leda_real
+ * - Lazy/LEA
+ * - Core/Real/Expr
+ * - APU
+ * - MetaCGAL
+ * - See also C++:
+ *   - dynamic types.
+ *   - delete order of objects.
+ */
 
-// Les problèmes arrivent lorsqu'un NT est détruit (ou modifié)
-// et que son ref_count est !=0.
+/*
+ * There are 2 major questions:
+ * - How to deal with the DAG management.
+ * - How to deal with the dynamic type of a DAG cell.
+ */
 
-// Lazy_exact_nt découpé en 3 morceaux:
-// - une partie interne stockant le noeud du DAG
-// - une classe allouée dynamiquement.
-// - une classe normale, manipulée par le user.
+/*
+ * I see only 2 ways to deal with the DAG cell type of operation:
+ * - using one enum by operation, and a switch/case.
+ * - using one class by operation, and virtual function calls.
+ */
 
-// Deux manières de gérer les operations:
-// - enum de l'operation + pointeurs vers les operandes.
-// - types dynamiques, avec fonctions virtuelles qui vont bien.
+/*
+ * The decisions should not be based on the predicates, since they will
+ * be overloaded to not use any dynamic thing (DAG and memory management).
+ * However, it would be nice it we had something that works great in all cases.
+ * Would also be nice if the cost was especially low for algorithms that don't
+ * do anything outside the predicates (triangulation, convex-hull...).
+ */
 
-// On se fout un peu du cas des prédicats, ils seront surchargés proprement
-// de toute façon.  Ça serait mieux si c'était optimal dans tous les cas, mais
-// bon...  Ça serait bien aussi que ça soit optimal à l'exterieur des prédicats
-// quand on n'y fait rien...
-
-// Il faut aussi gérer les constructions de plus haut niveau possible:
-// min(), max(), abs(), voire d'autres... (dotproduct ?)
-// Et les constructions au niveau geometriques ?  Y'a-t-il moyen de les
-// integrer a ce niveau facilement ?
+/*
+ * We can also try to manage contructions at the highest possible level.
+ * At the NT level, it means all the CGAL utilities (min/max, abs, square...).
+ * At the Kernel level: dotproduct ? generic constructions ?
+ */
 
 CGAL_BEGIN_NAMESPACE
 
 template <typename ET> class Lazy_exact_nt;
-
-/*
-template <typename ET>
-class Lazy_exact_nt_rep
-{
-  friend struct Lazy_exact_nt<ET>;
-  typedef Lazy_exact_nt_rep<ET> Self;
-
-  // Ctors:
-  Lazy_exact_nt_rep () : count(1) {};
-
-  // Status type:
-  enum {CST, NEG, ADD, SUB, MUL, DIV} Operation;
-  enum {Approx_not_computed=0, Approx_computed=16, Exact_computed=32} Status;
-
-  // Data members:
-  Interval	interval;
-  Self          *op1, *op2; // Dépend fondamentalement de l'operation...
-  ET		*exact;
-  int 		status; // = Operation|Status
-  unsigned	count;
-};
-*/
 
 // Do the operators with dynamic typing.
 // This class doesn't need to be template (?).
@@ -380,21 +363,22 @@ public:
 
   Lazy_exact_nt (const Self & s)
   {
-    if (rep != s.rep)
-    {
-	rep = s.rep;
-	inc_count();
-    }
+      // if (rep != s.rep) // One of these makes the program crash.
+      {
+	  rep = s.rep;
+	  inc_count();
+      }
   }
 
-  Self operator= (const Self s)
+  Self & operator= (const Self s)
   {
-      if (rep != s.rep)
+      // if (rep != s.rep) // One of these makes the program crash.
       {
 	  dec_count();
 	  rep = s.rep;
 	  inc_count();
       }
+      return *this;
   }
 
   // Operations
