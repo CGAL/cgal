@@ -1,6 +1,12 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.29 (7 janvier 99)
+import figures from 2.0 for html doc
+
+Ver 4.29 (6 janvier 99)
+Try to improve fugures in html doc
+
 Ver 4.28 (4 janvier 99)
 correction on the doc  : cpied .gif files modified by Susan 
 + deplaced a few \begin{ccAdvanced}
