@@ -56,8 +56,8 @@ A {\it vertex\/} of the arrangement is either a segment endpoint or
 the intersection of two segments. Given an arrangement of segments
 whose vertices are represented with arbitrary-precision coordinates,
 the SR procedure
-(snap\_rounding\_2 $<$ traits,InputIterator,OutputContainer $>$)
-proceeds as follows.  We tile the plane
+\ccc{snap_rounding_2<Traits,InputIterator,OutputContainer>}
+proceeds as follows. We tile the plane
 with a grid of unit squares, {\it pixels}, each centered at a point
 with integer coordinates. A pixel is {\it hot\/} if it contains a
 vertex of the arrangement. Each vertex of the arrangement is replaced
@@ -98,17 +98,20 @@ The input to the program is a set $S$ of $n$ segments,
 $S=\{s_1,\ldots,s_n\}$ and the output is a set $G$ of $n$ polylines,
 with a polyline $g_i$ for each input segments $s_i$. An input segment
 is given by the coordinates of its endpoints. An output polyline is
-given by the ordered set of vertices $v_0,\ldots,v_k$ along the polyline,
-that is the polyline consists of the segments,
-$\bar{v_0v_1},\ldots,\bar{v_{k-1}v_k}$.
+given by the ordered set of vertices $v_0,\ldots,v_k$ along the polyline.
+The polyline consists of the segments $\bar{v_0v_1},\ldots,\bar{v_{k-1}v_k}$.
 
-There are three template parameters: \ccc{Traits} is the underlying geometry, i.e., the number type used
-and the coordinate representation. \ccc{InputIterator} is the type of the iterators that point to the first
-and after-the-last elements of the input. Finally, \ccc{OutputContainer} is the type of the output container.
+There are three template parameters: \ccc{Traits} is the underlying geometry,
+i.e., the number type used and the coordinate representation.
+\ccc{InputIterator} is the type of the iterators that point to the first
+and after-the-last elements of the input. Finally, \ccc{OutputContainer} is the
+type of the output container.
 
-Since the algorithm requires kernel functionalities such as the rounding to the center of a pixel, a special
-traits class must be provided. The precise description of the requirements is given by the
-concept SnapRoundingTraits\_2. The class Snap\_rounding\_traits\_2 is a model of this concept.
+Since the algorithm requires kernel functionalities such as the rounding to the
+center of a pixel, a special traits class must be provided. The precise
+description of the requirements is given by the concept
+\ccc{SnapRoundingTraits_2}. The class \ccc{Snap_rounding_traits_2} is a model of
+this concept.
 
 \begin{figure}
 \begin{ccTexOnly}
@@ -133,9 +136,42 @@ and ISR (c) (hot pixels are shaded).}
 
 The following example generates an ISR representation
 of an arrangement of four line segments
-and a list of points which are the vertices of the resulting polylines.
+and a list of points that are the vertices of the resulting polylines.
 
 \ccIncludeExampleCode{Snap_rounding_2/example.C}
 % +--------------------------------------------------------+
+
+This program generates four polylines, one for each input segment. The exact
+output follows:
+
+\begin{verbatim}
+Polyline number 1:
+    (1/2:1/2)
+    (7/2:7/2)
+    (11/2:11/2)
+    (15/2:15/2)
+    (21/2:21/2)
+Polyline number 2:
+    (1/2:21/2)
+    (7/2:15/2)
+    (11/2:11/2)
+    (15/2:7/2)
+    (21/2:1/2)
+Polyline number 3:
+    (7/2:1/2)
+    (7/2:7/2)
+    (7/2:15/2)
+    (7/2:21/2)
+Polyline number 4:
+    (15/2:1/2)
+    (15/2:7/2)
+    (15/2:15/2)
+    (15/2:21/2)
+\end{verbatim}
+
+The package is supplied with a graphical demo program that opens a window,
+allows the user to edit segments dynamically, applies a selected
+snap-rounding procedures, and displays the result onto the same window
+(see \ccStyle{<CGAL_ROOT>/demo/Snap_rounding_2/demo.C}).
 
 % EOF
