@@ -45,11 +45,13 @@
 // int getrusage (int who, struct rusage *usage);
 #include <sys/resource.h>
 // For the numerical limits
-#include <float.h>
 #else //  CGAL__GETRUSAGE //
 // used for clock()
 #include <ctime>
 #endif //  CGAL__GETRUSAGE //
+
+// For the numerical limits
+#include <float.h>
 
 
 CGAL_BEGIN_NAMESPACE
