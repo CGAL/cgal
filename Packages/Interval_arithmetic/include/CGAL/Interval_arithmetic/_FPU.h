@@ -292,15 +292,16 @@ enum CGAL_FPU_rounding_mode
 // -1+epsilon		-1+ulp	-1	-1+ulp	-1
 // ----------------------------------------------------
 
-static inline CGAL_FPU_rounding_mode CGAL_FPU_get_rounding_mode ()
+static CGAL_FPU_rounding_mode CGAL_FPU_get_rounding_mode ()
 {
-    const double m = 5e-324; // CGAL_Interval_nt_advanced::min_double;
     // If not marked "volatile", the result is false when optimizing
     // because the constants are pre-computed at compile time !!!
-    volatile double x, y, z, xe, ye, ze;
-    x =  1.0; xe = x + m;
-    y =  1.0; ye = y - m;
-    z = -1.0; ze = z + m;
+    volatile const double m = 5e-324; // CGAL_Interval_nt_advanced::min_double;
+    const double x = 1.0, y = 1.0, z = -1.0;
+    double xe, ye, ze;
+    xe = x + m;
+    ye = y - m;
+    ze = z + m;
     if ((x == xe) && (y == ye) && (z == ze)) return CGAL_FPU_NEAREST;
     if (y == ye) return CGAL_FPU_PLUS_INFINITY;
     if (z == ze) return CGAL_FPU_MINUS_INFINITY;
