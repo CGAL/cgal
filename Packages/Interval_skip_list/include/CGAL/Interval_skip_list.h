@@ -299,7 +299,7 @@ class Interval_for_container : public Interval_
     void printOrdered(std::ostream& os) const;
 
 #ifdef ISL_LIST
-    typedef std::list<Interval>::const_iterator const_iterator;
+    typedef typename std::list<Interval>::const_iterator const_iterator;
 #else
     typedef typename 
     Compact_container<Interval_for_container<Interval> >::iterator iterator;
@@ -325,14 +325,14 @@ class Interval_for_container : public Interval_
     typedef typename Interval::Value Value;
     //typedef Interval* Interval_handle;
 #ifdef ISL_LIST
-    typedef std::list<Interval>::iterator Interval_handle;
+    typedef typename std::list<Interval>::iterator Interval_handle;
 #else
-    typedef Compact_container<Interval_for_container<Interval> >::iterator 
+    typedef typename Compact_container<Interval_for_container<Interval> >::iterator 
       Interval_handle;
 #endif
 
 #ifdef CCC
-    typedef Compact_container<IntervalListElt<Interval> >::iterator ILE_handle;
+    typedef typenme Compact_container<IntervalListElt<Interval> >::iterator ILE_handle;
 #else
     typedef IntervalListElt<Interval>* ILE_handle;
 #endif
@@ -428,14 +428,14 @@ class Interval_for_container : public Interval_
   {
     typedef Interval_ Interval;
 #ifdef ISL_LIST
-    typedef std::list<Interval>::iterator Interval_handle;
+    typedef typename std::list<Interval>::iterator Interval_handle;
 #else
-    typedef Compact_container<Interval_for_container<Interval> >::iterator 
+    typedef typename Compact_container<Interval_for_container<Interval> >::iterator 
       Interval_handle;
 #endif
 
 #ifdef CCC
-    typedef Compact_container<IntervalListElt<Interval> >::iterator ILE_handle;
+    typedef typename Compact_container<IntervalListElt<Interval> >::iterator ILE_handle;
 #else
     typedef IntervalListElt<Interval>* ILE_handle;
 #endif
@@ -1095,7 +1095,7 @@ template <class Interval>
   }  // end placeMarkers
 
   template <class Interval>
-  Interval_skip_list<Interval>::Interval_handle 
+  typename Interval_skip_list<Interval>::Interval_handle 
   Interval_skip_list<Interval>::removeMarkers(IntervalSLnode<Interval>* left, 
 					    const Interval& I)
   {
