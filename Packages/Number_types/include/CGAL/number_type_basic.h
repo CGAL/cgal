@@ -55,12 +55,26 @@ NT
 min(const NT& x, const NT& y)
 { return (y < x) ? y : x; }
 
+template <class NT, class Comp>
+inline
+NT
+// const NT&
+min(const NT& x, const NT& y, const Comp& c)
+{ return c(x, y) ? x : y; }
+
 template <class NT>
 inline
 NT
 // const NT&
 max(const NT& x, const NT& y)
 { return (x < y) ? y : x; }
+
+template <class NT, class Comp>
+inline
+NT
+// const NT&
+max(const NT& x, const NT& y, const Comp& c)
+{ return c(x, y) ? y : x; }
 
 #endif
 
