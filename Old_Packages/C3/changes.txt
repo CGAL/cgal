@@ -1,3 +1,8 @@
+Version 3.3.3 (September 9 1999)
+- Renamed the script to spare the work for Geert-Jan
+  (otherwise clash with C2)
+- nice arithmetic: 3.3.3.3 on 9/9/99
+
 Version 3.3.2 (September 9 1999)
 - Michael Hoffmann: The declarations of friend functions like
   _general_transformation_composition have to precede their friend declaration
