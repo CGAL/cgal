@@ -103,6 +103,125 @@ in_smallest_orthogonal_sphereC3(
   FT dpr = dpx*drx + dpy*dry +dpz*drz;
   return Bounded_side(CGAL_NTS sign (dr2 - dp2/FT4 + dpr*dpw/dp2 + drw ));
 }
+
+template <class FT>
+bool
+does_affine_dual_intersectC3(
+		const FT &px, const FT &py, const FT &pz, const FT &pw,
+                const FT &qx, const FT &qy, const FT &qz, const FT &qw,
+                const FT &rx, const FT &ry, const FT &rz, const FT &rw,
+                const FT &sx, const FT &sy, const FT &sz, const FT &sw)
+{
+  // returns true if weighted circumcenter of pqrs is in
+  // tetrahedron pqrs or on boundary
+  FT qpx = qx-px;
+  FT qpy = qy-py;
+  FT qpz = qz-pz;
+  
+  FT rpx = rx-px;
+  FT rpy = ry-py;
+  FT rpz = rz-pz;
+  
+  FT spx = sx-px;
+  FT spy = sy-py;
+  FT spz = sz-pz;
+
+  FT qq = CGAL_NTS square(qpx) + CGAL_NTS square(qpy) + CGAL_NTS square(qpz);
+  FT rr = CGAL_NTS square(rpx) + CGAL_NTS square(rpy) + CGAL_NTS square(rpz);
+  FT ss = CGAL_NTS square(spx) + CGAL_NTS square(spy) + CGAL_NTS square(spz);
+  FT qr = qpx*rpx + qpy*rpy + qpz*rpz;
+  FT rs = rpx*spx + rpy*spy + rpz*spz; 
+  FT qs = spx*qpx + spy*qpy + spz*qpz;
+  FT qpw = qq - qw + pw ;
+  FT rpw = rr - rw + pw ;
+  FT spw = ss - sw + pw ;
+ 
+  FT den = det3x3_by_formula(qq,qr,qs,
+			     qr,rr,rs,
+			     qs,rs,ss);
+  FT detq = det3x3_by_formula(qpw,qr,qs,
+			      rpw,rr,rs,
+			      spw,rs,ss);
+  FT detr = det3x3_by_formula(qq,qpw,qs,
+			      qr,rpw,rs,
+			      qs,spw,ss);
+  FT dets = det3x3_by_formula(qq,qr,qpw,
+			      qr,rr,rpw,
+			      qs,rs,spw);
+  CGAL_kernel_assertion( ! CGAL_NTS is_zero(den) );
+
+ CGAL::Sign  sign = sign(FT(2)*den - detq -detr -dets)
+  return  
+   (CGAL_NTS sign(detq) == CGAL_NTS sign(den) || CGAL_NTS sign(detq)== ZERO) &&
+   (CGAL_NTS sign(detr) == CGAL_NTS sign(den) || CGAL_NTS sign(detr)== ZERO) &&
+   (CGAL_NTS sign(dets) == CGAL_NTS sign(den) || CGAL_NTS sign(dets)== ZERO) &&
+   ( sign == POSITIVE || sign == ZERO );
+}
+
+template <class FT>
+bool
+does_affine_dual_intersectC3(
+		const FT &px, const FT &py, const FT &pz, const FT &pw,
+                const FT &qx, const FT &qy, const FT &qz, const FT &qw,
+                const FT &rx, const FT &ry, const FT &rz, const FT &rw)
+{
+  // returns true if weighted circumcenter of pqr is in
+  // triangle pqr or on boundary
+  FT qpx = qx-px;
+  FT qpy = qy-py;
+  FT qpz = qz-pz;
+  
+  FT rpx = rx-px;
+  FT rpy = ry-py;
+  FT rpz = rz-pz;
+  
+  FT qq = CGAL_NTS square(qpx) + CGAL_NTS square(qpy) + CGAL_NTS square(qpz);
+  FT rr = CGAL_NTS square(rpx) + CGAL_NTS square(rpy) + CGAL_NTS square(rpz);
+  FT qr = qpx*rpx + qpy*rpy + qpz*rpz;
+
+  FT qpw = qq - qw + pw ;
+  FT rpw = rr - rw + pw ;
+  
+  FT den = det2,2_by_formula(qq,qr,
+			     qr,rr);
+  FT detq = det3x3_by_formula(qpw,qr,
+			      rpw,rr);
+  FT detr = det3x3_by_formula(qq,qpw,
+			      qr,rpw);
+
+  CGAL_kernel_assertion( ! CGAL_NTS is_zero(den) );
+
+ CGAL::Sign  sign = CGAL_NTS sign(FT(2)*den - detq - detr)
+  return  
+   (CGAL_NTS sign(detq) == CGAL_NTS sign(den) || CGAL_NTS sign(detq)== ZERO) &&
+   (CGAL_NTS sign(detr) == CGAL_NTS sign(den) || CGAL_NTS sign(detr)== ZERO) &&
+   ( sign == POSITIVE || sign == ZERO );
+}
+
+
+template <class FT>
+bool
+does_affine_dual_intersectC3(
+		const FT &px, const FT &py, const FT &pz, const FT &pw,
+                const FT &qx, const FT &qy, const FT &qz, const FT &qw)
+{
+  // returns true if weighted circumcenter of pq is in
+  // segment  pq or on boundary
+  FT qpx = qx-px;
+  FT qpy = qy-py;
+  FT qpz = qz-pz;
+  
+  FT qq = CGAL_NTS square(qpx) + CGAL_NTS square(qpy) + CGAL_NTS square(qpz);
+  FT dw = pw - qw;
+  
+  CGAL::Sign  sign1 = CGAL_NTS sign( qq - dw);
+  CGAL::Sign  sign2 = CGAL_NTS sign( qq - dw);
+   
+  return 
+    ( sign1 == POSITIVE || sign == ZERO ) &&
+    ( sign2 == POSITIVE || sign == ZERO );
+}
+
 //------------------------------------------------------------------- 
 CGAL_END_NAMESPACE
 //-------------------------------------------------------------------
