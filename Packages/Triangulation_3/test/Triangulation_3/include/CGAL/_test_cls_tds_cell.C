@@ -32,7 +32,7 @@ _test_cell_tds_3( const Cell &)
 
   typedef typename Cell::Tds               Tds;
 
-  cout << "   Cells Tds Constructors " << endl;
+  std::cout << "   Cells Tds Constructors " << std::endl;
   int ind;
   Cell c;
   Tds tds;
@@ -52,7 +52,7 @@ _test_cell_tds_3( const Cell &)
   Cell c2(tds,v0, v1 , v2, v3, n0, n1, n2, n3);
 
 
-  cout << "   Access cell's functions " << endl;
+  std::cout << "   Access cell's functions " << std::endl;
      assert(c2.has_vertex(v0));
      ind=c2.index(v0);
      assert(c2.vertex(ind)==v0);
@@ -93,7 +93,7 @@ _test_cell_tds_3( const Cell &)
      assert(c2.neighbor(ind)==n3);
      assert(c2.has_neighbor(n3,ind));
 
-     cout << "   setting cell's functions " << endl;
+     std::cout << "   setting cell's functions " << std::endl;
    c2.set_vertex(0,v1);
    c2.set_vertex(1,v2);
    c2.set_vertex(2,v3);

@@ -533,12 +533,12 @@ public:
   bool is_valid(bool verbose = false, int level = 0) const
     {
       if ( ! tds().is_valid(verbose,level) ) {
-	if (verbose) { cerr << "invalid data structure" << endl; }
+	if (verbose) { std::cerr << "invalid data structure" << std::endl; }
 	CGAL_triangulation_assertion(false); return false;
       }
     
       if ( &(*infinite_vertex()) == NULL ) {
-	if (verbose) { cerr << "no infinite vertex" << endl; }
+	if (verbose) { std::cerr << "no infinite vertex" << std::endl; }
 	CGAL_triangulation_assertion(false); return false;
       }
 
@@ -557,7 +557,7 @@ public:
 		     ->point() )
 		   == ON_BOUNDED_SIDE ) {
 		if (verbose) { 
-		  cerr << "non-empty sphere " << endl;
+		  std::cerr << "non-empty sphere " << std::endl;
 		}
 		CGAL_triangulation_assertion(false); return false;
 	      }
@@ -577,7 +577,7 @@ public:
 		     ->vertex( (((*it).first)->neighbor(i))->index((*it).first) )->point() )
 		   == ON_BOUNDED_SIDE ) {
 		if (verbose) { 
-		  cerr << "non-empty circle " << endl;
+		  std::cerr << "non-empty circle " << std::endl;
 		}
 		CGAL_triangulation_assertion(false); return false;
 	      }
@@ -594,7 +594,7 @@ public:
 	  break;
 	}
       }
-      if (verbose) { cerr << "Delaunay valid triangulation" << endl;}
+      if (verbose) { std::cerr << "Delaunay valid triangulation" << std::endl;}
       return true;
     }
 

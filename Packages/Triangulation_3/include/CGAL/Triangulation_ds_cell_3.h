@@ -234,18 +234,18 @@ public:
     case -1:
     {
       if ( vertex(0) == NULL ) {
-	if (verbose) { cerr << "vertex 0 NULL" << endl;}
+	if (verbose) { std::cerr << "vertex 0 NULL" << std::endl;}
 	CGAL_triangulation_assertion(false); return false;
       }
       vertex(0)->is_valid(verbose,level);
       if ( vertex(1) != NULL || 
 	   vertex(2) != NULL || vertex(3) != NULL ) {
-	if (verbose) { cerr << "vertex 1,2 or 3 != NULL" << endl;}
+	if (verbose) { std::cerr << "vertex 1,2 or 3 != NULL" << std::endl;}
 	CGAL_triangulation_assertion(false); return false;
       }
       if ( neighbor(0) != NULL || neighbor(1) != NULL ||
 	   neighbor(2) != NULL || neighbor(3) != NULL ) {
-	if (verbose) { cerr << "one neighbor != NULL" << endl;}
+	if (verbose) { std::cerr << "one neighbor != NULL" << std::endl;}
 	CGAL_triangulation_assertion(false); return false;
       }
       break;
@@ -254,27 +254,27 @@ public:
     case 0:
       {
       if ( vertex(0) == NULL ) {
-	if (verbose) { cerr << "vertex 0 NULL" << endl;}
+	if (verbose) { std::cerr << "vertex 0 NULL" << std::endl;}
 	CGAL_triangulation_assertion(false); return false;
       }
       vertex(0)->is_valid(verbose,level);
       if ( neighbor (0) == NULL ) {
-	if (verbose) { cerr << "neighbor 0 NULL" << endl;}
+	if (verbose) { std::cerr << "neighbor 0 NULL" << std::endl;}
 	CGAL_triangulation_assertion(false); return false;
       }
       if ( vertex(1) != NULL || 
 	   vertex(2) != NULL || vertex(3) != NULL ) {
-	if (verbose) { cerr << "vertex 1, 2 or 3 != NULL" << endl;}
+	if (verbose) { std::cerr << "vertex 1, 2 or 3 != NULL" << std::endl;}
 	CGAL_triangulation_assertion(false); return false;
       }
       if ( neighbor(1) != NULL ||
 	   neighbor(2) != NULL || neighbor(3) != NULL ) {
-	if (verbose) { cerr << "neighbor 1, 2 or 3 != NULL" << endl;}
+	if (verbose) { std::cerr << "neighbor 1, 2 or 3 != NULL" << std::endl;}
 	CGAL_triangulation_assertion(false); return false;
       }
 
       if ( ! neighbor(0)->has_vertex(vertex(0)) ) {
-	if (verbose) { cerr << "neighbor 0 does not have vertex 0" << endl;}
+	if (verbose) { std::cerr << "neighbor 0 does not have vertex 0" << std::endl;}
 	CGAL_triangulation_assertion(false); return false;
       }
       break;
@@ -288,47 +288,47 @@ public:
       Cell* n1 = neighbor(1);
 
       if ( v0 == NULL || v1 == NULL ) {
-	if (verbose) { cerr << "vertex 0 or 1 NULL" << endl;}
+	if (verbose) { std::cerr << "vertex 0 or 1 NULL" << std::endl;}
 	CGAL_triangulation_assertion(false); return false;
       }
       vertex(0)->is_valid(verbose,level);
       vertex(1)->is_valid(verbose,level);
       if ( n0 == NULL || n1 == NULL ) {
-	if (verbose) { cerr << "neighbor 0 or 1 NULL" << endl;}
+	if (verbose) { std::cerr << "neighbor 0 or 1 NULL" << std::endl;}
 	CGAL_triangulation_assertion(false); return false;
       }
       if ( vertex(2) != NULL || vertex(3) != NULL ) {
-	if (verbose) { cerr << "vertex 2 or 3 != NULL" << endl;}
+	if (verbose) { std::cerr << "vertex 2 or 3 != NULL" << std::endl;}
 	CGAL_triangulation_assertion(false); return false;
       }
       if ( neighbor(2) != NULL || neighbor(3) != NULL ) {
-	if (verbose) { cerr << "neighbor 2 or 3 != NULL" << endl;}
+	if (verbose) { std::cerr << "neighbor 2 or 3 != NULL" << std::endl;}
 	CGAL_triangulation_assertion(false); return false;
       }
 
       if ( v0 !=  n1->vertex(1) ) {
-	if (verbose) { cerr << 
+	if (verbose) { std::cerr << 
 		       "neighbor 1 does not have vertex 0 as vertex 1" 
-			    << endl;}
+			    << std::endl;}
 	CGAL_triangulation_assertion(false); return false;
       }
       if ( v1 != n0->vertex(0) ) {
-	if (verbose) { cerr << 
+	if (verbose) { std::cerr << 
 			 "neighbor 0 does not have vertex 1 as vertex 0" 
-			    << endl;}
+			    << std::endl;}
 	CGAL_triangulation_assertion(false); return false;
       }
       
       if ( this != n0->neighbor(1) ) {
-	if (verbose) { cerr << 
+	if (verbose) { std::cerr << 
 			 "neighbor 0 does not have this as neighbor 1" 
-			    << endl;}
+			    << std::endl;}
 	CGAL_triangulation_assertion(false); return false;
       }
       if ( this != n1->neighbor(0) ) {
-	if (verbose) { cerr << 
+	if (verbose) { std::cerr << 
 			 "neighbor 1 does not have this as neighbor 0" 
-			    << endl;}
+			    << std::endl;}
 	CGAL_triangulation_assertion(false); return false;
       }
 
@@ -338,18 +338,18 @@ public:
     case 2:
       {
       if ( vertex(0) == NULL || vertex(1) == NULL || vertex(2) == NULL ) {
-	if (verbose) { cerr << "vertex 0, 1, or 2 NULL" << endl;}
+	if (verbose) { std::cerr << "vertex 0, 1, or 2 NULL" << std::endl;}
 	CGAL_triangulation_assertion(false); return false;
       }
       vertex(0)->is_valid(verbose,level);
       vertex(1)->is_valid(verbose,level);
       vertex(2)->is_valid(verbose,level);
       if ( vertex(3) != NULL ) {
-	if (verbose) { cerr << "vertex 3 != NULL" << endl;}
+	if (verbose) { std::cerr << "vertex 3 != NULL" << std::endl;}
 	CGAL_triangulation_assertion(false); return false;
       }
       if ( neighbor(3) != NULL ) {
-	if (verbose) { cerr << "neighbor 3 != NULL" << endl;}
+	if (verbose) { std::cerr << "neighbor 3 != NULL" << std::endl;}
 	CGAL_triangulation_assertion(false); return false;
       }
 
@@ -358,24 +358,24 @@ public:
       for(int i = 0; i < 3; i++) {
 	n = neighbor(i);
 	if ( n == NULL ) {
-	  if (verbose) { cerr << "neighbor " << i << " NULL" << endl;}
+	  if (verbose) { std::cerr << "neighbor " << i << " NULL" << std::endl;}
 	  CGAL_triangulation_assertion(false); return false;
 	}
 	if ( ! n->has_vertex(vertex(cw(i)),in ) ) {
-	  if (verbose) { cerr << "vertex " << cw(i) 
-			      << " not vertex of neighbor " << i << endl; }
+	  if (verbose) { std::cerr << "vertex " << cw(i) 
+			      << " not vertex of neighbor " << i << std::endl; }
 	  CGAL_triangulation_assertion(false); return false;
 	}
 	in = cw(in); 
 	if ( this != n->neighbor(in) ) {
-	  if (verbose) { cerr << "neighbor " << i
-			      << " does not have this as neighbor " << in << endl; }
+	  if (verbose) { std::cerr << "neighbor " << i
+			      << " does not have this as neighbor " << in << std::endl; }
 	  CGAL_triangulation_assertion(false); return false;
 	}
 	if ( vertex(ccw(i)) != n->vertex(cw(in)) ) {
-	  if (verbose) { cerr << "vertex " << ccw(i)
+	  if (verbose) { std::cerr << "vertex " << ccw(i)
 			      << " is not vertex " << cw(in) 
-			      << " of neighbor " << i << endl;}
+			      << " of neighbor " << i << std::endl;}
 	  CGAL_triangulation_assertion(false); return false;
 	}
       }
@@ -388,7 +388,7 @@ public:
 	for(i = 0; i < 4; i++) {
 	  if ( vertex(i) == NULL ) {
 	    if (verbose) { 
-	      cerr << "vertex " << i << " NULL" << endl;
+	      std::cerr << "vertex " << i << " NULL" << std::endl;
 	    }
 	    CGAL_triangulation_assertion(false); return false;
 	  }
@@ -399,7 +399,7 @@ public:
 	  Cell* n = neighbor(i);
 	  if ( n == NULL ) {
 	    if (verbose) { 
-	      cerr << "neighbor " << i << " NULL" << endl;
+	      std::cerr << "neighbor " << i << " NULL" << std::endl;
 	    }
 	    CGAL_triangulation_assertion(false); return false;
 	  }
@@ -414,23 +414,23 @@ public:
 	  
 	  int j1n,j2n,j3n;
 	  if ( ! n->has_vertex(vertex((i+1)&3),j1n) ) {
-	    if (verbose) { cerr << "vertex " << (i+1)%4
-				<< " not vertex of neighbor " << i << endl; }
+	    if (verbose) { std::cerr << "vertex " << (i+1)%4
+				<< " not vertex of neighbor " << i << std::endl; }
 	    CGAL_triangulation_assertion(false); return false;
 	  }
 	  if ( ! n->has_vertex(vertex((i+2)&3),j2n) ) {
-	    if (verbose) { cerr << "vertex " << (i+2)%4
-				<< " not vertex of neighbor " << i << endl; }
+	    if (verbose) { std::cerr << "vertex " << (i+2)%4
+				<< " not vertex of neighbor " << i << std::endl; }
 	    CGAL_triangulation_assertion(false); return false;
 	  }
 	  if ( ! n->has_vertex(vertex((i+3)&3),j3n) ) {
-	    if (verbose) { cerr << "vertex " << (i+3)%4
-				<< " not vertex of neighbor " << i << endl; }
+	    if (verbose) { std::cerr << "vertex " << (i+3)%4
+				<< " not vertex of neighbor " << i << std::endl; }
 	    CGAL_triangulation_assertion(false); return false;
 	  }
 	  
 	  if ( in+j1n+j2n+j3n != 6) {
-	    if (verbose) { cerr << "sum of the indices != 6 " << endl; }
+	    if (verbose) { std::cerr << "sum of the indices != 6 " << std::endl; }
 	    CGAL_triangulation_assertion(false); return false;
 	  }
 	  
@@ -523,34 +523,34 @@ private:
 
   void error_orient( Cell * n, int i) const
   {
-//     cerr << this->vertex(0)->point() << ", "
+//     std::cerr << this->vertex(0)->point() << ", "
 // 	 << this->vertex(1)->point() << ", "
 // 	 << this->vertex(2)->point() << ", "
-// 	 << this->vertex(3)->point() << endl
+// 	 << this->vertex(3)->point() << std::endl
 // 	 << " pb orientation with neighbor " << i
-// 	 << " : " << endl 
+// 	 << " : " << std::endl 
 // 	 << n->vertex(0)->point() << ", "
 // 	 << n->vertex(1)->point() << ", "
 // 	 << n->vertex(2)->point() << ", "
-// 	 << n->vertex(3)->point() << endl
-// 	 << endl;
-    cerr << " pb orientation with neighbor " << endl;
+// 	 << n->vertex(3)->point() << std::endl
+// 	 << std::endl;
+    std::cerr << " pb orientation with neighbor " << std::endl;
   }
 
   void error_neighbor( Cell* n, int i, int in ) const
   {
-//     cerr << "neighbor " << i << endl
+//     std::cerr << "neighbor " << i << std::endl
 // 	 << n->vertex(0)->point() << ", "
 // 	 << n->vertex(1)->point() << ", "
 // 	 << n->vertex(2)->point() << ", "
-// 	 << n->vertex(3)->point() << endl
-// 	 << " does not have this " << endl
+// 	 << n->vertex(3)->point() << std::endl
+// 	 << " does not have this " << std::endl
 // 	 << this->vertex(0)->point() << ", "
 // 	 << this->vertex(1)->point() << ", "
 // 	 << this->vertex(2)->point() << ", "
-// 	 << this->vertex(3)->point() << endl
-// 	 << " as neighbor " << in << endl;
-    cerr << "neighbor of c has not c as neighbor" << endl;
+// 	 << this->vertex(3)->point() << std::endl
+// 	 << " as neighbor " << in << std::endl;
+    std::cerr << "neighbor of c has not c as neighbor" << std::endl;
   }
 
 };

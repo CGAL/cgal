@@ -39,7 +39,7 @@
 int main()
 {
 
-cout << " with Triangulation_test_traits_3 : " << endl;
+std::cout << " with Triangulation_test_traits_3 : " << std::endl;
 // typedef CGAL::Triangulation_geom_traits_3<Test_rep_cartesian>  traits;
 // works with both geom_traits
   typedef _Triangulation_test_traits_3                        traits;

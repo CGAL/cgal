@@ -137,7 +137,7 @@ public:
     result = result && cell()->has_vertex(this);
     if ( ! result ) {
       if ( verbose ) {
-	cerr << "invalid vertex" << endl;
+	std::cerr << "invalid vertex" << std::endl;
       }
       CGAL_triangulation_assertion(false);
     }

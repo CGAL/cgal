@@ -30,8 +30,8 @@
 int
 main()
 {
-  cout << "Testing Triangulation_geom_traits" << endl;
-  cout << "   with Cartesian" << endl;
+  std::cout << "Testing Triangulation_geom_traits" << std::endl;
+  std::cout << "   with Cartesian" << std::endl;
 
   typedef CGAL::Triangulation_geom_traits_3<Test_rep_cartesian> Cls1;
 
@@ -59,7 +59,7 @@ typedef Cls1::Point  Pt1;
    _test_cls_geom_traits(p1, Cls1());
 
 
-  cout << "   with Homogeneous" << endl;
+  std::cout << "   with Homogeneous" << std::endl;
   typedef CGAL::Triangulation_geom_traits_3<Test_rep_homogeneous> Cls2;
   typedef Cls2::Point  Pt2;
 
@@ -86,7 +86,7 @@ typedef Cls1::Point  Pt1;
    _test_cls_geom_traits(p2, Cls2());
 
 
-   cout << "   Testing Triangulation_test_traits for the requirements" << endl;
+   std::cout << "   Testing Triangulation_test_traits for the requirements" << std::endl;
    typedef _Triangulation_test_traits_3 Cls3;
 
    typedef Cls3::Point  Pt3;

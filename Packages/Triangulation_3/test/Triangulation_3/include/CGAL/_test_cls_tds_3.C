@@ -40,18 +40,18 @@ _test_cls_tds_3( const Tds &)
 
 
   // test Vertex and cell :
-  cout << "    Test Vertex " << endl;
+  std::cout << "    Test Vertex " << std::endl;
   _test_vertex_tds_3(Vertex());
 
-  cout << "    Test Cell " << endl;
+  std::cout << "    Test Cell " << std::endl;
   
   _test_cell_tds_3(Cell());
 
 
-  cout << "   Testing TDS " << endl;
+  std::cout << "   Testing TDS " << std::endl;
   
   // Test constructors
-  cout << "    constructors" << endl;
+  std::cout << "    constructors" << std::endl;
   Tds tds1;
   Tds tds2;
   Vertex_iterator vit;
@@ -62,36 +62,36 @@ _test_cls_tds_3( const Tds &)
 
   vit=tds3.vertices_begin();
   tds3.insert_outside_affine_hull(*v2,&*vit);
-  cout << "ok" << endl;
+  std::cout << "ok" << std::endl;
   Tds tds4 = tds3;
   Vertex* v3 = new Vertex;
   vit=tds4.vertices_begin();
   tds4.insert_outside_affine_hull(*v3,&*vit);
-  cout << "ok" << endl;
+  std::cout << "ok" << std::endl;
   Tds tds5;
   tds5.swap(tds4);
   tds4=tds5;
   Vertex* v4 = new Vertex;
   vit=tds5.vertices_begin();
   tds5.insert_outside_affine_hull(*v4,&*vit);
-  cout << "ok" << endl;
+  std::cout << "ok" << std::endl;
   Tds tds6;
   tds6.swap(tds5);
   tds5=tds6;
   Vertex* v5 = new Vertex;
   vit=tds6.vertices_begin();
   tds6.insert_outside_affine_hull(*v5,&*vit);
-  cout << "ok" << endl;
+  std::cout << "ok" << std::endl;
 
   // Setting functions
-  cout << "    setting functions" << endl;
+  std::cout << "    setting functions" << std::endl;
   tds1.set_number_of_vertices(1);
   tds2.set_number_of_vertices(5);
 
   
-  cout << "  Insert are tested in test_triangulation_3  " << endl;
+  std::cout << "  Insert are tested in test_triangulation_3  " << std::endl;
 
-  cout << "  Iterator and circulator are tested in test_triangulation_3  " << endl;
+  std::cout << "  Iterator and circulator are tested in test_triangulation_3  " << std::endl;
 
   // Access functions
 
@@ -108,7 +108,7 @@ _test_cls_tds_3( const Tds &)
 
 
   // test destructor and return
-  cout << "    test destructors and return" << endl;
+  std::cout << "    test destructors and return" << std::endl;
   tds1.clear();
   tds2.clear();
   tds3.clear();

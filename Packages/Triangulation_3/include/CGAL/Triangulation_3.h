@@ -2609,30 +2609,30 @@ public:
       int i;
       if ( ! (&(*c))->is_valid(t.dimension(),verbose,level) ) {
 	if (verbose) { 
-	  cerr << "combinatorically invalid cell" ;
+	  std::cerr << "combinatorically invalid cell" ;
 	  for ( i=0; i <= t.dimension(); i++ ) {
-	    cerr << c->vertex(i)->point() << ", " ;
+	    std::cerr << c->vertex(i)->point() << ", " ;
 	  }
-	  cerr << endl;
+	  std::cerr << std::endl;
 	}
 	CGAL_triangulation_assertion(false); return false;
       }
       if ( is_finite(c) ) {
 	is_valid_finite(c);
       }
-      if (verbose) { cerr << "geometrically valid cell" << endl;}
+      if (verbose) { std::cerr << "geometrically valid cell" << std::endl;}
       return true;
     } //end is_valid(cell)
 
   bool is_valid(bool verbose = false, int level = 0) const
   {
     if ( ! _tds.is_valid(verbose,level) ) {
-      if (verbose) { cerr << "invalid data structure" << endl; }
+      if (verbose) { std::cerr << "invalid data structure" << std::endl; }
       CGAL_triangulation_assertion(false); return false;
     }
     
     if ( &(*infinite_vertex()) == NULL ) {
-      if (verbose) { cerr << "no infinite vertex" << endl; }
+      if (verbose) { std::cerr << "no infinite vertex" << std::endl; }
       CGAL_triangulation_assertion(false); return false;
     }
 
@@ -2645,12 +2645,12 @@ public:
 // 			      it->vertex(1)->point(),
 // 			      it->vertex(2)->point(),
 // 			      it->vertex(3)->point()) != LEFTTURN ) {
-// 	  if (verbose) { cerr << "badly oriented cell " 
+// 	  if (verbose) { std::cerr << "badly oriented cell " 
 // 			      << it->vertex(0)->point() << ", " 
 // 			      << it->vertex(1)->point() << ", " 
 // 			      << it->vertex(2)->point() << ", " 
 // 			      << it->vertex(3)->point() << ", " 
-// 			      << endl; }
+// 			      << std::endl; }
 // 	  CGAL_triangulation_assertion(false); return false;
 // 	}
 	  is_valid_finite((*it).handle());
@@ -2674,7 +2674,7 @@ public:
 	break;
       }
     }
-    if (verbose) { cerr << "valid triangulation" << endl;}
+    if (verbose) { std::cerr << "valid triangulation" << std::endl;}
     return true;
   }
 
@@ -2688,11 +2688,11 @@ public:
 					 c->vertex(2)->point(),
 					 c->vertex(3)->point()) 
 	       != LEFTTURN ) {
-	    if (verbose) { cerr << "badly oriented cell " 
+	    if (verbose) { std::cerr << "badly oriented cell " 
 				<< c->vertex(0)->point() << ", " 
 				<< c->vertex(1)->point() << ", " 
 				<< c->vertex(2)->point() << ", " 
-				<< c->vertex(3)->point() << endl; }
+				<< c->vertex(3)->point() << std::endl; }
 	    CGAL_triangulation_assertion(false); return false;
 	  }
 	  break;
@@ -2709,7 +2709,7 @@ public:
 		   c->neighbor(i)->vertex(c->neighbor(i)->index(c))->point()
 		   )
 		 != NEGATIVE ) {
-	      if (verbose) { cerr << "badly oriented face "
+	      if (verbose) { std::cerr << "badly oriented face "
 				  << c->vertex(0)->point() << ", " 
 				  << c->vertex(1)->point() << ", " 
 				  << c->vertex(2)->point() 
@@ -2717,7 +2717,7 @@ public:
 				  << c->neighbor(i)->vertex(0)->point() << ", " 
 				  << c->neighbor(i)->vertex(1)->point() << ", " 
 				  << c->neighbor(i)->vertex(2)->point() 
-				  << endl; }
+				  << std::endl; }
 	      CGAL_triangulation_assertion(false); return false;
 	    }
 	  }
@@ -2737,12 +2737,12 @@ public:
 		      != geom_traits().compare_y( p1, n0 ) )
 		 || ( geom_traits().compare_z( p0, p1 )
 		      != geom_traits().compare_z( p1, n0 ) ) ) {
-	      if (verbose) { cerr << "badly oriented edge "
-				  << p0 << ", " << p1 << endl
+	      if (verbose) { std::cerr << "badly oriented edge "
+				  << p0 << ", " << p1 << std::endl
 				  << "with neighbor 0"
 				  << c->neighbor(0)->vertex(1-c->neighbor(0)->index(c))->point() << ", "
 				  << n0
-				  << endl; }
+				  << std::endl; }
 	      CGAL_triangulation_assertion(false); return false;
 	    }
 	  }
@@ -2754,12 +2754,12 @@ public:
 		      != geom_traits().compare_y( p0, n1 ) )
 		 || ( geom_traits().compare_z( p1, p0 )
 		      != geom_traits().compare_z( p0, n1 ) ) ) {
-	      if (verbose) { cerr << "badly oriented edge "
-				  << p0 << ", " << p1 << endl
+	      if (verbose) { std::cerr << "badly oriented edge "
+				  << p0 << ", " << p1 << std::endl
 				  << "with neighbor 1"
 				  << c->neighbor(1)->vertex(1-c->neighbor(1)->index(c))->point() << ", "
 				  << n1
-				  << endl; }
+				  << std::endl; }
 	      CGAL_triangulation_assertion(false); return false;
 	    }
 	  }
@@ -2963,7 +2963,7 @@ std::ostream& operator<<
   case 3:
     {
       if(is_ascii(os)){
-        os << tr.dimension() << endl << n << endl;
+        os << tr.dimension() << std::endl << n << std::endl;
       } else {
         os << tr.dimension() << n;
       }
@@ -2972,7 +2972,7 @@ std::ostream& operator<<
   case 2:
     {
       if(is_ascii(os)){
-        os << tr.dimension() << endl << n << endl;
+        os << tr.dimension() << std::endl << n << std::endl;
       } else {
         os << tr.dimension() << n;
       }
@@ -2981,7 +2981,7 @@ std::ostream& operator<<
   case 1:
     {
       if(is_ascii(os)){
-        os << tr.dimension() << endl << n << endl;
+        os << tr.dimension() << std::endl << n << std::endl;
       } else {
         os << tr.dimension() << n ;
       }
@@ -2990,7 +2990,7 @@ std::ostream& operator<<
   case 0:
     {
       if(is_ascii(os)){
-	os << tr.dimension() << endl << n << endl;
+	os << tr.dimension() << std::endl << n << std::endl;
       } else {
 	os << tr.dimension() << n;
       }
@@ -2999,7 +2999,7 @@ std::ostream& operator<<
   default:
     {
       if(is_ascii(os)){
-	os << tr.dimension() << endl << n << endl;
+	os << tr.dimension() << std::endl << n << std::endl;
       } else {
 	os << tr.dimension() << n;
       }
@@ -3021,7 +3021,7 @@ std::ostream& operator<<
       V[&(*it)] = i++;
       os << *it; // uses the << operator of Vertex
       if(is_ascii(os)){
-	os << endl;
+	os << std::endl;
       }
     }
     ++it;
@@ -3072,7 +3072,7 @@ std::ostream& operator<<
 //   case 3:
 //     {
 //       os << m;
-//       if(is_ascii(os)){ os << endl;}
+//       if(is_ascii(os)){ os << std::endl;}
 
 //       // write the cells
 //       Cell_iterator it = tr.all_cells_begin();
@@ -3083,7 +3083,7 @@ std::ostream& operator<<
 // 	  if(is_ascii(os)) {
 // 	    if ( j==3 ) {
 // 	      os << *it; // other information
-// 	      os << endl;
+// 	      os << std::endl;
 // 	    } else {
 // 	      os << ' ';
 // 	    }
@@ -3100,7 +3100,7 @@ std::ostream& operator<<
 // 	  os << C[&(* it->neighbor(j))];
 // 	  if(is_ascii(os)){
 // 	    if(j==3) {
-// 	      os << endl;
+// 	      os << std::endl;
 // 	    } else {
 // 	      os <<  ' ';
 // 	    }
@@ -3113,7 +3113,7 @@ std::ostream& operator<<
 //   case 2:
 //     {
 //       os << m;
-//       if(is_ascii(os)){ os << endl;}
+//       if(is_ascii(os)){ os << std::endl;}
 
 //       // write the facets
 //       Facet_iterator it = tr.all_facets_begin();
@@ -3124,7 +3124,7 @@ std::ostream& operator<<
 // 	  if(is_ascii(os)) {
 // 	    if ( j==2 ) {
 // 	      os << *((*it).first); // other information
-// 	      os << endl;
+// 	      os << std::endl;
 // 	    } else {
 // 	      os <<  ' ';
 // 	    }
@@ -3141,7 +3141,7 @@ std::ostream& operator<<
 // 	  os << C[&*((*it).first->neighbor(j))];
 // 	  if(is_ascii(os)){
 // 	    if(j==2) {
-// 	      os << endl;
+// 	      os << std::endl;
 // 	    } else {
 // 	      os <<  ' ';
 // 	    }
@@ -3154,7 +3154,7 @@ std::ostream& operator<<
 //   case 1:
 //     {
 //       os << m;
-//       if(is_ascii(os)){ os << endl;}
+//       if(is_ascii(os)){ os << std::endl;}
 
 //       // write the edges
 //       Edge_iterator it = tr.all_edges_begin();
@@ -3165,7 +3165,7 @@ std::ostream& operator<<
 // 	  if(is_ascii(os)) {
 // 	    if ( j==1 ) {
 // 	      os << *((*it).first); // other information 
-// 	      os << endl;
+// 	      os << std::endl;
 // 	    } else {
 // 	      os <<  ' ';
 // 	    }
@@ -3182,7 +3182,7 @@ std::ostream& operator<<
 // 	  os << C[&*((*it).first->neighbor(j))];
 // 	  if(is_ascii(os)){
 // 	    if(j==1) {
-// 	      os << endl;
+// 	      os << std::endl;
 // 	    } else {
 // 	      os <<  ' ';
 // 	    }
@@ -3195,7 +3195,7 @@ std::ostream& operator<<
 // //   default:
 // //     {
 // //       os << m;
-// //       if(is_ascii(os)){ os << endl;}
+// //       if(is_ascii(os)){ os << std::endl;}
 // //       break;
 // //     }
 //   }

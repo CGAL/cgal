@@ -1161,7 +1161,7 @@ public:
 	int vertex_count;
 	if ( ! count_vertices(vertex_count,verbose,level) ) {return false;}
 	if ( number_of_vertices() != vertex_count ) {
-	  if (verbose) { cerr << "false number of vertices" << endl; }
+	  if (verbose) { std::cerr << "false number of vertices" << std::endl; }
 	  CGAL_triangulation_assertion(false); return false;
 	}
 
@@ -1174,7 +1174,7 @@ public:
 
 	// Euler relation 
 	if ( cell_count - facet_count + edge_count - vertex_count != 0 ) {
-	  if (verbose) { cerr << "Euler relation unsatisfied"<< endl; }
+	  if (verbose) { std::cerr << "Euler relation unsatisfied"<< std::endl; }
 	  CGAL_triangulation_assertion(false); return false;
 	}
 
@@ -1185,7 +1185,7 @@ public:
 	int vertex_count;
 	if ( ! count_vertices(vertex_count,verbose,level) ) {return false;}
 	if ( number_of_vertices() != vertex_count ) {
-	  if (verbose) { cerr << "false number of vertices" << endl; }
+	  if (verbose) { std::cerr << "false number of vertices" << std::endl; }
 	  CGAL_triangulation_assertion(false); return false;
 	}
 
@@ -1193,7 +1193,7 @@ public:
 	if ( ! count_edges(edge_count,verbose,level) ) {return false;}
 	// Euler for edges
 	if ( edge_count != 3 * vertex_count - 6 ) {
-	  if (verbose) { cerr << "Euler relation unsatisfied - edges/vertices" << endl;}
+	  if (verbose) { std::cerr << "Euler relation unsatisfied - edges/vertices" << std::endl;}
 	  CGAL_triangulation_assertion(false); return false;
 	}
 
@@ -1201,7 +1201,7 @@ public:
 	if ( ! count_facets(facet_count,verbose,level) ) {return false;}
 	// Euler for facets
 	if ( facet_count != 2 * vertex_count - 4 ) {
-	  if (verbose) { cerr << "Euler relation unsatisfied - facets/vertices" << endl;}
+	  if (verbose) { std::cerr << "Euler relation unsatisfied - facets/vertices" << std::endl;}
 	  CGAL_triangulation_assertion(false); return false;
 	}
 	break;
@@ -1211,14 +1211,14 @@ public:
 	int vertex_count;
 	if ( ! count_vertices(vertex_count,verbose,level) ) {return false;}
 	if ( number_of_vertices() != vertex_count ) {
-	  if (verbose) { cerr << "false number of vertices" << endl; }
+	  if (verbose) { std::cerr << "false number of vertices" << std::endl; }
 	  CGAL_triangulation_assertion(false); return false;
 	}
 	int edge_count;
 	if ( ! count_edges(edge_count,verbose,level) ) {return false;}
 	// Euler for edges
 	if ( edge_count != vertex_count ) {
-	  if (verbose) { cerr << "false number of edges" << endl; }
+	  if (verbose) { std::cerr << "false number of edges" << std::endl; }
 	  CGAL_triangulation_assertion(false); return false;
 	}
 	break;
@@ -1226,7 +1226,7 @@ public:
     case 0:
       {
 	if ( number_of_vertices() < 2 ) {
-	  if (verbose) { cerr << "less than 2 vertices but dimension 0" << endl; }
+	  if (verbose) { std::cerr << "less than 2 vertices but dimension 0" << std::endl; }
 	  CGAL_triangulation_assertion(false); return false;
 	}
 	// no break; continue
@@ -1235,7 +1235,7 @@ public:
       {
 	if ( number_of_vertices() < 1 ) {
 	  if (verbose)
-	    cerr << "no vertex but dimension -1" << endl;
+	    std::cerr << "no vertex but dimension -1" << std::endl;
 	  CGAL_triangulation_assertion(false);
 	  return false;
 	}
@@ -1245,13 +1245,13 @@ public:
 	  return false;
 	if ( number_of_vertices() != vertex_count ) {
 	  if (verbose)
-	    cerr << "false number of vertices" << endl;
+	    std::cerr << "false number of vertices" << std::endl;
 	  CGAL_triangulation_assertion(false);
 	  return false;
 	}
       } 
     } // end switch
-    if (verbose) { cerr << "valid data structure" << endl; }
+    if (verbose) { std::cerr << "valid data structure" << std::endl; }
     return true;
   } // end is_valid
 
@@ -1485,7 +1485,7 @@ private:
     
     while(it != vertices_end()) {
       if ( ! it->is_valid(verbose,level) ) {
-	if (verbose) { cerr << "invalid vertex" << endl; }
+	if (verbose) { std::cerr << "invalid vertex" << std::endl; }
 	CGAL_triangulation_assertion(false); return false;
       }
       ++i;
@@ -1502,7 +1502,7 @@ private:
     
     while(it != facets_end()) {
       if ( ! (*it).first->is_valid(dimension(),verbose, level) ) {
-	if (verbose) { cerr << "invalid facet" << endl;}
+	if (verbose) { std::cerr << "invalid facet" << std::endl;}
 	CGAL_triangulation_assertion(false); return false;
       }
       ++i;
@@ -1519,7 +1519,7 @@ private:
     
     while(it != edges_end()) {
       if ( ! (*it).first->is_valid(dimension(),verbose, level) ) {
-	if (verbose) { cerr << "invalid edge" << endl;}
+	if (verbose) { std::cerr << "invalid edge" << std::endl;}
 	CGAL_triangulation_assertion(false); return false;
       }
       ++i;
@@ -1536,7 +1536,7 @@ private:
     
     while(it != cells_end()) {
       if ( ! it->is_valid(dimension(),verbose, level) ) {
-	if (verbose) { cerr << "invalid cell" << endl;}
+	if (verbose) { std::cerr << "invalid cell" << std::endl;}
 	CGAL_triangulation_assertion(false); return false;
       }
       ++i;
@@ -1732,7 +1732,7 @@ std::ostream& operator<<
   case 3:
     {
       if(is_ascii(os)){
-        os << tds.dimension() << endl << n << endl;
+        os << tds.dimension() << std::endl << n << std::endl;
       } else {
         os << tds.dimension() << n;
       }
@@ -1741,7 +1741,7 @@ std::ostream& operator<<
   case 2:
     {
       if(is_ascii(os)){
-        os << tds.dimension() << endl << n << endl;
+        os << tds.dimension() << std::endl << n << std::endl;
       } else {
         os << tds.dimension() << n;
       }
@@ -1750,7 +1750,7 @@ std::ostream& operator<<
   case 1:
     {
       if(is_ascii(os)){
-        os << tds.dimension() << endl << n << endl;
+        os << tds.dimension() << std::endl << n << std::endl;
       } else {
         os << tds.dimension() << n ;
       }
@@ -1759,7 +1759,7 @@ std::ostream& operator<<
   case 0:
     {
       if(is_ascii(os)){
-	os << tds.dimension() << endl << n << endl;
+	os << tds.dimension() << std::endl << n << std::endl;
       } else {
 	os << tds.dimension() << n;
       }
@@ -1768,7 +1768,7 @@ std::ostream& operator<<
   default:
     {
       if(is_ascii(os)){
-	os << tds.dimension() << endl << n << endl;
+	os << tds.dimension() << std::endl << n << std::endl;
       } else {
 	os << tds.dimension() << n;
       }
@@ -1787,7 +1787,7 @@ std::ostream& operator<<
     V[&(*it)] = i++;
     //    os << it->point();
     //    if(is_ascii(os)){
-    //      os << endl;
+    //      os << std::endl;
     //    }
     ++it;
   }
@@ -1801,7 +1801,7 @@ std::ostream& operator<<
 //   case 3:
 //     {
 //       os << m;
-//       if(is_ascii(os)){ os << endl;}
+//       if(is_ascii(os)){ os << std::endl;}
 
 //       // write the cells
 //       Cell_iterator it = tds.cells_begin();
@@ -1811,7 +1811,7 @@ std::ostream& operator<<
 // 	  os << V[it->vertex(j)];
 // 	  if(is_ascii(os)) {
 // 	    if ( j==3 ) {
-// 	      os << endl;
+// 	      os << std::endl;
 // 	    } else {
 // 	      os << ' ';
 // 	    }
@@ -1828,7 +1828,7 @@ std::ostream& operator<<
 // 	  os << C[&(* it->neighbor(j))];
 // 	  if(is_ascii(os)){
 // 	    if(j==3) {
-// 	      os << endl;
+// 	      os << std::endl;
 // 	    } else {
 // 	      os <<  ' ';
 // 	    }
@@ -1841,7 +1841,7 @@ std::ostream& operator<<
 //   case 2:
 //     {
 //       os << m;
-//       if(is_ascii(os)){ os << endl;}
+//       if(is_ascii(os)){ os << std::endl;}
 
 //       // write the facets
 //       Facet_iterator it = tds.facets_begin();
@@ -1851,7 +1851,7 @@ std::ostream& operator<<
 // 	  os << V[(*it).first->vertex(j)];
 // 	  if(is_ascii(os)) {
 // 	    if ( j==2 ) {
-// 	      os << endl;
+// 	      os << std::endl;
 // 	    } else {
 // 	      os <<  ' ';
 // 	    }
@@ -1868,7 +1868,7 @@ std::ostream& operator<<
 // 	  os << C[&*((*it).first->neighbor(j))];
 // 	  if(is_ascii(os)){
 // 	    if(j==2) {
-// 	      os << endl;
+// 	      os << std::endl;
 // 	    } else {
 // 	      os <<  ' ';
 // 	    }
@@ -1881,7 +1881,7 @@ std::ostream& operator<<
 //   case 1:
 //     {
 //       os << m;
-//       if(is_ascii(os)){ os << endl;}
+//       if(is_ascii(os)){ os << std::endl;}
 
 //       // write the edges
 //       Edge_iterator it = tds.edges_begin();
@@ -1891,7 +1891,7 @@ std::ostream& operator<<
 // 	  os << V[(*it).first->vertex(j)];
 // 	  if(is_ascii(os)) {
 // 	    if ( j==1 ) {
-// 	      os << endl;
+// 	      os << std::endl;
 // 	    } else {
 // 	      os <<  ' ';
 // 	    }
@@ -1908,7 +1908,7 @@ std::ostream& operator<<
 // 	  os << C[&*((*it).first->neighbor(j))];
 // 	  if(is_ascii(os)){
 // 	    if(j==1) {
-// 	      os << endl;
+// 	      os << std::endl;
 // 	    } else {
 // 	      os <<  ' ';
 // 	    }
@@ -1921,7 +1921,7 @@ std::ostream& operator<<
 // //   default:
 // //     {
 // //       os << m;
-// //       if(is_ascii(os)){ os << endl;}
+// //       if(is_ascii(os)){ os << std::endl;}
 // //       break;
 // //     }
 //   }
@@ -2079,7 +2079,7 @@ std::ostream& print_cells
     {
       m = tds.number_of_cells();
       os << m;
-      if(is_ascii(os)){ os << endl;}
+      if(is_ascii(os)){ os << std::endl;}
 
       // write the cells
       Cell_iterator it = tds.cells_begin();
@@ -2089,7 +2089,7 @@ std::ostream& print_cells
 	  os << V[it->vertex(j)];
 	  if(is_ascii(os)) {
 	    if ( j==3 ) {
-	      os << endl;
+	      os << std::endl;
 	    } else {
 	      os << ' ';
 	    }
@@ -2106,7 +2106,7 @@ std::ostream& print_cells
 	  os << C[&(* it->neighbor(j))];
 	  if(is_ascii(os)){
 	    if(j==3) {
-	      os << endl;
+	      os << std::endl;
 	    } else {
 	      os <<  ' ';
 	    }
@@ -2120,7 +2120,7 @@ std::ostream& print_cells
     {
       m = tds.number_of_facets();
       os << m;
-      if(is_ascii(os)){ os << endl;}
+      if(is_ascii(os)){ os << std::endl;}
 
       // write the facets
       Facet_iterator it = tds.facets_begin();
@@ -2130,7 +2130,7 @@ std::ostream& print_cells
 	  os << V[(*it).first->vertex(j)];
 	  if(is_ascii(os)) {
 	    if ( j==2 ) {
-	      os << endl;
+	      os << std::endl;
 	    } else {
 	      os <<  ' ';
 	    }
@@ -2147,7 +2147,7 @@ std::ostream& print_cells
 	  os << C[&*((*it).first->neighbor(j))];
 	  if(is_ascii(os)){
 	    if(j==2) {
-	      os << endl;
+	      os << std::endl;
 	    } else {
 	      os <<  ' ';
 	    }
@@ -2161,7 +2161,7 @@ std::ostream& print_cells
     {
       m = tds.number_of_edges();
       os << m;
-      if(is_ascii(os)){ os << endl;}
+      if(is_ascii(os)){ os << std::endl;}
 
       // write the edges
       Edge_iterator it = tds.edges_begin();
@@ -2171,7 +2171,7 @@ std::ostream& print_cells
 	  os << V[(*it).first->vertex(j)];
 	  if(is_ascii(os)) {
 	    if ( j==1 ) {
-	      os << endl;
+	      os << std::endl;
 	    } else {
 	      os <<  ' ';
 	    }
@@ -2188,7 +2188,7 @@ std::ostream& print_cells
 	  os << C[&*((*it).first->neighbor(j))];
 	  if(is_ascii(os)){
 	    if(j==1) {
-	      os << endl;
+	      os << std::endl;
 	    } else {
 	      os <<  ' ';
 	    }
@@ -2201,7 +2201,7 @@ std::ostream& print_cells
 //   default:
 //     {
 //       os << m;
-//       if(is_ascii(os)){ os << endl;}
+//       if(is_ascii(os)){ os << std::endl;}
 //       break;
 //     }
   }
