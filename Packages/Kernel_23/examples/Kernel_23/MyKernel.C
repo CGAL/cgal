@@ -67,7 +67,7 @@ int main()
 
   Line l1(a,b), l2(p, q);
     
-intersection(l1, l2);
+  intersection(l1, l2);
 
 
   intersection(s1, l1);
