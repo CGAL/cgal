@@ -63,6 +63,7 @@ public: // conversion:
     return mpq_get_d(r);
   }
   
+  #if (__GNU_MP_VERSION >= 4)
   std::string toString() const {
     const int Base = 10;
     const int size = mpz_sizeinbase (mpq_numref(r),Base) + 
@@ -73,6 +74,7 @@ public: // conversion:
     delete str;
     return s;
   }
+  #endif
   
 public: // comparision:
   bool operator==(const Rational& x) const {
@@ -164,9 +166,11 @@ Rational operator/(const Rational& x,const Rational& y) {
   return z;
 }
 
+#if (__GNU_MP_VERSION >= 4)
 std::ostream& operator<<(std::ostream& out,const Rational& r) {
   return out << r.toString();
 }
+#endif
 
 double to_double(const Rational& x) {
   return x.toDouble();
