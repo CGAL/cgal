@@ -243,17 +243,6 @@ public:
     }
 };
 
-class Triangulation_test_Construct_bisector_2
-{
-public:
-  typedef Triangulation_test_point     Point;
-  typedef Triangulation_test_line      Line;
-  Line operator()(const Point &p, const Point &q)
-    {
-      return Line();
-    }
-};
-
 class Triangulation_test_Construct_midpoint
 {
 public:
@@ -264,6 +253,22 @@ public:
 		   (p.test_y() + q.test_y())/2. );
     }
 };
+
+class Triangulation_test_Construct_bisector_2
+{
+public:
+  typedef Triangulation_test_point     Point;
+  typedef Triangulation_test_line      Line;
+  Line operator()(const Point &p, const Point &q)
+    {
+      Triangulation_test_Construct_midpoint construct_midpoint;
+      Point m  = construct_midpoint(p,q);
+      Point mp = Point(m.test_x() + p.test_y() - q.test_y(), 
+		       m.test_y() - p.test_x() + q.test_x());
+      return Line(m,mp);
+    }
+};
+
 
 class Triangulation_test_Less_distance_to_point_2
 {
@@ -289,6 +294,15 @@ public:
     }
 };
 
+class Triangulation_test_Construct_direction_of_line_2
+{
+public:
+  Triangulation_test_Construct_direction_of_line_2(){}
+  typedef Triangulation_test_direction Direction;
+  typedef Triangulation_test_line      Line;
+  Direction operator()(Line l)    { return l.direction();}
+};
+
 class _Triangulation_test_traits {
 public:
   typedef Triangulation_test_point     Point_2;
@@ -311,6 +325,8 @@ public:
                                              Construct_midpoint;
   typedef Triangulation_test_Less_distance_to_point_2
                                              Less_distance_to_point_2;
+  typedef Triangulation_test_Construct_direction_of_line_2
+                                      Construct_direction_of_line_2;
 
   //  typedef Triangulation_test_distance  Distance;
 
@@ -350,6 +366,10 @@ public:
   Less_distance_to_point_2
   less_distance_to_point_2_object(const Point_2& p) const
     {return Less_distance_to_point_2(p);}
+
+  Construct_direction_of_line_2
+  construct_direction_of_line_2_object() const
+    { return Construct_direction_of_line_2();}
 };
 
 

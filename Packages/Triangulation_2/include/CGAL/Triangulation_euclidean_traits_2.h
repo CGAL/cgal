@@ -28,6 +28,7 @@
 #include <CGAL/Segment_2.h>
 #include <CGAL/Triangle_2.h>
 #include <CGAL/Line_2.h>
+#include <CGAL/Direction_2.h>
 #include <CGAL/Ray_2.h>
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/basic_constructions_2.h>
@@ -47,6 +48,7 @@ public:
   typedef Segment_2<R> Segment_2;
   typedef Triangle_2<R> Triangle_2;
   typedef Line_2<R> Line_2;
+  typedef Direction_2<R> Direction_2;
   typedef Ray_2<R> Ray_2;
 
   typedef typename R::Compare_x_2                Compare_x_2;
@@ -57,6 +59,8 @@ public:
   typedef typename R::Construct_bisector_2       Construct_bisector_2;
   typedef typename R::Construct_midpoint         Construct_midpoint;
   typedef typename R::Less_distance_to_point_2   Less_distance_to_point_2;
+  typedef typename R::Construct_direction_of_line_2
+                                            Construct_direction_of_line_2;
 
   // for compatibility with previous versions
   typedef Point_2      Point;
@@ -64,6 +68,7 @@ public:
   typedef Triangle_2   Triangle;
   typedef Ray_2        Ray;
   typedef Line_2       Line;
+  typedef Direction_2  Direction;
 
   Triangulation_euclidean_traits_2() {}
   Triangulation_euclidean_traits_2(const Triangulation_euclidean_traits_2 &) {}
@@ -103,6 +108,10 @@ public:
   Less_distance_to_point_2
   less_distance_to_point_2_object(const Point_2& p) const
     {return Less_distance_to_point_2(p);}
+
+  Construct_direction_of_line_2
+  construct_direction_of_line_2_object() const
+    {return  Construct_direction_of_line_2();}
 
 };
 
