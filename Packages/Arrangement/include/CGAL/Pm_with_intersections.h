@@ -26,14 +26,13 @@
 #include <CGAL/Pm_with_intersections_misc.h>
 #include <CGAL/Pm_walk_along_line_point_location.h>
 #include <CGAL/Planar_map_2/Pm_change_notification.h>
+#include <CGAL/Sweep_line_2/Pmwx_aggregate_insert.h>
 
 #ifndef CGAL_PM_COUNT_OPERATIONS_TIMES
 #define CGAL_PM_START_OP(x) 
 #define CGAL_PM_END_OP(x)  
 #define CGAL_DEFINE_COUNT_OP_TIMES_OBJECT
 #endif
-
-#include <CGAL/sweep_to_construct_planar_map_2.h>
 
 
 CGAL_BEGIN_NAMESPACE
@@ -1197,13 +1196,18 @@ public:
     return insert_intersecting_curve(c, src, tgt, false, en);
   }
 
+
   // inserts a given curve container into the map.
   template <class X_curve_2_iterator>
   Halfedge_iterator insert(const X_curve_2_iterator & begin,
                            const X_curve_2_iterator & end,
                            Change_notification * en = NULL)
   {
-    sweep_to_construct_planar_map_2(begin, end, *traits, *this);
+    typedef Pmwx_aggregate_insert<X_curve_2_iterator, Traits, 
+                                  Self ,Change_notification> Pmwx_agg_insert;
+    Pmwx_agg_insert p(traits);
+    p.insert_curves(begin, end, *this, en);
+
     return halfedges_begin();
   }
 
