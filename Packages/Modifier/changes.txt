@@ -1,5 +1,8 @@
 Modifier Package: Release changes:
 ---------------------------------------------------------------------
+1.3.3 (25 July 2001)
+     fixed unresolved figure reference in html manual
+
 1.3.2 removed wrapper.tex 
 1.3.1 removed test makefile
 
