@@ -92,11 +92,10 @@ throw_exception_for_assertion_violation( const char*  type,
 
 // We use derivation instead of typedefs to shorten mangled symbols.
 // typedef CGAL::Cartesian<double>                 C_double;
-// typedef CGAL::Cartesian<exact_NT>               C_real;
-// typedef CGAL::Filtered_kernel<C_double, C_real> C_filtered;
+// typedef CGAL::Filtered_kernel<C_double>         C_filtered;
 struct C_double   : public CGAL::Cartesian<double> {};
 struct C_real     : public CGAL::Cartesian<exact_NT> {};
-struct C_filtered : public CGAL::Filtered_kernel<C_double, C_real> {};
+struct C_filtered : public CGAL::Filtered_kernel<C_double> {};
 
 typedef C_double::Point_2             double_Point;
 typedef C_double::Segment_2           double_Segment;
