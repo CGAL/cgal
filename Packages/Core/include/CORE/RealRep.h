@@ -320,25 +320,78 @@ public:
 
   /// \name I/O stream
   //@{
-  std::ostream& operator <<(std::ostream&) const;
+  std::ostream& operator <<(std::ostream& o) const
+{
+  o << ker;
+  return o;
+};
   //@}
 };
 
 // The constructors of Realbase_for<> are specialized.
 template <>
-Realbase_for<long>::Realbase_for(const long &l);
+inline
+Realbase_for<long>::Realbase_for(const long &l)
+  : ker(l)
+{
+  mostSignificantBit = ((ker != 0) ? extLong(flrLg(ker)) : CORE_negInfty); 
+  //  This computes the bit length of "ker" minus 1,
+  //  i.e., floor(log_2(|ker|)) .
+}
 
 template <>
-Realbase_for<double>::Realbase_for(const double& d);
+inline
+Realbase_for<double>::Realbase_for(const double& d)
+  : ker(d)
+{
+  mostSignificantBit = BigFloat(ker).MSB();
+}
 
 template <>
-Realbase_for<BigInt>::Realbase_for(const BigInt& I);
+inline Realbase_for<BigInt>::Realbase_for(const BigInt& I)
+  : ker(I)
+{
+  mostSignificantBit = (sign(ker)? extLong(floorLg(ker)) : CORE_negInfty);
+}
 
 template <>
-Realbase_for<BigFloat>::Realbase_for(const BigFloat& B);
+inline
+Realbase_for<BigFloat>::Realbase_for(const BigFloat& B)
+  : ker(B)
+{
+  mostSignificantBit = ker.MSB();
+}
 
 template <>
-Realbase_for<BigRat>::Realbase_for(const BigRat& R);
+inline
+Realbase_for<BigRat>::Realbase_for(const BigRat& R)
+ : ker(R)
+{
+  // MSB of a rational x/y is given by floorLg(|x/y|)
+  BigInt x = ker.numerator();
+  BigInt y = ker.denominator();
+  if (ker.sign()) {
+    mostSignificantBit = extLong(floorLg(x) - floorLg(y));
+    x.abs();
+    if ((y << mostSignificantBit.asLong()) > x) 
+      mostSignificantBit = mostSignificantBit - 1;
+  } else
+    mostSignificantBit = CORE_negInfty;
+  /*
+  mostSignificantBit = ker.sign() ? \
+       extLong(floorLg(x) - floorLg(y)) : CORE_negInfty;
+
+  // This gives us an approximation to msb that could off by 1 in
+  // one direction.  So we next adjust for this possibility:
+  // The exact value of msb(x/y) is given by
+  //   y.2^msb <= x < y.2^{msb+1}.
+
+  // 5/16/02: fixed a bug in logic (Pion/Zilin/Chee)
+  x.abs();
+  if ((y << mostSignificantBit.asLong()) > x) 
+       mostSignificantBit = mostSignificantBit - 1;
+  */
+}
 
 CORE_END_NAMESPACE
 #endif
