@@ -419,4 +419,7 @@ make_testscripts;
 set_file_headers if !$::TESTING;
 set_version_in_config;
 make_results_page;
+chdir $::PARENT_DIR or die;
+system("tar cf - $::VERSION | gzip > $::VERSION.tar.gz");
+ 
 
