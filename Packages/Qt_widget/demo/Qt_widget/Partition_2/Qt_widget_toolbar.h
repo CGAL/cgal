@@ -39,10 +39,10 @@
 #include <qmainwindow.h>
 #include <qbuttongroup.h>
 
-typedef CGAL::Cartesian<CGAL::MP_Float>                   Rp;
+typedef CGAL::Cartesian<CGAL::MP_Float>     Rp;
 typedef CGAL::Partition_traits_2<Rp>			  Traits;
-typedef Traits::Point_2                                   Point_2;
-typedef Traits::Polygon_2                                 Polygon;
+typedef Traits::Point_2                     Point_2;
+typedef Traits::Polygon_2                   Polygon;
 
 
 namespace CGAL {
