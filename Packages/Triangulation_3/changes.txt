@@ -1,3 +1,6 @@
+18 May 2004 Sylvain Pion
+- SunPRO workaround.
+
 8 May 2004 Sylvain Pion
 - test_regular_3.C : remove warning.
 

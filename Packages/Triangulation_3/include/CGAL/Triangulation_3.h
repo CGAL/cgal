@@ -2756,8 +2756,14 @@ operator==(const Triangulation_3<GT, Tds> &t1,
     if (dim == 1) {
         // It's enough to test that the points are the same,
         // since the triangulation is uniquely defined in this case.
+#ifndef CGAL_CFG_MISSING_TEMPLATE_VECTOR_CONSTRUCTORS_BUG
         std::vector<Point> V1(t1.points_begin(), t1.points_end());
         std::vector<Point> V2(t2.points_begin(), t2.points_end());
+#else
+        std::vector<Point> V1, V2;
+        std::copy(t1.points_begin(), t1.points_end(), std::back_inserter(V1));
+        std::copy(t2.points_begin(), t2.points_end(), std::back_inserter(V2));
+#endif
         std::sort(V1.begin(), V1.end(),
                   compose(Is_negative<Comparison_result>(),
                           t1.geom_traits().compare_xyz_3_object()));
