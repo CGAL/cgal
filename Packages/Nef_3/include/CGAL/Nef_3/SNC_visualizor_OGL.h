@@ -242,8 +242,8 @@ namespace OGL {
     GLdouble* pu(static_cast<GLdouble*>(user));
     TRACEN("vertexCallback coord  "<<pc[0]<<","<<pc[1]<<","<<pc[2]);
     TRACEN("vertexCallback normal "<<pu[0]<<","<<pu[1]<<","<<pu[2]);
-    glVertex3dv(pc); 
     glNormal3dv(pu);
+    glVertex3dv(pc); 
   }
 
   class Polyhedron {
@@ -424,23 +424,29 @@ namespace OGL {
     }
 
 
-    void draw() const
+    void draw( GLdouble z_vec[3]) const
     { 
       if (!is_initialized()) const_cast<Polyhedron&>(*this).initialize();
       double l = std::max( std::max( bbox().xmax() - bbox().xmin(),
                                      bbox().ymax() - bbox().ymin()),
                            bbox().zmax() - bbox().zmin());
+      if ( l < 1) // make sure that a single point doesn't screw up here
+          l = 1;
       glScaled( 4.0/l, 4.0/l, 4.0/l);
       glTranslated( -(bbox().xmax() + bbox().xmin()) / 2.0,
                     -(bbox().ymax() + bbox().ymin()) / 2.0,
                     -(bbox().zmax() + bbox().zmin()) / 2.0);
-      glCallList(object_list_);   // vertices
-      glCallList(object_list_+1); // edges
       if ( surface_ ) {
 	glEnable(GL_LIGHTING); 
 	glCallList(object_list_+2); // facets
 	glDisable(GL_LIGHTING);
       }
+      // move edges and vertices a bit towards the view-point, 
+      // i.e., 1/100th of the unit vector in camera space
+      double f = l / 4.0 / 100.0;
+      glTranslated( z_vec[0] * f, z_vec[1] * f, z_vec[2] * f);
+      glCallList(object_list_+1); // edges
+      glCallList(object_list_);   // vertices
       if (axes_) glCallList(object_list_+3); // axis
    }
 
@@ -526,12 +532,12 @@ static void show (int mode)
       break;
     case BOUNDARY:
       CGAL_nef3_forall_iterators(it,polyhedra_) it->boundary_on();
-      CGAL_nef3_forall_iterators(it,polyhedra_) it->draw();
+      //CGAL_nef3_forall_iterators(it,polyhedra_) it->draw();
       glutPostRedisplay();
       break;
     case SKELETON:
       CGAL_nef3_forall_iterators(it,polyhedra_) it->skeleton_on();
-      CGAL_nef3_forall_iterators(it,polyhedra_) it->draw();
+      //CGAL_nef3_forall_iterators(it,polyhedra_) it->draw();
       glutPostRedisplay();
       break;
     case PERSP:
@@ -643,41 +649,45 @@ static void motion (int x, int y)
 
 static void initialize_olg()
 {
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+
+  GLfloat light_ambient[4] = { 1.0, 1.0, 1.0, 1.0 };
+  GLfloat light_diffuse[] =  { 1.0, 1.0, 1.0, 1.0 };    // white diffuse light 
+  GLfloat light_position[] = { 20.0, 30.0, -50.0, 0.0 }; // infinite location
+  //GLfloat light_position[] = { 3.0, 5.0, 4.5, 1.0};
+
+  glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, 1);
+  glLightModelfv(GL_LIGHT_MODEL_AMBIENT, light_ambient);
+  glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+  glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+  glEnable(GL_LIGHT0);
+
+
+  GLfloat mat_ambient[4] = { 0.1, 0.1, 0.1, 1.0 };
+  //GLfloat mat_back_ambient[4] = { 0.2, 0.0, 0.0, 1.0 };
   GLfloat mat_diffuse[4] = { 0.7, 0.7, 0.7, 1.0 };
   //GLfloat mat_specular[4] = { 1.0, 1.0, 1.0, 1.0 };
   GLfloat mat_specular[4] = { 0.3, 0.3, 0.3, 1.0 };
   GLfloat mat_shininess[] = { 100.0 };
   
-  glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, 1.0);
+  glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mat_ambient );
+  //glMaterialfv(GL_BACK,  GL_AMBIENT, mat_back_ambient );
   glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mat_diffuse );
   glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular );
   glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, mat_shininess );
 
-//#define SCREENSHOTS
-#ifdef SCREENSHOTS
-  GLfloat mat_emission[] = { 0.1, 0.1, 0.2, 0.0 };
-  glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);
-  //for screenshots enable this section
-#endif
-
-  GLfloat light_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };     // red diffuse light 
-  GLfloat light_position[] = {  0.0, 0.0, 10.0, 0.0 }; //  finite location
-  glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-  glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-  glEnable(GL_LIGHT0);
-
-  GLfloat ambient_light[] = {  0.8, 0.8, 0.8, 1.0 };
-  glLightfv(GL_LIGHT1, GL_AMBIENT, ambient_light);
-  glEnable(GL_LIGHT1);
-
+  glDepthFunc( GL_LEQUAL);
+  glShadeModel( GL_FLAT);
+  glEnable(GL_AUTO_NORMAL);
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_POINT_SMOOTH);
-  glEnable(GL_AUTO_NORMAL);
   glEnable(GL_NORMALIZE);
 
-  glColorMaterial(GL_FRONT_AND_BACK,GL_DIFFUSE);
-  glEnable(GL_COLOR_MATERIAL);
-
+  //glColorMaterial(GL_FRONT_AND_BACK,GL_DIFFUSE);
+  //glEnable(GL_COLOR_MATERIAL);
 }
 
 static void enter_leave(int state)
@@ -717,8 +727,11 @@ static void draw()
   glMultMatrixd( M);
   
   glScaled(s,s,s);
+  GLdouble z_vec[3] = { rotation.m(2,0) / s,
+                        rotation.m(2,1) / s,
+                        rotation.m(2,2) / s};
   int win = glutGetWindow();
-  polyhedra_[win-1].draw();
+  polyhedra_[win-1].draw( z_vec);
   glPopMatrix();
   glutSwapBuffers();
 }
@@ -841,7 +854,7 @@ public:
   { 
     Point_3 p = point(v);
     Point_3 sp(p.hx().eval_at(1000),p.hy().eval_at(1000),p.hz().eval_at(1000),p.hw().eval_at(1000));
-        SETDTHREAD(53);TRACEN("vertex " << sp);
+    TRACEN("vertex " << sp);
     ppoly_->push_back(double_point(sp), mark(v)); 
   }
 
@@ -881,7 +894,6 @@ public:
 
   void draw() const
   { 
-    SETDTHREAD(53);
     Vertex_iterator v;
     CGAL_nef3_forall_vertices(v,*sncp()) draw(v);
     ppoly_->bbox() = sncp()->bounded_bbox();
