@@ -34,6 +34,31 @@ void predicates()
   std::cout << (int) CGAL::orientation(A,B,C) << std::endl;
 }
 
+namespace CGAL {
+
+template <class NT>
+Sign
+my_sign(const NT& n)
+{
+  return CGAL_NTS sign(n);
+}
+
+template <class NT>
+NT
+my_square(const NT& n)
+{
+  return CGAL_NTS square(n);
+}
+
+template <class NT>
+NT
+my_min(const NT& n, const NT& m)
+{
+  return min(n, m);
+}
+
+} // namespace CGAL
+
 int main ()
 {
   std::cout.precision(20);
@@ -42,14 +67,14 @@ int main ()
   // NT c = b;
   NT d (1.0);
   NT e = d + d;
-  NT z = min(e,d);
+  NT z = CGAL::my_min(e,d);
   (void) d; (void) e; (void) z; // Shut up warnings.
   std::cout << e/NT(3) << std::endl;
   // NT f = abs(NT(0));
-  std::cout << "sign(3*(1/3)-1) = " << CGAL_NTS sign(NT(3)*(NT(1)/NT(3))-NT(1))
+  std::cout << "sign(3*(1/3)-1) = " << CGAL::my_sign(NT(3)*(NT(1)/NT(3))-NT(1))
             << std::endl;
   std::cout << "sign(sqrt(2)^2-2) = "
-            << CGAL_NTS sign(CGAL_NTS square(CGAL_NTS sqrt(NT(2)))-NT(2))
+            << CGAL::my_sign(CGAL::my_square(CGAL_NTS sqrt(NT(2)))-NT(2))
             << std::endl;
   // std::cout << "sign(sqrt(2)) = " << CGAL_NTS sign(CGAL_NTS sqrt(NT(2))) << std::endl;
   // std::cout << "sign(square(2)) = " << CGAL_NTS sign(CGAL_NTS square(NT(2))) << std::endl;
