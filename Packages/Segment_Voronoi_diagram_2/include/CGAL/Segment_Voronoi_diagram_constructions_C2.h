@@ -6,9 +6,8 @@
 #include <CGAL/Number_type_traits.h>
 #include <CGAL/Segment_Voronoi_diagram_site_2.h>
 
-#include <CGAL/Square_root_1.h>
-#include <CGAL/Square_root_2.h>
-#include <CGAL/Square_root_3.h>
+#include <CGAL/predicates/Square_root_1.h>
+#include <CGAL/predicates/Square_root_2.h>
 
 
 #include <CGAL/Parabola_2.h>
@@ -38,7 +37,7 @@ public:
   typedef CGAL::Square_root_1<RT>       Sqrt_1;
   typedef CGAL::Square_root_2<RT>       Sqrt_2;
   typedef CGAL::Square_root_2<Sqrt_1>   Sqrt_3;
-  //  typedef CGAL::Square_root_3<typename R::RT>   Sqrt_3;
+
 
   struct Homogeneous_point_2
   {
