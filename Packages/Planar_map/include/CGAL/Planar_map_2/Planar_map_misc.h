@@ -92,8 +92,12 @@ public:
   
   bool point_is_same( const Point  & p1, const Point  & p2 ) const
   { 
+#ifdef PM_MISC_USE_ISSAME
+    return is_same(p1, p2);
+#else
     return ( (compare_y(p1, p2) == EQUAL) &&
              (compare_x(p1, p2) == EQUAL)   );	
+#endif
   }
   
   bool point_is_left_low( const Point  & p1,  
