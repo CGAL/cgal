@@ -71,17 +71,18 @@ gp_linear_intersection(const PlaneH3<R> &f,
                        const PlaneH3<R> &g,
                        const PlaneH3<R> &h)
 {
+  typedef typename R::RT RT;
   return PointH3<R>(
-                      det3x3_by_formula(-f.d(), f.b(), f.c(),
+                  det3x3_by_formula<RT>(-f.d(), f.b(), f.c(),
                                         -g.d(), g.b(), g.c(),
                                         -h.d(), h.b(), h.c()),
-                      det3x3_by_formula( f.a(),-f.d(), f.c(),
+                  det3x3_by_formula<RT>( f.a(),-f.d(), f.c(),
                                          g.a(),-g.d(), g.c(),
                                          h.a(),-h.d(), h.c()),
-                      det3x3_by_formula( f.a(), f.b(),-f.d(),
+                  det3x3_by_formula<RT>( f.a(), f.b(),-f.d(),
                                          g.a(), g.b(),-g.d(),
                                          h.a(), h.b(),-h.d()),
-                      det3x3_by_formula( f.a(), f.b(), f.c(),
+                  det3x3_by_formula<RT>( f.a(), f.b(), f.c(),
                                          g.a(), g.b(), g.c(),
                                          h.a(), h.b(), h.c()));
 }

@@ -476,7 +476,7 @@ side_of_oriented_sphere(const PointH3<R> &p,
   const RT thw = t.hw();
   const RT thw2 = thw*thw;
 
-  const RT det = det5x5_by_formula(
+  const RT det = det5x5_by_formula<RT>(
         phx*phw, phy*phw, phz*phw, phx*phx + phy*phy + phz*phz, phw2,
         qhx*qhw, qhy*qhw, qhz*qhw, qhx*qhx + qhy*qhy + qhz*qhz, qhw2,
         rhx*rhw, rhy*rhw, rhz*rhw, rhx*rhx + rhy*rhy + rhz*rhz, rhw2,
@@ -514,9 +514,9 @@ side_of_bounded_sphere(const PointH3<R> &p,
   const RT& thz = t.hz();
   const RT& thw = t.hw();
 
-  return Bounded_side( CGAL_NTS sign((thx*phw-phx*thw)*(qhx*thw-thx*qhw)
-	                           + (thy*phw-phy*thw)*(qhy*thw-thy*qhw)
-	                           + (thz*phw-phz*thw)*(qhz*thw-thz*qhw)) );
+  return Bounded_side( CGAL_NTS sign<RT>((thx*phw-phx*thw)*(qhx*thw-thx*qhw)
+	                               + (thy*phw-phy*thw)*(qhy*thw-thy*qhw)
+	                               + (thz*phw-phz*thw)*(qhz*thw-thz*qhw)));
 }
 
 template < class R >

@@ -194,7 +194,7 @@ squared_radiusC3(const FT &px, const FT &py, const FT &pz,
   CGAL_kernel_assertion( ! CGAL_NTS is_zero(den) );
 
   return (CGAL_NTS square(num_x) + CGAL_NTS square(num_y)
-        + CGAL_NTS square(num_z)) / CGAL_NTS square(FT(2) * den);
+        + CGAL_NTS square(num_z)) / CGAL_NTS square<FT>(FT(2) * den);
 }
 
 template < class FT >
@@ -231,7 +231,7 @@ squared_radiusC3(const FT &px, const FT &py, const FT &pz,
   CGAL_kernel_assertion( den != FT(0) );
 
   return (CGAL_NTS square(num_x) + CGAL_NTS square(num_y)
-        + CGAL_NTS square(num_z)) / CGAL_NTS square(FT(2) * den);
+        + CGAL_NTS square(num_z)) / CGAL_NTS square<FT>(FT(2) * den);
 }
 
 template <class FT>
@@ -336,8 +336,8 @@ FT
 squared_distanceC3( const FT &px, const FT &py, const FT &pz,
                     const FT &qx, const FT &qy, const FT &qz)
 {
-  return CGAL_NTS square(px-qx) + CGAL_NTS square(py-qy) +
-	 CGAL_NTS square(pz-qz);
+  return CGAL_NTS square<FT>(px-qx) + CGAL_NTS square<FT>(py-qy) +
+	 CGAL_NTS square<FT>(pz-qz);
 }
 
 template < class FT >

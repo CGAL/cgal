@@ -520,9 +520,10 @@ CGAL_KERNEL_INLINE
 bool
 Aff_transformation_repH3<R>::is_even() const
 {
-  return (CGAL_NTS sign( t33 * det3x3_by_formula(t00, t01, t02,
+  return (CGAL_NTS sign<RT>( t33 *
+	                    det3x3_by_formula(t00, t01, t02,
                                               t10, t11, t12,
-                                              t20, t21, t22 ) ) == 1 );
+                                              t20, t21, t22 ) ) == POSITIVE );
 }
 
 template < class R >

@@ -134,6 +134,7 @@ struct Simple_cartesian
     typedef Cartesian_tag                                 Kernel_tag;
 
     typedef Simple_cartesian<FT>                          Self;
+    typedef Simple_cartesian<FT>                          R;
     typedef Simple_cartesian_base<Self,FT>                Kernel_base;
 
     // Now CGAL::Point_2<R> is only a wrapper around CGAL::PointC2<R>

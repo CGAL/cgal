@@ -907,8 +907,8 @@ _where_wrt_L_wedge( const PointH2<R>& p,
   const RT& qhy = q.hy();
   const RT& qhw = q.hw();
 
-  Sign xs = CGAL_NTS sign( qhx*phw - phx*qhw );  // sign( qx - px )
-  Sign ys = CGAL_NTS sign( qhy*phw - phy*qhw );  // sign( qy - py )
+  Sign xs = CGAL_NTS sign<RT>( qhx*phw - phx*qhw );  // sign( qx - px )
+  Sign ys = CGAL_NTS sign<RT>( qhy*phw - phy*qhw );  // sign( qy - py )
 
   if (( xs == NEGATIVE ) || ( ys == NEGATIVE ))
   {
@@ -939,8 +939,8 @@ compare_deltax_deltay(const PointH2<R>& p,
   const RT& rhw = r.hw();
   const RT& shy = s.hy();
   const RT& shw = s.hw();
-  const RT  tbc1 = CGAL_NTS abs(phx*qhw - qhx*phw) * rhw*shw;
-  const RT  tbc2 = CGAL_NTS abs(rhy*shw - shy*rhw) * phw*qhw;
+  const RT  tbc1 = CGAL_NTS abs<RT>(phx*qhw - qhx*phw) * rhw*shw;
+  const RT  tbc2 = CGAL_NTS abs<RT>(rhy*shw - shy*rhw) * phw*qhw;
 
   return (tbc2 < tbc1) ? LARGER
                        : (tbc1 == tbc2) ? EQUAL : SMALLER;

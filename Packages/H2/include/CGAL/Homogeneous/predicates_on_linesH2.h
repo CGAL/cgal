@@ -194,28 +194,27 @@ CGAL_KERNEL_MEDIUM_INLINE
 Comparison_result
 compare_slopes(const LineH2<R>& l1, const LineH2<R>& l2)
 {
+   typedef typename R::RT RT;
    if (l1.is_horizontal())
      return l2.is_vertical() ? 
-         SMALLER : Comparison_result(CGAL_NTS sign(l2.a() * l2.b()));
+         SMALLER : Comparison_result(CGAL_NTS sign<RT>(l2.a() * l2.b()));
    if (l2.is_horizontal()) 
      return l1.is_vertical() ? 
-         LARGER : Comparison_result(- CGAL_NTS sign(l1.a() * l1.b()));
+         LARGER : Comparison_result(- CGAL_NTS sign<RT>(l1.a() * l1.b()));
    if (l1.is_vertical()) return l2.is_vertical() ? EQUAL : LARGER;
    if (l2.is_vertical()) return SMALLER;
-   int l1_sign = CGAL_NTS sign(-l1.a() * l1.b());
-   int l2_sign = CGAL_NTS sign(-l2.a() * l2.b());
+   int l1_sign = CGAL_NTS sign<RT>(-l1.a() * l1.b());
+   int l2_sign = CGAL_NTS sign<RT>(-l2.a() * l2.b());
 
    if (l1_sign < l2_sign) return SMALLER;
    if (l1_sign > l2_sign) return LARGER;
 
    if (l1_sign > 0)
-     return Comparison_result(
-             CGAL_NTS sign ( CGAL_NTS abs(l1.a() * l2.b()) -
-                             CGAL_NTS abs(l2.a() * l1.b()) ) );
+     return CGAL_NTS compare( CGAL_NTS abs<RT>(l1.a() * l2.b()),
+                              CGAL_NTS abs<RT>(l2.a() * l1.b()) );
 
-   return Comparison_result(
-            CGAL_NTS sign ( CGAL_NTS abs(l2.a() * l1.b()) -
-                            CGAL_NTS abs(l1.a() * l2.b()) ) );
+   return CGAL_NTS compare( CGAL_NTS abs<RT>(l2.a() * l1.b()),
+                            CGAL_NTS abs<RT>(l1.a() * l2.b()) );
 }
 
 CGAL_END_NAMESPACE

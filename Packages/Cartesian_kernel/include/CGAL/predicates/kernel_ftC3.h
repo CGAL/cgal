@@ -91,9 +91,9 @@ orientationC3(const FT &px, const FT &py, const FT &pz,
               const FT &rx, const FT &ry, const FT &rz,
               const FT &sx, const FT &sy, const FT &sz)
 {
-  return Orientation(sign_of_determinant3x3(qx-px,rx-px,sx-px,
-                                            qy-py,ry-py,sy-py,
-                                            qz-pz,rz-pz,sz-pz));
+  return Orientation(sign_of_determinant3x3<FT>(qx-px,rx-px,sx-px,
+                                                qy-py,ry-py,sy-py,
+                                                qz-pz,rz-pz,sz-pz));
 }
 
 template < class FT >
@@ -103,9 +103,9 @@ angleC3(const FT &px, const FT &py, const FT &pz,
         const FT &qx, const FT &qy, const FT &qz,
         const FT &rx, const FT &ry, const FT &rz)
 {
-  return (Angle) CGAL_NTS sign ((px-qx)*(rx-qx)+
-	                        (py-qy)*(ry-qy)+
-				(pz-qz)*(rz-qz));
+  return (Angle) CGAL_NTS sign<FT>((px-qx)*(rx-qx)+
+	                           (py-qy)*(ry-qy)+
+				   (pz-qz)*(rz-qz));
 }
 
 template < class FT >
@@ -266,7 +266,7 @@ Oriented_side
 side_of_oriented_planeC3(const FT &a,  const FT &b,  const FT &c, const FT &d,
                          const FT &px, const FT &py, const FT &pz)
 {
-  return Oriented_side(CGAL_NTS sign(a*px + b*py + c*pz +d));
+  return Oriented_side(CGAL_NTS sign<FT>(a*px + b*py + c*pz +d));
 }
 
 template <class FT >
@@ -329,9 +329,9 @@ side_of_bounded_sphereC3(const FT &px, const FT &py, const FT &pz,
                          const FT &tx, const FT &ty, const FT &tz)
 {
   // Returns whether T lies inside or outside the sphere which diameter is PQ.
-  return Bounded_side( CGAL_NTS sign((tx-px)*(qx-tx)
-	                           + (ty-py)*(qy-ty)
-	                           + (tz-pz)*(qz-tz)) );
+  return Bounded_side( CGAL_NTS sign<FT>((tx-px)*(qx-tx)
+	                               + (ty-py)*(qy-ty)
+	                               + (tz-pz)*(qz-tz)) );
 }
 
 template < class FT >
@@ -389,9 +389,9 @@ side_of_bounded_sphereC3(const FT &px, const FT &py, const FT &pz,
   FT den2 = FT(2) * den;
 
   // The following could be simplified a bit.
-  return Bounded_side(cmp_dist_to_pointC3(num_x,    - num_y,  num_z,
-	                                  psx*den2, psy*den2, psz*den2,
-	                                  tsx*den2, tsy*den2, tsz*den2) );
+  return Bounded_side(cmp_dist_to_pointC3<FT>(num_x,    - num_y,  num_z,
+	                                      psx*den2, psy*den2, psz*den2,
+	                                      tsx*den2, tsy*den2, tsz*den2) );
 }
 
 template < class FT >

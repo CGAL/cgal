@@ -1,3 +1,7 @@
+2.70   (5 Oct 2002)
+- Add explicit types to function templates to support expression templates
+  (GMP++).
+
 2.69   (29 Aug 2002)
 - fixed bug in compare_slopes when segment2 is horizontal.
 

@@ -139,7 +139,7 @@ class Aff_transformation_repH2 : public Aff_transformation_rep_baseH2<R>
 
     virtual   bool
               is_even() const
-              { return CGAL_NTS sign( (a*e - b*d)*g )== 1; }
+              { return CGAL_NTS sign<RT>( (a*e - b*d)*g ) == POSITIVE; }
 
     virtual   RT   homogeneous(int i, int j) const;
     virtual   FT   cartesian(int i, int j) const;

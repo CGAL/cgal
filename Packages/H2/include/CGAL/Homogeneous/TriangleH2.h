@@ -108,7 +108,9 @@ TriangleH2<R>::area() const
    Vector_2 v1 = vertex(1) - vertex(0);
    Vector_2 v2 = vertex(2) - vertex(0);
 
-   return (v1.hx()*v2.hy() - v2.hx()*v1.hy())/(FT(2)*(v1.hw() * v2.hw()));
+   typename R::RT num = v1.hx()*v2.hy() - v2.hx()*v1.hy();
+   typename R::RT den = RT(2) * v1.hw() * v2.hw();
+   return FT(num)/FT(den);
 }
 
 template <class R>

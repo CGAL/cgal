@@ -71,7 +71,7 @@ circumcenterC2( const FT &px, const FT &py,
                 const FT &rx, const FT &ry,
                 FT &x, FT &y )
 {
-  circumcenter_translateC2(qx-px, qy-py, rx-px, ry-py, x, y);
+  circumcenter_translateC2<FT>(qx-px, qy-py, rx-px, ry-py, x, y);
   x += px;
   y += py;
 }
@@ -238,7 +238,7 @@ squared_radiusC2(const FT &px, const FT &py,
                        const FT &rx, const FT &ry)
 {
   FT x, y;
-  circumcenter_translateC2(qx-px, qy-py, rx-px, ry-py, x, y);
+  circumcenter_translateC2<FT>(qx-px, qy-py, rx-px, ry-py, x, y);
   return CGAL_NTS square(x) + CGAL_NTS square(y);
 }
 
@@ -248,7 +248,7 @@ FT
 squared_distanceC2( const FT &px, const FT &py,
                     const FT &qx, const FT &qy)
 {
-  return CGAL_NTS square(px-qx) + CGAL_NTS square(py-qy);
+  return CGAL_NTS square<FT>(px-qx) + CGAL_NTS square<FT>(py-qy);
 }
 
 template < class FT >
@@ -279,7 +279,7 @@ scaled_distance_to_lineC2( const FT &px, const FT &py,
                            const FT &qx, const FT &qy,
                            const FT &rx, const FT &ry)
 {
-  return det2x2_by_formula(px-rx,py-ry,qx-rx,qy-ry);
+  return det2x2_by_formula<FT>(px-rx, py-ry, qx-rx, qy-ry);
 }
 
 CGAL_END_NAMESPACE
