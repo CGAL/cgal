@@ -1,18 +1,3 @@
-// if QT is not installed, a message will be issued in runtime.
-#ifndef CGAL_USE_QT
-#include <iostream>
-
-int main(int, char*)
-{
-
-  std::cout << "Sorry, this demo needs QT...";
-  std::cout << std::endl;
-
-  return 0;
-}
-
-#else
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -20,10 +5,13 @@ int main(int, char*)
 
 #include <qapplication.h>
 #include <qmainwindow.h>
+#include <qtoolbar.h>
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_view.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
+#include <CGAL/IO/Qt_widget_get_point.h>
+#include <CGAL/IO/pixmaps/point.xpm>
 
 typedef CGAL::Cartesian<double>		    Rep;
 typedef CGAL::Point_2<Rep>		    Point;
@@ -35,22 +23,6 @@ class My_View : public CGAL::Qt_widget_view{
   void draw(CGAL::Qt_widget& win){
     win << CGAL::BLACK;
     win << dt;
-  }
-};
-
-class My_Tool : public CGAL::Qt_widget_tool{
-public:
-  My_Tool(){};
-private:
-  void mousePressEvent(QMouseEvent *e)
-  {
-    if(e->button() == Qt::LeftButton)
-    {
-      double
-	x=static_cast<double>(widget->x_real(e->x())),
-	y=static_cast<double>(widget->y_real(e->y()));
-      widget->new_object(CGAL::make_object(Point(x, y)));
-    }
   }
 };
 
@@ -68,12 +40,28 @@ public:
     stoolbar = new CGAL::Standard_toolbar(&win, this);
     this->addToolBar(stoolbar->toolbar(), Top, FALSE);
     
+    QToolBar  *tools_toolbar;
+    tools_toolbar = new QToolBar("Tools", this, QMainWindow::Top, TRUE, "Tools");
+    addToolBar(tools_toolbar, Top, FALSE);
+    get_point_but =  new QToolButton(QPixmap( (const char**)point_xpm ),
+				  "Point Tool", 
+				  0, 
+				  this, 
+				  SLOT(pointtool()), 
+				  tools_toolbar, 
+				  "Point Tool");
+    get_point_but->setToggleButton(TRUE);
     win.attach(&v);
 
     connect(&win, SIGNAL(new_cgal_object(CGAL::Object)), this, SLOT(get_object(CGAL::Object)));
-    win.attach(t);
   }
 private slots:
+  void pointtool(){
+    if (get_point_but->isOn())
+      win.attach(get_point);
+    else
+      win.detach_current_tool();
+  }
   void get_object(CGAL::Object obj)
   {
     Point p;
@@ -81,16 +69,18 @@ private slots:
     {
       dt.insert(p);
       win.redraw();
+      win << CGAL::RED << p;
     }
   }
 private:
   CGAL::Qt_widget win;
   My_View v;
-  My_Tool t;
   CGAL::Standard_toolbar *stoolbar;
+  CGAL::Qt_widget_get_point<Rep> get_point;
+  QToolButton *get_point_but;
 };
 
-#include "sixth.moc"
+#include "tutorial8.moc"
 
 int main( int argc, char **argv )
 {
@@ -101,5 +91,3 @@ int main( int argc, char **argv )
     W.setCaption("Using the Standard Toolbar");
     return app.exec();
 }
-
-#endif // CGAL_USE_QT

@@ -1420,6 +1420,7 @@ Packages/Qt_widget/demo/Qt_widget/basic/tutorial4/demo.dsp -text
 Packages/Qt_widget/demo/Qt_widget/basic/tutorial5/demo.dsp -text
 Packages/Qt_widget/demo/Qt_widget/basic/tutorial6/demo.dsp -text
 Packages/Qt_widget/demo/Qt_widget/basic/tutorial7/demo.dsp -text
+Packages/Qt_widget/demo/Qt_widget/basic/tutorial8/demo.dsp -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/arrow.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/greene_approx.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/hand.xpm -text
