@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1997-2000 The CGAL Consortium
+// Copyright (c) 1997-2002 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -35,22 +35,23 @@ int main(int, char*)
 
 #else
 
+//Application headers
+#include "cgal_types.h"
+#include "Qt_widget_toolbar.h"
+#include "Qt_widget_toolbar_layers.h"
+
+//Qt_widget headers
+#include <CGAL/IO/Qt_widget.h>
+#include <CGAL/IO/Qt_widget_standard_toolbar.h>
+#include <CGAL/IO/Qt_widget_helpwindow.h>
+
+//STL headers
 #include <fstream>
 #include <stack>
 #include <set>
 #include <string>
 
-#include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Triangulation_2.h>
-#include <CGAL/Delaunay_triangulation_2.h>
-#include <CGAL/point_generators_2.h>
-
-#include <CGAL/IO/Qt_widget.h>
-#include "Qt_widget_toolbar.h"
-#include "Qt_widget_toolbar_layers.h"
-#include <CGAL/IO/Qt_widget_standard_toolbar.h>
-
+//Qt headers
 #include <qplatinumstyle.h>
 #include <qapplication.h>
 #include <qmainwindow.h>
@@ -86,7 +87,7 @@ const QString my_title_string("Triangulation Demo with"
 			      " CGAL Qt_widget");
 Delaunay	tr1;
 int		current_state;
-Coord_type        xmin, ymin, xmax, ymax;
+Coord_type      xmin, ymin, xmax, ymax;
 
 class Window : public QMainWindow
 {
@@ -137,9 +138,9 @@ public:
     help->insertItem("About &Qt", this, SLOT(aboutQt()) );
 
     //the new tools toolbar
-    newtoolbar = new CGAL::Tools_toolbar(widget, this, &tr1);	
+    newtoolbar = new Tools_toolbar(widget, this, &tr1);	
     //the new scenes toolbar
-    vtoolbar = new CGAL::Layers_toolbar(widget, this, &tr1);
+    vtoolbar = new Layers_toolbar(widget, this, &tr1);
     //the standard toolbar
     stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this);
     this->addToolBar(stoolbar->toolbar(), Top, FALSE);
@@ -345,13 +346,13 @@ private:
   inline  void something_changed(){current_state++;};
 
 
-  CGAL::Qt_widget	                  *widget;		
-  CGAL::Tools_toolbar	              *newtoolbar;
-  CGAL::Layers_toolbar	            *vtoolbar;
+  CGAL::Qt_widget                   *widget;		
   CGAL::Qt_widget_standard_toolbar  *stoolbar;
-  bool			  got_point;	
+  Tools_toolbar                     *newtoolbar;
+  Layers_toolbar                    *vtoolbar;
+  bool                              got_point;
 	  //if a CGAL::Point is received should be true
-  int			  old_state;
+  int                               old_state;
 };//endclass
 
 #include "triangulation_2.moc"

@@ -18,16 +18,10 @@
 //
 // ============================================================================
 
-
 #ifndef CGAL_QT_WIDGET_TOOLBAR_H
 #define CGAL_QT_WIDGET_TOOLBAR_H
 
-#include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Delaunay_triangulation_2.h>
-
-
-// TODO: check if some of those includes shouldn't be in the .C file
+#include "cgal_types.h"
 #include <CGAL/IO/Qt_widget.h>
 #include "Qt_widget_move_point.h"
 #include <CGAL/IO/Qt_widget_get_line.h>
@@ -39,18 +33,12 @@
 #include <qmainwindow.h>
 #include <qbuttongroup.h>
 
-typedef double Coord_type;
-typedef CGAL::Cartesian<Coord_type>  Rp;
-typedef CGAL::Delaunay_triangulation_2<Rp>  Delaunay;
-
-
-namespace CGAL {
 
 class Tools_toolbar : public QObject
 {
-	Q_OBJECT
+  Q_OBJECT
 public:
-  Tools_toolbar(Qt_widget *w, QMainWindow *mw, Delaunay *t);
+  Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, Delaunay *t);
 
   QToolBar*	toolbar(){return maintoolbar;}
 
@@ -62,21 +50,20 @@ private slots:
   void get_new_object(CGAL::Object obj) { emit(new_object(obj)); }
 
 private:
-  QToolBar		  *maintoolbar;
-  QToolButton		*but[10];
-  Qt_widget		  *widget;
-  QButtonGroup  *button_group;
-  int			      activebutton;
-  bool			    is_active;
-  void			    setActiveButton(int i);
-  void			    addToolButton(QToolButton *b);
-  int			      nr_of_buttons;
+  QToolBar           *maintoolbar;
+  QToolButton        *but[10];
+  CGAL::Qt_widget    *widget;
+  QButtonGroup       *button_group;
+  int                activebutton;
+  bool               is_active;
+  void               setActiveButton(int i);
+  void               addToolButton(QToolButton *b);
+  int                nr_of_buttons;
 	
-  CGAL::Qt_widget_get_line<Rp>	    linebut;
-  CGAL::Qt_widget_get_point<Rp>	    pointbut;
+  CGAL::Qt_widget_get_line<Rep>       linebut;
+  CGAL::Qt_widget_get_point<Rep>      pointbut;
   CGAL::Qt_widget_movepoint<Delaunay> movepointbut;
 };//end class
 
-};//end namespace
 
 #endif

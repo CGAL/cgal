@@ -21,10 +21,7 @@
 #ifndef CGAL_QT_WIDGET_TOOLBAR_LAYERS_H
 #define CGAL_QT_WIDGET_TOOLBAR_LAYERS_H
 
-#include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Delaunay_triangulation_2.h>
-
+#include "cgal_types.h"
 #include <CGAL/IO/Qt_widget.h>
 #include "triangulation_2_layers.h"
 
@@ -35,17 +32,11 @@
 #include <qstatusbar.h>
 #include <qbuttongroup.h>
 
-typedef double Coord_type;
-typedef CGAL::Cartesian<Coord_type>  Rp;
-typedef CGAL::Delaunay_triangulation_2<Rp>  Delaunay;
-
-namespace CGAL {
-
 class Layers_toolbar : public QObject
 {
 	Q_OBJECT
 public:
-  Layers_toolbar(Qt_widget *w, QMainWindow *mw, Delaunay *t);
+  Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, Delaunay *t);
   ~Layers_toolbar()
   {
     delete showT;
@@ -59,22 +50,20 @@ signals:
   void new_object(CGAL::Object);
 	
 private:
-  QToolBar	*maintoolbar;
-  QToolButton	*but[10];
-  Qt_widget	*widget;
-  QMainWindow	*window;
-  Delaunay	*dt;
-  QButtonGroup  *button_group;
+  QToolBar	  *maintoolbar;
+  QToolButton	  *but[10];
+  CGAL::Qt_widget *widget;
+  QMainWindow     *window;
+  Delaunay        *dt;
+  QButtonGroup    *button_group;
 
   int	  nr_of_buttons;
 	
-  CGAL::Qt_layer_show_triangulation < Delaunay >  *showT;
-  CGAL::Qt_layer_show_voronoi < Delaunay >	  *showV;
-  CGAL::Qt_layer_show_points < Delaunay >	  *showP;
-  CGAL::Qt_layer_nearest_vertex < Delaunay >	  *showNV;
-  CGAL::Qt_layer_circum_circle < Delaunay>        *showCC;
+  Qt_layer_show_triangulation < Delaunay > *showT;
+  Qt_layer_show_voronoi < Delaunay >       *showV;
+  Qt_layer_show_points < Delaunay >        *showP;
+  Qt_layer_nearest_vertex < Delaunay >     *showNV;
+  Qt_layer_circum_circle < Delaunay>       *showCC;
 };//end class
-
-};//end namespace
 
 #endif

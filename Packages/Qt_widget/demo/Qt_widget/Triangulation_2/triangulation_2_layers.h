@@ -29,10 +29,8 @@
 #include <qobject.h>
 
 
-namespace CGAL {
-
 template <class T>
-class Qt_layer_show_triangulation : public Qt_widget_layer
+class Qt_layer_show_triangulation : public CGAL::Qt_widget_layer
 {
 public:
 	
@@ -50,7 +48,7 @@ private:
 };//end class 
 
 template <class T>
-class Qt_layer_show_voronoi : public Qt_widget_layer
+class Qt_layer_show_voronoi : public CGAL::Qt_widget_layer
 {
 public:
   Qt_layer_show_voronoi(T &t1) : tr(t1){};
@@ -66,7 +64,7 @@ private:
 };//end class 
 
 template <class T>
-class Qt_layer_show_points : public Qt_widget_layer {
+class Qt_layer_show_points : public CGAL::Qt_widget_layer {
 public:
   typedef typename T::Point           Point;
   typedef typename T::Segment         Segment;
@@ -92,7 +90,7 @@ private:
 };//end class 
 
 template <class T>
-class Qt_layer_nearest_vertex : public Qt_widget_layer
+class Qt_layer_nearest_vertex : public CGAL::Qt_widget_layer
 {
 public:
   typedef typename T::Point			Point;
@@ -148,7 +146,7 @@ private:
 
 
 template <class T>
-class Qt_layer_circum_circle : public Qt_widget_layer
+class Qt_layer_circum_circle : public CGAL::Qt_widget_layer
 {
 public:
   typedef typename T::Point			Point;
@@ -218,9 +216,6 @@ private:
 	bool		first_time;
 	
 };//end class 
-
-
-} // namespace CGAL
 
 
 #endif

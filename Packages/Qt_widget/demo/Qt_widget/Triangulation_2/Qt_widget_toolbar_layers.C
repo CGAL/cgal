@@ -99,9 +99,8 @@ static char * circum_circle_small_xpm[] = {
 "   ..@.@@....   ",
 "    ..@@....    "};
 
-namespace CGAL {
-  Layers_toolbar::Layers_toolbar(Qt_widget *w, QMainWindow *mw, Delaunay *t) : 
-    dt(t), nr_of_buttons(0)
+  Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, 
+                                 Delaunay *t) : dt(t), nr_of_buttons(0)
   {
     showT   = new Qt_layer_show_triangulation< Delaunay >(*t);
     showV   = new Qt_layer_show_voronoi< Delaunay >(*t);
@@ -176,7 +175,6 @@ namespace CGAL {
 
   }
   
-}//end namespace
 
 #include "Qt_widget_toolbar_layers.moc"
 
