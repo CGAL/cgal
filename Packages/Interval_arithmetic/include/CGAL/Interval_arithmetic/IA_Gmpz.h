@@ -32,10 +32,10 @@ CGAL_BEGIN_NAMESPACE
 // It should be much faster to have a low level function especially designed
 // for that using rounding to infinity.
 
-struct converter<Interval_nt_advanced,Gmpz>
+inline
+Interval_nt_advanced
+convert_from_to (const Interval_nt_advanced&, const Gmpz & z)
 {
-    static inline Interval_nt_advanced do_it (const Gmpz & z)
-    {
 #ifdef CGAL_IA_DEBUG
 	CGAL_assertion(FPU_get_cw() == FPU_cw_up);
 #endif
@@ -50,8 +50,18 @@ struct converter<Interval_nt_advanced,Gmpz>
 	FPU_set_cw(FPU_cw_up);
 #endif
 	return result;
+}
+
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+struct converter<Interval_nt_advanced,Gmpz>
+{
+    static inline Interval_nt_advanced do_it (const Gmpz & z)
+    {
+	return convert_from_to(Interval_nt_advanced(), z);
     }
 };
+#endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+
 
 CGAL_END_NAMESPACE
 

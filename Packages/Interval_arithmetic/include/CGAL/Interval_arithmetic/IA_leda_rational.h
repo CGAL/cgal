@@ -30,10 +30,10 @@ CGAL_BEGIN_NAMESPACE
 // conversion.  Since LEDA types (except real) don't give information on the
 // precision of to_double(), we can't do much...
 
-struct converter<Interval_nt_advanced,leda_rational>
+inline
+Interval_nt_advanced
+convert_from_to (const Interval_nt_advanced&, const leda_rational & z)
 {
-    static inline Interval_nt_advanced do_it (const leda_rational & z)
-    {
 #ifdef CGAL_IA_DEBUG
     CGAL_assertion(FPU_get_cw() == FPU_cw_up);
 #endif
@@ -52,8 +52,18 @@ struct converter<Interval_nt_advanced,leda_rational>
     FPU_set_cw(FPU_cw_up);
 #endif
     return result;
+}
+
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+struct converter<Interval_nt_advanced,leda_rational>
+{
+    static inline Interval_nt_advanced do_it (const leda_rational & z)
+    {
+	return convert_from_to(Interval_nt_advanced(), z);
     }
 };
+#endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+
 
 CGAL_END_NAMESPACE
 

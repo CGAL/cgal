@@ -30,17 +30,29 @@ CGAL_BEGIN_NAMESPACE
 // overflow, but we can't do better than the following trivial conversion.
 
 template <class RT>
-struct converter<Interval_nt_advanced,Quotient<RT> >
+inline
+Interval_nt_advanced
+convert_from_to (const Interval_nt_advanced&, const Quotient<RT> & z)
 {
-    static inline Interval_nt_advanced do_it (const Quotient<RT> & z)
-    {
 #ifdef CGAL_IA_DEBUG
 	CGAL_assertion(FPU_get_cw() == FPU_cw_up);
 #endif
 	return  convert_to<Interval_nt_advanced>(z.numerator()) /
 		convert_to<Interval_nt_advanced>(z.denominator());
+}
+
+
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template <class RT>
+struct converter<Interval_nt_advanced,Quotient<RT> >
+{
+    static inline Interval_nt_advanced do_it (const Quotient<RT> & z)
+    {
+	return convert_from_to(Interval_nt_advanced(), z);
     }
 };
+#endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+
 
 CGAL_END_NAMESPACE
 

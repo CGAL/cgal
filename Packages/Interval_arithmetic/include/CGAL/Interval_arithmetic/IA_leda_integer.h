@@ -32,10 +32,10 @@ CGAL_BEGIN_NAMESPACE
 // LEDA integer's internal representation, which is not possible without
 // modifying LEDA.
 
-struct converter<Interval_nt_advanced,leda_integer>
+inline
+Interval_nt_advanced
+convert_from_to (const Interval_nt_advanced&, const leda_integer & z)
 {
-    static inline Interval_nt_advanced do_it (const leda_integer & z)
-    {
 #ifdef CGAL_IA_DEBUG
     CGAL_assertion(FPU_get_cw() == FPU_cw_up);
 #endif
@@ -50,8 +50,18 @@ struct converter<Interval_nt_advanced,leda_integer>
     FPU_set_cw(FPU_cw_up);
 #endif
     return result;
+}
+
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+struct converter<Interval_nt_advanced,leda_integer>
+{
+    static inline Interval_nt_advanced do_it (const leda_integer & z)
+    {
+	return convert_from_to(Interval_nt_advanced(), z);
     }
 };
+#endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+
 
 CGAL_END_NAMESPACE
 
