@@ -74,11 +74,11 @@ class Triangulation_hierarchy_2
   typedef typename Triangulation::Geom_traits  Geom_traits;
   typedef typename Geom_traits::Point_2             Point;
   typedef Triangulation                        Tr_Base;
-  typedef typename Base::Vertex_handle     Vertex_handle;
-  typedef typename Base::Face_handle       Face_handle;
-  typedef typename Base::Vertex_iterator   Vertex_iterator;
-  typedef typename Base::Vertex           Vertex;
-  typedef typename Base::Locate_type       Locate_type;
+  typedef typename Tr_Base::Vertex_handle     Vertex_handle;
+  typedef typename Tr_Base::Face_handle       Face_handle;
+  typedef typename Tr_Base::Vertex_iterator   Vertex_iterator;
+  typedef typename Tr_Base::Vertex           Vertex;
+  typedef typename Tr_Base::Locate_type       Locate_type;
 
  private:
   // here is the stack of triangulations which form the hierarchy
