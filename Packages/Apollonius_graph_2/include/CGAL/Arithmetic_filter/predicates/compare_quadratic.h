@@ -38,12 +38,18 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
 /* inline */
 Comparison_result
 sqrt_compare_l1_l2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a2,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b2,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c2)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a2,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b2,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c2)
 {
   try
   {
@@ -82,12 +88,18 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
 /* inline */
 Comparison_result
 sqrt_compare_l1_r2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a2,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b2,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c2)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a2,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b2,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c2)
 {
   try
   {
@@ -126,12 +138,18 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
 /* inline */
 Comparison_result
 sqrt_compare_r1_l2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a2,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b2,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c2)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a2,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b2,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c2)
 {
   try
   {
@@ -170,12 +188,18 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
 /* inline */
 Comparison_result
 sqrt_compare_r1_r2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a2,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b2,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c2)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a2,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b2,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c2)
 {
   try
   {
@@ -214,12 +238,18 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
 /* inline */
 Comparison_result
 dfmt_compare_l1_l2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a2,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b2,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c2)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a2,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b2,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c2)
 {
   try
   {
@@ -258,12 +288,18 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
 /* inline */
 Comparison_result
 dfmt_compare_l1_r2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a2,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b2,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c2)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a2,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b2,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c2)
 {
   try
   {
@@ -302,12 +338,18 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
 /* inline */
 Comparison_result
 dfmt_compare_r1_l2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a2,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b2,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c2)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a2,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b2,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c2)
 {
   try
   {
@@ -346,12 +388,18 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
 /* inline */
 Comparison_result
 dfmt_compare_r1_r2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a2,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b2,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c2)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a2,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b2,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c2)
 {
   try
   {
@@ -390,12 +438,18 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
 /* inline */
 Comparison_result
 ke_compare_l1_l2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a2,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b2,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c2)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a2,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b2,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c2)
 {
   try
   {
@@ -434,12 +488,18 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
 /* inline */
 Comparison_result
 ke_compare_l1_r2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a2,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b2,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c2)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a2,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b2,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c2)
 {
   try
   {
@@ -478,12 +538,18 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
 /* inline */
 Comparison_result
 ke_compare_r1_l2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a2,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b2,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c2)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a2,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b2,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c2)
 {
   try
   {
@@ -522,12 +588,18 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
 /* inline */
 Comparison_result
 ke_compare_r1_r2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a2,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b2,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c2)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a2,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b2,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c2)
 {
   try
   {
