@@ -930,7 +930,7 @@ set_compiler_flags()
     esac
     # version specific adjustments for msvc
     case ${CGAL_OS_COMPILER} in
-	*CL.*-1300*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} `include_dir_option ${CGAL_DIR}/include/compilers/vc7`";;
+	*CL.*-1300*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS}";;
 	*CL.*|*cl.*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} `include_dir_option ${CGAL_DIR}/stlport`";;
     esac
 }
