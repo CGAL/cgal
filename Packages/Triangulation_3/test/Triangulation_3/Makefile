@@ -24,11 +24,12 @@ CXXFLAGS = \
 	 $(TESTSUITE_CXXFLAGS) \
 	-DCGAL_CHECK_EXPENSIVE \
 	-W -Wall \
-	-g 
+	-pedantic \
+	-g \
+	-DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS -DCGAL_NO_ASSERTIONS
 #         -gdwarf-2
 #	-O2 -fno-default-inline \
-#	-DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS -DCGAL_NO_ASSERTIONS
-#         -g
+
 
 
 #---------------------------------------------------------------------#
