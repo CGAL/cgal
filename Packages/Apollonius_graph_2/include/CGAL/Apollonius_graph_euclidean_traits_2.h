@@ -79,21 +79,18 @@ public:
   typedef R                                             Rep;
   typedef MTag                                          Method_tag;
   typedef typename Kernel::RT                           Weight;
-  typedef typename Kernel::Point_2                      Bare_point_2;
+  typedef typename Kernel::Point_2                      Point_2;
   typedef typename Kernel::Weighted_point_2             Weighted_point_2;
-  // I must add the following for some reason, otherwise it uses the
-  // definition of Point_2 from the Triangulation_euclidean_traits_2
-  typedef Weighted_point_2                              Point_2;
   //
   typedef Weighted_point_2                              Site;
   typedef typename Kernel::Line_2                       Line_2;
   typedef typename Kernel::Ray_2                        Ray_2;
   typedef typename Kernel::Segment_2                    Segment_2;
-  typedef CGAL::Parabola_segment_2<Bare_point_2,Weight,Line_2>
+  typedef CGAL::Parabola_segment_2<Point_2,Weight,Line_2>
   /*                                                 */ Parabola_segment_2;
-  typedef CGAL::Hyperbola_2<Bare_point_2,Weight>        Hyperbola_2;
-  typedef CGAL::Hyperbola_ray_2<Bare_point_2,Weight>    Hyperbola_ray_2;
-  typedef CGAL::Hyperbola_segment_2<Bare_point_2,Weight>
+  typedef CGAL::Hyperbola_2<Point_2,Weight>        Hyperbola_2;
+  typedef CGAL::Hyperbola_ray_2<Point_2,Weight>    Hyperbola_ray_2;
+  typedef CGAL::Hyperbola_segment_2<Point_2,Weight>
   /*                                                 */ Hyperbola_segment_2;
 
 public:
@@ -240,6 +237,9 @@ public:
 // DEFINITION OF FILTERED KERNEL DOES NOT SUPPORT MORE THAN ONE
 // TEMPLATE ARGUMENT
 
+// CHANGE THE TEMPLATE NAMES SO THAT THERE IS NO UNDERSCROEE IN THE
+// BEGINNING
+
 //-----------------------------------------------------------------------
 // the Traits class for a filtered kernel
 //-----------------------------------------------------------------------
@@ -268,21 +268,18 @@ public:
   typedef Kernel                                         Rep;
   typedef MTag                                           Method_tag;
   typedef typename Kernel::RT                            Weight;
-  typedef typename Kernel::Point_2                       Bare_point_2;
+  typedef typename Kernel::Point_2                       Point_2;
   typedef typename Kernel::Weighted_point_2              Weighted_point_2;
-  // I must add the following for some reason, otherwise it uses the
-  // definition of Point_2 from the Triangulation_euclidean_traits_2
-  typedef Weighted_point_2                               Point_2;
   //
   typedef Weighted_point_2                               Site;
   typedef typename Kernel::Line_2                        Line_2;
   typedef typename Kernel::Ray_2                         Ray_2;
   typedef typename Kernel::Segment_2                     Segment_2;
-  typedef CGAL::Parabola_segment_2<Bare_point_2,Weight,Line_2>
+  typedef CGAL::Parabola_segment_2<Point_2,Weight,Line_2>
   /*                                                  */ Parabola_segment_2;
-  typedef CGAL::Hyperbola_2<Bare_point_2,Weight>         Hyperbola_2;
-  typedef CGAL::Hyperbola_ray_2<Bare_point_2,Weight>     Hyperbola_ray_2;
-  typedef CGAL::Hyperbola_segment_2<Bare_point_2,Weight> Hyperbola_segment_2;
+  typedef CGAL::Hyperbola_2<Point_2,Weight>         Hyperbola_2;
+  typedef CGAL::Hyperbola_ray_2<Point_2,Weight>     Hyperbola_ray_2;
+  typedef CGAL::Hyperbola_segment_2<Point_2,Weight> Hyperbola_segment_2;
 
 private:
   // Types for the construction kernel

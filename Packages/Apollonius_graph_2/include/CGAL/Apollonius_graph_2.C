@@ -427,7 +427,11 @@ typename Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 insert_first(const Weighted_point_2& p)
 {
-  return Delaunay_graph::insert_first(p);
+  CGAL_triangulation_precondition(number_of_vertices() == 0);
+  Vertex_handle v = this->_tds.insert_second();
+  v->set_point(p);
+  return v;
+  //  return Delaunay_graph::insert_first(p);
 }
 
 template< class Gt, bool StoreHidden, class Agds >
@@ -446,7 +450,10 @@ insert_second(const Weighted_point_2& p)
     v->set_point(p);
     vnew = v;
   } else {
-    vnew = Delaunay_graph::insert_second(p);
+    CGAL_triangulation_precondition(number_of_vertices() == 1);
+    vnew = this->_tds.insert_dim_up(infinite_vertex(), true);
+    vnew->set_point(p);
+    //    vnew = Delaunay_graph::insert_second(p);
   }
 
   return vnew;
@@ -1048,7 +1055,7 @@ retriangulate_conflict_region(const Weighted_point_2& p,	List& l,
     clear();
 
     // 3. add a new vertex
-    Vertex_handle v = Delaunay_graph::insert_first(p);
+    Vertex_handle v = insert_first(p);
 
     // 4. add all old sites to the hidden weighted point list of the
     // new site
@@ -1097,13 +1104,13 @@ retriangulate_conflict_region(const Weighted_point_2& p,	List& l,
 
     // 4. insert the two non-hidden sites and copy the corresponding
     // hidden sites
-    Vertex_handle v1 = Delaunay_graph::insert_first(p1);
+    Vertex_handle v1 = insert_first(p1);
     for (Weighted_point_list_iterator it = wp_list1.begin();
 	 it != wp_list1.end(); ++it) {
       v1->add_hidden_weighted_point(*it);
     }
 
-    Vertex_handle v = Delaunay_graph::insert_second(p);
+    Vertex_handle v = insert_second(p);
     for (Weighted_point_list_iterator it = wp_list.begin();
 	 it != wp_list.end(); ++it) {
       v->add_hidden_weighted_point(*it);
@@ -1833,6 +1840,8 @@ remove_degree_d_vertex(Vertex_handle v)
 
 
   Vertex_handle vn = ag_small.nearest_neighbor(v->point());
+
+  assert( vn != NULL );
 
   List l;
   Face_map fm;

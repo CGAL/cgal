@@ -47,7 +47,7 @@ CGAL_BEGIN_NAMESPACE
 template < class Gt, bool StoreHidden = true,
   class Agds = Apollonius_graph_data_structure_2 < 
                Apollonius_graph_vertex_base_2<Gt,StoreHidden>,
-               Apollonius_graph_face_base_2<> > >
+               Apollonius_graph_face_base_2<Gt> > >
 class Apollonius_graph_2
   : private Triangulation_2< Apollonius_graph_gt_wrapper<Gt>, Agds >
 {
@@ -65,7 +65,7 @@ public:
   //------
   typedef Agds                                   Data_structure;
   typedef Gt                                     Geom_traits;
-  typedef typename Gt::Bare_point_2              Point_2;
+  typedef typename Gt::Point_2                   Point_2;
   typedef typename Gt::Weighted_point_2          Weighted_point_2;
   typedef typename Gt::Weight                    Weight;
 
@@ -765,7 +765,6 @@ protected:
   inline Vertex_handle create_vertex() {
     return this->_tds.create_vertex();
   }
-
 
 protected:
   // insertion of the first three sites

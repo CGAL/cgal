@@ -32,4 +32,4 @@
   i.e. just "CGAL::Apollonius_graph_data_structure_2" (?).
 - "number_of_hidden_weighted_points()" in vertex base should return size_t
 - see email to cgal-editor with answers to Sylvain's questions
-
+- ask Mariette to add access functions to the TDS of Triangulation_2.

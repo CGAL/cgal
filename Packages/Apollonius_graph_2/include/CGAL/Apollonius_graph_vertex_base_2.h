@@ -38,7 +38,7 @@ template <class Gt,
 	  bool StoreHidden = true,
 	  class Vb = Triangulation_ds_vertex_base_2<> >
 class Apollonius_graph_vertex_base_2
-  : private Triangulation_vertex_base_2<Gt,Vb>
+  : public Vb
 {
 private:
   typedef typename Vb::Triangulation_data_structure   AGDS;
@@ -46,6 +46,7 @@ public:
   // TYPES
   //------
   typedef Gt                             Geom_traits;
+  typedef Vb                             Base;
   typedef typename Gt::Weighted_point_2  Weighted_point_2;
   typedef AGDS	                         Apollonius_graph_data_structure;
   typedef typename AGDS::Face_handle     Face_handle;
@@ -61,7 +62,7 @@ public:
 private:
   // local types
   typedef std::list<Weighted_point_2>         Container;
-  typedef Triangulation_vertex_base_2<Gt,Vb>  Vbase;
+
 public:
   // TYPES (continued)
   //------------------
@@ -71,10 +72,11 @@ public:
 public:
   // CREATION
   //---------
-  Apollonius_graph_vertex_base_2() : Vbase() {}
-
-  Apollonius_graph_vertex_base_2(const Weighted_point_2& p, void* f = NULL) 
-    : Vbase(p, f) {}
+  Apollonius_graph_vertex_base_2() : Vb() {}
+  Apollonius_graph_vertex_base_2(const Weighted_point_2& p) : Vb(), _p(p) {}
+  Apollonius_graph_vertex_base_2(const Weighted_point_2& p,
+				 Face_handle f)
+    : Vb(f), _p(p) {}
 
   ~Apollonius_graph_vertex_base_2()
   {
@@ -84,20 +86,18 @@ public:
 
   // ACCESS METHODS
   //---------------
-  inline Weighted_point_2 point() const { return Vbase::point(); }
+  Weighted_point_2 point() const { return _p; }
 
-  inline Face_handle face() const { return Vbase::face(); }
+  Face_handle face() const { return Vb::face(); }
 
-  inline unsigned int number_of_hidden_weighted_points() const {
+  unsigned int number_of_hidden_weighted_points() const {
     return weighted_point_list.size();
   }
 
-  inline
   Hidden_weighted_point_iterator hidden_weighted_points_begin() { 
     return weighted_point_list.begin();
   }
 
-  inline
   Hidden_weighted_point_iterator hidden_weighted_points_end() {
     return weighted_point_list.end();
   }
@@ -105,13 +105,9 @@ public:
 public:
   // SETTING AND UNSETTING
   //----------------------
-  inline void set_point(const Weighted_point_2& p) {
-    Vbase::set_point(p);
-  }
+  void set_point(const Weighted_point_2& p) { _p = p; }
 
-  inline void set_face(Face_handle f) { Vbase::set_face(f); }
 
-  inline
   void add_hidden_weighted_point(const Weighted_point_2& p)
   {
     if ( StoreHidden ) {
@@ -119,7 +115,6 @@ public:
     }
   }
 
-  inline
   void clear_hidden_weighted_point_container()
   {
     weighted_point_list.clear();
@@ -127,13 +122,14 @@ public:
 
 public:
   // VALIDITY CHECK
-  inline bool is_valid(bool verbose, int level) const {
-    return Vbase::is_valid(verbose, level);
+  bool is_valid(bool verbose = false, int level = 0) const {
+    return Vb::is_valid(verbose, level);
   }
 
 private:
   // class variables
   Container weighted_point_list;
+  Weighted_point_2 _p;
 };
 
 CGAL_END_NAMESPACE 

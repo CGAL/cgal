@@ -41,8 +41,6 @@ public:
   typedef
   CGAL::Weighted_point<typename Kernel_base_2::Point_2,
 		       typename Kernel_base_2::RT>       Weighted_point_2;
-
-  typedef CGAL::Object                                   Object_2;
 };
 
 

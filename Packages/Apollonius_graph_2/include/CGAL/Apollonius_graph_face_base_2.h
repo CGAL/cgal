@@ -29,22 +29,24 @@
 
 #include <CGAL/Triangulation_ds_face_base_2.h>
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/Dummy_tds_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
 
-template <class AGDS = void >
+template < class Gt,
+	   class Fb = Triangulation_ds_face_base_2<> >
 class Apollonius_graph_face_base_2
-  :  public Triangulation_ds_face_base_2<AGDS>
+  : public Fb
 {
 protected:
   // local types
-  typedef Triangulation_ds_face_base_2<AGDS>     Fbase;
+  typedef typename Fb::Triangulation_data_structure    AGDS;
 
 public:
   // TYPES
   //------
+  typedef Gt                            Geom_traits;
+  typedef Fb                            Base;
   typedef AGDS                          Apollonius_graph_data_structure;
   typedef typename AGDS::Vertex_handle  Vertex_handle;
   typedef typename AGDS::Face_handle    Face_handle;
@@ -52,19 +54,22 @@ public:
 
   // Borland requires this.
   template <typename AGDS2>
-  struct Rebind_TDS { typedef Apollonius_graph_face_base_2<AGDS2> Other; }; 
+  struct Rebind_TDS {
+    typedef typename Fb::template Rebind_TDS<AGDS2>::Other  Vb2;
+    typedef Apollonius_graph_face_base_2<Gt,Vb2>            Other;
+  }; 
 
 
 public:
   // CREATION
   //---------
-  Apollonius_graph_face_base_2() : Fbase()
+  Apollonius_graph_face_base_2() : Base()
   { init(); }
 
   Apollonius_graph_face_base_2(Vertex_handle v0,
 			       Vertex_handle v1,
 			       Vertex_handle v2)
-    : Fbase(v0,v1,v2)
+    : Base(v0,v1,v2)
   { init(); }
 
   Apollonius_graph_face_base_2(Vertex_handle v0,
@@ -73,7 +78,7 @@ public:
 			       Face_handle n0,
 			       Face_handle n1,
 			       Face_handle n2)
-    : Fbase(v0,v1,v2,n0,n1,n2)
+    : Base(v0,v1,v2,n0,n1,n2)
   { init(); }
 
 public:
@@ -135,18 +140,6 @@ protected:
     }
   }
 
-};
-
-
-
-// Specialisation for void.
-template <>
-class Apollonius_graph_face_base_2<void>
-{
-public:
-  typedef Dummy_tds_2 Apollonius_graph_data_structure;
-  template <typename AGDS2>
-  struct Rebind_TDS { typedef Apollonius_graph_face_base_2<AGDS2> Other; };
 };
 
 

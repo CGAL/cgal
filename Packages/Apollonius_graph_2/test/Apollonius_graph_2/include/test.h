@@ -26,7 +26,7 @@ bool test_traits()
 
   // testing typedefs
   //--------------------------------------------------------------------
-  typedef typename Traits::Bare_point_2          Point_2;
+  typedef typename Traits::Point_2               Point_2;
   typedef typename Traits::Weighted_point_2      Weighted_point_2;
   typedef typename Traits::Site                  Site;
   typedef typename Traits::Line_2                Line_2;
