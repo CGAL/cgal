@@ -13,12 +13,11 @@ include $(CGAL_MAKEFILE)
               # -L$(GMP_LIB_DIR) -lgmp -lm \
 
 CXXFLAGS = \
-	-I$(CGAL)/include_advanced -I../../include \
+	-I../../../Cartesian_kernel/include \
+	-I../../include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS) \
-	-DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS\
-	-DCGAL_NO_WARNINGS \
-	-O2 -fomit-frame-pointer -mcpu=pentiumpro -march=pentiumpro -W -Wall -DLOOPS=10000000
+	-g -pedantic -W -Wall
 	# -g -W -Wall -Winline
 	# -O2 -mcpu=pentiumpro -march=pentiumpro -W -Wall -DLOOPS=10000000
 	# -O2 -W -Winline -Wunused -malign-double
