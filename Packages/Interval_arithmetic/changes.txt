@@ -1,8 +1,8 @@
 Changes done for the Interval Arithmetic package.
 
-Version ??? on ???
+Version 2.1 on 11 September 1998
 - "lines too long" problem fixed.
-- [sent Stefan the necessary updates to other NTs].
+- removed temporary objects => faster.
 
 Version 2.0 on 17 August 1998.
 - Added CGAL_to_interval_nt() cast functions for Gmpz and
@@ -11,6 +11,7 @@ Version 2.0 on 17 August 1998.
 - Moved private files to the directory CGAL/Interval_arithmetic
 - Doc update: cgal.bib removed, geombib is updated.
 - Using CVS.
+- [sent Stefan the necessary updates to other NTs].
 
 Version 1.6 on 10 May 1998.
 - "package" line added in the headers.
