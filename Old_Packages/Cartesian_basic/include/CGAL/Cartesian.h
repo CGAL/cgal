@@ -682,7 +682,7 @@ construct_supporting_plane_3_object() const
 typedef CGALi::Call_transform                          Transform_3;
 Transform_3
 transform_3_object() const 
-{ return Transform_2(); }
+{ return Transform_3(); }
 
 typedef CGALi::Assign                                  Assign_3;
 Assign_3
