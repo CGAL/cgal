@@ -43,15 +43,15 @@ namespace CGAL {
 class Qt_widget_focus : public Qt_widget_layer
 {
 private:
-  int	x2, y2;
-  QPixmap	*mouse_ico1,
-			*mouse_ico2,
-			*mouse_ico3;
+  int	    x2, y2;
+  QPixmap *mouse_ico1,
+          *mouse_ico2,
+          *mouse_ico3;
   QCursor	*cursor1,
-			*cursor2,
-			*cursor3;
+          *cursor2,
+          *cursor3;
   QBitmap	cb, cm;
-  int		cycle;
+  int		  cycle;
   QCursor oldcursor;
 
 public:
