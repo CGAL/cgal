@@ -816,8 +816,6 @@ public:
     // synthesis of spatial structure
 
     SNC_io_parser<SNC_structure> Op(std::cout, result);
-    Op.print();
-
     SNC_constructor C(result);
     C.pair_up_halfedges();
     C.link_shalfedges_to_facet_cycles();
