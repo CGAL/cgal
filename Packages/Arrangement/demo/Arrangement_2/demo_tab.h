@@ -198,13 +198,13 @@ public:
     for (Edge_iterator ei = m_curves_arr.edges_begin(); 
          ei != m_curves_arr.edges_end(); ++ei) 
     {
-	  if (change_pm_color)
-	    setColor(pm_color);
-	  else
-	  {
+      if (change_pm_color)
+        setColor(pm_color);
+      else
+      {
         int i = (ei->curve()).get_data().m_index;
         setColor(colors[i]);
-	  }
+      }
       m_tab_traits.draw_xcurve(this , ei->curve() );
     }
     
@@ -222,17 +222,17 @@ public:
         eit,eit2, first = (*vit).incident_halfedges();
       
       eit = first;
-	  setColor(Qt::red);
-	  int ind1, ind2;
+      setColor(Qt::red);
+      int ind1, ind2;
 	  
-	  eit2 = first;
-	  do
-	  { // find (if exist) a different index than the tab index
-	    ind2 = (*eit2).curve().get_data().m_index;
-		if (ind2 != index)
-		  break;
-		eit2++;
-	  } while (eit2 != first);
+      eit2 = first;
+      do
+      { // find (if exist) a different index than the tab index
+        ind2 = (*eit2).curve().get_data().m_index;
+        if (ind2 != index)
+          break;
+        eit2++;
+      } while (eit2 != first);
 
       do 
       {
@@ -242,23 +242,27 @@ public:
         if (ind1 != ind2 && ind1 != index && ind2 != index)
         {
           //const Pm_point_2& p = (*vit).point();
-		  Coord_point p(CGAL::to_double((*vit).point().x())/ m_tab_traits.COORD_SCALE, 
-			            CGAL::to_double((*vit).point().y())/ m_tab_traits.COORD_SCALE); 
+          Coord_point p(CGAL::to_double((*vit).point().x()) /
+                        m_tab_traits.COORD_SCALE, 
+                        CGAL::to_double((*vit).point().y()) /
+                        m_tab_traits.COORD_SCALE); 
           *this << p;
           break;
         }
         
         eit++;
         
-		if (eit == first && draw_vertex)
-		{
-		  if (change_pm_color)
-	        setColor(pm_color);
-	      else
-	        setColor(colors[ind2]);
-		  //const Pm_point_2& p = (*vit).point();
-		  Coord_point p(CGAL::to_double((*vit).point().x())/ m_tab_traits.COORD_SCALE, 
-			            CGAL::to_double((*vit).point().y())/ m_tab_traits.COORD_SCALE); 
+        if (eit == first && draw_vertex)
+        {
+          if (change_pm_color)
+            setColor(pm_color);
+          else
+            setColor(colors[ind2]);
+          //const Pm_point_2& p = (*vit).point();
+          Coord_point p(CGAL::to_double((*vit).point().x()) /
+                        m_tab_traits.COORD_SCALE, 
+                        CGAL::to_double((*vit).point().y()) /
+                        m_tab_traits.COORD_SCALE); 
           *this << p;
 		}
       } while (eit != first);
@@ -304,76 +308,84 @@ public:
       Locate_type lt;
       Pm_point_2 temp_p (pl_point.x(), pl_point.y());
       Halfedge_handle e = 
-		  m_curves_arr.vertical_ray_shoot(temp_p, lt ,ray_shooting_direction);
+        m_curves_arr.vertical_ray_shoot(temp_p, lt ,ray_shooting_direction);
       
       setColor(Qt::black);
       (*this) << CGAL::LineWidth(1);
 
-	  Coord_point pl_draw(pl_point.x() / m_tab_traits.COORD_SCALE , 
-		                  pl_point.y() / m_tab_traits.COORD_SCALE);
+      Coord_point pl_draw(pl_point.x() / m_tab_traits.COORD_SCALE , 
+                          pl_point.y() / m_tab_traits.COORD_SCALE);
 
-	  if (ray_shooting_direction)
-	  {
-	    if (lt == Curves_arr::UNBOUNDED_FACE)
-		{
-		  Coord_point up(pl_draw.x() , y_max());
-		  (*this) << Coord_segment(pl_draw , up );
-		}
-		else // we shoot something
-		{
-		  Pm_point_2 p1c1(pl_point.x() , y_max() * m_tab_traits.COORD_SCALE);
-		  Pm_point_2 p2c1(pl_point.x() , pl_point.y());
-		  const Xcurve c1 = m_tab_traits.curve_make_x_monotone(p1c1 , p2c1);
-		  const Xcurve c2 = e->curve();
-		  Pm_point_2 p1;
-		  Pm_point_2 p2;
-		  Pm_point_2 most_left(x_min() * m_tab_traits.COORD_SCALE, pl_point.y());
-		  m_traits.nearest_intersection_to_right(c1, c2, most_left, p1, p2);
-		  Coord_type y1 = CGAL::to_double(p1.y()) / m_tab_traits.COORD_SCALE;
-		  Coord_point up(pl_draw.x(),y1);
-		  (*this) << Coord_segment(pl_draw , up );
-		}
-	  }
-	  else // down ray shooting
-	  {
-	    if (lt == Curves_arr::UNBOUNDED_FACE)
-		{
-		  Coord_point down(pl_draw.x() , y_min());
-		  (*this) << Coord_segment(pl_draw , down );
-		}
-		else // we shoot something
-		{
-		  Pm_point_2 p1c1(pl_point.x() , y_min() * m_tab_traits.COORD_SCALE);
-		  Pm_point_2 p2c1(pl_point.x() , pl_point.y());
-		  const Xcurve c1 = m_tab_traits.curve_make_x_monotone(p1c1 , p2c1);
-		  const Xcurve c2 = e->curve();
-		  Pm_point_2 p1;
-		  Pm_point_2 p2;
-   		  Pm_point_2 most_right(x_max() * m_tab_traits.COORD_SCALE, pl_point.y());
+      if (ray_shooting_direction)
+      {
+        if (lt == Curves_arr::UNBOUNDED_FACE)
+        {
+          Coord_point up(pl_draw.x() , y_max());
+          (*this) << Coord_segment(pl_draw , up );
+        }
+        else // we shoot something
+        {
+          Pm_point_2 p1c1(pl_point.x() , y_max() * m_tab_traits.COORD_SCALE);
+          Pm_point_2 p2c1(pl_point.x() , pl_point.y());
+          const Xcurve c1 = m_tab_traits.curve_make_x_monotone(p1c1 , p2c1);
+          const Xcurve c2 = e->curve();
+          Pm_point_2 most_left(x_min() * m_tab_traits.COORD_SCALE,
+                               pl_point.y());
+          CGAL::Object res = m_traits.nearest_intersection_to_right(c1, c2,
+                                                                    most_left);
+          Pm_point_2 p1;
+          if (CGAL::assign(p1, res)) {
+            Coord_type y1 = CGAL::to_double(p1.y()) / m_tab_traits.COORD_SCALE;
+            Coord_point up(pl_draw.x(), y1);
+            (*this) << Coord_segment(pl_draw , up );
+          }
+          //! \todo what if the intersection is empty, or a subcurve?
+        }
+      }
+      else // down ray shooting
+      {
+        if (lt == Curves_arr::UNBOUNDED_FACE)
+        {
+          Coord_point down(pl_draw.x() , y_min());
+          (*this) << Coord_segment(pl_draw , down );
+        }
+        else // we shoot something
+        {
+          Pm_point_2 p1c1(pl_point.x() , y_min() * m_tab_traits.COORD_SCALE);
+          Pm_point_2 p2c1(pl_point.x() , pl_point.y());
+          const Xcurve c1 = m_tab_traits.curve_make_x_monotone(p1c1 , p2c1);
+          const Xcurve c2 = e->curve();
+          Pm_point_2 most_right(x_max() * m_tab_traits.COORD_SCALE,
+                                pl_point.y());
 
-		  m_traits.nearest_intersection_to_left(c1, c2, most_right, p1, p2);
-		  Coord_type y1 = CGAL::to_double(p1.y()) / m_tab_traits.COORD_SCALE;
-		  Coord_point up(pl_draw.x(),y1);
-		  (*this) << Coord_segment(pl_draw , up );
-		}
-	  }	    
+          CGAL::Object res = m_traits.nearest_intersection_to_left(c1, c2,
+                                                                   most_right);
+          Pm_point_2 p1;
+          if (CGAL::assign(p1, res)) {
+            Coord_type y1 = CGAL::to_double(p1.y()) / m_tab_traits.COORD_SCALE;
+            Coord_point up(pl_draw.x(),y1);
+            (*this) << Coord_segment(pl_draw , up );
+          }
+          //! \todo what if the intersection is empty, or a subcurve?
+        }
+      }	    
       
       (*this) << CGAL::LineWidth(3);
       setColor(Qt::red);
       
       switch (lt) {
        case (Curves_arr::VERTEX):
-		{
-		Coord_point p(CGAL::to_double(e->target()->point().x())/ m_tab_traits.COORD_SCALE, 
-			          CGAL::to_double(e->target()->point().y())/ m_tab_traits.COORD_SCALE); 
-		*this << p;
-        break;
+        {
+         Coord_point p(CGAL::to_double(e->target()->point().x())/ m_tab_traits.COORD_SCALE, 
+                       CGAL::to_double(e->target()->point().y())/ m_tab_traits.COORD_SCALE); 
+         *this << p;
+         break;
 		}
        case (Curves_arr::UNBOUNDED_VERTEX) :
         {
-		Coord_point p(CGAL::to_double(e->target()->point().x())/ m_tab_traits.COORD_SCALE, 
-			          CGAL::to_double(e->target()->point().y())/ m_tab_traits.COORD_SCALE); 
-		*this << p;
+          Coord_point p(CGAL::to_double(e->target()->point().x())/ m_tab_traits.COORD_SCALE, 
+                        CGAL::to_double(e->target()->point().y())/ m_tab_traits.COORD_SCALE); 
+          *this << p;
         break;
 		}
        case (Curves_arr::EDGE):
@@ -540,39 +552,45 @@ public:
       {
         active = true;
         m_tab_traits.first_point( p );
-		split_point = Pm_point_2( p.x() * m_tab_traits.COORD_SCALE ,
-			                      p.y() * m_tab_traits.COORD_SCALE);
+        split_point = Pm_point_2( p.x() * m_tab_traits.COORD_SCALE ,
+                                  p.y() * m_tab_traits.COORD_SCALE);
       } 
       else
       {	    
-	    active = false;
-		Pm_point_2 split_point2 = Pm_point_2(p.x() * m_tab_traits.COORD_SCALE,
-			                                 p.y() * m_tab_traits.COORD_SCALE);
+        active = false;
+        Pm_point_2 split_point2 = Pm_point_2(p.x() * m_tab_traits.COORD_SCALE,
+                                             p.y() * m_tab_traits.COORD_SCALE);
         const Xcurve split_curve = 
-			m_tab_traits.curve_make_x_monotone(split_point , split_point2);
-	    Pm_point_2 p1;
-	    Pm_point_2 p2;
-		Pm_point_2 p_right;
-		if (split_point.x() < split_point2.x())
-		  p_right = split_point;
-		else
-		  p_right = split_point2;
-		Halfedge_iterator hei;
-		for (hei = m_curves_arr.halfedges_begin();
-         hei != m_curves_arr.halfedges_end(); ++hei) 
+          m_tab_traits.curve_make_x_monotone(split_point , split_point2);
+        Pm_point_2 p1;
+        Pm_point_2 p_right;
+        if (split_point.x() < split_point2.x())
+          p_right = split_point;
+        else
+          p_right = split_point2;
+        Halfedge_iterator hei;
+        for (hei = m_curves_arr.halfedges_begin();
+             hei != m_curves_arr.halfedges_end(); ++hei) 
         {
-		  const Xcurve & xcurve = hei->curve();
-		  m_tab_traits.draw_xcurve(this, xcurve);
-		  if (m_traits.nearest_intersection_to_right(split_curve, 
-			  xcurve, p_right, p1, p2))
-			  break;
+          const Xcurve & xcurve = hei->curve();
+          m_tab_traits.draw_xcurve(this, xcurve);
+          CGAL::Object res =
+            m_traits.nearest_intersection_to_right(split_curve, xcurve,
+                                                   p_right);
+          if (CGAL::assign(p1, res))
+            return;
 
-		}		
-		m_tab_traits.draw_xcurve(this, hei->curve());
-		if (hei != m_curves_arr.halfedges_end())
-		  m_tab_traits.split_edge(hei , p1 , this);
-		
-	  }
+          Xcurve cv;
+          if (CGAL::assign(cv, res)) {
+            //! \todo handle the case where the intersection is a subcurve
+            return;
+          }
+        }		
+        m_tab_traits.draw_xcurve(this, hei->curve());
+        if (hei != m_curves_arr.halfedges_end())
+          m_tab_traits.split_edge(hei , p1 , this);
+        
+      }
     }    
   }
 
