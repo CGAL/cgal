@@ -869,6 +869,12 @@ create_replacement_header()
 #   create_replacement_header standard_header_name suffix replacements...
 #
 {
+    uncond=''
+    # special option to create header unconditionally (for CCTYPE_MACRO_BUG)
+    if [ "${1}" = "notest" ]; then
+	shift
+	uncond='y'
+    fi
     replacement_header=rh
     header_name=$1
     header_suffix=$2
@@ -877,9 +883,11 @@ create_replacement_header()
 #
 # Test if the standard header exists. Return if it does.
 #
-    ${_printf} "%s\n" "#include <$header_name>" > ${tmp_code_file}
-    ${_printf} "%s\n" "int main() {return 0;}" >> ${tmp_code_file}
-    if `compiler_bin` ${tmp_code_file} >/dev/null 2>&1; then return; fi
+    if [ -z "${uncond}" ]; then
+	${_printf} "%s\n" "#include <$header_name>" > ${tmp_code_file}
+	${_printf} "%s\n" "int main() {return 0;}" >> ${tmp_code_file}
+	if `compiler_bin` ${tmp_code_file} >/dev/null 2>&1; then return; fi
+    fi
 #
 # The standard header does not exist.
 # If some of the replacement headers do exist, they included in a
@@ -1156,6 +1164,9 @@ test_compiler_specifica()
 	    "${_NO}"
 	then
 	    ${_printf} "%s" "//" >> ${_file}
+	elif [ "`${_basename} ${i}`" = "CGAL_CFG_CCTYPE_MACRO_BUG.C" ]; then
+	    # we have to generate the redirection header cctype
+	    create_replacement_header notest cctype "" ctype.h
 	fi
 	${_printf} "%s\n\n" \
 	    "#define ${CGAL_CONFIG_PREFIX}${_test_name} 1" \
@@ -3376,8 +3387,13 @@ write_compiler_flags()
   fi
   makefile_print_line "-I\$(CGAL_INCL_CONF_DIR)" >> ${FILE}
   if [ -n "${LEDA_SUPPORT}" ]; then
-    makefile_print_line "-DCGAL_USE_LEDA -DLEDA_PREFIX -DLEDA_STD_HEADERS" \
-	>> ${FILE}
+    case ${CGAL_OS_COMPILER} in
+	*g++-2.8*)
+	    makefile_print_line "-DCGAL_USE_LEDA -DLEDA_PREFIX -DLEDA_NO_DEFAULT_COMPARE" \
+	    >> ${FILE};;
+		*)
+	    makefile_print_line "-DCGAL_USE_LEDA -DLEDA_PREFIX" >> ${FILE};;
+    esac
     if [ -n "${NEED_EXTRA_LEDA_IDIR}" ]; then
 	makefile_print_line "-I\$(CGAL_INCL_DIR)" >> ${FILE}
 	${_printf} "\t%s\n\n" "-I\$(LEDA_INCL_DIR)" >> ${FILE}
@@ -3713,7 +3729,7 @@ _do_compile()
     if [ -f ${COMPILE_LOGFILE} -a ! -w ${COMPILE_LOGFILE} ]; then
 	${_rm} -f ${COMPILE_LOGFILE} 
     fi
-    if make -f makefile_$1 >${COMPILE_LOGFILE} 2>&1; then
+    if make -k -f makefile_$1 >${COMPILE_LOGFILE} 2>&1; then
 	log_print "Compilation of $1 ${_libname} succeeded."
 	${_printf} "%s\n" " done."
 	ANY_LIB_COMPILED='y'
