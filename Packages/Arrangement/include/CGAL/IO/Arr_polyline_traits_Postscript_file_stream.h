@@ -24,10 +24,7 @@
 #define CGAL_ARR_POLYLINE_TRAITS_POSTSCRIPT_FILE_STREAM_H  
 
 #include <CGAL/Segment_2.h> 
-
-#ifndef CGAL_POSTSCRIPT_FILE_STREAM_H
 #include <CGAL/IO/Postscript_file_stream.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
