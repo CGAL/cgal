@@ -1,3 +1,13 @@
+Subdivision surfaces \cite{cc,ds,loop,sqrt3,qts}
+are the limit surface resulting from the
+application of a subdivision algorithm to a control mesh.
+Subdivision algorithms recursively \emph{refine} (subdivide) the
+control mesh and \emph{modify} (smooth) the geometry according
+to a stencil on the source mesh.  
+Further details on subdivisions can be found at \cite{Sub:course:2000}
+and \cite{Warren:subdivision}. The OpenMesh library has
+supports of Loop and $\sqrt{3}$ subdivisions \cite{Abhijit:2004:APISUB}.
+
 Subdivision algorithms contain two major
 components: \emph{\tr} and \emph{\gm}.
 The \tr\ reparameterizes the source mesh into a refined 

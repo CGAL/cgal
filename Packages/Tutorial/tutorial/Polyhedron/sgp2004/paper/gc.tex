@@ -1,19 +1,37 @@
 % geometric computing
 
+There are geometric algorithms available in \cgal, not directly
+processing a mesh, but that can be helpful in the mesh processing
+context, for example, a fast self intersection test, the smallest
+enclosing sphere, or the minimum width of a point set.
+
+The self intersection test is based on the general algorithm for fast
+box intersections~\cite{cgal:ze-fsbi-02}, applied to the bounding
+boxes of individual facets, i.e. triangles, as a filtering step. The
+triangles of  intersecting boxes are then checked in detail, i.e., if
+they share common edge, they do not intersect, if they share a common
+vertex, the may intersect or not depending on the opposite edge, and
+otherwise the intersection test for triangles in the \cgal\ geometric
+kernel is used to decide the intersection. A geometric kernel with
+exact predicates is sufficient for this algorithm. 
+
+if they are not adjacent in the data structur
+boxes that are reported as are then 
+
 \paragraph{Smallest enclosing spheres} are commonly used as bounding
 volumes, for example, to speed up intersection tests.
 
 All 7 digits after the decimal are identical between the exact and the
 double implementation.
 
-\begin{tabular}{l|ll}
-  \textbf{smallest enclosing sphere} & \texttt{double} & exact
-    \texttt{qmpq} (non opt.)\\\hline
-  Bunny     & 0.02 &  14 \\
-  Lion vase & 0.15 & 396 \\
-  David     & 0.13 & 215 \\
-  Raptor    & 0.35  & 589
-\end{tabular}
+% \begin{tabular}{l|ll}
+%   \textbf{smallest enclosing sphere} & \texttt{double} & exact
+%     \texttt{qmpq} (non opt.)\\\hline
+%   Bunny     & 0.02 &  14 \\
+%   Lion vase & 0.15 & 396 \\
+%   David     & 0.13 & 215 \\
+%   Raptor    & 0.35  & 589
+% \end{tabular}
 
 
 % models used for benchmarking
@@ -32,19 +50,26 @@ double implementation.
 \paragraph{Convex hulls} are commonly used as bounding
 volumes, for example, to speed up intersection tests.
 
-\begin{tabular}{l|ll}
-  & \textbf{convex hull} & \textbf{minimum width} \\\hline
-  Bunny     &  3.5 & 111 \\
-  Lion vase & 13.1 & 276 \\
-  David     & 20.3 & 112 \\
-  Raptor    & 45.5 & 123
+\noindent\hspace*{-3mm}%
+{\small
+\begin{tabular}{l|ccccc}
+  & \multicolumn{2}{c}{\textbf{min. sphere}}
+  & \textbf{convex} & \textbf{min.} & \textbf{self inter-}\\
+  & \CodeFmt{double} & \CodeFmt{gmpq}
+  & \textbf{hull} & \textbf{width}  & \textbf{section}\\\hline
+  Bunny     &  0.02 & \hspace*{1ex}14 & 
+                 \hspace*{1ex}3.5 & 111 & \hspace*{1ex}3.2\\
+  Lion vase\hspace*{-16mm} & 0.15 & 396 & 13.1 & 276 & 22.9 \\
+  David     & 0.13 & 215 & 20.3 & 112 & 41.6 \\
+  Raptor    & 0.35 & 589 & 45.5 & 123 & 92.3
 \end{tabular}
+}
 
-\begin{tabular}{l|l}
-  & \textbf{self intersection} \\\hline
-  Bunny     & 3.2 \\
-  Lion vase & 22.9 \\
-  David     & 41.6 \\
-  Raptor    & 92.3
-\end{tabular}
+% \begin{tabular}{l|l}
+%   & \textbf{self intersection} \\\hline
+%   Bunny     & 3.2 \\
+%   Lion vase & 22.9 \\
+%   David     & 41.6 \\
+%   Raptor    & 92.3
+% \end{tabular}
 
