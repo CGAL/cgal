@@ -35,6 +35,7 @@
 
 #include <CGAL/Static_filters/Orientation_2.h>
 #include <CGAL/Static_filters/Orientation_3.h>
+#include <CGAL/Static_filters/Side_of_oriented_circle_2.h>
 #include <CGAL/Static_filters/Side_of_oriented_sphere_3.h>
 
 // This traits class gathers optimized predicates written by hand, using
@@ -51,6 +52,11 @@
 
 CGAL_BEGIN_NAMESPACE
 
+inline bool diff_was_exact(double a, double b, double ab)
+{
+    return ab+b == a && a-ab == b;
+}
+
 template < class K_base >
 class Static_filters : public K_base
 {
@@ -60,10 +66,11 @@ public :
   typedef typename K_base::Point_3 Point_3;
 
   Static_filters()
-    : max3x(0), max3y(0), max3z(0) {}
+    : max2x(0), max2y(0), max3x(0), max3y(0), max3z(0) {}
 
   typedef SF_Orientation_2<Point_2>                 Orientation_2;
   typedef SF_Orientation_3<Point_3>                 Orientation_3;
+  typedef SF_Side_of_oriented_circle_2<Point_2>     Side_of_oriented_circle_2;
   typedef SF_Side_of_oriented_sphere_3<Point_3>     Side_of_oriented_sphere_3;
 
   const Orientation_2 &
@@ -73,6 +80,10 @@ public :
   const Orientation_3 &
   orientation_3_object() const
   { return _orientation_3; }
+
+  const Side_of_oriented_circle_2 &
+  side_of_oriented_circle_2_object() const
+  { return _side_of_oriented_circle_2; }
 
   const Side_of_oriented_sphere_3 &
   side_of_oriented_sphere_3_object() const
@@ -84,16 +95,15 @@ public :
   void register_object(const Point_3 &p) const
   {
       bool redo = false;
-      double d;
-      d = fabs(CGAL::to_double(p.x()));
-      if (d > max3x)
-	  max3x = d, redo = true;
-      d = fabs(CGAL::to_double(p.y()));
-      if (d > max3y)
-	  max3y = d, redo = true;
-      d = fabs(CGAL::to_double(p.z()));
-      if (d > max3z)
-	  max3z = d, redo = true;
+      double dx = fabs(CGAL::to_double(p.x()));
+      if (dx > max3x)
+	  max3x = dx, redo = true;
+      double dy = fabs(CGAL::to_double(p.y()));
+      if (dy > max3y)
+	  max3y = dy, redo = true;
+      double dz = fabs(CGAL::to_double(p.z()));
+      if (dx > max3z)
+	  max3z = dz, redo = true;
       if (redo) {
           _orientation_3.update(max3x, max3y, max3z);
           _side_of_oriented_sphere_3.update(max3x, max3y, max3z);
@@ -103,15 +113,15 @@ public :
   void register_object(const Point_2 &p) const
   {
       bool redo = false;
-      double d;
-      d = fabs(CGAL::to_double(p.x()));
-      if (d > max2x)
-	  max2x = d, redo = true;
-      d = fabs(CGAL::to_double(p.y()));
-      if (d > max2y)
-	  max2y = d, redo = true;
+      double dx = fabs(CGAL::to_double(p.x()));
+      if (dx > max2x)
+	  max2x = dx, redo = true;
+      double dy = fabs(CGAL::to_double(p.y()));
+      if (dy > max2y)
+	  max2y = dy, redo = true;
       if (redo) {
           _orientation_2.update(max2x, max2y);
+          _side_of_oriented_circle_2.update(max2x, max2y);
       }
   }
 
@@ -124,6 +134,7 @@ private:
   // Their state is related to the state of *this.
   mutable Orientation_2 _orientation_2;
   mutable Orientation_3 _orientation_3;
+  mutable Side_of_oriented_circle_2 _side_of_oriented_circle_2;
   mutable Side_of_oriented_sphere_3 _side_of_oriented_sphere_3;
 };
 
