@@ -1,3 +1,6 @@
+Version 1.68 (?? June 01)
+- include updated for Filtered_exact
+
 Version 1.67 (25 June 01)
 - bug in demo and example _color fixed
 - dual functions cleaned
