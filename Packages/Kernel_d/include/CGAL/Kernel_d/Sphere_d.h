@@ -295,8 +295,8 @@ Sphere_d<R>::center() const
       ptr->cp = new Point_d(A[0]); 
       return *(ptr->cp);
     }
-    typename R::Center_of_circle_d center_of_circle;
-    ptr->cp = new Point_d(center_of_circle(points_begin(),points_end()));
+    typename R::Center_of_sphere_d center_of_sphere;
+    ptr->cp = new Point_d(center_of_sphere(points_begin(),points_end()));
   }
   return *(ptr->cp);
 }

@@ -155,7 +155,7 @@ DirectionHd<RT,LA>  opposite() const
 }
 
 DirectionHd<RT,LA>  operator- () const
-/*{\Munopfunc  returns the direction opposite to |\Mvar|. }*/
+/*{\Munop returns the direction opposite to |\Mvar|.}*/
 { return opposite(); }
 
 static Comparison_result cmp(

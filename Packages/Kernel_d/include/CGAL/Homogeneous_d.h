@@ -74,7 +74,7 @@ public:
   typedef Lt_from_compare<Self> Less_lexicographically_d;
   typedef Le_from_compare<Self> Less_or_equal_lexicographically_d;
   typedef Eq_from_method<Self> Equal_d;
-  typedef Center_of_circleHd<Self> Center_of_circle_d;
+  typedef Center_of_sphereHd<Self> Center_of_sphere_d;
   typedef Contained_in_linear_hullHd<Self> Contained_in_linear_hull_d;
   typedef Linear_rankHd<Self> Linear_rank_d;
   typedef Linearly_independentHd<Self> Linearly_independent_d;
@@ -115,8 +115,8 @@ public:
   Less_or_equal_lexicographically_d 
     less_or_equal_lexicographically_d_object() const
   { return Less_or_equal_lexicographically_d(); }
-  Center_of_circle_d center_of_circle_d_object() const
-  { return Center_of_circle_d(); }
+  Center_of_sphere_d center_of_sphere_d_object() const
+  { return Center_of_sphere_d(); }
   Contained_in_linear_hull_d contained_in_linear_hull_d_object() const
   { return Contained_in_linear_hull_d(); }
   Linear_rank_d linear_rank_d_object() const 

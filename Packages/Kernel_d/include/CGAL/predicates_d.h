@@ -12,9 +12,9 @@ CGAL_BEGIN_NAMESPACE
 /*{\Mtext \setopdims{4cm}{2cm}\computewidths
 \headerline{Linear and affine predicates}
 
-For an iterator range |[first,last)| we define |S = set [first,last)|
-as the ordered tuple $(|S[0]|,|S[1]|, \ldots |S[d-1]|)$ where 
-$|S[i]| = |*| |++|^{(i)}|first|$ (the element obtained by $i$ times 
+For an iterator range |[first,last)| we define |T = tuple [first,last)|
+as the ordered tuple $(|T[0]|,|T[1]|, \ldots |T[d-1]|)$ where 
+$|T[i]| = |*| |++|^{(i)}|first|$ (the element obtained by $i$ times 
 forwarding the iterator by operator |++| and then dereferencing it to
 get the value to which it points). We write |d = size [first,last)|.
 This extends the syntax of random access iterators to input iterators. 
@@ -23,7 +23,7 @@ $|++|^{(d+1)}|first == last|$.
 
 In the following we require the Iterators to be globally 
 of value type |Point_d<R>|. Also if we are handed over an iterator
-range |[first,last)|, then all points in |S = set [first,last)|
+range |[first,last)|, then all points in |T = tuple [first,last)|
 have the same dimension |dim|.
 }*/
 
@@ -32,9 +32,9 @@ OutputIterator barycentric_coordinates(
   ForwardIterator first, ForwardIterator last, const Point_d<R>& p, 
   OutputIterator result)
 /*{\Xfunc returns the barycentric coordinates of a point $p \in R^d$ in a
-affine space of dimension $k$ spanned by the points in |set [first,last)|.
+affine space of dimension $k$ spanned by the points in |tuple [first,last)|.
 \precond value type of |ForwardIterator| is |Point_d<R>|,
-|affinely_independed(first,last)| and |affine_rank(set [first,last),p)==k|.}*/
+|affinely_independed(first,last)| and |affine_rank(tuple [first,last),p)==k|.}*/
 { typename R::Barycentric_coordinates_d coords;
   return coords(first,last,p,result);
 }
@@ -42,8 +42,8 @@ affine space of dimension $k$ spanned by the points in |set [first,last)|.
 template <class ForwardIterator>
 Orientation
 orientation(ForwardIterator first, ForwardIterator last)
-/*{\Mfunc determines the orientation of the points in the set 
-|A = set [first,last)| where $A$ consists of $d + 1$ points in $d$ - space. 
+/*{\Mfunc determines the orientation of the points in the tuple 
+|A = tuple [first,last)| where $A$ consists of $d + 1$ points in $d$ - space. 
 This is the sign of the determinant
   \[ \left\Lvert \begin{array}{cccc}
   1 & 1 & 1 & 1 \\
@@ -63,7 +63,7 @@ Oriented_side side_of_oriented_sphere(
   ForwardIterator first, ForwardIterator last, 
   const Point_d<R>& x)
 /*{\Mfuncl determines to which side of the sphere $S$ defined by the
-    points in |A = set [first,last)| the point $x$ belongs, 
+    points in |A = tuple [first,last)| the point $x$ belongs, 
     where $A$ consists of $d + 1$ points in $d$ - space.  
     The positive side is determined by the positive sign 
     of the determinant \[
@@ -87,7 +87,7 @@ Bounded_side side_of_bounded_sphere(
   const Point_d<R> &p)
 /*{\Mfunc determines whether the point |p| lies |ON_BOUNDED_SIDE|, 
 |ON_BOUNDARY|, or |ON_UNBOUNDED_SIDE| of the sphere defined by 
-the points in |A = set [first,last)| where $A$ consists of $d+1$ 
+the points in |A = tuple [first,last)| where $A$ consists of $d+1$ 
 points in $d$-space.
 \precond value type of |ForwardIterator| is |Point_d<R>| and
 $|orientation(first,last)| \neq |ZERO|$.}*/
@@ -98,7 +98,7 @@ template <class R, class ForwardIterator>
 bool contained_in_simplex(
   ForwardIterator first, ForwardIterator last, const Point_d<R>& p) 
 /*{\Mfunc determines whether |p| is contained in the simplex spanned
-by the points in |A = set[first,last)|. |A| may consists of up to 
+by the points in |A = tuple [first,last)|. |A| may consists of up to 
 $d + 1$ points. 
 \precond value type of |ForwardIterator| is |Point_d<R>| and
 the points in |A| are affinely independent.}*/
@@ -110,14 +110,14 @@ bool contained_in_affine_hull(
      ForwardIterator first, ForwardIterator last,
      const Point_d<R>& p) 
 /*{\Mfunc determines whether $p$ is contained in the affine hull
-of the points in |A = set[first,last)|.
+of the points in |A = tuple [first,last)|.
 \precond value type of |ForwardIterator| is |Point_d<R>|.}*/
 { typename R::Contained_in_affine_hull_d contained; 
   return contained(first,last,p); }
 
 template <class ForwardIterator>
 int affine_rank(ForwardIterator first, ForwardIterator last)
-/*{\Mfunc computes the affine rank of the points in |A = set [first,last)|.
+/*{\Mfunc computes the affine rank of the points in |A = tuple [first,last)|.
 \precond value type of |ForwardIterator| is |Point_d<R>|.}*/
 { typedef typename std::iterator_traits<ForwardIterator>::value_type Point_d;
   typedef typename Point_d::R R;
@@ -126,7 +126,7 @@ int affine_rank(ForwardIterator first, ForwardIterator last)
 
 template <class ForwardIterator>
 bool affinely_independent(ForwardIterator first, ForwardIterator last)
-/*{\Mfunc decides whether the points in |A = set [first,last)| are 
+/*{\Mfunc decides whether the points in |A = tuple [first,last)| are 
 affinely independent. 
 \precond value type of |ForwardIterator| is |Point_d<R>|.}*/
 { typedef typename std::iterator_traits<ForwardIterator>::value_type Point_d;
@@ -162,7 +162,7 @@ template <class R, class ForwardIterator>
 bool contained_in_linear_hull(
   ForwardIterator first, ForwardIterator last, const Vector_d<R>& x)
 /*{\Mfunc determines whether $x$ is contained in the linear hull
-of the vectors in |A = set[first,last)|. 
+of the vectors in |A = tuple [first,last)|. 
 \precond value type of |ForwardIterator| is |Vector_d<R>|.}*/
 { typename R::Contained_in_linear_hull_d contained; 
   return contained(first,last,x); }
@@ -171,7 +171,7 @@ template <class ForwardIterator>
 int linear_rank(
   ForwardIterator first, ForwardIterator last)
 /*{\Mfunc computes the linear rank of the vectors in 
-|A = set [first,last)|. 
+|A = tuple [first,last)|. 
 \precond value type of |ForwardIterator| is |Vector_d<R>|.}*/
 { typedef typename std::iterator_traits<ForwardIterator>::
     value_type value_type;
