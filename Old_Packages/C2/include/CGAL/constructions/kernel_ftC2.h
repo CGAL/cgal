@@ -85,7 +85,9 @@ line_from_pointsC2(const FT &px, const FT &py,
 {
   a = py - qy;
   b = qx - px;
-  c = px*qy - py*qx;
+  // Suggested by Serge Pashkov (psw@rt.kiam.ru) for better numeric stability.
+  c = -px*a - py*b;
+  // c = px*qy - py*qx;
 }
 
 template < class FT >

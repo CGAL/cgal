@@ -1,3 +1,6 @@
+Version 4.3 (?? ???? 2000)
+- Change to line_from_pointsC2() for better numeric stability. [syl]
+
 Version 4.2 (27 July 2000)
 - Suppress id() in Cartesian Ray_2.h [my]
 - Fixed an assertion message. [syl]
