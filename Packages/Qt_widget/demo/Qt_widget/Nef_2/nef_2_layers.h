@@ -2,13 +2,13 @@
 #include <CGAL/IO/Qt_widget_Nef_2.h>
 
 template <class Nef_polyhedron>
-class Qt_layer_nef_red : public CGAL::Qt_widget_layer
+class Qt_layer_nef_blue : public CGAL::Qt_widget_layer
 {
 public:	
-  Qt_layer_nef_red(Nef_polyhedron &n): Nef(n){}
+  Qt_layer_nef_blue(Nef_polyhedron &n): Nef(n){}
   void draw()
   {    
-    *widget << CGAL::FillColor(CGAL::RED) << CGAL::GREEN;
+    *widget << CGAL::FillColor(CGAL::BLUE) << CGAL::GREEN;
     widget->setRasterOp(XorROP);
     *widget << Nef;
   };	
