@@ -1,4 +1,4 @@
-// Copyright (c) 1998  Utrecht University (The Netherlands),
+// Copyright (c) 1998-2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -106,7 +106,7 @@ namespace CGALi {
   }
   
   template <class K>
-  extern typename K::FT
+  typename K::FT
   squared_distance(const typename CGAL_WRAP(K)::Point_2 &pt,
 		   const typename CGAL_WRAP(K)::Ray_2 &ray,
 		   const K& k)
@@ -543,7 +543,7 @@ namespace CGALi {
   }
   
   template <class K>
-  extern typename K::FT
+  typename K::FT
   squared_distance(const typename CGAL_WRAP(K)::Line_2 &line,
 		   const typename CGAL_WRAP(K)::Ray_2 &ray,
 		   const K& k)
@@ -587,7 +587,7 @@ namespace CGALi {
   }
 
   template <class K>
-  extern void
+  void
   distance_index(int &ind,
 		 const typename CGAL_WRAP(K)::Point_2 &pt,
 		 const typename CGAL_WRAP(K)::Ray_2 &ray,
@@ -602,7 +602,7 @@ namespace CGALi {
   }
 
   template <class K>
-  extern void
+  void
   distance_index(int &ind,
 		 const typename CGAL_WRAP(K)::Point_2 &pt,
 		 const typename CGAL_WRAP(K)::Segment_2 &seg,
