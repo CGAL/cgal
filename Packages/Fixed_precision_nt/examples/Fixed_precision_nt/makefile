@@ -24,15 +24,10 @@ CXXFLAGS = \
 #---------------------------------------------------------------------#
 
 LIBPATH = \
-          $(TESTSUITE_LIBPATH) \
-          $(CGAL_LIBPATH) \
-	  $(CGAL_WINDOW_LIBPATH)
+          $(CGAL_LIBPATH)
 
 LDFLAGS = \
-          $(TESTSUITE_LDFLAGS) \
-          $(CGAL_LDFLAGS)\
-          $(CGAL_WINDOW_LDFLAGS) 
-
+          $(CGAL_LDFLAGS)
 
 #---------------------------------------------------------------------#
 #                    target entries

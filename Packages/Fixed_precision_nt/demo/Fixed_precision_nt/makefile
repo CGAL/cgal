@@ -25,13 +25,9 @@ CXXFLAGS = \
 #---------------------------------------------------------------------#
 
 LIBPATH = \
-          $(TESTSUITE_LIBPATH) \
-          $(CGAL_LIBPATH)\
 	  $(CGAL_WINDOW_LIBPATH)
 
 LDFLAGS = \
-          $(TESTSUITE_LDFLAGS) \
-          $(CGAL_LDFLAGS) \
 	  $(LONG_NAME_PROBLEM_LDFLAGS) \
 	  $(CGAL_WINDOW_LDFLAGS)
 

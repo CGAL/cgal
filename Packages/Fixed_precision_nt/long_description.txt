@@ -11,6 +11,9 @@ predicates.
 Versions
 
 
+2.13 ( 6 Jan 2000)
+  makefiles demo and example
+
 2.12 (16 Dec 1999)
   target all in demo makefile
 
