@@ -32,10 +32,13 @@ int main(int, char*)
 #include <CGAL/point_generators_2.h>
 
 //Qt_widget
-#include <CGAL/IO/Qt_widget.h>
-#include "Qt_widget_toolbar.h"
 #include "Qt_widget_toolbar_layers.h"
+#include <CGAL/IO/Qt_widget.h>
+#include <CGAL/IO/Qt_widget_layer.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
+#include "Qt_widget_toolbar.h"
+
+
 
 //Qt
 #include <qplatinumstyle.h>
@@ -90,17 +93,21 @@ Delaunay	tr1;
 CGALPointlist	L;
 Alpha_shape	A;
 int		current_state;
+double		alpha_index;
 
-
-class show_alpha_shape : public Qt_widget_layer
+class Qt_layer_show_alpha_shape : public CGAL::Qt_widget_layer
 {
 public:
   show_alpha_shape(){};
 private:
-  void draw(){
-  
+  void draw(CGAL::Qt_widget &win){
+    alpha_index = 1000;
+    A.set_alpha(alpha_index);
+    A.set_mode(Alpha_shape::GENERAL);
+    win << CGAL::RED;
+    win << A;
   }
-}
+};
 
 class MyWindow : public QMainWindow
 {
@@ -132,7 +139,7 @@ public:
   // drawing menu
   QPopupMenu * draw = new QPopupMenu( this );
   menuBar()->insertItem( "&Draw", draw );
-  draw->insertItem("&Generate_triangulation", this, SLOT(gen_tr()), CTRL+Key_G );
+  draw->insertItem("&Generate Triangulation", this, SLOT(gen_tr()), CTRL+Key_G );
 
   // help menu
   QPopupMenu * help = new QPopupMenu( this );
@@ -164,6 +171,8 @@ public:
 
   //application flag stuff
   old_state = 0;
+  //layers
+  win.attach(&alpha_shape_layer);
   };
 
   ~MyWindow()
@@ -186,6 +195,8 @@ public slots:
     win.lock();
     win.clear();
     tr1.clear();
+    A.clear();
+    L.clear();
     win.set_window(-1.1, 1.1, -1.1, 1.1); // set the Visible Area to the Interval
     win.unlock();
     something_changed();
@@ -198,6 +209,7 @@ private slots:
     if(CGAL::assign(p,obj)) {
       tr1.insert(p);
       L.push_back(p);
+      A.make_alpha_shape(L.begin(), L.end());
       something_changed();
     } 
   };
@@ -240,8 +252,10 @@ private slots:
     win.unlock();
     CGAL::Random_points_in_disc_2<Point> g(0.5);
     for(int count=0; count<200; count++) {
-      tr1.insert(*g++);
+      tr1.insert(*g);
+      L.push_back(*g++);
     }
+    A.make_alpha_shape(L.begin(), L.end());
     win.redraw();
     something_changed();
   }
@@ -277,14 +291,13 @@ private slots:
 
 private:
   
-  CGAL::Qt_widget	  win;		
-  CGAL::Tools_toolbar	  *newtoolbar;
-  CGAL::Layers_toolbar	  *vtoolbar;
-  CGAL::Standard_toolbar  *stoolbar;
+  CGAL::Qt_widget	    win;		
+  CGAL::Tools_toolbar	    *newtoolbar;
+  CGAL::Layers_toolbar	    *vtoolbar;
+  CGAL::Standard_toolbar    *stoolbar;
   //if a CGAL::Point is received should be true
-  int			  old_state;
-	
-	
+  int			    old_state;
+  Qt_layer_show_alpha_shape alpha_shape_layer;		
 };
 
 #include "alpha_shapes_2.moc"
