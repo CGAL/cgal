@@ -92,3 +92,5 @@ Regular :
   - le insert() (ou find_conflict) de Regular devrait fournir un iterator sur
     les Vertex_handle correspondant aux points qui seront caches, et en
     fonction de ca, une hierarchy speciale Regular fera ce qu'il faut.
+- programmer centre ortho-sphere de 4 points. Aussi centre de l'ortho-cercle 
+de 3 points... (requete Tamal Dey)
