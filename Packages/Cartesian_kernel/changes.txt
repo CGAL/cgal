@@ -1,5 +1,7 @@
 Version 6.9 (?? March 2001)
 - Added constructor Vector(Point, Point).
+- Optimize circumcenterC3(3 points).
+- Added side_of_bounded_sphere() for 2 and 3 points.
 
 Version 6.8 (21 February 2001)
 - Use CGAL_TYPENAME_MSVC_NULL in Cartesian_converter<>.

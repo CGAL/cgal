@@ -282,6 +282,65 @@ side_of_bounded_sphereC3(const FT &px, const FT &py, const FT &pz,
   return Bounded_side(s * o);
 }
 
+template <class FT >
+CGAL_KERNEL_MEDIUM_INLINE
+Bounded_side
+side_of_bounded_sphereC3(const FT &px, const FT &py, const FT &pz,
+                         const FT &qx, const FT &qy, const FT &qz,
+                         const FT &tx, const FT &ty, const FT &tz)
+{
+  // Returns whether T lies inside or outside the sphere which diameter is PQ.
+  return Bounded_side( CGAL_NTS sign((tx-px)*(qx-tx)
+	                           + (ty-py)*(qy-ty)
+	                           + (tz-pz)*(qz-tz)) );
+}
+
+template <class FT >
+CGAL_KERNEL_MEDIUM_INLINE
+Bounded_side
+side_of_bounded_sphereC3(const FT &px, const FT &py, const FT &pz,
+                         const FT &qx, const FT &qy, const FT &qz,
+                         const FT &sx, const FT &sy, const FT &sz,
+                         const FT &tx, const FT &ty, const FT &tz)
+{
+  // Returns whether T lies inside or outside the sphere which equatorial
+  // circle is PQR.
+
+  // This code is inspired by the one of circumcenterC3(3 points).
+
+  FT psx = px-sx;
+  FT psy = py-sy;
+  FT psz = pz-sz;
+  FT ps2 = CGAL_NTS square(psx) + CGAL_NTS square(psy) + CGAL_NTS square(psz);
+  FT qsx = qx-sx;
+  FT qsy = qy-sy;
+  FT qsz = qz-sz;
+  FT qs2 = CGAL_NTS square(qsx) + CGAL_NTS square(qsy) + CGAL_NTS square(qsz);
+  FT rsx = psy*qsz-psz*qsy;
+  FT rsy = psz*qsx-psx*qsz;
+  FT rsz = psx*qsy-psy*qsx;
+  FT tsx = tx-sx;
+  FT tsy = ty-sy;
+  FT tsz = tz-sz;
+
+  FT num_x = ps2 * det2x2_by_formula(qsy,qsz,rsy,rsz)
+	   - qs2 * det2x2_by_formula(psy,psz,rsy,rsz);
+  FT num_y = ps2 * det2x2_by_formula(qsx,qsz,rsx,rsz)
+	   - qs2 * det2x2_by_formula(psx,psz,rsx,rsz);
+  FT num_z = ps2 * det2x2_by_formula(qsx,qsy,rsx,rsy)
+	   - qs2 * det2x2_by_formula(psx,psy,rsx,rsy);
+
+  FT den   = det3x3_by_formula(psx,psy,psz,
+                               qsx,qsy,qsz,
+                               rsx,rsy,rsz);
+
+  FT den2 = FT(2) * den;
+
+  return Bounded_side(compare_dist(tsx*den2, tsy*den2, tsz*den2,
+	                           psx*den2, psy*den2, psz*den2,
+				   num_x,    - num_y,  num_z) );
+}
+
 template < class FT >
 CGAL_KERNEL_INLINE
 Comparison_result
