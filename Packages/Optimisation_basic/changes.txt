@@ -1,5 +1,8 @@
 Changes done to the `Optimisation_basic' package
 
+Version 3.8.5 on 21-Mar-2001
+- removed 'maintainer' line from file header in non-product files
+
 Version 3.8.4 on 21-Mar-2001
 - removed 'maintainer' line from file header
 
