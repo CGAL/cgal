@@ -1,5 +1,11 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.34 on  3 November 1999
+- The script now recognizes the per predicate marker /*CGAL_NO_FILTER*/.
+- Added an exact converter from double to Quotient<Gmpz>, so that
+  Filtered_exact<double, Quotient<Gmpz> > works.
+- Added missing includes in tst0.C.
+
 Version 4.33 on 28 October 1999
 - New filters:
   - Comment out the re-adjustment stuff.  The bound only grows now.
