@@ -62,11 +62,6 @@ input point, \ccc{pixel_size} is the size of the pixel of the grid,
 and $x$ and $y$ are the $x$ and $y$-coordinates of the rounded point
 respectively.}
 
-\ccNestedType{Segment_direction_2}{Returns a floating-point approximation of the
-slope of a segment as described in \cite{isr-2002}.
-Must have the syntax \ccc{double operator()(Segment_2 s)}
-where $s$ is the input segment.}
-
 \ccNestedType{Integer_grid_point_2}{return the conversion of a point
 from an arbitrary-precision representation into an integer one as
 described in \cite{isr-2002}. 
@@ -107,8 +102,6 @@ and constructor objects.
 \ccMethod{Comparison_y_2 compare_y_2_object();}{}
 \ccGlue
 \ccMethod{Snap_2 snap_2_object();}{}
-\ccGlue
-\ccMethod{Segment_direction_2 segment_direction_2_object();}{}
 \ccGlue
 \ccMethod{Integer_grid_point_2 integer_grid_point_2_object();}{}
 \ccGlue

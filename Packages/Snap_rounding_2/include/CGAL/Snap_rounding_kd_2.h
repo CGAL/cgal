@@ -65,16 +65,19 @@ typedef CGAL::Kdtree_interface_2d<my_point<NT,SAVED_OBJECT> >  kd_interface;
 typedef CGAL::Kdtree_d<kd_interface>  kd_tree;
 typedef typename kd_tree::Box Box;
 typedef std::list<my_point<NT,SAVED_OBJECT> > Points_List; 
+typedef std::pair<kd_tree *,std::pair<Direction_2,NT> > kd_triple;
+typedef std::list<std::pair<kd_tree *,std::pair<Direction_2,NT> > >
+  kd_triple_list;
+
 
 private:
   Rep_   _gt;
   const double pi,half_pi,epsilon;
   int number_of_trees;
-  std::list<std::pair<kd_tree *,NT> > kd_trees_list;
+  kd_triple_list kd_trees_list;
   std::list<std::pair<Point_2,SAVED_OBJECT > > input_points_list;
-  std::list<Direction_2> kd_tree_direction;
 
-  std::pair<kd_tree *,NT> create_kd_tree(NT angle)
+  kd_triple create_kd_tree(NT angle)
   {
     Points_List l;
     kd_tree *tree = new kd_tree(2);
@@ -83,7 +86,6 @@ private:
         iter = input_points_list.begin();
         iter != input_points_list.end();
         ++iter) {
-
       Point_2 p(iter->first);
 
       static Snap_rounding_rotation<Rep> r;
@@ -101,7 +103,13 @@ private:
       tree->dump();
     assert(tree->is_valid());
 
-    return(std::pair<kd_tree *,NT>(tree,angle));
+    NT buffer_angle(angle - half_pi / (2 * number_of_trees));
+    Line_2 li(tan(buffer_angle.to_double()),-1,0);
+    Direction_2 d(li);
+    std::pair<Direction_2,NT> kp(d,angle);
+    kd_triple kt(tree,kp);
+
+    return(kt);
   }
 
   inline NT squere(NT x) {return(x * x);}
@@ -114,7 +122,7 @@ private:
        {return(max(max(max(x1,x2),
                 max(x3,x4)),max(x5,x6)));}
 
-  int get_kd_num(Segment_2 seg,int n)
+  Direction_2 get_direction(Segment_2 seg)
   {
     // force the segment slope to [0-180)
     Point_2 s = seg.source(),t = seg.target();
@@ -130,10 +138,17 @@ private:
       v = v.perpendicular(RIGHTTURN);
 
     Direction_2 d(v.direction());
+ 
+    return(d);
+  }
+
+  int get_kd_num(Segment_2 seg,int n,std::list<Direction_2>& directions)
+  {
+    Direction_2 d = get_direction(seg);
     int i = 0;
     bool found = false;
     typename std::list<Direction_2>::const_iterator
-        iter = kd_tree_direction.begin();
+      iter = directions.begin();
 
     while(i < n && !found) {
       if(*iter > d)
@@ -141,13 +156,17 @@ private:
       ++i;
       ++iter;
     }
-    --i;
+
+    if(found)
+      --i;
+    else
+      i = 0;
 
     return(i);
   }
 
   void check_kd(int *kd_counter,int number_of_trees,
-       std::list<Segment_2> &seg_list)
+       std::list<Segment_2> &seg_list,std::list<Direction_2>& directions)
   {
     for(int i = 0;i < number_of_trees;++i)
       kd_counter[i] = 0;
@@ -155,7 +174,7 @@ private:
     int kd_num;
     for(typename std::list<Segment_2>::iterator iter =
         seg_list.begin();iter != seg_list.end();++iter) {
-      kd_num = get_kd_num(*iter,number_of_trees);
+      kd_num = get_kd_num(*iter,number_of_trees,directions);
       kd_counter[kd_num]++;
     }
   }
@@ -168,7 +187,7 @@ public:
     pi(3.1415),half_pi(1.57075),epsilon(0.001),
     number_of_trees(inp_number_of_trees),input_points_list(inp_points_list)
   {
-    std::pair<kd_tree *,NT> kd;
+    kd_triple kd;
 
     // check that there are at least two trees
     if(number_of_trees < 1) {
@@ -176,19 +195,28 @@ public:
       exit(1);
     }
 
-    // create directions for each kd-tree
-    for(double ang = 0;ang < half_pi;ang += half_pi / number_of_trees)
-      kd_tree_direction.push_back(Direction_2(Line_2(tan(ang),-1,0)));
-
     // find the kd trees that have enough candidates  (segments with a close
     // slope)
     int *kd_counter = new int[number_of_trees];
     int number_of_segments = seg_list.size();
-    check_kd(kd_counter,number_of_trees,seg_list);
+
+    // auxilary directions
+    std::list<Direction_2> directions;
+    NT buffer_angle;
+    Line_2 li;
+    Direction_2 d;
+    for(NT angle = 0;angle < half_pi;angle += half_pi / number_of_trees) {
+      buffer_angle = angle - half_pi / (2 * number_of_trees);
+      li = Line_2(tan(buffer_angle.to_double()),-1,0);
+      d = Direction_2(li);
+      directions.push_back(d);
+    }
+
+    check_kd(kd_counter,number_of_trees,seg_list,directions);
     int ind = 0;
     for(NT angle = 0;angle < half_pi;angle += half_pi / number_of_trees) {
       if(kd_counter[ind] >= (double)number_of_segments /
-	                    (double) number_of_trees / 2.0) {
+	                    (double)number_of_trees / 2.0) {
         kd = create_kd_tree(angle);
         kd_trees_list.push_back(kd);
       }
@@ -198,51 +226,31 @@ public:
   }
 
   void get_intersecting_points(list<SAVED_OBJECT> &result_list,
-                               Segment_2 inp_s,
+                               Segment_2 s,
                                NT unit_squere)
   {
-    Comparison_result cy = _gt.compare_y_2_object()(
-           inp_s.source(),inp_s.target());
-    Segment_2 s(cy == SMALLER ?
-              inp_s.source() : inp_s.target(),
-              cy == SMALLER ?
-              inp_s.target() : inp_s.source());
-
     // determine right kd-tree to work on, depending on the segment's slope
-    // ^^^^^^ the next code should be replaced
-    double alpha_double = _gt.segment_direction_2_object()(s);
-
-    if(alpha_double < 0)
-      alpha_double += pi / 2.0;
-
-    NT alpha = alpha_double;
-
+    Direction_2 d = get_direction(s);
+    int i = 0;
+    int n = kd_trees_list.size();
     bool found = false;
-    NT last_dif;
+    typename kd_triple_list::const_iterator
+      iter = kd_trees_list.begin();
 
-    typename list<std::pair<kd_tree *,NT> >::iterator iter,right_iter;
-
-    for(iter = kd_trees_list.begin();
-        iter != kd_trees_list.end() && !found;
-        ++iter) {
-      if(iter->second > alpha) {
-        right_iter = iter;
-        if(iter != kd_trees_list.begin() &&
-           iter->second - alpha > last_dif)
-            --right_iter;
- 
+    while(i < n && !found) {
+      if(iter->second.first > d)
         found = true;
-      } else
-        last_dif = iter->second - alpha;
+      ++i;
+      ++iter;
     }
-    if(!found) {
-      right_iter = kd_trees_list.end();
-      --right_iter;
-    }
-    // ^^^^ until here
+
+    if(!found)
+      iter = kd_trees_list.begin();
+    else
+      --iter;
 
     Iso_rectangle_2 rec = _gt.bounding_box_of_minkowski_sum_2_object()
-        (s,unit_squere,right_iter->second);
+        (s,unit_squere,iter->second.second);
 
     Point_2 p1 = rec.vertex(0);
     Point_2 p2 = rec.vertex(2);
@@ -254,7 +262,7 @@ public:
  
     // the kd-tree query
     list<my_point<NT,SAVED_OBJECT> > res;
-    right_iter->first->search(std::back_inserter(res),b);
+    iter->first->search(std::back_inserter(res),b);
 
     // create result
     result_list.empty();

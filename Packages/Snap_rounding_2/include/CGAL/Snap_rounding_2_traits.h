@@ -75,24 +75,6 @@ Integer_grid_point_2 integer_grid_point_2_object() const
 
 /*! Functor
  */
-class Segment_direction_2 {
- public:
-  double operator()(Segment_2 s)
-  {
-    double x1 = s.source().x().to_double();
-    double y1 = s.source().y().to_double();
-    double x2 = s.target().x().to_double();
-    double y2 = s.target().y().to_double();
-
-    return(atan((y2 - y1)/(x2 - x1)));
-  }
-};
-
-Segment_direction_2 segment_direction_2_object() const
-    {return Segment_direction_2(); }
-
-/*! Functor
- */
 
 class Bounding_box_of_minkowski_sum_2 {
  private:
