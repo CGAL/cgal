@@ -81,12 +81,8 @@ typedef  Min_circle::Circle                                       OptCircle;
 typedef  CGAL::Min_ellipse_2_traits_2<K>                          Ell_Traits;
 typedef  CGAL::Min_ellipse_2<Ell_Traits>                          Min_ellipse;
 
-typedef CGAL::Triangulation_euclidean_traits_2<K>                 Gt;
-typedef CGAL::Triangulation_vertex_base_2<Gt>                     Vb;
-typedef CGAL::Triangulation_face_base_2<Gt>                       Fb;
-typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb>    Tds;
-typedef CGAL::Triangulation_2<Gt,Tds>                             Triangulation_2;
-typedef CGAL::Delaunay_triangulation_2<Gt,Tds>                    Delaunay_triangulation_2;
+typedef CGAL::Triangulation_2<K>                                  Triangulation_2;
+typedef CGAL::Delaunay_triangulation_2<K>                         Delaunay_triangulation_2;
 
 typedef Triangulation_2::Edge                                     Edge;
 typedef Triangulation_2::Locate_type                              Locate_type;
