@@ -2640,12 +2640,15 @@ check_QT_SUPPORT()
 }
 check_QT_T_SUPPORT()
 {
+    return 1
 }
 check_QT_DLL()
 {
+    return 1
 }
 check_QT_SECOND_LIB()
 {
+    return 1
 }
 
 
