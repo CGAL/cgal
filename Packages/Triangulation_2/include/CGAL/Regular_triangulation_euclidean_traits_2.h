@@ -284,16 +284,6 @@ public:
       //CGAL_triangulation_precondition( ! collinear(p, q, r) );
       return CGAL::power_test(p,q,r,s);
     }
-};
-
-template < typename K >
-class Power_test_degenerated_2
-{
-public:
-  typedef typename K::Weighted_point_2         Weighted_point_2;
-
-  typedef Arity_tag< 3 >   Arity;
-  typedef Oriented_side    result_type;
 
   Oriented_side operator() ( const Weighted_point_2 & p,
 			     const Weighted_point_2 & q,
@@ -334,7 +324,6 @@ public:
   typedef Regular_triangulation_euclidean_traits_base_2<R, W>   Self;
 
   typedef CGAL::Power_test_2<Self>              Power_test_2;
-  typedef CGAL::Power_test_degenerated_2<Self>  Power_test_degenerated_2;
   // construction objects
   typedef CGAL::Construct_weighted_circumcenter_2<Self> 
                                             Construct_weighted_circumcenter_2;
@@ -343,10 +332,6 @@ public:
   Power_test_2 
   power_test_2_object() const
     {  return Power_test_2();}
-
-  Power_test_degenerated_2
-  power_test_degenerated_2_object() const
-    {return Power_test_degenerated_2();}
 
   //constructions for dual:
   Construct_weighted_circumcenter_2

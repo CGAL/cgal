@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+21 September 2004 Sylvain Pion
+- Merge Power_test_degenerated_2 into Power_test_2.
+
 20 September 2004 Menelaos Karavelas
 - removed references to split and join operations when talking about the
   triangulation data structure concept

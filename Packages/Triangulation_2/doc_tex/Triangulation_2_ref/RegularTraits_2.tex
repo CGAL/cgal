@@ -22,7 +22,7 @@ The concept \ccRefName\ describe the requirements
 for the traits class of regular triangulations. It refines  the 
 concept \ccc{TriangulationTraits_2} 
 providing  the  type
-\ccc{Weighted_point} and the \ccc{power-test}  predicate on those 
+\ccc{Weighted_point_2} and the \ccc{power-test}  predicate on those 
 weighted points.
 A weighted point is basically 
 a point augmented with a scalar weight. It can be seen as a circle
@@ -50,49 +50,43 @@ a model of the concept \ccc{WeightedPoint}.}
 %\ccGlue
 
 \ccNestedType{Power_test_2}{A predicate object type. Must provide
-the operator : \\
-\ccc{Oriented_side operator() ( Weighted_point p,
-                             Weighted_point q,
-                             Weighted_point r,
-                             Weighted_point s) } \\
-which is the power test for points \ccc{p}, \ccc{q}, \ccc{r} and 
-\ccc{s}. \ccPrecond{the bare points corresponding to 
-\ccc{p}, \ccc{q}, \ccc{r} are not collinear}.}
-\ccGlue
-\ccNestedType{Power_test_degenerated_2}{A predicate object type. Must provide twp operators:
+the operators:
   \begin{enumerate}
-  \item 
-    the operator 
-    \ccc{Oriented_side operator() ( Weighted_point p,
-      Weighted_point q,
-      Weighted_point r) }
+  \item \ccc{Oriented_side operator() ( Weighted_point_2 p,
+                                        Weighted_point_2 q,
+                                        Weighted_point_2 r,
+                                        Weighted_point_2 s) }
+  which is the power test for points \ccc{p}, \ccc{q}, \ccc{r} and 
+  \ccc{s}. \ccPrecond{the bare points corresponding to 
+  \ccc{p}, \ccc{q}, \ccc{r} are not collinear.}
+  \item \ccc{Oriented_side operator() ( Weighted_point_2 p,
+                                        Weighted_point_2 q,
+                                        Weighted_point_2 r) }
     which is the degenerated power test for collinear points 
     \ccc{p}, \ccc{q}, \ccc{r}.
     \ccPrecond{the bare points corresponding to 
       \ccc{p}, \ccc{q}, \ccc{r} are collinear and \ccc{p != q}.}
-  \item the operator 
-    \ccc{Oriented_side operator() ( Weighted_point p,
-      Weighted_point q) }
+  \item \ccc{Oriented_side operator() ( Weighted_point_2 p,
+                                        Weighted_point_2 q) }
     which is the degenerated power test for weighted points  
     \ccc{p} and \ccc{q} whose corresponding bare-points are identical.
     \ccPrecond{the bare points corresponding to 
       \ccc{p} and \ccc{q} are identical.}
   \end{enumerate}
-  }
-
+}
 
 \ccNestedType{Construct_weighted_circumcenter_2}{A constructor
 object which constructs the weighted circumcenter of  three
 weighted points. Provides the operator \\
-\ccc{Bare_point operator() ( Weighted_point p,
-                     Weighted_point q,
-                     Weighted_point r);} }
+\ccc{Bare_point operator() ( Weighted_point_2 p,
+                             Weighted_point_2 q,
+                             Weighted_point_2 r);} }
 
 
 \ccNestedType{Construct_radical_axis_2} {A constructor type which
 constructs
 the radical axis of two weighted points. Provides the operator~: \\
-\ccc{ Line_2  operator() ( Weighted_point p, Weighted_point q);} }
+\ccc{ Line_2  operator() ( Weighted_point_2 p, Weighted_point_2 q);} }
 
 
 \ccCreation
@@ -109,9 +103,6 @@ the radical axis of two weighted points. Provides the operator~: \\
 \ccThree{Construct_weighted_circumcenter_2}
         { construct_weighted_circumcenter_2_object();}{}
 \ccMethod{Power_test_2 power_test_2_object();}{}
-\ccGlue
-\ccMethod{Power_test_degenerated_2
-  power_test_degenerated_2_object();}{}
 \ccGlue
 \ccMethod{Construct_weighted_circumcenter_2
   construct_weighted_circumcenter_2_object();}{}

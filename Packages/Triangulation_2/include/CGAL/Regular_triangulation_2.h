@@ -659,7 +659,7 @@ power_test(const Weighted_point &p,
 	   const Weighted_point &q,
 	   const Weighted_point &r) const
 {
-  return geom_traits().power_test_degenerated_2_object()(p,q,r);
+  return geom_traits().power_test_2_object()(p,q,r);
 }
 
 template < class Gt, class Tds >
@@ -669,7 +669,7 @@ Regular_triangulation_2<Gt,Tds>::
 power_test(const Weighted_point &p,
 	   const Weighted_point &r) const
 {
-  return geom_traits().power_test_degenerated_2_object()(p,r);
+  return geom_traits().power_test_2_object()(p,r);
 }
 
 template < class Gt, class Tds >
