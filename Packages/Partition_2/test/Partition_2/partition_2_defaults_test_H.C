@@ -40,7 +40,7 @@ typedef std::list<Polygon_2>                       Polygon_list;
 
 #include "test_defaults.h"
 
-int main( int argc, char** argv )
+int main( )
 {
    test_defaults();
 
