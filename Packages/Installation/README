@@ -1,4 +1,4 @@
-CGAL_HOME/README
+$(CGAL_HOME)/README
 -------------------------------------------------------------------------------
 
 This distribution of CGAL includes:
@@ -23,6 +23,8 @@ This distribution of CGAL includes:
                         for many.
    doc_html/          - a directory containing the installation manual in
                         HTML format
+   doc_pdf/           - a directory containing the installation manual in
+                        PDF format
    doc_ps/            - a directory containing the installation manual in
                         compressed postscript format
    examples/          - a directory containing programs illustrating the 
@@ -38,7 +40,6 @@ This distribution of CGAL includes:
                         process
    lib/               - directory in which the CGAL libraries will be 
                         installed
-   list_cgal_includes - ???
    make/              - directory containing CGAL include makefiles, which
                         are generated during installation
    makefile           - a makefile that can be used for instaling the CGAL
