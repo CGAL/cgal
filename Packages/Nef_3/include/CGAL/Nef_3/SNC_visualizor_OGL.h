@@ -843,10 +843,10 @@ public:
   { ppoly_ = & CGAL::OGL::add_polyhedron(); }
 
   OGL::Double_point double_point(const Point_3& p) const {
-    double x = CGAL::to_double(p.hx().eval_at(1));
-    double y = CGAL::to_double(p.hy().eval_at(1));
-    double z = CGAL::to_double(p.hz().eval_at(1));
-    double w = CGAL::to_double(p.hw().eval_at(1));
+    double x = CGAL::to_double(Infi_box::eval_at(p.hx()));
+    double y = CGAL::to_double(Infi_box::eval_at(p.hy()));
+    double z = CGAL::to_double(Infi_box::eval_at(p.hz()));
+    double w = CGAL::to_double(Infi_box::eval_at(p.hw()));
     return OGL::Double_point(x/w,y/w,z/w);
   }
 
@@ -887,10 +887,10 @@ public:
 	}
       }
     Vector_3 v = orthogonal_vector(f);
-    double x = CGAL::to_double(v.hx().eval_at(1));
-    double y = CGAL::to_double(v.hy().eval_at(1));
-    double z = CGAL::to_double(v.hz().eval_at(1));
-    double w = CGAL::to_double(v.hw().eval_at(1));    
+    double x = CGAL::to_double(Infi_box::eval_at(v.hx()));
+    double y = CGAL::to_double(Infi_box::eval_at(v.hy()));
+    double z = CGAL::to_double(Infi_box::eval_at(v.hz()));
+    double w = CGAL::to_double(Infi_box::eval_at(v.hw()));
     g.set_normal(x/w, y/w, z/w, mark(f));
     ppoly_->push_back(g);
   }

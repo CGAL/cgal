@@ -34,7 +34,7 @@ CGAL::Direction_3<R> normalized(const CGAL::Direction_3<R>& d) {
 }
 
 template <typename R>
-CGAL::Point_3<R> normalized(CGAL::Point_3<R>& p)
+CGAL::Point_3<R> normalized(const CGAL::Point_3<R>& p)
 { 
   typedef typename R::RT     RT;
 

@@ -416,9 +416,16 @@ public:
   }
 
   template <typename H>
-    void store_boundary_object(H h, Volume_handle c) const
-  { c->shell_entry_objects_.push_back(Object_handle(h));
-    sncp()->store_boundary_item(h, --(c->shells_end()));
+    void store_boundary_object(H h, Volume_handle c, bool at_front = false) const
+  { 
+    if(at_front) {
+      c->shell_entry_objects_.push_front(Object_handle(h));
+      sncp()->store_boundary_item(h, c->shells_begin());
+    }
+    else {
+      c->shell_entry_objects_.push_back(Object_handle(h));
+      sncp()->store_boundary_item(h, --(c->shells_end()));
+    }
   }
 
   struct Shell_volume_setter {
@@ -428,7 +435,11 @@ public:
     SFace_map linked;
     Shell_volume_setter(const SNC_decorator& Di)
       : D(Di), linked(false) {}
-    void visit(SFace_handle h) { TRACEN(D.point(D.vertex(h))); D.set_volume(h, c); linked[h] = true;}
+    void visit(SFace_handle h) { 
+      TRACEN(D.point(D.vertex(h))); 
+      D.set_volume(h, c); 
+      linked[h] = true;
+    }
     void visit(Vertex_handle h) { /* empty */ }
     void visit(Halfedge_handle h) { /* empty */ }
     void visit(Halffacet_handle h ) { D.set_volume(h, c); }
@@ -451,7 +462,7 @@ public:
     Setter.set_volume(c);
     visit_shell_objects( f, Setter );
     TRACEN("Volume "<<&*c<<", inner shell "<<&*f);
-    store_boundary_object( f, c );
+    store_boundary_object( f, c);
   }
 
   struct Shell_mark_setter {
@@ -935,7 +946,21 @@ public:
 
     void operator()( Halfedge_handle e0, Object_handle o1, const Point_3& p)
       const {
-      TRACEN("Intersection_call_back: intersection reported on " << p);
+      TRACEN("Intersection_call_back: intersection reported on " << p << " (normalized: " << normalized(p) << " )");
+      SNC_decorator D0(snc0);
+      TRACEN("edge 0 has source " << point(source(e0)) << " and direction " << D0.tmp_point(e0));
+      Halfedge_handle e;
+      Halffacet_handle f;
+      SNC_decorator D1(snc1);
+      if( assign( e, o1)) {
+	TRACEN("edge 1 has source " << point(source(e)) << " and direction " << D1.tmp_point(e));
+      }
+      else if( assign( f, o1)) {
+	TRACEN("face 1 has plane equation " << plane(f));
+      }
+      else 
+      	CGAL_nef3_assertion_msg( 0, "wrong handle");
+      
       SNC_decorator D(result);
       Vertex_handle v0, v1;
       v0 = D.qualify_with_respect( p, Object_handle(e0), snc0);
@@ -953,7 +978,7 @@ public:
     SNC_structure& result;
     bool inverse_order;
   };
-#define CGAL_NEF3_DUMP_SNC_OPERATORS
+
   template <typename Selection>
     void binary_operation( SNC_structure& snc1i, // TODO: should it be const?
 			   const SNC_point_locator* pl1,
@@ -974,6 +999,8 @@ public:
     Unique_hash_map<Vertex_handle, bool> ignore(false);
     Vertex_iterator v0, v1;
     SNC_decorator D(result);
+
+    //    SETDTHREAD(19*509*43);
     
     TRACEN("=> binary operation");
 #ifdef CGAL_NEF3_DUMP_SNC_OPERATORS
@@ -1015,14 +1042,14 @@ public:
 	TRACEN("p0 found on facet");
       }
       else if( assign( c, o)) {
-	if( BOP( true, mark(c)) != BOP( false, mark(c))) {
+	//	if( BOP( true, mark(c)) != BOP( false, mark(c))) {
 	  // TODO: to copy the SM on v0, instead of create a volume local view
 	  // and operate it with the vertex
 	  v1 = D.create_local_view_on( p0, c);
 	  binop_local_views( v0, v1, BOP, result);
 	  result.delete_vertex(v1);
 	  TRACEN("p0 found on volume");
-	}
+	  //	}
       }
       else CGAL_nef3_assertion_msg( 0, "wrong handle");
     }
@@ -1052,14 +1079,14 @@ public:
 	TRACEN("p1 found on facet");
       } 
       else if( assign( c, o)) {
-	if( BOP( mark(c), true) != BOP( mark(c), false)) {
+	//	if( BOP( mark(c), true) != BOP( mark(c), false)) {
 	  // TODO: to copy the SM on v0, instead of create a volume local view
 	  // and operate it with the vertex
 	  v0 = D.create_local_view_on( p1, c);
 	  binop_local_views( v0, v1, BOP, result);
 	  result.delete_vertex(v0);
 	  TRACEN("p1 found on volume");
-	}
+	  //	}
       }
       else CGAL_nef3_assertion_msg( 0, "wrong handle");
     }
@@ -1072,6 +1099,8 @@ public:
     // The responsability of the call back functor is to construct the
     // local view on the intersection point on both SNC structures,
     // overlay them and add the resulting sphere map to the result.
+
+    //    SETDTHREAD(19*509*43);
 
     Halfedge_iterator e0, e1;
 
@@ -1168,8 +1197,8 @@ public:
     CGAL_nef3_forall_vertices(vi,*this) {
       if(!valid) break;
 
-      valid = valid && vi->is_valid(verb, level);
       valid = valid && (vi->sncp()==sncp());
+      valid = valid && vi->is_valid(verb, level);
 
       SM_decorator SD(vi);
       Unique_hash_map<SVertex_handle, bool> SVvisited(false);
@@ -1237,6 +1266,7 @@ public:
       valid = valid && (++count <= max);
     }
 
+    Unique_hash_map<SHalfedge_handle, bool> SEinUniqueFC(false);
     Halffacet_iterator hfi;
     CGAL_nef3_forall_halffacets(hfi,*this) {
       valid = valid && hfi->is_valid(verb, level);
@@ -1252,6 +1282,11 @@ public:
 	  SHalfedge_around_facet_circulator shec1(sheh), shec2(shec1);
 	  CGAL_For_all(shec1, shec2) {
 	    SM_decorator SD(vertex(shec1));
+	    if(SEinUniqueFC[shec1])
+	      TRACEN("redundant facet " << point(vertex(shec1)) << " | " << SD.circle(shec1));
+	    CGAL_nef3_assertion(!SEinUniqueFC[shec1]);
+	    SEinUniqueFC[shec1] = true;
+
 	    Plane_3 p_ref(point(vertex(shec1)),SD.circle(shec1).opposite().orthogonal_vector());
 	    valid = valid && (normalized(plane(hfi)) == normalized(p_ref));
 	  }

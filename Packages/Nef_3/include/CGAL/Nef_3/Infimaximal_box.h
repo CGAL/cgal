@@ -83,11 +83,15 @@ class Infimaximal_box {
     return p;
   }
 
-  static int degree(const typename Kernel::RT& n) {
+  static int degree(const RT& n) {
     return 0;
   }
 
   static NT get_coeff(const RT& p, unsigned int i) {
+    return p;
+  }
+
+  static NT eval_at(const RT& p) {
     return p;
   }
 
@@ -142,14 +146,20 @@ class Infimaximal_box<Tag_true, Kernel> {
   typedef typename Kernel::RT::NT                NT;
   typedef typename Kernel::Standard_kernel       Standard_kernel;
   typedef typename Standard_kernel::Point_3      Standard_point;
+  typedef typename Standard_kernel::Plane_3      Standard_plane;
+  typedef typename Standard_kernel::Vector_3      Standard_vector;
   typedef typename Kernel::Point_3               Point_3;
   typedef typename Kernel::Plane_3               Plane_3;
   typedef typename Kernel::Vector_3              Vector_3;
+  //  typedef typename SNC_structure::Sphere_point   Sphere_point;
   //  typedef typename SNC_structure::Sphere_circle  Sphere_circle;
+
   //  typedef SNC_SM_decorator<SNC_structure>        SM_decorator;
 
   enum Boundary { EXCLUDED=0, INCLUDED=1 };
   
+  static const int RADIUS = 10000000;
+
  public:
 
 
@@ -188,9 +198,20 @@ class Infimaximal_box<Tag_true, Kernel> {
     return p[i];
   }
 
+  static NT eval_at(const RT& p, NT d=RADIUS) {
+    return p.eval_at(d);
+  }
+
   static Point_3 target_for_ray_shoot_on_minus_x_direction(Point_3 p) {
     CGAL_warning( Kernel::is_standard(p));
     return Kernel::epoint( -1, 0, 0, p.hy()[0], 0, p.hz()[0], p.hw()[0]);
+  }
+
+  static Point_3 box_point(const Point_3& p, NT d=RADIUS) {
+    return Point_3(p.hx().eval_at(d),
+		   p.hy().eval_at(d),
+		   p.hz().eval_at(d),
+		   p.hw().eval_at(1));
   }
 
   static Standard_point standard_point(Point_3 p, NT d=1) {
@@ -200,12 +221,17 @@ class Infimaximal_box<Tag_true, Kernel> {
 			  p.hw().eval_at(1));
   }
 
+  static Standard_plane standard_plane(Plane_3 p, NT d=1) {
+    return Standard_plane(p.a().eval_at(1),
+			  p.b().eval_at(1),
+			  p.c().eval_at(1),
+			  p.d().eval_at(d));
+  }
 
-  static Point_3 box_point(const Point_3& p, NT d=10000) {
-    return Point_3(p.hx().eval_at(d),
-		   p.hy().eval_at(d),
-		   p.hz().eval_at(d),
-		   p.hw().eval_at(1));
+  static Standard_vector standard_vector(Vector_3 p) {
+    return Standard_vector(p.hx().eval_at(1),
+			   p.hy().eval_at(1),
+			   p.hz().eval_at(1));
   }
 
   static Point_3 create_extended_point(NT x, NT y, NT z) {

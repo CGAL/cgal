@@ -103,6 +103,8 @@ public:
   typedef typename Items::Sphere_kernel Sphere_kernel;
   
   typedef Infimaximal_box<typename Is_extended_kernel<Kernel>::value_type, Kernel> Infi_box;
+  typedef Infi_box::Standard_kernel  Standard_kernel;
+  typedef Infimaximal_box<typename Is_extended_kernel<Standard_kernel>::value_type, Standard_kernel> No_box;
 
   typedef typename Kernel::Point_3      Point_3;
   /*{\Mtypemember embedding vertices.}*/
@@ -1120,7 +1122,7 @@ public:
     bool update_facets  =  false;
     bool update_sfaces  =  false;
     bool update_volumes =  false;
-    
+
     TRACEN(">>> simplifying");
     SNC_decorator D(*this);
 
@@ -1454,13 +1456,14 @@ public:
     Volume_setter setter(D);
 
     SFace_iterator sf;
+    Volume_handle c;
     CGAL_nef3_forall_sfaces(sf, *this) {
       TRACEN("SFace " << IO->index(sf));
       if( setter.is_linked(sf)) continue;
-      Volume_handle c = *(uf.find(hash[D.volume(sf)]));
+      c = *(uf.find(hash[D.volume(sf)]));
       TRACEN("Volume " << IO->index(c));
       setter.set_volume(c);
-      D.visit_shell_objects( sf, setter );
+      D.visit_shell_objects( sf, setter );      
       D.store_boundary_object( sf, c);
     }
   }
@@ -1883,6 +1886,448 @@ public:
       }
 
       for(i = 0; i<v; i++) {
+	SM_point_locator PL(V[i]);
+	PL.init_marks_of_halfspheres(); 
+      }
+
+      delete[] V;
+      delete[] E;
+      delete[] F;
+      delete[] C;
+      delete[] SE;
+      delete[] SL;
+      delete[] SF;
+
+      return OK;
+    }
+
+    bool load_simple(std::ifstream& in) {
+
+      bool addInfiBox = Infi_box::extended_Kernel();
+
+      int i,z;
+      char cc;
+      bool OK = true;
+      OK = OK && test_string("Selective", in);
+      OK = OK && test_string("Nef", in);
+      OK = OK && test_string("Complex", in);
+
+      int v;
+      OK = OK && test_string("vertices", in);
+      in >> v;
+      z = addInfiBox ? v+8 : v;
+      Vertex_handle* V = new Vertex_handle[z];
+      for(i = 0; i < z; i++) {
+	V[i] = new_vertex_only();
+	V[i]->sncp_ = this;
+      }
+
+      int e;
+      OK = OK && test_string("halfedges", in);
+      in >> e;
+      z = addInfiBox ? e+24 : e;
+      Halfedge_handle* E = new Halfedge_handle[z];
+      for(i = 0; i < z; i++)
+	E[i] = new_halfedge_only();
+
+      int f;
+      OK = OK && test_string("facets", in);
+      in >> f;
+      z = addInfiBox ? f+12 : f;
+      Halffacet_handle* F = new Halffacet_handle[z];
+      for(i = 0; i < z; i++)
+	F[i] = new_halffacet_only();
+
+      int c;
+      OK = OK && test_string("volumes", in);
+      in >> c;
+      z = addInfiBox ? c+1 : c;
+      Volume_handle* C = new Volume_handle[z];
+
+      for(i = 0; i < z; i++)
+	C[i] = new_volume_only();
+
+      int se;
+      OK = OK && test_string("shalfedges", in);
+      in >> se;
+      z = addInfiBox ? se+48 : se;
+      SHalfedge_handle* SE = new SHalfedge_handle[z];
+      for(i = 0; i < z; i++)
+	SE[i] = new_shalfedge_only();
+      
+      int sl;
+      OK = OK && test_string("shalfloops", in);
+      in >> sl;
+      SHalfloop_handle* SL = new SHalfloop_handle[sl];
+      for(i = 0; i < sl; i++)
+	SL[i] = new_shalfloop_only();
+
+      int sf;
+      OK = OK && test_string("sfaces", in);
+      in >> sf;
+      z = addInfiBox ? sf+16 : sf;
+      SFace_handle* SF = new SFace_handle[z];
+      for(i = 0; i < z; i++)
+	SF[i] = new_sface_only();
+
+      int index;
+      typename Standard_kernel::RT hx, hy, hz, hw;
+      for(i = 0; i < v; i++) {
+	in >> index;
+	OK = OK && (index == i);
+	OK = OK && test_string("{",in);
+	Vertex_handle vh = V[i];
+
+	in >> index;
+	vh->svertices_begin_ = (index >= 0 ? E[index] : svertices_end());
+	in >> index;
+	vh->svertices_last_  = index >= 0 ? E[index] : svertices_end();
+	OK = OK && test_string(",",in);
+	in >> index;
+	vh->shalfedges_begin_ = index >= 0 ? SE[index] : shalfedges_end();
+	in >> index;
+	vh->shalfedges_last_  = index >= 0 ? SE[index] : shalfedges_end();
+	OK = OK && test_string(",",in);
+	in >> index;
+	vh->sfaces_begin_ = index >= 0 ? SF[index] : sfaces_end();
+	in >> index;
+	vh->sfaces_last_  = index >= 0 ? SF[index] : sfaces_end();
+	OK = OK && test_string(",",in);
+	in >> index;
+	vh->shalfloop_ = index >= 0 ? SL[index] : shalfloops_end();
+	OK = OK && test_string("|",in);
+	in >> hx >> hy >> hz >> hw;
+	vh->point_at_center_ = Point_3(hx, hy, hz, hw);
+	OK = OK && test_string("}",in);
+	in >> vh->mark_;
+      }
+
+      for(i = 0; i < e; i++) {
+	in >> index;
+	OK = OK && (index == i);
+	OK = OK && test_string("{",in);
+	Halfedge_handle eh = E[i];
+	
+	in >> index;
+	eh->twin_ = E[index];
+	OK = OK && test_string(",",in);
+        in >> index;
+	eh->center_vertex_ = V[index];
+	OK = OK && test_string(",",in);
+	in >> index;
+	if(index == 0) {
+	  in >> index;
+	  eh->out_sedge_ = SE[index];
+	} else { 
+	  in >> index;
+	  eh->incident_sface_ = SF[index];
+	}
+	OK = OK && test_string("|",in);
+	in >> hx >> hy >> hz >> hw;
+	eh->point_on_surface_ = Sphere_point(hx,hy,hz);
+	OK = OK && test_string("}",in);
+	in >> eh->mark_;
+      }
+      
+      for(i = 0; i < f; i++) {
+	in >> index;
+	OK = OK && (index == i);
+	OK = OK && test_string("{",in);
+	Halffacet_handle fh = F[i];
+      
+	in >> index;
+	fh->twin_ = F[index];
+	OK = OK && test_string(",",in);
+
+	in >> cc;
+	while(isdigit(cc)) {
+	  in.putback(cc);
+	  in >> index;
+	  fh->boundary_entry_objects_.push_back(SE[index]);
+	  in >> cc;
+	}
+	
+	in >> cc;
+	while(isdigit(cc)) {
+	  in.putback(cc);
+	  in >> index;
+	  fh->boundary_entry_objects_.push_back(SL[index]);
+	  in >> cc;
+	}
+
+	in >> index;
+	fh->volume_ = C[index+addInfiBox];
+	OK = OK && test_string("|",in);
+	in >> hx >> hy >> hz >> hw;
+	fh->supporting_plane_ = Plane_3(hx,hy,hz,hw);
+	OK = OK && test_string("}",in);
+	in >> fh->mark_;
+      }
+
+      for(i = 0; i < c; i++) {
+	in >> index;
+	OK = OK && (index == i);
+	OK = OK && test_string("{",in);
+	Volume_handle ch = C[i+addInfiBox];
+
+	in >> cc;
+	while(isdigit(cc)) {
+	  in.putback(cc);
+	  in >> index;
+	  ch->shell_entry_objects_.push_back(SF[index]);
+	  in >> cc;
+	}
+	in >> ch->mark_;
+      }	
+
+      for(i = 0; i < se; i++) {
+	in >> index;
+	OK = OK && (index == i);
+	OK = OK && test_string("{",in);
+	SHalfedge_handle seh = SE[i];
+	
+	in >> index;
+	seh->twin_ = SE[index];
+	OK = OK && test_string(",",in);
+	in >> index;
+	seh->sprev_ = SE[index];
+	OK = OK && test_string(",",in);
+	in >> index;
+	seh->snext_ = SE[index];
+	OK = OK && test_string(",",in);
+	in >> index;
+	seh->source_ = E[index];
+	OK = OK && test_string(",",in);
+	in >> index;
+	seh->incident_sface_ = SF[index];
+	OK = OK && test_string(",",in);
+	in >> index;
+	seh->prev_ = SE[index];
+	OK = OK && test_string(",",in);
+	in >> index;
+	seh->next_ = SE[index];
+	OK = OK && test_string(",",in);
+	in >> index;
+	seh->incident_facet_ = F[index];
+	OK = OK && test_string("|",in);
+	in >> hx >> hy >> hz >> hw;
+	seh->circle_ = Sphere_circle(Plane_3(hx,hy,hz,hw));
+	OK = OK && test_string("}",in);
+	in >> seh->mark_;
+      }
+
+      for(i = 0; i < sl; i++) {
+	in >> index;
+	OK = OK && (index == i);
+	OK = OK && test_string("{",in);
+	SHalfloop_handle slh = SL[i];
+	
+	in >> index;
+	slh->twin_ = SL[index];
+	OK = OK && test_string(",",in);
+	in >> index;
+	slh->incident_sface_ = SF[index];
+	OK = OK && test_string(",",in);
+	in >> index;
+	slh->incident_facet_ = F[index];
+	OK = OK && test_string("|",in);	
+	in >> hx >> hy >> hz >> hw;
+	slh->circle_ = Sphere_circle(Plane_3(hx,hy,hz,hw));	
+	OK = OK && test_string("}",in);	
+	in >> slh->mark_;
+      }
+
+      for(i = 0; i < sf; i++) {
+	in >> index;
+	OK = OK && (index == i);
+	OK = OK && test_string("{",in);
+	SFace_handle sfh = SF[i];
+	
+	in >> index;
+	sfh->center_vertex_ = V[index];
+	OK = OK && test_string(",",in);
+
+	in >> cc;
+	while(isdigit(cc)) {
+	  in.putback(cc);
+	  in >> index;
+	  sfh->boundary_entry_objects_.push_back(SE[index]);
+	  in >> cc;
+	}
+
+	in >> cc;
+	while(isdigit(cc)) {
+	  in.putback(cc);
+	  in >> index;
+	  sfh->boundary_entry_objects_.push_back(E[index]);
+	  in >> cc;
+	}
+
+	in >> cc;
+	while(isdigit(cc)) {
+	  in.putback(cc);
+	  in >> index;
+	  sfh->boundary_entry_objects_.push_back(SL[index]);
+	  in >> cc;
+	}
+
+	in >> index;
+	sfh->incident_volume_ = C[index+addInfiBox];
+	OK = OK && test_string("}",in);	
+	in >> sfh->mark_;
+      }
+
+      if(addInfiBox) {
+	
+	for(i=0; i<8; i++) {
+	  Vertex_handle vh = V[v+i];
+	  vh->svertices_begin_ = E[e+3*i];
+	  vh->svertices_last_  = E[e+3*i+2];
+	  vh->shalfedges_begin_ = SE[se+6*i];
+	  vh->shalfedges_last_  = SE[se+6*i+5];
+	  vh->sfaces_begin_ = SF[sf+2*i];
+	  vh->sfaces_last_  = SF[sf+2*i+1];
+	  vh->shalfloop_ = shalfloops_end();
+	  hx = i % 2 ? -1 : 1;
+	  hy = i % 4 > 1 ? -1 : 1;
+	  hz = i > 3 ? -1 : 1;
+	  vh->point_at_center_ = Point_3(RT(0,hx), RT(0,hy), RT(0,hz), RT(1));
+	  vh->mark_ = 1;		
+	}
+
+	int seOff[3] = {0, 1, 3};
+	int twinIdx[24] = { 3, 7,14,
+			    0,10,17,
+			    9, 1,20,
+			    6, 4,23,
+			   15,19, 2,
+			   12,22, 5,
+			   21,13, 8,
+			   18,16,11};
+
+	for(i = 0; i < 24; i++) {
+	  Halfedge_handle eh = E[e+i];
+	  eh->twin_ = E[e+twinIdx[i]];
+	  eh->center_vertex_ = V[v+(i/3)];
+	  eh->out_sedge_ = SE[se+(i/3*6)+seOff[i%3]];
+	  switch(i%3) {
+	  case 0 : 
+	    hx = i % 6 ? 1 : -1;
+	    hy = hz = 0;
+	    break;
+	  case 1:
+	    hy = i % 12 >= 6 ? 1 : -1;
+	    hx = hz = 0;
+	    break;
+	  case 2:
+	    hz = i >= 12 ? 1 : -1;
+	    hx = hy = 0;
+	    break;
+	  }
+	  eh->point_on_surface_ = Sphere_point(hx,hy,hz);
+	  eh->mark_ = 1;
+	}
+
+	int bnd[12] = {19, 18, 43, 42, 35, 34,
+		       47, 46, 39, 38, 45, 44};
+	for(i = 0; i < 12; i++) {
+	  Halffacet_handle fh = F[f+i];
+	  fh->twin_ = F[f+(i/2*2)+((i+1)%2)];
+	  fh->boundary_entry_objects_.push_back(SE[se+bnd[i]]);
+	  fh->volume_ = C[((i%4) == 1 || (i%4 == 2)) ? 1 : 0];
+	  if(i<4) {
+	    hz = i % 2 ? -1 : 1;
+	    hx = hy = 0;
+	  }
+	  else if(i<8) {
+	    hy = i % 2 ? -1 : 1;
+	    hx = hz = 0;
+	  }
+	  else {
+	    hx = i % 2 ? -1 : 1;
+	    hz = hy = 0;
+	  }
+	  hw = ((i%4) == 1 || (i%4) == 2) ? 1 : -1;
+	  fh->supporting_plane_ = Plane_3(RT(hx),RT(hy),RT(hz),RT(0,hw));
+	  fh->mark_ = 1;
+	}
+
+	C[0]->shell_entry_objects_.push_back(SF[sf]);
+	C[0]->mark_ = 0;
+	C[1]->shell_entry_objects_.push_front(SF[sf+1]);
+
+	int sprevOff[6] = {4,3,0,5,2,1};
+	int snextOff[6] = {2,5,4,1,0,3};
+	int prevIdx[48] = {7,12,15,26,29,10,
+			   1,18,21,32,35,4,
+			   19,0,3,38,41,22,
+			   13,6,9,44,47,16,
+			   31,36,39,2,5,34,
+			   25,42,45,8,11,28,
+			   43,24,27,14,17,46,
+			   37,30,33,20,23,40};
+	int nextIdx[48] = {13,6,27,14,11,28,
+			   19,0,33,20,5,34,
+			   1,18,39,2,23,40,
+			   7,12,45,8,17,46,
+			   37,30,3,38,35,4,
+			   43,24,9,44,29,10,
+			   25,42,15,26,47,16,
+			   31,36,21,32,41,22};
+	int factIdx[48] = {1,0,9,8,5,4,
+			   0,1,11,10,4,5,
+			   0,1,8,9,7,6,
+			   1,0,10,11,6,7,
+			   3,2,8,9,4,5,
+			   2,3,10,11,5,4,
+			   2,3,9,8,6,7,
+			   3,2,11,10,7,6};
+	int sgn[24] = {1,1,1,-1,1,-1,
+		       -1,-1,1,1,-1,-1,
+		       1,-1,-1,-1,-1,1,
+		       -1,1,-1,1,1,1};
+
+	for(i = 0; i < 48; i++) {
+	  SHalfedge_handle seh = SE[se+i];
+	  
+	  seh->twin_ = SE[se+(i/2*2)+((i+1)%2)];
+	  seh->sprev_ = SE[se+sprevOff[i%6]+(i/6*6)];
+	  seh->snext_ = SE[se+snextOff[i%6]+(i/6*6)];
+	  seh->source_ = E[e+((i+1)%6)/2+(i/6)*3];
+	  seh->incident_sface_ = SF[sf+(i%2)+(i/6)*2];
+	  seh->prev_ = SE[se+prevIdx[i]];
+	  seh->next_ = SE[se+nextIdx[i]];
+	  seh->incident_facet_ = F[f+factIdx[i]];
+	  if(i%6 < 2) {
+	    hz = (i%2) ? sgn[i/2] * (-1) : sgn[i/2];
+	    hx = hy = 0;
+	  }
+	  else if(i%6 < 4) {
+	    hx = (i%2) ? sgn[i/2] * (-1) : sgn[i/2];
+	    hz = hy = 0;
+	  }
+	  else {
+	    hy = (i%2) ? sgn[i/2] * (-1) : sgn[i/2];
+	    hx = hz = 0;
+	  }
+	  seh->circle_ = Sphere_circle(Plane_3(RT(hx),RT(hy),RT(hz),RT(0)));
+	  seh->mark_ = 1;
+	}
+	
+	int volIdx[8] = {0,1,1,0,1,0,0,1};
+		
+	for(i = 0; i < 16; i++) {
+	  SFace_handle sfh = SF[sf+i];
+	  sfh->center_vertex_ = V[v+(i/2)];
+	  sfh->boundary_entry_objects_.push_back(SE[se+(i/2*6)+(i%2)]);
+	  int cIdx = i%2 ? 1-volIdx[i/2] : volIdx[i/2];
+	  sfh->incident_volume_ = C[cIdx];
+	  sfh->mark_ = cIdx ? C[1]->mark_ : 0;
+	}
+	
+      }
+
+      for(i = 0; i<v+addInfiBox*8; i++) {
 	SM_point_locator PL(V[i]);
 	PL.init_marks_of_halfspheres(); 
       }
