@@ -166,6 +166,14 @@ lexicographically_xy_smaller(const PointH2<R>& p,
 template < class R>
 CGAL_KERNEL_INLINE
 bool
+lexicographically_xy_larger_or_equal(const PointH2<R>& p, const PointH2<R>& q)
+{
+    return !lexicographically_xy_smaller(p,q);
+}
+
+template < class R>
+CGAL_KERNEL_INLINE
+bool
 lexicographically_xy_larger(const PointH2<R>& p,
                                  const PointH2<R>& q)
 {
@@ -227,8 +235,7 @@ compare_lexicographically_yx(const PointH2<R>& p,
 template < class R>
 CGAL_KERNEL_INLINE
 bool
-lexicographically_yx_smaller_or_equal(const PointH2<R>& p,
-                                           const PointH2<R>& q)
+lexicographically_yx_smaller_or_equal(const PointH2<R>& p, const PointH2<R>& q)
 {
   typedef typename R::RT RT;
 
@@ -257,8 +264,7 @@ lexicographically_yx_smaller_or_equal(const PointH2<R>& p,
 template < class R>
 CGAL_KERNEL_INLINE
 bool
-lexicographically_yx_smaller(const PointH2<R>& p,
-                                  const PointH2<R>& q)
+lexicographically_yx_smaller(const PointH2<R>& p, const PointH2<R>& q)
 {
   typedef typename R::RT RT;
 
@@ -282,6 +288,14 @@ lexicographically_yx_smaller(const PointH2<R>& p,
   pV = phx * qhw;
   qV = qhx * phw;
   return ( pV < qV );
+}
+
+template < class R>
+CGAL_KERNEL_INLINE
+bool
+lexicographically_yx_larger_or_equal(const PointH2<R>& p, const PointH2<R>& q)
+{
+    return !lexicographically_yx_smaller(p, q);
 }
 
 template < class R>
