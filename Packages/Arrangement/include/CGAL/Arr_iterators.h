@@ -107,24 +107,6 @@ public:
     }
     */
 
-#ifdef CGAL_CFG_NO_ITERATOR_TRAITS
-  friend inline  iterator_category
-  iterator_category( const Self&) {
-    return iterator_category();
-  }
-  friend inline  value_type*
-  value_type( const Self&) {
-    return (value_type*)(0);
-  }
-  friend inline  difference_type*
-  distance_type( const Self&) {
-    return (difference_type*)(0);
-  }
-  friend inline  Circulator_tag
-  query_circulator_or_iterator( const Self&) {
-    return Circulator_tag();
-  }
-#endif // CGAL_CFG_NO_ITERATOR_TRAITS //
 };
 
 
@@ -195,24 +177,6 @@ public:
     }
   */
 
-#ifdef CGAL_CFG_NO_ITERATOR_TRAITS
-  friend inline  iterator_category
-  iterator_category( const Self&) {
-    return iterator_category();
-  }
-  friend inline  value_type*
-  value_type( const Self&) {
-    return (value_type*)(0);
-  }
-  friend inline  difference_type*
-  distance_type( const Self&) {
-    return (difference_type*)(0);
-  }
-  friend inline  Circulator_tag
-  query_circulator_or_iterator( const Self&) {
-    return Circulator_tag();
-  }
-#endif // CGAL_CFG_NO_ITERATOR_TRAITS //
 };
 template < class Node, class It, class Ctg>
 class _Arr_vertex_circ : public It {
@@ -283,24 +247,6 @@ public:
     }
   */
 
-#ifdef CGAL_CFG_NO_ITERATOR_TRAITS
-  friend inline  iterator_category
-  iterator_category( const Self&) {
-    return iterator_category();
-  }
-  friend inline  value_type*
-  value_type( const Self&) {
-    return (value_type*)(0);
-  }
-  friend inline  difference_type*
-  distance_type( const Self&) {
-    return (difference_type*)(0);
-  }
-  friend inline  Circulator_tag
-  query_circulator_or_iterator( const Self&) {
-    return Circulator_tag();
-  }
-#endif // CGAL_CFG_NO_ITERATOR_TRAITS //
 };
 
 
@@ -371,24 +317,6 @@ public:
     }
   */
 
-#ifdef CGAL_CFG_NO_ITERATOR_TRAITS
-  friend inline  iterator_category
-  iterator_category( const Self&) {
-    return iterator_category();
-  }
-  friend inline  value_type*
-  value_type( const Self&) {
-    return (value_type*)(0);
-  }
-  friend inline  difference_type*
-  distance_type( const Self&) {
-    return (difference_type*)(0);
-  }
-  friend inline  Circulator_tag
-  query_circulator_or_iterator( const Self&) {
-    return Circulator_tag();
-  }
-#endif // CGAL_CFG_NO_ITERATOR_TRAITS //
 };
 
 
@@ -466,24 +394,6 @@ public:
     return tmp;
   }
 
-#ifdef CGAL_CFG_NO_ITERATOR_TRAITS
-  friend inline  iterator_category
-  iterator_category( const Self&) {
-    return iterator_category();
-  }
-  friend inline  value_type*
-  value_type( const Self&) {
-    return (value_type*)(0);
-  }
-  friend inline  difference_type*
-  distance_type( const Self&) {
-    return (difference_type*)(0);
-  }
-  friend inline  Circulator_tag
-  query_circulator_or_iterator( const Self&) {
-    return Circulator_tag();
-  }
-#endif // CGAL_CFG_NO_ITERATOR_TRAITS //
 };
 
 
@@ -552,24 +462,6 @@ public:
     return tmp;
   }
 
-#ifdef CGAL_CFG_NO_ITERATOR_TRAITS
-  friend inline  iterator_category
-  iterator_category( const Self&) {
-    return iterator_category();
-  }
-  friend inline  value_type*
-  value_type( const Self&) {
-    return (value_type*)(0);
-  }
-  friend inline  difference_type*
-  distance_type( const Self&) {
-    return (difference_type*)(0);
-  }
-  friend inline  Circulator_tag
-  query_circulator_or_iterator( const Self&) {
-    return Circulator_tag();
-  }
-#endif // CGAL_CFG_NO_ITERATOR_TRAITS //
 };
 
 
@@ -695,44 +587,11 @@ public:
     return tmp.operator*();
     }
   */
-#ifdef CGAL_CFG_NO_ITERATOR_TRAITS
-  friend inline  iterator_category
-  iterator_category( const Self&) { return iterator_category(); }
-  friend inline  value_type*
-  value_type( const Self&) { return (value_type*)(0); }
-  friend inline  difference_type*
-  distance_type( const Self&) { return (difference_type*)(0); }
-#endif // CGAL_CFG_NO_ITERATOR_TRAITS //
 };
-
-#ifdef CGAL_CFG_NO_ITERATOR_TRAITS
-template < class C, class Fct/*, class Ref, class Ptr*/>
-inline  Circulator_tag
-query_circulator_or_iterator(const Arr_overlap_circulator<C,Fct/*,Ref,Ptr*/>&)
-{
-  return Circulator_tag();
-}
-#endif // CGAL_CFG_NO_ITERATOR_TRAITS //
 
 #endif //BOGI
 
-
-
-
-
 CGAL_END_NAMESPACE
-
 
 #endif 
 // EOF //
-
-
-
-
-
-
-
-
-
-
-
