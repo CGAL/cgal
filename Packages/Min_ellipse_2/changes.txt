@@ -1,5 +1,8 @@
 Changes done to the `Min_ellipse_2' package.
 
+Version 3.5.3 on 07-Dec-1999
+- demos fixed.
+
 Version 3.5.2 on 07-Dec-1999
 - scope macro `CGAL_CLIB_STD::' added to `strcmp'.
 
