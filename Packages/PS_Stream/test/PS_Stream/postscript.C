@@ -1,24 +1,20 @@
 #include <CGAL/Cartesian.h>
+
 #include <iostream>
 #include <fstream>
 
-#include <CGAL/Point_2.h>
-#include <CGAL/Segment_2.h>
-#include <CGAL/Triangle_2.h>
-#include <CGAL/Iso_rectangle_2.h>
-#include <CGAL/Ray_2.h>
-#include <CGAL/Circle_2.h>
 #include <CGAL/IO/PS_Stream.h>
 
-typedef CGAL::Point_2< CGAL::Cartesian<double> >     Point;
-typedef CGAL::Segment_2< CGAL::Cartesian<double> >   Segment;
-typedef CGAL::Ray_2< CGAL::Cartesian<double> >       Ray;
-typedef CGAL::Triangle_2< CGAL::Cartesian<double> >  Triangle;
-typedef CGAL::Iso_rectangle_2< CGAL::Cartesian<double> > Rect;
-typedef CGAL::Circle_2< CGAL::Cartesian<double> >    Circle;
-typedef CGAL::Bbox_2 BBox;
+typedef CGAL::Cartesian<double>   K;
+typedef K::Point_2                Point;
+typedef K::Segment_2              Segment;
+typedef K::Ray_2                  Ray;
+typedef K::Triangle_2             Triangle;
+typedef K::Iso_rectangle_2        Rect;
+typedef K::Circle_2               Circle;
+typedef CGAL::Bbox_2              BBox;
 
-int  main()
+int main()
 {
  CGAL::PS_Stream::PS_BBox bb(-2,-2,2,2);
 
@@ -79,6 +75,5 @@ int  main()
 // ps <<g;
  // ps <<set_border_color(CGAL::Color(255,170,0))<<l3;
  
- return 1;
- }
-
+ return 0;
+}

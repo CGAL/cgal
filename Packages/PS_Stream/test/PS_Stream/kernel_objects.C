@@ -1,53 +1,44 @@
+#include <CGAL/Cartesian.h>
 
 #include <sys/time.h>
 #include <iostream>
 
-#include <CGAL/Cartesian.h>
 #include <CGAL/IO/Color.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/Line_3.h>
-#include <CGAL/Direction_3.h>
 #include <CGAL/Bbox_3.h>
-#include <CGAL/Segment_3.h>
-#include <CGAL/Tetrahedron_3.h>
-#include <CGAL/Triangle_3.h>
 
 #include "PS_Stream_3.C"
-
-
-using namespace std;
 
 typedef CGAL::Cartesian<double> D;
 //typedef CGAL::Cartesian<leda_real> R;
 
 typedef CGAL::Bbox_3 PS_BBox3;
 
-typedef CGAL::Direction_3< D > Direction;
-typedef CGAL::Point_3< D > Point3;
-typedef CGAL::Point_2< D > Point2;
-typedef CGAL::Plane_3< D > Plane3;
-typedef CGAL::Line_3< D > Line3;
-typedef CGAL::Segment_3< D > Segment3;
-typedef CGAL::Triangle_3< D > Triangle3;
-typedef CGAL::Tetrahedron_3< D > Tetrahedron;
+typedef D::Direction_3      Direction;
+typedef D::Point_3          Point3;
+typedef D::Point_2          Point2;
+typedef D::Plane_3          Plane3;
+typedef D::Line_3           Line3;
+typedef D::Segment_3        Segment3;
+typedef D::Triangle_3       Triangle3;
+typedef D::Tetrahedron_3    Tetrahedron;
 
-int main(void) {
-  
+int main()
+{
   PS_BBox3 bb3(-500,-500,-500,500,500,500);
   double x,y,z,lx,ly,lz;
   int filling;
   
-  cerr << "Filling 0,1,2,3 : ";cin >> filling;
+  std::cerr << "Filling 0,1,2,3 : ";std::cin >> filling;
   std::string filename;
-  cerr << "Enter file name: ";cin >> filename;
-  cerr << "Enter view x: ";cin >> x;
-  cerr << "Enter view y: ";cin >> y;
-  cerr << "Enter view z: ";cin >> z;
+  std::cerr << "Enter file name: ";std::cin >> filename;
+  std::cerr << "Enter view x: ";std::cin >> x;
+  std::cerr << "Enter view y: ";std::cin >> y;
+  std::cerr << "Enter view z: ";std::cin >> z;
   
   Direction dir(x,y,z);
-  cerr << "Enter light x: ";cin >> lx;
-  cerr << "Enter light y: ";cin >> ly;
-  cerr << "Enter light z: ";cin >> lz;
+  std::cerr << "Enter light x: ";std::cin >> lx;
+  std::cerr << "Enter light y: ";std::cin >> ly;
+  std::cerr << "Enter light z: ";std::cin >> lz;
   
   Direction light(lx,ly,lz);
   CGAL::PS_Stream_3 ps(bb3,dir,light,300,filename.c_str(),CGAL::PS_Stream::READABLE_EPS);
@@ -107,7 +98,7 @@ int main(void) {
 
   printf("Temps de calcul en secondes pour display() : %ld sec.\n", t2->tv_sec - t1->tv_sec);
   
-  cerr << "Creation du fichier : " << filename  << endl;
+  std::cerr << "Creation du fichier : " << filename  << std::endl;
   
-return 0;
+  return 0;
 }
