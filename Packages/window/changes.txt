@@ -1,3 +1,7 @@
+2.8.28 (?? ???? 2002)
+- updated version number in window header
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 4   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 2.8.27 (29 April 2002)
 - split of user and reference manauls
 
