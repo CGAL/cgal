@@ -2453,8 +2453,8 @@ homogeneous representation with number type \ccc{Gmpz}.
     typedef  Min_circle_2_traits_2< RepC >  TraitsC;
     typedef  Min_circle_2_traits_2< RepH >  TraitsH;
 
-    CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( RepC::Point_2);
-    CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( RepH::Point_2);
+    CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( RepC::Point_2)
+    CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( RepH::Point_2)
 @end
 
 The command line option \ccc{-verbose} enables verbose output.
@@ -2811,8 +2811,8 @@ representation) and corresponding data accessors.
         }
     };
 
-    CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( MyPointC2);
-    CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( MyPointH2);
+    CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( MyPointC2)
+    CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( MyPointH2)
 @end
 
 To test the traits class adapters we use the code coverage test function.
