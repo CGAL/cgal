@@ -1,6 +1,10 @@
 22 June 2004:  Menelaos Karavelas
 - fixed errors of g++ 3.4.0 related to the traits' template parameter
   checking
+- more g++ 3.4.0 fixes: qualified derived methods with this->
+- Square_root_{1,2} classes: when CGAL_USE_ADL_FOR_NT is defined the number
+  type related methods are implemented using the number type traits class
+- implementated the is_degenerate_edge predicate
 
 9 June 2004:  Menelaos Karavelas
 - added some more assertion checks in test_types.h (when testing the
