@@ -1,3 +1,6 @@
+Version 4.155 on 22 November 2002
+- Remove src/Interval_arithmetic/*.
+
 Version 4.154 on 21 November 2002
 - I've got a C version for IRIX which works !  The long standing problem was
   in fact that denormals were flushed to zero by default, and thus the
