@@ -3,6 +3,7 @@ Version 1.45 (?? dec 00)
 - locate() improvements (remembering). [syl]
 - new typdefs Geom_traits and Triangulation_data_structure.
 - various cleanups.
+- the kernel can be used as geometric traits class
 
 Version 1.44 (11 dec 00)
 - typdefs _3 fixed in demo and example
