@@ -10,12 +10,12 @@
 
 # TODO:
 # - Split the lines only if the result is larger than 80 characters ?
+# - Separate the class in other files ?  (they are needed by libCGAL)
 
-use vars qw($opt_p $opt_h $opt_s $opt_d $opt_v); # Suppress stupid warnings
+use vars qw($opt_p $opt_h $opt_d $opt_v $opt_l); # Suppress warnings
 require 'getopt.pl';
 
 # Global variables
-$static_version=0;		# Default is the filtered_exact version.
 %known_ret_types=("bool", 1);	# Known allowed return types (completed in main)
 @predicates=(			# list of predicates, with the built-ins.
 # CGAL::, template_type, inline, ret_type, fct_name, #eps, body, new_body, args
@@ -38,17 +38,17 @@ $CGAL_symbol_re='(?:CGAL::|)'.$C_symbol_re;	# Idem with eventually 'CGAL::'
 
 # Parse the command line options.
 sub parse_command_line {
-  Getopt('iod');
+  Getopt('iodl');
   if ($opt_h) {
     warn "Usage: filtered_predicate_converter [options]
     -i file   : specify the main input source file [default is stdin]
     -o file   : specify the main output file       [default is stdout]
+    -l file   : indicate the output file that will receive the static part.
     -d files  : list of dependant predicates file (concatenated with \":\")
                 by default, only the built-in predicates are known.
                 (typically, it's just sign_of_determinant.h that you want)
 		(it's only useful when \"-s\" is here too).
     -p        : be pedantic (changes warnings into errors)
-    -s        : semi-static version [default is Filtered_exact<>]
     -v        : be verbose [to stderr]
     -h        : print this help\n";
     exit;
@@ -56,7 +56,9 @@ sub parse_command_line {
   @dependancy_files = split(':', $opt_d) if ($opt_d);
   $opt_i = "-" unless $opt_i;
   $opt_o = "-" unless $opt_o;
-  $static_version = 1 if $opt_s;
+  if (not $opt_l) {
+    warning("The -l option is compulsory for the static filters.");
+  }
   $pedantic = $opt_p;
 }
 
@@ -116,9 +118,10 @@ sub print_CGAL_header {
 # Print the Filtered_exact<> version of a predicate.
 sub print_filtered_exact {
   my ($CGAL, $t, $inline, $ret_type, $fct_name, $e, $b, $n, @args) = @_;
-  my $args_call  = join(",\n    const ${CGAL}Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &", @args);
-  my $args_inter = join(".interval(),\n\t\t", @args);
-  my $args_exact = join(".exact(),\n\t\t", @args);
+  my $type = "const ${CGAL}Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE>";
+  my $args_call  = join ",", map "\n    $type &$_", @args;
+  my $args_inter = join ",", map "\n\t\t$_.interval()", @args;
+  my $args_exact = join ",", map "\n\t\t$_.exact()", @args;
 
   print FO
 "#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -126,38 +129,45 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* $inline */
 $ret_type
-$fct_name(
-    const ${CGAL}Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &$args_call)
+$fct_name($args_call)
 {
+  CGAL_assertion(${CGAL}Interval_nt_advanced::want_exceptions);
   ${CGAL}FPU_CW_t backup = ${CGAL}FPU_get_and_set_cw(${CGAL}FPU_cw_up);
   try
   {
-    $ret_type result = $fct_name(\n\t\t$args_inter.interval());
+    $ret_type result = $fct_name($args_inter);
     ${CGAL}FPU_set_cw(backup);
     return result;
   } 
   catch (${CGAL}Interval_nt_advanced::unsafe_comparison)
   {
     ${CGAL}FPU_set_cw(backup);
-    return $fct_name(\n\t\t$args_exact.exact());
+    return $fct_name($args_exact);
   }
 }\n\n";
 }
 
 # Print the epsilon variant of the function
-sub print_epsilon_function {
+sub epsilon_function {
   my ($ret_type, $fct_name, $body, $t, $eps, $new_t, $const, @args) = @_;
-  my $args_call = join(",\n    const $new_t &", @args);
-  my $eps_call  = join(",\n    ${const}double & epsilon_", 0..$eps-1);
+  my $args_call = join ",", map "\n\tconst $new_t &$_", @args;
+  my $eps_call  = join ",", map "\n\t${const}double & epsilon_$_", 0..$eps-1;
   # We just typedef the original template type at the beginning of the body.
   $_ = $body;
   s/{/{\n  typedef $new_t $t;\n/s;
-  print FO
-"inline
-$ret_type
-$fct_name\_SAF(
-    const $new_t &$args_call,
-    ${const}double & epsilon_$eps_call)$_\n\n";
+  s/\n/\n  /msg;
+  s/update_epsilon/$fct_name/msg;
+  return "static $ret_type $fct_name($args_call,$eps_call)$_";
+}
+
+# Print static infos
+sub print_static_infos {
+  my ($CGAL, $t, $inline, $ret_type, $fct_name, $eps, $b, $new_body, @args)=@_;
+
+  my $predicate_class_name = "Static_Filtered_$fct_name\_".($#args+1);
+
+  print FL map("double $predicate_class_name\::_epsilon_$_;\n", 0..$eps-1);
+  print FL "double $predicate_class_name\::_bound = -1.0;\n\n";
 }
 
 # Print the Static Adaptative version of a function
@@ -168,52 +178,74 @@ sub print_static_adaptatif {
     warning("Predicate \"$fct_name\" (".scalar(@args)." args) _must_ have at least one epsilon.");
   }
 
+  my $predicate_class_name = "Static_Filtered_$fct_name\_".($#args+1);
+
   # Print the accessory versions of the predicate.
-  print_epsilon_function($ret_type, $fct_name, $new_body, $t, $eps,
-  		         "${CGAL}Static_filter_error", "", @args);
+  my $update_epsilon = epsilon_function($ret_type, "update_epsilon", $new_body, $t,
+  				$eps, "${CGAL}Static_filter_error", "", @args);
 
-  print_epsilon_function($ret_type, $fct_name, $new_body, $t, $eps,
-  		         "Restricted_double", "const ", @args);
+  my $epsilon_variant = epsilon_function($ret_type, "epsilon_variant", $new_body, $t,
+  				$eps, "Restricted_double", "const ", @args);
+  my $epsilon_list = join ",", map "_epsilon_$_", 0..$eps-1;
+  my $bound_list = "b," x ($#args+1);
 
-  # Print the function declaration
-  my $args_call = join(",\n    const ${CGAL}Static_adaptatif_filter &", @args);
-  my $static_epsilons = join(";\n  static double SAF_epsilon_", 0..$eps-1);
-  my $bounds_check = join(".value()) > SAF_bound ||\n\tfabs(", @args);
-  my $args_value = join(".value()),\n\t\tRestricted_double(", @args);
-  my $args_error = "\n\t\tStatic_filter_error(SAF_bound)," x ($#args+1);
-  my $args_epsilons = join(",\n\t\tSAF_epsilon_", 0..$eps-1);
-  my $compute_new_bounds = join(".value()));\n      SAF_bound = std::max(SAF_bound, fabs(", @args);
-  my $args_exact = join(".exact(),\n\t\t", @args);
-
+  # Print the static class corresponding to the predicate.
   print FO
-"inline
-$ret_type
-$fct_name(
-    const ${CGAL}Static_adaptatif_filter &$args_call)
+"struct $predicate_class_name
 {
-  bool re_adjusted = false;
-  static double SAF_bound = -1.0;
-  static double SAF_epsilon_$static_epsilons;
+  static double _bound;
+  static double $epsilon_list;
+  // static unsigned number_of_failures; // ?
 
-  // Check the bounds.  All arguments must be <= SAF_bound.
-  if (\tfabs($bounds_check.value()) > SAF_bound)
+  $update_epsilon
+
+  // Call this function from the outside to update the context.
+  static void new_bound (const double b) // , const double error = 0)
   {
-re_adjust:
-      // Re-adjust SAF_bound.
-      SAF_bound = std::max(0.0, fabs($compute_new_bounds.value()));
-
-      // recompute the epsilons: \"just\" call it over Static_filter_error.
-      // That's the tricky part that might not work for everything.
-      (void) $fct_name\_SAF($args_error\n\t\tSAF_epsilon_$args_epsilons);
-
-      // TODO: We should verify that all epsilons have really been updated.
+    _bound = b;
+    // recompute the epsilons: \"just\" call it over Static_filter_error.
+    // That's the tricky part that might not work for everything.
+    (void) update_epsilon($bound_list$epsilon_list);
+    // TODO: We should verify that all epsilons have really been updated.
   }
 
-  try  // Try the epsilon variant of the predicate.
+  $epsilon_variant
+};\n\n";
+
+  # Print the function declaration
+  my $type = "const ${CGAL}Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE>";
+  my $args_call     = join ",", map "\n    $type &$_", @args;
+  my $args_dbl      = join ",", map "\n\t\t$_.dbl()", @args;
+  my $args_exact    = join ",", map "\n\t\t$_.exact()", @args;
+  my $args_epsilons = join ",", map "\n\t\t$predicate_class_name\::_epsilon_$_", 0..$eps-1;
+  my $args_error    = "\n\t\tStatic_filter_error(SAF_bound)," x ($#args+1);
+  my $bounds_check  = join " ||", map "\n\tfabs($_.to_double()) > SAF_bound", @args;
+  my $compute_new_bound = join "", map "\n    NEW_bound = std::max(NEW_bound, fabs($_.to_double()));", @args;
+
+  print FO
+"#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif
+/* $inline */
+$ret_type
+$fct_name($args_call)
+{
+  bool re_adjusted = false;
+  const double SAF_bound = $predicate_class_name\::_bound;
+
+  // Check the bounds.  All arguments must be <= SAF_bound.
+  if ($bounds_check)
   {
-    return $fct_name\_SAF(
-		Restricted_double($args_value.value()),
-		SAF_epsilon_$args_epsilons);
+re_adjust:
+    // Compute the new bound.
+    double NEW_bound = 0.0;$compute_new_bound
+    // Re-adjust the context.
+    $predicate_class_name\::new_bound(NEW_bound);
+  }
+
+  try
+  {
+    return $predicate_class_name\::epsilon_variant($args_dbl,$args_epsilons);
   }
   catch (${CGAL}Restricted_double::unsafe_comparison)
   {
@@ -223,7 +255,7 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return $fct_name(\n\t\t$args_exact.exact());
+    return $fct_name($args_exact);
   }
 }\n\n";
 }
@@ -268,7 +300,7 @@ sub parse_input_code {
       my ($after, @pred) = parse_function_definition($1.$');
       push @predicates, [ $CGAL, @pred ];
       $pred_list_re.="|".$pred[$fct_name_pos-1];
-      if ($static_version) { treat_predicate($#predicates); }
+      treat_predicate($#predicates);
       $_ = $after;
     }
   }
@@ -280,13 +312,14 @@ sub print_predicates {
   # We skip the built-in predicates.
   for $i ( $num_built_in_predicates .. $#predicates ) {
     my ($CGAL) = @{$predicates[$i]};
-    print "CGAL_BEGIN_NAMESPACE\n\n" if $CGAL eq "" && not $was_in_CGAL;
-    print "CGAL_END_NAMESPACE\n\n"   if $CGAL ne "" && $was_in_CGAL;
-    if ($static_version) { print_static_adaptatif(@{$predicates[$i]}); }
-    else { print_filtered_exact(@{$predicates[$i]}); }
+    print FO "CGAL_BEGIN_NAMESPACE\n\n" if $CGAL eq "" && not $was_in_CGAL;
+    print FO "CGAL_END_NAMESPACE\n\n"   if $CGAL ne "" && $was_in_CGAL;
+    print_filtered_exact(@{$predicates[$i]});
+    print_static_adaptatif(@{$predicates[$i]});
+    print_static_infos(@{$predicates[$i]});
     $was_in_CGAL = $CGAL eq "";
   }
-  print "CGAL_END_NAMESPACE\n\n" if $was_in_CGAL;
+  print FO "CGAL_END_NAMESPACE\n\n" if $was_in_CGAL;
 }
 
 # Matches balanced $beg $end (say "(" and ")"), and counts the number
@@ -320,8 +353,6 @@ sub match_calls_in_body {
   while (/(\W)($pred_list_re)(\s*\()/sm) {
     my $predicate_name = $2;
     my ($num_args, $before, $after) = extract_balanced ("(", ")", "(".$');
-    # We add "_SAF" to the predicate name
-    $new_body .= "$`$1$2_SAF$before,\n\t\tepsilon_";
 
     # Recognize the actual predicate, with same number of arguments.
     my $p;
@@ -332,6 +363,10 @@ sub match_calls_in_body {
     if (not $p) {
       warning("We matched \"$predicate_name\" with an unknown number of arguments");
     };
+
+    # We replace $predicate_name by
+    # Static_Filtered_$predicate_name_#args::update_epsilon.
+    $new_body .= "$`$1Static_Filtered_$2_$num_args\::update_epsilon$before,\n\t\tepsilon_";
 
     # We add the epsilon arguments to the call in $new_body.
     my $old_num_eps = $num_eps;
@@ -370,16 +405,18 @@ sub main {
   }
   parse_command_line();
   undef $/; # We parse the _whole_ input files as strings, not line by line.
-  if ($static_version && $opt_d) { parse_dependancy_files(); }
+  if ($opt_d) { parse_dependancy_files(); }
   open(FI, "<$opt_i") || die "Couldn't open input file \"$opt_i\"\n";
   my ($new_protect_name, $file_name, $rest) = parse_CGAL_header(<FI>);
   close(FI);
   parse_input_code($rest);
   open(FO, ">$opt_o") || die "Couldn't open output file \"$opt_o\"\n";
+  open(FL, ">$opt_l") || die "Couldn't open lib file \"$opt_l\"\n";
   print_CGAL_header($new_protect_name, $file_name);
   print_predicates();
   print FO "#endif // $new_protect_name\n";
   close(FO);
+  close(FL);
 }
 
 main();
