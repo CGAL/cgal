@@ -39,6 +39,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template < class Tr > class Natural_neighbors_3;
+
 template < class Gt, 
            class Tds = Triangulation_data_structure_3 <
                                    Triangulation_vertex_base_3<Gt>,
@@ -50,6 +52,9 @@ class Delaunay_triangulation_3 : public Triangulation_3<Gt,Tds>
 
   typedef Delaunay_triangulation_3<Gt, Tds> Self;
   typedef Triangulation_3<Gt,Tds>           Tr_Base;
+
+  friend class Natural_neighbors_3<Self>;
+
 public:
   typedef Tds Triangulation_data_structure;
   typedef Gt  Geom_traits;
