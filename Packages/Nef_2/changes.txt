@@ -1,6 +1,9 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
 
+1.13 (26 Apr 2002)
+     - removed SNIINST hack from calls in specialized operator -
+
 1.12 (25 Apr 2002)
      - removed CGAL_*_INLINE macros that were in comments in Polynomial.h
      - make specialized operator - for int and double polynomials defined
