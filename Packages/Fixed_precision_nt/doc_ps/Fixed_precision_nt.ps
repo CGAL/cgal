@@ -7,7 +7,7 @@
 %%EndComments
 %DVIPSCommandLine: dvips -o Fixed_precision_nt.ps wrapper.dvi
 %DVIPSParameters: dpi=600
-%DVIPSSource:  TeX output 1999.04.30:1335
+%DVIPSSource:  TeX output 1999.05.17:1142
 %%BeginProcSet: tex.pro
 %!
 /TeXDict 250 dict def TeXDict begin /N{def}def /B{bind def}N /S{exch}N
@@ -1866,191 +1866,175 @@ TeXDict begin
 1 0 bop 3714 -231 a Fl(1)71 2 y Fk(0.0.1)112 b(Fixed)38
 b(precision)e(n)m(um)m(b)s(ers)h(\()p Fj(Fixed)1929 4
 y(_)2007 2 y(precision)2393 4 y(_)2472 2 y(nt)9 b Fk(\))71
-246 y Fl(The)29 b(class)f Fi(Fixed)637 248 y(_)705 246
-y(precision)1031 248 y(_)1101 246 y(nt)36 b Fl(pro)n(vides)28
-b(24)g(bits)h(n)n(um)n(b)r(er)f(in)i(\034xed)e(p)r(oin)n(t)i(represen)n
-(tation.)39 b(Basically)27 b(these)71 346 y(n)n(um)n(b)r(ers)i(are)g
+241 y Fl(The)26 b(class)g Fi(Fixed)632 243 y(_)700 241
+y(precision)1026 243 y(_)1096 241 y(nt)33 b Fl(pro)n(vides)25
+b(24)h(bits)g(n)n(um)n(b)r(ers)g(in)h(\034xed)f(p)r(oin)n(t)h(represen)
+n(tation.)34 b(Basically)25 b(these)71 341 y(n)n(um)n(b)r(ers)k(are)g
 (in)n(tegers)g(in)h(the)g(range)f Fh([)p Fg(\000)p Fh(2)1462
-316 y Ff(24)1531 346 y Fe(;)14 b Fh(2)1610 316 y Ff(24)1680
-346 y Fh(])30 b Fl(with)h(a)e(m)n(ultiplying)h(factor)f
-Fh(2)2723 316 y Fd(b)2756 346 y Fl(.)44 b(The)30 b(m)n(ultiplying)g
-(factor)f Fh(2)3723 316 y Fd(b)71 445 y Fl(has)e(to)g(b)r(e)h
-(initialized)g(b)n(y)f(the)h(user)f(b)r(efore)g(the)h(construction)f
-(of)h(the)f(\034rst)h Fi(Fixed)2725 447 y(_)2793 445
-y(precision)3119 447 y(_)3189 445 y(nt)8 b Fl(.)71 636
-y(The)32 b(in)n(terest)f(of)h(suc)n(h)f(a)h(n)n(um)n(b)r(er)f(t)n(yp)r
-(e)h(is)g(that)g(geometric)e(predicates)h(can)g(b)r(e)i(o)n(v)n
-(erloaded)c(to)i(get)h(exact)f(and)71 735 y(v)n(ery)k(e\036cien)n(t)h
+311 y Ff(24)1531 341 y Fe(;)14 b Fh(2)1610 311 y Ff(24)1680
+341 y Fh(])30 b Fl(with)h(a)e(m)n(ultiplying)h(factor)f
+Fh(2)2723 311 y Fd(b)2756 341 y Fl(.)44 b(The)30 b(m)n(ultiplying)g
+(factor)f Fh(2)3723 311 y Fd(b)71 440 y Fl(has)21 b(to)h(b)r(e)g
+(initialized)g(b)n(y)g(the)g(user)f(b)r(efore)g(the)i(construction)d
+(of)i(the)g(\034rst)g Fi(Fixed)2650 442 y(_)2719 440
+y(precision)3045 442 y(_)3114 440 y(nt)29 b Fl(and)22
+b(is)g(common)71 540 y(to)27 b(all)h(v)-5 b(ariables.)71
+726 y(The)32 b(in)n(terest)f(of)h(suc)n(h)f(a)h(n)n(um)n(b)r(er)f(t)n
+(yp)r(e)h(is)g(that)g(geometric)e(predicates)h(can)g(b)r(e)i(o)n(v)n
+(erloaded)c(to)i(get)h(exact)f(and)71 825 y(v)n(ery)k(e\036cien)n(t)h
 (predicates.)61 b(The)36 b(dra)n(wbac)n(k)e(is)i(that)g(an)n(y)g
-Fi(Fixed)2230 737 y(_)2298 735 y(precision)2624 737 y(_)2694
-735 y(nt)43 b Fl(is)36 b(rounded)g(to)g(the)g(nearest)71
-835 y(m)n(ultiple)k(of)f Fh(2)556 805 y Fd(b)589 835
+Fi(Fixed)2230 827 y(_)2298 825 y(precision)2624 827 y(_)2694
+825 y(nt)43 b Fl(is)36 b(rounded)g(to)g(the)g(nearest)71
+925 y(m)n(ultiple)k(of)f Fh(2)556 895 y Fd(b)589 925
 y Fl(,)j(whic)n(h)d(yields)g(to)g(a)g(v)n(ery)f(p)r(o)r(or)g
 (arithmetic.)71 b(The)40 b(idea)f(is)g(to)g(not)g(use)g(the)g
-(arithmetic)g(on)71 935 y Fi(Fixed)269 937 y(_)337 935
-y(precision)663 937 y(_)733 935 y(nt)c Fl(but)28 b(only)f(the)h(sp)r
-(ecialized)f(predicates.)71 1223 y Fc(Creation)71 1414
-y Fl(#)p Fi(include)j Fb(<)p Fi(CGAL/Fixed)947 1416 y(_)1016
-1414 y(precision)1342 1416 y(_)1412 1414 y(nt.h)6 b Fb(>)71
-1629 y Fi(Fixed)269 1631 y(_)337 1629 y(precision)663
-1631 y(_)733 1629 y(nt)67 b(fvar)9 b(\()30 b(double)6
-b(\);)841 b Fl(Initialization)56 b(of)h(a)f(v)-5 b(ariable.)122
-b(The)57 b(v)-5 b(ari-)2220 1728 y(able)70 b(is)h(rounded)f(to)g(the)h
-(nearest)e(legal)2220 1828 y(\034xed)49 b(n)n(um)n(b)r(er)g(\(i.e.)101
-b(a)49 b(m)n(ultiple)g(of)g Fh(2)3600 1798 y Fd(b)3691
-1828 y Fh(=)2220 1928 y Fi(Fixed)2418 1930 y(_)2487 1928
-y(precision)2813 1930 y(_)2883 1928 y(nt::unit)3153 1930
-y(_)3220 1928 y(value\(\))71 2154 y(Fixed)269 2156 y(_)337
-2154 y(precision)663 2156 y(_)733 2154 y(nt)67 b(fvar)9
-b Fl(;)1173 b(Declaration.)71 2393 y Fi(Fixed)269 2395
-y(_)337 2393 y(precision)663 2395 y(_)733 2393 y(nt)67
-b(fvar)9 b(\()30 b(fval)9 b(\);)938 b Fl(Declaration)27
-b(and)g(initialization.)71 2633 y Fi(Fixed)269 2635 y(_)337
-2633 y(precision)663 2635 y(_)733 2633 y(nt)67 b(fvar)9
-b(\()30 b(i)8 b(\);)1040 b Fl(Declaration)22 b(and)g(initialization)h
-(with)g(an)f(in)n(te-)2220 2733 y(ger.)71 3028 y Fc(Op)s(erations)71
-3218 y Fl(The)27 b(comparison)f(op)r(erations)g Fh(==)p
+(arithmetic)g(on)71 1025 y Fi(Fixed)269 1027 y(_)337
+1025 y(precision)663 1027 y(_)733 1025 y(nt)c Fl(but)28
+b(only)f(the)h(sp)r(ecialized)f(predicates.)71 1289 y
+Fc(Creation)71 1474 y Fl(#)p Fi(include)j Fb(<)p Fi(CGAL/Fixed)947
+1476 y(_)1016 1474 y(precision)1342 1476 y(_)1412 1474
+y(nt.h)6 b Fb(>)71 1680 y Fi(Fixed)269 1682 y(_)337 1680
+y(precision)663 1682 y(_)733 1680 y(nt)67 b(fvar)9 b
+Fl(;)1173 b(Declaration.)71 1905 y Fi(Fixed)269 1907
+y(_)337 1905 y(precision)663 1907 y(_)733 1905 y(nt)67
+b(fvar)9 b(\()30 b(double)h(d)9 b(\);)765 b Fl(Initialization)56
+b(of)h(a)f(v)-5 b(ariable.)122 b(The)57 b(v)-5 b(ari-)2220
+2004 y(able)70 b(is)h(rounded)f(to)g(the)h(nearest)e(legal)2220
+2104 y(\034xed)49 b(n)n(um)n(b)r(er)g(\(i.e.)101 b(a)49
+b(m)n(ultiple)g(of)g Fh(2)3600 2074 y Fd(b)3691 2104
+y Fh(=)2220 2203 y Fi(Fixed)2418 2205 y(_)2487 2203 y(precision)2813
+2205 y(_)2883 2203 y(nt::unit)3153 2205 y(_)3220 2203
+y(value\(\))71 2420 y(Fixed)269 2422 y(_)337 2420 y(precision)663
+2422 y(_)733 2420 y(nt)67 b(fvar)9 b(\()30 b(fval)9 b(\);)938
+b Fl(Declaration)27 b(and)g(initialization.)71 2645 y
+Fi(Fixed)269 2647 y(_)337 2645 y(precision)663 2647 y(_)733
+2645 y(nt)67 b(fvar)9 b(\()30 b(int)g(i)8 b(\);)910 b
+Fl(Declaration)22 b(and)g(initialization)h(with)g(an)f(in)n(te-)2220
+2745 y(ger.)71 3011 y Fc(Op)s(erations)71 3216 y Fi(Fixed)269
+3218 y(_)337 3216 y(precision)663 3218 y(_)733 3216 y(nt)29
+b Fb(&)118 b Fi(fvar)33 b Fh(=)22 b Fi(fval)835 b Fl(Assignmen)n(t.)71
+3441 y Fi(bool)785 b(is)1058 3443 y(_)1126 3441 y(valid\()31
+b(fval\))701 b Fl(In)64 b(case)e(of)i(o)n(v)n(er\035o)n(w)c(or)j
+(division)f(b)n(y)h(0,)2220 3541 y(n)n(um)n(b)r(ers)90
+b(b)r(ecomes)f(in)n(v)-5 b(alid.)223 b(If)90 b(the)2220
+3640 y(precision)102 b(is)h(c)n(hanged)f(b)n(y)g(usage)g(of)2220
+3740 y Fi(Fixed)2418 3742 y(_)2487 3740 y(precision)2813
+3742 y(_)2883 3740 y(nt::init\(\))s Fl(,)264 b(already)2220
+3839 y(existing)48 b(n)n(um)n(b)r(ers)f(ma)n(y)g(b)r(ecome)g(in)n(v)-5
+b(alid)47 b(if)2220 3939 y(they)28 b(are)f(no)g(longer)f(m)n(ultiple)i
+(of)g Fh(2)3372 3909 y Fd(b)3405 3939 y Fl(.)71 4151
+y Fi(bool)785 b(is)1058 4153 y(_)1126 4151 y(finite\()30
+b(fval\))682 b(Fixed)2418 4153 y(_)2487 4151 y(precision)2813
+4153 y(_)2883 4151 y(nt)33 b Fl(do)27 b(not)f(implemen)n(t)h(in-)2220
+4251 y(\034nite)45 b(n)n(um)n(b)r(ers.)85 b Fi(is)2924
+4253 y(_)2993 4251 y(finite)51 b Fl(is)43 b(iden)n(tical)h(to)2220
+4350 y Fi(is)2279 4352 y(_)2348 4350 y(valid)9 b Fl(.)71
+4543 y(The)27 b(comparison)f(op)r(erations)g Fh(==)p
 Fl(,)h Fh(!)c(=)p Fl(,)28 b Fe(<)p Fl(,)f Fe(>)p Fl(,)g
 Fe(<)p Fh(=)p Fl(,)g(and)h Fe(>)p Fh(=)e Fl(are)h(all)g(a)n(v)-5
-b(ailable.)71 3433 y Fi(Fixed)269 3435 y(_)337 3433 y(precision)663
-3435 y(_)733 3433 y(nt)29 b Fb(&)118 b Fi(fvar)33 b Fh(=)22
-b Fi(fval)835 b Fl(Assignmen)n(t.)71 3673 y Fi(bool)785
-b(is)1058 3675 y(_)1126 3673 y(valid\()31 b(fval\))701
-b Fl(In)64 b(case)e(of)i(o)n(v)n(er\035o)n(w)c(or)j(division)f(b)n(y)h
-(0,)2220 3772 y(n)n(um)n(b)r(ers)90 b(b)r(ecomes)f(in)n(v)-5
-b(alid.)223 b(If)90 b(the)2220 3872 y(precision)102 b(is)h(c)n(hanged)f
-(b)n(y)g(usage)g(of)2220 3971 y Fi(Fixed)2418 3973 y(_)2487
-3971 y(precision)2813 3973 y(_)2883 3971 y(nt::init\(\))s
-Fl(,)264 b(already)2220 4071 y(existing)48 b(n)n(um)n(b)r(ers)f(ma)n(y)
-g(b)r(ecame)g(in)n(v)-5 b(alid)47 b(if)2220 4171 y(they)28
-b(are)f(non)g(longer)f(m)n(ultiple)j(of)e Fh(2)3418 4141
-y Fd(b)3451 4171 y Fl(.)71 4397 y Fi(bool)785 b(is)1058
-4399 y(_)1126 4397 y(finite\()30 b(fval\))682 b(Fixed)2418
-4399 y(_)2487 4397 y(precision)2813 4399 y(_)2883 4397
-y(nt)8 b Fl(do)34 b(not)h(implemen)n(t)h(in-)2220 4497
-y(\034nite)45 b(n)n(um)n(b)r(ers.)85 b Fi(is)2924 4499
-y(_)2993 4497 y(finite)51 b Fl(is)43 b(iden)n(tical)h(to)2220
-4596 y Fi(is)2279 4598 y(_)2348 4596 y(valid)9 b Fl(.)71
-4823 y Fi(Fixed)269 4825 y(_)337 4823 y(precision)663
-4825 y(_)733 4823 y(nt)191 b(fval1)31 b Fh(+)18 b Fi(fval2)771
-b Fl(rounds)27 b(the)h(result)f(to)h(nearest)e(legal)h
-Fi(Fixed)9 b Fl(.)71 4923 y Fi(Fixed)269 4925 y(_)337
-4923 y(precision)663 4925 y(_)733 4923 y(nt)191 b(fval1)31
-b Fg(\000)18 b Fi(fval2)771 b Fl(rounds)27 b(the)h(result)f(to)h
-(nearest)e(legal)h Fi(Fixed)9 b Fl(.)71 5022 y Fi(Fixed)269
-5024 y(_)337 5022 y(precision)663 5024 y(_)733 5022 y(nt)191
-b(fval1)31 b Fg(\003)18 b Fi(fval2)794 b Fl(rounds)40
-b(the)h(result)f(to)g(nearest)f(legal)h Fi(Fixed)9 b
-Fl(.)2220 5122 y(Ov)n(er\035o)n(w)26 b(is)h(p)r(ossible.)71
-5252 y Fi(Fixed)269 5254 y(_)337 5252 y(precision)663
-5254 y(_)733 5252 y(nt)191 b Fg(\000)p Fi(fval)1030 b
-Fl(rounds)27 b(the)h(result)f(to)h(nearest)e(legal)h
-Fi(Fixed)9 b Fl(.)71 5352 y Fi(Fixed)269 5354 y(_)337
-5352 y(precision)663 5354 y(_)733 5352 y(nt)191 b(fvar)24
-b Fh(+)9 b(=)22 b Fi(f)871 b Fl(rounds)27 b(the)h(result)f(to)h
-(nearest)e(legal)h Fi(Fixed)9 b Fl(.)p eop
+b(ailable.)71 4729 y(The)35 b(arithmetic)g(op)r(erators)e
+Fh(+)p Fl(,)j Fg(\000)p Fl(,)h Fg(\003)p Fl(,)g Fe(=)p
+Fl(,)f Fh(+)f(=)p Fl(,)i Fg(\000)e Fh(=)p Fl(,)i Fg(\003)e
+Fh(=)f Fl(and)h Fe(=)g Fh(=)g Fl(are)f(all)h(a)n(v)-5
+b(ailable.)58 b(The)35 b(result)g(of)g(the)71 4828 y(computation)k(is)h
+(rounded)f(to)h(the)h(nearest)d(legal)h Fi(Fixed)1970
+4830 y(_)2039 4828 y(precision)2365 4830 y(_)2435 4828
+y(nt)8 b Fl(.)73 b(Ov)n(er\035o)n(w)37 b(is)j(p)r(ossible,)j(and)d(ev)n
+(en)71 4928 y(probable)35 b(in)i(case)f(of)g(m)n(ultiplication)h(or)e
+(division.)63 b Fi(Fixed)2031 4930 y(_)2100 4928 y(precision)2426
+4930 y(_)2496 4928 y(nt)43 b Fl(are)36 b(designed)g(to)g(use)g(sp)r
+(ecialized)71 5028 y(predicates,)27 b(not)g(to)h(use)f(arithmetic.)71
+5233 y Fi(double)702 b(to)1069 5235 y(_)1137 5233 y(double\()30
+b(fval\))633 b Fl(casts)27 b(to)h Fi(double)6 b Fl(.)p
+eop
 %%Page: 2 2
-2 1 bop 71 -231 a Fl(2)71 2 y Fi(Fixed)269 4 y(_)337
-2 y(precision)663 4 y(_)733 2 y(nt)191 b(fvar)24 b Fg(\000)9
-b Fh(=)22 b Fi(f)871 b Fl(rounds)27 b(the)h(result)f(to)h(nearest)e
-(legal)h Fi(Fixed)9 b Fl(.)71 102 y Fi(Fixed)269 104
-y(_)337 102 y(precision)663 104 y(_)733 102 y(nt)191
-b(fvar)24 b Fg(\003)9 b Fh(=)22 b Fi(f)894 b Fl(rounds)40
-b(the)h(result)f(to)g(nearest)f(legal)h Fi(Fixed)9 b
-Fl(.)2220 201 y(Ov)n(er\035o)n(w)26 b(is)h(p)r(ossible.)71
-349 y Fi(Fixed)269 351 y(_)337 349 y(precision)663 351
-y(_)733 349 y(nt)191 b(fvar)24 b Fe(=)9 b Fh(=)22 b Fi(f)894
-b Fl(rounds)40 b(the)h(result)f(to)g(nearest)f(legal)h
-Fi(Fixed)9 b Fl(.)2220 448 y(Ov)n(er\035o)n(w)26 b(is)h(p)r(ossible.)71
-596 y Fi(Fixed)269 598 y(_)337 596 y(precision)663 598
-y(_)733 596 y(nt)191 b(fval1)26 b Fe(=)p Fi(fval2)817
-b Fl(rounds)40 b(the)h(result)f(to)g(nearest)f(legal)h
-Fi(Fixed)9 b Fl(.)2220 695 y(Ov)n(er\035o)n(w)26 b(is)h(p)r(ossible.)71
-843 y Fi(double)702 b(to)1069 845 y(_)1137 843 y(double\()30
-b(fval\))633 b Fl(casts)27 b(to)h Fi(double)6 b Fl(.)71
-1191 y Fc(Precision)33 b(initialization)71 1387 y Fl(As)19
-b(men)n(tioned)h(b)r(efore,)h(the)f Fi(Fixed)1180 1389
-y(_)1248 1387 y(precision)1574 1389 y(_)1644 1387 y(nt)26
-b Fl(n)n(um)n(b)r(ers)19 b(w)n(orks)f(in)i(an)f(in)n(terv)-5
-b(al)19 b Fh([)p Fg(\000)p Fh(2)2918 1357 y Ff(24+)p
-Fd(b)3068 1387 y Fe(;)14 b Fh(2)3147 1357 y Ff(24+)p
-Fd(b)3297 1387 y Fh(])19 b Fl(of)h(m)n(ultiples)71 1487
-y(of)27 b Fh(2)207 1456 y Fd(b)240 1487 y Fl(,)h(this)g(n)n(um)n(b)r
-(er)f Fe(b)g Fl(as)g(to)h(b)r(e)g(de\034ned)g(b)r(efore)f(all)g(use)h
-(of)f Fi(Fixed)2221 1489 y(_)2290 1487 y(precision)2616
-1489 y(_)2685 1487 y(nt)8 b Fl(.)71 1713 y Fi(static)30
-b(bool)h(Fixed)668 1715 y(_)736 1713 y(precision)1062
-1715 y(_)1132 1713 y(nt::)720 1910 y(init\()f(float)h(B\))794
-b Fe(B)26 b Fl(is)21 b(an)g(upp)r(er)h(b)r(ound)f(on)g(the)h(data,)g
-Fe(b)f Fl(is)h(the)f(smallest)1984 2009 y(in)n(teger)40
-b(suc)n(h)g(that)h Fg(j)p Fe(B)t Fg(j)k(\024)f Fh(2)2974
-1979 y Fd(b)3007 2009 y Fl(.)75 b(The)41 b(result)f(of)h(the)1984
-2109 y(function)24 b(is)f(false)g(if)h(initialization)e(w)n(as)h
-(already)e(done,)1984 2208 y(in)k(that)f(case)f(already)g(existing)g
-Fi(Fixed)3217 2210 y(_)3286 2208 y(precision)3612 2210
-y(_)3682 2208 y(nt)1984 2308 y Fl(ma)n(y)k(b)r(ecame)h(in)n(v)-5
-b(alid.)71 2547 y Fi(static)30 b(float)g(Fixed)682 2549
-y(_)751 2547 y(precision)1077 2549 y(_)1147 2547 y(nt::)720
-2743 y(unit)865 2745 y(_)932 2743 y(value\(\))800 b Fl(returns)27
-b Fh(2)2313 2713 y Fd(b)2346 2743 y Fl(.)71 3001 y Fi(static)j(float)g
-(Fixed)682 3003 y(_)751 3001 y(precision)1077 3003 y(_)1147
-3001 y(nt::)720 3197 y(upper)922 3199 y(_)991 3197 y(bound\(\))711
-b Fl(returns)27 b Fh(2)2313 3167 y Ff(24+)p Fd(b)2463
-3197 y Fl(.)71 3545 y Fc(P)m(erturbation)34 b(sc)m(heme)71
-3741 y Fi(Fixed)269 3743 y(_)337 3741 y(precision)663
-3743 y(_)733 3741 y(nt)j Fl(implemen)n(ts)31 b(p)r(erturbation)e(sc)n
-(heme)h(as)g(describ)r(ed)f(b)n(y)h(Alliez,)i(Devillers)d(and)h(Sno)r
-(eyink)71 3841 y([)p Fc(?)p Fl(].)56 b(The)35 b(p)r(erturbation)e(mo)r
-(de)h(can)g(b)r(e)g(activ)-5 b(ate)34 b(or)f(deactiv)-5
-b(ate)34 b(for)f(di\033eren)n(t)i(kinds)f(of)g(p)r(erturbations.)55
-b(The)71 3941 y(default)28 b(mo)r(de)f(is)h(no)f(p)r(erturbation.)71
-4167 y Fi(static)j(void)h(Fixed)672 4169 y(_)741 4167
-y(precision)1067 4169 y(_)1136 4167 y(nt::)720 4364 y(perturb)981
-4366 y(_)1049 4364 y(incircle\(\))600 b Fl(A)n(ctiv)-5
-b(ate.)52 b(Incircle)32 b(test)h(of)g(4)f(co)r(circular)f(p)r(oin)n(ts)
-i(an-)1984 4463 y(sw)n(ers)23 b(degenerate)g(only)h(if)h(the)f(4)g(p)r
-(oin)n(ts)g(are)f(colinear.)71 4702 y Fi(static)30 b(void)h(Fixed)672
-4704 y(_)741 4702 y(precision)1067 4704 y(_)1136 4702
-y(nt::)720 4899 y(unperturb)1073 4901 y(_)1140 4899 y(incircle\(\))509
-b Fl(Deactiv)-5 b(ate)71 5156 y Fi(static)30 b(bool)h(Fixed)668
-5158 y(_)736 5156 y(precision)1062 5158 y(_)1132 5156
-y(nt::)720 5352 y(is)779 5354 y(_)847 5352 y(perturbed)1188
-5354 y(_)1257 5352 y(incircle\(\))392 b Fl(returns)27
-b(curren)n(t)g(mo)r(de)p eop
+2 1 bop 71 -231 a Fl(2)71 2 y Fc(Precision)33 b(initialization)71
+188 y Fl(As)22 b(men)n(tioned)g(b)r(efore,)h(the)f Fi(Fixed)1189
+190 y(_)1258 188 y(precision)1584 190 y(_)1653 188 y(nt)30
+b Fl(n)n(um)n(b)r(ers)21 b(tak)n(es)g(their)h(v)-5 b(alues)22
+b(in)g(an)g(in)n(terv)-5 b(al)21 b Fh([)p Fg(\000)p Fh(2)3354
+157 y Ff(24+)p Fd(b)3504 188 y Fe(;)14 b Fh(2)3583 157
+y Ff(24+)p Fd(b)3733 188 y Fh(])71 287 y Fl(of)27 b(m)n(ultiples)h(of)g
+Fh(2)660 257 y Fd(b)693 287 y Fl(,)f(this)h(n)n(um)n(b)r(er)f
+Fe(b)h Fl(as)f(to)g(b)r(e)h(de\034ned)g(b)r(efore)f(an)n(y)g(use)g(of)h
+Fi(Fixed)2715 289 y(_)2784 287 y(precision)3110 289 y(_)3179
+287 y(nt)8 b Fl(.)71 492 y Fi(static)30 b(bool)h(Fixed)668
+494 y(_)736 492 y(precision)1062 494 y(_)1132 492 y(nt::)720
+678 y(init\()f(float)h(B\))794 b Fe(B)26 b Fl(is)21 b(an)g(upp)r(er)h
+(b)r(ound)f(on)g(the)h(data,)g Fe(b)f Fl(is)h(the)f(smallest)1984
+778 y(in)n(teger)40 b(suc)n(h)g(that)h Fg(j)p Fe(B)t
+Fg(j)k(\024)f Fh(2)2974 747 y Fd(b)3007 778 y Fl(.)75
+b(The)41 b(result)f(of)h(the)1984 877 y(function)24 b(is)f(false)g(if)h
+(initialization)e(w)n(as)h(already)e(done,)1984 977 y(in)k(that)f(case)
+f(already)g(existing)g Fi(Fixed)3217 979 y(_)3286 977
+y(precision)3612 979 y(_)3682 977 y(nt)1984 1076 y Fl(ma)n(y)k(b)r
+(ecome)h(in)n(v)-5 b(alid.)71 1283 y Fi(static)30 b(float)g(Fixed)682
+1285 y(_)751 1283 y(precision)1077 1285 y(_)1147 1283
+y(nt::)720 1469 y(unit)865 1471 y(_)932 1469 y(value\(\))800
+b Fl(returns)27 b Fh(2)2313 1439 y Fd(b)2346 1469 y Fl(.)71
+1693 y Fi(static)j(float)g(Fixed)682 1695 y(_)751 1693
+y(precision)1077 1695 y(_)1147 1693 y(nt::)720 1879 y(upper)922
+1881 y(_)991 1879 y(bound\(\))711 b Fl(returns)27 b Fh(2)2313
+1849 y Ff(24+)p Fd(b)2463 1879 y Fl(.)71 2162 y Fc(P)m(erturbation)34
+b(sc)m(heme)71 2348 y Fi(Fixed)269 2350 y(_)337 2348
+y(precision)663 2350 y(_)733 2348 y(nt)58 b Fl(implemen)n(ts)52
+b(the)f(p)r(erturbation)g(sc)n(heme)f(as)h(describ)r(ed)f(b)n(y)h
+(Alliez,)58 b(Devillers)50 b(and)71 2448 y(Sno)r(eyink)28
+b([)p Fc(?)p Fl(].)41 b(The)29 b(p)r(erturbation)f(mo)r(de)g(can)h(b)r
+(e)g(activ)-5 b(ated)28 b(or)g(deactiv)-5 b(ated)29 b(for)f(di\033eren)
+n(t)h(kinds)f(of)h(p)r(erturba-)71 2547 y(tions.)36 b(The)28
+b(default)g(mo)r(de)g(is)f(no)g(p)r(erturbation.)71 2752
+y Fi(static)j(void)h(Fixed)672 2754 y(_)741 2752 y(precision)1067
+2754 y(_)1136 2752 y(nt::)720 2938 y(perturb)981 2940
+y(_)1049 2938 y(incircle\(\))600 b Fl(A)n(ctiv)-5 b(ate.)64
+b Fi(side)2512 2940 y(_)2581 2938 y(of)2648 2940 y(_)2717
+2938 y(oriented)3012 2940 y(_)3081 2938 y(circle)44 b
+Fl(predicate)36 b(of)1984 3038 y(4)24 b(co)r(circular)e(p)r(oin)n(ts)i
+(answ)n(ers)f(degenerate)f(only)i(if)h(the)1984 3137
+y(4)i(p)r(oin)n(ts)h(are)e(colinear.)71 3344 y Fi(static)k(void)h
+(Fixed)672 3346 y(_)741 3344 y(precision)1067 3346 y(_)1136
+3344 y(nt::)720 3530 y(unperturb)1073 3532 y(_)1140 3530
+y(incircle\(\))509 b Fl(Deactiv)-5 b(ate)71 3754 y Fi(static)30
+b(bool)h(Fixed)668 3756 y(_)736 3754 y(precision)1062
+3756 y(_)1132 3754 y(nt::)720 3940 y(is)779 3942 y(_)847
+3940 y(perturbed)1188 3942 y(_)1257 3940 y(incircle\(\))392
+b Fl(returns)27 b(curren)n(t)g(mo)r(de)71 4165 y Fi(static)j(void)h
+(Fixed)672 4167 y(_)741 4165 y(precision)1067 4167 y(_)1136
+4165 y(nt::)720 4350 y(perturb)981 4352 y(_)1049 4350
+y(insphere\(\))566 b Fl(A)n(ctiv)-5 b(ate.)44 b Fi(side)2492
+4352 y(_)2561 4350 y(of)2628 4352 y(_)2697 4350 y(oriented)2992
+4352 y(_)3061 4350 y(sphere)37 b Fl(predicate)29 b(of)1984
+4450 y(5)40 b(cospherical)e(p)r(oin)n(ts)i(answ)n(ers)e(degenerate)h
+(only)g(if)1984 4549 y(the)28 b(5)f(p)r(oin)n(ts)h(are)e(coplanar.)71
+4756 y Fi(static)k(void)h(Fixed)672 4758 y(_)741 4756
+y(precision)1067 4758 y(_)1136 4756 y(nt::)720 4942 y(unperturb)1073
+4944 y(_)1140 4942 y(insphere\(\))475 b Fl(Deactiv)-5
+b(ate)71 5166 y Fi(static)30 b(bool)h(Fixed)668 5168
+y(_)736 5166 y(precision)1062 5168 y(_)1132 5166 y(nt::)720
+5352 y(is)779 5354 y(_)847 5352 y(perturbed)1188 5354
+y(_)1257 5352 y(insphere\(\))358 b Fl(returns)27 b(curren)n(t)g(mo)r
+(de)p eop
 %%Page: 3 3
-3 2 bop 3714 -231 a Fl(3)71 2 y Fi(static)30 b(void)h(Fixed)672
-4 y(_)741 2 y(precision)1067 4 y(_)1136 2 y(nt::)720
-193 y(perturb)981 195 y(_)1049 193 y(insphere\(\))566
-b Fl(A)n(ctiv)-5 b(ate.)35 b(Insphere)21 b(test)g(of)g(5)g(cospherical)
-f(p)r(oin)n(ts)h(an-)1984 293 y(sw)n(ers)f(degenerate)f(only)h(if)i
-(the)f(5)f(p)r(oin)n(ts)h(are)f(coplanar.)71 515 y Fi(static)30
-b(void)h(Fixed)672 517 y(_)741 515 y(precision)1067 517
-y(_)1136 515 y(nt::)720 706 y(unperturb)1073 708 y(_)1140
-706 y(insphere\(\))475 b Fl(Deactiv)-5 b(ate)71 947 y
-Fi(static)30 b(bool)h(Fixed)668 949 y(_)736 947 y(precision)1062
-949 y(_)1132 947 y(nt::)720 1138 y(is)779 1140 y(_)847
-1138 y(perturbed)1188 1140 y(_)1257 1138 y(insphere\(\))358
-b Fl(returns)27 b(curren)n(t)g(mo)r(de)71 1453 y Fc(Geometric)32
-b(predicates)71 1644 y Fl(Through)71 b(o)n(v)n(erloading)f(mec)n
-(hanisms,)82 b(functions)73 b(suc)n(h)f(that)h Fi(orientation)79
-b Fl(for)72 b Fi(Point)3189 1646 y(_)3258 1644 y(2)11
-b Fb(<)p Fi(Cartesian)6 b Fb(<)71 1744 y Fi(Fixed)269
-1746 y(_)337 1744 y(precision)663 1746 y(_)733 1744 y(nt)i
-Fb(>)28 b(>)g Fl(will)f(correctly)f(call)i(the)g(function)g(b)r(elo)n
-(w.)71 1960 y Fi(Orientation)228 b(orientationC2\()31
-b(x0,)g(y0,)f(x1,)h(y1,)f(x2,)g(y2\))71 2201 y(Oriented)388
-2203 y(_)456 2201 y(side)125 b(side)859 2203 y(_)928
-2201 y(of)995 2203 y(_)1064 2201 y(oriented)1359 2203
-y(_)1428 2201 y(circleC2\()31 b(x0,)f(y0,)h(x1,)f(y1,)h(x2,)f(y2,)h
-(x3,)f(y3\))1984 2392 y Fl(P)n(erturbation)d(mo)r(de)h(can)f(b)r(e)h
-(activ)-5 b(ated.)71 2707 y Fi(Orientation)228 b(orientationC3\()31
-b(x0,)g(y0,)f(z0,)h(x1,)f(y1,)h(z1,)f(x2,)g(y2,)h(z2,)g(x3,)f(y3,)h
-(z3\))71 2948 y(Oriented)388 2950 y(_)456 2948 y(side)237
-3139 y(side)376 3141 y(_)445 3139 y(of)512 3141 y(_)581
-3139 y(oriented)876 3141 y(_)945 3139 y(sphereC3\()g(x0,)g(y0,)f(z0,)h
-(x1,)f(y1,)h(z1,)f(x2,)g(y2,)h(z2,)g(x3,)f(y3,)h(z3,)f(x4,)g(y4,)h
-(z4\))1984 3330 y Fl(P)n(erturbation)c(mo)r(de)h(can)f(b)r(e)h(activ)-5
-b(ated.)p eop
+3 2 bop 3714 -231 a Fl(3)71 2 y Fc(Geometric)32 b(predicates)71
+193 y Fl(Through)71 b(o)n(v)n(erloading)f(mec)n(hanisms,)82
+b(functions)73 b(suc)n(h)f(that)h Fi(orientation)79 b
+Fl(for)72 b Fi(Point)3189 195 y(_)3258 193 y(2)11 b Fb(<)p
+Fi(Cartesian)6 b Fb(<)71 293 y Fi(Fixed)269 295 y(_)337
+293 y(precision)663 295 y(_)733 293 y(nt)i Fb(>)28 b(>)g
+Fl(will)f(correctly)f(call)i(the)g(function)g(b)r(elo)n(w.)71
+508 y Fi(Orientation)228 b(orientationC2\()31 b(x0,)g(y0,)f(x1,)h(y1,)f
+(x2,)g(y2\))71 749 y(Oriented)388 751 y(_)456 749 y(side)125
+b(side)859 751 y(_)928 749 y(of)995 751 y(_)1064 749
+y(oriented)1359 751 y(_)1428 749 y(circleC2\()31 b(x0,)f(y0,)h(x1,)f
+(y1,)h(x2,)f(y2,)h(x3,)f(y3\))1984 940 y Fl(P)n(erturbation)d(mo)r(de)h
+(can)f(b)r(e)h(activ)-5 b(ated.)71 1256 y Fi(Orientation)228
+b(orientationC3\()31 b(x0,)g(y0,)f(z0,)h(x1,)f(y1,)h(z1,)f(x2,)g(y2,)h
+(z2,)g(x3,)f(y3,)h(z3\))71 1496 y(Oriented)388 1498 y(_)456
+1496 y(side)237 1687 y(side)376 1689 y(_)445 1687 y(of)512
+1689 y(_)581 1687 y(oriented)876 1689 y(_)945 1687 y(sphereC3\()g(x0,)g
+(y0,)f(z0,)h(x1,)f(y1,)h(z1,)f(x2,)g(y2,)h(z2,)g(x3,)f(y3,)h(z3,)f(x4,)
+g(y4,)h(z4\))1984 1878 y Fl(P)n(erturbation)c(mo)r(de)h(can)f(b)r(e)h
+(activ)-5 b(ated.)p eop
 %%Page: 4 4
 4 3 bop 71 -231 a Fl(4)p eop
 %%Page: 5 5
