@@ -11,11 +11,11 @@ CGAL_BEGIN_NAMESPACE
 
 class Double
 {
- private:
+private:
 
-  double           val;          // The value;
+  double val;          // The value;
 
- public:
+public:
 
   // Constructors.
   Double () :
@@ -132,6 +132,7 @@ class Double
 
   // Friend functions:
   friend double to_double (const Double& x);
+  friend std::pair<double,double> to_interval(const Double& x);
   friend bool is_finite (const Double& x);
   friend Double sqrt (const Double& x);
   friend Double pow (const Double& x, const Double& y);
@@ -176,6 +177,11 @@ inline Double operator/ (const double& x, const Double& y)
 inline double to_double (const Double& x)
 {
   return (x.val);
+}
+
+inline std::pair<double,double> to_interval(const Double& x)
+{
+  return std::make_pair(x.val - ERR_EPSILON, x.val + ERR_EPSILON);
 }
 
 inline bool is_finite (const Double& x)
