@@ -93,7 +93,7 @@ public:
     std::clog<<"pointlocation_time: "<<pl_t.time()<<std::endl;
     std::clog<<"rayshooting_time:   "<<rs_t.time()<<std::endl;
     std::clog<<"intersection_time:  "<<it_t.time()<<std::endl;
-    // warning: the total time showed here could be actually greater
+    // warning: the total time showed here could be actually larger
     // that the real time used by this class, since point location
     // and intersection test use the ray shooter and so the same time 
     // could be account to more than one timer
