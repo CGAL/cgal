@@ -219,6 +219,7 @@ private slots:
     MyWindow *ed = new MyWindow(500, 500);
     ed->setCaption("View");
     ed->show();
+    ed->set_window(-1.1, 1.1, -1.1, 1.1);
     something_changed();
   }
 
