@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.84 on 17 April 2001
+- New filtered predicate : coplanar_side_of_oriented_circleC3.
+
 Version 4.83 on 10 April 2001
 - FPU.h is changed to reflect the realtity on Alpha/Linux 2.2.18 with
   libc 2.1 to support FPE handling by the Linux kernel.
