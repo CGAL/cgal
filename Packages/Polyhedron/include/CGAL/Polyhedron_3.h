@@ -36,6 +36,7 @@
 #endif
 
 #include <algorithm>
+#include <cstddef>
 
 #ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
 #include <CGAL/Polyhedron_old/Polyhedron_3.h>

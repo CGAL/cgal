@@ -44,6 +44,7 @@
 #include <CGAL/HalfedgeDS_decorator.h>
 #include <CGAL/IO/Verbose_ostream.h>
 #include <vector>
+#include <cstddef>
 
 CGAL_BEGIN_NAMESPACE
 

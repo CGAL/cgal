@@ -1,6 +1,10 @@
 Polyhedron Package: Release changes:
 ---------------------------------------------------------------------
 
+3.17 (16 Jul 2001)
+
+     - Added #include <cstddef> whereever std::size_t is used.
+
 3.16 (11 Jul 2001)
 
      - New example illustrating Euler ops creating a cube.
