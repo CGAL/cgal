@@ -55,7 +55,7 @@ typedef Rep_                                Rep;
 typedef typename Rep::FT                    NT;
 typedef typename Rep::Segment_2             Segment;
 typedef typename Rep::Point_2               Point_2;
-typedef CGAL::Iso_rectangle_2<Rep>          Iso_rectangle_2;
+typedef typename Rep::Iso_rectangle_2       Iso_rectangle_2;
 typedef CGAL::Kdtree_interface_2d<my_point<NT,SAVED_OBJECT> >  kd_interface;
 typedef CGAL::Kdtree_d<kd_interface>  kd_tree;
 typedef typename kd_tree::Box Box;

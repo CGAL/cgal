@@ -66,8 +66,8 @@ class Segment_data {
 
 typedef Rep_                                Rep;
 typedef typename Rep::FT                    NT;
-typedef CGAL::Segment_2<Rep>                Segment_2;
-typedef CGAL::Point_2<Rep>                  Point_2;
+typedef typename Rep::Segment_2             Segment_2;
+typedef typename Rep::Point_2               Point_2;
 
 private:
  Point_2 p;
@@ -92,8 +92,8 @@ class Hot_Pixel {
 
 typedef Rep_                       Rep;
 typedef typename Rep::FT           NT;
-typedef CGAL::Segment_2<Rep>       Segment_2;
-typedef CGAL::Point_2<Rep>         Point_2;
+typedef typename Rep::Segment_2    Segment_2;
+typedef typename Rep::Point_2      Point_2;
 
 private:
   // p is the center of the hot pixel
@@ -144,10 +144,10 @@ struct hot_pixel_dir_cmp
 template<class base_rep>
 class Snap_rounding_traits : public base_rep {
 
-typedef typename base_rep::FT           NT;
-typedef CGAL::Point_2<base_rep>         Point_2;
-typedef CGAL::Segment_2<base_rep>       Segment_2;
-typedef CGAL::Iso_rectangle_2<base_rep> Iso_rectangle_2;
+typedef typename base_rep::FT                    NT;
+typedef typename base_rep::Point_2               Point_2;
+typedef typename base_rep::Segment_2             Segment_2;
+typedef typename base_rep::Iso_rectangle_2       Iso_rectangle_2;
 
 public:
 
