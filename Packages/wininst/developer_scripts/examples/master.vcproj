@@ -101,7 +101,7 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm">
 			<File
-				RelativePath="..\master.C">
+				RelativePath="master.C">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
