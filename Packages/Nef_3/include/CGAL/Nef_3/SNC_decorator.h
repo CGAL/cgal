@@ -1373,9 +1373,6 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 
 };
 
-
-
-
 /* visiting shell objects:
 
 Objects are marked as done, when placed in the output list.  We have

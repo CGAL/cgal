@@ -355,7 +355,7 @@ protected:
 	SHalfedge_const_handle se;
 	Halffacet_cycle_const_iterator fc;
      	
-	Halffacet_const_handle f = D.twin(opposite_facet);
+	Halffacet_const_handle f = opposite_facet->twin();
 
 	B.begin_facet();
 	fc = f->facet_cycles_begin();
@@ -364,8 +364,8 @@ protected:
 	SHalfedge_around_facet_const_circulator hc_start(se);
 	SHalfedge_around_facet_const_circulator hc_end(hc_start);
 	CGAL_For_all(hc_start,hc_end) {
-	  TRACEN("   add vertex " << D.vertex(hc_start)->point());
-	  B.add_vertex_to_facet(VI[D.vertex(hc_start)]);
+	  TRACEN("   add vertex " << hc_start->source()->center_vertex()->point());
+	  B.add_vertex_to_facet(VI[hc_start->source()->center_vertex()]);
 	}
 	B.end_facet();
       }

@@ -1749,7 +1749,7 @@ create_edge_facet_overlay( typename SNC_::Halfedge_const_handle e,
       else
 	se2 = D.new_shalfedge_pair(sv, next_edge, -1);
       next_edge = twin(se2);
-      se1->mark() = se1->twin()->mark() = BOP(E.mark(ec), faces_p->volume()->mark()), inv);
+      se1->mark() = se1->twin()->mark() = BOP(E.mark(ec), faces_p->volume()->mark(), inv);
       se2->mark() = se2->twin()->mark() = BOP(E.mark(ec), faces_p->twin()->volume()->mark(), inv);
       mark_of_right_sface[se1] = E.mark(E.face(ec));
       D.circle(se1) = D.circle(se2) = E.circle(ec);

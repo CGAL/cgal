@@ -34,12 +34,12 @@ struct Project_halfedge_point {
   typedef Object       result_type;
   Object& operator()( Node& x) const   { 
     DClass D;
-    return x.source()->point();
+    return x.source()->source()->point();
     /* a Point_3& reference must be returned by D.point() */
   }
   const Object& operator()( const Node& x) const   { 
     DClass D;
-    return x.source()->point(); 
+    return x.source()->source()->point(); 
     /* a Point_3& reference must be returned by D.point() */
   }
 };
@@ -119,9 +119,8 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
     CGAL_For_all(fc, fe) {
       SHalfloop_handle l;
       if ( assign(l,fc) ) { 
-	TRACEN("isolated point on "<<point(vertex(l))<<"? "<<
-	       point(vertex(l)));
-	if( point(vertex(l)) == p)
+	TRACEN("isolated point on "<<l->incident_sface()->center_vertex()->point()<<"? ");
+	if( l->incident_sface()->center_vertex()->point() == p)
 	  return true;
       } 
       else if ( assign(se,fc) ) {
@@ -250,7 +249,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
 				  Halffacet_const_handle f,
 				  Point_3& p) const { 
     TRACEN("-> Intersection facet - ray");
-    Plane_3 h( plane(f));
+    Plane_3 h( f->plane());
     TRACEN("-> facet's plane: " << h);
     TRACEN("-> a point on the plane: " << h.point());
     TRACEN("-> ray: " << ray);
@@ -303,7 +302,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
     CGAL_assertion(h.has_on(p));
     Halffacet_cycle_const_iterator fc = f->facet_cycles_begin();
     SHalfedge_handle se;
-    Bounded_side outer_bound_pos(CGAL::ON_BOUNDED_SIDE);
+    Bounded_side outer_bound_pos(CGAL::ON_BOUNDARY);
     if ( assign(se,fc) ) {
       SHalfedge_around_facet_circulator hfc(se);
       Circulator c(hfc);
@@ -322,7 +321,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
     ++fc;
     if( fc == fe )
       return outer_bound_pos;
-    Bounded_side inner_bound_pos(CGAL::ON_BOUNDED_SIDE);
+    Bounded_side inner_bound_pos(CGAL::ON_BOUNDARY);
     CGAL_For_all(fc, fe) {
       SHalfloop_handle l;
       if ( assign(l,fc) ) { 
