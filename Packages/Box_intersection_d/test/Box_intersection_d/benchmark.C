@@ -21,28 +21,33 @@
 
 // enable invariant checking
 #define SEGMENT_TREE_CHECK_INVARIANTS 1
+#include <CGAL/Box_intersection_d.h>
+#include <CGAL/Timer.h>
+#include <iostream>
+#include <iterator>
 #include <fstream>
-#include "definitions.h"
+
+#include "util.h"
 
 static unsigned int failed = 0;
 
 template< class NT, unsigned int DIM, bool CLOSED >
 struct _test {
-typedef Definitions<NT,DIM,CLOSED> Defs;
+    typedef Util< NT, DIM, CLOSED > Util;
 
-#include "util.h"
+
 
 static void
 test_n( unsigned int n, std::ostream& outfile )
 {
-    Box_container boxes1, boxes2;
+    typename Util::Box_container boxes1, boxes2;
     //Result_container result_allpairs, result_scanner, result_tree;
     std::cout << "generating random box sets with size "
               << n << " ... " << std::flush;
-    fill_boxes( n, boxes1 );
-    fill_boxes( n, boxes2 );
+    Util::fill_boxes( n, boxes1 );
+    Util::fill_boxes( n, boxes2 );
     std::cout << std::endl;
-    Counter_callback callback1, callback2;
+    typename Util::Counter_callback callback1, callback2;
     CGAL::Timer timer, timer_scan;
     double time, time_scan;
     unsigned int problemsize = boxes1.size() + boxes2.size();
@@ -54,32 +59,35 @@ test_n( unsigned int n, std::ostream& outfile )
     timer_scan.start();
     unsigned int repetitions = 1;
     if( problemsize < 20 )
-        repetitions = 10000;
-    else if( problemsize < 50 )
-        repetitions = 5000;
-    else if( problemsize < 90 )
-        repetitions = 2000;
-    else if( problemsize < 300 )
         repetitions = 1000;
+    else if( problemsize < 50 )
+        repetitions = 500;
+    else if( problemsize < 90 )
+        repetitions = 100;
+    else if( problemsize < 300 )
+        repetitions = 50;
     else if( problemsize < 1000 )
-        repetitions = 300;
+        repetitions = 10;
     else if( problemsize < 10000 )
-        repetitions = 30;
+        repetitions = 4;
     else
         repetitions = 1;
 
     for( unsigned int i = repetitions; i; --i ) {
         CGAL::Box_intersection_d::one_way_scan( boxes1.begin(), boxes1.end(),
                                                 boxes2.begin(), boxes2.end(),
-                                                callback1, Traits(), DIM - 1 );
+                                                callback1, Util::Traits(),
+                                                DIM - 1 );
         CGAL::Box_intersection_d::one_way_scan( boxes2.begin(), boxes2.end(),
                                                 boxes1.begin(), boxes1.end(),
-                                                callback1, Traits(), DIM - 1 );
+                                                callback1, Util::Traits(),
+                                                DIM - 1 );
     }
     timer_scan.stop();
     time_scan = timer_scan.time() / repetitions;
+    const unsigned int scan_counter = callback1.counter/repetitions;
 
-    std::cout << "got " << callback1.counter/repetitions << " intersections in "
+    std::cout << "got " << scan_counter << " intersections in "
               << time_scan << " seconds."
               << std::endl;
 
@@ -99,6 +107,13 @@ test_n( unsigned int n, std::ostream& outfile )
         }
         timer.stop();
         time = timer.time() / repetitions;
+        const unsigned int stream_counter = callback2.counter/repetitions;
+        callback2.counter = 0;
+        if( stream_counter != scan_counter ) {
+            std::cout << "!! different number of intersections! got "
+                      << stream_counter << "intersections!" << std::endl;
+            exit(-1);
+        }
         std::cout << "cutoff = " << cutoff << " -> t = " << time << std::endl;
         if( last_time < time || time < 1e-4) {
             if( cutoff > stepsize )

@@ -20,30 +20,37 @@
 
 // enable invariant checking
 #define SEGMENT_TREE_CHECK_INVARIANTS 1
-#include "definitions.h"
+
+#include <CGAL/Box_intersection_d.h>
+#include <CGAL/Timer.h>
+#include <iostream>
+#include <sstream>
+#include <iterator>
+#include <cstdio>
+
+#include "util.h"
 
 bool test_failed = false;
 
 template< class NT, unsigned int DIM, bool CLOSED >
 struct _test {
-    typedef Definitions<NT,DIM,CLOSED> Defs;
+    typedef Util< NT, DIM, CLOSED > Util;
 
-#include "util.h"
 
 void
 operator()( const char* filename1, const char* filename2 )
 {
-    Box_container boxes1, boxes2;
-    Result_container result_all_pairs, result_tree;
+    typename Util::Box_container boxes1, boxes2;
+    typename Util::Result_container result_all_pairs, result_tree;
     FILE *infile1, *infile2;
     infile1 = fopen( filename1, "r");
     infile2 = fopen( filename2, "r");
 
-    readBoxesFromFile( infile1, boxes1 );
-    readBoxesFromFile( infile2, boxes2 );
+    Util::readBoxesFromFile( infile1, boxes1 );
+    Util::readBoxesFromFile( infile2, boxes2 );
 
     std::cout << std::endl;
-    Storage_callback< Result_container >
+    typename Util::Storage_callback<>
         callback1( result_all_pairs ),
         callback2( result_tree );
 
@@ -52,7 +59,7 @@ operator()( const char* filename1, const char* filename2 )
     timer.start();
     CGAL::Box_intersection_d::all_pairs( boxes1.begin(), boxes1.end(),
                                          boxes2.begin(), boxes2.end(),
-                                         callback1, Traits(), 2 );
+                                         callback1, Util::Traits(), 2 );
     timer.stop();
     std::cout << "got " << callback1.counter << " intersections in "
               << timer.time() << " seconds." << std::endl;
@@ -63,10 +70,10 @@ operator()( const char* filename1, const char* filename2 )
     timer.start();
     CGAL::Box_intersection_d::one_way_scan( boxes1.begin(), boxes1.end(),
                                             boxes2.begin(), boxes2.end(),
-                                            callback2, Traits(), 2 );
+                                            callback2, Util::Traits(), 2 );
     CGAL::Box_intersection_d::one_way_scan( boxes2.begin(), boxes2.end(),
                                             boxes1.begin(), boxes1.end(),
-                                            callback2, Traits(), 2 );
+                                            callback2, Util::Traits(), 2 );
     timer.stop();
     std::cout << "got " << callback2.counter << " intersections in "
               << timer.time() << " seconds." << std::endl;
@@ -80,15 +87,15 @@ operator()( const char* filename1, const char* filename2 )
     const unsigned int cutoff = n < 2000 ? 6 : n / 100;
     CGAL::box_intersection_d_custom_predicates( boxes1.begin(), boxes1.end(),
                                                 boxes2.begin(), boxes2.end(),
-                                                callback2, Traits(), cutoff );
+                                                callback2, Util::Traits(), cutoff );
     timer.stop();
     std::cout << "got " << callback2.counter << " intersections in "
               << timer.time() << " seconds." << std::endl;
 
     if( callback1.counter != callback2.counter ) {
-        unsigned int missing    = countMissingItems( result_all_pairs,
+        unsigned int missing    = Util::countMissingItems( result_all_pairs,
                                                      result_tree );
-        unsigned int duplicates = countDuplicates( result_tree );
+        unsigned int duplicates = Util::countDuplicates( result_tree );
         std::cout << "!! failed !! " << missing  << " missing and "
              << duplicates << " duplicate intersections in tree result."
              << std::endl;

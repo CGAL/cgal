@@ -22,35 +22,38 @@
 // enable invariant checking
 #define SEGMENT_TREE_CHECK_INVARIANTS 1
 
-#include "definitions.h"
+#include <CGAL/Box_intersection_d.h>
+#include <CGAL/Timer.h>
+#include <iostream>
+#include <iterator>
+
+#include "util.h"
 
 static unsigned int failed = 0;
 
 template< class NT, unsigned int DIM, bool CLOSED >
 struct _test {
-    typedef Definitions<NT,DIM,CLOSED> Defs;
-
-#include "util.h"
+typedef Util< NT, DIM, CLOSED > Util;
 
 static void
 test_n( unsigned int n,
         CGAL::Box_intersection_d::Setting
                              setting = CGAL::Box_intersection_d::BIPARTITE )
 {
-    Box_container boxes1, boxes2;
+    typename Util::Box_container boxes1, boxes2;
     const unsigned int allpairs_max = 5000;
     //Result_container result_allpairs, result_scanner, result_tree;
     std::cout << "generating random box sets with size " << n
               << " ... " << std::flush;
-    fill_boxes( n, boxes1 );
+    Util::fill_boxes( n, boxes1 );
     bool bipartite = setting == CGAL::Box_intersection_d::BIPARTITE;
 
     if( bipartite )
-        fill_boxes( n, boxes2 );
+        Util::fill_boxes( n, boxes2 );
     else
         boxes2 = boxes1;
     std::cout << std::endl;
-    Counter_callback callback0, callback1, callback2;
+    typename Util::Counter_callback callback0, callback1, callback2;
     CGAL::Timer timer;
 
     if( n < allpairs_max ) {
@@ -58,7 +61,8 @@ test_n( unsigned int n,
         timer.start();
         CGAL::Box_intersection_d::all_pairs( boxes1.begin(), boxes1.end(),
                                              boxes2.begin(), boxes2.end(),
-                                             callback0, Traits(), DIM - 1 );
+                                             callback0, Util::Traits(),
+                                             DIM - 1 );
         timer.stop();
         std::cout << "got " << callback0.counter << " intersections in "
                   << timer.time() << " seconds."
@@ -69,11 +73,13 @@ test_n( unsigned int n,
     timer.start();
     CGAL::Box_intersection_d::one_way_scan( boxes1.begin(), boxes1.end(),
                                             boxes2.begin(), boxes2.end(),
-                                            callback1, Traits(), DIM - 1 );
+                                            callback1, Util::Traits(),
+                                            DIM - 1 );
     if( bipartite )
         CGAL::Box_intersection_d::one_way_scan( boxes2.begin(), boxes2.end(),
                                                 boxes1.begin(), boxes1.end(),
-                                                callback1, Traits(), DIM - 1);
+                                                callback1, Util::Traits(),
+                                                DIM - 1);
     timer.stop();
     std::cout << "got " << callback1.counter << " intersections in "
               << timer.time() << " seconds."
@@ -85,7 +91,8 @@ test_n( unsigned int n,
     unsigned int cutoff = n < 200 ? 6 : n < 2000 ? 20 : n / 50;
     CGAL::box_intersection_d_custom_predicates( boxes1.begin(), boxes1.end(),
                                                 boxes2.begin(), boxes2.end(),
-                                                callback2, Traits(), cutoff, setting );
+                                                callback2, Util::Traits(),
+                                                cutoff, setting );
     timer.stop();
     std::cout << "got " << callback2.counter << " intersections in "
               << timer.time() << " seconds." << std::endl;
@@ -94,15 +101,8 @@ test_n( unsigned int n,
         n < allpairs_max && callback0.counter != callback1.counter )
     {
         ++failed;
-        /*unsigned int missing    = countMissingItems( result_scanner,
-                                                     result_tree );
-        unsigned int duplicates = countDuplicates( result_tree );*/
         std::cout << "!! failed !! " << std::endl;
-        /*std::cout << "!! failed !! " << missing  << " missing and "
-             << duplicates << " duplicate intersections in tree result. "
-             << std::endl;*/
-    }
-    else
+    } else
         std::cout << "--- passed --- " << std::endl;
 }
 
