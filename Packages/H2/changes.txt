@@ -1,3 +1,6 @@
+2.96 (5 August 2003)
+- Add squared_length() to Vector_2.
+
 2.95 (31 July 2003)
 - Fix warning in function_objects.h.
 
