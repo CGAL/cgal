@@ -86,7 +86,7 @@ write(std::ostream& os, const T& t, const io_Operator&)
 template < class T >
 inline
 void
-write(ostream& os, const T& t, const io_Extract_insert&)
+write(std::ostream& os, const T& t, const io_Extract_insert&)
 {
     insert(os, t);
 }
@@ -95,7 +95,7 @@ write(ostream& os, const T& t, const io_Extract_insert&)
 template < class T >
 inline
 void
-write(ostream& os, const T& t)
+write(std::ostream& os, const T& t)
 {
     write(os, t, io_tag(t));
 }
@@ -104,7 +104,7 @@ write(ostream& os, const T& t)
 template < class T >
 inline
 void
-read(istream& is, T& t, const io_Read_write&)
+read(std::istream& is, T& t, const io_Read_write&)
 {
     is.read((char*)&t, sizeof(t));
 }
@@ -113,7 +113,7 @@ read(istream& is, T& t, const io_Read_write&)
 template < class T >
 inline
 void
-read(istream& is, T& t, const io_Operator&)
+read(std::istream& is, T& t, const io_Operator&)
 {
     is >> t;
 }
@@ -122,7 +122,7 @@ read(istream& is, T& t, const io_Operator&)
 template < class T >
 inline
 void
-read(istream& is, T& t, const io_Extract_insert&)
+read(std::istream& is, T& t, const io_Extract_insert&)
 {
     extract(is, t);
 }
@@ -131,14 +131,14 @@ read(istream& is, T& t, const io_Extract_insert&)
 template < class T >
 inline
 void
-read(istream& is, T& t)
+read(std::istream& is, T& t)
 {
     read(is, t, io_tag(t));
 }
 
 
 inline
-ostream& operator<<( ostream& out, const Color& col)
+std::ostream& operator<<( std::ostream& out, const Color& col)
 {
     switch(out.iword(IO::mode)) {
     case IO::ASCII :
@@ -155,7 +155,7 @@ ostream& operator<<( ostream& out, const Color& col)
 }
 
 inline
-istream &operator>>(istream &is, Color& col)
+std::istream &operator>>(std::istream &is, Color& col)
 {
     int r, g, b;
     switch(is.iword(IO::mode)) {
