@@ -92,14 +92,14 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
   std::transform( P.facets_begin(), P.facets_end(),
 		  P.planes_begin(), Facet_plane_3());
   SNC_decorator D(S);
-  /*
-  Progress_indicator_cout progress
+
+  Progress_indicator_clog progress
     ( P.size_of_vertices(),
       "polyhedron_3_to_nef_3: constructing local view of vertices...");
-  */
+
   typename Polyhedron::Vertex_iterator pvi;
   for( pvi = P.vertices_begin(); pvi != P.vertices_end(); ++pvi ) {
-    //    progress++;
+    progress++;
     typename Polyhedron::Vertex pv = *pvi;
     Vertex_handle nv = S.new_vertex();
     D.point(nv) = pv.point();
@@ -189,13 +189,13 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
     SM.circle(SM.twin(e)) = ss_circle.opposite();
     SM.mark(e) = true;
 
-    // create facets
+    // create faces
     SFace_handle fint = SM.new_face();
     SFace_handle fext = SM.new_face();
     SM.link_as_face_cycle(e, fint);
     SM.link_as_face_cycle(SM.twin(e), fext);
     
-    // mark facets properly...
+    // mark faces properly...
     SM.mark(fint) = true;
     SM.mark(fext) = false;
     SM.check_integrity_and_topological_planarity();   
