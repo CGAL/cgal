@@ -41,9 +41,27 @@ FPU_CW_t FPU_empiric_test ()
     double ye, ze;
     ye = y - m;
     ze = z + m;
-    if ((y == ye) && (z == ze)) return FPU_cw_near;
+    if (y == ye && z == ze) return FPU_cw_near;
     if (y == ye) return FPU_cw_up;
     if (z == ze) return FPU_cw_down;
+    return FPU_cw_zero;
+}
+
+FPU_CW_t FPU_empiric_test_mul ()
+{
+    // If not marked "volatile", the result is false when optimizing
+    // because the constants are pre-computed at compile time !!!
+    // volatile const double m = CGAL_IA_MIN_DOUBLE;
+    volatile double m = 0.5;
+    int i;
+    for (i=0; i<10; i++) {m*=m; /* cout <<c << endl; */ }
+    double a = m*m;
+    double b = (-m)*m;
+    cout << "m = " << m << "\n m*m = " << a << "\n (-m)*m = " << b << endl;
+// Note: it's not supposed to work here like that.
+    if ((a == 0.0) && (b == 0.0)) return FPU_cw_near;
+    if (a > 0.0) return FPU_cw_up;
+    if (b < 0.0) return FPU_cw_down;
     return FPU_cw_zero;
 }
 
