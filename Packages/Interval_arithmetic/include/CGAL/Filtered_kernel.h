@@ -102,9 +102,9 @@ public:
     CGAL_Filter_type(Triangle_2)
     CGAL_Filter_type(Circle_2)
     CGAL_Filter_type(Iso_rectangle_2)
+    CGAL_Filter_type(Conic_2)
     // CGAL_Filter_type(Aff_transformation_2)
     // CGAL_Filter_type(Data_accessor_2) // ?
-    // CGAL_Filter_type(Conic_2)         // ?
 
     CGAL_Filter_type(Object_3)
     CGAL_Filter_type(Point_3)
