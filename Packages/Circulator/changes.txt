@@ -1,5 +1,12 @@
 Circulator Package: Release changes:
 ---------------------------------------------------------------------
+3.15 (8 August 00)
+     fixed the doc
+
+3.14 (3 May 00)
+     rename makefile to Makefile in test/Circulator 
+     to exclude it from submission
+
 3.13 (20 April 00)
      fixed a typing bug of the previous modification in 
      void Assert_forward_category( const IC &ic)

@@ -1,7 +1,6 @@
 # Makefile for Circulator Package
 PACKAGE=Circulator
 
-WWW=/u/www/0/www/htdocs/files/equipes/prisme
 WWW_CGAL=$(WWW)/CGAL/DR:/Members
 WWW_dir=$(WWW_CGAL)/Circulator
 TMP_file=/tmp/submit-mail
@@ -16,7 +15,7 @@ package:
 	@echo "---- editer changes.txt       ----"
 	@echo "---- cvs update; cvs commit ------"
 	@echo "---- more version ----------------"
-	@echo "---- VERSION=   ; export VERSION -"
+	@echo "---- VERSION=3.15; export VERSION "
 	@echo "---- make Doc --------------------"
 	@echo "---- make Version-----------------"
 	@echo "---- make tag --------------------"
