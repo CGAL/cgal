@@ -1,3 +1,6 @@
+1.42 (4 Nov 2002)
+  - fix return type in indirect traits
+
 1.41 (30 Oct 2002)
   - fix type redeclaration in indirect traits
   - add some documentation for the vertex visibility graph

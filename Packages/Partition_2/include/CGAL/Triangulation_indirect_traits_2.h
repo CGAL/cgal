@@ -119,7 +119,7 @@ class Construct_indirect_segment_2
 public:
    typedef Indirect_segment<Circulator>   I_segment;
 
-   Indirect_segment operator()(Circulator p1, Circulator p2)
+   I_segment operator()(Circulator p1, Circulator p2)
    {
       return I_segment(p1, p2);
    }
