@@ -47,11 +47,11 @@ public:
 };
 
 
-template <class Triangulation>
+template <class Triangul>
 void
-_test_cls_triangulation_short_2( const Triangulation &)
+_test_cls_triangulation_short_2( const Triangul &)
 {
-  typedef Triangulation                      Cls;
+  typedef Triangul                     Cls;
 
   // We assume the traits class has been tested already
   // actually, any traits is good if it has been tested
