@@ -1,5 +1,13 @@
 Halfedge_DS Package: Release changes:
 ---------------------------------------------------------------------
+2.9 (01 Jun 2001)
+
+     - Halfedge_data_structure_using_vector.h: Fixed missing & in 
+       update_prev(). Bug reported by Xiangmin Jiao.
+     - Halfedge_data_structure_using_list.h: Fixed bug in copy  
+       constructor and assignment operator to copy pairs instead of 
+       single halfedges. Bug reported by Xiangmin Jiao.
+
 2.8 (13 Sep 2000)
 
      Vertex, Halfedge, and Facet class prefixed with HDS in the doc.
