@@ -1,8 +1,9 @@
 HalfedgeDS Package: Release changes:
 ---------------------------------------------------------------------
 
-3.10 (24 Jun 2001)
+3.10 (25 Jun 2001)
 
+     - Fixed missing Plane dummy types in face_base classes.
      - Remove the HalfedgeDS_using_list
      - Rename HalfedgeDS_using_in_place_list to HalfedgeDS_list
      - Rename HalfedgeDS_using_vector to HalfedgeDS_vector.
