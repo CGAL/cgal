@@ -23,6 +23,8 @@
 #ifndef CGAL_TRIANGULATION_UTILS_3_H
 #define CGAL_TRIANGULATION_UTILS_3_H
 
+#include <CGAL/triangulation_assertions.h>
+
 CGAL_BEGIN_NAMESPACE
 
 class Triangulation_utils_3
