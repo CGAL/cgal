@@ -3,6 +3,7 @@ Circulator Package: Release changes:
 	
 3.27 (1 Apr 2003)
      - replaced #ifdef _MSC_VER with CGAL_CFG_NO_SCOPE_MEMBER_FUNCTION_PARAMETERS [af]
+     - SunPro 5.4 didn't like the space between -I and the path in a Makefile
 
 3.26 (29 Apr 2002)
      - split of reference and user manual
