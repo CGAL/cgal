@@ -51,19 +51,13 @@
  */
 
 /*
- * TODO (vaguely by decreasing priority):
- * - The next step will be to replace Cartesian<Lazy_exact_nt<ET> > by a kernel
- *   similar to LOOK in functionality : Lazy_exact_Cartesian<FT,ET>.
+ * TODO :
+ * - Generalize it for constructions at the kernel level.
  * - Interval rafinement functionnality ?
- * - Predicates should use the filtered advanced version.
- *   [ done via Filtered_exact<Lazy_exact<X>, X>  ? ]
- * - Geometric constructions could use the interval_advanced.
- *   [ will be done via the filtered Kernel ]
  * - Separate the handle and the representation(s) in 2 files (?)
  *   maybe not a good idea, better if everything related to one operation is
  *   close together.
  * - Add a CT template parameter like Filtered_exact_nt<> ?
- * - Have a traits class ?
  * - Add a string constant to provide an expression string (a la MetaCGAL) ?
  *   // virtual ostream operator<<() const = 0; // or string, like Core ?
  */
