@@ -7,9 +7,11 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+ALL : added std:: in a number of places where it was missing
 ALL : use namespace std and CGAL
 ALL : use standard header files
 ALL : Initial revision
+TEST: Added LONG_NAME_PROBLEM flags to makefile
 
 //---------------------------------------------------------------------
 //	 CGAL-1.2
