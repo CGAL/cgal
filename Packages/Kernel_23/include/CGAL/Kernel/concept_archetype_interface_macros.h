@@ -652,6 +652,16 @@ CGAL_Kernel_cons(Construct_vertex_3,
 		 construct_vertex_3_object)
 #endif
 
+#if !defined(CGAL_CA_LIMITED_INTERFACE) || defined(CGAL_CA_CONSTRUCT_BBOX_2)
+CGAL_Kernel_cons(Construct_bbox_2,
+		 construct_bbox_2_object)
+#endif
+
+#if !defined(CGAL_CA_LIMITED_INTERFACE) || defined(CGAL_CA_CONSTRUCT_BBOX_3)
+CGAL_Kernel_cons(Construct_bbox_3,
+		 construct_bbox_3_object)
+#endif
+
 #if !defined(CGAL_CA_LIMITED_INTERFACE) || \
     defined(CGAL_CA_COPLANAR_ORIENTATION_3)
 CGAL_Kernel_pred(Coplanar_orientation_3,

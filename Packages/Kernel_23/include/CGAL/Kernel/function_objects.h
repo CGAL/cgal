@@ -2015,6 +2015,84 @@ public:
     { return t.vertex(i); }
 };
 
+
+template <typename K>
+class Construct_bbox_2
+{
+    typedef typename K::Point_2          Point_2;
+    typedef typename K::Segment_2        Segment_2;
+  typedef typename K::Iso_rectangle_2  Iso_rectangle_2;
+    typedef typename K::Triangle_2       Triangle_2;
+    typedef typename K::Circle_2         Circle_2;
+public:
+    typedef Bbox_2          result_type;
+    typedef Arity_tag< 1 >   Arity;
+
+    Bbox_2
+    operator()( const Point_2& p) const
+    { return p.bbox(); }
+
+    Bbox_2
+    operator()( const Segment_2& s) const
+    { return s.bbox(); }
+
+    
+    Bbox_2
+    operator()( const Triangle_2& t) const
+    { return t.bbox(); }
+
+    Bbox_2
+    operator()( const Iso_rectangle_2& r) const
+    { return r.bbox(); }
+
+    Bbox_2
+    operator()( const Circle_2& c) const
+    { return c.bbox(); }
+};
+
+
+template <typename K>
+class Construct_bbox_3
+{
+    typedef typename K::Point_3          Point_3;
+    typedef typename K::Segment_3        Segment_3;
+    typedef typename K::Iso_cuboid_3     Iso_cuboid_3;
+    typedef typename K::Triangle_3       Triangle_3;
+    typedef typename K::Tetrahedron_3    Tetrahedron_3;
+    typedef typename K::Sphere_3         Sphere_3;
+public:
+    typedef Bbox_3          result_type;
+    typedef Arity_tag< 1 >   Arity;
+
+    Bbox_3
+    operator()( const Point_3& p) const
+    { return p.bbox(); }
+
+    Bbox_3
+    operator()( const Segment_3& s) const
+    { return s.bbox(); }
+
+    
+    Bbox_3
+    operator()( const Triangle_3& t) const
+    { return t.bbox(); }
+
+    Bbox_3
+    operator()( const Iso_cuboid_3& r) const
+    { return r.bbox(); }
+
+    Bbox_3
+    operator()( const Tetrahedron_3& t) const
+    { return t.bbox(); }
+
+    Bbox_3
+    operator()( const Sphere_3& s) const
+    { return s.bbox(); }
+};
+
+
+
+
 template <typename K>
 class Coplanar_orientation_3
 {

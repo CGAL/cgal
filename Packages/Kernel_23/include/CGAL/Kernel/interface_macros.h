@@ -243,6 +243,10 @@ CGAL_Kernel_cons(Construct_vertex_2,
 		 construct_vertex_2_object)
 CGAL_Kernel_cons(Construct_vertex_3,
 		 construct_vertex_3_object)
+CGAL_Kernel_cons(Construct_bbox_2,
+		 construct_bbox_2_object)
+CGAL_Kernel_cons(Construct_bbox_3,
+		 construct_bbox_3_object)
 CGAL_Kernel_pred(Coplanar_orientation_3,
 		 coplanar_orientation_3_object)
 CGAL_Kernel_pred(Coplanar_side_of_bounded_circle_3,

@@ -1,3 +1,5 @@
+- Added Kernel_ConstructBbox_2, Kernel_ConstructBbox_3 in doc_tex/kernel/Ref
+
 1.29 (21 February 2003)
 - New test programs Filtered_cartesian.C and Filtered_homogeneous.C
 - Remove some unused variables

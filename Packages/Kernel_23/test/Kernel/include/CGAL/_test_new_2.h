@@ -227,6 +227,14 @@ test_new_2(const R& rep)
           tmp6c = construct_vertex_2(rec2, 0);
           tmp6c = construct_vertex_2(t2, 0);
 
+  typename R::Construct_bbox_2 construct_bbox_2
+    = rep.construct_bbox_2_object();
+
+  Bbox_2 bb1 = construct_bbox_2(p1); // Point_2
+  Bbox_2 bb2 = construct_bbox_2(s1); // Segment_2
+  Bbox_2 bb3 = construct_bbox_2(t1); // Triangle_2
+  Bbox_2 bb4 = construct_bbox_2(c1); // Circle_2
+  Bbox_2 bb5 = construct_bbox_2(rec2); // Iso_rectangle_2
 
 #ifndef CGAL_NO_DEPRECATED_CODE
   typename R::Construct_direction_of_line_2 construct_direction_from

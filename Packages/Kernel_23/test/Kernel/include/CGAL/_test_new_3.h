@@ -245,6 +245,17 @@ test_new_3(const R& rep)
           tmp2f = construct_vertex_3(t2, 0);
           tmp2f = construct_vertex_3(th2, 0);
   
+
+  typename R::Construct_bbox_3 construct_bbox_3
+    = rep.construct_bbox_3_object();
+
+  Bbox_3 bb1 = construct_bbox_3(p1); // Point_3
+  Bbox_3 bb2 = construct_bbox_3(s1); // Segment_3
+  Bbox_3 bb3 = construct_bbox_3(t1); // Triangle_3
+  Bbox_3 bb4 = construct_bbox_3(th1); // Tetrahedron_3
+  Bbox_3 bb5 = construct_bbox_3(sp1); // Sphere_3
+  Bbox_3 bb6 = construct_bbox_3(iso1); // Iso_cuboid_3
+
 #ifndef CGAL_NO_DEPRECATED_CODE
   typename R::Construct_direction_of_line_3 construct_direction_from
         = rep.construct_direction_of_line_3_object();
