@@ -1,3 +1,8 @@
+13 April 2004 Menelaos Karavelas 
+- split the apollonius graph test suite into three separate parts;
+  this will hopefully decrease compilation time and memory requirements
+  for the compilation
+
 25 March 2004 Radu Ursu
 - made doc work with the current manual tools implementation
 
