@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.93 (??/5/01)
+- Triangulation_hierarchy doc fixes.
+
 Ver 4.92 (21/5/01)
 - add function star_hole in Triangulation_default_data_structure_2
   Triangulation_data_structure_using_list

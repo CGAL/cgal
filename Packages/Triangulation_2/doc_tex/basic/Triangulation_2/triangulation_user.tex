@@ -196,8 +196,8 @@ describes a class to handle a constrained triangulation,
 that is a triangulation in which certain edges are enforced.
 Constrained triangulations allow in particular to build  
 triangulations of planar polygons.
-FAt last section~\ref{I1_Sect_Hierarchy} describes the
-Triangulation hierarchy, a hierarchical data
+The last section~\ref{I1_Sect_Hierarchy} describes the
+triangulation hierarchy, a hierarchical data
 structure which may be used to improve the efficiency
 of point location queries.
 
@@ -1378,13 +1378,11 @@ property.
 
 \subsection{Definition}
 The class \ccc{Triangulation_hierarchy_2<Tr>}
- implements a triangulation augmented with
-a data structure which allows fast point location
-queries.
-The
-data structure  is a hierarchy 
+implements a triangulation augmented with
+a data structure which allows fast point location queries.
+The data structure is a hierarchy 
 of triangulations. The triangulation at the lowest level is
- the original triangulation where operations and point location are to 
+the original triangulation where operations and point location are to 
 be performed.
 Then at each succedding level, the data structure
 stores a triangulation of a small random sample of the vertices
@@ -1393,51 +1391,49 @@ is done through a top down nearest neighbor query.
 The nearest neighbor query is first
 performed naively in the top level triangulation.
 Then, at each following level, the nearest neighbor at that level
-is found through a linear march performed from
+is found through a linear walk performed from
 the nearest neighbor found at the preceeding level.
 Because the number of vertices in each triangulation is only a small
-fraction
-of the number of vertices of the preceeding triangulation 
-the data structure remains small and achieve fast point location 
+fraction of the number of vertices of the preceeding triangulation,
+the data structure remains small and achieves fast point location 
 queries  on real
 data. As proved in~\cite{d-iirdt-98}, this structure has an optimal behaviour
-when it is build for Delaunay triangulations.
+when it is built for Delaunay triangulations.
 However it can be used as well for other triangulations
-and the 
- class \ccc{Triangulation_hierarchy_2<Tr>} is templated by a parameter
-which is to be instantiated by one of the \cgal triangulation
+and the class \ccc{Triangulation_hierarchy_2<Tr>} is templated by a parameter
+which is to be instantiated by one of the \cgal\ triangulation
 classes.
 
 \subsection{The class \protect \ccc{Triangulation_hierarchy_2<Tr>}}
-The class \ccc{Triangulation_hierarchy_2<Tr>} inherits from
-triangulation type passed as template parameter Tr. 
+The class \ccc{Triangulation_hierarchy_2<Tr>} inherits from the
+triangulation type passed as template parameter \ccc{Tr}. 
 The insert and remove member functions
 are  overwritten to update the data structure at each operation.
-The locate queries are also overwritten taking advantage of the data
+The locate queries are also overwritten to take advantage of the data
 structure for a fast processing.
 
-\subsection{The Vertex type of a Triangulation Hierachy}
+\subsection{The Vertex type of a Triangulation Hierarchy}
 \subsubsection{Requirements}
 The vertex of a triangulation  
-included in a  triangulation hierarchy has to provided
+included in a  triangulation hierarchy has to provide
 some pointers to the corresponding vertices in the
 triangulations of the next and preceeding levels.
 Therefore the base vertex of a triangulation used as
-the base class of a triangulation hierachy has to be a model of the
+the base class of a triangulation hierarchy has to be a model of the
 concept
 \ccc{Triangulation_hierarchy_vertex_base_2_concept} which extends
-the concept \ccc{Triangulation_vertex_base_2_concept} adding
-access and setting member fonctions 
-for two pointers  to the corresponding vertex in the 
+the concept \ccc{Triangulation_vertex_base_2_concept}, adding
+access and setting member functions 
+for two pointers  to the corresponding vertices in the 
 triangulations of the next and preceeding levels.
 
 \subsubsection{A predefined Vertex Base type}
-\cgal provides the class \ccc{Triangulation_hierarchy_vertex_base_2<Vb>}
+\cgal\ provides the class \ccc{Triangulation_hierarchy_vertex_base_2<Vb>}
 which is a model for the concept 
-\ccc{Triangulation_hierarchy_vertex_base_2_concept}
+\ccc{Triangulation_hierarchy_vertex_base_2_concept}.
 This class is templated by a parameter \ccc{Vb}
-which is to be templated by a model of  the concept
-\ccc{Triangulation_vertex_base_2_concept}
+which is to be instantiated by a model of  the concept
+\ccc{Triangulation_vertex_base_2_concept}.
 The class \ccc{Triangulation_hierarchy_vertex_base_2<Vb>} inherits
 from its template parameter \ccc{Vb}.
 This design allows to use either the default

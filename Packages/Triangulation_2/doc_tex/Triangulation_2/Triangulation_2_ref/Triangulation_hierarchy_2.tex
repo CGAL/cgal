@@ -11,49 +11,44 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Triangulation_hierarchy_2<Tr>}  %% add template
-arg's if necessary
+\begin{ccRefClass}{Triangulation_hierarchy_2<Tr>}
+%% add template arg's if necessary
 
 \ccDefinition
-The class \ccRefName implements a triangulation augmented with
-a data structure which allows fast point location
-queries.
-The
-data structure  is a hierarchy 
+The class \ccRefName\ implements a triangulation augmented with
+a data structure which allows fast point location queries.
+The data structure is a hierarchy 
 of triangulations. The triangulation at the lowest level is
- the original triangulation where operations and point location are to 
+the original triangulation where operations and point location are to 
 be performed.
 Then at each succedding level, the data structure
-store a triangulation of a small random sample of the vertices
+stores a triangulation of a small random sample of the vertices
 of the triangulation at the preceeding level. Point location
 is done through a top-down nearest neighbor query.
 The nearest neighbor query is first
 performed naively in the top level triangulation.
 Then, at each following level, the nearest neighbor at that level
-is found through a linear march performed from
+is found through a linear walk performed from
 the nearest neighbor found at the preceeding level.
 Because the number of vertices in each triangulation is only a small
-fraction
-of the number of vertices of the preceeding triangulation 
-the data structure remains small and achieve fast point location 
-queries  on real
+fraction of the number of vertices of the preceeding triangulation 
+the data structure remains small and achieves fast point location 
+queries on real
 data. As proved in~\cite{d-iirdt-98}, this structure has an optimal behaviour
-when it is build for Delaunay triangulations.
+when it is built for Delaunay triangulations.
 However it can be used as well for other triangulations
-and the 
-\ccRefName class is templated by a parameter
-which is to be instantiated by one of the \cgal triangulation
+and the \ccRefName\ class is templated by a parameter
+which is to be instantiated by one of the \cgal\ triangulation
 classes.
 
-\ccInclude{Triangulation_hierarchy_2.h}
+\ccInclude{CGAL/Triangulation_hierarchy_2.h}
 
 \ccInheritsFrom
 
 \ccc{Tr}
 
-
 \ccTypes
-The class \ccRefName inherits the types from its base triangulation
+The class \ccRefName\ inherits the types from its base triangulation
 class \ccc{Tr}. 
 
 \ccCreation
@@ -66,21 +61,19 @@ Traits());}{default constructor.}
 Triangulation_hierarchy_2& trh1);}{Each triangulation in the hierarchy 
 is duplicated.}
 \ccGlue
-\ccMethod{Triangulationhierarchy_2<Tr> operator=(const Triangulation_hierarchy__2<Tr>& tr);}
-{Assignement. Each triangulation in the hierarchy is duplicated.}
-\ccGlue
-\ccMethod{void ~Triangulation_hierarchy_2();}{Destructor.}
+\ccMethod{Triangulation_hierarchy_2<Tr> operator=(const Triangulation_hierarchy_2<Tr>& tr);}
+{Assignment. Each triangulation in the hierarchy is duplicated.}
 
-\ccHeading{Helping functions}
+\ccHeading{Helper functions}
 \ccMethod{void swap(Triangulation_hierarchy_2<Tr>& trh1);}
 {The triangulations \ccc{trh1} and \ccVar\ are swapped.
 \ccVar. \ccc{swap(tr)} should be preferred to \ccc{trh} = \ccc{trh1} or to
 \ccc{trh(trh1)} if \ccc{trh} is deleted after that.}
 \ccGlue
-\ccMethod{void clear();}{Delete all the  triangulations in the hierarchy.}
+\ccMethod{void clear();}{Delete all triangulations in the hierarchy.}
 
 \ccHeading{Insertion and Removal}
-The class \ccRefName overwrite the following insertion and removal
+The class \ccRefName\ overwrites the following insertion and removal
 member functions to update the whole data structure at each operation.
 
 \ccMethod{Vertex_handle insert(const Point& p);}{Inserts  point \ccc{p}.
@@ -104,40 +97,38 @@ vertex is returned and the triangulation hierarchy is not updated.}
 \ccGlue
 \ccMethod{void remove_degree_3(Vertex_handle v);}
 {Removes a vertex of degree three.
-\ccPrecond{Vertex
-\ccc{v} is a finite vertex with degree three.}}
+\ccPrecond{Vertex \ccc{v} is a finite vertex with degree three.}}
 \ccMethod{void remove_second(Vertex_handle v);}{Removes the before
 last finite vertex.}
 \ccGlue
 \ccMethod{void remove_first(Vertex_handle v);}{Removes the last finite vertex.}
 
 \ccHeading{Point location}
-The following point location member function are overwritten.
+The following point location member functions are overwritten.
 They take advantage of the hierarchy to achieve an efficient
 point location.
 
 
 \ccMethod{ Face_handle  locate(const Point& p) const;}
-{Locates point p in the triangulation. See the description of locate
-member functions in the class \ccc{Triangulation_2<Traits,Tds>} }
+{Locates the point \ccc{p} in the triangulation. See the description of the
+\ccc{locate} member functions in the class \ccc{Triangulation_2<Traits,Tds>}. }
 
-\ccMethod{ Face_handle  locate(const Point& p, Locate_type& lt,int&
-li) const;}
-{Same as above. Additionally the locate type \ccc{lt}
+\ccMethod{ Face_handle  locate(const Point& p, Locate_type& lt, int& li) const;}
+{Same as above. Additionally, the locate type \ccc{lt}
  and the index \ccc{li} describing precisely the location are set.}
 
 \begin{ccAdvanced}
 \ccHeading{Checking}
 \ccMethod{bool is_valid() const;}{The \ccc{is_valid()} member function is
 overwritten
-to check the validity of the hierachy, as well as the validity of the
+to check the validity of the hierarchy, as well as the validity of the
 bottom triangulation.}
 \end{ccAdvanced}
 
 \ccSeeAlso
 \ccc{CGAL::Triangulation_2<Traits,Tds>} \\
 \ccc{Triangulation_hierarchy_vertex_base_2_concept}, \\
-\ccc{CGAL::Triangulation_hierarchy_vertex_base_2<Traits>}
+\ccc{CGAL::Triangulation_hierarchy_vertex_base_2<Vb>}
 
 
 %\ccExample
