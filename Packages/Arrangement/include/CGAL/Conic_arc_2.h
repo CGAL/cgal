@@ -161,12 +161,12 @@ class Point_2_ex : public Point_2<R>
 //
 
 static int _conics_count = 0;
-template <class _NT> class Arr_conic_traits;
+template <class _NT> class Arr_conic_traits_2;
 
 template <class NT>
 class Conic_arc_2
 {
-  friend class Arr_conic_traits<NT>;
+  friend class Arr_conic_traits_2<NT>;
 
  public:
 

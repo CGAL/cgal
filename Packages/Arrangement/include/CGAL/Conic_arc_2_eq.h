@@ -22,7 +22,7 @@ typedef leda_bigfloat  APNT;
 #define APNT_ZERO(x)   (x == 0 || ilog2(x) < ZERO_BITLEN)
 #define APNT_CZERO(x)  (x == 0 || ilog2(x) < ZERO_BITLEN/2)
 #define TO_APNT(x)     to_bigfloat(x)
-#define APNT_ABS(x)    CGAL::abs(x)
+#define APNT_ABS(x)    CGAL_NTS abs(x)
 
 
 // ----------------------------------------------------------------------------

@@ -13,7 +13,7 @@ CGAL_BEGIN_NAMESPACE
 //
 
 template <class _NT>
-class Arr_conic_traits 
+class Arr_conic_traits_2 
 {
  public:
   
@@ -47,7 +47,7 @@ class Arr_conic_traits
  public:
 
   // Constructor.
-  Arr_conic_traits()
+  Arr_conic_traits_2()
   {}
 
   ////////// Planar Map methods: //////////
