@@ -41,6 +41,20 @@ The algorithm
 computes a support set $S$ which remains fixed until the next insert
 or clear operation.
 
+\textbf{Note:} This class is (almost) obsolete. The class
+\ccc{Min_sphere_of_spheres_d} solves a more general problem
+and is faster then \ccRefName\, even if used only for points
+as input. Most importantly, \ccc{Min_sphere_of_spheres_d} has
+a specialized implementation for floating-point arithmetic which
+ensures correct results in a large number of cases (including
+highly degenerate ones). In contrast, \ccRefName\ is not reliable
+under floating-point computations. The only advantage of 
+\ccRefName\ over \ccc{Min_sphere_of_spheres_d} is that the
+former can deal with points in homogeneous coordinates, in which 
+case the algorithm is division-free. Thus, \ccRefName\ might still
+be an option in case your input number type cannot (efficiently) 
+divide.
+
     \ccInclude{CGAL/Min_sphere_d.h}
 
     \ccRequirements
