@@ -258,7 +258,7 @@ coplanar_orientation(const PointC3<R CGAL_CTAG> &p,
 
 template < class R >
 inline
-Oriented_side
+Orientation
 coplanar_orientation(const PointC3<R CGAL_CTAG> &p,
                      const PointC3<R CGAL_CTAG> &q,
                      const PointC3<R CGAL_CTAG> &r,
@@ -278,7 +278,7 @@ coplanar_orientation(const PointC3<R CGAL_CTAG> &p,
 
 template < class R >
 inline
-Orientation
+Oriented_side
 coplanar_side_of_oriented_circle(const PointC3<R CGAL_CTAG> &p,
                                  const PointC3<R CGAL_CTAG> &q,
                                  const PointC3<R CGAL_CTAG> &r,
