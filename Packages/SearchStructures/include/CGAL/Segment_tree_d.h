@@ -39,9 +39,9 @@
 // A d-dimensional Segment Tree or a multilayer tree consisting of a Segment
 // and other trees that are derived public Tree_base<C_Data, C_Window, 
 // C_Interface> can be constructed within this class.
-// C_Data: container class which contains the d-dimensional data the tree holds.
+// C_Data: container class which contains the d-dim data the tree holds.
 // C_Window: Query window -- a d-dimensional interval
-// C_Interface: Interface for the class with functions that allow to access the 
+// C_Interface: Interface for the class with functions that allow to access the
 //             data. cf. file _interface.h for the requirements.
 
 CGAL_BEGIN_NAMESPACE
