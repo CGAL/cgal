@@ -137,10 +137,10 @@ _test_cls_regular_triangulation_2( const Triangulation & )
   Weighted_point wp22(p12,300);
 
   Cls T;
-  assert(power_test(wp1,wp2,wp3) == CGAL::ON_NEGATIVE_SIDE);
-  assert(power_test(wp1,wp8,wp2) == CGAL::ON_POSITIVE_SIDE);
-  assert(power_test(wp2,wp8,wp9) == CGAL::ON_NEGATIVE_SIDE);
-  assert(power_test(wp1,wp9,wp3) == CGAL::ON_POSITIVE_SIDE);
+  assert(T.power_test(wp1,wp2,wp3) == CGAL::ON_NEGATIVE_SIDE);
+  assert(T.power_test(wp1,wp8,wp2) == CGAL::ON_POSITIVE_SIDE);
+  assert(T.power_test(wp2,wp8,wp9) == CGAL::ON_NEGATIVE_SIDE);
+  assert(T.power_test(wp1,wp9,wp3) == CGAL::ON_POSITIVE_SIDE);
  
   std::list<Weighted_point> lw; lw.push_back(wp0);
   lw.push_back(wp1); lw.push_back(wp2); lw.push_back(wp3);

@@ -26,7 +26,7 @@
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_2.h>
-#include <CGAL/Triangulation_face_base_2.h>
+#include <CGAL/Triangulation_ds_face_base_2.h>
 
 CGAL_BEGIN_NAMESPACE 
 
