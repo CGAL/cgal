@@ -6,7 +6,7 @@
 # Usage:
 # use_cgal_namespace file1 file2 ...
 
-# Version: 1.6
+# Version: 1.7
 
 my %cgal_macro_names;
 while(<DATA>) {
@@ -201,7 +201,6 @@ CGAL_CONVEX_HULL_TRAITS_2_H
 CGAL_CONVEX_HULL_TRAITS_CARTESIAN_DOUBLE_2_H
 CGAL_COPY_N_H
 CGAL_COUNTING_ITERATOR_H
-CGAL_Constrained_triangulation_face_base_2
 CGAL_DD_GEO_CHULL_H
 CGAL_DD_GEO_CONFIG_H
 CGAL_DD_GEO_REGL_COMPLEX_H
@@ -742,7 +741,6 @@ CGAL_REP_DISTINGUISHER
 CGAL_REP_DISTINGUISHER_H
 CGAL_Range_tree_d__
 CGAL_Ray_2_Ray_2_pair_H
-CGAL_Regular_triangulation_euclidean_traits_2
 CGAL_SEGMENTC2_H
 CGAL_SEGMENTC3_H
 CGAL_SEGMENTH2_H
@@ -904,23 +902,6 @@ CGAL_Tree_precondition_msg
 CGAL_Tree_warning
 CGAL_Tree_warning_code
 CGAL_Tree_warning_msg
-CGAL_Triangulation_default_data_structure_2
-CGAL_Triangulation_edge_circulator_2
-CGAL_Triangulation_edge_iterator_2
-CGAL_Triangulation_euclidean_traits_2
-CGAL_Triangulation_euclidean_traits_xy_3
-CGAL_Triangulation_euclidean_traits_xz_3
-CGAL_Triangulation_euclidean_traits_yz_3
-CGAL_Triangulation_face_2
-CGAL_Triangulation_face_base_2
-CGAL_Triangulation_face_circulator_2
-CGAL_Triangulation_face_handle_2
-CGAL_Triangulation_face_iterator_2
-CGAL_Triangulation_vertex_2
-CGAL_Triangulation_vertex_base_2
-CGAL_Triangulation_vertex_circulator_2
-CGAL_Triangulation_vertex_handle_2
-CGAL_Triangulation_vertex_iterator_2
 CGAL_USER_CLASSES_H
 CGAL_USE_LEDA
 CGAL_USE_NAMESPACE
@@ -991,15 +972,7 @@ CGAL__D_TUPLE_H
 CGAL__FOURTUPLE_H
 CGAL__For_all_backwards_old
 CGAL__For_all_old
-CGAL__HDS_list_facet
-CGAL__HDS_list_halfedge
-CGAL__HDS_list_vertex
-CGAL__HDS_vector_facet
-CGAL__HDS_vector_halfedge
-CGAL__HDS_vector_vertex
 CGAL__INTERSECTING_POLYGONS_DEBUG_ON
-CGAL__In_place_list_const_iterator
-CGAL__In_place_list_iterator
 CGAL__MIN_SQR_DISTANCE_DEBUG_ON
 CGAL__NIL
 CGAL__SIXTUPLE_H
