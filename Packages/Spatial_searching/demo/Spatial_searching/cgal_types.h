@@ -1,14 +1,12 @@
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Kd_tree.h>
-#include <CGAL/Kd_tree_traits_point.h>
+#include <CGAL/Search_traits_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/algorithm.h>
-#include <CGAL/Orthogonal_standard_search.h>
-#include <CGAL/Weighted_Minkowski_distance.h>
+#include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Euclidean_distance.h>
-#include <CGAL/Fuzzy_iso_box_d.h>
-#include <CGAL/Fuzzy_sphere_d.h>
+#include <CGAL/Fuzzy_iso_box.h>
+#include <CGAL/Fuzzy_sphere.h>
 
 #include <vector>
 #include <iostream>
@@ -22,11 +20,11 @@ typedef R::Circle_2                                     Circle_2;
 
 typedef CGAL::Creator_uniform_2<FT, Point_2>            Creator;
 typedef CGAL::Plane_separator<FT>                       Separator;
-typedef CGAL::Kd_tree_traits_point<Point_2>             Traits;
-typedef CGAL::Euclidean_distance<Point_2>               Distance;
-typedef CGAL::Orthogonal_standard_search<Traits>        Neighbour_search;
-typedef CGAL::Fuzzy_iso_box_d<Point_2, Iso_rectangle_2> Fuzzy_box;
-typedef CGAL::Fuzzy_sphere_d<Point_2>                   Fuzzy_circle;
+typedef CGAL::Search_traits_2<R>             Traits;
+typedef CGAL::Euclidean_distance<Traits>               Distance;
+typedef CGAL::Orthogonal_k_neighbor_search<Traits>        Neighbour_search;
+typedef CGAL::Fuzzy_iso_box<Traits> Fuzzy_box;
+typedef CGAL::Fuzzy_sphere<Traits>                   Fuzzy_circle;
 
-typedef std::vector<Traits::Point>                      Vector;
+typedef std::vector<Traits::Point_d>                      Vector;
 typedef std::vector<Point_2>                            Query_vector;

@@ -179,8 +179,11 @@ private slots:
       std::list<Point_2> l, res;
       CGAL::copy_n(vector_of_points.begin(), vector_of_points.size(),
                   std::back_inserter(l));
-      Tree d(l.begin(), l.end(), tr);
+      std::cout << "construct tree with " << l.size() << " points" << std::endl;
+      Tree d(l.begin(), l.end());
+      std::cout << "search" << std::endl;
       d.search( std::back_inserter( res ), exact_range);
+      std::cout << "search done" << std::endl;
       widget->redraw();
       widget->lock();
       *widget << CGAL::RED;
@@ -200,7 +203,7 @@ private slots:
       std::list<Point_2> l, res;
       CGAL::copy_n(vector_of_points.begin(), vector_of_points.size(),
                   std::back_inserter(l));
-      Tree d(l.begin(), l.end(), tr);
+      Tree d(l.begin(), l.end());
       d.search( std::back_inserter( res ), exact_range);
       widget->redraw();
       widget->lock();
@@ -275,24 +278,24 @@ private slots:
     CGAL::copy_n(vector_of_points.begin(), vector_of_points.size(),
 		std::back_inserter(l));
     //    Tree d(vector_of_points.begin(), vector_of_points.end(), tr);
-    Tree d(l.begin(), l.end(), tr);
+    Neighbour_search::Tree d(l.begin(), l.end());
 
     const int query_point_number=30;
     CGAL::Random_points_in_square_2<Point_2,Creator> h( 1.0);
     std::vector<Point_2> query_points;
     CGAL::copy_n( h, query_point_number, std::back_inserter(query_points));
     Distance tr_dist;
-    std::vector<Neighbour_search::Point_with_distance>
+    std::vector<Neighbour_search::Point_with_transformed_distance>
       nearest_neighbour;
     for (int i=0; i < query_point_number; i++) { 
      
-     Neighbour_search N(d, query_points[i], tr_dist, 1, 0.0);
-     N.the_k_neighbors(std::back_inserter(nearest_neighbour));
+     Neighbour_search N(d, query_points[i]);
+     std::copy(N.begin(), N.end(), std::back_inserter(nearest_neighbour));
     }
     widget->lock();    
     for (int j=0; j < query_point_number; j++) {
       *widget << CGAL::RED;
-      *widget << Segment_2(query_points[j], *(nearest_neighbour[j].first));
+      *widget << Segment_2(query_points[j], (nearest_neighbour[j].first));
       *widget << CGAL::YELLOW;
       *widget << query_points[j];
     }
