@@ -1,0 +1,17 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::LessY_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{bool operator()(const Kernel::Point_3&p, 
+                                  const Kernel::Point_3&q);}
+{returns true iff the $y$-coordinate of $p$ is smaller than the
+$y$-coordinate of $q$.}
+
+\ccRefines
+AdaptableFunctor
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::compare_y}\\
+
+\end{ccRefFunctionObjectConcept}

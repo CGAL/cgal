@@ -1,0 +1,17 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::LessXYZ_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{bool operator()(const Kernel::Point_3&p, 
+                                  const Kernel::Point_3&q);}
+{returns true iff the $x$-coordinate of $p$ is smaller than the
+$x$-coordinate of $q$ or if the are the same and 
+the $y$-coordinate of $p$ is smaller than the $y$-coordinate of $q$, or,
+if both $x$- and $y$- coordinate are identical and
+the $z$-coordinate of $p$ is smaller than the $z$-coordinate of $q$.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::lexicographically_xyz_smaller}\\
+
+\end{ccRefFunctionObjectConcept}

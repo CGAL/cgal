@@ -1,0 +1,18 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ComputeYAtX_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::FT operator()(const Kernel::Line_2& l,
+                                        const Kernel::FT &x) const;}
+       {returns the $y$-coordinate of the point at $l$ with
+        given $x$-coordinate.
+        \ccPrecond $l$ is not vertical.}
+
+\ccRefines
+AdaptableFunctor
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::compare_y_at_x} \\
+
+\end{ccRefFunctionObjectConcept}

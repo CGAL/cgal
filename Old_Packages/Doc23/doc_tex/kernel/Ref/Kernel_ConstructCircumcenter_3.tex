@@ -1,0 +1,22 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructCircumcenter_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Point_3 operator()(const Kernel::Point_3&p, 
+                                  const Kernel::Point_3&q, 
+                                  const Kernel::Point_3&r, 
+                                  const Kernel::Point_3&s);}
+ {compute the center of the sphere passing through the points $p$, $q$, $r$,
+  and $s$.  \ccPrecond $p$, $q$, $r$, and $s$ are not coplanar.}
+
+\ccMemberFunction{Kernel::Point_3 operator()(const Kernel::Point_3&p, 
+                                  const Kernel::Point_3&q, 
+                                  const Kernel::Point_3&r);}
+{compute the center of the circle passing through the points $p$, $q$ and $r$.
+  \ccPrecond $p$, $q$ and $r$ are not collinear.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::circumcenter} \\
+
+\end{ccRefFunctionObjectConcept}

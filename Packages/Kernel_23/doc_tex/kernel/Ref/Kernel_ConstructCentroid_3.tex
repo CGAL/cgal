@@ -1,0 +1,20 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructCentroid_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Point_3 operator()(const Kernel::Point_3&p, 
+                                  const Kernel::Point_3&q, 
+                                  const Kernel::Point_3&r);}
+ {compute the centroid of the points $p$, $q$, and $r$.}
+
+\ccMemberFunction{Kernel::Point_3 operator()(const Kernel::Point_3&p, 
+                                  const Kernel::Point_3&q, 
+                                  const Kernel::Point_3&r,
+                                  const Kernel::Point_3&r);}
+ {compute the centroid of the points $p$, $q$, $r$ and $s$.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::centroid} \\
+
+\end{ccRefFunctionObjectConcept}

@@ -1,0 +1,26 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructPoint_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+
+\ccHidden \ccMemberFunction{Kernel::Point_2 operator()();}
+             {introduces an uninitialized variable .}
+
+\ccHidden \ccMemberFunction{Kernel::Point_2 operator()(const Kernel::Point_2 &q);}
+            {copy constructor.}
+
+\ccMemberFunction{Kernel::Point_2 operator()(const Origin &ORIGIN);}
+            {introduces a variable  with Cartesian coordinates
+              $(0,0)$.}
+
+\ccHidden\ccMemberFunction{Kernel::Point_2 operator()(const Kernel::RT &hx, const Kernel::RT &hy, const Kernel::RT &hw = Kernel::RT(1));}
+            {introduces a point  initialized to $(hx/hw,hy/hw)$.
+             If the third argument is not explicitly given, it defaults
+             to \ccStyle{Kernel::RT(1)}.
+             \ccPrecond \ccc{hw} $\neq$ \ccc{Kernel::RT(0)}. }
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Point_2<R>} \\
+
+\end{ccRefFunctionObjectConcept}

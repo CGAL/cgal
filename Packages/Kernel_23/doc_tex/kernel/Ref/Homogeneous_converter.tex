@@ -1,6 +1,4 @@
-\begin{ccRefClass}{Homogeneous_converter<K1, K2,
-                             RT_Converter = NT_converter<K1::RT, K2::RT>,
-                             FT_Converter = NT_converter<K1::FT, K2::FT> >}
+\begin{ccRefClass}{Homogeneous_converter<K1, K2, RT_Converter, FT_Converter>}
 %\ccTexHtml{\ccSetThreeColumns{Point_2< us<RT> > }{}{\hspace*{8.5cm}}}{}
 
 \KernelRefLayout\gdef\ccTagOperatorLayout{\ccFalse}
@@ -13,23 +11,20 @@ the kernel traits \ccc{K2}.  Those traits must be of the form
 \ccc{Simple_homogeneous}).  It then provides the following operators to
 convert objects from \ccc{K1} to \ccc{K2}.
 
-\ccInclude{CGAL/Homogeneous_converter.h}
-
-\ccTypes
-
 The third template parameter \ccc{RT_Converter} is a function object that must
-satisfy:
+provide \ccc{K2::RT operator()(const K1::RT &n);} that 
+converts \ccc{n} to an \ccc{K2::RT} that has the same value.
 
-\ccMemberFunction{K2::RT operator()(const K1::RT &n);}
-{ converts \ccc{n} to an \ccc{K2::RT} which has the same value.}
-
-The default value of this parameter uses the conversion operator from
+The default value of this parameter is \ccc{CGAL::NT_converter<K1::RT, K2::RT>},
+which uses the conversion operator from
 \ccc{K1::RT} to \ccc{K2::RT}.
 
-Similarly for the fourth template parameter which must satisfy:
+Similarly, the fourth template parameter must provide
+\ccc{K2::FT operator()(const K1::FT &n);} that
+converts \ccc{n} to an \ccc{K2::FT} that has the same value.  Its
+default value is  \ccc{CGAL::NT_converter<K1::FT, K2::FT>}.
 
-\ccMemberFunction{K2::FT operator()(const K1::FT &n);}
-{ converts \ccc{n} to an \ccc{K2::FT} which has the same value.}
+\ccInclude{CGAL/Homogeneous_converter.h}
 
 \ccCreation
 \ccCreationVariable{conv}
@@ -45,6 +40,9 @@ converted by \ccc{RT_Converter}.}
 Similar operators are defined for the other kernel traits types \ccc{Point_3},
 \ccc{Vector_2}...
 
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Homogeneous<RingNumberType>} \\
+\ccRefIdfierPage{CGAL::Simple_homogeneous<RingNumberType>} \\
 
 %\ccTexHtml{\KernelRefLayout}{}
 \end{ccRefClass}

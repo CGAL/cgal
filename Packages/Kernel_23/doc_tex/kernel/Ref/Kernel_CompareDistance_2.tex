@@ -1,0 +1,18 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::CompareDistance_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Comparison_result operator()(const Kernel::Point_2&p,
+                                               const Kernel::Point_2&q, 
+                                               const Kernel::Point_2&r);}
+      {compares the distances of points \ccc{q} and \ccc{r} to point \ccc{p}}
+
+\ccRefines
+AdaptableFunctor
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::compare_distance_to_point} \\
+
+\end{ccRefFunctionObjectConcept}

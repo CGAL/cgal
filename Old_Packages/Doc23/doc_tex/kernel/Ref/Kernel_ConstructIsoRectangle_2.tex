@@ -1,0 +1,22 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructIsoRectangle_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+
+\ccHidden \ccMemberFunction{Kernel::Iso_rectangle_2 operator()();}
+             {introduces an uninitialized variable .}
+
+\ccHidden \ccMemberFunction{Kernel::Iso_rectangle_2 operator()(const Kernel::Iso_rectangle_2 &u);}
+            {copy constructor.}
+
+\ccMemberFunction{Kernel::Iso_rectangle_2 operator()(const Kernel::Point_2 &p, 
+                                                     const Kernel::Point_2 &q);}
+            {introduces an iso-oriented rectangle  with diagonal
+             opposite vertices $p$ and $q$ such that $p$ is the
+             lexicographically smallest point in the rectangle.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Iso_rectangle_2<R>} \\
+
+\end{ccRefFunctionObjectConcept}

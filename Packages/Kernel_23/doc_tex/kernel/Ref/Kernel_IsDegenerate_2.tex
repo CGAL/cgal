@@ -1,0 +1,36 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::IsDegenerate_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{bool operator()(const Kernel::Circle_2&o);} 
+{returns true iff $o$ is degenerate.}
+
+\ccMemberFunction{bool operator()(const Kernel::Iso_rectangle_2&o);} 
+{returns true iff $o$ is degenerate.}
+
+\ccMemberFunction{bool operator()(const Kernel::Line_2&o);} 
+{returns true iff $o$ is degenerate.}
+
+\ccMemberFunction{bool operator()(const Kernel::Ray_2&o);} 
+{returns true iff $o$ is degenerate.}
+
+\ccMemberFunction{bool operator()(const Kernel::Segment_2&o);} 
+{returns true iff $o$ is degenerate.}
+
+\ccMemberFunction{bool operator()(const Kernel::Triangle_2&o);} 
+{returns true iff $o$ is degenerate.}
+
+\ccRefines
+AdaptableFunctor
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Circle_2<R>} \\
+\ccRefIdfierPage{CGAL::Iso_rectangle_2<R>} \\
+\ccRefIdfierPage{CGAL::Line_2<R>} \\
+\ccRefIdfierPage{CGAL::Ray_2<R>} \\
+\ccRefIdfierPage{CGAL::Segment_2<R>} \\
+\ccRefIdfierPage{CGAL::Triangle_2<R>} \\
+
+
+\end{ccRefFunctionObjectConcept}

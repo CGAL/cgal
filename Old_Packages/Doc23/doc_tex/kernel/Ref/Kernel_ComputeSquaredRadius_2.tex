@@ -1,0 +1,19 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ComputeSquaredRadius_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::FT operator()(const Kernel::Circle_2& c);}
+       {returns the squared radius of $c$. }
+
+\ccMemberFunction{Kernel::FT operator()(const Kernel::Point_2& p,
+                                        const Kernel::Point_2& q,
+                                        const Kernel::Point_2& r);}
+       {returns the squared radius of the circle passing through $p$, $q$
+       and $r$. \ccPrecond \ccStyle{p, q} and \ccStyle{r} are not collinear.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Circle_2<R>} \\
+\ccRefIdfierPage{CGAL::squared_radius}  \\
+
+\end{ccRefFunctionObjectConcept}

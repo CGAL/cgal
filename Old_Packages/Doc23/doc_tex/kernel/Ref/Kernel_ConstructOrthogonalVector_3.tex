@@ -1,0 +1,16 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructOrthogonalVector_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Vector_3 operator()(const Kernel::Plane_3& p);}
+{returns a vector that is orthogonal to the plane \ccc{p} and directed
+ to the positive side of \ccc{p}.}
+
+\ccRefines
+AdaptableFunctor
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Plane_3<R>} \\
+
+\end{ccRefFunctionObjectConcept}

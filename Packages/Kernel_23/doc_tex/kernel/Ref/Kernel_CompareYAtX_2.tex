@@ -1,0 +1,67 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::CompareYAtX_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Comparison_result operator()(const Kernel::Point_2 &p,
+                                               const Kernel::Line_2 &h);}
+        {compares the $y$-coordinates of $p$ and the vertical projection
+         of \ccStyle{p} on \ccStyle{h}%
+         \ccTexHtml{ (Figure~\ref{fig-compare22} (d))}{, see (d) in the figure 
+         below}.}
+
+\begin{ccTexOnly}
+\begin{figure}[h]
+\centerline{\Ipe{compare2.ipe}}
+\caption{Comparison of the $y$-coordinates of the (implicitly given)
+         points in the boxes, at an $x$-coordinate. The $x$-coordinate
+         is either given explicitly (disc) or implicitly (circle).
+         \label{fig-compare22}}
+\end{figure} 
+\end{ccTexOnly} 
+
+\ccMemberFunction{Comparison_result  operator()(const Kernel::Point_2 &p,
+                                                const Kernel::Line_2 &h);}
+        {compares the $y$-coordinates of $p$ and the vertical projection
+         of \ccStyle{p} on \ccStyle{h}%
+         \ccTexHtml{ (Figure~\ref{fig-compare2} (d))}{, see (d) in the figure 
+         below}.}
+
+
+\ccMemberFunction{Comparison_result operator()(const Kernel::Point_2 &p,
+                                               const Kernel::Line_2 &h1,
+                                               const Kernel::Line_2 &h2);}
+{This function compares the $y$-coordinates of the vertical projection 
+ of \ccStyle{p} on \ccStyle{h1} and on \ccStyle{h2}%
+ \ccTexHtml{ (Figure~\ref{fig-compare2} (e))}{, see (e) in the figure 
+ below}.}
+
+\ccMemberFunction{Comparison_result operator()(const Kernel::Line_2 &l1,
+                                               const Kernel::Line_2 &l2,
+                                               const Kernel::Line_2 &h);}
+      {Let $p$ be the \ccHtmlNoLinksFrom{intersection} of lines $l1$ and $l2$.
+       This function compares the $y$-coordinates of $p$ and 
+       the vertical projection of \ccStyle{p} on \ccStyle{h}%
+       \ccTexHtml{ (Figure~\ref{fig-compare2} (f))}{, see (f) in the figure 
+       below}.}
+
+
+
+\ccMemberFunction{Comparison_result operator()(const Kernel::Line_2 &l1,
+                                               const Kernel::Line_2 &l2,
+                                               const Kernel::Line_2 &h1,
+                                               const Kernel::Line_2 &h2);}
+{Let $p$ be the \ccHtmlNoLinksFrom{intersection} of lines $l1$ and $l2$. This function 
+ compares the $y$-coordinates of the vertical projection of \ccStyle{p} on 
+ \ccStyle{h1} and on \ccStyle{h2}%
+ \ccTexHtml{ (Figure~\ref{fig-compare2} (g))}{, see (g) in the figure 
+ below}.}
+
+\begin{ccHtmlOnly}
+<img border=0 src=./compare2.gif align=center alt="Comparison of y at x">
+\end{ccHtmlOnly} 
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::compare_y_at_x}\\
+
+\end{ccRefFunctionObjectConcept}

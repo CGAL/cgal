@@ -1,0 +1,21 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::SideOfOrientedCircle_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Oriented_side operator()(const Kernel::Point_2&p, 
+                                  const Kernel::Point_2&q, 
+                                  const Kernel::Point_2&r, 
+                                  const Kernel::Point_2&t);}
+         {returns the relative position of point \ccStyle{t}
+          to the oriented circle defined by $p$, $q$ and $r$.
+          The order of the points $p$, $q$ and $r$ is important,
+          since it determines the orientation of the implicitly
+          constructed circle.
+          \ccPrecond \ccStyle{p, q} and \ccStyle{r} are not collinear.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::side_of_oriented_circle} \\
+
+
+\end{ccRefFunctionObjectConcept}

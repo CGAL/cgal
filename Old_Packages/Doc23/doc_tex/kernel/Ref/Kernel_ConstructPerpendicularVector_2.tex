@@ -1,0 +1,19 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructPerpendicularVector_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Vector_2 operator()(const Kernel::Vector_2& v,
+                                              Orientation o);}
+{returns \ccc{v} rotated clockwise by 90 degrees, if $o$ is
+\ccc{CLOCKWISE}, and rotated counterclockwise otherwise.
+\ccPrecond $o$ is not \ccc{COLLINEAR}.
+}
+
+\ccRefines
+AdaptableFunctor
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Vector_2<R>} \\
+
+\end{ccRefFunctionObjectConcept}

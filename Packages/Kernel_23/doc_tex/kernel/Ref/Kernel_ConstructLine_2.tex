@@ -1,0 +1,35 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructLine_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccHidden \ccMemberFunction{Kernel::Line_2 operator()();}
+             {introduces an uninitialized variable .}
+
+\ccHidden \ccMemberFunction{Kernel::Line_2 operator()(const Kernel::Line_2 &h);}
+ 	    {copy constructor.}
+
+\ccMemberFunction{Kernel::Line_2 operator()(const Kernel::RT &a, const Kernel::RT &b, const Kernel::RT &c);}
+            {introduces a line  with the line equation in Cartesian
+	      coordinates $ax +by +c = 0$.}
+
+\ccMemberFunction{Kernel::Line_2 operator()(const Kernel::Point_2 &p, const Kernel::Point_2 &q);}
+            {introduces a line  passing through the points $p$ and $q$. 
+             Line  is directed from $p$ to $q$.}
+
+\ccMemberFunction{Kernel::Line_2 operator()(const Kernel::Point_2 &p, const Kernel::Direction_2&d);}
+            {introduces a line  passing through point $p$ with 
+             direction $d$.}
+
+\ccMemberFunction{Kernel::Line_2 operator()(const Kernel::Segment_2 &s);}
+            {introduces a line  supporting the segment $s$,
+	    oriented from source to target.}
+
+\ccMemberFunction{Kernel::Line_2 operator()(const Kernel::Ray_2 &r);}
+            {introduces a line  supporting the ray $r$,
+	    with same orientation.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Line_2<R>}  \\
+
+\end{ccRefFunctionObjectConcept}

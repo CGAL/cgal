@@ -1,0 +1,17 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructOppositeTriangle_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Triangle_2 operator()(const Kernel::Triangle_2& t);}
+       {returns the triangle with opposite orientation to $t$
+        (this flips the positive and the negative side, but
+        not bounded and unbounded side).}
+
+\ccRefines
+AdaptableFunctor
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Triangle_2<R>} \\
+
+\end{ccRefFunctionObjectConcept}

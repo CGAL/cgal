@@ -1,0 +1,15 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructCircumcenter_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Point_2 operator()(const Kernel::Point_2&p, 
+                                             const Kernel::Point_2&q, 
+                                             const Kernel::Point_2&r);}
+ {compute the center of the circle passing through the points $p$, $q$, and $r$.
+  \ccPrecond $p$, $q$, and $r$ are not collinear.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::circumcenter} \\
+
+\end{ccRefFunctionObjectConcept}

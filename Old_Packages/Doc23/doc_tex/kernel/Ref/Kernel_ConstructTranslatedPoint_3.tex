@@ -1,0 +1,17 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructTranslatedPoint_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Point_3 operator()(const Kernel::Point_3& p,
+                                             const Kernel::Vector_3& v);}
+       {returns the point obtained by translating \ccc{p} by the vector 
+        \ccc{v}.}
+
+\ccRefines
+AdaptableFunctor
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Point_3<R>} \\
+
+\end{ccRefFunctionObjectConcept}

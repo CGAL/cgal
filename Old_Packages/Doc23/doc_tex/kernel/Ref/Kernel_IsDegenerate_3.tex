@@ -1,0 +1,44 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::IsDegenerate_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{bool operator()(const Kernel::Iso_cuboid_3&o);} 
+{returns true iff $o$ is degenerate.}
+
+\ccMemberFunction{bool operator()(const Kernel::Line_3&o);} 
+{returns true iff $o$ is degenerate.}
+
+\ccMemberFunction{bool operator()(const Kernel::Plane_3&o);} 
+{returns true iff $o$ is degenerate.}
+
+\ccMemberFunction{bool operator()(const Kernel::Ray_3&o);} 
+{returns true iff $o$ is degenerate.}
+
+\ccMemberFunction{bool operator()(const Kernel::Segment_3&o);} 
+{returns true iff $o$ is degenerate.}
+
+\ccMemberFunction{bool operator()(const Kernel::Sphere_3&o);} 
+{returns true iff $o$ is degenerate.}
+
+\ccMemberFunction{bool operator()(const Kernel::Tetrahedron_3&o);} 
+{returns true iff $o$ is degenerate.}
+
+\ccMemberFunction{bool operator()(const Kernel::Triangle_3&o);} 
+{returns true iff $o$ is degenerate.}
+
+\ccRefines
+AdaptableFunctor
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Iso_cuboid_3<R>} \\
+\ccRefIdfierPage{CGAL::Line_3<R>} \\
+\ccRefIdfierPage{CGAL::Plane_3<R>} \\
+\ccRefIdfierPage{CGAL::Point_3<R>} \\
+\ccRefIdfierPage{CGAL::Ray_3<R>} \\
+\ccRefIdfierPage{CGAL::Segment_3<R>} \\
+\ccRefIdfierPage{CGAL::Sphere_3<R>} \\
+\ccRefIdfierPage{CGAL::Tetrahedron_3<R>} \\
+\ccRefIdfierPage{CGAL::Triangle_3<R>}\\
+
+\end{ccRefFunctionObjectConcept}

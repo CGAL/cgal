@@ -1,0 +1,26 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ComputeSquaredRadius_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::FT operator()(const Kernel::Sphere_3& s);}
+       {returns the squared radius of $s$. }
+
+\ccMemberFunction{Kernel::FT operator()(const Kernel::Point_3& p,
+                                        const Kernel::Point_3& q,
+                                        const Kernel::Point_3& r,
+                                        const Kernel::Point_3& s);}
+       {returns the squared radius of the sphere passing through $p$, $q$, $r$
+       and $s$. \ccPrecond \ccStyle{p, q, r} and \ccStyle{s} are not coplanar.}
+
+\ccMemberFunction{Kernel::FT operator()(const Kernel::Point_3& p,
+                                        const Kernel::Point_3& q,
+                                        const Kernel::Point_3& r);}
+       {returns the squared radius of the sphere passing through $p$, $q$ and
+       $r$, and whose center is in the plane defined by these three points.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Sphere_3<R>}\\
+\ccRefIdfierPage{CGAL::squared_radius} \\
+
+\end{ccRefFunctionObjectConcept}

@@ -1,6 +1,5 @@
 \documentclass{book}
 
-\usepackage{hyperref}
 \usepackage{cprog}
 \usepackage{cc_manual}
 \usepackage{pslatex}
@@ -13,6 +12,7 @@
 \usepackage{path}
 \usepackage{ipe}
 \usepackage{longtable}
+%\usepackage{hyperref}
 
 % page dimensions
 % ---------------
@@ -30,7 +30,18 @@
     \ccSetThreeColumns{Oriented_side}{}{\hspace*{10cm}}
     \ccPropagateThreeToTwoColumns}{}}
 
-\newcommand{\cgalrelease}{2.2-I-..}
+\gdef\ccNewRefManualStyle{\ccTrue}
+\ccDefGlobalScope{CGAL::}
+\marginparsep10mm
+\marginparwidth15mm
+
+\newcommand{\cgalrelease}{2.3-I-..}
+%\lcTex{\batchmode}
+
+%% let HTML converter know it is dealing with a manual in multiple parts
+%\ccMultiplePartsToc
+%% make chapters start over at 1 for each part
+%\ccNumberChaptersByPart
 
 \makeindex
 
@@ -38,17 +49,20 @@
 
 \begin{document}
 
-%% \include{title}
+\include{title}
 \pagestyle{plain}
 \pagenumbering{roman}
 \setcounter{page}{0}
 \include{preface}
 \cleardoublepage
 \tableofcontents
+\pagenumbering{arabic}
 
 \cgalColumnLayout
 
 \include{main}
+
+\lcTex{\listofrefpages}
 
 \bibliographystyle{alpha}
 \bibliography{../cgal-manual,geom}

@@ -1,0 +1,35 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::BoundedSide_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Bounded_side operator()(const Kernel::Sphere_3& s, 
+                                          const Kernel::Point_3&p);} 
+{returns either \ccc{ON_UNBOUNDED_SIDE},
+\ccc{ON_BOUNDED_SIDE}, or the constant
+\ccc{ON_BOUNDARY}, depending on where point \ccc{p} is with
+respect to sphere \ccc{s}. }
+
+\ccMemberFunction{Bounded_side operator()(const Kernel::Tetrahedron_3& t, 
+                                          const Kernel::Point_3&p);} 
+{returns either \ccc{ON_UNBOUNDED_SIDE},
+\ccc{ON_BOUNDED_SIDE}, or the constant
+\ccc{ON_BOUNDARY}, depending on where point \ccc{p} is with
+respect to tetrahedron \ccc{t}. }
+
+\ccMemberFunction{Bounded_side operator()(const Kernel::Iso_cuboid_3& c, 
+                                          const Kernel::Point_3&p);} 
+{returns either \ccc{ON_UNBOUNDED_SIDE},
+\ccc{ON_BOUNDED_SIDE}, or the constant
+\ccc{ON_BOUNDARY}, depending on where point \ccc{p} is with
+respect to iso-cuboid \ccc{c}. }
+
+\ccRefines
+AdaptableFunctor
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Iso_cuboid_3<R>} \\
+\ccRefIdfierPage{CGAL::Sphere_3<R>} \\
+\ccRefIdfierPage{CGAL::Tetrahedron_3<R>} \\
+
+\end{ccRefFunctionObjectConcept}
