@@ -6,7 +6,7 @@ if [ ${#} -ne 1 ]; then
    exit 1
 fi
 
-CGAL_MANUAL_TEST_DIR="/KM/usr3/cgal/manual"
+CGAL_MANUAL_TEST_DIR="/KM/usr3/cgal/Manual"
 MANUAL_TEST_LOG="${CGAL_MANUAL_TEST_DIR}/autotest_manual.log"
 CGAL_RELEASE_ID="${1}"
 CGAL_RELEASE_NUM=`echo ${CGAL_RELEASE_ID} | sed 's/CGAL-//'`
