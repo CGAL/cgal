@@ -29,6 +29,9 @@
 
 inline CGAL_Interval_nt_advanced CGAL_convert_to (const leda_rational &z)
 {
+#ifndef CGAL_NO_PRECONDITIONS
+    CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
+#endif
     return CGAL_convert_to<CGAL_Interval_nt_advanced>(z.numerator())
 	/  CGAL_convert_to<CGAL_Interval_nt_advanced>(z.denominator());
 }

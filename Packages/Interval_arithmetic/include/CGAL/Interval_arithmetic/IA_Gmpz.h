@@ -30,6 +30,9 @@
 
 inline CGAL_Interval_nt_advanced CGAL_convert_to (const CGAL_Gmpz &z)
 {
+#ifndef CGAL_NO_PRECONDITIONS
+    CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
+#endif
     return CGAL_Interval_nt_advanced (CGAL_to_double(z)) +
 	   CGAL_Interval_nt_advanced::smallest;
 }
