@@ -1,6 +1,11 @@
 Polyhedron_IO Package: Release changes:
 ---------------------------------------------------------------------
 
+3.9 (12 Jul 2001)
+
+     - Qualified CGAL::to_double() function explicitly to avoid conflict
+       when using with leda_real.
+
 3.8 (02 Jul 2001)
 
      - Try changed order of scan_OFF declarations for Borland.

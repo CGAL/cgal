@@ -49,9 +49,9 @@ generic_print_polyhedron( std::ostream&     out,
                          P.size_of_halfedges(),
                          P.size_of_facets());
     for( VCI vi = P.vertices_begin(); vi != P.vertices_end(); ++vi) {
-        writer.write_vertex( to_double( vi->point().x()),
-                             to_double( vi->point().y()),
-                             to_double( vi->point().z()));
+        writer.write_vertex( ::CGAL::to_double( vi->point().x()),
+                             ::CGAL::to_double( vi->point().y()),
+                             ::CGAL::to_double( vi->point().z()));
     }
     typedef Inverse_index< VCI> Index;
     Index index( P.vertices_begin(), P.vertices_end());

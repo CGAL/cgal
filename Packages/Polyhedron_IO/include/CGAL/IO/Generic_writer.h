@@ -135,9 +135,9 @@ public:
     // Interface used by the iterators and their proxies.
     void write_vertex( const Point& p) {
         ++m_vcnt;
-        m_writer.write_vertex( to_double( p.x()),
-                               to_double( p.y()),
-                               to_double( p.z()));
+        m_writer.write_vertex( ::CGAL::to_double( p.x()),
+                               ::CGAL::to_double( p.y()),
+                               ::CGAL::to_double( p.z()));
     }
     void write_facet_index( std::size_t i) {
         if ( m_fcnt > m_facets) {
