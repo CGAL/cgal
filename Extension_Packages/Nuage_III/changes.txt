@@ -1,0 +1,2 @@
+
+- replaced set and list in each vertex with static lists. 
