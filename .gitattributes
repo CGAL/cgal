@@ -849,6 +849,8 @@ Packages/Manual/doc_tex_skel/Fig/g-full.ipe -text
 Packages/Manual/doc_tex_skel/Fig/g-simp.ipe -text
 Packages/Manual/doc_tex_skel/Fig/l-full.ipe -text
 Packages/Manual/doc_tex_skel/Fig/l-simp.ipe -text
+Packages/Manual/web_pages/doc_html/frameset/cgal_small_FAF8E8.gif -text svneol=unset#unset
+Packages/Manual/web_pages/doc_html/frameset/cgal_very_small_FFFFFF.gif -text svneol=unset#unset
 Packages/Manual_tools/doc/horizontal_struct.ips -text
 Packages/Manual_tools/doc/tools_overview.ips -text
 Packages/Manual_tools/doc/vertical_struct.ips -text
