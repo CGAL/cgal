@@ -1,3 +1,6 @@
+07 January 2005 Sylvain Pion
+- Add Mesh_3 in the internal releases.
+
 06 January 2005 Sylvain Pion
 - Add Map_overlay_2 back in the internal releases.
 - Add Persistent_homology_d back in the internal releases.
