@@ -1,6 +1,8 @@
 Version 1.71 (?? July 01)
 - a few corrections in the user manual
 - VC++ needs some macros for Filtered_exact<>.
+- std::ostream & operator<< of T3 modified to respect the order 
+in which vertices were created
 
 Version 1.70 (3  July 01)
 - Use Filtered_exact<MP_Float> in the demo/examples.

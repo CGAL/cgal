@@ -1,11 +1,8 @@
 -------------- POUR LA RELEASE
 
-FINIR CORRECTIONS SUR output_stream de T_3 (ordre)
-pour tester, example/Triangulation_3/example_hierarchy
-- Incompatibilite entre le remove, et les I/O de fichiers, a cause du numero
-  de vertex pour les perturbations, qui est recree pas dans le bon ordre.
-  Solution possible : mettre les sommets dans le fichier dans l'ordre du
-  numero de creation utilise par le remove ?
+- bien tester le output_stream de T_3 (ordre de creation des sommets)
+- meme chose sur copy et eventuellement autres operations du meme style, 
+a verifier 
 
 a negocier 
 - mise a jour de la doc de Filtered_exact...
