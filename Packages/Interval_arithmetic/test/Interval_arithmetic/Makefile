@@ -15,7 +15,7 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = -I../../include \
            $(TESTSUITE_CXXFLAGS) \
            $(CGAL_CXXFLAGS) \
-           -g -Wall -O -fprofile-arcs -ftest-coverage
+           -g -Wall -O # -fprofile-arcs -ftest-coverage
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -33,9 +33,9 @@ all: tst1 tst2
 	./tst1
 	./tst2
 
-tst1.o: tst1.C data/tst_generic.il
+tst1.o: tst1.C include/tst_generic.C
 
-tst2.o: tst2.C data/tst_generic.il
+tst2.o: tst2.C include/tst_generic.C
 
 tst1: tst1.o
 	$(CGAL_CXX) -o tst1 tst1.o $(LDFLAGS)

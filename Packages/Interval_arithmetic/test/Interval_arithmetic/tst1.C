@@ -4,4 +4,4 @@
 
 #define NOT_ADVANCED
 #define TESTED_TYPE CGAL_Interval_nt
-#include "data/tst_generic.il"
+#include "include/tst_generic.C"
