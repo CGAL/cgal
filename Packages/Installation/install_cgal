@@ -953,9 +953,6 @@ set_compiler_flags()
 	    # -mp is required for correct enough floating point operations
 	    # necessary for interval arithmetic.
 	    ADDITIONAL_CXXFLAGS="-mp"
-	    ICCCOMPILERBIN=`compiler_bin`
-	    ICCREALDIRNAME=`echo ${ICCCOMPILERBIN} | ${_sed} 's#bin/icc##g'`
-	    ADDITIONAL_LDFLAGS="-Wl,-R${ICCREALDIRNAME}lib"
 	    RUNTIME_LINKER_FLAG='-Wl,-R'
 	    PRINT_STACKTRACE_PROGRAM="idb"
 	    ;;

@@ -1,5 +1,7 @@
 20 January 2005 Sylvain Pion
 - Identify Intel C++ minor version number.
+- Remove ADDITIONAL_LDFLAGS specification for Intel : set your LD_LIBRARY_PATH
+  instead.
 
 14 January 2005 Sylvain Pion
 - install_cgal : proper computation of PGCC version number.
