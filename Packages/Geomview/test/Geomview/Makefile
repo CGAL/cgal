@@ -43,7 +43,7 @@ CXXFLAGS = \
 #                    linker flags
 #---------------------------------------------------------------------#
 
-LDFLAGS = \
+LDFLAGS = ./Geomview_stream.o \
          $(TESTSUITE_LDFLAGS) \
          $(CGAL_LDFLAGS)
 
@@ -75,7 +75,7 @@ OBJECTS  := $(SOURCES:.C=$(OBJ_EXT))
 PROGRAMS := $(SOURCES:.C=$(EXE_EXT))
 TEST_RUN := $(SOURCES:.C=.test)
 
-all: $(PROGRAMS)
+all: ../../src/Geomview_stream.o $(PROGRAMS)
 
 test: $(TEST_RUN)
 
