@@ -162,27 +162,27 @@ public:
 
   //! reads a planar map.
   template <class Scanner>
-  bool read(std::istream & in, Scanner & scanner)
+  bool read(std::istream &, Scanner & scanner)
   {
     clear(); 
     return scan_planar_map(scanner);
   }
 
-  //! inserts a new edge into the map. The new edge is represented by
-  //! a given curve.
+  //! inserts a given curve into the map.
 
-  /*! insert() inserts a new edge into the map. The new edge is represented by
-   * a given curve.
+  /*! insert() inserts the given curve into the map.
    * \param cv the given curve
    * \param en the notification class. It's default value is NULL, which
    * implies no notification on insertion.
-   * \return a handle to a new halfedge represented by the given curve.
+   * \return a handle to a new halfedge directed in the same way as the curve
+   * cv. That is, the curve source and target points coincide with the points
+   * of the source and target vertices of the returned halfedge respectively.
    */
   Halfedge_handle insert(const X_curve_2     & cv, 
                          Change_notification * en = NULL);
 
-  //! inserts a set of new edges into the map. The new edges are
-  //! reprsented by a given range of cirves.
+  //! iterates through a given range of curves, inserting the curves into the
+  // map.
 
   /*! insert() iterates through a given range of curves, inserting a new couple
    * of halfedges into the planar map for each curve.
@@ -190,8 +190,8 @@ public:
    * range.
    * \param end the input past-the-end iterator of the range.
    * \param en the notification class.
-   * \return a handle to the last halfedge inserted into the map. It is
-   * represented by the last curve in the given range.
+   * \return a handle to a new halfedge directed in the same way as the last 
+   * curve in the range.
    */
   template <class X_curve_2_iterator>
   Halfedge_iterator insert(const X_curve_2_iterator & begin,
@@ -211,13 +211,11 @@ public:
     return out;
   }
 
-  //! inserts a new edge into the map. The new
-  //! edge is represented by a given curve, and placed in the interior of a
-  //! given face.
+  //! inserts a given curve into the map as a new inner component of a given
+  // face
 
-  /*! insert_in_face_interior() inserts a new edge into the map. The new edge
-   * is represented by a given curve, and placed in the interior of a given
-   * face.
+  /*! insert_in_face_interior() inserts the given curve into the map as a new
+   * inner component of the given face.
    * \param cv the given curve.
    * \param f the given face.
    * \param en the notification class. It's default value is NULL, which
@@ -230,25 +228,22 @@ public:
                                           Face_handle f, 
                                           Change_notification * en = NULL);
 
-  //! inserts a new edge into the map. The new edge
-  //! is represented by a given curve, for which one endpoint, held by the
-  //! target vertex of a given halfedge, is already in the map.
+  //! inserts a given curve that one of its endpoints is held by the target
+  // vertex of a given halfedge into the map.
 
-  /*! insert_from_vertex() inserts a new edge into the map. The new edge
-   * is represented by a given curve, for which one endpoint, held by the
-   * target vertex v of a given halfedge, is already in the map.
-   * The returened twin halfedge is inserted immediately after the given
-   * halfedge in the circular list of halfedges that share the same target
-   * vertex v.
-   * This method is the quick version of insert_from_vertex(), as the search
-   * for the previous halfedge in the circular list of halfedges that share the
-   * same target vertex v is unnecessary, saving its computation time.
+  /*! insert_from_vertex() inserts the given curve cv into the map. One
+   * endpoint of cv is the point of the target vertex, v, of the given halfedge
+   * h. The returened twin halfedge is inserted immediately after h in the
+   * circular list of halfedges that share the same target vertex v. This
+   * method is the quick version of insert_from_vertex(), as the search for the
+   * previous halfedge in the circular list of halfedges that share the same
+   * target vertex is unnecessary, saving computation time.
    * \param cv the given curve.
    * \param prev the reference halfedge. Its target vertex v, is already
    * in the map.
    * \param en the notification class. It's default value is NULL, which
    * implies no notification on insertion.
-   * \return a handle to a new halfedge that has the vertex v as its source.
+   * \return a handle to a new halfedge that has v as its source vertex.
    */
   Halfedge_handle insert_from_vertex(const X_curve_2 & cv,
                                      Halfedge_handle prev, 
@@ -258,13 +253,11 @@ public:
 #endif
                                      );
 
-  //! inserts a new edge into the map. The new edge
-  //! is represented by a given curve, for which one endpoint, a given vertex,
-  //! is already in the map.
+  //! inserts a given curve that one of its endpoints is held by a given
+  // vertex into the map.
 
-  /*! insert_from_vertex() inserts a new edge into the map. The new edge is
-   * represented by a given curve, for which one endpoint, a given vertex, is
-   * already in the map.
+  /*! insert_from_vertex() the given curve cv into the map. One endpoint of cv
+   * is the point of the given vertex v1, that is already in the map.
    * \param cv the given curve.
    * \param v1 the given vertex.
    * \param source indicates whether the target of the returned halfedge holds
@@ -282,26 +275,18 @@ public:
                                      Vertex_handle v1, bool source, 
                                      Change_notification * en = NULL);
 
-  //! inserts a new edge into the map. The new edge
-  //! is represented by a given curve, for which its two endpoints, held by
-  //! the target vertices of two given halfedges, are already in the map.
+  //! inserts a given curve that both of its endpoints are held by the target
+  // vertices of two given halfedges respectively into the map.
 
-  /*! insert_at_vertices() inserts a new edge into the map. The new edge
-   * is represented by a given curve, for which its two endpoints, held by
-   * the target vertices of two given halfedges, are already in the map.
-   * Call the two target vertices of the two given halfedges v1 and v2
-   * respectively. They will be the source and target vertices of the returned
-   * halfedge respectively.
-   * The returened twin halfedge is inserted immediately after the first given
-   * halfedge in the circular list of halfedges that share the same target
-   * vertex v1.
-   * The returened halfedge is inserted immediately after the second given
-   * halfedge in the circular list of halfedges that share the same target
-   * vertex v2.
-   * This method is the quick version of insert_at_vertices(), as the searches
-   * for the previous halfedges in the circular lists of halfedges that share
-   * the same target vertices v1 and v2 is unnecessary, saving its computation
-   * time.
+  /*! insert_at_vertices() the given curve into the map. The two endpoints of
+   * cv are held by the two target vertices v1 and v2 of h1 and h2
+   * respectively. The returened halfedge is inserted immediately after h1 in
+   * the circular list of halfedges that share the same target vertex v1. Its
+   * twin halfedge is inserted immediately after h2 in the circular list of
+   * halfedges that share the same target vertex v2. This method is the quick
+   * version of insert_from_vertex(), as the search for the previous halfedges
+   * in the circular lists of halfedges that share the same target vertices is
+   * unnecessary, saving computation time.
    * \param cv the given curve.
    * \param prev1 the given halfedge that its target vertex is already in
    * the map, and will be the source vertex of the returned halfedge.
@@ -309,8 +294,8 @@ public:
    * the map, and will be the target vertex of the returned halfedge.
    * \param en the notification class. It's default value is NULL, which
    * implies no notification on insertion.
-   * \return a handle to a new halfedge that has the target vertices of the
-   * prev1 and prev2 as its source and target vertices respectively.
+   * \return a handle to to a new halfedge, that has v1 and v2 as its source
+   * and target vertices respectively.
    */
   Halfedge_handle insert_at_vertices(const X_curve_2 & cv,
                                      Halfedge_handle prev1, 
@@ -321,13 +306,12 @@ public:
 #endif
                                      );
 
-  //! inserts a new edge into the map. The new edge
-  //! is represented by a given curve, for which its two endpoints, held by two
-  //! given vertices, are already in the map.
+  //! inserts a given curve that both of its endpoints are held by two given
+  // vertices respectively into the map.
 
-  /*! insert_at_vertices() inserts a new edge into the map. The new edge is
-   * represented by a given curve, for which its two endpoints, held by two
-   * given vertices, are already in the map.
+  /*! insert_at_vertices() inserts the given curve cv into the map. The two
+   * endpoints of cv are held by the two given vertices v1 and v2 respectively,
+   * that are already in the map.
    * \param cv the given curve.
    * \param v1 the vertex in the map that holds the curve source point.
    * \param v2 the vertex in the map that holds the curve target point.
@@ -939,13 +923,10 @@ insert_from_vertex(const typename Planar_map_2<Dcel, Traits>::X_curve_2 & cv,
                    typename Planar_map_2<Dcel,Traits>::Halfedge_handle prev,
                    Change_notification * en
 #ifdef _MSC_VER
-  ,int dummy
+                   ,int
 #endif
   )
 {
-#ifdef _MSC_VER
-  (void) dummy;
-#endif
   CGAL_precondition_msg(traits->point_is_same(prev->target()->point(), 
                                               traits->curve_source(cv)) ||
                         traits->point_is_same(prev->target()->point(), 
@@ -1055,18 +1036,15 @@ insert_from_vertex(const typename Planar_map_2< Dcel, Traits >::X_curve_2 & cv,
 template < class Dcel, class Traits >
 typename Planar_map_2< Dcel, Traits >::Halfedge_handle 
 Planar_map_2< Dcel, Traits >::
-insert_at_vertices(const typename Planar_map_2<Dcel, Traits>::X_curve_2 & cv,
+insert_at_vertices(const typename Planar_map_2<Dcel, Traits>::X_curve_2 & cv, 
                    typename Planar_map_2<Dcel, Traits>::Halfedge_handle prev1, 
-                   typename Planar_map_2<Dcel, Traits>::Halfedge_handle prev2,
-                   Change_notification * en
+                   typename Planar_map_2<Dcel, Traits>::Halfedge_handle prev2, 
+                   Change_notification                                  * en
 #ifdef _MSC_VER
-  ,int dummy
+                   ,int
 #endif
-  )
+                   )
 {
-#ifdef _MSC_VER
-  (void) dummy;
-#endif
   CGAL_precondition_msg(traits->point_is_same(prev1->target()->point(), 
                                               traits->curve_source(cv)) &&
                         traits->point_is_same(prev2->target()->point(), 
