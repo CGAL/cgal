@@ -86,24 +86,24 @@ int  QPE_full_filtered_pricing<Rep_,NT_,ET2NT_>::
 pricing( )
 {
     // get properties of quadratic program
-    int  w = solver().number_of_working_variables();
+    int  w = this->solver().number_of_working_variables();
 
     // initialize filtered computation
-    init_NT();
+    this->init_NT();
 
     // loop over all non-basic variables
     int  j,  min_j  = -1;
-    NT   mu, min_mu = nt0;
+    NT   mu, min_mu = this->nt0;
     for ( j = 0; j < w; ++j) {
 
 	// variable non-basic?
-	if ( ! solver().is_basic( j)) {
+	if ( ! this->solver().is_basic( j)) {
 
 	    // compute mu_j
-	    mu = mu_j_NT( j);
+	    mu = this->mu_j_NT( j);
 
 	    CGAL_qpe_debug {
-		vout() << "mu_" << j << " [NT]: " << mu << std::endl;
+		this->vout() << "mu_" << j << " [NT]: " << mu << std::endl;
 	    }
 
 	    // new minimum?
@@ -113,16 +113,16 @@ pricing( )
 
     // exact check of entering variable
     if ( min_j >= 0) {
-	if ( mu_j( min_j) >= et0) {
+	if ( this->mu_j( min_j) >= this->et0) {
 
 	    // exact check failed!
 	    CGAL_qpe_debug {
-		vout() << "--> exact check of entering variable failed!"
+		this->vout() << "--> exact check of entering variable failed!"
 		       << std::endl;
 	    }
 	    
 	    min_j  = -1;
-	    min_mu = nt0;
+	    min_mu = this->nt0;
 	}
     }
 
@@ -130,16 +130,16 @@ pricing( )
     if ( min_j < 0) {
 
 	// update row and column maxima
-	update_maxima();
+	this->update_maxima();
 
 	// loop over all non-basic variables again
 	for ( j = 0; j < w; ++j) {
 
 	    // variable non-basic?
-	    if ( ! solver().is_basic( j)) {
+	    if ( ! this->solver().is_basic( j)) {
 
 		// certify 'mu_j >= 0'
-		if ( ! certify_mu_j_NT( j)) {
+		if ( ! this->certify_mu_j_NT( j)) {
 
 		    // entering variable missed by inexact arithmetic
 		    min_j = j;
@@ -148,7 +148,7 @@ pricing( )
 	    }
 	}
     }
-    vout() << std::endl;
+    this->vout() << std::endl;
 
     // return index of entering variable
     return min_j;
