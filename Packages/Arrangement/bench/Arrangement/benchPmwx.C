@@ -123,9 +123,9 @@ typedef CGAL::Bench_parse_args::FormatId                FormatId;
 
 #if defined(USE_CACHED_TRAITS)
 inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os,
-                                        const Curve & seg)
+                                        const Curve & curve)
 {
-  os << seg;
+  os << static_cast<Kernel::Segment_2>(curve);
   return os;
 }
 #endif
@@ -136,10 +136,10 @@ inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os,
 { return os << leda_point(p.xcoordD(), p.ycoordD()); } 
 
 inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os,
-                                        const Curve & c)
+                                        const Kernel::Segment_2 & seg)
 {
-  return os << leda_segment(c.xcoord1D(), c.ycoord1D(),
-                            c.xcoord2D(), c.ycoord2D());
+  return os << leda_segment(seg.xcoord1D(), seg.ycoord1D(),
+                            seg.xcoord2D(), seg.ycoord2D());
 
 }
 inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os, Pmwx & pm)
