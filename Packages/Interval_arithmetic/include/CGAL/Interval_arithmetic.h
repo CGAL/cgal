@@ -145,6 +145,8 @@ public:
     }
     else					/* 0 \in [d.inf;d.sup] */
       return CGAL_Interval_nt_advanced(-HUGE_VAL, HUGE_VAL);
+             // We could do slightly better -> [0;HUGE_VAL] when d.sup==0,
+	     // but is this worth ?
   }
 
   CGAL_Interval_nt_advanced& operator+=(const CGAL_Interval_nt_advanced& d)
@@ -265,6 +267,7 @@ public:
 
   // This particular one needs to be redefined, a pitty...
   // I should learn C++ before writing...
+  // Is that virtual functions ?
   CGAL_Interval_nt operator-() const 
   { return CGAL_Interval_nt(-(sup), inf); }
 
