@@ -1,5 +1,5 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: General_priority_search.tex
+% | Reference manual page: Incremental_neighbor_search.tex
 % +------------------------------------------------------------------------+
 % | 1.07.2001   Johan W.H. Tangelder
 % | Package: ASPAS
@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{General_priority_search<PointTraits, GeneralDistance, Splitter, SpatialTree>}
+\begin{ccRefClass}{Incremental_neighbor_search<PointTraits, GeneralDistance, Splitter, SpatialTree>}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -22,7 +22,7 @@ The class \ccRefName\ implements incremental nearest and furthest neighbor searc
 using priority search on a tree. It is not required that the tree is
 built with extended nodes.
 
-\ccInclude{CGAL/General_priority_search.h}
+\ccInclude{CGAL/Incremental_neighbor_search.h}
 
 \ccParameters
 
@@ -56,7 +56,7 @@ template argument \ccc{CGAL::Tag_false} makes that the tree is built with unexte
 
 
 \def\ccLongParamLayout{\ccTrue}
-\ccConstructor{General_priority_search(Tree& tree, QueryItem q, NT eps=NT(0.0),
+\ccConstructor{Incremental_neighbor_search(Tree& tree, QueryItem q, NT eps=NT(0.0),
 bool search_nearest=true, GeneralDistance d=GeneralDistance());}
 {Constructor for incremental neighbor searching of the query item \ccc{q}
 in the points stored \ccc{tree} using a distance \ccc{d} and approximation factor \ccc{eps}. }
