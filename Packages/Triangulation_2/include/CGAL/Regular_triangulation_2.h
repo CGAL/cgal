@@ -910,8 +910,6 @@ update_hidden_points_1_3(const Face_handle& f1, const Face_handle& f2,
 
     Weighted_point_list p_list;
     p_list.splice(p_list.begin(),f1->point_list());
-    p_list.splice(p_list.begin(),f1->point_list());
-    p_list.splice(p_list.begin(),f1->point_list());
     if (p_list.empty())
 	return;
 
