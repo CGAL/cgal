@@ -1,3 +1,2 @@
-The CLN CGAL package gathers the functions required by CGAL to use all the
-ordinary number types provided by the CLN library available at
-http://clisp.cons.org/~haible/packages-cln.html.
+Functions required to use the ordinary number types provided by CLN
+(http://clisp.cons.org/~haible/packages-cln.html).
