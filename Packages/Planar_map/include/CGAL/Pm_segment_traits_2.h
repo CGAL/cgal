@@ -200,7 +200,7 @@ public:
   Point_2 point_reflect_in_x_and_y(const Point_2 & pt) const
   {
     Point_2 org = construct_point_2_object()(ORIGIN);      
-    typename Kernel::Vector_2 v = construct_vector_2_object()(org, pt);
+    typename Kernel::Vector_2 v = construct_vector_2_object()(pt, org);
     Point_2 reflected_pt(v);
     return reflected_pt;
   }
@@ -296,7 +296,7 @@ public:
   Point_2 curve_source(const X_curve_2 & cv) const 
   { return construct_vertex_2_object()(cv, 0); }
 
-  /*! \todo replace indirect use curve_source() with construct_vertex_2()
+  /*! \todo replace indirect use curve_target() with construct_vertex_2()
    */
   Point_2 curve_target(const X_curve_2 & cv) const 
   { return construct_vertex_2_object()(cv, 1); }
