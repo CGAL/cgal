@@ -47,6 +47,8 @@ kd tree nodes.
 \ccTypedef{PointTraits::NT NT;}{Number type.}
 \ccTypedef{std::pair<Point,NT> Point_with_distance;}{Pair of point and distance.}
 
+\ccNestedType{iterator}{Bidirectional iterator with value type \ccc{Point_with_distance}
+                        for enumerating approximate neighbors.}
 \ccTypedef{SpatialTree Tree;}{The tree type.}
 
 \ccCreationVariable{s}  %% choose variable name
@@ -61,9 +63,13 @@ kd tree nodes.
 in the points stored in \ccc{tree} using 
 distance \ccc{d} and approximation factor \ccc{eps}.}
 
-\ccMethod{template <class OutputIterator>
-OutputIterator  the_k_neighbors(OutputIterator res);}
-{Writes \ccc{k} elements of type \ccc{Point_with_distance} to \ccc{res}.}
+%\ccMethod{template <class OutputIterator>
+%OutputIterator  the_k_neighbors(OutputIterator res);}
+%{Writes \ccc{k} elements of type \ccc{Point_with_distance} to \ccc{res}.}
+
+\ccMethod{iterator begin();}{Returns an iterator to the approximate neighbors.}
+
+\ccMethod{iterator end();}{Past-the-end iterator.}
 
 
 \begin{ccAdvanced}

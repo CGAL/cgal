@@ -66,11 +66,9 @@ Plane_separator<NT> operator=(Plane_separator<NT> s2);}
 
 \ccHeading{Output Operators}
 
-\ccGlueBegin
-\ccGlobalFunction{ template<class NT>
+\ccFunction{ template<class NT>
 std::ostream& operator<<(std::ostream& s, Plane_separator<NT> p);}
-{Prints the plane separator \ccc{p} to the output stream \ccc{s} and returns \ccc{s}.}
-\ccGlueEnd
+{Inserts the plane separator \ccc{p} in the output stream \ccc{s} and returns \ccc{s}.}
 
 \end{ccAdvanced}
 

@@ -42,7 +42,10 @@ template argument \ccc{CGAL::Tag_false} makes that the tree is built with unexte
 
 \ccTypedef{PointTraits::Point Point;}{Point type.}
 \ccTypedef{PointTraits::NT NT;}{Number type.}
-\ccTypedef{std::pair<Point,NT> Point_with_distance;}{Pair of point and distance} 
+\ccTypedef{std::pair<Point,NT> Point_with_distance;}{Pair of point and distance.} 
+
+\ccNestedType{iterator}{Bidirectional iterator with value type \ccc{Point_with_distance}
+                        for enumerating approximate neighbors.}
 
 \ccTypedef{GeneralDistance::Query_item Query_item;}{Query item type.}
 
@@ -62,9 +65,14 @@ distance class $d$ and approximation factor \ccc{eps}.}
 
 \ccOperations
 
-\ccMethod{template <class OutputIterator>
-OutputIterator  the_k_neighbors(OutputIterator res);}
-{Writes \ccc{k} elements of type \ccc{Point_with_distance} to \ccc{res}.} 
+%\ccMethod{template <class OutputIterator>
+%OutputIterator  the_k_neighbors(OutputIterator res);}
+%{Writes \ccc{k} elements of type \ccc{Point_with_distance} to \ccc{res}.} 
+
+\ccMethod{iterator begin();}{Returns an iterator to the approximate neighbors.}
+
+\ccMethod{iterator end();}{Past-the-end iterator.}
+
 
 \begin{ccAdvanced}
 \ccMethod{std::ostream& statistics(std::ostream& s);}

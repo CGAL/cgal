@@ -32,6 +32,55 @@ space is given.
 The spatial searching package consists of the following concepts and
 classes that are described in the reference pages.
 
+
+
+
+\ccHeading{Search Classes}
+
+\ccRefIdfierPage{CGAL::K_neighbor_search<PointTraits, GeneralDistance, Splitter, SpatialTree>} \\
+\ccRefIdfierPage{CGAL::Incremental_neighbor_search<PointTraits, GeneralDistance, Splitter, SpatialTree>} \\
+\ccRefIdfierPage{CGAL::Orthogonal_incremental_neighbor_search<PointTraits, OrthogonalDistance, Splitter, SpatialTree>} \\
+\ccRefIdfierPage{CGAL::Orthogonal_k_neighbor_search<PointTraits, OrthogonalDistance, Splitter, SpatialTree>} \\
+\ccRefIdfierPage{CGAL::Kd_tree<PointTraits, Splitter, UseExtendedNode>} 
+
+\ccHeading{Range Query Classes}
+
+\ccRefIdfierPage{CGAL::Fuzzy_iso_box<PointTraits, IsoBox>} \\
+\ccRefIdfierPage{CGAL::Fuzzy_sphere<PointTraits>} 
+
+
+\ccHeading{Point Traits Classes}
+
+\ccRefIdfierPage{CGAL::Kd_tree_traits_point_2<Kernel>}\\
+\ccRefIdfierPage{CGAL::Kd_tree_traits_point_3<Kernel>}\\
+\ccRefIdfierPage{CGAL::Kd_tree_traits_point_d<Kernel>} \\
+\ccRefIdfierPage{CGAL::Kd_tree_traits_point<NT_, Point_, CartesianIterator,ConstructCartesianIterator>}
+
+\ccHeading{Distance Classes}
+
+\ccRefIdfierPage{CGAL::Euclidean_distance<PointTraits>} \\
+\ccRefIdfierPage{CGAL::Euclidean_distance_sphere_point<PointTraits,Sphere>} \\
+\ccRefIdfierPage{CGAL::Manhattan_distance_iso_box_point<PointTraits, IsoBox>} \\
+\ccRefIdfierPage{CGAL::Weighted_Minkowski_distance<PointTraits>} 
+
+\ccHeading{Splitter Classes}
+\ccRefIdfierPage{CGAL::Sliding_midpoint<PointTraits, PointContainer, SpatialSeparator>} \\
+\ccRefIdfierPage{CGAL::Sliding_fair<PointTraits, PointContainer, SpatialSeparator>} \\
+\ccRefIdfierPage{CGAL::Fair<PointTraits, PointContainer, SpatialSeparator>} \\
+\ccRefIdfierPage{CGAL::Median_of_max_spread<PointTraits, PointContainer, SpatialSeparator>} \\
+\ccRefIdfierPage{CGAL::Median_of_rectangle<PointTraits, PointContainer, SpatialSeparator>} \\
+\ccRefIdfierPage{CGAL::Midpoint_of_max_spread<PointTraits, PointContainer, SpatialSeparator>} \\
+\ccRefIdfierPage{CGAL::Midpoint_of_rectangle<PointTraits, PointContainer, SpatialSeparator>} 
+
+
+
+\ccHeading{Advanced Classes}
+
+\ccRefIdfierPage{CGAL::Kd_tree_node<PointTraits,Splitter,UseExtendedNode>} \\
+\ccRefIdfierPage{CGAL::Kd_tree_rectangle<PointTraits>} \\
+\ccRefIdfierPage{CGAL::Plane_separator<NT>} \\
+\ccRefIdfierPage{CGAL::Point_container<PointTraits>}
+
 \ccHeading{Concepts}
 
 \ccRefConceptPage{FuzzyQueryItem} \\
@@ -45,37 +94,7 @@ classes that are described in the reference pages.
 \ccRefConceptPage{SpatialSeparator} \\
 \ccRefConceptPage{SpatialTree} \\
 \ccRefConceptPage{Sphere} \\
-\ccRefConceptPage{Splitter} \\
-
-
-\ccHeading{Classes}
-
-\ccRefIdfierPage{CGAL::Euclidean_distance<PointTraits>} \\
-\ccRefIdfierPage{CGAL::Euclidean_distance_sphere_point<PointTraits,Sphere>} \\
-\ccRefIdfierPage{CGAL::Fair<PointTraits, PointContainer, SpatialSeparator>} \\
-\ccRefIdfierPage{CGAL::Fuzzy_iso_box<PointTraits, IsoBox>} \\
-\ccRefIdfierPage{CGAL::Fuzzy_sphere<PointTraits>} \\
-\ccRefIdfierPage{CGAL::Incremental_neighbor_search<PointTraits, GeneralDistance, Splitter, SpatialTree>} \\
-\ccRefIdfierPage{CGAL::K_neighbor_search<PointTraits, GeneralDistance, Splitter, SpatialTree>} \\
-\ccRefIdfierPage{CGAL::Kd_tree<PointTraits, Splitter, UseExtendedNode>} \\
-\ccRefIdfierPage{CGAL::Kd_tree_node<PointTraits, Splitter, UseExtendedNode>} \\
-\ccRefIdfierPage{CGAL::Kd_tree_rectangle<PointTraits>} \\
-\ccRefIdfierPage{CGAL::Kd_tree_traits_point<NT_, Point_, CartesianConstIterator,ConstructCartesianConstIterator>} \\
-\ccRefIdfierPage{CGAL::Kd_tree_traits_point_2<Kernel>}\\
-\ccRefIdfierPage{CGAL::Kd_tree_traits_point_3<Kernel>}\\
-\ccRefIdfierPage{CGAL::Kd_tree_traits_point_d<Kernel>} \\
-\ccRefIdfierPage{CGAL::Manhattan_distance_iso_box_point<PointTraits, IsoBox>} \\
-\ccRefIdfierPage{CGAL::Median_of_max_spread<PointTraits, PointContainer, SpatialSeparator>} \\
-\ccRefIdfierPage{CGAL::Median_of_rectangle<PointTraits, PointContainer, SpatialSeparator>} \\
-\ccRefIdfierPage{CGAL::Midpoint_of_max_spread<PointTraits, PointContainer, SpatialSeparator>} \\
-\ccRefIdfierPage{CGAL::Midpoint_of_rectangle<PointTraits, PointContainer, SpatialSeparator>} \\
-\ccRefIdfierPage{CGAL::Orthogonal_incremental_neighbor_search<PointTraits, OrthogonalDistance, Splitter, SpatialTree>} \\
-\ccRefIdfierPage{CGAL::Orthogonal_k_neighbor_search<PointTraits, OrthogonalDistance, Splitter, SpatialTree>} \\
-\ccRefIdfierPage{CGAL::Plane_separator<NT>} \\
-\ccRefIdfierPage{CGAL::Point_container<PointTraits>} \\
-\ccRefIdfierPage{CGAL::Sliding_fair<PointTraits, PointContainer, SpatialSeparator>} \\
-\ccRefIdfierPage{CGAL::Sliding_midpoint<PointTraits, PointContainer, SpatialSeparator>} \\
-\ccRefIdfierPage{CGAL::Weighted_Minkowski_distance<PointTraits>} \\
+\ccRefConceptPage{Splitter}
 
 \lcHtml{\ccHeading{Alphabetical Listing of Reference Pages}}
 

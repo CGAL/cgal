@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Kd_tree_traits_point<NT_, Point_, CartesianConstIterator,ConstructCartesianConstIterator>}
+\begin{ccRefClass}{Kd_tree_traits_point<NT_, Point_, CartesianIterator,ConstructCartesianIterator>}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -31,8 +31,8 @@ PointTraits.
 \ccTypes
 \ccTypedef {NT_ NT;}{The number type of the coordinates.}
 \ccTypedef {Point_ Point;}{Point type.}
-\ccTypedef {CartesianConstIterator Cartesian_const_iterator;}{An iterator over the coordinates.}
-\ccTypedef {ConstructCartesianConstIterator Construct_Cartesian_const_iterator;}{A functor with
+\ccTypedef {CartesianIterator Cartesian_const_iterator;}{An iterator over the coordinates.}
+\ccTypedef {ConstructCartesianIterator Construct_Cartesian_const_iterator;}{A functor with
 two function operators, which return the begin and past the end iterator for the Cartesian coordinates. 
 The functor for begin has as argument a \ccc{Point}. The functor for the past the end iterator, 
 has as argument a \ccc{Point} and an \ccc{int}.}

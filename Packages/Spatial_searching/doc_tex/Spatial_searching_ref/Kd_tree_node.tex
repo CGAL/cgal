@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Kd_tree_node<PointTraits, Splitter>}  %% add template arg's if necessary
+\begin{ccRefClass}{Kd_tree_node<PointTraits,Splitter,UseExtendedNode>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -43,8 +43,8 @@ for example \ccc{CGAL::Kd_tree_traits_point_2<Kernel>}.
 \ccTypedef{PointTraits::NT NT;}{Number type.}
 \ccTypedef{PointTraits::Point Point;}{Point type.}
 \ccTypedef{Splitter::Separator Separator;}{Separator type.}
-\ccTypedef{Kd_tree<PointTraits>::Point_iterator Point_iterator;}{Iterator over points.} 
-\ccTypedef{Kd_tree<PointTraits>::Node_handle Node_handle;}{Node handle.}
+\ccTypedef{Kd_tree<PointTraits,Splitter,UseExtendedNode>::Point_iterator Point_iterator;}{Iterator over points.} 
+\ccTypedef{Kd_tree<PointTraits,Splitter,UseExtendedNode>::Node_handle Node_handle;}{Node handle.}
 
 
 \ccCreation
