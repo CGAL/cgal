@@ -44,7 +44,7 @@ typedef Traits::Point_2                                 Point;
 typedef Traits::X_curve_2                               Curve;
 typedef std::list<Curve>                                CurveList;
 
-static const char * BenchOpts[] = {
+static char * BenchOpts[] = {
   "construct", "display", "co", "di", NULL
 };
 
@@ -191,15 +191,16 @@ public:
    */
   int init()
   {
-    int rc;
-    if (rc = Basic_Pm::init() < 0) return rc;
+    int rc = Basic_Pm::init();
+    if (rc < 0) return rc;
 
     float x_range = m_x1 - m_x0;
     float y_range = m_y1 - m_y0;
     float width = 640;
     float height = (y_range * width) / x_range;
     
-    m_window = new Window_stream(width, height);
+    m_window = new Window_stream(static_cast<int>(width),
+                                 static_cast<int>(height));
     if (!m_window) return -1;
 
     float min_range = (x_range < y_range) ? x_range : y_range;
@@ -306,18 +307,18 @@ int main(int argc, char * argv[])
   const char * filename = argv[optind];
 
   // Construct
-  ConstructPmBench benchConstruct(std::string(BenchOpts[BENCH_CONSTRUCT]) +
+  ConstructPmBench benchConstruct((std::string(BenchOpts[BENCH_CONSTRUCT]) +
                                   std::string(" PM (") +
-                                  std::string(filename) + std::string(")"),
+                                  std::string(filename) + std::string(")")),
                                   seconds, true);
   Construct_Pm & construct_pm = benchConstruct.getBenchUser();
   construct_pm.setFilename(filename);
   construct_pm.setVerbose(verbose);
 
   // Construct and Display
-  DisplayPmBench benchDisplay(std::string(BenchOpts[BENCH_DISPLAY]) +
+  DisplayPmBench benchDisplay((std::string(BenchOpts[BENCH_DISPLAY]) +
                               std::string(" PM (") +
-                              std::string(filename) + std::string(")"),
+                              std::string(filename) + std::string(")")),
                               seconds, false);
   Display_Pm & display_pm = benchDisplay.getBenchUser();
   display_pm.setFilename(filename);
