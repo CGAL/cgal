@@ -222,9 +222,9 @@ vertical_ray_shoot(const Point & p,
     {
       lt=Planar_map::VERTEX;
       if (up)    
-	closest_edge = find_lowest(v,traits, false);  
+	closest_edge = find_lowest(v, false);  
       else
-	closest_edge = find_lowest(v,traits, true);
+	closest_edge = find_lowest(v, true);
     }
 	
   Halfedge_handle h;	
@@ -281,7 +281,6 @@ typename Pm_naive_point_location<Planar_map>::Halfedge_handle
 Pm_naive_point_location<Planar_map>::
 find_lowest(
 	    typename Pm_naive_point_location<Planar_map>::Vertex_handle v,
-	    typename Pm_naive_point_location<Planar_map>::Traits_wrap *traits, 
 	    bool highest) const{
 	
   Halfedge_handle lowest_left = pm->halfedges_end();

@@ -111,7 +111,7 @@ public:
   inline const Traits* get_traits() const {return traits;}
   
 protected:
-  Halfedge_handle find_lowest(Vertex_handle v, Traits_wrap * traits, 
+  Halfedge_handle find_lowest(Vertex_handle v,
                               bool highest) const;
   
 #ifdef CGAL_PM_DEBUG
