@@ -72,7 +72,8 @@ the inherited functions. At the moment, only the static version is implemented.
 \ccThreeToTwo
 
 \ccNestedType{Gt}{the alpha shape traits type.}
-it contains a Delaunay triangulation traits class.  For example \ccc{Dt::Point} is a Point class. 
+it contains a Delaunay triangulation traits class.  
+For example \ccc{Dt::Point} is a Point class. 
 
 \ccTypedef{typedef Gt::Coord_type Coord_type;}{the number type for computation.}
 
@@ -80,6 +81,16 @@ it contains a Delaunay triangulation traits class.  For example \ccc{Dt::Point} 
 the increasing sequence of different $\alpha$-values. The iterator is
 bidirectional and non-mutable. Its \ccc{value_type}
 is \ccc{Coord_type}}
+
+\ccNestedType{Alpha_shape_vertices_iterator}{An iterator that allow to traverse 
+the vertices which belongs to the $\alpha$-shape for a fixed $\alpha$. The
+iterator is bidirectional and non-mutable. Its \ccc{value_type}
+is \ccc{Dt::Vertex_handle}}
+
+\ccNestedType{Alpha_shape_edges_iterator}{An iterator that allow to traverse 
+the edges which belongs to the $\alpha$-shape for a fixed $\alpha$. The iterator
+is bidirectional and non-mutable. Its \ccc{value_type}
+is \ccc{Dt::Edge}}
 
 \ccEnum{enum Classification_type {EXTERIOR, SINGULAR, REGULAR, INTERIOR};}
 {Distinguishes the different cases for classifying a $k$-dimensional face
@@ -185,22 +196,31 @@ Returns the previous mode.}
 	get_mode(void) const;}
 {Returns whether \ccVar\ is general or regularized.}
 
-\ccMethod{template  < class OutputIterator >
-	  OutputIterator get_alpha_shape_vertices(
-					 OutputIterator result);}
-{Writes the vertices of the alpha shape \ccVar\ for the current $\alpha$-value
-to the container where \ccc{result} refers to. 
-The \ccc{value_type} of \ccc{result} is \ccc{Vertex_handle}.
-Returns an output iterator which is the end of the constructed range.}
+\ccMethod{Alpha_shape_vertices_iterator Alpha_shape_vertices_begin();}{Starts at
+an arbitrary finite vertex which belongs to the $\alpha$-shape for a fixed $\alpha$.}
+\ccMethod{Alpha_shape_vertices_iterator Alpha_shape_vertices_end();}{Past-the-end iterator.}
+\ccMethod{Alpha_shape_edges_iterator Alpha_shape_edges_begin();}{Starts at
+an arbitrary finite edge which belongs to the $\alpha$-shape for a fixed
+$\alpha$. In regularised mode, edges are represented as a pair (f,i), where f is 
+an interior face of the $\alpha$-shape.}
+\ccMethod{Alpha_shape_edges_iterator Alpha_shape_edges_end();}{Past-the-end iterator.}
 
-\ccMethod{template  < class OutputIterator >
-	  OutputIterator get_alpha_shape_edges(
-					 OutputIterator result);}
-{Writes the edges 
-of the alpha shape \ccVar\ for the current $\alpha$-value
-to the container where \ccc{result} refers to. 
-The \ccc{value_type} of \ccc{result} is \ccc{pair<Face_handle, int>}.
-Returns an output iterator which is the end of the constructed range.}
+%\ccMethod{template  < class OutputIterator >
+%	  OutputIterator get_alpha_shape_vertices(
+%					 OutputIterator result);}
+%{Writes the vertices of the alpha shape \ccVar\ for the current $\alpha$-value
+%to the container where \ccc{result} refers to. 
+%The \ccc{value_type} of \ccc{result} is \ccc{Vertex_handle}. 
+%Returns an output iterator which is the end of the constructed range.}
+%
+%\ccMethod{template  < class OutputIterator >
+%	  OutputIterator get_alpha_shape_edges(
+%					 OutputIterator result);}
+%{Writes the edges 
+%of the alpha shape \ccVar\ for the current $\alpha$-value
+%to the container where \ccc{result} refers to. 
+%The \ccc{value_type} of \ccc{result} is \ccc{pair<Face_handle, int>}.
+%Returns an output iterator which is the end of the constructed range.}
 
 \ccHeading{Predicates}
 
