@@ -1,13 +1,12 @@
 // Triangulation_3/example_find_conflicts.C
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Filtered_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/point_generators_3.h>
 
 #include <vector>
 #include <cassert>
 
-struct K : CGAL::Filtered_kernel<CGAL::Simple_cartesian<double> > {};
+struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
 
 typedef CGAL::Delaunay_triangulation_3<K>        Delaunay;
 typedef Delaunay::Point                          Point;

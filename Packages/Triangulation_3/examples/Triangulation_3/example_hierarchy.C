@@ -1,17 +1,12 @@
 // Triangulation_3/example_hierarchy.C
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Filtered_kernel.h>
-
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_hierarchy_3.h>
 
 #include <cassert>
 #include <vector>
 
-typedef CGAL::Filtered_kernel<CGAL::Simple_cartesian<double> > my_K;
-
-// This is just to shorten some symbol names for VC++
-struct K : public my_K {};
+struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
 
 typedef CGAL::Triangulation_vertex_base_3<K>             Vb;
 typedef CGAL::Triangulation_hierarchy_vertex_base_3<Vb>  Vbh;

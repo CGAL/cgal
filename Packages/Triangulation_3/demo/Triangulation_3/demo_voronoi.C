@@ -30,10 +30,7 @@ int main()
 }
 #else
 
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/MP_Float.h> 
-#include <CGAL/Lazy_exact_nt.h>
-#include <CGAL/Quotient.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Delaunay_triangulation_3.h>
 
@@ -42,11 +39,9 @@ int main()
 
 #include <iostream>
 
-// an exact number type is needed because we are using constructions
-// (circumcenter computations) in this demo, not only predicates 
-typedef CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::MP_Float> > NT;
-
-typedef CGAL::Simple_cartesian<NT> K;
+// exact constructions (circumcenter computations) are needed in this
+// demo, not only predicates 
+struct K : CGAL::Exact_predicates_exact_constructions_kernel {};
 
 typedef CGAL::Delaunay_triangulation_3<K> Triangulation;
 

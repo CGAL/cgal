@@ -1,6 +1,5 @@
 // Triangulation_3/example_simple.C
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Filtered_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Triangulation_3.h>
 
 #include <iostream>
@@ -9,7 +8,7 @@
 #include <list>
 #include <vector>
 
-struct K : CGAL::Filtered_kernel<CGAL::Simple_cartesian<double> > {};
+struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
 
 typedef CGAL::Triangulation_3<K>      Triangulation;
 

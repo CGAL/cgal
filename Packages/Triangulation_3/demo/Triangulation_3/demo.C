@@ -30,8 +30,7 @@ int main()
 }
 #else
 
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Filtered_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Delaunay_triangulation_3.h>
 
@@ -42,7 +41,7 @@ int main()
 #include <fstream>
 #include <unistd.h>
 
-typedef CGAL::Filtered_kernel<CGAL::Simple_cartesian<double> > K;
+struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
 
 typedef CGAL::Delaunay_triangulation_3<K>  Triangulation;
 

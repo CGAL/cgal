@@ -1,11 +1,10 @@
 // Triangulation_3/example_color.C
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Filtered_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #include <CGAL/IO/Color.h>
 
-struct K : CGAL::Filtered_kernel<CGAL::Simple_cartesian<double> > {};
+struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
 
 typedef CGAL::Triangulation_vertex_base_with_info_3<CGAL::Color, K> Vb;
 typedef CGAL::Triangulation_data_structure_3<Vb>                    Tds;
