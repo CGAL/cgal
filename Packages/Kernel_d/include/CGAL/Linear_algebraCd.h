@@ -16,7 +16,6 @@
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Herve.Bronnimann@sophia.inria.fr
-// author(s)     : Michael.Seel@mpi-sb.mpg.de
 // coordinator   : Michael.Seel@mpi-sb.mpg.de
 //
 // ======================================================================

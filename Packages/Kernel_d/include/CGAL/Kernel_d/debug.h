@@ -1,29 +1,3 @@
-// ============================================================================
-//
-// Copyright (c) 1997-2000 The CGAL Consortium
-//
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
-//
-// ----------------------------------------------------------------------------
-//
-// release       : $CGAL_Revision$
-// release_date  : $CGAL_Date$
-//
-// file          : include/CGAL/Kernel_d/debug.h
-// package       : Kernel_d
-// chapter       : Basic
-//
-// revision      : $Revision$
-// revision_date : $Date$
-//
-// author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
-// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
-// coordinator   : Susan Hert <hert@mpi-sb.mpg.de>
-//
-// implementation: debugging tools
-// ============================================================================
 #ifndef CGAL_DEBUG_H
 #define CGAL_DEBUG_H
 
@@ -74,7 +48,7 @@ static int debugthread=3141592;
 #endif
 
 #if _DEBUG>0
-#define CTRACEN(b,t) if(b) std::cerr<<" "<<t<<"\n"; else std::cerr<<" 0\n"
+#define CTRACEN(b,t)  if(b) std::cerr << " " << t << "\n"; else std::cerr << " 0\n"
 #else
 #define CTRACEN(b,t) 
 #endif
@@ -84,9 +58,9 @@ static int debugthread=3141592;
 #else
 #define ASSERT(cond,fstr)   \
   if (!(cond)) {       \
-    std::cerr<<"   ASSERT:   "<< #fstr <<std::endl; \
-    std::cerr<<"   COND:     "<< #cond <<std::endl; \
-    std::cerr<<"   POSITION: "<<__FILE__<<" at line "<<__LINE__<<std::endl; \
+    std::cerr << "   ASSERT:   " << #fstr << endl; \
+    std::cerr << "   COND:     " << #cond << endl; \
+    std::cerr << "   POSITION: " << __FILE__ << " at line " << __LINE__ << std::endl; \
     abort();           \
   }
 #endif
