@@ -23,7 +23,7 @@ is_valid(bool verbose, int level) const
   //  CGAL_assertion( result );
 
   if ( result && verbose ) {
-    std::cout << "TDS is ok... " << std::flush;
+    std::cout << "AGDS is ok... " << std::flush;
   }
 
   if (level == 0) { return result; }
