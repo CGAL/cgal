@@ -175,7 +175,7 @@ struct Simple_Cartesian_v2_base :
                                                        	Ray_handle_2;
     typedef CGAL::Simple_Handle_for<CGAL::Simple_Twotuple<Point_2> >
                                                       	Segment_handle_2;
-    typedef CGAL::Simple_Handle_for<CGAL::Circle_repC2<R> >
+    typedef CGAL::Simple_Handle_for<CGAL::Simple_Circle_repC2<R> >
                                                       	Circle_handle_2;
     typedef CGAL::Simple_Handle_for<CGAL::Simple_Threetuple<Point_2> >
                                                        	Triangle_handle_2;
@@ -190,7 +190,7 @@ struct Simple_Cartesian_v2_base :
                                                    	Vector_handle_3;
     typedef CGAL::Simple_Handle_for<CGAL::Simple_Threetuple<FT> >
                                                   	Direction_handle_3;
-    typedef CGAL::Simple_Handle_for<CGAL::Line_repC3<R> >
+    typedef CGAL::Simple_Handle_for<CGAL::Simple_Line_repC3<R> >
                                                      	Line_handle_3;
     typedef CGAL::Simple_Handle_for<CGAL::Simple_Fourtuple<FT> >
                                                    	Plane_handle_3;
@@ -198,7 +198,7 @@ struct Simple_Cartesian_v2_base :
                                                   	Ray_handle_3;
     typedef CGAL::Simple_Handle_for<CGAL::Simple_Twotuple<Point_3> >
                                                    	Segment_handle_3;
-    typedef CGAL::Simple_Handle_for<CGAL::Sphere_repC3<R> >
+    typedef CGAL::Simple_Handle_for<CGAL::Simple_Sphere_repC3<R> >
                                                     	Sphere_handle_3;
     typedef CGAL::Simple_Handle_for<CGAL::Simple_Threetuple<Point_3> >
                                                   	Triangle_handle_3;
