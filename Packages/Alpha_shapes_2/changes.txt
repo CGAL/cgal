@@ -1,3 +1,6 @@
+version 11.10:
+- Remove useless non standard <strstream>.
+
 version 11.9:
 - Fixes for SunPro.
 

@@ -11,7 +11,6 @@ Alpha shape.
 #include <cstring>
 #include <iostream>
 #include <fstream>
-#include <strstream> // The standard says sstream
 #include <vector>
 #include <list>
 
