@@ -46,6 +46,8 @@
 #ifndef __CONJUGATE_GRADIENT__
 #define __CONJUGATE_GRADIENT__
 
+#include "blas.h"
+
 #include <cassert>
 
 namespace OpenNL {
