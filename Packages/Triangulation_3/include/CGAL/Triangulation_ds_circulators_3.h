@@ -43,7 +43,7 @@ class Triangulation_ds_cell_circulator_3
   typedef Triangulation_ds_cell_circulator_3<Tds> Cell_circulator;
 
 public:
-
+#ifdef CGAL_T3_USE_ITERATOR_AS_HANDLE
   bool operator==(Cell_handle ch) const
   {
     return ch == pos;
@@ -66,7 +66,7 @@ public:
     CGAL_triangulation_assertion( n == NULL);
     return pos != NULL;
   }
-
+#endif
 
   Triangulation_ds_cell_circulator_3()
     : _s(NULL), _t(NULL), pos(NULL)
@@ -162,8 +162,9 @@ public:
 
   // For TDS's private use only.
   Cell_handle base() const { return pos; }
-
+#ifdef CGAL_T3_USE_ITERATOR_AS_HANDLE
   operator Cell_handle() const { return pos; }
+#endif
 private:
   Vertex_handle _s;    // source vertex of the edge
   Vertex_handle _t;    // target vertex of the edge
@@ -175,6 +176,7 @@ private:
   } 
 };
 
+#ifdef CGAL_T3_USE_ITERATOR_AS_HANDLE
 template < class Tds_ >
 bool
 operator==(typename Tds_::Cell_handle ch, Triangulation_ds_cell_circulator_3<Tds_> cc)
@@ -188,7 +190,7 @@ operator!=(typename Tds_::Cell_handle ch, Triangulation_ds_cell_circulator_3<Tds
 {
   return !(cc==ch);
 }
-
+#endif
 template < class Tds_ >
 class Triangulation_ds_facet_circulator_3
   : public Bidirectional_circulator_base<typename Tds_::Facet,
@@ -448,8 +450,9 @@ public:
 
   // For TDS's private use only.
   Cell_handle base() const { return pos; }
-
+#ifdef CGAL_T3_USE_ITERATOR_AS_HANDLE
   operator Cell_handle()const { return pos; }
+#endif
 
 private:
   Vertex_handle _s;    // source vertex

@@ -36,7 +36,7 @@
 
 #include <CGAL/utility.h>
 
-#if !defined _MSC_VER || defined __INTEL_COMPILER 
+#if (!defined _MSC_VER || defined __INTEL_COMPILER) && !defined __sgi
 #  define CGAL_T3_USE_ITERATOR_AS_HANDLE
 #endif
 
