@@ -21,6 +21,10 @@ IA_nt add (IA_nt a, IA_nt b)
   return a+b;
 }
 
+// To avoid constant propagation.
+double ten=10.0;
+double zero_12=0.12;
+
 // Some simple operators benchmarks.
 
 void bench()
@@ -35,9 +39,9 @@ void bench()
   CGAL::Timer t;
   double dt;
   const double dd = 1.0000001;
-  const IA_nt a(0.12);
+  const IA_nt a(zero_12);
   // const IA_nt b(2.1);
-  IA_nt b(IA_nt(21)/10);
+  IA_nt b(IA_nt(21)/ten);
   IA_nt c(1), d(-5.0/3), e(-6.0/7), f(7.0/9);
 
   c = a + b;
@@ -50,7 +54,6 @@ void bench()
     assert(!b.is_point());
   }
   std::cout << c << std::endl;
-
   std::cout << loops << " loops.\n";
 
   dt = t.time(); t.start();
