@@ -24,6 +24,8 @@
 #ifndef CGAL_TRIANGULATION_HIERARCHY_3_H
 #define CGAL_TRIANGULATION_HIERARCHY_3_H
 
+#include <CGAL/basic.h>
+#include <CGAL/Triangulation_short_names_3.h>
 #include <CGAL/Random.h>
 #include <CGAL/Triangulation_hierarchy_vertex_base_3.h>
 

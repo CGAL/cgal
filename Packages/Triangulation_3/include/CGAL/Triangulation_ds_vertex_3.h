@@ -25,6 +25,7 @@
 #ifndef CGAL_TRIANGULATION_DS_VERTEX_3_H
 #define CGAL_TRIANGULATION_DS_VERTEX_3_H
 
+#include <CGAL/basic.h>
 #include <CGAL/Triangulation_ds_iterators_3.h>
 #include <CGAL/Triangulation_short_names_3.h>
 

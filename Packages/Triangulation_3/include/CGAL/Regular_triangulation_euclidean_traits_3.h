@@ -25,6 +25,7 @@
 #ifndef CGAL_REGULAR_TRIANGULATION_EUCLIDEAN_TRAITS_3_H
 #define CGAL_REGULAR_TRIANGULATION_EUCLIDEAN_TRAITS_3_H
 
+#include <CGAL/basic.h>
 #include <CGAL/Triangulation_short_names_3.h>
 #include <CGAL/Weighted_point.h>
 
