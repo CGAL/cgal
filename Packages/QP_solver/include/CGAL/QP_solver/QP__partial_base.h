@@ -111,19 +111,19 @@ QPE__partial_base<Rep_>::
 init( )
 {
     // initialize indices of non-basic variables
-    int  w = solver().number_of_working_variables();
-    int  b = solver().number_of_basic_variables();
+    int  w = this->solver().number_of_working_variables();
+    int  b = this->solver().number_of_basic_variables();
 
     if ( ! N.empty()) N.clear();
     N.reserve( w-b);                                        // use 'w' ???
     for ( int i = 0; i < w; ++i) {
-	if ( ! solver().is_basic( i)) N.push_back( i);
+	if ( ! this->solver().is_basic( i)) N.push_back( i);
     }
     if ( permute) std::random_shuffle( N.begin(), N.end(), rand_src);
 
     // initialize size of active set
-    int  n = solver().number_of_variables();
-    int  m = solver().number_of_constraints();
+    int  n = this->solver().number_of_variables();
+    int  m = this->solver().number_of_constraints();
 
     s = std::min( static_cast< unsigned int>( m*std::sqrt( n/2.0)), N.size());
 }
@@ -184,14 +184,14 @@ QPE__partial_base<Rep_>::
 transition( )
 {
     // remove artificial variables from non-basis
-    int  w = solver().number_of_working_variables();
+    int  w = this->solver().number_of_working_variables();
     N.erase( std::partition( N.begin(), N.end(),
 			     std::bind2nd( std::less<int>(), w)),
 	     N.end());
 
     // initialize size of active set
-    int  n = solver().number_of_variables();
-    int  m = solver().number_of_constraints();
+    int  n = this->solver().number_of_variables();
+    int  m = this->solver().number_of_constraints();
 
     s = std::min( static_cast< unsigned int>( m*std::sqrt( n/2.0)), N.size());
 }
