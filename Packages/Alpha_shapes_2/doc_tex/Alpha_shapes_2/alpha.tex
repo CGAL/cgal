@@ -108,11 +108,7 @@ the classic version, in \cite{bb-srmua-97t}.
 
 \section{Generic Alpha-Shapes of Points in a Plane \label{I1_SectAlpha_Shape_2}}
 
-\begin{ccClassTemplate} {Alpha_shape_2<Dt>}
-
-\ccDefinition
-
-The class \ccClassTemplateName\ represents the family of
+The class \ccc{Alpha_shape_2<Dt>} represents the family of
 $\alpha$-shapes of points in a plane for {\em all} positive
 $\alpha$. It maintains the underlying triangulation \ccc{Dt} which
 represents connectivity and order among its faces. Each
@@ -121,270 +117,14 @@ an interval that specifies for which values of $\alpha$ the face
 belongs to the $\alpha$-shape. There are links between the intervals
 and the $k$-dimensional faces of the triangulation.
 
+The main class of this package is documented in the Reference Manual
+\ccRefPage{CGAL::Alpha_shape_2<Dt>} and can be included from~: 
+
 \ccInclude{CGAL/Alpha_shape_2.h}
-
-\ccInheritsFrom
-
-\ccc{Dt}
-
-This class is the underlying triangulation class.
-
-The modifying functions \ccc{insert} and \ccc{remove} will overwrite
-the inherited functions. At the moment, only the static version is implemented.
-
-\ccTypes
-\ccSetThreeColumns{Oriented_side}{}{\hspace*{10cm}}
-\ccThreeToTwo
-
-\ccNestedType{Gt}{the alpha shape traits type.}
-it contains a Delaunay triangulation traits class.  For example \ccc{Dt::Point} is a Point class. 
-
-\ccTypedef{typedef Gt::Coord_type Coord_type;}{the number type for computation.}
-
-\ccNestedType{Alpha_iterator}{An iterator that allow to traverse 
-the increasing sequence of different $\alpha$-values. The iterator is
-bidirectional and non-mutable. Its \ccc{value_type}
-is \ccc{Coord_type}}
-
-\ccEnum{enum Classification_type {EXTERIOR, SINGULAR, REGULAR, INTERIOR};}
-{Distinguishes the different cases for classifying a $k$-dimensional face
- of the underlying triangulation of the $\alpha$-shape. \\
-\ccc{EXTERIOR} if the face does not belong to the $\alpha$-complex.\\
-\ccc{SINGULAR} if the face belongs to the boundary of the $\alpha$-shape,
- but is not incident to any 2-dimensional face of the $\alpha$-complex\\
-\ccc{REGULAR} if the face belongs to the boundary of the $\alpha$-shape
- and is incident to a 2-dimensional face of the $\alpha$-complex\\
-\ccc{INTERIOR} if the face belongs to the $\alpha$-complex, but does
-not belong to the boundary of the $\alpha$-shape\\}
-
-\ccEnum{enum Mode {GENERAL, REGULARIZED};}
-{ In general, an alpha shape can be disconnected and contain many singular edges 
-or vertices. Its regularized version is formed by the set of regular edges
-and their vertices}
-
-\ccCreation
-\ccCreationVariable{A}
-
-\ccConstructor{Alpha_shape_2(Coord_type alpha = 0,
-				  Mode m = GENERAL);}
-{Introduces an empty $\alpha$-shape \ccVar\ for a positive $\alpha$-value
- \ccc{alpha}.
-\ccPrecond \ccc{alpha}~$\geq~0$.}
-
-
-\ccConstructor{template < class InputIterator >
-		Alpha_shape_2(
-			InputIterator first,
-			InputIterator last,
-                const Coord_type& alpha = 0,
-	        Mode m = GENERAL);}
-{Initializes the family of alpha-shapes with the points in the range
-$\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$ and 
-introduces an $\alpha$-shape \ccVar\ for a positive $\alpha$-value
-\ccc{alpha}.  
-\ccPrecond The \ccc{value_type} of \ccc{first} and
-\ccc{last} is \ccc{Point}.\\
-\ccc{alpha} $\geq 0$.}
-
-\ccOperations
-
-\ccMethod{template < class InputIterator >
-		int make_alpha_shape(
-			InputIterator first,
-			InputIterator last,
-                        const Coord_type& alpha = 0,
-	                Mode m = GENERAL);}
-{Initialize the family of alpha-shapes with the points in the range
-$\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$ and 
-introduces an $\alpha$-shape \ccVar\ for a positive $\alpha$-value
-\ccc{alpha}. Returns the number of inserted points. \\
-If the function is applied to an non-empty family of alpha-shape, it is cleared
-before initialization.
-\ccPrecond The \ccc{value_type} of \ccc{first} and
-\ccc{last} is \ccc{Point}.\\
-\ccc{alpha} $\geq 0$.}
-
-\ccMethod{void
-	clear();}
-{Clears the structure.}
-
-\ccMethod{Coord_type
-	set_alpha(const Coord_type& alpha);}
-{Sets the $\alpha$-value to \ccc{alpha}.
- Returns the previous $\alpha$-value.
-\ccPrecond \ccc{alpha} $\geq 0$.}
-
-\ccMethod{const Coord_type&
-	get_alpha(void) const;}
-{Returns the current $\alpha$-value.}
-
-\ccMethod{const Coord_type&  get_nth_alpha(int n) const;}
-{Returns the $n$-th alpha-value, sorted in an increasing order.
- \ccPrecond \ccc{n} < number of alphas.}
-
-\ccMethod{int number_of_alphas() const;}
-{Returns the number of different alpha-values.}
-
-% dynamic version	
-% 
-% \ccMethod{Vertex_handle insert(const Point& p);}
-% {Inserts point \ccc{p} in the alpha shape and returns the
-% corresponding vertex of the underlying Delaunay triangulation.\\ If
-% point \ccc{p} coincides with an already existing vertex, this
-% vertex is returned and the alpha shape remains unchanged.\\ Otherwise,
-% the vertex is inserted in the underlying Delaunay triangulation and
-% the associated intervals are updated. }
-% 
-% \ccMethod{void remove(Vertex *v);}
-% {Removes the vertex from the underlying Delaunay triangulation. The
-% created hole is retriangulated and the associated intervals are
-% updated.}
-% 
-
-\ccMethod{Mode
-	set_mode(Mode m = GENERAL );}
-{Sets \ccVar\ to its general or regularized version. 
-Returns the previous mode.}
-
-\ccMethod{Mode
-	get_mode(void) const;}
-{Returns whether \ccVar\ is general or regularized.}
-
-\ccMethod{template  < class OutputIterator >
-	  OutputIterator get_alpha_shape_vertices(
-					 OutputIterator result);}
-{Writes the vertices of the alpha shape \ccVar\ for the current $\alpha$-value
-to the container where \ccc{result} refers to. 
-The \ccc{value_type} of \ccc{result} is \ccc{Vertex_handle}.
-Returns an output iterator which is the end of the constructed range.}
-
-\ccMethod{template  < class OutputIterator >
-	  OutputIterator get_alpha_shape_edges(
-					 OutputIterator result);}
-{Writes the edges 
-of the alpha shape \ccVar\ for the current $\alpha$-value
-to the container where \ccc{result} refers to. 
-The \ccc{value_type} of \ccc{result} is \ccc{pair<Face_handle, int>}.
-Returns an output iterator which is the end of the constructed range.}
-
-\ccHeading{Predicates}
-
-
-\ccMethod{Classification_type
-           classify(const Point& p, 
-	const Coord_type& alpha = get_alpha()) const;}
-{Locates a point  \ccc{p} in the underlying triangulation and Classifies the 
-associated k-face with respect to \ccVar.}
-
-\ccMethod{Classification_type
-           classify(Face_handle f, const Coord_type& alpha = get_alpha()) const;}
-{Classifies the face \ccc{f} of the underlying triangulation with respect to \ccVar.}
-
-\ccMethod{Classification_type
-           classify(pair<Face_handle, int> e, const Coord_type& alpha = get_alpha()) const;}
-{Classifies the edge \ccc{e} of the underlying triangulation with respect to \ccVar.}
-
-\ccMethod{Classification_type
-           classify(Face_handle f, int i, const Coord_type& alpha = get_alpha()) const;}
-{Classifies the edge of the face \ccc{f} opposite to the vertex with index
-\ccc{i} 
-of the underlying triangulation with respect to \ccVar.}	
-
-\ccMethod{Classification_type
-           classify(Vertex_handle v, const Coord_type& alpha = get_alpha()) const;}
-{Classifies the vertex \ccc{v} of the underlying triangulation with respect to \ccVar.}
-
-
-\ccHeading{Traversal of the $\alpha$-Values}
-
-\smallskip
-The alpha shape class defines an iterator that allows to visit the
-sorted sequence of $\alpha$-values. This iterator is
-non-mutable and bidirectional. Its value type is
-\ccc{Coord_type}.
-
-\ccMethod{Alpha_iterator alpha_begin() const;}
-{Returns an iterator that allows to traverse the
-sorted sequence of $\alpha$-values of the family of alpha shapes.}
-
-\ccMethod{Alpha_iterator alpha_end() const;}
-{Returns the corresponding past-the-end iterator.}
-
-\ccMethod{Alpha_iterator alpha_find(const Coord_type& alpha) const;}
-{Returns an iterator pointing to an element with $\alpha$-value
-\ccc{alpha}, or the corresponding past-the-end iterator if such 
-an element is not found.}
-
-\ccMethod{Alpha_iterator alpha_lower_bound(const Coord_type& alpha) const;}
-{Returns an iterator pointing to the first element with
-$\alpha$-value not less than \ccc{alpha}.}
-
-\ccMethod{Alpha_iterator alpha_upper_bound(const Coord_type& alpha) const;}
-{Returns an iterator pointing to the first element with $\alpha$-value
-greater than \ccc{alpha}.}
-
-\ccHeading{Operations}
-
-\ccMethod{int number_solid_components(const Coord_type& alpha = get_alpha()) const;}
-{Returns the number of solid components of \ccVar, that is, the number of
-components of its 
-regularized version.}
-
-\ccMethod{Alpha_iterator find_optimal_alpha(int nb_components) const;}
-{Returns an iterator pointing to the first element with $\alpha$-value
-such that \ccVar\ satisfies the following two properties:\\
-\ccc{nb_components} equals the number of solid components and \\
-all data points are either on the boundary or in the interior of the regularized version of \ccVar.\\
-If no such value is found, the iterator points to the first element with 
-$\alpha$-value such that \ccVar\ satisfies the second property.}
-
-\ccHeading{I/O}
-
-The I/O operators are defined for \ccc{iostream}, and for
-the window stream provided by \cgal. The format for the iostream
-is an internal format. 
-
-\ccInclude{CGAL/IO/io.h}
-
-\ccFunction{ostream& operator<<(ostream& os,
-                  const Alpha_shape_2<Dt>& A);}
-{Inserts the alpha shape \ccVar\ for the current $\alpha$-value into the stream \ccc{os}.
-\ccPrecond The insert operator must be defined for \ccc{Point}.}
-
-\ccInclude{CGAL/IO/Window_stream.h}
-
-\ccInclude{CGAL/IO/alpha_shapes_2_window_stream.h}
-
-\ccFunction{Window_stream& operator<<(Window_stream& W,
-                         const Alpha_shape_2<Dt>& A);}
-{Inserts the alpha shape \ccVar\ for the current $\alpha$-value into the window stream \ccc{W}.
-\ccPrecond The insert operator must be defined for \ccc{Point} and \ccc{Segment}.}
-\end{ccClassTemplate}
-
-\ccImplementation
-In the first static version, the set of intervals associated with the
-$k$-dimensional faces of the underlying triangulation are
-stored only as sorted \ccc{vectors}. By using an interval tree the
-alpha-shape could be constructed more efficiently. For the dynamic
-version, we need \ccc{multimaps} or dynamic interval trees.
-
-The cross links between the intervals and the $k$-dimensional faces of the
-triangulation are actually realized using methods in the $k$-dimensional faces
-themselves. By this way, you can decide if you want to store or re-compute any
-of these informations.
-
-
-\ccc{A.alpha find} uses linear search, while 
-\ccc{A.alpha lower bound} and \ccc{A.alpha upper bound} 
-use binary search.
-\ccc{A.number solid components} performs a graph traversal and takes time
-linear in the number of faces of the underlying triangulation.
-\ccc{A.find optimal alpha} uses binary search and takes time
-$O(\mbox{ \em n } \log{\mbox{ \em n } })$, where  $n$ is the number of points.
 
 %----------------------------------------------------------------------
 
-\section{The Underlying Triangulation\label{I1_SectDtClass}}
+\section{Requirements for the Underlying Triangulation\label{I1_SectDtClass}}
 
 For the \ccc{Dt} class, you have to choose between a Delaunay or a regular
 triangulation, depending the version of alpha shapes, you want.
@@ -394,71 +134,20 @@ traits class and a simple triangulation data structure, with no more requirement
 for a simple triangulation class, but parameterized by a special vertex base
 class and a special face base class.
 
-\section*{The Alpha-Shape Traits Class (\mbox{\it Gt})\label{I1_ASTraits}} 
+\subsection*{The Alpha-Shape Traits Class (\mbox{\it Gt})\label{I1_ASTraits}} 
 
 \subsection{Requirements for the Alpha-Shape Traits Class}
 
 First, this traits class has the same requirements as the 
 triangulation traits class, for the \ccc{Dt} triangulation, you opted.
-The following requirement catalog lists the primitives that must be defined
-additionally.
 
+Furthermore, you have also to provide specific methods to compute Alpha-Shapes~:\\
+as two constructions to compute the minimum squared radius for a face and for an
+edge, and a predicate to certify if a point is in the smallest circle associated
+with an edge or not. You can find the complete description in the Reference
+Manual \ccRefPage{CGAL::Alpha_shape_traits}.
 
-\begin{ccClass} {Gt}
-\subsection*{\protect \ccc{Alpha_shape_traits} (\mbox{\it Gt})}
-
-\ccCreationVariable{t}
-
-\ccDefinition
-A class \ccClassName\ that satisfies the requirements of a
-\ccc{Alpha_shape_traits} class must provide the following predicate and
-operations in addition to the requirements for the underlying triangulation
-traits class.
-
-\ccTypes
-
-\ccNestedType{Coord_type}{A type to hold a coordinate type class. 
-The type must provide a copy constructor, assignment, comparison
-operators, negation, multiplication, division and allow the
-declaration and initialization with a small integer constant
-(cf. requirements for number types). 
-\ccPrecond An obvious choice would be coordinate type of the point class.}
-
-\ccCreation
-
-Only a default constructor is required. Note that further constructors
-can be provided. 
-
-\ccConstructor{Gt();}
-{A default constructor.}
-
-\ccHeading{Constructions}
-
-\ccMethod{Coord_type squared_radius(const Point& p0,
-				const Point& p1, 
-				const Point& p2) const;} 
-{Returns the squared radius of the circle of the
-points \ccc{p0, p1, p2}, associated with the metric 
-used by \ccc{Dt}.}
-
-\ccMethod{Coord_type squared_radius(const Point& p0,
-                                const Point& p1) const;} 
-{Returns the squared radius of smallest  circle of the
-points \ccc{p0, p1}, associated with the metric 
-used by \ccc{Dt}.}
-
-\ccHeading{Predicate}
-
-\ccMethod{Bounded_side side_of_circle(const Point& p0,
-                                const Point& p1,
-                                const Point& test) const;}
-{Returns the relative position of point \ccc{test} to the smallest circle of
-the points \ccc{p0, p1}, using the same metric as \ccc{Dt}.}
-
-\end{ccClass}
-
-
-\section*{Triangulation Data Structure Class (\mbox{\it Tds}) for an Alpha-Shape}
+\subsection*{Triangulation Data Structure Class (\mbox{\it Tds}) for an Alpha-Shape}
 
 The underlying triangulation \ccc{Dt} is parameterized with her
 triangulation data structure class \ccc{Tds}, that has no additional
@@ -475,67 +164,12 @@ Alpha-Shape\label{I1_SectVertex}}
 The information about the alpha values associated  are accessible by the 
 vertices of the alpha shape. Thus the nested \ccc{Alpha_shape_vertex_base}
 type of an alpha shape offers additional functionalities to deal with these
-methods. 
+methods.  
 
 This additional functionalities related to the alpha shape
-are requirements which have to be fulfilled
-by the base vertex for an alpha shape,
-in addition to the functionalities required for a simple triangulation vertex.
-They are listed below as such.
-
-\ccInheritsFrom
-
-\ccc{Triangulation_vertex_base}
-
-\begin{ccClass}{Alpha_shape_vertex_base}
-
-\ccCreationVariable{v}
-
-\ccTypes
-
-\ccNestedType{Coord_type}{A type to hold a coordinate type class. 
-The type must provide a copy constructor, assignment, comparison
-operators, negation, multiplication, division and allow the
-declaration and initialization with a small integer constant
-(cf. requirements for number types). An obvious choice would be
-coordinate type of the point class.
-\ccPrecond Let's us precise that \ccc{Coord_type} has to be the same as the one used by
-the \ccc{Gt}, already used by underlying triangulation \ccc{Dt}.}
-
-\ccCreation
-
-\begin{ccAdvanced}
-
-\ccConstructor{Alpha_shape_vertex_base();}{default constructor.}
-\ccGlue
-\ccConstructor{Alpha_shape_vertex_base(Point p);}{constructor setting
-the point associated to.}
-\ccGlue
-\ccConstructor{Alpha_shape_vertex_base(Point p, void* f);} 
-{constructor setting the point  associated to and an incident face.}
-
-\end{ccAdvanced}
-
-\ccHeading{Access Functions}
-
-\ccMethod{std::pair< Coord_type, Coord_type > get_range();}
-{returns two alpha values $\alpha_1 \leq \alpha_2$, such as for
-$\alpha$ under $\alpha_2$, the vertex is attached but singular, and
-for $\alpha$ under $\alpha_1$, the vertex is regular.}
-
-
-\ccModifiers
-
-\begin{ccAdvanced}
-
-\ccMethod{void set_range(std::pair< Coord_type, Coord_type > I);}
-{sets the alpha values $\alpha_1 \leq \alpha_2$, such as for
-$\alpha$ under $\alpha_2$, the vertex is attached but singular, and
-for $\alpha$ under $\alpha_1$, the vertex is regular.}
-
-\end{ccAdvanced}
-
-\end{ccClass}
+are requirements which have to be fulfilled by the base vertex for an alpha
+shape. You can find the complete description in the Reference Manual
+\ccRefPage{CGAL::Alpha_shape_vertex_base}.  
 
 \subsection{Requirements for the \protect \ccc{Face_base} Class of an Alpha-Shape}
 
@@ -545,79 +179,10 @@ faces of the alpha shape. Thus the nested \ccc{Alpha_shape_face_base<Df>}
 type of an alpha shape offers additional functionalities to deal with these
 methods.
 
-\ccc{Df} has to be choosed as the face base for the underlying triangulation. 
-
-This additional functionalities related to the alpha shape
-are requirements which have to be fulfilled
-by the base face  for an alpha shape,
-in addition to the functionalities required by an underlying triangulation face \ccc{Df}.
-They are listed below as such.
-
-\ccInheritsFrom
-
-\ccc{Df}
-
-\begin{ccClass}{Alpha_shape_face_base<Df>}
-
-\ccCreationVariable{f}
-\ccTypes
-
-\ccNestedType{Interval_3}{A container type to get (and put) the three special values 
-($\alpha_1, \alpha_2, \alpha_3$) associated with an alpha shape edge.}
-
-\ccNestedType{Coord_type}{A type to hold a coordinate type class. 
-The type must provide a copy constructor, assignment, comparison
-operators, negation, multiplication, division and allow the
-declaration and initialization with a small integer constant
-(cf. requirements for number types). An obvious choice would be
-coordinate type of the point class.
-\ccPrecond Let's us precise that \ccc{Coord_type} has to be the same as the one used by
-\ccc{Gt}, already used by the underlying triangulation \ccc{Dt}, and by
-her face base \ccc{Df}.} 
-
-\ccCreation
-
-\begin{ccAdvanced}
-
-\ccConstructor{Alpha_shape_face_base();}{default constructor.}
-\ccGlue
-\ccConstructor{Alpha_shape_face_base(void* v0, void* v1, void* v2);}{constructor setting the incident vertices.}
-\ccGlue
-\ccConstructor{Alpha_shape_face_base(void* v0, void* v1, void*  v2, void* n0, void* n1, void* n2);} 
-{constructor setting the incident vertices and the neighboring faces.}
-
-\end{ccAdvanced}
-
-\ccHeading{Access Functions}
-\ccMethod{Interval_3[3] get_ranges();}
-{returns a vector \ccc{V}, in which, for each edge $i$, \ccc{V[i]} contains
-three alpha values
- $\alpha_1 \leq \alpha_2 \leq \alpha_3$, such as for
-$\alpha$ under $\alpha_3$, the edge is attached but singular,
-for $\alpha$ under $\alpha_2$, the face is regular, and for $\alpha$
-under $\alpha_1$, the edge is interior.}
-\ccMethod{Coord_type get_alpha();}
-{return the alpha value, under which the alpha shape contains the
-face.}
-
-\ccModifiers
-
-\begin{ccAdvanced}
-
-\ccMethod{void set_ranges(Interval_3[3] V);}
-{sets the vector \ccc{V}, in which, for each edge $i$, \ccc{V[i]} contains three
-alpha values
- $\alpha_1 \leq \alpha_2 \leq \alpha_3$, such as for
-$\alpha$ under $\alpha_3$, the edge is attached but singular,
-for $\alpha$ under $\alpha_2$, the face is regular, and for $\alpha$
-under $\alpha_1$, the edge is interior.}
-\ccMethod{void set_alpha(Coord_type A);}
-{sets the alpha value, under which the alpha shape contains the
-face.}
-
-\end{ccAdvanced}
-
-\end{ccClass}
+This additional functionalities related to the alpha shape are requirements
+which have to be fulfilled by the base face  for an alpha shape. You can find
+the complete description in the Reference Manual
+\ccRefPage{CGAL::Alpha_shape_face_base<Df>}.
 
 %----------------------------------------------------------------------
 
@@ -660,6 +225,10 @@ for the Alpha Shape. The class
 \ccInclude{CGAL/Alpha_shape_face_base_2.h}
 
 \subsection*{To Do a Classic Alpha-Shape}
+
+And last, you have to include~:
+
+\ccInclude{CGAL/Alpha_shape_2.h}
 
 \ccExample
 The following code details the different steps to create 
@@ -717,6 +286,10 @@ for the Alpha Shape. The class
 \ccInclude{CGAL/Alpha_shape_face_base_2.h}
 
 \subsection*{To Do a Weighted Alpha-Shape}
+
+And last, you have to include~:
+
+\ccInclude{CGAL/Alpha_shape_2.h}
 
 \ccExample
 The following code details the different steps to create 
