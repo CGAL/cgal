@@ -8,16 +8,13 @@ using namespace CGAL;
 using namespace std;
 
 typedef Cartesian<double>     K;
-typedef CGAL::Triangulation_vertex_base_2<K> Vb;
-typedef CGAL::Triangulation_face_base_2<K>  Fb;
-typedef CGAL::Triangulation_default_data_structure_2<K,Vb,Fb> Tds;
 
-typedef CGAL::Point_set_2<K,Tds>::Edge    Edge;
-typedef CGAL::Point_set_2<K,Tds>::Edge_iterator  Edge_iterator;
-typedef CGAL::Point_set_2<K,Tds>::Vertex_handle  Vertex_handle;
-typedef CGAL::Point_set_2<K,Tds>::Vertex  Vertex;
+typedef CGAL::Point_set_2<K>::Edge    Edge;
+typedef CGAL::Point_set_2<K>::Edge_iterator  Edge_iterator;
+typedef CGAL::Point_set_2<K>::Vertex_handle  Vertex_handle;
+typedef CGAL::Point_set_2<K>::Vertex  Vertex;
 
-Point_set_2<K,Tds> PSet;
+Point_set_2<K> PSet;
 
 Point_2<K> ar1[6];
 Point_2<K> ar2[3];

@@ -1,3 +1,5 @@
+2.3.4  second template parameter of Point_set_2 has now a default value
+
 2.3.3  other pointer access using handles
 
 2.3.2  the Unique hash map stores now Vertex_handles

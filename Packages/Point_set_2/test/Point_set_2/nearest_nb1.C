@@ -8,16 +8,13 @@ using namespace CGAL;
 using namespace std;
 
 typedef Cartesian<double>     K;
-typedef CGAL::Triangulation_vertex_base_2<K> Vb;
-typedef CGAL::Triangulation_face_base_2<K>  Fb;
-typedef CGAL::Triangulation_default_data_structure_2<K,Vb,Fb> Tds;
 
-typedef CGAL::Point_set_2<K,Tds>::Edge           Edge;
-typedef CGAL::Point_set_2<K,Tds>::Edge_iterator  Edge_iterator;
-typedef CGAL::Point_set_2<K,Tds>::Vertex_handle  Vertex_handle;
-typedef CGAL::Point_set_2<K,Tds>::Vertex         Vertex;
+typedef CGAL::Point_set_2<K>::Edge           Edge;
+typedef CGAL::Point_set_2<K>::Edge_iterator  Edge_iterator;
+typedef CGAL::Point_set_2<K>::Vertex_handle  Vertex_handle;
+typedef CGAL::Point_set_2<K>::Vertex         Vertex;
 
-Point_set_2<K,Tds> PSet;
+Point_set_2<K> PSet;
 
 Point_2<K> ar1[5];
 
@@ -84,9 +81,9 @@ int main()
    w2=check1(L);
    
    // construction ...
-   Point_set_2<K,Tds> PSet2;
-   Point_set_2<K,Tds> PSet3(Lr.begin(),Lr.end());
-   Point_set_2<K,Tds> PSet4(Lr.begin(),Lr.end());
+   Point_set_2<K> PSet2;
+   Point_set_2<K> PSet3(Lr.begin(),Lr.end());
+   Point_set_2<K> PSet4(Lr.begin(),Lr.end());
    
    // init ...
    PSet2.insert(Lr.begin(),Lr.end());
