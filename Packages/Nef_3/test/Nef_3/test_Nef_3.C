@@ -102,7 +102,6 @@ private:
     }
 
     void visit(Vertex_const_handle h) {
-      cerr << "visit " << E.point(h) << std::endl;
       if(first) {
 	v_min = h;
 	first=false; 
@@ -198,7 +197,6 @@ private:
     Polyhedron P;
     Nef_polyhedron N = load_off("data/cube.off");
     N.convert_to_Polyhedron(P);
-    N.dump();
     std::ofstream out("data/temp.off");
     out << P;
     N = load_off("data/temp.off");
@@ -218,7 +216,7 @@ private:
   void newell() {
 
     Nef_polyhedron N = load_off("data/star.off");
-    CGAL_assertion(N.is_valid(1,0));    
+    CGAL_assertion(N.is_valid(0,0));    
     CGAL_assertion(does_nef3_equals_file(N,"newell.nef3.SH"));
   }
 
@@ -309,20 +307,23 @@ private:
 
   void point_location_SNC() {
     
-    point_location_SNC_in("point_location.nef3.SH");
-
     Volume_handle c;
+    Object_handle o;
     Nef_polyhedron N;
+
+    if(Infi_box::extended_Kernel()) {
+      point_location_SNC_in("point_location.nef3.EH");
+
+      N = load_nef3("point_location.nef3.EH");
+      o = N.locate(Point_3(-3,-3,0));
+      CGAL_nef3_assertion(assign(c,o));
+    }
 
     N = load_nef3("grid.nef3.SH");
     CGAL_nef3_assertion(N.is_valid(0,0));
-    Object_handle o = N.locate(Point_3(2,2,-1));
+    o = N.locate(Point_3(2,2,-1));
     CGAL_nef3_assertion(assign(c,o));
     o = N.locate(Point_3(2,0,-1));
-    CGAL_nef3_assertion(assign(c,o));
-
-    N = load_nef3("point_location.nef3.SH");
-    o = N.locate(Point_3(-3,-3,0));
     CGAL_nef3_assertion(assign(c,o));
     
     N = load_nef3("single_vertex.nef3.SH");
@@ -379,8 +380,6 @@ private:
 			  E.plane(fin) == E.plane(E.twin(fout)));
     }
     
-    std::cerr << std::endl;
-
     Volume_const_iterator Cin;
     Volume_handle Cout;
     Vector_3 vec(1,1,1);
@@ -394,15 +393,12 @@ private:
       Point_3 p(E.point(SE.minimal_vertex()));
       Object_handle o;
       if(Cin == E.volumes_begin()) {
-	cerr << "locate- " << p-vec << std::endl;
 	o = N.locate(p-vec);
       }
       else {
 	o = N.locate(p+vec);
-	cerr << "locate+ " << p+vec << std::endl;
       }
       CGAL_nef3_assertion(assign(Cout,o));
-      cerr << &*Cout << std::endl;
       CGAL_nef3_assertion(Cin == Cout);
     }
   }
@@ -1037,17 +1033,17 @@ private:
 public:
   void run_test() {
 
-    //        loadSave();
-    //        newell();
-    //        construction(); 
-            point_location_SNC();
-    //        intersection();   
-    //        point_location_SM();
-    //        simplification_SNC();
-    //        simplification_SM();
-    //	      synthesis();
-    //        unary_operations();
-    //        mark_evaluation();
+    loadSave();
+    newell();
+    construction(); 
+    point_location_SNC();
+    intersection();   
+    point_location_SM();
+    //    simplification_SNC();
+    simplification_SM();
+    synthesis();
+    unary_operations();
+    mark_evaluation();
   }
 
 };

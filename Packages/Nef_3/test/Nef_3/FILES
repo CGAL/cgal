@@ -6,7 +6,7 @@ mark_eval2.nef3.SH
 nestedFCafterSimpl.nef3.SH
 openSquare.nef3.SH
 plane-vertex.nef3.SH
-point_location.nef3.SH
+point_location.nef3.EH
 rotated_cube.nef3.SH
 simplifySface.nef3.SH
 single_vertex.nef3.SH

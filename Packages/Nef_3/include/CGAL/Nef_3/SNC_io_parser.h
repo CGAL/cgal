@@ -240,6 +240,9 @@ class sort_sfaces : public SNC_decorator<T> {
     if(vertex(sf1) != vertex(sf2))
       return SORT(vertex(sf1), vertex(sf2));
     
+    if(sf1 == sf2)
+      return false;
+
     SM_decorator SD(vertex(sf1));
     moreLeft<Base> ml((Base) *this);
     Vector_3 plus(1,0,0);
@@ -248,6 +251,7 @@ class sort_sfaces : public SNC_decorator<T> {
     SHalfedge_handle se;
     SFace_cycle_iterator fc;
   
+    TRACEN("vertex " << point(vertex(sf1)));
     TRACEN("sface 1");
 
     SHalfedge_handle se1;
@@ -306,6 +310,7 @@ class sort_sfaces : public SNC_decorator<T> {
 	   " | " << SD.circle(se1).orthogonal_vector());
     TRACEN("minimal sedge in sface 2:" << ssource(se2)->tmp_point() << 
 	   " | " << SD.circle(se2).orthogonal_vector());
+    TRACE("result " << ml(se1,se2));
     return ml(se1, se2);
   }
  
