@@ -1,2 +1,6 @@
+1.4 (15 April 2003) [af]
+- added missing typename
+
+1.3
 - Added a destructor for Interval_skip_list as the constructor calls new
 - Added function clear()
