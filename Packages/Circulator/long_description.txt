@@ -14,12 +14,6 @@ Circulator Package
 
      Circulator base classes and tags.     
 
--  CGAL/circulator_compat.h
-
-     Old circulator.h file from CGAL R2.0. Useful for compilers
-     not yet supporting std::iterator_traits. Distributed to stay
-     compatible.
-
 -  CGAL/circulator_impl.h
 
      Adaptors that provide circulators for common types of 

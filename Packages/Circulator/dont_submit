@@ -1,3 +1,2 @@
 Makefile
-circulator_compat.h
 run_testsuite

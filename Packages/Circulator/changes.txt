@@ -1,33 +1,41 @@
 Circulator Package: Release changes:
 ---------------------------------------------------------------------
 
+3.23 (21 Mar 2002)
+
+     - Maintenance moved to Lutz Kettner, MPI Saarbruecken.
+     - Removed doc_tex/use_of_stl/*.
+     - Deleted include/CGAL/circulator_compat.h that was no longer
+       in the release. It was the old pre-iterator_traits implementation.
+     - Deleted doc_tex/support/Circulator/wrapper.tex.
+
 3.22 (20 Mar 2002)
-- Fixed problem in Circulator_from_iterator for VC7. Initializes
-  the circulator now from a static member variable instead of
-  each time a new default construction of the internal iterator type.
+     - Fixed problem in Circulator_from_iterator for VC7. Initializes
+       the circulator now from a static member variable instead of
+       each time a new default construction of the internal iterator type.
 
 3.21 (12 December 01)
-- Remove warning.
+     - Remove warning.
 
 3.20 (1 December 01)
-- Remove warning.
+     - Remove warning.
 
 3.19 (24 September 01)
-- test suite fix.
+     - test suite fix.
 
 3.18 (20 September 01)
-- SunPro 5.3 fixes/workarounds.
+     - SunPro 5.3 fixes/workarounds.
 
 ======================== CGAL 2.3 ==========================
 
 3.17 (26 july 01)
-- remove from the doc duplicated included example files
-- fixed the \ccIncludeExampleCode commands accordinggly
-- move the file doc_tex/support/Circulator/Circulator_stl.tex 
-             to doc_tex/use_of_stl
+     - remove from the doc duplicated included example files
+     - fixed the \ccIncludeExampleCode commands accordinggly
+     - move the file doc_tex/support/Circulator/Circulator_stl.tex 
+       to doc_tex/use_of_stl
 
 3.16 (25 February 01)
-- Remove warnings.
+     - Remove warnings.
 
 3.15 (8 August 00)
      fixed the doc
