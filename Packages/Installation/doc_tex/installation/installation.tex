@@ -336,6 +336,7 @@ A menu similar to the following will appear on your screen.\index{main
   **   Compiler:            GNU gcc-2.95.3                      **
   **   LEDA:                not supported.                      **
   **   GMP:                 not supported.                      **
+  **   GMPXX:               not supported.                      **
   **   CLN:                 not supported.                      **
   **                                                            **
   **   Compiler is supported by CGAL.                           **
@@ -361,7 +362,8 @@ A menu similar to the following will appear on your screen.\index{main
 \end{alltt}}
 
 The first lines below the headline contain some kind of status report:
-current OS and compiler, are \leda, GMP and CLN supported etc.
+current OS and compiler, are \leda, GMP, GMPXX (GMP's built-in C++ interface)
+and CLN supported etc.
 Moreover you can see that the current setup has been tested and that
 there do not exist \cgal\ libraries for this OS/compiler combination
 in the \cgal\ lib directory by now.
@@ -401,6 +403,7 @@ the error messages from compiler or linker).
   COMPILER:     GNU gcc-2.95.3
   LEDA:         not supported
   GMP:          not supported
+  GMPXX:        not supported
   CLN:          not supported
 
   Generating Makefiles ... done.
@@ -657,6 +660,12 @@ and GMP libraries ({\tt GMP\_LIB\_DIR})\TTindex{GMP\_LIB\_DIR}.  Even
 if the tests are passed, you still have the option to set these
 directories differently.\bigskip
 
+If GMP support is enabled, you may additionnally enable support for GMPXX,
+GMP's built-in C++ interface, from the GMP menu.  Note that this is not
+supported by all C++ compilers, you should check the GMP manual for more
+information.  Once you choose to have GMPXX support, then if you install GMP
+from the CGAL tree, GMP will be configured with C++ support.
+
 \index{GMP@\gmp!installing}\index{GMP@\gmp!enable support}
 \fbox{
 \begin{minipage}{.95\linewidth}
@@ -667,6 +676,7 @@ directories differently.\bigskip
 \item[$<$C$>$] Install the GMP distribution shipped with \cgal\ in the
   \cgal\ directory tree.
 \item[$<$G$>$] Enable/Disable GMP support in \cgal.
+\item[$<$X$>$] Enable/Disable GMPXX support in \cgal.
 \item[$<$I$>$] (\textit{present if GMP support is enabled)} Set the
   include directory for GMP.
 \item[$<$L$>$] (\textit{present if GMP support is enabled)} Set the
@@ -853,6 +863,8 @@ more of the following conditions apply to you:
   \ref{sec:leda-setup}),
 \item you want to use \gnu\ GMP together with \cgal\ (section
   \ref{sec:gmp-setup}) \textit{or}
+\item you want to use \gnu\ GMP's built-in C++ interface together with \cgal\
+  (section \ref{sec:gmpxx-setup}) \textit{or}
 \item you want to use CLN together with \cgal\ (section
   \ref{sec:cln-setup}).
 \item you want to use Qt together with \cgal\ (section
@@ -914,6 +926,14 @@ containing the GMP header files (``\texttt{--GMP\_INCL\_DIR}
 \textit{$<$dir$>$}'')\TTindex{GMP\_INCL\_DIR} and the GMP library
 (``\texttt{--GMP\_LIB\_DIR}
 \textit{$<$dir$>$}'')\TTindex{GMP\_LIB\_DIR}.
+
+\subsection{Setting up support for GMPXX}\label{sec:gmpxx-setup}
+\index{GMPXX@\gmpxx!enable support}
+
+By default there is no support for GMPXX, GMP's built-in C++ interface, but
+you can change this easily by use of the command line option
+``\texttt{-gmpxx}''.  The only requirement for this to work is that GMP
+support is enable correctly.
 
 \subsection{Setting up support for CLN}\label{sec:cln-setup}
 \index{CLN!enable support}

@@ -7,6 +7,9 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: Update GMP to version 4.1
+GLOB: Add support for GMP++
+GLOB: Use configure to install GMP
 GLOB: Document CLN version requirements (<1.1)
 GLOB: QT licensing documentation
 GLOB: - Document --build-all
