@@ -50,19 +50,20 @@ The polyhedral surface is realized as a container class that manages
 vertices, halfedges, facets with their incidences, and that maintains
 the combinatorial integrity of them. It is based on the highly
 flexible design of the halfedge data structure, see the introduction
-in Chapter~\ref{chapterHalfedgeDS} and~\cite{k-ugpdd-99}, but the
-following examples can be understood without knowing the underlying
-design.
+in Chapter~\ref{chapterHalfedgeDS} and~\cite{k-ugpdd-99}. However, the
+polyhedral surface can be used and understood without knowing the
+underlying design. Some of the examples in this chapter introduce also
+gradually into first applications of this flexibility.
 
 % +========================================================================+
 \section{Definition}
 % +========================================================================+
   
-A polyhedral surface \ccc{CGAL::Polyhedron_3<Traits>} in three dimensions
-consists of vertices $V$, edges $E$, facets $F$ and an incidence
-relation on them.  Each edge is represented by two halfedges with
-opposite orientations. The incidences stored with a halfedge are
-illustrated in the following figure:
+A polyhedral surface \ccc{CGAL::Polyhedron_3<PolyhedronTraits_3>} in
+three dimensions consists of vertices $V$, edges $E$, facets $F$ and
+an incidence relation on them.  Each edge is represented by two
+halfedges with opposite orientations. The incidences stored with a
+halfedge are illustrated in the following figure:
 
 \begin{ccTexOnly}
     \vspace{-7mm}
@@ -115,14 +116,14 @@ that create or close holes in the surface.
 Other intersections besides the incidence relation are not allowed.
 However, this is not automatically verified in the operations, since
 self intersections are not easy to check
-efficiently. \ccc{CGAL::Polyhedron_3<Traits>} does only maintain the
-combinatorial integrity of the polyhedral surface (using Euler
-operations) and does not consider the coordinates of the points or any
-other geometric information.
+efficiently. \ccc{CGAL::Polyhedron_3<PolyhedronTraits_3>} does only
+maintain the combinatorial integrity of the polyhedral surface (using
+Euler operations) and does not consider the coordinates of the points
+or any other geometric information.
 
-\ccc{CGAL::Polyhedron_3<Traits>} can represent polyhedral surfaces as
-well as polyhedra. The interface is designed in such a way that it is
-easy to ignore border edges and work only with polyhedra.
+\ccc{CGAL::Polyhedron_3<PolyhedronTraits_3>} can represent polyhedral
+surfaces as well as polyhedra. The interface is designed in such a way
+that it is easy to ignore border edges and work only with polyhedra.
 
 
 % +========================================================================+
@@ -157,8 +158,8 @@ the program will be ``\verb|1 0 0\n0 1 0\n0 0 1\n0 0 0\n|''.
 \ccIncludeExampleCode{Polyhedron/polyhedron_prog_tetra.C}
 
 The polyhedron offers a point iterator for convenience. The above
-output simplifies to a single statement by using the \stl\ algorithm
-\ccc{std::copy} and the ostream iterator adaptor.
+output simplifies to a single statement by using \ccc{std::copy} and
+the ostream iterator adaptor.
 
 \begin{ccExampleCode}
 std::copy( P.points_begin(), P.points_end(), 
@@ -168,61 +169,33 @@ std::copy( P.points_begin(), P.points_end(),
 % +-------------------------------------------------------------+
 \subsection{Example for Affine Transformation}
 
-Assuming that only the point coordinates of a polyhedron $P$ need to
-be transformed by an affine transformation $A$, the \stl\ algorithm
-\ccc{std::transform} can be used. 
+An affine transformation $A$ can act as a functor transforming points
+and a point iterator is conveniently defined for polyhedral surfaces.
+So, assuming we want only the point coordinates of a polyhedron $P$
+transformed, \ccc{std::transform} does the job in a single line.
 
 \begin{ccExampleCode}
 std::transform( P.points_begin(), P.points_end(), P.points_begin(), A);
 \end{ccExampleCode}
-
-The point iterator is already conveniently defined for polyhedral
-surfaces. However, for other geometric attributes, such iterators
-need to be defined by the user. This can be done easily, see the
-following example about adding a plane equation for facets.
 
 
 % +-------------------------------------------------------------+
 \subsection{Example Computing Plane Equations}
 
 The polyhedral surface has already provisions to store a plane
-equation---or only its normal vector---for each facet. However, it 
-does not have a function to compute plane equations or normal vectors. 
+equation for each facet. However, it does not provide a function to
+compute plane equations.
 
 This example computes the plane equations for the facets of a
 tetrahedron.  The actual plane computation is provided in the user
-defined function {\tt compute\_plane\_equations}.  Depending on the
-coordinate number type (exact/inexact) and the shape of the polygons
-of facets (convex/non-convex) different methods are possible. We
-assume here strictly convex facets and exact arithmetic. In our
-example a homogeneous representation with {\tt int} coordinates is
-sufficient.  The output of the program are the four plane
-equations. 
+defined function \texttt{compute\_plane\_equations}.  Depending on the
+arithmetic (exact/inexact) and the shape of the facets
+(convex/non-convex) different methods are useful. We assume here
+strictly convex facets and exact arithmetic. In our example a
+homogeneous representation with \texttt{int} coordinates is sufficient.
+The output of the program are the four plane equations.
 
-For the output, we define a \texttt{Plane\_iterator} similar to the point
-iterator already provided by the polyhedron class. We use the
-\texttt{CBP\_Project\_iterator} from the support library. It takes a projector 
-function object, \texttt{CBP\_Project\_plane}, that given a reference
-to a facet returns a reference to its plane equation. Here is the
-implementation of this projector. Others can be written easily.
-
-\begin{ccExampleCode}
-template < class Facet>
-struct Project_plane {
-    typedef Facet                  argument_type;
-    typedef typename Facet::Plane  Plane;
-    typedef Plane                  result_type;
-    Plane&       operator()( Facet& x)       const { return x.plane(); }
-    const Plane& operator()( const Facet& x) const { return x.plane(); }
-};
-\end{ccExampleCode}
-
-Note that in distinction to normal function objects we work here with
-references and have a second member function for the const-references
-version of this call. The example for computing the plane equations
-follow.
-
-\ccIncludeExampleCode{Polyhedron/polyhedron_prog_normals.C}
+\ccIncludeExampleCode{Polyhedron/polyhedron_prog_planes.C}
 
 % +-------------------------------------------------------------+
 \subsection{Example with a Vector instead of a List Representation}
@@ -298,7 +271,7 @@ which is also understood by GeomView~\cite{p-gmgv15-94}. For OFF
 exists an ASCII and a binary format. The format can be selected with
 the \cgal\ modifiers for streams, \ccc{set_ascii_mode} and
 \ccc{set_binary_mode} respectively. The modifier \ccc{set_pretty_mode}
-can be used to allow for structuring comments in the
+can be used to allow for (a few) structuring comments in the
 output. Otherwise, the output would be free of comments.  The default
 for writing is ASCII without comments. Both, ASCII and binary format,
 can be read independant of the stream setting. Since this file format
@@ -308,12 +281,14 @@ is the default format, iostream operators are provided for it.
 \ccInclude{CGAL/IO/Polyhedron_iostream.h}
 
 \ccHtmlNoLinks
-\ccGlobalFunction{template <class Traits>
-    ostream& operator<<( ostream& out, const CGAL::Polyhedron_3<Traits>& P);}
+\ccGlobalFunction{template <class PolyhedronTraits_3>
+    ostream& operator<<( ostream& out, 
+                         const CGAL::Polyhedron_3<PolyhedronTraits_3>& P);}
 
 \ccHtmlNoLinks
-\ccGlobalFunction{template <class Traits>
-    istream& operator>>( istream& in, CGAL::Polyhedron_3<Traits>& P);}
+\ccGlobalFunction{template <class PolyhedronTraits_3>
+    istream& operator>>( istream& in, 
+                         CGAL::Polyhedron_3<PolyhedronTraits_3>& P);}
 
 
 Additional formats supported for writing are OpenInventor ({\tt .iv})
@@ -334,33 +309,33 @@ format.
 \ccInclude{CGAL/IO/Geomview_stream.h}
 
 \ccHtmlNoLinks
-\ccGlobalFunction{template <class Traits>
+\ccGlobalFunction{template <class PolyhedronTraits_3>
     Inventor_ostream& operator<<( Inventor_ostream& out, 
-                                  const CGAL::Polyhedron_3<Traits>& P);}
+                           const CGAL::Polyhedron_3<PolyhedronTraits_3>& P);}
 
 \ccHtmlNoLinks
-\ccGlobalFunction{template <class Traits>
+\ccGlobalFunction{template <class PolyhedronTraits_3>
     VRML_1_ostream& operator<<( VRML_1_ostream& out, 
-                                  const CGAL::Polyhedron_3<Traits>& P);}
+                           const CGAL::Polyhedron_3<PolyhedronTraits_3>& P);}
 
 \ccHtmlNoLinks
-\ccGlobalFunction{template <class Traits>
+\ccGlobalFunction{template <class PolyhedronTraits_3>
     VRML_2_ostream& operator<<( VRML_2_ostream& out, 
-                                  const CGAL::Polyhedron_3<Traits>& P);}
+                           const CGAL::Polyhedron_3<PolyhedronTraits_3>& P);}
 
 \ccHtmlNoLinks
-\ccGlobalFunction{template <class Traits>
+\ccGlobalFunction{template <class PolyhedronTraits_3>
     Geomview_stream& operator<<( Geomview_stream& out, 
-                                  const CGAL::Polyhedron_3<Traits>& P);}
+                           const CGAL::Polyhedron_3<PolyhedronTraits_3>& P);}
 
 
 These file formats have all in common that they represent a surface as
 a set of facets. Each facet is a list of indices pointing into a set
-of vertices. Vertices are represented as a coordinate triples. The
-file I/O for polyhedral surfaces
-\ccc{CGAL::Polyhedron_3} imposes certain restrictions onto these
-formats. They must represent a permissible polyhedral surface, e.g., a
-2-manifold and no isolated vertices, see Section~\ref{sectionPolyIntro}.
+of vertices. Vertices are represented as coordinate triples. The
+file I/O for polyhedral surfaces \ccc{CGAL::Polyhedron_3} imposes certain 
+restrictions onto these formats. They must represent a permissible 
+polyhedral surface, e.g., a 2-manifold and no isolated vertices, see 
+Section~\ref{sectionPolyIntro}.
 
 Some example programs around the different file formats are provided
 in the distribution under \texttt{examples/Polyhedron\_IO/} and
@@ -383,9 +358,9 @@ typedef CGAL::Polyhedron_3< Traits,
 
 to a vector based representation of the underlying halfedge data
 structure. Now we want to look a bit closer at the second template argument,
-\texttt{CBP\_Polyhedron\_items\_3}, that specifies what kind of vertex, 
+\texttt{Polyhedron\_items\_3}, that specifies what kind of vertex, 
 halfedge, and facet is used. The implementation of 
-\texttt{CBP\_Polyhedron\_items\_3} looks a bit involved with nested 
+\texttt{Polyhedron\_items\_3} looks a bit involved with nested 
 wrapper class templates. But ignoring this technicality, what remains
 are three local typedefs that define the \texttt{Vertex}, the
 \texttt{Halfedge}, and the \texttt{Face} for the polyhedral surface.
@@ -398,16 +373,17 @@ class Polyhedron_items_3 {
 public:
     template < class Refs, class Traits>
     struct Vertex_wrapper {
-        typedef typename Traits::Point Point;
-        typedef CGAL::HalfedgeDS_vertex_base< Refs, CGAL::Tag_true, Point> Vertex;
+        typedef typename Traits::Point_3 Point;
+        typedef CGAL::HalfedgeDS_vertex_base<Refs, CGAL::Tag_true, Point> Vertex;
     };
     template < class Refs, class Traits>
     struct Halfedge_wrapper {
-        typedef CGAL::HalfedgeDS_halfedge_base< Refs> Halfedge;
+        typedef CGAL::HalfedgeDS_halfedge_base<Refs>                      Halfedge;
     };
     template < class Refs, class Traits>
     struct Face_wrapper {
-        typedef CGAL::HalfedgeDS_face_base< Refs, CGAL::Tag_true, Traits> Face;
+        typedef typename Traits::Plane_3 Plane;
+        typedef CGAL::HalfedgeDS_face_base<Refs, CGAL::Tag_true, Plane>   Face;
     };
 };
 \end{ccExampleCode}
@@ -425,11 +401,11 @@ Using this example code we can write our own items class. Instead, we
 illustrate an easier way if we only want to exchange one class. We use
 a simpler face without the plane equation but with a color attribute
 added. To simplify the creation of a vertex, halfedge, or face class,
-it is always recommended to derive from one of the given base classes,
-even if the base class would contain no data. So, we derive from the
-base class, repeat the mandatory constructors if necessary---which is
-not the case for faces but would be for vertices---and add the color
-attribute.
+it is always recommended to derive from one of the given base classes.
+Even if the base class would contain no data it would provide
+convenient type definitions. So, we derive from the base class, repeat
+the mandatory constructors if necessary---which is not the case for
+faces but would be for vertices---and add the color attribute.
 
 \begin{ccExampleCode}
 template <class Refs>
@@ -457,10 +433,11 @@ When we use our new items class with the polyhedral surface, our new
 face class is used in the halfedge data structure and the color
 attribute is available in the type \texttt{Polyhedron::Facet}. However,
 \texttt{Polyhedron::Facet} is not the same type as our local face 
-typedef, but it is derived from the local face typedef. Thus,
-everything that we put in the local face type except constructors is then
-available in the \texttt{Polyhedron::Facet} type. For more details, see 
-the Chapter~\ref{chapterHalfedgeDS} on the halfedge data structure design.
+typedef for \texttt{My\_face}, but it is derived therefrom. Thus,
+everything that we put in the local face type except constructors is
+then available in the \texttt{Polyhedron::Facet} type. For more
+details, see the Chapter~\ref{chapterHalfedgeDS} on the halfedge data
+structure design.
 
 Pulling all together, the full example program illustrates how easy
 the color attribute can be accessed once it is defined.
@@ -473,10 +450,11 @@ allow us to make further references between vertices, halfedges, and
 facets, which have not already been prepared for in the current
 design. These local types are \texttt{Vertex\_handle},
 \texttt{Halfedge\_handle}, \texttt{Face\_handle}, and there respective
-\texttt{\ldots\_const\_handle}. We could add now a new vertex reference to a
+\texttt{\ldots\_const\_handle}. We add now a new vertex reference to a
 face class as follows. Encapsulation and access functions could be
-added for a more thorough design. The integration of the face class
-with the items class works as illustrated above.
+added for a more thorough design, but we omit that here for the sake
+of brevity. The integration of the face class with the items class
+works as illustrated above.
 
 \begin{ccExampleCode}
 template <class Refs>
@@ -486,9 +464,8 @@ struct My_face : public CGAL::HalfedgeDS_face_base<Refs> {
 };
 \end{ccExampleCode}
 
-More advanced examples can be found in the
-Section~\ref{sectionHdsExamples} illustrating the design of the
-halfedge data structure.
+More advanced examples can be found in the Section~\ref{sectionHdsExamples}
+illustrating further the design of the halfedge data structure.
 
 
 % +========================================================================+
@@ -543,8 +520,8 @@ steps starting with a cube as the initial polyhedral surface.
 A utility class \ccc{CGAL::Polyhedron_incremental_builder_3} helps in
 creating polyhedral surfaces from a list of points followed by a list
 of facets that are represented as indices into the point list. This is
-particularly useful in combination with common file formats for
-polyhedra.  It is used here to create a triangle.
+particularly useful for implementing file reader for common file
+formats.  It is used here to create a triangle.
 
 A modifier mechanism allows to access the internal representation of
 the polyhedral surface, i.e.~the halfedge data structure, in a
@@ -556,10 +533,10 @@ validity. Such a modifier object must always return with a halfedge
 data structure that is a valid polyhedral surface.
 
 In this example, \ccc{Build_triangle} is such a function object
-derived from \ccc{CGAL::Modifier_base<HDS>}. The \ccc{delegate()} member
-function of the polyhedron accepts this function object and calls its
-\ccc{operator()} with a reference to its internally used halfedge data
-structure. Thus, this member function in \ccc{Build_triangle} can
+derived from \ccc{CGAL::Modifier_base<HalfedgeDS>}. The \ccc{delegate()}
+member function of the polyhedron accepts this function object and calls
+its \ccc{operator()} with a reference to its internally used halfedge 
+data structure. Thus, this member function in \ccc{Build_triangle} can 
 create the triangle in the halfedge data structure.
 
 \ccIncludeExampleCode{Polyhedron/polyhedron_prog_incr_builder.C}

@@ -31,13 +31,12 @@
 #endif
 #define CGAL_USE_POLYHEDRON_DESIGN_TWO 1
 
-#include <CGAL/HalfedgeDS_using_vector.h>
-#include <CGAL/HalfedgeDS_using_list.h>
+#include <CGAL/HalfedgeDS_vector.h>
+#include <CGAL/HalfedgeDS_list.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
-#include <CGAL/Polyhedron_default_traits_3.h>
+#include <CGAL/Polyhedron_traits_3.h>
+#include <CGAL/Polyhedron_traits_with_normals_3.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/Plane_3.h>
 #include <CGAL/Iterator_project.h>
 #include <CGAL/function_objects.h>
 
@@ -90,24 +89,34 @@ Build_tetrahedron<HDS>:: operator()( HDS& target) {
 
 
 void test_Polyhedron() {
-    typedef CGAL::Cartesian<double>                          Rep;
-    typedef CGAL::Cartesian<int>                             RepI;
-    typedef CGAL::Point_3<Rep>                               Point;
-    typedef CGAL::Plane_3<Rep>                               Plane;
-    typedef CGAL::Polyhedron_default_traits_3<Rep>           Traits;
-    typedef CGAL::Polyhedron_default_traits_3<RepI>          TraitsI;
+    typedef CGAL::Cartesian<double>                     Kernel;
+    typedef CGAL::Cartesian<int>                        KernelI;
+    typedef CGAL::Point_3<Kernel>                       Point;
+    typedef CGAL::Plane_3<Kernel>                       Plane;
+    typedef CGAL::Polyhedron_traits_3<Kernel>           Traits;
+    typedef CGAL::Polyhedron_traits_3<KernelI>          TraitsI;
+    typedef CGAL::Polyhedron_traits_with_normals_3<Kernel>  TraitsN;
 
-    typedef CGAL::Polyhedron_3<Traits>                        Polyhedron;
-    typedef CGAL::Polyhedron_3<TraitsI>                       PolyhedronI;
+    // Using traits for testing of requirements minimality
+    typedef CGAL::Polyhedron_3<Traits>                  Polyhedron;
+    typedef CGAL::Polyhedron_3<TraitsI>                 PolyhedronI;
+
+    // Test use of kernel as well
+    typedef CGAL::Polyhedron_3<Kernel>                  PolyhedronK;
+
+    // Test the use of normal vectors instead of plane equations
+    typedef CGAL::Polyhedron_3<TraitsN>                 PolyhedronN;
+
     typedef CGAL::Polyhedron_3<Traits,
                              CGAL::Polyhedron_items_3,
-                             CGAL::HalfedgeDS_using_vector>   PolyhedronV;
+                             CGAL::HalfedgeDS_vector>   PolyhedronV;
     typedef CGAL::Polyhedron_3<Traits,
                              CGAL::Polyhedron_items_3,
-                             CGAL::HalfedgeDS_using_list>     PolyhedronL;
+                             CGAL::HalfedgeDS_list>     PolyhedronL;
 
     typedef Polyhedron::HDS                     HDS;
     typedef PolyhedronI::HDS                    HDSI;
+    typedef PolyhedronK::HDS                    HDSK;
     typedef PolyhedronV::HDS                    HDSV;
     typedef PolyhedronL::HDS                    HDSL;
 
@@ -132,6 +141,10 @@ void test_Polyhedron() {
                                    Halfedge_around_facet_circulator;
     typedef Polyhedron::Halfedge_around_facet_const_circulator
                                    Halfedge_around_facet_const_circulator;
+
+    typedef PolyhedronK::Halfedge_handle         HalfedgeK_handle;
+
+    typedef PolyhedronN::Halfedge_handle         HalfedgeN_handle;
 
     typedef PolyhedronV::Halfedge_handle         HalfedgeV_handle;
     typedef PolyhedronV::Halfedge_iterator       HalfedgeV_iterator;
@@ -303,10 +316,10 @@ void test_Polyhedron() {
         CGAL_assertion_code( Halfedge_handle h = P.make_tetrahedron();)
         CGAL_assertion( P.is_valid());
         CGAL_assertion( P.is_tetrahedron( h));
-        typedef Polyhedron::Point_const_iterator Point_iterator;
+        typedef Polyhedron::Point_const_iterator Point_const_iterator;
         const Polyhedron& P2(P);
-        Point_iterator begin( P2.points_begin());
-        Point_iterator end( P2.points_end());
+        Point_const_iterator begin( P2.points_begin());
+        Point_const_iterator end( P2.points_end());
         Vertex_iterator i = P.vertices_begin();
         while( begin != end) {
             CGAL_assertion( i->point() == *begin);
@@ -314,6 +327,39 @@ void test_Polyhedron() {
             ++i;
         }
         CGAL_assertion( i == P.vertices_end());
+    }
+    {
+        // Check the predefined plane iterator
+        Polyhedron P;
+        P.make_tetrahedron();
+        typedef Polyhedron::Plane_iterator Plane_iterator;
+        Plane_iterator begin( P.planes_begin());
+        Plane_iterator end( P.planes_end());
+        Facet_iterator i = P.facets_begin();
+        while( begin != end) {
+            CGAL_assertion( i->plane() == *begin);
+            ++begin;
+            ++i;
+        }
+        CGAL_assertion( i == P.facets_end());
+    }
+    {
+        // Check the predefined plane const_iterator
+        Polyhedron P;
+        CGAL_assertion_code( Halfedge_handle h = P.make_tetrahedron();)
+        CGAL_assertion( P.is_valid());
+        CGAL_assertion( P.is_tetrahedron( h));
+        typedef Polyhedron::Plane_const_iterator Plane_const_iterator;
+        const Polyhedron& P2(P);
+        Plane_const_iterator begin( P2.planes_begin());
+        Plane_const_iterator end( P2.planes_end());
+        Facet_iterator i = P.facets_begin();
+        while( begin != end) {
+            CGAL_assertion( i->plane() == *begin);
+            ++begin;
+            ++i;
+        }
+        CGAL_assertion( i == P.facets_end());
     }
     {
         // Check the easy creation of a point iterator.
@@ -707,6 +753,71 @@ void test_Polyhedron() {
         CGAL_assertion( P2.is_tetrahedron( P2.halfedges_begin()));
         P2.inside_out();
         CGAL_assertion( P2.is_tetrahedron( P2.halfedges_begin()));
+    }
+    {
+        // Check use of kernel as traits class.
+        PolyhedronK P;
+        HalfedgeK_handle h = P.make_triangle();
+        CGAL_assertion( P.is_valid());
+        CGAL_assertion( P.is_triangle( h));
+        CGAL_assertion( ! P.is_tetrahedron( h));
+        P.normalize_border();
+        CGAL_assertion( P.is_valid( false, 1));
+        P.inside_out();
+        CGAL_assertion( P.is_valid( false, 1));
+        CGAL_assertion( P.is_triangle( h));
+        P.normalize_border();
+        CGAL_assertion( P.is_valid( false, 1));
+        CGAL_assertion( P.is_triangle( h));
+
+        h = P.make_tetrahedron();
+        CGAL_assertion( P.is_valid());
+        CGAL_assertion( P.is_tetrahedron( h));
+        CGAL_assertion( ! P.is_triangle( h));
+        P.normalize_border();
+        CGAL_assertion( P.is_valid( false, 1));
+        P.inside_out();
+        CGAL_assertion( P.is_valid( false, 1));
+        CGAL_assertion( P.is_tetrahedron( h));
+        P.normalize_border();
+        CGAL_assertion( P.is_valid( false, 1));
+        CGAL_assertion( P.is_tetrahedron( h));
+        P.make_hole(h);
+        CGAL_assertion( ! P.is_tetrahedron( h));
+        P.fill_hole(h);
+        CGAL_assertion( P.is_tetrahedron( h));
+
+        Polyhedron P2;
+        Build_tetrahedron<HDS> modifier;
+        P2.delegate( modifier);
+        CGAL_assertion( P2.is_tetrahedron(P2.halfedges_begin()));
+        P2.normalize_border();
+        CGAL_assertion( P2.is_valid( false, 1));
+
+        Polyhedron P3(P2);
+        CGAL_assertion( P3.is_tetrahedron(P3.halfedges_begin()));
+        P3.inside_out();
+        P3.inside_out();
+        P2 = P3;
+        CGAL_assertion( P2.is_tetrahedron(P2.halfedges_begin()));
+        P2.inside_out();
+        CGAL_assertion( P2.is_tetrahedron(P2.halfedges_begin()));
+    }
+    {
+        // Check use of kernel as traits class.
+        PolyhedronN P;
+        HalfedgeN_handle h = P.make_triangle();
+        CGAL_assertion( P.is_valid());
+        CGAL_assertion( P.is_triangle( h));
+        CGAL_assertion( ! P.is_tetrahedron( h));
+        P.normalize_border();
+        CGAL_assertion( P.is_valid( false, 1));
+        P.inside_out();
+        CGAL_assertion( P.is_valid( false, 1));
+        CGAL_assertion( P.is_triangle( h));
+        P.normalize_border();
+        CGAL_assertion( P.is_valid( false, 1));
+        CGAL_assertion( P.is_triangle( h));
     }
 }
 

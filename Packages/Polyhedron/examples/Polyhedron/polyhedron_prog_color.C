@@ -2,7 +2,6 @@
 // ------------------------------------------
 #include <CGAL/Cartesian.h>
 #include <CGAL/IO/Color.h>
-#include <CGAL/Polyhedron_default_traits_3.h>
 #include <CGAL/Polyhedron_3.h>
 
 // A face type with a color member variable.
@@ -19,9 +18,8 @@ struct My_items : public CGAL::Polyhedron_items_3 {
     };
 };
 
-typedef CGAL::Cartesian<double>               R;
-typedef CGAL::Polyhedron_default_traits_3<R>  Traits;
-typedef CGAL::Polyhedron_3<Traits, My_items>  Polyhedron;
+typedef CGAL::Cartesian<double>               Kernel;
+typedef CGAL::Polyhedron_3<Kernel, My_items>  Polyhedron;
 typedef Polyhedron::Halfedge_handle           Halfedge_handle;
 
 int main() {

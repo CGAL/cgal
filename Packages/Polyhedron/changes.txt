@@ -1,5 +1,17 @@
 Polyhedron Package: Release changes:
 ---------------------------------------------------------------------
+
+3.10 (25 Jun 2001)
+
+     - Include the renaming of HalfedgeDS_using_... to HalfedgeDS_...
+     - Fixed typename problem for MSVC in Polyhedron_old/Polyhedron_3.h.
+     - Removed support for normals.
+     - Added Plane_iterator.
+     - New naming scheme for concepts.
+     - New kernel traits introduced.
+     - Changed name of Polyhedron_default_traits_3.h to Polyhedron_traits_3.h.
+     - Revised example files and doc.
+
 3.9 (20 Jun 2001)
 
      - Changes in the doc incorporating Andreas comments.

@@ -18,7 +18,7 @@
 
 \ccDefinition
   
-The class \ccRefName\ is a model of the \ccc{Polyhedron_items}
+The class \ccRefName\ is a model of the \ccc{PolyhedronItems_3}
 concept.  It provides definitions for vertices with points, halfedges,
 and faces with plane equations. The polyhedron traits class must
 provide the respective types for the point and the plane equation.
@@ -27,27 +27,29 @@ provide the respective types for the point and the plane equation.
 
 \ccIsModel
 
-\ccc{Polyhedron_items}
+\ccRefIdfierPage{PolyhedronItems_3}
 
-\ccHeading{Types in \ccc{Polyhedron_items::Vertex_wrapper<Refs,Traits>::Face}}
+\ccHeading{Types in 
+   \ccc{Polyhedron_items_3::Vertex_wrapper<Refs,Traits>::Vertex}}
 \ccThree{CGAL::Polyhedron_items_3}{items;;;;}{}
 \ccThreeToTwo
 %%\ccTwo{CGAL::Polyhedron_items_3 items;;;}{}
 
-\ccTypedef{typedef Traits::Point Point;}{}
+\ccTypedef{typedef Traits::Point_3 Point;}{}
 \ccGlue
 \ccTypedef{typedef CGAL::Tag_true Supports_vertex_point;}{}
 
 
-\ccHeading{Types in \ccc{Polyhedron_items::Face_wrapper<Refs,Traits>::Face}}
+\ccHeading{Types in \ccc{Polyhedron_items_3::Face_wrapper<Refs,Traits>::Face}}
 
-\ccTypedef{typedef Traits::Plane Plane;}{}
-\ccGlue
-\ccTypedef{typedef Traits::Normal Normal;}{}
+\ccTypedef{typedef Traits::Plane_3 Plane;}{}
 \ccGlue
 \ccTypedef{typedef CGAL::Tag_true Supports_face_plane;}{}
-\ccGlue
-\ccTypedef{typedef CGAL::Tag_true Supports_face_normal;}{}
+% No longer required.
+%\ccGlue
+%\ccTypedef{typedef Traits::Normal Normal;}{}
+%\ccGlue
+%\ccTypedef{typedef CGAL::Tag_true Supports_face_normal;}{}
 
 \ccCreation
 \ccCreationVariable{items}  %% choose variable name
@@ -56,12 +58,13 @@ provide the respective types for the point and the plane equation.
 
 \ccOperations
 
-Supported as required by the \ccc{Polyhedron_items} concept.
+Supported as required by the \ccc{PolyhedronItems_3} concept.
 
 \ccSeeAlso
 
-\ccc{CGAL::Polyhedron_3},
-\ccc{CGAL::HalfedgeDS_items}.
+\ccRefIdfierPage{CGAL::Polyhedron_3}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_min_items}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_items_2}
 
 \ccExample
 
@@ -70,7 +73,7 @@ The following example program defines a new face class based on the
 The new face class is used to replace the face definition in the
 \ccc{CGAL::Polyhedron_items_3} class. The main function illustrates the
 access to the new member variable.
-See also the \ccc{Polyhedron_items} concept for another illustrative
+See also the \ccc{PolyhedronItems_3} concept for another illustrative
 example.
 
 \ccIncludeExampleCode{Polyhedron/polyhedron_prog_color.C}

@@ -64,7 +64,7 @@ already known.
 
 \ccNestedType{HalfedgeDS}{halfedge data structure \ccc{HDS}.}
 \ccGlue
-\ccNestedType{Point}{point type of the vertex.}
+\ccNestedType{Point_3}{point type of the vertex.}
 \ccGlue
 \ccNestedType{size_type}{size type.}
 
@@ -95,7 +95,7 @@ already known.
     polyhedra. If the representation does not support insertion the
     object must fit into the reserved sizes.}  
 
-\ccMethod{void add_vertex( const Point& p);}{
+\ccMethod{void add_vertex( const Point_3& p);}{
     adds $p$ to the vertex list.}  
 \ccGlue
 \ccMethod{void begin_facet();}{starts a facet.}
@@ -126,9 +126,9 @@ already known.
 
 \ccSeeAlso
 
-\ccc{CGAL::Polyhedron_3},
-\ccc{CGAL::Modifier_base},
-\ccc{HalfedgeDS}.
+\ccRefIdfierPage{CGAL::Polyhedron_3}\\
+\ccRefIdfierPage{CGAL::Modifier_base}\\
+\ccRefIdfierPage{HalfedgeDS}
 
 \ccExample
 

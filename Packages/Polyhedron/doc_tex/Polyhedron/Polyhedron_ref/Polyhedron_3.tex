@@ -97,28 +97,29 @@ information.
 The full template declaration of \ccClassTemplateName\ states three parameters:
 
 \begin{tabbing}
-\ccc{template <} \=\ccc{class Traits,}\\
-                 \>\ccc{class Items  = CGAL::Polyhedron_items_3,}\\
+\ccc{template <} \=\ccc{class PolyhedronTraits_3,}\\
+                 \>\ccc{class PolyhedronItems_3  = CGAL::Polyhedron_items_3,}\\
                  \>\ccc{template < class T, class I>}
-                 \ccc{class HDS = CGAL::HalfedgeDS_default>}\\
+                 \ccc{class HalfedgeDS = CGAL::HalfedgeDS_default>}\\
      \ccc{class Polyhedron_3;}
 \end{tabbing}
    
-The first parameter \ccc{Traits} expects a model of the
-\ccc{Polyhedron_traits} concept, for example \ccc{CGAL::Polyhedron_traits_3}.
-The second parameter expects a model of the \ccc{Polyhedron_items} concept.
-By default, the class \ccc{CGAL::Polyhedron_items_3} is preselected. The third 
-parameter is a class template. A model of the \ccc{HalfedgeDS} concept is 
-expected. By default, the class \ccc{CGAL::HalfedgeDS_default} is preselected, 
-which is a list based implementation of the halfedge data structure.
+The first parameter requires a model of the \ccc{PolyhedronTraits_3}
+concept as argument, for example \ccc{CGAL::Polyhedron_traits_3}.  The
+second parameter expects a model of the \ccc{PolyhedronItems_3}
+concept.  By default, the class \ccc{CGAL::Polyhedron_items_3} is
+preselected. The third parameter is a class template. A model of the
+\ccc{HalfedgeDS} concept is expected. By default, the class
+\ccc{CGAL::HalfedgeDS_default} is preselected, which is a list based
+implementation of the halfedge data structure.
 
 \ccTypes
 
 \ccTwo{Polyhedron_3<Traits>:: circulator_category}{}
 
-\ccNestedType{Traits}{traits class.}
+\ccNestedType{Traits}{traits class selected for \ccc{PolyhedronTraits_3}.}
 \ccGlue
-\ccNestedType{Items}{items class.}
+\ccNestedType{Items}{items class selected for \ccc{PolyhedronItems_3}.}
 \ccGlue
 \ccNestedType{HalfedgeDS}{instantiated halfedge data structure.}
 
@@ -139,11 +140,12 @@ which is a list based implementation of the halfedge data structure.
 \ccGlue
 \ccNestedType{Facet}{facet type.}
 
-\ccNestedType{Point}{point stored in vertices.}
+\ccNestedType{Point_3}{point stored in vertices.}
 \ccGlue
-\ccNestedType{Plane}{plane equation stored in facets (if supported).}
-\ccGlue
-\ccNestedType{Normal}{normal vector stored in facets (if supported).}
+\ccNestedType{Plane_3}{plane equation stored in facets (if supported).}
+
+%\ccGlue
+%\ccNestedType{Normal}{normal vector stored in facets (if supported).}
 
 The following handles, iterators and circulators have appropriate
 non-mutable counterparts, i.e.~\ccc{const_handle},
@@ -156,7 +158,8 @@ well. For convenience, the \ccc{Edge_iterator} enumerates every other
 halfedge. It is based on the \ccc{CGAL::N_step_adaptor} adapter. For
 convenience, the \ccc{Point_iterator} enumerates all points in the polyhedral
 surface in the same order as the \ccc{Vertex_iterator}, but with the 
-value type \ccc{Point}. It is based on the \ccc{CGAL::Iterator_project} adaptor.
+value type \ccc{Point}. It is based on the \ccc{CGAL::Iterator_project} 
+adaptor.
 
 \ccNestedType{Vertex_handle}{handle to vertex.}
 \ccGlue
@@ -180,6 +183,8 @@ value type \ccc{Point}. It is based on the \ccc{CGAL::Iterator_project} adaptor.
 \ccNestedType{Edge_iterator}{iterator over all edges (every other halfedge).}
 \ccGlue
 \ccNestedType{Point_iterator}{iterator over all points.}
+\ccGlue
+\ccNestedType{Plane_iterator}{iterator over all plane equations.}
 
 % +-----------------------------------+
 \begin{ccAdvanced}
@@ -205,9 +210,10 @@ supported or not.
 \ccGlue
 \ccNestedType{Supports_facet_plane}{\ccc{Facet::plane()}.}
 \ccGlue
-\ccNestedType{Supports_facet_normal}{\ccc{Facet::normal()}.}
-\ccGlue
 \ccNestedType{Supports_removal}{supports removal of individual elements.}
+
+%\ccGlue
+%\ccNestedType{Supports_facet_normal}{\ccc{Facet::normal()}.}
 
 \end{ccAdvanced}
 
@@ -315,6 +321,10 @@ supported or not.
 \ccMethod{Point_iterator points_begin();}{iterator over all points.}
 \ccGlue
 \ccMethod{Point_iterator points_end();}{past-the-end iterator.}
+
+\ccMethod{Plane_iterator planes_begin();}{iterator over all plane equations.}
+\ccGlue
+\ccMethod{Plane_iterator planes_end();}{past-the-end iterator.}
 
 
 \ccMethod{const Traits& traits() const;}{returns the traits class.}
@@ -654,7 +664,7 @@ automatically updated.
 \ccHeading{Miscellaneous}
 
 \ccMethod{void   inside_out();}
-    {reverses facet orientations (incl.\ normal or plane equations).}
+    {reverses facet orientations (incl.\ plane equations if supported).}
 
 \begin{ccAdvanced}
 \ccMethod{void  delegate( CGAL::Modifier_base<HDS>& m);}
@@ -688,17 +698,17 @@ automatically updated.
 
 \ccSeeAlso
 
-\ccc{CGAL::Polyhedron_3<Traits>::Vertex}, 
-\ccc{CGAL::Polyhedron_3<Traits>::Halfedge},\\
-\ccc{CGAL::Polyhedron_3<Traits>::Facet}, 
-\ccc{Polyhedron_traits}, 
-\ccc{CGAL::Polyhedron_default_traits_3},\\
-\ccc{Polyhedron_items}, 
-\ccc{CGAL::Polyhedron_items_3}, 
-\ccc{HalfedgeDS}, 
-\ccc{CGAL::HalfedgeDS_default},\\
-\ccc{CGAL::Modifier_base},
-\ccc{CGAL::Polyhedron_incremental_builder_3}.
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>::Vertex}\\
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>::Halfedge}\\
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>::Facet}\\
+\ccRefIdfierPage{PolyhedronTraits_3}\\
+\ccRefIdfierPage{CGAL::Polyhedron_traits_3}\\
+\ccRefIdfierPage{PolyhedronItems_3}\\
+\ccRefIdfierPage{CGAL::Polyhedron_items_3}\\
+\ccRefIdfierPage{HalfedgeDS}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_default}\\
+\ccRefIdfierPage{CGAL::Modifier_base}\\
+\ccRefIdfierPage{CGAL::Polyhedron_incremental_builder_3}
 
 \ccExample
 

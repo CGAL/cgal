@@ -35,6 +35,8 @@
 #endif
 #endif
 
+#include <algorithm>
+
 #ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
 #include <CGAL/Polyhedron_old/Polyhedron_3.h>
 #else // CGAL_USE_POLYHEDRON_DESIGN_ONE //
@@ -66,8 +68,8 @@
 #endif
 
 #ifdef CGAL_REP_CLASS_DEFINED
-#ifndef CGAL_POLYHEDRON_DEFAULT_TRAITS_3_H
-#include <CGAL/Polyhedron_default_traits_3.h>
+#ifndef CGAL_POLYHEDRON_TRAITS_3_H
+#include <CGAL/Polyhedron_traits_3.h>
 #endif
 #endif // CGAL_REP_CLASS_DEFINED
 
@@ -88,6 +90,7 @@ public:
     typedef Vertex_base                            Base;
     //typedef typename Base::HalfedgeDS              HDS;
     typedef typename Base::Point                   Point;
+    typedef Point                                  Point_3;
 
     // Handles have to explicitly repeated, although they are derived
     typedef typename Base::Vertex_handle           Vertex_handle;
@@ -141,7 +144,7 @@ public:
     // We need to repeat the constructors here.
     I_Polyhedron_vertex() {}
     I_Polyhedron_vertex( const Vertex_base& b) : Vertex_base(b) {}
-    I_Polyhedron_vertex( const Point& p) : Vertex_base(p) {}
+    I_Polyhedron_vertex( const Point_3& p) : Vertex_base(p) {}
 
 // New Access Functions (not provided in Vertex_base).
 
@@ -317,6 +320,8 @@ class I_Polyhedron_facet  : public Facet_base  {
 public:
     typedef Facet_base                             Base;
     //typedef typename Base::HalfedgeDS              HDS;
+    typedef typename Base::Plane                   Plane;
+    typedef Plane                                  Plane_3;
 
     // Handles have to explicitly repeated, although they are derived
     typedef typename Base::Vertex_handle           Vertex_handle;
@@ -333,7 +338,9 @@ public:
     // Supported options by HDS.
     typedef typename Base::Supports_face_halfedge Supports_face_halfedge;
     typedef typename Base::Supports_face_plane    Supports_face_plane;
-    typedef typename Base::Supports_face_normal   Supports_face_normal;
+
+    // No longer required.
+    //typedef typename Base::Supports_face_normal   Supports_face_normal;
 
     // Circulator category.
     typedef typename Halfedge::Supports_halfedge_prev  Supports_prev;
@@ -437,12 +444,12 @@ public:
 };
 
 
-template < class p_Traits,
-           class p_Items = Polyhedron_items_3,
+template < class PolyhedronTraits_3,
+           class PolyhedronItems_3 = Polyhedron_items_3,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
            template < class T, class I>
 #endif
-           class p_HDS = HalfedgeDS_default>
+           class T_HDS = HalfedgeDS_default>
 class Polyhedron_3 {
     //
     // DEFINITION
@@ -463,18 +470,18 @@ class Polyhedron_3 {
     // geometric properties, e.g. test for self intersections which
     // is  too expensive to be guaranteed as a class invariant.
 public:
-    typedef Polyhedron_3<p_Traits,p_Items,p_HDS>  Self;
-    typedef p_Traits                              Traits;
-    typedef p_Items                               Items;
+    typedef Polyhedron_3<PolyhedronTraits_3,PolyhedronItems_3,T_HDS>  Self;
+    typedef PolyhedronTraits_3                    Traits;
+    typedef PolyhedronItems_3                     Items;
     typedef I_Polyhedron_derived_items_3<Items>   Derived_items;
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-    typedef p_HDS< Traits, Derived_items>         HDS;
+    typedef T_HDS< Traits, Derived_items>         HDS;
 #else
 #ifdef __GNUC__
-    typedef typename p_HDS::HDS< Traits, Derived_items>  HDS;
+    typedef typename T_HDS::HDS< Traits, Derived_items>  HDS;
 #else // __GNUC__ //
     // here is the standard conforming way
-    typedef p_HDS::template HDS< Traits, Derived_items>  HDS;
+    typedef T_HDS::template HDS< Traits, Derived_items>  HDS;
 #endif // __GNUC__ //
 #endif
     typedef HDS                                   HalfedgeDS;
@@ -489,9 +496,10 @@ public:
     typedef typename HDS::Supports_removal        Supports_removal;
 
     // Geometry
-    typedef typename Traits::Point                Point;
-    typedef typename Traits::Plane                Plane;
-    typedef typename Traits::Normal               Normal;
+    typedef typename Traits::Point_3              Point_3;
+    typedef typename Traits::Plane_3              Plane_3;
+    // No longer required.
+    //typedef typename Traits::Normal               Normal;
 
     // Items
     typedef typename HDS::Vertex                  Vertex;
@@ -522,7 +530,13 @@ public:
     typedef Iterator_project<Vertex_iterator, Proj_point>
                                                   Point_iterator;
     typedef Iterator_project<Vertex_const_iterator, Proj_point,
-        const Point&, const Point*>               Point_const_iterator;
+        const Point_3&, const Point_3*>           Point_const_iterator;
+
+    typedef Project_plane<Face>                   Proj_plane;
+    typedef Iterator_project<Face_iterator, Proj_plane>
+                                                  Plane_iterator;
+    typedef Iterator_project<Face_const_iterator, Proj_plane,
+        const Plane_3&, const Plane_3*>           Plane_const_iterator;
 
     typedef N_step_adaptor_derived<Halfedge_iterator, 2>
                                                   Edge_iterator;
@@ -548,14 +562,17 @@ public:
 
     // Supported options especially for Polyhedron_3.
     typedef typename VBase::Supports_vertex_point   Supports_vertex_point;
-    typedef typename FBase::Supports_face_normal    Supports_face_normal;
     typedef typename FBase::Supports_face_plane     Supports_face_plane;
+
+    // No longer required.
+    //typedef typename FBase::Supports_face_normal    Supports_face_normal;
 
     // Renamed versions for facet
     typedef Supports_halfedge_face  Supports_halfedge_facet;
     typedef Supports_face_halfedge  Supports_facet_halfedge;
-    typedef Supports_face_normal    Supports_facet_normal;
     typedef Supports_face_plane     Supports_facet_plane;
+    // No longer required.
+    //typedef Supports_face_normal    Supports_facet_normal;
 
 public:
     // Circulator category.
@@ -701,19 +718,19 @@ public:
         // actual polyhedral surface. Returns an arbitrary halfedge of
         // this structure.
 
-    Halfedge_handle make_tetrahedron( const Point& p1,
-                                      const Point& p2,
-                                      const Point& p3,
-                                      const Point& p4);
+    Halfedge_handle make_tetrahedron( const Point_3& p1,
+                                      const Point_3& p2,
+                                      const Point_3& p3,
+                                      const Point_3& p4);
 
     Halfedge_handle make_triangle();
         // the combinatorial structure of a single triangle with border
         // edges is added to the actual polyhedral surface. Returns an
         // arbitrary halfedge of this structure.
 
-    Halfedge_handle make_triangle( const Point& p1,
-                                   const Point& p2,
-                                   const Point& p3);
+    Halfedge_handle make_triangle( const Point_3& p1,
+                                   const Point_3& p2,
+                                   const Point_3& p3);
         // the single triangle p_1, p_2, p_3 with border edges is added to
         // the actual polyhedral surface. Returns an arbitrary halfedge of
         // this structure.
@@ -793,6 +810,12 @@ public:
 
     Point_const_iterator points_begin() const { return vertices_begin();}
     Point_const_iterator points_end()   const { return vertices_end();}
+
+    Plane_iterator       planes_begin()       { return facets_begin();}
+    Plane_iterator       planes_end()         { return facets_end();}
+
+    Plane_const_iterator planes_begin() const { return facets_begin();}
+    Plane_const_iterator planes_end()   const { return facets_end();}
 
     Edge_iterator        edges_begin()        { return halfedges_begin();}
         // iterator over all edges. The iterator refers to halfedges, but
@@ -1298,20 +1321,16 @@ public:
         CGAL_postcondition( normalized_border_is_valid());
     }
 
-protected:            // Supports: normals,      planes
-    void inside_out_geometry( Tag_false, Tag_false) {}
-    void inside_out_geometry( Tag_true,  Tag_false);
-    void inside_out_geometry( Tag_true,  Tag_true);
-    void inside_out_geometry( Tag_false, Tag_true)  {
-        inside_out_geometry( Tag_true(), Tag_true());
-    }
+protected:            // Supports_face_plane
+    void inside_out_geometry( Tag_false) {}
+    void inside_out_geometry( Tag_true);
 
 public:
     void inside_out() {
         // reverse facet orientation.
         HalfedgeDS_decorator<HDS> decorator(hds);
         decorator.inside_out();
-        inside_out_geometry( Supports_face_normal(),Supports_face_plane());
+        inside_out_geometry( Supports_face_plane());
     }
 
     bool is_valid( bool verb = false, int level = 0) const;
@@ -1586,7 +1605,7 @@ make_triangle() {
 CGAL__POLYH_TMPL_DECL  CGAL_LARGE_INLINE
 typename Polyhedron_3<TR,Itms,HD>::Halfedge_handle
 Polyhedron_3<TR,Itms,HD>::
-make_triangle(const Point& p1, const Point& p2, const Point& p3) {
+make_triangle(const Point_3& p1, const Point_3& p2, const Point_3& p3) {
     reserve( 3 + size_of_vertices(),
              6 + size_of_halfedges(),
              1 + size_of_facets());
@@ -1613,10 +1632,10 @@ make_tetrahedron() {
 CGAL__POLYH_TMPL_DECL  CGAL_LARGE_INLINE
 typename Polyhedron_3<TR,Itms,HD>::Halfedge_handle
 Polyhedron_3<TR,Itms,HD>::
-make_tetrahedron(const Point& p1,
-                 const Point& p2,
-                 const Point& p3,
-                 const Point& p4) {
+make_tetrahedron(const Point_3& p1,
+                 const Point_3& p2,
+                 const Point_3& p3,
+                 const Point_3& p4) {
     reserve( 4 + size_of_vertices(),
             12 + size_of_halfedges(),
              4 + size_of_facets());
@@ -1630,23 +1649,11 @@ make_tetrahedron(const Point& p1,
 // Special Operations on Polyhedral Surfaces
 
 CGAL__POLYH_TMPL_DECL  CGAL_LARGE_INLINE
-void                               // Supports: normals,      planes
-Polyhedron_3<TR,Itms,HD>::inside_out_geometry( Tag_true, Tag_false) {
-    Facet_iterator begin = facets_begin();
-    Facet_iterator end   = facets_end();
-    for ( ; begin != end; ++begin) {
-        m_traits.reverse_normal( begin->normal());
-    }
-}
-
-CGAL__POLYH_TMPL_DECL  CGAL_LARGE_INLINE
-void                               // Supports: normals,      planes
-Polyhedron_3<TR,Itms,HD>::inside_out_geometry( Tag_true, Tag_true) {
-    Facet_iterator begin = facets_begin();
-    Facet_iterator end   = facets_end();
-    for ( ; begin != end; ++begin) {
-        m_traits.reverse_plane( begin->plane());
-    }
+void                               // Supports_facet_plane
+Polyhedron_3<TR,Itms,HD>::inside_out_geometry( Tag_true) {
+    typename Traits::Construct_opposite_plane_3 opposite
+        = traits().construct_opposite_plane_3_object();
+    std::transform( planes_begin(), planes_end(), planes_begin(), opposite);
 }
 
 CGAL__POLYH_TMPL_DECL

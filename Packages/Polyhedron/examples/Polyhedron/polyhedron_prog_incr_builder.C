@@ -1,14 +1,8 @@
 // polyhedron_prog_incr_builder.C
 // -----------------------------------------------
 #include <CGAL/Cartesian.h>
-#include <CGAL/Polyhedron_default_traits_3.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Polyhedron_3.h>
-
-typedef CGAL::Cartesian<double>                R;
-typedef CGAL::Polyhedron_default_traits_3<R>   Traits;
-typedef CGAL::Polyhedron_3<Traits>             Polyhedron;
-typedef Polyhedron::HDS                        HDS;
 
 // A modifier creating a triangle with the incremental builder.
 template <class HDS>
@@ -33,9 +27,13 @@ public:
     }
 };
 
+typedef CGAL::Cartesian<double>            Kernel;
+typedef CGAL::Polyhedron_3<Kernel>         Polyhedron;
+typedef Polyhedron::HalfedgeDS             HalfedgeDS;
+
 int main() {
     Polyhedron P;
-    Build_triangle<HDS> triangle;
+    Build_triangle<HalfedgeDS> triangle;
     P.delegate( triangle);
     CGAL_assertion( P.is_triangle( P.halfedges_begin()));
     return 0;

@@ -75,6 +75,7 @@ else
   compile_and_run polyhedron_prog_normals_old
   compile_and_run polyhedron_prog_off
   compile_and_run polyhedron_prog_off_old
+  compile_and_run polyhedron_prog_planes
   compile_and_run polyhedron_prog_point_iterator_old
   compile_and_run polyhedron_prog_simple
   compile_and_run polyhedron_prog_simple_old

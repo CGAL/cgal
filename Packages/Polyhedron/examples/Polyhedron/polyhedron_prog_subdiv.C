@@ -1,21 +1,16 @@
 // polyhedron_prog_subdiv.C
 // -----------------------------------------
 #include <CGAL/Cartesian.h>
-#include <CGAL/Vector_3.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/Polyhedron_default_traits_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <iostream>
 #include <algorithm>
 #include <vector>
 
-typedef CGAL::Cartesian<double>                              R;
-typedef CGAL::Vector_3<R>                                    Vector;
-typedef CGAL::Point_3<R>                                     Point;
-typedef CGAL::Cartesian<double>                              R;
-typedef CGAL::Polyhedron_default_traits_3<R>                 Traits;
-typedef CGAL::Polyhedron_3<Traits>                           Polyhedron;
+typedef CGAL::Cartesian<double>                              Kernel;
+typedef Kernel::Vector_3                                     Vector;
+typedef Kernel::Point_3                                      Point;
+typedef CGAL::Polyhedron_3<Kernel>                           Polyhedron;
 
 typedef Polyhedron::Vertex                                   Vertex;
 typedef Polyhedron::Vertex_iterator                          Vertex_iterator;

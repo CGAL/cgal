@@ -635,7 +635,8 @@ private:
 
 
 template < class TR, class HDS 
-    = CGAL::Halfedge_data_structure_polyhedron_default_3< typename TR::R>
+    = CGAL::Halfedge_data_structure_polyhedron_default_3< 
+          CGAL_TYPENAME_MSVC_NULL TR::R>
 >
 class Polyhedron_3 {
     //

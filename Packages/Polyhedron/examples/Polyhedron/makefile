@@ -43,6 +43,7 @@ all:            \
                 polyhedron_prog_normals_old \
                 polyhedron_prog_off \
                 polyhedron_prog_off_old \
+                polyhedron_prog_planes \
                 polyhedron_prog_point_iterator_old \
                 polyhedron_prog_simple \
                 polyhedron_prog_simple_old \
@@ -71,6 +72,9 @@ polyhedron_prog_off$(EXE_EXT): polyhedron_prog_off$(OBJ_EXT)
 
 polyhedron_prog_off_old$(EXE_EXT): polyhedron_prog_off_old$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)polyhedron_prog_off_old polyhedron_prog_off_old$(OBJ_EXT) $(LDFLAGS)
+
+polyhedron_prog_planes$(EXE_EXT): polyhedron_prog_planes$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)polyhedron_prog_planes polyhedron_prog_planes$(OBJ_EXT) $(LDFLAGS)
 
 polyhedron_prog_point_iterator_old$(EXE_EXT): polyhedron_prog_point_iterator_old$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)polyhedron_prog_point_iterator_old polyhedron_prog_point_iterator_old$(OBJ_EXT) $(LDFLAGS)
@@ -101,6 +105,7 @@ clean: \
                    polyhedron_prog_normals_old.clean \
                    polyhedron_prog_off.clean \
                    polyhedron_prog_off_old.clean \
+                   polyhedron_prog_planes.clean \
                    polyhedron_prog_point_iterator_old.clean \
                    polyhedron_prog_simple.clean \
                    polyhedron_prog_simple_old.clean \

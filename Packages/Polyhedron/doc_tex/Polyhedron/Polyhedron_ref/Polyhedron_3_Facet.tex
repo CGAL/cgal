@@ -18,11 +18,10 @@
 
 \ccDefinition
   
-A facet optionally stores a normal vector, a plane equation, and a
-reference to an incident halfedge that points to the facet.  If a
-plane equation is supported the normal vector is taken from the plane
-equation. Type tags indicate whether these member functions are
-supported.  Figure~\ccTexHtml{\ref{figurePolyOptionalMethods} on page
+A facet optionally stores a plane equation, and a reference to an 
+incident halfedge that points to the facet. Type tags indicate whether 
+these member functions are supported.  
+Figure~\ccTexHtml{\ref{figurePolyOptionalMethods} on page
   \pageref{figurePolyOptionalMethods}}{}\begin{ccHtmlOnly}
   <A HREF="Halfedge.html#figurePolyOptionalMethods"><IMG
   SRC="cc_ref_up_arrow.gif" ALT="reference arrow" WIDTH="10" HEIGHT="10"></A>
@@ -45,9 +44,9 @@ of the forward category.
 \ccGlue
 \ccNestedType{Halfedge}{type of incident halfedges.}
 \ccGlue
-\ccNestedType{Plane}{plane equation type stored in facets.}
-\ccGlue
-\ccNestedType{Normal}{normal vector type stored in facets.}
+\ccNestedType{Plane_3}{plane equation type stored in facets.}
+%\ccGlue
+%\ccNestedType{Normal}{normal vector type stored in facets.}
 
 \ccNestedType{Vertex_handle}{handle to vertex.}
 \ccGlue
@@ -70,8 +69,8 @@ of the forward category.
   \ccc{CGAL::Tag_false}.}
 \ccGlue
 \ccNestedType{Supports_facet_plane}{\~{}}
-\ccGlue
-\ccNestedType{Supports_facet_normal}{\~{}}
+%\ccGlue
+%\ccNestedType{Supports_facet_normal}{\~{}}
 
 
 \ccCreation
@@ -83,21 +82,22 @@ of the forward category.
 \ccHeading{Operations available if \ccc{Supports_facet_plane} $\equiv$ 
            \ccc{CGAL::Tag_true}}
          
-Note, this implies \ccc{Supports_facet_normal} $\equiv$ \ccc{CGAL::Tag_true}, but
-the return type of the \ccc{normal()} member function will not be by reference.
+%Note, this implies \ccc{Supports_facet_normal} $\equiv$
+%\ccc{CGAL::Tag_true}, but the return type of the \ccc{normal()} member
+%function will not be by reference.
 
-\ccMethod{Plane&       plane();}{}
+\ccMethod{Plane_3&       plane();}{}
 \ccGlue
-\ccMethod{const Plane& plane() const;}{plane equation.}
-\ccGlue
-\ccMethod{Normal normal() const;}{normal vector.}
+\ccMethod{const Plane_3& plane() const;}{plane equation.}
+%\ccGlue
+%\ccMethod{Normal normal() const;}{normal vector.}
 
-\ccHeading{Operations available if \ccc{Supports_facet_normal} $\equiv$ 
-           \ccc{CGAL::Tag_true}}
-
-\ccMethod{Normal&       normal();}{}
-\ccGlue
-\ccMethod{const Normal& normal() const;}{normal vector.}
+%\ccHeading{Operations available if \ccc{Supports_facet_normal} $\equiv$ 
+%           \ccc{CGAL::Tag_true}}
+%
+%\ccMethod{Normal&       normal();}{}
+%\ccGlue
+%\ccMethod{const Normal& normal() const;}{normal vector.}
 
 
 \ccHeading{Operations available if \ccc{Supports_facet_halfedge} $\equiv$ 
@@ -120,7 +120,9 @@ the return type of the \ccc{normal()} member function will not be by reference.
 
 \ccSeeAlso
 
-\ccc{Vertex}, \ccc{Halfedge}, \ccc{CGAL::Polyhedron_3}.
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>::Vertex}\\
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>::Halfedge}\\
+\ccRefIdfierPage{CGAL::Polyhedron_3}
 
 \ccTagDefaults
 \end{ccRefClass}

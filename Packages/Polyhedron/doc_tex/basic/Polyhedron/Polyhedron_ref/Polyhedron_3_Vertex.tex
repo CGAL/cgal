@@ -44,7 +44,7 @@ of the forward category.
 \ccGlue
 \ccNestedType{Facet}{type of incident facets.}
 \ccGlue
-\ccNestedType{Point}{point type stored in vertices.}
+\ccNestedType{Point_3}{point type stored in vertices.}
 
 \ccNestedType{Vertex_handle}{handle to vertex.}
 \ccGlue
@@ -80,9 +80,9 @@ of the forward category.
 \ccHeading{Operations available if \ccc{Supports_vertex_point} $\equiv$ 
            \ccc{CGAL::Tag_true}}
 
-\ccMethod{Point&       point();}{}
+\ccMethod{Point_3&       point();}{}
 \ccGlue
-\ccMethod{const Point& point() const;}{the point.}
+\ccMethod{const Point_3& point() const;}{the point.}
 
 \newpage
 \ccHeading{Operations available if \ccc{Supports_vertex_halfedge} $\equiv$ 
@@ -105,7 +105,9 @@ of the forward category.
 
 \ccSeeAlso
 
-\ccc{Halfedge}, \ccc{Facet}, \ccc{CGAL::Polyhedron_3}.
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>::Halfedge}\\
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>::Facet}\\
+\ccRefIdfierPage{CGAL::Polyhedron_3}
 
 \ccTagDefaults
 \end{ccRefClass}

@@ -43,34 +43,17 @@
 // Use renamed traits class and provide derived class for backwards
 // compatibility.
 
-#error Error
-oueh eoef oEHefe we wei 0 ewuwehffh
+#include <CGAL/Polyhedron_traits_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template < class Kernel_ >
-class Polyhedron_traits_3 {
+class Polyhedron_default_traits_3 : public Polyhedron_traits_3<Kernel_> {
 public:
-    // workaround for warning in egcs-2.91.66
-    //typedef Polyhedron_traits_3<Kernel_> Self;
-    //Self& operator= ( const Self& ) { return *this; }
-
-    typedef Kernel_                   Kernel;
-    typedef typename Kernel::Point_3  Point_3;
-    typedef typename Kernel::Plane_3  Plane_3;
-
-    typedef typename Kernel::Construct_opposite_plane_3 
-                                      Construct_opposite_plane_3;
-private:
-    Kernel m_kernel;
-
-public:
-    Polyhedron_traits_3() {}
-    Polyhedron_traits_3( const Kernel& kernel) : m_kernel(kernel) {}
-
-    Construct_opposite_plane_3 construct_opposite_plane_3_object() const {
-        return m_kernel.construct_opposite_plane_3_object();
-    }
+    typedef Kernel_ Kernel;
+    Polyhedron_default_traits_3() {}
+    Polyhedron_default_traits_3( const Kernel& kernel) 
+        : Polyhedron_traits_3<Kernel>(kernel) {}
 };
 
 CGAL_END_NAMESPACE

@@ -1,24 +1,20 @@
 // polyhedron_prog_off.C
 // -------------------------------------------
 #include <CGAL/Cartesian.h>
-#include <CGAL/Polyhedron_default_traits_3.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/Iterator_project.h>
-#include <CGAL/function_objects.h>
 #include <iostream>
 
-typedef CGAL::Cartesian<double>                      R;
-typedef CGAL::Polyhedron_default_traits_3<R>         Traits;
-typedef CGAL::Polyhedron_3<Traits>                   Polyhedron;
-typedef Polyhedron::Point                            Point;
+typedef CGAL::Cartesian<double>                      Kernel;
+typedef Kernel::Point_3                              Point_3;
+typedef CGAL::Polyhedron_3<Kernel>                   Polyhedron;
 typedef Polyhedron::Facet_iterator                   Facet_iterator;
 typedef Polyhedron::Halfedge_around_facet_circulator Halfedge_facet_circulator;
 
 int main() {
-    Point p( 0.0, 0.0, 0.0);
-    Point q( 1.0, 0.0, 0.0);
-    Point r( 0.0, 1.0, 0.0);
-    Point s( 0.0, 0.0, 1.0);
+    Point_3 p( 0.0, 0.0, 0.0);
+    Point_3 q( 1.0, 0.0, 0.0);
+    Point_3 r( 0.0, 1.0, 0.0);
+    Point_3 s( 0.0, 0.0, 1.0);
 
     Polyhedron P;
     P.make_tetrahedron( p, q, r, s);
@@ -28,7 +24,7 @@ int main() {
     std::cout << "OFF" << std::endl << P.size_of_vertices() << ' ' 
               << P.size_of_facets() << " 0" << std::endl;
     std::copy( P.points_begin(), P.points_end(),
-               std::ostream_iterator<Point>( std::cout, "\n"));
+               std::ostream_iterator<Point_3>( std::cout, "\n"));
     for (  Facet_iterator i = P.facets_begin(); i != P.facets_end(); ++i) {
         Halfedge_facet_circulator j = i->facet_begin();
         // Facets in polyhedral surfaces are at least triangles.

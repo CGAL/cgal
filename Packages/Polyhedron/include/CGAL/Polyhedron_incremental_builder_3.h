@@ -72,7 +72,7 @@ public:
     typedef typename HDS::Face_handle       Face_handle;
     typedef typename Vertex::Base           VBase;
     typedef typename Halfedge::Base         HBase;
-    typedef typename Vertex::Point          Point;
+    typedef typename Vertex::Point          Point_3;
     typedef typename HDS::size_type         size_type;
 
 protected:
@@ -202,7 +202,7 @@ public:
         // If the representation does not support insertion the object
         // must fit in the reserved sizes.
 
-    void add_vertex( const Point& p);
+    void add_vertex( const Point_3& p);
         // adds p to the vertex list.
 
     void begin_facet();
@@ -431,7 +431,7 @@ lookup_hole( Halfedge_handle e) {
 template < class HDS>  CGAL_MEDIUM_INLINE
 void
 Polyhedron_incremental_builder_3<HDS>::
-add_vertex( const Point& p) {
+add_vertex( const Point_3& p) {
     CGAL_assertion( check_protocoll == 1);
     if ( hds.size_of_vertices() >= hds.capacity_of_vertices()) {
         Verbose_ostream verr( m_verbose);
