@@ -319,8 +319,7 @@ int main(int argc,char *argv[])
   W.text_box(-1.5,-1,9.5,"add");
   W.text_box(-1.5,-1,9,"isr");
 
-  Snap_rounding_2 s(prec,true,5);// !!!! number_of_kd_trees instead of 5
-                                 // which is read from argv such as others are read
+  Snap_rounding_2 s(prec,true,false,5);
 
   Iso_rectangle_2 b(Point_2(x1, y1), Point_2(x2, y2));
 
