@@ -20,11 +20,8 @@
 // coordinator   : Utrecht University
 //
 // ======================================================================
-
-
 #ifndef CGAL_SEARCH_FURTHEST_NEIGHBOUR_H
 #define CGAL_SEARCH_FURTHEST_NEIGHBOUR_H
-
 namespace CGAL {
 
   class Search_furthest_neighbour {

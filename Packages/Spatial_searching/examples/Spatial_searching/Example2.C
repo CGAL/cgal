@@ -1,7 +1,7 @@
-// example using nearest_neighbour_iterator for L2
+// example using nearest_neighbour_iterator for Linf
 // benchmark example using 10000 data points and 2000 query points
 // both generated with Random_points_in_cube_3<Point_3>
-// comparing ASPAS to brute force method
+// comparing to brute force method
 
 #include <CGAL/basic.h>
 
@@ -15,12 +15,13 @@
 #include <CGAL/Point_3.h>
 #include <CGAL/Binary_search_tree.h>
 #include <CGAL/Kd_tree_traits_point.h>
-#include <CGAL/Nearest_neighbour_L2.h>
+#include <CGAL/Nearest_neighbour_Linf.h>
 #include <CGAL/Search_nearest_neighbour.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Timer.h>
 #include <CGAL/algorithm.h>
-// #include <CGAL/squared_distance_3.h>
+
+
 
 
 typedef CGAL::Cartesian<double> R;
@@ -33,23 +34,23 @@ typedef K::FT NT;
 
 typedef CGAL::Plane_separator<NT> Separator;
 typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
-typedef CGAL::Nearest_neighbour_L2<Traits,CGAL::Search_nearest_neighbour>::iterator NNN_Iterator;
+typedef CGAL::Nearest_neighbour_Linf<Traits,CGAL::Search_nearest_neighbour>::iterator NNN_Iterator;
 
-
-
-NT The_squared_distance(Point P, Point Q) {
-	NT distx= P.x()-Q.x();
-        NT disty= P.y()-Q.y();
-        NT distz= P.z()-Q.z();
-        return distx*distx+disty*disty+distz*distz;
+NT The_Linf_distance(Point P, Point Q) {
+	NT dist=fabs(P.x()-Q.x());
+        NT disty=fabs(P.y()-Q.y());
+        NT distz=fabs(P.z()-Q.z());
+        if (disty>dist) dist=disty;
+        if (distz>dist) dist=distz;
+        return dist;
   };
 
-  int test_benchmark_nearest_neighbour_L2() {
+  int test_benchmark_nearest_neighbour_Linf() {
 
   CGAL::Timer t;
   int dim=3;
-  int point_number=10000; //10000;
-  int query_point_number=200; //2000;
+  int point_number=10000;
+  int query_point_number=2000;
   int bucket_size=1;
   NT eps=0.0;
 
@@ -98,18 +99,16 @@ NT The_squared_distance(Point P, Point Q) {
 
   t.reset(); t.start();
   for (int i=0; i < query_point_number; i++) {
-    // one time iterator
+    // one time iterator  
     NNN_Iterator NNN_Iterator1(d,query_points[i],0.0);
     nearest_neighbours[i]=*NNN_Iterator1;
   };
   t.stop();
    
-  
   std::cout << "computed" << std::endl
   << query_point_number << " queries in time " << t.time() <<
   " seconds using ASPAS" << std::endl;
-
-  // brute force approach
+ // brute force approach
 
   // copy data points from vector to list
   Vector the_data_points;
@@ -123,13 +122,13 @@ NT The_squared_distance(Point P, Point Q) {
   for (int i=0; i < query_point_number; i++) {
     // one time iterator
     nearest_neighbours_brute_force_index[i]=0;
-    NT squared_distance=
-		The_squared_distance(query_points[i],the_data_points[0]);
+    NT Linf_distance=
+		The_Linf_distance(query_points[i],the_data_points[0]);
     for (int j=1; j < point_number; j++) {
-        NT new_squared_distance=The_squared_distance(query_points[i],
+        NT new_Linf_distance=The_Linf_distance(query_points[i],
 			the_data_points[j]);
-		if (new_squared_distance<squared_distance) {
-			squared_distance=new_squared_distance;
+		if (new_Linf_distance<Linf_distance) {
+			Linf_distance=new_Linf_distance;
 			nearest_neighbours_brute_force_index[i]=j;
 		};
 	};
@@ -146,8 +145,8 @@ NT The_squared_distance(Point P, Point Q) {
 	if (!(*(nearest_neighbours[i].first)==the_data_points[
 		nearest_neighbours_brute_force_index[i]])) {
 		assert(
-		The_squared_distance(query_points[i],*(nearest_neighbours[i]).first)==
-		The_squared_distance(query_points[i],
+		The_Linf_distance(query_points[i],*(nearest_neighbours[i]).first)==
+		The_Linf_distance(query_points[i],
 		the_data_points[nearest_neighbours_brute_force_index[i]]));
 	};
   };
@@ -156,7 +155,7 @@ NT The_squared_distance(Point P, Point Q) {
 };
 
 int main() {
-  test_benchmark_nearest_neighbour_L2();
+  test_benchmark_nearest_neighbour_Linf();
   return 0;
 };
 

@@ -1,7 +1,6 @@
-// example using nearest_neighbour_iterator for L2
-// benchmark example using 10000 data points and 2000 query points
+// example using nearest_neighbour_iterator for Minkowski_norm with general_distance
+// benchmark example using 10000 data points and 2000 query points, bucketsize=10
 // both generated with Random_points_in_cube_3<Point_3>
-// comparing ASPAS to brute force method
 
 #include <CGAL/basic.h>
 
@@ -15,13 +14,14 @@
 #include <CGAL/Point_3.h>
 #include <CGAL/Binary_search_tree.h>
 #include <CGAL/Kd_tree_traits_point.h>
-#include <CGAL/Nearest_neighbour_L2.h>
+#include <CGAL/Nearest_neighbour_general_distance.h>
 #include <CGAL/Search_nearest_neighbour.h>
+#include <CGAL/Weighted_Minkowski_distance.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Timer.h>
 #include <CGAL/algorithm.h>
-// #include <CGAL/squared_distance_3.h>
 
+int test_benchmark_nearest_neighbour_Minkowski_norm() {
 
 typedef CGAL::Cartesian<double> R;
 typedef R::Point_3 Point;
@@ -33,26 +33,21 @@ typedef K::FT NT;
 
 typedef CGAL::Plane_separator<NT> Separator;
 typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
-typedef CGAL::Nearest_neighbour_L2<Traits,CGAL::Search_nearest_neighbour>::iterator NNN_Iterator;
-
-
-
-NT The_squared_distance(Point P, Point Q) {
-	NT distx= P.x()-Q.x();
-        NT disty= P.y()-Q.y();
-        NT distz= P.z()-Q.z();
-        return distx*distx+disty*disty+distz*distz;
-  };
-
-  int test_benchmark_nearest_neighbour_L2() {
+typedef CGAL::Weighted_Minkowski_distance<Traits> Distance_traits;
+typedef CGAL::Nearest_neighbour_general_distance<Traits,
+		CGAL::Search_nearest_neighbour, Distance_traits>::iterator 
+NNN_Iterator;
 
   CGAL::Timer t;
   int dim=3;
-  int point_number=10000; //10000;
-  int query_point_number=200; //2000;
-  int bucket_size=1;
+  int point_number=10000;
+  int query_point_number=2000;
+  int bucket_size=10;
   NT eps=0.0;
-
+  double the_power=1.3;
+  std::vector<double> my_weights(dim);
+  my_weights[0]=0.0; my_weights[1]=2.0; my_weights[2]=5;
+  
   std::cout << "test parameters: d=" << dim << " point_number=" << point_number << std::endl;
   std::cout << "query_point_number=" << query_point_number << " bucket_size="
   << bucket_size << " eps=" << eps << std::endl;
@@ -82,7 +77,9 @@ NT The_squared_distance(Point P, Point Q) {
 
   t.reset(); t.start();
   
-  Traits tr(bucket_size, CGAL::SLIDING_MIDPOINT, 3.0, true);
+  // Traits tr(bucket_size, CGAL::SLIDING_MIDPOINT, 3.0, true);
+  Traits tr(bucket_size, CGAL::MIDPOINT_OF_MAX_SPREAD, 2.0, false);
+
   typedef CGAL::Binary_search_tree<Traits> Tree;
   Tree d(data_points.begin(), data_points.end(), tr, true);
   t.stop();
@@ -95,20 +92,19 @@ NT The_squared_distance(Point P, Point Q) {
   // end of building binary search tree
   
   std::vector<Traits::Item_with_distance> nearest_neighbours(query_point_number);
+  Distance_traits tr_dist(the_power,dim,my_weights);
 
   t.reset(); t.start();
   for (int i=0; i < query_point_number; i++) {
     // one time iterator
-    NNN_Iterator NNN_Iterator1(d,query_points[i],0.0);
+    NNN_Iterator NNN_Iterator1(d,query_points[i],tr_dist,0.0);
     nearest_neighbours[i]=*NNN_Iterator1;
   };
   t.stop();
    
-  
   std::cout << "computed" << std::endl
   << query_point_number << " queries in time " << t.time() <<
-  " seconds using ASPAS" << std::endl;
-
+  " seconds " << std::endl;
   // brute force approach
 
   // copy data points from vector to list
@@ -123,13 +119,13 @@ NT The_squared_distance(Point P, Point Q) {
   for (int i=0; i < query_point_number; i++) {
     // one time iterator
     nearest_neighbours_brute_force_index[i]=0;
-    NT squared_distance=
-		The_squared_distance(query_points[i],the_data_points[0]);
+    NT distance=
+		tr_dist.distance(query_points[i],the_data_points[0]);
     for (int j=1; j < point_number; j++) {
-        NT new_squared_distance=The_squared_distance(query_points[i],
+        NT new_distance=tr_dist.distance(query_points[i],
 			the_data_points[j]);
-		if (new_squared_distance<squared_distance) {
-			squared_distance=new_squared_distance;
+		if (new_distance<distance) {
+			distance=new_distance;
 			nearest_neighbours_brute_force_index[i]=j;
 		};
 	};
@@ -146,8 +142,8 @@ NT The_squared_distance(Point P, Point Q) {
 	if (!(*(nearest_neighbours[i].first)==the_data_points[
 		nearest_neighbours_brute_force_index[i]])) {
 		assert(
-		The_squared_distance(query_points[i],*(nearest_neighbours[i]).first)==
-		The_squared_distance(query_points[i],
+		tr_dist.distance(query_points[i],*(nearest_neighbours[i]).first)==
+		tr_dist.distance(query_points[i],
 		the_data_points[nearest_neighbours_brute_force_index[i]]));
 	};
   };
@@ -156,7 +152,7 @@ NT The_squared_distance(Point P, Point Q) {
 };
 
 int main() {
-  test_benchmark_nearest_neighbour_L2();
+  test_benchmark_nearest_neighbour_Minkowski_norm();
   return 0;
 };
 

@@ -30,7 +30,6 @@
 #define CGAL_SPLITTING_RULES_H
 #include <CGAL/Points_container.h>
 #include <CGAL/Plane_separator.h>
-
 namespace CGAL {
 
 enum Split_rule {MEDIAN_OF_MAX_SPREAD, MEDIAN_OF_BOX,

@@ -24,20 +24,12 @@
 
 #ifndef  NEAREST_NEIGHBOUR_GENERAL_DISTANCE_H
 #define  NEAREST_NEIGHBOUR_GENERAL_DISTANCE_H
-
 #include <cstring>
 #include <list>
 #include <queue>
 #include <memory>
 #include <CGAL/Internal_node.h>
 #include <CGAL/Box.h>
-
-// copy to example.cpp
-// #include <CGAL/Kd_tree_traits_point.h>
-// #include <CGAL/Weighted_Minkowski_distance.h>
-
-// using std::list; ??? to avoid compiler crash on MSVC++
-
 namespace CGAL {
 
 template <class Tree_traits, class Search_traits, class Distance>
@@ -273,7 +265,6 @@ class Distance_smaller
         Search_traits s;
         search_nearest = s.Search_nearest();
 
-        std::cout << "search_nearest=" << search_nearest << std::endl;
 
 	reference_count=1;
         Distance_instance=&tr;
@@ -282,15 +273,13 @@ class Distance_smaller
 
         Node_box *bounding_box = new Node_box(*(tree.bounding_box()));
 
-        std::cout << "Bounding box tree is " << *(tree.bounding_box()) 
-		  << std::endl;
 
         if (search_nearest) distance_to_root=
         Distance_instance->lower_bound_distance_to_box(q,*bounding_box);
         else distance_to_root=
    	Distance_instance->upper_bound_distance_to_box(q,*bounding_box);
 
-        std::cout << "distance_to_root=" << distance_to_root << std::endl;
+        
 
         query_point = &q;
 

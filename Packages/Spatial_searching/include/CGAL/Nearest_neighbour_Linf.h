@@ -23,7 +23,6 @@
 
 #ifndef  NEAREST_NEIGHBOUR_L2_INF_H
 #define  NEAREST_NEIGHBOUR_L2_INF_H
-
 #include <cstring>
 #include <list>
 #include <queue>
@@ -31,9 +30,6 @@
 #include <CGAL/Extended_internal_node.h>
 #include <CGAL/Kd_tree_traits_point.h>
 #include <CGAL/Box.h>
-
-// using std::list; ?? to avoid compiler crash on MSVC++
-
 namespace CGAL {
 
 template <class Tree_traits, class Search_traits> //= Kd_tree_traits_2d>

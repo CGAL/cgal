@@ -24,12 +24,6 @@
 #ifndef CGAL_INTERNAL_NODE_H
 #define CGAL_INTERNAL_NODE_H
 #include <CGAL/Base_node.h>
-// #include <CGAL/Cartesian.h>
-// #include <CGAL/Segment_2.h>
-// #include <CGAL/Point_2.h>
-// #include <iomanip>
-// #include <CGAL/PS_stream.h>
-
 namespace CGAL {
 
 template < class Traits > // = Kd_tree_traits_2d >

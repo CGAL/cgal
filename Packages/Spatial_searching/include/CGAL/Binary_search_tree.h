@@ -23,14 +23,8 @@
 
 #ifndef CGAL_BINARY_SEARCH_TREE_H
 #define CGAL_BINARY_SEARCH_TREE_H
-
 #include <CGAL/Leaf_node.h>
 #include <CGAL/Extended_internal_node.h>
-// #include <CGAL/Cartesian.h>
-// #include <CGAL/Segment_2.h>
-// #include <iomanip>
-// #include <CGAL/PS_Stream.h>
-
 namespace CGAL {
 
 
@@ -98,7 +92,8 @@ public:
   int item_number() {return the_item_number;}
 
  
-  bool is_valid(bool verbose = false, int level = 0) {
+  bool is_valid() { 
+     // bool verbose = false, int level = 0) {
      // Perform internal consistency checks to verify the correctness
      // of the tree.
     std::list<Item> pts_1;
@@ -126,7 +121,7 @@ public:
     std::cout << "Number of items stored: " 
 		  << tree_root->num_items() << std::endl;
     std::cout << " Tree depth: " << tree_root->depth() << std::endl;
-    if (check_validity) { assert(is_valid);
+    if (check_validity) { assert(is_valid());
         // std::cout << " Calling is_valid: " << is_valid() << std::endl;
     }
 

@@ -25,7 +25,6 @@
 #define CGAL_EXTENDED_INTERNAL_NODE_H
 #include <CGAL/Internal_node.h>
 #include <iomanip>
-
 namespace CGAL {
 
 template <class Traits> // = Kd_tree_traits_2d>

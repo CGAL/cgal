@@ -24,10 +24,6 @@
 #ifndef CGAL_BASE_NODE_H
 #define CGAL_BASE_NODE_H
 #include <CGAL/Kd_tree_traits_point.h>
-// #include <CGAL/Cartesian.h>
-// #include <CGAL/Segment_2.h>
-// #include <CGAL/PS_stream.h>
-
 namespace CGAL {
 
 	template < class Traits > // = Kd_tree_traits_point >
@@ -62,7 +58,7 @@ namespace CGAL {
 
  
 		virtual const bool is_leaf() const {assert(false); return 0;}
-		virtual const int size() const {assert(false); return 0;}
+		virtual const unsigned int size() const {assert(false); return 0;}
 		virtual Node* lower() const {assert(false); return 0;}
 		virtual Node* upper() const {assert(false); return 0;}
 		virtual Item_iterator const begin() const {assert(false); return 0;}

@@ -25,7 +25,6 @@
 #ifndef CGAL_KD_TREE_TRAITS_POINT_H
 #define CGAL_KD_TREE_TRAITS_POINT_H
 #include <CGAL/Splitting_rules.h>
-
 namespace CGAL {
 
   template <class Separator_, class Item_>
@@ -41,7 +40,7 @@ namespace CGAL {
 
   private:
 
-    int the_bucket_size;
+    unsigned int the_bucket_size;
     Split_rule the_selected_split_rule;
     NT the_aspect_ratio;
     bool use_extended_nodes_option;
@@ -49,7 +48,7 @@ namespace CGAL {
   public:
 
         
-	Kd_tree_traits_point(int bucket_size=1, 
+	Kd_tree_traits_point(unsigned int bucket_size=1, 
 			     Split_rule My_split_rule=SLIDING_MIDPOINT,
 			     NT aspect_ratio=3.0, 
 			     bool use_extended_nodes=true) {
@@ -62,7 +61,7 @@ namespace CGAL {
     	NT aspect_ratio() const {return the_aspect_ratio;}
 	Split_rule  selected_split_rule() const {return the_selected_split_rule;}
 	Shrink_rule selected_shrink_rule() const {return NONE;}
-    	unsigned int bucket_size() const {return the_bucket_size;}
+    unsigned int bucket_size() const {return the_bucket_size;}
 	bool use_extended_nodes() const {return use_extended_nodes_option;}
 
 	// split c0 in c0 and c1

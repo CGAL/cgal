@@ -20,12 +20,8 @@
 // coordinator   : Utrecht University
 //
 // ======================================================================
-
-
 #ifndef CGAL_PLANE_SEPARATOR_H
 #define CGAL_PLANE_SEPARATOR_H
-
-
 namespace CGAL {
 template < class NT> class Plane_separator {
 

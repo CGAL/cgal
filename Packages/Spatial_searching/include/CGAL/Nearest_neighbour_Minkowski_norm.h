@@ -21,26 +21,18 @@
 //
 // ======================================================================
 
-#ifndef  NEAREST_NEIGHBOUR_PQ_H
-#define  NEAREST_NEIGHBOUR_PQ_H
-
+#ifndef  NEAREST_NEIGHBOUR_MINKOWSKI_NORM_H
+#define  NEAREST_NEIGHBOUR_MINKOWSKI_NORM_H
 #include <cstring>
 #include <list>
 #include <queue>
 #include <memory>
 #include <CGAL/Extended_internal_node.h>
 #include <CGAL/Box.h>
-
-// copy to example.cpp
-// #include <CGAL/Kd_tree_traits_point.h>
-// #include <CGAL/Weighted_Minkowski_distance.h>
-
-// using std::list; ?? to avoid compiler crash on MSVC++
-
 namespace CGAL {
 
 template <class Tree_traits, class Search_traits, class Orthogonal_Distance>
-class Nearest_neighbour_PQ {
+class Nearest_neighbour_Minkowski_norm {
 
 public:
 
@@ -105,7 +97,7 @@ class Distance_smaller
     public:
 
     // constructor
-    Nearest_neighbour_PQ(Tree& tree, Item& q, Orthogonal_Distance& tr,
+    Nearest_neighbour_Minkowski_norm(Tree& tree, Item& q, Orthogonal_Distance& tr,
     NT Eps=0.0)
     {
         start = new iterator(tree,q,tr,Eps);
@@ -113,7 +105,7 @@ class Distance_smaller
     };
 
     // destructor
-    ~Nearest_neighbour_PQ() {
+    ~Nearest_neighbour_Minkowski_norm() {
 		delete start;
                 delete past_the_end;
     };
@@ -245,7 +237,7 @@ class Distance_smaller
         Search_traits s;
         search_nearest = s.Search_nearest();
 
-        std::cout << "search_nearest=" << search_nearest << std::endl;
+       
 
 	reference_count=1;
         Orthogonal_Distance_instance=&tr;
@@ -259,8 +251,7 @@ class Distance_smaller
    	Orthogonal_Distance_instance->upper_bound_distance_to_box(q,
 						*(tree.bounding_box()));
 
-        std::cout << "distance_to_root=" << distance_to_root << std::endl;
-
+        
         query_point = &q;
 
         total_item_number=tree.item_number();
@@ -415,11 +406,11 @@ class Distance_smaller
 }; // class Nearest neighbour_L2
 
 template <class Tree_traits, class Search_traits, class Orthogonal_Distance>
-void swap (typename Nearest_neighbour_PQ<Tree_traits, 
+void swap (typename Nearest_neighbour_Minkowski_norm<Tree_traits, 
 		Search_traits, Orthogonal_Distance>::iterator& x,
-typename Nearest_neighbour_PQ<Tree_traits, Search_traits, 
+typename Nearest_neighbour_Minkowski_norm<Tree_traits, Search_traits, 
 				Orthogonal_Distance>::iterator& y) {
-typename Nearest_neighbour_PQ<Tree_traits, Search_traits, 
+typename Nearest_neighbour_Minkowski_norm<Tree_traits, Search_traits, 
 		Orthogonal_Distance>::iterator::Iterator_implementation
         *tmp = x.Ptr_implementation;
         x.Ptr_implementation  = y.Ptr_implementation;
@@ -429,4 +420,4 @@ typename Nearest_neighbour_PQ<Tree_traits, Search_traits,
 } // namespace CGAL
 
 
-#endif  // NEAREST_NEIGHBOUR_PQ_H
+#endif  // NEAREST_NEIGHBOUR_MINKOWSKI_NORM_H

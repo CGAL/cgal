@@ -26,7 +26,6 @@
 #include <functional>
 #include <algorithm>
 #include <new>
-
 namespace CGAL {
 
   template <class T> class Points_container;

@@ -28,11 +28,10 @@
 // Note: Use p=0 to denote the weighted Linf-distance 
 // For 0<p<1 Lp is not a metric
 
-#include <math.h>
-#include <CGAL/Box.h>
-
 #ifndef CGAL_WEIGHTED_MINKOWSKI_DISTANCE_H
 #define CGAL_WEIGHTED_MINKOWSKI_DISTANCE_H
+#include <math.h>
+#include <CGAL/Box.h>
 
 namespace CGAL {
 

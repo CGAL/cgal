@@ -25,14 +25,11 @@
 // custom point container
 #ifndef CGAL_POINTS_CONTAINER_H
 #define CGAL_POINTS_CONTAINER_H
-
 #include <list>
 #include <set>
 #include <functional>
 #include <algorithm>
 #include <CGAL/Box.h>
-
-
 namespace CGAL {
 
   template <class Item> class Points_container;
