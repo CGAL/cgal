@@ -4,7 +4,7 @@
 # Project related configuration options
 #---------------------------------------------------------------------------
 PROJECT_NAME           = Visibility_complex
-PROJECT_NUMBER         = 1.0.2
+PROJECT_NUMBER         = 1.0.4
 OUTPUT_DIRECTORY       = doxygen/
 OUTPUT_LANGUAGE        = English
 USE_WINDOWS_ENCODING   = NO
