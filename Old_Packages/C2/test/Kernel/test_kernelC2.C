@@ -28,14 +28,15 @@
 #ifndef CGAL_CARTESIAN_H
 #include <CGAL/Cartesian.h>
 #endif // CGAL_CARTESIAN_H
+#include <CGAL/Gmpz.h>
+#include <CGAL/Quotient.h>
 #include <CGAL/_test_2.C>
-#include <CGAL/leda_real.h>
 
 int
 main()
 {
-  typedef   CGAL::Cartesian<leda_real>     Cls;
-  std::cout << "Testing 2d with Cartesian<double> :" << std::endl;
+  typedef   CGAL::Cartesian<CGAL::Quotient<CGAL::Gmpz> >     Cls;
+  std::cout << "Testing 2d with Cartesian<Gmpz> :" << std::endl;
   _test_2( Cls() );
   return 0;
 }
