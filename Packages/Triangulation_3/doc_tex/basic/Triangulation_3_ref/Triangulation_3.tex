@@ -167,6 +167,19 @@ copy of cells and vertices, thus this method runs in constant time.}
 \ccMethod{const TriangulationDataStructure_3 & tds() const;}
 {Returns a const reference to the triangulation data structure.}
 
+\begin{ccAdvanced}
+\ccHeading{Non const access}
+The responsibility of keeping a valid triangulation belongs to the user
+when using advanced operations allowing a direct manipulation of the \ccc{tds}.
+
+\ccMethod{TriangulationDataStructure_3 & tds();}
+{Returns a reference to the triangulation data structure.}
+
+This method is mainly a help for users implementing their own triangulation
+algorithms.
+ 
+\end{ccAdvanced}
+
 \ccMethod{int dimension() const;}
 {Returns the dimension of the affine hull.}
 \ccGlue

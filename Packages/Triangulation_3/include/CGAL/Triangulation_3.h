@@ -277,10 +277,13 @@ public:
   //ACCESS FUNCTIONS
   const GT & geom_traits() const 
     { return _gt;}
-  
+
   const Tds & tds() const 
     { return _tds;}
-  
+
+  Tds & tds()
+    { return _tds;}
+
   int dimension() const 
     { return _tds.dimension();}
 
