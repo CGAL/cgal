@@ -1,4 +1,7 @@
 31/01/2004 Sylvain Pion
+- Fix missing CGALi:: qualification.
+
+31/01/2004 Sylvain Pion
 - Shrink the GIF files.
 
 30/01/2004 Sylvain Pion

@@ -2877,7 +2877,7 @@ operator==(const Triangulation_3<GT, Tds> &t1,
 	return false;
 
     // We now have one cell, we need to propagate recursively.
-    return test_next(t1, t2,
+    return CGALi::test_next(t1, t2,
 	             Cmap.begin()->first, Cmap.begin()->second, Cmap, Vmap);
 }
 
