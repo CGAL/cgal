@@ -44,8 +44,17 @@ typedef Traits::Point_2                                 Point;
 typedef Traits::X_curve_2                               Curve;
 typedef std::list<Curve>                                CurveList;
 
+static const char * BenchOpts[] = {
+  "construct", "display", "co", "di", NULL
+};
 
-static char OptionStr[] = "hs:t:v";
+#define BENCH_CONSTRUCT 0
+#define BENCH_DISPLAY   1
+#define BENCH_CO        2
+#define BENCH_DI        3
+#define NUM_BENCHS      2
+
+static char OptionStr[] = "b:hs:t:v";
 
 /*
  */
@@ -141,11 +150,6 @@ typedef CGAL::Bench<Construct_Pm> ConstructPmBench;
 
 /*!
  */
-void redraw(leda_window * wp, double x0, double y0, double x1, double y1) 
-{ wp->flush_buffer(x0,y0,x1,y1); }
-
-/*!
- */
 class Display_Pm : public Basic_Pm {
 private:
   typedef CGAL::Window_stream           Window_stream;
@@ -200,7 +204,7 @@ public:
     float y0 = m_y0 - y_margin;
     m_window->init(x0, x1, y0);   // logical window size 
 
-    m_window->set_redraw(redraw);
+    m_window->set_redraw(&Display_Pm::redraw);
     m_window->set_mode(leda_src_mode);
     m_window->set_node_width(3);
     m_window->display(leda_window::center, leda_window::center);
@@ -216,6 +220,12 @@ public:
   }
   
 private:
+  /*!
+   */
+  static void
+    redraw(leda_window * wp, double x0, double y0, double x1, double y1) 
+  { wp->flush_buffer(x0,y0,x1,y1); }
+
   Window_stream * m_window;
 };
 
@@ -226,9 +236,11 @@ typedef CGAL::Bench<Display_Pm> DisplayPmBench;
 static void printHelp(void)
 {
   printf("Usage: bench [options]\n\
+  -b <id>\tset bench id to <id> (default all)\n\
   -h\t\tprint this help message\n\
-  -s <samples>\tset number of samples to <samples>\n\
-  -t <seconds>\tset number of seconds to <seconds>\n");
+  -s <samples>\tset number of samples to <samples> (default 10)\n\
+  -t <seconds>\tset number of seconds to <seconds> (default 1)\n\
+  -v\t\ttoggle verbosity (default no)");
 }
 
 /*
@@ -239,6 +251,8 @@ int main(int argc, char * argv[])
   progName = (progName) ? progName+1 : argv[0];
 
   bool verbose = false;
+  int benchId = -1;
+  
 #if (defined _MSC_VER)
   int samples = 10;
 #else
@@ -247,8 +261,23 @@ int main(int argc, char * argv[])
   
   int seconds = 0;
   int c;
+  char * options, * value;
   while ((c = getopt(argc, argv, OptionStr)) != EOF) {
     switch (c) {
+      case 'b':
+	options = optarg;
+	if (*options == '\0') break;
+	while (*options != '\0') {
+          switch(getsubopt(&options, BenchOpts, &value)) {
+            case BENCH_CONSTRUCT:
+            case BENCH_CO:
+              benchId = BENCH_CONSTRUCT; break;
+            case BENCH_DISPLAY:
+            case BENCH_DI:
+              benchId = BENCH_DISPLAY; break;
+          }
+        }
+        break;
       case 'h': printHelp(); return 0;
       case 's': samples = atoi(optarg); break;
       case 't': seconds = atoi(optarg); break;
@@ -266,27 +295,42 @@ int main(int argc, char * argv[])
   }
   const char * filename = argv[optind];
 
-#if 0
-  ConstructPmBench bench(std::string("Construct PM (") +
-                         std::string(filename) + std::string(")"));
-  Construct_Pm & construct_pm = bench.getBenchUser();
+  // Construct
+  ConstructPmBench benchConstruct(std::string(BenchOpts[BENCH_CONSTRUCT]) +
+                                  std::string(" PM (") +
+                                  std::string(filename) + std::string(")"),
+                                  seconds, true);
+  Construct_Pm & construct_pm = benchConstruct.getBenchUser();
   construct_pm.setFilename(filename);
   construct_pm.setVerbose(verbose);
-#else
-  DisplayPmBench bench(std::string("Display PM (") +
-                       std::string(filename) + std::string(")"));
-  Display_Pm & display_pm = bench.getBenchUser();
+
+  // Construct and Display
+  DisplayPmBench benchDisplay(std::string(BenchOpts[BENCH_DISPLAY]) +
+                              std::string(" PM (") +
+                              std::string(filename) + std::string(")"),
+                              seconds, false);
+  Display_Pm & display_pm = benchDisplay.getBenchUser();
   display_pm.setFilename(filename);
   display_pm.setVerbose(verbose);
-#endif
+
+  if (samples > 0) {
+    benchConstruct.setSamples(samples);
+    benchDisplay.setSamples(samples);
+  }
+
+  if (benchId == -1) {
+    benchConstruct();
+    benchDisplay();
+  } else switch(benchId) {
+    case BENCH_CONSTRUCT: benchConstruct(); break;
+    case BENCH_DISPLAY: benchDisplay(); break;
+  }
   
-  if (samples > 0) bench.setSamples(samples);
-  if (seconds > 0) bench.setSeconds(seconds);
-
-  bench();
-
   // Ensure the compiler doesn't optimize the code away...
-  if (verbose) std::cout << "(" << bench.getIterations() << ") " << std::endl;
+  if (verbose) {
+    std::cout << "(" << benchConstruct.getIterations() << ") " << std::endl;
+    std::cout << "(" << benchDisplay.getIterations() << ") " << std::endl;
+  }
   
   return 0;
 }
