@@ -35,7 +35,7 @@ CGAL_BEGIN_NAMESPACE
 Geomview_stream::Geomview_stream(const Bbox_3 &bbox,
 				 const char *machine,
 				 const char *login)
-    : _line_width(1)
+    : line_width_(1)
 {
     setup_geomview(machine,login);
     frame(bbox);
@@ -51,7 +51,7 @@ Geomview_stream::~Geomview_stream()
 void Geomview_stream::setup_geomview(const char *machine, const char *login)
 {
     bflag = 0;
-    _trace = false;
+    trace_ = false;
     col = BLACK;
     vertex_color = BLACK;
     edge_color = BLACK;
@@ -187,63 +187,63 @@ Geomview_stream::operator<<(Geomview_stream&(*fct)(Geomview_stream&))
 bool
 Geomview_stream::get_trace() const
 {
-    return _trace;
+    return trace_;
 }
 
 bool
 Geomview_stream::set_trace(bool b)
 {
-    bool old = _trace;
-    _trace = b;
+    bool old = trace_;
+    trace_ = b;
     return old;
 }
 
 void
 Geomview_stream::trace(const char *cptr) const
 {
-    if (_trace)
+    if (trace_)
         std::cerr << cptr;
 }
 
 void
 Geomview_stream::trace(double d) const
 {
-    if (_trace)
+    if (trace_)
         std::cerr << d << ' ';
 }
 
 void
 Geomview_stream::trace(int i) const
 {
-    if (_trace)
+    if (trace_)
         std::cerr << i << ' ';
 }
 
 double
 Geomview_stream::get_vertex_radius() const
 {
-    return _radius;
+    return radius_;
 }
 
 double
 Geomview_stream::set_vertex_radius(double r)
 {
-    double old = _radius;
-    _radius = r;
+    double old = radius_;
+    radius_ = r;
     return old;
 }
 
 int
 Geomview_stream::get_line_width() const
 {
-    return _line_width;
+    return line_width_;
 }
 
 int
 Geomview_stream::set_line_width(int w)
 {
-    int old = _line_width;
-    _line_width = w;
+    int old = line_width_;
+    line_width_ = w;
     return old;
 }
 

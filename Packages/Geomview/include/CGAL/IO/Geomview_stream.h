@@ -119,13 +119,13 @@ private:
     void pickplane(const Bbox_3 &bbox);
 
     Color col, vertex_color, edge_color, face_color;
-    bool _trace;
+    bool trace_;
     int in;       // file descriptor for input pipe
     int out;      // file descriptor for output pipe
     int pid;      // the geomview process identification
     int bflag ;   // bool that makes operator<< write binary format
-    double _radius;
-    int _line_width;
+    double radius_;
+    int line_width_;
 };
 
 

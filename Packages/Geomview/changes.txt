@@ -4,6 +4,7 @@ Ver 3.1 ???
 - Removed obsolete constructor.
 - Commented code in setup_geomview() (called from the ctor) that blocked on
   Linux and whose purpose was unknown to me.
+- Fix non-std compliant names beginning with underscore.
 
 Ver 3.0 (16 October 00)
 - Added "\newpage" from Susan's changes for CGAL 2.2.
