@@ -9,6 +9,8 @@
 \cgalColumnLayout
 
 \begin{ccRefFunction}{min_rectangle_2}
+  \ccIndexSubitem[t]{smallest enclosing}{rectangle}
+  \ccIndexSubitem[t]{rectangle}{smallest enclosing}
   
   \ccDefinition The function computes a minimum area enclosing
   rectangle $R(P)$ (not necessarily axis-parallel) of a given convex
@@ -62,12 +64,12 @@
   \ccSeeAlso
   \ccRefIdfierPage{CGAL::min_parallelogram_2}\\
   \ccRefIdfierPage{CGAL::min_strip_2}\\
-  \ccRefIdfierPage{Min_quadrilateral_traits_2}\\
+  \ccRefConceptPage{Min_quadrilateral_traits_2}\\
   \ccRefIdfierPage{CGAL::Min_quadrilateral_default_traits_2<R>}
-
-  \ccImplementation We use a rotating caliper algorithm
-  \cite{t-sgprc-83} with worst case running time linear in the number
-  of input points.
+  
+  \ccImplementation We use a rotating caliper
+  \ccIndexMainItem[t]{rotating caliper} algorithm \cite{t-sgprc-83}
+  with worst case running time linear in the number of input points.
   
   \ccExample The following code generates a random convex polygon
   \ccc{P} with 20 vertices and computes the minimum enclosing
@@ -78,6 +80,8 @@
 \end{ccRefFunction}
     
 \begin{ccRefFunction}{min_parallelogram_2}
+  \ccIndexSubitem[t]{smallest enclosing}{parallelogram}
+  \ccIndexSubitem[t]{parallelogram}{smallest enclosing}
   
   \ccDefinition The function computes a minimum area enclosing
   parallelogram $A(P)$ of a given convex point set $P$.  Note that
@@ -129,10 +133,11 @@
   \ccSeeAlso
   \ccRefIdfierPage{CGAL::min_rectangle_2}\\
   \ccRefIdfierPage{CGAL::min_strip_2}\\
-  \ccRefIdfierPage{Min_quadrilateral_traits_2}\\
+  \ccRefConceptPage{Min_quadrilateral_traits_2}\\
   \ccRefIdfierPage{CGAL::Min_quadrilateral_default_traits_2<R>}
-
-  \ccImplementation We use a rotating caliper algorithm
+  
+  \ccImplementation We use a rotating caliper
+  \ccIndexMainItem[t]{rotating caliper} algorithm
   \cite{stvwe-mepa-95,v-fmep-90} with worst case running time linear
   in the number of input points.
   
@@ -145,6 +150,8 @@
 \end{ccRefFunction}
 
 \begin{ccRefFunction}{min_strip_2}
+  \ccIndexSubitem[t]{smallest enclosing}{strip}
+  \ccIndexSubitem[t]{strip}{smallest enclosing}
   
   \ccDefinition The function computes a minimum width enclosing strip
   $S(P)$ of a given convex point set $P$. A strip is the closed region
@@ -195,12 +202,12 @@
   \ccSeeAlso
   \ccRefIdfierPage{CGAL::min_rectangle_2}\\
   \ccRefIdfierPage{CGAL::min_parallelogram_2}\\
-  \ccRefIdfierPage{Min_quadrilateral_traits_2}\\
+  \ccRefConceptPage{Min_quadrilateral_traits_2}\\
   \ccRefIdfierPage{CGAL::Min_quadrilateral_default_traits_2<R>}
-
-  \ccImplementation We use a rotating caliper algorithm
-  \cite{t-sgprc-83} with worst case running time linear in the number
-  of input points.
+  
+  \ccImplementation We use a rotating caliper
+  \ccIndexMainItem[t]{rotating caliper} algorithm \cite{t-sgprc-83}
+  with worst case running time linear in the number of input points.
     
   \ccExample The following code generates a random convex polygon
   \ccc{P} with 20 vertices and computes the minimum enclosing
@@ -213,10 +220,9 @@
 \begin{ccRefClass}{Min_quadrilateral_default_traits_2<R>}
   \ccCreationVariable{t}\ccTagFullDeclarations
   
-  \ccDefinition The class \ccRefName\ defines types and operations
-  needed to compute minimum enclosing quadrilaterals of a planar point
-  set using the functions \ccc{min_rectangle_2},
-  \ccc{min_parallelogram_2} and \ccc{min_strip_2}.
+  \ccDefinition The class \ccRefName\ is a traits class for the
+  functions \ccc{min_rectangle_2}, \ccc{min_parallelogram_2} and
+  \ccc{min_strip_2} using the two-dimensional \cgal\ kernel.
   
   \ccRequirements The template parameter \ccc{R} is a model for
   \ccc{Kernel}.
@@ -224,7 +230,7 @@
   \ccInclude{CGAL/Min_quadrilateral_traits_2.h}
   
   \ccIsModel
-  \ccRefIdfierPage{Min_quadrilateral_traits_2}
+  \ccRefConceptPage{Min_quadrilateral_traits_2}
   
   \ccTypes 
   
@@ -356,24 +362,24 @@
   \ccThree{Rotate_direction_by_multiple_of_pi_2}{
     rotate_direction_by_multiple_of_pi_2_object();}{}
   
-  \ccMemberFunction{Equal_2 equal_2_object();}{}
-  \ccGlue\ccMemberFunction{Less_x_2 less_x_2_object();}{}
-  \ccGlue\ccMemberFunction{Less_y_2 less_y_2_object();}{}
-  \ccGlue\ccMemberFunction{Greater_x_2 greater_x_2_object();}{}
-  \ccGlue\ccMemberFunction{Greater_y_2 greater_y_2_object();}{}
+  \ccMemberFunction{Equal_2 equal_2_object() const;}{}
+  \ccGlue\ccMemberFunction{Less_x_2 less_x_2_object() const;}{}
+  \ccGlue\ccMemberFunction{Less_y_2 less_y_2_object() const;}{}
+  \ccGlue\ccMemberFunction{Greater_x_2 greater_x_2_object() const;}{}
+  \ccGlue\ccMemberFunction{Greater_y_2 greater_y_2_object() const;}{}
   
   \ccGlue\ccMemberFunction{Right_of_implicit_line_2
     right_of_implicit_line_2_object() const;}{}
   \ccGlue\ccMemberFunction{Less_rotate_ccw_2
-    less_rotate_ccw_2_object();}{}
+    less_rotate_ccw_2_object() const;}{}
   \ccGlue\ccMemberFunction{Area_less_rectangle_2
-    area_less_rectangle_2_object();}{}
+    area_less_rectangle_2_object() const;}{}
   \ccGlue\ccMemberFunction{Area_less_parallelogram_2
-    area_less_parallelogram_2_object();}{}
+    area_less_parallelogram_2_object() const;}{}
   \ccGlue\ccMemberFunction{Width_less_strip_2
-    width_less_strip_2_object();}{}
+    width_less_strip_2_object() const;}{}
   \ccGlue\ccMemberFunction{Construct_direction_2
-    construct_direction_2_object();}{}
+    construct_direction_2_object() const;}{}
   \ccGlue\ccMemberFunction{Construct_rectangle_2
     construct_rectangle_2_object() const;}{}
   \ccGlue\ccMemberFunction{Construct_parallelogram_2
@@ -381,7 +387,7 @@
   \ccGlue\ccMemberFunction{Construct_strip_2
     construct_strip_2_object() const;}{}
   \ccGlue\ccMemberFunction{Rotate_direction_by_multiple_of_pi_2
-    rotate_direction_by_multiple_of_pi_2_object();}{}
+    rotate_direction_by_multiple_of_pi_2_object() const;}{}
   
   \ccSeeAlso
   \ccRefIdfierPage{CGAL::min_rectangle_2}\\
@@ -402,22 +408,20 @@
   
   \ccTwo{Minq_traits::Rotate_direction_by_multiple_of_pi_22}{}
 
-  \ccNestedType{Point_2}{class used for representing the input
-    points.}
+  \ccNestedType{Point_2}{type for representing points.}
   
-  \ccNestedType{Direction_2}{class used for representing
-    directions.}
+  \ccNestedType{Direction_2}{type for representing directions.}
   
-  \ccNestedType{Line_2}{class used for representing lines.}
+  \ccNestedType{Line_2}{type for representing lines.}
   
-  \ccNestedType{Rectangle_2}{class used for representing (not
-    necessarily axis-parallel) rectangles.}
+  \ccNestedType{Rectangle_2}{type for representing (not necessarily
+    axis-parallel) rectangles.}
   
-  \ccNestedType{Parallelogram_2}{class used for representing
+  \ccNestedType{Parallelogram_2}{type for representing
     parallelograms.}
   
-  \ccNestedType{Strip_2}{class used for representing strips, that is
-    the closed region bounded by two parallel lines.}
+  \ccNestedType{Strip_2}{type for representing strips, that is the
+    closed region bounded by two parallel lines.}
   
   \ccNestedType{Equal_2}{AdaptableBinaryFunction class\\\ccc{op}:
     \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{bool}.\\
@@ -533,24 +537,24 @@
   \ccThree{Rotate_direction_by_multiple_of_pi_2}{
     rotate_direction_by_multiple_of_pi_2_object();}{}
   
-  \ccMemberFunction{Equal_2 equal_2_object();}{}
-  \ccGlue\ccMemberFunction{Less_x_2 less_x_2_object();}{}
-  \ccGlue\ccMemberFunction{Less_y_2 less_y_2_object();}{}
-  \ccGlue\ccMemberFunction{Greater_x_2 greater_x_2_object();}{}
-  \ccGlue\ccMemberFunction{Greater_y_2 greater_y_2_object();}{}
+  \ccMemberFunction{Equal_2 equal_2_object() const;}{}
+  \ccGlue\ccMemberFunction{Less_x_2 less_x_2_object() const;}{}
+  \ccGlue\ccMemberFunction{Less_y_2 less_y_2_object() const;}{}
+  \ccGlue\ccMemberFunction{Greater_x_2 greater_x_2_object() const;}{}
+  \ccGlue\ccMemberFunction{Greater_y_2 greater_y_2_object() const;}{}
   
   \ccGlue\ccMemberFunction{Right_of_implicit_line_2
     right_of_implicit_line_2_object() const;}{}
   \ccGlue\ccMemberFunction{Less_rotate_ccw_2
-    less_rotate_ccw_2_object();}{}
+    less_rotate_ccw_2_object() const;}{}
   \ccGlue\ccMemberFunction{Area_less_rectangle_2
-    area_less_rectangle_2_object();}{}
+    area_less_rectangle_2_object() const;}{}
   \ccGlue\ccMemberFunction{Area_less_parallelogram_2
-    area_less_parallelogram_2_object();}{}
+    area_less_parallelogram_2_object() const;}{}
   \ccGlue\ccMemberFunction{Width_less_strip_2
-    width_less_strip_2_object();}{}
+    width_less_strip_2_object() const;}{}
   \ccGlue\ccMemberFunction{Construct_direction_2
-    construct_direction_2_object();}{}
+    construct_direction_2_object() const;}{}
   \ccGlue\ccMemberFunction{Construct_rectangle_2
     construct_rectangle_2_object() const;}{}
   \ccGlue\ccMemberFunction{Construct_parallelogram_2
@@ -558,7 +562,7 @@
   \ccGlue\ccMemberFunction{Construct_strip_2
     construct_strip_2_object() const;}{}
   \ccGlue\ccMemberFunction{Rotate_direction_by_multiple_of_pi_2
-    rotate_direction_by_multiple_of_pi_2_object();}{}
+    rotate_direction_by_multiple_of_pi_2_object() const;}{}
   
   \ccHasModels
   \ccRefIdfierPage{CGAL::Min_quadrilateral_default_traits_2<R>}
