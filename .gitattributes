@@ -1523,14 +1523,9 @@ Packages/Qt_widget/demo/Qt_widget/Alpha_shapes_2/alpha_shape.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Alpha_shapes_2/data/m30f.jpg svneol=native#unset
 Packages/Qt_widget/demo/Qt_widget/Convex_Hull_2/convex_hull_2.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Generator/generator.vcproj -text
-Packages/Qt_widget/demo/Qt_widget/Largest_empty_rect_2/largest_empty_rect_2.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Max_k-gon/max_k-gon.vcproj -text
-Packages/Qt_widget/demo/Qt_widget/Min_circle_2/min_circle_2.vcproj -text
-Packages/Qt_widget/demo/Qt_widget/Min_ellipse_2/min_ellipse_2.vcproj -text
-Packages/Qt_widget/demo/Qt_widget/Min_quadrilateral_2/min_quadrilateral_2.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Nef_2/nef_2.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Partition_2/partition_2.vcproj -text
-Packages/Qt_widget/demo/Qt_widget/Polygon/polygon.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2_constrained/constrained_delaunay_triangulation_2.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2_constrained/help/input_point_layer.gif svneol=native#unset
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2_constrained/help/input_polygon_layer.gif svneol=native#unset

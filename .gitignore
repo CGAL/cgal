@@ -138,14 +138,8 @@ Packages/Qt_widget/demo/Qt_widget/Examples/*.moc
 Packages/Qt_widget/demo/Qt_widget/Examples/hellosegment
 Packages/Qt_widget/demo/Qt_widget/Examples/layer
 Packages/Qt_widget/demo/Qt_widget/Examples/standard_toolbar
-Packages/Qt_widget/demo/Qt_widget/Largest_empty_rect_2/*.moc
-Packages/Qt_widget/demo/Qt_widget/Largest_empty_rect_2/largest_empty_rect_2
 Packages/Qt_widget/demo/Qt_widget/Max_k-gon/*.moc
 Packages/Qt_widget/demo/Qt_widget/Max_k-gon/max_k-gon
-Packages/Qt_widget/demo/Qt_widget/Min_ellipse_2/*.moc
-Packages/Qt_widget/demo/Qt_widget/Min_ellipse_2/min_ellipse_2
-Packages/Qt_widget/demo/Qt_widget/Min_quadrilateral_2/*.moc
-Packages/Qt_widget/demo/Qt_widget/Min_quadrilateral_2/min_quadrilateral_2
 Packages/Qt_widget/demo/Qt_widget/Nef_2/*.moc
 Packages/Qt_widget/demo/Qt_widget/Nef_2/nef_2
 Packages/Qt_widget/demo/Qt_widget/Partition_2/*.moc
