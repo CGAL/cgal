@@ -4,7 +4,7 @@
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Kd_tree_traits_point_2.h>
-#include <CGAL/Orthogonal_standard_search.h>
+#include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <list>
 #include <iostream>
 
@@ -15,7 +15,7 @@ typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator
 typedef CGAL::Kd_tree_traits_point_2<R> TreeTraits;
 typedef CGAL::Euclidean_distance<TreeTraits> Distance;
 typedef CGAL::Fair<TreeTraits> Splitter;
-typedef CGAL::Orthogonal_standard_search<TreeTraits,Distance,Splitter> Neighbor_search;
+typedef CGAL::Orthogonal_k_neighbor_search<TreeTraits,Distance,Splitter> Neighbor_search;
 typedef Neighbor_search::Tree Tree;
 typedef std::list<Neighbor_search::Point_with_distance> Neighbors;
 

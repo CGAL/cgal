@@ -4,7 +4,7 @@
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Kd_tree_traits_point.h>
 #include <CGAL/point_generators_3.h>
-#include <CGAL/Orthogonal_standard_search.h>
+#include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <iostream>
 
 #include "Point.h"  // defines types Point, Construct_coord_iterator, Distance
@@ -12,9 +12,9 @@
 typedef CGAL::Random_points_in_cube_3<Point> Random_points_iterator;
 typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator;
 typedef CGAL::Kd_tree_traits_point<double, Point, const double*, Construct_coord_iterator> Traits;
-typedef CGAL::Orthogonal_standard_search<Traits, Distance> NN_orthogonal_search;
-typedef NN_orthogonal_search::Tree Tree;
-typedef std::list<NN_orthogonal_search::Point_with_distance> Neighbors;
+typedef CGAL::Orthogonal_k_neighbor_search<Traits, Distance> K_neighbor_search;
+typedef K_neighbor_search::Tree Tree;
+typedef std::list<K_neighbor_search::Point_with_distance> Neighbors;
 
 
 int
@@ -34,7 +34,7 @@ main() {
   Neighbors neighbors;
 
   // search 5 nearest neighbours
-  NN_orthogonal_search NN1(tree, query, 5);
+  K_neighbor_search NN1(tree, query, 5);
   NN1.the_k_neighbors(std::back_inserter(neighbors));
   for(Neighbors::iterator it = neighbors.begin(); it != neighbors.end(); it++){
     std::cout << " d(q, nearest neighbor)=  " 
@@ -43,7 +43,7 @@ main() {
 
   neighbors.clear();
   // search 5 furthest neighbour searching, with eps=0, search_nearest=false 
-  NN_orthogonal_search NN2(tree, query, 5, 0.0, false);
+  K_neighbor_search NN2(tree, query, 5, 0.0, false);
   NN2.the_k_neighbors(std::back_inserter(neighbors));
   
   for(Neighbors::iterator it = neighbors.begin(); it != neighbors.end(); it++){

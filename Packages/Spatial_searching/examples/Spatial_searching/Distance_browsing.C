@@ -4,7 +4,7 @@
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Kd_tree_traits_point_d.h>
-#include <CGAL/Orthogonal_priority_search.h>
+#include <CGAL/Orthogonal_incremental_neighbor_search.h>
 #include <CGAL/Euclidean_distance.h>
 #include <CGAL/iterator.h>
 #include <iostream>
@@ -15,7 +15,7 @@ typedef K::Point_d Point_d;
 typedef CGAL::Random_points_in_iso_box_d<Point_d>       Random_points_iterator;
 typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator;
 typedef CGAL::Kd_tree_traits_point_d<K> Traits;
-typedef CGAL::Orthogonal_priority_search<Traits> NN_priority_search;
+typedef CGAL::Orthogonal_incremental_neighbor_search<Traits> NN_priority_search;
 typedef NN_priority_search::iterator NN_iterator;
 typedef NN_priority_search::Tree Tree;
 

@@ -4,7 +4,7 @@
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Kd_tree_traits_point_d.h>
 #include <CGAL/point_generators_d.h>
-#include <CGAL/Orthogonal_standard_search.h>
+#include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Weighted_Minkowski_distance.h>
  
 typedef CGAL::Cartesian_d<double> K;
@@ -14,8 +14,8 @@ typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator
 typedef CGAL::Kd_tree_traits_point_d<K> Traits;
 typedef CGAL::Kd_tree<Traits> Tree;
 typedef CGAL::Weighted_Minkowski_distance<Traits> Distance;
-typedef CGAL::Orthogonal_standard_search<Traits, Distance> NN_standard_search;
-typedef   std::list<NN_standard_search::Point_with_distance> Neighbors;
+typedef CGAL::Orthogonal_k_neighbor_search<Traits, Distance> K_neighbor_search;
+typedef   std::list<K_neighbor_search::Point_with_distance> Neighbors;
  
 int 
 main() {
@@ -40,7 +40,7 @@ main() {
 
   Neighbors neighbours;
   
-  NN_standard_search NN(tree, query_item, nearest_neighbour_number, 0.0, true, tr_dist);
+  K_neighbor_search NN(tree, query_item, nearest_neighbour_number, 0.0, true, tr_dist);
   NN.the_k_neighbors(std::back_inserter(neighbours));
 
   for (Neighbors::iterator it = neighbours.begin(); it != neighbours.end();++it) { 

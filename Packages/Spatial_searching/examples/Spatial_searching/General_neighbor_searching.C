@@ -4,7 +4,7 @@
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Kd_tree_traits_point_d.h>
 #include <CGAL/Manhattan_distance_rectangle_point.h>
-#include <CGAL/General_standard_search.h>
+#include <CGAL/K_neighbor_search.h>
 
 
 typedef CGAL::Cartesian_d<double> K;
@@ -14,7 +14,7 @@ typedef CGAL::Random_points_in_iso_box_d<Point_d>       Random_points_iterator;
 typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator;
 typedef CGAL::Kd_tree_traits_point_d<K> TreeTraits;
 typedef CGAL::Manhattan_distance_rectangle_point<TreeTraits, Iso_box_d> Distance;
-typedef CGAL::General_standard_search<TreeTraits, Distance> Neighbor_search;
+typedef CGAL::K_neighbor_search<TreeTraits, Distance> Neighbor_search;
 typedef Neighbor_search::Tree Tree;
 typedef std::list<Neighbor_search::Point_with_distance> Neighbors;
 

@@ -5,8 +5,8 @@
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Kd_tree_traits_point_d.h>
-#include <CGAL/General_standard_search.h>
-#include <CGAL/Manhattan_distance_rectangle_point.h>
+#include <CGAL/K_neighbor_search.h>
+#include <CGAL/Manhattan_distance_iso_box_point.h>
 #include <iostream>
 
 typedef CGAL::Homogeneous_d<CGAL::MP_Float> R;
@@ -16,10 +16,10 @@ typedef Point_d::R::RT NT;
 typedef CGAL::Random_points_in_iso_box_d<Point_d>       Random_points_iterator;
 typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator;
 typedef CGAL::Kd_tree_traits_point_d<R> Traits;
-typedef CGAL::Manhattan_distance_rectangle_point<Traits,Iso_box> L1_distance;
-typedef CGAL::General_standard_search<Traits, L1_distance> NN_standard_search;
-typedef NN_standard_search::Tree Tree;
-typedef std::list<NN_standard_search::Point_with_distance> Neighbors;
+typedef CGAL::Manhattan_distance_iso_box_point<Traits,Iso_box> L1_distance;
+typedef CGAL::K_neighbor_search<Traits, L1_distance> K_neighbor_search;
+typedef K_neighbor_search::Tree Tree;
+typedef std::list<K_neighbor_search::Point_with_distance> Neighbors;
 
 int 
 main() {
@@ -43,7 +43,7 @@ main() {
 
   Neighbors neighbors;
   
-  NN_standard_search NN(tree, query, K);
+  K_neighbor_search NN(tree, query, K);
   std::cout << "neighbour searching statistics using no extended nodes: " << std::endl;
   NN.the_k_neighbors(std::back_inserter(neighbors));
 
