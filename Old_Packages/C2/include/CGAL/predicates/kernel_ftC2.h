@@ -19,11 +19,11 @@ equal_lineC2(const FT &l1a, const FT &l1b, const FT &l1c,
 {
     if (sign_of_determinant2x2(l1a, l1b, l2a, l2b) != ZERO)
         return false; // Not parallel.
-    CGAL::Sign s1a = CGAL::sign(l1a);
+    CGAL::Sign s1a = CGAL_NTS sign(l1a);
     if (s1a != ZERO)
-        return s1a == CGAL::sign(l2a)
+        return s1a == CGAL_NTS sign(l2a)
 	    && sign_of_determinant2x2(l1a, l1c, l2a, l2c) == ZERO;
-    return CGAL::sign(l1b) == CGAL::sign(l2b)
+    return CGAL_NTS sign(l1b) == CGAL_NTS sign(l2b)
 	&& sign_of_determinant2x2(l1b, l1c, l2b, l2c) == ZERO;
 }
 
@@ -37,9 +37,9 @@ compare_xC2(const FT &px,
   // The abscissa of the intersection point is num/den.
   FT num = det2x2_by_formula( lb, lc, hb, hc);
   FT den = det2x2_by_formula( la, lb, ha, hb);
-  Sign s = CGAL::sign(den);
+  Sign s = CGAL_NTS sign(den);
   CGAL_kernel_assertion( s != ZERO );
-  return Comparison_result( s * CGAL::compare( px * den, num) );
+  return Comparison_result( s * CGAL_NTS compare( px * den, num) );
 }
 
 template < class FT >
@@ -54,7 +54,7 @@ compare_xC2(const FT &la, const FT &lb, const FT &lc,
   FT den1 = det2x2_by_formula( la, lb, h1a, h1b);
   FT num2 = det2x2_by_formula( lb, lc, h2b, h2c);
   FT den2 = det2x2_by_formula( la, lb, h2a, h2b);
-  Sign s = Sign (CGAL::sign(den1) * CGAL::sign(den2));
+  Sign s = Sign (CGAL_NTS sign(den1) * CGAL_NTS sign(den2));
   CGAL_kernel_assertion( s != ZERO );
   return Comparison_result( s * sign_of_determinant2x2(num1, 
                                                        num2, den1, den2));
@@ -65,8 +65,8 @@ compare_xC2(const FT &la, const FT &lb, const FT &lc,
             + det2x2_by_formula(num1,num2,h1b,h2b);
   FT den1 = det2x2_by_formula( la, lb, h1a, h1b);
   FT den2 = det2x2_by_formula( la, lb, h2a, h2b);
-  return Comparison_result( CGAL::sign(lb) * CGAL::sign(num) *
-                            CGAL::sign(den1) * CGAL::sign(den2));
+  return Comparison_result( CGAL_NTS sign(lb) * CGAL_NTS sign(num) *
+                            CGAL_NTS sign(den1) * CGAL_NTS sign(den2));
 }
 
 template < class FT >
@@ -81,10 +81,10 @@ compare_xC2(const FT &l1a, const FT &l1b, const FT &l1c,
   FT den1 = det2x2_by_formula( l1a, l1b, h1a, h1b);
   FT num2 = det2x2_by_formula( l2b, l2c, h2b, h2c);
   FT den2 = det2x2_by_formula( l2a, l2b, h2a, h2b);
-  Sign s = Sign (CGAL::sign(den1) * CGAL::sign(den2));
+  Sign s = Sign (CGAL_NTS sign(den1) * CGAL_NTS sign(den2));
   CGAL_kernel_assertion( s != ZERO );
-  return Comparison_result( s * sign_of_determinant2x2(num1, 
-						       num2, den1, den2));
+  return Comparison_result( s * sign_of_determinant2x2(num1, num2,
+			                               den1, den2));
 }
 
 template < class FT >
@@ -93,9 +93,9 @@ Comparison_result
 compare_y_at_xC2(const FT &px, const FT &py,
                  const FT &la, const FT &lb, const FT &lc)
 {
-  Sign s = CGAL::sign(lb);
+  Sign s = CGAL_NTS sign(lb);
   CGAL_kernel_assertion( s != ZERO );
-  return Comparison_result (s * CGAL::sign(la*px + lb*py + lc));
+  return Comparison_result (s * CGAL_NTS sign(la*px + lb*py + lc));
 }
 
 template < class FT >
@@ -105,7 +105,7 @@ compare_y_at_xC2(const FT &px,
                  const FT &l1a, const FT &l1b, const FT &l1c,
                  const FT &l2a, const FT &l2b, const FT &l2c)
 {
-  Sign s = Sign (CGAL::sign(l1b) * CGAL::sign(l2b));
+  Sign s = Sign (CGAL_NTS sign(l1b) * CGAL_NTS sign(l2b));
   CGAL_kernel_assertion( s != ZERO );
   return Comparison_result ( s * sign_of_determinant2x2(l2a*px+l2c, l2b,
                                                         l1a*px+l1c, l1b));
@@ -118,7 +118,8 @@ compare_y_at_xC2(const FT &l1a, const FT &l1b, const FT &l1c,
                  const FT &l2a, const FT &l2b, const FT &l2c,
                  const FT &ha,  const FT &hb,  const FT &hc)
 {
-  Sign s = Sign (sign_of_determinant2x2(l1a, l1b, l2a, l2b) * CGAL::sign(hb));
+  Sign s = Sign (sign_of_determinant2x2(l1a, l1b, l2a, l2b) *
+		 CGAL_NTS sign(hb));
   CGAL_kernel_assertion( s != ZERO );
   return Comparison_result( s * sign_of_determinant3x3(l1a, l1b, l1c,
                                                        l2a, l2b, l2c,
@@ -136,7 +137,7 @@ compare_y_at_xC2(const FT &l1a, const FT &l1b, const FT &l1c,
   // The abscissa of the intersection point is num/den.
   FT num = det2x2_by_formula( l1b, l1c, l2b, l2c);
   FT den = det2x2_by_formula( l1a, l1b, l2a, l2b);
-  Sign s = Sign (CGAL::sign(h1b) * CGAL::sign(h2b) * CGAL::sign(den));
+  Sign s = Sign (CGAL_NTS sign(h1b) * CGAL_NTS sign(h2b) * CGAL_NTS sign(den));
   CGAL_kernel_assertion( s != ZERO );
   return Comparison_result ( s * sign_of_determinant2x2(h2a*num+h2c*den, h2b,
                                                         h1a*num+h1c*den, h1b));
@@ -148,8 +149,8 @@ bool
 equal_directionC2(const FT &dx1, const FT &dy1,
                   const FT &dx2, const FT &dy2) 
 {
-  return CGAL::sign(dx1) == CGAL::sign(dx2)
-      && CGAL::sign(dy1) == CGAL::sign(dy2)
+  return CGAL_NTS sign(dx1) == CGAL_NTS sign(dx2)
+      && CGAL_NTS sign(dy1) == CGAL_NTS sign(dy2)
       && sign_of_determinant2x2(dx1, dy1, dx2, dy2) == ZERO;
 }
 
@@ -166,7 +167,7 @@ compare_angle_with_x_axisC2(const FT &dx1, const FT &dy1,
                                   : ((dy1 >= FT(0))?2:3);
   int quadrant_2 = (dx2 >= FT(0)) ? ((dy2 >= FT(0))?1:4)
                                   : ((dy2 >= FT(0))?2:3);
-  // We can't use CGAL::compare(quadrant_1,quadrant_2) because in case
+  // We can't use CGAL_NTS compare(quadrant_1,quadrant_2) because in case
   // of tie, we need additional computation
   if (quadrant_1 > quadrant_2)
     return LARGER;
@@ -181,7 +182,7 @@ Comparison_result
 compare_deltax_deltayC2(const FT &px, const FT &qx,
                         const FT &ry, const FT &sy)
 {
-  return CGAL::compare(abs(px-qx), abs(ry-sy));
+  return CGAL_NTS compare(CGAL_NTS abs(px-qx), CGAL_NTS abs(ry-sy));
 }
 
 template < class FT >
@@ -191,8 +192,8 @@ Comparison_result
 compare_lexicographically_xyC2(const FT &px, const FT &py,
                                const FT &qx, const FT &qy)
 {
-  Comparison_result c = CGAL::compare(px,qx);
-  return (c != EQUAL) ? c : CGAL::compare(py,qy);
+  Comparison_result c = CGAL_NTS compare(px,qx);
+  return (c != EQUAL) ? c : CGAL_NTS compare(py,qy);
 }
 
 template < class FT >
@@ -286,8 +287,8 @@ cmp_dist_to_pointC2(const FT &px, const FT &py,
                     const FT &qx, const FT &qy,
                     const FT &rx, const FT &ry)
 {
-  return CGAL::compare(squared_distanceC2(px,py,qx,qy),
-                       squared_distanceC2(px,py,rx,ry));
+  return CGAL_NTS compare(squared_distanceC2(px,py,qx,qy),
+                          squared_distanceC2(px,py,rx,ry));
 }
 
 template < class FT >
@@ -319,8 +320,8 @@ cmp_signed_dist_to_directionC2(const FT &la, const FT &lb,
                                const FT &px, const FT &py,
                                const FT &qx, const FT &qy)
 {
-  return CGAL::compare(scaled_distance_to_directionC2(la,lb,px,py),
-                       scaled_distance_to_directionC2(la,lb,qx,qy));
+  return CGAL_NTS compare(scaled_distance_to_directionC2(la,lb,px,py),
+                          scaled_distance_to_directionC2(la,lb,qx,qy));
 }
 
 template < class FT >
@@ -353,8 +354,8 @@ cmp_signed_dist_to_lineC2(const FT &px, const FT &py,
                           const FT &rx, const FT &ry,
                           const FT &sx, const FT &sy)
 {
-  return CGAL::compare(scaled_distance_to_lineC2(px,py,qx,qy,rx,ry),
-                       scaled_distance_to_lineC2(px,py,qx,qy,sx,sy));
+  return CGAL_NTS compare(scaled_distance_to_lineC2(px,py,qx,qy,rx,ry),
+                          scaled_distance_to_lineC2(px,py,qx,qy,sx,sy));
 }
 
 template <class FT>

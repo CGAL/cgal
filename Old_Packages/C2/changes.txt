@@ -1,3 +1,6 @@
+Version 4.0 (?? June 2000)
+- Fixed namespace issues for number type utilities [syl].
+
 Version 3.9 (6 Juin 2000)
 fixed a bug in bisector_of_pointsC2 in the file
 include/CGAL/constructions/kernel_ftC2.h

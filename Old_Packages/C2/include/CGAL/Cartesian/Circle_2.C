@@ -54,7 +54,7 @@ CircleC2<R CGAL_CTAG>::
 CircleC2(const typename CircleC2<R CGAL_CTAG>::Point_2 &center,
          const Orientation &orient)
 {
-  CGAL_kernel_precondition( ( orient    != COLLINEAR) );
+  CGAL_kernel_precondition( orient != COLLINEAR );
 
   new ( static_cast< void*>(ptr)) Circle_repC2<R>(center, FT(0), orient);
 }
@@ -78,7 +78,6 @@ CircleC2(const typename CircleC2<R CGAL_CTAG>::Point_2 &p,
   } else
     new ( static_cast< void*>(ptr)) Circle_repC2<R>(p, FT(0), orient);
 }
-
 
 template < class R >
 CGAL_KERNEL_CTOR_MEDIUM_INLINE
@@ -108,9 +107,9 @@ CGAL_KERNEL_INLINE
 bool
 CircleC2<R CGAL_CTAG>::operator==(const CircleC2<R CGAL_CTAG> &c) const
 {
-  return (center() == c.center()) &&
-         (squared_radius() == c.squared_radius() &&
-          orientation() == c.orientation());
+  return center() == c.center() &&
+         squared_radius() == c.squared_radius() &&
+         orientation() == c.orientation();
 }
 
 template < class R >
@@ -160,8 +159,8 @@ Bounded_side
 CircleC2<R CGAL_CTAG>::
 bounded_side(const typename CircleC2<R CGAL_CTAG>::Point_2 &p) const
 {
-  return Bounded_side(CGAL::compare(squared_radius(),
-                                    squared_distance(center(),p)));
+  return Bounded_side(CGAL_NTS compare(squared_radius(),
+                                       squared_distance(center(),p)));
 }
 
 template < class R >
@@ -218,7 +217,7 @@ inline
 bool
 CircleC2<R CGAL_CTAG>::is_degenerate() const
 {
-  return is_zero(squared_radius());
+  return CGAL_NTS is_zero(squared_radius());
 }
 
 template < class R >

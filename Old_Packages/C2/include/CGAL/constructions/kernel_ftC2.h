@@ -20,8 +20,6 @@ midpointC2( const FT &px, const FT &py,
   y = (py+qy) / FT(2);
 }
 
-
-
 template < class FT >
 CGAL_KERNEL_LARGE_INLINE
 void
@@ -34,20 +32,19 @@ circumcenter_translateC2(const FT &dqx, const FT &dqy,
   // where (cx, cy) are the coordinates of the circumcenter C.
 
   // What we do is intersect the bisectors.
-  FT r2 = square(drx) + square(dry);
-  FT q2 = square(dqx) + square(dqy);
+  FT r2 = CGAL_NTS square(drx) + CGAL_NTS square(dry);
+  FT q2 = CGAL_NTS square(dqx) + CGAL_NTS square(dqy);
   FT den = FT(2) * det2x2_by_formula(dqx, dqy, drx, dry);
 
   // The 3 points aren't collinear.
   // Hopefully, this is already checked at the upper level.
-  CGAL_kernel_assertion ( ! is_zero(den) );
+  CGAL_kernel_assertion ( den != FT(0) );
 
   // One possible optimization here is to precompute 1/den, to avoid one
   // division.  However, we loose precision, and it's maybe not worth it (?).
   dcx =   det2x2_by_formula (dry, dqy, r2, q2) / den;
   dcy = - det2x2_by_formula (drx, dqx, r2, q2) / den;
 }
-
 
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
@@ -86,7 +83,6 @@ line_from_point_directionC2(const FT &px, const FT &py,
   c = px*dy - py*dx;
 }
 
-
 template < class FT >
 CGAL_KERNEL_INLINE
 void
@@ -98,11 +94,6 @@ bisector_of_pointsC2(const FT &px, const FT &py,
   b = FT(2)*(py - qy);
   c = -px*px - py*py + qx*qx + qy*qy;
 }
-
-
-
-
-
 
 template < class FT >
 inline
@@ -136,7 +127,7 @@ Oriented_side
 side_of_oriented_lineC2(const FT &a, const FT &b, const FT &c,
                         const FT &x, const FT &y)
 {
-  return Oriented_side(CGAL::sign(a*x+b*y+c));
+  return Oriented_side(CGAL_NTS sign(a*x+b*y+c));
 }
 
 template < class FT >
@@ -148,7 +139,7 @@ squared_circumradiusC2(const FT &px, const FT &py,
                        FT &x, FT &y )
 {
   circumcenter_translateC2(qx-px, qy-py, rx-px, ry-py, x, y);
-  FT r2 = square(x) + square(y);
+  FT r2 = CGAL_NTS square(x) + CGAL_NTS square(y);
   x += px;
   y += py;
   return r2;
@@ -163,9 +154,8 @@ squared_circumradiusC2(const FT &px, const FT &py,
 {
   FT x, y;
   circumcenter_translateC2(qx-px, qy-py, rx-px, ry-py, x, y);
-  return square(x) + square(y);
+  return CGAL_NTS square(x) + CGAL_NTS square(y);
 }
-
 
 template < class FT >
 CGAL_KERNEL_INLINE
@@ -173,7 +163,7 @@ FT
 squared_distanceC2( const FT &px, const FT &py,
                     const FT &qx, const FT &qy)
 {
-  return square(px-qx) + square(py-qy);
+  return CGAL_NTS square(px-qx) + CGAL_NTS square(py-qy);
 }
 
 template < class FT >

@@ -27,15 +27,13 @@ y_equal(const PointC2<R CGAL_CTAG> &p, const PointC2<R CGAL_CTAG> &q)
     return p.y() == q.y();
 }
 
-
 template < class R >
 inline
 bool
 equal_xy(const PointC2<R CGAL_CTAG> &p, const PointC2<R CGAL_CTAG> &q)
 {
-    return (p.x() == q.x() && p.y() == q.y());
+    return p.x() == q.x() && p.y() == q.y();
 }
-
 
 template < class R >
 inline
@@ -44,7 +42,6 @@ less_x(const PointC2<R CGAL_CTAG> &p, const PointC2<R CGAL_CTAG> &q)
 {
     return p.x() < q.x();
 }
-
 
 template < class R >
 inline
@@ -59,7 +56,7 @@ inline
 Comparison_result
 compare_x(const PointC2<R CGAL_CTAG> &p, const PointC2<R CGAL_CTAG> &q)
 {
-    return CGAL::compare(p.x(), q.x());
+    return CGAL_NTS compare(p.x(), q.x());
 }
 
 template < class R >
@@ -67,7 +64,7 @@ inline
 Comparison_result
 compare_y(const PointC2<R CGAL_CTAG> &p, const PointC2<R CGAL_CTAG> &q)
 {
-    return CGAL::compare(p.y(), q.y());
+    return CGAL_NTS compare(p.y(), q.y());
 }
 
 template < class R >
