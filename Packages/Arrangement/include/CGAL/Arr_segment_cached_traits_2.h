@@ -618,14 +618,10 @@ public:
       return (false);
 
     if (! is_overlap) 
-    {
       return (compare_xy_2_object()(ip1, p) == LARGER);
-    }
-    else
-    {
-      // Since always ip1 < ip2.
-      return (compare_xy_2_object()(ip2, p) == LARGER);
-    }
+
+    // Since always ip1 < ip2.
+    return (compare_xy_2_object()(ip2, p) == LARGER);
   }
 
   /*! do_intersect_to_left() compares the location of the intersection
@@ -646,14 +642,10 @@ public:
       return (false);
 
     if (! is_overlap) 
-    {
       return (compare_xy_2_object()(ip1, p) == SMALLER);
-    }
-    else
-    {
-      // Since always ip1 < ip2.
-      return (compare_xy_2_object()(ip1, p) == SMALLER);
-    }
+
+    // Since always ip1 < ip2.
+    return (compare_xy_2_object()(ip1, p) == SMALLER);
   }
 
   /*! nearest_intersection_to_right() finds the nearest intersection point of
@@ -953,7 +945,7 @@ private:
       }
 
       // Check if the intersection segment has not become a point.
-      is_overlap = (comp_xy(p1,p2) == EQUAL);
+      is_overlap = (comp_xy(p1,p2) != EQUAL);
       CGAL_assertion(comp_xy(p1,p2) != LARGER);
       return (true);
     }
