@@ -8,6 +8,7 @@
 # -d   create a default CGAL makefile
 # -t   create a makefile for the test suite
 # -w   create a makefile with flags for LEDA windows
+# -g   create a makefile with flags for GEOWIN
 
 #VERSION=2.0
 
@@ -87,12 +88,6 @@ create_makefile()
     base=`basename $file .C`
     create_makefile_entry $base
   done
-#  echo clean:
-#  printf    "	rm -f *\$(OBJ_EXT) "
-#  for file in `ls *.C` ; do
-#      printf "\\\\\n                   `basename $file .C`\$(EXE_EXT) "
-#  done
-#  printf    "\\\\\n                   core\n\n"
   printf "clean: "
   for file in `ls *.C` ; do
       printf "\\\\\n                   `basename $file .C`.clean "
