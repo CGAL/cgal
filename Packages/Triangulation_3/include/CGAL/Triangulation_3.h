@@ -1423,7 +1423,6 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
        Cell_handle start ) const
   // returns the (finite or infinite) cell p lies in
   // starts at cell "start"
-  // start must be finite
   // if lt == OUTSIDE_CONVEX_HULL, li is the
   // index of a facet separating p from the rest of the triangulation
   // in dimension 2 :
@@ -1434,105 +1433,79 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
   // separating p from the rest of the triangulation
   // lt = OUTSIDE_AFFINE_HULL if p is not coplanar with the triangulation
 {
-  int i, inf;
+    if ( dimension() >= 1 ) {
+        // Make sure we continue from here with a finite cell.
+        if ( start == Cell_handle() )
+            start = infinite_cell();
 
-  if ( dimension() >= 1 && start == Cell_handle() )
-    // there is at least one finite "cell" (or facet or edge)
-    start = infinite_vertex()->cell()->neighbor
-            ( infinite_vertex()->cell()->index( infinite_vertex()) );
+        int ind_inf;
+        if ( start->has_vertex(infinite, ind_inf) )
+	    start = start->neighbor(ind_inf);
+    }
 
   switch (dimension()) {
   case 3:
     {
       CGAL_triangulation_precondition( start != Cell_handle() );
-      Cell_handle previous = Cell_handle();
-      Cell_handle c;
-      int ind_inf;
-      if ( start->has_vertex(infinite, ind_inf) )
-	c = start->neighbor(ind_inf);
-      else
-	c = start;
- 
-      Orientation o[4];
+      CGAL_triangulation_precondition( ! start->has_vertex(infinite) );
 
       // We implement the remembering visibility/stochastic walk.
 
-      // Main locate loop
-      while(1) {
-	if ( c->has_vertex(infinite,li) ) {
-	  // c must contain p in its interior
-	  lt = OUTSIDE_CONVEX_HULL;
-	  return c;
-	}
+      // Remembers the previous cell to avoid useless orientation tests.
+      Cell_handle previous = Cell_handle();
+      Cell_handle c = start;
 
-	// FIXME: do more benchmarks.
-	i = rng.template get_bits<2>(); // For the remembering stochastic walk
-	// i = 0; // For the remembering visibility walk. Ok for Delaunay only
+      // Stores the results of the 4 orientation tests.  It will be used
+      // at the end to decide if p lies on a face/edge/vertex/interior.
+      Orientation o[4];
 
-        Orientation test_or = (i&1)==0 ? NEGATIVE : POSITIVE;
-	const Point & p1 = c->vertex( (i+1)&3 )->point();
-	const Point & p2 = c->vertex( (i+2)&3 )->point();
-	const Point & p3 = c->vertex( (i+3)&3 )->point();
+      // Now treat the cell c.
+      try_next_cell:
 
-	// Note : among the four Points, 3 are common with the previous cell...
-	// Something can probably be done to take advantage of this, like
-	// storing the four in an array and changing only one ?
+        // We know that the 4 vertices of c are positively oriented.
+        // So, in order to test if p is seen outside from one of c's facets,
+        // we just replace the corresponding point by p in the orientation
+        // test.  We do this using the array below.
+        const Point* pts[4] = { &(c->vertex(0)->point()),
+                                &(c->vertex(1)->point()),
+                                &(c->vertex(2)->point()),
+                                &(c->vertex(3)->point()) };
 
-	// We could make a loop of these 4 blocks, for clarity, but not speed.
-	Cell_handle next = c->neighbor(i);
-	if (previous != next) {
-	  o[0] = orientation(p, p1, p2, p3);
-	  if ( o[0] == test_or) {
+        // For the remembering stochastic walk,
+        // we need to start trying with a random index :
+	int i = rng.template get_bits<2>();
+        // For the remembering visibility walk (Delaunay only), we don't :
+	// int i = 0;
+
+        for (int j=0; j != 4; ++j, i = (i+1)&3) {
+	    Cell_handle next = c->neighbor(i);
+	    if (previous == next) {
+	        o[i] = POSITIVE;
+                continue;
+            }
+            // We temporarily put p at i's place in pts.
+            const Point* backup = pts[i];
+            pts[i] = &p;
+	    o[i] = orientation(*pts[0], *pts[1], *pts[2], *pts[3]);
+	    if ( o[i] != NEGATIVE ) {
+                pts[i] = backup;
+                continue;
+            }
+	    if ( next->has_vertex(infinite, li) ) {
+	        // We are outside the convex hull.
+	        lt = OUTSIDE_CONVEX_HULL;
+	        return next;
+	    }
 	    previous = c;
 	    c = next;
-	    continue;
-	  }
-	} else
-	    o[0] = (Orientation) - test_or;
+            goto try_next_cell;
+        }
 
-	const Point & p0 = c->vertex( i )->point();
-
-	next = c->neighbor((i+1)&3);
-	if (previous != next) {
-	  o[1] = orientation(p0, p, p2, p3);
-	  if ( o[1] == test_or) {
-	    previous = c;
-	    c = next;
-	    continue;
-	  }
-	} else
-	    o[1] = (Orientation) - test_or;
-
-	next = c->neighbor((i+2)&3);
-	if (previous != next) {
-	  o[2] = orientation(p0, p1, p, p3);
-	  if ( o[2] == test_or) {
-	    previous = c;
-	    c = next;
-	    continue;
-	  }
-	} else
-	    o[2] = (Orientation) - test_or;
-
-	next = c->neighbor((i+3)&3);
-	if (previous != next) {
-	  o[3] = orientation(p0, p1, p2, p);
-	  if ( o[3] == test_or) {
-	    // previous = c; // not necessary because it's the last one.
-	    c = next;
-	    continue;
-	  }
-	} else
-	    o[3] = (Orientation) - test_or;
-
-	break;
-      }
-	  
 	// now p is in c or on its boundary
 	int sum = ( o[0] == COPLANAR )
-	  + ( o[1] == COPLANAR )
-	  + ( o[2] == COPLANAR )
-	  + ( o[3] == COPLANAR );
+	        + ( o[1] == COPLANAR )
+	        + ( o[2] == COPLANAR )
+	        + ( o[3] == COPLANAR );
 	switch (sum) {
 	case 0:
 	  {
@@ -1540,35 +1513,31 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
 	    break;
 	  }
 	case 1:
-	  { 
+	  {
 	    lt = FACET;
-	    li = ( o[0] == COPLANAR ) ? i :
-	         ( o[1] == COPLANAR ) ? (i+1)&3 :
-	         ( o[2] == COPLANAR ) ? (i+2)&3 :
-	         (i+3)&3;
+	    li = ( o[0] == COPLANAR ) ? 0 :
+	         ( o[1] == COPLANAR ) ? 1 :
+	         ( o[2] == COPLANAR ) ? 2 : 3;
 	    break;
 	  }
 	case 2:
-	  { 
+	  {
 	    lt = EDGE;
-	    li = ( o[0] != COPLANAR ) ? i :
-	         ( o[1] != COPLANAR ) ? ((i+1)&3) :
-	         ((i+2)&3);
-	    lj = ( o[ (li+1-i)&3 ] != COPLANAR ) ? ((li+1)&3) :
-	         ( o[ (li+2-i)&3 ] != COPLANAR ) ? ((li+2)&3) :
-	         ((li+3)&3);
+	    li = ( o[0] != COPLANAR ) ? 0 :
+	         ( o[1] != COPLANAR ) ? 1 : 2;
+	    lj = ( o[li+1] != COPLANAR ) ? li+1 :
+	         ( o[li+2] != COPLANAR ) ? li+2 : li+3;
 	    CGAL_triangulation_assertion(collinear( p,
 						    c->vertex( li )->point(),
-						    c->vertex( lj )->point() ));
+						    c->vertex( lj )->point()));
 	    break;
 	  }
 	case 3:
 	  {
 	    lt = VERTEX;
-	    li = ( o[0] != COPLANAR ) ? i :
-	         ( o[1] != COPLANAR ) ? (i+1)&3 :
-	         ( o[2] != COPLANAR ) ? (i+2)&3 :
-	         (i+3)&3;
+	    li = ( o[0] != COPLANAR ) ? 0 :
+	         ( o[1] != COPLANAR ) ? 1 :
+	         ( o[2] != COPLANAR ) ? 2 : 3;
 	    break;
 	  }
 	}
@@ -1577,27 +1546,22 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
   case 2:
     {
       CGAL_triangulation_precondition( start != Cell_handle() );
-      Cell_handle c;
-      int ind_inf;
-      if ( start->has_vertex(infinite, ind_inf) )
-	c = start->neighbor(ind_inf);
-      else
-	c = start;
+      CGAL_triangulation_precondition( ! start->has_vertex(infinite) );
+      Cell_handle c = start;
 
       //first tests whether p is coplanar with the current triangulation
-      Finite_facets_iterator finite_fit = finite_facets_begin();
-      if ( orientation( finite_fit->first->vertex(0)->point(),
-			finite_fit->first->vertex(1)->point(),
-			finite_fit->first->vertex(2)->point(),
+      if ( orientation( c->vertex(0)->point(),
+			c->vertex(1)->point(),
+			c->vertex(2)->point(),
 			p ) != DEGENERATE ) {
 	lt = OUTSIDE_AFFINE_HULL;
 	li = 3; // only one facet in dimension 2
-	return (*finite_fit).first;
+	return c;
       }
       // if p is coplanar, location in the triangulation
       // only the facet numbered 3 exists in each cell
       while (1) {
-	  
+	int inf;
 	if ( c->has_vertex(infinite,inf) ) {
 	  // c must contain p in its interior
 	  lt = OUTSIDE_CONVEX_HULL;
@@ -1609,7 +1573,7 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
 	// else c is finite
 	// we test its edges in a random order until we find a
 	// neighbor to go further
-	i = rng.get_int(0, 3);
+	int i = rng.get_int(0, 3);
 	const Point & p0 = c->vertex( i )->point();
 	const Point & p1 = c->vertex( ccw(i) )->point();
 	const Point & p2 = c->vertex( cw(i) )->point();
@@ -1666,24 +1630,19 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
   case 1:
     {
       CGAL_triangulation_precondition( start != Cell_handle() );
-      Cell_handle c;
-      int ind_inf;
-      if ( start->has_vertex(infinite, ind_inf) )
-	c = start->neighbor(ind_inf);
-      else
-	c = start;
+      CGAL_triangulation_precondition( ! start->has_vertex(infinite) );
+      Cell_handle c = start;
 
       //first tests whether p is collinear with the current triangulation
-      Finite_edges_iterator finite_eit = finite_edges_begin();
       if ( ! collinear( p,
-			finite_eit->first->vertex(0)->point(),
-			finite_eit->first->vertex(1)->point()) ) {
+			c->vertex(0)->point(),
+			c->vertex(1)->point()) ) {
 	lt = OUTSIDE_AFFINE_HULL;
-	return finite_eit->first;
+	return c;
       }
       // if p is collinear, location :
       while (1) {
-	if ( c->has_vertex(infinite,inf) ) {
+	if ( c->has_vertex(infinite) ) {
 	  // c must contain p in its interior
 	  lt = OUTSIDE_CONVEX_HULL;
 	  return c;
@@ -1699,7 +1658,7 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
 	  continue;
 	case BEFORE:
 	  c = c->neighbor(1);
-	  continue; 
+	  continue;
 	case MIDDLE:
 	    lt = EDGE;
 	    li = 0;
@@ -1740,7 +1699,7 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
     }
   }
 }
-	  
+
 template < class GT, class Tds >
 Bounded_side
 Triangulation_3<GT,Tds>::
