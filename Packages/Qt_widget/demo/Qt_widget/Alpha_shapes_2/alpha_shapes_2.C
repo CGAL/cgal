@@ -123,7 +123,7 @@ public:
   file->insertItem("&Load Triangulation", this, 
 		   SLOT(load_triangulation()), CTRL+Key_L);
   file->insertItem("&Save Triangulation", 
-		   this, SLOT(save_triangulation()), CTRL+Key_T);
+		   this, SLOT(save_triangulation()), CTRL+Key_S);
   file->insertSeparator();
   file->insertItem("&Load Image", 
 		   this, SLOT(load_image()), CTRL+Key_I);
@@ -141,7 +141,7 @@ public:
   edit->insertItem("C&rust", this, 
 		   SLOT(show_crust()), CTRL+Key_R );
   edit->insertItem("&Weighted Alpha Shape", this, 
-		   SLOT(show_weighted()), CTRL+Key_W );
+		   SLOT(show_weighted()), CTRL+Key_B);
 
   // help menu
   QPopupMenu * help = new QPopupMenu( this );
@@ -308,6 +308,8 @@ private slots:
         mult = res;
       slider->setValue(res*10000/mult);	
       A.set_alpha(alpha_index);
+      label->setText(QString("The current alpha value: ") +
+		   QString::number(alpha_index));
       widget->redraw();      
     }
   }
