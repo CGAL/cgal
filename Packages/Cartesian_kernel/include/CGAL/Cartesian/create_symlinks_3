@@ -1,0 +1,51 @@
+#!/bin/sh
+
+# Presumably LINK=cp on M$ since there are no symlinks
+LINK="ln -sf"
+
+# The following is necessary for the new kernel to work, since
+# 1. outer files may still try to include ClassC3<R>
+# 2. if they include Class_2<R> in Michael's design, we'd like them to
+# include Cartesian/Class_2<R> instead
+
+# becuase most problems have been fixed with Stefan, this script is only to be
+# used by the braves wanting to try out Michael's design
+# (CGAL_CFG_NO_ADVANCED_KERNEL not set)
+
+cd .. ;
+
+# to solve problems related to #1
+$LINK Cartesian/Aff_transformation_3.h Aff_transformationC3.h
+$LINK Cartesian/Direction_3.h DirectionC3.h
+$LINK Cartesian/Line_3.h LineC3.h
+$LINK Cartesian/Plane_3.h PlaneC3.h
+$LINK Cartesian/Point_3.h PointC3.h
+$LINK Cartesian/Ray_3.h RayC3.h
+$LINK Cartesian/Segment_3.h SegmentC3.h
+$LINK Cartesian/Tetrahedron_3.h TetrahedronC3.h
+$LINK Cartesian/Triangle_3.h TriangleC3.h
+$LINK Cartesian/Vector_3.h VectorC3.h
+$LINK Cartesian/basic_constructions_3.h basic_constructionsC3.h
+$LINK constructions/kernel_ftC3.h basic_constructions_ftC3.h
+$LINK Cartesian/distance_predicates_3.h distance_predicatesC3.h
+$LINK predicates/kernel_ftC3.h predicates_on_ftC3.h
+$LINK Cartesian/predicates_on_points_3.h predicates_on_pointsC3.h
+$LINK Cartesian/solve_3.h solveC3.h
+
+# to solve problems related to #2
+$LINK Cartesian/Aff_transformation_3.h Aff_transformation_3.h
+$LINK Cartesian/Direction_3.h Direction_3.h
+$LINK Cartesian/Line_3.h Line_3.h
+$LINK Cartesian/Plane_3.h Plane_3.h
+$LINK Cartesian/Point_3.h Point_3.h
+$LINK Cartesian/Ray_3.h Ray_3.h
+$LINK Cartesian/Segment_3.h Segment_3.h
+$LINK Cartesian/Tetrahedron_3.h Tetrahedron_3.h
+$LINK Cartesian/Triangle_3.h Triangle_3.h
+$LINK Cartesian/Vector_3.h Vector_3.h
+$LINK Cartesian/basic_constructions_3.h basic_constructions_3.h
+$LINK Cartesian/basic_constructions_ft_3.h basic_constructions_ft_3.h
+$LINK Cartesian/distance_predicates_3.h distance_predicates_3.h
+$LINK Cartesian/predicates_on_ft_3.h predicates_on_ft_3.h
+$LINK Cartesian/predicates_on_points_3.h predicates_on_points_3.h
+$LINK Cartesian/solve_3.h solve_3.h

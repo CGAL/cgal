@@ -1,0 +1,49 @@
+#!/bin/sh
+
+# Presumably LINK=cp on M$ since there are no symlinks
+LINK="ln -f -s"
+
+# The following is necessary for the new kernel to work, since
+# 1. outer files may still try to include ClassC2<R>
+# 2. if they include Class_2<R> in Michael's design, we'd like them to
+# include Cartesian/Class_2<R> instead
+
+# because it's been fixed in Stefan's deisgn, these scripts are only useful for
+# the brave who want to try out Michael's design (CGAL_CFG_NO_ADVANCED_KERNEL
+# not set)
+
+cd .. ;
+
+# to solve problems related to #1
+$LINK Cartesian/Aff_transformation_2.h Aff_transformationC2.h
+$LINK Cartesian/Circle_2.h CircleC2.h
+$LINK Cartesian/Circle_rep_2.h Circle_repC2.h
+$LINK Cartesian/Direction_2.h DirectionC2.h
+$LINK Cartesian/Iso_rectangle_2.h Iso_rectangleC2.h
+$LINK Cartesian/Line_2.h LineC2.h
+$LINK Cartesian/Point_2.h PointC2.h
+$LINK Cartesian/Ray_2.h RayC2.h
+$LINK Cartesian/Segment_2.h SegmentC2.h
+$LINK Cartesian/Triangle_2.h TriangleC2.h
+$LINK Cartesian/Vector_2.h VectorC2.h
+$LINK Cartesian/basic_constructions_2.h basic_constructionsC2.h
+$LINK Cartesian/distance_predicates_2.h distance_predicatesC2.h
+$LINK Cartesian/predicates_on_lines_2.h predicates_on_linesC2.h
+$LINK Cartesian/predicates_on_points_2.h predicates_on_pointsC2.h
+
+# to solve problems related to #2
+$LINK Cartesian/Aff_transformation_2.h Aff_transformation_2.h
+$LINK Cartesian/Circle_2.h Circle_2.h
+$LINK Cartesian/Circle_rep_2.h Circle_rep_2.h
+$LINK Cartesian/Direction_2.h Direction_2.h
+$LINK Cartesian/Iso_rectangle_2.h Iso_rectangle_2.h
+$LINK Cartesian/Line_2.h Line_2.h
+$LINK Cartesian/Point_2.h Point_2.h
+$LINK Cartesian/Ray_2.h Ray_2.h
+$LINK Cartesian/Segment_2.h Segment_2.h
+$LINK Cartesian/Triangle_2.h Triangle_2.h
+$LINK Cartesian/Vector_2.h Vector_2.h
+$LINK Cartesian/basic_constructions_2.h basic_constructions_2.h
+$LINK Cartesian/distance_predicates_2.h distance_predicates_2.h
+$LINK Cartesian/predicates_on_lines_2.h predicates_on_lines_2.h
+$LINK Cartesian/predicates_on_points_2.h predicates_on_points_2.h
