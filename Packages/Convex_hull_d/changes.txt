@@ -1,3 +1,6 @@
+24 July 2004  Sylvain Pion
+- Move demo from Kernel_d.
+
 22 June 2004  Sylvain Pion
 - G++ 3.4 fixes.
 
