@@ -24,8 +24,6 @@
 
 #include <CGAL/Cartesian/redefine_names_2.h>
 #include <CGAL/Cartesian/Circle_rep_2.h>
-#include <CGAL/Cartesian/constructions_on_points_2.h>
-#include <CGAL/Cartesian/constructions_on_circles_2.h>
 #include <CGAL/Cartesian/distance_computations_2.h>
 #include <CGAL/Cartesian/predicates_on_points_2.h>
 

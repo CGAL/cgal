@@ -24,7 +24,6 @@
 
 #include <CGAL/Cartesian/redefine_names_3.h>
 #include <CGAL/Fourtuple.h>
-#include <CGAL/Cartesian/constructions_on_planes_3.h>
 #include <CGAL/Cartesian/distance_computations_3.h>
 #include <CGAL/Cartesian/predicates_on_planes_3.h>
 
