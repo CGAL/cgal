@@ -296,11 +296,11 @@ bool is_finite_test()
 {
   bool tmpflag, flag = true;
   const double inf = 1.0/zero;
-  const double nan = inf-inf;
   const IA_nt a(inf, inf), b(-inf,inf), c(-inf, 0), d(0,inf);
   const IA_nt e(0,1), f(0,0);
 
   DEBUG(
+  const double nan = inf-inf;
   using CGAL::is_finite;
   std::cout << "Test de is_finite(double)" << std::endl;
   std::cout << "is_finite( " << inf << " ) = " << is_finite(inf) << std::endl;
