@@ -128,6 +128,7 @@ public:
   // - non virtual => no lazy, no virtual calls.
   //
   // (rounding changes are disablable on a whole algorithm basis)
+  //  inline ?
   virtual Interval_nt interval() const = 0;
   // virtual ET exact() const = 0;
   // virtual ostream operator<<() const = 0; // ou string, comme Core ?
