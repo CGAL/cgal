@@ -247,7 +247,7 @@ copy(const Constrained_triangulation_plus_2 &ctp)
   Vertex_iterator vit = ctp.vertices_begin();
   Vertex_iterator vvit = vertices_begin();
   for( ; vit != ctp.vertices_end(); ++vit, ++vvit) {
-    assert (vit->point() == vvit->point());
+    CGAL_triangulation_assertion(vit->point() == vvit->point());
     vmap[vit] = vvit;
   }
   hierarchy.copy(ctp.hierarchy, vmap);
