@@ -159,7 +159,8 @@ private slots:
     widget->clear();
     widget->clear_history();
     tr1.clear();
-    widget->set_window(-1.1, 1.1, -1.1, 1.1); // set the Visible Area to the Interval
+    // set the Visible Area to the Interval
+    widget->set_window(-1.1, 1.1, -1.1, 1.1);
     widget->unlock();
     something_changed();
   }
@@ -347,7 +348,7 @@ private:
   CGAL::Qt_widget                   *widget;		
   CGAL::Qt_widget_standard_toolbar  *stoolbar;
   Tools_toolbar                     *newtoolbar;
-  Layers_toolbar	            *vtoolbar;
+  Layers_toolbar                    *vtoolbar;
   bool                              got_point;	
 	  //if a CGAL::Point is received should be true
   int                               old_state;
