@@ -145,6 +145,8 @@ public:
 
 };
 
+template < class Gt, class Tds >
+inline bool
 Delaunay_triangulation_2<Gt,Tds>::
 does_conflict(const Point  &p, Face_handle fh) const
 {
