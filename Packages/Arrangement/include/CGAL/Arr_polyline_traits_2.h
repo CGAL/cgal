@@ -54,8 +54,7 @@ private:
   /*!
    * Inner representation of a polyline curve.
    */
-  class My_polyline_2 : 
-    protected ::std::vector<typename Segment_traits_::Curve_2>
+  class My_polyline_2
   {
   protected:
 
@@ -64,11 +63,16 @@ private:
     typedef typename Segment_traits_2::Curve_2        Segment_2;
     typedef ::std::vector<Segment_2>                  Base;
 
+  private:
+    // The segments that comprise the poyline:
+    ::std::vector<Segment_2>                          segments;
+
+  protected:
     /*!
      * Default constructor.
      */
     My_polyline_2 () :
-      Base()
+      segments()
     {}
 
     /*!
@@ -81,7 +85,8 @@ private:
      */
     template <class Iterator>
     My_polyline_2 (const Iterator& pts_begin,
-		   const Iterator& pts_end)
+		   const Iterator& pts_end) :
+      segments()
     {
       // Check if there are no points in the range:
       Iterator  ps = pts_begin;
@@ -95,7 +100,7 @@ private:
 
       while (pt != pts_end)
       {
-	push_back (Segment_2 (*ps, *pt));
+	segments.push_back (Segment_2 (*ps, *pt));
 	ps++; pt++;
       }
     }
@@ -106,9 +111,37 @@ private:
      * \pre If the polyline is not empty, the segment source must be the
      *      same as the target point of the last segment in the polyline.
      */
-    void append (const Segment_2& seg)
+    inline void push_back (const Segment_2& seg)
     {
-      push_back(seg);
+      segments.push_back(seg);
+      return;
+    }
+
+    /*!
+     * Get the number of segments that comprise the poyline.
+     * \return The number of segments.
+     */
+    inline int size () const
+    {
+      return (segments.size());
+    }
+
+    /*!
+     * Get the i'th segment of the polyline.
+     * \param i The segment index (from 0 to size()-1).
+     * \return A const reference to the segment.
+     */
+    inline const Segment_2& operator[] (const int& i) const
+    {
+      return (segments[i]);
+    }
+
+    /*!
+     * Clear the polyline.
+     */
+    inline void clear ()
+    {
+      segments.clear();
       return;
     }
 
@@ -385,7 +418,7 @@ public:
 
     for (i = 0; i < n; i++)
     {
-      flip_cv.append(seg_traits.curve_opposite(cv[n - i - 1]));
+      flip_cv.push_back (seg_traits.curve_opposite(cv[n - i - 1]));
     }
 
     return (flip_cv); 
