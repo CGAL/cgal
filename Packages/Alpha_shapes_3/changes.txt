@@ -1,3 +1,6 @@
+14 May 2004 Sylvain Pion
+- Fix warning.
+
 08 May 2004 Sylvain Pion
 - Use CGAL_USE_GEOMVIEW
 

@@ -21,7 +21,7 @@
 //
 // Author(s)     : Andreas Fabri
 //                 Lutz Kettner <kettner@inf.ethz.ch>
-//                 Herve Bronnimann <Herve.Bronnimann@sophia.inria.fr>
+//                 Herve Bronnimann
 //                 Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 
 
@@ -29,13 +29,8 @@
 #ifndef CGAL_IO_VRML_2_OSTREAM_H
 #define CGAL_IO_VRML_2_OSTREAM_H
 
-#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
-#endif // CGAL_BASIC_H
-#ifndef CGAL_PROTECT_IOSTREAM_H
 #include <iostream>
-#define CGAL_PROTECT_IOSTREAM_H
-#endif // CGAL_PROTECT_IOSTREAM_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -301,7 +296,6 @@ VRML_2_ostream&
 operator<<(VRML_2_ostream& os,
            const Sphere_3<R > &s)
 {
-  const char *Indent = "                                    ";
   os <<      "        Group {\n"
              "            children [\n"
              "              Transform {\n"
@@ -326,7 +320,4 @@ operator<<(VRML_2_ostream& os,
 CGAL_END_NAMESPACE
 
 #endif // CGAL_IO_VRML_2_SEGMENT_3
-#endif // CGAL_SEGMENT_3_H
-
-
-
+#endif // CGAL_SPHERE_3_H

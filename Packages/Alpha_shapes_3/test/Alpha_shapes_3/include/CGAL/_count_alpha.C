@@ -194,7 +194,6 @@ show_triangulation(AS& A)
 	    << std::endl;
 
   typedef typename AS::Finite_cells_iterator Finite_cells_iterator;
-  Finite_cells_iterator cit = A.finite_cells_begin();
   for (  Finite_cells_iterator cit = A.finite_cells_begin();
 	 cit != A.finite_cells_end(); ++cit) {
     std::cerr << "cell " <<  "alpha " << cit->get_alpha() << std::endl;
