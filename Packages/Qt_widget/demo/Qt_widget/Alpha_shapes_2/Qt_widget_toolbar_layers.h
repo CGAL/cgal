@@ -27,9 +27,6 @@
 #include <CGAL/IO/Qt_widget.h>
 
 //Qt_widget_layer
-//#include "Qt_layer_show_triangulation.h"
-//#include "Qt_layer_show_voronoi.h"
-//#include "Qt_layer_show_points.h"
 #include "alpha_shapes_2_layers.h"
 
 //Qt

@@ -160,6 +160,17 @@ namespace CGAL {
     };
     void delete_pointi(){
       dt->remove(current_v);
+      FT alpha_index = as->get_alpha();
+      as->clear();
+      L.clear();
+      Vertex_iterator it = dt->vertices_begin(), 
+	              beyond = dt->vertices_end();
+      while(it != beyond) {      
+        L.push_back((*it).point());
+        ++it;
+	}
+      as->make_alpha_shape(L.begin(), L.end());
+      as->set_alpha(alpha_index);
       widget->redraw();	//redraw the scenes
     };
     void move_pointi(){
