@@ -507,6 +507,6 @@ fi
 
 # restore settings:
 cd ${CGAL_ROOT}
-cp LATEST RELEASE_NR
+mv LATEST RELEASE_NR
 rm -f $LOCK_FILE;
 # EOF

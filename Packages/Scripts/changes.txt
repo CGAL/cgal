@@ -1,3 +1,6 @@
+21 August 2004 Sylvain Pion
+- autotest_cgal : don't keep LATEST at the end (RELEASE_NR is enough).
+
 03 August 2004 Radu Ursu
 - create_internal_release:
   -fixed small bug introduced by the latest changes: put "test_" in front 
