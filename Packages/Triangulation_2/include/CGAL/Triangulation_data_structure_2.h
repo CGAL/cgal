@@ -53,14 +53,14 @@ CGAL_BEGIN_NAMESPACE
 // These two compilers seem to eat the concept checking code.
 #if defined __GNUG__ || defined __SUNPRO_CC
 template < typename T >
-struct vertex_and_cell_base_concept_checker {
+struct vertex_and_face_base_concept_checker {
   template < typename T2 > struct check_for_rebind {};
 };
 
 template <>
 template < typename T >
-struct vertex_and_cell_base_concept_checker<T>::check_for_rebind<T>
-{ struct YOU_FORGOT_TO_ADD_A_Rebind_TO_YOUR_OWN_VERTEX_OR_CELL{}; };
+struct vertex_and_face_base_concept_checker<T>::check_for_rebind<T>
+{ struct YOU_FORGOT_TO_ADD_A_Rebind_TO_YOUR_OWN_VERTEX_OR_FACE{}; };
 #endif
 
 
@@ -124,17 +124,17 @@ class Triangulation_data_structure_2
 
 #if defined __GNUG__ || defined __SUNPRO_CC
   // We verify that the user has not forgotten to add a Rebind_TDS in his own
-  // Vertex/Cell derived class, by checking that rebinding it to void gives
+  // Vertex/Face derived class, by checking that rebinding it to void gives
   // the exact same type.
-  typedef vertex_and_cell_base_concept_checker<Vb>        checker_1;
+  typedef vertex_and_face_base_concept_checker<Vb>        checker_1;
   typedef typename Vb::template Rebind_TDS<void>::Other   vb2;
   typename checker_1::template check_for_rebind<vb2>::
-    YOU_FORGOT_TO_ADD_A_Rebind_TO_YOUR_OWN_VERTEX_OR_CELL o1;
+    YOU_FORGOT_TO_ADD_A_Rebind_TO_YOUR_OWN_VERTEX_OR_FACE o1;
 
-  typedef vertex_and_cell_base_concept_checker<Fb>        checker_2;
+  typedef vertex_and_face_base_concept_checker<Fb>        checker_2;
   typedef typename Fb::template Rebind_TDS<void>::Other   fb2;
   typename checker_2::template check_for_rebind<fb2>::
-    YOU_FORGOT_TO_ADD_A_Rebind_TO_YOUR_OWN_VERTEX_OR_CELL o2;
+    YOU_FORGOT_TO_ADD_A_Rebind_TO_YOUR_OWN_VERTEX_OR_FACE o2;
 #endif
 
   friend class Triangulation_ds_edge_iterator_2<Tds>;

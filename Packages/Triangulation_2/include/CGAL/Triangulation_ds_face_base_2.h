@@ -340,7 +340,7 @@ template <>
 class Triangulation_ds_face_base_2<void>
 {
 public:
-  typedef Dummy_tds_2 Triangulation_data_structure;
+  typedef Dummy_tds_2                                   Triangulation_data_structure;
   typedef Triangulation_data_structure::Vertex_handle   Vertex_handle;
   typedef Triangulation_data_structure::Face_handle     Face_handle;
   template <typename TDS2>

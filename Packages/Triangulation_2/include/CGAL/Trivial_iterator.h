@@ -36,8 +36,7 @@ CGAL_BEGIN_NAMESPACE
 class Trivial_iterator_tag{};
 
 
-#if !defined CGAL_CFG_NO_ITERATOR_TRAITS && \
-    defined CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
+#if defined CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
   template < class I, class Ref, class Ptr, class Val, class Dist >
 #else
   template <class I>
@@ -46,8 +45,7 @@ class Trivial_iterator
 {
 public:
   typedef I                                                 Iterator;
-#if !defined CGAL_CFG_NO_ITERATOR_TRAITS && \
-    defined CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
+#if defined CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
   typedef Trivial_iterator<I,Ref,Ptr,Val,Dist>              Self;
   typedef Val                                               value_type;
   typedef Dist                                              difference_type;
@@ -70,8 +68,7 @@ public:
   Trivial_iterator(const I &i) : base_(i) {}
 
   // To allow conversion from iterator to const_iterator.
-#if !defined CGAL_CFG_NO_ITERATOR_TRAITS && \
-    defined CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
+#if  defined CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
   template <class I2, class Ref2, class Ptr2, class Val2, class Dist2 >
   Trivial_iterator(const Trivial_iterator<I2, Ref2, Ptr2, Val2, Dist2> &t)
     : base_(t.base()) {}
@@ -98,8 +95,7 @@ private:
 
 class Trivial_comparable_iterator_tag{};
 
-#if !defined CGAL_CFG_NO_ITERATOR_TRAITS && \
-    defined CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
+#if  defined CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
   template < class I, class Ref, class Ptr, class Val, class Dist >
 #else
   template <class I>
@@ -108,8 +104,7 @@ class Trivial_comparable_iterator
 {
 public:
   typedef I                                            Iterator;
-#if !defined CGAL_CFG_NO_ITERATOR_TRAITS && \
-    defined CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
+#if  defined CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
   typedef Trivial_comparable_iterator<I,Ref,Ptr,Val,Dist>  Self;
   typedef Val                                          value_type;
   typedef Dist                                         difference_type;
@@ -133,8 +128,7 @@ public:
   Trivial_comparable_iterator(const I &i) : base_(i) {}
 
   // To allow conversion from iterator to const_iterator.
-#if !defined CGAL_CFG_NO_ITERATOR_TRAITS && \
-    defined CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
+#if  defined CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
   template <class I2, class Ref2, class Ptr2, class Val2, class Dist2>
   Trivial_comparable_iterator(const Trivial_comparable_iterator<I2, 
 			      Ref2, Ptr2, Val2, Dist2> &t)
@@ -180,8 +174,7 @@ private:
 #endif
 
 // This macro added to workaround yet another VC++ deficiency.
-#if !defined CGAL_CFG_NO_ITERATOR_TRAITS && \
-    defined CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT && \
+#if  defined CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT && \
     !defined CGAL_NO_CONCEPT_CHECKING
 #  define CGAL_TRIVIAL_ITERATOR_CHECKER_POINTER(X) \
           CGAL::Trivial_iterator<X*, X&, X*, X, std::ptrdiff_t>
