@@ -2705,9 +2705,13 @@ test_gmp()
     if [ -n "${GMP_SUPPORT}" ]; then
 	${_printf} "%s\n" '
 	#include <cstdio>
+	#ifdef __BORLANDC__
+	#include <cstddef>
+	using std::size_t;
+	using std::printf;
+	#endif 
 	#include "gmp.h"
-	int
-	main ()
+	int main()
 	{
 	    mpz_t b, p;
 	    mpz_init (p);
@@ -3741,9 +3745,18 @@ link_gmp()
 	if [ ! -r ${CGAL_LIB_DIR}/`full_ostype`/libgmp.a -a \
 	    -r ${i}/libgmp.a ]
 	then
-	    ${_ln} -s ${i}/libgmp.a \
-	      ${CGAL_LIB_DIR}/`full_ostype`/libgmp.a
-	    log_print "remark: linked libgmp from ${i}" 
+	    case ${CGAL_OS_COMPILER} in 
+		*CYGWIN*) 
+		    ${_cp} ${i}/libgmp.a \
+			${CGAL_LIB_DIR}/`full_ostype`/libgmp.a
+		    log_print "remark: copied libgmp from ${i}" 
+		    ;;
+		*) 
+		    ${_ln} -s ${i}/libgmp.a \
+			${CGAL_LIB_DIR}/`full_ostype`/libgmp.a
+		    log_print "remark: linked libgmp from ${i}" 
+		    ;;
+	    esac
 	    log_print "  to ${CGAL_LIB_DIR}/`full_ostype`."
 	fi
     done
