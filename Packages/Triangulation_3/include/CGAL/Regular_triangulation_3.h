@@ -44,7 +44,7 @@ class Regular_triangulation_3 : public Triangulation_3<Gt,Tds>
 
 public:
 
-  typedef typename Gt::Bare_point Bare_point;
+  typedef typename Gt::Bare_point Point;
   typedef typename Gt::Weighted_point Weighted_point;
 
   typedef typename Triangulation_3<Gt,Tds>::Vertex_handle Vertex_handle;
