@@ -102,7 +102,7 @@ template <typename T>
 class sort_vertices : public SNC_decorator<T> {
   
   typedef T SNC_structure;
-  typedef SNC_decorator<T>          Base;
+  typedef CGAL::SNC_decorator<T>          Base;
   typedef typename T::Vertex_handle Vertex_handle;
   typedef typename T::Point_3       Point_3;
   
@@ -118,7 +118,7 @@ template <typename T>
 class sort_edges : public SNC_decorator<T> {
   
   typedef T SNC_structure;  
-  typedef SNC_decorator<T>            Base;
+  typedef CGAL::SNC_decorator<T>            Base;
   typedef typename T::Halfedge_handle Halfedge_handle;
   
  public:
@@ -179,8 +179,8 @@ template <typename T>
 class sort_sedges : public SNC_decorator<T> {
   
   typedef T SNC_structure;  
-  typedef SNC_decorator<T>             Base;
-  typedef SM_decorator<T>          SM_decorator;
+  typedef CGAL::SNC_decorator<T>             Base;
+  typedef CGAL::SM_decorator<T>          SM_decorator;
   typedef typename T::Vertex_handle    Vertex_handle;
   typedef typename T::SHalfedge_handle SHalfedge_handle;
   typedef typename T::Sphere_circle    Sphere_circle;
@@ -240,7 +240,7 @@ template <typename T>
 class sort_sloops : public SNC_decorator<T> {
   
   typedef T SNC_structure;  
-  typedef SNC_decorator<T>             Base;
+  typedef CGAL::SNC_decorator<T>             Base;
   typedef typename T::SHalfloop_handle SHalfloop_handle;
   
  public:
@@ -260,15 +260,15 @@ template <typename T>
 class sort_sface_cycle_entries : public SNC_decorator<T> {
   
   typedef T                             SNC_structure;  
-  typedef SNC_decorator<T>              Base;
+  typedef CGAL::SNC_decorator<T>        Base;
   typedef typename T::SM_decorator      SM_decorator;
-  typedef typename T::Object_handle Object_handle;
-  typedef typename T::SVertex_handle  SVertex_handle;
+  typedef typename T::Object_handle     Object_handle;
+  typedef typename T::SVertex_handle    SVertex_handle;
   typedef typename T::SHalfedge_handle  SHalfedge_handle;
   typedef typename T::SHalfloop_handle  SHalfloop_handle;
-  typedef typename T::SFace_handle  SFace_handle;
-  typedef typename T::Point_3       Point_3;
-  typedef typename T::Vector_3       Vector_3;
+  typedef typename T::SFace_handle      SFace_handle;
+  typedef typename T::Point_3           Point_3;
+  typedef typename T::Vector_3          Vector_3;
   
  public:
   sort_sface_cycle_entries(T D) : Base(D) {}
@@ -333,7 +333,7 @@ template <typename T>
 class sort_sfaces : public SNC_decorator<T> {
   
   typedef T SNC_structure;
-  typedef SNC_decorator<T>                  Base;
+  typedef CGAL::SNC_decorator<T>            Base;
   typedef typename T::SM_decorator          SM_decorator;
   typedef typename T::Point_3               Point_3;
   typedef typename T::Vector_3              Vector_3;
@@ -445,7 +445,7 @@ template <typename T>
 class sort_volumes : public SNC_decorator<T> {
   
   typedef T SNC_structure;
-  typedef SNC_decorator<T>          Base;
+  typedef CGAL::SNC_decorator<T>    Base;
   typedef typename T::Volume_handle Volume_handle;
   typedef typename T::SFace_handle  SFace_handle;
   
@@ -541,14 +541,14 @@ class sort_shell_entries : public T {
 template<typename T>
 struct find_minimal_sface_of_shell : public SNC_decorator<T> {
   
-  typedef T                        SNC_structure;
-  typedef SNC_decorator<T>          Base;
-  typedef typename T::Vertex_handle  Vertex_handle;
-  typedef typename T::Halfedge_handle  Halfedge_handle;
-  typedef typename T::Halffacet_handle  Halffacet_handle;
-  typedef typename T::SFace_handle  SFace_handle;
-  typedef typename T::SHalfedge_handle  SHalfedge_handle;
-  typedef typename T::SHalfloop_handle  SHalfloop_handle;
+  typedef T                               SNC_structure;
+  typedef CGAL::SNC_decorator<T>          Base;
+  typedef typename T::Vertex_handle       Vertex_handle;
+  typedef typename T::Halfedge_handle     Halfedge_handle;
+  typedef typename T::Halffacet_handle    Halffacet_handle;
+  typedef typename T::SFace_handle        SFace_handle;
+  typedef typename T::SHalfedge_handle    SHalfedge_handle;
+  typedef typename T::SHalfloop_handle    SHalfloop_handle;
   typedef CGAL::Unique_hash_map<SFace_handle,bool> SFace_visited_hash;
 
   SFace_visited_hash& Done;

@@ -117,12 +117,12 @@ class SNC_point_locator_by_spatial_subdivision :
   public SNC_decorator
 { 
   typedef SNC_decorator Base;
-  typedef SNC_point_locator<SNC_decorator> SNC_point_locator;
-  typedef SNC_point_locator_by_spatial_subdivision<SNC_decorator> Self;
+  typedef CGAL::SNC_point_locator<SNC_decorator> SNC_point_locator;
+  typedef CGAL::SNC_point_locator_by_spatial_subdivision<SNC_decorator> Self;
   typedef typename SNC_decorator::SNC_structure SNC_structure;
   typedef typename SNC_decorator::Decorator_traits Decorator_traits;
   typedef typename Decorator_traits::SM_decorator SM_decorator;
-  typedef SNC_intersection<SNC_structure> SNC_intersection;
+  typedef CGAL::SNC_intersection<SNC_structure> SNC_intersection;
   typedef typename SNC_decorator::Kernel Kernel;
 
 public:

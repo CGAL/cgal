@@ -17,13 +17,13 @@ CGAL_BEGIN_NAMESPACE
 template<typename SNC_structure>
 class SNC_simplify : public SNC_decorator<SNC_structure> {
   
-  typedef SNC_simplify<SNC_structure>             Self;
-  typedef SNC_decorator<SNC_structure>            SNC_decorator;
-  typedef SNC_decorator                           Base;
-  typedef typename SNC_structure::Sphere_map      Sphere_map;
-  typedef SM_decorator<Sphere_map>            SM_decorator;
+  typedef CGAL::SNC_simplify<SNC_structure>             Self;
+  typedef CGAL::SNC_decorator<SNC_structure>            SNC_decorator;
+  typedef SNC_decorator                                 Base;
+  typedef typename SNC_structure::Sphere_map            Sphere_map;
+  typedef CGAL::SM_decorator<Sphere_map>                SM_decorator;
 #ifdef _DEBUG
-  typedef SNC_io_parser<SNC_structure>            SNC_io_parser;
+  typedef CGAL::SNC_io_parser<SNC_structure>            SNC_io_parser;
 #endif
   typedef typename SNC_structure::Vertex_handle Vertex_handle;
   typedef typename SNC_structure::Halfedge_handle Halfedge_handle;
@@ -609,7 +609,7 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
   void create_boundary_links_forall_volumes( 
       Unique_hash_map< Volume_handle, UFH_volume>& hash,
       Union_find< Volume_handle>& uf) {
-    typedef typename SNC_decorator::Shell_volume_setter Volume_setter;
+    typedef typename SNC_decorator::Shell_volume_setter<SNC_decorator> Volume_setter;
     //   typedef Unique_hash_map< SFace_handle, bool> SFace_map;
     //  SFace_map linked(false);
 

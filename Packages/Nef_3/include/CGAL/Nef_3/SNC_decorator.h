@@ -57,16 +57,16 @@ class SNC_decorator : public SNC_const_decorator<Map> {
  public:
   typedef Map SNC_structure;
   typedef typename Map::Sphere_map                     Sphere_map;
-  typedef SNC_decorator<SNC_structure>                 Self;
-  typedef SNC_const_decorator<SNC_structure>           Base;
+  typedef CGAL::SNC_decorator<SNC_structure>           Self;
+  typedef CGAL::SNC_const_decorator<SNC_structure>     Base;
   typedef Base                                         SNC_const_decorator;
   typedef CGAL::SNC_constructor<SNC_structure>         SNC_constructor;
   typedef CGAL::SM_decorator<Sphere_map>               SM_decorator;
   typedef CGAL::SM_const_decorator<Sphere_map>         SM_const_decorator;
-  typedef SNC_SM_overlayer<SM_decorator>               SM_overlayer;
-  typedef SM_point_locator<SM_const_decorator>         SM_point_locator;
-  typedef SNC_intersection<SNC_structure>              SNC_intersection;
-  typedef SNC_point_locator<SNC_decorator>             SNC_point_locator;
+  typedef CGAL::SNC_SM_overlayer<SM_decorator>         SM_overlayer;
+  typedef CGAL::SM_point_locator<SM_const_decorator>   SM_point_locator;
+  typedef CGAL::SNC_intersection<SNC_structure>        SNC_intersection;
+  typedef CGAL::SNC_point_locator<SNC_decorator>       SNC_point_locator;
   typedef CGAL::SNC_simplify<SNC_structure>            SNC_simplify;
   SNC_structure* sncp_;
 
@@ -410,12 +410,13 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     }
   }
 
+  template<typename SNCD_>
   struct Shell_volume_setter {
-    const Self D;
+    const SNCD_ D;
     Volume_handle c;
     typedef Unique_hash_map< SFace_handle, bool> SFace_map;
     SFace_map linked;
-    Shell_volume_setter(const Self& Di)
+    Shell_volume_setter(const SNCD_& Di)
       : D(Di), linked(false) {}
     void visit(SFace_handle h) { 
       TRACEN(D.point(D.vertex(h))); 
@@ -433,7 +434,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 
   void link_as_outer_shell( SFace_handle f, Volume_handle c ) const {
     //    CGAL_assertion(c->shell_entry_objects().size() == 0);
-    Shell_volume_setter Setter(*this);
+    Shell_volume_setter<SNC_decorator> Setter(*this);
     Setter.set_volume(c);
     visit_shell_objects( f, Setter );
     TRACEN("Volume "<<&*c<<", outer shell "<<&*f);
@@ -442,7 +443,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 
   void link_as_inner_shell( SFace_handle f, Volume_handle c ) const {
     // CGAL_assertion(c->shell_entry_objects().size() > 0);
-    Shell_volume_setter Setter(*this);
+    Shell_volume_setter<SNC_decorator> Setter(*this);
     Setter.set_volume(c);
     visit_shell_objects( f, Setter );
     TRACEN("Volume "<<&*c<<", inner shell "<<&*f);

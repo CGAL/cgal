@@ -269,20 +269,21 @@ private:
 				 NT(0), sin_alpha, cos_alpha,
 				 w);
 
-    Nef_polyhedron N = load_off("data/cube.off");
+    Nef_polyhedron C = load_off("data/cube.off");
+    Nef_polyhedron N(C);
     N.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(2,1,0,1)));
     N.transform(Aff_transformation_3( CGAL::SCALING, 6, 4));
-    N.transform(Aff_transformation_3(0,1,0,1,0,0,0,0,1,1));
+    N.transform(Aff_transformation_3(0,-1,0,1,0,0,0,0,1,1));
     N.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(0,-4,-1,1)));
     N.transform(Aff_transformation_3( CGAL::SCALING, 5, 12));
-    N.transform(Aff_transformation_3(0,1,0,1,0,0,0,0,1,1));
+    N.transform(Aff_transformation_3(0,-1,0,1,0,0,0,0,1,1));
     N.transform(rotx20);
     N.transform(Aff_transformation_3( CGAL::SCALING, 8, 5));
     N.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(-2,0,0,1)));
     N.transform(rotx20.inverse());
-    N.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(8,-3,2,3)));
+    N.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(16,21,2,3)));
     CGAL_assertion(N.is_valid(0,0));
-    CGAL_assertion(does_nef3_equals_file(N,"cube.nef3.SH"));
+    CGAL_assertion(N == C);
 
     if(Infi_box::extended_kernel()) {    
       N = Nef_polyhedron(Plane_3(1,1,0,0));

@@ -200,10 +200,10 @@ public:
 
   typedef typename SNC_structure::Items                   Items;
   typedef typename SNC_structure::Sphere_map              Sphere_map;
-  typedef SM_decorator<Sphere_map>                    SM_decorator;  
+  typedef CGAL::SM_decorator<Sphere_map>                 SM_decorator;  
   typedef CGAL::SNC_SM_overlayer<SM_decorator>           SM_overlayer;
-  typedef CGAL::SM_const_decorator<Sphere_map>     SM_const_decorator;
-  typedef CGAL::SM_point_locator<SM_const_decorator>  SM_point_locator;
+  typedef CGAL::SM_const_decorator<Sphere_map>           SM_const_decorator;
+  typedef CGAL::SM_point_locator<SM_const_decorator>     SM_point_locator;
 
   typedef typename SNC_structure::Vertex Vertex;
   typedef typename SNC_structure::Halfedge Halfedge;
@@ -442,7 +442,7 @@ public:
 					    const Mark& boundary, const Mark& inside, const Mark& outside)const;
 
   Vertex_handle create_SM_on_infibox(const Point_3& center, Sphere_point* SP, int size, 
-			    bool boundary, bool fmark0, bool fmark1) const;
+			    const Mark& boundary, const Mark& fmark0, const Mark& fmark1) const;
 
   void build_external_structure() {
     //    SNC_io_parser<SNC_structure> O0(std::cout,*sncp());
@@ -949,9 +949,9 @@ create_frame_point(Point_3 p, Point_3 sp1, Point_3 sp2, Plane_3 h,
  
   RT delta = h.a()*SP[2].hx()+h.b()*SP[2].hy()+h.c()*SP[2].hz();
   CGAL_assertion(delta !=0);
-  bool swtch = (delta <  0);
-  bool fmark0 = (swtch && inside)  || (!swtch && !inside);
-  bool fmark1 = (swtch && outside) || (!swtch && !outside);
+  Mark swtch = (delta <  0);
+  Mark fmark0 = (swtch && inside)  || (!swtch && !inside);
+  Mark fmark1 = (swtch && outside) || (!swtch && !outside);
 
   return create_SM_on_infibox(p, SP, 4, boundary, fmark0, fmark1);
 }
@@ -1019,9 +1019,9 @@ create_corner_frame_point(Point_3 p, Point_3 sp1, Point_3 sp2,int max,Plane_3 h,
 
   RT delta = h.a()*SP[4].hx()+h.b()*SP[4].hy()+h.c()*SP[4].hz();
   CGAL_assertion(delta !=0);
-  bool swtch = (delta >  0);
-  bool fmark0 = (swtch && inside)  || (!swtch && !inside);
-  bool fmark1 = (swtch && outside) || (!swtch && !outside);
+  Mark swtch = (delta >  0);
+  Mark fmark0 = (swtch && inside)  || (!swtch && !inside);
+  Mark fmark1 = (swtch && outside) || (!swtch && !outside);
 
   return create_SM_on_infibox(p, SP, 5, boundary, fmark0, fmark1);
 }
@@ -1075,9 +1075,9 @@ create_degenerate_corner_frame_point(Point_3 p, Point_3 sp1, Point_3 sp2,
 
   RT delta = h.a()*SP[2].hx()+h.b()*SP[2].hy()+h.c()*SP[2].hz();
   CGAL_assertion(delta !=0);
-  bool swtch = (delta <  0);
-  bool fmark0 = (swtch && inside)  || (!swtch && !inside);
-  bool fmark1 = (swtch && outside) || (!swtch && !outside);
+  Mark swtch = (delta <  0);
+  Mark fmark0 = (swtch && inside)  || (!swtch && !inside);
+  Mark fmark1 = (swtch && outside) || (!swtch && !outside);
 
   return create_SM_on_infibox(p, SP, 4, boundary, fmark0, fmark1);
 }
@@ -1086,7 +1086,7 @@ template <typename SNC_>
 typename SNC_::Vertex_handle
 SNC_constructor<SNC_>::
 create_SM_on_infibox(const Point_3& center, Sphere_point* SP, int size, 
-		     bool boundary, bool fmark0, bool fmark1) const {
+		     const Mark& boundary, const Mark& fmark0, const Mark& fmark1) const {
 
   Vertex_handle v=sncp()->new_vertex(normalized(center), boundary);
   SM_decorator SD(&*v); 
