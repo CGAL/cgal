@@ -23,7 +23,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/Intersections.h>
+#include <CGAL/intersections.h>
 //temporary, should remove next line!!
 #include <CGAL/Triangle_2_Iso_rectangle_2_intersection.h>
 #include <CGAL/IO/Color.h>
