@@ -840,8 +840,8 @@ operator>> (std::istream& is, Triangulation_3<GT, Tds> &tr)
 
   int m;
   read_cells(is, tr._tds, V, m, C);
-  for (int i=0 ; i < m; i++)
-    is >> *(C[i]);
+  for (int j=0 ; j < m; j++)
+    is >> *(C[j]);
 
   CGAL_triangulation_assertion( tr.is_valid(false) );
   return is;
