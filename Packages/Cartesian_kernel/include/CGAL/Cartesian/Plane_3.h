@@ -153,8 +153,7 @@ PlaneC3<R CGAL_CTAG>::operator==(const PlaneC3<R CGAL_CTAG> &p) const
 {
   if (identical(p))
       return true;
-  return has_on_boundary(p.point()) &&
-         (orthogonal_direction() == p.orthogonal_direction());
+  return equal_plane(*this, p);
 }
 
 template < class R >

@@ -220,6 +220,27 @@ equal_directionC3(const FT &dx1, const FT &dy1, const FT &dz1,
       && CGAL_NTS sign(dz1) == CGAL_NTS sign(dz2);
 }
 
+template < class FT >
+CGAL_KERNEL_MEDIUM_INLINE
+bool
+equal_planeC3(const FT &ha, const FT &hb, const FT &hc, const FT &hd,
+              const FT &pa, const FT &pb, const FT &pc, const FT &pd)
+{
+    if (!equal_directionC3(ha, hb, hc, pa, pb, pc))
+	return false; // Not parallel.
+
+    CGAL::Sign s1a = CGAL_NTS sign(ha);
+    if (s1a != ZERO)
+        return s1a == CGAL_NTS sign(pa)
+            && sign_of_determinant2x2(pa, pd, ha, hd) == ZERO;
+    CGAL::Sign s1b = CGAL_NTS sign(hb);
+    if (s1b != ZERO)
+        return s1b == CGAL_NTS sign(pb)
+            && sign_of_determinant2x2(pb, pd, hb, hd) == ZERO;
+    return CGAL_NTS sign(pc) == CGAL_NTS sign(hc)
+        && sign_of_determinant2x2(pc, pd, hc, hd) == ZERO;
+}
+
 template <class FT >
 CGAL_KERNEL_LARGE_INLINE
 Oriented_side

@@ -1,3 +1,6 @@
+Version 6.20 (21 June 2001)
+- Improve robustness and speed of Plane_3::operator==(Plane_3).
+
 Version 6.19 (19 June 2001)
 - added centroid
 

@@ -37,6 +37,15 @@ side_of_oriented_plane(const PlaneC3<R CGAL_CTAG> &h,
 	                          p.x(), p.y(), p.z());
 }
 
+template < class R >
+inline
+bool
+equal_plane(const PlaneC3<R CGAL_CTAG> &h, const PlaneC3<R CGAL_CTAG> &p)
+{ 
+  return equal_planeC3(h.a(), h.b(), h.c(), h.d(),
+	               p.a(), p.b(), p.c(), p.d());
+}
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CARTESIAN_PREDICATES_ON_PLANES_3_H
