@@ -1,3 +1,7 @@
+Version 1.14 (4 oct 99)
+problem in conversion from ds_cell to Cell_handle solved in
+Triangulation_circulator_3 (in Facet_circulator)
+
 Version 1.13 (28 sept 99)
 cleaning typedefs, friend declarations
 test suite modified for regular triangulation
