@@ -196,7 +196,6 @@ public:
   typedef typename DG::size_type                 size_type;
 
 private:
-  typedef typename DG::Vertex                    Vertex;
   typedef CGALi::Svd_project_site_2<Vertex>      Proj_site;
 
 public:

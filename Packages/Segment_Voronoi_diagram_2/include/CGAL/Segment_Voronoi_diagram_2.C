@@ -452,24 +452,13 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& t,
   Storage_site_2 ssv1;
   Site_2 sv1;
   if ( sitev.is_exact(0) ) {
-#ifdef USE_SET_METHODS
-    sv1.set_segment(sitev.point(0), sitev.point(1),
-		    t.point(0), t.point(1), true);
-#else
     sv1 = Site_2(sitev.point(0), sitev.point(1),
 		 t.point(0), t.point(1), true);
-#endif
     ssv1 = create_storage_site(ssitev, ss, true);
   } else {
-#ifdef USE_SET_METHODS
-    sv1.set_segment(sitev.point(0), sitev.point(1),
-		    sitev.point(2), sitev.point(3),
-		    t.point(0), t.point(1));
-#else
     sv1 = Site_2(sitev.point(0), sitev.point(1),
 		 sitev.point(2), sitev.point(3),
 		 t.point(0), t.point(1));
-#endif
     ssv1 = create_storage_site_type1(ssitev, ssitev, ss);
   }
   v1->set_site( ssv1 );
@@ -478,24 +467,13 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& t,
   Storage_site_2 ssv2;
   Site_2 sv2;
   if ( sitev.is_exact(1) ) {
-#ifdef USE_SET_METHODS
-    sv2.set_segment(sitev.point(0), sitev.point(1),
-		    t.point(0), t.point(1), false);
-#else
     sv2 = Site_2(sitev.point(0), sitev.point(1),
 		 t.point(0), t.point(1), false);
-#endif
     ssv2 = create_storage_site(ssitev, ss, false);
   } else {
-#ifdef USE_SET_METHODS
-    sv2.set_segment(sitev.point(0), sitev.point(1),
-		    t.point(0), t.point(1),
-		    sitev.point(4), sitev.point(5));
-#else
     sv2 = Site_2(sitev.point(0), sitev.point(1),
 		 t.point(0), t.point(1),
 		 sitev.point(4), sitev.point(5));
-#endif
     ssv2 = create_storage_site_type2(ssitev, ss, ssitev);
   }
   v2->set_site( ssv2 );
@@ -692,46 +670,24 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
   Storage_site_2 ss3, ss4;
   Site_2 s3, s4;
   if ( t.is_exact(0) ) {
-#ifdef USE_SET_METHODS
-    s3.set_segment(t.point(0), t.point(1),
-		   sitev.point(0), sitev.point(1), true);
-#else
     s3 = Site_2(t.point(0), t.point(1),
 		sitev.point(0), sitev.point(1), true);
-#endif
     ss3 = create_storage_site(ss, ssitev, true);
   } else {
-#ifdef USE_SET_METHODS
-    s3.set_segment(t.point(0), t.point(1),
-		   t.point(2), t.point(3),
-		   sitev.point(0), sitev.point(1));
-#else
     s3 = Site_2(t.point(0), t.point(1),
 		t.point(2), t.point(3),
 		sitev.point(0), sitev.point(1));
-#endif
     ss3 = create_storage_site_type1(ss, ss, ssitev);
   }
 
   if ( t.is_exact(1) ) {
-#ifdef USE_SET_METHODS
-    s4.set_segment(t.point(0), t.point(1),
-		   sitev.point(0), sitev.point(1), false);
-#else
     s4 = Site_2(t.point(0), t.point(1),
 		sitev.point(0), sitev.point(1), false);
-#endif
     ss4 = create_storage_site(ss, ssitev, false);
   } else {
-#ifdef USE_SET_METHODS
-    s4.set_segment(t.point(0), t.point(1),
-		   sitev.point(0), sitev.point(1),
-		   t.point(4), t.point(5));
-#else
     s4 = Site_2(t.point(0), t.point(1),
 		sitev.point(0), sitev.point(1),
 		t.point(4), t.point(5));
-#endif
     ss4 = create_storage_site_type2(ss, ssitev, ss);
   }
 
