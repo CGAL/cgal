@@ -1,4 +1,3 @@
-
 // ============================================================================
 //
 // Copyright (c) 1999 The CGAL Consortium
@@ -38,8 +37,9 @@
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/predicates_on_lines_2.h>
 #include <CGAL/distance_predicates_2.h>
+#include <CGAL/squared_distance_2.h>
 
-void use(bool) {};
+void use(bool) {}
 void use(CGAL::Sign) {}
 void use(CGAL::Bounded_side) {}
 void use(CGAL::Oriented_side) {}
@@ -275,6 +275,12 @@ test_new_2(const R& rep)
         = rep.compute_area_2_object();
   FT tmp22a = compute_area_2(tmp18);
   FT tmp22b = compute_area_2(rec2);
+
+  typename R::Compute_squared_distance_2 Compute_squared_distance
+        = rep.compute_squared_distance_2_object();
+  FT tmp22c = Compute_squared_distance(p1, p2);
+     tmp22c = Compute_squared_distance(p1, r2);
+     tmp22c = Compute_squared_distance(p1, t2);
 
   typename R::Compute_squared_length_2 Compute_squared_length
         = rep.compute_squared_length_2_object();

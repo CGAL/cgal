@@ -1,3 +1,6 @@
+3.12   (6 Mar 2001)
+- Added Compute_squared_distance_2 and 3.
+
 3.11   (21 Feb 2001)
 - Added test for Construct_cross_product_vector_3.
 
