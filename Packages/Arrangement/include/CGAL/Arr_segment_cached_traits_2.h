@@ -818,9 +818,7 @@ protected:
   Comparison_result compare_distance(const Point_2 & p,
                                      const Point_2 & q, const Point_2 & r) const
   {
-    typedef typename Kernel_::Compare_distance_2        Compare_distance_2;
-    Compare_distance_2 cmp = compare_distance_2_object();
-    return cmp(p, q, r); 
+    return (this->compare_distance_2_object()(p, q, r)); 
   }
 
 private:

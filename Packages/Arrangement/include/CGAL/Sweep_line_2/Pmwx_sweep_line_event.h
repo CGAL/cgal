@@ -62,6 +62,8 @@ public:
   
   typedef typename PmwxInsertInfo::Halfedge_handle Halfedge_handle;
 
+  using Base::m_rightCurves;
+
 
   Pmwx_sweep_line_event()
   {}
@@ -112,7 +114,7 @@ public:
     iter = m_rightCurves.end();
     --iter;
      
-    unsigned int num_left_curves = get_num_left_curves();
+    unsigned int num_left_curves = this->get_num_left_curves();
     for ( ; iter != m_rightCurves.begin() ; --iter )
     {
       if(curve == (*iter))

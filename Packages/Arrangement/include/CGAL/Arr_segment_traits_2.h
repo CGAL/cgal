@@ -429,7 +429,7 @@ public:
   Comparison_result compare_distance(const Point_2 & p,
                                      const Point_2 & q, const Point_2 & r) const
   {
-    return (compare_distance_2_object()(p, q, r)); 
+    return (this->compare_distance_2_object()(p, q, r)); 
   }
 
   
