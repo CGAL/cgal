@@ -34,7 +34,7 @@
 # CGAL specific:
 
 # ---------------------------------------------
-CGAL_VERSION='3.1'
+CGAL_VERSION="`awk '/#define CGAL_VERSION / {print $3}' include/CGAL/version.h`"
 # ---------------------------------------------
 CGAL_INSTALL_CGAL="`basename ${0}`"
 # ---------------------------------------------

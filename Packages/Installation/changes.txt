@@ -2,6 +2,9 @@
 //	Revision History for package Installation
 //=====================================================================
 
+26 Feb 2004 Radu Ursu
+- install_cgal takes the CGAL_VERSION from include/CGAL/version.h 
+
 17 Feb 2004 Sylvain Pion
 - Remove mentions about obsolete workarounds in installation.tex
 
