@@ -1,5 +1,10 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.90 on 23 May 2001
+- Rename Filtered_predicate to Filter_predicate.
+- Put Filter_predicate'operators() non-inline, except for VC++.
+- Fix for Borland.
+
 Version 4.89 on 23 May 2001
 - Workaround what seems to be a bug in KCC with non-inline overloading of
   inline templates.
