@@ -152,22 +152,22 @@ in the \ccc{Planar_Map_2<Dcel,Traits>} package (see Chapter~\ref{I1_ChapterPlana
 in order to update the corresponding features constructed by the overlay.  
 
 \subsection*{Boolean Operations:}
-The \ccc{Map_overlay_2<Subsection,Notifier>} package
-provides an utility for performing boolean operations on planar 
-subdivisions.
+%The \ccc{Map_overlay_2<Subsection,Notifier>} package
+%provides an utility for performing boolean operations on planar 
+%subdivisions.
+A straightforward usage of the \ccc{Map_overlay_2<Subsection,Notifier>} 
+utilities, is performing boolean operations on planar subdivisions in general, 
+and specifically on polygons.
 
 An object of the \ccc{Boolean_operations_2<Map_overlay>} 
-class is initialized with 
-two input subdivisions. 
+class is initialized with two input subdivisions. 
 In the initialization step, it constructs the overlay 
 of the two input subdivisions. 
 By constructing the overlay, all boolean operations, 
 on the two input subdivisions, can be easily provided.
-The  \ccc{Boolean_operations_2<Map_overlay>} 
-class provides methods for 
-performing an intersection, union, 
-difference and symmetric difference on the two 
-input subdivisions. 
+The \ccc{Boolean_operations_2<Map_overlay>} 
+class provides methods for performing an intersection, union, 
+difference and symmetric difference on the two input subdivisions. 
 The output of such operations are all resulting vertices, 
 halfedges and faces.
 
