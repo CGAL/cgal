@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.56 (10 August 00)
+Fixed makefile(s), once more 
+
 Ver 4.56 (7 August 00)
 Fixed makefile(s)
 

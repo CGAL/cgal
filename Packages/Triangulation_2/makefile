@@ -16,11 +16,11 @@ package:
 	@echo "----------------------------------"
 	@echo "---- cvs update; -----------------"
 	@echo "---- make Test                ----"
-	@echo "---- make VERSION=4.56 Doc -------"
+	@echo "---- make VERSION=4.57 Doc -------"
 	@echo "---- editer changes.txt       ----"
-	@echo "---- make VERSION=4.56 Version ---"
+	@echo "---- make VERSION=4.57 Version ---"
 	@echo "---- cvs commit ------------------"
-	@echo "---- make VERSION=4.56 Tag -------"
+	@echo "---- make VERSION=4.57 Tag -------"
 	@echo "---- make Submit -----------------"
 	@echo "----------------------------------"
 
@@ -35,7 +35,7 @@ Tag:
 
 clean:
 	rm -f $(PACKAGE).tar.gz
-	cd test/Triangulation ; make realclean
+	cd test/Triangulation ; make -f Makefile realclean
 	cd examples/Triangulation ; make realclean
 	cd demo/Triangulation ; make clean
 
