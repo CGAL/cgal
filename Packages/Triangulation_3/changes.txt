@@ -1,3 +1,7 @@
+Version 1.43 (?? ???? 00)
+- Regular 3D compile for simple cartesian kernels too. [syl]
+- Geomview output. [syl]
+
 Version 1.42 (26 sept 00)
 Minor modifications :
 - One more sentence in the doc
