@@ -43,19 +43,19 @@ public:
 
   Triangulation_ds_vertex_3()
     : Vb()
-  {}
+  { set_order_of_creation(); }
     
   Triangulation_ds_vertex_3(const Point & p)
     :  Vb(p)
-  {}
+  { set_order_of_creation(); }
     
   Triangulation_ds_vertex_3(const Point & p, Cell * c)
     :  Vb(p, c)
-  {}
+  { set_order_of_creation(); }
 
   Triangulation_ds_vertex_3(Cell * c)
     :  Vb(c)
-  {}
+  { set_order_of_creation(); }
 
   // ACCESS
 
@@ -79,6 +79,21 @@ public:
   // CHECKING
 
    bool is_valid(bool verbose = false, int level = 0) const;
+
+  // used for symbolic perturbation in remove_vertex for Delaunay
+  // undocumented
+  void set_order_of_creation()
+  {
+    static int nb=0;
+    _order_of_creation = ++nb;
+  }
+
+  int get_order_of_creation() const
+  {
+      return _order_of_creation;
+  }
+  
+  int _order_of_creation;
 };
 
 template <class Vb, class Cb >
