@@ -24,7 +24,7 @@
 #ifndef CGAL_IA_LEDA_RATIONAL_H
 #define CGAL_IA_LEDA_RATIONAL_H
 
-// For this one, I hope that adding 2 ulps will be enough for an exact
+// For this one, I hope that adding 3 ulps will be enough for an exact
 // conversion.  Since LEDA types (except real) don't give information on the
 // precision of to_double(), we can't do much...
 
@@ -37,12 +37,21 @@ inline CGAL_Interval_nt_advanced CGAL_convert_to (const leda_rational &z)
     double approx = CGAL_to_double(z);
     CGAL_FPU_set_rounding_to_infinity();
 
-    return (CGAL_Interval_nt_advanced (approx)
+    const CGAL_Interval_nt_advanced result =
+	((CGAL_Interval_nt_advanced (approx)
+	  + CGAL_Interval_nt_advanced::smallest)
 	  + CGAL_Interval_nt_advanced::smallest)
 	  + CGAL_Interval_nt_advanced::smallest;
 // The following is bad because overflow is highly probable with rationals.
     // return CGAL_convert_to<CGAL_Interval_nt_advanced>(z.numerator())
 	// /  CGAL_convert_to<CGAL_Interval_nt_advanced>(z.denominator());
+#ifndef CGAL_NO_POSTCONDITIONS
+    CGAL_FPU_set_rounding_to_nearest();
+    CGAL_assertion( leda_rational(result.lower_bound()) <= z &&
+		    leda_rational(result.upper_bound()) >= z );
+    CGAL_FPU_set_rounding_to_infinity();
+#endif
+    return result;
 }
 
 #endif	 // CGAL_IA_LEDA_RATIONAL_H

@@ -36,8 +36,16 @@ inline CGAL_Interval_nt_advanced CGAL_convert_to (const leda_bigfloat &z)
     CGAL_FPU_set_rounding_to_nearest();
     double approx = CGAL_to_double(z);
     CGAL_FPU_set_rounding_to_infinity();
-    return CGAL_Interval_nt_advanced (approx) +
-	   CGAL_Interval_nt_advanced::smallest;
+    const CGAL_Interval_nt_advanced result = 
+	CGAL_Interval_nt_advanced (approx) +
+	CGAL_Interval_nt_advanced::smallest;
+#ifndef CGAL_NO_POSTCONDITIONS
+    CGAL_FPU_set_rounding_to_nearest();
+    CGAL_assertion(     leda_bigfloat(result.lower_bound()) <= z &&
+			leda_bigfloat(result.upper_bound()) >= z);
+    CGAL_FPU_set_rounding_to_infinity();
+#endif
+    return result;
 }
 
 #endif	 // CGAL_IA_LEDA_BIGFLOAT_H
