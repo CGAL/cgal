@@ -43,26 +43,8 @@ CGAL_BEGIN_NAMESPACE
 #include <CGAL/Arithmetic_filter/static_infos/dispatch.h>
 #endif
 
-unsigned Interval_base::number_of_failures;
 
-const Interval_base Interval_base::Largest (-HUGE_VAL, HUGE_VAL);
-const Interval_base Interval_base::Smallest (-CGAL_IA_MIN_DOUBLE,
-                                              CGAL_IA_MIN_DOUBLE);
 
-std::ostream &
-operator<< (std::ostream & os, const Interval_base & I)
-{
-    return os << "[" << I.inf() << ";" << I.sup() << "]";
-}
-
-std::istream &
-operator>> (std::istream & is, Interval_base & I)
-{
-    double d;
-    is >> d;
-    I = d;
-    return is;
-}
 
 void force_ieee_double_precision()
 {
