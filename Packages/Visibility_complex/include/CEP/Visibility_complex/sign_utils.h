@@ -1,6 +1,7 @@
 #ifndef SIGN_UTILS_H
 #define SIGN_UTILS_H
 
+#include <utility>
 #include <CGAL/basic.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -19,10 +20,10 @@ operator *(Sign s, Sign t)
 // the pair is true and the sign is the sign of the sum.
 // Otherwise the first element of the pair if false and the second is the sign
 // of s.
-pair<bool,Sign>
+std::pair<bool,Sign>
 sign_of_sum(Sign s, Sign t)
 {
-    typedef pair<bool,Sign> p;
+    typedef std::pair<bool,Sign> p;
     if (s == POSITIVE) {
 	if (t == POSITIVE || t == ZERO) return p(true,POSITIVE);
 	else return p(false,POSITIVE);
