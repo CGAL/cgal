@@ -2,8 +2,8 @@
 @! The CGAL Library
 @! Implementation: 2D Smallest Enclosing Circle
 @! ----------------------------------------------------------------------------
-@! file  : web/Optimisation/Min_circle_2.aw
-@! author: Bernd Gärtner, Sven Schönherr <sven@inf.fu-berlin.de>
+@! file  : web/Min_circle_2.aw
+@! author: Bernd Gärtner, Sven Schönherr <sven@inf.ethz.ch>
 @! ----------------------------------------------------------------------------
 @! $CGAL_Chapter: Geometric Optimisation $
 @! $CGAL_Package: Min_circle_2 WIP $
@@ -153,26 +153,26 @@ small probability.
 @! Specifications
 @! ============================================================================
 
-\clearpage
-\section{Specifications}
-
-\emph{Note:} Below some references are undefined, they refer to sections
-in the \cgal\ Reference Manual.
-
-\renewcommand{\ccFont}{\tt}
-\renewcommand{\ccEndFont}{}
-\newcommand{\cgalColumnLayout}{
-  \ccSetThreeColumns{Oriented_side}{}{\hspace*{10cm}}
-  \ccPropagateThreeToTwoColumns}
-\newcommand{\cgalSetMinCircleLayout}{%
-  \ccSetThreeColumns{Support_point_iterator}{}{returns
-    \ccc{ON_BOUNDED_SIDE}, \ccc{ON_BOUNDARY}, or \ccc{ON_UNBOUNDED_SIDE}}
-    \ccPropagateThreeToTwoColumns}
-\input{../../doc_tex/basic/Optimisation/Min_circle_2.tex}
-\input{../../doc_tex/basic/Optimisation/Optimisation_circle_2.tex}
-\input{../../doc_tex/basic/Optimisation/Min_circle_2_traits_2.tex}
-\input{../../doc_tex/basic/Optimisation/Min_circle_2_adapterC2.tex}
-\input{../../doc_tex/basic/Optimisation/Min_circle_2_adapterH2.tex}
+@! \clearpage
+@! \section{Specifications}
+@! 
+@! \emph{Note:} Below some references are undefined, they refer to sections
+@! in the \cgal\ Reference Manual.
+@! 
+@! \renewcommand{\ccFont}{\tt}
+@! \renewcommand{\ccEndFont}{}
+@! \newcommand{\cgalColumnLayout}{
+@!   \ccSetThreeColumns{Oriented_side}{}{\hspace*{10cm}}
+@!   \ccPropagateThreeToTwoColumns}
+@! \newcommand{\cgalSetMinCircleLayout}{%
+@!   \ccSetThreeColumns{Support_point_iterator}{}{returns
+@!     \ccc{ON_BOUNDED_SIDE}, \ccc{ON_BOUNDARY}, or \ccc{ON_UNBOUNDED_SIDE}}
+@!     \ccPropagateThreeToTwoColumns}
+@! \input{../../doc_tex/basic/Optimisation/Min_circle_2.tex}
+@! \input{../../doc_tex/basic/Optimisation/Optimisation_circle_2.tex}
+@! \input{../../doc_tex/basic/Optimisation/Min_circle_2_traits_2.tex}
+@! \input{../../doc_tex/basic/Optimisation/Min_circle_2_adapterC2.tex}
+@! \input{../../doc_tex/basic/Optimisation/Min_circle_2_adapterH2.tex}
 
 @! ============================================================================
 @! Implementations
@@ -2811,7 +2811,7 @@ end of each file.
 \clearpage
 \section{Files}
 
-@i ../namespace.awi
+@i share/namespace.awi
 
 @! ----------------------------------------------------------------------------
 @! Min_circle_2.h
@@ -3187,7 +3187,7 @@ end of each file.
 
 \subsection*{File Header}
 
-@i ../file_header.awi
+@i share/file_header.awi
  
 And here comes the specific file header for the product files of this
 web file.
@@ -3211,6 +3211,6 @@ web file.
 
 \clearpage
 \bibliographystyle{plain}
-\bibliography{geom,../../doc_tex/basic/Optimisation/cgal}
+\bibliography{geom,../doc_tex/basic/Optimisation/cgal}
 
 @! ===== EOF ==================================================================

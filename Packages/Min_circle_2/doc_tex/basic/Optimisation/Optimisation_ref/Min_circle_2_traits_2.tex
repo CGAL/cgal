@@ -1,88 +1,73 @@
 % =============================================================================
 % The CGAL Reference Manual
 % Chapter: Geometric Optimisation
-% Section: Smallest Enclosing Circles
-% Subsec.: Traits Class Implementation using the CGAL 2D Kernel
+% Class  : CGAL::Min_circle_2_traits_2<R>
 % -----------------------------------------------------------------------------
-% file  : doc_tex/basic/Optimisation/Min_circle_2_traits_2.tex
-% author: Sven Schönherr <sven@inf.fu-berlin.de>
+% file  : doc_tex/basic/Optimisation/Optimisation_ref/Min_circle_2_traits_2.tex
+% author: Sven Schönherr <sven@inf.ethz.ch>
 % -----------------------------------------------------------------------------
+% $CGAL_Chapter: Geometric Optimisation $
 % $CGAL_Package: Min_circle_2 WIP $
 % $Revision$
 % $Date$
 % =============================================================================
 
-\ccHtmlNoClassToc
-\begin{ccClassTemplate}{Min_circle_2_traits_2<R>}
-%\ccSubsection{Traits Class Implementation using the two-dimensional
-%  \cgal-kernel}
-\ccTexHtml{%
-  \subsection[Traits Class Implementation using the 2D \cgal-kernel
-               (\protect\ccPrintSingleTokenSemi \ccPureClassTemplateName;)]%
-             {Traits Class Implementation for 2D Smallest Enclosing Circle
-               using the two-dimensional \cgal-kernel (\ccClassTemplateName)}}{
-  <H2> Traits Class Implementation using the two-dimensional CGAL-kernel
-          (<I>Min_circle_2_traits_2</I>)
-  </H2> <P>}
-\label{sec:min_circle_2_traits_impl_2D_kernel}
-
-\cgalColumnLayout
+\begin{ccRefClass}{Min_circle_2_traits_2<R>}
 
 % -----------------------------------------------------------------------------
 \ccDefinition
 
-The class \ccClassTemplateName\ interfaces the 2D optimisation
-algorithm for smallest enclosing circles with the 2D \cgal-kernel.
+The class \ccRefName\ is a traits class for \ccc{Min_circle_2<Traits>}
+using the two-dimensional \cgal\ kernel.
 
 \ccInclude{CGAL/Min_circle_2_traits_2.h}
 
 % -----------------------------------------------------------------------------
+\ccRequirements
+
+The template parameter \ccc{R} is a model for \ccc{Kernel}.
+
+% -----------------------------------------------------------------------------
+\ccIsModel
+
+\ccRefIdfierPage{Min_circle_2_traits}
+
+% -----------------------------------------------------------------------------
 \ccTypes
 
-\ccSetThreeColumns{typedef Optimisation_circle_2<R>}{Circle;}{}
+\ccSaveThreeColumns
+\ccSetTwoColumns{Min_circle_2_traits_2<R>:: Circle}{}
 
-\ccTypedef{typedef  Point_2<R>                 Point;  }{}
-\ccTypedef{typedef  Optimisation_circle_2<R>   Circle; }{}
-
-\cgalColumnLayout
+\ccNestedType{Point }{typedef to \ccc{R::Point_2}.}
+\ccNestedType{Circle}{internal type.}
 
 % -----------------------------------------------------------------------------
 \ccCreation
 \ccCreationVariable{traits}
 
-\ccConstructor{ Min_circle_2_traits_2( );}{}
-
-\ccConstructor{ Min_circle_2_traits_2( const Min_circle_2_traits_2<R>&);}{}
+\ccConstructor{ Min_circle_2_traits_2( );}{default constructor.}
+\ccConstructor{ Min_circle_2_traits_2(
+                    const Min_circle_2_traits_2<R>&);}{copy constructor.}
 
 % -----------------------------------------------------------------------------
 \ccOperations
 
-\ccMemberFunction{ Orientation  orientation( const Point& p,
-                                             const Point& q,
-                                             const Point& r) const;}{
-        returns \ccc{orientation( p, q, r)}.}
+\ccSetThreeColumns{\ccPureGlobalScope Orientation}{}{\hspace*{10cm}}
+
+\ccMemberFunction{ \ccPureGlobalScope Orientation
+                   orientation( const Point& p,
+                                const Point& q,
+                                const Point& r) const;}{
+        returns \ccGlobalScope\ccc{orientation( p, q, r)}.}
 
 % -----------------------------------------------------------------------------
 \ccSeeAlso
 
-\ccc{Min_circle_2}
-  \ccTexHtml{(Section~\ref{sec:min_circle_2_spec})}{},
-\ccc{Min_circle_2_adapterC2}
-  \ccTexHtml{(Section~\ref{sec:min_circle_2_traits_adapterC2})}{},
-\ccc{Min_circle_2_adapterH2}
-  \ccTexHtml{(Section~\ref{sec:min_circle_2_traits_adapterH2})}{},
-\ccTexHtml{}{<A HREF="requirements_Min_circle_2.html">}Requirements
-  of Traits Classes for 2D Smallest Enclosing
-  Circle\ccTexHtml{ (Section~\ref{sec:min_circle_2_traits_req})}{</A>}.
-
-% -----------------------------------------------------------------------------
-\ccExample
-
-See example for \ccc{Min_circle_2}
-  \ccTexHtml{(Section~\ref{sec:min_circle_2_spec})}{}.
+\ccRefIdfierPage{\ccPureGlobalScope Min_circle_2<Traits>}\\[1ex]
+\ccRefIdfierPage{Min_circle_2_traits}
 
 % -----------------------------------------------------------------------------
 
-\end{ccClassTemplate}
+\end{ccRefClass}
 
 % ===== EOF ===================================================================
