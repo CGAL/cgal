@@ -194,55 +194,6 @@ insert(Point a)
 // in addition to what is done for non constrained triangulations
 // constrained edges are updated
 {
-//   Vertex_handle va;
-//   Face_handle f,n,start;
-//   int indf,indn,li;
-//   Locate_type lt;
-
-//   start = locate(a, lt, li);
-
-//   // a is a vertex
-
-//   if (lt == VERTEX) {
-//     return start->vertex(li);
-//   }
-
-//   // a belongs to the relative interior of a constrained edge
-
-//   if ((lt == EDGE) && (start->is_constrained(li))) {
-//     va = insert_in_constrained_edge(a, start,li);
-//     return va;
-//   }
-    
-       
-//   // a does NOT belong to a constrained edge
-//   va = Triangulation::insert(a,start);
-
-//   // updates the status (constrained or not) of the edges 
-//   // of  the new triangles (incident to a)
-    
-//   if (dimension()<2) { 
-//     return va;
-//   }
-//   f = va->face();
-//   start = f;
-//   do {
-//     indf = f->index(va);
-//     f->set_constraint(cw(indf),false);  // edge incident to a
-//     f->set_constraint(ccw(indf),false); // other edge incident to a 
-//     // edge opposite to a
-//     n = f->neighbor(indf);
-//     indn=f->mirror_index(indf);
-//     if (n->is_constrained(indn)) {
-//       f->set_constraint(indf,true);
-//     }
-//     else {
-//       f->set_constraint(indf,false);
-//     }
-//     f= f->neighbor(ccw(indf)); // turns ccw around va 
-//   } while (f != start);
-//   return va;
-
   Vertex_handle va;
   Vertex_handle c1,c2;
   Face_handle loc;
@@ -412,7 +363,6 @@ insert(const Vertex_handle & va, const Vertex_handle & vb,
     vbb=vb;
 
     // case where ab contains an edge of t incident to a
-
     if(includes_edge(vaa,vbb,fr,i)) {
       if (dimension()==1) fr->set_constraint(2, true);
       else{
@@ -422,7 +372,6 @@ insert(const Vertex_handle & va, const Vertex_handle & vb,
       }
     }
     else {
-     
       // ab does not contain an edge of t incident to a
       // finds all triangles intersected by ab (in conflict)
 
@@ -431,13 +380,15 @@ insert(const Vertex_handle & va, const Vertex_handle & vb,
       find_conflicts(vaa,vbb,conflict_boundary_ab,conflict_boundary_ba);
       
       // removes the triangles in conflict and creates the new ones
-
       triangulate(conflict_boundary_ab, faces_to_be_removed, new_edges);
+      faces_to_be_removed.pop_back(); 
+      //to avoid repetitions in faces_to_be_removed
       triangulate(conflict_boundary_ba, faces_to_be_removed, new_edges);
+      faces_to_be_removed.pop_back(); 
+      //to avoid repetitions in faces_to_be_remove
 
       // the two faces that share edge ab are neighbors
       // their common edge ab is a constraint
-
       fl=(*conflict_boundary_ab.begin()).first;
       fr=(*conflict_boundary_ba.begin()).first;
       fl->set_neighbor(2, fr);
@@ -445,11 +396,19 @@ insert(const Vertex_handle & va, const Vertex_handle & vb,
       fl->set_constraint(2, true);
       fr->set_constraint(2, true);
       i=2;
-    }
-    vaa=vbb;
-  } while (vbb != vb);
 
+      // delete faces to be removed
+      while( ! faces_to_be_removed.empty()){
+	fl = faces_to_be_removed.front();
+	faces_to_be_removed.pop_front();
+	delete &(*fl);
+      }
+    }
+
+      vaa=vbb;
+  } while (vbb != vb);
 }
+
 
 template < class Gt, class Tds >
 void
