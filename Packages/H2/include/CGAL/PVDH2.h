@@ -54,7 +54,6 @@ public:
             PointH2(const PointH2<R> & p);
             PointH2(const RT& hx, const RT& hy );
             PointH2(const RT& hx, const RT& hy, const RT& hw );
-            ~PointH2();
 
     bool    operator==( const PointH2<R>& p) const;
     bool    operator!=( const PointH2<R>& p) const;
@@ -108,7 +107,6 @@ public:
             VectorH2(const Null_vector &);
             VectorH2(const RT& x, const RT& y);
             VectorH2(const RT& x, const RT& y, const RT& w );
-            ~VectorH2();
 
     bool    operator==( const VectorH2<R>& v) const;
     bool    operator!=( const VectorH2<R>& v) const;
@@ -205,7 +203,6 @@ public:
             DirectionH2(const VectorH2<R> & v );
             DirectionH2(const RT& x, const RT& y);
             DirectionH2(const RT& x, const RT& y, const RT& w );
-            ~DirectionH2();
 
     bool    operator==( const DirectionH2<R>& d) const;
     bool    operator!=( const DirectionH2<R>& d) const;
@@ -269,10 +266,6 @@ PointH2<R>::PointH2(const RT& hx, const RT& hy, const RT& hw)
    { initialize_with( Point_ref_2(-hx,-hy,-hw)); }
 }
 
-template < class R >
-inline
-PointH2<R>::~PointH2()
-{}
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 PointH2<R>::PointH2(const VectorH2<R>& v)
@@ -422,11 +415,6 @@ VectorH2<R>::VectorH2(const RT& x, const RT& y, const RT& w)
   else
   { initialize_with( Vector_ref_2(-x, -y, -w)); }
 }
-
-template < class R >
-inline
-VectorH2<R>::~VectorH2()
-{}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
@@ -598,11 +586,6 @@ DirectionH2<R>::DirectionH2(const RT& x, const RT& y, const RT& w )
   else
   { initialize_with( Direction_ref_2(-x,-y,-w)); }
 }
-
-template <class R >
-inline
-DirectionH2<R>::~DirectionH2()
-{}
 
 
 template <class R >
