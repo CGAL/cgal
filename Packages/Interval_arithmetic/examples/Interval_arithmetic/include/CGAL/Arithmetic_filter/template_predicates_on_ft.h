@@ -20,37 +20,34 @@ CGAL_compare_xC2(const CGAL_Filtered_exact<CT,ET> &px,
 	                 const CGAL_Filtered_exact<CT,ET> &l2a,
 	const CGAL_Filtered_exact<CT,ET> &l2b,
 	const CGAL_Filtered_exact<CT,ET> &l2c)
-{ // This is the default filter (specialisation).
-
-  typedef CGAL_Interval_nt_advanced IA;
-
+{
   CGAL_Comparison_result result;
   CGAL_FPU_set_rounding_to_infinity();
   try
   {
     result = CGAL_compare_xC2(
-		CGAL_convert_to<IA>(px.value),
-		CGAL_convert_to<IA>(py.value),
-		CGAL_convert_to<IA>(l1a.value),
-		CGAL_convert_to<IA>(l1b.value),
-		CGAL_convert_to<IA>(l1c.value),
-		CGAL_convert_to<IA>(l2a.value),
-		CGAL_convert_to<IA>(l2b.value),
-		CGAL_convert_to<IA>(l2c.value));
+		px.interval(),
+		py.interval(),
+		l1a.interval(),
+		l1b.interval(),
+		l1c.interval(),
+		l2a.interval(),
+		l2b.interval(),
+		l2c.interval());
     CGAL_FPU_set_rounding_to_nearest();
   } 
-  catch (IA::unsafe_comparison)
+  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_FPU_set_rounding_to_nearest();
     result = CGAL_compare_xC2(
-		CGAL_convert_to<ET>(px.value),
-		CGAL_convert_to<ET>(py.value),
-		CGAL_convert_to<ET>(l1a.value),
-		CGAL_convert_to<ET>(l1b.value),
-		CGAL_convert_to<ET>(l1c.value),
-		CGAL_convert_to<ET>(l2a.value),
-		CGAL_convert_to<ET>(l2b.value),
-		CGAL_convert_to<ET>(l2c.value));
+		px.exact(),
+		py.exact(),
+		l1a.exact(),
+		l1b.exact(),
+		l1c.exact(),
+		l2a.exact(),
+		l2b.exact(),
+		l2c.exact());
   }
   return result;
 }
