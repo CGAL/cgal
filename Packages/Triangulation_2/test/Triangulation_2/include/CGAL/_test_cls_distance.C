@@ -31,7 +31,7 @@ CGAL__test_cls_distance(Point p[34],const Traits &)
 {
 
   typedef typename Traits::Distance Distance;
-  typedef typename Traits::Point  Point;
+  //typedef typename Traits::Point  Point;
   //test for constructors
   Distance d0;
   Distance d1(p[0]); 

@@ -11,4 +11,4 @@
    #define CGAL_Triangulation_test_distance CGAL_Ttdst
    #define CGAL__Triangulation_test_traits CGAL__Tttr
 
-#endif CGAL_TRIANGULATION_TEST_SHORT_NAMES_2_H
+#endif //CGAL_TRIANGULATION_TEST_SHORT_NAMES_2_H
