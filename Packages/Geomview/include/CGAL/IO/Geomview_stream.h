@@ -376,146 +376,8 @@ operator<<(Geomview_stream &gv, const Bbox_2 &bbox);
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Bbox_3 &bbox);
 
-// The following stuff is for the very old Tetrahedralization.
-// I keep it for inspiration only.
-
-#if defined CGAL_TETRAHEDRALIZATION_3_H && \
-   !defined CGAL_GV_OUT_CGAL_TETRAHEDRALIZATION_3_H
-#define CGAL_GV_OUT_CGAL_TETRAHEDRALIZATION_3_H
-template < class Tr >
-Geomview_stream&
-operator<<(Geomview_stream& os, Tetrahedralization_3<Tr>& T)
-{
-    Tetrahedralization_3<Tr>::Simplex_iterator
-        it = T.simplices_begin(),
-        end = T.simplices_end();
-
-    while(it != end){
-        if(! T.is_infinite(*it)){
-            os << *it;
-        }
-        ++it;
-  }
-  return os;
-}
-#endif
-
-#if defined CGAL_TETRAHEDRALIZATION_SIMPLEX_H && \
-   !defined CGAL_GV_OUT_CGAL_TETRAHEDRALIZATION_SIMPLEX_H
-#define CGAL_GV_OUT_CGAL_TETRAHEDRALIZATION_SIMPLEX_H
-template < class V >
-Geomview_stream&
-operator<<(Geomview_stream &gv, const Tetrahedralization_simplex<V>* s)
-{
-    gv << ascii
-       << "(geometry Simplex_" << (unsigned long int)s
-       << " {appearance {+edge material {edgecolor "
-       << gv.ecr()  << gv.ecg()  << gv.ecb() <<  "} shading constant}{ "
-       << binary
-       << "OFF BINARY\n";
-    // it has 4 vertices, 4 face and 6 edges
-    gv << 4 << 4 << 6 ;
-
-    // the vertices
-    for(int i=0; i<4; i++)
-        gv << CGAL::to_double(s->vertex(i)->point().x())
-           << CGAL::to_double(s->vertex(i)->point().y())
-           << CGAL::to_double(s->vertex(i)->point().z());
-
-    // the faces
-    double r = gv.fcr(),
-           g = gv.fcg(),
-           b = gv.fcb();
-
-    gv << 3 << 3 << 1 << 2 << 4 << r << g << b << 1.0
-       << 3 << 3 << 0 << 2 << 4 << r << g << b << 1.0
-       << 3 << 3 << 0 << 1 << 4 << r << g << b << 1.0
-       << 3 << 0 << 1 << 2 << 4 << r << g << b << 1.0
-       << "}})"
-       << ascii;
-
-    return gv;
-}
-#endif
-
-#if defined CGAL_TETRAHEDRALIZATION_VERTEX_H && \
-   !defined CGAL_GV_OUT_CGAL_TETRAHEDRALIZATION_VERTEX_H
-#define CGAL_GV_OUT_CGAL_TETRAHEDRALIZATION_VERTEX_H
-template < class P >
-Geomview_stream&
-operator<<(Geomview_stream &gv, const Tetrahedralization_vertex<P>* v)
-{
-    double x = CGAL::to_double(v->point().x());
-    double y = CGAL::to_double(v->point().y());
-    double z = CGAL::to_double(v->point().z());
-    double radius = gv.get_vertex_radius();
-    gv << ascii
-       << "(geometry Vertex_" << (unsigned long int)v
-       << " {appearance {}{ "
-       << binary
-       << "OFF BINARY\n"
-
-    // it has 4 vertices, 6 face and 12 edges
-       << 8 << 6 << 12;
-
-    // the vertices
-    gv << x-radius << y-radius << z-radius
-       << x+radius << y-radius << z-radius
-       << x+radius << y+radius << z-radius
-       << x-radius << y+radius << z-radius
-       << x-radius << y+radius << z+radius
-       << x+radius << y+radius << z+radius
-       << x+radius << y-radius << z+radius
-       << x-radius << y-radius << z+radius;
-
-    // the faces
-    double r = gv.vcr(),
-           g = gv.vcg(),
-           b = gv.vcb();
-    gv << 4 << 0 << 1 << 6 << 7 << 4 << r << g << b << 1.0
-       << 4 << 1 << 2 << 5 << 6 << 4 << r << g << b << 1.0
-       << 4 << 2 << 3 << 4 << 5 << 4 << r << g << b << 1.0
-       << 4 << 3 << 0 << 7 << 4 << 4 << r << g << b << 1.0
-       << 4 << 0 << 1 << 2 << 3 << 4 << r << g << b << 1.0
-       << 4 << 4 << 5 << 6 << 7 << 4 << r << g << b << 1.0
-       << "}})" << ascii;
-
-    return gv;
-}
-#endif
-
-#if defined CGAL_DELAUNAY_TETRAHEDRALIZATION_3_H && \
-   !defined CGAL_GV_OUT_CGAL_DELAUNAY_TETRAHEDRALIZATION_3_H
-#define CGAL_GV_OUT_CGAL_DELAUNAY_TETRAHEDRALIZATION_3_H
-template < class I >
-Geomview_stream&
-operator<<(Geomview_stream& gv, const Delaunay_tetrahedralization_3<I> &DT)
-{
-  // return gv << (const Tetrahedralization_3<I>&)DT;
-  Tetrahedralization_3<I>::Simplex_iterator
-      it = DT.simplices_begin(),
-      end = DT.simplices_end();
-
-  while(it != end){
-    if(! DT.is_infinite(*it)){
-      gv << *it;
-    }
-    ++it;
-  }
-  return gv;
-}
-#endif
-
 char*
 nth(char* s, int count);
-
-// Returns whether "p" is a prefix of "w".
-inline
-bool
-is_prefix(const char* p, const char* w)
-{
-    return w == ::strstr(w, p);
-}
 
 #ifdef CGAL_POINT_3_H
 template < class R >
@@ -538,7 +400,8 @@ template < class R >
 Geomview_stream&
 operator>>(Geomview_stream &gv, Point_3<R> &point)
 {
-    const char *gclpick = "(pick world pickplane * nil nil nil nil nil nil nil)";
+    const char *gclpick =
+	"(pick world pickplane * nil nil nil nil nil nil nil)";
 
     gv << ascii
        << "(pickable pickplane yes) (ui-target pickplane yes)"
@@ -557,75 +420,6 @@ operator>>(Geomview_stream &gv, Point_3<R> &point)
     gv << "(uninterest " << gclpick  << ") (pickable pickplane no)" ;
 
     return gv ;
-}
-#endif
-
-#if defined CGAL_TETRAHEDRALIZATION_SIMPLEX_H && \
-   !defined CGAL_GV_IN_CGAL_TETRAHEDRALIZATION_SIMPLEX_H
-#define CGAL_GV_IN_CGAL_TETRAHEDRALIZATION_SIMPLEX_H
-template < class V >
-Geomview_stream&
-operator>>(Geomview_stream &gv, Tetrahedralization_simplex<V>*& s)
-{
-    char* id;
-    const char *gclpick = "(pick world * nil nil nil nil nil nil nil nil)";
-
-    gv << ascii ;
-    gv << "(interest " << gclpick << ")" ;
-
-    while(true) {
-        gv >> gv.sexpr;  // this reads a gcl expression
-        id = nth(gv.sexpr, 2);
-
-        if(! is_prefix("Simplex_", id)){
-            std::cerr << "You did not click on a simplex" << std::endl;
-            continue;
-        } else {
-            break;
-        }
-    }
-    gv << "(ui-target " << id << " yes)";
-    gv << "(uninterest " << gclpick << ")";
-    id+=8;                   // remove first 7 chars
-    unsigned long int ui = std::strtoul(id, (char **)NULL, 10);
-    s = (Tetrahedralization_simplex<V>*)ui;
-
-    return gv;
-}
-#endif
-
-#if defined CGAL_TETRAHEDRALIZATION_VERTEX_H && \
-   !defined CGAL_GV_IN_CGAL_TETRAHEDRALIZATION_VERTEX_H
-#define CGAL_GV_IN_CGAL_TETRAHEDRALIZATION_VERTEX_H
-template < class P >
-Geomview_stream&
-operator>>(Geomview_stream &gv, Tetrahedralization_vertex<P>*& v)
-{
-    char* id;
-    const char *gclpick = "(pick world * nil nil nil nil nil nil nil nil)";
-
-    gv << ascii
-       << "(interest " << gclpick << ")" ;
-
-    while(true) {
-        gv >> gv.sexpr;  // this reads a gcl expression
-        id = nth(gv.sexpr, 2);
-
-        if(! is_prefix("Vertex_", id)){
-            std::cerr << "You did not click on a vertex" << std::endl;
-            continue;
-        } else {
-            break;
-        }
-    }
-    gv << "(ui-target " << id << " yes)";
-    gv << "(uninterest " << gclpick << ")";
-
-    id+=7;                   // cut first 6 chars
-    unsigned long int ui = std::strtoul(id, (char **)NULL, 10);
-    v = (Tetrahedralization_vertex<P>*)ui;
-
-    return gv;
 }
 #endif
 

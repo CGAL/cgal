@@ -4,8 +4,8 @@ Ver 3.3 (?? ???????? 2000)
 - to_double -> CGAL::to_double.
 - char * -> string.
 - Got rid of useless and deprecated strstreams.
-- Moved is_prefix() to the .h file, and make it inline.
 - Fixed a bug in frame().
+- Removed obsolete code concerning the ooold triangulation package.
 
 Ver 3.2 (24 November 2000)
 - Forgot to submit the test/ directory.
