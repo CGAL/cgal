@@ -73,6 +73,12 @@ endif
 
 LOBJDIR =
 
+ifeq ($(USE_CGAL_WINDOW), 1)
+LCPPDEFS+= -DUSE_RATIONAL_NT
+TARGET0 := $(TARGET0)CgalWindow
+LOBJDIR :=$(LOBJDIR)_cgal_window
+endif
+
 ifeq ($(NT), RATIONAL_NT)
 LCPPDEFS+= -DUSE_RATIONAL_NT
 TARGET0 := $(TARGET0)Rat
@@ -184,7 +190,8 @@ endif
 TARGET0 := $(TARGET0)$(EXEFILESUFFIX)
 LOBJDIR := $(LOBJDIR)_$(COMPILER)$(COMPILER_VER)
 
-LCPPINCS = -I$(BASEDIR)
+LCPPINCS = -I.
+LCPPINCS+= -I$(BASEDIR)
 LCPPINCS+= -I$(BASEDIR)/../../include
 LCPPINCS+= -I$(BASEDIR)/../../../Benchmark/include
 LCPPINCS+= -I$(BASEDIR)/../../../Planar_map/include
@@ -194,6 +201,9 @@ LCPPINCS+= -I$(BASEDIR)/../../../Leda_rat_kernel/include
 LCPPINCS+= $(CGALINCS)
 
 include $(ROOT)/include/make/cgalrul.mak
+
+$(BASENAME).moc: $(BASENAME).C
+	${QT_MOC} -o $@ $<
 
 cartesian:
 	$(MAKEF) "NT=RATIONAL_NT" "KERNEL=CARTESIAN_KERNEL" "TRAITS=SEGMENT_TRAITS"
@@ -380,3 +390,5 @@ all_cached_inst: cached_traits_inst \
 	gmpq_cached_traits_inst \
 	lazy_gmpq_cached_traits_inst \
 	double_cached_traits_inst
+
+$(BASENAME).o: $(BASENAME).moc
