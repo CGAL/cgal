@@ -30,8 +30,8 @@ public:
 
   void draw() {
     *widget << CGAL::ORANGE;
-    // svd.draw_skeleton(*widget);
-    svd.draw_Voronoi_circles(*widget);
+    svd.draw_skeleton(*widget);
+    //    svd.draw_Voronoi_circles(*widget);
   }
 
 };
