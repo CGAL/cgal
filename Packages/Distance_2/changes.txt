@@ -1,3 +1,6 @@
+2.4.2 (19 February 2001)
++ Bug fix in wdot function in squared_distance_utils.h.
+
 2.4 (14 February 2001)
 + Added flags for SIMPLE kernels.
 + Rewrote wdot in terms of wmult.
