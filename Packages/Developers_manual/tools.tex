@@ -337,4 +337,19 @@ For the moment the script does not produce the tar.gz version of the module, thi
   
 
 
+\section{{\tt create\_modules}}
+\label{sec:create_modules}
+\index{create_modules script@{\tt create\_modules} script|(}
+\ccIndexSubitem{test suite}{internal release}
+
+This script is used to trigger the previous script {\tt create\_internal\_module}. It looks in the {\tt \$MODULES\_DIRECTORY} directory for all the files containing the packages list that should generate the module. For example if the {\tt \$MODULES\_DIRECTORY} is ``Modules'', than it looks in the Modules directory for all the files. Each file in this directory represents a module to be created, the name of the file becoming the name of the module. Each file contains a list of packages, one package per line.
+
+For each file in Modules directory, for each package enumerated in the file, it checks out or updates the package in the {\tt \$CVSDIR}. {\tt \$CVSDIR} represents the directory where you store the packages. It is the same as the ``All packages dir'' from the previous script.
+
+Once the update process is done, it calls {\tt create\_internal\_module} script with the right parameters.
+
+The version and version number are preset and the way to determine those will be changed in the near future. I am just looking for the best way to do it. 
+  
+
+
 \ccIndexMainItemEnd{tools}
