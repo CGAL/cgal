@@ -25,8 +25,9 @@ typedef CGAL::Map_overlay_2<Planar_map>        MapOverlay;
 
 typedef CGAL::Pm_walk_along_line_point_location<Planar_map>  PmWalkPL;
 
-using namespace std;
-
+using std::cin;
+using std::cout;
+using std::endl;
 
 // This is provided dute to the fact that the extractor (is >> ) 
 // is not defined per each kind of curve. 

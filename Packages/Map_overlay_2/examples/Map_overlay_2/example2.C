@@ -8,14 +8,15 @@
 #include <CGAL/Map_overlay_default_notifier.h>
 #include <CGAL/Pm_with_intersections.h>
 #include <CGAL/Arr_segment_exact_traits.h>
-#include <CGAL/IO/Pm_Window_stream.h>
+#include <CGAL/IO/Pm_iostream.h>
 
 #include <iostream.h>
 #include <vector>
 #include <list>
 #include <string>
 
-#include <CGAL/IO/cgal_window.h>  //used for visualization -
+//#include <CGAL/IO/cgal_window.h>  //used for visualization -
+//#include <CGAL/IO/Pm_Window_stream.h>
 
 typedef CGAL::Quotient<int>                    NT;
 typedef CGAL::Cartesian<NT>                    R;
@@ -32,9 +33,9 @@ typedef CGAL::Map_overlay_2<Pmwx>               MapOverlay;
 
 typedef CGAL::Pm_walk_along_line_point_location<Planar_map>  PmWalkPL;
 
-
-using namespace std;
-
+using std::cin;
+using std::cout;
+using std::endl;
 
 int  main()
 {
@@ -58,19 +59,18 @@ int  main()
   }
   
   MapOverlay_incremental                 ovl_incremental;
-
-  cout<<"calling map overlay";
+  
   MapOverlay map1(pmwx1, &ovl_incremental), map2(pmwx2, &ovl_incremental);
   MapOverlay map_overlay(map1, map2, &ovl_incremental);
 
-  CGAL::Window_stream W(700, 700);
-  W.init(-10, 10, -10);
-  W.set_node_width(3);
+  cout << map_overlay.subdivision();
   
-  W.display();
-  
-  W<<CGAL::BLUE;
-  W<<map_overlay.subdivision();
+  //CGAL::Window_stream W(700, 700);
+  //W.init(-10, 10, -10);
+  //W.set_node_width(3);
+  //W.display();
+  //W<<CGAL::BLUE;
+  //W<<map_overlay.subdivision();
   
   return 0;
 }

@@ -29,8 +29,9 @@ typedef CGAL::Map_overlay_2<Planar_map>        MapOverlay;
 
 typedef CGAL::Pm_walk_along_line_point_location<Planar_map>  PmWalkPL;
 
-using namespace std;
-
+using std::cin;
+using std::cout;
+using std::endl;
 
 void calc_Window_size(const Planar_map &pm, 
                       double &max_x, double &min_x, double &min_y)
