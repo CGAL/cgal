@@ -1,3 +1,6 @@
+4.22     (18 June 01)
+- Update the Quotient documentation.
+
 4.21     (14 June 01)
 - Include IEEE_754_unions.h only for VC++ and BCC.
 
