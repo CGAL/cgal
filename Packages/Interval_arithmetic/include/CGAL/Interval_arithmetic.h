@@ -55,7 +55,7 @@ CGAL_BEGIN_NAMESPACE
 struct Interval_nt_advanced
 {
   typedef Interval_nt_advanced IA;
-  typedef struct {} unsafe_comparison;	// Exception class.
+  struct unsafe_comparison {};		// Exception class.
   static unsigned number_of_failures;	// Counts the number of failures.
 
   void overlap_action() const // This should be runtime customisable. FIXME
