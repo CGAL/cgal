@@ -1,5 +1,8 @@
 Changes done to the `_QP_solver' package
 
+Version 0.9.19 on 27-Sep-2003
+- new headers
+
 Version 0.9.18 on 10-Sep-2003 [af]
 - Fixing the sqrt problem in Partial_exact_pricing.h
 

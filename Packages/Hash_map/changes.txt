@@ -1,6 +1,9 @@
 Hash_map Package: Release changes
 ----------------------------------------------------------------------
 
+1.4 (27 Sep 2003)
+- new headers
+
 1.3 (08 May 2003)
 
      - Fixed <strstream> to <sstream>.

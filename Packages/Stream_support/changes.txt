@@ -1,6 +1,9 @@
 Stream_support Package: Release changes:
 ---------------------------------------------------------------------
 
+2.23 (27 Sep 2003)
+- new headers
+
 2.22 (16 July 2003)
 - Modified the demos to compile if the LEDA is not installed
 

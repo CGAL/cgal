@@ -3,6 +3,9 @@ VRML_1_ostream and VRML_2_ostream based on popular formats
 OpenInventor and VRML (Virtual Reality Markup Language)
 
 CHANGES:
+Ver 2.5 (27 Sep 2003)
+- new headers
+
 Ver 2.4 (2 Dec 1999)
 cut too long lines
 
