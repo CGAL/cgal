@@ -75,7 +75,7 @@ public:
   class Construct_Cartesian_const_iterator
   {    
     typedef typename K::Point_d Point_d;
-    typedef typename Point_d::Cartesian_const_iterator  Cartesian_const_iterator_d;
+    typedef typename K::Cartesian_const_iterator  Cartesian_const_iterator_d;
 
   public:
     typedef Cartesian_const_iterator_d result_type;
