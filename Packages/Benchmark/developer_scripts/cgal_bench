@@ -453,18 +453,171 @@ sub processEndCmd
 
 sub printEnv
 {
+  # Compiler
+  # --------
   OS_SWITCH: {
-      $compInfo = `cl -? 2>&1`, $compInfo =~ s/([^\n]*)\n.*/$1/g,
-      $compName = 'cl', last OS_SWITCH if $OSNAME =~ /MSWin32/;
-      $compInfo = `gcc --version`, $compName = 'gcc', last OS_SWITCH if $OSNAME =~ /Linux/;
+      @infoLines = `cl -? 2>&1`, $compInfo = $infoLines[0], chop $compInfo,
+        $compName = 'cl', last OS_SWITCH if $OSNAME =~ /MSWin32/;
+      $compInfo = `gcc --version`, $compName = 'gcc',
+        last OS_SWITCH if $OSNAME =~ /Linux/i;
       $compInfo = '', $compName = 'unrecognized';
   }
-    printf("COMPILER NAME: $compName\n");
-    printf("COMPILER INFO: $compInfo\n");
+  printf("COMPILER NAME: $compName\n");
+  printf("COMPILER INFO: $compInfo\n");
 
-    $sysInfo = `uname -a`;
-    printf("OS NAME: $OSNAME\n");
-    printf("OS INFO: $sysInfo\n");
+  # System
+  # ------
+  $sysInfo = `uname -a`;
+  printf("OS NAME: $OSNAME\n");
+  printf("OS INFO: $sysInfo\n");
+
+  # Hardware
+  # --------
+  @cpus = ();
+  $memSize = 'unknown';
+  $gfxBoard = 'unknown';
+  if ($OSNAME =~ /MSWin32/i) {
+  } elsif ($OSNAME =~ /IRIX/i) {
+    # Extract the information:
+    @infoLines = `hinv`;
+
+    # Initialize the fields
+    $numCpus = 0;
+    $cpuSpeed = 0;
+    $cpuType = 0;
+    $primDataCache = 0;
+    $secDataCache = 0;
+    $instCache = 0;
+
+    # Parse:
+    for $record (@infoLines) {
+      if ($record =~ /([^\s])+ ([^\s]+) MHZ ([^\s]+) Processor/) {
+	$numCpus = $1;
+	$cpuSpeed = $2;
+	$cpuType = $3;
+      } elsif ($record =~ /Data cache size:[\s]+([^\n]*)/) {
+        $primDataCache = $1;
+      } elsif ($record =~ /Secondary cache size:[\s]+([^\n]*)/) {
+        $secDataCache = $1;
+      } elsif ($record =~ /Instruction cache size:[\s]+([^\n]*)/) {
+        $instCache = $1;
+      } elsif ($record =~ /Graphics board:[\s]+([^\n]*)/) {
+        $gfxBoard = $1;
+      } elsif ($record =~ /Main memory size:[\s]+([^\n]*)/) {
+        $memSize = $1;
+      }
+    }
+
+    # Update:
+    for $i (0 .. $numCpus-1) {
+      $cpus[$i]{'cpuSpeed'} = $cpuSpeed;
+      $cpus[$i]{'cpuType'} = $cpuType;
+      $cpus[$i]{'primDataCache'} = $primDataCache;
+      $cpus[$i]{'secDataCache'} = $secDataCache;
+      $cpus[$i]{'instCache'} = $instCache;
+    }
+    
+  } elsif ($OSNAME =~ /linux/i) {
+    open CPUFILE, '/proc/cpuinfo' or die "Can't open file: /proc/cpuinfo\n";
+    @infoLines = <CPUFILE>;
+    close CPUFILE;
+
+    for $record (@infoLines) {
+      chop $record;
+      if ($record =~ /processor[\s]*:[\s]+([^\s]+)/) {
+	$i = $1;
+	$cpus[$i]{'cpuSpeed'} = 0;
+	$cpus[$i]{'cpuType'} = 0;
+	$cpus[$i]{'primDataCache'} = 0;
+	$cpus[$i]{'secDataCache'} = 0;
+	$cpus[$i]{'instCache'} = 0;
+      } elsif ($record =~ /cpu MHz[\s]*:[\s]+([^\s]+)/) {
+	$cpus[$i]{'cpuSpeed'} = $1;
+      } elsif ($record =~ /model name[\s]*:[\s]+([^\s]+)/) {
+	$cpus[$i]{'cpuType'} = $1;
+      } elsif ($record =~ /cache size[\s]*:[\s]+([^\s]+)/) {
+	$cpus[$i]{'primDataCache'} = $1;
+      }
+    }
+    
+    open MEMFILE, '/proc/meminfo' or die "Can't open file: /proc/meminfo\n";
+    @infoLines = <MEMFILE>;
+    close MEMFILE;
+    for $record (@infoLines) {
+      chop $record;
+      if ($record =~ /Mem:[\s]+([^\s]+)/) {
+        $memSize = $1;
+      }
+    }
+  } elsif ($OSNAME =~ /Solaris/i) {
+#     Processor=`psrinfo -v | sed -n -e '1,4 s/.*The \(.*\)
+#     processor operates at \(.*\),/\2 \1/p'`
+
+#     Memory size=`prtconf -pv`:Memory.size[\s:]+(.*)
+
+#     Instruction cache=0x`prtconf -pv`:icache-size Bytes
+#     L1 data cache=0x`prtconf -pv`:dcache-size Bytes
+#     L2 data cache=0x`prtconf -pv`:ecache-size Bytes    
+  }
+
+  for $i (0 .. $#cpus) {
+    print "PROCESSOR: $i\n";
+    print "CPU SPEED: $cpus[$i]{'cpuSpeed'}\n";
+    print "CPU TYPE: $cpus[$i]{'cpuType'}\n";
+    print "PRIMARY DATA CACHE: $cpus[$i]{'primDataCache'}\n";
+    print "SECONDARY DATA CACHE: $cpus[$i]{'secDataCache'}\n";
+    print "INSTRUCTION CACHE: $cpus[$i]{'instCache'}\n";
+  }
+	   
+  print "MEM SIZE: $memSize\n";
+  print "GFX BOARD: $gfxBoard\n";
+
+  # CGAL version
+  # ------------
+  $cgalVersion = 'unknown';
+  $cgalFile = "$ENV{CGAL_DIR}/include/CGAL/config.h";
+  if (open CGALFILE, $cgalFile) {
+    undef $/;			# input record separator
+    $_ = <CGALFILE>;		# whole file
+    if (/#define CGAL_VERSION\s+([^\s]+)/) {
+      $cgalVersion = $1;
+    }
+  }
+  print "CGAL VERSION: $cgalVersion\n";
+ 
+  # LEDA version
+  # ------------
+  $ledaVersion = 'unknown';
+  $ledaFile = "$ENV{LEDA_DIR}/CHANGES";
+
+  $cgalMakeFile = "$ENV{CGAL_MAKEFILE}";
+  if (open CGALMAKEFILE, $cgalMakeFile) {
+    undef $/;			# input record separator
+    $_ = <CGALMAKEFILE>;	# whole file
+    if (/^(.*LEDA)\/incl/) {
+      $ledaFile = $1;
+    }
+    open LEDAFILE, $ledaFile or die "Can't open file: $ledaFile\n";
+    undef $/;			# input record separator
+    $_ = <LEDAFILE>;		# whole file
+    if (/#define __LEDA__\s+([^\s]+)/) {
+      $ledaVersion = $1;
+    }
+  }
+  print "LEDA VERSION: $ledaVersion\n";
+
+  # Qt version
+  # ----------
+  $qtVersion = 'unknown';
+  $qtFile = "$ENV{QTDIR}/README";
+  if (open QTFILE, $qtFile) { 
+    undef $/;			# input record separator
+    $_ = <QTFILE>;		# whole file
+    if (/version\s+([^\s]+)/) {
+      $qtVersion = $1;
+    }
+  }
+  print "QT VERSION: $qtVersion\n";
 }
 
 # Tell Emacs that this is really a perl script
