@@ -1,32 +1,51 @@
 Concerning the code itself:
 
+- Fixed support : IA_Fixed.h
+- SGI'CC bugs me:
+"tst5.C", line 25: error(1282): more than one instance of overloaded function
+          "CGAL_compare_y_at_xC2" matches the argument list:
+            function template "CGAL_compare_y_at_xC2(const FT &, const FT &,
+                      const FT &, const FT &, const FT &)"
+            function template "CGAL_compare_y_at_xC2(const CGAL_Filtering<CT,
+                      ET> &, const CGAL_Filtering<CT, ET> &, const
+                      CGAL_Filtering<CT, ET> &, const CGAL_Filtering<CT, ET>
+                      &, const CGAL_Filtering<CT, ET> &)"
+            argument types are: (NT, NT, NT, NT, NT)
+    cout << "Result 1st test: " << (int)CGAL_compare_y_at_xC2(px, py, la, lb,
+lc);
+- Look at Stroustrup to learn what references are...
 - Try to fix that warning:
   /usr/ccs/bin/as: "/var/tmp/ccBHnU0T.s", line 861: warning: 3 instructions
   required between ldfsr and next FBfcc; nops inserted
-- include "Fixed" support (CGAL_to_interval_nt).
-- go on with "typedef CGAL_Interval_nt IA", if the test-suite is ok.
-? overwrite overlap_action() so that it differs between IA and IA_advanced.
+- overwrite overlap_action() so that it differs between IA and IA_advanced.
   This implies declaring it as virtual...  It first needs a bench on
-  predicates.
+  predicates.  It could be defined using template...
+- Add preconditions on the rounding mode => CGAL_get_rounding...
+? try to fix the assembly for Mips (is it Geert' egcs-1.0.3 problem ?)
 ? template by float/double ? (=> must provide CGAL_FPU... for floats...)
 ? implement operator{<,>,<=,>=}(double) -> the current operators will be
   implemented using them, and the tests (IA) > 0 will be faster ?
   Also, this would simplify the *() and /() code.
-  But be careful with exceptions... => 2 different semantics.
+  But be careful with exceptions... => 2 different semantics...
 ? shall I protect ostream operator<<() by CGAL_FPU... ?
-  it seems there's a pb with Linux here.  Hum... it's not MY fault.
+  it seems there's a pb with Linux & Irix  (& Solaris ?) here.
+  Hum... it's not MY fault, is it ?
 
 Concerning the script:
 
-- It also has to fix the headers, the "#define"s, and add #include <IA>.
-  I've done it by hand for the moment.
+- Add a check for the return type (must be CGAL_sign... but not FT)
+  (it won't even compile in this case, I guess) ?
+- Directory where to put the script, and add it to the "make package".
 
 Concerning the doc:
 
 - re-read the doc carefully.
+- modified sqrt() behaviour when negative.
 - document the change of behaviour in the comparison operators, and the effect
   of CGAL_IA_DONT_THROW_EXCEPTION...
 - describe the filtering scheme (new class CGAL_Filter -> new paragraph).
+- Re-document CGAL_to_Interval_nt[_advanced]  (they change regarding the
+  ronding mode).
 ? document the speed up with (double * IA).
 ? document is_same().
 
