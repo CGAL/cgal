@@ -1,15 +1,18 @@
-#include <CGAL/basic.h> //CGAL definitions that need to be before anything
-#include <iostream.h>
+// example9
 
-#include <CGAL/leda_rational.h>
+#include <CGAL/basic.h> //CGAL definitions that need to come before anything
+
+//#include <CGAL/leda_rational.h>
+#include <CGAL/Quotient.h>
+
 #include <CGAL/Cartesian.h>
 
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Planar_map_2.h>
-
 #include <CGAL/Pm_segment_exact_traits.h>
 
 #include <CGAL/IO/Pm_iostream.h>
+#include <iostream.h>
 
 //uncomment if you have LEDA installed.
 //#include <CGAL/IO/Pm_Window_stream.h>
@@ -18,7 +21,8 @@
 //uncomment if you have LEDA installed.
 //#include <CGAL/IO/Pm_Postscript_file_stream.h>
 
-typedef leda_rational                      NT;
+//typedef leda_rational                    NT;
+typedef CGAL::Quotient<int>                NT;
 typedef CGAL::Cartesian<NT>                R;
 typedef CGAL::Pm_segment_exact_traits<R>   Traits;
 typedef CGAL::Pm_default_dcel<Traits>      Dcel;
