@@ -56,10 +56,10 @@ per halfedge in addition to the 3D coordinates per vertex.
 \item 
 After initial sampling the \emph{constrained Delaunay triangulation}
 has been used together with Lloyd's clustering algorithm to build a
-weighted centroidal Voronoi diagram over the newly sampled points in
+weighted centroidal Voronoi diagram over the new sample points in
 parameter space. The fast point location in a triangulation provided
-by CGAL has been used to determine the 3D coordinates of the sample
-points.
+by CGAL has been used to determine the final 3D coordinates of the
+sample points.
 
 \end{itemize}
 
@@ -68,12 +68,32 @@ as all algorithms involved in our remeshing technique
 (parameterization, error diffusion for sampling, Lloyd's clustering
 for sample placement and point location), which nicely unifies all
 components of the algorithm and provides us with genericity for all
-geometric entities and predications. Notice that the filtered kernel
-provided by CGAL (add ref) gives necessary robustness for complex
-models by mixing exact and floating point arithmetic in a transparent
-manner for the programmer.
+geometric entities and predications. An important feature provided by
+CGAL is the filtered kernel~\cite{bbp-iayed-01,p-iaeia-99}, which
+gives robustness required for complex models by mixing exact and
+floating point arithmetic in a transparent manner for the programmer.
 
 \subsection{Anisotropic Remeshing}
+
+% anisotropic remeshing, what is that ?
+
+Beside quality of the mesh elements, remeshing techniques are also
+concerned by approximation efficiency. When accurate representation is
+needed, a strategic sizing, alignement and aspect ratio of the mesh
+elements is crucial. This is a consequence of the natural anisotropic
+nature of generic surfaces.
+
+% main idea
+
+The main idea of the anisotropic remeshing technique described in
+\cite{acdld-apr-03} consists of tracing two orthogonal sets of streamlines
+in a conformal parameter space to align mesh edges along principal
+curvature lines and therefore respect the local symmetries. A careful
+control of the streamline density allows us to improve the mesh
+efficiency so as to match the optimality conditions for the $\Ltwo$
+metric in the limit. Such a strategy produces quad-dominant meshes as
+illustrated by Fig.\ref{fig:anisotropic}.
+
 
 Building blocks taken from CGAL:
 - Polyhedron (enriched primitives to store curvature tensors per
