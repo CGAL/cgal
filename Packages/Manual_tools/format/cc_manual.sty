@@ -11,7 +11,7 @@
   \cs\CCdate$Date$
 }
 
-\tracingmacros=1
+%\tracingmacros=1
 
 % +--------------------------------------------------------------------------
 % | Dimensions (from the LEDA Manual):
@@ -37,7 +37,7 @@
 
 % redefine this macro to be \CCtrue to switch the alternative
 % three column formatting on.
-\def\CCalternateThreeColumn{\CCfalse}
+\def\CCalternateThreeColumn{\CCtrue}
 
 \newdimen\CCWindent
 \newdimen\CCWfirst
@@ -106,6 +106,7 @@
 \def\R{\mbox{$\mathbb R$}}  %% zusammen mit usepackage{amssymb}
 \def\N{\mbox{$\mathbb N$}}  %% zusammen mit usepackage{amssymb}
 \def\Z{\mbox{$\mathbb Z$}}  %% zusammen mit usepackage{amssymb}
+\def\E{\mbox{$\mathbb E$}}  %% zusammen mit usepackage{amssymb}
 
 \newcommand{\leda}{{\sc Leda}}
 \newcommand{\cgal}{{\sc Cgal}}
@@ -125,26 +126,26 @@
                    \label{#1}}
 
 \def\definition    {\bigskip\pagebreak[1]
-                    {\bf 1. Definition}
+                    {\bf Definition}
                     \par\nopagebreak }
 
 \def\creation      {\bigskip\pagebreak[1]
-                    {\bf 2. Creation}
+                    {\bf Creation}
                     \par\nopagebreak }
 
 \def\operations    {\bigskip\pagebreak[1]
-                    {\bf 3. Operations}
+                    {\bf Operations}
                     \par\nopagebreak }
 
 \def\implementation {\bigskip\pagebreak[1]
-                    {\bf 4. Implementation}
+                    {\bf Implementation}
                     \par\nopagebreak }
 
 \def\example       {\bigskip\pagebreak[1]
-                    {\bf 5. Example}
+                    {\bf Example}
                     \par\nopagebreak }
 
-\def\precond {{\it Precondition}: }
+\def\precond {\par{\it Precondition}: }
 
 
 % +--------------------------------------------------------------------------
@@ -391,7 +392,8 @@
 \gdef\CCopenangle  {\CCendfont {\tt <}}
 \gdef\CCcloseangle {\CCendfont {\tt >}}
 \gdef\CCampersand  {\CCendfont {\tt \&}}
-\gdef\CCunderscore {\_}
+% \gdef\CCunderscore {\raisebox{-.05ex}{\_}\kern.05em}
+\gdef\CCunderscore {\kern.05em\raisebox{.5ex}{\_}\kern-.1em}
 \gdef\CChat        {{\large $\;\,\hat{}\,\,$}}
 \gdef\CCtilde      {{\lower.3ex \hbox{\large$\,\tilde{}\,$}}}
 
@@ -680,7 +682,7 @@
                        \hspace*{\CCWindent}%
                        \ifdim\CCWfirst>0pt % check for constructors
                            \ifdim\wd\returntypebox>\CCWfirst
-                               \unhbox\returntypebox\CCreturnskip
+                               \unhbox\returntypebox\nopagebreak\CCreturnskip
                            \else
                                \parbox[t]{\CCWfirst}{\sloppy 
                                    \unhbox\returntypebox}%
@@ -699,11 +701,13 @@
                                  \global\advance\CCWparam \CCWfirst
                                  \global\advance\CCWparam \CCWbetween
                                \fi
-                               \def\CCextendedFormat{\\\hspace*{\CCWparam}}%
+                               \def\CCextendedFormat{\nopagebreak\\
+                                       \hspace*{\CCWparam}}%
                                {\CCfont\unhbox\callnamebox #1 }%
                            \else
                                %  Switches ext. format ON.
-                               \def\CCextendedFormat{\\\hspace*{\CCWparam}}%
+                               \def\CCextendedFormat{\nopagebreak\\
+                                       \hspace*{\CCWparam}}%
                                {\CCfont \unhbox\callnamebox #1}%
                                \CCextendedFormat
                            \fi
@@ -713,7 +717,7 @@
                                \fi
                            #3}\hfill
                            \isEmpty{#4}\ifnum\CCbool=\CCfalse
-                               \CCmiddleskip
+                               \nopagebreak\CCmiddleskip
                                \parbox[t]{\CCWcomment}{\sloppy #4}\hfill
                            \fi
                            \def\CCextendedFormat{\ }% Switches ext. format OFF.
@@ -722,10 +726,12 @@
                            \parbox[t]{\CCWsecondlong}{\unhbox\functioncallbox}%
                            \hfill
                            \isEmpty{#4}\ifnum\CCbool=\CCfalse
-                               \CCmiddleskip
+                               \nopagebreak\CCmiddleskip
                                \parbox[t]{\CCWcomment}{\sloppy #4}\hfill
+                               \CCbottombigskip
+			   \else
+                               \CCbottomskip
                            \fi
-                           \CCbottombigskip
                         \else
                            \parbox[t]{\CCWsecond}{\unhbox\functioncallbox}%
                            \hspace*{\CCWbetween}%
@@ -962,7 +968,8 @@
                            \if+#1\if+#2\CCoperatorpraefix{#1\!#2}\fi\fi
                            \if-#1\if-#2\CCoperatorpraefix{#1\!#2}\fi\fi
                        \or                         @ 2 parameters
-                           \if[#1\if]#2\CCoperatorparXX{\CCendfont[ }{]}\fi\fi
+                           \if[#1\if]#2\CCoperatorparXX{\CCendfont{\rm [} 
+				}{\CCendfont{\rm ]}}\fi\fi
                            \if(#1\if)#2\CCoperatorparXX{( }{)}\fi\fi
                            \if+#1\if+#2\CCoperatorpostfix{#1\!#2}\fi\fi
                            \if-#1\if-#2\CCoperatorpostfix{#1\!#2}\fi\fi
@@ -1291,5 +1298,4 @@
         \fi
     \fi}
 \def\CCprintReturnTypeXQ #1const.&.\end{\CCprintTokens #1\end}
-
 
