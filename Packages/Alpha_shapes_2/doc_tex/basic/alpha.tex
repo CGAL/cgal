@@ -1,0 +1,387 @@
+\RCSdef{\alphashapeRevision}{$Revision$}
+\RCSdefDate{\alphashapeDate}{$Date$}
+
+\chapter{Alpha-Shapes} \label{I1_ChapterAlphashapes}
+
+\ccChapterSubTitle{\alphashapeRevision, \alphashapeDate}
+
+\section{Introduction}
+
+This chapter presents a framework for alpha shapes. The description is
+based on Edelsbrunner and M\"ucke.  Alpha shapes can be used for shape
+reconstruction from a dense unorganized set of data points.  Alpha
+shapes are the generalization of the convex hull of a point set. Let
+$S$ be a finite set of points in $\R^d$, $d = 2,3$ and $\alpha$ a
+parameter with $0 \leq \alpha \leq \infty$. For $\alpha =
+\infty$, the $\alpha$-shape is the convex hull of $S$.  As $\alpha$
+decreases, the $\alpha$-shape shrinks and develops cavities. Finally,
+for $\alpha = 0$, the $\alpha$-shape is the set $S$ itself.
+
+There is a close connection between alpha shapes and Delaunay
+triangulations. More precisely, the $\alpha$-complex of $S$ is a
+subcomplex of the Delaunay triangulation of $S$.  The corresponding
+$\alpha$-shape is its underlying space.  Alternatively, the
+$\alpha$-shape of $S$ is a polygon (resp.\ polytope) whose boundary
+consists of $\alpha$-exposed $k$-simplices, $0 \leq k \leq d-1$. A
+simplex is $\alpha$-exposed, if there is an open disk (resp.\ ball) of
+radius $\sqrt{\alpha}$ through the vertices of the simplex that does
+not contain any other point of $S$. In general, an alpha shape is a
+non-connected, mixed-dimension polygon (rep.\ polytope).
+
+The $\alpha$-shapes of $S$ form a discrete family, even though they
+are defined for all real numbers $\alpha$ with $0 \leq \alpha
+\leq \infty$. Thus, we can represent the entire family of $\alpha$ shapes
+of $S$ by the Delaunay triangulation of $S$. In this representation
+each $k$-simplex of the Delaunay triangulation is associated with an
+interval that specifies for which values of $\alpha$ the $k$-simplex
+belongs to the $\alpha$-shape. Relying on this result, the family of
+$\alpha$-shapes can be computed efficiently and relatively
+easily. Furthermore, we can select an appropriate $\alpha$-shape from a
+finite number of different $\alpha$-shapes and corresponding
+$\alpha$-values.
+
+%----------------------------------------------------------------------
+
+\section{Alpha Shape of Points in a Plane \label{I1_SectAlpha Shape_2}}
+
+\begin{ccClassTemplate} {Alpha_shape_2<Gt,Tds>}
+
+\ccDefinition
+The class \ccClassTemplateName\ represents the family of
+$\alpha$-shapes of points in a plane for {\em all} positive
+$\alpha$. It maintains the underlying Delaunay triangulation which
+represents connectivity and order among its faces. Each
+$k$-dimensional face of the Delaunay triangulation is associated with
+an interval that specifies for which values of $\alpha$ the face
+belongs to the $\alpha$-shape. There are links between the intervals
+and the $k$-dimensional faces of the Delaunay triangulation.
+
+
+\ccInclude{CGAL/Alpha_shape_2.h}
+
+\ccInheritsFrom
+
+\ccStyle{Delaunay_Triangulation_2<Gt,Tds>}
+
+The modifying functions \ccStyle{insert} and \ccStyle{remove} will overwrite
+the inherited functions. At the moment, only the static version is implemented.
+
+\ccTypes
+\ccSetThreeColumns{Oriented_side}{}{\hspace*{10cm}}
+\ccThreeToTwo
+
+\ccNestedType{Gt}{the alpha shape traits type.}
+ 
+It contains the Delaunay triangulation traits class.  For example
+\ccStyle{Gt::Point} is a mapping on a point class. Additionally,
+it defines a mapping on a coordinate type class.
+
+\ccTypedef{typedef Gt::Coord_type Coord_type;}{}
+
+\ccNestedType{Alpha_iterator}{An iterator that allow to traverse 
+the sorted sequence of different $\alpha$-values. The iterator is
+bidirectional and non-mutable. Its \ccStyle{value_type}
+is \ccStyle{Coord_type}}
+
+\ccEnum{enum Classification_type {EXTERIOR, SINGULAR, REGULAR, INTERIOR};}
+{Distinguishes the different cases for classifying a $k$-dimensional face
+ of the underlying Delaunay triangulation of the $\alpha$-shape. \\
+\ccStyle{EXTERIOR} if the face does not belong to the $\alpha$-complex.\\
+\ccStyle{SINGULAR} if the face belongs to the boundary of the $\alpha$-shape,
+ but is not incident to any 2-dimensional face of the $\alpha$-complex\\
+\ccStyle{REGULAR} if the face belongs to the boundary of the $\alpha$-shape
+ and is incident to a 2-dimensional face of the $\alpha$-complex\\
+\ccStyle{INTERIOR} if the face belongs to the $\alpha$-complex, but does
+not belong to the boundary of the $\alpha$-shape\\}
+
+\ccEnum{enum Mode {GENERAL, REGULARIZED};}
+{ In general, an alpha shape is a non-connected, mixed-dimension
+polygon. Its regularized version is formed by the set of regular edges
+and their vertices}
+
+\ccCreation
+\ccCreationVariable{A}
+
+\ccConstructor{Alpha_shape_2(Coord_type alpha = 0,
+				  Mode m = GENERAL);}
+{Introduces an empty $\alpha$-shape \ccVar\ for a positive $\alpha$-value
+ \ccStyle{alpha}.
+\ccPrecond \ccStyle{alpha}~$\geq~0$.}
+
+
+\ccConstructor{template < class InputIterator >
+		Alpha_shape_2(
+			InputIterator first,
+			InputIterator last,
+                const Coord_type& alpha = 0,
+	        Mode m = GENERAL);}
+{Initializes the family of alpha-shapes with the points in the range
+$\left[\right.$\ccStyle{first}, \ccStyle{last}$\left.\right)$ and 
+introduces an $\alpha$-shape \ccVar\ for a positive $\alpha$-value
+\ccStyle{alpha}.  
+\ccPrecond The \ccStyle{value_type} of \ccStyle{first} and
+\ccStyle{last} is \ccStyle{Point}.\\
+\ccStyle{alpha} $\geq 0$.}
+
+\ccOperations
+
+\ccMethod{template < class InputIterator >
+		int make_Alpha_shape(
+			InputIterator first,
+			InputIterator last,
+                        const Coord_type& alpha = 0,
+	                Mode m = GENERAL);}
+{Initialize the family of alpha-shapes with the points in the range
+$\left[\right.$\ccStyle{first}, \ccStyle{last}$\left.\right)$ and 
+introduces an $\alpha$-shape \ccVar\ for a positive $\alpha$-value
+\ccStyle{alpha}. Returns the number of inserted points. \\
+If the function is applied to an non-empty family of alpha-shape, it is cleared
+before initialization.
+\ccPrecond The \ccStyle{value_type} of \ccStyle{first} and
+\ccStyle{last} is \ccStyle{Point}.\\
+\ccStyle{alpha} $\geq 0$.}
+
+\ccMethod{void
+	clear();}
+{Clears the structure.}
+
+\ccMethod{Coord_type
+	set_alpha(const Coord_type& alpha);}
+{Sets the $\alpha$-value to \ccStyle{alpha}.
+ Returns the previous $\alpha$-value.
+\ccPrecond \ccStyle{alpha} $\geq 0$.}
+
+\ccMethod{const Coord_type&
+	get_alpha(void) const;}
+{Returns the current $\alpha$-value.}
+
+\ccMethod{const Coord_type&  get_nth_alpha(int n) const;}
+{Returns the $n$-th alpha-value.
+ \ccPrecond \ccStyle{n} < number of alphas.}
+
+\ccMethod{int number_of_alphas() const;}
+{Returns the number of different alpha-values.}
+
+% dynamic version	
+% 
+% \ccMethod{Vertex* insert(const Point& p);}
+% {Inserts point \ccStyle{p} in the alpha shape and returns the
+% corresponding vertex of the underlying Delaunay triangulation.\\ If
+% point \ccStyle{p} coincides with an already existing vertex, this
+% vertex is returned and the alpha shape remains unchanged.\\ Otherwise,
+% the vertex is inserted in the underlying Delaunay triangulation and
+% the associated intervals are updated. }
+% 
+% \ccMethod{void remove(Vertex *v);}
+% {Removes the vertex from the underlying Delaunay triangulation. The
+% created hole is retriangulated and the associated intervals are
+% updated.}
+% 
+
+\ccMethod{Mode
+	set_mode(Mode m = GENERAL );}
+{Sets \ccVar\ to its general or regularized version. 
+Returns the previous mode.}
+
+\ccMethod{Mode
+	get_mode(void) const;}
+{Returns whether \ccVar\ is general or regularized.}
+
+\ccMethod{template  < class OutputIterator >
+	  OutputIterator get_Alpha_shape_vertices(
+					 OutputIterator result);}
+{Writes the vertices of the alpha shape \ccVar\ for the current $\alpha$-value
+to the container where \ccStyle{result} refers to. 
+The \ccStyle{value_type} of \ccStyle{result} is \ccStyle{Vertex*}.
+Returns an output iterator which is the end of the constructed range.}
+
+\ccMethod{template  < class OutputIterator >
+	  OutputIterator get_Alpha_shape_edges(
+					 OutputIterator result);}
+{Writes the edges 
+of the alpha shape \ccVar\ for the current $\alpha$-value
+to the container where \ccStyle{result} refers to. 
+The \ccStyle{value_type} of \ccStyle{result} is \ccStyle{pair<Face*, int>}.
+Returns an output iterator which is the end of the constructed range.}
+
+\ccHeading{Predicates}
+
+
+\ccMethod{Classification_type
+           classify(const Point& p, 
+	const Coord_type& alpha = get_alpha()) const;}
+{Classifies a point \ccStyle{p} with respect to \ccVar.}
+
+\ccMethod{Classification_type
+           classify(Face* f, const Coord_type& alpha = get_alpha()) const;}
+{Classifies the face \ccStyle{f} of the underlying Delaunay triangulation with respect to \ccVar.}
+
+\ccMethod{Classification_type
+           classify(pair<Face*, int> e, const Coord_type& alpha = get_alpha()) const;}
+{Classifies the edge \ccStyle{e} of the underlying Delaunay triangulation with respect to \ccVar.}
+
+\ccMethod{Classification_type
+           classify(Face* f, int i, const Coord_type& alpha = get_alpha()) const;}
+{Classifies the edge of the face \ccStyle{f} opposite to the vertex with index \ccStyle{i} of the underlying Delaunay triangulation with respect to \ccVar.}	
+
+\ccMethod{Classification_type
+           classify(Vertex* v, const Coord_type& alpha = get_alpha()) const;}
+{Classifies the vertex \ccStyle{v} of the underlying Delaunay triangulation with respect to \ccVar.}
+
+
+\ccHeading{Traversal of the $\alpha$-Values}
+
+\smallskip
+The alpha shape class defines an iterator that allows to visit the
+sorted sequence of $\alpha$-values. This iterator is
+non-mutable and bidirectional. Its value type is
+\ccStyle{Coord_type}.
+
+\ccMethod{Alpha_iterator alpha_begin() const;}
+{Returns an iterator that allows to traverse the
+sorted sequence of $\alpha$-values of the family of alpha shapes.}
+
+\ccMethod{Alpha_iterator alpha_end() const;}
+{Returns the corresponding past-the-end iterator.}
+
+\ccMethod{Alpha_iterator alpha_find(const Coord_type& alpha) const;}
+{Returns an iterator pointing to an element with $\alpha$-value
+\ccStyle{alpha}, or the corresponding past-the-end iterator if such 
+an element is not found.}
+
+\ccMethod{Alpha_iterator alpha_lower_bound(const Coord_type& alpha) const;}
+{Returns an iterator pointing to the first element with
+$\alpha$-value not less than \ccStyle{alpha}.}
+
+\ccMethod{Alpha_iterator alpha_upper_bound(const Coord_type& alpha) const;}
+{Returns an iterator pointing to the first element with $\alpha$-value
+greater than \ccStyle{alpha}.}
+
+\ccHeading{Operations}
+
+\ccMethod{int number_solid_components(const Coord_type& alpha = get_alpha()) const;}
+{Returns the number of solid components of \ccVar, that is, the number of components of its regularized version.}
+
+\ccMethod{Alpha_iterator find_optimal_alpha(int nb_components) const;}
+{Returns an iterator pointing to the first element with $\alpha$-value
+such that \ccVar\ satisfies the following two properties:\\
+\ccStyle{nb_components} equals the number of solid components and \\
+all data points are either on the boundary or in the interior of the regularized version of \ccVar.\\
+If no such value is found, the iterator points to the first element with 
+$\alpha$-value such that \ccVar\ satisfies the second property.}
+\ccHeading{I/O}
+
+The I/O operators are defined for \ccStyle{iostream}, and for
+the window stream provided by \cgal. The format for the iostream
+is an internal format. 
+
+\ccInclude{CGAL/IO/ostream_2.h}
+
+\ccFunction{ostream& operator<<(ostream& os,
+                  const Alpha_shape_2<Gt,Tds>& A);}
+{Inserts the alpha shape \ccVar\ for the current $\alpha$-value into the stream \ccStyle{os}.
+\ccPrecond The insert operator must be defined for \ccStyle{Point}.}
+
+\ccInclude{CGAL/IO/Window_stream.h}
+
+\ccFunction{Window_stream& operator<<(Window_stream& W,
+                         const Alpha_shape_2<Gt,Tds>& T);}
+{Inserts the alpha shape \ccVar\ for the current $\alpha$-value into the window stream \ccStyle{W}.
+\ccPrecond The insert operator must be defined for \ccStyle{Point} and \ccStyle{Segment}.}
+\end{ccClassTemplate}
+
+\ccImplementation
+In the first static version, the set of intervals associated with the
+$k$-dimensional faces of the underlying Delaunay triangulation are
+stored only as sorted \ccStyle{vectors}. By using an interval tree the
+alpha-shape could be constructed more efficiently. For the dynamic
+version, we need \ccStyle{multimaps} or dynamic interval trees. The
+cross links between the intervals and the $k$-dimensional faces of the
+Delaunay triangulation are actually realized using
+\ccStyle{multimaps} resp.\ \ccStyle{hash multimaps}.
+
+\ccStyle{A.alpha find} uses linear search, while 
+\ccStyle{A.alpha lower bound} and \ccStyle{A.alpha upper bound} 
+use binary search.
+\ccStyle{A.number solid components} performs a graph traversal and takes time linear in the number of faces of the underlying Delaunay triangulation.
+\ccStyle{A.find optimal alpha} uses binary search and takes time
+$O(\mbox{\em number of faces } \log{\mbox{\em number of faces}})$.
+
+%----------------------------------------------------------------------
+
+\section{Requirements\label{I1_SectRequirements}}
+
+
+\subsection{Requirements for the Alpha-Shape Traits Class} 
+
+The class \ccStyle{Alpha_shape_2<Gt,Tds>} parameterized with a
+traits class, that has the same requirements as the Delaunay
+triangulation traits class.  The following requirement catalog lists
+the primitives that must be defined additionnally.
+
+\begin{ccClass} {Gt}
+\subsection*{Traits (\mbox{\it Gt})}
+
+\ccCreationVariable{t}
+
+\ccDefinition
+A class \ccClassName\ that satisfies the requirements of a alpha shape
+traits class must provide the following predicate and operations in
+addition to the requirements for the Delaunay triangulation traits
+class.
+
+\ccTypes
+
+\ccNestedType{Coord_type}{A type to hold a coordinate type class. 
+The type must provide a copy constructor, assignment, comparison
+operators, negation, multiplication, division and allow the
+declaration and initialization with a small integer constant
+(cf. requirements for number types). An obvious choice would be
+coordinate type of the point class.}
+
+\ccCreation
+
+Only a default constructor is required. Note that further constructors
+can be provided. 
+
+\ccConstructor{Gt();}
+{A default constructor.}
+
+
+\ccOperations
+
+\ccMethod{Coord_type squared_radius_smallest_circumcircle(const Point& p0,
+                                       		const Point& p1, 
+						const Point& p2 );} 
+{Returns the squared radius of smallest circumscribing circle of the
+points \ccStyle{p0, p1, p2}. }
+
+\ccMethod{Coord_type squared_radius_smallest_circumcircle(const Point& p0,
+                                       const Point& p1);} 
+{Returns the squared radius of smallest circumscribing circle of the
+points \ccStyle{p0, p1}. }
+
+\ccMethod{Bounded_side side_of_bounded_circle(const Point& p0,
+                                    const Point& p1,
+                                    const Point& test);}
+{Returns the relative position of point \ccStyle{test} to the circle
+defined as the smallest circumscribing circle of the points \ccStyle{p0,
+p1}.}
+
+\end{ccClass}
+
+\subsection{Requirements for the Triangulation Data Structure Class}
+
+The class \ccStyle{Alpha_shape_2<Gt,Tds>} parameterized with a
+triangulation data structure class, that has exactly the same
+requirements as the Delaunay triangulation triangulation data
+structure class. But, she requires to be templated by the the two
+paramaters \ccc{Alpha_shape_vertex_base_2} and
+\ccc{Alpha_shape_face_base_2}.
+
+\ccInclude{CGAL/Alpha_shape_vertex_base_2.h}
+
+\ccInclude{CGAL/Alpha_shape_face_base_2.h}
+
+These two classes have the same requirements as the classes
+\ccc{Triangulation_vertex_base_2} and \ccc{Triangulation_face_base_2}.
