@@ -1,3 +1,6 @@
+3.32 (7 Mar 2002)
+- changed std:: to CGAL_CLIB_STD:: for atoi and exit in example
+
 3.31 (20 Feb 2002)
 - fixed documentation bug (removed mention of Left_of_line_2)
 
