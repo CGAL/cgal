@@ -1,3 +1,6 @@
+
+- Iterator specializations are NOT needed for Intel together with .net 2003
+
 2.82 15/10/2003
 -added global min/max functions in config.h (only if NOMINMAX is defined)
 
