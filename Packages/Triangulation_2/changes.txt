@@ -1,6 +1,11 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.98 (14/6/01)
+- fixed problems related to the change from Less_distance_to_point_2
+to Compare_distance_2
+- added std:: in front of iterator_traits< >
+
 Ver 4.97 (12/6/01)
 - replace Less_distance_to_Point_2 by Compare_distance_2
 - Turn  classes To_tds_edge_iterator and To_tds_face_iterator
