@@ -112,8 +112,8 @@ public:
     }
   }
 
-  void write_value(unsigned int val, char deliminator = '\n') {
-    out() << val <<deliminator;
+  void write_value(unsigned int val, char delimiter = '\n') {
+    out() << val <<delimiter;
   }
   
   /*void  write_header(const char   *title_name) {
