@@ -19,13 +19,14 @@
 			ManagedExtensions="TRUE">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/TP /GR /Zm900"
+				AdditionalOptions="/Zm900"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;CGAL_USE_GMP;"
 				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="5"
+				RuntimeTypeInfo="TRUE"
 				WarningLevel="2"
 				DebugInformationFormat="3"
 				CompileAsManaged="0"/>
@@ -62,12 +63,13 @@
 			ManagedExtensions="TRUE">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/GR /Zm900"
+				AdditionalOptions="/Zm900"
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG"
 				MinimalRebuild="FALSE"
+				RuntimeTypeInfo="TRUE"
 				WarningLevel="2"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
