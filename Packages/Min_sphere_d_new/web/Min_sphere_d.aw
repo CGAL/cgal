@@ -179,11 +179,11 @@ in the \cgal\ Reference Manual.
 %\input{../doc_tex/basic/Optimisation/Optimisation_ref/Min_sphere_d.tex}
 
 @! ----------------------------------------------------------------------------
-@! Concept: Optimisation_d_traits
+@! Concept: OptimisationDTraits
 @! ----------------------------------------------------------------------------
 
 \subsectionRef{Concept}{Optimisation\_d\_traits}
-\input{../../Optimisation_basic/doc_tex/basic/Optimisation/Optimisation_ref/Optimisation_d_traits.tex}
+\input{../../Optimisation_basic/doc_tex/basic/Optimisation/Optimisation_ref/OptimisationDTraits.tex}
 
 @p maximum_input_line_length = 80
 
@@ -203,7 +203,7 @@ in the \cgal\ Reference Manual.
   CGAL::Min\_sphere\_d\texttt{<}Traits\texttt{>}}
 
 The class template \ccc{Min_sphere_d} expects a model of the concept
-\ccc{Optimisation_d_traits} (see Section~\ref{ccRef_Optimisation_d_traits}.2)
+\ccc{OptimisationDTraits} (see Section~\ref{ccRef_OptimisationDTraits}.2)
 as its template argument.
 
 @macro <Min_sphere_d declarations> += @begin
@@ -1517,7 +1517,7 @@ model \ccc{Homogeneous<leda_integer>}.
     // comparing (needs LEDA)
     #ifdef CGAL_USE_LEDA
       typedef  CGAL::Homogeneous<leda_integer>   K_3;
-      typedef  CGAL::Min_circle_2_traits_2<R_3>  Traits_3;
+      typedef  CGAL::Min_circle_2_traits_2<K_3>  Traits_3;
       typedef  CGAL::Min_sphere_d<Traits_1>      Min_sphere_d;
       typedef  CGAL::Min_circle_2<Traits_3>      O_Min_sphere_d;
     #endif
@@ -1528,7 +1528,7 @@ model \ccc{Homogeneous<leda_integer>}.
     // comparing (needs LEDA)
     #ifdef CGAL_USE_LEDA
       typedef  CGAL::Homogeneous<leda_integer>     K_3;
-      typedef  CGAL::Optimisation_d_traits_@1<R_3>  Traits_3;
+      typedef  CGAL::Optimisation_d_traits_@1<K_3>  Traits_3;
       typedef  CGAL::Min_sphere_d<Traits_1>        Min_sphere_d;
       typedef  CGAL::Min_sphere_d<Traits_3>        O_Min_sphere_d;
     #endif
