@@ -618,11 +618,11 @@ The class \ccc{My\_Widget} is like in the previous example an intance of
 The only difference between this example and the previous one is the
 use of standard toolbar. It is declared as private in \ccc{My\_Window} class:
 \begin{ccExampleCode}
-CGAL::Standard_toolbar *stoolbar;
+CGAL::Qt_widget_standard_toolbar *stoolbar;
 \end{ccExampleCode}
 To use it, in the constructor of \ccc{My\_Window}, it is added:
 \begin{ccExampleCode}
-stoolbar = new CGAL::Standard_toolbar(widget, this);
+stoolbar = new CGAL::Qt_widget_standard_toolbar(widget, this);
 this->addToolBar(stoolbar->toolbar(), Top, FALSE);
 \end{ccExampleCode}
 In this tutorial you can play a little bit with the standard toolbar
