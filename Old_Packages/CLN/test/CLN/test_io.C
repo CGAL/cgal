@@ -18,10 +18,7 @@ int main()
 #include <CGAL/CLN/cl_rational.h>
 #include <CGAL/Quotient.h>
 
-#include <cl_io.h>
-#include <cl_integer_io.h>
-#include <cl_rational_io.h>
-#include <cl_output.h>
+#include <cl_output.h> // for cl_default_print_flags
 
 int main()
 {

@@ -26,9 +26,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/CLN/cl_integer.h>
-#include <cl_integer_io.h>
-#include <cl_io.h>
-#include <cl_output.h>
+#include <cl_output.h> // for cl_default_print_flags
 
 CGAL_BEGIN_NAMESPACE
 
