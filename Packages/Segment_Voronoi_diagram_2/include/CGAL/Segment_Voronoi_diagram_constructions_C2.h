@@ -207,7 +207,7 @@ public:
   typedef typename Gt::Line_2                   Line_2;
   typedef typename Gt::Ray_2                    Ray_2;
   typedef typename Gt::Construct_svd_vertex_2   Construct_svd_vertex_2;
-  typedef typename Gt::Are_same_points_2        Are_same_points_2;
+  typedef typename Gt::Equal_2                  Equal_2;
   typedef Ray_2                                 result_type;
   typedef Arity_tag<3>                          Arity;
 
@@ -216,7 +216,7 @@ public:
   {
     CGAL_assertion( !(p.is_segment() && q.is_segment()) );
 
-    Are_same_points_2 are_same_points;
+    Equal_2 are_same_points;
 
     Point_2 v = Construct_svd_vertex_2()(p, q, r);
     Point_2 p1, p2;
@@ -257,7 +257,7 @@ public:
   typedef CGAL::Parabola_segment_2<Gt>         Parabola_segment_2;
 
   typedef typename Gt::Construct_svd_vertex_2  Construct_svd_vertex_2;
-  typedef typename Gt::Are_same_points_2       Are_same_points_2;
+  typedef typename Gt::Equal_2                 Equal_2;
 
   typedef CGAL::Object                         Object_2;
   typedef Object_2                             result_type;
@@ -270,7 +270,7 @@ public:
     Point_2 vpqr = circumcenter(p, q, r);
     Point_2 vqps = circumcenter(q, p, s);
 
-    Are_same_points_2 same_points;
+    Equal_2 same_points;
 
     if ( (p.is_point() && q.is_point()) ||
 	 (p.is_segment() && q.is_segment()) ) {

@@ -352,6 +352,8 @@ public:
   typedef typename Kernel::FT                     FT;
   typedef typename Kernel::RT                     RT;
 
+  typedef CGALi::Svd_arrangement_enum::Arrangement_type Arrangement_type;
+
 public:
   // OBJECT CONSTRUCTION & ASSIGNMENT
   //-------------------------------
@@ -369,7 +371,7 @@ public:
   typedef CGAL::Svd_compare_x_2<K>                      Compare_x_2;
   typedef CGAL::Svd_compare_y_2<K>                      Compare_y_2;
   typedef CGAL::Svd_orientation_2<K>                    Orientation_2;
-  typedef CGAL::Are_same_points_2<K>                    Are_same_points_2;
+  typedef CGAL::Are_same_points_2<K>                    Equal_2;
   typedef CGAL::Are_parallel_2<K>                       Are_parallel_2;
   typedef CGAL::Svd_oriented_side_of_bisector_2<K,MTag> 
   /*                                          */ Oriented_side_of_bisector_2;
@@ -430,9 +432,9 @@ public:
     return Orientation_2();
   }
 
-  Are_same_points_2
-  are_same_points_2_object() const {
-    return Are_same_points_2();
+  Equal_2
+  equal_2_object() const {
+    return Equal_2();
   }
 
   Are_parallel_2

@@ -152,6 +152,8 @@ public:
 
   typedef typename CK::Rep_tag          Rep_tag;
 
+  typedef CGALi::Svd_arrangement_enum::Arrangement_type Arrangement_type;
+
 private:
   typedef typename CK_traits::Construct_svd_vertex_2
   CK_Construct_svd_vertex_2;
@@ -191,7 +193,7 @@ private:
   typedef typename FK_traits::Compare_x_2        FK_Compare_x_2;
   typedef typename FK_traits::Compare_y_2        FK_Compare_y_2;
   typedef typename FK_traits::Orientation_2      FK_Orientation_2;
-  typedef typename FK_traits::Are_same_points_2  FK_Are_same_points_2;
+  typedef typename FK_traits::Equal_2            FK_Equal_2;
   typedef typename FK_traits::Are_parallel_2     FK_Are_parallel_2;
 
   typedef typename FK_traits::Oriented_side_of_bisector_2
@@ -215,7 +217,7 @@ private:
   typedef typename EK_traits::Compare_x_2        EK_Compare_x_2;
   typedef typename EK_traits::Compare_y_2        EK_Compare_y_2;
   typedef typename EK_traits::Orientation_2      EK_Orientation_2;
-  typedef typename EK_traits::Are_same_points_2  EK_Are_same_points_2;
+  typedef typename EK_traits::Equal_2            EK_Equal_2;
   typedef typename EK_traits::Are_parallel_2     EK_Are_parallel_2;
 
   typedef typename EK_traits::Oriented_side_of_bisector_2
@@ -240,7 +242,7 @@ private:
   typedef Svd_compare_x_2<FK>                    FK_Compare_x_2;
   typedef Svd_compare_y_2<FK>                    FK_Compare_y_2;
   typedef Svd_orientation_C2<FK>                 FK_Orientation_2;
-  typedef Svd_are_same_points_C2<FK>             FK_Are_same_points_2;
+  typedef Svd_are_same_points_C2<FK>             FK_Equal_2;
   typedef Svd_are_parallel_C2<FK>                FK_Are_parallel_2;
 
   typedef Svd_oriented_side_of_bisector_C2<FK,FK_MTag>
@@ -262,7 +264,7 @@ private:
   typedef Svd_compare_x_2<EK>                    EK_Compare_x_2;
   typedef Svd_compare_y_2<EK>                    EK_Compare_y_2;
   typedef Svd_orientation_C2<EK>                 EK_Orientation_2;
-  typedef Svd_are_same_points_C2<EK>             EK_Are_same_points_2;
+  typedef Svd_are_same_points_C2<EK>             EK_Equal_2;
   typedef Svd_are_parallel_C2<EK>                EK_Are_parallel_2;
 
   typedef Svd_oriented_side_of_bisector_C2<EK,EK_MTag>
@@ -297,9 +299,8 @@ public:
   Orientation_2;
 
   typedef
-  Filtered_predicate<EK_Are_same_points_2,
-		     FK_Are_same_points_2, C2E, C2F>
-  Are_same_points_2;
+  Filtered_predicate<EK_Equal_2, FK_Equal_2, C2E, C2F>
+  Equal_2;
 
   typedef
   Filtered_predicate<EK_Are_parallel_2,	FK_Are_parallel_2, C2E, C2F>
@@ -399,9 +400,9 @@ public:
     return Orientation_2();
   }
 
-  Are_same_points_2
-  are_same_points_2_object() const {
-    return Are_same_points_2();
+  Equal_2
+  equal_2_object() const {
+    return Equal_2();
   }
 
   Are_parallel_2

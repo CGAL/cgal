@@ -157,19 +157,20 @@ public:
   typedef typename Gt::Site_2                    Site_2;
   typedef typename Gt::Point_2                   Point_2;
 
-  typedef typename DG::Edge                      Edge;
-  typedef typename DG::Vertex_handle             Vertex_handle;
-  typedef typename DG::Face_handle               Face_handle;
+  typedef typename DS::Edge                      Edge;
+  typedef typename DS::Vertex_handle             Vertex_handle;
+  typedef typename DS::Face_handle               Face_handle;
 
-  typedef typename DG::Vertex_circulator         Vertex_circulator;
-  typedef typename DG::Edge_circulator           Edge_circulator;
-  typedef typename DG::Face_circulator           Face_circulator;
+  typedef typename DS::Vertex_circulator         Vertex_circulator;
+  typedef typename DS::Edge_circulator           Edge_circulator;
+  typedef typename DS::Face_circulator           Face_circulator;
 
-  typedef typename DG::All_faces_iterator        All_faces_iterator;
+  typedef typename DS::Face_iterator             All_faces_iterator;
+  typedef typename DS::Vertex_iterator           All_vertices_iterator;
+  typedef typename DS::Edge_iterator             All_edges_iterator;
+
   typedef typename DG::Finite_faces_iterator     Finite_faces_iterator;
-  typedef typename DG::All_vertices_iterator     All_vertices_iterator;
   typedef typename DG::Finite_vertices_iterator  Finite_vertices_iterator;
-  typedef typename DG::All_edges_iterator        All_edges_iterator;
   typedef typename DG::Finite_edges_iterator     Finite_edges_iterator;
 
 protected:
@@ -198,7 +199,7 @@ public:
   typedef Simple_container_wrapper<PC>           Point_container;
   typedef typename Point_container::iterator     Point_handle;
 
-  typedef typename DG::size_type                 size_type;
+  typedef typename DS::size_type                 size_type;
 
 protected:
   typedef CGALi::Svd_project_site_2<Vertex>      Proj_site;
@@ -1059,7 +1060,7 @@ protected:
   //----------------------------------
   inline
   bool same_points(const Site_2& p, const Site_2& q) const {
-    return geom_traits().are_same_points_2_object()(p, q);
+    return geom_traits().equal_2_object()(p, q);
   }
 
   inline
