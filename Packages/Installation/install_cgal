@@ -843,7 +843,7 @@ set_compiler_flags()
 	    ;;
 	*IRIX*g++*)
 	    #### settings for egcs/gcc2.8 on irix
-	    ADDITIONAL_CXXFLAGS="-Wall -ftemplate-depth-25"
+	    ADDITIONAL_CXXFLAGS="-Wall"
 	    LONG_NAME_PROBLEM_LDFLAGS="-U -s"
 	    CGAL_SHARED_LIB_LDFLAGS="-lm"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
@@ -873,7 +873,7 @@ set_compiler_flags()
 	    ;;
 	*SunOS*5.*g++*)
 	    #### settings for egcs/gcc2.8 on solaris
-	    ADDITIONAL_CXXFLAGS="-Wall -ftemplate-depth-25"
+	    ADDITIONAL_CXXFLAGS="-Wall"
 	    LONG_NAME_PROBLEM_LDFLAGS="-z nodefs -s"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
 	    WINDOW_DIR="/usr/openwin/lib"
@@ -882,7 +882,7 @@ set_compiler_flags()
 	    ;;
 	*Linux*g++*)
 	    #### settings for egcs/gcc2.8 on linux
-	    ADDITIONAL_CXXFLAGS="-Wall -ftemplate-depth-25"
+	    ADDITIONAL_CXXFLAGS="-Wall"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -Xlinker -shared"
 	    WINDOW_DIR="/usr/X11R6/lib"
 	    RUNTIME_LINKER_FLAG='-Wl,-R'
@@ -890,16 +890,16 @@ set_compiler_flags()
 	    ;;
 	*CYGWIN*g++-egcs*)
 	    #### settings for egcs/gcc2.8 on linux
-	    ADDITIONAL_CXXFLAGS="-Wall -ftemplate-depth-25 -D__STL_NO_DRAND48"
+	    ADDITIONAL_CXXFLAGS="-Wall -D__STL_NO_DRAND48"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -Xlinker -shared"
 	    WINDOW_DIR=
 	    XLIBS="-luser32 -lgdi32 -lcomdlg32 -lshell32"
 	    PRINT_STACKTRACE_PROGRAM="gdb"
 	    EXE_EXT=".exe"
 	    ;;
-	*CYGWIN*g++-2.95*)
+	*CYGWIN*g++*)
 	    #### settings for gcc-2.95.2 on Cygwin
-	    ADDITIONAL_CXXFLAGS="-Wall -ftemplate-depth-25"
+	    ADDITIONAL_CXXFLAGS="-Wall"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -Xlinker -shared"
 	    WINDOW_DIR=
 	    XLIBS="-luser32 -lgdi32 -lcomdlg32 -lshell32"
@@ -909,6 +909,14 @@ set_compiler_flags()
 	*)
 	    #### settings for unknown compiler 
 	    CGAL_SHARED_LIB_CREATE="`compiler_bin` -G"
+	    ;;
+    esac
+    case `compiler_description` in
+	*GNU*) 
+	    case `compiler_version` in
+		egcs*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} -ftemplate-depth-25";;
+		2.*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} -ftemplate-depth-25";;
+	    esac
 	    ;;
     esac
 }
