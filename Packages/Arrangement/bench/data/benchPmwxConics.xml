@@ -1,70 +1,161 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<bench name_length="64" header="false" type_mask="0x3" strategy_mask="0xc">
-  <class name="cls111" key="increment naive PMWX Conics Cartesian Leda Real"/>
-  <class name="cls112" key="increment walk PMWX Conics Cartesian Leda Real"/>
-  <class name="cls131" key="aggregate dummy PMWX Conics Cartesian Leda Real"/>
+<bench name_length="80" header="false" type_mask="0x2" strategy_mask="0x8">
+  <class name="cls111" key="aggregate dummy PMWX Conics Cartesian Leda Real"/>
+  <class name="cls112" key="aggregate dummy PMWX Conics Simple Cartesian Leda Real"/>
+  <class name="cls112" key="aggregate dummy PMWX Conics Cartesian Core Expr"/>
+  <class name="cls114" key="aggregate dummy PMWX Conics Simple Cartesian Core Expr"/>
 
-  <clo name="format" string="-If="/> 
+  <class name="cls121" key="aggregate dummy PMWX Curved Kernel Conics Cartesian Nix Leda"/>
+  <class name="cls123" key="aggregate dummy PMWX Curved Kernel Conics Cartesian Nix Core"/>
+
+  <class name="cls131" key="aggregate dummy PMWX Exacus Conics Cartesian mpz"/>
+  <class name="cls132" key="aggregate dummy PMWX Exacus Conics Simple Cartesian mpz"/>
+
+  <!-- <clo name="format" string="-If="/> -->
   <clo name="samples" string="-s"/> 
   <clo name="header" string="-bh="/> 
   <clo name="name_length" string="-bnl="/> 
   <clo name="type_mask" string="-btm="/> 
   <clo name="strategy_mask" string="-bsm="/> 
 
-  <file name="box_25_16_org_big.dat" format="rat" curves="1"
+  <file name="box_25_16_org_big.dat" format="dat" curves="41"
+    vertices="507" halfedges="2084" faces="537"></file>
+  <file name="cgal_logo_460.dat" format="dat" curves="1"
     vertices="1" halfedges="1" faces="1"></file>
-  <file name="cgal_logo_460.dat" format="rat" curves="1"
-    vertices="1" halfedges="1" faces="1"></file>
-  <file name="circles_21.dat" format="rat" curves="1"
-    vertices="1" halfedges="1" faces="1"></file>
-  <file name="ellipses_20.dat" format="rat" curves="1"
-    vertices="1" halfedges="1" faces="1"></file>
-  <file name="ellipses_30.dat" format="rat" curves="1"
-    vertices="1" halfedges="1" faces="1"></file>
-  <file name="hyper_ellip_18.dat" format="rat" curves="1"
-    vertices="1" halfedges="1" faces="1"></file>
-  <file name="mix_20.dat" format="rat" curves="1"
-    vertices="1" halfedges="1" faces="1"></file>
-  <file name="mix_50.dat" format="rat" curves="1"
-    vertices="1" halfedges="1" faces="1"></file>
-  <file name="rose_with_holes_14.dat" format="rat" curves="1"
-    vertices="1" halfedges="1" faces="1"></file>
-  <file name="tng_circs_8.dat" format="rat" curves="1"
-    vertices="1" halfedges="1" faces="1"></file>
-  <file name="tng_ellipses_9.dat" format="rat" curves="1"
-    vertices="1" halfedges="1" faces="1"></file>
+  <file name="circles_21.dat" format="dat" curves="21"
+    vertices="87" halfedges="340" faces="85"></file>
+  <file name="ellipses_18.dat" format="dat" curves="18"
+    vertices="190" halfedges="692" faces="158"></file>
+  <file name="ellipses_20.dat" format="dat" curves="20"
+    vertices="221" halfedges="808" faces="185"></file>
+  <file name="ellipses_30.dat" format="dat" curves="30"
+    vertices="674" halfedges="2594" faces="623"></file>
+  <file name="hyper_ellip_18.dat" format="dat" curves="18"
+    vertices="104" halfedges="312" faces="54"></file>
+  <file name="mix_20.dat" format="dat" curves="20"
+    vertices="102" halfedges="314" faces="58"></file>
+  <file name="mix_50.dat" format="dat" curves="50"
+    vertices="373" halfedges="1388" faces="323"></file>
+  <file name="rose_with_holes_14.dat" format="dat" curves="14"
+    vertices="59" halfedges="212" faces="53"></file>
+  <file name="tng_circs_6.dat" format="dat" curves="6"
+    vertices="7" halfedges="24" faces="7"></file>
+  <file name="tng_ellipses_9.dat" format="dat" curves="9"
+    vertices="44" halfedges="184" faces="50"></file>
+  <file name="tng_circs_seg_8.dat" format="dat" curves="8"
+    vertices="31" halfedges="108" faces="25"></file>
 
-  <bench samples="1" enable="true">
-    <benchPmwxRealCartesianConic file="box_25_16_org_big.dat" header="true"></benchPmwxRealCartesianConic>
+  <bench samples="1" file="box_25_16_org_big.dat" enable="true">
+    <benchPmwxLedaRealCartesianConic header="true"/>
+    <benchPmwxLedaRealSimpleCartesianConic/>
+    <benchPmwxCgalWindowCoreExprCartesianCoreConic/>
+    <benchPmwxCgalWindowCoreExprSimpleCartesianCoreConic/>
+    <benchPmwxLazyGmpqCartesianCkCircle/>
+    <benchPmwxLazyGmpqSimpleCartesianCkCircle/>
+    <benchPmwxGmpzCartesianCkConic/>
+    <benchPmwxGmpzSimpleCartesianCkConic/>
   </bench>
-  <bench samples="1" enable="false">
-    <benchPmwxRealCartesianConic file="cgal_logo_460.dat" ></benchPmwxRealCartesianConic>
+  <bench samples="1" file="cgal_logo_460.dat" enable="false">
+    <benchPmwxLedaRealCartesianConic/>
+    <benchPmwxLedaRealSimpleCartesianConic/>
+    <benchPmwxCgalWindowCoreExprCartesianCoreConic/>
+    <benchPmwxCgalWindowCoreExprSimpleCartesianCoreConic/>
+    <benchPmwxGmpzCartesianCkConic/>
+    <benchPmwxGmpzSimpleCartesianCkConic/>
   </bench>
-  <bench samples="1" enable="true">
-    <benchPmwxRealCartesianConic file="circles_21.dat" ></benchPmwxRealCartesianConic>
+  <bench samples="1" file="circles_21.dat" enable="true">
+    <benchPmwxLedaRealCartesianConic/>
+    <benchPmwxLedaRealSimpleCartesianConic/>
+    <benchPmwxCgalWindowCoreExprCartesianCoreConic/>
+    <benchPmwxCgalWindowCoreExprSimpleCartesianCoreConic/>
+    <benchPmwxLazyGmpqCartesianCkCircle/>
+    <benchPmwxLazyGmpqSimpleCartesianCkCircle/>
+    <benchPmwxGmpzCartesianCkConic/>
+    <benchPmwxGmpzSimpleCartesianCkConic/>
   </bench>
-  <bench samples="1" enable="true">
-    <benchPmwxRealCartesianConic file="ellipses_20.dat" ></benchPmwxRealCartesianConic>
+  <bench samples="1" file="ellipses_18.dat" enable="true">
+    <benchPmwxLedaRealCartesianConic/>
+    <benchPmwxLedaRealSimpleCartesianConic/>
+    <benchPmwxCgalWindowCoreExprCartesianCoreConic/>
+    <benchPmwxCgalWindowCoreExprSimpleCartesianCoreConic/>
+    <benchPmwxGmpzCartesianCkConic/>
+    <benchPmwxGmpzSimpleCartesianCkConic/>
   </bench>
-  <bench samples="1" enable="true">
-    <benchPmwxRealCartesianConic file="ellipses_30.dat" ></benchPmwxRealCartesianConic>
+  <bench samples="1" file="ellipses_20.dat" enable="true">
+    <benchPmwxLedaRealCartesianConic/>
+    <benchPmwxLedaRealSimpleCartesianConic/>
+    <benchPmwxCgalWindowCoreExprCartesianCoreConic/>
+    <benchPmwxCgalWindowCoreExprSimpleCartesianCoreConic/>
+    <benchPmwxGmpzCartesianCkConic enable="false"/>
+    <benchPmwxGmpzSimpleCartesianCkConic enable="false"/>
   </bench>
-  <bench samples="1" enable="true">
-    <benchPmwxRealCartesianConic file="hyper_ellip_18.dat" ></benchPmwxRealCartesianConic>
+  <bench samples="1" file="ellipses_30.dat" enable="false">
+    <benchPmwxLedaRealCartesianConic/>
+    <benchPmwxLedaRealSimpleCartesianConic/>
+    <benchPmwxCgalWindowCoreExprCartesianCoreConic/>
+    <benchPmwxCgalWindowCoreExprSimpleCartesianCoreConic/>
+    <benchPmwxGmpzCartesianCkConic enable="false"/>
+    <benchPmwxGmpzSimpleCartesianCkConic enable="false"/>
   </bench>
-  <bench samples="1" enable="true">
-    <benchPmwxRealCartesianConic file="mix_20.dat" ></benchPmwxRealCartesianConic>
+  <bench samples="1" file="rose_with_holes_14.dat" enable="true">
+    <benchPmwxLedaRealCartesianConic/>
+    <benchPmwxLedaRealSimpleCartesianConic/>
+    <benchPmwxCgalWindowCoreExprCartesianCoreConic/>
+    <benchPmwxCgalWindowCoreExprSimpleCartesianCoreConic/>
+    <benchPmwxLazyGmpqCartesianCkCircle/>
+    <benchPmwxLazyGmpqSimpleCartesianCkCircle/>
+    <benchPmwxGmpzCartesianCkConic/>
+    <benchPmwxGmpzSimpleCartesianCkConic/>
   </bench>
-  <bench samples="1" enable="true">
-    <benchPmwxRealCartesianConic file="mix_50.dat" ></benchPmwxRealCartesianConic>
+  <bench samples="1" file="tng_circs_6.dat" enable="true">
+    <benchPmwxLedaRealCartesianConic/>
+    <benchPmwxLedaRealSimpleCartesianConic/>
+    <benchPmwxCgalWindowCoreExprCartesianCoreConic/>
+    <benchPmwxCgalWindowCoreExprSimpleCartesianCoreConic/>
+    <benchPmwxLazyGmpqCartesianCkCircle/>
+    <benchPmwxLazyGmpqSimpleCartesianCkCircle/>
+    <benchPmwxGmpzCartesianCkConic/>
+    <benchPmwxGmpzSimpleCartesianCkConic/>
   </bench>
-  <bench samples="1" enable="true">
-    <benchPmwxRealCartesianConic file="rose_with_holes_14.dat" ></benchPmwxRealCartesianConic>
+  <bench samples="1" file="tng_ellipses_9.dat" enable="true">
+    <benchPmwxLedaRealCartesianConic/>
+    <benchPmwxLedaRealSimpleCartesianConic/>
+    <benchPmwxCgalWindowCoreExprCartesianCoreConic/>
+    <benchPmwxCgalWindowCoreExprSimpleCartesianCoreConic/>
+    <benchPmwxGmpzCartesianCkConic/>
+    <benchPmwxGmpzSimpleCartesianCkConic/>
   </bench>
-  <bench samples="1" enable="true">
-    <benchPmwxRealCartesianConic file="tng_circs_8.dat" ></benchPmwxRealCartesianConic>
+
+  <bench samples="1" file="hyper_ellip_18.dat" enable="true">
+    <benchPmwxLedaRealCartesianConic/>
+    <benchPmwxLedaRealSimpleCartesianConic/>
+    <benchPmwxCgalWindowCoreExprCartesianCoreConic/>
+    <benchPmwxCgalWindowCoreExprSimpleCartesianCoreConic/>
+    <benchPmwxGmpzCartesianCkConic enable="false"/>
+    <benchPmwxGmpzSimpleCartesianCkConic enable="false"/>
   </bench>
-  <bench samples="1" enable="true">
-    <benchPmwxRealCartesianConic file="tng_ellipses_9.dat" ></benchPmwxRealCartesianConic>
+  <bench samples="1" file="mix_20.dat" enable="true">
+    <benchPmwxLedaRealCartesianConic/>
+    <benchPmwxLedaRealSimpleCartesianConic/>
+    <benchPmwxCgalWindowCoreExprCartesianCoreConic enable="false"/>
+    <benchPmwxCgalWindowCoreExprSimpleCartesianCoreConic enable="false"/>
+    <benchPmwxGmpzCartesianCkConic enable="false"/>
+    <benchPmwxGmpzSimpleCartesianCkConic enable="false"/>
+  </bench>
+  <bench samples="1" file="mix_50.dat" enable="true">
+    <benchPmwxLedaRealCartesianConic/>
+    <benchPmwxLedaRealSimpleCartesianConic/>
+    <benchPmwxCgalWindowCoreExprCartesianCoreConic enable="false"/>
+    <benchPmwxCgalWindowCoreExprSimpleCartesianCoreConic enable="false"/>
+    <benchPmwxGmpzCartesianCkConic enable="false"/>
+    <benchPmwxGmpzSimpleCartesianCkConic enable="false"/>
+  </bench>
+  <bench samples="1" file="tng_circs_seg_8.dat" enable="true">
+    <benchPmwxLedaRealCartesianConic/>
+    <benchPmwxLedaRealSimpleCartesianConic/>
+    <benchPmwxCgalWindowCoreExprCartesianCoreConic/>
+    <benchPmwxCgalWindowCoreExprSimpleCartesianCoreConic/>
+    <benchPmwxGmpzCartesianCkConic enable="false"/>
+    <benchPmwxGmpzSimpleCartesianCkConic enable="false"/>
   </bench>
 </bench>
