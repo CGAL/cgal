@@ -43,9 +43,9 @@ public:
       Point_2 extreme_point(bool /*b*/, const Disk& c) const { return c; }
 	Point_2 extreme_point(bool b, const Bitangent_2& c) const 
 	{ return (b) ? c.source() : c.target(); }
-	template < class _C , class _D >
-	Comparison_result operator() (bool sa , const _C& a,
-				      bool sb , const _D& b) const { 
+	template < class C , class D >
+	Comparison_result operator() (bool sa , const C& a,
+				      bool sb , const D& b) const { 
 	    Point_2 ap = extreme_point(sa,a);
 	    Point_2 bp = extreme_point(sb,b);
 	    return compare_lexicographically_xyC2(ap.y(),ap.x(),bp.y(),bp.x());
