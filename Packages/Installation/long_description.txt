@@ -4,6 +4,14 @@
 
 
 //---------------------------------------------------------------------
+//	revision 1.40
+//---------------------------------------------------------------------
+
+GLOB: added CGAL_EXTRA_OBJECTS to include makefile (Intervall_arithmetic fix
+ALL : for irix)
+SRC : added CGAL_EXTRA_OBJECTS to lib makefiles (Intervall_arithmetic fix
+
+//---------------------------------------------------------------------
 //	revision 1.39
 //---------------------------------------------------------------------
 

@@ -7,6 +7,8 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: added CGAL_EXTRA_OBJECTS to include makefile (Intervall_arithmetic fix
+ALL : for irix)
 GLOB: added -DLEDA_STD_HEADERS if compiling with LEDA support
 GLOB: undefine evt. existing cctype macros (see CGAL_CFG_CCTYPE_MACRO_BUG)
 GLOB: in cctype, use the functions instead
@@ -29,6 +31,7 @@ DOCS: removed support for "external" STL
 DOCS: removed obsolete paragraph about LEDA/STL problems
 DOCS: updated upgrade section.
 DOCS: updated list of supported compilers.
+SRC : added CGAL_EXTRA_OBJECTS to lib makefiles (Intervall_arithmetic fix
 SRC : added Fixed_precision_nt.o.
 
 //---------------------------------------------------------------------
