@@ -1,5 +1,9 @@
 //demo/Qt_widget/basic/tutorial7/tutorial7.C
-
+#ifndef CGAL_USE_QT
+#include <iostream>
+int main(int, char*){
+  std::cout << "Sorry, this demo needs QT..." << std::endl; return 0;}
+#else
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -75,3 +79,4 @@ int main( int argc, char **argv )
     W.setCaption("Using the Standard Toolbar");
     return app.exec();
 }
+#endif
