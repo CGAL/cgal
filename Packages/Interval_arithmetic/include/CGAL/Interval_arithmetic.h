@@ -323,6 +323,16 @@ to_double (const Interval_nt<Protected> & d)
   // This may overflow...
 }
 
+// Returns true if the interval is a unique representable double.
+template <bool Protected>
+inline
+bool
+fit_in_double (const Interval_nt<Protected> & d, double &r)
+{
+  r = d.inf();
+  return d.is_point();
+}
+
 template <bool Protected>
 inline
 std::pair<double, double>
