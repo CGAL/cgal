@@ -26,6 +26,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/IO/Geomview_stream.h>
 
+#include <strstream>
 #include <csignal>
 #include <cerrno>
 #include <unistd.h>
@@ -132,6 +133,7 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
         bbox_count = 0;
         triangle_count = 0;
         segment_count = 0;
+        sphere_count = 0;
         point_count = 0;
         tetrahedron_count = 0;
         (*this) << "(normalization g* none)(bbox-draw g* no)";
