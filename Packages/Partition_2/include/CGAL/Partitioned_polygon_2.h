@@ -350,7 +350,7 @@ class Partition_vertex : public Traits_::Point_2
     void sort_diagonals(const Circulator& prev, const Circulator& next) 
     {
        diag_endpoint_refs.sort(
-                Indirect_CW_diag_compare<Circulator,Traits>(*this, prev, next));
+               Indirect_CW_diag_compare<Circulator,Traits>(*this, prev, next));
        diag_endpoint_refs.unique();
        current_diag = diag_endpoint_refs.begin();
     }

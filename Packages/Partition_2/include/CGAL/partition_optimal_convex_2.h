@@ -376,8 +376,8 @@ void make_collinear_vertices_visible(Polygon& polygon,
 
     // start at the beginning, move backwards as long as the points are
     // collinear; move forward as long as the points are collinear;
-    // when you find the extremes make the larger one visible to the smaller one
-    // loop until you reach the larger one each time starting again at the
+    // when you find the extremes make the larger one visible to the smaller 
+    // one loop until you reach the larger one each time starting again at the
     // larger
     i = polygon.size() - 1;
     prev_j = 0;
