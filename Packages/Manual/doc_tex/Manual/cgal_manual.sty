@@ -73,10 +73,11 @@
 % include hypperref for PDF documents
 \lcTex{\ifpdf
   \pdfinfo{
-    /Author   (CGAL Editorial Committee)
-    /Title    (CGAL Library Manuals)
+    /Author   (CGAL Open Source Project)
+    /Title    (CGAL Manuals)
     /Keywords (computational geometry;generic programming;algorithms;software library;C++)
   }
+  % add option ps2pdf=true when using ps2pdf instead of pdflatex
   \usepackage[colorlinks=true,
               linkcolor=blue,
               bookmarksnumbered=true,
@@ -167,9 +168,12 @@
     <img border="0" src="Manual/fig/cgal_small_FAF8E8.gif" align="center"
       alt="[Computational Geometry Algorithms Library]">
   </p>}
-  \vspace{2cm}
+  \vspace{1cm}
 
-  \centerline{{\huge #1}}\vspace{2cm}
+%  \centerline{{\huge #1}}\vspace{2cm}
+  \begin{center}{{\huge #1\par}}\end{center}
+
+  \vspace{16mm}
 
   \centerline{{\Large \cgalversion}}\vspace{1cm}
 
