@@ -590,7 +590,7 @@ namespace CGALi {
 		 const typename CGAL_WRAP(K)::Ray_2 &ray,
 		 const K& k)
   {
-    typename K::construct_vector_2 construct_vector;
+    typename K::Construct_vector_2 construct_vector;
     if (!is_acute_angle(ray.direction().vector(), construct_vector(ray.source(), pt), k)) {
       ind = 0;
       return;
