@@ -1,3 +1,6 @@
+3.29 (9 January 2001)
+- Resubmit.
+
 3.28 (7 January 2001)
 - Comment the now useless member functions of Iso_rectangle_2.
 
