@@ -1,5 +1,14 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
+2.37 (12 July 2001)
+   added example program for random polygon
+
+   changed name of demo directory from Generator_LEDA to Generator
+
+   fixed value_type problem in random_polygon_2 
+
+   added versions of duplicate_points and copy_n_unique that use default traits
+   
 2.36 (15 February 2001)
 
    removed parameters from main() in rcs_test.C to get rid of warning
