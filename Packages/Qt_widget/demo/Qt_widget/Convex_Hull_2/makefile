@@ -7,7 +7,6 @@
 # Choose the right include file from the <cgalroot>/make directory.
 
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
-# CGAL_MAKEFILE = ~/CGAL-2.4-I-47/make/makefile_sparc_SunOS-5.6_g++-2.95
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -36,11 +35,6 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-#SOURCES = ../../../src/CGALQt/Qt_widget.o \
-	../../../src/CGALQt/Qt_widget_tool.o \
-	../../../src/CGALQt/Qt_widget_view.o \
-	../../../src/CGALQt/Qt_widget_standard_toolbar.o
-
 all: convex_hull_2
 
 Qt_widget_toolbar$(OBJ_EXT): Qt_widget_toolbar.C Qt_widget_toolbar.moc
@@ -59,7 +53,8 @@ convex_hull_2$(EXE_EXT): convex_hull_2$(OBJ_EXT)
 	$(CGAL_CXX) $(EXE_OPT)convex_hull_2 convex_hull_2$(OBJ_EXT) \
 	 Qt_widget_toolbar$(OBJ_EXT) $(LDFLAGS)
 
-clean: convex_hull_2.clean
+clean: convex_hull_2.clean \
+       Qt_widget_toolbar.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules

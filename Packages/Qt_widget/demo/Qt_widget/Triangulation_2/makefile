@@ -67,7 +67,10 @@ triangulation_2$(OBJ_EXT): triangulation_2.C triangulation_2.moc
 triangulation_2$(EXE_EXT): triangulation_2$(OBJ_EXT)
 	$(CGAL_CXX) $(EXE_OPT)triangulation_2 triangulation_2$(OBJ_EXT)  Qt_widget_move_point$(OBJ_EXT) Qt_widget_toolbar$(OBJ_EXT) Qt_widget_toolbar_views$(OBJ_EXT) $(LDFLAGS)
 
-clean: triangulation_2.clean
+clean: triangulation_2.clean \
+       Qt_widget_toolbar_views.clean \
+       Qt_widget_toolbar.clean \
+       Qt_widget_move_point.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules

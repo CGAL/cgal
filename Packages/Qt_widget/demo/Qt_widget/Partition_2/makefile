@@ -7,7 +7,6 @@
 # Choose the right include file from the <cgalroot>/make directory.
 
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
-#CGAL_MAKEFILE = ~/CGAL-2.4-I-47/make/makefile_sparc_SunOS-5.6_g++-2.95
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -34,11 +33,6 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
-
-#SOURCES = ../../../src/CGALQt/Qt_widget$(OBJ_EXT) \
-	../../../src/CGALQt/Qt_widget_tool$(OBJ_EXT) \
-	../../../src/CGALQt/Qt_widget_view$(OBJ_EXT) \
-	../../../src/CGALQt/Qt_widget_standard_toolbar$(OBJ_EXT)
 
 all: partition_2
 
@@ -68,7 +62,9 @@ partition_2$(EXE_EXT): partition_2$(OBJ_EXT)
 		Qt_widget_toolbar$(OBJ_EXT) \
 		Qt_widget_toolbar_views$(OBJ_EXT) $(LDFLAGS)
 
-clean: partition_2.clean
+clean: partition_2.clean \
+       Qt_widget_toolbar_views.clean \
+       Qt_widget_toolbar.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules

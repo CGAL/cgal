@@ -34,19 +34,23 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
+DEMO_SUBDIRS= \
+./basic/tutorial1 \
+./basic/tutorial2 \
+./basic/tutorial3 \
+./basic/tutorial4 \
+./basic/tutorial5 \
+./basic/tutorial6 \
+./basic/tutorial7 \
+./basic/tutorial8 \
+./Partition_2 \
+./Triangulation_2 \
+./Min_ellipse_2 \
+./Convex_Hull_2
+
 all:            \
                 constrained$(EXE_EXT) 
-	make -C basic/tutorial1
-	make -C basic/tutorial2
-	make -C basic/tutorial3
-	make -C basic/tutorial4
-	make -C basic/tutorial5
-	make -C basic/tutorial6
-	make -C basic/tutorial7
-	make -C basic/tutorial8
-	make -C Partition_2
-	make -C Triangulation_2
-	make -C Convex_Hull_2
+	for dir in ${DEMO_SUBDIRS}; do make -C $$dir; done
 
 constrained.moc: constrained.C
 	$(QT_MOC) -o constrained.moc $<
@@ -58,6 +62,7 @@ constrained$(EXE_EXT): constrained$(OBJ_EXT)
 
 clean: \
                    constrained.clean 
+	for dir in ${DEMO_SUBDIRS}; do make -C $$dir clean; done
 
 #---------------------------------------------------------------------#
 #                    suffix rules
