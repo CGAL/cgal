@@ -47,14 +47,14 @@ public:
   VectorC2()
     : base(rep()) {}
 
-  VectorC2(const Null_vector &)
-    : base(rep(FT(0), FT(0))) {}
+  VectorC2(const Null_vector &n)
+    : base(R().construct_vector_2_object()(n)) {}
 
   VectorC2(const Point_2 &p)
     : base(p) {}
 
   VectorC2(const Point_2 &a, const Point_2 &b)
-    : base(b-a) {}
+    : base(R().construct_vector_2_object()(a, b)) {}
 
   VectorC2(const Direction_2 &d)
     : base(d) {}

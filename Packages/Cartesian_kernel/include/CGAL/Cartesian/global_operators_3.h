@@ -62,6 +62,7 @@ typename K::Vector_3
 operator-(const PointC3<K> &p, const PointC3<K> &q)
 {
   return VectorC3<K>(p.x() - q.x(), p.y() - q.y(), p.z() - q.z());
+  //return K().construct_vector_3_object()(q, p);
 }
 
 template < class K >

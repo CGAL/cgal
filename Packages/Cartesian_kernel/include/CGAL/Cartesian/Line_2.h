@@ -49,19 +49,19 @@ public:
     : base(rep()) {}
 
   LineC2(const Point_2 &p, const Point_2 &q)
-    : base(line_from_points(p, q)) {}
+    : base(R().construct_line_2_object()(p, q)) {}
 
   LineC2(const FT &a, const FT &b, const FT &c)
     : base(rep(a, b, c)) {}
 
   LineC2(const Segment_2 &s)
-    : base(line_from_points(s.source(), s.target())) {}
+    : base(R().construct_line_2_object()(s)) {}
 
   LineC2(const Ray_2 &r)
-    : base(line_from_points(r.point(0), r.point(1))) {}
+    : base(R().construct_line_2_object()(r)) {}
 
   LineC2(const Point_2 &p, const Direction_2 &d)
-    : base(line_from_point_direction(p, d)) {}
+    : base(R().construct_line_2_object()(p, d)) {}
 
   bool            operator==(const LineC2 &l) const;
   bool            operator!=(const LineC2 &l) const;

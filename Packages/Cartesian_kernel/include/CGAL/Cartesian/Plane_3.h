@@ -202,23 +202,14 @@ template < class R >
 typename PlaneC3<R>::Vector_3
 PlaneC3<R>::base1() const
 {
-  if ( CGAL_NTS is_zero(a()) )  // parallel to x-axis
-      return Vector_3(FT(1), FT(0), FT(0));
-
-  if ( CGAL_NTS is_zero(b()) )  // parallel to y-axis
-      return Vector_3(FT(0), FT(1), FT(0));
-
-  if ( CGAL_NTS is_zero(c()) )  // parallel to z-axis
-      return Vector_3(FT(0), FT(0), FT(1));
-
-  return Vector_3(-b(), a(), FT(0));
+  return R().construct_base_vector_3_object()(*this, 1);
 }
 
 template < class R >
 typename PlaneC3<R>::Vector_3
 PlaneC3<R>::base2() const
 {
-  return cross_product(orthogonal_vector(), base1());
+  return R().construct_base_vector_3_object()(*this, 2);
 }
 
 template < class R >
@@ -253,7 +244,7 @@ typename PlaneC3<R>::Point_3
 PlaneC3<R>::
 to_3d(const typename PlaneC3<R>::Point_2 &p) const
 {
-  return point() + p.x() * base1() + p.y() * base2();
+  return R().construct_lifted_point_3_object()(*this, p);
 }
 
 template < class R >

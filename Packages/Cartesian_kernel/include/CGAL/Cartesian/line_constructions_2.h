@@ -33,9 +33,7 @@ LineC2<K>
 line_from_points(const PointC2<K> &p,
                  const PointC2<K> &q)
 {
-  typename K::FT a, b, c;
-  line_from_pointsC2(p.x(), p.y(), q.x(), q.y(), a, b, c);
-  return LineC2<K>(a, b, c);
+  return K().construct_line_2_object()(p, q);
 }
 
 template < class K >
@@ -44,9 +42,7 @@ LineC2<K>
 line_from_point_direction(const PointC2<K> &p,
                           const DirectionC2<K> &d)
 {
-  typename K::FT a, b, c;
-  line_from_point_directionC2(p.x(), p.y(), d.dx(), d.dy(), a, b, c);
-  return LineC2<K>(a, b, c);
+  return K().construct_line_2_object()(p, d);
 }
 
 template < class K >

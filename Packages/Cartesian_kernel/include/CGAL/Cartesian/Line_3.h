@@ -55,10 +55,10 @@ public:
     : base(rep(p, (q-p).direction())) {}
 
   LineC3(const Segment_3 &s)
-    : base(rep(s.start(), (s.end() - s.start()).direction())) {}
+    : base(R().construct_line_3_object()(s)) {}
 
   LineC3(const Ray_3 &r)
-    : base(rep(r.start(), (r.point(1) - r.start()).direction())) {}
+    : base(R().construct_line_3_object()(r)) {}
 
   LineC3(const Point_3 &p, const Direction_3 &d)
     : base(rep(p, d)) {}

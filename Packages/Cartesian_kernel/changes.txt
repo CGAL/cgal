@@ -1,3 +1,7 @@
+Version 6.84 (9 May 2003) [mh]
+- Moved common functors from function_objects into Kernel_23
+- Let some global functions call the functors
+
 Version 6.83 (7 May 2003) [mk]
 - added type names for the template parameters of the Cartesian
   converter; the Cartesian converter now derives from Enum_converter

@@ -176,26 +176,12 @@ RayC2<R>::has_on(const typename RayC2<R>::Point_2 &p) const
 }
 
 template < class R >
-CGAL_KERNEL_MEDIUM_INLINE
+inline
 bool
 RayC2<R>::
 collinear_has_on(const typename RayC2<R>::Point_2 &p) const
 {
-    switch(compare_x(source(), second_point())){
-    case SMALLER:
-        return compare_x(source(), p) != LARGER;
-    case LARGER:
-        return compare_x(p, source()) != LARGER;
-    default:
-        switch(compare_y(source(), second_point())){
-        case SMALLER:
-            return compare_y(source(), p) != LARGER;
-        case LARGER:
-            return compare_y(p, source()) != LARGER;
-        default:
-            return true; // p == source()
-        }
-    }
+  return R().collinear_has_on_2_object()(*this, p);
 }
 
 #ifndef CGAL_NO_OSTREAM_INSERT_RAYC2

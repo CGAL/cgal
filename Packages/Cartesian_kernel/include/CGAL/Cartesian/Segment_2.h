@@ -239,12 +239,12 @@ has_on(const typename SegmentC2<R>::Point_2 &p) const
 }
 
 template < class R >
-CGAL_KERNEL_MEDIUM_INLINE
+inline
 bool
 SegmentC2<R>::
 collinear_has_on(const typename SegmentC2<R>::Point_2 &p) const
 {
-    return collinear_are_ordered_along_line(source(), p, target());
+  return R().collinear_has_on_2_object()(*this, p);
 }
 
 #ifndef CGAL_NO_OSTREAM_INSERT_SEGMENTC2
