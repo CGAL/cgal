@@ -1,7 +1,0 @@
-#!/opt/gnu/bin/perl
-
-while (<>) {
-    if ( ! ($_ =~ m/^\s*%/) ) {
-	print $_
-    }
-}
