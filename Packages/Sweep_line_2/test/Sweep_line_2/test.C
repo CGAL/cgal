@@ -26,24 +26,11 @@
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 
-#ifndef CGAL_PM_DEFAULT_DCEL_H
 #include <CGAL/Pm_default_dcel.h>
-#endif
-#ifndef CGAL_PLANAR_MAP_2_H
 #include <CGAL/Planar_map_2.h>
-#endif
-#ifndef CGAL_PLANAR_MAP_WITH_INTERSECTIONS_H  
 #include <CGAL/Pm_with_intersections.h>
-#endif
-#ifndef SWEEP_TO_CONSTRUCT_PLANAR_MAP_2_H
-#include <CGAL/sweep_to_construct_planar_map_2.h>
-#endif
-#ifndef SWEEP_TO_PRODUCE_PLANAR_MAP_SUBCURVES_2_H
-#include <CGAL/sweep_to_produce_subcurves_2.h>
-#endif
-//#ifndef CGAL_SWEEP_LINE_H
-//#include <CGAL/Sweep_line.h>
-//#endif
+
+#include <CGAL/Sweep_line_2.h>
 
 #define CGAL_SEGMENT_TRAITS        1
 #define CGAL_SEGMENT_LEDA_TRAITS   2
@@ -54,11 +41,7 @@
 // Picking a default Traits class (this, with the 
 // PL flag enables the running of the test independently of cgal_make.)
 #ifndef CGAL_ARR_TEST_TRAITS
-//#define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_TRAITS
 #define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_LEDA_TRAITS
-//#define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_TRAITS
-//#define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_LEDA_TRAITS
-//#define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_CIRCLE_TRAITS
 #endif
 
 // Making sure test doesn't fail if LEDA is not installed
@@ -144,14 +127,11 @@ int main()
 
 #if CGAL_ARR_TEST_TRAITS==CGAL_SEGMENT_TRAITS 
   typedef CGAL::Quotient<int>                  NT;
-//typedef leda_rational                        NT;
   typedef CGAL::Cartesian<NT>                  R;
   typedef CGAL::Arr_segment_exact_traits<R>    Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
   typedef leda_rational                        NT;
-//typedef CGAL::Pm_segment_traits_leda_kernel_2<NT>  Kernel;
-// typedef CGAL::Arr_segment_traits_2<Kernel>               Traits;
   typedef CGAL::Arr_leda_segment_exact_traits<NT>  Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
@@ -174,7 +154,7 @@ typedef Traits::X_curve                        X_curve;
 typedef Traits::Curve                          Curve;
 typedef CGAL::Pm_default_dcel<Traits>          Dcel;   
 typedef CGAL::Planar_map_2<Dcel, Traits>       PM;
-typedef CGAL::Planar_map_with_intersections_2<PM>    Pmwx;
+typedef CGAL::Planar_map_with_intersections_2<PM> Pmwx;
 typedef Pmwx::Pmwx_change_notification         Notifier;
  
 // we use the namespace std for compatability with MSVC
@@ -226,10 +206,10 @@ CGAL_END_NAMESPACE
 using namespace std;
 
 
-template <class PM>
+template <class _PM>
 class Pm_polyline_traits_test
 {
-  PM  pm;  
+  _PM  pm;  
 
 public:
 #if CGAL_ARR_TEST_POINT_LOCATION == 3  
@@ -289,91 +269,94 @@ private:
       return counted_overlaps;
       } */
  
-  void print_vertices(PM& pm)
+  void print_vertices(_PM& pm)
+  {
+    typename _PM::Vertex_const_iterator vit;
+    
+    std::cout << "Vertices in Pmwx:" << std::endl;
+    for(vit = pm.vertices_begin(); vit != pm.vertices_end(); vit++)
     {
-      typename PM::Vertex_const_iterator vit;
-
-      std::cout << "Vertices in Pmwx:" << std::endl;
-      for(vit = pm.vertices_begin(); vit != pm.vertices_end(); vit++)
-	{
-	  std::cout << (*vit).point() << " , ";
-	}
-      std::cout << std::endl;
-   } 
+      std::cout << (*vit).point() << " , ";
+    }
+    std::cout << std::endl;
+  } 
  
   void print_kind_of_location(Pmwx::Locate_type &lt)
-    {
-      switch (lt) {
-      case  PM::VERTEX:
-	std::cout << "Vertex ";
-	break;
-      case  PM::EDGE:
-	std::cout<< "Edge ";
-	break;
-      case  PM::FACE:
-	std::cout<< "Face ";
-	break;
-      case  PM::UNBOUNDED_VERTEX:
-	std::cout<< "UnBounded Vertex ";
-	break;
-      case  PM::UNBOUNDED_EDGE:
-	std::cout<< "UnBounded Edge ";
-	break;
-      case  PM::UNBOUNDED_FACE:
-	std::cout<< "UnBounded Face ";
-	break;
-      }
-      std::cout << std::endl;
+  {
+    switch (lt) {
+    case  PM::VERTEX:
+      std::cout << "Vertex ";
+      break;
+    case  PM::EDGE:
+      std::cout<< "Edge ";
+      break;
+    case  PM::FACE:
+      std::cout<< "Face ";
+      break;
+    case  PM::UNBOUNDED_VERTEX:
+      std::cout<< "UnBounded Vertex ";
+      break;
+    case  PM::UNBOUNDED_EDGE:
+      std::cout<< "UnBounded Edge ";
+      break;
+    case  PM::UNBOUNDED_FACE:
+      std::cout<< "UnBounded Face ";
+      break;
     }
+    std::cout << std::endl;
+  }
   
-  bool point_is_in_expected_place(PM& pm, Point &pnt, typename PM::Locate_type exp_lt)
+  bool point_is_in_expected_place(_PM& pm, Point &pnt, 
+				  typename _PM::Locate_type exp_lt)
     {
-      typename PM::Locate_type    location_of_vertex;
+      typename _PM::Locate_type    location_of_vertex;
       
       pm.locate(pnt ,location_of_vertex);
       print_kind_of_location(location_of_vertex);
       return (location_of_vertex == exp_lt);
     }
   
-  void check_that_vertices_are_in_arrangement(PM & pm, Point_list & all_points_list)
+  void check_that_vertices_are_in_arrangement(_PM & pm, 
+					      Point_list & all_points_list)
+  {
+    Point_list::iterator pit;
+    
+    for (pit = all_points_list.begin(); pit != all_points_list.end(); pit++)
     {
-      Point_list::iterator pit;
-      
-      for (pit = all_points_list.begin(); pit != all_points_list.end(); pit++)
-	{
 #if CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
-	  std::cout << (*pit).xcoord() << " " << (*pit).ycoord() << "*** ";
+      std::cout << (*pit).xcoord() << " " << (*pit).ycoord() << "*** ";
 #else
-	  std::cout << (*pit).x() << " " << (*pit).y() << "*** ";
+      std::cout << (*pit).x() << " " << (*pit).y() << "*** ";
 #endif
-	  CGAL_assertion(point_is_in_expected_place(pm, *pit, PM::VERTEX) ||
-                         point_is_in_expected_place(pm, *pit, PM::EDGE));
-	}
+      CGAL_assertion(point_is_in_expected_place(pm, *pit, _PM::VERTEX) ||
+		     point_is_in_expected_place(pm, *pit, _PM::EDGE));
     }
+  }
   
-  void points_in_expected_place(PM &                    pm,
+  void points_in_expected_place(_PM &                    pm,
                                 Point_list &            point_list,
-                                std::list<typename PM::Locate_type> & lt_list)
-    {
-      Point_list::iterator              pit;
-      typename std::list<CGAL_TYPENAME_MSVC_NULL PM::Locate_type>::iterator lt_it;
+                                std::list<typename _PM::Locate_type> & lt_list)
+  {
+    Point_list::iterator              pit;
+    typename std::list<CGAL_TYPENAME_MSVC_NULL PM::Locate_type>::iterator 
+                                      lt_it;
       
-      for (pit = point_list.begin(), lt_it = lt_list.begin();
-	   pit != point_list.end();
-	   pit++, lt_it++)
-	{
+    for (pit = point_list.begin(), lt_it = lt_list.begin();
+	 pit != point_list.end();
+	 pit++, lt_it++)
+    {
 #if CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || \
     CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
 	  //#if CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
 	  //CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || 
           //    CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
-	  std::cout << (*pit).xcoord() << " " << (*pit).ycoord() << "*** ";
+      std::cout << (*pit).xcoord() << " " << (*pit).ycoord() << "*** ";
 #else
-	  std::cout << (*pit).x() << " " << (*pit).y() << "*** ";
+      std::cout << (*pit).x() << " " << (*pit).y() << "*** ";
 #endif
-	  CGAL_assertion(point_is_in_expected_place(pm, *pit, *lt_it));
-	}
+      CGAL_assertion(point_is_in_expected_place(pm, *pit, *lt_it));
     }
+  }
 
   void show_comparison()
     {
@@ -676,23 +659,20 @@ Curve read_seg_circ_curve(std::ifstream& file, bool reverse_order=false)
 
     Traits  traits;
     if (sweep_to_subcurves)
-      CGAL::sweep_to_construct_planar_map_2(curves.begin(), 
-                                            curves.end(), 
-                                            traits, 
-                                            pm);
-    else{
+      pm.insert(curves.begin(), curves.end());
+
+    else 
+    {
+      typedef std::list<X_curve>                     CurveList;
+      typedef CurveList::iterator                    CurveListIter;
+      typedef CGAL::Sweep_line_2<CurveListIter, Traits> Sweep_line;
+
       std::list<X_curve>   subcurves;
-      CGAL::sweep_to_produce_subcurves_2(curves.begin(), 
-                                                    curves.end(), 
-                                                    traits, 
-                                                    std::back_inserter(subcurves));
-      CGAL::sweep_to_construct_planar_map_2(subcurves.begin(), 
-                                            subcurves.end(), 
-                                            traits, 
-                                            pm);
+      Sweep_line sl(&traits);
+      sl.get_subcurves(curves.begin(), curves.end(), 
+		       std::back_inserter(subcurves));
+      pm.insert(subcurves.begin(), subcurves.end());
       
-      //for (std::list<X_curve>::iterator scv_iter = subcurves.begin(); scv_iter != subcurves.end(); scv_iter++)
-      //  pm.insert(*scv_iter);
     }
 
     // 2. read test vertices
@@ -766,7 +746,7 @@ public:
 int main(int argc, char* argv[])
 {
   
-  Pm_polyline_traits_test<PM>   test;
+  Pm_polyline_traits_test<Pmwx>   test;
   bool                          sweep_to_subcurves = false;
 
   if (argc < 2 || argc > 3) {
