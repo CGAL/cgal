@@ -182,7 +182,7 @@ public slots:
   {
     widget->lock();
     list_of_points.clear();
-    widget->clear_history();
+    stoolbar->clear_history();
     widget->set_window(-1.1, 1.1, -1.1, 1.1);
 		// set the Visible Area to the Interval
     widget->unlock();
@@ -223,7 +223,7 @@ private slots:
   void new_window(){
     MyWindow *ed = new MyWindow(500, 500);
     ed->setCaption("Layer");
-    ed->widget->clear_history();
+    ed->stoolbar->clear_history();
     ed->widget->set_window(-1.1, 1.1, -1.1, 1.1);
     ed->show();
     something_changed();
@@ -239,7 +239,7 @@ private slots:
 
   void gen_points()
   {
-    widget->clear_history();
+    stoolbar->clear_history();
     widget->set_window(-1.1, 1.1, -1.1, 1.1); 
 		// set the Visible Area to the Interval
 

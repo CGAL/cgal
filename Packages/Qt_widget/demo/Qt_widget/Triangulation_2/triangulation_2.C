@@ -154,7 +154,7 @@ private slots:
   void new_instance(){
     widget->lock();
     widget->clear();
-    widget->clear_history();
+    stoolbar->clear_history();
     tr1.clear();
     // set the Visible Area to the Interval
     widget->set_window(-1.1, 1.1, -1.1, 1.1);
@@ -238,7 +238,7 @@ private slots:
         it++;
       }
     }
-    ed->widget->clear_history();
+    ed->stoolbar->clear_history();
     ed->widget->set_window(xmin, xmax, ymin, ymax);
     ed->show();
     something_changed();
@@ -270,7 +270,7 @@ private slots:
         ymax = (*it).point().y();
       it++;
     }
-    widget->clear_history();
+    stoolbar->clear_history();
     widget->set_window(xmin, xmax, ymin, ymax);
     something_changed();
   }
@@ -313,7 +313,7 @@ private slots:
         ymax = (*it).point().y();
       it++;
     }
-    widget->clear_history();
+    stoolbar->clear_history();
     widget->set_window(xmin, xmax, ymin, ymax);
     something_changed();
   }

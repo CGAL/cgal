@@ -220,7 +220,7 @@ public slots:
     tr1.clear();
     A.clear();AW.clear();
     L.clear();LW.clear();
-    widget->clear_history();
+    stoolbar->clear_history();
     widget->set_window(-1.1, 1.1, -1.1, 1.1); 
     // set the Visible Area to the Interval
     widget->unlock();
@@ -323,7 +323,7 @@ private slots:
         it++;
       }
     }
-    ed->widget->clear_history();
+    ed->stoolbar->clear_history();
     ed->widget->set_window(xmin, xmax, ymin, ymax);
     ed->show();
     something_changed();
@@ -384,7 +384,7 @@ private slots:
         ymax = (*it).point().y();
       it++;
     }
-    widget->clear_history();
+    stoolbar->clear_history();
     widget->set_window(xmin, xmax, ymin, ymax);
     A.make_alpha_shape(L.begin(), L.end());
     AW.make_alpha_shape(LW.begin(), LW.end());
@@ -430,7 +430,7 @@ private slots:
         ymax = (*it).point().y();
       it++;
     }
-    widget->clear_history();
+    stoolbar->clear_history();
     widget->set_window(xmin, xmax, ymin, ymax);
     A.make_alpha_shape(L.begin(), L.end());
     A.set_alpha(alpha_index);

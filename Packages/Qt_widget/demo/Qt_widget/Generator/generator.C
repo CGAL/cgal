@@ -162,7 +162,7 @@ public slots:
   {
     widget->lock();
     list_of_points.clear();
-    widget->clear_history();
+    stoolbar->clear_history();
     widget->set_window(-1.1, 1.1, -1.1, 1.1);
 		// set the Visible Area to the Interval
     widget->unlock();
@@ -194,7 +194,7 @@ private slots:
   void new_window(){
     MyWindow *ed = new MyWindow(500, 500);
     ed->setCaption("Layer");
-    ed->widget->clear_history();
+    ed->stoolbar->clear_history();
     ed->widget->set_window(-1.1, 1.1, -1.1, 1.1);
     ed->show();
     something_changed();
@@ -209,7 +209,7 @@ private slots:
   }	
 
   void in_square(){
-    widget->clear_history();
+    stoolbar->clear_history();
     widget->set_window(-1.1, 1.1, -1.1, 1.1); 
     // set the Visible Area to the Interval
     CGAL::Random_points_in_square_2<Point> g(1);
@@ -221,7 +221,7 @@ private slots:
 
   void in_disc()
   {
-    widget->clear_history();
+    stoolbar->clear_history();
     widget->set_window(-1.1, 1.1, -1.1, 1.1); 
     // set the Visible Area to the Interval
 
@@ -235,7 +235,7 @@ private slots:
 
   void on_square()
   {
-    widget->clear_history();
+    stoolbar->clear_history();
     widget->set_window(-1.1, 1.1, -1.1, 1.1); 
     // set the Visible Area to the Interval
 
@@ -248,7 +248,7 @@ private slots:
 
   void on_square_grid()
   {
-    widget->clear_history();
+    stoolbar->clear_history();
     widget->set_window(-1.1, 1.1, -1.1, 1.1); 
     // set the Visible Area to the Interval
 
@@ -261,7 +261,7 @@ private slots:
 
   void on_circle()
   {
-    widget->clear_history();
+    stoolbar->clear_history();
     widget->set_window(-1.1, 1.1, -1.1, 1.1); 
     // set the Visible Area to the Interval
 

@@ -126,7 +126,7 @@ public slots:
 
 private slots:
   void gen_poly(){
-    widget->clear_history();
+    stoolbar->clear_history();
     widget->set_window(-1.1, 1.1, -1.1, 1.1);
     // set the Visible Area to the Interval
     polygon.erase(polygon.vertices_begin(), polygon.vertices_end());
@@ -172,7 +172,7 @@ private slots:
   void new_window(){
     MyWindow *ed = new MyWindow(500, 500);
     ed->setCaption("View");
-    ed->widget->clear_history();
+    ed->stoolbar->clear_history();
     ed->widget->set_window(-1.1, 1.1, -1.1, 1.1);
     ed->show();
     something_changed();
