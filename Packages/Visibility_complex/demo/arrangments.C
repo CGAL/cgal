@@ -2,10 +2,12 @@
 
 // STL headers
 #include <list>
+#include <algorithm>
 
 // CGAL kernel headers
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_kernel.h>
+#include <CGAL/Polygon_2.h>
 
 // CGAL utilities headers
 #include <CGAL/iterator.h>
@@ -23,9 +25,13 @@
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 #include <CGAL/IO/Qt_widget_get_point.h>
 #include <CGAL/IO/Qt_widget_get_line.h>
+#include <CGAL/IO/Qt_widget_Polygon_2.h>
+
+// Personnal headers
 #include "Qt_layer_show_points.h"
 #include "Qt_layer_show_lines.h"
 #include "Show_pseudo_triangulation.h"
+#include "Show_antichain.h"
 #include "Qt_layer_show_nearest_vertex.h"
 
 // Qt headers
@@ -65,11 +71,51 @@ typedef CGAL::Visibility_complex_point_traits<K> Gt;
 typedef CGAL::Visibility_complex_2<Gt> Visibility_complex;
 typedef Visibility_complex::Antichain Antichain;
 typedef Antichain::Cw_traits Cw_traits;
+typedef Visibility_complex::Vertex_handle Vertex_handle;
 typedef Visibility_complex::Vertex Vertex;
+typedef Visibility_complex::Face_handle Face_handle;
+typedef Visibility_complex::Face Face;
+typedef Visibility_complex::Edge_handle Edge_handle;
+typedef Visibility_complex::Edge Edge;
+
+// special vertex
+template < class Gt, class Vb = CGAL::Triangulation_vertex_base_2<Gt> >
+class My_vertex_base 
+  : public  Vb
+{
+  typedef Vb                              Base;
+public:
+  typedef typename Vb::Face_handle        DT_Face_handle;
+  typedef typename Vb::Point              Point;
+
+  template < typename TDS2 >
+  struct Rebind_TDS {
+    typedef typename Vb::template Rebind_TDS<TDS2>::Other    Vb2;
+    typedef My_vertex_base<Gt,Vb2>                           Other;
+  };
+
+private:
+  Vertex_handle  va_;
+
+public:
+  My_vertex_base() : Base() {}
+  My_vertex_base(const Point & p) : Base(p) {}
+  My_vertex_base(const Point & p, DT_Face_handle f) : Base(f,p) {}
+  My_vertex_base(DT_Face_handle f) : Base(f) {}
+
+  void set_associated_vertex(Vertex_handle va) { va_ = va;}
+  Vertex_handle get_associated_vertex() {return va_ ; }
+};
 
 // Delaunay triangulations definition
 typedef CGAL::Delaunay_triangulation_2<K> DT;
+
+typedef CGAL::Triangulation_data_structure_2<My_vertex_base<K> > Special_tds;
+typedef CGAL::Delaunay_triangulation_2<K, Special_tds> Special_DT;
+typedef DT::Vertex_handle DT_vertex_handle;
+typedef Special_DT::Vertex_handle Special_DT_vertex_handle;
 typedef DT::Vertex DT_vertex;
+typedef Special_DT::Vertex Special_DT_vertex;
 
 // utility global functions
 const Line_2 dual(const Point_2& p)
@@ -84,6 +130,87 @@ const Point_2 dual(const Line_2& l)
   return Point_2( -l.a()/l.b(), l.c()/l.b() );
 }
 
+bool dual(const Vertex_handle vh, Point_2& p)
+{
+  const Line_2& line =
+    vh->supporting_line();
+  if(line.b() == 0) return false;
+  p = dual(line);
+  return true;
+}
+
+void display(CGAL::Qt_widget* widget, Vertex_handle va, Vertex_handle vb)
+{
+  Point_2 a, b;
+  if( dual(va, a) && dual(vb, b) )
+    *widget << Segment_2(a, b);
+}
+
+void print(Vertex_handle va, Vertex_handle vb)
+{
+  Point_2 a, b;
+  if( dual(va, a) && dual(vb, b) )
+    std::cerr << Segment_2(a, b) << std::endl;
+}
+
+struct Nop {
+  void operator()(CGAL::Qt_widget*, DT_vertex_handle) {};
+};
+
+void display_zone(CGAL::Qt_widget* widget, Vertex_handle top)
+{
+  typedef CGAL::Polygon_2<Kernel> Polygon_2;
+  Polygon_2 poly;
+  
+  Face_handle fh = top->inf();
+
+  display(widget, fh->top_edge()->sup(), fh->bottom_edge()->sup());
+  return;
+
+  Vertex_handle va = fh->top_edge()->sup();
+  
+  Point_2 p;
+  if( dual(va, p) ) poly.push_back(p);
+  std::cerr << "top_edge: " << p << std::endl;
+
+  while( ! Gt::Equal_as_segments()(*va, *top) )
+    {
+      va = va->ccw_target_edge()->sup();
+      if( dual(va, p) ) poly.push_back(p);
+      std::cerr << p << std::endl;
+    }
+
+  Polygon_2::Vertex_iterator p_begin = poly.vertices_begin();
+
+  va = fh->bottom_edge()->sup();
+
+  if( dual(va, p) ) p_begin=poly.insert(p_begin, p);
+  p_begin++;
+  std::cerr << "bottom_edge: " << p << " ";
+  dual(fh->bottom_edge()->inf(),p);
+  std::cerr << p << std::endl;
+  
+
+  while( ! Gt::Equal_as_segments()(*va, *top) )
+    {
+      const Edge_handle& e = va->cw_target_edge();
+      if( e == 0 ) break;
+      va = e->inf();
+      if( dual(va, p) && ! Gt::Equal_as_segments()(*va, *top) )
+	poly.insert(p_begin, p);
+      std::cerr << p << std::endl;
+    }
+
+  *widget << poly;
+}
+
+struct Draw_from_Special_DT_vertex_handle {
+  void operator()(CGAL::Qt_widget* ,
+		  Special_DT_vertex_handle )
+  {
+  }
+};
+
 // ********* MAIN WINDOW CLASS  ********** //
 class MyWindow : public QMainWindow
 {
@@ -95,12 +222,15 @@ private:
   // typdefs of layers
   typedef CGAL::Qt_layer_show_points<List_of_points,
     List_of_points::const_iterator> Show_points_from_list;
-  typedef CGAL::Qt_layer_show_nearest_vertex<DT, Line_2> Nearest_vertex;
+  typedef CGAL::Qt_layer_show_nearest_vertex<DT, Special_DT, 
+    Line_2, Nop, Draw_from_Special_DT_vertex_handle> Nearest_vertex;
+  typedef CGAL::Qt_layer_show_nearest_vertex<Special_DT, DT, 
+    Line_2, Draw_from_Special_DT_vertex_handle, Nop> Special_Nearest_vertex;
 
   List_of_points* list_of_points;
   List_of_lines* list_of_lines;
   DT dt_of_points;
-  DT dt_of_bitangents;
+  Special_DT dt_of_bitangents;
   CGAL::Qt_widget* points_widget;
   CGAL::Qt_widget* lines_widget;
   Antichain* antichain;
@@ -113,6 +243,13 @@ private:
     typedef DT_vertex argument_type;
 
     inline Point_2 operator()(const DT_vertex& v)
+      { return v.point(); }
+  };
+  struct Special_vertex_to_Point_2 {
+    typedef Point_2 result_type;
+    typedef Special_DT_vertex argument_type;
+
+    inline Point_2 operator()(const Special_DT_vertex& v)
       { return v.point(); }
   };
   
@@ -142,9 +279,11 @@ public:
 
       // create std toolbars
       CGAL::Qt_widget_standard_toolbar* points_stdbar =
-	new CGAL::Qt_widget_standard_toolbar(points_widget, this, Left);
+	new CGAL::Qt_widget_standard_toolbar(points_widget, this, "Left");
+      addDockWindow(points_stdbar, Left);
       CGAL::Qt_widget_standard_toolbar* lines_stdbar =
-	new CGAL::Qt_widget_standard_toolbar(lines_widget, this, Right);
+	new CGAL::Qt_widget_standard_toolbar(lines_widget, this, "Right");
+      addDockWindow(lines_stdbar, Right);
       // add tooltips to distinguish them
       QToolTip::add(points_stdbar->toolbar(), "Primal (left)");
       QToolTip::add(lines_stdbar->toolbar(), "Dual (left)");
@@ -223,14 +362,19 @@ public:
 	new CGAL::Qt_layer_show_lines<List_of_lines>(list_of_lines,
 						       CGAL::BLUE, 1);
       lines_widget->attach(show_lines);
+
+      CGAL::Show_antichain<Antichain>* show_antichain =
+	new CGAL::Show_antichain<Antichain>(antichain, CGAL::PURPLE);
+      lines_widget->attach(show_antichain);
+
       CGAL::Show_pseudo_triangulation<Antichain>* show_ptrig_dual =
 	new CGAL::Show_pseudo_triangulation<Antichain>(antichain, true,
 						       CGAL::RED,
 						       5);
       lines_widget->attach(show_ptrig_dual);
 
-      Nearest_vertex* nearest_bitangent = 
-	new Nearest_vertex(dt_of_bitangents,
+      Special_Nearest_vertex* nearest_bitangent = 
+	new Special_Nearest_vertex(dt_of_bitangents,
 			   nearest_point,
 			   Qt::green,
 			   5,
@@ -348,7 +492,12 @@ private slots:
 	{
 	  Line_2 l = it->supporting_line();
 	  if(l.b() != 0)
-	    dt_of_bitangents.insert(Point_2( -l.a()/l.b(), l.c()/l.b() ));
+	    {
+	      Special_DT_vertex::Vertex_handle v = 
+		dt_of_bitangents.insert(Point_2( -l.a()/l.b(),
+						 l.c()/l.b() ));
+	      v->set_associated_vertex(&(*it));
+	    }
 	}
     }
 

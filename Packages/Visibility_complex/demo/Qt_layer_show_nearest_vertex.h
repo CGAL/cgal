@@ -27,7 +27,9 @@
 
 namespace CGAL {
 
-template <class DT, class Line>
+template <class DT, class OtherDT, class Line, 
+	  class Draw_other_things,
+	  class Other_draw_other_things>
 class Qt_layer_show_nearest_vertex : public Qt_widget_layer
 {
   enum State {DRAW_NOTHING, DRAW_POINT, DRAW_LINE};
@@ -36,12 +38,20 @@ public:
   typedef typename DT::Point			Point;
   typedef typename DT::Segment			Segment;
   typedef typename DT::Face_handle		Face_handle;
+  typedef typename DT::Vertex                   Vertex;
   typedef typename DT::Vertex_handle		Vertex_handle;
   typedef typename DT::Geom_traits::FT		FT;
-  typedef Qt_layer_show_nearest_vertex<DT, Line> Self;
+  typedef Qt_layer_show_nearest_vertex<DT, OtherDT,
+				       Line,
+				       Draw_other_things,
+				       Other_draw_other_things> Self;
+  typedef Qt_layer_show_nearest_vertex<OtherDT, DT,
+				       Line,
+				       Other_draw_other_things,
+				       Draw_other_things> Other;
 
   Qt_layer_show_nearest_vertex(const DT &t,
-			       Self* twin_layer,
+			       Other* twin_layer,
 			       const QColor &point_color = Qt::green,
 			       const int point_size = 10,
 			       const PointStyle point_style = CIRCLE,
@@ -77,7 +87,13 @@ public:
 	  widget->setPointSize(_point_size);
 	  widget->setPointStyle(_point_style);
 
-	  *widget << point;
+	  const Point& p = vh->point();
+
+	  widget->lock();
+	  *widget << p;
+	  Draw_other_things()(widget, vh);
+	  widget->unlock();
+
 	  break;
 	}
       case DRAW_LINE:
@@ -111,23 +127,24 @@ public:
 
     state = DRAW_POINT;
 
-    Vertex_handle v = tr.nearest_vertex(p);
+    const Vertex_handle v = tr.nearest_vertex(p);
 
-    if( point != v->point() )
+    if( vh != v )
       {
-	point = v->point();
+	vh = v;
 	widget->redraw();
-	other_layer->set_line( dual(point) );
+	other_layer->set_line( dual(vh->point()) );
       }
   }
 
-  void leaveEvent(QEvent *e)
+  void leaveEvent(QEvent*)
   {
     state = DRAW_NOTHING;
     other_layer->draw_nothing();
+    widget->redraw();
   }
 
-  void set_twin(Self* twin_layer) { other_layer = twin_layer; };
+  void set_twin(Other* twin_layer) { other_layer = twin_layer; };
 
   void set_line(const Line& l)
   {
@@ -151,10 +168,10 @@ private:
   int _line_width;
 
   State state;
-  Point point;
+  Vertex_handle vh;
   Line line;
 
-  Self* other_layer;
+  Other* other_layer;
 };//end class 
 
 } // namespace CGAL

@@ -47,6 +47,7 @@ arrangments.moc:  arrangments.C
 
 arrangments$(OBJ_EXT): arrangments.moc \
 	Show_pseudo_triangulation.h \
+	Show_antichain.h \
 	Qt_layer_show_lines.h \
 	Qt_layer_show_points.h \
 	Qt_layer_show_nearest_vertex.h \

@@ -3,6 +3,8 @@
 
 #include <CGAL/IO/Qt_widget_layer.h>
 
+using std::endl;
+
 namespace CGAL {
 
 template <class Antichain>
@@ -10,11 +12,13 @@ class Show_pseudo_triangulation : public Qt_widget_layer {
 public:
   typedef typename Antichain::Vertex_iterator	Vertex_iterator;
   typedef typename Antichain::Vertex Vertex;
-  typedef typename Vertex::Bitangent_2 Bitangent;
-  typedef typename Bitangent::R R; // WARNING: very dependant from
+  typedef typename Antichain::Gt Gt;
+  typedef typename Gt::R Kernel; // WARNING: very dependant from
   // CGAL kernels
-  typedef typename R::Line_2 Line_2;
-  typedef typename R::Point_2 Point_2;
+  typedef typename Vertex::Bitangent_2 Bitangent;
+  typedef typename Kernel::Line_2 Line_2;
+  typedef typename Kernel::Point_2 Point_2;
+  typedef typename Kernel::Segment_2 Segment_2;
 
   Show_pseudo_triangulation(Antichain* &antichain,
 			    bool in_dual=false,
@@ -35,10 +39,12 @@ public:
 	{
 	  Line_2 l = it->supporting_line();
 	  if(l.b() == 0) return;
+
 	  *widget << dual(l);
 	}
       else
-	*widget << (*it);
+	*widget << *it;
+	  
   };
 private:
   Antichain*	&ant;
