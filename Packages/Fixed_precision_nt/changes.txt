@@ -1,3 +1,6 @@
+2.37 (21 October 2002)
+- Remove doc_tex/support/Makefile (Susan asked...).
+
 2.36 (12 August 2002)
 - replace LEFTTURN and relatives by LEFT_TURN and relatives
 
