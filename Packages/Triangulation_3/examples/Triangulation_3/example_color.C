@@ -3,8 +3,6 @@
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 
-#include <cassert>
-
 template < class Traits >
 class My_vertex_base
   : public CGAL::Triangulation_vertex_base_3<Traits>
@@ -41,10 +39,10 @@ int main()
   T.insert(Point(-1,0,1));  
 
   Delaunay::Finite_vertices_iterator vit;
-  std::set<Delaunay::Vertex_handle> adjacent;
   for (vit = T.finite_vertices_begin(); vit != T.finite_vertices_end(); ++vit) {
-    T.incident_vertices( &*vit, adjacent);
-    if (adjacent.size() == 6) 
+    std::vector<Delaunay::Vertex_handle> adjacent;
+    T.incident_vertices( vit->handle(), std::back_inserter(adjacent));
+    if (adjacent.size() == 6)
       vit->color = CGAL::RED;
   }
 

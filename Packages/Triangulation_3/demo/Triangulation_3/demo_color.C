@@ -75,10 +75,10 @@ int main()
   T.insert(Point(-1,0,1));  
 
   Delaunay::Finite_vertices_iterator vit;
-  std::set<Delaunay::Vertex_handle> adjacent;
   for (vit = T.finite_vertices_begin(); vit != T.finite_vertices_end(); ++vit) {
-    T.incident_vertices( &*vit, adjacent);
-    if (adjacent.size() == 6) 
+    std::vector<Delaunay::Vertex_handle> adjacent;
+    T.incident_vertices( vit->handle(), std::back_inserter(adjacent));
+    if (adjacent.size() == 6)
       vit->color = CGAL::RED;
   }
 
@@ -99,7 +99,7 @@ int main()
   std::cout << "Enter any character to quit" << std::endl;
   std::cin >> ch;
 
-  return 1;
+  return 0;
 }
 
 #endif // if defined(__BORLANDC__) || defined(_MSC_VER)
