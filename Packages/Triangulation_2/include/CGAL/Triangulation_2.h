@@ -66,7 +66,6 @@ class Triangulation_2
 {
   friend std::istream& operator>> CGAL_NULL_TMPL_ARGS
                 (std::istream& is, Triangulation_2 &tr);
-   class Infinite_tester;
   typedef Triangulation_2<Gt,Tds>             Self;
 
 public:
@@ -93,6 +92,8 @@ public:
   typedef typename Tds::Edge_iterator          All_edges_iterator;
   typedef typename Tds::Vertex_iterator        All_vertices_iterator;
  
+  class Infinite_tester;
+
   //We derive in order to add a conversion to handle.
   class Finite_vertices_iterator :
     public Filter_iterator<All_vertices_iterator, Infinite_tester> 

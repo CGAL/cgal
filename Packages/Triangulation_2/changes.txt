@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 7.90 (11/06/03))
+- make the declaration for class Infinite_tester public in Triangulation_2
+
 Ver 7.81 (10/06/03)
 - make qt_demo for regular work
 
