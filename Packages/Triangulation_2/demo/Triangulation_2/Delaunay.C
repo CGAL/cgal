@@ -113,10 +113,23 @@ void show_conflicts( Point& p, Delaunay& T, Window_stream &W )
     }
     W << CGAL::RED << p;
     any_button(W);
+    T.star_hole(p, 
+		hole_bd.begin(), 
+		hole_bd.end(), 
+		conflict_faces.begin(),
+		conflict_faces.end());
+    T.is_valid();
+    //T.insert(p);
+    W << CGAL::BLUE << T;
+    any_button(W);
     W.clear();
     W.set_fill_color(leda_invisible);
     W << CGAL::BLUE << T;
-  }  
+  }
+  else  {
+    T.insert(p);
+    W.clear(); W << CGAL::BLUE << T;
+  }
   return;
 }
 
@@ -166,7 +179,7 @@ void window_input(TRIANGULATION &T,
 	      coord_type(y));
     if(b == MOUSE_BUTTON(1)){
       show_conflicts(p, T , W);
-      T.insert(p);
+      //T.insert(p);
       W.clear(); W << T;
     } 
     else if(b == MOUSE_BUTTON(2)){

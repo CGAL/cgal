@@ -91,8 +91,8 @@ _test_cls_delaunay_triangulation_2( const Del & )
   vnn = T2.nearest_vertex(Point(-1,-1,2));
   assert(vnn == cible->vertex(i));
 
-  // test get_conflicts
-  std:: cout << "    get conflicts" << std::endl;
+  // test get_conflicts and star_hole
+  std:: cout << "    get conflicts and star_hole" << std::endl;
   std::list<Face_handle> conflicts;
   std::list<Edge>  hole_bd;
   assert(T2.get_conflicts(Point(1,1,2), std::back_inserter(conflicts)));
@@ -125,6 +125,7 @@ _test_cls_delaunay_triangulation_2( const Del & )
 				std::back_inserter(hole_bd));
   T2.star_hole (Point(1,1,2), hole_bd.begin(), hole_bd.end(),
 		      conflicts.begin(), conflicts.end() );
+  assert(T2.is_valid());
 
   
 

@@ -312,21 +312,27 @@ public:
     // the triangulation is assumed to have dim=2
     // hole is supposed to be ccw oriented
   {
-       CGAL_triangulation_precondition(dimension() == 2);
+    CGAL_triangulation_precondition(dimension() == 2);
     EdgeIt eit = edge_begin;
     FaceIt fit = face_begin;
 
-    Face* first_f =  reset_or_create_face((*eit).first, (*eit).second, newv,
-					  fit, face_end);
-    ++eit;
+    Face* fn = (*eit).first;
+    int in = (*eit).second;
+    fn->vertex(cw(in))->set_face(fn);
+    Face* first_f =  reset_or_create_face(fn, in , newv, fit, face_end);
     Face* previous_f=first_f, *next_f;
+    ++eit; 
+
     for( ; eit != edge_end ; eit++) {
-    next_f = reset_or_create_face((*eit).first, (*eit).second, newv,
-				  fit, face_end);
-    next_f->set_neighbor(1, previous_f);
-    previous_f->set_neighbor(0, next_f);
-    previous_f=next_f;
+      fn = (*eit).first;
+      in = (*eit).second;
+      fn->vertex(cw(in))->set_face(fn);
+      next_f = reset_or_create_face(fn, in , newv, fit, face_end);
+      next_f->set_neighbor(1, previous_f);
+      previous_f->set_neighbor(0, next_f);
+      previous_f=next_f;
     }
+    
     next_f->set_neighbor(0, first_f);
     first_f->set_neighbor(1, next_f);
     newv->set_face(first_f);
@@ -338,11 +344,13 @@ private:
   Face*  reset_or_create_face(Face* fn, 
 			      int in, 
 			      Vertex* v,
-			      FaceIt fit,
-			      FaceIt face_end) {
+			      FaceIt& fit,
+			      const FaceIt& face_end)
+  {
     if (fit == face_end) return create_face(fn, in, v);
     (*fit)->set_vertices(fn->vertex(cw(in)), fn->vertex(ccw(in)), v);
     (*fit)->set_neighbors(0,0,fn);
+    fn->set_neighbor(in, *fit);
     return &(**fit++);    
   }
 

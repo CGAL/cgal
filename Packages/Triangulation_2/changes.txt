@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 5.24 ()
+- fixes demo Delaunay
+
 Ver 5.23 (8/1/01)
 - changes prefixes to CGAL_CLIB_STD in front of ptrdiff_t and size_t
 - prevent insertion of twice the very same constraint in 
