@@ -1,0 +1,374 @@
+% +------------------------------------------------------------------------+
+% | CGAL User Manual:  Point_set_2.tex
+% +------------------------------------------------------------------------+
+
+\ccParDims
+
+\chapter{Point Set in 2D}
+\label{chapterPoint_set_2}
+\ccChapterAuthor{Matthias B\"asken}
+
+
+%---------------------------------------------
+% Introduction
+%---------------------------------------------
+\section{Introduction}
+
+Geometric Queries are fundamental to many applications in computational
+geometry. The task is to maintain a dynamic set of geometric objects
+in such a way that certain queries can be performed efficiently.
+Typical examples of queries are:
+find out whether a given object is contained in the set,
+find all objects of the set lying in a given area (e.g. rectangle),
+find the object closest to a given point or
+find the pair of objects in the set lying closest to each other. 
+Furthermore, the set should be dynamic in the sense that deletions and 
+insertions of objects can be performed efficiently.
+
+In computational geometry literature one can find many different data structures for
+maintaining sets of geometric objects. Most of them are data structures 
+that have been developed to support a single very special kind of query 
+operation.
+Examples are Voronoi diagrams for answering nearest neighbor
+searches, range trees for orthogonal range queries, partition trees
+for more general range queries, hierarchical triangulations for point
+location and segment trees for intersection queries \dots.
+
+In many applications, different types of queries have to be
+performed on the same set of objects. A naive approach to this
+problem would use a collection of the above mentioned data structures to
+represent the set of objects and delegate every query operation to
+the corresponding structure.
+However, this is completely impractical since it uses too much
+memory and requires the maintenance of all these data structures in the presence of
+update operations.
+
+Data structures that are non-optimal in theory seem to perform quite well in
+practice for many of these queries.
+For example, the Delaunay diagram turns out to be a very powerful
+data structure for storing dynamic sets of points under range and nearest
+neighbor queries. A first implementation and computational
+study of using Delaunay diagrams for geometric queries is described by
+Mehlhorn and N\"aher in ~\cite{LEDAbook}.
+
+In this section we present a generic variant of a two dimensional point set
+data type supporting various geometric queries.
+
+The \ccc{CGAL::Point\_set\_2} class in this section is a planar embedded bidirected
+graph representing the {\em Delaunay Triangulation} of its vertex set.
+
+The \ccc{CGAL::Point\_set\_2} class depends on a template parameter standing for a
+geometric traits class. This traits class has to provide the needed classes of
+geometric objects and geometric predicates on these objects.
+
+\section{Examples}
+
+\subsection{Range search operations}
+
+The following example program demonstrates the various range search operations
+of the two dimensional point set.
+First we construct a two dimensional point set $PSet$ and initialize it with a few points.
+After the $init$ - call $PSet$ is the point set of the points $p1$, ..., $p9$ .
+Then we perform circular, triangular and isorectangular range search operations on the
+point set.
+The traits class used in the example is the standard traits class for \cgal\ kernel
+objects.
+
+\ccHtmlLinksOff
+
+{\bf rs\_test.C :}
+\begin{verbatim}
+#include <CGAL/config.h>
+#include <list>
+#include <vector>
+#include <CGAL/Point_set_2.h>
+
+typedef CGAL::Cartesian<double>            REP;
+typedef CGAL::point_set_traits_2<REP>      TRAITS;
+typedef CGAL::Point_set_2<TRAITS>::Edge    Edge;
+typedef CGAL::Point_set_2<TRAITS>::Vertex  Vertex;
+
+int main()
+{
+  CGAL::Point_set_2<TRAITS> PSet;
+  CGAL::Point_2<REP> pnew;
+
+  std::list<CGAL::Point_2<REP> > Lr;
+  
+  CGAL::Point_2<REP> p1(12,14);
+  CGAL::Point_2<REP> p2(-12,14);  
+  CGAL::Point_2<REP> p3(2,11);
+  CGAL::Point_2<REP> p4(5,6);
+  CGAL::Point_2<REP> p5(6.7,3.8);
+  CGAL::Point_2<REP> p6(11,20);
+  CGAL::Point_2<REP> p7(-5,6);  
+  CGAL::Point_2<REP> p8(12,0);
+  CGAL::Point_2<REP> p9(4,31);
+  CGAL::Point_2<REP> p10(-10,-10); 
+  
+  Lr.push_back(p1); Lr.push_back(p2); Lr.push_back(p3);
+  Lr.push_back(p4); Lr.push_back(p5); Lr.push_back(p6);
+  Lr.push_back(p7); Lr.push_back(p8); Lr.push_back(p9);
+  Lr.push_back(p10); 
+
+  PSet.init(Lr.begin(),Lr.end()); 
+
+  pnew= CGAL::Point_2<REP>(12,6.2);
+  std::cout << "insert!\n"; 
+  PSet.insert(pnew);
+
+  std::cout << "range search for circle !\n";  
+  CGAL::Circle_2<REP> rc(p5,p6);
+
+  std::list<Vertex> LV;
+  PSet.range_search(rc,std::back_inserter(LV));
+
+  std::list<Vertex>::const_iterator it;
+  for (it=LV.begin();it != LV.end(); it++)
+     std::cout << PSet.pos(*it) << "\n";      
+ 
+  std::cout << "range search for triangle !\n";    
+  
+  LV.clear();
+  PSet.range_search(p1,p2,p3,std::back_inserter(LV));
+  for (it=LV.begin();it != LV.end(); it++)
+     std::cout << PSet.pos(*it) << "\n";
+        
+  LV.clear();
+ 
+  std::cout << "range search for iso rectangle !\n";
+  CGAL::Point_2<REP> pt1=p10; // lower left
+  CGAL::Point_2<REP> pt3=p3; // upper right 
+  
+  CGAL::Point_2<REP> pt2 = CGAL::Point_2<REP>(pt3.x(),pt1.y());
+  CGAL::Point_2<REP> pt4 = CGAL::Point_2<REP>(pt1.x(),pt3.y());
+  
+  PSet.range_search(pt1,pt2,pt3,pt4,std::back_inserter(LV));
+  for (it=LV.begin();it != LV.end(); it++)
+    std::cout << PSet.pos(*it) << "\n"; 
+
+  return 0;
+}
+\end{verbatim}
+
+\ccHtmlLinksOn
+
+
+\subsection{Minimum spanning tree and k nearest neighbor search operation}
+
+The next example program demonstrates the $k$ nearest neighbors operation
+and the computation of the minimum spanning tree.
+This demonstration program uses the $GeoWin$ library for visualization.
+
+
+\ccHtmlLinksOff
+
+{\bf geowin\_k\_nearest\_neighbors.C :}
+\begin{verbatim}
+#include <CGAL/geowin_support.h>
+#include <CGAL/Point_set_2.h>
+
+typedef CGAL::Cartesian<double>            REP;
+typedef CGAL::point_set_traits_2<REP>      TRAITS;
+typedef CGAL::Point_set_2<TRAITS>::Edge    Edge;
+typedef CGAL::Point_set_2<TRAITS>::Vertex  Vertex;
+
+CGAL::Point_set_2<TRAITS> PST;
+int k;
+
+class construct_pointset : public geowin_update<std::list<CGAL::Point_2<REP> >,
+                           std::list<CGAL::Segment_2<REP> > >
+{
+public:
+ void update(const std::list<CGAL::Point_2<REP> >& Lin, 
+             std::list<CGAL::Segment_2<REP> >& Lout)
+ {
+  PST.init(Lin.begin(),Lin.end());
+  Lout.clear();
+  PST.segments(std::back_inserter(Lout));
+ }
+};
+
+class mst : public geowin_update<std::list<CGAL::Point_2<REP> >, 
+            std::list<CGAL::Segment_2<REP> > >
+{
+public:
+ void update(const std::list<CGAL::Point_2<REP> >& Lin,
+             std::list<CGAL::Segment_2<REP> >& Lout)
+ {
+  Lout.clear();
+  std::list<Edge> output;  
+  std::list<Edge>::const_iterator pit;
+  
+  PST.minimum_spanning_tree( std::back_inserter(output));  
+  
+  for (pit=output.begin(); pit != output.end(); pit++){
+    Lout.push_back(CGALSegment(PST.seg(*pit)));
+  } 
+ }
+};
+
+class nearest_neighbors : public geowin_update<std::list<CGAL::Point_2<REP> >, 
+                          std::list<CGAL::Circle_2<REP> > >
+{
+public:
+ void update(const std::list<CGAL::Point_2<REP> >& Lin, 
+             std::list<CGAL::Circle_2<REP> >& Lout)
+ {
+  Lout.clear();
+  std::list<CGAL::Point_2<REP> >::const_iterator it = Lin.begin();
+  std::list<Vertex> output;  
+  std::list<Vertex>::const_iterator pit;
+
+  for (; it != Lin.end(); it++){
+    PST.nearest_neighbors(*it, k, std::back_inserter(output));
+  } 
+  for (pit=output.begin(); pit != output.end(); pit++){
+    Lout.push_back(CGALCircle(PST.pos(*pit),2.0));
+  } 
+ }
+};
+
+int main()
+{
+  geowin_init_default_type((std::list<CGAL::Point_2<REP> >*)0, 
+                            leda_string("CGALPointlist"));
+    
+  std::cout << "Find the k nearest neighbors of every point in scene 2.\n";
+  std::cout << "k:"; std::cin >> k;
+  
+  GeoWin gw;
+
+  std::list<CGAL::Point_2<REP> > Lp;
+  geo_scene sc1 = gw.new_scene(Lp);
+  
+  std::list<CGAL::Point_2<REP> > Lother;
+  geo_scene sc2 = gw.new_scene(Lother);
+  gw.set_color(sc2,leda_blue);
+  
+  construct_pointset CP;
+  geo_scene sc3 = gw.new_scene(CP, sc1, leda_string("2d point set"));
+  gw.set_color(sc3,leda_blue);
+  
+  nearest_neighbors NN;
+  geo_scene sc4 = gw.new_scene(NN, sc2, leda_string("k nearest neighbors"));
+  gw.set_fill_color(sc4,leda_red);
+  gw.set_color(sc4,leda_red);
+  gw.set_point_style(sc4,leda_circle_point);
+  gw.set_line_width(sc4,4);
+  
+  mst MS;
+  geo_scene sc5 = gw.new_scene(MS, sc1, leda_string("Minimum spanning tree"));
+  gw.set_line_width(sc5,2);
+ 
+  gw.set_all_visible(true);
+  gw.add_dependence(sc1,sc4);
+   
+  gw.edit(sc1);
+
+  return 0;
+}
+\end{verbatim}
+
+
+\ccHtmlLinksOn
+
+\subsection{Using the LEDA kernel}
+
+We provide also traits classes for the \leda\ floating point and rational kernels. The next short
+example demonstrates the usage of the two dimensional point set with the rational \leda\ kernel.
+
+\ccHtmlLinksOff
+
+\begin{verbatim}
+#include <CGAL/config.h>
+#include <list>
+#include <LEDA/rat_window.h>
+#include <CGAL/Point_set_2.h>
+
+
+typedef CGAL::point_set_leda_rat_traits_2  TRAITS;
+typedef CGAL::Point_set_2<TRAITS>::Edge    Edge;
+typedef CGAL::Point_set_2<TRAITS>::Vertex  Vertex;
+
+void output(leda_window& W, const CGAL::Point_set_2<TRAITS>& PSR_rat)
+{
+  W.clear();
+  leda_edge e;
+  forall_edges(e,PSR_rat) W << leda_segment(PSR_rat.seg(e).to_segment());
+}
+
+int main()
+{
+  int i;
+  CGAL::Point_set_2<TRAITS> PSR_rat;
+  leda_window W(500,400);
+  W.init(-500,500,-400);
+  W.display();
+
+  // insert operation
+  for (i=0; i<30; i++) {
+    leda_rat_point pnew;
+    W >> pnew;
+    PSR_rat.insert(pnew);
+    output(W,PSR_rat);    
+  }
+
+  // delete operation
+  for (i=0; i<3; i++) {
+    leda_rat_point pnew;
+    W >> pnew;
+    Vertex v = PSR_rat.nearest_neighbor(pnew);
+    PSR_rat.del(v);
+    output(W,PSR_rat);    
+  }  
+
+  W.set_point_style(leda_disc_point);
+  
+  leda_rat_circle rc;
+  W >> rc; W << rc;
+
+  leda_list<Vertex> LV;
+  
+  // circular range search
+  PSR_rat.range_search(rc, std::back_inserter(LV));
+  Vertex v;  
+  W.set_color(leda_red);
+  forall(v,LV) W << PSR_rat.pos(v);
+
+  leda_rat_point pt1,pt2,pt3,pt4;
+  W >> pt1; W << pt1;
+  W >> pt2; W << pt2;
+  W >> pt3; W << pt3;
+  
+  LV.clear();
+  
+  // triangular range search
+  PSR_rat.range_search(pt1,pt2,pt3,std::back_inserter(LV));
+  leda_list<Vertex>::iterator it;
+  W.set_color(leda_green);
+  
+  for (it=LV.begin();it != LV.end(); it++)
+      W <<  PSR_rat.pos(*it);
+  
+  LV.clear();
+  
+  W >> pt1; W << pt1;
+  W >> pt3; W << pt3;
+  
+  pt2 = leda_rat_point(pt3.xcoord(),pt1.ycoord());
+  pt4 = leda_rat_point(pt1.xcoord(),pt3.ycoord());
+  
+  W.set_color(leda_orange);
+  
+  // iso rectangular range search
+  PSR_rat.range_search(pt1,pt2,pt3,pt4,std::back_inserter(LV));
+  for (it=LV.begin();it != LV.end(); it++)
+      W << PSR_rat.pos(*it);     
+  
+  W.read_mouse();
+  return 1;
+}
+\end{verbatim}
+
+\ccHtmlLinksOn

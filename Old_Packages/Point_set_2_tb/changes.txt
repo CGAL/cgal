@@ -1,0 +1,1 @@
+0.1  BETA version of the new CGAL - Delaunay triangulation based point set
