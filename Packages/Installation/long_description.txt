@@ -4,6 +4,14 @@
 
 
 //---------------------------------------------------------------------
+//	revision 1.32
+//---------------------------------------------------------------------
+
+GLOB: added -Wall flag for gcc2.8/egcs.
+GLOB: added standard header redirection by Geert-Jan.
+GLOB: added namespace disabling for SGI-7.2.1 in tests.
+
+//---------------------------------------------------------------------
 //	revision 1.31
 //---------------------------------------------------------------------
 
@@ -14,9 +22,7 @@ SRC : added File_header_extended_OFF.o to CGAL_OBJECTS.
 //---------------------------------------------------------------------
 
 GLOB: removed geomview support (now in geomview package).
-SRC : added File_header_extended_OFF.o to CGAL_OBJECTS.
 SRC : added Geomview_stream.o to CGAL_OBJECTS in makefiles.
-SRC : Initial revision
 
 //---------------------------------------------------------------------
 //	revision 1.29
@@ -25,8 +31,6 @@ SRC : Initial revision
 GLOB: added geomview support,
 GLOB: included fixes from CGAL-1-1-patch.
 DOCS: adopted to new html-converter.
-SRC : added File_header_extended_OFF.o to CGAL_OBJECTS.
-SRC : added Geomview_stream.o to CGAL_OBJECTS in makefiles.
 
 //---------------------------------------------------------------------
 //	revision 1.28

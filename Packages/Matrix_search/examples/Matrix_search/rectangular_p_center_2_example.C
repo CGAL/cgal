@@ -24,32 +24,14 @@
 // 2-4-Centering Axis-Parallel 2D-Rectangles - example program
 // ============================================================================
 
-#ifndef CGAL_CARTESIAN_H
 #include <CGAL/Cartesian.h>
-#endif // CGAL_CARTESIAN_H
-#ifndef CGAL_POINT_2_H
 #include <CGAL/Point_2.h>
-#endif // CGAL_POINT_2_H
-#ifndef CGAL_POINT_GENERATORS_2_H
 #include <CGAL/point_generators_2.h>
-#endif // CGAL_POINT_GENERATORS_2_H
-#ifndef CGAL_RECTANGULAR_P_CENTER_2_H
 #include <CGAL/rectangular_p_center_2.h>
-#endif // CGAL_RECTANGULAR_P_CENTER_2_H
-#ifndef CGAL_COPY_N_H
 #include <CGAL/copy_n.h>
-#endif // CGAL_COPY_N_H
-#ifndef CGAL_IO_OSTREAM_ITERATOR_H
 #include <CGAL/IO/Ostream_iterator.h>
-#endif // CGAL_IO_OSTREAM_ITERATOR_H
-#ifndef CGAL_PROTECT_IOSTREAM_H
 #include <iostream.h>
-#define CGAL_PROTECT_IOSTREAM_H
-#endif // CGAL_PROTECT_IOSTREAM_H
-#ifndef CGAL_PROTECT_VECTOR_H
 #include <vector.h>
-#define CGAL_PROTECT_VECTOR_H
-#endif // CGAL_PROTECT_VECTOR_H
 
 typedef double                            FT;
 typedef CGAL_Cartesian< FT >              R;

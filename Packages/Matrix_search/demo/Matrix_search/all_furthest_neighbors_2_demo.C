@@ -24,42 +24,17 @@
 // Demo program: All Furthest Neighbors for a Convex Polygon
 // ============================================================================
 
-#ifndef CGAL_CARTESIAN_H
 #include <CGAL/Cartesian.h>
-#endif // CGAL_CARTESIAN_H
-#ifndef CGAL_POINT_2_H
 #include <CGAL/Point_2.h>
-#endif // CGAL_POINT_2_H
-#ifndef CGAL_POLYGON_2_H
 #include <CGAL/Polygon_2.h>
-#endif // CGAL_POLYGON_2_H
-#ifndef CGAL_POINT_GENERATORS_2_H
 #include <CGAL/point_generators_2.h>
-#endif // CGAL_POINT_GENERATORS_2_H
-#ifndef CGAL_RANDOM_CONVEX_SET_2_H
 #include <CGAL/random_convex_set_2.h>
-#endif // CGAL_RANDOM_CONVEX_SET_2_H
-#ifndef CGAL_ALL_FURTHEST_NEIGHBORS_2_H
 #include <CGAL/all_furthest_neighbors_2.h>
-#endif // CGAL_ALL_FURTHEST_NEIGHBORS_2_H
-#ifndef CGAL_PROTECT_VECTOR_H
 #include <vector.h>
-#define CGAL_PROTECT_VECTOR_H
-#endif // CGAL_PROTECT_VECTOR_H
-#ifndef CGAL_SQUARED_DISTANCE_2_H
 #include <CGAL/squared_distance_2.h>
-#endif // CGAL_SQUARED_DISTANCE_2_H
-#ifndef CGAL_IO_WINDOW_STREAM_H
 #include <CGAL/IO/Window_stream.h>
-#endif // CGAL_IO_WINDOW_STREAM_H
-#ifndef CGAL_PROTECT_LEDA_POINT_SET_H
 #include <LEDA/point_set.h>
-#define CGAL_PROTECT_LEDA_POINT_SET_H
-#endif // CGAL_PROTECT_LEDA_POINT_SET_H
-#ifndef CGAL_PROTECT_IOSTREAM_H
 #include <iostream.h>
-#define CGAL_PROTECT_IOSTREAM_H
-#endif // CGAL_PROTECT_IOSTREAM_H
 
 typedef double                                 FT;
 typedef CGAL_Cartesian< FT >                   R;
