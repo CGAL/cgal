@@ -1,5 +1,5 @@
 @i cgal_util.fwi
-Bbox_2_Line_2_pair<R>::intersection
+Bbox_2_Line_2_pair::intersection
 @B@<2D Bbox Line intersection@>
 
 @O@<../include/CGAL/Line_2_Bbox_2_intersection.h@>==@{
@@ -21,78 +21,57 @@ MPI, Saarbruecken@)
 #ifndef CGAL_BBOX_2_LINE_2_INTERSECTION_H
 #define CGAL_BBOX_2_LINE_2_INTERSECTION_H
 
-#include <CGAL/Cartesian.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Line_2.h>
-#include <CGAL/Segment_2.h>
-#include <CGAL/Point_2.h>
+//#include <CGAL/Segment_2.h>
+//#include <CGAL/Point_2.h>
 #include <CGAL/utils.h>
 #include <CGAL/number_utils.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template <class R>
+class Bbox_2_Line_2_pair_impl;
+
 class Bbox_2_Line_2_pair {
 public:
-    typedef Cartesian<double> Rcart;
     enum Intersection_results {NO, POINT, SEGMENT};
     Bbox_2_Line_2_pair() ;
-    Bbox_2_Line_2_pair(Bbox_2 const *bbox,
-                            Line_2<R> const *line);
-    ~Bbox_2_Line_2_pair() {}
-
-#ifndef CGAL_CFG_RETURN_TYPE_BUG_2
-  Intersection_results intersection_type() const;
-
-#else
-
-  Intersection_results intersection_type() const
-@<Bbox_2_Line_2_pair intersection_type body@>
-#endif // CGAL_CFG_RETURN_TYPE_BUG_2
-
-    bool intersection(Point_2< Rcart > &result) const;
-    bool intersection(Segment_2< Rcart > &result) const;
+    Bbox_2_Line_2_pair(Bbox_2_Line_2_pair const &);
+    Bbox_2_Line_2_pair(Bbox_2 const &bbox,
+                            double line_a, double line_b, double line_c);
+    ~Bbox_2_Line_2_pair() ;
+    Bbox_2_Line_2_pair &operator=(Bbox_2_Line_2_pair const &o);
+    // set_bbox(Bbox_2 const &bbox);
+    // set_line(double line_a, double line_b, double line_c);
+    Intersection_results intersection_type() const;
+    bool intersection(double &x, double &y) const;
+    bool intersection(double &x1, double &y1, double &x2, double &y2) const;
 protected:
-    Bbox_2 const *      _bbox;
-    Line_2< Rcart > _line;
-    mutable bool                     _known;
-    mutable Intersection_results     _result;
-    mutable double                   _min, _max;
+    Bbox_2_Line_2_pair_impl *pimpl;
 };
+
+template <class Line>
+Bbox_2_Line_2_pair intersection_computer(Bbox_2 const &bbox, Line const &line)
+{
+    return Bbox_2_Line_2_pair(bbox, to_double(line->a()),
+        to_double(line->b()), to_double(line->c()));
+}
 
 template <class R>
 inline bool do_intersect(
     const Bbox_2 &box,
     const Line_2<R> &line)
 {
-    typedef Bbox_2_Line_2_pair<R> pair_t;
-    pair_t pair(&box, &line);
-    return pair.intersection_type() != pair_t::NO;
+    Bbox_2_Line_2_pair pair = intersection_computer(box, line);
+    return pair.intersection_type() != Bbox_2_Line_2_pair::NO;
 }
-
-CGAL_END_NAMESPACE
-
-@<Bbox_2_Line_2_pair implementation@>
-
-CGAL_BEGIN_NAMESPACE
-
-template <class R>
-class Line_2_Bbox_2_pair: public Bbox_2_Line_2_pair<R> {
-public:
-    Line_2_Bbox_2_pair(
-            Line_2<R> const *line,
-            Bbox_2 const *bbox) :
-                                Bbox_2_Line_2_pair<R>(bbox, line) {}
-};
 
 template <class R>
 inline bool do_intersect(
     const Line_2<R> &line,
     const Bbox_2 &box)
 {
-    typedef Line_2_Bbox_2_pair<R> pair_t;
-    pair_t pair(&line, &box);
-    return pair.intersection_type() != pair_t::NO;
+    return do_intersect(box, line);
 }
 
 CGAL_END_NAMESPACE
@@ -104,57 +83,43 @@ CGAL_END_NAMESPACE
 
 CGAL_BEGIN_NAMESPACE
 
-template <class R>
-Bbox_2_Line_2_pair<R>::Bbox_2_Line_2_pair()
-{
-    _bbox = 0;
-    _known = false;
-}
-
-template <class R>
-Bbox_2_Line_2_pair<R>::Bbox_2_Line_2_pair(
-    Bbox_2 const *bbox, Line_2<R> const *line)
-{
-    _bbox = bbox;
-    _line = Line_2< Rcart >(to_double(line->a()),
-            to_double(line->b()), to_double(line->c()));
-    _known = false;
-}
-
 #ifndef CGAL_CFG_RETURN_TYPE_BUG_2
-template <class R>
-Bbox_2_Line_2_pair<R>::Intersection_results
-Bbox_2_Line_2_pair<R>::intersection_type() const
+Bbox_2_Line_2_pair::Intersection_results
+Bbox_2_Line_2_pair::intersection_type() const
 @<Bbox_2_Line_2_pair intersection_type body@>
 #endif // CGAL_CFG_RETURN_TYPE_BUG_2
 
-template <class R>
 bool
-Bbox_2_Line_2_pair<R>::intersection(
-    Segment_2< Cartesian<double> > &seg) const
+Bbox_2_Line_2_pair::intersection(
+    double &x1, double &y1, double &x2, double &y2) const
 {
-    if (!_known)
+    if (!pimpl->_known)
         intersection_type();
-    if (_result != SEGMENT)
+    if (pimpl->_result != SEGMENT)
         return false;
-    Point_2< Cartesian<double> > p1(_line.point()
-                + _min*_line.direction().to_vector());
-    Point_2< Cartesian<double> > p2(_line.point()
-                + _max*_line.direction().to_vector());
-    seg = Segment_2< Cartesian<double> >(p1, p2);
+    Rcart::Point_2 p1(pimpl->_line.point()
+                + pimpl->_min*pimpl->_line.direction().to_vector());
+    Rcart::Point_2 p2(pimpl->_line.point()
+                + pimpl->_max*pimpl->_line.direction().to_vector());
+    x1 = p1.x();
+    y1 = p1.y();
+    x2 = p2.x();
+    y2 = p2.y();
     return true;
 }
 
-template <class R>
 bool
-Bbox_2_Line_2_pair<R>::intersection(
-    Point_2< Cartesian<double> > &pt) const
+Bbox_2_Line_2_pair::intersection(
+    double &x, double &y) const
 {
-    if (!_known)
+    if (!pimpl->_known)
         intersection_type();
-    if (_result != POINT)
+    if (pimpl->_result != POINT)
         return false;
-    pt = (_line.point() + _min*_line.direction().to_vector());
+    Rcart::Point_2 pt(pimpl->_line.point()
+        + pimpl->_min*pimpl->_line.direction().to_vector());
+    x = pt.x();
+    y = pt.y();
     return true;
 }
 
@@ -167,89 +132,89 @@ Once inline (which the g++ compiler wants because of a bug) and once outline.
 
 @$@<Bbox_2_Line_2_pair intersection_type body@>@M==@{@-
 {
-    if (_known)
-        return _result;
+    if (pimpl->_known)
+        return pimpl->_result;
     // The non const this pointer is used to cast away const.
-    _known = true;
-    const Point_2< Cartesian<double> > &ref_point = _line.point();
-    const Vector_2< Cartesian<double> > &dir =
-                               _line.direction().to_vector();
+    pimpl->_known = true;
+    const Rcart::Point_2 &ref_point = pimpl->_line.point();
+    const Rcart::Vector_2 &dir =
+                               pimpl->_line.direction().to_vector();
     bool to_infinity = true;
 // first on x value
     if (dir.x() == 0.0) {
-        if (ref_point.x() < _bbox->xmin()) {
-            _result = NO;
-            return _result;
+        if (ref_point.x() < pimpl->_bbox.xmin()) {
+            pimpl->_result = NO;
+            return pimpl->_result;
         }
-        if (ref_point.x() > _bbox->xmax()) {
-            _result = NO;
-            return _result;
+        if (ref_point.x() > pimpl->_bbox.xmax()) {
+            pimpl->_result = NO;
+            return pimpl->_result;
         }
     } else {
         double newmin, newmax;
         if (dir.x() > 0.0) {
-            newmin = (_bbox->xmin()-ref_point.x())/dir.x();
-            newmax = (_bbox->xmax()-ref_point.x())/dir.x();
+            newmin = (pimpl->_bbox.xmin()-ref_point.x())/dir.x();
+            newmax = (pimpl->_bbox.xmax()-ref_point.x())/dir.x();
         } else {
-            newmin = (_bbox->xmax()-ref_point.x())/dir.x();
-            newmax = (_bbox->xmin()-ref_point.x())/dir.x();
+            newmin = (pimpl->_bbox.xmax()-ref_point.x())/dir.x();
+            newmax = (pimpl->_bbox.xmin()-ref_point.x())/dir.x();
         }
         if (to_infinity) {
-            _min = newmin;
-            _max = newmax;
+            pimpl->_min = newmin;
+            pimpl->_max = newmax;
         } else {
-            if (newmin > _min)
-                _min = newmin;
-            if (newmax < _max)
-                _max = newmax;
-            if (_max < _min) {
-                _result = NO;
-                return _result;
+            if (newmin > pimpl->_min)
+                pimpl->_min = newmin;
+            if (newmax < pimpl->_max)
+                pimpl->_max = newmax;
+            if (pimpl->_max < pimpl->_min) {
+                pimpl->_result = NO;
+                return pimpl->_result;
             }
         }
         to_infinity = false;
     }
 // now on y value
     if (dir.y() == 0.0) {
-        if (ref_point.y() < _bbox->ymin()) {
-            _result = NO;
-            return _result;
+        if (ref_point.y() < pimpl->_bbox.ymin()) {
+            pimpl->_result = NO;
+            return pimpl->_result;
         }
-        if (ref_point.y() > _bbox->ymax()) {
-            _result = NO;
-            return _result;
+        if (ref_point.y() > pimpl->_bbox.ymax()) {
+            pimpl->_result = NO;
+            return pimpl->_result;
         }
     } else {
         double newmin, newmax;
         if (dir.y() > 0.0) {
-            newmin = (_bbox->ymin()-ref_point.y())/dir.y();
-            newmax = (_bbox->ymax()-ref_point.y())/dir.y();
+            newmin = (pimpl->_bbox.ymin()-ref_point.y())/dir.y();
+            newmax = (pimpl->_bbox.ymax()-ref_point.y())/dir.y();
         } else {
-            newmin = (_bbox->ymax()-ref_point.y())/dir.y();
-            newmax = (_bbox->ymin()-ref_point.y())/dir.y();
+            newmin = (pimpl->_bbox.ymax()-ref_point.y())/dir.y();
+            newmax = (pimpl->_bbox.ymin()-ref_point.y())/dir.y();
         }
         if (to_infinity) {
-            _min = newmin;
-            _max = newmax;
+            pimpl->_min = newmin;
+            pimpl->_max = newmax;
         } else {
-            if (newmin > _min)
-                _min = newmin;
-            if (newmax < _max)
-                _max = newmax;
-            if (_max < _min) {
-                _result = NO;
-                return _result;
+            if (newmin > pimpl->_min)
+                pimpl->_min = newmin;
+            if (newmax < pimpl->_max)
+                pimpl->_max = newmax;
+            if (pimpl->_max < pimpl->_min) {
+                pimpl->_result = NO;
+                return pimpl->_result;
             }
         }
         to_infinity = false;
     }
     CGAL_kernel_assertion(!to_infinity);
-    if (_max == _min) {
-        _result = POINT;
-        return _result;
+    if (pimpl->_max == pimpl->_min) {
+        pimpl->_result = POINT;
+        return pimpl->_result;
     }
-    _result = SEGMENT;
-    return _result;
+    pimpl->_result = SEGMENT;
+    return pimpl->_result;
 }
 @}
 
@@ -258,16 +223,52 @@ Once inline (which the g++ compiler wants because of a bug) and once outline.
 
 CGAL_BEGIN_NAMESPACE
 
-template <>
-Bbox_2_Line_2_pair< Cartesian<double> >::Bbox_2_Line_2_pair(
-    Bbox_2 const *bbox, Line_2< Cartesian<double> > const *line)
+class Bbox_2_Line_2_pair_impl
 {
-    _bbox = bbox;
-    _line = *line;
-    _known = false;
+public:
+    Bbox_2_Line_2_pair_impl() {}
+    Bbox_2_Line_2_pair_impl(Bbox_2 const &bb, Rcart::Line_2 const &line)
+        : _bbox(bb), _line(line), _known(false) {}
+    Bbox_2 _bbox;
+    Rcart::Line_2 _line;
+    mutable bool                     _known;
+    mutable Bbox_2_Line_2_pair::Intersection_results     _result;
+    mutable double                   _min, _max;
+};
+
+Bbox_2_Line_2_pair::~Bbox_2_Line_2_pair()
+{
+    delete pimpl;
+}
+
+Bbox_2_Line_2_pair::Bbox_2_Line_2_pair()
+{
+    pimpl = new Bbox_2_Line_2_pair_impl;
+    pimpl->_known = false;
+}
+
+Bbox_2_Line_2_pair::Bbox_2_Line_2_pair(Bbox_2_Line_2_pair const &o)
+{
+    pimpl = new Bbox_2_Line_2_pair_impl(*o.pimpl);
+}
+
+Bbox_2_Line_2_pair::Bbox_2_Line_2_pair(
+    Bbox_2 const &bbox, double line_a, double line_b, double line_c)
+{
+    pimpl = new Bbox_2_Line_2_pair_impl(bbox,
+              Rcart::Line_2(line_a, line_b, line_c));
+}
+
+Bbox_2_Line_2_pair &
+Bbox_2_Line_2_pair::operator=(Bbox_2_Line_2_pair const &o)
+{
+    *pimpl = *o.pimpl;
+    return *this;
 }
 
 CGAL_END_NAMESPACE
+
+@<Bbox_2_Line_2_pair implementation@>
 
 @}
 
@@ -295,47 +296,34 @@ Saarbruecken@)
 #ifndef CGAL_RAY_2_BBOX_2_INTERSECTION_H
 #define CGAL_RAY_2_BBOX_2_INTERSECTION_H
 
-#include <CGAL/Cartesian.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Ray_2.h>
-#include <CGAL/Segment_2.h>
-#include <CGAL/Point_2.h>
+// #include <CGAL/Segment_2.h>
+// #include <CGAL/Point_2.h>
 #include <CGAL/utils.h>
 #include <CGAL/number_utils.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template <class R>
-class Ray_2_Bbox_2_pair {
+class Bbox_2_Ray_2_pair_impl;
+
+class Bbox_2_Ray_2_pair {
 public:
-    typedef Cartesian<double> Rcart;
     enum Intersection_results {NO, POINT, SEGMENT};
-    Ray_2_Bbox_2_pair() ;
-    Ray_2_Bbox_2_pair(Ray_2<R> const *ray, Bbox_2 const *box) ;
-
-#ifndef CGAL_CFG_RETURN_TYPE_BUG_2
-  Intersection_results intersection_type() const;
-
-#else
-  Intersection_results intersection_type() const
-@<Ray_2_Bbox_2_pair intersection_type body@>
-#endif // CGAL_CFG_RETURN_TYPE_BUG_2
-
-    bool                       intersection(
-                                    Point_2< Rcart > &result) const;
-    bool                       intersection(
-                                    Segment_2< Rcart > &result) const;
+    ~Bbox_2_Ray_2_pair() ;
+    Bbox_2_Ray_2_pair() ;
+    Bbox_2_Ray_2_pair(Bbox_2_Ray_2_pair const &o) ;
+    Bbox_2_Ray_2_pair(Bbox_2 const &box,
+                      double x, double y, double dx, double dy) ;
+    Bbox_2_Ray_2_pair& operator=(Bbox_2_Ray_2_pair const &o) ;
+    Intersection_results intersection_type() const;
+    bool intersection(double &x, double &y) const;
+    bool intersection(double &x1, double &y1, double &x2, double &y2) const;
 protected:
-    Ray_2< Rcart >        _ray;
-    Bbox_2 const *        _box;
-    mutable bool                       _known;
-    mutable Intersection_results       _result;
-    mutable Point_2< Rcart >      _ref_point;
-    mutable Vector_2< Rcart >     _dir;
-    mutable double                     _min,
-                               _max;
+    Bbox_2_Ray_2_pair_impl *pimpl;
 };
 
+/*
 template <class R>
 inline bool do_intersect(
     const Ray_2<R> &ray,
@@ -345,13 +333,12 @@ inline bool do_intersect(
     pair_t pair(&ray, &box);
     return pair.intersection_type() != pair_t::NO;
 }
-
+*/
 CGAL_END_NAMESPACE
 
-@<Ray_2_Bbox_2_pair implementation@>
 
 CGAL_BEGIN_NAMESPACE
-
+/*
 template <class R>
 class Bbox_2_Ray_2_pair: public Ray_2_Bbox_2_pair<R> {
 public:
@@ -369,7 +356,7 @@ inline bool do_intersect(
     pair_t pair(&box, &ray);
     return pair.intersection_type() != pair_t::NO;
 }
-
+*/
 CGAL_END_NAMESPACE
 
 #endif
@@ -379,14 +366,7 @@ CGAL_END_NAMESPACE
 @$@<Ray_2_Bbox_2_pair implementation@>==@{
 
 CGAL_BEGIN_NAMESPACE
-
-template <class R>
-Ray_2_Bbox_2_pair<R>::Ray_2_Bbox_2_pair()
-{
-    _known = false;
-    _box = 0;
-}
-
+/*
 template <class R>
 Ray_2_Bbox_2_pair<R>::
 Ray_2_Bbox_2_pair(Ray_2<R> const *ray, Bbox_2 const *box)
@@ -403,37 +383,37 @@ Ray_2_Bbox_2_pair(Ray_2<R> const *ray, Bbox_2 const *box)
     _dir = Vector_2< Rcart > (dx, dy);
     _min = 0;
 }
+*/
 
-#ifndef CGAL_CFG_RETURN_TYPE_BUG_2
-template <class R>
-Ray_2_Bbox_2_pair<R>::Intersection_results
-Ray_2_Bbox_2_pair<R>::intersection_type() const
+Bbox_2_Ray_2_pair::Intersection_results
+Bbox_2_Ray_2_pair::intersection_type() const
 @<Ray_2_Bbox_2_pair intersection_type body@>
-#endif // CGAL_CFG_RETURN_TYPE_BUG_2
 
-template <class R>
-bool Ray_2_Bbox_2_pair<R>::
-intersection(Segment_2< Cartesian<double> > &seg) const
+bool Bbox_2_Ray_2_pair::
+intersection(double &x1, double &y1, double &x2, double &y2) const
 {
-    if (!_known)
+    if (!pimpl->_known)
         intersection_type();
-    if (_result != SEGMENT)
+    if (pimpl->_result != SEGMENT)
         return false;
-    Point_2< Rcart > p1(_ref_point + _min*_dir);
-    Point_2< Rcart > p2(_ref_point + _max*_dir);
-    seg = Segment_2< Rcart >(p1, p2);
+    Rcart::Point_2 p1(pimpl->_ref_point + pimpl->_min*pimpl->_dir);
+    Rcart::Point_2 p2(pimpl->_ref_point + pimpl->_max*pimpl->_dir);
+    x1 = p1.x();
+    y1 = p1.y();
+    x2 = p2.x();
+    y2 = p2.y();
     return true;
 }
 
-template <class R>
-bool Ray_2_Bbox_2_pair<R>::
-intersection(Point_2< Cartesian<double> > &pt) const
+bool Bbox_2_Ray_2_pair::intersection(double &x, double &y) const
 {
-    if (!_known)
+    if (!pimpl->_known)
         intersection_type();
-    if (_result != POINT)
+    if (pimpl->_result != POINT)
         return false;
-    pt = Point_2< Rcart >(_ref_point + _min*_dir);
+    Rcart::Point_2 pt = pimpl->_ref_point + pimpl->_min*pimpl->_dir;
+    x = pt.x();
+    y = pt.y();
     return true;
 }
 
@@ -443,83 +423,83 @@ CGAL_END_NAMESPACE
 
 @$@<Ray_2_Bbox_2_pair intersection_type body@>@M==@{@-
 {
-    if (_known)
-        return _result;
-    _known = true;
+    if (pimpl->_known)
+        return pimpl->_result;
+    pimpl->_known = true;
     bool to_infinity = true;
 // first on x value
-    if (_dir.x() == 0.0) {
-        if (_ref_point.x() < _box->xmin()) {
-            _result = NO;
-            return _result;
+    if (pimpl->_dir.x() == 0.0) {
+        if (pimpl->_ref_point.x() < pimpl->_box.xmin()) {
+            pimpl->_result = NO;
+            return pimpl->_result;
         }
-        if (_ref_point.x() > _box->xmax()) {
-            _result = NO;
-            return _result;
+        if (pimpl->_ref_point.x() > pimpl->_box.xmax()) {
+            pimpl->_result = NO;
+            return pimpl->_result;
         }
     } else {
         double newmin, newmax;
-        if (_dir.x() > 0.0) {
-            newmin = (_box->xmin()-_ref_point.x())/_dir.x();
-            newmax = (_box->xmax()-_ref_point.x())/_dir.x();
+        if (pimpl->_dir.x() > 0.0) {
+            newmin = (pimpl->_box.xmin()-pimpl->_ref_point.x())/pimpl->_dir.x();
+            newmax = (pimpl->_box.xmax()-pimpl->_ref_point.x())/pimpl->_dir.x();
         } else {
-            newmin = (_box->xmax()-_ref_point.x())/_dir.x();
-            newmax = (_box->xmin()-_ref_point.x())/_dir.x();
+            newmin = (pimpl->_box.xmax()-pimpl->_ref_point.x())/pimpl->_dir.x();
+            newmax = (pimpl->_box.xmin()-pimpl->_ref_point.x())/pimpl->_dir.x();
         }
-        if (newmin > _min)
-            _min = newmin;
+        if (newmin > pimpl->_min)
+            pimpl->_min = newmin;
         if (to_infinity) {
-            _max = newmax;
+            pimpl->_max = newmax;
         } else {
-            if (newmax < _max)
-                _max = newmax;
+            if (newmax < pimpl->_max)
+                pimpl->_max = newmax;
         }
-        if (_max < _min){
-            _result = NO;
-            return _result;
+        if (pimpl->_max < pimpl->_min){
+            pimpl->_result = NO;
+            return pimpl->_result;
         }
         to_infinity = false;
     }
 // now on y value
-    if (_dir.y() == 0.0) {
-        if (_ref_point.y() < _box->ymin()) {
-            _result = NO;
-            return _result;
+    if (pimpl->_dir.y() == 0.0) {
+        if (pimpl->_ref_point.y() < pimpl->_box.ymin()) {
+            pimpl->_result = NO;
+            return pimpl->_result;
         }
-        if (_ref_point.y() > _box->ymax()) {
-            _result = NO;
-            return _result;
+        if (pimpl->_ref_point.y() > pimpl->_box.ymax()) {
+            pimpl->_result = NO;
+            return pimpl->_result;
         }
     } else {
         double newmin, newmax;
-        if (_dir.y() > 0.0) {
-            newmin = (_box->ymin()-_ref_point.y())/_dir.y();
-            newmax = (_box->ymax()-_ref_point.y())/_dir.y();
+        if (pimpl->_dir.y() > 0.0) {
+            newmin = (pimpl->_box.ymin()-pimpl->_ref_point.y())/pimpl->_dir.y();
+            newmax = (pimpl->_box.ymax()-pimpl->_ref_point.y())/pimpl->_dir.y();
         } else {
-            newmin = (_box->ymax()-_ref_point.y())/_dir.y();
-            newmax = (_box->ymin()-_ref_point.y())/_dir.y();
+            newmin = (pimpl->_box.ymax()-pimpl->_ref_point.y())/pimpl->_dir.y();
+            newmax = (pimpl->_box.ymin()-pimpl->_ref_point.y())/pimpl->_dir.y();
         }
-        if (newmin > _min)
-            _min = newmin;
+        if (newmin > pimpl->_min)
+            pimpl->_min = newmin;
         if (to_infinity) {
-            _max = newmax;
+            pimpl->_max = newmax;
         } else {
-            if (newmax < _max)
-                _max = newmax;
+            if (newmax < pimpl->_max)
+                pimpl->_max = newmax;
         }
-        if (_max < _min) {
-            _result = NO;
-            return _result;
+        if (pimpl->_max < pimpl->_min) {
+            pimpl->_result = NO;
+            return pimpl->_result;
         }
         to_infinity = false;
     }
     CGAL_kernel_assertion(!to_infinity);
-    if (_max == _min) {
-        _result = POINT;
-        return _result;
+    if (pimpl->_max == pimpl->_min) {
+        pimpl->_result = POINT;
+        return pimpl->_result;
     }
-    _result = SEGMENT;
-    return _result;
+    pimpl->_result = SEGMENT;
+    return pimpl->_result;
 }
 @}
 
@@ -527,7 +507,52 @@ CGAL_END_NAMESPACE
 
 CGAL_BEGIN_NAMESPACE
 
-template <>
+class Bbox_2_Ray_2_pair_impl
+{
+public:
+    Bbox_2_Ray_2_pair_impl():_known(false) {}
+    Bbox_2_Ray_2_pair_impl(Bbox_2 const &bbox, Rcart::Point_2 const &pt,
+                Rcart::Vector_2 const &dir)
+        :_box(bbox), _known(false), _ref_point(pt), _dir(dir), _min(0.0) {}
+    Ray_2< Rcart > _ray;
+    Bbox_2 _box;
+    bool _known;
+    Bbox_2_Ray_2_pair::Intersection_results _result;
+    Rcart::Point_2 _ref_point;
+    Rcart::Vector_2 _dir;
+    double _min, _max;
+};
+
+Bbox_2_Ray_2_pair::~Bbox_2_Ray_2_pair()
+{
+    delete pimpl;
+}
+
+Bbox_2_Ray_2_pair::Bbox_2_Ray_2_pair()
+{
+    pimpl = new Bbox_2_Ray_2_pair_impl;
+}
+
+Bbox_2_Ray_2_pair::Bbox_2_Ray_2_pair(Bbox_2_Ray_2_pair const &o)
+{
+    pimpl = new Bbox_2_Ray_2_pair_impl(*o.pimpl);
+}
+
+Bbox_2_Ray_2_pair::Bbox_2_Ray_2_pair(
+    Bbox_2 const &bbox, double x, double y, double dx, double dy)
+{
+    pimpl = new Bbox_2_Ray_2_pair_impl(bbox,
+                    Rcart::Point_2(x,y), Rcart::Vector_2(dx,dy));
+}
+
+Bbox_2_Ray_2_pair &
+Bbox_2_Ray_2_pair::operator=(Bbox_2_Ray_2_pair const &o)
+{
+    *pimpl = *o.pimpl;
+    return *this;
+}
+
+/*
 Ray_2_Bbox_2_pair< Cartesian<double> >::
 Ray_2_Bbox_2_pair(
             Ray_2< Cartesian<double> > const *ray,
@@ -539,9 +564,11 @@ Ray_2_Bbox_2_pair(
     _dir = ray->direction().to_vector();
     _min = 0;
 }
+*/
 
 CGAL_END_NAMESPACE
 
+@<Ray_2_Bbox_2_pair implementation@>
 @}
 
 
@@ -2402,9 +2429,10 @@ intersection_2_1.fw@,@-
 Geert-Jan Giezeman@,@-
 Saarbruecken@)
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Bbox_2_Line_2_intersection.h>
 #include <CGAL/Ray_2_Bbox_2_intersection.h>
+typedef CGAL::Simple_cartesian<double> Rcart;
 @<Bbox2_2 cartesian double Line_2 intersection@>
 @<Bbox2_2 cartesian double Ray_2 intersection@>
 @}
