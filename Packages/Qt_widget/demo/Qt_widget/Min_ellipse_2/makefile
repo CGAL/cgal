@@ -53,7 +53,7 @@ min_ellipse_2$(EXE_EXT): min_ellipse_2$(OBJ_EXT)
 	$(CGAL_CXX) $(EXE_OPT)min_ellipse_2 min_ellipse_2$(OBJ_EXT) \
 	 Qt_widget_toolbar$(OBJ_EXT) $(LDFLAGS)
 
-clean: min_ellipse_2.clean
+clean: min_ellipse_2.clean Qt_widget_toolbar.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
