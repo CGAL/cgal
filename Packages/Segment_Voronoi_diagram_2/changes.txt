@@ -1,3 +1,7 @@
+9 September 2004:  Menelaos Karavelas
+- added third example (in examples/subdir and in doc) that shows how
+  to recover the data for the Voronoi edges.
+
 7 September 2004:  Menelaos Karavelas
 - Documentation & code: replaced Agds_2 by Tds_2
 
