@@ -18,15 +18,17 @@ OutputIterator greene_approx_convex_partition_2(InputIterator first,
                                                 const Traits& traits = Default_traits);
 }
 {
-computes a partition of the simple, counterclockwise-oriented polygon defined 
-by the points in the range [\ccc{first}, \ccc{last}) into convex 
+computes a partition of the polygon defined 
+by the points in the range [\ccc{first}, \ccc{beyond}) into convex 
 polygons. The counterclockwise-oriented partition polygons are written to
 the sequence starting at position \ccc{result}.  The past-the-end iterator for 
 the resulting sequence of polygons is returned.
+\ccPrecond The points in the range [\ccc{first}, \ccc{beyond}) define a simple,
+counterclockwise-oriented polygon.
+%\ccIndexSubitem[C]{greene_approx_convex_partition_2}{preconditions}
 }
 
 \ccHeading{Requirements}
-%\ccIndexSubitem[C]{greene_approx_convex_partition_2}{preconditions}
 \begin{enumerate}
     \item \ccc{Traits} is a model of the concepts PartitionTraits\_2%
           \ccIndexMainItem[c]{PartitionTraits_2} and 
@@ -45,8 +47,6 @@ the resulting sequence of polygons is returned.
     \item \ccc{InputIterator::value_type} should be \ccc{Traits::Point_2},
           which should also be the type of the points stored in an object
           of type \ccc{Traits::Polygon_2}.
-    \item Points in the range $[first, beyond)$ must define a simple polygon
-          whose vertices are oriented counterclockwise.
 \end{enumerate}
 
 The default traits class \ccc{Default_traits} is \ccc{Partition_traits_2},
@@ -68,34 +68,12 @@ polygon with $n$ vertices.  The function \ccc{y_monotone_partition_2}
 is used to produce the monotone partition.
 
 \ccExample
-The following code fragment will compute an approximately optimal
-convex partitioning of the simple polygon \ccc{P} using the default
-traits class and store the partition polygons in the list 
+The following program computes an approximately optimal
+convex partitioning of a polygon using the default
+traits class and stores the partition polygons in the list 
 \ccc{partition_polys}.
 
-\begin{verbatim}
-   #include <CGAL/basic.h>
-   #include <CGAL/Cartesian.h>
-   #include <CGAL/Polygon_traits_2.h>
-   #include <CGAL/partition_2.h>
-   #include <list>
-
-   typedef CGAL::Cartesian<double>                           R;
-   typedef CGAL::Polygon_traits_2<R>                         Traits;
-   typedef Traits::Point_2                                   Point_2;
-   typedef std::list<Point_2>                                Container;
-   typedef CGAL::Polygon_2<Traits, Container>                Polygon_2;
-
-   Polygon_2            P;
-   std::list<Polygon_2> partition_polys;
-
-   // ...
-   // insert vertices into P to create a simple CCW-oriented polygon
-   // ...
-   CGAL::greene_approx_convex_partition_2(P.vertices_begin(),
-                                          P.vertices_end(),
-                                          std::back_inserter(partition_polys));
-\end{verbatim}
+\ccIncludeExampleCode{Partition_2/greene_approx_convex_ex.C}
 
 
 \end{ccRefFunction}
