@@ -158,8 +158,8 @@ class Polytope_distance_d {
     typedef  typename Point_vector::const_iterator
                                         Point_iterator;
     
-    typedef  CGAL::Join_random_access_iterator_1<
-                 typename Index_vector::const_iterator, Point_by_index >
+    typedef typename Index_vector::const_iterator IVCI;
+    typedef CGAL::Join_random_access_iterator_1< IVCI, Point_by_index >
                                         Support_point_iterator;
     
     typedef  typename ET_vector::const_iterator
