@@ -11,8 +11,8 @@ class MyCartesian_base
   : public K_Base::template Base<K_>::Type
 {
   typedef typename K_Base::template Base<K_>::Type   OldK;
-  typedef K_                                Kernel;
 public:
+  typedef K_                                Kernel;
   typedef MyPointC2                         Point_2;
   typedef MySegmentC2<Kernel>               Segment_2;
   typedef MyConstruct_point_2<Kernel>       Construct_point_2;
