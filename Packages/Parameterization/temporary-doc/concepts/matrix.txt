@@ -43,6 +43,12 @@ public:
 				// * 0 <= row < row_dimension()
 				// * 0 <= column < column_dimension()
 				NT  get_coef (int row, int column) const;
+				// Write access to 1 matrix coefficient: aij <- aij + val
+				// 
+				// Preconditions:
+				// * 0 <= row < row_dimension()
+				// * 0 <= column < column_dimension()
+			    void add_coef(unsigned int i, unsigned int j, T val);
 				
 				// Write access to 1 matrix coefficient.
 				// 

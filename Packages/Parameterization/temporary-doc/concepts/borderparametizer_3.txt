@@ -27,11 +27,12 @@ class BorderParametizer_3
 {
 // Public stuff
 public:
+				// Assign to mesh's border vertices a 2D position (ie a (u,v) pair) on border's shape
+				// Mark them as "parameterized"
+				// Return false on error
+				bool  parameterize_border (MeshAdaptor_3* mesh);
+
 				// Indicate if border's shape is convex
 				bool  is_border_convex ();
-				
-				// Assign to mesh's border vertices a 2D position (ie a (u,v) pair) on border's shape
-				// Reurn false on error
-				bool  parameterize_border (MeshAdaptor_3* mesh);
 };
 
