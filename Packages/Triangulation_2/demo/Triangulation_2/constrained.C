@@ -1,5 +1,6 @@
 #include <CGAL/basic.h>
 #include <fstream>
+#include <list>
 #include <stack>
 #include <set>
 
@@ -45,10 +46,10 @@ any_button(Window_stream &win)
 }
 
 void
-draw_constraints(Window_stream &win, list<Constraint> & lc)
+draw_constraints(Window_stream &win, std::list<Constraint> & lc)
 {
   win << CGAL::RED;
-  list<Constraint>::iterator cit=lc.begin();
+  std::list<Constraint>::iterator cit=lc.begin();
   for( ; cit != lc.end(); ++cit) {
     win << Segment((*cit).first,(*cit).second);
   }
@@ -56,8 +57,8 @@ draw_constraints(Window_stream &win, list<Constraint> & lc)
 } 
 
 void
-input_constraints_from_file(list<Constraint> & list_contraintes,
-			    ifstream& is)
+input_constraints_from_file(std::list<Constraint> & list_contraintes,
+			    std::ifstream& is)
 {
   int n;
   is >> n;
@@ -66,7 +67,7 @@ input_constraints_from_file(list<Constraint> & list_contraintes,
   Point p,q;
   for(; n > 0; n--) {
     is >> p >> q;
-    list_contraintes.push_back(std::make_pair(p,q));
+    std::list_contraintes.push_back(std::make_pair(p,q));
   }
 }
 
