@@ -12,10 +12,11 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-           -I../../include \
-          -I./include \
-            $(CGAL_CXXFLAGS) \
-           -g
+	-I../../include \
+	-I./include \
+	$(CGAL_CXXFLAGS)\
+	$(TESTSUITE_CXXFLAGS) \
+	-g
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -49,7 +50,7 @@ clean:
 	            test_triangulation_tds test_delaunay_triangulation_2 core \
 	            T??.triangulation
 
-distclean: clean
+realclean: clean
 	- rm -f Program* Error* Compiler* error*
 
 #---------------------------------------------------------------------#
@@ -57,4 +58,4 @@ distclean: clean
 #---------------------------------------------------------------------#
 
 .C.o:
-	$(CGAL_CXX) -Wall  $(CXXFLAGS) -c $<
+	$(CGAL_CXX)  $(CXXFLAGS) -c $<
