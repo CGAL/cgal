@@ -121,7 +121,8 @@ private:
 template < class Gt, class Tds >
 inline
 bool
-operator==(typename Tds::Face_handle fh, Triangulation_line_face_circulator_2<Gt,Tds> fc)
+operator==(typename Tds::Face_handle fh, 
+	   Triangulation_line_face_circulator_2<Gt,Tds> fc)
 {
   return (fc==fh);
 }
@@ -129,7 +130,8 @@ operator==(typename Tds::Face_handle fh, Triangulation_line_face_circulator_2<Gt
 template < class Gt, class Tds >
 inline
 bool
-operator!=(typename Tds::Face_handle fh, Triangulation_line_face_circulator_2<Gt, Tds> fc)
+operator!=(typename Tds::Face_handle fh, 
+	   Triangulation_line_face_circulator_2<Gt, Tds> fc)
 {
   return (fc!=fh);
 }
