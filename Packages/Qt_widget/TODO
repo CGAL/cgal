@@ -6,6 +6,14 @@ Tools system:
 ~~~~~~~~~~~~
 The virtual base class is done.
 Need now to derive some implementation classes.
+  Get_Point.h  (done)
+  Get_Segment.h
+  Get_Line.h
+  Get_Ray.h
+  Get_Triangle.h
+  Get_Circle.h
+  Get_Iso_rectangle.h
+  Get_Polygon.h (done)
 ---
 Scenes system
 ---
