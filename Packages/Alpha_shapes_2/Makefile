@@ -15,7 +15,7 @@ mode:
 submit: 
 	$(MAKE) clean
 	$(MAKE) mode
-	$(MAKE) cgal_submit $(VERSION)
+	cgal_submit $(VERSION)
 
 test:
 	$(MAKE) -C test/$(Package) test_alpha test_weight
