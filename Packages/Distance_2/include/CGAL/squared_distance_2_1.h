@@ -78,7 +78,7 @@ squared_distance(
     RT b = line.b();
     RT w = pt.hw();
     RT n = a*pt.hx() + b*pt.hy() + wmult((R*)0, line.c(), w);
-    RT d = wmult((R*)0, RT(a*a+b*b), w, w);
+    RT d = wmult((R*)0, a*a+b*b, w, w);
     return R::make_FT(n*n, d);
 }
 
