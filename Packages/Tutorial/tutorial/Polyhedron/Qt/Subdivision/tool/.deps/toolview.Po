@@ -34,11 +34,12 @@ toolview.o : \
  /usr/local/qt2/include/qiodevice.h /usr/local/qt2/include/qregexp.h \
  /usr/local/qt2/include/qpalette.h /usr/local/qt2/include/qcursor.h \
  /usr/local/qt2/include/qstyle.h /usr/local/qt2/include/qsizepolicy.h \
- /usr/local/qt2/include/qgl.h /usr/X11R6/include/GL/gl.h \
- /usr/X11R6/include/GL/glext.h /usr/X11R6/include/GL/glu.h glview.h \
- Camera.h Quaternion.h Matrix44.h Vector3d.h Viewport.h Arcball.h \
- tooldoc.h ../config.h /usr/local/qt2/include/qlist.h \
+ /usr/local/qt2/include/qworkspace.h \
+ /usr/local/qt2/include/qwidgetlist.h /usr/local/qt2/include/qlist.h \
  /usr/local/qt2/include/qglist.h /usr/local/qt2/include/qcollection.h \
+ /usr/local/qt2/include/qgl.h /usr/X11R6/include/GL/gl.h \
+ /usr/X11R6/include/GL/glu.h glview.h Camera.h Quaternion.h Matrix44.h \
+ Vector3d.h Viewport.h Arcball.h tooldoc.h ../config.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Simple_cartesian.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/basic.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/config.h \
@@ -251,7 +252,15 @@ toolview.o : \
  /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/list \
  /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_list.h \
  /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/fstream \
- /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/fstream.h
+ /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/fstream.h \
+ toolview.moc /usr/local/qt2/include/qmetaobject.h \
+ /usr/local/qt2/include/qconnection.h \
+ /usr/local/qt2/include/qstrlist.h \
+ /usr/local/qt2/include/qapplication.h \
+ /usr/local/qt2/include/qasciidict.h /usr/local/qt2/include/qgdict.h \
+ /usr/local/qt2/include/qtranslator.h \
+ /usr/local/qt2/include/qintdict.h \
+ /usr/local/qt2/include/qsignalslotimp.h
 toolview.cpp :
 /usr/local/qt2/include/qprinter.h :
 /usr/local/qt2/include/qpaintdevice.h :
@@ -312,9 +321,13 @@ toolview.h :
 /usr/local/qt2/include/qcursor.h :
 /usr/local/qt2/include/qstyle.h :
 /usr/local/qt2/include/qsizepolicy.h :
+/usr/local/qt2/include/qworkspace.h :
+/usr/local/qt2/include/qwidgetlist.h :
+/usr/local/qt2/include/qlist.h :
+/usr/local/qt2/include/qglist.h :
+/usr/local/qt2/include/qcollection.h :
 /usr/local/qt2/include/qgl.h :
 /usr/X11R6/include/GL/gl.h :
-/usr/X11R6/include/GL/glext.h :
 /usr/X11R6/include/GL/glu.h :
 glview.h :
 Camera.h :
@@ -325,9 +338,6 @@ Viewport.h :
 Arcball.h :
 tooldoc.h :
 ../config.h :
-/usr/local/qt2/include/qlist.h :
-/usr/local/qt2/include/qglist.h :
-/usr/local/qt2/include/qcollection.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Simple_cartesian.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/basic.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/config.h :
@@ -553,3 +563,13 @@ cgal_types.h :
 /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_list.h :
 /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/fstream :
 /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/fstream.h :
+toolview.moc :
+/usr/local/qt2/include/qmetaobject.h :
+/usr/local/qt2/include/qconnection.h :
+/usr/local/qt2/include/qstrlist.h :
+/usr/local/qt2/include/qapplication.h :
+/usr/local/qt2/include/qasciidict.h :
+/usr/local/qt2/include/qgdict.h :
+/usr/local/qt2/include/qtranslator.h :
+/usr/local/qt2/include/qintdict.h :
+/usr/local/qt2/include/qsignalslotimp.h :

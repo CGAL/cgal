@@ -31,8 +31,8 @@ Arcball.o : \
  /usr/local/qt2/include/qfont.h /usr/local/qt2/include/qfontmetrics.h \
  /usr/local/qt2/include/qfontinfo.h /usr/local/qt2/include/qstyle.h \
  /usr/local/qt2/include/qsizepolicy.h /usr/X11R6/include/GL/gl.h \
- /usr/X11R6/include/GL/glext.h /usr/X11R6/include/GL/glu.h Arcball.h \
- Camera.h Quaternion.h Matrix44.h Vector3d.h Viewport.h
+ /usr/X11R6/include/GL/glu.h Arcball.h Camera.h Quaternion.h \
+ Matrix44.h Vector3d.h Viewport.h
 Arcball.cpp :
 /usr/include/math.h :
 /usr/include/features.h :
@@ -88,7 +88,6 @@ Arcball.cpp :
 /usr/local/qt2/include/qstyle.h :
 /usr/local/qt2/include/qsizepolicy.h :
 /usr/X11R6/include/GL/gl.h :
-/usr/X11R6/include/GL/glext.h :
 /usr/X11R6/include/GL/glu.h :
 Arcball.h :
 Camera.h :

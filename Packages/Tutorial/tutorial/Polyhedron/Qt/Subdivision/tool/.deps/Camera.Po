@@ -32,7 +32,7 @@ Camera.o : \
  /usr/local/qt2/include/qfont.h /usr/local/qt2/include/qfontmetrics.h \
  /usr/local/qt2/include/qfontinfo.h /usr/local/qt2/include/qstyle.h \
  /usr/local/qt2/include/qsizepolicy.h /usr/X11R6/include/GL/gl.h \
- /usr/X11R6/include/GL/glext.h /usr/X11R6/include/GL/glu.h
+ /usr/X11R6/include/GL/glu.h
 Camera.cpp :
 Camera.h :
 Quaternion.h :
@@ -93,5 +93,4 @@ Viewport.h :
 /usr/local/qt2/include/qstyle.h :
 /usr/local/qt2/include/qsizepolicy.h :
 /usr/X11R6/include/GL/gl.h :
-/usr/X11R6/include/GL/glext.h :
 /usr/X11R6/include/GL/glu.h :

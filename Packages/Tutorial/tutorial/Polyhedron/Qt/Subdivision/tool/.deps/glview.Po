@@ -28,13 +28,22 @@ glview.o : \
  /usr/local/qt2/include/qfont.h /usr/local/qt2/include/qfontmetrics.h \
  /usr/local/qt2/include/qfontinfo.h /usr/local/qt2/include/qstyle.h \
  /usr/local/qt2/include/qsizepolicy.h /usr/X11R6/include/GL/gl.h \
- /usr/X11R6/include/GL/glext.h /usr/X11R6/include/GL/glu.h Camera.h \
- Quaternion.h Matrix44.h Vector3d.h Viewport.h Arcball.h \
- /usr/include/stdio.h \
+ /usr/X11R6/include/GL/glu.h Camera.h Quaternion.h Matrix44.h \
+ Vector3d.h Viewport.h Arcball.h /usr/include/stdio.h \
  /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/include/stdarg.h \
  /usr/include/bits/types.h /usr/include/libio.h \
  /usr/include/_G_config.h /usr/include/bits/stdio_lim.h \
- /usr/include/bits/stdio.h /usr/include/assert.h toolview.h
+ /usr/include/bits/stdio.h /usr/include/assert.h toolview.h \
+ /usr/local/qt2/include/qworkspace.h \
+ /usr/local/qt2/include/qwidgetlist.h /usr/local/qt2/include/qlist.h \
+ /usr/local/qt2/include/qglist.h /usr/local/qt2/include/qcollection.h \
+ glview.moc /usr/local/qt2/include/qmetaobject.h \
+ /usr/local/qt2/include/qconnection.h \
+ /usr/local/qt2/include/qstrlist.h \
+ /usr/local/qt2/include/qapplication.h \
+ /usr/local/qt2/include/qasciidict.h /usr/local/qt2/include/qgdict.h \
+ /usr/local/qt2/include/qtranslator.h \
+ /usr/local/qt2/include/qintdict.h
 glview.cpp :
 glview.h :
 /usr/local/qt2/include/qgl.h :
@@ -85,7 +94,6 @@ glview.h :
 /usr/local/qt2/include/qstyle.h :
 /usr/local/qt2/include/qsizepolicy.h :
 /usr/X11R6/include/GL/gl.h :
-/usr/X11R6/include/GL/glext.h :
 /usr/X11R6/include/GL/glu.h :
 Camera.h :
 Quaternion.h :
@@ -102,3 +110,17 @@ Arcball.h :
 /usr/include/bits/stdio.h :
 /usr/include/assert.h :
 toolview.h :
+/usr/local/qt2/include/qworkspace.h :
+/usr/local/qt2/include/qwidgetlist.h :
+/usr/local/qt2/include/qlist.h :
+/usr/local/qt2/include/qglist.h :
+/usr/local/qt2/include/qcollection.h :
+glview.moc :
+/usr/local/qt2/include/qmetaobject.h :
+/usr/local/qt2/include/qconnection.h :
+/usr/local/qt2/include/qstrlist.h :
+/usr/local/qt2/include/qapplication.h :
+/usr/local/qt2/include/qasciidict.h :
+/usr/local/qt2/include/qgdict.h :
+/usr/local/qt2/include/qtranslator.h :
+/usr/local/qt2/include/qintdict.h :

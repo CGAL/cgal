@@ -1905,6 +1905,45 @@ Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/lo16-app-tool.png -tex
 Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/lo32-app-tool.png -text svneol=unset#unset
 Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/subdivision.sln -text
 Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/subdivision.vcproj -text
+Packages/Tutorial/tutorial/Polyhedron/data/aircraft.off -text
+Packages/Tutorial/tutorial/Polyhedron/data/aircraft_open.off -text
+Packages/Tutorial/tutorial/Polyhedron/data/al.obj -text
+Packages/Tutorial/tutorial/Polyhedron/data/bevel_cube.off -text
+Packages/Tutorial/tutorial/Polyhedron/data/cross_all_quads.off -text
+Packages/Tutorial/tutorial/Polyhedron/data/cube_quad.off -text
+Packages/Tutorial/tutorial/Polyhedron/data/cube_tri.off -text
+Packages/Tutorial/tutorial/Polyhedron/data/cut_mushroom.off -text
+Packages/Tutorial/tutorial/Polyhedron/data/hedra.off -text
+Packages/Tutorial/tutorial/Polyhedron/data/hedra_open.off -text
+Packages/Tutorial/tutorial/Polyhedron/data/hexagon.off -text
+Packages/Tutorial/tutorial/Polyhedron/data/mannequin.off -text
+Packages/Tutorial/tutorial/Polyhedron/data/nefertiti.off -text
+Packages/Tutorial/tutorial/Polyhedron/data/ngon10Q.off -text
+Packages/Tutorial/tutorial/Polyhedron/data/ngon10T.off -text
+Packages/Tutorial/tutorial/Polyhedron/data/oct.off -text
+Packages/Tutorial/tutorial/Polyhedron/data/pipes_all_quads.off -text
+Packages/Tutorial/tutorial/Polyhedron/data/pipes_tri_quads.off -text
+Packages/Tutorial/tutorial/Polyhedron/data/star.off -text
+Packages/Tutorial/tutorial/Polyhedron/data/tetra.off -text
+Packages/Tutorial/tutorial/Polyhedron/data/torus_quad.off -text
+Packages/Tutorial/tutorial/Polyhedron/data/torus_tri.off -text
+Packages/Tutorial/tutorial/Polyhedron/data/twtriCube.off -text
+Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/Mesh.sln -text
+Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/Mesh.vcproj -text
+Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/Mesh.ico -text svneol=unset#unset
+Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/Mesh.manifest -text
+Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/Mesh.rc2 -text
+Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/MeshDoc.ico -text svneol=unset#unset
+Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/Toolbar.bmp -text svneol=unset#unset
+Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/idb0.bmp -text svneol=unset#unset
+Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/idb1.bmp -text svneol=unset#unset
+Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/idb2.bmp -text svneol=unset#unset
+Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/idb3.bmp -text svneol=unset#unset
+Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/idb4.bmp -text svneol=unset#unset
+Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/idb5.bmp -text svneol=unset#unset
+Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/idb6.bmp -text svneol=unset#unset
+Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/idb7.bmp -text svneol=unset#unset
+Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/idb8.bmp -text svneol=unset#unset
 Packages/Viewer_3/doc_tex/Viewer_3/viewer.eps -text
 Packages/Viewer_3/doc_tex/Viewer_3/viewer.gif -text svneol=unset#unset
 Packages/Viewer_3/doc_tex/support/Viewer_3/viewer.eps -text

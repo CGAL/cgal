@@ -39,13 +39,13 @@ POST_UNINSTALL = :
 build_triplet = i686-pc-linux-gnu
 host_triplet = i686-pc-linux-gnu
 target_triplet = i686-pc-linux-gnu
-ACLOCAL = ${SHELL} /u/criquet/0/prisme/palliez/src/cgal/tutorial/admin/missing --run aclocal
+ACLOCAL = ${SHELL} /u/criquet/0/prisme/palliez/src/cgal/tutorial/Tutorial/tutorial/Polyhedron/Qt/Subdivision/admin/missing --run aclocal
 AMDEP_FALSE = #
 AMDEP_TRUE = 
-AMTAR = ${SHELL} /u/criquet/0/prisme/palliez/src/cgal/tutorial/admin/missing --run tar
-AUTOCONF = ${SHELL} /u/criquet/0/prisme/palliez/src/cgal/tutorial/admin/missing --run autoconf
-AUTOHEADER = ${SHELL} /u/criquet/0/prisme/palliez/src/cgal/tutorial/admin/missing --run autoheader
-AUTOMAKE = ${SHELL} /u/criquet/0/prisme/palliez/src/cgal/tutorial/admin/missing --run automake
+AMTAR = ${SHELL} /u/criquet/0/prisme/palliez/src/cgal/tutorial/Tutorial/tutorial/Polyhedron/Qt/Subdivision/admin/missing --run tar
+AUTOCONF = ${SHELL} /u/criquet/0/prisme/palliez/src/cgal/tutorial/Tutorial/tutorial/Polyhedron/Qt/Subdivision/admin/missing --run autoconf
+AUTOHEADER = ${SHELL} /u/criquet/0/prisme/palliez/src/cgal/tutorial/Tutorial/tutorial/Polyhedron/Qt/Subdivision/admin/missing --run autoheader
+AUTOMAKE = ${SHELL} /u/criquet/0/prisme/palliez/src/cgal/tutorial/Tutorial/tutorial/Polyhedron/Qt/Subdivision/admin/missing --run automake
 AWK = gawk
 CC = gcc
 CCDEPMODE = depmode=gcc
@@ -98,7 +98,7 @@ LIB_X11 = -lX11 $(LIBSOCKET)
 LIB_XEXT = -lXext
 LN_S = ln -s
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} /u/criquet/0/prisme/palliez/src/cgal/tutorial/admin/missing --run makeinfo
+MAKEINFO = ${SHELL} /u/criquet/0/prisme/palliez/src/cgal/tutorial/Tutorial/tutorial/Polyhedron/Qt/Subdivision/admin/missing --run makeinfo
 MOC = /usr/local/qt2/bin/moc
 MSGFMT = /usr/local/bin/msgfmt
 NOOPT_CXXFLAGS =  -fno-check-new
@@ -161,7 +161,7 @@ host_os = linux-gnu
 host_vendor = pc
 includedir = ${prefix}/include
 infodir = ${prefix}/info
-install_sh = /u/criquet/0/prisme/palliez/src/cgal/tutorial/admin/install-sh
+install_sh = /u/criquet/0/prisme/palliez/src/cgal/tutorial/Tutorial/tutorial/Polyhedron/Qt/Subdivision/admin/install-sh
 kde_qtver = 2
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
@@ -225,14 +225,13 @@ am_tool_OBJECTS = Vector2d.$(OBJEXT) Viewport.$(OBJEXT) \
 	toolview.$(OBJEXT) tooldoc.$(OBJEXT) tool.$(OBJEXT) \
 	main.$(OBJEXT)
 #>- tool_OBJECTS = $(am_tool_OBJECTS)
-#>+ 9
+#>+ 8
 tool_final_OBJECTS = tool.all_cpp.o 
 tool_nofinal_OBJECTS = Vector2d.$(OBJEXT) Viewport.$(OBJEXT) \
 	Matrix44.$(OBJEXT) Vector3d.$(OBJEXT) Quaternion.$(OBJEXT) \
 	Camera.$(OBJEXT) Arcball.$(OBJEXT) glview.$(OBJEXT) \
 	toolview.$(OBJEXT) tooldoc.$(OBJEXT) tool.$(OBJEXT) \
-	main.$(OBJEXT)\
-tool.moc.o tooldoc.moc.o toolview.moc.o glview.moc.o 
+	main.$(OBJEXT)
 tool_OBJECTS = $(tool_nofinal_OBJECTS)
 #tool_OBJECTS = $(tool_final_OBJECTS)
 tool_DEPENDENCIES =
@@ -436,7 +435,7 @@ distclean-tags:
 	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 #>- DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 #>+ 4
-KDE_DIST=slotBuildMake quad-triangle.h builder.h ScalarMap.h tool 
+KDE_DIST=subdivision.vcproj quad-triangle.h subdivision.sln builder.h ScalarMap.h 
 
 DISTFILES= $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST) $(KDE_DIST)
 
@@ -569,24 +568,24 @@ uninstall-am: uninstall-binPROGRAMS uninstall-info-am
 .NOEXPORT:
 
 #>+ 3
-tool.moc.cpp: $(srcdir)/tool.h
-	$(MOC) $(srcdir)/tool.h -o tool.moc.cpp
+tool.moc: $(srcdir)/tool.h
+	$(MOC) $(srcdir)/tool.h -o tool.moc
 
 #>+ 3
-tooldoc.moc.cpp: $(srcdir)/tooldoc.h
-	$(MOC) $(srcdir)/tooldoc.h -o tooldoc.moc.cpp
+tooldoc.moc: $(srcdir)/tooldoc.h
+	$(MOC) $(srcdir)/tooldoc.h -o tooldoc.moc
 
 #>+ 3
-toolview.moc.cpp: $(srcdir)/toolview.h
-	$(MOC) $(srcdir)/toolview.h -o toolview.moc.cpp
+toolview.moc: $(srcdir)/toolview.h
+	$(MOC) $(srcdir)/toolview.h -o toolview.moc
 
 #>+ 3
-glview.moc.cpp: $(srcdir)/glview.h
-	$(MOC) $(srcdir)/glview.h -o glview.moc.cpp
+glview.moc: $(srcdir)/glview.h
+	$(MOC) $(srcdir)/glview.h -o glview.moc
 
 #>+ 3
 clean-metasources:
-	-rm -f  tool.moc.cpp tooldoc.moc.cpp toolview.moc.cpp glview.moc.cpp
+	-rm -f  tool.moc tooldoc.moc toolview.moc glview.moc
 
 #>+ 2
 docs-am:
@@ -599,11 +598,11 @@ force-reedit:
 
 
 #>+ 11
-tool.all_cpp.cpp: $(srcdir)/Makefile.in $(srcdir)/Vector2d.cpp $(srcdir)/Viewport.cpp $(srcdir)/Matrix44.cpp $(srcdir)/Vector3d.cpp $(srcdir)/Quaternion.cpp $(srcdir)/Camera.cpp $(srcdir)/Arcball.cpp $(srcdir)/glview.cpp $(srcdir)/toolview.cpp $(srcdir)/tooldoc.cpp $(srcdir)/tool.cpp $(srcdir)/main.cpp  tool.moc.cpp tooldoc.moc.cpp toolview.moc.cpp glview.moc.cpp
+tool.all_cpp.cpp: $(srcdir)/Makefile.in $(srcdir)/Vector2d.cpp $(srcdir)/Viewport.cpp $(srcdir)/Matrix44.cpp $(srcdir)/Vector3d.cpp $(srcdir)/Quaternion.cpp $(srcdir)/Camera.cpp $(srcdir)/Arcball.cpp $(srcdir)/glview.cpp $(srcdir)/toolview.cpp $(srcdir)/tooldoc.cpp $(srcdir)/tool.cpp $(srcdir)/main.cpp   tool.moc tooldoc.moc toolview.moc glview.moc 
 	@echo 'creating tool.all_cpp.cpp ...'; \
 	rm -f tool.all_cpp.files tool.all_cpp.final; \
 	echo "#define KDE_USE_FINAL 1" >> tool.all_cpp.final; \
-	for file in Vector2d.cpp Viewport.cpp Matrix44.cpp Vector3d.cpp Quaternion.cpp Camera.cpp Arcball.cpp glview.cpp toolview.cpp tooldoc.cpp tool.cpp main.cpp  tool.moc.cpp tooldoc.moc.cpp toolview.moc.cpp glview.moc.cpp; do \
+	for file in Vector2d.cpp Viewport.cpp Matrix44.cpp Vector3d.cpp Quaternion.cpp Camera.cpp Arcball.cpp glview.cpp toolview.cpp tooldoc.cpp tool.cpp main.cpp ; do \
 	  echo "#include \"$$file\"" >> tool.all_cpp.files; \
 	  test ! -f $(srcdir)/$$file || egrep '^#pragma +implementation' $(srcdir)/$$file >> tool.all_cpp.final; \
 	done; \
@@ -633,3 +632,9 @@ cvs-clean:
 #>+ 3
 kde-rpo-clean:
 	-rm -f *.rpo
+
+#>+ 5
+$(srcdir)/glview.cpp: glview.moc 
+$(srcdir)/tool.cpp: tool.moc 
+$(srcdir)/toolview.cpp: toolview.moc 
+$(srcdir)/tooldoc.cpp: tooldoc.moc 

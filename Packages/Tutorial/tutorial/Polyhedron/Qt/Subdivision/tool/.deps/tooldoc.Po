@@ -230,7 +230,8 @@ tooldoc.o : \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Kernel_traits_common.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Kernel/interface_macros.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/iterator_traits_pointer_specs_for_simple_cartesian_kernel.h \
- cgal_types.h /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Cartesian.h \
+ cgal_types.h /usr/X11R6/include/GL/gl.h \
+ /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Cartesian.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/iterator_traits_pointer_specs_for_cartesian_kernel.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Polyhedron_3.h \
  /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/cstddef \
@@ -266,20 +267,21 @@ tooldoc.o : \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Polyhedron_traits_3.h \
  /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/list \
  /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_list.h \
- /usr/X11R6/include/GL/gl.h /usr/X11R6/include/GL/glext.h tool.h \
+ tool.h /usr/local/qt2/include/qaction.h \
+ /usr/local/qt2/include/qiconset.h /usr/local/qt2/include/qaccel.h \
  /usr/local/qt2/include/qapp.h /usr/local/qt2/include/qapplication.h \
  /usr/local/qt2/include/qasciidict.h \
  /usr/local/qt2/include/qtranslator.h \
  /usr/local/qt2/include/qintdict.h \
- /usr/local/qt2/include/qmainwindow.h /usr/local/qt2/include/qaction.h \
- /usr/local/qt2/include/qiconset.h /usr/local/qt2/include/qworkspace.h \
- /usr/local/qt2/include/qwidgetlist.h \
+ /usr/local/qt2/include/qcolordialog.h /usr/local/qt2/include/qlabel.h \
+ /usr/local/qt2/include/qmainwindow.h \
  /usr/local/qt2/include/qmenubar.h /usr/local/qt2/include/qpopupmenu.h \
- /usr/local/qt2/include/qmenudata.h /usr/local/qt2/include/qtoolbar.h \
- /usr/local/qt2/include/qstatusbar.h \
- /usr/local/qt2/include/qwhatsthis.h /usr/local/qt2/include/qaccel.h \
+ /usr/local/qt2/include/qmenudata.h /usr/local/qt2/include/qprinter.h \
+ /usr/local/qt2/include/qstatusbar.h /usr/local/qt2/include/qtoolbar.h \
  /usr/local/qt2/include/qtoolbutton.h /usr/local/qt2/include/qbutton.h \
- /usr/local/qt2/include/qprinter.h Arcball.h Camera.h Quaternion.h \
+ /usr/local/qt2/include/qwhatsthis.h \
+ /usr/local/qt2/include/qworkspace.h \
+ /usr/local/qt2/include/qwidgetlist.h Arcball.h Camera.h Quaternion.h \
  Matrix44.h Vector3d.h Viewport.h toolview.h \
  /usr/local/qt2/include/qgl.h /usr/X11R6/include/GL/glu.h glview.h \
  quad-triangle.h builder.h \
@@ -295,7 +297,9 @@ tooldoc.o : \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/IO/scan_OFF.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/IO/Polyhedron_scan_OFF.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/IO/File_scanner_OFF.h \
- /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Polyhedron_incremental_builder_3.h
+ /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Polyhedron_incremental_builder_3.h \
+ tooldoc.moc /usr/local/qt2/include/qmetaobject.h \
+ /usr/local/qt2/include/qconnection.h
 tooldoc.cpp :
 /usr/local/qt2/include/qdir.h :
 /usr/local/qt2/include/qstrlist.h :
@@ -575,6 +579,7 @@ tooldoc.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Kernel/interface_macros.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/iterator_traits_pointer_specs_for_simple_cartesian_kernel.h :
 cgal_types.h :
+/usr/X11R6/include/GL/gl.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Cartesian.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/iterator_traits_pointer_specs_for_cartesian_kernel.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Polyhedron_3.h :
@@ -611,29 +616,29 @@ cgal_types.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Polyhedron_traits_3.h :
 /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/list :
 /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_list.h :
-/usr/X11R6/include/GL/gl.h :
-/usr/X11R6/include/GL/glext.h :
 tool.h :
+/usr/local/qt2/include/qaction.h :
+/usr/local/qt2/include/qiconset.h :
+/usr/local/qt2/include/qaccel.h :
 /usr/local/qt2/include/qapp.h :
 /usr/local/qt2/include/qapplication.h :
 /usr/local/qt2/include/qasciidict.h :
 /usr/local/qt2/include/qtranslator.h :
 /usr/local/qt2/include/qintdict.h :
+/usr/local/qt2/include/qcolordialog.h :
+/usr/local/qt2/include/qlabel.h :
 /usr/local/qt2/include/qmainwindow.h :
-/usr/local/qt2/include/qaction.h :
-/usr/local/qt2/include/qiconset.h :
-/usr/local/qt2/include/qworkspace.h :
-/usr/local/qt2/include/qwidgetlist.h :
 /usr/local/qt2/include/qmenubar.h :
 /usr/local/qt2/include/qpopupmenu.h :
 /usr/local/qt2/include/qmenudata.h :
-/usr/local/qt2/include/qtoolbar.h :
+/usr/local/qt2/include/qprinter.h :
 /usr/local/qt2/include/qstatusbar.h :
-/usr/local/qt2/include/qwhatsthis.h :
-/usr/local/qt2/include/qaccel.h :
+/usr/local/qt2/include/qtoolbar.h :
 /usr/local/qt2/include/qtoolbutton.h :
 /usr/local/qt2/include/qbutton.h :
-/usr/local/qt2/include/qprinter.h :
+/usr/local/qt2/include/qwhatsthis.h :
+/usr/local/qt2/include/qworkspace.h :
+/usr/local/qt2/include/qwidgetlist.h :
 Arcball.h :
 Camera.h :
 Quaternion.h :
@@ -659,3 +664,6 @@ builder.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/IO/Polyhedron_scan_OFF.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/IO/File_scanner_OFF.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Polyhedron_incremental_builder_3.h :
+tooldoc.moc :
+/usr/local/qt2/include/qmetaobject.h :
+/usr/local/qt2/include/qconnection.h :
