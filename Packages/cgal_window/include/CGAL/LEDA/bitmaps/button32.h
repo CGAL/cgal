@@ -8,8 +8,8 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : 
-// release_date  : 
+// release       : $CGAL_Revision: CGAL-2.3-I-73 $
+// release_date  : $CGAL_Date: 2001/06/19 $
 //
 // file          : include/CGAL/LEDA/bitmaps/button32.h
 // package       : cgal_window (0.9.8)

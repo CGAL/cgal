@@ -8,8 +8,8 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : 
-// release_date  : 
+// release       : $CGAL_Revision: CGAL-2.3-I-75 $
+// release_date  : $CGAL_Date: 2001/06/21 $
 //
 // file          : include/CGAL/LEDA/sys/win32.h
 // package       : cgal_window (1.0)

@@ -8,11 +8,11 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : 
-// release_date  : 2001, June 12
+// release       : $CGAL_Revision: CGAL-2.3-I-75 $
+// release_date  : $CGAL_Date: 2001/06/21 $
 //
 // file          : include/CGAL/LEDA/pixmaps/button32.h
-// package       : cgal_window (0.9.8)
+// package       : cgal_window (1.0)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
 // revision      : 0.9.8
 // revision_date : 12 June 2001
