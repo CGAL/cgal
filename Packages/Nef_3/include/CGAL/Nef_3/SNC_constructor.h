@@ -111,6 +111,8 @@ struct circle_lt {
       if(x[0] > zero) return (y[0]<y[1]);
       else return  (y[0]>y[1]);
     }
+    CGAL_assertion_msg(false, "control should not reach this line");
+    return false;
   }
 };
 

@@ -28,17 +28,15 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class Node, class Object, class DClass>
+template < class Node, class Object>
 struct Project_halfedge_point {
   typedef Node         argument_type;
   typedef Object       result_type;
   Object& operator()( Node& x) const   { 
-    DClass D;
     return x.source()->source()->point();
     /* a Point_3& reference must be returned by D.point() */
   }
   const Object& operator()( const Node& x) const   { 
-    DClass D;
     return x.source()->source()->point(); 
     /* a Point_3& reference must be returned by D.point() */
   }
@@ -94,7 +92,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
 
   bool does_contain_on_boundary( Halffacet_const_handle f, const Point_3& p) const {
     typedef Project_halfedge_point
-      < SHalfedge, const Point_3, Base> Project;
+      < SHalfedge, const Point_3> Project;
     typedef Circulator_project
       < SHalfedge_around_facet_circulator, Project, 
       const Point_3&, const Point_3*> Circulator;
@@ -292,7 +290,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
   Bounded_side locate_point_in_halffacet( const Point_3& p, 
 					  Halffacet_const_handle f) const {
     typedef Project_halfedge_point
-      < SHalfedge, const Point_3, Base> Project;
+      < SHalfedge, const Point_3> Project;
     typedef Circulator_project
       < SHalfedge_around_facet_circulator, Project, 
       const Point_3&, const Point_3*> Circulator;
