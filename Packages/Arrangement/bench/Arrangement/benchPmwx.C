@@ -31,8 +31,8 @@
 
 #include "CGAL/Bench.h"
 #include "CGAL/Bench.C"
-#include "CGAL/Parse_args.h"
-#include "CGAL/Parse_args.C"
+#include "CGAL/Bench_parse_args.h"
+#include "CGAL/Bench_parse_args.C"
 
 typedef leda_rational                                   NT;
 
@@ -103,13 +103,13 @@ public:
     int i;
     for (i = 0; i < count; i++) {
       leda_rational x0, y0, x1, y1;
-      if (m_format == Parse_args::FORMAT_RAT) {
+      if (m_format == CGAL::Bench_parse_args::FORMAT_RAT) {
         inp >> x0 >> y0 >> x1 >> y1;
-      } else if (m_format == Parse_args::FORMAT_INT) {
+      } else if (m_format == CGAL::Bench_parse_args::FORMAT_INT) {
         int ix0, iy0, ix1, iy1;
         inp >> ix0 >> iy0 >> ix1 >> iy1;
         x0 = ix0; y0 = iy0; x1 = ix1; y1 = iy1;
-      } else if (m_format == Parse_args::FORMAT_FLT) {
+      } else if (m_format == CGAL::Bench_parse_args::FORMAT_FLT) {
         float ix0, iy0, ix1, iy1;
         inp >> ix0 >> iy0 >> ix1 >> iy1;
         x0 = ix0; y0 = iy0; x1 = ix1; y1 = iy1;
@@ -138,7 +138,7 @@ public:
   void clean() { m_curveList.clear(); }
   void sync(){}
 
-  void setFormat(Parse_args::FormatId format) { m_format = format; }
+  void setFormat(CGAL::Bench_parse_args::FormatId fmt) { m_format = fmt; }
   void setFilename(const char * filename) { m_filename = filename; }
   void setVerbose(const bool verbose) { m_verbose = verbose; }
 
@@ -146,7 +146,7 @@ protected:
   const char * m_filename;
   CurveList m_curveList;
   bool m_verbose;
-  Parse_args::FormatId m_format;
+  CGAL::Bench_parse_args::FormatId m_format;
 
   double m_x0;
   double m_x1;
@@ -156,7 +156,7 @@ protected:
 
 /*!
  */
-class Construct_Pmwx : public Basic_Pm {
+class Increment_pmwx : public Basic_Pm {
 public:
   virtual void op()
   {
@@ -172,11 +172,11 @@ public:
   }
 };
 
-typedef CGAL::Bench<Construct_Pmwx> ConstructPmwxBench;
+typedef CGAL::Bench<Increment_pmwx> Increemnt_pmwx_bench;
 
 /*!
  */
-class Sweep_Pm : public Basic_Pm {
+class Aggregate_pm : public Basic_Pm {
 public:
   virtual void op()
   {
@@ -189,7 +189,7 @@ public:
   }
 };
 
-typedef CGAL::Bench<Sweep_Pm> SweepPmBench;
+typedef CGAL::Bench<Aggregate_pm> Aggregate_pm_bench;
 
 #if defined(USE_LEDA_KERNEL) || defined(USE_MY_KERNEL)
 CGAL::Window_stream & operator<<(CGAL::Window_stream & os, const Point & p)
@@ -278,14 +278,14 @@ typedef CGAL::Bench<Display_Pm> DisplayPmBench;
  */
 int main(int argc, char * argv[])
 {
-  Parse_args parseArgs(argc, argv);
+  CGAL::Bench_parse_args parseArgs(argc, argv);
   int rc = parseArgs.parse();
   if (rc > 0) return 0;
   if (rc < 0) return rc;
   
   bool verbose = parseArgs.getVerbose();
   unsigned int benchMask = parseArgs.getBenchMask();
-  Parse_args::FormatId inputFormat = parseArgs.getInputFormat();
+  CGAL::Bench_parse_args::FormatId inputFormat = parseArgs.getInputFormat();
   int samples = parseArgs.getSamples();
   int iterations = parseArgs.getIterations();
   int seconds = parseArgs.getSeconds();
@@ -294,56 +294,60 @@ int main(int argc, char * argv[])
   const std::string * fullname = parseArgs.getFullname();
       
   // Construct
-  const char * bname = parseArgs.getBenchName(Parse_args::BENCH_CONSTRUCT);
-  ConstructPmwxBench benchConstruct((std::string(bname) +
-                                     " Pmwx (" + std::string(filename) + ")"),
-                                    seconds, false);
-  Construct_Pmwx & construct_pmwx = benchConstruct.getBenchUser();
-  construct_pmwx.setFormat(inputFormat);
-  construct_pmwx.setFilename(fullname->c_str());
-  construct_pmwx.setVerbose(verbose);
+  const char * bname =
+    parseArgs.getBenchName(CGAL::Bench_parse_args::BENCH_INCREMENT);
+  Increemnt_pmwx_bench benchIncrement((std::string(bname) + " Pmwx (" +
+                                       std::string(filename) + ")"),
+                                      seconds, false);
+  Increment_pmwx & incerementPmwx = benchIncrement.getBenchUser();
+  incerementPmwx.setFormat(inputFormat);
+  incerementPmwx.setFilename(fullname->c_str());
+  incerementPmwx.setVerbose(verbose);
 
   // Sweep
-  bname = parseArgs.getBenchName(Parse_args::BENCH_SWEEP);
-  SweepPmBench benchSweep((std::string(bname) +
-                           " Pm (" + std::string(filename) + ")"),
-                          seconds, false);
-  Sweep_Pm & sweep_pm = benchSweep.getBenchUser();
-  sweep_pm.setFormat(inputFormat);
-  sweep_pm.setFilename(fullname->c_str());
-  sweep_pm.setVerbose(verbose);
+  bname = parseArgs.getBenchName(CGAL::Bench_parse_args::BENCH_AGGREGATE);
+  Aggregate_pm_bench benchAggregate((std::string(bname) + " Pm (" +
+                                     std::string(filename) + ")"),
+                                    seconds, false);
+  Aggregate_pm & aggregatePm = benchAggregate.getBenchUser();
+  aggregatePm.setFormat(inputFormat);
+  aggregatePm.setFilename(fullname->c_str());
+  aggregatePm.setVerbose(verbose);
   
   // Construct and Display
-  bname = parseArgs.getBenchName(Parse_args::BENCH_DISPLAY);
+  bname = parseArgs.getBenchName(CGAL::Bench_parse_args::BENCH_DISPLAY);
   DisplayPmBench benchDisplay((std::string(bname) +
                                " Pm (" + std::string(filename) + ")"),
                               seconds, false);
-  Display_Pm & display_pm = benchDisplay.getBenchUser();
-  display_pm.setFormat(inputFormat);
-  display_pm.setFilename(fullname->c_str());
-  display_pm.setVerbose(verbose);
+  Display_Pm & displayPm = benchDisplay.getBenchUser();
+  displayPm.setFormat(inputFormat);
+  displayPm.setFilename(fullname->c_str());
+  displayPm.setVerbose(verbose);
 
   if (samples > 0) {
-    benchConstruct.setSamples(samples);
-    benchSweep.setSamples(samples);
+    benchIncrement.setSamples(samples);
+    benchAggregate.setSamples(samples);
     benchDisplay.setSamples(samples);
   } else {
     if (iterations > 0) {
-      benchConstruct.setIterations(iterations);
-      benchSweep.setIterations(iterations);
+      benchIncrement.setIterations(iterations);
+      benchAggregate.setIterations(iterations);
       benchDisplay.setIterations(iterations);
     }
   }
 
   if (printHeader) CGAL::Bench_base::printHeader();
-  if (benchMask & (0x1 << Parse_args::BENCH_CONSTRUCT)) benchConstruct();
-  if (benchMask & (0x1 << Parse_args::BENCH_SWEEP)) benchSweep();
-  if (benchMask & (0x1 << Parse_args::BENCH_DISPLAY)) benchDisplay();
+  if (benchMask & (0x1 << CGAL::Bench_parse_args::BENCH_INCREMENT))
+    benchIncrement();
+  if (benchMask & (0x1 << CGAL::Bench_parse_args::BENCH_AGGREGATE))
+    benchAggregate();
+  if (benchMask & (0x1 << CGAL::Bench_parse_args::BENCH_DISPLAY))
+    benchDisplay();
   
   // Ensure the compiler doesn't optimize the code away...
   if (verbose) {
-    std::cout << "(" << benchConstruct.getSamples() << ")" << std::endl;
-    std::cout << "(" << benchSweep.getSamples() << ") " << std::endl;
+    std::cout << "(" << benchIncrement.getSamples() << ")" << std::endl;
+    std::cout << "(" << benchAggregate.getSamples() << ") " << std::endl;
     std::cout << "(" << benchDisplay.getSamples() << ") " << std::endl;
   }
   
