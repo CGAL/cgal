@@ -1,3 +1,27 @@
+Version 3.5 (20 April 2000)
+- removed leading underscores in variables names
+- added newly tested functionalities :
+   Object_2
+   Assign_2
+   Construct_perpendicular_direction_2
+   Construct_bisector_2
+   Compare_xy_2
+   Equal_xy_2
+   Less_x_2
+   Less_y_2
+   Counterclockwise_in_between_2
+   Object_3
+   Assign_3
+   Equal_xyz_3
+   Compare_xy_3
+   Equal_xy_3
+   Less_x_3
+   Less_y_3
+   Less_z_3
+   Less_xy_3
+   Less_distance_to_point_3
+
+
 Version 3.4 (22 March 2000)
 - fixed iso_cuboid_3 bugs
 - added maintainer files
