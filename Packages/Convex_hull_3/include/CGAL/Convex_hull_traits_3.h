@@ -90,9 +90,8 @@ class Convex_hull_traits_3
   typedef typename R::Construct_plane_3          Construct_plane_3;
   typedef typename R::Construct_vector_3         Construct_vector_3;
   typedef typename R::Construct_triangle_3       Construct_triangle_3;
-  typedef typename R::Construct_centroid_3<Point_3> 
-                                                 Construct_centroid_3;
-  typedef Construct_orthogonal_vector_3<Plane_3, Vector_3> 
+  typedef typename R::Construct_centroid_3       Construct_centroid_3;
+  typedef typename R::Construct_orthogonal_vector_3
                                                  Construct_orthogonal_vector_3;
 
   typedef typename R::Collinear_3                Collinear_3;
