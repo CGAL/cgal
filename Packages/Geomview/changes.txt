@@ -1,4 +1,7 @@
 22 November 2004 Sylvain Pion
+- Undo last change : the real bug was in CGAL/IO/binary_file_io.h.
+
+22 November 2004 Sylvain Pion
 - Fix problem on Fedora (using OFF ASCII mode instead of BINARY).
   [provided by Steve Oudot]
 
