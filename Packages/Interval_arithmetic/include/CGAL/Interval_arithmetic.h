@@ -39,17 +39,7 @@
 // towards -infinity, it's enough to take the opposite of some of the operand,
 // and the opposite of the result (see operator+, operator*,...).
 
-// #include <CGAL/config.h>		// This order is necessary.
-// #include <iostream>
 #include <CGAL/basic.h>
-
-// #include <CGAL/assertions.h>
-// #include <CGAL/IO/io_tags.h>		// For io_Operator().
-// #include <CGAL/number_type_tags.h>	// For number_type_tag()
-// #include <CGAL/double.h>		// For is_valid() and is_finite().
-// #include <CGAL/enum.h>		// For overloading sign, compare, abs
-// #include <CGAL/number_utils.h> 	// For square<double>
-// #include <CGAL/misc.h>		// For convert_to<>()
 #include <CGAL/Interval_arithmetic/_FPU.h>	// FPU rounding mode functions.
 
 // Some useful constants
@@ -68,11 +58,7 @@ struct Interval_nt_advanced
   struct unsafe_comparison{};		// Exception class.
   static unsigned number_of_failures;	// Counts the number of failures.
 
-protected:
-  double _inf, _sup;	// "_inf" stores the lower bound, "_sup" the upper.
-
-public:
-  int overlap_action() const // This should be runtime customisable.
+  void overlap_action() const // This should be runtime customisable. FIXME
 #ifndef CGAL_IA_NO_EXCEPTION
       throw (unsafe_comparison)
   { number_of_failures++;  throw unsafe_comparison(); }
@@ -81,17 +67,8 @@ public:
 #if !defined(CGAL_IA_NO_WARNINGS) && !defined(CGAL_NO_WARNINGS)
      CGAL_warning_msg(false, " Comparison between overlapping intervals");
 #endif
-     return 0; // Return an arbitrary value.
   }
 #endif // CGAL_IA_NO_EXCEPTION
-
-  friend IA	sqrt	(const IA &);
-  friend IA	square	(const IA &);
-  friend IA	abs	(const IA &);
-  friend IA	min	(const IA &, const IA &);
-  friend IA	max	(const IA &, const IA &);
-  friend IA	operator- (const double, const IA &);
-  friend IA	operator/ (const double, const IA &);
 
   // The constructors.
   Interval_nt_advanced()
@@ -156,21 +133,24 @@ public:
   {
     if (_sup  < d._inf) return true;
     if (_inf >= d._sup) return false;
-    return overlap_action();
+    overlap_action();
+    return false;
   }
 
   bool operator<= (const IA & d) const
   {
     if (_sup <= d._inf) return true;
     if (_inf >  d._sup) return false;
-    return overlap_action();
+    overlap_action();
+    return false;
   }
   
   bool operator== (const IA & d) const
   {
     if ((d._inf >  _sup) || (d._sup  < _inf)) return false;
     if ((d._inf == _sup) && (d._sup == _inf)) return true;
-    return overlap_action();
+    overlap_action();
+    return false;
   }
 
   bool operator>  (const IA & d) const { return  (d <  *this); }
@@ -196,6 +176,9 @@ public:
   // The (meet, intersection, &&) operator.  Valid if intervals overlap.
   IA operator&& (const IA & d) const
   { return IA(std::max(_inf,d._inf), std::min(_sup,d._sup)); }
+
+protected:
+  double _inf, _sup;	// "_inf" stores the lower bound, "_sup" the upper.
 };
 
 inline
@@ -308,8 +291,7 @@ operator+ (const double d, const Interval_nt_advanced & t)
 inline
 Interval_nt_advanced
 operator- (const double d, const Interval_nt_advanced & t)
-{ return Interval_nt_advanced(-(t._sup-d), d-t._inf); }
-// { return -(t-d); }
+{ return -(t-d); }
 
 inline
 Interval_nt_advanced
@@ -318,14 +300,13 @@ operator* (const double d, const Interval_nt_advanced & t)
 
 inline
 Interval_nt_advanced
-operator/ (const double t, const Interval_nt_advanced & d)
+operator/ (const double d, const Interval_nt_advanced & t)
 {
-  typedef Interval_nt_advanced IA;
-  if ( (d._inf<=0) && (d._sup>=0) ) // d~0
+  if ( (t.inf()<=0) && (t.sup()>=0) ) // t~0
       return CGAL_IA_LARGEST;
 
-  return (t>=0) ? IA(-(t/-d._sup), t/d._inf)
-                : IA(-(t/-d._inf), t/d._sup);
+  return (d>=0) ? Interval_nt_advanced(-(d/-t.sup()), d/t.inf())
+                : Interval_nt_advanced(-(d/-t.inf()), d/t.sup());
 }
 
 inline
@@ -393,33 +374,24 @@ inline
 Interval_nt_advanced
 sqrt (const Interval_nt_advanced & d)
 {
-  FPU_set_cw(FPU_cw_down);
-  Interval_nt_advanced tmp;
   // sqrt([+a,+b]) => [sqrt(+a);sqrt(+b)]
   // sqrt([-a,+b]) => [0;sqrt(+b)] => assumes roundoff error.
   // sqrt([-a,-b]) => [0;sqrt(-b)] => assumes user bug (unspecified result).
-  tmp._inf = (d._inf>0) ? std::sqrt(d._inf) : 0;
+  FPU_set_cw(FPU_cw_down);
+  double i = (d.inf()>0) ? std::sqrt(d.inf()) : 0;
   FPU_set_cw(FPU_cw_up);
-  tmp._sup = std::sqrt(d._sup);
-  return tmp;
+  return Interval_nt_advanced(i, std::sqrt(d.sup()));
 }
 
 inline
 Interval_nt_advanced
 square (const Interval_nt_advanced & d)
 {
-    // The first one is slightly slower, but produces shorter code.
-#if 0
-  double a = (-d._inf)*fabs(d._inf);
-  double b = d._sup*fabs(d._sup);
-  if (d._inf >= 0) return Interval_nt_advanced(-a,b);
-  if (d._sup <= 0) return Interval_nt_advanced(-b,a);
-  return Interval_nt_advanced(0, std::max(a,b));
-#else
-  if (d._inf>=0) return Interval_nt_advanced(-(d._inf*-d._inf), d._sup*d._sup);
-  if (d._sup<=0) return Interval_nt_advanced(-(d._sup*-d._sup), d._inf*d._inf);
-  return Interval_nt_advanced(0.0, square(std::max(-d._inf, d._sup)));
-#endif
+  if (d.inf()>=0)
+      return Interval_nt_advanced(-(d.inf()*-d.inf()), d.sup()*d.sup());
+  if (d.sup()<=0)
+      return Interval_nt_advanced(-(d.sup()*-d.sup()), d.inf()*d.inf());
+  return Interval_nt_advanced(0.0, square(std::max(-d.inf(), d.sup())));
 }
 
 inline
@@ -444,7 +416,8 @@ sign (const Interval_nt_advanced & d)
   if (d.inf() > 0) return POSITIVE;
   if (d.sup() < 0) return NEGATIVE;
   if (d.inf() == d.sup()) return ZERO;
-  return Sign (d.overlap_action());
+  d.overlap_action();
+  return ZERO;
 }
 
 inline
@@ -454,30 +427,33 @@ compare (const Interval_nt_advanced & d, const Interval_nt_advanced & e)
   if (d.inf() > e.sup()) return LARGER;
   if (e.inf() > d.sup()) return SMALLER;
   if ( (e.inf() == d.sup()) && (d.inf() == e.sup()) ) return EQUAL;
-  return Comparison_result (d.overlap_action());
+  d.overlap_action();
+  return EQUAL;
 }
 
 inline
 Interval_nt_advanced
 abs (const Interval_nt_advanced & d)
 {
-  if (d._inf >= 0) return d;
-  if (d._sup <= 0) return -d;
-  return Interval_nt_advanced(0, std::max(-d._inf,d._sup));
+  if (d.inf() >= 0) return d;
+  if (d.sup() <= 0) return -d;
+  return Interval_nt_advanced(0, std::max(-d.inf(), d.sup()));
 }
 
 inline
 Interval_nt_advanced
 min (const Interval_nt_advanced & d, const Interval_nt_advanced & e)
 {
-  return Interval_nt_advanced(std::min(d._inf, e._inf), std::min(d._sup, e._sup));
+  return Interval_nt_advanced(std::min(d.inf(), e.inf()),
+			      std::min(d.sup(), e.sup()));
 }
 
 inline
 Interval_nt_advanced
 max (const Interval_nt_advanced & d, const Interval_nt_advanced & e)
 {
-  return Interval_nt_advanced(std::max(d._inf, e._inf), std::max(d._sup, e._sup));
+  return Interval_nt_advanced(std::max(d.inf(), e.inf()),
+			      std::max(d.sup(), e.sup()));
 }
 
 inline
@@ -514,16 +490,6 @@ struct Interval_nt : public Interval_nt_advanced
   Interval_nt(const Interval_nt_advanced &d)
       : Interval_nt_advanced(d) {}
 
-  friend IA	sqrt	(const IA &);
-  friend IA	square	(const IA &);
-  // How to share those definitions ?
-  friend IA     abs (const IA & d)
-    { return abs((Interval_nt_advanced) d); }
-  friend IA     min (const IA & d, const IA & e)
-    { return min((Interval_nt_advanced) d, (Interval_nt_advanced) e); }
-  friend IA     max (const IA & d, const IA & e)
-    { return max((Interval_nt_advanced) d, (Interval_nt_advanced) e); }
-  // friend IA     operator* (const double &, const IA &);
   IA operator-() const 
     { return IA(-_sup, -_inf); }
 
@@ -541,6 +507,22 @@ struct Interval_nt : public Interval_nt_advanced
   IA & operator*=(const IA & d) ;
   IA & operator/=(const IA & d) ;
 };
+
+
+inline
+Interval_nt
+abs (const Interval_nt & d)
+{ return abs((Interval_nt_advanced) d); }
+
+inline
+Interval_nt
+min (const Interval_nt & d, const Interval_nt & e)
+{ return min((Interval_nt_advanced) d, (Interval_nt_advanced) e); }
+
+inline
+Interval_nt
+max (const Interval_nt & d, const Interval_nt & e)
+{ return max((Interval_nt_advanced) d, (Interval_nt_advanced) e); }
 
 // Here we use the GNU extension of "Named return value".
 
