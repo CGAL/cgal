@@ -159,18 +159,10 @@ protected:
       return geom_traits().construct_object_3_object()(r);
   }
 
-private:
-  Vertex_handle
-  nearest_vertex(const Point &p, Vertex_handle v, Vertex_handle w) const
+  bool
+  less_distance(const Point &p, const Point &q, const Point &r) const
   {
-      CGAL_triangulation_precondition(v != w);
-
-      if (is_infinite(v))
-	  return w;
-      if (is_infinite(w))
-	  return v;
-      return geom_traits().compare_distance_3_object()(p,v->point(),w->point())
-	     == SMALLER ? v : w;
+      return geom_traits().compare_distance_3_object()(p, q, r) == SMALLER;
   }
 
 public:
@@ -255,6 +247,18 @@ public:
     }
 
 private:
+
+  Vertex_handle
+  nearest_vertex(const Point &p, Vertex_handle v, Vertex_handle w) const
+  {
+      CGAL_triangulation_precondition(v != w);
+
+      if (is_infinite(v))
+	  return w;
+      if (is_infinite(w))
+	  return v;
+      return less_distance(p, v->point(), w->point()) ? v : w;
+  }
 
   Bounded_side
   side_of_sphere_inf_perturb(Vertex_handle v0, 
