@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<bench name_length="64" header="false" type_mask="0x2" strategy_mask="0x8">
+  <class name="cls111" key="dummy PMWX Segments Cartesian Leda Rat"/>
+  <class name="cls121" key="dummy PMWX Segments Leda Leda Rat"/>
+  <class name="cls131" key="dummy PMWX Segments Cartesian Lazy Leda Rat"/>
+  <class name="cls141" key="dummy PMWX Segments Cartesian Quotient"/>
+  <class name="cls151" key="dummy PMWX Segments Cartesian Lazy Quotient MP"/>
+  <class name="cls161" key="dummy PMWX Segments Cartesian Gmpq"/>
+  <class name="cls171" key="dummy PMWX Segments Cartesian Lazy Gmpq"/>
+  <class name="cls181" key="dummy PMWX Segments Cartesian Double"/>
+
+  <class name="cls211" key="dummy PMWX Cached Segments Cartesian Leda Rat"/>
+  <class name="cls221" key="dummy PMWX Cached Segments Leda Leda Rat"/>
+  <class name="cls231" key="dummy PMWX Cached Segments Cartesian Lazy Leda Rat"/>
+  <class name="cls241" key="dummy PMWX Cached Segments Cartesian Quotient"/>
+  <class name="cls251" key="dummy PMWX Cached Segments Cartesian Lazy Quotient MP"/>
+  <class name="cls261" key="dummy PMWX Cached Segments Cartesian Gmpq"/>
+  <class name="cls271" key="dummy PMWX Cached Segments Cartesian Lazy Gmpq"/>
+  <class name="cls281" key="dummy PMWX Cached Segments Cartesian Double"/>
+  
+  <clo name="format" string="-If="/>
+  <clo name="samples" string="-s"/>
+  <clo name="header" string="-bh="/> 
+  <clo name="name_length" string="-bnl="/> 
+  <clo name="type_mask" string="-btm="/> 
+  <clo name="strategy_mask" string="-bsm="/> 
+
+  <file name="eurcut.dat" format="rat" curves="3099"
+    vertices="3078" halfedges="6198" faces="39"></file>
+  <file name="fork0505_mc.seg.rand.dat" format="rat" curves="12834"
+    vertices="6561" halfedges="25668" faces="6275"></file>
+  <file name="polygon_100.dat" format="float" curves="100"
+    vertices="100" halfedges="200" faces="2"></file>
+  <file name="world.seg.cut.rand.dat" format="rat" curves="24559"
+    vertices="24280" halfedges="49118" faces="405"></file>
+  <file name="onebig_100.dat" format="rat" curves="2704"
+    vertices="1504" halfedges="5408" faces="1202"></file>
+  <file name="onebig_100_x.dat" format="int" curves="104"
+    vertices="1504" halfedges="5408" faces="1202"></file>
+  <file name="random_segments_100.dat" format="rat" curves="1958"
+    vertices="1129" halfedges="3916" faces="831"></file>
+  <file name="random_segments_100_x.dat" format="int" curves="100"
+    vertices="1129" halfedges="3916" faces="831"></file>
+  <file name="non_degenerate_100_x.dat" format="float" curves="100"
+    vertices="1" halfedges="1" faces="1"></file>
+  <file name="non_degenerate_500_x.dat" format="float" curves="500"
+    vertices="1" halfedges="1" faces="1"></file>
+
+
+
+  <bench samples="1" enable="true">
+    <benchPmwx file="onebig_100_x.dat" header="true"/>
+    <benchPmwxLedaKernel file="onebig_100_x.dat"/>
+    <benchPmwxLazyRat file="onebig_100_x.dat"/>
+    <benchPmwxMPFloat file="onebig_100_x.dat"/>
+    <benchPmwxLazyQuotient file="onebig_100_x.dat"/>
+    <benchPmwxGmpq file="onebig_100_x.dat"/>
+    <benchPmwxLazyGmpq file="onebig_100_x.dat"/>
+  </bench>
+
+  <bench samples="1">
+    <benchPmwxCached file="onebig_100_x.dat"  header="true"/>
+    <benchPmwxLedaKernelCached file="onebig_100_x.dat"/>
+    <benchPmwxLazyRatCached file="onebig_100_x.dat"/>
+    <benchPmwxMPFloatCached file="onebig_100_x.dat"/>
+    <benchPmwxLazyQuotientCached file="onebig_100_x.dat"/>
+    <benchPmwxGmpqCached file="onebig_100_x.dat"/>
+    <benchPmwxLazyGmpqCached file="onebig_100_x.dat"/>
+  </bench>
+
+  <bench samples="1">
+    <benchPmwx file="random_segments_100_x.dat" header="true"/>
+    <benchPmwxLedaKernel file="random_segments_100_x.dat"/>
+    <benchPmwxLazyRat file="random_segments_100_x.dat"/>
+    <benchPmwxMPFloat file="random_segments_100_x.dat"/>
+    <benchPmwxLazyQuotient file="random_segments_100_x.dat"/>
+    <benchPmwxGmpq file="random_segments_100_x.dat"/>
+    <benchPmwxLazyGmpq file="random_segments_100_x.dat"/>
+  </bench>
+
+  <bench samples="1">
+    <benchPmwxCached file="random_segments_100_x.dat"  header="true"/>
+    <benchPmwxLedaKernelCached file="random_segments_100_x.dat"/>
+    <benchPmwxLazyRatCached file="random_segments_100_x.dat"/>
+    <benchPmwxMPFloatCached file="random_segments_100_x.dat"/>
+    <benchPmwxLazyQuotientCached file="random_segments_100_x.dat"/>
+    <benchPmwxGmpqCached file="random_segments_100_x.dat"/>
+    <benchPmwxLazyGmpqCached file="random_segments_100_x.dat"/>
+  </bench>
+
+  <bench samples="1">
+    <benchPmwx file="non_degenerate_100_x.dat" header="true"/>
+    <benchPmwxLedaKernel file="non_degenerate_100_x.dat"/>
+    <benchPmwxLazyRat file="non_degenerate_100_x.dat"/>
+    <benchPmwxMPFloat file="non_degenerate_100_x.dat"/>
+    <benchPmwxLazyQuotient file="non_degenerate_100_x.dat"/>
+    <benchPmwxGmpq file="non_degenerate_100_x.dat"/>
+    <benchPmwxLazyGmpq file="non_degenerate_100_x.dat"/>
+    <benchPmwxDouble file="non_degenerate_100_x.dat"/>
+  </bench>
+
+  <bench samples="1">
+    <benchPmwxCached file="non_degenerate_100_x.dat"  header="true"/>
+    <benchPmwxLedaKernelCached file="non_degenerate_100_x.dat"/>
+    <benchPmwxLazyRatCached file="non_degenerate_100_x.dat"/>
+    <benchPmwxMPFloatCached file="non_degenerate_100_x.dat"/>
+    <benchPmwxLazyQuotientCached file="non_degenerate_100_x.dat"/>
+    <benchPmwxGmpqCached file="non_degenerate_100_x.dat"/>
+    <benchPmwxLazyGmpqCached file="non_degenerate_100_x.dat"/>
+    <benchPmwxDoubleCached file="non_degenerate_100_x.dat"/>
+  </bench>
+
+</bench>
