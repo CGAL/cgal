@@ -1,5 +1,8 @@
 Circulator Package: Release changes:
 ---------------------------------------------------------------------
+3.33 (22 Sep 2003)
+- new headers
+
 3.32 (6 June 2003) [af]
      - Added missing semicolon in circulator.h
 
