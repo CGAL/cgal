@@ -194,33 +194,7 @@ Finally, we give an example how this new kernel can be used.
 
 
 \ccHtmlLinksOff
-\begin{ccExampleCode}
-#include <CGAL/basic.h>
-#include <CGAL/convex_hull_2.h>
-#include ``./MyKernel.h''
-#include <list>
-
-typedef MyKernel<double>           MyK;
-typedef CGAL::Filtered_kernel<MyK> K;
-typedef K::Point_2                 Point_2;
-
-int main()
-{
-  std::list<Point_2> input;
-  
-  Point_2 act;
-  input.push_back(act);
-
-  std::list<Point_2> output;
-
-  K  traits;
-
-  CGAL::convex_hull_2(input.begin(), input.end(),
-                      std::back_inserter(output), traits);		        
-  return 0;
-}
-\end{ccExampleCode}
-
+\ccIncludeExampleCode{Kernel_23/MyKernel.C}
 \ccHtmlLinksOn
 
 
