@@ -134,7 +134,6 @@ sub collect_results()
 sub print_result_table()
 {
     my $platform_count = scalar(@platforms_to_do);
-    my $pc_plus_2 = $platform_count + 2;
 
     print OUTPUT <<"EOF";
 <TABLE CLASS="result" BORDER=1 CELLSPACING=2 CELLPADDING=5>
@@ -145,11 +144,6 @@ sub print_result_table()
 </TR>
 <TR ALIGN=CENTER>
 EOF
-
-#<TR>
-#<TD ALIGN=CENTER COLSPAN=$pc_plus_2>
-#<FONT SIZE="+2">Test Suite Results $release_name</FONT></TD>
-#</TR>
 
     my ($platform_num,$platform)=(0,"");
     foreach $platform (@platforms_to_do) {
@@ -221,10 +215,9 @@ EOF
 sub print_resultpage()
 {
     my $platform_count = scalar(@platforms_to_do);
-    my $pc_plus_2 = $platform_count + 2;
 
     print OUTPUT << "EOF";
-<H2><A NAME="testresults">Test Results for $release_name</A></H2>
+<H2><A NAME="testresults">Test Results</A></H2>
 
 EOF
     if ($PLATFORMS_BESIDE_RESULTS) {
@@ -264,6 +257,7 @@ EOF
 </TABLE>
 EOF
     }
+    print OUTPUT "</BODY></HTML>\n";
 }
 
 sub parse_platform($)
@@ -341,6 +335,7 @@ sub print_platform_descriptions()
 {
     my ($i,$pf_no,$pf) = (0,1);
     print OUTPUT <<'EOF';
+<H2><A NAME="platforms">Platform Description and Summary</A></H2>
 <TABLE BORDER=1 CELLSPACING=2 CELLPADDING=5 >
 <TR ALIGN=CENTER>
 <TH COLSPAN=2>OS and compiler</TH>
@@ -393,6 +388,7 @@ EOF
 	++$platform_num;
     }
     print OUTPUT "</TABLE>\n";
+    print OUTPUT "<P>\n";
 }
 
 sub print_platforms()
@@ -521,24 +517,20 @@ sub main()
     chdir $release_name or die;
     collect_results();
     print_little_header();
-    chdir $testresult_dir or die;
-    write_select();
-    chdir $release_name or die;    
-    print OUTPUT
-     '<H2><A NAME="platforms">Platform Description and Summary</A></H2>',"\n";
     print_platform_descriptions();
-    print OUTPUT "<P>\n";
     print_resultpage();
-    print OUTPUT "<P></BODY></HTML>\n";
     close OUTPUT;
     chdir "..";
-    $VERSIONS_WEBPAGE="versions.inc";
     rename $TEMPPAGE, $WWWPAGE;
-    rename $TEMPPAGE2, $VERSIONS_WEBPAGE;
-    chmod 0644, $VERSIONS_WEBPAGE;
     chmod 0644, $WWWPAGE;
     unlink "index.shtml";
     symlink $WWWPAGE, "index.shtml";
+
+    # Deal with the versions.inc file.
+    write_select();
+    $VERSIONS_WEBPAGE="versions.inc";
+    rename $TEMPPAGE2, $VERSIONS_WEBPAGE;
+    chmod 0644, $VERSIONS_WEBPAGE;
 }
 
 sub init_known_platforms()
