@@ -120,12 +120,13 @@ wdot(const Point_3<R> &p,
      const Point_3<R> &q,
      const Point_3<R> &r)
 {
-    return  (wmult(p.hx(),q.hw()) - wmult(q.hx(),p.hw()))
-          * (wmult(r.hx(),q.hw()) - wmult(q.hx(),r.hw()))
-        +   (wmult(p.hy(),q.hw()) - wmult(q.hy(),p.hw()))
-          * (wmult(r.hy(),q.hw()) - wmult(q.hy(),r.hw()))
-        +   (wmult(p.hz(),q.hw()) - wmult(q.hz(),p.hw()))
-          * (wmult(r.hz(),q.hw()) - wmult(q.hz(),r.hw()));
+    R* pR = 0;
+    return  (wmult(pR, p.hx(),q.hw()) - wmult(pR, q.hx(),p.hw()))
+          * (wmult(pR, r.hx(),q.hw()) - wmult(pR, q.hx(),r.hw()))
+        +   (wmult(pR, p.hy(),q.hw()) - wmult(pR, q.hy(),p.hw()))
+          * (wmult(pR, r.hy(),q.hw()) - wmult(pR, q.hy(),r.hw()))
+        +   (wmult(pR, p.hz(),q.hw()) - wmult(pR, q.hz(),p.hw()))
+          * (wmult(pR, r.hz(),q.hw()) - wmult(pR, q.hz(),r.hw()));
 }
 
 @}
