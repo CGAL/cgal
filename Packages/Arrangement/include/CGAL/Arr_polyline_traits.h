@@ -41,7 +41,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class R,
-  class Container  = std::vector<typename R::Point_2 > >
+  class Container  = std::vector<CGAL_TYPENAME_MSVC_NULL R::Point_2 > >
 class Arr_polyline_traits {
 public:
   typedef Arr_polyline_traits<R> Self;
