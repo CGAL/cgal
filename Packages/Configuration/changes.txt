@@ -1,3 +1,6 @@
+2.26
+- Undo Borland fix because it broke the kernel.
+
 2.25
 - Added time_t to std for msvc.
 
