@@ -1,6 +1,9 @@
 Circulator Package: Release changes:
 ---------------------------------------------------------------------
 
+Version 3.41 (09 February 2004) [rursu]
+- Updated headers in examples
+
 3.40 (18 Jan 2004)
 - Rename CGAL_TEMPLATE_NULL to "template <>".
 
