@@ -62,7 +62,7 @@ void parab_cb(Fl_Widget* w, void* v)
     tr->insert(Point(i, i*i));
     i=i+0.00000000000001;
   } 
-  cerr << "number of faces : " << tr->number_of_faces() << endl;
+  std::cerr << "number of faces : " << tr->number_of_faces() << std::endl;
   CGAL::Drawable_triangulation_2<Delaunay_2>* dtr = new CGAL::Drawable_triangulation_2<Delaunay_2>(*tr,win->get_color(1),  CGAL::ORANGE,CGAL::RAW, 2);
   win->add_drawable(dtr, win->get_group()+1);
   win->display();
@@ -93,13 +93,13 @@ void iterator_cb(Fl_Widget* w, void* v)
       //      sleep(1);
       win->remove_drawable(gr, 1);
       if (i==500) {
-	cerr << "nombre de faces visitees : " << count << endl;
+	std::cerr << "nombre de faces visitees : " << count << std::endl;
 	i=0;
       }
       count ++;
       i++;
     }
-  cerr << "delete group" << endl;
+  std::cerr << "delete group" << std::endl;
   win->delete_group(gr);
 }
 
