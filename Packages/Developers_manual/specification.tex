@@ -17,15 +17,15 @@
 \ccChapterAuthor{Susan Hert ({\tt hert@mpi-sb.mpg.de})}
 
 The official \cgal\ 
-\ccAnchor{http://www.mpi-sb.mpg.de/GALIA/Members/Manual/}{documentation} 
+\ccAnchor{http://www.cgal.org/Manual/}{documentation} 
 is currently divided into six separate manuals:
 \begin{itemize}
-   \item \ccAnchor{http://www.mpi-sb.mpg.de/GALIA/Members/Manual/doc_html/installation/contents.html}{Installation Guide}
-   \item \ccAnchor{http://www.mpi-sb.mpg.de/GALIA/Members/Manual/doc_html/ref-manual0/contents.html}{General Introduction}
-   \item \ccAnchor{http://www.mpi-sb.mpg.de/GALIA/Members/Manual/doc_html/ref-manual1/contents.html}{Kernel}
-   \item \ccAnchor{http://www.mpi-sb.mpg.de/GALIA/Members/Manual/doc_html/ref-manual2/contents.html}{Basic Library}
-   \item \ccAnchor{http://www.mpi-sb.mpg.de/GALIA/Members/Manual/doc_html/ref-manual3/contents.html}{Support Library}
-   \item \ccAnchor{http://www.mpi-sb.mpg.de/GALIA/Members/Manual/doc_html/use_of_stl/contents.html}{Use of \stl\ and \stl\ Extensions in \cgal}
+   \item \ccAnchor{http://www.cgal.org/Manual/doc_html/installation/contents.html}{Installation Guide}
+   \item \ccAnchor{http://www.cgal.org/Manual/doc_html/ref-manual0/contents.html}{General Introduction}
+   \item \ccAnchor{http://www.cgal.org/Manual/doc_html/ref-manual1/contents.html}{Kernel}
+   \item \ccAnchor{http://www.cgal.org/Manual/doc_html/ref-manual2/contents.html}{Basic Library}
+   \item \ccAnchor{http://www.cgal.org/Manual/doc_html/ref-manual3/contents.html}{Support Library}
+   \item \ccAnchor{http://www.cgal.org/Manual/doc_html/use_of_stl/contents.html}{Use of \stl\ and \stl\ Extensions in \cgal}
 \end{itemize}
 Not surprisingly, the Installation Guide describes how to install \cgal
 \ccIndexMainItem{installation}, 
@@ -345,15 +345,17 @@ to be independent documents, there is (going to be) some overlap between
 the two ({\em e.g.}, text that introduces a package chapter),
 but this overlap should be kept to a minimum.   
 
-There are currently six categories of reference pages that are supported by 
-the manual tools.  These are: class, concept, enum, function, macro, and 
+There are currently nine categories of reference pages that are supported by 
+the manual tools.  These are: class, function object class, concept, 
+function object concept, enum, function, macro, constant, and 
 variable.  For each of these categories there is an environment that takes
 a single argument, which is the identifier plus an optional list of 
 template arguments (for classes).  Function parameters, function template
 declarations and macro parameters are not given here.  The result of entering
 one of these environments is the production of a section heading that
 has the category followed by the identifier provided as the argument.  
-For all categories except concepts, this identifier is prefixed by the
+For all categories except concepts and function object concepts, this 
+identifier is prefixed by the
 global scope name that has been defined using \verb|\ccDefGlobalScope|.%\ccIndexEntry{DefGlobalScope}
 By default, this scope is empty.  For example the following commands
 \begin{verbatim}
@@ -394,11 +396,19 @@ The commands are listed in the order in which they should be used.  Sections
 that are empty for a particular item should, obviously, be left out. 
 
 \begin{tabbing}
-\lcTex{  M \= CCimplementationNNN \= ImplementationMMMM \= \kill}
+\lcTex{  M \= CCimplementationNNN \= IsxModelxforxthexConceptxx \= \kill}
   \> \verb+\ccDefinition+      \>  {\bf Definition}    \>
                                           including template parameters\\ %\ccIndexEntry{Definition}\\
   \> \verb+\ccInheritsFrom+    \>  {\bf Inherits From}     \>
                                                      base classes\\ %\ccIndexEntry{InheritsFrom}\\
+%  \> \verb+\ccGeneralizes+     \>  {\bf Generalizes}     \>
+%                                                     concept names\\
+  \> \verb+\ccRefines+         \>  {\bf Refines}     \>
+                                                     concept names\\
+  \> \verb+\ccHasModels+       \>  {\bf Has Models}     \>
+                                                     models for concepts\\
+  \> \verb+\ccIsModel+         \>  {\bf Is Model for the Concept}     \>
+                                                     concept names\\
   \> \verb+\ccTypes+           \>  {\bf Types}         \>
                                                      local type definitions\\ %\ccIndexEntry{Types} \\
   \> \verb+\ccConstants+       \>  {\bf Constants}     \>
@@ -409,6 +419,8 @@ that are empty for a particular item should, obviously, be left out.
                                                      functions and operators\\ %\ccIndexEntry{Operations}\\
   \> \verb+\ccAccessFunctions+ \>  {\bf Access Functions}    \>
                                                      member access\\ %\ccIndexEntry{AccessFunctions}\\
+  \> \verb+\ccQueryFunctions+ \>   {\bf Query Functions}    \>
+                                                     query functions\\
   \> \verb+\ccPredicates+      \>  {\bf Predicates}    \>
                                                      query functions\\% \ccIndexEntry{Predicates}\\
   \> \verb+\ccModifiers +      \>  {\bf Modifiers}    \>
@@ -457,6 +469,23 @@ the heading produced by  \verb|\ccHasModels| you should list  the classes
 in the library that are models for this concept.
 \ccIndexSubitemEnd{reference manual}{concepts}
 
+\subsection{Constants}
+\label{sec:ref_constant}
+\ccIndexSubitemBegin{reference manual}{constants}
+\ccIndexSubitem{constants, global}{documenting}
+
+Global constants should be described using the 
+{\tt ccRefConstant} environment.%\Eindex{ccRefVariable}.  
+The name of the constant
+should be provided as the argument to the environment.  Under a
+\verb|\ccDefinition| heading, the meaning of the constant
+should be described.  Just after the definition, a command 
+\verb|\ccInclude| should be used to indicate in which file the constant
+is defined.  Following this, the complete declaration of the constant
+should be formatted using \verb|\ccGlobalVariable|.
+Another possible section heading here is \verb|\ccSeeAlso|.
+\ccIndexSubitemEnd{reference manual}{constants}
+
 \subsection{Enums}
 \label{sec:ref_enums}
 \ccIndexSubitemBegin{reference manual}{enums}
@@ -489,6 +518,39 @@ of the function should be documented using \verb|\ccPrecond| and
 \verb|\ccSeeAlso|, \verb|\ccImplementation|, and \verb|\ccExample|.
 \ccIndexSubitemEnd{reference manual}{functions}
 
+\subsection{Function Object Classes }
+\label{sec:ref_function_object_class}
+\ccIndexSubitemBegin{reference manual}{function object classes}
+\ccIndexSubitem{function object classes}{documenting}
+\ccIndexSubsubitem{classes}{function object}{documenting}
+
+Function object classes should be documented using the
+{\tt ccRefFunctionObjectClass} environment.  
+Just after the definition section, a command \verb|\ccInclude| should be
+used to indicate in which file the class is defined.  Following this,
+the concepts that this class is a model for should be listed under
+the heading \verb|\ccIsModel| and then the list of
+member functions (a set of \ccc{operator()} functions) should be
+listed. Another possible heading here is \verb|\ccSeeAlso|.
+\ccIndexSubitemEnd{reference manual}{function object classes}
+
+\subsection{Function Object Concepts}
+\label{sec:ref_function_object_concept}
+\ccIndexSubitemBegin{reference manual}{function object concepts}
+\ccIndexSubitem{function object concepts}{documenting}
+\ccIndexSubsubitem{concepts}{function object}{documenting}
+
+Function object classes should be documented using the
+{\tt ccRefFunctionObjectConcept} environment.
+The name of the concept is provided as the argument to this environment.
+Under the \verb|\ccDefinition| heading, the concept should be described
+followed by the set of required functions (one or more
+\ccc{operator()} methods).  Under the heading \verb|\ccRefines| 
+you should list concepts that this one ``inherits'' from and
+under \verb|\ccHasModels| list the classes that are models of this
+concept.
+\ccIndexSubitemEnd{reference manual}{function object concepts}
+
 \subsection{Macros}
 \label{sec:ref_macro}
 \ccIndexSubitemBegin{reference manual}{macros}
@@ -503,31 +565,130 @@ defined.  Following this, the macro together with its arguments should
 be formatted using \verb|\ccc|.  
 \ccIndexSubitemEnd{reference manual}{macros}
 
-\subsection{Variables, constants, and types}
+\subsection{Variables}
 \label{sec:ref_variable}
-\ccIndexSubitemBegin{reference manual}{variables, constants, types}
+\ccIndexSubitemBegin{reference manual}{variables}
 \ccIndexSubitem{variables, global}{documenting}
-\ccIndexSubitem{constants, global}{documenting}
-\ccIndexSubitem{types, global}{documenting}
+%\ccIndexSubitem{types, global}{documenting}
 
-Global variables, constants, and types should be described using the 
+Global variables should be described using the 
 {\tt ccRefVariable} environment.%\Eindex{ccRefVariable}.  
-The name of the variable, constant, or
-type should be provided as the argument to the environment.  Under a
-\verb|\ccDefinition| heading, the meaning of the variable, constant,
-or type should be described.  Just after the definition, a command 
-\verb|\ccInclude| should be used to indicate in which file the variable,
-constant or type
-is defined.  Following this, the complete declaration of the variable,
-constant, or type should be formatted using either \verb|\ccGlobalVariable|
-or \verb|\ccGlobalTypedef|.  Another possible section heading here is
-\verb|\ccSeeAlso|.
-\ccIndexSubitemEnd{reference manual}{variables, constants, types}
+The name of the variable
+should be provided as the argument to the environment.  Under a
+\verb|\ccDefinition| heading, the meaning of the variable
+should be described.  Just after the definition, a command 
+\verb|\ccInclude| should be used to indicate in which file the variable
+is defined.  Following this, the complete declaration of the variable
+should be formatted using \verb|\ccGlobalVariable|.
+Another possible section heading here is \verb|\ccSeeAlso|.
+\ccIndexSubitemEnd{reference manual}{variables}
 \ccIndexMainItemEnd{reference manual}
 
 \section{Users' manual}
 \label{sec:users_manual}
 \ccIndexMainItemBegin{users' manual}
+
+%%%%%
+% New stuff decided on in Dagstuhl
+%%%%%
+%%
+%%Here are the general guidelines for what should be included in the
+%%users manual and how it should be organized.
+%%
+%%The goal of this manual is to describe the functionality available in
+%%the library and to illustrate it through relatively simple examples
+%%(although, of course not all functionality can be illustrated).
+%%The document should be easily and quickly readable, which means readers
+%%should not get bogged down in too many details.
+%%
+%%You should mention the precise name of the class(es) or function(s)
+%%being described (although NOT in the table of contents) so if the user 
+%%wants the functionality being described it will be easy to find the thing 
+%%that provides it.  If the precise name is given (i.e, the name given at 
+%%the top of the reference page), then a hyperlink can be created automatically.
+%%
+%%Each chapter should include:
+%%   - Definitions necessary to describe the functionality (usually at the
+%%     beginning of the chapter).
+%%
+%%   - A section describing the software design, where applicable.  When there
+%%     are no real design issues to explain, then a section isn't really warranted
+%%     but at the very least the interface to the class or function should be 
+%%     briefly explained (e.g. "the class CGAL::Cone<T, DS> has two template 
+%%     parameters; the first respresents the traits class and the second the 
+%%     data structure", or "the function flavor(b, e, r) computes the value 42 
+%%     from an iterator range [b, e) over a set of points.  The computed value 
+%%     is stored in the output iterator r")
+%%
+%%   - One or more examples.
+%%
+%%   - A section (or, rather, paragraph) with information about the 
+%%     implementation, which includes: references to the papers describing the 
+%%     algorithms/DS's implemented; comments on the running times; and perhaps 
+%%     a short description of how the algorithm works or the data structure is 
+%%     built.
+%%
+%%The table of contents reflects the organization of the manual, and it 
+%%should be a concise but informative listing. These specific guidelines 
+%%regarding the organization are provided:
+%%
+%%   - There *should* be a section labeled Introduction, but the next section
+%%     should not be examples.  Introduction should actually introduce things.
+%%
+%%   - The section describing software design should be labeled (you guessed it)
+%%     Software Design 
+%%
+%%   - Example programs should have entries in the table of contents, which
+%%     means they should be in sections of their own and the sections should
+%%     have descriptive names (i.e. "Example Constructing a Vanilla Cone" instead
+%%     of just "Example Program").  The examples should appear near the things
+%%     of which they are examples.  So for chapters describing more than one
+%%     class (such as Triangulations) or one class that achieves different things
+%%     by using different traits classes (such as Arrangements) or more than one
+%%     global function, the examples should appear in the sections corresponding 
+%%     to each class. For chapters describing a single class (such as HalfedgeDS),
+%%     the examples can appear in a section of their own.  The examples should 
+%%     generally not span more than a page.  Advanced examples are a possible 
+%%     exception.
+%%
+%%In general, one should describe things at a level of detail that gives people 
+%%enough information to determine if they want to refer to the reference page 
+%%for the full details and one should use the precise name of a reference manual
+%%item so that cross-linking (by humans or the HTML converter) is possible.  For 
+%%example, you might say:  
+%%
+%%  The fact that points are required to be chocolate in order to compute a 
+%%  Hundink cone means that the traits class for a Hundink cone must provide 
+%%  flavored predicates. The precise description of the requirements is given by 
+%%  the concept HundinkConeTraits_6.  The class Hundink_cone_traits_6 
+%%  is a model of this concept.
+%%
+%%
+%% PICTURES are good too.
+%%
+%%I wouldn't do this.  The nice thing about having "Example" in the title is it 
+%%tells people immediately that there is some example code to be found in this 
+%%section, and this is often what people look for, I think.  So, if you had a 
+%%section labeled, say, "Vanilla Cones" and then you do some explanations 
+%%about what vanilla cones are and finally show an example of constructing one,
+%%I would expect an organization as follows:
+%%
+%%     \section{Vanilla Cones}
+%%     \subsection{Definition}
+%%     \subsection{...}
+%%     \subsection{Example}
+%%     OR
+%%     \subsection{Example with Extra Stuff}
+%%
+%%(I think this sort of thing is what we suggested for the Triangulation chapter, 
+%%for example.)  
+%%
+%%The point is 
+%%    a) the user should be able to find example code easily from the table
+%%       of contents
+%%and b) the user should be able to figure out quite easily what this example
+%%       illustrates from the table of contents.
+%%
 
 In contrast to the reference manual, the users' manual is intended to be
 read by users who are first considering whether to use part of the library.
@@ -677,7 +838,7 @@ documentation works with {\bf both} \ccTexHtml{\LaTeX\ }{LaTeX} and
 {\bf before} submitting.  The test suite is meant simply to assure that all the
 parts fit together nicely and all references to other parts of the manual
 get resolved correctly.  The results of the test suite are currently
-available at \path|http://www.mpi-sb.mpg.de/GALIA/Members/Manual_test/test_manual|.
+available at \path|http://www.cgal.org/Members/Manual_test/test_manual|.
 Each time you submit a package with modified documentation, you should
 check these test results to make sure your documentation did not cause
 any problems.

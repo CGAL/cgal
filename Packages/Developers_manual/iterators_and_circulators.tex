@@ -18,7 +18,7 @@
 \ccChapterAuthor{Mariette Yvinec ({\tt yvinec@sophia.inria.fr})}
 
 
-\ccAnchor{http://www.mpi-sb.mpg.de/GALIA/Members/Manual/doc_html/use_of_stl/Chapter_Iterator.html}{Iterators}
+\ccAnchor{http://www.cgal.org/Manual/doc_html/use_of_stl/Chapter_Iterator.html}{Iterators}
 \ccIndexMainItemDef{iterators}
 are a generalization of pointers that allow a programmer to work 
 with different data structures (containers) in a uniform manner. 
@@ -35,7 +35,7 @@ Iterators are widely used in \cgal\ too.
 \cgal\ extends the idea of the iterator, which works for linear data
 structures, to circular data structures by defining the concept of
 a circulator.  
-\ccAnchor{http://www.mpi-sb.mpg.de/GALIA/Members/Manual/doc_html/use_of_stl/Chapter_Circulator_stl.html}{Circulators}
+\ccAnchor{http://www.cgal.org/Manual/doc_html/use_of_stl/Chapter_Circulator_stl.html}{Circulators}
 \ccIndexMainItemDef{circulators}
 are quite similar to iterators, with the
 major difference being the absence of a past-the-end position in a sequence.
@@ -47,7 +47,7 @@ In \cgal, we also define the concept of a handle,
 which bahaves roughly
 like a pointer to an object without an increment or decrement operation.
 More details about handles and their requirements can be found in 
-the \ccAnchor{http://www.mpi-sb.mpg.de/GALIA/Members/Manual/doc_html/ref-manual3/contents.html}{\cgal\ Support Library Reference Manual}. 
+the \ccAnchor{http://www.cgal.org/Manual/doc_html/ref-manual3/contents.html}{\cgal\ Support Library Reference Manual}. 
 Section~\ref{sec:handle_vs_it_vs_circ} below discusses when handles
 should be used in your code.
 \ccIndexMainItemEnd{handles}
@@ -56,7 +56,7 @@ The concept of iterators is relatively well described in textbooks such as
 Stroustrup's {\em The C++ Programming Langage} \cite{Stroustrup97} 
 and Austern's {\em Generic Programming and the \stl} \cite{Austern98}
 and in the
-\ccAnchor{http://www.mpi-sb.mpg.de/GALIA/Members/Manual/doc_html/use_of_stl/contents.html}{Use of \stl\ and \stl\ Extensions in \cgal\ } manual (which also
+\ccAnchor{http://www.cgal.org/Manual/doc_html/use_of_stl/contents.html}{Use of \stl\ and \stl\ Extensions in \cgal\ } manual (which also
 discusses the circulator concept).
 Thus we will not give a full description of this concept here
 but only a few hints about how to use and write iterators (and circulators)
@@ -270,7 +270,8 @@ requirements of the stream classes are that they define \ccc{operator>>}
 \ccIndexSubitem{iterators}{output}
 
 Insert iterators are output iterators that can be used to insert items 
-into containers.  With regular iterator classes, the code given above
+into containers.\ccIndexSubitem{containers}{insertion into}
+With regular iterator classes, the code given above
 for the \ccAnchor{#copy_function}{\ccc{copy} function} of \stl, 
 causes the range \ccc{[first,last)} to be copied into an existing range 
 starting with \ccc{result}. No memory allocation is involved and the
@@ -289,6 +290,7 @@ beginning of a container by using the container's \ccc{push_front}
 function.  The general \ccc{insert_iterator} is used to insert elements
 at any point in a container, by using the container's \ccc{insert} 
 member function and a provided location of the insertion.
+\ccIndexSubitem{containers}{insertion into}
 
 For convenience, \stl\  provides the templated
 functions (or adaptors) 
@@ -299,6 +301,7 @@ functions (or adaptors)
 \ccIndexSubitem{adaptor}{for insert iterators}
 and \ccc{inserter} to get inserters from containers.
 \ccIndexMainItem{\ccFont inserter}
+\ccIndexSubitem{containers}{insertion adaptors}
 
 \begin{verbatim}
 template<class Container, class Iterator> 
@@ -361,7 +364,7 @@ into a Delaunay triangulation data structure:
 %of a handle, which is defined in \cgal\ (but not in \stl).  A handle
 %behaves roughly like a pointer to an object without an increment or
 %decrement operation. The requirements for handles are detailed in
-%the \ccAnchor{http://www.mpi-sb.mpg.de/GALIA/Members/Manual/doc_html/ref-manual3/contents}{\cgal\ Support Library Reference Manual}. 
+%the \ccAnchor{http://www.cgal.org/Manual/doc_html/ref-manual3/contents}{\cgal\ Support Library Reference Manual}. 
 %\ccIndexMainItemEnd{handles}
 
 \section{Writing code with and for iterators, circulators, and handles}
@@ -386,6 +389,7 @@ computes the convex hull of a set of points in two dimensions:
             sequence is returned. It is not specified at which point the
             cyclic sequence of extreme points is cut into a linear sequence.}
 
+\ccIndexSubitem{containers}{writing}
 Also, when writing container classes, you should be sure to provide
 iterators and/or circulators for the containers and design the interfaces
 so they can be used with generic algorithms from the \stl\ and other
@@ -449,12 +453,13 @@ over either a linear or circular sequence:
 \ccStyle{CGAL_For_all_backwards( ic1, ic2)}
 \ccIndexMainItem[C]{CGAL_For_all_backwards}
 
-See the \ccAnchor{http://www.mpi-sb.mpg.de/GALIA/Members/Manual/doc_html/ref-manual3/Circulator/Chapter_circulator.html}{Circulator documentation} in the
+See the \ccAnchor{http://www.cgal.org/Manual/doc_html/ref-manual3/Circulator/Chapter_circulator.html}{Circulator documentation} in the
 Support Library Reference Manual for more information and examples.
 
 \subsection{Writing an iterator for your container}
 \label{sec:class_iterator}
 \ccIndexSubitemBegin{iterators}{writing}
+\ccIndexSubitemBegin{containers}{iterators for}
 
 Every container class in \cgal\ should strive to be a model for the
 \stl\ concept of a container.  As for all concepts, this means that 
@@ -478,11 +483,13 @@ Variations on the above names are possible when, for example, the container
 contains more than one thing that can be iterated over.  See 
 Section~\ref{sec:naming_scheme} for more details about the naming conventions
 for iterators and their access functions.
+\ccIndexSubitemEnd{containers}{iterators for}
 \ccIndexSubitemEnd{iterators}{writing}
 
 \subsection{Writing a circulator for your container}
 \label{sec:class_circulator}
 \ccIndexSubitemBegin{circulators}{writing}
+\ccIndexSubitemBegin{containers}{circulators for}
 
 When a container represents a circular data structure (\ie, one without a
 defined beginning or end), one should provide circulators for the data
@@ -495,6 +502,7 @@ This means that the following types should be defined:
 \end{tabbing}
 as well as two access functions, one for each of the two types, with names
 that end in the suffix \ccc{_circulator} (Section~\ref{sec:naming_scheme}).
+\ccIndexSubitemEnd{containers}{circulators for}
 \ccIndexSubitemEnd{circulators}{writing}
 
 \section{Requirements and recommendations}
@@ -507,6 +515,7 @@ Requirements:
 
 \item All container classes that represent circular data structures should
       provide circulator types and access functions.
+      \ccIndexSubitem{containers}{types}
 
 \item Take care that decrement of the past-the-end value
       is, in accordance with the standard, a legal operation for a 
@@ -535,5 +544,6 @@ Recommendations:
 \item When writing a container-like structure, provide \ccc{push_back}, 
       \ccc{push_front}, and \ccc{insert} member functions
       so all insert iterators can be used with your container.
+      \ccIndexSubitem{containers}{member functions}
 \end{itemize}
 

@@ -9,15 +9,15 @@
 % $Date$
 % =============================================================================
 
-\chapter{Tools}
+\chapter{Scripts and Other Tools}
 \label{chap:tools}
 \ccIndexMainItemBegin{tools}
 \ccChapterRelease{Chapter Version: 1.0} \\
 \ccChapterAuthor{Geert-Jan Giezeman ({\tt geert@cs.uu.nl})}
 
-There are a number of tools that automatize some of the tedious and 
+There are a number of tools that automate some of the tedious and 
 error-prone tasks that are unavoidable when developing for \cgal.
-These scripts can be found in several places.
+Most of these scripts can be found in several places.
 \begin{itemize}
    \item in every internal release (directory {\tt developer\_scripts} or 
          {\tt scripts})
@@ -166,6 +166,36 @@ The generated file contains a header that lists the requirements a
 {\tt cgal\_test} program should fulfill. These are also listed in
 Section~\ref{sec:test_subdirectory} with the description of the 
 {\tt cgal\_test} script.
+
+\section{{\tt autotest\_cgal}}
+\label{sec:autotest_cgal}
+\index{autotest_cgal script@{\tt autotest\_cgal} script|(}
+\ccIndexSubitem{test suite}{internal release}
+
+This shell script \ccAnchor{http://www.cs.inf.ethz.ch/personal/hoffmann/CGAL/members/autotest_cgal}{{\tt autotest\_cgal}}
+is used to run test suites for the internal releases of the library 
+``automagically''.  The script takes two arguments, which are a 
+\cgal\ release label (Section~\ref{sec:internal_releases}) and an email
+address of someone to notify about the success or failure of the test suite
+run.  For example:
+\begin{verbatim}
+   autotest_cgal CGAL-2.2-I-3 cgal-submit@cs.uu.nl
+\end{verbatim}
+
+The script must be 
+\ccAnchor{http://www.cs.inf.ethz.ch/personal/hoffmann/CGAL/members/autotest.html}{customized} 
+\begin{ccTexOnly} 
+ (See \path|http://www.cs.inf.ethz/ch/personal/hoffmann/CGAL/members/autotest.html|)
+\end{ccTexOnly}
+a bit to run on your environment, but
+after this it works almost like magic! 
+When run, the script will download the indicated internal release of
+the library, unpack it, configure things and create the proper makefiles,
+build the library, run the test, collect the results and then send mail
+notifying the proper authorities ({\em i.e.}, {\tt cgal-submit@cs.uu.nl})
+that the test results are available.  
+\index{autotest_cgal script@{\tt autotest\_cgal} script|)}
+
 
 %\begin{itemize}
 %\item For every target two one-line messages are written to the file 
