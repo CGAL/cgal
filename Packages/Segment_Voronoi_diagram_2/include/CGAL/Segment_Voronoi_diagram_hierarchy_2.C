@@ -101,6 +101,9 @@ insert(const Site_2& t) {
   // the intended use is to unify the calls to insert(...);
   // thus the site must be an exact one; 
   CGAL_precondition( t.is_exact() );
+
+  this->register_input_site(t);
+
   if ( t.is_segment() ) {
     return insert_segment(t.source(), t.target(), UNDEFINED_LEVEL);
   } else if ( t.is_point() ) {
@@ -144,7 +147,7 @@ insert_point(const Point_2& p, int level, Vertex_handle* vertices)
 
   nearest_neighbor(p, vnear, false);
 
-  vertex = hierarchy[0]->insert(p, vnear[0]);
+  vertex = hierarchy[0]->insert_no_register(p, vnear[0]);
 
   if ( vertices != NULL ) { vertices[0] = vertex; }
 
@@ -152,10 +155,10 @@ insert_point(const Point_2& p, int level, Vertex_handle* vertices)
 
   // insert at other levels
   Vertex_handle previous = vertex;
-      
+
   int k = 1;
   while ( k <= level ) {
-    vertex = hierarchy[k]->insert(p, vnear[k]);
+    vertex = hierarchy[k]->insert_no_register(p, vnear[k]);
 
     CGAL_assertion( vertex != Vertex_handle() );
 
@@ -203,7 +206,7 @@ insert_point(const Site_2& t, const Storage_site_2& ss,
       vertex = hierarchy[k]->insert_third(t, ss);
     } else {
       if ( ss.is_exact() ) {
-	vertex = hierarchy[k]->insert(t.point(), vnear[k]);
+	vertex = hierarchy[k]->insert_no_register(t.point(), vnear[k]);
       } else {
 	break;
       }
@@ -685,6 +688,7 @@ copy_triangulation
 
   // copy the point container
   hierarchy[0]->pc_ = svd.hierarchy[0]->pc_;
+  hierarchy[0]->isc_ = svd.hierarchy[0]->isc_;
 }
 
 template<class Gt, class STag, class DS, class LTag>

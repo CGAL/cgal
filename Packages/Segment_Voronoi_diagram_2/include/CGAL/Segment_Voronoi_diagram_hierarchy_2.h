@@ -88,6 +88,9 @@ public:
   typedef typename Base::All_edges_iterator        All_edges_iterator;
   typedef typename Base::Finite_edges_iterator     Finite_edges_iterator;
 
+  typedef typename Base::Input_sites_iterator      Input_sites_iterator;
+  typedef typename Base::Output_sites_iterator     Output_sites_iterator;
+
 private:
   typedef std::list<Point_2>                       PC;
 
@@ -174,10 +177,12 @@ public:
   }
 
   Vertex_handle  insert(const Point_2& p) {
+    this->register_input_site(p);
     return insert_point(p, UNDEFINED_LEVEL);
   }
 
   Vertex_handle  insert(const Point_2& p0, const Point_2& p1) {
+    this->register_input_site(p0,p1);
     return insert_segment(p0, p1, UNDEFINED_LEVEL);
   }
 
@@ -185,9 +190,9 @@ public:
     return insert(p);
   }
 
-  Vertex_handle insert(const Point_2& p1, const Point_2& p2,
+  Vertex_handle insert(const Point_2& p0, const Point_2& p1,
 		       Vertex_handle) {
-    return insert(p1, p2);
+    return insert(p0, p1);
   }
 
   Vertex_handle  insert(const Site_2& t);

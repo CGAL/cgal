@@ -40,7 +40,9 @@
 #include <CGAL/edge_list.h>
 #include <CGAL/Segment_Voronoi_diagram_traits_wrapper_2.h>
 
+#include <CGAL/Iterator_project.h>
 #include <CGAL/Simple_container_wrapper.h>
+
 
 /*
   Conventions:
@@ -55,6 +57,8 @@
      points and segments; points start by a 'p' and segments by an 's'.
 */
 
+//#define STORE_INPUT_SITES 1
+#define STORE_INPUT_SITES 0
 
 CGAL_BEGIN_NAMESPACE
 
@@ -82,6 +86,35 @@ namespace CGALi {
     typedef Edge_list<Edge,Use_stl_map_tag>   List;
   };
 
+
+  template < class Node >
+  struct Svd_project_site_2 {
+    typedef Node                   argument_type;
+    typedef typename Node::Site_2  Site;
+    typedef Site                   result_type;
+    Site& operator()(const Node& x) const { 
+      static Site s;
+      s = x.site();
+      return s;
+    }
+    //    const Site& operator()(const Node& x) const { return x.site(); }
+  };
+
+  template < class Node, class Site_t >
+  struct Svd_project_input_to_site_2 {
+    typedef Node                   argument_type;
+    typedef Site_t                 Site;
+    typedef Site                   result_type;
+    Site& operator()(const Node& x) const {
+      static Site s;
+      if ( x.third ) { // it is a point
+	s = Site(x.first);
+      } else {
+	s = Site(x.first, x.second);
+      }
+      return s;
+    }
+  };
 
 } // namespace CGALi
 
@@ -140,17 +173,48 @@ public:
 private:
   typedef std::list<Point_2>                     PC;
 
+#if STORE_INPUT_SITES
+  typedef std::vector<Site_2>        Input_sites_container;
+  typedef typename Input_sites_container::const_iterator
+  All_inputs_iterator;
+#else
+  // these containers should have point handles and should replace the
+  // point container...
+  typedef Triple<Point_2,Point_2,bool>   Site_rep_2;
+  typedef std::vector<Site_rep_2>        Input_sites_container;
+  typedef typename Input_sites_container::const_iterator
+  All_inputs_iterator;
+
+  typedef CGALi::Svd_project_input_to_site_2<Site_rep_2, Site_2>
+  Proj_input_to_site;
+#endif
+
 public:
   typedef Simple_container_wrapper<PC>           Point_container;
   typedef typename Point_container::iterator     Point_handle;
 
   typedef typename DG::size_type                 size_type;
 
+private:
+  typedef typename DG::Vertex                    Vertex;
+  typedef CGALi::Svd_project_site_2<Vertex>      Proj_site;
+
+public:
+#if STORE_INPUT_SITES
+  typedef All_inputs_iterator Input_sites_iterator;
+#else
+  typedef Iterator_project<All_inputs_iterator, Proj_input_to_site>
+  Input_sites_iterator;
+#endif
+
+  typedef Iterator_project<Finite_vertices_iterator, 
+                           Proj_site>            Output_sites_iterator;
 protected:
   // LOCAL VARIABLE(S)
   //------------------
   // the container of points
   Point_container pc_;
+  Input_sites_container isc_;
 
 protected:
   // MORE LOCAL TYPES
@@ -253,9 +317,6 @@ public:
     return DG::finite_edges_end();    
   }
 
-  //  Point_iterator points_begin() const;
-  //  Point_iterator points_end() const;
-
   All_faces_iterator all_faces_begin() const {
     return DG::all_faces_begin();
   }
@@ -278,6 +339,30 @@ public:
 
   All_edges_iterator all_edges_end() const {
     return DG::all_edges_end();
+  }
+
+  Input_sites_iterator input_sites_begin() const {
+#if STORE_INPUT_SITES
+    return isc_.begin();
+#else
+    return Input_sites_iterator(isc_.begin());
+#endif
+  }
+
+  Input_sites_iterator input_sites_end() const {
+#if STORE_INPUT_SITES
+    return isc_.end();
+#else
+    return Input_sites_iterator(isc_.end());
+#endif
+  }
+
+  Output_sites_iterator output_sites_begin() const {
+    return Output_sites_iterator(finite_vertices_begin());
+  }
+
+  Output_sites_iterator output_sites_end() const {
+    return Output_sites_iterator(finite_vertices_end());    
   }
 
 public:
@@ -359,20 +444,37 @@ public:
 
   // insert a point
   Vertex_handle  insert(const Point_2& p) {
+    // update input site container
+    register_input_site(p);
     return insert_point(p, Vertex_handle());
   }
 
   Vertex_handle  insert(const Point_2& p, Vertex_handle vnear) {
+    // update input site container
+    register_input_site(p);
     return insert_point(p, vnear);
   }
 
+protected:
+  // insert a point without registering it in the input sites
+  // container: useful for the hierarchy
+  Vertex_handle  insert_no_register(const Point_2& p,
+				    Vertex_handle vnear) {
+    return insert_point(p, Vertex_handle());
+  }
+
+public:
   // insert a segment
-  Vertex_handle  insert(const Point_2& p1, const Point_2& p2) {
-    return insert_segment(Site_2(p1, p2), Vertex_handle());
+  Vertex_handle  insert(const Point_2& p0, const Point_2& p1) {
+    // update input site container
+    register_input_site(p0, p1);
+    return insert_segment(Site_2(p0, p1), Vertex_handle());
   }
 
   Vertex_handle  insert(const Point_2& p0, const Point_2& p1, 
 			Vertex_handle vnear) {
+    // update input site container
+    register_input_site(p0, p1);
     return insert_segment(Site_2(p0, p1), vnear);
   }
 
@@ -380,6 +482,10 @@ public:
     // the intended use is to unify the calls to insert(...);
     // thus the site must be an exact one; 
     CGAL_precondition( t.is_exact() );
+
+    // update input site container
+    register_input_site(t);
+
     if ( t.is_segment() ) {
       return insert_segment(t, Vertex_handle());
     } else if ( t.is_point() ) {
@@ -398,6 +504,34 @@ public:
 #endif
 
 protected:
+  void register_input_site(const Point_2& p)
+  {
+#if STORE_INPUT_SITES
+    isc_.push_back(Site_2(p));
+#else
+    isc_.push_back(Site_rep_2(p, p, true));
+#endif
+  }
+
+  void register_input_site(const Point_2& p0, const Point_2& p1)
+  {
+#if STORE_INPUT_SITES
+    isc_.push_back(Site_2(p0, p1));
+#else
+    isc_.push_back(Site_rep_2(p0, p1, false));
+#endif
+  }
+
+  void register_input_site(const Site_2& t)
+  {
+    CGAL_precondition( t.is_exact() );
+    if ( t.is_point() ) {
+      register_input_site( t.point(0) );
+    } else {
+      register_input_site( t.point(0), t.point(1) );
+    }
+  }
+
   Vertex_handle  insert_first(const Point_2& p);
   Vertex_handle  insert_second(const Point_2& p);
   Vertex_handle  insert_third(const Point_2& p);
@@ -521,11 +655,13 @@ public:
   void clear() {
     DG::clear();
     pc_.clear();
+    isc_.clear();
   }
 
   void swap(const Segment_Voronoi_diagram_2& svd) {
     DG::swap(svd);
     pc_.swap(svd.pc_);
+    isc_.swap(svd.isc_);
   }
 
   //////////////////////////////////////////////////////////////////////
