@@ -31,6 +31,8 @@ rtag:
 submit: package
 	cp $(Package).tar.gz doc_ps/$(Package).ps version description.txt \
 	   $(WWW_dir)
+	rm -f $(WWW_dir)/$(Package).ps.gz
+	gzip -9 $(WWW_dir)/$(Package).ps
 	echo > $(TMP_file)
 	echo "submission::" >> $(TMP_file)
 	echo "http://www-sop.inria.fr/prisme/CGAL/DR:/Members" >> $(TMP_file)
