@@ -177,12 +177,12 @@ struct Lazy_exact_nt_Abs : public Lazy_exact_nt_unary<ET>
 
   void update_approx() const
   {
-      in = CGAL_NTS::abs(op1.approx());
+      in = CGAL_NTS abs(op1.approx());
   }
   ET exact() const
   {
       if (!et)
-	  et = new ET(CGAL_NTS::abs(op1.exact()));
+	  et = new ET(CGAL_NTS abs(op1.exact()));
       return *et;
   }
 };
@@ -215,12 +215,12 @@ struct Lazy_exact_nt_Square : public Lazy_exact_nt_unary<ET>
 
   void update_approx() const
   {
-      in = CGAL_NTS::square(op1.approx());
+      in = CGAL_NTS square(op1.approx());
   }
   ET exact() const
   {
       if (!et)
-	  et = new ET(CGAL_NTS::square(op1.exact()));
+	  et = new ET(CGAL_NTS square(op1.exact()));
       return *et;
   }
 };

@@ -16,7 +16,7 @@ CXXFLAGS = \
 	-I../../include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS) \
-	-O2 -W -Wall
+	-g -W -Wall
 	# -DCGAL_IA_NEW_FILTERS
 	# -O2 -mcpu=pentiumpro -march=pentiumpro -W -Wall -DLOOPS=10000000
 	# -g -Wall -W
@@ -56,7 +56,7 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-.PRECIOUS: %$(OBJ_EXT)
+.PRECIOUS: %$(OBJ_EXT) tst1 %$(EXE_EXT)
 .SUFFIXES: .test
 .PHONY: %.test test
 

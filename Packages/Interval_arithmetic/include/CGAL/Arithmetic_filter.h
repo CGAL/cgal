@@ -160,11 +160,15 @@ Filtered_exact<CT,ET,Type,Protection,Cache>
 sqrt (const Filtered_exact<CT,ET,Type,Protection,Cache>& fil)
 { return sqrt(fil.value()); }
 
+namespace NTS {
+
 template <class CT, class ET, class Type, class Protection, class Cache>
 inline
 Filtered_exact<CT,ET,Type,Protection,Cache>
 square (const Filtered_exact<CT,ET,Type,Protection,Cache>& fil)
-{ return CGAL_NTS::square(fil.value()); }
+{ return CGAL_NTS square(fil.value()); }
+
+} // namespace NTS
 #endif // CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
 
 template <class CT, class ET, class Type, class Protection, class Cache>
@@ -185,24 +189,28 @@ double
 to_double (const Filtered_exact<CT,ET,Type,Protection,Cache>& fil)
 { return to_double(fil.value()); }
 
+namespace NTS {
+
 template <class CT, class ET, class Type, class Protection, class Cache>
 inline
 Sign
 sign (const Filtered_exact<CT,ET,Type,Protection,Cache>& fil)
-{ return CGAL_NTS::sign(fil.value()); }
+{ return CGAL_NTS sign(fil.value()); }
 
 template <class CT, class ET, class Type, class Protection, class Cache>
 inline
 Comparison_result
 compare (const Filtered_exact<CT,ET,Type,Protection,Cache>& fil,
 	 const Filtered_exact<CT,ET,Type,Protection,Cache>& fil2)
-{ return CGAL_NTS::compare(fil.value(), fil2.value()); }
+{ return CGAL_NTS compare(fil.value(), fil2.value()); }
 
 template <class CT, class ET, class Type, class Protection, class Cache>
 inline
 Filtered_exact<CT,ET,Type,Protection,Cache>
 abs (const Filtered_exact<CT,ET,Type,Protection,Cache>& fil)
-{ return CGAL_NTS::abs(fil.value()); }
+{ return CGAL_NTS abs(fil.value()); }
+
+} // namespace NTS
 
 template <class CT, class ET, class Type, class Protection, class Cache>
 inline

@@ -50,14 +50,22 @@ extern "C" { double CGAL_ms_sqrt(double); }
 
 CGAL_BEGIN_NAMESPACE
 
+struct Interval_nt_advanced;
 // For experimenting with inlining * and /.
 #ifdef CGAL_IA_NO_INLINE
-struct Interval_nt_advanced;
 static Interval_nt_advanced operator*(const Interval_nt_advanced&,
 	                              const Interval_nt_advanced&);
 static Interval_nt_advanced operator/(const Interval_nt_advanced&,
 	                              const Interval_nt_advanced&);
 #endif
+
+namespace NTS {
+inline Interval_nt_advanced square	(const Interval_nt_advanced &);
+inline Interval_nt_advanced abs		(const Interval_nt_advanced &);
+inline Sign sign			(const Interval_nt_advanced &);
+inline Comparison_result compare	(const Interval_nt_advanced &,
+		                         const Interval_nt_advanced &);
+} // namespace NTS
 
 struct Interval_nt_advanced
 {
@@ -84,13 +92,15 @@ struct Interval_nt_advanced
   friend inline IA min           (const IA &, const IA &);
   friend inline IA max           (const IA &, const IA &);
   friend inline IA sqrt          (const IA &);
-  friend inline IA square        (const IA &);
-  friend inline IA abs           (const IA &);
   friend inline double to_double (const IA &);
   friend inline bool is_valid    (const IA &);
   friend inline bool is_finite   (const IA &);
-  friend inline Sign sign        (const IA &);
-  friend inline Comparison_result compare (const IA &, const IA &);
+#if 1
+  friend inline IA NTS::square        (const IA &);
+  friend inline IA NTS::abs           (const IA &);
+  friend inline Sign NTS::sign        (const IA &);
+  friend inline Comparison_result NTS::compare (const IA &, const IA &);
+#endif
 
 private:
   static void overlap_action() // throw (unsafe_comparison)
@@ -288,6 +298,8 @@ sqrt (const Interval_nt_advanced & d)
   return Interval_nt_advanced(i, CGAL_IA_FORCE_TO_DOUBLE(CGAL_IA_SQRT(d._sup)));
 }
 
+namespace NTS {
+
 inline
 Interval_nt_advanced
 square (const Interval_nt_advanced & d)
@@ -300,8 +312,41 @@ square (const Interval_nt_advanced & d)
       return Interval_nt_advanced(-CGAL_IA_FORCE_TO_DOUBLE(d._sup*(-d._sup)),
 	     			   CGAL_IA_FORCE_TO_DOUBLE(d._inf*d._inf));
   return Interval_nt_advanced(0.0,
-	  CGAL_IA_FORCE_TO_DOUBLE(square(max(-d._inf, d._sup))));
+	  CGAL_IA_FORCE_TO_DOUBLE(CGAL_NTS square(max(-d._inf, d._sup))));
 }
+
+inline
+Interval_nt_advanced
+abs (const Interval_nt_advanced & d)
+{
+  if (d._inf >= 0.0) return d;
+  if (d._sup <= 0.0) return -d;
+  return Interval_nt_advanced(0.0, max(-d._inf, d._sup));
+}
+
+inline
+Sign
+sign (const Interval_nt_advanced & d)
+{
+  if (d._inf > 0.0) return POSITIVE;
+  if (d._sup < 0.0) return NEGATIVE;
+  if (d._inf == d._sup) return ZERO;
+  Interval_nt_advanced::overlap_action();
+  return ZERO;
+}
+
+inline
+Comparison_result
+compare (const Interval_nt_advanced & d, const Interval_nt_advanced & e)
+{
+  if (d._inf > e._sup) return LARGER;
+  if (e._inf > d._sup) return SMALLER;
+  if (e._inf == d._sup && d._inf == e._sup) return EQUAL;
+  Interval_nt_advanced::overlap_action();
+  return EQUAL;
+}
+
+} // namespace NTS
 
 inline
 bool
@@ -379,37 +424,6 @@ inline
 bool
 is_finite (const Interval_nt_advanced & d)
 { return is_finite(d._inf) && is_finite(d._sup); }
-
-inline
-Sign
-sign (const Interval_nt_advanced & d)
-{
-  if (d._inf > 0.0) return POSITIVE;
-  if (d._sup < 0.0) return NEGATIVE;
-  if (d._inf == d._sup) return ZERO;
-  Interval_nt_advanced::overlap_action();
-  return ZERO;
-}
-
-inline
-Comparison_result
-compare (const Interval_nt_advanced & d, const Interval_nt_advanced & e)
-{
-  if (d._inf > e._sup) return LARGER;
-  if (e._inf > d._sup) return SMALLER;
-  if (e._inf == d._sup && d._inf == e._sup) return EQUAL;
-  Interval_nt_advanced::overlap_action();
-  return EQUAL;
-}
-
-inline
-Interval_nt_advanced
-abs (const Interval_nt_advanced & d)
-{
-  if (d._inf >= 0.0) return d;
-  if (d._sup <= 0.0) return -d;
-  return Interval_nt_advanced(0.0, max(-d._inf, d._sup));
-}
 
 inline
 Interval_nt_advanced
@@ -520,15 +534,24 @@ sqrt (const Interval_nt & d)
   return tmp;
 }
 
+namespace NTS {
+
 inline
 Interval_nt
 square (const Interval_nt & d)
 {
   FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
-  Interval_nt tmp = CGAL_NTS::square( (Interval_nt_advanced) d);
+  Interval_nt tmp = CGAL_NTS square( (Interval_nt_advanced) d);
   FPU_set_cw(backup);
   return tmp;
 }
+
+inline
+Interval_nt
+abs (const Interval_nt & d)
+{ return CGAL_NTS abs( (Interval_nt_advanced) d); }
+
+} // namespace NTS
 
 inline
 Interval_nt &
@@ -549,11 +572,6 @@ inline
 Interval_nt &
 Interval_nt::operator/= (const Interval_nt & d)
 { return *this = *this / d; }
-
-inline
-Interval_nt
-abs (const Interval_nt & d)
-{ return CGAL_NTS::abs( (Interval_nt_advanced) d); }
 
 inline
 Interval_nt

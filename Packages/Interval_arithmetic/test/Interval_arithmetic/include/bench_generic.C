@@ -76,7 +76,7 @@ void bench()
   BENCH_MACRO_generic(c = 1, c *= b; c /= b, "*= /=");
 
   BENCH_MACRO_generic(EMPTY, c = CGAL::sqrt(b), "sqrt");
-  BENCH_MACRO_generic(EMPTY, c = CGAL::square(b), "square");
+  BENCH_MACRO_generic(EMPTY, c = CGAL_NTS square(b), "square");
   BENCH_MACRO_generic(EMPTY, c = c * dd, "ia*d");
   BENCH_MACRO_generic(EMPTY, c = dd * c, "d*ia");
   BENCH_MACRO_generic(EMPTY, c = c + dd, "ia+d");
@@ -127,8 +127,8 @@ int main()
   bench_orientation();
 
   IA_nt a=1, b=2;
-  (int) CGAL::sign(a);
-  (int) CGAL::compare(a,b);
+  (int) CGAL_NTS sign(a);
+  (int) CGAL_NTS compare(a,b);
 
 #ifdef ADVANCED
   CGAL::FPU_set_cw(backup);

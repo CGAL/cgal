@@ -57,7 +57,7 @@ IA_nt test_mult_a2(const IA_nt &a) { return a * 2.0; }
 IA_nt test_mult_4a(const IA_nt &a) { return 4.0 * a; }
 IA_nt test_mult_a4(const IA_nt &a) { return a * 4.0; }
 
-IA_nt test_square(const IA_nt &a) { return CGAL::square(a); }
+IA_nt test_square(const IA_nt &a) { return CGAL_NTS square(a); }
 IA_nt test_sqr(const IA_nt &a) { return a*a; }
 
 // This test program computes the coordinates of a sequence of points drawing
@@ -75,7 +75,7 @@ bool spiral_test()
     IA_nt y_ip1 = y_i + x_i/CGAL::sqrt(IA_nt(i));
     x_i = x_ip1;
     y_i = y_ip1;
-    DEBUG( IA_nt length = CGAL::square(x_i) + CGAL::square(y_i); )
+    DEBUG( IA_nt length = CGAL_NTS square(x_i) + CGAL_NTS square(y_i); )
     DEBUG(std::cout<<i<<": (" << x_i << " , " << y_i << ") : " << length << "\n";)
     if ( x_i.overlap(0) || y_i.overlap(0) )
       break;
@@ -169,7 +169,7 @@ bool underflow_test()
 
   for (i=0; i<20; i++) a *= a;
   for (i=0; i<20; i++) b = b * b;
-  for (i=0; i<20; i++) c = CGAL::square(c);
+  for (i=0; i<20; i++) c = CGAL_NTS square(c);
 
   return a.is_same(IA_nt(0, CGAL_IA_MIN_DOUBLE))
       && b.is_same(CGAL::Interval_nt_advanced::Smallest)
@@ -239,19 +239,19 @@ bool utility_test()
   const IA_nt a(-1,1), b(-1,0), c(0,0), d(0,1), e(1,2), f(-2,-1), g(1);
   IA_nt h = 1/c;
 
-  tmpflag = (CGAL::sign(c) == CGAL::ZERO) &&
-            (CGAL::sign(e) == CGAL::POSITIVE) &&
-            (CGAL::sign(f) == CGAL::NEGATIVE) ;
+  tmpflag = (CGAL_NTS sign(c) == CGAL::ZERO) &&
+            (CGAL_NTS sign(e) == CGAL::POSITIVE) &&
+            (CGAL_NTS sign(f) == CGAL::NEGATIVE) ;
   DEBUG( std::cout << "Sign test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
-  tmpflag = CGAL::abs(a).is_same(IA_nt(0,1)) &&
-            CGAL::abs(b).is_same(IA_nt(0,1)) &&
-            CGAL::abs(c).is_same(IA_nt(0,0)) &&
-	    CGAL::abs(d).is_same(IA_nt(0,1)) &&
-            CGAL::abs(e).is_same(IA_nt(1,2)) &&
-	    CGAL::abs(f).is_same(IA_nt(1,2)) &&
-            CGAL::abs(g).is_same(g) ;
+  tmpflag = CGAL_NTS abs(a).is_same(IA_nt(0,1)) &&
+            CGAL_NTS abs(b).is_same(IA_nt(0,1)) &&
+            CGAL_NTS abs(c).is_same(IA_nt(0,0)) &&
+	    CGAL_NTS abs(d).is_same(IA_nt(0,1)) &&
+            CGAL_NTS abs(e).is_same(IA_nt(1,2)) &&
+	    CGAL_NTS abs(f).is_same(IA_nt(1,2)) &&
+            CGAL_NTS abs(g).is_same(g) ;
   DEBUG( std::cout << "abs test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
@@ -271,12 +271,12 @@ bool utility_test()
   DEBUG( std::cout << "max test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
-  tmpflag = CGAL::sign(f) == CGAL::NEGATIVE;
+  tmpflag = CGAL_NTS sign(f) == CGAL::NEGATIVE;
   DEBUG( std::cout << "sign test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
-  tmpflag = (CGAL::compare(b,e) == CGAL::SMALLER)
-         && (CGAL::compare(g,g) == CGAL::EQUAL);
+  tmpflag = (CGAL_NTS compare(b,e) == CGAL::SMALLER)
+         && (CGAL_NTS compare(g,g) == CGAL::EQUAL);
   DEBUG( std::cout << "compare test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
