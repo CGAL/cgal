@@ -7,3 +7,32 @@
   But is it useful ?
 - Add operator<< (Sphere), as it's known to geomview, cf :
   http://www.geomview.org/docs/html/geomview_44.html#SEC47
+
+- Make a testsuite (words from Herve):
+<<<<<<<<<<<<<<<<
+Geomview testsuite:
+
+It's not clear how to make it at this point...
+After talking to Francois, I got the following idea:
+
+* make sure . is in the path
+* create a local script called geomview, so that upon creating the
+  Geomview_stream(), the call execlp("geomview",...)  calls ./geomview instead
+  of the 3D viewer
+* that script will simply process gcl (geomview command language) so that it
+  reports on its output exactly the objects that are given from the input
+* the testsuite will simply consist of outputting the different objects into
+* the
+  geomview stream, and getting them back, and comparing.
+
+This should allow the testsuite to be fully automatic and yet test all the
+documented features of the package. How to do it remains to be cleared.
+Any volunteers?
+
+--Herve 
+>>>>>>>>>>>>>>>
+
+- Now I think that testing compilation for all kernel (and others) objects
+  output may be already nice, and simple.
+  Maybe we can start geomview with no single window via command line options
+  of environement variables ?
