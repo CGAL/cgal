@@ -958,7 +958,8 @@ Alpha_shape_3<Dt>::initialize_alpha_vertex_maps(bool reinitialize)
       
       // set alpha_mid and alpha_max and is_on_chull
       std::list<Cell_handle> incidents;
-      incident_cells(static_cast<Vertex_handle>(vit), back_inserter(incidents));
+      incident_cells(static_cast<Vertex_handle>(vit),
+	             back_inserter(incidents));
       typename std::list<Cell_handle>::iterator
 	chit=incidents.begin();
       if (is_infinite(*chit)) as->set_is_on_chull(true);
@@ -996,7 +997,8 @@ Alpha_shape_3<Dt>::initialize_alpha_vertex_maps(bool reinitialize)
       as->set_alpha_min(as->alpha_mid());
 
       std::list<Vertex_handle> incidentv;
-      incident_vertices(static_cast<Vertex_handle>(vit), back_inserter(incidentv));
+      incident_vertices(static_cast<Vertex_handle>(vit),
+	                back_inserter(incidentv));
       typename std::list<Vertex_handle>::iterator vvit=incidentv.begin();
       for( ; vvit != incidentv.end(); ++vvit){
 	if (!is_infinite(*vvit)) {
