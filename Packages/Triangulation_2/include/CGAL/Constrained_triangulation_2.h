@@ -703,9 +703,9 @@ file_output(std::ostream& os) const
 
 template < class Gt, class Tds >
 std::ostream &
-operator<<(std::ostream& os, const Constrained_triangulation_2<Gt,Tds> &Ct)
+operator<<(std::ostream& os, const Constrained_triangulation_2<Gt,Tds> &ct)
 {
-  Ct.file_output(os);
+  ct.file_output(os);
   return os ;
 }
 
