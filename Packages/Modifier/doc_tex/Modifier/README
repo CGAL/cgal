@@ -1,0 +1,7 @@
+The .gif figures are needed for the Modifier section. Since
+the modifier section does reside in a different directory, but
+does not create its own file, for example, for a chapter, will the
+latex_to_html converter not find the gif file automatically from the
+Modifier directory. The latex_to_html converter searches the file in
+the Miscellany directory instead, where we just keep a copy of those
+gif files for now, until maybe the converter can be improved.
