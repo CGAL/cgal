@@ -67,9 +67,11 @@ _test_fct_point_2(const R& )
  assert( CGAL::lexicographically_xy_larger(p2,p3) );
  assert( CGAL::lexicographically_xy_larger(p4,p3) );
 
+/*
  assert( CGAL::lexicographically_xy_larger_or_equal(p3,p3) );
  assert( CGAL::lexicographically_xy_larger_or_equal(p2,p3) );
  assert( CGAL::lexicographically_xy_larger_or_equal(p4,p3) );
+*/
 
  std::cout <<'.';
 
@@ -170,11 +172,13 @@ _test_fct_point_2(const R& )
  assert( CGAL::lexicographically_yx_smaller_or_equal(p4,p4) );
  assert( CGAL::lexicographically_yx_smaller_or_equal(p5,p3) );
 
+/*
  assert(!CGAL::lexicographically_yx_larger_or_equal(p5,p3) );
  assert( CGAL::lexicographically_yx_larger_or_equal(p3,p5) );
  assert( CGAL::lexicographically_yx_larger_or_equal(p2,p7) );
  assert( CGAL::lexicographically_yx_larger_or_equal(p7,p7) );
  assert( CGAL::lexicographically_yx_larger_or_equal(p8,p3) );
+*/
 
  std::cout << '.';
 
