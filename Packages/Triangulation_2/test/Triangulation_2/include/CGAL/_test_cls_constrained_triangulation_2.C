@@ -79,19 +79,15 @@ _test_cls_constrained_triangulation(const Triangulation &)
     Cls T1_1(l);
   assert( T1_1.dimension() == 1 );
   assert( T1_1.number_of_vertices() == 4 );
-     //cerr << T1_1;
   assert( T1_1.is_valid() );
   
-  //l.clear();
   l.erase(l.begin(),l.end());
   for (m=0; m<4; m++)
       l.push_back(Constraint(Point(3*m, 2*m),Point(3*(m+1),2*(m+1)) ));
     Cls T1_2(l);
   assert( T1_2.dimension() == 1 );
   assert( T1_2.number_of_vertices() == 5);
-  //cerr << T1_2;
   assert( T1_2.is_valid() );
-  //l.clear();
   l.erase(l.begin(),l.end());
 
   // Build triangulations, 2-dimensional
@@ -136,7 +132,7 @@ _test_cls_constrained_triangulation(const Triangulation &)
     assert( Taux.number_of_vertices() == 20);
     assert( Taux.is_valid() );
 
-   // Points locations
+  // Points locations
     //to check  if functionnality is accessible
     // 1-dimensional
    std::cout << "    point locations 1-dim" << std::endl;
@@ -303,5 +299,41 @@ _test_cls_constrained_triangulation(const Triangulation &)
   std::ifstream if2_2("T22.triangulation"); CGAL::set_ascii_mode(if2_2);
   Cls T2_2_copy; if2_2 >> T2_2_copy;
 
-    
+  
+//   // remove_constraint and remove _1 dim
+//   Face_handle fh;
+//   int ih;
+//   Vertex_handle vha, vhb;
+//   fh  =  T1_2.locate(Point(0,0),lt,li); assert( lt == Cls::VERTEX );
+//   vha = fh->vertex(li);
+//   fh  =  T1_2.locate(Point(3,2),lt,li); assert( lt == Cls::VERTEX );
+//   vhb =  fh->vertex(li);
+//   assert(T1_2.is_edge(vha,vhb, fh, ih));
+//   assert(fh.is_constrained(ih));
+//   T1_2.remove_constraint(fh,ih);
+//   T1_2.insert(Point(0,0),Point(3,2));
+//   fh  =  T1_2.locate(Point(3,2),lt,li); assert( lt == Cls::VERTEX );
+//   vhb =  fh->vertex(li);
+//   T1_2.remove(vhb);
+//   fh  =  T1_2.locate(Point(0,0),lt,li); assert( lt == Cls::VERTEX );
+//   vha = fh->vertex(li);
+//   T1_2.remove(vha);
+
+//    // remove_constraint and remove 2 dim
+//   m=2;
+//   fh = T2_2.locate(lpt[m], lt,li); assert( lt == Cls::VERTEX );
+//   vha = fh->vertex(li);
+//   fh  =  T1_2.locate(lpt[m+1],lt,li); assert( lt == Cls::VERTEX );
+//   vhb =  fh->vertex(li);
+//   assert(T1_2.is_edge(vha,vhb, fh, ih));
+//   assert(fh.is_constrained(ih));
+//   T1_2.remove_constraint(fh,ih);
+//   T1_2.insert(lpt[m], lpt[m+1]);
+//   fh  =  T1_2.locate(lpt[m+1],lt,li); assert( lt == Cls::VERTEX );
+//   vhb =  fh->vertex(li);
+//   T1_2.remove(vhb);
+//   fh  =  T1_2.locate(lpt[m],lt,li); assert( lt == Cls::VERTEX );
+//   vha = fh->vertex(li);
+//   T1_2.remove(vha);
+
 }
