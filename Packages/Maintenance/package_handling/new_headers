@@ -27,14 +27,14 @@ EOF
 my $lgpl_owner="Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbrucken (Germany), RISC Linz (Austria),
+// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
 // and Tel-Aviv University (Israel).";
 
 my %qpl_owners=("UU"    => "Utrecht University (The Netherlands)",
                 "INRIA" => "INRIA Sophia-Antipolis (France)",
                 "ETHZ"  => "ETH Zurich (Switzerland)",
                 "FUB"   => "Freie Universitaet Berlin (Germany)",
-                "MPI"   => "Max-Planck-Institute Saarbrucken (Germany)",
+                "MPI"   => "Max-Planck-Institute Saarbruecken (Germany)",
                 "RISC"  => "RISC Linz (Austria)",
                 "TAU"   => "Tel-Aviv University (Israel)",
                 "TRIER" => "University of Trier (Germany)",

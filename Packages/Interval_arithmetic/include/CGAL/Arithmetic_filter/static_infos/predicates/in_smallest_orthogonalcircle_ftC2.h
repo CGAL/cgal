@@ -1,7 +1,7 @@
 // Copyright (c) 1999,2000,2001  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbrucken (Germany), RISC Linz (Austria),
+// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or

@@ -28,7 +28,7 @@
 // The GALIA Consortium consists of Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Free University of Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Trier University
-// (Germany), Max-Planck-Institute Saarbrucken (Germany),
+// (Germany), Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).
 //
 // ----------------------------------------------------------------------

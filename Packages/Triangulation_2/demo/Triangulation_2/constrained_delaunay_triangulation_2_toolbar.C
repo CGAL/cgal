@@ -23,7 +23,7 @@
 // The CGAL Consortium consists of Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbrucken (Germany), RISC Linz (Austria),
+// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
 // and Tel-Aviv University (Israel).
 //
 // ----------------------------------------------------------------------
