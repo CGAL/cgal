@@ -226,8 +226,8 @@ A subdivision algorithm recursively
 applies \emph{refinement} and \emph{geometry smoothing} 
 on the control mesh (\figurename\ \ref{fig:sqrt3},  
 \ref{fig:quad-triangle}), 
-and approximates the limit surface of the control mesh.
-Several refinement schemes in practice are illustrated in 
+and approximates the limit surface of the control mesh.  Several
+refinement schemes in practice are illustrated in
 \figurename\ \ref{fig:RefSchemes}. The stencils of the
 geometry smoothing are depending on the refinement schemes, 
 i.e.\ the reparametrizations. A stencil defines a control
@@ -351,26 +351,34 @@ viewer based on the default configuration of the \cgalpoly . This
 simple viewer demonstrates some basic functionalities of the
 \cgalpoly\ such as \italic{modifier} and \italic{incremental builder} 
 for mesh importing and the mesh traversal, i.e. the \italic{iterators}
-and the \italic{circulators}, for rendering or mesh exporting. 
-Based on this simple viewer, we then show the readers how to
+and the \italic{circulators}, for rendering or mesh exporting.  Based
+on this simple viewer, we then show the readers how to
 \italic{customize the \poly} to support certain rendering attributes and 
-functionalities. 
+functionalities.
 
-An enriched polyhedron is proposed with per-facet and per-vertex normals 
-used for rendering, with an axis-aligned bounding box and the primitives specialized
-with algorithmic flags. The extended primitives are employed to support 
-efficient computation of the number of connected components, number of boundaries 
-and combinatorial genus of the polyhedron. The extended halfedges are employed to support
-the superimposition of the control mesh on the subdivided surfaces (see Figure 
-\ref{fig:quad-triangle}). This enriched polyhedron is used as the core
-data structure of our application.  We then show how to interact with
-a customized \poly.  
+An enriched polyhedron is proposed with per-facet and per-vertex
+normals used for rendering, with an axis-aligned bounding box and the
+primitives specialized with algorithmic flags. The extended primitives
+are employed to support efficient computation of the number of
+connected components, number of boundaries and combinatorial genus of
+the polyhedron. The extended halfedges are employed to support the
+superimposition of the control mesh on the subdivided surfaces (see
+Figure \ref{fig:quad-triangle}). This enriched polyhedron is used as
+the core data structure of our application.  We then show how to
+interact with a customized \poly.
 
-The tutorial also features a trackball to interactively manipulate the 
-polyhedron, the possibility to backup and restore a camera viewpoint, 
-a raster output of the active client window to the clipboard and a vectorial 
-output of the active mesh to a postscript file.
+The tutorial also features a trackball to interactively manipulate the
+polyhedron, the possibility to backup and restore a camera viewpoint,
+a raster output of the active client window to the clipboard and a
+vectorial output of the active mesh to a postscript file (see Figure
+\ref{fig:gargoyle}).
 
+\begin{figure}[t]
+    \centering{\includegraphics[width=3.0cm]{figs/gargoyle_raster}
+               \includegraphics[width=3.0cm]{figs/gargoyle_vec}}
+    \caption{Raster and vectorial output of the gargoyle mesh.}
+    \label{fig:gargoyle}
+\end{figure}
 
 % ------------------------------------------------------------------------
 \subsubsection*{Subdivision Algorithms}
