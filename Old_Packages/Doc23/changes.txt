@@ -1,5 +1,6 @@
 2.27    (?? June 2001)
 - Update Construct_circumcenter_3.
+- Remove \ccInclude of obsolete header files.
 
 2.26    (19 June 2001)
 - added centroid and Construct_centroid_[23]
