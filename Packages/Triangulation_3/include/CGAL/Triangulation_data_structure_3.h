@@ -53,23 +53,16 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class TDS> class Triangulation_ds_cell_iterator_3;
-template <class TDS> class Triangulation_ds_facet_iterator_3;
-template <class TDS> class Triangulation_ds_edge_iterator_3;
-template <class TDS> class Triangulation_ds_vertex_iterator_3;
-
-template <class TDS> class Triangulation_ds_cell_circulator_3;
-template <class TDS> class Triangulation_ds_facet_circulator_3;
-
 template <class Vb, class Cb>
 class Triangulation_data_structure_3;
+
 template <class Vb, class Cb>
 std::istream& operator >> 
 (std::istream&, Triangulation_data_structure_3<Vb,Cb>&);
 
 template <class Vb, class Cb>
 class Triangulation_data_structure_3
-  :public Triangulation_utils_3
+  : public Triangulation_utils_3
 {
 public:
 
@@ -85,27 +78,34 @@ public:
   friend class Triangulation_ds_cell_circulator_3<Tds>;
   friend class Triangulation_ds_facet_circulator_3<Tds>;
 
-  typedef Triangulation_ds_vertex_3<Vb,Cb> Vertex;
-  typedef Triangulation_ds_cell_3<Vb,Cb> Cell;
-  typedef std::pair<Cell*, int>  Facet;
-  typedef triple<Cell*, int, int> Edge;
+  typedef Triangulation_ds_vertex_3<Vb,Cb>         Vertex;
+  typedef Triangulation_ds_cell_3<Vb,Cb>           Cell;
+  typedef std::pair<Cell*, int>                    Facet;
+  typedef triple<Cell*, int, int>                  Edge;
 
-  typedef Triangulation_ds_cell_iterator_3<Tds> Cell_iterator;
-  typedef Triangulation_ds_facet_iterator_3<Tds> Facet_iterator;
-  typedef Triangulation_ds_edge_iterator_3<Tds> Edge_iterator;
-  typedef Triangulation_ds_vertex_iterator_3<Tds> Vertex_iterator;
+  typedef Triangulation_ds_cell_iterator_3<Tds>    Cell_iterator;
+  typedef Triangulation_ds_facet_iterator_3<Tds>   Facet_iterator;
+  typedef Triangulation_ds_edge_iterator_3<Tds>    Edge_iterator;
+  typedef Triangulation_ds_vertex_iterator_3<Tds>  Vertex_iterator;
 
-  typedef Triangulation_ds_cell_circulator_3<Tds> Cell_circulator;
+  typedef Triangulation_ds_cell_circulator_3<Tds>  Cell_circulator;
   typedef Triangulation_ds_facet_circulator_3<Tds> Facet_circulator;
 
   Triangulation_data_structure_3() 
     : _dimension(-2), _number_of_vertices(0)
-  {}
+  {
+      init_cell_list(&_list_of_cells);
+      init_cell_list(&_list_of_free_cells);
+      init_cell_list(&_list_of_temporary_free_cells);
+  }
 
   Triangulation_data_structure_3(const Tds & tds)
     : _number_of_vertices(0)
     // _number_of_vertices is set to 0 so that clear() in copy_tds() works
   {
+    init_cell_list(&_list_of_cells);
+    init_cell_list(&_list_of_free_cells);
+    init_cell_list(&_list_of_temporary_free_cells);
     copy_tds(tds);
   }
 
@@ -194,6 +194,13 @@ private:
       return cnew; 
     }
 
+  // Used to initialize the lists to empty lists.
+  void init_cell_list(Cell* c)
+  {
+      c->_next_cell = c;
+      c->_previous_cell = c;
+  }
+
   void link_cells(Cell* a, Cell *b)
   {
       a->_next_cell = b;
@@ -239,6 +246,14 @@ private:
 	         &_list_of_temporary_free_cells);
   }
 
+  void add_cell( Cell* c )
+    {
+      CGAL_triangulation_precondition( c != NULL );
+
+      link_cells(c, _list_of_cells._next_cell);
+      link_cells(&_list_of_cells, c);
+    }
+
 public:
   // not documented
   std::istream& read_cells(std::istream& is,
@@ -248,14 +263,6 @@ public:
   // not documented
   std::ostream& print_cells(std::ostream& os, 
 			    std::map< void*, int > &V ) const;
-
-  void add_cell( Cell* c )
-    {
-      CGAL_triangulation_precondition( c != NULL );
-
-      link_cells(c, _list_of_cells._next_cell);
-      link_cells(&_list_of_cells, c);
-    }
 
   // ACCESS FUNCTIONS
 
@@ -306,16 +313,13 @@ public:
   bool flip(Cell* c, int i);
   void flip_flippable(Facet f);
   void flip_flippable(Cell* c, int i);
-private:
-  // common to flip and filp_flippable
-  void flip_really(Cell* c, int i, Cell* n, int in);
-public:
   bool flip(Edge e);
   bool flip(Cell* c, int i, int j);
   void flip_flippable(Edge e);
   void flip_flippable(Cell* c, int i, int j);
 private:
   // common to flip and filp_flippable
+  void flip_really(Cell* c, int i, Cell* n, int in);
   void flip_really(Cell* c, int i, int j,
 		   Cell* c1, Vertex* v1, int i1, int j1, int next1,
 		   Cell* c2, Vertex* v2, int i2, int j2, int next2,
@@ -577,7 +581,6 @@ public:
   void clear_cells_only(std::vector<Vertex *> & Vertices);
 
 
-
 private:
   // in dimension i, number of vertices >= i+2 
   // ( the boundary of a simplex in dimension i+1 has i+2 vertices )
@@ -711,7 +714,6 @@ operator<<(std::ostream& os, const Triangulation_data_structure_3<Vb,Cb> &tds)
   }
   CGAL_triangulation_assertion( i == n );
 
-  //print_cells(os, tds, V);
   tds.print_cells(os, V);
 
   return os;
@@ -2480,14 +2482,18 @@ clear_cells_only(std::vector<Vertex *> & Vertices)
 
   // Delete the cells in the free_list.
   for (it = _list_of_free_cells._next_cell; it != &_list_of_free_cells;
-       it = _list_of_free_cells._next_cell)
+       it = _list_of_free_cells._next_cell) {
+      remove_cell_from_list(it);
       delete it;
+  }
 
   if (number_of_vertices() == 0) {
     // the list of cells must be cleared even in this case
     for (it = _list_of_cells._next_cell; it != past_end_cell();
-         it = _list_of_cells._next_cell)
-      delete it; // The ds_cell destructor removes it from the list.
+         it = _list_of_cells._next_cell) {
+      remove_cell_from_list(it);
+      delete it;
+    }
 
     // then _list_of_cells points on itself, nothing more to do
     set_dimension(-2);
@@ -2507,7 +2513,8 @@ clear_cells_only(std::vector<Vertex *> & Vertices)
     for (int i=0; i<=std::max(0,dimension()); i++)
       if (it->vertex(i)->cell() == it)
         Vertices.push_back(&(*it->vertex(i)));
-    delete it; // The ds_cell destructor removes it from the list.
+    remove_cell_from_list(it);
+    delete it;
   }
 
   // then _list_of_cells points on itself, nothing more to do
