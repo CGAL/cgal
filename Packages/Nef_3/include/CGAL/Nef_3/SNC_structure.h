@@ -397,8 +397,9 @@ public:
     shalfedges_(D.shalfedges_), shalfloops_(D.shalfloops_), sfaces_(D.sfaces_)
   { pointer_update(D); }
 
-  Self& operator=(const Self& D) 
-  { if ( this == &D ) return *this;
+  Self& operator=(const Self& D) { 
+    if ( this == &D ) 
+      return *this;
     clear();
     boundary_item_.clear(undef_);
     sm_boundary_item_.clear(undef_);
@@ -765,8 +766,17 @@ public:
 	  merge_sets( fu, ftu, hash, uf);
 	  SM_decorator SD(D.vertex(u));
 	  TRACEN("removing "<<IO->index(u)<<" & "<<IO->index(SD.twin(u)));
-	  SD.delete_edge_pair(u);
-	}
+	  Halfedge_handle src(SD.source(u)), tgt(SD.target(u));
+	  if ( SD.is_closed_at_source(u) ) 
+	    SD.set_face( SD.source(u), SD.face(u));
+	  if ( SD.is_closed_at_source( SD.twin(u)) ) 
+ 	    SD.set_face( SD.target(u), SD.face(u));
+	  SD.delete_edge_pair(u); 
+	  if( SD.is_isolated(src))
+	    SD.delete_vertex_only(src);
+	  if( SD.is_isolated(tgt))
+	    SD.delete_vertex_only(tgt);
+      }
       }
       else if( assign(l, fc)) {
 	SFace_handle fu = D.sface(l), ftu = D.sface(D.twin(l));
@@ -839,11 +849,11 @@ public:
     /* determines if a vertex v is part of a volume, cheking if its local
        graph is trivial (only one sface with no boundary). */  {
     SM_decorator SD(v);
-    if( ++SD.sfaces_begin() == SD.sfaces_end()) {
-      SFace_handle sf(SD.sfaces_begin());
-      if( is_empty_range( SD.sface_cycles_begin(sf), SD.sface_cycles_end(sf)))
-	return true;
-    }
+    CGAL_assertion( !is_empty_range( SD.sfaces_begin(), SD.sfaces_end()));
+    if( is_empty_range( SD.svertices_begin(), SD.svertices_end()) &&
+	is_empty_range( SD.shalfedges_begin(), SD.shalfedges_end()) &&
+	!SD.has_loop())
+      return true;
     return false;
   }
 
@@ -852,8 +862,8 @@ public:
        facet, checking if its local graph consists just of a sloop and
        two incident sfaces. */ {
     SM_decorator SD(v);
-    CGAL_assertion( !SD.has_loop() || 
-		    std::distance( SD.sfaces_begin(), SD.sfaces_end()) == 2);
+    CGAL_assertion(!is_empty_range(SD.svertices_begin(),SD.svertices_end()) ||
+ 		    is_empty_range(SD.shalfedges_begin(),SD.shalfedges_end()));
     return( SD.has_loop() &&
 	    is_empty_range( SD.svertices_begin(), SD.svertices_end()));
   }
@@ -932,7 +942,7 @@ public:
       do
 	f_next++;
       while( f_next != D.halffacets_end() && f_next->is_twin());
-
+      CGAL_assertion( f != D.twin(f));
       Volume_handle c1 = D.volume(f), c2 = D.volume(D.twin(f));
       TRACEN(" mark("<<IO->index(c1)<<")="<<D.mark(c1)<<
 	     " mark("<<IO->index(f) <<")="<<D.mark(f) <<
@@ -1004,10 +1014,14 @@ public:
       v_next++;
 
       CGAL_assertion( SD.sfaces_begin() != SFace_handle());
-      if( is_part_of_volume(v) && 
-	  D.mark(v) == D.mark(D.volume(SD.sfaces_begin()))) {
-	TRACEN("removing isolated vertex "<<IO->index(v));
-	delete_vertex(v);
+      if( is_part_of_volume(v)) {
+	TRACEN("mark("<<IO->index(v)<<")="<<D.mark(v)<<", "<<
+	       "mark("<<IO->index(D.volume(SD.sfaces_begin()))<<")="<<
+	       D.mark(D.volume(SD.sfaces_begin())));
+	if(D.mark(v) == D.mark(D.volume(SD.sfaces_begin()))) {
+	  TRACEN("removing isolated vertex "<<IO->index(v));
+	  delete_vertex(v);
+	}
       }
       else if( is_part_of_facet(v)) {
 	CGAL_assertion( D.facet(SD.shalfloop()) != Halffacet_handle());
@@ -1036,7 +1050,6 @@ public:
     create_boundary_links_forall_facets( hash_facet, uf_facet);
     create_boundary_links_forall_volumes( hash_volume, uf_volume);
 
-    IO->print();
     TRACEN(">>> simplifying done");
    }
    
@@ -1305,12 +1318,21 @@ pointer_update(const SNC_structure<Items>& D)
     Halffacet_cycle_iterator ftc;
     for(ftc = f->boundary_entry_objects_.begin(); 
         ftc !=  f->boundary_entry_objects_.end(); ++ftc) {
-      if ( assign(se,SObject_handle(ftc)) ) 
+      if ( assign( se, ftc) ) 
       { *ftc = SObject_handle(SEM[se]); store_boundary_item(se,ftc); }
-      else if ( assign(sl,SObject_handle(ftc)) ) 
+      else if ( assign( sl, ftc) ) 
       { *ftc = SObject_handle(SLM[sl]); store_boundary_item(sl,ftc); }
       else CGAL_nef3_assertion_msg(0,"damn wrong boundary item in facet.");
     }
+  }
+  for ( fc = D.halffacets_begin(), f = halffacets_begin();
+	fc != D.halffacets_end(); ++fc, ++f) {
+    /* It is possible that the is_twin() property differs for equivalent 
+       facets on both SNC structures.  So, we need to store the correct
+       selection mark in the correct (non-twin) facet of a halffacet pair. */
+    CGAL_assertion_code( if( fc->is_twin() == f->is_twin())
+			 CGAL_assertion( fc->mark_ == f->mark_));
+    if( !f->is_twin() && fc->is_twin()) f->mark_ = f->twin_->mark_;
   }
   // Volume update
   CGAL_nef3_forall_volumes(c,*this) {
@@ -1342,11 +1364,11 @@ pointer_update(const SNC_structure<Items>& D)
     for(sfc = sf->sface_cycles_begin(); 
         sfc != sf->sface_cycles_end(); ++sfc) {
       SVertex_handle sv;
-      if ( assign(sv,SObject_handle(sfc)) ) 
+      if ( assign(sv,sf) ) 
       { *sfc = SObject_handle(EM[sv]); store_sm_boundary_item(sv,sfc); }
-      else if ( assign(se,SObject_handle(sfc)) ) 
+      else if ( assign(se,sfc) ) 
       { *sfc = SObject_handle(SEM[se]); store_sm_boundary_item(se,sfc); }
-      else if ( assign(sl,SObject_handle(sfc)) ) 
+      else if ( assign(sl,sfc) ) 
       { *sfc = SObject_handle(SLM[sl]); store_sm_boundary_item(sl,sfc); }
       else CGAL_nef3_assertion_msg(0,"damn wrong boundary item in sface.");
     }

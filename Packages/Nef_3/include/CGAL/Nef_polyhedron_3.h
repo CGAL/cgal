@@ -261,7 +261,7 @@ protected:
       f = D.face(D.twin(e));
     D.mark(f) = space;
     CGAL_nef3_forall_sedges_of(e, v)
-      D.mark(e) = D.mark(D.source(e)) = true;
+      D.mark(e) = D.mark(D.source(e)) = space;
     D.mark_of_halfsphere(-1) = (x<0 && y>0 && z>0);
     D.mark_of_halfsphere(+1) = (x>0 && y>0 && z<0);
     return v;
@@ -293,12 +293,11 @@ protected:
   }
 
   void clear_box_marks() 
-  { // unset all frame marks
+    /* unset all frame marks */ {
     SNC_decorator D(snc());
     Volume_iterator c = D.volumes_begin(); 
     D.mark(c) = false;
-    Shell_entry_iterator s = D.shells_begin(c);
-    //D.set_marks_in_shell(s, false); // TO IMPLEMENT
+    D.clear_outer_box_marks();
   }
 
 public:
@@ -451,6 +450,17 @@ public:
   }
 
 
+  /* HERE I AM!!!
+
+  void binop( Self& P0, Self& P1) {
+    // for each vertex x of P_i do
+    //   qualify_x_with_respect_to P(1-i)
+    //   biopn both local views Px(0,1): subdivide-slect-simplify...
+    // for each edge-edge or edge-face interesection x do
+    //   binop both local views Px(0,1): subdivide-select-simplify...
+    // remove vertices whose local view is not that of a vertex
+    // synthesis f spatial structure...
+    } */
 
   Nef_polyhedron_3<T> intersection(const Nef_polyhedron_3<T>& N1) const
   /*{\Mop returns |\Mvar| $\cap$ |N1|. }*/
@@ -680,28 +690,35 @@ Nef_polyhedron_3(const Plane_3& h, Boundary b) : Base(Nef_rep()) {
 template <typename T>
 Nef_polyhedron_3<T>::
 Nef_polyhedron_3(const SNC_structure& W, bool clone) : Base(Nef_rep()) {
-  TRACEN("construction from an existing nefp3");
+  TRACEN("construction from an existing nef3");
   if (clone) { 
     snc() = W;
-  } else {
-    bool __CGAL_Nef_polyhedron_3__copy_operation_not_supported_yet__;
   }
 }
 
 template <typename T>
 void Nef_polyhedron_3<T>::extract_complement() {
   TRACEN("extract complement");
-  //if (refs()>1) *this = Nef_polyhedron_3<T>(snc()); // clone
-  //EW_overlayer D(snc());
+  if( is_shared()) clone_rep();
+  SNC_decorator D(snc());
   Vertex_iterator v;
-  //forall_vertices(v,D) D.mark(v) = !D.mark(v);
+  CGAL_nef3_forall_vertices(v,D) {
+    TRACE(D.mark(v));
+    D.mark(v) = !D.mark(v); 
+    TRACEN(" vcomplement "<<D.mark(v));
+  }
   Halfedge_iterator e;
-  //forall_edges(e,D) D.mark(e) = !D.mark(e);
+  CGAL_nef3_forall_edges(e,D) D.mark(e) = !D.mark(e);
   Halffacet_iterator f;
-  //forall_facets(f,D) D.mark(f) = !D.mark(f);
+  CGAL_nef3_forall_facets(f,D) {
+    TRACE(D.mark(f)<<f->mark_<<f->twin_->mark_);
+    D.mark(f) = !D.mark(f); 
+    TRACEN(" fcomplement "<<D.mark(f)<<", "<<&*f);
+  }
   Volume_iterator c;
-    //forall_volumes(c,D) D.mark(c) = !D.mark(c);
+  CGAL_nef3_forall_volumes(c,D) D.mark(c) = !D.mark(c);
   clear_box_marks();
+  dump();
 }
 
 

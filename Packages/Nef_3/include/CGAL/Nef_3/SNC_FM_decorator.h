@@ -23,7 +23,7 @@
 // coordinator   : Michael Seel <seel@mpi-sb.mpg.de>
 //
 // implementation: operations on a facet substructure of an SNC
-// ============================================================================ 
+// =========================================================================== 
 
 #ifndef CGAL_SNC_FM_DECORATOR_H
 #define CGAL_SNC_FM_DECORATOR_H
@@ -331,8 +331,9 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
 
   // the sweep traits class instantiated with the input, output and
   // geometry models
-  typedef CGAL::Segment_overlay_traits< 
-    Segment_iterator, Halffacet_output, Halffacet_geometry> Halffacet_sweep_traits;
+  typedef CGAL::Segment_overlay_traits
+    <Segment_iterator, Halffacet_output, Halffacet_geometry>
+    Halffacet_sweep_traits;
   typedef CGAL::generic_sweep<Halffacet_sweep_traits>   Halffacet_sweep;
   Halffacet_geometry G(plane_supporting_facet);
 

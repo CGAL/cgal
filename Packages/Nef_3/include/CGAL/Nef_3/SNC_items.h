@@ -26,7 +26,7 @@
 //                 Lutz Kettner    <kettner@mpi-sb.mpg.de>
 // coordinator   : MPI Saarbruecken
 //
-// SNC_items.h             items classes (Vertex, Halfedge, Facet, Volume objects)
+// SNC_items.h     items classes (Vertex, Halfedge, Facet, Volume objects)
 // ============================================================================
 #ifndef CGAL_SNC_ITEMS_H
 #define CGAL_SNC_ITEMS_H
@@ -392,6 +392,8 @@ public:
                                           Halffacet_cycle_iterator;
     typedef typename Refs::Halffacet_cycle_const_iterator
                                           Halffacet_cycle_const_iterator;
+  public: // TO REMOVE!!!
+
 
     Plane_3              supporting_plane_;
     Mark                 mark_;
@@ -426,7 +428,7 @@ public:
       return *this;
     }
 
-    Mark& mark() 
+    Mark& mark()  
     { if ( this < &*twin_ ) return mark_; 
       else return twin_->mark_; }
 

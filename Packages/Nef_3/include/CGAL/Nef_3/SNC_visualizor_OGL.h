@@ -44,8 +44,9 @@
 #include <CGAL/Nef_3/SNC_decorator.h>
 #include <CGAL/Nef_3/SNC_FM_decorator.h>
 
-//#undef TRACEN
-//#define TRACEN(t) std::cerr << t << std::endl
+#undef _DEBUG
+#define _DEBUG 53
+#include <CGAL/Nef_3/debug.h>
 
 #define CGAL_NEF3_MARKED_VERTEX_COLOR 221,221,255
 #define CGAL_NEF3_UNMARKED_VERTEX_COLOR 15,15,31

@@ -634,7 +634,7 @@ public:
       outer_bound_pos = bounded_side_3(ct.begin(), ct.end(), p, h);
     } 
     else 
-      CGAL_assertion_msg(0, "facet's first cycle is a SHalfloop?");
+      CGAL_assertion_msg(0, "is facet first cycle a SHalfloop?");
     if( outer_bound_pos != CGAL::ON_BOUNDED_SIDE )
       return outer_bound_pos;
     /* The point p is not in the relative interior of the outer face cycle

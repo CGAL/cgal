@@ -47,36 +47,6 @@ class SNC_io_parser : public SNC_decorator<SNC_structure_>
   typedef CGAL::SNC_decorator<SNC_structure_> Base;
   typedef CGAL::SNC_SM_decorator<SNC_structure_> SM_decorator;
 
-  #define USING(t) typedef typename SNC_structure::t t
-  USING(Vertex_iterator);
-  USING(Halfedge_iterator);
-  USING(Halffacet_iterator);
-  USING(Volume_iterator);
-  USING(SVertex_iterator);
-  USING(SHalfedge_iterator);
-  USING(SHalfloop_iterator);
-  USING(SFace_iterator);
-  #undef USING
-
-  std::istream& in; std::ostream& out;
-  bool verbose;
-  CGAL::Object_index<Vertex_iterator>   VI;
-  CGAL::Object_index<Halfedge_iterator> EI;
-  CGAL::Object_index<Halffacet_iterator>    FI;
-  CGAL::Object_index<Volume_iterator>   CI;
-  CGAL::Object_index<SHalfedge_iterator> SEI;
-  CGAL::Object_index<SHalfloop_iterator>   SLI;
-  CGAL::Object_index<SFace_iterator>     SFI;
-  std::vector<Vertex_iterator>   Vertex_of;
-  std::vector<Halfedge_iterator> Edge_of;
-  std::vector<Halffacet_iterator>    Halffacet_of;
-  std::vector<Volume_iterator>   Volume_of;
-  std::vector<SVertex_iterator>  SVertex_of; 
-  std::vector<SHalfedge_iterator> SEdge_of;
-  std::vector<SHalfloop_iterator> SLoop_of;
-  std::vector<SFace_iterator>     SFace_of;
-  long i,vn,en,fn,cn,sen,sln,sfn;
-
 public:
   #define USING(t) typedef typename SNC_structure_::t t
   USING(Vertex_iterator); USING(Vertex_handle);
@@ -101,6 +71,26 @@ public:
   #undef USING
   typedef void* GenPtr;
 
+ private:
+  std::istream& in; std::ostream& out;
+  bool verbose;
+  CGAL::Object_index<Vertex_iterator>   VI;
+  CGAL::Object_index<Halfedge_iterator> EI;
+  CGAL::Object_index<Halffacet_iterator>    FI;
+  CGAL::Object_index<Volume_iterator>   CI;
+  CGAL::Object_index<SHalfedge_iterator> SEI;
+  CGAL::Object_index<SHalfloop_iterator>   SLI;
+  CGAL::Object_index<SFace_iterator>     SFI;
+  std::vector<Vertex_iterator>   Vertex_of;
+  std::vector<Halfedge_iterator> Edge_of;
+  std::vector<Halffacet_iterator>    Halffacet_of;
+  std::vector<Volume_iterator>   Volume_of;
+  std::vector<SVertex_iterator>  SVertex_of; 
+  std::vector<SHalfedge_iterator> SEdge_of;
+  std::vector<SHalfloop_iterator> SLoop_of;
+  std::vector<SFace_iterator>     SFace_of;
+  long i,vn,en,fn,cn,sen,sln,sfn;
+
 public:
   SNC_io_parser(std::istream& is, SNC_structure& W);
   SNC_io_parser(std::ostream& os, SNC_structure& W);
@@ -115,7 +105,7 @@ public:
   { return CI(c,verbose); }
   std::string index(SHalfedge_iterator e) const 
   { return SEI(e,verbose); }
-  std::string index(SHalfloop_handle l) const 
+  std::string index(SHalfloop_iterator l) const 
   { return SLI(l,verbose); }
   std::string index(SFace_iterator f) const 
   { return SFI(f,verbose); }
@@ -127,7 +117,7 @@ public:
     Halffacet_iterator f;
     Volume_iterator c;
     SHalfedge_iterator se;
-    SHalfloop_handle sl;
+    SHalfloop_iterator sl;
     SFace_iterator sf;
     if( assign( v, *o))
       return index(v);
