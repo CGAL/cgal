@@ -177,6 +177,8 @@ struct Cartesian : public Cartesian_base< Cartesian<_FT>, _FT >
     typedef typename Kernel_base::Tetrahedron_3           Tetrahedron_3_base;
     typedef typename Kernel_base::Aff_transformation_3    Aff_transformation_3_base;
   
+    typedef typename Kernel_base::Point_d                 Point_d_base;
+
     // Note: necessary to qualify Point_2 by CGAL:: to disambiguate between
     // Point_2 in the current namespace (nested within CGAL) and
     // CGAL::Point_2< Cartesian<FT> > (which is in the CGAL namespace)

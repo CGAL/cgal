@@ -1,3 +1,6 @@
+Version 3.3.3 (September 17 1999)
+- Added Point_d_base in Cartesian
+
 Version 3.3.2 (September 16 1999)
 - Added missing typename in Cartesian_dynamic_d
 - Added missing typedefs for RT and FT in Cartesian_dynamic_d
