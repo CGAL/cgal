@@ -33,9 +33,9 @@
 
 // typedefs
 typedef  CGAL::Gmpz                       NT;
-typedef  CGAL::Homogeneous<NT>            R;
-typedef  CGAL::Point_2<R>                 Point;
-typedef  CGAL::Min_ellipse_2_traits_2<R>  Traits;
+typedef  CGAL::Homogeneous<NT>            K;
+typedef  CGAL::Point_2<K>                 Point;
+typedef  CGAL::Min_ellipse_2_traits_2<K>  Traits;
 typedef  CGAL::Min_ellipse_2<Traits>      Min_ellipse;
 
 // main

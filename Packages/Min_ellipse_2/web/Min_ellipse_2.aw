@@ -194,7 +194,7 @@ slow -- random shuffling gives these orders a very small probability.
 First, we declare the class template \ccc{Min_ellipse_2}.
 
 @macro<Min_ellipse_2 declaration> = @begin
-    template < class _Traits >
+    template < class Traits_ >
     class Min_ellipse_2;
 @end
 
@@ -206,7 +206,7 @@ case $\me(\emptyset,B)$, see Section~\ref{sec:algo}.
 The class interface looks as follows.
 
 @macro <Min_ellipse_2 interface> = @begin
-    template < class _Traits >
+    template < class Traits_ >
     class Min_ellipse_2 {
       public:
         @<Min_ellipse_2 public interface>
@@ -216,8 +216,8 @@ The class interface looks as follows.
         @<Min_ellipse_2 private data members>
 
         // copying and assignment not allowed!
-        Min_ellipse_2( const Min_ellipse_2<_Traits>&);
-        Min_ellipse_2<_Traits>& operator = ( const Min_ellipse_2<_Traits>&);
+        Min_ellipse_2( const Min_ellipse_2<Traits_>&);
+        Min_ellipse_2<Traits_>& operator = ( const Min_ellipse_2<Traits_>&);
 
     @<dividing line>
 
@@ -273,9 +273,9 @@ section, so we do not comment on it here.
 
 @macro <Min_ellipse_2 public interface> = @begin
     // types
-    typedef           _Traits                           Traits;
-    typedef typename  _Traits::Point                    Point;
-    typedef typename  _Traits::Ellipse                  Ellipse;
+    typedef           Traits_                           Traits;
+    typedef typename  Traits_::Point                    Point;
+    typedef typename  Traits_::Ellipse                  Ellipse;
     typedef typename  std::list<Point>::const_iterator  Point_iterator;
     typedef           const Point *                     Support_point_iterator;
 
@@ -912,24 +912,24 @@ traits class object.
 \subsubsection{I/O}
 
 @macro <Min_ellipse_2 I/O operators declaration> = @begin
-    template < class _Traits >
+    template < class Traits_ >
     std::ostream&
-    operator << ( std::ostream& os, const Min_ellipse_2<_Traits>& me);
+    operator << ( std::ostream& os, const Min_ellipse_2<Traits_>& me);
 
-    template < class _Traits >
+    template < class Traits_ >
     std::istream&
-    operator >> ( std::istream& is,       Min_ellipse_2<_Traits>& me);
+    operator >> ( std::istream& is,       Min_ellipse_2<Traits_>& me);
 @end
 
 @macro <Min_ellipse_2 I/O operators> = @begin
-    template < class _Traits >
+    template < class Traits_ >
     std::ostream&
     operator << ( std::ostream& os,
-                  const Min_ellipse_2<_Traits>& min_ellipse)
+                  const Min_ellipse_2<Traits_>& min_ellipse)
     {
         CGAL_USING_NAMESPACE_STD
 
-        typedef  Min_ellipse_2<_Traits>::Point  Point;
+        typedef  Min_ellipse_2<Traits_>::Point  Point;
         typedef  ostream_iterator<Point>        Os_it;
 
         switch ( CGAL::get_mode( os)) {
@@ -971,9 +971,9 @@ traits class object.
         return( os);
     }
 
-    template < class _Traits >
+    template < class Traits_ >
     std::istream&
-    operator >> ( std::istream& is, CGAL::Min_ellipse_2<_Traits>& min_ellipse)
+    operator >> ( std::istream& is, CGAL::Min_ellipse_2<Traits_>& min_ellipse)
     {
         CGAL_USING_NAMESPACE_STD
         
@@ -986,7 +986,7 @@ traits class object.
 
           case CGAL::IO::ASCII:
           case CGAL::IO::BINARY:
-            typedef  Min_ellipse_2<_Traits>::Point  Point;
+            typedef  Min_ellipse_2<Traits_>::Point  Point;
             typedef  istream_iterator<Point>       Is_it;
             min_ellipse.clear();
             min_ellipse.insert( Is_it( is), Is_it());
@@ -1008,12 +1008,12 @@ traits class object.
     #ifndef CGAL_IO_WINDOW_STREAM_MIN_ELLIPSE_2
     #define CGAL_IO_WINDOW_STREAM_MIN_ELLIPSE_2
 
-    template< class R >
+    template< class Traits_ >
     CGAL::Window_stream&
     operator << ( CGAL::Window_stream &ws,
-                  const CGAL::Min_ellipse_2<R>& min_ellipse)
+                  const CGAL::Min_ellipse_2<Traits_>& min_ellipse)
     {
-        typedef CGAL::Min_ellipse_2<R>::Point_iterator  Point_iterator;
+        typedef CGAL::Min_ellipse_2<Traits_>::Point_iterator  Point_iterator;
 
         Point_iterator  first( min_ellipse.points_begin());
         Point_iterator  last ( min_ellipse.points_end());
@@ -1112,30 +1112,30 @@ pseudo-code above.
 @end
 
 @! ----------------------------------------------------------------------------
-@! Class template Optimisation_ellipse_2<R>
+@! Class template Optimisation_ellipse_2<K>
 @! ----------------------------------------------------------------------------
 
-\subsection{Class template \ccFont Optimisation\_ellipse\_2<R>}
+\subsection{Class template \ccFont Optimisation\_ellipse\_2<K>}
 
 First, we declare the class template \ccc{Optimisation_ellipse_2},
 
 @macro<Optimisation_ellipse_2 declaration> = @begin
-    template < class _R >
+    template < class K_ >
     class Optimisation_ellipse_2;
 @end
 
 The class interface looks as follows.
 
 @macro <Optimisation_ellipse_2 interface> = @begin
-    template < class _R >
+    template < class K_ >
     class Optimisation_ellipse_2 {
         /*
         friend  std::ostream&  operator << CGAL_NULL_TMPL_ARGS (
-            std::ostream&, const Optimisation_ellipse_2<_R>&);
+            std::ostream&, const Optimisation_ellipse_2<K_>&);
         friend  std::istream&  operator >> CGAL_NULL_TMPL_ARGS (
-            std::istream&, Optimisation_ellipse_2<_R> &);
+            std::istream&, Optimisation_ellipse_2<K_> &);
         friend  CGAL::Window_stream& operator << CGAL_NULL_TMPL_ARGS (
-            CGAL::Window_stream&, const Optimisation_ellipse_2<_R>&);
+            CGAL::Window_stream&, const Optimisation_ellipse_2<K_>&);
         */
       public:
         @<Optimisation_ellipse_2 public interface>
@@ -1180,11 +1180,11 @@ section, so we do not comment on it here.
 
 @macro <Optimisation_ellipse_2 public interface> = @begin
     // types
-    typedef           _R                R;
-    typedef  typename _R::RT            RT;
-    typedef  typename _R::FT            FT;
-    typedef           CGAL::Point_2<R>  Point;
-    typedef           CGAL::Conic_2<R>  Conic;
+    typedef           K_                K;
+    typedef  typename K_::RT            RT;
+    typedef  typename K_::FT            FT;
+    typedef           CGAL::Point_2<K>  Point;
+    typedef           CGAL::Conic_2<K>  Conic;
 
     /**************************************************************************
     WORKAROUND: Some compilers are unable to match member functions defined
@@ -1207,8 +1207,8 @@ section, so we do not comment on it here.
     int  number_of_boundary_points()
 
     // equality tests
-    bool  operator == ( const Optimisation_ellipse_2<R>& e) const;
-    bool  operator != ( const Optimisation_ellipse_2<R>& e) const;
+    bool  operator == ( const Optimisation_ellipse_2<K>& e) const;
+    bool  operator != ( const Optimisation_ellipse_2<K>& e) const;
 
     // predicates
     CGAL::Bounded_side  bounded_side( const Point& p) const;
@@ -1240,7 +1240,7 @@ points, if any, are stored directly in \ccc{boundary_point1} and
 @end
 
 Given three or five points, the ellipse is represented as a conic,
-using the class \ccc{Conic_2<R>}. The case with four boundary
+using the class \ccc{Conic_2<K>}. The case with four boundary
 points is the most complicated one, since in general a direct
 representation with one conic has irrational
 coordinates~\cite{gs-seefe-97a}. Therefore the ellipse is represented
@@ -1360,7 +1360,7 @@ points as its boundary points.
         if ( n_boundary_points == 4)
             t = conic1.vol_minimum( dr, ds, dt, du, dv, dw);
         
-        Conic_2<R> c( conic1);
+        Conic_2<K> c( conic1);
         Conic_2< Cartesian<double> > e;
         e.set( CGAL::to_double( c.r()) + t*CGAL::to_double( dr),
                CGAL::to_double( c.s()) + t*CGAL::to_double( ds),
@@ -1378,7 +1378,7 @@ points as its boundary points.
 
 @macro <Optimisation_ellipse_2 equality tests> = @begin
     bool
-    operator == ( const Optimisation_ellipse_2<R>& e) const
+    operator == ( const Optimisation_ellipse_2<K>& e) const
     {
         if ( n_boundary_points != e.n_boundary_points)
             return( false);
@@ -1410,7 +1410,7 @@ points as its boundary points.
     
     inline
     bool
-    operator != ( const Optimisation_ellipse_2<R>& e) const
+    operator != ( const Optimisation_ellipse_2<K>& e) const
     {
         return( ! operator == ( e));
     }
@@ -1503,19 +1503,19 @@ one.
 \subsubsection{I/O}
 
 @macro <Optimisation_ellipse_2 I/O operators declaration> = @begin
-    template < class _R >
+    template < class K_ >
     std::ostream&
-    operator << ( std::ostream&, const CGAL::Optimisation_ellipse_2<_R>&);
+    operator << ( std::ostream&, const CGAL::Optimisation_ellipse_2<K_>&);
 
-    template < class _R >
+    template < class K_ >
     std::istream&
-    operator >> ( std::istream&, CGAL::Optimisation_ellipse_2<_R>&);
+    operator >> ( std::istream&, CGAL::Optimisation_ellipse_2<K_>&);
 @end
 
 @macro <Optimisation_ellipse_2 I/O operators> = @begin
-    template < class _R >
+    template < class K_ >
     std::ostream&
-    operator << ( std::ostream& os, const CGAL::Optimisation_ellipse_2<_R>& e)
+    operator << ( std::ostream& os, const CGAL::Optimisation_ellipse_2<K_>& e)
     {
         const char* const  empty       = "";
         const char* const  pretty_head = "CGAL::Optimisation_ellipse_2( ";
@@ -1567,9 +1567,9 @@ one.
         return( os);
     }
 
-    template < class _R >
+    template < class K_ >
     std::istream&
-    operator >> ( std::istream& is, CGAL::Optimisation_ellipse_2<_R>& e)
+    operator >> ( std::istream& is, CGAL::Optimisation_ellipse_2<K_>& e)
     {
         switch ( CGAL::get_mode( is)) {
 
@@ -1618,10 +1618,10 @@ one.
     #ifndef CGAL_IO_WINDOW_STREAM_OPTIMISATION_ELLIPSE_2
     #define CGAL_IO_WINDOW_STREAM_OPTIMISATION_ELLIPSE_2
 
-    template< class R >
+    template< class Traits_ >
     CGAL::Window_stream&
     operator << ( CGAL::Window_stream &ws,
-                  const CGAL::Optimisation_ellipse_2<R>& oe)
+                  const CGAL::Optimisation_ellipse_2<Traits_>& oe)
     {
         switch ( oe.n_boundary_points) {
           case 0:
@@ -1653,19 +1653,19 @@ one.
 
 
 @! ----------------------------------------------------------------------------
-@! Class template Min_ellipse_2_traits_2<R>
+@! Class template Min_ellipse_2_traits_2<K>
 @! ----------------------------------------------------------------------------
 
-\subsection{Class template \ccFont Min\_ellipse\_2\_traits\_2<R>}
+\subsection{Class template \ccFont Min\_ellipse\_2\_traits\_2<K>}
 
 First, we declare the class templates \ccc{Min_ellipse_2} and
 \ccc{Min_ellipse_2_traits_2}.
 
 @macro<Min_ellipse_2_traits_2 declarations> = @begin
-    template < class _Traits >
+    template < class Traits_ >
     class Min_ellipse_2;
 
-    template < class _R >
+    template < class K_ >
     class Min_ellipse_2_traits_2;
 @end
 
@@ -1678,25 +1678,25 @@ it. Since the algorithm needs to access and modify the current ellipse,
 it is declared \ccc{friend}.
 
 @macro <Min_ellipse_2_traits_2 interface and implementation> = @begin
-    template < class _R >
+    template < class K_ >
     class Min_ellipse_2_traits_2 {
       public:
         // types
-        typedef  _R                               R;
-        typedef  CGAL::Point_2<R>                 Point;
-        typedef  CGAL::Optimisation_ellipse_2<R>  Ellipse;
+        typedef  K_                               K;
+        typedef  CGAL::Point_2<K>                 Point;
+        typedef  CGAL::Optimisation_ellipse_2<K>  Ellipse;
 
     private:
         // data members
         Ellipse  ellipse;                                // current ellipse
 
         // friends
-        friend  class CGAL::Min_ellipse_2< CGAL::Min_ellipse_2_traits_2< R > >;
+        friend  class CGAL::Min_ellipse_2< CGAL::Min_ellipse_2_traits_2<K> >;
 
       public:
         // creation (use default implementations)
         // Min_ellipse_2_traits_2( );
-        // Min_ellipse_2_traits_2( Min_ellipse_2_traits_2<R> const&);
+        // Min_ellipse_2_traits_2( Min_ellipse_2_traits_2<K> const&);
     };
 @end   
 
@@ -1711,13 +1711,13 @@ First, we declare the class templates \ccc{Min_ellipse_2},
 \ccc{_Min_ellipse_2_adapterC2__Ellipse}.
 
 @macro<Min_ellipse_2_adapterC2 declarations> = @begin
-    template < class _Traits >
+    template < class Traits_ >
     class Min_ellipse_2;
 
-    template < class _PT, class _DA >
+    template < class PT_, class DA_ >
     class Min_ellipse_2_adapterC2;
 
-    template < class _PT, class _DA >
+    template < class PT_, class DA_ >
     class _Min_ellipse_2_adapterC2__Ellipse;
 @end
 
@@ -1731,12 +1731,12 @@ it. Since the algorithm needs to access and modify the current ellipse,
 it is declared \ccc{friend}.
 
 @macro <Min_ellipse_2_adapterC2 interface and implementation> = @begin
-    template < class _PT, class _DA >
+    template < class PT_, class DA_ >
     class Min_ellipse_2_adapterC2 {
       public:
         // types
-        typedef  _PT  PT;
-        typedef  _DA  DA;
+        typedef  PT_  PT;
+        typedef  DA_  DA;
 
         // nested types
         typedef  PT                                             Point;
@@ -1772,7 +1772,7 @@ it is declared \ccc{friend}.
     CGAL::Orientation
     orientation( const Point& p, const Point& q, const Point& r) const
     {
-        typedef  typename _DA::FT  FT;
+        typedef  typename DA_::FT  FT;
 
         FT  px;
         FT  py;
@@ -1794,23 +1794,23 @@ it is declared \ccc{friend}.
 \subsubsection{Nested Type \ccFont Ellipse}
 
 @macro <Min_ellipse_2_adapterC2 nested type `Ellipse'> = @begin
-    template < class _PT, class _DA >
+    template < class PT_, class DA_ >
     std::ostream&  operator << ( std::ostream& os,
-        const _Min_ellipse_2_adapterC2__Ellipse<_PT,_DA>& c);
+        const _Min_ellipse_2_adapterC2__Ellipse<PT_,DA_>& c);
 
-    template < class _PT, class _DA >
+    template < class PT_, class DA_ >
     std::istream&  operator >> ( std::istream& is,
-        _Min_ellipse_2_adapterC2__Ellipse<_PT,_DA>& c);
+        _Min_ellipse_2_adapterC2__Ellipse<PT_,DA_>& c);
 
-    template < class _PT, class _DA >
+    template < class PT_, class DA_ >
     class _Min_ellipse_2_adapterC2__Ellipse {
       public:
         // typedefs
-        typedef  _PT  PT;
-        typedef  _DA  DA;
+        typedef  PT_  PT;
+        typedef  DA_  DA;
 
         typedef           ConicCPA2< PT, DA>  CT;
-        typedef  typename _DA::FT                  FT;
+        typedef  typename DA_::FT                  FT;
 
       private:
         // data members
@@ -1821,11 +1821,11 @@ it is declared \ccc{friend}.
 
         friend
         std::ostream&  operator << CGAL_NULL_TMPL_ARGS ( std::ostream& os,
-            const _Min_ellipse_2_adapterC2__Ellipse<_PT,_DA>& c);
+            const _Min_ellipse_2_adapterC2__Ellipse<PT_,DA_>& c);
 
         friend
         std::istream&  operator >> CGAL_NULL_TMPL_ARGS ( std::istream& is,
-            _Min_ellipse_2_adapterC2__Ellipse<_PT,_DA>& c);
+            _Min_ellipse_2_adapterC2__Ellipse<PT_,DA_>& c);
 
       public:
         // types
@@ -1957,7 +1957,7 @@ it is declared \ccc{friend}.
         // additional operations for checking
         bool
         operator == (
-            const CGAL::_Min_ellipse_2_adapterC2__Ellipse<_PT,_DA>& e) const
+            const CGAL::_Min_ellipse_2_adapterC2__Ellipse<PT_,DA_>& e) const
         {
             if ( n_boundary_points != e.n_boundary_points)
                 return( false);
@@ -1989,17 +1989,17 @@ it is declared \ccc{friend}.
 
         bool
         operator != (
-            const CGAL::_Min_ellipse_2_adapterC2__Ellipse<_PT,_DA>& e) const
+            const CGAL::_Min_ellipse_2_adapterC2__Ellipse<PT_,DA_>& e) const
         {
             return( ! ( *this == e));
         }
     };
 
     // I/O
-    template < class _PT, class _DA >
+    template < class PT_, class DA_ >
     std::ostream&
     operator << ( std::ostream& os,
-                  const CGAL::_Min_ellipse_2_adapterC2__Ellipse<_PT,_DA>& e)
+                  const CGAL::_Min_ellipse_2_adapterC2__Ellipse<PT_,DA_>& e)
     {
         const char* const  empty       = "";
         const char* const  pretty_head =
@@ -2052,10 +2052,10 @@ it is declared \ccc{friend}.
         return( os);
     }
 
-    template < class _PT, class _DA >
+    template < class PT_, class DA_ >
     std::istream&
     operator >> ( std::istream& is,
-                  CGAL::_Min_ellipse_2_adapterC2__Ellipse<_PT,_DA>& e)
+                  CGAL::_Min_ellipse_2_adapterC2__Ellipse<PT_,DA_>& e)
     {
         switch ( CGAL::get_mode( is)) {
 
@@ -2107,13 +2107,13 @@ First, we declare the class templates \ccc{Min_ellipse_2},
 \ccc{_Min_ellipse_2_adapterH2__Ellipse}.
 
 @macro<Min_ellipse_2_adapterH2 declarations> = @begin
-    template < class _Traits >
+    template < class Traits_ >
     class Min_ellipse_2;
 
-    template < class _PT, class _DA >
+    template < class PT_, class DA_ >
     class Min_ellipse_2_adapterH2;
 
-    template < class _PT, class _DA >
+    template < class PT_, class DA_ >
     class _Min_ellipse_2_adapterH2__Ellipse;
 @end
 
@@ -2127,12 +2127,12 @@ it. Since the algorithm needs to access and modify the current ellipse,
 it is declared \ccc{friend}.
 
 @macro <Min_ellipse_2_adapterH2 interface and implementation> = @begin
-    template < class _PT, class _DA >
+    template < class PT_, class DA_ >
     class Min_ellipse_2_adapterH2 {
       public:
         // types
-        typedef  _PT  PT;
-        typedef  _DA  DA;
+        typedef  PT_  PT;
+        typedef  DA_  DA;
 
         // nested types
         typedef  PT                                             Point;
@@ -2168,7 +2168,7 @@ it is declared \ccc{friend}.
     CGAL::Orientation
     orientation( const Point& p, const Point& q, const Point& r) const
     {
-        typedef  typename _DA::RT  RT;
+        typedef  typename DA_::RT  RT;
 
         RT  phx;
         RT  phy;
@@ -2194,25 +2194,25 @@ it is declared \ccc{friend}.
 \subsubsection{Nested Type \ccFont Ellipse}
 
 @macro <Min_ellipse_2_adapterH2 nested type `Ellipse'> = @begin
-    template < class _PT, class _DA >
+    template < class PT_, class DA_ >
     std::ostream&
     operator << ( std::ostream&,
-                  const CGAL::_Min_ellipse_2_adapterH2__Ellipse<_PT,_DA>&);
+                  const CGAL::_Min_ellipse_2_adapterH2__Ellipse<PT_,DA_>&);
 
-    template < class _PT, class _DA >
+    template < class PT_, class DA_ >
     std::istream&
     operator >> ( std::istream&,
-                  CGAL::_Min_ellipse_2_adapterH2__Ellipse<_PT,_DA>&);
+                  CGAL::_Min_ellipse_2_adapterH2__Ellipse<PT_,DA_>&);
 
-    template < class _PT, class _DA >
+    template < class PT_, class DA_ >
     class _Min_ellipse_2_adapterH2__Ellipse {
       public:
         // typedefs
-        typedef  _PT  PT;
-        typedef  _DA  DA;
+        typedef  PT_  PT;
+        typedef  DA_  DA;
 
         typedef           CGAL::ConicHPA2< PT, DA>  CT;
-        typedef  typename _DA::RT                   RT;
+        typedef  typename DA_::RT                   RT;
 
       private:
         // data members
@@ -2222,10 +2222,10 @@ it is declared \ccc{friend}.
         RT   dr, ds, dt, du, dv, dw;            // the gradient vector
 
         friend  std::ostream&  operator << CGAL_NULL_TMPL_ARGS ( std::ostream&,
-            const _Min_ellipse_2_adapterH2__Ellipse<_PT,_DA>&);
+            const _Min_ellipse_2_adapterH2__Ellipse<PT_,DA_>&);
 
         friend  std::istream&  operator >> CGAL_NULL_TMPL_ARGS ( std::istream&,
-            _Min_ellipse_2_adapterH2__Ellipse<_PT,_DA>&);
+            _Min_ellipse_2_adapterH2__Ellipse<PT_,DA_>&);
 
       public:
         // types
@@ -2357,7 +2357,7 @@ it is declared \ccc{friend}.
         // additional operations for checking
         bool
         operator == (
-            const CGAL::_Min_ellipse_2_adapterH2__Ellipse<_PT,_DA>& e) const
+            const CGAL::_Min_ellipse_2_adapterH2__Ellipse<PT_,DA_>& e) const
         {
             if ( n_boundary_points != e.n_boundary_points)
                 return( false);
@@ -2389,17 +2389,17 @@ it is declared \ccc{friend}.
 
         bool
         operator != (
-            const CGAL::_Min_ellipse_2_adapterH2__Ellipse<_PT,_DA>& e) const
+            const CGAL::_Min_ellipse_2_adapterH2__Ellipse<PT_,DA_>& e) const
         {
             return( ! ( *this == e));
         }
     };
 
     // I/O
-    template < class _PT, class _DA >
+    template < class PT_, class DA_ >
     std::ostream&
     operator << ( std::ostream& os,
-                  const CGAL::_Min_ellipse_2_adapterH2__Ellipse<_PT,_DA>& e)
+                  const CGAL::_Min_ellipse_2_adapterH2__Ellipse<PT_,DA_>& e)
     {
         const char* const  empty       = "";
         const char* const  pretty_head =
@@ -2452,10 +2452,10 @@ it is declared \ccc{friend}.
         return( os);
     }
 
-    template < class _PT, class _DA >
+    template < class PT_, class DA_ >
     std::istream&
     operator >> ( std::istream& is,
-                  CGAL::_Min_ellipse_2_adapterH2__Ellipse<_PT,_DA>& e)
+                  CGAL::_Min_ellipse_2_adapterH2__Ellipse<PT_,DA_>& e)
     {
         switch ( CGAL::get_mode( is)) {
 
@@ -2531,10 +2531,10 @@ number type \ccc{Gmpz} or \ccc{integer}.
        typedef  CGAL::Quotient< CGAL::Gmpz >       Ft;
     #endif
 
-    typedef  CGAL::Cartesian< Ft >                 RepC;
-    typedef  CGAL::Homogeneous< Rt >               RepH;
-    typedef  CGAL::Min_ellipse_2_traits_2< RepC >  TraitsC;
-    typedef  CGAL::Min_ellipse_2_traits_2< RepH >  TraitsH;
+    typedef  CGAL::Cartesian< Ft >                 KerC;
+    typedef  CGAL::Homogeneous< Rt >               KerH;
+    typedef  CGAL::Min_ellipse_2_traits_2< KerC >  TraitsC;
+    typedef  CGAL::Min_ellipse_2_traits_2< KerH >  TraitsH;
 @end
 
 The command line option \ccc{-verbose} enables verbose output.
@@ -2810,25 +2810,25 @@ representation) and corresponding data accessors.
       public:
         typedef  ::Ft  FT;
       private:
-        FT _x;
-        FT _y;
+        FT x_;
+        FT y_;
       public:
         MyPointC2( ) { }
-        MyPointC2( const FT& x, const FT& y) : _x( x), _y( y) { }
+        MyPointC2( const FT& x, const FT& y) : x_( x), y_( y) { }
 
-        const FT&  x( ) const { return( _x); }
-        const FT&  y( ) const { return( _y); }
+        const FT&  x( ) const { return( x_); }
+        const FT&  y( ) const { return( y_); }
 
         bool
         operator == ( const MyPointC2& p) const
         {
-            return( ( _x == p._x) && ( _y == p._y));
+            return( ( x_ == p.x_) && ( y_ == p.y_));
         }
 
         bool
         operator != ( const MyPointC2& p) const
         {
-            return( ( _x != p._x) || ( _y != p._y));
+            return( ( x_ != p.x_) || ( y_ != p.y_));
         }
 
         friend
@@ -2841,19 +2841,21 @@ representation) and corresponding data accessors.
     std::ostream&
     operator << ( std::ostream& os, const MyPointC2& p)
     {
-        return( os << p._x << ' ' << p._y);
+        return( os << p.x_ << ' ' << p.y_);
     }
 
     std::istream&
     operator >> ( std::istream& is, MyPointC2& p)
     {
-        return( is >> p._x >> p._y);
+        return( is >> p.x_ >> p.y_);
     }
 
     // 2D Cartesian point class data accessor
     class MyPointC2DA {
       public:
         typedef  ::Ft  FT;
+
+	MyPointC2DA( ) { }
 
         const FT&  get_x( const MyPointC2& p) const { return( p.x()); }
         const FT&  get_y( const MyPointC2& p) const { return( p.y()); }
@@ -2883,28 +2885,28 @@ representation) and corresponding data accessors.
       public:
         typedef  ::Rt  RT;
       private:
-        RT _hx;
-        RT _hy;
-        RT _hw;
+        RT hx_;
+        RT hy_;
+        RT hw_;
       public:
         MyPointH2( ) { }
         MyPointH2( const RT& hx, const RT& hy, const RT& hw = RT( 1))
-            : _hx( hx), _hy( hy), _hw( hw) { }
+            : hx_( hx), hy_( hy), hw_( hw) { }
 
-        const RT&  hx( ) const { return( _hx); }
-        const RT&  hy( ) const { return( _hy); }
-        const RT&  hw( ) const { return( _hw); }
+        const RT&  hx( ) const { return( hx_); }
+        const RT&  hy( ) const { return( hy_); }
+        const RT&  hw( ) const { return( hw_); }
 
         bool
         operator == ( const MyPointH2& p) const
         {
-            return( ( _hx*p._hw == p._hx*_hw) && ( _hy*p._hw == p._hy*_hw));
+            return( ( hx_*p.hw_ == p.hx_*hw_) && ( hy_*p.hw_ == p.hy_*hw_));
         }
 
         bool
         operator != ( const MyPointH2& p) const
         {
-            return( ( _hx*p._hw != p._hx*_hw) || ( _hy*p._hw != p._hy*_hw));
+            return( ( hx_*p.hw_ != p.hx_*hw_) || ( hy_*p.hw_ != p.hy_*hw_));
         }
 
         friend
@@ -2917,19 +2919,21 @@ representation) and corresponding data accessors.
     std::ostream&
     operator << ( std::ostream& os, const MyPointH2& p)
     {
-        return( os << p._hx << ' ' << p._hy << ' ' << p._hw);
+        return( os << p.hx_ << ' ' << p.hy_ << ' ' << p.hw_);
     }
 
     std::istream&
     operator >> ( std::istream& is, MyPointH2& p)
     {
-        return( is >> p._hx >> p._hy >> p._hw);
+        return( is >> p.hx_ >> p.hy_ >> p.hw_);
     }
     
     // 2D homogeneous point class data accessor
     class MyPointH2DA {
       public:
         typedef  ::Rt  RT;
+
+	MyPointH2DA( ) { }
 
         const RT&  get_hx( const MyPointH2& p) const { return( p.hx()); }
         const RT&  get_hy( const MyPointH2& p) const { return( p.hy()); }

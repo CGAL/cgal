@@ -2,7 +2,7 @@
 % =============================================================================
 % The CGAL Reference Manual
 % Chapter: Geometric Optimisation
-% Class  : CGAL::Min_ellipse_2_traits_2<R>
+% Class  : CGAL::Min_ellipse_2_traits_2<K>
 % -----------------------------------------------------------------------------
 % file   : doc_tex/basic/Optimisation/..._ref/Min_ellipse_2_traits_2.tex
 % package: Min_ellipse_2
@@ -14,7 +14,7 @@
 
 \ccAutoIndexingOff
 
-\begin{ccRefClass}{Min_ellipse_2_traits_2<R>}
+\begin{ccRefClass}{Min_ellipse_2_traits_2<K>}
 \ccIndexTraitsClassBegin{Min_ellipse_2_traits_2}{Min_ellipse_2}{}
 
 \ccAutoIndexingOn
@@ -30,20 +30,20 @@ using the two-di\-men\-sional \cgal\ kernel.
 % -----------------------------------------------------------------------------
 \ccRequirements
 
-The template parameter \ccc{R} is a model for \ccc{Kernel}.
+The template parameter \ccc{K} is a model for \ccc{Kernel}.
 
 % -----------------------------------------------------------------------------
 \ccIsModel
 
-\ccRefConceptPage{Min_ellipse_2_traits}
+\ccRefConceptPage{MinEllipse2Traits}
 
 % -----------------------------------------------------------------------------
 \ccTypes
 
 \ccSaveThreeColumns
-\ccSetTwoColumns{Min_ellipse_2_traits_2<R>:: Ellipse}{}
+\ccSetTwoColumns{Min_ellipse_2_traits_2<K>:: Ellipse}{}
 
-\ccNestedType{Point  }{typedef to \ccc{R::Point_2}.}
+\ccNestedType{Point  }{typedef to \ccc{K::Point_2}.}
 \ccNestedType{Ellipse}{internal type.}
 
 % -----------------------------------------------------------------------------
@@ -52,13 +52,13 @@ The template parameter \ccc{R} is a model for \ccc{Kernel}.
 
 \ccConstructor{ Min_ellipse_2_traits_2( );}{default constructor.}
 \ccConstructor{ Min_ellipse_2_traits_2(
-                    const Min_ellipse_2_traits_2<R>&);}{copy constructor.}
+                    const Min_ellipse_2_traits_2<K>&);}{copy constructor.}
 
 % -----------------------------------------------------------------------------
 \ccSeeAlso
 
 \ccRefIdfierPage{CGAL::Min_ellipse_2<Traits>}\\[1ex]
-\ccRefConceptPage{Min_ellipse_2_traits}
+\ccRefConceptPage{MinEllipse2Traits}
 
 % -----------------------------------------------------------------------------
 

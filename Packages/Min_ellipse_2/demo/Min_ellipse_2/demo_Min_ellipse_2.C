@@ -32,9 +32,6 @@
 // contain all points nor be the smallest one.
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-// needs LEDA
-#ifdef CGAL_USE_LEDA
-
 // includes
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
@@ -43,9 +40,9 @@
 #include <CGAL/IO/Window_stream.h>
 
 // typedefs
-typedef  CGAL::Cartesian< double >          R;
-typedef  CGAL::Point_2< R >                 Point;
-typedef  CGAL::Min_ellipse_2_traits_2< R >  Traits;
+typedef  CGAL::Cartesian< double >          K;
+typedef  CGAL::Point_2< K >                 Point;
+typedef  CGAL::Min_ellipse_2_traits_2< K >  Traits;
 typedef  CGAL::Min_ellipse_2< Traits >      Min_ellipse;
 
 // main
@@ -64,7 +61,6 @@ main( int, char**)
     // open window
     CGAL::Window_stream ws( "CGAL Demo: Smallest Enclosing Ellipse in 2D");
     ws.set_icon_label("CGAL");
-    ws.set_icon_pixrect( ws.create_pixrect( CGAL::esprit_logo));
     ws.set_node_width( 5);
     ws.init( -100.0, 100.0, -100.0);
     ws.display();
@@ -97,21 +93,5 @@ main( int, char**)
 
     return( 0);
 }
-
-#else
-// no LEDA available
-
-#include <iostream>
-
-int
-main( int, char**)
-{
-    using namespace std;
-
-    cerr << "This demo program needs LEDA!" << endl;
-
-    return( 0);
-}
-#endif // CGAL_USE_LEDA
 
 // ===== EOF ==================================================================
