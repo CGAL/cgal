@@ -378,7 +378,7 @@ QColor Qt_widget::backgroundColor() const
 inline
 void Qt_widget::setBackgroundColor(const QColor& c)
 {
-  QWidget::setBackgroundColor(c);
+  QWidget::setPaletteBackgroundColor(c);
   get_painter().setBackgroundColor(c);
   clear();
 }

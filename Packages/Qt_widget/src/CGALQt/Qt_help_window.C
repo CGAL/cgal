@@ -146,8 +146,8 @@ Qt_help_window::Qt_help_window( const QString& home_, const QString& _path,
   menuBar()->insertItem("&File", file);
   menuBar()->insertItem("&Go", go); 
 
-  QToolBar* toolbar = new QToolBar( this );
-  addToolBar( toolbar, "Toolbar");
+  QToolBar* toolbar = new QToolBar( "Toolbar", this, this);
+
   QToolButton* button;
 
 

@@ -1,3 +1,9 @@
+22 March 2004 Radu Ursu
+- removed obsolete functions of Qt3 from Qt_widget
+  - removed QMainWindow::addToolBar
+  - removed QWidget::setBackgroundColor
+- Qt_widget still has the interface as setBackgroundColor but makes a call to QWidget::setPaletteBackgroundColor(QColor &)
+
 8 March 2004 Sylvain Pion
 - IO/Qt_widget_Conic_2.h : make more robust against the case where RT is an
   integral type.
