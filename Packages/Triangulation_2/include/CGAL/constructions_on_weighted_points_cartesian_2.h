@@ -1,3 +1,27 @@
+// ======================================================================
+//
+// Copyright (c) 1997 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : 
+// release_date  : 
+//
+// file          : constructions_on_weighted_points_cartesian_2.h
+// package       : Triangulation
+// source        : $RCSfile$
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Julia Flototto, Mariette Yvinec
+//
+// coordinator   : Mariette Yvinec 
+//
+// ======================================================================
+
 #ifndef CGAL_CONSTRUCTIONS_ON_WEIGHTED_POINTS_CARTESIAN_2_H
 #define CGAL_CONSTRUCTIONS_ON_WEIGHTED_POINTS_CARTESIAN_2_H
 
