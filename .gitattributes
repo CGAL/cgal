@@ -1436,28 +1436,19 @@ Packages/Polyhedron/examples/Polyhedron/corner_with_sharp_edge.off -text
 Packages/Polyhedron/examples/Polyhedron/cross.off -text
 Packages/Qt_widget/demo/Qt_widget/Alpha_shapes_2/alpha_shape.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Alpha_shapes_2/data/m30f.jpg svneol=native#unset
-Packages/Qt_widget/demo/Qt_widget/Alpha_shapes_2/demo.dsp -text
 Packages/Qt_widget/demo/Qt_widget/Convex_Hull_2/convex_hull_2.vcproj -text
-Packages/Qt_widget/demo/Qt_widget/Convex_Hull_2/demo.dsp -text
-Packages/Qt_widget/demo/Qt_widget/Largest_empty_rect_2/demo.dsp -text
 Packages/Qt_widget/demo/Qt_widget/Largest_empty_rect_2/largest_empty_rect_2.vcproj -text
-Packages/Qt_widget/demo/Qt_widget/Max_k-gon/demo.dsp -text
 Packages/Qt_widget/demo/Qt_widget/Max_k-gon/max_k-gon.vcproj -text
-Packages/Qt_widget/demo/Qt_widget/Min_ellipse_2/demo.dsp -text
 Packages/Qt_widget/demo/Qt_widget/Min_ellipse_2/min_ellipse_2.vcproj -text
-Packages/Qt_widget/demo/Qt_widget/Min_quadrilateral_2/demo.dsp -text
 Packages/Qt_widget/demo/Qt_widget/Min_quadrilateral_2/min_quadrilateral_2.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Nef_2/nef_2.vcproj -text
-Packages/Qt_widget/demo/Qt_widget/Partition_2/demo.dsp -text
 Packages/Qt_widget/demo/Qt_widget/Partition_2/partition_2.vcproj -text
-Packages/Qt_widget/demo/Qt_widget/Triangulation_2/demo.dsp -text
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2/help/conflict_zone.gif svneol=native#unset
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2/help/conflict_zone_after.gif svneol=native#unset
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2/help/input_line_layer.gif svneol=native#unset
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2/help/input_point_layer.gif svneol=native#unset
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2/help/movedelete_point_layer.gif svneol=native#unset
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2/triangulation_2.vcproj -text
-Packages/Qt_widget/demo/Qt_widget/Triangulation_2_constrained/demo.dsp -text
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2_constrained/help/input_point_layer.gif svneol=native#unset
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2_constrained/help/input_polygon_layer.gif svneol=native#unset
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2_constrained/help/input_segment_layer.gif svneol=native#unset
@@ -1549,7 +1540,6 @@ Packages/Qt_widget/include/CGAL/IO/pixmaps/ymonotone.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/zoom_in.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/zoom_in_rect.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/zoom_out.xpm -text
-Packages/Qt_widget/src/CGALQt/CGALQt.dsp -text
 Packages/Qt_widget/src/CGALQt/CGALQt.vcproj -text
 Packages/SearchStructures/doc_tex/SearchStructures/d-range.eps -text
 Packages/SearchStructures/doc_tex/SearchStructures/d-range.gif -text svneol=unset#unset
