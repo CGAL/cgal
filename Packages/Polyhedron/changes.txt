@@ -1,6 +1,10 @@
 Polyhedron Package: Release changes:
 ---------------------------------------------------------------------
 
+3.27 (11 Apr 2002)
+
+     - resubmission.
+
 3.26 (09 Apr 2002)
 
      - Made 'hds' a protected member instead of private.
