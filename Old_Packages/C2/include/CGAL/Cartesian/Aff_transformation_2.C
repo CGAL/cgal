@@ -26,7 +26,7 @@
 #define CGAL_CTAG
 #endif
 
-#ifdef _MSC_VER
+#ifdef CGAL_CFG_TYPENAME_BUG
 #define typename
 #endif
 
@@ -175,7 +175,7 @@ operator<<(std::ostream& os, const Aff_transformationC2<R CGAL_CTAG>& t)
 
 CGAL_END_NAMESPACE
 
-#ifdef _MSC_VER
+#ifdef CGAL_CFG_TYPENAME_BUG
 #undef typename
 #endif
 

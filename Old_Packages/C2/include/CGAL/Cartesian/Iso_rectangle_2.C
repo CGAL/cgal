@@ -26,7 +26,7 @@
 #define CGAL_CTAG
 #endif
 
-#ifdef _MSC_VER
+#ifdef CGAL_CFG_TYPENAME_BUG
 #define typename
 #endif
 
@@ -315,7 +315,7 @@ operator>>(std::istream &is, Iso_rectangleC2<R CGAL_CTAG> &r)
 
 CGAL_END_NAMESPACE
 
-#ifdef _MSC_VER
+#ifdef CGAL_CFG_TYPENAME_BUG
 #undef typename
 #endif
 

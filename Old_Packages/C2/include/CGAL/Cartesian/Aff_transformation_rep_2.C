@@ -25,7 +25,7 @@
 #ifndef CGAL_CARTESIAN_AFF_TRANSFORMATION_REP_2_C
 #define CGAL_CARTESIAN_AFF_TRANSFORMATION_REP_2_C
 
-#ifdef _MSC_VER
+#ifdef CGAL_CFG_TYPENAME_BUG
 #define typename
 #endif
 
@@ -111,7 +111,7 @@ compose(const Aff_transformation_repC2<R> &t) const
 
 CGAL_END_NAMESPACE
 
-#ifdef _MSC_VER
+#ifdef CGAL_CFG_TYPENAME_BUG
 #undef typename
 #endif
 
