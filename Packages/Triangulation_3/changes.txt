@@ -1,3 +1,6 @@
+Version 1.114 (15 May 02)
+- bug fix in the doc of the Delaunay traits concept
+
 Version 1.113 (7 May 02)
 - bug fix in deprecated version of incident_vertices()
 
