@@ -33,11 +33,11 @@
 #include <CGAL/Point_2.h> 
 #include <CGAL/Line_2_Line_2_intersection.h> 
 #include <CGAL/squared_distance_2.h> 
-#ifndef _MSC_VER
-#include <CGAL/Nef_2/Polynomial.h>
-#else
+#if (defined( _MSC_VER) && (_MSC_VER <= 1200))
 #include <CGAL/Nef_2/Polynomial_MSC.h>
 #define Polynomial Polynomial_MSC
+#else
+#include <CGAL/Nef_2/Polynomial.h>
 #endif
 #undef _DEBUG
 #define _DEBUG 5

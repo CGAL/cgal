@@ -29,7 +29,7 @@
 #ifndef CGAL_NEF_POLYHEDRON_2_H
 #define CGAL_NEF_POLYHEDRON_2_H
 
-#if defined(_MSC_VER) || defined(__BORLANDC__)
+#if (defined(_MSC_VER) && (_MSC_VER <= 1200)) || defined(__BORLANDC__)
 #define CGAL_SIMPLE_HDS
 #endif
 
@@ -343,7 +343,7 @@ public:
   { Base::operator=(N1); return (*this); }
   ~Nef_polyhedron_2() {}
 
-  #ifndef _MSC_VER
+  #if ! defined(_MSC_VER) || _MSC_VER >= 1300
 
   template <class Forward_iterator>
   Nef_polyhedron_2(Forward_iterator first, Forward_iterator beyond, 

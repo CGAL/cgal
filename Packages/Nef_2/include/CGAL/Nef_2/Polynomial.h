@@ -38,7 +38,8 @@
 #define _DEBUG 3
 #include <CGAL/Nef_2/debug.h>
 
-#if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__SUNPRO_CC)
+#if (defined(_MSC_VER) && (_MSC_VER <= 1200)) || \
+     defined(__BORLANDC__) || defined(__SUNPRO_CC)
 #include <CGAL/Nef_2/vector_MSC.h>
 #define CGAL_SIMPLE_NEF_INTERFACE
 #define SNIHACK ,char,char
@@ -147,7 +148,7 @@ template <class NT>   /*CGAL_KERNEL_MEDIUM_INLINE*/ Polynomial<NT>
 template <class NT> inline Polynomial<NT>
   operator / (const Polynomial<NT>&, const Polynomial<NT>&);
 
-#ifndef _MSC_VER 
+#if ! defined(_MSC_VER) || _MSC_VER >= 1300
 template<class NT> /*CGAL_KERNEL_INLINE*/ CGAL::Sign 
   sign(const Polynomial<NT>& p);
 #endif // collides with global CGAL sign
@@ -164,7 +165,7 @@ template<class NT>
 template <class NT>  
   std::istream& operator >> (std::istream& is, Polynomial<NT>& p);
 
-#ifndef _MSC_VER
+#if ! defined(_MSC_VER) || _MSC_VER >= 1300
   // lefthand side
 template<class NT> inline Polynomial<NT> operator + 
   (const NT& num, const Polynomial<NT>& p2);
@@ -1414,13 +1415,13 @@ template <class NT> /*CGAL_KERNEL_INLINE*/ bool operator >=
   (const Polynomial<NT>& p1, const Polynomial<NT>& p2)
   { return ( (p1-p2).sign() != CGAL::NEGATIVE ); }    
 
-#ifndef _MSC_VER 
+#if ! defined(_MSC_VER) || _MSC_VER >= 1300
 template <class NT> /*CGAL_KERNEL_INLINE*/ CGAL::Sign 
   sign(const Polynomial<NT>& p)
   { return p.sign(); }
 #endif // collides with global CGAL sign
 
-#ifndef _MSC_VER
+#if ! defined(_MSC_VER) || _MSC_VER >= 1300
 //------------------------------------------------------------------
 // SPECIALIZE_FUNCTION(NT,int double) START
 // SPECIALIZING inline to :

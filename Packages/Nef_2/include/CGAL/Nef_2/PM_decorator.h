@@ -696,7 +696,7 @@ void clone(const Plane_map& H) const;
   \precond |H.check_integrity_and_topological_planarity()| and 
   |P| is empty.}*/
 
-#ifndef _MSC_VER
+#if ! defined(_MSC_VER) || _MSC_VER >= 1300
 
 template <typename LINKDA>
 void clone_skeleton(const Plane_map& H, const LINKDA& L) const;
@@ -880,7 +880,7 @@ void PM_decorator<HDS>::clone(const HDS& H) const
   CGAL_assertion((check_integrity_and_topological_planarity(),1));
 }
 
-#ifndef _MSC_VER
+#if ! defined(_MSC_VER) || _MSC_VER >= 1300
 
 template <typename HDS>
 template <typename LINKDA>

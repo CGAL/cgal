@@ -41,7 +41,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#ifndef _MSC_VER
+#if ! defined(_MSC_VER) || _MSC_VER >= 1300
 
 template <typename Iter, typename Move>
 inline CGAL::Circulator_tag  

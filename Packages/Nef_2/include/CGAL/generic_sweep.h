@@ -31,7 +31,7 @@
 /*{\Moptions print_title=yes}*/
 /*{\Moptions section=subsection}*/
 
-#ifndef _MSC_VER
+#if (! defined( _MSC_VER) || _MSC_VER >= 1300)
 #include <CGAL/sweep_observer.h>
 
 namespace CGAL {
