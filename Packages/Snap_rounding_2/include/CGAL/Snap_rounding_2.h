@@ -492,13 +492,15 @@ bool Hot_Pixel<Rep_>::intersect_top(Segment_2 &seg) const
                Snap_rounding_2<Rep_>::get_direction() ==
                Snap_rounding_2<Rep_>::DOWN_LEFT ||
                Snap_rounding_2<Rep_>::get_direction() ==
-               Snap_rounding_2<Rep_>::DOWN_RIGHT) && tar_y != y + pixel_size / 2.0 ||
+               Snap_rounding_2<Rep_>::DOWN_RIGHT) && tar_y != y +
+               pixel_size / 2.0 ||
                (Snap_rounding_2<Rep_>::get_direction() ==
                Snap_rounding_2<Rep_>::UP ||
                Snap_rounding_2<Rep_>::get_direction() ==
                Snap_rounding_2<Rep_>::UP_LEFT ||
                Snap_rounding_2<Rep_>::get_direction() ==
-               Snap_rounding_2<Rep_>::UP_RIGHT) && sou_y != y + pixel_size / 2.0);
+               Snap_rounding_2<Rep_>::UP_RIGHT) && sou_y != y +
+               pixel_size / 2.0);
     } else
     return(false);
   }
@@ -607,11 +609,15 @@ void Snap_rounding_2<Rep_>::find_hot_pixels_and_create_kd_trees()
     /*    for(list<X_curve>::iterator v_iter = subcurves.begin();
         v_iter != subcurves.end();
         ++v_iter) {
-      hp = new Hot_Pixel<Rep_>(v_iter->source().x(),v_iter->source().y(),pixel_size);
+      hp = new Hot_Pixel<Rep_>(v_iter->source().x(),
+                               v_iter->source().y(),
+                               pixel_size);
       if(hp_set.insert(hp).second)
         hot_pixels_list.push_back(pair<pair<NT,NT>,Hot_Pixel<Rep_> *>(
             pair<NT,NT>(hp->get_x(),hp->get_y()),hp));
-      hp = new Hot_Pixel<Rep_>(v_iter->target().x(),v_iter->target().y(),pixel_size);
+      hp = new Hot_Pixel<Rep_>(v_iter->target().x(),
+                               v_iter->target().y(),
+                               pixel_size);
       if(hp_set.insert(hp).second)
         hot_pixels_list.push_back(pair<pair<NT,NT>,Hot_Pixel<Rep_> *>(
             pair<NT,NT>(hp->get_x(),hp->get_y()),hp));
