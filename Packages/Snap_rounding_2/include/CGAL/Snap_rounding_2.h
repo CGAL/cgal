@@ -524,15 +524,11 @@ bool Hot_pixel_dir_cmp<Traits_>::operator ()(const Hot_pixel * h1,
 /*! */
 template<class Traits,class OutputContainer>
 void Snap_rounding_2<Traits,OutputContainer>::
-find_hot_pixels_and_create_kd_trees
-(NT pixel_size,
- unsigned int number_of_kd_trees,
- std::list<Segment_data> & seg_list,
- Multiple_kd_tree<Traits, Hot_pixel *> **mul_kd_tree)
+find_hot_pixels_and_create_kd_trees(NT pixel_size,
+                                    unsigned int number_of_kd_trees,
+                                    std::list<Segment_data> & seg_list,
+                                    Multiple_kd_tree ** mul_kd_tree)
 {
-  typedef Hot_pixel<Traits>                             Hot_pixel;
-  typedef Segment_data<Traits>                          Segment_data;
-  typedef Multiple_kd_tree<Traits,Hot_pixel *>          Multiple_kd_tree;
   typedef std::pair<Point_2, Hot_pixel *>               Point_hot_pixel_pair;
   typedef typename std::list<Segment_data>::iterator    Segment_data_iter;
   typedef std::list<Segment_2>                          Segment_list;
@@ -590,9 +586,8 @@ find_intersected_hot_pixels(Segment_data & seg,
                             &hot_pixels_intersected_set,
                             int &number_of_intersections,
                             NT pixel_size,
-                            Multiple_kd_tree<Traits,Hot_pixel *> *mul_kd_tree)
+                            Multiple_kd_tree * mul_kd_tree)
 {
-  typedef Hot_pixel<Traits_>                            Hot_pixel;
   typedef typename std::list<Hot_pixel *>::iterator     Hot_pixel_iter;
   
   Hot_pixel_iter iter;
@@ -645,14 +640,14 @@ reroute_sr(std::set<Hot_pixel *, Hot_pixel_dir_cmp>
 /*! */
 template<class Traits_,class OutputContainer>
 void Snap_rounding_2<Traits_,OutputContainer>::
-reroute_isr(std::set<Hot_pixel<Traits_> *,
-            Hot_pixel_dir_cmp<Traits_> > &inp_hot_pixels_intersected_set,
-            Polyline_type& seg_output,
+reroute_isr(std::set<Hot_pixel *, Hot_pixel_dir_cmp>
+            & inp_hot_pixels_intersected_set,
+            Polyline_type & seg_output,
             int number_of_intersections,
             bool first_time,
             NT pixel_size,
             bool int_output,
-            Multiple_kd_tree<Traits,Hot_pixel<Traits> *> *mul_kd_tree)
+            Multiple_kd_tree * mul_kd_tree)
 {
   typedef std::set<Hot_pixel *, Hot_pixel_dir_cmp>      Hot_pixel_set;
   typedef typename std::set<Hot_pixel *, Hot_pixel_dir_cmp>::iterator
@@ -694,10 +689,11 @@ reroute_isr(std::set<Hot_pixel<Traits_> *,
 /*! */
 template<class Traits_, class OutputContainer>
 void Snap_rounding_2<Traits_,OutputContainer>::
-iterate(OutputContainer & output_container, NT pixel_size,
+iterate(OutputContainer & output_container,
+        NT pixel_size,
         bool int_output, bool do_isr,
-        std::list<Segment_data<Traits> > & seg_list,
-        Multiple_kd_tree<Traits, Hot_pixel<Traits> *> * mul_kd_tree)
+        std::list<Segment_data> & seg_list,
+        Multiple_kd_tree * mul_kd_tree)
 {
   typedef std::set<Hot_pixel *, Hot_pixel_dir_cmp>      Hot_pixel_set;
   typedef typename std::set<Hot_pixel *, Hot_pixel_dir_cmp>::iterator
