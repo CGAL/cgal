@@ -67,7 +67,6 @@ public:
 #endif // CGAL_CFG_NO_ADVANCED_KERNEL
    
   Aff_transformationC2();
-  Aff_transformationC2(const Self &t);
 
   // Identity
   Aff_transformationC2(const Identity_transformation);
@@ -162,12 +161,6 @@ Aff_transformationC2(const Identity_transformation)
 {
   PTR = new Aff_transformation_repC2<R>(FT(1), FT(0), FT(0), FT(1));
 }
-
-template < class R >
-Aff_transformationC2<R CGAL_CTAG>::Aff_transformationC2
-  (const Aff_transformationC2<R CGAL_CTAG> &t)
-  : Handle(t)
-{}
 
 template < class R >
 Aff_transformationC2<R CGAL_CTAG>::

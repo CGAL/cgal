@@ -69,7 +69,6 @@ public:
 #endif
 
   Aff_transformationC3();
-  // Aff_transformationC3(const Self &t); // Provided by default
 
   // Identity constructor:
   Aff_transformationC3(const Identity_transformation &);
