@@ -294,7 +294,7 @@ sign_of_cross(Direction_2<R> const &dir1,
             Direction_2<R> const &dir2)
 {
     int result;
-    switch(orientation(dir1.to_vector(), dir2.to_vector()))  {
+    switch(CGALi::orientation(dir1.to_vector(), dir2.to_vector(), R()))  {
     case COUNTERCLOCKWISE:
         result = 1;
         break;
