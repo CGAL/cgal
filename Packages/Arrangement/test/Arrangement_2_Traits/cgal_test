@@ -38,7 +38,10 @@ compile_and_run()
   
     for DATAFILE in ${datafiles}
     do
-        COMMAND="./$1 ${DATAFILE}"
+        base=`expr $DATAFILE : '.*\/\(.*\)' '|' $DATAFILE`;
+        if [ ${base} == "CVS" ]; then continue; fi
+
+	COMMAND="./$1 ${DATAFILE}"
         EXEC_AND_DATAFILE="$1 `basename ${DATAFILE}`"
 	echo "Executing $1 `basename ${DATAFILE}` ... "
         echo "__________________________________________" >> $OUTPUTFILE 
@@ -80,8 +83,5 @@ else
   compile_and_run Arr_leda_polyline_traits_test        polylines
   compile_and_run Arr_segment_circle_traits_test       segment_circles
   compile_and_run Arr_circles_real_traits_test         circular_arcs
-  # Supressing test for conic traits until after release 2.4
-  # compile_and_run Arr_conic_traits_test                conic_arcs
-
+  compile_and_run Arr_conic_traits_test                conic_arcs
 fi
-
