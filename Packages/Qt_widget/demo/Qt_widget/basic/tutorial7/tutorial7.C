@@ -41,7 +41,8 @@ public:
     
     widget->attach(&v);
 
-    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), this, SLOT(get_object(CGAL::Object)));
+    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), 
+	  this, SLOT(get_object(CGAL::Object)));
     widget->attach(&get_point);
   }
   ~My_Window(){}
