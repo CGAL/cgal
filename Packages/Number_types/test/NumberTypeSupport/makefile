@@ -74,6 +74,7 @@ clean: \
                    _test_sign.clean \
                    _test_valid_finite_double.clean \
                    _test_valid_finite_float.clean \
+                   _test_to_interval.clean \
                    doubletst.clean \
                    floattst.clean \
                    quotient_io.clean 
