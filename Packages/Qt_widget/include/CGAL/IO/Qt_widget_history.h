@@ -89,14 +89,14 @@ namespace CGAL {
       History_atom atom(xmin, xmax, ymin, ymax, xcenter,
 		                ycenter, xscal, yscal);
       history_list.push_back(atom);
-      nr_of_items = history_list.size();
+      nr_of_items = (unsigned int)(history_list.size());
       current_item = nr_of_items;
       it = history_list.end();
       it--;
     }
     void clear(){
       history_list.erase(history_list.begin(), history_list.end());
-      nr_of_items = history_list.size();
+      nr_of_items = (unsigned int)(history_list.size());
       current_item = nr_of_items;
       it = history_list.end();
       it--;
@@ -107,8 +107,8 @@ namespace CGAL {
     private:
       std::list<History_atom> history_list;
       std::list<History_atom>::iterator it;
-      int current_item;
-      int nr_of_items;
+      unsigned int current_item;
+      unsigned int nr_of_items;
     protected:
   };
   
