@@ -176,7 +176,9 @@ public:
       edges_to_be_conformed(is_really_a_constrained_edge)
     {
       while(first != last){
-	insert((*first).first, (*first).second);
+	// af: added "_constraint", otherwise it does not 
+	// work with hierarchy
+	insert_constraint((*first).first, (*first).second);
 	++first;
       }
       CGAL_triangulation_postcondition(is_valid());
@@ -216,10 +218,9 @@ public:
 	      ++it)
 	    it->set_marked(!mark);
 	  
-	  for(Seed_it it=begin; it!=end; ++it)
+	  for(Seed_it sit=begin; sit!=end; ++sit)
 	    {
-	      std::queue<Face_handle> face_queue;
-	      Face_handle fh=locate(*it);
+	      Face_handle fh=locate(*sit);
 	      if(fh!=NULL)
 		propagate_marks(fh, mark);
 	    }
@@ -470,7 +471,7 @@ private:
   // tell if [va,vb] is encroached by p
   bool is_encroached(const Vertex_handle va, 
 		     const Vertex_handle vb,
-		     Point p) const;
+		     const Point& p) const;
 
   // tell if the angle <pleft, pmiddle, pright> is less than 60°
   // Uses squared_cosine_of_angle_times_4 and used by
@@ -496,7 +497,7 @@ private:
 
   // insert the point p in the edge (fh,edge_index)
   Vertex_handle insert_in_the_edge(Face_handle fh, int edge_index,
-				   const Point p);
+				   const Point& p);
   
   // -- helping computing functions -- 
 
@@ -581,7 +582,7 @@ squared_minimum_sine(const Face_handle fh) const
 {
   const Vertex_handle&
     va = fh->vertex(0),
-    vb = fh->vertex(1),
+    & vb = fh->vertex(1),
     vc = fh->vertex(2);
   return squared_minimum_sine(va, vb, vc);
 }
@@ -614,7 +615,7 @@ read(std::istream &f, bool dont_refine)
   for(int n = 0; n<nedges; n++) {
     Point p1, p2;
     f >> p1 >> p2;
-    insert(p1, p2);
+    insert_constraint(p1, p2);
   }
   if(!dont_refine)
     refine();
@@ -703,7 +704,7 @@ read_poly(std::istream &f, bool dont_refine)
       unsigned int l, v1, v2;
       f >> l >> v1 >> v2;
       skip_until_EOL(f); skip_comment_OFF(f);
-      insert(vertices[--v1], vertices[--v2]);
+      insert_constraint(vertices[--v1], vertices[--v2]);
     }
 
   // read holes
@@ -761,7 +762,7 @@ Mesh_2(List_constraints& lc, const Geom_traits& gt)
   typename List_constraints::iterator lcit = lc.begin();
   for( ; lcit != lc.end(); ++lcit)
     {
-      insert( (*lcit).first, (*lcit).second);
+      insert_constraint( (*lcit).first, (*lcit).second);
     }
   CGAL_triangulation_postcondition(is_valid());
 }
@@ -828,7 +829,7 @@ template <class Tr>
 void Mesh_2<Tr>::
 propagate_marks(const Face_handle fh, bool mark)
 {
-  std::queue<Face_handle> face_queue;
+  std::queue<Face_handle, std::list<Face_handle> > face_queue;
   fh->set_marked(mark);
   face_queue.push(fh);
   while( !face_queue.empty() )
@@ -935,7 +936,7 @@ construct_cluster(Vertex_handle v,
   if(begin==end)
     all_edges_in_cluster=true;
 
-  Point& vp = v->point();
+  const Point& vp = v->point(); // af: why not const?
   
   FT greatest_cosine = 
     squared_cosine_of_angle_times_4(c.smallest_angle.first->point(),
@@ -1009,7 +1010,7 @@ template <class Tr>
 bool Mesh_2<Tr>::
 get_cluster(Vertex_handle va, Vertex_handle vb, Cluster &c, bool erase)
 {
-  typedef Cluster_map::iterator Iterator;
+  typedef typename Cluster_map::iterator Iterator;
   typedef std::pair<Iterator, Iterator> Range;
   Range range = cluster_map.equal_range(va);
   for(Iterator it = range.first; it != range.second; it++)
@@ -1174,7 +1175,7 @@ template <class Tr>
 void Mesh_2<Tr>::
 refine_face(const Face_handle f)
 {
-  Point pc = circumcenter(f);
+  const Point& pc = circumcenter(f); // af: why not const&
 
   List_of_edges zone_of_pc_boundary;
   List_of_face_handles zone_of_pc;
@@ -1190,7 +1191,7 @@ refine_face(const Face_handle f)
   bool split_the_face = true;
   bool keep_the_face_bad = false;
 
-  for(List_of_edges::iterator it = zone_of_pc_boundary.begin();
+  for(typename List_of_edges::iterator it = zone_of_pc_boundary.begin();
       it!= zone_of_pc_boundary.end();
       it++)
     {
@@ -1198,7 +1199,7 @@ refine_face(const Face_handle f)
       const int& i = it->second;
       const Vertex_handle&
 	va = fh->vertex(cw(i)),
-	vb = fh->vertex(ccw(i));
+	& vb = fh->vertex(ccw(i));
       if(fh->is_constrained(i) && is_encroached(va,vb,pc))
 	{
 	  split_the_face = false;
@@ -1238,8 +1239,8 @@ refine_face(const Face_handle f)
 
   const Vertex_handle&
     va = f->vertex(0),
-    vb = f->vertex(1),
-    vc = f->vertex(2);
+    & vb = f->vertex(1),
+    & vc = f->vertex(2);
 
   if(split_the_face)
     {
@@ -1258,7 +1259,7 @@ refine_face(const Face_handle f)
 template <class Tr>
 bool Mesh_2<Tr>::
 is_encroached(const Vertex_handle va, const Vertex_handle vb,
-	      const Point p) const
+	      const Point& p) const // af: why not &
 {
   Angle_2 angle = geom_traits().angle_2_object();
 
@@ -1273,8 +1274,8 @@ is_encroached(const Vertex_handle va, const Vertex_handle vb) const
   int i;
   is_edge(va,vb,fh,i);
 
-  Point candidat_1 = fh->vertex(i)->point();
-  Point candidat_2 = fh->mirror_vertex(i)->point();
+  const Point& candidat_1 = fh->vertex(i)->point();
+  const Point& candidat_2 = fh->mirror_vertex(i)->point();
 
   return ( ( fh->is_marked() && 
 	    is_encroached(va, vb, candidat_1) ) ||
@@ -1337,17 +1338,18 @@ cut_cluster_edge(Vertex_handle va, Vertex_handle vb, Cluster& c)
     }
   else
     {
-      const Point&
-	a = va->point(),
-	b = vb->point(),
-	m = midpoint(a, b);
+      const Point
+	&a = va->point(),
+	&b = vb->point(),
+	&m = midpoint(a, b);
+
+
 
       Vector_2 v = vector(a,m);
       v = scaled_vector(v,CGAL_NTS sqrt(c.minimum_squared_length /
 				      squared_distance(a,b)));
-      Point 
-	i = translate(a,v),
-	i2(i);
+      Point i = translate(a,v), 
+	    i2(i); 
 	
       do {
 	i = translate(a,v);
@@ -1369,7 +1371,7 @@ cut_cluster_edge(Vertex_handle va, Vertex_handle vb, Cluster& c)
 }
 
 template <class Tr>
-Mesh_2<Tr>::Vertex_handle
+typename Mesh_2<Tr>::Vertex_handle
 Mesh_2<Tr>::
 insert_middle(Face_handle f, int i)
 {
@@ -1378,9 +1380,9 @@ insert_middle(Face_handle f, int i)
 
   const Vertex_handle& 
     va = f->vertex(cw(i)),
-    vb = f->vertex(ccw(i));
+    & vb = f->vertex(ccw(i));
 
-  Point mp = midpoint(va->point(), vb->point());
+  const Point& mp = midpoint(va->point(), vb->point());
 
   Vertex_handle vm = insert_in_the_edge(f, i, mp);
 
@@ -1402,7 +1404,7 @@ split_face(const Face_handle& f, const Point& circum_center)
 			     std::back_inserter(zone_of_cc),
 			     std::back_inserter(zone_of_cc_boundary),
 			     f);
-  for(List_of_face_handles::iterator fh_it = zone_of_cc.begin();
+  for(typename List_of_face_handles::iterator fh_it = zone_of_cc.begin();
       fh_it != zone_of_cc.end();
       ++fh_it)
     bad_faces.erase(*fh_it);
@@ -1424,15 +1426,15 @@ split_face(const Face_handle& f, const Point& circum_center)
 
 template <class Tr>
 inline 
-Mesh_2<Tr>::Vertex_handle
+typename Mesh_2<Tr>::Vertex_handle
 Mesh_2<Tr>::
-insert_in_the_edge(Face_handle fh, int edge_index, const Point p)
+insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
   // insert the point p in the edge (fh, edge_index). It updates seeds 
   // too.
 {
   const Vertex_handle&
     va = fh->vertex(cw(edge_index)),
-    vb = fh->vertex(ccw(edge_index));
+    & vb = fh->vertex(ccw(edge_index));
 
   bool 
     mark_at_right = fh->is_marked(),
@@ -1441,7 +1443,7 @@ insert_in_the_edge(Face_handle fh, int edge_index, const Point p)
   List_of_face_handles zone_of_p;
 
   get_conflicts(p, std::back_inserter(zone_of_p), fh);
-  for(List_of_face_handles::iterator fh_it = zone_of_p.begin();
+  for(typename List_of_face_handles::iterator fh_it = zone_of_p.begin();
       fh_it != zone_of_p.end();
       ++fh_it)
     bad_faces.erase(*fh_it);
@@ -1503,10 +1505,10 @@ shortest_edge_squared_length(Face_handle f)
 {
   Compute_squared_distance_2 squared_distance = 
     geom_traits().compute_squared_distance_2_object();
-  Point 
+  const Point & 
     pa = (f->vertex(0))->point(),
-    pb = (f->vertex(1))->point(),
-    pc = (f->vertex(2))->point();
+    & pb = (f->vertex(1))->point(),
+    & pc = (f->vertex(2))->point();
   FT a, b, c;
   a = squared_distance(pb, pc);
   b = squared_distance(pc, pa);

@@ -6,17 +6,20 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
-include $(CGAL_MAKEFILE)
 
+# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
+#CGAL_MAKEFILE = d:/cgal/CGAL-2.5-I-7/make/makefile_i686_CYGWINNT-5.0-1.3.3_mwcc.exe-2.400
+#CGAL_MAKEFILE = d:/cgal/CGAL-2.5-I-2/make/makefile_i686_CYGWINNT-5.0-1.3.3_g++-2.95
+CGAL_MAKEFILE = d:/cgal/CGAL-2.5-I-7/make/makefile_i686_CYGWINNT-5.0-1.3.3_bcc32.exe-5.51
+#CGAL_MAKEFILE = d:/cgal/CGAL-2.5-I-7/make/makefile_i686_CYGWINNT-5.0-1.3.3_CL.EXE-1200
+include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = \
+CXXFLAGS = $(CGAL_CXXFLAGS) \
            -I../../include \
            -I../../../Mesh_3/include \
-           $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
 
@@ -45,6 +48,9 @@ mesh$(OBJ_EXT): ../../include/CGAL/Mesh_2.h \
 
 mesh$(EXE_EXT): mesh$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)mesh mesh$(OBJ_EXT) $(LDFLAGS)
+
+bug$(EXE_EXT): bug$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)bug bug$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
                    mesh.clean 
