@@ -1,15 +1,15 @@
 % ------------------------------------------------------------------------
 \subsection{CGAL Polyhedron}
 
-CGAL Polyhedron (\cgalpoly) is realized as a container class 
-that manages geometry items such as vertices, halfedges, and 
-facets with their incidences.  \cgalpoly\ has chosen the 
-halfedge data structure as the underlying connectivity 
-structure. In the halfedge data structure, a halfedge is 
-associated with a facet and stores the adjacency pointers 
-to it previous, next and opposite halfedge (\figurename\ \ref{fig:halfedge}). 
-The details of the halfedge data structure and the \cgalpoly\ based 
-on it are described in~\cite{k-ugpdd-99}.
+CGAL Polyhedron (\cgalpoly) is realized as a container class that
+manages geometry items such as vertices, halfedges, and facets with
+their incidences.  \cgalpoly\ has chosen the halfedge data structure
+as the underlying connectivity structure. In the halfedge data
+structure, a halfedge is associated with a facet and stores the
+adjacency pointers to it previous, next and opposite halfedge
+(\figurename\ \ref{fig:halfedge}).  The details of the halfedge data
+structure and the \cgalpoly\ based on it are described
+in~\cite{k-ugpdd-99}.
 
 \begin{figure}[h]
     \centering{\includegraphics[width=7.0cm]{figs/halfedge}}
@@ -59,9 +59,9 @@ What are the potential obstacles in using CGAL and \cgalpoly?
 A subdivision algorithm recursively 
 applies \emph{refinement} and \emph{geometry smoothing} 
 on the control mesh (\figurename\ \ref{fig:sqrt3},  
-\ref{fig:quad-triangle}), 
-and approximates the limit surface of the control mesh.  Several
-refinement schemes in practice are illustrated in
+\ref{fig:quad-triangle}),  and approximates the limit surface of 
+the control mesh.  Several refinement schemes in practice are
+illustrated in
 \figurename\ \ref{fig:RefSchemes}. The stencils of the
 geometry smoothing are depending on the refinement schemes, 
 i.e.\ the reparameterizations. A stencil defines a control

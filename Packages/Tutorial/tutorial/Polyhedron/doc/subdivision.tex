@@ -1,34 +1,34 @@
 The second part of the tutorial focuses on the design and the
-implementation of $\sqrt{3}$ subdivision (\figurename\ \ref{fig:sqrt3}) 
-and Quad-Triangle subdivision (\figurename\ \ref{fig:quad-triangle}).  
+implementation of $\sqrt{3}$ (\figurename\ \ref{fig:sqrt3}) and
+Quad-Triangle subdivision (\figurename\ \ref{fig:quad-triangle}).
 
-In addition to its importance in the surface modeling, we 
-choose subdivision algorithms to demonstrate both the 
+In addition to its importance in the surface modeling, we choose
+subdivision algorithms to demonstrate both the
 \italic{connectivity operation} (refinement) and the
 \italic{geometry operation} (smoothing) of a
 \cgalpoly . These two operations are the
-primary implementation components required by algorithms on
-polyhedron meshes. Readers intended to design and implement
-mesh algorithms other than subdivisions will also be benefited
-from the techniques we proposed here.
+primary implementation components required by algorithms on polyhedron
+meshes. Readers intended to design and implement mesh algorithms other
+than subdivisions will also be benefited from the techniques we
+proposed here.
 
-The key to implement a subdivision algorithm is to 
-efficiently support the refinement, i.e.\ the connectivity 
-modifications. Two approaches are introduced to support the 
-refinement: the \italic{Euler operators} (operator scheme) and
-the \italic{modifier callback mechanism} (modifier scheme). 
-The operator scheme reconfigures the connectivity with a 
-combination of Euler operators. $\sqrt{3}$ subdivision~\cite{sqrt3} is
-used to demonstrate this scheme. We also compare our implementation
-with the $\sqrt{3}$ subdivision provided in OpenMesh library.
+The key to implement a subdivision algorithm is to efficiently support
+the refinement, i.e.\ the connectivity modifications. Two approaches
+are introduced to support the refinement: the \italic{Euler operators}
+(operator scheme) and the \italic{modifier callback mechanism}
+(modifier scheme).  The operator scheme reconfigures the connectivity
+with a combination of Euler operators. $\sqrt{3}$
+subdivision~\cite{sqrt3} is used to demonstrate this scheme. We also
+compare our implementation with the $\sqrt{3}$ subdivision provided in
+OpenMesh library.
 
-Though simple and efficient in some
-refinements, e.g.\ $\sqrt{3}$ subdivision, the correct combination of
-the operators is hard to find for some refinements, e.g.\ Doo-Sabin
-subdivision~\cite{ds}. The modifier scheme solves the problem by
-letting the programmers create their own combinatorial operators 
-using the polyhedron incremental builder. Quad-Triangle
-subdivision~\cite{qts,l-pg-03} is used to demonstrate this scheme.
+Though simple and efficient in some refinements, e.g.\ $\sqrt{3}$
+subdivision, the correct combination of the operators is hard to find
+for some refinements, e.g.\ Doo-Sabin subdivision~\cite{ds}. The
+modifier scheme solves the problem by letting the programmers create
+their own combinatorial operators using the polyhedron incremental
+builder. Quad-Triangle subdivision~\cite{qts,l-pg-03} is used to
+demonstrate this scheme.
 
 % ------------------------------------------------------------------------
 \subsection{$\sqrt{3}$ Subdivision}
