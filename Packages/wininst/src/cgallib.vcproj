@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="../lib/VC7-MDd/CGAL.lib"/>
+				OutputFile="../lib/msvc7/CGAL.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool

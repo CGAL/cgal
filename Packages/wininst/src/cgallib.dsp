@@ -73,7 +73,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo /out:"../lib/VC6-MLd/cgal.lib"
+# ADD LIB32 /nologo /out:"../lib/msvc6/cgal.lib"
 
 !ENDIF 
 
@@ -183,3 +183,15 @@ SOURCE=.\Triangulation_3.C
 # End Group
 # End Target
 # End Project
+
+
+
+
+
+
+
+
+
+
+
+
