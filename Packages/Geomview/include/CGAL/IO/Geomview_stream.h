@@ -594,7 +594,7 @@ operator>>(Geomview_stream &gv,
 
     char* pickpoint = nth(gv.sexpr, 3);
     // this gives something as: (0.0607123 0.0607125 4.76837e-07 0.529628)
-    parse_point(pickpoint,point);
+    parse_point(pickpoint, point);
 
     // we echo the input
     gv << point;
@@ -689,9 +689,3 @@ operator>>(Geomview_stream &gv,
 CGAL_END_NAMESPACE
 
 #endif // CGAL_GEOMVIEW_STREAM_H
-
-#ifdef CGAL_POLYHEDRON_3
-#include <CGAL/IO/Polyhedron_geomview_ostream.h>
-#endif
-
-
