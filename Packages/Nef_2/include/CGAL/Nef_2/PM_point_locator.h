@@ -29,7 +29,7 @@
 #include <CGAL/Nef_2/geninfo.h>
 #ifdef CGAL_USE_LEDA
 #include <LEDA/basic.h>
-#if __LEDA__ > 410 && __LEDA__ != 441
+#if __LEDA__ > 410 && __LEDA__ < 441
 #define CGAL_USING_PPL
 #include <CGAL/Nef_2/PM_persistent_PL.h>
 #endif
