@@ -1,4 +1,4 @@
-Version 4.1 (?? June 2000)
+Version 4.1 (29 June 2000)
 - Header fixes [syl].  Got rid of Herve's check_header script.
 - Fixed a few buggy protect macro names [syl].
 
