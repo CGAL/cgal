@@ -35,7 +35,8 @@ set).
 \end{center}
 \end{ccTexOnly}
 \caption{Two spherical Nef polyhedra. A closed halfspace on the left 
-  and a complex polyhedron on the right.}\label{nefexamples}
+  and a complex polyhedron on the right. The different colors indicate
+  selected and unselected regions, lines and points.}\label{nefexamples}
 \begin{ccHtmlOnly}
 <CENTER>
 <IMG BORDER=0 SRC="./halfspace.gif" ALIGN=center
@@ -53,19 +54,18 @@ Following the above definition, the data type
 polyhedra and the binary and unary composition by the mentioned set
 operations.
 
-In the following examples skip the typedefs at the beginning at first
-and take the types \ccc{Sphere_point} and \ccc{Sphere_circle} as
-follows.  A \ccc{Sphere_point} is a point in the surface of $S_2$ and
+A \ccc{Sphere_point} is a point in the surface of $S_2$ and
 corresponds to a ray from the origin through that point. A
 \ccc{Sphere_circle} is an oriented great circle of the surface and
 corresponds to an oriented plane containing the origin. A
-\ccc{Sphere_circle} bounds a hemisphere. The functionality of objects
+\ccc{Sphere_circle} bounds a hemisphere. A \ccc{Sphere_segment} is 
+a segment of a \ccc{Sphere_circle}. The functionality of objects
 of sperical geometry can be found in the corresponding reference
 pages.
 
 \ccIncludeExampleCode{Nef_S2/construction.C}
 
-In the previous example \ccc{N1} is the Nef polyhedron representing
+In the above example \ccc{N1} is the Nef polyhedron representing
 the full sphere, \ccc{N2} is the closed hemisphere left of the
 oriented circle with equation $x + y + z = 0$ including the circle,
 \ccc{N3} is the complement of \ccc{N2} and therefore it must hold that
@@ -106,7 +106,7 @@ indicate set inclusion or exclusion.
 The plane map is defined by the interface data type
 \ccc{Nef_polyhedron_2<T>::Explorer} where a vertex $v$ is embedded by
 a \ccc{Sphere_point} \ccc{point(v)}. Edges are embedded as part of
-great circles. An edge $e$ is embedded on \ccc{circle(e)} an bounded
+great circles. An edge $e$ is embedded on \ccc{circle(e)} and bounded
 by the sphere points \ccc{point(source(e))} and \ccc{point(target(e))}
 in that order on the oriented circle \ccc{circle(e)}.
 
