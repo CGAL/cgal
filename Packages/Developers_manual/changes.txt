@@ -1,3 +1,6 @@
+30 March 2005 Sylvain Pion
+- Mention CropBox option of recent Ipe versions as alternative to epstopdf.
+
 5 March 2005 Sylvain Pion
 - New numbering scheme for CGAL_VERSION_NR
 
