@@ -189,8 +189,9 @@ Build_tetrahedron_3<HDS>:: operator()( HDS& target) {
     B.add_facet( t4, t4+3);
     CGAL_assertion( ! B.test_facet( t4, t4+3));
     std::size_t t5[] = { 2, 4, 5}; // non-manifold at vertex
+    (void)t5; // suppress warning about unused t5
     CGAL_assertion( ! B.test_facet( t5, t5+3));
-    bool removed = B.remove_unconnected_vertices();
+    CGAL_assertion_code( bool removed = B.remove_unconnected_vertices();)
     CGAL_assertion( removed);
     B.end_surface();
 }
@@ -426,7 +427,7 @@ void test_Polyhedron() {
         CGAL_assertion( P.is_pure_triangle());
         CGAL_assertion( 2 == halfedgeds_connected_components(P, 
                                                 CGAL::Emptyset_iterator()));
-        const Polyhedron& Pq(P);
+        CGAL_assertion_code( const Polyhedron& Pq(P);)
         CGAL_assertion( 2 == halfedgeds_connected_components(Pq, 
                                                 CGAL::Emptyset_iterator()));
         P.normalize_border();
