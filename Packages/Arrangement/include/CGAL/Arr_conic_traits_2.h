@@ -33,21 +33,21 @@ CGAL_BEGIN_NAMESPACE
 //
 
 template <class _NT>
-class Arr_conic_traitrr_s_2 
+class Arr_conic_traits_2 
 {
  public:
   
-  typedef _NT                    NT;
+  typedef _NT                      NT;
 
   // The difference between Curve and X_curve is semantical only,
   // NOT syntactical.
-  typedef Conic_arc_2<NT>        Curve_2;
-  typedef Curve_2                X_curve_2;
+  typedef Conic_arc_2<NT>          Curve_2;
+  typedef Curve_2                  X_curve_2;
  
   // Using typename to please compiler (e.g., CC with IRIX64 on mips)
-  typedef typename Curve::R      R;
-  typedef typename Curve::Point  Point_2;
-  typedef typename Curve::Conic  Conic_2;
+  typedef typename Curve_2::R      R;
+  typedef typename Curve_2::Point  Point_2;
+  typedef typename Curve_2::Conic  Conic_2;
 
   enum Curve_point_status
   {
@@ -604,8 +604,8 @@ class Arr_conic_traitrr_s_2
   }
 
   // Check whether the given point is above, under or on the given curve.
-  Curve_2_point_status curve_get_point_status (const X_curve_2& curve,
-					     const Point_2& p) const
+  Curve_point_status curve_get_point_status (const X_curve_2 & curve,
+                                             const Point_2   & p) const
   {
     CGAL_precondition(is_x_monotone(curve));
 

@@ -1074,7 +1074,7 @@ public:
 
   // return the last inserted halfedge whose target points to the last 
   // point of the inserted xcurve
-  Halfedge_handle insert_from_vertex(const Curve_2_2 & c, 
+  Halfedge_handle insert_from_vertex(const Curve_2                & c, 
 				     Vertex_handle                  src, 
 				     Pmwx_change_notification     * en = NULL)
   {

@@ -55,7 +55,7 @@ public:
   typedef Point_2              Point;
   typedef Vector_2             Vector;
   typedef X_curve_2            X_curve;
-  typedef Curve_2              Curve_2;
+  typedef Curve_2              Curve;
 
   typedef enum
   {
@@ -65,7 +65,6 @@ public:
     CURVE_NOT_IN_RANGE = 0
     //CURVE_VERTICAL = 3
   } Curve_point_status;
-
 
   Arr_polyline_traits() {
   }
