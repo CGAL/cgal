@@ -27,13 +27,13 @@
 #include <CGAL/IO/Qt_widget_Triangulation_2.h>
 
 template <class T>
-class Qt_layer_show_constraineds : public CGAL::Qt_widget_layer {
+class Qt_layer_show_constraints : public CGAL::Qt_widget_layer {
 public:
   typedef typename T::Edge            Edge;
   typedef typename T::Finite_edges_iterator
                                       Finite_edges_iterator;
 
-  Qt_layer_show_constraineds(T &t) : tr(t){};
+  Qt_layer_show_constraints(T &t) : tr(t){};
 
   void draw()
   {  
