@@ -4,6 +4,12 @@
 
 
 //---------------------------------------------------------------------
+//      revision 301
+//---------------------------------------------------------------------
+- Compact_container : mark some code as deprecated, and optimize
+  construct_insert() by taking reference arguments...
+
+//---------------------------------------------------------------------
 //      revision 300
 //---------------------------------------------------------------------
 - remove the useless "b_" field in Filter_iterator, and update the interface

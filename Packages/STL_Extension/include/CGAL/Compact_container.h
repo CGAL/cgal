@@ -21,7 +21,7 @@
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 //                 Lutz Kettner <kettner@mpi-sb.mpg.de>
-//                 Sylvain Pion <Sylvain.Pion@mpi-sb.mpg.de>
+//                 Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 
 #ifndef CGAL_COMPACT_CONTAINER_H
 #define CGAL_COMPACT_CONTAINER_H
@@ -80,6 +80,7 @@
 //   Instead of having the blocks linked between them, the start/end pointers
 //   could point back to the container, so that we can do more interesting
 //   things (e.g. freeing empty blocks automatically) ?
+// - Submission to Boost.
 
 CGAL_BEGIN_NAMESPACE
 
@@ -209,10 +210,11 @@ public:
     ++size_;
     return iterator(ret, 0);
   }
+
   // Special insert methods that construct the objects in place
-  // (just forward the arguments to the constructor, to optimize a copy.
+  // (just forward the arguments to the constructor, to optimize a copy).
   template < typename T1 >
-  iterator construct_insert(T1 t1)
+  iterator construct_insert(const T1 &t1)
   {
     if (free_list == NULL)
       allocate_new_block();
@@ -224,8 +226,10 @@ public:
     ++size_;
     return iterator(ret, 0);
   }
+
   template < typename T1, typename T2 >
-  iterator construct_insert(T1 t1, T2 t2)
+  iterator
+  construct_insert(const T1 &t1, const T2 &t2)
   {
     if (free_list == NULL)
       allocate_new_block();
@@ -237,8 +241,10 @@ public:
     ++size_;
     return iterator(ret, 0);
   }
+
   template < typename T1, typename T2, typename T3 >
-  iterator construct_insert(T1 t1, T2 t2, T3 t3)
+  iterator
+  construct_insert(const T1 &t1, const T2 &t2, const T3 &t3)
   {
     if (free_list == NULL)
       allocate_new_block();
@@ -250,8 +256,10 @@ public:
     ++size_;
     return iterator(ret, 0);
   }
+
   template < typename T1, typename T2, typename T3, typename T4 >
-  iterator construct_insert(T1 t1, T2 t2, T3 t3, T4 t4)
+  iterator
+  construct_insert(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4)
   {
     if (free_list == NULL)
       allocate_new_block();
@@ -263,8 +271,11 @@ public:
     ++size_;
     return iterator(ret, 0);
   }
+
   template < typename T1, typename T2, typename T3, typename T4, typename T5 >
-  iterator construct_insert(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5)
+  iterator
+  construct_insert(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
+	           const T5 &t5)
   {
     if (free_list == NULL)
       allocate_new_block();
@@ -277,8 +288,11 @@ public:
     return iterator(ret, 0);
   }
 
-  template < typename T1, typename T2, typename T3, typename T4, typename T5, typename T6 >
-  iterator construct_insert(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6)
+  template < typename T1, typename T2, typename T3, typename T4,
+             typename T5, typename T6 >
+  iterator
+  construct_insert(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
+                   const T5 &t5, const T6 &t6)
   {
     if (free_list == NULL)
       allocate_new_block();
@@ -291,8 +305,11 @@ public:
     return iterator(ret, 0);
   }
 
-  template < typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7 >
-  iterator construct_insert(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6, T7 t7)
+  template < typename T1, typename T2, typename T3, typename T4,
+             typename T5, typename T6, typename T7 >
+  iterator
+  construct_insert(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
+                   const T5 &t5, const T6 &t6, const T7 &t7)
   {
     if (free_list == NULL)
       allocate_new_block();
@@ -305,8 +322,11 @@ public:
     return iterator(ret, 0);
   }
 
-  template < typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8 >
-  iterator construct_insert(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6, T7 t7, T8 t8)
+  template < typename T1, typename T2, typename T3, typename T4,
+             typename T5, typename T6, typename T7, typename T8 >
+  iterator
+  construct_insert(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
+                   const T5 &t5, const T6 &t6, const T7 &t7, const T8 &t8)
   {
     if (free_list == NULL)
       allocate_new_block();
@@ -636,7 +656,8 @@ namespace CGALi {
     typedef typename DSC::difference_type             difference_type;
     typedef std::bidirectional_iterator_tag           iterator_category;
 
-    CC_iterator() : p(NULL) {}   // VC7.0 needs the initialisation with NULL 
+    // the initialization with NULL is required by our Handle concept.
+    CC_iterator() : p(NULL) {}
 
     // Either a harmless copy-ctor,
     // or a conversion from iterator to const_iterator.
@@ -650,6 +671,18 @@ namespace CGALi {
       return *this;
     }
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+    // This is marked as deprecated in order to be able to test
+    // our code without the feature, but we want to keep it forever
+    // for backward compatibility.
+    // Construction from NULL
+    CC_iterator(CGAL_NULL_TYPE CGAL_assertion_code(n))
+    : p(NULL)
+    {
+      CGAL_assertion( n == NULL);
+    }
+#endif
+
   private:
 
     pointer p;
@@ -657,21 +690,7 @@ namespace CGALi {
     // Only Compact_container should access these constructors.
     friend class Compact_container<value_type, typename DSC::allocator_type>;
 
-  public:
-    
-    // For the construction from NULL
-    // The construction  from NULL is a non-documented feature
-    // which might disappear in the future.
-    // It is currently needed in the triangulation code.
-    CC_iterator(CGAL_NULL_TYPE CGAL_assertion_code(n))
-    : p(NULL)
-    {
-      CGAL_assertion( n == NULL);
-    }
-  
-  private:   
-  
-    // For begin() 
+    // For begin()
     CC_iterator(pointer ptr, int, int)
     : p(ptr)
     {
@@ -735,10 +754,13 @@ namespace CGALi {
     reference operator*() const { return *p; }
     pointer   operator->() const { return p; }
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+    // For std::less...
     bool operator<(const CC_iterator& other) const
     {
       return p < other.p;
     }
+#endif
 
     // Can itself be used for bit-squatting.
     void *   for_compact_container() const { return (void *) p; }
@@ -785,24 +807,26 @@ namespace CGALi {
                   const CC_iterator<DSC, Val*, Val&> &lhs)
   { return &*rhs != &*lhs; }
 
-  // and now the same for comparison with NULL
-
+  // This is marked as deprecated in order to be able to test
+  // our code without the feature, but we want to keep it forever
+  // for backward compatibility.
+#ifndef CGAL_NO_DEPRECATED_CODE
   template < class DSC, class Ptr, class Ref >
   inline
   bool operator==(const CC_iterator<DSC, Ptr, Ref> &rhs,
 		  CGAL_NULL_TYPE CGAL_assertion_code(n))
-  { 
+  {
     CGAL_assertion( n == NULL);
-    return &*rhs == NULL; 
+    return &*rhs == NULL;
   }
 
   template < class DSC, class Val >
   inline
   bool operator==(const CC_iterator<DSC, Val*, Val&> &rhs,
 		  CGAL_NULL_TYPE CGAL_assertion_code(n))
-  { 
+  {
     CGAL_assertion( n == NULL);
-    return &*rhs == NULL; 
+    return &*rhs == NULL;
   }
 
 
@@ -810,41 +834,38 @@ namespace CGALi {
   inline
   bool operator==(const CC_iterator<DSC, const Val*, const Val&> &rhs,
 		  CGAL_NULL_TYPE CGAL_assertion_code(n))
-  { 
+  {
     CGAL_assertion( n == NULL);
-    return &*rhs == NULL; 
+    return &*rhs == NULL;
   }
 
-  
   template < class DSC, class Ptr, class Ref >
   inline
   bool operator!=(const CC_iterator<DSC, Ptr, Ref> &rhs,
 		  CGAL_NULL_TYPE CGAL_assertion_code(n))
-  { 
+  {
     CGAL_assertion( n == NULL);
-    return &*rhs != NULL; 
+    return &*rhs != NULL;
   }
 
   template < class DSC, class Val >
   inline
   bool operator!=(const CC_iterator<DSC, Val*, Val&> &rhs,
                   CGAL_NULL_TYPE CGAL_assertion_code(n))
-  { 
+  {
     CGAL_assertion( n == NULL);
-    return &*rhs != NULL; 
+    return &*rhs != NULL;
   }
 
   template < class DSC, class Val >
   inline
   bool operator!=(const CC_iterator<DSC, const Val*, const Val&> &rhs,
                   CGAL_NULL_TYPE CGAL_assertion_code(n))
-  { 
+  {
     CGAL_assertion( n == NULL);
-    return &*rhs != NULL; 
+    return &*rhs != NULL;
   }
-
-  
-
+#endif
 
 #else
   template < class DSC, class Ptr1, class Ref1, class Ptr2, class Ref2 >
@@ -855,16 +876,6 @@ namespace CGALi {
     return &*rhs == &*lhs;
   }
 
- template < class DSC, class Ptr1, class Ref1>
-  inline
-  bool operator==(const CC_iterator<DSC, Ptr1, Ref1> &rhs,
-                  CGAL_NULL_TYPE CGAL_assertion_code(n))
-  {
-    CGAL_assertion( n == NULL);
-    return &*rhs == NULL;
-  }
-
-
   template < class DSC, class Ptr1, class Ref1, class Ptr2, class Ref2 >
   inline
   bool operator!=(const CC_iterator<DSC, Ptr1, Ref1> &rhs,
@@ -873,7 +884,20 @@ namespace CGALi {
     return &*rhs != &*lhs;
   }
 
- template < class DSC, class Ptr1, class Ref1>
+  // This is marked as deprecated in order to be able to test
+  // our code without the feature, but we want to keep it forever
+  // for backward compatibility.
+#ifndef CGAL_NO_DEPRECATED_CODE
+  template < class DSC, class Ptr1, class Ref1>
+  inline
+  bool operator==(const CC_iterator<DSC, Ptr1, Ref1> &rhs,
+                  CGAL_NULL_TYPE CGAL_assertion_code(n))
+  {
+    CGAL_assertion( n == NULL);
+    return &*rhs == NULL;
+  }
+
+  template < class DSC, class Ptr1, class Ref1>
   inline
   bool operator!=(const CC_iterator<DSC, Ptr1, Ref1> &rhs,
 		  CGAL_NULL_TYPE CGAL_assertion_code(n))
@@ -881,6 +905,7 @@ namespace CGALi {
     CGAL_assertion( n == NULL);
     return &*rhs != NULL;
   }
+#endif
 
 #endif
 
