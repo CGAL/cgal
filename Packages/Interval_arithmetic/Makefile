@@ -28,7 +28,8 @@ clean:
 
 Interval_arithmetic.tar.gz:
 	tar -zcvf Interval_arithmetic.tar.gz \
-	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile TODO \
+	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
+	--exclude=TODO \
 	version description.txt changes.txt include doc_tex doc_ps test
 
 doc: doc_ps/Interval_arithmetic.ps
