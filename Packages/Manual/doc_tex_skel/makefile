@@ -308,6 +308,8 @@ unzip_ps:
 dest_unzip_ps:
 	gunzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4/kernel.ps.gz
 	gunzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter/kernel.ps.gz
+	gunzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4/kernel_d.ps.gz
+	gunzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter/kernel_d.ps.gz
 	gunzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4/basic_lib.ps.gz
 	gunzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter/basic_lib.ps.gz
 	gunzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4/deprecated_basic_lib.ps.gz
@@ -324,6 +326,8 @@ dest_unzip_ps:
 dest_zip_ps:
 	gzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4/kernel.ps
 	gzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter/kernel.ps
+	gzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4/kernel_d.ps
+	gzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter/kernel_d.ps
 	gzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4/basic_lib.ps
 	gzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter/basic_lib.ps
 	gzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4/deprecated_basic_lib.ps
