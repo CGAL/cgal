@@ -54,7 +54,7 @@ using std::endl;
 using std::strcmp;
 using std::exit;
 
-// #define CGAL_USE_EXTENDED_KERNEL
+#define CGAL_USE_EXTENDED_KERNEL
 
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>

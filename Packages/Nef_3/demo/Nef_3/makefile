@@ -39,7 +39,7 @@ LDFLAGS = \
 all:            \
                 nef_3$(EXE_EXT) \
                 visualization_SNC$(EXE_EXT) \
-                visualization_SM$(EXE_EXT) \
+                visualization_SM$(EXE_EXT)
 
 nef_3.clean:
 	rm -f nef_3 nef_3.o
