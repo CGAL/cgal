@@ -26,7 +26,10 @@
 #include <CGAL/Pm_with_intersections_misc.h>
 #include <CGAL/Pm_walk_along_line_point_location.h>
 #include <CGAL/Planar_map_2/Pm_change_notification.h>
+
+#include <CGAL/Sweep_line_2/Pmwx_aggregate_insert_impl.h>
 #include <CGAL/Sweep_line_2/Pmwx_aggregate_insert.h>
+
 
 #ifndef CGAL_PM_COUNT_OPERATIONS_TIMES
 #define CGAL_PM_START_OP(x) 
@@ -1196,13 +1199,27 @@ public:
   }
 
 
-  // inserts a given curve container into the map.
+  // inserts a given curve container into the map using Eti's sweep
   template <class X_curve_2_iterator>
   Halfedge_iterator insert(const X_curve_2_iterator & begin,
                            const X_curve_2_iterator & end,
                            Change_notification * en = NULL)
   {
     typedef Pmwx_aggregate_insert<X_curve_2_iterator, Traits, 
+                                  Self ,Change_notification> Pmwx_agg_insert;
+    Pmwx_agg_insert p(traits);
+    p.insert_curves(begin, end, *this, en);
+
+    return halfedges_begin();
+  }
+
+  // inserts a given curve container into the map using Tali's sweep
+  template <class X_curve_2_iterator>
+  Halfedge_iterator insert_fast(const X_curve_2_iterator & begin,
+				const X_curve_2_iterator & end,
+				Change_notification * en = NULL)
+  {
+    typedef Pmwx_aggregate_insert_impl<X_curve_2_iterator, Traits, 
                                   Self ,Change_notification> Pmwx_agg_insert;
     Pmwx_agg_insert p(traits);
     p.insert_curves(begin, end, *this, en);
