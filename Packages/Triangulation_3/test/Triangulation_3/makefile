@@ -51,7 +51,7 @@ clean:
 
 
 realclean: clean
-	- rm -f Program* Error* Compiler* error*
+	- rm -f Program* Error* Compiler* error* Test_triangulation_IO_3
 
 #---------------------------------------------------------------------#
 #                    suffix rules
