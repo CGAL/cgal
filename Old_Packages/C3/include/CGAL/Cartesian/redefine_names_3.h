@@ -25,6 +25,7 @@
 #define SegmentC3 Segment_3
 #define TriangleC3 Triangle_3
 #define TetrahedronC3 Tetrahedron_3
+#define Iso_cuboidC3 Iso_cuboid_3
 #define Aff_transformationC3 Aff_transformation_3
 #define Data_accessorC3 Data_accessor_3
 

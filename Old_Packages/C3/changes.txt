@@ -2,6 +2,8 @@ Version 4.0.2 (?? ?? 1999)
 - Various cleanups [syl & herve].
 - Shorter headers in CVS repository, but complete thanks to scripti
   for submission
+- Added compare_dominance and compare_is_dominated in predicates_on_points
+- Added Iso_cuboid_3
 
 Version 4.0.1 (October 28 1999)
 - Filter related typo in kernel_ftC3.h [Sylvain]

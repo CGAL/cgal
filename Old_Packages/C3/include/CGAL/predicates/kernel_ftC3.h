@@ -26,6 +26,40 @@ compare_lexicographically_xyzC3(const FT &px, const FT &py, const FT &pz,
 }
 
 template < class FT >
+/*CGAL_NO_FILTER*/
+CGAL_KERNEL_MEDIUM_INLINE
+Comparison_result
+compare_dominanceC3(const FT &px, const FT &py, const FT &pz,
+                    const FT &qx, const FT &qy, const FT &qz)
+{
+  Comparison_result cx = CGAL::compare(px, qx);
+  Comparison_result cy = CGAL::compare(py, qy);
+  Comparison_result cz = CGAL::compare(pz, qrzy);
+  if (cx == SMALLER) return SMALLER;
+  if (cy == SMALLER) return SMALLER;
+  if (cz == SMALLER) return SMALLER;
+  if (cx == LARGER && cy == LARGER && cz == LARGER) return LARGER;
+  return EQUAL;
+}
+
+template < class FT >
+/*CGAL_NO_FILTER*/
+CGAL_KERNEL_MEDIUM_INLINE
+Comparison_result
+compare_is_dominatedC3(const FT &px, const FT &py, const FT &pz,
+                       const FT &qx, const FT &qy, const FT &qz)
+{
+  Comparison_result cx = CGAL::compare(px, qx);
+  Comparison_result cy = CGAL::compare(py, qy);
+  Comparison_result cz = CGAL::compare(pz, qrzy);
+  if (cx == LARGER) return LARGER;
+  if (cy == LARGER) return LARGER;
+  if (cz == LARGER) return LARGER;
+  if (cx == SMALLER && cy == SMALLER && cz == SMALLER) return SMALLER;
+  return EQUAL;
+}
+
+template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
 bool
 collinearC3(const FT &px, const FT &py, const FT &pz,

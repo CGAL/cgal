@@ -60,6 +60,24 @@ z_equal(const PointC3<R CGAL_CTAG> &p, const PointC3<R CGAL_CTAG> &q)
 }
 
 template < class R >
+Comparison_result
+compare_dominance(const PointC3<R CGAL_CTAG> &p,
+                  const PointC3<R CGAL_CTAG> &q)
+{
+  return compare_dominanceC3(p.x(),p.y(),p.z(),
+                             q.x(),q.y(),q.z());
+}
+
+template < class R >
+Comparison_result
+compare_is_dominated(const PointC3<R CGAL_CTAG> &p,
+                     const PointC3<R CGAL_CTAG> &q)
+{
+  return compare_is_dominatedC3(p.x(),p.y(),p.z(),
+                                q.x(),q.y(),q.z());
+}
+
+template < class R >
 inline
 Comparison_result
 compare_x(const PointC3<R CGAL_CTAG> &p, const PointC3<R CGAL_CTAG> &q)
