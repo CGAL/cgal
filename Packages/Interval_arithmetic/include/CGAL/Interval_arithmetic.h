@@ -113,7 +113,6 @@ struct Interval_nt_advanced
       return IA (-CGAL_IA_FORCE_TO_DOUBLE(-_inf - d._inf),
 	          CGAL_IA_FORCE_TO_DOUBLE( _sup + d._sup));
   }
-  // { return IA  (d) += *this; }
 
   IA  operator-(const IA & d) const
   {
@@ -132,10 +131,6 @@ struct Interval_nt_advanced
   IA & operator-= (const IA & d);
   IA & operator*= (const IA & d);
   IA & operator/= (const IA & d);
-
-  // For speed.
-  IA  operator* (const double d) const;
-  IA  operator/ (const double d) const;
 
   bool operator< (const IA & d) const
   {
@@ -241,29 +236,6 @@ Interval_nt_advanced::operator* (const Interval_nt_advanced & d) const
 }
 
 inline
-Interval_nt_advanced
-Interval_nt_advanced::operator* (const double d) const
-{
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
-  return (d>=0.0) ? IA (-CGAL_IA_FORCE_TO_DOUBLE(d*-_inf),
-	               CGAL_IA_FORCE_TO_DOUBLE(d*_sup))
-     		: IA (-CGAL_IA_FORCE_TO_DOUBLE(d*-_sup),
-		       CGAL_IA_FORCE_TO_DOUBLE(d*_inf));
-}
-
-inline
-Interval_nt_advanced
-Interval_nt_advanced::operator/ (const double d) const
-{
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
-  if (d>0.0) return IA (-CGAL_IA_FORCE_TO_DOUBLE((-_inf)/d),
-	               CGAL_IA_FORCE_TO_DOUBLE(_sup/d));
-  if (d<0.0) return IA (-CGAL_IA_FORCE_TO_DOUBLE((-_sup)/d),
-	               CGAL_IA_FORCE_TO_DOUBLE(_inf/d));
-  return CGAL_IA_LARGEST;
-}
-
-inline
 bool
 operator< (const double d, const Interval_nt_advanced & t)
 { return t>d; }
@@ -311,16 +283,7 @@ operator* (const double d, const Interval_nt_advanced & t)
 inline
 Interval_nt_advanced
 operator/ (const double d, const Interval_nt_advanced & t)
-{
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
-  if (t._inf <= 0.0 && t._sup >= 0.0) // t~0
-      return CGAL_IA_LARGEST;
-
-  return (d>=0.0) ? Interval_nt_advanced(-CGAL_IA_FORCE_TO_DOUBLE(d/-t._sup),
-	 				CGAL_IA_FORCE_TO_DOUBLE(d/t._inf))
-                : Interval_nt_advanced(-CGAL_IA_FORCE_TO_DOUBLE(d/-t._inf),
-					CGAL_IA_FORCE_TO_DOUBLE(d/t._sup));
-}
+{ return Interval_nt_advanced(d)/t; }
 
 inline
 Interval_nt_advanced
@@ -511,9 +474,6 @@ struct Interval_nt : public Interval_nt_advanced
   IA operator*(const IA & d) const;
   IA operator/(const IA & d) const;
 
-  IA operator*(const double d) const;
-  IA operator/(const double d) const;
-
   IA & operator+=(const IA & d);
   IA & operator-=(const IA & d);
   IA & operator*=(const IA & d);
@@ -570,23 +530,6 @@ Interval_nt::operator* (const Interval_nt & d) const
 
 inline
 Interval_nt
-Interval_nt::operator* (const double d) const
-{
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
-  Interval_nt tmp;
-  if (d>=0.0) {
-      tmp._inf = -CGAL_IA_FORCE_TO_DOUBLE(_inf*-d);
-      tmp._sup =  CGAL_IA_FORCE_TO_DOUBLE(_sup*d);
-  } else {
-      tmp._inf = -CGAL_IA_FORCE_TO_DOUBLE(_sup*-d);
-      tmp._sup =  CGAL_IA_FORCE_TO_DOUBLE(_inf*d);
-  }
-  FPU_set_cw(backup);
-  return tmp;
-}
-
-inline
-Interval_nt
 operator+ (const double d, const Interval_nt & t)
 { return t+d; }
 
@@ -614,16 +557,6 @@ inline
 Interval_nt
 operator/ (const double d, const Interval_nt & t)
 { return Interval_nt(d)/t; }
-
-inline
-Interval_nt
-Interval_nt::operator/ (const double d) const
-{
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
-  Interval_nt tmp ( Interval_nt_advanced::operator/(d) );
-  FPU_set_cw(backup);
-  return tmp;
-}
 
 inline
 Interval_nt &
