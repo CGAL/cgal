@@ -1939,7 +1939,6 @@ fact \ccc{Point_3<R>}.
 
 	\end{ccClassTemplate}
 
-		\begin{ccClass}{Weighted_point}
 		\subsection{Weighted points}	
 		\label{Triangulation3-sec-class-Weightedpoints}
 
@@ -1965,7 +1964,8 @@ The weighted point class must fulfill the following requirements:
 \ccMethod{Point point() const;}{}
 \ccMethod{Weight weight() const;}{}
 
-		\subsubsection{The class Weighted\_point<Point,Weight>}
+		\begin{ccClassTemplate}{Weighted_point<Point,Weight>}
+		\subsubsection{The class \protect\ccc{Weighted\_point<Point,Weight>}}
 
 This class provides \ccc{Regular_triangulation_euclidean_traits_3}
 with all the required functionalities.
@@ -1974,7 +1974,7 @@ with all the required functionalities.
 
 \ccInheritsFrom{\ccc{Point}}
 
-		\end{ccClass}
+		\end{ccClassTemplate}
 
 \section{The Triangulation Data Structure Parameter}
 \label{Triangulation3-sec-tds}
