@@ -45,6 +45,9 @@
 #ifndef CGAL_RANDOM_H
 #include <CGAL/Random.h>
 #endif // CGAL_RANDOM_H
+#ifndef CGAL_TIMER_H
+#include <CGAL/Timer.h>
+#endif // CGAL_TIMER_H
 #ifndef CGAL_ALGORITHM_H
 #include <CGAL/algorithm.h>
 #endif // CGAL_ALGORITHM_H
@@ -57,29 +60,13 @@
 #include <iterator>
 #endif // CGAL_PCENTER_NO_OUTPUT
 
-#include <ctime>
-static time_t Measure;
-static long long int measure;
-#define MEASURE(comm) \
-Measure = clock(); \
-  comm; \
-  measure = (long long int)((float)(clock() - Measure) \
-  * 1000 / CLOCKS_PER_SEC); \
-    cerr << "[time: " << measure << " msec]\n";
-#define MEASURE_NO_OUTPUT(comm) \
-Measure = clock(); \
-  comm; \
-  measure = (long long int)((float)(clock() - Measure) \
-  * 1000 / CLOCKS_PER_SEC);
-
 using std::vector;
-//    using std::bind2nd;
-//    using std::transform;
 using std::back_inserter;
 using CGAL::Cartesian;
 using CGAL::Creator_uniform_2;
 using CGAL::Random_points_in_square_2;
 using CGAL::Random;
+using CGAL::Timer;
 using CGAL::default_random;
 using CGAL::rectangular_p_center_2;
 #ifndef CGAL_PCENTER_NO_OUTPUT
@@ -191,7 +178,7 @@ main(int argc, char* argv[])
 {
 #ifndef CGAL_PCENTER_NO_OUTPUT
   CGAL::set_pretty_mode(cerr);
-  ostream_iterator< Point > cerr_it_p(cerr, "\n");
+  //ostream_iterator< Point > cerr_it_p(cerr, "\n");
   //ostream_iterator< Square_2 > cerr_it_s(cerr, "\n");
 #endif // CGAL_PCENTER_NO_OUTPUT
 
@@ -207,8 +194,7 @@ main(int argc, char* argv[])
   if (argc < 3) {
 
 #ifndef CGAL_PCENTER_NO_OUTPUT
-  cerr << "warning: no random seed specified\n"
-         << "generating random seed" << endl;
+    cerr << "No random seed specified - generating it" << endl;
 #endif // CGAL_PCENTER_NO_OUTPUT
 
     // generate random seed
@@ -235,14 +221,18 @@ main(int argc, char* argv[])
 
     PCont centers;
     FT result;
-    MEASURE(
-      rectangular_p_center_2(
-        input_points.begin(),
-        input_points.end(),
-        back_inserter(centers),
-        result,
-        p);
-      )
+    Timer t;
+    t.start();
+    rectangular_p_center_2(
+      input_points.begin(),
+      input_points.end(),
+      back_inserter(centers),
+      result,
+      p);
+    t.stop();
+#ifndef CGAL_PCENTER_NO_OUTPUT
+    cerr << "[time: " << t.time() << " msec]" << endl;
+#endif // CGAL_PCENTER_NO_OUTPUT
 
     CGAL::Infinity_distance_2< R > dist;
     for (iterator i = input_points.begin(); i != input_points.end(); ++i) {

@@ -115,8 +115,7 @@ main( int argc, char* argv[])
   if ( argc < 5 || (random_seed = atoi(argv[4])) <= 0) {
   
     #ifdef OUTPUT
-    cerr << "warning: no random seed specified\n"
-         << "generating random seed" << endl;
+    cerr << "No random seed specified - generating it" << endl;
     #endif
   
     // generate random seed
