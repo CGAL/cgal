@@ -11,7 +11,7 @@ TMP_file=/tmp/submit-mail
 
 package: doc filters clean $(Package).tar.gz
 	@echo "-----------------------------------"
-	@echo "------------ Penser à: ------------"
+	@echo "---------- Don't forget: ----------"
 	@echo "-----------------------------------"
 	@echo "---- changes.txt               ----"
 	@echo "---- make test                 ----"
@@ -52,7 +52,7 @@ $(Package).tar.gz:
 	tar -zcvf $(Package).tar.gz \
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile --exclude=TODO \
 	--exclude="*".swp --exclude=tst_Static_filter_error.C \
-	--exclude=tst_static_adaptatif.C --exclude=Lazy_exact_nt.C \
+	--exclude=tst_static_adaptatif.C \
 	version description.txt changes.txt maintainer \
 	src include doc_tex doc_ps test scripts
 

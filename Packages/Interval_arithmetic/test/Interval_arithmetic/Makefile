@@ -16,7 +16,7 @@ CXXFLAGS = \
 	-I../../include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS) \
-	-g -W -Wall
+	-O2 -W -Wall
 	# -DCGAL_IA_NEW_FILTERS
 	# -O2 -mcpu=pentiumpro -march=pentiumpro -W -Wall -DLOOPS=10000000
 	# -g -Wall -W
@@ -24,11 +24,11 @@ CXXFLAGS = \
 	# /Fatst1.s
 	# /Op /Oi /Od /Za /O2 /Ox
 	# -fpermissive
-	# -DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS\
-	# -DCGAL_NO_WARNINGS
 	# -DCGAL_CHECK_EXPENSIVE \
-	# -DCGAL_IA_DONT_STOP_CONSTANT_PROPAGATION
-	# -DCGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT
+	# -DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS\
+	# -DCGAL_NO_WARNINGS \
+	# -DCGAL_IA_DONT_STOP_CONSTANT_PROPAGATION \
+	# -DCGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT \
 	# -O2 -W -Winline -Wunused -malign-double
 	# -mcpu=pentiumpro -march=pentiumpro -mieee-fp
 	# -mcpu=ultrasparc -mtune=ultrasparc

@@ -1,6 +1,6 @@
 // Test program for Lazy_exact_nt<>.
 
-#define CGAL_NO_ASSERTIONS
+// #define CGAL_NO_ASSERTIONS
 
 #include <CGAL/basic.h>
 #include <iostream>
@@ -61,10 +61,10 @@ int main ()
   // cout << "sign(sqrt(2)) = " << CGAL_NTS sign(CGAL_NTS sqrt(NT(2))) << endl;
   // cout << "sign(square(2)) = " << CGAL_NTS sign(CGAL_NTS square(NT(2))) << endl;
   // bool UNUSED pipo = e < d;
-  cout << "sizeof(rep) = " << sizeof(CGAL::Lazy_exact_nt_rep<int>) << endl;
-  cout << "sizeof(cst) = " << sizeof(CGAL::Lazy_exact_nt_Cst<int>) << endl;
-  cout << "sizeof(abs) = " << sizeof(CGAL::Lazy_exact_nt_Abs<int>) << endl;
-  cout << "sizeof(add) = " << sizeof(CGAL::Lazy_exact_nt_Add<int>) << endl;
+  cout << "sizeof(rep) = " << sizeof(CGAL::Lazy_exact_rep<int>) << endl;
+  cout << "sizeof(cst) = " << sizeof(CGAL::Lazy_exact_Cst<int>) << endl;
+  cout << "sizeof(abs) = " << sizeof(CGAL::Lazy_exact_Abs<int>) << endl;
+  cout << "sizeof(add) = " << sizeof(CGAL::Lazy_exact_Add<int>) << endl;
   cout << "sizeof(leda_real) = " << sizeof(leda_real) << endl;
   cout << "sizeof(Lazy_exact_nt) = " << sizeof(CGAL::Lazy_exact_nt<int>) << endl;
   predicats();
