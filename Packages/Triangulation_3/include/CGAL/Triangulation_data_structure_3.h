@@ -598,7 +598,50 @@ public:
 
   void clear();
 
-  void clear_cells_only(std::vector<Vertex *> & Vertices);
+  void clear_cells_only(std::vector<Vertex *> & Vertices){
+  CGAL_triangulation_assertion(_list_of_temporary_free_cells._next_cell
+	  == &_list_of_temporary_free_cells);
+  CGAL_triangulation_assertion(_list_of_temporary_free_cells._previous_cell
+	  == &_list_of_temporary_free_cells);
+
+  Cell *it;
+
+  // Delete the cells in the free_list.
+  for (it = _list_of_free_cells._next_cell; it != &_list_of_free_cells;
+       it = _list_of_free_cells._next_cell)
+      delete it;
+
+  if (number_of_vertices() == 0) {
+    // the list of cells must be cleared even in this case
+    for (it = _list_of_cells._next_cell; it != past_end_cell();
+         it = _list_of_cells._next_cell)
+      delete it; // The ds_cell destructor removes it from the list.
+
+    // then _list_of_cells points on itself, nothing more to do
+    set_dimension(-2);
+    return;
+  }
+
+  // We must save all vertices because we're going to delete the cells.
+  Vertices.reserve(number_of_vertices());
+
+  // deletion of the cells
+  // does not use the cell iterator to work in any dimension
+  for (it = _list_of_cells._next_cell; it != past_end_cell();
+       it = _list_of_cells._next_cell)
+  {
+    // We save the vertices to delete them after.
+    // We use the same trick as the Vertex_iterator.
+    for (int i=0; i<=std::max(0,dimension()); i++)
+      if (it->vertex(i)->cell() == it)
+        Vertices.push_back(&(*it->vertex(i)));
+    delete it; // The ds_cell destructor removes it from the list.
+  }
+
+  // then _list_of_cells points on itself, nothing more to do
+  CGAL_triangulation_assertion(_list_of_cells._next_cell == &_list_of_cells);
+  CGAL_triangulation_assertion(_list_of_cells._previous_cell==&_list_of_cells);
+}
 
 private:
   // in dimension i, number of vertices >= i+2 
@@ -2548,56 +2591,6 @@ swap(Tds & tds)
     tds._list_of_cells._previous_cell = p;
     tds._list_of_cells._previous_cell->_next_cell = &(tds._list_of_cells);
   }
-}
-
-template <class Vb, class Cb >
-void
-Triangulation_data_structure_3<Vb,Cb>::
-clear_cells_only(std::vector< CGAL_TYPENAME_MSVC_NULL
-             Triangulation_data_structure_3<Vb,Cb>::Vertex * > & Vertices)
-{
-  CGAL_triangulation_assertion(_list_of_temporary_free_cells._next_cell
-	  == &_list_of_temporary_free_cells);
-  CGAL_triangulation_assertion(_list_of_temporary_free_cells._previous_cell
-	  == &_list_of_temporary_free_cells);
-
-  Cell *it;
-
-  // Delete the cells in the free_list.
-  for (it = _list_of_free_cells._next_cell; it != &_list_of_free_cells;
-       it = _list_of_free_cells._next_cell)
-      delete it;
-
-  if (number_of_vertices() == 0) {
-    // the list of cells must be cleared even in this case
-    for (it = _list_of_cells._next_cell; it != past_end_cell();
-         it = _list_of_cells._next_cell)
-      delete it; // The ds_cell destructor removes it from the list.
-
-    // then _list_of_cells points on itself, nothing more to do
-    set_dimension(-2);
-    return;
-  }
-
-  // We must save all vertices because we're going to delete the cells.
-  Vertices.reserve(number_of_vertices());
-
-  // deletion of the cells
-  // does not use the cell iterator to work in any dimension
-  for (it = _list_of_cells._next_cell; it != past_end_cell();
-       it = _list_of_cells._next_cell)
-  {
-    // We save the vertices to delete them after.
-    // We use the same trick as the Vertex_iterator.
-    for (int i=0; i<=std::max(0,dimension()); i++)
-      if (it->vertex(i)->cell() == it)
-        Vertices.push_back(&(*it->vertex(i)));
-    delete it; // The ds_cell destructor removes it from the list.
-  }
-
-  // then _list_of_cells points on itself, nothing more to do
-  CGAL_triangulation_assertion(_list_of_cells._next_cell == &_list_of_cells);
-  CGAL_triangulation_assertion(_list_of_cells._previous_cell==&_list_of_cells);
 }
 
 template <class Vb, class Cb >
