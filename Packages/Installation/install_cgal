@@ -4818,7 +4818,7 @@ install_gmp_sub()
 	    ${_printf} "%s" "${_LEFTSPACE}Installing ..."
 	    _check_write ${CGAL_INCL_DIR}
 	    ${_cp} gmp.h ${CGAL_INCL_DIR}
-	    ${_mv} "`${_find} . -name \"libgmp.*\"`" "${CGAL_LIB_DIR}/`full_ostype`"
+	    ${_cp} "`${_find} . -name \"libgmp.*\"`" "${CGAL_LIB_DIR}/`full_ostype`"
 	    ${_printf} "%s\n" " done."
 	    _do_command "make clean" "Cleaning"
 	    GMP_INSTALLATION='c'
