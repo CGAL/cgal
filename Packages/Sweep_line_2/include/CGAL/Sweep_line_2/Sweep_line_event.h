@@ -188,10 +188,18 @@ public:
     Comparison_result res = SMALLER;
     iter = m_leftCurves->begin();
 
-    while ( iter != m_leftCurves->end() &&
-	    (res = m_traits->curve_compare_at_x_right(cv, (*iter)->getCurve(), 
-						      ref )) == LARGER)
+    while ( iter != m_leftCurves->end() )
+    {
+      if ( m_traits->curve_is_in_x_range((*iter)->getCurve(), ref))
+        res = m_traits->curve_compare_at_x_right(cv, (*iter)->getCurve(), 
+						      ref );// == LARGER)
+      else 
+        res = m_traits->curve_compare_at_x_right(cv, (*iter)->getCurve(), 
+						 (*iter)->getLeftEnd());
+      if ( res != LARGER )
+        break;
       ++iter;
+    }
     
     while ( iter != m_leftCurves->end() &&
 	    res == EQUAL &&
