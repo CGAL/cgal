@@ -15,10 +15,9 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = -I../../include\
 	$(CGAL_CXXFLAGS)\
-	$(LONG_NAME_PROBLEM_CXXFLAGS)
-#	-B$(UTIL)/Binutils/SunOS/bin/
-#	$(LONG_NAME_PROBLEM_CXXFLAGS) 
-#	 \
+	-B$(UTIL)/Binutils/$(UNAME)/bin/
+#	$(LONG_NAME_PROBLEM_CXXFLAGS)
+#	$(LONG_NAME_PROBLEM_CXXFLAGS) \
 #	-g 
 
 
@@ -28,18 +27,17 @@ CXXFLAGS = -I../../include\
 
 LDFLAGS = \
 	$(TESTSUITE_LDFLAGS) \
-	$(LONG_NAME_PROBLEM_LDFLAGS) \
+	-B$(UTIL)/Binutils/$(UNAME)/bin/ \
 	$(CGAL_LDFLAGS)
-
-
+	# $(LONG_NAME_PROBLEM_LDFLAGS) \
 
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
-# QUANTIFY = quantify
-
 all: example1 example_tds
+	./example1
+	./example_tds
 
 example1: example1.o
 	$(CGAL_CXX) -o example1 example1.o $(LDFLAGS)
@@ -48,10 +46,9 @@ example_tds: example_tds.o
 	$(CGAL_CXX) -o example_tds example_tds.o $(LDFLAGS)
 
 clean:
-	rm -rf *~ *.o core 
+	rm -rf *~ *.o core example1 example_tds output output_tds
 
 realclean: clean
-	rm -rf example1 example_tds Program* Compiler* Error* error.txt output output_tds
 
 #---------------------------------------------------------------------#
 #                    suffix rules
