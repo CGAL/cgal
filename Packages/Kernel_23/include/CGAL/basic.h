@@ -25,9 +25,7 @@
 #ifndef CGAL_BASIC_H
 #define CGAL_BASIC_H
 
-#ifndef CGAL_CONFIG_H
-#  include <CGAL/config.h>
-#endif // CGAL_CONFIG_H
+#include <CGAL/config.h>
 
 #define CGAL_NTS CGAL::NTS::
 
@@ -95,43 +93,19 @@ namespace CGAL {
 } // namespace CGAL
 
 
-#ifndef CGAL_ASSERTIONS_H
 #include <CGAL/assertions.h>
-#endif // CGAL_ASSERTIONS_H
-#ifndef CGAL_KERNEL_ASSERTIONS_H
 #include <CGAL/kernel_assertions.h>
-#endif // CGAL_KERNEL_ASSERTIONS_H
-#ifndef CGAL_HANDLE_H
 #include <CGAL/Handle.h>
-#endif // CGAL_HANDLE_H
-#ifndef CGAL_OBJECT_H
 #include <CGAL/Object.h>
-#endif // CGAL_OBJECT_H
-#ifndef CGAL_ENUM_H
 #include <CGAL/enum.h>
-#endif // CGAL_ENUM_H
-#ifndef CGAL_TAGS_H
 #include <CGAL/tags.h>
-#endif // CGAL_TAGS_H
-#ifndef CGAL_MISC_H
 #include <CGAL/misc.h>
-#endif // CGAL_MISC_H
-#ifndef CGAL_NUMBER_TYPE_BASIC_H
 #include <CGAL/number_type_basic.h>
-#endif // CGAL_NUMBER_TYPE_BASIC_H
-#ifndef CGAL_IO_IO_H
 #include <CGAL/IO/io.h>
-#endif // CGAL_IO_IO_H
-#ifndef CGAL_KERNEL_BASIC_H
 #include <CGAL/kernel_basic.h>
-#endif // CGAL_KERNEL_BASIC_H
-
-#ifndef CGAL_KNOWN_BIT_SIZE_INTEGERS_H
 #include <CGAL/known_bit_size_integers.h>
-#endif // CGAL_KNOWN_BIT_SIZE_INTEGERS_H
 
 CGAL_BEGIN_NAMESPACE
-
 
 // Two struct's to denote boolean compile time decisions.
 // ======================================================
@@ -168,8 +142,6 @@ inline
 void
 assert_equal_types( const T&, const T&) {}
 
-
-
 // Symbolic constants to tailor inlining. Inlining Policy.
 // =======================================================
 #ifndef CGAL_MEDIUM_INLINE
@@ -183,7 +155,5 @@ assert_equal_types( const T&, const T&) {}
 #endif
 
 CGAL_END_NAMESPACE
-
-
 
 #endif // CGAL_BASIC_H
