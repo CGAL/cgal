@@ -1,3 +1,6 @@
+3.95   (9 October 2002)
+- Remove Kernel_traits_common.h.
+
 3.94   (9 October 2002)
 - Missing #include <CGAL/Origin.h>
 

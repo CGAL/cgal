@@ -168,7 +168,10 @@ class Simple_homogeneous
     FT_denominator(const FT &r)
     { return r.denominator(); }
 
-#include <CGAL/Kernel_traits_common.h>
+#define CGAL_Kernel_pred(Y,Z) typedef CGALi::Y<R> Y; Y Z() const {return Y();}
+#define CGAL_Kernel_cons(Y,Z) CGAL_Kernel_pred(Y,Z)
+
+#include <CGAL/Kernel/interface_macros.h>
 
 };
 

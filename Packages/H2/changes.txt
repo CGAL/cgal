@@ -1,3 +1,6 @@
+2.71   (9 Oct 2002)
+- Remove Kernel_traits_common.h.
+
 2.70   (5 Oct 2002)
 - Add explicit types to function templates to support expression templates
   (GMP++).

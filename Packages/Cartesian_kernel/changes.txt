@@ -1,3 +1,6 @@
+Version 6.62 (9 October 2002)
+- Remove Kernel_traits_common.h.
+
 Version 6.61 (8 October 2002)
 - Add deprecation warnings.
 
