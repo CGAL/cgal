@@ -110,7 +110,7 @@ public:
   // The operators.
   IA  operator+(const IA & d) const
   {
-#ifndef CGAL_NO_PRECONDITIONS
+#ifdef CGAL_IA_DEBUG
       CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
 #endif
       return IA (-(inf + d.inf), sup + d.sup);
@@ -119,7 +119,7 @@ public:
 
   IA  operator-(const IA & d) const
   {
-#ifndef CGAL_NO_PRECONDITIONS
+#ifdef CGAL_IA_DEBUG
       CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
 #endif
       return IA (-(inf + d.sup), sup + d.inf);
@@ -202,7 +202,7 @@ inline
 CGAL_Interval_nt_advanced
 CGAL_Interval_nt_advanced::operator* (const CGAL_Interval_nt_advanced& d) const
 {
-#ifndef CGAL_NO_PRECONDITIONS
+#ifdef CGAL_IA_DEBUG
       CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
 #endif
   if (inf<=0)					/* this>=0 */
@@ -245,7 +245,7 @@ inline
 CGAL_Interval_nt_advanced
 CGAL_Interval_nt_advanced::operator* (const double d) const
 {
-#ifndef CGAL_NO_PRECONDITIONS
+#ifdef CGAL_IA_DEBUG
       CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
 #endif
   if (d>=0)	return IA (-(inf*d), sup*d);
@@ -261,7 +261,7 @@ inline
 CGAL_Interval_nt_advanced
 CGAL_Interval_nt_advanced::operator/ (const CGAL_Interval_nt_advanced& d) const
 {
-#ifndef CGAL_NO_PRECONDITIONS
+#ifdef CGAL_IA_DEBUG
       CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
 #endif
   if (d.inf<0.0)				/* d>0 */
@@ -292,7 +292,7 @@ inline
 CGAL_Interval_nt_advanced &
 CGAL_Interval_nt_advanced::operator+= (const CGAL_Interval_nt_advanced& d)
 {
-#ifndef CGAL_NO_PRECONDITIONS
+#ifdef CGAL_IA_DEBUG
       CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
 #endif
   // A pity: this compact "one line" notation is not ok for speed.
@@ -306,7 +306,7 @@ inline
 CGAL_Interval_nt_advanced &
 CGAL_Interval_nt_advanced::operator-= (const CGAL_Interval_nt_advanced& d)
 { // return *this = *this - d;
-#ifndef CGAL_NO_PRECONDITIONS
+#ifdef CGAL_IA_DEBUG
       CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
 #endif
   inf += d.sup;
