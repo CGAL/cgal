@@ -5,7 +5,7 @@
 #include <CGAL/Box_intersection_d/one_way_scan.h>
 #include <CGAL/Box_intersection_d/all_pairs.h>
 
-#include "Timer.h"
+#include <CGAL/Timer.h>
 
 #include <iostream>
 #include <cstdlib>
@@ -20,9 +20,10 @@ static unsigned int failed = 0;
 template< class NT, unsigned int DIM, bool CLOSED >
 struct _test {
 typedef NT Number_type;
-typedef CGAL::Default_box_d< Number_type, DIM >  Box;
-typedef CGAL::Default_box_traits_d< Box > Box_adapter;
-typedef CGAL::Default_box_predicate_traits_d< Box_adapter, CLOSED > Traits;
+typedef CGAL::Box_intersection_d::Box_d< Number_type, DIM >  Box;
+typedef CGAL::Box_intersection_d::Box_traits_d< Box > Box_adapter;
+typedef CGAL::Box_intersection_d::Box_predicate_traits_d<
+                                                 Box_adapter, CLOSED > Traits;
 typedef std::vector< Box >     Box_container;
 typedef std::pair< Box, Box >  Box_pair;
 typedef std::vector< Box_pair > Result_container;
@@ -60,8 +61,6 @@ struct Storage_callback {
     void operator()( const Box& a, const Box& b ) {
         assert_intersection( a, b );
         ++counter;
-        //storage.push_back( std::make_pair( a, b ) );
-        //std::cout << Traits::get_id( a ) << " " << Traits::get_id( b ) << std::endl;
     }
 };
 
@@ -71,53 +70,8 @@ struct Counter_callback {
     void operator()( const Box& a, const Box& b ) {
         assert_intersection( a, b );
         ++counter;
-        //std::cout << Traits::get_id( a ) << " " << Traits::get_id( b ) << std::endl;
     }
 };
-
-/*bool
-operator==( const Box& a, const Box& b ) {
-    for( unsigned int dim = 0; dim < DIM; ++dim )
-        if( Traits::get_lo( a, dim ) != Traits::get_lo( b, dim ) ||
-            Traits::get_hi( a, dim ) != Traits::get_hi( b, dim )   )
-            return false;
-    return true;
-}
-
-bool
-operator==( const BoxPair& a, const BoxPair& b ) {
-    return( a.first == b.first && a.second == b.second ||
-            a.first == b.second && a.second == b.first );
-}
-
-template< class Storage >
-unsigned int countMissingItems( Storage& a, Storage& b ) {
-    unsigned int missing = 0;
-    typedef typename Storage::iterator IT;
-    for( IT it = a.begin(); it != a.end(); ++it ) {
-        bool found = false;
-        for( IT it2 = b.begin(); it2 != b.end(); ++it2 ) {
-            if( *it == *it2 ) {
-                found = true;
-                break;
-            }
-        }
-        if (!found) ++missing;
-    }
-    return missing;
-}
-
-template< class Storage >
-unsigned int countDuplicates( Storage& storage ) {
-    unsigned int counter = 0;
-    typedef typename Storage::iterator IT;
-    for( IT it = storage.begin(); it != storage.end(); ++it )
-        for( IT it2 = it; it2 != storage.end(); ++it2 )
-            if( it != it2 &&  *it == *it2 )
-                ++counter;
-
-    return counter;
-} */
 
 static void
 test_n( unsigned int n, std::ostream& outfile )
@@ -129,44 +83,62 @@ test_n( unsigned int n, std::ostream& outfile )
     fill_boxes( n, boxes2 );
     std::cout << std::endl;
     Counter_callback callback1, callback2;
-    Timer timer, timer_scan;
-
-    std::cout << "one way scan ... " << std::flush;
-    timer_scan.start();
-    CGAL::one_way_scan( boxes1.begin(), boxes1.end(),
-                        boxes2.begin(), boxes2.end(), callback1, Traits(), DIM - 1 );
-    CGAL::one_way_scan( boxes2.begin(), boxes2.end(),
-                        boxes1.begin(), boxes1.end(), callback1, Traits(), DIM - 1 );
-    timer_scan.stop();
-    std::cout << "got " << callback1.counter << " intersections in "
-              << timer_scan.t << " seconds."
-              << std::endl;
-
-    std::cout << "segment tree ... " << std::endl;
+    CGAL::Timer timer, timer_scan;
+    double time, time_scan;
     unsigned int problemsize = boxes1.size() + boxes2.size();
     unsigned int cutoff = 0;
     unsigned int stepsize = 500;
-    float last_time = 1e30;
+    double last_time = 1e30;
+
+    std::cout << "one way scan ... " << std::flush;
+    timer_scan.start();
+    unsigned int repititions = 1;
+    if( problemsize < 20 )
+        repititions = 10000;
+    else if( problemsize < 50 )
+        repititions = 5000;
+    else if( problemsize < 90 )
+        repititions = 2000;
+    else if( problemsize < 300 )
+        repititions = 1000;
+    else if( problemsize < 1000 )
+        repititions = 300;
+    else if( problemsize < 10000 )
+        repititions = 30;
+    else
+        repititions = 1;
+
+    for( unsigned int i = repititions; i; --i ) {
+        CGAL::Box_intersection_d::one_way_scan( boxes1.begin(), boxes1.end(),
+                                                boxes2.begin(), boxes2.end(),
+                                                callback1, Traits(), DIM - 1 );
+        CGAL::Box_intersection_d::one_way_scan( boxes2.begin(), boxes2.end(),
+                                                boxes1.begin(), boxes1.end(),
+                                                callback1, Traits(), DIM - 1 );
+    }
+    timer_scan.stop();
+    time_scan = timer_scan.time() / repititions;
+
+    std::cout << "got " << callback1.counter/repititions << " intersections in "
+              << time_scan << " seconds."
+              << std::endl;
+
+    std::cout << "segment tree ... " << std::endl;
     if( problemsize > 3000 )
         cutoff = 500;
     while( true )
     {
         timer.reset();
         timer.start();
-        CGAL::box_intersection_d( boxes1.begin(), boxes1.end(),
-                                  boxes2.begin(), boxes2.end(), callback2, cutoff );
-        if( problemsize < 500 ) {
+        for( unsigned int i = repititions; i; --i ) {
             CGAL::box_intersection_d( boxes1.begin(), boxes1.end(),
-                                      boxes2.begin(), boxes2.end(), callback2, cutoff );
-            CGAL::box_intersection_d( boxes1.begin(), boxes1.end(),
-                                      boxes2.begin(), boxes2.end(), callback2, cutoff );
-
-            timer.stop();
-            timer.t /= 3.0;
-        } else
-            timer.stop();
-        std::cout << "cutoff = " << cutoff << " -> t = " << timer.t << std::endl;
-        if( last_time < timer.t || timer.t < 1e-4) {
+                                      boxes2.begin(), boxes2.end(),
+                                      callback2, cutoff );
+        }
+        timer.stop();
+        time = timer.time() / repititions;
+        std::cout << "cutoff = " << cutoff << " -> t = " << time << std::endl;
+        if( last_time < time || time < 1e-4) {
             if( cutoff > 2*stepsize )
                 cutoff -= 2*stepsize;
             else
@@ -176,11 +148,11 @@ test_n( unsigned int n, std::ostream& outfile )
             stepsize /= 2;
         }
         cutoff += stepsize;
-        last_time = timer.t;
+        last_time = time;
 
     }
     std::cout << "optimal cutoff = " << cutoff << std::endl;
-    outfile << problemsize << " " << last_time << " " << timer_scan.t << std::endl;
+    outfile << problemsize << " " << last_time << " " << time_scan << std::endl;
 }
 
 void operator()() {
@@ -191,7 +163,7 @@ void operator()() {
     outfile << "# problemsize streamingtime scanningtime" << std::endl;
     outfile.precision(9);
     outfile << std::fixed;
-    for( unsigned int n = 8; n < 1000000; n = (int)(n * 1.5)) {
+    for( unsigned int n = 8; n < 2000000; n = (int)(n * 1.3)) {
         test_n( n, outfile );
     }
 }
