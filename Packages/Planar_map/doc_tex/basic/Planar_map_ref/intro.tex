@@ -67,7 +67,7 @@ We also supply a traits class that uses LEDA's rational kernel and makes use
 of its efficient predicates. The different supplied traits classes are described at the end of this chapter.
 
 Models of PlanarMapTraits\_2 are meant to serve as arguments for the respective
-template parameter of \ccRefName\. However, it should be noted that
+template parameter of \ccc{CGAL::Planar_map_2<Dcel,Traits>}. However, it should be noted that
 each model of PlanarMapTraits\_2 defines a family of curves and
 primitive geometric operations thereof. Sometimes, the only
 implementation available for the manipulation of a certain family of
@@ -273,8 +273,9 @@ More details are give in sections
   \ccc{Pm_walk_along_a_line_point_location<Planar_map>}\lcTex{
   (\ccRefPage{CGAL::Pm_walk_along_a_line_point_location<Planar_map>})}.
 
-In order for the advanced user to write a model of a~\ccRefName\ the user's class should inherit the \cgal\/ supplied class 
-\ccc{Pm_point_location_base<Planar_map>}.
+% Advanced users may wish to write their own point location class.  We
+% state that a point location class should inherit the \cgal\/ supplied
+% class \ccc{Pm_point_location_base<Planar_map>}.
 
 \paragraph{Trade-off Issues}
 The main trade-off among the three strategies implemented, is between
