@@ -68,6 +68,25 @@ struct Static_filter_error
   Sfe operator- ()             const { return *this; }
   Sfe operator/ (const Sfe &f) const { abort(); } // Division not supported.
 
+  Sfe& operator+=(const Sfe &f) { return *this = *this + f; }
+  Sfe& operator-=(const Sfe &f) { return *this = *this - f; }
+  Sfe& operator*=(const Sfe &f) { return *this = *this * f; }
+  Sfe& operator/=(const Sfe &f) { return *this = *this / f; }
+
+  bool operator< (const Sfe &f) const
+  {
+      double e;
+      compare(*this, f, e);
+      std::cerr << "Static error is" << e << endl;
+      abort();
+      return false;
+  }
+  bool operator> (const Sfe &f) const { return *this < f; }
+  bool operator<=(const Sfe &f) const { return *this < f; }
+  bool operator>=(const Sfe &f) const { return *this < f; }
+  bool operator==(const Sfe &f) const { return *this < f; }
+  bool operator!=(const Sfe &f) const { return *this < f; }
+
   double error()  const { return _e; }
   double bound()  const { return _b; }
   int    degree() const { return _d; }
