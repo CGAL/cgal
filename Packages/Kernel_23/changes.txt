@@ -1,3 +1,6 @@
+1.41 (12 June 2003)
+- Un-hide Circle_2::operator== (similarly for Sphere_3 and !=).
+
 1.40 (3 June 2003)
 - Fix doc bugs.
 
