@@ -34,7 +34,7 @@ class Triangulation_hierarchy_vertex_base_2
  : public Vbb
 {
   typedef Vbb V_Base;
-  typedef typename V_Base::Point                        Point;
+  typedef typename V_Base::Point   Point;
 
  public:
   Triangulation_hierarchy_vertex_base_2()
@@ -71,9 +71,9 @@ class Triangulation_hierarchy_2
 : public Triangulation
 {
  public:
-  typedef typename Triangulation::Geom_traits  Geom_traits;
-  typedef typename Geom_traits::Point_2             Point;
   typedef Triangulation                        Tr_Base;
+  typedef typename Tr_Base::Geom_traits        Geom_traits;
+  typedef typename Geom_traits::Point_2        Point;
   typedef typename Tr_Base::Vertex_handle     Vertex_handle;
   typedef typename Tr_Base::Face_handle       Face_handle;
   typedef typename Tr_Base::Vertex_iterator   Vertex_iterator;

@@ -188,6 +188,7 @@ public:
   Face* create_face(Vertex* v1, Vertex* v2, Vertex* v3);
   Face* create_face(Vertex* v1, Vertex* v2, Vertex* v3,
 		    Face* f1, Face* f2, Face* f3);
+  Face* create_face(Face* f); // calls copy constructor of Face
   Face* create_face();
   void  delete_face(Face*);
 
@@ -797,6 +798,16 @@ template <class Gt, class Vb, class Fb>
 inline
 Triangulation_default_data_structure_2<Gt,Vb,Fb>::Face*
 Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+create_face(Face* f)
+{
+ Face* newf = new Face(*f);
+ return newf;
+}
+
+template <class Gt, class Vb, class Fb>
+inline
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::Face*
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
 create_face()
 {
  Face* newf= new Face();
@@ -943,9 +954,11 @@ copy_tds(const Tds &tds, const Vertex* v)
   // create the faces
   for(Iterator_base ib = tds.iterator_base_begin();
       ib != tds.iterator_base_end(); ++ib) {
-    F[&(*ib)]=  new Face( (Vertex*) V[ib->vertex(0)],
-			  (Vertex*) V[ib->vertex(1)],
-			  (Vertex*) V[ib->vertex(2)] );
+    f2 = create_face(&(*ib));
+    F[&(*ib)]=  f2;
+    f2->set_vertices((Vertex*) V[ib->vertex(0)],
+		     (Vertex*) V[ib->vertex(1)],
+		     (Vertex*) V[ib->vertex(2)] );
   }
 
   // link each vertex to a face

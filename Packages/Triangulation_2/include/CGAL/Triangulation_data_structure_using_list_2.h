@@ -1025,9 +1025,11 @@ copy_tds(const Tds &tds, const Vertex* v)
   // create the faces
   for(Iterator_base ib = tds.iterator_base_begin();
       ib != tds.iterator_base_end(); ++ib) {
-    F[&(*ib)]=  create_face( (Vertex*) V[ib->vertex(0)],
-			     (Vertex*) V[ib->vertex(1)],
-			     (Vertex*) V[ib->vertex(2)] );
+    f2 = create_face(&(*ib));
+    F[&(*ib)]=  f2;
+    f2->set_vertices((Vertex*) V[ib->vertex(0)],
+		     (Vertex*) V[ib->vertex(1)],
+		     (Vertex*) V[ib->vertex(2)] );
   }
 
   // link each vertex to a face
