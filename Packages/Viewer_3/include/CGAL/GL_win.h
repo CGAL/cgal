@@ -20,10 +20,11 @@
 //                 (Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>)
 //
 // ============================================================================
+#include <config.h> // fltk's config
+#include <FL/Fl.H>  // order of includes is important on Windows.
+#include <FL/gl.h>
 #include <FL/Fl_Gl_Window.H>
 #include <CGAL/scene_graph.h>
-#include <FL/gl.h>
-#include <FL/Fl.H>
 #ifdef USE_THREAD
 #include <CGAL/Threads.h>
 #endif

@@ -26,7 +26,7 @@
 extern "C" {
 #include <stdio.h>
 }
-#include <X11/Xlib.h>
+#include <FL/x.H> // platform-indep. fttk wrapper for X11/Windows
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Radio_Light_Button.H>
