@@ -1,5 +1,11 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.12 on 7 May 1999
+- Fixed a bug in std::istream & operator>>().
+- Fixed the definition of CGAL_IA_CACHE for the MipsPro workaround.
+- Removed a useless assertion(false) in the predicates.
+- ship workaround_4_irix as assembly file instead of object.
+
 Version 4.11 on 4 May 1999
 - Introduced macro CGAL_IA_FORCE_TO_DOUBLE to workaround an Intel processors
   "feature", breaking the intervals that underflow or overflow.

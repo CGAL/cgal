@@ -55,7 +55,6 @@ compare_xC2(
 		l2b.exact(),
 		l2c.exact());
   }
-  CGAL_assertion(false);
 }
 
 CGAL_END_NAMESPACE

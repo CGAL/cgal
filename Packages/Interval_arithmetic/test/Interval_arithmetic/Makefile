@@ -17,7 +17,7 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = -I../../include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS) \
-	-O2
+	-g -W
 	# -DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS\
 	# -O2 -W -Winline
 	# -mcpu=pentiumpro -march=pentiumpro -mieee-fp
@@ -32,6 +32,7 @@ CXXFLAGS = -I../../include \
 	# -Wa,-xarch=v8plus   # g++ sans -m*=ultra*
 	# -ffast-math         # seems slower !?!
 	# -fhonor-std
+	# -frepo
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -116,7 +117,7 @@ tstlink: tstlink1.o tstlink2.o
 	$(CGAL_CXX) -o $@ $+ $(LDFLAGS)
 
 clean:
-	rm -f *.o *.bb *.bbg *.da *.gcov core tst? tstlink
+	rm -f *.o *.bb *.bbg *.da *.gcov core tst? tstlink *.rpo
 
 #---------------------------------------------------------------------#
 #                    suffix rules

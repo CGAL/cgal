@@ -14,6 +14,9 @@
 
 Concerning the code itself:
 
+- PENSER a virer include/CGAL/determinant.h.
+- Try long double bounds on Intel, and make benchmarks.  If it isn't too slow,
+  then it'll be better, because it won't need the "force to mem" workaround.
 - Stop constant propagation (could be considered a compiler bug, or
   misfeature).  It's not specific to Intel, it would be nice if egcs had
   better control over that (work on that ?).  It can easily be fixed by
@@ -28,6 +31,7 @@ Concerning the code itself:
   Hum, rajouter un booléen pour calculer le cache seulement sur demande ?
   (ça évite de le faire inutilement pour les variables intermédiaires,
   mais ça prend un chouia plus de place... mais en comparaison du reste...)
+  Utiliser plutôt Tag_true/Tag_false si possible.
 - sign_det_2x2() optimisé pour l'IA (+ bench de triangulation).
   (et régler le sort de include/CGAL/Interval_arithmetic/determinant.h.)
 	include/CGAL/Interval_arithmetic/determinant.h has no header.
