@@ -70,7 +70,7 @@ power_testH3(
     RT dthw = square(thw);
     RT dtz = square(thx) + square(thy) + square(thz) - twt*dthw;
 
-    return Oriented_side(sign_of_determinant5x5(dphx, dphy, dphz, dpz, dphw,
+    return Oriented_side(- sign_of_determinant5x5(dphx, dphy, dphz, dpz, dphw,
 	                                        dqhx, dqhy, dqhz, dqz, dqhw,
 	                                        drhx, drhy, drhz, drz, drhw,
 	                                        dshx, dshy, dshz, dsz, dshw,
