@@ -13,7 +13,8 @@
 //
 // file          : include/CGAL/Object_handle.h
 // package       : Nef_2
-// maintainer    : Michael Seel
+// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>    
+// coordinator   : Michael Seel <seel@mpi-sb.mpg.de>     
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
