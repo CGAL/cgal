@@ -1,52 +1,3 @@
-05/05/2003 1.190
-- Update GMP to 4.1.2
-- Recognize GCC 3.3
-- Update documentation for -fsquangle.
-
-02/05/2003 (rursu) 1.188
------------
-	modified the install_cgal script: fixed libs names introduced in 1.187 (removed .lib from the end)
-
-2/05/2003 (spion)
-
-- Add the CUSTOM*FLAGS to get_compiler_description().
-
-30/04/2003 (rursu) 1.187
------------------
-	modified install_cgal: added some libs to QT_LDFLAGS
-
-02/04/2003 (rursu) 1.186
-----------
-	modified CGAL_CXXFLAGS. GMP and CLN include dirs should have come after CGAL config and include dirs.
-	modified lib name for QT on Windows commdlg32.lib -> comdlg32.lib
-
-28/03/2003 (rursu) 1.185
-----------
-fixed ole_32.lib -> ole32.lib
-
-28/03/2003 (rursu) 1.184
-----------
-fixed install_cgal syntax error
-
-
-28/03/2003 (rursu) 1.183
-removed stlport from README
-
-28/03/2003 (rursu)
-----------
-modified install_cgal script to support Qt 2, 3 on Windows
-fixed CGAL_CXXFLAGS
-
-26/03/2003 (rursu)
-----------
-fixed bug in install_cgal: Borland 5.5 compiler is supported by CGAL
-modifed install_cgal: cl1310 is supported by CGAL
-
-17/03/2003 (rursu)
-----------
-modified src/CGALWin/makefile_Win
-
-
 //=====================================================================
 //	Revision History for package Installation
 //=====================================================================
@@ -57,7 +8,27 @@ modified src/CGALWin/makefile_Win
 //---------------------------------------------------------------------
 
 GLOB: added licensing information about Qt widget stuff
+GLOB: removed stlport from README
 GLOB: updated for release 2.4
+GLOB: fix version
+ALL : - Update GMP to 4.1.2.
+ALL : - Recognize GCC 3.3.
+ALL : - Update documentation for -fsquangle.
+GLOB: fixed install_cgal for Qt
+GLOB: - Add the CUSTOM*FLAGS to get_compiler_description().
+GLOB: added libs to QT_LDFLAGS for Windows
+GLOB: 02/04/2003 (rursu) 1.186
+GLOB: ----------
+GLOB: modified CGAL_CXXFLAGS. GMP and CLN include dirs should have come after
+GLOB:  CGAL config and include dirs.
+GLOB: modified lib name for QT on Windows commdlg32.lib -> comdlg32.lib
+GLOB: fixed ole_32.lib -> ole32.lib
+GLOB: fixed install_cgal
+GLOB: updated
+GLOB: fixed bug in install_cgal: Borland 5.5 compiler is supported by CGAL
+GLOB: modifed install_cgal: cl1310 is supported by CGAL
+ALL : modified /src/CGALWin/makefile_Win
+ALL : added -I/usr/X11R6/include at CXX_FLAGS
 GLOB: Fix last change.
 GLOB: Remove LEDA link options for libCGAL.
 GLOB: -O replaced by -O2 for the Intel compiler.
@@ -86,6 +57,20 @@ GLOB: - Document --build-all
 GLOB: Fixes for QT.
 GLOB: src/Interval_arithmetic/workaround_4_ms.obj is no longer necessary.
 GLOB: Add -D_RWSTD__ALLOCATOR for SunPro.
+GLOB: Retrieve config version from CGAL_CFG_NO_TMPL_IN_TMPL_PARAM.C.
+GLOB: Add spaces before "-" in libflags to please printf on some platforms.
+GLOB: modified lib name for QT commdlg32.lib -> comdlg32.lib
+GLOB: gmp, cln include directories come after CGAL include and configure
+GLOB:  directories
+GLOB: ole_32.lib -> ole32.lib
+GLOB: fixed
+GLOB: added support for Qt 2, 3 on Windows for all flavours:
+GLOB: threaded, shared, static, THREAD_SUPPORT
+GLOB: for Windows compilers the qt_windows_menu is used
+GLOB: for the others, qt_menu is used
+GLOB: fixed bug in CGAL_CXXFLAGS:
+GLOB: QT_INCL_DIR comes at the end now.
+GLOB: modified also the LEDA stuff here ... see if it is no problem
 ALL : Removed all MLd options (=debug) for vc/ilc.
 GLOB: Incorporate Intel support (<- Andreas).
 GLOB: Set CGAL_VERSION to 3.0.

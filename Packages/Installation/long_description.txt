@@ -4,6 +4,101 @@
 
 
 //---------------------------------------------------------------------
+//	revision 1191
+//---------------------------------------------------------------------
+
+GLOB: Retrieve config version from CGAL_CFG_NO_TMPL_IN_TMPL_PARAM.C.
+GLOB: Add spaces before "-" in libflags to please printf on some platforms.
+
+//---------------------------------------------------------------------
+//	revision 1190
+//---------------------------------------------------------------------
+
+GLOB: fix version
+ALL : - Update GMP to 4.1.2.
+ALL : - Recognize GCC 3.3.
+ALL : - Update documentation for -fsquangle.
+
+//---------------------------------------------------------------------
+//	revision 1189
+//---------------------------------------------------------------------
+
+GLOB: fixed install_cgal for Qt
+
+//---------------------------------------------------------------------
+//	revision 1188
+//---------------------------------------------------------------------
+
+GLOB: - Add the CUSTOM*FLAGS to get_compiler_description().
+
+//---------------------------------------------------------------------
+//	revision 1187
+//---------------------------------------------------------------------
+
+GLOB: added libs to QT_LDFLAGS for Windows
+
+//---------------------------------------------------------------------
+//	revision 1186
+//---------------------------------------------------------------------
+
+GLOB: 02/04/2003 (rursu) 1.186
+GLOB: ----------
+GLOB: modified CGAL_CXXFLAGS. GMP and CLN include dirs should have come after
+GLOB:  CGAL config and include dirs.
+GLOB: modified lib name for QT on Windows commdlg32.lib -> comdlg32.lib
+GLOB: modified lib name for QT commdlg32.lib -> comdlg32.lib
+GLOB: gmp, cln include directories come after CGAL include and configure
+GLOB:  directories
+
+//---------------------------------------------------------------------
+//	revision 1185
+//---------------------------------------------------------------------
+
+GLOB: fixed ole_32.lib -> ole32.lib
+GLOB: ole_32.lib -> ole32.lib
+
+//---------------------------------------------------------------------
+//	revision 1184
+//---------------------------------------------------------------------
+
+GLOB: fixed install_cgal
+GLOB: fixed
+
+//---------------------------------------------------------------------
+//	revision 1183
+//---------------------------------------------------------------------
+
+GLOB: removed stlport from README
+GLOB: updated
+
+//---------------------------------------------------------------------
+//	revision 1182
+//---------------------------------------------------------------------
+
+GLOB: updated
+GLOB: added support for Qt 2, 3 on Windows for all flavours:
+GLOB: threaded, shared, static, THREAD_SUPPORT
+GLOB: for Windows compilers the qt_windows_menu is used
+GLOB: for the others, qt_menu is used
+GLOB: fixed bug in CGAL_CXXFLAGS:
+GLOB: QT_INCL_DIR comes at the end now.
+GLOB: modified also the LEDA stuff here ... see if it is no problem
+
+//---------------------------------------------------------------------
+//	revision 1181
+//---------------------------------------------------------------------
+
+GLOB: fixed bug in install_cgal: Borland 5.5 compiler is supported by CGAL
+GLOB: modifed install_cgal: cl1310 is supported by CGAL
+
+//---------------------------------------------------------------------
+//	revision 1180
+//---------------------------------------------------------------------
+
+ALL : modified /src/CGALWin/makefile_Win
+ALL : added -I/usr/X11R6/include at CXX_FLAGS
+
+//---------------------------------------------------------------------
 //	revision 1179
 //---------------------------------------------------------------------
 
@@ -151,6 +246,9 @@ GLOB: Qt license updates
 //	revision 1158
 //---------------------------------------------------------------------
 
+DOCS: - Update GMP to 4.1.2.
+DOCS: - Recognize GCC 3.3.
+DOCS: - Update documentation for -fsquangle.
 DOCS: Removed all MLd options (=debug) for vc/ilc.
 DOCS: Changed CGAL_VERSION to 3.0.
 DOCS: Update supported compiler list.
@@ -242,6 +340,8 @@ TEST: Added return 0;
 TEST: Converted to namespace CGAL.
 ALL : Initial revision
 ALL : Installation
+SRC : modified /src/CGALWin/makefile_Win
+SRC : added -I/usr/X11R6/include at CXX_FLAGS
 SRC : Changed makefile_Win to work on Borland.
 SRC : Fixed CGAL_WIN_LIB.
 
