@@ -8,9 +8,9 @@
 #include "MyKernel.h"
 
 
-typedef MyKernel<double>      MK;
-typedef CGAL::Filtered_kernel_without_type_equality<MK> K;
-typedef CGAL::Delaunay_triangulation_2<K> Delaunay_triangulation_2;
+typedef MyKernel<double>                   MK;
+typedef CGAL::Filtered_kernel_adaptor<MK>  K;
+typedef CGAL::Delaunay_triangulation_2<K>  Delaunay_triangulation_2;
 
 
 typedef K::Point_2         Point;
@@ -25,22 +25,22 @@ const int BLACK=2;
 
 int main()
 {
-  
   Point a(0,0, RED), b(1,0, BLACK), c(1,1, BLACK), d(0,1, RED);
-  
+
   Delaunay_triangulation_2 dt;
   dt.insert(a);
-  
+
   K::Orientation_2 orientation;
   orientation(a,b,c);
   Point p(1,2, BLACK), q;
   p.color() = RED;
   q.color() = BLACK;
   std::cout << p << std::endl;
-  
+
   K::Compute_squared_distance_2 squared_distance;
 
-  std::cout << "squared_distance(a, b) == " << squared_distance(a, b) << std::endl;
+  std::cout << "squared_distance(a, b) == "
+            << squared_distance(a, b) << std::endl;
 
   Segment s1(p,q), s2(a, c);
 
@@ -55,49 +55,49 @@ int main()
   assert(s1.source().color() == BLACK);
 
   K::Intersect_2 intersection;
-  
+
   CGAL::Object o = intersection(s1, s2);
-  
+
   K::Construct_cartesian_const_iterator_2 construct_it;
   K::Cartesian_const_iterator_2  cit = construct_it(a);
   assert(*cit == a.x());
-  
+
   cit = construct_it(a,0);
 
   cit--;
   assert(*cit == a.y());
 
   Line l1(a,b), l2(p, q);
-    
+
   intersection(l1, l2);
 
 
   intersection(s1, l1);
-  
+
   Ray r1(d,b), r2(d,c);
   intersection(r1, r2);
-    
+
   intersection(r1, l1);
 
   squared_distance(r1, r2);
   squared_distance(r1, l2);
   squared_distance(r1, s2);
-  
+
   Triangle t1(a,b,c), t2(a,c,d);
   intersection(t1, t2);
-  intersection(t1, l1);  
-  
+  intersection(t1, l1);
+
   intersection(t1, s1);
- 
+
   intersection(t1, r1);
-  
+
   Iso_rectangle i1(a,c), i2(d,p);
   intersection(i1, i2);
- intersection(i1, s1);
-   
+  intersection(i1, s1);
+
   intersection(i1, r1);
   intersection(i1, l1);
-  
+
   t1.orientation();
 
   std::cout << s1.source() << std::endl;

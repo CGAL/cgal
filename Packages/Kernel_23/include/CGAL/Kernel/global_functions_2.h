@@ -621,6 +621,18 @@ operator<=(const Direction_2<K>& d1, const Direction_2<K>& d2)
 template < class K >
 inline
 bool
+operator==(const Point_2<K>& p, const Point_2<K>& q)
+{ return K().equal_2_object()(p, q); }
+
+template < class K >
+inline
+bool
+operator!=(const Point_2<K>& p, const Point_2<K>& q)
+{ return ! (p == q); }
+
+template < class K >
+inline
+bool
 operator<(const Point_2<K>& p, const Point_2<K>& q)
 { return K().less_xy_2_object()(p, q); }
 

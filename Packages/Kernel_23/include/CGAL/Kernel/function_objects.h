@@ -1474,6 +1474,8 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Equal_2
   {
+    typedef typename K::Point_2       Point_2;
+
   public:
     typedef bool             result_type;
     typedef Arity_tag< 2 >   Arity;
@@ -1483,11 +1485,20 @@ namespace CommonKernelFunctors {
     bool
     operator()(const T& p, const T& q) const
     { return p == q; }
+
+    // Point_2 is special case since the global operator== would recurse.
+    bool
+    operator()(const Point_2 &p, const Point_2 &q) const
+    {
+      return p.x() == q.x() && p.y() == q.y();
+    }
   };
 
   template <typename K>
   class Equal_3
   {
+    typedef typename K::Point_3       Point_3;
+
   public:
     typedef bool             result_type;
     typedef Arity_tag< 2 >   Arity;
@@ -1497,6 +1508,13 @@ namespace CommonKernelFunctors {
     bool
     operator()(const T& p, const T& q) const
     { return p == q; }
+
+    // Point_3 is special case since the global operator== would recurse.
+    bool
+    operator()(const Point_3 &p, const Point_3 &q) const
+    {
+      return p.x() == q.x() && p.y() == q.y() && p.z() == q.z();
+    }
   };
 
   template <typename K>

@@ -1,4 +1,10 @@
-13 September 2004
+14 September 2004 Sylvain Pion
+- Exact_predicates_inexact_constructions_kernel : now uses Filtered_kernel
+  instead of Filtered_exact (benefits from static filters).
+- Filtered_kernel_without_type_equality renamed to Filtered_kernel_adaptor.
+- More global functions call the functors.
+
+13 September 2004 Andreas Fabri
 - Added construct_min/max_vertex_2/3 in the kernel archetype interface macros
 
 7 September 2004 Andreas Fabri

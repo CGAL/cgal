@@ -1,4 +1,4 @@
-\begin{ccRefClass}{Filtered_kernel_without_type_equality<CK>}
+\begin{ccRefClass}{Filtered_kernel_adaptor<CK>}
 
 \KernelRefLayout\gdef\ccTagOperatorLayout{\ccFalse}
 
@@ -29,7 +29,7 @@ are not.
 #include <CGAL/Filtered_kernel.h>
 
 typedef CGAL::Simple_cartesian<double> CK;
-typedef CGAL::Filtered_kernel_without_type_equality<CK> K;
+typedef CGAL::Filtered_kernel_adaptor<CK> K;
 
 
 typedef K::Point_2 p(0,0), q(1,1), r(1,5);

@@ -140,17 +140,6 @@ circumcenter(const typename CGAL_WRAP(K)::Triangle_3 &t, const K& k)
 
 template < class K >
 inline
-Comparison_result
-compare_distance_to_point(const typename CGAL_WRAP(K)::Point_3 &p,
-                          const typename CGAL_WRAP(K)::Point_3 &q,
-                          const typename CGAL_WRAP(K)::Point_3 &r,
-			  const K& k)
-{
-  return k.compare_distance_3_object()(p, q, r);
-}
-
-template < class K >
-inline
 bool
 collinear(const typename CGAL_WRAP(K)::Point_3 &p,
           const typename CGAL_WRAP(K)::Point_3 &q,
@@ -163,6 +152,18 @@ collinear(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 bool
+collinear_are_ordered_along_line(
+          const typename CGAL_WRAP(K)::Point_3 &p,
+          const typename CGAL_WRAP(K)::Point_3 &q,
+          const typename CGAL_WRAP(K)::Point_3 &r,
+          const K& k)
+{
+  return k.collinear_are_ordered_along_line_3_object()(p, q, r);
+}
+
+template < class K >
+inline
+bool
 collinear_are_strictly_ordered_along_line(
           const typename CGAL_WRAP(K)::Point_3 &p,
           const typename CGAL_WRAP(K)::Point_3 &q,
@@ -170,6 +171,97 @@ collinear_are_strictly_ordered_along_line(
           const K& k)
 {
   return k.collinear_are_strictly_ordered_along_line_3_object()(p, q, r);
+}
+
+template < class K >
+inline
+Comparison_result
+compare_distance_to_point(const typename CGAL_WRAP(K)::Point_3 &p,
+                          const typename CGAL_WRAP(K)::Point_3 &q,
+                          const typename CGAL_WRAP(K)::Point_3 &r,
+			  const K& k)
+{
+  return k.compare_distance_3_object()(p, q, r);
+}
+
+template < class K >
+inline
+Comparison_result
+compare_lexicographically_xyz(const typename CGAL_WRAP(K)::Point_3 &p,
+                              const typename CGAL_WRAP(K)::Point_3 &q,
+			      const K& k)
+{
+  return k.compare_xyz_3_object()(p, q);
+}
+
+template < class K >
+inline
+Comparison_result
+compare_signed_distance_to_plane(const typename CGAL_WRAP(K)::Plane_3 &h,
+				 const typename CGAL_WRAP(K)::Point_3 &p,
+				 const typename CGAL_WRAP(K)::Point_3 &q,
+				 const K &k)
+{ 
+  if (k.less_signed_distance_to_plane_3_object()(h, p, q)) return SMALLER;
+  if (k.less_signed_distance_to_plane_3_object()(h, q, p)) return LARGER;
+  return EQUAL;
+}
+
+template < class K >
+inline
+Comparison_result
+compare_signed_distance_to_plane(const typename CGAL_WRAP(K)::Point_3 &hp,
+				 const typename CGAL_WRAP(K)::Point_3 &hq,
+				 const typename CGAL_WRAP(K)::Point_3 &hr,
+				 const typename CGAL_WRAP(K)::Point_3 &p,
+				 const typename CGAL_WRAP(K)::Point_3 &q,
+				 const K &k)
+{ 
+  if (k.less_signed_distance_to_plane_3_object()(hp, hq, hr, p, q))
+    return SMALLER;
+  if (k.less_signed_distance_to_plane_3_object()(hp, hq, hr, q, p))
+    return LARGER;
+  return EQUAL;
+}
+
+template < class K >
+inline
+Comparison_result
+compare_x(const typename CGAL_WRAP(K)::Point_3 &p,
+	  const typename CGAL_WRAP(K)::Point_3 &q,
+	  const K &k)
+{ 
+  return k.compare_x_3_object()(p, q);
+}
+
+template < class K >
+inline
+Comparison_result
+compare_y(const typename CGAL_WRAP(K)::Point_3 &p,
+	  const typename CGAL_WRAP(K)::Point_3 &q,
+	  const K &k)
+{ 
+  return k.compare_y_3_object()(p, q);
+}
+
+template < class K >
+inline
+Comparison_result
+compare_z(const typename CGAL_WRAP(K)::Point_3 &p,
+	  const typename CGAL_WRAP(K)::Point_3 &q,
+	  const K &k)
+{ 
+  return k.compare_z_3_object()(p, q);
+}
+
+template < class K >
+inline
+Comparison_result
+compare_xyz(const typename CGAL_WRAP(K)::Point_3 &p,
+	    const typename CGAL_WRAP(K)::Point_3 &q,
+	    const K &k)
+{ 
+  return k.compare_xyz_3_object()(p, q);
 }
 
 template < class K >
@@ -249,34 +341,6 @@ has_larger_distance_to_point(const typename CGAL_WRAP(K)::Point_3 &p,
 
 template < class K >
 inline
-Comparison_result
-compare_signed_distance_to_plane(const typename CGAL_WRAP(K)::Plane_3 &h,
-				 const typename CGAL_WRAP(K)::Point_3 &p,
-				 const typename CGAL_WRAP(K)::Point_3 &q,
-				 const K &k)
-{ 
-  if(k.less_signed_distance_to_plane_3_object()(h, p, q)) return SMALLER;
-  if(k.less_signed_distance_to_plane_3_object()(h, q, p)) return LARGER;
-  return EQUAL;
-}
-
-template < class K >
-inline
-Comparison_result
-compare_signed_distance_to_plane(const typename CGAL_WRAP(K)::Point_3 &hp,
-				 const typename CGAL_WRAP(K)::Point_3 &hq,
-				 const typename CGAL_WRAP(K)::Point_3 &hr,
-				 const typename CGAL_WRAP(K)::Point_3 &p,
-				 const typename CGAL_WRAP(K)::Point_3 &q,
-				 const K &k)
-{ 
-  if(k.less_signed_distance_to_plane_3_object()(hp, hq, hr, p, q)) return SMALLER;
-  if(k.less_signed_distance_to_plane_3_object()(hp, hq, hr, q, p)) return LARGER;
-  return EQUAL;
-}
-
-template < class K >
-inline
 bool
 has_larger_signed_distance_to_plane(const typename CGAL_WRAP(K)::Plane_3 &h,
 				    const typename CGAL_WRAP(K)::Point_3 &p,
@@ -321,6 +385,46 @@ has_smaller_signed_distance_to_plane(const typename CGAL_WRAP(K)::Point_3 &hp,
 				     const K &k)
 { 
   return k.less_signed_distance_to_plane_3_object()(hp, hq, hr, p, q);
+}
+
+template < class K >
+inline
+bool
+less_x(const typename CGAL_WRAP(K)::Point_3 &p,
+       const typename CGAL_WRAP(K)::Point_3 &q,
+       const K &k)
+{ 
+  return k.less_x_3_object()(p, q);
+}
+
+template < class K >
+inline
+bool
+less_y(const typename CGAL_WRAP(K)::Point_3 &p,
+       const typename CGAL_WRAP(K)::Point_3 &q,
+       const K &k)
+{ 
+  return k.less_y_3_object()(p, q);
+}
+
+template < class K >
+inline
+bool
+less_z(const typename CGAL_WRAP(K)::Point_3 &p,
+       const typename CGAL_WRAP(K)::Point_3 &q,
+       const K &k)
+{ 
+  return k.less_z_3_object()(p, q);
+}
+
+template < class K >
+inline
+bool
+lexicographically_xyz_smaller(const typename CGAL_WRAP(K)::Point_3 &p,
+                              const typename CGAL_WRAP(K)::Point_3 &q,
+                              const K &k)
+{
+  return k.less_xyz_3_object()(p, q);
 }
 
 template < class K >
@@ -509,6 +613,33 @@ volume(const typename CGAL_WRAP(K)::Point_3 &p,
   return k.compute_volume_3_object()(p, q, r, s);
 }
 
+template < class K >
+inline
+bool
+x_equal(const typename CGAL_WRAP(K)::Point_3 &p,
+        const typename CGAL_WRAP(K)::Point_3 &q, const K &k)
+{
+  return k.equal_x_3_object()(p, q);
+}
+
+template < class K >
+inline
+bool
+y_equal(const typename CGAL_WRAP(K)::Point_3 &p,
+        const typename CGAL_WRAP(K)::Point_3 &q, const K &k)
+{
+  return k.equal_y_3_object()(p, q);
+}
+
+template < class K >
+inline
+bool
+z_equal(const typename CGAL_WRAP(K)::Point_3 &p,
+        const typename CGAL_WRAP(K)::Point_3 &q, const K &k)
+{
+  return k.equal_z_3_object()(p, q);
+}
+
 
 // The following functions only call some of the previous ones.
 
@@ -532,6 +663,16 @@ are_positive_oriented(const typename CGAL_WRAP(K)::Point_3 &p,
                       const typename CGAL_WRAP(K)::Point_3 &s, const K &k)
 {
   return CGALi::orientation(p, q, r, s, k) == POSITIVE;
+}
+
+template < class K >
+inline
+bool
+lexicographically_xyz_smaller_or_equal(const typename CGAL_WRAP(K)::Point_3 &p,
+                                       const typename CGAL_WRAP(K)::Point_3 &q,
+                                       const K&k)
+{
+  return CGALi::compare_lexicographically_xyz(p, q, k) != LARGER;
 }
 
 } // namespace CGALi

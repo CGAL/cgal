@@ -148,11 +148,31 @@ circumcenter(const Triangle_3<K> &t)
 }
 
 template < class K >
-CGAL_KERNEL_INLINE
+inline
 bool
 collinear(const Point_3<K> &p, const Point_3<K> &q, const Point_3<K> &r)
 {
   return CGALi::collinear(p, q, r, K());
+}
+
+template < class K >
+inline
+bool
+collinear_are_ordered_along_line(const Point_3<K> &p,
+                                 const Point_3<K> &q,
+                                 const Point_3<K> &r)
+{
+  return CGALi::collinear_are_ordered_along_line(p, q, r, K());
+}
+
+template < class K >
+inline
+bool
+collinear_are_strictly_ordered_along_line(const Point_3<K> &p,
+                                          const Point_3<K> &q,
+                                          const Point_3<K> &r)
+{
+  return CGALi::collinear_are_strictly_ordered_along_line(p, q, r, K());
 }
 
 template < class K >
@@ -163,6 +183,15 @@ compare_distance_to_point(const Point_3<K> &p,
                           const Point_3<K> &r)
 {
   return CGALi::compare_distance_to_point(p, q, r, K());
+}
+
+template < class K >
+inline
+Comparison_result
+compare_lexicographically_xyz(const Point_3<K> &p,
+                              const Point_3<K> &q)
+{
+  return CGALi::compare_lexicographically_xyz(p, q, K());
 }
 
 template < class K >
@@ -189,12 +218,34 @@ compare_signed_distance_to_plane(const Point_3<K> &hp,
 
 template < class K >
 inline
-bool
-collinear_are_strictly_ordered_along_line(const Point_3<K> &p,
-                                          const Point_3<K> &q,
-                                          const Point_3<K> &r)
-{
-  return CGALi::collinear_are_strictly_ordered_along_line(p, q, r, K());
+Comparison_result
+compare_x(const Point_3<K> &p, const Point_3<K> &q)
+{ 
+  return CGALi::compare_x(p, q, K());
+}
+
+template < class K >
+inline
+Comparison_result
+compare_y(const Point_3<K> &p, const Point_3<K> &q)
+{ 
+  return CGALi::compare_y(p, q, K());
+}
+
+template < class K >
+inline
+Comparison_result
+compare_z(const Point_3<K> &p, const Point_3<K> &q)
+{ 
+  return CGALi::compare_z(p, q, K());
+}
+
+template < class K >
+inline
+Comparison_result
+compare_xyz(const Point_3<K> &p, const Point_3<K> &q)
+{ 
+  return CGALi::compare_xyz(p, q, K());
 }
 
 template < class K >
@@ -204,6 +255,47 @@ coplanar(const Point_3<K> &p, const Point_3<K> &q,
          const Point_3<K> &r, const Point_3<K> &s)
 {
   return CGALi::coplanar(p, q, r, s, K());
+}
+
+
+template < class K >
+inline
+Orientation
+coplanar_orientation(const Point_3<K> &p,
+                     const Point_3<K> &q,
+                     const Point_3<K> &r,
+                     const Point_3<K> &s)
+{
+  return CGALi::coplanar_orientation(p, q, r, s, K());
+}
+
+template < class K >
+inline
+Orientation
+coplanar_orientation(const Point_3<K> &p,
+                     const Point_3<K> &q,
+                     const Point_3<K> &r)
+{
+  return CGALi::coplanar_orientation(p, q, r, K());
+}
+
+template < class K >
+inline
+Bounded_side
+coplanar_side_of_bounded_circle(const Point_3<K> &p,
+                                const Point_3<K> &q,
+                                const Point_3<K> &r,
+                                const Point_3<K> &t)
+{
+  return CGALi::coplanar_side_of_bounded_circle(p, q, r, t, K());
+}
+
+template < class K >
+inline
+typename K::Vector_3
+cross_product(const Vector_3<K> &v, const Vector_3<K> &w)
+{
+  return CGALi::cross_product(v, w, K());
 }
 
 template < class K >
@@ -270,45 +362,45 @@ has_smaller_signed_distance_to_plane(const Plane_3<K> &h,
   return CGALi::has_smaller_signed_distance_to_plane(h, p, q, K());
 }
 
-
 template < class K >
 inline
-Orientation
-coplanar_orientation(const Point_3<K> &p,
-                     const Point_3<K> &q,
-                     const Point_3<K> &r,
-                     const Point_3<K> &s)
-{
-  return CGALi::coplanar_orientation(p, q, r, s, K());
+bool
+less_x(const Point_3<K> &p, const Point_3<K> &q)
+{ 
+  return CGALi::less_x(p, q, K());
 }
 
 template < class K >
 inline
-Orientation
-coplanar_orientation(const Point_3<K> &p,
-                     const Point_3<K> &q,
-                     const Point_3<K> &r)
-{
-  return CGALi::coplanar_orientation(p, q, r, K());
+bool
+less_y(const Point_3<K> &p, const Point_3<K> &q)
+{ 
+  return CGALi::less_y(p, q, K());
 }
 
 template < class K >
 inline
-Bounded_side
-coplanar_side_of_bounded_circle(const Point_3<K> &p,
-                                const Point_3<K> &q,
-                                const Point_3<K> &r,
-                                const Point_3<K> &t)
-{
-  return CGALi::coplanar_side_of_bounded_circle(p, q, r, t, K());
+bool
+less_z(const Point_3<K> &p, const Point_3<K> &q)
+{ 
+  return CGALi::less_z(p, q, K());
 }
 
 template < class K >
 inline
-typename K::Vector_3
-cross_product(const Vector_3<K> &v, const Vector_3<K> &w)
+bool
+lexicographically_xyz_smaller(const Point_3<K> &p, const Point_3<K> &q)
 {
-  return CGALi::cross_product(v, w, K());
+  return CGALi::lexicographically_xyz_smaller(p, q, K());
+}
+
+template < class K >
+inline
+bool
+lexicographically_xyz_smaller_or_equal(const Point_3<K> &p,
+                                       const Point_3<K> &q)
+{
+  return CGALi::lexicographically_xyz_smaller_or_equal(p, q, K());
 }
 
 template < class K >
@@ -335,7 +427,31 @@ min_vertex(const Iso_cuboid_3<K> &ic)
   return CGALi::min_vertex(ic, K());
 }
 
-// FIXME TODO : what to do with teh operators ?
+// FIXME TODO : what to do with the operators ?
+template < class K >
+inline
+bool
+operator==(const Point_3<K>& p, const Point_3<K>& q)
+{ return K().equal_3_object()(p, q); }
+
+template < class K >
+inline
+bool
+operator!=(const Point_3<K>& p, const Point_3<K>& q)
+{ return ! (p == q); }
+
+template < class K >
+inline
+bool
+operator==(const Point_3<K>& p, const Origin& o)
+{ return K().equal_3_object()(p, Point_3<K>(o)); }
+
+template < class K >
+inline
+bool
+operator!=(const Point_3<K>& p, const Origin& o)
+{ return ! (p == o); }
+
 template < class K >
 inline
 bool
@@ -579,6 +695,30 @@ volume(const Point_3<K> &p, const Point_3<K> &q,
        const Point_3<K> &r, const Point_3<K> &s)
 {
   return CGALi::volume(p, q, r, s, K());
+}
+
+template < class K >
+inline
+bool
+x_equal(const Point_3<K> &p, const Point_3<K> &q)
+{
+  return CGALi::x_equal(p, q, K());
+}
+
+template < class K >
+inline
+bool
+y_equal(const Point_3<K> &p, const Point_3<K> &q)
+{
+  return CGALi::y_equal(p, q, K());
+}
+
+template < class K >
+inline
+bool
+z_equal(const Point_3<K> &p, const Point_3<K> &q)
+{
+  return CGALi::z_equal(p, q, K());
 }
 
 CGAL_END_NAMESPACE

@@ -25,22 +25,12 @@
 #define CGAL_EXACT_PREDICATES_INEXACT_CONSTRUCTIONS_KERNEL_H
 
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/MP_Float.h>
-#include <CGAL/Filtered_exact.h>
-
-// We don't use Filtered_kernel at the moment because it's slower
-// that Filtered_exact, and the power tests are not supported yet.
-// #include <CGAL/Filtered_kernel.h>
+#include <CGAL/Filtered_kernel.h>
 
 CGAL_BEGIN_NAMESPACE
 
-#if 0
 typedef Filtered_kernel< Simple_cartesian<double> >
         Exact_predicates_inexact_constructions_kernel;
-#else
-typedef Simple_cartesian<Filtered_exact<double, MP_Float> >
-        Exact_predicates_inexact_constructions_kernel;
-#endif
 
 CGAL_END_NAMESPACE
 
