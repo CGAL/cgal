@@ -1,5 +1,6 @@
 Version 1.45 (?? dec 00)
 - point() of vertex_base returns a const ref instead of a Point. [syl]
+- locate() improvements (remembering). [syl]
 
 Version 1.44 (11 dec 00)
 - typdefs _3 fixed in demo and example
