@@ -174,7 +174,14 @@ _test_cls_tds_2( const Tds &, const Gt &)
   assert(tds1.is_valid()&& tds1.number_of_vertices()==0); 
   w1 = tds1.insert_first();
 
-  //access
+  //  make_hole, star_hole
+  u4 = tds4.insert_in_face(v4_1->face());
+  typename Tds::List_edges hole;
+  tds4.make_hole(u4, hole);
+  u4 = tds4.star_hole(hole);
+  tds4.remove_degree_3(u4);
+
+ //access
   std::cout << "    test access" << std::endl;
   assert(tds0.dimension() <= -1     && tds0.number_of_vertices() == 0 &&
 	 tds0.number_of_faces()== 0 && tds0.number_of_edges()    == 0 &&

@@ -5,7 +5,7 @@
 # Choose the right include file from the <cgalroot>/make directory.
 
 
-CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.14_g++-2.95.2_LEDA
+CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.14_g++-2.95.2_LEDA
 
 include $(CGAL_MAKEFILE)
 
@@ -19,16 +19,7 @@ CXXFLAGS = \
 	-I../../include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS)\
-	-g -pedantic 
-
-
-##To test the Kernel
-#	-I../../../Kernel/C2/include \
-#	-I../../../Kernel/C3/include \
-#	-I../../../Kernel/Cartesian_basic/include \
-
-
-
+	-g 
 
 
 #---------------------------------------------------------------------#
@@ -37,7 +28,6 @@ CXXFLAGS = \
 
 LDFLAGS = $(TESTSUITE_LDFLAGS) \
           $(CGAL_LDFLAGS)
-#	  $(LONG_NAME_PROBLEM_LDFLAGS) \
 
 #---------------------------------------------------------------------#
 #                    target entries

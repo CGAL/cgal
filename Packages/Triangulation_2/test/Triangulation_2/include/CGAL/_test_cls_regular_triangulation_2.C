@@ -36,9 +36,9 @@
 template < class Triangulation, class Point, class Face_handle >
 bool
 _test_is_to_the_left( const Triangulation &T,
-                           const Point &p,
-		           const Face_handle &f,
-		           const int li)
+		      const Point &p,
+		      const Face_handle &f,
+		      const int li)
 {
   return( T.orientation(f->vertex(f->ccw(li))->point(),
 			f->vertex(f->cw(li))->point(),
@@ -401,7 +401,8 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   fc--;
   ++fc;
   --fc;
-  Point pp(0,0.5,1);
+  //Point pp(0,0.5,1);
+  Point pp(0,1,2);
   loc = T2_3.locate(pp,lt,li);
   // assert(lt==Cls::VERTEX); no longer true, I've changed the triangulation
   fc= T2_3.line_walk(pp,p10,loc);
@@ -421,7 +422,8 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   do {fc2++ ; n = n+1;} while (fc2 != fc);
   assert(T2_8.number_of_vertices()>=2);
   assert(T2_8.is_valid());
-  fc= T2_8.line_walk(Point(0.5,0.4),Point(5,5));
+  //fc= T2_8.line_walk(Point(0.5,0.4),Point(5,5));
+  fc= T2_8.line_walk(Point(5,4,10),Point(5,5));
   fc2=fc;
   n=0;
   assert(fc==fc2);

@@ -34,14 +34,12 @@
 int
 main()
 {
-  
-  std::cout << "Testing Triangulation_defaut_data_structure_2" << std::endl;
+  std::cout << "Testing Triangulation_defaut_data_structure_2" 
+	    << std::endl;
   typedef CGAL::_Triangulation_test_traits Gt;
   typedef CGAL::Triangulation_vertex_base_2<Gt> Vb;
   typedef CGAL::Triangulation_face_base_2<Gt>  Fb;
   typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Cls;
-
-  _test_cls_tds_2( Cls(), Gt() );
-  
+  _test_cls_tds_2( Cls(), Gt() );  
   return 0;
 }
