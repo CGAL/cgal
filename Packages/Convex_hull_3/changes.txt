@@ -1,3 +1,6 @@
+8 April 2004 Andreas Fabri
+- Bug fix in Convex_hull_traits_3 so that it also works with homogenous kernel
+
 25 March 2004 Radu Ursu
 - made the doc work with the current implementation of the manual tools
 
