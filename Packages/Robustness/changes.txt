@@ -1,4 +1,7 @@
-1.14    (24 February 2002)
+1.15    (12 April 2003)
+- Replace <strstream> by <sstream>.
+
+1.14    (24 February 2003)
 - Filtered_kernel only takes one template parameter now.
 
 1.13    (14 September 2002)

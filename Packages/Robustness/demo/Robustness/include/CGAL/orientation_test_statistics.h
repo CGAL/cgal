@@ -17,14 +17,13 @@
 // author(s)     : Stefan Schirra
 //
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ============================================================================
  
 
 #include <CGAL/Interval_arithmetic.h>
 
-// #include <sstream> // doesn't work with GCC 2.95.2
-#include <strstream>
+#include <sstream>
 
 template <class ForwardIterator, class Traits>
 void
@@ -84,8 +83,7 @@ orientation_statistics_IA( ForwardIterator first, ForwardIterator last,
                 }
 
 #if defined(CGAL_USE_CGAL_WINDOW)
-    // std::ostringstream OS;
-    std::ostrstream OS;
+    std::ostringstream OS;
     OS << "Out of " << c << " orientation tests, " << c;
     OS << std::ends;
     s1 = OS.str();

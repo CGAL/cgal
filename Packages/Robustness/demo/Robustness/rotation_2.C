@@ -17,7 +17,7 @@
 // author(s)     : Stefan Schirra
 //
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ============================================================================
  
 #include <CGAL/Homogeneous.h>
@@ -30,8 +30,7 @@
 #include <cmath>
 #include <vector>
 #include <algorithm>
-// #include <sstream> // Doesn't work with GCC < 2.95.3
-#include <strstream>
+#include <sstream>
 #include <CGAL/IO/Window_stream.h>
 #include <CGAL/IO/Ostream_iterator.h>
 #ifdef CGAL_USE_LEDA
@@ -153,8 +152,7 @@ main()
   str = leda_string("Before rotation, %2.2f%% ", 100.0* s/n );
   str += trailer;
 #else
-  // std::ostringstream OS;
-  std::ostrstream OS;
+  std::ostringstream OS;
   OS << "Before rotation, " << 100.0* s/n << "% ";
   OS << trailer;
   OS << std::ends;
@@ -177,8 +175,7 @@ main()
   str = leda_string("After rotation, only %2.2f%% ", 100.0* s/n );
   str += trailer;
 #else
-  // std::ostringstream OS2;
-  std::ostrstream OS2;
+  std::ostringstream OS2;
   OS2 << "After rotation, only " << 100.0* s/n << "% ";
   OS2 << trailer;
   OS2 << std::ends;
@@ -206,8 +203,7 @@ main()
   str = leda_string("%d different distances",
                     std::distance( D.begin(), D.end() ));
 #else
-  // std::ostringstream OS3;
-  std::ostrstream OS3;
+  std::ostringstream OS3;
   OS3 << std::distance( D.begin(), D.end() ) << " different distances";
   OS3 << std::ends;
   str = OS3.str();  
