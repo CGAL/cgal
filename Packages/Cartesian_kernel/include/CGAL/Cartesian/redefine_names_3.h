@@ -40,6 +40,7 @@
 #define PlaneC3 Plane_3
 #define RayC3 Ray_3
 #define SegmentC3 Segment_3
+#define SphereC3 Sphere_3
 #define TriangleC3 Triangle_3
 #define TetrahedronC3 Tetrahedron_3
 #define Iso_cuboidC3 Iso_cuboid_3

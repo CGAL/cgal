@@ -45,7 +45,9 @@ template < class R_ >
 class Aff_transformationC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public Handle
 {
-  friend class PlaneC3<R_ CGAL_CTAG>;
+#ifdef CGAL_CFG_NO_ADVANCED_KERNEL
+  friend class PlaneC3<R_ CGAL_CTAG>; // why ?
+#endif
 
 public:
   typedef R_                               R;
