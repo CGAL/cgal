@@ -1,0 +1,84 @@
+/* ======================================================================= */
+/* default.css                                                             */
+/* ----------------------------------------------------------------------- */
+/* The default style of the LaTeX-to-HTML converter output.                */
+/*                                                                         */
+/* (c) 2004   Lutz Kettner                                                 */
+/* $Revision$                                                       */
+/* $Date$                                            */
+/* ======================================================================= */
+
+/* ----------------------------------------------------------------------- */
+/* General Body                                                            */
+/* ----------------------------------------------------------------------- */
+
+body {
+  background-color: #ffffff;
+  font-family: arial,sans-serif;
+  color:black;
+}
+
+a:link    { text-decoration: none;}
+a:visited { text-decoration: none;}
+a:hover   { text-decoration: underline;}
+a:active  { text-decoration: underline;}
+
+
+/* ----------------------------------------------------------------------- */
+/* Table of Contents                                                       */
+/* ----------------------------------------------------------------------- */
+
+table.TocOuterTable    {  }
+td.TocGroupOddLeft,
+td.TocEmptyOddLeft     { background-color: #d0d0d0; }
+td.TocGroupOddRight,
+td.TocEmptyOddRight    {  }
+td.TocGroupEvenLeft,
+td.TocEmptyEvenLeft    {  }
+td.TocGroupEvenRight,
+td.TocEmptyEvenRight   { background-color: #d0d0d0; }
+
+h3.TocPart             { background-color: #ffffa0; }
+
+table.TocInnerTable    {  }
+td.TocIndent           {  }
+td.TocTitle,
+td.TocContents,
+td.TocIndex,
+td.TocBibliography,
+td.TocChapter          { font-weight: bold; }
+td.TocSection          {  }
+td.TocSubsection       {  }
+td.TocSubsubsection    {  }
+td.TocParagraph        {  }
+td.TocSubparagraph     {  }
+
+a.TocLinkTitle         {  }
+a.TocLinkContents      {  }
+a.TocLinkIndex         {  }
+a.TocLinkBibliography  {  }
+a.TocLinkPart          {  }
+a.TocLinkChapter       {  }
+a.TocLinkSection       {  }
+a.TocLinkSubsection    {  }
+a.TocLinkSubsubsection {  }
+a.TocLinkParagraph     {  }
+a.TocLinkSubparagraph  {  }
+
+/* ----------------------------------------------------------------------- */
+/* Navigation Header and Footer                                            */
+/* ----------------------------------------------------------------------- */
+div.NavBottom,
+div.NavAddress,
+div.NavTop             { background-color: #ffffa0; }
+div.NavNext,
+div.NavPrev            { background-color: #c0ffc0; }
+
+
+/* ----------------------------------------------------------------------- */
+/* cc_manual.sty                                                           */
+/* ----------------------------------------------------------------------- */
+div.AdvancedBlock      { background-color: #c0d0ff; }
+
+
+

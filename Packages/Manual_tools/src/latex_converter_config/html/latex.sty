@@ -65,15 +65,20 @@
 % |   o   C.14  Pictures and Color                                          |
 % |   o   C.15  Font Selection                                              |
 % |                                                                         |
+% |   o   Default Style for Latex to HTML Converter                         |
+% |                                                                         |
 % |#########################################################################|
 
 
-% Load latex_converter.sty that provides the basic converter capabilities.
+% Load latex_to_html.sty that provides the basic converter capabilities.
+% redefined in latex_to_html.sty
+\newcommand{\lcFalse}[2]{#2}
+\newcommand{\lcTrue}[2]{#1}
 \lciIfDefined{\lcStyleFile}{}{
     \newcommand{\lcStyleFile}[1]{\lciInputStyleFile{\lciConfigPath}{#XC1}}
-    \newcommand{\lciInputStyleFile}[2]{\input{#XC1#C2.sty}}
+    \newcommand{\lciInputStyleFile}[2]{\lciInclude{#XC1#C2.sty}}
 }
-\lcStyleFile{latex_converter}
+\lcStyleFile{latex_to_html}
 
 % print own release number
 \RCSdef{\lcRevision}{$Revision$}\RCSdefArg{\lcRevision}{\lcRevision}
@@ -97,6 +102,7 @@
 \newcommand{\vbox}[1]{#1}
 \newcommand{\hbox}[1]{#1}
 
+\newcommand{\batchmode}{}
 
 % ___________________________________________________________________________
 % ###########################################################################
@@ -147,7 +153,7 @@
 % |   o   C.1   Commands and Environments
 % |
 % ###########################################################################
-% --> see latex_converter.sty
+% --> see latex_to_html.sty
 
 \newcommand{\protect}{}
 
@@ -158,10 +164,38 @@
 % |
 % ###########################################################################
 
-\newenvironment{document}{\lciStartToc}{\lciEndOfConversion\gdef{\lciEndOfConversion}{}}
+\newenvironment{document}{%
+    % prepare main HTML file
+    \lciHtmlFileHeader{\lciIfEmpty{\lciManualTitle}{}{\lciManualTitle : }%
+      \lciMainRootname}%
+    \lciHtmlNavigationTop
+    % prepare TOC
+    \lciPushOutput{toc}\lciTocFileHeader\lciPopOutput
+    \lciReadAuxtmp{\lciTmpPath}{\lciMainRootname}%  read auxtmp file
+    \lciReadBbl{\lciMainPath}{\lciMainRootname}%    read bbl    file
+}{%
+    % print remaining footnotes at the end of the conversion
+    \lciPrintFootnotes
+    % close all parts, chapters, and sections at the end of the conversion
+    \lciEndPart
+    % finish table of contents
+    \lciPushOutput{toc}\lciTocFileFooter\lciPopOutput
+    % finish main HTML file
+    \lciHtmlNavigationBottom
+    \lciHtmlFileFooter
+    % prepare Index Header and Footer (only if index is actually used)
+    \lciOpenFile{cc_index_header}\lciIndexFileHeader\lciCloseFile
+    \lciOpenFile{cc_index_footer}\lciIndexFileFooter\lciCloseFile
+}
 
-%% print remaining footnotes at the end of the conversion
-\lciPrependToGlobalDef{\lciEndOfConversion}{\lciPrintFootnotes}
+% Args: tmp-path, main-rootname: reads *.auxtmp file created by latex_to_html
+\newcommand{\lciReadAuxtmp}[2]{%
+    \lciIfFileExists{#GXC1#GXC2.auxtmp}{\lciInclude{#GXC1#GXC2.auxtmp}}{}}
+
+% Args: main-path, main-rootname: reads *.bbl file if it exists
+\newcommand{\lciReadBbl}[2]{%
+    \lciIfFileExists{#GXC1#GXC2.bbl}{\lciInclude{#GXC1#GXC2.bbl}}{}}
+
 
 % ___________________________________________________________________________
 % ###########################################################################
@@ -215,41 +249,43 @@
 % |     * Footnotes
 % +--------------------------------------------------------------------------
 
-\gdef\thefootnote{0}           %% counter
+% the counter '\lciCounterfootnote' used for footnotes is defined in C.8,
+% see below
+
 \gdef{\lciFootnotes}{}         %% collected footnotes
 
 \gdef{\lciFootnoteStack}{}     %% stack for counter and collected footnotes
 \newcommand{\lciPushFootnotes}{%
-    \lciPushGlobalStack{\lciFootnoteStack}{\thefootnote}%
+    \lciPushGlobalStack{\lciFootnoteStack}{\lciCounterfootnote}%
     \lciPushGlobalStack{\lciFootnoteStack}{\lciFootnotes}%
     \setcounter{footnote}{0}%
     \gdef{\lciFootnotes}{}}
 \newcommand{\lciPopFootnotes}{%
     \lciTopGlobalStack{\lciFootnoteStack}{\lciFootnotes}%
     \lciPopGlobalStack{\lciFootnoteStack}%
-    \lciTopGlobalStack{\lciFootnoteStack}{\thefootnote}%
+    \lciTopGlobalStack{\lciFootnoteStack}{\lciCounterfootnote}%
     \lciPopGlobalStack{\lciFootnoteStack}}
 
 \newcommand{\footnote}[1]{%
     \addtocounter{footnote}{1}%
-    \footnote[\thefootnote]{#1}}
+    \footnote[\lciCounterfootnote]{#1}}
 \newcommand{\footnote@om}{%
     \footnotemark[#1]%
     \footnotetext[#1]{#2}}
 
 \newcommand{\footnotemark}{%
     \addtocounter{footnote}{1}%
-    \footnotemark[\thefootnote]}
+    \footnotemark[\lciCounterfootnote]}
 \newcommand{\footnotemark@o}{%
     \lcRawHtml{<A HREF="##Footnote_#XC1"><SUP>#XC1</SUP></A>}}
 \newcommand{\footnotetext}[1]{%
-    \footnotetext[\thefootnote]{#1}}
+    \footnotetext[\lciCounterfootnote]{#1}}
 \newcommand{\footnotetext@om}{%
     \lciAddFootnote{\lciFootnotes}{#1}{#2}}
 
 %% Args: collected footnotes, footnote number, footnote text
 \newcommand{\lciAddFootnote}[3]{%
-    \lciIfEqualExpanded{\thefootnote}{0}{
+    \lciIfEqualExpanded{\lciCounterfootnote}{0}{
         \gdef{\lciFootnotes}{#X1%
         \lcRawHtml{<A NAME="Footnote_#XC2">&nbsp;<SUP>#XC2</SUP>&nbsp;</A></TD><TD VALIGN=TOP>
 }#3
@@ -262,7 +298,7 @@
 
 
 \newcommand{\lciPrintFootnotes}{%
-    \lciIfEqualExpanded{\thefootnote}{0}{}{%
+    \lciIfEqualExpanded{\lciCounterfootnote}{0}{}{%
         \lcRawHtml{<P><HR><H3>Footnotes</H3><P><TABLE><TR><TD VALIGN=TOP>
 }\lciFootnotes\lcRawHtml{
 </TD></TR></TABLE>
@@ -943,61 +979,183 @@
 % |
 % ###########################################################################
 
-\newcommand{\part}[1]{\lciPrintFootnotes\lciResetFootnotes%
+% the counters used for enumerating are defined in C.8, see below
+
+
+% part
+\newcommand{\part}[1]{\part[#1]{#1}}
+\newcommand{\part@om}{%
+    \lciEndPart
     \gdef{\lciIfHtmlLinks}{\lcTrue}%
     \gdef{\lciIfHtmlIndex}{\lcTrue}%
-    \lciPart{#1}}
-
-\newcommand{\chapter}[1]{\lciPrintFootnotes\lciResetFootnotes%
+    \refstepcounter{part}%
+    \setcounter{chapter}{0}%
+    \lciIfEqualExpanded{\lciDocumentClass}{article}%
+        {\def\lciPartNum{0}}{\def\lciPartNum{-1}}%
+    \lciIfLessExpanded{\lciCountersecnumdepth}{\lciPartNum}{%
+      \lciHtmlPartHeader{\value{part}}{#2}%
+      \lciHtmlPartToc{\value{part}}{#1}}%
+    {\lciHtmlPartHeader{\value{part}}{\thepart~~~#2}%
+      \lciHtmlPartToc{\value{part}}{\thepart~~~#1}}}
+\newcommand{\part*}[1]{%
     \gdef{\lciIfHtmlLinks}{\lcTrue}%
     \gdef{\lciIfHtmlIndex}{\lcTrue}%
-    \lciChapter{#1}}
-\newcommand{\section*}[1]{\lcRawHtml{<H1>}#C1\lcRawHtml{</H1>
-}}
+    \lciHtmlPartHeader{}{#1}}
+
+\newcommand{\lciEndPart}{%
+  \lciEndChapter
+  \lciIfEqualExpanded{\lciCounterpart}{0}{}{% check for first part
+    \lciPrintFootnotes\lciResetFootnotes
+  }}
+
+\gdef\lciReplaceWithCurrentPathToken{REPLACE_WITH_CURRENT_PATH}%
 
 
-\gdef\lciSectionAnchorCounter{0}
+% chapter
+\newcommand{\chapter}[1]{\chapter[#1]{#1}}
+\newcommand{\chapter@om}{%
+    \lciEndChapter
+    \gdef{\lciIfHtmlLinks}{\lcTrue}%
+    \gdef{\lciIfHtmlIndex}{\lcTrue}%
+    \refstepcounter{chapter}%
+    \lciChapter{#1}% does also a PushOutput
+    % cross linking rules
+    \lciPushOutput{anchor}%
+    \lcRawHtml{"<!Next_chapter_link_}\value{part}\_\value{chapter}%
+    \lcRawHtml{!>"    }\{%
+    \lcRawHtml{ fputs( "<div class=\"NavNext\"><hr> Next chapter: <a href=\"}%
+    \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%
+    \lcRawHtmlExpanded{\lciOutputBasename}%
+    \lcRawHtml{\">}#1\lcRawHtml{</a> \n", stdout);}\}\lcRawHtml{
+}%
+    \lcRawHtml{"<!Up_chapter_link_}\value{part}\_\value{chapter}%
+    \lcRawHtml{!>"    }\{\lcRawHtml{ fputs( "<a href=\"}%
+    \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%
+    \lcRawHtmlExpanded{\lciOutputBasename}%
+    \lcRawHtml{\">}Up\lcRawHtml{</a>, ", stdout);}\}\lcRawHtml{
+}%
+    \lciPopOutput
+    % file header
+    \lciHtmlFileHeader{#2}%
+    \lciHtmlNavigationTop
+    \lciIfLessExpanded{\lciCountersecnumdepth}{0}{%
+      \lciHtmlChapterToc{\value{chapter}}{#1}%
+      \lciHtmlChapterHeader{#2}%
+    }{%
+      \lciHtmlChapterToc{\value{chapter}}{\thechapter~~~#1}%
+      \lciHtmlChapterHeader{Chapter \thechapter\\#2}%
+    }}
+\newcommand{\chapter*}[1]{%
+    \lciHtmlChapterHeader{#1}}
 
+\newcommand{\lciEndChapter}{%
+  \lciEndSection
+  \lciIfEqualExpanded{\lciCounterchapter}{0}{}{% check for first chapter
+    \lciPrintFootnotes\lciResetFootnotes
+    % navigation footer
+    \addtocounter{chapter}{1}%
+    \lcRawHtml{<!Next_chapter_link_}\value{part}\_\value{chapter}\lcRawHtml{!>
+}
+    \addtocounter{chapter}{-1}%
+    \lciHtmlNavigationBottom
+    \lciHtmlFileFooter
+    \lciPopOutput
+  }}
 
+% section
 \newcommand{\section}[1]{\section[#1]{#1}}
 \newcommand{\section@om}{%
-    \lciGlobalAddTo{\lciSectionAnchorCounter}{1}%
-    \lcRawHtml{<A NAME="Section_}\lciSectionAnchorCounter\lcRawHtml{"></A>
-<H2>}#C2\lcRawHtml{</H2>
-}%
-    \edef\lciOut{\lciOutputFilename}%
-    \lciPushOutput{toc}% 
-    \lcRawHtml{        <UL><LI><A HREF="}\lcRawHtmlExpanded{\lciOut}%
-    \lcRawHtml{##Section_}%
-    \lciSectionAnchorCounter\lcRawHtml{">}#C1\lcRawHtml{</A></UL> }%       
-    \lciPopOutput}
-\newcommand{\section*}[1]{\lcRawHtml{<H2>}#C1\lcRawHtml{</H2>
-}}
+    \lciEndSection
+    \refstepcounter{section}%
+    \lciIfLessExpanded{\lciCountersecnumdepth}{1}{%
+      \lciHtmlSectionToc{\value{section}}{#1}%
+      \lciHtmlSectionHeader{#2}}%
+    {\lciHtmlSectionToc{\value{section}}{\thesection~~~#1}%
+      \lciHtmlSectionHeader{\thesection~~~#2}}}
+\newcommand{\section*}[1]{%
+    \lciHtmlSectionHeader{#1}}
+
+\newcommand{\lciEndSection}{%
+  \lciEndSubsection
+  \lciIfEqualExpanded{\lciCountersection}{0}{}{% check for first section
+  }}
+
+% subsection
+\newcommand{\subsection}[1]{\subsection[#1]{#1}}
+\newcommand{\subsection@om}{%
+    \lciEndSubsection
+    \refstepcounter{subsection}%
+    \lciIfLessExpanded{\lciCountersecnumdepth}{2}{%
+      \lciHtmlSubsectionHeader{\value{subsection}}{#2}%
+      \lciHtmlSubsectionToc{\value{subsection}}{#1}}%
+    {\lciHtmlSubsectionHeader{\value{subsection}}{\thesubsection~~~#2}%
+      \lciHtmlSubsectionToc{\value{subsection}}{\thesubsection~~~#1}}}
+\newcommand{\subsection*}[1]{%
+    \lciHtmlSubsectionHeader{}{#1}}
+
+\newcommand{\lciEndSubsection}{%
+  \lciEndSubsubsection
+  \lciIfEqualExpanded{\lciCountersubsection}{0}{}{% check for first subsection
+  }}
+
+% subsubsection
+\newcommand{\subsubsection}[1]{\subsubsection[#1]{#1}}
+\newcommand{\subsubsection@om}{%
+    \lciEndSubsubsection
+    \refstepcounter{subsubsection}%
+    \lciIfLessExpanded{\lciCountersecnumdepth}{3}{%
+      \lciHtmlSubsubsectionHeader{\value{subsubsection}}{#2}%
+      \lciHtmlSubsubsectionToc{\value{subsubsection}}{#1}}%
+   {\lciHtmlSubsubsectionHeader{\value{subsubsection}}{\thesubsubsection~~~#2}%
+     \lciHtmlSubsubsectionToc{\value{subsubsection}}{\thesubsubsection~~~#1}}}
+\newcommand{\subsubsection*}[1]{%
+    \lciHtmlSubsubsectionHeader{}{#1}}
+
+\newcommand{\lciEndSubsubsection}{%
+  \lciEndParagraph
+  \lciIfEqualExpanded{\lciCountersubsubsection}{0}{}{% check 1st. subsubsection
+  }}
 
 
+% paragraph
+\newcommand{\paragraph}[1]{\paragraph[#1]{#1}}
+\newcommand{\paragraph@om}{%
+    \lciEndParagraph
+    \refstepcounter{paragraph}%
+    \lciIfLessExpanded{\lciCountersecnumdepth}{4}{%
+      \lciHtmlParagraphHeader{\value{paragraph}}{#2}%
+      \lciHtmlParagraphToc{\value{paragraph}}{#1}}%
+    {\lciHtmlParagraphHeader{\value{paragraph}}{\theparagraph~~~#2}%
+      \lciHtmlParagraphToc{\value{paragraph}}{\theparagraph~~~#1}}}
+\newcommand{\paragraph*}[1]{%
+    \lciHtmlParagraphHeader{}{#1}}
 
-\newcommand{\subsection}[1]{\lcRawHtml{<H3>}#1\lcRawHtml{</H3>}
-}
-\newcommand{\subsubsection}[1]{\lcRawHtml{<H4>}#1\lcRawHtml{</H4>}
-}
-\newcommand{\paragraph}[1]{{\bf #1}~~\lciSkipWhiteSpace}
-\newcommand{\subparagraph}[1]{{\bf #1}~~\lciSkipWhiteSpace}
+\newcommand{\lciEndParagraph}{%
+  \lciEndSubparagraph
+  \lciIfEqualExpanded{\lciCounterparagraph}{0}{}{% check for first paragraph
+  }}
 
-\newcommand{\subsection*}[1]{\lcRawHtml{<H3>}#1\lcRawHtml{</H3>}
-}
-\newcommand{\subsubsection*}[1]{\lcRawHtml{<H4>}#1\lcRawHtml{</H4>}
-}
-\newcommand{\paragraph*}[1]{{\bf #1}~~\lciSkipWhiteSpace}
-\newcommand{\subparagraph*}[1]{{\bf #1}~~\lciSkipWhiteSpace}
+% subparagraph
+\newcommand{\subparagraph}[1]{\subparagraph[#1]{#1}}
+\newcommand{\subparagraph@om}{%
+    \lciEndSubparagraph
+    \refstepcounter{subparagraph}%
+    \lciIfLessExpanded{\lciCountersecnumdepth}{5}{%
+      \lciHtmlSubparagraphHeader{\value{subparagraph}}{#2}%
+      \lciHtmlSubparagraphToc{\value{subparagraph}}{#1}}%
+    {\lciHtmlSubparagraphHeader{\value{subparagraph}}{\thesubparagraph~~~#2}%
+      \lciHtmlSubparagraphToc{\value{subparagraph}}{\thesubparagraph~~~#1}}}
+\newcommand{\subparagraph*}[1]{%
+    \lciHtmlSubparagraphHeader{}{#1}}
 
-\newcommand{\subsection@om}[1]{\lcRawHtml{<H3>}#2\lcRawHtml{</H3>}
-}
-\newcommand{\subsubsection@om}[1]{\lcRawHtml{<H4>}#2\lcRawHtml{</H4>}
-}
-\newcommand{\paragraph@om}[1]{{\bf #2}~~\lciSkipWhiteSpace}
-\newcommand{\subparagraph@om}[1]{{\bf #2}~~\lciSkipWhiteSpace}
+\newcommand{\lciEndSubparagraph}{%
+  \lciIfEqualExpanded{\lciCountersubparagraph}{0}{}{% check 1st subparagraph
+  }}
 
-\newcommand{\appendix}{}
+
+% appendix changes numbering of chapters
+\newcommand{\appendix}{%
+    \gdef{\thechapter}{\Alpha{chapter}}}
 
 \newcommand{\minitoc}{}
 \newcommand{\tableofcontents}{}
@@ -1006,9 +1164,6 @@
 %\newcommand{\listofexamples}{}
 \newcommand{\listofrefpages}{}
 
-\gdef\thesecnumdepth{2}  %% yet not supported
-\gdef\thetocdepth{2}     %% yet not supported
-
 % ___________________________________________________________________________
 % ###########################################################################
 % |
@@ -1016,12 +1171,14 @@
 % |
 % ###########################################################################
 
-\newcommand{\documentstyle}[1]{}
-\newcommand{\documentstyle@om}[1]{}
-\newcommand{\documentclass}[1]{}
-\newcommand{\documentclass@om}[1]{}
-\newcommand{\usepackage}[1]{}
-\newcommand{\usepackage@om}[1]{}
+\newcommand{\documentclass}[1]{%
+    \gdef{\lciDocumentClass}{#C1}%
+    \lcTryStyleFile{documentclass_#C1}}
+\newcommand{\documentclass@om}[1]{\documentclass{#2}}
+\newcommand{\documentstyle}[1]{\documentclass{#1}}
+\newcommand{\documentstyle@om}[1]{\documentclass{#2}}
+\newcommand{\usepackage}[1]{\lcTryStyleFile{#C1}}
+\newcommand{\usepackage@om}[1]{\lcTryStyleFile{#C2}}
 \newcommand{\pagestyle}[1]{}
 \newcommand{\thispagestyle}[1]{}
 \newcommand{\markright}[1]{}
@@ -1088,6 +1245,8 @@
 
 \newcommand{\lciMathMode}{\lcFalse}        % for all math environments
 \newcommand{\lciMathModeDisplay}{\lcFalse} % in addition for display math env.
+% declare TeX compatible \ifmmode (can be used in the ifthen.sty)
+\newcommand{\ifmmode}{\lciMathMode}
 
 \newcommand{\(}{\newcommand{\lciMathMode}{\lcTrue}\lcRawHtml{<MATH><I>}}
 \newcommand{\)}{\newcommand{\lciMathMode}{\lcFalse}\lcRawHtml{</I></MATH>}}
@@ -1146,7 +1305,7 @@
 % |   o   C.8   Definitions, Numbering, and Programming
 % |
 % ###########################################################################
-% --> see latex_converter.sty
+% --> see latex_to_html.sty
 
 \newcommand{\newtheorem}[2]{%
     \gdef{\begin@#C1}{{\bf #2}~~\lcRawHtml{<EM>}}%
@@ -1154,23 +1313,72 @@
     \gdef{\end#C1}{\lcRawHtml{</EM>}}%
 }
 \newcommand{\newcounter}[1]{%
-    \gdef{\the#C1}{0}%
+    \gdef{\lciCounter#C1}{0}%
+    \gdef{\the#C1}{\arabic{#1}}%
     \gdef{\lciDependantCounter#C1}{}}
-\newcommand{\newcounter@mo}{
-    \gdef{\the#C1}{0}%
+\newcommand{\newcounter@mo}{%
+    \gdef{\lciCounter#C1}{0}%
+    \gdef{\the#C1}{\arabic{#1}}%
     \gdef{\lciDependantCounter#C1}{}%
-    \lciAddToDependantList{\lciDependantCounter#C2}{\gdef{\the#C1}{0}}}
+    \lciAddToDependantList{\lciDependantCounter#GC2}%
+        {\gdef{\lciCounter#GC1}{0}\lciDependantCounter#GC1}}
 %% Args: #1 = dependant list, #2 command to be added to the list
 \newcommand{\lciAddToDependantList}[2]{%
-    \gdef{#1}{#X1#2}}
+    \gdef{#1}{#XC1#C2}}
 
-\newcommand{\setcounter}[2]{\gdef{\the#C1}{#XC2}}
-\newcommand{\addtocounter}[2]{\lciGlobalAddTo{\the#C1}{#XC2}}
-\newcommand{\value}[1]{\lciGlueTwoParam{\the}{#C1}}
+% Args: <counter> <dependant-counter>: same as \newcounter{#1}[#2], except
+% that \the<counter> is redefined as \the<dependant-counter>.\arabic{<counter>}
+\newcommand{\lciNewCounter}[2]{%
+    \newcounter{#1}[#2]%
+    \gdef{\the#C1}{\the#GC2.\arabic{#1}}}
+
+\newcommand{\setcounter}[2]{\gdef{\lciCounter#C1}{#XC2}}
+\newcommand{\addtocounter}[2]{\lciGlobalAddTo{\lciCounter#GC1}{#XC2}}
+\newcommand{\value}[1]{\lciCounter#GC1}
 
 \newcommand{\stepcounter}[1]{%
-    \lciGlobalAddTo{\the#C1}{1}\lciDependantCounter#C1}
+    \lciGlobalAddTo{\lciCounter#GC1}{1}%
+    \lciGlueTwoParam{\lciDependantCounter}{#C1}}
 \newcommand{\refstepcounter}{\stepcounter}
+
+% counter to string conversions
+\newcommand{\lciExpandedCallOne}[2]{%
+    #1{#X2}}
+\newcommand{\arabic}[1]{\value{#1}}
+\newcommand{\roman}[1]{\lciExpandedCallOne\lciToRoman{\lciCounter#GC1}}
+\newcommand{\Roman}[1]{\lciExpandedCallOne\lciToRomanUpper{\lciCounter#GC1}}
+\newcommand{\alpha}[1]{\lciExpandedCallOne\lciToAlpha{\lciCounter#GC1}}
+\newcommand{\Alpha}[1]{\lciExpandedCallOne\lciToAlphaUpper{\lciCounter#GC1}}
+\newcommand{\fnsymbol}[1]{%
+    \ifEqualExpanded{\lciCounter#GC1}{1}{\ast}{%
+      \ifEqualExpanded{\lciCounter#GC1}{2}{\dag}{%
+        \ifEqualExpanded{\lciCounter#GC1}{3}{\ddag}{%
+          \ifEqualExpanded{\lciCounter#GC1}{4}{\S}{%
+            \ifEqualExpanded{\lciCounter#GC1}{5}{\P}{%
+              \ifEqualExpanded{\lciCounter#GC1}{6}{\parallel}{%
+                \ifEqualExpanded{\lciCounter#GC1}{7}{\ast\ast}{%
+                  \ifEqualExpanded{\lciCounter#GC1}{8}{\dag\dag}{%
+                    \ifEqualExpanded{\lciCounter#GC1}{9}{\ddag\ddag}{%
+                      \lciError{Counter must be between 1 and 9 in \\fnsymbol}%
+                    }}}}}}}}}}
+
+
+% Counters defined for part, chapter and sectioning commands in C.4.
+\newcounter{part}
+\gdef{\thepart}{\Roman{part}}
+
+\newcounter{chapter}
+\lciNewCounter{section}{chapter}
+\lciNewCounter{subsection}{section}
+\lciNewCounter{subsubsection}{subsection}
+\lciNewCounter{paragraph}{subsubsection}
+\lciNewCounter{subparagraph}{paragraph}
+
+\newcounter{secnumdepth}\setcounter{secnumdepth}{2}
+\newcounter{tocdepth}\setcounter{tocdepth}{2}
+
+% Counter defined for footnotes in C.3
+\newcounter{footnote}
 
 
 % ___________________________________________________________________________
@@ -1365,9 +1573,12 @@
 \newcommand{\bibliography}[1]{}
 
 \newenvironment{thebibliography}[1]{%
-    \newcommand{\lciFirstBibItem}{}\lciOpenBibliography
+    \newcommand{\lciFirstBibItem}{}%
+    \lciOpenFile{\lciBibFilename}%
+    \lciBibFileHeader
 }{%
-    \lciCloseBibliography
+    \lciBibFileFooter
+    \lciCloseFile
 }
 
 \newcommand{\cite}[1]{[\lciCite {#1}]}
@@ -1410,9 +1621,11 @@
 % +--------------------------------------------------------------------------
 % |     * Splitting the Input
 % +--------------------------------------------------------------------------
-% --> see html_lex.yy
 
 \newcommand{\includeonly}[1]{}
+\newcommand{\include}[1]{\lciInclude{#GXC1}}
+\newcommand{\input}[1]{\lciInclude{#GXC1}}
+
 
 % +--------------------------------------------------------------------------
 % |     * Index and Glossary
@@ -1728,6 +1941,16 @@
 \newcommand{\emph}[1]{{\em #1}}
 
 %% --> see C.7 for amth fonts.
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   Default Style for Latex to HTML Converter
+% |
+% ###########################################################################
+
+\lcStyle{default}
+
 
 % ___________________________________________________________________________
 % ###########################################################################

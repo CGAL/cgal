@@ -1,23 +1,19 @@
 % ___________________________________________________________________________
 % |#########################################################################|
 % |                                                                         |
-% | Latex Converter Style File: path.sty                                    |
+% | Latex Converter Style File: latex_to_html_style_default.sty             |
 % | ------------------------------------------------------------------      |
-% | path Macro for HTML URL's.                                              |
+% | Customize the look and feel of the HTML result.                         |
+% | Default selection, forwards to 'modern' style.                          |
 % |                                                                         |
-% | (c) 1998, 2004   Lutz Kettner                                           |
+% | (c) 2004   Lutz Kettner                                                 |
 % | $Revision$                                                       |
 % | $Date$                                            |
 % |_________________________________________________________________________|
 % |#########################################################################|
 
-\newcommand{\lciLocalPath}[1]{%
-    \lcRawHtml{<A HREF="#C1">}{\tt\lciRawOutputN{#L1}#1}\lcRawHtml{</A>}}
-\newcommand{\path}{\lciParseUntilDelimiter{\lciLocalPath}}
-
-\newcommand{\lciNonLinkedLocalPath}[1]{%
-    {\tt\lciRawOutputN{#L1}#1}}
-\newcommand{\nonlinkedpath}{\lciParseUntilDelimiter{\lciNonLinkedLocalPath}}
+% Corresponds to the 'modern' style.
+\lcStyle{modern}
 
 % ___________________________________________________________________________
 % ###########################################################################

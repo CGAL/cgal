@@ -245,7 +245,7 @@
 % +--------------------------------------------------------------------------
 % | A handy macro to define macros for RCS entries in a TeX file
 % +--------------------------------------------------------------------------
-% --> see latex_converter.sty
+% --> see latex_to_html.sty
 
 % +--------------------------------------------------------------------------
 % | Original LEDA Manual macros (shortcuts):
@@ -292,21 +292,7 @@
 % | \ccChapterAuthor, \ccChapterRelease, \ccChapterSubTitle
 % +--------------------------------------------------------------------------
 
-% if the manual has more than one part, the table of contents will look
-% a bit different
-
-%\newcommand{\ccMultiplePartsToc}{}
-%\renewcommand{\lciTocHeader}{cc_toc_w_parts_header}
-%\renewcommand{\lciTocFooter}{cc_toc_w_parts_footer}
-%}
-
-\newcommand{\ccMultiplePartsToc}{\gdef{\lciIfMultipleParts}{\lcTrue}
-  \renewcommand{\lciTocHeader}{cc_toc_w_parts_header}
-  \renewcommand{\lciTocFooter}{cc_toc_w_parts_footer}
-}
-
-% make chapters start number at 1 again for each new part of the manual
-\newcommand{\ccNumberChaptersByPart}{\gdef{\lciIfNumberChaptersByPart}{\lcTrue}}
+\newcommand{\ccMultiplePartsToc}{\gdef{\lciIfMultipleParts}{\lcTrue}}
 
 \newcommand{\ccChapterSubTitle}[1]{\lcRawHtml{<EM>}#1\lcRawHtml{</EM>}}
 \newcommand{\ccChapterAuthor}[1]{\lciIf{\ccTagChapterAuthor}
@@ -362,12 +348,6 @@
 \newcommand{\ccPostcond }{\ccCommentHeading{Postcondition}}
 \newcommand{\ccRequire }{\ccCommentHeading{Requirement}}
 
-\newenvironment{ccAdvanced}{%
-    \lcRawHtml{<BR><IMG BORDER=0 SRC="cc_advanced_begin.gif" ALT="begin of advanced section"><BR>}
-}{
-    \lcRawHtml{<BR><IMG BORDER=0 SRC="cc_advanced_end.gif" ALT="end of advanced section"><BR>}
-}
-
 
 % ___________________________________________________________________________
 % ###########################################################################
@@ -378,8 +358,8 @@
 % +--------------------------------------------------------------------------
 % | \ccStyle
 % +--------------------------------------------------------------------------
-\newcommand{\ccc}{\lciParseCC{\lciStyle 1}}  %% the 1 is a dummy to keep it
-                                             %% from parsing spaces
+\newcommand{\ccc}{\lciParseCC{\lciCCStyle 1}}  %% the 1 is a dummy to keep it
+                                               %% from parsing spaces
 \newcommand{\ccStyle}{\ccc}
 
 % +--------------------------------------------------------------------------
@@ -418,6 +398,70 @@
 % | ...ccRefFunction, ...ccRefVariable, ...ccRefMacro,
 % | \ccRefName
 % +--------------------------------------------------------------------------
+
+% have a counter for reference pages per chapter, used for 
+% forward and backward linking between reference pages.
+\newcounter{referencepage}[chapter]
+\gdef{\thereferencepage}{%
+    \lciCounterpart\_\lciCounterchapter\_\lciCounterreferencepage}
+
+
+% open and close a new file for reference pages and classes
+% Is between section and subsection
+% Args: <filename>, <text referring to new file>
+\newenvironment{ccReferenceFile}{%
+    \lciEndSubsection
+    \lciPushFootnotes
+    \lciParseCC{\ccReferenceFileCont}%
+}{%
+    \lciEndSubsection
+    \lciPrintFootnotes
+    \lciPopFootnotes
+    % navigation footer
+    \addtocounter{referencepage}{1}%
+    \lcRawHtml{<!Next_reference_link_}\thereferencepage\lcRawHtml{!>
+}
+    \addtocounter{referencepage}{-1}%
+    \lciHtmlNavigationBottom
+    \lciHtmlFileFooter
+    \lciCloseReferenceFile
+}
+% Args: <text referring to new file>: cc_text contains filename
+\newcommand{\ccReferenceFileCont}[1]{%
+    \lciStoreFileName
+    \refstepcounter{referencepage}%
+    % Make a hyperlink in the chapter to the class file.
+    \lcRawHtml{<UL><LI>
+<!Toc_reference_link_}\thereferencepage\lcRawHtml{!></UL>
+
+}
+    \lciOpenReferenceFile
+    % cross linking rules
+    \lciPushOutput{anchor}%
+    \lcRawHtml{"<!Next_reference_link_}\thereferencepage
+    \lcRawHtml{!>"    }\{%
+    \lcRawHtml{ fputs( "<div class=\"NavNext\"><hr> <b>Next:</b> <a href=\"}%
+    \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%
+    \lcRawHtmlExpanded{\lciOutputBasename}%
+    \lcRawHtml{\">}#1\lcRawHtml{</a> \n", stdout);}\}\lcRawHtml{
+}%
+    \lcRawHtml{"<!Toc_reference_link_}\thereferencepage%
+    \lcRawHtml{!>"    }\{\lcRawHtml{ fputs( "<a href=\"}%
+    \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%
+    \lcRawHtmlExpanded{\lciOutputBasename}%
+    \lcRawHtml{\">}#1\lcRawHtml{</a>", stdout);}\}\lcRawHtml{
+}%
+    \lciPopOutput
+    % file header
+    \lciHtmlFileHeader{\ccReferenceFileContX #X1}%
+    \lciHtmlNavigationTop
+    %\lciHtmlReferenceToc{\thereferencepage}{#1}%
+    %\lciHtmlReferenceHeader{#1}%   
+}
+% skips a leading \ccc command, useful for formatted title from reference pages
+\newcommand{\ccReferenceFileContX}[1]{%
+  \lciIfEqual{#1}{\lciParseCC}{\ccReferenceFileContXX}{#1}}
+\newcommand{\ccReferenceFileContXX}[1]{\lcAsciiToHtml}
 
 % make the new manual style parameterized.
 \newcommand{\ccNewRefManualStyle}{}   % false -> old style, true -> new style
@@ -458,8 +502,8 @@
                    \lciParseCC{\lciRefDeclCont}%
                }{
                    \ccRefPageEnd
-                   \end{lciClass}%
-                   \end{ccHtmlClassFile}%
+                   \end{ccReferenceFile}%
+                   \gdef{\lciIfHtmlClassNotInline}{\lcTrue}%
                    \def\ccRefCategory{}%
                    \def\ccPureRefScope{}%
                    \def\ccRefScope{}%
@@ -471,6 +515,7 @@
                    \renewcommand{\ccClassTemplateName}{}%
                    \def\ccPureVar{}%
                    \renewcommand{\ccVar}{}%
+                   \lciCacheClassName % empties cached class_name 
                    \gdef{\lciIfHtmlClassToc}{\lcTrue}%
                    \gdef{\lciIfHtmlClassLinks}{\lcTrue}%
                    \gdef{\lciIfHtmlClassIndex}{\lcTrue}%
@@ -489,37 +534,40 @@
 \newcommand{\lciRefDeclContX}[2]{%
                    \def\ccPureRefName{#XC1#XC2}%
                    \renewcommand{\ccRefName}{\ccc{#XC1#XC2}}%
-                   \lciParseUntilDelimiter{\lciRefDeclDefFilename}<#XC2<@%
-                   \ccRefPageBegin
-                   \ccRefSection{\ccRefCategory}{\ccPureRefName}%
                    % needed for compliance with ccClass
                    \def\ccPureClassTemplateName{#XC1#XC2}%
                    \renewcommand{\ccClassTemplateName}{\ccc{#XC1#XC2}}%
-                   \begin{lciClass}%% to make classname and templateclassname
-                                   %% known internally
+                   \lciParseUntilDelimiter{\lciRefDeclDefFilename}<#XC2<@%
+                   \ccRefPageBegin
+                   \ccRefSection{\ccRefCategory}{\ccPureRefName}%
+                   \lciCacheClassName
                }
 
 % #1 = classname (functioname etc.) without template parameters
 \newcommand{\lciRefDeclDefFilename}[1]{%
-    \lciRefDeclDefFilenameX{\ccPureRefScope}{#1}{\ccRefCategory}}
+    \lciRefDeclDefFilenameX{\ccPureRefScope}{#1}{\ccRefCategory}%
+      {\ccRefPureGlobalScope}}
 
 % #1 = local scope (may be empty)
 % #2 = classname (functioname etc.) without template parameters
 % #3 = Ref category
-\newcommand{\lciRefDeclDefFilenameX}[3]{%
+% #4 = global scope (may be empty)
+\newcommand{\lciRefDeclDefFilenameX}[4]{%
     \newcommand{\ccPureClassName}{#XC1#C2}%
     \newcommand{\ccClassName}{\ccc{#XC1#C2}}%
     \gdef{\ccIndexClassName}{\ccClassName}%
     \newcommand{\ccRefFilename}{#XC1#C2}%
+    \gdef{\lciIfHtmlClassNotInline}{\lcFalse}%
     \gdef{\lciIfHtmlClassToc}{\lcFalse}%
-    \begin{ccHtmlClassFile}{#XC3_#XC1#C2.html}{\ccRefName}%
-    \lciIfHtmlClassLinks{\ccHtmlCrossLink{#XC1#C2}}{}% 
+    \lciRefDeclOpenFilenameX{#GXC3_#GXC1#GC2}{\lciHtmlSuffix}{\ccRefName}%
+    \lciIfHtmlClassLinks{\ccHtmlCrossLink{#GXC4#GXC1#GC2}}{}% 
     \ccIndexRefName{#1}{\ccc{#2}}{#3}%
     \gdef{\lciIfHtmlClassLinks}{\lcFalse}%
     \gdef{\lciIfHtmlClassIndex}{\lcFalse}%
     \gdef{\lciIfHtmlRefLinks}{\lcFalse}%
     \gdef{\lciIfHtmlRefIndex}{\lcFalse}%
     \lciParseUntilDelimiter{\lciSkipOneParameter}@}% skip remaining part
+\newcommand{\lciRefDeclOpenFilenameX}[3]{\begin{ccReferenceFile}{#1#GXC2}{#3}}
 
 %% Args: ccCategory, ccRefName
 \newcommand{\ccRefSection}[2]{%
@@ -530,7 +578,8 @@
 %% Args: ccRefPureGlobalScope, ccRefName (which should include any local scope)
 \newcommand{\ccRefSectionX}[2]{%
     %%\section*{\lcAsciiToHtml{#XC1#XC2#XC3}}
-    \label{ccRef_#XC1#XC2}\section*{\lciIf{\ccNewRefManualStyle}{}{%
+    \label{ccRef_#XC1#XC2}\lciHtmlReferenceHeader{%
+      \lciIf{\ccNewRefManualStyle}{}{%
       \lciIf{\ccIsFunctionObjectClass}{Function Object Class }{%
       \lciIf{\ccIsFunctionObjectConcept}{Function Object Concept }{%
       \ccRefCategory~}}}%
@@ -668,7 +717,13 @@
         \lciPushFootnotes
     }{}}{}%
     \lciIf{\lciIfHtmlClassIndex}{}{\ccIndexMainItem{\ccClassName}}%
-    \begin{lciClass}%
+    \lciCacheClassName
+    \lciIfHtmlClassNotInline{\lciIfHtmlClassFile{%
+        \lciClassEnvOpenFile{#XC1}{\lciHtmlSuffix}{\ccClassTemplateName}}{}}{}%
+    \lciIfHtmlClassIndex{\lciIfHtmlIndex{\ccIndex{\ccAutoIndex{%
+        \lciHtmlIndexCExpanded{\ccPureClassName}}{}}{}}{}}{}%
+    \lciIfHtmlClassLinks{\lciIfHtmlLinks{%
+        \lciExpandedCrossLinkTemplateX{\ccPureGlobalScope}{\ccPureClassName}}{}}{}%
     \gdef{\lciIfHtmlLinks}{\lcTrue}%
     \gdef{\lciIfHtmlIndex}{\lcTrue}%
 }{%
@@ -676,7 +731,8 @@
         \lciPrintFootnotes
         \lciPopFootnotes
     }{}}{}%
-    \end{lciClass}%
+    \lciIfHtmlClassNotInline{\lciIfHtmlClassFile{%
+        \end{ccReferenceFile}}{}}{}%
     \gdef{\lciIfHtmlClassToc}{\lcTrue}%
     \gdef{\lciIfHtmlClassFile}{\lcTrue}%
     \lciIfHtmlRefLinks{\gdef{\lciIfHtmlClassLinks}{\lcTrue}}{}%
@@ -688,7 +744,10 @@
     \lciUndef{\ccClassName}%
     \gdef\ccIndexClassName{}%
     \lciUndef{\ccClassTemplateName}%
+    \lciCacheClassName % empties cached class_name 
 }
+\newcommand{\lciClassEnvOpenFile}[3]{\begin{ccReferenceFile}{#1#GXC2}{#3}}
+
 
 % +--------------------------------------------------------------------------
 % | \ccCreationVariable, \ccConstructor
@@ -796,7 +855,7 @@
 % |   o   HTML Related Support
 % |
 % ###########################################################################
-% --> see also latex_converter.sty
+% --> see also latex_to_html.sty
 
 % old names for compatibility
 \newcommand{\ccTexHtml}[1]{\lcRawHtml}
@@ -818,31 +877,32 @@
 }}
 \newcommand{\ccHtmlNoLinksFrom}[1]{\ccHtmlLinksOff#1\ccHtmlLinksOn}
 
-\newcommand{\ccHtmlIndex}[1]{\lciHtmlIndex{class}{#C1}}
-\newcommand{\ccHtmlIndex@om}{\lciHtmlIndex{#C1}{#C2}}
+% enable later when it's clear that the old definitions where not used
+%\newcommand{\ccHtmlIndex}[1]{\lciHtmlIndex{#1}}
+%\newcommand{\ccHtmlIndexC}{\lciParseCC{\lciHtmlIndexCParsed}}
+\newcommand{\lciHtmlIndexCParsed}{\lciHtmlIndexC 1} % dummy 1, uses cc_string
 
-\newcommand{\ccHtmlIndexC}{%
-    \newcommand{\lciLocalIndexCategory}{class}\lciParseCC{\lciIndexCParsed}}
-\newcommand{\ccHtmlIndexC@o}{%
-    \newcommand{\lciLocalIndexCategory}{#C1}\lciParseCC{\lciIndexCParsed}}
-\newcommand{\lciIndexCParsed}{\lciIndexCParsedX{\lciLocalIndexCategory}}
-\newcommand{\lciIndexCParsedX}[1]{\lciHtmlIndexC{#X1}}
+\newcommand{\lciHtmlIndexExpanded}[1]{\lciHtmlIndex{#XC1}}
+\newcommand{\lciHtmlIndexCExpanded}[1]{\lciParseCC{\lciHtmlIndexCParsed}{#XC1}}
 
 \newcommand{\lciLocalIndexCategory}{class}
 
 \newcommand{\ccHtmlCrossLink}{\lciParseCC{\lciHtmlCrossLink 1}}
+\newcommand{\ccHtmlCrossLinkTemplate}{\lciParseCC{\lciHtmlCrossLinkTemplate 1}}
+
+\newcommand{\lciExpandedCrossLinkTemplate}[1]{%
+    \ccHtmlCrossLinkTemplate{#X1}}
+\newcommand{\lciExpandedCrossLinkTemplateX}[2]{%
+    \ccHtmlCrossLinkTemplate{#X1#GX2}}
 
 \newenvironment{ccHtmlClassFile}{%
     \lciPushFootnotes
     \gdef{\lciIfHtmlClassNotInline}{\lcFalse}%
-    \lciParseCC{\ccHtmlClassFileCont}%
+    \begin{ccReferenceFile}%
 }{%
-    \lciPrintFootnotes
-    \lciPopFootnotes
-    \lciHtmlClassFileEnd
+    \end{ccReferenceFile}%
     \gdef{\lciIfHtmlClassNotInline}{\lcTrue}%
 }
-\newcommand{\ccHtmlClassFileCont}{\lciStoreHtmlFileName\lciHtmlFileNameBegin}
 
 
 % ___________________________________________________________________________

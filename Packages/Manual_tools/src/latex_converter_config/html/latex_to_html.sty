@@ -1,7 +1,7 @@
 % ___________________________________________________________________________
 % |#########################################################################|
 % |                                                                         |
-% | Latex Converter Style File: latex_converter.sty                         |
+% | Latex Converter Style File: latex_to_html.sty                           |
 % | ------------------------------------------------------------------      |
 % | Macros needed to make the converter run.                                |
 % |                                                                         |
@@ -17,6 +17,7 @@
 % |   o   Configuration                                                     |
 % |   o   End of Conversion Activities                                      |
 % |   o   Inclusion of Converter Style Files                                |
+% |   o   Style Selection                                                   |
 % |   o   (La)TeX Macro Expansion, Environments and Scopes                  |
 % |   o   Boolean Values and Control Structures                             |
 % |   o   Stack of Macro Bodies                                             |
@@ -35,7 +36,7 @@
 
 \newcommand{\lciHtmlSuffix}{.html}
 \newcommand{\lciChapterPrefix}{Chapter_}
-\newcommand{\lciAnchorFilename}{cc_anchor_rules}
+\newcommand{\lciAnchorFilename}{cc_anchor_rules.stage_1}
 \newcommand{\lciContentsFilename}{contents.html}
 \newcommand{\lciBibFilename}{biblio.html}
 \newcommand{\lciIndexFilename}{manual.hidx}
@@ -55,7 +56,8 @@
 
 \gdef{\lciIfHtmlClassToc}{\lcTrue}
 \gdef{\lciIfHtmlClassFile}{\lcTrue}
-\gdef{\lciIfHtmlClassNotInline}{\lcTrue} %% used by ccHtmlClassFile
+\gdef{\lciIfHtmlClassNotInline}{\lcTrue} %% used by ccHtmlClassFile,
+                                         %% and ccRefDeclaration
 \gdef{\lciIfHtmlClassLinks}{\lcTrue}
 \gdef{\lciIfHtmlClassIndex}{\lcTrue}
 \gdef{\lciIfHtmlRefLinks}{\lcTrue}
@@ -97,10 +99,10 @@
 % files provide them with the basic macro definitions to make the 
 % LaTeX converter work.
 
-%% % Load latex_converter.sty that provides the basic converter capabilities.
+%% % Load latex_to_html.sty that provides the basic converter capabilities.
 %% \newcommand{\lcStyleFile}[1]{\lciInputStyleFile{\lciConfigPath}{#XC1}}
-%% \newcommand{\lciInputStyleFile}[2]{\input{#XC1#C2.sty}}
-%% \lcStyleFile{latex_converter}
+%% \newcommand{\lciInputStyleFile}[2]{\lciInclude{#XC1#C2.sty}}
+%% \lcStyleFile{latex_to_html}
 
 % The \lcStyleFile macro will be overloaded here with a more sophisticated
 % version which keeps track of already loaded styles and which skips 
@@ -109,16 +111,51 @@
 % be used to define these names, since they contain characters not allowed
 % in usual TeX macros. (I.e. \gdef\... or \def\... would not work.)
 
-\gdef{\lciLoadedStyle_latex_converter}{}
+\gdef{\lciLoadedStyle_latex_to_html}{}
 
 \newcommand{\lcStyleFile}[1]{%
     \lciIfDefined{\lciLoadedStyle_#XC1}{}{%
         \lciIfDefined{\lciSkipStyle_#XC1}{}{%
             \lciInputStyleFile{\lciConfigPath}{#XC1}%
             \gdef{\lciLoadedStyle_#XC1}{}}}}
-\newcommand{\lciInputStyleFile}[2]{\input{#XC1#C2.sty}}
-%\newcommand{\lciInputStyleFile}[2]{\input{#C2.sty}}
+\newcommand{\lciInputStyleFile}[2]{\lciInclude{#XC1#C2.sty}}
+%\newcommand{\lciInputStyleFile}[2]{\lciInclude{#C2.sty}}
 
+% Try if a style file exists. Give a warning if not (no error as 
+% for \lcStyleFile itself.) Try local files and LATEX_CONV_INPUTS files
+% first, then try \lciConfigPath.
+\newcommand{\lcTryStyleFile}[1]{%
+    \lciIfDefined{\lciLoadedStyle_#XC1}{}{%
+        \lciIfDefined{\lciSkipStyle_#XC1}{}{%
+            \lciTryInputStyleFile{\lciConfigPath}{#XC1}%
+            \gdef{\lciLoadedStyle_#XC1}{}}}}
+\newcommand{\lciTryInputStyleFile}[2]{%
+    \lciIfFileExists{#C2}{\lciInclude{#C2}}{%
+        \lciIfFileExists{#XC1#C2.sty}{\lciInclude{#XC1#C2.sty}}{%
+            \lciIfFileExists{#XC1#C2}{\lciInclude{#XC1#C2}}{%
+                \lciMessage{\nWARNING: Style file '#C2' does not exist.\n}}}}}
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   Style Selection                       
+% |
+% ###########################################################################
+
+% Customization of the HTML style. Loads 'default' style at the end
+% of 'latex.sty'. Other options are 'classic' for the old conversion look
+% of the pre 4.0 release tools, and 'modern', which is the one selected
+% for 'default'.
+\newcommand{\lcStyle}[1]{%
+    \newcommand{\lciLatexToHtmlStyle}{#C1}%
+    \lcStyleFile{latex_to_html_style_#C1}%
+}
+
+\newcommand{\lciCopyCSSFile}[1]{%
+    \lciCopyCSSFileX{\lciConfigPath}{#1}{\lciTmpPath}}
+\newcommand{\lciCopyCSSFileX}[3]{%
+    \lciCopyFile{#XC1#XC2.css}{#XC3latex_to_html.css}}
 
 % ___________________________________________________________________________
 % ###########################################################################
@@ -248,6 +285,8 @@
 \newcommand{\lciIf}[1]{#X1}
 
 \newcommand{\lciIfEqualExpanded}[2]{\lciIfEqual{#X1}{#X2}}
+\newcommand{\lciIfLessExpanded}[2]{\lciIfLess{#X1}{#X2}}
+\newcommand{\lciIfLessOrEqualExpanded}[2]{\lciIfLessOrEqual{#X1}{#X2}}
 
 %% Args: countername, start, end, body
 \newcommand{\lciFor}[4]{%
@@ -260,6 +299,11 @@
     \lciIfLessOrEqual{#X1}{#2}%
         {#3\lciAddTo{#1}{1}\lciWhileLessOrEqual{#1}{#2}{#3}}{}%
 }
+
+% declare TeX compatible \iftrue and \iffalse (can be used in the ifthen.sty)
+\newcommand{\iftrue}{\lcTrue}
+\newcommand{\iffalse}{\lcFalse}
+
 
 % ___________________________________________________________________________
 % ###########################################################################
@@ -398,7 +442,7 @@
 \newcommand{\lciRCSdefArgX}[1]{\lciParseUntilDelimiter{\lciRCSdefArgXX}$}
 \newcommand{\lciRCSdefArgXX}[1]{%
     \lciIfEmpty{#1}{%
-        \lciMessage{\nWarning: Empty RCS argument}%
+        \lciMessage{\nWARNING: Empty RCS argument\n}%
         \lciRCSnewcommand{\lciRCSdefArgName}{}%
     }{%
         \lciRCSnewcommand{\lciRCSdefArgName}{#C1}}}

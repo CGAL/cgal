@@ -1,0 +1,582 @@
+% ___________________________________________________________________________
+% |#########################################################################|
+% |                                                                         |
+% | Latex Converter Style File: latex_to_html_style_modern.sty              |
+% | ------------------------------------------------------------------      |
+% | Customize the look and feel of the HTML result.                         |
+% | Uses CSS, a bit more sleek and colorful than the classic style.         |
+% |                                                                         |
+% | (c) 2004   Lutz Kettner                                                 |
+% | $Revision$                                                       |
+% | $Date$                                            |
+% |_________________________________________________________________________|
+% |#########################################################################|
+
+% copy the corresponding CSS file
+\lciCopyCSSFile{modern}
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   HTML File Header, Footer, and Navigation Bars
+% |
+% ###########################################################################
+
+
+% Args: <title-text>
+\newcommand{\lciHtmlFileHeader}[1]{%
+    \lciHtmlFileHeaderX{#1}{\lciExtractHtmlRelease}{\lciInputFilename}}
+\newcommand{\lciHtmlFileHeaderX}[3]{%
+  \lcRawHtml{<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<!-- Page automatically generated from latex_to_html converter. -->
+<!-- by cc_extract_html, #XC2 -->
+<!-- LaTeX source file: '#XC3' -->
+<html> <head>  
+<title>}#1\lcRawHtml{</title>
+</head>  
+<link href="}\lciOutputUppath\lcRawHtml{latex_to_html.css" rel="STYLESHEET">
+<body bgcolor="white">
+<!-- ------------------------------------------------------------------- -->
+
+}}
+
+% Args: none
+\newcommand{\lciHtmlNavigationTop}{\lcRawHtml{
+<!-- Top Navigation ---------------------------------------------------- -->
+<div class="NavTop">
+<hr>
+  <strong>Navigation:</strong>}
+\lciIfEqualExpanded{\lciMainFilename}{\lciCurrentFilename}{}{%
+  \lcRawHtml{<!Up_chapter_link_}\value{part}\_\value{chapter}\lcRawHtml{!>}}
+  \lcRawHtml{<a href="}\lciOutputUppath\lcRawHtml{contents.html">Table of Contents</A>,
+  <a href="}\lciOutputUppath\lcRawHtml{biblio.html">Bibliography</a>,
+  <a href="}\lciOutputUppath\lcRawHtml{manual_index.html">Index</a>,
+  <a href="}\lciOutputUppath\lcRawHtml{title.html">Title Page</a>
+<hr><!-- End of Top Navigation ----------------------------------------- -->
+</div>
+
+}}
+
+% Args: none
+\newcommand{\lciHtmlNavigationBottom}{\lcRawHtml{
+<div class="NavBottom">
+<hr><!-- Bottom Navigation --------------------------------------------- -->
+  <strong>Navigation:</strong>}
+\lciIfEqualExpanded{\lciMainFilename}{\lciCurrentFilename}{}{%
+  \lcRawHtml{<!Up_chapter_link_}\value{chapter}\lcRawHtml{!>}}
+  \lcRawHtml{<a href="}\lciOutputUppath\lcRawHtml{contents.html">Table of Contents</A>,
+  <a href="}\lciOutputUppath\lcRawHtml{biblio.html">Bibliography</a>,
+  <a href="}\lciOutputUppath\lcRawHtml{manual_index.html">Index</a>,
+  <a href="}\lciOutputUppath\lcRawHtml{title.html">Title Page</a>
+<!-- End of Bottom Navigation ------------------------------------------ -->
+
+}}
+
+% Args: none
+\newcommand{\lciHtmlFileFooter}{%
+  \lcRawHtml{
+<hr><!-- --------------------------------------------------------------- -->
+<div class="NavAddress">
+}
+\lciIfEqualExpanded{\lciManualAuthor}{}{}{%
+    \lcRawHtmlExpanded{\lciManualAuthor} .}
+\lciIfEqualExpanded{\lciManualRelease}{}{}{%
+    \lcRawHtmlExpanded{\lciManualRelease} .}
+\lciIfEqualExpanded{\lciManualDate}{}{}{%
+    \lcRawHtmlExpanded{\lciManualDate} .}\lcRawHtml{
+<hr></div>
+</body>  </html>  
+}}
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   HTML TOC (Table of Contents) Layout
+% |
+% ###########################################################################
+
+% manage even/odd outer table blocks
+\newcommand{\lcTocToggleOdd}{\lciIfEqualExpanded{\lciTocOdd}{Odd}{%
+    \gdef\lciTocOdd{Even}}{\gdef\lciTocOdd{Odd}}}
+\gdef\lciTocOdd{Odd}
+
+% Enables the two-column TOC
+\newcommand{\lcTwoColumnToc}{\gdef\lciIfTwoColumnToc{\lcTrue}}
+\gdef\lciIfTwoColumnToc{\lcFalse}
+
+% Implements the three states for the outer table: Sync, Left, Right
+% Two set of functions: \lcToc assumes we are currently _not_ writing
+% to the TOC, so they have to switch, while \lciToc assumes we
+% are currently writing to the TOC
+\gdef\lciTocOuterState{Sync}
+\newcommand{\lcTocSync}{\lciPushOutput{toc}\lciTocSync\lciPopOutput}
+\newcommand{\lciTocSync}{%
+  \lciTocCloseInner
+  \lciIfEqualExpanded{\lciTocOuterState}{Left}{%
+    \lcRawHtml{  </td>}%
+    \lciIfTwoColumnToc{% create an empty block for the right column
+      \lcRawHtml{<td class="TocEmpty}\lciTocOdd\lcRawHtml{Right"></td>}}{}%
+    \lcRawHtml{  </tr>
+
+}%
+    \lcTocToggleOdd
+  }{\lciIfEqualExpanded{\lciTocOuterState}{Right}{%
+    \lcRawHtml{  </td></tr>
+
+}%
+    \lcTocToggleOdd
+  }{}}%
+  \gdef\lciTocOuterState{Sync}%
+}
+\newcommand{\lcTocLeft}{\lciPushOutput{toc}\lciTocLeft\lciPopOutput}
+\newcommand{\lciTocLeft}{%
+  \lciTocCloseInner
+  \lciIfEqualExpanded{\lciTocOuterState}{Right}{\lciTocSync}{}%
+  \lciIfEqualExpanded{\lciTocOuterState}{Sync}{%
+    \lcRawHtml{  <tr valign="top"><td class="TocGroup}\lciTocOdd
+    \lcRawHtml{Left">
+}}{}%
+  \gdef\lciTocOuterState{Left}%
+}
+\newcommand{\lcTocRight}{\lciPushOutput{toc}\lciTocRight\lciPopOutput}
+\newcommand{\lciTocRight}{%
+  \lciIfTwoColumnToc{%
+    \lciTocCloseInner
+    \lciIfEqualExpanded{\lciTocOuterState}{Left}{%
+      \lcRawHtml{  </td><td class="TocGroup}\lciTocOdd\lcRawHtml{Right">
+}}{%
+    \lciIfEqualExpanded{\lciTocOuterState}{Sync}{%
+      % create an empty block for the left column
+      \lcRawHtml{  <tr valign="top"><td class="TocEmpty}\lciTocOdd
+      \lcRawHtml{Left"></td>}%
+      \lcRawHtml{<td class="TocGroup}\lciTocOdd\lcRawHtml{Right">
+}}{}}%
+    \gdef\lciTocOuterState{Right}%
+  }{% else we have only one (left_column)
+    \lciTocLeft
+}}
+
+% Implements the two inner table states: Open and Closed
+\gdef\lciIfTocInnerOpen{\lcFalse}
+
+% Opens a new inner table for chapter and sectioning TOC entries
+\newcommand{\lciTocOpenInner}{%
+  \lciIfTocInnerOpen{% do nothing if inner table is already open
+  }{%
+    % make sure we are not in Sync state
+    \lciIfEqualExpanded{\lciTocOuterState}{Sync}{\lciTocLeft}{}%
+    \lciTocInnerTable
+    \gdef\lciIfTocInnerOpen{\lcTrue}%
+  }%
+}
+
+% Closes a inner table of chapter and sectioning TOC entries
+\newcommand{\lciTocCloseInner}{%
+  \lciIfTocInnerOpen{%
+    \lcRawHtml{    </table>
+}%
+    \gdef\lciIfTocInnerOpen{\lcFalse}%
+  }{% do nothing if inner table is already closed
+}}
+
+
+% Style Options of TOC
+% ======================================
+
+% indentation for section, subsections, and such
+\newcommand{\lciTocIndentWidth}{%
+    \lcRawHtml{        <td class="TocIndent" width="30">&nbsp;&nbsp;</td>
+}}
+
+% outer table class and options
+\newcommand{\lciTocOuterTable}{%
+    \lcRawHtml{<table class="TocOuterTable" cellpadding="2" cellspacing="2">
+}}
+
+% inner table class and options
+\newcommand{\lciTocInnerTable}{%
+  \lcRawHtml{    <table class="TocInnerTable" cellpadding="2" cellspacing="0">
+}}
+
+
+% Args: none
+\newcommand{\lciTocFileHeader}{%
+    \lciHtmlFileHeader{\lciIfEmpty{\lciManualTitle}{}{\lciManualTitle : }%
+      Table of Contents}%
+    \lciHtmlNavigationTop
+    \lcRawHtml{
+<h1>}\lciIfEqualExpanded{\lciManualTitle}{}{}{%
+    \lciManualTitle\lcRawHtml{<br>}}%
+    \lcRawHtml{Table of Contents</h1>
+<hr>
+
+<!-- Begin of the list of contents entries -->
+}\lciTocOuterTable\lcRawHtml{
+}    \lciIfTwoColumnToc{\lcRawHtml{
+  <tr valign="top"><td class="TocGroupOddLeft">
+}\lciTocInnerTable
+\lcRawHtml{    <tr><td class="TocTitle">
+        <a class="TocLinkTitle" href="title.html">Title Page</a>
+    </tr></td>
+  </table></td><td class="TocGroupOddRight">
+}\lciTocInnerTable
+\lcRawHtml{    <tr><td class="TocBibliography">
+        <a class="TocLinkBibliography" href="biblio.html">Bibliography</a>
+    </td></tr>
+  </table></td></tr>
+
+  <tr valign="top"><td class="TocGroupEvenLeft">
+}\lciTocInnerTable
+\lcRawHtml{    <tr><td class="TocContents">
+        <a class="TocLinkContents" href="contents.html">Table of Contents</a>
+    </td></tr>
+  </table></td><td class="TocGroupEvenRight">
+}\lciTocInnerTable
+\lcRawHtml{    <tr><td class="TocIndex">
+        <a class="TocLinkIndex" href="manual_index.html">Index</a>
+    </td></tr>
+  </table></td></tr>
+
+}}{\lcRawHtml{
+  <tr valign="top"><td class="TocGroupOddLeft">
+}\lciTocInnerTable
+\lcRawHtml{    <tr><td class="TocTitle">
+        <a class="TocLinkTitle" href="title.html">Title Page</a>
+    </tr></td>
+  </table></td></tr>
+  
+  <tr valign="top"><td class="TocGroupEvenLeft">
+}\lciTocInnerTable
+\lcRawHtml{    <tr><td class="TocContents">
+        <a class="TocLinkContents" href="contents.html">Table of Contents</a>
+    </td></tr>
+  </table></td></tr>
+
+}%
+}}
+
+% Args: none
+\newcommand{\lciTocFileFooter}{%
+    \lciTocSync
+    \lciIfTwoColumnToc{}{\lcRawHtml{
+  <tr valign="top"><td class="TocGroup}\lciTocOdd\lcRawHtml{Left">
+}\lciTocInnerTable
+\lcRawHtml{    <tr><td class="TocBibliography">
+        <a class="TocLinkBibliography" href="biblio.html">Bibliography</a>
+    </td></tr>
+  </table></td></tr>
+}\lcTocToggleOdd\lcRawHtml{  
+  <tr valign="top"><td class="TocGroup}\lciTocOdd\lcRawHtml{Left">
+}\lciTocInnerTable
+\lcRawHtml{    <tr><td class="TocIndex">
+        <a class="TocLinkIndex" href="manual_index.html">Index</a>
+    </td></tr>
+  </table></td></tr>
+}}\lcRawHtml{        
+</table>
+<!-- End of the list of contents entries -->
+}%
+    \lciHtmlNavigationBottom
+    \lciHtmlFileFooter
+}
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   HTML Bibliography File Layout
+% |
+% ###########################################################################
+
+
+% Args: none
+\newcommand{\lciBibFileHeader}{%
+    \lciHtmlFileHeader{\lciIfEmpty{\lciManualTitle}{}{\lciManualTitle : }%
+      Bibliography}%
+    \lciHtmlNavigationTop
+    \lcRawHtml{
+<h1>}\lciIfEqualExpanded{\lciManualTitle}{}{}{%
+    \lciManualTitle\lcRawHtml{<br>}}%
+    \lcRawHtml{Bibliography</h1>
+<hr>
+
+<!-- Begin of the table of bibliography entries -->
+<table class="BibliographyPage">
+}}
+
+% Args: none
+\newcommand{\lciBibFileFooter}{%
+    \lcRawHtml{
+  </td></tr>
+<!-- End of the table of bibliography entries -->
+</table>
+}%
+    \lciHtmlNavigationBottom
+    \lciHtmlFileFooter
+}
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   HTML Index File Layout
+% |
+% ###########################################################################
+
+
+% Args: none
+\newcommand{\lciIndexFileHeader}{%
+    \lciHtmlFileHeader{\lciIfEmpty{\lciManualTitle}{}{\lciManualTitle : }%
+      Index}%
+    \lciHtmlNavigationTop
+    \lcRawHtml{
+<h1>}\lciIfEqualExpanded{\lciManualTitle}{}{}{%
+    \lciManualTitle\lcRawHtml{<br>}}%
+    \lcRawHtml{Index</h1>
+<hr>
+
+<!-- Begin of the list of index entries -->
+<ul class="IndexPage">
+}}
+
+% Args: none
+\newcommand{\lciIndexFileFooter}{%
+    \lcRawHtml{
+<!-- End of the list of index entries -->
+</ul>
+}%
+    \lciHtmlNavigationBottom
+    \lciHtmlFileFooter
+}
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   HTML Part, Chapter, and Section Headers and TOC Entries
+% |
+% ###########################################################################
+
+
+% Args: <anchor-counter> <header-text>: if anchor counter is empty, no
+% anchor is defined. Respect secnumdepth counter.
+\newcommand{\lciHtmlPartHeader}[2]{%
+%% %% ignore part titles at the moment until full output support is there
+%%    \lciIfEqualExpanded{\lciDocumentClass}{article}%
+%%        {\def\lciPartNum{0}}{\def\lciPartNum{-1}}%
+%%    \lciIfEmpty{#C1}{}{\lciIfLessExpanded{\lciCountertocdepth}{\lciPartNum}{}{%
+%%        \lcRawHtml{<a name="Part_}#C1\lcRawHtml{"></a>}}}\lcRawHtml{
+%%<h1>}#C2\lcRawHtml{</h1>
+%%}%
+}
+
+% Args: <anchor-counter> <toc-entry>
+\newcommand{\lciHtmlPartToc}[2]{%
+  \lciIfEqualExpanded{\lciDocumentClass}{article}%
+    {\def\lciPartNum{0}}{\def\lciPartNum{-1}}%
+  \lciIfLessExpanded{\lciCountertocdepth}{\lciPartNum}{}{%
+%% %% make part entries unlinked until full output support is there
+    \edef\lciOut{\lciOutputFilename}%
+    \lciPushOutput{toc}% 
+    \lciTocCloseInner
+    % make sure we are not in Sync state
+    \lciIfEqualExpanded{\lciTocOuterState}{Sync}{\lciTocLeft}{}%
+%%    \lcRawHtml{<a href="}\lcRawHtmlExpanded{\lciOut}%
+%%    \lcRawHtml{##Part_}#C1\lcRawHtml{"><h3>}#C2\lcRawHtml{</h3></a> }% 
+    \lcRawHtml{    <!-- =================================================== -->
+    <h3 class="TocPart"><br>}#C2\lcRawHtml{</h3>
+}%
+    \lciPopOutput
+}}
+
+% Args: <header-text>
+\newcommand{\lciHtmlChapterHeader}[1]{\lcRawHtml{
+<h1>}#C1\lcRawHtml{</h1>
+}}
+
+% Args: <anchor-counter> <toc-entry>: Respect secnumdepth counter.
+\newcommand{\lciHtmlChapterToc}[2]{%
+  \lciIfEmpty{#C1}{}{\lciIfLessExpanded{\lciCountertocdepth}{0}{}{%
+      \lcRawHtml{<a name="Chapter_}#C1\lcRawHtml{"></a>}}}
+  \lciIfLessExpanded{\lciCountertocdepth}{0}{}{%
+    \edef\lciOut{\lciOutputFilename}%
+    \lciPushOutput{toc}% 
+    \lciTocOpenInner
+    % \lcRawHtml{##Chapter_}#C1 % omit anchor, we start at the page top
+    \lcRawHtml{      <tr><td class="TocChapter" colspan="6">
+        <!-- --------------------------------------------------- -->
+        <a class="TocLinkChapter" href="}\lcRawHtmlExpanded{\lciOut}%
+      \lcRawHtml{"
+            >}#C2\lcRawHtml{</a>
+      </td></tr>
+}%
+    \lciPopOutput
+}}
+
+
+% Args: <header-text>:
+\newcommand{\lciHtmlSectionHeader}[1]{\lcRawHtml{
+<h2>}#C1\lcRawHtml{</h2>
+}}
+
+% Args: <anchor-counter> <toc-entry>:  Respect secnumdepth counter.
+\newcommand{\lciHtmlSectionToc}[2]{%
+    \lciIfLessExpanded{\lciCountertocdepth}{1}{}{%
+        \lcRawHtml{<a name="Section_}#C1\lcRawHtml{"></a>}
+        \edef\lciOut{\lciOutputFilename}%
+        \lciPushOutput{toc}% 
+        \lciTocOpenInner
+        \lcRawHtml{      <tr>
+}\lciTocIndentWidth
+        \lcRawHtml{        <td class="TocSection" colspan="5">
+          <a class="TocLinkSection" href="}\lcRawHtmlExpanded{\lciOut}%
+        \lcRawHtml{##Section_}#C1\lcRawHtml{"
+          >}#C2\lcRawHtml{</a>
+        </td>
+      </tr>
+}% 
+        \lciPopOutput}}
+
+% Args: <header-text>:
+\newcommand{\lciHtmlReferenceHeader}[1]{\lcRawHtml{
+<h2>}#C1\lcRawHtml{</h2>
+}}
+
+% Args: <anchor-counter> <toc-entry>:  Respect secnumdepth counter.
+\newcommand{\lciHtmlReferenceToc}[2]{%
+    \lciIfLessExpanded{\lciCountertocdepth}{1}{}{%
+        \lcRawHtml{<a name="Reference_}#C1\lcRawHtml{"></a>}
+        \edef\lciOut{\lciOutputFilename}%
+        \lciPushOutput{toc}% 
+        \lciTocOpenInner
+        \lcRawHtml{      <tr>
+}\lciTocIndentWidth
+        \lcRawHtml{        <td class="TocReference" colspan="5">
+          <a class="TocLinkReference" href="}\lcRawHtmlExpanded{\lciOut}%
+        %\lcRawHtml{##Reference_}#C1 % go to top of file, not the anchor
+        \lcRawHtml{"
+          >}#C2\lcRawHtml{</a>
+        </td>
+      </tr>
+}% 
+        \lciPopOutput}}
+
+
+% Args: <anchor-counter> <header-text>: if anchor counter is empty, no
+% anchor is defined. Respect secnumdepth counter.
+\newcommand{\lciHtmlSubsectionHeader}[2]{%
+    \lciIfEmpty{#C1}{}{\lciIfLessExpanded{\lciCountertocdepth}{2}{}{%
+        \lcRawHtml{<a name="Subsection_}#C1\lcRawHtml{"></a>}}}\lcRawHtml{
+<h3>}#C2\lcRawHtml{</h3>
+}}
+
+% Args: <anchor-counter> <toc-entry>
+\newcommand{\lciHtmlSubsectionToc}[2]{%
+    \lciIfLessExpanded{\lciCountertocdepth}{2}{}{%
+        \edef\lciOut{\lciOutputFilename}%
+        \lciPushOutput{toc}% 
+        \lciTocOpenInner
+        \lcRawHtml{      <tr>
+}\lciTocIndentWidth\lciTocIndentWidth
+        \lcRawHtml{        <td class="TocSubsection" colspan="4">
+          <a class="TocLinkSubsection" href="}\lcRawHtmlExpanded{\lciOut}%
+        \lcRawHtml{##Subsection_}#C1\lcRawHtml{"
+          >}#C2\lcRawHtml{</a>
+        </td>
+      </tr>
+}% 
+        \lciPopOutput}}
+
+% Args: <anchor-counter> <header-text>: if anchor counter is empty, no
+% anchor is defined. Respect secnumdepth counter.
+\newcommand{\lciHtmlSubsubsectionHeader}[2]{%
+    \lciIfEmpty{#C1}{}{\lciIfLessExpanded{\lciCountertocdepth}{3}{}{%
+        \lcRawHtml{<a name="Subsubsection_}#C1\lcRawHtml{"></a>}}}\lcRawHtml{
+<h4>}#C2\lcRawHtml{</h4>
+}}
+
+% Args: <anchor-counter> <toc-entry>
+\newcommand{\lciHtmlSubsubsectionToc}[2]{%
+    \lciIfLessExpanded{\lciCountertocdepth}{3}{}{%
+        \edef\lciOut{\lciOutputFilename}%
+        \lciPushOutput{toc}% 
+        \lciTocOpenInner
+        \lcRawHtml{      <tr>
+}\lciTocIndentWidth\lciTocIndentWidth\lciTocIndentWidth
+        \lcRawHtml{        <td class="TocSubsubsection" colspan="3">
+          <a class="TocLinkSubsubsection" href="}\lcRawHtmlExpanded{\lciOut}%
+        \lcRawHtml{##Subsubsection_}#C1\lcRawHtml{"
+          >}#C2\lcRawHtml{</a>
+        </td>
+      </tr>
+}% 
+       \lciPopOutput}}
+
+% Args: <anchor-counter> <header-text>: if anchor counter is empty, no
+% anchor is defined. Respect secnumdepth counter.
+\newcommand{\lciHtmlParagraphHeader}[2]{%
+    \lciIfEmpty{#C1}{}{\lciIfLessExpanded{\lciCountertocdepth}{4}{}{%
+        \lcRawHtml{<a name="Paragraph_}#C1\lcRawHtml{"></a>}}}\lcRawHtml{
+<b>}#C2\lcRawHtml{</b>
+}\lciSkipWhiteSpace}
+
+% Args: <anchor-counter> <toc-entry>
+\newcommand{\lciHtmlParagraphToc}[2]{%
+    \lciIfLessExpanded{\lciCountertocdepth}{4}{}{%
+        \edef\lciOut{\lciOutputFilename}%
+        \lciPushOutput{toc}% 
+        \lciTocOpenInner
+        \lcRawHtml{      <tr>
+}\lciTocIndentWidth\lciTocIndentWidth\lciTocIndentWidth\lciTocIndentWidth
+        \lcRawHtml{        <td class="TocParagraph" colspan="2">
+          <a class="TocLinkParagraph" href="}\lcRawHtmlExpanded{\lciOut}%
+        \lcRawHtml{##Paragraph_}#C1\lcRawHtml{"
+          >}#C2\lcRawHtml{</a>
+        </td>
+      </tr>
+}% 
+        \lciPopOutput}}
+
+% Args: <anchor-counter> <header-text>: if anchor counter is empty, no
+% anchor is defined. Respect secnumdepth counter.
+\newcommand{\lciHtmlSubparagraphHeader}[2]{%
+    \lciIfEmpty{#C1}{}{\lciIfLessExpanded{\lciCountertocdepth}{5}{}{%
+        \lcRawHtml{<a name="Subparagraph_}#C1\lcRawHtml{"></a>}}}\lcRawHtml{
+<b>}#C2\lcRawHtml{</b>
+}\lciSkipWhiteSpace}
+
+% Args: <anchor-counter> <toc-entry>
+\newcommand{\lciHtmlSubparagraphToc}[2]{%
+    \lciIfLessExpanded{\lciCountertocdepth}{5}{}{%
+        \edef\lciOut{\lciOutputFilename}%
+        \lciPushOutput{toc}% 
+        \lciTocOpenInner
+        \lcRawHtml{      <tr>
+}\lciTocIndentWidth\lciTocIndentWidth\lciTocIndentWidth\lciTocIndentWidth
+\lciTocIndentWidth
+        \lcRawHtml{        <td class="TocSubparagraph">
+          <a class="TocLinkSubparagraph" href="}\lcRawHtmlExpanded{\lciOut}%
+        \lcRawHtml{##Subparagraph_}#C1\lcRawHtml{"
+          >}#C2\lcRawHtml{</a>
+        </td>
+      </tr>
+}% 
+        \lciPopOutput}}
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   Elements for cc_manual.sty
+% |
+% ###########################################################################
+
+\newenvironment{ccAdvanced}{%
+    \lcRawHtml{<br><div class="AdvancedBlock"><img border="0" src="cc_advanced_begin.gif" alt="begin of advanced section"><br>}
+}{
+    \lcRawHtml{<br><img border="0" src="cc_advanced_end.gif" alt="end of advanced section"><br></div>}
+}
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% | EOF
+% ###########################################################################
