@@ -2,13 +2,32 @@
 
 \section{Introduction}
 
-The Approximate SPAtial Searching (ASPAS) package supports
-(approximate) nearest and furthest, (approximate) $k$-nearest and furthest, (approximate) incremental nearest
-and furthest searching of query items representing $d$-dimensional
-points using $d$-dimensional trees
-($k$-$d$) trees. Also, range searching is supported by using query items that represent
-$d$-dimensional iso-rectangles.
 
+The {\bf approximate spatial searching} package implements
+exact and approximate distance browsing
+by providing implementations of algorithms supporting
+
+\begin{itemize} 
+
+\item
+both nearest and furthest neighbour searching
+
+\item
+both exact and approximate searching
+
+\item 
+(approximate) $k$-nearest and $k$-furthest neighbour searching
+
+\item 
+(approximate) incremental nearest and incremental furthest neighbour searching
+
+\item
+query items representing points and spatial objects.
+
+\end{itemize}
+
+In these searching problems a set $P$ of data points in $d$-dimensional
+space is given.
 ASPAS consists of the following concepts, function object concepts, classes, function object classes
 and enumerations that are described in the reference pages.
 

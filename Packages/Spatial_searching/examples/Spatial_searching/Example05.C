@@ -86,9 +86,9 @@ int test_range_searching(CGAL::Split_rule_enumeration::Split_rule s) {
 int main() {
   
   test_range_searching(CGAL::Split_rule_enumeration::MEDIAN_OF_MAX_SPREAD); 
-  test_range_searching(CGAL::Split_rule_enumeration::MEDIAN_OF_BOX); 
+  test_range_searching(CGAL::Split_rule_enumeration::MEDIAN_OF_RECTANGLE); 
   test_range_searching(CGAL::Split_rule_enumeration::MIDPOINT_OF_MAX_SPREAD);
-  test_range_searching(CGAL::Split_rule_enumeration::MIDPOINT_OF_BOX);
+  test_range_searching(CGAL::Split_rule_enumeration::MIDPOINT_OF_RECTANGLE);
   test_range_searching(CGAL::Split_rule_enumeration::FAIR);
   test_range_searching(CGAL::Split_rule_enumeration::SLIDING_MIDPOINT); 
   test_range_searching(CGAL::Split_rule_enumeration::SLIDING_FAIR);    

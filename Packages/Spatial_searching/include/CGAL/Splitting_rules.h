@@ -34,8 +34,8 @@ namespace CGAL {
 
 class Split_rule_enumeration {
 public:
-enum Split_rule {MEDIAN_OF_MAX_SPREAD, MEDIAN_OF_BOX,
-        MIDPOINT_OF_MAX_SPREAD, MIDPOINT_OF_BOX, FAIR, 
+enum Split_rule {MEDIAN_OF_MAX_SPREAD, MEDIAN_OF_RECTANGLE,
+        MIDPOINT_OF_MAX_SPREAD, MIDPOINT_OF_RECTANGLE, FAIR, 
 		SLIDING_MIDPOINT, SLIDING_FAIR};
 };
 
@@ -108,7 +108,7 @@ public:
 };
 
 template <class Item>
-class Median_of_box : public Splitter<Item> {
+class Median_of_rectangle : public Splitter<Item> {
 public:
   typedef typename Item::R::FT NT;
   Plane_separator<NT>* rule(Point_container<Item>& c)
@@ -134,7 +134,7 @@ public:
 };
 
 template <class Item>
-class Midpoint_of_box: public Splitter<Item> {
+class Midpoint_of_rectangle: public Splitter<Item> {
 public:
   typedef typename Item::R::FT NT;
   Plane_separator<NT>* rule(Point_container<Item>& c)

@@ -1,19 +1,29 @@
-\chapter{Approximate spatial searching}
+\chapter{Approximate Spatial Searching}
 
 \section{Introduction}
 
-The Approximate SPAtial Searching (ASPAS) package implements
+The {\bf approximate spatial searching} package implements
 exact and approximate distance browsing
-by providing implementations of algorithms supporting both exact and
-approximate nearest and furthest, (approximate) $k$-nearest and furthest,
-exact and approximate incremental nearest
-and furthest searching in a generic fashion of query items
-representing $d$-dimensional
-points using $d$-dimensional trees
-($k$-$d$) trees.
-Also, exact and approximate range searching is
-supported by using query items that represent
-$d$-dimensional iso-rectangles.
+by providing implementations of algorithms supporting
+
+\begin{itemize} 
+
+\item
+both nearest and furthest neighbour searching
+
+\item
+both exact and approximate searching
+
+\item 
+(approximate) $k$-nearest and $k$-furthest neighbour searching
+
+\item 
+(approximate) incremental nearest and incremental furthest neighbour searching
+
+\item
+query items representing points and spatial objects.
+
+\end{itemize}
 
 In these searching problems a set $P$ of data points in $d$-dimensional
 space is given.
@@ -27,32 +37,37 @@ from databases that assume that the data reside in secondary storage).
 
 Spatial searching supports browsing through a collection of spatial objects
 stored in a spatial data structure on the basis of their distances to an arbitrary spatial
-query object. The conventional approach is one that makes use of a $k$-nearest neighbour
-algorithm where $k$ is know prior to the invocation of the algorithm.
-Thus if $m>k$ neighbours are needed, the $k$-nearest neighbour algorithm has to be
-reinvoked for $m$ neighbours, thereby possibly performing some redundant computations.
+query object. The first approach is one that makes use of a $k$-nearest neighbour
+algorithm, where $k$ is know prior to the invocation of the algorithm.
+Hence, the number of nearest neighbours has to be
+guessed. If the guess is too large redundant computations are performed.
+If the number is too small the computation has to be  
+reinvoked for a larger number of neighbours, thereby performing redundant computations.
 The second approach is incremental in the sence that having obtained
 the $k$ nearest neighbours, the $k$ + 1$^{st}$ neighbour can be obtained without
-having to calculate the $k$ + 1 nearest neighbour frm scratch.
-The incremental approach is useful when processing complex queries where
-one of the conditions involves spatial proximity (e.g. the nearest city to Paris with
-population greater than a million), in which case a query engine can make use of
-a pipelined strategey.
+having to calculate the $k$ + 1 nearest neighbour from scratch.
+The incremental approach is useful when processing queries where
+one but not all of the conditions involves spatial proximity (e.g. the nearest city to Paris with
+population greater than a million).
 
 \subsection{Furthest Neighbour Searching}
 
 With relatively minor modifications, nearest neighbour searching algorithms can be
-used to find the farthest object from the query object. Furthest neighbour searching is invoked if
+used to find the furthest object from the query object. Furthest neighbour searching is invoked if
 a boolean \ccc{Search_nearest} is set to false in the constructor of the searching classes.
-If this boolean is set to true or is not set nearest neighbour searching is invoked.
+If this boolean is set to true, or is not set, nearest neighbour searching is invoked.
 
 \subsection{Range Searching}
 
-Range queries are supported by using iso-rectangles as query item.
+Range queries are supported by using incremental nearest neighbour search
+using iso-rectangles as query item, and using a $L1$-distance between iso-rectangles and points.
+This distance is defined such that all points contained in a query item have distance zero
+to the query. Hence, an incremental nearest neighbour search will report first all points
+contained in the query item.  
 
 \subsection{Approximate Searching}
 
-ASPAS supports both exact and approximate browsing, by
+The approximate spatial searching package supports both exact and approximate browsing, by
 specifying an approximation facter $\epsilon \geq 0$ with the query.
 
 \subsection{The $k$-$d$ tree}
@@ -81,7 +96,7 @@ Friedmann, Bentley and Finkel \cite{fbf-afbml-77} described the standard
 search algorithm to find the $k$th nearest neighbour by searching a $k$-$d$ tree recursively.
 
 When encountering a node of the kd-tree the algorithm first visits the child that is closest
-to the query point. On return, if the box containing  the other child lie within
+to the query point. On return, if the rectangle containing  the other child lies within
 1/ (1+$\epsilon$) times the distance to the $k$th nearest neighbours so far, then
 the other child is visited recursively.
 Priority search \cite{am-annqf-93} visits the nodes in increasing order of distance from
@@ -97,25 +112,25 @@ which determine how a separating hyperplane is selected:
 
 \begin{itemize}
 
-\item {\bf Midpoint of box}
+\item {\bf Midpoint of rectangle}
 This splitting rule cuts a rectangle through its midpoint orthogonal
 to the longest side.
 
 \item {\bf Midpoint of max spread}
-This splitting rule cuts a rectangle through its midpoint orthogonal
-to the dimension with the maximum point spread.
+This splitting rule cuts a rectangle through $Mind+Maxd/2$ orthogonal
+to the dimension with the maximum point spread $[Mind,Maxd]$.
 
 \item {\bf Sliding midpoint}
 
-This is a modification of the midpoint of box splitting rule.
-It first attempts to perform a midpoint of box split as
+This is a modification of the midpoint of rectangle splitting rule.
+It first attempts to perform a midpoint of rectangle split as
 described above. If data points lie on both sides of the separating
 plane the sliding midpoint rule computes the same separator as
-the midpoint of box rule. If the data points lie only on one
+the midpoint of rectangle rule. If the data points lie only on one
 side it avoids this by sliding the separator, computed by
-the midpoint of box rule, to the nearest datapoint.
+the midpoint of rectangle rule, to the nearest datapoint.
 
-\item {\bf Median of box}
+\item {\bf Median of rectangle}
 
 The splitting dimension is the dimension of the longest side of the rectangle.
 The splitting value is defined by the median of the coordintes of the data points
@@ -128,8 +143,8 @@ The splitting value is defined by the median of the coordinates of the data poin
 along this dimension.
 
 \item {\bf Fair}
-This splitting rule is a compromise between the median of box splitting rule
-and the midpoint of box splitting rule. This splitting rule maintains an upper
+This splitting rule is a compromise between the median of rectangle splitting rule
+and the midpoint of rectangle splitting rule. This splitting rule maintains an upper
 bound on the maximal allowed ratio of the longest and shortest side of
 a rectangle (the value of this upper bound is set in the constructor of the
 fair splitting rule). Among the splits that satisfy this bound, it selects
@@ -166,7 +181,80 @@ splitting rule.
 
 \section{Software Design}
 
-{\bf To be provided.}
+The approximate spatial searching package consists of the following classes:
+
+\begin{itemize}
+
+\item
+The class \ccc{Kd_tree_rectangle} implements $d$-dimensional iso-rectangles, methods to compute bounding boxes
+of point sets and methods to split iso-rectangles.
+
+\item
+The classes \ccc{Kd_tree} and \ccc{Kd_tree_node} implement the $k$-$d$ tree.
+
+\item
+The class \ccc{Kd_tree_traits_point} provides parameters for the construction of the $k$-$d$ tree.
+
+\item
+The class \ccc{Plane_separator} implements a separator.
+
+\item 
+The class \ccc{Point_container} is a point container providing a method, that given a separator
+splits a point set. Also \ccc{Point_container} provides methods that support the implementation
+of splitting rules.
+
+\item
+The function object classes \ccc{Midpoint_of_rectangle}, \ccc{Midpoint_of_max_spread},
+\ccc{Sliding_midpoint}, \ccc{Median_of_rectangle}, \ccc{Median_of_max_spread}, \ccc{Median_of_max_spread},
+\ccc{Fair} and \ccc{Sliding_fair} implement the splitting rules.
+
+\item
+The class \ccc{Weighted_Minkowski_distance} implements a weighted $L_p$-distance for $d$-dimensional points.
+
+\item
+The class \ccc{L1_distance_rectangle_point} implements a $L1$ distance for $d$-dimensional
+iso-rectangles and points. 
+
+\item
+The class \ccc{General_standard_search} implements the standard search strategy for general distances
+like the $L1$ distance for iso-rectangles.
+
+\item
+The class \ccc{General_priority_search} implements the priority search strategy for general distances
+like the $L1$ distance for iso-rectangles.
+
+\item
+The class \ccc{Orthogonal_standard_search} implements the standard search strategy for orthogonal distances
+like a weighted $L_p$ distance.
+
+\item
+The class \ccc{Orthogonal_priority_search} implements the priority search strategy for general distances
+like the $L1$ distance for iso-rectangles.
+
+\end{itemize}
+
+\begin{ccTexOnly}
+
+\begin{figure} [t]
+  \begin{center}
+  \leavevmode
+  \vspace*{6cm}
+  \hspace*{-2cm}
+  \scalebox{.7}{\includegraphics{Fig1.eps}}
+  \end{center}
+  \vspace*{-8cm}
+  \caption{Overiew of use of traits classes.}
+\end{figure}
+
+\end{ccTexOnly}
+
+%for html
+%\lcHtml{\label{KDT_fig:kdtree}}
+\begin{ccHtmlOnly}
+<P>
+<center><img border=0 src="Fig1.gif" alt=" "><br>
+Overview of use of traits classes</center>
+\end{ccHtmlOnly}
 
 \section{Example Programs}
 

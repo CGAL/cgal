@@ -97,8 +97,8 @@ namespace CGAL {
 				c0.split_container(c1,sep);}
 			    break;
 
-			case Split_rule_enumeration::MEDIAN_OF_BOX:
-				{Median_of_box<Item> M;
+			case Split_rule_enumeration::MEDIAN_OF_RECTANGLE:
+				{Median_of_rectangle<Item> M;
 				sep=M.rule(c0);
 				c0.split_container(c1,sep);}
 			    break;
@@ -109,8 +109,8 @@ namespace CGAL {
 				c0.split_container(c1,sep);}
 			    break;
 
-			case Split_rule_enumeration::MIDPOINT_OF_BOX:
-				{Midpoint_of_box<Item> M;
+			case Split_rule_enumeration::MIDPOINT_OF_RECTANGLE:
+				{Midpoint_of_rectangle<Item> M;
 				sep=M.rule(c0);
 				c0.split_container(c1,sep);}
 			    break;
