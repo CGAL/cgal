@@ -42,9 +42,9 @@ class ConicCPA2
 {
   public:
     // types
-    typedef           _PT      PT;
-    typedef           _DA      DA;
-    typedef  typename _DA::FT  FT;
+    typedef           _PT             PT;
+    typedef           _DA             DA;
+    typedef  typename _DA::FT         FT;
 
   //private:
     //friend class Conic_2< CGAL::Cartesian<FT> >;
@@ -163,8 +163,6 @@ class ConicCPA2
            c2 = -FT(6)*a0*b3 - a1*b2 + FT(4)*a2*b1,
            c1 = -FT(4)*a0*b2 + a1*b1 + FT(6)*a2*b0,
            c0 = -FT(2)*a0*b1 + FT(3)*a1*b0;
-    
-           if ( CGAL_NTS is_zero( c0)) return 0;// E(0) is the smallest ellipse
     
            double roots[3];
            int nr_roots = solve_cubic
@@ -321,7 +319,10 @@ class ConicCPA2
     PT center () const
     {
         CGAL_kernel_precondition (type != PARABOLA);
-        PT p;
+	// PT p;
+	// replaced previous line by following hack (no idea
+	// why original version doesn't work)
+        typename DA::Point p;
         FT two = FT(2);
         FT div = -det();
         dao.set( p, (two*s()*u() - t()*v()) / div,

@@ -60,7 +60,13 @@ NT best_value (NT *values, int nr_values,
         d = (a2*x+a1)*x+a0;
         q = ((b3*x+b2)*x+b1)*x+b0;
         det = d*d*d/(q*q);
-        if (det > 0.0)
+	// if q==0, this root value doesn't qualify for the
+	// best value. Under roundoff errors, q might be very
+	// small but nonzero, so that the value is erroneously 
+	// being considered; however, d should be very small
+	// in this case as well, so that det won't compete
+	// for max_det below.
+        if (CGAL_NTS is_positive(det) && !CGAL_NTS is_zero(q))
             if (!det_positive || (det > max_det)) {
                 max_det = det;
                 best = x;

@@ -164,8 +164,6 @@ class ConicHPA2
            c1 = -RT(4)*a0*b2 + a1*b1 + RT(6)*a2*b0,
            c0 = -RT(2)*a0*b1 + RT(3)*a1*b0;
     
-           if ( CGAL_NTS is_zero( c0)) return 0;// E(0) is the smallest ellipse
-    
            double roots[3];
            int nr_roots = solve_cubic
                                 (CGAL::to_double(c3), CGAL::to_double(c2),
@@ -321,7 +319,10 @@ class ConicHPA2
     PT center () const
     {
         CGAL_kernel_precondition (type != PARABOLA);
-        PT p;
+        // PT p;
+	// replaced previous line by following hack (no idea
+	// why original version doesn't work)
+        typename DA::Point_2 p;
         RT two = RT(2);
         dao.set( p, two*s()*u() - t()*v(), two*r()*v() - t()*u(), -det());
         return p;
