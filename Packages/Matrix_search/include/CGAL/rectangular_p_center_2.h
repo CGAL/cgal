@@ -32,6 +32,7 @@
 #include <CGAL/sorted_matrix_search.h>
 #include <CGAL/rectangular_3_center_2.h>
 #include <algorithm>
+#include <CGAL/number_utils_classes.h>
 #ifdef CGAL_REP_CLASS_DEFINED
 #include <CGAL/Rectangular_p_center_traits_2.h>
 #endif // CGAL_REP_CLASS_DEFINED
@@ -125,6 +126,17 @@ cartesian_matrix_horizontally_flipped(
     RandomAccessIC_column >
   ( r_f, r_l, c_f, c_l, o);
 }
+#if defined(__GNUC__) && (__GNUC__ == 2) && (__GNUC_MINOR__ <= 91)
+// gcc-2.91 gives funny ices when I try to do this with
+// bind/compose adaptors
+template < class NT >
+struct Pcenter_gcc291_operation
+: public CGAL_STD::binary_function< NT, NT, NT >
+{
+  NT operator()(const NT& n1, const NT& n2) const
+  { return CGAL::max(NT(0), n1 - n2); }
+};
+#endif // defined(__GNUC__) && (__GNUC__ == 2) && (__GNUC_MINOR__ <= 91)
 /*
 template < class ForwardIterator,
            class OutputIterator,
@@ -263,7 +275,7 @@ rectangular_p_center_2_matrix_search(
 #endif
   PiercingFunction pf,
   const Traits& t,
-  const MatrixOperator&)
+  const MatrixOperator& mop)
 {
   int number_of_points( iterator_distance( f, l));
   CGAL_optimisation_precondition( number_of_points > 0);
@@ -329,18 +341,15 @@ rectangular_p_center_2_matrix_search(
             x_coords.end(),
             x_coords.begin(),
             x_coords.end(),
-            compose1_2(
-              bind1st( Max< FT >(), 0),
-              minus< FT >())));
+            mop));
+  
   // create matrix of y-differences:
   matrices.push_back(
     Matrix( y_coords.begin(),
             y_coords.end(),
             y_coords.begin(),
             y_coords.end(),
-            compose1_2(
-              bind1st( Max< FT >(), 0),
-              minus< FT >())));
+            mop));
 
   // do the actual search:
   r = sorted_matrix_search(matrices.begin(),
@@ -390,7 +399,14 @@ rectangular_p_center_2_matrix_search(
     r,
     pf,
     t,
-    compose1_2(bind1st(Max< FT >(), 0), minus< FT >()));
+#if defined(__GNUC__) && (__GNUC__ == 2) && (__GNUC_MINOR__ <= 91)
+    // gcc-2.91 gives funny ices when I try to do this with
+    // bind/compose adaptors
+    Pcenter_gcc291_operation< FT >()
+#else
+    compose1_2(bind1st(Max< FT >(), 0), minus< FT >())
+#endif // defined(__GNUC__) && (__GNUC__ == 2) && (__GNUC_MINOR__ <= 91)
+    );
 
 } // Pcenter_matrix_search( ... )
 

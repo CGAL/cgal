@@ -27,7 +27,8 @@
 #if ! (CGAL_RECTANGULAR_3_CENTER_2_H)
 #define CGAL_RECTANGULAR_3_CENTER_2_H 1
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/basic.h>
+#include <CGAL/Optimisation/assertions.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/algorithm.h>
 #ifdef CGAL_REP_CLASS_DEFINED
@@ -58,6 +59,7 @@ struct Wastebasket
   iterator operator++(int) { return *this; }
 };
 */
+
 
 template < class ForwardIterator, class OutputIterator,
            class FT, class Traits >
@@ -805,6 +807,7 @@ rectangular_3_center_2_type2(
 #ifndef CGAL_CFG_NO_NAMESPACE
   using std::max;
   using std::less;
+  using std::greater;
   using std::greater_equal;
   using std::not_equal_to;
   using std::logical_and;
@@ -854,8 +857,7 @@ rectangular_3_center_2_type2(
   {
     // First try whether the best radius so far can be reached at all
     RandomAccessIterator m =
-      partition(f, l, compose1(bind1st(greater_equal< FT >(), rad),
-                               op.delta()));
+      partition(f, l, compose1(bind1st(greater< FT >(), rad), op.delta()));
     IP pos = min_max_element(m, l, op.compare_x(), op.compare_y());
     // extreme points of the two other squares
     Point q_t =
@@ -910,15 +912,6 @@ rectangular_3_center_2_type2(
   }
 #endif // ! CGAL_3COVER_NO_PREFILTER
 
-#ifdef CGAL_PCENTER_DEBUG
-  leda_window W(730, 690);
-  cgalize(W);
-  W.init(-1.5, 1.5, -1.2);
-  W.set_node_width(3);
-  W.display();
-  typedef Ostream_iterator< leda_window > Window_stream_iterator;
-  Window_stream_iterator wout(W);
-#endif // CGAL_PCENTER_DEBUG
 
   while (e - s > 6) {
     /*
@@ -940,21 +933,6 @@ rectangular_3_center_2_type2(
     Point q_t = op.place_x_square(q_t_afap, r, op.delta()(*m));
     Point q_r = op.place_y_square(q_r_afap, r, op.delta()(*m));
 
-#ifdef CGAL_PCENTER_DEBUG
-    W << GREEN << r;
-    if (!Q_t_empty)
-      W << ORANGE << Q_t;
-    if (!Q_r_empty)
-      W << Q_r;
-    W << BLACK << Rectangle(r[0], Point(r[0].x() + op.delta()(*m),
-                                        r[0].y() + op.delta()(*m)));
-    W.set_node_width(5);
-    W << BLUE;
-    std::copy(s, e, wout);
-    W.set_node_width(2);
-    W << WHITE << *pos.first << *pos.second;
-    { Point p; W >> p; }
-#endif // CGAL_PCENTER_DEBUG
 
 #ifdef CGAL_3COVER_CHECK
     // check whether the points in [e,l) which have been assigned
@@ -971,7 +949,7 @@ rectangular_3_center_2_type2(
                                   bind1st(op.distance(), q_t)),
                          compose1(greater_delta_m,
                                   bind1st(op.distance(), q_r))));
-      CGAL_assertion(iii == l);
+      CGAL_optimisation_assertion(iii == l);
     }
     // check whether the points in [f,s) are covered
     {
@@ -983,7 +961,7 @@ rectangular_3_center_2_type2(
                       compose1(le_delta_m, bind1st(op.distance(), q_t)));
       iii = partition(iii, s,
                       compose1(le_delta_m, bind1st(op.distance(), q_r)));
-      CGAL_assertion(iii == s);
+      CGAL_optimisation_assertion(iii == s);
     }
 #endif // CGAL_3COVER_CHECK
 
@@ -999,14 +977,6 @@ rectangular_3_center_2_type2(
     RandomAccessIterator b3 =
       partition(b2, e, compose1(le_delta_m, bind1st(op.distance(), q_r)));
 
-#ifdef CGAL_PCENTER_DEBUG
-    W << RED; std::copy(m+1, b1, wout);
-    W << GREEN; std::copy(b1, b2, wout);
-    W << ORANGE; std::copy(b2, b3, wout);
-    W << VIOLET; std::copy(b3, e, wout);
-    W << BLACK << q_r;
-    { Point p; W << WHITE >> p; }
-#endif // CGAL_PCENTER_DEBUG
 
     // step (c)
     if (b3 != e ||
@@ -1055,7 +1025,7 @@ rectangular_3_center_2_type2(
     }
 
     // step (e) [not enough points in G]
-    CGAL_assertion(b1 - (m + 1) >= 5 * cutoff);
+    CGAL_optimisation_assertion(b1 - (m + 1) >= 5 * cutoff);
 
     // compute the four cutting lines for R
     nth_element(m + 1, m + 1 + cutoff, b1, op.less_x_2_object());
@@ -1114,18 +1084,19 @@ rectangular_3_center_2_type2(
     // partition the range [s_b+1, e) into ranges
     // [s_b+1, b1), [b1, b2),   [b2, b3) and [b3, e)
     //     R      G cap q_t  G cap q_r      none
-    le_delta_m = bind1st(greater_equal< FT >(), op.delta()(*s_b));
-    b2 = partition(s_b + 1, e, compose1(le_delta_m,
+    binder1st< greater_equal< FT > >
+    le_delta_sb = bind1st(greater_equal< FT >(), op.delta()(*s_b));
+    b2 = partition(s_b + 1, e, compose1(le_delta_sb,
                                         bind1st(op.distance(), q_t)));
-    b1 = partition(s_b + 1, b2, compose1(le_delta_m,
+    b1 = partition(s_b + 1, b2, compose1(le_delta_sb,
                                          bind1st(op.distance(), q_r)));
-    b3 = partition(b2, e, compose1(le_delta_m, bind1st(op.distance(), q_r)));
+    b3 = partition(b2, e, compose1(le_delta_sb, bind1st(op.distance(), q_r)));
 
     if (b3 != e ||
         !Q_t_empty && op.compute_x_distance(q_t, Q_t) > op.delta()(*s_b) ||
         !Q_r_empty && op.compute_y_distance(q_r, Q_r) > op.delta()(*s_b)) {
       // no covering
-      CGAL_assertion(b1 - s >= cutoff);
+      CGAL_optimisation_assertion(b1 - s >= cutoff);
       s = b1;
       rho_min = op.delta()(*s_b);
       q_t_at_rho_min = q_t, q_r_at_rho_min = q_r;
@@ -1145,13 +1116,15 @@ rectangular_3_center_2_type2(
     // we still have a covering
 
     if (s_b == s) {
-      CGAL_expensive_assertion_code(
+      CGAL_optimisation_expensive_assertion_code(
         RandomAccessIterator ii =
-        partition(f, l, compose1(le_delta_m, op.delta()));
+        partition(f, l, compose1(le_delta_sb, op.delta()));
         pos = min_max_element(ii, l, op.compare_x(), op.compare_y());
         )
-      CGAL_expensive_assertion(!op.compare_x()(*pos.first, q_t));
-      CGAL_expensive_assertion(!op.compare_y()(*pos.second, q_r));
+      CGAL_optimisation_expensive_assertion(
+        !op.compare_x()(*pos.first, q_t));
+      CGAL_optimisation_expensive_assertion(
+        !op.compare_y()(q_r, *pos.second));
 
       // we are done
       rho_max = op.delta()(*s);
@@ -1193,20 +1166,21 @@ rectangular_3_center_2_type2(
                      op.delta()));
     rho_max = op.delta()(*s_b);
     q_t_at_rho_max = q_t, q_r_at_rho_max = q_r;
-    CGAL_assertion(op.delta()(*next) < op.delta()(*s_b));
+    CGAL_optimisation_assertion(op.delta()(*next) < op.delta()(*s_b));
     q_t_afap = op.update_x_square(q_t_afap, *s_b);
     q_r_afap = op.update_y_square(q_r_afap, *s_b);
     q_t = op.place_x_square(q_t_afap, r, op.delta()(*next));
     q_r = op.place_y_square(q_r_afap, r, op.delta()(*next));
 
     // again check for covering
-    le_delta_m = bind1st(greater_equal< FT >(), op.delta()(*next));
+    binder1st< greater_equal< FT > >
+    le_delta_next = bind1st(greater_equal< FT >(), op.delta()(*next));
     b2 = partition(s_b, e,
-                   compose1(le_delta_m, bind1st(op.distance(), q_t)));
+                   compose1(le_delta_next, bind1st(op.distance(), q_t)));
     b1 = partition(s_b, b2,
-                   compose1(le_delta_m, bind1st(op.distance(), q_r)));
+                   compose1(le_delta_next, bind1st(op.distance(), q_r)));
     b3 = partition(b2, e,
-                   compose1(le_delta_m, bind1st(op.distance(), q_r)));
+                   compose1(le_delta_next, bind1st(op.distance(), q_r)));
 
     if (b3 != e ||
         !Q_t_empty && op.compute_x_distance(q_t, Q_t) > op.delta()(*next) ||
@@ -1229,7 +1203,7 @@ rectangular_3_center_2_type2(
     }
 
     // still a covering, but now there must be enough points in G
-    CGAL_assertion(b3 - b1 >= cutoff);
+    CGAL_optimisation_assertion(b3 - b1 >= cutoff);
     e = b1;
     // adjust Q_t
     if (b1 != b2)
@@ -1265,32 +1239,13 @@ rectangular_3_center_2_type2(
     Point q_t = op.place_x_square(q_t_afap, r, rho_max);
     Point q_r = op.place_y_square(q_r_afap, r, rho_max);
 
-#ifdef CGAL_PCENTER_DEBUG
-    W << BLACK << Rectangle(r[0], Point(r[0].x() + rho_max,
-                                        r[0].y() + rho_max));
-    W << GREEN << r << ORANGE;
-    if (!Q_t_empty)
-      W << Q_t;
-    if (!Q_r_empty)
-      W << Q_r;
-    W.set_node_width(5);
-    W << VIOLET << q_t_afap << q_r_afap;
-    W.set_node_width(4);
-    W << RED;
-    std::copy(f, l, wout);
-    W.set_node_width(3);
-    W << BLACK;
-    std::copy(s, e, wout);
-    W << *s << BLUE << q_t << q_r;
-    { Point p; W << WHITE >> p; }
-#endif // CGAL_PCENTER_DEBUG
 
     if (!Q_t_empty && op.compute_x_distance(q_t, Q_t) > rho_max ||
         !Q_r_empty && op.compute_y_distance(q_r, Q_r) > rho_max) {
       rho_max = CGAL::max(op.compute_x_distance(q_t, Q_t),
                           op.compute_y_distance(q_r, Q_r));
 #ifndef CGAL_3COVER_NO_CHECK_OPTIMUM_FIRST
-      CGAL_assertion(rho_max <= rad);
+      CGAL_optimisation_assertion(rho_max <= rad);
 #endif // ! CGAL_3COVER_NO_CHECK_OPTIMUM_FIRST
       rad = rho_max;
       *o++ = op.construct_corner_square(r, rad / FT(2));
@@ -1298,7 +1253,7 @@ rectangular_3_center_2_type2(
       *o++ = op.construct_y_square(q_r, rad / FT(2));
       return o;
     }
-    CGAL_assertion(s != e);
+    CGAL_optimisation_assertion(s != e);
 
     // find the first diameter where covering is possible
     for (;;) {
@@ -1315,7 +1270,7 @@ rectangular_3_center_2_type2(
 
       // try the next possible diameter value
       FT try_rho = op.delta()(*t);
-      CGAL_assertion(try_rho < rho_max);
+      CGAL_optimisation_assertion(try_rho < rho_max);
       q_t = op.place_x_square(q_t_afap, r, try_rho);
       q_r = op.place_y_square(q_r_afap, r, try_rho);
 
@@ -1362,7 +1317,7 @@ rectangular_3_center_2_type2(
   //   - q_r_at_rho_min is the corr. position of q_r.
 
   // try rho_min
-  CGAL_assertion(rho_min <= rho_max);
+  CGAL_optimisation_assertion(rho_min <= rho_max);
   FT rad2 = q_t_q_r_cover_at_rho_min;
   typedef binder1st< Distance > Dist_bind;
   if (s_at_rho_min != e_at_rho_min) {
@@ -1377,7 +1332,7 @@ rectangular_3_center_2_type2(
                             e_at_rho_min,
                             compose2_2(less< FT >(), mydist, mydist))));
   }
-  CGAL_assertion(rad2 == 0 || rad2 > rho_min);
+  CGAL_optimisation_assertion(rad2 == 0 || rad2 > rho_min);
 
   // if a covering with rho == 0 is possible,
   // it will be catched in the type1 functions
@@ -1390,7 +1345,7 @@ rectangular_3_center_2_type2(
     q_t = q_t_at_rho_min, q_r = q_r_at_rho_min;
 
 #ifndef CGAL_3COVER_NO_CHECK_OPTIMUM_FIRST
-  CGAL_assertion(rad2 <= rad);
+  CGAL_optimisation_assertion(rad2 <= rad);
 #endif // ! CGAL_3COVER_NO_CHECK_OPTIMUM_FIRST
   rad = rad2;
   *o++ = op.construct_corner_square(r, rad / FT(2));
@@ -1407,7 +1362,7 @@ rectangular_3_center_2(
   typename Traits::FT& r,
   Traits& t)
 {
-  CGAL_precondition(f != l);
+  CGAL_optimisation_precondition(f != l);
   typedef typename Traits::FT                                    FT;
   typedef typename Traits::Point_2                            Point;
   typedef typename Traits::Iso_rectangle_2                Rectangle;
@@ -1433,9 +1388,6 @@ rectangular_3_center_2(
   Point* pts = ptst;
   FT rmin = r;
 
-#ifdef CGAL_PCENTER_DEBUG
-  std::cerr << "1: rmin = " << rmin << std::endl;
-#endif // CGAL_PCENTER_DEBUG
 
   rectangular_3_center_2_type2(
     points.begin(), points.end(), bb, pts0, r, Op0(t, bb[0]));
@@ -1446,9 +1398,6 @@ rectangular_3_center_2(
     r = rmin;
 #endif // CGAL_3COVER_NO_CHECK_OPTIMUM_FIRST
 
-#ifdef CGAL_PCENTER_DEBUG
-  std::cerr << "2: rmin = " << rmin << std::endl;
-#endif // CGAL_PCENTER_DEBUG
 
   rectangular_3_center_2_type2(
     points.begin(), points.end(), bb, pts1, r, Op1(t, bb[1]));
@@ -1459,9 +1408,6 @@ rectangular_3_center_2(
     r = rmin;
 #endif // CGAL_3COVER_NO_CHECK_OPTIMUM_FIRST
 
-#ifdef CGAL_PCENTER_DEBUG
-  std::cerr << "3: rmin = " << rmin << std::endl;
-#endif // CGAL_PCENTER_DEBUG
 
   rectangular_3_center_2_type2(
     points.begin(), points.end(), bb, pts2, r, Op2(t, bb[2]));
@@ -1472,9 +1418,6 @@ rectangular_3_center_2(
     r = rmin;
 #endif // CGAL_3COVER_NO_CHECK_OPTIMUM_FIRST
 
-#ifdef CGAL_PCENTER_DEBUG
-  std::cerr << "4: rmin = " << rmin << std::endl;
-#endif // CGAL_PCENTER_DEBUG
 
   rectangular_3_center_2_type2(
     points.begin(), points.end(), bb, pts3, r, Op3(t, bb[3]));
