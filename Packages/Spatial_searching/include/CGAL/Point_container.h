@@ -42,7 +42,7 @@ namespace CGAL {
   public:
    typedef typename SearchTraits::FT FT;
    typedef std::list<Point_d*> Point_list; 
-    typedef Point_list::iterator iterator;
+    typedef typename Point_list::iterator iterator;
 
   private:
     Point_list p_list; // list of pointers to points
