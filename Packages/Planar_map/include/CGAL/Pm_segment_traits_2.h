@@ -44,7 +44,7 @@ public:
   typedef Kernel_                         Kernel;
 
   // Categories:
-//#define HAS_LEFT_NOT
+#define HAS_LEFT_NOT
 #if !defined(HAS_LEFT_NOT)
   typedef Tag_true                        Has_left_category;
 #else
@@ -198,7 +198,8 @@ public:
    */
   Point_2 point_reflect_in_x_and_y(const Point_2 & pt) const
   {
-    typename Kernel::Vector_2 v = construct_vector_2_object()(ORIGIN, pt);
+    Point_2 org = construct_point_2_object()(ORIGIN);      
+    typename Kernel::Vector_2 v = construct_vector_2_object()(org, pt);
     Point_2 reflected_pt(v);
     return reflected_pt;
   }
