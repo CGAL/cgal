@@ -1852,7 +1852,7 @@ public:
     // intersect the input X_curve, using left-low to right-high order
     In_face_iterator it=follow_curve(tt_p1,cv,LARGER);
     pointer curr,prev=&t_p1,prev_bottom,prev_top;
-    pointer old_output=it.operator->(),old_top=0,old_bottom=0;
+    pointer old_output = it.operator->(), old_top = 0, old_bottom = 0;
     
 #ifndef CGAL_TD_DEBUG
 
@@ -1894,7 +1894,7 @@ public:
 #endif
         
       }
-      split_trapezoid_by_curve(*tt,old_output,old_bottom,old_top,cv);
+      split_trapezoid_by_curve(*tt,old_output, old_bottom, old_top, cv);
       
 #ifdef CGAL_TD_DEBUG
       
@@ -1916,7 +1916,7 @@ public:
           ))
         {
           tt->set_left(*(prev_bottom->get_node()));
-          old_bottom=prev_bottom;
+          old_bottom = prev_bottom;
         }
         // merge adjacent trapezoids on input X_curve's top side if possible
         if(merge_if_possible(
@@ -2051,7 +2051,7 @@ public:
       mid_it(follow_curve(tt1,cv,EQUAL)),
       top_it(follow_curve(tt1,cv,LARGER));
     
-    bool bottom,old_bottom,end_reached;
+    bool bottom, old_bottom = false, end_reached;
     map_nodes new_array;
     int last_index[]={0,0};
     int sz=0;
@@ -2139,7 +2139,7 @@ public:
       CGAL_assertion(last->get_node());
 #endif
 
-      if (old_bottom!=bottom)
+      if (old_bottom != bottom)
       {
         Data_structure tmp=container2data_structure(
           new_array,last_index[bottom ? 0 : 1],sz-1);
@@ -2152,7 +2152,7 @@ public:
 
         last_it->remove(&tmp);
         last_index[bottom ? 0 : 1] = sz;
-        old_bottom=bottom;
+        old_bottom = bottom;
       }
       else
       {
@@ -2171,7 +2171,7 @@ public:
       (*real)->set_node((Data_structure*)real);
     }
     while(!end_reached);
-    Iterator& it =  !old_bottom ? bottom_it : top_it;
+    Iterator & it = !old_bottom ? bottom_it : top_it;
     
 #ifdef CGAL_TD_DEBUG
     CGAL_warning(traits->point_is_same(it->right(),rightmost));
