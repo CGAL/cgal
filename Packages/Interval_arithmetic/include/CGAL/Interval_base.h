@@ -117,19 +117,56 @@ to_interval (const Interval_base & d)
   return d;
 }
 
+// We put all the to_interval() of the builtin types here, because of #include
+// circular dependencies otherwise.
+inline
+Interval_base
+to_interval (const double & d)
+{
+  return Interval_base(d);
+}
+
+inline
+Interval_base
+to_interval (const float & f)
+{
+  return Interval_base(double(f));
+}
+
+inline
+Interval_base
+to_interval (const int & i)
+{
+  return Interval_base(double(i));
+}
+
+inline
+Interval_base
+to_interval (const short & s)
+{
+  return Interval_base(double(s));
+}
+
+inline
+Interval_base
+to_interval (const long & l)
+{
+  // actually we would like to compare number of mantissa bits,
+  // this seems to be a sufficient approximation
+  CGAL_assertion( sizeof(double) > sizeof(long) );
+  // need something else for 64 bits longs.
+  return Interval_base(double(l));
+}
+
+// to_interval(long long) is in Interval_arithmetic.h
+
 inline
 double
 to_double (const Interval_base & d)
 {
   return (d.sup_ + d.inf_) * 0.5;
   // This may overflow...
-  // But if you are _that_ unlucky, you are probably already dead :)
 }
-
-// I need to declare them here since double.h is included after, and otherwise
-// is_finite(Interval_base) calls itself recursively...
-inline bool is_finite(double);
-inline bool is_valid(double);
 
 inline
 bool
