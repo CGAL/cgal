@@ -56,7 +56,12 @@ public:
     
   inline 
   CGAL_Triangulation_ds_vertex_3(const Point & p, Cell * c)
-    :  Vb(p, c )
+    :  Vb(p, c)
+  {}
+
+  inline 
+  CGAL_Triangulation_ds_vertex_3(Cell * c)
+    :  Vb(c)
   {}
 
   // ACCESS

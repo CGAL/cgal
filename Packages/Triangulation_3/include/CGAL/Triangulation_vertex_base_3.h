@@ -50,6 +50,11 @@ public:
     :  _p(p), _c(c)
   {}
 
+  inline 
+  CGAL_Triangulation_vertex_base_3(void* c)
+    :  _p(), _c(c)
+  {}
+
   // ACCES 
 
   inline 

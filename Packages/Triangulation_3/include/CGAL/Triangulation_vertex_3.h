@@ -81,6 +81,10 @@ public:
     :  Vtds(p, &(*c))
   {}
 
+  CGAL_Triangulation_vertex_3(Cell_handle c)
+    :  Vtds(&(*c))
+  {}
+
   inline void set_cell(Cell_handle c)
   {
     Vtds::set_cell(&(*c));
