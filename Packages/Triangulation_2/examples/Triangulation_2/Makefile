@@ -5,8 +5,8 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-CGAL_MAKEFILE = $(UTIL)/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.18_g++-2.95.3
-include $(CGAL_MAKEFILE)
+CGAL_MAKEFILE = $(UTIL)/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.18_g++-2.95
+ include $(CGAL_MAKEFILE)
 
 
 #---------------------------------------------------------------------#

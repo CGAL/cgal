@@ -3,6 +3,7 @@ constrained and regular triangulations with  tests and examples.
 
 Ver 5.24 ()
 - fixes demo Delaunay
+- fixes a bug in star_hole() 
 
 Ver 5.23 (8/1/01)
 - changes prefixes to CGAL_CLIB_STD in front of ptrdiff_t and size_t

@@ -133,6 +133,50 @@ public:
   // bool are_there_incident_constraints(Vertex_handle v, 
   //                                     OutputIterator out) const;
 
+  
+  // the following fonctions are overloaded 
+  // to take care od constraint marks 
+  template<class EdgeIt>
+  Vertex_handle star_hole( Point p, 
+			      EdgeIt edge_begin,
+			      EdgeIt edge_end){
+    std::list<Face_handle> empty_list;
+    return star_hole(p, 
+		     edge_begin, 
+		     edge_end, 
+		     empty_list.begin(),
+		     empty_list.end());
+  }
+
+  template<class EdgeIt, class FaceIt>
+  Vertex_handle star_hole( Point p, 
+			   EdgeIt edge_begin,
+			   EdgeIt edge_end,
+			   FaceIt face_begin,
+			   FaceIt face_end)
+{
+    Vertex_handle v =  Triangulation::star_hole(p, 
+						edge_begin, 
+						edge_end, 
+						face_begin,
+						face_end);
+    EdgeIt eit;
+    Face_handle fh;
+    int ih;
+    for(eit=edge_begin; eit != edge_end; eit++) {
+      fh = (*eit).first;
+      ih = (*eit).second;
+      if(fh->is_constrained(ih))
+	fh->neighbor(ih)->set_constraint(fh->neighbor(ih)->index(fh),
+					 true);
+    }
+    return v;
+}
+
+
+
+
+
   class Less_edge 
     :  public std::binary_function<Edge, Edge, bool>
   {
