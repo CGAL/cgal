@@ -15,7 +15,8 @@
 // file          : include/CGAL/_test_cls_tds_3.C
 // revision      : 
 // revision_date : 
-// author(s)     : Herve Bronnimann (Herve.Bronnimann@sophia.inria.fr)
+// author(s)     : Francois Rebufat <Francois Rebufat@sophia.inria.fr>
+//                 Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
@@ -124,6 +125,78 @@ std::ifstream iFileT("Test_tds_IO_3",std::ios::in);
   assert(tds2.number_of_vertices()==5);
   assert(tds1.number_of_vertices()==1);
 
+  std::cout << "  Test flip " << std::endl;
+  assert(tds6.is_valid());
+  Cell_iterator cit, cdone;
+  int nbflips=0;
+  int i;
+  Vertex v6;
+  cit = tds6.cells_begin();
+  tds6.insert_in_cell(v6, &(*cit));
+  Vertex v7;
+  cit = tds6.cells_begin();
+  tds6.insert_in_cell(v7, &(*cit));
+  Vertex v8;
+  cit = tds6.cells_begin();
+  tds6.insert_in_cell(v8, &(*cit));
+  assert(tds6.number_of_vertices()==8);
+//   std::cout << tds6.number_of_cells()<< " cells" << std::endl;
+
+  cdone = tds6.cells_end();
+  
+  std::set< Vertex*,std::less<Vertex*> > set_of_vertices;
+  
+  for ( cit = tds6.cells_begin(); cit != cdone; cit++ ) {
+    // NOTE : the triangulation is modified during loop
+    // --> the cell_iterator does not mean a lot
+    for ( i=0; i<4; i++ ) {
+      std::set< Vertex*,std::less<Vertex*> > set_of_vertices;
+      tds6.incident_vertices( (&(*cit))->vertex(i), set_of_vertices );
+      if ( set_of_vertices.find
+	   ( (&(*cit))->neighbor(i)->vertex
+	     ( (&(*cit))->neighbor(i)->index( &(*cit) ) ) 
+	     ) 
+	   == set_of_vertices.end() ) {
+	nbflips++;
+	tds6.flip_flippable( &(*cit), i );
+	assert(tds6.is_valid());
+// 	if ( tds6.flip( &(*cit), i ) ) {
+// 	  tds6.is_valid(true);
+// 	  nbflips++;
+// 	}
+      }
+    }
+  }
+  std::cout << nbflips << " flips 2-3" << std::endl;
+  assert(tds6.number_of_vertices()==8);
+//  std::cout << tds6.number_of_cells()<< " cells" << std::endl;
+
+  nbflips=0; 
+  bool flipped;
+  int j;
+  cit = tds6.cells_begin();
+  cdone = tds6.cells_end();
+  Cell_iterator next_cell;
+  while ( cit != cdone ) {
+    // NOTE : cells are deleted during loop
+    // the cell_iterator is modified "by hand" (not using ++)
+    flipped = false; i=0; j=1;
+    next_cell = ++cit; --cit;
+    while ( (! flipped) && (i<4) ) {
+      if ( (i!=j) ) {
+	flipped = tds6.flip( &(*cit), i, j ) ;
+	if (flipped) {
+	  nbflips++;
+	  assert(tds6.is_valid());
+	}
+      }
+      if ( j==3 ) { i++; j=0; }
+      else j++;
+    }
+    cit = next_cell;
+  }
+  std::cout << nbflips << " flips 3-2" << std::endl;
+  assert(tds6.number_of_vertices()==8);
 
   // test destructor and return
   std::cout << "    test destructors and return" << std::endl;
