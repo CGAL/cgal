@@ -1,3 +1,6 @@
+#ifndef CGAL_CGAL_TYPES_H
+#define CGAL_CGAL_TYPES_H
+
 #include <CGAL/basic.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -35,5 +38,5 @@ typedef CDT::Vertex_handle                      Vertex_handle;
 typedef CGAL::Partition_traits_2<Rep>           Traits;
 typedef Traits::Polygon_2                       Cgal_Polygon;
 
-
+#endif
 
