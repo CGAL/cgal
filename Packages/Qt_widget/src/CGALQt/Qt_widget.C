@@ -192,7 +192,7 @@ void Qt_widget::mouseMoveEvent(QMouseEvent *e)
   }
 }
 
-void Qt_widget::wheelEvent(QMouseEvent *e)
+void Qt_widget::wheelEvent(QWheelEvent *e)
 {
   emit(s_wheelEvent(e));
   if(!is_standard_active()) {
