@@ -24,7 +24,7 @@ typedef CGAL::Iso_cuboid_3<R> box;
 
 int main() {
 
-  int dim=3;
+  const int dim=3;
   int bucket_size=1;
   CGAL::Timer t;
   

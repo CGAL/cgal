@@ -275,7 +275,7 @@ namespace CGAL {
 			     delete b_upper;
 		}
 	return it;
-	};
+	}
 	
 
    };
