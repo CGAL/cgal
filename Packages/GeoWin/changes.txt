@@ -1,3 +1,9 @@
+1.6.2 (30 Aug 2002)
+- src/GeoWin removed
+- CGAL_max_k_gon_2.C fixed
+- change in geowin_support.h : don't use leda_polygon.bounding_box(...)
+  with LEDA < 4.3
+
 1.6.1 (13 Aug 2002)
 - changes in geowin_support.h :
   conversion function templates moved into CGAL namespace

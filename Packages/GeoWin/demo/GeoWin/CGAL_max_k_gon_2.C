@@ -93,7 +93,7 @@ public:
      std::vector<Point> CT = kg.container();
 
      for (i=0;i<kg.size();i++){
-       leda_point lakt(convert_to_leda(CT[i]));
+       leda_point lakt = CGAL::convert_to_leda(CT[i]);
        HLP.append(lakt);
      }
      leda_polygon back(HLP); 
@@ -124,7 +124,7 @@ public:
      std::vector<Point> CT = kg.container();
 
      for (i=0;i<kg.size();i++){
-       leda_point lakt(convert_to_leda(CT[i]));
+       leda_point lakt = CGAL::convert_to_leda(CT[i]);
        HLP.append(lakt);
      }
      leda_polygon back(HLP); 
