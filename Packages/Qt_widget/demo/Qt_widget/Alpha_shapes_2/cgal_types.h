@@ -13,8 +13,10 @@
 #include <CGAL/Alpha_shape_face_base_2.h> 
 #include <CGAL/Alpha_shape_euclidean_traits_2.h>
 #include <CGAL/Weighted_alpha_shape_euclidean_traits_2.h>
+#include <CGAL/Weighted_point.h>
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/point_generators_2.h>
+#include <CGAL/Kernel/function_objects.h>
 
 
 typedef double                      Coord_type;
@@ -24,6 +26,8 @@ typedef CGAL::Segment_2<Rep>        Segment;
 typedef CGAL::Line_2<Rep>           Line;
 typedef CGAL::Triangle_2<Rep>       Triangle;
 
+typedef CGAL::CGALi::p_Less_xy<Point>
+                                    Point_compare;
 typedef CGAL::Triangulation_2<Rep>  Triangulation;
 typedef std::list<Point>            CGALPointlist;
 
@@ -36,6 +40,7 @@ typedef CGAL::Triangulation_default_data_structure_2<Gt_w,Av_w,Af_w>
                                                            Tds_w;
 typedef CGAL::Regular_triangulation_2<Gt_w,Tds_w>          Rt_w;
 typedef CGAL::Alpha_shape_2<Rt_w>                          Alpha_shape_w;
+typedef CGAL::Weighted_point<Point, double>                Wpoint;
 
 //Delaunay triangulation
 typedef CGAL::Alpha_shape_euclidean_traits_2<Rep>          Gt;

@@ -54,11 +54,15 @@ int main(int, char*)
 const QString my_title_string("Alpha_shapes_2 Demo with"
 			      " CGAL Qt_widget");
 
-Delaunay      tr1;
-CGALPointlist L;
-Alpha_shape   A;
-int           current_state;
-double        alpha_index;
+//Global variables
+Delaunay          tr1;
+CGALPointlist     L;
+std::list<Wpoint> LW;
+Alpha_shape       A;
+Alpha_shape_w     AW;
+int               current_state;
+double            alpha_index;
+QImage            image;
 
 class Qt_layer_show_alpha_shape : public CGAL::Qt_widget_layer
 {
@@ -73,6 +77,15 @@ private:
   }
 };
 
+class Qt_layer_show_image : public CGAL::Qt_widget_layer{
+public:
+  Qt_layer_show_image(QImage* i) : image(i){}
+  ~Qt_layer_show_image(){};
+  void draw(){
+    widget->get_painter().drawImage(0, 0, *image, 0, 0, widget->width(), widget->height(), 0);
+  }
+  QImage *image;
+};
 class Layout_widget : public QWidget{
 public:
   Layout_widget(QWidget *parent, const char *name=0):
@@ -109,6 +122,10 @@ public:
   label  = cwidget->get_label();
   setCentralWidget(cwidget);
 
+  //image = new QImage();
+  image_layer = new Qt_layer_show_image(&image);
+  widget->attach(image_layer);
+
   //create a timer for checking if somthing changed
   QTimer *timer = new QTimer( this );
   connect( timer, SIGNAL(timeout()),
@@ -139,6 +156,10 @@ public:
 		   SLOT(gen_tr()), CTRL+Key_G );
   edit->insertItem("&Change Alpha", this, 
 		   SLOT(change_alpha()), CTRL+Key_C );
+  edit->insertItem("C&rust", this, 
+		   SLOT(show_crust()), CTRL+Key_R );
+  edit->insertItem("&Weighted Alpha Shape", this, 
+		   SLOT(show_weighted()), CTRL+Key_W );
 
   // help menu
   QPopupMenu * help = new QPopupMenu( this );
@@ -161,12 +182,11 @@ public:
 
   resize(w,h);
   widget->show();
-  widget->setMouseTracking(TRUE);
+  widget->setMouseTracking(TRUE);  
 	
   //connect the widget to the main function that receives the objects
   connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), 
     this, SLOT(get_new_object(CGAL::Object)));
-
   connect(slider, SIGNAL(valueChanged(int)), this, SLOT(slider_changed(int)));
 
   //application flag stuff
@@ -195,8 +215,8 @@ public slots:
     widget->lock();
     widget->clear();
     tr1.clear();
-    A.clear();
-    L.clear();
+    A.clear();AW.clear();
+    L.clear();LW.clear();
     widget->clear_history();
     widget->set_window(-1.1, 1.1, -1.1, 1.1); 
     // set the Visible Area to the Interval
@@ -210,16 +230,49 @@ public slots:
     if ( s.isEmpty() )
         return;
     QImage img(s);
-    widget->get_painter().drawImage(0, 0, img, 0, 0, widget->width(), widget->height(), 0);
+    image = img;
+    something_changed();
+  }
+  void show_crust(){
+    Delaunay T(tr1);
+    Face_iterator f;
+    typedef std::set<Point, Point_compare> point_set;
+    point_set s;
+    for (f=T.faces_begin(); f!=T.faces_end(); ++f)
+      s.insert( T.dual(f) );
+    widget->lock();
+    point_set::iterator p;
+    for (p=s.begin(); p!=s.end(); ++p)
+      T.insert(*p);
+    Edge_iterator e;
+    for (e=T.edges_begin(); e!=T.edges_end(); ++e) {
+      Face_handle f=(*e).first; int i=(*e).second;
+      bool s1=s.find(f->vertex(f->ccw(i))->point())==s.end();
+      bool s2=s.find(f->vertex(f->cw(i))->point())==s.end();
+      if (s1&&s2)
+        *widget << CGAL::YELLOW << T.segment(e);
+    }
+    widget->unlock();
+  }
+  void show_weighted(){
+    AW.set_alpha(alpha_index);
+    *widget << CGAL::LineWidth(2) << CGAL::GRAY;
+    widget->lock();
+    *widget << AW;
+    widget->unlock();
   }
 private slots:
   void get_new_object(CGAL::Object obj)
   {
-    Point p;
+    Point   p;
+    Wpoint  wp;
     if(CGAL::assign(p,obj)) {
+      wp = p;
       tr1.insert(p);
+      LW.push_back(wp);
       L.push_back(p);
       A.make_alpha_shape(L.begin(), L.end());
+      AW.make_alpha_shape(LW.begin(), LW.end());
       something_changed();
     } 
   };
@@ -252,7 +305,7 @@ private slots:
     if ( ok ){
       alpha_index = res;
       slider->setValue(res*10000);
-      widget->redraw();
+      widget->redraw();      
     }
   }
 
@@ -267,22 +320,26 @@ private slots:
   void gen_tr()
   {
     tr1.clear();
+    L.clear();
+    LW.clear();
     A.clear();
+    AW.clear();
     widget->clear_history();
     widget->lock();
     widget->set_window(-1.1, 1.1, -1.1, 1.1); 
     // set the Visible Area to the Interval
-
-    // send resizeEvent only on show.
     widget->unlock();
+    Wpoint pw;
     CGAL::Random_points_in_disc_2<Point> g(0.5);
     for(int count=0; count<200; count++) {
       tr1.insert(*g);
+      pw = *g;
       L.push_back(*g++);
+      LW.push_back(pw);
     }
     A.make_alpha_shape(L.begin(), L.end());
-    widget->redraw();
-    something_changed();
+    AW.make_alpha_shape(LW.begin(), LW.end());
+    something_changed();    
   }
   void save_triangulation()
   {
@@ -320,7 +377,7 @@ private slots:
   void slider_changed(int new_value)	{
     alpha_index = 0.0001 * new_value;
     label->setText(QString("The current alpha value: ") + QString::number(alpha_index));
-    widget->redraw();
+    widget->redraw();   
   }
 
 private:
@@ -334,6 +391,7 @@ private:
                           alpha_shape_layer;
   QSlider                 *slider;
   QLabel                  *label;
+  Qt_layer_show_image     *image_layer;
 };
 
 #include "alpha_shapes_2.moc"
