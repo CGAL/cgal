@@ -933,7 +933,7 @@ Triangulation_3<GT,Tds>::
 number_of_cells() const 
 { 
   if ( dimension() < 3 ) return 0;
-  return std::distance(all_cells_begin(), cells_end());
+  return _tds.number_of_cells();
 }
 
 template < class GT, class Tds >
