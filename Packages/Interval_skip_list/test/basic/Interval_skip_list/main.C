@@ -1,26 +1,22 @@
-// interval skip list test program  
-// Author:  Eric N. Hanson, cis.ufl.edu, University of Florida
-
-#include <string.h>
-
 #include <CGAL/Interval_skip_list.h>
+#include <CGAL/Interval_skip_list_interval.h>
 #include <vector>
 #include <iostream>
 
-#define maxKey 10000
-#define offset 1000
-#define maxIntervals 10000
+typedef CGAL::Interval_skip_list_interval<double> Interval;
+typedef CGAL::Interval_skip_list<Interval> Interval_skip_list;
 
 void
 fct()
 {
-  CGAL::IntervalSkipList isl;
+ 
+  Interval_skip_list isl;
   int i, n, d;
 
   std::cin >> n >> d;
-  std::vector<CGAL::Interval> intervals(n);
-  for(int i = 0; i < n; i++) {
-    intervals[i] = CGAL::Interval('[', i, i+d, ']');
+  std::vector<Interval> intervals(n);
+  for(i = 0; i < n; i++) {
+    intervals[i] = Interval('[', i, i+d, ']');
   }
   std::random_shuffle(intervals.begin(), intervals.end());
 
@@ -29,21 +25,22 @@ fct()
   }
 
   for(i = 0; i < n+d; i++) {
-    std::list<CGAL::Interval> L;
+    std::list<Interval> L;
     isl.findIntervals(i, std::back_inserter(L));
-    for(std::list<CGAL::Interval>::iterator it = L.begin(); it != L.end(); it++){
+    for(std::list<Interval>::iterator it = L.begin(); it != L.end(); it++){
       std::cout << *it;
     }  
     std::cout << std::endl;
   }
 
-  isl.print();
+  std::cout << isl;
   std::cout << std::endl;
 
+  std::cout << * isl.begin();
   for(i = 0; i < n; i++) {
     isl.remove(intervals[i]);
   }
-  isl.print();
+  std::cout << isl;
   std::cout << std::endl;
   
 }
