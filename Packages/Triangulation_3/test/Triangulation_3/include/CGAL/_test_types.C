@@ -87,7 +87,7 @@ public:
   Triangulation_test_direction(const Point &p, const Point &q)
     : _p(p), _q(q) {}
 
-  Triangulation_test_direction perpendicular(const CGAL::Orientation &o) const {
+  Triangulation_test_direction perpendicular(const CGAL::Orientation &) const {
     return *this;
   }
 };
