@@ -11,26 +11,28 @@
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 % +========================================================================+
-%  Arr_leda_segement_exact_traits
+%  Arr_leda_segment_exact_traits
 % +========================================================================+
-\renewcommand{\ccRefPageBegin}{\begin{ccAdvanced}}
-\renewcommand{\ccRefPageEnd}{\end{ccAdvanced}}
+
+%\renewcommand{\ccRefPageBegin}{\begin{ccAdvanced}}
+%\renewcommand{\ccRefPageEnd}{\end{ccAdvanced}}
+
 \begin{ccRefClass}{Arr_leda_segment_exact_traits}
 
 %\begin{ccAdvanced} %--------------------\
 
 \ccDefinition
-    We supply a traits class that uses LEDA's rational kernel ---
+    We supply a traits class that uses \leda\/'s rational kernel ---
     \ccRefName.\/ The class handles
     finite line segments in the plane
-    and uses the LEDA rational kernel (\ccStyle{Point} is of type 
+    and uses the \leda\/ rational kernel (\ccStyle{Point} is of type 
     \ccStyle{leda_rat_point}, \ccc{Curve} and \ccc{X_curve} are of type
-    \ccStyle{leda_rat_segment}). The predicates make use of LEDA's primitive
+    \ccStyle{leda_rat_segment}). The predicates make use of \leda\/'s primitive
     predicates (e.g., orientation) that are implemented using floating point
     ``filters'' \cite{fv-sayee-96} which speed up the use of exact 
     computations.
     Normalization of the intersection points is performed which speeds up
-    computations since the bitlength of the points stays relatively small.
+    computations since the bit-length of the points stays relatively small.
 
 \ccInclude{ CGAL/Arr_leda_segment_exact_traits.h}
 
@@ -40,8 +42,9 @@
 %\end{ccAdvanced} %----------------------/
 
 \end{ccRefClass} 
-\renewcommand{\ccRefPageBegin}{}
-\renewcommand{\ccRefPageEnd}{}
+
+%\renewcommand{\ccRefPageBegin}{}
+%\renewcommand{\ccRefPageEnd}{}
 
 % +------------------------------------------------------------------------+
 %%RefPage: end of main body, begin of footer
