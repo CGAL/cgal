@@ -96,10 +96,9 @@ CGAL_BEGIN_NAMESPACE
 
 // Should this be a nested class ?
 class Free_elt {
-    struct magic_key { unsigned i0, i1, i2; };
-    static const unsigned magic0 = 0xabcd0123;
-    static const unsigned magic1 = 0xfedc9876;
-    static const unsigned magic2 = 0xdeadbeef;
+    struct magic_key { unsigned i0, i1; };
+    static const unsigned magic0 = 0xc9a1c9al;
+    static const unsigned magic1 = 0xdeadbeef;
 
     magic_key key;
     Free_elt * ptr;
@@ -116,19 +115,16 @@ public:
     void mark_free() {
 	key.i0 = magic0;
 	key.i1 = magic1;
-	key.i2 = magic2;
     }
 
     void unmark_free() {
 	key.i0 = 0;
 	key.i1 = 0;
-	key.i2 = 0;
     }
 
     bool is_free() const {
 	return key.i0 == magic0 &&
-	       key.i1 == magic1 &&
-	       key.i2 == magic2;
+	       key.i1 == magic1;
     }
 };
 
