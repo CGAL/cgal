@@ -98,17 +98,27 @@ compare_y_at_x(const PointH2<R> &p,
                const SegmentH2<R> &s)
 {
     // compares the y-coordinates of p and the vertical projection of p on s.
-    // Precondition : p is in the x-range of s, and s is not vertical.
-    CGAL_kernel_precondition(! s.is_vertical() );
+    // Precondition : p is in the x-range of s.
+
     if (compare_x(s.source(), s.target()) == SMALLER) {
         CGAL_kernel_precondition(compare_x(s.source(), p) != LARGER
 		              && compare_x(p, s.target()) != LARGER);
         return (Comparison_result) orientation(p, s.source(), s.target());
     }
-    else {
+    else if (compare_x(s.source(), s.target()) == LARGER) {
         CGAL_kernel_precondition(compare_x(s.target(), p) != LARGER
 		              && compare_x(p, s.source()) != LARGER);
         return (Comparison_result) orientation(p, s.target(), s.source());
+    }
+    else {
+        CGAL_kernel_precondition(compare_x(s.target(), p) == EQUAL);
+	if (compare_y(p, s.source()) == SMALLER &&
+	    compare_y(p, s.target()) == SMALLER)
+	    return SMALLER;
+	if (compare_y(p, s.source()) == LARGER &&
+	    compare_y(p, s.target()) == LARGER)
+	    return LARGER;
+	return EQUAL;
     }
 }
 
@@ -119,22 +129,10 @@ compare_y_at_x(const PointH2<R> &p,
                const SegmentH2<R> &s2)
 {
     // compares the y-coordinates of the vertical projections of p on s1 and s2
-    // Precondition : p is in the x-range of s1 and s2, which are not vertical.
-    CGAL_kernel_precondition(! s1.is_vertical() );
-    CGAL_kernel_precondition(! s2.is_vertical() );
-    if (compare_x(s1.source(), s1.target()) == SMALLER)
-        CGAL_kernel_precondition(compare_x(s1.source(), p) != LARGER
-		              && compare_x(p, s1.target()) != LARGER);
-    else
-        CGAL_kernel_precondition(compare_x(s1.target(), p) != LARGER
-		              && compare_x(p, s1.source()) != LARGER);
-
-    if (compare_x(s2.source(), s2.target()) == SMALLER)
-        CGAL_kernel_precondition(compare_x(s2.source(), p) != LARGER
-		              && compare_x(p, s2.target()) != LARGER);
-    else
-        CGAL_kernel_precondition(compare_x(s2.target(), p) != LARGER
-		              && compare_x(p, s2.source()) != LARGER);
+    // Precondition : p is in the x-range of s1 and s2.
+    // - if one or two segments are vertical :
+    //   - if the segments intersect, return EQUAL
+    //   - if not, return the obvious SMALLER/LARGER.
 
     typedef typename R::FT FT;
     FT px = p.x();
@@ -146,15 +144,38 @@ compare_y_at_x(const PointH2<R> &p,
     FT s2sy = s2.source().y();
     FT s2tx = s2.target().x();
     FT s2ty = s2.target().y();
-    FT s1stx = s1sx-s1tx;
-    FT s2stx = s2sx-s2tx;
 
-    return Comparison_result(
-       CGAL_NTS compare(s1sx, s1tx) *
-       CGAL_NTS compare(s2sx, s2tx) *
-       CGAL_NTS compare(-(s1sx-px)*(s1sy-s1ty)*s2stx,
-                        (s2sy-s1sy)*s2stx*s1stx
-                        -(s2sx-px)*(s2sy-s2ty)*s1stx ));
+    CGAL_kernel_precondition(px >= min(s1sx, s1tx) && px <= max(s1sx, s1tx));
+    CGAL_kernel_precondition(px >= min(s2sx, s2tx) && px <= max(s2sx, s2tx));
+
+    if (s1sx != s1tx && s2sx != s2tx) {
+	FT s1stx = s1sx-s1tx;
+	FT s2stx = s2sx-s2tx;
+
+	return Comparison_result(
+	    CGAL_NTS compare(s1sx, s1tx) *
+	    CGAL_NTS compare(s2sx, s2tx) *
+	    CGAL_NTS compare(-(s1sx-px)*(s1sy-s1ty)*s2stx,
+		             (s2sy-s1sy)*s2stx*s1stx
+		             -(s2sx-px)*(s2sy-s2ty)*s1stx ));
+    }
+    else {
+	if (s1sx == s1tx) { // s1 is vertical
+	    Comparison_result c1, c2;
+	    c1 = compare_y_at_x(s1.source(), s2);
+	    c2 = compare_y_at_x(s1.target(), s2);
+	    if (c1 == c2)
+		return c1;
+	    return EQUAL;
+	}
+	// s2 is vertical
+	Comparison_result c3, c4;
+	c3 = compare_y_at_x(s2.source(), s1);
+	c4 = compare_y_at_x(s2.target(), s1);
+	if (c3 == c4)
+	    return opposite(c3);
+	return EQUAL;
+    }
 }
 
 CGAL_END_NAMESPACE 

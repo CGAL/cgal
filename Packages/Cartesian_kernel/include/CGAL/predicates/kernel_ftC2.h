@@ -169,15 +169,20 @@ compare_y_at_xC2(const FT &px, const FT &py,
                  const FT &stx, const FT &sty)
 {
     // compares the y-coordinates of p and the vertical projection of p on s.
-    // Precondition : p is in the x-range of s, and s is not vertical.
-    CGAL_kernel_precondition(ssx != stx);
-    if (ssx < stx) {
-	CGAL_kernel_precondition(ssx <= px && px <= stx);
+    // Precondition : p is in the x-range of s.
+
+    CGAL_kernel_precondition(px >= min(ssx, stx) && px <= max(ssx, stx));
+
+    if (ssx < stx)
 	return (Comparison_result) orientationC2(px, py, ssx, ssy, stx, sty);
-    }
-    else {
-	CGAL_kernel_precondition(stx <= px && px <= ssx);
+    else if (ssx > stx)
 	return (Comparison_result) orientationC2(px, py, stx, sty, ssx, ssy);
+    else {
+	if (py < min(sty, ssy))
+	    return SMALLER;
+	if (py > max(sty, ssy))
+	    return LARGER;
+	return EQUAL;
     }
 }
 
@@ -185,33 +190,48 @@ template < class FT >
 CGAL_KERNEL_LARGE_INLINE
 Comparison_result
 compare_y_at_x_segment_C2(const FT &px,
-                 const FT &s1sx, const FT &s1sy,
-                 const FT &s1tx, const FT &s1ty,
-                 const FT &s2sx, const FT &s2sy,
-                 const FT &s2tx, const FT &s2ty)
+                          const FT &s1sx, const FT &s1sy,
+                          const FT &s1tx, const FT &s1ty,
+                          const FT &s2sx, const FT &s2sy,
+                          const FT &s2tx, const FT &s2ty)
 {
     // compares the y-coordinates of the vertical projections of p on s1 and s2
-    // Precondition : p is in the x-range of s1 and s2, which are not vertical.
-    CGAL_kernel_precondition(s1sx != s1tx);
-    CGAL_kernel_precondition(s2sx != s2tx);
-    if (s1sx < s1tx)
-        CGAL_kernel_precondition(s1sx <= px && px <= s1tx);
-    else
-        CGAL_kernel_precondition(s1tx <= px && px <= s1sx);
-    if (s2sx < s2tx)
-        CGAL_kernel_precondition(s2sx <= px && px <= s2tx);
-    else
-        CGAL_kernel_precondition(s2tx <= px && px <= s2sx);
+    // Precondition : p is in the x-range of s1 and s2.
+    // - if one or two segments are vertical :
+    //   - if the segments intersect, return EQUAL
+    //   - if not, return the obvious SMALLER/LARGER.
 
-    FT s1stx = s1sx-s1tx;
-    FT s2stx = s2sx-s2tx;
+    CGAL_kernel_precondition(px >= min(s1sx, s1tx) && px <= max(s1sx, s1tx));
+    CGAL_kernel_precondition(px >= min(s2sx, s2tx) && px <= max(s2sx, s2tx));
 
-    return Comparison_result(
-	CGAL_NTS compare(s1sx, s1tx) *
-	CGAL_NTS compare(s2sx, s2tx) *
-	CGAL_NTS compare(-(s1sx-px)*(s1sy-s1ty)*s2stx,
-		         (s2sy-s1sy)*s2stx*s1stx
-		         -(s2sx-px)*(s2sy-s2ty)*s1stx ));
+    if (s1sx != s1tx && s2sx != s2tx) {
+	FT s1stx = s1sx-s1tx;
+	FT s2stx = s2sx-s2tx;
+
+	return Comparison_result(
+	    CGAL_NTS compare(s1sx, s1tx) *
+	    CGAL_NTS compare(s2sx, s2tx) *
+	    CGAL_NTS compare(-(s1sx-px)*(s1sy-s1ty)*s2stx,
+		             (s2sy-s1sy)*s2stx*s1stx
+		             -(s2sx-px)*(s2sy-s2ty)*s1stx ));
+    }
+    else {
+	if (s1sx == s1tx) { // s1 is vertical
+	    Comparison_result c1, c2;
+	    c1 = compare_y_at_xC2(px, s1sy, s2sx, s2sy, s2tx, s2ty);
+	    c2 = compare_y_at_xC2(px, s1ty, s2sx, s2sy, s2tx, s2ty);
+	    if (c1 == c2)
+		return c1;
+	    return EQUAL;
+	}
+	// s2 is vertical
+	Comparison_result c3, c4;
+	c3 = compare_y_at_xC2(px, s2sy, s1sx, s1sy, s1tx, s1ty);
+	c4 = compare_y_at_xC2(px, s2ty, s1sx, s1sy, s1tx, s1ty);
+	if (c3 == c4)
+	    return opposite(c3);
+	return EQUAL;
+    }
 }
 
 template < class FT >
