@@ -26,16 +26,16 @@
 #ifndef CGAL_MAP_OVERLAY_SWEEP_H
 #define CGAL_MAP_OVERLAY_SWEEP_H
 
-#include <vector>
-#include <list>
-
 #include <CGAL/basic.h>
 #include <CGAL/In_place_list.h>
 #include <CGAL/Handle.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Map_overlay_base.h>
-#include <CGAL/Sweep_line_2/Sweep_curves_base_2.h>
-#include <CGAL/Sweep_line_2/Point_plus_handle.h>
+#include <CGAL/Sweep_line_2_old/Sweep_curves_base_2.h>
+#include <CGAL/Sweep_line_2_old/Point_plus_handle.h>
+
+#include <vector>
+#include <list>
 
 CGAL_BEGIN_NAMESPACE
 

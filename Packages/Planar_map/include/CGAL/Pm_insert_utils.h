@@ -27,7 +27,7 @@
 #define CGAL_PM_INSERT_UTILS_H
 
 #include <CGAL/Handle_for.h>
-#include <CGAL/Sweep_line_2/Point_plus_handle.h>
+#include <CGAL/Sweep_line_2_old/Point_plus_handle.h>
 
 CGAL_BEGIN_NAMESPACE
 
