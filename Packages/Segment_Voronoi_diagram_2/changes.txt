@@ -1,5 +1,6 @@
 10 May 2004:  Menelaos Karavelas <mkaravel@cse.nd.edu>
 - removed unreachable break statements to avoid pgCC warning
+- removed excessive >'s in filtered traits (SunPro specific part)
 
 6 May 2004:  Menelaos Karavelas <mkaravel@cse.nd.edu>
 - fixed bugs for SunPro CC compiler:
