@@ -23,8 +23,8 @@
 #ifndef CGAL_LINEAR_ALGEBRACD_H
 #define CGAL_LINEAR_ALGEBRACD_H
 
-#include <CGAL/Kernel_d/Ivector.h>
-#include <CGAL/Kernel_d/Imatrix.h>
+#include <CGAL/Kernel_d/Vector__.h>
+#include <CGAL/Kernel_d/Matrix__.h>
 #include <memory>
 #include <vector>
 #undef _DEBUG
@@ -43,8 +43,8 @@ public:
   typedef _FT                     RT;
   typedef _AL                     AL;
   typedef Linear_algebraCd<FT,AL> Self;
-  typedef Ivector<FT,AL>          Vector;
-  typedef Imatrix<FT,AL>          Matrix;
+  typedef CGALLA::Vector_<FT,AL>  Vector;
+  typedef CGALLA::Matrix_<FT,AL>  Matrix;
   typedef const FT*               const_iterator;
   typedef FT*                     iterator;
   

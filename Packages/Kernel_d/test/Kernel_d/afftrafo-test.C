@@ -65,7 +65,9 @@ int main()
 
   { 
     Vector e1 = Vector(3,Vector::Base_vector(),0);
-    IVector iv1(1,0,1,1), iv2(0,0,1);
+    int IV1[]={1,0,1,1};
+    int IV2[]={0,0,1};
+    IVector iv1(IV1,IV1+4), iv2(IV2,IV2+3);
     Point p0(3), p1(p0 + e1), p2(3,iv1.begin(),iv1.end()), 
           p3(3,iv2.begin(),iv2.end(),1), p4(3);
     std::vector<Point> V = 
@@ -87,7 +89,8 @@ int main()
   }
 
   { 
-    IVector iv(2,3,1); 
+    int IV[]={2,3,1};
+    IVector iv(IV,IV+3); 
     IMatrix M1(3),M2(3); 
     M1(0,0) = -1; M1(1,1) = -1; M1(2,2) = 1; // rot pi
     M2(0,0) = 0; M2(0,1) = -1; M2(0,2) = 1;
@@ -230,7 +233,9 @@ int main()
 
   { 
     Vector e1 = Vector(3,Vector::Base_vector(),0);
-    IVector iv1(1,0,1,1), iv2(0,0,1);
+    int IV1[]={1,0,1,1};
+    int IV2[]={0,0,1};
+    IVector iv1(IV1,IV1+4), iv2(IV2,IV2+3);
     Point p0(3), p1(p0 + e1), p2(3,iv1.begin(),iv1.end()), 
           p3(3,iv2.begin(),iv2.end(),1), p4(3);
     std::vector<Point> V = 
@@ -252,7 +257,8 @@ int main()
   }
 
   { 
-    IVector iv(2,3,1); 
+    int IV[]={2,3,1};
+    IVector iv(IV,IV+3); 
     IMatrix M1(3),M2(3); 
     M1(0,0) = -1; M1(1,1) = -1; M1(2,2) = 1; // rot pi
     M2(0,0) = 0; M2(0,1) = -1; M2(0,2) = 1;

@@ -66,8 +66,10 @@ int main()
 
   { 
     /* some construction test */
-    IVector iv1(1,0,1), iv2(0,1);
-    Point p0(2,CGAL::ORIGIN), p1(2,iv1.begin(),iv1.end()), 
+    int IV1[] = {1,0,1};
+    int IV2[] = {0,1};
+    IVector iv1(IV1,IV1+3), iv2(IV2,IV2+2);
+    Point p0(2,CGAL::ORIGIN), p1(2,IV1,IV1+3), 
           p2(2,iv2.begin(),iv2.end(),1), 
           p3(2), p4(p1), p5(2,iv2.begin(),iv2.end(),1); 
     CGAL_TEST(p0 == p3 && p1 == p4 && p2 == p5); // op==
@@ -157,7 +159,9 @@ int main()
     /* some construction test */
     Point p0(3); // the origin
     Vector e1 = Vector(3,Vector::Base_vector(),0);
-    IVector iv1(0,1,0,1), iv2(0,0,1);
+    int IV1[] = {0,1,0,1};
+    int IV2[] = {0,0,1};
+    IVector iv1(IV1,IV1+4), iv2(IV2,IV2+3);
     // the first unit vector
 
     Point p1(p0 + e1), 
@@ -241,7 +245,9 @@ int main()
 
   { 
     /* construction and access */
-    IVector i1(1,2,3,1), i2(3,2,1);
+    int IV1[] = {1,2,3,1};
+    int IV2[] = {3,2,1};
+    IVector i1(IV1,IV1+4), i2(IV2,IV2+3);
     Vector a0(3), 
            a1(3,i1.begin(),i1.end()), 
            a2(3,i2.begin(),i2.end(),1), 
@@ -327,7 +333,9 @@ int main()
 
   { 
     /* construction and access */
-    IVector iv1(1,5,-3,2), iv2(1,1,0);
+    int IV1[] = {1,5,-3,2};
+    int IV2[] = {1,1,0};
+    IVector iv1(IV1,IV1+4), iv2(IV2,IV2+3);
     Direction d0(3), d1(3,iv1.begin(),iv1.end()), 
               d2(3,iv2.begin(),iv2.end()),
               d31(1,1,1), d32(1,1),
@@ -357,8 +365,10 @@ int main()
 
   { 
     /* construction and access */
-    IVector vi1(1,2,3,4); 
-    IVector vi2(-4,-3,-2); 
+    int IV1[] = {1,2,3,4};
+    int IV2[] = {-4,-3,-2};
+    IVector vi1(IV1,IV1+4); 
+    IVector vi2(IV2,IV2+3); 
     // two ivec inits
 
     Point p1(CGAL::ORIGIN + Vector(3,Vector::Base_vector(),0)), 
@@ -562,8 +572,10 @@ int main()
 
   { 
     /* some construction test */
-    IVector iv1(1,0,1), iv2(0,1);
-    Point p0(2,CGAL::ORIGIN), p1(2,iv1.begin(),iv1.end()), 
+    int IV1[] = {1,0,1};
+    int IV2[] = {0,1};
+    IVector iv1(IV1,IV1+3), iv2(IV2,IV2+2);
+    Point p0(2,CGAL::ORIGIN), p1(2,IV1,IV1+3), 
           p2(2,iv2.begin(),iv2.end(),1), 
           p3(2), p4(p1), p5(2,iv2.begin(),iv2.end(),1); 
     CGAL_TEST(p0 == p3 && p1 == p4 && p2 == p5); // op==
@@ -653,7 +665,9 @@ int main()
     /* some construction test */
     Point p0(3); // the origin
     Vector e1 = Vector(3,Vector::Base_vector(),0);
-    IVector iv1(0,1,0,1), iv2(0,0,1);
+    int IV1[] = {0,1,0,1};
+    int IV2[] = {0,0,1};
+    IVector iv1(IV1,IV1+4), iv2(IV2,IV2+3);
     // the first unit vector
 
     Point p1(p0 + e1), 
@@ -737,7 +751,9 @@ int main()
 
   { 
     /* construction and access */
-    IVector i1(1,2,3,1), i2(3,2,1);
+    int IV1[] = {1,2,3,1};
+    int IV2[] = {3,2,1};
+    IVector i1(IV1,IV1+4), i2(IV2,IV2+3);
     Vector a0(3), 
            a1(3,i1.begin(),i1.end()), 
            a2(3,i2.begin(),i2.end(),1), 
@@ -823,7 +839,9 @@ int main()
 
   { 
     /* construction and access */
-    IVector iv1(1,5,-3,2), iv2(1,1,0);
+    int IV1[] = {1,5,-3,2};
+    int IV2[] = {1,1,0};
+    IVector iv1(IV1,IV1+4), iv2(IV2,IV2+3);
     Direction d0(3), d1(3,iv1.begin(),iv1.end()), 
               d2(3,iv2.begin(),iv2.end()),
               d31(1,1,1), d32(1,1),
@@ -853,8 +871,10 @@ int main()
 
   { 
     /* construction and access */
-    IVector vi1(1,2,3,4); 
-    IVector vi2(-4,-3,-2); 
+    int IV1[] = {1,2,3,4};
+    int IV2[] = {-4,-3,-2};
+    IVector vi1(IV1,IV1+4); 
+    IVector vi2(IV2,IV2+3); 
     // two ivec inits
 
     Point p1(CGAL::ORIGIN + Vector(3,Vector::Base_vector(),0)), 

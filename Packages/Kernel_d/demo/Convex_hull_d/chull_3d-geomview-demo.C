@@ -5,8 +5,6 @@
 #include <CGAL/random_selection.h>
 
 #include <CGAL/point_generators_3.h>
-#include <CGAL/Halfedge_data_structure_polyhedron_default_3.h>
-#include <CGAL/Polyhedron_default_traits_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Convex_hull_d_to_polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_geomview_ostream.h>
@@ -31,9 +29,7 @@ typedef CGAL::Convex_hull_d_traits_3<Kernel_3> Kernel_d_3;
 typedef CGAL::Convex_hull_d<Kernel_d_3> Convex_hull_d;
 
 typedef  CGAL::Point_3<Kernel_3> Point_3;
-typedef  CGAL::Polyhedron_default_traits_3<Kernel_3> Traits;
-typedef  CGAL::Halfedge_data_structure_polyhedron_default_3<Kernel_3> HDS;
-typedef  CGAL::Polyhedron_3<Traits,HDS> Polyhedron;
+typedef  CGAL::Polyhedron_3<Kernel_3> Polyhedron;
 
 typedef CGAL::Creator_uniform_3<RT,Point_3> Creator;
 typedef CGAL::Random_points_in_cube_3<Point_3,Creator> Point_source;

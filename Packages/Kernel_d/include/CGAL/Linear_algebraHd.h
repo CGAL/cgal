@@ -35,8 +35,8 @@
 #ifndef CGAL_LINEAR_ALGEBRAHD_H
 #define CGAL_LINEAR_ALGEBRAHD_H
 
-#include <CGAL/Kernel_d/Ivector.h>
-#include <CGAL/Kernel_d/Imatrix.h>
+#include <CGAL/Kernel_d/Vector__.h>
+#include <CGAL/Kernel_d/Matrix__.h>
 
 // #define CGAL_LA_SELFTEST
 CGAL_BEGIN_NAMESPACE
@@ -44,7 +44,7 @@ CGAL_BEGIN_NAMESPACE
 /*{\Moptions outfile=Linear_algebra.man}*/
 /*{\Manpage {Linear_algebraHd}{RT}{Linear Algebra on RT}{LA}}*/
 
-template <class _RT, class _ALLOC = CGAL_ALLOCATOR(_RT) >
+template <class RT_, class AL_ = CGAL_ALLOCATOR(RT_) >
 class Linear_algebraHd
 { 
 /*{\Mdefinition
@@ -68,16 +68,16 @@ public:
 
 /*{\Mtypes 5.5}*/
 
-typedef _RT RT;
+typedef RT_ RT;
 /*{\Mtypemember the ring type of the components.}*/ 
 
-typedef CGAL::Ivector<_RT,_ALLOC> Vector;
+typedef CGALLA::Vector_<RT_,AL_> Vector;
 /*{\Mtypemember the vector type.}*/ 
 
-typedef CGAL::Imatrix<_RT,_ALLOC> Matrix;
+typedef CGALLA::Matrix_<RT_,AL_> Matrix;
 /*{\Mtypemember the matrix type.}*/ 
 
-typedef _ALLOC allocator_type;
+typedef AL_ allocator_type;
 /*{\Mtypemember the allocator used for memory management. |\Mname| is
 an abbreviation for |Linear_algebraHd<RT, ALLOC = allocator<RT,LA> >|. Thus  
 |allocator_type| defaults to the standard allocator offered by the STL.}*/ 
@@ -100,7 +100,7 @@ static Matrix  inverse(const Matrix& M, RT& D)
   Matrix result; 
   Vector c;
   if (!inverse(M,result,D,c)) 
-    ERROR_HANDLER(1,"Imatrix<RT,A>::inverse: matrix is singular."); 
+    CGAL_assertion_msg(0,"inverse(): matrix is singular."); 
   return result;
 }
 

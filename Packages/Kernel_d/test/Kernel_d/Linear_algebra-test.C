@@ -34,7 +34,7 @@ typedef double FT;
 
 int main(int argc, char* argv[])
 {
-  SETDTHREAD(131);
+  SETDTHREAD(151);
   CGAL::set_pretty_mode ( std::cerr );
   CGAL_TEST_START;
   {
@@ -52,9 +52,9 @@ int main(int argc, char* argv[])
 
       Vector v0(vec_dim), v1(vec_dim), v2(vec_dim);
       int F[] = { 1,2,3,4,5 };
-      Vector v11(1,2), v12(1,2,3), v13(1,2,3,4), v14(F,F+5),
+      Vector v11(F,F+2), v12(F,F+3), v13(F,F+4), v14(F,F+5),
                  v15(v13.begin(),v13.end()), 
-                 v16(vec_dim,Vector::Initialize(),1);
+                 v16(vec_dim,NT(1));
       CGAL_TEST(v13==v15);
       CGAL_TEST(v0==v1);
       for (int i = 0; i < vec_dim; i++) {
@@ -65,7 +65,7 @@ int main(int argc, char* argv[])
       Vector v3(v1);
       CGAL_TEST(v3==v1);
 
-      v1 += 2*v2;
+      v1 += NT(2)*v2;
       v1 -= v2;
       v1 = -v1;
       CGAL_TEST((v1*v1 == NT(vec_dim*vec_dim*vec_dim)));
@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
       /* we test the third binomial formula */
       Vector v21(v13),v22(v13);
       v21 *= 13;
-      CGAL_TEST(v21 == 13*v22);
+      CGAL_TEST(v21 == NT(13)*v22);
       v21 /= 13;
       CGAL_TEST(v21 == v22);
 
@@ -90,10 +90,9 @@ int main(int argc, char* argv[])
       else           mat_dim = MAT_DIM;
 
       /* some construction and access ops */
-      Matrix::Initialize INIT;   
       Matrix::Identity ID;
       Matrix A(mat_dim,mat_dim), B(mat_dim),
-             I(mat_dim,ID), One(mat_dim,mat_dim,INIT,2); 
+             I(mat_dim,ID), One(mat_dim,mat_dim,NT(2)); 
       CGAL_TEST(A==B);
       CGAL_TEST(One*I==One);
       std::vector<Vector> F(mat_dim);
@@ -133,7 +132,7 @@ int main(int argc, char* argv[])
 
       /* some basic arithmetic testing */
       C = A; C += A; 
-      C -= 3*A; 
+      C -= NT(3)*A; 
       C = -C; 
       CGAL_TEST(C==A);
 
@@ -154,8 +153,8 @@ int main(int argc, char* argv[])
       CGAL_TEST(LA::rank(C)==mat_dim);
       
       /* matrix operations 2* , |determinant| */
-      C = 2 * I;
-      C = C * 2; 
+      C = NT(2) * I;
+      C = C * NT(2);
       Matrix L,U; 
       Vector c; 
       std::vector<int> q; 
@@ -245,9 +244,9 @@ int main(int argc, char* argv[])
 
       Vector v0(vec_dim), v1(vec_dim), v2(vec_dim);
       int F[] = { 1,2,3,4,5 };
-      Vector v11(1,2), v12(1,2,3), v13(1,2,3,4), v14(F,F+5),
+      Vector v11(F,F+2), v12(F,F+3), v13(F,F+4), v14(F,F+5),
                  v15(v13.begin(),v13.end()), 
-                 v16(vec_dim,Vector::Initialize(),1);
+                 v16(vec_dim,NT(1));
       CGAL_TEST(v13==v15);
       CGAL_TEST(v0==v1);
       for (int i = 0; i < vec_dim; i++) {
@@ -258,7 +257,7 @@ int main(int argc, char* argv[])
       Vector v3(v1);
       CGAL_TEST(v3==v1);
 
-      v1 += 2*v2;
+      v1 += NT(2)*v2;
       v1 -= v2;
       v1 = -v1;
       CGAL_TEST((v1*v1 == NT(vec_dim*vec_dim*vec_dim)));
@@ -270,7 +269,7 @@ int main(int argc, char* argv[])
       /* we test the third binomial formula */
       Vector v21(v13),v22(v13);
       v21 *= 13;
-      CGAL_TEST(v21 == 13*v22);
+      CGAL_TEST(v21 == NT(13)*v22);
       v21 /= 13;
       CGAL_TEST(v21 == v22);
 
@@ -283,10 +282,9 @@ int main(int argc, char* argv[])
       else           mat_dim = MAT_DIM;
 
       /* some construction and access ops */
-      Matrix::Initialize INIT;   
       Matrix::Identity ID;
       Matrix A(mat_dim,mat_dim), B(mat_dim),
-             I(mat_dim,ID), One(mat_dim,mat_dim,INIT,2); 
+             I(mat_dim,ID), One(mat_dim,mat_dim,NT(2)); 
       CGAL_TEST(A==B);
       CGAL_TEST(One*I==One);
       std::vector<Vector> F(mat_dim);
@@ -326,7 +324,7 @@ int main(int argc, char* argv[])
 
       /* some basic arithmetic testing */
       C = A; C += A; 
-      C -= 3*A; 
+      C -= NT(3)*A; 
       C = -C; 
       CGAL_TEST(C==A);
 
@@ -347,8 +345,8 @@ int main(int argc, char* argv[])
       CGAL_TEST(LA::rank(C)==mat_dim);
       
       /* matrix operations 2* , |determinant| */
-      C = 2 * I;
-      C = C * 2; 
+      C = NT(2) * I;
+      C = C * NT(2);
       Matrix L,U; 
       Vector c; 
       std::vector<int> q; 

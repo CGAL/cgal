@@ -4,8 +4,6 @@
 #include <CGAL/random_selection.h>
 
 #include <CGAL/Homogeneous.h>
-#include <CGAL/Halfedge_data_structure_polyhedron_default_3.h>
-#include <CGAL/Polyhedron_default_traits_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Convex_hull_d_to_polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_geomview_ostream.h>
@@ -50,9 +48,7 @@ void random_points_in_range(int n, int d,int l,int h,
 
 typedef  CGAL::Homogeneous<RT> Kernel_3;
 typedef  CGAL::Point_3<Kernel_3> Point_3;
-typedef  CGAL::Polyhedron_default_traits_3<Kernel_3> Traits;
-typedef  CGAL::Halfedge_data_structure_polyhedron_default_3<Kernel_3> HDS;
-typedef  CGAL::Polyhedron_3<Traits,HDS> Polyhedron;
+typedef  CGAL::Polyhedron_3<Kernel_3> Polyhedron;
 
 int main(int argc, char* argv[]) {
   int dimension = 3;  

@@ -36,8 +36,8 @@
 #define CGAL_LINEAR_ALGEBRAHD_C
 CGAL_BEGIN_NAMESPACE
 
-template <class _RT, class _ALLOC>
-bool Linear_algebraHd<_RT,_ALLOC>::
+template <class RT_, class AL_>
+bool Linear_algebraHd<RT_,AL_>::
 linear_solver(const Matrix& A, const Vector& b, 
               Vector& x, RT& D, 
               Matrix& spanning_vectors, Vector& c)
@@ -73,7 +73,7 @@ linear_solver(const Matrix& A, const Vector& b,
   for(j=0; j<cols; j++)
     var[j]= j; // at the beginning, variable $x_j$ stands in column $j$
 
-  _RT denom = 1; // the determinant of an empty matrix is 1
+  RT_ denom = 1; // the determinant of an empty matrix is 1
   int sign = 1; // no interchanges yet
   int rank = 0; // we have not seen any non-zero row yet
 
@@ -148,7 +148,7 @@ linear_solver(const Matrix& A, const Vector& b,
     x = Vector(cols); 
     D = denom; 
     for(i = rank - 1; i >= 0; i--) { 
-      _RT h = C(i,cols) * D; 
+      RT_ h = C(i,cols) * D; 
       for (j = i + 1; j < rank; j++) { 
         h -= C(i,j)*x[var[j]]; 
       }
@@ -165,7 +165,7 @@ linear_solver(const Matrix& A, const Vector& b,
       for(int l=0; l < defect; l++) { 
         spanning_vectors(var[rank + l],l)=D; 
         for(i = rank - 1; i >= 0 ; i--) { 
-          _RT h = - C(i,rank + l)*D; 
+          RT_ h = - C(i,rank + l)*D; 
           for ( j= i + 1; j<rank; j++)  
             h -= C(i,j)*spanning_vectors(var[j],l); 
           spanning_vectors(var[i],l)= h / C(i,i); 
@@ -182,12 +182,13 @@ linear_solver(const Matrix& A, const Vector& b,
   return solvable; 
 }
 
-template <class _RT, class _ALLOC>
-_RT Linear_algebraHd<_RT,_ALLOC>::
+template <class RT_, class AL_>
+RT_ Linear_algebraHd<RT_,AL_>::
 determinant(const Matrix& A)
 { 
   if (A.row_dimension() != A.column_dimension())
-    ERROR_HANDLER(1,"determinant: only square matrices are legal inputs."); 
+    CGAL_assertion_msg(0,
+      "determinant(): only square matrices are legal inputs."); 
   Vector b(A.row_dimension()); // zero - vector
   int i,j,k; // indices to step through the matrix
   int rows = A.row_dimension(); 
@@ -219,7 +220,7 @@ determinant(const Matrix& A)
   for(j=0; j<cols; j++)
     var[j]= j; // at the beginning, variable $x_j$ stands in column $j$
 
-  _RT denom = 1; // the determinant of an empty matrix is 1
+  RT_ denom = 1; // the determinant of an empty matrix is 1
   int sign = 1; // no interchanges yet
   int rank = 0; // we have not seen any non-zero row yet
 
@@ -294,14 +295,15 @@ determinant(const Matrix& A)
 }
 
 
-template <class _RT, class _ALLOC>
-_RT Linear_algebraHd<_RT,_ALLOC>::
+template <class RT_, class AL_>
+RT_ Linear_algebraHd<RT_,AL_>::
 determinant(const Matrix& A, 
             Matrix& Ld, Matrix& Ud, 
-            std::vector<int>& q, Ivector<_RT,_ALLOC>& c) 
+            std::vector<int>& q, Vector& c) 
 { 
   if (A.row_dimension() != A.column_dimension())
-    ERROR_HANDLER(1,"determinant: only square matrices are legal inputs."); 
+    CGAL_assertion_msg(0,
+      "determinant(): only square matrices are legal inputs."); 
   Vector b(A.row_dimension()); // zero - vector
   int i,j,k; // indices to step through the matrix
   int rows = A.row_dimension(); 
@@ -333,7 +335,7 @@ determinant(const Matrix& A,
   for(j=0; j<cols; j++)
     var[j]= j; // at the beginning, variable $x_j$ stands in column $j$
 
-  _RT denom = 1; // the determinant of an empty matrix is 1
+  RT_ denom = 1; // the determinant of an empty matrix is 1
   int sign = 1; // no interchanges yet
   int rank = 0; // we have not seen any non-zero row yet
 
@@ -415,25 +417,25 @@ determinant(const Matrix& A,
   }
 }
 
-template <class _RT, class _ALLOC>  
-int  Linear_algebraHd<_RT,_ALLOC>:: 
+template <class RT_, class AL_>  
+int  Linear_algebraHd<RT_,AL_>:: 
 sign_of_determinant(const Matrix& M)
 { return CGAL_NTS sign(determinant(M)); }
 
-template <class _RT, class _ALLOC>  
-bool Linear_algebraHd<_RT,_ALLOC>:: 
-verify_determinant(const Matrix& A, _RT D, 
+template <class RT_, class AL_>  
+bool Linear_algebraHd<RT_,AL_>:: 
+verify_determinant(const Matrix& A, RT_ D, 
                    Matrix& L, Matrix& U, 
-                   const std::vector<int>& q, Ivector<_RT,_ALLOC>& c) 
+                   const std::vector<int>& q, Vector& c) 
 { 
   if ((int)q.size() != A.column_dimension())
-    ERROR_HANDLER(1,"verify_determinant: \
-    q should be a permutation array \
+    CGAL_assertion_msg(0,
+    "verify_determinant: q should be a permutation array \
     with index range [0,A.column_dimension() - 1]."); 
   int n = A.row_dimension(); 
   int i,j; 
   if (D == 0) { /* we have $c^T \cdot A = 0$  */
-    Ivector<_RT,_ALLOC> zero(n); 
+    Vector zero(n); 
     return  (transpose(A) * c == zero); 
   } else { 
     /* we check the conditions on |L| and |U| */
@@ -473,7 +475,7 @@ verify_determinant(const Matrix& A, _RT D,
 
     for (i = 0; i < n; i++) 
       if (! already_considered[i])
-        ERROR_HANDLER(1,"verify_determinant:q is not a permutation."); 
+        CGAL_assertion_msg(0,"verify_determinant:q is not a permutation."); 
       else 
         already_considered[i] = false; 
 
@@ -494,12 +496,12 @@ verify_determinant(const Matrix& A, _RT D,
   }
 }
 
-template <class _RT, class _ALLOC> 
-int Linear_algebraHd<_RT,_ALLOC>::
+template <class RT_, class AL_> 
+int Linear_algebraHd<RT_,AL_>::
 independent_columns(const Matrix& A, 
                     std::vector<int>& columns) 
 { 
-  Ivector<_RT,_ALLOC> b(A.row_dimension()); // zero - vector
+  Vector b(A.row_dimension()); // zero - vector
   int i,j,k; // indices to step through the matrix
   int rows = A.row_dimension(); 
   int cols = A.column_dimension(); 
@@ -530,7 +532,7 @@ independent_columns(const Matrix& A,
   for(j=0; j<cols; j++)
     var[j]= j; // at the beginning, variable $x_j$ stands in column $j$
 
-  _RT denom = 1; // the determinant of an empty matrix is 1
+  RT_ denom = 1; // the determinant of an empty matrix is 1
   int sign = 1; // no interchanges yet
   int rank = 0; // we have not seen any non-zero row yet
 
@@ -610,11 +612,11 @@ independent_columns(const Matrix& A,
 }
 
 
-template <class _RT, class _ALLOC>  
-int  Linear_algebraHd<_RT,_ALLOC>::
+template <class RT_, class AL_>  
+int  Linear_algebraHd<RT_,AL_>::
 rank(const Matrix& A)
 { 
-  Ivector<_RT,_ALLOC> b(A.row_dimension()); // zero - vector
+  Vector b(A.row_dimension()); // zero - vector
   int i,j,k; // indices to step through the matrix
   int rows = A.row_dimension(); 
   int cols = A.column_dimension(); 
@@ -645,7 +647,7 @@ rank(const Matrix& A)
   for(j=0; j<cols; j++)
     var[j]= j; // at the beginning, variable $x_j$ stands in column $j$
 
-  _RT denom = 1; // the determinant of an empty matrix is 1
+  RT_ denom = 1; // the determinant of an empty matrix is 1
   int sign = 1; // no interchanges yet
   int rank = 0; // we have not seen any non-zero row yet
 
@@ -715,14 +717,14 @@ rank(const Matrix& A)
   return rank; 
 }
 
-template <class _RT, class _ALLOC>  
-bool  Linear_algebraHd<_RT,_ALLOC>::
+template <class RT_, class AL_>  
+bool  Linear_algebraHd<RT_,AL_>::
 inverse(const Matrix& A, Matrix& inverse, 
-        _RT& D, Ivector<_RT,_ALLOC>& c)
+        RT_& D, Vector& c)
 { 
   if (A.row_dimension() != A.column_dimension())
-    ERROR_HANDLER(1,"inverse: only square matrices are legal inputs."); 
-  Ivector<_RT,_ALLOC> b(A.row_dimension()); // zero - vector
+    CGAL_assertion_msg(0,"inverse: only square matrices are legal inputs."); 
+  Vector b(A.row_dimension()); // zero - vector
   int i,j,k; // indices to step through the matrix
   int rows = A.row_dimension(); 
   int cols = A.column_dimension(); 
@@ -753,7 +755,7 @@ inverse(const Matrix& A, Matrix& inverse,
   for(j=0; j<cols; j++)
     var[j]= j; // at the beginning, variable $x_j$ stands in column $j$
 
-  _RT denom = 1; // the determinant of an empty matrix is 1
+  RT_ denom = 1; // the determinant of an empty matrix is 1
   int sign = 1; // no interchanges yet
   int rank = 0; // we have not seen any non-zero row yet
 
@@ -828,7 +830,7 @@ inverse(const Matrix& A, Matrix& inverse,
   }
   D = denom; 
   inverse = Matrix(rows); //square
-  _RT h; 
+  RT_ h; 
   for(i = 0; i <rows; i++) 
   {  // $i$-th column of inverse
     for (j = rows - 1; j >= 0; j--) { 
@@ -841,22 +843,22 @@ inverse(const Matrix& A, Matrix& inverse,
 
   #ifdef CGAL_LA_SELFTEST
   if (A*inverse != Matrix(rows,Matrix::RT_val(1))*D)
-    ERROR_HANDLER(1,"inverse: matrix inverse computed incorrectly."); 
+    CGAL_assertion_msg(0,"inverse(): matrix inverse computed incorrectly."); 
   #endif      
 
   return true; 
 }
 
 
-template <class _RT, class _ALLOC>  
-int  Linear_algebraHd<_RT,_ALLOC>::
+template <class RT_, class AL_>  
+int  Linear_algebraHd<RT_,AL_>::
 homogeneous_linear_solver(const Matrix &A, 
                           Matrix& spanning_vectors)
 /* returns the dimension of the solution space of the homogeneous system 
    $Ax = 0$. The columns of spanning\_vectors span the solution space. */
 { 
-  Ivector<_RT,_ALLOC> b(A.row_dimension()); // zero - vector
-  _RT D; 
+  Vector b(A.row_dimension()); // zero - vector
+  RT_ D; 
   int i,j,k; // indices to step through the matrix
   int rows = A.row_dimension(); 
   int cols = A.column_dimension(); 
@@ -887,7 +889,7 @@ homogeneous_linear_solver(const Matrix &A,
   for(j=0; j<cols; j++)
     var[j]= j; // at the beginning, variable $x_j$ stands in column $j$
 
-  _RT denom = 1; // the determinant of an empty matrix is 1
+  RT_ denom = 1; // the determinant of an empty matrix is 1
   int sign = 1; // no interchanges yet
   int rank = 0; // we have not seen any non-zero row yet
 
@@ -954,11 +956,11 @@ homogeneous_linear_solver(const Matrix &A,
   }
 
 
-  Ivector<_RT,_ALLOC> x; 
+  Vector x; 
   x = Vector(cols); 
   D = denom; 
   for(i = rank - 1; i >= 0; i--) { 
-    _RT h = C(i,cols) * D; 
+    RT_ h = C(i,cols) * D; 
     for (j = i + 1; j < rank; j++) { 
       h -= C(i,j)*x[var[j]]; 
     }
@@ -975,7 +977,7 @@ homogeneous_linear_solver(const Matrix &A,
     for(int l=0; l < defect; l++) { 
       spanning_vectors(var[rank + l],l)=D; 
       for(i = rank - 1; i >= 0 ; i--) { 
-        _RT h = - C(i,rank + l)*D; 
+        RT_ h = - C(i,rank + l)*D; 
         for ( j= i + 1; j<rank; j++)  
           h -= C(i,j)*spanning_vectors(var[j],l); 
         spanning_vectors(var[i],l)= h / C(i,i); 
@@ -991,8 +993,8 @@ homogeneous_linear_solver(const Matrix &A,
   return defect; 
 }
 
-template <class _RT, class _ALLOC>  
-bool  Linear_algebraHd<_RT,_ALLOC>::
+template <class RT_, class AL_>  
+bool  Linear_algebraHd<RT_,AL_>::
 homogeneous_linear_solver(const Matrix& A, Vector& x)
 /* returns true if the homogeneous system $Ax = 0$ has a non - trivial
    solution and false otherwise. */
@@ -1009,9 +1011,9 @@ homogeneous_linear_solver(const Matrix& A, Vector& x)
 }
 
 
-template <class _RT, class _ALLOC>  
-typename Linear_algebraHd<_RT,_ALLOC>::Matrix 
-Linear_algebraHd<_RT,_ALLOC>::transpose(const Matrix& M)
+template <class RT_, class AL_>  
+typename Linear_algebraHd<RT_,AL_>::Matrix 
+Linear_algebraHd<RT_,AL_>::transpose(const Matrix& M)
 { 
   int d1 = M.row_dimension(); 
   int d2 = M.column_dimension(); 
