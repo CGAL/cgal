@@ -8,13 +8,6 @@
   http://www.cmla.ens-cachan.fr/Utilisateurs/dosreis/C++/FAQ/
   It's harder than I thought, since g++ 2.95 doesn't have <sstream>.
   Maybe CGAL should define it ?
----->>> Test what I checked in, then update the doc.
-  Remove the requirement to have a .geomview file with (echo "started")
-  inside.  Synchronization can probably be done with select() ?
-  There are other problems (sleep(1) is needed), so maybe don't touch...
-  It must be backward-compatible...
-  Question : is there a need for backward compatibility, given that
-  operator>>(Point) probably never worked ???
 - The remote geomview (with rsh) facility probably doesn't work.
   But is it useful ?
 - What to do for Circle_2 ?  Maybe there's some code somewhere, or ask the
@@ -30,8 +23,12 @@
 - For T3D : I want to be able to tell Geomview or the CGAL program to stop
   displaying a tetrahedron that I select, so that I can see the inside.
 - Why not use the OOGL library coming with Geomview to parse stuff ?
+- See how we can use this as a debugger : ask Frederic details on his stuff.
+  The fact we're multiprocess probably means we'll have less problems than
+  multi-threads...
 
 Demo :
 ------
+- Add colors...
 - Add demo files for polyhedrons, t2D, t3d.
 - Add a note in the doc when triangulation outputs are ready.
