@@ -31,17 +31,17 @@
 
 CGAL_BEGIN_NAMESPACE
 
-int IO::mode = ios::xalloc();
+int IO::mode = std::ios::xalloc();
 
 
 IO::Mode
-get_mode(ios& i)
+get_mode(std::ios& i)
 {
     return CGAL_static_cast(IO::Mode,i.iword(IO::mode));
 }
 
 IO::Mode
-set_ascii_mode(ios& i)
+set_ascii_mode(std::ios& i)
 {
     IO::Mode m = get_mode(i);
     i.iword(IO::mode) = IO::ASCII;
@@ -50,7 +50,7 @@ set_ascii_mode(ios& i)
 
 
 IO::Mode
-set_binary_mode(ios& i)
+set_binary_mode(std::ios& i)
 {
     IO::Mode m = get_mode(i);
     i.iword(IO::mode) = IO::BINARY;
@@ -59,7 +59,7 @@ set_binary_mode(ios& i)
 
 
 IO::Mode
-set_pretty_mode(ios& i)
+set_pretty_mode(std::ios& i)
 {
     IO::Mode m = get_mode(i);
     i.iword(IO::mode) = IO::PRETTY;
@@ -68,7 +68,7 @@ set_pretty_mode(ios& i)
 
 
 IO::Mode
-set_mode(ios& i, IO::Mode m)
+set_mode(std::ios& i, IO::Mode m)
 {
     IO::Mode old = get_mode(i);
     i.iword(IO::mode) = m;
@@ -76,20 +76,20 @@ set_mode(ios& i, IO::Mode m)
 }
 
 bool
-is_pretty(ios& i)
+is_pretty(std::ios& i)
 {
     return i.iword(IO::mode) == IO::PRETTY;
 }
 
 bool
-is_ascii(ios& i)
+is_ascii(std::ios& i)
 {
     return i.iword(IO::mode) == IO::ASCII;
 }
 
 
 bool
-is_binary(ios& i)
+is_binary(std::ios& i)
 {
     return i.iword(IO::mode) == IO::BINARY;
 }
