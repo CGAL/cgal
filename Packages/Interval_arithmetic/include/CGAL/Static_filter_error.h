@@ -30,9 +30,12 @@
 // 
 // The original idea is from Olivier Devillers.
 
+// It is still EXPERIMENTAL.
+
 // TODO:
 // - I need to add some missing operators and functions, min/max...
-// - Remove the degree stuff, it's only meant for debug.
+// - Remove the degree stuff, it's only meant for debug (?).
+// - Add __attribute__((const)) for optimizing ?
 
 #include <CGAL/basic.h>
 #include <CGAL/Interval_arithmetic/_FPU.h>
