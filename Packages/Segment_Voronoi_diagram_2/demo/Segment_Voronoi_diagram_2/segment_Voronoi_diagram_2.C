@@ -156,6 +156,36 @@ private slots:
       Point p;
       if ( CGAL::assign(p, obj) ) {
 	SVD_2::Vertex_handle v = svd.nearest_neighbor(p);
+#if 1
+	std::cout << "degree: " << v->degree() << std::endl;
+	if ( v->site().is_segment() &&
+	     !v->site().is_exact() ) {
+	  std::cout << "site: " << v->site() << std::endl;
+	  std::cout << "supporting segment: "
+		    << v->site().supporting_segment() << std::endl;
+	  if ( !v->site().is_exact(0) ) {
+	    std::cout << "crossing segment for source: "
+		      << v->site().crossing_segment(0) << std::endl;
+	  }
+	  if ( !v->site().is_exact(1) ) {
+	    std::cout << "crossing segment for target: "
+		      << v->site().crossing_segment(1) << std::endl;
+	  }
+	  SVD_2::Vertex_circulator vc = svd.incident_vertices(v);
+	  SVD_2::Vertex_circulator vc_start = vc;
+	  do {
+	    SVD_2::Vertex_handle vv(vc);
+	    if ( !svd.is_infinite(vc) &&
+		 vv->site().is_point() &&
+		 (vv->site().point() == v->site().source() ||
+		  vv->site().point() == v->site().target()) ) {
+	      std::cout << "degree of endpoint " << vv->site()
+			<< " : " << vv->degree() << std::endl;
+	    }
+	    ++vc;
+	  } while ( vc_start != vc );
+	}
+#else
 	*widget << CGAL::BLACK;
 	if ( v->is_point() ) {
 	  std::cout << v->point() << std::endl;
@@ -164,6 +194,7 @@ private slots:
 	  std::cout << v->segment() << std::endl;
 	  *widget << v->segment();
 	}
+#endif
       }
       return;
 
