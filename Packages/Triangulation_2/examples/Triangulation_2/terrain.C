@@ -1,16 +1,16 @@
 // file : example/Triangulation_2/terrain.C
-#include <CGAL/basic.h>
-#include <CGAL/Gmpz.h>
-#include <CGAL/Homogeneous.h>
-#include <fstream>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Triangulation_euclidean_traits_xy_3.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 
-typedef CGAL::Homogeneous<CGAL::Gmpz>  Rp;
-typedef CGAL::Triangulation_euclidean_traits_xy_3<Rp>  Gt;
+#include <fstream>
+
+struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
+
+typedef CGAL::Triangulation_euclidean_traits_xy_3<K>  Gt;
 typedef CGAL::Delaunay_triangulation_2<Gt> Delaunay;
 
-typedef Rp::Point_3   Point;
+typedef K::Point_3   Point;
 
 int main()
 {

@@ -1,13 +1,12 @@
 // file : example/Triangulation_2/Voronoi.C
-#include <CGAL/basic.h>
-#include <fstream>
-
-#include <CGAL/Cartesian.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 
-typedef double coord_type;
-typedef CGAL::Cartesian<coord_type>  Gt;
-typedef CGAL::Delaunay_triangulation_2<Gt>  Triangulation;
+#include <fstream>
+
+struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
+
+typedef CGAL::Delaunay_triangulation_2<K>  Triangulation;
 typedef Triangulation::Edge_iterator  Edge_iterator;
 
 int main( )
@@ -23,8 +22,8 @@ int main( )
   Edge_iterator eit =T.edges_begin();
   for ( ; eit !=T.edges_end(); ++eit) {
     CGAL::Object o = T.dual(eit);
-    Gt::Segment_2 s;
-    Gt::Ray_2     r;
+    K::Segment_2 s;
+    K::Ray_2     r;
     if (CGAL::assign(s,o)) {++ns;}
     if (CGAL::assign(r,o)) {++nr;}
   }

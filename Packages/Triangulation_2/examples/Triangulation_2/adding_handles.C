@@ -1,6 +1,5 @@
 // file : examples/Triangulation_2/colored_face.C
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Filtered_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Triangulation_2.h>
 
 /* A facet with a color member variable. */
@@ -33,7 +32,7 @@ public:
   Vertex_handle get_associated_vertex() {return va_ ; }
 };
 
-struct K : CGAL::Filtered_kernel<CGAL::Simple_cartesian<double> > {};
+struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
 
 typedef My_vertex_base<K> Vb;
 typedef CGAL::Triangulation_data_structure_2<Vb> Tds;

@@ -1,12 +1,14 @@
 // file example/Triangulation_2/regular.C
-#include <CGAL/Cartesian.h>
-#include <fstream>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/Regular_triangulation_2.h>
 
-typedef CGAL::Cartesian<double> Rp;
+#include <fstream>
+
+struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
+
 typedef double W;
-typedef CGAL::Regular_triangulation_euclidean_traits_2<Rp,W>  Gt;
+typedef CGAL::Regular_triangulation_euclidean_traits_2<K,W>  Gt;
 typedef CGAL::Regular_triangulation_2<Gt> Regular_triangulation;
 
 int main()

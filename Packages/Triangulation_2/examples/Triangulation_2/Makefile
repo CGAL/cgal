@@ -14,11 +14,11 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-	   -I../../../Kernel_23/include \
 	   -I../../include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
-           $(DEBUG_OPT)
+           $(DEBUG_OPT) \
+	   -pedantic
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -40,7 +40,6 @@ all:            \
                 colored_face$(EXE_EXT) \
                 constrained$(EXE_EXT) \
                 constrained_plus$(EXE_EXT) \
-                points$(EXE_EXT) \
                 regular$(EXE_EXT) \
                 terrain$(EXE_EXT) \
                 triangulation_prog1$(EXE_EXT) \
@@ -57,9 +56,6 @@ constrained$(EXE_EXT): constrained$(OBJ_EXT)
 
 constrained_plus$(EXE_EXT): constrained_plus$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)constrained_plus constrained_plus$(OBJ_EXT) $(LDFLAGS)
-
-points$(EXE_EXT): points$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)points points$(OBJ_EXT) $(LDFLAGS)
 
 regular$(EXE_EXT): regular$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)regular regular$(OBJ_EXT) $(LDFLAGS)
@@ -78,7 +74,6 @@ clean: \
                    colored_face.clean \
                    constrained.clean \
                    constrained_plus.clean \
-                   points.clean \
                    regular.clean \
                    terrain.clean \
                    triangulation_prog1.clean \

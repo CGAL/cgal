@@ -1,33 +1,36 @@
 // file : examples/Triangulation_2/constrained.C
-#include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
-#include <fstream>
-#include <list>
-#include <cassert>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 
-typedef double Coord_type;
-typedef CGAL::Cartesian<Coord_type>  Gt;
-typedef Gt::Point_2    Point;
-typedef CGAL::Constrained_Delaunay_triangulation_2<Gt>  CDT;
-typedef CDT::Constraint     Constraint;
+struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
+
+typedef CGAL::Triangulation_vertex_base_2<K>                     Vb;
+typedef CGAL::Constrained_triangulation_face_base_2<K>           Fb;
+typedef CGAL::Triangulation_data_structure_2<Vb,Fb>              TDS;
+typedef CGAL::Exact_predicates_tag                               Itag;
+typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag> CDT;
+typedef CDT::Point          Point;
 
 int
 main( )
 {
-  std::ifstream is("data/constrained.cin");
-  std::list<Constraint> lc;
-  int n;
-  Point p,q;
-  is >> n;
-  std::cerr << "Reading " << n << " constraints" << std::endl;
-  for(; n > 0; n--) {
-    is >> p >> q;
-    lc.push_back(std::make_pair(p,q));
-  }
-
-  CDT cdt(lc.begin(),lc.end());
+  CDT cdt;
+  std::cerr << "Inserting a grid of constraints " << std::endl;
+  std::cerr << "Inserting five horizontal constraints  " << std::endl;
+  for (int i = 1; i < 6; ++i) 
+    cdt.insert_constraint( Point(0,i), Point(6,i));
+  std::cerr << "Inserting five vertical constraints   " << std::endl;
+  for (int j = 1; j < 6; ++j) 
+    cdt.insert_constraint( Point(j,0), Point(j,6));
+  
   assert(cdt.is_valid());
+  int count = 0;
+  for (CDT::Finite_edges_iterator eit = cdt.finite_edges_begin();
+       eit != cdt.finite_edges_end();
+       ++eit)
+    if (cdt.is_constrained(*eit)) ++count;
+  std::cerr << "The number of resulting constrained edges is  ";
+  std::cerr <<  count << std::endl;
   return 0;
 }
   
