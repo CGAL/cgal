@@ -108,7 +108,6 @@ namespace CGAL {
   //for compilers that doesn't support partial specialization
   //of class templates we provide the full specialization for
   //the specific types used
-  template <>
   struct Kernel_traits < Point_float_d<4> > {
     public:
     typedef My_kernel<4> Kernel;
