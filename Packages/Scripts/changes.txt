@@ -1,3 +1,6 @@
+31 May 2004 Radu Ursu
+- create_internal_module removes files from the root of the module including install_cgal if it is the case.
+
 27 May Sylvain Pion
 - Try to fix create_internal_release again.
 

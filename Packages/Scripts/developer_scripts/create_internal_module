@@ -990,6 +990,7 @@ make_src_makefiles();
 
 chdir "$RELEASEDIR/$MODULE_NAME" or die;
 system("rm", "-rf", "test");
+system("rm -f * 2> /dev/null");
 
 unlock;
 
