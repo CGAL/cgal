@@ -13,7 +13,6 @@
 #include <list>
 
 
-
 // Kernel
 //#include <CGAL/Kernel_checker.h>
 #include <CGAL/Simple_cartesian.h>
@@ -1463,7 +1462,7 @@ int main(int argc,  char* argv[])
     section_file_input(opt.finname, opt.number_of_points, L);
 
   construct_delaunay(L, A);
-  assert(A.is_valid());
+  //assert(A.is_valid());
   
   L.clear();
   _A_size_before_postprocessing = A.number_of_vertices();

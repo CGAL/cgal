@@ -3,6 +3,8 @@
 #define UTILITIES_H
 //=====================================================================
 
+#include <CGAL/Unique_hash_map.h>
+
 void
 construct_delaunay(const std::vector<Point> &V_p,
 		   Triangulation_3& A)
@@ -279,36 +281,34 @@ show_selected_facets(CGAL::Geomview_stream &gv, const Triangulation_3& A)
   // Header.
   bool ascii_bak = gv.get_ascii_mode();
   bool raw_bak = gv.set_raw(true);
-
+  _vh_number = 0;
   for (Finite_vertices_iterator v_it = A.finite_vertices_begin();
        v_it != A.finite_vertices_end();
        v_it++)
-   if ((!v_it->is_exterior()) && (v_it->get_visu_index()==-1))
+   if (!v_it->is_exterior())
      {
-       v_it->set_visu_index(_vh_number);
        _vh_number++;
      }
-
-  int _vh_size(_vh_number);
 
   gv.set_binary_mode();
   gv << "(geometry " << gv.get_new_id("object")
      << " {appearance {}{ OFF BINARY\n"
-     << _vh_size << _facet_number << 0;
+     << _vh_number << _facet_number << 0;
 
-  typedef const Point*  Const_point_star;
-  Const_point_star * points_tab = new  Const_point_star[_vh_size];
+  CGAL::Unique_hash_map<Vertex*, int> vertex_index_map(-1, A.number_of_vertices());
 
-
+  int count(0);
   for (Finite_vertices_iterator v_it = A.finite_vertices_begin();
        v_it != A.finite_vertices_end();
-       v_it++)
-    if (v_it->get_visu_index() > -1)
-      points_tab[v_it->get_visu_index()] = &v_it->point();
+       v_it++){
+    CGAL::Unique_hash_map<Vertex*, int>::Data& d = vertex_index_map[&(*v_it)];
+    if ((!v_it->is_exterior()) && d == -1){
+      d = count;
+      count++;
+      gv << convert()(v_it->point())  << " \n";
+    }
+  }
 
-  for(int vh_i=0; vh_i<_vh_size; vh_i++)
-    gv << *points_tab[vh_i];
-     
   for(Finite_facets_iterator f_it = A.finite_facets_begin(); 
       f_it != A.finite_facets_end(); 
       f_it++)
@@ -325,9 +325,9 @@ show_selected_facets(CGAL::Geomview_stream &gv, const Triangulation_3& A)
 	  i2 = (ci+2) & 3;
 	  i3 = (ci+3) & 3;
 	  gv << 3;
-	  gv << c->vertex(i1)->get_visu_index();
-	  gv << c->vertex(i2)->get_visu_index();
-	  gv << c->vertex(i3)->get_visu_index();
+	  gv << vertex_index_map[&(*c->vertex(i1))];
+	  gv << vertex_index_map[&(*c->vertex(i2))];
+	  gv << vertex_index_map[&(*c->vertex(i3))];
 	  gv << 0; // without color.
 	  // gv << 4 << drand48() << drand48() << drand48() << 1.0; // random
 	  // color
@@ -339,9 +339,9 @@ show_selected_facets(CGAL::Geomview_stream &gv, const Triangulation_3& A)
 	  i2 = (ni+2) & 3;
 	  i3 = (ni+3) & 3;
 	  gv << 3;
-	  gv << n->vertex(i1)->get_visu_index();
-	  gv << n->vertex(i2)->get_visu_index();
-	  gv << n->vertex(i3)->get_visu_index();
+	  gv << vertex_index_map[&(*n->vertex(i1))];
+	  gv << vertex_index_map[&(*n->vertex(i2))];
+	  gv << vertex_index_map[&(*n->vertex(i3))];
 	  gv << 0; // without color.
 	  // gv << 4 << drand48() << drand48() << drand48() << 1.0; // random
 	  // color 
@@ -352,7 +352,6 @@ show_selected_facets(CGAL::Geomview_stream &gv, const Triangulation_3& A)
       
   gv.set_raw(raw_bak);
   gv.set_ascii_mode(ascii_bak);
-  delete[] points_tab;
 }
 
 //=====================================================================

@@ -1,2 +1,4 @@
+- added VRML output
+- replaced the dynamically allocated array with a vector in iofile_manipulator.h 
 
 - replaced set and list in each vertex with static lists. 
