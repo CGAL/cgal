@@ -1,3 +1,7 @@
+2.5 (7 December 2001)
++ Added three classes that compute distance from a Point_2 to a fixed object.
+  The object is either a line, a ray or a segment.
+
 2.4.2 (19 February 2001)
 + Bug fix in wdot function in squared_distance_utils.h.
 

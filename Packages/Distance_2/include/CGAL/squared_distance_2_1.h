@@ -49,6 +49,16 @@ squared_distance(
 
 
 template <class R>
+class Squared_distance_to_line {
+    typename R::Vector_2 normal;
+    typename R::FT normal_sqlen;
+    typename R::Point_2 line_point;
+  public:
+    Squared_distance_to_line(typename R::Line_2 const &line);
+    typename R::FT operator()(typename R::Point_2 const &pt) const;
+};
+
+template <class R>
 typename R::FT
 squared_distance(
     const Point_2<R> &pt,
@@ -56,12 +66,37 @@ squared_distance(
 {
     typedef typename R::RT RT;
     typedef typename R::FT FT;
+    typedef typename R::Vector_2 Vector_2;
     RT x = line.a();
     RT y = line.b();
-    Vector_2<R> normal(x, y);
-    Vector_2<R> diff = pt - line.point();
+    Vector_2 normal(x, y);
+    Vector_2 diff = pt - line.point();
     FT signdist = diff * normal;
     return (typename R::FT)((signdist*signdist)/FT(x*x+y*y));
+}
+
+template <class R>
+Squared_distance_to_line<R>::
+Squared_distance_to_line(typename R::Line_2 const &line)
+: line_point(line.point())
+{
+    typedef typename R::RT RT;
+    typedef typename R::FT FT;
+    RT x = line.a();
+    RT y = line.b();
+    normal = Vector_2<R>(x, y);
+    normal_sqlen = FT(x*x+y*y);
+}
+
+template <class R>
+typename R::FT Squared_distance_to_line<R>::
+operator()(typename R::Point_2 const &pt) const
+{
+    typedef typename R::FT FT;
+    typedef typename R::Vector_2 Vector_2;
+    Vector_2 diff = pt - line_point;
+    FT signdist = diff * normal;
+    return FT(signdist*signdist)/normal_sqlen;
 }
 
 
@@ -73,6 +108,16 @@ squared_distance(
 {
     return squared_distance(pt, line);
 }
+
+template <class R>
+class Squared_distance_to_ray {
+    typename R::Vector_2 ray_dir;
+    typename R::Point_2 ray_source;
+    Squared_distance_to_line<R> supline_dist;
+  public:
+    Squared_distance_to_ray(typename R::Ray_2 const &ray);
+    typename R::FT operator()(typename R::Point_2 const &pt) const;
+};
 
 
 
@@ -87,6 +132,24 @@ squared_distance(
     if (!is_acute_angle(dir,diff) )
         return (typename R::FT)(diff*diff);
     return squared_distance(pt, ray.supporting_line());
+}
+
+template <class R>
+Squared_distance_to_ray<R>::
+Squared_distance_to_ray(typename R::Ray_2 const &ray)
+: ray_dir(ray.direction().vector()),
+  ray_source(ray.source()),
+  supline_dist(ray.supporting_line())
+{ }
+
+template <class R>
+typename R::FT Squared_distance_to_ray<R>::
+operator()(typename R::Point_2 const &pt) const
+{
+    Vector_2<R> diff = pt-ray_source;
+    if (!is_acute_angle(ray_dir,diff) )
+        return (typename R::FT)(diff*diff);
+    return supline_dist(pt);
 }
 
 
@@ -126,6 +189,17 @@ squared_distance_indexed(const Point_2<R> &pt,
 
 
 
+template <class R>
+class Squared_distance_to_segment {
+    typename R::Point_2 seg_source, seg_target;
+    Squared_distance_to_line<R> supline_dist;
+    typename R::Vector_2 segvec;
+    typename R::RT e;
+  public:
+    Squared_distance_to_segment(typename R::Segment_2 const &seg);
+    typename R::FT operator()(typename R::Point_2 const &pt) const;
+};
+
 
 template <class R>
 typename R::FT
@@ -144,6 +218,31 @@ squared_distance(
     if (wmult((R*)0 ,d, segvec.hw()) > wmult((R*)0, e, diff.hw()))
         return squared_distance(pt, seg.target());
     return squared_distance(pt, seg.supporting_line());
+}
+
+template <class R>
+Squared_distance_to_segment<R>::
+Squared_distance_to_segment(typename R::Segment_2 const &seg)
+: seg_source(seg.source()), seg_target(seg.target()),
+  supline_dist(seg.supporting_line())
+{
+    segvec = seg_target-seg_source;
+    e = wdot(segvec,segvec);
+}
+
+template <class R>
+typename R::FT Squared_distance_to_segment<R>::
+operator()(typename R::Point_2 const &pt) const
+{
+    typedef typename R::RT RT;
+    // assert that the segment is valid (non zero length).
+    Vector_2<R> diff = pt-seg_source;
+    RT d = wdot(diff,segvec);
+    if (d <= (RT)0)
+        return (typename R::FT)(diff*diff);
+    if (wmult((R*)0 ,d, segvec.hw()) > wmult((R*)0, e, diff.hw()))
+        return squared_distance(pt, seg_target);
+    return supline_dist(pt);
 }
 
 
