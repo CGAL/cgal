@@ -30,7 +30,8 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class GT >
-class Regular_triangulation_vertex_base_2 : public Triangulation_vertex_base_2<GT> {
+class Regular_triangulation_vertex_base_2 : 
+  public Triangulation_vertex_base_2<GT> {
 
 public:
   typedef typename GT::Point_2 Point;

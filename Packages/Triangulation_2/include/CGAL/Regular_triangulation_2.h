@@ -77,13 +77,16 @@ private:
 
 public:
   typedef Filter_iterator_with_handle<typename Base::All_vertices_iterator, 
-                                      Hidden_tester, Vertex_handle> All_vertices_iterator;  
+                                      Hidden_tester, Vertex_handle> 
+                                                 All_vertices_iterator;  
 
   typedef Filter_iterator_with_handle<typename Base::Finite_vertices_iterator, 
-                                      Hidden_tester, Vertex_handle> Finite_vertices_iterator;  
+                                      Hidden_tester, Vertex_handle> 
+                                                 Finite_vertices_iterator;  
 
   typedef Filter_iterator_with_handle<typename Base::Finite_vertices_iterator, 
-                                      Unhidden_tester, Vertex_handle> Hidden_vertices_iterator;
+                                      Unhidden_tester, Vertex_handle> 
+                                                 Hidden_vertices_iterator;
 
   // af: why are the following typedefs public??
 
@@ -1001,7 +1004,8 @@ fill_hole_regular(std::list<Edge> & first_hole)
 
 template < class Gt, class Tds >
 void
-Regular_triangulation_2<Gt,Tds>::set_face(Vertex_list& vl, const Face_handle& fh)
+Regular_triangulation_2<Gt,Tds>::
+set_face(Vertex_list& vl, const Face_handle& fh)
 {
   for(typename Vertex_list::iterator it = vl.begin(); it != vl.end(); it++)
     {
@@ -1053,7 +1057,8 @@ update_hidden_points_2_2(const Face_handle& f1, const Face_handle& f2)
 
   if (dimension() == 1) {
     const Weighted_point& a1 = f1->vertex(f1->index(f2))->point();
-    //af: bcc warns about unused variable: const Weighted_point& a2 = f2->vertex(f2->index(f1))->point();
+    // af: bcc warns about unused variable: 
+    // const Weighted_point& a2 = f2->vertex(f2->index(f1))->point();
     const Weighted_point& a  = f1->vertex(1-f1->index(f2))->point();
     while ( ! p_list.empty() ) {
       Vertex_handle v(static_cast<Vertex*>(p_list.front()));
@@ -1347,7 +1352,8 @@ typename Regular_triangulation_2<Gt,Tds>::All_vertices_iterator
 Regular_triangulation_2<Gt,Tds>::
 all_vertices_begin () const
 {
-  return filter_iterator_with_handle(Base::all_vertices_begin(), Base::all_vertices_end(), 
+  return filter_iterator_with_handle(Base::all_vertices_begin(), 
+				     Base::all_vertices_end(), 
 				     Hidden_tester(), Vertex_handle());
 }
 
@@ -1356,8 +1362,10 @@ typename Regular_triangulation_2<Gt,Tds>::All_vertices_iterator
 Regular_triangulation_2<Gt,Tds>::
 all_vertices_end () const
 {
-  return filter_iterator_with_handle(Base::all_vertices_begin(), Base::all_vertices_end(), 
-				     Hidden_tester(), Vertex_handle(), Base::all_vertices_end());
+  return filter_iterator_with_handle(Base::all_vertices_begin(), 
+				     Base::all_vertices_end(), 
+				     Hidden_tester(), Vertex_handle(), 
+				     Base::all_vertices_end());
 }
 
 template < class Gt, class Tds >
@@ -1365,7 +1373,8 @@ typename Regular_triangulation_2<Gt,Tds>::Finite_vertices_iterator
 Regular_triangulation_2<Gt,Tds>::
 finite_vertices_begin () const
 {
-  return filter_iterator_with_handle(Base::finite_vertices_begin(), Base::finite_vertices_end(), 
+  return filter_iterator_with_handle(Base::finite_vertices_begin(), 
+				     Base::finite_vertices_end(), 
 				     Hidden_tester(), Vertex_handle());
 }
 
@@ -1375,8 +1384,10 @@ Regular_triangulation_2<Gt,Tds>::
 finite_vertices_end () const
 {
 
-  return filter_iterator_with_handle(Base::finite_vertices_begin(), Base::finite_vertices_end(), 
-				     Hidden_tester(), Vertex_handle(), Base::finite_vertices_end());
+  return filter_iterator_with_handle(Base::finite_vertices_begin(), 
+				     Base::finite_vertices_end(), 
+				     Hidden_tester(), Vertex_handle(), 
+				     Base::finite_vertices_end());
 
 }
 
@@ -1385,7 +1396,8 @@ typename Regular_triangulation_2<Gt,Tds>::Hidden_vertices_iterator
 Regular_triangulation_2<Gt,Tds>::
 hidden_vertices_begin () const
 {
-  return filter_iterator_with_handle(Base::finite_vertices_begin(), Base::finite_vertices_end(), 
+  return filter_iterator_with_handle(Base::finite_vertices_begin(),
+				     Base::finite_vertices_end(), 
 				     Unhidden_tester(), Vertex_handle());
 
 }
@@ -1395,8 +1407,11 @@ typename Regular_triangulation_2<Gt,Tds>::Hidden_vertices_iterator
 Regular_triangulation_2<Gt,Tds>::
 hidden_vertices_end () const
 {
-  return filter_iterator_with_handle(Base::finite_vertices_begin(), Base::finite_vertices_end(), 
-				     Unhidden_tester(), Vertex_handle(), Base::finite_vertices_end());
+  return filter_iterator_with_handle(Base::finite_vertices_begin(), 
+				     Base::finite_vertices_end(), 
+				     Unhidden_tester(),
+				     Vertex_handle(), 
+				     Base::finite_vertices_end());
 
 }
 
