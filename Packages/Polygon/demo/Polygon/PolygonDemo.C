@@ -81,7 +81,7 @@ void PrintPolygonInfo(const CGAL::Polygon_2<Traits,Container>& P)
     case CGAL::COLLINEAR       : cerr << "collinear" << endl; break;
   }
 
-  cerr << "  P.bbox()               = " << P.bbox() << endl;
+//  cerr << "  P.bbox()               = " << P.bbox() << endl;
   cerr << "  P.area()               = " << P.area() << endl;
   cerr << "  P.left_vertex()        = " << *P.left_vertex() << endl;
   cerr << "  P.right_vertex()       = " << *P.right_vertex() << endl;
