@@ -69,17 +69,17 @@ ext_pdf_doc:
 	mv pdf_developers_manual_ext.pdf developers_manual_ext.pdf
 
 ext_html_doc:
-	cc_manual_to_html -o $(EXT_HTML_TARGET_DIR) -title "CGAL Developers' Manual (2.2.4)" -author "<A HREF=""http://www.cgal.org/CGAL"" target=""_top"">The CGAL project</A>" -date "`date +%b` `date +%e`, `date +%Y`" -aux $(EXT_WRAPPER).aux -bbl $(EXT_WRAPPER).bbl $(EXT_WRAPPER).tex
+	cc_manual_to_html -o $(EXT_HTML_TARGET_DIR) -title "CGAL Developers' Manual (2.3)" -author "<A HREF=""http://www.cgal.org"" target=""_top"">The CGAL project</A>" -date "`date +%b` `date +%e`, `date +%Y`" -aux $(EXT_WRAPPER).aux -bbl $(EXT_WRAPPER).bbl $(EXT_WRAPPER).tex
 	cp manual_index.html $(EXT_HTML_TARGET_DIR)
 	cp title.html $(EXT_HTML_TARGET_DIR)
 
 html_doc:
-	cc_manual_to_html -o $(HTML_TARGET_DIR) -title "CGAL Developers' Manual (2.2.4)" -author "<A HREF=""http://www.cgal.org/CGAL"" target=""_top"">The CGAL project</A>" -date "`date +%b` `date +%e`, `date +%Y`" -aux $(WRAPPER).aux -bbl $(WRAPPER).bbl $(WRAPPER).tex
+	cc_manual_to_html -o $(HTML_TARGET_DIR) -title "CGAL Developers' Manual (2.3)" -author "<A HREF=""http://www.cgal.org"" target=""_top"">The CGAL project</A>" -date "`date +%b` `date +%e`, `date +%Y`" -aux $(WRAPPER).aux -bbl $(WRAPPER).bbl $(WRAPPER).tex
 	cp manual_index.html $(HTML_TARGET_DIR)
 	cp title.html $(HTML_TARGET_DIR)
 
 html_title:
-	cc_manual_to_html -o title_html -title "CGAL Developers' Manual (2.2.4)" -author "<A HREF=""http://www.cgal.org"" target=""_top"">The CGAL project</A>" -date "`date +%b` `date +%e`, `date +%Y`" -show_main title_wrap.tex
+	cc_manual_to_html -o title_html -title "CGAL Developers' Manual (2.3)" -author "<A HREF=""http://www.cgal.org"" target=""_top"">The CGAL project</A>" -date "`date +%b` `date +%e`, `date +%Y`" -show_main title_wrap.tex
 
 install_internal: install_html install_ps install_pdf install_tools_doc
 	chmod -R a+r $(INSTALL_DIR)
