@@ -1,3 +1,0 @@
-1.0 (12 June 2001)
-- Initial internal release.
-

@@ -78,6 +78,7 @@ clean: \
                    test_io.clean \
                    test_kernelS2.clean \
                    test_kernelS3.clean \
+                   test_kernelSd.clean \
                    test_new_kernelS2.clean \
                    test_new_kernelS3.clean \
                    test_new_partsS_.clean \

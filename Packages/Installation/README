@@ -7,7 +7,6 @@ This distribution of CGAL includes:
                         with CGAL but not part of the library (in particular,
                         the GNU multi-precision number type). The gmp library
                         has its own license.
-   cgal_config.bat    - configuration file for the Windows platforms
    CHANGES            - file recording the history of changes for the library
    config/            - directory containing several test programs used in
                         installation and configuration and into which 
@@ -23,6 +22,8 @@ This distribution of CGAL includes:
                         for many.
    doc_html/          - a directory containing the installation manual in
                         HTML format
+   doc_pdf/           - a directory containing the installation manual in
+                        PDF format
    doc_ps/            - a directory containing the installation manual in
                         compressed postscript format
    examples/          - a directory containing programs illustrating the 
@@ -34,13 +35,14 @@ This distribution of CGAL includes:
    include/CGAL/IO/Qt_widget*.h
                       - the include files for the CGAL Qt widget, which are
                         distributed under the Q Public License (QPL)
-   install.txt        - instructions for insalling CGAL on the Windows 
-                        platform.
    install_cgal       - the script with which you can install CGAL
-   INSTALLATION       - file containing information about the installation
+   INSTALL            - file containing information about the installation
                         process
+   INSTALL.win32      - file containing information about the installation
+                        process on the Windows platform
    lib/               - directory in which the CGAL libraries will be 
                         installed
+   LICENSE            - A file containing the license for CGAL
    make/              - directory containing CGAL include makefiles, which
                         are generated during installation
    makefile           - a makefile that can be used for instaling the CGAL

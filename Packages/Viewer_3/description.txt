@@ -1,1 +1,0 @@
-A 3D viewer for CGAL objects. Based on OpenGL and FLTK.

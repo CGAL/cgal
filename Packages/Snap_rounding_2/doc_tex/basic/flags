@@ -1,4 +1,0 @@
-setenv TEXINPUTS ".:~shaihi/CGAL/examples:/usr/local/CGAL/Tools/format/:"
-# for the latex to html converter
-setenv LATEX_CONV_INPUTS ".:~shaihi/CGAL/examples/:"
-

@@ -1,6 +1,0 @@
-Nef_3 Package: Release changes:
----------------------------------------------------------------------
-
-0.1 (03 Apr 2002)
-
-    - initial develop version.

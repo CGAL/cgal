@@ -1,2 +1,0 @@
-Snap Rounding of line segment in 2D.
-

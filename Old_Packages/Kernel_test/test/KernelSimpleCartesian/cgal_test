@@ -73,6 +73,7 @@ else
   compile_and_run test_io
   compile_and_run test_kernelS2
   compile_and_run test_kernelS3
+  compile_and_run test_kernelSd
   compile_and_run test_new_kernelS2
   compile_and_run test_new_kernelS3
   compile_and_run test_new_partsS_

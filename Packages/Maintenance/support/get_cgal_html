@@ -1,7 +1,0 @@
-#!/bin/sh
-
-WGETRC=/projects/CGAL/admin_scripts/DATA/wgetrc
-export WGETRC
-
-/sw/bin/wget $1
-

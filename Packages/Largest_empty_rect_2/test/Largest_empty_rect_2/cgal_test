@@ -54,7 +54,7 @@ run()
       if eval 2>&1 $COMMAND > $OUTPUTFILE ; then
 	  echo "   execution of $1 ${data_dir}/${DATAFILE} > ${data_dir}/out succeeded" >> $ERRORFILE
 	  if ${CMP} ${data_dir}/out "${data_dir}/gold_$DATANAME" ; then
-	      echo "   no differences between output and gold were found" >> $ERRORFILE
+#	      echo "   no differences between output and gold were found" >> $ERRORFILE
 	  else
 	      echo "   ERROR:  differences between output and gold were found" >> $ERRORFILE
 	      echo "   ERROR:  differences between output and gold were found :" >> $OUTPUTFILE

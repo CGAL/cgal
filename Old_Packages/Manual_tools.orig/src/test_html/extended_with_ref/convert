@@ -1,6 +1,0 @@
-#!/bin/csh -f
-
-setenv LATEX_CONV_INPUTS .:examples
-
-cc_manual_to_html -extended -o html Example/main.tex -ref_manual Example_ref/ref_manual.tex -bbl biblio_web.tex
-

@@ -1,1 +1,0 @@
-APSPAS: Approximate Spatial Searching Package
