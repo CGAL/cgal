@@ -2,6 +2,8 @@
 #include <CGAL/Cartesian.h>
 
 #include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Filtered_exact.h>
+#include <CGAL/MP_Float.h>
 
 #include <cassert>
 
@@ -30,15 +32,9 @@ public :
     {}
 };
 
-typedef double NT;
-// for this simple example, using doubles is ok
-// for more complicated examples with degenerate configurations,
 // using Filtered_exact number type is advised :
-// 
-// #include <CGAL/Filtered_exact.h>
-// #include <CGAL/MP_Float.h>
-// 
-// typedef CGAL::Filtered_exact<double, CGAL::MP_Float> NT;
+
+typedef CGAL::Filtered_exact<double, CGAL::MP_Float> NT;
 
 typedef CGAL::Cartesian<NT> K;
 

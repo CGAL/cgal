@@ -4,40 +4,25 @@
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_hierarchy_3.h>
+#include <CGAL/Filtered_exact.h>
+#include <CGAL/MP_Float.h>
 
 #include <cassert>
 #include <vector>
 
-////////////////////// 
-// chosing the number type
-////////////////////// 
-
-// for this simple example, using doubles is ok though the points
-// are in degenerate configutations, since their coordinates
-// are very small integers
-// for examples with data stored on a large number of bits,
 // using Filtered_exact number type is advised :
-// 
-// #include <CGAL/Filtered_exact.h>
-// #include <CGAL/MP_Float.h>
-// 
-// typedef CGAL::Filtered_exact<double, CGAL::MP_Float> NT;
 
-typedef double NT;
+typedef CGAL::Filtered_exact<double, CGAL::MP_Float> NT;
 
-////////////////////// 
-// chosing the representation (cartesian or homogeneous)
-////////////////////// 
+// chosing the representation (Cartesian or homogeneous)
 
 typedef CGAL::Cartesian<NT> K;
 
-////////////////////// 
-
-typedef CGAL::Triangulation_vertex_base_3<K>            Vb;
+typedef CGAL::Triangulation_vertex_base_3<K>             Vb;
 typedef CGAL::Triangulation_hierarchy_vertex_base_3<Vb>  Vbh;
 typedef CGAL::Triangulation_cell_base_3<void>            Cb;
 typedef CGAL::Triangulation_data_structure_3<Vbh,Cb>     Tds;
-typedef CGAL::Delaunay_triangulation_3<K,Tds>           Dt;
+typedef CGAL::Delaunay_triangulation_3<K,Tds>            Dt;
 typedef CGAL::Triangulation_hierarchy_3<Dt>              Dh;
 
 typedef Dh::Vertex_iterator Vertex_iterator;

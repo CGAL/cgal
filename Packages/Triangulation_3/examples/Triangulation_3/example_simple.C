@@ -2,6 +2,8 @@
 #include <CGAL/Cartesian.h>
 
 #include <CGAL/Triangulation_3.h>
+#include <CGAL/Filtered_exact.h>
+#include <CGAL/MP_Float.h>
 
 #include <iostream>
 #include <fstream>
@@ -9,28 +11,13 @@
 #include <list>
 #include <vector>
 
-////////////////////// 
-// chosing the number type
-////////////////////// 
-
-// for this simple example, using doubles is ok
-// for more complicated examples with degenerate configurations,
 // using Filtered_exact number type is advised :
-// 
-// #include <CGAL/Filtered_exact.h>
-// #include <CGAL/MP_Float.h>
-// 
-// typedef CGAL::Filtered_exact<double, CGAL::MP_Float> NT;
 
-typedef double NT;
+typedef CGAL::Filtered_exact<double, CGAL::MP_Float> NT;
 
-////////////////////// 
-// chosing the representation (cartesian or homogeneous)
-////////////////////// 
+// chosing the representation (Cartesian or homogeneous)
 
 typedef CGAL::Cartesian<NT> K;
-
-////////////////////// 
 
 typedef CGAL::Triangulation_3<K> Triangulation;
 
