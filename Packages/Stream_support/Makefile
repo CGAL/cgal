@@ -26,8 +26,8 @@ Version:
 submit: clean Version $(Package).tar.gz
 	cp $(Package).tar.gz version description.txt \
 	   changes.txt $(WWW_dir)
-	rm -f $(WWW_dir)/$(Package).ps.gz
-	gzip -9 $(WWW_dir)/$(Package).ps
+	# rm -f $(WWW_dir)/$(Package).ps.gz
+	# gzip -9 $(WWW_dir)/$(Package).ps
 	echo > $(TMP_file)
 	echo "submission::" >> $(TMP_file)
 	echo "http://www-sop.inria.fr/prisme/CGAL/DR:/Members" >> $(TMP_file)
