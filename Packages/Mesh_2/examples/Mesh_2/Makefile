@@ -15,7 +15,6 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = $(CGAL_CXXFLAGS) \
            -I../../include \
-           -I../../../Mesh_3/include \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
 
@@ -40,7 +39,7 @@ all:            \
 mesh$(OBJ_EXT): ../../include/CGAL/Mesh_2.h \
                 ../../include/CGAL/Mesh_face_base_2.h \
                 ../../include/CGAL/Mesh_default_traits_2.h \
-                ../../../Mesh_3/include/CGAL/Double_map.h
+                ../../include/CGAL/Double_map.h
 
 mesh$(EXE_EXT): mesh$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)mesh mesh$(OBJ_EXT) $(LDFLAGS)
