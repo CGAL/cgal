@@ -29,10 +29,12 @@
 #include <cassert>
 #include <iostream>
 #include <CGAL/Random.h>
-#define CCC
-//#define ISL_LIST
 
-#if defined(CCC) || ! defined(ISL_LIST)
+
+//#define CGAL_ISL_USE_CCC
+#define CGAL_ISL_USE_LIST
+
+#if defined(CGAL_ISL_USE_CCC) || ! defined(CGAL_ISL_USE_LIST)
 #include <CGAL/Compact_container.h>
 #endif
 
@@ -130,7 +132,7 @@ class Interval_for_container : public Interval_
     typedef typename Interval::Value Value;
     Random rand;
 
-#ifdef ISL_LIST
+#ifdef CGAL_ISL_USE_LIST
     std::list<Interval> container;
 
     typedef typename std::list<Interval>::iterator Interval_handle;
@@ -140,7 +142,7 @@ class Interval_for_container : public Interval_
       Interval_handle;
 #endif
 
-#ifdef CCC
+#ifdef CGAL_ISL_USE_CCC
     typedef typename Compact_container<IntervalListElt<Interval> >::iterator ILE_handle;
 #else
     typedef IntervalListElt<Interval>* ILE_handle;
@@ -301,7 +303,7 @@ class Interval_for_container : public Interval_
     void print(std::ostream& os) const;
     void printOrdered(std::ostream& os) const;
 
-#ifdef ISL_LIST
+#ifdef CGAL_ISL_USE_LIST
     typedef typename std::list<Interval>::const_iterator const_iterator;
 #else
     typedef typename 
@@ -327,7 +329,7 @@ class Interval_for_container : public Interval_
     typedef Interval_ Interval;
     typedef typename Interval::Value Value;
     //typedef Interval* Interval_handle;
-#ifdef ISL_LIST
+#ifdef CGAL_ISL_USE_LIST
 
     typedef typename std::list<Interval>::iterator Interval_handle;
 #else
@@ -335,7 +337,7 @@ class Interval_for_container : public Interval_
       Interval_handle;
 #endif
 
-#ifdef CCC
+#ifdef CGAL_ISL_USE_CCC
     typedef typename Compact_container<IntervalListElt<Interval> >::iterator ILE_handle;
 #else
     typedef IntervalListElt<Interval>* ILE_handle;
@@ -344,7 +346,7 @@ class Interval_for_container : public Interval_
 
     ILE_handle header;
 
-#ifdef CCC
+#ifdef CGAL_ISL_USE_CCC
     static Compact_container<IntervalListElt<Interval> > compact_container;
 #endif
     std::allocator<IntervalListElt<Interval> > alloc;
@@ -366,7 +368,7 @@ class Interval_for_container : public Interval_
 
     ILE_handle create_list_element(const Interval_handle& I)
     {
-#ifdef CCC
+#ifdef CGAL_ISL_USE_CCC
       IntervalListElt<Interval> e(I);
       ILE_handle it = compact_container.insert(e);
       return it;
@@ -380,7 +382,7 @@ class Interval_for_container : public Interval_
 
     void erase_list_element(ILE_handle I)
     {      
-#ifdef CCC
+#ifdef CGAL_ISL_USE_CCC
       compact_container.erase(I);
 #else
       alloc.destroy(I);
@@ -418,7 +420,7 @@ class Interval_for_container : public Interval_
     ~IntervalList();
   };
 
-#ifdef CCC
+#ifdef CGAL_ISL_USE_CCC
   template <class Interval_>
   Compact_container<IntervalListElt<Interval_> > 
      IntervalList<Interval_>::compact_container;
@@ -431,7 +433,7 @@ class Interval_for_container : public Interval_
   class IntervalListElt
   {
     typedef Interval_ Interval;
-#ifdef ISL_LIST
+#ifdef CGAL_ISL_USE_LIST
 
     typedef typename std::list<Interval>::iterator Interval_handle;
 #else
@@ -439,7 +441,7 @@ class Interval_for_container : public Interval_
       Interval_handle;
 #endif
 
-#ifdef CCC
+#ifdef CGAL_ISL_USE_CCC
     typedef typename Compact_container<IntervalListElt<Interval> >::iterator ILE_handle;
 #else
     typedef IntervalListElt<Interval>* ILE_handle;
@@ -447,11 +449,11 @@ class Interval_for_container : public Interval_
 
     Interval_handle I;
     ILE_handle next;
-#ifdef CCC
+#ifdef CGAL_ISL_USE_CCC
     void* p;
 #endif
   public:
-#ifdef CCC
+#ifdef CGAL_ISL_USE_CCC
     void *   for_compact_container() const { return p; }
     void * & for_compact_container()       { return p; }
 #endif
@@ -1038,7 +1040,7 @@ template <class Interval>
   void
   Interval_skip_list<Interval>::insert(const Interval& I)
   {
-#ifdef ISL_LIST
+#ifdef CGAL_ISL_USE_LIST
     container.push_front(I);
     Interval_handle ih = container.begin();
 #else
