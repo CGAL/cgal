@@ -32,16 +32,21 @@ typedef Traits::Curve                                 Curve;
 
 typedef CGAL::Pm_default_dcel<Traits>                Dcel;   
 typedef CGAL::Planar_map_2<Dcel, Traits>             PM;
+typedef CGAL::Pm_file_writer<PM>                     Pm_writer;
 
-using namespace std;
+using std::cout;
+using std::cin;
+using std::endl;
 
 
 int main(int argc, char* argv[])
 {
   PM                 pm;
   int                num_segments;
-  vector<Curve>     segments;
+  vector<Curve>      segments;
   
+  cout << " * * * Demonstrating a trivial use of the sweep line algorithm" << endl <<endl;
+
   cin >> num_segments;
   
   NT        x1, y1, x2, y2;
@@ -54,7 +59,9 @@ int main(int argc, char* argv[])
   
   CGAL::sweep_to_construct_planar_map(segments.begin(),segments.end(), pm);
   
-  cout<<pm;
+  cout << " * * * Printing list of all halfedges of the resulting Planar map" << endl;
+  Pm_writer verbose_writer(cout, pm, true);
+  verbose_writer.write_halfedges(pm.halfedges_begin(), pm.halfedges_end());
   
   //CGAL::Window_stream W(700, 700);
   //W.init(-10, 10, -10);
@@ -63,3 +70,4 @@ int main(int argc, char* argv[])
   //W.display();
   //W << pm; 
 }
+
