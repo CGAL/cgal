@@ -1,3 +1,6 @@
+2.2.1  manual changes
+       some member functions removed from Point_set_2 class
+
 2.2    function template versions for nearest neighbor queries and
        range searches added 
 
