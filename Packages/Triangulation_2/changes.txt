@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 7.56 (06/02/03)
+- fixes by Andreas in Regular_triangulation_2.h
+
 Ver 7.55 (04/02/03)
 - Instead of hiding weighted points in faces of the regular triangulation, we now hide vertices.
   This makes that the Triangulation_hierarchy works for Regular now
