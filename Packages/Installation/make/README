@@ -1,15 +1,20 @@
 This directory contains the following files:
 
-CGAL_directories         : a file with the location of the CGAL lib and include directory
+makefile_<os>_<compiler> : 
 
-makefile_<os>_<compiler> : include files with platform dependent makefile settings (these
-                           files will be generated during installation)
-                           <os> and <compiler> are abbreviations of the operating system
-                           and the compiler for which the include file is intended
+	Include makefiles with platform dependent settings. These
+	files will be generated during installation.
 
-                           if you choose LEDA support, the include file gets the
-                           extension _LEDA
+	<os> and <compiler> are short descriptors of the operating
+	system and the compiler for which the include file is
+	intended. For information on how these descriptors are
+	generated, see the installation manual.
+
+	If you choose LEDA support, the include file gets the
+ 	extension _LEDA
 
 sample_makefile
-sample_makefile_LEDA     : two examples of the include files that will be generated
-                           during installation of CGAL
+sample_makefile_LEDA :
+
+	Two examples of include makefiles.
+
