@@ -78,7 +78,7 @@ private:
 /*!
  */
 template<class Kernel_>
-struct Is_vertex_for_segments_2 
+class Is_vertex_for_segments_2 
 {
 public:
   typedef Kernel_                     Kernel;
@@ -123,7 +123,7 @@ public Kernel_::Counterclockwise_in_between_2
   typedef typename Kernel::Point_2                       Point_2;
   typedef typename Kernel::Direction_2                   Direction_2;
 
-  typedef struct Is_vertex_for_segments_2<Kernel>        Is_vertex_2;
+  typedef Is_vertex_for_segments_2<Kernel>               Is_vertex_2;
     
   typedef CGAL::Construct_direction_at_endpoint_2<Kernel, Segment_2>
                                                          Construct_direction_2;
