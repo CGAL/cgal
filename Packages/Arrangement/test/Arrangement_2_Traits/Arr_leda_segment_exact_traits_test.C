@@ -14,13 +14,13 @@ int main()
 }
 #else
 
-#include <CGAL/Arr_leda_segment_exact_traits.h>
+#include <CGAL/Arr_leda_segment_traits_2.h>
 #include <CGAL/leda_rational.h>
 
 #include "include/Segment_traits_test.h"
 
 typedef leda_rational                                  NT;
-typedef CGAL::Arr_leda_segment_exact_traits            Traits;
+typedef CGAL::Arr_leda_segment_traits_2                Traits;
 
 int main( int argc, char** argv ){
   Segment_traits_test< Traits, leda_rational >  test_obj( argc, argv );
@@ -31,4 +31,4 @@ int main( int argc, char** argv ){
     return (1); // FAILURE  
 }
 
-#endif // ! defined(CGAL_USE_LEDA) ...
+#endif
