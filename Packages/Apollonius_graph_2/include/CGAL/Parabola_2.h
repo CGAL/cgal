@@ -215,14 +215,14 @@ public:
     compute_origin();
   }
 
-  Parabola_2(const Point_2 &p, const Line_2 &l)
+  Parabola_2(const Point_2 &p, const Line_2 &line)
   {
     this->c = p;
 
-    if ( l.has_on_positive_side(p) ) {
-      this->l = l;
+    if ( line.has_on_positive_side(p) ) {
+      this->l = line;
     } else {
-      this->l = l.opposite();
+      this->l = line.opposite();
     }
     compute_origin();
   }
