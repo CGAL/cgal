@@ -1,0 +1,128 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Planar_map.tex (Planar_map)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar_map_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+% +========================================================================+
+%   Planar Map
+% +========================================================================+
+\begin{ccRefClass}{Sweep_line_2<CurveInputIterator, SweepLineTraits_2>}
+\label{SL_sec:sl}
+    
+\ccDefinition
+    \ccStyle{Sweep_line_2} is a utility class that calculates 
+    intersection
+    points between given curves. The following operationas are supported:
+
+\begin{itemize}
+\item calculate the intersection points between the curves.
+\item calculate the interior-disjoint segments induced by $C$.
+\item calculate the intersection points and return a list of curves 
+participating at each intersection point.
+\item query for the existance of an intersection point between any two curves.
+\end{itemize}
+
+The \ccStyle{Sweep_line_2} class is implemented in such a way that no
+assumptions are made regarding the given curves. For example, the curves may
+be overlapping or vertical. There is also no assumtion that the curves are
+x-monotone.
+
+The \ccStyle{Sweep_line_2} is parametrized by two parameters. The input 
+iterator and  the traits parameter. The 
+\ccStyle{CurveInputIterator::type_value} is equivalent to 
+\ccStyle{Traits::Curve_2}.
+
+\ccInclude{CGAL/Sweep_line_2.h}
+
+\ccCreation
+  \ccCreationVariable{sweepLine}
+    
+  \ccConstructor{Sweep_line_2<CurveInputIterator, SweepLineTraits_2>();} 
+   {constructs an instance of the \ccStyle{Sweep_line_2} class.}
+    
+  \ccConstructor{Sweep_line_2<CurveInputIterator, SweepLineTraits_2>(SweepLineTraits_2 *traits);}
+   {constructs an instance of the \ccStyle{Sweep_line_2} class.}
+    
+
+\ccTypes
+\ccNestedType{Traits}{traits class.}
+\ccNestedType{Curve_2}{a 2D curve as defined in the traits class.}
+\ccNestedType{X_curve_2}{an x-monotone 2D curve as defined in the traits class.}
+\ccNestedType{Point_2}{a 2D point as defined in the traits class.}
+
+\ccQueryFunctions
+
+\ccMethod{template <class OutpoutIterator>
+          void  get_subcurves(CurveInputIterator curves_begin, 
+		      CurveInputIterator curves_end, 
+		      OutpoutIterator subcurves, 
+		      bool overlapping = false);}
+{given a range of curves, this method returns a container of 
+interior-disjoint curves that are the product of intersecting 
+the specified curves. 
+\\The overlapping parameter is an input parameter and is relevant 
+only in case there are overlapping curves in the input. If this parameter 
+is false (default), any overlapping subcurve is reported only once. If the 
+parameter is set to true, the subcurve is reported as many times as it 
+is overlapped.
+\\\ccStyle{OutpoutIterator::value_type} is equvalent to 
+\ccStyle{Traits::X_curve_2}.}
+
+\ccMethod{  template <class OutpoutIterator>
+  void  get_intersection_points(CurveInputIterator curves_begin, 
+				CurveInputIterator curves_end, 
+				OutpoutIterator points,
+				bool endpoints = true,
+				bool overlapping = false);}
+{given a range of curves, this method returns a list of all intersection
+points of the curves. 
+\\If endpoints is true (default) the end points
+of the curves are reported as intersection points. Otherwise they are 
+ommited. 
+\\The overlapping parameter is an input parameter and is relevant 
+only in case there are overlapping curves in the input. If this parameter 
+is false (default), any overlapping subcurve is reported only once. If the 
+parameter is set to true, the subcurve is reported as many times as it 
+is overlapped.
+\\The \ccStyle{OutputIterator::value_type} is equivalent to
+\ccStyle{Traits::Point_2}.}
+
+
+\ccMethod{template <class OutputIterator>
+  void  get_intersecting_curves(CurveInputIterator curves_begin, 
+				CurveInputIterator curves_end, 
+				OutputIterator intersecting_curves,
+				bool endpoints = true);}
+{given a range of curves this method calculates the intersection points
+between the curves. It returns the list of intersection points,
+and for each intersection point the list of curves intersecting
+at that point is given. 
+\\If endpoints is true (default) the end points
+of the curves are reported as intersection points. Otherwise they are 
+ommited.
+\\The \ccStyle{OutputIterator::value_type} is equivalent to a pair of 
+\ccStyle{Point_2} and a container (e.g., list, vector) of \ccStyle{Curve_2}.}
+ 
+
+\ccMethod{  bool  do_curves_intersect(CurveInputIterator curves_begin, 
+			    CurveInputIterator curves_end);}
+{given a range of curves this method returns true if any two curves intersect,
+false otherwise.}
+
+\end{ccRefClass}
+
+% FILL IN THE REST OF THE FILES
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

@@ -1,0 +1,189 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: SweepLineTraits_2.tex
+% +------------------------------------------------------------------------+
+% | 17.02.2002   Author
+% | Package: Sweep_line_2
+% | 
+\RCSdef{\RCSSweepLineTraitsRev}{$Revision$}
+\RCSdefDate{\RCSSweepLineTraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{SweepLineTraits_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+A model of the concept \ccRefName\ aggregates the geometric types and
+primitive operations used by the sweep line functions.
+
+%\ccGeneralizes
+
+\ccTypes
+
+  \ccNestedType{Point_2}{The point type for the endpoints of the curves. }
+  \ccNestedType{X_curve_2}{The x-montone curve type}
+  \ccNestedType{Curve_2}{The curve type on which the sweep line functions
+                         operates.}
+
+  The curve type \ccc{Curve_2} should be {\it syntactically} identical
+  to the \ccc{X_curve_2} type (i.e., it should {\em be} the same
+  type).  However, {\it semantically} it differs from the
+  \ccc{X_curve_2} in that it is not necessarily $x$-monotone. In the
+  following methods when we require an \ccc{X_curve_2} as a parameter,
+  we assume that the curve is $x$-monotone.
+
+\ccCreationVariable{tr} 
+
+\ccOperations
+
+    \ccMethod{Comparison_result compare_x(const Point& p0,
+       const Point& p1);} {compares the \ccStyle{x}-coordinates
+       of $p0$ and $p1$.  Return \ccStyle{LARGER} if $x(p0) >
+       x(p1)$, \ccStyle{SMALLER} if $x(p0) < x(p1)$, or else
+       \ccStyle{EQUAL}.  }
+    
+    \ccMethod{Comparison_result compare_xy(const Point& p0,
+       const Point& p1);} {compares lexigoraphically the two points 
+       by \ccStyle{x}, then by \ccStyle{y}. }
+
+
+    \ccMethod{bool curve_is_vertical(const X_curve& cv);} 
+   {returns \ccStyle{true} if \ccStyle{cv} is a vertical segment.}
+        
+%redundant - we have curve point status ?
+    \ccMethod{bool curve_is_in_x_range( const X_curve& cv,
+       const Point& p );}{returns \ccStyle{true} if \ccStyle{p} is
+       in the $x$ range of \ccStyle{cv}.}
+    
+    \ccMethod{Comparison_result curve_compare_at_x(
+       const X_curve& cv1, const X_curve& cv2, const Point& p );}
+    {compares the $y$-coordinate of $cv1$ and $cv2$ at the $x$-coordinate 
+     of $p$. \ccPrecond{The point $p$ is in the x-range of the two curves.}}
+   
+  \ccMethod{Comparison_result
+     curve_compare_at_x_right(const X_curve& cv1, const X_curve& cv2,
+     const Point& p);} {compares the $y$-coordinate of $cv1$ and
+     $cv2$ immediately to the right of the $x$-coordinate of $p$.
+     \ccPrecond{The point $p$ is in the x-range of the two curves, and both
+     of them must be also be defined to its right. }}
+
+    
+    \ccMethod{Curve_point_status curve_get_point_status(const X_curve& cv,
+       const Point& p);} {returns a constant describing the
+       relative position between $cv$ and $p$:
+       \begin{itemize}
+       \item[]\ccStyle{CURVE_NOT_IN_RANGE} - $p$ is not in the $x$-range of
+       $cv$, 
+%       \item[]\ccStyle{CURVE_VERTICAL} - $cv$ is a vertical segment,
+       \item[]\ccStyle{UNDER_CURVE} - $p$ is below $cv$,
+       \item[]\ccStyle{ABOVE_CURVE} - $p$ is above $cv$, and
+       \item[]\ccStyle{ON_CURVE} - $p$ is on $cv$.
+       \end{itemize}}
+
+
+       \ccMethod{bool curve_is_same(const X_curve &cv1, const X_cur
+          ve &cv2);}{returns \ccc{true} if \ccc{cv1} is the same as \ccc{cv2}.
+	  It disregards the direction of the curve, so that two identical 
+	  but opposite curves will result in a \ccc{true} value.}
+
+       \ccMethod{bool point_is_same(const Point_2 & p1, const Point_2 & p2);}
+          {returns \ccc{true} if \ccc{p1} is the same as \ccc{p2}.}
+
+
+%construction function
+%---------------------   
+
+    \ccMethod{Point curve_source(const X_curve& cv);}{returns the source of 
+       \ccc{cv}.}
+    \ccMethod{Point curve_target(const X_curve& cv);}{returns the target of 
+       \ccc{cv}.}
+
+%additions needed for the default point location strategy
+
+    \ccMethod{bool is_x_monotone(const Curve& c);}{returns true if $c$ is
+       an $x$-monotone curve.}
+
+    \ccMethod{void make_x_monotone(const Curve& cv, list<X_curve>& l);}{
+       cuts \ccc{cv} into $x$-monotone subcurves and stores them in $l$.
+       The order in which they are inserted into $l$ defines their order
+       in the hierarchy tree.}
+
+    \ccMethod{void curve_split(const X_curve& cv, X_curve& c1, X_curve& c2,
+              const Point& split_pt);}{splits $cv$ at \ccc{split_pt}
+	      and assigns the resulting two curves to \ccc{c1} and \ccc{c2}.
+	      \ccPrecond{\ccc{split_pt} is on \ccc{cv} but is not an endpoint.}}
+
+
+\ccMethod{bool nearest_intersection_to_right(const X_curve& c1,
+                                      const X_curve& c2,
+                                      const Point& pt,
+                                      Point& p1, Point& p2);}
+{finds the
+nearest intersection point to the right of \ccc{pt}. Nearest is defined as the
+one lexicographically closest to \ccc{pt} not including \ccc{pt} itself.
+If the intersection of \ccc{c1} and \ccc{c2} to the
+right of \ccc{pt} is an \ccc{X_curve} (i.e., there is an overlapping subcurve
+to the right of \ccc{pt}),
+then \ccc{p1} will hold the source point of the intersection and
+\ccc{p2} will hold its target point. Otherwise \ccc{p1} and \ccc{p2} are
+identical. In the case of an overlap we regard the intersection
+to the right as the open curve between \ccc{p1} and \ccc{p2}. This means that
+if the overlapping subcurve contains \ccc{pt} either \ccc{p1} or \ccc{p2} will
+be equal to \ccc{pt}, this is the only case in which \ccc{p1} or \ccc{p2} are
+ equal to \ccc{pt}.
+If \ccc{c1} and \ccc{c2} do not intersect to the right of \ccc{pt}
+the function returns \ccc{false}, otherwise it returns true.
+%\ccPrecond{\ccc{do_intersect_to_right(c1,c2,pt) == true}}
+}
+
+\ccMethod{bool curves_overlap(const X_curve& cv1, const X_curve& cv2);}
+{returns \ccc{true} if \ccc{cv1} and \ccc{cv2} overlap
+in a one-dimensional subcurve (i.e., not in a finite number
+of points), otherwise returns \ccc{false}.}
+
+
+
+\ccHasModels
+  \ccc{Arr_segment_exact_traits<R>}\\
+  \ccc{Arr_leda_segment_exact_traits}\\
+  \ccc{Arr_circles_real_traits<NT>}\\
+  \ccc{Arr_polyline_traits<R, Container>} \\
+  \ccc{Arr_leda_polyline_traits<Container>} \\
+  \ccc{Arr_segment_circle_traits<NT>}
+
+  Note that the concept ArrangementTraits\_2 is a refinement of the 
+  concept \ccRefName\ so each model of the former is a model of the latter.
+
+\ccSeeAlso
+
+\ccc{CGAL::Sweep_line_2}
+
+
+% \ccExample
+
+% A short example program.
+% Instead of a short program fragment, a full running program can be
+% included using the 
+% \verb|\ccIncludeExampleCode{examples/Sweep_line_2/SweepLineTraits_2_prog.C}| 
+% macro. The program example would be part of the source code distribution and
+% also part of the automatic test suite.
+
+% \begin{ccExampleCode}
+% void your_example_code() {
+% }
+% \end{ccExampleCode}
+
+%% \ccIncludeExampleCode{examples/Sweep_line_2/SweepLineTraits_2_prog.C}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
