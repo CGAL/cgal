@@ -856,22 +856,14 @@ insert(const Point& p, Locate_type lt, Face_handle loc, int li)
   // insert a point p, whose localisation is known (lt, f, i)
 {
   if(number_of_vertices() == 0) {
-    //lt = OUTSIDE_AFFINE_HULL;
     return(insert_first(p));
   }
+
   if(number_of_vertices() == 1) {
-    // if (geom_traits().compare(p,finite_vertex()->point()) ) {
-//       lt = VERTEX;
-//       return finite_vertex();
-//     }
-//     lt = OUTSIDE_AFFINE_HULL;
-//     return(insert_second(p));
     if (lt == VERTEX) return finite_vertex();
     else return(insert_second(p));
   }
 
-  // int li;
-//   Face_handle loc = locate(p, lt, li, f);
   switch(lt) {
   case FACE:
     return insert_in_face(p,loc);
