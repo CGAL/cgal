@@ -42,7 +42,7 @@
 # CGAL specific:
 
 # ---------------------------------------------
-CGAL_VERSION='0.9'
+CGAL_VERSION='1.0'
 # ---------------------------------------------
 CGAL_INSTALL_VERSION='$Revision$'
 # ---------------------------------------------
@@ -686,7 +686,7 @@ set_compiler_flags()
 	    ;;
 	*IRIX*g++-egcs*|*IRIX*g++-2.8*)
 	    #### settings for egcs/gcc2.8 on irix
-	    ADDITIONAL_CXXFLAGS=
+	    ADDITIONAL_CXXFLAGS="-ftemplate-depth-25"
 	    CGAL_LIB_CXXFLAGS=
 	    CGAL_LIB_LDFLAGS=
 	    CGAL_LIB_CREATE="ar cr"
@@ -720,6 +720,18 @@ set_compiler_flags()
 	    WINDOW_DIR="/usr/openwin/lib"
 	    RUNTIME_LINKER_FLAG="-R "
 	    ;;
+	*SunOS*5.*g++-egcs*|*SunOS*5.*g++-2.8*)
+	    #### settings for egcs/gcc2.8 on solaris
+	    ADDITIONAL_CXXFLAGS="-ftemplate-depth-25"
+	    CGAL_LIB_CXXFLAGS=
+	    CGAL_LIB_LDFLAGS=
+	    CGAL_LIB_CREATE="ar cr"
+	    CGAL_SHARED_LIB_CXXFLAGS="-fpic"
+	    CGAL_SHARED_LIB_LDFLAGS=""
+	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
+	    WINDOW_DIR="/usr/openwin/lib"
+	    RUNTIME_LINKER_FLAG="-R "
+	    ;;
 	*SunOS*5.*g++*)
 	    #### settings for GNU compiler on solaris
 	    ADDITIONAL_CXXFLAGS=
@@ -731,6 +743,18 @@ set_compiler_flags()
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
 	    WINDOW_DIR="/usr/openwin/lib"
 	    RUNTIME_LINKER_FLAG="-R "
+	    ;;
+	*Linux*g++-egcs*|*Linux*g++-2.8*)
+	    #### settings for egcs/gcc2.8 on linux
+	    ADDITIONAL_CXXFLAGS="-ftemplate-depth-25"
+	    CGAL_LIB_CXXFLAGS=
+	    CGAL_LIB_LDFLAGS=
+	    CGAL_LIB_CREATE="ar cr"
+	    CGAL_SHARED_LIB_CXXFLAGS="-fpic"
+	    CGAL_SHARED_LIB_LDFLAGS=""
+	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -Xlinker -shared"
+	    WINDOW_DIR="/usr/lib/X11"
+	    RUNTIME_LINKER_FLAG='-Wl,-R'
 	    ;;
 	*Linux*g++*)
 	    #### settings for GNU compiler on linux
@@ -3626,12 +3650,9 @@ generatemakefiles()
 
   prepare_lib_makefiles
 
-  for DIRECTORY in `${_ls} ${CGAL_EXAMPLE_DIR}`; do
-    if [ -d ${DIRECTORY} ]; then
-      FILE=${CGAL_EXAMPLE_DIR}/${DIRECTORY}/makefile
-      replace_line ${FILE} CGAL_MAKEFILE \
-        "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
-    fi
+  for FILE in `${_ls} ${CGAL_EXAMPLE_DIR}/*/makefile`; do
+    replace_line ${FILE} CGAL_MAKEFILE \
+    "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
   done
 
   if [ -n "${CGAL_TESTSUITE}" ]; then
