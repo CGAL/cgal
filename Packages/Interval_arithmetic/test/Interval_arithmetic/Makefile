@@ -15,10 +15,9 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = -I../../include \
            $(TESTSUITE_CXXFLAGS) \
            $(CGAL_CXXFLAGS) \
-	   -W -g
-	   # -DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS \
-	   # -W -O2 -mcpu=ultrasparc -mtune=ultrasparc
-	   # -Winline
+	   -DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS \
+	   -W -O2 -mcpu=ultrasparc -mtune=ultrasparc -Winline
+	   # -W -g
 	   # -mcpu=pentiumpro -march=pentiumpro
 	   # -mcpu=ultrasparc -mtune=ultrasparc
 	   # -fomit-frame-pointer

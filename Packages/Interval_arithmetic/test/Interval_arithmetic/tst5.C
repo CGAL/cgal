@@ -93,7 +93,6 @@ int test()
   NT px, py, la, lb, lc;
   Filtered_exact< Quotient<int>, leda_rational> ii (3,2);
   Quotient<leda_integer> jj (4,5);
-  Interval_nt_advanced pipo;
   Interval_nt nt = convert_to<Interval_nt_advanced>(jj);
   cout << nt << endl;
   px=1; py=2; la=3; lb=4; lc=5;

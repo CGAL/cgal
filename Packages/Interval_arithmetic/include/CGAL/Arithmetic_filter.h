@@ -27,7 +27,9 @@
 #ifndef CGAL_ARITHMETIC_FILTER_H
 #define CGAL_ARITHMETIC_FILTER_H
 
-#include <iostream>
+#include <CGAL/basic.h>
+
+// #include <iostream>
 #include <CGAL/Interval_arithmetic.h>
 #if 0 // The following are already included from Interval_arithmetic.h.
 #include <CGAL/enum.h>  // Because we overload {sign,compare,abs,min,max}
@@ -122,9 +124,8 @@ struct Filtered_exact
 
 
 // We forward the following functions to the CT value:
-// sqrt, square, is_valid, is_finite, to_double, sign,
-// compare, abs, min, max, io_tag,
-// number_type_tag, operator>>, operator<<.
+// sqrt, square, is_valid, is_finite, to_double, sign, compare, abs, min, max,
+// io_tag, number_type_tag, operator>>, operator<<.
 
 #ifndef CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
 template <class CT, class ET>
@@ -156,7 +157,7 @@ template <class CT, class ET>
 inline
 double
 to_double (const Filtered_exact<CT,ET>& fil)
-{ return to_double(fil.value); }
+{ return CGAL::to_double(fil.value); }
 
 template <class CT, class ET>
 inline

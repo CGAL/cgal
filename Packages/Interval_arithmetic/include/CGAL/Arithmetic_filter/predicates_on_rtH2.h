@@ -14,7 +14,7 @@
 // source        : 
 // file          : include/CGAL/Arithmetic_filter/predicates_on_rtH2.h
 // package       : Interval_arithmetic
-// revision      : 2.0.2
+// revision      : 2.0.4
 // revision_date :
 // author(s)     : Sylvain.Pion@sophia.inria.fr
 //

@@ -1,5 +1,11 @@
 Changes done to the Interval Arithmetic package.
 
+Version 3.5 on 1 April 1999
+- Header include files order fixes.
+- Use CGAL::to_double.
+- Introduced .inf() and .sup().
+- Removed friend functions for SunPro 5.0.
+
 Version 3.4 on 26 March 1999
 - Fix for IRIX.
 - More std compliance.
