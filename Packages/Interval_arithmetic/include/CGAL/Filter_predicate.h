@@ -115,7 +115,7 @@ public:
 
   template <class A1, class A2, class A3>
   result_type
-  operator()(const A1 &a1, const A2 &a2, const A3 &a3) const;
+  operator()(const A1 &a1, const A2 &a2, const A3 &a3) const
 #ifndef _MSC_VER
   ;
 #else
@@ -135,7 +135,7 @@ public:
 
   template <class A1, class A2, class A3, class A4>
   result_type
-  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4) const;
+  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4) const
 #ifndef _MSC_VER
   ;
 #else
