@@ -2,9 +2,9 @@
 //  $Revision$
 //  $Date$
 
-// This file is included from tst[12].C, that do just a typedef:
-// typedef CGAL_Interval_nt                IA;   // For tst1.C
-// typedef CGAL_Interval_nt_advanced       IA;   // For tst2.C
+// This file is included from tst[12].C, that do just a #define:
+// #define TESTED_TYPE CGAL_Interval_nt_advanced // For tst1.C
+// #define TESTED_TYPE CGAL_Interval_nt          // For tst2.C
 #define CGAL_IA_NO_WARNINGS
 #include <CGAL/Interval_arithmetic.h>
 
