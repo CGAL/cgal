@@ -1,5 +1,9 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.92 on 28 May 2001
+- Fix bug spotted by BCC.
+- Don't submit tst_static_adaptatif.
+
 Version 4.91 on 23 May 2001
 - Add a simple test for Quotient<MP_Float>.
 
