@@ -1,3 +1,7 @@
+20 June 2004 Sylvain Pion
+- Move are_positive_oriented() and are_negative_oriented() after
+  the definition of orientation() which they call with qualification.
+
 5 June 2004 Sylvain Pion
 - Remove warnings in the test-suite.
 

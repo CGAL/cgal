@@ -41,17 +41,6 @@ angle(const typename CGAL_WRAP(K)::Point_3 &p,
   return k.angle_3_object()(p, q, r);
 }
 
-template <typename K>
-inline
-bool
-are_negative_oriented(const typename CGAL_WRAP(K)::Point_3 &p,
-                      const typename CGAL_WRAP(K)::Point_3 &q,
-                      const typename CGAL_WRAP(K)::Point_3 &r,
-                      const typename CGAL_WRAP(K)::Point_3 &s, const K &k)
-{
-  return CGALi::orientation(p, q, r, s, k) == NEGATIVE;
-}
-
 template < class K >
 inline
 bool
@@ -60,17 +49,6 @@ are_ordered_along_line(const typename CGAL_WRAP(K)::Point_3 &p,
                        const typename CGAL_WRAP(K)::Point_3 &r, const K& k)
 {
   return k.are_ordered_along_line_3_object()(p, q, r);
-}
-
-template <typename K>
-inline
-bool
-are_positive_oriented(const typename CGAL_WRAP(K)::Point_3 &p,
-                      const typename CGAL_WRAP(K)::Point_3 &q,
-                      const typename CGAL_WRAP(K)::Point_3 &r,
-                      const typename CGAL_WRAP(K)::Point_3 &s, const K &k)
-{
-  return CGALi::orientation(p, q, r, s, k) == POSITIVE;
 }
 
 template < class K >
@@ -513,6 +491,31 @@ volume(const typename CGAL_WRAP(K)::Point_3 &p,
        const typename CGAL_WRAP(K)::Point_3 &s, const K &k)
 {
   return k.compute_volume_3_object()(p, q, r, s);
+}
+
+
+// The following functions only call some of the previous ones.
+
+template <typename K>
+inline
+bool
+are_negative_oriented(const typename CGAL_WRAP(K)::Point_3 &p,
+                      const typename CGAL_WRAP(K)::Point_3 &q,
+                      const typename CGAL_WRAP(K)::Point_3 &r,
+                      const typename CGAL_WRAP(K)::Point_3 &s, const K &k)
+{
+  return CGALi::orientation(p, q, r, s, k) == NEGATIVE;
+}
+
+template <typename K>
+inline
+bool
+are_positive_oriented(const typename CGAL_WRAP(K)::Point_3 &p,
+                      const typename CGAL_WRAP(K)::Point_3 &q,
+                      const typename CGAL_WRAP(K)::Point_3 &r,
+                      const typename CGAL_WRAP(K)::Point_3 &s, const K &k)
+{
+  return CGALi::orientation(p, q, r, s, k) == POSITIVE;
 }
 
 } // namespace CGALi
