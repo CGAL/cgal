@@ -16,14 +16,14 @@ struct HDS_traits {
   typedef bool Mark;
 };
 
-typedef  HalfedgeDS_using_in_place_list<HDS_traits,HDS_items> HDS;
-typedef  CGAL::PM_decorator< HDS > PM_dec;
-typedef  PM_dec::Point           Point;
-typedef  PM_dec::Vertex_handle   v_handle;
-typedef  PM_dec::Halfedge_handle e_handle;
-typedef  PM_dec::Face_handle     f_handle;
-typedef  PM_dec::Vertex_base     Vertex_base;
-typedef  PM_dec::Point_const_iterator Point_const_iterator;
+typedef CGAL::HalfedgeDS_using_in_place_list<HDS_traits,HDS_items> HDS;
+typedef CGAL::PM_decorator< HDS > PM_dec;
+typedef PM_dec::Point           Point;
+typedef PM_dec::Vertex_handle   v_handle;
+typedef PM_dec::Halfedge_handle e_handle;
+typedef PM_dec::Face_handle     f_handle;
+typedef PM_dec::Vertex_base     Vertex_base;
+typedef PM_dec::Point_const_iterator Point_const_iterator;
 
 int main()
 {

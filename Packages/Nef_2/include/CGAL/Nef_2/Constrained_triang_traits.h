@@ -1,4 +1,4 @@
-// ============================================================================
+// ======================================================================
 //
 // Copyright (c) 1997-2000 The CGAL Consortium
 //
@@ -6,13 +6,14 @@
 // of the Computational Geometry Algorithms Library (CGAL). It is not
 // intended for general use.
 //
-// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision$
-// release_date  : $CGAL_Date$
+// release       : $CGAL_Revision: CGAL-2.4-I-63 $
+// release_date  : $CGAL_Date: 2002/03/15 $
 //
 // file          : include/CGAL/Nef_2/Constrained_triang_traits.h
-// package       : Nef_2 
+// package       : Nef_2 (0.9.31)
+// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
 // chapter       : Nef Polyhedra
 //
 // source        : nef_2d/Constrained_triang.lw
@@ -20,11 +21,10 @@
 // revision_date : $Date$
 //
 // author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
-// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
 // coordinator   : Michael Seel <seel@mpi-sb.mpg.de>
 //
 // implementation: Constrained triangulation of a plane map
-// ============================================================================
+// ======================================================================
 #ifndef CGAL_PM_CONSTR_TRIANG_TRAITS_H
 #define CGAL_PM_CONSTR_TRIANG_TRAITS_H
 
@@ -40,12 +40,12 @@
 #include <CGAL/Nef_2/debug.h>
 
 CGAL_BEGIN_NAMESPACE
-#ifndef LEDA_ERROR_H
-static void error_handler(int n, const char* s)
+//#ifndef LEDA_ERROR_H
+inline void error_handler(int n, const char* s)
 { std::cerr << s << std::endl;
   exit(n);
 }
-#endif
+//#endif
 
 struct Do_nothing {
 Do_nothing() {}
@@ -109,11 +109,11 @@ public:
     int s = 0;
     if ( p == point(source(e1)) )      s =   orientation(e2,p);
     else if ( p == point(source(e2)) ) s = - orientation(e1,p);
-    else error_handler(1,"compare error in sweep.");
+    else CGAL::error_handler(1,"compare error in sweep.");
     if ( s || source(e1) == target(e1) || source(e2) == target(e2) ) 
       return ( s < 0 );
     s = orientation(e2,point(target(e1)));
-    if (s==0) error_handler(1,"parallel edges not allowed.");
+    if (s==0) CGAL::error_handler(1,"parallel edges not allowed.");
     return ( s < 0 );
   }
 

@@ -38,7 +38,7 @@
 #define _DEBUG 3
 #include <CGAL/Nef_2/debug.h>
 
-#if defined(_MSC_VER) || defined(__BORLANDC__)
+#if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__SUNPRO_CC)
 #include <CGAL/Nef_2/vector_MSC.h>
 #define CGAL_SIMPLE_NEF_INTERFACE
 #define SNIHACK ,char,char
@@ -773,7 +773,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
 
   int content() const
   { CGAL_assertion( degree()>=0 );
-    iterator its=ptr()->coeff.begin(),ite=ptr()->coeff.end();
+    const_iterator its=ptr()->coeff.begin(),ite=ptr()->coeff.end();
     int res = *its++;
     for(; its!=ite; ++its) res = 
       (*its==0 ? res : ring_or_field<int>::gcd(res, *its));
@@ -1094,7 +1094,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
 
   double content() const
   { CGAL_assertion( degree()>=0 );
-    iterator its=ptr()->coeff.begin(),ite=ptr()->coeff.end();
+    const_iterator its=ptr()->coeff.begin(),ite=ptr()->coeff.end();
     double res = *its++;
     for(; its!=ite; ++its) res = 
       (*its==0 ? res : ring_or_field<double>::gcd(res, *its));

@@ -3,6 +3,7 @@
 #include "xpms/nef.xpm"
 #include <LEDA/pixmaps/button32/eye.xpm>
 #include <LEDA/pixmaps/button32/draw.xpm>
+#include <CGAL/LEDA_basic.h>
 #include <CGAL/leda_integer.h>
 #include <CGAL/Extended_homogeneous.h>
 #include <CGAL/Filtered_extended_homogeneous.h>
@@ -15,7 +16,7 @@ struct ring_or_field<leda_integer> {
   typedef ring_with_gcd kind;
   typedef leda_integer RT;
   static RT gcd(const RT& r1, const RT& r2) 
-  { return ::gcd(r1,r2); }  
+  { return CGAL_LEDA_SCOPE::gcd(r1,r2); }  
 };
 
 #define FILTERED_KERNEL
@@ -47,13 +48,13 @@ typedef  Explorer::Face_const_handle Face_const_handle;
 #include <LEDA/file.h>
 #include <LEDA/stream.h>
 
-static leda_panel      main_panel;
-static leda_panel      op_panel;
-static panel_item      nef_menu_item;
-static panel_item      op_item;
-static leda_string     nef1;
-static leda_string     nef2;
-static menu            create_menu;
+static leda_panel                       main_panel;
+static leda_panel                       op_panel;
+static CGAL_LEDA_SCOPE::panel_item      nef_menu_item;
+static CGAL_LEDA_SCOPE::panel_item      op_item;
+static leda_string                      nef1;
+static leda_string                      nef2;
+static CGAL_LEDA_SCOPE::menu            create_menu;
 static int num;
 #ifndef FILTERED_KERNEL
 static leda_string  dname = "./homogeneous_data";
@@ -115,7 +116,7 @@ void create(int i)
   std::list<Point> Lp;
   leda_point pd;
   leda_list<leda_point> Lpd;
-  string_ostream sos; CGAL::set_pretty_mode(sos);
+  CGAL_LEDA_SCOPE::string_ostream sos; CGAL::set_pretty_mode(sos);
   pW->clear();
 
   switch (i) {
@@ -197,7 +198,7 @@ static void write_file(leda_string fname)
 
 static void file_handler(int what)
 { 
-  file_panel FP(fname,dname);
+  CGAL_LEDA_SCOPE::file_panel FP(fname,dname);
   switch (what) {
   case FILE_LOAD: FP.set_load_handler(read_file);
                   break;
@@ -392,7 +393,7 @@ int main(int argc, char* argv[])
     double x, y;
     int val;
     switch( W.read_event(val, x, y) ) {
-    case button_press_event: 
+    case CGAL_LEDA_SCOPE::button_press_event: 
       p_down = Point(x,y);
       if (val == MOUSE_BUTTON(1)) { 
         std::cerr << "locating " << p_down << std::endl;
@@ -405,8 +406,7 @@ int main(int argc, char* argv[])
         std::cerr << "shooting down from " << p_down << std::endl;
         dm = W.set_mode(leda_xor_mode); 
         W<<CGAL::GREEN<<p_down; W.set_mode(dm);
-        //h = N_display.ray_shoot( p_down, Direction(0,-1),
-        //                         Nef_polyhedron::NAIVE);
+//      h = N_display.ray_shoot(p_down,Direction(0,-1),Nef_polyhedron::NAIVE);
         h = N_display.ray_shoot(p_down,Direction(0,-1));
         draw(h);
       }
@@ -415,7 +415,7 @@ int main(int argc, char* argv[])
         win_redraw_handler(&W);
       }
       break;
-    case button_release_event: 
+    case CGAL_LEDA_SCOPE::button_release_event: 
       if (val == MOUSE_BUTTON(1))  
 #ifndef WIN32CONFIG 
       { dm = W.set_mode(leda_xor_mode);
@@ -431,15 +431,15 @@ int main(int argc, char* argv[])
       { win_redraw_handler(&W); }
 #endif
       break;
-    case key_press_event:
-      if (val ==  KEY_UP) { // ZOOM IN 
+    case CGAL_LEDA_SCOPE::key_press_event:
+      if (val ==  CGAL_LEDA_SCOPE::KEY_UP) { // ZOOM IN 
         CGAL::frame_default*=2;
         Nef_polyhedron::Extended_kernel::RT::set_R(CGAL::frame_default);
         int r = CGAL::frame_default+10;
         W.init(-r,r,-r);
         win_redraw_handler(&W);
       }
-      if (val ==  KEY_DOWN) { // ZOOM OUT       
+      if (val ==  CGAL_LEDA_SCOPE::KEY_DOWN) { // ZOOM OUT       
         CGAL::frame_default/=2;
         Nef_polyhedron::Extended_kernel::RT::set_R(CGAL::frame_default);
         int r = CGAL::frame_default+10;

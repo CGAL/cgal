@@ -1,4 +1,4 @@
-// ============================================================================
+// ======================================================================
 //
 // Copyright (c) 1997-2000 The CGAL Consortium
 //
@@ -6,13 +6,14 @@
 // of the Computational Geometry Algorithms Library (CGAL). It is not
 // intended for general use.
 //
-// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision$
-// release_date  : $CGAL_Date$
+// release       : $CGAL_Revision: CGAL-2.4-I-63 $
+// release_date  : $CGAL_Date: 2002/03/15 $
 //
 // file          : include/CGAL/Nef_2/gen_point_location.h
-// package       : Nef_2 
+// package       : Nef_2 (0.9.31)
+// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
 // chapter       : Nef Polyhedra
 //
 // source        : nef_2d/Svens_point_location.lw
@@ -20,16 +21,16 @@
 // revision_date : $Date$
 //
 // author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
-// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
 // coordinator   : Michael Seel <seel@mpi-sb.mpg.de>
 //
 // implementation: Polynomials in one variable
-// ============================================================================
+// ======================================================================
 
 
 #ifndef GEN_POINT_LOCATION_H
 #define GEN_POINT_LOCATION_H
 
+#include <CGAL/LEDA_basic.h>
 #include <LEDA/pp_dictionary.h>
 #include <strstream>
 #include <string>
@@ -85,7 +86,8 @@ public:
     operator const Node&() const
     {
   #if !defined(CHECKING_OFF)
-      if (type != NODE) error_handler(1, "Location: not convertible to node");
+      if (type != NODE) 
+        CGAL_LEDA_SCOPE::error_handler(1, "Location: not convertible to node");
   #endif
       return geninfo<Node>::const_access(value);
     }
@@ -95,7 +97,8 @@ public:
     operator const Edge&() const
     { 
   #if !defined(CHECKING_OFF)
-      if (type != EDGE) error_handler(1, "Location: not convertible to edge");
+      if (type != EDGE) 
+        CGAL_LEDA_SCOPE::error_handler(1, "Location: not convertible to edge");
   #endif
       return geninfo<Edge>::const_access(value);
     }
@@ -320,7 +323,8 @@ public:
   enum Direction { downwards, upwards};
   /*{\Menum used to specify the direction for the point location.}*/
 
-  typedef pp_dictionary<Curve, Location, PredCompareCurves>   Sweepline;
+  typedef CGAL_LEDA_SCOPE::pp_dictionary<Curve, Location, PredCompareCurves>   
+                                                              Sweepline;
   typedef GenericXStructure<XCoord, PredLessThanX, Sweepline> XStructure;
   typedef typename Sweepline::item                            SL_item;
   typedef typename XStructure::Sweepline_iterator Sweepline_iterator;
