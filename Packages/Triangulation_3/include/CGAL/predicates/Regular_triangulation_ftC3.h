@@ -25,7 +25,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-// return the sign of the 5x5 determinant [P,Q,R,S,T]
+// return minus the sign of the 5x5 determinant [P,Q,R,S,T]
 // where column [P] = transpose[px,py,pz,p^2 -wp,1]
 template <class FT>
 Oriented_side

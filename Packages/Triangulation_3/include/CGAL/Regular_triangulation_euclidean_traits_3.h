@@ -35,7 +35,7 @@
 
 CGAL_BEGIN_NAMESPACE 
 
-// return the sign of the determinant of the lifted points
+// returns minus the sign of the determinant of the lifted points
 // associated with p,q,r,s,t  [P,Q,R,S,T]
 // where the P colum is [ p, p^2-wp,1]
 template < typename K >
