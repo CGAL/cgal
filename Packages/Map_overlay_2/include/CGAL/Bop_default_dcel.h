@@ -140,7 +140,8 @@ public:
 
   Vertex_bop() : vertex_overlay (){ bop_ = true; }
 
-  Vertex_bop(const_pointer v) : vertex_overlay(*v) { set_ignore_bop(v->bop()); }
+  Vertex_bop(const_pointer v) : vertex_overlay(*v)
+  { set_ignore_bop(v->bop()); }
 
   Vertex_bop(const_ref v) : vertex_overlay(v) { set_ignore_bop(v.bop()); } 
   
