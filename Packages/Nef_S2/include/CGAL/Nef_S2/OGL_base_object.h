@@ -2,7 +2,6 @@
 #define CGAL_OGL_BASE_OBJECT_H
 
 #include <CGAL/basic.h>
-#include <GL/glut.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -11,7 +10,7 @@ namespace OGL {
   class OGL_base_object {    
   public:
 
-    typedef CGAL::Simple_cartesian<double> DKernel;  
+    typedef CGAL::Simple_cartesian<double> Double_kernel;  
     typedef DKernel::Point_3               Double_point;
     typedef DKernel::Vector_3              Double_vector;
     typedef DKernel::Segment_3             Double_segment;
