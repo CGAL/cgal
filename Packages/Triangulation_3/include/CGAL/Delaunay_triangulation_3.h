@@ -30,17 +30,15 @@
 #include <set>
 #include <list>
 #include <algorithm>
+
 #include <CGAL/Triangulation_utils_3.h>
 #include <CGAL/Triangulation_3.h>
 
 #include <CGAL/Triangulation_short_names_3.h>
 #include <CGAL/Delaunay_remove_tds_3.h>
 #include <CGAL/Triangulation_face_base_2.h>
+
 CGAL_BEGIN_NAMESPACE
-
-
-
-
 
 template < class Gt, class Tds>
 class Delaunay_triangulation_3 : public Triangulation_3<Gt,Tds>
@@ -60,7 +58,8 @@ public:
 
   // Function objects
   typedef typename Gt::Side_of_oriented_sphere_3 Side_of_oriented_sphere;
-  typedef typename Gt::Coplanar_side_of_oriented_circle_3 Coplanar_side_of_oriented_circle;
+  typedef typename Gt::Coplanar_side_of_oriented_circle_3
+                                             Coplanar_side_of_oriented_circle;
   typedef typename Gt::Cross_product Cross_product;
 
   typedef typename Triangulation_3<Gt,Tds>::Cell_handle Cell_handle;
@@ -111,15 +110,15 @@ public:
       init_function_objects();
       CGAL_triangulation_postcondition( is_valid() );  
     }
-  
 
   void init_function_objects() 
     {
-      side_of_oriented_sphere = geom_traits().side_of_oriented_sphere_3_object();
-      coplanar_side_of_oriented_circle = geom_traits().coplanar_side_of_oriented_circle_3_object();
+      side_of_oriented_sphere =
+	  geom_traits().side_of_oriented_sphere_3_object();
+      coplanar_side_of_oriented_circle =
+	  geom_traits().coplanar_side_of_oriented_circle_3_object();
       cross_product = geom_traits().cross_product_object();
     }
-
 
   template < class InputIterator >
   int
@@ -160,7 +159,7 @@ public:
   bool fill_hole_3D_ear(std::list<Facet> & boundhole);
   void make_hole_3D_ear( Vertex_handle v, 
 	                 std::list<Facet> & boundhole,
-			 //	                 std::set<Vertex_handle> & boundvert,
+			 // std::set<Vertex_handle> & boundvert,
 	                 std::list<Cell_handle> & hole);
   void undo_make_hole_3D_ear(std::list<Facet> & boundhole,
 		             std::list<Cell_handle> & hole);
@@ -338,7 +337,6 @@ insert(const Point & p, Cell_handle start)
     // dimension <= 1
     return Triangulation_3<Gt,Tds>::insert(p);
   }
-  // return Triangulation_3<Gt,Tds>::insert(p);// to avoid warning with egcs // to avoid warning with bcc
 }// insert(p)
 
 template < class Gt, class Tds >
@@ -471,10 +469,6 @@ make_hole_3D( Vertex_handle v,
 
 
 
-
-
-
-
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_3<Gt,Tds>::
@@ -498,23 +492,20 @@ undo_make_hole_3D(std::list<Facet> & outside,
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_3<Gt,Tds>::
-delete_cells(std::list<Cell_handle> & hole, int dummy_for_windows) {
-  for(std::list<Cell_handle>::iterator cit = hole.begin(); cit != hole.end(); cit++) {
+delete_cells(std::list<Cell_handle> & hole, int /*dummy_for_windows*/) {
+  for(std::list<Cell_handle>::iterator cit = hole.begin(); cit != hole.end();
+	  cit++)
     _tds.delete_cell( &*(*cit) );
-  }
 }
-
 
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_3<Gt,Tds>::
-delete_cells(std::list<Facet> & hole) {
-    for(std::list<Facet>::iterator cit = hole.begin(); cit != hole.end(); cit++) {
-     _tds.delete_cell( &*((*cit).first) );
-   }
+delete_cells(std::list<Facet> & hole)
+{
+  for(std::list<Facet>::iterator cit = hole.begin(); cit != hole.end(); cit++)
+    _tds.delete_cell( &*((*cit).first) );
 }
-
-
 
 
 //debug
@@ -1046,7 +1037,7 @@ find_conflicts_3(Conflict_set & conflicts, const Point & p,
 {
 #ifdef SYL
   conflicts.push_back( (Conflict_set::value_type) &(*c) );
-  c->set_flags(1);
+  c->set_in_conflict_flag(1);
 #else
   (void) conflicts.insert( (Conflict_set::value_type) &(*c) );
 #endif
@@ -1054,7 +1045,7 @@ find_conflicts_3(Conflict_set & conflicts, const Point & p,
   for ( int j=0; j<4; j++ ) {
     Cell_handle test = c->neighbor(j);
 #ifdef SYL
-    if (test->get_flags() == 1)
+    if (test->get_in_conflict_flag() == 1)
 #else
     if (conflicts.find( (Conflict_set::value_type) &(*test) ) != conflicts.end())
 #endif
@@ -1154,7 +1145,7 @@ find_conflicts_2(Conflict_set & conflicts, const Point & p,
 
 #ifdef SYL
   conflicts.push_back( (Conflict_set::value_type) &(*c) );
-  c->set_flags(1);
+  c->set_in_conflict_flag(1);
 #else
   (void) conflicts.insert( (Conflict_set::value_type) &(*c) );
 #endif
@@ -1162,7 +1153,7 @@ find_conflicts_2(Conflict_set & conflicts, const Point & p,
   for ( int j=0; j<3; j++ ) {
     Cell_handle test = c->neighbor(j);
 #ifdef SYL
-    if (test->get_flags() == 1)
+    if (test->get_in_conflict_flag() == 1)
 #else
     if (conflicts.find( (Conflict_set::value_type) &(*test) ) != conflicts.end())
 #endif
@@ -1176,7 +1167,6 @@ find_conflicts_2(Conflict_set & conflicts, const Point & p,
   }
 }
 
-
 template < class Gt, class Tds >
 Oriented_side 
 Delaunay_triangulation_3<Gt,Tds>::
@@ -1185,12 +1175,9 @@ side_of_oriented_circle(const Point & p,
 			  const Point & r,
 			  const Point & test) const
 {
-
   Vector v = cross_product(q-p, r-p);
-
   return coplanar_side_of_oriented_circle(p, q, r, test, v);
 }
-
 
 
 template < class Gt, class Tds >
@@ -1299,7 +1286,6 @@ side_of_sphere(Vertex_handle v0,
 			 v2->point(),
 			 v3->point(), p) );
 }// end side of sphere
-
 
 
 template < class Gt, class Tds >
@@ -1739,8 +1725,6 @@ undo_make_hole_3D_ear(std::list<Facet> & boundhole,
 
 
 
-
-
 template < class Gt, class Tds >
 bool
 Delaunay_triangulation_3<Gt,Tds>::
@@ -1842,8 +1826,7 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 	// we looked at all vertices
 	// if there are cospheric points we have to test more
 	if(! cospheric_vertices.empty() ) {
-	  std::set<Vertex_3_2*>::iterator co_it,
-	                                  not_found = cospheric_vertices.end();
+	  std::set<Vertex_3_2*>::iterator not_found = cospheric_vertices.end();
 	  if(inf_0 || inf_3) {
 	    // the cospheric points are on the boundary of the convex hull 
 	    //if(! on_unbounded_side) {
@@ -1978,8 +1961,6 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
   next_ear: ;
   } // for(;;)
 }
-
-
 
 CGAL_END_NAMESPACE
 
