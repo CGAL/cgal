@@ -153,6 +153,7 @@ public:
     CGAL_Filter_cons(Construct_perpendicular_line_2,
 	construct_perpendicular_line_2_object)
     CGAL_Filter_cons(Construct_midpoint_2, construct_midpoint_2_object)
+    CGAL_Filter_cons(Construct_center_2, construct_center_2_object)
     CGAL_Filter_cons(Construct_circumcenter_2, construct_circumcenter_2_object)
     CGAL_Filter_cons(Construct_bisector_2, construct_bisector_2_object)
     CGAL_Filter_cons(Construct_opposite_segment_2,
@@ -246,6 +247,7 @@ public:
     CGAL_Filter_cons(Construct_perpendicular_line_3,
 	construct_perpendicular_line_3_object)
     CGAL_Filter_cons(Construct_midpoint_3, construct_midpoint_3_object)
+    CGAL_Filter_cons(Construct_center_3, construct_center_3_object)
     CGAL_Filter_cons(Construct_circumcenter_3, construct_circumcenter_3_object)
     CGAL_Filter_cons(Construct_cross_product_vector_3,
 	    construct_cross_product_vector_3_object)
@@ -286,6 +288,8 @@ public:
     CGAL_Filter_pred(Collinear_3, collinear_3_object)
     CGAL_Filter_pred(Coplanar_3, coplanar_3_object)
     CGAL_Filter_pred(Coplanar_orientation_3, coplanar_orientation_3_object)
+    CGAL_Filter_pred(Coplanar_side_of_oriented_circle_3,
+	    coplanar_side_of_oriented_circle_3_object)
     CGAL_Filter_pred(Orientation_3, orientation_3_object)
     CGAL_Filter_pred(Is_degenerate_3, is_degenerate_3_object)
     CGAL_Filter_pred(Has_on_3, has_on_3_object)

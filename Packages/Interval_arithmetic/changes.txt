@@ -1,5 +1,9 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.85 on ?? April 2001
+- Add new predicate/constructions to Filtered_kernel :
+  Construct_center_2, Construct_center_3, Coplanar_side_of_oriented_circle_3
+
 Version 4.84 on 17 April 2001
 - New filtered predicate : coplanar_side_of_oriented_circleC3.
 
