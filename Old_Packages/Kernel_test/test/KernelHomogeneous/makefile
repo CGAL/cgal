@@ -49,7 +49,6 @@ all:            \
                 test_io$(EXE_EXT) \
                 test_kernelH2$(EXE_EXT) \
                 test_kernelH3$(EXE_EXT) \
-                test_kernelHd$(EXE_EXT) \
                 test_new_kernelH2$(EXE_EXT) \
                 test_new_kernelH3$(EXE_EXT) \
                 test_new_partsH_$(EXE_EXT) \
