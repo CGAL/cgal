@@ -46,7 +46,8 @@ Versions
 2.2 ( 7 May 1999)
   remove warnings in test suite
 
-
+2.3 (10 May 1999)
+  small bug in test suite
 
 CONTENTS:
 
