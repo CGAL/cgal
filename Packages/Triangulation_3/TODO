@@ -28,41 +28,7 @@
 - Tds::insert conflict pourrait etre utilisee pour T3D insert_outside_CH
   (link() hat()...) -> virer les new cell (create_cell)
 - idem regular
-- Facet_circulator a l'air bugue (et lent) d'apres F&D quand on specifie une
-  facet de depart.  Est-ce qu'il y A besoin de stocker un TDS * ?  Stocker
+- Facet_circulator : Est-ce qu'il y a besoin de stocker un TDS * ?  Stocker
   deux Vertex * plutot que deux ints, ca permet de gagner une Cell *, et
-  d'etre plus rapide, non ?  Voila le code que Frank utilise a la place :
-
-  typedef CGAL::triple< void*, int, int > void_Edge;
-  typedef std::pair< void_Edge, int > Edge_IFacet;
-
-//---------------------------------------------------------------------
-
-inline Edge_IFacet inc_facet_circ(const Edge_IFacet& e)
-{
-  Cell_handle c = (Cell*) e.first.first;
-  int i = e.second;
-  int i1 = e.first.second, i2 = e.first.third;
-  int i3 = (6 - e.second - i1 - i2);
-
-  Cell_handle n = c->neighbor(i);
-  int j1 = n->index(c->vertex(i1)), j2 = n->index(c->vertex(i2));
-  int j =  n->index(c->vertex(i3));
-  return Edge_IFacet(void_Edge((void*) &*n, j1, j2), j);
-}
-
-//---------------------------------------------------------------------
-
-inline Edge_IFacet dec_facet_circ(const Edge_IFacet& e)
-{
-  Cell_handle c = (Cell*) e.first.first;
-  int i = e.second;
-  int i1 = e.first.second, i2 = e.first.third;
-  int i3 = (6 - e.second - i1 - i2);
-
-  Cell_handle n = c->neighbor(i3);
-  int j1 = n->index(c->vertex(i1)), j2 = n->index(c->vertex(i2));
-  int j =  n->index(c->vertex(i));
-  return Edge_IFacet(void_Edge((void*) &*n, j1, j2), j);
-}
+  d'etre plus rapide, non ? 
 
