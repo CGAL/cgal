@@ -10,6 +10,7 @@ class CGAL_Triangulation_face_base_2 {
 
 public:
   typedef typename Gt::Triangle Triangle;
+  typedef CGAL_Triangulation_face_base_2<Gt> Face_base;
 
   inline
   CGAL_Triangulation_face_base_2()
@@ -186,12 +187,23 @@ public:
     N[1] = n1;
     N[2] = n2;
   }
+ 
+ //Miscelleanous
+  inline int ccw(int i) const
+  {
+    return (i+1) % 3;
+  }
     
+  inline int cw(int i) const
+  {
+    return (i+2) % 3;
+  }
+   
  bool is_valid(bool verbose = false, int level = 0) const
   {
     bool result = true;
     for(int i = 0; i < 3; i++) {
-      void* n = neighbor(i);
+      Face_base* n = (Face_base *)neighbor(i);
             
       // The following seems natural, but it may fail if the faces
       // this and n are neighbors on two edges (1-dim triangulation,
