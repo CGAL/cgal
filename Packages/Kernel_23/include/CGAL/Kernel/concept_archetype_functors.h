@@ -44,7 +44,8 @@ public:
     typedef Angle            result_type;
     typedef Arity_tag< 3 >   Arity;
 
-    Angle operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
+    Angle operator()(const Point_2& p, const Point_2& q, 
+                     const Point_2& r) const
     { CGAL::Angle a = CGAL::RIGHT;
       return a; 
     }
@@ -58,7 +59,8 @@ public:
     typedef Angle            result_type;
     typedef Arity_tag< 3 >   Arity;
 
-    Angle operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
+    Angle operator()(const Point_3& p, const Point_3& q, 
+                     const Point_3& r) const
     { CGAL::Angle a = CGAL::RIGHT;
       return a; 
     }
