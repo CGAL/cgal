@@ -1,18 +1,4 @@
-
 #include <CGAL/basic.h>
-
-#if !defined(CGAL_USE_LEDA) || (__LEDA__ < 400)
-#include <iostream>
-
-int main(int argc, char *argv[])
-{
- std::cout << "No LEDA installed!\n";
- return 0;
-}
-#else 
-
-
-#include <CGAL/config.h>
 
 #include <list>
 #include <vector>
@@ -22,12 +8,11 @@ int main(int argc, char *argv[])
 #include <CGAL/Triangulation_euclidean_traits_2.h>
 
 #include <CGAL/Point_set_2_tb.h>
-#include <CGAL/leda_rational.h>
 
 using namespace CGAL;
 using namespace std;
 
-typedef Cartesian<leda_rational>     REP;
+typedef Cartesian<double>     REP;
 typedef CGAL::Triangulation_euclidean_traits_2<REP> Gt;
 typedef CGAL::Triangulation_vertex_base_2<Gt> Vb;
 typedef CGAL::Triangulation_face_base_2<Gt>  Fb;
@@ -94,22 +79,22 @@ int check3(std::list<Vertex_handle> L)
 
 int main()
 {
-  Point_2<REP> pnew(120,62,10);
+  Point_2<REP> pnew(12,6.2);
   
   int w1,w2,w3;
 
   std::list<Point_2<REP> > Lr;
   
-  Point_2<REP> p1(12,14,1);
-  Point_2<REP> p2(-12,14,1);  
-  Point_2<REP> p3(2,11,1);
-  Point_2<REP> p4(5,6,1);
-  Point_2<REP> p5(67,38,10);
-  Point_2<REP> p6(11,20,1);
-  Point_2<REP> p7(-5,6,1);  
-  Point_2<REP> p8(12,0,1);
-  Point_2<REP> p9(4,31,1);
-  Point_2<REP> p10(-10,-10,1); 
+  Point_2<REP> p1(12,14);
+  Point_2<REP> p2(-12,14);  
+  Point_2<REP> p3(2,11);
+  Point_2<REP> p4(5,6);
+  Point_2<REP> p5(6.7,3.8);
+  Point_2<REP> p6(11,20);
+  Point_2<REP> p7(-5,6);  
+  Point_2<REP> p8(12,0);
+  Point_2<REP> p9(4,31);
+  Point_2<REP> p10(-10,-10); 
   
   // init 
   ar1[0]=p1; ar1[1]=p6; ar1[2]=p3; ar1[3]=p4; ar1[4]=p5; ar1[5]=pnew; 
@@ -165,5 +150,3 @@ int main()
   if (w1==0 && w2==0 && w3==0) return 0;
   else return 1;
 }
-
-#endif

@@ -1,4 +1,3 @@
-
 #include <CGAL/basic.h>
 
 #include <list>
@@ -26,9 +25,7 @@ typedef CGAL::Point_set_2_tb<TRAITS,Gt,Tds>::Edge_iterator  Edge_iterator;
 typedef CGAL::Point_set_2_tb<TRAITS,Gt,Tds>::Vertex_handle  Vertex_handle;
 typedef CGAL::Point_set_2_tb<TRAITS,Gt,Tds>::Vertex         Vertex;
 
-
 Point_set_2_tb<TRAITS,Gt,Tds> PSet;
-
 
 Point_2<REP> ar1[5];
 
@@ -78,7 +75,7 @@ int main()
 
   // nearest neighbor ...  
   Vertex_handle v = PSet.nearest_neighbor(actual);
-  cout << "Nearest neighbor:" << PSet.pos(v) << "\n";
+  std::cout << "Nearest neighbor:" << PSet.pos(v) << "\n";
   
   if (PSet.pos(v) == p4) w1=0; else w1=1;
   
@@ -86,15 +83,34 @@ int main()
   std::list<Vertex_handle> L;
   std::list<Vertex_handle>::const_iterator it;
 
-  PSet.nearest_neighbors(actual,5,back_inserter(L));
-  cout << "actual point: " << actual << "\n";
+  PSet.nearest_neighbors(actual,5,std::back_inserter(L));
+  std::cout << "actual point: " << actual << "\n";
     
   for (it=L.begin();it != L.end(); it++)
-      cout << PSet.pos(*it) << "\n";
+      std::cout << PSet.pos(*it) << "\n";
      
    w2=check1(L);
-
+   
+   // construction ...
+   Point_set_2_tb<TRAITS,Gt,Tds> PSet2;
+   Point_set_2_tb<TRAITS,Gt,Tds> PSet3(Lr.begin(),Lr.end());
+   Point_set_2_tb<TRAITS,Gt,Tds> PSet4(Lr);
+   
+   // init ...
+   PSet2.init(Lr);
+   
+   //get points/segments ...
+   std::list<Point_2<REP> >    ptlist;
+   std::list<Segment_2<REP> >  seglist;
+   
+   PSet3.points(std::back_inserter(ptlist));
+   PSet3.segments(std::back_inserter(seglist));
+   
+   std::cout << PSet3.is_empty() << "\n";
+   PSet3.clear();
+   
+   PSet4.lookup(actual);
+   
   if (w1==0 && w2==0) return 0;
   else return 1;
 }
-

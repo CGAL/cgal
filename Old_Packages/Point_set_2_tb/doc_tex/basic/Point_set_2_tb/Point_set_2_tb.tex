@@ -1,0 +1,239 @@
+% +------------------------------------------------------------------------+
+% | CGAL User Manual:  Point_set_2_tb.tex
+% +------------------------------------------------------------------------+
+
+\ccParDims
+
+\chapter{Point Set in 2D}
+\label{chapterPoint_set_2}
+\ccChapterAuthor{Matthias B\"asken}
+
+
+%---------------------------------------------
+% Introduction
+%---------------------------------------------
+\section{Introduction}
+
+Geometric Queries are fundamental to many applications in computational
+geometry. The task is to maintain a dynamic set of geometric objects
+in such a way that certain queries can be performed efficiently.
+Typical examples of queries are:
+find out whether a given object is contained in the set,
+find all objects of the set lying in a given area (e.g. rectangle),
+find the object closest to a given point or
+find the pair of objects in the set lying closest to each other. 
+Furthermore, the set should be dynamic in the sense that deletions and 
+insertions of objects can be performed efficiently.
+
+In computational geometry literature one can find many different data structures for
+maintaining sets of geometric objects. Most of them are data structures 
+that have been developed to support a single very special kind of query 
+operation.
+Examples are Voronoi diagrams for answering nearest neighbor
+searches, range trees for orthogonal range queries, partition trees
+for more general range queries, hierarchical triangulations for point
+location and segment trees for intersection queries \dots.
+
+In many applications, different types of queries have to be
+performed on the same set of objects. A naive approach to this
+problem would use a collection of the above mentioned data structures to
+represent the set of objects and delegate every query operation to
+the corresponding structure.
+However, this is completely impractical since it uses too much
+memory and requires the maintenance of all these data structures in the presence of
+update operations.
+
+Data structures that are non-optimal in theory seem to perform quite well in
+practice for many of these queries.
+For example, the Delaunay diagram turns out to be a very powerful
+data structure for storing dynamic sets of points under range and nearest
+neighbor queries. A first implementation and computational
+study of using Delaunay diagrams for geometric queries is described by
+Mehlhorn and N\"aher in ~\cite{LEDAbook}.
+
+In this section we present a generic variant of a two dimensional point set
+data type supporting various geometric queries.
+
+The \ccc{CGAL::Point\_set\_2\_tb} class in this section is inherited
+from the two-dimensional CGAL {\em Delaunay Triangulation} data type.
+
+The \ccc{CGAL::Point\_set\_2\_tb} class depends on three template parameters T1, T2 and T3.
+T2 and T3 are used as template parameters for the \ccc{CGAL::Delaunay\_triangulation\_2}
+class \ccc{CGAL::Point\_set\_2\_tb} is inherited from. T2 and T3 are models for the
+geometric traits and for the triangulation data structure that the Delaunay triangulation
+expects.
+T1 is a model of geometric traits for the \ccc{CGAL::Point\_set\_2\_tb} class.
+This class has a few additional requirements not yet covered by the kernel traits, that
+are covered by this traits.
+
+\section{Examples}
+
+\subsection{Range search operations}
+
+The following example program demonstrates the various range search operations
+of the two dimensional point set.
+First we construct a two dimensional point set $PSet$ and initialize it with a few points.
+After the $init$ - call $PSet$ is the point set of the points $p1$, ..., $p9$ .
+Then we perform circular, triangular and isorectangular range search operations on the
+point set.
+
+\ccHtmlLinksOff
+
+{\bf range\_search\_tr.C :}
+\begin{verbatim}
+#include <CGAL/basic.h>
+
+#include <list>
+#include <vector>
+#include <CGAL/Cartesian.h>
+
+#include <CGAL/Triangulation_short_names_2.h>
+#include <CGAL/Triangulation_euclidean_traits_2.h>
+
+#include <CGAL/Point_set_2_tb.h>
+
+using namespace CGAL;
+using namespace std;
+
+typedef Cartesian<double>     REP;
+typedef CGAL::Triangulation_euclidean_traits_2<REP> Gt;
+typedef CGAL::Triangulation_vertex_base_2<Gt> Vb;
+typedef CGAL::Triangulation_face_base_2<Gt>  Fb;
+typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
+
+
+typedef point_set_traits_2<REP>      TRAITS;
+typedef CGAL::Point_set_2_tb<TRAITS,Gt,Tds>::Edge    Edge;
+typedef CGAL::Point_set_2_tb<TRAITS,Gt,Tds>::Edge_iterator  Edge_iterator;
+typedef CGAL::Point_set_2_tb<TRAITS,Gt,Tds>::Vertex_handle  Vertex_handle;
+typedef CGAL::Point_set_2_tb<TRAITS,Gt,Tds>::Vertex  Vertex;
+
+
+Point_set_2_tb<TRAITS,Gt,Tds> PSet;
+
+Point_2<REP> ar1[6];
+Point_2<REP> ar2[3];
+Point_2<REP> ar3[3];
+
+int check1(std::list<Vertex_handle> L)
+{
+  cout << "check 1!\n";
+  if (L.size() != 6) return 1;
+  std::list<Vertex_handle>::const_iterator it = L.begin();
+  int i=0;
+  int w=0;
+  
+  for(; it != L.end();it++){
+    if (ar1[i] != PSet.pos(*it)) w=1;
+    i++;
+  }
+  return w;
+}
+
+int check2(std::list<Vertex_handle> L)
+{
+  cout << "check 2!\n";
+  if (L.size() != 3) return 1; 
+  std::list<Vertex_handle>::const_iterator it = L.begin();
+  int i=0;
+  int w=0;
+    
+  for(; it != L.end();it++){
+    if (ar2[i] != PSet.pos(*it)) w=1;
+    i++;
+  }
+  return w;
+}
+
+int check3(std::list<Vertex_handle> L)
+{
+ cout << "check 3!\n";
+ if (L.size() != 3) return 1; 
+ std::list<Vertex_handle>::const_iterator it = L.begin();
+ int i=0;
+ int w=0;
+    
+ for(; it != L.end();it++){
+    if (ar3[i] != PSet.pos(*it)) w=1;
+    i++;
+ }
+ return w;
+}
+
+int main()
+{
+  Point_2<REP> pnew(12,6.2);
+  
+  int w1,w2,w3;
+
+  std::list<Point_2<REP> > Lr;
+  
+  Point_2<REP> p1(12,14);
+  Point_2<REP> p2(-12,14);  
+  Point_2<REP> p3(2,11);
+  Point_2<REP> p4(5,6);
+  Point_2<REP> p5(6.7,3.8);
+  Point_2<REP> p6(11,20);
+  Point_2<REP> p7(-5,6);  
+  Point_2<REP> p8(12,0);
+  Point_2<REP> p9(4,31);
+  Point_2<REP> p10(-10,-10); 
+  
+  // init 
+  ar1[0]=p1; ar1[1]=p6; ar1[2]=p3; ar1[3]=p4; ar1[4]=p5; ar1[5]=pnew; 
+  ar2[0]=p2; ar2[1]=p3; ar2[2]=p1;
+  ar3[0]=p7; ar3[1]=p10; ar3[2]=p3;
+  
+  Lr.push_back(p1); Lr.push_back(p2); Lr.push_back(p3);
+  Lr.push_back(p4); Lr.push_back(p5); Lr.push_back(p6);
+  Lr.push_back(p7); Lr.push_back(p8); Lr.push_back(p9);
+  Lr.push_back(p10); 
+
+  PSet.init(Lr.begin(),Lr.end()); 
+
+  cout << "insert!\n"; cout.flush();
+  PSet.insert(pnew);
+
+
+  cout << "circular range search!\n";  
+  Circle_2<REP> rc(p5,p6);
+
+  std::list<Vertex_handle> LV;
+  PSet.range_search(rc,back_inserter(LV));
+
+  std::list<Vertex_handle>::const_iterator it;
+  for (it=LV.begin();it != LV.end(); it++)
+     cout << PSet.pos(*it) << "\n";      
+     
+  w1 = check1(LV);
+ 
+  cout << "triangular range search!\n";    
+  
+  LV.clear();
+  PSet.range_search(p1,p2,p3,back_inserter(LV));
+  for (it=LV.begin();it != LV.end(); it++)
+     cout << PSet.pos(*it) << "\n";
+    
+  w2 = check2(LV);    
+  LV.clear();
+ 
+  cout << "isorectangular range search!\n";
+  Point_2<REP> pt1=p10; 
+  Point_2<REP> pt3=p3; 
+  
+  Point_2<REP> pt2 = Point_2<REP>(pt3.x(),pt1.y());
+  Point_2<REP> pt4 = Point_2<REP>(pt1.x(),pt3.y());
+  
+  PSet.range_search(pt1,pt2,pt3,pt4,back_inserter(LV));
+  for (it=LV.begin();it != LV.end(); it++)
+    cout << PSet.pos(*it) << "\n"; 
+
+  w3 = check3(LV);
+  
+  if (w1==0 && w2==0 && w3==0) return 0;
+  else return 1;
+}
+\end{verbatim}
+
+\ccHtmlLinksOn
+

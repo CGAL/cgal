@@ -1,0 +1,38 @@
+\begin{ccRefConcept} {Point_set_traits}
+
+\subsection{Requirements for the Point\_set traits class}
+
+A point set traits class has to provide some primitives that are used by the point set class
+and that are not (yet) covered by the kernel traits.
+The following catalog lists the involved primitives.
+The types used in the traits class must have a copy constructor and an assignment operator.
+
+\ccCreationVariable{ps_traits}
+\ccTypes
+
+\ccNestedType{Point}%
+       {The point type on which the point set operates.}
+
+\ccNestedType{Circle}%
+       {The circle type on which the point set operates.}
+
+\ccNestedType{Compare_dist_2}%
+       {The primitive must provide 
+	\ccc{Comparison_result operator()(const Point& p1,const Point& p2, const Point& p3) const}.
+	The operator has to compare the distances of points $p2$ and $p3$ to $p1$.
+        The operator returns \ccc{SMALLER}, if $p2$ is closer (to $p1$), \ccc{LARGER} if $p3$ is closer,
+        \ccc{EQUAL} otherwise.
+       }      
+	
+ \ccNestedType{Circle_bounded_side_2}%
+	{The primitive must provide 
+	\ccc{Bounded_side operator()(const Circle& c, const Point& p) const}.
+	The operator has to return \ccc{ON_BOUNDED_SIDE} if $p$ lies on the bounded side of $c$,
+	\ccc{ON_UNBOUNDED_SIDE} if $p$ lies on the unbounded side of $c$, \ccc{ON_BOUNDARY} otherwise.}
+	
+ \ccNestedType{Circle_center_2}%
+	{The primitive must provide 
+	\ccc{Point operator()(const Circle& c) const}.
+	The operator has to return the center of $c$.}	
+
+\end{ccRefConcept}

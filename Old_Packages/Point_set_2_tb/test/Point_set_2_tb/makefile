@@ -1,3 +1,10 @@
+# This is the makefile for compiling the CGAL Kernel test.
+
+#---------------------------------------------------------------------#
+#                    include platform specific settings
+#---------------------------------------------------------------------#
+# Choose the right include file from the <cgalroot>/make directory.
+
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -5,14 +12,15 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-           $(CGAL_CXXFLAGS)
-  
+           $(TESTSUITE_CXXFLAGS) \
+           -DCGAL_CH_CHECK_EXPENSIVE \
+           $(CGAL_CXXFLAGS) \
+           $(EXTRA_FLAGS) 
 
 
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
-
 LIBPATH = \
           $(TESTSUITE_LIBPATH) \
           $(CGAL_LIBPATH)
@@ -21,23 +29,21 @@ LDFLAGS = \
           $(TESTSUITE_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
-
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
 all:            \
-                range_search_tr \
-                nearest_nb1_tr 
+                range_search \
+                nearest_nb1 
 
-range_search_tr$(EXE_EXT) : range_search_tr$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)range_search_tr range_search_tr$(OBJ_EXT) $(LDFLAGS)
+range_search$(EXE_EXT) : range_search$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)range_search range_search$(OBJ_EXT) $(LDFLAGS)
 
-nearest_nb1_tr$(EXE_EXT) : nearest_nb1_tr$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)nearest_nb1_tr nearest_nb1_tr$(OBJ_EXT) $(LDFLAGS)
-	
-clean:
-	rm -f range_search_tr nearest_nb1_tr range_search_tr_leda *$(OBJ_EXT) *.obj *.exe core
+nearest_nb1$(EXE_EXT) : nearest_nb1$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)nearest_nb1 nearest_nb1$(OBJ_EXT) $(LDFLAGS)
+
+clean: nearest_nb1.clean range_search.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
