@@ -172,6 +172,11 @@ protected:
 			      List_edges & list_ab, 
 			      List_edges & list_ba,
 			      Vertex_handle & vi);
+private:
+  Vertex_handle t_intersect(Vertex_handle vaa,
+			    Vertex_handle vbb,
+			    Vertex_handle vcc,
+			    Vertex_handle vdd);
 
   //to debug
 public:
@@ -496,23 +501,56 @@ intersect(Face_handle f, int i,
   result = compute_intersection(Segment(vcc->point(),vdd->point()),
 				Segment(vaa->point(),vbb->point()));
   bool intersection = assign(pi, result);
-  if (!intersection) {
-    CGAL_triangulation_assertion(false); // what can I do here? TODO
-    // I should probably issue vi = one of vaa, vbb, vcc, vdd ?
+  Vertex_handle vi;
+  if ( !intersection) {  //intersection detected but not computed
+    vi = t_intersect(vaa,vbb,vcc,vdd);
   }
-   
-  remove_constraint(f, i);
-  Vertex_handle vi = insert(pi, f);
-  // if intersection point is found on vcc or vdd nothin is to be done 
-  // for the subconstraint [vcc,vdd]
-  // this may happen due to approximate construction of the intersection
+  else{ //intersection detected but not computed
+    remove_constraint(f, i);
+    vi = insert(pi, f);
+  }
+
+  // vi == vc or vi == vd may happen even if intersection==true
+  // due to approximate construction of the intersection
   if (vi != vcc && vi != vdd) { 
     hierarchy.split_constraint(vcc,vdd,vi);
     insert_subconstraint(vcc,vi); 
     insert_subconstraint(vi, vdd);
   } 
+  else {
+    insert_subconstraint(vcc,vdd);
+  }
   return vi; 
 }
+
+template <class Tr, class I_tag >
+typename Constrained_triangulation_plus_2<Tr,I_tag>::Vertex_handle 
+Constrained_triangulation_plus_2<Tr,I_tag>::
+t_intersect(Vertex_handle vaa,
+	    Vertex_handle vbb,
+	    Vertex_handle vcc,
+	    Vertex_handle vdd)
+{
+  // intersection between edges [vaa,vbb] and [vcc,vdd]
+  // has been detected by exact predicates
+  // but not computed by approximate construction
+  typename Geom_traits::Construct_line_2  construct_line = 
+    geom_traits().construct_line_2_object();
+  typename Geom_traits::Compute_squared_distance_2
+    compute_squared_distance = 
+    geom_traits().compute_squared_distance_2_object();
+  typename Geom_traits::Line_2 l1 = construct_line(vaa->point(),
+						   vbb->point());
+  typename Geom_traits::Line_2 l2 = construct_line(vcc->point(),
+						   vdd->point());
+  Vertex_handle vi = vaa;
+  typename Geom_traits::FT dd = compute_squared_distance(l2,vaa->point());
+  if (compute_squared_distance(l2,vbb->point()) < dd) vi = vbb;
+  if (compute_squared_distance(l1,vcc->point()) < dd) vi = vcc;
+  if (compute_squared_distance(l1,vdd->point()) < dd) vi = vdd;
+  return vi;
+}
+
 
 template <class Tr, class I_tag >
 std::ostream &
