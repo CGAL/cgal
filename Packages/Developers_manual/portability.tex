@@ -321,11 +321,21 @@ for more explanation of some of these problems and known workarounds.
  depends on the template parameter.  This bug appears for example on
  Sunpro~5.3 and 5.4.
 
+\item[{\tt CGAL\_CFG\_NESTED\_CLASS\_TEMPLATE\_BUG}]~\\
+ \ccIndexSubitem{compiler bugs}{nested class templates} %
+ This flag ist set, if a compiler cannot parse an instantiation of a
+ nested class template \ccc{B<>} which is defined in another class
+ template \ccc{A<>}. This bug shows up on VC~7.0 (\ccc{cl1300}). A
+ workaround is to pass the instantiation of \ccc{A<>} to a helper
+ class which extracts \ccc{B<>}. (See the file
+ \texttt{include/CGAL/Kernel\_d/Iso\_box\_d.h}.)
+
 \item[{\tt CGAL\_CFG\_NET2003\_MATCHING\_BUG}]~\\
  \ccIndexSubitem{matching}{member functions} %
  \ccIndexSubitem{compiler bugs}{member functions} %
  This flag is set, if the compiler does not match a member definition
- to an existing declaration (eg., cl1310 Beta).
+ to an existing declaration. This bug shows up on VC~7.1~Beta
+ (\ccc{cl1310}).
 
 \item[{\tt CGAL\_CFG\_NO\_AUTOMATIC\_TEMPLATE\_INCLUSION}]~\\
  \ccIndexSubitem{source files}{template implementation files}
