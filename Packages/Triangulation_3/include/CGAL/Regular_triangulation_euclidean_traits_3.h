@@ -27,6 +27,7 @@
 
 // This file is based on Regular_triangulation_euclidean_traits_2.h
 
+#include <CGAL/Triangulation_short_names_3.h>
 #include <CGAL/Triangulation_geom_traits_3.h>
 #include <CGAL/Weighted_point.h>
 
@@ -34,20 +35,15 @@
 #error  no representation class defined
 #endif  // CGAL_REP_CLASS_DEFINED
 
-#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_V2_H || \
-    defined CGAL_SIMPLE_CARTESIAN_H
+#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
 #include <CGAL/predicates/Regular_triangulation_ftC3.h>
 #endif
 
-#ifdef CGAL_HOMOGENEOUS_H
+#if defined CGAL_HOMOGENEOUS_H || defined CGAL_SIMPLE_HOMOGENEOUS_H
 #include <CGAL/predicates/Regular_triangulation_rtH3.h>
 #endif
 
-#include <CGAL/Triangulation_short_names_3.h>
-
 CGAL_BEGIN_NAMESPACE 
-
-
 
 template <class Point, class Weight>
 class Power_test_3
@@ -107,8 +103,7 @@ public:
 
 };
 
-#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_V2_H || \
-    defined CGAL_SIMPLE_CARTESIAN_H
+#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
 template < class pt, class Weight >
 inline
 Oriented_side
@@ -158,7 +153,7 @@ power_test(const Weighted_point<pt, Weight> &p,
 }
 #endif // CGAL_CARTESIAN_H
 
-#ifdef CGAL_HOMOGENEOUS_H
+#if defined CGAL_HOMOGENEOUS_H || defined CGAL_SIMPLE_HOMOGENEOUS_H
 template < class pt, class Weight >
 inline
 Oriented_side
