@@ -107,7 +107,10 @@
 #  define CGAL_USE_LONG_LONG
 #endif
 
-#ifdef CGAL_CFG_MATCHING_BUG_4
+// FIXME: what is the problem with Sun 5.5? MATCHING_BUG_4 is not
+// triggered, but there are runtime errors, e.g., with Distance_3,
+// that do not appear when using the wrapper...
+#if defined(CGAL_CFG_MATCHING_BUG_4) || (defined(__sun) && defined(__SUNPRO_CC))
 #  define CGAL_WRAP(K) Matching_bug_wrapper<K>
 #  include <CGAL/Matching_bug_wrapper.h>
 #else
