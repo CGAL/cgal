@@ -106,6 +106,7 @@ public:
   typedef Ray_2_Ray_2_pair<R> Ray_X_target_unbounded_curve; 
   typedef Ray_2_Line_2_pair<R> Ray_X_unbounded_curve;
   typedef Straight_2_<R> X_curve;
+  typedef Straight_2_<R> X_curve_2;
   
   typedef std::vector<Point> Point_container;
   typedef std::vector<X_curve> X_curve_container;
@@ -199,7 +200,7 @@ public:
   // A copy c'tor is required for all the planar map traits.
   Pm_straight_exact_traits(const Pm_straight_exact_traits& tr):
     bbox(tr.bbox),num(tr.num),den(tr.den){
-    CGAL_precondition(num>=0 && den>0);
+    CGAL_precondition(num >= RT(0) && den > RT(0));
 #ifdef CGAL_PMBB_DEBUG
     std::cout << 
       "\nPm_straight_exact_traits(const Pm_straight_exact_traits& tr)->";
@@ -1805,7 +1806,7 @@ protected:
 
 protected:
   Indirect_bounding_box bbox;
-  RT num,den;
+  RT num, den;
   
 };
 
