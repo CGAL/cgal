@@ -503,7 +503,7 @@ init_logfiles()
 	"${_LEFTSPACE}You built CGAL ${CGAL_VERSION} on:" \
 	>>${INSTALL_RIS_LOGFILE}
     ${_printf} "${_LEFTSPACE}%s\n" \
-	"----------------------------------------------------------\n" \
+	"----------------------------------------------------------" \
 	>>${INSTALL_RIS_LOGFILE}
 }
 
@@ -1425,7 +1425,7 @@ print_as_shell_comment()
 # print $2 times string $1 ($1 must not contain '@'!)
 string_n_print()
 {
-    _tmp=`eval "printf \"%s\" \"\`${_printf} \"%s\" \"$1@$2\" | ${_awk} 'BEGIN {FS=\"@\"} 
+    _tmp=`eval "printf \"\`${_printf} \"$1@$2\" | ${_awk} 'BEGIN {FS=\"@\"} 
 	{ for ( i=0; i<$2; ++i) printf $1}'\`\""`
    write_buffer "${_tmp}"
 }
@@ -3457,7 +3457,7 @@ write_compiler_flags()
 # write linker flags for a CGAL include makefile
 write_linker_flags()
 {
-  makefile_header "linker flags\n" >> ${FILE}
+  makefile_header "linker flags" >> ${FILE}
 
   #
   # LEDA_LIB_DIR
@@ -3640,7 +3640,7 @@ create_include_makefile()
   # 
   # CGAL_SHARED_LIB
   # 
-  ${_printf} "%s\n" "CGAL_SHARED_LIB = libCGAL.so\n" >> ${FILE}
+  ${_printf} "%s\n" "CGAL_SHARED_LIB = libCGAL.so" >> ${FILE}
 
   # 
   # CGAL_SHARED_LIB_CXXFLAGS
