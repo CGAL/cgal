@@ -1,4 +1,8 @@
 31 May 2004 Sylvain Pion
+- Change the exponent of MP_Float to be a double instead of int.
+  (temporary improvement before using a multiprecision value)
+
+31 May 2004 Sylvain Pion
 - Document the limitation of the exponent of MP_Float.
 
 30 Apr 2004 Sylvain Pion

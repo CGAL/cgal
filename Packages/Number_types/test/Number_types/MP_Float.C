@@ -97,6 +97,21 @@ void test_overflow_to_interval()
   assert(CGAL::to_interval(val) == std::make_pair(0.5, 0.5));
 }
 
+void test_overflow_exponent()
+{
+  std::cout << "Testing overflow in exponent." << std::endl;
+  QMPF a = 2;
+  a = a/a;
+  double loops = 0;
+  while (loops < 55) // An assertion must fail at 56.
+  {
+    a = a*a;
+    assert((a+1)-1 == a);
+    loops += 1;
+    // std::cout << "loops = " << loops << std::endl;
+  };
+}
+
 int main(int argc, char **argv)
 {
   std::cout << "sizeof(long) = " << sizeof(long) << std::endl;
@@ -197,6 +212,8 @@ int main(int argc, char **argv)
   test_overflow_to_double();
 
   test_overflow_to_interval();
+
+  test_overflow_exponent();
 
   return 0;
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2001  Utrecht University (The Netherlands),
+// Copyright (c) 2001-2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -46,6 +46,7 @@
 // - IOs
 
 // TODO :
+// - The exponent really overflows sometimes -> make it multiprecision.
 // - Write a generic wrapper that adds an exponent to be used by MP integers.
 // - Karatsuba (or other) ?  Would be fun to implement at least.
 // - Division, sqrt... : different options :
@@ -75,6 +76,7 @@ public:
 
   typedef short limb;
   typedef int   limb2;
+  typedef double exponent_type;
 
   typedef std::vector<limb>  V;
   typedef V::const_iterator  const_iterator;
@@ -171,21 +173,21 @@ public:
   MP_Float& operator*=(const MP_Float &a) { return *this = *this * a; }
   MP_Float& operator/=(const MP_Float &a) { return *this = *this / a; }
 
-  int max_exp() const
+  exponent_type max_exp() const
   {
     return v.size() + exp;
   }
 
-  int min_exp() const
+  exponent_type min_exp() const
   {
     return exp;
   }
 
-  limb of_exp(int i) const
+  limb of_exp(exponent_type i) const
   {
     if (i < exp || i >= max_exp())
       return 0;
-    return v[i-exp];
+    return v[static_cast<int>(i-exp)];
   }
 
   bool is_zero() const
@@ -210,7 +212,7 @@ public:
   }
 
   V v;
-  int exp;
+  exponent_type exp;
 };
 
 inline
