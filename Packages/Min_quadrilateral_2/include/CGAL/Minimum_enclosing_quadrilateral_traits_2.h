@@ -167,7 +167,7 @@ struct Minimum_enclosing_quadrilateral_default_traits_2 {
     
     RT
     area_denominator(const Rectangle_2& r, Cartesian_tag) const
-    { return square(r.d.dx()) + square(r.d.dy()); }
+    { return CGAL::square(r.d.dx()) + CGAL::square(r.d.dy()); }
     
     RT
     area_numerator(const Rectangle_2& r, Homogeneous_tag) const
@@ -183,7 +183,7 @@ struct Minimum_enclosing_quadrilateral_default_traits_2 {
     area_denominator(const Rectangle_2& r, Homogeneous_tag) const
     {
       return r.p1.hw() * r.p2.hw() * r.p3.hw() * r.p4.hw() *
-        (square(r.d.dx()) + square(r.d.dy()));
+        (CGAL::square(r.d.dx()) + CGAL::square(r.d.dy()));
     }
   
     bool
@@ -251,7 +251,7 @@ struct Minimum_enclosing_quadrilateral_default_traits_2 {
     
     RT
     width_denominator(const Strip_2& r, Cartesian_tag) const
-    { return square(r.d.dx()) + square(r.d.dy()); }
+    { return CGAL::square(r.d.dx()) + CGAL::square(r.d.dy()); }
     
     RT
     width_numerator(const Strip_2& r, Homogeneous_tag) const
@@ -263,7 +263,8 @@ struct Minimum_enclosing_quadrilateral_default_traits_2 {
     
     RT
     width_denominator(const Strip_2& r, Homogeneous_tag) const {
-      return r.p1.hw() * r.p2.hw() * (square(r.d.dx()) + square(r.d.dy()));
+      return r.p1.hw() * r.p2.hw() *
+        (CGAL::square(r.d.dx()) + CGAL::square(r.d.dy()));
     }
   
     bool
@@ -294,14 +295,14 @@ struct Minimum_enclosing_quadrilateral_default_traits_2 {
       if (i == 0)
         return d;
       if (i == 1)
-        return Direction_2(Vector_2(d.vector().hy(),
-                                    -d.vector().hx(),
-                                    d.vector().hw()));
+        return Direction_2(Vector_2(d.to_vector().hy(),
+                                    -d.to_vector().hx(),
+                                    d.to_vector().hw()));
       if (i == 2)
         return -d;
-      return Direction_2(Vector_2(-d.vector().hy(),
-                                  d.vector().hx(),
-                                  d.vector().hw()));
+      return Direction_2(Vector_2(-d.to_vector().hy(),
+                                  d.to_vector().hx(),
+                                  d.to_vector().hw()));
     }
   };
   struct Construct_rectangle_2
