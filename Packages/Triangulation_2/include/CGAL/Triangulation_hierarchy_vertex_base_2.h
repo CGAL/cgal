@@ -34,7 +34,7 @@ class Triangulation_hierarchy_vertex_base_2
   typedef typename Base::Triangulation_data_structure   Tds;
 
 public:
-  //typedef typename Base::Point            Point;
+  typedef typename Base::Point            Point;
   typedef Tds                             Triangulation_data_structure;
   typedef typename Tds::Vertex_handle     Vertex_handle;
   typedef typename Tds::Face_handle       Face_handle;
