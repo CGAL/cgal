@@ -154,7 +154,8 @@ completely in Section~\ref{sec:doc_tex_subdirectory}. In summary, all
 describe the details:
 
 \begin{itemize}  
-   \item The programs creating the manuals, i.e., \texttt{latex} etc.,
+   \item The programs creating the manuals, i.e., \texttt{latex},
+         \texttt{pdflatex} etc., 
          are called in the \texttt{doc\_tex} directory. Since
          \texttt{latex}, and consequently \texttt{latex\_to\_html}
          too, do not maintain a current working directory, all
@@ -210,9 +211,7 @@ describe the details:
          reference pages contained in this chapter, and mention
          optionally with a non-numbered section labeled \textbf{Assertions} 
          the string used in the package-specific assertion macros 
-         (Section~\ref{sec:checks_controlling}).  See the current reference
-         manual and the example provided in
-         \nonlinkedpath|Manual_tools/example/two_manuals|. 
+         (Section~\ref{sec:checks_controlling}). 
 \end{itemize}
 
 This is all that is needed for a package manual and the
@@ -304,7 +303,7 @@ in the \texttt{scripts/} directory. It is called in the
 release.
  
 This script is the driver program for creating \cgal\ manuals.  It
-makes use of \LaTeX, Bib\TeX, \texttt{makeindex},
+makes use of \LaTeX, PDF\LaTeX, Bib\TeX, \texttt{makeindex},
 \texttt{latex\_to\_html}, and other tools to create the PostScript,
 PDF, and HTML manuals for individual \emph{CVS Packages} as well as
 custom \emph{Modules}. It encodes the conventions of how \cgal\ manuals are
@@ -376,12 +375,10 @@ script itself, these documentations need to be kept synchronized!
    \item \textbf{All other environments:}
      The style and bibliography files need to be installed properly
      from the CVS package \texttt{Manual}, such that the tools can
-     find them, for example through the search paths defined in the
+     find them, for example, through the search paths defined in the
      environment variables  \texttt{TEXINPUTS}, \texttt{BIBINPUTS},
-     and \texttt{LATEX\_CONV\_INPUTS}. (Currently the program will
-     issue a warning for this case because it currently cannot check if
-     the files are actually in the search paths, and this isn't the
-     recommended environment anyway.)
+     and \texttt{LATEX\_CONV\_INPUTS}. The program checks if the files
+     are actually in the search paths and issues an error message otherwise.
 \end{enumerate}
  
 This script properly adds entries in \texttt{TEXINPUTS},
@@ -393,9 +390,9 @@ The result of run of \texttt{cgal\_manual} are the specified manuals
 in the corresponding \texttt{../doc\_ps}, \texttt{../doc\_pdf}, and
 \texttt{../doc\_html} directories. A logfile with suffix
 \texttt{.cgallog} is created with a logfile summary from the
-individual logfiles \texttt{.log}, \texttt{.blg}, \texttt{.ilg}, and
-\texttt{.hlg}. The logfiles are kept in case of warnings and error
-messages. 
+individual logfiles \texttt{.log}, \texttt{.blg}, \texttt{.ilg},
+\texttt{.pdflg}, and \texttt{.hlg}. The logfiles are kept in case of
+warnings and error messages. 
 
 The screen output reports the progress and result status of each
 module (abbreviated as \texttt{Mod}) and package (abbreviated as
@@ -414,7 +411,7 @@ the manuals and logfiles to
 \verb|${TestSuiteResultPath}/CGAL-${CgalVersion}/| and creates an HTML
 summary page \texttt{index.html} in that subdirectory. The latest
 result is also always accessible at
-\verb|${TestSuiteResultPath}/LAST/index.html| .  Furthermore, the
+\verb|${TestSuiteResultPath}/LAST/index.html|.  Furthermore, the
 script will cleanup old results. For the most recent number
 \verb|${TestSuiteFullHistory}| of test suites the full results
 including the manuals are kept. Older test suites will have their
@@ -431,9 +428,9 @@ overwrite the old results.
 \begin{alltt}
 \textbf{Usage: cgal\_manual [<options>] [<module-files...>] [<package-dirs...>]}
 \textbf{Options:}
-    \textbf{-ps       }          PostScript manuals only.
-    \textbf{-pdf      }          PDF manuals only.
-    \textbf{-html     }          HTML manuals only (incl. a LaTeX run).
+    \textbf{-ps       }          PostScript manuals.
+    \textbf{-pdf      }          PDF manuals.
+    \textbf{-html     }          HTML manuals (incl. a LaTeX run).
     \textbf{-wrapper  }          creates the LaTeX wrapper files only.
     \textbf{-testsuite}          runs testsuite, installs results and sends email. Use
     \textbf{          }          only after reading the config section of this script.
@@ -1178,9 +1175,10 @@ Another possible section heading here is \verb|\ccSeeAlso|.
 \ccIndexSubitemBegin{manuals}{figures}
 
 When including pictures in your documentation, you must provide versions
-of the pictures for both the PostScript and HTML versions of the manuals.
-This generally means providing both a {\tt .ps}, {\tt .eps}, or {\tt .ipe} 
-file and a {\tt .gif}, {\tt .jpg}, or {\tt .png} file.  You should
+of the pictures for the PostScript, PDF, and HTML versions of the manuals.
+This generally means providing both a {\tt .ps} or {\tt .eps} file for
+PostScript manuals, a {\tt .pdf} file for PDF manuals, and a {\tt
+  .gif}, {\tt .jpg}, or {\tt .png} file for HTML manuals.  You should
 take care that the figures are  
 readable in both formats and that they are neither too large nor too small.  
 Also, all figures used in the HTML documentation should have transparent 
@@ -1193,6 +1191,13 @@ script@{\tt giftrans} script} program distributed with
 \ccAnchor{http://www.cgal.org/Members/Manual_tools/pstogif}{PostScript to gif}, and from 
 \ccAnchor{http://www.cgal.org/Members/Manual_tools/ipe2gif}{ipe to gif}\ccIndexSubsubitem{manuals}{figures}{converting to gif}.  
 
+We use currently PDF\LaTeX\ to create the PDF manuals. The
+\verb|\includegraphics| macro can be used conveniently for the
+PostScript images as well as the PDF images. One has just to omit the
+file suffix, and the \verb|\includegraphics| macro uses automatically
+an \texttt{.eps} or \texttt{.ps} file (whatever exits) for the \LaTeX\
+run, and uses a \texttt{.pdf} file for the PDF\LaTeX\ run.
+
 The program that converts to HTML does not currently support
 the commands that input PostScript figures into a document (since the figures
 for the HTML manual will be in a different format).  Thus for each figure
@@ -1204,7 +1209,7 @@ document.\ccIndexSubsubitem{manuals}{HTML}{figures}  For example:
 \begin{figure}[htbp]
 \begin{ccTexOnly}
 \begin{center}
-\includegraphics{orient.eps}
+\includegraphics{orient} % omit suffix .eps to supprt PS and PDF
 \end{center}
 \end{ccTexOnly}
 \caption{Orientation of a cell (3-dimensional case)
@@ -1358,7 +1363,7 @@ as the following example illustrates:
 \begin{figure}[htbp]
 \begin{ccTexOnly}
 \begin{center}
-\includegraphics{orient.eps}
+\includegraphics{orient} % omit suffix .eps to supprt PS and PDF
 \end{center}
 \caption{Orientation of a cell (3-dimensional case)
 \label{Triangulation3-fig-orient}}
