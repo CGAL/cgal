@@ -482,11 +482,20 @@ construct_bounding_box_union_2(const Rectangle& r1,
   Pohil    pohil =
     t.construct_projection_onto_horizontal_implicit_line_2_object();
 
+#ifdef __BORLANDC__
+  typedef typename Traits::Point_2 Point_2;
+  Point_2 bpt1 = lessx(minpt(r1), r2.min()) ? minpt(r1) : minpt(r2);
+  Point_2 bpt2 = lessy(minpt(r1), r2.min()) ? minpt(r1) : minpt(r2);
+  Point_2 bpt3 = lessx(maxpt(r2), maxpt(r1)) ? maxpt(r1) : maxpt(r2);
+  Point_2 bpt4 = lessy(maxpt(r2), maxpt(r1)) ? maxpt(r1) : maxpt(r2);
+  return rect(pohil(bpt1, bpt2), pohil(bpt3, bpt4));
+#else
   return rect(
     pohil(lessx(minpt(r1), r2.min()) ? minpt(r1) : minpt(r2),
           lessy(minpt(r1), r2.min()) ? minpt(r1) : minpt(r2)),
     pohil(lessx(maxpt(r2), maxpt(r1)) ? maxpt(r1) : maxpt(r2),
           lessy(maxpt(r2), maxpt(r1)) ? maxpt(r1) : maxpt(r2)));
+#endif
 } // construct_bounding_box_union_2(r1, r2, t)
 template < class Rectangle >
 inline Rectangle

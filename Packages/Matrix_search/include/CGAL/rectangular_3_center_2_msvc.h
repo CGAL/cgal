@@ -117,92 +117,120 @@ public:
                        const Point& first_uncovered,
                        const Rectangle& bbox) const
   {
-    return construct_projection_onto_horizontal_implicit_line_2_object()(
-      constraint_empty ? first_uncovered :
-      minx()(first_uncovered, construct_min_point_2_object()(constraint)),
+  #ifdef __BORLANDC__
+      Point bpt = constraint_empty ? first_uncovered :
+      minx()(first_uncovered, construct_min_point_2_object()(constraint));
+      return construct_projection_onto_horizontal_implicit_line_2_object()(
+        bpt, construct_max_point_2_object()(bbox));
+  #else
+      return construct_projection_onto_horizontal_implicit_line_2_object()(
+        constraint_empty ? first_uncovered :
+        minx()(first_uncovered, construct_min_point_2_object()(constraint)),
+          construct_max_point_2_object()(bbox));
+  #endif
+    }
+  
+    Point place_x_square(bool constraint_empty,
+                         const Rectangle& constraint,
+                         const Rectangle& bbox) const
+    {
+  #ifdef __BORLANDC__
+      Point bpt = constraint_empty ? construct_max_point_2_object()(bbox) :
+      construct_min_point_2_object()(constraint);
+      return construct_projection_onto_horizontal_implicit_line_2_object()(
+        bpt, construct_max_point_2_object()(bbox));
+  #else
+      return construct_projection_onto_horizontal_implicit_line_2_object()(
+        constraint_empty ?
+        construct_max_point_2_object()(bbox) :
+        construct_min_point_2_object()(constraint),
         construct_max_point_2_object()(bbox));
-  }
+  #endif
+    }
   
-  Point place_x_square(bool constraint_empty,
-                       const Rectangle& constraint,
-                       const Rectangle& bbox) const
-  {
-    return construct_projection_onto_horizontal_implicit_line_2_object()(
-      constraint_empty ?
+    Point place_x_square(const Point& so_far,
+                         const Rectangle& bbox,
+                         FT radius) const
+    {
+      return construct_projection_onto_horizontal_implicit_line_2_object()(
+        minx()(
+          pt_b_l()(construct_max_point_2_object()(bbox),
+                   construct_max_point_2_object()(bbox), radius), so_far),
+          so_far);
+    }
+  
+    Point place_y_square(bool constraint_empty,
+                         const Rectangle& constraint,
+                         const Point& first_uncovered,
+                         const Rectangle& bbox) const
+    {
+  #ifdef __BORLANDC__
+      Point bpt = constraint_empty ? first_uncovered :
+      miny()(first_uncovered, construct_min_point_2_object()(constraint));
+      return construct_projection_onto_horizontal_implicit_line_2_object()(
+        construct_max_point_2_object()(bbox), bpt);
+  #else
+      return construct_projection_onto_horizontal_implicit_line_2_object()(
+        construct_max_point_2_object()(bbox),
+        constraint_empty ? first_uncovered :
+      miny()(first_uncovered, construct_min_point_2_object()(constraint)));
+  #endif
+    }
+  
+    Point place_y_square(bool constraint_empty,
+                         const Rectangle& constraint,
+                         const Rectangle& bbox) const
+    {
+  #ifdef __BORLANDC__
+      Point bpt = constraint_empty ? construct_max_point_2_object()(bbox) :
+      construct_min_point_2_object()(constraint);
+      return construct_projection_onto_horizontal_implicit_line_2_object()(
+        construct_max_point_2_object()(bbox), bpt);
+  #else
+      return construct_projection_onto_horizontal_implicit_line_2_object()(
+        construct_max_point_2_object()(bbox),
+        constraint_empty ?
       construct_max_point_2_object()(bbox) :
-      construct_min_point_2_object()(constraint),
-      construct_max_point_2_object()(bbox));
-  }
+      construct_min_point_2_object()(constraint));
+  #endif
+    }
   
-  Point place_x_square(const Point& so_far,
-                       const Rectangle& bbox,
-                       FT radius) const
-  {
-    return construct_projection_onto_horizontal_implicit_line_2_object()(
-      minx()(
-        pt_b_l()(construct_max_point_2_object()(bbox),
-                 construct_max_point_2_object()(bbox), radius), so_far),
-        so_far);
-  }
+    Point place_y_square(const Point& so_far,
+                         const Rectangle& bbox,
+                         FT radius) const
+    {
+      return construct_projection_onto_horizontal_implicit_line_2_object()(
+        so_far,
+        miny()(pt_b_l()(construct_max_point_2_object()(bbox),
+                        construct_max_point_2_object()(bbox), radius),
+               so_far));
+    }
   
-  Point place_y_square(bool constraint_empty,
-                       const Rectangle& constraint,
-                       const Point& first_uncovered,
-                       const Rectangle& bbox) const
-  {
-    return construct_projection_onto_horizontal_implicit_line_2_object()(
-      construct_max_point_2_object()(bbox),
-      constraint_empty ? first_uncovered :
-    miny()(first_uncovered, construct_min_point_2_object()(constraint)));
-  }
+    Point update_x_square(const Point& s, const Point& newp) const
+    { return construct_projection_onto_horizontal_implicit_line_2_object()(
+      minx()(s, newp), s); }
   
-  Point place_y_square(bool constraint_empty,
-                       const Rectangle& constraint,
-                       const Rectangle& bbox) const
-  {
-    return construct_projection_onto_horizontal_implicit_line_2_object()(
-      construct_max_point_2_object()(bbox),
-      constraint_empty ?
-    construct_max_point_2_object()(bbox) :
-    construct_min_point_2_object()(constraint));
-  }
+    Point update_y_square(const Point& s, const Point& newp) const
+    { return construct_projection_onto_horizontal_implicit_line_2_object()(
+      s, miny()(s, newp)); }
   
-  Point place_y_square(const Point& so_far,
-                       const Rectangle& bbox,
-                       FT radius) const
-  {
-    return construct_projection_onto_horizontal_implicit_line_2_object()(
-      so_far,
-      miny()(pt_b_l()(construct_max_point_2_object()(bbox),
-                      construct_max_point_2_object()(bbox), radius),
-             so_far));
-  }
+    FT compute_x_distance(const Point& extreme,
+                          const Rectangle& constraint) const
+    { return distance()(extreme, corner()(constraint, 1)); }
   
-  Point update_x_square(const Point& s, const Point& newp) const
-  { return construct_projection_onto_horizontal_implicit_line_2_object()(
-    minx()(s, newp), s); }
+    FT compute_y_distance(const Point& extreme,
+                          const Rectangle& constraint) const
+    { return distance()(extreme, corner()(constraint, 3)); }
   
-  Point update_y_square(const Point& s, const Point& newp) const
-  { return construct_projection_onto_horizontal_implicit_line_2_object()(
-    s, miny()(s, newp)); }
+    Point construct_corner_square(const Rectangle& bbox, FT r) const
+    { return pt_a_r()(construct_min_point_2_object()(bbox),
+                      construct_min_point_2_object()(bbox), r); }
   
-  FT compute_x_distance(const Point& extreme,
-                        const Rectangle& constraint) const
-  { return distance()(extreme, corner()(constraint, 1)); }
+    Point construct_x_square(const Point& p, FT r) const
+    { return pt_b_r()(p, p, r); }
   
-  FT compute_y_distance(const Point& extreme,
-                        const Rectangle& constraint) const
-  { return distance()(extreme, corner()(constraint, 3)); }
-  
-  Point construct_corner_square(const Rectangle& bbox, FT r) const
-  { return pt_a_r()(construct_min_point_2_object()(bbox),
-                    construct_min_point_2_object()(bbox), r); }
-  
-  Point construct_x_square(const Point& p, FT r) const
-  { return pt_b_r()(p, p, r); }
-  
-  Point construct_y_square(const Point& p, FT r) const
-  { return pt_a_l()(p, p, r); }
+    Point construct_y_square(const Point& p, FT r) const
+    { return pt_a_l()(p, p, r); }
 };
 template < class R >
 struct Rectangular_3_center_2_type2_operations1 {
@@ -294,21 +322,35 @@ public:
                        const Point& first_uncovered,
                        const Rectangle& bbox) const
   {
+  #ifdef __BORLANDC__
+    Point bpt = constraint_empty ? first_uncovered :
+    maxx()(first_uncovered, construct_max_point_2_object()(constraint));
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
+      bpt, construct_max_point_2_object()(bbox));
+  #else
     return construct_projection_onto_horizontal_implicit_line_2_object()(
       constraint_empty ? first_uncovered :
       maxx()(first_uncovered, construct_max_point_2_object()(constraint)),
         construct_max_point_2_object()(bbox));
+  #endif
   }
   
   Point place_x_square(bool constraint_empty,
                        const Rectangle& constraint,
                        const Rectangle& bbox) const
   {
+  #ifdef __BORLANDC__
+    Point bpt = constraint_empty ? construct_min_point_2_object()(bbox) :
+    construct_max_point_2_object()(constraint);
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
+      bpt, construct_max_point_2_object()(bbox));
+  #else
     return construct_projection_onto_horizontal_implicit_line_2_object()(
       constraint_empty ?
       construct_min_point_2_object()(bbox) :
       construct_max_point_2_object()(constraint),
-      construct_max_point_2_object()(bbox));
+        construct_max_point_2_object()(bbox));
+  #endif
   }
   
   Point place_x_square(const Point& so_far,
@@ -326,21 +368,35 @@ public:
                        const Point& first_uncovered,
                        const Rectangle& bbox) const
   {
+  #ifdef __BORLANDC__
+    Point bpt = constraint_empty ? first_uncovered :
+    miny()(first_uncovered, construct_min_point_2_object()(constraint));
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
+      construct_min_point_2_object()(bbox), bpt);
+  #else
     return construct_projection_onto_horizontal_implicit_line_2_object()(
       construct_min_point_2_object()(bbox),
       constraint_empty ? first_uncovered :
     miny()(first_uncovered, construct_min_point_2_object()(constraint)));
+  #endif
   }
   
   Point place_y_square(bool constraint_empty,
                        const Rectangle& constraint,
                        const Rectangle& bbox) const
   {
+  #ifdef __BORLANDC__
+    Point bpt = constraint_empty ? construct_max_point_2_object()(bbox) :
+    construct_min_point_2_object()(constraint);
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
+      construct_min_point_2_object()(bbox), bpt);
+  #else
     return construct_projection_onto_horizontal_implicit_line_2_object()(
       construct_min_point_2_object()(bbox),
       constraint_empty ?
       construct_max_point_2_object()(bbox) :
       construct_min_point_2_object()(constraint));
+  #endif
   }
   
   Point place_y_square(const Point& so_far,
@@ -469,21 +525,35 @@ public:
                        const Point& first_uncovered,
                        const Rectangle& bbox) const
   {
+  #ifdef __BORLANDC__
+    Point bpt = constraint_empty ? first_uncovered :
+    maxx()(first_uncovered, construct_max_point_2_object()(constraint));
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
+      bpt, construct_min_point_2_object()(bbox));
+  #else
     return construct_projection_onto_horizontal_implicit_line_2_object()(
       constraint_empty ? first_uncovered :
       maxx()(first_uncovered, construct_max_point_2_object()(constraint)),
         construct_min_point_2_object()(bbox));
+  #endif
   }
   
   Point place_x_square(bool constraint_empty,
                        const Rectangle& constraint,
                        const Rectangle& bbox) const
   {
+  #ifdef __BORLANDC__
+    Point bpt = constraint_empty ? construct_min_point_2_object()(bbox) :
+    construct_max_point_2_object()(constraint);
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
+      bpt, construct_min_point_2_object()(bbox));
+  #else
     return construct_projection_onto_horizontal_implicit_line_2_object()(
       constraint_empty ?
       construct_min_point_2_object()(bbox) :
       construct_max_point_2_object()(constraint),
       construct_min_point_2_object()(bbox));
+  #endif
   }
   
   Point place_x_square(const Point& so_far,
@@ -501,21 +571,35 @@ public:
                        const Point& first_uncovered,
                        const Rectangle& bbox) const
   {
+  #ifdef __BORLANDC__
+    Point bpt = constraint_empty ? first_uncovered :
+    maxy()(first_uncovered, construct_max_point_2_object()(constraint));
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
+      construct_min_point_2_object()(bbox), bpt);
+  #else
     return construct_projection_onto_horizontal_implicit_line_2_object()(
       construct_min_point_2_object()(bbox),
       constraint_empty ? first_uncovered :
     maxy()(first_uncovered, construct_max_point_2_object()(constraint)));
+  #endif
   }
   
   Point place_y_square(bool constraint_empty,
                        const Rectangle& constraint,
                        const Rectangle& bbox) const
   {
+  #ifdef __BORLANDC__
+    Point bpt = constraint_empty ? construct_min_point_2_object()(bbox) :
+    construct_max_point_2_object()(constraint);
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
+      construct_min_point_2_object()(bbox), bpt);
+  #else
     return construct_projection_onto_horizontal_implicit_line_2_object()(
       construct_min_point_2_object()(bbox),
       constraint_empty ?
       construct_min_point_2_object()(bbox) :
       construct_max_point_2_object()(constraint));
+  #endif
   }
   
   Point place_y_square(const Point& so_far,
@@ -644,21 +728,35 @@ public:
                        const Point& first_uncovered,
                        const Rectangle& bbox) const
   {
+  #ifdef __BORLANDC__
+    Point bpt = constraint_empty ? first_uncovered :
+    minx()(first_uncovered, construct_min_point_2_object()(constraint));
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
+      bpt, construct_min_point_2_object()(bbox));
+  #else
     return construct_projection_onto_horizontal_implicit_line_2_object()(
       constraint_empty ? first_uncovered :
       minx()(first_uncovered, construct_min_point_2_object()(constraint)),
         construct_min_point_2_object()(bbox));
+  #endif
   }
   
   Point place_x_square(bool constraint_empty,
                        const Rectangle& constraint,
                        const Rectangle& bbox) const
   {
+  #ifdef __BORLANDC__
+    Point bpt = constraint_empty ? construct_max_point_2_object()(bbox) :
+    construct_min_point_2_object()(constraint);
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
+      bpt, construct_min_point_2_object()(bbox));
+  #else
     return construct_projection_onto_horizontal_implicit_line_2_object()(
       constraint_empty ?
       construct_max_point_2_object()(bbox) :
       construct_min_point_2_object()(constraint),
       construct_min_point_2_object()(bbox));
+  #endif
   }
   
   Point place_x_square(const Point& so_far,
@@ -676,21 +774,35 @@ public:
                        const Point& first_uncovered,
                        const Rectangle& bbox) const
   {
+  #ifdef __BORLANDC__
+    Point bpt = constraint_empty ? first_uncovered :
+    maxy()(first_uncovered, construct_max_point_2_object()(constraint));
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
+      construct_max_point_2_object()(bbox), bpt);
+  #else
     return construct_projection_onto_horizontal_implicit_line_2_object()(
       construct_max_point_2_object()(bbox),
       constraint_empty ? first_uncovered :
     maxy()(first_uncovered, construct_max_point_2_object()(constraint)));
+  #endif
   }
   
   Point place_y_square(bool constraint_empty,
                        const Rectangle& constraint,
                        const Rectangle& bbox) const
   {
+  #ifdef __BORLANDC__
+    Point bpt = constraint_empty ? construct_min_point_2_object()(bbox) :
+    construct_max_point_2_object()(constraint);
+    return construct_projection_onto_horizontal_implicit_line_2_object()(
+      construct_max_point_2_object()(bbox), bpt);
+  #else
     return construct_projection_onto_horizontal_implicit_line_2_object()(
       construct_max_point_2_object()(bbox),
       constraint_empty ?
       construct_min_point_2_object()(bbox) :
       construct_max_point_2_object()(constraint));
+  #endif
   }
   
   Point place_y_square(const Point& so_far,
