@@ -21,22 +21,18 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = -I../../include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS) \
-	-g -W
+	-g -W -Winline
 	# -fpermissive
 	# -DCGAL_IA_STOP_CONSTANT_PROPAGATION \
 	# -DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS\
+	# -DCGAL_CHECK_EXPENSIVE \
 	# -O2 -W -Winline -Wunused -malign-double
 	# -mcpu=pentiumpro -march=pentiumpro -mieee-fp
 	# -mcpu=ultrasparc -mtune=ultrasparc
 	# -B$(UTIL)/Binutils/$(UNAME)/bin/ \
 	# -fomit-frame-pointer
 	# -fprofile-arcs -ftest-coverage
-	# -DCGAL_IA_DEBUG
-	# -DNO_QUOTIENT_INT \
-	# -DCGAL_NO_QUOTIENT_INT_FRIENDS \
-        # -O2 -xtarget=ultra2 # (SunPro)
 	# -Wa,-xarch=v8plus   # g++ sans -m*=ultra*
-	# -ffast-math         # seems slower !?!
 	# -fhonor-std
 	# -frepo
 	# -pedantic
@@ -57,12 +53,13 @@ LDFLAGS = \
 
 all: test bench
 
-test:  tst0 tst1 tst2 tst5 tst7 # tst6
+test:  tst0 tst1 tst2 tst5 tst7 tst_static_adaptatif # tst6
 	./tst0
 	./tst1
 	./tst2
 	./tst5
 	./tst7
+	./tst_static_adaptatif
 	# ./tst6
 
 bench_isolate: ./a.out
@@ -121,6 +118,9 @@ tst6: tst6.o
 	$(CGAL_CXX) -o $@ $+ $(LDFLAGS)
 
 tst7: tst7.o
+	$(CGAL_CXX) -o $@ $+ $(LDFLAGS)
+
+tst_static_adaptatif: tst_static_adaptatif.o
 	$(CGAL_CXX) -o $@ $+ $(LDFLAGS)
 
 clean:
