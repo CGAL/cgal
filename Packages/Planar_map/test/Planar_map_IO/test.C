@@ -399,8 +399,8 @@ X_curve read_polyline_curve(std::ifstream& file, bool reverse_order)
     
     char s1[STR_LEN], s2[STR_LEN];
 
-    file1.seekg(0, ios::beg);
-    file2.seekg(0, ios::beg);
+    file1.seekg(0, std::ios::beg);
+    file2.seekg(0, std::ios::beg);
     while (!file1.eof() && !file2.eof()){
       file1.getline(s1, STR_LEN);
       file2.getline(s2, STR_LEN);
@@ -561,7 +561,3 @@ int main(int argc, char* argv[])
 }
 
 #endif // CGAL_ARR_TEST_LEDA_CONFLICT
-
-
-
-
