@@ -1,3 +1,6 @@
+1.49 (20 June 2003)
+- fix version file.
+
 1.48 (20 June 2003)
   - Fixes for HTML index.
 
