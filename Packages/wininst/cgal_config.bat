@@ -30,12 +30,24 @@ if %cc% == bcc	goto :bccconf
 if %cc% == msvc	goto :msvcconf
 
 :msvcconf
+
+set cclibo=unknown
+if "%2" == "ml"		set cclibo=ML
+if "%2" == "mt"		set cclibo=MT
+if "%2" == "md"		set cclibo=MD
+if "%2" == "mld"	set cclibo=MLd
+if "%2" == "mtd"	set cclibo=MTd
+if "%2" == "mdd"	set cclibo=MDd
+if %cclibo% == unknown set cclibo=ML
+
+set ccopt=unknown
 if "%2" == "ml"		set ccopt=-ML
 if "%2" == "mt"		set ccopt=-MT
 if "%2" == "md"		set ccopt=-MD
 if "%2" == "mld"	set ccopt=-MLd -Zi
 if "%2" == "mtd"	set ccopt=-MTd -Zi
 if "%2" == "mdd"	set ccopt=-MDd -Zi
+if %cclibo% == ML	set ccopt=-ML
 
 set cxx=cl -nologo -GX 
 set make=nmake -nologo /S
@@ -44,7 +56,9 @@ set cgallibpref=-LIBPATH:
 goto :ledaconf
 
 :bccconf
+set cclibo=bcc
 if "%2" == "d"		set ccopt=-v
+if "%2" == "d"		set cclibo=bcc_debug
 
 set cxx=bcc32
 rem set cxx=bcc32 -nologo -- BCC 5.5.1 does not have -nologo option!
@@ -121,7 +135,8 @@ set ledain=leda
 set ledaflag=-DCGAL_USE_LEDA -DLEDA_PREFIX -I$(LEDA_INCL_DIR)
 set ledasupport="SUPPORTED"
 set ledalink=%cgallibpref%%ledaroot%
-set ledalibs=libP.lib libG.lib libL.lib
+set ledalibs=libP.lib libG.lib libL.lib libD3.lib libGeoW.lib libW.lib
+set cgalwindirpath=
 goto :done
 
 rem --------------------------------------------------------
@@ -138,8 +153,8 @@ set ledaincl=
 set ledaflag=
 set ledalink=
 set ledasupport="NOT SUPPORTED"
-set ledalibs=
-
+set ledalibs=CGALWin.lib
+set cgalwindirpath=%cgallibpref%$(CGAL_ROOT)\cgalwindow\win32\%cc%\%cclibo%
 goto :done
 
 
@@ -246,7 +261,9 @@ echo # LEDA-specific linking flags *** >> makefile.mak
 echo LE_LIB_DIR = %ledalink% >> makefile.mak
 echo LE_LIBS_LIST = %ledalibs% >> makefile.mak
 echo.  >> makefile.mak
-
+echo # CGAL_WINDOW library path *** >> makefile.mak
+echo CGALWIN_LIB_DIR_PATH = %cgalwindirpath% >> makefile.mak
+echo. >> makefile.mak
 rem --------------------------------------------------------
 rem	setting compiler/linker options
 rem --------------------------------------------------------
