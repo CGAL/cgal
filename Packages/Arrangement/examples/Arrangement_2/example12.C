@@ -1,17 +1,7 @@
 //examples/Arrangement_2/example12
 
 // Shorten long names for problematic compilers (e.g., MSVC):
-#if defined(CGAL_CFG_NO_LONGNAME_PROBLEM) || defined(_MSC_VER)
-#define Arrangement_2           Ar
-#define Cartesian               Cr
-#define Quotient                Qt
-#define Planar_map_2            PlM
-#define allocator               All
-#define Pm_default_dcel         PDD
-#define Arr_polyline_traits     APT
-#define Arr_2_default_dcel      ADD
-#define Td_X_trapezoid          TXT
-#endif
+#include "short_names.h"
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/MP_Float.h>
