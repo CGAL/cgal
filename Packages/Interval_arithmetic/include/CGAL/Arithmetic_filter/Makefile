@@ -21,6 +21,9 @@ OBJECTS = predicates_on_ftC2.h \
 % :: $(CGAL)/include/CGAL/% $(SCRIPT)
 	$(SCRIPT) < $< > $@
 
+predicates/% : $(CGAL)/include/CGAL/predicates/% $(SCRIPT)
+	$(SCRIPT) < $< > $@
+
 all: $(OBJECTS)
 
 clean:
