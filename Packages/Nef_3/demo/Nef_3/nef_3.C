@@ -305,7 +305,14 @@ int eval( int argc, char* argv[]) {
                 error = 2;
                 continue;
             }
-            nef.back().dump();
+            nef.back().dump(false, std::cout);
+        } else if ( strcmp( argv[i], "sorted") == 0) {
+            if ( nef.size() == 0) {
+                cerr << "Error: '" << argv[i] << "' on empty stack." << endl;
+                error = 2;
+                continue;
+            }
+            nef.back().dump(true, std::cout);
         } else if ( strcmp( argv[i], "vis") == 0) {
             if ( nef.size() == 0) {
                 cerr << "Error: '" << argv[i] << "' on empty stack." << endl;
