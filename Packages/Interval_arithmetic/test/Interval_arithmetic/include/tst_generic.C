@@ -1,4 +1,4 @@
-// Generic test file for the IA package. data/tst_generic.il
+// Generic test file for the IA package. include/tst_generic.C
 //  $Revision$
 //  $Date$
 // Written by Sylvain Pion, 1997/1998.
@@ -15,10 +15,9 @@
 
 typedef TESTED_TYPE IA;
 
-// This example/demo/test program computes the coordinates of a sequence of
-// points drawing a spiral.  It tests, using Interval Arithmetic, whether we
-// fall back on an axis.  With double precision, the first possible solution
-// is 396.
+// This test program computes the coordinates of a sequence of points drawing
+// a spiral.  It tests, using Interval Arithmetic, whether we fall back on an
+// axis.  With double precision, the first possible solution is 396.
 
 int spiral_test()
 {
@@ -65,7 +64,7 @@ int square_root_test()
 }
 
 
-// Here we take a initial interval, and we multiply it by itself...
+// Here we take an initial interval, and we multiply it by itself...
 //     The fixed point must be:
 // Same thing for [2;2]      -> [MAX_DOUBLE;+inf].
 // Same thing for [2.1;2.1]  -> [MAX_DOUBLE;+inf].
@@ -130,7 +129,7 @@ int division_test()
   while (++i < 100)
   {
     b = ((IA)1/d + d)/4 + 0.5;
-    a = ((IA)-1/e -e*1)/-4 - 0.5; // make it complicate to test more cases.
+    a = ((IA)-1/e -e*1)/-4 - 0.5; // make it complicated to test more cases.
     DEBUG( cout << d << e << endl; )
     if ( (b.lower_bound() == d.lower_bound()) &&
          (b.upper_bound() == d.upper_bound()) &&
@@ -173,6 +172,7 @@ int main()
 
   bool flag = true;
   cout.precision(20);
+
   cout << "Printing test: " << endl;
   cout << (IA)-.7 << endl << (IA)7/10 << endl << (IA)1/0 << endl;
 
