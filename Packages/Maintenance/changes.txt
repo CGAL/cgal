@@ -1,3 +1,7 @@
+10 August 2004 Radu Ursu
+- create_testresult_page sorts correctly the array containing the name of the 
+  testresults posted by testers. (eg. 3.1-100 > 3.1-I-99 works now) 
+
 3 August 2004 Sylvain Pion
 - create_testresult_page, to_zipped_format : make use of the new TESTER_NAME
   and TESTER_ADDRESS.
