@@ -183,6 +183,21 @@ for the Regular triangulation).
 described in Chapter~\ref{chapter-TDS3}.
 \end{itemize}	
 
+\begin{figure}[htbp]
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics[width=13cm]{design.eps}
+\end{center}
+\end{ccTexOnly}
+\caption{Triangulation software design.
+\label{T3-fig-layers}}
+\begin{ccHtmlOnly}
+<CENTER>
+<img border=0 src="./design.gif" align=center alt="Triangulation software design">
+</CENTER>
+\end{ccHtmlOnly}
+\end{figure} 
+
 Delaunay triangulations as well as triangulation hierarchies
 \cite{d-iirdt-98} are also implemented in \cgal: 
 \ccc{Delaunay_triangulation_3<DelaunayTriangulationTraits_3, TriangulationDataStructure_3>}
@@ -212,9 +227,9 @@ In addition to the requirements described before, the geometric traits
 class of a Delaunay triangulation must define predicates for the
 \textit{empty sphere property}.
 
-The kernels provided by CGAL: \ccc{Cartesian<FT>}, \ccc{Homogeneous<RT>},
-\ccc{Simple_cartesian<FT>}, \ccc{Simple_homogeneous<RT>} and
-\ccc{Filtered_kernel<R>} can all be used as models for the geometric traits
+The kernels provided by CGAL: \ccc{Cartesian}, \ccc{Homogeneous},
+\ccc{Simple_cartesian}, \ccc{Simple_homogeneous} and
+\ccc{Filtered_kernel} can all be used as models for the geometric traits
 parameter.
 They supply the user with all the functionalities described for the concepts
 \ccc{TriangulationTraits_3}\lcTex{
