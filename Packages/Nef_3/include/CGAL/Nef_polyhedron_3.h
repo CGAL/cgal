@@ -462,7 +462,7 @@ protected:
 	double delta_z = CGAL::to_double(c.orthogonal_vector().hz());
 	Point_3 target = ORIGIN + c.orthogonal_vector();
 	Segment_3 s(Point_3(0,0,0), target);
-	delta_z /= sqrt(to_double(s.squared_length()));
+	delta_z /= CGAL::sqrt(CGAL::to_double(s.squared_length()));
 	z += delta_z;	
       }
       first = false;
