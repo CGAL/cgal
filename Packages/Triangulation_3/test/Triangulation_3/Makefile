@@ -82,7 +82,7 @@ clean:
 	            test_triangulation_tds test_delaunay_3 \
 		    test_delaunay_hierarchy_3 test_regular_3 \
 	            Program* Error* Compiler* error* Test*_triangulation_IO_3 \
-	            Test_tds_IO_3 core
+	            Test_tds_IO_3 core *.da *.gcov *.bb *.bbg
 
 #---------------------------------------------------------------------#
 #                    suffix rules
