@@ -28,19 +28,19 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                quickhull_3_demo \
-                randomized_incremental_hull_3_demo 
+                incremental_hull_3_demo \
+                quickhull_3_demo 
+
+incremental_hull_3_demo: incremental_hull_3_demo.o
+	$(CGAL_CXX) -o incremental_hull_3_demo incremental_hull_3_demo.o $(LDFLAGS)
 
 quickhull_3_demo: quickhull_3_demo.o
 	$(CGAL_CXX) -o quickhull_3_demo quickhull_3_demo.o $(LDFLAGS)
 
-randomized_incremental_hull_3_demo: randomized_incremental_hull_3_demo.o
-	$(CGAL_CXX) -o randomized_incremental_hull_3_demo randomized_incremental_hull_3_demo.o $(LDFLAGS)
-
 clean:
 	/bin/rm -f *.o \
+                   incremental_hull_3_demo \
                    quickhull_3_demo \
-                   randomized_incremental_hull_3_demo \
                    core
 
 #---------------------------------------------------------------------#

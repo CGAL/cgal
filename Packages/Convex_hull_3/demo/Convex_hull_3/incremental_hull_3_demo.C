@@ -1,5 +1,5 @@
 // 
-// file: demo/Convex_hull_3/randomized_incremental_3_demo.C
+// file: demo/Convex_hull_3/incremental_3_demo.C
 //
 #include <CGAL/Cartesian.h>
 #include <CGAL/point_generators_3.h>
