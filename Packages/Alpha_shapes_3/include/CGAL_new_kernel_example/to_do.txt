@@ -1,6 +1,0 @@
---Regarder dans CGAL-2.3-I/include/CGAL/kernel/function_object.h
-il y a les nouveaux predicats definis comme function object, 
-ie des class contenant seulement des operateurs ()
-
-
---et voir ici l'exemple d'ANDREAS sur squared_radius_smallest_circumsphere dans les fichiers
