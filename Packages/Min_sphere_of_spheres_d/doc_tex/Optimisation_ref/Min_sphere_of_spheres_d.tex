@@ -61,6 +61,20 @@ sphere's \emph{discriminant}, and by $d+1$ pairs $(a_i,b_i)\in\Q^2$
 
 \ccInclude{CGAL/Min_sphere_of_spheres_d.h}
 
+\textbf{Note:} This class (almost) replaces
+\ccc{CGAL::Min_sphere_d<Traits>}, which solves the less general
+problem of finding the smallest enclosing ball of a set of
+\emph{points}.  \ccRefName\ is faster than
+\ccc{CGAL::Min_sphere_d<Traits>}, and in contrast to the latter
+provides a specialized implementation for floating-point arithmetic
+which ensures correct results in a large number of cases (including
+highly degenerate ones).  The only advantage of
+\ccc{CGAL::Min_sphere_d<Traits>} over \ccRefName\ is that the former
+can deal with points in homogeneous coordinates, in which case the
+algorithm is division-free. Thus, \ccc{CGAL::Min_sphere_d<Traits>}
+might still be an option in case your input number type cannot
+(efficiently) divide.
+
 \ccRequirements
 \ccIndexRequirements
 
@@ -267,16 +281,12 @@ An object \ccVar\ is valid, iff
 %\end{ccIndexGlobalFunctions}
 
 % -----------------------------------------------------------------------------
-%\ccSeeAlso
+\ccSeeAlso
 %
-%    \ccRefIdfierPage{CGAL::Optimisation_d_traits_2<K,ET,FT>}\\
-%    \ccRefIdfierPage{CGAL::Optimisation_d_traits_3<K,ET,FT>}\\
-%    \ccRefIdfierPage{CGAL::Optimisation_d_traits_d<K,ET,FT>}\\
-%    \ccRefConceptPage{OptimisationDTraits}\\
-%    \ccRefIdfierPage{CGAL::Min_circle_2<Traits>}\\
-%    \ccRefIdfierPage{CGAL::Min_annulus_d<Traits>}
-
+    \ccRefIdfierPage{CGAL::Min_sphere_d<Traits>}\\
+    \ccRefIdfierPage{CGAL::Min_circle_2<Traits>}\\
 % -----------------------------------------------------------------------------
+
 \ccImplementation
 \ccIndexImplementation
 %\ccIndexSubitem[t]{incremental algorithm}{\ccc{Min_sphere_of_spheres_d}}
