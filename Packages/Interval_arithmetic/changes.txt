@@ -1,3 +1,8 @@
+06 January 2005 Sylvain Pion
+- Fix warning with VC++.
+
+------------------------------ CGAL 3.1 ------------------------------
+
 25 November 2004 Sylvain Pion
 - x86_64 porting.
 

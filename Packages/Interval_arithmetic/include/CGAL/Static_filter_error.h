@@ -87,7 +87,7 @@ struct Static_filter_error
 
   Sfe operator+ (const Sfe &f) const
   {
-      CGAL_warning_msg(_d == f._d,
+      CGAL_warning_msg( _d == f._d ,
 	      "you are adding variables of different homogeneous degree");
       // We have to add an ulp, since the homogeneization could induce such
       // an error.
@@ -154,8 +154,8 @@ inline
 Static_filter_error
 sqrt(const Static_filter_error &f)
 {
-  CGAL_warning_msg(f.degree() & 1 == 0,
-	  "you really want a non integer degree ???");
+  CGAL_warning_msg( (f.degree() & 1) == 0,
+	            "Do you really want a non integral degree ???");
   // We have to add an ulp, since the homogeneization could induce such
   // an error.
   FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
