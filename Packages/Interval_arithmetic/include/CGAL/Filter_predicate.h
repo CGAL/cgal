@@ -54,12 +54,27 @@ public:
 
   typedef typename AP::result_type  result_type;
 
-#if 1
   Filtered_predicate()
   {
     assert_equal_types(typename AP::result_type(), typename EP::result_type());
   }
-#endif
+
+  // These constructors are used for constructive predicates.
+  // You should try to avoid constructive predicates, as they will construct
+  // the exact values systematically (in the ctor), rather than lazily.
+  template <class O>
+  Filtered_predicate(const O &o1)
+    : EP(To_Exact(o1)), AP(To_Approx(o1))
+  {
+    assert_equal_types(typename AP::result_type(), typename EP::result_type());
+  }
+
+  template <class O>
+  Filtered_predicate(const O &o1, const O &o2)
+    : EP(To_Exact(o1), To_Exact(o2)), AP(To_Approx(o1), To_Approx(o2))
+  {
+    assert_equal_types(typename AP::result_type(), typename EP::result_type());
+  }
 
   template <class A1>
   result_type
