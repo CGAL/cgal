@@ -1,6 +1,10 @@
 Circulator Package: Release changes:
 ---------------------------------------------------------------------
 
+3.25 (15 Apr 2002)
+
+     - Fixed change in get_min_circulator in circulator.h.
+
 3.24 (12 Apr 2002)
 
      - Changed constructors of test classes with 'this; initializers
