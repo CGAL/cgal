@@ -25,8 +25,8 @@
 // Chapter       : 
 // ======================================================================
 
-#ifndef SWEEP_TO_CONSTRUCT_PLANAR_MAP_2_H
-#define SWEEP_TO_CONSTRUCT_PLANRA_MAP_2_H
+#ifndef CGAL_SWEEP_TO_CONSTRUCT_PLANAR_MAP_2_H
+#define CGAL_SWEEP_TO_CONSTRUCT_PLANAR_MAP_2_H
 
 #ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
@@ -62,14 +62,3 @@ void  sweep_to_construct_planar_map_2(Curve_iterator curves_begin,
 CGAL_END_NAMESPACE
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
