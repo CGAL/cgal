@@ -113,14 +113,40 @@ several algorithms available for the user to choose from.
 I/O functions for reading a saved planar map from the standard input, 
 writing it to the standard output or drawing it to a graphic stream are also provided.
 
-\paragraph{Sweep line:}
-The construction of a \ccc{Planar map} can be done using a sweep
-line technique rather than iteratively inserting one curve after another.
-The sweep line algorithm perfomrs better, but is done statically and therefore
-requires the list of curves in advance.
-Due to the sweep line technique, inserting curves which are interior intersect, 
-overlap or non $x$-monotone is supported.
-The interface is given in chapter  ~\ref{I1_ChapterPmwx}.
+
+\paragraph{Sweep Line}
+%-------------------------------------------------
+  The \ccc{Planar Map with Intersections} packge contains a sweep line
+  utility. The sweep line algorithm can be used to build a planar map
+  much quicker than in an incremental way, where each curve is
+  inserted after the other. Two global functions are provided. 
+
+  The function \ccc{sweep_to_construct_planar_map} builds a planar map
+  as a result of the call. Mind that it is possible to call this
+  function also with an instance the \ccc{Planar_map_2} class rather
+  than an instance of \ccc{Planar_map_with_intersections_2}. If no
+  additional insertion of intersecting or non-$x$-monotone curves are
+  planned follwing the building of the map, then it would be more
+  efficient (in running time) and less demanding (in traits class
+  functionality) to use an instance of the former.
+
+  The function \ccc{sweep_to_produce_planar_map_subcurves} does not
+  build a planar map but rather collects the $x$-monotone pairwise
+  disjoint subcurves in a container. It is possible to tune the
+  function so that it will avoid to produce repetitions of overlapping
+  subcurves in the container or not.
+
+  The sweep line utility calculates intersections of curves.  The
+  \ccc{PlanarMapWithIntersectionTraits_2} concepts requires this
+  very functionality.  Thus, the sweep line functions have to use
+  traits classes that model the above concept. This is true even for
+  the case where an instance of \ccc{Planar_map_2<Dcel, Traits>} is built.
+
+  %See the sweep line functions reference pages for implementation
+  %details (\ccc{sweep_to_construct_planar_map}\lcTex{
+  %\ccRefPage{CGAL::sweep_to_construct_planar_map}} and
+  %\ccc{sweep_to_produce_planar_map_subcurves}\lcTex{
+  %\ccRefPage{CGAL::sweep_to_produce_planar_map_subcurves}}).
 
 \subsection*{Functionality}
 
@@ -197,25 +223,34 @@ returned the curve : 20 50 180 50
 \label{PM_sec:example9}
 
 The following program demonstrates the use of I/O functions provided for planar maps. %\ccc{Planar_map}.
-First the program demonstrates a trivial use of the I/O functions: it defines an empty instance of \ccc{Planar_map_2}, 
-reads the planar map representation text from the standard input stream, and then prints the resulting planar map
-to the standard output stream.
-Second, it presents the usage of the verbose format, by defining \ccc{Pm_file_writer} with the verbose flag set to true, 
+First the program demonstrates a trivial use of the I/O functions: 
+it defines an empty instance of \ccc{Planar_map_2}, 
+reads the planar map representation text from the standard input stream, 
+and then prints the resulting planar map to the standard output stream.
+
+Second, it presents the usage of the verbose format, 
+by defining \ccc{Pm_file_writer} with the verbose flag set to true, 
 and then calls the function \ccc{write_pm}.
-A use of the interface of the class \ccc{Pm_file_writer} is also presented, by calling to its function 
-\ccStyle{write_halfedges} which prints all the halfedges of the map.
-In addition, the program presents the operators writing the resulting \ccc{Planar map} to graphic streams  in commented lines
-(The comments can be removed if the user has LEDA installed).
+A usage of the interface of the class \ccc{Pm_file_writer} is also presented, 
+by calling its function \ccStyle{write_halfedges}, which prints all the halfedges of the map.
+In addition, the program presents the operators writing the resulting 
+\ccc{Planar map} to a postscript file when LEDA is installed. 
+The demo for the planar map package makes use of the output operator 
+of \ccc{Planar_map_2<Dcel,Traits>} to a window stream  
+(see at \ccc{<CGAL_ROOT>/demo/Planar_map/demo.C).   
+
+%graphic streams in commented lines
+%(The comments can be removed if the user has LEDA installed).
 
 \ccIncludeExampleCode{Planar_map/example9.C}
 
-The input of the program is a text file which holds the planar map representation in a special format (which is presented in the reference pages of the the \ccc{Planar Map} package. This representation apears as the first block in the 
-output file.
+The input of the program is a text file which holds the planar map representation in a special format (which is presented in the reference pages of the the \ccc{Planar Map} package. 
+This representation apears as the first block in the output file.
  
 %\ccIncludeExampleCode{Planar_map/example9.cin}
 
-The output is the \ccc{Planar map} includes both formats, non verbose and verbose. In addition the two lists 
-(non verbose and verbose) of halfedges are written.
+The output is the \ccc{Planar map} includes both formats, non-verbose and verbose. In addition the two lists 
+(non-verbose and verbose) of halfedges are written.
 \ccIncludeExampleCode{Planar_map/example9.cout}
 
 %% EOF %%
