@@ -157,7 +157,7 @@ public:
 // Unary operations: probably some factorization of code is welcome...
 // constant, abs, sqrt, square.
 
-// Dynamic double Constant.
+// double Constant.
 template <typename ET>
 class Lazy_exact_nt_dyn_cst : public Lazy_exact_nt_dyn_rep<ET>
 {
@@ -168,7 +168,7 @@ class Lazy_exact_nt_dyn_cst : public Lazy_exact_nt_dyn_rep<ET>
   Interval_nt interval() const { return d; };
 };
 
-// Dynamic abs.
+// abs.
 template <typename ET>
 class Lazy_exact_nt_dyn_abs : public Lazy_exact_nt_dyn_rep<ET>
 {
@@ -185,7 +185,7 @@ class Lazy_exact_nt_dyn_abs : public Lazy_exact_nt_dyn_rep<ET>
   }
 };
 
-// Dynamic sqrt.
+// sqrt.
 template <typename ET>
 class Lazy_exact_nt_dyn_sqrt : public Lazy_exact_nt_dyn_rep<ET>
 {
@@ -202,7 +202,7 @@ class Lazy_exact_nt_dyn_sqrt : public Lazy_exact_nt_dyn_rep<ET>
   }
 };
 
-// Dynamic square.
+// square.
 template <typename ET>
 class Lazy_exact_nt_dyn_square : public Lazy_exact_nt_dyn_rep<ET>
 {
@@ -223,7 +223,7 @@ class Lazy_exact_nt_dyn_square : public Lazy_exact_nt_dyn_rep<ET>
 // Binary operations: (probably some factorization of code is welcome...)
 // +, -, *, /, min, max.
 
-// Dynamic Addition.
+// Addition.
 template <typename ET>
 class Lazy_exact_nt_dyn_add : public Lazy_exact_nt_dyn_rep<ET>
 {
@@ -244,7 +244,7 @@ class Lazy_exact_nt_dyn_add : public Lazy_exact_nt_dyn_rep<ET>
   }
 };
 
-// Dynamic Subtraction.
+// Subtraction.
 template <typename ET>
 class Lazy_exact_nt_dyn_sub : public Lazy_exact_nt_dyn_rep<ET>
 {
@@ -263,7 +263,7 @@ class Lazy_exact_nt_dyn_sub : public Lazy_exact_nt_dyn_rep<ET>
   }
 };
 
-// Dynamic Multiplication.
+// Multiplication.
 template <typename ET>
 class Lazy_exact_nt_dyn_mul : public Lazy_exact_nt_dyn_rep<ET>
 {
@@ -282,7 +282,7 @@ class Lazy_exact_nt_dyn_mul : public Lazy_exact_nt_dyn_rep<ET>
   }
 };
 
-// Dynamic Division.
+// Division.
 template <typename ET>
 class Lazy_exact_nt_dyn_div : public Lazy_exact_nt_dyn_rep<ET>
 {
@@ -301,7 +301,7 @@ class Lazy_exact_nt_dyn_div : public Lazy_exact_nt_dyn_rep<ET>
   }
 };
 
-// Dynamic min().
+// min().
 template <typename ET>
 class Lazy_exact_nt_dyn_min : public Lazy_exact_nt_dyn_rep<ET>
 {
@@ -320,7 +320,7 @@ class Lazy_exact_nt_dyn_min : public Lazy_exact_nt_dyn_rep<ET>
   }
 };
 
-// Dynamic max().
+// max().
 template <typename ET>
 class Lazy_exact_nt_dyn_max : public Lazy_exact_nt_dyn_rep<ET>
 {
@@ -339,7 +339,8 @@ class Lazy_exact_nt_dyn_max : public Lazy_exact_nt_dyn_rep<ET>
   }
 };
 
-// A few operations are probably still lacking.
+// A few operations are probably still lacking (+=, ... see CGAL doc).
+//
 // static Lazy_exact_nt_dyn_cst<int> lazy_null(0.0);
 
 // Celui-là devrait contenir un ref_count et tout le bazard sur la pile ?
