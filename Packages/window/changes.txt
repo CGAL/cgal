@@ -1,3 +1,6 @@
+2.8.31
+- CGAL_Window_stream needs LEDA installed
+
 2.8.30
 - new headers
 - protect demo with CGAL_USE_LEDA
