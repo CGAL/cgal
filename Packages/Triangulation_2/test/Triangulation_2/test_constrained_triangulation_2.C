@@ -33,9 +33,9 @@
 
 int main()
 {
-  std::cout << "Testing constrained_triangulation "<< endl;
-  std::cout << " with Triangulation_test_traits : " << endl;
-  std::cout << " this uses double type coordinates " << endl;
+  std::cout << "Testing constrained_triangulation "<< std::endl;
+  std::cout << " with Triangulation_test_traits : " << std::endl;
+  std::cout << " this uses double type coordinates " << std::endl;
   typedef CGAL::_Triangulation_test_traits                       Gt;
   typedef CGAL::Triangulation_vertex_base_2<Gt>                  Vb;
   typedef CGAL::Constrained_triangulation_face_base_2<Gt>        CFb;
