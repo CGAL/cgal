@@ -1,3 +1,5 @@
+Version 4.166 on 13 May 2003 [af]
+- Removed a forgotten #include <CGAL/Interval_base.h>
 
 Version 4.165 on 11 May 2003 [af]
 - Removed Interval_base
