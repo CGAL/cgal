@@ -5400,10 +5400,10 @@ write_linker_flags()
 	fi
 	RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:\$(CORE_LIB_DIR)"
     fi
-    LIBS="${LIBS} `lib_option Core`"
-    GEOWLIBS="${GEOWLIBS} `lib_option Core` "
-    WLIBS="${WLIBS}  `lib_option Core`"
-    QLIBS="${QLIBS}  `lib_option Core`"
+    LIBS="${LIBS} `lib_option core++`"
+    GEOWLIBS="${GEOWLIBS} `lib_option core++` "
+    WLIBS="${WLIBS}  `lib_option core++`"
+    QLIBS="${QLIBS}  `lib_option core++`"
   fi
 
   if [ -n "${GMP_SUPPORT}" ]; then
