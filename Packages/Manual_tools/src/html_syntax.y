@@ -190,6 +190,7 @@ extern bool mbox_within_math;
 %token             BEGINSUBSCRIPT
 %token             BEGINSUPERSCRIPT
 %token             FRACTION
+%token             SQRT
 
 /* handle LALR(1) restriction */
 /* -------------------------- */
@@ -1209,11 +1210,22 @@ math_token:
     | FRACTION  '{'  math_sequence  '}'  '{'  math_sequence  '}'
         {
 	    $$ = $3;
-	    $$->prepend( "<BOX>", 5);
-	    $$->add( "<OVER>", 6);
+	    /* This officially correct solution does currently not work. */
+	    /* $$->prepend( "<BOX>", 5); */
+	    /* $$->add( "<OVER>", 6);    */
+	    /* $$->add( $6);             */
+	    /* $$->add( "</BOX>", 6);    */
+	    $$->prepend( "(", 1);
+	    $$->add( ")/(", 3);
 	    $$->add( $6);
-	    $$->add( "</BOX>", 6);
+	    $$->add( ")", 1);
 	    delete $6;
+	}
+    | SQRT  '{'  math_sequence  '}'
+        {
+	    $$ = $3;
+	    $$->prepend( "sqrt(", 5);
+	    $$->add( ")", 1);
 	}
     | CCSTYLE  '{' nested_token_sequence '}'  {
 	  char* s = text_block_to_string( *$3);

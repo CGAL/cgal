@@ -484,6 +484,8 @@ compound_comment:   '{' full_comment_sequence '}' {
 		  | BEGINHTMLONLY nested_token_sequence ENDHTMLONLY  { 
                                   set_INITIAL = 1;
 				  delete $2;
+                                  $$ = new Text( *new TextToken( " ", 1, true),
+						 managed);
                                 }
                   | CCSECTION '{' comment_sequence '}'  {
 				  $$ = $3;
@@ -589,6 +591,23 @@ nested_token:       string      {
 		                  $2->append( *new TextToken( ")", 1));
 				  $$ = $2;
 		                }
+                  | CCSTYLE '{' nested_token_sequence '}'  { 
+				  $$ = $3;
+		                  set_INITIAL = 1;
+                                  if ( $$->head().isSpace)  // should not
+		                      $$->cons(   *new TextToken( "`", 1));
+                                  else
+		                      $$->head().prepend( "`");
+                                  InListFIter< TextToken> ix( * $$);
+				  ForAll( ix) {
+				      if ( ix.isLast())
+					  if ( ix->isSpace)
+					      $$->append( *new TextToken(
+                                                                  "'", 1));
+					  else
+					      ix->add( "'");
+				  }
+                                }
 ;
 
 /* Parsing of a C++ Declaration (function, method ..., not class) */

@@ -930,6 +930,12 @@ calblockintro   ([\{][\\](cal))|([\\]mathcal[\{])
 		    yylval.string.len  = -1;
 		    return STRING;
                  }
+[\\]ccSeeAlso/{noletter} {
+		    skipspaces();
+	            yylval.string.text = "<H3>See Also</H3>";
+		    yylval.string.len  = -1;
+		    return STRING;
+                 }
 [\\]ccImplementation/{noletter} {
 		    skipspaces();
 	            yylval.string.text = "<H3>Implementation</H3>";
@@ -1182,7 +1188,11 @@ calblockintro   ([\{][\\](cal))|([\\]mathcal[\{])
 		    yylval.character = yytext[1];
 		    return CHAR;
                  }
-<INITIAL,MMODE,NestingMode>[~]              |
+<INITIAL,MMODE,NestingMode>[~]                          {
+	            yylval.string.text = "&nbsp;";
+		    yylval.string.len  = 6;
+	  	    return STRING;
+		 }
 <INITIAL,MMODE,NestingMode,ccStyleMode>[\\]{space}      {
 	            yylval.string.text = " ";
 		    yylval.string.len  = 1;
@@ -1227,8 +1237,11 @@ calblockintro   ([\{][\\](cal))|([\\]mathcal[\{])
 <MMODE>"^"[\{]   {
 		    return BEGINSUPERSCRIPT;
                  }
-<MMODE>\frac/{noletter}   {
+<MMODE>[\\]frac/{noletter}   {
 		    return FRACTION;
+                 }
+<MMODE>[\\]sqrt/{noletter}   {
+		    return SQRT;
                  }
 <MMODE>[\\][\{\}]   {
 		    yylval.character = yytext[1];
@@ -1238,6 +1251,39 @@ calblockintro   ([\{][\\](cal))|([\\]mathcal[\{])
 		    return yytext[0];
                  }
 
+<MMODE>[\\]over/{noletter}        { SET( "/");          return STRING;}
+<MMODE>[\\]angle/{noletter}       { SET( "angle");      return STRING;}
+<MMODE>[\\]infty/{noletter}       { SET( "infinity");   return STRING;}
+<MMODE>[\\]neg/{noletter}         { SET( "&not;");      return STRING;}
+<MMODE>[\\]pm/{noletter}          { SET( "&plusmn;");   return STRING;}
+<MMODE>[\\]subset/{noletter}      { SET( "subset");     return STRING;}
+<MMODE>[\\]subseteq/{noletter}    { SET( "subset or equal"); return STRING;}
+<MMODE>[\\]forall/{noletter}      { SET( "Forall");     return STRING;}
+<MMODE>[\\]exists/{noletter}      { SET( "Exists");     return STRING;}
+<MMODE>[\\]lceil/{noletter}       { SET( "ceiling(");   return STRING;}
+<MMODE>[\\]lfloor/{noletter}      { SET( "floor(");     return STRING;}
+<MMODE>[\\]langle/{noletter}      { SET( "angle(");     return STRING;}
+<MMODE>[\\]rceil/{noletter}       { SET( ")");          return STRING;}
+<MMODE>[\\]rfloor/{noletter}      { SET( ")");          return STRING;}
+<MMODE>[\\]rangle/{noletter}      { SET( ")");          return STRING;}
+<MMODE>[\\]ast/{noletter}         { SET( "*");          return STRING;}
+<MMODE>[\\]circ/{noletter}        { SET( "<TT>o</TT>"); return STRING;}
+<MMODE>[\\]bullet/{noletter}      { SET( "<TT>o</TT>"); return STRING;}
+<MMODE>[\\]equiv/{noletter}       { SET( "=");          return STRING;}
+
+<MMODE>[\\]leftarrow/{noletter}   { SET( "<-");         return STRING;}
+<MMODE>[\\]Leftarrow/{noletter}   { SET( "<=");         return STRING;}
+<MMODE>[\\]longleftarrow/{noletter} { SET( "<--");      return STRING;}
+<MMODE>[\\]Longleftarrow/{noletter} { SET( "<==");      return STRING;}
+<MMODE>[\\]rightarrow/{noletter}  { SET( "->");         return STRING;}
+<MMODE>[\\]Rightarrow/{noletter}  { SET( "=>");         return STRING;}
+<MMODE>[\\]longrightarrow/{noletter} { SET( "-->");     return STRING;}
+<MMODE>[\\]Longrightarrow/{noletter} { SET( "==>");     return STRING;}
+<MMODE>[\\]leftrightarrow/{noletter} { SET( "<->");     return STRING;}
+<MMODE>[\\]Leftrightarrow/{noletter} { SET( "<=>");     return STRING;}
+<MMODE>[\\]longleftrightarrow/{noletter} { SET( "<-->");return STRING;}
+<MMODE>[\\]Longleftrightarrow/{noletter} { SET( "<==>");return STRING;}
+<MMODE>[\\]mapsto/{noletter}      { SET( "+->");        return STRING;}
 
   /* yet not supported characters ...
   <MMODE>[\\]delta/{noletter}       { SET( "&delta;");    return STRING;}
@@ -1262,7 +1308,7 @@ calblockintro   ([\{][\\](cal))|([\\]mathcal[\{])
 <INITIAL,NestingMode>[\\]"^"e     { SET( "&ecirc;");    return STRING;}
 <INITIAL,NestingMode>[\\]ss[\{][\}]  { SET( "&szlig;"); return STRING;}
 
-<MMODE>[\\]emptyset/{noletter}    { SET( "&Oslash");    return STRING;}
+<MMODE>[\\]emptyset/{noletter}    { SET( "&Oslash;");   return STRING;}
 <MMODE>[\\]setminus/{noletter}    { SET( "\\");         return STRING;}
 <MMODE>[\\]times/{noletter}       { SET( "&times;");    return STRING;}
 <MMODE>[\\]in/{noletter}          { SET( " is in ");    return STRING;}
@@ -1279,7 +1325,7 @@ calblockintro   ([\{][\\](cal))|([\\]mathcal[\{])
 <MMODE>[\\]iota/{noletter}        { SET( "&iota;");     return STRING;}
 <MMODE>[\\]kappa/{noletter}       { SET( "&kappa;");    return STRING;}
 <MMODE>[\\]lambda/{noletter}      { SET( "lambda");   return STRING;}
-<MMODE>[\\]mu/{noletter}          { SET( "&mu;");       return STRING;}
+<MMODE>[\\]mu/{noletter}          { SET( "&micro;");    return STRING;}
 <MMODE>[\\]nu/{noletter}          { SET( "&nu;");       return STRING;}
 <MMODE>[\\]xi/{noletter}          { SET( "&xi;");       return STRING;}
 <MMODE>[\\]pi/{noletter}          { SET( "pi");       return STRING;}

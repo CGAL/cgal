@@ -1232,7 +1232,7 @@ void three_cols_html_begin( ostream& out, bool big_col1) {
 	<< "<!3><TABLE BORDER=0 CELLSPACING=2 CELLPADDING=0 WIDTH="
 	<< table_width << ">" << indNewline 
 	<< "<TR><TD ALIGN=LEFT VALIGN=TOP WIDTH="
-	<< table_first_col << "%" << ( big_col1 ? " COLSPAN=3>" : ">")
+	<< table_first_col << "%" << ( big_col1 ? " COLSPAN=3>" : " NOWRAP>")
 	<< indNewline << "<I><NOBR>" << outdent << indNewline;
 }
 

@@ -429,6 +429,11 @@ blockintro      [\{][\\]((tt)|(em)|(it)|(sc)|(sl))
 		    yylval.string.len  = -1;
 		    return STRING;
                  }
+[\\]ccSeeAlso{w} {
+	            yylval.string.text = "SEE ALSO";
+		    yylval.string.len  = -1;
+		    return STRING;
+                 }
 [\\]ccImplementation{w} {
 	            yylval.string.text = "IMPLEMENTATION";
 		    yylval.string.len  = -1;
