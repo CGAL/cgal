@@ -12,12 +12,14 @@
 %
 %\section{Introduction} 
 
-\begin{ccClass}{Fixed_precision_nt}
+\begin{ccRefClass}{Fixed_precision_nt}
 
-\subsection{Fixed precision numbers}
+%\subsection{Fixed precision numbers}
 \label{I1_Chapter_Fixed_precision_nt}
 
-The class \ccStyle{Fixed_precision_nt} provides 24 bits numbers in 
+\ccDefinition
+
+The class \ccStyle{Fixed_precision_nt} provides 24-bit numbers in 
 fixed point representation.
 Basically these numbers are integers in the range
 $[-2^{24},2^{24}]$ with a multiplying factor $2^b$.
@@ -39,11 +41,13 @@ default.
 
 \ccSetTwoColumns{}{\hspace*{8.5cm}}
 
-\ccCreation
-\ccCreationVariable{fvar}
-
 \ccInclude{CGAL/Fixed_precision_nt.h}
 
+\ccIsModel
+RingNumberType
+
+\ccCreation
+\ccCreationVariable{fvar}
 \ccConstructor{Fixed_precision_nt();}
             {Declaration.}
 
@@ -185,4 +189,4 @@ will correctly call the function below.
   Fixed_precision_nt x4, Fixed_precision_nt y4, Fixed_precision_nt z4);}
 {Perturbation mode can be activated.}
 
-\end{ccClass} 
+\end{ccRefClass} 
