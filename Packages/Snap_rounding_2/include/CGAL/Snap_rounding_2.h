@@ -76,7 +76,7 @@ private:
   typedef typename Traits::FT           NT;
   typedef typename Traits::Segment_2    Segment_2;
   typedef typename Traits::Point_2      Point_2;
-  typedef Segment_data<Traits>          Segment_data;
+  typedef CGAL::Segment_data<Traits>          Segment_data;
   
 private:
   // p is the center of the hot pixel
@@ -113,7 +113,7 @@ template<class Traits_> Direction Hot_pixel<Traits_>::seg_dir;
 // a function for compare two hot pixels for the set of hot pixels
 template<class Traits_>
 struct Hot_pixel_auclidian_cmp {
-  typedef Hot_pixel<Traits_>    Hot_pixel;
+  typedef CGAL::Hot_pixel<Traits_>    Hot_pixel;
 
   Traits_ m_gt;
 
@@ -124,7 +124,7 @@ struct Hot_pixel_auclidian_cmp {
 // certain segment intersect
 template<class Traits_>
 struct Hot_pixel_dir_cmp {
-  typedef Hot_pixel<Traits_>    Hot_pixel;
+  typedef CGAL::Hot_pixel<Traits_>    Hot_pixel;
 
   Traits_ m_gt;
 
@@ -142,11 +142,11 @@ private:
   typedef typename Traits::FT                           NT;
   typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
   typedef typename OutputContainer::value_type          Polyline_type;
-  typedef Hot_pixel<Traits_>                            Hot_pixel;
-  typedef Segment_data<Traits>                          Segment_data;
-  typedef Multiple_kd_tree<Traits,Hot_pixel *>          Multiple_kd_tree;
+  typedef CGAL::Hot_pixel<Traits_>                      Hot_pixel;
+  typedef CGAL::Segment_data<Traits>                    Segment_data;
+  typedef CGAL::Multiple_kd_tree<Traits,Hot_pixel *>    Multiple_kd_tree;
   typedef std::list<Segment_data>                       Segment_data_list;
-  typedef Hot_pixel_dir_cmp<Traits>                     Hot_pixel_dir_cmp;
+  typedef CGAL::Hot_pixel_dir_cmp<Traits>               Hot_pixel_dir_cmp;
   typedef std::set<Hot_pixel *, Hot_pixel_dir_cmp>      Hot_pixel_set;
   
 public:
@@ -754,10 +754,10 @@ void snap_rounding_2(InputIterator begin,
   number_of_false_hp = 0;
 #endif
 
-  typedef Hot_pixel<Traits>                     Hot_pixel;
-  typedef Segment_data<Traits>                  Segment_data;
-  typedef Multiple_kd_tree<Traits,Hot_pixel *>  Multiple_kd_tree;
-  typedef std::list<Segment_data>               Segment_data_list;
+  typedef CGAL::Hot_pixel<Traits>                     Hot_pixel;
+  typedef CGAL::Segment_data<Traits>                  Segment_data;
+  typedef CGAL::Multiple_kd_tree<Traits,Hot_pixel *>  Multiple_kd_tree;
+  typedef std::list<Segment_data>                     Segment_data_list;
   
   Segment_data_list seg_list;
   Multiple_kd_tree * mul_kd_tree;
