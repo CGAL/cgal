@@ -22,6 +22,7 @@ Version 6.0 (?? ????? 00)
 - Alternative cartesian kernel without ref-counting : Simple_Cartesian_v2.
 - A few fixes for the advanced kernel.
 - Removed the copy ctors, as they are provided by the handles.
+- Added "if (is)" tests in all operator>>() (as per Pierre's request).
 - Various cleanups.
 
 --- CGAL 2.2 is out ---

@@ -22,29 +22,14 @@ Stuff to look at, as time permits:
     - It would also be nice if we could remove the ref-counting mecanism
       easily, like for Handle_for<>. [low priority, but would be nice to
       get the right interface able to do that]
+      Update : it is not possible to have it since we cannot copy this object
+      as we don't know its exact type !
     - Apply them to Aff_transformations, then Lazy_exact_nt<>, then... :)
 
 - Advanced Kernel :
   - Rename CGAL_CFG_NO_ADVANCED_KERNEL to CGAL_USE_ADVANCED_KERNEL, definable
     on the command line, and not in config.h... ?
   - Have a separate (top-level) kernel for the advanced cartesian ? 
-
-- Pierre reported that the operator>>() should test for empty stream,
-  something like :
-diff -ru CGAL-2.3-I-6/include/CGAL/SimpleCartesian/CircleS2.h CGAL-2.3-I-6-new/include/CGAL/SimpleCartesian/CircleS2.h
---- CGAL-2.3-I-6/include/CGAL/SimpleCartesian/CircleS2.h        Fri Oct 27 16:48:01 2000
-+++ CGAL-2.3-I-6-new/include/CGAL/SimpleCartesian/CircleS2.h    Tue Oct 31 11:15:41 2000
-@@ -333,7 +333,7 @@
-         cerr << "Stream must be in ascii or binary mode" << std::endl;
-         break;
-     }
--    c = CircleS2<FT>(center, squared_radi, (Orientation)o);
-+    if (is) c = CircleS2<FT>(center, squared_radi, (Orientation)o);
-     return is;
- }
- #endif // CGAL_NO_ISTREAM_EXTRACT_CIRCLES2
-
- See his e-mails.
 
 - Remove include/CGAL/Kernel/* ?  It's used nowhere...
   Try to guess what it was supposed to be used for.
