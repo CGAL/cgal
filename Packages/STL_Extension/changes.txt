@@ -9,6 +9,8 @@
 
 ALL : New functor adaptors (bind/compose).
 ALL : Removed Compose for Projection objects.
+ALL : Added compose_shared.
+ALL : Fixed Arity_traits problem.
 ALL : Fixed Inverse_index for buggy gcc-3 map acc. to Eti.
 ALL : Changed Iterator_project as Lutz suggested.
 ALL : Added merge and sort parameterized with a StrictWeakOrdering to in-place
@@ -24,6 +26,8 @@ TEST: Fixed warnings with NDEBUG.
 ALL : Fixed leading underscore names.
 SRC : Replace reverse_bidirectional_iterator by reverse_iterator.
 SRC : Fixed composition class/functions.
+TEST: Added compose_shared.
+TEST: Fixed Arity_traits problem.
 TEST: Initial revision
 TEST: Fixed std::distance(...) calls.
 
@@ -46,3 +50,5 @@ ALL : Removed line directives.
 SRC : Added typedefs for types from base class that are not visible
 SRC : since the base class depends on the template parameter.
 SRC : (in composition classes and Random_access_value_adaptor)
+TEST: Added compose_shared.
+TEST: Fixed Arity_traits problem.
