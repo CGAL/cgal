@@ -29,7 +29,7 @@
 #define CGAL_FILTERED_EXTENDED_HOMOGENEOUS_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Handle.h>
+#include <CGAL/Handle_for.h>
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Homogeneous.h>
 #undef _DEBUG
@@ -179,16 +179,17 @@ inline double to_double(const SQuotient<RT>& q)
 
 
 template <typename RT> class Extended_point;
+template <typename RT> class Extended_point_rep;
 
 template <typename RT>
-class Extended_point_rep : public CGAL::Rep {
+class Extended_point_rep : public Ref_counted {
   friend class Extended_point<RT>;
-  SPolynomial<RT> _x,_y; RT _w;
+  SPolynomial<RT> x_,y_; RT w_;
   typedef Interval_nt_advanced DT;
   DT mxd,myd,nxd,nyd,wd;
 public:
   Extended_point_rep(const RT& x, const RT& y, const RT& w) :
-    _x(x),_y(y),_w(w)
+    Ref_counted(), x_(x),y_(y),w_(w)
   { CGAL_assertion_msg(w!=0,"denominator is zero.");
     nxd=CGAL::to_interval(x);
     nyd=CGAL::to_interval(y);
@@ -198,7 +199,7 @@ public:
 
   Extended_point_rep(const SPolynomial<RT>& x, 
                      const SPolynomial<RT>& y, 
-                     const RT& w) : _x(x),_y(y),_w(w)
+                     const RT& w) : Ref_counted(), x_(x),y_(y),w_(w)
   { CGAL_assertion_msg(w!=0,"denominator is zero.");
     mxd=CGAL::to_interval(x.m());
     myd=CGAL::to_interval(y.m());
@@ -207,40 +208,37 @@ public:
     wd=CGAL::to_interval(w);
   }
 
-  Extended_point_rep() : _x(),_y(),_w() {}
+  Extended_point_rep() : Ref_counted(), x_(),y_(),w_() {}
   ~Extended_point_rep() {}
+  void negate() 
+  { x_ = -x_; y_ = -y_; w_ = -w_; 
+    mxd = -mxd; myd = -myd; nxd = -nxd; nyd = -nyd; wd = -wd; }
 
 };
 
 template <typename RT_>
-class Extended_point : public CGAL::Handle {
-  typedef CGAL::Handle Base;
-  Extended_point_rep<RT_>* ptr() const 
-  { return (Extended_point_rep<RT_>*)PTR; } 
+class Extended_point : public Handle_for< Extended_point_rep<RT_> > {
+  typedef Extended_point_rep<RT_> Rep;
+  typedef Handle_for< Rep >       Base;
 public:
-  typedef typename Extended_point_rep<RT_>::DT DT;
+  typedef typename Rep::DT DT;
   typedef RT_ RT;
 
-  Extended_point() { PTR = new Extended_point_rep<RT>; }
+  Extended_point() : Base( Rep() ) {}
 
-  Extended_point(const RT& x, const RT& y, const RT& w)
-  { if (w > 0) PTR = new Extended_point_rep<RT>(x,y,w); 
-    else       PTR = new Extended_point_rep<RT>(-x,-y,-w); }
+  Extended_point(const RT& x, const RT& y, const RT& w) :
+    Base( Rep(x,y,w) )
+  { if (w < 0) ptr->negate(); }
   
   Extended_point(const SPolynomial<RT>& x, 
                  const SPolynomial<RT>& y, 
-                 const RT& w)
-  { if (w > 0) PTR = new Extended_point_rep<RT>(x,y,w); 
-    else       PTR = new Extended_point_rep<RT>(-x,-y,-w); }
+                 const RT& w) : Base( Rep(x,y,w) )
+  { if (w < 0) ptr->negate(); }
 
   Extended_point(const RT& mx, const RT& nx,
-                 const RT& my, const RT& ny, const RT& w)
-  { if (w > 0) 
-      PTR = new Extended_point_rep<RT>(SPolynomial<RT>(mx,nx),
-                                       SPolynomial<RT>(my,ny),w);
-    else
-      PTR = new Extended_point_rep<RT>(SPolynomial<RT>(-mx,-nx),
-                                       SPolynomial<RT>(-my,-ny),-w); }
+                 const RT& my, const RT& ny, const RT& w) :
+    Base( Rep(SPolynomial<RT>(mx,nx), SPolynomial<RT>(my,ny), w) )
+  { if (w < 0) ptr->negate(); }
   
   Extended_point(const Extended_point<RT>& p) : Base(p) {}
   ~Extended_point() {}
@@ -248,24 +246,24 @@ public:
   Extended_point& operator=(const Extended_point<RT>& p) 
   { Base::operator=(p); return *this; }
 
-  const RT& mx() const { return ptr()->_x.m(); }
-  const RT& nx() const { return ptr()->_x.n(); }
-  const RT& my() const { return ptr()->_y.m(); }
-  const RT& ny() const { return ptr()->_y.n(); }
-  const RT& hw()  const { return ptr()->_w; }
-  const DT& mxD() const { return ptr()->mxd; }
-  const DT& nxD() const { return ptr()->nxd; }
-  const DT& myD() const { return ptr()->myd; }
-  const DT& nyD() const { return ptr()->nyd; }
-  const DT& hwD() const { return ptr()->wd; }
+  const RT& mx() const { return ptr->x_.m(); }
+  const RT& nx() const { return ptr->x_.n(); }
+  const RT& my() const { return ptr->y_.m(); }
+  const RT& ny() const { return ptr->y_.n(); }
+  const RT& hw()  const { return ptr->w_; }
+  const DT& mxD() const { return ptr->mxd; }
+  const DT& nxD() const { return ptr->nxd; }
+  const DT& myD() const { return ptr->myd; }
+  const DT& nyD() const { return ptr->nyd; }
+  const DT& hwD() const { return ptr->wd; }
 
   SQuotient<RT> x() const 
-  { return SQuotient<RT>(ptr()->_x, ptr()->_w); }
+  { return SQuotient<RT>(ptr->x_, ptr->w_); }
   SQuotient<RT> y() const 
-  { return SQuotient<RT>(ptr()->_y, ptr()->_w); }
+  { return SQuotient<RT>(ptr->y_, ptr->w_); }
 
-  const SPolynomial<RT> hx() const { return ptr()->_x; }
-  const SPolynomial<RT> hy() const { return ptr()->_y; }
+  const SPolynomial<RT> hx() const { return ptr->x_; }
+  const SPolynomial<RT> hy() const { return ptr->y_; }
 
   bool is_standard() const { return (mx()==0)&&(my()==0); }
   Extended_point<RT> opposite() const 
@@ -485,7 +483,7 @@ template <typename RT>
 inline bool operator==(const Extended_point<RT>& p1, 
                        const Extended_point<RT>& p2) 
 { CHECK(bool(compare_xy(p1,p2) == 0),p1.checkrep()==p2.checkrep())
-  return (identical(p1,p2) || compare_xy(p1,p2) == 0); }
+  return (p1.identical(p2) || compare_xy(p1,p2) == 0); }
 
 template <typename RT>
 inline bool operator!=(const Extended_point<RT>& p1, 

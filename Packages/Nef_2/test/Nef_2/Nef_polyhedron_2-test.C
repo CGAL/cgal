@@ -1,10 +1,8 @@
 #include <CGAL/basic.h>
 #include <CGAL/test_macros.h>
+#include <CGAL/Nef_2/redefine_MSC.h>
 #include <CGAL/Extended_homogeneous.h>
 #include <CGAL/Filtered_extended_homogeneous.h>
-#include <CGAL/basic_constructions_2.h>
-#include <CGAL/Point_2.h>
-
 #include <CGAL/Nef_polyhedron_2.h>
 
 #ifdef CGAL_USE_LEDA
@@ -284,6 +282,8 @@ int main()
   CGAL_TEST( CGAL::assign(f1,h3) && !E.mark(f1) );
 
   CGAL_IO_TEST(N1,N2);
+
+
 
   Nef_polyhedron::EK.print_statistics();
 }
