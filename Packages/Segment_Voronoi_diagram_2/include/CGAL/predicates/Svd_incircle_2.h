@@ -101,7 +101,8 @@ private:
 
     if ( p.is_point() && q.is_point() ) {
 
-      Orientation o;
+      Orientation o = COLLINEAR; // the initialization was done in
+                                 // order a compiler warning
 
       // do some geometric filtering...
       bool p_exact = p.is_exact();
