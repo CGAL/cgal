@@ -291,6 +291,7 @@ public:
     }
 
     Point_3& point() { return point_at_center_; }
+    const Point_3& point() const { return point_at_center_; }
     Mark& mark() { return mark_; }
     GenPtr& info() { return info_; }
 

@@ -1392,6 +1392,25 @@ public:
     }
   }
   
+    // Returns the bounding box of the finite vertices of the polyhedron.
+    // Returns $[-1,+1]^3$ as bounding box if no finite vertex exists.
+    Bbox_3  bounded_bbox() const {
+        Vertex_const_iterator vi = vertices_begin();
+        // HACK to skip infbox, needs deco.is_infbox_vertex() test!
+        std::advance( vi, 8);
+        bool first_vertex = true;
+        Bbox_3 bbox( -1.0, -1.0, -1.0, 1.0, 1.0, 1.0);
+        for ( ; vi != vertices_end(); ++vi) {
+            if ( first_vertex) {
+                bbox = vi->point().bbox();
+                first_vertex = false;
+            } else {
+                bbox = bbox + vi->point().bbox();
+            }
+        }
+        return bbox;
+    }
+
   
 protected:
   void pointer_update(const Self& D);

@@ -307,7 +307,7 @@ public:
     public:
       Visitor(Polyhedron_incremental_builder_3<HDS>& BB,
 	      SNC_decorator& sd,
-	      Object_index<Vertex_iterator>& vi) : VI(vi), D(sd), B(BB){}
+	      Object_index<Vertex_iterator>& vi) : VI(vi), B(BB), D(sd){}
 
       void visit(Halffacet_handle opposite_facet) {
  
@@ -362,7 +362,7 @@ public:
       }     
         
       int outer_volume = 0;
-      Shell_entry_iterator it;
+      //Shell_entry_iterator it;
       Visitor V(B,D,VI);
       Volume_handle c;
       CGAL_nef3_forall_volumes(c,snc) {
@@ -671,12 +671,15 @@ public:
   { return N1.difference(*this).is_empty(); } 
 
     void transform( const Aff_transformation_3& aff) {
+        if( is_shared())
+            clone_rep();
         SNC_decorator deco( snc());
         Vertex_iterator vi = deco.vertices_begin();
         // HACK to skip infbox, needs deco.is_infbox_vertex() test!
         std::advance( vi, 8);
         for ( ; vi != deco.vertices_end(); ++vi) {
             vi->point() = vi->point().transform( aff);
+#if 0
             SM_decorator sdeco;
             for ( SVertex_iterator si = vi->svertices_begin();
                   si != vi->svertices_end(); ++si) {
@@ -686,6 +689,7 @@ public:
                 sp = Sphere_point( p.hx(), p.hy(), p.hz());
                 //sdeco.point(si) = Point_3(sdeco.point(si)).transform( aff);
             }
+#endif
         }
         Halffacet_iterator fi;
         CGAL_nef3_forall_halffacets(fi,snc()) {

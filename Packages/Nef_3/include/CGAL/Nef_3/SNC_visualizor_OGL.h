@@ -64,7 +64,9 @@ namespace OGL {
 
   typedef CGAL::Simple_cartesian<double> DKernel;  
   typedef DKernel::Point_3               Double_point;
+  typedef DKernel::Vector_3              Double_vector;
   typedef DKernel::Segment_3             Double_segment;
+  typedef DKernel::Aff_transformation_3  Affine_3;
 
   // DPoint = a double point including a mark
   class DPoint : public Double_point {
@@ -252,12 +254,14 @@ namespace OGL {
     GLuint         object_list_;
     bool init_, axes_, surface_;
 
+    Bbox_3  bbox_;
+
     typedef std::list<DPoint>::const_iterator   Vertex_iterator;
     typedef std::list<DSegment>::const_iterator Edge_iterator;
     typedef std::list<DFacet>::const_iterator   Halffacet_iterator;
 
   public:
-    Polyhedron() 
+    Polyhedron() : bbox_(-1,-1,-1,1,1,1)
     { object_list_ = 0;
       init_ = axes_ = false; surface_ = true; }
 
@@ -271,8 +275,9 @@ namespace OGL {
     ~Polyhedron() 
     { if (object_list_) glDeleteLists(object_list_, 4); }
 
-    void push_back(const Double_point& p, bool m) 
-    { vertices_.push_back(DPoint(p,m)); }
+    void push_back(const Double_point& p, bool m) {
+        vertices_.push_back(DPoint(p,m));
+    }
     void push_back(const Double_segment& s, bool m) 
     { edges_.push_back(DSegment(s,m)); }
     void push_back(const DFacet& f) 
@@ -282,6 +287,9 @@ namespace OGL {
     void skeleton_on() { surface_ = false; }
     void boundary_on() { surface_ = true; }
     bool is_initialized() const { return init_; }
+
+    Bbox_3  bbox() const { return bbox_; }
+    Bbox_3& bbox()       { return bbox_; }
 
     void draw(Vertex_iterator v) const
     { TRACEN("drawing vertex "<<*v);
@@ -419,6 +427,13 @@ namespace OGL {
     void draw() const
     { 
       if (!is_initialized()) const_cast<Polyhedron&>(*this).initialize();
+      double l = std::max( std::max( bbox().xmax() - bbox().xmin(),
+                                     bbox().ymax() - bbox().ymin()),
+                           bbox().zmax() - bbox().zmin());
+      glScaled( 4.0/l, 4.0/l, 4.0/l);
+      glTranslated( -(bbox().xmax() + bbox().xmin()) / 2.0,
+                    -(bbox().ymax() + bbox().ymin()) / 2.0,
+                    -(bbox().zmax() + bbox().zmin()) / 2.0);
       glCallList(object_list_);   // vertices
       glCallList(object_list_+1); // edges
       if ( surface_ ) {
@@ -452,24 +467,30 @@ namespace OGL {
 // Viewer configuration:
 // ----------------------------------------------------------------------------
 
-  enum MenuEntries { ROTATE, SCALE, TRANSLATE, RESET_CONTROL, 
-		     AXES, BOUNDARY, SKELETON, QUIT };
+  enum MenuEntries { ROTATE, SCALE, TRANSLATE, TRANS_Z, RESET_CONTROL, 
+		     AXES, BOUNDARY, SKELETON, PERSP, FULLSCREEN, QUIT };
 
-  int window_width  = 400;           // Breite und
-  int window_height = 400;           // Hoehe des Fensters
+  const double znear = 4.0;
+  const double zfar  = 4.0;
+  const double eye   = 6.0;
+  const double wsize = 2.0;
+
+  int window_width  = 600;           // Breite und
+  int window_height = 600;           // Hoehe des Fensters
+  int window_radius = 300;           // min(width,height) / 2
+
+  bool perspective  = true;
 
   int mouse_x, mouse_y;              // Mauskoordinaten linker button
-  int mouse_left_button = false;     // Mouse1 gedrueckt
+  int interaction;                   // type of interaction in motion fct.
   int motion_mode       = ROTATE;    // Bewegen der Maus bei Mouse1 gedrueckt
   int submenu1, submenu2;
-  long double dx = 0;                // Translation
-  long double dy = 0;                // Translation
-  long double wx = 0;                // Rotation
-  long double wy = 0;                // Rotation
-  long double s  = 0.5;              // Skalierung
+  double dx = 0;                     // Translation
+  double dy = 0;                     // Translation
+  double dz = 0;                     // Translation in Z
+  double s  = 0.5;                   // Skalierung
+  Affine_3    rotation( IDENTITY);   // Rotation
                        
-  long double factor_d;              // Umrechnungsfaktor fuer Translation
-  long double factor_w;              // Umrechnungsfaktor fuer Rotation
   long double factor_s;              // Umrechnungsfaktor fuer Skalierung
 
   // our draw object:
@@ -488,11 +509,13 @@ static void show (int mode)
     case ROTATE:
     case SCALE:
     case TRANSLATE:
+    case TRANS_Z:
       motion_mode = mode;
       break;
     case RESET_CONTROL:
-      dx = dy = wx = wy = 0.0;
+      dx = dy = dz = 0.0;
       s = 0.5;
+      rotation = Affine_3( IDENTITY);
       motion_mode = ROTATE;
       CGAL_nef3_forall_iterators(it,polyhedra_) it->initialize();
       glutPostRedisplay();
@@ -511,6 +534,12 @@ static void show (int mode)
       CGAL_nef3_forall_iterators(it,polyhedra_) it->draw();
       glutPostRedisplay();
       break;
+    case PERSP:
+      perspective = ! perspective;
+      break;
+    case FULLSCREEN:
+      glutFullScreen();
+      break;
     case QUIT: 
       exit(0);
   }
@@ -521,37 +550,95 @@ static void show (int mode)
 // Mausknopf gedrueckt
 static void mouse (int button, int state, int x, int y)
 {
-  if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
     mouse_x = x;
     mouse_y = y;
-    mouse_left_button = true;
-  } else 
-    mouse_left_button = false;
+    interaction = 0;
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+        if ( GLUT_ACTIVE_SHIFT & glutGetModifiers())
+            interaction = SCALE;
+        else
+            interaction = motion_mode;
+    }
+    if (button == GLUT_MIDDLE_BUTTON && state == GLUT_DOWN)
+        if ( GLUT_ACTIVE_SHIFT & glutGetModifiers())
+            interaction = TRANS_Z;
+        else
+            interaction = TRANSLATE;
 }
 
+
+static Affine_3 virtual_sphere_transformation( double old_x, double old_y, 
+                                               double new_x, double new_y) {
+    if ( old_x == new_x && old_y == new_y)// zero rotation.
+	return Affine_3( IDENTITY);
+    // Determine the projected vectors on the `sphere'.
+    double dd = old_x * old_x + old_y * old_y;
+    Double_vector v_old( old_x, old_y, 
+                         ((dd < 0.5) ? std::sqrt(1-dd) : 0.5 / std::sqrt(dd)));
+    dd = new_x * new_x + new_y * new_y;
+    Double_vector v_new( new_x, new_y, 
+                         ((dd < 0.5) ? std::sqrt(1-dd) : 0.5 / std::sqrt(dd)));
+    Double_vector axis  = cross_product( v_old, v_new);
+    double angle = 0.0;
+    double norm = std::sqrt( (v_old*v_old)*(v_new*v_new));
+    if ( norm != 0) {
+        double x = v_old*v_new/ norm;
+        if ( x <= -1)
+        angle = M_PI;
+        if ( x < 1)
+            angle = std::acos(x);
+    }
+    double len = std::sqrt( double(axis * axis));
+    double s   = std::sin( angle / 2.0) / len;
+    double q1 = axis.x() * s; // quaternion
+    double q2 = axis.y() * s;
+    double q3 = axis.z() * s;
+    double q0 = std::cos( angle / 2.0);
+    double a   = q1 * q2;
+    double b   = q0 * q3;
+    double c   = q1 * q3;
+    double d   = q0 * q2;
+    double e   = q2 * q3;
+    double f   = q0 * q1;
+    double qq0 = q0 * q0;
+    double qq1 = q1 * q1;
+    double qq2 = q2 * q2;
+    double qq3 = q3 * q3;
+    return Affine_3( qq0 + qq1 - qq2 - qq3, 2 * (a-b), 2 * (c+d),
+                     2 * (a+b), qq0 - qq1 + qq2 - qq3, 2 * (e-f),
+                     2 * (c-d), 2 * (e+f), qq0 - qq1 - qq2 + qq3);
+}
 
 
 // Objekt rotieren, zoomen oder verschieben
 static void motion (int x, int y)
 {
-  if (mouse_left_button) {
-    if (motion_mode == ROTATE) {
-      wx += (y - mouse_y) * factor_w;       
-      // Mausbewegung in y-Richtung entspricht Rotation um die x-Achse
-      wy += (x - mouse_x) * factor_w;       
-      // Mausbewegung in x-Richtung entspricht Rotation um die y-Achse
-    }
-    else if (motion_mode == SCALE) {
-      s *= exp( (y - mouse_y) * factor_s );
-    }
-    else if (motion_mode == TRANSLATE) {
-      dx += (x - mouse_x) * factor_d / s;
-      dy -= (y - mouse_y) * factor_d / s;
+    switch ( interaction) {
+    case SCALE:
+        s *= exp( (x - mouse_x + y - mouse_y) * factor_s );
+        break;
+    case ROTATE: {
+        double old_x =   1.2 * (mouse_x -  window_width/2) / window_radius;
+        double old_y = - 1.2 * (mouse_y - window_height/2) / window_radius;
+        double new_x =   1.2 * (x -  window_width/2) / window_radius;
+        double new_y = - 1.2 * (y - window_height/2) / window_radius;
+        rotation =  virtual_sphere_transformation( old_x, old_y, new_x, new_y)
+            * rotation;
+        }
+        break;
+    case TRANSLATE:
+        dx += (x - mouse_x) * 2.0 / window_radius;
+        dy -= (y - mouse_y) * 2.0 / window_radius;
+        break;
+    case TRANS_Z:
+        dz += (x - mouse_x + mouse_y -y) * 2.0 / window_radius;
+        break;
+    default:
+        break;
     }
     mouse_x = x;
     mouse_y = y;
     glutPostRedisplay();
-  }
 }
 
 static void initialize_olg()
@@ -566,7 +653,7 @@ static void initialize_olg()
   glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular );
   glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, mat_shininess );
 
-//#define SCREENSHOTS
+#define SCREENSHOTS
 #ifdef SCREENSHOTS
   GLfloat mat_emission[] = { 0.1, 0.1, 0.2, 0.0 };
   glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);
@@ -600,10 +687,36 @@ static void draw()
 {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
   glPushMatrix();
-  glRotated(wy,0,1,0);
-  glRotated(wx,1,0,0);
+  if (window_width > window_height) {
+    double w = double( window_width) / double( window_height);
+    if ( perspective) {
+        double s = (eye - znear) / eye;
+        glFrustum( -wsize*w*s, wsize*w*s, -wsize*s, wsize*s, 
+                   eye-znear, eye+zfar);
+        glTranslated( 0.0, 0.0, -eye);
+    } else {
+        glOrtho( -wsize*w, wsize*w, -wsize, wsize, -znear, zfar );
+    }
+  } else {
+    double h = double( window_height) / double( window_width);
+    if ( perspective) {
+        double s = (eye - znear) / eye;
+        glFrustum( -wsize*s, wsize*s, -wsize*h*s, wsize*h*s, 
+                   eye-znear, eye+zfar);
+        glTranslated( 0.0, 0.0, -eye);
+    } else {
+        glOrtho( -wsize, wsize, -wsize*h, wsize*h, -znear, zfar );
+    }
+  }
+  glTranslated(dx,dy,dz);
+  glTranslated(0,0,1);
+  GLdouble M[16] = { rotation.m(0,0), rotation.m(1,0), rotation.m(2,0), 0.0,
+                     rotation.m(0,1), rotation.m(1,1), rotation.m(2,1), 0.0,
+                     rotation.m(0,2), rotation.m(1,2), rotation.m(2,2), 0.0,
+                     rotation.m(0,3), rotation.m(1,3), rotation.m(2,3), 1.0};
+  glMultMatrixd( M);
+  
   glScaled(s,s,s);
-  glTranslated(dx,dy,0.0);
   int win = glutGetWindow();
   polyhedra_[win-1].draw();
   glPopMatrix();
@@ -612,33 +725,14 @@ static void draw()
 
 static void reshape(int width, int height)
 {
-  window_width = width;
+  window_width  = width;
   window_height = height;
+  window_radius = std::min( width, height) / 2;
+  factor_s = std::log(4.0) / (window_radius/2.0); // radius == scale factor 4
 
   glViewport(0, 0, (GLint)width, (GLint)height);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-
-  if (width>height) {
-    long double w = (long double) width / (long double) height;
-    glOrtho( -2*w, 2*w, -2.0, 2.0, -100.0, 100.0 );
-    factor_d = 2.0 / (height/2.0);           
-    // halbe Fensterhoehe soll 2 LE entsprechen
-    factor_w = 90.0 / (height/2.0);           
-    // halbe Fensterhoehe soll 90 Grad entsprechen
-    factor_s = std::log(4.0) / (height/2.0);           
-    // halbe Fensterhoehe soll Faktor 4 entsprechen
-  } else {
-    long double h = (long double) height / (long double) width;
-    glOrtho( -2.0, 2.0, -2*h, 2*h, -100.0, 100.0 );
-    factor_d =  2.0   / (width/2.0);            
-    // halbe Fensterbreite soll 2 LE entsprechen
-    factor_w = 90.0   / (width/2.0);            
-    // halbe Fensterbreite soll 90 Grad entsprechen
-    factor_s = std::log(4.0) / (height/2.0);           
-    // halbe Fensterhoehe soll Faktor 4 entsprechen
-  }
-
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 }
@@ -654,7 +748,8 @@ static void start_viewer()
   glutAddMenuEntry("Reset",RESET_CONTROL);
   glutAddMenuEntry("Rotate",ROTATE);
   glutAddMenuEntry("Scale",SCALE);
-  glutAddMenuEntry("Translate",TRANSLATE);
+  glutAddMenuEntry("Translate in XY",TRANSLATE);
+  glutAddMenuEntry("Translate in Z",TRANS_Z);
 
   int submenu2 = glutCreateMenu(show);
   glutAddMenuEntry("Boundary",BOUNDARY);
@@ -674,6 +769,8 @@ static void start_viewer()
     glutCreateMenu(show);
     glutAddSubMenu("Control",submenu1);
     glutAddSubMenu("Render",submenu2);
+    glutAddMenuEntry("Persp/Ortho",PERSP);
+    glutAddMenuEntry("Fullscreen",FULLSCREEN);
     glutAddMenuEntry("Quit",QUIT);
     glutAttachMenu(GLUT_RIGHT_BUTTON);
   }
@@ -770,6 +867,7 @@ public:
   { 
     Vertex_iterator v;
     CGAL_nef3_forall_vertices(v,*sncp()) draw(v);
+    ppoly_->bbox() = sncp()->bounded_bbox();
     Halfedge_iterator e;
     CGAL_nef3_forall_edges(e,*sncp()) draw(e);
     Halffacet_iterator f;
