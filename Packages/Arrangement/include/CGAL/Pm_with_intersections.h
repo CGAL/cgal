@@ -1061,8 +1061,12 @@ public:
   Halfedge_handle insert(const typename Traits::Curve& c, 
 			 Pmwx_change_notification *en = NULL)
   {
-    CGAL_precondition( ! traits->point_is_same( traits->curve_source( c),
-						traits->curve_target( c)));
+    // If curve is x-monotone then its source is different from its target.
+    // (which is not true for non x-monotone curves, e.g, triangles.)
+    CGAL_precondition( ! traits->is_x_monotone(c) ||
+		       ! traits->point_is_same( traits->curve_source( c),
+    						traits->curve_target( c)));
+
     Vertex_handle src, tgt;
     return insert_intersecting_curve(c, src, tgt, false, en);
   }
