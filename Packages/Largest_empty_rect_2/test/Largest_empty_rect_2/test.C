@@ -4,6 +4,7 @@
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Largest_empty_iso_rectangle_2.h>
 #include <fstream>
+#include <cassert>
 
 #define MIN_X 0
 #define MIN_Y 0
@@ -82,7 +83,7 @@ int main(int argc,char *argv[])
       it != empty_rectangle1.end();
       ++it){
     const Point& p = *it;
-    std::cout << "   " << p << endl;
+    std::cout << "   " << p << std::endl;
   }
 
   // output
@@ -109,7 +110,6 @@ int main(int argc,char *argv[])
 
   // test cctor
   Largest_empty_rect empty_rectangle3(empty_rectangle1);
-
   // output
   ler = empty_rectangle3.get_largest_empty_iso_rectangle();
 
@@ -124,7 +124,7 @@ int main(int argc,char *argv[])
 
   // output
   std::cout << "test list insertion:\n";
-  std::cout << "  number of successfully inserted points is " << n << endl;
+  std::cout << "  number of successfully inserted points is " << n << std::endl;
   ler = empty_rectangle4.get_largest_empty_iso_rectangle();
 
   std::cout << "  LER is  (" << ler.min().x()
@@ -163,7 +163,7 @@ int main(int argc,char *argv[])
   empty_rectangle1.clear();
   assert(empty_rectangle1.begin() == empty_rectangle1.end());
   bool bo = empty_rectangle1.insert(p);
-  std::cout << "test successful insertion " << bo << endl;
+  std::cout << "test successful insertion " << bo << std::endl;
 
   // output
   ler = empty_rectangle1.get_largest_empty_iso_rectangle();
@@ -174,7 +174,7 @@ int main(int argc,char *argv[])
             << "," << ler.max().y() << ")\n";
 
   bo = empty_rectangle1.insert(p);
-  std::cout << "test unsuccessful insertion " << bo << endl;
+  std::cout << "test unsuccessful insertion " << bo << std::endl;
 
   // test bbox
   Iso_rectangle_2 bb = empty_rectangle1.get_bounding_box();
