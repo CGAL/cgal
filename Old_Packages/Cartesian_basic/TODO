@@ -1,12 +1,8 @@
 Stuff to look at, as time permits:
 ----------------------------------
 
-*** Before CGAL-2.2 ***
------------------------
+- Test Advanced Kernel, Cd.
 - SphereC3 should be able to use Handle_for<>.
-
-*** After CGAL-2.2 ***
-----------------------
 - Use CGAL_TYPENAME_MSVC_NULL instead of "#define typename".
   Only in the template parameters, right ?
 - Aff_tranformations can't use Handle_for<> yet.
@@ -90,3 +86,4 @@ Stuff to look at, as time permits:
   but mainly they are the simple ones, just needing to compute an opposite or
   something.  I need to think about what to do with these, it's painful to have
   a 3-stage calling sequence for not that much...
+- Merge Intersection package.
