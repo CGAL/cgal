@@ -203,7 +203,8 @@ public:
 
   typedef Sweep_curves_base_2<Curve_iterator, Traits, 
     Point_handle_traits, X_curve_plus>                     Base;
-  
+
+  typedef typename Base::Point_plus                  Point_plus;
   typedef typename Base::Curve_node                  Curve_node;
   typedef typename Base::Intersection_point_node     Intersection_point_node;
   typedef typename Base::Points_iterator             Points_iterator;  
@@ -447,12 +448,12 @@ public:
 #ifdef  CGAL_SWEEP_LINE_DEBUG
       cout<<cv<<std::endl;
 #endif
-      
+
       typename Event_queue::iterator  edge_point = 
         event_queue.find( traits->curve_source(cv) );
       // defining one cv_node for both source and target event points. 
       Curve_node  cv_node = Curve_node(X_curve_plus(cv, id), 
-                                       Point_plus(traits->curve_source(cv)),
+				       Point_plus(traits->curve_source(cv)),
                                        traits );
       
       Intersection_point_node  source_point_node = 
