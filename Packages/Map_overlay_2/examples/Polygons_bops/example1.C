@@ -6,7 +6,7 @@
 #include <CGAL/Bops/Polygons_bops_traits.h>
 #include <CGAL/Polygons_bops_2.h>
 
-#include <iostream.h>
+#include <iostream>
 #include <vector>
 #include <list>
 
@@ -17,8 +17,8 @@
 typedef CGAL::Quotient<int>        NT;
 typedef CGAL::Cartesian<NT>        K;
 typedef K::Point_2                 Point_2;
-typedef CGAL::Polygon_2<K>         Polygon;
-typedef Polygon::Segment_2         Segment_2;
+typedef CGAL::Polygon_2<K>         Polygon_2;
+typedef Polygon_2::Segment_2       Segment_2;
 
 typedef CGAL::Polygons_bops_traits_2<K>   Bops_traits;
 
@@ -26,7 +26,7 @@ using std::cin;
 using std::cout; 
 using std::endl;
 
-void read_polygon(Polygon& polygon)
+void read_polygon(Polygon_2& polygon)
 {  
   unsigned int n;  
 
@@ -41,7 +41,7 @@ void read_polygon(Polygon& polygon)
 
 int  main()
 {
-  Polygon  poly1, poly2;
+  Polygon_2  poly1, poly2;
   
   read_polygon(poly1);
   read_polygon(poly2);
@@ -50,7 +50,7 @@ int  main()
   cout<<poly1<<endl;
   cout<<poly2<<endl;
   
-  std::list<Polygon>      polygons;
+  std::list<Polygon_2>      polygons;
   std::list<Segment_2>    curves;
   std::list<Point_2>      points;
   
@@ -64,7 +64,7 @@ int  main()
   cout<<"The number of resulting polygons: "<<
     polygons.size()<<endl;
   
-  for (std::list<Polygon>::iterator iter = polygons.begin();
+  for (std::list<Polygon_2>::iterator iter = polygons.begin();
        iter != polygons.end(); ++iter)
     cout << *iter << endl;
   
