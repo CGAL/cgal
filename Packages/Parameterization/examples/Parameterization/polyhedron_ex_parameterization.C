@@ -321,9 +321,8 @@ int main(int argc,char * argv[])
 			}
 			else if ( (strcmp(type,"floater") == 0) && (strcmp(boundary,"circle") == 0) )
 			{
-				err = CGAL::parameterize(&Mesh_adaptor_polyhedron_ex(&mesh),
-										 CGAL::Mean_value_coordinates_parametizer_3<Mesh_adaptor_polyhedron_ex, 
-										 CGAL::Circular_border_parametizer_3<Mesh_adaptor_polyhedron_ex> >());
+				// Floater/circle is the default parameterization algorithm
+				err = CGAL::parameterize(&Mesh_adaptor_polyhedron_ex(&mesh));
 			}
 			else if ( (strcmp(type,"floater") == 0) && (strcmp(boundary,"square") == 0) )
 			{

@@ -21,7 +21,7 @@
 #ifndef PARAMETERIZATION_H
 #define PARAMETERIZATION_H
 
-#include "CGAL/Barycentric_mapping_parametizer_3.h"
+#include "CGAL/Mean_value_coordinates_parametizer_3.h"
 
 CGAL_BEGIN_NAMESPACE
 
@@ -31,7 +31,7 @@ CGAL_BEGIN_NAMESPACE
 //
 
 // Compute a 1 to 1 mapping from a triangular 3D surface 'mesh' to 2D circle, 
-// using Tutte's barycentric mapping algorithm .
+// using Floater's mean value coordinates algorithm .
 // 1 to 1 mapping is guaranteed.
 //
 // The mapping is linear by pieces (linear in each triangle).
@@ -40,12 +40,13 @@ CGAL_BEGIN_NAMESPACE
 // Preconditions:
 // * 'mesh' must be a surface with 1 connected component and no hole
 // * 'mesh' must be a triangular mesh
+// * the mesh border must be mapped onto a convex polygon
 //
 template <class MeshAdaptor_3>			
 typename Parametizer_3<MeshAdaptor_3>::ErrorCode 
 parameterize(MeshAdaptor_3* mesh)						// 3D mesh, model of MeshAdaptor_3 concept
 {
-	Barycentric_mapping_parametizer_3<MeshAdaptor_3> parametizer;
+	Mean_value_coordinates_parametizer_3<MeshAdaptor_3> parametizer;
 	return parametizer.parameterize(mesh);
 }
 
@@ -58,6 +59,7 @@ parameterize(MeshAdaptor_3* mesh)						// 3D mesh, model of MeshAdaptor_3 concep
 // Preconditions:
 // * 'mesh' must be a surface with 1 connected component and no hole
 // * 'mesh' must be a triangular mesh
+// * the mesh border must be mapped onto a convex polygon
 //
 template <class MeshAdaptor_3, class Parametizer_3_>			
 typename Parametizer_3<MeshAdaptor_3>::ErrorCode 
