@@ -555,10 +555,33 @@ collinear( const PointH2<R>& p,
 template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
 Bounded_side
+side_of_bounded_circle( const PointH2<R>& p,
+                        const PointH2<R>& q,
+                        const PointH2<R>& t)
+{
+  typedef typename R::RT RT;
+
+  const RT& phx = p.hx_ref();
+  const RT& phy = p.hy_ref();
+  const RT& phw = p.hw_ref();
+  const RT& qhx = q.hx_ref();
+  const RT& qhy = q.hy_ref();
+  const RT& qhw = q.hw_ref();
+  const RT& thx = t.hx_ref();
+  const RT& thy = t.hy_ref();
+  const RT& thw = t.hw_ref();
+
+  return Bounded_side( CGAL_NTS compare((thx*phw-phx*thw)*(qhx*thw-thx*qhw),
+	                                (thy*phw-phy*thw)*(thy*qhw-qhy*thw)) );
+}
+
+template <class R>
+CGAL_KERNEL_MEDIUM_INLINE
+Bounded_side
 side_of_bounded_circle( const PointH2<R>& q,
-                             const PointH2<R>& r,
-                             const PointH2<R>& s,
-                             const PointH2<R>& t)
+                        const PointH2<R>& r,
+                        const PointH2<R>& s,
+                        const PointH2<R>& t)
 {
   typedef typename R::RT RT;
 

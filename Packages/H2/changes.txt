@@ -1,5 +1,6 @@
-2.23   (? Mar 2001)
+2.23   (16 Mar 2001)
 - Added constructor Vector(Point, Point).
+- side_of_bounded_circle(3 points).
 
 2.22   (6 Mar 2001)
 - Remove useless friends in PVDH2.h and delete point_vector_declarationsH2.h.
