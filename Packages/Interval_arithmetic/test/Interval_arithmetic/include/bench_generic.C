@@ -1,6 +1,4 @@
 // Generic bench file for the IA package. include/bench_generic.C
-//  $Revision$
-//  $Date$
 // Written by Sylvain Pion, 1997-1999.
 
 // This file is included from tst[34].C, that do just a #define:
@@ -12,7 +10,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Interval_arithmetic.h>
-#include <CGAL/predicates_on_ftC2.h>
+#include <CGAL/predicates/kernel_ftC2.h>
 
 #include <cassert>
 
