@@ -37,7 +37,7 @@ int main()
 
   typedef CGAL::Triangulation_geom_traits_3<Test_rep_cartesian> Cls1;
 
-typedef Cls1::Point  Pt1;
+typedef Cls1::Point_3  Pt1;
   Pt1 p1[55] = {
 	Pt1(1,3,0), Pt1(3,5,2), Pt1(3,8,0), 
 	Pt1(1,3,1), Pt1(3,5,0), Pt1(7,5,0), 
@@ -63,7 +63,7 @@ typedef Cls1::Point  Pt1;
 
   std::cout << "   with Homogeneous" << std::endl;
   typedef CGAL::Triangulation_geom_traits_3<Test_rep_homogeneous> Cls2;
-  typedef Cls2::Point  Pt2;
+  typedef Cls2::Point_3  Pt2;
 
   Pt2 p2[55] = {
 	Pt2(1,3,0,1), Pt2(3,5,2,1), Pt2(6,16,0,2), 
@@ -91,7 +91,7 @@ typedef Cls1::Point  Pt1;
    std::cout << "   Testing Triangulation_test_traits for the requirements" << std::endl;
    typedef _Triangulation_test_traits_3 Cls3;
 
-   typedef Cls3::Point  Pt3;
+   typedef Cls3::Point_3  Pt3;
 
    Pt3 p3[55] = {
 	Pt3(1,3,0), Pt3(3,5,2), Pt3(3,8,0), 
