@@ -159,7 +159,7 @@ template < class R >
 std::istream &
 operator>>(std::istream &is, RayH2<R> &r)
 {
-  typename RayH2<R>::Point_2 p, q;
+  typename R::Point_2 p, q;
   is >> p >> q;
   r = RayH2<R>(p, q);
   return is;

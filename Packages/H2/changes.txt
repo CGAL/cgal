@@ -1,3 +1,6 @@
+2.52   (13 December 2001)
+- one more similar fix for RayH2.
+
 2.51   (5 December 2001)
 - added compare_slopes
 
