@@ -28,7 +28,8 @@ rtag:
 	cvs rtag v`echo $(VERSION) | sed -e "s/\./_/"` $(CVS_MODULE_NAME)
 
 submit: package
-	cp $(Package).tar.gz doc_ps/$(Package).ps version description $(WWW_dir)
+	cp $(Package).tar.gz doc_ps/$(Package).ps version description.txt \
+	   $(WWW_dir)
 	mail -s autohandle cgal-submit@cs.uu.nl spion < submit-mail
 
 test:
