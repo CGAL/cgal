@@ -38,7 +38,6 @@ public:
   Qt_widget_get_polygon()
     : active(false), lastx(0), lasty(0), num_points(0), points(), qpoints(0), qpoints_old(0) {};
 
-private:
   void mousePressEvent(QMouseEvent *e)
   {
     QPainter painter(widget);
@@ -52,6 +51,7 @@ private:
 	qpoints_old.putPoints(num_points,1,e->x(),e->y());
 	++num_points;
 	active=true;
+	widget->setMouseTracking(TRUE);
 	return;
       };
     if(e->button() == Qt::RightButton)
@@ -70,6 +70,7 @@ private:
 	    qpoints_old.resize(0);
 	    num_points=0;
 	    active=false;
+	    widget->setMouseTracking(FALSE);
 	  };
       };
   };
@@ -97,22 +98,13 @@ private:
       }
   };
 
+protected:
   bool active;
   int lastx, lasty;
   int num_points;
   std::list<Point> points;
   QPointArray qpoints;
   QPointArray qpoints_old;
-  
-  void attaching()
-  {
-    widget->setMouseTracking(TRUE);
-  };
-
-  void dettaching()
-  {
-    widget->setMouseTracking(FALSE);
-  };
 };
 
 } // namespace CGAL
