@@ -1,6 +1,8 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+ver 7.77 (23/05/03)
+- resubmitted because of an error introduced in _test_types.h
 
 ver 7.76 (23/05/03) 
 - fixed nearest_vertex_1D in Delaunay_triangulation_2.h
