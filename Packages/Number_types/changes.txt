@@ -1,3 +1,6 @@
+4.91      (5 May 03)
+- Added CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC for Gmpz and Gmpq and MSC_VER==1300
+
 4.90      (24 Feb 03)
 - Remove g++ 2.95 warnings (windows end-of-line)
   and MipsPro warnings (unused variables).
