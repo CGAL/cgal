@@ -1,3 +1,6 @@
+1.54 (16 October 2003) [mk]
+- added files doc_tex/basic/Apollonius_graph_2/htmlfiles
+
 1.53 (16 October 2003) [af]
 - Added file doc_tex/basic/Apollonius_graph_2/htmlfiles
 - protect'ed \ccc in a \caption
