@@ -3,6 +3,16 @@
 //
 // Sylvain Pion, 2000.
 
+// Geomview doesn't work on M$ at the moment, so we don't compile this file.
+#if defined(__BORLANDC__) || defined(_MSC_VER)
+#include <iostream>
+int main()
+{
+  std::cout << "Geomview untested on Windows." << std::endl;
+  return 0;
+}
+#else
+
 #include <CGAL/Cartesian.h>
 
 #include <CGAL/IO/Geomview_stream.h>
@@ -23,3 +33,4 @@ int main()
   test_parse_point();
   return 0;
 }
+#endif

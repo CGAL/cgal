@@ -1,5 +1,8 @@
 CHANGES to the Geomview package.
 
+Ver 3.26 (25 September 2001)
+- Don't compile the test program on windows.
+
 Ver 3.25 (22 September 2001)
 - Fix private/public buglet just introduced.
 
