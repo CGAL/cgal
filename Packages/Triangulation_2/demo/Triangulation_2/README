@@ -1,18 +1,24 @@
 DEMOS   :
 ---------
+These demos makes use of graphical IO and needs LEDA or CGAL::WINDOW
+to be installed
 
 demo:
-Illustrates features of the  basic triangulation and of Delaunay Triangulation
-(i. e. the classes CGAL_Triangulation_2<Gt,Tds> and
-CGAL_Delaunay_triangulation_2<Gt,Tds>)
-It makes use of graphical IO and needs LEDA to be installed.
+Illustrates different features of the  basic triangulation and of Delaunay Triangulation
+input points with left button
+delete points with middle button
+quit with right button
 
 regular_demo
 a demo for regular triangulations
+input points with left button
+delete points with middle button
+quit with right button
 
 constrained
 A demo for the constrained triangulation.
-The constraints are read from a file and the constrained Delaunay triangulation is build. 
+The constraints are read from a file 
+and the constrained Delaunay triangulation is build. 
 When clicking left, a point is input and the connected component containing
 this point is shown.
 You can try several points. Click right to terminate.

@@ -3,13 +3,11 @@
 #include <stack>
 #include <set>
 
-#ifndef CGAL_USE_LEDA
+#if !defined(CGAL_USE_LEDA) && !defined(CGAL_USE_CGAL_WINDOW)
 int main(int argc, char* argv[])
 {
-
-  std::cout << "Sorry, this demo needs LEDA for visualisation.";
+  std::cout <<"Sorry, this demo needs LEDA or CGAL::WINDOW for visualisation.";
   std::cout << std::endl;
-
   return 0;
 }
 

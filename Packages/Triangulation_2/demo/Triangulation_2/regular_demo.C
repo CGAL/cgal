@@ -1,6 +1,6 @@
 #include <CGAL/basic.h>
 
-#ifndef CGAL_USE_LEDA
+#if !defined(CGAL_USE_LEDA) || !defined(CGAL_USE_CGAL_WINDOW )
 int main(int argc, char* argv[])
 {
 
@@ -68,4 +68,4 @@ int main()
    return 0;	
 }
 
-#endif // CGAL_USE_LEDA
+#endif // CGAL_USE_LEDA || CGAL_USE_CGAL_WINDOW

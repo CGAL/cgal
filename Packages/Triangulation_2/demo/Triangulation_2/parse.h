@@ -1,3 +1,4 @@
+
 class Options {
 public:
     Options()
@@ -22,5 +23,4 @@ public:
 
 void usage(char* program);
 
-bool
-parse(int argc, char* argv[], Options &opt);
+bool parse(int argc, char* argv[], Options &opt);
