@@ -81,13 +81,13 @@ one tool can be attached at a moment of time.}
 \ccMethod{bool has_tool() const;}{Returns true if it is a tool attached.}
 \ccMethod{void detach_current_tool();}{Detach the current tool from the widget.}
 
-%scenes
-%\ccHeading{Scenes}
-\ccMethod{void add_scene(Qt_scene* s);}{Add the scene s in the list of scenes.
-The last added will be on top of the screen.}
-\ccMethod{void remove_scene(Qt_scene* s);}{Remove the scene s from the list.}
-\ccMethod{void redraw();}{Redraw the scenes situated in the list. Before 
-redraw the scenes clears the screen. Also calls \ccc{widget\_repainted()} for 
+%VIEWS
+%\ccHeading{Views}
+\ccMethod{void add_view(Qt_widget_view* s);}{Add the view s in the list of 
+views.The last added will be on top of the screen.}
+\ccMethod{void remove_view(Qt_widget_view* s);}{Remove the view s from the list.}
+\ccMethod{void redraw();}{Redraw the views situated in the list. Before 
+redraw the views, clears the screen. Also calls \ccc{widget\_repainted()} for 
 current tool.}
 
 %Cgal
