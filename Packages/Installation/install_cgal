@@ -3573,7 +3573,7 @@ create_include_makefile()
 	"CGAL_EXTRA_OBJECTS = workaround_4_irix.o" \
 	>> ${FILE}
 	;;
-    *) 
+    *IRIX*-6*) 
 	${_printf} "%s\n" \
 	"CGAL_EXTRA_OBJECTS = workaround_4_irix6.o" \
 	>> ${FILE}
