@@ -95,8 +95,10 @@ void read_data(int argc,
 }
 
 #ifdef ISR_DEBUG
-inline Number_Type max(Number_Type a,Number_Type b,Number_Type c) {Number_Type tmp = max(a,b);return(max(tmp,c));}
-inline Number_Type min(Number_Type a,Number_Type b,Number_Type c) {Number_Type tmp = min(a,b);return(min(tmp,c));}
+inline Number_Type max(Number_Type a,Number_Type b,Number_Type c)
+       {Number_Type tmp = max(a,b);return(max(tmp,c));}
+inline Number_Type min(Number_Type a,Number_Type b,Number_Type c) 
+       {Number_Type tmp = min(a,b);return(min(tmp,c));}
 
 
 void get_extreme_points(std::list<Segment_2> &seg_list,Number_Type &min_x,Number_Type &min_y,Number_Type &max_x,Number_Type &max_y)
