@@ -8,13 +8,13 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.3-I-74 $
-// release_date  : $CGAL_Date: 2001/06/20 $
+// release       : $CGAL_Revision: CGAL-2.3-I-80 $
+// release_date  : $CGAL_Date: 2001/07/06 $
 //
 // file          : include/CGAL/Point_set_2.h
-// package       : Point_set_2 (2.1)
+// package       : Point_set_2 (2.2.1)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 2.1
+// revision      : 2.2.1
 // revision_date : 21 June 2001 
 // author(s)     : Matthias Baesken
 //
@@ -105,13 +105,6 @@ public:
    { 
      init_vertex_marks();
    }
-
-
-   Point_set_2(const std::list<Point>& S)
-   { 
-     init_vertex_marks();
-     init(S);
-   }
    
    template<class InputIterator>
    Point_set_2(InputIterator first, InputIterator last)
@@ -121,15 +114,6 @@ public:
    }
    
    ~Point_set_2() {}
-
-
-   void  init(const std::list<Point>& L0)
-   { 
-    clear();
-    insert(L0.begin(), L0.end());
-    init_vertex_marks();
-  }    
-
    
    template<class InputIterator>
    void init(InputIterator first, InputIterator last)
@@ -188,20 +172,11 @@ public:
      return out;
    }        
    
-   // -----------------------------------------------------
-   // d_face_cycle_succ and d_face_cycle_pred removed ...
-   // -----------------------------------------------------
-   
-
-   bool   empty() { return number_of_vertices() == 0; }
-   
-   bool   is_empty() { return number_of_vertices() == 0; }
 
    // -------------------------------------------------------------------------
    // locate removed; use the locate - operations inherited from triangulation
    // -------------------------------------------------------------------------
 
-   // Vertex -> Vertex_handle ...
    Vertex_handle lookup(Point p) const
    { 
      if (number_of_vertices() == 0) return NULL;   
@@ -216,18 +191,6 @@ public:
 	return f.vertex(li);
      }
      else return NULL;
-   }
-
-
-   void del(Vertex_handle v)
-   {  
-     remove(v);
-   }
-
-
-   void del(Point p)
-   { Vertex_handle v = lookup(p);
-     if ( v != NULL ) del(v);
    }
 
 
