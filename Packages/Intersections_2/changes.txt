@@ -1,4 +1,8 @@
 -----
+* 2.1.7 *
++cgal_test now writes to ProgramOutput* file
+
+-----
 * 2.1.6 *
 +Small change to test/cgal_test
 
