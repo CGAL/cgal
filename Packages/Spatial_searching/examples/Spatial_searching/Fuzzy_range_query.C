@@ -4,6 +4,7 @@
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/Fuzzy_sphere_d.h>
 #include <CGAL/Fuzzy_iso_box_d.h>
+#include <CGAL/Iso_box_d.h>
 
 #include <vector>
 #include <iostream>
@@ -13,11 +14,11 @@ typedef R::Point_d Point;
 
 typedef Point::R::FT NT;
 
-typedef CGAL::Iso_rectangle_d<R> Iso_rectangle;
+typedef CGAL::Iso_box_d<R> Iso_box;
 typedef CGAL::Kd_tree_traits_point<Point> Traits;
 
 typedef CGAL::Fuzzy_sphere_d<Point> Sphere;
-typedef CGAL::Fuzzy_iso_box_d<Point,Iso_rectangle> Box;
+typedef CGAL::Fuzzy_iso_box_d<Point, Iso_box> Box;
 
 int main() {
 

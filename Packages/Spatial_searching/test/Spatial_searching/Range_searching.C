@@ -4,7 +4,6 @@
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Kd_tree_traits_point.h>
 #include <CGAL/Splitters.h>
-#include <CGAL/Iso_rectangle_d.h>
 #include <CGAL/Random.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Fuzzy_iso_box_d.h>

@@ -1,6 +1,5 @@
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/Iso_rectangle_d.h>
 #include <CGAL/Euclidean_distance_sphere_point.h>
 #include <CGAL/General_standard_search.h>
 

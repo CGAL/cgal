@@ -1,6 +1,6 @@
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Cartesian_d.h>
-#include <CGAL/Iso_rectangle_d.h>
+#include <CGAL/Iso_box_d.h>
 #include <CGAL/Manhattan_distance_rectangle_point.h>
 #include <CGAL/General_standard_search.h>
 
@@ -11,7 +11,7 @@ typedef CGAL::Cartesian_d<double> R;
 typedef R::Point_d Point;
 typedef Point::R::FT NT;
 
-typedef CGAL::Iso_rectangle_d<R> Box;
+typedef CGAL::Iso_box_d<R> Box;
 typedef CGAL::Plane_separator<NT> Separator;
 
 typedef CGAL::Kd_tree_traits_point<Point> TreeTraits;
