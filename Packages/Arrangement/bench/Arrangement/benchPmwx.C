@@ -99,6 +99,9 @@
 #elif BENCH_NT == LAZY_CGAL_GMPQ_NT
 #include <ECG/Root_of/CGAL_Lazy_exact_nt.h>
 #include <ECG/Root_of/gmpxx.h>
+#elif BENCH_NT == LAZY_GMPZ_NT
+#include <ECG/Root_of/CGAL_Lazy_exact_nt.h>
+#include <ECG/Root_of/gmpxx.h>
 #elif BENCH_NT == LAZY_QUOTIENT_MP_FLOAT_NT
 #include <ECG/Root_of/CGAL_Lazy_exact_nt.h>
 #include <ECG/Root_of/CGAL_Quotient.h>
