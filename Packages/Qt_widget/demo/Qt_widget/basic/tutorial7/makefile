@@ -40,12 +40,12 @@ LDFLAGS = \
 	../../../../src/CGALQt/Qt_widget_view.o \
 	../../../../src/CGALQt/Qt_widget_standard_toolbar.o
 
-all: tut7$(EXE_EXT)
+all: tutorial7$(EXE_EXT)
 
-tut7$(OBJ_EXT): tutorial7.C
+tutorial7$(OBJ_EXT): tutorial7.C
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) tutorial7.C
 
-tut7$(EXE_EXT): tut7$(OBJ_EXT) $(SOURCES)
+tutorial7$(EXE_EXT): tutorial7$(OBJ_EXT) 
 	$(CGAL_CXX)  $(EXE_OPT)tutorial7 tutorial7$(OBJ_EXT) $(LDFLAGS)
 
 clean: 
