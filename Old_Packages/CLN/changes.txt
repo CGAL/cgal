@@ -1,7 +1,9 @@
 Changes done to the CLN package.
 
-Version 1.9 on ?? ???? 2000.
-- Fixed header of src/CLN.C .
+Version 1.9 on 3 August 2000.
+- Moved workaround for Solaris/GCC from src/CLN.C to include/CGAL/CLN/common.h.
+- Moved workaround for Quotient<cl_I> from src/CLN.C to CGAL/CLN/cl_integer.h.
+- Removed src/CLN.C : this way, libCGAL doesn't depend on CLN anymore !
 
 Version 1.8 on 28 June 2000.
 - New maintainer file.

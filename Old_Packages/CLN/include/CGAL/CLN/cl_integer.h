@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1999 The CGAL Consortium
+// Copyright (c) 1999,2000 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -24,16 +24,37 @@
 #ifndef CGAL_CL_INTEGER_H
 #define CGAL_CL_INTEGER_H
 
+#include <CGAL/basic.h>
+#include <iostream>
 #include <CGAL/CLN/common.h>
+#include <CGAL/Quotient.h>
 #include <cl_integer.h>
+#include <cl_rational_io.h>
 #include <cl_integer_io.h>
 
 CGAL_BEGIN_NAMESPACE
 
-// There's a hack to be able to read "a/b" as a Quotient<cl_I>.
-template <class FT> class Quotient;
+// First, a "workaround" to be able to read "a/b" as a Quotient<cl_I>.
+// CLN believes (the author says it's a "design issue") that "a/b" is a valid
+// number, so it reads it, but then decides it's not a valid cl_I.
+// And there's no easy way to stop him parsing before "/" like for
+// the generic Quotient<>.
+//  
+// So we read it as cl_RA, and convert to Quotient<cl_I>.
+// Note that this requires CLN >= 1.0.2 (for numerator() and denominator() ).
+
+// We put the function inline, so that it doesn't have to be in a src/CLN.C,
+// and this way, libCGAL doesn't depend on CLN at build time.
+
+inline
 std::istream&
-operator>> (std::istream& in, Quotient<cl_I>& z);
+operator>> (std::istream& in, Quotient<cl_I>& z)
+{
+  cl_RA q;
+  in >> q;
+  z = Quotient<cl_I> (numerator(q), denominator(q));
+  return in;
+}
 
 // Requirements.
 

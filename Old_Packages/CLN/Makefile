@@ -46,14 +46,14 @@ test:
 clean:
 	$(MAKE) -C doc_tex/support/NumberTypeSupport clean
 	$(MAKE) -C test/$(Package) clean
-	rm -f $(Package).tar.gz src/.pure src/*.o
+	rm -f $(Package).tar.gz
 
 $(Package).tar.gz:
 	tar -zcvf $(Package).tar.gz \
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile --exclude=TODO \
 	--exclude="*".swp \
 	version description.txt changes.txt maintainer \
-	doc_tex doc_ps include examples src test
+	doc_tex doc_ps include examples test
 
 doc:
 	$(MAKE) -C doc_tex/support/NumberTypeSupport
