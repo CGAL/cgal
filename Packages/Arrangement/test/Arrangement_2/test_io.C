@@ -47,8 +47,8 @@
 // Picking a default Traits class (this, with the 
 // PL flag enables the running of the test independently of cgal_make.)
 #ifndef CGAL_ARR_TEST_TRAITS
-//#define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_TRAITS
-#define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_LEDA_TRAITS
+#define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_TRAITS
+//#define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_LEDA_TRAITS
 //#define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_TRAITS
 //#define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_LEDA_TRAITS
 #endif
