@@ -1,5 +1,8 @@
 CHANGES to the Geomview package.
 
+Ver 3.12 (5  June 2001)
+- read() and write() are not in std::.
+
 Ver 3.11 (30 May 2001)
 - Use std:: for C library functions for GCC 3.
 
