@@ -1,4 +1,5 @@
 //examples/Arrangement_2/example1.C
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
@@ -11,20 +12,20 @@ typedef CGAL::Quotient<CGAL::MP_Float>                NT;
 typedef CGAL::Cartesian<NT>                           Kernel;
 typedef CGAL::Arr_segment_exact_traits<Kernel>        Traits;
 
-typedef Traits::Point                                 Point;
-typedef Traits::Curve                                 Curve;
+typedef Traits::Point_2                               Point_2;
+typedef Traits::Curve_2                               Curve_2;
 
-typedef CGAL::Arr_base_node<Curve>                    Base_node;
+typedef CGAL::Arr_base_node<Curve_2>                  Base_node;
 typedef CGAL::Arr_2_default_dcel<Traits>              Dcel;
-typedef CGAL::Arrangement_2<Dcel,Traits,Base_node >   Arr_2;
+typedef CGAL::Arrangement_2<Dcel,Traits,Base_node>    Arr_2;
 
 int main() 
 {
   Arr_2 arr;
 
   //insertion of the curves
-  arr.insert(Curve(Point(0,0), Point(1,1)));
-  arr.insert(Curve(Point(0,1), Point(1,0))); 
+  arr.insert(Curve_2(Point_2(0,0), Point_2(1,1)));
+  arr.insert(Curve_2(Point_2(0,1), Point_2(1,0))); 
   
   //traversal of the curves
   Arr_2::Curve_iterator cit;
