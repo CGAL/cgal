@@ -156,7 +156,7 @@ io_tag(double)
 namespace NTS {
 
 // GCC is faster with std::fabs().
-#ifdef __GUNG__
+#ifdef __GNUG__
 inline
 double
 abs(const double& d)
