@@ -32,6 +32,7 @@ output_pslg_to_medit (std::ostream& os, const Tr & T) {
   typedef typename Tr::Finite_facets_iterator Finite_facets_iterator;
   typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
   typedef typename Tr::Vertex_handle Vertex_handle;
+  typedef typename Tr::Point Point;
 
   // Header.
 
@@ -48,11 +49,13 @@ output_pslg_to_medit (std::ostream& os, const Tr & T) {
   std::map<Vertex_handle, int> V;
   int inum = 1;
   for( Finite_vertices_iterator
-      vit = T.finite_vertices_begin(); vit != T.finite_vertices_end(); ++vit) {
-    V[vit] = inum++;
-    os << vit->point() << " " 
-       << 0 << std::endl; //ref
-  }
+      vit = T.finite_vertices_begin(); vit != T.finite_vertices_end(); ++vit) 
+    {
+      V[vit] = inum++;
+      Point p = static_cast<Point>(vit->point());
+      os << p.x() << " " << p.y() << " " << p.z() << " " 
+	 << 0 << std::endl; //ref
+    }
 
   // Facets
   os << "Triangles" << std::endl

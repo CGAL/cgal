@@ -19,6 +19,7 @@ CXXFLAGS = -I. \
            -I ../../../Mesh_2/include \
            -I ../../../Chew_4_surfaces/include \
 	   -I../../include \
+	   -I../../../Triangulation_2/include \
 	   -I../../../Triangulation_3/include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
@@ -62,14 +63,14 @@ Inrimage_files= \
   ImageIO/reech4x4.c
 
 libInrimage.a: $(INRIMAGE_FILES)
-	gcc -I ImageIO -static -shared -o libInrimage.a $(Inrimage_files) -lm
+	gcc -I ImageIO -static -shared $(OTHER_CXXFLAGS) -o libInrimage.a $(Inrimage_files) -lm
 
 essai$(OBJ_EXT): essai.C
 
 essai$(EXE_EXT): essai$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)essai essai$(OBJ_EXT) $(LDFLAGS)
 
-implicit_surfaces_mesher_3$(OBJ_EXT): implicit_surfaces_mesher_3.C
+implicit_surfaces_mesher_3$(OBJ_EXT): implicit_surfaces_mesher_3.C Isosurface.h
 
 implicit_surfaces_mesher_3$(EXE_EXT): implicit_surfaces_mesher_3$(OBJ_EXT) implicit_function$(OBJ_EXT) parameters$(OBJ_EXT) libInrimage.a
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)implicit_surfaces_mesher_3 implicit_surfaces_mesher_3$(OBJ_EXT) implicit_function$(OBJ_EXT) parameters$(OBJ_EXT) $(LDFLAGS) $(INRIMAGE_LDFLAGS)

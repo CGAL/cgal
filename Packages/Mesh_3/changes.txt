@@ -1,3 +1,11 @@
+03 April 2005 Laurent Rineau
+- New functions using isosurface of Inrimage images
+- Regular triangulation
+- New prototype of sliver exudation
+- New command-line options parser
+- examples/Mesh_3/implicit_surface_mesher.C is some kind of demo. It
+can also make coffe.
+
 24 March 2005 Laurent Rineau
 - new requirements for Mesher_level
 - the bug of Refine_tets.h has been crunched!

@@ -39,9 +39,9 @@ public:
     else{
       float value = triLinInterp(image, X, Y, Z); 
 
-      if (value < isovalue)
+      if (value > isovalue)
 	return -1;
-      else if (value > isovalue)
+      else if (value < isovalue)
 	return 1;
       else
 	return 0;

@@ -1,13 +1,16 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Complex_2_in_triangulation_surface_mesh_cell_base_3.h>
 #include <CGAL/Mesh_3/Complex_2_in_triangulation_cell_base_3.h>
-#include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Regular_triangulation_3.h>
+#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
+#include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/Implicit_surfaces_mesher_3.h>
 #include <CGAL/Chew_4_surfaces/Criteria/Standard_criteria.h>
-#include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 
+#include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 #include <CGAL/IO/File_medit.h>
+
 
 #include <CGAL/Chew_4_surfaces/Oracles/Implicit_oracle.h>
 
@@ -27,17 +30,21 @@
 #include <algorithm> // std::max_element()
 #include <qpixmap.h>  // qt drawing to pixmap
 #include <sstream>
+#include <CGAL/Mesh_3/Slivers_exuder.h>
 
 /////////////// Types /////////////// 
 
 struct K : public CGAL::Exact_predicates_inexact_constructions_kernel {};
-typedef CGAL::Triangulation_vertex_base_with_info_3<bool, K> Vb;
-typedef CGAL::Complex_2_in_triangulation_surface_mesh_cell_base_3<K> CCb;
-typedef CGAL::Mesh_3::Complex_2_in_triangulation_cell_base_3<K, CCb> Cb;
+typedef CGAL::Regular_triangulation_euclidean_traits_3<K> Regular_traits;
+typedef CGAL::Triangulation_vertex_base_with_info_3<bool, Regular_traits> Vb;
+typedef CGAL::Regular_triangulation_cell_base_3<Regular_traits> Cb1;
+typedef CGAL::Complex_2_in_triangulation_cell_base_3<Regular_traits, Cb1> Cb2;
+typedef CGAL::Complex_2_in_triangulation_surface_mesh_cell_base_3<Regular_traits, Cb2> Cb3;
+typedef CGAL::Mesh_3::Complex_2_in_triangulation_cell_base_3<Regular_traits, Cb3> Cb;
 typedef CGAL::Triangulation_data_structure_3<Vb, Cb> Tds;
-typedef CGAL::Delaunay_triangulation_3<K, Tds> Del;
+typedef CGAL::Regular_triangulation_3<Regular_traits, Tds> Del;
 typedef Function <K::FT> Func;
-typedef CGAL::Chew_4_surfaces::Implicit_oracle<K, Func> Oracle;
+typedef CGAL::Chew_4_surfaces::Implicit_oracle<Regular_traits, Func> Oracle;
 typedef CGAL::Chew_4_surfaces::Refine_criterion<Del> Criterion;
 typedef CGAL::Chew_4_surfaces::Standard_criteria <Criterion > Criteria;
 typedef CGAL::Mesh_criteria_3<Del> Tets_criteria;
@@ -51,10 +58,6 @@ typedef Simple_kernel::Segment_2 Segment;
 typedef Simple_kernel::Point_2 Point;
 
 typedef enum { RADIUS_RATIO, ANGLE} Distribution_type;
-
-#ifndef PI
-#define PI 3.1415926535897932
-#endif
 
 /// Global variables 
 std::ostream *out = 0;
@@ -154,128 +157,34 @@ void parse_argv(int argc, char** argv, int extra_args = 0)
           function_name = argv[2 + extra_args];
           parse_argv(argc, argv, extra_args + 2);
         }
+      else if( arg.substr(0, 2) == "--" )
+	{
+	  Double_options::iterator opt_it = 
+	    double_options.find(arg.substr(2, arg.length()-2));
+	  if( opt_it != double_options.end() )
+	    {
+	      if( argc < (3 + extra_args) )
+		usage(argv[0],
+		      (arg + " must be followed by a double!").c_str());
+	      std::stringstream s;
+	      double val;
+	      s << argv[extra_args + 2];
+	      s >> val;
+	      if( !s )
+		usage(argv[0], ("Bad double after " + arg + "!").c_str());
+	      opt_it->second = val;
+	      parse_argv(argc, argv, extra_args + 2);
+	    }
+	  else
+	    usage(argv[0], ("Invalid option: " + arg + "!").c_str());
+	}
       else 
-        {
-          output_to_file = true;
-          filename = argv[1+extra_args];
-        }
+	{
+	  output_to_file = true;
+	  filename = argv[1+extra_args];
+	  parse_argv(argc, argv, extra_args + 1);
+	}
     }
-}
-
-template <typename K>
-double
-area(const CGAL::Tetrahedron_3<K>& t)
-{// This function is (c) Pierre Alliez 2005
-  typedef typename K::Triangle_3 Triangle;
-    
-  Triangle t1 = Triangle(t[0],t[1],t[2]);
-  Triangle t2 = Triangle(t[0],t[1],t[3]);
-  Triangle t3 = Triangle(t[2],t[1],t[3]);
-  Triangle t4 = Triangle(t[2],t[0],t[3]);
-  double a1 = std::sqrt(CGAL_NTS to_double(t1.squared_area()));
-  double a2 = std::sqrt(CGAL_NTS to_double(t2.squared_area()));
-  double a3 = std::sqrt(CGAL_NTS to_double(t3.squared_area()));
-  double a4 = std::sqrt(CGAL_NTS to_double(t4.squared_area()));
-  return a1 + a2 + a3 + a4;
-}
-
-template <typename K>
-double
-circumradius(const CGAL::Tetrahedron_3<K>& t)
-{ // This function is (c) Pierre Alliez 2005
-  typename K::Point_3 center = circumcenter( t.vertex(0),
-                                             t.vertex(1),
-                                             t.vertex(2),
-                                             t.vertex(3));
-  return CGAL::sqrt(CGAL::to_double( squared_distance( center, t.vertex(0))));
-}
-
-template <typename K>
-double
-radius_ratio(const typename CGAL::Tetrahedron_3<K>& t)
-{ // This function is (c) Pierre Alliez 2005
-  typename K::FT inradius = 3 * std::abs(t.volume()) / area(t);
-  double circ = circumradius(t);
-  if(circ == 0)
-    return 0;
-  else
-    return (3 * CGAL::to_double(inradius) / circ);
-}
-
-
-template <typename K>
-double
-len(const CGAL::Vector_3<K> &v)
-{ // This function is (c) Pierre Alliez 2005
-  return std::sqrt(CGAL::to_double(v*v));
-}
-
-double fix_sine(double sine)
-{ // This function is (c) Pierre Alliez 2005x
-  if(sine >= 1)
-    return 1;
-  else
-    if(sine <= -1)
-      return -1;
-    else
-      return sine;
-}
-
-template <typename K>
-double 
-angle_rad(const CGAL::Vector_3<K> &u,
-          const CGAL::Vector_3<K> &v)
-{ // This function is (c) Pierre Alliez 2005
-  // check
-  double product = len(u)*len(v);
-  if(product == 0.)
-    return 0.0;
-
-  // cosine
-  double dot = CGAL::to_double(u*v);
-  double cosine = dot / product;
-
-  // sine
-  typename K::Vector_3 w = CGAL::cross_product(u,v);
-  double AbsSine = len(w) / product;
-
-  if(cosine >= 0)
-    return std::asin(fix_sine(AbsSine));
-  else
-    return PI-std::asin(fix_sine(AbsSine));
-}
-
-template <typename K>
-double angle_deg(const CGAL::Vector_3<K> &u,
-                 const CGAL::Vector_3<K> &v)
-{
-  static const double conv = 1.0/PI*180.0;
-
-  return conv*angle_rad(u,v);
-}
-
-template <typename K>
-typename CGAL::Vector_3<K>
-normal(const CGAL::Point_3<K>& a,
-       const CGAL::Point_3<K>& b,
-       const CGAL::Point_3<K>& c)
-{
-  return CGAL::cross_product(b-a,c-a);
-}
-
-// dihedral angle at an edge [vi,vj]
-template <typename K>
-double dihedral_angle(const CGAL::Tetrahedron_3<K>& t,
-                      const int i,
-                      const int j)
-{
-  const CGAL::Vector_3<K> vi = normal(t[(i+1)&3],
-                                      t[(i+2)&3],
-                                      t[(i+3)&3]);
-  const CGAL::Vector_3<K> vj = normal(t[(j+1)&3],
-                                      t[(j+2)&3],
-                                      t[(j+3)&3]);
-  return 180-angle_deg(vi,vj);
 }
 
 template <typename Triangulation>
@@ -355,7 +264,6 @@ void output_distribution_to_png(Triangulation& tr,
       *widget << Rectangle(Point(k*width, 0),
                            Point((k+1)*width, height));
     }
-  std::cerr << "Max: " << max_quality << std::endl;
   
   widget->unlock();
   if( widget->get_pixmap().save( QString(distribution_filename.c_str()),
@@ -377,6 +285,8 @@ int main(int argc, char **argv) {
 
   QApplication app (argc, argv);
   
+  init_parameters();
+
   parse_argv(argc, argv);
 
   init_functions();
@@ -385,9 +295,12 @@ int main(int argc, char **argv) {
   Func F(functions[function_name]);
 
   // Oracle (NB: parity oracle is toggled)
-  Oracle O (F, K::Point_3 (0,0,0),
-	    enclosing_sphere_radius,
-	    precision,
+  Oracle O (F, 
+	    Regular_traits::Point_3 (double_options["center_x"],
+				     double_options["center_y"],
+				     double_options["center_z"]),
+	    double_options["enclosing_sphere_radius"],
+	    double_options["precision"],
 	    bipolar_oracle);
 
   // 2D-complex in 3D-Delaunay triangulation
@@ -395,31 +308,35 @@ int main(int argc, char **argv) {
 
   // Initial point sample
   Oracle::Points initial_point_sample = 
-    O.random_points (number_of_initial_points);
+    O.random_points (static_cast<int>(double_options["number_of_initial_points"]));
   T.insert (initial_point_sample.begin(), initial_point_sample.end());
   
   // Meshing criteria
   CGAL::Chew_4_surfaces::Curvature_size_criterion<Del> 
-    c_s_crit (curvature_bound);
-//   CGAL::Chew_4_surfaces::Uniform_size_criterion<Del>
-//     u_s_crit (size_bound);
+    c_s_crit (double_options["curvature_bound"]);
+  CGAL::Chew_4_surfaces::Uniform_size_criterion<Del>
+    u_s_crit (double_options["size_bound"]);
   CGAL::Chew_4_surfaces::Aspect_ratio_criterion<Del>
-    a_r_crit (aspect_ratio_bound);
+    a_r_crit (double_options["facets_aspect_ratio_bound"]);
 
   std::vector<Criterion*> crit_vect;
   crit_vect.push_back (&c_s_crit);
-//   crit_vect.push_back (&u_s_crit);
-//   crit_vect.push_back(&a_r_crit);
+  crit_vect.push_back (&u_s_crit);
+  crit_vect.push_back(&a_r_crit);
   Criteria C (crit_vect);
 
-  Tets_criteria tets_criteria(tets_aspect_ratio_bound, tets_size_bound);
+  Tets_criteria tets_criteria(double_options["tets_aspect_ratio_bound"],
+			      double_options["tets_size_bound"]);
 
   std::cerr << "Initial number of points: " << T.number_of_vertices() 
             << std::endl;
-  
   // Surface meshing
   Mesher mesher (T, O, C, tets_criteria);
   mesher.refine_surface();
+  {
+    std::ofstream dump("dump.off");
+    output_surface_facets_to_off(dump, T);
+  }
   mesher.refine_mesh();
 //   int i = 100;
 //   while(!mesher.done())
@@ -460,5 +377,8 @@ int main(int argc, char **argv) {
     }
   if( dump_distribution )
     output_distribution_to_png(T, distribution_size, distribution_type);
+  CGAL::Slivers_exuder<Del> exuder(T);
+  exuder.init();
+  exuder.pump_vertices();
   std::cerr << " done\n";
 }

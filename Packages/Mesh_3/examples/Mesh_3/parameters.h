@@ -1,10 +1,10 @@
-extern const int number_of_initial_points;
-extern const double curvature_bound;
-extern const double size_bound;
-extern const double aspect_ratio_bound;
-extern const double tets_size_bound;
-extern const double tets_aspect_ratio_bound;
-extern const double precision;
-extern const double enclosing_sphere_radius;
-extern const double precision;
-extern const bool bipolar_oracle;
+#include <map>
+#include <string>
+
+extern int number_of_initial_points;
+extern bool bipolar_oracle;
+
+typedef std::map<std::string, double> Double_options;
+extern Double_options double_options;
+
+void init_parameters();
