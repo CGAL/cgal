@@ -32,40 +32,95 @@ typedef CGAL::Ring_tag Method_tag;
 #include "./include/test.h"
 
 
+struct CK : public CGAL::Simple_cartesian<double> {};
+struct EK : public CGAL::Simple_cartesian<CGAL::MP_Float> {};
+
 
 int main()
 {
-  std::ifstream ifs_traits("./data/traits.dat");
-  std::ifstream ifs_algo("./data/algo.dat");
-  std::ifstream ifs_hierarchy("./data/hierarchy.dat");
+  {
+    std::ifstream ifs_traits("./data/traits.dat");
+    std::ifstream ifs_algo("./data/algo.dat");
+    std::ifstream ifs_hierarchy("./data/hierarchy.dat");
 
-  assert( ifs_traits );
-  assert( ifs_algo );
-  assert( ifs_hierarchy );
+    assert( ifs_traits );
+    assert( ifs_algo );
+    assert( ifs_hierarchy );
 
-  //  bool is_ok =
-  //    CGAL::test_traits<Kernel,CGAL::Ring_tag,std::ifstream>(ifs_traits);
+    //  bool is_ok =
+    //    CGAL::test_traits<Kernel,CGAL::Ring_tag,std::ifstream>(ifs_traits);
 
-  std::cout << "testing the traits class..." << std::flush;
-  bool traits_ok = CGAL::test_traits<Kernel,Method_tag>();
+    std::cout << "testing the traits class..." << std::flush;
+    bool traits_ok = CGAL::test_traits<Kernel,Method_tag>();
 
-  assert( traits_ok );
-  std::cout << " done!" << std::endl;
+    assert( traits_ok );
+    std::cout << " done!" << std::endl;
 
-  std::cout << "testing the Apollonius graph class..." << std::flush;
-  bool algo_ok =
-    CGAL::test_algo<Kernel,Method_tag,std::ifstream>(ifs_algo);
+    std::cout << "testing the Apollonius graph class..." << std::flush;
+    bool algo_ok =
+      CGAL::test_algo<Kernel,Method_tag,std::ifstream>(ifs_algo);
 
-  assert( algo_ok );
-  std::cout << " done!" << std::endl;
+    assert( algo_ok );
+    std::cout << " done!" << std::endl;
 
-  std::cout << "testing the Apollonius graph hierarchy class..."
-	    << std::flush;
-  bool hierarchy_ok = 
-    CGAL::test_hierarchy_algo<Kernel,Method_tag,std::ifstream>(ifs_hierarchy);
+    std::cout << "testing the Apollonius graph hierarchy class..."
+	      << std::flush;
+    bool hierarchy_ok = 
+      CGAL::test_hierarchy_algo<Kernel,Method_tag,
+      std::ifstream>(ifs_hierarchy);
 
-  assert( hierarchy_ok );
-  std::cout << " done!" << std::endl;
+    assert( hierarchy_ok );
+    std::cout << " done!" << std::endl;
+
+    ifs_traits.close();
+    ifs_algo.close();
+    ifs_hierarchy.close();
+
+    std::cout << std::endl;
+  }
+
+  //------------------------------------------------------------------------
+
+  {
+    std::ifstream ifs_traits("./data/traits.dat");
+    std::ifstream ifs_algo("./data/algo.dat");
+    std::ifstream ifs_hierarchy("./data/hierarchy.dat");
+
+    assert( ifs_traits );
+    assert( ifs_algo );
+    assert( ifs_hierarchy );
+
+    std::cout << "testing the filtered traits class..." << std::flush;
+    bool traits_ok =
+      CGAL::test_filtered_traits<CK,Method_tag,EK,Method_tag>();
+
+    assert( traits_ok );
+    std::cout << " done!" << std::endl;
+
+    std::cout << "testing the Apollonius graph class"
+	      << " with filtered traits..." << std::flush;
+    bool algo_ok =
+      CGAL::test_filtered_traits_algo<CK,Method_tag,EK,Method_tag,
+      std::ifstream>(ifs_algo);
+
+    assert( algo_ok );
+    std::cout << " done!" << std::endl;
+
+    std::cout << "testing the Apollonius graph hierarchy class"
+	      << " with filtered traits..." << std::flush;
+    bool hierarchy_ok = 
+      CGAL::test_filtered_traits_hierarchy_algo<CK,Method_tag,EK,
+      Method_tag,std::ifstream>(ifs_hierarchy);
+
+    assert( hierarchy_ok );
+    std::cout << " done!" << std::endl;
+
+    ifs_traits.close();
+    ifs_algo.close();
+    ifs_hierarchy.close();
+
+    std::cout << std::endl;
+  }
 
   return 0;
 }

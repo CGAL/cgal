@@ -18,12 +18,30 @@
 CGAL_BEGIN_NAMESPACE
 
 
-//template<class Kernel, class Method_tag, class InputStream>
 template<class Kernel, class Method_tag>
 bool test_traits()
-  //bool test_traits(InputStream& is)
 {
   typedef Apollonius_graph_traits_2<Kernel,Method_tag>  Traits;
+  return test_traits_base( Traits() );
+};
+
+template<class CK, class CK_Method, class EK, class EK_Method>
+bool test_filtered_traits()
+{
+  typedef
+  Apollonius_graph_filtered_traits_2<CK, CK_Method, EK, EK_Method>
+  Traits;
+
+  return test_traits_base( Traits() );
+};
+
+
+//template<class Kernel, class Method_tag, class InputStream>
+template<class Traits>
+bool test_traits_base(const Traits& = Traits())
+  //bool test_traits(InputStream& is)
+{
+  //  typedef Apollonius_graph_traits_2<Kernel,Method_tag>  Traits;
 
   // testing typedefs
   //--------------------------------------------------------------------
@@ -759,6 +777,29 @@ template<class Kernel, class Method_tag, class InputStream>
 bool test_hierarchy_algo(InputStream& is)
 {
   typedef Apollonius_graph_traits_2<Kernel,Method_tag> Traits;
+  typedef Apollonius_graph_hierarchy_2<Traits>  Apollonius_graph_hierarchy;
+
+  return test_algo_generic<Apollonius_graph_hierarchy,InputStream>(is);
+}
+
+
+
+
+
+
+template<class CK, class CKM, class EK, class EKM, class InputStream>
+bool test_filtered_traits_algo(InputStream& is)
+{
+  typedef Apollonius_graph_filtered_traits_2<CK,CKM,EK,EKM> Traits;
+  typedef Apollonius_graph_2<Traits>  Apollonius_graph;
+
+  return test_algo_generic<Apollonius_graph,InputStream>(is);
+}
+
+template<class CK, class CKM, class EK, class EKM, class InputStream>
+bool test_filtered_traits_hierarchy_algo(InputStream& is)
+{
+  typedef Apollonius_graph_filtered_traits_2<CK,CKM,EK,EKM> Traits;
   typedef Apollonius_graph_hierarchy_2<Traits>  Apollonius_graph_hierarchy;
 
   return test_algo_generic<Apollonius_graph_hierarchy,InputStream>(is);
