@@ -656,6 +656,13 @@ insert_intersecting_segment(const Site_2& t, Vertex_handle v)
 {
   CGAL_precondition( t.is_segment() && v->is_segment() );
 
+  if ( (are_same_points(t.source_site(), v->site().source_site()) &&
+	are_same_points(t.target_site(), v->site().target_site())) ||
+       (are_same_points(t.source_site(), v->site().target_site()) &&
+	are_same_points(t.target_site(), v->site().source_site())) ) {
+    return v;
+  }
+
   Site_2 sx(t.supporting_segment(), v->site().supporting_segment());
   Site_2 sitev(v->site());
 
