@@ -86,8 +86,9 @@ public:
     typedef typename Refs::Halfedge_handle       Halfedge_handle;
     typedef HalfedgeDS_halfedge_base<Refs, Tag_false,Tag_false,Tag_false>
         Base;
+    typedef HalfedgeDS_halfedge_base_base<Refs, Tag_false,Tag_false,Tag_false>
+        Base_base;
 private:
-    typedef typename Base::Base_base Base_base;
     void  set_opposite( Halfedge_handle h)  { Base_base::set_opposite(h);}
 };
 
@@ -104,8 +105,9 @@ public:
     typedef typename Refs::Halfedge_const_handle Halfedge_const_handle;
     typedef HalfedgeDS_halfedge_base<Refs, Tag_true,Tag_false,Tag_false>
         Base;
+    typedef HalfedgeDS_halfedge_base_base<Refs, Tag_true,Tag_false,Tag_false>
+        Base_base;
 private:
-    typedef typename Base::Base_base Base_base;
     void  set_opposite( Halfedge_handle h)  { Base_base::set_opposite(h);}
     Halfedge_handle  prv;
 public:
@@ -129,8 +131,9 @@ public:
     typedef typename Refs::Vertex_const_handle   Vertex_const_handle;
     typedef HalfedgeDS_halfedge_base<Refs, Tag_false,Tag_true,Tag_false>
         Base;
+    typedef HalfedgeDS_halfedge_base_base<Refs, Tag_false,Tag_true,Tag_false>
+        Base_base;
 private:
-    typedef typename Base::Base_base Base_base;
     void  set_opposite( Halfedge_handle h)  { Base_base::set_opposite(h);}
     Vertex_handle    v;
 public:
@@ -154,8 +157,9 @@ public:
     typedef typename Refs::Face_const_handle     Face_const_handle;
     typedef HalfedgeDS_halfedge_base<Refs, Tag_false,Tag_false,Tag_true>
         Base;
+    typedef HalfedgeDS_halfedge_base_base<Refs, Tag_false,Tag_false,Tag_true>
+        Base_base;
 private:
-    typedef typename Base::Base_base Base_base;
     void  set_opposite( Halfedge_handle h)  { Base_base::set_opposite(h);}
     Face_handle      f;
 public:
@@ -187,8 +191,9 @@ public:
     typedef typename Refs::Vertex_const_handle   Vertex_const_handle;
     typedef HalfedgeDS_halfedge_base<Refs, Tag_true,Tag_true,Tag_false>
         Base;
+    typedef HalfedgeDS_halfedge_base_base<Refs, Tag_true,Tag_true,Tag_false>
+        Base_base;
 private:
-    typedef typename Base::Base_base Base_base;
     void  set_opposite( Halfedge_handle h)  { Base_base::set_opposite(h);}
     Halfedge_handle  prv;
     Vertex_handle    v;
@@ -219,8 +224,9 @@ public:
     typedef typename Refs::Face_const_handle     Face_const_handle;
     typedef HalfedgeDS_halfedge_base<Refs, Tag_true,Tag_false,Tag_true>
         Base;
+    typedef HalfedgeDS_halfedge_base_base<Refs, Tag_true,Tag_false,Tag_true>
+        Base_base;
 private:
-    typedef typename Base::Base_base Base_base;
     void  set_opposite( Halfedge_handle h)  { Base_base::set_opposite(h);}
     Halfedge_handle  prv;
     Face_handle      f;
@@ -259,8 +265,9 @@ public:
     typedef typename Refs::Face_const_handle     Face_const_handle;
     typedef HalfedgeDS_halfedge_base<Refs, Tag_false,Tag_true,Tag_true>
         Base;
+    typedef HalfedgeDS_halfedge_base_base<Refs, Tag_false,Tag_true,Tag_true>
+        Base_base;
 private:
-    typedef typename Base::Base_base Base_base;
     void  set_opposite( Halfedge_handle h)  { Base_base::set_opposite(h);}
     Vertex_handle    v;
     Face_handle      f;
@@ -300,8 +307,9 @@ public:
     typedef typename Refs::Face_const_handle     Face_const_handle;
     typedef HalfedgeDS_halfedge_base<Refs, Tag_true,Tag_true,Tag_true>
         Base;
+    typedef HalfedgeDS_halfedge_base_base<Refs, Tag_true,Tag_true,Tag_true>
+        Base_base;
 private:
-    typedef typename Base::Base_base Base_base;
     void  set_opposite( Halfedge_handle h)  { Base_base::set_opposite(h);}
     Halfedge_handle  prv;
     Vertex_handle    v;
@@ -383,9 +391,9 @@ public:
     typedef typename Refs::Vertex_const_handle   Vertex_const_handle;
     typedef typename Refs::Face_handle           Face_handle;
     typedef typename Refs::Face_const_handle     Face_const_handle;
-    typedef HalfedgeDS_halfedge_base<Refs, TP, TV, TF>  Base;
+    typedef HalfedgeDS_halfedge_base<Refs, TP, TV, TF>       Base;
+    typedef HalfedgeDS_halfedge_base_base<Refs, TP, TV, TF>  Base_base;
 private:
-    typedef typename Base::Base_base Base_base;
     void  set_opposite( Halfedge_handle h)  { Base_base::set_opposite(h);}
     Halfedge_handle  prv;
     Vertex_handle    v;

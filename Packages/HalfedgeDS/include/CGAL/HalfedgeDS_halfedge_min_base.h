@@ -73,9 +73,9 @@ class HalfedgeDS_halfedge_min_base
 {
 public:
     typedef typename Refs::Halfedge_handle Halfedge_handle;
-    typedef HalfedgeDS_halfedge_min_base<Refs>  Base;
+    typedef HalfedgeDS_halfedge_min_base<Refs>       Base;
+    typedef HalfedgeDS_halfedge_min_base_base<Refs>  Base_base;
 private:
-    typedef typename Base::Base_base Base_base;
     void  set_opposite( Halfedge_handle h)  { Base_base::set_opposite(h);}
 };
 

@@ -1,5 +1,10 @@
 HalfedgeDS Package: Release changes:
 ---------------------------------------------------------------------
+3.7 (18 Jun 2001)
+
+     - Fixed example code inclusion in the doc.
+     - Fixed compilation bugs with Base_base types in halfedge bases.
+
 3.6 (17 Jun 2001)
 
      - changed erase_all() to clear() for HalfedgeDS concept.
