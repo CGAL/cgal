@@ -27,7 +27,6 @@ tag:
 
 submit:	
 	rm -rf Inventor.tar.gz
-	rm -rf version ; echo "$(VERSION) (`date '+%d %h %y'`)" > version
 	tar -zcvf Inventor.tar.gz\
 	--exclude=CVS --exclude=wrapper.tex --exclude=makefile \
 	--exclude=TODO --exclude=run_testsuite\
