@@ -56,8 +56,6 @@ int sphere_function (double x, double y, double z) {
 }
 
 
-
-
 // Ellipsoid (r=1)
 
 int ellipsoid_function (double x, double y, double z) {
@@ -440,4 +438,42 @@ int peanut_function (double x, double y, double z) {
     return 1;
   else
     return 0;
+}
+
+Implicit_function_map functions;
+
+void init_functions()
+{
+  functions["sphere_function"] = &sphere_function;
+  functions["ellipsoid_function"] = &ellipsoid_function;
+  functions["torus_function"] = &torus_function;
+  functions["chair_function"] = &chair_function;
+  functions["tanglecube_function"] = &tanglecube_function;
+  functions["octic_function"] = &octic_function;
+  functions["heart_function"] = &heart_function;
+  functions["klein_function"] = &klein_function;
+  functions["ring_function"] = &ring_function;
+  functions["false_knot_function"] = &false_knot_function;
+  functions["knot1_function"] = &knot1_function;
+  functions["knot2_function"] = &knot2_function;
+  functions["knot3_function"] = &knot3_function;
+  functions["peanut_function"] = &peanut_function;
+  functions["implicit_function"] = &implicit_function;
+  functions["sphere_function"] = &sphere_function;
+  functions["ellipsoid_function"] = &ellipsoid_function;
+  functions["torus_function"] = &torus_function;
+  functions["chair_function"] = &chair_function;
+  functions["tanglecube_function"] = &tanglecube_function;
+  functions["octic_function"] = &octic_function;
+  functions["heart_function"] = &heart_function;
+  functions["klein_function"] = &klein_function;
+  functions["ring_function"] = &ring_function;
+  functions["false_knot_function"] = &false_knot_function;
+  functions["knot1_function"] = &knot1_function;
+  functions["knot1_function"] = &knot1_function;
+  functions["knot1_surf1_function"] = &knot1_surf1_function;
+  functions["knot1_surf2_function"] = &knot1_surf2_function;
+  functions["knot2_function"] = &knot2_function;
+  functions["knot3_function"] = &knot3_function;
+  functions["peanut_function"] = &peanut_function;
 }

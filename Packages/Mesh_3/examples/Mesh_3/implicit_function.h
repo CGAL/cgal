@@ -16,9 +16,16 @@
 
 #include <CGAL/basic.h>
 
-int implicit_function (double, double, double);
+#include <map>
+
+// type "pointer to implicit function"
+typedef int (*Implicit_function) (double, double, double);
+
+// vector of functions
+typedef std::map<std::string, Implicit_function> Implicit_function_map;
 
 template <class FT> class Function {
+  Implicit_function *implicit_function;
 public:  
 
   enum SURFACE_LOCATION {IN = -1, ON = 0, OUT = 1};
