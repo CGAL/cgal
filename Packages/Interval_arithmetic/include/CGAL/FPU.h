@@ -118,7 +118,20 @@ inline double IA_force_to_double(double x)
 
 // std::sqrt(double) on VC++ and CygWin is buggy when not optimizing.
 #ifdef _MSC_VER
-#  define CGAL_BUG_SQRT(d) CGAL_ms_sqrt(d)
+// Let's try this asm version.  If it works, then we can get rid of some
+// painful stuff in the installation procedure.
+inline double IA_bug_sqrt(double d)
+{
+  _asm
+  {
+    fld d
+    fsqrt
+    fstp d
+  }
+  return d;
+}
+// #  define CGAL_BUG_SQRT(d) CGAL_ms_sqrt(d)
+#  define CGAL_BUG_SQRT(d) CGAL::IA_bug_sqrt(d)
 #elif defined __CYGWIN__
 inline double IA_bug_sqrt(double d)
 {

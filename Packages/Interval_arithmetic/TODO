@@ -4,22 +4,9 @@
 - Filtered_kernel<> should be a proper kernel.  It should be possible to use
   the Kernel_base stuff (see Kernel_traits paper)...
 - mv test/include/*.C *.def ; Or use template functions ?
-- Use Self instead of IA as the internal typedef ?
 
 Concerning the main code:
 -------------------------
-- Lazy_exact_nt<Traits>, where :
-  class Traits {
-    typedef leda_real  ET;
-    typedef Tag_true   Protection; // due, this won't work nicely... const ?
-  }
-  In any case worth it for my multi-type kernel ?
-- DAG : voir include/CGAL/Td_dag.h
-- Have a scheme for counting each try{} and each catch{} of each predicate ?
-  (request by Michael Seel).  Maybe not worth it : gcov or any profiling tool
-  should be fine for that.
-- Remove the "return false" after overlap_action(), if possible, and see
-  produced code.  Or re-arrange the code in order to remove it ?
 - Specializations for is_zero() and co, and make use of them in the kernel.
   [Filtered_exact<> doesn't define them either, it's a bug...]
 - Implement CGAL_ms_sqrt() with asms so that no special install procedure is
@@ -42,7 +29,7 @@ Sous optimal, mais si on peut lui dire de l'utiliser quand il n'optimise pas
 (genre #ifndef __OPTIMIZE__), ca peut faire l'affaire.
 De toute facon, c'est le fsqrt qui prend un max de temps, donc l'enrobage...
 
-- SunPro 5.1 ?  Mike says it supports interval arithmetic...
+- SunPro 5.x supports Interval arithmetic...
   http://docs.sun.com/htmlcoll/coll.693.1/iso-8859-1/CPPARITHPROG/iapg_bookTOC.html
   http://www.sun.com/forte/cplusplus/interval/index.html;$sessionid$GSXJDFYAABWVTAMTA1FU45Q
 - Does KCC 4.0 still fails when optimizing ?  Ask Stefan.
@@ -106,8 +93,7 @@ Concerning the doc:
   probably a cc_manual compliance bug from me.
   Idem, my fct to_double(Ia) is not the same as the others...
 - add a pointer to my MISC'99 paper.
-- DOCUMENT the new boolean template parameter, the script, the static filters,
-  Lazy_exact_nt<> ...
+- DOCUMENT the new boolean template parameter, the script, the static filters.
 
 Concerning the test-suite:
 --------------------------
