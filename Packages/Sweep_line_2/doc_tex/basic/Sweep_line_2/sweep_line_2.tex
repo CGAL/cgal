@@ -7,10 +7,17 @@ Given a collection $C$ of possibly intersecting
 We stress this fact because some implementation, such as, 
 \ccc{Planar_map_2<Dcel,Traits>} assume all curves are $x$-monotone 
 in order to gain simplicity and speed.}) 
-curves in the plane, the sweep line algorithm can produce the collections of their 
-intersections and the disjoint-interior subcurves induced by $C$, or rather 
-construct the planar map induced by $C$. Use the functions \ccc{sweep_to_produce_points_2},
+curves in the plane, the sweep line algorithm can produce 
+the collections of their intersections and the disjoint-interior 
+subcurves induced by $C$, or rather 
+construct the planar map induced by $C$. 
+Use the functions \ccc{sweep_to_produce_points_2},
 \ccc{sweep_to_produce_subcurves_2} and \ccc{sweep_to_construct_planar_map_2} respectively.
+The sweep line algorithm can only check whether the curves in $C$
+induce intersections, or can report all subsets of curves meeting in 
+a common point. For the latter, use the functions 
+\ccc{sweep_do_curves_intersect_2} and 
+\ccc{sweep_to_report_intersecting_curves_2} respectively.
 
 The sweep line implementation supports not only segments but rather 
 general curves, and hence users may define their own geometry by providing a 
