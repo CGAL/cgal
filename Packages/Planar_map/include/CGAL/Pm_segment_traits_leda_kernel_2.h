@@ -6,13 +6,16 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template< class FT_ >
 class Pm_segment_traits_leda_kernel_2 {
 private:
-  typedef Pm_segment_traits_leda_kernel_2 Self;
-
+  typedef Pm_segment_traits_leda_kernel_2       Self;
+    
 public:
-  typedef leda_rat_point      Point_2;
-  typedef leda_rat_segment    Segment_2;
+  typedef FT_                                   RT;
+  typedef FT_                                   FT;
+  typedef leda_rat_point                        Point_2;
+  typedef leda_rat_segment                      Segment_2;
 
   /*! Functor
    */
@@ -178,7 +181,7 @@ public:
         return EQUAL;
       }
 
-      Orientation o = (cmp_x(cv.source(), cv.source()) < 0) ?
+      Orientation o = (cmp_x(cv.source(), cv.target()) < 0) ?
         orientation(cv.source(), cv.target(), p) :
         orientation(cv.target(), cv.source(), p);
 			
