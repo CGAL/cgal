@@ -86,6 +86,13 @@ namespace CGAL {
 #  define CGAL_WRAP(K) K
 #endif
 
+
+#ifndef CGAL_CFG_TYPENAME_BEFORE_DEFAULT_ARGUMENT_BUG
+#  define CGAL_TYPENAME_DEFAULT_ARG typename
+#else
+#  define CGAL_TYPENAME_DEFAULT_ARG
+#endif
+
 //----------------------------------------------------------------------//
 //             include separate workaround files
 //----------------------------------------------------------------------//
