@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1998-1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -57,8 +57,7 @@ public:
 
   // PREDICATES ON POINTS
 
-  bool equal(const Point & p,
-	     const Point & q) const
+  bool equal(const Point & p, const Point & q) const
   {
     return (p == q);
   }
@@ -101,65 +100,39 @@ public:
   {
     // should be used only when p,q,r,s are coplanar
     CGAL_triangulation_precondition( ! collinear(q,r,s) );
-    CGAL_triangulation_precondition( orientation(p,q,r,s) ==
-				     CGAL_COPLANAR );
+    CGAL_triangulation_precondition( orientation(p,q,r,s) == CGAL_COPLANAR );
     // projection on the x,y-plane
-    Point2 pxy(p.hx(), p.hy(), p.hw());
-    Point2 qxy(q.hx(), q.hy(), q.hw());
-    Point2 rxy(r.hx(), r.hy(), r.hw());
-    Point2 sxy(s.hx(), s.hy(), s.hw());
-    CGAL_Orientation oxy_qrs = CGAL_orientation(qxy,rxy,sxy);
+    Point2 P(p.hx(), p.hy(), p.hw());
+    Point2 Q(q.hx(), q.hy(), q.hw());
+    Point2 R(r.hx(), r.hy(), r.hw());
+    Point2 S(s.hx(), s.hy(), s.hw());
+    CGAL_Orientation oxy_qrs = CGAL_orientation(Q,R,S);
 
-    if ( oxy_qrs !=  CGAL_COLLINEAR ) {
+    if ( oxy_qrs != CGAL_COLLINEAR )
       // the projection on x,y is OK
-      // tests whether pxy is on the same side of qxy, rxy as sxy
-      CGAL_Orientation oxy_qrp = CGAL_orientation(qxy,rxy,pxy);
-      if ( oxy_qrp == oxy_qrs) {
-	return CGAL_POSITIVE;
-      }
-      else {
-	if ( oxy_qrp == CGAL_COLLINEAR ) { return CGAL_COLLINEAR; }
-	else { return CGAL_NEGATIVE; }
-      }
-    }
+      return CGAL_Orientation( oxy_qrs * CGAL_orientation(Q,R,P) );
 
     // else : must project on another plane
     // tests on which plane :
 
-    if ( ( qxy.x() != rxy.x() ) || 
-	 ( qxy.x() != sxy.x() ) ) {
+    if ( ( Q.x() != R.x() ) || 
+	 ( Q.x() != S.x() ) ) {
       // projection on x,z-plane is ok
-      Point2 pxz(p.hx(), p.hz(), p.hw());
-      Point2 qxz(q.hx(), q.hz(), q.hw());
-      Point2 rxz(r.hx(), r.hz(), r.hw());
-      Point2 sxz(s.hx(), s.hz(), s.hw());
-      // tests whether pxz is on the same side of qxz, rxz as sxz
-      CGAL_Orientation oxz_qrs = CGAL_orientation(qxz,rxz,sxz);
-      CGAL_Orientation oxz_qrp = CGAL_orientation(qxz,rxz,pxz);
-      if ( oxz_qrp == oxz_qrs) {
-	return CGAL_POSITIVE;
-      }
-      else {
-	if ( oxz_qrp == CGAL_COLLINEAR ) { return CGAL_COLLINEAR;	}
-	else { return CGAL_NEGATIVE; }
-      }
+      P = Point2(p.hx(), p.hz(), p.hw());
+      Q = Point2(q.hx(), q.hz(), q.hw());
+      R = Point2(r.hx(), r.hz(), r.hw());
+      S = Point2(s.hx(), s.hz(), s.hw());
     }
-   
-    // else : projection on y,z-plane
-    Point2 pyz(p.hy(), p.hz(), p.hw());
-    Point2 qyz(q.hy(), q.hz(), q.hw());
-    Point2 ryz(r.hy(), r.hz(), r.hw());
-    Point2 syz(s.hy(), s.hz(), s.hw());
-    // tests whether pyz is on the same side of qyz, ryz as syz
-    CGAL_Orientation oyz_qrs = CGAL_orientation(qyz,ryz,syz);
-    CGAL_Orientation oyz_qrp = CGAL_orientation(qyz,ryz,pyz);
-    if ( oyz_qrp == oyz_qrs) {
-      return CGAL_POSITIVE;
+    else
+    { // projection on y,z-plane
+      P = Point2(p.hy(), p.hz(), p.hw());
+      Q = Point2(q.hy(), q.hz(), q.hw());
+      R = Point2(r.hy(), r.hz(), r.hw());
+      S = Point2(s.hy(), s.hz(), s.hw());
     }
-    else {
-      if ( oyz_qrp == CGAL_COLLINEAR ) { return CGAL_COLLINEAR;	}
-      else { return CGAL_NEGATIVE; }
-    }
+
+    return CGAL_Orientation ( CGAL_orientation(Q,R,S)
+                            * CGAL_orientation(Q,R,P) );
   }
 
   bool collinear(const Point & p,
@@ -192,48 +165,16 @@ public:
 
       // test belongs to the circle if and only if it belongs to a
       // sphere passing through pqr
-      Point O(0,0,0);
-      switch ( orientation( p,q,r,O ) ) {
-      case CGAL_POSITIVE:
-	return CGAL_side_of_oriented_sphere(p, q, r, O, test); 
-      case CGAL_NEGATIVE:
-	return CGAL_side_of_oriented_sphere(O, p, q, r, test);
-      default: 
-	break;
-      }
-      // if O coplanar, use A
-      Point A(1,0,0);
-      switch ( orientation( p,q,r,A ) ) {
-      case CGAL_POSITIVE:
-	return CGAL_side_of_oriented_sphere(p, q, r, A, test); 
-      case CGAL_NEGATIVE:
-	return CGAL_side_of_oriented_sphere(A, p, q, r, test);
-      default: 
-	break;
-      }
-      // if A is coplanar, use B
-      Point B(0,1,0);
-      switch ( orientation( p,q,r,B ) ) {
-      case CGAL_POSITIVE:
-	return CGAL_side_of_oriented_sphere(p, q, r, B, test); 
-      case CGAL_NEGATIVE:
-	return CGAL_side_of_oriented_sphere(B, p, q, r, test);
-      default: 
-	break;
-     }
-      // if B also coplanar, use C
-      Point C(0,0,1);
-      switch ( orientation( p,q,r,C ) ) {
-      case CGAL_POSITIVE:
-	return CGAL_side_of_oriented_sphere(p, q, r, C, test); 
-      case CGAL_NEGATIVE:
-	return CGAL_side_of_oriented_sphere(C, p, q, r, test);
-      default: 
-	break;
-      }
-      // impossible, only to avoid compilation warnings :
-      CGAL_triangulation_assertion(false);
-      return CGAL_ON_POSITIVE_SIDE;
+      CGAL_Orientation or;
+      Point O(0,0,0), A(1,0,0), B(0,1,0), C(0,0,1);
+
+      Point P = (or = orientation(p,q,r,O) != CGAL_ZERO) ? O:
+	        (or = orientation(p,q,r,A) != CGAL_ZERO) ? A:
+		(or = orientation(p,q,r,B) != CGAL_ZERO) ? B:
+		(or = orientation(p,q,r,C) != CGAL_ZERO) ? C: C;
+
+      return CGAL_Oriented_side( or *
+	      CGAL_side_of_oriented_sphere(p, q, r, P, test));
     }
 
 };
