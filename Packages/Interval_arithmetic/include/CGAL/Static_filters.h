@@ -49,6 +49,7 @@
 //   - power_tests
 //   - others ?
 // - improve fit_in_double() for other NTs (MP_Float, Lazy).
+// - check if it's not possible to underflow/overflow the new filters.
 
 
 CGAL_BEGIN_NAMESPACE
