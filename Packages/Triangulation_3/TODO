@@ -1,37 +1,13 @@
-- revoir fonctions "dual" (robustesse dans le cas des tetraedres presque plats)
-
--------------- POUR DES QU'ON PEUT
-
-- nettoyer hierarchie
-cf mail Mariette 
-la hierarchie surcharge correctement certianes
-versions du insert() et locate()
-et fait n'importe quoi pour les autres....
-(c'est tout ce qui se trouve  apres
-  // added to make the test program of usual triangulations work
-  // undocumented
-public: 
-.....
-)
-
-- Finir de decider pour find_conflicts, si on veut les facettes du bord du
-  trou vues de l'interieur ou de l'exterieur. 
-  Fournir un output iterator adaptator pour transformer l'iterateur de 
-  facettes vues de l'interieur en iterateur de facettes vues de l'exterieur.
-
 General
 - mettre des locate_2D, locate_3D, insert idem, pour eviter les tests 
   redondants sur la dimension a chaque insertion.
 - trouver une interface avec T_2 qui permette d'eviter de reprogrammer 
   tout le 2d dans le 3d
 - valgrind
+- gcov
 - const handle, const it, const circ ...
 - utiliser le cell_container_iterator partout ou c'est possible 
   (unifier le code pour differentes dimensions) 
-
-TEST SUITE
-- faire tourner GCOV sur la test-suite, et rajouter ce qu'il faut pour
-  atteindre 100%.
 
 TDS
 - reflechir a un support de facettes explicites (cf papier de Giesen)
@@ -59,12 +35,12 @@ T3
 - degree() devrait-il, au niveau geometrique, ne pas compter le sommet infini ?
 - is_valid devrait verifier l'enveloppe convexe
 - prevoir differentes sorties : geomview (ameliorer le rendu pour
-  donner un effet de perspective), vrml, viewer_3...
+  donner un effet de perspective), vrml...
   cf Polyhedron_3, file I/O.
 
 Delaunay
-- faire en sorte que les constructions pour Voronoi ne soient plus 
-qu'optionnelles dans la traits, et requises seulement si les fonctions 
+- faire en sorte que les types line, ray, etc Voronoi ne soient plus 
+qu'optionnels dans la traits, et requis seulement si les fonctions 
 dual sont effectivement utilisees
 - remplacer les create_face du remove2D par des create_cell et virer 
   les create_face de la tds
@@ -76,10 +52,10 @@ dual sont effectivement utilisees
     profiter de ca pour avoir les adjacences directement (peut-etre en
     squattant le flag des cellules pour y mettre un pointeur vers la facette
     2d correspondante).
-- For Delaunay, we can use the visibility (non stochastic) walk.  How to
-  choose ?  Is it worth the complexity (benchmark first) ?
 - nearest neighbor
 - natural neighbors de Raphaelle a integrer
+- Pb du type de points pour les fonctions "dual" (robustesse dans le cas 
+des tetraedres presque plats) rounding ?
 
 Regular :
 - la cell_base speciale qui stocke une liste de points caches ou pas (et un
@@ -99,3 +75,16 @@ Regular :
 - programmer centre ortho-sphere de 4 points. Aussi centre de l'ortho-cercle 
   de 3 points... (requete Tamal Dey)
 - .dual()
+
+Hierarchie
+- nettoyer hierarchie
+cf mail Mariette 
+la hierarchie surcharge correctement certianes
+versions du insert() et locate()
+et fait n'importe quoi pour les autres....
+(c'est tout ce qui se trouve  apres
+  // added to make the test program of usual triangulations work
+  // undocumented
+public: 
+.....
+)
