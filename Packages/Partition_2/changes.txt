@@ -1,3 +1,6 @@
+1.14 (12 July 2001)
+    minor fix in doc.
+
 1.13 (12 July 2001)
     Simplified Partition_vertex_map so it does not have any circular type
     references;  this makes the Borland compiler happy
