@@ -22,7 +22,7 @@
 
 
 #include <cassert>
-CGAL_END_NAMESPACE
+CGAL_BEGIN_NAMESPACE
 
 template <class Vertex, class Gt>
 void
