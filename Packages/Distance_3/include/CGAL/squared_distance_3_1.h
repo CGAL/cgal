@@ -74,7 +74,7 @@ squared_distance(
   typename K::Construct_vector_3 construct_vector;
   typedef typename K::Vector_3 Vector_3;
 
-    Vector_3 diff = construct_vector(ray.start(), pt);
+    Vector_3 diff = construct_vector(ray.source(), pt);
     const Vector_3 &dir = ray.direction().vector();
     if (!is_acute_angle(dir,diff, k) )
         return (typename K::FT)(diff*diff);
@@ -109,14 +109,14 @@ squared_distance(
     typedef typename K::RT RT;
     typedef typename K::FT FT;
     // assert that the segment is valid (non zero length).
-    Vector_3 diff = construct_vector(seg.start(), pt);
-    Vector_3 segvec = construct_vector(seg.start(), seg.end());
+    Vector_3 diff = construct_vector(seg.source(), pt);
+    Vector_3 segvec = construct_vector(seg.source(), seg.target());
     RT d = wdot(diff,segvec, k);
     if (d <= (RT)0)
         return (FT(diff*diff));
     RT e = wdot(segvec,segvec, k);
     if ( (d * segvec.hw()) > (e * diff.hw()))
-        return squared_distance(pt, seg.end(), k);
+        return squared_distance(pt, seg.target(), k);
 
     Vector_3 wcr = wcross(segvec, diff, k);
     return FT(wcr*wcr)/FT(e * diff.hw() * diff.hw());
@@ -135,14 +135,14 @@ squared_distance(
     typedef typename K::RT RT;
     typedef typename K::FT FT;
     // assert that the segment is valid (non zero length).
-    Vector_3 diff = construct_vector(seg.start(), pt);
-    Vector_3 segvec = construct_vector(seg.start(), seg.end());
+    Vector_3 diff = construct_vector(seg.source(), pt);
+    Vector_3 segvec = construct_vector(seg.source(), seg.target());
     RT d = wdot(diff,segvec, k);
     if (d <= (RT)0)
         return (FT(diff*diff));
     RT e = wdot(segvec,segvec, k);
     if (d > e)
-        return squared_distance(pt, seg.end(), k);
+        return squared_distance(pt, seg.target(), k);
 
     Vector_3 wcr = wcross(segvec, diff, k);
     return FT(wcr*wcr)/e;
@@ -189,17 +189,17 @@ squared_distance_parallel(
     const Vector_3 &dir2 = seg2.direction().vector();
  
     if (same_direction(dir1, dir2, k)) {
-        if (!is_acute_angle(seg1.start(), seg1.end(), seg2.start(), k))
-            return squared_distance(seg1.end(), seg2.start(), k);
-        if (!is_acute_angle(seg1.end(), seg1.start(), seg2.end(), k))
-            return squared_distance(seg1.start(), seg2.end(), k);
+        if (!is_acute_angle(seg1.source(), seg1.target(), seg2.source(), k))
+            return squared_distance(seg1.target(), seg2.source(), k);
+        if (!is_acute_angle(seg1.target(), seg1.source(), seg2.target(), k))
+            return squared_distance(seg1.source(), seg2.target(), k);
     } else {
-        if (!is_acute_angle(seg1.start(), seg1.end(), seg2.end(), k))
-            return squared_distance(seg1.end(), seg2.end(), k);
-        if (!is_acute_angle(seg1.end(), seg1.start(), seg2.start(), k))
-            return squared_distance(seg1.start(), seg2.start(), k);
+        if (!is_acute_angle(seg1.source(), seg1.target(), seg2.target(), k))
+            return squared_distance(seg1.target(), seg2.target(), k);
+        if (!is_acute_angle(seg1.target(), seg1.source(), seg2.source(), k))
+            return squared_distance(seg1.source(), seg2.source(), k);
     }
-    return squared_distance(seg2.start(), seg1.supporting_line(), k);
+    return squared_distance(seg2.source(), seg1.supporting_line(), k);
 }
 
 
@@ -229,10 +229,10 @@ squared_distance(
     typedef typename K::Point_3 Point_3;
     typedef typename K::RT RT;
     typedef typename K::FT FT;
-    const Point_3 &start1 = seg1.start();
-    const Point_3 &start2 = seg2.start();
-    const Point_3 &end1 = seg1.end();
-    const Point_3 &end2 = seg2.end();
+    const Point_3 &start1 = seg1.source();
+    const Point_3 &start2 = seg2.source();
+    const Point_3 &end1 = seg1.target();
+    const Point_3 &end2 = seg2.target();
 
     if (start1 == end1)
         return squared_distance(start1, seg2, k);
@@ -319,7 +319,7 @@ squared_distance(
             if (dm == RT(0)) // should not happen with exact arithmetic.
                return squared_distance_parallel(seg1, seg2, k);
             min1 = (dm < RT(0)) ?
-                squared_distance(seg1.start(), seg2, k):
+                squared_distance(seg1.source(), seg2, k):
                 squared_distance(end1, seg2, k);
             dm = _distance_measure_sub(
                      sdm_s2to1, sdm_e2to1, s2mins1, e2mins1, k);
@@ -357,13 +357,13 @@ squared_distance_parallel(
     same_direction = (CGAL_NTS sign(dir1.hy()) == CGAL_NTS sign(dir2.hy()));
   }
   if (same_direction) {
-    if (!is_acute_angle(seg.start(), seg.end(), ray.start(), k))
-      return squared_distance(seg.end(), ray.start(), k);
+    if (!is_acute_angle(seg.source(), seg.target(), ray.source(), k))
+      return squared_distance(seg.target(), ray.source(), k);
   } else {
-    if (!is_acute_angle(seg.end(), seg.start(), ray.start(), k))
-      return squared_distance(seg.start(), ray.start(), k);
+    if (!is_acute_angle(seg.target(), seg.source(), ray.source(), k))
+      return squared_distance(seg.source(), ray.source(), k);
   }
-  return squared_distance(ray.start(), seg.supporting_line(), k);
+  return squared_distance(ray.source(), seg.supporting_line(), k);
 }
 
 
@@ -379,8 +379,8 @@ squared_distance(
     typedef typename K::Vector_3 Vector_3;
     typedef typename K::RT RT;
     typedef typename K::FT FT;
-    const Point_3 & ss = seg.start();
-    const Point_3 & se = seg.end();
+    const Point_3 & ss = seg.source();
+    const Point_3 & se = seg.target();
     if (ss == se)
         return squared_distance(ss, ray, k);
     Vector_3 raydir, segdir, normal;
@@ -395,8 +395,8 @@ squared_distance(
     Vector_3 perpend2seg, perpend2ray, ss_min_rs, se_min_rs;
     perpend2seg = wcross(segdir, normal, k);
     perpend2ray = wcross(raydir, normal, k);
-    ss_min_rs = construct_vector(ray.start(), ss);
-    se_min_rs = construct_vector(ray.start(), se);
+    ss_min_rs = construct_vector(ray.source(), ss);
+    se_min_rs = construct_vector(ray.source(), se);
     sdm_ss2r = wdot(perpend2ray, ss_min_rs, k);
     sdm_se2r = wdot(perpend2ray, se_min_rs, k);
     if (sdm_ss2r < RT(0)) {
@@ -425,7 +425,7 @@ squared_distance(
         if (crossing2) {
             return squared_distance_to_plane(normal, ss_min_rs, k);
         }
-        return squared_distance(ray.start(), seg, k);
+        return squared_distance(ray.source(), seg, k);
     } else {
         if (crossing2) {
             RT dm;
@@ -451,7 +451,7 @@ squared_distance(
             min1 = (dm < RT(0))
                  ? squared_distance(ss, ray, k)
                  : squared_distance(se, ray, k);
-            min2 = squared_distance(ray.start(), seg, k);
+            min2 = squared_distance(ray.source(), seg, k);
             return (min1 < min2) ? min1 : min2;
         }
     }
@@ -483,8 +483,8 @@ squared_distance(
     typedef typename K::Point_3 Point_3;
     typedef typename K::RT RT;
     const Point_3 &linepoint = line.point();
-    const Point_3 &start = seg.start();
-    const Point_3 &end = seg.end();
+    const Point_3 &start = seg.source();
+    const Point_3 &end = seg.target();
 
     if (start == end)
         return squared_distance(start, line, k);
@@ -570,8 +570,8 @@ squared_distance(
     typedef typename K::Point_3 Point_3;
     typedef typename K::RT RT;
     typedef typename K::FT FT;
-    const Point_3 & s1 = ray1.start();
-    const Point_3 & s2 = ray2.start();
+    const Point_3 & s1 = ray1.source();
+    const Point_3 & s2 = ray2.source();
     Vector_3 dir1, dir2, normal;
     dir1 = ray1.direction().vector();
     dir2 = ray2.direction().vector();
@@ -609,14 +609,14 @@ squared_distance(
     if (crossing1) {
         if (crossing2)
             return squared_distance_to_plane(normal, s1_min_s2, k);
-        return squared_distance(ray2.start(), ray1, k);
+        return squared_distance(ray2.source(), ray1, k);
     } else {
         if (crossing2) {
-            return squared_distance(ray1.start(), ray2, k);
+            return squared_distance(ray1.source(), ray2, k);
         } else {
           FT min1, min2;
-            min1 = squared_distance(ray1.start(), ray2, k);
-            min2 = squared_distance(ray2.start(), ray1, k);
+            min1 = squared_distance(ray1.source(), ray2, k);
+            min2 = squared_distance(ray2.source(), ray1, k);
             return (min1 < min2) ? min1 : min2;
         }
     }
@@ -637,7 +637,7 @@ squared_distance(
   typedef typename K::Vector_3 Vector_3;
   typedef typename K::Point_3 Point_3;
     typedef typename K::RT RT;
-    const Point_3 & rs =ray.start();
+    const Point_3 & rs =ray.source();
     Vector_3 raydir, linedir, normal;
     linedir = line.direction().vector();
     raydir = ray.direction().vector();
