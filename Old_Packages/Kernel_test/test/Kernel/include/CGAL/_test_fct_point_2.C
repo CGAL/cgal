@@ -44,6 +44,16 @@ _test_fct_point_2(const R& )
  CGAL::Point_2<R> p9( RT( 6), RT(10), RT(1) );  // ( 6,10)
 
 
+ assert( !CGAL::less_x(p1,p1) );
+ assert( !CGAL::less_x(p1,p2) );
+ assert(  CGAL::less_x(p1,p4) );
+ assert( !CGAL::less_x(p4,p1) );
+
+ assert( !CGAL::less_y(p1,p1) );
+ assert( !CGAL::less_y(p3,p6) );
+ assert( !CGAL::less_y(p1,p3) );
+ assert(  CGAL::less_y(p3,p1) );
+
  assert( CGAL::compare_xy(p1,p2) == CGAL::SMALLER );
  assert( CGAL::compare_xy(p3,p2) == CGAL::SMALLER );
  assert( CGAL::compare_xy(p3,p1) == CGAL::SMALLER );

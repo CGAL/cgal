@@ -1,3 +1,8 @@
+3.47  (14 Aug 2002)
+- added missing test for less_x, less_y
+
+====================== CGAL 2.4 =============================
+
 3.46  (20 March 2002)
 - removed Point_d
 
