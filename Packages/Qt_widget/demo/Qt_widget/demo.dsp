@@ -95,24 +95,16 @@ SOURCE=.\constrained.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\Qt_Window.C
+SOURCE=..\..\src\CGALQt\Qt_widget.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\Qt_Window_tool.C
+SOURCE=..\..\src\CGALQt\Qt_widget_tool.C
 # End Source File
 # End Group
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
-# Begin Source File
-
-SOURCE=..\..\include\CGAL\IO\Qt_Window.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\include\CGAL\IO\Qt_Window_tool.h
-# End Source File
 # End Group
 # Begin Group "Resource Files"
 
