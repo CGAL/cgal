@@ -1,68 +1,108 @@
-TODO: to be written by lutz (probably a short extracts from lutz's papers)
-
-A polyhedron consists of \emph{topology primitives}, such as vertices
-and facets, and \emph{geometry attributes}, such as point positions
-and normals.  In graphics modeling, rendering attributes, such as
-colors and texture coordinates, or algorithmic attributes are also
-part of a polyhedron mesh. \cgalpoly\ relies on the halfedge data
-structure \cite{hds} to provide the connectivity of topology
-primitives of the represented polyhedron mesh.  The connectivity
-describes the incidences between primitives. \poly\ supports generic
-attributes by the templated primitives in the concept of the
-polyhedron items.
-
+% polyhedron.tex
 % ------------------------------------------------------------------------
 
-A \cgalpoly\ represents polyhedron surfaces in three dimensions
-consisting of vertices, edges, facets and incidence relations among
-them.  The \emph{incidence relation} (or connectivity) of the \poly\
-is internally represented by the \cgalhds.  The \poly\ only maintains
-the combinatorial integrity of the polyhedral surface. The geometry
-primitives are the abstract entities. A \poly\ is specialized by the
-template parameters of the kernel and primitives.
+The design of \cgalpoly\ \cite{k-ugpdd-99} consists of four components:
 
-TODO: design of the polyhedron (polyhedron(hds(kernel)))
+\paragraph*{A Geometric Traits Concept} is defined as for all \cgal\
+data structures that describes the types for geometric primitives,
+predicates and constructions. Relevant for us is the point type
+defined here. A \cgal\ geometric kernel is a valid model for this
+geomtric traits concept.
 
-TODO: a specialized polyhedron demos the power and flexibility.
+\paragraph*{Items}  are collectively the  vertices, halfedges, and
+facets. They contain the pointers referring to incident items (see
+Fig.~\ref{fig:halfedge}) and the additional attributes including the
+geometry, such as points in vertices. Mandatory for \cgalpoly\ are the
+\CodeFmt{next}, \CodeFmt{opposite}, and \CodeFmt{vertex} incidence
+pointers, and a three-dimensional point in vertices. All other
+incidences, also the back pointers from a vertex or facet to an
+incident halfedge, are optional, but if they are provided, they will
+be automatically maintained in the other levels of this design. By
+default all incidences are provided plus a plane equation in facets.
 
-% ------------------------------------------------------------------------
+In fact, the design does not use pointers, but the abstraction of
+\emph{handles}, a.k.a. the \emph{trivial iterator\/} concept that
+requires the dereference operator, but no traversal of a sequence.
+These handle types are available to the user when they extend items
+with additional attributes and references, e.g., material properties
+for rendering or links in multi-resolution representations.
 
-TODO:modifications on a polyhedron that maintain the topology
-invariance: known invariant ops (euler ops) and postcondition of the
-modifier. Unlike fundamental data structures in STL, polyhedron needs
-to support two sets of the entity operations: connectivity operations
-and geometry (including general attributes) operations. Similar to
-entities in a vector or list, the geometry access is abstracted into
-the concepts of the iterator and circulator.  But connectivity
-modifications need special object functions to ensure the topology
-integrity.
+\paragraph*{The Halfedge Data Structure} is a container class managing
+the storage for items. Two solutions are provided; one stores items in
+a list that allows for efficient insertion and removal, and one
+stores items in an array that allows random access and more compact
+storage, but is less flexible in removing and inserting items, e.g.,
+inserting items beyond the currently reserved capacity causes the
+array to reallocate and update all invalidated handles.
 
-TODO: what kind of ops are needed to support different geometry algorithms?
+The type dependency between the different item types is not hardcoded
+on the items level. Instead, the halfedge data structure defines the
+iterator and handle types and instantiates the corresponding items
+with these types. This gives great flexibility in extending and
+exchanging individual item types. The internal library
+realization of this design is a brain twister, but since the user is
+not exposed to it we skip details and refer to~\cite{k-ugpdd-99}.
 
-\cgalpoly\ provides a set of operators for combinatorial 
-modifications that maintain the combinatorial integrity of the
-polyhedron mesh. Most of them are categorized as Euler operations that
-assure the Euler-Poincar\'e equality.  These atomic operators can
-split/join of two facets, two vertices or two loops. They can also
-create/erase a center vertex or a facet.
+\paragraph*{CGAL::Polyhedron\_3} is the top-level interface class that
+assembles the other pieces in a convenient user-friendly interface.
+It offers iterators for all items and defines \emph{circulators} for
+the circular sequence of halfedges around a vertex and for halfedges
+around a facet. Circulators are a new concept in \cgal\ that
+corresponds closely to iterators, but is tailored for circular
+sequences.  The main difference to iterators is the lack of a
+past-the-end position that leads to the typical ideom of a
+do-while-loop instead of the usual while-loop for iterators.  Let us
+write a small function rendering a polyhedral surface with convex
+facets in OpenGL with double coordinates in non-reference counted
+points and making a bold, but informed guess about its memory layout.
+%
+\begin{lstlisting}
+typedef CGAL::Polyhedron_3< CGAL::Simple_cartesian<double> > 
+                                                 Polyhedron;
+void render( const Polyhedron& P) {
+  Polyhedron::Facet_const_iterator i;
+  for ( i = P.facets_begin(); i != P.facets_end(); ++i) {
+    glBegin( GL_POLYGON);
+    Polyhedron::Halfedge_around_facet_const_circulator c = 
+        i->facet_begin();
+    do {
+      glVertex3dv( & (c->vertex()->point().x()));
+    } while ( ++c != i->facet_begin());
+    glEnd();
+  }
+}
+\end{lstlisting}%
+%
+The sequential access is conventional, but the connectivity
+modifications needs new ideas. The polyhedron protects the
+combinatorial integrity of the underlying halfedge data structure.
+Instead of updating individual handles in the items, it offers an
+interface with Euler operations, so called because they preserve the
+Euler-Poincar\'e invariance of a mesh. Examples of Euler operations
+are the well-known edge collapse, split facet, join facets, etc.
+In~\cite{Maentylae88} it was shown that a proper set of Euler
+operators does not restrict the class of meshes one can create.
 
-In addition to these modification operators, the \polybuilder\
-warrants the direct accesses and modifications of the internal
-representation, i.e. the halfedge data structure, of the \poly\ in a
-controlled environment. In CGAL, the controlled environment is defined
-by a callback mechanism that manages the interaction between the
-polyhedron and a modifier.  A modifier is a function object allowed
-accesses of the internal representation when it is delegated by the
-polyhedron. A \polybuilder\ is then created to build the connectivity
-of the halfedge data structure.  The combinatorial integrity of the
-polyhedron is verified after the return of the modifier. The
-\polybuilder\ and the modifier are particularly useful for
-implementing file reader for common file formats.
+Nevertheless, Euler operations can be cumbersome for certain tasks,
+especially if a mesh operation needs to work with intermediate invalid
+states of the halfedge data structure. The \cgalpoly\ provides a
+backdoor access with the \CodeFmt{CGAL::Modifier} class to the
+underlying halfedge data structure, but assures that, when this access
+finishes, the integrity of the data structure is checked.
 
-TODO: why support modifier in addition to euler ops? euler ops are
-more generic and \emph{standard} than modifier. If the connectivity
-operation is fully implemented with only these \emph{standard} ops,
-the data structure can be general from the connectivity operation.
+The prime example for this backdoor use is an alternative way of
+describing meshes in the indexed-facet-set format common in file
+formats: First, points are defined with their coordinates, then facets
+are defined as sequence of indices to the points on their boundary. An
+efficient implementation of such a construction is provided with the
+incremental builder class in \cgal. Examples for the different ways of
+modifying the mesh are given the following sections.
 
-pierre: modifier can also authorize transient states where the mesh is
-not manifold, the integrity being check once the builder is done.
+
+
+
+
+
+
+
+

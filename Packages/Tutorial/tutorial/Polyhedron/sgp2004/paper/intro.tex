@@ -10,9 +10,8 @@ level of a students homework assignment. But then, these data
 structures consist almost entirely of pointers for all sort of
 incidence informations. Maintaining them consistently during mesh
 operations is not anymore a trivial linked-list update operation. So,
-moving from a students exercise to a reliable research implementation
-, including maintaining and optimizing such an implementation, is a
-respectable software task.
+moving from a students exercise to a reliable research implementation,
+including maintaining and optimizing it, is a respectable software task.
 %, just imagine to introduce a back-pointer for
 %an existing incidence pointer and change all operations on the mesh to
 %handle this additional pointer consistently.
@@ -25,7 +24,7 @@ is an excellent address for our analog example of the linked lists,
 and we argue in this paper that an excellent flexible mesh data
 structure together with a rich and versatile infrastructure for mesh
 algorithms exists in the \emph{Computational Geometry Algorithms Library},
-\cgal~\footnote{\path|http://www.cgal.org/|}.
+\cgal, see \path|http://www.cgal.org/|.
 
 We will review the design of the polygonal boundary representation
 \cgalpoly\ in \cgal\ that is based on the halfedge data structure.
@@ -87,7 +86,7 @@ tutorial.
     exactly the required incidences and other required data, not more and
     not less. %We give the details in the next section.
   \item
-    Is it flexible enough? Yes, probably. Certainly within its design
+    Is it flexible enough? Yes, certainly within its design
     space of oriented 2-manifold meshes with boundary that was
     sufficient for the range of applications illustrated with our
     example programs. 
@@ -107,9 +106,10 @@ tutorial.
   \item
     What is the license, can I use it? Yes, we hope so. \cgal\ since
     release 3.0 and our tutorial programs have open source
-    licenses. If the implied requirement to stay in the open source
-    model is too restrictive, one can obtain a commercial license
-    instead.
+    licenses. Other options are available.
+    %If the implied requirement to stay in the open source
+    %model is too restrictive, one can obtain a commercial license
+    %instead.
 \end{enumerate}
 
 The intended audience of this paper are researchers, developers and

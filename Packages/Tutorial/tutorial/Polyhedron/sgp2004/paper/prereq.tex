@@ -13,9 +13,7 @@ requirements and can thus be used as template argument. An example
 function template:
 \begin{lstlisting}
 template <typename T>
-void swap( T& a, T& b) {
-  T tmp = a; a = b; b = tmp;
-}
+void swap( T& a, T& b) { T tmp = a; a = b; b = tmp; }
 \end{lstlisting}
 This generic \CodeFmt{swap} function requires from the template
 parameter \CodeFmt{T} to have a copy constructor and an assignment
@@ -155,7 +153,7 @@ always be a pointer or iterator, and cannot be an index into that
 error.
 
 The same observation led the developers in the \openmesh\ 
-project\footnote{Release 1.0.0-beta4: \path|http://www.openmesh.org/|}
+project, see Release 1.0.0-beta4 at \path|http://www.openmesh.org/|,
 to modify the \cgal\ design for their mesh data structure. Among
 others does their design allow indices instead of pointers, and they
 have a specialized data structure for meshes that consist only of
@@ -171,7 +169,9 @@ requires the knowledge of the data structure itself, and potentially
 more costly array arithmetic to access an item, such as in the
 equivalent example now written for \openmesh
 \begin{lstlisting}
-hds.face_handle(hds.opposite_halfedge_handle(hds.halfedge_handle(facet_handle))).
+hds.face_handle(
+    hds.opposite_halfedge_handle(
+        hds.halfedge_handle(facet_handle))).
 \end{lstlisting}
 The obvious question is, does it matter, and if, for which design. We
 have a first answer in favior for the more readable \cgal\ design with

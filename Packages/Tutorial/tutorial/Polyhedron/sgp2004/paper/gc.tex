@@ -48,37 +48,39 @@ before they, for example, go into production.
   & \textbf{hull} & \textbf{width}  & \textbf{section}\\\hline
   Bunny     &  0.02 & \hspace*{1ex}14 & 
                  \hspace*{1ex}3.5 & 111 & \hspace*{1ex}3.2\\
-  Lion vase\hspace*{-16mm} & 0.15 & 396 & 13.1 & 276 & 22.9 \\
-  David     & 0.13 & 215 & 20.3 & 112 & 41.6 \\
+  Lion vase\hspace*{-16mm} & 0.19 & 396 & 13.1 & 276 & 22.9 \\
+  David     & 0.12 & 215 & 20.3 & 112 & 41.6 \\
   Raptor    & 0.35 & 589 & 45.5 & 123 & 92.3
 \end{tabular}
 }
 
 Smallest enclosing spheres, min.~sphere for short, are commonly used
 as bounding volumes in bounding volume hierarchies, for example, to
-speed up intersection tests. This algorithm~\cite{minsphere} needs a
-geometric kernel with an exact number type. We use \CodeFmt{gmpq} from
-the GMP number type package here~\cite{cgal:g-gmpal-96}. The runtimes
-are slow, but still feasible for huge meshes. In contrast, when we run
-the algorithm with the \CodeFmt{double} number type, it becomes fast
-enough to be considered for interactive purposes, for example,
-selecting a good view frustrum in a viewer. We compared the resulting
-spheres of the algorithm run with the exact and with the floating-point number
-type. In all cases the sphere center coordinates and the radius
-where exactly the same up to the seven digits after the
-decimal. Nonetheless it must be said that the \CodeFmt{double} version
-can fail here. We want to point out the running time anomaly in above
-table---the smaller lion vase needs longer than the larger david
-sculpture---which is o.k. for this data sensitive algorithm. It is
-worst-case linear time, but depends on a heuristic to be really fast.
+speed up intersection tests. This algorithm~\cite{fg-sebbc-03} needs a
+geometric kernel with an exact number type for correctness, but
+specializations for the number types \CodeFmt{double} and
+\CodeFmt{float} have been written to be very robust as well. We use
+\CodeFmt{gmpq} from the GMP number type package
+here~\cite{cgal:g-gmpal-96}. The runtimes are slow, but still feasible
+for huge meshes. In contrast, when we run the algorithm with the
+\CodeFmt{double} number type, it becomes fast enough to be considered
+for interactive purposes, for example, selecting a good view frustrum
+in a viewer. We compared the resulting spheres of the algorithm
+running with the exact and with the floating-point number type. In all
+cases the sphere center coordinates and the radius where exactly the
+same up to the seven digits after the decimal. We want to point out
+the running time anomaly in above table---the smaller lion vase needs
+longer than the larger david sculpture---which is o.k. for this data
+sensitive algorithm. It is worst-case linear time, but depends on a
+heuristic to be really fast.
 
 
 % \begin{tabular}{l|ll}
 %   \textbf{smallest enclosing sphere} & \texttt{double} & exact
 %     \texttt{qmpq} (non opt.)\\\hline
 %   Bunny     & 0.02 &  14 \\
-%   Lion vase & 0.15 & 396 \\
-%   David     & 0.13 & 215 \\
+%   Lion vase & 0.19 & 396 \\
+%   David     & 0.12 & 215 \\
 %   Raptor    & 0.35  & 589
 % \end{tabular}
 
