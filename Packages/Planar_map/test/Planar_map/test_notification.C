@@ -318,7 +318,7 @@ int main(int argc, char *argv[])
     Halfedge_handle hh = Pm.insert(Curve(Point(x1,y1),Point(x2,y2)), &notf);
     std::cout << "Inserted ("<< hh->curve() <<")"<<std::endl;
   }
-  assert(Pm.is_valid());
+  CGAL_assertion(Pm.is_valid());
 
   // General test
   // This used to be tst21, (Shai, Aug. 03, 2000)
