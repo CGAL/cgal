@@ -26,8 +26,7 @@
     La solution que je vois est de commencer l'implantation des sommets caches
     par une liste (in place) de vertex dans chaque cellule, qui sera
     necessaire pour le remove de toute facon.
-  - vu le code, il semble que pleins de cas ne soient pas programmes, ca fait
-    froid dans le dos.
+  - quelques cas de dimension < 3 ne sont pas programmes.
 - Facet_circulator : Est-ce qu'il y a besoin de stocker un TDS * ?  Stocker
   deux Vertex * plutot que deux ints, ca permet de gagner une Cell *, et
   d'etre plus rapide, non ? 
