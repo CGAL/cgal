@@ -1,3 +1,6 @@
+2.55   (29 January 2003)
+- "far" is rejected by VC++ (used to be a keyword).
+
 2.54   (22 January 2003)
 - Add coordinate iterator
 - Add new constructor Iso_cuboid_3(left, right, bottom, top, far, close).

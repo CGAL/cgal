@@ -61,13 +61,13 @@ public:
 
   Iso_cuboidC3(const Point_3 &left,   const Point_3 &right,
                const Point_3 &bottom, const Point_3 &top,
-               const Point_3 &far,    const Point_3 &close)
-    : base(rep(Point_3(left.x(), bottom.y(), far.z()),
-               Point_3(right.x(), top.y(), close.z())))
+               const Point_3 &far_,   const Point_3 &close)
+    : base(rep(Point_3(left.x(),  bottom.y(), far_.z()),
+               Point_3(right.x(), top.y(),    close.z())))
   {
     CGAL_kernel_precondition(!less_x(right, left));
     CGAL_kernel_precondition(!less_y(top, bottom));
-    CGAL_kernel_precondition(!less_z(close, far));
+    CGAL_kernel_precondition(!less_z(close, far_));
   }
 
   Iso_cuboidC3(const FT& min_x, const FT& min_y, const FT& min_z,

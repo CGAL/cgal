@@ -1,3 +1,6 @@
+Version 6.75 (29 January 2003)
+- "far" is rejected by VC++ (used to be a keyword).
+
 Version 6.74 (27 January 2003)
 - Split the main kernel classes into Cartesian_base<>, and use
   Type_equality_wrapper<>.
