@@ -53,16 +53,16 @@ bisector( const PointH2<R>& p, const PointH2<R>& q )
  // ( X - p.x())^2 + (Y - p.y())^2 == ( X - q.x())^2 + (Y - q.y())
  // and x() = hx()/hw() ...
 
-  RT phx = p.hx();
-  RT phy = p.hy();
-  RT phw = p.hw();
-  RT qhx = q.hx();
-  RT qhy = q.hy();
-  RT qhw = q.hw();
+  const RT & phx = p.hx();
+  const RT & phy = p.hy();
+  const RT & phw = p.hw();
+  const RT & qhx = q.hx();
+  const RT & qhy = q.hy();
+  const RT & qhw = q.hw();
 
-  RT a = RT(2) * ( qhx*qhw*phw*phw - phx*phw*qhw*qhw );
-  RT b = RT(2) * ( qhy*qhw*phw*phw - phy*phw*qhw*qhw );
-  RT c = phx*phx*qhw*qhw + phy*phy*qhw*qhw - qhx*qhx*phw*phw - qhy*qhy*phw*phw;
+  RT a = RT(2) * ( phx*phw*qhw*qhw - qhx*qhw*phw*phw );
+  RT b = RT(2) * ( phy*phw*qhw*qhw - qhy*qhw*phw*phw );
+  RT c = qhx*qhx*phw*phw + qhy*qhy*phw*phw - phx*phx*qhw*qhw - phy*phy*qhw*qhw;
 
   return LineH2<R>( a, b, c );
 }
@@ -75,12 +75,12 @@ squared_distance( const PointH2<R>& p, const PointH2<R>& q )
   typedef typename R::RT RT;
   typedef typename R::FT FT;
 
-  const RT phx = p.hx();
-  const RT phy = p.hy();
-  const RT phw = p.hw();
-  const RT qhx = q.hx();
-  const RT qhy = q.hy();
-  const RT qhw = q.hw();
+  const RT & phx = p.hx();
+  const RT & phy = p.hy();
+  const RT & phw = p.hw();
+  const RT & qhx = q.hx();
+  const RT & qhy = q.hy();
+  const RT & qhw = q.hw();
 
   RT sq_dist_numerator =
           phx * phx * qhw * qhw
