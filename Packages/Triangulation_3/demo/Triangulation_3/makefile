@@ -45,9 +45,8 @@ blind_demo$(EXE_EXT): blind_demo$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)blind_demo blind_demo$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-	demo.clean \
-	blind_demo.clean #\
-#	rm -f data/output core
+	demo.clean blind_demo.clean
+	rm -f data/output core
 
 #---------------------------------------------------------------------#
 #                    suffix rules
