@@ -1,0 +1,86 @@
+\begin{ccRefClass} {Line_3<Kernel>}
+
+\ccDefinition
+An object \ccStyle{l} of the data type \ccRefName\ is a directed
+straight line in the three-dimensional Euclidean space $\E^3$.
+
+\ccCreation
+\ccCreationVariable{l}
+
+\ccHidden \ccConstructor{Line_3();}
+             {introduces an uninitialized variable \ccVar.}
+
+\ccHidden \ccConstructor{Line_3(const Line_3<Kernel> &h);}
+ 	    {copy constructor.}
+
+\ccConstructor{Line_3(const Point_3<Kernel> &p, const Point_3<Kernel> &q);}
+            {introduces a line \ccVar\ passing through the points $p$ and $q$. 
+             Line \ccVar\ is directed from $p$ to $q$.}
+
+
+\ccConstructor{Line_3(const Point_3<Kernel> &p, const Direction_3<Kernel>&d)}
+            {introduces a line \ccVar\ passing through point $p$ with 
+             direction $d$.}
+
+\ccConstructor{Line_3(const Point_3<Kernel> &p, const Vector_3<Kernel>&v)}
+            {introduces a line \ccVar\ passing through point $p$ and
+             oriented by $v$.}
+
+\ccConstructor{Line_3(const Segment_3<Kernel> &s);}
+            {returns the line supporting the segment $s$,
+	    oriented from source to target.}
+
+\ccConstructor{Line_3(const Ray_3<Kernel> &r);}
+            {returns the line supporting the ray $r$, with the
+	    same orientation.}
+
+\ccOperations
+\ccSetThreeColumns{Direction_3<Kernel> }{}{\hspace*{8.5cm}}
+
+\ccHidden \ccMethod{Line_3<Kernel> & operator=(const Line_3<Kernel> &h);}
+        {Assignment.}
+
+\ccMethod{bool operator==(const Line_3<Kernel> &h) const;}
+       {Test for equality: two lines are equal, iff they have a non 
+        empty \ccHtmlNoLinksFrom{intersection} and the same direction.}
+
+\ccMethod{bool operator!=(const Line_3<Kernel> &h) const;}
+       {Test for inequality.}
+
+\ccMethod{Point_3<Kernel>    projection(const Point_3<Kernel> &p) const;}
+       {returns the orthogonal \ccHtmlNoLinksFrom{projection} of $p$ on \ccVar.}
+
+\ccMethod{Point_3<Kernel> point(int i) const;}
+       {returns an arbitrary point on \ccVar. It holds 
+        \ccStyle{point(i) = point(j)}, iff \ccStyle{i=j}.}
+
+\ccPredicates
+
+\ccMethod{bool is_degenerate() const;}
+       {returns \ccc{true} iff line \ccVar\ is degenerated to a point.}
+
+\ccMethod{bool has_on(const Point_3<Kernel> &p) const;}
+       {returns \ccc{true} iff \ccc{p} lies on \ccVar.}
+
+\ccHeading{Miscellaneous}
+
+\ccMethod{Plane_3<Kernel>      perpendicular_plane(const Point_3<Kernel> &p) const;}
+       {returns the plane perpendicular to \ccVar\ passing through $p$.}
+
+\ccMethod{Line_3<Kernel>      opposite() const;}
+       {returns the line with opposite direction.}
+
+\ccMethod{Vector_3<Kernel>    to_vector() const;}
+       {returns a vector having the same direction as \ccVar.}
+
+\ccMethod{Direction_3<Kernel> direction() const;}
+       {returns the direction of \ccVar.}
+
+\ccMethod{Line_3<Kernel>  transform(const Aff_transformation_3<Kernel> &t) const;}
+       {returns the line obtained by applying $t$ on a point on \ccVar\ 
+        and the direction of \ccVar.}
+
+\ccSeeAlso
+\ccRefConceptPage{Kernel::Line_3}
+
+\end{ccRefClass} 

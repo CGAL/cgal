@@ -1,0 +1,55 @@
+\documentclass{book}
+
+\usepackage{cprog}
+\usepackage{cc_manual}
+\usepackage{cc_manual_index}
+\usepackage{latex_converter}
+\usepackage{makeidx}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{path}
+\usepackage{ipe}
+\usepackage{longtable}
+
+% page dimensions
+% ---------------
+\textwidth 15.6cm 
+\textheight 23 cm
+\topmargin -14mm       
+\evensidemargin 3mm 
+\oddsidemargin 3mm
+
+% default column layout
+% ---------------------
+% This is the recommended layout. It may be changed inside main.tex.
+
+\newcommand{\cgalColumnLayout}{\ccTexHtml{%
+    \ccSetThreeColumns{Oriented_side}{}{\hspace*{10cm}}
+    \ccPropagateThreeToTwoColumns}{}}
+
+\marginparsep12mm
+\marginparwidth13mm
+\newcommand{\cgalrelease}{2.2}
+\gdef\ccNewRefManualStyle{\ccTrue}
+\gdef\ccTagOperatorLayout{\ccFalse}
+
+
+\makeindex
+
+\sloppy
+
+\begin{document}
+
+\include{title}
+\pagestyle{plain}
+
+\cgalColumnLayout
+
+\include{Traits}
+
+\bibliographystyle{alpha}
+\bibliography{../cgal-manual,geom}
+
+\lcTex{\printindex}
+\end{document}
+

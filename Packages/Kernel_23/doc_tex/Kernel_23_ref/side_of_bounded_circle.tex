@@ -1,0 +1,24 @@
+\begin{ccRefFunction}{side_of_bounded_circle}
+
+\ccFunction{Bounded_side side_of_bounded_circle(
+	                           const Point_2<Kernel> &p, 
+	                           const Point_2<Kernel> &q,
+                                   const Point_2<Kernel> &r, 
+                                   const Point_2<Kernel> &t);}
+         {returns the relative position of point \ccStyle{t}
+          to the circle defined by $p$, $q$ and $r$. The order
+          of the points $p$, $q$ and $r$ does not matter.
+          \ccPrecond \ccStyle{p, q} and \ccStyle{r} are not collinear.}
+
+\ccFunction{Bounded_side side_of_bounded_circle(
+	                           const Point_2<Kernel> &p, 
+	                           const Point_2<Kernel> &q,
+                                   const Point_2<Kernel> &t);}
+  {returns the position of the point \ccStyle{t} relative to the circle
+   that has $pq$ as its diameter.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::coplanar_side_of_bounded_circle} \\
+\ccRefIdfierPage{CGAL::side_of_oriented_circle} \\
+
+\end{ccRefFunction}

@@ -1,0 +1,90 @@
+\begin{ccRefClass} {Ray_3<Kernel>}
+
+\ccDefinition
+An object \ccStyle{r} of the data type \ccRefName\ is a directed
+straight ray in the three-dimensional Euclidean space $\E^3$. It starts
+in a  point called the {\em source} of  \ccStyle{r} and it goes to infinity.
+
+
+\ccCreation
+\ccCreationVariable{r}
+
+
+\ccHidden \ccConstructor{Ray_3();}
+             {introduces an uninitialized variable \ccVar.}
+
+\ccHidden \ccConstructor{Ray_3(const Ray_3<Kernel> &s);}
+ 	    {copy constructor.}
+
+\ccConstructor{Ray_3(const Point_3<Kernel> &p, const Point_3<Kernel> &q);}
+            {introduces a ray \ccVar\ 
+             with source $p$ and passing through point $q$.}
+
+\ccConstructor{Ray_3(const Point_3<Kernel> &p, const Direction_3<Kernel> &d)}
+            {introduces a ray \ccVar\ with source $p$ and with 
+             direction $d$.}
+
+\ccConstructor{Ray_3(const Point_3<Kernel> &p, const Vector_3<Kernel> &v)}
+            {introduces a ray \ccVar\ with source $p$ and with 
+             a direction given by $v$.}
+
+\ccConstructor{Ray_3(const Point_3<Kernel> &p, const Line_3<Kernel> &l)}
+            {introduces a ray \ccVar\ starting at source $p$ with 
+             the same direction as $l$.}
+
+\ccOperations
+
+\ccHidden \ccMethod{Ray_3<Kernel> &operator=(const Ray_3<Kernel> &s);}
+        {Assignment.}
+
+\ccMethod{bool operator==(const Ray_3<Kernel> &h) const;}
+       {Test for equality: two rays are equal, iff they have the same 
+        source and the same direction.}
+
+\ccMethod{bool operator!=(const Ray_3<Kernel> &h) const;}
+       {Test for inequality.}
+
+
+
+\ccMethod{Point_3<Kernel> source() const;}
+       {returns the source of \ccVar}
+
+\ccMethod{Point_3<Kernel> point(int i) const;}
+       {returns a point on \ccVar. \ccStyle{point(0)} is the source.
+        \ccStyle{point(i)}, with $i>0$, is different from the 
+        source. \ccPrecond $i \geq 0$.}
+
+\ccMethod{Direction_3<Kernel> direction() const;}
+       {returns the direction of \ccVar.}
+
+\ccMethod{Vector_3<Kernel> to_vector() const;}
+       {returns a vector giving the direction of \ccVar.}
+
+\ccMethod{Line_3<Kernel>      supporting_line() const;}
+       {returns the line supporting \ccVar\ which has the same direction.}
+
+\ccMethod{Ray_3<Kernel>       opposite() const;}
+       {returns the ray with the same source and the opposite direction.}
+
+\ccMethod{bool is_degenerate() const;}
+       {ray \ccVar\ is degenerate, if the source and the second defining
+        point fall together (that is if the direction is degenerate).}
+
+
+\ccMethod{bool has_on(const Point_3<Kernel> &p) const;}
+       {A point is on \ccVar, iff it is equal to the source 
+        of \ccVar, or if it is in the interior of \ccVar.}
+% 
+% \ccMethod{bool collinear_has_on(const Point_3<Kernel> &p) const;}
+%        {checks if point $p$ is on ray \ccVar. This function is faster
+%         than function \ccStyle{has_on()}.
+%         \ccPrecond{$p$ is collinear to \ccVar.}}
+% 
+\ccMethod{Ray_3<Kernel> transform(const Aff_transformation_3<Kernel> &t) const;}
+       {returns the ray obtained by applying $t$ on the source 
+        and on the direction of \ccVar.}
+
+\ccSeeAlso
+\ccRefConceptPage{Kernel::Ray_3}
+
+\end{ccRefClass} 

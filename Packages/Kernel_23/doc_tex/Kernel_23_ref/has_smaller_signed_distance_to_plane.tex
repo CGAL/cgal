@@ -1,0 +1,34 @@
+\begin{ccRefFunction}{has_smaller_signed_distance_to_plane}
+
+\ccFunction{bool
+has_smaller_signed_distance_to_plane(const Plane_3<Kernel>& h,
+                                 const Point_3<Kernel>& p,
+                                 const Point_3<Kernel>& q);}
+          {returns \ccStyle{true} iff the signed distance of \ccStyle{p}
+           and \ccStyle{h} is smaller than the signed distance of 
+           \ccStyle{q} and \ccStyle{h}.}
+
+\ccFunction{bool
+has_smaller_signed_distance_to_plane(const Point_3<Kernel>& p,
+                                 const Point_3<Kernel>& q,
+                                 const Point_3<Kernel>& r,
+                                 const Point_3<Kernel>& s,
+                                 const Point_3<Kernel>& t);}
+          {returns \ccStyle{true} iff the signed distance of \ccStyle{p}
+           and \ccStyle{h} is smaller than the signed distance of 
+           \ccStyle{q} and \ccStyle{h}, where \ccc{h} is the oriented
+           plane through \ccc{p}, \ccc{q} and \ccc{r}.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::compare_distance_to_point} \\
+\ccRefIdfierPage{CGAL::compare_signed_distance_to_line} \\
+\ccRefIdfierPage{CGAL::compare_signed_distance_to_plane} \\
+\ccRefIdfierPage{CGAL::has_larger_distance_to_point} \\
+\ccRefIdfierPage{CGAL::has_larger_signed_distance_to_line} \\
+\ccRefIdfierPage{CGAL::has_larger_signed_distance_to_plane} \\
+\ccRefIdfierPage{CGAL::has_smaller_distance_to_point} \\
+\ccRefIdfierPage{CGAL::has_smaller_signed_distance_to_line} \\
+
+\end{ccRefFunction}
+

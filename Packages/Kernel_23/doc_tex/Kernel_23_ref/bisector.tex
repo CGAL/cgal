@@ -1,0 +1,39 @@
+\begin{ccRefFunction}{bisector}
+
+\ccFunction{Line_2<Kernel> bisector(const Point_2<Kernel> &p,
+                            	    const Point_2<Kernel> &q);}
+{constructs the bisector line of the two points \ccc{p} and \ccc{q}.
+The bisector is oriented in such a way that \ccc{p} lies on its
+positive side. \ccPrecond{\ccc{p} and \ccc{q} are not equal.}}
+
+\ccFunction{Line_2<Kernel> bisector(const Line_2<Kernel> &l1,
+                            	    const Line_2<Kernel> &l2);}
+{constructs the bisector of the two lines $l1$ and $l2$.
+In the general case, the bisector has the direction of the vector which
+is the sum of the normalized directions of the two lines, and which passes
+through the intersection of \ccc{l1} and \ccc{l2}.
+If \ccc{l1} and \ccc{l2} are parallel, then the bisector is defined as the line
+which has the same direction as \ccc{l1}, and which is at the same distance
+from \ccc{l1} and \ccc{l2}.
+This function requires that \ccc{Kernel::RT} supports the \ccc{sqrt()}
+operation.}
+
+\ccFunction{Plane_3<Kernel> bisector(const Point_3<Kernel> &p,
+                            	     const Point_3<Kernel> &q);}
+{constructs the bisector plane of the two points \ccc{p} and \ccc{q}.
+The bisector is oriented in such a way that \ccc{p} lies on its
+positive side. \ccPrecond{\ccc{p} and \ccc{q} are not equal.}}
+
+\ccFunction{Plane_3<Kernel> bisector(const Plane_3<Kernel> &h1,
+                            	     const Plane_3<Kernel> &h2);}
+{constructs the bisector of the two planes $h1$ and $h2$.
+In the general case, the bisector has a normal vector which has the same
+direction as the sum of the normalized normal vectors of the two planes, and
+passes through the intersection of \ccc{h1} and \ccc{h2}.
+If \ccc{h1} and \ccc{h2} are parallel, then the bisector is defined as the
+plane which has the same oriented normal vector as \ccc{l1}, and which is at
+the same distance from \ccc{h1} and \ccc{h2}.
+This function requires that \ccc{Kernel::RT} supports the \ccc{sqrt()}
+operation.}
+
+\end{ccRefFunction}

@@ -1,0 +1,41 @@
+\begin{ccRefClass}{Cartesian_converter<K1, K2, NTConverter>}
+%\ccTexHtml{\ccSetThreeColumns{Point_2< us<RT> > }{}{\hspace*{8.5cm}}}{}
+
+\KernelRefLayout\gdef\ccTagOperatorLayout{\ccFalse}
+
+\ccDefinition
+
+\ccClassTemplateName converts objects from the kernel traits \ccc{K1} to
+the kernel traits \ccc{K2} using \ccc{Converter} to do the conversion.  
+Those traits must be of the form
+\ccc{Cartesian<FT1>} and \ccc{Cartesian<FT2>} (or the equivalent with
+\ccc{Simple_cartesian}).  It then provides the following operators to convert
+objects from \ccc{K1} to \ccc{K2}.
+
+The third template parameter \ccc{NTConverter} is a function object that must
+provide \ccc{K2::FT operator()(K1::FT n)} that converts \ccc{n} to an
+\ccc{K2::FT} which has the same value.
+
+The default value of this parameter is \ccc{CGAL::NT_converter<K1::FT, K2::FT>}.
+
+\ccInclude{CGAL/Cartesian_converter.h}
+
+\ccCreation
+\ccCreationVariable{conv}
+
+\ccConstructor{Cartesian_converter<>();}{Default constructor.}
+
+\ccOperations
+
+\ccMemberFunction{K2::Point_2 operator()(const K1::Point_2&p);}
+{ returns a \ccc{K2::Point_2} which coordinates are those of \ccc{p},
+converted by \ccc{NTConverter}.}
+
+Similar operators are defined for the other kernel traits types \ccc{Point_3},
+\ccc{Vector_2}...
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Cartesian<FieldNumberType>} \\
+\ccRefIdfierPage{CGAL::Simple_cartesian<FieldNumberType>} \\
+
+\end{ccRefClass}
