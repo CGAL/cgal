@@ -116,7 +116,7 @@ of a DCEL and a traits class.
 The input to our algorithms are two planar subdivisions denoted by $S_1$ and $S_2$ having 
 $N$ vertices in total. The overlay of $S_1$ and $S_2$ has $N+k$ vertices, 
 while $k$ is the number of intersections between $S_1$ and $S_2$. 
-Consequentially, the combinatorial complexity of the overlay is quadratic 
+Consequently, the combinatorial complexity of the overlay is quadratic 
 in the size of $S_1$ and $S_2$ in the worst case.
 We devised and implemented two different algorithms for computing the map-overlay 
 of two given planar subdivisions, 
@@ -152,26 +152,56 @@ in the \ccc{Planar_Map_2<Dcel,Traits>} package (see Chapter~\ref{I1_ChapterPlana
 in order to update the corresponding features constructed by the overlay.  
 
 \subsection*{Boolean Operations:}
-One of the most natural usage of the \ccc{Map_overlay_2<Subsection,Notifier>} utilities, 
-is performing boolean operations on planar subdivisions in general, 
-and specifically on polygons.
+The \ccc{Map_overlay_2<Subsection,Notifier>} package
+provides an utility for performing boolean operations on planar 
+subdivisions.
 
-An object of the \ccc{Boolean_operations_2<Map_overlay>} class is initialized with 
-two input subdivisions. In the initialization step, it constructs the overlay 
-of the two input subdivisions. By constructing the overlay, all boolean operations, 
+An object of the \ccc{Boolean_operations_2<Map_overlay>} 
+class is initialized with 
+two input subdivisions. 
+In the initialization step, it constructs the overlay 
+of the two input subdivisions. 
+By constructing the overlay, all boolean operations, 
 on the two input subdivisions, can be easily provided.
-The  \ccc{Boolean_operations_2<Map_overlay>} class provides methods for 
-performing an intersection, union, symmetric difference and difference on the two 
-input subdivisions. The output of such operations are all resulting vertices, halfedges 
-and faces.
+The  \ccc{Boolean_operations_2<Map_overlay>} 
+class provides methods for 
+performing an intersection, union, 
+difference and symmetric difference on the two 
+input subdivisions. 
+The output of such operations are all resulting vertices, 
+halfedges and faces.
 
-\subsection*{Example of an Overlaying Two Subdivisions of Line Segments:}
+\subsection*{Polygons Bops:}
+One of the most natural usage of 
+the \ccc{Map_overlay_2<Subsection,Notifier>} utilities, 
+is performing boolean operations on polygons.
+
+The above utility is a straightforward usage of the 
+\ccc{Boolean_operations_2<Map_overlay>} 
+class. Hence, every operation obtained from the functions 
+for boolean operations on polygons can be achieved by 
+directly using the \ccc{Boolean_operations_2<Map_overlay>} 
+class. 
+
+The goal of providing these functions, is to 
+provide a simple interface for users who are 
+interested only in boolean operations on 
+polygons, rather than boolean operations 
+on planar subdivisions of general curves.
+
+In out interface, we provide four function objects 
+for all kinds of boolean operations on polygons,
+namely, for intersection, union, difference, and 
+symmetric difference.
+
+\subsection*{Example of Overlaying Two Subdivisions of Line Segments:}
 The following example demonstrates a simple usage of the 
 \ccc{Map_overlay_2<Subdivision,Notifier>} package.
 In this example we construct two planar maps of line segments. 
 Then we construct their overlay when using the sweep-line algorithm, which is 
 the default algorithm for the overlay construction. 
-After the overlay is constructed, we write its corresponding planar map to the 
+After the overlay is constructed, 
+we write its corresponding planar map to the 
 standard output stream.
 
 \ccIncludeExampleCode{Map_overlay_2/example1.C}
@@ -189,6 +219,7 @@ The output of the program looks like this:
 \ccRefConceptPage{MapOverlayDcelFace_2}\\
 \ccRefConceptPage{MapOverlayAlgorithm_2}\\
 \ccRefConceptPage{MapOverlayNotifier_2}\\
+\ccRefConceptPage{PolygonBopsTraits_2}\\
 
 \subsection*{Classes}
 
@@ -197,6 +228,11 @@ The output of the program looks like this:
 \ccRefIdfierPage{CGAL::Ovl_incremental<Subdivision,Notifier>}\\
 \ccRefIdfierPage{CGAL::Ovl_sweep<Subdivision,Notifier>}\\
 \ccRefIdfierPage{CGAL::Ovl_notifier<Subdivision>}\\
+\ccRefIdfierPage{CGAL::Polygons_do_intersect_2<Traits>}\\
+\ccRefIdfierPage{CGAL::Polygons_intersection_2<Traits>}\\
+\ccRefIdfierPage{CGAL::Polygons_union_2<Traits>}\\
+\ccRefIdfierPage{CGAL::Polygons_difference_2<Traits>}\\
+\ccRefIdfierPage{CGAL::Polygons_symmetric_difference_2<Traits>}\\
 
 \end{ccTexOnly}    
 
