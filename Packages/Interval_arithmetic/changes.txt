@@ -1,5 +1,10 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.99 on 12 June 2001
+- Add missing #include <CGAL/misc.h> since it's not done in basic.h anymore.
+- Workaround for GCC 3 only activated for 3.0.0 as it's probably going to be
+  fixed in 3.0.1, so that we'll get the full speed back with 3.0.1.
+
 Version 4.98 on 7 June 2001
 - Move MP_Float to the Number_types package.
 

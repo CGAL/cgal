@@ -70,8 +70,10 @@ CGAL_BEGIN_NAMESPACE
 // Inline function to stop compiler optimization.
 inline double IA_force_to_double(double x)
 {
-#if defined __GNUG__ && __GNUG__ < 3
-  // This appears to be faster, but doesn't work reliably everywhere.
+#if defined __GNUG__ && \
+    ! (__GNUG__ == 3 && __GNUC_MINOR__ == 0 && __GNUC_PATCHLEVEL__ == 0)
+  // This appears to be faster but is GNU specific,
+  // and GCC 3.0.0 has a bug with it.
   asm("" : "=m"(x) : "m"(x));
   // asm("" : "+m"(x) );
   return x;
@@ -255,7 +257,8 @@ inline
 FPU_CW_t
 FPU_get_cw (void)
 {
-#if defined __GNUG__ && __GNUG__ >= 3
+#if defined __GNUG__ && \
+    (__GNUG__ == 3 && __GNUC_MINOR__ == 0 && __GNUC_PATCHLEVEL__ == 0)
     volatile
 #endif
     FPU_CW_t cw;
