@@ -48,5 +48,5 @@ B<A>::fct(C *i){
 }
 
 int main(){
-  return 1;
+  return 0;
 }
