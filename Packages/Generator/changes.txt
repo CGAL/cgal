@@ -1,6 +1,9 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
-2.48 (11 Mar 2002)
+2.50 (15 Mar 2002)
+   - added missing demo program for point_on_square_grid_3 generator function
+
+2.49 (11 Mar 2002)
    - added point_on_square_grid_3 generator function
 
 2.48 (7 Mar 2002)
