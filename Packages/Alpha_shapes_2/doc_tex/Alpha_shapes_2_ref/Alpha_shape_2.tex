@@ -137,18 +137,14 @@ introduces an $\alpha$-shape \ccVar\ for a positive $\alpha$-value
 \ccMethod{template < class InputIterator >
 		int make_alpha_shape(
 			InputIterator first,
-			InputIterator last,
-                        const Coord_type& alpha = 0,
-	                Mode m = GENERAL);}
+			InputIterator last);}
 {Initialize the family of alpha-shapes with the points in the range
-$\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$ and 
-introduces an $\alpha$-shape \ccVar\ for a positive $\alpha$-value
-\ccc{alpha}. Returns the number of inserted points. \\
+$\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$. Returns the number of
+inserted points. \\ 
 If the function is applied to an non-empty family of alpha-shape, it is cleared
 before initialization.
 \ccPrecond The \ccc{value_type} of \ccc{first} and
-\ccc{last} is \ccc{Point}.\\
-\ccc{alpha} $\geq 0$.}
+\ccc{last} is \ccc{Point}.}
 
 \ccMethod{void
 	clear();}

@@ -192,7 +192,8 @@ public:
   Alpha_shape_2(const InputIterator& first,  
 		const InputIterator& last,  
 		const Coord_type& alpha = Coord_type(0),
-		Mode = GENERAL) 
+		Mode m = GENERAL)
+    : _alpha(alpha), _mode(m), Infinity(-1), UNDEFINED(-2) 
     {
       Dt::insert(first, last);
       if (dimension() == 2)
