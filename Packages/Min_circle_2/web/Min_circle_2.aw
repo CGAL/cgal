@@ -253,6 +253,7 @@ section, so we do not comment on it here.
     // types
     typedef           _I                           I;
     typedef typename  _I::Point                    Point;
+    typedef typename  _I::Distance		   Distance;
     typedef typename  _I::Circle                   Circle;
     typedef typename  list<Point>::const_iterator  Point_iterator;
     typedef           const Point *                Support_point_iterator;
@@ -298,7 +299,7 @@ section, so we do not comment on it here.
 
     Point const&  support_point( int i) const;
 
-    Circle const&  circle( ) const;
+    Circle  circle( ) const;
 
     // predicates
     CGAL_Bounded_side  bounded_side( Point const& p) const;
@@ -353,13 +354,16 @@ array here.
     Point*       support_points;		// array of support points
 @end
 
-Finally, an actual circle is stored in \ccc{min_circle}, by the end
-of computation equal to $mc(P)$. During computation, this circle
-equals the circle $mc$ appearing in the pseudocode for $\mc(P,B)$,
-see Section~\ref{sec:algo}.
+Finally, an actual circle is stored in \ccc{center} and
+\ccc{squared_radius}, by the end of computation equal to
+$mc(P)$. During computation, this circle equals the circle $mc$
+appearing in the pseudocode for $\mc(P,B)$, see
+Section~\ref{sec:algo}. An empty circle is represented by a negative
+squared radius.
 
 @macro <Min_circle_2 private data members> += @begin
-    Circle       min_circle;			// current circle
+    Point        center;			// current circle
+    Distance	 squared_radius;
 @end  
 
 @! ----------------------------------------------------------------------------
@@ -461,7 +465,8 @@ building $mc(\emptyset)$.
     // default constructor
     inline
     CGAL_Min_circle_2( I const& i = I())
-	: ico( i), n_support_points( 0)
+	: ico( i), n_support_points( 0),
+	  center( CGAL_ORIGIN), squared_radius( -Distance( 1))
     {
 	// allocate support points' array
 	support_points = new Point[ 3];
@@ -472,7 +477,8 @@ building $mc(\emptyset)$.
     // constructor for one point
     inline
     CGAL_Min_circle_2( Point const& p, I const& i = I())
-	: ico( i), points( 1, p), n_support_points( 1), min_circle( p)
+	: ico( i), points( 1, p), n_support_points( 1),
+	  center( p), squared_radius( 0)
     {
 	// allocate support points' array
 	support_points = new Point[ 3];
@@ -607,15 +613,15 @@ orientation of the current circle and reverse it, if necessary
 @macro <Min_circle_2 access functions> += @begin
     // circle
     inline
-    Circle const&
+    Circle
     circle( ) const
     {
-        CGAL_optimisation_precondition( ! is_empty());
-	// ensure positive orientation
-	if ( min_circle.orientation() == CGAL_NEGATIVE)
-	    CGAL_const_cast( Circle&, min_circle) = min_circle.opposite();
-	CGAL_optimisation_assertion(min_circle.orientation() == CGAL_POSITIVE);
-	return( min_circle);
+	Circle c;
+
+	if ( is_empty())
+	    return( c);
+	else
+	    return( Circle( center, squared_radius));
     }
 @end
 
@@ -652,29 +658,29 @@ corresponding predicates of class \ccc{Circle}.
     CGAL_Bounded_side
     bounded_side( Point const& p) const
     {
-	return( is_empty() ? CGAL_ON_UNBOUNDED_SIDE 
-			   : min_circle.bounded_side( p));
+	return( CGAL_static_cast( CGAL_Bounded_side, 
+	        CGAL_sign( ico.squared_distance( center,p) - squared_radius)));
     }
 
     inline
     bool
     has_on_bounded_side( Point const& p) const
     {
-	return( ( ! is_empty()) && ( min_circle.has_on_bounded_side( p)));
+	return( ico.squared_distance( center, p) < squared_radius);
     }
 
     inline
     bool
     has_on_boundary( Point const& p) const
     {
-	return( ( ! is_empty()) && ( min_circle.has_on_boundary( p)));
+	return( ico.squared_distance( center, p) == squared_radius);
     }
 
     inline
     bool
     has_on_unbounded_side( Point const& p) const
     {
-	return( ( is_empty()) || ( min_circle.has_on_unbounded_side( p)));
+	return( ico.squared_distance( center, p) > squared_radius);
     }
 @end
 
@@ -732,7 +738,7 @@ only for consistency with interfaces of other classes.
 
 @macro <Min_circle_2 validity check> = @begin
     bool
-    is_valid( bool verbose = true, int level = 0) const
+    is_valid( bool verbose = false, int level = 0) const
     {
 	CGAL_Verbose_ostream verr( verbose);
 	verr << endl;
@@ -811,11 +817,10 @@ be equal to that point, i.e.\ its center must be $p$ and its radius
 $0$.
 
 @macro <Min_circle_2 check one support point> = @begin
-    if ( ( circle().center() != support_point( 0)    ) ||
-	 ( ! CGAL_is_zero( circle().squared_radius())) )
+    if ( ( center != support_point( 0)    ) ||
+	 ( ! CGAL_is_zero( squared_radius)) )
 	return( CGAL__optimisation_is_valid_fail( verr,
-		    "circle differs from the circle \
-		     spanned by its single support point."));
+       "circle differs from the circle spanned by its single support point."));
 @end
 
 In case of two support points $p,q$, these points must form a diameter
@@ -837,25 +842,26 @@ diameter of the circle.
 		    "the two support points are equal."));
 
     // segment(p,q) is not diameter?
-    if ( ( ! circle().has_on_boundary( p)                               ) ||
-	 ( ! circle().has_on_boundary( q)                               ) ||
-	 ( ico.orientation( p, q, circle().center()) != CGAL_COLLINEAR) )
+    if ( ( ! has_on_boundary( p)                           ) ||
+	 ( ! has_on_boundary( q)                           ) ||
+	 ( ico.orientation( p, q, center) != CGAL_COLLINEAR) )
 	return( CGAL__optimisation_is_valid_fail( verr,
 		  "circle does not have its two support points as diameter."));
 @end
 
-If the number of support points is three (and they are distinct and
-not collinear), the circle through them is unique, and must therefore
-equal \ccc{min_circle}. It is the smallest one containing the three
-points if and only if the center of the circle lies inside or on the
-boundary of the triangle defined by the three points. The support set
-is minimal only if the center lies properly inside the triangle.
+If the number of support points is three (and they are distinct and not
+collinear), the circle through them is unique, and must therefore equal
+the current circle stored in \ccc{center} and \ccc{squared_radius}. It
+is the smallest one containing the three points if and only if the
+center of the circle lies inside or on the boundary of the triangle
+defined by the three points. The support set is minimal only if the
+center lies properly inside the triangle.
 
 Both triangle properties are checked by comparing the orientatons of
 three point triples, each containing two of the support points and the
-center $z$ of \ccc{min_circle}, resp. If one of these orientations
-equals \ccc{CGAL_COLLINEAR}, $z$ lies on the boundary of the triangle.
-Otherwise, if two triples have opposite orientations, $z$ is not
+center of the current circle, resp. If one of these orientations equals
+\ccc{CGAL_COLLINEAR}, the center lies on the boundary of the triangle.
+Otherwise, if two triples have opposite orientations, the center is not
 contained in the triangle.
 
 @macro <Min_circle_2 check three support points> = @begin
@@ -873,30 +879,32 @@ contained in the triangle.
 	return( CGAL__optimisation_is_valid_fail( verr,
 		    "the three support points are collinear."));
 
-    // circle() not equal the unique circle through p,q,r (except orientation)?
-    Circle c( p, q, r);
-    Point const& z( circle().center());
-    if ( ( z                         != c.center()        ) ||
-         ( circle().squared_radius() != c.squared_radius()) )
+    // current circle not equal the unique circle through p,q,r ?
+    Point cp( ico.circumcenter( p, q, r));
+    Distance dp( ico.squared_distance( cp, p));
+    Distance dq( ico.squared_distance( cp, q));
+    Distance dr( ico.squared_distance( cp, r));
+    if ( ( center         != cp) ||
+         ( squared_radius != dp) ||
+         ( squared_radius != dq) ||
+         ( squared_radius != dr) )
 	return( CGAL__optimisation_is_valid_fail( verr,
-		    "circle is not the unique circle \
-		     through its three support points."));
+         "circle is not the unique circle through its three support points."));
 
-    // circle().center() on boundary of triangle(p,q,r)?
-    CGAL_Orientation o_pqz = ico.orientation( p, q, z);
-    CGAL_Orientation o_qrz = ico.orientation( q, r, z);
-    CGAL_Orientation o_rpz = ico.orientation( r, p, z);
+    // circle's center on boundary of triangle(p,q,r)?
+    CGAL_Orientation o_pqz = ico.orientation( p, q, center);
+    CGAL_Orientation o_qrz = ico.orientation( q, r, center);
+    CGAL_Orientation o_rpz = ico.orientation( r, p, center);
     if ( ( o_pqz == CGAL_COLLINEAR) ||
 	 ( o_qrz == CGAL_COLLINEAR) ||
 	 ( o_rpz == CGAL_COLLINEAR) )
 	return( CGAL__optimisation_is_valid_fail( verr,
 		    "one of the three support points is redundant."));
 
-    // circle().center() not inside triangle(p,q,r)?
+    // circle's center not inside triangle(p,q,r)?
     if ( ( o_pqz != o_qrz) || ( o_qrz != o_rpz) || ( o_rpz != o_pqz))
 	return( CGAL__optimisation_is_valid_fail( verr,
-		    "circle's center is not in the \
-		     convex hull of its three support points."));
+    "circle's center is not in the convex hull of its three support points."));
 @end
 
 @! ----------------------------------------------------------------------------
@@ -907,7 +915,7 @@ contained in the triangle.
     ostream&
     operator << ( ostream& os, CGAL_Min_circle_2<I> const& min_circle)
     {
-	switch ( os.iword( CGAL_IO::mode)) {
+	switch ( CGAL_get_mode( os)) {
 
 	  case CGAL_IO::PRETTY:
 	    os << endl;
@@ -935,11 +943,12 @@ contained in the triangle.
 
 	  case CGAL_IO::BINARY:
 	    copy( min_circle.points_begin(), min_circle.points.end(),
-		  ostream_iterator<Point>( os, " "));
+		  ostream_iterator<Point>( os));
 	    break;
 
 	  default:
-	    CGAL_optimisation_assertion_msg( false, "CGAL_IO::mode invalid!");
+	    CGAL_optimisation_assertion_msg( false,
+					     "CGAL_get_mode( os) invalid!");
 	    break; }
 
 	return( os);
@@ -949,8 +958,10 @@ contained in the triangle.
     istream&
     operator >> ( istream& is, CGAL_Min_circle_2<I>& min_circle)
     {
-	switch ( is.iword( CGAL_IO::mode)) {
+	switch ( CGAL_get_mode( is)) {
 	  case CGAL_IO::PRETTY:
+	    cerr << endl;
+	    cerr << "Stream must be in ascii or binary mode" << endl;
 	    break;
 	  case CGAL_IO::ASCII:
 	  case CGAL_IO::BINARY:
@@ -985,18 +996,25 @@ noting that $|B| \leq 3$.
     {
 	switch ( n_support_points) {
 	  case 3:
-	    min_circle = Circle( support_points[ 0],
-				 support_points[ 1],
-				 support_points[ 2]);
+	    center         = ico.circumcenter( support_points[ 0],
+					       support_points[ 1],
+					       support_points[ 2]);
+	    squared_radius = ico.squared_distance( center,
+						   support_points[ 0]);
             break;
 	  case 2:
-	    min_circle = Circle( support_points[ 0], support_points[ 1]);
+	    center         = ico.midpoint( support_points[ 0],
+					   support_points[ 1]);
+	    squared_radius = ico.squared_distance( center,
+						   support_points[ 0]);
 	    break;
 	  case 1:
-	    min_circle = Circle( support_points[ 0]);
+	    center         = support_points[ 0];
+	    squared_radius = Distance( 0);
 	    break;
 	  case 0:
-	    min_circle = Circle( );
+	    center         = Point( CGAL_ORIGIN);
+	    squared_radius = -Distance( 1);
 	    break;
 	  default:
 	    CGAL_optimisation_assertion( ( n_support_points >= 0) &&
@@ -1062,8 +1080,6 @@ representation and number type \ccc{integer}.
     #include <CGAL/Optimisation_default_interface_2.h>
     #include <CGAL/Min_circle_2.h>
     #include <CGAL/Random.h>
-    // #include <CGAL/IO/ostream_2.h>
-    #include <CGAL/IO/new_iostream.h>
     #include <CGAL/IO/Verbose_ostream.h>
     #include <algo.h>
     #include <assert.h>
@@ -1085,7 +1101,7 @@ to ensure code coverage. The command line option \ccc{-verbose}
 enables verbose output.
 
 @macro <Min_circle_2 test (verbose option)> = @begin
-    bool verbose = false;
+    bool  verbose = false;
     if ( ( argc > 1) && ( strcmp( argv[ 1], "-verbose") == 0)) {
         verbose = true;
 	--argc;
@@ -1107,93 +1123,136 @@ enables verbose output.
 
     verr << endl << "default constructor...";
     {
-	Min_circle mc;
-	assert( mc.is_empty());
-	assert( mc.is_valid( verbose));
+	Min_circle  mc;
+	bool  is_valid = mc.is_valid( verbose);
+	bool  is_empty = mc.is_empty();
+	assert( is_valid); 
+	assert( is_empty);
     }
 
     verr << endl << "one point constructor...";
     {
-	Min_circle mc( random_points[ 0]);
-	assert( mc.is_degenerate());
-	assert( mc.is_valid( verbose));
+	Min_circle  mc( random_points[ 0]);
+	bool  is_valid      = mc.is_valid( verbose);
+	bool  is_degenerate = mc.is_degenerate();
+	assert( is_valid);
+	assert( is_degenerate);
     }
 
     verr << endl << "two points constructor...";
-    assert( Min_circle( random_points[ 1],
-			random_points[ 2]).is_valid( verbose));
+    {
+	Min_circle  mc( random_points[ 1],
+			random_points[ 2]);
+	bool  is_valid = mc.is_valid( verbose);
+	assert( is_valid);
+    }
 
     verr << endl << "three points constructor...";
-    assert( Min_circle( random_points[ 3],
+    {    
+	Min_circle  mc( random_points[ 3],
 			random_points[ 4],
-			random_points[ 5]).is_valid( verbose));
+			random_points[ 5]);
+	bool  is_valid = mc.is_valid( verbose);
+	assert( is_valid);
+    }
 
     verr << endl << "Point* constructor (without randomization)...";
-    assert( Min_circle( random_points, random_points+9).is_valid( verbose));
+    {
+	Min_circle  mc( random_points, random_points+9);
+	bool  is_valid = mc.is_valid( verbose);
+	assert( is_valid);
+    }
 
     verr << endl << "Point* constructor (with randomization)...";
     Min_circle mc( random_points, random_points+9, true);
-    assert( mc.is_valid( verbose));
+    {
+	bool  is_valid = mc.is_valid( verbose);
+	assert( is_valid);
+    }
 
     verr << endl << "list<Point>::const_iterator constructor...";
-    assert( Min_circle( mc.points_begin(), mc.points_end(), true).circle()
-	                                                    == mc.circle());
+    {
+	Min_circle  mc2( mc.points_begin(), mc.points_end(), true);
+	bool  is_valid = mc2.is_valid( verbose);
+	assert( is_valid);
+	assert( mc.circle() == mc2.circle());
+    }
 
     verr << endl << "#points...";
-    assert( mc.number_of_points() == 9);
+    {
+	int  number_of_points = mc.number_of_points();
+	assert( number_of_points == 9);
+    }
 
     verr << endl << "points access already called above.";
 
     verr << endl << "support points access...";
-    Min_circle::Support_point_iterator iter( mc.support_points_begin());
-    for ( i = 0; i < mc.number_of_support_points(); ++i, ++iter)
-	assert( mc.support_point( i) == *iter);
-    assert( iter == mc.support_points_end());
+    {
+	Point  support_point;
+        Min_circle::Support_point_iterator  iter( mc.support_points_begin());
+        for ( i = 0; i < mc.number_of_support_points(); ++i, ++iter) {
+	    support_point = mc.support_point( i);
+	    assert( support_point == *iter); }
+	Min_circle::Support_point_iterator  end_iter( mc.support_points_end());
+        assert( iter == end_iter);
+    }
 
     verr << endl << "circle access...";
-    Circle circle( mc.circle());
+    Circle  circle( mc.circle());
 
     verr << endl << "in-circle predicates...";
-    for ( i = 0; i < 9; ++i) {
-	Point const& p( random_points[ i]);
-	assert( ( mc.bounded_side( p) != CGAL_ON_UNBOUNDED_SIDE       ) &&
-		( mc.has_on_bounded_side( p) || mc.has_on_boundary( p)) &&
-		( ! mc.has_on_unbounded_side( p)                      ) );
-	assert(
-	    (mc.bounded_side(p)          == circle.bounded_side(p)       ) &&
-	    (mc.has_on_bounded_side(p)   == circle.has_on_bounded_side(p)) &&
-	    (mc.has_on_boundary(p)       == circle.has_on_boundary(p)    ) &&
-	    (mc.has_on_unbounded_side(p) == circle.has_on_unbounded_side(p)));}
+    {
+	Point              p;
+	CGAL_Bounded_side  bounded_side;
+	bool               has_on_bounded_side;
+	bool		   has_on_boundary;
+	bool		   has_on_unbounded_side;
+	for ( i = 0; i < 9; ++i) {
+	    p = random_points[ i];
+	    bounded_side          = mc.bounded_side( p);
+	    has_on_bounded_side   = mc.has_on_bounded_side( p);
+	    has_on_boundary       = mc.has_on_boundary( p);
+	    has_on_unbounded_side = mc.has_on_unbounded_side( p);
+	assert( bounded_side != CGAL_ON_UNBOUNDED_SIDE);
+	assert( has_on_bounded_side || has_on_boundary);
+	assert( ! has_on_unbounded_side); }
+    }
 
     verr << endl << "is_... predicates already called above.";
 
     verr << endl << "modifiers...";
     mc.insert( random_points[ 9]);
-    assert( mc.is_valid( verbose));
+    {
+	bool  is_valid = mc.is_valid( verbose);
+	assert( is_valid);
+    }
 
     verr << endl << "validity check already called several times.";
 
     verr << endl << "I/O...";
     {
-	verr << endl << "  writing `test_Min_circle_2.pretty'...";
-	ofstream os( "test_Min_circle_2.pretty");
-	os << CGAL_pretty << mc;
-    }
-    {
 	verr << endl << "  writing `test_Min_circle_2.ascii'...";
 	ofstream os( "test_Min_circle_2.ascii");
-	os << CGAL_ascii << mc;
+	CGAL_set_ascii_mode( os);
+	os << mc;
+    }
+    {
+	verr << endl << "  writing `test_Min_circle_2.pretty'...";
+	ofstream os( "test_Min_circle_2.pretty");
+	CGAL_set_pretty_mode( os);
+	os << mc;
     }
     {
 	verr << endl << "  writing `test_Min_circle_2.binary'...";
 	ofstream os( "test_Min_circle_2.binary");
-	os << CGAL_binary << mc;
+	CGAL_set_binary_mode( os);
+	os << mc;
     }
     {
 	verr << endl << "  reading `test_Min_circle_2.ascii'...";
 	Min_circle mc_in;
 	ifstream is( "test_Min_circle_2.ascii");
-	is.iword( CGAL_IO::mode) = CGAL_IO::ASCII;
+	CGAL_set_ascii_mode( is);
 	is >> mc_in;
 	assert( mc.circle() == mc_in.circle());
     }
@@ -1215,13 +1274,17 @@ end of each file.
 	list<Point>  points;
 	int          n, x, y;
 	ifstream     in( argv[ 1]);
-	assert( in >> n);
+	in >> n;
+	assert( in);
 	for ( i = 0; i < n; ++i) {
-	    assert( in >> x >> y);
+	    in >> x >> y;
+	    assert( in);
 	    points.push_back( Point( x, y)); }
 
 	// compute and check min_circle
-	assert( Min_circle( points.begin(), points.end()).is_valid( verbose));
+	Min_circle  mc2( points.begin(), points.end());
+	bool  is_valid = mc2.is_valid( verbose);
+	assert( is_valid);
 
 	// next file
 	--argc;
@@ -1272,15 +1335,6 @@ end of each file.
 
 @file <test_Min_circle_2.C> = @begin
     @<Min_circle_2 header>("test/test_Min_circle_2.C")
-
-    #define typename
-
-    #define CGAL_kernel_assertion CGAL_assertion
-    #define CGAL_kernel_precondition CGAL_precondition
-    #define CGAL_kernel_postcondition CGAL_postcondition
-
-    #define CGAL_nondegeneracy_assertion
-    #define CGAL_nondegeneracy_precondition(cond)
 
     @<Min_circle_2 test (includes and typedefs)>
 
