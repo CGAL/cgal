@@ -3,7 +3,7 @@
 %%
 %% file:     installation.tex
 %%
-%% authors:  Michael Hoffmann and Wieger Wesselink
+%% authors:  Michael Hoffmann, Dima Pasechnik and Wieger Wesselink
 %%
 %% $Revision$ $Date$
 %%
@@ -11,8 +11,11 @@
 %% macro for GNU
 \newcommand{\gnu}{\textsc{Gnu}}
 
-%% macro for GNU
-\newcommand{\MSInst}{``Windows-specific Installation''}
+%% macro for GMP
+\newcommand{\gmp}{\textsc{GMP}}
+
+%% macro for Windows-specific installation
+\newcommand{\MSInst}{Windows-specific Installation}
 
 %% macro for g++
 \newcommand{\Gcc}[1]{\gnu~\texttt{g++}~{\rm #1}}
@@ -31,6 +34,9 @@
 
 %% macro for Microsoft Visual C++
 \newcommand{\msvc}[1]{\textsc{MS}~Visual~\texttt{C++}~{\rm #1}}
+
+%% macro for Intel C++ Compiler
+\newcommand{\icl}[1]{\textsc{Intel}~\texttt{C++}~{\rm #1}}
 
 %% macro for Microsoft Windows
 \newcommand{\mswin}{\textsc{MS}~Windows}
@@ -53,7 +59,7 @@
 \newcommand{\faqpage}{\path'http://www.cs.uu.nl/CGAL/FAQ/'}
 %%\newcommand{\hpstlpage}{\path'http://www.cs.rpi.edu/~musser/stl.html'}
 \newcommand{\sgistlpage}{\path'http://www.sgi.com/Technology/STL/'}
-\newcommand{\stlportpage}{\path'http://www.metabyte.com/~fbp/stl/'}
+\newcommand{\stlportpage}{\path'http://www.stlport.org/'}
 \newcommand{\ledapage}{\path'http://www.mpi-sb.mpg.de/LEDA'}
 \newcommand{\gmppage}{\path'http://www.gnu.org/software/gmp'}
 \newcommand{\clnpage}{\path'http://clisp.cons.org/~haible/packages-cln.html'}
@@ -86,11 +92,15 @@ conform to the ISO 14882 standard for \lcTex{\CC\footnote{see e.g.
 we could not work around all of them.
 
 On \mswin, one has two options for installing: one is specifically
-targeted for this OS and is described in \MSInst; the other is using
-Cygwin\footnote{see \path~http://sourceware.cygnus.com/cygwin~} and
-the generic installation procedure for Unix-like environments
-described here. If you are going to install \cgal\ using Cygwin,
-please read section \ref{sec:cygwin} first.
+targeted for this OS and is described in
+section~\ref{sec:wininst}\footnote{see also {\tt wininstall.txt} in
+  the root directory of the installation}; the other is using
+Cygwin\footnote{\path~http://sourceware.cygnus.com/cygwin~} and the
+generic installation procedure for Unix-like environments described in
+section~\ref{sec:sample-inst} and subsequent sections.  If you are
+going to install \cgal\ using Cygwin, please read section
+\ref{sec:cygwin} first.
+
 
 More precisely, \cgaldir\ supports the following compilers/operating
 systems:
@@ -103,24 +113,27 @@ systems:
     \mipsprocc\ 7.3 (n32)    & IRIX 6.5\\\hline
     \Gcc{2.95} (and later)   & 
       IRIX 6.5 / Solaris 2.6 / Linux 2.x / 
-      \mswin\ 95/98/NT4\footnotemark[6]\\\hline
+      \mswin\ 95/98/NT4\footnotemark[7]\\\hline
     \egcs{1.1.2} (and later) & 
       IRIX 6.5 / Solaris 2.6 / Linux 2.x / 
-      \mswin\ 95/98/NT4\footnotemark[6]\\\hline
+      \mswin\ 95/98/NT4\footnotemark[7]\\\hline
     \msvc{6.0}               & \mswin\ 95/98/NT4\\\hline
   \end{tabular}
 \end{center}
-\footnotetext[6]{with Cygwin $\beta$20.1}
+\footnotetext[7]{with Cygwin $\beta$20.1}
 
 There are plans to provide full support for \bcc{5.4} in the future,
-but there is no such support at the moment. The \sunprocc{4.2}
-compiler is not supported anymore, please stay with \cgal-1.2 if you
-have to use it.  \Gcc{2.8.1} is not supported anymore, please stay
-with \cgal-2.0 if you have to use it.  Support for \sunprocc{5} will
-be reconsidered as soon as an acceptable degree of
-standard-conformance is reached.
+but there is no such support at the moment. \msvc{5.0} and prior is
+not supported and there are no plans to support it in future releases.
+The \sunprocc{4.2} compiler is not supported anymore, please stay with
+\cgal-1.2 if you have to use it.  \Gcc{2.8.1} is not supported
+anymore, please stay with \cgal-2.0 if you have to use it.  Support
+for \sunprocc{5} will be reconsidered as soon as an acceptable degree
+of standard-conformance is reached.  Support for \icl{4.0} will be
+considered.
 
-\section{Getting \cgal}
+\section{Getting \cgal} \label{sec:gettingcgal}
+This section applies to Unix-like environments, as well as to \mswin .
 
 The \cgal\ library can be downloaded in two different ways: using ftp
 or using WWW.  If you have a WWW connection, the easiest way to
@@ -144,7 +157,7 @@ file that contains descriptions of the files in this directory. An
 example of an FTP-session is given below.
 
 \begin{alltt}
-      $ ftp ftp.cs.uu.nl 
+      > ftp ftp.cs.uu.nl 
       Name (ftp.cs.uu.nl:<your username>): anonymous
       Password: <type your email address here>
       ftp> cd pub/CGAL
@@ -155,7 +168,10 @@ example of an FTP-session is given below.
 \end{alltt}
 
 After you have downloaded the file containing the \cgal\ library, you
-have to decompress it. For the zipfile use the command
+have to decompress it. For the zipfile use the
+command\footnote{\texttt{unzip} for \mswin\ 
+can be downloaded, for instance, from
+\texttt{http://www.itribe.net/virtunix/}}.
 
 \begin{verbatim}
       unzip <filename>.zip
@@ -168,12 +184,15 @@ and for the gzipped file use the commands
       tar xvf <filename>.tar
 \end{verbatim}
 
-%% N.B. On a PC you should use an unzip utility that can deal with long
-%% filenames (like WinZip or InfoZip)!
+Alternatively, your browser might be able to invoke the right
+decompression program by itself.
+On \mswin\ you should use an unzip utility that can deal with long
+filenames (like WinZip or InfoZip).
 
 In both cases the directory \cgaldir\ will be created. This directory
 contains the following subdirectories:
 
+\footnotetext[8]{\stlportpage}
 \begin{center}
   \renewcommand{\arraystretch}{1.3}
   \gdef\lcTabularBorder{2}
@@ -181,8 +200,8 @@ contains the following subdirectories:
     \textbf{directory} & \textbf{contents}\\\hline\hline
     \texttt{auxiliary} & packages that can optionally be used with \cgal\\\hline
     \texttt{config}    & configuration files for install script\\\hline
-    \texttt{demo}      & demo programs (some of them need \leda, geomview, 
-                         OpenGL or other third-party products)\\\hline
+    \texttt{demo}      & demo programs (some of them need \leda, geomview
+                         or other third-party products)\\\hline
     \texttt{doc\_html} & documentation (HTML)\\\hline
     \texttt{doc\_pdf}  & documentation (PDF)\\\hline
     \texttt{doc\_ps}   & documentation (Postscript)\\\hline
@@ -192,8 +211,19 @@ contains the following subdirectories:
     \texttt{make}      & files with platform dependent makefile settings\\\hline
     \texttt{scripts}   & some useful scripts (e.g. for creating makefiles)\\\hline
     \texttt{src}       & source files\\\hline
+    \texttt{stlport}   & 
+         a customized version of \texttt{Stlport-3.2.1}\footnotemark[8] 
+         that is used with \msvc{6.0}\\\hline
   \end{tabular}
 \end{center}
+
+In order to avoid problems with installation routines, please make
+sure that  the full path to \cgaldir\ does not contain spaces
+(the latter, while in principle possible on \mswin , in not supported
+in the present release).
+
+It is planned that in the future on \mswin\ the installation procedure
+will be automated via InstallShield.
 
 \section{Installing \cgal}
 
@@ -402,7 +432,7 @@ This also retests for \leda/GMP/CLN installation in system directories
 which otherwise is only done the first time you enable \leda/GMP/CLN
 support for an OS/compiler combination.
 
-\subsection{Files created during installation}
+\subsection{Files created during installation}\label{sec:filescreated}
 
 The install script stores all relevant settings for an OS/compiler
 combination in the directory
@@ -499,13 +529,14 @@ option to set these directories differently.\bigskip
 
 \subsection{The GMP Menu}\label{sec:gmp-menu}
 
-This menu is to set GMP (\gnu\ Muptiple Precision Library) specific
+This menu is to set GMP (\gnu\ Multiple Precision Library) specific
 options, if you plan to use GMP together with \cgal . In the {\tt
   auxiliary} directory you can find a GMP distribution, if you do not
 already have it installed on your system. This menu contains an option
 to install GMP in your \cgal\ directory tree\footnote{This option is
-  not present on \mswin.}, but of course you can also install it
-independently from \cgal .
+  on \msvc\ just unpacks the corresponding pre-compiled library that
+  comes with \cgal\ distribution.}, but of course you can also install
+it independently from \cgal .
 
 If GMP support is enabled the first time, the script tests whether GMP
 is installed in standard system directories or in the \cgal\ tree. If
@@ -700,6 +731,39 @@ not.  This option is not recommended for general use, but it can be
 useful to check why a certain test fails that was expected to be
 passed.
 
+\section{Upgrading a previous \cgal\ installation}\label{sec:upgrade}
+
+In case you have \cgal\ 1.*/2.0 installed on your system, you might
+like to reuse your configuration files and GMP installations. Simply
+use the following command to copy them into the right place:
+\begin{verbatim}
+./install_cgal --upgrade <OLD_CGAL_DIR>
+\end{verbatim}
+where \texttt{<OLD\_CGAL\_DIR>} is the root directory of your existing
+\cgal\ installation\\ (e.g. \texttt{/pub/local/CGAL-1.2}).
+You can then build all libraries for the actual operating system that
+existed in your \cgal\ 1.* installation with 
+\begin{verbatim}
+./install_cgal --rebuild-all
+\end{verbatim}
+
+If you want to install \cgal\ for more than one operating system in
+the same directory structure, you have to run the latter command
+(\texttt{rebuild-all}) once on each operating system.
+
+\textbf{Note} that some compilers that have been supported in previous
+\cgal\ releases might not be supported in \cgal-\cgalrelease\ anymore,
+see section \ref{sec:prerequisites}. Trying to build
+\cgal-\cgalrelease\ with these compilers will most probably fail. You
+can solve this problem by deleting the obsolete config files (see
+section \ref{sec:filescreated}) from \cgalinstconfdir\ before issuing
+the \texttt{rebuild-all} command.
+
+Similarly you might want to use compilers with \cgal-\cgalrelease\ 
+that have not been supported in previous releases. For these compilers
+please follow the usual procedure as described in section
+\ref{sec:interactive-mode} or \ref{sec:non-interactive}.
+
 \section{Identifying OS and Compiler}\label{sec:os-compiler-id}
 
 Since \cgal\ supports several different operating systems and
@@ -762,6 +826,7 @@ contains an include statement that looks as follows:
       CGAL_MAKEFILE = /users/jannes/CGAL-2.1/make/makefile_<CGAL-OS description>
       include $(CGAL_MAKEFILE)
 \end{verbatim}
+%$
 
 The file \texttt{CGAL\_MAKEFILE} is an include file with platform
 dependent makefile settings. The abbreviation \texttt{<CGAL-OS
@@ -832,11 +897,382 @@ Furthermore the directories \texttt{\cgaldir/examples} and
 and graphical example programs.  In all these directories you will
 find a makefile that is ready for use.
 
-\section{Using \cgal\ and \leda}\label{sec:leda}
-This section describes how to use \cgal\ and \leda\ simultaneously.
+\section{Installation on Cygwin}\label{sec:cygwin}
 
-\subsection{Support for \leda}
-\cgal\ supports \leda\ in the following ways:
+Cygwin is a free Unix-like environment for MS-Windows, distributed by
+Cygnus Solutions. For our tests we have used version $\beta$-20.1.
+
+It consists of a port of a large number of GNU tools, such as bash,
+make, gcc (egcs), gas, file utilities, etc, as well as tools ensuring
+an ability to emulate Unix-like access to resources, for instance
+mount.  For a comprehensive introduction and details, see
+\path~http://sourceware.cygnus.com/cygwin/~ .
+
+\subsection{Pathnames}
+
+Cygwin has a UNIX-like way of navigating hard drives, NFS shares, etc.
+This is also the way in which directories and pathnames have to given
+to the installation script. They are automatically converted to
+Win32-style pathnames when given to the compiler or linker.
+
+The main difference is that directories are seperated by slash (``/'')
+rather than by backslash (``$\backslash$'').  The other difference is
+concerned with specifying drives. One way is to use POSIX-style
+pathnames that map Win32-style drives (\texttt{A:}, \texttt{B:}) to
+\texttt{//a/\ldots}, \texttt{//b/\ldots} respectively. For instance,
+the path
+\texttt{D:$\backslash$Mystuff$\backslash$Mydir$\backslash$LEDA}
+translates to \texttt{//d/Mystuff/Mydir/LEDA}.
+
+Alternatively, it can be done using the mount utility, that can be
+used to establish a map between Win32-style drives and the Unix-like
+style. More precisely, it maps the forest of the directories/files on
+Win32-drives to a tree with the root that is usually located at the top
+level of the boot drive, say \texttt{C:}.  The root location can be
+seen by typing \texttt{mount} command without parameters.  For
+instance, if \texttt{D:} is mounted on
+\texttt{C:$\backslash$ddrive}\footnote{by typing \texttt{mount D:
+    /ddrive}} then the path
+\texttt{D:$\backslash$Mystuff$\backslash$Mydir$\backslash$LEDA}
+translates to \texttt{/ddrive/Mystuff/Mydir/LEDA}.
+
+\paragraph{Upper/lower case and spaces in file names}
+Behavour of Cygwin in this regard might be different from the \mswin\ 
+behaviour. In particular, using spaces in filenames should better be
+avoided.
+
+\paragraph{Links, shortcuts, etc} should be avoided as well.
+
+\subsection{\msvc{6.0}-setup}
+A number of environment variables has to be set (or updated)
+in order to use the installation.
+
+\texttt{PATH} should contain \msvc{6.0} command line tools locations.
+The environment variables \texttt{INCLUDE} and \texttt{LIB} should
+point to the location of \msvc{6.0} header files and to the location
+of the \msvc{6.0} libraries, respectively.
+The interface for doing this is different for NT and for Win9*.
+
+\paragraph{\mswin-NT4.0.}
+One can set the corresponding environment variables using the
+usual NT interface\footnote{open MyComputer, press right mouse button,
+  select Properties, select Environment, set the relevant variables}.
+Alternatively, they can be set in the \texttt{.bashrc} file for the
+particular user, or in the system-wide \texttt{bash} customization
+file (usually \texttt{/etc/bashrc}).
+
+The result should look roughly as follows, assuming that
+\texttt{C:$\backslash$PROGRA$\sim$1$\backslash$MICROS$\sim$2$\backslash$}
+is the location of the \msvc{} installation.
+\begin{verbatim}
+LIB=C:\PROGRA~1\MICROS~2\VC98\LIB
+INCLUDE=C:\PROGRA~1\MICROS~2\VC98\INCLUDE
+\end{verbatim}
+and \texttt{PATH} should contain
+\begin{verbatim}
+/PROGRA~1/MICROS~2/Common/msdev98/BIN:
+/PROGRA~1/MICROS~2/VC98/BIN:/PROGRA~1/MICROS~2/Common/TOOLS:
+/PROGRA~1/MICROS~2/Common/TOOLS/WINNT
+\end{verbatim}
+
+\paragraph{\mswin-9*.} 
+First, the memory for environment variables has to be increased.
+Select the Cygwin icon from the Start-menu, press the right mouse
+button and choose \textit{Properties}. Go to \textit{Memory}, select
+\textit{Initial Environment}, set it to at least 2048 and
+\textit{apply} the changes.
+
+Second, edit the file \texttt{cygnus.bat}, located in the cygwin main
+directory and add the line
+\begin{verbatim}
+call C:\PROGRA~1\MICROS~2\VC98\Bin\MSCVARS32.BAT
+\end{verbatim}
+where
+\texttt{C:$\backslash$PROGRA$\sim$1$\backslash$MICROS$\sim$2$\backslash$}
+has to be customized according to where \msvc{} is installed on your
+system.
+
+\section{Installation on \mswin\ with native tools} \label{sec:wininst}
+\cgal-\cgalrelease\ provides a basic support for \msvc{6.0}
+compiler.  It can also be considered an early beta release for Inprise
+Borland C++ Builder 4, known also as \bcc{5.4}. 
+Using the latter with \cgal\ is briefly described
+in file \texttt{wininstall.txt} located in the directory
+\cgal-\cgalrelease.
+
+Downloading and contents of the distribution are described in 
+section~\ref{sec:gettingcgal} above.
+
+In order to install and use \cgal\ with \msvc , you need \msvc\ 
+command line tools installed and working\footnote{To make sure that
+  certain environment variables are set correctly, one can execute
+  \texttt{VCVARS32.BAT} located in the same directory as the \msvc\ 
+  executables.}. Certain familiarity with using Windows command prompt
+and these tools is assumed. A reasonable amount of system resources,
+that is enough memory to run large compilations (64 Mb on NT4.0) and
+about 15MB of disk space, is required.
+
+It is highly recommended that you have a recent (at least 4.0) version
+of \leda\ installed. Most of the \cgal\ demos use \leda\ for
+visualization.
+
+\cgal\ has interfaces to a number of rather important 3rd party
+packages, that provide, in particular, arbitrary precision arithmetic,
+and visualization. On Windows these packages are \leda\ and \gnu\ MP
+(also known as \gmp ).  \gmp\ is supported by default; see
+section~\ref{sect:wingmp} for details.  \leda\ configuration is
+described below.
+
+\newcommand{\CGALR}{\texttt{CGALROOT}}
+\newcommand{\bslsh}{$\backslash$}
+
+In what follows \CGALR\ will refer to the full path to the
+directory \cgal-\cgalrelease , where the downloaded source is
+unpacked.
+
+\subsection{Initial customization}
+
+Change to \CGALR\ and run the batch file \texttt{cgal\_config.bat} at the
+command prompt.  This script will set the appropriate makefiles for
+subsequent compilation.
+
+\texttt{cgal\_config.bat} accepts 4 parameters.
+\begin{enumerate}
+\item the compiler type (\texttt{msc} or \texttt{bcc})
+%
+\item (optional) compiler options (to enable debugging and/or threads
+                support)
+%
+\item (optional) \texttt{LEDAROOT} (the location where \leda\ lib files are installed)
+%
+\item (optional) the location where \leda\ header files are installed.
+                If omitted, it is assumed to be 
+\texttt{LEDAROOT\bslsh incl}.
+\end{enumerate}
+
+Typically, assuming that \leda\ is installed in 
+\texttt{k:\bslsh LEDA-4.1-991117}, 
+one would run at the command prompt:
+\begin{verbatim}
+K:\cgal\> cgal_config msc k:\LEDA-4.1-991117
+\end{verbatim}
+
+Otherwise, if \leda\ header files are not in \texttt{LEDAROOT\bslsh incl}, 
+one would run, say,
+
+\begin{verbatim}
+K:\cgal\> cgal_config msc k:\LEDA-4.1-991117\msvc k:\LEDA-4.1-991117\incl
+\end{verbatim}
+
+It is assumed that paths to \texttt{LEDAROOT} and \leda\ include
+directories do not have names with spaces.
+
+Running \texttt{cgal\_config.bat} without parameters prints out the detailed
+options list (in particular, the compiler and linker options).
+
+
+\subsection{Building the library, examples and demos}
+
+Change (if necessary)
+to \CGALR\ and run \texttt{make\_lib.bat} at the command prompt. Namely,
+\begin{verbatim}
+K:\cgal\> make_lib
+\end{verbatim}
+
+builds the library with the compiler and linker options specified
+by the last run of \texttt{cgal\_config.bat}.
+For other settings, one would have to reconfigure and recompile
+(same as for current \leda\ installation).
+\begin{verbatim}
+K:\cgal\> make_examples
+\end{verbatim}
+compiles and links the examples and
+\begin{verbatim}
+K:\cgal\> make_demos
+\end{verbatim}
+compiles and links the demos. 
+
+Examples and demos can also be built on per directory, or even on per
+executable basis.  For instance, change to 
+\texttt{\cgal-\cgalrelease\bslsh demo\bslsh Point\_set\_2}
+and type \texttt{nmake all} to build all the examples.  
+Typing \texttt{nmake ps\_test1}
+will build the particular demo program \texttt{ps\_test1}.
+
+The corresponding executable(s) then can be run as usual, from the
+command prompt, or via Explorer.
+
+Note that demos requiring \leda\ would not work if \cgal\ was
+configured without \leda\ support.  \leda\ must be compiled and used
+with \texttt{LEDA\_STD\_HEADERS} flag on. See
+section~\ref{subs:ledastlconfl} for details.
+
+
+\subsection{Developing for \cgal\ with \msvc{6.0}}
+
+Here we give some hints on the use of \cgal\ with native \msvc\ tools;
+C++ language issues, troubleshooting and the use of \cgal\ with Cygwin
+are covered above.
+
+The most important issue is the following. \cgal\ uses C++ STL
+(Standard Template Library) quite extensively.  To resolve many C++
+Standard compliance problems of the native \msvc\ STL, we chose to use
+a drop-in replacement for it, \texttt{STLPort} (see \stlportpage). We
+have customized \texttt{STLPort-3.2.1} to partially support
+\texttt{std::iterator\_traits} template of STL.
+
+For this to work, the compiler should have \texttt{STLPort}
+subdirectory first in its search path.  This issue is taken care of in
+the makefiles generated.  Customization of IDE is described in Sect
+4.2 below.
+
+
+\paragraph{Using nmake makefiles.}
+Simply adapt a makefile from an \texttt{examples/} or \texttt{demos/} 
+subdirectory.
+This means changing the target \texttt{all} and changing the targets that
+create executables (look in the subsection ``target entries'' there).
+For instance, you would like to create an executable \texttt{demo\_beta.exe}
+from a C++ source file \texttt{demo\_beta.C}.  Then your 
+\texttt{makefile}, that would
+include the ``main'' makefile makefile.mak in \CGALR\ would have
+\begin{verbatim}
+all: demo_beta
+
+demo_beta: demo_beta.obj
+        $(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_beta demo_beta.obj \
+        $(LDFLAGS)
+\end{verbatim}
+
+and a ``suffix rule'' that describes creation of an object file from a
+.C - file, e.g.
+\begin{verbatim}
+.C.obj:
+        $(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
+\end{verbatim}
+
+Extra compiler and linker options are to be specified by changing
+macros \texttt{CXXFLAGS} and \texttt{LDFLAGS}, respectively.
+
+One way to specify the ``main'' makefile is by using environment
+variable \texttt{CGAL\_MAKEFILE} to specify the full path to 
+\texttt{makefile.mak} in
+\CGALR .
+
+Probably such a makefile can also be used for a ``custom build'' via an
+IDE, although we never attempted this ourselves.
+
+
+\paragraph{Using \msvc\ IDE.}
+The compiler/linker options used to build the \cgal\ library should
+match those used for the project. This can be done by
+selecting {\em Project/Settings...}, the {\em C/C++} section,
+{\em Code Generation} category, and choosing the right
+library in {\em Use run-time library}:
+
+\begin{tabular}{|l|l|} \hline
+Single-Threaded&                 ml (or no option)\\
+Multi-threaded &                 mt\\
+Multi-threaded DLL&              md\\
+Debug Single-Threaded &          mld\\
+Debug Multi-threaded   &         mtd\\
+Debug Multi-threaded DLL&        mdd\\\hline
+\end{tabular}
+
+Further necessary customization is as follows.
+We hope that the forthcoming automatic installation will simplify
+these elaborated procedures.
+
+
+\paragraph{Customizing compilation.}
+Additional include directories (in the right order!) and preprocessor
+definitions have to be specified.  We assume that either 
+\texttt{CGAL\_ROOT} is
+an (already defined) environment variable (and then the include and
+library paths can be entered as shown), or 
+\texttt{\$(CGAL\_ROOT)} must be
+replaced by the corresponding full path to the \cgal\ installation.
+
+Select {\em Project/Settings...}, the {\em C/C++}
+section, {\em Preprocessor} category. Add (in the following order)
+\begin{verbatim}
+   $(CGAL_ROOT)\stlport
+   $(CGAL_ROOT)\include\CGAL\config\msvc
+   $(CGAL_ROOT)\include
+   $(CGAL_ROOT)\include
+   $(CGAL_ROOT)\auxiliary\wingmp\gmp-2.0.2
+\end{verbatim}
+%$ %$ %$%$
+to "Additional include directories:".
+ It is very important that 
+\texttt{\$(CGAL\_ROOT)\bslsh stlport} 
+appears first in the list in {\em Additional include directories}. 
+Otherwise a bunch
+of ugly compiler error messages is guaranteed.
+
+If \leda\ is used, don't forget to add 
+\texttt{\$(LEDAROOT)\bslsh incl}
+to {\em Additional include directories}.
+
+Add \texttt{CGAL\_USE\_GMP} to {\em Preprocessor definitions}.
+If \leda\ is used, also add \texttt{CGAL\_USE\_LEDA} and 
+\texttt{LEDA\_PREFIX} there.
+
+
+Should your source file(s) have suffices that are not recognized by
+\msvc{6.0} IDE as C++ source files,
+(like all the \cgal\ source files, by the way)
+add \texttt{/TP} to options {\em Project Settings} in the {\em C/C++} section,
+{\em Preprocessor} category.
+
+
+\paragraph{Customizing linking.}
+Additional library directories have to be specified.
+Select {\em Project/Settings...}, {\em Link} section, {\em Input} 
+category. Add 
+\texttt{CGAL.lib} and \texttt{gmp.lib}
+in {\em Object/library modules}: list.
+If LEDA is used, also add there
+\texttt{libP.lib},
+\texttt{libG.lib}, and 
+   \texttt{libL.lib}.
+
+If \leda\ Window is used, also add there \texttt{libW.lib}.
+In addition, make sure that you link against the system libraries
+\texttt{user32.lib, gdi32.lib, comdlg32.lib, shell32.lib, advapi32.lib}
+(usually IDE has them already on the list).
+
+If \leda\ Geowin is used, one should as well add
+\texttt{libGeoW.lib} and \texttt{libD3.lib}
+to {\em Object/library modules}.
+
+
+\subsection{\gmp\ support}\label{sect:wingmp}
+A pre-compiled for \msvc{6.0}, using Cygwin \gnu\ C compiler and 
+\gnu\ assembler, 
+static object library \texttt{gmp.lib} is located in 
+\texttt{CGALROOT\bslsh auxiliary\bslsh wingmp\bslsh gmp-2.0.2\bslsh msvc}
+and the corresponding header file \texttt{gmp.h} in
+\texttt{CGALROOT\bslsh auxiliary\bslsh wingmp\bslsh gmp-2.0.2}.
+
+It was created using M.Khan's Cygwin-specific patches to  \gmp-2.0.2,
+that are available from\\
+\texttt{http://www.xraylith.wisc.edu/~khan/software/gnu-win32/} and then
+slightly modified (by adding a few routines, like 
+\texttt{random}, and creating a
+separate \msvc{6.0}-compiled library that does I/O of the GMP numbers.)  It
+was checked that all tests that come with \gmp\ distribution pass.
+See \texttt{CGALROOT\bslsh auxiliary\bslsh wingmp\bslsh
+  gmp-2.0.2\bslsh msvc\bslsh src} for details.
+
+Subject to time constraints, we might provide a smoother \gmp\ support
+for \msvc\ in the future. A new major release of \msvc\ is expected in
+March 2000, probably \cgal\ will be upgraded to use it then.
+
+\lcTex{\begin{appendix}}
+
+\section{Using \cgal\ and \leda}\label{sec:leda}
+\cgal\ supports \leda\ in the following ways.
 
 \begin{enumerate}
 \item There are support functions defined for the \leda\ number types
@@ -844,6 +1280,11 @@ This section describes how to use \cgal\ and \leda\ simultaneously.
   \texttt{real} (see the files \texttt{<CGAL/leda\_*>}).
 \item For all two-dimensional geometric objects there are input/output
   operators from/to a \texttt{leda\_window}.
+\item For all two-dimensional geometric objects there are output
+  operators to a \texttt{leda\_ps\_file}.
+\item The registration functions needed to interact with a
+  \texttt{leda\_geowin} are defined for all geometric objects from the
+  \cgal\ kernel.
 \item \cgal\ defines the following \leda-related compiler flags:
 \begin{itemize}
 \item When \leda\ is used, the flags \texttt{CGAL\_USE\_LEDA} and
@@ -859,6 +1300,55 @@ This section describes how to use \cgal\ and \leda\ simultaneously.
 The include makefiles in the \texttt{\cgaldir/make} directory
 corresponding to \leda\ can be recognized by the suffix
 ``\texttt{\_LEDA}''.
+
+\section{Compiler workarounds}
+In \cgal\ a number of compiler flags is defined, all of them start
+with the prefix \texttt{CGAL\_CFG}. These flags are used to work
+around compiler bugs and limitations.  For example, the flag
+\texttt{CGAL\_CFG\_NO\_MUTABLE} denotes that the compiler does not
+know the keyword \texttt{mutable}. 
+
+For each compiler a file \texttt{<CGAL/compiler\_config.h>} is
+defined, with the correct settings of all flags. This file is
+generated automatically by the \texttt{install\_cgal} script. For this
+the test programs in the directory \texttt{\cgaldir/config/testfiles}
+are used. The file \texttt{<CGAL/compiler\_config.h>} and the test
+programs contain a description of the problem, so in case of trouble
+with a \texttt{CGAL\_CFG} flag it is a good idea to take a look at it.
+
+The file \texttt{<CGAL/config.h>} manages all configuration problems
+of the compiler.  This file includes the file
+\texttt{CGAL/compiler\_config.h}.  It is therefore important that the
+file \texttt{<CGAL/config.h>} is always included before any other
+\cgal\ source file that depends on workaround flags. In most cases you
+do not have to do anything special for this, because many CGAL files
+already take care of including \texttt{<CGAL/config.h>}. Nevertheless
+it would be a good idea to always start your \cgal\ programs with
+including \texttt{<CGAL/config.h>} (or \texttt{<CGAL/basic.h>}, which
+contains some more basic \cgal\ definitions).
+
+\section{Compiler Optimizations}\label{sec:compiler-optimisations}
+
+You may have noticed that we do not set optimizer flags as \texttt{-O}
+by default in the include makefiles(see section~\ref{sec:makefiles} for
+a description of the makefile structure in \cgal).  The main reason
+for not doing this is that compilers run much more stable without. On
+the other hand, most if not all \cgal\ programs will run considerably
+faster when compiled with optimizations! So if you are going for
+performance, you should/have to add \texttt{-O}, \texttt{-O3} or maybe
+more specific optimizer flags (please refer to the compiler
+documentation for that) to the \texttt{CXXFLAGS} variable in your
+application makefile:
+\begin{alltt}
+#---------------------------------------------------------------------#
+#                    compiler flags
+#---------------------------------------------------------------------#
+# The flag CGAL_CXXFLAGS contains the path to the compiler and is defined
+# in the file CGAL_MAKEFILE. You may add your own compiler flags to CXXFLAGS.
+
+CXXFLAGS = $(CGAL_CXXFLAGS) -O
+\end{alltt}
+%$
 
 \section{Troubleshooting}\label{sec:troubleshooting}
 
@@ -925,80 +1415,145 @@ CXXFLAGS = $(LONG_NAME_PROBLEM_CXXFLAGS) $(CGAL_CXXFLAGS)
 LDFLAGS = $(LONG_NAME_PROBLEM_LDFLAGS) $(CGAL_LDFLAGS) 
 \end{alltt}
 
-\subsection{\leda\ and \stl\ conflicts}
+\subsection{\leda\ and \stl\ conflicts}\label{subs:ledastlconfl}
 
 If you are using an old version of \leda, the combination of \leda\ 
 and \stl\ may give some problems. In order to avoid them, it is highly
 recommended to use the latest \leda\ release\footnote{At the moment
   this is \leda\ 4.0.}, since this is what we test \cgal\ with.
 
-\section{Compiler Optimizations}\label{sec:compiler-optimisations}
-
-You may have noticed that we do not set optimizer flags as \texttt{-O}
-by default in the include makefiles(see section\ref{sec:makefiles} for
-a description of the makefile structure in \cgal).  The main reason
-for not doing this is that compilers run much more stable without. On
-the other hand, most if not all \cgal\ programs will run considerably
-faster when compiled with optimizations! So if you are going for
-performance, you should/have to add \texttt{-O}, \texttt{-O3} or maybe
-more specific optimizer flags (please refer to the compiler
-documentation for that) to the \texttt{CXXFLAGS} variable in your
-application makefile:
+\paragraph{\msvc\-specific problems.}
+Using \msvc\ with \leda\ requires\footnote{Also applies to \bcc .} the
+latter to be compiled and used with \texttt{LEDA\_STD\_HEADERS} flag
+on. \cgal\ uses new-style C++ standard conformant headers\footnote{the
+  ones that do not have \texttt{.h} suffix}, while \leda\ can work
+with both styles. Mixing these styles is a strict no-no for \msvc.
+Before compiling \leda\, edit the file
+\texttt{\$(LEDAROOT)/incl/LEDA/system.h} and uncomment the
+\texttt{\#define} in the following fragment there.
 \begin{alltt}
-#---------------------------------------------------------------------#
-#                    compiler flags
-#---------------------------------------------------------------------#
-# The flag CGAL_CXXFLAGS contains the path to the compiler and is defined
-# in the file CGAL_MAKEFILE. You may add your own compiler flags to CXXFLAGS.
-
-CXXFLAGS = $(CGAL_CXXFLAGS) -O
+// use c++ std headers
+//#define LEDA_STD_HEADERS
 \end{alltt}
 
-\section{Upgrading a previous \cgal\ installation}
-In case you have \cgal\ 1.*/2.0 installed on your system, you might
-like to reuse your configuration files and GMP installations.  Simply
-use the following command to copy them into the right place:
-\begin{verbatim}
-./install_cgal --upgrade <OLD_CGAL_DIR>
-\end{verbatim}
-where \texttt{<OLD\_CGAL\_DIR>} is the root directory of your existing
-\cgal\ installation (e.g. \texttt{/pub/local/CGAL-1.2}).
+Also, \leda\ and \cgal\ libraries must be compiled with the same
+options controlling the use of debugging and multithreading.
+\footnote{\msvc\ compilation/linking options 
+\texttt{-ML, -MT, -MD, -MLD, -MTD, -MDD}}
 
-You can then build all libraries for the actual operating system that
-existed in your \cgal\ 1.* installation with 
-\begin{verbatim}
-./install_cgal --rebuild-all
-\end{verbatim}
+\subsection{\msvc{6.0}-specific C++ problems}
 
-If you want to install \cgal\ for more than one operating system in
-the same directory structure, you have to run the latter command
-(\texttt{rebuild-all}) once on each operating system.
+%Most of the following really belongs to, 
+%yet to be written, \cgal\ Developer manual.
 
-\section{Compiler workarounds}
-In \cgal\ a number of compiler flags is defined, all of them start
-with the prefix \texttt{CGAL\_CFG}. These flags are used to work
-around compiler bugs and limitations.  For example, the flag
-\texttt{CGAL\_CFG\_NO\_MUTABLE} denotes that the compiler does not
-know the keyword \texttt{mutable}. 
+\cgal\ uses a modified drop-in replacement for STL, STLPort, 
+version 3.2.1. Our modifications included 
+\begin{itemize}
+\item modifying the code to enable
+the use of \texttt{std::iterator\_traits} template, where possible;
+\item providing \texttt{std::vector} class that does not use
+a plain C pointer as \texttt{vector\_iterator}.
+\end{itemize}
+The latter allows using the full power of STL algorithms on
+\texttt{std::vector} without the limitation given by the absense
+of the support for partial specialization of template parameters.
 
-For each compiler a file \texttt{<CGAL/compiler\_config.h>} is
-defined, with the correct settings of all flags. This file is
-generated automatically by the \texttt{install\_cgal} script. For this
-the test programs in the directory \texttt{\cgaldir/config/testfiles}
-are used. The file \texttt{<CGAL/compiler\_config.h>} and the test
-programs contain a description of the problem, so in case of trouble
-with a \texttt{CGAL\_CFG} flag it is a good idea to take a look at it.
+Always make sure that the subdirectory
+\texttt{\$(CGAL\_ROOT)/stlport/} %$
+comes first in the list of additional include directories for \msvc.
+This is handled automatically if you use \cgal-supplied (or \cgal-generated)
+makefiles.
 
-The file \texttt{<CGAL/config.h>} manages all configuration problems
-of the compiler.  This file includes the file
-\texttt{CGAL/compiler\_config.h}.  It is therefore important that the
-file \texttt{<CGAL/config.h>} is always included before any other
-\cgal\ source file that depends on workaround flags. In most cases you
-do not have to do anything special for this, because many CGAL files
-already take care of including \texttt{<CGAL/config.h>}. Nevertheless
-it would be a good idea to always start your \cgal\ programs with
-including \texttt{<CGAL/config.h>} (or \texttt{<CGAL/basic.h>}, which
-contains some more basic \cgal\ definitions).
+
+\paragraph{\texttt{std::iterator\_traits}} is only partially
+supported, due to absense of partial specialization support in \msvc.
+This means that \texttt{std::iterator\_traits<T>} must be explicitly
+instantiated when \texttt{T} is a C pointer. 
+
+\cgal\ provides
+these instantiations for most commonly used primitive data types and
+\cgal\ kernel types\footnote{\cgal\ \texttt{Point, Segment}, etc.}.
+For other types the user must do this himself.  
+This can be done by using the macro
+\texttt{CGAL\_DEFINE\_ITERATOR\_TRAITS\_POINTER\_SPEC(T)}.
+Note that the parameter of this macro cannot contain symbols $<$ and
+$>$. Thus the macro cannot on types that contain $<$ and $>$
+directly. However, one can be done by first define a new type using 
+\texttt{typedef} and then applying the macro to this new type.
+See e.g. \texttt{examples/Getting\_started/advanced\_hull.C}
+for an example of using this macro.
+
+Note that this macro does not have any effect when other than
+\msvc{6.0} compiler is used, so it can be safely left in the source code. 
+\medskip
+
+\paragraph{Other problems.} Here goes an incomplete list
+of problems encountered, and \cgal-specific workarounds, if
+available. 
+Compiler error messages are meant to be
+hints only, and do not pretend to be complete, as well.
+\begin{enumerate}
+%
+\item Partial specialization of template parameters is not
+supported. Do not use it. Error messages say that ``the class has
+already been declared'', or ``unrecognizable template
+declaration/definition''. See
+\texttt{config/testfiles/CGAL\_CFG\_NO\_PARTIAL\_CLASS\_TEMPLATE\_SPECIALISATION.C}\\
+ for a test program illustrating the problem. \label{msvc::parspec}
+%
+\item Compiler does not always match the most
+specialized instance of a function template correctly. So you get
+``error C2667: none of 2 overload have a best conversion''.\\
+See \texttt{config/testfiles/CGAL\_CFG\_MATCHING\_BUG\_2.C} \\
+for a test program illustrating the problem.\label{msvc::matchbug2}
+%
+\item Compiler does not support the Koenig
+lookup. That is, it does not search in the namespace of the arguments for
+the function. See
+\texttt{config/testfiles/CGAL\_CFG\_NO\_KOENIG\_LOOKUP.C}. \label{msvc::koenig}
+%
+\item A scope operator in  parameter types of a member function only
+works when the function is defined inline. See
+\texttt{config/testfiles/CGAL\_CFG\_NO\_SCOPE\_MEMBER\_FUNCTION\_PARAMETERS.C}. 
+\label{msvc::scopememberfunc}
+%
+\item Passing a dependant type as template parameter cannot be done
+with \texttt{typename} keyword on \msvc. Replace \texttt{typename}
+by \texttt{CGAL\_TYPENAME\_MSVC\_NULL} in such places.\\ 
+See \texttt{config/testfiles/CGAL\_CFG\_TYPENAME\_BUG.C}. \label{msvc::typename}
+%
+\item Template \texttt{friend} declarations must not contain $<>$.
+Replace $<>$  by \texttt{CGAL\_NULL\_TMPL\_ARGS}.\\
+See \texttt{config/testfiles/CGAL\_CFG\_NO\_TEMPLATE\_FRIEND\_DISTINCTION}.
+\label{msvc::friend}
+%
+\item Using non-class template parameters often gives internal
+  compiler errors.
+%
+\item Internal compiler errors can sometimes be avoided by increasing
+  the amount of memory available to the compiler. Use \texttt{-Zm<number>}
+option. In \cgal\ makefiles it is set to \texttt{-Zm900}, meaning
+``using 900\% out of the usual memory limit''. \label{msvc::Zm}
+%
+\item \texttt{[...]/VC98/INCLUDE/xlocnum(268) : 
+error C2587: '\_U' :\\ 
+illegal use of local variable as default
+parameter} can occur\footnote{For instance, in \cgal\
+\texttt{Min\_circle} package}. The only workaround we know is to redefine
+the macro \texttt{\_VIRTUAL} in 
+\texttt{<xlocnum>}\footnote{Yes, in the \msvc\ header !}
+to be empty. Search for\\
+ \texttt{\#define~\_VIRTUAL~virtual} there and
+replace it by \texttt{\#define~\_VIRTUAL~}. \label{msvc::VIRTUAL}
+%
+\item Various matching failures for overloaded functions and ctors.
+Use dummy parameters.
+%
+\item Avoid multiple forward declarations.
+%
+\item If necessary, simplify template parameters by using extra 
+\texttt{typedef}s.
+\end{enumerate}
 
 \section{Scripts}
 
@@ -1072,98 +1627,10 @@ Alternatively, you can type
   perl -wi.hrbck -- replace_headers <FILES>
 \end{alltt}
 
-\section{Installation on Cygwin}\label{sec:cygwin}
+\lcTex{\end{appendix}}
 
-Cygwin is a free Unix-like environment for MS-Windows, distributed by
-Cygnus Solutions, see \path~http://sourceware.cygnus.com/cygwin/~ For
-our tests we have used version $\beta$-20.1.
+%%
+%% EOF
+%%
 
-It consists of a port of a large number of GNU tools, such as bash,
-make, gcc (egcs), gas, file utilities, etc, as well as tools ensuring
-an ability to emulate Unix-like access to resources, for instance
-mount.  For a comprehensive introduction and details, see the URL
-above.
-
-\subsection{Pathnames}
-
-Cygwin has a UNIX-like way of navigating hard drives, NFS shares, etc.
-This is also the way in which directories and pathnames have to given
-to the installation script. They are automatically converted to
-Win*-style pathnames when given to the compiler or linker.
-
-The main difference is that directories are seperated by slash (``/'')
-rather than by backslash (``$\backslash$'').  The other difference is
-concerned with specifying drives. One way is to use POSIX-style
-pathnames that map Win*-style drives (\texttt{A:}, \texttt{B:}) to
-\texttt{//a/\ldots}, \texttt{//b/\ldots} respectively. For instance,
-the path
-\texttt{D:$\backslash$Mystuff$\backslash$Mydir$\backslash$LEDA}
-translates to \texttt{//d/Mystuff/Mydir/LEDA}.
-
-Alternatively, it can be done using the mount utility, that can be
-used to establish a map between Win*-style drives and the Unix-like
-style. More precisely, it maps the forest of the directories/files on
-Win*-drives to a tree with the root that is usually located at the top
-level of the boot drive, say \texttt{C:}.  The root location can be
-seen by typing \texttt{mount} command without parameters.  For
-instance, if \texttt{D:} is mounted on
-\texttt{C:$\backslash$ddrive}\footnote{by typing \texttt{mount D:
-    /ddrive}} then the path
-\texttt{D:$\backslash$Mystuff$\backslash$Mydir$\backslash$LEDA}
-translates to \texttt{/ddrive/Mystuff/Mydir/LEDA}.
-
-\paragraph{Upper/lower case and spaces in file names}
-might also be confusing. Behavour of Cygwin in this regard might be
-different from the \mswin\ behavour.
-In particular, using spaces in filenames should better be avoided.
-
-\paragraph{Links, shortcuts, etc} should be avoided as well.
-
-\subsection{\msvc{6.0}-setup}
-A number of environment variables has to be set (or updated)
-in order to use the installation.
-
-\texttt{PATH} should contain \msvc{6.0} command line tools locations.
-The environment variables \texttt{INCLUDE} and \texttt{LIB} should
-point to the location of \msvc{6.0} header files and to the location
-of the \msvc{6.0} libraries, respectively.
-The interface for doing this is different for NT and for Win9*.
-
-\paragraph{\mswin-NT4.0.}
-One can set the corresponding environment variables using the
-usual NT interface\footnote{open MyComputer, press right mouse button,
-  select Properties, select Environment, set the relevant variables}.
-Alternatively, they can be set in \texttt{.bashrc} file for the
-particular user.
-
-The result should look roughly as follows, assuming that
-\texttt{C:$\backslash$PROGRA$\sim$1$\backslash$MICROS$\sim$2$\backslash$}
-is the location of the \msvc{} installation.
-\begin{verbatim}
-LIB=C:\PROGRA~1\MICROS~2\VC98\LIB
-INCLUDE=C:\PROGRA~1\MICROS~2\VC98\INCLUDE
-\end{verbatim}
-and \texttt{PATH} should contain
-\begin{verbatim}
-/PROGRA~1/MICROS~2/Common/msdev98/BIN:
-/PROGRA~1/MICROS~2/VC98/BIN:/PROGRA~1/MICROS~2/Common/TOOLS:
-/PROGRA~1/MICROS~2/Common/TOOLS/WINNT
-\end{verbatim}
-
-\paragraph{\mswin-9*.} 
-First, the memory for environment variables has to be increased.
-Select the Cygwin icon from the Start-menu, press the right mouse
-button and choose \textit{Properties}. Go to \textit{Memory}, select
-\textit{Initial Environment}, set it to at least 2048 and
-\textit{apply} the changes.
-
-Second, edit the file \texttt{cygnus.bat}, located in the cygwin main
-directory and add the line
-\begin{verbatim}
-call C:\PROGRA~1\MICROS~2\VC98\Bin\MSCVARS32.BAT
-\end{verbatim}
-where
-\texttt{C:$\backslash$PROGRA$\sim$1$\backslash$MICROS$\sim$2$\backslash$}
-has to be customized according to where \msvc{} is installed on your
-system.
 
