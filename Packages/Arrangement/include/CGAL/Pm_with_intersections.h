@@ -22,16 +22,9 @@
 #ifndef CGAL_PLANAR_MAP_WITH_INTERSECTIONS_H
 #define CGAL_PLANAR_MAP_WITH_INTERSECTIONS_H
 
-#ifndef CGAL_PLANAR_MAP_2_H
 #include <CGAL/Planar_map_2.h>
-#endif // CGAL_PLANAR_MAP_2_H
-#ifndef CGAL_PM_WITH_INTERSECTIONS_MISC_H
 #include <CGAL/Pm_with_intersections_misc.h>
-#endif // CGAL_PM_WITH_INTERSECTIONS_MISC_H
-#ifndef CGAL_PM_WALK_ALONG_LINE_POINT_LOCATION_H
 #include <CGAL/Pm_walk_along_line_point_location.h>
-#endif // CGAL_PM_WALK_ALONG_LINE_POINT_LOCATION_H
-
 #include <CGAL/Planar_map_2/Pm_change_notification.h>
 
 #ifndef CGAL_PM_COUNT_OPERATIONS_TIMES
@@ -54,9 +47,9 @@ public:
   typedef typename Planar_map::Halfedge_handle              Halfedge_handle;
   typedef typename Planar_map::Vertex_handle                Vertex_handle;
   typedef typename Planar_map::Face_handle                  Face_handle;
-  typedef typename Traits::X_curve                          X_curve_2;
-  typedef typename Traits::Curve                            Curve_2;
-  typedef typename Traits::Point                            Point_2;
+  typedef typename Traits::X_curve_2                        X_curve_2;
+  typedef typename Traits::Curve_2                          Curve_2;
+  typedef typename Traits::Point_2                          Point_2;
   typedef typename Planar_map::Change_notification      Change_notification;
 
   typedef typename Planar_map::Halfedge_iterator            Halfedge_iterator;
@@ -112,7 +105,7 @@ public:
   Planar_map_with_intersections_2(const Self & rhs);
 
   // Planar_map converter
-  Planar_map_with_intersections_2(const Planar_map& pm);
+  Planar_map_with_intersections_2(const Planar_map & pm);
 
   // Destructor
   //-----------
@@ -122,7 +115,7 @@ public:
   // Operations
   // ----------
 
-  const X_curve_2& curve(Halfedge_handle he, Change_notification *en )
+  const X_curve_2& curve(Halfedge_handle he, Change_notification * en)
   { 
     if( en == NULL ) 
       return he->curve();
@@ -135,15 +128,14 @@ public:
   // halfedge <he>. The returned intersections is based on the intersection
   // of the supporting curves (if they exist).
   bool 
-  directed_nearest_intersection_with_halfedge(
-                                              const X_curve_2 &cv,
-                                              const X_curve_2 &orig_cv,
+  directed_nearest_intersection_with_halfedge(const X_curve_2 & cv,
+                                              const X_curve_2 & orig_cv,
                                               Halfedge_handle he,
-                                              const Point_2 &ref_point,
+                                              const Point_2 & ref_point,
                                               bool direction_right,
-                                              Point_2 &xp1,
-                                              Point_2 &xp2,
-                                              Change_notification *en)
+                                              Point_2 & xp1,
+                                              Point_2 & xp2,
+                                              Change_notification * en)
   {
     bool intersection_exists;
     if (direction_right)
@@ -158,10 +150,10 @@ public:
 
     if (direction_right)
       intersection_exists = pmwx_traits->nearest_intersection_to_right
-        ( orig_cv, curve(he, en), ref_point, xp1, xp2);
+        (orig_cv, curve(he, en), ref_point, xp1, xp2);
     else
       intersection_exists = pmwx_traits->nearest_intersection_to_left
-        ( orig_cv, curve(he, en), ref_point, xp1, xp2);
+        (orig_cv, curve(he, en), ref_point, xp1, xp2);
 
     CGAL_assertion (intersection_exists);
                 
@@ -216,14 +208,13 @@ public:
 
   // input: cv.source is on vh
   // is_overlap is true if cv overlaps prev_halfedge around vh.
-  void find_face_of_curve_around_vertex(
-                                        const X_curve_2 &cv, 
-                                        const X_curve_2 &orig_cv, 
-                                        const Vertex_handle &vh,
-                                        Halfedge_handle &prev_halfedge,
-                                        Point_2& overlap_end_pt,
-                                        bool &is_overlap,
-                                        Change_notification *en)
+  void find_face_of_curve_around_vertex(const X_curve_2 & cv, 
+                                        const X_curve_2 & orig_cv, 
+                                        const Vertex_handle & vh,
+                                        Halfedge_handle & prev_halfedge,
+                                        Point_2 & overlap_end_pt,
+                                        bool & is_overlap,
+                                        Change_notification * en)
   {
     CGAL_PM_START_OP(1);
      
@@ -277,15 +268,15 @@ public:
         }
       }
 
-          // Same check as above is done now to next->curve() to prevent
-          // unexpected behavior of is_between_cw when one of the curves
-          // overlaps at vh.
-          // last_next_checked is set to next so if the test fails
-          // (namely, there is no overlap at vh) then it will not 
-          // be executed again at the next loop when prev will be this 
-          // next. this is for efficiency only.
+      // Same check as above is done now to next->curve() to prevent
+      // unexpected behavior of is_between_cw when one of the curves
+      // overlaps at vh.
+      // last_next_checked is set to next so if the test fails
+      // (namely, there is no overlap at vh) then it will not 
+      // be executed again at the next loop when prev will be this 
+      // next. this is for efficiency only.
       if (traits->curves_overlap( cv, next->curve())) {
-    last_next_checked = next;
+        last_next_checked = next;
         // cv overlapps next->curve()
         b = directed_nearest_intersection_with_halfedge
           (cv, orig_cv, next, start_point, direction_right, xp1, xp2, en);
@@ -302,7 +293,7 @@ public:
              (pmwx_traits->point_is_same(xp2, 
                                          pmwx_traits->curve_source(cv))) )
         {
-          if ( traits->point_is_same( vh->point(), xp1)) {
+          if (traits->point_is_same( vh->point(), xp1)) {
             overlap_end_pt = xp2;
           }
           else {
@@ -317,26 +308,26 @@ public:
         }
       }
   
-          /////////***** Eyal end
+      /////////***** Eyal end
       // The following remarked test is not fully correct
-          // since there can be an overlap that does not start at vh
-          // but elsewhere on cv (e.g., polylines).
-          // this condition is redundant if curve_is_between_cw does
-          // not return true when overlap occurs, but it is needed
-          // since it is not a defined behaviour (in specs).
+      // since there can be an overlap that does not start at vh
+      // but elsewhere on cv (e.g., polylines).
+      // this condition is redundant if curve_is_between_cw does
+      // not return true when overlap occurs, but it is needed
+      // since it is not a defined behaviour (in specs).
       //// if (!traits->curves_overlap( cv, next->curve())) ----
       
       if (next != prev) 
-          {
-          if (( pmwx_traits->curve_is_between_cw
-                        (cv, prev->curve(), next->curve(), vh->point()) ))
-                                        {
-                  prev_halfedge = prev;
-                  is_overlap = false;
-                  CGAL_PM_END_OP(1);
-                  return;
-                                        }
-          }
+      {
+        if (( pmwx_traits->curve_is_between_cw
+              (cv, prev->curve(), next->curve(), vh->point()) ))
+        {
+          prev_halfedge = prev;
+          is_overlap = false;
+          CGAL_PM_END_OP(1);
+          return;
+        }
+      }
       ++next;
       ++prev;
     } while (prev != start);
@@ -348,7 +339,7 @@ public:
     prev_halfedge = prev;
     is_overlap = false;
     CGAL_PM_END_OP(1)
-      return;
+    return;
   }
         
         
@@ -359,17 +350,16 @@ public:
   // <cv> and <face>'s boundary.
   // returned <halfedge> is the halfedge on whic the intersection occurs,
   // in case of intersection-point halfedge->source will contain this point
-  bool find_first_intersection_in_face(
-                                       const Face_handle &face,
-                                       const X_curve_2 &cv,
-                                       const X_curve_2 &orig_cv, 
-                                       Halfedge_handle &halfedge,
-                                       Point_2 &best_xpnt1,
-                                       Point_2 &best_xpnt2,
-                                       Change_notification *en)
+  bool find_first_intersection_in_face(const Face_handle & face,
+                                       const X_curve_2 & cv,
+                                       const X_curve_2 & orig_cv, 
+                                       Halfedge_handle & halfedge,
+                                       Point_2 & best_xpnt1,
+                                       Point_2 & best_xpnt2,
+                                       Change_notification * en)
   {
     CGAL_PM_START_OP(2)
-      Halfedge_handle best_halfedge_x;
+    Halfedge_handle best_halfedge_x;
     typename Planar_map::Ccb_halfedge_circulator che, che_beg;
     Point_2 start_point, best_point, xpnt;
     Point_2 xp1, xp2;
@@ -388,36 +378,36 @@ public:
       do
       {
         if (intersection_exist) // optimization: comparing the
-            // endpoints of the halfedge and the best intersection 
-            //point found so far, Improve performance.
         {
-            if (direction_right)
+          // endpoints of the halfedge and the best intersection 
+          //point found so far, Improve performance.
+          if (direction_right)
+          {
+            if (!is_left(leftmost(che->source()->point(),
+                                  che->target()->point()),
+                         best_point))
             {
-                if (!is_left(leftmost(che->source()->point(),
-                                      che->target()->point()),
-                             best_point))
-                {
-                    ++che;
-                    continue;
-                }
+              ++che;
+              continue;
             }
-            else
+          }
+          else
+          {
+            if (!is_right(rightmost(che->source()->point(),
+                                    che->target()->point()),
+                          best_point))
             {
-                if (!is_right(rightmost(che->source()->point(),
-                                        che->target()->point()),
-                              best_point))
-                {
-                    ++che;
-                    continue;
-                }
+              ++che;
+              continue;
             }
+          }
         }
           
         // optimization: checking the x-range, Highly improve performance.
         if (! in_x_range(orig_cv,che->curve()))
         {
-            ++che;
-            continue;
+          ++che;
+          continue;
         }
         
         b = directed_nearest_intersection_with_halfedge
@@ -473,32 +463,32 @@ public:
       {
         if (intersection_exist)
         {
-            if (direction_right)
-            {
-                if (!(is_left(leftmost(che->source()->point(),
-                                       che->target()->point()),
-                              best_point)))
-                {
-                    ++che;
-                    continue;
-                }
-            }
-            else
-            {
-                if (!(is_right(rightmost(che->source()->point(),
-                                         che->target()->point()),
-                                 best_point)))
-                {
-                    ++che;
-                    continue;
-                }
-            }
+           if (direction_right)
+           {
+             if (!(is_left(leftmost(che->source()->point(),
+                                    che->target()->point()),
+                           best_point)))
+             {
+               ++che;
+               continue;
+             }
+           }
+           else
+           {
+             if (!(is_right(rightmost(che->source()->point(),
+                                      che->target()->point()),
+                            best_point)))
+             {
+               ++che;
+               continue;
+             }
+           }
         }
         
         if (! in_x_range(orig_cv,che->curve()))
         {
-            ++che;
-            continue;
+          ++che;
+          continue;
         }
 
         b = directed_nearest_intersection_with_halfedge
@@ -546,7 +536,8 @@ public:
 
   
   void get_vertex_of_point_on_halfedge
-  ( const Point_2 &point,                     
+  (
+    const Point_2 &point,                     
     Halfedge_handle halfedge,
     Vertex_handle &vertex_of_point, 
     // in case of split it is easy to compute:
@@ -616,7 +607,7 @@ public:
     // (a little ugly solution. should be made nicer) : 
     vertex_of_point_prev_halfedge_set = false; 
     CGAL_PM_END_OP(3)
-      }
+  }
 
  
   // insert the first part of cv into the face source_face 
@@ -625,18 +616,18 @@ public:
   //   2. remaining curve (the part that was not inserted)
   //   3. remaining curve source vertex 
   int insert_intersecting_xcurve_in_face_interior
-  ( const X_curve_2 &cv,                     // inserted curve
-    const X_curve_2 &orig_cv, 
-    Face_handle source_face,
-    Halfedge_handle &inserted_halfedge,
-    bool &remaining_curve_trivial,
-    X_curve_2 &remaining_curve,
-    Vertex_handle &remaining_curve_source_vertex, 
-    // in case of split it is easy to compute :
-    Halfedge_handle &remaining_curve_prev_halfedge,
-    // true if remaining_curve_face is set :
-    bool &remaining_curve_prev_halfedge_set,  
-    Change_notification *en)
+  (const X_curve_2 & cv,                     // inserted curve
+   const X_curve_2 & orig_cv, 
+   Face_handle source_face,
+   Halfedge_handle & inserted_halfedge,
+   bool & remaining_curve_trivial,
+   X_curve_2 & remaining_curve,
+   Vertex_handle & remaining_curve_source_vertex, 
+   // in case of split it is easy to compute :
+   Halfedge_handle &remaining_curve_prev_halfedge,
+   // true if remaining_curve_face is set :
+   bool &remaining_curve_prev_halfedge_set,  
+   Change_notification * en)
   {
     CGAL_PM_START_OP(4)
       remaining_curve_trivial = false;
@@ -645,14 +636,8 @@ public:
     Halfedge_handle intersection_he;
     Point_2 xpnt1, xpnt2;
                 
-    if ( find_first_intersection_in_face(
-                                         source_face,
-                                         cv,
-                                         orig_cv,
-                                         intersection_he,
-                                         xpnt1, 
-                                         xpnt2,
-                                         en) )
+    if (find_first_intersection_in_face(source_face, cv, orig_cv,
+                                        intersection_he, xpnt1, xpnt2, en))
     {
       Point_2 insert_point;
       X_curve_2 cv_first_part;
@@ -690,8 +675,7 @@ public:
                 << intersection_he->curve() << std::endl;
       //                        std::cout << " " << << std::endl;
 #endif                        
-      get_vertex_of_point_on_halfedge(
-                                      insert_point,
+      get_vertex_of_point_on_halfedge(insert_point,
                                       intersection_he,
                                       remaining_curve_source_vertex,
                                       remaining_curve_prev_halfedge,
@@ -704,7 +688,7 @@ public:
       if (en != NULL) en->add_edge(cv_first_part, inserted_halfedge,
                                    false, false);
       CGAL_PM_END_OP(4)
-        return 1;
+      return 1;
     }
     else
     {
@@ -726,7 +710,7 @@ public:
       remaining_curve_trivial = true;
       remaining_curve_prev_halfedge_set = false;
       CGAL_PM_END_OP(4)
-        return 1;
+      return 1;
     }
   }
 
@@ -741,18 +725,18 @@ public:
   //   2. remaining curve (the part that was not inserted)
   //   3. remaining curve source vertex 
   int insert_intersecting_xcurve_from_boundary_of_face
-  (const X_curve_2 &cv,                     // inserted curve
-   const X_curve_2 &orig_cv, 
+  (const X_curve_2 & cv,                     // inserted curve
+   const X_curve_2 & orig_cv, 
    Halfedge_handle source_prev_halfedge,
-   Halfedge_handle &inserted_halfedge,
-   bool &remaining_curve_trivial,
-   X_curve_2 &remaining_curve,
-   Vertex_handle &remaining_curve_source_vertex, 
+   Halfedge_handle & inserted_halfedge,
+   bool & remaining_curve_trivial,
+   X_curve_2 & remaining_curve,
+   Vertex_handle & remaining_curve_source_vertex, 
    // in case of split it is easy to compute :
-   Halfedge_handle &remaining_curve_prev_halfedge, 
+   Halfedge_handle & remaining_curve_prev_halfedge, 
    // true if remaining_curve_face is set :
    bool &remaining_curve_prev_halfedge_set,  
-   Change_notification *en)
+   Change_notification * en)
   {
     CGAL_PM_START_OP(5)
       remaining_curve_trivial = false;
@@ -767,14 +751,9 @@ public:
     Point_2 xpnt1, xpnt2;
     Face_handle orig_face = source_prev_halfedge->face();
                 
-    if ( find_first_intersection_in_face(
-                                         source_prev_halfedge->face(),
-                                         cv,
-                                         orig_cv,
-                                         intersection_he,
-                                         xpnt1,
-                                         xpnt2,
-                                         en) )
+    if (find_first_intersection_in_face(source_prev_halfedge->face(),
+                                        cv, orig_cv, intersection_he,
+                                        xpnt1, xpnt2, en))
     {
       Point_2 insert_point;
       X_curve_2 cv_first_part;
@@ -806,8 +785,7 @@ public:
                                           insert_point, cv_first_part, 
                                           remaining_curve);
                         
-      get_vertex_of_point_on_halfedge(
-                                      insert_point,
+      get_vertex_of_point_on_halfedge(insert_point,
                                       intersection_he,
                                       remaining_curve_source_vertex,
                                       remaining_curve_prev_halfedge,
@@ -866,22 +844,19 @@ public:
 
         
   Halfedge_handle 
-  insert_intersecting_xcurve(
-                             // inserted curve:
-                             const X_curve_2 &cv_,               
+  insert_intersecting_xcurve(const X_curve_2 &cv_,           // inserted curve
                              Vertex_handle &source_vertex,
                              // to be set by the function :  
                              Vertex_handle &target_vertex, 
                              bool source_vertex_valid,
-                             Change_notification *en = NULL)
+                             Change_notification * en = NULL)
   {
     CGAL_PM_START_OP(6)
-      //if a vertex on which an endpoint of cv_ is known then set cv to 
-      //have this endpoint as it's source
-                
-      // at the end source_vertex and target_vertex will contain the
-      // end-vertices of cv
-      int count = 0;
+    //if a vertex on which an endpoint of cv_ is known then set cv to 
+    //have this endpoint as it's source
+    // at the end source_vertex and target_vertex will contain the
+    // end-vertices of cv
+    int count = 0;
     Vertex_handle curr_vertex = source_vertex;
     X_curve_2 cv = cv_; 
     X_curve_2 orig_cv = cv;
@@ -986,14 +961,9 @@ public:
         //-- locate cv around curr_vertex
         //std::cout << "iis " << " ---- curr_vertex: " 
         //<< curr_vertex->point() << std::endl;
-        find_face_of_curve_around_vertex(
-                                         cv, 
-                                         orig_cv,
-                                         curr_vertex,
-                                         prev_halfedge,
-                                         overlap_end_pt,
-                                         is_overlap,
-                                         en);
+        find_face_of_curve_around_vertex(cv, orig_cv, curr_vertex,
+                                         prev_halfedge, overlap_end_pt,
+                                         is_overlap, en);
         //std::cout << "iis " << " ---- prev_halfedge: " 
         //<< prev_halfedge->source()->point() <<
         //   "  ---->  " << prev_halfedge->target()->point() << std::endl;
@@ -1004,7 +974,7 @@ public:
 #endif
           // rem: prev_halfedge->target == curr_vertex
           if ( pmwx_traits->point_is_same
-               (prev_halfedge->source()->point(),        overlap_end_pt) )
+               (prev_halfedge->source()->point(), overlap_end_pt) )
           { // whole edge is overlapped, proceed to its other end
 #ifdef CGAL_PM_WITH_INTERSECTIONS_PRINT_DEBUG
             std::cout << "%";
@@ -1284,12 +1254,12 @@ public:
   // ------------
 protected:
 
-  bool in_x_range(const Curve& cv1, const Curve& cv2)
+  bool in_x_range(const Curve_2 & cv1, const Curve_2 & cv2)
   {
     return  (curve_in_x_range(cv1,cv2) || curve_in_x_range(cv2,cv1));   
   }
   
-  bool curve_in_x_range(const Curve& cv1, const Curve& cv2)
+  bool curve_in_x_range(const Curve_2 & cv1, const Curve_2 & cv2)
   {
     
     return ((traits->curve_is_in_x_range(cv1, traits->curve_source(cv2)) ||
@@ -1297,7 +1267,7 @@ protected:
   
   }
 
-  Pmwx_traits_wrap *pmwx_traits;
+  Pmwx_traits_wrap * pmwx_traits;
   bool pmwx_use_delete_traits;
   bool pmwx_use_delete_pl;
 
@@ -1353,6 +1323,7 @@ Planar_map_with_intersections_2(const Planar_map& pm) :
   pmwx_traits = (Pmwx_traits_wrap*)traits;
   //use_delete_pmwx_traits = true;
 }
+
 //-----------------------------------------------------------------------------
 template<class Pm>
 Planar_map_with_intersections_2<Pm>::~Planar_map_with_intersections_2()
