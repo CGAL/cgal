@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+17 April 2004 Sylvain Pion
+- Fix copy-paste bug in T_face_base_with_info_2.h .
+
 14 April 2004 Andreas Fabri
 - Made Triangulation_data_structure_2::create_face more efficient
 

@@ -57,7 +57,7 @@ public:
                                       Face_handle   n0, 
 				      Face_handle   n1,
                                       Face_handle   n2 )
-    : Fb(v0, v1, v2, v3, n0, n1, n2, n3) {}
+    : Fb(v0, v1, v2, n0, n1, n2) {}
 
   const Info& info() const { return _info; }
   Info&       info()       { return _info; }
