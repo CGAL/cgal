@@ -33,10 +33,10 @@ typedef TraitsCls::Point_2                          Point2;
 int
 main( int argc, char* argv[] )
 {
-  if (argc != 3)   // assertion
+  if (argc < 2 || argc > 3)   // assertion
   {
       cerr << "Usage: ch_example_timing datafilename ";
-      cerr << "number_of_iterations";
+      cerr << "[number_of_iterations]";
       exit(1);
   }
   vector< Point2 > V;
@@ -47,7 +47,11 @@ main( int argc, char* argv[] )
   istream_iterator< Point2>  in_end;
   copy( in_start, in_end , back_inserter(V) );
   copy( V.begin(), V.end(), back_inserter(VE) );
-  int iterations = atoi( argv[2] );
+  int iterations;
+  if (argc == 3)
+    iterations = atoi( argv[2] );
+  else
+    iterations = 1;
   CGAL::ch_timing(V.begin(), V.end(), VE.begin(), iterations, TraitsCls() ); 
   return 0;
 }
