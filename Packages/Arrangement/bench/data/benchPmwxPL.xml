@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<bench name_length="80" header="false" type_mask="0x2" strategy_mask="0x1f" samples="1">
+  <class name="cls111" key="aggregate dummy PMWX Conics Cartesian Leda Real"/>
+  <class name="cls112" key="aggregate dummy PMWX Conics Simple Cartesian Leda Real"/>
+  <class name="cls121" key="aggregate dummy PMWX Conics Cartesian Core Expr"/>
+  <class name="cls122" key="aggregate dummy PMWX Conics Simple Cartesian Core Expr"/>
+
+  <class name="cls211" key="aggregate dummy PMWX Curved Kernel Circles Cartesian Gmpz"/>
+  <class name="cls212" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian Gmpz"/>
+  <class name="cls213" key="aggregate dummy PMWX Curved Kernel Circles Cartesian Lazy Gmpz"/>
+  <class name="cls214" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian Lazy Gmpz"/>
+  <class name="cls215" key="aggregate dummy PMWX Curved Kernel Circles Cartesian Core Expr"/>
+  <class name="cls216" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian Core Expr"/>
+  <class name="cls217" key="aggregate dummy PMWX Curved Kernel Circles Cartesian Leda Real"/>
+  <class name="cls218" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian Leda Real"/>
+  <class name="cls219" key="aggregate dummy PMWX Curved Kernel Circles Cartesian MP Float"/>
+  <class name="cls21a" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian MP Float"/>
+  <class name="cls21b" key="aggregate dummy PMWX Curved Kernel Circles Cartesian Quotient MP Float"/>
+  <class name="cls21c" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian Quotient MP Float"/>
+  <class name="cls21d" key="aggregate dummy PMWX Curved Kernel Circles Cartesian Lazy Cgal Gmpq"/>
+  <class name="cls21e" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian Lazy Cgal Gmpq"/>
+  <class name="cls21f" key="aggregate dummy PMWX Curved Kernel Circles Cartesian Cgal Gmpq"/>
+  <class name="cls21g" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian Cgal Gmpq"/>
+
+  <class name="cls221" key="aggregate dummy PMWX Curved Kernel Conics Cartesian Gmpq"/>
+  <class name="cls222" key="aggregate dummy PMWX Curved Kernel Conics Simple Cartesian Gmpq"/>
+
+  <class name="cls311" key="aggregate dummy PMWX Exacus Conics Cartesian NiX Leda Real"/>
+  <class name="cls321" key="aggregate dummy PMWX Exacus Conics Cartesian NiX Core"/>
+
+  <clo name="format" string="-If="/>
+  <clo name="samples" string="-s"/>
+  <clo name="time" string="-t"/>
+  <clo name="header" string="-bh="/> 
+  <clo name="name_length" string="-bnl="/> 
+  <clo name="type_mask" string="-btm="/> 
+  <clo name="strategy_mask" string="-bsm="/> 
+  <clo name="dir" string="-d"/>
+
+  <file name="seg0.dat" format="f" curves="41"
+    vertices="507" halfedges="2084" faces="537"></file>
+  <file name="seg1.dat" format="f" curves="41"
+    vertices="507" halfedges="2084" faces="537"></file>
+  <file name="seg2.dat" format="f" curves="41"
+    vertices="507" halfedges="2084" faces="537"></file>
+
+  <bench dir="/a/home/cc/cs/efif/roots/linux/data/Segments_2/size10">
+    <benchPmQuotientCartesianSegmentCached file="seg0.dat" header="true"/>
+    <benchPmQuotientCartesianSegmentCached file="seg1.dat"/>
+    <benchPmQuotientCartesianSegmentCached file="seg2.dat"/>
+  </bench>
+
+</bench>
