@@ -42,7 +42,7 @@ void del_cb(Fl_Widget* w, void* v)
     g ( 500.0 );
   for (int i=0; i<50; i++)
     tr->insert(*g++ + disp);
-  CGAL::Drawable_triangulation_2<Delaunay_2>* dtr = new CGAL::Drawable_triangulation_2<Delaunay_2>(tr,win->get_color(),  CGAL::ORANGE,CGAL::RAW, 2);
+  CGAL::Drawable_triangulation_2<Delaunay_2>* dtr = new CGAL::Drawable_triangulation_2<Delaunay_2>(*tr,win->get_color(),  CGAL::ORANGE,CGAL::RAW, 2);
   win->add_drawable(dtr, win->get_group()+1);
   win->display();
 }
@@ -59,7 +59,7 @@ void parab_cb(Fl_Widget* w, void* v)
     i=i+0.00000000000001;
   } 
   cerr << "number of faces : " << tr->number_of_faces() << endl;
-  CGAL::Drawable_triangulation_2<Delaunay_2>* dtr = new CGAL::Drawable_triangulation_2<Delaunay_2>(tr,win->get_color(),  CGAL::ORANGE,CGAL::RAW, 2);
+  CGAL::Drawable_triangulation_2<Delaunay_2>* dtr = new CGAL::Drawable_triangulation_2<Delaunay_2>(*tr,win->get_color(),  CGAL::ORANGE,CGAL::RAW, 2);
   win->add_drawable(dtr, win->get_group()+1);
   win->display();
 }
@@ -76,9 +76,10 @@ void iterator_cb(Fl_Widget* w, void* v)
   int count = 1;
   for (; it != tr->finite_faces_end() ;it++)
     {
+      Delaunay_2::Triangle trg = tr->triangle(it);
       CGAL::Drawable_triangle_2<Delaunay_2::Triangle>*
 	tri= new
-	CGAL::Drawable_triangle_2<Delaunay_2::Triangle>(tr->triangle(it), CGAL::ORANGE, CGAL::DEEPBLUE);
+	CGAL::Drawable_triangle_2<Delaunay_2::Triangle>(trg, CGAL::ORANGE, CGAL::DEEPBLUE);
 
       win->add_drawable(tri,gr);
 
@@ -106,19 +107,20 @@ void line_face_cb(Fl_Widget* w, void* v)
   CGAL::Random_points_on_segment_2<Point,CGAL::Creator_uniform_2<double,Point> >
     g2 (Point(900,10),Point(900,900));
   int gr = win->get_group()+1;
+   Delaunay_2::Segment sg=Delaunay_2::Segment(*g1,*g2);
   CGAL::Drawable_segment_2<Delaunay_2::Segment>*
       seg= new
-      CGAL::Drawable_segment_2<Delaunay_2::Segment>(Delaunay_2::Segment(*g1,*g2),
-						    CGAL::PURPLE);
+      CGAL::Drawable_segment_2<Delaunay_2::Segment>(sg, CGAL::PURPLE);
  win->add_drawable(seg,gr);
   Delaunay_2::Line_face_circulator lfc=tr->line_walk(*g1,*g2);
   Delaunay_2::Line_face_circulator lfc_o=lfc;
 
   do {
    if (!(tr->is_infinite(lfc))) {
+    Delaunay_2::Triangle trg = tr->triangle(lfc);
     CGAL::Drawable_triangle_2<Delaunay_2::Triangle>*
       tri= new
-      CGAL::Drawable_triangle_2<Delaunay_2::Triangle>(tr->triangle(lfc), CGAL::ORANGE, CGAL::DEEPBLUE);
+      CGAL::Drawable_triangle_2<Delaunay_2::Triangle>(trg, CGAL::ORANGE, CGAL::DEEPBLUE);
 
       win->add_drawable(tri,gr);
 
@@ -147,9 +149,10 @@ void circulator_cb(Fl_Widget* w, void* v)
       do 
 	{
           if (!(tr->is_infinite(fct))) {
+            Delaunay_2::Triangle trg = tr->triangle(fct);
 	    CGAL::Drawable_triangle_2<Delaunay_2::Triangle>*
 	      tri= new
-	      CGAL::Drawable_triangle_2<Delaunay_2::Triangle>(tr->triangle(fct), CGAL::ORANGE, CGAL::DEEPBLUE);
+	      CGAL::Drawable_triangle_2<Delaunay_2::Triangle>(trg, CGAL::ORANGE, CGAL::DEEPBLUE);
 
 	    win->add_drawable(tri,gr);
 

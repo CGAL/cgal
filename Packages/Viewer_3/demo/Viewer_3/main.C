@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
   W.init_window_thread();
   W.set_custom_panel(my_panel);
   W.set_mouse_push_handler(myhandler);
-   stop();
+  stop();
 
 
   point_t p1(100,50,0);
@@ -80,8 +80,9 @@ int main(int argc, char *argv[])
     tet(point_t(100,100,-200),point_t(400,100,-300),point_t(400,300,-100),point_t(250,250, 100));
 
 
-  CGAL::Drawable_triangle_3<triangle> dtr(tr,CGAL::GRAY,CGAL::FILL);
-  CGAL::Drawable_tetrahedron_3<tetra> dtet(tet,CGAL::ORANGE,CGAL::FILL);
+  CGAL::Drawable_triangle_3<triangle> dtr(tr,CGAL::GRAY,CGAL::RAW);
+ 
+  CGAL::Drawable_tetrahedron_3<tetra> dtet(tet,CGAL::ORANGE);
 
   segment s(p10,p11);
   CGAL::Drawable_segment_3<segment> ds1(s,CGAL::VIOLET,CGAL::FILL,5,10);

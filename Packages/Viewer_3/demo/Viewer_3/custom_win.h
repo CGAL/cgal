@@ -26,7 +26,7 @@ void tri_cb(Fl_Widget* w, void* v)
     g ( 500.0 );
   for (int i=0; i<100; i++)
     tr->insert(*g++ + disp);
-  CGAL::Drawable_triangulation_2<Triangulation_2>* dtr = new CGAL::Drawable_triangulation_2<Triangulation_2>(tr,win->get_color(), CGAL::ORANGE,CGAL::RAW, 2);
+  CGAL::Drawable_triangulation_2<Triangulation_2>* dtr = new CGAL::Drawable_triangulation_2<Triangulation_2>(*tr,win->get_color(), CGAL::ORANGE,CGAL::RAW, 2);
   win->add_drawable(dtr, win->get_group() + 1);
   win->display();
 }
@@ -42,7 +42,7 @@ void del_cb(Fl_Widget* w, void* v)
     g ( 500.0 );
   for (int i=0; i<100; i++)
     tr->insert(*g++ + disp);
-  CGAL::Drawable_triangulation_2<Delaunay_2>* dtr = new CGAL::Drawable_triangulation_2<Delaunay_2>(tr,win->get_color(),  CGAL::ORANGE,CGAL::RAW, 2);
+  CGAL::Drawable_triangulation_2<Delaunay_2>* dtr = new CGAL::Drawable_triangulation_2<Delaunay_2>(*tr,win->get_color(),  CGAL::ORANGE,CGAL::RAW, 2);
   win->add_drawable(dtr, win->get_group() + 1);
   win->display();
 }
@@ -77,7 +77,7 @@ void vord_cb(Fl_Widget* w, void* v)
   CGAL::Drawable_voronoi_2<Delaunay_2>* vor = new CGAL::Drawable_voronoi_2<Delaunay_2>(*tr,CGAL::ORANGE, CGAL::RAW, 2);
   win->add_drawable(vor, win->get_group() + 1);
   CGAL::Drawable_triangulation_2<Delaunay_2>* dtr = new
-    CGAL::Drawable_triangulation_2<Delaunay_2>(tr,CGAL::BLUE,
+    CGAL::Drawable_triangulation_2<Delaunay_2>(*tr,CGAL::BLUE,
 					       CGAL::GREEN ,CGAL::RAW, 2);
   win->add_drawable(dtr, win->get_group() );
 

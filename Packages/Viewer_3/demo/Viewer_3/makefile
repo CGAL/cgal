@@ -1,9 +1,9 @@
 
 
-FLTK_DIR = ${UTIL}/FLTK/SunOS/fltk-1.0.6
-#GL_DIR = /0/prisme_util/MESA/SunOS/Mesa-3.0/include/
-# GL_DIR = /usr/local/mesa
-CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-I/make/makefile_sparc_SunOS-5.6_g++-2.95.2_LEDA
+FLTK_DIR = ${UTIL}/FLTK/Linux/fltk-1.0.6
+GL_DIR = /0/prisme_util/MESA/Mesa-3.1-Linux
+
+CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.14_g++-2.95.2_LEDA
 include $(CGAL_MAKEFILE)
 
 
@@ -18,17 +18,16 @@ CHECKS_OFF = -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS \
 
 CXXFLAGS = -g  \
 	   -I${FLTK_DIR} \
-	   -I./ \
-           -I../include \
-	   -I/usr/X11R6/include/ \
-	   -B$(UTIL)/Binutils/SunOS/bin/ \
+	   -I${GL_DIR}/include \
+           -I../../include \
+	   -I/usr/X11R6/include \
 	   -B$(GCC_EXEC_PREFIX) $(LONG_NAME_PROBLEM_CXXFLAGS) \
 	   $(CGAL_CXXFLAGS) $(CHECKS_OFF) -DUSE_THREAD
 
 #-I${GL_DIR}/include \
 
-LDFLAGS =  $(CGAL_LDFLAGS) -L$(FLTK_DIR)/lib -L/usr/lib/X11 \
-		-R$(FLTK_DIR)/lib -R/usr/lib/X11 \
+LDFLAGS =  $(CGAL_LDFLAGS) -L${GL_DIR}/lib -L$(FLTK_DIR)/lib -L/usr/X11R6/lib \
+		-Wl,-R$(FLTK_DIR)/lib -Wl,-R${GL_DIR}/lib -Wl,-R/usr/X11R6/lib \
 	 	-lfltk -lXext -lX11 -lGL -lGLU
 
 #-lMesaGL -lMesaGLU
