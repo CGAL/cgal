@@ -14,7 +14,10 @@ TEST-SUITE
   - prendre un noyau exact pour tout, et supposer qu'on l'a dans les tests.
   - avoir des fonctions qui generent differentes distributions
     (cas degeneres, grands nombre de points...)
-  - pour nearest_vertex() : comparer le resultat avec Spatial_searching ?
+  - pour nearest_vertex() : comparer le resultat avec Spatial_searching ? 
+    (c'est impossible dans le cas ou il y a plusieurs points equidistants,
+    puisqu'il y a un choix arbitraire, il n'y a aucune raison que ca soit
+    le meme dans un autre package)
 
 TDS
 - reflechir a un support de facettes explicites (cf papier de Giesen)
