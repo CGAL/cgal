@@ -1,3 +1,8 @@
+2.38   (15 August 2001)
+- SunPro patches.
+
+======================= CGAL 2.3 ====================
+
 2.37   (25 July 2001)
 - Remove Aff_transformation_[23] from Homogeneous_converter.
 

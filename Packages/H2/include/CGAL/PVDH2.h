@@ -528,10 +528,17 @@ VectorH2<R>
 operator*(const VectorH2<R>& v, const typename R::RT& f)
 { return VectorH2<R>( v.hx()*f, v.hy()*f, v.hw() ); }
 
-template <class R>
+#ifdef __SUNPRO_CC
+template <class RT, class R>
+CGAL_KERNEL_INLINE
+VectorH2<R>
+operator*(const RT& f, const VectorH2<R>& v)
+#else
+template <class RT, class R>
 CGAL_KERNEL_INLINE
 VectorH2<R>
 operator*(const typename R::RT& f, const VectorH2<R>& v)
+#endif
 { return VectorH2<R>( v.hx()*f, v.hy()*f, v.hw() ); }
 
 template <class R>
