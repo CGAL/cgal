@@ -212,8 +212,8 @@ push_back(const Constraint &c)
     
 template < class Tr, class I_tag >
 inline 
-Constrained_triangulation_plus_2<Tr,I_tag>::Vertex_handle
-typename Constrained_triangulation_plus_2<Tr,I_tag>::
+typename Constrained_triangulation_plus_2<Tr,I_tag>::Vertex_handle
+Constrained_triangulation_plus_2<Tr,I_tag>::
 insert(const Point& a, Face_handle start)
 {
   Locate_type lt;
@@ -223,8 +223,8 @@ insert(const Point& a, Face_handle start)
 }
 
 template < class Tr, class I_tag >
-Constrained_triangulation_plus_2<Tr,I_tag>::Vertex_handle
-typename Constrained_triangulation_plus_2<Tr,I_tag>::
+typename Constrained_triangulation_plus_2<Tr,I_tag>::Vertex_handle
+Constrained_triangulation_plus_2<Tr,I_tag>::
 insert(const Point& a, Locate_type lt, Face_handle loc, int li)
 {
   Vertex_handle v1, v2;
