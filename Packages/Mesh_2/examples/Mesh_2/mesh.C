@@ -1,6 +1,8 @@
-#include <CGAL/basic.h>
+ #include <CGAL/basic.h>
 #include <iostream>
 #include <fstream>
+#include <string>
+#include <sstream>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_kernel.h>
@@ -9,7 +11,7 @@
 
 #include <CGAL/Mesh_2.h>
 #include <CGAL/Mesh_face_base_2.h>
-#include <CGAL/Mesh_default_traits_2.h>
+#include <CGAL/Mesh_area_traits_2.h>
 
 typedef CGAL::Simple_cartesian<double> K1;
 typedef CGAL::Filtered_kernel<K1> K2;
@@ -18,7 +20,7 @@ struct K : public K2 {};
 typedef CGAL::Triangulation_vertex_base_2<K> Vb;
 typedef CGAL::Mesh_face_base_2<K> Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb, Fb> Tds;
-typedef CGAL::Mesh_default_traits_2<K> Meshtraits;
+typedef CGAL::Mesh_area_traits_2<K> Meshtraits;
 typedef CGAL::Constrained_Delaunay_triangulation_2<Meshtraits, Tds,
   CGAL::Exact_predicates_tag> Tr;
 
@@ -31,32 +33,83 @@ Mesh mesh;
 void usage(char** argv)
 {
   std::cerr << "Usage: " << std::endl
-	    << argv[0] << " input.poly [output.poly]" << std::endl;
+	    << argv[0] << " [-Q] [-a area] input.poly [output.poly]" << std::endl;
 }
 
 int main(int argc, char** argv)
 {
-  if(argc<2 || argc> 3)
+  int arg_count = 1;
+  bool terminal_output = true;
+  Meshtraits traits;
+
+  if(argc < 2)
+    {
+      usage(argv);
+      return 1;
+    }
+
+  while(argv[arg_count][0] == '-' && argv[arg_count] != "--")
+    {
+      if(std::string(argv[arg_count]) == "-Q")
+	terminal_output = false;
+      else if(std::string(argv[arg_count]) == "-a")
+	{
+	  double area_bound;
+	    if( (argc > arg_count+1) && 
+		std::istringstream(argv[arg_count+1]) >> area_bound )
+	      {
+		traits.set_area_bound(area_bound);
+		mesh.set_geom_traits(traits);
+		++arg_count;
+	      }
+	    else
+	      {
+		std::cerr << "The area " << argv[arg_count+1]
+			  << " is not a double." << std::endl;
+		usage(argv);
+		return 1;
+	      }
+	}
+      else
+	{
+	  std::cerr << "Unknown option " << argv[arg_count] << std::endl;
+	  usage(argv);
+	  return 1;
+	}
+      ++arg_count;
+    }
+  if(argv[arg_count] == "--")
+    ++arg_count;
+
+  if(argc < arg_count+1 || argc > arg_count+2)
     {
       usage(argv);
       return 1;
     };
-  std::ifstream input(argv[1]);
+  std::ifstream input(argv[arg_count]);
   if(input)
     mesh.read_poly(input);
   else
     {
-      std::cerr << "Bad file: " << argv[1] << std::endl;
+      std::cerr << "Bad file: " << argv[arg_count] << std::endl;
       usage(argv);
       return 1;
     }
   
-  if(argc==2)
-    mesh.write_poly(std::cout);
+  if(argc==arg_count+1)
+    {
+      if(terminal_output)
+	mesh.write_poly(std::cout);
+    }
   else
     {
-      std::ofstream output(argv[2]);
+      std::ofstream output(argv[arg_count+1]);
       mesh.write_poly(output);
     }
+  if(terminal_output)
+    std::cerr 
+      << "Mesh points: " << mesh.number_of_vertices() << std::endl
+      << "Mesh triangles: " << mesh.number_of_faces () << std::endl;
+
   return 0;
 };
