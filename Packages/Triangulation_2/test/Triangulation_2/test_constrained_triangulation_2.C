@@ -34,8 +34,9 @@
 
 int main()
 {
-  cout << "Testing constrained_triangulation with Gmpz "<< endl;
-
+  cout << "Testing constrained_triangulation "<< endl;
+  cout << " with Triangulation_test_traits : " << endl;
+  cout << " this uses double type coordinates " << endl;
   typedef CGAL::_Triangulation_test_traits                       Gt;
   typedef CGAL::Triangulation_vertex_base_2<Gt>                  Vb;
   typedef CGAL::Constrained_triangulation_face_base_2<Gt>        CFb;

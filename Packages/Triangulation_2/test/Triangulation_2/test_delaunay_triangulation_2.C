@@ -37,10 +37,10 @@
 
 int main()
 {
-  cout << "Testing Delaunay Triangulation_2 with Gmpz coordinates"; 
-  // cout << " with Euclidean_traits_2<Cartesian> : " << endl;
-  // typedef CGAL::Triangulation_euclidean_traits_2<Test_rep_homogeneous> Gt;
+  cout << "Testing Delaunay Triangulation_2 "; 
   cout << " with Triangulation_test_traits : " << endl;
+  cout << " this use double type coordinates " << endl;
+
   typedef CGAL::_Triangulation_test_traits                       Gt;
   typedef CGAL::Triangulation_vertex_base_2<Gt>                  Vb;
   typedef CGAL::Triangulation_face_base_2<Gt>                    Fb;
