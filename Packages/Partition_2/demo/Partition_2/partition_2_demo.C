@@ -121,7 +121,7 @@ void draw_polygons(int button_num)
 
 void compute_partitions(Polygon_2& polygon)
 {
-    CGAL::Partition_traits_2<R> partition_traits;
+    CGAL::Partition_traits_2<K> partition_traits;
     save_poly_to_file(polygon, "data/_last");
     monotone_polys.clear();
     greene_approx_polys.clear();
