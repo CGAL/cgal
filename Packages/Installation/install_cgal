@@ -1356,7 +1356,7 @@ gmp_ldflags()
 
 gmp_test_cxxflags()
 {
-    ${_printf} "%s" "${CUSTOM_CXXFLAGS} "
+    compiler_test_cxxflags
     if [ -n "${GMP_SUPPORT}" -a "${GMP_INSTALLATION}" = 'c' ]; then
 	cgal_cxxflags
     fi
@@ -1365,7 +1365,7 @@ gmp_test_cxxflags()
 
 gmp_test_ldflags()
 {
-    ${_printf} "%s" "${CUSTOM_LDFLAGS} "
+    compiler_test_ldflags
     if [ -n "${GMP_SUPPORT}" -a "${GMP_INSTALLATION}" = 'c' ]; then
 	cgal_ldflags
     fi
@@ -2592,7 +2592,7 @@ test_gmp()
 {
     if [ -n "${GMP_SUPPORT}" ]; then
 	${_printf} "%s\n" '
-	#include <stdio.h>
+	#include <cstdio>
 	#include "gmp.h"
 	int
 	main ()
@@ -2601,8 +2601,10 @@ test_gmp()
 	    mpz_init (p);
 	    mpz_init_set_str (b, "31", 0);
 	    mpz_mul_ui (p, b, 75);          /* generate product */
-	    mpz_out_str (stdout, 10, p);    /* print number without newline */
-	    puts ("");                      /* print newline */
+	    char *str = new char[mpz_sizeinbase(p, 10) + 2];
+	    str = mpz_get_str(str, 10, p);
+	    printf("%s\n", str);
+	    delete[] str;
 	    return 0;
 	}' > ${TMP_CXX_FILE}.C
 
