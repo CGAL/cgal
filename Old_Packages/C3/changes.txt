@@ -1,4 +1,5 @@
-Version 5.1 (?? August 2000)
+Version 5.1 (24 August 2000)
+- Fixed circumcenterC3 for 3 3D points in kernel_ftC3.h
 - Removed Sphere_3::id(). [syl]
 - Various other cleanups. [syl]
 - Removed long_description.txt. [syl]
