@@ -171,7 +171,7 @@ input points, respectively.
         returns the corresponding past-the-end iterator.}
 \ccGlueEnd
 
-\ccMemberFunction{ const Point&  center( ) const;}{
+\ccMemberFunction{ Point  center( ) const;}{
         returns the center of \ccVar.
         \ccPrecond \ccVar\ is not empty and an implicit conversion
         from \ccc{ET} to \ccc{RT} must be available.}
@@ -190,8 +190,8 @@ input points, respectively.
 \ccGlueBegin
 \ccMemberFunction{ Center_coordinate_iterator
                    center_coordinates_begin() const;}{
-        returns an iterator referring to the coordinate of the first
-        coordinate of the center of \ccVar.
+        returns an iterator referring to the first coordinate
+        of the center of \ccVar.
         \ccCommentHeading{Note} The coordinates have a rational
         representation, i.e.~the first $d$ elements of the iterator
         range are the numerators and the $(d\!+\!1)$-st element is the
@@ -261,17 +261,13 @@ unbounded side equals the whole space $\E_d$.
 \ccMemberFunction{ template < class InputIterator >
                    void  set( InputIterator first,
                               InputIterator last );}{
-        sets \ccVar\ to the $ma(P)$, where $P$ is the set of points in
+        sets \ccVar\ to $ma(P)$, where $P$ is the set of points in
         the range [\ccc{first},\ccc{last}).
         \ccPrecond  The value type of \ccc{InputIterator} is \ccc{Point},
         and all points have the same dimension.}
 
 \ccMemberFunction{ void  insert( const Point& p);}{
         inserts \ccc{p} into \ccVar.
-%  If \ccc{p} lies inside the current
-%  annulus, this is a constant-time operation, otherwise it might take
-%  longer, but in any case substantially less than recomputing the
-%  smallest enclosing annulus from scratch.
         \ccPrecond  The dimension of \ccc{p} equals
         \ccVar\ccc{.ambient_dimension()} if \ccVar\ is not empty.}
 
@@ -280,17 +276,10 @@ unbounded side equals the whole space $\E_d$.
                                  InputIterator  last );}{
         inserts the points in the range [\ccc{first},\ccc{last}) into
         \ccVar\ and recomputes the smallest enclosing annulus.
-%  , by calling \ccc{insert} for all points in the range.
         \ccPrecond  The value type of \ccc{InputIterator} is \ccc{Point},
         and all points have the same dimension.
         If \ccVar\ is not empty, this dimension must be equal to
         \ccVar\ccc{.ambient_dimension()}.}
-
-% When applied to an empty \ccVar, \ccc{set( first, last)} and
-% \ccc{insert( first, last)} produce the same result. However, the
-% latter method is usually much slower, because it processes the
-% points on-line, while the \ccc{set} method takes advantage of
-% knowing the whole point set in advance.
 
 % -----------------------------------------------------------------------------
 \begin{ccAdvanced}
