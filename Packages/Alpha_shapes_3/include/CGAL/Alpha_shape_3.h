@@ -737,7 +737,7 @@ private:
 			    const int& i, const int& j) const
     {
       return Gt().compute_squared_radius_3_object()(s->vertex(i)->point(),
-						    s->vertex(j)->point()) ;
+						    s->vertex(j)->point());
     }
 
   //---------------------------------------------------------------------
@@ -1029,7 +1029,7 @@ Alpha_shape_3<Dt>::initialize_interval_vertex_map()
 			 (--_interval_cell_map.end())->first :
 			 0);
 
-	  //-------------- examine incident simplices -------------------------
+	  //-------------- examine incident simplices --------------------
 	  // we use a different definition than Edelsbrunner and Muecke
 	  // singular means not incident to any 3-dimensional face
 	  // regular means incident to a 3-dimensional face
@@ -1096,7 +1096,7 @@ Alpha_shape_3<Dt>::initialize_interval_vertex_map()
 
 	  Interval2 interval = std::make_pair(alpha_mid_v, alpha_max_v);
 	  _interval_vertex_map.insert(Interval_vertex(interval, 
-							 vertex_it->handle()));
+						      vertex_it->handle()));
 
 	  // cross references
 	  vertex_it->handle()->set_range(interval);
@@ -1400,7 +1400,7 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
 	      else // (pInterval->second == A.Infinity || 
 		   //  pInterval->second >= A.get_alpha()))
 
-		// pInterval->second == A.Infinity happens only for convex hull 
+		// pInterval->second == A.Infinity happens only for convex hull
 		// of dimension 2 thus singular
 		{
 		  // write the singular faces
@@ -1483,8 +1483,8 @@ Alpha_shape_3<Dt>::get_alpha_shape_vertices(std::back_insert_iterator<
 //---------------------------------------------------------------------
 
 template <class Dt>
-std::back_insert_iterator<
-       std::list<std::pair<CGAL_TYPENAME_MSVC_NULL Alpha_shape_3<Dt>::Cell_handle, int > > >
+std::back_insert_iterator< std::list<
+    std::pair<CGAL_TYPENAME_MSVC_NULL Alpha_shape_3<Dt>::Cell_handle, int > > >
 Alpha_shape_3<Dt>::get_alpha_shape_facets(std::back_insert_iterator<
 					  std::list<
 					  std::pair< Cell_handle, int > > > 

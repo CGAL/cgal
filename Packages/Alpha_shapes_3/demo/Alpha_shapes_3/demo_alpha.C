@@ -155,10 +155,6 @@ int main()
 {
   CGAL::Geomview_stream gv(CGAL::Bbox_3(0,0,0, 2, 2, 2));
   Alpha_shape_3 A;
-  // moi j'aurais voulu mettre ca 
-  //Alpha_shape_3 A();
-  //mais ca marche pas !!!
-
 
   gv.set_line_width(4);
   gv.set_trace(false);
