@@ -36,8 +36,8 @@ void  QPE__filtered_base<Rep_,NT_,ET2NT_>::
 set( )
 {
     // reserve memory for NT versions of current solution
-    int  l = std::min( solver().number_of_variables(),
-		       solver().number_of_constraints());
+    int  l = std::min( this->solver().number_of_variables(),
+		       this->solver().number_of_constraints());
     lambda_NT.resize( l, nt0);
     set( l, Is_linear());
 }
@@ -48,10 +48,10 @@ void  QPE__filtered_base<Rep_,NT_,ET2NT_>::
 init( )
 {
     // get properties of quadratic program
-    int  n = solver().number_of_variables();
-    int  m = solver().number_of_constraints();
-    int  s = solver().number_of_slack_variables();
-    int  a = solver().number_of_artificial_variables();
+    int  n = this->solver().number_of_variables();
+    int  m = this->solver().number_of_constraints();
+    int  s = this->solver().number_of_slack_variables();
+    int  a = this->solver().number_of_artificial_variables();
 
     // clear row and column maxima, if necessary
     if ( ! row_max_A.empty()) row_max_A.clear();
@@ -77,15 +77,15 @@ init_NT( )
     // ToDo: scale 'x_B_O', 'lambda', and 'd' if necessary
 
     // get inexact version of 'lambda'
-    std::transform( solver().lambda_numerator_begin(),
-		    solver().lambda_numerator_end(),
+    std::transform( this->solver().lambda_numerator_begin(),
+		    this->solver().lambda_numerator_end(),
 		    lambda_NT.begin(), et2nt_obj);
 
     // get inexact version of 'x_B_O'
     init_NT( Is_linear());
 
     // get inexact version of 'd'
-    d_NT = et2nt_obj( solver().variables_common_denominator());
+    d_NT = et2nt_obj( this->solver().variables_common_denominator());
 }
 
 template < class Rep_, class NT_, class ET2NT_ >
@@ -93,23 +93,23 @@ void  QPE__filtered_base<Rep_,NT_,ET2NT_>::
 update_maxima( )
 {
     // get properties of quadratic program
-    int  n = solver().number_of_variables();
-    int  c = solver().number_of_basic_constraints();
-    int  b = solver().number_of_basic_original_variables();
+    int  n = this->solver().number_of_variables();
+    int  c = this->solver().number_of_basic_constraints();
+    int  b = this->solver().number_of_basic_original_variables();
 
     // initialize error bounds
     bound1    = d_NT * row_max_c;
     bound2_wq = d_NT;
 
     // update row and column maxima of 'A'
-    A_iterator  a_it = solver().a_begin();
-    R_iterator  r_it = solver().row_type_begin();
+    A_iterator  a_it = this->solver().a_begin();
+    R_iterator  r_it = this->solver().row_type_begin();
     int         row, col;
     NT          row_max, z;
 
     Basic_constraint_index_iterator  it;
-    for ( it =  solver().basic_constraints_index_begin();
-	  it != solver().basic_constraints_index_end(); ++it) {
+    for ( it =  this->solver().basic_constraints_index_begin();
+	  it != this->solver().basic_constraints_index_end(); ++it) {
 	row = *it;
 
 	// row not handled yet?
@@ -117,7 +117,7 @@ update_maxima( )
 
 	    // slack variable (or artificial in phase I) involved?
 	    row_max = (    ( r_it[ row] != Rep::EQUAL)
-			|| ( solver().phase() == 1) ? nt1 : nt0);
+			|| ( this->solver().phase() == 1) ? nt1 : nt0);
 
 	    // scan row and update maxima
 	    for ( col = 0; col < n; ++col) {
@@ -146,7 +146,7 @@ update_maxima( )
     bound2_wq *= q;
 
     CGAL_qpe_debug {
-	vout() << std::endl
+	this->vout() << std::endl
 	       << "first bound for certification: " << bound1 << std::endl;
     }
 }
@@ -155,7 +155,7 @@ template < class Rep_, class NT_, class ET2NT_ >                // QP case
 void  QPE__filtered_base<Rep_,NT_,ET2NT_>::
 update_maxima( Tag_false)
 {
-    int  n = solver().number_of_variables();
+    int  n = this->solver().number_of_variables();
 
     // update row and column maxima of 'D'
     D_row_iterator  d_row_it;
@@ -163,13 +163,13 @@ update_maxima( Tag_false)
     NT              row_max, z;
 
     Basic_variable_index_iterator  it;
-    for ( it =  solver().basic_original_variables_index_begin();
-	  it != solver().basic_original_variables_index_end(); ++it) {
+    for ( it =  this->solver().basic_original_variables_index_begin();
+	  it != this->solver().basic_original_variables_index_end(); ++it) {
 	row = *it;
 
 	// row not handled yet?
 	if ( ! handled_D[ row]) {
-	    d_row_it = solver().d_begin()[ row];
+	    d_row_it = this->solver().d_begin()[ row];
 
 	    // scan row and update maxima
 	    row_max = nt0;
@@ -198,13 +198,13 @@ certify_mu_j_NT( int j) const
     NT  mu = mu_j_NT( j);
 
     CGAL_qpe_debug {
-	vout() << "mu_" << j << " [NT]: " << mu;
+	this->vout() << "mu_" << j << " [NT]: " << mu;
     }
 
     // check against first bound
     if ( mu >= bound1) {
 	CGAL_qpe_debug {
-	    vout() << "  ok [1]" << std::endl;
+	    this->vout() << "  ok [1]" << std::endl;
 	}
 	return true;
     }
@@ -213,19 +213,19 @@ certify_mu_j_NT( int j) const
     NT  bound2 = bound2_wq * col_max[ j];
     if ( mu >= bound2) {
 	CGAL_qpe_debug {
-	    vout() << "  ok [2: " << bound2 << "]" << std::endl;
+	    this->vout() << "  ok [2: " << bound2 << "]" << std::endl;
 	}
 	return true;
     }
 
     // compute and check exact 'mu_j'
-    ET  mu_et = mu_j( j);
+    ET  mu_et = this->mu_j( j);
 
     CGAL_qpe_debug {
-	vout() << "  " << ( mu_et >= et0 ? "ok" : "MISSED")
+	this->vout() << "  " << ( mu_et >= this->et0 ? "ok" : "MISSED")
 	       << " [exact: " << mu_et << "]" << std::endl;
     }
-    return ( mu_et >= et0);
+    return ( mu_et >= this->et0);
 }
 
 // transition
@@ -234,10 +234,10 @@ void  QPE__filtered_base<Rep_,NT_,ET2NT_>::
 transition( )
 {
     // get properties of quadratic program
-    int  n = solver().number_of_variables();
+    int  n = this->solver().number_of_variables();
 
     // update row and column maxima with original objective vector 'c'
-    typename Rep::C_iterator  c_it = solver().c_begin();
+    typename Rep::C_iterator  c_it = this->solver().c_begin();
     NT  z;
     row_max_c = nt0;
     for ( int i = 0; i < n; ++i, ++c_it) {
