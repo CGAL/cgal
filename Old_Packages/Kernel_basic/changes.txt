@@ -1,3 +1,8 @@
+3.22   (?? Feb 2001)
+
+- moved Kernel_traits_common.h from Cartesian_kernel package
+- moved predicate_objects_on_points.h from Convex_hull_2(?!) package.
+
 3.21   (13 Feb 2001)
 - Added several missing function object classes
 - modified homogeneous_rep.h to include Kernel_common_traits.h to reduce
