@@ -1,3 +1,8 @@
+24 July 2004 Sylvain Pion
+- Only declare some private functions that are used to prevent
+  inheretance.  Previously they were defined to empty, which
+  generated warnings.
+
 22 June 2004 Sylvain Pion
 - Add some "using base::member;" to please g++ 3.4.
 

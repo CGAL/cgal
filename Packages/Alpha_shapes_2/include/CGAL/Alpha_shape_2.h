@@ -384,8 +384,7 @@ private:
 
   // the dynamic version is not yet implemented
   // desactivate the triangulation member functions
-  Vertex_handle insert(const Point& p) 
-    {}
+  Vertex_handle insert(const Point& p);
   // Inserts point `p' in the alpha shape and returns the
   // corresponding vertex of the underlying Delaunay triangulation.
   // If point `p' coincides with an already existing vertex, this
@@ -393,8 +392,7 @@ private:
   // Otherwise, the vertex is inserted in the underlying Delaunay
   // triangulation and the associated intervals are updated.
 
-  void remove(Vertex_handle v) 
-    {}
+  void remove(Vertex_handle v);
   // Removes the vertex from the underlying Delaunay triangulation.
   // The created hole is retriangulated and the associated intervals
   // are updated.
@@ -706,11 +704,9 @@ private:
 private:
   // prevent default copy constructor and default assigment
   
-  Alpha_shape_2(const Alpha_shape_2& A) 
-    {}
+  Alpha_shape_2(const Alpha_shape_2& A);
 
-  Alpha_shape_2& operator=(const Alpha_shape_2& A) 
-    {} 
+  Alpha_shape_2& operator=(const Alpha_shape_2& A);
 
 };
 
