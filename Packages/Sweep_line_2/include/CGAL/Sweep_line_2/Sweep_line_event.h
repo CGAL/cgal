@@ -51,15 +51,14 @@ public:
   typedef typename StatusLine::iterator StatusLineIter;
 
   /*! Constructor */
-  Sweep_line_event(const Point_2 &point, Traits *traits, 
-		   bool isInternalIntersectionPoint = false) {
+  Sweep_line_event(const Point_2 &point, Traits *traits) { 
     m_leftCurves = new SubcurveContainer();
     m_rightCurves = new SubcurveContainer();
     m_point = point;
     m_traits = traits;
     m_isInitialized = false;
     m_verticalCurve = 0;  
-    m_isInternalIntersectionPoint = isInternalIntersectionPoint;
+    m_isInternalIntersectionPoint = false;
   }
 
   /*! Destructor. Deletes the lists of curves, without deleting the 
@@ -137,6 +136,8 @@ public:
 	m_leftCurves->insert(iter, curve);
       } 
     }
+    if ( !curve->isEndPoint(m_point) )
+      m_isInternalIntersectionPoint = true;
   }
 
   /*! Adds a new curve that is defined to the right of the event point.
@@ -214,6 +215,8 @@ public:
 	m_rightCurves->insert(iter, curve);
       }
     }
+    if ( !curve->isEndPoint(m_point) )
+      m_isInternalIntersectionPoint = true;
   }
 
   /*! Returns an iterator to the first curve to the left of the event */

@@ -480,13 +480,14 @@ protected:
 	       !isInternalXPoint((*slIter)->getLeftEnd()))
 	  {
 	    *out = (*slIter)->getLeftEnd(); ++out;
+	    std::cout << "1 - reporting " << (*slIter)->getLeftEnd() << "\n";
 	  }
 	}
 	++slIter;
       }   
     }
   }
- 
+
   /*! For each left-curve, if it is the "last" subcurve, i.e., the 
     event point is the right-edge of the original curve, the 
     last sub curve is created and added to the result. Otherwise
@@ -574,8 +575,10 @@ protected:
     const Point_2 &eventPoint = m_currentEvent->getPoint();
     if ( !m_currentEvent->hasLeftCurves() )
     {
-      if ( includeEndPoints || m_currentEvent->isInternalIntersectionPoint())
+      if ( includeEndPoints || m_currentEvent->isInternalIntersectionPoint()) {
+	std::cout << "2 - reporting " << eventPoint << "\n";
         *out = eventPoint; ++out;    
+      }
       return;
     }
     EventCurveIter leftCurveIter = m_currentEvent->leftCurvesBegin();
@@ -593,7 +596,10 @@ protected:
     }
 
     if ( includeEndPoints || m_currentEvent->isInternalIntersectionPoint() )
+    {
+      std::cout << "3 - reporting " << eventPoint<< "\n";
       *out = eventPoint; ++out;
+    }
   }
 
   
@@ -772,7 +778,6 @@ InitCurve(X_curve_2 &curve)
   if ( eventIter != m_queue->end() ) {
     SL_DEBUG(std::cout << "event " << source << " already exists\n";)
     e = eventIter->second;
-    e->markInternalIntersectionPoint();
   } else  {
     e = new Event(source, m_traits); 
     SL_DEBUG(e->id = m_eventId++;)
@@ -787,7 +792,6 @@ InitCurve(X_curve_2 &curve)
   if ( eventIter != m_queue->end() ) {
     SL_DEBUG(std::cout << "event " << target << " already exists\n";)
     e = eventIter->second;
-    e->markInternalIntersectionPoint();
   } else  {
     e = new Event(target, m_traits); 
     SL_DEBUG(e->id = m_eventId++;)
@@ -839,7 +843,6 @@ FirstPass()
       {
 	m_currentEvent->addCurveToRight(*prev);
 	m_currentEvent->addCurveToLeft(*prev, m_prevPos);
-	m_currentEvent->markInternalIntersectionPoint();
       }
     }
     if ( slIter != m_statusLine->end() )
@@ -849,7 +852,6 @@ FirstPass()
       {
 	m_currentEvent->addCurveToRight(*next);
 	m_currentEvent->addCurveToLeft(*next, m_prevPos);
-	m_currentEvent->markInternalIntersectionPoint();
       }    
     } 
     ++rightIter;
@@ -923,14 +925,14 @@ HandleVerticalCurveBottom(SweepLineGetSubCurves &tag)
     const X_curve_2 &cv1 = vcurve->getCurve();
     const X_curve_2 &cv2 = (*slIter)->getCurve();
     Point_2 p;
-    bool res = 
+    SL_DEBUG(bool res =)
       m_traits->nearest_intersection_to_right(cv1, cv2, currentPoint, p, p);
-    assert(res==true);
+    SL_DEBUG(assert(res==true);)
     EventQueueIter eqi = m_queue->find(p);
     Event *e = 0;
     if ( eqi == m_queue->end() )
     {
-      e = new Event(p, m_traits, true); 
+      e = new Event(p, m_traits); 
       SL_DEBUG(e->id = m_eventId++;)
       m_events.push_back(e);
       
@@ -942,7 +944,6 @@ HandleVerticalCurveBottom(SweepLineGetSubCurves &tag)
     } else {
 
       e = eqi->second;
-      e->markInternalIntersectionPoint();
       SL_DEBUG(std::cout << "Updating event \n";)
       SL_DEBUG(e->Print();)
     }
@@ -1019,16 +1020,17 @@ HandleVerticalCurveBottom(SweepLineGetPoints &tag)
     }
 
     Point_2 xp;
-    bool res = m_traits->nearest_intersection_to_right(vcurve->getCurve(), 
-						       (*slIter)->getCurve(), 
-						       currentPoint, 
-						       xp, xp);
-    assert(res==true);
+    SL_DEBUG(bool res = )
+	     m_traits->nearest_intersection_to_right(vcurve->getCurve(), 
+						     (*slIter)->getCurve(), 
+						     currentPoint, 
+						     xp, xp);
+    SL_DEBUG(assert(res==true);)
     EventQueueIter eqi = m_queue->find(xp);
     Event *e = 0;
     if ( eqi == m_queue->end() )
     {
-      e = new Event(xp, m_traits, true); 
+      e = new Event(xp, m_traits); 
       SL_DEBUG(e->id = m_eventId++;)
       m_events.push_back(e);
       
@@ -1201,7 +1203,7 @@ Intersect(SubCurve *c1, SubCurve *c2)
     Event *e = 0;
     if ( eqi == m_queue->end() )
     {
-      e = new Event(p, m_traits, true); 
+      e = new Event(p, m_traits); 
       SL_DEBUG(e->id = m_eventId++;)
       m_events.push_back(e);
       
@@ -1219,7 +1221,6 @@ Intersect(SubCurve *c1, SubCurve *c2)
     {
       SL_DEBUG(std::cout << "event already exists, updating.. (" << p << ")\n";)
       e = eqi->second;
-      e->markInternalIntersectionPoint();
       if ( !scv1->isEndPoint(p)) {
 	e->addCurveToLeft(c1, m_sweepLinePos);
 	e->addCurveToRight(c1);
@@ -1286,7 +1287,7 @@ Intersect(SubCurve *c1, SubCurve *c2, SubCurve *c3)
   Event *e = 0;
   if ( eqi == m_queue->end() )
   {
-    e = new Event(p, m_traits, true); 
+    e = new Event(p, m_traits); 
     SL_DEBUG(e->id = m_eventId++;)
     m_events.push_back(e);
     
@@ -1302,7 +1303,6 @@ Intersect(SubCurve *c1, SubCurve *c2, SubCurve *c3)
   } else {
 
     e = eqi->second;
-    e->markInternalIntersectionPoint();
     if ( !a->isEndPoint(p))
     {
       e->addCurveToLeft(a, m_sweepLinePos);
@@ -1334,7 +1334,8 @@ isInternalXPoint(const Point_2 &p)
     {
       if ((*itt)->isInternalIntersectionPoint())
 	return true;
-      return false;
+      (*itt)->markInternalIntersectionPoint();   // this is to handle cases: |/ .
+      return false;                              // (test 50/51)             |\ .
     } 
     ++itt;
   }
@@ -1410,7 +1411,8 @@ HandleVerticalCurveXAtEnd(SubCurve *vcurve, SubCurve *curve,
   if (m_traits->curve_get_point_status((curve)->getCurve(), topEnd) 
       == Traits::ON_CURVE )
   {
-    topEndEvent->markInternalIntersectionPoint();
+    if ( !curve->isEndPoint(topEnd))
+      topEndEvent->markInternalIntersectionPoint();
     return true;
   } 
 
@@ -1419,7 +1421,8 @@ HandleVerticalCurveXAtEnd(SubCurve *vcurve, SubCurve *curve,
 				       m_currentEvent->getPoint()) 
       == Traits::ON_CURVE)
   {
-    m_currentEvent->markInternalIntersectionPoint();
+    if ( !curve->isEndPoint(m_currentEvent->getPoint()))
+      m_currentEvent->markInternalIntersectionPoint();
     return true;
   }
   return false;
