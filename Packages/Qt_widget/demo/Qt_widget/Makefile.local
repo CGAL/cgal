@@ -77,7 +77,6 @@ test$(EXE_EXT): test$(OBJ_EXT)
 clean: \
                    constrained.clean \
                    test.clean 
-	rm -f constrained.moc
 
 #---------------------------------------------------------------------#
 #                    suffix rules
