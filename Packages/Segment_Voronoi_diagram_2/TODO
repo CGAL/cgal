@@ -12,3 +12,8 @@
   methods) into one or two classes; if two classes are used, then do one with
   constructions and then derive from that and do the predicates;
   also this/these classes should provide basic types
+- check using Gmpq that when the ring tag is used that no calls to the
+  sqrt function are permitted
+- try to rewrite the filtered traits so that the non-filtered traits are used to get
+  the various types/predicates etc.
+- check the case that s is a segment in the infinite_edge_conflict predicate
