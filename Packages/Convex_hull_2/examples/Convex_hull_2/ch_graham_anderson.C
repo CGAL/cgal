@@ -3,6 +3,7 @@
 //
 #include <CGAL/Cartesian.h>
 #include <CGAL/ch_graham_andrew.h>
+#include <CGAL/functional.h>
 #include <vector>
 #include <algorithm>
 
@@ -22,7 +23,7 @@ ch_graham_anderson( InputIterator  first, InputIterator  beyond,
   std::copy( first, beyond, std::back_inserter(V) );
   typename std::vector< Point_2 >::iterator it =
                std::min_element(V.begin(), V.end(), Less_xy_2());
-  std::sort( V.begin(), V.end(), Less_rotate_ccw_2(*it) );
+  std::sort( V.begin(), V.end(), CGAL::bind_1(Less_rotate_ccw_2(), *it) );
   if ( *(V.begin()) == *(V.rbegin()) )
   {
       *result = *(V.begin());  ++result;

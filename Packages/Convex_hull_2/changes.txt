@@ -1,3 +1,6 @@
+3.14    (20 Jul 2001)
+- removed constructive predicates
+
 3.14    (17 Jul 2001)
 - changed doc to split 2D, 3D, and dD into 3 chapters
 

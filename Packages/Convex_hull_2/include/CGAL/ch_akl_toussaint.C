@@ -37,7 +37,7 @@ ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
                       const Traits&   ch_traits)
 {
   typedef  typename Traits::Point_2                    Point_2;    
-  typedef  typename Traits::Left_of_line_2             Left_of_line;
+  typedef  typename Traits::Leftturn_2                 Left_of_line;
   typedef  typename Traits::Less_xy_2                  Less_xy;
   typedef  ch_Binary_predicate_reversor< Point_2, Less_xy>
                                                        Greater_xy;
@@ -68,25 +68,21 @@ ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
   region3.push_back( *e);
   region4.push_back( *n);
 
-  Left_of_line  rol_we = ch_traits.left_of_line_2_object( *e, *w);
-  Left_of_line  rol_en = ch_traits.left_of_line_2_object( *n, *e);
-  Left_of_line  rol_nw = ch_traits.left_of_line_2_object( *w, *n);
-  Left_of_line  rol_ws = ch_traits.left_of_line_2_object( *s, *w);
-  Left_of_line  rol_se = ch_traits.left_of_line_2_object( *e, *s);
+  Left_of_line  left_turn = ch_traits.leftturn_2_object();
 
   CGAL_ch_postcondition_code( ForwardIterator save_first = first; )
 
   for ( ; first != last; ++first )
   {
-      if ( rol_we( *first ) )   
+      if ( left_turn(*e, *w, *first ) )   
       {
-          if ( rol_ws( *first ) )        region1.push_back( *first );
-          else if ( rol_se( *first ) )   region2.push_back( *first );
+          if ( left_turn( *s, *w, *first ) )       region1.push_back( *first );
+          else if ( left_turn( *e, *s, *first ) )  region2.push_back( *first );
       }
       else
       {
-          if ( rol_en( *first ) )        region3.push_back( *first );
-          else if ( rol_nw( *first ) )   region4.push_back( *first );
+          if ( left_turn( *n, *e, *first ) )       region3.push_back( *first );
+          else if ( left_turn( *w, *n, *first ) )  region4.push_back( *first );
       }
   }
 

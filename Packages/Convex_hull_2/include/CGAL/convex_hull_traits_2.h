@@ -37,15 +37,14 @@ class Convex_hull_traits_2 : public K_
 {
 public:
   typedef K_                                 K;
-  typedef typename K::Point_2                         Point_2;    
-  typedef typename K::Less_xy_2                       Less_xy_2;
-  typedef typename K::Less_yx_2                       Less_yx_2;
-  typedef typename K::Left_of_line_2                  Left_of_line_2;
+  typedef typename K::Point_2                Point_2;    
+  typedef typename K::Less_xy_2              Less_xy_2;
+  typedef typename K::Less_yx_2              Less_yx_2;
   typedef typename K::Less_signed_distance_to_line_2  
                                          Less_signed_distance_to_line_2;
-  typedef typename K::Less_rotate_ccw_2               Less_rotate_ccw_2;
-  typedef typename K::Leftturn_2                      Leftturn_2;
-  typedef typename K::Segment_2                       Segment_2;    
+  typedef typename K::Less_rotate_ccw_2      Less_rotate_ccw_2;
+  typedef typename K::Leftturn_2             Leftturn_2;
+  typedef typename K::Segment_2              Segment_2;    
   
   Less_xy_2
   less_xy_2_object() const 
@@ -55,18 +54,13 @@ public:
   less_yx_2_object() const 
   { return Less_yx_2(); } 
 
-  Left_of_line_2
-  left_of_line_2_object( const Point_2& p, const Point_2& q) const 
-  { return Left_of_line_2( p, q); } 
-
   Less_signed_distance_to_line_2
-  less_signed_distance_to_line_2_object( const Point_2& p, 
-                                         const Point_2& q) const
-  { return Less_signed_distance_to_line_2( p, q); } 
+  less_signed_distance_to_line_2_object( ) const
+  { return Less_signed_distance_to_line_2( ); } 
 
   Less_rotate_ccw_2
-  less_rotate_ccw_2_object( const Point_2& p ) const
-  { return Less_rotate_ccw_2( p); }
+  less_rotate_ccw_2_object() const
+  { return Less_rotate_ccw_2(); }
 
   Leftturn_2
   leftturn_2_object() const

@@ -28,6 +28,7 @@
 #ifndef CGAL_CH_BYKAT_H
 #include <CGAL/ch_eddy.h>
 #endif // CGAL_CH_BYKAT_H
+#include <CGAL/functional.h>
 
 CGAL_BEGIN_NAMESPACE
 template <class InputIterator, class OutputIterator, class Traits>
@@ -37,7 +38,7 @@ ch_bykat(InputIterator first, InputIterator last,
               const Traits& ch_traits)
 {
   typedef typename Traits::Point_2                         Point_2;
-  typedef typename Traits::Left_of_line_2                  Left_of_line;
+  typedef typename Traits::Leftturn_2                      Leftturn_2;
   typedef typename Traits::Less_signed_distance_to_line_2  Less_dist;
 
   if (first == last) return result;
@@ -73,21 +74,22 @@ ch_bykat(InputIterator first, InputIterator last,
   #endif // no postconditions ...
   H.push_back( a );
   L.push_back( P.begin() );
+  Leftturn_2 left_turn = ch_traits.leftturn_2_object();
   R.push_back( l = std::partition( P.begin(), P.end(), 
-                                   ch_traits.left_of_line_2_object(a,b) ) );
-  r = std::partition( l, P.end(), ch_traits.left_of_line_2_object(b,a) );
+                                   bind_1(bind_1(left_turn,a),b) ) );
+  r = std::partition( l, P.end(), bind_1(bind_1(left_turn,b),a) );
   
+  Less_dist less_dist = ch_traits.less_signed_distance_to_line_2_object();
   for (;;)
   {
       if ( l != r)
       {
-          c = *std::min_element( l, r, 
-                        ch_traits.less_signed_distance_to_line_2_object(a,b));
+          c = *std::min_element( l, r, bind_1(bind_1(less_dist, a), b));
           H.push_back( b );
           L.push_back( l );
           R.push_back( l = std::partition(l, r, 
-                                     ch_traits.left_of_line_2_object(b,c)));
-          r = std::partition(l, r, ch_traits.left_of_line_2_object(c,a));
+                                          bind_1(bind_1(left_turn,b),c)));
+          r = std::partition(l, r, bind_1(bind_1(left_turn,c),a));
           b = c; 
       }
       else
@@ -125,7 +127,7 @@ ch_bykat_with_threshold(InputIterator   first, InputIterator last,
                              const Traits&   ch_traits)
 {
   typedef typename Traits::Point_2               Point_2;
-  typedef typename Traits::Left_of_line_2        Left_of_line;
+  typedef typename Traits::Leftturn_2            Leftturn_2;
   typedef typename Traits::Less_signed_distance_to_line_2     
                                                  Less_dist;
   typedef typename Traits::Less_xy_2             Less_xy;
@@ -170,23 +172,24 @@ ch_bykat_with_threshold(InputIterator   first, InputIterator last,
   #endif // no postconditions ...
   H.push_back( a );
   L.push_back( Pbegin );
+  Leftturn_2 left_turn = ch_traits.leftturn_2_object();
   R.push_back( l = std::partition( Pbegin, Pend, 
-                                   ch_traits.left_of_line_2_object(a,b) ) );
-  r = std::partition( l, Pend, ch_traits.left_of_line_2_object(b,a) );
+                                   bind_1(bind_1(left_turn, a), b) ) );
+  r = std::partition( l, Pend, bind_1(bind_1(left_turn,b),a) );
   
+  Less_dist less_dist = ch_traits.less_signed_distance_to_line_2_object();
   for (;;)
   {
       if ( l != r)
       {
           if ( r-l > CGAL_ch_THRESHOLD )
           {
-              c = *std::min_element(l, r, 
-                         ch_traits.less_signed_distance_to_line_2_object(a,b));
+              c = *std::min_element( l, r, bind_1(bind_1(less_dist, a), b));
               H.push_back( b );
               L.push_back( l );
               R.push_back( l = std::partition(l, r, 
-                           ch_traits.left_of_line_2_object(b,c)) );
-              r = std::partition(l, r, ch_traits.left_of_line_2_object(c,a));
+                           bind_1(bind_1(left_turn, b), c)) );
+              r = std::partition(l, r, bind_1(bind_1(left_turn, c), a));
               b = c; 
           }
           else

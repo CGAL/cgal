@@ -27,6 +27,7 @@
 
 #include <CGAL/Kernel/traits_aids.h>
 #include <CGAL/convexity_check_2.h>
+#include <CGAL/functional.h>
 
 CGAL_BEGIN_NAMESPACE
 template <class ForwardIterator, class Traits>
@@ -144,7 +145,7 @@ ch_brute_force_check_2(ForwardIterator1 first1, ForwardIterator1 last1,
                             ForwardIterator2 first2, ForwardIterator2 last2,
                             const Traits&  ch_traits)
 {
-  typedef    typename Traits::Left_of_line_2    Left_of_line;
+  typedef    typename Traits::Leftturn_2    Left_of_line;
   ForwardIterator1 iter11;
   ForwardIterator2 iter21;
   ForwardIterator2 iter22;
@@ -162,19 +163,18 @@ ch_brute_force_check_2(ForwardIterator1 first1, ForwardIterator1 last1,
       return true;
   }
 
-  Left_of_line  rol = ch_traits.left_of_line_2_object(*successor(first2), 
-                                                      *first2);
+  Left_of_line  left_turn = ch_traits.leftturn_2_object();
   iter22 = first2;
   iter21 = iter22++;
   while (iter22 != last2)
   {
-      rol = ch_traits.left_of_line_2_object( *iter22++, *iter21++);
-      iter11 = std::find_if( first1, last1, rol );
+      iter11 = std::find_if( first1, last1, 
+                             bind_1(bind_1(left_turn,*iter22++), *iter21++) );
       if (iter11 != last1 ) return false;
   }
 
-  rol = ch_traits.left_of_line_2_object( *first2, *iter21 );   
-  iter11 = std::find_if( first1, last1, rol );
+  iter11 = std::find_if( first1, last1, 
+                         bind_1(bind_1(left_turn, *first2), *iter21) );
   if (iter11 != last1 ) return false;
   return true;
 }
@@ -198,14 +198,13 @@ ch_brute_force_chain_check_2(ForwardIterator1 first1,
 
   if ( successor(first2) == last2 ) return true;
 
-  Left_of_line  rol = ch_traits.left_of_line_2_object(*successor(first2), 
-                                                      *first2);
+  Left_of_line  left_turn = ch_traits.leftturn_2_object();
   iter22 = first2;
   iter21 = iter22++;
   while (iter22 != last2)
   {
-      rol = ch_traits.left_of_line_2_object( *iter22++, *iter21++);
-      iter11 = std::find_if( first1, last1, rol );
+      iter11 = std::find_if( first1, last1, 
+                             bind_1(bind_1(left_turn, *iter22++), *iter21++) );
       if (iter11 != last1 ) return false;
   }
 

@@ -82,7 +82,7 @@ ch_brute_force_check_2(ForwardIterator1 first1, ForwardIterator1 last1,
 /*{\Mfunc returns true, if all points in [|first1|,|last1|) are 
 not right of the lines defined by consecutive points in the range 
 [|first2|,|last2|), where the range is considered as a cycle.\\
-{\sc traits}: uses |Traits::Left_of_line_2|.
+{\sc traits}: uses |Traits::Leftturn_2|.
 }*/
 
 
@@ -100,7 +100,7 @@ ch_brute_force_chain_check_2(ForwardIterator1 first1,
 /*{\Mfunc returns true, if all points in [|first1|,|last1|) are 
 not right of the lines defined by consecutive points in the range 
 [|first2|,|last2|).\\ 
-{\sc traits}: uses |Traits::Left_of_line_2|.
+{\sc traits}: uses |Traits::Leftturn_2|.
 }*/
 
 #ifdef CGAL_POINT_2_H

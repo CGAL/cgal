@@ -29,6 +29,8 @@
 #include <CGAL/ch_jarvis.h>
 #endif // CGAL_CH_JARVIS_H
 
+#include <CGAL/functional.h>
+
 CGAL_BEGIN_NAMESPACE
 template <class ForwardIterator, class OutputIterator, 
           class Point, class Traits>
@@ -52,16 +54,16 @@ ch_jarvis_march(ForwardIterator first, ForwardIterator last,
       int count_points = 0; )
   CGAL_ch_assertion_code( \
       for (ForwardIterator fit = first; fit!= last; ++fit) ++count_points; )
-
   Less_rotate_ccw  
-      rotation_predicate = ch_traits.less_rotate_ccw_2_object( start_p );
+      rotation_predicate = ch_traits.less_rotate_ccw_2_object( );
   *res = start_p;  ++res;
   CGAL_ch_assertion_code( \
       int constructed_points = 1; )
   CGAL_ch_exactness_assertion_code( \
       Point previous_point = start_p; ) 
 
-  ForwardIterator it = std::min_element( first, last, rotation_predicate );
+  ForwardIterator it = std::min_element( first, last, 
+                                         bind_1(rotation_predicate, start_p) );
   while ( *it != stop_p )
   {
       CGAL_ch_exactness_assertion( \
@@ -75,8 +77,8 @@ ch_jarvis_march(ForwardIterator first, ForwardIterator last,
       CGAL_ch_assertion( \
           constructed_points <= count_points + 1 );
 
-      rotation_predicate = ch_traits.less_rotate_ccw_2_object( *it );
-      it = std::min_element( first, last, rotation_predicate );
+      it = std::min_element( first, last, 
+                             bind_1(rotation_predicate, *it) );
   } 
   CGAL_ch_postcondition( \
       is_ccw_strongly_convex_2( res.output_so_far_begin(), \

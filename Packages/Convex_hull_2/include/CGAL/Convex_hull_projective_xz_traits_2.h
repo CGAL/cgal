@@ -24,6 +24,7 @@
 
 #include <CGAL/predicates/kernel_ftC2.h>
 #include <CGAL/predicates_on_points_2.h>
+#include <CGAL/functional_base.h>
 #include <CGAL/function_objects.h>
 
 namespace CGAL {
@@ -32,6 +33,9 @@ template <class Point_3>
 class Less_xy_plane_xz_2 
 {
 public:
+   typedef bool           result_type;
+   typedef Arity_tag<2>   Arity;
+
    bool 
    operator()(const Point_3& p, const Point_3& q) const
    { 
@@ -44,6 +48,9 @@ template <class Point_3>
 class Less_yx_plane_xz_2 
 {
 public:
+   typedef bool           result_type;
+   typedef Arity_tag<2>   Arity;
+
    bool 
    operator()(const Point_3& p, const Point_3& q) const
    { 
@@ -53,9 +60,12 @@ public:
 };
 
 template <class Point_3>
-class Leftturn_plane_xz_2 
+class Left_turn_plane_xz_2 
 {
 public:
+   typedef bool           result_type;
+   typedef Arity_tag<2>   Arity;
+
    bool 
    operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
    { 
@@ -63,35 +73,17 @@ public:
    }
 };
 
-template <class Point_3>
-class Left_of_line_plane_xz_2
-{
-public:
-   Left_of_line_plane_xz_2(const Point_3& a, const Point_3& b):
-      p_a(a), p_b(b) 
-   { }
-
-   bool 
-   operator()(const Point_3& c) const
-   {
-      return orientationC2(p_a.x(), p_a.z(), p_b.x(), p_b.z(), c.x(), c.z()) ==
-             LEFTTURN; 
-   }
-private:
-   Point_3 p_a;
-   Point_3 p_b;
-};
 
 template <class Point_3>
 class Less_dist_to_line_plane_xz_2
 {
 public:
-   Less_dist_to_line_plane_xz_2(const Point_3& a, const Point_3& b):
-      p(a), q(b)
-   { }
+   typedef bool           result_type;
+   typedef Arity_tag<4>   Arity;
 
    bool
-   operator()(const Point_3& r, const Point_3& s) const
+   operator()(const Point_3& p, const Point_3& q,
+              const Point_3& r, const Point_3& s) const
    {
       Comparison_result
          res = cmp_signed_dist_to_lineC2(p.x(), p.z(), q.x(), q.z(),
@@ -104,9 +96,6 @@ public:
          return compare_lexicographically_xyC2(r.x(), r.z(), s.x(), s.z())
              == SMALLER;
    }
-private:
-   Point_3 p;
-   Point_3 q;
 };
 
 
@@ -114,33 +103,30 @@ template <class Point_3>
 class Less_rotate_ccw_plane_xz_2
 {
 public:
-   Less_rotate_ccw_plane_xz_2(const Point_3& p):
-      rot_point(p)
-   { }
+
+   typedef bool         result_type;
+   typedef Arity_tag<3> Arity;
 
    bool
-   operator()(const Point_3& p, const Point_3& q) const
+   operator()(const Point_3& r, const Point_3& p, const Point_3& q) const
    {
       Orientation orient =
-               orientationC2(rot_point.x(), rot_point.z(), p.x(), p.z(),
-                             q.x(), q.z());
+               orientationC2(r.x(), r.z(), p.x(), p.z(), q.x(), q.z());
       if ( orient ==  LEFTTURN )
          return true;
       else if ( orient == RIGHTTURN )
          return false;
       else
       {
-         if (p.x() == rot_point.x() && p.z() == rot_point.z()) return false;
-         if (q.x() == rot_point.x() && q.z() == rot_point.z()) return true;
+         if (p.x() == r.x() && p.z() == r.z()) return false;
+         if (q.x() == r.x() && q.z() == r.z()) return true;
          if (p.x() == q.x() && p.z() == q.z()) return false;
          return
-            collinear_are_ordered_along_lineC2(rot_point.x(), rot_point.z(),
+            collinear_are_ordered_along_lineC2(r.x(), r.z(),
                                                q.x(), q.z(), p.x(), p.z());
       }
    }
 
-private:
-   Point_3 rot_point;
 };
 
 
@@ -152,15 +138,10 @@ public:
     typedef Point_3                             Point_2;
     typedef Less_xy_plane_xz_2<Point_3>         Less_xy_2;
     typedef Less_yx_plane_xz_2<Point_3>         Less_yx_2;
-    typedef Leftturn_plane_xz_2<Point_3>        Leftturn_2;
-    typedef Left_of_line_plane_xz_2<Point_3>    Left_of_line_2;
+    typedef Left_turn_plane_xz_2<Point_3>       Leftturn_2;
     typedef Less_rotate_ccw_plane_xz_2<Point_3> Less_rotate_ccw_2;
     typedef Less_dist_to_line_plane_xz_2<Point_3> 
                                                 Less_signed_distance_to_line_2;
-
-    Left_of_line_2
-    left_of_line_2_object(Point_2 p, Point_2 q) const
-    {  return Left_of_line_2(p, q); }
 
     Less_xy_2
     less_xy_2_object() const

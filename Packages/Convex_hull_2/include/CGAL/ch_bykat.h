@@ -61,7 +61,7 @@ ch_bykat(InputIterator first, InputIterator last,
 /*{\Mfuncl 
 same as |convex_hull_2(first,last,result)|.\\
 {\sc traits}: uses |Traits::Point_2|, |Traits::Less_signed_distance_to_line_2|,
-|Traits::Left_of_line_2|, and |Traits::Less_xy_2|.
+|Traits::Leftturn_2|, and |Traits::Less_xy_2|.
 }*/
 
 template <class InputIterator, class OutputIterator, class Traits>
