@@ -1,4 +1,4 @@
-Ver 2.6 (6 Oct 2003)
+Ver 2.7 (6 Oct 2003)
 - resubmit.
 
 Ver 2.5 (27 Sep 2003)
