@@ -31,7 +31,11 @@
 #undef ASSERT
 */
 
+#if CGAL_NEF_DEBUG>0
+namespace CGAL {
 static int debugthread=3141592;
+}
+#endif
 
 #if CGAL_NEF_DEBUG>0
 #define SETDTHREAD(l) debugthread=l
@@ -86,5 +90,3 @@ static int debugthread=3141592;
 
 
 #endif //CGAL_DEBUG_H
-
-

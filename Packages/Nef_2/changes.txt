@@ -1,5 +1,8 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
+05 November 2004 Sylvain Pion
+- Move debugthread inside namespace CGAL, and protect it under CGAL_NEF_DEBUG.
+
 02 November 2004 Andreas Fabri
 - Replaced macro _DEBUG with CGAL_NEF_DEBUG
 
