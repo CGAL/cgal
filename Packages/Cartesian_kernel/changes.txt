@@ -1,3 +1,6 @@
+Version 102.5 (19 November 2003)
+- Added bisector(Point_3, Point_3).
+
 Version 102.4 (17 November 2003)
 - 2-stage name lookup fixes for g++ 3.4.
 - Remove deprecated code.

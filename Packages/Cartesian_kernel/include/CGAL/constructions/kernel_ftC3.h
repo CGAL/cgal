@@ -384,6 +384,20 @@ scaled_distance_to_planeC3(
                            prx-px,pry-py,prz-pz);
 }
 
+template < class FT >
+CGAL_KERNEL_INLINE
+void
+bisector_of_pointsC3(const FT &px, const FT &py, const FT &pz,
+		     const FT &qx, const FT &qy, const FT &qz,
+		     FT &a, FT &b, FT &c, FT &d)
+{
+  a = 2*(px - qx);
+  b = 2*(py - qy);
+  c = 2*(pz - qz);
+  d = CGAL_NTS square(qx) + CGAL_NTS square(qy) + CGAL_NTS square(qz)
+    - CGAL_NTS square(px) - CGAL_NTS square(py) - CGAL_NTS square(pz);
+}
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CONSTRUCTIONS_KERNEL_FTC3_H

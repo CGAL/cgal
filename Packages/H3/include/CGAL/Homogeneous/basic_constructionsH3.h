@@ -96,12 +96,13 @@ squared_distance( PointH3<R> const& p, PointH3<R> const& q)
 { return (p-q)*(p-q); }
 
 
-template <class R>
-inline
-PlaneH3<R>
-bisector( PointH3<R> const& p,
-          PointH3<R> const& q)
-{ return PlaneH3<R>( midpoint(p,q), q-p); }
+template <typename K>
+CGAL_KERNEL_MEDIUM_INLINE
+typename K::Plane_3
+bisector( const PointH3<K>& p, const PointH3<K>& q )
+{
+  return K().construct_bisector_3_object()(p, q);
+}
 
 template <class R>
 CGAL_KERNEL_MEDIUM_INLINE

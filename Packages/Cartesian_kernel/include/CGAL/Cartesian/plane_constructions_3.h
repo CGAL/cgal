@@ -19,7 +19,7 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Herve Bronnimann
+// Author(s)     : Herve Bronnimann, Sylvain Pion
 
 #ifndef CGAL_CARTESIAN_PLANE_CONSTRUCTIONS_3_H
 #define CGAL_CARTESIAN_PLANE_CONSTRUCTIONS_3_H
@@ -54,6 +54,14 @@ plane_from_point_direction(const PointC3<R> &p,
   plane_from_point_directionC3(p.x(), p.y(), p.z(), d.dx(), d.dy(), d.dz(),
                                A, B, C, D);
   return PlaneC3<R>(A, B, C, D);
+}
+
+template <typename K>
+inline
+typename K::Plane_3
+bisector(const PointC3<K> &p, const PointC3<K> &q)
+{
+  return K().construct_bisector_3_object()(p, q);
 }
 
 CGAL_END_NAMESPACE

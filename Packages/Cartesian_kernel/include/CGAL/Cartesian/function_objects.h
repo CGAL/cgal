@@ -822,6 +822,27 @@ namespace CartesianKernelFunctors {
   };
 
   template <typename K>
+  class Construct_bisector_3
+  {
+    typedef typename K::FT      FT;
+    typedef typename K::Point_3 Point_3;
+    typedef typename K::Plane_3 Plane_3;
+  public:
+    typedef Plane_3          result_type;
+    typedef Arity_tag< 2 >   Arity;
+
+    Plane_3
+    operator()(const Point_3& p, const Point_3& q) const
+    {
+      FT a, b, c, d;
+      bisector_of_pointsC3(p.x(), p.y(), p.z(),
+	                   q.x(), q.y(), q.z(),
+			   a, b, c, d);
+      return Plane_3(a, b, c, d);
+    }
+  };
+
+  template <typename K>
   class Construct_centroid_2
   {
     typedef typename K::FT       FT;

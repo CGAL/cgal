@@ -1,3 +1,6 @@
+2.69 (19 November 2003)
+- Added bisector(Point_3, Point_3).
+
 2.68 (18 November 2003)
 - Remove deprecated stuff.
 
