@@ -27,10 +27,19 @@ Exactly one of the options -h or -r must be present.
 
    The version number is stored in include/CGAL/config.h.
    The RELEASEDIR is the place where the new release will be created.
-   The ALLPACKAGESDIR is the directory that contains the checked out packages from the CVS. Could be a taged version (<<current_submission>>) or some other version.
-   The SCRIPTSDIR is the place where you have the create_makefile script. This script you can take it from CVS/Scripts/scripts/create_makefile. You need this script to create the default makefiles for examples and tests.
+   The ALLPACKAGESDIR is the directory that contains the checked out packages
+       from the CVS. Could be a taged version (<<current_submission>>) or some
+       other version.
+   The SCRIPTSDIR is the place where you have the create_makefile script.
+       This script you can take it from CVS/Scripts/scripts/create_makefile.
+       You need this script to create the default makefiles for examples and
+       tests.
    The LOCKFILE is some file used by lockfile command as a mutex.
-   The PACKAGESFILE is the file that contains a list of the packages you want to include in this release. In fact it is a filter for packages you have in ALLPACKAGESDIR. There is one file that is used to create the CGAL internal release in CVS/Maintenance/release_building/include_in_release. You can take that one too.
+   The PACKAGESFILE is the file that contains a list of the packages you want
+       to include in this release. In fact it is a filter for packages you have
+       in ALLPACKAGESDIR. There is one file that is used to create the CGAL
+       internal release in CVS/Maintenance/release_building/include_in_release.
+       You can take that one too.
 
 Example of how to use the script:
 >cvs -q co -P -r current_submission All
