@@ -125,6 +125,7 @@ class DS_Container
 public:
 
     typedef Elt                         value_type;
+    typedef Elt&                        reference;
     typedef const Elt &                 const_reference;
     typedef DS_Container_iterator<Self> iterator;
     typedef std::size_t                 size_type;

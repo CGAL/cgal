@@ -22,7 +22,7 @@ test:
 	$(MAKE) -C demo/$(Package)
 
 clean:
-	$(MAKE) -C doc_tex/basic/$(Package) clean
+#	$(MAKE) -C doc_tex/basic/$(Package) clean
 	$(MAKE) -C examples/$(Package) clean
 	$(MAKE) -C demo/$(Package) clean
 	$(MAKE) -C test/$(Package) clean
