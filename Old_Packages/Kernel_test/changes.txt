@@ -1,3 +1,6 @@
+3.50  (8 Oct 2002)
+- Merge .C files into their corresponding .h.
+
 3.49  (8 Oct 2002)
 - Make it work with -DCGAL_NO_DEPRECATED, and other fixes.
 

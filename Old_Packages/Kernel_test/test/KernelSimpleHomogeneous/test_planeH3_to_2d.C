@@ -17,7 +17,7 @@
 // author(s)     : Stefan Schirra
 //
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ============================================================================
  
 
@@ -25,7 +25,7 @@
 #include <cassert>
 #include "../Kernel/include/CGAL/Precise_numbers.h"
 #include <CGAL/Simple_homogeneous.h>
-#include "../Kernel/include/CGAL/_test_mf_plane_3_to_2d.C"
+#include "../Kernel/include/CGAL/_test_mf_plane_3_to_2d.h"
 
 int
 main()

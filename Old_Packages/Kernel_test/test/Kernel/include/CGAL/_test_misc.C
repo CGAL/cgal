@@ -24,7 +24,7 @@
 #ifndef CGAL__TEST_MISC_C
 #define CGAL__TEST_MISC_C
 
-#include <CGAL/_test_cls_object.C>
+#include <CGAL/_test_cls_object.h>
 
 template <class R>
 bool
