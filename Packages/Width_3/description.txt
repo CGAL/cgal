@@ -1,0 +1,2 @@
+This package determines the width of a three dimensional point set,
+that is two parallel supporting planes are computed having minimum distance.
