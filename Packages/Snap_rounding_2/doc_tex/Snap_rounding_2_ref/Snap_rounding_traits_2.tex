@@ -15,10 +15,11 @@
     
 %\ccDefinition 
 
-The class \ccStyle{Snap_rounding_triats<Kernel>} is used as the recommended
-class for the SnapRoundingTraits\_2 concept. To avoid robustness problems,
-the template parameter should represent a geometric kernel that supports
-exact manipulation of line segments, such as the
+The class \ccStyle{Snap_rounding_triats_2<Kernel>} is a model of the
+\ccc{SnapRoundingTraits_2} concept, and is the only traits class supplied
+with the package.
+This class should be instantiated with an exact geometric kernel that conforms
+to the \cgal\ kernel-concept, such as the
 \ccStyle{Cartesian<gmpq>} kernel, although other inexact kernels could be
 used at the user's own risk.
 % The traits class inherits from the
