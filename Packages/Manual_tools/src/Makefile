@@ -14,6 +14,15 @@ nodefault:
 #INSTALL_DIR = /usr/bin
 INSTALL_DIR = $(PUBLIC)/$(SYSTEM)/bin  # local settings on my machine
 
+# Path for the HTML conversion tools for the default configuration files.
+# This path will be compiled into the cc_extract_html program and used for 
+# the installation.
+# The same variable has to be configured in the cc_manual_to_html script.
+# The path must terminate with a slash.
+#HTML_DEFAULT_PATH = 
+HTML_DEFAULT_PATH = /pub/local/CGAL/Tools/html_config_files/
+#HTML_DEFAULT_PATH = /home/kettner/topics/cgal/Tools/src/html_config_files/
+
 # =======================================================
 
 # all the files that have to be copied into a directory in the $PATH
