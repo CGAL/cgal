@@ -37,7 +37,7 @@ int main( )
                        std::back_inserter(point_set));
    CGAL::random_polygon_2(point_set.size(), std::back_inserter(polygon), 
                           point_set.begin());
-   cout << polygon << endl;
+   std::cout << polygon << std::endl;
    return 0;
 }
 
