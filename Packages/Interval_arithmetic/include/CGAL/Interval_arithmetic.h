@@ -172,6 +172,8 @@ public:
   bool is_same (const IA & d) const
   { return (inf == d.inf) && (sup == d.sup); }
 
+  bool is_point() const { return (sup == -inf); }
+
   bool overlap (const IA & d) const
   { return !((-d.inf > sup) || (d.sup < -inf)); }
 
