@@ -1,3 +1,7 @@
+2.8.9   (11 July 2001)
+- removed unused parameter names in Postscript_file_stream
+- got rid of node_width here too
+
 2.8.8   (11 July 2001)
 - LEDA check changed in manual_example_ps
 
