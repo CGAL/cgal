@@ -72,7 +72,8 @@ power_testH2_SAF(
     return Oriented_side(sign_of_determinant4x4_SAF(dphx, dphy, dpz, dphw,
 	                                        dqhx, dqhy, dqz, dqhw,
 	                                        drhx, drhy, drz, drhw,
-	                                        dthx, dthy, dtz, dthw, epsilon_0));
+	                                        dthx, dthy, dtz, dthw,
+		epsilon_0));
 }
 
 inline
@@ -121,7 +122,8 @@ power_testH2_SAF(
     return Oriented_side(sign_of_determinant4x4_SAF(dphx, dphy, dpz, dphw,
 	                                        dqhx, dqhy, dqz, dqhw,
 	                                        drhx, drhy, drz, drhw,
-	                                        dthx, dthy, dtz, dthw, epsilon_0));
+	                                        dthx, dthy, dtz, dthw,
+		epsilon_0));
 }
 
 inline
@@ -309,10 +311,12 @@ power_testH2_SAF(
     RT dthw = square(thw);
     RT dtz = square(thx) + square(thy) - twt*dthw;
 
-    return Oriented_side(CGAL::compare_SAF(pa, qa, epsilon_0) *
+    return Oriented_side(CGAL::compare_SAF(pa, qa,
+		epsilon_0) *
 	                 sign_of_determinant3x3_SAF(pa, dpz, dphw,
 				                qa, dqz, dqhw,
-				                ta, dtz, dthw, epsilon_1));
+				                ta, dtz, dthw,
+		epsilon_1));
 }
 
 inline
@@ -361,10 +365,12 @@ power_testH2_SAF(
     RT dthw = square(thw);
     RT dtz = square(thx) + square(thy) - twt*dthw;
 
-    return Oriented_side(CGAL::compare_SAF(pa, qa, epsilon_0) *
+    return Oriented_side(CGAL::compare_SAF(pa, qa,
+		epsilon_0) *
 	                 sign_of_determinant3x3_SAF(pa, dpz, dphw,
 				                qa, dqz, dqhw,
-				                ta, dtz, dthw, epsilon_1));
+				                ta, dtz, dthw,
+		epsilon_1));
 }
 
 inline

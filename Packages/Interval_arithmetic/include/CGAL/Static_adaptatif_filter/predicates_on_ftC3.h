@@ -50,9 +50,12 @@ collinearC3_SAF(
   FT dqx = qx-rx;
   FT dqy = qy-ry;
   FT dqz = qz-rz;
-  return (sign_of_determinant2x2_SAF(dpx,dqx,dpy,dqy, epsilon_0) == ZERO)
-      && (sign_of_determinant2x2_SAF(dpx,dqx,dpz,dqz, epsilon_1) == ZERO)
-      && (sign_of_determinant2x2_SAF(dpy,dqy,dpz,dqz, epsilon_2) == ZERO);
+  return (sign_of_determinant2x2_SAF(dpx,dqx,dpy,dqy,
+		epsilon_0) == ZERO)
+      && (sign_of_determinant2x2_SAF(dpx,dqx,dpz,dqz,
+		epsilon_1) == ZERO)
+      && (sign_of_determinant2x2_SAF(dpy,dqy,dpz,dqz,
+		epsilon_2) == ZERO);
 }
 
 inline
@@ -79,9 +82,12 @@ collinearC3_SAF(
   FT dqx = qx-rx;
   FT dqy = qy-ry;
   FT dqz = qz-rz;
-  return (sign_of_determinant2x2_SAF(dpx,dqx,dpy,dqy, epsilon_0) == ZERO)
-      && (sign_of_determinant2x2_SAF(dpx,dqx,dpz,dqz, epsilon_1) == ZERO)
-      && (sign_of_determinant2x2_SAF(dpy,dqy,dpz,dqz, epsilon_2) == ZERO);
+  return (sign_of_determinant2x2_SAF(dpx,dqx,dpy,dqy,
+		epsilon_0) == ZERO)
+      && (sign_of_determinant2x2_SAF(dpx,dqx,dpz,dqz,
+		epsilon_1) == ZERO)
+      && (sign_of_determinant2x2_SAF(dpy,dqy,dpz,dqz,
+		epsilon_2) == ZERO);
 }
 
 inline
@@ -208,7 +214,8 @@ orientationC3_SAF(
 
   return Orientation(sign_of_determinant3x3_SAF(qx-px,rx-px,sx-px,
                                             qy-py,ry-py,sy-py,
-                                            qz-pz,rz-pz,sz-pz, epsilon_0));
+                                            qz-pz,rz-pz,sz-pz,
+		epsilon_0));
 }
 
 inline
@@ -232,7 +239,8 @@ orientationC3_SAF(
 
   return Orientation(sign_of_determinant3x3_SAF(qx-px,rx-px,sx-px,
                                             qy-py,ry-py,sy-py,
-                                            qz-pz,rz-pz,sz-pz, epsilon_0));
+                                            qz-pz,rz-pz,sz-pz,
+		epsilon_0));
 }
 
 inline
@@ -391,7 +399,8 @@ side_of_oriented_sphereC3_SAF(
   return Oriented_side(sign_of_determinant4x4_SAF(ptx,pty,ptz,pt2,
                                               rtx,rty,rtz,rt2,
                                               qtx,qty,qtz,qt2,
-                                              stx,sty,stz,st2, epsilon_0));
+                                              stx,sty,stz,st2,
+		epsilon_0));
 }
 
 inline
@@ -435,7 +444,8 @@ side_of_oriented_sphereC3_SAF(
   return Oriented_side(sign_of_determinant4x4_SAF(ptx,pty,ptz,pt2,
                                               rtx,rty,rtz,rt2,
                                               qtx,qty,qtz,qt2,
-                                              stx,sty,stz,st2, epsilon_0));
+                                              stx,sty,stz,st2,
+		epsilon_0));
 }
 
 inline
@@ -598,11 +608,13 @@ side_of_bounded_sphereC3_SAF(
                                               qx, qy, qz,
                                               rx, ry, rz,
                                               sx, sy, sz,
-                                              tx, ty, tz, epsilon_0);
+                                              tx, ty, tz,
+		epsilon_0);
   Orientation o = orientationC3_SAF(px, py, pz,
                                 qx, qy, qz,
                                 rx, ry, rz,
-                                sx, sy, sz, epsilon_1);
+                                sx, sy, sz,
+		epsilon_1);
   return Bounded_side(s * o);
 }
 
@@ -633,11 +645,13 @@ side_of_bounded_sphereC3_SAF(
                                               qx, qy, qz,
                                               rx, ry, rz,
                                               sx, sy, sz,
-                                              tx, ty, tz, epsilon_0);
+                                              tx, ty, tz,
+		epsilon_0);
   Orientation o = orientationC3_SAF(px, py, pz,
                                 qx, qy, qz,
                                 rx, ry, rz,
-                                sx, sy, sz, epsilon_1);
+                                sx, sy, sz,
+		epsilon_1);
   return Bounded_side(s * o);
 }
 
@@ -794,7 +808,8 @@ cmp_dist_to_pointC3_SAF(
   typedef Static_filter_error FT;
 
   return CGAL::compare_SAF(squared_distanceC3(px,py,pz,qx,qy,qz),
-                       squared_distanceC3(px,py,pz,rx,ry,rz), epsilon_0);
+                       squared_distanceC3(px,py,pz,rx,ry,rz),
+		epsilon_0);
 }
 
 inline
@@ -814,7 +829,8 @@ cmp_dist_to_pointC3_SAF(
   typedef Restricted_double FT;
 
   return CGAL::compare_SAF(squared_distanceC3(px,py,pz,qx,qy,qz),
-                       squared_distanceC3(px,py,pz,rx,ry,rz), epsilon_0);
+                       squared_distanceC3(px,py,pz,rx,ry,rz),
+		epsilon_0);
 }
 
 inline
@@ -932,7 +948,8 @@ cmp_signed_dist_to_planeC3_SAF(
   typedef Static_filter_error FT;
 
   return CGAL::compare_SAF(scaled_distance_to_planeC3(pa,pb,pc,pd,px,py,pz),
-                       scaled_distance_to_planeC3(pa,pb,pc,pd,qx,qy,qz), epsilon_0);
+                       scaled_distance_to_planeC3(pa,pb,pc,pd,qx,qy,qz),
+		epsilon_0);
 }
 
 inline
@@ -953,7 +970,8 @@ cmp_signed_dist_to_planeC3_SAF(
   typedef Restricted_double FT;
 
   return CGAL::compare_SAF(scaled_distance_to_planeC3(pa,pb,pc,pd,px,py,pz),
-                       scaled_distance_to_planeC3(pa,pb,pc,pd,qx,qy,qz), epsilon_0);
+                       scaled_distance_to_planeC3(pa,pb,pc,pd,qx,qy,qz),
+		epsilon_0);
 }
 
 inline
@@ -1087,7 +1105,8 @@ cmp_signed_dist_to_planeC3_SAF(
                                       px,py,pz),
            scaled_distance_to_planeC3(ppx,ppy,ppz,pqx,pqy,pqz,
                                       prx,pry,prz,psx,psy,psz,
-                                      qx,qy,qz) , epsilon_0);
+                                      qx,qy,qz) ,
+		epsilon_0);
 }
 
 inline
@@ -1118,7 +1137,8 @@ cmp_signed_dist_to_planeC3_SAF(
                                       px,py,pz),
            scaled_distance_to_planeC3(ppx,ppy,ppz,pqx,pqy,pqz,
                                       prx,pry,prz,psx,psy,psz,
-                                      qx,qy,qz) , epsilon_0);
+                                      qx,qy,qz) ,
+		epsilon_0);
 }
 
 inline

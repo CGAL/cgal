@@ -49,7 +49,8 @@ in_smallest_orthogonalcircleC2_SAF(
   FT dpz = square(dpx)+square(dpy);
  
   return Oriented_side (sign_SAF((square(dtx)+square(dty)-tw+qw)*dpz
-			     -(dpz-pw+qw)*(dpx*dtx+dpy*dty), epsilon_0));
+			     -(dpz-pw+qw)*(dpx*dtx+dpy*dty),
+		epsilon_0));
 }
 
 inline
@@ -75,7 +76,8 @@ in_smallest_orthogonalcircleC2_SAF(
   FT dpz = square(dpx)+square(dpy);
  
   return Oriented_side (sign_SAF((square(dtx)+square(dty)-tw+qw)*dpz
-			     -(dpz-pw+qw)*(dpx*dtx+dpy*dty), epsilon_0));
+			     -(dpz-pw+qw)*(dpx*dtx+dpy*dty),
+		epsilon_0));
 }
 
 inline

@@ -60,7 +60,8 @@ power_testC2_SAF(
 
     return Oriented_side(sign_of_determinant3x3_SAF(dpx, dpy, dpz,
                                                 dqx, dqy, dqz,
-                                                drx, dry, drz, epsilon_0));
+                                                drx, dry, drz,
+		epsilon_0));
 }
 
 inline
@@ -97,7 +98,8 @@ power_testC2_SAF(
 
     return Oriented_side(sign_of_determinant3x3_SAF(dpx, dpy, dpz,
                                                 dqx, dqy, dqz,
-                                                drx, dry, drz, epsilon_0));
+                                                drx, dry, drz,
+		epsilon_0));
 }
 
 inline
@@ -243,13 +245,17 @@ power_testC2_SAF(
     FT dqz = square(dqx) + square(dqy) - qwt + twt;
 
     
-    Comparison_result cmpx = CGAL::compare_SAF(px, qx, epsilon_0);
+    Comparison_result cmpx = CGAL::compare_SAF(px, qx,
+		epsilon_0);
     if (cmpx != EQUAL)
-	return Oriented_side(cmpx * sign_of_determinant2x2_SAF(dpx, dpz, dqx, dqz, epsilon_1));
+	return Oriented_side(cmpx * sign_of_determinant2x2_SAF(dpx, dpz, dqx, dqz,
+		epsilon_1));
 
     
-    Comparison_result cmpy = CGAL::compare_SAF(py, qy, epsilon_2);
-    return Oriented_side(cmpy * sign_of_determinant2x2_SAF(dpy, dpz, dqy, dqz, epsilon_3));
+    Comparison_result cmpy = CGAL::compare_SAF(py, qy,
+		epsilon_2);
+    return Oriented_side(cmpy * sign_of_determinant2x2_SAF(dpy, dpz, dqy, dqz,
+		epsilon_3));
 }
 
 inline
@@ -280,13 +286,17 @@ power_testC2_SAF(
     FT dqz = square(dqx) + square(dqy) - qwt + twt;
 
     
-    Comparison_result cmpx = CGAL::compare_SAF(px, qx, epsilon_0);
+    Comparison_result cmpx = CGAL::compare_SAF(px, qx,
+		epsilon_0);
     if (cmpx != EQUAL)
-	return Oriented_side(cmpx * sign_of_determinant2x2_SAF(dpx, dpz, dqx, dqz, epsilon_1));
+	return Oriented_side(cmpx * sign_of_determinant2x2_SAF(dpx, dpz, dqx, dqz,
+		epsilon_1));
 
     
-    Comparison_result cmpy = CGAL::compare_SAF(py, qy, epsilon_2);
-    return Oriented_side(cmpy * sign_of_determinant2x2_SAF(dpy, dpz, dqy, dqz, epsilon_3));
+    Comparison_result cmpy = CGAL::compare_SAF(py, qy,
+		epsilon_2);
+    return Oriented_side(cmpy * sign_of_determinant2x2_SAF(dpy, dpz, dqy, dqz,
+		epsilon_3));
 }
 
 inline

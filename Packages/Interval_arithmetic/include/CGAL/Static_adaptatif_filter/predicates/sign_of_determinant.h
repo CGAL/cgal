@@ -36,7 +36,8 @@ sign_of_determinant2x2_SAF(
     double & epsilon_0)
 {
   typedef Static_filter_error FT;
- return static_cast<Sign>(static_cast<int>(CGAL::compare_SAF( a00*a11, a10*a01, epsilon_0))); }
+ return static_cast<Sign>(static_cast<int>(CGAL::compare_SAF( a00*a11, a10*a01,
+		epsilon_0))); }
 
 inline
 Sign
@@ -48,7 +49,8 @@ sign_of_determinant2x2_SAF(
     const double & epsilon_0)
 {
   typedef Restricted_double FT;
- return static_cast<Sign>(static_cast<int>(CGAL::compare_SAF( a00*a11, a10*a01, epsilon_0))); }
+ return static_cast<Sign>(static_cast<int>(CGAL::compare_SAF( a00*a11, a10*a01,
+		epsilon_0))); }
 
 inline
 Sign
@@ -135,7 +137,8 @@ sign_of_determinant3x3_SAF(
 
   return CGAL::sign_SAF(det3x3_by_formula(a00, a01, a02,
                                       a10, a11, a12,
-                                      a20, a21, a22), epsilon_0);
+                                      a20, a21, a22),
+		epsilon_0);
 }
 
 inline
@@ -156,7 +159,8 @@ sign_of_determinant3x3_SAF(
 
   return CGAL::sign_SAF(det3x3_by_formula(a00, a01, a02,
                                       a10, a11, a12,
-                                      a20, a21, a22), epsilon_0);
+                                      a20, a21, a22),
+		epsilon_0);
 }
 
 inline
@@ -282,7 +286,8 @@ sign_of_determinant4x4_SAF(
   return CGAL::sign_SAF(det4x4_by_formula(a00, a01, a02, a03,
                                       a10, a11, a12, a13,
                                       a20, a21, a22, a23,
-                                      a30, a31, a32, a33), epsilon_0);
+                                      a30, a31, a32, a33),
+		epsilon_0);
 }
 
 inline
@@ -311,7 +316,8 @@ sign_of_determinant4x4_SAF(
   return CGAL::sign_SAF(det4x4_by_formula(a00, a01, a02, a03,
                                       a10, a11, a12, a13,
                                       a20, a21, a22, a23,
-                                      a30, a31, a32, a33), epsilon_0);
+                                      a30, a31, a32, a33),
+		epsilon_0);
 }
 
 inline
@@ -489,7 +495,8 @@ sign_of_determinant5x5_SAF(
                                       a10, a11, a12, a13, a14,
                                       a20, a21, a22, a23, a24,
                                       a30, a31, a32, a33, a34,
-                                      a40, a41, a42, a43, a44), epsilon_0);
+                                      a40, a41, a42, a43, a44),
+		epsilon_0);
 }
 
 inline
@@ -528,7 +535,8 @@ sign_of_determinant5x5_SAF(
                                       a10, a11, a12, a13, a14,
                                       a20, a21, a22, a23, a24,
                                       a30, a31, a32, a33, a34,
-                                      a40, a41, a42, a43, a44), epsilon_0);
+                                      a40, a41, a42, a43, a44),
+		epsilon_0);
 }
 
 inline
@@ -772,7 +780,8 @@ sign_of_determinant6x6_SAF(
                                       a20, a21, a22, a23, a24, a25,
                                       a30, a31, a32, a33, a34, a35,
                                       a40, a41, a42, a43, a44, a45,
-                                      a50, a51, a52, a53, a54, a55), epsilon_0);
+                                      a50, a51, a52, a53, a54, a55),
+		epsilon_0);
 }
 
 inline
@@ -823,7 +832,8 @@ sign_of_determinant6x6_SAF(
                                       a20, a21, a22, a23, a24, a25,
                                       a30, a31, a32, a33, a34, a35,
                                       a40, a41, a42, a43, a44, a45,
-                                      a50, a51, a52, a53, a54, a55), epsilon_0);
+                                      a50, a51, a52, a53, a54, a55),
+		epsilon_0);
 }
 
 inline
