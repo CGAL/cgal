@@ -1,4 +1,4 @@
-\ccSetThreeColumns{CGAL_Color }{}{\hspace*{8cm}}
+\ccSetThreeColumns{Color }{}{\hspace*{8cm}}
 \ccSetTwoColumns{}{\hspace*{8cm}}
 
 \cleardoublepage
@@ -6,7 +6,7 @@
 
 \medskip
 
-\begin{ccClass} {CGAL_Color}
+\begin{ccClass} {Color}
 \ccSection{Colors}
 
 \ccDefinition
@@ -19,26 +19,26 @@ $0\le r,g,b \le 255$, the so-called {\em rgb-value} of the color.
 \ccCreation
 \ccCreationVariable{c}
 
-\ccThree{CGAL_Color &}{c(int red, int green, int blue);}{}
+\ccThree{Color &}{c(int red, int green, int blue);}{}
 \ccThreeToTwo
 
-\ccConstructor{CGAL_Color();}
+\ccConstructor{Color();}
              {creates a color with rgb-value $(0,0,0)$, i.e.\ black.}
 
-\ccConstructor{CGAL_Color(int red, int green, int blue);}
+\ccConstructor{Color(int red, int green, int blue);}
              {creates a color with rgb-value \ccStyle{(red,green,blue)}.}
 
 
 \ccOperations
 
-\ccHidden \ccMethod{CGAL_Color & operator=(const CGAL_Color &q);}
+\ccHidden \ccMethod{Color & operator=(const Color &q);}
         {Assignment.}
 
-\ccMethod{bool operator==(const CGAL_Color &q) const;}
+\ccMethod{bool operator==(const Color &q) const;}
        {Test for equality: Two colors are equal, iff their 
         rgb-values are equal.}
 \ccGlue
-\ccMethod{bool operator!=(const CGAL_Color &q) const;}
+\ccMethod{bool operator!=(const Color &q) const;}
        {Test for inequality.}
 
 \ccMethod{int red() const;}
@@ -56,19 +56,19 @@ The following constants are predefined:
 
 \newpage
 
-\ccThree{const CGAL_Color &}{CGAL_WHITE = CGAL_Color(255, 255, 255);}{}
+\ccThree{const Color &}{WHITE = Color(255, 255, 255);}{}
 
-\ccVariable{const CGAL_Color CGAL_BLACK  = CGAL_Color(0, 0, 0);}{Black.}
+\ccVariable{const Color BLACK  = Color(0, 0, 0);}{Black.}
 \ccGlue
-\ccVariable{const CGAL_Color CGAL_WHITE  = CGAL_Color(255, 255, 255);}{White.}
+\ccVariable{const Color WHITE  = Color(255, 255, 255);}{White.}
 \ccGlue
-\ccVariable{const CGAL_Color CGAL_RED    = CGAL_Color(255, 0, 0);}{Red.}
+\ccVariable{const Color RED    = Color(255, 0, 0);}{Red.}
 \ccGlue
-\ccVariable{const CGAL_Color CGAL_GREEN  = CGAL_Color(0, 255, 0);}{Green.}
+\ccVariable{const Color GREEN  = Color(0, 255, 0);}{Green.}
 \ccGlue
-\ccVariable{const CGAL_Color CGAL_BLUE   = CGAL_Color(0, 0, 255);}{Blue.}
+\ccVariable{const Color BLUE   = Color(0, 0, 255);}{Blue.}
 \ccGlue
-\ccVariable{const CGAL_Color CGAL_VIOLET = CGAL_Color(255, 0, 255);}{Violet.}
+\ccVariable{const Color VIOLET = Color(255, 0, 255);}{Violet.}
 \ccGlue
-\ccVariable{const CGAL_Color CGAL_ORANGE = CGAL_Color(255, 170, 0);}{Orange.}
+\ccVariable{const Color ORANGE = Color(255, 170, 0);}{Orange.}
 \end{ccClass} 
