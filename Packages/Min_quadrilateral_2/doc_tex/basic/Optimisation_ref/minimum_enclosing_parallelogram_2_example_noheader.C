@@ -14,14 +14,14 @@ using std::back_inserter;
 using std::cout;
 using std::endl;
 
-typedef CGAL::Cartesian< double >                      R;
-typedef R::Point_2                                     Point_2;
-typedef R::Line_2                                      Line_2;
-typedef CGAL::Polygon_traits_2< R >                    P_traits;
-typedef std::vector< Point_2 >                         Cont;
-typedef CGAL::Polygon_2< P_traits, Cont >              Polygon_2;
-typedef CGAL::Creator_uniform_2< double, Point_2 >     Creator;
-typedef Random_points_in_square_2< Point_2, Creator >  Point_generator;
+typedef CGAL::Cartesian<double>                     Kernel;
+typedef Kernel::Point_2                             Point_2;
+typedef Kernel::Line_2                              Line_2;
+typedef CGAL::Polygon_traits_2<Kernel>              P_traits;
+typedef std::vector<Point_2>                        Cont;
+typedef CGAL::Polygon_2<P_traits,Cont>              Polygon_2;
+typedef CGAL::Creator_uniform_2<double,Point_2>     Creator;
+typedef Random_points_in_square_2<Point_2,Creator>  Point_generator;
 
 int main()
 {

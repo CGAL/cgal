@@ -42,22 +42,21 @@
   exactly this point is written to \ccc{o}.
   
   \ccPrecond The points denoted by the range [\ccc{points_begin},
-  \ccc{points_end}) form the boundary of a convex polygon $P$ in
-  counterclockwise orientation.
+  \ccc{points_end}) form the boundary of a simple convex polygon $P$
+  in counterclockwise orientation.
   
   The geometric types and operations to be used for the computation
   are specified by the traits class parameter \ccc{t}. The parameter
   can be omitted if \ccc{ForwardIterator} refers to a point type from
   the 2D-Kernel. In this case, a default traits class
-  (\ccc{Min_quadrilateral_default_traits_2<R>}) is used.
+  (\ccc{Min_quadrilateral_default_traits_2<Kernel>}) is used.
   
   \ccRequire
   \begin{enumerate}
   \item If \ccc{Traits} is specified, it is a model for
     \ccc{MinQuadrilateralTraits_2} and the value type \ccc{VT} of
-    \ccc{ForwardIterator} is \ccc{Traits::Point_2}.  Otherwise
-    \ccc{VT} is \ccc{CGAL::Point_2<R>} for some representation class
-    \ccc{R}.
+    \ccc{ForwardIterator} is \ccc{Traits::Point_2}. Otherwise \ccc{VT}
+    is \ccc{CGAL::Point_2<Kernel>} for some kernel \ccc{Kernel}.
   \item \ccc{OutputIterator} accepts \ccc{VT} as value type.
   \end{enumerate}
   
@@ -65,7 +64,7 @@
   \ccRefIdfierPage{CGAL::min_parallelogram_2}\\
   \ccRefIdfierPage{CGAL::min_strip_2}\\
   \ccRefConceptPage{MinQuadrilateralTraits_2}\\
-  \ccRefIdfierPage{CGAL::Min_quadrilateral_default_traits_2<R>}
+  \ccRefIdfierPage{CGAL::Min_quadrilateral_default_traits_2<Kernel>}
   
   \ccImplementation We use a rotating caliper
   \ccIndexMainItem[t]{rotating caliper} algorithm \cite{t-sgprc-83}
@@ -111,22 +110,22 @@
   exactly this point is written to \ccc{o}.
   
   \ccPrecond The points denoted by the range [\ccc{points_begin},
-  \ccc{points_end}) form the boundary of a convex polygon $P$ in
-  counterclockwise orientation.
+  \ccc{points_end}) form the boundary of a simple convex polygon $P$
+  in counterclockwise orientation.
 
   The geometric types and operations to be used for the computation
   are specified by the traits class parameter \ccc{t}. The parameter
   can be omitted if \ccc{ForwardIterator} refers to a point type from
   the 2D-Kernel. In this case, a default traits class
-  (\ccc{Min_quadrilateral_default_traits_2<R>}) is used.
+  (\ccc{Min_quadrilateral_default_traits_2<Kernel>}) is used.
   
   \ccRequire
   \begin{enumerate}
   \item If \ccc{Traits} is specified, it is a model for
     \ccc{MinQuadrilateralTraits_2} and the value type \ccc{VT} of
-    \ccc{ForwardIterator} is \ccc{Traits::Point_2}.  Otherwise
-    \ccc{VT} is \ccc{CGAL::Point_2<R>} for some representation class
-    \ccc{R}.
+    \ccc{ForwardIterator} is \ccc{Traits::Point_2}. Otherwise
+    \ccc{VT} is \ccc{CGAL::Point_2<Kernel>} for some Kernel
+    \ccc{Kernel}.
   \item \ccc{OutputIterator} accepts \ccc{VT} as value type.
   \end{enumerate}
   
@@ -134,7 +133,7 @@
   \ccRefIdfierPage{CGAL::min_rectangle_2}\\
   \ccRefIdfierPage{CGAL::min_strip_2}\\
   \ccRefConceptPage{MinQuadrilateralTraits_2}\\
-  \ccRefIdfierPage{CGAL::Min_quadrilateral_default_traits_2<R>}
+  \ccRefIdfierPage{CGAL::Min_quadrilateral_default_traits_2<Kernel>}
   
   \ccImplementation We use a rotating caliper
   \ccIndexMainItem[t]{rotating caliper} algorithm
@@ -180,22 +179,21 @@
   remains unchanged.
   
   \ccPrecond The points denoted by the range [\ccc{points_begin},
-  \ccc{points_end}) form the boundary of a convex polygon $P$ in
-  counterclockwise orientation.
+  \ccc{points_end}) form the boundary of a simple convex polygon $P$
+  in counterclockwise orientation.
 
   The geometric types and operations to be used for the computation
   are specified by the traits class parameter \ccc{t}. The parameter
   can be omitted if \ccc{ForwardIterator} refers to a point type from
   the 2D-Kernel. In this case, a default traits class
-  (\ccc{Min_quadrilateral_default_traits_2<R>}) is used.
+  (\ccc{Min_quadrilateral_default_traits_2<Kernel>}) is used.
   
   \ccRequire
   \begin{enumerate}
   \item If \ccc{Traits} is specified, it is a model for
     \ccc{MinQuadrilateralTraits_2} and the value type \ccc{VT} of
-    \ccc{ForwardIterator} is \ccc{Traits::Point_2}.  Otherwise
-    \ccc{VT} is \ccc{CGAL::Point_2<R>} for some representation class
-    \ccc{R}.
+    \ccc{ForwardIterator} is \ccc{Traits::Point_2}.  Otherwise \ccc{VT}
+    is \ccc{CGAL::Point_2<Kernel>} for some kernel \ccc{Kernel}.
   \item \ccc{OutputIterator} accepts \ccc{VT} as value type.
   \end{enumerate}
   
@@ -203,7 +201,7 @@
   \ccRefIdfierPage{CGAL::min_rectangle_2}\\
   \ccRefIdfierPage{CGAL::min_parallelogram_2}\\
   \ccRefConceptPage{MinQuadrilateralTraits_2}\\
-  \ccRefIdfierPage{CGAL::Min_quadrilateral_default_traits_2<R>}
+  \ccRefIdfierPage{CGAL::Min_quadrilateral_default_traits_2<Kernel>}
   
   \ccImplementation We use a rotating caliper
   \ccIndexMainItem[t]{rotating caliper} algorithm \cite{t-sgprc-83}
@@ -217,14 +215,14 @@
 
 \end{ccRefFunction}
     
-\begin{ccRefClass}{Min_quadrilateral_default_traits_2<R>}
+\begin{ccRefClass}{Min_quadrilateral_default_traits_2<Kernel>}
   \ccCreationVariable{t}\ccTagFullDeclarations
   
   \ccDefinition The class \ccRefName\ is a traits class for the
   functions \ccc{min_rectangle_2}, \ccc{min_parallelogram_2} and
-  \ccc{min_strip_2} using the two-dimensional \cgal\ kernel.
+  \ccc{min_strip_2} using a two-dimensional \cgal\ kernel.
   
-  \ccRequirements The template parameter \ccc{R} is a model for
+  \ccRequirements The template parameter \ccc{Kernel} is a model for
   \ccc{Kernel}.
   
   \ccInclude{CGAL/Min_quadrilateral_traits_2.h}
@@ -236,11 +234,13 @@
   
   \ccTwo{Minq_traits::Rotate_direction_by_multiple_of_pi_22}{}
   
-  \ccNestedType{Point_2}{typedef to \ccc{R::Point_2}}
+  \ccNestedType{Point_2}{\ccRefConceptPage{Kernel::Point_2}.}
   
-  \ccNestedType{Direction_2}{typedef to \ccc{R::Direction_2}}
+  \ccNestedType{Vector_2}{\ccRefConceptPage{Kernel::Vector_2}.}
   
-  \ccNestedType{Line_2}{typedef to \ccc{R::Line_2}}
+  \ccNestedType{Direction_2}{\ccRefConceptPage{Kernel::Direction_2}.}
+  
+  \ccNestedType{Line_2}{\ccRefConceptPage{Kernel::Line_2}.}
   
   \ccNestedType{Rectangle_2}{internal type.}
   
@@ -248,42 +248,19 @@
   
   \ccNestedType{Strip_2}{internal type.}
   
-  \ccNestedType{Equal_2}{AdaptableBinaryFunction class\\\ccc{op}:
-    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{bool}.\\
-    Returns true, iff the two points are equal.}
+  \ccHeading{Predicates}
+
+  \ccNestedType{Equal_2}{\ccRefConceptPage{Kernel::Equal_2}.}
   
-  \ccNestedType{Less_x_2}{AdaptableBinaryFunction class \\\ccc{op}:
-    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{bool}.\\
-    \ccc{op(p,q)} returns true, iff the $x$-coordinate of \ccc{p} is
-    smaller than the $x$-coordinate of \ccc{q}.}
+  \ccNestedType{Less_xy_2}{\ccRefConceptPage{Kernel::Less_xy_2}.}
   
-  \ccNestedType{Less_y_2}{AdaptableBinaryFunction class \\\ccc{op}:
-    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{bool}.\\
-    \ccc{op(p,q)} returns true, iff the $y$-coordinate of \ccc{p} is
-    smaller than the $y$-coordinate of \ccc{q}.}
+  \ccNestedType{Less_yx_2}{\ccRefConceptPage{Kernel::Less_yx_2}.}
   
-  \ccNestedType{Greater_x_2}{AdaptableBinaryFunction class
-    \\\ccc{op}:
-    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{bool}.\\
-    \ccc{op(p,q)} returns true, iff the $x$-coordinate of \ccc{p} is
-    greater than the $x$-coordinate of \ccc{q}.}
+  \ccNestedType{Has_on_negative_side_2}
+  {\ccRefConceptPage{Kernel::Has_on_negative_side_2}.}
   
-  \ccNestedType{Greater_y_2}{AdaptableBinaryFunction class
-    \\\ccc{op}:
-    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{bool}.\\
-    \ccc{op(p,q)} returns true, iff the $y$-coordinate of \ccc{p} is
-    greater than the $y$-coordinate of \ccc{q}.}
-  
-  \ccNestedType{Right_of_implicit_line_2}{Function class \\\ccc{op}:
-    \ccc{Point_2} $\times$ \ccc{Point_2} $\times$ \ccc{Direction_2}
-    $\rightarrow$ \ccc{bool}.\\ \ccc{op(p1,p2,d)} returns true, iff
-    the \ccc{p1} is strictly to the right of the oriented line
-    through \ccc{p2} with direction \ccc{d}.}
-  
-  \ccNestedType{Less_rotate_ccw_2}{AdaptableBinaryFunction class
-    \\\ccc{op}: \ccc{Direction_2} $\times$ \ccc{Direction_2}
-    $\rightarrow$ \ccc{bool}.\\ \ccc{op(d1,d2)} returns true, iff
-    the slope of \ccc{d1} is less than the slope of \ccc{d2}.}
+  \ccNestedType{Compare_angle_with_x_axis_2}
+  {\ccRefConceptPage{Kernel::Compare_angle_with_x_axis_2}.}
   
   \ccNestedType{Area_less_rectangle_2}{AdaptableBinaryFunction class
     \\\ccc{op}: \ccc{Rectangle_2} $\times$ \ccc{Rectangle_2}
@@ -301,18 +278,25 @@
     \ccc{bool}.\\ \ccc{op(s1,s2)} returns true, iff the width of
     $s1$ is strictly less than the width of $s2$.}
   
-  \ccNestedType{Rotate_direction_by_multiple_of_pi_2}{
-    AdaptableBinaryFunction class \\\ccc{op}: \ccc{Direction_2}
-    $\times$ \ccc{int} $\rightarrow$ \ccc{Direction_2}.\\ For a
-    direction $d$ and $i,\, 0 \le i < 4$ \ccc{op(d,i)} returns the
-    direction that results from clockwise rotating $d$ by $i \cdot
-    \pi$.}
+  \ccHeading{Constructions}
+
+  \ccNestedType{Construct_vector_2}{\ccRefConceptPage{Kernel::Construct_vector_2}.}
+
+  \ccNestedType{Construct_vector_from_direction_2}{AdaptableFunctor
+  \\\ccc{op}: \ccc{Direction_2} $\rightarrow$ \ccc{Vector_2}.\\
+  \ccc{op(d)} returns a vector in direction \ccc{d}.}
+
+  \ccNestedType{Construct_perpendicular_vector_2}
+  {\ccRefConceptPage{Kernel::Construct_perpendicular_vector_2}.}
   
-  \ccNestedType{Construct_direction_2}{AdaptableBinaryFunction class
-    \\\ccc{op}: \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$
-    \ccc{Direction_2}.\\ \ccc{op(p,q)} returns the direction of the
-    vector from $p$ to $q$.}
+  \ccNestedType{Construct_direction_2}
+  {\ccRefConceptPage{Kernel::Construct_direction_2}.}
   
+  \ccNestedType{Construct_opposite_direction_2}
+  {\ccRefConceptPage{Kernel::Construct_opposite_direction_2}.}
+
+  \ccNestedType{Construct_line_2}{\ccRefConceptPage{Kernel::Construct_line_2}.}
+
   \ccNestedType{Construct_rectangle_2}{Function class \\\ccc{op}:
     \ccc{Point_2} $\times$ \ccc{Direction_2} $\times$ \ccc{Point_2}
     $\times$ \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$
@@ -356,38 +340,15 @@
     copy_strip_lines_2(const Strip_2& s, OutputIterator o)
     const;}{copies the two lines bounding \ccc{s} to \ccc{o}.}
 
-  The following functions just return the corresponding function
-  object.
-  
-  \ccThree{Rotate_direction_by_multiple_of_pi_2}{
-    rotate_direction_by_multiple_of_pi_2_object();}{}
-  
-  \ccMemberFunction{Equal_2 equal_2_object() const;}{}
-  \ccGlue\ccMemberFunction{Less_x_2 less_x_2_object() const;}{}
-  \ccGlue\ccMemberFunction{Less_y_2 less_y_2_object() const;}{}
-  \ccGlue\ccMemberFunction{Greater_x_2 greater_x_2_object() const;}{}
-  \ccGlue\ccMemberFunction{Greater_y_2 greater_y_2_object() const;}{}
-  
-  \ccGlue\ccMemberFunction{Right_of_implicit_line_2
-    right_of_implicit_line_2_object() const;}{}
-  \ccGlue\ccMemberFunction{Less_rotate_ccw_2
-    less_rotate_ccw_2_object() const;}{}
-  \ccGlue\ccMemberFunction{Area_less_rectangle_2
-    area_less_rectangle_2_object() const;}{}
-  \ccGlue\ccMemberFunction{Area_less_parallelogram_2
-    area_less_parallelogram_2_object() const;}{}
-  \ccGlue\ccMemberFunction{Width_less_strip_2
-    width_less_strip_2_object() const;}{}
-  \ccGlue\ccMemberFunction{Construct_direction_2
-    construct_direction_2_object() const;}{}
-  \ccGlue\ccMemberFunction{Construct_rectangle_2
-    construct_rectangle_2_object() const;}{}
-  \ccGlue\ccMemberFunction{Construct_parallelogram_2
-    construct_parallelogram_2_object() const;}{}
-  \ccGlue\ccMemberFunction{Construct_strip_2
-    construct_strip_2_object() const;}{}
-  \ccGlue\ccMemberFunction{Rotate_direction_by_multiple_of_pi_2
-    rotate_direction_by_multiple_of_pi_2_object() const;}{}
+  Additionally, for each of the predicate and construction functor
+  types listed above, there is a member function that requires no
+  arguments and returns an instance of that functor type. The name of
+  the member function is the uncapitalized name of the type returned
+  with the suffix \ccc{_object} appended. For example, for the functor
+  type \ccc{Construct_vector_2} the following member function exists:
+
+  \ccMemberFunction{Construct_vector_2 construct_vector_2_object()
+    const ;}{}
   
   \ccSeeAlso
   \ccRefIdfierPage{CGAL::min_rectangle_2}\\
@@ -406,9 +367,11 @@
   
   \ccTypes 
   
-  \ccTwo{Minq_traits::Rotate_direction_by_multiple_of_pi_22}{}
+  \ccTwo{Minq_traits::Construct_perpendicular_vector_2}{}
 
   \ccNestedType{Point_2}{type for representing points.}
+  
+  \ccNestedType{Vector_2}{type for representing vectors.}
   
   \ccNestedType{Direction_2}{type for representing directions.}
   
@@ -423,70 +386,58 @@
   \ccNestedType{Strip_2}{type for representing strips, that is the
     closed region bounded by two parallel lines.}
   
-  \ccNestedType{Equal_2}{AdaptableBinaryFunction class\\\ccc{op}:
-    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{bool}.\\
-    Returns true, iff the two points are equal.}
+  \ccHeading{Predicates}
+
+  \ccNestedType{Equal_2}{a model for \ccRefConceptPage{Kernel::Equal_2}.}
   
-  \ccNestedType{Less_x_2}{AdaptableBinaryFunction class \\\ccc{op}:
-    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{bool}.\\
-    \ccc{op(p,q)} returns true, iff the $x$-coordinate of \ccc{p} is
-    smaller than the $x$-coordinate of \ccc{q}.}
+  \ccNestedType{Less_xy_2}{a model for
+    \ccRefConceptPage{Kernel::Less_xy_2}.}
+
+  \ccNestedType{Less_yx_2}{a model for
+    \ccRefConceptPage{Kernel::Less_yx_2}.}
   
-  \ccNestedType{Less_y_2}{AdaptableBinaryFunction class \\\ccc{op}:
-    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{bool}.\\
-    \ccc{op(p,q)} returns true, iff the $y$-coordinate of \ccc{p} is
-    smaller than the $y$-coordinate of \ccc{q}.}
+  \ccNestedType{Has_on_negative_side_2}{a model for
+    \ccRefConceptPage{Kernel::Has_on_negative_side_2}.}
   
-  \ccNestedType{Greater_x_2}{AdaptableBinaryFunction class
-    \\\ccc{op}:
-    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{bool}.\\
-    \ccc{op(p,q)} returns true, iff the $x$-coordinate of \ccc{p} is
-    greater than the $x$-coordinate of \ccc{q}.}
+  \ccNestedType{Compare_angle_with_x_axis_2}{a model for
+    \ccRefConceptPage{Kernel::Compare_angle_with_x_axis_2}.}
   
-  \ccNestedType{Greater_y_2}{AdaptableBinaryFunction class
-    \\\ccc{op}:
-    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{bool}.\\
-    \ccc{op(p,q)} returns true, iff the $y$-coordinate of \ccc{p} is
-    greater than the $y$-coordinate of \ccc{q}.}
+  \ccNestedType{Area_less_rectangle_2}{AdaptableFunctor \\\ccc{op}:
+    \ccc{Rectangle_2} $\times$ \ccc{Rectangle_2} $\rightarrow$
+    \ccc{bool}.\\ \ccc{op(r1,r2)} returns true, iff the area of $r1$ is
+    strictly less than the area of $r2$.}
   
-  \ccNestedType{Right_of_implicit_line_2}{Function class \\\ccc{op}:
-    \ccc{Point_2} $\times$ \ccc{Point_2} $\times$ \ccc{Direction_2}
-    $\rightarrow$ \ccc{bool}.\\ \ccc{op(p1,p2,d)} returns true, iff
-    the \ccc{p1} is strictly to the right of the oriented line
-    through \ccc{p2} with direction \ccc{d}.}
+  \ccNestedType{Area_less_parallelogram_2}{AdaptableFunctor \\\ccc{op}:
+    \ccc{Parallelogram_2} $\times$
+    \ccc{Parallelogram_2} $\rightarrow$ \ccc{bool}.\\
+    \ccc{op(p1,p2)} returns true, iff the area of $p1$ is strictly less
+    than the area of $p2$.}
   
-  \ccNestedType{Less_rotate_ccw_2}{AdaptableBinaryFunction class
-    \\\ccc{op}: \ccc{Direction_2} $\times$ \ccc{Direction_2}
-    $\rightarrow$ \ccc{bool}.\\ \ccc{op(d1,d2)} returns true, iff
-    the slope of \ccc{d1} is less than the slope of \ccc{d2}.}
+  \ccNestedType{Width_less_strip_2}{AdaptableFunctor \\\ccc{op}:
+    \ccc{Strip_2} $\times$ \ccc{Strip_2} $\rightarrow$ \ccc{bool}.\\ 
+    \ccc{op(s1,s2)} returns true, iff the width of $s1$ is strictly less
+    than the width of $s2$.}
   
-  \ccNestedType{Area_less_rectangle_2}{AdaptableBinaryFunction class
-    \\\ccc{op}: \ccc{Rectangle_2} $\times$ \ccc{Rectangle_2}
-    $\rightarrow$ \ccc{bool}.\\ \ccc{op(r1,r2)} returns true, iff
-    the area of $r1$ is strictly less than the area of $r2$.}
+  \ccHeading{Constructions}
+
+  \ccNestedType{Construct_vector_2}{a model for
+    \ccRefConceptPage{Kernel::Construct_vector_2}.}
   
-  \ccNestedType{Area_less_parallelogram_2}{AdaptableBinaryFunction
-    class \\\ccc{op}: \ccc{Parallelogram_2} $\times$
-    \ccc{Parallelogram_2} $\rightarrow$ \ccc{bool}.\\ 
-    \ccc{op(p1,p2)} returns true, iff the area of $p1$ is strictly
-    less than the area of $p2$.}
+  \ccNestedType{Construct_vector_from_direction_2}{AdaptableFunctor
+  \\\ccc{op}: \ccc{Direction_2} $\rightarrow$ \ccc{Vector_2}.\\
+  \ccc{op(d)} returns a vector in direction \ccc{d}.}
+
+  \ccNestedType{Construct_perpendicular_vector_2}{a model for
+    \ccRefConceptPage{Kernel::Construct_perpendicular_vector_2}.}
   
-  \ccNestedType{Width_less_strip_2}{AdaptableBinaryFunction class
-    \\\ccc{op}: \ccc{Strip_2} $\times$ \ccc{Strip_2} $\rightarrow$
-    \ccc{bool}.\\ \ccc{op(s1,s2)} returns true, iff the width of
-    $s1$ is strictly less than the width of $s2$.}
+  \ccNestedType{Construct_direction_2}{a model for
+    \ccRefConceptPage{Kernel::Construct_direction_2}.}
   
-  \ccNestedType{Rotate_direction_by_multiple_of_pi_2}{
-    AdaptableBinaryFunction class \\\ccc{op}: \ccc{Direction_2}
-    $\times$ \ccc{int} $\rightarrow$ \ccc{Direction_2}.\\ For a
-    direction $d$ and $i,\, 0 \le i < 4$ \ccc{op(d,i)} returns the
-    direction that results from clockwise rotating $d$ by $i \cdot
-    \pi$.}
+  \ccNestedType{Construct_opposite_direction_2}{a model for
+    \ccRefConceptPage{Kernel::Construct_opposite_direction_2}.}
   
-  \ccNestedType{Construct_direction_2}{AdaptableBinaryFunction class
-    \\\ccc{op}: \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$
-    \ccc{Direction_2}.\\ \ccc{op(p,q)} returns the direction of the
-    vector from $p$ to $q$.}
+  \ccNestedType{Construct_line_2}{a model for
+    \ccRefConceptPage{Kernel::Construct_line_2}.}
   
   \ccNestedType{Construct_rectangle_2}{Function class \\\ccc{op}:
     \ccc{Point_2} $\times$ \ccc{Direction_2} $\times$ \ccc{Point_2}
@@ -531,41 +482,19 @@
     copy_strip_lines_2(const Strip_2& s, OutputIterator o)
     const;}{copies the two lines bounding \ccc{s} to \ccc{o}.}
 
-  The following functions just return the corresponding function
-  object.
-  
-  \ccThree{Rotate_direction_by_multiple_of_pi_2}{
-    rotate_direction_by_multiple_of_pi_2_object();}{}
-  
-  \ccMemberFunction{Equal_2 equal_2_object() const;}{}
-  \ccGlue\ccMemberFunction{Less_x_2 less_x_2_object() const;}{}
-  \ccGlue\ccMemberFunction{Less_y_2 less_y_2_object() const;}{}
-  \ccGlue\ccMemberFunction{Greater_x_2 greater_x_2_object() const;}{}
-  \ccGlue\ccMemberFunction{Greater_y_2 greater_y_2_object() const;}{}
-  
-  \ccGlue\ccMemberFunction{Right_of_implicit_line_2
-    right_of_implicit_line_2_object() const;}{}
-  \ccGlue\ccMemberFunction{Less_rotate_ccw_2
-    less_rotate_ccw_2_object() const;}{}
-  \ccGlue\ccMemberFunction{Area_less_rectangle_2
-    area_less_rectangle_2_object() const;}{}
-  \ccGlue\ccMemberFunction{Area_less_parallelogram_2
-    area_less_parallelogram_2_object() const;}{}
-  \ccGlue\ccMemberFunction{Width_less_strip_2
-    width_less_strip_2_object() const;}{}
-  \ccGlue\ccMemberFunction{Construct_direction_2
-    construct_direction_2_object() const;}{}
-  \ccGlue\ccMemberFunction{Construct_rectangle_2
-    construct_rectangle_2_object() const;}{}
-  \ccGlue\ccMemberFunction{Construct_parallelogram_2
-    construct_parallelogram_2_object() const;}{}
-  \ccGlue\ccMemberFunction{Construct_strip_2
-    construct_strip_2_object() const;}{}
-  \ccGlue\ccMemberFunction{Rotate_direction_by_multiple_of_pi_2
-    rotate_direction_by_multiple_of_pi_2_object() const;}{}
-  
+  Additionally, for each of the predicate and construction functor
+  types listed above, there must exist a member function that requires
+  no arguments and returns an instance of that functor type. The name
+  of the member function is the uncapitalized name of the type
+  returned with the suffix \ccc{_object} appended. For example, for
+  the functor type \ccc{Construct_vector_2} the following member
+  function must exist:
+
+  \ccMemberFunction{Construct_vector_2 construct_vector_2_object()
+    const ;}{}
+
   \ccHasModels
-  \ccRefIdfierPage{CGAL::Min_quadrilateral_default_traits_2<R>}
+  \ccRefIdfierPage{CGAL::Min_quadrilateral_default_traits_2<Kernel>}
 
   \ccSeeAlso
   \ccRefIdfierPage{CGAL::min_rectangle_2}\\

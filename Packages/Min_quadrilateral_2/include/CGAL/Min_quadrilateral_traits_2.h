@@ -322,12 +322,6 @@ public:
   
     tmpo = isec(line(r.p1, r.d1), line(r.p2, r.d2));
     if (assign(tmp, tmpo)) {
-  #ifdef CGAL_TRACE
-      if (!line(r.p1, r.d1).has_on(tmp) ||
-          !line(r.p2, r.d2).has_on(tmp))
-        std::cerr << "ERROR!" << std::endl;
-      else std::cerr << "---   OK1" << std::endl;
-  #endif // CGAL_TRACE
       *o++ = tmp;
     } else {
       CGAL_optimisation_assertion_code(bool test1 =)
@@ -337,12 +331,6 @@ public:
     }
     tmpo = isec(line(r.p3, r.d1), line(r.p2, r.d2));
     if (assign(tmp, tmpo)) {
-  #ifdef CGAL_TRACE
-      if (!line(r.p3, r.d1).has_on(tmp) ||
-          !line(r.p2, r.d2).has_on(tmp))
-        std::cerr << "ERROR!" << std::endl;
-      else std::cerr << "---   OK2" << std::endl;
-  #endif // CGAL_TRACE
       *o++ = tmp;
     } else {
       CGAL_optimisation_assertion_code(bool test1 =)
@@ -352,12 +340,6 @@ public:
     }
     tmpo = isec(line(r.p3, r.d1), line(r.p4, r.d2));
     if (assign(tmp, tmpo)) {
-  #ifdef CGAL_TRACE
-      if (!line(r.p3, r.d1).has_on(tmp) ||
-          !line(r.p4, r.d2).has_on(tmp))
-        std::cerr << "ERROR!" << std::endl;
-      else std::cerr << "---   OK3" << std::endl;
-  #endif // CGAL_TRACE
       *o++ = tmp;
     } else {
       CGAL_optimisation_assertion_code(bool test1 =)
@@ -367,12 +349,6 @@ public:
     }
     tmpo = isec(line(r.p1, r.d1), line(r.p4, r.d2));
     if (assign(tmp, tmpo)) {
-  #ifdef CGAL_TRACE
-      if (!line(r.p1, r.d1).has_on(tmp) ||
-          !line(r.p4, r.d2).has_on(tmp))
-        std::cerr << "ERROR!" << std::endl;
-      else std::cerr << "---   OK4" << std::endl;
-  #endif // CGAL_TRACE
       *o++ = tmp;
     } else {
       CGAL_optimisation_assertion_code(bool test1 =)
