@@ -335,8 +335,7 @@ public:
        s.target().x(),y2 = s.target().y();
 
     // determine right kd-tree to work on, depending on the segment's slope
-    double alpha_double = atan((y2.to_double() - y1.to_double()) /
-                               (x2.to_double() - x1.to_double()));
+    double alpha_double = _gt.segment_direction(s);
 
     if(alpha_double < 0)
       alpha_double += pi / 2.0;
