@@ -324,7 +324,7 @@ void MyWindow::fileOpenPm()
 
   QCursor old = w_demo_p1->cursor();
   w_demo_p1->setCursor(Qt::WaitCursor);
-
+  w_demo_p1->read_from_file = true;
   switch ( w_demo_p1->traits_type ) {
    case SEGMENT_TRAITS:
     {

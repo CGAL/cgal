@@ -22,7 +22,6 @@
 #include "icons/demo_insert.xpm"
 #include "icons/demo_delete.xpm"
 #include "icons/demo_snapgrid.xpm"
-#include "icons/demo_rayshoot.xpm"
 #include "icons/demo_snapvertex.xpm"
 #include "icons/demo_merge.xpm"
 #include "icons/demo_split.xpm"
@@ -348,8 +347,7 @@ void MyWindow::something_changed()
   // as we know that only
   // Qt_widget_base_tab objects are stored in the tab pages.
   Qt_widget_base_tab     *w_demo_p = 
-    dynamic_cast<Qt_widget_base_tab  *> (myBar->currentPage());
-  
+    dynamic_cast<Qt_widget_base_tab  *> (myBar->currentPage());  
   w_demo_p->current_state++;
 }
 
@@ -361,16 +359,14 @@ void MyWindow::get_new_object(CGAL::Object obj)
   // We peform downcasting from QWigdet* to Qt_widget_base_tab*, 
   // as we know that only
   // Qt_widget_base_tab objects are stored in the tab pages.
-  Qt_widget_base_tab    *w_demo_p = 
+  Qt_widget_base_tab *w_demo_p = 
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
   
   // point location
   Coord_point p;
-  if(CGAL::assign(p,obj)) {
-    
+  if(CGAL::assign(p,obj)) 
     w_demo_p->pl_point = p;
-    //something_changed();
-  }
+  
   something_changed();
 }
 
