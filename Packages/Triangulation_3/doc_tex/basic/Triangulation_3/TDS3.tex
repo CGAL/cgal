@@ -397,17 +397,18 @@ triangulation data structure class must provide the following types and
 operations. 
 
 \ccTypes
-
-%\ccNestedType{Point}{\textit{Optional when using the triangulation
-%data structure class alone. Becomes compulsory when the 
-%triangulation data structure is used as a layer for the geometric
-%triangulation class (see Section~\ref{TDS3-sec-design}).}}
+\ccThree{typedef triple <Cell*, int, int>}{Facet }{}
+\ccThreeToTwo
 
 \ccNestedType{Vertex}{}
 \ccGlue
-\ccNestedType{Edge}{}
+\ccTypedef{typedef triple<Cell*, int, int> Edge;}{\ccc{(c,i,j)} is the
+edge of cell \ccc{c} whose vertices indices are \ccc{i} and
+\ccc{j}. (see Section~\ref{TDS3-sec-def})}
 \ccGlue
-\ccNestedType{Facet}{}
+\ccTypedef{typedef pair<Cell*, int>  Facet;}{\ccc{(c,i)} is the facet
+of \ccc{c} opposite to the vertex of index \ccc{i}. (see
+Section~\ref{TDS3-sec-def})} 
 \ccGlue
 \ccNestedType{Cell}{}
 Requirements for \ccc{Vertex} and \ccc{Cell} are described in
@@ -434,14 +435,15 @@ incident to a given edge. They are bidirectional and non mutable.
 \ccNestedType{Cell_circulator}{}
 
 \ccCreation
+\ccThree{Tds<Vb,Fb>}{tds.set_number_of_vertices()}{}
 
 \ccConstructor{\ccClassName();}
 {A default constructor.}
 
-\ccConstructor{\ccClassName(const Tds & tds1)}
+\ccConstructor{\ccClassName(const Tds & tds1);}
 {Copy constructor. All the vertices and cells are duplicated.}
 
-\ccMethod{Tds operator=(const Tds & tds1);}
+\ccMethod{Tds<Vb,Fb> operator=(const Tds & tds1);}
 {Assignment. All the vertices and cells are duplicated.}
 
 The previous first two methods are equivalent.
@@ -616,6 +618,7 @@ boundary of \ccc{region} (this precondition is not checked
 but must be satisfied).}}
 
 \ccHeading{Traversing the triangulation}
+\ccThree{Facet_circulator}{tds.facets_begin()toto}{}
 
 \ccMethod{Cell_iterator cells_begin() const;}
 {Returns \ccc{cells_end()} when \ccc{\ccVar.dimension()}~$<3$.}
@@ -664,6 +667,8 @@ const;}
 
 \ccHeading{Traversal of the incident cells and the
 adjacent vertices of a given vertex}
+
+\ccThree{void_circulator}{tds.facets_begin()toto}{}
 
 \ccMethod{void incident_cells(Vertex* v, set<Cell*, less<Cell*> > & cells,
 		   Cell* c = NULL ) const;}
@@ -723,17 +728,20 @@ for the geometric triangulation class (see
 Section~\ref{TDS3-sec-design}).
 
 \ccTypes
+\ccThree{typedef triple <Cell*, int, int>}{Facet }{}
+\ccThreeToTwo
+\ccNestedType{Point}{\textit{Optional for the triangulation data
+structure alone.}} 
+
 The class \ccClassName\ defines types that are the same as some of the 
 types defined by the triangulation data structure class \ccc{Tds}.
 
-\ccTypedef{typedef Tds::Point Point;}{\textit{Optional for the
-triangulation data structure alone.}}
-\ccGlue
 \ccTypedef{typedef Tds::Vertex Vertex;}{}
 \ccGlue
 \ccTypedef{typedef Tds::Cell Cell;}{}
 
 \ccCreation
+\ccThree{Tds::Vertex}{v(const Point & p, Cell* c);}{}
 
 \ccConstructor{\ccClassName();}
 {Introduces a vertex \ccVar. 
@@ -798,6 +806,8 @@ dimension~1, each cell represents one edge $(0,1)$ (see also
 Section~\ref{TDS3-sec-degen_dim}). 
 
 \ccTypes
+\ccThree{typedef triple <Cell*, int, int>}{Facet }{}
+\ccThreeToTwo
 The class \ccClassName\ defines the following types.
 
 \ccTypedef{typedef Tds::Vertex Vertex;}{}
@@ -805,6 +815,7 @@ The class \ccClassName\ defines the following types.
 \ccTypedef{typedef Tds::Cell Cell;}{}
 
 \ccCreation
+\ccThree{Tds::Vertex}{v(const Point & p, Cell* c);}{}
 
 \ccConstructor{\ccClassName();}
 {Introduces a cell \ccVar\ and initializes all vertices and neighbors 
@@ -905,9 +916,8 @@ described in Section~\ref{TDS3-sec-concept} and provides the optional
 geometric functionalities. It is templated by base classes for
 vertices and cells described in Section~\ref{TDS3-sec-concept-Base}.
 
-\ccInheritsFrom
-\ccc{Triangulation_utils_3}
-\\This class defines basic computations on indices of vertices and
+\ccInheritsFrom{\ccc{Triangulation_utils_3}}
+This class defines basic computations on indices of vertices and
 neighbors of cells (Details are presented in
 Section~\ref{Triangulation3-sec-class-Utils} of
 Chapter~\ref{chapter-Triangulation3}).

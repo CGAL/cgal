@@ -288,6 +288,8 @@ within a cell. These operations are used in \ccc{Triangulation_3.h},
 \ccc{Triangulation_ds_circulators_3.h}. These classes inherit from
 \ccClassTemplateName\ so that they can use its methods.
 
+\ccThree{unsigned int}{ccw(unsigned int i)toto}{}
+
 \ccFunction{unsigned int nextposaround(unsigned int i, 
 				    unsigned int j) const;}
 {In dimension~3, index of the neighbor that is next to a given cell,
@@ -335,20 +337,21 @@ and~\ref{Triangulation3-sec-class-Traits}.
 
 \ccInclude{CGAL/Triangulation_3.h}
 
-\ccInheritsFrom
-\ccc{Triangulation_utils_3}
+\ccInheritsFrom{\ccc{Triangulation_utils_3}}
 (see Section~\ref{Triangulation3-sec-class-Utils})
 
 \ccTypes
 The class \ccClassTemplateName\ defines the following types:
+\ccThree{typedef Traits::Tetrahedron Tetrahedron;}{Tetrahedron}{}
+\ccThreeToTwo
 
-\ccTypedef{typedef Traits::Point Point;}{Point}
+\ccTypedef{typedef Traits::Point Point;}{}
 \ccGlue
-\ccTypedef{typedef Traits::Segment Segment;}{Segment}
+\ccTypedef{typedef Traits::Segment Segment;}{}
 \ccGlue
-\ccTypedef{typedef Traits::Triangle Triangle;}{Triangle}
+\ccTypedef{typedef Traits::Triangle Triangle;}{}
 \ccGlue
-\ccTypedef{typedef Traits::Tetrahedron Tetrahedron;}{Tetrahedron}
+\ccTypedef{typedef Traits::Tetrahedron Tetrahedron;}{}
 
 The following types represent $k$-faces for $k\in\{0,1,2,3\}$. Edges
 ($1$-faces) and facets ($2$-faces) are not explicitely represented and
@@ -409,6 +412,7 @@ OUTSIDE_AFFINE_HULL};}
 
 \ccCreation
 \ccCreationVariable{t}
+\ccThree{Triangulation_3<Traits,Tds>}{Facet }{}
 
 \ccConstructor{\ccClassName(const Traits & traits );}
 {Introduces a triangulation \ccVar\ having only one vertex which is the
@@ -443,6 +447,8 @@ The previous first two methods are equivalent.
 copy of cells and vertices, thus this method runs in constant time.}
 
 \ccAccessFunctions
+\ccThree{Vertex_handle}{t.number_of_finite_edges()toto}{}
+
 \ccMethod{const Traits & geom_traits() const;}
 {Returns a const reference to the geometric traits object.}
 \ccGlue
@@ -593,6 +599,8 @@ order.
 \textit{not yet implemented}}
 
 \ccHeading{Location}
+\ccThree{Vertex_handle}{t.locate()toto}{}
+
 The class \ccClassTemplateName\  provides two functions to locate
 a given point with respect to a triangulation. It provides
 also functions to test if a given point is inside a finite face
@@ -871,12 +879,6 @@ alt="insert_outside_affine_hull} (2-dimensional case)">
 
 \ccHeading{Removal}
 
-\ccMethod{void remove(Point p);}
-{\ccPrecond{\ccc{p} is a vertex of the triangulation.}\\
-Removes the associated vertex. 
-\ccPrecond{\ccc{p} is a vertex of the triangulation.}\\
-\textit{not yet implemented}}
-
 \ccMethod{void clear();}
 {Removes all finite vertices and all cells of \ccVar.}
 
@@ -886,6 +888,7 @@ The triangulation provides several iterators and circulators
 that allow to traverse it (completely or partially).
 
 \ccHeading{Face, Edge and Vertex Iterators}
+\ccThree{Facet_circulator}{t.finite_facets_begin()toto}{}
 
 The following iterators respectively allow the user to visit cells,
 facets, edges and vertices of the
@@ -1053,7 +1056,7 @@ of maximal dimension.)
 \end{ccClassTemplate}
 
 \begin{ccClassTemplate}{Triangulation_vertex_3<Traits,Tds>}
-\section{The Vertex Class of a Triangulation \protect \ccClassTemplateName} 
+\section{The Vertex Class of a Triangulation\\ \protect \ccClassTemplateName} 
 \label{Triangulation3-sec-class-Vertex}
 
 \ccCreationVariable{v}
@@ -1067,18 +1070,15 @@ maximal dimension.
 \ccInheritsFrom{Tds::Vertex}
 
 \ccTypes
+\ccThree{typedef triple <Cell*, int, int>}{Facettoto}{}
 The class \ccClassTemplateName\ defines the following types, also
 defined in the class \ccc{Triangulation_3<Traits,Tds>}:
 
-\ccTypedef{typedef typename Traits::Point Point;}{point type}
+\ccTypedef{typedef Traits::Point Point;}{point type}
 \ccGlue
-\ccTypedef{typedef typename Tds::Vertex Vtds;}{vertex of the triangulation data structure}
+\ccNestedType{Vertex_handle;}{handle to a vertex}
 \ccGlue
-\ccTypedef{typedef typename Tds::Cell Ctds;}{cell of the triangulation data structure}
-\ccGlue
-\ccTypedef{typedef Triangulation_vertex_handle_3<Traits,Tds> Vertex_handle;}{handle to a vertex}
-\ccGlue
-\ccTypedef{typedef Triangulation_cell_handle_3<Traits,Tds> Cell_handle;}{handle to a cell}
+\ccNestedType{Cell_handle;}{handle to a cell}
 
 \begin{ccAdvanced}
 \ccCreation
@@ -1138,7 +1138,7 @@ of maximal dimension (Section~\ref{Triangulation3-sec-degen_dim}).}
 	\end{ccClassTemplate} 
 
 \begin{ccClassTemplate}{Triangulation_cell_3<Traits,Tds>}
-\section{The Cell Class of a Triangulation \protect \ccClassTemplateName} 
+\section{The Cell Class of a Triangulation\\ \protect \ccClassTemplateName} 
 \label{Triangulation3-sec-class-Cell}
 
 \ccCreationVariable{c}
@@ -1197,6 +1197,7 @@ neighbors are initialized so that tests on the handles for equality with
 {Introduces a variable \ccVar, and initializes its vertices and neighbors.}
 
 \ccHeading{Setting}
+\ccThree{Cell_handle}{tds.set_number_of_vertices()}{}
 
 \ccMethod{void set_vertices();}
 {Sets all vertices so that tests on the handles for equality with
@@ -1295,6 +1296,7 @@ equality, coordinates comparison, orientation in the space, orientation
 in case of coplanar points, and collinearity tests.
 
 \ccTypes
+\ccThree{Traits::Tetrahedron}{tds.set_number_of_vertices()}{}
 
 \ccNestedType{Point}
 {The type must provide a copy constructor and assignement operator.}
@@ -1311,6 +1313,7 @@ arguments.}
 arguments.}
 
 \ccCreation
+\ccThree{Comparison_result}{compare_x()toto}{}
 
 Only a default constructor is required. Note that further constructors
 can be provided. 
@@ -1416,6 +1419,7 @@ Section~\ref{Triangulation3-sec-concept-Traits}.
 \ccInclude{CGAL/Triangulation_geom_traits_3.h}
 
 \ccTypes
+\ccThree{typedef triple <Cell*, int, int>}{Facet }{}
 
 \ccTypedef{typedef Point_3<R> Point;}{}
 \ccGlue
@@ -1444,7 +1448,7 @@ A model of this triangulation data structure is
 Section~\ref{TDS3-sec-class}. 
 
 \begin{ccClassTemplate}{Delaunay_triangulation_3<Traits,Tds>}
-\section{The Delaunay Triangulation Class \protect
+\section{The Delaunay Triangulation Class\\ \protect
 \ccClassTemplateName}  
 
 \ccDefinition
@@ -1459,6 +1463,7 @@ Section~\ref{TDS3-sec-class}.
 Inherits the types of \ccc{Triangulation_3<Traits,Tds>}.
 
 \ccCreation
+\ccThree{Bounded_side}{dt.remove(Pont p)toto}{}
 
 \ccConstructor{\ccClassName()}
 {Creates an empty Delaunay triangulation.}
@@ -1512,6 +1517,14 @@ number of inserted points.
 \ccMethod{int insert(Point* first,
 	     Point* last);}
 {}
+
+\ccHeading{Removal}
+
+\ccMethod{void remove(Point p);}
+{\ccPrecond{\ccc{p} is a vertex of the triangulation.}\\
+Removes the associated vertex. 
+\ccPrecond{\ccc{p} is a vertex of the triangulation.}\\
+\textit{not yet implemented}}
 
 \ccHeading{Queries}
 
@@ -1572,7 +1585,7 @@ This method is  mainly a debugging help for the users of advanced features.
 \end{ccClassTemplate}
 
 \begin{ccClassTemplate}{Delaunay_hierarchic_triangulation_3<Traits,Tds>}
-\section{The Hierarchic Delaunay Triangulation Class \protect
+\section{The Hierarchic Delaunay Triangulation Class\\ \protect
 \ccClassTemplateName}  
 
 \textit{Not yet implemented}
