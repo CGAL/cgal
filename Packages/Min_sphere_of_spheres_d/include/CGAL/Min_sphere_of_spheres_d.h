@@ -55,7 +55,7 @@
 #include <cassert>
 #include <cstdlib>                 // for std::rand()
 #include <cmath>
-
+#include <cstddef>                 // for std::size_t, std::ptrdiff_t
 #include <vector>
 #include <iostream>
 #include <CGAL/Min_sphere_of_spheres_d_support_set.h>
