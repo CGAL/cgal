@@ -591,37 +591,37 @@ class Aff_transformationH2
 
 template < class R >
 Aff_transformationH2<R>::Aff_transformationH2()
-{ ptr = new Aff_transformation_repH2<R>(); }
+{ initialize_with(Aff_transformation_repH2<R>()); }
 
 template < class R >
 Aff_transformationH2<R>::
 Aff_transformationH2(const Identity_transformation)
-{ ptr = new Identity_repH2<R>(); }
+{ initialize_with(Identity_repH2<R>()); }
 
 template < class R >
 Aff_transformationH2<R>::
 Aff_transformationH2(const Translation,const VectorH2<R>& v)
-{ ptr = new Translation_repH2<R>( v ); }
+{ initialize_with(Translation_repH2<R>( v )); }
 
 template < class R >
 Aff_transformationH2<R>::
 Aff_transformationH2(const Scaling, const RT& a, const RT& b)
-{ ptr = new Scaling_repH2<R>( a, b); }
+{ initialize_with(Scaling_repH2<R>( a, b)); }
 
 template < class R >
 Aff_transformationH2<R>::
 Aff_transformationH2( const Scaling, const RT& xa, const RT& xb,
                                      const RT& ya, const RT& yb)
 {
-  ptr = new Aff_transformation_repH2<R>(xa*yb,  RT(0),  RT(0),
+  initialize_with(Aff_transformation_repH2<R>(xa*yb,  RT(0),  RT(0),
                                         RT(0),  ya*xb,  RT(0),
-                                        xb*yb  );
+                                        xb*yb  ));
 }
 
 template < class R >
 Aff_transformationH2<R>::
 Aff_transformationH2(const Reflection, const LineH2<R>& l)
-{ ptr = new Reflection_repH2<R>( l); }
+{ initialize_with(Reflection_repH2<R>( l)); }
 
 template < class R >
 Aff_transformationH2<R>::
@@ -629,7 +629,7 @@ Aff_transformationH2(const Rotation,
                      const RT& sine,
                      const RT& cosine,
                      const RT& denominator)
-{ ptr = new Rotation_repH2<R>(sine, cosine, denominator); }
+{ initialize_with(Rotation_repH2<R>(sine, cosine, denominator)); }
 
 template < class R >
 Aff_transformationH2<R>::Aff_transformationH2(const Rotation,
@@ -645,7 +645,7 @@ Aff_transformationH2<R>::Aff_transformationH2(const Rotation,
  RT   den;
 
  rational_rotation_approximation(dir.x(), dir.y(), sin, cos, den, n, d);
- ptr = new Rotation_repH2<R>( sin, cos, den );
+ initialize_with(Rotation_repH2<R>( sin, cos, den ));
 }
 
 template < class R >
@@ -654,9 +654,9 @@ Aff_transformationH2( const RT& a, const RT& b, const RT& c,
                       const RT& d, const RT& e, const RT& f,
                                                 const RT& g)
 {
-  ptr = new Aff_transformation_repH2<R>( a,   b,   c,
+  initialize_with(Aff_transformation_repH2<R>( a,   b,   c,
                                          d,   e,   f,
-                                         g  );
+                                         g  ));
 }
 
 template < class R >
@@ -665,9 +665,9 @@ Aff_transformationH2( const RT& a, const RT& b,
                       const RT& d, const RT& e,
                       const RT& g)
 {
-  ptr = new Aff_transformation_repH2<R>( a,   b,   RT(0),
+  initialize_with(Aff_transformation_repH2<R>( a,   b,   RT(0),
                                          d,   e,   RT(0),
-                                         g  );
+                                         g  ));
 }
 
 template < class R >

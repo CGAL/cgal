@@ -36,6 +36,7 @@
 #include <CGAL/representation_tags.h>
 #include <CGAL/predicate_objects_on_points_2.h>
 #include <CGAL/Kernel/function_objects.h>
+#include <CGAL/New_delete_allocator.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -91,8 +92,8 @@ class Simple_homogeneous_base
 	Line_handle_2;
     typedef CGAL::Simple_Handle_for< Simple_Segment_repH2<R_> >
 	Segment_handle_2;
-    typedef CGAL::Handle_for< Aff_transformation_rep_baseH2<R_>, // Simple ???
-                       No_op_allocator< Aff_transformation_rep_baseH2<R_> > >
+    typedef CGAL::Handle_for< Aff_transformation_rep_baseH2<R_>,
+		   New_delete_allocator< Aff_transformation_rep_baseH2<R_> > >
 			                        Aff_transformation_handle_2;
 
     typedef CGAL::Simple_Handle_for< Simple_RepH3<RT> >

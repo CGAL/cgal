@@ -1,5 +1,6 @@
-2.40   (?? October 2001)
+2.40   (5 October 2001)
 - Cleanup use of ptr in AffH2.
+- Use New_delete_allocator.
 
 2.39   (2 October 2001)
 - Access functions of objects (like .x() ) now return const references.
