@@ -359,9 +359,13 @@ _test_interpolation_functions_2_delaunay( const Triangul &, const
 
   
   //TESTING A POINT == A DATA POINT:
-  norm = 
+  CGAL::Triple<
+    std::back_insert_iterator<Point_coordinate_vector>, 
+    Coord_type, bool> coordinate_result = 
     CGAL::natural_neighbor_coordinates_2(T,points[n/2],std::back_inserter
-					 (coords)).second;
+					 (coords)); 
+  assert(coordinate_result.third);
+  norm = coordinate_result.second;
   assert(norm == Coord_type(1));
   typename std::vector< std::pair< Point, Coord_type > >::iterator 
     ci= coords.begin();
@@ -386,9 +390,12 @@ _test_interpolation_functions_2_delaunay( const Triangul &, const
   assert(!T.is_infinite(fh->neighbor(i)));
   Point p = fh->vertex(T.ccw(i))->point() + Coord_type(0.5)* 
     (fh->vertex(T.cw(i))->point()-fh->vertex(T.ccw(i))->point()); 
-  norm = 
+  
+  coordinate_result = 
     CGAL::natural_neighbor_coordinates_2(T, p,
-					 std::back_inserter(coords)).second;
+					 std::back_inserter(coords)); 
+  assert(coordinate_result.third);
+  norm =  coordinate_result.second;
   assert(test_norm( coords.begin(), coords.end(),norm));
   assert(test_barycenter( coords.begin(), coords.end(),norm,p, tolerance));
   coords.clear();
@@ -416,10 +423,12 @@ _test_interpolation_functions_2_delaunay( const Triangul &, const
   T2.insert(p1_2);T2.insert(p2_2);T2.insert(p3_2);T2.insert(p4_2);
   T2.insert(p1);T2.insert(p2);T2.insert(p3);T2.insert(p4);
   T2.insert(p12);T2.insert(p23);T2.insert(p34);T2.insert(p41);
-
-  norm = 
+  
+  coordinate_result = 
     CGAL::natural_neighbor_coordinates_2(T2,Point(0,0),
-					 std::back_inserter(coords)).second;
+					 std::back_inserter(coords)); 
+  assert(coordinate_result.third);
+  norm = coordinate_result.second;
   assert(norm == Coord_type(1));
   ci= coords.begin();
   for(; ci!= coords.end(); ci++)
@@ -432,9 +441,11 @@ _test_interpolation_functions_2_delaunay( const Triangul &, const
   T2.insert(Point(0,0));
 
   //point on a vertex;
-  norm = 
+  coordinate_result = 
     CGAL::natural_neighbor_coordinates_2(T2,p34,
-					 std::back_inserter(coords)).second;
+					 std::back_inserter(coords)); 
+  assert(coordinate_result.third);
+  norm = coordinate_result.second;
   assert(norm == Coord_type(1));
   ci= coords.begin();
   assert(ci->first == p34);
@@ -445,11 +456,26 @@ _test_interpolation_functions_2_delaunay( const Triangul &, const
 
   //point on an edge:
   p= Point(0,0.5);
-  norm = 
+  coordinate_result = 
     CGAL::natural_neighbor_coordinates_2(T2,p,
-					 std::back_inserter(coords)).second;
+					 std::back_inserter(coords)); 
+  assert(coordinate_result.third);
+  norm = coordinate_result.second;
   assert(test_barycenter( coords.begin(), coords.end(),norm, p, tolerance));
   coords.clear();
+
+  //Point outside convex hull:
+  p= Point(3,0.5);
+  coordinate_result = 
+    CGAL::natural_neighbor_coordinates_2(T2,p,
+					 std::back_inserter(coords)); 
+  assert(!coordinate_result.third);
+  //Point on a convex hull edge:
+  p= Point(2,1);
+   coordinate_result = 
+    CGAL::natural_neighbor_coordinates_2(T2,p,
+					 std::back_inserter(coords)); 
+  assert(!coordinate_result.third);
 }
 //end of file
 
