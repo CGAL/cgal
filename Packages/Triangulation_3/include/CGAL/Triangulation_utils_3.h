@@ -38,13 +38,13 @@ public:
 //       return tab_cw[i];
 //     }
 
-  int ccw(const int i) const
+  inline unsigned int ccw(const unsigned int i) const
     {
       CGAL_triangulation_precondition( ((unsigned int) i) < 3 );
       return (i==2) ? 0 : i+1;
     }
   
-  int cw(const int i) const
+  inline unsigned int cw(const unsigned int i) const
     {
       CGAL_triangulation_precondition( ((unsigned int) i) < 3 );
       return (i==0) ? 2 : i-1;
