@@ -5,25 +5,27 @@
 #include <fstream>
 #include <CGAL/basic.h>
 #include <CGAL/Pm_default_dcel.h>
-#include <CGAL/Pm_segment_traits_2.h>
 #include <CGAL/Planar_map_2.h>
 #include <CGAL/IO/Pm_iostream.h>
 
-#define CGAL_SEGMENT_TRAITS        1
-#define CGAL_SEGMENT_LEDA_TRAITS   2
+#define CGAL_SEGMENT_TRAITS             1
+#define CGAL_SEGMENT_CACHED_TRAITS      2
+#define CGAL_SEGMENT_LEDA_TRAITS        3
 
+#define CGAL_POLYLINE_TRAITS            11
+#define CGAL_POLYLINE_CACHED_TRAITS     12
+#define CGAL_POLYLINE_LEDA_TRAITS       13
 
 // Picking a default Traits class (this, with the 
 // PL flag enables the running of the test independently of cgal_make.)
 #ifndef CGAL_PM_TEST_TRAITS
 #define CGAL_PM_TEST_TRAITS CGAL_SEGMENT_TRAITS
-//#define CGAL_PM_TEST_TRAITS CGAL_SEGMENT_LEDA_TRAITS
 #endif
 
 // Making sure test doesn't fail if LEDA is not installed
 #if ! defined(CGAL_USE_LEDA) && \
-      (CGAL_PM_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS)
-
+      ((CGAL_PM_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS) || \
+       (CGAL_PM_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS))
 using namespace std;
 
 int main()
@@ -39,9 +41,14 @@ int main()
 
 #if CGAL_PM_TEST_TRAITS==CGAL_SEGMENT_TRAITS
 #include <CGAL/Cartesian.h>
+#include <CGAL/Pm_segment_traits_2.h>
+#elif CGAL_PM_TEST_TRAITS==CGAL_SEGMENT_CACHED_TRAITS
+#include <CGAL/Cartesian.h>
+#include <CGAL/Pm_segment_cached_traits_2.h>
 #elif CGAL_PM_TEST_TRAITS==CGAL_SEGMENT_LEDA_TRAITS
 #include <CGAL/leda_rational.h>
 #include <CGAL/Pm_segment_traits_leda_kernel_2.h>
+#include <CGAL/Pm_segment_traits_2.h>
 #else
   #error No traits defined for test
 #endif
@@ -76,14 +83,19 @@ int main()
 #if CGAL_PM_TEST_TRAITS==CGAL_SEGMENT_TRAITS
 typedef CGAL::Quotient<int>                             NT;
 typedef CGAL::Cartesian<NT>                             Kernel;
+typedef CGAL::Pm_segment_traits_2<Kernel>               Traits;
+#elif CGAL_PM_TEST_TRAITS==CGAL_SEGMENT_CACHED_TRAITS
+typedef CGAL::Quotient<int>                             NT;
+typedef CGAL::Cartesian<NT>                             Kernel;
+typedef CGAL::Pm_segment_cached_traits_2<Kernel>        Traits;
 #elif CGAL_PM_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
 typedef leda_rational                                   NT;
 typedef CGAL::Pm_segment_traits_leda_kernel_2           Kernel;
+typedef CGAL::Pm_segment_traits_2<Kernel>               Traits;
 #endif
 
-typedef CGAL::Pm_segment_traits_2<Kernel>               Traits;
 typedef Traits::Point_2                                 Point_2;
-typedef Traits::X_monotone_curve_2                               X_monotone_curve_2;
+typedef Traits::X_monotone_curve_2                      X_monotone_curve_2;
 typedef CGAL::Pm_default_dcel<Traits>                   Dcel;
 typedef CGAL::Planar_map_2<Dcel,Traits>                 Planar_map;
  
@@ -308,9 +320,11 @@ private:
   }
 
 #if CGAL_PM_TEST_TRAITS == CGAL_SEGMENT_TRAITS || \
+    CGAL_PM_TEST_TRAITS == CGAL_SEGMENT_CACHED_TRAITS || \
     CGAL_PM_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
 
-  X_monotone_curve_2 read_segment_curve(std::ifstream & file, bool reverse_order)
+  X_monotone_curve_2 read_segment_curve(std::ifstream & file,
+                                        bool reverse_order)
   {
     X_monotone_curve_2 segment;
     NT    x,y; 
@@ -335,7 +349,8 @@ private:
 #elif CGAL_PM_TEST_TRAITS == CGAL_POLYLINE_TRAITS || \
       CGAL_PM_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
 
-  X_monotone_curve_2 read_polyline_curve(std::ifstream & file, bool reverse_order)
+  X_monotone_curve_2 read_polyline_curve(std::ifstream & file,
+                                         bool reverse_order)
   {
     X_monotone_curve_2 polyline;
     NT x,y; 

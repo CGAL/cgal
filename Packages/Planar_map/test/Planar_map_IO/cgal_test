@@ -50,6 +50,9 @@ run()
   if [ $3 -eq $CGAL_SEGMENT_TRAITS ] ; then
     iofiles="DATA/exact_io/"
     SUFFIO="exact_io"
+  elif [ $3 -eq $CGAL_SEGMENT_CACHED_TRAITS ] ; then
+    iofiles="DATA/exact_io/"
+    SUFFIO="leda_io"
   elif [ $3 -eq $CGAL_SEGMENT_LEDA_TRAITS ] ; then
     iofiles="DATA/leda_io/"
     SUFFIO="leda_io"
@@ -112,21 +115,20 @@ if [ $# -ne 0 ] ; then
   done
 else
   CGAL_SEGMENT_TRAITS=1
-  CGAL_SEGMENT_LEDA_TRAITS=2
+  # CGAL_SEGMENT_CACHED_TRAITS=2
+  # CGAL_SEGMENT_LEDA_TRAITS=3
 
-  #CGAL_POLYLINE_TRAITS=11
-  #CGAL_POLYLINE_LEDA_TRAITS=12
+  # CGAL_POLYLINE_TRAITS=11
+  # CGAL_POLYLINE_CACHED_TRAITS=12
+  # CGAL_POLYLINE_LEDA_TRAITS=13
 
   CGAL_PM_TEST_TRAITS=$CGAL_SEGMENT_TRAITS
-    (compile_and_run test 1 $CGAL_PM_TEST_TRAITS)
-    (compile_and_run test 2 $CGAL_PM_TEST_TRAITS)
-    (compile_and_run test 3 $CGAL_PM_TEST_TRAITS)
-  CGAL_PM_TEST_TRAITS=$CGAL_SEGMENT_LEDA_TRAITS
-    (compile_and_run test 1 $CGAL_PM_TEST_TRAITS)
-    (compile_and_run test 2 $CGAL_PM_TEST_TRAITS)
-    (compile_and_run test 3 $CGAL_PM_TEST_TRAITS)
+  (compile_and_run test 1 $CGAL_PM_TEST_TRAITS)
+  (compile_and_run test 2 $CGAL_PM_TEST_TRAITS)
+  (compile_and_run test 3 $CGAL_PM_TEST_TRAITS)
+
+  # CGAL_PM_TEST_TRAITS=$CGAL_SEGMENT_CACHED_TRAITS
+  # (compile_and_run test 1 $CGAL_PM_TEST_TRAITS)
+  # (compile_and_run test 2 $CGAL_PM_TEST_TRAITS)
+  # (compile_and_run test 3 $CGAL_PM_TEST_TRAITS)
 fi
-
-
-
-
