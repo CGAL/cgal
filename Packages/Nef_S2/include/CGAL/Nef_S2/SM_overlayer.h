@@ -1090,15 +1090,20 @@ merge_halfsphere_maps(Vertex_handle v1, Vertex_handle v2,
     Halfedge_handle e1 = it->first, e2 = it->second;
     Halfedge_handle e1t = twin(e1), e2t = twin(e2);
     TRACEV(PH(e1));TRACEV(PH(e2));
+    Halfedge_handle e2tp = previous(e2t);
+    Halfedge_handle e2tn = next(e2t);
+    link_as_prev_next_pair(e2tp,e1);
+    link_as_prev_next_pair(e1,e2tn);
+    falls e2t zyklusentry ersetze e2t durch e1;
+    face(e1) = face(e2t);
+
     D.assert_equal_marks(e1,e2);
     D.transfer_marks(e1); D.transfer_marks(e2);
     make_twins(e1,e2); make_twins(e1t,e2t);
-    if ( e1 == first_out_edge(source(e1)) )
-      set_first_out_edge(source(e1),e2t);
     if ( e2 == first_out_edge(source(e2)) )
       set_first_out_edge(source(e2),e1t);
-    D.discard_info(e1);
-    delete_edge_pair_only(e1);
+    D.discard_info(e2);
+    delete_edge_pair_only(e2);
   }
 }
 

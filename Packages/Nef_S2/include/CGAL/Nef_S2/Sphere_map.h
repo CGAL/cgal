@@ -451,11 +451,6 @@ template <typename Kernel_>
 typename Sphere_map<Kernel_>::Object_iterator
 Sphere_map<Kernel_>::undef_;
 
-/* boundary item is member!
-template <typename Kernel_> 
-typename Sphere_map<Kernel_>::Handle_to_iterator_map
-Sphere_map<Kernel_>::boundary_item_(Sphere_map<Kernel_>::undef_);
-*/
 
 CGAL_END_NAMESPACE
 #endif // CGAL_SPHERE_MAP_H

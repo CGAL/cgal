@@ -9,8 +9,10 @@
 # Please adapt the following paths:
 #---------------------------------------------------------------------#
 
-X_DIR = /opt/xfree86-4.0.1
-X_GLUTDIR = /HPS/opt/pckg/glut
+#X_DIR = /opt/xfree86-4.0.1
+#X_GLUTDIR = /HPS/opt/pckg/glut
+X_DIR = /usr
+X_GLUTDIR = /usr/X11R6
 TESTSUITE_LDFLAGS = \
 	-L$(X_DIR)/lib -L$(X_GLUTDIR)/lib \
 	-R$(X_DIR)/lib -R$(X_GLUTDIR)/lib \
