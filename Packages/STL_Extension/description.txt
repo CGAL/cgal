@@ -1,2 +1,0 @@
-STL Extensions like an in-place list, iterator adaptors, function objects.
-

@@ -1,3 +1,0 @@
-Algorithms for searching in monotone and sorted matrices and
-applications: computing extremal polygons, all furthest neighbors for
-the vertices of a convex polygon and rectangular p-centers.

@@ -1,2 +1,0 @@
-Describes the classes Inventor_ostream, VRML_1_ostream and VRML_2_ostream
-based on popular formats OpenInventor and VRML (Virtual Reality Markup Language)

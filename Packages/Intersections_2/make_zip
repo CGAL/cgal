@@ -1,3 +1,0 @@
-#!/bin/sh
-
-zip -r Intersections_2.zip version description.txt changes.txt include test src 

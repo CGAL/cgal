@@ -1,1 +1,0 @@
-Modifier_base class to access internal representations.
