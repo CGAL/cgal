@@ -363,7 +363,8 @@ insert(const Weighted_point & p, Cell_handle start)
       
       if ( lt == VERTEX )
 	  return c->vertex(li);
-      // TODO: look at the weight...
+      // choice: not to do anything
+      // could reinsert the point with the new weight
       
       if (! in_conflict_3(p, c))
 	  return NULL;
@@ -416,6 +417,8 @@ insert(const Weighted_point & p, Cell_handle start)
 	}
       case VERTEX:
 	return c->vertex(li);
+	// choice: not to do anything
+	// could reinsert the point with the new weight
       case OUTSIDE_AFFINE_HULL:
 	{
 	  // if the 2d triangulation is Delaunay, the 3d
@@ -473,6 +476,8 @@ insert(const Weighted_point & p, Cell_handle start)
 	}
       case VERTEX:
 	return c->vertex(li);
+	// choice: not to do anything
+	// could reinsert the point with the new weight
       case OUTSIDE_AFFINE_HULL:
 	return Tr_Base::insert_outside_affine_hull(p);
       case FACET:
@@ -483,8 +488,6 @@ insert(const Weighted_point & p, Cell_handle start)
     }
   default :
     {
-      // temporary : will only work for non degenerated dimensions
-      // (only for the first 4 points if they form a true tetrahedron)
       return Tr_Base::insert(p,start);
     }
   }
