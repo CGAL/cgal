@@ -49,8 +49,9 @@
 
 \ccDefinition
 
-The class \ccClassTemplateName\ represents intervals with infimum 
-and supremum of type \ccc{Value}, and which can be open or closed.
+The class \ccClassTemplateName\ represents intervals with lower and upper
+bound of type \ccc{Value}. These intervals
+ can be opened or closed at each endpoint.
 
 \ccInclude{CGAL/Interval_skip_list_interval.h}
 
@@ -65,26 +66,22 @@ and supremum of type \ccc{Value}, and which can be open or closed.
 \ccConstructor{Interval_skip_list_interval();}
 {Default constructor.}
 
-\ccConstructor{Interval_skip_list_interval(char lb, 
-							      const Value& i, 
-							      const Value& s, 
-							      char rb);}
+\ccConstructor{Interval_skip_list_interval(const Value& i, 
+                                           const Value& s, 
+			                   bool ic = true,
+					   bool uc = true);}
 {Constructs the interval with infimum \ccc{i} and supremum \ccc{s}.
-The arguments \ccc{lb} and \ccc{rb} can be \ccc{,} and \ccc{,} respectively.}
+The arguments \ccc{ic} and \ccc{uc} have value \ccc{true}, iff
+the interval is closed at the lower and upper bound, respectively.}
 
 \ccOperations
 
-\ccMethod{Value inf() const;}
-{returns the infimum.}
 
-\ccMethod{Value sup() const;}
-{returns the supremum.}
+\ccMethod{bool inf_closed() const;}
+{returns \ccc{true}, iff the interval is closed at the lower bound.}
 
-\ccMethod{char lbound() const;}
-{returns the left bound.}
-
-\ccMethod{char rbound() const;}
-{returns the right bound.}
+\ccMethod{bool sup_closed() const;}
+{returns \ccc{true}, iff the interval is closed at the upper bound.}
 
 \ccHeading{I/O}
 
