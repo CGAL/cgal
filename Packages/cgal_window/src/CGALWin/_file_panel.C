@@ -8,8 +8,8 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : 
-// release_date  : 
+// release       : $CGAL_Revision: CGAL-2.3-I-75 $
+// release_date  : $CGAL_Date: 2001/06/21 $
 //
 // file          : src/CGALWin/_file_panel.C
 // package       : cgal_window (1.0)
