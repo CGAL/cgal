@@ -52,7 +52,6 @@ using std::endl;
 using std::strcmp;
 using std::exit;
 
-// Types
 typedef CGAL::Gmpz                         NT;
 #ifdef CGAL_USE_EXTENDED_KERNEL
 typedef CGAL::Extended_homogeneous_3<NT>   Kernel;
@@ -61,7 +60,6 @@ const char *kernelversion = "Extended homogeneous 3d kernel (tm).";
 typedef CGAL::Simple_homogeneous<NT>       Kernel;
 const char *kernelversion = "Simple homogeneous kernel (tm).";
 #endif
-
 typedef CGAL::Polyhedron_3<Kernel>         Polyhedron;
 typedef CGAL::SNC_items<Kernel, bool>      SNC_items;
 typedef CGAL::SNC_structure<SNC_items>     SNC_structure;
@@ -130,6 +128,7 @@ bool assert_argc( const char* command, int n, int arg_left) {
 // evaluate the commands (and arguments) in argv[0..argc-1].
 // returns 0 if all is o.k., and != 0 otherwise.
 int eval( int argc, char* argv[]) {
+    CGAL::Timer t;
     int error = 0;
     for ( int i = 0; error == 0 && i < argc; ++i) {
         if ( strcmp( argv[i], "h") == 0 || strcmp( argv[i], "help") == 0
@@ -555,10 +554,18 @@ int eval( int argc, char* argv[]) {
 	    i += 4; 
 	  } else 
 	    error = 4;
+	} else if ( strcmp( argv[i], "start") == 0) {
+	  t.start();
+	} else if ( strcmp( argv[i], "stop") == 0) {
+	  t.stop();
+	} else if ( strcmp( argv[i], "time") == 0) {
+	  std::cerr << "Time " << t.time() << std::endl;
+	} else if ( strcmp( argv[i], "time") == 0) {
+	  t.reset();
 	} else {
-            cerr << "Error: unkown command '" << argv[i]
-                 << "'. Try 'help' for help." << endl;
-            error = 3;
+	    cerr << "Error: unkown command '" << argv[i]
+	         << "'. Try 'help' for help." << endl;
+	    error = 3;
         }
     }
     return error;
