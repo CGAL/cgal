@@ -20,10 +20,18 @@
 %//
 %//============================================================================
 
-\begin{ccClass}{Fixed_precision_nt}
+\marginparwidth 1.5cm
+\def\ccTagChapterRelease{\ccTrue}
+\def\ccTagChapterAuthor{\ccTrue}
 
-\ccSubsection{Fixed precision numbers}
-\label{I1_Chapter_Fixed_precision_nt}
+\chapter{Fixed precision numbers} \label{I1_Chapter_Fixed_precision_nt}
+
+\ccChapterRelease{Revision: , Date: }
+
+\ccChapterAuthor{Olivier Devillers}
+
+\section{Introduction} 
+
 
 The class \ccStyle{Fixed_precision_nt} provides 24 bits numbers in 
 fixed point representation.
@@ -41,7 +49,12 @@ The idea is to not use the arithmetic on \ccStyle{Fixed_precision_nt}
 but only the specialized predicates.
 
 
-\ccSetTwoColumns{}{\hspace*{6.5cm}}
+\section{Class description}
+
+
+
+\begin{ccClass} {Fixed_precision_nt}
+\ccSetTwoColumns{}{\hspace*{8.5cm}}
 
 \ccCreation
 \ccCreationVariable{fvar}
@@ -64,7 +77,7 @@ but only the specialized predicates.
 \ccConstructor{Fixed_precision_nt(int i)}
             {Declaration and initialization with an integer.}
 
-\ccSetThreeColumns{Fixed_precision_nt &}{}{\hspace*{6.5cm}}
+\ccSetThreeColumns{XXXXXX}{}{\hspace*{8.5cm}}
 \ccOperations
 
 
@@ -96,7 +109,7 @@ specialized predicates, not to use arithmetic.
          {casts to \ccStyle{double}.}
 
 
-%\section{Parametrization routines}
+\section{Parametrization routines}
 
 \ccHeading{Precision initialization}
 As mentioned before, the \ccClassName\ numbers takes their values in an
@@ -104,7 +117,7 @@ interval $[-2^{24+b},2^{24+b}]$ of multiples of $2^b$,
 this number $b$ as to be defined before any
  use of \ccStyle{Fixed_precision_nt}.
 
-\ccSetThreeColumns{Oriented_side}{}{\hspace*{7.5cm}}
+\ccSetThreeColumns{Comparison_result}{}{\hspace*{6cm}}
 
 \ccFunction{static bool Fixed_precision_nt::init(float B);}
 {$B$ is an upper bound on the data, $b$ is the smallest integer such that 
@@ -117,9 +130,9 @@ already done, in that case already existing \ccClassName\ may become invalid.}
 \ccFunction{static float Fixed_precision_nt::upper_bound();}
 {returns $2^{24+b}$.}
 
-\ccHeading{Perturbation scheme}
+\subsection{Perturbation scheme}
 
-\ccClassName\ implements the perturbation scheme as described by
+\ccClassName\ implements perturbation scheme as described by
 Alliez, Devillers and Snoeyink \cite{ads-rdppw-97}.
 The perturbation mode can be activated or deactivated for different kinds
 of perturbations. The default mode is no perturbation.
@@ -146,17 +159,16 @@ the 5 points are coplanar.}
 \ccFunction{static bool Fixed_precision_nt::is_perturbed_insphere();}
 {returns current mode}
 
-%\section{Geometric predicates}
-\ccHeading{Geometric predicates}
+\section{Geometric predicates}
 
 Through overloading mechanisms, functions such that
 \ccStyle{orientation} for 
 \ccStyle{Point_2<Cartesian< Fixed_precision_nt> >}
 will correctly call the function below.
 
-\ccSetThreeColumns{Oriented_side}{}{\hspace*{7.5cm}}
+\ccSetThreeColumns{Oriented_side}{}{\hspace*{6cm}}
 
-%\subsection{Two dimensional}
+\subsection{Two dimensional}
 
 \ccFunction{Orientation orientationC2(
   Fixed_precision_nt x0, Fixed_precision_nt y0,
@@ -169,7 +181,7 @@ will correctly call the function below.
   Fixed_precision_nt x2, Fixed_precision_nt y2,
   Fixed_precision_nt x3, Fixed_precision_nt y3);}{Perturbation mode can be activated.}
 
-%\subsection{Three dimensional}
+\subsection{Three dimensional}
 
 \ccFunction{Orientation orientationC3(  
   Fixed_precision_nt x0, Fixed_precision_nt y0, Fixed_precision_nt z0,
@@ -177,7 +189,7 @@ will correctly call the function below.
   Fixed_precision_nt x2, Fixed_precision_nt y2, Fixed_precision_nt z2,
   Fixed_precision_nt x3, Fixed_precision_nt y3, Fixed_precision_nt z3);}{}
 
-\ccSetThreeColumns{x}{}{\hspace*{7.5cm}}
+\ccSetThreeColumns{x}{}{\hspace*{3.5cm}}
 
 \ccFunction{Oriented_side side_of_oriented_sphereC3 (
   Fixed_precision_nt x0, Fixed_precision_nt y0, Fixed_precision_nt z0,

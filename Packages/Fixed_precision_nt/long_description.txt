@@ -50,6 +50,7 @@ Versions
   small bug in test suite
 
 2.4 (17 May 1999)
+2.5 (18 May 1999)
   doc
 
 
