@@ -223,12 +223,6 @@ void Qt_widget::leaveEvent(QEvent *e)
   }
 }
 
-void Qt_widget::init(double x_min, double x_max, double y_min)
-{
-  double y_max=y_min+(height()-1)*(x_max-x_min)/(width()-1);
-  set_window(x_min, x_max, y_min, y_max);
-}
-
 void Qt_widget::set_window(double  x_min, double x_max, double y_min, double y_max)
 {
   xmin = x_min;

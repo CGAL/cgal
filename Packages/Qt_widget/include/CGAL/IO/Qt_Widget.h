@@ -50,7 +50,6 @@ public:
 
   // initialization of coordinates system
   void set_window(double x_min, double x_max, double y_min, double y_max);
-  void init(double x_min, double x_max, double y_min);
   bool isInitialized() const; // tell if init has been called
   void zoom_in(double ratio);
   void zoom_out(double ratio);
