@@ -397,7 +397,7 @@ $mc(P)=mc(P,\emptyset)$.
     Min_circle_2( InputIterator first,
                   InputIterator last,
                   bool          randomize
-#if !defined(_MSC_VER) || _MSC_VER > 1200
+#if !defined(__BORLANDC__) && (!defined(_MSC_VER) || _MSC_VER > 1200)
                                           = false
 #endif
                                                  ,
@@ -1036,9 +1036,9 @@ traits class object.
         return( os);
     }
 
-    template < class Traits >
+    template < class _Traits >
     std::istream&
-    operator >> ( std::istream& is, CGAL::Min_circle_2<Traits>& min_circle)
+    operator >> ( std::istream& is, CGAL::Min_circle_2<_Traits>& min_circle)
     {
     #ifndef CGAL_CFG_NO_NAMESPACE
         using namespace std;
@@ -1053,7 +1053,7 @@ traits class object.
 
           case CGAL::IO::ASCII:
           case CGAL::IO::BINARY:
-            typedef  CGAL::Min_circle_2<Traits>::Point  Point;
+            typedef  CGAL::Min_circle_2<_Traits>::Point  Point;
             typedef  istream_iterator<Point>            Is_it;
             min_circle.clear();
             min_circle.insert( Is_it( is), Is_it());
@@ -2612,20 +2612,24 @@ representation) and corresponding data accessors.
         }
 
         friend
-        std::ostream&
-        operator << ( std::ostream& os, const MyPointC2& p)
-        {
-            return( os << p._x << ' ' << p._y);
-        }
+        std::ostream&  operator << ( std::ostream& os, const MyPointC2& p);
 
         friend
-        std::istream&
-        operator >> ( std::istream& is, MyPointC2& p)
-        {
-            return( is >> p._x >> p._y);
-        }
+        std::istream&  operator >> ( std::istream& is,       MyPointC2& p);
     };
 
+    std::ostream&
+    operator << ( std::ostream& os, const MyPointC2& p)
+    {
+        return( os << p._x << ' ' << p._y);
+    }
+
+    std::istream&
+    operator >> ( std::istream& is, MyPointC2& p)
+    {
+        return( is >> p._x >> p._y);
+    }
+    
     // 2D Cartesian point class data accessor
     class MyPointC2DA {
       public:
@@ -2684,19 +2688,23 @@ representation) and corresponding data accessors.
         }
 
         friend
-        std::ostream&
-        operator << ( std::ostream& os, const MyPointH2& p)
-        {
-            return( os << p._hx << ' ' << p._hy << ' ' << p._hw);
-        }
+        std::ostream&  operator << ( std::ostream& os, const MyPointH2& p);
 
         friend
-        std::istream&
-        operator >> ( std::istream& is, MyPointH2& p)
-        {
-            return( is >> p._hx >> p._hy >> p._hw);
-        }
+        std::istream&  operator >> ( std::istream& is,       MyPointH2& p);
     };
+
+    std::ostream&
+    operator << ( std::ostream& os, const MyPointH2& p)
+    {
+        return( os << p._hx << ' ' << p._hy << ' ' << p._hw);
+    }
+
+    std::istream&
+    operator >> ( std::istream& is, MyPointH2& p)
+    {
+        return( is >> p._hx >> p._hy >> p._hw);
+    }
 
     // 2D homogeneous point class data accessor
     class MyPointH2DA {
@@ -3174,8 +3182,8 @@ web file.
         "Geometric Optimisation",
         "Min_circle_2","Optimisation/Min_circle_2",
         "$Revision$","$Date$",
+        "Sven Schönherr, Bernd Gärtner",
         "Sven Schönherr <sven@@inf.fu-berlin.de>",
-        "Bernd Gärtner",
         "ETH Zürich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
         "@2")
 @end
