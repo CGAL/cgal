@@ -371,6 +371,7 @@ collinear_are_strictly_ordered_along_line(const PointC3<R CGAL_CTAG> &p,
 }
 
 template <class R >
+inline
 Oriented_side
 side_of_oriented_sphere(const PointC3<R CGAL_CTAG> &p,
                         const PointC3<R CGAL_CTAG> &q,
@@ -386,6 +387,7 @@ side_of_oriented_sphere(const PointC3<R CGAL_CTAG> &p,
 }
 
 template <class R >
+inline
 Bounded_side
 side_of_bounded_sphere(const PointC3<R CGAL_CTAG> &p,
                        const PointC3<R CGAL_CTAG> &q,
