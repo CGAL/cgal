@@ -45,14 +45,14 @@ public:
     set_constraints(c0,c1,c2);
   }
 
-  void set_constraint(bool c0, bool c1, bool c2)
+  void set_constraints(bool c0, bool c1, bool c2)
   {
     C[0]=c0;
     C[1]=c1;
     C[2]=c2;
   }
 
-  void set_constraints(int i, bool b)
+  void set_constraint(int i, bool b)
   {
     CGAL_triangulation_precondition( i == 0 || i == 1 || i == 2);
     C[i] = b;
