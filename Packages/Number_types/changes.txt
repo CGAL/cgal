@@ -1,3 +1,6 @@
+26 March 2005 Sylvain Pion
+- Gmpz/Gmpq : remove some copies.
+
 13 March 2005 Sylvain Pion
 - Quotient.h : Use Kernel/mpl.h's First_if_different<>, instead of redefining
   a local equivalent.

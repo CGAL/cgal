@@ -20,7 +20,7 @@
 // $Name$
 //
 // Author(s)     : Andreas Fabri, Sylvain Pion
- 
+
 
 #ifndef CGAL_GMPQ_H
 #define CGAL_GMPQ_H
@@ -40,123 +40,25 @@
 
 CGAL_BEGIN_NAMESPACE
 
-class Gmpq_rep
+// TODO : add mixed operators with Gmpz.
+
+// Wrapper around mpq_t to get the destructor call mpq_clear.
+// Contrary to mpz_t, there are no mpq_init_set_* functions,
+// so we simply call mpq_init() here.
+struct Gmpq_rep
 {
-public:
+  mpq_t mpQ;
 
-  mpq_t  mpQ;
+  Gmpq_rep()  { mpq_init(mpQ); }
+  ~Gmpq_rep() { mpq_clear(mpQ); }
 
-  Gmpq_rep()
-  { 
-    mpq_init(mpQ); 
-  }
-
-  Gmpq_rep(const mpq_t z)
-  { 
-    mpq_init(mpQ); 
-    mpq_set(mpQ, z);
-  }
-
-  Gmpq_rep(const Gmpq_rep & g)
-  { 
-    mpq_init(mpQ); 
-    mpq_set(mpQ, g.mpQ);
-  }
-
-  Gmpq_rep & operator= (const Gmpq_rep & g)
-  {
-      if (&g != this) {
-	  mpq_clear(mpQ);
-	  mpq_set(mpQ, g.mpQ);
-      }
-      return *this;
-  }
-
-  Gmpq_rep(int si)
-  { 
-    mpq_init(mpQ); 
-    mpq_set_si(mpQ, si, 1); 
-  }
-
-  Gmpq_rep(long si)
-  { 
-    mpq_init(mpQ); 
-    mpq_set_si(mpQ, si, 1); 
-  }
-
-
-  Gmpq_rep(unsigned long ui)
-  { 
-    mpq_init(mpQ); 
-    mpq_set_ui(mpQ, ui, 1); 
-  }
-
-  Gmpq_rep(const Gmpz& z)
-  { 
-    mpq_init(mpQ); 
-    mpq_set_z(mpQ, z.mpz()); 
-  }
-
-  Gmpq_rep(unsigned long int ui1, unsigned long int ui2)
-  { 
-    mpq_init(mpQ); 
-    mpq_set_ui(mpQ, ui1, ui2); 
-    mpq_canonicalize(mpQ);
-  }
-  
-  Gmpq_rep(signed long int si, unsigned long int ui)
-  { 
-    mpq_init(mpQ); 
-    mpq_set_si(mpQ, si, ui);
-    mpq_canonicalize(mpQ);
-  }
-  
-  Gmpq_rep(int num, int den)
-  { 
-    mpq_init(mpQ); 
-    if(den < 0) {
-      num = -num;
-      den = -den;
-    }
-    mpq_set_si(mpQ, num, den);
-    mpq_canonicalize(mpQ);
-  }
-
-  Gmpq_rep(const Gmpz& n, const Gmpz& d)
-  { 
-    mpq_init(mpQ); 
-    mpz_set(mpq_numref(mpQ), n.mpz());
-    mpz_set(mpq_denref(mpQ), d.mpz());
-    
-    mpq_canonicalize(mpQ);
-  }
-
-  Gmpq_rep(double d)
-  { 
-    mpq_init(mpQ);
-    mpq_set_d(mpQ, d); 
-  }
-
-  Gmpq_rep(const std::string& str)
-  { 
-    mpq_init(mpQ);
-    mpq_set_str(mpQ, str.c_str(), 10);
-    mpq_canonicalize(mpQ); 
-  }
-
-  Gmpq_rep(const std::string& str, int base)
-  { 
-    mpq_init(mpQ);
-    mpq_set_str(mpQ, str.c_str(), base);
-    mpq_canonicalize(mpQ);
-  }
-
-  ~Gmpq_rep()
-  { mpq_clear(mpQ); }
+private:
+  // Make sure it does not get accidentally copied.
+  Gmpq_rep(const Gmpq_rep &);
+  Gmpq_rep & operator= (const Gmpq_rep &);
 };
 
 
-// TODO : add mixed operators with Gmpz
 class Gmpq
   : Handle_for<Gmpq_rep>,
     boost::ordered_field_operators1< Gmpq
@@ -173,56 +75,64 @@ public:
   typedef Tag_true   Has_exact_division;
   typedef Tag_false  Has_exact_sqrt;
 
-  Gmpq() // {} we can't do that since the non-const mpq() is called.
-    : Base(Gmpq_rep()) {}
+  Gmpq() {}
 
-  Gmpq(const mpq_t z)
-    : Base(Gmpq_rep(z)) {}
+  Gmpq(const mpq_t q)
+  { mpq_set(mpq(), q); }
 
   Gmpq(int n)
-    : Base(Gmpq_rep(n)) {}
+  { mpq_set_si(mpq(), n, 1); }
 
   Gmpq(long n)
-    : Base(Gmpq_rep(n)) {}
+  { mpq_set_si(mpq(), n, 1); }
 
   Gmpq(unsigned long n)
-    : Base(Gmpq_rep(n)) {}
+  { mpq_set_ui(mpq(), n, 1); }
 
   Gmpq(const Gmpz& n)
-    : Base(Gmpq_rep(n)) {}
+  { mpq_set_z(mpq(), n.mpz()); }
 
   Gmpq(int n, int d)
-    : Base(Gmpq_rep(n, d)) {}
-  
+  {
+    if (d < 0) {
+      n = -n;
+      d = -d;
+    }
+    mpq_set_si(mpq(), n, d);
+    mpq_canonicalize(mpq());
+  }
+
   Gmpq(signed long n, unsigned long d)
-    : Base(Gmpq_rep(n, d)) {}
+  {
+    mpq_set_si(mpq(), n, d);
+    mpq_canonicalize(mpq());
+  }
 
   Gmpq(unsigned long n, unsigned long d)
-    : Base(Gmpq_rep(n, d)) {}
+  {
+    mpq_set_ui(mpq(), n, d);
+    mpq_canonicalize(mpq());
+  }
 
   Gmpq(const Gmpz& n, const Gmpz& d)
-    : Base(Gmpq_rep(n,d)) {}
+  {
+    mpz_set(mpq_numref(mpq()), n.mpz());
+    mpz_set(mpq_denref(mpq()), d.mpz());
+    mpq_canonicalize(mpq());
+  }
 
   Gmpq(double d)
-    : Base(Gmpq_rep(d)) {}
-  
-  Gmpq(const std::string& str)
-    : Base(Gmpq_rep(str)) {}
-  
-   Gmpq(const std::string& str, int base)
-    : Base(Gmpq_rep(str, base)) {}
+  { mpq_set_d(mpq(), d); }
+
+  Gmpq(const std::string& str, int base = 10)
+  { mpq_set_str(mpq(), str.c_str(), base); }
 
 
   Gmpz numerator() const
-  {
-    return Gmpz(mpq_numref(mpq()));
-  }
+  { return Gmpz(mpq_numref(mpq())); }
 
   Gmpz denominator() const
-  {
-    return Gmpz(mpq_denref(mpq()));
-    
-  }
+  { return Gmpz(mpq_denref(mpq())); }
 
   Gmpq operator-() const;
 
@@ -401,7 +311,7 @@ struct Rational_traits<Gmpq> {
   RT   numerator     (const Gmpq & r) const { return r.numerator(); }
   RT   denominator   (const Gmpq & r) const { return r.denominator(); }
   Gmpq make_rational (const RT & n, const RT & d) const
-  { return Gmpq(n, d); } 
+  { return Gmpq(n, d); }
 };
 
 CGAL_END_NAMESPACE

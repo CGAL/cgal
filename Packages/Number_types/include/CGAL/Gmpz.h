@@ -20,14 +20,14 @@
 // $Name$
 //
 // Author(s)     : Andreas Fabri, Stefan Schirra, Sylvain Pion
- 
+
 
 #ifndef CGAL_GMPZ_H
 #define CGAL_GMPZ_H
 
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
-#include <CGAL/double.h> 
+#include <CGAL/double.h>
 #include <CGAL/Interval_arithmetic.h>
 
 #include <string>
@@ -44,50 +44,25 @@
 
 CGAL_BEGIN_NAMESPACE
 
-class Gmpz_rep
+// Wrapper around mpz_t to get the destructor call mpz_clear.
+struct Gmpz_rep
 {
-public:
-  mpz_t  mpZ;
+// FIXME : bug if ~() is called before an mpz_init*() is called.
+// not a problem in practice, but not nice.
+// maybe the mpz_init_set* functions should move back to Gmpz_rep.
+// But then we should use the Storage_traits::construct/get...
 
-  Gmpz_rep()
-  { mpz_init(mpZ); }
+  mpz_t mpZ;
 
-  Gmpz_rep(const mpz_t z)
-  { mpz_init_set(mpZ, z); }
+  Gmpz_rep() {}
+  ~Gmpz_rep() { mpz_clear(mpZ); }
 
-  Gmpz_rep(const Gmpz_rep & g)
-  { mpz_init_set(mpZ, g.mpZ); }
-
-  Gmpz_rep & operator= (const Gmpz_rep & g)
-  {
-      if (&g != this) {
-	  mpz_clear(mpZ);
-	  mpz_init_set(mpZ, g.mpZ);
-      }
-      return *this;
-  }
-
-  Gmpz_rep(int si)
-  { mpz_init_set_si(mpZ, si); }
-
-  Gmpz_rep(long li)
-  { mpz_init_set_si(mpZ, li); }
-
-  Gmpz_rep(unsigned long li)
-  { mpz_init_set_ui(mpZ, li); }
-
-  Gmpz_rep(double d)
-  { mpz_init_set_d(mpZ, d); }
-
-  Gmpz_rep(const char * const str)
-  { mpz_init_set_str(mpZ, str, 10); }
-
-  Gmpz_rep(const char * const str, int base)
-  { mpz_init_set_str(mpZ, str, base); }
-
-  ~Gmpz_rep()
-  { mpz_clear(mpZ); }
+private:
+  // Make sure it does not get accidentally copied.
+  Gmpz_rep(const Gmpz_rep &);
+  Gmpz_rep & operator= (const Gmpz_rep &);
 };
+
 
 class Gmpz
   : Handle_for<Gmpz_rep>,
@@ -105,29 +80,26 @@ public:
   typedef Tag_false Has_exact_division;
   typedef Tag_false Has_exact_sqrt;
 
-  Gmpz() // {} we can't do that since the non-const mpz() is called.
-    : Base(Gmpz_rep()) {}
+  Gmpz()
+  { mpz_init(mpz()); }
 
   Gmpz(const mpz_t z)
-    : Base(Gmpz_rep(z)) {}
+  { mpz_init_set(mpz(), z); }
 
   Gmpz(int i)
-    : Base(Gmpz_rep(i)) {}
+  { mpz_init_set_si(mpz(), i); }
 
   Gmpz(long l)
-    : Base(Gmpz_rep(l)) {}
+  { mpz_init_set_si(mpz(), l); }
 
   Gmpz(unsigned long l)
-    : Base(Gmpz_rep(l)) {}
+  { mpz_init_set_ui(mpz(), l); }
 
   Gmpz(double d)
-    : Base(Gmpz_rep(d)) {}
+  { mpz_init_set_d(mpz(), d); }
 
-  Gmpz(const std::string& str)
-    : Base(Gmpz_rep(str.c_str())) {}
-
-  Gmpz(const std::string& str, int base)
-    : Base(Gmpz_rep(str.c_str(), base)) {}
+  Gmpz(const std::string& str, int base = 10)
+  { mpz_init_set_str(mpz(), str.c_str(), base); }
 
   Gmpz operator-() const;
 
@@ -205,16 +177,15 @@ Gmpz::operator+=(const Gmpz &z)
 
 inline
 Gmpz&
-Gmpz::operator+=(int b)
+Gmpz::operator+=(int i)
 {
-    if (b>0)
-    {
-        Gmpz Res;
-        mpz_add_ui(Res.mpz(), mpz(), b);
-        swap(Res);
-        return *this;
-    }
-    return *this += Gmpz(b);
+    Gmpz Res;
+    if (i >= 0)
+        mpz_add_ui(Res.mpz(), mpz(), i);
+    else
+        mpz_sub_ui(Res.mpz(), mpz(), -i);
+    swap(Res);
+    return *this;
 }
 
 inline
@@ -229,16 +200,15 @@ Gmpz::operator-=(const Gmpz &z)
 
 inline
 Gmpz&
-Gmpz::operator-=(int b)
+Gmpz::operator-=(int i)
 {
-    if (b>0)
-    {
-        Gmpz Res;
-        mpz_sub_ui(Res.mpz(), mpz(), b);
-        swap(Res);
-        return *this;
-    }
-    return *this -= Gmpz(b);
+    Gmpz Res;
+    if (i >= 0)
+        mpz_sub_ui(Res.mpz(), mpz(), i);
+    else
+        mpz_add_ui(Res.mpz(), mpz(), -i);
+    swap(Res);
+    return *this;
 }
 
 inline
@@ -255,7 +225,10 @@ inline
 Gmpz&
 Gmpz::operator*=(int i)
 {
-    return *this *= Gmpz(i);
+    Gmpz Res;
+    mpz_mul_si(Res.mpz(), mpz(), i);
+    swap(Res);
+    return *this;
 }
 
 inline
