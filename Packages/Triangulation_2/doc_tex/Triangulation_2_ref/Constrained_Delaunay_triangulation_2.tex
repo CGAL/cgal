@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Constrained_Delaunay_triangulation_2<Traits,Tds>}  %% add template arg's if necessary
+\begin{ccRefClass}{Constrained_Delaunay_triangulation_2<Traits,Tds,Itag>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -34,6 +34,25 @@ from the interior of the triangle.
 The class \ccRefName\ is designed to represent
 constrained Delaunay triangulations.
 
+As in the case of constrained triangulations, three different versions
+of Delaunay constrained triangulations are offered
+and can be selected through the instantation of the
+third template parameter \ccc{Itag} which can be one of the
+following~:
+\ccc{CGAL::No_intersection_tag} if  intersections of
+ input constraints are disallowed,\\
+\ccc{CGAL::Exact_predicates_tag} allows intersection between input
+constraints
+ and is to be used when the traits
+class
+provides exact predicates but approximate constructions of the
+intersection points.
+\ccc{CGAL::Exact_intersections_tag} allows intersection between input
+constraints
+ and is to be used in conjonction
+with an exact aritmetic type.
+
+
 The template parameters \ccc{Tds} 
 has to be instantiate with a model of \ccc{Triangulation_data_structure_2}.
 The geometric traits 
@@ -43,6 +62,12 @@ of a Delaunay triangulation and the \ccc{Traits}
 parameter has 
 to be instantiated with a model
 \ccc{Delaunay_triangulation_traits_2}.
+When intersection of input constraints are supported, 
+the geometric traits class 
+is required to provide additional function object  types
+to compute the intersection of two segments.
+and  has then to be also a model of the concept
+\ccc{ConstrainedTriangulationTraits_2}.
 
 A constrained Delaunay triangulation is not a Delaunay
 triangulation but it is a constrained triangulation.
@@ -62,6 +87,8 @@ by the base face.
 The base face of a constrained triangulation
 has to be a model of the concept
 \ccc{ConstrainedTriangulationFaceBase_2}.
+
+\cgal provides a defaults for the template parameters.
 If \ccc{Gt} is the geometric traits
 parameter,
 the default  for
@@ -73,14 +100,15 @@ triangulation data structure parameter is the class
                        CGAL::Triangulation_vertex_base_2<Gt>,
 		       CGAL::Constrained_triangulation_face_base_2<Gt>
 >}.
+The default intersection tag is \ccc{CGAL::No_intersection_tag}.
 
 \ccInclude{Constrained_Delaunay_triangulation_2.h}
 
-\ccInheritsFrom \ccc{Constrained_triangulation_2<Traits,Tds>}
+\ccInheritsFrom \ccc{Constrained_triangulation_2<Traits,Tds,Itag>}
 
 \ccTypes
 All types used in this class are inherited from the base class
-\ccc{Constrained_triangulation_2<Traits,Tds>}.
+\ccc{Constrained_triangulation_2<Traits,Tds,Itag>}.
 
 
 

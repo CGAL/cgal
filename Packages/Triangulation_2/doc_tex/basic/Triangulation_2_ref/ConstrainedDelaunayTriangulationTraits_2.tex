@@ -1,0 +1,81 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: DelaunayConstrainedTriangulationTraits_2.tex
+% +------------------------------------------------------------------------+
+% | 05.02.2002   Mariette Yvinec
+% | Package: Triangulation_2
+% | 
+\RCSdef{\RCSConstrainedDelaunayTriangulationTraitsRev}{$Revision$}
+\RCSdefDate{\RCSConstrainedDelaunayTriangulationTraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{ConstrainedDelaunayTriangulationTraits_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ defines the requirements for the geometric
+traits class of a Delaunay constrained triangulation
+( \ccc{Delaunay_constrained_Triangulation_2<Traits,Tds,Itag>})
+that support intersections of input constraints (i. e.
+when the template parameter \ccc{Itag} is instantiated
+by one one of the tag classes \ccc{Exact_intersections_tag} or
+\ccc{Exact_predicates_tag}). This concept refines both the concept
+\ccc{TriangulationTraits_2} and the concept
+\ccc{ConstrainedTriangulationTraits_2}.
+
+\ccGeneralizes
+\ccc{TriangulationTraits_2} \\
+\ccc{ConstrainedTriangulationTraits_2}
+
+
+\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+
+\ccConstructor{ConstrainedDelaunayTriangulationTraits_2();}{default constructor.}
+\ccGlue
+\ccConstructor{ConstrainedDelaunayTriangulationTraits_2(
+                    const ConstrainedDelaunayTriangulationTraits_2& dctraits);}
+{Copy constructor}
+
+\ccMethod{ConstrainedDelaunayTriangulationTraits_2 operator=
+	(const ConstrainedDelaunayTriangulationTraits_2& dctraits);}
+{Assignment operator.}
+
+\ccHasModels
+The kernels of \cgal are models for this traits class.
+
+\ccSeeAlso
+\ccc{TriangulationTraits_2} \\
+\ccc{ConstrainedTriangulationTraits_2} \\
+\ccc{Constrained_triangulation_2<Gt,Tds,Itag>} \\
+\ccc{Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>} 
+
+
+%\ccExample
+
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{examples/Package/ConstrainedTriangulationPlusTraits_2_prog.C}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
+
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
+
+%% \ccIncludeExampleCode{examples/Package/ConstrainedTriangulationPlusTraits_2_prog.C}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

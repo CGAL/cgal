@@ -11,56 +11,37 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Constrained_triangulation_plus_2<Tr,Itag>}  %% add template arg's if necessary
+\begin{ccRefClass}{Constrained_triangulation_plus_2<Tr>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
 The class \ccRefName\ 
-implements a constrained triangulation that 
-can deal with intersecting constraints. 
-The class allows as input a set of constraint segments which may be
-intersecting, overlapping or partially
-overlapping segments. 
-The class  \ccRefName\ 
- constructs a triangulation  of the  arrangement
-of these constraints.
-To this purpose, a vertex  is introduced at each intersection point,
-thus refining the input constraints into subconstraints
-which are edges (more precisely constrained edges) of the
-triangulation.
-
-The class \ccRefName\ 
-is equipped with a data structure called  the constraint hierarchy 
+implements a constrained triangulation 
+with an additional data
+structure called the  constraint hierarchy 
 that keeps track of  the input constraints and of their refinement
 in the triangulation.
-Thus it is possible to retrieve, for each input constraint, the 
-sequence of intersection vertices added on this constraint
-and, for each constrained edge of the
-triangulation, the set of input constraints that overlap it.
-
-The class has two template parameters.  The first one has to be
-instantiated by a constrained triangulation or 
-a Delaunay constrained triangulation
-class. The second parameter is an intersection tag
- which allows to choose different
-strategies to deal with constraint intersections. 
-\cgal\ provides three valid types for this parameter : \\
-the type \ccc{Tag_no_intersection} disallows intersections of
- input constraints,\\
-the type \ccc{Tag_exact_intersections} is to be used in conjonction
-with an exact aritmetic type \\
-the type \ccc{Tag_exact_predicates} is to be used when the traits
-class of the base triangulation class
-provide exact predicates but approximate constructions of the
-intersection points.
-
-When intersections of input constraints are allowed, the traits class of the
-base triangulation class
-is required to provide the type
-\ccc{Intersect_2},  a function object whose operator()
-compute the intersection of two segments.
-
+The class \ccc{Constrained_triangulation_plus_2<Tr>}
+inherits from its template parameter Tr, which has to be instantiated
+by a constraint or Delaunay constraint triangulation.
+According to its intersection tag, the base class
+will support intersecting input constraints or not.
+When intersections of input constraints are supported,
+the base class constructs a triangulation  of the  arrangement
+of these constraints,
+introducing new vertices at each proper intersection
+points and  refining the input constraints into subconstraints
+which are edges (more precisely constrained edges) of the
+triangulation. 
+In this context, the constraint hierarchy 
+keeps track of  the input constraints and of their refinement
+in the triangulation. This data structure keeps track of the
+input constraints and maintain for each of them
+the sequence of intersection vertices added on this constraint.
+The constraint hierarchy also allows the user to retrieve the set
+of constrained edges of the triangulation, and for each
+constrained edge,  the set of input constraints that overlap it.
 
 \ccInclude{CGAL/Constrained_triangulation_plus_2.h}
 
@@ -180,13 +161,13 @@ to be given by \ccc{(lt,loc,li)}.}
  \ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
  is \ccc{Point}.}
 
-\ccMethod{ void insert(Point a, Point b);}
+\ccMethod{ void insert_constraint(Point a, Point b);}
 {Inserts the constraint segment ab in the triangulation. }
 
 \ccMethod{ void push_back(const Constraint& c);}
 {Inserts the constraint \ccc{c}.}
 
-\ccMethod{ void insert(Vertex_handle va, Vertex_handle vb);}
+\ccMethod{ void insert_constraint(Vertex_handle va, Vertex_handle vb);}
 { Inserts a constraint whose endpoints are the vertices 
 pointed by \ccc{va} and 
 \ccc{vb}

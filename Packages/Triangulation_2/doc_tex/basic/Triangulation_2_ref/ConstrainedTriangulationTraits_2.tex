@@ -1,0 +1,116 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ConstrainedTriangulationTraits_2.tex
+% +------------------------------------------------------------------------+
+% | 05.02.2002   Mariette Yvinec
+% | Package: Triangulation_2
+% | 
+\RCSdef{\RCSConstrainedTriangulationTraitsRev}{$Revision$}
+\RCSdefDate{\RCSConstrainedTriangulationTraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{ConstrainedTriangulationTraits_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ defines the requirements for the geometric
+traits class of a constrained triangulation
+( \ccc{Constrained_Triangulation_2<Traits,Tds,Itag>})
+that support intersections of input constraints (i. e.
+when the template parameter \ccc{Itag} is instantiated
+by one one of the tag classes \ccc{Exact_intersections_tag} or
+\ccc{Exact_predicates_tag}). This concept refines the concept
+\ccc{TriangulationTraits_2}, adding requirement for function objects
+to compute the intersection points of two constraints.
+When \ccc{Exact_predicates_tag}) is used, the insertion of constraint may
+also require additionnal types
+to compute the square distance between a point and a line
+
+
+\ccGeneralizes
+\ccc{TriangulationTraits_2} 
+
+
+\ccTypes
+
+\ccNestedType{Intersect_2}{A function object whose operator()
+computes the intersection of two segments : \\
+\ccc{Object_2 operator()(Segment s1, Segment s2);}
+Returns the intersection of \ccc{s1} and \ccc{s2}.}
+
+The geometric traits of  constrained triangulation is instantiated with
+the intersection tag \ccc{Exact_predicates_tag}
+is also required to provide the following types~:
+\ccNestedType{Line_2}{The line type.}
+\ccGlue
+\ccNestedType{Construct_line_2} {A function object whose operator()
+constructs a line (type \ccc{Line_2}) from two points
+(type \ccc{Point_2}).}
+\ccGlue
+\ccNestedType{Compute_squared_distance_2}{A function object with an
+operator() designed to compute the squared distance between
+a line (type \ccc{Line_2}) and a point (type \ccc{Point_2}).}
+
+
+\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+
+\ccConstructor{ConstrainedTriangulationTraits_2();}{default constructor.}
+\ccGlue
+\ccConstructor{ConstrainedTriangulationTraits_2(
+                    const ConstrainedTriangulationPlusTraits_2& cttraits);}
+{Copy constructor}
+
+\ccMethod{ConstrainedTriangulationTraits_2 operator=
+	(const ConstrainedTriangulationTraits_2& cttraits);}
+{Assignment operator.}
+
+
+\ccHeading{Access to constructor object}
+\ccMethod{Intersect_2  intersect_2_object();}{}
+\ccMethod{Construct_line_2 construct_line_2_object();}{required when
+the intersection tag is \ccc{Exact_predicates_tag}.}
+\ccMethod{Compute_squared_distance_2
+compute_squared_distance_2_object();}
+{required when
+the intersection tag is \ccc{Exact_predicates_tag}.}
+
+
+\ccHasModels
+The kernels of \cgal are models for this traits class.
+
+
+
+\ccSeeAlso
+\ccc{TriangulationTraits_2} \\
+\ccc{ConstrainedTriangulationTraits_2}
+
+
+%\ccExample
+
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{examples/Package/ConstrainedTriangulationPlusTraits_2_prog.C}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
+
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
+
+%% \ccIncludeExampleCode{examples/Package/ConstrainedTriangulationPlusTraits_2_prog.C}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

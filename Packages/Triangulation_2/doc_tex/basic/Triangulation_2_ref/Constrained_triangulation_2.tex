@@ -11,25 +11,49 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Constrained_triangulation_2<Traits,Tds>}  %% add template arg's if necessary
+\begin{ccRefClass}{Constrained_triangulation_2<Traits,Tds,Itag>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
-\ccDefinition
-  
+\ccDefinition  
 A constrained triangulation is a triangulation of a set of points
 which has to include among its edges 
 a given set of segments joining the points. The corresponding 
 edges are called {\em constrained edges}. 
 
-The set of points defining the vertices of the triangulation
-includes the set of constrained edges endpoints. It may include other points
-(considered as null length constrained edges) as well.  The set of
-constrained edges forms a set of segments which do not intersect
-except possibly at their endpoints.  Any number of constrained edges
+The endpoints of constrained edges are of course vertices of the
+triangulation. However the triangulation may include
+include other vertices as well.
+There are three versions of  constrained triangulations.
+In the basic version, the constrained triangulation 
+do not handle intersecting constraints, and the set of input 
+constraints is required to be a set of segments that do not intersect
+except possibly at their endpoints. Any number of constrained edges
 are allowed to share the same endpoint.  Vertical constrained edges or
 constrained edges with null length are allowed.
+The two other versions support intersecting input constraints.
+In those versions, input constraints are allowed to be
+intersecting, overlapping or partially
+overlapping segments.
+The triangulation introduce  additional  vertices at each point which
+is a proper intersection points of  two 
+constraints. A single constraint intersecting other
+constraints will then appear as several edges in the triangulation.
+The two versions dealing with intersecting constraints, slightly differ
+in the way intersecting constraints are dealt with. One of them is
+designed to be robust when predicates are evaluated exactly but
+constructions (i. e.  intersection computations) are
+approximative.
+The other one is designed to be used 
+with an exact arithmetic (meaning exact
+evaluation of predicates and exact computation of intersections.)
+This last version finds its full efficiency  when used in conjonction
+with a constraint hierarchy data structure (which allows to avoid the
+cascading of intersection computations)
+as provided in the class
+\ccc{Constrained_triangulation_plus_2}. See section~\ref{Section_2D_Constrained_triangulation_plus}.
+
 
 \begin{ccTexOnly}
 \begin{center} \IpeScale{50} \Ipe{constraints.ipe} \end{center}
@@ -44,10 +68,32 @@ constraints and its constrained triangulation">
 
 The class \ccRefName\ of the CGAL library
 implements constrained triangulations.
-The template parameters \ccc{Traits} and \ccc{Tds}
-are to be instantiated with models of respectively
-\ccc{TriangulationTraits_2}  and
-\ccc{TriangulationDdataStructure_2}.
+The template parameter \ccc{Traits} 
+stands for a geometric traits class. It has to be a model
+of the concept \ccc{TriangulationTraits_2}.
+When intersection of input constraints are supported, 
+the geometric traits class 
+is required to provide additional function object  types
+to compute the intersection of two segments.
+It has then to be a model of the concept
+\ccc{ConstrainedTriangulationTraits_2}.
+The template parameter \ccc{Tds}
+stands for 
+a triangulation data structure class that has to be a model
+of the concept \ccc{TriangulationDataStructure_2}.
+The third parameter \ccc{Itag} is the intersection tag
+which serves  to choose different
+strategies to deal with constraint intersections. 
+\cgal\ provides three valid types for this parameter : \\
+\ccc{CGAL::No_intersection_tag} disallows intersections of
+ input constraints,\\
+\ccc{CGAL::Exact_predicates_tag} is to be used when the traits
+class
+provides exact predicates but approximate constructions of the
+intersection points.\\
+\ccc{CGAL::Exact_intersections_tag} is to be used in conjonction
+with an exact aritmetic type.
+
  The information about constrained edges is store in the 
 faces of the triangulation. Thus the nested \ccc{Face}
 type of a constrained triangulation offers
@@ -60,7 +106,11 @@ by the base face.
 The base face of a constrained triangulation
 has to be a model of the concept
 \ccc{ConstrainedTriangulationFaceBase_2}.
-\cgal provides a defaults. If \ccc{Gt} is the geometric traits
+
+
+\cgal\ provides a defaults for the template parameters
+\ccc{Tds} and \ccc{Itag}, and for the \ccc{ConstrainedTriangulationFaceBase_2}.
+ If \ccc{Gt} is the geometric traits
 parameter,
 the default  for
 \ccc{ConstrainedTriangulationFaceBase_2}  is the class
@@ -69,7 +119,9 @@ and the default for the
 triangulation data structure parameter is the class
 \ccc{CGAL::Triangulation_data_structure_using_list_2 <
                        CGAL::Triangulation_vertex_base_2<Gt>,
-		       CGAL::Constrained_triangulation_face_base_2<Gt> >}.
+		       CGAL::Constrained_triangulation_face_base_2<Gt>
+>}.
+The default intersection tag is \ccc{CGAL::No_intersection_tag}.
 
 \ccInclude{CGAL/Constrained_triangulation_2.h} 
  
@@ -78,11 +130,10 @@ triangulation data structure parameter is the class
 \ccc{Triangulation_2<Traits,Tds>}
 
 \ccTypes
-The only new type defined by
-\ccRefName\ is a constraint type: a
-constraint is represented as a pair of points.
-
-\ccTypedef{typedef pair<Point,Point> Constraint;}{}
+\ccTypedef{typedef pair<Point,Point> Constraint;}{ The type of input
+constraints}
+\ccTypedef{typedef Itag   Intersection_tag;}{Thr intersection tag which decides how 
+intersections between input constraints are dealt with.}
 
 
 
@@ -99,7 +150,7 @@ constrained edges with null length are allowed.
 Constrained_triangulation_2& ct1)}
  {Copy constructor, all faces and vertices
 are duplicated and  the constrained status of edges
-is copied. This last feature is not yet implemented.}
+is copied.}
 
 \ccConstructor{Constrained_triangulation_2(list<Constrained>& lc,
 const Traits& t = Traits());}
@@ -156,7 +207,7 @@ for the location of \ccc{p}.}
  \ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
  is \ccc{Point}.}
 
-\ccMethod{void insert(Point a, Point b);}
+\ccMethod{void insert_constraint(Point a, Point b);}
 { Inserts points a and b, and inserts segment ab as a
 constraint. Removes the faces crossed by segment ab and creates new
 faces instead. If a vertex c lies on segment ab, constraint ab is
@@ -169,7 +220,7 @@ intersect the relative interior of another constrained edge.}
 \ccMethod{ void push_back(const Constraint& c);}
 {Inserts constraints \ccc{c} as above.}
 
-\ccMethod{ void insert(const Vertex_handle & va, const Vertex_handle & vb);}
+\ccMethod{ void insert_constraint(const Vertex_handle & va, const Vertex_handle & vb);}
 { Inserts the line segment \ccc{s} whose endpoints are the vertices 
 \ccc{va} and
 \ccc{vb}  as a constrained edge \ccc{e}. The triangles intersected by s
@@ -212,7 +263,9 @@ write ``C'' or ``N'' depending whether edge
 \ccc{CGAL::Triangulation_2<Traits,Tds>}, \\
 \ccc{TriangulationDataStructure_2}, \\
 \ccc{TriangulationTraits_2} \\
-\ccc{ConstrainedTriangulationFaceBase_2}
+\ccc{ConstrainedTriangulationTraits_2} \\
+\ccc{ConstrainedTriangulationFaceBase_2} \\
+
 
 
 
