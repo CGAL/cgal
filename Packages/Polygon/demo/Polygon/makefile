@@ -34,7 +34,7 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                PolygonDemo 
+                PolygonDemo$(EXE_EXT) 
 
 PolygonDemo$(EXE_EXT): PolygonDemo$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)PolygonDemo PolygonDemo$(OBJ_EXT) $(LDFLAGS)
