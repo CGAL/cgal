@@ -37,14 +37,19 @@ void bench()
   const double dd = 1.0000001;
   const IA_nt a(0.12);
   // const IA_nt b(2.1);
-  const IA_nt b(IA_nt(21)/10);
+  IA_nt b(IA_nt(21)/10);
   IA_nt c(1), d(-5.0/3), e(-6.0/7), f(7.0/9);
 
-   c = a + b;
-   std::cout << a << std::endl << b << std::endl;
-   if (b.is_point())
-     std::cout << "error due to constant propagation" << std::endl;
-   std::cout << c << std::endl;
+  c = a + b;
+  std::cout << a << std::endl << b << std::endl;
+  if (b.is_point())
+  {
+    std::cout << "error due to constant propagation" << std::endl;
+    const volatile double ddd = 10.0;
+    b = IA_nt(21)/ddd;
+    assert(!b.is_point());
+  }
+  std::cout << c << std::endl;
 
   std::cout << loops << " loops.\n";
 
