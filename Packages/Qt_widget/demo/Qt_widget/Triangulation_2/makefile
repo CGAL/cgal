@@ -33,7 +33,7 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: triangulation_2
+all: triangulation_2 regular_triangulation_2
 
 triangulation_2_toolbar$(OBJ_EXT): triangulation_2_toolbar.C triangulation_2_toolbar.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) triangulation_2_toolbar.C
@@ -65,14 +65,50 @@ triangulation_2$(OBJ_EXT): triangulation_2.C triangulation_2.moc
 triangulation_2$(EXE_EXT): triangulation_2$(OBJ_EXT)
 	$(CGAL_CXX) $(EXE_OPT)triangulation_2 triangulation_2$(OBJ_EXT)  triangulation_2_edit_vertex$(OBJ_EXT) triangulation_2_toolbar$(OBJ_EXT) triangulation_2_toolbar_layers$(OBJ_EXT) $(LDFLAGS)
 
+
+#--------------------------------#
+# regular_triangulation_2
+#--------------------------------#
+
+regular_triangulation_2_toolbar$(OBJ_EXT): regular_triangulation_2_toolbar.C \
+                                           regular_triangulation_2_toolbar.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) regular_triangulation_2_toolbar.C
+
+regular_triangulation_2_toolbar.moc: regular_triangulation_2_toolbar.h
+	$(QT_MOC) -o regular_triangulation_2_toolbar.moc \
+                     regular_triangulation_2_toolbar.h
+
+regular_triangulation_2_toolbar_layers$(OBJ_EXT): \
+                       regular_triangulation_2_toolbar_layers.C \
+		       regular_triangulation_2_toolbar_layers.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) \
+                       regular_triangulation_2_toolbar_layers.C
+
+regular_triangulation_2_toolbar_layers.moc: \
+                       regular_triangulation_2_toolbar_layers.h
+	$(QT_MOC) -o regular_triangulation_2_toolbar_layers.moc \
+                     regular_triangulation_2_toolbar_layers.h
+
+regular_triangulation_2.moc: regular_triangulation_2.C \
+                        triangulation_2_edit_vertex$(OBJ_EXT) \
+			regular_triangulation_2_toolbar$(OBJ_EXT) \
+			regular_triangulation_2_toolbar_layers$(OBJ_EXT)
+	${QT_MOC} -o triangulation_2.moc triangulation_2.C
+
+
+regular_triangulation_2$(OBJ_EXT): regular_triangulation_2.C \
+                                   regular_triangulation_2.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) regular_triangulation_2.C
+
+regular_triangulation_2$(EXE_EXT): regular_triangulation_2$(OBJ_EXT)
+	$(CGAL_CXX) $(EXE_OPT)regular_triangulation_2 regular_triangulation_2$(OBJ_EXT)  triangulation_2_edit_vertex$(OBJ_EXT) regular_triangulation_2_toolbar$(OBJ_EXT) regular_triangulation_2_toolbar_layers$(OBJ_EXT) $(LDFLAGS)
+
+
 clean: triangulation_2.clean \
        triangulation_2_toolbar_layers.clean \
        triangulation_2_toolbar.clean \
-       triangulation_2_edit_vertex.clean
+       triangulation_2_edit_vertex.clean \
+       regular_triangulation_2.clean \
+       regular_triangulation_2_toolbar_layers.clean \
+       regular_triangulation_2_toolbar.clean
 
-#---------------------------------------------------------------------#
-#                    suffix rules
-#---------------------------------------------------------------------#
-
-.C$(OBJ_EXT):
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
