@@ -1,0 +1,26 @@
+
+
+essai.o: \
+  ../../include/CGAL/Constrained_regular_triangulation_3.h \
+  ../../../Mesh_2/include/CGAL/Delaunay_mesher_2.h \
+  ../../../Mesh_2/include/CGAL/Mesh_2/Refine_edges_for_refine_faces.h \
+  ../../../Mesh_2/include/CGAL/Mesh_2/Refine_edges_with_clusters.h \
+  ../../../Mesh_2/include/CGAL/Mesh_2/Refine_edges.h \
+  ../../../Mesh_2/include/CGAL/Mesher_level.h \
+  ../../../Mesh_2/include/CGAL/Mesh_2/Triangulation_mesher_level_traits_2.h \
+  ../../../Mesh_2/include/CGAL/Mesh_2/Filtered_queue_container.h \
+  ../../../Mesh_2/include/CGAL/Mesh_2/Clusters.h \
+  ../../../Mesh_2/include/CGAL/Filter_circulator.h \
+  ../../../Mesh_2/include/CGAL/Mesh_2/Refine_edges_visitor.h \
+  ../../../Mesh_2/include/CGAL/Mesh_2/Refine_faces.h \
+  ../../../Mesh_2/include/CGAL/Double_map.h \
+  ../../include/CGAL/Constrained_triangulation_vertex_base_3.h \
+  ../../include/CGAL/Constrained_triangulation_cell_base_3.h \
+  ../../include/CGAL/Triangulation_mesher_3.h \
+  ../../include/CGAL/Mesh_3/Triangulation_mesher_level_traits_3.h \
+  ../../include/CGAL/Mesh_3/Refine_edges.h \
+  ../../include/CGAL/Mesh_3/Simple_queue_container.h \
+  ../../include/CGAL/Mesh_3/Refine_facets.h \
+  ../../include/CGAL/Mesh_3/Simple_set_container.h \
+  ../../include/CGAL/Conforming_Delaunay_triangulation_2_traits_3.h \
+  ../../../Mesh_2/include/CGAL/Delaunay_mesh_face_base_2.h

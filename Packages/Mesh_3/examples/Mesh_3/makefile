@@ -15,9 +15,8 @@ include $(CGAL_MAKEFILE)
 
 OTHER_CXXFLAGS?=
 
-CXXFLAGS = -I../../include \
-           -I../../../Mesh_2/include\
-	-DCGAL_USE_ADL_FOR_NT -fpermissive -pipe \
+CXXFLAGS = -I ../../../Mesh_2/include \
+	   -I../../include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(OTHER_CXXFLAGS)
@@ -40,20 +39,7 @@ LDFLAGS = \
 all:            \
                 essai$(EXE_EXT) 
 
-HEADERS = ../../include/CGAL/Constrained_regular_triangulation_3.h \
-	  ../../include/CGAL/Constrained_triangulation_vertex_base_3.h \
-	  ../../include/CGAL/Constrained_triangulation_cell_base_3.h \
-	  ../../include/CGAL/Mesher_level.h \
-	  ../../include/CGAL/Triangulation_mesher_3.h \
-	  ../../include/CGAL/Mesh_3/Refine_edges.h \
-	  ../../include/CGAL/Mesh_3/Refine_facets.h \
-	  ../../include/CGAL/Mesh_3/Simple_queue_container.h \
-	  ../../include/CGAL/Mesh_3/Simple_set_container.h \
-	  ../../include/CGAL/Mesh_3/Triangulation_mesher_level_traits_3.h \
-	  ../../../Mesh_2/include/CGAL/Conforming_Delaunay_triangulation_2.h \
-	  ../../../Mesh_2/include/CGAL/Delaunay_mesh_2.h
-
-essai$(OBJ_EXT): essai.C $(HEADERS)
+essai$(OBJ_EXT): essai.C
 
 essai$(EXE_EXT): essai$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)essai essai$(OBJ_EXT) $(LDFLAGS)
