@@ -878,7 +878,7 @@ set_compiler_flags()
     esac
     # version specific adjustments for msvc
     case ${CGAL_OS_COMPILER} in
-	*CL.*-13.*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} `include_dir_option ${CGAL_DIR}/include/compilers/vc7`";;
+	*CL.*-1300*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} `include_dir_option ${CGAL_DIR}/include/compilers/vc7`";;
 	*CL.*|*cl.*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} `include_dir_option ${CGAL_DIR}/stlport`";;
     esac
 }
@@ -1674,9 +1674,10 @@ EOF4
     # set flags
     EXE_OPT="-o "
     case $1 in
-  	*bcc32.exe*|*BCC32*) EXE_OPT="-P -e";;
-	*CL.*|*cl.*)         EXE_OPT="-TP -GR -GX -nologo -Fp";;
-        *mwcc.exe*|*MWCC*)   EXE_OPT="-gccincludes -lang c++ -msgstyle gcc -o ";
+  	*bcc32.exe*|*BCC32*)      EXE_OPT="-P -e";;
+	*CL.*-1300*|*cl.*-1300*)  EXE_OPT="-EHsc -TP -GR -GX -nologo -Fp";;
+	*CL.*|*cl.*)              EXE_OPT="-TP -GR -GX -nologo -Fp";;
+        *mwcc.exe*|*MWCC*) EXE_OPT="-gccincludes -lang c++ -msgstyle gcc -o ";
     esac
     _flags="${EXE_OPT}${TMP_CXX_FILE} ${TMP_CXX_FILE}.C"
 
@@ -1689,7 +1690,7 @@ EOF4
 	"Got the following error messages:" >>${TMP_LOGFILE}
     ${_printf} "%s\n" \
 	"---------------------------------" >>${TMP_LOGFILE}
-    eval "$1 ${_flags} >>${TMP_LOGFILE} 2>&1"
+    eval "`quote $1` ${_flags} >>${TMP_LOGFILE} 2>&1"
     if [ $? = 0 ]; then
 	log_print "Compiler version test compiled."
 	${_printf} "\n\n%s\n" "Execution:" >>${TMP_LOGFILE}
