@@ -30,14 +30,3 @@ TODO FOR DOC
 2) Document well set_window() add ranges ...
 
 
-Radu:
------
-Use heap instead of stack in files below:
-  demo/Qt_widget/basic/tutorial1/README.txt:    CGAL::Qt_widget W;
-  demo/Qt_widget/basic/tutorial1/README.txt:    CGAL::Qt_widget W;
-  demo/Qt_widget/basic/tutorial1/tutorial1.C:    CGAL::Qt_widget W;
-  demo/Qt_widget/basic/tutorial6/tutorial6.C:  CGAL::Qt_widget win;
-  demo/Qt_widget/basic/tutorial7/tutorial7.C:  CGAL::Qt_widget win;
-  demo/Qt_widget/basic/tutorial8/tutorial8.C:  CGAL::Qt_widget win;
-  demo/Qt_widget/Examples/standard_toolbar.C:  CGAL::Qt_widget win;
-  demo/Qt_widget/Examples/hellosegment.C:    CGAL::Qt_widget W;
