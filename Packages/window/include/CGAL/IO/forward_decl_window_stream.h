@@ -11,10 +11,12 @@
 // release       : 
 // release_date  : 
 // 
-// file          : IO/forward_decl_window_stream.h
-// package       : window
-// revision      : $Revision$
-// revision_date : $Date$
+// source        : leda_window.fw
+// file          : include/CGAL/IO/forward_decl_window_stream.h
+// package       : window (2.8.0)
+// maintainer    : Stefan Schirra <stschirr@mpi-sb.mpg.de>
+// revision      : 2.8.0
+// revision_date : 17 May 2001 
 // author(s)     : Stefan Schirra
 //
 //
@@ -23,10 +25,23 @@
  
 #ifndef CGAL_IO_FORWARD_DECL_WINDOW_STREAM_H
 #define CGAL_IO_FORWARD_DECL_WINDOW_STREAM_H
+
+#if defined(__USE_CGAL_WINDOW__)
+#include <CGAL/LEDA/window.h>
+
+class CGAL::window;
+#else
 class leda_window;
+#endif
+
 CGAL_BEGIN_NAMESPACE
 
+#if defined(__USE_CGAL_WINDOW__)
+typedef   CGAL::window    Window_stream;
+#else
 typedef   leda_window    Window_stream;
+#endif
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_IO_FORWARD_DECL_WINDOW_STREAM_H
