@@ -26,6 +26,7 @@
 #define CGAL_KERNEL_BASIC_H
 
 #include <CGAL/Kernel_traits.h>
+#include <CGAL/functional_base.h>
 
 #ifndef CGAL_KERNEL_INLINE
 #  define CGAL_KERNEL_INLINE inline
