@@ -143,32 +143,6 @@ public:
     return false; // don't intersect at all
   }
 
-  /*! do_intersect_to_left() compares the location of the intersection
-   * point of two given curves with a given point.
-   * \param c1 the first curve
-   * \param c2 the second curve
-   * \param pt the point
-   * \return true if c1 and c2 intersect at a point that is lexicographically
-   * smaller than pt, that is bellow or to the left of pt but not on pt.    
-   */
-  bool do_intersect_to_left(const X_curve_2 & c1, const X_curve_2 & c2,
-                            const Point_2 & pt) const 
-  {
-    Point_2 ip;
-    X_curve_2 seg;
-    Object res = intersect_2_object()(c1, c2);
-
-    if (assign(ip, res)) {
-      return (compare_xy_2_object()(ip, pt) == SMALLER);
-    }
-    if (assign(seg, res)) {
-      Compare_xy_2 compare_xy = compare_xy_2_object();
-      return ((compare_xy(seg.source(), pt) == SMALLER) ||
-              (compare_xy(seg.target(), pt) == SMALLER));
-    }
-     
-    return false; // don't intersect at all
-  }
 
   /*! nearest_intersection_to_right() finds the nearest intersection point of
    * two given curves to the right of a given point. Nearest is defined as the
@@ -240,83 +214,6 @@ public:
       }
 
       // the subcurve is completely to the left:
-      return false;
-    }
-
-    // the curves do not intersect:
-    return false;
-  }
-
-  /*! nearest_intersection_to_left() finds the nearest intersection point of
-   * two given curves to the left of a given point. Nearest is defined as the
-   * lexicographically nearest not including the point itself with one
-   * exception explained bellow..
-   * If the intersection of the two curves is an X_curve_2, that is,
-   * there is an overlapping subcurve, then if the the source and target of the
-   * subcurve are strickly to the left, they are returned through two
-   * other point references p1 and p2. If pt is between the source and target
-   * of the overlapping subcurve, or pt is its left endpoint, pt and the target
-   * of the left endpoint of the subcurve are returned through p1 and p2 
-   * respectively.
-   * If the intersection of the two curves is a point to the left of pt, pt
-   * is returned through the p1 and p2.
-   * \param c1 the first curve
-   * \param c2 the second curve
-   * \param pt the point to compare against
-   * \param p1 the first point reference
-   * \param p2 the second point reference
-   * \return true if c1 and c2 do intersect to the left of pt. Otherwise,
-   * false
-   */
-  bool nearest_intersection_to_left(const X_curve_2 & c1,
-                                    const X_curve_2 & c2,
-                                    const Point_2 & pt,
-                                    Point_2 & p1, Point_2 & p2) const
-  {
-    Point_2 ip;
-    X_curve_2 seg;
-    Object res = intersect_2_object()(c1, c2);
-
-    if (assign(p1,res)) {
-      // the intersection is a point:
-      if (compare_xy_2_object()(p1, pt) == SMALLER) {
-        p2 = p1;
-        return true;
-      }
-      return false;
-    }
-
-    if (assign(seg, res)) {
-      // the intersection is a curve:
-      Construct_vertex_2 construct_vertex = construct_vertex_2_object();
-      const Point_2 & src = construct_vertex(seg, 0);
-      const Point_2 & trg = construct_vertex(seg, 1);
-      Compare_xy_2 compare_xy = compare_xy_2_object();
-      Comparison_result src_pt = compare_xy(src, pt);
-      Comparison_result trg_pt = compare_xy(trg, pt);
-
-      if (src_pt == SMALLER && trg_pt == SMALLER) {
-        // the subcurve is completely to the left:
-        p1 = src;
-        p2 = trg;
-        return true;
-      }
-      
-      if (trg_pt != SMALLER && src_pt == SMALLER) {
-        // target is to the right, source is to the left:
-        p1 = pt;
-        p2 = src;
-        return true;
-      }
-
-      if (src_pt != SMALLER && trg_pt == SMALLER) {
-        // source is to the right, target is to the left:
-        p1 = pt;
-        p2 = trg;
-        return true;
-      }
-
-      // the subcurve is completely to the right:
       return false;
     }
 
