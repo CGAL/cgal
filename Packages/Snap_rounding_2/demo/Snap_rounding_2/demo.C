@@ -117,11 +117,6 @@ void get_extreme_points(std::list<Segment_2> &seg_list,Number_Type &min_x,Number
 
 int main(int argc,char *argv[])
 {
-#ifdef TIMER
-  CGAL::Timer t;
-  t.start();
-#endif
-
   std::list<Segment_2> seg_list;
   Number_Type prec;
   int number_of_trees;
@@ -142,13 +137,11 @@ int main(int argc,char *argv[])
   w.display();
   draw_orig(w,seg_list);
 #endif
-  CGAL::Snap_rounding_2<Rep> i(seg_list.begin(),seg_list.end(),prec,do_isr,number_of_trees);
-
-#ifdef TIMER
-  t.stop();
-
-  std::cerr << std::endl << "The whole program took " << t.time() << " seconds\n\n";
-#endif
+  CGAL::Snap_rounding_2<Rep> i(seg_list.begin(),
+                               seg_list.end(),
+                               prec,
+                               do_isr,
+                               number_of_trees);
 
 #ifdef ISR_DEBUG
   i.window_output(w,wait_for_click);
