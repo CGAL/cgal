@@ -180,8 +180,7 @@ private:
   int max2(int i0, int i1, int i2, int i3, int i4, int m) const;
   int maxless(int i0, int i1, int i2, int i3, int i4, int m) const;
 
-  void delete_cells(std::list<Cell_handle> & cells, int dummy_for_windows=0);
-  void delete_cells(std::list<Facet> & cells);
+  void delete_cells(std::list<Cell_handle> & cells);
 
   void make_hole_3D_ear( Vertex_handle v, 
 	                 std::list<Facet> & boundhole,
@@ -341,23 +340,12 @@ remove(Vertex_handle v)
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_3<Gt,Tds>::
-delete_cells(std::list<Cell_handle> & hole, int /*dummy_for_windows*/)
+delete_cells(std::list<Cell_handle> & hole)
 {
   for(typename std::list<Cell_handle>::iterator cit = hole.begin();
       cit != hole.end(); ++cit)
     _tds.delete_cell( &*(*cit) );
 }
-
-template < class Gt, class Tds >
-void
-Delaunay_triangulation_3<Gt,Tds>::
-delete_cells(std::list<Facet> & hole)
-{
-  for(typename std::list<Facet>::iterator cit = hole.begin();
-      cit != hole.end(); ++cit)
-    _tds.delete_cell( &*((*cit).first) );
-}
-
 
 //debug
 template < class Gt, class Tds >
@@ -838,7 +826,7 @@ make_hole_3D_ear( Vertex_handle v,
 	      std::list<Facet> & boundhole,
 	      std::list<Cell_handle> & hole)
 {
-  CGAL_triangulation_precondition( ! test_dim_down(v) );
+  CGAL_triangulation_expensive_precondition( ! test_dim_down(v) );
 
   typedef std::set<Cell_handle> Hole_cells;
   Hole_cells cells;
@@ -864,7 +852,6 @@ make_hole_3D_ear( Vertex_handle v,
     ++cit;
   } while ( cit != cdone );
 
-  return;
 }// make_hole_3D_ear
 
 
@@ -913,7 +900,7 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
   // As edges are not explicitely there, we loop over the faces instead,
   // and an index. 
   // The current face is f, The current index is k = -1, 0, 1, 2
-  for(;;){
+  for(;;) {
     k++;
     if(k == 3) {
       // The faces form a circular list. With f->n() we go to the next face.
@@ -960,12 +947,9 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
       bool inf_0 = is_infinite(Vertex_handle(v0));
       bool inf_3 = is_infinite(Vertex_handle(v3));
 
-      const Point & p0 = v0->point();
-      const Point & p1 = v1->point();
-      const Point & p2 = v2->point();
-      const Point & p3 = v3->point();
-
-      if( inf_0 || inf_3 || (orientation(p0, p1, p2, p3) == POSITIVE) ) {
+      if( inf_0 || inf_3 || 
+	  (orientation(v0->point(), v1->point(), 
+		       v2->point(), v3->point()) == POSITIVE) ) {
 	// the two faces form a concavity, in which we might plug a cell
 
 	// we now look at all vertices that are on the boundary of the hole
@@ -1000,7 +984,6 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 
 	if( (((! neighbor_i) && (! neighbor_j)) 
 	       && surface.is_edge(f->vertex(k), n->vertex(fi)))) {
-	  // We are in the flip case:
 	  // The edge that would get introduced is on the surface
 	  goto next_edge;
 	}
@@ -1066,6 +1049,7 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 	  if(surface.number_of_vertices() != 4) {
 	    // this should not happen at all  => panic mode, 
 	    //clean up, and say that it didn't work
+	    CGAL_triangulation_warning_msg(true, "panic");
 	    delete_cells(cells);
 	    return false;
 	  } else {
