@@ -1,9 +1,39 @@
 //-----------------------------------------------------------------------//
+// Changes in 1.32
+
+Removed configuration files/flags, as decided in ETHZ-99 meeting
+CGAL_CFG_INCOMPLETE_TYPE_BUG_1.C
+CGAL_CFG_INCOMPLETE_TYPE_BUG_3.C
+CGAL_CFG_INCOMPLETE_TYPE_BUG_4.C
+CGAL_CFG_INCOMPLETE_TYPE_BUG_5.C
+CGAL_CFG_NO_ARROW_OPERATOR.C
+CGAL_CFG_NO_BUILTIN_BOOL.C
+CGAL_CFG_NO_CONSTANTS_IN_FUNCTION_TEMPLATES.C
+CGAL_CFG_NO_CONST_CAST.C
+CGAL_CFG_NO_CONST_REFERENCE_OVERLOADING.C
+CGAL_CFG_NO_DEFAULT_PREVIOUS_TEMPLATE_ARGUMENTS.C
+CGAL_CFG_NO_DEFAULT_TEMPLATE_ARGUMENTS.C
+CGAL_CFG_NO_EXPLICIT.C
+CGAL_CFG_NO_EXPLICIT_CLASS_TEMPLATE_SPECIALISATION.C
+CGAL_CFG_NO_LAZY_INSTANTIATION.C
+CGAL_CFG_NO_MEMBER_TEMPLATES.C
+CGAL_CFG_NO_MUTABLE.C
+CGAL_CFG_NO_REINTERPRET_CAST.C
+CGAL_CFG_NO_STATIC_CAST.C
+CGAL_CFG_NO_STATIC_MEMBERS_IN_CLASS_TEMPLATES.C
+CGAL_CFG_NO_TEMPLATE_FUNCTION_MATCHING.C
+CGAL_CFG_NO_TYPENAME.C
+CGAL_CFG_RETURN_TYPE_BUG_1.C
+CGAL_CFG_RETURN_TYPE_BUG_2.C
+Updated: 
+CGAL_CFG_NO_ITERATOR_TRAITS.C and
+CGAL_CFG_NO_TEMPLATE_FRIEND_DISTINCTION.C
+//-----------------------------------------------------------------------//
 // Changes in 1.31
 
 Added file MSVC_standard_header_fixes.h, which puts things that are lacking
 in namespace std in there on the MS VC++ platform.
-The file config.h was chnged to include this header file.
+The file config.h was changed to include this header file.
 //-----------------------------------------------------------------------//
 // Changes in 1.30
 
