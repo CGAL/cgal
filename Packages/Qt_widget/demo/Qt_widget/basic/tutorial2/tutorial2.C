@@ -2,7 +2,7 @@
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Delaunay_triangulation_2.h>
-
+#include <CGAL/IO/Qt_widget_Triangulation_2.h>
 #include <CGAL/IO/Qt_widget.h>
 #include <qapplication.h>
 
@@ -11,8 +11,8 @@ typedef CGAL::Point_2<Rep>		    Point;
 typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
 
 Delaunay dt;
-
-class My_window : public CGAL::Qt_widget {
+typedef CGAL::Qt_widget Qt_widget;
+class My_window : public Qt_widget {
   Q_OBJECT
 public:
   My_window(int x, int y){
