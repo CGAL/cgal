@@ -34,11 +34,6 @@ public:
   // point list
   typedef list<Weighted_point> Weighted_point_list;
 
-
-private:
-  Faces_around_stack faces_around;
-	
-
 public:
   CGAL_Regular_triangulation_2()
     : Triangulation( )
@@ -123,24 +118,19 @@ public:
 	}
 	#endif // CGAL_TEMPLATE_MEMBER_FUNCTIONS
 
-private:
-
+public:
   CGAL_Oriented_side
   power_test(const Face_handle& f, const Weighted_point & p) const
   {
-/*cerr <<endl
-<<f->vertex(0)->point()<<"     "
-<<f->vertex(1)->point()<<"     "
-<<f->vertex(2)->point()<<"     "<<endl;
-*/
+    //p is assume to be a finite point
     CGAL_Orientation o;
     if ( ! is_infinite(f) )
       {
-//cerr<<"face finie "<<(void*)&(*f)<<endl;
 	return geom_traits().power_test(f->vertex(0)->point(),
 					f->vertex(1)->point(),
 					f->vertex(2)->point(),p);
       }
+
     else if ( f->vertex(0) == infinite_vertex() )
       {	o = geom_traits().orientation(f->vertex(1)->point(),
 				 f->vertex(2)->point(),p);
@@ -148,38 +138,38 @@ private:
 	{	return geom_traits().power_test(f->vertex(1)->point(),
 			                         f->vertex(2)->point(),p);
 	}
-      } else if ( f->vertex(1) == infinite_vertex() )
+      }
+ 
+    else if ( f->vertex(1) == infinite_vertex() )
 	{	o = geom_traits().orientation(f->vertex(2)->point(),
 					 f->vertex(0)->point(),p);
 	if (o==CGAL_COLLINEAR)
 	  {	return geom_traits().power_test(f->vertex(2)->point(),
 					   f->vertex(0)->point(),p);
 	  }
-	} else if ( f->vertex(2) == infinite_vertex() )
-	  {	o = geom_traits().orientation(f->vertex(0)->point(),
+	} 
+
+    else if ( f->vertex(2) == infinite_vertex() )
+      {	o = geom_traits().orientation(f->vertex(0)->point(),
 			                         f->vertex(1)->point(),p);
-	  if (o==CGAL_COLLINEAR)
-	    {	return geom_traits().power_test(f->vertex(0)->point(),
-			                         f->vertex(1)->point(),p);
-	    }
-	  }
-//cerr<<"face infinie "<<(void*)&(*f)<<endl;
+      if (o==CGAL_COLLINEAR)
+	{	
+	  return geom_traits().power_test(f->vertex(0)->point(),
+					  f->vertex(1)->point(),p);
+	}
+      }
+
     return (o == CGAL_NEGATIVE) ? CGAL_ON_NEGATIVE_SIDE :
       (o == CGAL_POSITIVE) ? CGAL_ON_POSITIVE_SIDE :                                                     CGAL_ON_ORIENTED_BOUNDARY;
   }
 
-
+  private :
   // add the point_list of f2 and f3 to the point list of f1
   // for the 3-1 flip 
   void update_hidden_points_3_1(const Face_handle& f1, 
 				const Face_handle& f2, 
 				const Face_handle& f3 )
   {
-//     Weighted_point_list p_list;
-//     p_list.splice(p_list.begin(),f1->point_list());
-//     p_list.splice(p_list.begin(),f2->point_list());
-//     p_list.splice(p_list.begin(),f3->point_list());
-//     (f1->point_list()).splice(f1->point_list().begin(),p_list);
      (f1->point_list()).splice(f1->point_list().begin(),f2->point_list());
      (f1->point_list()).splice(f1->point_list().begin(),f3->point_list());
   }
@@ -190,8 +180,7 @@ private:
   void update_hidden_points_2_2(const Face_handle& f1, const Face_handle& f2)
   {	
     CGAL_triangulation_assertion(f1->has_neighbor(f2));
-    //CGAL_triangulation_assertion( (!is_infinite(f1)) || (!is_infinite(f2)));
-
+    
     Weighted_point_list p_list;
     p_list.splice(p_list.begin(),f1->point_list());
     p_list.splice(p_list.begin(),f2->point_list());
@@ -327,9 +316,20 @@ private:
   }
 
 protected:
-  bool degree_equal_3(Vertex_handle &v) const
+  bool is_degree(Vertex_handle v, int i) const
   {
-    Face_handle f = v->face();
+    Face_circulator fic = v->incident_faces(), done(fic);
+    fic++;
+    int count=1;
+    while ( fic != done && count <= i) {
+      fic ++; count++;
+    }
+    return (count==i ? true :false );
+  }
+
+bool degree_equal_3(Vertex_handle v) const
+{
+  Face_handle f = v->face();
     if (f == NULL) 
       {	return false;
       }
@@ -350,296 +350,151 @@ protected:
       }
     return (count==3 ? true :false );
   }
-    
+  
+  bool degree_equal_4(Vertex_handle v) const
+  {
+    return ( v->degree() == 4);
+  }
+  
   void hide_vertex(const Face_handle& f,const Weighted_point& p)
     // insert the point among the hidden points list
   {
-//		if ( is_infinite(f) )
-//			return ;
+
 	 f->point_list().push_back(p);
   }
 
-  void hide_and_remove_vertex(Face_handle& f, Vertex_handle& v)
-    // remove the verte from the triangulation but keep it among the hidden points list
+
+
+public:
+void 
+regularize(Vertex_handle v)
   {
-//		if ( is_infinite(f) )
-//			return ;
-    hide_vertex(f, v->point());
-    // remove the point that disappear
-    _tds.remove_degree_3(&(*v),&(*f));
+    CGAL_triangulation_precondition( v != infinite_vertex());
+    Faces_around_stack faces_around;
+
+    //initialise faces_around
+    Face_circulator fit = v->incident_faces(), done(fit);
+    do {
+      faces_around.push_back(fit++);
+    } while(fit != done);
+
+      while( ! faces_around.empty() ){
+	stack_flip(v, faces_around);
+      }
+    return;
+  }
+   
+private :
+void 	stack_flip(Vertex_handle v, Faces_around_stack &faces_around)
+  {
+    Face_handle f=faces_around.front();
+    int i = i=f->index(v);
+    faces_around.pop_front();
+
+    //test the regularity of edge (f,i)
+    Face_handle n = f->neighbor(i);
+    if( power_test(n, v->point()) == CGAL_ON_NEGATIVE_SIDE){
+      return;
+    }
+    
+    if(is_infinite(f,i)) {
+      int j = 3 - ( i + f->index(infinite_vertex()));
+      if ( is_degree(f->vertex(j),4)) { 
+	stack_flip_4_2(f,i,j,faces_around);
+      }
+      return;
+    }
+
+    // now f and n are both finite faces
+    int ni= n->index(f);
+    CGAL_Orientation occw = geom_traits().orientation(f->vertex(i)->point(),
+						  f->vertex(ccw(i))->point(),
+						  n->vertex(ni)->point());
+    CGAL_Orientation ocw = geom_traits().orientation(f->vertex(i)->point(),
+						  f->vertex(cw(i))->point(),
+						  n->vertex(ni)->point());
+    if(occw == CGAL_LEFTTURN && ocw  ==  CGAL_RIGHTTURN){
+      // quadrilater (f,n) is convex
+      stack_flip_2_2(f,i, faces_around);
+      return;
+    }
+    else if (occw == CGAL_RIGHTTURN && is_degree(f->vertex(ccw(i)), 3) ){
+      stack_flip_3_1(f,i,ccw(i),faces_around);
+      return;
+    }
+    else if (ocw == CGAL_LEFTTURN && is_degree(f->vertex(cw(i)), 3) ){
+      stack_flip_3_1(f,i,cw(i),faces_around);
+      return;
+    }
+    else if (occw == CGAL_COLLINEAR && is_degree(f->vertex(ccw(i)), 4) ){
+      stack_flip_4_2(f,i,ccw(i),faces_around);
+      return;
+    }
+    else if (ocw == CGAL_COLLINEAR && is_degree(f->vertex(cw(i)), 4) ){ 
+      stack_flip_4_2(f,i,cw(i),faces_around);
+      return;
+    }
+    return;
+  }
+      
+      
+void stack_flip_4_2(Face_handle f, int i, int j, 
+		    Faces_around_stack & faces_around)
+  {
+    int k = 3-(i+j);
+    Face_handle g=f->neighbor(k);
+    if (!faces_around.empty()){
+      if (faces_around.front()== g){ faces_around.pop_front();}
+      else if ( faces_around.back() == g) { faces_around.pop_back();}
+    }
+    
+    //union f with  g and f->neihgbor(i) with g->f->neihgbor(i)
+    Face_handle fn = f->neighbor(i);
+    Face_handle gn = g->neighbor(g->index(f->vertex(i)));
+    Vertex_handle vq = f->vertex(j);
+    
+    _tds.flip( &(*f), i); //not using flip because the vertex j is flat.
+    update_hidden_points_2_2(f,fn);
+    Face_handle h1 = ( f->has_vertex(vq) ? fn : f);
+    remove_degree_3(vq,g);
+    hide_vertex(h1, vq->point());
+    faces_around.push_front(g);
+    faces_around.push_front(h1);    
   }
 
-  void
-  stack_flip(Face_handle& f,int i)  
+void stack_flip_3_1(Face_handle f, int i, int j,
+		    Faces_around_stack & faces_around)
+{
+  int k = 3-(i+j);
+  Face_handle g=f->neighbor(k);
+  if (!faces_around.empty()){
+    if (faces_around.front()== g){ faces_around.pop_front();}
+    else if ( faces_around.back() == g) { faces_around.pop_back();}
+  }
+
+  Vertex_handle vq= f->vertex(j);
+  remove_degree_3(vq,f);
+  hide_vertex(f,vq->point());
+  faces_around.push_front(f);
+}
+
+
+
+void stack_flip_2_2(Face_handle f, int i, Faces_around_stack & faces_around)
   {
-    Face_handle ni = f->neighbor(i);
-    int j;
-
-    //cerr <<endl<<"entree PROPAGATING FLIP "
-    //<<"[ "<<f->vertex(0)->point()
-    //<<" / "<<f->vertex(1)->point()
-    //<<" / "<<f->vertex(2)->point()
-    //<<" ]     "<<f->vertex(i)->point()<<endl;
-
-
-/* Test de debugage de la liste de faces autour du point insere
-if (!faces_around.empty())
-{cerr <<endl<<"premiere et derniere : "
-<<&(*(faces_around.front()))<<"[ "<<faces_around.front()->vertex(0)->point()
-<<"/ "<<faces_around.front()->vertex(1)->point()
-<<"/ "<<faces_around.front()->vertex(2)->point() <<" ]    "
-<<&(*(faces_around.back()))<<"[ "<<faces_around.back()->vertex(0)->point()
-<<"/ "<<faces_around.back()->vertex(1)->point()
-<<"/ "<<faces_around.back()->vertex(2)->point() << " ]"<<endl;
-}
-else
-{cerr<<endl<<"pile vide";
-}*/
-
-   if (is_infinite(f) )
-   {
-//cerr << "FACE INFINE"<<endl;
-     return;
-   }
-
-   if (is_infinite(ni) )
-   {
-//cerr<<"FACE VOISINE INFINE "<<endl;
-     int j=ccw(i);
-     ni=f->neighbor(j);
-     // let us test the face on the left
-     if ( ! is_infinite(ni) )
-       {	
-	 Vertex_handle q=f->vertex(j),
-	   r=f->vertex(cw(i)),
-	   s=ni->vertex(ccw(ni->index(r)));
-	 if ( geom_traits().orientation(q->point(),r->point(),s->point())
-	      ==CGAL_COLLINEAR )
-	   {	
-	     if ( CGAL_power_test (q->point(),s->point(),r->point()) 
-		  != CGAL_ON_POSITIVE_SIDE )
-	       {
-		 if (!faces_around.empty())
-		   {	if ( faces_around.front()->has_vertex(r) )
-		     {	faces_around.pop_front();
-		     }
-		   else if ( faces_around.back()->has_vertex(r) )
-		     {	faces_around.pop_back();
-		     }
-		   }
-		 int nii=ni->index(f);
-		 Face_handle fh1=f->neighbor(cw(i)),
-		   fh2=ni->neighbor(ccw(nii)),
-		   fh3=f->neighbor(i);
-		 int fhi1=fh1->index(f),
-		   fhi2=fh2->index(ni);
-		 flip(ni, nii);
-		 update_hidden_points_2_2(ni,f);
-		 ni=fh2->neighbor(fhi2);
-		 update_hidden_points_3_1(ni,fh2,fh3);
-		 hide_and_remove_vertex(ni,r);
-		 f=fh1->neighbor(fhi1);
-		 faces_around.push_front(f);
-		 return;
-		 
-	       }
-	   }
-       }
-
-     // let us test the face on the right
-     j=cw(i);
-     ni=f->neighbor(j);
-     if ( ! is_infinite(f->neighbor(j)))
-       {	Vertex_handle r=f->vertex(j),
-		  q=f->vertex(ccw(i)),
-		  p=ni->vertex(cw(ni->index(q)));
-       if ( geom_traits().orientation(p->point(),q->point(),r->point())
-	    ==CGAL_COLLINEAR )
-	 {	if ( CGAL_power_test (p->point(),r->point(),q->point())
-		     != CGAL_ON_POSITIVE_SIDE )
-	   if (!faces_around.empty())
-	     {	if ( faces_around.front()->has_vertex(q) )
-	       {	faces_around.pop_front();
-	       }
-	     else if ( faces_around.back()->has_vertex(q) )
-	       {	faces_around.pop_back();
-	       }
-	     }
-	 int nii=ni->index(f);
-	 Face_handle fh1=f->neighbor(ccw(i)),
-	   fh2=ni->neighbor(cw(nii)),
-	   fh3=f->neighbor(i);
-	 int fhi1=fh1->index(f),
-	   fhi2=fh2->index(ni);
-	 flip(ni, nii);
-	 update_hidden_points_2_2(ni,f);
-	 ni=fh2->neighbor(fhi2);
-	 update_hidden_points_3_1(ni,fh2,fh3);
-	 hide_and_remove_vertex(ni,q);
-	 f=fh1->neighbor(fhi1);
-	 faces_around.push_front(f);
-	 return;
-	 // the other side will be seen through the next face in
-	 // the faces_around list.
-	 }
-       }
-      return;
-   }
-
-   // it means that no flip is needed
-if ( CGAL_ON_NEGATIVE_SIDE == power_test(ni, f->vertex(i)->point()) )
-{
-//cerr <<"ON neg side"<<endl;
-  return;
-}
-
-// declaration of the vertices near face f
-Vertex_handle
-p=f->vertex(i),
-  q=f->vertex(ccw(i)),
-  r=f->vertex(cw(i)),
-  s=ni->vertex( ni->index(f ) );
-
-// non-convexity on right side (3-1 flip)
-if ( geom_traits().orientation( p->point(), q->point(), s->point() )!= CGAL_LEFTTURN )
-{
-//cerr<<"non convexity on the right"<<endl;
-    if (q->degree()==3)
-    {
-      if (!faces_around.empty())
-	{	if ( faces_around.front()->has_vertex(q) )
-	  {	faces_around.pop_front();
-	  }
-	else if ( faces_around.back()->has_vertex(q) )
-	  {	faces_around.pop_back();
-	  }
-	}
-      update_hidden_points_3_1( f, f->neighbor(i), f->neighbor(cw(i)) );
-      hide_and_remove_vertex( f, q );
+    Vertex_handle vq = f->vertex(ccw(i));
+    flip(f,i);
+    if(f->has_vertex(vq)) {
+      faces_around.push_front(f->neighbor(ccw(i)));
       faces_around.push_front(f);
     }
-  else if ( is_infinite( f->neighbor(cw(i)))  
-	    && is_infinite((f->neighbor(i))->neighbor(ccw((f->neighbor(i))->index(f)))  ))
-			{
-//cerr<<"border point"<<endl;
-			  if (!faces_around.empty())
-			    {	if ( faces_around.front()->has_vertex(q) )
-					{	faces_around.pop_front();
-					}
-					else if ( faces_around.back()->has_vertex(q) )
-					{	faces_around.pop_back();
-					}
-				}
-//cerr<<"1 --- ";affiche_tout();
-				Face_handle fh1,fh2,fh3;
-				Vertex_handle vh=f->vertex(ccw(i));
-				int fhi1,fhi2,fhi3;
-				fh1=f->neighbor(ccw(i));
-				fh3=f->neighbor(cw(i));
-				fhi1=fh1->index(f);
-				fhi3=fh3->index(f);
-				fh2=f->neighbor(i);
-				flip(f,i);
-				update_hidden_points_2_2(f,fh2);
-				f=fh3->neighbor(fhi3);
-				fh2=fh3->neighbor(cw(fhi3));
-//cerr<<"2 --- ";affiche_tout();
-				update_hidden_points_3_1( f,fh1,fh2);	
-//cerr<<"3 --- ";affiche_tout();
-				hide_and_remove_vertex( f, vh );
-//cerr<<"4 --- ";affiche_tout();
-				//faces_around.push_front(fh1);
-			}
-			return;
-		}
+    else { 
+      faces_around.push_front(f);
+      faces_around.push_front(f->neighbor(cw(i)));
+    }
+  }
+  
 
-		// non-convexity on left side (3-1 flip)
-		if ( geom_traits().orientation( p->point(), r->point(), s->point() ) !=CGAL_RIGHTTURN )
-		{
-//cerr<<"non convexity on the left"<<endl;
-			if (r->degree()==3 )
-			{
-			  if (!faces_around.empty())
-				{	if ( faces_around.front()->has_vertex(r) )
-					{	faces_around.pop_front();
-					}
-					else if ( faces_around.back()->has_vertex(r) )
-					{	faces_around.pop_back();
-					}
-				}
-			  update_hidden_points_3_1( f, f->neighbor(i), f->neighbor(ccw(i)) );
-			  hide_and_remove_vertex( f, r );
-			  faces_around.push_front(f);
-			}
-			else if ( is_infinite( f->neighbor(ccw(i)))  
-				&& is_infinite((f->neighbor(i))->neighbor(cw((f->neighbor(i))->index(f)))  ))
-			{
-//cerr<<"border point"<<endl;
-				if (!faces_around.empty())
-				{	if ( faces_around.front()->has_vertex(r) )
-					{	faces_around.pop_front();
-					}
-					else if ( faces_around.back()->has_vertex(r) )
-					{	faces_around.pop_back();
-					}
-				}
-//cerr<<"1 --- ";affiche_tout();
-				Face_handle fh1,fh2,fh3;
-				Vertex_handle vh=f->vertex(cw(i));
-				int fhi1,fhi2,fhi3;
-				fh1=f->neighbor(cw(i));
-				fh3=f->neighbor(ccw(i));
-				fhi1=fh1->index(f);
-				fhi3=fh3->index(f);
-				fh2=f->neighbor(i);
-				flip(f,i);
-				update_hidden_points_2_2(f,fh2);
-				f=fh3->neighbor(fhi3);
-				fh2=fh3->neighbor(ccw(fhi3));
-//cerr<<"2 --- ";affiche_tout();
-				update_hidden_points_3_1( f,fh1,fh2);
-//cerr<<"3 --- ";affiche_tout();
-				hide_and_remove_vertex( f, vh );
-//cerr<<"4 --- ";affiche_tout();
-				//faces_around.push_front(fh1);
-			}
-			return;
-		}
-
-		// otherwise 2-2 flip
-
-/*cerr <<endl<<"flip 2-2: "<<&(*f)
-<<"   [ "<<f->vertex(0)->point()
-<<"  +  "<<f->vertex(1)->point()
-<<"  +  "<<f->vertex(2)->point()<< " ]"
-<<"   "<<f->vertex(i)->point()<<endl;
-*/
-		flip(f, i);
-		update_hidden_points_2_2( f, ni );
-		
-		if (f->neighbor( ccw(i) )==ni)
-		{
-			faces_around.push_front(ni);
-			faces_around.push_front(f);
-		}else
-		{
-			faces_around.push_front(f);
-			faces_around.push_front(ni);
-		}
-	}
-
-	void
-	propagating_flip(Vertex_handle &v)
-	{	Face_handle f;
-		int i;
-		while ( !faces_around.empty() )
-		{
-			f=(faces_around.front());
-			faces_around.pop_front();
-			i=f->index(v);
-			stack_flip(f,i);
-		}
-	}
 
 
 public:
@@ -650,136 +505,122 @@ public:
 	  Face_handle f = Face_handle() ) 
   {
     Vertex_handle v;
-    bool ok=true;
-    do{
-      ok=true;
-      if(number_of_vertices() == 0) {
-	v = new Vertex(p);
-	lt = OUTSIDE;
-	_tds.insert_first(&(*v));
+   
+    if(number_of_vertices() == 0) {
+      v = new Vertex(p);
+      lt = OUTSIDE;
+      insert_first(v);
+      return v;
+    }
+		
+    if(number_of_vertices() == 1) {
+      if (geom_traits().compare(p,finite_vertex()->point())) {
+	remove_first(finite_vertex());
+	v= new Vertex(p);
+	insert_first(v);
 	return v;
       }
-		
-      if(number_of_vertices() == 1) {
-       	if (geom_traits().compare(p,finite_vertex()->point())) {
-	  v=finite_vertex();
-	  remove(v);
-	  ok=false; // to reinsert p
-	  break;
-	}
+      else{
 	v = new Vertex(p);
 	lt = OUTSIDE;
-	_tds.insert_second(&(*v));	
+	insert_second(v);	
 	return v;
       }
-    
-      int li;
-      Face_handle loc = locate(p, lt, li, f);
-//cerr <<"LOCALISATION : "<<(void*)&(*loc)<<"   "<<li<<endl;
-      switch(lt){
-      case OUTSIDE:
-	{
-//cerr<<"OUTSIDE"<<endl;
-	  v = new Vertex(p);
-	  insert_outside(v,loc); 
-	  break;
-	}
-      case VERTEX:
-	{
-//cerr<<"VERTEX"<<endl;
-	  Vertex_handle v=loc->vertex(li);
-	  remove(v);
-	  ok=false; // p will be reinserted
-	  break;
-	}
-      case FACE:
-	{
-//cerr<<"FACE"<<endl;
-	  if (power_test( loc ,p)==CGAL_ON_NEGATIVE_SIDE) {
-//cerr << " ON NEGATIVE SIDE "<<endl;
-	    hide_vertex(loc, p );
-	    return loc->vertex(0);
-	  }
-//cerr << "on POSITIVE SIDE "<<endl;
-	  v = new Vertex(p);
-	  _tds.insert_in_face( &(*v), &(*loc));
-	  update_hidden_points_1_3(loc,loc->neighbor(ccw(loc->index(v))),
-				   loc->neighbor(cw(loc->index(v))));
-	  break;
-	}
-      case EDGE:
-	{
-//cerr<<endl<<"EDGE"<<(void*)&(*loc)<<"  "<<p<<endl;
-	  if (power_test( loc ,p)==CGAL_ON_NEGATIVE_SIDE){
-//cerr << " ON NEGATIVE SIDE "<<endl;
-	      hide_vertex(loc, p);
-	      return loc->vertex(0);
-	  }
-//cerr << "on POSITIVE SIDE "<<endl;
-	  v = new Vertex(p);
-	  Vertex_handle w1= loc->vertex(li);
-	  _tds.insert_on_edge(&(*v), &(*loc), li);
-	  Face_circulator fc=v->incident_faces(),
-	                done=fc, fcc = fc++;
-	  do{
-	    if (fc->has_vertex(w1)) {
-	      if (fcc->has_vertex(w1)) {
-		update_hidden_points_2_2(fc, fcc);
-	      }
-	    }
-	    else { // fc has not w1 as a vertex
-	      if ( ! fcc->has_vertex(w1)) {
-		update_hidden_points_2_2(fc, fcc);
-	      }
-	    }
-	    fc++; fcc++;
-	  } while(fcc!=done);
-	    break;
-	}
-		
-      case COLLINEAR_OUTSIDE:
-	{
-//cerr<<"COLLINEAR OUTSIDE"<<endl;
-	  v = new Vertex(p);
-	  _tds.insert_collinear_outside( &(*v), &(*loc),li);
-	  return v; 
-	}
-		
-      default:
-	CGAL_triangulation_assertion(false);  // locate step failed
-      }
-    }while(!ok);
-
-    f=v->face();
-    Face_handle next;
-    int i;
-    Face_handle start(f);
-    // memorise the faces around the inserted point counterclockwise
-    faces_around.clear();
-    do {
-      i = f->index(v);
-      next = f->neighbor(ccw(i));  // turn ccw around v
-      faces_around.push_back(f);
-      f=next;
-    } while(next != start);
-
-    // go round the point counterclockwise
-    propagating_flip(v);
-
-    CGAL_triangulation_postcondition( is_valid() );
-    return v;
     }
     
-public:
-    Vertex_handle insert(const Weighted_point &p,
-			 Face_handle f = Face_handle() )
-      {
-//cerr<<endl<<"INSERT : "<<p<<endl;
-	Locate_type lt;
-	return insert(p, lt, f);
-      }
+    int li;
+    Face_handle loc = locate(p, lt, li, f);
+    switch(lt){
+    case VERTEX:
+      remove(loc->vertex(li));
+      v = insert(p,lt,f);
+      return v;
 
-    void remove_2D(Vertex_handle& v)
+    case OUTSIDE:
+      v = new Vertex(p);
+      insert_outside(v,loc); 
+      break;
+	
+    case FACE:
+      if (power_test( loc ,p)==CGAL_ON_NEGATIVE_SIDE) {
+	hide_vertex(loc, p );
+	return v;
+      }
+      v = new Vertex(p);
+      insert_in_face(v,loc);
+      break;
+	
+    case EDGE:
+      if (power_test( loc ,p)==CGAL_ON_NEGATIVE_SIDE){
+	hide_vertex(loc, p);
+	return v;
+      }
+      v = new Vertex(p);
+      insert_on_edge(v,loc,li);
+      break;
+    
+    case COLLINEAR_OUTSIDE:
+      v = new Vertex(p);
+      insert_collinear_outside( v, loc,li);
+      break;  
+   
+    default:
+      CGAL_triangulation_assertion(false);  // locate step failed
+    }
+   
+    regularize(v);
+    return v;
+  }
+
+
+
+    
+public:
+  Vertex_handle insert(const Weighted_point &p,
+		       Face_handle f = Face_handle() )
+{
+//cerr<<endl<<"INSERT : "<<p<<endl;
+  Locate_type lt;
+  return insert(p, lt, f);
+}
+
+void insert_in_face(Vertex_handle v, Face_handle f)
+{
+  CGAL_Triangulation_2<Gt,Tds>::insert_in_face(v,f);
+  update_hidden_points_1_3(f, f->neighbor(ccw(f->index(v))), 
+			   f->neighbor(cw(f->index(v))) );
+  return;
+}
+
+void insert_on_edge(Vertex_handle v, Face_handle f, int i)
+{
+  CGAL_Triangulation_2<Gt,Tds>::insert_on_edge(v,f,i);
+  Face_handle g = (v==f->vertex(cw(i)) ? f->neighbor(ccw(i)) : f->neighbor(cw(i)) );
+  update_hidden_points_2_2(f,g);
+  update_hidden_points_2_2(f->neighbor(i), g->neighbor(i));
+}    
+
+
+void flip(Face_handle f,int i)
+{
+  Face_handle n = f->neighbor(i);
+  CGAL_Triangulation_2<Gt,Tds>::flip(f,i);
+  update_hidden_points_2_2(f,n);
+  return;
+}
+
+
+void remove_degree_3(Vertex_handle v,Face_handle f = Face_handle()) 
+{
+  if (f == Face_handle()) f=v->face();
+  update_hidden_points_3_1(f, f->neighbor(cw(f->index(v))),
+			   f->neighbor(ccw(f->index(v))));
+  CGAL_Triangulation_2<Gt,Tds>::remove_degree_3(v,f);
+}
+
+
+protected :
+void remove_2D(Vertex_handle v)
       {
 	// General case
   
@@ -973,9 +814,9 @@ public:
 
 	}
 
-
-	void  remove(Vertex_handle& v )
-	{
+public:
+      void  remove(Vertex_handle v )
+    {
 /*cerr<<endl<<"REMOVE "<<v->point()<<endl;
 cerr<<"etat AVANT remove";
 affiche_tout();
@@ -1044,132 +885,53 @@ cerr<<endl;
 
 	bool is_valid(bool verbose = false, int level = 0) const
 	{
-//cerr <<endl<<" IS VALID "<<this<<"  level "<<level<<endl;
-//affiche_tout();
-		if(number_of_vertices() <= 1)
-		{	return true;
-		}
+	  if(number_of_vertices() <= 1) {
+	    return true;
+	  }
   
-		bool result = true;
-  
-		int vertex_count = 0;
-		{
-			Vertex_iterator it   = vertices_begin(),
-			                done = vertices_end();
-  
-			while(it != done)
-			{	++vertex_count;
-				++it;
-			}
-		}
-		result = result && (number_of_vertices() == vertex_count);
-		CGAL_triangulation_assertion( result );
-  
-		int edge_count = 0;
-		{
-			Edge_iterator it   = edges_begin(),
-			              done = edges_end();
-  
-			while(it != done)
-			{	++edge_count;
-				++it;
-			}
-		}
-  
-		int face_count = 0;
-		{
-			Face_iterator it   = faces_begin(),
-			              done = faces_end();
-  
-			while(it != done)
-			{	++face_count;
-				result = result && it->is_valid(verbose, level);
-//cerr << (result ? "ok" :"faux")<<endl;
-				CGAL_triangulation_assertion( result );
-				result = result && (! is_infinite( it ));
-//cerr << (result ? "ok" :"faux")<<endl;
-				CGAL_triangulation_assertion( result );
-//cerr << "face : "<<(void*)&(*it)<<" => ";
-//cerr <<(it->vertex(0)->point())<<" / ";
-//cerr <<(it->vertex(1)->point())<<" / ";
-//cerr <<(it->vertex(2)->point())<<endl;
+	  bool result = CGAL_Triangulation_2<Gt,Tds>::is_valid();
+  		
+	  for( Face_iterator it = faces_begin(); it != faces_end() ; it++) {
 
-//cerr <<"voisin : " <<it->neighbor(0)->vertex(it->neighbor(0)->index( it ))->point()<<endl;
-				if ( ! is_infinite( it->neighbor(0)) )
-				{	result = result &&
-						(CGAL_ON_POSITIVE_SIDE !=
-						power_test( it, it->neighbor(0)->
-						vertex(it->neighbor(0)->index( it ))->point()));
-				}
-//cerr << (result ? "ok" :"faux")<<endl;
-//cerr <<"voisin : " <<it->neighbor(1)->vertex(it->neighbor(1)->index( it ))->point()<<endl;
-				if ( ! is_infinite(it->neighbor(1)) )
-				{	result = result && (CGAL_ON_POSITIVE_SIDE !=
-						power_test( it, it->neighbor(1)->
-						vertex(it->neighbor(1)->index( it ))->point()));
-				}
-//cerr << (result ? "ok" :"faux")<<endl;
-//cerr <<"voisin : " <<it->neighbor(2)->vertex(it->neighbor(2)->index( it ))->point()<<endl;
-				if ( ! is_infinite(it->neighbor(2)) )
-				{	result = result && (CGAL_ON_POSITIVE_SIDE !=
-						power_test( it, it->neighbor(2)->
-						vertex(it->neighbor(2)->index( it))->point()));
-				}
-//cerr << (result ? "ok" :"faux")<<endl;
-				CGAL_triangulation_assertion( result );
-				++it;
-			}
-		}
-  
-		Face_circulator fc = infinite_vertex()->incident_faces(),fcdone(fc);
-		do
-		{	if(dimension() == 2)
-			{	result = result && fc->is_valid(verbose, level);
-				CGAL_triangulation_assertion( result );
-			}
-			++face_count;
-			++edge_count;
-		}while(++fc != fcdone);
-  
-		Vertex_circulator start = infinite_vertex()->incident_vertices(),
-		                  pc(start),
-		                  qc(start),
-		                  rc(start);
-		++qc;
-		++rc;
-		++rc;
-		do
-		{	bool extremal = ( geom_traits().orientation(pc->point(),
-			                  qc->point(),
-			                  rc->point()) != CGAL_POSITIVE);
-			result = result && extremal;
-			CGAL_triangulation_assertion( result );
-			pc = qc;
-			qc = rc;
-			++rc;
-		}while(pc != start);
-		result = result && ( edge_count == 3* (vertex_count -1) );
-		CGAL_triangulation_assertion( result );
-		result = result && ( face_count == 2* (vertex_count -1) );
-		CGAL_triangulation_assertion( result );
-  
-		return result;
+	    for(int i=0; i<3; i++) {
+	    if 	( ! is_infinite( it->vertex(i))) {
+	      result = result &&
+	       CGAL_ON_POSITIVE_SIDE != 
+		power_test( it->neighbor(i), it->vertex(i)->point());
+	    }
+	    if ( !result) {
+	      cerr << "face : " << (void*)&(*it)<< "  " 
+		   <<"["<< it->vertex(0)->point()
+		   <<"/"<< it->vertex(1)->point()
+		   <<"/"<< it->vertex(2)->point()<<"]"	<<endl;
+	      cerr << "voisin : " << (void*)&(*(it->neighbor(i)))<< "  "
+		   <<"["<<(it->neighbor(i))->vertex(0)->point()
+		   <<"/"<<(it->neighbor(i))->vertex(1)->point()
+		   <<"/"<<(it->neighbor(i))->vertex(2)->point()<<"]" <<endl;
+	    }
+	    CGAL_triangulation_assertion( result );
+	    }
+	    
+	    Weighted_point_list::iterator plit= it->point_list().begin(),
+	      pldone= it->point_list().end();
+	    for( ; plit != pldone ; plit++) {
+	      result = result &&
+		power_test( it, *plit) == CGAL_ON_NEGATIVE_SIDE ;
+	    	
+	      if ( !result) {
+		cerr << "face : " << (void*)&(*it)<< "  " 
+		     <<"["<< it->vertex(0)->point()
+		     <<"/"<< it->vertex(1)->point()
+		     <<"/"<< it->vertex(2)->point()<<"]"	<<endl;
+		cerr << "hidden point : " << *plit <<endl;
+	      }
+	     CGAL_triangulation_assertion( result ); 
+	    }
+	
+	    return result;
+	  }
 	}
 
-
-	void affiche() const
-	{	CGAL_Regular_triangulation_2<Gt,Tds>::Vertex_iterator it = vertices_begin();
-		cerr <<endl<<"AFFICHAGE ETAT TRIANGULATION REGULIERE"<<endl;
-		while(it != vertices_end())
-		{
-			cerr << "point " <<it->point() <<"   face incidente [";
-			cerr <<it->face()->vertex(0)->point();
-			cerr << " / "<<it->face()->vertex(1)->point();
-			cerr << " / "<<it->face()->vertex(2)->point()<<"]"<<endl;
-			++it;
-		}
-		cerr <<endl;
-	}
 
 void affiche_tout()
 {
@@ -1209,7 +971,8 @@ cerr<<"***"<<endl;
 		}
  cerr <<"faces infinies "<<endl;
 			
- Face_circulator fc = infinite_vertex()->incident_faces(),fcdone(fc);
+ if ( number_of_vertices() <= 2) {return;}
+Face_circulator fc = infinite_vertex()->incident_faces(),fcdone(fc);
  do {	
    cerr<<(void*)&(*fc) <<" = "<< fc->vertex(0)->point()<<" / "
        << fc->vertex(1)->point()<<" / "<< fc->vertex(2)->point()

@@ -26,11 +26,7 @@ public:
   typedef CGAL_Weighted_point_2<Bare_point, W> Weighted_point;
   typedef Weighted_point Point;
 
-  bool compare(const Weighted_point &p, const Weighted_point &q) const
-  {
-    return ( Traits::compare(p,q) && p.weight() == q.weight() );
-  }
-
+ 
   CGAL_Oriented_side power_test(const Weighted_point &p,
 				const Weighted_point &q,
 				const Weighted_point &r,
