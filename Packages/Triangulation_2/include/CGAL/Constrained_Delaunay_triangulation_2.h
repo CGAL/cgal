@@ -15,7 +15,6 @@
 // source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
-
 // author(s)     : Mariette Yvinec, Jean Daniel Boissonnat
 //
 // coordinator   : Mariette Yvinec  < Mariette Yvinec@sophia.inria.fr>
@@ -517,6 +516,7 @@ remove(Vertex_handle v)
 }
 
 template < class Gt, class Tds, class Itag >  
+typename
 Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::Vertex_handle
 Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
 special_insert_in_edge(const Point & a, Face_handle f, int i)

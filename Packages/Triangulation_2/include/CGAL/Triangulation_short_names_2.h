@@ -63,6 +63,4 @@
 #define Regular_triangulation_euclidean_traits_2 Rtet2
 #define Regular_triangulation_face_base_2  Rtfb
 
-
-
 #endif //CGAL_TRIANGULATION_SHORT_NAMES_2_H
