@@ -1,4 +1,5 @@
 // ======================================================================
+
 //
 // Copyright (c) 1999 The CGAL Consortium
 //
@@ -300,7 +301,7 @@ less_z(const PointH3<R> &p, const PointH3<R> &q)
 
 CGAL_END_NAMESPACE
 
-#include <CGAL/orientation_predicatesH3.h>
+#include <CGAL/Homogeneous/orientation_predicatesH3.h>
 
 CGAL_BEGIN_NAMESPACE
 
