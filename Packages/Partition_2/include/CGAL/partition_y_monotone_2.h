@@ -48,7 +48,7 @@
 #define CGAL_PARTITION_Y_MONOTONE_H
 
 #include <CGAL/Circulator_list.h>
-#include <CGAL/Indirect_not_less_yx_compare.h>
+#include <CGAL/Indirect_not_less_yx_2.h>
 #include <CGAL/Indirect_edge_compare.h>
 #include <CGAL/Segment_2_Ray_2_intersection.h>
 #include <CGAL/Object.h>
@@ -440,14 +440,14 @@ OutputIterator partition_y_monotone_2(InputIterator first,
 
    Circulator first_c(polygon.begin(), polygon.end());
    Circulator_list<Circulator>  circ_list(first_c);
-   circ_list.sort(Indirect_not_less_yx_compare<Traits>(traits));
+   circ_list.sort(Indirect_not_less_yx_2<Traits>(traits));
 
 #ifdef CGAL_PARTITION_Y_MONOTONE_DEBUG
    cerr << "Initial vertex list: "<< circ_list << endl;
 #endif
 
    typedef std::map<Circulator, Circulator, 
-                    Indirect_edge_compare<Traits> > Tree;
+                    Indirect_edge_compare<Circulator, Traits> > Tree;
    Tree tree;
 
    typename Circulator_list<Circulator>::iterator it = circ_list.begin();
