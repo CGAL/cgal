@@ -23,8 +23,8 @@ the sequence starting at position \ccc{result}.  The past-the-end iterator for
 the resulting sequence of polygons is returned.
 }
 
-\ccHeading{Preconditions}
-\ccIndexSubitem[C]{y_monotone_partition_2}{preconditions}
+\ccHeading{Requirements}
+%\ccIndexSubitem[C]{y_monotone_partition_2}{preconditions}
 \begin{enumerate}
     \item \ccc{Traits} is a model of the concept YMonotonePartitionTraits\_2%
           \ccIndexMainItem[c]{YMonotonePartitionTraits_2} and, for the purposes
@@ -41,7 +41,7 @@ the resulting sequence of polygons is returned.
 \end{enumerate}
 
 The default traits class \ccc{Default_traits} is \ccc{Partition_traits_2},
-\ccIndexTraitsClassDefault{y_monotone_partition_2}
+%\ccIndexTraitsClassDefault{y_monotone_partition_2}
 with the representation type determined by \ccc{InputIterator::value_type}.
 
 \ccSeeAlso
@@ -50,6 +50,12 @@ with the representation type determined by \ccc{InputIterator::value_type}.
 \ccRefIdfierPage{CGAL::optimal_convex_partition_2} \\
 \ccRefIdfierPage{CGAL::partition_is_valid_2} \\
 \ccRefIdfierPage{CGAL::y_monotone_partition_is_valid_2}
+
+\ccImplementation
+
+This function implements the algorithm presented by de Bert \textit{et al.}
+\cite{bkos-cgaa-97} which requires $O(n \log n)$ time
+and $O(n)$ space for a polygon with $n$ vertices.
 
 \ccExample
 

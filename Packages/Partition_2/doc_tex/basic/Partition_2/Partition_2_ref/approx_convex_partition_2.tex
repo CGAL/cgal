@@ -3,10 +3,10 @@
 \ccDefinition
 Function that produces a set of 
 convex polygons that represent a partitioning of a polygon defined
-on a sequence of points using the algorithm of Hertel and Mehlhorn
-\cite{hm-ftsp-83}.  The number of convex polygons produced is 
+on a sequence of points.  The number of convex polygons produced is 
 no more than four times the minimal number.%
 \ccIndexSubsubitem{polygon partitioning}{convex}{approximately optimal}
+
 
 \ccInclude{CGAL/partition_2.h}
 
@@ -25,8 +25,8 @@ the sequence starting at position \ccc{result}.  The past-the-end iterator for
 the resulting sequence of polygons is returned.
 }
 
-\ccHeading{Preconditions}
-\ccIndexSubitem[C]{approx_convex_partition_2}{preconditions}
+\ccHeading{Requirements}
+%\ccIndexSubitem[C]{approx_convex_partition_2}{preconditions}
 \begin{enumerate}
     \item \ccc{Traits} is a model of the concept 
           PartitionTraits\_2\ccIndexMainItem[c]{PartitionTraits_2}
@@ -43,7 +43,7 @@ the resulting sequence of polygons is returned.
 \end{enumerate}
 
 The default traits class \ccc{Default_traits} is \ccc{Partition_traits_2},%
-\ccIndexTraitsClassDefault{approx_convex_partition_2} 
+%\ccIndexTraitsClassDefault{approx_convex_partition_2} 
 with the representation type determined by \ccc{InputIterator1::value_type}.
 
 \ccSeeAlso
@@ -54,6 +54,13 @@ with the representation type determined by \ccc{InputIterator1::value_type}.
 \ccRefIdfierPage{CGAL::partition_is_valid_2} \\
 \ccRefIdfierPage{CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>} \\
 \ccRefIdfierPage{CGAL::y_monotone_partition_2}
+
+\ccImplementation
+This function implements the algorithm of Hertel and Mehlhorn
+\cite{hm-ftsp-83} and is based on the class 
+\ccc{CGAL::Constrained_triangulation_2}.  Given a triangulation of
+the polygon, the function requires $O(n)$ time and
+space for a polygon with $n$ vertices.
 
 \ccExample
 

@@ -3,8 +3,8 @@
 \ccDefinition
 Function that produces a set of 
 convex polygons that represent a partitioning of a polygon defined
-on a sequence of points using the approximation algorithm of 
-Greene \cite{g-dpcp-83}.  The number of convex polygons produced is 
+on a sequence of points.
+The number of convex polygons produced is 
 no more than four times the minimal number.%
 \ccIndexSubsubitem{polygon partitioning}{convex}{approximately optimal}
 
@@ -25,8 +25,8 @@ the sequence starting at position \ccc{result}.  The past-the-end iterator for
 the resulting sequence of polygons is returned.
 }
 
-\ccHeading{Preconditions}
-\ccIndexSubitem[C]{greene_approx_convex_partition_2}{preconditions}
+\ccHeading{Requirements}
+%\ccIndexSubitem[C]{greene_approx_convex_partition_2}{preconditions}
 \begin{enumerate}
     \item \ccc{Traits} is a model of the concepts PartitionTraits\_2%
           \ccIndexMainItem[c]{PartitionTraits_2} and 
@@ -50,7 +50,7 @@ the resulting sequence of polygons is returned.
 \end{enumerate}
 
 The default traits class \ccc{Default_traits} is \ccc{Partition_traits_2},
-\ccIndexTraitsClassDefault{greene_approx_convex_partition_2}
+%\ccIndexTraitsClassDefault{greene_approx_convex_partition_2}
 with the representation type determined by \ccc{InputIterator::value_type}.
 
 \ccSeeAlso
@@ -59,6 +59,13 @@ with the representation type determined by \ccc{InputIterator::value_type}.
 \ccRefIdfierPage{CGAL::optimal_convex_partition_2} \\
 \ccRefIdfierPage{CGAL::partition_is_valid_2} \\
 \ccRefIdfierPage{CGAL::y_monotone_partition_2} 
+
+\ccImplementation
+This function implements the the approximation algorithm of 
+Greene \cite{g-dpcp-83} and requires $O(n \log n)$ time and $O(n)$ space
+to produce a convex partitioning given a $y$-monotone partitioning of a
+polygon with $n$ vertices.  The function \ccc{y_monotone_partition_2} 
+is used to produce the monotone partition.
 
 \ccExample
 The following code fragment will compute an approximately optimal
