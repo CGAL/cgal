@@ -1,7 +1,5 @@
-2.18 (4 October 2003) [af]
+2.17 (4 October 2003) [af]
 - Added definitions of functions from .C file to .h file
-
-2.17 (26 September 2003) [af]
 - Added maintainer
 
 2.15 (18 September 2003) [af]
