@@ -6,25 +6,25 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
-#include <CGAL/Arr_segment_exact_traits.h>
+#include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Sweep_line_2.h>
 
 #include <iostream>
 #include <vector>
 
-typedef CGAL::Quotient<CGAL::MP_Float>          NT;
-typedef CGAL::Cartesian<NT>                     Kernel;
-typedef CGAL::Arr_segment_exact_traits<Kernel>  Traits;
+typedef CGAL::Quotient<CGAL::MP_Float>                  NT;
+typedef CGAL::Cartesian<NT>                             Kernel;
+typedef CGAL::Arr_segment_traits_2<Kernel>              Traits;
 
-typedef Traits::Point_2                         Point_2;
-typedef Traits::Curve_2                         Curve_2;
-typedef Traits::X_curve_2                       X_curve_2;
+typedef Traits::Point_2                                 Point_2;
+typedef Traits::Curve_2                                 Curve_2;
+typedef Traits::X_curve_2                               X_curve_2;
 
-typedef std::pair<Point_2, std::list<X_curve_2> > Pair_point_curves;
+typedef std::pair<Point_2, std::list<X_curve_2> >       Pair_point_curves;
 
-typedef std::vector<Curve_2>                    CurveList;
-typedef CurveList::iterator                     CurveListIter;
-typedef CGAL::Sweep_line_2<CurveListIter, Traits> Sweep_line;
+typedef std::vector<Curve_2>                            CurveList;
+typedef CurveList::iterator                             CurveListIter;
+typedef CGAL::Sweep_line_2<CurveListIter, Traits>       Sweep_line;
 
 int main()
 {
