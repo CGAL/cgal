@@ -20,7 +20,7 @@
 This chapter gives an overview of issues related to the
 configuration of \cgal\ that allow you to answer such questions as:
 \begin{itemize}
-\item Is \leda/\textsc{Gmp}/\textsc{Cln} there? (Section~\ref{sec:leda_gmp_cln_support})
+\item Is \leda/\textsc{Gmp} there? (Section~\ref{sec:leda_gmp_support})
 \item What version of \cgal\ am I running? (Section~\ref{sec:which_versions})
 \item Which compiler is this? (Section~\ref{sec:which_compiler})
 \item Does the compiler support Koenig lookup? (Section~\ref{sec:workaround_flags})
@@ -44,12 +44,11 @@ Section~\ref{sec:workaround_flags} to get an idea of which ``features'' are
 still present.  
 
 \ccIndexMainItemBegin{configuration}
-\section{Checking for \leda, GMP or CLN support}
-\label{sec:leda_gmp_cln_support}
+\section{Checking for \leda\ or GMP support}
+\label{sec:leda_gmp_support}
 \ccIndexSubsubitem{\leda}{support}{checking for}
 %\index{leda support@\leda\ support!checking for}
 \index{gmp support@GMP support!checking for}
-\index{CLN support@CLN support!checking for}
 
 In the makefiles included for the compilation of every \cgal\ program
 (\ie, those to which the environment variable {\tt CGAL\_MAKEFILE} refers),
@@ -57,15 +56,13 @@ In the makefiles included for the compilation of every \cgal\ program
 \index{CGAL_MAKEFILE variable@{\tt CGAL\_MAKEFILE} variable}
 we define command line switches that set the flags 
 \begin{verbatim}
-CGAL_USE_LEDA, CGAL_USE_GMP, CGAL_USE_CLN
+CGAL_USE_LEDA, CGAL_USE_GMP
 \end{verbatim}
 \index{CGAL_USE_LEDA flag@{\tt CGAL\_USE\_LEDA} flag}
 \index{flag!for \leda}
 \index{CGAL_USE_GMP flag@{\tt CGAL\_USE\_GMP} flag}
 \index{flag!for GMP}
-\index{CGAL_USE_CLN flag@{\tt CGAL\_USE\_CLN} flag}
-\index{flag!for CLN}
-iff \cgal\ is configured with \leda, GMP or CLN support, respectively.
+iff \cgal\ is configured with \leda\ or GMP support, respectively.
 
 \section{Identifying \cgal\ and \leda\ versions}
 \label{sec:which_versions}
@@ -108,7 +105,6 @@ current \leda\ version. Examples: for \leda-3.8, it is 380, for
 \index{LEDA macro@{\tt \_\_LEDA\_\_} macro!using}
 \index{CGAL_USE_LEDA flag@{\tt CGAL\_USE\_LEDA} flag!using}
 \index{CGAL_USE_GMP flag@{\tt CGAL\_USE\_GMP} flag!using}
-\index{CGAL_USE_CLN flag@{\tt CGAL\_USE\_CLN} flag!using}
 
 Here is a short example on how these macros can be used. Assume you have some
 piece of code that depends on whether you have \leda-4.0 or later.
