@@ -1,0 +1,77 @@
+// examples/Sweep_line/example6.C
+// ------------------------------
+
+#if defined(CGAL_CFG_NO_LONGNAME_PROBLEM) || defined(_MSC_VER)
+#define Quotient                        Qt
+#define Cartesian                       Cn
+#define Arr_segment_exact_traits        AST
+#define Pm_default_dcel                 PmDD
+#define X_curve_plus_id                 XCPI
+#define allocator                       All
+#define Sweep_curves_to_subcurves_utils SCSU
+#define Sweep_curves_base_2             SCB
+#define Intersection_point_node         IPN
+#endif
+
+#include <CGAL/Cartesian.h>
+#include <CGAL/MP_Float.h>
+#include <CGAL/Quotient.h>
+#include <CGAL/Arr_segment_exact_traits.h>
+#include <CGAL/Pm_default_dcel.h>
+#include <CGAL/Planar_map_2.h>
+#include <CGAL/sweep_do_curves_intersect_2.h>
+#include <CGAL/IO/Pm_iostream.h>
+#include <iostream>
+#include <vector>
+
+//#include <CGAL/IO/Pm_Window_stream.h>
+//#include <CGAL/IO/cgal_window.h>
+
+typedef CGAL::Quotient<CGAL::MP_Float>          NT;
+typedef CGAL::Cartesian<NT>                     Kernel;
+typedef CGAL::Arr_segment_exact_traits<Kernel>  Traits;
+
+typedef Traits::Point                           Point;
+typedef Traits::Curve                           Curve;
+
+typedef CGAL::Pm_default_dcel<Traits>           Dcel;   
+typedef CGAL::Planar_map_2<Dcel,Traits>         PM;
+
+int main()
+{
+  PM                  pm;
+  int                 num_segments;
+  std::vector<Curve>  segments;
+  
+  std::cout << " * * * Demonstrating a trivial usage of the sweep line ";
+  std::cout << "algorithm" << std::endl << std::endl;
+  
+  // Read input
+  std::cin >> num_segments;
+  
+  while (num_segments--) 
+  {
+    Curve cv;
+    std::cin >> cv;
+    segments.push_back(cv);
+  }    
+
+  // Use a sweep to find the points induced in the arrangement  
+  Traits traits;
+  bool b = CGAL::sweep_do_curves_intersect_2(segments.begin(),
+                                             segments.end(), 
+                                             traits);
+
+  // Write output
+  if (b)
+    std::cout << " * * * Curves intersect"<<std::endl;
+  else
+    std::cout << " * * * Curves do NOT intersect"<<std::endl;
+  
+  return 0;
+}
+
+
+
+
+
