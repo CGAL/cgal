@@ -246,6 +246,7 @@
 
 \end{ccRefClass}
 
+%% +--------------------------------------------------------+
 \begin{ccRefClass}{Counting_iterator<Iterator, Value>}
   \label{sectionCountingIterator}
 
@@ -278,6 +279,41 @@
   \ccSeeAlso
   \ccRefIdfierPage{CGAL::copy_n}
 
+\end{ccRefClass}
+
+%% +--------------------------------------------------------+
+\begin{ccRefClass}{Insert_iterator<Container>}
+  \label{sectionInsertIterator}
+
+  \ccCreationVariable{i}
+  
+  \ccDefinition The output iterator \ccClassTemplateName\ is similar
+  to \ccc{std::insert_iterator}, but differs in that it calls the
+  \ccc{insert()} function of the container without the iterator
+  additional argument.
+
+  \ccInclude{CGAL/iterator.h}
+
+  \ccIsModel
+  \ccc{OutputIterator}
+  
+  \ccRequirements \ccc{Container} provides a member function
+  \ccc{insert(const Container::const_reference&)}.
+
+  \ccCreation
+
+  \ccTwo{Identity<Value>MMMMMM}{}
+  
+  \ccConstructor{Insert_iterator( Container &c );}{initializes
+    the internal container reference to $c$.}
+
+  There is also a global function similar to \ccc{std::inserter}:
+
+  \ccFunction{template < class Container >
+              Insert_iterator<Container>
+              inserter(Container &x);}
+  { Constructs \ccc{Insert_iterator<Container>(x)}. }
+  
 \end{ccRefClass}
 
 %% +--------------------------------------------------------+

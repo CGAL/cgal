@@ -1,3 +1,6 @@
+25 Feb 2004 Sylvain Pion
+- Document Insert_iterator [bug#210].
+
 21 Feb 2004 Sylvain Pion
 - Move successor() and predecessor() from Convex_hull_2 to STL_Extension.
 
