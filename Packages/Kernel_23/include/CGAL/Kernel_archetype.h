@@ -10,7 +10,7 @@
 // release       : 
 // release_date  : 
 //
-// file          : Test_kernel.h
+// file          : Kernel_archetype.h
 // package       : Kernel_23
 // maintainer    : 
 // revision      : $Revision$
@@ -141,7 +141,8 @@ public:
   // functors and access functions ...
   
 // predicate ...  
-#define CGAL_Kernel_pred(Y,Z) typedef CGALca::Y<Kernel_archetype> Y; Y Z() const {return Y();}
+#define CGAL_Kernel_pred(Y,Z) typedef CGALca::Y<Kernel_archetype> Y; \
+Y Z() const {return Y();}
 // accessor function ...
 #define CGAL_Kernel_cons(Y,Z) CGAL_Kernel_pred(Y,Z)
 

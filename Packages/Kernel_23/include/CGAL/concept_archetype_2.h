@@ -82,10 +82,12 @@ struct Test_point_2 {
 };
 
 #if defined(CGAL_CONCEPT_ARCHETYPE_ALLOW_COMPARISONS)
-inline bool operator==(const Test_point_2& obj1, const Test_point_2& obj2)
+inline bool operator==(const Test_point_2& obj1, 
+                       const Test_point_2& obj2)
 { return true; }
 
-inline bool operator!=(const Test_point_2& obj1, const Test_point_2& obj2)
+inline bool operator!=(const Test_point_2& obj1, 
+                       const Test_point_2& obj2)
 { return true; }
 #endif
 
@@ -177,10 +179,12 @@ struct Test_direction_2 {
 };
 
 #if defined(CGAL_CONCEPT_ARCHETYPE_ALLOW_COMPARISONS)
-inline bool operator==(const Test_direction_2& obj1, const Test_direction_2& obj2)
+inline bool operator==(const Test_direction_2& obj1, 
+                       const Test_direction_2& obj2)
 { return true; }
 
-inline bool operator!=(const Test_direction_2& obj1, const Test_direction_2& obj2)
+inline bool operator!=(const Test_direction_2& obj1, 
+                       const Test_direction_2& obj2)
 { return true; }
 #endif
 
@@ -196,10 +200,12 @@ struct Test_triangle_2 {
 };
 
 #if defined(CGAL_CONCEPT_ARCHETYPE_ALLOW_COMPARISONS)
-inline bool operator==(const Test_triangle_2& obj1, const Test_triangle_2& obj2)
+inline bool operator==(const Test_triangle_2& obj1, 
+                       const Test_triangle_2& obj2)
 { return true; }
 
-inline bool operator!=(const Test_triangle_2& obj1, const Test_triangle_2& obj2)
+inline bool operator!=(const Test_triangle_2& obj1, 
+                       const Test_triangle_2& obj2)
 { return true; }
 #endif
 

@@ -224,10 +224,12 @@ struct Test_triangle_3 {
 };
 
 #if defined(CGAL_CONCEPT_ARCHETYPE_ALLOW_COMPARISONS)
-inline bool operator==(const Test_triangle_3& obj1, const Test_triangle_3& obj2)
+inline bool operator==(const Test_triangle_3& obj1, 
+                       const Test_triangle_3& obj2)
 { return true; }
 
-inline bool operator!=(const Test_triangle_3& obj1, const Test_triangle_3& obj2)
+inline bool operator!=(const Test_triangle_3& obj1, 
+                       const Test_triangle_3& obj2)
 { return true; }
 #endif
 
