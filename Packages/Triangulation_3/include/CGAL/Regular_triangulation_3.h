@@ -125,9 +125,9 @@ public:
   side_of_power_sphere( Cell_handle c, const Weighted_point &p) const;
   
   Bounded_side
-  side_of_circle( const Facet & f, const Weighted_point & p) const
+  side_of_power_circle( const Facet & f, const Weighted_point & p) const
     {
-      return side_of_circle(f.first, f.second, p);
+      return side_of_power_circle(f.first, f.second, p);
     }
 
   Bounded_side
