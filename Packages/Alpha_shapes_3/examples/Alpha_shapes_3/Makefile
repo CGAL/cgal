@@ -1,3 +1,4 @@
+# Created by the script create_makefile
 # This is the makefile for compiling a CGAL application.
 
 #---------------------------------------------------------------------#
@@ -5,61 +6,52 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-#CGAL_MAKEFILE =$(UTIL)/CGAL/CGAL-2.3-I-76/make/makefile_sparc_SunOS-5.6_g++-2.95.3_LEDA
-
-# for cygwin
-#\prisme\CGAL\CGAL-2.1-I-30\make\makefile_i686_CYGWINNT-4.0-20.1_CL.EXE-12.00.8168
-
-# for others
-#$(UTIL)/CGAL-I/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.66_LEDA
-#makefile_sparc_SunOS-5.6_eg++-egcs-2.91.66_LEDA
-#makefile_sparc_SunOS-5.6_g++-2.95.1_LEDA
-#makefile_sparc_SunOS-5.6_g++-2.95.2_LEDA
-#makefile_i686_Linux-2.2.7_eg++-egcs-2.91.66_LEDA
-#makefile_i686_Linux-2.2.7_g++-2.95.1_LEDA
-#makefile_i686_Linux-2.2.10_g++-2.95.2_LEDA
-
+# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
 
-# ---------------------------------------------------------------------#
+#---------------------------------------------------------------------#
 #                    compiler flags
-#----------------------------------------------------------------------#
-# rajouter CGAL_LOCAL_CXXFLAGS si on veut les packages de Local
+#---------------------------------------------------------------------#
 
-CXXFLAGS =  -I../../include \
-	     $(CGAL_CXXFLAGS)
+CXXFLAGS = \
+           -I../../include \
+	   -I../../../Triangulation_3/include \
+           $(CGAL_CXXFLAGS) \
+           $(LONG_NAME_PROBLEM_CXXFLAGS)
 
-# for cygwin
-#'-Iz:\Cgal-2.0\To_submit\Alpha_shapes_2\include' \
-
-# for others
-#-I$(HOME)/Cgal-2.0/To_submit/Alpha_shapes_2/include \
-#-mcpu=ultrasparc -mtune=ultrasparc  -Wall -W -O2 -DDEBUG
-#-B /u/alcor/0/prisme_util/Binutils/SunOS/bin/
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
 
-LIBPATH = $(CGAL_LIBPATH)
+LIBPATH = \
+          $(CGAL_LIBPATH)
 
-LDFLAGS = $(CGAL_WINDOW_LDFLAGS)
+LDFLAGS = \
+          $(LONG_NAME_PROBLEM_LDFLAGS) \
+          $(CGAL_LDFLAGS)
 
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: example_alpha$(EXE_EXT) example_weight$(EXE_EXT)
+all:            \
+                example_alpha$(EXE_EXT) \
+                example_big_alpha$(EXE_EXT) \
+                example_weight$(EXE_EXT) 
 
 example_alpha$(EXE_EXT): example_alpha$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_alpha  example_alpha$(OBJ_EXT) $(LDFLAGS)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_alpha example_alpha$(OBJ_EXT) $(LDFLAGS)
+
+example_big_alpha$(EXE_EXT): example_big_alpha$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_big_alpha example_big_alpha$(OBJ_EXT) $(LDFLAGS)
 
 example_weight$(EXE_EXT): example_weight$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_weight  example_weight$(OBJ_EXT) $(LDFLAGS)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_weight example_weight$(OBJ_EXT) $(LDFLAGS)
 
-clean:
-	\rm -f *.o  *.obj *.exe \
-                   example_alpha$(EXE_EXT)  example_weight$(EXE_EXT) \
-                   core
+clean: \
+                   example_alpha.clean \
+                   example_big_alpha.clean \
+                   example_weight.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
@@ -67,6 +59,4 @@ clean:
 
 .C$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
-
-
 
