@@ -156,10 +156,10 @@ public:
   void	      attach(Qt_widget_tool& tool);
   inline bool has_tool() const { return _has_tool; };
   void	      detach_current_tool(); 
-  
+  /*  
   Qt_widget& operator<<(Qt_widget_tool* tool);
   Qt_widget& operator>>(Qt_widget_tool &tool);
-		
+  */	
   void new_object(CGAL::Object obj) { emit(new_cgal_object(obj)); };
 
 signals:
