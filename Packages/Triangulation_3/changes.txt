@@ -1,3 +1,7 @@
+Version 1.109 (?? April 02)
+- SunPro can't eat the automatic conversion iterator -> handle in some cases,
+  so fix example_color.C.
+
 Version 1.108 (22 March 02)
 - Iterators and circulators are convertible to handles.
 - Cell.init() obsolete (redundant with default constructor)
