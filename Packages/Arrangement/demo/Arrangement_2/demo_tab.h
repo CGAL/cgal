@@ -2904,6 +2904,7 @@ public:
             QMessageBox::information( w, "Insert Conic", "Invalid Conic");
             w->active = false;
             *w << m_p1 << m_p2 << m_p3 << m_p4 << p;
+            delete cv;
             return;
           }
         }
