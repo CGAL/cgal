@@ -81,14 +81,10 @@ namespace CGAL {
     typedef std::pair<Point_d,FT> Point_with_transformed_distance;
     typedef std::pair<Cell*,FT> Cell_with_distance;
 
-    // this forward declaration may problems for g++ 
     class iterator;
 
-
     typedef std::vector<Cell_with_distance*> Cell_with_distance_vector;
-
     typedef std::vector<Point_with_transformed_distance*> Point_with_distance_vector;
-
     typedef std::vector<FT> Distance_vector;
 
     iterator *start;
@@ -142,43 +138,43 @@ namespace CGAL {
       typedef int distance_type;
 
       class Iterator_implementation;
-      Iterator_implementation *Ptr_implementation;
+      Iterator_implementation *ptr;
 
 
       // default constructor
       iterator() 
-	: Ptr_implementation(0)
+	: ptr(0)
       {}
 
       int 
       the_number_of_items_visited() 
       {
-        return Ptr_implementation->number_of_items_visited;
+        return ptr->number_of_items_visited;
       }
 
       // constructor
       iterator(const Tree& tree, const Query_item& q, const Distance& tr, FT eps, 
 	       bool search_nearest)
-        : Ptr_implementation(new Iterator_implementation(tree, q, tr, eps, search_nearest))
+        : ptr(new Iterator_implementation(tree, q, tr, eps, search_nearest))
       {}
       
       // copy constructor
       iterator(const iterator& Iter)
-	: Ptr_implementation(Iter.Ptr_implementation)
+	: ptr(Iter.ptr)
       {
-	if (Ptr_implementation != 0) Ptr_implementation->reference_count++;
+	if (ptr != 0) ptr->reference_count++;
       }
       
       Point_with_transformed_distance& 
       operator* () 
       {
-	return *(*Ptr_implementation);
+	return *(*ptr);
       }
 
       // prefix operator
       iterator& operator++() 
       {
-        ++(*Ptr_implementation);
+        ++(*ptr);
         return *this;
       }
 
@@ -193,14 +189,14 @@ namespace CGAL {
       bool 
       operator==(const iterator& It) const 
       {
-        if ( ((Ptr_implementation == 0) || 
-	      Ptr_implementation->Item_PriorityQueue->empty()) &&
-	     ((It.Ptr_implementation == 0) ||  
-	      It.Ptr_implementation->Item_PriorityQueue->empty())
+        if ( ((ptr == 0) || 
+	      ptr->Item_PriorityQueue.empty()) &&
+	     ((It.ptr == 0) ||  
+	      It.ptr->Item_PriorityQueue.empty())
 	     )
 	  return true;
         // else
-        return (Ptr_implementation == It.Ptr_implementation);
+        return (ptr == It.ptr);
       }
 
       bool 
@@ -212,17 +208,17 @@ namespace CGAL {
       std::ostream& 
       statistics (std::ostream& s) 
       {
-    	Ptr_implementation->statistics(s);
+    	ptr->statistics(s);
         return s;
       }
 
       ~iterator() 
       {
-        if (Ptr_implementation != 0) {
-	  Ptr_implementation->reference_count--;
-	  if (Ptr_implementation->reference_count==0) {
-	    delete Ptr_implementation;
-	    Ptr_implementation = 0;
+        if (ptr != 0) {
+	  ptr->reference_count--;
+	  if (ptr->reference_count==0) {
+	    delete ptr;
+	    ptr = 0;
 	  }
         }
       }
@@ -244,23 +240,24 @@ namespace CGAL {
 
 	FT rd;
 
+
 	class Priority_higher {
 	
 	public:
 
 	  bool search_nearest;
 
-	  Priority_higher(bool search_the_nearest_neighbour) {
-	    search_nearest = search_the_nearest_neighbour;
-	  }
+	  Priority_higher(bool search_the_nearest_neighbour)
+	    : search_nearest(search_the_nearest_neighbour) 
+	  {}
 
 	  //highest priority is smallest distance
 	  bool operator() (Cell_with_distance* n1, Cell_with_distance* n2) const 
 	  {
-	    if (search_nearest) { return (n1->second > n2->second);}
-	    else {return (n2->second > n1->second);}
+	    return (search_nearest)? (n1->second > n2->second) : (n2->second > n1->second);
 	  }
 	};
+
 
 	class Distance_smaller {
 
@@ -280,14 +277,15 @@ namespace CGAL {
 	  }
 	};
 
+
 	std::priority_queue<Cell_with_distance*, Cell_with_distance_vector,
-	                    Priority_higher>* PriorityQueue;
+	                    Priority_higher> PriorityQueue;
       public:
 	std::priority_queue<Point_with_transformed_distance*, Point_with_distance_vector,
-	                    Distance_smaller>* Item_PriorityQueue;
+	                    Distance_smaller> Item_PriorityQueue;
     
 
-	Distance* Distance_instance;
+	Distance distance;
 
       public:
 
@@ -301,42 +299,29 @@ namespace CGAL {
 	// constructor
 	Iterator_implementation(const Tree& tree, const Query_item& q,const Distance& tr,
 				FT Eps, bool search_nearest)
-	  : reference_count(1), Distance_instance(new Distance(tr)), search_nearest_neighbour(search_nearest), query_point(q)
-	{
-	  PriorityQueue = new std::priority_queue<Cell_with_distance*, 
-	                                          Cell_with_distance_vector, Priority_higher> 
-	                      (Priority_higher(search_nearest));
-	  
-	  Item_PriorityQueue = new std::priority_queue<Point_with_transformed_distance*, 
-	                                               Point_with_distance_vector,
-	                                               Distance_smaller>
-	                           (Distance_smaller(search_nearest));
-
-	  
-	  multiplication_factor=
-	    Distance_instance->transformed_distance(FT(1)+Eps);
+	  : reference_count(1), distance(tr), search_nearest_neighbour(search_nearest), query_point(q),
+	    number_of_leaf_nodes_visited(0), number_of_internal_nodes_visited(0), number_of_items_visited(0),
+	    number_of_neighbours_computed(0), PriorityQueue(Priority_higher(search_nearest)),
+	    Item_PriorityQueue(Distance_smaller(search_nearest))
+	{	  
+	  multiplication_factor= distance.transformed_distance(FT(1)+Eps);
 
 	  Node_box *bounding_box = new Node_box((tree.bounding_box()));
 
 	  if (search_nearest) distance_to_root=
-				Distance_instance->min_distance_to_rectangle(q,*bounding_box);
+				distance.min_distance_to_rectangle(q,*bounding_box);
 	  else distance_to_root=
-		 Distance_instance->max_distance_to_rectangle(q,*bounding_box);
+		 distance.max_distance_to_rectangle(q,*bounding_box);
 
         
 	  total_item_number=tree.size();
-
-	  number_of_leaf_nodes_visited=0;
-	  number_of_internal_nodes_visited=0;
-	  number_of_items_visited=0;
-	  number_of_neighbours_computed=0;
 
 
 	  Cell *Root_Cell = new Cell(bounding_box,tree.root());
 	  Cell_with_distance  *The_Root = 
 	    new Cell_with_distance(Root_Cell,distance_to_root);
 
-	  PriorityQueue->push(The_Root);
+	  PriorityQueue.push(The_Root);
 
 	  // rd is the distance of the top of the priority queue to q
 	  rd=The_Root->second;
@@ -347,7 +332,7 @@ namespace CGAL {
 	Point_with_transformed_distance& 
 	operator* () 
 	{    
-	  return *(Item_PriorityQueue->top());
+	  return *(Item_PriorityQueue.top());
 	}
 
 	// prefix operator
@@ -379,20 +364,18 @@ namespace CGAL {
 	//destructor
 	~Iterator_implementation() 
 	{
-
-	  while (PriorityQueue->size()>0) {
-	    Cell_with_distance* The_top=PriorityQueue->top();
-	    PriorityQueue->pop();
+	  while (PriorityQueue.size()>0) {
+	    Cell_with_distance* The_top=PriorityQueue.top();
+	    PriorityQueue.pop();
 	    delete The_top->first->box();
 	    delete The_top->first;
 	    delete The_top;
 	  }
-	  while (Item_PriorityQueue->size()>0) {
-	    Point_with_transformed_distance* The_top=Item_PriorityQueue->top();
-	    Item_PriorityQueue->pop();
+	  while (Item_PriorityQueue.size()>0) {
+	    Point_with_transformed_distance* The_top=Item_PriorityQueue.top();
+	    Item_PriorityQueue.pop();
 	    delete The_top;
 	  }
-	  delete Distance_instance;
 	}
 
       private:
@@ -400,8 +383,8 @@ namespace CGAL {
 	void 
 	Delete_the_current_item_top() 
 	{
-	  Point_with_transformed_distance* The_item_top=Item_PriorityQueue->top();
-	  Item_PriorityQueue->pop();
+	  Point_with_transformed_distance* The_item_top=Item_PriorityQueue.top();
+	  Item_PriorityQueue.pop();
 	  delete The_item_top;
 	}
 
@@ -410,20 +393,20 @@ namespace CGAL {
 	{
 	  // compute the next item
 	  bool next_neighbour_found=false;
-	  if (!(Item_PriorityQueue->empty())) {
+	  if (!(Item_PriorityQueue.empty())) {
 	    if (search_nearest_neighbour)
 	      next_neighbour_found =
-		(multiplication_factor*rd > Item_PriorityQueue->top()->second);
+		(multiplication_factor*rd > Item_PriorityQueue.top()->second);
 	    else
 	      next_neighbour_found =
-		(rd < multiplication_factor*Item_PriorityQueue->top()->second);
+		(rd < multiplication_factor*Item_PriorityQueue.top()->second);
 	  }
-	  while ((!next_neighbour_found) && (!PriorityQueue->empty())) {
+	  while ((!next_neighbour_found) && (!PriorityQueue.empty())) {
                 
-	    Cell_with_distance* The_node_top = PriorityQueue->top();
+	    Cell_with_distance* The_node_top = PriorityQueue.top();
 	    Node_handle N = The_node_top->first->node();
 	    Node_box* B = The_node_top->first->box();
-	    PriorityQueue->pop();
+	    PriorityQueue.pop();
 	    delete The_node_top->first;
 	    delete The_node_top;
 
@@ -438,36 +421,36 @@ namespace CGAL {
 	      delete B;
 	      if (search_nearest_neighbour) {
 		FT distance_to_box_lower =
-		  Distance_instance->min_distance_to_rectangle(query_point, *lower_box);
+		  distance.min_distance_to_rectangle(query_point, *lower_box);
 		FT distance_to_box_upper =
-		  Distance_instance->min_distance_to_rectangle(query_point, *upper_box);
+		  distance.min_distance_to_rectangle(query_point, *upper_box);
 		if (distance_to_box_lower <= distance_to_box_upper) {
 
 		  Cell* C_upper = new Cell(upper_box, N->upper());
 		  Cell_with_distance *Upper_Child =
 		    new Cell_with_distance(C_upper,distance_to_box_upper);
-		  PriorityQueue->push(Upper_Child);
+		  PriorityQueue.push(Upper_Child);
 		  N=N->lower();
 		  B=lower_box;
 		} else {
 		  Cell* C_lower = new Cell(lower_box, N->lower());
 		  Cell_with_distance *Lower_Child =
 		    new Cell_with_distance(C_lower,distance_to_box_lower);
-		  PriorityQueue->push(Lower_Child);
+		  PriorityQueue.push(Lower_Child);
 		  N=N->upper();
 		  B=upper_box;
 		}
 	      }
 	      else { // search furthest
 		FT distance_to_box_lower =
-		  Distance_instance->max_distance_to_rectangle(query_point, *lower_box);
+		  distance.max_distance_to_rectangle(query_point, *lower_box);
 		FT distance_to_box_upper =
-		  Distance_instance->max_distance_to_rectangle(query_point, *upper_box);
+		  distance.max_distance_to_rectangle(query_point, *upper_box);
 		if (distance_to_box_lower >= distance_to_box_upper) {
 		  Cell* C_upper = new Cell(upper_box, N->upper());
 		  Cell_with_distance *Upper_Child =
 		    new Cell_with_distance(C_upper,distance_to_box_upper);
-		  PriorityQueue->push(Upper_Child);
+		  PriorityQueue.push(Upper_Child);
 		  N=N->lower();
 		  B=lower_box;
 		}
@@ -475,7 +458,7 @@ namespace CGAL {
 		  Cell* C_lower = new Cell(lower_box, N->lower());
 		  Cell_with_distance *Lower_Child =
 		    new Cell_with_distance(C_lower,distance_to_box_lower);
-		  PriorityQueue->push(Lower_Child);
+		  PriorityQueue.push(Lower_Child);
 		  N=N->upper();
 		  B=upper_box;
 		}
@@ -487,24 +470,23 @@ namespace CGAL {
 	      for (Point_d_iterator it = N->begin(); it != N->end(); it++) {
 		number_of_items_visited++;
 		FT distance_to_query_point=
-		  Distance_instance->
-		  transformed_distance(query_point,**it);
+		  distance.transformed_distance(query_point,**it);
 		Point_with_transformed_distance *NN_Candidate=
 		  new Point_with_transformed_distance(**it,distance_to_query_point);
-		Item_PriorityQueue->push(NN_Candidate);
+		Item_PriorityQueue.push(NN_Candidate);
 	      }
 	      // old top of PriorityQueue has been processed,
 	      // hence update rd
-	      if (!PriorityQueue->empty()) {
-		rd = PriorityQueue->top()->second;
+	      if (!PriorityQueue.empty()) {
+		rd = PriorityQueue.top()->second;
 		if (search_nearest_neighbour)
 		  next_neighbour_found =
 		    (multiplication_factor*rd > 
-		     Item_PriorityQueue->top()->second);
+		     Item_PriorityQueue.top()->second);
 		else
 		  next_neighbour_found =
 		    (multiplication_factor*rd < 
-		     Item_PriorityQueue->top()->second);
+		     Item_PriorityQueue.top()->second);
 	      }
 	      else // priority queue empty => last neighbour found
 		{
