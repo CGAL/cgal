@@ -142,7 +142,7 @@ printer. This method also use signals as \ccc{redraw_on_back()} or \ccc{redraw_o
 
 You can set the properties of the functions through this functions as
 well as with the help of manipulators described later. The function
-naming convention has changed for this member functions, to \qt\ convention.
+naming convention has changed for this member functions, to \cgalqt\ convention.
 
 \ccMethod{void setColor(Qcolor c);}{Set the current pen color of the widget to 
 be c.}
@@ -187,7 +187,7 @@ connected to this signal.}
 %PROPERTIES
 %\ccHeading{Properties}
 
-Note that we use also types from \qt\ here.
+Note that we use also types from \cgalqt\ here.
 
 \ccMethod{QColor color() const;}{Returns the current pen color. The color 
 returned is a Qt class.}
@@ -304,7 +304,7 @@ the \ccc{QPixmap} object.
 \ccMethod{void s_leaveEvent(QEvent *e);}{}
 \ccGlue
 \ccMethod{void s_event(QEvent *e);}{The \ccc{Qt\_widget} receives the
-events through virtual functions. This is the mechanism that \qt\
+events through virtual functions. This is the mechanism that \cgalqt\
 offers for dispaching events. This signals are called every time an
 event is dispatched to a virtual function. For example if
 \ccc{Qt\_widget} receives \ccc{mousePressEvent(QMouseEvent *e)} emits
@@ -383,10 +383,10 @@ int main( int argc, char **argv )
   *W << Segment(Point(200,400),Point(400,200));
   W->setFilled(TRUE);
   *W << RED << Triangle(Point(150,300),
-				  Point(150,350),
-				  Point(100,325));
+                                  Point(150,350),
+                                  Point(100,325));
   *W << FillColor(RED) << Cgal_Rectangle(Point(320,220),
-					      Point(350,240));
+                                              Point(350,240));
   *W << DEEPBLUE << BBox(100,80,260,140);
   Cgal_Polygon p;
   p.push_back(Point(300,30));

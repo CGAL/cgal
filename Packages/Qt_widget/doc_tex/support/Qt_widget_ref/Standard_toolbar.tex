@@ -32,12 +32,12 @@ first parameter is a pointer to a Qt\_widget object, the second is a
 pointer to a QMainWindow object, that contains the toolbar. The last
 parameter is the name of the toolbar. If you are using this
 constructor, you should deallocate yourself the memory used for the
-toolbar. Use the other one if you want \qt\ to do it for you.}
+toolbar. Use the other one if you want \cgalqt\ to do it for you.}
 
 \ccConstructor{Qt_widget_standard_toolbar(Qt_widget *w, QMainWindow
 *mw = 0, QWidget* parent, bool newline = true, const char* name =
 0);}{ The same as the previous one except from \ccc{parent} parameter that
-is used to tell \qt\ to destroy the memory after the parent is
+is used to tell \cgalqt\ to destroy the memory after the parent is
 destroied. If \ccc{newline} is true, the toolbar will be placed on a
 new line.}
 
@@ -68,8 +68,8 @@ standard toolbar.}
 #include <CGAL/IO/Qt_widget_layer.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 
-typedef CGAL::Cartesian<double>		    Rep;
-typedef CGAL::Point_2<Rep>		    Point;
+typedef CGAL::Cartesian<double>             Rep;
+typedef CGAL::Point_2<Rep>                  Point;
 typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
 
 Delaunay dt;
@@ -105,7 +105,7 @@ public:
     
     //How to attach the standard toolbar
     stoolbar = new CGAL::Qt_widget_standard_toolbar(widget, this,
-						    "Standard toolbar");
+                                                    "Standard toolbar");
     widget->attach(&v);
   }
 private:

@@ -22,12 +22,16 @@ attached will be drawn.
 \ccInclude{CGAL/IO/Qt_widget_layer.h}
 \ccGlue
 
+\ccInheritsFrom
+\ccc{QObject}
+
 \ccCreation
 \ccCreationVariable{layer}
 \ccSetTwoColumns{Qt_widget_layer}{}
 
 \ccConstructor{Qt_widget_layer(QObject *parent = 0, const char* name = 
-0);}{The default constructor.}
+0);}{The default constructor. The parameters \ccc{parent} and \ccc{name} 
+are passed to the \ccc{QObject} constructor.}
 \ccSetThreeColumns{const_iterator}{container.begin() const;}{}
 
 \ccMethod{virtual void mousePressEvent(QMouseEvent *);}{}
@@ -98,7 +102,7 @@ public:
   typedef typename T::Point           Point;
   typedef typename T::Segment         Segment;
   typedef typename T::Vertex          Vertex;
-  typedef typename T::Vertex_iterator	Vertex_iterator;
+  typedef typename T::Vertex_iterator   Vertex_iterator;
 
   Qt_layer_show_points(T &t) : tr(t){};
 
