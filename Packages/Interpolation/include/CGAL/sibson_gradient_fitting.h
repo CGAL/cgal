@@ -1,0 +1,142 @@
+// Copyright (c) 1997  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$ $Date$
+// $Name$
+//
+// Author(s)     : Julia Floetotto
+#ifndef CGAL_GRADIENT_FITTING_H
+#define CGAL_GRADIENT_FITTING_H
+
+#include <utility>
+#include <CGAL/double.h>
+
+CGAL_BEGIN_NAMESPACE 
+
+
+template < class ForwardIterator, class Functor, class Traits>
+typename Traits::Vector 
+sibson_gradient_fitting(ForwardIterator first, ForwardIterator beyond,
+			const typename std::iterator_traits<ForwardIterator>::value_type::second_type&
+			norm, const typename
+			std::iterator_traits<ForwardIterator>::value_type::first_type& p, 
+			Functor f,
+			const Traits& geom_traits)
+{  
+  typedef typename Traits::Aff_transformation Aff_transformation;
+  typedef typename Traits::FT                 Coord_type;
+  
+  typename Functor::result_type fn =  f(p);
+  
+  typename Traits::Vector pn = 
+    geom_traits.construct_vector_object()(NULL_VECTOR);
+  Aff_transformation scaling, m,
+    Hn(geom_traits.construct_null_matrix_object()());
+  
+  for(;first!=beyond; first++){
+    Coord_type square_dist = geom_traits.compute_squared_distance_object()
+      (first->first, p);
+    Coord_type  scale(first->second/(norm*square_dist));
+    typename Traits::Vector d= 
+      geom_traits.construct_vector_object()(p, first->first);
+ 
+    //compute the vector pn:
+    pn = pn + geom_traits.construct_scaled_vector_object()
+      (d,scale * (f(first->first) - fn));  
+    
+    //compute the matrix Hn:
+    m = geom_traits.construct_outer_product_object()(d);
+    scaling = geom_traits.construct_scaling_matrix_object()(scale);
+ 
+    Hn =  geom_traits.construct_sum_matrix_object()(Hn, scaling * m);   
+  }
+
+  return (Hn.inverse()).transform(pn);
+};
+
+//the following functions allow to fit the gradients for all points in 
+// a triangulation except the convex hull points.
+// -> _nn2: natural_neighbor_coordinates_2
+// -> _rn2: regular_neighbor_coordinates_2
+// -> _sn2_3: surface_neighbor_coordinates_2_3
+template < class Dt, class OutputIterator,  class Functor, class Traits>
+OutputIterator
+sibson_gradient_fitting_nn_2(const Dt& dt, 
+				   OutputIterator out,
+				   Functor f,
+				   const Traits& traits)
+{
+  typedef typename Traits::Point                        Point;
+  typedef typename Traits::FT                           Coord_type;
+  
+  std::vector< std::pair< Point, Coord_type > > coords;
+  Coord_type norm;
+  
+  typename Dt::Finite_vertices_iterator vit = dt.finite_vertices_begin();
+  for(; vit != dt.vertices_end(); vit++){
+    //test if vit is a convex hull vertex:
+    if(dt.is_edge(vit, dt.infinite_vertex()))
+      *out++= std::make_pair(vit->point(), typename Traits::Vector(NULL_VECTOR));
+    else{
+      norm = 
+	natural_neighbor_coordinates_2(dt, vit,
+				       std::back_inserter(coords)).second;
+      *out++= std::make_pair(vit->point(), 
+			     sibson_gradient_fitting(coords.begin(), 
+						     coords.end(),
+							   norm, vit->point(),
+							   f, traits));
+      coords.clear();
+    }
+  }
+  return out;
+};
+
+// //fitting of function gradients using regular_neighbor_2:
+// template < class Rt, class OutputIterator,  class Functor, class Traits>
+// OutputIterator
+// sibson_gradient_fitting_rn_2(const Rt& rt, 
+// 				   OutputIterator out,
+// 				   Functor f,
+// 				   const Traits& traits)
+// {
+//   typedef typename Traits::Point                        Point;
+//   typedef typename Traits::FT                           Coord_type;
+  
+//   std::vector< std::pair< Point, Coord_type > > coords;
+//   Coord_type norm;
+  
+//   typename Rt::Finite_vertices_iterator vit = rt.finite_vertices_begin();
+//   for(; vit != dt.vertices_end(); vit++){
+//     //test if vit is a convex hull vertex:
+//     if(dt.is_edge(vit, dt.infinite_vertex()))
+//       *out++= std::make_pair(vit->point(), typename Traits::Vector(NULL_VECTOR));
+//     else{
+//       norm = 
+// 	natural_neighbor_coordinates_2(dt, vit,
+// 				       std::back_inserter(coords)).second;
+//       *out++= std::make_pair(vit->point(), 
+// 			     sibson_gradient_fitting(coords.begin(), 
+// 							   coords.end(),
+// 							   norm, vit->point(),
+// 							   f, traits));
+//       coords.clear();
+//     }
+//   }
+//   return out;
+// };
+
+CGAL_END_NAMESPACE
+
+#endif // CGAL_GRADIENT_FITTING_H

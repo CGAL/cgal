@@ -26,31 +26,6 @@
 CGAL_BEGIN_NAMESPACE
 //-------------------------------------------------------------------
 
-//compute the coordinates for a vertex of the triangulation 
-// with respect to the other points in the triangulation
-template <class Dt, class OutputIterator>
-std::pair< OutputIterator, typename Dt::Geom_traits::FT > 
-natural_neighbor_coordinates_2(const Dt& dt, 
-			       typename Dt::Vertex_handle vh, 
-			       OutputIterator out){
-  //this functions creates a small triangulation of the 
-  // incident vertices of this vertex and computes the 
-  // natural neighbor coordinates of ch->point() wrt. it.
-  typedef typename Dt::Vertex_circulator     Vertex_circulator;
- 
-  Dt t2;
-  Vertex_circulator vc = dt.incident_vertices(vh),
-    done(vc);
-  do{
-    assert(!dt.is_infinite(vc));
-    t2.insert(vc->point());
-  }
-  while(++vc!=done);
-    
-  return natural_neighbor_coordinates_2(t2, vh->point(), out, 
-					dt.geom_traits());
-}
-
 
 template <class Dt, class OutputIterator>
 std::pair< OutputIterator, typename Dt::Geom_traits::FT > 
@@ -169,6 +144,43 @@ natural_neighbor_coordinates_2(const Dt& dt,
      ++hit;
     }
   return( std::make_pair(out, area_sum));
+};
+
+/**********************************************************/
+//compute the coordinates for a vertex of the triangulation 
+// with respect to the other points in the triangulation
+template <class Dt, class OutputIterator>
+std::pair< OutputIterator, typename Dt::Geom_traits::FT > 
+natural_neighbor_coordinates_2(const Dt& dt, 
+			       typename Dt::Vertex_handle vh,
+			       OutputIterator out){
+  //init the traits class in natural_neighbor_coordinates_2
+  // to dt.geom_traits()
+  return natural_neighbor_coordinates_2(dt, vh, out, 
+					dt.geom_traits());
+};
+
+template <class Dt, class OutputIterator, class Traits>
+std::pair< OutputIterator, typename Traits::FT > 
+natural_neighbor_coordinates_2(const Dt& dt, 
+			       typename Dt::Vertex_handle vh, 
+			       OutputIterator out, const Traits& traits){
+  //this functions creates a small triangulation of the 
+  // incident vertices of this vertex and computes the 
+  // natural neighbor coordinates of ch->point() wrt. it.
+  typedef typename Dt::Vertex_circulator     Vertex_circulator;
+ 
+  Dt t2;
+  Vertex_circulator vc = dt.incident_vertices(vh),
+    done(vc);
+  do{
+    assert(!dt.is_infinite(vc));
+    t2.insert(vc->point());
+  }
+  while(++vc!=done);
+    
+  return natural_neighbor_coordinates_2(t2, vh->point(), out, 
+					traits);
 };
 
 //-------------------------------------------------------------------
