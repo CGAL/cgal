@@ -370,36 +370,25 @@ test_new_3(const R& rep)
         = rep.equal_xy_3_object();
   bool tmp16 = equal_xy(p2,p3);
 
-
-  typename R::Equal_xyz_3 equal_xyz
-        = rep.equal_xyz_3_object();
-  bool tmp17 = equal_xyz(p2,p3);
-
-
   typename R::Less_x_3 less_x
         = rep.less_x_3_object();
   bool tmp18 = less_x(p2,p3);
-
 
   typename R::Less_y_3 less_y
         = rep.less_y_3_object();
   bool tmp19 = less_y(p2,p3);
 
-
   typename R::Less_z_3 less_z
         = rep.less_z_3_object();
   bool tmp20 = less_z(p2,p3);
-
 
   typename R::Less_xy_3 less_xy
         = rep.less_xy_3_object();
   bool tmp21 = less_xy(p2,p3);
 
-
   typename R::Less_xyz_3 less_xyz
         = rep.less_xyz_3_object();
   bool tmp22 = less_xyz(p2,p3);
-
 
   typename R::Compare_x_3 compare_x
         = rep.compare_x_3_object();
@@ -424,10 +413,6 @@ test_new_3(const R& rep)
   typename R::Compare_xyz_3 compare_xyz
         = rep.compare_xyz_3_object();
   Comparison_result tmp27 = compare_xyz(p2,p3);
-
-  typename R::Less_distance_to_point_3 less_distance_to_point
-        = rep.less_distance_to_point_3_object(p4);
-  bool tmp28 = less_distance_to_point(p2,p3);
 
   typename R::Less_signed_distance_to_plane_3 less_signed_distance_to_plane
         = rep.less_signed_distance_to_plane_3_object();
@@ -563,8 +548,8 @@ test_new_3(const R& rep)
   use(tmp15); use(tmp14); use(tmp13); use(tmp12b); use(tmp12a);
   use(tmp12d); use(tmp12e); use(tmp12f); use(tmp12g); use(tmp12l); 
   use(tmp12h); use(tmp12i); use(tmp12j); use(tmp12k); use(tmp36c); use(tmp36d); 
-  use(tmp16); use(tmp17); use(tmp18); use(tmp19); use(tmp20); use(tmp21);
-  use(tmp26); use(tmp28); use(tmp30a); use(tmp30b); use(tmp34ab); 
+  use(tmp16); use(tmp18); use(tmp19); use(tmp20); use(tmp21);
+  use(tmp26); use(tmp30a); use(tmp30b); use(tmp34ab); 
   use(tmp39a);
 
   return true;

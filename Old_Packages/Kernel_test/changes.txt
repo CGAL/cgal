@@ -1,3 +1,7 @@
+3.29   (26 June 2001)
+- Remove references to obsolete Equal_xy_2, Equal_xyz_3,
+  Less_distance_to_point_2 and Less_distance_to_point_3.
+
 3.28   (21 June 2001)
 - Really test circumcenter(3 Point_3).
 - Other updates.

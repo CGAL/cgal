@@ -349,11 +349,6 @@ test_new_2(const R& rep)
         = rep.equal_y_2_object();
   bool tmp26 = equal_y(p2,p3);
 
-
-  typename R::Equal_xy_2 equal_xy
-        = rep.equal_xy_2_object();
-  bool tmp27 = equal_xy(p2,p3);
-
   typename R::Less_x_2 less_x
         = rep.less_x_2_object();
   bool tmp28 = less_x(p2,p3);
@@ -403,10 +398,6 @@ test_new_2(const R& rep)
   Comparison_result tmp34bb = compare_x_at_y(p2,l2,l3);
   Comparison_result tmp34cc = compare_x_at_y(l2,l3,l4);
   Comparison_result tmp34dd = compare_x_at_y(l2,l3,l4,l5);
-
-  typename R::Less_distance_to_point_2 less_distance_to_point
-        = rep.less_distance_to_point_2_object(p2);
-  bool tmp35 = less_distance_to_point(p3,p4);
 
   typename R::Compare_distance_2 compare_dist
         = rep.compare_distance_2_object();
@@ -559,11 +550,11 @@ test_new_2(const R& rep)
   use(tmp52b); use(tmp52a); use(tmp51b); use(tmp51a); use(tmp50b); use(tmp50a);
   use(tmp49b); use(tmp49a); use(tmp48b); use(tmp48a); use(tmp47); use(tmp46);
   use(tmp45); use(tmp44); use(tmp43); use(tmp42); use(tmp41); use(tmp40);
-  use(tmp39); use(tmp38); use(tmp37); use(tmp36); use(tmp35); use(tmp34d);
+  use(tmp39); use(tmp38); use(tmp37); use(tmp36); use(tmp34d);
   use(tmp34c); use(tmp34b); use(tmp34a); use(tmp32d); use(tmp32c); use(tmp32b);
   use(tmp32a); use(tmp31d); use(tmp31c); use(tmp31b); use(tmp31a); use(tmp30);
   use(tmp26); use(tmp25); use(tmp24);
-  use(tmp29); use(tmp28); use(tmp27); use(tmp33a); use(tmp34ab); use(tmp34ac); 
+  use(tmp29); use(tmp28); use(tmp33a); use(tmp34ab); use(tmp34ac); 
   use(tmp34dd); use(tmp34cc); use(tmp34bb); use(tmp34aa); 
   use(tmp39a); use(tmp36a); use(tmp48c); use(tmp49c); use(tmp50c); 
   use(tmp24a); use(tmp24b); use(tmp24c); use(tmp24d); use(tmp24e); use(tmp24f);
