@@ -99,11 +99,54 @@ public:
   bool is_point_on_cell( const Point_3& p, const typename Objects_around_segment::Iterator& target) const {
     return is_point_on_cell( p, target.get_node(), root);
   }
+
+  template<typename SNCd>
+  class BBox_updater {
+    SNCd D;
+    Bounding_box_3 b;
+
+  public:	
+    BBox_updater(const SNCd& sncd) : D(sncd), b(0,0,0,0,0,0) {}
+
+    void pre_visit(const Node* n) {}
+    void post_visit(const Node* n) {
+      typename Object_list::const_iterator o;
+      for( o = n->objects().begin(); o != n->objects().end(); ++o) {
+        Vertex_handle v;
+        if( assign( v, *o)) {
+	  Point_3 p(D.point(v));
+          b = b + Bounding_box_3(p.x(), p.y(), p.z(), p.x(), p.y(), p.z());
+        }
+      }
+    }
+
+    Bounding_box_3 box() const{
+      return b;
+    }
+    
+  };
+
+  template <typename Visitor>
+  void visit_k3tree(const Node* current, Visitor& V) const {
+    V.pre_visit(current);
+    if(current->left() != 0) {
+      visit_k3tree(current->left(), V);
+      visit_k3tree(current->right(), V);
+    }
+    V.post_visit(current);
+  }
+
   void transform(const Aff_transformation_3& t) {
     // TODO: Bounding box must be updated/transformed, too
     if(root != 0)
       root->transform(t);
+
+    Explorer D;
+    BBox_updater<Explorer> bbup(D);
+    visit_k3tree(root, bbup);
+    bounding_box = bbup.box();
   }
+
 
   class Objects_around_segment 
   {
@@ -433,7 +476,7 @@ public:
 	CGAL_assertion(right_node != 0);
 	left_node->transform(t);
  	right_node->transform(t);
-  	splitting_plane.transform(t);
+  	splitting_plane = splitting_plane.transform(t);
     }
   }
   <<definition of the node display method>>
@@ -742,7 +785,10 @@ friend std::ostream& operator<<
   CGAL_assertion( node != 0);
   if( node->is_leaf())
     os <<  node->objects().size();
-  else { 
+  else {     if ( collinear( s2.source(), s2.target(), s1.source()) &&
+	 collinear( s2.source(), s2.target(), s1.point(1)) )
+      // the segments are collinear 
+      return false;
     os << " ( ";
     if( !node->left()) os << '-';
     else os << node->left();
