@@ -18,12 +18,16 @@ typedef CGAL::Fuzzy_iso_box<Traits> Fuzzy_iso_box;
 
 int 
 main() {
-  const int N = 1;
+  const int N = 1000;
    
   std::list<Point_d> points;
   points.push_back(Point_d(0,0));
 
-  Tree tree(points.begin(), points.end());
+  Tree tree;
+  Random_points_iterator rpg;
+  for(int i = 0; i < N; i++){
+    tree.insert(*rpg++);
+  }
 
   std::list<Point_d> result;
   
@@ -40,16 +44,18 @@ main() {
   tree.search( std::back_inserter( result ), exact_range);
 
   std::cout << "The points in the box [0.2,0.7]x[0.2,0.7] are: " << std::endl;
-  //std::copy (result.begin(), result.end(), std::ostream_iterator<Point>(std::cout,"\n") );
+  std::copy (result.begin(), result.end(), std::ostream_iterator<Point_d>(std::cout,"\n") );
   std::cout << std::endl;
   
+  result.clear();
   // Searching a fuzzy range
   // using value 0.1 for fuzziness paramater
-  std::cout << "The points in the fuzzy box [<0.1-0.3>,<0.6-0.9>]x[<0.1-0.3>,<0.6-0.9>] are: " 
-	    << std::endl;
   Fuzzy_iso_box approximate_range(p, q, 0.1);
   tree.search(std::back_inserter( result ), approximate_range);
-
+  std::cout << "The points in the fuzzy box [<0.1-0.3>,<0.6-0.9>]x[<0.1-0.3>,<0.6-0.9>] are: " 
+	    << std::endl;
+  std::copy (result.begin(), result.end(), std::ostream_iterator<Point_d>(std::cout,"\n") );
+  std::cout << std::endl;
   return 0;
 }
 
