@@ -1,4 +1,5 @@
 1.41 (30 Oct 2002)
+  - fix type redeclaration in indirect traits
   - add some documentation for the vertex visibility graph
 
 1.39 & 1.40? (10 Oct 2002)
