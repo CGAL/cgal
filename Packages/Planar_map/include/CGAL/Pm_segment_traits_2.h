@@ -61,7 +61,7 @@ public:
     CURVE_NOT_IN_RANGE = 0
   } Curve_point_status;	
 
-private:
+protected:
 
   // This is an implementation type
   typedef enum 
