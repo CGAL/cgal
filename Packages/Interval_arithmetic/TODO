@@ -54,7 +54,7 @@ Concerning the main code:
 - Handle in_smallest_orthogonalcircle_ftC2.h correctly (needs an include)
 - Essayer de bencher avec -fbranch-probabilities ?  Ça pourrait être pas mal.
 - Expertiser le bench de Stefan... à la prochaine version.
-- Drop the class Interval_nt ?  It's 230 lines for nothing...
+- Drop the class Interval_nt ?  It's 130 lines for nothing...
   Or have a boolean template parameter, instead or the derivation ?
 - Filter_Cache: Faire des benchs, et une test-suite qui soit raisonnable.
   Hum, rajouter un booléen pour calculer le cache seulement sur demande ?
@@ -65,11 +65,6 @@ Concerning the main code:
   required between ldfsr and next FBfcc; nops inserted
 ? See the C++ Standard numeric_limits<>, section 18.2.
 ? convert_to à faire pour: long double, long long (CGAL..._64), CLN.
-- Have a look at the "function-try-blocks" ?
-- The idea of an CGAL::Ieee_double, which would have corrected operators
-  is not so bad.  It would save VC++, as well as allow to replace all the
-  CGAL_IA_FORCE_TO_DOUBLE.  But it would perhaps impact performance and
-  compile time...   Hum, maybe it's not needed after all.
 
 Concerning the script:
 ----------------------
@@ -83,8 +78,7 @@ Concerning the doc:
   Idem, my fct to_double(Ia) is not the same as the others...
 - add a pointer to my MISC'99 paper.
 - Use the new doc format.
-- DOCUMENT the script.
-- DOCUMENT the new static stuff !!!
+- DOCUMENT the script, the new static stuff, the Lazy_exact_nt<> ...
 
 Concerning the test-suite:
 --------------------------

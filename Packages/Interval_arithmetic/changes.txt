@@ -1,5 +1,11 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.31 on 20 October 1999
+- Removed Lazy_exact_nt.C from the test-suite (it's experimental stuff).
+- New experimental filter stuff is now protected with
+  "#ifdef CGAL_IA_NEW_FILTERS" in the code, to protect against VC++ failures.
+- Hopefully it's ready for release 2.1 now ! :)
+
 Version 4.30 on 19 October 1999
 - Added one more missing header.
 - Documentation updates: new flags CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT and
