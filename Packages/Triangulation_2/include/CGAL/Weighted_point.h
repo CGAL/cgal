@@ -1,4 +1,4 @@
-// Copyright (c) 1999  INRIA Sophia-Antipolis (France).
+// Copyright (c) 1999-2004  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -31,15 +31,15 @@ public:
   typedef Pt Point;
   //typedef typename Point::RT RT;
 
-  Weighted_point (const Point &p=Point(), const Weight &w = Weight(0))
+  explicit Weighted_point (const Point &p=Point(), const Weight &w = Weight(0))
       : Point(p), _weight(w) {}
 
-  Point point() const
+  const Point & point() const
   {
-      return (Point)*this;
+      return *this;
   }
 
-  Weight weight() const
+  const Weight & weight() const
   {
       return _weight;
   }
@@ -76,7 +76,8 @@ operator>>(std::istream &is, Weighted_point<Point,Weight> &wp)
 	Weight w;
 	Point p;
 	is >> p >> w;
-	wp = Weighted_point<Point,Weight>(p,w);
+	if (is)
+	    wp = Weighted_point<Point,Weight>(p,w);
 	return is;
 }
 

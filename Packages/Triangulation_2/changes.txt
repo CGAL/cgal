@@ -1,7 +1,13 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-ver 8.38
+19 February 2004 Sylvain Pion
+- Weighted_point :
+  - make constructor explicit, 
+  - make .weight() and .point() return references,
+  - protect operator>> against end of steram.
+
+?? February 2004 Mariette Yvinec
 - fixed the return of get_conflicts_and_boundary member functions
 - suppressed the using Tds::cw[ccw]
    added by Menelaus in Delaunnay_triangulation_2
