@@ -43,13 +43,29 @@ struct Conforming_Delaunay_triangulation_2_default_extras
 {
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Face_handle Face_handle;
+  typedef typename Tr::Point Point;
 
   bool is_bad(const Tr&, const Face_handle&, const int) const { return false;}
 
-  void signal_inserted_vertex_in_edge(const Tr&,
-				      const Face_handle&,
-				      const int,
-				      const Vertex_handle&) const  {};
+  void signal_before_inserted_vertex_in_edge(const Tr&,
+					     const Face_handle&,
+					     const int,
+					     const Point&) const  {};
+
+  void signal_after_inserted_vertex_in_edge(const Tr&,
+					    const Vertex_handle&) const  {};
+
+  template<class EdgeIt, class FaceIt>
+  void signal_before_inserted_vertex_in_face(const Tr&,
+					     const Face_handle&,
+					     EdgeIt edge_begin,
+					     EdgeIt edge_end,
+					     FaceIt face_begin,
+					     FaceIt face_end,
+					     const Point&) const {};
+
+  void signal_after_inserted_vertex_in_face(const Tr&,
+					    const Vertex_handle&) const {};
 };
 
 /**
@@ -244,11 +260,11 @@ public:
 public:
   struct Is_locally_conforming_Gabriel
   {   
-    bool operator()(const Conform& ct,
+    bool operator()(Conform& ct,
 		    const Face_handle& fh,
 		    const int i) const
       {
-	if( ct.extras.is_bad( static_cast<const Tr&>(ct),
+	if( ct.extras().is_bad( static_cast<const Tr&>(ct),
 			      fh, i ) ) return false;
 
 	typedef typename Geom_traits::Angle_2 Angle_2;
@@ -263,12 +279,12 @@ public:
 	return( ( ct.is_infinite(vi) || angle(a, vi->point(), b) != OBTUSE) &&
 		( ct.is_infinite(mvi) || angle(a, mvi->point(), b) != OBTUSE ));
       }
-    bool operator()(const Conform& ct,
+    bool operator()(Conform& ct,
 		    const Face_handle& fh,
 		    const int i,
 		    const Point& p) const	
       {
-	if( ct.extras.is_bad( static_cast<const Tr&>(ct),
+	if( ct.extras().is_bad( static_cast<const Tr&>(ct),
 			      fh, i ) ) return false;
 
 	typedef typename Geom_traits::Angle_2 Angle_2;
@@ -289,7 +305,7 @@ public:
 		    const Face_handle& fh,
 		    const int i) const
       {
-	if( ct.extras.is_bad( static_cast<const Tr&>(ct),
+	if( ct.extras().is_bad( static_cast<const Tr&>(ct),
 			      fh, i ) ) return false;
 
 	typedef typename Geom_traits::Side_of_oriented_circle_2
@@ -321,7 +337,7 @@ public:
   /** default constructor */
   explicit
   Conforming_Delaunay_triangulation_2(const Geom_traits& gt = Geom_traits(),
-				      const Extras& extras_ = Extras());
+				      const Extras& extras = Extras());
   //@}
 
   /** \name SURCHARGED INSERTION-DELETION FONCTIONS
@@ -344,6 +360,9 @@ private:
 public:
   /** \name ACCESS FUNCTIONS */
   //@{
+
+  Extras& extras() { return extras_;}
+  
   int number_of_constrained_edges() const;
 
   int number_of_clusters_vertices() const
@@ -487,7 +506,7 @@ private:
   //  warning: some edges could be destroyed, use the same wrapper
   // is_really_a_constrained_edge: tester to filter edges_to_be_conformed
   const Is_really_a_constrained_edge is_really_a_constrained_edge;
-  Extras extras;
+  Extras extras_;
   Constrained_edges_queue edges_to_be_conformed;
 
   // Cluster_map: multimap Vertex_handle -> Cluster
@@ -667,10 +686,10 @@ protected:
 template <class Tr, class Extras>
 Conforming_Delaunay_triangulation_2<Tr, Extras>::
 Conforming_Delaunay_triangulation_2(const Geom_traits& gt,
-				    const Extras& extras_)
+				    const Extras& extras)
   : Tr(gt), is_really_a_constrained_edge(*this), 
     /** \todo{ *this is used in the constructor!!} */
-    extras(extras_),
+    extras_(extras),
     edges_to_be_conformed(is_really_a_constrained_edge),
     cluster_map(),
     initialized(NONE)
@@ -683,8 +702,8 @@ int Conforming_Delaunay_triangulation_2<Tr, Extras>::
 number_of_constrained_edges() const
 {
   int nedges = 0;
-  for(Finite_edges_iterator eit = finite_edges_begin();
-      eit != finite_edges_end();
+  for(Finite_edges_iterator eit = this->finite_edges_begin();
+      eit != this->finite_edges_end();
       ++eit)
     if(eit->first->is_constrained(eit->second))
       ++nedges;
@@ -696,8 +715,8 @@ template <class Is_locally_conform>
 bool Conforming_Delaunay_triangulation_2<Tr, Extras>::
 is_conforming(const Is_locally_conform& is_locally_conform)
 {
-  for(Finite_edges_iterator ei = finite_edges_begin();
-      ei != finite_edges_end();
+  for(Finite_edges_iterator ei = this->finite_edges_begin();
+      ei != this->finite_edges_end();
       ++ei)
     if(ei->first->is_constrained(ei->second) && 
        !is_locally_conform(*this, ei->first, ei->second) )
@@ -728,8 +747,8 @@ mark_facets(Seeds_it begin,
   if (this->dimension()<2) return;
   if( begin != end )
     {
-      for(All_faces_iterator it=all_faces_begin();
-	  it!=all_faces_end();
+      for(All_faces_iterator it=this->all_faces_begin();
+	  it!=this->all_faces_end();
 	  ++it)
 	it->set_marked(!mark);
 	  
@@ -742,7 +761,7 @@ mark_facets(Seeds_it begin,
     }
   else
     mark_convex_hull();
-  propagate_marks(infinite_face(), false);
+  propagate_marks(this->infinite_face(), false);
 };
 
 // --- CONFORMING FUNCTIONS ---
@@ -806,11 +825,11 @@ template <class Tr, class Extras>
 void Conforming_Delaunay_triangulation_2<Tr, Extras>::
 mark_convex_hull()
 {
-  for(All_faces_iterator fit=all_faces_begin();
-      fit!=all_faces_end();
+  for(All_faces_iterator fit=this->all_faces_begin();
+      fit!=this->all_faces_end();
       ++fit)
     fit->set_marked(true);
-  propagate_marks(infinite_face(), false);
+  propagate_marks(this->infinite_face(), false);
 }
 
 template <class Tr, class Extras>
@@ -845,8 +864,8 @@ template <class Tr, class Extras>
 void Conforming_Delaunay_triangulation_2<Tr, Extras>::
 create_clusters()
 {
-  for(Finite_vertices_iterator vit = finite_vertices_begin();
-      vit != finite_vertices_end();
+  for(Finite_vertices_iterator vit = this->finite_vertices_begin();
+      vit != this->finite_vertices_end();
       vit++)
     create_clusters_of_vertex(vit);
 }
@@ -936,7 +955,7 @@ construct_cluster(Vertex_handle v,
 		  Cluster c)
 {
   Compute_squared_distance_2 squared_distance = 
-    geom_traits().compute_squared_distance_2_object();
+    this->geom_traits().compute_squared_distance_2_object();
 
   if(c.vertices.empty())
     {
@@ -1001,8 +1020,8 @@ template <class Is_locally_conform>
 void Conforming_Delaunay_triangulation_2<Tr, Extras>::
 fill_edge_queue(const Is_locally_conform& is_locally_conform)
 {
-  for(Finite_edges_iterator ei = finite_edges_begin();
-      ei != finite_edges_end();
+  for(Finite_edges_iterator ei = this->finite_edges_begin();
+      ei != this->finite_edges_end();
       ++ei)
     {
       if(ei->first->is_constrained(ei->second) && 
@@ -1064,8 +1083,8 @@ update_edges_to_be_conformed(Vertex_handle va,
        if( fc->is_constrained(i) &&
 	  !is_locally_conform(*this, fc, i) )
 	{
-	  const Vertex_handle& v1 = fc->vertex(ccw(i));
-	  const Vertex_handle& v2 = fc->vertex(cw(i));
+	  const Vertex_handle& v1 = fc->vertex(this->ccw(i));
+	  const Vertex_handle& v2 = fc->vertex(this->cw(i));
 	  edges_to_be_conformed.push_back(Constrained_edge(v1, v2));
 	}
     }
@@ -1158,8 +1177,8 @@ is_small_angle(const Point& pleft,
 	       const Point& pmiddle,
 	       const Point& pright) const
 {
-  Angle_2 angle = geom_traits().angle_2_object();
-  Orientation_2 orient = geom_traits().orientation_2_object();
+  Angle_2 angle = this->geom_traits().angle_2_object();
+  Orientation_2 orient = this->geom_traits().orientation_2_object();
   
   if( angle(pleft, pmiddle, pright)==OBTUSE )
     return false;
@@ -1185,15 +1204,15 @@ Conforming_Delaunay_triangulation_2<Tr, Extras>::
 cut_cluster_edge(Vertex_handle va, Vertex_handle vb, Cluster& c)
 {
   Construct_vector_2 vector =
-    geom_traits().construct_vector_2_object();
+    this->geom_traits().construct_vector_2_object();
   Construct_scaled_vector_2 scaled_vector =
-    geom_traits().construct_scaled_vector_2_object();
+    this->geom_traits().construct_scaled_vector_2_object();
   Compute_squared_distance_2 squared_distance =
-    geom_traits().compute_squared_distance_2_object();
+    this->geom_traits().compute_squared_distance_2_object();
   Construct_midpoint_2 midpoint = 
-    geom_traits().construct_midpoint_2_object();
+    this->geom_traits().construct_midpoint_2_object();
   Construct_translated_point_2 translate =
-    geom_traits().construct_translated_point_2_object();
+    this->geom_traits().construct_translated_point_2_object();
 
   Vertex_handle vc;
 
@@ -1243,11 +1262,11 @@ Conforming_Delaunay_triangulation_2<Tr, Extras>::
 insert_middle(Face_handle f, int i)
 {
   Construct_midpoint_2
-    midpoint = geom_traits().construct_midpoint_2_object();
+    midpoint = this->geom_traits().construct_midpoint_2_object();
 
   const Vertex_handle
-    & va = f->vertex(cw(i)),
-    & vb = f->vertex(ccw(i));
+    & va = f->vertex(this->cw(i)),
+    & vb = f->vertex(this->ccw(i));
 
   const Point& mp = midpoint(va->point(), vb->point());
 
@@ -1271,21 +1290,25 @@ virtual_insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
   fh->neighbor(edge_index)->set_constraint(fh->mirror_index(edge_index),
 					   false);
 
-  get_conflicts_and_boundary(p, 
-			     std::back_inserter(zone_of_p), 
-			     Emptyset_iterator(), fh);
+  // Useless, I think.
+  //   get_conflicts_and_boundary(p, 
+  // 			     std::back_inserter(zone_of_p), 
+  // 			     Emptyset_iterator(), fh);
   
   // reconstrain the edge
   fh->set_constraint(edge_index,true);
   fh->neighbor(edge_index)->set_constraint(fh->mirror_index(edge_index),true);
+
+  extras().signal_before_inserted_vertex_in_edge(static_cast<const Tr&>(*this),
+					       fh, edge_index, p);
 
   Vertex_handle vp = insert(p, Triangulation::EDGE, fh, edge_index);
   // TODO, WARNING: this is not robust!
   // We should deconstrained the constrained edge, insert the two
   // subconstraints and re-constrain them
 
-  extras.signal_inserted_vertex_in_edge(static_cast<const Tr&>(*this),
-					fh, edge_index, vp);
+  extras().signal_after_inserted_vertex_in_edge(static_cast<const Tr&>(*this),
+					      vp);
 
   return vp;
 }
@@ -1300,7 +1323,7 @@ squared_cosine_of_angle_times_4(const Point& pb, const Point& pa,
 				const Point& pc) const
 {
   Compute_squared_distance_2 squared_distance = 
-    geom_traits().compute_squared_distance_2_object();
+    this->geom_traits().compute_squared_distance_2_object();
 
   const FT
     a = squared_distance(pb, pc),
@@ -1321,7 +1344,7 @@ update_cluster(Cluster& c, Vertex_handle va,Vertex_handle vb,
 	       Vertex_handle vm, bool reduction)
 {
   Compute_squared_distance_2 squared_distance = 
-    geom_traits().compute_squared_distance_2_object();
+    this->geom_traits().compute_squared_distance_2_object();
   c.vertices.erase(vb);
   c.vertices[vm] = reduction;
   

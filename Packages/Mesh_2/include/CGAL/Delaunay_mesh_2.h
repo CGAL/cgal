@@ -313,7 +313,7 @@ inline
 void Delaunay_mesh_2<Tr, Extras>::
 refine_mesh()
 {
-  if(get_initialized() != GABRIEL) init();
+  if(get_initialized() != this->GABRIEL) init();
 
   while(!Conform::is_conforming_done() || !bad_faces.empty() )
     {
@@ -522,6 +522,14 @@ split_face(const Face_handle& f, const Point& circum_center)
       ++fh_it)
     bad_faces.erase(*fh_it);
 
+  extras().signal_before_inserted_vertex_in_face(static_cast<const Tr&>(*this),
+						 f,
+						 zone_of_cc_boundary.begin(),
+						 zone_of_cc_boundary.end(),
+						 zone_of_cc.begin(),
+						 zone_of_cc.end(),
+						 circum_center);
+
   // insert the point in the triangulation with star_hole
   Vertex_handle v = star_hole(circum_center,
 			      zone_of_cc_boundary.begin(),
@@ -529,7 +537,10 @@ split_face(const Face_handle& f, const Point& circum_center)
 			      zone_of_cc.begin(),
 			      zone_of_cc.end());
 
-  Face_circulator fc = incident_faces(v), fcbegin(fc); 	 
+  extras().signal_after_inserted_vertex_in_face(static_cast<const Tr&>(*this),
+					      v);
+
+  Face_circulator fc = incident_faces(v), fcbegin(fc);
   do { 	 
     fc->set_marked(marked); 	 
   } while (++fc != fcbegin); 	 
@@ -572,12 +583,18 @@ virtual_insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
       ++fh_it)
     bad_faces.erase(*fh_it);
 
+  extras().signal_before_inserted_vertex_in_edge(static_cast<const Tr&>(*this),
+					       fh, edge_index, p);
+
   Vertex_handle vp = insert(p, Base::EDGE, fh, edge_index);
   // TODO, WARNING: this is not robust!
   // We should deconstrained the constrained edge, insert the two
   // subconstraints and re-constrain them
 
   //  CGAL_assertion(is_bad_faces_valid());
+
+  extras().signal_after_inserted_vertex_in_edge(static_cast<const Tr&>(*this),
+					      vp);
 
   int dummy; 
   // if we put edge_index instead of dummy, Intel C++ does not find
@@ -635,6 +652,12 @@ is_bad_faces_valid()
 	  result = false;
 	  std::cerr << "Invalid bad face: (" << va->point() << ", "
 		    << vb->point() << ", " << vc->point() << ")" << std::endl;
+	  if( ! is_face(va, vb, vc, fh2) || fh != fh2 )
+	    std::cerr << "(not a face)" << std::endl;
+	  if( ! fh->is_marked() )
+	    std::cerr << "(not marked)" << std::endl;
+	  if( ! is_bad(fh) )
+	    std::cerr << "(not bad)" << std::endl;
 	}
     }
 
