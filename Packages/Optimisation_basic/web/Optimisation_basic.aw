@@ -100,9 +100,9 @@ expensive checks, and for expensive exactness checks.
     #  define  CGAL_optimisation_@2_code(CODE)
     #else
     #  define  CGAL_optimisation_@2(EX) \
-         ((EX)?((void)0):CGAL::@2_fail( # EX , __FILE__, __LINE__, 0))
+         ((EX)?((void)0): ::CGAL::@2_fail( # EX ,__FILE__,__LINE__,0))
     #  define  CGAL_optimisation_@2_msg(EX,MSG) \
-         ((EX)?((void)0):CGAL::@2_fail( # EX , __FILE__, __LINE__, MSG))
+         ((EX)?((void)0): ::CGAL::@2_fail( # EX ,__FILE__,__LINE__,MSG))
     #  define  CGAL_optimisation_@2_code(CODE) CODE
     #endif // optimisation @2s
 @end
@@ -120,9 +120,9 @@ expensive checks, and for expensive exactness checks.
     #  define  CGAL_optimisation_exactness_@2_code(CODE)
     #else
     #  define  CGAL_optimisation_exactness_@2(EX) \
-         ((EX)?((void)0):CGAL::@2_fail( # EX , __FILE__, __LINE__, 0))
+         ((EX)?((void)0): ::CGAL::@2_fail( # EX ,__FILE__,__LINE__,0))
     #  define  CGAL_optimisation_exactness_@2_msg(EX,MSG) \
-         ((EX)?((void)0):CGAL::@2_fail( # EX , __FILE__, __LINE__, MSG))
+         ((EX)?((void)0): ::CGAL::@2_fail( # EX ,__FILE__,__LINE__,MSG))
     #  define  CGAL_optimisation_exactness_@2_code(CODE) CODE
     #endif // optimisation exactness @2s
 @end
@@ -140,9 +140,9 @@ expensive checks, and for expensive exactness checks.
     #  define  CGAL_optimisation_expensive_@2_code(CODE)
     #else
     #  define  CGAL_optimisation_expensive_@2(EX) \
-         ((EX)?((void)0):CGAL::@2_fail( # EX , __FILE__, __LINE__, 0))
+         ((EX)?((void)0): ::CGAL::@2_fail( # EX ,__FILE__,__LINE__,0))
     #  define  CGAL_optimisation_expensive_@2_msg(EX,MSG) \
-         ((EX)?((void)0):CGAL::@2_fail( # EX , __FILE__, __LINE__, MSG))
+         ((EX)?((void)0): ::CGAL::@2_fail( # EX ,__FILE__,__LINE__,MSG))
     #  define  CGAL_optimisation_expensive_@2_code(CODE) CODE
     #endif // optimisation expensive @2s
 @end
@@ -164,9 +164,9 @@ expensive checks, and for expensive exactness checks.
     #  define  CGAL_optimisation_expensive_exactness_@2_code(CODE)
     #else
     #  define  CGAL_optimisation_expensive_exactness_@2(EX) \
-         ((EX)?((void)0):CGAL::@2_fail( # EX , __FILE__, __LINE__, 0))
+         ((EX)?((void)0): ::CGAL::@2_fail( # EX ,__FILE__,__LINE__,0))
     #  define  CGAL_optimisation_expensive_exactness_@2_msg(EX,MSG) \
-         ((EX)?((void)0):CGAL::@2_fail( # EX , __FILE__, __LINE__, MSG))
+         ((EX)?((void)0): ::CGAL::@2_fail( # EX ,__FILE__,__LINE__,MSG))
     #  define  CGAL_optimisation_expensive_exactness_@2_code(CODE) CODE
     #endif // optimisation expensive exactness @2s
 @end
