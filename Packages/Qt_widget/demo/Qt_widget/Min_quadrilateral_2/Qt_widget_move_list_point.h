@@ -89,21 +89,23 @@ private:
         "Generate some points first or add it with the input tool before using this tool!");
       else{
         FT x=static_cast<FT>(widget->x_real(e->x()));
-	      FT y=static_cast<FT>(widget->y_real(e->y()));
+	FT y=static_cast<FT>(widget->y_real(e->y()));
         Point p(x, y);
-        Point closest_p;  //this point is the closest one to the mouse coordinates
+        Point closest_p;  
+              //this point is the closest one to the mouse coordinates
         FT min_dist;
         std::list<Point>::const_iterator it = l_of_p->begin();
         min_dist = squared_distance(p, (*it));
+	closest_p = (*it);
         while(it!=l_of_p->end())
         {
-  	      if (min_dist > squared_distance(p, (*it)))
-	        {
-	          min_dist = squared_distance(p, (*it));
-	          closest_p = (*it);
-	        }
-	        it++;
-	      }
+  	  if (min_dist > squared_distance(p, (*it)))
+	  {
+	    min_dist = squared_distance(p, (*it));
+	    closest_p = (*it);
+	  }
+	    it++;
+	}
 	
         RasterOp old = widget->rasterOp();	//save the initial raster mode
         widget->setRasterOp(XorROP);
