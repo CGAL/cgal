@@ -1,3 +1,6 @@
+3.86   (22 March 2002)
+- removed the iterator traits pointer spec macro calls for Point_d
+
 3.85   (20 March 2002)
 - added CGAL_LEDA_SCOPEs where needed for in kernel_to_kernel.h
 
