@@ -309,7 +309,7 @@ public:
 
   void flip_flippable(Cell_handle c, int i);
   void flip_flippable(const Facet &f)
-  { return flip_flippable( f.first, f.second ); }
+  { flip_flippable( f.first, f.second ); }
 
   bool flip(Cell_handle c, int i, int j);
   bool flip(const Edge &e)
@@ -317,7 +317,7 @@ public:
 
   void flip_flippable(Cell_handle c, int i, int j);
   void flip_flippable(const Edge &e)
-  { return flip_flippable( e.first, e.second, e.third ); }
+  { flip_flippable( e.first, e.second, e.third ); }
 
 private:
   // common to flip and flip_flippable
