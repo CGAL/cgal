@@ -1,3 +1,6 @@
+18 November 2004 Sylvain Pion
+- g++ 3.4.[23] workaround.
+
 4 October 2004:  Menelaos Karavelas
 - fixed warnings for VC++ IDE mentioned by Andreas (a class was initially
   defined as a struct but a specilization of which as a class; now everything

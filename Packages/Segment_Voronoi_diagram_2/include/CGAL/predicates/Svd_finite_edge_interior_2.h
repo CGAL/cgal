@@ -343,7 +343,7 @@ private:
     Homogeneous_point_2 pv = projection_on_line(lq, p);
     Homogeneous_point_2 hp(p);
 
-    pv = midpoint(pv, hp);
+    pv = Base::midpoint(pv, hp);
 
     Oriented_side o_l_pv = oriented_side_of_line(l, pv);
 
