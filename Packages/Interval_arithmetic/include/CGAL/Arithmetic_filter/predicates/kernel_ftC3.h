@@ -2480,11 +2480,10 @@ template <>
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
-cmp_signed_dist_to_planeC3(
+cmp_signed_dist_to_directionC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &pa,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &pb,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &pc,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &pd,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &px,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &py,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &pz,
@@ -2495,11 +2494,10 @@ cmp_signed_dist_to_planeC3(
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   try
   {
-    Comparison_result result = cmp_signed_dist_to_planeC3(
+    Comparison_result result = cmp_signed_dist_to_directionC3(
 		pa.interval(),
 		pb.interval(),
 		pc.interval(),
-		pd.interval(),
 		px.interval(),
 		py.interval(),
 		pz.interval(),
@@ -2512,11 +2510,10 @@ cmp_signed_dist_to_planeC3(
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_set_cw(backup);
-    return cmp_signed_dist_to_planeC3(
+    return cmp_signed_dist_to_directionC3(
 		pa.exact(),
 		pb.exact(),
 		pc.exact(),
-		pd.exact(),
 		px.exact(),
 		py.exact(),
 		pz.exact(),
@@ -2533,11 +2530,10 @@ template <>
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
-cmp_signed_dist_to_planeC3(
+cmp_signed_dist_to_directionC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pa,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pb,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pc,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pd,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &px,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &py,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pz,
@@ -2548,11 +2544,10 @@ cmp_signed_dist_to_planeC3(
   CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
   try
   {
-    return cmp_signed_dist_to_planeC3(
+    return cmp_signed_dist_to_directionC3(
 		pa.interval(),
 		pb.interval(),
 		pc.interval(),
-		pd.interval(),
 		px.interval(),
 		py.interval(),
 		pz.interval(),
@@ -2563,11 +2558,10 @@ cmp_signed_dist_to_planeC3(
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
-    Comparison_result result = cmp_signed_dist_to_planeC3(
+    Comparison_result result = cmp_signed_dist_to_directionC3(
 		pa.exact(),
 		pb.exact(),
 		pc.exact(),
-		pd.exact(),
 		px.exact(),
 		py.exact(),
 		pz.exact(),
@@ -2581,7 +2575,7 @@ cmp_signed_dist_to_planeC3(
 
 #ifdef CGAL_IA_NEW_FILTERS
 
-struct Static_Filtered_cmp_signed_dist_to_planeC3_10
+struct Static_Filtered_cmp_signed_dist_to_directionC3_9
 {
   static double _bound;
   static double _epsilon_0;
@@ -2592,7 +2586,6 @@ struct Static_Filtered_cmp_signed_dist_to_planeC3_10
 	const Static_filter_error &pa,
 	const Static_filter_error &pb,
 	const Static_filter_error &pc,
-	const Static_filter_error &pd,
 	const Static_filter_error &px,
 	const Static_filter_error &py,
 	const Static_filter_error &pz,
@@ -2603,8 +2596,8 @@ struct Static_Filtered_cmp_signed_dist_to_planeC3_10
   {
     typedef Static_filter_error FT;
   
-    return CGAL::Static_Filtered_compare_2::update_epsilon(scaled_distance_to_planeC3(pa,pb,pc,pd,px,py,pz),
-                         scaled_distance_to_planeC3(pa,pb,pc,pd,qx,qy,qz),
+    return CGAL::Static_Filtered_compare_2::update_epsilon(scaled_distance_to_directionC3(pa,pb,pc,px,py,pz),
+                         scaled_distance_to_directionC3(pa,pb,pc,qx,qy,qz),
   		epsilon_0);
   }
 
@@ -2615,7 +2608,7 @@ struct Static_Filtered_cmp_signed_dist_to_planeC3_10
     number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
-    (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,_epsilon_0);
+    (void) update_epsilon(b,b,b,b,b,b,b,b,b,_epsilon_0);
     // TODO: We should verify that all epsilons have really been updated.
   }
 
@@ -2623,7 +2616,6 @@ struct Static_Filtered_cmp_signed_dist_to_planeC3_10
 	const Restricted_double &pa,
 	const Restricted_double &pb,
 	const Restricted_double &pc,
-	const Restricted_double &pd,
 	const Restricted_double &px,
 	const Restricted_double &py,
 	const Restricted_double &pz,
@@ -2634,8 +2626,8 @@ struct Static_Filtered_cmp_signed_dist_to_planeC3_10
   {
     typedef Restricted_double FT;
   
-    return CGAL::Static_Filtered_compare_2::epsilon_variant(scaled_distance_to_planeC3(pa,pb,pc,pd,px,py,pz),
-                         scaled_distance_to_planeC3(pa,pb,pc,pd,qx,qy,qz),
+    return CGAL::Static_Filtered_compare_2::epsilon_variant(scaled_distance_to_directionC3(pa,pb,pc,px,py,pz),
+                         scaled_distance_to_directionC3(pa,pb,pc,qx,qy,qz),
   		epsilon_0);
   }
 };
@@ -2647,11 +2639,10 @@ template <>
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
-cmp_signed_dist_to_planeC3(
+cmp_signed_dist_to_directionC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &pa,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &pb,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &pc,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &pd,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &px,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &py,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &pz,
@@ -2660,14 +2651,13 @@ cmp_signed_dist_to_planeC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qz)
 {
 //   bool re_adjusted = false;
-  const double SAF_bound = Static_Filtered_cmp_signed_dist_to_planeC3_10::_bound;
+  const double SAF_bound = Static_Filtered_cmp_signed_dist_to_directionC3_9::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
   if (
 	fabs(pa.to_double()) > SAF_bound ||
 	fabs(pb.to_double()) > SAF_bound ||
 	fabs(pc.to_double()) > SAF_bound ||
-	fabs(pd.to_double()) > SAF_bound ||
 	fabs(px.to_double()) > SAF_bound ||
 	fabs(py.to_double()) > SAF_bound ||
 	fabs(pz.to_double()) > SAF_bound ||
@@ -2681,7 +2671,6 @@ cmp_signed_dist_to_planeC3(
     NEW_bound = std::max(NEW_bound, fabs(pa.to_double()));
     NEW_bound = std::max(NEW_bound, fabs(pb.to_double()));
     NEW_bound = std::max(NEW_bound, fabs(pc.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pd.to_double()));
     NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
     NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
     NEW_bound = std::max(NEW_bound, fabs(pz.to_double()));
@@ -2689,23 +2678,22 @@ cmp_signed_dist_to_planeC3(
     NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
     NEW_bound = std::max(NEW_bound, fabs(qz.to_double()));
     // Re-adjust the context.
-    Static_Filtered_cmp_signed_dist_to_planeC3_10::new_bound(NEW_bound);
+    Static_Filtered_cmp_signed_dist_to_directionC3_9::new_bound(NEW_bound);
   }
 
   try
   {
-    return Static_Filtered_cmp_signed_dist_to_planeC3_10::epsilon_variant(
+    return Static_Filtered_cmp_signed_dist_to_directionC3_9::epsilon_variant(
 		pa.dbl(),
 		pb.dbl(),
 		pc.dbl(),
-		pd.dbl(),
 		px.dbl(),
 		py.dbl(),
 		pz.dbl(),
 		qx.dbl(),
 		qy.dbl(),
 		qz.dbl(),
-		Static_Filtered_cmp_signed_dist_to_planeC3_10::_epsilon_0);
+		Static_Filtered_cmp_signed_dist_to_directionC3_9::_epsilon_0);
   }
   catch (...)
   {
@@ -2713,12 +2701,11 @@ cmp_signed_dist_to_planeC3(
       // re_adjusted = true;
       // goto re_adjust;
     // }
-    Static_Filtered_cmp_signed_dist_to_planeC3_10::number_of_failures++;
-    return cmp_signed_dist_to_planeC3(
+    Static_Filtered_cmp_signed_dist_to_directionC3_9::number_of_failures++;
+    return cmp_signed_dist_to_directionC3(
 		pa.exact(),
 		pb.exact(),
 		pc.exact(),
-		pd.exact(),
 		px.exact(),
 		py.exact(),
 		pz.exact(),
@@ -2735,11 +2722,10 @@ template <>
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
-cmp_signed_dist_to_planeC3(
+cmp_signed_dist_to_directionC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pa,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pb,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pc,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pd,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &px,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &py,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pz,
@@ -2748,12 +2734,11 @@ cmp_signed_dist_to_planeC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qz)
 {
   CGAL_assertion_code(
-    const double SAF_bound = Static_Filtered_cmp_signed_dist_to_planeC3_10::_bound; )
+    const double SAF_bound = Static_Filtered_cmp_signed_dist_to_directionC3_9::_bound; )
   CGAL_assertion(!(
 	fabs(pa.to_double()) > SAF_bound ||
 	fabs(pb.to_double()) > SAF_bound ||
 	fabs(pc.to_double()) > SAF_bound ||
-	fabs(pd.to_double()) > SAF_bound ||
 	fabs(px.to_double()) > SAF_bound ||
 	fabs(py.to_double()) > SAF_bound ||
 	fabs(pz.to_double()) > SAF_bound ||
@@ -2763,27 +2748,25 @@ cmp_signed_dist_to_planeC3(
 
   try
   {
-    return Static_Filtered_cmp_signed_dist_to_planeC3_10::epsilon_variant(
+    return Static_Filtered_cmp_signed_dist_to_directionC3_9::epsilon_variant(
 		pa.dbl(),
 		pb.dbl(),
 		pc.dbl(),
-		pd.dbl(),
 		px.dbl(),
 		py.dbl(),
 		pz.dbl(),
 		qx.dbl(),
 		qy.dbl(),
 		qz.dbl(),
-		Static_Filtered_cmp_signed_dist_to_planeC3_10::_epsilon_0);
+		Static_Filtered_cmp_signed_dist_to_directionC3_9::_epsilon_0);
   }
   catch (...)
   {
-    Static_Filtered_cmp_signed_dist_to_planeC3_10::number_of_failures++;
-    return cmp_signed_dist_to_planeC3(
+    Static_Filtered_cmp_signed_dist_to_directionC3_9::number_of_failures++;
+    return cmp_signed_dist_to_directionC3(
 		pa.exact(),
 		pb.exact(),
 		pc.exact(),
-		pd.exact(),
 		px.exact(),
 		py.exact(),
 		pz.exact(),
@@ -2960,12 +2943,11 @@ struct Static_Filtered_cmp_signed_dist_to_planeC3_15
   {
     typedef Static_filter_error FT;
   
-    return CGAL::Static_Filtered_compare_2::update_epsilon(
-             scaled_distance_to_planeC3(ppx,ppy,ppz,pqx,pqy,pqz,
-                                        prx,pry,prz, px,py,pz),
-             scaled_distance_to_planeC3(ppx,ppy,ppz,pqx,pqy,pqz,
-                                        prx,pry,prz, qx,qy,qz) ,
-  		epsilon_0);
+    return Comparison_result(Static_Filtered_sign_of_determinant3x3_9::update_epsilon(
+  	      pqx-ppx, pqy-ppy, pqz-ppz,
+  	      prx-ppx, pry-ppy, prz-ppz,
+  	      qx-px,   qy-py,   qz-pz,
+  		epsilon_0));
   }
 
   // Call this function from the outside to update the context.
@@ -2999,12 +2981,11 @@ struct Static_Filtered_cmp_signed_dist_to_planeC3_15
   {
     typedef Restricted_double FT;
   
-    return CGAL::Static_Filtered_compare_2::epsilon_variant(
-             scaled_distance_to_planeC3(ppx,ppy,ppz,pqx,pqy,pqz,
-                                        prx,pry,prz, px,py,pz),
-             scaled_distance_to_planeC3(ppx,ppy,ppz,pqx,pqy,pqz,
-                                        prx,pry,prz, qx,qy,qz) ,
-  		epsilon_0);
+    return Comparison_result(Static_Filtered_sign_of_determinant3x3_9::epsilon_variant(
+  	      pqx-ppx, pqy-ppy, pqz-ppz,
+  	      prx-ppx, pry-ppy, prz-ppz,
+  	      qx-px,   qy-py,   qz-pz,
+  		epsilon_0));
   }
 };
 
@@ -3188,820 +3169,6 @@ cmp_signed_dist_to_planeC3(
   {
     Static_Filtered_cmp_signed_dist_to_planeC3_15::number_of_failures++;
     return cmp_signed_dist_to_planeC3(
-		ppx.exact(),
-		ppy.exact(),
-		ppz.exact(),
-		pqx.exact(),
-		pqy.exact(),
-		pqz.exact(),
-		prx.exact(),
-		pry.exact(),
-		prz.exact(),
-		px.exact(),
-		py.exact(),
-		pz.exact(),
-		qx.exact(),
-		qy.exact(),
-		qz.exact());
-  }
-}
-
-#endif // CGAL_IA_NEW_FILTERS
-
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
-#else
-template <>
-#endif
-/* CGAL_KERNEL_MEDIUM_INLINE */
-bool
-has_larger_signed_dist_to_planeC3(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &ppx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &ppy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &ppz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &pqx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &pqy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &pqz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &prx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &pry,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &prz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &py,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &pz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &qy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &qz)
-{
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
-  try
-  {
-    bool result = has_larger_signed_dist_to_planeC3(
-		ppx.interval(),
-		ppy.interval(),
-		ppz.interval(),
-		pqx.interval(),
-		pqy.interval(),
-		pqz.interval(),
-		prx.interval(),
-		pry.interval(),
-		prz.interval(),
-		px.interval(),
-		py.interval(),
-		pz.interval(),
-		qx.interval(),
-		qy.interval(),
-		qz.interval());
-    FPU_set_cw(backup);
-    return result;
-  } 
-  catch (Interval_nt_advanced::unsafe_comparison)
-  {
-    FPU_set_cw(backup);
-    return has_larger_signed_dist_to_planeC3(
-		ppx.exact(),
-		ppy.exact(),
-		ppz.exact(),
-		pqx.exact(),
-		pqy.exact(),
-		pqz.exact(),
-		prx.exact(),
-		pry.exact(),
-		prz.exact(),
-		px.exact(),
-		py.exact(),
-		pz.exact(),
-		qx.exact(),
-		qy.exact(),
-		qz.exact());
-  }
-}
-
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
-#else
-template <>
-#endif
-/* CGAL_KERNEL_MEDIUM_INLINE */
-bool
-has_larger_signed_dist_to_planeC3(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &ppx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &ppy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &ppz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pqx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pqy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pqz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &prx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pry,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &prz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &py,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qz)
-{
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
-  try
-  {
-    return has_larger_signed_dist_to_planeC3(
-		ppx.interval(),
-		ppy.interval(),
-		ppz.interval(),
-		pqx.interval(),
-		pqy.interval(),
-		pqz.interval(),
-		prx.interval(),
-		pry.interval(),
-		prz.interval(),
-		px.interval(),
-		py.interval(),
-		pz.interval(),
-		qx.interval(),
-		qy.interval(),
-		qz.interval());
-  } 
-  catch (Interval_nt_advanced::unsafe_comparison)
-  {
-    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
-    bool result = has_larger_signed_dist_to_planeC3(
-		ppx.exact(),
-		ppy.exact(),
-		ppz.exact(),
-		pqx.exact(),
-		pqy.exact(),
-		pqz.exact(),
-		prx.exact(),
-		pry.exact(),
-		prz.exact(),
-		px.exact(),
-		py.exact(),
-		pz.exact(),
-		qx.exact(),
-		qy.exact(),
-		qz.exact());
-    FPU_set_cw(backup);
-    return result;
-  }
-}
-
-#ifdef CGAL_IA_NEW_FILTERS
-
-struct Static_Filtered_has_larger_signed_dist_to_planeC3_15
-{
-  static double _bound;
-  static double _epsilon_0;
-  static unsigned number_of_failures; // ?
-  static unsigned number_of_updates;
-
-  static bool update_epsilon(
-	const Static_filter_error &ppx,
-	const Static_filter_error &ppy,
-	const Static_filter_error &ppz,
-	const Static_filter_error &pqx,
-	const Static_filter_error &pqy,
-	const Static_filter_error &pqz,
-	const Static_filter_error &prx,
-	const Static_filter_error &pry,
-	const Static_filter_error &prz,
-	const Static_filter_error &px,
-	const Static_filter_error &py,
-	const Static_filter_error &pz,
-	const Static_filter_error &qx,
-	const Static_filter_error &qy,
-	const Static_filter_error &qz,
-	double & epsilon_0)
-  {
-    typedef Static_filter_error FT;
-  
-      return Static_Filtered_cmp_signed_dist_to_planeC3_15::update_epsilon(ppx, ppy, ppz, pqx, pqy, pqz,
-  	    prx, pry, prz, px, py, pz, qx, qy, qz,
-  		epsilon_0) == LARGER;
-  }
-
-  // Call this function from the outside to update the context.
-  static void new_bound (const double b) // , const double error = 0)
-  {
-    _bound = b;
-    number_of_updates++;
-    // recompute the epsilons: "just" call it over Static_filter_error.
-    // That's the tricky part that might not work for everything.
-    (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,_epsilon_0);
-    // TODO: We should verify that all epsilons have really been updated.
-  }
-
-  static bool epsilon_variant(
-	const Restricted_double &ppx,
-	const Restricted_double &ppy,
-	const Restricted_double &ppz,
-	const Restricted_double &pqx,
-	const Restricted_double &pqy,
-	const Restricted_double &pqz,
-	const Restricted_double &prx,
-	const Restricted_double &pry,
-	const Restricted_double &prz,
-	const Restricted_double &px,
-	const Restricted_double &py,
-	const Restricted_double &pz,
-	const Restricted_double &qx,
-	const Restricted_double &qy,
-	const Restricted_double &qz,
-	const double & epsilon_0)
-  {
-    typedef Restricted_double FT;
-  
-      return Static_Filtered_cmp_signed_dist_to_planeC3_15::epsilon_variant(ppx, ppy, ppz, pqx, pqy, pqz,
-  	    prx, pry, prz, px, py, pz, qx, qy, qz,
-  		epsilon_0) == LARGER;
-  }
-};
-
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
-#else
-template <>
-#endif
-/* CGAL_KERNEL_MEDIUM_INLINE */
-bool
-has_larger_signed_dist_to_planeC3(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &ppx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &ppy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &ppz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &pqx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &pqy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &pqz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &prx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &pry,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &prz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &py,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &pz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qz)
-{
-//   bool re_adjusted = false;
-  const double SAF_bound = Static_Filtered_has_larger_signed_dist_to_planeC3_15::_bound;
-
-  // Check the bounds.  All arguments must be <= SAF_bound.
-  if (
-	fabs(ppx.to_double()) > SAF_bound ||
-	fabs(ppy.to_double()) > SAF_bound ||
-	fabs(ppz.to_double()) > SAF_bound ||
-	fabs(pqx.to_double()) > SAF_bound ||
-	fabs(pqy.to_double()) > SAF_bound ||
-	fabs(pqz.to_double()) > SAF_bound ||
-	fabs(prx.to_double()) > SAF_bound ||
-	fabs(pry.to_double()) > SAF_bound ||
-	fabs(prz.to_double()) > SAF_bound ||
-	fabs(px.to_double()) > SAF_bound ||
-	fabs(py.to_double()) > SAF_bound ||
-	fabs(pz.to_double()) > SAF_bound ||
-	fabs(qx.to_double()) > SAF_bound ||
-	fabs(qy.to_double()) > SAF_bound ||
-	fabs(qz.to_double()) > SAF_bound)
-  {
-// re_adjust:
-    // Compute the new bound.
-    double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(ppx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(ppy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(ppz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pqx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pqy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pqz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(prx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pry.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(prz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qz.to_double()));
-    // Re-adjust the context.
-    Static_Filtered_has_larger_signed_dist_to_planeC3_15::new_bound(NEW_bound);
-  }
-
-  try
-  {
-    return Static_Filtered_has_larger_signed_dist_to_planeC3_15::epsilon_variant(
-		ppx.dbl(),
-		ppy.dbl(),
-		ppz.dbl(),
-		pqx.dbl(),
-		pqy.dbl(),
-		pqz.dbl(),
-		prx.dbl(),
-		pry.dbl(),
-		prz.dbl(),
-		px.dbl(),
-		py.dbl(),
-		pz.dbl(),
-		qx.dbl(),
-		qy.dbl(),
-		qz.dbl(),
-		Static_Filtered_has_larger_signed_dist_to_planeC3_15::_epsilon_0);
-  }
-  catch (...)
-  {
-    // if (!re_adjusted) {  // It failed, we re-adjust once.
-      // re_adjusted = true;
-      // goto re_adjust;
-    // }
-    Static_Filtered_has_larger_signed_dist_to_planeC3_15::number_of_failures++;
-    return has_larger_signed_dist_to_planeC3(
-		ppx.exact(),
-		ppy.exact(),
-		ppz.exact(),
-		pqx.exact(),
-		pqy.exact(),
-		pqz.exact(),
-		prx.exact(),
-		pry.exact(),
-		prz.exact(),
-		px.exact(),
-		py.exact(),
-		pz.exact(),
-		qx.exact(),
-		qy.exact(),
-		qz.exact());
-  }
-}
-
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
-#else
-template <>
-#endif
-/* CGAL_KERNEL_MEDIUM_INLINE */
-bool
-has_larger_signed_dist_to_planeC3(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &ppx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &ppy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &ppz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pqx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pqy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pqz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &prx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pry,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &prz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &py,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qz)
-{
-  CGAL_assertion_code(
-    const double SAF_bound = Static_Filtered_has_larger_signed_dist_to_planeC3_15::_bound; )
-  CGAL_assertion(!(
-	fabs(ppx.to_double()) > SAF_bound ||
-	fabs(ppy.to_double()) > SAF_bound ||
-	fabs(ppz.to_double()) > SAF_bound ||
-	fabs(pqx.to_double()) > SAF_bound ||
-	fabs(pqy.to_double()) > SAF_bound ||
-	fabs(pqz.to_double()) > SAF_bound ||
-	fabs(prx.to_double()) > SAF_bound ||
-	fabs(pry.to_double()) > SAF_bound ||
-	fabs(prz.to_double()) > SAF_bound ||
-	fabs(px.to_double()) > SAF_bound ||
-	fabs(py.to_double()) > SAF_bound ||
-	fabs(pz.to_double()) > SAF_bound ||
-	fabs(qx.to_double()) > SAF_bound ||
-	fabs(qy.to_double()) > SAF_bound ||
-	fabs(qz.to_double()) > SAF_bound));
-
-  try
-  {
-    return Static_Filtered_has_larger_signed_dist_to_planeC3_15::epsilon_variant(
-		ppx.dbl(),
-		ppy.dbl(),
-		ppz.dbl(),
-		pqx.dbl(),
-		pqy.dbl(),
-		pqz.dbl(),
-		prx.dbl(),
-		pry.dbl(),
-		prz.dbl(),
-		px.dbl(),
-		py.dbl(),
-		pz.dbl(),
-		qx.dbl(),
-		qy.dbl(),
-		qz.dbl(),
-		Static_Filtered_has_larger_signed_dist_to_planeC3_15::_epsilon_0);
-  }
-  catch (...)
-  {
-    Static_Filtered_has_larger_signed_dist_to_planeC3_15::number_of_failures++;
-    return has_larger_signed_dist_to_planeC3(
-		ppx.exact(),
-		ppy.exact(),
-		ppz.exact(),
-		pqx.exact(),
-		pqy.exact(),
-		pqz.exact(),
-		prx.exact(),
-		pry.exact(),
-		prz.exact(),
-		px.exact(),
-		py.exact(),
-		pz.exact(),
-		qx.exact(),
-		qy.exact(),
-		qz.exact());
-  }
-}
-
-#endif // CGAL_IA_NEW_FILTERS
-
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
-#else
-template <>
-#endif
-/* CGAL_KERNEL_MEDIUM_INLINE */
-bool
-has_smaller_signed_dist_to_planeC3(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &ppx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &ppy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &ppz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &pqx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &pqy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &pqz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &prx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &pry,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &prz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &py,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &pz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &qy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &qz)
-{
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
-  try
-  {
-    bool result = has_smaller_signed_dist_to_planeC3(
-		ppx.interval(),
-		ppy.interval(),
-		ppz.interval(),
-		pqx.interval(),
-		pqy.interval(),
-		pqz.interval(),
-		prx.interval(),
-		pry.interval(),
-		prz.interval(),
-		px.interval(),
-		py.interval(),
-		pz.interval(),
-		qx.interval(),
-		qy.interval(),
-		qz.interval());
-    FPU_set_cw(backup);
-    return result;
-  } 
-  catch (Interval_nt_advanced::unsafe_comparison)
-  {
-    FPU_set_cw(backup);
-    return has_smaller_signed_dist_to_planeC3(
-		ppx.exact(),
-		ppy.exact(),
-		ppz.exact(),
-		pqx.exact(),
-		pqy.exact(),
-		pqz.exact(),
-		prx.exact(),
-		pry.exact(),
-		prz.exact(),
-		px.exact(),
-		py.exact(),
-		pz.exact(),
-		qx.exact(),
-		qy.exact(),
-		qz.exact());
-  }
-}
-
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
-#else
-template <>
-#endif
-/* CGAL_KERNEL_MEDIUM_INLINE */
-bool
-has_smaller_signed_dist_to_planeC3(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &ppx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &ppy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &ppz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pqx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pqy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pqz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &prx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pry,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &prz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &py,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qz)
-{
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
-  try
-  {
-    return has_smaller_signed_dist_to_planeC3(
-		ppx.interval(),
-		ppy.interval(),
-		ppz.interval(),
-		pqx.interval(),
-		pqy.interval(),
-		pqz.interval(),
-		prx.interval(),
-		pry.interval(),
-		prz.interval(),
-		px.interval(),
-		py.interval(),
-		pz.interval(),
-		qx.interval(),
-		qy.interval(),
-		qz.interval());
-  } 
-  catch (Interval_nt_advanced::unsafe_comparison)
-  {
-    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
-    bool result = has_smaller_signed_dist_to_planeC3(
-		ppx.exact(),
-		ppy.exact(),
-		ppz.exact(),
-		pqx.exact(),
-		pqy.exact(),
-		pqz.exact(),
-		prx.exact(),
-		pry.exact(),
-		prz.exact(),
-		px.exact(),
-		py.exact(),
-		pz.exact(),
-		qx.exact(),
-		qy.exact(),
-		qz.exact());
-    FPU_set_cw(backup);
-    return result;
-  }
-}
-
-#ifdef CGAL_IA_NEW_FILTERS
-
-struct Static_Filtered_has_smaller_signed_dist_to_planeC3_15
-{
-  static double _bound;
-  static double _epsilon_0;
-  static unsigned number_of_failures; // ?
-  static unsigned number_of_updates;
-
-  static bool update_epsilon(
-	const Static_filter_error &ppx,
-	const Static_filter_error &ppy,
-	const Static_filter_error &ppz,
-	const Static_filter_error &pqx,
-	const Static_filter_error &pqy,
-	const Static_filter_error &pqz,
-	const Static_filter_error &prx,
-	const Static_filter_error &pry,
-	const Static_filter_error &prz,
-	const Static_filter_error &px,
-	const Static_filter_error &py,
-	const Static_filter_error &pz,
-	const Static_filter_error &qx,
-	const Static_filter_error &qy,
-	const Static_filter_error &qz,
-	double & epsilon_0)
-  {
-    typedef Static_filter_error FT;
-  
-      return Static_Filtered_cmp_signed_dist_to_planeC3_15::update_epsilon(ppx, ppy, ppz, pqx, pqy, pqz,
-  	    prx, pry, prz, px, py, pz, qx, qy, qz,
-  		epsilon_0) == SMALLER;
-  }
-
-  // Call this function from the outside to update the context.
-  static void new_bound (const double b) // , const double error = 0)
-  {
-    _bound = b;
-    number_of_updates++;
-    // recompute the epsilons: "just" call it over Static_filter_error.
-    // That's the tricky part that might not work for everything.
-    (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,_epsilon_0);
-    // TODO: We should verify that all epsilons have really been updated.
-  }
-
-  static bool epsilon_variant(
-	const Restricted_double &ppx,
-	const Restricted_double &ppy,
-	const Restricted_double &ppz,
-	const Restricted_double &pqx,
-	const Restricted_double &pqy,
-	const Restricted_double &pqz,
-	const Restricted_double &prx,
-	const Restricted_double &pry,
-	const Restricted_double &prz,
-	const Restricted_double &px,
-	const Restricted_double &py,
-	const Restricted_double &pz,
-	const Restricted_double &qx,
-	const Restricted_double &qy,
-	const Restricted_double &qz,
-	const double & epsilon_0)
-  {
-    typedef Restricted_double FT;
-  
-      return Static_Filtered_cmp_signed_dist_to_planeC3_15::epsilon_variant(ppx, ppy, ppz, pqx, pqy, pqz,
-  	    prx, pry, prz, px, py, pz, qx, qy, qz,
-  		epsilon_0) == SMALLER;
-  }
-};
-
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
-#else
-template <>
-#endif
-/* CGAL_KERNEL_MEDIUM_INLINE */
-bool
-has_smaller_signed_dist_to_planeC3(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &ppx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &ppy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &ppz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &pqx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &pqy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &pqz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &prx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &pry,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &prz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &py,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &pz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qz)
-{
-//   bool re_adjusted = false;
-  const double SAF_bound = Static_Filtered_has_smaller_signed_dist_to_planeC3_15::_bound;
-
-  // Check the bounds.  All arguments must be <= SAF_bound.
-  if (
-	fabs(ppx.to_double()) > SAF_bound ||
-	fabs(ppy.to_double()) > SAF_bound ||
-	fabs(ppz.to_double()) > SAF_bound ||
-	fabs(pqx.to_double()) > SAF_bound ||
-	fabs(pqy.to_double()) > SAF_bound ||
-	fabs(pqz.to_double()) > SAF_bound ||
-	fabs(prx.to_double()) > SAF_bound ||
-	fabs(pry.to_double()) > SAF_bound ||
-	fabs(prz.to_double()) > SAF_bound ||
-	fabs(px.to_double()) > SAF_bound ||
-	fabs(py.to_double()) > SAF_bound ||
-	fabs(pz.to_double()) > SAF_bound ||
-	fabs(qx.to_double()) > SAF_bound ||
-	fabs(qy.to_double()) > SAF_bound ||
-	fabs(qz.to_double()) > SAF_bound)
-  {
-// re_adjust:
-    // Compute the new bound.
-    double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(ppx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(ppy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(ppz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pqx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pqy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pqz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(prx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pry.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(prz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qz.to_double()));
-    // Re-adjust the context.
-    Static_Filtered_has_smaller_signed_dist_to_planeC3_15::new_bound(NEW_bound);
-  }
-
-  try
-  {
-    return Static_Filtered_has_smaller_signed_dist_to_planeC3_15::epsilon_variant(
-		ppx.dbl(),
-		ppy.dbl(),
-		ppz.dbl(),
-		pqx.dbl(),
-		pqy.dbl(),
-		pqz.dbl(),
-		prx.dbl(),
-		pry.dbl(),
-		prz.dbl(),
-		px.dbl(),
-		py.dbl(),
-		pz.dbl(),
-		qx.dbl(),
-		qy.dbl(),
-		qz.dbl(),
-		Static_Filtered_has_smaller_signed_dist_to_planeC3_15::_epsilon_0);
-  }
-  catch (...)
-  {
-    // if (!re_adjusted) {  // It failed, we re-adjust once.
-      // re_adjusted = true;
-      // goto re_adjust;
-    // }
-    Static_Filtered_has_smaller_signed_dist_to_planeC3_15::number_of_failures++;
-    return has_smaller_signed_dist_to_planeC3(
-		ppx.exact(),
-		ppy.exact(),
-		ppz.exact(),
-		pqx.exact(),
-		pqy.exact(),
-		pqz.exact(),
-		prx.exact(),
-		pry.exact(),
-		prz.exact(),
-		px.exact(),
-		py.exact(),
-		pz.exact(),
-		qx.exact(),
-		qy.exact(),
-		qz.exact());
-  }
-}
-
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
-#else
-template <>
-#endif
-/* CGAL_KERNEL_MEDIUM_INLINE */
-bool
-has_smaller_signed_dist_to_planeC3(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &ppx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &ppy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &ppz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pqx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pqy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pqz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &prx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pry,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &prz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &py,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qz)
-{
-  CGAL_assertion_code(
-    const double SAF_bound = Static_Filtered_has_smaller_signed_dist_to_planeC3_15::_bound; )
-  CGAL_assertion(!(
-	fabs(ppx.to_double()) > SAF_bound ||
-	fabs(ppy.to_double()) > SAF_bound ||
-	fabs(ppz.to_double()) > SAF_bound ||
-	fabs(pqx.to_double()) > SAF_bound ||
-	fabs(pqy.to_double()) > SAF_bound ||
-	fabs(pqz.to_double()) > SAF_bound ||
-	fabs(prx.to_double()) > SAF_bound ||
-	fabs(pry.to_double()) > SAF_bound ||
-	fabs(prz.to_double()) > SAF_bound ||
-	fabs(px.to_double()) > SAF_bound ||
-	fabs(py.to_double()) > SAF_bound ||
-	fabs(pz.to_double()) > SAF_bound ||
-	fabs(qx.to_double()) > SAF_bound ||
-	fabs(qy.to_double()) > SAF_bound ||
-	fabs(qz.to_double()) > SAF_bound));
-
-  try
-  {
-    return Static_Filtered_has_smaller_signed_dist_to_planeC3_15::epsilon_variant(
-		ppx.dbl(),
-		ppy.dbl(),
-		ppz.dbl(),
-		pqx.dbl(),
-		pqy.dbl(),
-		pqz.dbl(),
-		prx.dbl(),
-		pry.dbl(),
-		prz.dbl(),
-		px.dbl(),
-		py.dbl(),
-		pz.dbl(),
-		qx.dbl(),
-		qy.dbl(),
-		qz.dbl(),
-		Static_Filtered_has_smaller_signed_dist_to_planeC3_15::_epsilon_0);
-  }
-  catch (...)
-  {
-    Static_Filtered_has_smaller_signed_dist_to_planeC3_15::number_of_failures++;
-    return has_smaller_signed_dist_to_planeC3(
 		ppx.exact(),
 		ppy.exact(),
 		ppz.exact(),
