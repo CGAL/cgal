@@ -20,13 +20,13 @@ void tri_cb(Fl_Widget* w, void* v)
 {
   CGAL::Viewer_3* win = (CGAL::Viewer_3*) v;
   typedef Triangulation_2::Point Point;
-  Triangulation_2* tr= new Triangulation_2();  
+  Triangulation_2* tr;  
   CGAL::Vector_2<rep_t> disp( 425.0, 425.0 );
   CGAL::Random_points_in_square_2<Point,CGAL::Creator_uniform_2<double,Point> >
     g ( 500.0 );
   for (int i=0; i<100; i++)
     tr->insert(*g++ + disp);
-  CGAL::Drawable_triangulation_2<Triangulation_2>* dtr = new CGAL::Drawable_triangulation_2<Triangulation_2>(*tr,win->get_color(), CGAL::ORANGE,CGAL::RAW, 2);
+  CGAL::Drawable_triangulation_2<Triangulation_2>* dtr = new CGAL::Drawable_triangulation_2<Triangulation_2>(*tr,win->get_color(1), CGAL::ORANGE,CGAL::RAW, 2);
   win->add_drawable(dtr, win->get_group() + 1);
   win->display();
 }
@@ -36,13 +36,13 @@ void del_cb(Fl_Widget* w, void* v)
 {
   CGAL::Viewer_3* win = (CGAL::Viewer_3*) v;
   typedef Delaunay_2::Point Point;
-  Delaunay_2* tr=new Delaunay_2();  
+  Delaunay_2* tr;  
   CGAL::Vector_2<rep_t> disp( 425.0, 425.0 );
   CGAL::Random_points_in_square_2<Point,CGAL::Creator_uniform_2<double,Point> >
     g ( 500.0 );
   for (int i=0; i<100; i++)
     tr->insert(*g++ + disp);
-  CGAL::Drawable_triangulation_2<Delaunay_2>* dtr = new CGAL::Drawable_triangulation_2<Delaunay_2>(*tr,win->get_color(),  CGAL::ORANGE,CGAL::RAW, 2);
+  CGAL::Drawable_triangulation_2<Delaunay_2>* dtr = new CGAL::Drawable_triangulation_2<Delaunay_2>(*tr,win->get_color(1),  CGAL::ORANGE,CGAL::RAW, 2);
   win->add_drawable(dtr, win->get_group() + 1);
   win->display();
 }
@@ -52,13 +52,13 @@ void vor_cb(Fl_Widget* w, void* v)
 {
   CGAL::Viewer_3* win = (CGAL::Viewer_3*) v;
   typedef Delaunay_2::Point Point;
-  Delaunay_2* tr= new Delaunay_2();  
+  Delaunay_2* tr;  
   CGAL::Vector_2<rep_t> disp( 425.0, 425.0 );
   CGAL::Random_points_in_square_2<Point,CGAL::Creator_uniform_2<double,Point> >
     g ( 500.0 );
   for (int i=0; i<100; i++)
     tr->insert(*g++ + disp);
-  CGAL:: Drawable_voronoi_2<Delaunay_2>* vo = new CGAL::Drawable_voronoi_2<Delaunay_2>(*tr,win->get_color(), CGAL::RAW, 2);
+  CGAL:: Drawable_voronoi_2<Delaunay_2>* vo = new CGAL::Drawable_voronoi_2<Delaunay_2>(*tr,win->get_color(1), CGAL::RAW, 2);
   win->add_drawable(vo, win->get_group() + 1);
   win->display();
 }
@@ -68,7 +68,7 @@ void vord_cb(Fl_Widget* w, void* v)
 {
   CGAL::Viewer_3* win = (CGAL::Viewer_3*) v;
   typedef Delaunay_2::Point Point;
-  Delaunay_2* tr= new Delaunay_2();  
+  Delaunay_2* tr;  
   CGAL::Vector_2<rep_t> disp( 425.0, 425.0 );
   CGAL::Random_points_in_square_2<Point,CGAL::Creator_uniform_2<double,Point> >
     g ( 500.0 );

@@ -37,12 +37,12 @@ int main(int argc, char *argv[])
   tr.insert(point_t(100,-350,0));
   tr.insert(point_t(500,-300,-250));
 
-  W << CGAL::ORANGE ;
+  W << CGAL::set_color_1(CGAL::ORANGE) ;
   Delaunay_3::Cell_iterator cit;
-  tetra* t;
+  tetra t;
   for (cit = tr.finite_cells_begin(); cit != tr.cells_end(); cit++) {
-    t = new tetra(tr.tetrahedron(cit->handle()));
-    W << *t;
+    t = tr.tetrahedron(cit->handle());
+    W << t;
   }
  W.main_loop();
 

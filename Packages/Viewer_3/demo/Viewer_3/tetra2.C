@@ -76,10 +76,10 @@ int main(int argc, char *argv[])
   CGAL::Color c=CGAL::ORANGE ;
   Delaunay_3::Cell_iterator cit;
   int i=1;
-  tetra* t;
+  tetra t;
   for (cit = tr.finite_cells_begin(); cit != tr.cells_end(); cit++) {
-    t= new tetra(schrink(tr.tetrahedron(cit->handle())));
-    CGAL::Drawable_tetrahedron_3<Delaunay_3::Tetrahedron>* tet = new CGAL::Drawable_tetrahedron_3<Delaunay_3::Tetrahedron>(*t,c,CGAL::FILL);
+    t= schrink(tr.tetrahedron(cit->handle()));
+    CGAL::Drawable_tetrahedron_3<Delaunay_3::Tetrahedron>* tet = new CGAL::Drawable_tetrahedron_3<Delaunay_3::Tetrahedron>(t,c,CGAL::FILL);
     W.add_drawable(tet,i);
     i++;
     c=change(c);

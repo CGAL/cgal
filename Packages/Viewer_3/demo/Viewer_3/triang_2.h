@@ -6,11 +6,15 @@
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 
+#include <CGAL/Line_2.h>
 
+#include <CGAL/Ray_2.h>
 
 
 typedef CGAL::Cartesian<double> rep_t;
 
+typedef CGAL::Line_2 <rep_t> Line2;
+typedef CGAL::Ray_2 <rep_t> Ray2;
 
 typedef CGAL::Triangulation_euclidean_traits_2< rep_t > Ttraits;
 typedef CGAL::Triangulation_vertex_base_2<Ttraits>      Vertex_base ;
@@ -72,8 +76,8 @@ Drawable_voronoi_2(const triangulation_2 &tet,Color c, Style
 	glBegin( GL_LINES );
 	for ( ;it != beyond; ++it) {
 	  CGAL::Object o = tr.dual(it);
-	 typename  triangulation_2::Line l;
-	 typename  triangulation_2::Ray r;
+	 Line2 l;
+	 Ray2 r;
 	 typename  triangulation_2::Segment s;
 	  if (assign(s,o)) {
 	    glVertex2f(s.source().x(),s.source().y() );

@@ -13,9 +13,9 @@ typedef CGAL::Triangle_3<rep_t> triangle;
 typedef CGAL::Triangle_2<rep_t> triangle2;
 typedef CGAL::Tetrahedron_3<rep_t> tetra;
 typedef CGAL::Line_3<rep_t> Line;
-typedef CGAL::Line_2<rep_t> Line2;
+//typedef CGAL::Line_2<rep_t> Line2;
 typedef CGAL::Ray_3<rep_t> Ray;
-typedef CGAL::Ray_2<rep_t> Ray2;
+//typedef CGAL::Ray_2<rep_t> Ray2;
 typedef CGAL::Circle_2<rep_t> circle2;
 std::list<point_t> all_points;
 
@@ -29,12 +29,9 @@ int main(int argc, char *argv[])
   W.set_custom_panel(my_panel);
   W.set_mouse_push_handler(myhandler);
   stop();
-
-
-  point_t p1(100,50,0);
-  point_t p2(200,50,0);
-  point_t p3(300,50,0);
-
+  point_t p1(100,100,100);
+  point_t p2(200,100,100);
+  point_t p3(300,100,100);
   CGAL::Drawable_point_3<point_t> dp1(p1,CGAL::RED,CGAL::FILL,25,50);
 
   CGAL::Drawable_point_3<point_t> dp2(p2,CGAL::RED,CGAL::FILL,25,50);
@@ -80,7 +77,7 @@ int main(int argc, char *argv[])
     tet(point_t(100,100,-200),point_t(400,100,-300),point_t(400,300,-100),point_t(250,250, 100));
 
 
-  //  CGAL::Drawable_triangle_3<triangle> dtr(tr,CGAL::GRAY,CGAL::RAW);
+  CGAL::Drawable_triangle_3<triangle> dtr(tr,CGAL::GRAY,CGAL::RAW);
  
   CGAL::Drawable_tetrahedron_3<tetra> dtet(tet,CGAL::ORANGE);
 
@@ -97,7 +94,7 @@ int main(int argc, char *argv[])
  CGAL::Drawable_points_set_3<std::list<point_t>::iterator,point_t>
    dlp(first,last,CGAL::RED,CGAL::FILL,5,30);
 
- W << tr ;
+ // W << tr ;
  W.add_drawable(&dp1);
  W.add_drawable(&dp2);
  W.add_drawable(&dp3);
@@ -120,7 +117,7 @@ int main(int argc, char *argv[])
  W.add_drawable(&dry2,3);
 
 
- // W.add_drawable(&dtr,4);
+ W.add_drawable(&dtr,4);
  W.add_drawable(&dtet,5);
 
  W.add_drawable(&ds1,6);

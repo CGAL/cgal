@@ -61,7 +61,10 @@ terrain: terrain.o
 testter: testter.o
 	$(CGAL_CXX) -o $@ $(OFILES) testter.o -lpthread $(LDFLAGS)
 
-all: facet demo tetra1 tetra2 tetra3
+stream_ex: stream_ex.o
+	$(CGAL_CXX) -o $@ $(OFILES) stream_ex.o -lpthread $(LDFLAGS)
+
+all: facet demo tetra1 tetra2 tetra3 terrain stream_ex
 
 #---------------------------------------------------------------------#
 #                    suffix rules
@@ -80,5 +83,5 @@ clean:
 	rm -f *.o core *~
 	rm -f ii_files/*
 distclean: clean
-	rm -f demo facet tetra1 tetra2 tetra3 
+	rm -f demo facet tetra1 tetra2 tetra3 terrain stream_ex
 	rm ../include/CGAL/*~

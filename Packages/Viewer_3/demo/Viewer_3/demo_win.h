@@ -11,7 +11,7 @@ typedef CGAL::Triangulation_face_base_2<Ttraits>        Face_base ;
 typedef CGAL::Triangulation_default_data_structure_2<Ttraits,Vertex_base,Face_base> TDS ;
 typedef CGAL::Delaunay_triangulation_2<Ttraits, TDS> Delaunay_2;
 typedef Delaunay_2::Point Point;
-Delaunay_2* tr=new Delaunay_2(); 
+Delaunay_2* tr; 
 
 
 void step(int val)
@@ -42,7 +42,7 @@ void del_cb(Fl_Widget* w, void* v)
     g ( 500.0 );
   for (int i=0; i<50; i++)
     tr->insert(*g++ + disp);
-  CGAL::Drawable_triangulation_2<Delaunay_2>* dtr = new CGAL::Drawable_triangulation_2<Delaunay_2>(*tr,win->get_color(),  CGAL::ORANGE,CGAL::RAW, 2);
+  CGAL::Drawable_triangulation_2<Delaunay_2>* dtr = new CGAL::Drawable_triangulation_2<Delaunay_2>(*tr,win->get_color(1),  CGAL::ORANGE,CGAL::RAW, 2);
   win->add_drawable(dtr, win->get_group()+1);
   win->display();
 }
@@ -59,7 +59,7 @@ void parab_cb(Fl_Widget* w, void* v)
     i=i+0.00000000000001;
   } 
   cerr << "number of faces : " << tr->number_of_faces() << endl;
-  CGAL::Drawable_triangulation_2<Delaunay_2>* dtr = new CGAL::Drawable_triangulation_2<Delaunay_2>(*tr,win->get_color(),  CGAL::ORANGE,CGAL::RAW, 2);
+  CGAL::Drawable_triangulation_2<Delaunay_2>* dtr = new CGAL::Drawable_triangulation_2<Delaunay_2>(*tr,win->get_color(1),  CGAL::ORANGE,CGAL::RAW, 2);
   win->add_drawable(dtr, win->get_group()+1);
   win->display();
 }
