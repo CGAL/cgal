@@ -27,6 +27,7 @@
 #include <CGAL/user_classes.h>
 #include <CGAL/basic_classes.h>
 #include <LEDA/rat_point.h>
+#include <CGAL/Homogeneous.h>
 
 #define CGAL_REP_CLASS_DEFINED
 
@@ -36,7 +37,7 @@ CGAL_BEGIN_NAMESPACE
 class use_rat_leda_kernel;
 CGAL_TEMPLATE_NULL class Point_2<use_rat_leda_kernel>;
 
-class use_rat_leda_kernel
+class use_rat_leda_kernel : public Homogeneous_base< use_rat_leda_kernel, leda_integer, leda_rational>
 {
   public:
     typedef  use_rat_leda_kernel  R;

@@ -30,43 +30,44 @@
 CGAL_BEGIN_NAMESPACE
 
 
-template <>
+template <class use_rat_leda_kernel>
 inline
 Orientation
-orientation<use_rat_leda_kernel>(const Point_2<use_rat_leda_kernel>& p,
-                                 const Point_2<use_rat_leda_kernel>& q,
-                                 const Point_2<use_rat_leda_kernel>& r)
+orientation(const Point_2<use_rat_leda_kernel>& p,
+            const Point_2<use_rat_leda_kernel>& q,
+            const Point_2<use_rat_leda_kernel>& r)
 {
-/*
-  typedef use_rat_leda_kernel::Point_2_base  RPoint_2;
+  typedef typename use_rat_leda_kernel::Point_2_base  RPoint_2;
   return static_cast<Orientation>( ::orientation((const RPoint_2&)p,
                                                  (const RPoint_2&)q,
                                                  (const RPoint_2&)r) );
-*/
+/*
   return static_cast<Orientation>(
       ::orientation((const use_rat_leda_kernel::Point_2_base&)p,
                     (const use_rat_leda_kernel::Point_2_base&)q,
                     (const use_rat_leda_kernel::Point_2_base&)r) );
+*/
 }
 
 // #ifdef CGAL_CFG_NO_KOENIG_LOOKUP
-template <>
+template <class use_rat_leda_kernel>
 inline
 bool
-collinear<use_rat_leda_kernel>(const Point_2<use_rat_leda_kernel>& p,
-                               const Point_2<use_rat_leda_kernel>& q,
-                               const Point_2<use_rat_leda_kernel>& r)
+collinear(const Point_2<use_rat_leda_kernel>& p,
+          const Point_2<use_rat_leda_kernel>& q,
+          const Point_2<use_rat_leda_kernel>& r)
 {
-/*
-  typedef use_rat_leda_kernel::Point_2_base  RPoint_2;
+
+  typedef typename use_rat_leda_kernel::Point_2_base  RPoint_2;
   return ::collinear((const RPoint_2&)p,
                      (const RPoint_2&)q,
                      (const RPoint_2&)r );
-*/
+/*
   return
       ::collinear((const use_rat_leda_kernel::Point_2_base&)p,
                   (const use_rat_leda_kernel::Point_2_base&)q,
                   (const use_rat_leda_kernel::Point_2_base&)r);
+*/
 }
 // #endif // CGAL_CFG_NO_KOENIG_LOOKUP
 
