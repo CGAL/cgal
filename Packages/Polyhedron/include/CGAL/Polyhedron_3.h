@@ -876,6 +876,15 @@ public:
 
 // Combinatorial Predicates
 
+    bool is_closed() const { 
+        for ( Halfedge_const_iterator i = halfedges_begin();
+              i != halfedges_end(); ++i) {
+            if ( i->is_border())
+                return false;
+        }
+        return true;
+    }
+
 private:
     bool is_pure_bivalent( Tag_true) const { 
         for ( Vertex_const_iterator i = vertices_begin();

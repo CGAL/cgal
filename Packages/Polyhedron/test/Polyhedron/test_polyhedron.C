@@ -313,6 +313,7 @@ void test_Polyhedron() {
         CGAL_assertion( P.is_triangle( hch));
         CGAL_assertion( P.is_triangle( HDS::halfedge_handle(&*hh)));
         CGAL_assertion( P.is_triangle( HDS::halfedge_handle(&*hch)));
+        CGAL_assertion( ! P.is_closed());
         //CGAL_assertion( P.is_triangle( hh->handle()));
         //CGAL_assertion( P.is_triangle( hch->handle()));
 
@@ -388,6 +389,7 @@ void test_Polyhedron() {
         CGAL_assertion( P.is_valid());
         CGAL_assertion( P.is_triangle( h));
         CGAL_assertion( ! P.is_tetrahedron( h));
+        CGAL_assertion( ! P.is_closed());
         CGAL_assertion( h->vertex_degree() == 2);
         CGAL_assertion( h->vertex()->vertex_degree() == 2);
         CGAL_assertion( h->is_bivalent());
@@ -412,6 +414,7 @@ void test_Polyhedron() {
         CGAL_assertion( P.is_valid());
         CGAL_assertion( P.is_tetrahedron( h));
         CGAL_assertion( ! P.is_triangle( h));
+        CGAL_assertion( ! P.is_closed()); // we have also a triangle in P
         CGAL_assertion( h->vertex_degree() == 3);
         CGAL_assertion( h->vertex()->vertex_degree() == 3);
         CGAL_assertion( h->is_trivalent());
@@ -443,6 +446,7 @@ void test_Polyhedron() {
         Build_tetrahedron<HDS> modifier;
         P2.delegate( modifier);
         CGAL_assertion( P2.is_tetrahedron(P2.halfedges_begin()));
+        CGAL_assertion( P2.is_closed());
         P2.normalize_border();
         CGAL_assertion( P2.is_valid( false, 1));
 
@@ -451,6 +455,7 @@ void test_Polyhedron() {
         Build_tetrahedron_2<HDS> modifier2;
         P2.delegate( modifier2);
         CGAL_assertion( P2.is_tetrahedron(P2.halfedges_begin()));
+        CGAL_assertion( P2.is_closed());
         P2.normalize_border();
         CGAL_assertion( P2.is_valid( false, 1));
 
@@ -638,6 +643,7 @@ void test_Polyhedron() {
         CGAL_assertion( ! P.is_pure_triangle());
         CGAL_assertion( P.is_pure_quad());
         CGAL_assertion( P.is_pure_trivalent());
+        CGAL_assertion( P.is_closed());
     }
     {
         // Check set_halfedge() for vertices and facets
