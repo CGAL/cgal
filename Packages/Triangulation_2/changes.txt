@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+ver 8.27 (29/12/03)
+- Update to the new filter_iterator() interface.
+
 ver 8.26 (12/12/03)
 - fixed typo in the doc
 
