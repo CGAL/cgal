@@ -1,8 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-ver 8.21 (29/10/03)
+ver 8.21 (30/10/03)
 - fix in  line_face_circulator susequent to change in 8.18
+- the previous fix is for SGI too [rursu]
 
 ver 8.20 (29/10/03)
 - fixed files for _MSC_VER but not INTEL

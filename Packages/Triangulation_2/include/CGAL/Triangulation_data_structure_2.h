@@ -29,7 +29,7 @@
 #include <vector>
 #include <algorithm>
 
-#if !defined _MSC_VER || defined __INTEL_COMPILER 
+#if (!defined _MSC_VER || defined __INTEL_COMPILER) && !defined __sgi
 #  define CGAL_T2_USE_ITERATOR_AS_HANDLE
 #endif
 
