@@ -1,51 +1,49 @@
 # Makefile for a CGAL package.
 
-CVS_MODULE_NAME=Cartesian_kernel
-Package=Cartesian_kernel
+.PHONY: package submit Version
 
-.PHONY: package test submit version rtag
+Package:=$(shell basename `cat CVS/Repository`)
+TAG_VERSION:=v$(shell echo $(VERSION) | sed -e "s/\./_/g")
+CGAL_VERSION:='$(VERSION) ($(shell date '+%e %b %Y'))'
+WWW_base=/net/servers/www-sop/prisme/CGAL/DR:/Members
+WWW_dir=$(WWW_base)/$(Package)
+TMP_file=/tmp/submit-mail
 
 WWW_base=/net/servers/www-sop/prisme/CGAL/DR:/Members
 WWW_dir=$(WWW_base)/$(Package)
 TMP_file=/tmp/submit-mail
 
-package: clean $(Package).tar.gz
-	@echo "----------------------------------"
-	@echo "------------ Penser à: -----------"
-	@echo "----------------------------------"
-	@echo "---- changes.txt              ----"
-	@echo "---- make Test                ----"
-	@echo "---- make VERSION=6.0 version ----"
-	@echo "---- make commit              ----"
-	@echo "---- make VERSION=6.0 rtag    ----"
-	@echo "---- make submit              ----"
-	@echo "----------------------------------"
+all:
+        @echo "-----------------------------------"
+        @echo "---- edit changes.txt          ----"
+        @echo -n "---- the current version file contains : "
+        @cat version
+        @echo "---- make VERSION=X.XX submit  ----"
+        @echo "-----------------------------------"
 
-version:
-	echo "$(VERSION) (" `date +"%e %b %Y"` ")" > version
+Version:
+        echo $(CGAL_VERSION) > version
+        cvs commit -m "Bump for $(CGAL_VERSION)" version
+        cvs tag -c $(TAG_VERSION)
+        cvs tag -F -c current_submission
 
-commit:
-	cvs commit
-
-rtag:
-	cvs rtag v`echo $(VERSION) | sed -e "s/\./_/g"` $(CVS_MODULE_NAME)
-
-submit: package
-	cp $(Package).tar.gz version description.txt changes.txt \
-	   $(WWW_dir)
-	echo > $(TMP_file)
-	echo "submission::" >> $(TMP_file)
-	echo "http://www-sop.inria.fr/prisme/CGAL/DR:/Members" >> $(TMP_file)
-	echo "/$(Package)/$(Package).tar.gz" >> $(TMP_file)
-	mail -s autohandle cgal-submit@cs.uu.nl $(USER) < $(TMP_file)
-	rm -f $(TMP_file)
-
-clean:
-	rm -f $(Package).tar.gz
+submit: specific clean Version $(Package).tar.gz
+        cp $(Package).tar.gz doc_ps/$(Package).ps version description.txt \
+           changes.txt $(WWW_dir)
+        rm -f $(WWW_dir)/$(Package).ps.gz
+        gzip -9 $(WWW_dir)/$(Package).ps
+        echo > $(TMP_file)
+        echo "submission::" >> $(TMP_file)
+        echo "http://www-sop.inria.fr/prisme/CGAL/DR:/Members" >> $(TMP_file)
+        echo "/$(Package)/$(Package).tar.gz" >> $(TMP_file)
+        mail -s autohandle cgal-submit@cs.uu.nl $(USER) < $(TMP_file)
+        rm -f $(TMP_file)
 
 $(Package).tar.gz:
 	tar -zcvf $(Package).tar.gz \
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
 	--exclude=TODO --exclude="*~" --exclude="*.old" \
-	version maintainer description.txt changes.txt \
-	include
+	version maintainer description.txt changes.txt include
+
+clean:
+	rm -f $(Package).tar.gz
