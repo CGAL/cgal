@@ -42,6 +42,58 @@ by \ccc{p}, \ccc{q}, and \ccc{r} on which \ccc{s} lies.
 \ccPrecond \ccc{p}, \ccc{q}, \ccc{r}, and \ccc{s} are coplanar and
 \ccc{p}, \ccc{q}, and \ccc{r} are not collinear.}
 
+In addition, in order to display a Voronoi diagram, the traits class
+must provide the following:
+
+\ccTwo{DelaunayTriangulationTraits_3::Direction_3xxx}{}
+
+\ccNestedType{Line_3}
+{The line type.}
+\ccGlue
+\ccNestedType{Plane_3}
+{The plane type.}
+\ccGlue
+\ccNestedType{Ray_3}
+{The ray type.}
+\ccGlue
+\ccNestedType{Direction_3}
+{The direction type.}
+\ccGlue
+\ccNestedType{Object_3}
+{The object type.}
+
+\ccTwo{DelaunayTriangulationTraits_3}{}
+\ccNestedType{Construct_circumcenter_3}{A constructor object that
+must provide \\
+\ccc{Point_3 operator()(Point_3 p, Point_3 q, 
+                                         Point_3 r, Point_3 s)}
+that contructs the circumcenter of four non coplanar points and\\
+\ccc{Point_3 operator()(Point_3 p, Point_3 q, Point_3 r)}
+that contructs the circumcenter of three non collinear points.}
+\ccGlue
+\ccNestedType{Construct_plane_3}{A constructor object
+that must provide\\
+\ccc{Plane_3 operator()(Point_3 p, Point_3 q, Point_3 r)}
+that constructs the plane passing through the non collinear points
+\ccc{p}, \ccc{q} and \ccc{r}.}
+\ccGlue
+\ccNestedType{Construct_perpendicular_line_3}{A constructor object
+that must provide\\
+\ccc{Line_3 operator()(Plane_3 pl, Point_3 p)}
+that constructs the line perpendicular to \ccc{pl} and passing through
+\ccc{p}.}
+\ccGlue
+\ccNestedType{Construct_direction_of_line_3}{A constructor object
+that must provide\\
+\ccc{Direction_3 operator()(Line_3 l)} that constructs the oriented
+direction of \ccc{l}.} 
+\ccGlue
+\ccNestedType{Construct_ray_3}{A constructor object
+that must provide\\
+\ccc{Ray_3 operator()(Point_3 p, Direction_3 d)} that constructs the
+ray starting at \ccc{p} and with direction \ccc{d}.}
+
+
 \ccHasModels
 
 The cartesian and homegenous kernels provided by \cgal.

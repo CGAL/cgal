@@ -31,7 +31,23 @@ functionalities but is much more efficient for large data sets.
 
 \ccTypes
 
-Inherits the types of \ccc{Triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>}.
+Inherits the types of
+\ccc{Triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>}.
+
+\ccThree{typedef DelaunayTriangulationTraits_3::Direction_3 Direction;}{}
+\ccThreeToTwo
+In addition, the following types are used for the construction of the
+Voronoi diagram:
+
+\ccTypedef{typedef DelaunayTriangulationTraits_3::Line_3 Line;}{}
+\ccGlue
+\ccTypedef{typedef DelaunayTriangulationTraits_3::Ray_3 Ray;}{}
+\ccGlue
+\ccTypedef{typedef DelaunayTriangulationTraits_3::Plane_3 Plane;}{}
+\ccGlue
+\ccTypedef{typedef DelaunayTriangulationTraits_3::Direction_3 Direction;}{}
+\ccGlue
+\ccTypedef{typedef DelaunayTriangulationTraits_3::Object_3 Object;}{}
 
 \ccCreation
 \ccCreationVariable{dt}  %% choose variable name
@@ -165,6 +181,29 @@ by \ccc{f} and not containing any other point of the triangulation,
 \ccMethod{Bounded_side
 	  side_of_circle(Cell_handle c, int i, const Point & p);}
 {Same as the previous method for facet \ccc{i} of cell \ccc{c}.}
+
+\ccHeading{Voronoi diagram}
+\ccIndexMainItem{Voronoi diagram}
+\cgal\ offers several functionalities to display the Voronoi diagram of 
+a set of points in 3D.
+
+\ccMethod{Point dual(Cell_handle c) const;}
+{Returns the circumcenter of the four vertices of c.
+\ccPrecond{\ccVar.\ccc{dimension()}$=3$ and \ccc{c} is not infinite.}}
+
+\ccMethod{Object dual(Facet f) const;}
+{Returns the dual of facet \ccc{f}, which is \\
+in dimension 3: either a segment, if the two cells incident to \ccc{f}  
+are finite, or a ray, if one of them is infinite;\\
+in dimension 2: a point.
+\ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$ and \ccc{f} is not infinite.}}
+
+\ccMethod{Object dual(Cell_handle c, int i) const;}
+{same as the previous method for facet \ccc{(c,i)}.}
+
+\ccMethod{template <class Stream> Stream & draw_dual(Stream & os);}
+{Sends the set of duals to all the facets of \ccVar\ into \ccc{os}.}
+
 
 \begin{ccAdvanced}
 \ccHeading{Checking}

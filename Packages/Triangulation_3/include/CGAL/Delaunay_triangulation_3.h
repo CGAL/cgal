@@ -57,14 +57,19 @@ public:
   typedef typename Gt::Segment_3     Segment;
   typedef typename Gt::Triangle_3    Triangle;
   typedef typename Gt::Tetrahedron_3 Tetrahedron;
+
+  // types for dual:
   typedef typename Gt::Line_3        Line;
   typedef typename Gt::Ray_3         Ray;
+  typedef typename Gt::Plane_3       Plane;
+  typedef typename Gt::Direction_3   Direction;
   typedef typename Gt::Object_3      Object;
 
   // Function objects
   typedef typename Gt::Side_of_oriented_sphere_3 Side_of_oriented_sphere;
   typedef typename Gt::Coplanar_side_of_bounded_circle_3
                                              Coplanar_side_of_bounded_circle;
+  // for dual:
   typedef typename Gt::Construct_circumcenter_3
                                              Construct_circumcenter;
   typedef typename Gt::Construct_perpendicular_line_3
