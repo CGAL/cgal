@@ -26,6 +26,8 @@
 //#include <CGAL/predicates/Svd_basic_predicates_C2.h>
 //#include <CGAL/predicates/Segment_Voronoi_diagram_vertex_2.h>
 
+#include <CGAL/predicates/Svd_are_same_points_C2.h>
+
 
 CGAL_BEGIN_NAMESPACE
 
@@ -36,21 +38,32 @@ CGAL_BEGIN_NAMESPACE
 template<class K, class Method_tag>
 class Svd_is_degenerate_edge_C2
 {
+public:
+  typedef typename K::Site_2      Site_2;
+
 private:
   typedef CGAL::Svd_voronoi_vertex_2<K,Method_tag>  Voronoi_vertex_2;
 
-public:
-  typedef typename K::Site_2      Site_2;
+  typedef Svd_are_same_points_C2<K>   Are_same_points_C2;
+
+  bool is_endpoint(const Site_2& p, const Site_2& s) const
+  {
+    CGAL_precondition( p.is_point() && s.is_segment() );
+    Are_same_points_C2 same_points;
+
+    return
+      same_points(p, s.source_site()) || same_points(p, s.target_site());
+  }
 
 public:
   bool operator()(const Site_2& p, const Site_2& q,
 		  const Site_2& r, const Site_2& s)
   {
     Voronoi_vertex_2 vpqr(p, q, r);
-    if ( vpqr.incircle(s) == POSITIVE ) { return false; }
+    if ( vpqr.incircle_no_easy(s) == POSITIVE ) { return false; }
 
     Voronoi_vertex_2 vqps(q, p, s);
-    if ( vqps.incircle(r) == POSITIVE ) { return false; }
+    if ( vqps.incircle_no_easy(r) == POSITIVE ) { return false; }
 
     return true;
   }

@@ -30,7 +30,7 @@
 #include <CGAL/predicates/Svd_are_same_points_C2.h>
 #include <CGAL/predicates/Svd_are_same_segments_C2.h>
 
-#define SVD_USE_NEW_INCIRCLE_SQRT_FIELD_CASE
+
 
 
 CGAL_BEGIN_NAMESPACE
@@ -861,26 +861,17 @@ private:
 
     if ( sl == POSITIVE ) { return sl; }
 
+    if ( sl == ZERO && (d1 == ZERO || d2 == ZERO) ) { return ZERO; }
+
     Oriented_side os1 = oriented_side(l, t.source());
     Oriented_side os2 = oriented_side(l, t.target());
 
-#ifdef SVD_USE_NEW_INCIRCLE_SQRT_FIELD_CASE
     if ( sl == ZERO ) {
-      if ( (os1 == ON_POSITIVE_SIDE && os2 != ON_POSITIVE_SIDE) ||
-	   (os1 != ON_POSITIVE_SIDE && os2 == ON_POSITIVE_SIDE) ) {
+      if (os1 == ON_ORIENTED_BOUNDARY || os2 == ON_ORIENTED_BOUNDARY) {
 	return ZERO;
       }
-      return POSITIVE;
+      return ( os1 == os2 ) ? POSITIVE : ZERO;
     }
-#else
-    if ( sl == ZERO ) {
-      if ( (os1 == ON_POSITIVE_SIDE && os2 == ON_NEGATIVE_SIDE) ||
-	   (os1 == ON_NEGATIVE_SIDE && os2 == ON_POSITIVE_SIDE) ) {
-	return ZERO;
-      }
-      return POSITIVE;
-    }
-#endif
 
     return (os1 == os2) ? POSITIVE : NEGATIVE;
   }
