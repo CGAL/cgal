@@ -1,0 +1,104 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: sweep_to_report_intersecting_curves_2.tex
+% +------------------------------------------------------------------------+
+% | 17.02.2002   Author
+% | Package: Sweep_line_2
+% | 
+\RCSdef{\RCSsweeptoproducepointsRev}{$Revision$}
+\RCSdefDate{\RCSsweeptoproducepointsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{sweep_to_report_intersecting_curves_2}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+  
+The function \ccRefName\ reports all subsets of curves meeting in a 
+common point.
+It is also possible to ask the function to
+include the endpoints of the input curves within the output.
+Non $x$-monotone curves are split into $x$-monotone 
+portions using the \ccc{make_x_monotone} function of
+\ccc{SweepLineTraits_2}. 
+The spliting points are treated as new endpoints rather than 
+intersection points.
+
+\ccInclude{sweep_to_report_intersecting_curves_2.h}
+
+\ccFunction{
+   template <class InputIterator, class SweepLineTraits_2, class OutputIterator>
+   void  
+   sweep_to_report_intersecting_curves_2(InputIterator curves_begin, 
+                                         InputIterator curves_end,  
+                                         SweepLineTraits_2& traits, 
+                                         OutputIterator intersecting_curves,
+                                         bool endpoints = true);}
+  {Reports all subsets of curves meeting in a common point.
+   To each subset we add the point of intersection.
+   The curves are taken from the given range \ccStyle{[curves_begin,curves_end)}. 
+   The parameter \ccStyle{intersecting_curves} is an inserter iterator which 
+   will eventually point to all the reported subsets as above. 
+   \ccc{sweep_to_report_intersecting_curves_2} supports
+   curves which are interior intersect, overlap or non x-monotone, and
+   hence users may provide their input curves without any
+   restriction of the kind mentioned above. 
+   Users may obtain such subsets having input point as the common point 
+   in addition to the intersection points,
+   by setting the flag \ccStyle{endpoints} to true. 
+   The default choice provides this first possibility. 
+   Notice that if the input curves are not $x$-monotone, their splitting points 
+   to $x$-monotone curves are treated as new endpoints points, and hence 
+   when setting \ccStyle{endpoints} to false, this new endpoints are not part 
+   of the output.}
+
+\ccHeading{Requirements}
+\begin{enumerate}
+   \item    \ccc{InputIterator::value_type} is equivalent to \ccc{Traits::Curve_2}.
+   \item    \ccc{SweepLineTraits_2} is a model of the \ccc{SweepLineTraits_2} concept
+   \item    \ccc{OutputIterator::value_type} is equivalent to 
+   \ccc{pair<Traits::Point_2, list<Traits::X_curve_2>}
+\end{enumerate}
+
+
+\ccSeeAlso
+\ccc{CGAL::sweep_to_construct_planar_map_2} \\
+\ccc{CGAL::sweep_to_produce_subcurves_2} \\
+\ccc{CGAL::sweep_to_produce_points_2} \\
+\ccc{CGAL::sweep_do_curves_intersect_2} 
+
+% \ccImplementation
+% The implementation uses the container $map$ defined in STL for
+% implementing the event queue and the status line.  The implementation
+% also keeps per each input curve an associated container of all its
+% intersection points ordered from left to right, and also keeps per
+% each event point all its outcoming curves.  The complexity of this
+% algorithm is $O(n\log{n} + k\log{n})$ where $n$ is the number of the 
+% input curves and $k$ is the number of intersection points 
+% induced by these curves.
+
+\ccIncludeExampleCode{Sweep_line_2/example7.C}
+
+And the output of the program looks like this:
+
+\ccIncludeExampleCode{Sweep_line_2/example7.cout}
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
+
+
+
+
+
+
+
+
