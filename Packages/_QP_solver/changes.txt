@@ -1,5 +1,8 @@
 Changes done to the `_QP_solver' package
 
+Version 0.9.5 on 18-Mar-2002
+- Fixed a number of warnings (i hides variable class::i, inline <-> extern).
+
 Version 0.9.4 on 5-Feb-2002
 - GCC 3.1 fixes.
 

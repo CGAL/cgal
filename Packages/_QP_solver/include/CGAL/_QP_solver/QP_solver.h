@@ -1,4 +1,4 @@
-// ============================================================================
+// ======================================================================
 //
 // Copyright (c) 1997-2001 The CGAL Consortium
 //
@@ -6,13 +6,14 @@
 // of the Computational Geometry Algorithms Library (CGAL). It is not
 // intended for general use.
 //
-// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-I $
-// release_date  : $CGAL_Date$
+// release       : $CGAL_Revision: CGAL-2.4-I-64 $
+// release_date  : $CGAL_Date: 2002/03/18 $
 //
 // file          : include/CGAL/_QP_solver/QP_solver.h
-// package       : $CGAL_Package: _QP_solver $
+// package       : _QP_solver (0.9.4)
+// maintainer    : Sven Schönherr <sven@inf.ethz.ch>
 //
 // revision      : 0.6
 // revision_date : 2000/09/06
@@ -21,7 +22,7 @@
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
 //
 // implementation: Solver for Quadratic Programs
-// ============================================================================
+// ======================================================================
                                                                                
 #ifndef CGAL_QP_SOLVER_H
 #define CGAL_QP_SOLVER_H
@@ -263,12 +264,12 @@ class QP_solver {
                      Make_quotient( Compute_quotient(), d)); }
     
     
-    bool  is_basic( int i) const
-        { CGAL_optimisation_precondition( i >= 0);
-          CGAL_optimisation_precondition( i < ( phase() == 1
+    bool  is_basic( int ii) const
+        { CGAL_optimisation_precondition( ii >= 0);
+          CGAL_optimisation_precondition( ii < ( phase() == 1
               ? number_of_variables()+number_of_constraints()
               : number_of_variables()));
-          return ( in_B[ i] >= 0); }
+          return ( in_B[ ii] >= 0); }
     
     
     // access to variables
@@ -1663,7 +1664,7 @@ QP_solver<Rep_>::
 template < class Rep_ >
 void
 QP_solver<Rep_>::
-    set_pricing_strategy( QP_solver<Rep_>::Pricing_strategy& pricing_strategy)
+    set_pricing_strategy( typename QP_solver<Rep_>::Pricing_strategy& pricing_strategy)
         {
             
             CGAL_optimisation_debug {

@@ -1,4 +1,4 @@
-// ============================================================================
+// ======================================================================
 //
 // Copyright (c) 1997-2001 The CGAL Consortium
 //
@@ -6,13 +6,14 @@
 // of the Computational Geometry Algorithms Library (CGAL). It is not
 // intended for general use.
 //
-// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-I $
-// release_date  : $CGAL_Date$
+// release       : $CGAL_Revision: CGAL-2.4-I-64 $
+// release_date  : $CGAL_Date: 2002/03/18 $
 //
 // file          : include/CGAL/_QP_solver/gmp_double.h
-// package       : $CGAL_Package: _QP_solver $
+// package       : _QP_solver (0.9.4)
+// maintainer    : Sven Schönherr <sven@inf.ethz.ch>
 //
 // revision      : 0.1
 // revision_date : 2000/08/09
@@ -21,7 +22,7 @@
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
 //
 // implementation: arbitra. precise floating-point type based on GMP's integers
-// ============================================================================
+// ======================================================================
 
 #ifndef GMP_DOUBLE_H
 #define GMP_DOUBLE_H
@@ -39,7 +40,7 @@ class Double;
 
 // Function declaration
 // ====================
-std::ostream&  operator << ( std::ostream&, const Double&);
+inline std::ostream&  operator << ( std::ostream&, const Double&);
 
 
 // Class interface

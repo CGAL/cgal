@@ -1,4 +1,4 @@
-// ============================================================================
+// ======================================================================
 //
 // Copyright (c) 1997-2001 The CGAL Consortium
 //
@@ -6,13 +6,14 @@
 // of the Computational Geometry Algorithms Library (CGAL). It is not
 // intended for general use.
 //
-// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-I $
-// release_date  : $CGAL_Date$
+// release       : $CGAL_Revision: CGAL-2.4-I-64 $
+// release_date  : $CGAL_Date: 2002/03/18 $
 //
 // file          : include/CGAL/_QP_solver/QP_solver.C
-// package       : $CGAL_Package: _QP_solver $
+// package       : _QP_solver (0.9.4)
+// maintainer    : Sven Schönherr <sven@inf.ethz.ch>
 //
 // revision      : 0.5
 // revision_date : 2000/09/06
@@ -21,7 +22,7 @@
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
 //
 // implementation: Solver for Quadratic Programs
-// ============================================================================
+// ======================================================================
                                                                                
 CGAL_BEGIN_NAMESPACE
                     
@@ -72,7 +73,7 @@ void
 QP_solver<Rep_>::
 set_up_auxiliary_problem( )
 {
-    int i;
+    int ii;
 
     // delete artifical part of `A' and auxiliary `c', if necessary
     art_A.erase( art_A.begin(), art_A.end());
@@ -83,10 +84,10 @@ set_up_auxiliary_problem( )
     aux_c.reserve( qp_n+qp_m);
     aux_c.insert( aux_c.end(), qp_n, nt_0);
 
-    for ( i = 0; i < qp_m; ++i) {
+    for ( ii = 0; ii < qp_m; ++ii) {
         Artificial_column  art_col;
-        art_col.push_back( std::make_pair( i,
-                           qp_b[ i] >= nt_0 ? nt_1 : nt_minus_1));
+        art_col.push_back( std::make_pair( ii,
+                           qp_b[ ii] >= nt_0 ? nt_1 : nt_minus_1));
         art_A.push_back( art_col);
         aux_c.push_back( nt_1);
     }
@@ -96,9 +97,9 @@ set_up_auxiliary_problem( )
         int  k = 0;
         while ( ( k < qp_m) && ( qp_b[ k] == nt_0)) { ++k; }
         CGAL_optimisation_precondition( k < qp_m);
-        for ( i = 0; i < qp_m; ++i) {
-            if ( qp_b[ i] == nt_0) {
-                art_A[ k].push_back( std::make_pair( i, nt_minus_1));
+        for ( ii = 0; ii < qp_m; ++ii) {
+            if ( qp_b[ ii] == nt_0) {
+                art_A[ k].push_back( std::make_pair( ii, nt_minus_1));
             }
         }
     }
@@ -110,12 +111,12 @@ void
 QP_solver<Rep_>::
 set_up_basis( )
 {
-    int i;
+    int ii;
 
     // initialize basis (with artificial variables)
     if ( B.size() > 0) B.erase( B.begin(), B.end());
     B.insert( B.end(), qp_m, 0);
-    for ( i = 0; i < qp_m; ++i) B[ i] = qp_n+i;
+    for ( ii = 0; ii < qp_m; ++ii) B[ ii] = qp_n+ii;
     art_basic = qp_m;
 
     
@@ -137,7 +138,7 @@ set_up_basis( )
     if ( in_B.size() > 0) in_B.erase( in_B.begin(), in_B.end());
     in_B.reserve( qp_n+qp_m);
     in_B.insert( in_B.end(), qp_n, -1);
-    for ( i = 0; i < qp_m; ++i) in_B.push_back( i);
+    for ( ii = 0; ii < qp_m; ++ii) in_B.push_back( ii);
 
     // initialize basis inverse
     int  k = 0;
@@ -148,13 +149,13 @@ set_up_basis( )
     w.reserve( qp_m);
     NT  u_k = ( qp_b[ k] > nt_0 ? nt_1 : nt_minus_1);
     /***** NT  u_k = nt_0; *****/
-    for ( i = 0; i < qp_m; ++i) {
-        if ( qp_b[ i] < nt_0) {
+    for ( ii = 0; ii < qp_m; ++ii) {
+        if ( qp_b[ ii] < nt_0) {
             u.push_back( nt_minus_1);
             w.push_back( nt_0);
         } else {
             u.push_back( nt_1);
-            w.push_back( qp_b[ i] > nt_0 ? nt_0 : u_k);
+            w.push_back( qp_b[ ii] > nt_0 ? nt_0 : u_k);
         }
     }
 
@@ -372,8 +373,8 @@ solution_numerator( ) const
     Basic_variable_index_iterator        i_it,   j_it;
     Basic_variable_numerator_iterator  x_i_it, x_j_it;
     ET   s = et_0, sum;
-    int  i;
-    bool is_phase_I = (phase() == 1);
+    int  ii;
+    bool is_phase_II = (phase() == 1);
 
     // compute  c^T x + x^T D x  (D is symmetric)
     // ------------------------------------------
@@ -383,26 +384,26 @@ solution_numerator( ) const
     x_i_it = basic_variables_numerator_begin();
     for ( ; i_it != basic_variables_index_end(); ++i_it, ++x_i_it) {
         sum = et_0;
-        i   = *i_it;
+        ii   = *i_it;
 
-        if ( ! ( CGAL::check_tag( Is_lp()) || is_phase_I)) {
+        if ( ! ( CGAL::check_tag( Is_lp()) || is_phase_II)) {
 
             // j: 0..i-1
               j_it = basic_variables_index_begin();
             x_j_it = basic_variables_numerator_begin();
             for ( ; j_it != i_it; ++j_it, ++x_j_it) {
 
-                // D_{i,j} x_j
-                sum += ET( qp_D[ i][ *j_it]) * *x_j_it;
+                // D_{ii,j} x_j
+                sum += ET( qp_D[ ii][ *j_it]) * *x_j_it;
             }
             sum *= et_2;
 
-            // D_{i,i} x_i
-            sum += ET( qp_D[ i][ i]) * *x_i_it;
+            // D_{ii,ii} x_i
+            sum += ET( qp_D[ ii][ ii]) * *x_i_it;
         }
 
         // d c_i
-        sum += d * ( is_phase_I ? aux_c[ i] : qp_c[ i]);
+        sum += d * ( is_phase_II ? aux_c[ ii] : qp_c[ ii]);
 
         s += sum * *x_i_it;
     }
@@ -413,11 +414,11 @@ solution_numerator( ) const
 template < class Rep_ >
 typename QP_solver<Rep_>::ET
 QP_solver<Rep_>::
-dual_variable( int i) const
+dual_variable( int ii) const
 {
     Assert_compile_time_tag( Tag_true(), Is_lp());
     Values  unity( qp_m), col;
-    unity[ i] = et_1;
+    unity[ ii] = et_1;
     col.reserve( qp_m);
     inv_M_B.multiply_x( unity.begin(), std::back_inserter( col));
     return std::inner_product( col.begin(), col.end(),
