@@ -39,25 +39,25 @@
 #define __osf
 #endif
 
-#if (	!defined(__i386)  && \
-	!defined(__sparc) && \
-	!defined(__alpha) && \
-	!defined(__mips) )
+#if (	!defined(__i386__)  && \
+	!defined(__sparc__) && \
+	!defined(__alpha__) && \
+	!defined(__mips__) )
 #error "Architecture not supported."
 #endif
 
-#ifndef CGAL_IA_DONT_USE_ASSEMBLY && defined(__GNUC__)
+#if defined (CGAL_IA_DONT_USE_ASSEMBLY) && defined (__GNUC__)
 #define CGAL_IA_USE_ASSEMBLY
 #endif
 
-#ifdef __linux
+#ifdef __linux__
 #include <fpu_control.h>
 #endif
 
 #ifndef CGAL_IA_USE_ASSEMBLY
-#ifdef __sun
+#ifdef __sun__
 #include <ieeefp.h>
-#endif // __sun
+#endif // __sun__
 #ifdef __osf
 #include <float.h>
 #endif // __osf
@@ -74,7 +74,7 @@ extern "C" {
 
 CGAL_BEGIN_NAMESPACE
 
-#ifdef __i386
+#ifdef __i386__
 #ifdef CGAL_IA_USE_ASSEMBLY
 #define CGAL_IA_SETFPCW(CW) asm volatile ("fldcw %0" : :"m" (CW))
 #define CGAL_IA_GETFPCW(CW) asm volatile ("fstcw %0" : "=m" (CW))
@@ -86,9 +86,9 @@ enum {  //               rounding | def. mask
     FPU_cw_up   = _FPU_RC_UP      | 0x127f,
     FPU_cw_down = _FPU_RC_DOWN    | 0x127f
 };
-#endif // __i386
+#endif // __i386__
 
-#ifdef __sparc
+#ifdef __sparc__
 #ifdef CGAL_IA_USE_ASSEMBLY
 #define CGAL_IA_SETFPCW(CW) asm volatile ("ld %0,%%fsr" : :"m" (CW))
 #define CGAL_IA_GETFPCW(CW) asm volatile ("st %%fsr,%0" : "=m" (CW))
@@ -108,9 +108,9 @@ enum {
     FPU_cw_down = FP_RM
 };
 #endif
-#endif // __sparc
+#endif // __sparc__
 
-#ifdef __mips
+#ifdef __mips__
 #ifdef CGAL_IA_USE_ASSEMBLY
 #define CGAL_IA_SETFPCW(CW) asm volatile ("ctc1 %0,$31" : :"r" (CW))
 #define CGAL_IA_GETFPCW(CW) asm volatile ("cfc1 %0,$31" : "=r" (CW))
@@ -122,9 +122,9 @@ enum {
     FPU_cw_up   = 0x2,
     FPU_cw_down = 0x3
 };
-#endif // __mips
+#endif // __mips__
 
-#ifdef __alpha // This one is not really supported [yet].
+#ifdef __alpha__ // This one is not really supported [yet].
 #ifdef CGAL_IA_USE_ASSEMBLY
 #define CGAL_IA_SETFPCW(CW) asm volatile ("mt_fpcr %0; excb" : :"f" (CW))
 #define CGAL_IA_GETFPCW(CW) asm volatile ("excb; mf_fpcr %0" : "=f" (CW))
@@ -145,7 +145,7 @@ enum {
     FPU_cw_down = FP_RND_RM
 };
 #endif
-#endif // __alpha
+#endif // __alpha__
 
 
 // Main functions: FPU_get_cw() and FPU_set_cw();
@@ -157,11 +157,11 @@ inline FPU_CW_t FPU_get_cw (void)
     CGAL_IA_GETFPCW(cw);
 #else
 
-#ifdef __linux
+#ifdef __linux__
 #error "It seems there's no C function in libc5 !!!"
 #endif
 
-#ifdef __sun
+#ifdef __sun__
     cw = fpgetround();
 #endif
 
@@ -183,11 +183,11 @@ inline void FPU_set_cw (FPU_CW_t cw)
     CGAL_IA_SETFPCW(cw);
 #else
 
-#ifdef __linux
+#ifdef __linux__
     __setfpucw(cw);
 #endif
 
-#ifdef __sun
+#ifdef __sun__
     fpsetround(fp_rnd(cw));
 #endif
 
