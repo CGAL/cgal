@@ -1,0 +1,119 @@
+// Copyright (c) 2005  INRIA (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$
+// $Name$
+//
+// Author(s)     : Laurent Saboret, Bruno Levy, Pierre Alliez
+
+
+// MeshAdaptor_3 is a concept for a 3D mesh interface. 
+// Adaptators for Polyhedron _3 and Triangulation_2 with 3D points are provided.
+// 
+// This concept is mainly intended to provide a uniform access to Polyhedron _3 and Triangulation_2 for the parameterization package, but it may be adapted to other mesh structures and other algorithms.
+
+class MeshAdaptor_3 
+{
+// Public types
+public:
+				typedef ...						NT;
+				typedef ...						Face;
+				typedef ...						Vertex;
+				typedef ...						Point_2;
+				typedef ...						Point_3;
+				typedef ...						Face_iterator;
+				typedef ...						Vertex_iterator;
+				typedef ...						Border_vertex_iterator;
+				typedef ...						Vertex_around_face_circulator;
+				typedef ...						Vertex_around_vertex_circulator;
+
+// Public operations
+public:
+				//
+				// MESH INTERFACE
+				//
+
+				// Get iterator over first vertex of mesh
+				Vertex_iterator  mesh_vertices_begin ();
+
+				// Get iterator over past-the-end vertex of mesh
+				Vertex_iterator  mesh_vertices_end ();
+				
+				// Count the number of vertices of the mesh.
+				int  count_mesh_vertices () const;
+				// Index vertices of the mesh for 0 to count_mesh_vertices()-1.
+				void  index_mesh_vertices ();
+				
+				
+				// Return true of all mesh's faces are triangles
+				bool  is_mesh_triangular () const;
+				
+				// Compute the genus of the mesh
+				int  get_mesh_genus () const;
+				// Count the number of boundaries of the mesh
+				int  count_mesh_boundaries () const;
+				
+				
+				// Get iterator over first vertex of mesh's border
+				Border_vertex_iterator  mesh_border_vertices_begin ();
+				// Get iterator over past-the-end vertex of mesh's border
+				Border_vertex_iterator  mesh_border_vertices_end ();
+				
+				// Get iterator over first face of mesh
+				Face_iterator  mesh_faces_begin ();
+				// Get iterator over past-the-end face of mesh
+				Face_iterator  mesh_faces_end ();
+				
+				// Count the number of faces of the mesh.
+				int  count_mesh_faces () const;
+
+				//
+				// FACE INTERFACE
+				//
+
+				// Get circulator over face's vertices
+				Vertex_around_face_circulator  face_vertices_begin (Face* face);
+				
+				// Count the number of vertices of a face
+				int  count_face_vertices (const Face& face) const;
+
+				//
+				// VERTEX INTERFACE
+				//
+
+				// Get the 3D position of a vertex
+				Point_3  get_vertex_position (const Vertex& vertex) const;
+				
+				// Get the 2D position of a vertex
+				Point_2  get_vertex_uv (const Vertex& vertex) const;
+				// Set the 2D position of a vertex
+				void  set_vertex_uv (Vertex* vertex, Point_2 uv);
+				
+				// Set "is parameterized" field of vertex
+				void  set_vertex_parameterized (Vertex* vertex, bool is_parameterized);
+				// Indicate if a vertex is already parameterized
+				bool  is_vertex_parameterized (const Vertex& vertex) const;
+				
+				// Set vertex index
+				void  set_vertex_index (Vertex* vertex, int index);
+				// Get the index of a vertex
+				int  get_vertex_index (const Vertex& vertex) const;
+				
+				// Return true if a vertex belongs to the mesh's boundary
+				bool  is_vertex_on_border (const Vertex& vertex) const;
+				
+				// Get circulator over the vertices incident to 'vertex'
+				Vertex_around_vertex_circulator  vertices_around_vertex_begin (Vertex* vertex);
+};
+
