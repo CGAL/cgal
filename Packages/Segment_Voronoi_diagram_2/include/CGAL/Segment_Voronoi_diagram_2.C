@@ -610,38 +610,15 @@ insert_segment(const Site_2& t, Vertex_handle vnear)
     return insert_point(t.source(), vnear);
   }
 
-  Vertex_handle vs;
+  Vertex_handle v0 = insert_point( t.source(), vnear );
+  Vertex_handle v1 = insert_point( t.target(), v0 );
 
-  if ( number_of_vertices() == 0 ) {
-    Vertex_handle v0 = insert_first( t.source() );
-    Vertex_handle v1 = insert_second( t.target() );
-    Vertex_handle vs = insert_third(v0, v1);
-    return vs;
-  } else {
-    Vertex_handle v0, v1;
-    if ( number_of_vertices() == 1 ) {
-      v0 = insert_second( t.source() );
-      v1 = insert_third( t.target() );
-    } else if ( number_of_vertices() == 2 ) {
-      v0 = insert_third( t.source() );
-      v1 = insert_point( t.target(), v0 );
-    } else {
-      v0 = insert_point( t.source(), vnear );
-      v1 = insert_point( t.target(), v0 );
-    }
+  if ( number_of_vertices() == 2 ) {
+    return insert_third(v0, v1);
+  }
 
-    if ( number_of_vertices() == 2 ) {
-      Vertex_handle v0( finite_vertices_begin() );
-      Vertex_handle v1( ++finite_vertices_begin() );
-      return insert_third(v0, v1);
-    }
-
-    Storage_site_2 ss = create_storage_site(v0, v1);
-    // we do not add vs in the vertex list; it is inserted inside
-    // the method insert_segment2
-    vs = insert_segment_interior(t, ss, v0);
-    return vs;
-  } // if ( number_of_vertices() == 0 ) {
+  Storage_site_2 ss = create_storage_site(v0, v1);
+  return insert_segment_interior(t, ss, v0);
 }
 
 
