@@ -110,11 +110,14 @@ class QPE__filtered_base : virtual public QPE_pricing_strategy<Rep_> {
     typedef  typename Rep::Is_linear    Is_linear;
 
     typedef  typename Rep::A_iterator   A_iterator;
+    typedef  typename Rep::C_iterator   C_iterator;   
     typedef  typename std::iterator_traits
         <typename Rep::D_iterator>::value_type
                                         D_row_iterator;
     typedef  typename Rep::Row_type_iterator
                                         R_iterator;
+					
+    typedef typename Base::QP_solver::C_auxiliary_iterator C_auxiliary_iterator;
 
     typedef  typename Base::QP_solver::Basic_variable_index_iterator
                                         Basic_variable_index_iterator;
@@ -166,9 +169,9 @@ set( int l, Tag_false)
 
 template < class Rep_, class NT_, class ET2NT_ > inline         // LP case
 void  QPE__filtered_base<Rep_,NT_,ET2NT_>::
-set( int, Tag_true)
+set( int l, Tag_true)
 {
-    // nop
+     x_B_O_NT.resize( l, nt0);   
 }
 
 // initialization

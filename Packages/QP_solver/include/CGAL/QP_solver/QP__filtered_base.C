@@ -52,7 +52,6 @@ init( )
     int  n = this->solver().number_of_variables();
     int  m = this->solver().number_of_constraints();
     int  s = this->solver().number_of_slack_variables();
-    int  a = this->solver().number_of_artificial_variables();
 
     // clear row and column maxima, if necessary
     if ( ! row_max_A.empty()) row_max_A.clear();
@@ -61,13 +60,24 @@ init( )
     init( Is_linear());
 
     // initialize row and column maxima
-    row_max_c = nt1;
-
+    // assuming nonneg coefficients
+    row_max_c = nt0;
+    C_auxiliary_iterator v_it;
+    for ( v_it = this->solver().c_auxiliary_value_iterator_begin();
+              v_it != this->solver().c_auxiliary_value_iterator_end(); ++v_it) {
+        if (*v_it > row_max_c) row_max_c = (*v_it);
+    }
+        
     handled_A.insert( handled_A.end(), m, false);
     row_max_A.insert( row_max_A.end(), m, nt0);
 
     col_max.insert( col_max.end(), n,   nt0);               // original
-    col_max.insert( col_max.end(), s+a, nt1);               // slack+artificial
+    col_max.insert( col_max.end(), s, nt1);               // slack
+    							  //auxiliary
+    for ( v_it = this->solver().c_auxiliary_value_iterator_begin();
+          v_it != this->solver().c_auxiliary_value_iterator_end(); ++v_it) {
+	      col_max.insert( col_max.end(), (*v_it));
+    }
 }
 
 // operations
@@ -109,8 +119,9 @@ update_maxima( )
     NT          row_max, z;
 
     Basic_constraint_index_iterator  it;
+    Values_NT_iterator v_it = lambda_NT.begin();
     for ( it =  this->solver().basic_constraints_index_begin();
-	  it != this->solver().basic_constraints_index_end(); ++it) {
+	  it != this->solver().basic_constraints_index_end(); ++it, ++v_it) {
 	row = *it;
 
 	// row not handled yet?
@@ -130,7 +141,7 @@ update_maxima( )
 	    handled_A[ row] = true;
 	}
 	// update bounds
-	z = CGAL::abs( lambda_NT[ row]);
+	z = CGAL::abs( *v_it);
 	if ( z > bound2_wq) bound2_wq = z;
 	z *= row_max_A[ row];
 	if ( z > bound1) bound1 = z;
@@ -167,8 +178,10 @@ update_maxima( Tag_false)
     NT              row_max, z;
 
     Basic_variable_index_iterator  it;
+    Values_NT_iterator v_it = x_B_O_NT.begin();
     for ( it =  this->solver().basic_original_variables_index_begin();
-	  it != this->solver().basic_original_variables_index_end(); ++it) {
+	  it != this->solver().basic_original_variables_index_end();
+	  ++it, ++v_it) {
 	row = *it;
 
 	// row not handled yet?
@@ -186,7 +199,7 @@ update_maxima( Tag_false)
 	    handled_D[ row] = true;
 	}
 	// update bounds
-	z = CGAL::abs( x_B_O_NT[ row]);
+	z = CGAL::abs( (*v_it));
 	if ( z > bound2_wq) bound2_wq = z;
 	z *= row_max_D[ row];
 	if ( z > bound1) bound1 = z;
@@ -201,11 +214,8 @@ update_maxima( Tag_true)
     // update basic original variables maxima
     NT              z;
 
-    Basic_variable_index_iterator  it;
-    Values_NT_iterator v_it = x_B_O_NT.begin();
-    for ( it =  this->solver().basic_original_variables_index_begin();
-	      it != this->solver().basic_original_variables_index_end(); ++it,
-	      ++v_it) {
+    Values_NT_iterator v_it;
+    for ( v_it = x_B_O_NT.begin(); v_it != x_B_O_NT.end(); ++v_it) {
 
 	// update bounds
 	z = CGAL::abs( (*v_it));
@@ -260,7 +270,7 @@ transition( )
     int  n = this->solver().number_of_variables();
 
     // update row and column maxima with original objective vector 'c'
-    typename Rep::C_iterator  c_it = this->solver().c_begin();
+    C_iterator  c_it = this->solver().c_begin();
     NT  z;
     row_max_c = nt0;
     for ( int i = 0; i < n; ++i, ++c_it) {
