@@ -45,8 +45,8 @@ struct SphereTraits {
   typedef CGAL::Tag_true Use_square_roots;
   typedef double FT;
 
-  typedef Sphere::ConstIterator Coordinate_iterator;
-  static Coordinate_iterator begin(const Sphere& b) {
+  typedef Sphere::ConstIterator Cartesian_const_iterator;
+  static Cartesian_const_iterator center_cartesian_begin(const Sphere& b) {
     return b.beginCenter();
   }
   static double radius(const Sphere& b) {

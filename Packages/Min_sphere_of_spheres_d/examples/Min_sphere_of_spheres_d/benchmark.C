@@ -81,9 +81,10 @@ struct Ball_traits {
   typedef double FT;
   typedef CGAL::Default_algorithm Algorithm;
   typedef CGAL::Tag_false Use_square_roots;
-  typedef Sphere::Coord_iterator Coordinate_iterator;
+  typedef Sphere::Coord_iterator Cartesian_const_iterator;
 
-  static Coordinate_iterator begin(const Ball& b) {
+  static Cartesian_const_iterator
+    center_cartesian_begin(const Ball& b) {
     return b.begin_center();
   }
   static double radius(const Ball& b) {

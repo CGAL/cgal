@@ -65,7 +65,7 @@ namespace CGAL {
     typedef FT_ Weight;
     typedef CGAL::Point_2<K_> Point;
     typedef CGAL::Weighted_point<Point,Weight> Sphere;
-    typedef typename Point::Cartesian_const_iterator Coordinate_iterator;
+    typedef typename Point::Cartesian_const_iterator Cartesian_const_iterator;
     typedef UseSqrt_ Use_square_roots;
     typedef Algorithm_ Algorithm;
 
@@ -77,7 +77,8 @@ namespace CGAL {
       return s.weight();
     }
 
-    static inline Coordinate_iterator begin(const Sphere& s) {
+    static inline Cartesian_const_iterator
+      center_cartesian_begin(const Sphere& s) {
       return s.cartesian_begin();
     }
   };

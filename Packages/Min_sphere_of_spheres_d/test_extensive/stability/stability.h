@@ -105,11 +105,12 @@ struct BallTraits {
   typedef CGAL::Default_algorithm Algorithm;
   typedef Sqrt Use_square_roots;
   typedef FunctorIterator< const StorageNumberType *,
-			   fromDouble<NumberType> > Coordinate_iterator;
+			   fromDouble<NumberType> > Cartesian_const_iterator;
   
   // routines:
-  inline static Coordinate_iterator begin(const Sphere& b) {
-    return Coordinate_iterator(b.center());
+  inline static Cartesian_const_iterator
+    center_cartesian_begin(const Sphere& b) {
+    return Cartesian_const_iterator(b.center());
   }
   inline static FT radius(const Sphere& b) {
     return static_cast<NumberType>(b.radius());

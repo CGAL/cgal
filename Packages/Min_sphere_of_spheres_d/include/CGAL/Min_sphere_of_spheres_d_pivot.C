@@ -85,7 +85,8 @@ namespace CGAL_MINIBALL_NAMESPACE {
         bool isEnclosingSupporting = ss.is_spanning();
         if (isEnclosingSupporting)
           for(int i=0; i<e; ++i)
-            if (!T.test(i) && !ss.contains(t.begin(*l[i]),t.radius(*l[i]),
+            if (!T.test(i) && !ss.contains(t.center_cartesian_begin(*l[i]),
+                                           t.radius(*l[i]),
                                            Tol,Is_exact())) {
               isEnclosingSupporting = false;
               break;

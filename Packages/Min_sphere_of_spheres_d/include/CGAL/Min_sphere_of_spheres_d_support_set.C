@@ -91,7 +91,8 @@ namespace CGAL_MINIBALL_NAMESPACE {
       
     } else {
       // calculate $C_m$, storing it (temporarily) in u[m]:
-      CIt c = t.begin(*b[m]), c_0 = t.begin(*b[0]);
+      CIt c   = t.center_cartesian_begin(*b[m]),
+          c_0 = t.center_cartesian_begin(*b[0]);
       for (int j=0; j<D; ++j) {
         u[m][j] = *c - *c_0;
         ++c; ++c_0;
@@ -172,7 +173,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     // make sure at least one ball got pushed:
     CGAL_MINIBALL_ASSERT(m > 0);
   
-    copy_n<D>(t.begin(*b[0]),center);
+    copy_n<D>(t.center_cartesian_begin(*b[0]),center);
   
     if (m > 1) {
       // compute the coeffients beta[i] and the center:

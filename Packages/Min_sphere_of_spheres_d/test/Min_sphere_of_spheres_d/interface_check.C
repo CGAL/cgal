@@ -68,8 +68,8 @@ struct BallTraits {
   typedef _Sqrt Use_square_roots;
   typedef _FT FT;
 
-  typedef typename Sphere::Coordinate_iterator Coordinate_iterator;
-  static Coordinate_iterator begin(const Sphere& b) {
+  typedef typename Sphere::Coordinate_iterator Cartesian_const_iterator;
+  static Cartesian_const_iterator center_cartesian_begin(const Sphere& b) {
     return b.center();
   }
   static const FT& radius(const Sphere&b) {
@@ -105,31 +105,33 @@ template<int D,typename Sphere,typename FT>
 void compare(const FT& tol,Sphere& m1,Sphere& m2,
 	     const CGAL::Tag_true is_exact) {
   typedef typename Sphere::Result Pair;
-  typedef typename Sphere::Coordinate_iterator CIt;
+  typedef typename Sphere::Cartesian_const_iterator CIt;
 
   // check radii:
   const Pair r1 = m1.radius(), r2 = m2.radius();
   checkCondition(r1 == r2,"Radii do not match.");
 
   // check coordinates:
-  CIt c1 = m1.center_begin();
-  CIt c2 = m2.center_begin();
+  CIt c1 = m1.center_cartesian_begin();
+  CIt c2 = m2.center_cartesian_begin();
   for (int i=0; i<D; ++i, ++c1, ++c2)
     checkCondition(*c1 == *c2,"Center coordinates do not match.");
+  checkCondition(c1 == m1.center_cartesian_end(),"Iterator mismatch.");
+  checkCondition(c2 == m2.center_cartesian_end(),"Iterator mismatch.");
 }
 
 template<int D,typename Sphere,typename FT>
 void compare(const FT& tol,Sphere& m1,Sphere& m2,
 	     const CGAL::Tag_false is_exact) {
-  typedef typename Sphere::Coordinate_iterator CIt;
+  typedef typename Sphere::Cartesian_const_iterator CIt;
 
   // check radii:
   const FT r1 = m1.radius(), r2 = m2.radius();
   checkRelError(r1,r2,tol,"Radii do not match.");
 
   // check coordinates:
-  CIt c1 = m1.center_begin();
-  CIt c2 = m2.center_begin();
+  CIt c1 = m1.center_cartesian_begin();
+  CIt c2 = m2.center_cartesian_begin();
   for (int i=0; i<D; ++i, ++c1, ++c2)
     checkRelError(*c1,*c2,tol,"Center coordinates do not match.");
 }

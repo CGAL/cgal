@@ -46,8 +46,8 @@ struct BallTraits {
   typedef CGAL::Tag_false Use_square_roots;
   typedef ::FT FT;
 
-  typedef Sphere::ConstIterator Coordinate_iterator;
-  static Coordinate_iterator begin(const Sphere& b) {
+  typedef Sphere::ConstIterator Cartesian_const_iterator;
+  static Cartesian_const_iterator center_cartesian_begin(const Sphere& b) {
     return b.beginCenter();
   }
   static const FT& radius(const Sphere& b) {

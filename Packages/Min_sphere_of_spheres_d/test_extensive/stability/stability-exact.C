@@ -79,7 +79,7 @@ void atomicTest(const int no,const std::string& name,Perturbation perturb,
   PairToDouble p2d(mb.discriminant());
   fd << setprecision(18) << p2d(mb.radius());
   writePair(mb.radius(),ed,mb.discriminant());
-  typename Minsphere::Coordinate_iterator it=mb.center_begin();
+  typename Minsphere::Cartesian_const_iterator it=mb.center_cartesian_begin();
   for (int i=0; i<D; ++i) {
     fd << ' ' << setprecision(18) << p2d(*it);
     writePair(*it,ed,mb.discriminant());

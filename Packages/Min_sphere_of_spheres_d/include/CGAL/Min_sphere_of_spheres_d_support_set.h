@@ -282,7 +282,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     typedef typename Traits::Use_square_roots Use_sqrt;
     typedef typename Traits::Sphere Sphere;
     static const int D = Traits::D;
-    typedef typename Traits::Coordinate_iterator CIt;
+    typedef typename Traits::Cartesian_const_iterator CIt;
   
   public: // constructor:
     inline Support_set(Traits& traits);

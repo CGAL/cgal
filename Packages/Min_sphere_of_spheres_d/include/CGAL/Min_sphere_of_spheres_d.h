@@ -100,7 +100,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     typedef typename Traits::Use_square_roots Use_sqrt;
     typedef typename Traits::Algorithm Algorithm;
     static const int D = Traits::D;
-    typedef typename Traits::Coordinate_iterator CIt;
+    typedef typename Traits::Cartesian_const_iterator CIt;
   
   private: // traits class:
     Traits t; // To allow the traits to not only vary at compile- but
@@ -113,7 +113,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     bool is_up_to_date;
   
   public: // iterators:
-    typedef const Result *Coordinate_iterator; // coordinate iterator
+    typedef const Result *Cartesian_const_iterator; // coordinate iterator
   
     class Support_iterator {
       typedef typename std::vector<const Sphere*>::const_iterator It;
@@ -172,7 +172,8 @@ namespace CGAL_MINIBALL_NAMESPACE {
   
     inline const Result& radius();
   
-    inline Coordinate_iterator center_begin();
+    inline Cartesian_const_iterator center_cartesian_begin();
+    inline Cartesian_const_iterator center_cartesian_end();
   
     inline const FT& discriminant();
   
@@ -262,12 +263,21 @@ namespace CGAL_MINIBALL_NAMESPACE {
   }
 
   template<class Traits>
-  typename Min_sphere_of_spheres_d<Traits>::Coordinate_iterator
-    Min_sphere_of_spheres_d<Traits>::center_begin() {
+  typename Min_sphere_of_spheres_d<Traits>::Cartesian_const_iterator
+    Min_sphere_of_spheres_d<Traits>::center_cartesian_begin() {
     if (!is_up_to_date)
       update();
     CGAL_MINIBALL_ASSERT(!is_empty());
     return ss.begin();
+  }
+
+  template<class Traits>
+  typename Min_sphere_of_spheres_d<Traits>::Cartesian_const_iterator
+    Min_sphere_of_spheres_d<Traits>::center_cartesian_end() {
+    if (!is_up_to_date)
+      update();
+    CGAL_MINIBALL_ASSERT(!is_empty());
+    return ss.begin()+D;
   }
 
   template<class Traits>
