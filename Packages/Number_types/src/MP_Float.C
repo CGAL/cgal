@@ -182,8 +182,9 @@ operator*(const MP_Float &a, const MP_Float &b)
   if (a.is_zero() || b.is_zero())
     return MP_Float();
 
-  if (&a == &b)
-    return square(a);
+  // Disabled until square() is fixed.
+  // if (&a == &b)
+  //   return square(a);
 
   MP_Float r;
   r.exp = a.exp + b.exp;
@@ -210,6 +211,11 @@ operator*(const MP_Float &a, const MP_Float &b)
 MP_Float
 square(const MP_Float &a)
 {
+  // There is a bug here (see test-case in test/NT/MP_Float.C).
+  // For now, I disable this small optimization.
+  // See also the comment code in operator*().
+  return a*a;
+#if 0
   typedef MP_Float::limb limb;
   typedef MP_Float::limb2 limb2;
 
@@ -255,6 +261,7 @@ square(const MP_Float &a)
   }
   r.canonicalize();
   return r;
+#endif
 }
 
 // Division by Newton (code by Valentina Marotta & Chee Yap) :

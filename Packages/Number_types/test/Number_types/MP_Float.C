@@ -50,6 +50,17 @@ void square_test()
   CGAL::MP_Float g = 32767.5;
   CGAL::MP_Float sqr = CGAL::square(f);
   assert(sqr == f*g);
+
+  // Another test case.
+  CGAL::MP_Float M_16 = 1.0/(1<<16);
+  CGAL::MP_Float M_32 = M_16*M_16;
+  CGAL::MP_Float M_48 = M_32*M_16;
+  CGAL::MP_Float M_64 = M_48*M_16;
+  CGAL::MP_Float m = -32768 * M_64 -4795 * M_48 +10121 * M_32 -32768 * M_16;
+  // square(m) is wrongly computed.
+  // For now, I disable square(MP_Float).
+  CGAL::MP_Float s = CGAL_NTS square(m);
+  assert(s*4 == CGAL_NTS square(2*m));
 }
 
 MPF factoriel (short i)

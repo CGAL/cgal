@@ -1,3 +1,6 @@
+17 November 2004 Sylvain Pion
+- Disable square(MP_Float) [minor] optimization until the bug is fixed.
+
 30 September 2004 Sylvain Pion
 - MP_Float : fix bug in constructor from double.
 - MP_Float : add convertion function to rational types (e.g. Gmpq).
