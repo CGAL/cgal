@@ -1,4 +1,3 @@
-
 // ======================================================================
 //
 // Copyright (c) 1999 The CGAL Consortium
@@ -22,13 +21,15 @@
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
  
+#ifndef CGAL_KERNEL_TO_KERNEL_H
+#define CGAL_KERNEL_TO_KERNEL_H
 
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
 #include <LEDA/rat_point.h>
-#endif // CGAL_USE_LEDA
+#endif
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class NumberType>
 struct Cartesian_double_to_Homogeneous
@@ -137,4 +138,6 @@ struct Cartesian_float_to_H_double_int
 };
 #endif // CGAL_USE_LEDA
 
-} // namespace CGAL
+CGAL_END_NAMESPACE
+
+#endif // CGAL_KERNEL_TO_KERNEL_H
