@@ -1,0 +1,15 @@
+#!/sw/bin/perl5 -pi.bak -w
+
+my @clib_names = (
+  'fabs', 'log', 'cos', 'sin', 'ceil', 'floor',
+  'abort', 'atoi',
+  'sscanf', 'sprintf',
+  'clock', 'clock_t',
+  'isalnum', 'isdigit', 'isspace',
+  'strlen', 'strcat','strcpy','strcmp');
+
+foreach $name (@clib_names) {
+    s/\b(std|CGAL_CLIB_STD)::$name\b/$name/g;
+    s/\b$name\b/CGAL_CLIB_STD::$name/g;
+}
+

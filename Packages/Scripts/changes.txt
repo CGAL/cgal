@@ -1,3 +1,7 @@
+# 1.15 (30 May 2000)
++ added script rename_clib_calls to developer_scripts
+
+----------------------
 # 1.14 (25 Apr 2000)
 + Altered implementation for wait_for_process.
 
