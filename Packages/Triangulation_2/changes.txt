@@ -1,11 +1,14 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-- remove the virtual charactwer of insert in Constrained_triangulation
+Ver 7.38 (08/07/02)
+- remove the virtual character of insert in Constrained_triangulation
   Constrained_Delaunay_triangulation_2 and Constrained_triangulation_plus_2.
   There are now virtual versions of those functions with a different name:
   virtual_insert()
 - fixed overloaded insert and locate of Triangulation_hierarachy_2
+  to make Triangulation_hierarachy_2 compatible with 
+  Constrained_triangulation_plus_2
 - remove depraated files in the doc 
   Triangulation_2_ref/Triangulation_face_2.tex
   and Triangulation_2_ref/Triangulation_vertex_2.tex

@@ -32,7 +32,7 @@ _test_cls_const_triang_plus_2( const TrP & )
     vh[i] = trp.insert(pt[i]);
   }
   for(int j=0; j<11; j+=2){
-    trp.insert(vh[j],vh[j+1]);
+     trp.insert_constraint(vh[j],vh[j+1]);
   }
 
   trp.insert(Point(4,4), Point(4,5));

@@ -405,7 +405,7 @@ intersect(Face_handle f, int i,
   bool ok = intersection(geom_traits(), pa, pb, pc, pd, pi, itag );
   CGAL_triangulation_assertion(ok);
 
-  Vertex_handle vi = virtual_insert(pi, EDGE, f, i);
+  Vertex_handle vi = insert(pi, EDGE, f, i);
   return vi; 
 }
 
@@ -442,7 +442,7 @@ intersect(Face_handle f, int i,
   }
   else{ //computed
     remove_constraint(f, i);
-    vi = virtual_insert(pi, f);
+    vi = insert(pi, f);
   }
 
   // vi == vc or vi == vd may happen even if intersection==true
