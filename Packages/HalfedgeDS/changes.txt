@@ -1,5 +1,17 @@
-HalfedgeDS_2 Package: Release changes:
+HalfedgeDS Package: Release changes:
 ---------------------------------------------------------------------
+3.4 (15 Jun 2001)
+
+     - Added missing reference pages in 
+       doc_tex/basic/HalfedgeDS/HalfedgeDS_ref/.
+     - Added missing *.gif files for the reference pages.
+     - HalfedgeDS_using_in_place_list.h: Fixed bug in copy  
+       constructor and assignment operator to copy pairs instead of 
+       single halfedges. Bug reported by Xiangmin Jiao.
+     - Made assignment of empty vertex or face handles while copying
+       explicit. Was relying previously on proper default initialization.
+     - Fixed warnings in the test suite about unused variables.
+
 3.3 (27 Sep 2000)
 
      - Fixed warning for ill-formed main() declaration. 
