@@ -30,8 +30,10 @@ public:
 
   /*! Constructor */
   Pmwx_insert_info() : m_halfedge(Halfedge_handle(NULL)),
-                       vertical_above_event_flag(false),
-                       vertical_below_event_flag(false)
+                      // m_vertical_inserted_above_event(false),
+                      // m_vertical_inserted_below_event(false),
+                       m_right_curves_counter(0)
+
   {
   }
 
@@ -43,24 +45,39 @@ public:
     return m_halfedge;
   }
 
-  bool get_vertical_above_event_flag() const
+ /* bool get_vertical_above_event_flag() const
   {
-    return vertical_above_event_flag;
+    return m_vertical_inserted_above_event;
   }
 
   bool get_vertical_below_event_flag() const
   {
-    return vertical_below_event_flag;
-  }
-
-  void set_vertical_below_event_flag(bool flag)
-  {
-    vertical_below_event_flag = flag;
+    return m_vertical_inserted_below_event;
   }
 
   void set_vertical_above_event_flag(bool flag)
   {
-    vertical_above_event_flag = flag;
+    m_vertical_inserted_above_event = flag;
+  }
+
+  void set_vertical_below_event_flag(bool flag)
+  {
+    m_vertical_inserted_below_event = flag;
+  }*/
+
+  unsigned int dec_right_curves_counter()
+  {
+     return --m_right_curves_counter;
+  }
+
+  void inc_right_curves_counter()
+  {
+    ++m_right_curves_counter;
+  }
+
+  unsigned int get_right_curves_counter()
+  {
+    return m_right_curves_counter;
   }
 
 
@@ -77,8 +94,10 @@ private:
   Halfedge_handle m_halfedge;
 
   //Baruch
-  bool vertical_above_event_flag;
-  bool vertical_below_event_flag;
+ /* bool m_vertical_inserted_above_event;
+  bool m_vertical_inserted_below_event;*/
+
+  unsigned int m_right_curves_counter;
   
 };
 

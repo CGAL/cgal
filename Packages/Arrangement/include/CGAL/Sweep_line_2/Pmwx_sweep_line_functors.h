@@ -11,7 +11,7 @@ public:
   
   Event_less_functor( Traits *traits) : m_traits(traits) {}
   
-  bool operator()(  Event* e1, Event* e2) const 
+  bool operator()(Event* e1, Event* e2) const 
   { 
     return (m_traits->compare_xy(e1->get_point(), e2->get_point()) == SMALLER);
   }

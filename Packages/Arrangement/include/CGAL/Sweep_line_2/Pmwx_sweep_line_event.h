@@ -77,76 +77,57 @@ public:
 
   typedef typename PmwxInsertInfo::Halfedge_handle Halfedge_handle;
 
+  Pmwx_sweep_line_event():m_isCurveInPm(1)
+  {}
   /*! Constructor */
   Pmwx_sweep_line_event(const Point_2 &point, Traits *traits) :
     Base(point, traits)
   {
-    m_verticalCurveXEvents = new VerticalXEventSet(EventLess(this->m_traits));
+    //m_verticalCurveXEvents = new VerticalXEventSet(EventLess(this->m_traits));
   }
 
 
     /*! destructor */
     ~Pmwx_sweep_line_event()
     {
-      delete m_verticalCurveXEvents;
+      //delete m_verticalCurveXEvents;
     }
-  PmwxInsertInfo *get_insert_info() {
+
+
+    void init(const Point_2 &point, Traits *traits)
+    {
+      Base::init(point,traits);
+    }
+
+  PmwxInsertInfo *get_insert_info()
+  {
     return &m_insertInfo;
   }
 
-  /*! Insert a new intersection point on any of the vertical curves.
-   *  The list of points is sorted by their y values.
-   *  If the requireSort flag is true, the appripriate place in the list 
-   *  is searched for. If not, the point is assumed to have the largest y 
-   *  value, and is inserted at the end of the list. 
-   *  If the point already exists, the point is not inserted again.
-   *
-   *  @param p a reference to the point
-   *  @param requireSort false if the point is to be added at the end
-   *  of the list.
-   *
-   *  
+  void add_curve_to_right(SubCurve *curve)
+  {
+    if(Base::add_curve_to_right(curve))
+      m_insertInfo.inc_right_curves_counter();
+  }
+
+
+
+  /*! Insert a new intersection point (event) on any of the vertical curves.
+   *  The set of points is sorted by their y values.
+   * 
+   *  @param e a pointer to the event 
    */
-  void add_vertical_curve_x_event(Self *e, bool requireSort=false) 
+ /* void add_vertical_curve_x_event(Self *e) 
   {
 		m_verticalCurveXEvents->insert(e);
-	}
+	}*/
 		
-		/*
-    if ( m_verticalCurveXEvents.empty() ) 
-    {
-      m_verticalCurveXEvents.push_back(e); 
-      return;
-    }
-    
-    if ( !requireSort ) 
-    {
-      if ( m_verticalCurveXEvents.back() != e ) {
-	m_verticalCurveXEvents.push_back(e);
-      }
-    } else
-    {
-      VerticalXEventListIter iter = m_verticalCurveXEvents.begin();
-      while ( iter != m_verticalCurveXEvents.end() )
-      {
-	if ( m_traits->compare_xy((*iter)->get_point(), e->get_point()) 
-	     == SMALLER ) {
-	  ++iter; 
-	}
-	else
-	  break;
-      }
-      if ( iter == m_verticalCurveXEvents.end() )
-	m_verticalCurveXEvents.push_back(e);
-      else if (m_verticalCurveXEvents.back() != e) {
-	m_verticalCurveXEvents.insert(iter, e);
-      }
-    }
-  }*/
+	
 
-  VerticalXEventSet &get_vertical_x_event_set() {
+  /*VerticalXEventSet &get_vertical_x_event_set() 
+  {
     return *m_verticalCurveXEvents;
-  }
+  }*/
 	
 
   /*! Initialize the array that indicates wheter a curve to the right of the
@@ -154,8 +135,9 @@ public:
    */
   void init_right_curves()
   {
-    m_isCurveInPm.resize(this->get_num_right_curves());
-    for ( int i = 0 ; i < this->get_num_right_curves() ; i++ )
+    unsigned int num_right_curves = get_num_right_curves();
+    m_isCurveInPm.resize(num_right_curves);
+    for ( unsigned int i = 0 ; i < num_right_curves ; i++ )
       m_isCurveInPm[i] = false;
   }
   
@@ -172,8 +154,9 @@ public:
     int i = 0;
     int counter = 0;
     int skip = 0;
-
-    for (unsigned int j = 0 ; j < m_isCurveInPm.size() ; j++ ) {
+    unsigned int _size = m_isCurveInPm.size();
+   
+    for (unsigned int j = 0 ; j < _size ; j++ ) {
       if ( m_isCurveInPm[j] == true ) {
         skip++;
       }
@@ -181,27 +164,29 @@ public:
     skip--;  // now 'skip' holds the amount of the right curves of the event
 		         // that are already inserted to the planar map  - 1 (minus 1)
 
-    SubCurveIter iter = this->m_rightCurves->end();
+    SubCurveIter iter = this->m_rightCurves.end();
     --iter;
     
 
 	 
     // a boolean indictes if there is a vertical that was inserted to the map with endpoint as the
     // event point.
-    bool exist_vertical = m_insertInfo.get_vertical_below_event_flag() ||
-                          m_insertInfo.get_vertical_above_event_flag();
+    /*bool exist_vertical = m_insertInfo.get_vertical_below_event_flag() ||
+                          m_insertInfo.get_vertical_above_event_flag();*/
 	   
-    for ( ; iter != this->m_rightCurves->begin() ; --iter )
+    unsigned int num_left_curves = get_num_left_curves();
+    for ( ; iter != m_rightCurves.begin() ; --iter )
     {
-      if ( curve->getId() == (*iter)->getId() ) 
+      //if ( curve->getId() == (*iter)->getId() ) 
+      if(curve == (*iter))
       {
         m_isCurveInPm[counter] = true;
-        if (( i == 0 ) && ( this->get_num_left_curves() == 0 )
-            && !exist_vertical) 
+        //m_insertInfo.set_right_curves_counter(m_insertInfo.get_right_curves_counter() - 1); //Baruch
+        if (( i == 0 ) && ( num_left_curves == 0 ) /*&& !exist_vertical*/) 
         {
           return skip;
         }
-        if ( this->get_num_left_curves() == 0 && !exist_vertical ) 
+        if ( num_left_curves == 0 /*&& !exist_vertical */) 
 	      {   
           return i-1;
         }
@@ -212,10 +197,12 @@ public:
       counter++;
     }
 
-    CGAL_assertion(curve->getId() == (*iter)->getId());
+    //CGAL_assertion(curve->getId() == (*iter)->getId());
+    CGAL_assertion(curve == (*iter));
     m_isCurveInPm[counter] = true;
+   //  m_insertInfo.set_right_curves_counter(m_insertInfo.get_right_curves_counter() - 1);Baruch
     
-    if ( this->get_num_left_curves() == 0 && !exist_vertical )
+    if ( num_left_curves == 0 /*&& !exist_vertical */)
       i--;
     return i;
   }
@@ -226,9 +213,10 @@ public:
   bool is_curve_largest(CurveWrap *curve)
   {
     int counter = 0;
-    SubCurveIter iter = this->m_rightCurves->end();
+    SubCurveIter iter = this->m_rightCurves.end();
     --iter;
-    while ( curve->getId() != (*iter)->getId() )
+    //while ( curve->getId() != (*iter)->getId() )
+    while(curve != (*iter))
     {
       if ( m_isCurveInPm[counter] == true )
         return false;
@@ -241,7 +229,7 @@ public:
 private:
   PmwxInsertInfo m_insertInfo;
   std::vector<bool> m_isCurveInPm;
-  VerticalXEventSet* m_verticalCurveXEvents;
+ // VerticalXEventSet* m_verticalCurveXEvents;
 };
 
 CGAL_END_NAMESPACE

@@ -59,11 +59,26 @@ public:
   typedef Pmwx_insert_info<HalfedgeHandle> PmwxInsertInfo;
   typedef Pmwx_sweep_line_event<Traits, Self> Event;
 
-  Pmwx_sweep_line_curve(int id, X_monotone_curve_2 &curve, Point_2 *reference, 
+  Pmwx_sweep_line_curve(){}
+
+  Pmwx_sweep_line_curve( X_monotone_curve_2 &curve,
 			SweepLineTraits_2 *traits) : 
-    Base(id, curve, reference, traits) , m_insertInfo(0), m_lastEvent(0)
+    Base( curve,traits),
+   // m_insertInfo(0),
+    m_lastEvent(0)
   {
   }
+
+  
+  void init(X_monotone_curve_2 &curve,
+			SweepLineTraits_2 *traits)
+  {
+    Base::init(curve,traits);
+   // m_insertInfo = 0;
+    m_lastEvent  = 0;
+
+  }
+
 
   void set_hint(StatusLineIter hint) 
   {
@@ -75,13 +90,13 @@ public:
     return m_hint1;
   }
 
-  void set_insert_info(PmwxInsertInfo *insertInfo) {
+ /* void set_insert_info(PmwxInsertInfo *insertInfo) {
     m_insertInfo = insertInfo;
-  }
+  }*/
 
-  PmwxInsertInfo *get_insert_info() const {
+ /* PmwxInsertInfo *get_insert_info() const {
     return m_insertInfo;
-  }
+  }*/
 
   void set_last_event(Event *e) {
     m_lastEvent = e;
@@ -95,7 +110,7 @@ public:
 private:
 
   /* the insert information  of this curve */
-  PmwxInsertInfo *m_insertInfo;
+  //PmwxInsertInfo *m_insertInfo;
 
   /*! the last event that was handled on the curve */
   Event *m_lastEvent;
