@@ -253,6 +253,9 @@ public:
   Largest_empty_iso_rectangle_2(const Iso_rectangle_2 &b);
 
   // ctor
+  Largest_empty_iso_rectangle_2();
+
+  // ctor
   //  Largest_empty_iso_rectangle_2(Polygon &inp_polygon);
 
   // add a point to data
@@ -370,8 +373,6 @@ Largest_empty_iso_rectangle_2<T>::operator =(
 {
   if(this != &ler) {
     free_memory();
-
-    cerr << "operator = calling copy_memory\n";
     copy_memory(ler);
   }
 
@@ -386,7 +387,6 @@ Largest_empty_iso_rectangle_2(
   x_sorted(Less_xy(geom_traits())),
   y_sorted(Less_yx(geom_traits()))
 {
-  cerr << "cctor = calling copy_memory\n";
   copy_memory(ler);
 }
 
@@ -1220,6 +1220,7 @@ Largest_empty_iso_rectangle_2<T>::init(const Point& bl, const Point& tr)
   insert(Point(tr.x(),tr.y()), TOP_RIGHT);
 }
 
+// ctor
 template<class T>
 Largest_empty_iso_rectangle_2<T>::Largest_empty_iso_rectangle_2(
   const Point& bl,
@@ -1232,6 +1233,7 @@ Largest_empty_iso_rectangle_2<T>::Largest_empty_iso_rectangle_2(
   init(bl, tr);
 }
 
+// ctor
 template<class T>
 Largest_empty_iso_rectangle_2<T>::Largest_empty_iso_rectangle_2(
   const Iso_rectangle_2 &b)
@@ -1240,6 +1242,19 @@ Largest_empty_iso_rectangle_2<T>::Largest_empty_iso_rectangle_2(
     y_sorted(Less_yx(geom_traits()))
 {
   init(b.min(), b.max());
+}
+
+// ctor
+template<class T>
+Largest_empty_iso_rectangle_2<T>::Largest_empty_iso_rectangle_2()
+  : cache_valid(false), _gt(),
+    x_sorted(Less_xy(geom_traits())),
+    y_sorted(Less_yx(geom_traits()))
+{
+  Point bl(0,0);
+  Point tr(1,1);
+
+  init(bl,tr);
 }
 
 
