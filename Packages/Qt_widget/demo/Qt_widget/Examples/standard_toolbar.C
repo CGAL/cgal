@@ -16,6 +16,7 @@ typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
 Delaunay dt;
 
 class My_window : public QMainWindow{
+  Q_OBJECT
 public:
   My_window(int x, int y)
   {
@@ -37,11 +38,9 @@ public:
     connect(widget, SIGNAL(custom_redraw()),
 	    this, SLOT(redraw_win()) );
   }
-  ~My_window(){}
 private slots:	//functions
   void redraw_win()
   {
-    //CGAL::Qt_widget::redraw();
     *widget << dt;
   }
 
