@@ -459,6 +459,10 @@ public:
     _Polyhedron_facet_const_circ( pointer p) : It(p) {}
     _Polyhedron_facet_const_circ( It i) : It(i) {}
 
+    template <class NN, class II, class CTG>
+    _Polyhedron_facet_const_circ( const _Polyhedron_facet_circ<NN,II,CTG>& c)
+        : It(c.ptr()) {}
+
 // OPERATIONS Forward Category
 // ---------------------------
 
@@ -575,6 +579,10 @@ public:
     _Polyhedron_vertex_const_circ() : It(0) {}
     _Polyhedron_vertex_const_circ( pointer p) : It(p) {}
     _Polyhedron_vertex_const_circ( It i) : It(i) {}
+
+    template <class NN, class II, class CTG>
+    _Polyhedron_vertex_const_circ( const _Polyhedron_vertex_circ<NN,II,CTG>& c)
+        : It(c.ptr()) {}
 
 // OPERATIONS Forward Category
 // ---------------------------
