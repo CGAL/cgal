@@ -1,5 +1,9 @@
 Circulator Package: Release changes:
 ---------------------------------------------------------------------
+3.32 (4 June 2003) [af]
+     - Fixed bug in circulator.h
+
+
 3.31 (14 May 2003)
 
      - Addressed remarks by Colin Dunlop and made difference_type as argument
