@@ -50,6 +50,8 @@ int main()
   W.draw_text(-260,20, "Input some points; quit input with the right mouse button");
   
   CGAL::Point_2<K> actual;
+  /*std::cout << sizeof(actual) << "\n";*/
+  
   int i=0;
   
   while (W >> actual){

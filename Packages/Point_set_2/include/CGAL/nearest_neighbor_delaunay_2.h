@@ -8,14 +8,14 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : 
-// release_date  : 
+// release       : $CGAL_Revision: CGAL-2.4-I-21 $
+// release_date  : $CGAL_Date: 2001/10/26 $
 //
 // file          : include/CGAL/nearest_neighbor_delaunay_2.h
-// package       : Point_set_2 (2.2.1)
+// package       : Point_set_2 (2.3)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 2.2.1
-// revision_date : 10 July 2001 
+// revision      : 2.3
+// revision_date : 16 Nov 2001 
 // author(s)     : Matthias Baesken
 //
 // coordinator   : Matthias Baesken, Trier  (<baesken@informatik.uni-trier.de>)
@@ -25,6 +25,7 @@
 #define CGAL_NEAREST_NEIGHBOR_DELAUNAY_2_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Unique_hash_map.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <list>
 #include <queue>
@@ -36,12 +37,13 @@ CGAL_BEGIN_NAMESPACE
 
 
 // compare function objects for the priority queues used in nearest neighbor search
-template<class VP, class NT>
+template<class VP, class NT,class MAP_TYPE>
 class compare_vertices {
  public:
-  std::map<VP,NT,std::less<VP> > *pmap;
+  //std::map<VP,NT,std::less<VP> > *pmap;
+  MAP_TYPE* pmap;
   
-  compare_vertices(std::map<VP,NT,std::less<VP> > *p){ pmap=p; }
+  compare_vertices(MAP_TYPE *p){ pmap=p; }
   
   bool operator()(VP e1, VP e2)
   // get the priorities from the map and return result of comparison ...
@@ -211,8 +213,8 @@ void nearest_neighbors_list(const Dt& delau, typename Dt::Vertex_handle v, int k
   typedef typename Dt::Vertex                         Vertex;
   typedef typename Dt::Point                          Point;
   typedef typename Gt::FT                             Numb_type;  // field number type ...
-  typedef typename Gt::Compute_squared_distance_2     Compute_squared_distance_2;  
-  typedef typename std::map<Vertex*,int, std::less<Vertex*> >::iterator map_iterator;
+  typedef typename Gt::Compute_squared_distance_2     Compute_squared_distance_2;   
+  typedef Unique_hash_map<Vertex*, Numb_type>         MAP_TYPE;
 
   int n = delau.number_of_vertices();
    
@@ -224,27 +226,29 @@ void nearest_neighbors_list(const Dt& delau, typename Dt::Vertex_handle v, int k
      
   Point p = v->point();
      
-  std::map<Vertex*,int, std::less<Vertex*> > mark;
+  Unique_hash_map<Vertex*, int>  mark;
   int cur_mark = 1;
 
-  std::map<Vertex*,Numb_type, std::less<Vertex*> > priority_number; // here we save the priorities ...
-  compare_vertices<Vertex*,Numb_type> comp(& priority_number);      // comparison object ...
-  std::priority_queue<Vertex*, std::vector<Vertex*>, CGAL::compare_vertices<Vertex*,Numb_type> > PQ(comp);
+  MAP_TYPE  priority_number; // here we save the priorities ...
+  
+  compare_vertices<Vertex*,Numb_type,MAP_TYPE> comp(& priority_number);      // comparison object ...
+  std::priority_queue<Vertex*, std::vector<Vertex*>, CGAL::compare_vertices<Vertex*,Numb_type,MAP_TYPE> > PQ(comp);
 
   priority_number[v.ptr()] = 0;
   PQ.push(v.ptr());
      
-  //mark_vertex(v);
+  // mark vertex v
   Vertex* vptr = v.ptr();
   mark[vptr] = cur_mark;
       
   while ( k > 0 )
   { 
     // find minimum from PQ ...
-    Vertex* w = PQ.top(); PQ.pop();
-    priority_number.erase(w); // and clean entry in priority map
+    Vertex* w = PQ.top(); 
+    PQ.pop();
    
-    res.push_back(w->handle()); k--; 
+    res.push_back(w->handle());
+    k--; 
 
     // get the incident vertices of w ...
     Vertex_circulator vc = delau.incident_vertices(w->handle());
@@ -255,17 +259,14 @@ void nearest_neighbors_list(const Dt& delau, typename Dt::Vertex_handle v, int k
          act = &(*vc);
 	 
 	 // test, if act is marked ...
-	 bool is_marked;
-    
-         map_iterator mit = mark.find(act);   
-         if (mit == mark.end()) is_marked=false;
-         else is_marked=true;
+	 bool is_marked = mark.is_defined(act);  
 	 
          if ( (! is_marked) && (! delau.is_infinite(act->handle())) )
          { 
              priority_number[act] = Compute_squared_distance_2()(p,act->point());
-             PQ.push(act);	      
-             //mark_vertex(act->handle());
+             PQ.push(act);
+	     	      
+             //mark vertex 
 	     Vertex* vptr = act->handle().ptr();
              mark[vptr] = cur_mark;
          }	   

@@ -37,7 +37,8 @@ all:            \
                 range_search \
                 nearest_nb1 \
 		nearest_nb_fcn \
-		range_search_fcn 
+		range_search_fcn \
+		rs_check_empty
 
 range_search$(EXE_EXT) : range_search$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)range_search range_search$(OBJ_EXT) $(LDFLAGS)
@@ -48,10 +49,13 @@ nearest_nb1$(EXE_EXT) : nearest_nb1$(OBJ_EXT)
 range_search_fcn$(EXE_EXT) : range_search_fcn$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)range_search_fcn range_search_fcn$(OBJ_EXT) $(LDFLAGS)
 
+rs_check_empty$(EXE_EXT) : rs_check_empty$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)rs_check_empty rs_check_empty$(OBJ_EXT) $(LDFLAGS)
+
 nearest_nb_fcn$(EXE_EXT) : nearest_nb_fcn$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)nearest_nb_fcn nearest_nb_fcn$(OBJ_EXT) $(LDFLAGS)
 
-clean: nearest_nb1.clean range_search.clean range_search_fcn.clean nearest_nb_fcn.clean
+clean: nearest_nb1.clean range_search.clean range_search_fcn.clean nearest_nb_fcn.clean rs_check_empty.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules

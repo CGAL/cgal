@@ -8,14 +8,14 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : 
-// release_date  : 
+// release       : $CGAL_Revision: CGAL-2.4-I-21 $
+// release_date  : $CGAL_Date: 2001/10/26 $
 //
 // file          : include/CGAL/Point_set_2.h
-// package       : Point_set_2 (2.2.2)
+// package       : Point_set_2 (2.3)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 2.2.2
-// revision_date : 13 July 2001 
+// revision      : 2.3
+// revision_date : 16 Nov 2001 
 // author(s)     : Matthias Baesken
 //
 // coordinator   : Matthias Baesken, Trier  (<baesken@informatik.uni-trier.de>)
@@ -25,6 +25,7 @@
 #define CGAL_POINT_SET_2_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Unique_hash_map.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <list>
 #include <queue>
@@ -38,12 +39,12 @@ CGAL_BEGIN_NAMESPACE
 
 
 // compare function objects for the priority queues used in nearest neighbor search
-template<class VP, class NT>
+template<class VP, class NT,class MAP_TYPE>
 class compare_vertices {
  public:
-  std::map<VP,NT,std::less<VP> > *pmap;
+  MAP_TYPE* pmap;
   
-  compare_vertices(std::map<VP,NT,std::less<VP> > *p){ pmap=p; }
+  compare_vertices(MAP_TYPE *p){ pmap=p; }
   
   bool operator()(VP e1, VP e2)
   // get the priorities from the map and return result of comparison ...
@@ -52,7 +53,6 @@ class compare_vertices {
     return (v1 > v2);
   }
 };
-
 
 
 template<class Gt, class Tds>
@@ -89,7 +89,9 @@ public:
 
   typedef typename Geom_traits::Bounded_side_2              Circleptori; 
   typedef typename Geom_traits::Compare_distance_2          Comparedist;         
-  typedef typename Geom_traits::Construct_center_2          Circlecenter;     
+  typedef typename Geom_traits::Construct_center_2          Circlecenter;   
+  
+  typedef Unique_hash_map<Vertex*, Numb_type>               MAP_TYPE;  
   
    Comparedist                   tr_comparedist;
    Orientation_2                 tr_orientation;  
@@ -237,6 +239,7 @@ public:
    return res;     
   }
 
+
   void nearest_neighbors_list(Vertex_handle v, int k, std::list<Vertex_handle>& res) 
   {  
      int n = number_of_vertices();
@@ -249,10 +252,9 @@ public:
      // "unmark" the vertices ...
      init_dfs();
 
-
-     std::map<Vertex*,Numb_type, std::less<Vertex*> > priority_number; // here we save the priorities ...
-     compare_vertices<Vertex*,Numb_type> comp(& priority_number);      // comparison object ...
-     std::priority_queue<Vertex*, std::vector<Vertex*>, CGAL::compare_vertices<Vertex*,Numb_type> > PQ(comp);
+     MAP_TYPE                                        priority_number;              // here we save the priorities ...
+     compare_vertices<Vertex*,Numb_type,MAP_TYPE>    comp(& priority_number);      // comparison object ...
+     std::priority_queue<Vertex*, std::vector<Vertex*>, CGAL::compare_vertices<Vertex*,Numb_type,MAP_TYPE> > PQ(comp);
 
      priority_number[v.ptr()] = 0;
      PQ.push(v.ptr());
@@ -262,10 +264,11 @@ public:
      while ( k > 0 )
      { 
        // find minimum from PQ ...
-       Vertex* w = PQ.top(); PQ.pop();
-       priority_number.erase(w); // and clean entry in priority map
+       Vertex* w = PQ.top();
+       PQ.pop();
    
-       res.push_back(w->handle()); k--; 
+       res.push_back(w->handle()); 
+       k--; 
 
        // get the incident vertices of w ...
        Vertex_circulator vc = incident_vertices(w->handle());
@@ -293,14 +296,17 @@ public:
   // for marking nodes in search procedures
   int cur_mark;
    
-  std::map<Vertex*,int, std::less<Vertex*> > mark;  
-  typedef typename std::map<Vertex*,int, std::less<Vertex*> >::iterator map_iterator;
+  /*std::map<Vertex*,int, std::less<Vertex*> > mark;  */
+  Unique_hash_map<Vertex*, int>  mark;
+  
+  
+  /*typedef typename std::map<Vertex*,int, std::less<Vertex*> >::iterator map_iterator;*/
 
   
   void init_vertex_marks()
   {
      cur_mark = 0;
-     mark.erase(mark.begin(), mark.end());
+     mark.clear();
   }
   
   void init_dfs()
@@ -320,8 +326,7 @@ public:
   {
     Vertex* v = vh.ptr();
     
-    map_iterator mit = mark.find(v);   
-    if (mit == mark.end()) return false;
+    if (! mark.is_defined(v)) return false;
 
     return (mark[v] == cur_mark);
   }

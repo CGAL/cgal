@@ -1,3 +1,7 @@
+2.3    Unique_hash_map used
+       new range_search variants added (not yet documented)
+       some demos added
+
 2.2.7  some changes in the demos
 
 2.2.5  Susan moved Point_set_2_ref directory up one level
