@@ -118,7 +118,7 @@ public:
     OUTSIDE_AFFINE_HULL };//5
 
 private:
-  Tds _Triangulation_data_structure_3;
+  Tds _tds;
   GT  _gt;
   Vertex_handle infinite; //infinite vertex
   
@@ -131,12 +131,12 @@ private:
 //   }
 
   void set_number_of_vertices(int n) 
-    { _Triangulation_data_structure_3.set_number_of_vertices(n+1); }
+    { _tds.set_number_of_vertices(n+1); }
 
-  void init_Triangulation_data_structure_3()
+  void init_tds()
     {
       infinite = new Vertex(Point(500,500,500)); // ?? debug
-      _Triangulation_data_structure_3.insert_outside_affine_hull(&(*infinite));
+      _tds.insert_outside_affine_hull(&(*infinite));
       // forces the compiler to instanciate CGAL_debug :
       CGAL_debug( infinite ); 
       CGAL_debug( Cell_handle() );
@@ -146,20 +146,20 @@ public:
 
 // CONSTRUCTORS
   CGAL_Triangulation_3()
-    : _Triangulation_data_structure_3(), _gt()
+    : _tds(), _gt()
   {
-    init_Triangulation_data_structure_3();
+    init_tds();
   }
 
   CGAL_Triangulation_3(const GT & gt) 
-    : _Triangulation_data_structure_3(), _gt(gt)
+    : _tds(), _gt(gt)
   {
-    init_Triangulation_data_structure_3();
+    init_tds();
   }
 
   // copy constructor duplicates vertices and cells
   CGAL_Triangulation_3(const CGAL_Triangulation_3<GT,Tds> & tr)
-    : _Triangulation_data_structure_3(tr._Triangulation_data_structure_3), _gt(tr._gt), infinite(tr.infinite)
+    : _tds(tr._tds), _gt(tr._gt), infinite(tr.infinite)
   {}
 
   // pour la demo
@@ -167,9 +167,9 @@ public:
 		     const Point & p1,
 		     const Point & p2,
 		     const Point & p3)
-    : _Triangulation_data_structure_3(), _gt()
+    : _tds(), _gt()
     {
-      init_Triangulation_data_structure_3();
+      init_tds();
       insert_outside_affine_hull(p0);
       insert_outside_affine_hull(p1);
       insert_outside_affine_hull(p2);
@@ -177,9 +177,9 @@ public:
     }
 
 //   CGAL_Triangulation_3(Tds Triangulation_data_structure_3, const GT & gt=GT())
-//     : _Triangulation_data_structure_3(),_gt(gt)
+//     : _tds(),_gt(gt)
 //   {
-//     _Triangulation_data_structure_3.swap(Triangulation_data_structure_3);
+//     _tds.swap(Triangulation_data_structure_3);
 //   }
 
   // DESTRUCTOR
@@ -191,7 +191,7 @@ public:
 
   void clear()
   {
-    _Triangulation_data_structure_3.clear();
+    _tds.clear();
     infinite.Delete();
   }
 
@@ -202,15 +202,15 @@ public:
   
   inline
   const Tds & Triangulation_data_structure_3() const 
-    { return _Triangulation_data_structure_3;}
+    { return _tds;}
   
   inline
   int dimension() const 
-    { return _Triangulation_data_structure_3.dimension();}
+    { return _tds.dimension();}
 
   inline
   int number_of_vertices() const // number of finite vertices
-    {return _Triangulation_data_structure_3.number_of_vertices()-1;}
+    {return _tds.number_of_vertices()-1;}
 
   inline
   Vertex_handle infinite_vertex() const
@@ -231,7 +231,7 @@ public:
   CGAL_Triangulation_3 & operator=(const CGAL_Triangulation_3 & tr)
   {
     clear();
-    _Triangulation_data_structure_3 = tr._Triangulation_data_structure_3;
+    _tds = tr._Triangulation_data_structure_3;
     _gt = tr._gt;
     infinite = tr.infinite;
     return *this;
