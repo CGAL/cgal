@@ -1,7 +1,7 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-Ver 6.10 (xx/xx/xx)
+Ver 6.10 (11/02/02)
 - changed NULL default Face_handle argument to Face_handle(NULL)
   in Triangulation_data_structure_2.h for vcc
 - move code for operator*() and ->() inside class definition
