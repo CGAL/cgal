@@ -9,6 +9,9 @@
 [ -f ./release/polyhedron_ex_parameterization.exe ] && PARAM_APPLICATION="./release/polyhedron_ex_parameterization.exe"
 [ -x ./polyhedron_ex_parameterization ] && PARAM_APPLICATION="./polyhedron_ex_parameterization"
 
+# Create test folder (if needed)
+mkdir test >/dev/null 2>/dev/null
+
 # echo on
 set -x
 
