@@ -1,4 +1,3 @@
-M
 // ======================================================================
 //
 // Copyright (c) 2002 The CGAL Consortium
@@ -16,7 +15,7 @@ M
 // package       : Number_types
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Andreas Fabri, Sylvain Pion
+// author(s)     : Andreas Fabri
 //
 // coordinator   : MPI, Saarbruecken
 // ======================================================================
@@ -150,7 +149,6 @@ public:
   typedef Tag_true Has_division;
   typedef Tag_false  Has_sqrt;
 
-  typedef Gmpz NT;
 
   Gmpq()
     : Base(Gmpq_rep()) {}
@@ -430,6 +428,17 @@ to_interval (const Gmpq& z)
          Interval_nt<>(CGAL::to_interval(z.denominator()));
 }
 
+
+
+
+template <>
+struct Rational_traits<Gmpq> {
+  typedef Gmpz RT;
+ RT  numerator   (const Gmpq & r) const { return r.numerator(); }
+ RT  denominator (const Gmpq & r) const { return r.denominator(); }
+ Gmpq make_rational(const RT & n, const RT & d) const
+ { return Gmpq(n, d); } 
+};
 
 CGAL_END_NAMESPACE
 
