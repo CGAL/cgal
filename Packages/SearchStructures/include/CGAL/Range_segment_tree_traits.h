@@ -27,8 +27,8 @@
 // ======================================================================
 
 
-#ifndef __CGAL_Range_segment_tree_traits__
-#define __CGAL_Range_segment_tree_traits__
+#ifndef CGAL_RANGE_SEGMENT_TREE_TRAITS_H
+#define CGAL_RANGE_SEGMENT_TREE_TRAITS_H
 
 #include <CGAL/Point_2.h>
 #include <CGAL/Point_3.h>
@@ -43,12 +43,9 @@ template<class Key_1>
   class C_Compare_1{
   public:
     
-    bool operator()(Key_1 k1, Key_1 k2)
+    bool operator()(const Key_1& k1, const Key_1& k2)
     {
-      if(SMALLER == (int)compare_x(k1,k2))
-        return true;
-      else 
-        return false;
+      return SMALLER == (int)compare_x(k1,k2);
     }
   };
 
@@ -56,12 +53,9 @@ template<class Key_2>
   class C_Compare_2{
   public:
     
-    bool operator()(Key_2 k1, Key_2 k2)
+    bool operator()(const Key_2& k1, const Key_2& k2)
     {
-      if(SMALLER == (int)compare_y(k1,k2))
-        return true;
-      else 
-        return false;
+      return SMALLER == (int)compare_y(k1,k2);
     }
   };
 
@@ -69,12 +63,9 @@ template<class Key_3>
   class C_Compare_3{
   public:
     
-    bool operator()(Key_3 k1, Key_3 k2)
+    bool operator()(const Key_3& k1, const Key_3& k2)
     {
-      if(SMALLER == (int)compare_z(k1,k2))
-        return true;
-      else 
-        return false;
+      return SMALLER == (int)compare_z(k1,k2);
     }
   };
 
@@ -168,10 +159,11 @@ template <class Rep, class T>
 class Range_tree_map_traits_2{
  public:
   typedef   T Value;
-  typedef Point_2< Rep> Pure_key;
+  typedef typename Rep::Point_2 Point_2;
+  typedef Point_2 Pure_key;
   typedef std::pair<Pure_key,  T> Key;
-  typedef Point_2< Rep> Key_1;
-  typedef Point_2< Rep> Key_2;
+  typedef Point_2 Key_1;
+  typedef Point_2 Key_2;
   typedef std::pair<Pure_key, Pure_key> Interval;
 
   typedef C_Compare_1<Key_1> compare_1;
@@ -231,12 +223,13 @@ template<class Key_3,class Interval>
 
 template <class Rep, class T>
 class Range_tree_map_traits_3{
- public:
-  typedef std::pair<Point_3< Rep>, T> Key;
-  typedef Point_3< Rep> Pure_key;
-  typedef Point_3< Rep> Key_1;
-  typedef Point_3< Rep> Key_2;
-  typedef Point_3< Rep> Key_3;
+public:
+  typedef typename Rep::Point_3 Point_3;
+  typedef std::pair<Point_3, T> Key;
+  typedef Point_3 Pure_key;
+  typedef Point_3 Key_1;
+  typedef Point_3 Key_2;
+  typedef Point_3 Key_3;
   typedef std::pair<Key,Key> Interval;
 
   typedef C_Compare_1<Key_1> compare_1;
@@ -300,9 +293,10 @@ template <class Rep, class T>
 class Segment_tree_map_traits_2{
  public:
   typedef  T Value;
-  typedef Point_2< Rep> Key;
-  typedef Point_2< Rep> Key_1;
-  typedef Point_2< Rep> Key_2;
+  typedef typename Rep::Point_2 Point_2;
+  typedef Point_2 Key;
+  typedef Point_2 Key_1;
+  typedef Point_2 Key_2;
   typedef std::pair<Key,Key> Pure_interval;
   typedef std::pair<Pure_interval, T> Interval;
 
@@ -321,10 +315,11 @@ class Segment_tree_map_traits_2{
 template <class Rep, class T>
 class Segment_tree_map_traits_3{
  public:
-  typedef Point_3< Rep> Key;
-  typedef Point_3< Rep> Key_1;
-  typedef Point_3< Rep> Key_2;
-  typedef Point_3< Rep> Key_3;
+  typedef typename Rep::Point_3 Point_3;
+  typedef Point_3 Key;
+  typedef Point_3 Key_1;
+  typedef Point_3 Key_2;
+  typedef Point_3 Key_3;
   typedef std::pair<Key,Key> Pure_interval;
   typedef std::pair<Pure_interval,T> Interval;
 
@@ -349,10 +344,11 @@ class Segment_tree_map_traits_3{
 template <class Rep>
 class Range_segment_tree_set_traits_3{
  public:
-  typedef Point_3< Rep> Key;
-  typedef Point_3< Rep> Key_1;
-  typedef Point_3< Rep> Key_2;
-  typedef Point_3< Rep> Key_3;
+  typedef typename Rep::Point_3 Point_3;
+  typedef Point_3 Key;
+  typedef Point_3 Key_1;
+  typedef Point_3 Key_2;
+  typedef Point_3 Key_3;
   typedef std::pair<Key,Key> Interval;
 
   typedef C_Compare_1<Key_1> compare_1;
@@ -376,9 +372,10 @@ class Range_segment_tree_set_traits_3{
 template <class Rep>
 class Range_segment_tree_set_traits_2{
  public:
-  typedef Point_2< Rep> Key;
-  typedef Point_2< Rep> Key_1;
-  typedef Point_2< Rep> Key_2;
+  typedef typename Rep::Point_2 Point_2;
+  typedef Point_2 Key;
+  typedef Point_2 Key_1;
+  typedef Point_2 Key_2;
   typedef std::pair<Key,Key> Interval;
 
   typedef C_Compare_1<Key_1> compare_1;
@@ -395,7 +392,7 @@ class Range_segment_tree_set_traits_2{
 
 
 CGAL_END_NAMESPACE
-#endif
+#endif // CGAL_RANGE_SEGMENT_TREE_TRAITS_H
 
 
 
