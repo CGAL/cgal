@@ -1,4 +1,8 @@
 21 April 2004 Radu Ursu
+- added end of line at the end of file snap_rounding_2_toolbar.h
+- removed wasCancelled call from snap_rounding_2.cpp because it has problems with old versions of Qt. (on Linux)
+
+21 April 2004 Radu Ursu
 -converted Leda based demo to Qt based demo
 
 26 March 2004 Radu Ursu

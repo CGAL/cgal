@@ -223,8 +223,6 @@ public slots:
       in >> x2;
       in >> y2;
       seg_list.push_back(Segment_2(Point_2(x1, y1), Point_2(x2, y2)));
-      if(progress.wasCanceled())
-        break;
     }
     progress.setProgress( number_of_segments);
     get_extreme_points(seg_list, x1, y1, x2, y2);
