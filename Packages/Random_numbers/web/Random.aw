@@ -71,7 +71,7 @@ created in Section~4.
 \renewcommand{\ccSection}{\ccSubsection}
 \renewcommand{\ccFont}{\tt}
 \renewcommand{\ccEndFont}{}
-\ccSetThreeColumns{CGAL_Random}{random.restore_state( State state)}{}
+\ccSetThreeColumns{Random}{random.restore_state( State state)}{}
 \ccPropagateThreeToTwoColumns
 \input{../../doc_tex/support/Random/Random.tex}
 
@@ -88,16 +88,16 @@ random numbers. It behaves like the well-known function \ccc{drand48}
 but operates on a user supplied storage for the 48-Bit state. This
 makes different instances of the random number generator independent.
 
-First, we declare the class \ccc{CGAL_Random}.
+First, we declare the class \ccc{Random}.
 
 @macro<Random declaration> = @begin
-    class CGAL_Random;
+    class Random;
 @end
 
 The class interface looks as follows.
 
 @macro <Random interface> = @begin
-    class CGAL_Random {
+    class Random {
       public:
         @<Random public interface>
 
@@ -116,9 +116,9 @@ section, so we do not comment on it here.
     typedef  unsigned short  State[3];                  // 48 Bits
 
     // creation
-    CGAL_Random( );
-    CGAL_Random( long seed);
-    CGAL_Random( State state);
+    Random( );
+    Random( long seed);
+    Random( State state);
 
     // operations
     bool    get_bool  ( );
@@ -132,7 +132,7 @@ section, so we do not comment on it here.
     void    restore_state( const State& state);
 
     // equality test
-    bool  operator == ( const CGAL_Random& rnd) const;
+    bool  operator == ( const Random& rnd) const;
 @end
 
 
@@ -140,15 +140,15 @@ section, so we do not comment on it here.
 
 \subsection{Global Variable}
 
-The global variable \ccc{CGAL_random} is the default random numbers
+The global variable \ccc{default_random} is the default random numbers
 generator.
 
 @macro <Random global variable declaration> = @begin
-    extern  CGAL_Random  CGAL_random;
+    extern  Random  default_random;
 @end
 
 @macro <Random global variable definition> = @begin
-    CGAL_Random  CGAL_random;
+    Random  default_random;
 @end
 
 
@@ -167,13 +167,8 @@ The state is stored in an array of three \ccc{unsigned short}s.
 In the default constructor the seed is set using the system time.
 
 @macro <Random constructors> = @begin
-    #ifndef CGAL_PROTECT_CTIME
-    #  include <ctime>
-    #  define CGAL_PROTECT_CTIME
-    #endif
-
-    CGAL_Random::
-    CGAL_Random( )
+    Random::
+    Random( )
     {
         // get system's microseconds
         std::timeval tv;
@@ -185,23 +180,22 @@ In the default constructor the seed is set using the system time.
         _state[ 1] =            CGAL_static_cast( unsigned short, ms & 65535);
     }
 
-    CGAL_Random::
-    CGAL_Random( long seed)
+    Random::
+    Random( long seed)
     {
         // initialize random numbers generator
         _state[ 0] = _state[ 2] = CGAL_static_cast( unsigned short,seed >> 16);
         _state[ 1] =            CGAL_static_cast( unsigned short,seed & 65535);
     }
 
-    CGAL_Random::
-    CGAL_Random( State state)
+    Random::
+    Random( State state)
     {
         // initialize random numbers generator
         _state[ 0] = state[ 0];
         _state[ 1] = state[ 1];
         _state[ 2] = state[ 2];
     }
-
 @end
 
 
@@ -212,41 +206,34 @@ uniformly chosen from the interval $[\ccc{0.0},\ccc{1.0})$.
 The result is converted to a number in the given range.
 
 @macro <Random operations> = @begin
-    #ifndef CGAL_PROTECT_CSTDLIB
-    #  include <cstdlib>
-    #  define CGAL_PROTECT_CSTDLIB
-    #endif
-
-    using std::erand48;
-
     inline
     bool
-    CGAL_Random::
+    Random::
     get_bool( )
     {
-        return( CGAL_static_cast( bool, ( erand48( _state) >= 0.5)));
+        return( CGAL_static_cast( bool, ( std::erand48( _state) >= 0.5)));
     }
 
     inline
     int
-    CGAL_Random::
+    Random::
     get_int( int lower, int upper)
     {
         return( lower + CGAL_static_cast( int,
-                  CGAL_static_cast( double, upper-lower) * erand48( _state)));
+            CGAL_static_cast( double, upper-lower) * std::erand48( _state)));
     }
 
     inline
     double
-    CGAL_Random::
+    Random::
     get_double( double lower, double upper)
     {
-        return( lower + ( upper-lower) * erand48( _state));
+        return( lower + ( upper-lower) * std::erand48( _state));
     }
 
     inline
     int
-    CGAL_Random::
+    Random::
     operator () ( int upper)
     {
         return( get_int( 0, upper));
@@ -261,7 +248,7 @@ state variable, respectively.
 
 @macro <Random state functions> = @begin
     void
-    CGAL_Random::
+    Random::
     save_state( State& state) const
     {
         state[ 0] = _state[ 0];
@@ -270,7 +257,7 @@ state variable, respectively.
     }
 
     void
-    CGAL_Random::
+    Random::
     restore_state( const State& state)
     {
         _state[ 0] = state[ 0];
@@ -287,8 +274,8 @@ The equality test compares the internal states of the two operands.
 @macro <Random equality test> = @begin
     inline
     bool    
-    CGAL_Random::
-    operator == ( const CGAL_Random& rnd) const
+    Random::
+    operator == ( const Random& rnd) const
     {
         return( CGAL_static_cast( bool,
                     ( _state[ 0] == rnd._state[ 0]) &&
@@ -304,55 +291,55 @@ The equality test compares the internal states of the two operands.
 \clearpage
 \section{Test}
 
-We call each function of class \ccc{CGAL_Random} at least once to
+We call each function of class \ccc{Random} at least once to
 ensure code coverage. In addition, we check if the generated random
 numbers lie in the given ranges, and if two random numbers generators
 initialized with the same seed generate the same sequence of random
 numbers.
 
 @macro <Random tests> = @begin
-    CGAL_Random::State  state;
-    CGAL_random.save_state( state);
+    Random::State  state;
+    default_random.save_state( state);
 
     // test get_bool
     {
-        bool b = CGAL_random.get_bool();
+        bool b = default_random.get_bool();
         assert( ! b || b);
     }
 
     // test get_int
     {
-        int  l = CGAL_random.get_int( -100, 0);
-        int  u = CGAL_random.get_int( 0, 1000);
-        int  i = CGAL_random.get_int( l, u);
+        int  l = default_random.get_int( -100, 0);
+        int  u = default_random.get_int( 0, 1000);
+        int  i = default_random.get_int( l, u);
         assert( ( l <= i) && ( i < u));
     }
 
     // test get_double
     {
-        double  l = CGAL_random.get_double( -123.45, -0.99);
-        double  u = CGAL_random.get_double( 22.0/7.0, 33.3);
-        double  d = CGAL_random.get_double( l, u);
+        double  l = default_random.get_double( -123.45, -0.99);
+        double  u = default_random.get_double( 22.0/7.0, 33.3);
+        double  d = default_random.get_double( l, u);
         assert( ( l <= d) && ( d < u));
     }
 
     // test operator()
     {
-        int  i = CGAL_random( 5555);
+        int  i = default_random( 5555);
         assert( ( 0 <= i) && ( i < 5555));
     }
 
     // test state functions
     {
-        CGAL_random.restore_state( state);      // `CGAL_Random' and `rnd'
-        CGAL_Random rnd( state);                // have the same state now
-        assert( CGAL_random.get_bool()         == rnd.get_bool()        );
-        assert( CGAL_random.get_int( -100,100) == rnd.get_int( -100,100));
-        assert( CGAL_random.get_double()       == rnd.get_double()      );
-        assert( CGAL_random                    == rnd                   );
+        default_random.restore_state( state);     // `default_random' and `rnd'
+        Random rnd( state);                       // have the same state now
+        assert( default_random.get_bool()         == rnd.get_bool()        );
+        assert( default_random.get_int( -100,100) == rnd.get_int( -100,100));
+        assert( default_random.get_double()       == rnd.get_double()      );
+        assert( default_random                    == rnd                   );
 
-        long init = CGAL_random( 9999);
-        CGAL_Random rnd1( init), rnd2( init);
+        long init = default_random( 9999);
+        Random rnd1( init), rnd2( init);
         assert( rnd1.get_bool()         == rnd2.get_bool()        );
         assert( rnd1.get_int( -100,100) == rnd2.get_int( -100,100));
         assert( rnd1.get_double()       == rnd2.get_double()      );
@@ -367,6 +354,8 @@ numbers.
 \clearpage
 \section{Files}
 
+@i ../namespace.awi
+
 @! ----------------------------------------------------------------------------
 @! Random.h
 @! ----------------------------------------------------------------------------
@@ -377,32 +366,46 @@ numbers.
     #ifndef CGAL_RANDOM_H
     #define CGAL_RANDOM_H
 
-    // Class declaration
-    // =================
-    @<Random declaration>
-
-    // Class interface
-    // ===============
     // includes
     #ifndef CGAL_BASIC_H
     #  include <CGAL/basic.h>
     #endif
 
+    @<namespace begin>("CGAL")
+
+    // Class declaration
+    // =================
+    @<Random declaration>
+    
+    // Class interface
+    // ===============
     @<Random interface>
 
     // Global variables
     // ================
     @<Random global variable declaration>
 
+    @<namespace end>("CGAL")
+    
     @<dividing line>
 
     // Class implementation (inline functions)
     // =======================================
+    // includes
+    #ifndef CGAL_PROTECT_CSTDLIB
+    #  include <cstdlib>
+    #  define CGAL_PROTECT_CSTDLIB
+    #endif
+
+    @<namespace begin>("CGAL")
+
     // operations
     @<Random operations>
 
     @<Random equality test>
 
+    @<namespace end>("CGAL")
+    
     #endif // CGAL_RANDOM_H
 
     @<end of file line>
@@ -417,8 +420,17 @@ numbers.
 
     #include <CGAL/Random.h>
 
+    // additional includes
+    #ifndef CGAL_PROTECT_CTIME
+    #  include <ctime>
+    #  define CGAL_PROTECT_CTIME
+    #endif
+
+    @<namespace begin>("CGAL")
+
     // Class implementation (continued)
     // ================================
+
     // constructors
     @<Random constructors>
 
@@ -429,6 +441,8 @@ numbers.
     // ================
     @<Random global variable definition>
 
+    @<namespace end>("CGAL")
+    
     @<end of file line>
 @end
 
@@ -441,9 +455,12 @@ numbers.
         "test/Random/test_Random.C",
         "test program for Random Numbers Generator")
 
+    // includes
     #include <CGAL/Random.h>
     #include <cassert>
 
+    using namespace CGAL;
+    
     int
     main( int, char**)
     {
