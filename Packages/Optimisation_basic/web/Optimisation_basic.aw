@@ -100,9 +100,9 @@ expensive checks, and for expensive exactness checks.
     #  define  CGAL_optimisation_@2_code(CODE)
     #else
     #  define  CGAL_optimisation_@2(EX) \
-         ((EX)?((void)0):CGAL_@2_fail( # EX , __FILE__, __LINE__, 0))
+         ((EX)?((void)0):CGAL::@2_fail( # EX , __FILE__, __LINE__, 0))
     #  define  CGAL_optimisation_@2_msg(EX,MSG) \
-         ((EX)?((void)0):CGAL_@2_fail( # EX , __FILE__, __LINE__, MSG))
+         ((EX)?((void)0):CGAL::@2_fail( # EX , __FILE__, __LINE__, MSG))
     #  define  CGAL_optimisation_@2_code(CODE) CODE
     #endif // optimisation @2s
 @end
@@ -120,9 +120,9 @@ expensive checks, and for expensive exactness checks.
     #  define  CGAL_optimisation_exactness_@2_code(CODE)
     #else
     #  define  CGAL_optimisation_exactness_@2(EX) \
-         ((EX)?((void)0):CGAL_@2_fail( # EX , __FILE__, __LINE__, 0))
+         ((EX)?((void)0):CGAL::@2_fail( # EX , __FILE__, __LINE__, 0))
     #  define  CGAL_optimisation_exactness_@2_msg(EX,MSG) \
-         ((EX)?((void)0):CGAL_@2_fail( # EX , __FILE__, __LINE__, MSG))
+         ((EX)?((void)0):CGAL::@2_fail( # EX , __FILE__, __LINE__, MSG))
     #  define  CGAL_optimisation_exactness_@2_code(CODE) CODE
     #endif // optimisation exactness @2s
 @end
@@ -140,9 +140,9 @@ expensive checks, and for expensive exactness checks.
     #  define  CGAL_optimisation_expensive_@2_code(CODE)
     #else
     #  define  CGAL_optimisation_expensive_@2(EX) \
-         ((EX)?((void)0):CGAL_@2_fail( # EX , __FILE__, __LINE__, 0))
+         ((EX)?((void)0):CGAL::@2_fail( # EX , __FILE__, __LINE__, 0))
     #  define  CGAL_optimisation_expensive_@2_msg(EX,MSG) \
-         ((EX)?((void)0):CGAL_@2_fail( # EX , __FILE__, __LINE__, MSG))
+         ((EX)?((void)0):CGAL::@2_fail( # EX , __FILE__, __LINE__, MSG))
     #  define  CGAL_optimisation_expensive_@2_code(CODE) CODE
     #endif // optimisation expensive @2s
 @end
@@ -164,9 +164,9 @@ expensive checks, and for expensive exactness checks.
     #  define  CGAL_optimisation_expensive_exactness_@2_code(CODE)
     #else
     #  define  CGAL_optimisation_expensive_exactness_@2(EX) \
-         ((EX)?((void)0):CGAL_@2_fail( # EX , __FILE__, __LINE__, 0))
+         ((EX)?((void)0):CGAL::@2_fail( # EX , __FILE__, __LINE__, 0))
     #  define  CGAL_optimisation_expensive_exactness_@2_msg(EX,MSG) \
-         ((EX)?((void)0):CGAL_@2_fail( # EX , __FILE__, __LINE__, MSG))
+         ((EX)?((void)0):CGAL::@2_fail( # EX , __FILE__, __LINE__, MSG))
     #  define  CGAL_optimisation_expensive_exactness_@2_code(CODE) CODE
     #endif // optimisation expensive exactness @2s
 @end
@@ -180,10 +180,10 @@ expensive checks, and for expensive exactness checks.
 \section{Functions}
 
 @! ----------------------------------------------------------------------------
-@! Function CGAL__optimisation_is_valid_fail
+@! Function _optimisation_is_valid_fail
 @! ----------------------------------------------------------------------------
 
-\subsection{Function \ccFont CGAL\_\_optimisation\_is\_valid\_fail}
+\subsection{Function \ccFont \_optimisation\_is\_valid\_fail}
 
 This function is called from the checking functions of the
 optimisation algorithms if a check fails.  First, we declare the
@@ -191,8 +191,8 @@ function.
 
 @macro<Function _optimisation_is_valid_fail declaration> = @begin
     bool
-    CGAL__optimisation_is_valid_fail( CGAL_Verbose_ostream& verr,
-                                      const char*           message);
+    _optimisation_is_valid_fail( CGAL::Verbose_ostream& verr,
+                                 const char*            message);
 @end
 
 The function prints a failure \ccc{message} to the \cgal\ verbose
@@ -200,8 +200,8 @@ stream \ccc{verr}.
 
 @macro<Function _optimisation_is_valid_fail> = @begin
     bool
-    CGAL__optimisation_is_valid_fail( CGAL_Verbose_ostream& verr,
-                                      const char*           message)
+    _optimisation_is_valid_fail( CGAL::Verbose_ostream& verr,
+                                 const char*            message)
     {
         verr << "FAILED." << endl;
         verr << "  --> " << message << endl;
@@ -218,6 +218,8 @@ stream \ccc{verr}.
 \clearpage
 \section{Files}
 
+@i ../namespace.awi
+
 @! ----------------------------------------------------------------------------
 @! optimisation_assertions.h
 @! ----------------------------------------------------------------------------
@@ -232,10 +234,6 @@ stream \ccc{verr}.
 
     #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
     #define CGAL_OPTIMISATION_ASSERTIONS_H
-
-    #ifndef CGAL_ASSERTIONS_H
-    #  include <CGAL/assertions.h>
-    #endif
 
     // macro definitions
     // =================
@@ -276,16 +274,27 @@ stream \ccc{verr}.
     #ifndef CGAL_OPTIMISATION_BASIC_H
     #define CGAL_OPTIMISATION_BASIC_H
 
+    // includes
+    #ifndef CGAL_BASIC_H
+    #  include <CGAL/basic.h>
+    #endif
+    #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
+    #  include <CGAL/optimisation_assertions.h>
+    #endif
+    #ifndef CGAL_IO_VERBOSE_OSTREAM_H
+    #  include <CGAL/IO/Verbose_ostream.h>
+    #endif
+
+    @<namespace begin>("CGAL")
+
     // Function declarations
     // =====================
 
     // is_valid failure function
     // -------------------------
-    #ifndef CGAL_IO_VERBOSE_OSTREAM_H
-    #  include <CGAL/IO/Verbose_ostream.h>
-    #endif
-
     @<Function _optimisation_is_valid_fail declaration>
+
+    @<namespace end>("CGAL")
 
     #endif // CGAL_OPTIMISATION_BASIC_H
 
@@ -304,8 +313,9 @@ stream \ccc{verr}.
         "basic things for optimisation algorithms",
         "N.N.")
 
-    #include <CGAL/basic.h>
     #include <CGAL/optimisation_basic.h>
+
+    @<namespace begin>("CGAL")
 
     // Function implementations
     // ========================
@@ -313,6 +323,8 @@ stream \ccc{verr}.
     // is_valid failure function
     // -------------------------
     @<Function _optimisation_is_valid_fail>
+
+    @<namespace end>("CGAL")
 
     @<end of file line>
 @end
