@@ -3,7 +3,7 @@
 # Targets: package doc clean test
 # - all = test/package ?
 
-.PHONY: doc package filters
+.PHONY: doc package filters test
 
 package: doc filters clean Interval_arithmetic.tar.gz
 	@echo "-----------------------------------------------------"
@@ -11,7 +11,7 @@ package: doc filters clean Interval_arithmetic.tar.gz
 	@echo " *** updater les fichiers version  et changes.txt ---"
 	@echo " *** faire un make test -----------------------------"
 	@echo " *** faire un cvs commit/status    ------------------"
-	@echo " *** faire un cvs rtag v?_?        ------------------"
+	@echo " *** faire un cvs rtag v?_? ia     ------------------"
 	@echo " *** mettre à jour le fichier html ------------------"
 	@echo "-----------------------------------------------------"
 
@@ -27,7 +27,8 @@ Interval_arithmetic.tar.gz:
 	tar -zcvf Interval_arithmetic.tar.gz \
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
 	--exclude=TODO \
-	version description.txt changes.txt include doc_tex doc_ps test
+	version description.txt changes.txt \
+	include doc_tex doc_ps test examples
 
 doc: doc_ps/Interval_arithmetic.ps
 
