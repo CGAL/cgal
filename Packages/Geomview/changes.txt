@@ -2,10 +2,16 @@ Geomview package: an interface to the Geometry Center's popular 3D viewer
 
 CONTENTS:
 
-include/CGAL/IO/Geomview.h
-src/Geomview.C
+include/CGAL/IO/Geomview_stream.h
+src/Geomview_stream.C
 
 CHANGES
+Ver 2.4 (23 July 1999)
+included #if !defined in src/Geomview_stream.C
+because Geomview is not supported by M$C and BORLANDC
+
+Ver 2.3 (2 July 1999)
+added std::
 
 Ver 2.2 18 Mai 99
  Corrected doc files 
