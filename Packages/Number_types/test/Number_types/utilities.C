@@ -4,6 +4,7 @@
 #include <CGAL/MP_Float.h> 
 #include <CGAL/Lazy_exact_nt.h> 
 #include <CGAL/Fixed_precision_nt.h> 
+#include <CGAL/Interval_arithmetic.h> 
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 #include <CGAL/Filtered_exact.h> 
@@ -83,6 +84,7 @@ int main()
   TESTIT(CGAL::Quotient<int>, "Quotient<int>")
   TESTIT(QMPF, "Quotient<MP_Float>")
   TESTIT(CGAL::Lazy_exact_nt<QMPF>, "Lazy_exact_nt<Quotient<MP_Float> >")
+  TESTIT(CGAL::Interval_nt<>, "Interval_nt<>")
 #ifndef CGAL_CFG_MATCHING_BUG_2
 #ifdef CGAL_USE_GMP
   TESTIT(FEIG, "Filtered_exact<int, Gmpz>");
