@@ -36,7 +36,7 @@ Window_stream&
 operator<<(Window_stream& ws,
            const Polygon_2<Traits,Container> &polygon)
 {
-  typedef Polygon_2<Traits,Container>::Edge_const_circulator EI;
+  typedef typename Polygon_2<Traits,Container>::Edge_const_circulator EI;
   EI e = polygon.edges_circulator();
   if (e != NULL) {
     EI end = e;
