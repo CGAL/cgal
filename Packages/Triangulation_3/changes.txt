@@ -1,3 +1,6 @@
+23 May 2004 Sylvain Pion
+- Fix move_point() for degenerate dimensions.
+
 22 May 2004 Sylvain Pion
 - Make TDS::incident_cells(Vertex, OutputIterator) useful in dimension 2.
   operator==() of Triangulation_3 was relying on it.

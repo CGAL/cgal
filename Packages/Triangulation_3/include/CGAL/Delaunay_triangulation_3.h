@@ -558,21 +558,21 @@ Delaunay_triangulation_3<Gt,Tds>::
 move_point(Vertex_handle v, const Point & p)
 {
     CGAL_triangulation_precondition(! is_infinite(v));
-    CGAL_triangulation_expensive_precondition(tds().is_vertex(v));
+    CGAL_triangulation_expensive_precondition(is_vertex(v));
 
     // Dummy implementation for a start.
 
-    // Remember a cell to start the point location after the removal.
+    // Remember an incident vertex to restart
+    // the point location after the removal.
     Cell_handle c = v->cell();
-    c = c->neighbor(c->index(v));
-
-    CGAL_triangulation_assertion(! c->has_vertex(v));
+    Vertex_handle old_neighbor = c->vertex(c->index(v) == 0 ? 1 : 0);
+    CGAL_triangulation_assertion(old_neighbor != v);
 
     remove(v);
-    CGAL_triangulation_expensive_assertion(number_of_vertices() == 0
-	                                   || tds().is_cell(c));
 
-    return insert(p, number_of_vertices() == 0 ? Cell_handle() : c);
+    if (dimension() <= 0)
+	return insert(p);
+    return insert(p, old_neighbor->cell());
 }
  
 template < class Gt, class Tds >
@@ -966,7 +966,7 @@ remove(Vertex_handle v)
 {
   CGAL_triangulation_precondition( v != Vertex_handle());
   CGAL_triangulation_precondition( !is_infinite(v));
-  CGAL_triangulation_expensive_precondition( tds().is_vertex(v) );
+  CGAL_triangulation_expensive_precondition(is_vertex(v));
 
   if (dimension() >= 0 && test_dim_down(v)) {
       tds().remove_decrease_dimension(v);
