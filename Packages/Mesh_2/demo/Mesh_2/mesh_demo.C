@@ -405,8 +405,6 @@ public:
 
       setUsesBigPixmaps(true);
 
-      widget->clear_history();
-
       // MENUS
       QPopupMenu *pmMesh = new QPopupMenu(this);
       menuBar()->insertItem("&File", pmMesh);
@@ -501,7 +499,7 @@ public slots:
 
 	    Face_handle fh = mesh->locate(p);
 	    traits.set_point(p);
-	    if( (fh!=NULL) )
+	    if( (fh!=NULL) && (!mesh->is_infinite(fh)) )
 	      {
 		const Point&
 		  a = fh->vertex(0)->point(),
@@ -591,6 +589,8 @@ public slots:
       triangulation->insert(bb2, bb3);
       triangulation->insert(bb3, bb4);
       triangulation->insert(bb4, bb1);
+      switch_to_mesh();
+      mesh->mark_facets(seeds->begin(), seeds->end());
       widget->redraw();
     }
 
@@ -666,6 +666,7 @@ public slots:
       is_mesh_initialized=false;
       switch_to_triangulation();
       updatePointCouter();
+      widget->clear_history();
       widget->redraw();
     }
 
@@ -710,6 +711,7 @@ public slots:
 
       widget->set_window(xmin-1.1*xspan, xmax+1.1*xspan, 
 			 ymin-1.1*yspan, ymax+1.1*yspan);
+      widget->clear_history();
 
       updatePointCouter();
       widget->redraw();
@@ -851,14 +853,20 @@ int main(int argc, char** argv)
   app.setMainWidget(W);
   W->show();
 
-//   my_previous_failure_function = 
-//     CGAL::set_error_handler(cgal_with_exceptions_failure_handler);
+  my_previous_failure_function = 
+    CGAL::set_error_handler(cgal_with_exceptions_failure_handler);
 
   try {
     return app.exec();
   }
   catch(Cgal_exception e) {
-    W->saveTriangulationUrgently();
+    std::cerr << "catch(Cgal_exception e)" << std::endl;
+    try {
+      W->saveTriangulationUrgently();
+    }
+    catch(...) {
+      std::cerr << "PANIC !!" << std::endl;
+    }
     my_previous_failure_function(e.type, e.expr, e.file, e. line, e.msg);
   }
 
