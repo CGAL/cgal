@@ -136,6 +136,24 @@ protected:
       return geom_traits().construct_ray_3_object()(p, d);
   }
 
+  Object
+  construct_object(const Point &p) const
+  {
+      return geom_traits().construct_object_3_object()(p);
+  }
+
+  Object
+  construct_object(const Segment &s) const
+  {
+      return geom_traits().construct_object_3_object()(s);
+  }
+
+  Object
+  construct_object(const Ray &r) const
+  {
+      return geom_traits().construct_object_3_object()(r);
+  }
+
 public:
 
   Delaunay_triangulation_3()
@@ -742,15 +760,15 @@ dual(Cell_handle c, int i) const
 
   if ( dimension() == 2 ) {
     CGAL_triangulation_precondition( i == 3 );
-    return make_object( construct_circumcenter(c->vertex(0)->point(),
-		                               c->vertex(1)->point(),
-					       c->vertex(2)->point()) );
+    return construct_object( construct_circumcenter(c->vertex(0)->point(),
+		                                    c->vertex(1)->point(),
+					            c->vertex(2)->point()) );
   }
 
   // dimension() == 3
   Cell_handle n = c->neighbor(i);
   if ( ! is_infinite(c) && ! is_infinite(n) )
-    return make_object(construct_segment( dual(c), dual(n) ));
+    return construct_object(construct_segment( dual(c), dual(n) ));
 
   // either n or c is infinite
   int in;
@@ -770,7 +788,8 @@ dual(Cell_handle c, int i) const
   
   Line l = construct_perpendicular_line( construct_plane(p,q,r),
 					 construct_circumcenter(p,q,r) );
-  return make_object(construct_ray( dual(n), construct_direction_of_line(l) ));
+  return construct_object(construct_ray( dual(n),
+	                                 construct_direction_of_line(l)));
 }
 
 template < class Gt, class Tds >

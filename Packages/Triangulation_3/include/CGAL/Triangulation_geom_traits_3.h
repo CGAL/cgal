@@ -69,6 +69,7 @@ public:
   typedef typename Rep::Construct_segment_3        Construct_segment_3;
   typedef typename Rep::Construct_triangle_3       Construct_triangle_3;
   typedef typename Rep::Construct_tetrahedron_3    Construct_tetrahedron_3;
+  typedef typename Rep::Construct_object_3         Construct_object_3;
 
   // For the hierarchy :
   typedef typename Rep::Compare_distance_3         Compare_distance_3;
