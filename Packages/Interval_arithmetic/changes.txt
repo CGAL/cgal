@@ -1,3 +1,7 @@
+Version 4.172 on 24 July 2003
+- Added the "mixed operators with int" to Interval_nt, Filtered_exact,
+  and Lazy_exact_nt.
+
 Version 4.171 on 24 July 2003
 - CGAL_PROFILER : make it a block scope, so that only one argument is needed.
 
