@@ -79,7 +79,8 @@ void show_results(Snap_rounding_2 &s,
                  Number_Type prec,
                  CGAL::Window_stream &w,
                  bool show_hp,
-                 bool show_output)
+                 bool show_output,
+                 bool show_input)
 {
   // draw isr polylines
   for(Polyline_const_iterator i = s.polylines_begin();
@@ -88,6 +89,14 @@ void show_results(Snap_rounding_2 &s,
     Point_const_iterator prev = i->begin();
     Point_const_iterator i2 = prev;
     bool seg_painted = false;
+
+    if(show_input) {
+      w << CGAL::BLACK;
+      for(Segment_iterator i1 = s.segments_begin();
+          i1 != s.segments_end();
+          ++i1)
+        w << *i1;
+    }
 
     /*    if(show_hp)
       w << CGAL::GREEN << Iso_rectangle_2(Point_2(i2->x() - prec / 2.0,
@@ -122,55 +131,6 @@ void display_bounding_box(CGAL::Window_stream &W,
 {
   //  if(display_bbox)
     W << CGAL::BLACK << b;
-}
-
-void window_output(Snap_rounding_2 &s,Window_stream &w,
-                   Number_Type prec,
-                   bool wait_for_click)
-{
-  w << CGAL::BLACK;
-
-  // draw original segments
-  for(Segment_iterator i1 = s.segments_begin();
-      i1 != s.segments_end();
-      ++i1)
-    w << *i1;
-
-  // draw isr polylines
-  double x,y;
-  for(Polyline_const_iterator i = s.polylines_begin();
-      i != s.polylines_end();
-      ++i) {
-    if(wait_for_click)
-      w.read_mouse(x,y);
-    Point_const_iterator prev = i->begin();
-    Point_const_iterator i2 = prev;
-    bool seg_painted = false;
-    w << CGAL::GREEN << Iso_rectangle_2(Point_2(i2->x() - prec / 2.0,
-					        i2->y() - prec / 2.0),
-                                        Point_2(i2->x() + prec / 2.0,
-					        i2->y() + prec / 2.0));
-    for(++i2;
-        i2 != i->end();
-        ++i2) {
-      seg_painted = true;
-      w << CGAL::RED << Segment_2(*prev,*i2);
-      w << CGAL::GREEN << Iso_rectangle_2(Point_2(i2->x() - prec / 2.0,
-					          i2->y() - prec / 2.0),
-                                          Point_2(i2->x() + prec / 2.0,
-					          i2->y() + prec / 2.0));
-      prev = i2;
-    }
-    if(!seg_painted) // segment entirely inside hot pixel
-      w << *(i->begin());
-  }
-
-  int mouse_input;
-  while(true) {
-    mouse_input = w.read_mouse(x,y);
-    if(mouse_input == 1)
-      return;
-  }
 }
 
 void read_data(int argc,
@@ -248,7 +208,7 @@ int main(int argc,char *argv[])
 {
   CGAL::Window_stream W(600, 600);
   std::ifstream *is_ptr;
-  bool automatic_show = false;
+  bool automatic_show = true;
   Number_Type prec;
   // @@@@ next
   Number_Type delta;
@@ -260,10 +220,10 @@ int main(int argc,char *argv[])
   bool show_input = true;
   bool show_output = true;
 
-  if(argc == 1 || argc == 3) {
+  if(argc == 3) {
     // initialize window
-    // W.init(MIN_X - 3,MAX_X + 60,MIN_Y - 45); // for example
-    W.init(MIN_X - 3,MAX_X + 100,MIN_Y - 3);
+    //W.init(MIN_X - 3,MAX_X + 60,MIN_Y - 45); // for example
+    //W.init(MIN_X - 3,MAX_X + 100,MIN_Y - 3);
     W.set_mode(leda_src_mode);
     W.set_node_width(3);
     W.buttons_per_line(4);
@@ -285,17 +245,17 @@ int main(int argc,char *argv[])
     W.button("Enlarge Pixel",16);
     W.button("Shrink Pixel",17);
     W.button("Reset Pixel",18);
-    W.button("Enlarge Delta",19);
-    W.button("Shrink Delta",20);
-    W.button("Exit",21);
+    //    W.button("Enlarge Delta",19);
+    //W.button("Shrink Delta",20);
+    W.button("Exit",19);
     W.display();
-    W.disable_button(4);
+    W.disable_button(3);
     W.disable_button(5);
     W.disable_button(9);
     W.disable_button(12);
     W.disable_button(14);
   } else {
-    std::cerr << "Syntax : demo [input file name,delta]\n";
+    std::cerr << "Syntax : isrs input file name max-deviation\n";
     return(1);
   }
 
@@ -322,10 +282,10 @@ int main(int argc,char *argv[])
     // @@@@ next (delta)
     read_data(argc,argv,prec,seg_list,delta);
     get_extreme_points(seg_list,x1,y1,x2,y2);
-    /*    W.init((x1 - 3 - prec * 3).to_double(),x2 - x1 > y2 - y1 ? 
-           (x2 + 3 + prec * 3).to_double() : 
-           (y2 - y1 + x1 + 3 + prec * 3).to_double(),
-           (y1 - 3 - prec * 3).to_double());*/
+    W.init((x1 - 10 - prec * 3).to_double(),x2 - x1 > y2 - y1 ? 
+           (x2 + 20 + prec * 3).to_double() : 
+           (y2 - y1 + x1 + 20 + prec * 3).to_double(),
+           (y1 - 3 - prec * 3).to_double());
     W.set_mode(leda_src_mode);
     W.set_node_width(3);
   }
@@ -344,7 +304,7 @@ int main(int argc,char *argv[])
 
   if(argc == 3) {
     s.insert(seg_list.begin(),seg_list.end());
-    show_results(s,prec,W,show_hp,show_output);
+    show_results(s,prec,W,show_hp,show_output,show_input);
     sr_shown = true;
   } else
     sr_shown = false;
@@ -394,12 +354,12 @@ int main(int argc,char *argv[])
 
       if(automatic_show) {
         // automatic display of biggest rectangle
-        show_results(s,prec,W,show_hp,show_output);
+        show_results(s,prec,W,show_hp,show_output,show_input);
         sr_shown = true;
       }
     } else if(mouse_input == 1) {
       // show biggest rectangle
-      show_results(s,prec,W,show_hp,show_output);
+      show_results(s,prec,W,show_hp,show_output,show_input);
       sr_shown = true;
     } else if(mouse_input == 2) {
       clear(s,W,b,argc == 1);
@@ -407,13 +367,13 @@ int main(int argc,char *argv[])
     } else if(mouse_input == 3) {
       // change to automatic mode
       automatic_show = true;
-      show_results(s,prec,W,show_hp,show_output);
+      show_results(s,prec,W,show_hp,show_output,show_input);
       W.enable_button(4);
       W.disable_button(3);
       W.disable_button(1);
       sr_shown = true;
       redraw(s,W,b,show_input,argc == 1);
-      show_results(s,prec,W,show_hp,show_output);
+      show_results(s,prec,W,show_hp,show_output,show_input);
       sr_shown = true;
     } else if(mouse_input == 4) {
       // change to manual mode
@@ -492,7 +452,7 @@ int main(int argc,char *argv[])
       s.change_pixel_size(prec);
       W.enable_button(16);
       W.enable_button(17);
-     } else if(mouse_input == 19) {
+      /*     } else if(mouse_input == 19) {
       delta = delta + 1;
       s.change_delta(delta);
       if(delta > 2)
@@ -501,8 +461,8 @@ int main(int argc,char *argv[])
       delta = delta - 1;
       s.change_delta(delta);
       if(delta <= 2)
-        W.disable_button(20);
-   } else if(mouse_input == 21) {
+      W.disable_button(20);*/
+   } else if(mouse_input == 19) {
       // finish
       break;
     }
@@ -510,7 +470,7 @@ int main(int argc,char *argv[])
     if(mouse_input > 4 && mouse_input < 18) {
       redraw(s,W,b,show_input,argc == 1);
       if(automatic_show)
-        show_results(s,prec,W,show_hp,show_output);
+        show_results(s,prec,W,show_hp,show_output,show_input);
     }
   }
 

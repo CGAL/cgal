@@ -52,7 +52,7 @@
 #include <CGAL/Sweep_line_2.h>
 
 #include <CGAL/Arr_segment_traits_2.h>
-#include <CGAL/Arr_polyline_traits.h>
+//#include <CGAL/Arr_polyline_traits.h>
 #include <list>
 #include <set>
 #include <CGAL/leda_real.h>
@@ -1638,6 +1638,7 @@ void Snap_rounding_2<Rep_>::find_hot_pixels_and_create_kd_trees()
     Object result;
     Point_2 p;
 
+    NUMBER_OF_HP = 0;
     list<X_curve> segments;
     for(iter1 = seg_list.begin();iter1 != seg_list.end();++iter1)
       segments.push_back(X_curve(iter1->source(),iter1->target()));
@@ -1825,9 +1826,8 @@ Snap_rounding_2<Rep_>::Snap_rounding_2(
   NT inp_delta)
   {
     // @@@@ for isrs
-    NUMBER_OF_HP = 0;
     if(inp_delta < 2 * inp_pixel_size) {
-      std::cout << "small delta " << delta << " exit\n";
+      std::cout << "small max-deviation " << inp_delta << ". exit.\n";
       exit(-1);
     } else
       delta = inp_delta;
@@ -1907,9 +1907,8 @@ Snap_rounding_2<Rep_>::Snap_rounding_2(
   NT inp_delta)
   {
     // @@@@ for isrs
-    NUMBER_OF_HP = 0;
     if(inp_delta < 2 * inp_pixel_size) {
-      std::cout << "small delta " << delta << " exit\n";
+      std::cout << "small max-deviation " << inp_delta << ". exit.\n";
       exit(-1);
     } else
       delta = inp_delta;
