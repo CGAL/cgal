@@ -31,6 +31,7 @@ template <class K>
 class Cartesian_coordinate_iterator_2 
 {
 
+protected:
   typedef typename K::Point_2 P;
   const P* point;
   int index;
