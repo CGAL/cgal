@@ -1,6 +1,10 @@
 Polyhedron Package: Release changes:
 ---------------------------------------------------------------------
 
+3.11 (25 Jun 2001)
+
+     - Fixed Wrapper<> problem for Borland.
+
 3.10 (25 Jun 2001)
 
      - Include the renaming of HalfedgeDS_using_... to HalfedgeDS_...

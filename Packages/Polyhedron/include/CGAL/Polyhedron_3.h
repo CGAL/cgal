@@ -409,36 +409,36 @@ public:
     class Vertex_wrapper {
     public:
 #ifdef __GNUC__
-        typedef typename Items::Vertex_wrapper<Refs,Traits> Wrapper;
+        typedef typename Items::Vertex_wrapper<Refs,Traits> VWrapper;
 #else // __GNUC__ //
-        typedef Items::template Vertex_wrapper<Refs,Traits> Wrapper;
+        typedef Items::template Vertex_wrapper<Refs,Traits> VWrapper;
         // here is the standard conforming way
 #endif // __GNUC__ //
-        typedef typename Wrapper::Vertex Vertex_base;
+        typedef typename VWrapper::Vertex Vertex_base;
         typedef I_Polyhedron_vertex< Vertex_base> Vertex;
     };
     template < class Refs, class Traits>
     class Halfedge_wrapper {
     public:
 #ifdef __GNUC__
-        typedef typename Items::Halfedge_wrapper<Refs,Traits> Wrapper;
+        typedef typename Items::Halfedge_wrapper<Refs,Traits> HWrapper;
 #else // __GNUC__ //
-        typedef Items::template Halfedge_wrapper<Refs,Traits> Wrapper;
+        typedef Items::template Halfedge_wrapper<Refs,Traits> HWrapper;
         // here is the standard conforming way
 #endif // __GNUC__ //
-        typedef typename Wrapper::Halfedge Halfedge_base;
+        typedef typename HWrapper::Halfedge Halfedge_base;
         typedef I_Polyhedron_halfedge< Halfedge_base> Halfedge;
     };
     template < class Refs, class Traits>
     class Face_wrapper {
     public:
 #ifdef __GNUC__
-        typedef typename Items::Face_wrapper<Refs,Traits> Wrapper;
+        typedef typename Items::Face_wrapper<Refs,Traits> FWrapper;
 #else // __GNUC__ //
         // here is the standard conforming way
-        typedef Items::template Face_wrapper<Refs,Traits> Wrapper;
+        typedef Items::template Face_wrapper<Refs,Traits> FWrapper;
 #endif // __GNUC__ //
-        typedef typename Wrapper::Face Face_base;
+        typedef typename FWrapper::Face Face_base;
         typedef I_Polyhedron_facet< Face_base> Face;
     };
 };
