@@ -21,6 +21,7 @@
 //
 // maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
 // coordinator   : ETH
+//
 // Demo program: Compute extremal polygons of a convex polygon
 // ============================================================================
 
@@ -57,8 +58,8 @@ using CGAL::Cartesian;
 using CGAL::Random_access_circulator_from_container;
 using CGAL::convex_hull_points_2;
 using CGAL::squared_distance;
-using CGAL::maximum_area_inscribed_k_gon;
-using CGAL::maximum_perimeter_inscribed_k_gon;
+using CGAL::maximum_area_inscribed_k_gon_2;
+using CGAL::maximum_perimeter_inscribed_k_gon_2;
 using CGAL::Random_points_in_square_2;
 using CGAL::Creator_uniform_2;
 using CGAL::random_convex_set_2;
@@ -190,7 +191,7 @@ main()
         Timer t;
         t.start();
 #endif // EXTREMAL_POLYGON_MEASURE
-        maximum_area_inscribed_k_gon(
+        maximum_area_inscribed_k_gon_2(
           p.begin(),
           p.end(),
           k,
@@ -216,13 +217,13 @@ main()
       t.start();
 #endif // EXTREMAL_POLYGON_MEASURE
 #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
-      maximum_perimeter_inscribed_k_gon(
+      maximum_perimeter_inscribed_k_gon_2(
         Vertex_circulator( &p),
         Vertex_circulator( &p),
         k,
         back_inserter( k_gon));
 #else
-      maximum_perimeter_inscribed_k_gon(
+      maximum_perimeter_inscribed_k_gon_2(
         p.begin(),
         p.end(),
         k,

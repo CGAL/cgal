@@ -21,6 +21,7 @@
 //
 // maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
 // coordinator   : ETH
+//
 // 2,3-Center Computation for Axis-Parallel 2D-Rectangles
 // ============================================================================
 
@@ -1086,7 +1087,8 @@ rectangular_3_center_2_type2(
     RandomAccessIterator b2 =
       partition(m + 1, e, compose1_1(le_delta_m, bind1st(op.distance(), q_t)));
     RandomAccessIterator b1 =
-      partition(m + 1, b2, compose1_1(le_delta_m, bind1st(op.distance(), q_r)));
+      partition(m + 1, b2,
+                compose1_1(le_delta_m, bind1st(op.distance(), q_r)));
     RandomAccessIterator b3 =
       partition(b2, e, compose1_1(le_delta_m, bind1st(op.distance(), q_r)));
 

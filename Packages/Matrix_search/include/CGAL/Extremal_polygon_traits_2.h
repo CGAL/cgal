@@ -21,6 +21,7 @@
 //
 // maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
 // coordinator   : ETH
+//
 // Predefined Traits classes for Extremal Polygon Computation
 // ============================================================================
 
@@ -74,7 +75,7 @@ private:
 
 
 template < class R_ >
-class Kgon_area_traits
+class Extremal_polygon_area_traits_2
 {
 public:
   typedef          R_              R;
@@ -227,7 +228,7 @@ private:
 
 
 template < class R_ >
-class Kgon_perimeter_traits
+class Extremal_polygon_perimeter_traits_2
 {
 public:
   typedef          R_                    R;
@@ -328,7 +329,7 @@ public:
 template < class RandomAccessIC, class OutputIterator >
 inline
 OutputIterator
-maximum_area_inscribed_k_gon(
+maximum_area_inscribed_k_gon_2(
   RandomAccessIC points_begin,
   RandomAccessIC points_end,
   int k,
@@ -355,18 +356,32 @@ maximum_area_inscribed_k_gon(
 // returns the past-the-end iterator of that sequence.
 {
   typedef typename std::iterator_traits< RandomAccessIC >::value_type::R R;
-  return extremal_polygon(
+  return extremal_polygon_2(
     points_begin,
     points_end,
     k,
     o,
-    Kgon_area_traits< R >());
+    Extremal_polygon_area_traits_2< R >());
+} // maximum_area_inscribed_k_gon_2( ... )
+
+// backwards compatibility
+template < class RandomAccessIC, class OutputIterator >
+inline
+OutputIterator
+maximum_area_inscribed_k_gon(
+  RandomAccessIC points_begin,
+  RandomAccessIC points_end,
+  int k,
+  OutputIterator o)
+{
+  return maximum_area_inscribed_k_gon_2(
+    points_begin, points_end, k, o);
 } // maximum_area_inscribed_k_gon( ... )
 
 template < class RandomAccessIC, class OutputIterator >
 inline
 OutputIterator
-maximum_perimeter_inscribed_k_gon(
+maximum_perimeter_inscribed_k_gon_2(
   RandomAccessIC points_begin,
   RandomAccessIC points_end,
   int k,
@@ -393,12 +408,26 @@ maximum_perimeter_inscribed_k_gon(
 // returns the past-the-end iterator of that sequence.
 {
   typedef typename std::iterator_traits< RandomAccessIC >::value_type::R R;
-  return extremal_polygon(
+  return extremal_polygon_2(
     points_begin,
     points_end,
     k,
     o,
-    Kgon_perimeter_traits< R >());
+    Extremal_polygon_perimeter_traits_2< R >());
+} // maximum_perimeter_inscribed_k_gon_2( ... )
+
+// backwards compatibility
+template < class RandomAccessIC, class OutputIterator >
+inline
+OutputIterator
+maximum_perimeter_inscribed_k_gon(
+  RandomAccessIC points_begin,
+  RandomAccessIC points_end,
+  int k,
+  OutputIterator o)
+{
+  return maximum_perimeter_inscribed_k_gon_2(
+    points_begin, points_end, k, o);
 } // maximum_perimeter_inscribed_k_gon( ... )
 
 CGAL_END_NAMESPACE

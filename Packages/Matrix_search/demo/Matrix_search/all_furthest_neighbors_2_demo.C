@@ -21,6 +21,7 @@
 //
 // maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
 // coordinator   : ETH
+//
 // Demo program: All Furthest Neighbors for a Convex Polygon
 // ============================================================================
 
@@ -49,7 +50,7 @@ using CGAL::Creator_uniform_2;
 using CGAL::Random_points_in_square_2;
 using CGAL::random_convex_set_2;
 using CGAL::has_smaller_dist_to_point;
-using CGAL::all_furthest_neighbors;
+using CGAL::all_furthest_neighbors_2;
 using CGAL::cgalize;
 using CGAL::RED;
 
@@ -98,7 +99,7 @@ main()
   W << RED << p;
   // compute all furthest neighbors:
   Index_cont neighbors;
-  all_furthest_neighbors(
+  all_furthest_neighbors_2(
     p.vertices_begin(),
     p.vertices_end(),
     back_inserter( neighbors));

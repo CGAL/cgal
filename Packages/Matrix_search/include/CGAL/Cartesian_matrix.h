@@ -21,6 +21,7 @@
 //
 // maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
 // coordinator   : ETH
+//
 // A Representation for Cartesian Matrices
 // ============================================================================
 

@@ -21,6 +21,7 @@
 //
 // maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
 // coordinator   : ETH
+//
 // Test program: Compute extremal polygons of a convex polygon
 // ============================================================================
 
@@ -44,8 +45,8 @@ using CGAL::Polygon_traits_2;
 using CGAL::Creator_uniform_2;
 using CGAL::Random_points_in_square_2;
 using CGAL::random_convex_set_2;
-using CGAL::maximum_area_inscribed_k_gon;
-using CGAL::maximum_perimeter_inscribed_k_gon;
+using CGAL::maximum_area_inscribed_k_gon_2;
+using CGAL::maximum_perimeter_inscribed_k_gon_2;
 
 // typedefs:
 typedef double                             FT;
@@ -190,7 +191,7 @@ int main() {
       Cont k_gon;
       k_gon.reserve( k[j]);
 
-      maximum_area_inscribed_k_gon(
+      maximum_area_inscribed_k_gon_2(
         p.vertices_begin(),
         p.vertices_end(),
         k[j],
@@ -243,7 +244,7 @@ int main() {
       // maximum perimeter:
       Cont k_gon;
       k_gon.reserve( k[j]);
-      maximum_perimeter_inscribed_k_gon(
+      maximum_perimeter_inscribed_k_gon_2(
         p.vertices_begin(),
         p.vertices_end(),
         k[j],

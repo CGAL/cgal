@@ -21,6 +21,7 @@
 //
 // maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
 // coordinator   : ETH
+//
 // 2-4-Centering Axis-Parallel 2D-Rectangles - example program
 // ============================================================================
 

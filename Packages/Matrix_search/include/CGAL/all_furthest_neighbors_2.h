@@ -21,6 +21,7 @@
 //
 // maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
 // coordinator   : ETH
+//
 // Compute all furthest neighbors for the vertices of a convex polygon
 // ============================================================================
 
@@ -102,20 +103,20 @@ template < class RandomAccessIC,
            class Traits,
            class IteratorCategory >
 OutputIterator
-all_furthest_neighbors( RandomAccessIC points_begin,
-                        RandomAccessIC points_end,
-                        OutputIterator o,
-                        const Traits& t,
-                        IteratorCategory)
+all_furthest_neighbors_2( RandomAccessIC points_begin,
+                          RandomAccessIC points_end,
+                          OutputIterator o,
+                          const Traits& t,
+                          IteratorCategory)
 #else
 template < class RandomAccessIC,
            class OutputIterator,
            class Traits >
 OutputIterator
-all_furthest_neighbors( RandomAccessIC points_begin,
-                        RandomAccessIC points_end,
-                        OutputIterator o,
-                        const Traits& t)
+all_furthest_neighbors_2( RandomAccessIC points_begin,
+                          RandomAccessIC points_end,
+                          OutputIterator o,
+                          const Traits& t)
 #endif
 {
 #ifndef CGAL_CFG_NO_NAMESPACE
@@ -159,7 +160,7 @@ all_furthest_neighbors( RandomAccessIC points_begin,
                     v.end(),
                     o,
                     bind2nd( modulus< int >(), number_of_points));
-} // all_furthest_neighbors( ... )
+} // all_furthest_neighbors_2( ... )
 
 #if !defined(CGAL_CFG_NO_ITERATOR_TRAITS) && \
 !defined(CGAL_CFG_MATCHING_BUG_2)
@@ -168,11 +169,11 @@ template < class RandomAccessIC,
            class OutputIterator,
            class Traits >
 OutputIterator
-all_furthest_neighbors( RandomAccessIC points_begin,
-                        RandomAccessIC points_end,
-                        OutputIterator o,
-                        const Traits& t,
-                        std::random_access_iterator_tag)
+all_furthest_neighbors_2( RandomAccessIC points_begin,
+                          RandomAccessIC points_end,
+                          OutputIterator o,
+                          const Traits& t,
+                          std::random_access_iterator_tag)
 {
 #ifndef CGAL_CFG_TYPENAME_BUG
   typedef All_furthest_neighbor_matrix< typename Traits::Distance,
@@ -197,23 +198,23 @@ all_furthest_neighbors( RandomAccessIC points_begin,
     o);
 
   return o + number_of_points;
-} // all_furthest_neighbors( ... )
+} // all_furthest_neighbors_2( ... )
 
 template < class RandomAccessIC, class OutputIterator, class Traits >
 inline
 OutputIterator
-all_furthest_neighbors( RandomAccessIC points_begin,
-                        RandomAccessIC points_end,
-                        OutputIterator o,
-                        const Traits& t)
+all_furthest_neighbors_2( RandomAccessIC points_begin,
+                          RandomAccessIC points_end,
+                          OutputIterator o,
+                          const Traits& t)
 {
   typedef typename
     std::iterator_traits< OutputIterator >::iterator_category
   iterator_category;
 
-  return all_furthest_neighbors(
+  return all_furthest_neighbors_2(
     points_begin, points_end, o, t, iterator_category());
-} // all_furthest_neighbors( ... )
+} // all_furthest_neighbors_2( ... )
 
 #endif // !CGAL_CFG_NO_ITERATOR_TRAITS && !CGAL_CFG_MATCHING_BUG_2
 

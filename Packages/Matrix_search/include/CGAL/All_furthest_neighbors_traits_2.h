@@ -21,6 +21,7 @@
 //
 // maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
 // coordinator   : ETH
+//
 // Compute all furthest neighbors for the vertices of a convex polygon
 // ============================================================================
 
@@ -51,7 +52,7 @@ CGAL_END_NAMESPACE
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
-class All_furthest_neighbors_traits {
+class All_furthest_neighbors_default_traits_2 {
 public:
   typedef R_                                    R;
   typedef Point_2< R >                          Point_2;
@@ -92,18 +93,27 @@ private:
 template < class RandomAccessIC, class OutputIterator >
 inline
 OutputIterator
-all_furthest_neighbors( RandomAccessIC points_begin,
-                        RandomAccessIC points_end,
-                        OutputIterator o)
+all_furthest_neighbors_2( RandomAccessIC points_begin,
+                          RandomAccessIC points_end,
+                          OutputIterator o)
 {
   typedef typename std::iterator_traits< RandomAccessIC >::value_type::R R;
   return
-  all_furthest_neighbors(
+  all_furthest_neighbors_2(
     points_begin,
     points_end,
     o,
-    All_furthest_neighbors_traits< R >());
-} // all_furthest_neighbors( ... )
+    All_furthest_neighbors_default_traits_2< R >());
+} // all_furthest_neighbors_2( ... )
+
+// backwards compatibility
+template < class RandomAccessIC, class OutputIterator >
+inline
+OutputIterator
+all_furthest_neighbors( RandomAccessIC points_begin,
+                        RandomAccessIC points_end,
+                        OutputIterator o)
+{ return all_furthest_neighbors_2( points_begin, points_end, o); }
 
 CGAL_END_NAMESPACE
 

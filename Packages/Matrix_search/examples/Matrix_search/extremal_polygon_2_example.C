@@ -21,6 +21,7 @@
 //
 // maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
 // coordinator   : ETH
+//
 // Example program: Compute extremal polygons of a convex polygon
 // ============================================================================
 
@@ -35,7 +36,7 @@
 
 using namespace std;
 using CGAL::random_convex_set_2;
-using CGAL::maximum_area_inscribed_k_gon;
+using CGAL::maximum_area_inscribed_k_gon_2;
 
 typedef double                                FT;
 typedef CGAL::Cartesian< FT >                 R;
@@ -59,7 +60,7 @@ int main() {
   cout << "Generated Polygon:\n" << p << endl;
 
   Polygon k_gon;
-  maximum_area_inscribed_k_gon(
+  maximum_area_inscribed_k_gon_2(
     p.vertices_begin(),
     p.vertices_end(),
     k,

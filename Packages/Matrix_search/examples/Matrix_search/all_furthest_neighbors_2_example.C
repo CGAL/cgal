@@ -21,6 +21,7 @@
 //
 // maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
 // coordinator   : ETH
+//
 // Example program: All Furthest Neighbors for a Convex Polygon
 // ============================================================================
 
@@ -36,7 +37,7 @@
 
 using namespace std;
 using CGAL::random_convex_set_2;
-using CGAL::all_furthest_neighbors;
+using CGAL::all_furthest_neighbors_2;
 
 typedef double                                   FT;
 typedef CGAL::Cartesian< FT >                    R;
@@ -57,7 +58,7 @@ main()
   random_convex_set_2( 10, back_inserter( p), Point_generator( 1));
 
   // compute all furthest neighbors:
-  all_furthest_neighbors(
+  all_furthest_neighbors_2(
     p.vertices_begin(),
     p.vertices_end(),
     Oiterator( cout));
