@@ -35,7 +35,7 @@ class Point_2_ex : public Point_2<R>
 
   // Constructors.
   Point_2_ex () :
-    Point_2<R>(),
+    CGAL::Point_2<R>(),
     _type(User_defined),
     conic_id1(0),
     conic_id2(0),
@@ -49,7 +49,7 @@ class Point_2_ex : public Point_2<R>
 
   Point_2_ex (const NT& hx, const NT& hy, const NT& hz,
 	      const Type& type) :
-    Point_2<R>(hx,hy,hz),
+    CGAL::Point_2<R>(hx,hy,hz),
     _type(type),
     conic_id1(0),
     conic_id2(0),
@@ -65,7 +65,7 @@ class Point_2_ex : public Point_2<R>
   Point_2_ex (const NT& hx, const NT& hy,
 	      const Type& type,
 	      const int& id1 = 0, const int& id2 = 0) :
-    Point_2<R>(hx,hy),
+    CGAL::Point_2<R>(hx,hy),
     _type(type),
     conic_id1(id1),
     conic_id2(id2),
@@ -79,7 +79,7 @@ class Point_2_ex : public Point_2<R>
   }
 
   Point_2_ex (const NT& hx, const NT& hy) :
-    Point_2<R>(hx,hy),
+    CGAL::Point_2<R>(hx,hy),
     _type(User_defined),
     conic_id1(0),
     conic_id2(0),

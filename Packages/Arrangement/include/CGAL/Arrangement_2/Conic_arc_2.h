@@ -50,8 +50,10 @@ class Conic_arc_2
   typedef Circle_2<Kernel>     Circle_2;
   typedef Segment_2<Kernel>    Segment_2;
 
- private:
+  typedef Point_2_ex<Kernel>   My_point_2;
     
+ private:
+
   enum
   {
     DEGREE_0 = 0,
@@ -70,8 +72,8 @@ class Conic_arc_2
 
   Conic_2  _conic;          // The conic that contains the arc.
   int      _conic_id;       // The id of the conic.
-  Point_2  _source;         // The source of the arc. 
-  Point_2  _target;         // The target of the arc.
+  My_point_2  _source;      // The source of the arc. 
+  My_point_2  _target;      // The target of the arc.
   int      _info;           // A bit array with extra information:
                             // Bit 0 & 1 - The degree of the conic 
                             //             (either 1 or 2).
@@ -112,7 +114,7 @@ class Conic_arc_2
     int     id1;
     int     id2;
     int     n_points;
-    Point_2 ps[4];
+    My_point_2 ps[4];
   };
 #endif
 
@@ -131,7 +133,7 @@ class Conic_arc_2
 
   // Private constructor.
   Conic_arc_2 (const Conic_arc_2& arc,
-	       const Point_2& source, const Point_2& target,
+	       const My_point_2& source, const My_point_2& target,
 	       const bool& is_full) :
     _conic(arc._conic),
     _conic_id(arc._conic_id),
@@ -227,7 +229,7 @@ class Conic_arc_2
   // not be the same.
   Conic_arc_2 (const NT& r, const NT& s, const NT& t,
 	       const NT& u, const NT& v, const NT& w,
-	       const Point_2& source, const Point_2& target) :
+	       const My_point_2& source, const My_point_2& target) :
     _conic_id(0),
     _source(source),
     _target(target),
@@ -267,8 +269,8 @@ class Conic_arc_2
   Conic_arc_2 (const Segment_2& segment)
   {
     // Use the source and target of the given segment.
-    Point_2      source = Point_2(segment.source().x(), segment.source().y());
-    Point_2      target = Point_2(segment.target().x(), segment.target().y());
+    My_point_2 source = My_point_2(segment.source().x(), segment.source().y());
+    My_point_2 target = My_point_2(segment.target().x(), segment.target().y());
     Conic_2      conic;
     static const NT _zero = 0;
     static const NT _one = 1;
@@ -311,7 +313,7 @@ class Conic_arc_2
   // end-point.
   // Note that the orientation of the input circle is preserved.
   Conic_arc_2 (const Circle_2& circle,
-	       const Point_2& source, const Point_2& target)
+	       const My_point_2& source, const My_point_2& target)
   {
     // Make sure the circle contains the two endpoints on its boundary.
     CGAL_precondition(circle.has_on_boundary(source));
@@ -404,10 +406,10 @@ class Conic_arc_2
   // (or the target) will be selected.
   Conic_arc_2 (const NT& r, const NT& s, const NT& t,
 	       const NT& u, const NT& v, const NT& w,
-	       const Point_2& app_source,
+	       const My_point_2& app_source,
 	       const NT& r_1, const NT& s_1, const NT& t_1,
 	       const NT& u_1, const NT& v_1, const NT& w_1,
-	       const Point_2& app_target,
+	       const My_point_2& app_target,
 	       const NT& r_2, const NT& s_2, const NT& t_2,
 	       const NT& u_2, const NT& v_2, const NT& w_2) :
     _conic_id(0),
@@ -441,13 +443,13 @@ class Conic_arc_2
       arc_t._info = arc_t._info | DEGREE_2;
     
     // Compute the source and the target.
-    Point_2     source;
-    Point_2     target;
-    Conic_arc_2   *arc_P;
-    const Point_2 *app_P;
-    Point_2       *end_P;
+    My_point_2  source;
+    My_point_2  target;
+    Conic_arc_2 *arc_P;
+    const My_point_2 *app_P;
+    My_point_2  *end_P;
     int         i, j;
-    Point_2     ipts[4];         // The intersection points.
+    My_point_2  ipts[4];         // The intersection points.
     int         n_points = 0;    // Their number.
     NT          xs[4];
     int         x_mults[4];
@@ -584,13 +586,13 @@ class Conic_arc_2
   }
 
   // Get the arc's source.
-  const Point_2& source () const
+  const My_point_2& source () const
   {
     return (_source);
   }
 
   // Get the arc's target.
-  const Point_2& target () const
+  const My_point_2& target () const
   {
     return (_target);
   }
@@ -652,9 +654,9 @@ class Conic_arc_2
       CGAL::to_double(_target.y()) : CGAL::to_double(_source.y());
 
     // Go over the vertical tangency points and try to update the x-points.
-    Point_2  tps[2];
-    int      n_tps;
-    int      i;
+    My_point_2 tps[2];
+    int        n_tps;
+    int        i;
 
     n_tps = vertical_tangency_points (tps);
     for (i = 0; i < n_tps; i++)
@@ -680,7 +682,7 @@ class Conic_arc_2
   }
 
   // Check whether the given point is on the arc.
-  bool contains_point (const Point_2& p) const
+  bool contains_point (const My_point_2& p) const
   { 
     // Check whether the conic contains the point (x,y).
     if (p.is_generating_conic_id(_conic_id) ||
@@ -702,7 +704,7 @@ class Conic_arc_2
   // Calculate the vertical tangency points of the arc (ps should be allocated
   // at the size of 2).
   // The function return the number of vertical tangency points.
-  int vertical_tangency_points (Point_2* vpts) const
+  int vertical_tangency_points (My_point_2* vpts) const
   {
     // No vertical tangency points for segments or for x-monotone curves:
     if ((_info & DEGREE_MASK) < 2 ||
@@ -710,8 +712,8 @@ class Conic_arc_2
       return (0);
 
     // Calculate the vertical tangency points of the conic.
-    Point_2  ps[2];
-    int      n;
+    My_point_2 ps[2];
+    int        n;
 
     n = _conic_vertical_tangency_points (ps);
 
@@ -734,15 +736,15 @@ class Conic_arc_2
   // Calculate the horizontal tangency points of the arc (ps should be
   // allocated to the size of 2).
   // The function return the number of vertical tangency points.
-  int horizontal_tangency_points (Point_2* hpts) const
+  int horizontal_tangency_points (My_point_2* hpts) const
   {
     // No horizontal tangency points for segments:
     if ((_info & DEGREE_MASK) < 2)
       return (0);
 
     // Calculate the horizontal tangency points of the conic.
-    Point_2  ps[2];
-    int      n;
+    My_point_2 ps[2];
+    int        n;
 
     n = _conic_horizontal_tangency_points (ps);
 
@@ -775,7 +777,7 @@ class Conic_arc_2
       return (true);
 
     // Check the number of vertical tangency points.
-    Point_2   vpts[2];
+    My_point_2 vpts[2];
 
     return (vertical_tangency_points(vpts) == 0);
   }
@@ -783,8 +785,8 @@ class Conic_arc_2
   // Find all points on the arc with a given x-coordinate: ps should be
   // allocated to the size of 2.
   // The function return the number of points found.
-  int get_points_at_x (const Point_2& p,
-                       Point_2 *ps) const
+  int get_points_at_x (const My_point_2& p,
+                       My_point_2 *ps) const
   {
     // Make sure the conic is not a vertical segment.
     CGAL_precondition(!is_vertical_segment());
@@ -800,10 +802,11 @@ class Conic_arc_2
     
     for (int i = 0; i < n; i++)
     {
-      ps[m] = Point_2 (p.x(), ys[i], 
-		       p.is_approximate() ? Point_2::Ray_shooting_approx :
-		                            Point_2::Ray_shooting_exact,
-		       _conic_id);
+      ps[m] = My_point_2 (p.x(), ys[i], 
+                          p.is_approximate() ?
+                          My_point_2::Ray_shooting_approx :
+                          My_point_2::Ray_shooting_exact,
+                          _conic_id);
 
       if (is_full_conic() || _is_between_endpoints(ps[m]))
 	m++;
@@ -816,8 +819,8 @@ class Conic_arc_2
   // Find all points on the arc with a given y-coordinate: ps should be
   // allocated to the size of 2.
   // The function return the number of points found.
-  int get_points_at_y (const Point_2& p,
-                       Point_2 *ps) const
+  int get_points_at_y (const My_point_2& p,
+                       My_point_2 *ps) const
   {
     // Make sure the conic is not a horizontal segment.
     CGAL_precondition(!is_horizontal_segment());
@@ -833,10 +836,11 @@ class Conic_arc_2
     
     for (int i = 0; i < n; i++)
     {
-      ps[m] = Point_2 (xs[i], p.y(),
-		       p.is_approximate() ? Point_2::Ray_shooting_approx :
-		                            Point_2::Ray_shooting_exact,
-		       _conic_id);
+      ps[m] = My_point_2 (xs[i], p.y(),
+                          p.is_approximate() ?
+                          My_point_2::Ray_shooting_approx :
+                          My_point_2::Ray_shooting_exact,
+                          _conic_id);
 
       if (is_full_conic() || _is_between_endpoints(ps[m]))
 	m++;
@@ -972,7 +976,7 @@ class Conic_arc_2
 
   // Get the i'th order derivative by x of the conic at the point p=(x,y).
   // Note that i should be either 1 (first order) or 2 (second order).
-  void derive_by_x_at (const Point_2& p, const int& i,
+  void derive_by_x_at (const My_point_2& p, const int& i,
 		       NT& slope_numer, NT& slope_denom) const
   {
     // Make sure i is either 1 or 2.
@@ -1036,7 +1040,7 @@ class Conic_arc_2
 
   // Get the i'th order derivative by y of the conic at the point p=(x,y).
   // Note that i should be either 1 (first order) or 2 (second order).
-  void derive_by_y_at (const Point_2& p, const int& i,
+  void derive_by_y_at (const My_point_2& p, const int& i,
 		       NT& slope_numer, NT& slope_denom) const
   {
     // Make sure i is either 1 or 2.
@@ -1102,7 +1106,7 @@ class Conic_arc_2
   // ps must be allocated at the size of 4.
   // The function returns the number of the actual intersection points.
   int intersections_with (const Conic_arc_2<NT>& arc,
-			  Point_2* ps
+			  My_point_2* ps
 #ifdef CGAL_CONIC_ARC_USE_CACHING
 			  ,std::list<Intersections> *inter_list_P = NULL
 #endif
@@ -1142,7 +1146,7 @@ class Conic_arc_2
       // Find all points on our arc that have the same x co-ordinate as
       // the other vertical segment.
       int         n_ys;
-      Point_2     xps[2];
+      My_point_2  xps[2];
       int         j;
       int         n = 0;
 
@@ -1154,9 +1158,9 @@ class Conic_arc_2
 	if (arc.contains_point(xps[j]))
 	{
 	  // Return an exact point:
-	  ps[n] = Point_2 (xps[j].x(), xps[j].y(),
-			   Point_2::Intersection_exact,
-			   _conic_id, arc._conic_id);
+	  ps[n] = My_point_2(xps[j].x(), xps[j].y(),
+                             My_point_2::Intersection_exact,
+                             _conic_id, arc._conic_id);
 	  n++;
 	}
       }
@@ -1168,7 +1172,7 @@ class Conic_arc_2
       // Find all points on the other arc that have the same x co-ordinate as
       // our vertical segment.
       int         n_ys;
-      Point_2     xps[2];
+      My_point_2  xps[2];
       int         j;
       int         n = 0;
 
@@ -1180,9 +1184,9 @@ class Conic_arc_2
 	if (contains_point(xps[j]))
 	{
 	  // Return an exact point:
-	  ps[n] = Point_2 (xps[j].x(), xps[j].y(),
-			   Point_2::Intersection_exact,
-			   _conic_id, arc._conic_id);
+	  ps[n] = My_point_2(xps[j].x(), xps[j].y(),
+                             My_point_2::Intersection_exact,
+                             _conic_id, arc._conic_id);
 	  n++;
 	}
       }
@@ -1191,7 +1195,7 @@ class Conic_arc_2
     }
 
     // Find all intersection points between the two base conic curves.
-    Point_2   ipts[4];             // The intersection points.
+    My_point_2 ipts[4];            // The intersection points.
     int       n_points = 0;        // Their number.
     bool      calc_points = true;
     // REF_TRICK
@@ -1407,8 +1411,8 @@ class Conic_arc_2
     // In case the other arc has an opposite orientation, switch its source
     // and target (notice that in case of segments, when the orientation is 0,
     // we make sure the two segments have the same direction).
-    const Point_2 *arc_sourceP;
-    const Point_2 *arc_targetP;
+    const My_point_2 *arc_sourceP;
+    const My_point_2 *arc_targetP;
 
     if (orient1 == 0)
       orient1 = (_source.compare_lex_xy(_target) 
@@ -1500,7 +1504,7 @@ class Conic_arc_2
   // Set the properties of a conic arc (for the usage of the constructors).
   // The source and the target are assumed be on the conic boundary.
   void _set (const Conic_2& conic,
-	     const Point_2& source, const Point_2& target,
+	     const My_point_2& source, const My_point_2& target,
 	     Circular_arc_data *circ_data_P = NULL)
   {
     // Set the data members.
@@ -1557,10 +1561,10 @@ class Conic_arc_2
     if (deg == 2 && ! _conic.is_ellipse())
     {
       CGAL_precondition_code(
-      const NT      _two = 2;
-      const Point_2 p_mid ((source.x() + target.x()) / _two,
-			   (source.y() + target.y()) / _two);
-      Point_2       ps[2];
+      const NT         _two = 2;
+      const My_point_2 p_mid ((source.x() + target.x()) / _two,
+                              (source.y() + target.y()) / _two);
+      My_point_2       ps[2];
 
       bool  finite_at_x = (this->get_points_at_x(p_mid, ps) > 0);
       bool  finite_at_y = (this->get_points_at_y(p_mid, ps) > 0);
@@ -1571,13 +1575,13 @@ class Conic_arc_2
     // If we reached here, the conic arc is legal: Get a new id for the conic.
     _conic_id = _get_new_conic_id();
 
-    _source = Point_2 (_source.x(), _source.y(), 
-		       Point_2::User_defined,
-		       _conic_id);
+    _source = My_point_2(_source.x(), _source.y(), 
+                         My_point_2::User_defined,
+                         _conic_id);
 
-    _target = Point_2 (_target.x(), _target.y(), 
-		       Point_2::User_defined,
-		       _conic_id);
+    _target = My_point_2(_target.x(), _target.y(), 
+                         My_point_2::User_defined,
+                         _conic_id);
 
     // Check whether the conic is x-monotone.
     if (is_x_monotone())
@@ -1630,13 +1634,13 @@ class Conic_arc_2
 
     // Assign one of the vertical tangency points as both the source and
     // the target of the conic arc.
-    Point_2   vpts[2];
-    int       n_vpts;
+    My_point_2 vpts[2];
+    int        n_vpts;
 
     if (circ_data_P != NULL)
     {
-      vpts[0] = Point_2 (circ_data_P->x0 + circ_data_P->r, 
-			 circ_data_P->y0);
+      vpts[0] = My_point_2(circ_data_P->x0 + circ_data_P->r, 
+                           circ_data_P->y0);
     }
     else
     {
@@ -1649,13 +1653,13 @@ class Conic_arc_2
     // If we reached here, the conic arc is legal: Get a new id for the conic.
     _conic_id = _get_new_conic_id();
 
-    _source = Point_2 (vpts[0].x(), vpts[0].y(),
-		       Point_2::User_defined,
-		       _conic_id);
+    _source = My_point_2(vpts[0].x(), vpts[0].y(),
+                         My_point_2::User_defined,
+                         _conic_id);
 
-    _target = Point_2 (vpts[0].x(), vpts[0].y(),
-		       Point_2::User_defined,
-		       _conic_id);
+    _target = My_point_2(vpts[0].x(), vpts[0].y(),
+                         My_point_2::User_defined,
+                         _conic_id);
 
 #ifdef CGAL_CONIC_ARC_USE_BOUNDING_BOX
     _bbox = bounding_box();       // Compute the bounding box.
@@ -1761,7 +1765,7 @@ class Conic_arc_2
 
   // Find on which branch of the hyperbola is the given point located.
   // The point is assumed to be on the hyperbola.
-  int _hyperbolic_arc_side (const Point_2& p) const
+  int _hyperbolic_arc_side (const My_point_2& p) const
   {
     if (_data.hyper_P == NULL)
       return (0);
@@ -1774,7 +1778,7 @@ class Conic_arc_2
  
   // Check whether the given point is between the source and the target.
   // The point is assumed to be on the conic's boundary.
-  bool _is_between_endpoints (const Point_2& p) const
+  bool _is_between_endpoints (const My_point_2& p) const
   {
     if (p.equals(_source) || p.equals(_target))
       return (true);
@@ -1785,7 +1789,7 @@ class Conic_arc_2
   // Check whether the given point is strictly between the source and the
   // target (but not any of them).
   // The point is assumed to be on the conic's boundary.
-  bool _is_strictly_between_endpoints (const Point_2& p) const
+  bool _is_strictly_between_endpoints (const My_point_2& p) const
   {
     // In case this is a full conic, any point on its boundary is between
     // its end points.
@@ -1868,14 +1872,15 @@ class Conic_arc_2
   }
   
   // Find the vertical tangency points of the conic.
-  int _conic_vertical_tangency_points (Point_2* ps) const
+  int _conic_vertical_tangency_points (My_point_2* ps) const
   {
     // In case the base conic is of degree 1 (and not 2), the arc has no
     // vertical tangency points.
     static const NT _zero = 0;
     static const NT _two = 2;
     static const NT _four = 4;
-
+    int i;
+    
     if ((_info & DEGREE_MASK) == DEGREE_1 || _conic.s() == _zero)
       return (0);
 
@@ -1883,14 +1888,14 @@ class Conic_arc_2
     // are simply (x0-r,y0) and (x0+r,y0).
     if ((_info & IS_CIRCLE) != 0)
     {
-      ps[0] = Point_2 (_data.circ_P->x0 - _data.circ_P->r, 
-		       _data.circ_P->y0,
-		       Point_2::Tangency,
-		       _conic_id);
-      ps[1] = Point_2 (_data.circ_P->x0 + _data.circ_P->r, 
-		       _data.circ_P->y0,
-		       Point_2::Tangency,
-		       _conic_id);
+      ps[0] = My_point_2(_data.circ_P->x0 - _data.circ_P->r, 
+                         _data.circ_P->y0,
+                         My_point_2::Tangency,
+                         _conic_id);
+      ps[1] = My_point_2(_data.circ_P->x0 + _data.circ_P->r, 
+                         _data.circ_P->y0,
+                         My_point_2::Tangency,
+                         _conic_id);
 
       return (2);
     }
@@ -1938,7 +1943,7 @@ class Conic_arc_2
       y_mults[0] = 2;
 
       y_deg = 0;
-   }
+    }
     else
     {
       n_ys = solve_quadratic_eq (_four*r*s*s - s*t*t,
@@ -1956,13 +1961,13 @@ class Conic_arc_2
 
     // Pair the x and y coordinates and obtain the vertical tangency points.
     n = 0;
-    for (int i = 0; i < n_xs; i++)
+    for (i = 0; i < n_xs; i++)
     {
       if (n_ys == 1)
       {
-	ps[n] = Point_2 (xs[i], ys[0],
-			 Point_2::Tangency,
-			 _conic_id);
+        ps[n] = My_point_2(xs[i], ys[0],
+                           My_point_2::Tangency,
+                           _conic_id);
 	n++;
       }
       else
@@ -1971,9 +1976,9 @@ class Conic_arc_2
 	{
 	  if (ys[j] == -(t*xs[i] + v) / (_two*s))
 	  {
-	    ps[n] = Point_2 (xs[i], ys[j],
-			     Point_2::Tangency,
-			     _conic_id);
+	    ps[n] = My_point_2(xs[i], ys[j],
+                               My_point_2::Tangency,
+                               _conic_id);
 	    n++;
 	    break;
 	  }
@@ -1982,7 +1987,7 @@ class Conic_arc_2
     }
 
     // Attach the generating polynomials.
-    for (int i = 0; i < n; i++)
+    for (i = 0; i < n; i++)
     {
       ps[i].attach_polynomials (x_deg, x_coeffs,
 				y_deg, y_coeffs);
@@ -1992,7 +1997,7 @@ class Conic_arc_2
   }
 
   // Find the horizontal tangency points of the conic.
-  int _conic_horizontal_tangency_points (Point_2* ps) const
+  int _conic_horizontal_tangency_points (My_point_2* ps) const
   {
     // In case the base conic is of degree 1 (and not 2), the arc has no
     // vertical tangency points.
@@ -2007,14 +2012,14 @@ class Conic_arc_2
     // are simply (x0,y0-r) and (x0,y0+r).
     if ((_info & IS_CIRCLE) != 0)
     {
-      ps[0] = Point_2 (_data.circ_P->x0, 
-		       _data.circ_P->y0 - _data.circ_P->r,
-		       Point_2::Tangency,
-		       _conic_id);
-      ps[1] = Point_2 (_data.circ_P->x0, 
-		       _data.circ_P->y0 + _data.circ_P->r,
-		       Point_2::Tangency,
-		       _conic_id);
+      ps[0] = My_point_2(_data.circ_P->x0, 
+                         _data.circ_P->y0 - _data.circ_P->r,
+                         My_point_2::Tangency,
+                         _conic_id);
+      ps[1] = My_point_2(_data.circ_P->x0, 
+                         _data.circ_P->y0 + _data.circ_P->r,
+                         My_point_2::Tangency,
+                         _conic_id);
 
       return (2);
     }
@@ -2046,9 +2051,10 @@ class Conic_arc_2
       // above, and since its discriminant is 0, x is simply given by:
       x = -(t*ys[i] + u) / (_two*r);
 
-      ps[i] = Point_2 (x, ys[i],
-		       Point_2::Tangency,
-		       _conic_id);
+      // MSVC Complains about something, so I use the explicit typedef of point
+      ps[i] = My_point_2(x, ys[i],
+                         My_point_2::Tangency,
+                         _conic_id);
     }
       
     return (n);
@@ -2056,7 +2062,7 @@ class Conic_arc_2
   
   // Check whether the base conic contains the given approximate point on its
   // boundary.
-  bool _conic_has_approx_point_on_boundary (const Point_2& p) const
+  bool _conic_has_approx_point_on_boundary (const My_point_2& p) const
   {
     APNT r = TO_APNT(_conic.r());
     APNT s = TO_APNT(_conic.s());
@@ -2084,8 +2090,8 @@ class Conic_arc_2
     static const NT _two = 2;
     const NT        x_mid = (_source.x() + _target.x()) / _two;
     const NT        y_mid = (_source.y() + _target.y()) / _two;
-    Point_2         p_mid (x_mid, y_mid);
-    Point_2         ps[2];
+    My_point_2      p_mid (x_mid, y_mid);
+    My_point_2      ps[2];
     int             n_ps;
 
     n_ps = get_points_at_x (p_mid, ps);
@@ -2343,7 +2349,7 @@ class Conic_arc_2
 
 	// Try to factor out intersection points that occur at vertical
 	// tangency points of one of the curves.
-	Point_2   vpts[4];
+	My_point_2 vpts[4];
 	int       n_vpts;
 	NT        red_coeffs[5], temp_coeffs[5];
 	int       red_degree = x_deg, temp_degree;
@@ -2648,7 +2654,7 @@ class Conic_arc_2
 
 	// Try to factor out intersection points that occur at vertical
 	// tangency points of one of the curves.
-	Point_2   vpts[4];
+	My_point_2   vpts[4];
 	int       n_vpts;
 	NT        red_coeffs[5], temp_coeffs[5];
 	int       red_degree = y_deg, temp_degree;
@@ -2726,7 +2732,7 @@ class Conic_arc_2
 				 const int& n_ys,
 				 const NT* ys, const int* y_mults,
 				 const int& n_approx_ys,
-				 Point_2* ipts) const
+				 My_point_2* ipts) const
   {
     // Calculate the minimal number of intersection points.
     int          x_total = 0, y_total = 0;
@@ -2812,11 +2818,11 @@ class Conic_arc_2
       is_approx = (x_indices[k] >= (n_xs - n_approx_xs)) ||
 	          (y_indices[k] >= (n_ys - n_approx_ys));
 
-      ipts[n_ipts] = Point_2 (xs[x_indices[k]], ys[y_indices[k]],
-			      (is_approx ?
-			       Point_2::Intersection_approx :
-			       Point_2::Intersection_exact),
-			      _conic_id, arc._conic_id);
+      ipts[n_ipts] = My_point_2(xs[x_indices[k]], ys[y_indices[k]],
+                                (is_approx ?
+                                 My_point_2::Intersection_approx :
+                                 My_point_2::Intersection_exact),
+                                _conic_id, arc._conic_id);
       k++;
       n_ipts++;
     }

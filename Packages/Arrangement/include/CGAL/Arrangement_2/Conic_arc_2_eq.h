@@ -4,6 +4,14 @@
 #include <CGAL/double.h>
 #include <CGAL/Arrangement_2/Sturm_seq.h>
 
+// if we use a LEDA version without namespaces
+// we have to define a few macros
+#if !defined(LEDA_NAMESPACE)
+#define LEDA_BEGIN_NAMESPACE
+#define LEDA_END_NAMESPACE
+#define LEDA_NAMESPACE_NAME
+#endif
+
 CGAL_BEGIN_NAMESPACE
 
 typedef double      APNT;
@@ -965,7 +973,7 @@ Comparison_result compare_roots (const std::vector<NT>& p1_coeffs,
   for (i = 0; i < max_iters; i++)
   {
     // Bisect [l1, r1] and select either [l1, m1] or [m1, r1].
-    m1 = to_bigfloat((r1 + l1) / _two);
+    m1 = LEDA_NAMESPACE_NAME::to_bigfloat((r1 + l1) / _two);
 
     if (sts1.sign_changes_at_x(l1) - sts1.sign_changes_at_x(m1) == 1)
       r1 = m1;
@@ -973,7 +981,7 @@ Comparison_result compare_roots (const std::vector<NT>& p1_coeffs,
       l1 = m1;
 
     // Bisect [l2, r2] and select either [l2, m2] or [m2, r2].
-    m2 = to_bigfloat((r2 + l2) / _two);
+    m2 = LEDA_NAMESPACE_NAME::to_bigfloat((r2 + l2) / _two);
 
     if (sts2.sign_changes_at_x(l2) - sts2.sign_changes_at_x(m2) == 1)
       r2 = m2;
