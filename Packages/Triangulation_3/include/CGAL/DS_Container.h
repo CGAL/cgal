@@ -25,6 +25,7 @@
 
 #include <CGAL/basic.h>
 #include <vector>
+#include <memory>
 
 // What we want is a kind of STL like container/adapter with the following
 // properties, by decreasing priority :
@@ -93,15 +94,53 @@
 
 CGAL_BEGIN_NAMESPACE
 
-const int DS_Container_allocation_size = 1024;
-// const int DS_Container_allocation_size = 16384;
+// Should this be a nested class ?
+class Free_elt {
+    struct magic_key { unsigned i0, i1, i2; };
+    static const unsigned magic0 = 0xabcd0123;
+    static const unsigned magic1 = 0xfedc9876;
+    static const unsigned magic2 = 0xdeadbeef;
+
+    magic_key key;
+    Free_elt * ptr;
+public:
+
+    Free_elt * next() const {
+	return ptr;
+    }
+
+    void set_next(Free_elt *p) {
+	ptr = p;
+    }
+
+    void mark_free() {
+	key.i0 = magic0;
+	key.i1 = magic1;
+	key.i2 = magic2;
+    }
+
+    void unmark_free() {
+	key.i0 = 0;
+	key.i1 = 0;
+	key.i2 = 0;
+    }
+
+    bool is_free() const {
+	return key.i0 == magic0 &&
+	       key.i1 == magic1 &&
+	       key.i2 == magic2;
+    }
+};
+
+// const int DS_Container_allocation_size = 1024;
+const int DS_Container_allocation_size = 16384;
 
 template < class DSC > class DS_Container_iterator;
 
-template < class Elt > // , class Alloc = ... > // , size_t = 1024 > // ???
+template < class Elt, class Alloc = CGAL_ALLOCATOR(Elt) > //, size_t=1024> ???
 class DS_Container
 {
-    typedef DS_Container<Elt> Self;
+    typedef DS_Container<Elt, Alloc> Self;
 public:
 
     typedef Elt                         value_type;
@@ -111,38 +150,31 @@ public:
     friend class DS_Container_iterator<Self>;
 
     DS_Container()
-      : free_list(NULL) {}
-
-    Elt * get_new_element() // would be push_back() but we don't want a copy...
-	                    // But if we later use the allocators/constructor..
     {
-	if (free_list == NULL)
-	{
-          array_vect.push_back(new Elt[DS_Container_allocation_size]);
+	CGAL_assertion(sizeof(Free_elt) <= sizeof(Elt));
+	init_free_list();
+    }
+
+    // would be push_back() but we don't want a copy and we want the pointer...
+    Elt * get_new_element()
+    {
+        if (is_free_list_empty()) {
+          array_vect.push_back(alloc.allocate(DS_Container_allocation_size));
           for (int i=0; i<DS_Container_allocation_size; ++i)
-              release_element(&array_vect.back()[i]);
+              put_on_free_list((Free_elt *) &array_vect.back()[i]);
   	}
-	
-	Elt * ret = free_list;
-	free_list = get_list_pointer(free_list);
-	if (free_list == ret)
-	    free_list = NULL;
-	set_list_pointer(ret, NULL);
-	return ret;
+
+	Free_elt * ret = free_list.next();
+	free_list.set_next(ret->next());
+	ret->unmark_free();
+	alloc.construct((Elt *) ret, Elt());
+	return (Elt *) ret;
     }
 
     void release_element(Elt *x) // erase() is the std naming ?
     {
-	// Put it on the free list.
-
-	// By choosing a different constant, we can get rid of this test.
-	if (free_list == NULL)
-	    free_list = x;
-
-	set_list_pointer(x, free_list);
-	free_list = x;
-
-	CGAL_postcondition(is_free(x));
+	alloc.destroy(x);
+	put_on_free_list((Free_elt *)x);
     }
 
     bool is_element(Elt *x) const
@@ -172,53 +204,62 @@ public:
 
     void swap(Self &c)
     {
+	std::swap(alloc, c.alloc);
 	std::swap(array_vect, c.array_vect);
         std::swap(free_list, c.free_list);
     }
 
     void clear()
     {
+	for (iterator it = begin(); it != end(); ++it)
+	    alloc.destroy(&*it);
 	for (typename Array_vect::iterator it = array_vect.begin();
 		it != array_vect.end(); ++it)
-	    delete[] *it;
+	    alloc.deallocate(*it, DS_Container_allocation_size);
 	array_vect.clear();
-	free_list = NULL;
+        init_free_list();
     }
 
     size_type size() const
     {
 	size_type number_of_free_elts = 0;
-	if (free_list != NULL) {
-	    for (Elt *p=free_list; p!=get_list_pointer(p);
-		    p=get_list_pointer(p))
-		++number_of_free_elts;
+	for (Free_elt *p=free_list.next(); p!=NULL; p=p->next())
 	    ++number_of_free_elts;
-	}
 	return array_vect.size()*DS_Container_allocation_size
 	     - number_of_free_elts;
     }
 
 private:
 
+    void put_on_free_list(Free_elt *x)
+    {
+	x->mark_free();
+	x->set_next(free_list.next());
+	free_list.set_next(x);
+    }
+
     static bool is_free(const Elt *x)
     {
-	return get_list_pointer(x) != NULL; // or call a function object ?
+	return ((Free_elt *) x)->is_free();
     }
 
-    static void set_list_pointer(Elt *a, Elt *b)
+    bool is_free_list_empty() const
     {
-	a->set_list_pointer(b); // or call a function object ?
+	return free_list.next() == NULL;
     }
 
-    static Elt * get_list_pointer(const Elt *a)
+    void init_free_list()
     {
-	return (Elt *) a->get_list_pointer(); // or call a function object ?
+	free_list.unmark_free();
+	free_list.set_next(NULL);
     }
 
     typedef std::vector<Elt *> Array_vect;
 
+    Alloc alloc;
     Array_vect array_vect;
-    Elt * free_list;
+    Free_elt free_list;
+    // actually, would it be possible to use a union{Free_elt; Elt;} ?
 };
 
 template < class DSC >

@@ -40,7 +40,7 @@ template < class Tds> class Triangulation_ds_cell_iterator_3;
 template < class Tds> class Triangulation_ds_facet_iterator_3;
 template < class Tds> class Triangulation_ds_edge_iterator_3;
 template < class Tds> class Triangulation_ds_vertex_iterator_3;
-template < class Cell> class DS_Container;
+template < class Elt, class Alloc > class DS_Container;
 
 template < class Vb, class Cb >
 class Triangulation_ds_cell_3
@@ -70,7 +70,8 @@ public:
   typedef Triangulation_ds_vertex_3<Vb,Cb> Vertex;
   typedef Triangulation_ds_cell_3<Vb,Cb> Cell;
 
-  friend class DS_Container<Cell>;
+  template < class Elt, class Alloc >
+  friend class DS_Container;
 
   Triangulation_ds_cell_3()
     : Cb()
@@ -182,10 +183,7 @@ public:
 
 private:
 
-  union {
-      int _in_conflict_flag;
-      void *_list;
-  };
+  int _in_conflict_flag;
   
   void set_in_conflict_flag(int f)
   {
@@ -195,16 +193,6 @@ private:
   int get_in_conflict_flag() const
   {
       return _in_conflict_flag;
-  }
-
-  void set_list_pointer(void *p)
-  {
-      _list = p;
-  }
-
-  void * get_list_pointer() const
-  {
-      return _list;
   }
 
   void error_orient( Cell * , int i ) const

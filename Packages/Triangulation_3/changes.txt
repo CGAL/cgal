@@ -2,7 +2,7 @@ Version 1.84 (?? August 01)
 - Use std::swap instead of temporary variables in swap().
 - Commonize code between operator=() and copy_triangulation().
 - Test iterators/circulators for Delaunay too.
-- New cell container in DS_Container.h.
+- New cell container in DS_Container.h using an allocator.
 - TDS uses DS_Container.
 - Remove list pointer from ds_cell, to make it more compact.
 - Circulators don't store a TDS* anymore as it's not used.
