@@ -1,13 +1,7 @@
 This directory contains some example programs that
 illustrate robustness and precision issues in CGAL.
-The demos use LEDA, so LEDA must be installed to run the
-examples:
-
-intersection_points_on_segment_2
-triangulation_of_intersection_points_2
-hull_of_intersection_points_2
-
-
+The demos use LEDA if available.  If not, it uses CGAL::MP_Float
+as an exact number type, and requires the CGAL window for the display.
 
 
 ***********************************************************
@@ -136,14 +130,14 @@ In this examples, segments are generated at random (random
 endpoints in a square) and their intersection points are
 computed. Then the Delaunay triangulation of this set of
 points is constructed, using different kernels: First,
-Cartesian<leda_real>, next Cartesian<Filtered_exact<double,
-leda_real>>, and finally Cartesian<double>.
+Cartesian<exact_NT>, next Cartesian<Filtered_exact<double,
+exact_NT>>, and finally Cartesian<double>.
 
-Computation with Cartesian<leda_real> gives a correct
+Computation with Cartesian<exact_NT> gives a correct
 Delaunay triangulation, but it takes some time due to the
 constructed degeneracies in the point set.
 
-Computation with Cartesian<Filtered_exact<double,leda_real>>
+Computation with Cartesian<Filtered_exact<double,exact_NT>>
 does not give the correct triangulation, but it causes no
 robustness problems. The first step, computation of
 intersection points, is still subject to rounding errors.
@@ -190,7 +184,7 @@ For one of the segments intersecting in P, let's call it S,
 there is for each of two endpoints of S an extreme (blue)
 points on it that is closer to the endpoint then P. Hence P
 cannot be extreme. The detection of points incorrectly
-classified as extreme points uses Cartesian<leda_real>.
+classified as extreme points uses Cartesian<exact_NT>.
 
 This precision problem is caused by rounding-errors in the
 intersection point computation and the orientation tests.

@@ -25,10 +25,11 @@
 #include <fstream>
 #ifdef CGAL_USE_LEDA
 #  include <CGAL/leda_real.h>
+typedef leda_real exact_NT;
 #else
 #  include <CGAL/MP_Float.h>
 #  include <CGAL/Quotient.h>
-typedef CGAL::Quotient<CGAL::MP_Float> leda_real;
+typedef CGAL::Quotient<CGAL::MP_Float> exact_NT;
 #endif
 #include <CGAL/segment_intersection_points_2.h>
 #include <CGAL/point_generators_2.h>
@@ -58,7 +59,7 @@ main( int argc, char** argv)
   typedef CGAL::Cartesian<double>       C_double;
   typedef C_double::Point_2             double_Point;
   typedef C_double::Segment_2           double_Segment;
-  typedef CGAL::Cartesian<leda_real>    C_real;
+  typedef CGAL::Cartesian<exact_NT>     C_real;
   typedef C_real::Point_2               real_Point;
   typedef C_real::Segment_2             real_Segment;
   typedef CGAL::Creator_uniform_2<double, double_Point>

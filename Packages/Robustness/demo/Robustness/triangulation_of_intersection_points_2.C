@@ -25,10 +25,11 @@
 #include <fstream>
 #ifdef CGAL_USE_LEDA
 #  include <CGAL/leda_real.h>
+typedef leda_real exact_NT;
 #else
 #  include <CGAL/MP_Float.h>
 #  include <CGAL/Quotient.h>
-typedef CGAL::Quotient<CGAL::MP_Float.h>  leda_real;
+typedef CGAL::Quotient<CGAL::MP_Float>  exact_NT;
 #endif
 #include <CGAL/segment_intersection_points_2.h>
 #include <CGAL/point_generators_2.h>
@@ -45,7 +46,7 @@ typedef CGAL::Quotient<CGAL::MP_Float.h>  leda_real;
 #ifdef CGAL_CFG_MATCHING_BUG_2
 #define CGAL_IA_CT double
 #define CGAL_IA_PROTECTED true
-#define CGAL_IA_ET leda_real
+#define CGAL_IA_ET exact_NT
 #define CGAL_IA_CACHE No_Filter_Cache
 #endif
 #include <CGAL/Filtered_exact.h>
@@ -102,8 +103,8 @@ main( int argc, char** argv)
   CGAL::set_error_handler( CGAL::throw_exception_for_assertion_violation);
 
   typedef CGAL::Cartesian<double>       C_double;
-  typedef CGAL::Cartesian<leda_real>    C_real;
-  typedef CGAL::Cartesian<CGAL::Filtered_exact< double, leda_real> >
+  typedef CGAL::Cartesian<exact_NT>    C_real;
+  typedef CGAL::Cartesian<CGAL::Filtered_exact< double, exact_NT> >
                                                            C_filtered;
   typedef C_double::Point_2             double_Point;
   typedef C_double::Segment_2           double_Segment;
@@ -157,7 +158,7 @@ main( int argc, char** argv)
 
 
   std::vector<C_filtered_Segment >  filtered_segments;
-  typedef CGAL::Filtered_exact< double, leda_real>  Filtered;
+  typedef CGAL::Filtered_exact< double, exact_NT>  Filtered;
   CGAL::Cartesian_converter<C_double, C_filtered>  Fconverter;
   std::transform( double_segments.begin(),
                   double_segments.end(),
@@ -194,8 +195,8 @@ main( int argc, char** argv)
   std::copy( double_segments.begin(),
              double_segments.end(),
              CGAL::Ostream_iterator< double_Segment, CGAL_Stream>( W));
-  W0.draw_text(25,115, leda_string("Cartesian< leda_real >"));
-  std::cout << "First with Cartesian< leda_real > ";
+  W0.draw_text(25,115, leda_string("Cartesian< exact_NT >"));
+  std::cout << "First with Cartesian< exact_NT > ";
   std::cout << std::endl;
   DT_real   DTR;
   std::copy( real_intersection_points.begin(),
@@ -212,8 +213,8 @@ main( int argc, char** argv)
   W.read_mouse();
 
   W0.draw_text(25,100,
-      leda_string("Cartesian< Filtered_exact< double, leda_real > >"));
-  std::cout << "Next with Cartesian< Filtered_exact< double, leda_real> > ";
+      leda_string("Cartesian< Filtered_exact< double, exact_NT> >"));
+  std::cout << "Next with Cartesian< Filtered_exact< double, exact_NT> > ";
   std::cout << std::endl;
   DT_filtered FTD;
   std::copy( filtered_intersection_points.begin(),

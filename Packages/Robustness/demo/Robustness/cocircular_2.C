@@ -31,10 +31,11 @@
 #include <CGAL/IO/Ostream_iterator.h>
 #ifdef CGAL_USE_LEDA
 #  include <CGAL/leda_real.h>
+typedef leda_real exact_NT;
 #else
 #  include <CGAL/MP_Float.h>
 #  include <CGAL/Quotient.h>
-typedef CGAL::Quotient<CGAL::MP_Float> leda_real;
+typedef CGAL::Quotient<CGAL::MP_Float> exact_NT;
 #endif
 
 #include <CGAL/Interval_arithmetic.h>
@@ -61,7 +62,7 @@ typedef CGAL::Cartesian<double>                          CartesianDouble;
 typedef CartesianDouble::Point_2                         Point;
 typedef CGAL::Creator_uniform_2<double,Point>            Pt_creator;
 typedef std::vector<Point>                               Vector;
-typedef CGAL::Cartesian<leda_real>                       CartesianLedaReal;
+typedef CGAL::Cartesian<exact_NT>                        CartesianLedaReal;
 typedef CGAL::Min_circle_2_traits_2<CartesianDouble>     Traits;
 
 typedef CGAL::Min_circle_2_traits_2<CartesianDouble>     Traits;

@@ -28,13 +28,6 @@
 #include <CGAL/copy_n.h>
 #include <CGAL/IO/Window_stream.h>
 #include <CGAL/IO/Ostream_iterator.h>
-#ifdef CGAL_USE_LEDA
-#  include <CGAL/leda_real.h>
-#else
-#  include <CGAL/MP_Float.h>
-#  include <CGAL/Quotient.h>
-typedef CGAL::Quotient<CGAL::MP_Float> leda_real;
-#endif
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Cartesian_converter.h>
 
