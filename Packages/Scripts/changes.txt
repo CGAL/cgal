@@ -1,3 +1,7 @@
+02 June 2004 Radu Ursu
+- create_internal_release must remove the Modules directory from the internal
+  release. This is introduced in release from the Installation package. 
+
 1 June 2004 Sylvain Pion
 - Add create_new_release under CVS.
 
