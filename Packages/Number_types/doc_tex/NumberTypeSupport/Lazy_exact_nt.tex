@@ -1,0 +1,64 @@
+% $Revision$
+% $Date$
+% author : Sylvain Pion
+
+\begin{ccClassTemplate} {Lazy_exact_nt<NT>}
+\ccSubsection{Lazy wrapper for exact number types}
+\label{lazy_exact_nt}
+
+\ccDefinition
+An object of the class \ccc{Lazy_exact_nt<NT>} is able to represent any number
+which \ccc{NT} is able to represent.  The arithmetic operations it can do are
+those \ccc{NT} can do, limited to the 4 basic operations, the square root and
+the comparisons.
+The idea is that \ccc{Lazy_exact_nt<NT>} works exactly like \ccc{NT}, except
+that it is faster because it tries to only compute an approximation of the
+value, and only refers to \ccc{NT} when needed.  The goal is to speed up exact
+computations done by any exact but slow number type \ccc{NT}.
+
+\ccInclude{CGAL/Lazy_exact_nt.h}
+
+\ccCreation
+\ccCreationVariable{m}
+
+\ccConstructor{Lazy_exact_nt();}
+{introduces an uninitialized variable \ccVar.}
+\ccGlue
+%\ccConstructor{Lazy_exact_nt(const Lazy_exact_nt &);}
+%{copy constructor.}
+%\ccGlue
+\ccConstructor{Lazy_exact_nt(int i)}
+{introduces the integral value \ccc{i}.}
+\ccGlue
+\ccConstructor{Lazy_exact_nt(double d)}
+{introduces the floating point value \ccc{d} (works only if \ccc{NT} has a
+constructor from a double too).}
+\ccGlue
+\ccConstructor{Lazy_exact_nt(NT n)}
+{introduces the value \ccc{n}.}
+
+\ccOperations
+All functions are provided so that it can be used as a number type in
+\cgal.
+
+\ccFunction{std::ostream& operator<<(std::ostream& out,
+                                     const Lazy_exact_nt<NT>& m);}
+{writes \ccc{m} to ostream \ccc{out} in an interval format.}
+
+\ccFunction{std::istream& operator>>(std::istream& in, Lazy_exact_nt<NT>& m);}
+{reads a \ccc{NT} from \ccc{in}, then converts it to a \ccc{Lazy_exact_nt<NT>}.}
+
+\ccExample
+
+\begin{verbatim}
+#include <CGAL/Cartesian.h>
+#include <CGAL/MP_Float.h>
+#include <CGAL/Lazy_exact_nt.h>
+#include <CGAL/Quotient.h>
+
+typedef CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::MP_Float> > NT;
+typedef CGAL::Cartesian<NT> K;
+\end{verbatim}
+
+\end{ccClassTemplate} 
+
