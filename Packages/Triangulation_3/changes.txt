@@ -1,5 +1,6 @@
 
 - Fixed bug in Delaunay_remove_tds_3.h introduced with Version 1.153
+- VC7 workaround in make_hole_3D_ear.
 
 Version 1.155 (12 June 03)
 - Removed derivation from Triangulation_cw_ccw_2 again

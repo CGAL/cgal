@@ -325,9 +325,31 @@ private:
       return less_distance(p, v->point(), w->point()) ? v : w;
   }
 
+#ifndef CGAL_CFG_NET2003_MATCHING_BUG
   void make_hole_3D_ear( Vertex_handle v, 
 	                 std::vector<Facet> & boundhole,
 	                 std::vector<Cell_handle> & hole);
+#else
+  void make_hole_3D_ear( Vertex_handle v, 
+	                 std::vector<Facet> & boundhole,
+                         std::vector<Cell_handle> & hole)
+  {
+    CGAL_triangulation_expensive_precondition( ! test_dim_down(v) );
+    incident_cells(v, std::back_inserter(hole));
+
+    for (typename std::vector<Cell_handle>::iterator cit = hole.begin();
+        cit != hole.end(); ++cit) {
+      int indv = (*cit)->index(v);
+      Cell_handle opp_cit = (*cit)->neighbor( indv );
+      boundhole.push_back(Facet( opp_cit, opp_cit->index(*cit)) );
+
+      for (int i=0; i<4; i++)
+        if ( i != indv )
+	  (*cit)->vertex(i)->set_cell(opp_cit);
+    }
+  }
+#endif
+
   void fill_hole_3D_ear(const std::vector<Facet> & boundhole);
 
   class Conflict_tester_3
@@ -1108,12 +1130,13 @@ is_valid(Cell_handle c, bool verbose, int level) const
   return true;
 }
 
+#ifndef CGAL_CFG_NET2003_MATCHING_BUG
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_3<Gt,Tds>::
 make_hole_3D_ear( Vertex_handle v, 
-	      std::vector<Facet> & boundhole,
-	      std::vector<Cell_handle> & hole)
+	          std::vector<Facet> & boundhole,
+	          std::vector<Cell_handle> & hole)
 {
   CGAL_triangulation_expensive_precondition( ! test_dim_down(v) );
 
@@ -1130,6 +1153,7 @@ make_hole_3D_ear( Vertex_handle v,
 	(*cit)->vertex(i)->set_cell(opp_cit);
   }
 }
+#endif
 
 template < class Gt, class Tds >
 void
