@@ -1203,8 +1203,8 @@ operation on two instances of the ring type.}*/
 // SPECIALIZE_CLASS(NT,int double) END
 
 template <class NT> double to_double 
-  (const Polynomial<NT>& p) 
-  { return 0; } // AF THIS USED R_  STRANGE!!!
+  (const Polynomial<NT>&) 
+  { return 0; }
 
 template <class NT> bool is_valid 
   (const Polynomial<NT>& p) 
