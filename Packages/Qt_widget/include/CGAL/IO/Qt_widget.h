@@ -119,11 +119,11 @@ public:
   // CGAL version of setFooColor
   // used by the manipulators system
   // DO NOT USE THESE THREE UNDOCUMENTED FUNCTIONS !!
-  inline void setColor(Color c)
+  inline void setColor(const Color c)
     { setColor(CGAL2Qt_Color(c)); };
-  inline void setBackgroundColor(Color c)
+  inline void setBackgroundColor(const Color c)
     { setBackgroundColor(CGAL2Qt_Color(c)); };
-  inline void setFillColor(Color c)
+  inline void setFillColor(const Color c)
     { setFillColor(CGAL2Qt_Color(c)); };
 
   // set pen() color to c, cf. manipulators below for setting
@@ -323,7 +323,7 @@ QColor Qt_widget::color() const
 
 
 inline
-void Qt_widget::setColor(QColor c)
+void Qt_widget::setColor(const QColor c)
 {
   QPen p=get_painter().pen();
   p.setColor(c);
@@ -337,7 +337,7 @@ QColor Qt_widget::backgroundColor() const
 }
 
 inline
-void Qt_widget::setBackgroundColor(QColor c)
+void Qt_widget::setBackgroundColor(const QColor c)
 {
   QWidget::setBackgroundColor(c);
   get_painter().setBackgroundColor(c);
@@ -351,7 +351,7 @@ QColor Qt_widget::fillColor() const
 }
 
 inline
-void Qt_widget::setFillColor(QColor c)
+void Qt_widget::setFillColor(const QColor c)
 {
   setFilled(true);
   get_painter().setBrush(c);
@@ -364,7 +364,7 @@ bool Qt_widget::isFilled() const
 }
 
 inline
-void Qt_widget::setFilled(bool f)
+void Qt_widget::setFilled(const bool f)
 {
   if (f)
     painter->setBrush(savedBrush);
@@ -382,7 +382,7 @@ uint Qt_widget::lineWidth() const
 }
 
 inline
-void Qt_widget::setLineWidth(unsigned int i)
+void Qt_widget::setLineWidth(const unsigned int i)
 {
   QPen p=get_painter().pen();
   p.setWidth(i);
@@ -396,7 +396,7 @@ uint Qt_widget::pointSize() const
 }
 
 inline
-void Qt_widget::setPointSize(unsigned int i)
+void Qt_widget::setPointSize(const unsigned int i)
 {
   _pointSize=i;
 }
@@ -408,7 +408,7 @@ PointStyle Qt_widget::pointStyle() const
 }
 
 inline
-void Qt_widget::setPointStyle(PointStyle ps)
+void Qt_widget::setPointStyle(const PointStyle ps)
 {
   _pointStyle=ps;
 }
