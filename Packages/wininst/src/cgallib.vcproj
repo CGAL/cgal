@@ -303,6 +303,21 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="Polynomial.C">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						CompileAs="2"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						CompileAs="2"/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="Random.C">
 				<FileConfiguration
 					Name="Debug|Win32">
