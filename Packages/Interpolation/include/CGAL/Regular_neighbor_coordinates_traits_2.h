@@ -26,7 +26,7 @@
 
 CGAL_BEGIN_NAMESPACE 
 
-template < class R, class W = CGAL_TYPENAME_MSVC_NULL  R::RT>
+template < class R, class W = typename  R::RT>
 class Regular_neighbor_coordinates_traits_2
   : public Regular_triangulation_euclidean_traits_2<R,W>
 {
