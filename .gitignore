@@ -145,8 +145,6 @@ Packages/Polytope_distance_d/Makefile
 Packages/Polytope_distance_d/bin
 Packages/Polytope_distance_d/doc_ps
 Packages/Qt_widget/.env
-Packages/Qt_widget/demo/Qt_widget/Constrained_triangulation_2/*.moc
-Packages/Qt_widget/demo/Qt_widget/Constrained_triangulation_2/constrained
 Packages/Qt_widget/demo/Qt_widget/Examples/*.moc
 Packages/Qt_widget/demo/Qt_widget/Examples/hellosegment
 Packages/Qt_widget/demo/Qt_widget/Examples/layer
