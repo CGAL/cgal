@@ -1180,18 +1180,19 @@ pseudocode above.
 
 \subsection{Class template \ccFont CGAL\_Min\_circle\_2\_adapterC2<PT,DA>}
 
-First, we declare the class templates \ccc{CGAL_Min_circle_2_adapterC2},
-\ccc{CGAL__Min_circle_2_adapterC2__Circle} and \ccc{CGAL_Min_circle_2}
+First, we declare the class templates \ccc{CGAL_Min_circle_2},
+\ccc{CGAL_Min_circle_2_adapterC2} and
+\ccc{CGAL__Min_circle_2_adapterC2__Circle}.
 
 @macro<Min_circle_2_adapterC2 declarations> = @begin
+    template < class _Traits >
+    class CGAL_Min_circle_2;
+
     template < class _PT, class _DA >
     class CGAL_Min_circle_2_adapterC2;
 
     template < class _PT, class _DA >
     class CGAL__Min_circle_2_adapterC2__Circle;
-
-    template < class _Traits >
-    class CGAL_Min_circle_2;
 @end
 
 The actual work of the adapter is done in the nested class
@@ -1502,18 +1503,19 @@ it is declared \ccc{friend}.
 
 \subsection{Class template \ccFont CGAL\_Min\_circle\_2\_adapterH2<PT,DA>}
 
-First, we declare the class templates \ccc{CGAL_Min_circle_2_adapterH2}
-\ccc{CGAL__Min_circle_2_adapterH2__Circle} and \ccc{CGAL_Min_circle_2}
+First, we declare the class templates \ccc{Min_circle_2},
+\ccc{CGAL_Min_circle_2_adapterH2} and
+\ccc{CGAL__Min_circle_2_adapterH2__Circle}.
 
 @macro<Min_circle_2_adapterH2 declarations> = @begin
+    template < class _Traits >
+    class CGAL_Min_circle_2;
+
     template < class _PT, class _DA >
     class CGAL_Min_circle_2_adapterH2;
 
     template < class _PT, class _DA >
     class CGAL__Min_circle_2_adapterH2__Circle;
-
-    template < class _Traits >
-    class CGAL_Min_circle_2;
 @end
 
 The actual work of the adapter is done in the nested class
