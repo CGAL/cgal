@@ -537,10 +537,6 @@ void Qt_widget::clear() {
     qt_layers.erase(std::find(qt_layers.begin(),qt_layers.end(),s));
   }
 
-  QSize Qt_widget::sizeHint(){
-    return QSize(geometry().width(), geometry().height();}
-  } 
-
 } // namespace CGAL
 
 // moc_source_file: ../../include/CGAL/IO/Qt_widget.h
