@@ -33,12 +33,12 @@ between two convex polytopes, given as the convex hulls of two finite point
 sets in $d$-dimensional Euclidean space $\E_d$. For point sets $P$ and $Q$
 we denote by $pd(P,Q)$ the distance between the convex hulls of $P$ and
 $Q$. Note that $pd(P,Q)$ can be
-degenerate\ccIndexSubitem[t]{degeneracies}{\ccc{Polytope_distance_d}},
+degenerate\lcTex{\ccIndexSubitem[t]{degeneracies}{\ccFont Polytope_distance_d}},
 i.e.~$pd(P,Q)=\infty$ if $P$ or $Q$ is empty.
 
 Two inclusion-minimal subsets $S_P$ of $P$ and $S_Q$ of $Q$ with
 $pd(S_P,S_Q)=pd(P,Q)$ are called \emph{pair of support
-  sets}\ccIndexSubitem[t]{support set}{\ccc{Polytope_distance_d}}, the
+  sets}\lcTex{\ccIndexSubitem[t]{support set}{\ccFont Polytope_distance_d}}, the
 points in $S_P$ and $S_Q$ are the \emph{support points}. A pair of support
 sets has size at most $d+2$ (by size we mean $|S_P|+|S_Q|$). The distance
 between the two polytopes is \emph{realized} by a pair of points $p$ and
@@ -153,7 +153,7 @@ two-, three-, and $d$-dimensional \cgal~kernel, respectively.
 \ccGlueBegin
 \ccMemberFunction{ int  number_of_support_points( ) const;}{
         returns the number of support points of \ccVar, i.e.~$|S_P|+|S_Q|$.}
-\ccIndexSubitem[t]{support set}{\ccc{Polytope_distance_d}}
+\lcTex{\ccIndexSubitem[t]{support set}{\ccFont Polytope_distance_d}}
 %
 \ccMemberFunction{ int  number_of_support_points_p( ) const;}{
         returns the number of support points in $S_P$.}
@@ -269,7 +269,7 @@ two-, three-, and $d$-dimensional \cgal~kernel, respectively.
 \ccMemberFunction{ bool  is_degenerate( ) const;}{
         returns \ccc{true}, iff $pd(P,Q)$ is degenerate,
         i.e.~$pd(P,Q)$ is not finite.}
-\ccIndexSubitem[t]{degeneracies}{\ccc{Polytope_distance_d}}
+\lcTex{\ccIndexSubitem[t]{degeneracies}{\ccFont Polytope_distance_d}}
 
 % -----------------------------------------------------------------------------
 \ccModifiers
@@ -355,7 +355,7 @@ two-, three-, and $d$-dimensional \cgal~kernel, respectively.
 % -----------------------------------------------------------------------------
 \ccHeading{Validity Check}
 \ccIndexMemberFunctionGroup{validity check}
-\ccIndexSubitem[t]{validity check}{\ccc{Polytope_distance_d}}
+\lcTex{\ccIndexSubitem[t]{validity check}{\ccFont Polytope_distance_d}}
 
 An object \ccVar\ is valid, iff
 \ldots
@@ -420,9 +420,9 @@ An object \ccVar\ is valid, iff
 The problem of finding the distance between two convex polytopes given as
 the convex hulls of two finite point sets can be formulated as an
 optimization problem with linear constraints and a convex quadratic
-objective function\ccIndexSubitem[t]{quadratic program}
-{\ccc{Polytope_distance_d}}. The solution is obtained using our exact solver for
-quadratic programs~\cite{gs-eegqp-00}.
+objective function\lcTex{\ccIndexSubitem[t]{quadratic program}
+{\ccFont Polytope_distance_d}}. The solution is obtained using our exact solver
+for quadratic programs~\cite{gs-eegqp-00}.
 
 The creation time is almost always linear in the number of points.  Access
 functions and predicates take constant time, inserting a point might take
