@@ -2,17 +2,12 @@
 //
 // Copyright (c) 1997 The CGAL Consortium
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
-//
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.0-I-1 $
-// release_date  : $CGAL_Date: 1999/02/09 $
+// release       : 
+// release_date  : 
 //
 // file          : config/testfiles/CGAL_CFG_NO_NAMESPACE.C
-// package       : Configuration (1.21)
 // source        :
 // revision      : 1.11
 // revision_date : 29 Mar 1998
@@ -29,31 +24,17 @@
 // The following documentation will be pasted in the generated configfile.
 // ---------------------------------------------------------------------
 
-//| If a compiler doesn't know namespaces, the flag
-//| CGAL_CFG_NO_NAMESPACE is set.
+//| If a compiler doesn't know the namespace std, the flag
+//| CGAL_CFG_NO_STD_NAMESPACE is set. Some compilers know namespace std
+//| but don't implement namespaces in general.
 
-#include <cassert>
+#include <vector.h>
 
-namespace A {
-  int foo() { return 1; }
-}
-
-namespace B {
-  int foo() { return 2; }
-}
+using namespace std;
 
 int main()
 {
-  assert( A::foo() == 1);
-  assert( B::foo() == 2);
-  {
-    using namespace A;
-    assert( foo() == 1);
-  }
-  {
-    using namespace B;
-    assert( foo() == 2);
-  }
+  std::vector<int> v;
   return 0;
 }
 

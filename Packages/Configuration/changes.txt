@@ -1,4 +1,18 @@
 //-----------------------------------------------------------------------//
+// Changes in 1.22
+
+Added support for namespace CGAL.
+- Moved CGAL_CFG_NO_NAMESPACE.C to
+- Added new CGAL_CFG_NO_NAMESPACE.C
+- removed inclusion of workaround_stl.h from config.h
+- Added flags CGAL_BEGIN_NAMESPACE and CGAL_END_NAMESPACE to config.h
+
+//-----------------------------------------------------------------------//
+// Changes in 1.20
+
+Added CGAL_CFG_NO_TMPL_IN_TMPL_PARAM.C
+
+//-----------------------------------------------------------------------//
 // Changes in 1.16
 
 Corrected headers and shortened lines that were longer than 80 characters.
