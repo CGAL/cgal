@@ -1,6 +1,10 @@
 Circulator Package: Release changes:
 ---------------------------------------------------------------------
 	
+3.28 (6 Apr 2003)
+
+     - G++ 3.4 support : add missing "typename" and "this->". [sp]
+
 3.27 (1 Apr 2003)
      - replaced #ifdef _MSC_VER with CGAL_CFG_NO_SCOPE_MEMBER_FUNCTION_PARAMETERS [af]
      - SunPro 5.4 didn't like the space between -I and the path in a Makefile
