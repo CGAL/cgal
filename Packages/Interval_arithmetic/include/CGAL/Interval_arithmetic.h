@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 //
-// file          : $Source$
+// file          : include/CGAL/Interval_arithmetic.h
 // revision      : $Revision$
 // revision_date : $Date$
 // package       : Interval Arithmetic
@@ -21,19 +21,6 @@
 //
 // ============================================================================
 
-//  [OLD STUFF]
-// release       :
-// release_date  :
-//
-// file          : include/CGAL/Interval_arithmetic.h
-// revision      : 1.7
-// revision_date : 1 July 1998
-// package       : Interval Arithmetic
-// author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
-//
-// coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
-//
-// ============================================================================
 
 // This file contains the description of the two classes:
 // - CGAL_Interval_nt_advanced  (do the FPU tricks yourself)
