@@ -57,6 +57,7 @@ int square_root_test()
       break;
     a = b;
   };
+  DEBUG( cout << i; )
   a -= 1;
   return ( (i==54) &&
            (a.upper_bound() == - a.lower_bound()) &&
@@ -170,29 +171,41 @@ int main()
   cout << "Stress-testing the class CGAL_Interval_nt.\n";
 #endif
 
-  bool flag = true;
+  bool tmpflag, flag = true;
   cout.precision(20);
 
-  cout << "Printing test: " << endl;
+  cout << "Printing test:" << endl;
   cout << (IA)-.7 << endl << (IA)7/10 << endl << (IA)1/0 << endl;
 
-  cout << "Do square_root_test()\n";
-  flag = square_root_test() && flag;
+  cout << "Do square_root_test() ";
+  tmpflag = square_root_test();
+  cout << tmpflag << endl;
+  flag = tmpflag && flag;
 
-  cout << "Do spiral_test()\n";
-  flag = spiral_test() && flag;
+  cout << "Do spiral_test() ";
+  tmpflag = spiral_test();
+  cout << tmpflag << endl;
+  flag = tmpflag && flag;
 
-  cout << "Do overflow_test()\n";
-  flag = overflow_test() && flag;
+  cout << "Do overflow_test() ";
+  tmpflag = overflow_test();
+  cout << tmpflag << endl;
+  flag = tmpflag && flag;
 
-  cout << "Do underflow_test()\n";
-  flag = underflow_test() && flag;
+  cout << "Do underflow_test() ";
+  tmpflag = underflow_test();
+  cout << tmpflag << endl;
+  flag = tmpflag && flag;
 
-  cout << "Do division_test()\n";
-  flag = division_test() && flag;
+  cout << "Do division_test() ";
+  tmpflag = division_test();
+  cout << tmpflag << endl;
+  flag = tmpflag && flag;
 
-  cout << "Do multiplication_test()\n";
-  flag = multiplication_test() && flag;
+  cout << "Do multiplication_test() ";
+  tmpflag = multiplication_test();
+  cout << tmpflag << endl;
+  flag = tmpflag && flag;
 
 #ifdef ADVANCED
   CGAL_FPU_set_rounding_to_nearest();
