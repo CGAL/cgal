@@ -1,10 +1,14 @@
-- Changed many occurences of Point to const Point& in argument lists
+
   and for local variables [af]
 
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-Ver 7.40 (25/07/02))
+Ver 7.41 ()
+- fixes in doc
+
+Ver 7.40 (25/07/02)
+- Changed many occurences of Point to const Point& in argument lists
 - fixed long lines
 - fixes in doc
 - suppressed precondition from insert_in_edge

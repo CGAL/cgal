@@ -13,6 +13,10 @@
 - ajouter dans la doc du line face circulator, la precondition p!= q
 
  
+- arranger ca :
+  Concernant la Constrained_triangulation_plus_2:
+  Ca devrait etre Vertices_in_constraint_iterator a la place de 
+  Vertices_in_constraint
 - constrained_triangulation_plus_2 plante sur Sun CC
 - tenir compte remarque de sylvain a propos de design
 - documenter Constrained_triangulation_plus_2
