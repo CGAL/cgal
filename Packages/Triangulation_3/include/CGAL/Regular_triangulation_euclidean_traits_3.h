@@ -52,9 +52,9 @@ class Regular_triangulation_euclidean_traits_3
   : public Triangulation_geom_traits_3<Repres>
 {
 public:
-  typedef typename Triangulation_geom_traits_3<Repres>::Point Bare_point;
+  typedef typename Triangulation_geom_traits_3<Repres>::Point_3 Bare_point;
   typedef Weighted_point <Bare_point, Weight>   Weighted_point;
-  typedef Weighted_point                        Point;
+  typedef Weighted_point                        Point_3;
 
   // power test for non coplanar points
   Oriented_side power_test(const Weighted_point &p,
