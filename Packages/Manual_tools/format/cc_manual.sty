@@ -451,8 +451,16 @@
 \newcommand{\RCSdef}{}
 \def\RCSdef{\begingroup\catcode`\$=12 \RCSdefSet}
 { \catcode`\$=12
-    \gdef\RCSdefSetX #1$#2${\gdef#1{#2}}%
-    \gdef\RCSdefSet #1#2{\RCSdefSetX{#1}#2\endgroup}%
+    \gdef\RCSdefSetSpace #1$#2 ${\gdef#1{#2}}%
+    \gdef\RCSdefSetNonSpace #1$#2${\gdef#1{#2}}%
+    \gdef\RCSdefSetTest #1#2$#3 $#4\end{%
+        \def\xRCSparams{#4}\ifx\xRCSparams\empty
+            \RCSdefSetNonSpace{#1}#2%
+        \else
+            \RCSdefSetSpace{#1}#2%
+        \fi
+    }%
+    \gdef\RCSdefSet #1#2{\RCSdefSetTest{#1}{#2}#2 $\end\endgroup}%
 }
 
 %   #1  the macro name for the RCS entry
@@ -460,9 +468,24 @@
 \newcommand{\RCSdefDate}{}
 \def\RCSdefDate{\begingroup\catcode`\$=12 \RCSdefSetDate}
 { \catcode`\$=12
+    % Define the date if it is set.
     % #1 = macro name, #2 = "Date:", #3 = year, #4 = month, #5 = day, #6 = time
-    \gdef\RCSdefSetDateX #1$#2 #3/#4/#5 #6${\gdef#1{#2 #3/#4/#5}}%
-    \gdef\RCSdefSetDate #1#2{\RCSdefSetDateX{#1}#2\endgroup}%
+    \gdef\RCSdefSetDateSet #1$#2 #3/#4/#5 #6${\gdef#1{#2 #3/#4/#5}}%
+    % Define the date if it is not set.
+    % #1 = macro name, #2 = string without $'s
+    \gdef\RCSdefSetDateNonSet #1$#2${\gdef#1{#2 -\,-/-\,-/-\,-}}%
+    % Test whether the date is set or not.
+    % #1 = macro name, #2 = full date string, #8 = empty if date is not set
+    \gdef\RCSdefSetDateTest #1#2$#3 #4/#5/#6 #7$#8\end{%
+        \def\xRCSparams{#8}\ifx\xRCSparams\empty
+            \RCSdefSetDateNonSet{#1}#2%
+        \else
+            \RCSdefSetDateSet{#1}#2%
+        \fi
+    }%
+    \gdef\RCSdefSetDate #1#2{%
+        \RCSdefSetDateTest{#1}{#2}#2 1/2/3 4$\end\endgroup %$
+    }%
 }
 
 \RCSdef{\ccRevision}{$Revision$}
@@ -530,12 +553,12 @@
 
 \newcommand{\ccSection}[1]{%
                    \section[#1 (\protect\ccPrintSingleTokenSemi
-                   \ccPureClassName;)]{#1 (\ccClassName)}
+                   \ccPureClassTemplateName;)]{#1 (\ccClassTemplateName)}
                    \label{#1}}
 
 \newcommand{\ccSubsection}[1]{%
                    \subsection[#1 (\protect\ccPrintSingleTokenSemi
-                           \ccPureClassName;)]{#1 (\ccClassName)}
+                         \ccPureClassTemplateName;)]{#1 (\ccClassTemplateName)}
                    \label{#1}}
 
 \newcommand{\ccHeading}[1]{\bigskip\pagebreak[1]
@@ -683,27 +706,27 @@
 
 \def\ccClassTemplateX #1{%
                    \endgroup
-                   \ccClassTemplateXX #1<\end}
+                   \ccClassTemplateXX {#1}#1<\end}
 
-\def\ccClassTemplateXX #1<#2\end{%
-                   \def\xparams{#2}\ifx\xparams\empty
+\def\ccClassTemplateXX #1#2<#3\end{%
+                   \def\xparams{#3}\ifx\xparams\empty
                        \errmessage{Template parameters missing for
                          class template}>%
-                       \ccClassTemplateXXX{#1}<???><\end%
+                       \ccClassTemplateXXX{#1<???>}{#2}<???><\end%
                    \else
-                       \ccClassTemplateXXX{#1}<#2\end%
+                       \ccClassTemplateXXX{#1}{#2}<#3\end%
                    \fi}
 
-\def\ccClassTemplateXXX #1#2<\end{%
-                   \def\ccPureClassName{#1}%
-                   \def\ccPureClassTemplateName{#1#2}%
-                   \def\ccPureTemplateParameters{#2}%
+\def\ccClassTemplateXXX #1#2#3<\end{%
+                   \def\ccPureClassName{#2}%
+                   \def\ccPureClassTemplateName{#1}%
+                   \def\ccPureTemplateParameters{#3}%
                    \renewcommand{\ccClassName}{\hbox{{\ccFont
-                           \ccPrintTokens #1\end\ccEndFont}}}%
-                   \renewcommand{\ccClassTemplateName}{\hbox{{\ccFont
-                           \ccPrintTokens #1#2\end\ccEndFont}}}%
-                   \renewcommand{\ccTemplateParameters}{\hbox{{\ccFont
                            \ccPrintTokens #2\end\ccEndFont}}}%
+                   \renewcommand{\ccClassTemplateName}{\hbox{{\ccFont
+                           \ccPrintTokens #1\end\ccEndFont}}}%
+                   \renewcommand{\ccTemplateParameters}{\hbox{{\ccFont
+                           \ccPrintTokens #3\end\ccEndFont}}}%
                }
 
 % +--------------------------------------------------------------------------
@@ -1079,7 +1102,7 @@
                        % check for template function
                        \isTemplate{#2}\ifnum\ccBool=\ccTrue
                            \ccSeparateTemplate{\ccTemplateLine}{%
-                               \constructorcall{#1}}#2(#3)#4\end
+                               \ccConstructorCall{#1}}#2(#3)#4\end
                        \else
                          \ccInitConstructorWidths
                          \setbox\callnamebox=\hbox{%
@@ -1891,9 +1914,10 @@
 \newcount\nestinglevel
 
 % Print a parameter where "const ...&" pairs are eliminated. Strips a
-% type that equals the \ccPureClassName. It is a nested macro definition.
-% It uses the \ccPureClassName to build a matching pattern to detect a 
-% possible type name to be eliminated. Similar solution as \ccReplacePrefix.
+% type that equals the \ccPureClassTemplateName. It is a nested macro
+% definition. It uses the \ccPureClassTemplateName to build a matching
+% pattern to detect a possible type name to be eliminated. Similar
+% solution as \ccReplacePrefix. 
 % If the function argument is empty, \ccEmptyParameter is printed.
 % The parameter has to be delimited with "<>\end".
 % Ignore leading spaces.
@@ -1901,7 +1925,7 @@
     \ifnum\ccTagRmEigenClassName=\ccFalse
         \ccPrintTokens #1#2\end%
     \else
-        \ifx\ccPureClassName\empty
+        \ifx\ccPureClassTemplateName\empty
             \ccPrintTokens #1#2\end%
         \else
         \isEmpty{#2}\ifnum\ccBool=\ccTrue
@@ -1912,30 +1936,33 @@
             % function, where the first argument is \ccVar, causes the trouble.
             % This special case is checked here.
         \else
-            \edef\ccOwnClassPair{{\ccPureClassName}{#1#2\ccPureClassName}}%
+            \edef\ccOwnClassPair{{\ccPureClassTemplateName}{%
+                #1#2\ccPureClassTemplateName}}%
             \expandafter\ccPrintOwnClassParameterX\ccOwnClassPair
         \fi\fi
     \fi
 }
 
-% Does the actual work:  #1 is the \ccPureClassName
-%                        #2 is the text to process with the \ccPureClassName
+% Does the actual work:  #1 is the \ccPureClassTemplateName
+%                        #2 is the text to process with the 
+%                           \ccPureClassTemplateName
 %                           appended at the end
 \def\ccPrintOwnClassParameterX #1#2{%
-    % local macro to do the parsing: ##1 is the text before \ccPureClassName
-    %                                ##2 is the text after \ccPureClassName
+    % local macro to do the parsing: 
+    %                  ##1 is the text before \ccPureClassTemplateName
+    %                  ##2 is the text after \ccPureClassTemplateName
     \def\ccRepOwnClass ##1#1##2\end{%
         \isEmpty{##2}\ifnum\ccBool=\ccTrue
-            % normal case, \ccPureClassName is not in the argument.
+            % normal case, \ccPureClassTemplateName is not in the argument.
             \ccPrintTokens ##1\end%
         \else
-            % \ccPureClassName is in the argument.
+            % \ccPureClassTemplateName is in the argument.
             \ccRepOwnClassX ##1##2\end%
         \fi
     }%
-    % local macro to remove the trailing \ccPureClassName.
+    % local macro to remove the trailing \ccPureClassTemplateName.
     % If the function argument is empty, print \ccEmptyParameter.
-    %     ##1 is the text before \ccPureClassName
+    %     ##1 is the text before \ccPureClassTemplateName
     \def\ccRepOwnClassX ##1#1\end{%
         \isEmpty{##1}\ifnum\ccBool=\ccTrue
             \ccEmptyParameter
