@@ -1,3 +1,6 @@
+4.13     (25 Feb 01)
+- Fix warning.
+
 4.12     (21 Feb 01)
 - Add NT_converter.h which contains NT_converter<A,B> and
   Interval_converter<A>.

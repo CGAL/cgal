@@ -22,11 +22,10 @@
  
 
 #include <cassert>
-template <class NT> bool test_to_interval(const NT& n);
 
 template <class NT>
 bool
-test_to_interval(const NT& n)
+test_to_interval(const NT&)
 {
   CGAL::Interval_base I = CGAL::to_interval( NT(2) );
   assert( I.inf()<=2.0 && I.sup()>=2.0 );
