@@ -164,8 +164,9 @@ public:
 #ifdef _MSC_VER
   #if _MSC_VER>1200
    int insert(InputIterator first, InputIterator last, int i = 0)
-  #endif
+  #else
    int insert(InputIterator first, InputIterator last) 
+  #endif
 #else
    int insert(InputIterator first, InputIterator last) 
 #endif
