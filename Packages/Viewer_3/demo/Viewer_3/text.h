@@ -29,8 +29,8 @@ void draw_tri_tex(double x1, double y1, double z1,double x2, double
   glPolygonMode(GL_FRONT,GL_FILL);
   glBegin(GL_TRIANGLES);
 
-  vector<double> v1(3);
-  vector<double> v2(3);
+  std::vector<double> v1(3);
+  std::vector<double> v2(3);
   v1 = CGAL::normal(x1,y1,z1,x2,y2,z2,x3,y3,z3);
        
   v2[0]= -v1[0];  v2[1]=-v1[1] ; v2[2]= -v1[2];

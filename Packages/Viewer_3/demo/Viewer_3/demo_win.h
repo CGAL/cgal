@@ -1,7 +1,11 @@
 #include <CGAL/point_generators_2.h>
 #include <stdlib.h>
 #include <math.h>
+
+#if !defined(_MSC_VER) && !defined(__BORLANDC__)
 #include <unistd.h>
+#endif 
+
 //#include "triang_2.h"
 
 typedef CGAL::Cartesian<double> rep_t;
