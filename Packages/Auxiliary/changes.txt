@@ -1,3 +1,9 @@
+9 November 2004 Andreas Fabri
+- Added #define __GMP_LIBGMP_DLL and __MPFR_LIBGMP_DLL to gmp.h and mpfr.h
+
+8 November 2004 Andreas Fabri
+- Replaced the gmp.lib built with gcc with the one built with VC++ (Brian Gladman)
+
 2 November 2004 Menelaos Karavelas
 - added cgal_app.icns: icons file needed for MacOSX applications
 
