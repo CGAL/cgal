@@ -29,34 +29,43 @@ CGAL_BEGIN_NAMESPACE
 
 // };
 
-template <class Gt, class Tds, class Mtraits = void>
-class Mesh:
-public Constrained_Delaunay_triangulation_2 <Gt, Tds, Exact_predicates_tag >
+template <class Tr, class Mtraits = void>
+class Mesh: public Tr
 {
 
 public:
   //  QWidget *viewer;
 
-  typedef Gt      Triangulation_geom_traits;
-  typedef Tds     Triangulation_data_structure;
-  typedef typename Gt::FT FT;
+  typedef Tr Triangulation;
+  typedef typename Triangulation::Geom_traits Geom_traits;
+  typedef typename Tr::Triangulation_data_structure Tds;
+  typedef typename Geom_traits::FT FT;
   typedef FT      Length;
   typedef FT      Square_length;
 
-  typedef CGAL::Triangulation_2<Gt, Tds>                Tr;
-  typedef CGAL::Constrained_triangulation_2<Gt, Tds, Exact_predicates_tag>   Ct; // used for 
+  typedef Tr Ct;
+  //  typedef CGAL::Constrained_triangulation_2<Gt, Tds, Exact_predicates_tag>   Ct; // used for 
   // special_insert_in_edge TODO: is it necessar?
-  typedef CGAL::Constrained_Delaunay_triangulation_2<Gt, Tds, Exact_predicates_tag>     CDt;
+  typedef Tr CDt;
+  //  typedef CGAL::Constrained_Delaunay_triangulation_2<Gt, Tds, Exact_predicates_tag>     CDt;
   //  typedef typename CDt::Constraint             Constraint;
-  typedef typename CDt::Vertex                 Vertex;
-  typedef typename CDt::Edge                   Edge;
-  typedef typename CDt::Face_handle            Face_handle;
-  typedef typename CDt::Vertex_handle          Vertex_handle;
-  typedef typename CDt::Finite_faces_iterator  Finite_faces_iterator;
+  typedef typename Tr::Vertex                 Vertex;
+  typedef typename Tr::Edge                   Edge;
+  typedef typename Tr::Edge_iterator          Edge_iterator;
+  typedef typename Tr::Edge_circulator        Edge_circulator;
+  typedef typename Tr::Face_handle            Face_handle;
+  typedef typename Tr::Face_iterator          Face_iterator;
+  typedef typename Tr::Face_circulator        Face_circulator;
+  typedef typename Tr::Vertex_handle          Vertex_handle;
+  typedef typename Tr::Vertex_circulator      Vertex_circulator;
+  typedef typename Tr::Vertex_iterator        Vertex_iterator;
+  typedef typename Tr::Finite_faces_iterator  Finite_faces_iterator;
+
+  typedef typename Tr::Locate_type            Locate_type;
   
   typedef std::pair<Vertex_handle,Vertex_handle> Constrained_edge;
 
-  typedef typename Gt::Point_2                        Point;
+  typedef typename Tr::Point                  Point;
   typedef std::pair<Point,Point>             Constraint;
   typedef std::list<Constraint>              List_constraints;
 
@@ -95,9 +104,9 @@ public:
 
 
     
-  Mesh(/*const Geom_traits& gt=Geom_traits()*/):CDt(/*gt*/){};
+  Mesh(/*const Geom_traits& gt=Geom_traits()*/):Tr(/*gt*/){};
 
-    Mesh(List_constraints& lc, const Geom_traits& gt=Geom_traits()):CDt(gt)
+    Mesh(List_constraints& lc, const Geom_traits& gt=Geom_traits()):Tr(gt)
     {
       typename List_constraints::iterator lcit=lc.begin();
       for( ; lcit != lc.end(); ++lcit)
@@ -108,8 +117,8 @@ public:
     }
 
     template <class InputIterator>
-    Mesh(InputIterator first, InputIterator last/*, const Geom_traits&
-						  gt=Gt()*/):CDt(/*gt*/)
+    Mesh(InputIterator first, InputIterator last, const Geom_traits&
+						  gt=Geom_traits()):Tr(gt)
     {
       while(first != last){
 	insert((*first).first, (*first).second);
@@ -265,8 +274,8 @@ bool is_infinite(Edge e) {
 
 }; // end of Mesh
 
-template <class Gt, class Tds, class Mtraits>
-bool Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+bool Mesh<Tr, Mtraits>::
 find_cluster(Vertex_handle va, Vertex_handle vb, Cluster &c)
 {
     // check if vb is in any cluster of va 
@@ -286,8 +295,8 @@ find_cluster(Vertex_handle va, Vertex_handle vb, Cluster &c)
 }
 
 //the function that writes a file
-template <class Gt, class Tds, class Mtraits>
-void Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+void Mesh<Tr, Mtraits>::
 write(ostream &f)
 {
   int nedges = 0;
@@ -312,8 +321,8 @@ write(ostream &f)
 
 
 //the function that reads a file
-template <class Gt, class Tds, class Mtraits>
-void Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+void Mesh<Tr, Mtraits>::
 read(istream &f)
 {
   int nedges = 0;
@@ -326,8 +335,8 @@ read(istream &f)
   }
 }
 
-template <class Gt, class Tds, class Mtraits>
-void Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+void Mesh<Tr, Mtraits>::
 fill_edge_queue()
 {
   Edge_iterator ei = edges_begin();
@@ -345,8 +354,8 @@ fill_edge_queue()
 }
 
 //it is necessarry for process_facette_map
-template <class Gt, class Tds, class Mtraits>
-void Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+void Mesh<Tr, Mtraits>::
 fill_facette_map()
 {
   Face_iterator fit = faces_begin();
@@ -365,8 +374,8 @@ fill_facette_map()
 
 
 //is used by process_edge_queue
-template <class Gt, class Tds, class Mtraits>
-void Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+void Mesh<Tr, Mtraits>::
 process_edge_queue()
 {
   while(! c_edge_queue.empty() )
@@ -398,8 +407,8 @@ process_edge_queue()
 
 
 
-template <class Gt, class Tds, class Mtraits>
-void Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+void Mesh<Tr, Mtraits>::
 process_facette_map()
 {
   if(Bad_faces.empty())
@@ -427,8 +436,8 @@ process_facette_map()
 
 
 //this function split all the segments that are encroached
-template <class Gt, class Tds, class Mtraits>
-void Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+void Mesh<Tr, Mtraits>::
 refine_edge(Vertex_handle va, Vertex_handle vb)
 {
   // UPDATE;
@@ -461,8 +470,8 @@ refine_edge(Vertex_handle va, Vertex_handle vb)
 }
 
  //split all the bad faces
-template <class Gt, class Tds, class Mtraits>
-void Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+void Mesh<Tr, Mtraits>::
 refine_face(Face_handle f)
 {
   Point pc; 
@@ -527,8 +536,8 @@ refine_face(Face_handle f)
 }
 
 
-template <class Gt, class Tds, class Mtraits>
-void Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+void Mesh<Tr, Mtraits>::
 create_clusters()
 {
 	Vertex_iterator vit = vertices_begin();
@@ -538,8 +547,8 @@ create_clusters()
 	}
 }
 
-template <class Gt, class Tds, class Mtraits>
-void Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+void Mesh<Tr, Mtraits>::
 create_clusters_of_vertex(Vertex_handle v)
 {
   // prerequisite: at least too vertices must exist in the triangulation
@@ -594,8 +603,8 @@ create_clusters_of_vertex(Vertex_handle v)
 
 
 
-template <class Gt, class Tds, class Mtraits>
-void Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+void Mesh<Tr, Mtraits>::
 show_clusters()
 {
   /*  multimap<Vertex_handle, Cluster>::iterator cmit = cluster_map.begin();
@@ -612,8 +621,8 @@ show_clusters()
 }
 
 //refine the cluster
-template <class Gt, class Tds, class Mtraits>
-void Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+void Mesh<Tr, Mtraits>::
 cut_cluster(Vertex_handle va, Vertex_handle vb)
 {
   Cluster c;
@@ -631,8 +640,8 @@ cut_cluster(Vertex_handle va, Vertex_handle vb)
 
 
 //refine the reduced_cluster
-template <class Gt, class Tds, class Mtraits>
-void Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+void Mesh<Tr, Mtraits>::
 cut_reduced_cluster(Vertex_handle va, Vertex_handle vb)
 {
   Cluster c;
@@ -648,8 +657,8 @@ cut_reduced_cluster(Vertex_handle va, Vertex_handle vb)
 
 
 //refine the cluster edges
-template <class Gt, class Tds, class Mtraits>
-void Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+void Mesh<Tr, Mtraits>::
 cut_cluster_edge(Vertex_handle va, Vertex_handle vb)
 {
   //seulement les constraints
@@ -670,8 +679,8 @@ cut_cluster_edge(Vertex_handle va, Vertex_handle vb)
 }
 
 
-template <class Gt, class Tds, class Mtraits>
-Mesh<Gt, Tds, Mtraits>::Vertex_handle Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+Mesh<Tr, Mtraits>::Vertex_handle Mesh<Tr, Mtraits>::
 insert_middle(Vertex_handle va, Vertex_handle vb)
 {
   Point midpoint;
@@ -681,8 +690,8 @@ insert_middle(Vertex_handle va, Vertex_handle vb)
 
 
 //insert in constraint edge the middle
-template <class Gt, class Tds, class Mtraits>
-Mesh<Gt, Tds, Mtraits>::Vertex_handle Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+Mesh<Tr, Mtraits>::Vertex_handle Mesh<Tr, Mtraits>::
 insert_in_c_edge(Vertex_handle va, Vertex_handle vb, Point p)
 {
   Face_handle f;
@@ -698,8 +707,8 @@ insert_in_c_edge(Vertex_handle va, Vertex_handle vb, Point p)
 
 
 //update the encroached segments list
-template <class Gt, class Tds, class Mtraits>
-void Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+void Mesh<Tr, Mtraits>::
 update_c_edge_queue(Vertex_handle va, Vertex_handle vb, Vertex_handle vm)
 {
   //c_edge_queue.pop_back();
@@ -732,8 +741,8 @@ update_c_edge_queue(Vertex_handle va, Vertex_handle vb, Vertex_handle vm)
 
 }
 
-template <class Gt, class Tds, class Mtraits>
-void Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+void Mesh<Tr, Mtraits>::
 update_facette_map(Vertex_handle v)
 {
   Face_circulator fc = v->incident_faces();
@@ -751,8 +760,8 @@ update_facette_map(Vertex_handle v)
 
 
 //ok
-template <class Gt, class Tds, class Mtraits>
-void Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+void Mesh<Tr, Mtraits>::
 update_cluster(Vertex_handle va, Vertex_handle vb, Vertex_handle vm)
 {
   multimap<Vertex_handle, Cluster>::iterator it_va_cluster =
@@ -791,9 +800,9 @@ update_cluster(Vertex_handle va, Vertex_handle vb, Vertex_handle vm)
     }
 }
 
-template <class Gt, class Tds, class Mtraits>
-inline Mesh<Gt, Tds, Mtraits>::Edge 
-Mesh<Gt, Tds, Mtraits>::edge_between(Vertex_handle va, Vertex_handle vb) {
+template <class Tr, class Mtraits>
+inline Mesh<Tr, Mtraits>::Edge 
+Mesh<Tr, Mtraits>::edge_between(Vertex_handle va, Vertex_handle vb) {
   Edge_circulator ec = va->incident_edges();
   Edge_circulator ecbegin = ec;
   do {
@@ -817,8 +826,8 @@ Mesh<Gt, Tds, Mtraits>::edge_between(Vertex_handle va, Vertex_handle vb) {
 //CHECK
 
 
-template <class Gt, class Tds, class Mtraits>
-bool Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+bool Mesh<Tr, Mtraits>::
 is_encroached(Vertex_handle va, Vertex_handle vb, Point p)
 {
    Point pm=midpoint(va->point(), vb->point());
@@ -830,8 +839,8 @@ is_encroached(Vertex_handle va, Vertex_handle vb, Point p)
 }
 
 
-template <class Gt, class Tds, class Mtraits>
-bool Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+bool Mesh<Tr, Mtraits>::
 is_encroached(Vertex_handle va, Vertex_handle vb)
 {
   Vertex_iterator vi=vertices_begin();
@@ -850,8 +859,8 @@ is_encroached(Vertex_handle va, Vertex_handle vb)
 }
 
 
-template <class Gt, class Tds, class Mtraits>
-bool Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+bool Mesh<Tr, Mtraits>::
 min_insertion_radius(Vertex_handle v, Cluster &c)
 {
 
@@ -859,8 +868,8 @@ min_insertion_radius(Vertex_handle v, Cluster &c)
 
 
 //the measure of faces quality
-template <class Gt, class Tds, class Mtraits>
-bool Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+bool Mesh<Tr, Mtraits>::
 is_bad(Face_handle f)
 {
   FT quality = circumradius_to_shortest_edge_ratio(f);
@@ -885,8 +894,8 @@ is_bad(Face_handle f)
 
 
 //
-template <class Gt, class Tds, class Mtraits>
-bool Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+bool Mesh<Tr, Mtraits>::
 is_small_angle(Vertex_handle vleft,
 	       Vertex_handle vmiddle,
 	       Vertex_handle vright)
@@ -905,8 +914,8 @@ is_small_angle(Vertex_handle vleft,
 
 
 //
-template <class Gt, class Tds, class Mtraits>
-bool Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+bool Mesh<Tr, Mtraits>::
 is_cluster_reduced(const Cluster& c)
 {
   return c.status == REDUCED;
@@ -914,8 +923,8 @@ is_cluster_reduced(const Cluster& c)
 
 
 
-template <class Gt, class Tds, class Mtraits>
-bool Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+bool Mesh<Tr, Mtraits>::
 is_cluster(Vertex_handle va, Vertex_handle vb)
 {
   // check if vb is in any cluster of va 
@@ -934,8 +943,8 @@ is_cluster(Vertex_handle va, Vertex_handle vb)
 }
 
 
-template <class Gt, class Tds, class Mtraits>
-typename Gt::FT Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+typename Mesh<Tr, Mtraits>::FT Mesh<Tr, Mtraits>::
 shortest_edge_of_cluster(Vertex_handle v, Cluster &cluster)
 { 
   map<Vertex_handle, Length>::iterator vit = cluster.vertices.begin();
@@ -954,8 +963,8 @@ shortest_edge_of_cluster(Vertex_handle v, Cluster &cluster)
 }
 
 // look if all edges have the same lenght
-template <class Gt, class Tds, class Mtraits>
-void Mesh<Gt, Tds, Mtraits>:: 
+template <class Tr, class Mtraits>
+void Mesh<Tr, Mtraits>:: 
 check_cluster_status( Cluster& cluster)
 {
   Length initl;
@@ -983,8 +992,8 @@ check_cluster_status( Cluster& cluster)
 
 
 
-template <class Gt, class Tds, class Mtraits>
-void Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+void Mesh<Tr, Mtraits>::
 bounds(FT &xmin, FT &ymin, 
        FT &xmax, FT &ymax,
        FT &xcenter, FT &ycenter)
@@ -1009,8 +1018,8 @@ bounds(FT &xmin, FT &ymin,
 
 
 //bounding box
-template <class Gt, class Tds, class Mtraits>
-void Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+void Mesh<Tr, Mtraits>::
 bounding_box()
 {
  
@@ -1035,8 +1044,8 @@ bounding_box()
 
 
 //the angle that are between 2 edges from the triangulation
-template <class Gt, class Tds, class Mtraits>
-typename Gt::FT Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+typename Mesh<Tr, Mtraits>::FT Mesh<Tr, Mtraits>::
 angle(Vertex_handle vleft, Vertex_handle vmiddle, Vertex_handle vright)
 {
   Point 
@@ -1053,8 +1062,8 @@ angle(Vertex_handle vleft, Vertex_handle vmiddle, Vertex_handle vright)
 
 
 //the shortest edge that are in a triangle
-template <class Gt, class Tds, class Mtraits>
-typename Gt::FT Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+typename Mesh<Tr, Mtraits>::FT Mesh<Tr, Mtraits>::
 shortest_edge(Face_handle f)
 {
   Point 
@@ -1072,8 +1081,8 @@ shortest_edge(Face_handle f)
 
 //the triangle quality is represented by the
 //circumradius_to_shortest_edge_ratio value
-template <class Gt, class Tds, class Mtraits>
-typename Gt::FT Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+typename Mesh<Tr, Mtraits>::FT Mesh<Tr, Mtraits>::
 circumradius_to_shortest_edge_ratio(Face_handle f)
 {
   Point p;
@@ -1086,8 +1095,8 @@ circumradius_to_shortest_edge_ratio(Face_handle f)
 
 
 //insertion radius: the definition
-template <class Gt, class Tds, class Mtraits>
-typename Gt::FT Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+typename Mesh<Tr, Mtraits>::FT Mesh<Tr, Mtraits>::
 insertion_radius(Vertex_handle v)
 {
   Vertex_handle v1 = nearest_incident_vertex(v);
@@ -1096,8 +1105,8 @@ insertion_radius(Vertex_handle v)
 
 
 //this function must compute the vertex that are so close to our vertex.
-template <class Gt, class Tds, class Mtraits>
-Mesh<Gt, Tds, Mtraits>::Vertex_handle Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+Mesh<Tr, Mtraits>::Vertex_handle Mesh<Tr, Mtraits>::
 nearest_incident_vertex(Vertex_handle v)
 {
   Vertex_handle vbegin, vcurrent, vnearest;
@@ -1118,8 +1127,8 @@ nearest_incident_vertex(Vertex_handle v)
 
 
 //the mesh refine function 
-template <class Gt, class Tds, class Mtraits>
-void Mesh<Gt, Tds, Mtraits>::
+template <class Tr, class Mtraits>
+void Mesh<Tr, Mtraits>::
 refine_mesh(/* QWidget *w */)
 {
   //  viewer = w;
