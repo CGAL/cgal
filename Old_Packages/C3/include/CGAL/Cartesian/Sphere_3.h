@@ -50,7 +50,7 @@ public:
 
   // Sphere with center p, squared radius s, orientation o
   SphereC3(const Point_3 &p, const FT &s,
-           const Orientation &o = COUNTERCLOCKWISE);
+           const Orientation &o = COUNTERCLOCKWISE)
   {
     CGAL_kernel_precondition( ( s >= FT(0) ) && ( o != COLLINEAR) );
 
