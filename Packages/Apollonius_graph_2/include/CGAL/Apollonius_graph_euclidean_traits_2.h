@@ -28,7 +28,6 @@
 #define CGAL_APOLLONIUS_GRAPH_EUCLIDEAN_TRAITS_2_H
 
 #include <CGAL/Triangulation_euclidean_traits_2.h>
-#include <CGAL/Weighted_point.h>
 #include <CGAL/Parabola_segment_2.h>
 #include <CGAL/Hyperbola_2.h>
 #include <CGAL/Hyperbola_segment_2.h>
@@ -55,9 +54,10 @@
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Number_type_traits.h>
 
+#include <CGAL/Apollonius_graph_kernel_wrapper_2.h>
+
 #include <CGAL/Apollonius_graph_euclidean_traits_2.C>
 
-#include <CGAL/Apollonius_graph_kernel_wrapper_2.h>
 
 #define KEEP_MOST_TYPES_IN_TRAITS 1
 
@@ -111,7 +111,7 @@ public:
 
   // CONSTRUCTIONS
   //--------------
-  // vertex and weighted point
+  // vertex and dual site
   typedef CGAL::Construct_Apollonius_vertex_2<Kernel>
   /*                                      */ Construct_Apollonius_vertex_2;
   typedef CGAL::Construct_Apollonius_site_2<Kernel>
@@ -273,8 +273,6 @@ class Apollonius_graph_euclidean_traits_2<
 Filtered_kernel<_CK,_EK,_FK,_C2E,_C2F>, MTag>
 {
 private:
-  // add the wrappers; these should be removed once weighted points
-  // find their way into the kernel
   typedef Apollonius_graph_kernel_wrapper_2<_CK>  CK;
   typedef Apollonius_graph_kernel_wrapper_2<_EK>  EK;
   typedef Apollonius_graph_kernel_wrapper_2<_FK>  FK;
@@ -308,11 +306,11 @@ public:
 public:
   // CONSTRUCTIONS
   //--------------
-  // vertex and weighted point
+  // vertex and dual site
   typedef CGAL::Construct_Apollonius_vertex_2<Kernel>
   /*                                      */ Construct_Apollonius_vertex_2;
-  typedef CGAL::Construct_Apollonius_weighted_point_2<Kernel>
-  /*                              */ Construct_Apollonius_weighted_point_2;
+  typedef CGAL::Construct_Apollonius_site_2<Kernel>
+  /*                                        */ Construct_Apollonius_site_2;
 
   // bisectors and subsets
   typedef CGAL::Construct_Apollonius_bisector_2<Kernel>
@@ -401,9 +399,9 @@ public:
     return Construct_Apollonius_vertex_2();
   }
 
-  inline Construct_Apollonius_weighted_point_2
-  construct_Apollonius_weighted_point_2_object() const {
-    return Construct_Apollonius_weighted_point_2();
+  inline Construct_Apollonius_site_2
+  construct_Apollonius_site_2_object() const {
+    return Construct_Apollonius_site_2();
   }
 
   inline Construct_Apollonius_bisector_2

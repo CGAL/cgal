@@ -153,7 +153,7 @@ protected:
   }
 
 protected:
-  // Less_than comparator for weights of weighted points;
+  // Less_than comparator for site weights;
   // used to sort sites by decreasing weight when a sequence of sites
   // is inserted
   class Site_less_than_comparator
@@ -587,7 +587,7 @@ public:
 
 protected:
   template < class Stream > 
-  Stream& draw_dual_weighted_points(Stream &str) const
+  Stream& draw_dual_sites(Stream &str) const
   {
     All_faces_iterator fit = all_faces_begin();
     for (; fit != all_faces_end(); ++fit) {
@@ -633,7 +633,6 @@ public:
   // MK: THE FOLLOWING ARE NOT IN THE SPEC
   //======================================
   // Primal
-  //  Weighted_point primal(const Face_handle& f) const;
   typename Gt::Object_2 primal(const Edge e) const;
   typename Gt::Object_2 primal(const Edge_circulator& ec) const {
     return primal(*ec);

@@ -37,16 +37,16 @@ CGAL_BEGIN_NAMESPACE
 template <class AGVB2_Iterator>
 struct Apollonius_graph_vertex_base_nested_iterator_traits
 {
-  typedef AGVB2_Iterator                   Base_iterator;
+  typedef AGVB2_Iterator                              Base_iterator;
   typedef typename
-  Base_iterator::value_type::Hidden_sites_iterator Nested_iterator;
+  Base_iterator::value_type::Hidden_sites_iterator    Iterator;
 
-  Nested_iterator begin(Base_iterator it) const
+  Iterator begin(Base_iterator it) const
   {
     return it->hidden_sites_begin();
   }
 
-  Nested_iterator end(Base_iterator it) const
+  Iterator end(Base_iterator it) const
   {
     return it->hidden_sites_end();
   }
