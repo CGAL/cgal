@@ -274,10 +274,12 @@ namespace CGAL {
 				(pt != p_list[i].end())
 					); ++pt) {}
                 // avoid empty lists 
-			    if (pt==p_list[i].begin()) pt++;
-				if (pt==p_list[i].end())  pt--;
+				if (sliding) {
+			    	if (pt==p_list[i].begin()) pt++;
+					if (pt==p_list[i].end())  pt--;
+                };
 				// move points on negative side to c.p_list
-			    	c.p_list[i].splice(c.p_list[i].end(), 
+			    c.p_list[i].splice(c.p_list[i].end(), 
 				p_list[i], p_list[i].begin(), pt); 
 				
 		    } // end of if

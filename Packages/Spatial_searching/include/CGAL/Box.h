@@ -1,5 +1,4 @@
 // ======================================================================
-//
 // Copyright (c) 2002 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
@@ -300,3 +299,4 @@ namespace CGAL {
 
 } // namespace CGAL
 #endif // CGAL_BOX_H
+

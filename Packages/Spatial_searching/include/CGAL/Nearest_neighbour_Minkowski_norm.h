@@ -17,7 +17,7 @@
 // revision_date : 2002/16/08 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
-// coordinator   : Utrecht University
+// coordinator   : Utrecht University 
 //
 // ======================================================================
 

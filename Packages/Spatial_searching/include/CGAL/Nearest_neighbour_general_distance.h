@@ -70,7 +70,7 @@ class Cell
     };
 
     
-typedef Tree_traits::Item_with_distance Item_with_distance;
+typedef typename Tree_traits::Item_with_distance Item_with_distance;
 typedef std::pair<Cell*,NT> Cell_with_distance;
 
 class iterator;
@@ -472,7 +472,7 @@ void swap (typename Nearest_neighbour_general_distance<Tree_traits,
         *tmp = x.Ptr_implementation;
         x.Ptr_implementation  = y.Ptr_implementation;
         y.Ptr_implementation = tmp;
-};
+}
 
 } // namespace CGAL
 
