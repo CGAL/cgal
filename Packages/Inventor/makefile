@@ -1,7 +1,7 @@
 #Makefile for Inventor files
 
 WWW=/u/www/0/www/htdocs/files/equipes/prisme
-WWWW_CGAL=$(WWW)/CGAL/DR:/Members
+WWW_CGAL=$(WWW)/CGAL/DR:/Members
 WWW_dir=$(WWW_CGAL)/Inventor
 TMP_file=/tmp/submit-mail
 
@@ -39,7 +39,7 @@ submit:
 	echo "submission::" >> $(TMP_file)
 	echo "http://www-sop.inria.fr/prisme/CGAL/DR:/Members" >> $(TMP_file)
 	echo "/Inventor/Inventor.tar.gz" >> $(TMP_file)
-#	mail -s autohandle cgal-submit@cs.uu.nl yvinec < $(TMP_file)
+	mail -s autohandle cgal-submit@cs.uu.nl yvinec < $(TMP_file)
 	rm -f $(TMP_file)
 
 
