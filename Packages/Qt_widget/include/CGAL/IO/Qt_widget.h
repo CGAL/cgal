@@ -41,7 +41,6 @@
 #include <map>
 
 #include <qwidget.h>
-#include <qframe.h>
 #include <qpainter.h>
 #include <qcolor.h>
 #include <qpixmap.h>
@@ -56,7 +55,7 @@ namespace CGAL {
 class Qt_widget_layer;
 enum PointStyle { PIXEL, CROSS, PLUS, CIRCLE, DISC, RECT, BOX };
 
-class Qt_widget : public QFrame {
+class Qt_widget : public QWidget {
   Q_OBJECT
 public:
   // constructor
@@ -220,7 +219,7 @@ public slots:
   bool forth();
   
 protected:
-  void drawContents(QPainter*); // protected method of QFrame
+  void paintEvent(QPaintEvent *e);
   void resizeEvent(QResizeEvent *e);
   void showEvent(QShowEvent *e);
   void mousePressEvent(QMouseEvent *e);

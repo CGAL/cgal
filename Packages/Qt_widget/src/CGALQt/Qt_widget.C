@@ -28,7 +28,7 @@
 namespace CGAL {
 
 Qt_widget::Qt_widget(QWidget *parent, const char *name) :
-  QFrame(parent, name), set_scales_to_be_done(false), Locked(0),
+  QWidget(parent, name), set_scales_to_be_done(false), Locked(0),
   _pointSize(4), _pointStyle(DISC) 
 { 
   setCaption("CGAL::Qt_widget");
@@ -51,7 +51,7 @@ Qt_widget::Qt_widget(QWidget *parent, const char *name) :
   pixmap = new QPixmap;
   matrix = new QWMatrix;
 
-  pixmap->resize(contentsRect().size());
+  pixmap->resize(size());
   painter->begin(pixmap);
   painter->setWorldMatrix(*matrix);
 
@@ -74,7 +74,7 @@ void Qt_widget::set_scales()
 
   if(!constranges)
     {
-      double tempmin = min(contentsRect().width(), contentsRect().height());
+      double tempmin = min(width(), height());
 	    double tempmax = max(xmax-xmin, ymax-ymin);
       
       xscal=yscal=(tempmin - 1)/(tempmax);
@@ -82,8 +82,8 @@ void Qt_widget::set_scales()
     }
   else
     {
-      xscal=contentsRect().width()/(xmax-xmin);
-      yscal=contentsRect().height()/(ymax-ymin);
+      xscal=width()/(xmax-xmin);
+      yscal=height()/(ymax-ymin);
     }
   add_to_history();
   configure_history_buttons();
@@ -94,15 +94,15 @@ void Qt_widget::set_ranges_const_center()
   if (set_scales_to_be_done) return;
 
   if(xscal<1) {
-    xmin = xcentre - (int)(contentsRect().width()/xscal)/2;
-    xmax = xcentre + (int)(contentsRect().width()/xscal)/2;
-    ymin = ycentre - (int)(contentsRect().height()/yscal)/2;
-    ymax = ycentre + (int)(contentsRect().height()/yscal)/2;
+    xmin = xcentre - (int)(width()/xscal)/2;
+    xmax = xcentre + (int)(width()/xscal)/2;
+    ymin = ycentre - (int)(height()/yscal)/2;
+    ymax = ycentre + (int)(height()/yscal)/2;
   } else {
-    xmin = xcentre - (contentsRect().width()/xscal)/2;
-    xmax = xcentre + (contentsRect().width()/xscal)/2;
-    ymin = ycentre - (contentsRect().height()/yscal)/2;
-    ymax = ycentre + (contentsRect().height()/yscal)/2;
+    xmin = xcentre - (width()/xscal)/2;
+    xmax = xcentre + (width()/xscal)/2;
+    ymin = ycentre - (height()/yscal)/2;
+    ymax = ycentre + (height()/yscal)/2;
   }
   redraw();
 }
@@ -117,7 +117,7 @@ void Qt_widget::resize_pixmap()
   QWMatrix bm = painter->worldMatrix();
 
   painter->end();  // end painting on pixmap
-  pixmap->resize(contentsRect().size());
+  pixmap->resize(size());
   painter->begin(pixmap); // begin again painting on pixmap
   clear();
 
@@ -137,22 +137,15 @@ void Qt_widget::resizeEvent(QResizeEvent *e)
   redraw();
 }
 
-void Qt_widget::frameChanged()
-{
-  resize_pixmap();
-  set_scales();
-  redraw();
-}
-
 void Qt_widget::showEvent(QShowEvent* e)
 {
   if( set_scales_to_be_done )
     set_scales();
 
-  return QFrame::showEvent(e);
+  return QWidget::showEvent(e);
 }
 
-void Qt_widget::drawContents(QPainter*)
+void Qt_widget::paintEvent(QPaintEvent *e)
 {
   // save paint state
   QFont f=painter->font();
@@ -162,8 +155,7 @@ void Qt_widget::drawContents(QPainter*)
   QWMatrix bm = painter->worldMatrix();
 
   painter->end();  // end painting on pixmap
-  bitBlt(this, contentsRect().topLeft(),
-	 pixmap); // copy pixmap to the Qt_widget
+  bitBlt(this, 0, 0, pixmap); // copy pixmap to the Qt_widget
   painter->begin(pixmap); // begin again painting on pixmap
   painter->setWorldMatrix(bm);
 
@@ -339,7 +331,7 @@ void Qt_widget::leaveEvent(QEvent *e)
 bool Qt_widget::event(QEvent *e)
 {
   emit(s_event(e));
-  QFrame::event(e);
+  QWidget::event(e);
   if(!does_standard_eat_events()) {
     std::list<Qt_widget_layer*>::iterator it;
     for(it = qt_layers.begin(); it!= qt_layers.end(); it++)
@@ -573,7 +565,7 @@ void Qt_widget::clear() {
       QPainter *painter_for_printer = new QPainter(printer);
       painter = painter_for_printer;
       painter->setClipping(true);
-      painter->setClipRect(contentsRect());
+      painter->setClipRect(rect());
       lock();
         std::list<Qt_widget_layer*>::iterator it;
 		    for(it = qt_layers.begin(); it!= qt_layers.end(); it++)
