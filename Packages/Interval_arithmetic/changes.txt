@@ -1,5 +1,6 @@
 21 June 2004 Sylvain Pion
 - Add Kernel_profiler.
+- Add predicates used by convex_hull_2.
 
 21 June 2004 Sylvain Pion
 - Improve static filters for 2D predicates.

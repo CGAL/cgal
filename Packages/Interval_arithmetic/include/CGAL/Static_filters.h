@@ -24,15 +24,6 @@
 #ifndef CGAL_STATIC_FILTERS_H
 #define CGAL_STATIC_FILTERS_H
 
-#include <CGAL/basic.h>
-#include <CGAL/Static_filters/tools.h>
-#include <CGAL/Static_filters/Orientation_2.h>
-#include <CGAL/Static_filters/Orientation_3.h>
-#include <CGAL/Static_filters/Side_of_oriented_circle_2.h>
-#include <CGAL/Static_filters/Side_of_oriented_sphere_3.h>
-// #include <CGAL/Static_filters/Coplanar_orientation_3.h>
-// #include <CGAL/Static_filters/Coplanar_side_of_bounded_circle_3.h>
-
 // This kernel wrapper gathers optimized predicates written by hand, using
 // a few steps of filtering.  It should work if the initial traits has
 // cartesian coordinates which fit exactly in doubles.
@@ -40,6 +31,20 @@
 // Purely static filters code has been removed, since it requires additional
 // logic and is not plug'n play (requires users providing bounds).
 // If it should be provided again, it should probably be separate.
+
+#include <CGAL/basic.h>
+
+#include <CGAL/Kernel/function_objects.h>
+#include <CGAL/Cartesian/function_objects.h>
+
+#include <CGAL/Static_filters/tools.h>
+#include <CGAL/Static_filters/Orientation_2.h>
+#include <CGAL/Static_filters/Orientation_3.h>
+#include <CGAL/Static_filters/Side_of_oriented_circle_2.h>
+#include <CGAL/Static_filters/Side_of_oriented_sphere_3.h>
+
+// #include <CGAL/Static_filters/Coplanar_orientation_3.h>
+// #include <CGAL/Static_filters/Coplanar_side_of_bounded_circle_3.h>
 
 // TODO :
 // - aim at obsoleting Filtered_exact, so that
@@ -62,19 +67,21 @@
 
 CGAL_BEGIN_NAMESPACE
 
+// The K_base argument is supposed to provide exact primitives.
 template < typename K_base >
 struct Static_filters : public K_base
 {
+  typedef Static_filters<K_base>                    Self;
+
   typedef SF_Orientation_2<K_base>                  Orientation_2;
   typedef SF_Orientation_3<K_base>                  Orientation_3;
   typedef SF_Side_of_oriented_circle_2<K_base>      Side_of_oriented_circle_2;
   typedef SF_Side_of_oriented_sphere_3<K_base>      Side_of_oriented_sphere_3;
 
-  // The two following are for degenerate cases, so I'll update them later.
-  // typedef SF_Coplanar_orientation_3<Point_3, Orientation_2>
-  //                                                   Coplanar_orientation_3;
-  // typedef SF_Side_of_bounded_circle_3<Point_3>
-  //                                          Coplanar_side_of_bounded_circle_3;
+  typedef CommonKernelFunctors::Left_turn_2<Self>   Left_turn_2;
+  typedef CartesianKernelFunctors::Less_yx_2<Self>  Less_yx_2;
+  typedef CartesianKernelFunctors::Less_xy_2<Self>  Less_xy_2;
+
 
   Orientation_2
   orientation_2_object() const
@@ -91,6 +98,25 @@ struct Static_filters : public K_base
   Side_of_oriented_sphere_3
   side_of_oriented_sphere_3_object() const
   { return Side_of_oriented_sphere_3(); }
+
+  Left_turn_2
+  left_turn_2_object() const
+  { return Left_turn_2(); }
+
+  Less_xy_2
+  less_xy_2_object() const
+  { return Less_xy_2(); }
+
+  Less_yx_2
+  less_yx_2_object() const
+  { return Less_yx_2(); }
+
+  // The two following are for degenerate cases, so I'll update them later.
+  //
+  // typedef SF_Coplanar_orientation_3<Point_3, Orientation_2>
+  //                                                   Coplanar_orientation_3;
+  // typedef SF_Side_of_bounded_circle_3<Point_3>
+  //                                         Coplanar_side_of_bounded_circle_3;
 
   // Coplanar_orientation_3
   // coplanar_orientation_3_object() const
