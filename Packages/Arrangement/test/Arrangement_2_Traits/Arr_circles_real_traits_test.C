@@ -1,5 +1,22 @@
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
+#include <fstream>
+
+// Making sure test doesn't fail if LEDA is not installed
+#if ! defined(CGAL_USE_LEDA) && \
+      (CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || \
+       CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS)
+
+int main(int argc, char* argv[])
+{
+  std::cout << "A try to run test with LEDA traits but LEDA is not installed.";
+  std::cout << std::endl;
+  std::cout << "Test is not performed.";
+  std::cout << std::endl;
+
+  return 0;
+}
+#else
 
 #include <CGAL/Circle_2.h>
 #include <CGAL/Arr_circles_real_traits.h>
@@ -154,3 +171,4 @@ int main()
     return 1;
 }
  
+#endif // ! defined(CGAL_USE_LEDA) ...
