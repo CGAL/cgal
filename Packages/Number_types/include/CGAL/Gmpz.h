@@ -26,11 +26,13 @@
 #define CGAL_GMPZ_H
 
 #include <CGAL/basic.h>
+
 #ifndef CGAL_CFG_NO_LOCALE
-#include <locale>
+#  include <locale>
 #else
-#include <cctype>
+#  include <cctype>
 #endif // CGAL_CFG_NO_LOCALE
+
 #include <gmp.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -68,14 +70,6 @@ public:
   ~Gmpz_rep()
   { mpz_clear(mpZ); }
 };
-
-CGAL_END_NAMESPACE
-
-
-
-CGAL_BEGIN_NAMESPACE
-
-class Gmpz;
 
 class Gmpz : public Handle
 {
@@ -622,11 +616,13 @@ to_interval (const Gmpz & z)
 {
   // GMP returns the closest double (seen in the code).
   Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
-  Interval_nt_advanced approx (CGAL::to_double(z));
+  double app = CGAL::to_double(z);
+  // If it's lower than 2^53, then it's exact.
+  if (CGAL_CLIB_STD::fabs(app) < double(1<<26)*double(1<<27))
+      return app;
   FPU_set_cw(CGAL_FE_UPWARD);
-  return approx + Interval_base::Smallest;
+  return Interval_nt_advanced(app) + Interval_base::Smallest;
 }
-
 
 CGAL_END_NAMESPACE
 
