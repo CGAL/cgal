@@ -216,14 +216,14 @@ in conflict with a face \ccc{f} iff it is
  visible from the interior of \ccc{f} and 
 included in the circumcircle of \ccc{f}.
 
-\ccMethod{template <class Out_it1, class Out_it2> 
-          bool get_conflicts_and_boundary(const Point  &p, 
-   		       		Out_it1 fit, 
-   		       		Out_it2 eit,
-  		       		Face_handle start) const;} 
-{ 
-\ccc{Out_it1} is an output iterator with \ccc{Face_handle} as value type.
-\ccc{Out_it2} stands for an output iterator with \ccc{Edge} as value type.
+\ccMethod{template <class OutputItFaces, class OutputItBoundaryEdges> 
+  std::pair<OutputItFaces,OutputItBoundaryEdges>
+  get_conflicts_and_boundary(const Point  &p, 
+			     OutputItFaces fit, 
+			     OutputItBoundaryEdges eit,
+                             Face_handle start) const;}
+{ \ccc{OutItFaces} is an output iterator with \ccc{Face_handle} as value type.
+\ccc{OutItBoundaryEdges} stands for an output iterator with \ccc{Edge} as value type.
 This members function outputs in the container pointed to by \ccc{fit}
 the faces which are in conflict with point \ccc{p}.
 It outputs in the container pointed to by \ccc{eit} the 
@@ -234,30 +234,31 @@ and each edge is described  through its incident face
 which is not in conflict with \ccc{p}.
 The ouput boolean is \ccc{true} if some conflicts has been found and 
 \ccc{false}
-otherwise, that is when \ccc{p} coincides with a vertex of the
-triangulation.
+The function returns in a std::pair the resulting output iterators.
 }
 
-\ccMethod{template <class Out_it1> 
-          bool get_conflicts (const Point  &p, 
-   		       		Out_it1 fit, 
-  		       		Face_handle start) const;}
+\ccMethod{template <class OutputItFaces> 
+	  OutputItFaces
+          get_conflicts (const Point  &p, 
+   		         OutputItFaces fit, 
+  		         Face_handle start) const;}
 {Same as above except that only the faces in conflict with \ccc{p}
-are output.}
-\ccMethod{template <class Out_it2> 
-          bool get_boundary_of_conflicts(const Point  &p, 
-   		   		Out_it2 eit,
-  		       		Face_handle start) const;}
-{ \ccc{Out_it2} stands for an output iterator with \ccc{Edge} as value
+are output. The function returns the resulting output iterator.}
+
+\ccMethod{template <class OutputItBoundaryEdges>
+          OutputItBoundaryEdges
+          get_boundary_of_conflicts(const Point  &p, 
+   		   		    OutputItBoundaryEdges eit,
+  		       		    Face_handle start) const;}
+{ \ccc{OutputItBoundaryEdges} stands for an output iterator with 
+\ccc{Edge} as value
 type.
  This functions  outputs in the container pointed to by \ccc{eit},
 the boundary of the zone in conflict with \ccc{p}. The boundary edges
 of the conflict  zone are ouput in counter-clockwise order
 and each edge is described  through the incident face
 which is not in conflict with \ccc{p}.
-The ouput boolean is true if some conflicts has been found and false
-otherwise
-(i. e. when \ccc{p} coincide with a vertex of the triangulation)}
+The function returns the resulting output iterator.}
 
 
 \ccHeading{Checking}

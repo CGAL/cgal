@@ -1,7 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-- Added a missing typename in Constraint_hierarchy_2
+ver 7.104  (29/07/03)
+- change the return types of get_conflicts member functions in
+  Delaunay and constrained_Delaunay triangulations
+- added missing typename in Constraint_hierarchy (AF)
 
 ver 7.103 (25/07/03)
 - modify example triangulation_prog1 to use a default Kernel

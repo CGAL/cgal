@@ -81,19 +81,22 @@ public:
 		      std::list<Face_handle>& conflicts,
 		      Face_handle start= Face_handle(NULL) ) const;
   //  //template member functions, declared and defined at the end 
-  // template <class Out_it1, class Out_it2> 
-  //   bool get_conflicts_and_boundary(const Point  &p, 
-  // 		                        Out_it1 fit, 
-  // 		                        Out_it2 eit,
-  // 		                        Face_handle start) const;
-  //   template <class Out_it1> 
-  //   bool get_conflicts (const Point  &p, 
-  // 		            Out_it1 fit, 
-  // 		            Face_handle start ) const;
-  //   template <class Out_it2> 
-  //   bool get_boundary_of_conflicts(const Point  &p, 
-  // 				      Out_it2 eit, 
-  // 				      Face_handle start ) const;
+  // template <class OutputItFaces, class OutputItBoundaryEdges> 
+  // std::pair<OutputItFaces,OutputItBoundaryEdges>
+  // get_conflicts_and_boundary(const Point  &p, 
+  // 		                OutputItFaces fit, 
+  // 		                OutputItBoundaryEdges eit,
+  // 		                Face_handle start) const;
+  // template <class OutputItFaces>
+  // OutputItFaces
+  // get_conflicts (const Point  &p, 
+  //                OutputItFaces fit, 
+  // 		    Face_handle start ) const;
+  // template <class OutputItBoundaryEdges>
+  // OutputItBoundaryEdges
+  // get_boundary_of_conflicts(const Point  &p, 
+  // 			       OutputItBoundaryEdges eit, 
+  // 			       Face_handle start ) const;
    
  
   // DUAL
@@ -155,73 +158,73 @@ public:
       return number_of_vertices() - n;
     }
 
-  template <class Out_it1, class Out_it2> 
-  bool 
-  get_conflicts_and_boundary (const Point  &p, 
-			      Out_it1 fit, 
-			      Out_it2 eit,
-			      Face_handle start = Face_handle(NULL)) const
-    {
-      CGAL_triangulation_precondition( dimension() == 2);
-      int li;
-      Locate_type lt;
-      Face_handle fh = locate(p,lt,li, start);
-      switch(lt) {
-      case Triangulation::OUTSIDE_AFFINE_HULL:
-      case Triangulation::VERTEX:
-	return false;
-      case Triangulation::FACE:
-      case Triangulation::EDGE:
-      case Triangulation::OUTSIDE_CONVEX_HULL:
-	*fit++ = fh; //put fh in Out_it1
-	propagate_conflicts(p,fh,0,fit,eit);
-	propagate_conflicts(p,fh,1,fit,eit);
-	propagate_conflicts(p,fh,2,fit,eit);
-	return true;    
-      }
-      CGAL_triangulation_assertion(false);
-      return false;
-    }
 
-  template <class Out_it1> 
-  bool 
+  template <class OutputItFaces, class OutputItBoundaryEdges> 
+  std::pair<OutputItFaces,OutputItBoundaryEdges>
+  get_conflicts_and_boundary(const Point  &p, 
+			     OutputItFaces fit, 
+			     OutputItBoundaryEdges eit,
+			     Face_handle start = Face_handle(NULL)) const {
+    CGAL_triangulation_precondition( dimension() == 2);
+    int li;
+    Locate_type lt;
+    Face_handle fh = locate(p,lt,li, start);
+    switch(lt) {
+    case Triangulation::OUTSIDE_AFFINE_HULL:
+    case Triangulation::VERTEX:
+      return std::make_pair(fit,eit);
+    case Triangulation::FACE:
+    case Triangulation::EDGE:
+    case Triangulation::OUTSIDE_CONVEX_HULL:
+      *fit++ = fh; //put fh in OutputItFaces
+      std::pair<OutputItFaces,OutputItBoundaryEdges>
+	pit = std::make_pair(fit,eit);
+      pit = propagate_conflicts(p,fh,0,pit);
+      pit = propagate_conflicts(p,fh,1,pit);
+      pit = propagate_conflicts(p,fh,2,pit);
+      return std::make_pair(fit,eit);    
+    }
+    CGAL_triangulation_assertion(false);
+    return std::make_pair(fit,eit);
+  } 
+
+  template <class OutputItFaces> 
+  OutputItFaces
   get_conflicts (const Point  &p, 
-		  Out_it1 fit, 
-		  Face_handle start= Face_handle(NULL)) const
-    {
-      return get_conflicts_and_boundary(p, fit, Emptyset_iterator(), start);
-    }
+		 OutputItFaces fit, 
+		 Face_handle start= Face_handle(NULL)) const {
+    return get_conflicts_and_boundary(p,fit,Emptyset_iterator(),start).first;
+  }
 
-  template <class Out_it2> 
-  bool 
+  template <class OutputItBoundaryEdges> 
+  OutputItBoundaryEdges
   get_boundary_of_conflicts(const Point  &p, 
-			    Out_it2 eit, 
-			    Face_handle start= Face_handle(NULL)) const
-    {
-      return get_conflicts_and_boundary(p, Emptyset_iterator(), eit, start);
-    }
+			    OutputItBoundaryEdges eit, 
+			    Face_handle start= Face_handle(NULL)) const {
+    return get_conflicts_and_boundary(p,Emptyset_iterator(),eit,start).second;
+  }
 
 private:
- template <class Out_it1, class Out_it2> 
-  void propagate_conflicts (const Point  &p,
-			    Face_handle fh, 
-			    int i,
-			    Out_it1 fit, 
-			    Out_it2 eit) const
-    {
-      Face_handle fn = fh->neighbor(i);
-      if (! test_conflict(p,fn)) {
-	*eit++ = Edge(fn, fn->index(fh));
-	return;
-      }
-      *fit++ = fn;
-      int j = fn->index(fh);
-      propagate_conflicts(p,fn,ccw(j),fit,eit);
-      propagate_conflicts(p,fn,cw(j),fit,eit);
-      return;
-    }
-
-
+ template <class OutputItFaces, class OutputItBoundaryEdges> 
+ std::pair<OutputItFaces,OutputItBoundaryEdges>
+ propagate_conflicts (const Point  &p,
+		      Face_handle fh, 
+		      int i,
+		      std::pair<OutputItFaces,OutputItBoundaryEdges>
+		      pit)  const {
+   Face_handle fn = fh->neighbor(i);
+   OutputItFaces fit = pit.first;
+   OutputItBoundaryEdges eit = pit.second;
+   if (! test_conflict(p,fn)) {
+     *eit++ = Edge(fn, fn->index(fh));
+     return std::make_pair(fit,eit);
+   }
+   *fit++ = fn;
+   int j = fn->index(fh);
+   pit = propagate_conflicts(p,fn,ccw(j),pit);
+   pit = propagate_conflicts(p,fn,cw(j), pit);
+   return pit;
+ }
 };
 
 template < class Gt, class Tds >
@@ -247,7 +250,8 @@ find_conflicts(const Point  &p,
 	       std::list<Face_handle>& conflicts,
 	       Face_handle start ) const
 {
-  return get_conflicts(p, std::back_inserter(conflicts), start);
+  get_conflicts(p, std::back_inserter(conflicts), start);
+  return (! conflicts.empty());
 }
 
 template < class Gt, class Tds >

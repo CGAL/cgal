@@ -234,8 +234,7 @@ private:
   Vertex_handle hide_new_vertex(Face_handle f, const Weighted_point& p);
   void hide_remove_degree_3(Face_handle fh, Vertex_handle vh);
   void hide_vertex(Face_handle f, Vertex_handle v);
-  //void hide_vertex(Face_handle f, void* ptr);
-  void exchange_incidences(Vertex_handle va, Vertex_handle vb);
+   void exchange_incidences(Vertex_handle va, Vertex_handle vb);
   void exchange_hidden(Vertex_handle va, Vertex_handle vb);
 
   void stack_flip(Vertex_handle v, Faces_around_stack &faces_around);
