@@ -9,16 +9,16 @@
 // ----------------------------------------------------------------------
 //
 // release       : 
-// release_date  : 2001, January 30
+// release_date  : 
 //
 // file          : include/CGAL/geowin_support.h
-// package       : GeoWin (1.2.2)
+// package       : GeoWin (1.3.9)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 1.2.2
-// revision_date : 30 January 2001 
+// revision      : 1.3.9
+// revision_date : 12 Feb 2002 
 // author(s)     : Matthias Baesken, Ulrike Bartuschka, Stefan Naeher
 //
-// coordinator   : Matthias Baesken, Halle  (<baesken@informatik.uni-trier.de>)
+// coordinator   : Matthias Baesken, Trier  (<baesken@informatik.uni-trier.de>)
 // ======================================================================
 
 
@@ -1261,8 +1261,8 @@ void cgal_Iso_rectangle_2_d3(const T& L, leda_d3_window& W, GRAPH<leda_d3_point,
 template<class TRAITS, class CONTAINER>
 void convert_from_leda(const leda_polygon& p, CGAL::Polygon_2<TRAITS,CONTAINER>& rc)
 {
- typedef typename TRAITS::Point_2 POINT;
- typedef typename POINT::RT  RT;
+ typedef typename TRAITS::Point_2  POINT;
+ typedef typename TRAITS::RT       RT;
 
  leda_list<leda_point> pl= p.vertices();
  std::list<POINT> sl;
@@ -1304,8 +1304,8 @@ template<class TRAITS, class CONTAINER>
 void geowin_Translate(CGAL::Polygon_2<TRAITS,CONTAINER>& obj, double dx, double dy)
 {
  typedef typename TRAITS::Point_2 POINT;
- typedef typename POINT::RT  RT;
- typedef typename POINT::R   REP;
+ typedef typename TRAITS::RT      RT;
+ typedef typename POINT::R        REP;
  
   CGAL::Vector_2<REP> vec;
   vec= CGAL::Vector_2<REP>(RT(dx), RT(dy)); 
