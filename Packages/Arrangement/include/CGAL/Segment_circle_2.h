@@ -971,8 +971,9 @@ class Segment_circle_2
 template <class NT>
 std::ostream& operator<< (std::ostream& os, const Segment_circle_2<NT>& arc)
 {
-  Segment_circle_2<NT>::Conic conic = arc.conic();
-  Segment_circle_2<NT>::Point source = arc.source(), target = arc.target();
+  typename Segment_circle_2<NT>::Conic conic = arc.conic();
+  typename Segment_circle_2<NT>::Point source =
+      arc.source(), target = arc.target();
 
   os << "{" << CGAL::to_double(conic.r()) << "*x^2 + "
      << CGAL::to_double(conic.s()) << "*y^2 + "
