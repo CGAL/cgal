@@ -18,9 +18,9 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/GR /Zm900 /GX -nologo /D CGAL_USE_GMP"
+				AdditionalOptions="/GR /Zm900 /GX -nologo /D CGAL_USE_GMP /D CGAL_USE_QT"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(CGALROOT)\include\CGAL\config\i686_CYGWINNT-5.0-1.3.2_CL.EXE-1300&quot;;&quot;$(CGALROOT)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(QTDIR)/include&quot;;&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)\include&quot;"
 				PreprocessorDefinitions="WIN32;_LIB"
 				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="3"
@@ -91,17 +91,62 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm">
 			<File
 				RelativePath="Qt_widget.C">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						CompileAs="2"/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="Qt_widget_layer.C">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						CompileAs="2"/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="Qt_widget_standard_toolbar.C">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						CompileAs="2"/>
+				</FileConfiguration>
 			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc">
+			<File
+				RelativePath="..\..\include\CGAL\IO\Qt_widget.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe $(CGALROOT)/include/CGAL/IO/Qt_widget_standard_toolbar.h -o Qt_widget_standard_toolbar.moc"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\include\CGAL\IO\Qt_widget_layer.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe $(CGALROOT)/include/CGAL/IO/Qt_widget_layer.h -o Qt_widget_layer.moc"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\include\CGAL\IO\Qt_widget_standard_toolbar.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe $(CGALROOT)/include/CGAL/IO/Qt_widget.h -o Qt_widget.moc"/>
+				</FileConfiguration>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
