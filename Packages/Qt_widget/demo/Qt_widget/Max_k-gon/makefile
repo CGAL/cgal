@@ -37,19 +37,25 @@ all: max_k-gon
 
 Qt_widget_toolbar$(OBJ_EXT): Qt_widget_toolbar.C Qt_widget_toolbar.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar.C
-
 Qt_widget_toolbar.moc: Qt_widget_toolbar.h
 	$(QT_MOC) -o Qt_widget_toolbar.moc $<
 
-max_k-gon.moc: max_k-gon.C Qt_widget_toolbar$(OBJ_EXT) 
-	${QT_MOC} -o max_k-gon.moc max_k-gon.C
+Qt_widget_move_list_point$(OBJ_EXT): Qt_widget_move_list_point.moc \
+					Qt_widget_move_list_point.C
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_move_list_point.C
+Qt_widget_move_list_point.moc: Qt_widget_move_list_point.h
+	$(QT_MOC) -o Qt_widget_move_list_point.moc $<
 
 max_k-gon$(OBJ_EXT): max_k-gon.C max_k-gon.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) max_k-gon.C
+max_k-gon.moc: max_k-gon.C
+	${QT_MOC} -o max_k-gon.moc $<
 
-max_k-gon$(EXE_EXT): max_k-gon$(OBJ_EXT)
+max_k-gon$(EXE_EXT): max_k-gon$(OBJ_EXT) Qt_widget_move_list_point$(OBJ_EXT) \
+			Qt_widget_toolbar$(OBJ_EXT) 
 	$(CGAL_CXX) $(EXE_OPT)max_k-gon max_k-gon$(OBJ_EXT) \
-	 Qt_widget_toolbar$(OBJ_EXT) $(LDFLAGS)
+	 Qt_widget_toolbar$(OBJ_EXT) Qt_widget_move_list_point$(OBJ_EXT) \
+	$(LDFLAGS)
 
 clean: max_k-gon.clean \
        Qt_widget_toolbar.clean
