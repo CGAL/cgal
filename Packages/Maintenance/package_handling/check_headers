@@ -1,4 +1,4 @@
-#!/net/bin/perl5 -w
+#!/sw/bin/perl5 -w
 
 use strict;
 #use Cwd;
@@ -324,6 +324,7 @@ sub main()
 	    chomp $::opt_d;
 	}
     } else {  # no updates, only checking
+	die if !$::opt_c; # mainly put here for shutting up warnings
 	$TEMPFILE="/dev/null";
 	$::opt_v = "";
 	$::opt_d = "";
