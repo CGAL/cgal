@@ -1,2 +1,0 @@
-Tutorial/Polyhedrin contains a tutorial on CGAL Polyhedron
-created by ..... on the 
