@@ -28,6 +28,14 @@
 //#ifndef CGAL_ENUM_H
 #include <CGAL/Cartesian.h>
 #include <CGAL/Quotient.h>
+// @@@@ special includes for pm
+#include <CGAL/MP_Float.h>
+#include <CGAL/Quotient.h>
+#include <CGAL/Pm_default_dcel.h>
+#include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/Planar_map_2.h>
+#include <CGAL/Pm_with_intersections.h>
+// @@@@ end of special includes
 #include <CGAL/enum.h>
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/Random.h>
@@ -45,7 +53,7 @@
 #include <list>
 #include <set>
 #include <CGAL/leda_real.h>
-#include <CGAL/Snap_rounding_kd_2.h>
+#include "Snap_rounding_kd_2.h"
 
 #include <CGAL/utility.h>
 #include <CGAL/Iterator_project.h>
@@ -139,6 +147,15 @@ typedef CGAL::Arr_segment_traits_2<Rep_ >            Traits;// !!!! remove
 
 typedef Rep_                                         Rep;
 typedef typename Rep::FT                             NT;
+// @@@@ special typedefs for pm
+//typedef CGAL::Quotient<CGAL::MP_Float>               NT2;
+//typedef CGAL::Cartesian<NT>                         Kernel2;
+//typedef CGAL::Arr_segment_traits_2<Kernel2> Traits2;
+typedef CGAL::Pm_default_dcel<Traits>      Dcel2;
+typedef CGAL::Planar_map_2<Dcel2,Traits>            Planar_map2;
+typedef CGAL::Planar_map_with_intersections_2<Planar_map2> Pmwx;
+typedef Traits::X_curve                           X_curve2;
+// @@@@ end special typedefs for pm
 typedef typename Traits::X_curve                     X_curve;
 typedef typename Traits::Curve                       Curve;
 typedef std::list<X_curve>                           CurveContainer;
@@ -256,6 +273,7 @@ private:
   int number_of_segments,number_of_kd_trees;
   Multiple_kd_tree<NT,Hot_Pixel<Rep> *> *mul_kd_tree;
   bool wheteher_to_do_isr;
+  Pmwx pm;// @@@@
 
   void find_hot_pixels_and_create_kd_trees();
   void find_intersected_hot_pixels(Segment_data<Rep> &seg,
@@ -360,6 +378,7 @@ template<class Rep_>
 Hot_Pixel<Rep_>::Hot_Pixel(NT inp_x,NT inp_y,NT inp_pixel_size) :
                            pixel_size(inp_pixel_size)
   {
+    // $$$$ the next two functions are not generic !!!
     x = NT(floor((inp_x / pixel_size).to_double())) * pixel_size +
         pixel_size / 2.0;
 
@@ -439,13 +458,20 @@ bool Hot_Pixel<Rep_>::intersect_right(Segment_2 &seg) const
     if(CGAL::assign(p,result)) {
       // bottom right point was checked in intersect_bot
 
-      NT tmp = y + pixel_size / 2.0;
-      if(p.y() == tmp)
+      //*** NT tmp = y + pixel_size / 2.0;
+      Point_2 tmp1(0,y + pixel_size / 2.0);
+      Point_2 tmp2(0,y - pixel_size / 2.0);
+      Comparison_result c1 = _gt.compare_y_2_object()(p,tmp1);
+      Comparison_result c2 = _gt.compare_y_2_object()(p,tmp2);
+      Comparison_result c3 = _gt.compare_y_2_object()(seg.source(),tmp1);
+      Comparison_result c4 = _gt.compare_y_2_object()(seg.target(),tmp1);
+
+      if(c1 == EQUAL)
         return(Snap_rounding_2<Rep_>::get_direction() ==
-               Snap_rounding_2<Rep_>::UP_RIGHT && seg.source().y() != tmp ||
+               Snap_rounding_2<Rep_>::UP_RIGHT && c3 != EQUAL ||
                Snap_rounding_2<Rep_>::get_direction() ==
-               Snap_rounding_2<Rep_>::DOWN_LEFT && seg.target().y() != tmp);
-      else if(p.y() == y - pixel_size / 2.0)
+               Snap_rounding_2<Rep_>::DOWN_LEFT && c4 != EQUAL);
+      else if(c2 == EQUAL)
         return(false);// was checked
       else {
         Point_2 p_check(x + pixel_size / 2.0,0);
@@ -634,6 +660,13 @@ void Snap_rounding_2<Rep_>::find_hot_pixels_and_create_kd_trees()
             std::pair<NT,NT>(hp->get_x(),hp->get_y()),hp));
     }
 
+
+
+    // @@@@ for ISRS : create new hot pixels
+
+
+
+
     // create kd multiple tree
     // create simple_list from seg_list
     std::list<std::pair<std::pair<NT,NT>,std::pair<NT,NT> > > simple_seg_list;
@@ -794,6 +827,14 @@ Snap_rounding_2<Rep_>::Snap_rounding_2(Segment_const_iterator
                                             begin->target()));
       seg_2_list.push_back(*begin);
       ++number_of_segments;
+
+      // @@@@ insert to planar map
+      //std:: cout << "1st : " << begin->source() << " snd : " << begin->target() << endl;
+      X_curve2 c(begin->source(),begin->target());
+      //std::cout << "bbb\n";
+      pm.insert(c);
+      // @@@@ end of pmwx for here
+
       ++begin;
     }
   }
