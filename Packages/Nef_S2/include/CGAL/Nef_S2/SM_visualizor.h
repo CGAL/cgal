@@ -79,7 +79,7 @@ SM_visualizor(const SM_explorer* M, CGAL::OGL::Unit_sphere& S,
 	      const Color_objects& C = Color_objects())
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname| to visualize
     the vertices, edges, and faces of |D| in an open GL window.}*/
-  : Base(&MT_,M), E_(M), CO_(C), MT_(), S_(S)
+  : Base(&MT_,M), E_(M), CO_(C), MT_(true), S_(S)
   { triangulate(); }
 
 /*{\Moperations 2 1}*/

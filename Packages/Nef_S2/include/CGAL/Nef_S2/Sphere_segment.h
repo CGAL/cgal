@@ -24,6 +24,7 @@ Sphere_segment_rep(const Point& p1, const Point& p2,
 { // warning stays as reminder that one gets an arbitrary plane equation
   // in this degenerate case
   CGAL_warning(p1 != p2.antipode());
+  CGAL_assertion(p1 != p2.antipode());
   if ( p1 == p2 ) { 
     Plane_3 h(Point_3(0,0,0),(p1-CGAL::ORIGIN));
     c_ = Sphere_circle<R_>(Plane_3(Point_3(0,0,0),h.base1()));

@@ -392,6 +392,63 @@ public:
     return h;
   }
 
+  Object_handle ray_shoot(const Sphere_point& p, 
+			  const Sphere_circle& c,
+			  Sphere_point& ip,
+			  bool start_inclusive = false) const { 
+    //    Sphere_circle c(d.circle());
+    CGAL_assertion(c.has_on(p));
+    Sphere_segment s;
+    bool s_init(false);
+    Object_handle h = Object_handle();
+
+    SVertex_iterator vi;
+    CGAL_forall_svertices (vi,*this) {
+      Sphere_point pv = point(vi);
+      if (!(s_init && s.has_on(pv)) ||
+	  (!s_init && c.has_on(pv))) continue;
+      TRACEN("candidate "<<pv);
+      if (start_inclusive || p != pv) {
+        h = Object_handle(*vi);     // store vertex
+        s = Sphere_segment(p,pv,c); // shorten
+	ip = pv;
+	s_init = true;
+      }
+    }
+ 
+    SHalfedge_iterator ei;
+    CGAL_forall_sedges(ei,*this) {
+      Sphere_segment se = segment(ei);
+      Sphere_point p_res;
+      if (!(s_init && do_intersect_internally(se,s,p_res)) ||
+	  (!s_init && do_intersect_internally(c,se,p_res))) continue;
+      TRACEN("candidate "<<se); 
+      if (start_inclusive || p != p_res) {
+	h = Object_handle(*ei); 
+	s = Sphere_segment(p,p_res,c);
+	ip = p_res;
+	s_init = true;
+      }
+    }
+
+    if(has_shalfloop()) {
+      Sphere_circle cl(shalfloop()->circle());
+      if(!s_init)
+	s = Sphere_segment(p,p.antipode(),c);
+      Sphere_point p_res;
+      if(!do_intersect_internally(cl,s,p_res))
+	return h;
+      if(p_res == p.antipode())
+	p_res = p;
+      if (start_inclusive || p != p_res) {
+	ip = p_res;
+	return Object_handle(shalfloop());
+      }
+    }
+
+    return h;
+  }
+
   void marks_of_halfspheres(std::vector<Mark>& mohs, int offset, 
 			    int axis=2);
   void marks_of_halfspheres(Mark& unten, Mark& oben, int axis=2);

@@ -227,7 +227,7 @@ public:
   construction means cloning an isomorphic structure and is thus an
   expensive operation.}*/
 
-  Sphere_map() : boundary_item_(undef_), 
+  Sphere_map(bool b=false) : boundary_item_(undef_), 
     svertices_(), sedges_(), sfaces_(), shalfloop_(0) {}
 
   ~Sphere_map() { clear(); }

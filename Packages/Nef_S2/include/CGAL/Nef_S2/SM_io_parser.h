@@ -429,7 +429,7 @@ void SM_io_parser<Decorator_>::print_faces() const
     CGAL_For_all(c,ce) 
     { Done[c]=true; out << "  "; debug_vertex(source(c)); }
   }
-  if ( has_sloop() ) 
+  if ( has_shalfloop() ) 
   { debug_loop(shalfloop()); debug_loop(twin(shalfloop())); }
   out << std::endl;
 }

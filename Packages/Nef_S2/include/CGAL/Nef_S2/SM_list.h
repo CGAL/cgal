@@ -64,27 +64,6 @@ public:
     }
 };
 
-/*
-template < class SHalfloop>
-class SNC_in_place_list_shalfloop
-    : public SHalfloop, 
-      public In_place_list_base<SNC_in_place_list_shalfloop<SHalfloop> > {
-public:
-    typedef SNC_in_place_list_shalfloop<SHalfloop> Self;
-    //    typedef typename SHalfloop::SHalfloop_handle       SHalfloop_handle;
-    //    typedef typename SHalfloop::SHalfloop_const_handle SHalfloop_const_handle;
-    SNC_in_place_list_shalfloop() {}
-    SNC_in_place_list_shalfloop(const SHalfloop& v)   // down cast
-        : SHalfloop(v) {}
-    Self& operator=( const Self& v) {
-        // This self written assignment avoids that assigning vertices will
-        // overwrite the list linking of the target vertex.
-        *((SHalfloop*)this) = ((const SHalfloop&)v);
-        return *this;
-    }
-};
-*/
-
 template < class SFace>
 class SNC_in_place_list_sface
     : public SFace, 

@@ -1,8 +1,10 @@
 #ifndef CGAL_SPHERE_GEOMETRY_OGL_H
 #define CGAL_SPHERE_GEOMETRY_OGL_H
 
+#include <CGAL/Nef_S2/OGL_base_object.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Nef_S2/Sphere_geometry.h>
+#include <CGAL/Nef_S2/SM_triangulator.h>
 #include <CGAL/IO/Color.h>
 #include <GL/glut.h>
 #include <cmath>
@@ -14,6 +16,9 @@
 #undef _DEBUG
 #define _DEBUG 151
 #include <CGAL/Nef_S2/debug.h>
+
+#define LGREY CGAL::Color(170,170,200)
+#define DGREY CGAL::Color(30,30,50)
 
 CGAL_BEGIN_NAMESPACE
 namespace OGL {
@@ -30,6 +35,7 @@ typedef CGAL::Simple_cartesian<double>      VKernel;
 typedef VKernel::Vector_3                   VVector;
 typedef VKernel::Point_3                    VPoint;
 typedef VKernel::Aff_transformation_3       VTrafo;
+typedef VKernel::Aff_transformation_3       Affine_3;
 typedef std::vector<VPoint>                 VSegment;
 typedef VKernel::Triangle_3                 DTriangle;
 typedef std::vector<DTriangle>              VTriangle;
@@ -38,18 +44,165 @@ const double refinement_angle = 0.1;
 const double shrink_fac = 0.995;
 
 template <typename R>
+class Approximator {
+
+ public:
+  static VPoint approximate(const CGAL::Sphere_point<R>& p) {
+    VVector v = convert(p-CGAL::ORIGIN);
+    v = v / CGAL_NTS sqrt(v*v) ; // normalize
+    return CGAL::ORIGIN+v;
+  }
+   
+  static VSegment approximate(const CGAL::Sphere_segment<R>& s) {
+    
+    /* we construct the rotation matrix that transfers the x-axis
+       into |ps_|, the z-axis into h_.orthogonal_vector() and the
+       y-axix into the corresponding crossproduct of the two.*/
+    if ( s.is_degenerate() ) {
+      VSegment S(1);
+      S[0] = approximate(s.source());
+      return S;
+    }
+    
+    VVector v0 = convert(s.source()-CGAL::ORIGIN);
+    VVector v2 = convert(s.sphere_circle().orthogonal_vector());
+    VVector v1(-cross_product(v0,v2));
+    VVector v3 = convert(s.target()-CGAL::ORIGIN);
+    double v0l = CGAL_NTS sqrt(v0*v0);
+    double v1l = CGAL_NTS sqrt(v1*v1);
+    double v2l = CGAL_NTS sqrt(v2*v2);
+    double v3l = CGAL_NTS sqrt(v3*v3);
+    double cosalpha = v0*v3 / v0l / v3l; 
+    double alpha = acos(cosalpha);
+    const int units_per_halfcircle = 50;
+    int units = int(units_per_halfcircle/M_PI * alpha);
+    if (units == 0) ++units;
+    bool seg_is_short = s.is_short();
+    bool seg_is_halfcircle = s.is_halfcircle();
+    if ( seg_is_halfcircle ) units = units_per_halfcircle;
+    else if ( !seg_is_short ) {
+      units = 2*units_per_halfcircle - (units+1);
+    } TRACEV(units); TRACEV(cosalpha); TRACEV(alpha);
+    
+    v0 = v0 / v0l;
+    v1 = v1 / v1l;
+    v2 = v2 / v2l;
+    v3 = v3 / v3l;
+    VTrafo T(v0.x(),v1.x(),v2.x(),
+	     v0.y(),v1.y(),v2.y(),
+	     v0.z(),v1.z(),v2.z());
+    VSegment S(units+1);
+    for (int i=0; i<units; ++i) 
+      S[i] = VPoint(cos(M_PI*i/double(units_per_halfcircle)),
+		    sin(M_PI*i/double(units_per_halfcircle)),
+		    0.0);
+    double sinalpha = 1 - cosalpha*cosalpha;
+    if (sinalpha <0) sinalpha = 0; 
+    else             sinalpha = CGAL_NTS sqrt(sinalpha);
+    if ( seg_is_short ) 
+      S[units] = VPoint(cosalpha, sinalpha, 0);
+    else
+      S[units] = VPoint(cosalpha, -sinalpha, 0);
+    VSegment::iterator it;
+    for(it = S.begin(); it != S.end(); ++it) { TRACEN(*it<<" "<<T(*it));
+    *it = T(*it); 
+    } TRACEN("");
+    return S;
+  }
+
+  static VSegment approximate(const CGAL::Sphere_circle<R>& s) {
+    
+    /* we construct the rotation matrix that transfers the x-axis
+       into |ps_|, the z-axis into h_.orthogonal_vector() and the
+       y-axix into the corresponding crossproduct of the two.*/
+    
+    VVector v0 = convert(s.base1());
+    VVector v1 = convert(s.base2());
+    VVector v2 = convert(s.orthogonal_vector());
+    double v0l = CGAL_NTS sqrt(v0*v0);
+    double v1l = CGAL_NTS sqrt(v1*v1);
+    double v2l = CGAL_NTS sqrt(v2*v2);
+    const int units = 100;
+    v0 = v0 / v0l;
+    v1 = v1 / v1l;
+    v2 = v2 / v2l;
+    VTrafo T(v0.x(),v1.x(),v2.x(),
+	     v0.y(),v1.y(),v2.y(),
+	     v0.z(),v1.z(),v2.z());
+    VSegment S(units);
+    for (int i=0; i<units; ++i) {
+      S[i] = VPoint(cos(2.0*M_PI*i/double(units)),
+		    sin(2.0*M_PI*i/double(units)),
+		    0.0);
+    }
+    VSegment::iterator it;
+    for(it = S.begin(); it != S.end(); ++it) *it = T(*it); 
+    return S;
+  }
+
+
+/* the following operation refines a sphere triangle as a list of flat
+   triangles in 3d. The refinement only works for triangles that are
+   contained in a perfect hemisphere (no long sphere segments are
+   allowed as triangle segments). We split triangles along at the
+   midpoint of their longest side into two. */
+
+  static void refine(const DTriangle& t, VTriangle& T) {
+    double angle[3]; int i(0);
+    angle[0] = acos((t[0]-CGAL::ORIGIN)*(t[1]-CGAL::ORIGIN));
+    angle[1] = acos((t[1]-CGAL::ORIGIN)*(t[2]-CGAL::ORIGIN));
+    angle[2] = acos((t[2]-CGAL::ORIGIN)*(t[0]-CGAL::ORIGIN));
+    TRACEN("refine "<<angle[0]<<" "<<angle[1]<<" "<<angle[2]);
+    if ( angle[1] > angle[0] ) {
+      if ( angle[2] > angle[1] ) i=2;
+      else                       i=1;
+    } else { // angle[0] >= angle[1]
+      if ( angle[2] > angle[0] ) i=2;
+      else                       i=0;
+    }
+    // now i references the side of maximal angle
+    if ( angle[i] < refinement_angle ) // refinement threshhold
+      { T.push_back(t); return; }
+    VVector v;
+    switch (i) {
+    case 0: v = (t[0]-CGAL::ORIGIN)+(t[1]-CGAL::ORIGIN); break;
+    case 1: v = (t[1]-CGAL::ORIGIN)+(t[2]-CGAL::ORIGIN); break;
+    case 2: v = (t[2]-CGAL::ORIGIN)+(t[0]-CGAL::ORIGIN); break;
+    }
+    v = v / CGAL_NTS sqrt(v*v) ; // normalize
+    VPoint p = CGAL::ORIGIN+v;
+    DTriangle t1,t2;
+    switch (i) {
+    case 0: t1=DTriangle(t[0],p,t[2]); t2=DTriangle(p,t[1],t[2]); break;
+    case 1: t1=DTriangle(t[1],p,t[0]); t2=DTriangle(p,t[2],t[0]); break;
+    case 2: t1=DTriangle(t[2],p,t[1]); t2=DTriangle(p,t[0],t[1]); break;
+    }
+    refine(t1,T);
+    refine(t2,T);
+  }
+
+  static VTriangle approximate(const CGAL::Sphere_triangle<R>& t) {
+    // we subdivide the triangle into a list of triangles until
+    // we reach a fine resolution on the surface.
+    
+    VTriangle T;
+    DTriangle td(approximate(t.point(0)), 
+		 approximate(t.point(1)),
+		 approximate(t.point(2)));
+    TRACEN("approximate " << td);
+    refine(td,T);
+    return T;
+  }
+
+};
+
+template <typename R>
 VVector convert(const CGAL::Vector_3<R>& v)
 { return VVector(CGAL::to_double(v.x()),
                  CGAL::to_double(v.y()),
                  CGAL::to_double(v.z())); }
 
-template <typename R>
-VPoint approximate(const CGAL::Sphere_point<R>& p)
-{
-  VVector v = convert(p-CGAL::ORIGIN);
-  v = v / CGAL_NTS sqrt(v*v) ; // normalize
-  return CGAL::ORIGIN+v;
-}
+
 
 template <class R_>
 class Sphere_point : public VPoint, public Gen_object {
@@ -61,7 +214,7 @@ public:
   Sphere_point() {}
   Sphere_point(const CGAL::Sphere_point<R>& p,
     CGAL::Color c = CGAL::BLACK, unsigned w = 10) : 
-    VPoint(approximate(p)), p_(p), c_(c), w_(w) {}
+    VPoint(Approximator<R>::approximate(p)), p_(p), c_(c), w_(w) {}
   Sphere_point(const Sphere_point<R>& p) : VPoint(p)
   { p_ = p.p_; c_ = p.c_; w_ = p.w_; }
   Sphere_point<R>& operator=(const Sphere_point<R>& p)
@@ -76,8 +229,8 @@ public:
   virtual Gen_object* clone() const 
   { return new Sphere_point<R>(*this); }
  
-  virtual void draw() const
-  { glPointSize(w_);
+  virtual void draw() const { 
+    glPointSize(w_);
     glColor3ub(c_.red(),c_.green(),c_.blue());
     glBegin(GL_POINTS);
     glNormal3d(x(),y(),z());
@@ -92,63 +245,6 @@ public:
 
 
 
-template <typename R>
-VSegment approximate(const CGAL::Sphere_segment<R>& s)
-{
-  /* we construct the rotation matrix that transfers the x-axis
-     into |ps_|, the z-axis into h_.orthogonal_vector() and the
-     y-axix into the corresponding crossproduct of the two.*/
-  if ( s.is_degenerate() ) {
-    VSegment S(1);
-    S[0] = approximate(s.source());
-    return S;
-  }
-  
-  VVector v0 = convert(s.source()-CGAL::ORIGIN);
-  VVector v2 = convert(s.sphere_circle().orthogonal_vector());
-  VVector v1(-cross_product(v0,v2));
-  VVector v3 = convert(s.target()-CGAL::ORIGIN);
-  double v0l = CGAL_NTS sqrt(v0*v0);
-  double v1l = CGAL_NTS sqrt(v1*v1);
-  double v2l = CGAL_NTS sqrt(v2*v2);
-  double v3l = CGAL_NTS sqrt(v3*v3);
-  double cosalpha = v0*v3 / v0l / v3l; 
-  double alpha = acos(cosalpha);
-  const int units_per_halfcircle = 50;
-  int units = int(units_per_halfcircle/M_PI * alpha);
-  if (units == 0) ++units;
-  bool seg_is_short = s.is_short();
-  bool seg_is_halfcircle = s.is_halfcircle();
-  if ( seg_is_halfcircle ) units = units_per_halfcircle;
-  else if ( !seg_is_short ) {
-    units = 2*units_per_halfcircle - (units+1);
-  } TRACEV(units); TRACEV(cosalpha); TRACEV(alpha);
-
-  v0 = v0 / v0l;
-  v1 = v1 / v1l;
-  v2 = v2 / v2l;
-  v3 = v3 / v3l;
-  VTrafo T(v0.x(),v1.x(),v2.x(),
-           v0.y(),v1.y(),v2.y(),
-           v0.z(),v1.z(),v2.z());
-  VSegment S(units+1);
-  for (int i=0; i<units; ++i) 
-    S[i] = VPoint(cos(M_PI*i/double(units_per_halfcircle)),
-                  sin(M_PI*i/double(units_per_halfcircle)),
-                  0.0);
-  double sinalpha = 1 - cosalpha*cosalpha;
-  if (sinalpha <0) sinalpha = 0; 
-  else             sinalpha = CGAL_NTS sqrt(sinalpha);
-  if ( seg_is_short ) 
-    S[units] = VPoint(cosalpha, sinalpha, 0);
-  else
-    S[units] = VPoint(cosalpha, -sinalpha, 0);
-  VSegment::iterator it;
-  for(it = S.begin(); it != S.end(); ++it) { TRACEN(*it<<" "<<T(*it));
-    *it = T(*it); 
-  } TRACEN("");
-  return S;
-}
 
 
 template <class R_>
@@ -161,7 +257,7 @@ public:
   Sphere_segment() {}
   Sphere_segment(const CGAL::Sphere_segment<R>& s,
     CGAL::Color c = CGAL::BLACK, unsigned w = 2) 
-    : VSegment(approximate(s)), s_(s), c_(c), w_(w) {}
+    : VSegment(Approximator<R>::approximate(s)), s_(s), c_(c), w_(w) {}
   Sphere_segment(const Sphere_segment<R>& s) : VSegment(s)
   { s_ = s.s_; c_ = s.c_; w_ = s.w_; }
   Sphere_segment<R>& operator=(const Sphere_segment<R>& s)
@@ -202,37 +298,6 @@ public:
 
 };
 
-template <typename R>
-VSegment approximate(const CGAL::Sphere_circle<R>& s)
-{
-  /* we construct the rotation matrix that transfers the x-axis
-     into |ps_|, the z-axis into h_.orthogonal_vector() and the
-     y-axix into the corresponding crossproduct of the two.*/
-  
-  VVector v0 = convert(s.base1());
-  VVector v1 = convert(s.base2());
-  VVector v2 = convert(s.orthogonal_vector());
-  double v0l = CGAL_NTS sqrt(v0*v0);
-  double v1l = CGAL_NTS sqrt(v1*v1);
-  double v2l = CGAL_NTS sqrt(v2*v2);
-  const int units = 100;
-  v0 = v0 / v0l;
-  v1 = v1 / v1l;
-  v2 = v2 / v2l;
-  VTrafo T(v0.x(),v1.x(),v2.x(),
-           v0.y(),v1.y(),v2.y(),
-           v0.z(),v1.z(),v2.z());
-  VSegment S(units);
-  for (int i=0; i<units; ++i) {
-    S[i] = VPoint(cos(2.0*M_PI*i/double(units)),
-                  sin(2.0*M_PI*i/double(units)),
-                  0.0);
-  }
-  VSegment::iterator it;
-  for(it = S.begin(); it != S.end(); ++it) *it = T(*it); 
-  return S;
-}
-
 
 
 template <class R_>
@@ -245,7 +310,7 @@ public:
   Sphere_circle() {}
   Sphere_circle(const CGAL::Sphere_circle<R>& s,
     CGAL::Color c = CGAL::BLACK, unsigned w = 2) 
-    : VSegment(approximate(s)), s_(s), c_(c), w_(w) {}
+    : VSegment(Approximator<R>::approximate(s)), s_(s), c_(c), w_(w) {}
   Sphere_circle(const Sphere_circle<R>& s) : VSegment(s)
   { s_ = s.s_; c_ = s.c_; w_ = s.w_; }
   Sphere_circle<R>& operator=(const Sphere_circle<R>& s)
@@ -291,7 +356,7 @@ public:
 
   Sphere_triangle(const CGAL::Sphere_triangle<R>& t,
     CGAL::Color c = CGAL::GREY) 
-    : VTriangle(approximate(t)), t_(t), c_(c) {}
+    : VTriangle(Approximator<R>::approximate(t)), t_(t), c_(c) {}
 
   Sphere_triangle(const Sphere_triangle<R>& t) : VTriangle(t)
   { t_ = t.t_; c_ = t.c_; }
@@ -307,8 +372,8 @@ public:
   virtual Gen_object* clone() const 
   { return new Sphere_triangle<R>(*this); }
 
-  virtual void draw() const
-  { TRACEN("draw "<<t_);
+  virtual void draw() const { 
+    TRACEN("draw "<<t_ << " in " << c_);
     VTriangle::const_iterator it;
     VPoint p;
     glColorMaterial(GL_FRONT, GL_DIFFUSE);
@@ -316,15 +381,15 @@ public:
     glColor3ub(c_.red(),c_.green(),c_.blue());
     glBegin(GL_TRIANGLES);
     for(it = begin(); it != end(); ++it) {
-        p = it->vertex(0); 
-	glNormal3d(p.x(),p.y(),p.z()); 	//glVertex3d(p.x(),p.y(),p.z());
-	glVertex3d(shrink_fac*p.x(),shrink_fac*p.y(),shrink_fac*p.z());
-        p = it->vertex(1); 
-	glNormal3d(p.x(),p.y(),p.z()); 
-	glVertex3d(shrink_fac*p.x(),shrink_fac*p.y(),shrink_fac*p.z());
-        p = it->vertex(2); 
-	glNormal3d(p.x(),p.y(),p.z()); 
-	glVertex3d(shrink_fac*p.x(),shrink_fac*p.y(),shrink_fac*p.z());
+      p = it->vertex(0); 
+      glNormal3d(p.x(),p.y(),p.z()); 	//glVertex3d(p.x(),p.y(),p.z());
+      glVertex3d(shrink_fac*p.x(),shrink_fac*p.y(),shrink_fac*p.z());
+      p = it->vertex(1); 
+      glNormal3d(p.x(),p.y(),p.z()); 
+      glVertex3d(shrink_fac*p.x(),shrink_fac*p.y(),shrink_fac*p.z());
+      p = it->vertex(2); 
+      glNormal3d(p.x(),p.y(),p.z()); 
+      glVertex3d(shrink_fac*p.x(),shrink_fac*p.y(),shrink_fac*p.z());
     }
     glEnd();
     glDisable(GL_COLOR_MATERIAL);
@@ -335,90 +400,38 @@ public:
 
 };
 
-/* the following operation refines a sphere triangle as a list of flat
-   triangles in 3d. The refinement only works for triangles that are
-   contained in a perfect hemisphere (no long sphere segments are
-   allowed as triangle segments). We split triangles along at the
-   midpoint of their longest side into two. */
-
-void refine(const DTriangle& t, VTriangle& T)
-{
-  double angle[3]; int i(0);
-  angle[0] = acos((t[0]-CGAL::ORIGIN)*(t[1]-CGAL::ORIGIN));
-  angle[1] = acos((t[1]-CGAL::ORIGIN)*(t[2]-CGAL::ORIGIN));
-  angle[2] = acos((t[2]-CGAL::ORIGIN)*(t[0]-CGAL::ORIGIN));
-  TRACEN("refine "<<angle[0]<<" "<<angle[1]<<" "<<angle[2]);
-  if ( angle[1] > angle[0] ) {
-    if ( angle[2] > angle[1] ) i=2;
-    else                       i=1;
-  } else { // angle[0] >= angle[1]
-    if ( angle[2] > angle[0] ) i=2;
-    else                       i=0;
-  }
-  // now i references the side of maximal angle
-  if ( angle[i] < refinement_angle ) // refinement threshhold
-  { T.push_back(t); return; }
-  VVector v;
-  switch (i) {
-    case 0: v = (t[0]-CGAL::ORIGIN)+(t[1]-CGAL::ORIGIN); break;
-    case 1: v = (t[1]-CGAL::ORIGIN)+(t[2]-CGAL::ORIGIN); break;
-    case 2: v = (t[2]-CGAL::ORIGIN)+(t[0]-CGAL::ORIGIN); break;
-  }
-  v = v / CGAL_NTS sqrt(v*v) ; // normalize
-  VPoint p = CGAL::ORIGIN+v;
-  DTriangle t1,t2;
-  switch (i) {
-    case 0: t1=DTriangle(t[0],p,t[2]); t2=DTriangle(p,t[1],t[2]); break;
-    case 1: t1=DTriangle(t[1],p,t[0]); t2=DTriangle(p,t[2],t[0]); break;
-    case 2: t1=DTriangle(t[2],p,t[1]); t2=DTriangle(p,t[0],t[1]); break;
-  }
-  refine(t1,T);
-  refine(t2,T);
-}
-
-template <typename R>
-VTriangle approximate(const CGAL::Sphere_triangle<R>& t)
-{
-  /* we subdivide the triangle into a list of triangles until
-     we reach a fine resolution on the surface.*/
-  
-  VTriangle T;
-  DTriangle td(approximate(t.point(0)), 
-	       approximate(t.point(1)),
-	       approximate(t.point(2)));
-  TRACEN("approximate " << td);
-  refine(td,T);
-  return T;
-}
-
-
 //----------------------------------------------------------------------------
 // the sphere:
 //----------------------------------------------------------------------------
 
-enum Sphere_map_mode {
-  SM_FACES, SM_SKELETON, SM_TRIANGULATION
-};
+ enum { SM_FACES, SM_SKELETON, SM_TRIANGULATION };
+ enum { SM_AXES, SM_CUBE };
 
-class Unit_sphere  {
-typedef std::list<Gen_object*> Object_list;
-typedef Object_list::const_iterator  Object_const_iterator;
-typedef Object_list::iterator  Object_iterator;
-
-GLUquadricObj*        sphere_;
-Sphere_map_mode       style_;
-bool                  axes_, cube_, initialized_;
-Object_list           objects_,triangles_,triangle_edges_;
-GLuint                sphere_list_;
+class Unit_sphere : public OGL_base_object {
+  typedef std::list<Gen_object*> Object_list;
+  typedef Object_list::const_iterator  Object_const_iterator;
+  typedef Object_list::iterator  Object_iterator;
+  
+  GLUquadricObj*        sphere_;
+  int                   style_;
+  bool                  initialized_;
+  Object_list           objects_,triangles_,triangle_edges_;
+  GLuint                sphere_list_;
+  std::vector<bool>     switches;
 
 public:
-void init(Sphere_map_mode style = SM_FACES)
-{ style_ = style; axes_ = true; cube_ = false;
+void init() { 
+  style_ = SM_FACES; 
+  switches[0] = true;
+  switches[1] = false;
   gluQuadricNormals(sphere_,GLenum(GLU_SMOOTH));
 }
 
-Unit_sphere(Sphere_map_mode style = SM_FACES) 
-{ sphere_ = gluNewQuadric(); initialized_ = false; init(style); }
+Unit_sphere() : switches(2) { 
+  sphere_ = gluNewQuadric(); 
+  initialized_ = false; 
+  init(); 
+}
 
 void clear_list() 
 { while ( objects_.begin() != objects_.end() ) {
@@ -462,8 +475,8 @@ Unit_sphere(const Unit_sphere& S)
   sphere_ = gluNewQuadric();
   initialized_ = S.initialized_;
   style_ = S.style_;
-  axes_ = S.axes_;
-  cube_ = S.cube_;
+  switches[0] = S.switches[0];
+  switches[1] = S.switches[1];
   copy_list(S);
 }
 
@@ -472,13 +485,16 @@ Unit_sphere& operator=(const Unit_sphere& S)
 { TRACEN("assignment");
   initialized_ = S.initialized_;
   style_ = S.style_;
-  axes_ = S.axes_;
-  cube_ = S.cube_;
+  switches[0] = S.switches[0];
+  switches[1] = S.switches[1];
   clear_list(); copy_list(S);
   return *this;
 }
 
-~Unit_sphere() { clear_list(); gluDeleteQuadric(sphere_); }
+~Unit_sphere() {
+  clear_list(); 
+  gluDeleteQuadric(sphere_); 
+}
 
 template <typename R>
 void push_back(const CGAL::Sphere_point<R>& p,
@@ -505,10 +521,13 @@ void push_back_triangle_edge(const CGAL::Sphere_segment<R>& s,
   CGAL::Color c = CGAL::BLUE, unsigned w = 1)
 { triangle_edges_.push_back(new Sphere_segment<R>(s,c,w)); }
 
-void set_style(Sphere_map_mode style) { style_ = style; }
-void toggle_axes() { axes_ = !axes_; }
-void toggle_cube() { cube_ = !cube_; }
+void set_style(int style) { 
+  style_ = style; 
+}
 
+void toggle(int index) { 
+  switches[index] = !switches[index]; 
+}
 private:
 
 void construct_axes() const
@@ -616,6 +635,7 @@ void construct()
 
 public:
 
+//void draw(GLdouble z_vec[3]) const
 void draw() const
 { 
   gluQuadricDrawStyle(sphere_,GLenum(GLU_FILL));
@@ -640,255 +660,111 @@ void draw() const
   if ( style_ != SM_TRIANGULATION ) {
     glCallList(sphere_list_);
   }
-  if ( axes_ ) glCallList(sphere_list_+3);
-  if ( cube_ ) glCallList(sphere_list_+4);
+  if ( switches[0] ) glCallList(sphere_list_+3);
+  if ( switches[1] ) glCallList(sphere_list_+4);
 }
 
 
 };
 
-  enum MenuEntriesS2 { ROTATE, SCALE, TRANSLATE, RESET_CONTROL, 
-		       UNITY_CUBE, AXES, 
-  		       FACES, SKELETON, TRIANGULATION, 
-		       QUIT };
-
-  int window_width  = 300;           // Breite und
-  int window_height = 300;           // Hoehe des Fensters
-
-  int mouse_x, mouse_y;              // Mauskoordinaten linker button
-  int mouse_left_button = false;     // Mouse1 gedrueckt
-  int motion_mode       = ROTATE;    // Bewegen der Maus bei Mouse1 gedrueckt
-  int submenu1, submenu2;
-  long double dx = 0;                // Translation
-  long double dy = 0;                // Translation
-  long double wx = 0;                // Rotation
-  long double wy = 0;                // Rotation
-  long double s  = 1.5;              // Skalierung
-                       
-  long double factor_d;              // Umrechnungsfaktor fuer Translation
-  long double factor_w;              // Umrechnungsfaktor fuer Rotation
-  long double factor_s;              // Umrechnungsfaktor fuer Skalierung
-
-  // our draw object:
-  static std::vector<Unit_sphere> spheres_;
-  static std::vector<std::string> titles_;
-
-void show (int mode)
+template <typename Map_>
+class SM_BooleColor 
 {
-  std::vector<Unit_sphere>::iterator it;
-  switch(mode)
-  {
-    case ROTATE:
-    case SCALE:
-    case TRANSLATE:
-      motion_mode = mode;
-      break;
-    case RESET_CONTROL:
-      dx = dy = wx = wy = 0.0;
-      s = 1.5;
-      motion_mode = ROTATE;
-      CGAL_forall_iterators(it,spheres_) it->init();
-      glutPostRedisplay();
-      break;
-    case UNITY_CUBE:
-      CGAL_forall_iterators(it,spheres_) it->toggle_cube();
-      glutPostRedisplay();
-      break;
-    case AXES:
-      CGAL_forall_iterators(it,spheres_) it->toggle_axes();
-      glutPostRedisplay();
-      break;
-    case FACES:
-      CGAL_forall_iterators(it,spheres_) it->set_style(SM_FACES);
-      glutPostRedisplay();
-      break;
-    case SKELETON:
-      CGAL_forall_iterators(it,spheres_) it->set_style(SM_SKELETON);
-      glutPostRedisplay();
-      break;
-    case TRIANGULATION:
-      CGAL_forall_iterators(it,spheres_) it->set_style(SM_TRIANGULATION);
-      glutPostRedisplay();
-      break;
-    case QUIT: 
-      exit(0);
+  typedef typename Map_::SVertex_const_handle   SVertex_const_handle;   
+  typedef typename Map_::SHalfedge_const_handle SHalfedge_const_handle;   
+  typedef typename Map_::SHalfloop_const_handle SHalfloop_const_handle;   
+  typedef typename Map_::SFace_const_handle     SFace_const_handle;   
+  typedef typename Map_::Mark Mark;   
+public:
+  Color color(SVertex_const_handle, Mark m) const
+  { return ( m ? CGAL::BLACK : CGAL::WHITE ); }
+  Color color(SHalfedge_const_handle, Mark m) const
+  { return ( m ? CGAL::BLACK : CGAL::WHITE ); }
+  Color color(SHalfloop_const_handle, Mark m) const
+  { return ( m ? CGAL::BLACK : CGAL::WHITE ); }
+  Color color(SFace_const_handle, Mark m) const
+  { return ( m ? DGREY : LGREY ); }
+};
+
+template <typename Nef_polyhedron>
+class NefS2_to_UnitSphere
+{
+  typedef typename Nef_polyhedron::Sphere_map          Sphere_map;
+  typedef CGAL::OGL::SM_BooleColor<Sphere_map>           Color_;
+  typedef typename Sphere_map::Sphere_kernel        Sphere_kernel;
+  typedef SM_decorator<Sphere_map>                  Decorator;
+  typedef CGAL::SM_triangulator<Decorator>                Base;
+
+  typedef typename Sphere_map::SVertex_const_handle SVertex_const_handle;   
+  typedef typename Sphere_map::SHalfedge_const_handle SHalfedge_const_handle; 
+  typedef typename Sphere_map::SFace_const_handle SFace_const_handle;     
+  typedef typename Sphere_map::SVertex_const_iterator SVertex_const_iterator;
+  typedef typename Sphere_map::SHalfedge_const_iterator SHalfedge_const_iterator;
+  typedef typename Sphere_map::SFace_const_iterator SFace_const_iterator;
+  typedef typename Sphere_map::Mark Mark;
+
+  typedef typename Sphere_kernel::Sphere_point    Sphere_point;
+  typedef typename Sphere_kernel::Sphere_segment  Sphere_segment;
+  typedef typename Sphere_kernel::Sphere_circle   Sphere_circle;
+  typedef typename Sphere_kernel::Sphere_triangle Sphere_triangle;
+
+  typedef Color_                                  Color_objects;  
+
+ public:
+  static CGAL::OGL::Unit_sphere convert(const Nef_polyhedron& E_,
+					const Color_objects& CO_ = Color_objects()) {
+    Sphere_map MT_(true);
+    Base T_(&MT_, &E_);
+    CGAL::OGL::Unit_sphere S_;
+
+    T_.triangulate();
+
+    SHalfedge_const_iterator e;
+    CGAL_forall_sedges(e,E_) {
+      if ( e->source() == e->twin()->source() ) {
+	S_.push_back(E_.circle(e), CO_.color(e,E_.mark(e)));} else {
+	S_.push_back(Sphere_segment(E_.point(E_.source(e)),
+				    E_.point(E_.target(e)),
+				    E_.circle(e)),CO_.color(e,E_.mark(e)));
+      }
+    }
+    // draw sphere circles underlying loops of E_:
+    
+    if ( E_.has_shalfloop() )
+      S_.push_back(
+		   Sphere_circle(E_.circle(E_.shalfloop())),
+		   CO_.color(E_.shalfloop(),E_.mark(E_.shalfloop())));
+    
+    // draw points underlying vertices of E_:
+    SVertex_const_iterator v;
+    CGAL_forall_svertices(v,E_)
+      S_.push_back(E_.point(v),CO_.color(v,E_.mark(v)));
+    
+    Unique_hash_map<SHalfedge_const_iterator,bool> Done(false);
+    CGAL_forall_shalfedges(e,T_) {
+      if ( Done[e] ) continue;
+      SHalfedge_const_handle en(e->snext()),enn(en->snext());
+      TRACEV(T_.incident_triangle(e));
+      TRACEN(T_.incident_mark(e)<<T_.incident_mark(en)<<T_.incident_mark(enn));
+      CGAL_assertion(T_.incident_mark(e)==T_.incident_mark(en) &&
+		     T_.incident_mark(en)==T_.incident_mark(enn));
+      Mark m = T_.incident_mark(e);
+      Sphere_triangle t = T_.incident_triangle(e);
+      S_.push_back(t, (m ? DGREY : LGREY) );
+      Done[e]=Done[en]=Done[enn]=true;
+    }
+    
+    Done.clear(false);
+    CGAL_forall_shalfedges(e,T_) {
+      if ( Done[e] ) continue;
+      S_.push_back_triangle_edge(Sphere_segment(E_.point(E_.source(e)),
+						E_.point(E_.target(e)),
+						E_.circle(e)));
+      Done[e]=Done[e->twin()]=true;
+    }    
+    return S_;
   }
-}
-
-
-
-// Mausknopf gedrueckt
-void mouse (int button, int state, int x, int y)
-{
-  if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
-    {
-      mouse_x = x;
-      mouse_y = y;
-      mouse_left_button = true;
-    }
-  else
-    mouse_left_button = false;
-}
-
-
-
-// Objekt rotieren, zoomen oder verschieben
-void motion (int x, int y)
-{
-  if (mouse_left_button)
-    {
-      if (motion_mode == ROTATE)
-        {
-          wx += (y - mouse_y) * factor_w;       
-          // Mausbewegung in y-Richtung entspricht Rotation um die x-Achse
-          wy += (x - mouse_x) * factor_w;       
-          // Mausbewegung in x-Richtung entspricht Rotation um die y-Achse
-        }
-      else if (motion_mode == SCALE)
-        {
-          s *= exp( (y - mouse_y) * factor_s );
-        }
-      else if (motion_mode == TRANSLATE)
-        {
-          dx += (x - mouse_x) * factor_d / s;
-          dy -= (y - mouse_y) * factor_d / s;
-        }
-      mouse_x = x;
-      mouse_y = y;
-      glutPostRedisplay();
-    }
-}
-
-void init()
-{
-  GLfloat mat_diffuse[4] = { 0.7, 0.7, 0.7, 1.0 };
-  GLfloat mat_specular[4] = { 1.0, 1.0, 1.0, 1.0 };
-  GLfloat mat_shininess[] = { 100.0 };
-  GLfloat ambient_light[] = { 0.2, 0.2, 0.2, 1.0 };
-  
-  glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambient_light);
-  glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mat_diffuse );
-  glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular );
-  glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, mat_shininess );
-#define SCREENSHOTS
-#ifdef SCREENSHOTS
-  GLfloat mat_emission[] = { 0.1, 0.1, 0.2, 0.0 };
-  glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);
-  //for screenshots enable this section
-#endif
-
-  GLfloat light0[4] = { 4.0, 4.0, 10.0, 1.0 };
-  glLightfv (GL_LIGHT0, GL_POSITION, light0);
-  glEnable (GL_LIGHT0);
-
- 
-  glEnable(GL_DEPTH_TEST);
-  glEnable(GL_AUTO_NORMAL);
-  glEnable(GL_NORMALIZE);
-  //  glEnable(GL_POINT_SMOOTH);
-
-}
-
-void enter_leave(int state)
-{ glutPostRedisplay(); }
-
-void draw()
-{
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-  glPushMatrix();
-  glRotated(wy,0,1,0);
-  glRotated(wx,1,0,0);
-  glScaled(s,s,s);
-  glTranslated(dx,dy,0.0);
-  int win = glutGetWindow();
-  //std::cerr << "WINDOW" << win << std::endl;
-  spheres_[win-1].draw();
-  glPopMatrix();
-  glutSwapBuffers();
-}
-
-void reshape(int width, int height)
-{
-  window_width = width;
-  window_height = height;
-
-  glViewport(0, 0, (GLint)width, (GLint)height);
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-
-  if (width>height)
-    {
-      long double w = (long double) width / (long double) height;
-      glOrtho( -2*w, 2*w, -2.0, 2.0, -100.0, 100.0 );
-      factor_d =  2.0   / (height/2.0);           
-      // halbe Fensterhoehe soll 2 LE entsprechen
-      factor_w = 90.0   / (height/2.0);           
-      // halbe Fensterhoehe soll 90 Grad entsprechen
-      factor_s = std::log(4.0) / (height/2.0);           
-      // halbe Fensterhoehe soll Faktor 4 entsprechen
-    }  
-  else
-    {
-      long double h = (long double) height / (long double) width;
-      glOrtho( -2.0, 2.0, -2*h, 2*h, -100.0, 100.0 );
-      factor_d =  2.0   / (width/2.0);            
-      // halbe Fensterbreite soll 2 LE entsprechen
-      factor_w = 90.0   / (width/2.0);            
-      // halbe Fensterbreite soll 90 Grad entsprechen
-      factor_s = std::log(4.0) / (height/2.0);           
-      // halbe Fensterhoehe soll Faktor 4 entsprechen
-    }
-
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-}
-
-void add_sphere()
-{ spheres_.push_back(Unit_sphere()); }
-
-void start_viewer()
-{ 
-  glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
-  glutInitWindowSize(window_width, window_height);
-  glutInitWindowPosition(0,0);
-
-  int submenu1 = glutCreateMenu(show);
-  glutAddMenuEntry("Reset",RESET_CONTROL);
-  glutAddMenuEntry("Rotate",ROTATE);
-  glutAddMenuEntry("Scale",SCALE);
-  glutAddMenuEntry("Translate",TRANSLATE);
-
-  int submenu2 = glutCreateMenu(show);
-  glutAddMenuEntry("Toggle Axes",AXES);
-  glutAddMenuEntry("Toggle Unity Cube",UNITY_CUBE);
-
-  int submenu3 = glutCreateMenu(show);
-  glutAddMenuEntry("Faces",FACES);
-  glutAddMenuEntry("Skeleton",SKELETON);
-  glutAddMenuEntry("Triangulation",TRIANGULATION);
-
-  //for (unsigned i = 0; i < spheres_.size(); ++i) spheres_[i].print();
-  for (unsigned i = 0; i < spheres_.size(); ++i) {
-    if (i > 0 ) glutInitWindowPosition(i*(window_width+12),0);
-    if ( i < titles_.size() ) glutCreateWindow(titles_[i].c_str());
-    else                      glutCreateWindow("Sphere Window");
-    glutEntryFunc(enter_leave);
-    init();
-    glutDisplayFunc(draw);
-    glutReshapeFunc(reshape);
-    glutMouseFunc(mouse);
-    glutMotionFunc(motion);
-    glutCreateMenu(show);
-    glutAddSubMenu("Control",submenu1);
-    glutAddSubMenu("Render",submenu3);
-    glutAddSubMenu("Options",submenu2);
-    glutAddMenuEntry("Quit",QUIT);
-    glutAttachMenu(GLUT_RIGHT_BUTTON);
-  }
-
-  glutMainLoop();
-}
-
+};
 
 } // OGL
 CGAL_END_NAMESPACE

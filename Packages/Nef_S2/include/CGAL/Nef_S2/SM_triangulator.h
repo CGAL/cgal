@@ -374,10 +374,10 @@ void SM_triangulator<Decorator_>::triangulate()
   partition_to_halfsphere(L.begin(), L.end(), L_neg, From, -1);
 
   //  typename Seg_list::iterator it;
-  //  std::cerr << "L_pos" << std::endl;
-  //  CGAL_forall_iterators(it,L_pos) std::cerr << *it << std::endl;
-  //  std::cerr << "L_neg" << std::endl;
-  //  CGAL_forall_iterators(it,L_neg) std::cerr << *it << std::endl;
+  //    std::cerr << "L_pos" << std::endl;
+  //    CGAL_forall_iterators(it,L_pos) std::cerr << *it << std::endl;
+  //    std::cerr << "L_neg" << std::endl;
+  //    CGAL_forall_iterators(it,L_neg) std::cerr << *it << std::endl;
 
   // sweep the hemispheres to create two half sphere maps
   typedef SM_subdivision<Self,Seg_iterator,Object_handle> SM_output;
@@ -411,7 +411,6 @@ void SM_triangulator<Decorator_>::triangulate()
   // v_sep = first vertex of CC in negative x-sphere
   // e_sep = first edge of CC in negative x-sphere
    
-  // enrich the edges by circle information
   SHalfedge_iterator u;
   CGAL_forall_sedges(u,*this) {
     Sphere_segment s(point(source(u)),point(target(u)));
@@ -475,6 +474,27 @@ void SM_triangulator<Decorator_>::triangulate()
   }
   */
 
+  /*
+  Sphere_segment s;
+  for(u=shalfedges_begin(); u!=e_sep; ++u) {
+    if(point(source(u)) == point(target(u)).antipode())
+      s = Sphere_segment(point(source(u)), Sphere_point(0,0,1));
+    else
+      s=Sphere_segment(point(source(u)),point(target(u))); 
+    circle(u) = s.sphere_circle(); 
+    circle(twin(u)) = s.sphere_circle().opposite();	
+  }
+
+  for(u=e_sep; u!=shalfedges_end(); ++u) {
+    if(point(source(u)) == point(target(u)).antipode())
+      s = Sphere_segment(point(source(u)), Sphere_point(0,0,-1));
+    else
+      s=Sphere_segment(point(source(u)),point(target(u))); 
+    circle(u) = s.sphere_circle(); 
+    circle(twin(u)) = s.sphere_circle().opposite();	    
+  }
+  */
+ 
   CGAL_forall_sedges(u,*this) {
     Sphere_segment s(point(source(u)),point(target(u)));
     circle(u) = s.sphere_circle();
@@ -494,9 +514,12 @@ partition_to_halfsphere(Iterator start, Iterator beyond, Seg_list& L,
   CGAL::Unique_hash_map<Iterator,T>& M, int pos) const
 { TRACEN("partition_to_halfsphere ");
   CGAL_assertion(pos!=0);
+  bool add_cross = true;
   Sphere_segment s1,s2;
   Sphere_circle xycircle(0,0,pos);
   while ( start != beyond ) { 
+    if(start->source().hz() * pos > 0 || start->target().hz() * pos > 0)
+      add_cross = false;
     int i = start->intersection(xycircle,s1,s2);
     if (i>1) { L.push_back(s2); M[--L.end()] = M[start]; }
     if (i>0) { L.push_back(s1); M[--L.end()] = M[start]; }
@@ -550,7 +573,7 @@ partition_to_halfsphere(Iterator start, Iterator beyond, Seg_list& L,
   /* if no segment is covering the interior of the hemisphere
      we have to add a trivial segment to allow for a correct
      triangulation */
-  if ( !part_in_hemisphere ) {
+  if ( !part_in_hemisphere || add_cross) {
     Sphere_point p(0,0,pos);
     Sphere_circle c(1,0,0);
     L.push_back(Sphere_segment(p,p,c));

@@ -31,6 +31,7 @@
 #include <CGAL/Nef_S2/debug.h>
 #include <CGAL/Nef_S2/SM_decorator_traits.h>
 #include <CGAL/Nef_S2/Sphere_map.h>
+#include <CGAL/Nef_3/Normalizing.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/IO/Verbose_ostream.h>
 
@@ -820,9 +821,9 @@ void transform( const Aff_transformation_3& linear) {
                        linear.hm(1,3) == 0 && 
                        linear.hm(2,3) == 0);
 
-    TRACEN(linear);
+    //    TRACEN(linear);
     for (SVertex_iterator i = svertices_begin(); i != svertices_end(); ++i)
-      point(i) = Sphere_point( point(i).transform( linear));
+      point(i) = normalized(Sphere_point( point(i).transform( linear)));
     for (SHalfedge_iterator i = shalfedges_begin(); i !=shalfedges_end(); ++i)
       circle(i) = Sphere_circle( circle(i).transform( linear));
     if ( has_shalfloop()) {

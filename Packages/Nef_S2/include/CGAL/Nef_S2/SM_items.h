@@ -96,6 +96,8 @@ public:
     SFace_handle& incident_sface() { return incident_sface_; } 
     SFace_handle incident_sface() const { return incident_sface_; } 
 
+    bool is_isolated() const { return (out_sedge() == SHalfedge_handle()); }
+
     GenPtr& info() { return info_; }
     const GenPtr& info() const { return info_; }
                           
@@ -172,6 +174,9 @@ public:
 
     SVertex_handle& source() { return source_; }
     SVertex_handle source() const { return source_; }
+
+    SVertex_handle& target() { return twin()->source(); }
+    SVertex_handle target() const { return twin()->source(); }
 
     SHalfedge_handle& sprev() { return sprev_; }
     SHalfedge_handle sprev() const { return sprev_; }
