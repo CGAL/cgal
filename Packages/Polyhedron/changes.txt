@@ -1,6 +1,11 @@
 Polyhedron Package: Release changes:
 ---------------------------------------------------------------------
 
+3.29 (19 Apr 2002)
+
+     - Relocated some member functions of Polyhedron_incremental_builder_3
+       into class definition to make VC7 happy.
+
 3.28 (15 Apr 2002)
 
      - Removed cgal_test and makefile from CVS, rely on defaults.

@@ -202,7 +202,7 @@ public:
     enum { RELATIVE = 0, ABSOLUTE = 1};
 
 
-    void begin_surface( size_type v, size_type f, size_type h = 0,
+    void begin_surface( std::size_t v, std::size_t f, std::size_t h = 0,
                         int mode = RELATIVE);
         // starts the construction. v is the number of new
         // vertices to expect, f the number of new facets, and h the number of
@@ -219,13 +219,31 @@ public:
         // starting with new indices for the new construction.
 
 
-    void add_vertex( const Point_3& p);
+    void add_vertex( const Point_3& p) {
         // adds p to the vertex list.
+        CGAL_assertion( check_protocoll == 1);
+        if ( hds.size_of_vertices() >= hds.capacity_of_vertices()) {
+            Verbose_ostream verr( m_verbose);
+            verr << " " << std::endl;
+            verr << "CGAL::Polyhedron_incremental_builder_3<HDS>::"
+                 << std::endl;
+            verr << "add_vertex(): capacity error: more than " << new_vertices
+                 << " vertices added." << std::endl;
+            m_error = true;
+            return;
+        }
+        HalfedgeDS_decorator<HDS> decorator(hds);
+        Vertex_handle v = decorator.vertices_push_back( Vertex(p));
+        index_to_vertex_map.push_back( v);
+        decorator.set_vertex_halfedge( v, Halfedge_handle());
+        push_back_vertex_to_edge_map( Halfedge_handle());
+        ++new_vertices;
+    }
 
     void begin_facet();
         // starts a facet.
 
-    void add_vertex_to_facet( size_type i);
+    void add_vertex_to_facet( std::size_t i);
         // adds a vertex with index i to the current facet. The first
         // point added with `add_vertex()' has the index 0.
 
@@ -253,18 +271,42 @@ public:
     void rollback();
 
 protected:
-    Halfedge_handle lookup_hole( size_type w) {
+    Halfedge_handle lookup_hole( std::size_t w) {
         CGAL_assertion( w < new_vertices);
         return lookup_hole( get_vertex_to_edge_map( w));
     }
 
-    size_type find_vertex( Vertex_handle v);
+    size_type find_vertex( Vertex_handle v) {
         // Returns 0 if v == NULL.
+        if ( v == Vertex_handle() )
+            return 0;
+        size_type n = 0;
+        typename HDS::Vertex_iterator it = hds.vertices_begin();
+        while ( it != v) {
+            CGAL_assertion( it != hds.vertices_end());
+            ++n;
+            ++it;
+        }
+        n = n - rollback_v;
+        return n;
+    }
 
-    size_type find_facet( Face_handle f);
+    size_type find_facet( Face_handle f) {
         // Returns 0 if f == NULL.
+        if ( f == Face_handle())
+            return 0;
+        size_type n = 0;
+        typename HDS::Face_iterator it = hds.faces_begin();
+        while ( it != f) {
+            CGAL_assertion( it != hds.faces_end());
+            ++n;
+            ++it;
+        }
+        n = n - rollback_f;
+        return n;
+    }
 
-    Halfedge_handle lookup_halfedge( size_type w, size_type v);
+    Halfedge_handle lookup_halfedge( size_type w, size_type v) {
         // Pre: 0 <= w,v < new_vertices
         // Case a: It exists an halfedge g from w to v:
         //     g must be a border halfedge and the facet of g->opposite()
@@ -276,195 +318,129 @@ protected:
         //     Set the facet of g to the current facet and g->opposite()
         //     to a border halfedge. Assign the vertex references.
         //     Set g->opposite()->next() to g. Return g->opposite().
-
-    Halfedge_handle lookup_hole( Halfedge_handle e);
-        // Halfedge e points to a vertex w. Walk around w to find a hole
-        // in the facet structure. Report an error if none exist. Return
-        // the halfedge at this hole that points to the vertex w.
-};
-
-template < class HDS>  CGAL_LARGE_INLINE
-typename HDS::size_type
-Polyhedron_incremental_builder_3<HDS>::
-find_vertex( Vertex_handle v) {
-    if ( v == Vertex_handle() )
-        return 0;
-    size_type n = 0;
-    typename HDS::Vertex_iterator it = hds.vertices_begin();
-    while ( it != v) {
-        CGAL_assertion( it != hds.vertices_end());
-        ++n;
-        ++it;
-    }
-    n = n - rollback_v;
-    return n;
-}
-
-template < class HDS>  CGAL_LARGE_INLINE
-typename HDS::size_type
-Polyhedron_incremental_builder_3<HDS>::
-find_facet( Face_handle f) {
-    if ( f == Face_handle())
-        return 0;
-    size_type n = 0;
-    typename HDS::Face_iterator it = hds.faces_begin();
-    while ( it != f) {
-        CGAL_assertion( it != hds.faces_end());
-        ++n;
-        ++it;
-    }
-    n = n - rollback_f;
-    return n;
-}
-
-template < class HDS>  CGAL_LARGE_INLINE
-typename HDS::Halfedge_handle
-Polyhedron_incremental_builder_3<HDS>::
-lookup_halfedge( size_type w, size_type v) {
-    typedef typename HDS::Supports_halfedge_vertex  Supports_halfedge_vertex;
-    Assert_compile_time_tag( Supports_halfedge_vertex(), Tag_true());
-    CGAL_assertion( w < new_vertices);
-    CGAL_assertion( v < new_vertices);
-    CGAL_assertion( ! last_vertex);
-    HalfedgeDS_items_decorator<HDS> decorator;
-    Halfedge_handle e = get_vertex_to_edge_map( w);
-    if ( e != Halfedge_handle()) {
-        CGAL_assertion( e->vertex() == index_to_vertex_map[w]);
-        // check that the facet has no self intersections
-        if ( current_face != Face_handle()
-             && current_face == decorator.get_face(e)) {
+        typedef typename HDS::Supports_halfedge_vertex 
+            Supports_halfedge_vertex;
+        Assert_compile_time_tag( Supports_halfedge_vertex(), Tag_true());
+        CGAL_assertion( w < new_vertices);
+        CGAL_assertion( v < new_vertices);
+        CGAL_assertion( ! last_vertex);
+        HalfedgeDS_items_decorator<HDS> decorator;
+        Halfedge_handle e = get_vertex_to_edge_map( w);
+        if ( e != Halfedge_handle()) {
+            CGAL_assertion( e->vertex() == index_to_vertex_map[w]);
+            // check that the facet has no self intersections
+            if ( current_face != Face_handle()
+                 && current_face == decorator.get_face(e)) {
+                Verbose_ostream verr( m_verbose);
+                verr << " " << std::endl;
+                verr << "CGAL::Polyhedron_incremental_builder_3<HDS>::"
+                     << std::endl;
+                verr << "lookup_halfedge(): input error: facet "
+                     << new_faces << " has a self intersection at vertex "
+                     << w << "." << std::endl;
+                m_error = true;
+                return Halfedge_handle();
+            }
+            Halfedge_handle start_edge( e);
+            do {
+                if ( e->next()->vertex() == index_to_vertex_map[v]) {
+                    if ( ! e->next()->is_border()) {
+                        Verbose_ostream verr( m_verbose);
+                        verr << " " << std::endl;
+                        verr << "CGAL::Polyhedron_incremental_builder_3"
+                                "<HDS>::" << std::endl;
+                        verr << "lookup_halfedge(): input error: facet "
+                             << new_faces << " shares a halfedge from "
+                                "vertex " <<  w << " to vertex " << v
+                             << " with";
+                        if (  m_verbose && current_face != Face_handle())
+                            verr << " facet "
+                                 << find_facet( decorator.get_face(e->next()))
+                                 << '.' << std::endl;
+                        else
+                            verr << " another facet." << std::endl;
+                        m_error = true;
+                        return Halfedge_handle();
+                    }
+                    CGAL_assertion( ! e->next()->opposite()->is_border());
+                    if ( current_face != Face_handle() && current_face ==
+                         decorator.get_face( e->next()->opposite())) {
+                        Verbose_ostream verr( m_verbose);
+                        verr << " " << std::endl;
+                        verr << "CGAL::Polyhedron_incremental_builder_3"
+                                "<HDS>::" << std::endl;
+                        verr << "lookup_halfedge(): input error: facet "
+                             << new_faces << " has a self intersection "
+                                "at the halfedge from vertex " << w
+                             << " to vertex " << v << "." << std::endl;
+                        m_error = true;
+                        return Halfedge_handle();
+                    }
+                    decorator.set_face( e->next(), current_face);
+                    return e;
+                }
+                e = e->next()->opposite();
+            } while ( e != start_edge);
+        }
+        // create a new halfedge
+        if ( hds.size_of_halfedges() >= hds.capacity_of_halfedges()) {
             Verbose_ostream verr( m_verbose);
             verr << " " << std::endl;
             verr << "CGAL::Polyhedron_incremental_builder_3<HDS>::"
                  << std::endl;
-            verr << "lookup_halfedge(): input error: facet "
-                 << new_faces << " has a self intersection at vertex "
-                 << w << "." << std::endl;
+            verr << "lookup_halfedge(): capacity error: more than "
+                 << new_halfedges << " halfedges added while creating facet"
+                 << new_faces << '.' << std::endl;
             m_error = true;
             return Halfedge_handle();
         }
+        e = hds.edges_push_back( Halfedge(), Halfedge());
+        new_halfedges++;
+        new_halfedges++;
+        decorator.set_face( e, current_face);
+        e->HBase::set_vertex( index_to_vertex_map[v]);
+        e->HBase::set_next( Halfedge_handle());
+        decorator.set_prev( e, e->opposite());
+        e = e->opposite();
+        e->HBase::set_vertex( index_to_vertex_map[w]);
+        e->HBase::set_next( e->opposite());
+        return e;
+    }
+
+    Halfedge_handle lookup_hole( Halfedge_handle e) {
+        // Halfedge e points to a vertex w. Walk around w to find a hole
+        // in the facet structure. Report an error if none exist. Return
+        // the halfedge at this hole that points to the vertex w.
+        CGAL_assertion( e != Halfedge_handle());
+        HalfedgeDS_items_decorator<HDS> decorator;
         Halfedge_handle start_edge( e);
         do {
-            if ( e->next()->vertex() == index_to_vertex_map[v]) {
-                if ( ! e->next()->is_border()) {
-                    Verbose_ostream verr( m_verbose);
-                    verr << " " << std::endl;
-                    verr << "CGAL::Polyhedron_incremental_builder_3"
-                            "<HDS>::" << std::endl;
-                    verr << "lookup_halfedge(): input error: facet "
-                         << new_faces << " shares a halfedge from "
-                            "vertex " <<  w << " to vertex " << v
-                         << " with";
-                    if (  m_verbose && current_face != Face_handle())
-                        verr << " facet "
-                             << find_facet( decorator.get_face(e->next()))
-                             << '.' << std::endl;
-                    else
-                        verr << " another facet." << std::endl;
-                    m_error = true;
-                    return Halfedge_handle();
-                }
-                CGAL_assertion( ! e->next()->opposite()->is_border());
-                if ( current_face != Face_handle() && current_face ==
-                     decorator.get_face( e->next()->opposite())) {
-                    Verbose_ostream verr( m_verbose);
-                    verr << " " << std::endl;
-                    verr << "CGAL::Polyhedron_incremental_builder_3"
-                            "<HDS>::" << std::endl;
-                    verr << "lookup_halfedge(): input error: facet "
-                         << new_faces << " has a self intersection "
-                            "at the halfedge from vertex " << w
-                         << " to vertex " << v << "." << std::endl;
-                    m_error = true;
-                    return Halfedge_handle();
-                }
-                decorator.set_face( e->next(), current_face);
+            if ( e->next()->is_border()) {
                 return e;
             }
             e = e->next()->opposite();
         } while ( e != start_edge);
-    }
-    // create a new halfedge
-    if ( hds.size_of_halfedges() >= hds.capacity_of_halfedges()) {
+
         Verbose_ostream verr( m_verbose);
         verr << " " << std::endl;
-        verr << "CGAL::Polyhedron_incremental_builder_3<HDS>::"
-             << std::endl;
-        verr << "lookup_halfedge(): capacity error: more than "
-             << new_halfedges << " halfedges added while creating facet"
-             << new_faces << '.' << std::endl;
+        verr << "CGAL::Polyhedron_incremental_builder_3<HDS>::" << std::endl;
+        verr << "lookup_hole(): input error: at vertex "
+             << find_vertex( e->vertex())
+             << " a closed surface already exists and facet "
+             << new_faces << " is nonetheless adjacent." << std::endl;
+        if (  m_verbose && current_face != Face_handle()) {
+            verr << "             The closed cycle of facets is:";
+            do {
+                if ( ! e->is_border())
+                    verr << " " << find_facet( decorator.get_face(e));
+                e = e->next()->opposite();
+            } while ( e != start_edge);
+            verr << '.' << std::endl;
+        }
         m_error = true;
         return Halfedge_handle();
     }
-    e = hds.edges_push_back( Halfedge(), Halfedge());
-    new_halfedges++;
-    new_halfedges++;
-    decorator.set_face( e, current_face);
-    e->HBase::set_vertex( index_to_vertex_map[v]);
-    e->HBase::set_next( Halfedge_handle());
-    decorator.set_prev( e, e->opposite());
-    e = e->opposite();
-    e->HBase::set_vertex( index_to_vertex_map[w]);
-    e->HBase::set_next( e->opposite());
-    return e;
-}
-
-template < class HDS>  CGAL_LARGE_INLINE
-typename HDS::Halfedge_handle
-Polyhedron_incremental_builder_3<HDS>::
-lookup_hole( Halfedge_handle e) {
-    CGAL_assertion( e != Halfedge_handle());
-    HalfedgeDS_items_decorator<HDS> decorator;
-    Halfedge_handle start_edge( e);
-    do {
-        if ( e->next()->is_border()) {
-            return e;
-        }
-        e = e->next()->opposite();
-    } while ( e != start_edge);
-
-    Verbose_ostream verr( m_verbose);
-    verr << " " << std::endl;
-    verr << "CGAL::Polyhedron_incremental_builder_3<HDS>::" << std::endl;
-    verr << "lookup_hole(): input error: at vertex "
-         << find_vertex( e->vertex())
-         << " a closed surface already exists and facet "
-         << new_faces << " is nonetheless adjacent." << std::endl;
-    if (  m_verbose && current_face != Face_handle()) {
-        verr << "             The closed cycle of facets is:";
-        do {
-            if ( ! e->is_border())
-                verr << " " << find_facet( decorator.get_face(e));
-            e = e->next()->opposite();
-        } while ( e != start_edge);
-        verr << '.' << std::endl;
-    }
-    m_error = true;
-    return Halfedge_handle();
-}
-
-template < class HDS>  CGAL_MEDIUM_INLINE
-void
-Polyhedron_incremental_builder_3<HDS>::
-add_vertex( const Point_3& p) {
-    CGAL_assertion( check_protocoll == 1);
-    if ( hds.size_of_vertices() >= hds.capacity_of_vertices()) {
-        Verbose_ostream verr( m_verbose);
-        verr << " " << std::endl;
-        verr << "CGAL::Polyhedron_incremental_builder_3<HDS>::"
-             << std::endl;
-        verr << "add_vertex(): capacity error: more than " << new_vertices
-             << " vertices added." << std::endl;
-        m_error = true;
-        return;
-    }
-    HalfedgeDS_decorator<HDS> decorator(hds);
-    Vertex_handle v = decorator.vertices_push_back( Vertex(p));
-    index_to_vertex_map.push_back( v);
-    decorator.set_vertex_halfedge( v, Halfedge_handle());
-    push_back_vertex_to_edge_map( Halfedge_handle());
-    ++new_vertices;
-}
+};
 
 template < class HDS>
 void
@@ -491,7 +467,7 @@ rollback() {
 template < class HDS>  CGAL_MEDIUM_INLINE
 void
 Polyhedron_incremental_builder_3<HDS>::
-begin_surface( size_type v, size_type f, size_type h, int mode) {
+begin_surface( std::size_t v, std::size_t f, std::size_t h, int mode) {
     CGAL_assertion( check_protocoll == 0);
     CGAL_assertion_code( check_protocoll = 1;)
     CGAL_assertion( ! m_error);
@@ -562,7 +538,7 @@ begin_facet() {
 template < class HDS>
 void
 Polyhedron_incremental_builder_3<HDS>::
-add_vertex_to_facet( size_type v2) {
+add_vertex_to_facet( std::size_t v2) {
     if ( m_error)
         return;
     CGAL_assertion( check_protocoll == 2);
