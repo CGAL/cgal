@@ -1,4 +1,4 @@
-4.66
+4.66      (5 September 02)
 - forgot this entry for 4.65
 - added a construction of an arbitrary size integer from a double
   in simplest_rational_in_interval. This is not allowed by the spec
