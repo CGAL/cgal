@@ -4,16 +4,21 @@
 % |
 % | 05.04.2004   Peter Hachenberger
 % | 
-\RCSdef{\Nef_polyhedronRev}{$Revision$}
-\RCSdefDate{\Nef_polyhedronDate}{$Date$}
+\RCSdef{\NefpolyhedronRev}{$Revision$}
+\RCSdefDate{\NefpolyhedronDate}{$Date$}
 % +------------------------------------------------------------------------+
 
 \ccParDims
 
 \chapter{3D Nef Polyhedron}
 \label{chapterNef_3}
-\ccChapterRelease{\Nef_polyhedronRev. \ \Nef_polyhedronDate}\\
-\ccChapterAuthor{Peter Hachenberger}
+\ccChapterRelease{\NefpolyhedronRev. \ \NefpolyhedronDate}\\
+\ccChapterAuthor{Peter Hachenberger and Lutz Kettner}
+
+\catcode`@=11
+\newcommand{\pyr}{\mathop{\operator@font Pyr}\nolimits}
+\newcommand{\aff}{\mathop{\operator@font aff}\nolimits}
+\catcode`@=12
 
 \minitoc
 
@@ -29,60 +34,67 @@
     \end{flushright}
 \end{ccTexOnly}
 
-In solid modeling, there are two major representation schemata: constructive
-solid geometry (CSG) and boundary representation (B-rep). Both have inherent
-strength and weaknesses. Therefore, it can be useful to combine both.
+In solid modeling, two major representation schemes are used:
+\emph{constructive solid geometry} (CSG) and \emph{boundary
+  representations} (B-rep). Both have inherent strengths and
+weaknesses, see \ref{cgal:h-gsmi-89} for a discussion.
 
-In CSG a solid is represented as a set-theoretic boolean combination of
-primitive solid objects, such as blocks, prisms, cylinders, or toruses.
-The boolean operations are not proceeded. Instead, objects are only
-represented implicitly by means of a tree structure. Here, leaves are
-primitive objects, and interior nodes are rigid motions, e.g. translation
-or rotation, and boolean operations. Algorithms performed on a so-called 
-CSG-tree first evaluate properties on the primitive objects and propagate 
-the results using the tree structure.
+
+In CSG a solid is represented as a set-theoretic boolean combination
+of primitive solid objects, such as blocks, prisms, cylinders, or
+toruses.  The boolean operations are not evaluated, instead, objects
+are represented implicitly with a tree structure; leaves represent
+primitive objects and interior nodes represent boolean operations or
+rigid motions, e.g., translation and rotation. Algorithms on such a
+CSG-tree first evaluate properties on the primitive objects and
+propagate the results using the tree structure.
  
-A B-rep describes the incidence structure and the geometric properties of all
-lower-dimensional features of a solid. Surfaces are oriented to decide
-between the interior and exterior of an object. For a more detailed 
-discussion see \ref{cgal:h-gsmi-89}. 
+A B-rep describes the incidence structure and the geometric properties
+of all lower-dimensional features of the boundary of a solid. Surfaces
+are oriented to decide between the interior and exterior of a solid.
 
-The major advantage of CSG is, that the representation does not have to
-take care about the properties of the represented object. Any object
-resulting from a set of boolean operations applied to a set of primitive
-objects is representable. On the contrary, using B-rep the class of 
-representable objects is not always closed under boolean set operations.
-As an example, the class of manifold objects is well understood and 
-therefore widely used. Also it can be represented very efficiently - 
-the data structures are
-small and the needed algorithms are simple. On the other side, this object
-class is not closed under boolean set operations. As an example, the union of
-two overlapping cubes is non-manifold. The figure shown above
-can be generated using boolean set operations on cubes. The vertices bounding
-the cavity or the lower dimensional features each form a non-manifold situation.
+The class of representable objects in a CSG is usually limited by the
+choice of the primitive solids. A B-rep is usually limited by the
+choice for the geometry of the supporting curves for edges and the
+supporting surfaces for surface patches, and, in addition, the
+connectivity structure that is allowed. In particular, a B-rep is not
+always closed under boolean set operations.  As an example, the class
+of orientable 2-manifold objects is a popular and well understood
+class of surfaces commonly used for B-reps. They can be represented
+and manipulated efficiently, the data structures are compact in
+storage size, and many algorithms are simple. On the other side, this
+object class is not closed under boolean set operations, as many
+examples can illustrate, such as the Figure shown above that can be
+generated using boolean set operations on cubes. The vertices bounding
+the tunnel, or the edge connecting the ``roof'' with the cube are
+non-manifold situations.
 
-The major advantage of B-rep is, that it is much easier and more efficient to
-perform algorithms on an object, e.g. the visualization of the object. If we
-want to visualize a non-primitive CSG object, we first have to find out the 
-shape of the object. With B-rep this is always given.
+In our implementation of Nef polyhedra in 3D, we offer a B-rep data
+structures that is closed under boolean operations and with all their
+generality. Starting from halfspaces (and also directly from oriented
+2-manifolds), we can work with set union, set intersection, set
+difference, set complement, interior, exterior, boundary, closure, and
+regularization operations. In essence, we can evaluate a CSG-tree with
+halfspaces as primitives and convert it into a B-rep representation.
 
-In our implementation of Nef polyhedra in 3D, we try to get the best out of
-both representation schemata. A Nef polyhedron in 3-dimensional space is
-any point set generated from a finite number of open halfspaces by set
-complement and set intersection operations. It is therefore closed under all
-set operations, such as union, intersection, difference, complement, interior,
-exterior, boundary, closure, or regularization. This definition gives us the
-primitives and the operations for a CSG representation. Since we want easy
-and efficient algorithms on Nef polyhedra, we use a B-rep which models
-all  
+In fact, we work with two data structures; one that represents the
+local neighborhoods of vertices, which is in itself already a complete
+description, and a data structure that connects these neighborhoods up
+to a global data structure with edges, facets, and volumes. We offer a
+rhich interface to investigate these data structures, their different
+elements and their connectivity. We provide affine (rigid)
+tranformations and a point location query operation. We have a custom
+file format for storing and reading Nef polyhedra from files. We offer
+a simple OpenGL visualization for debugging and illustrations.
 
 
 % +------------------------------------------------------------------------+
 \section{Definition}
 
-The following definition is presented
-for arbitrary dimensions. The class \ccc{Nef_polyhedron_3} implements a
+The theory of Nef polyhedra has been developed for arbitrary
+dimensions. The class \ccc{Nef_polyhedron_3} implements a
 representation for the 3-dimensional case.
+
 
 \vspace{2ex}{\bf Definition:}\quad
     A \emph{Nef-poly\-he\-dron} in dimension $d$ is a point set $P \subseteq
