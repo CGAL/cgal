@@ -96,7 +96,7 @@ public:
   /*! compare_x() compares the x-coordinates of two given points
    * \param p1 the first point
    * \param p2 the second point
-   * \return LARGER if x(p1) > x(p2), SMALLER if x(p1) < x(p2), or else EQUAL
+   * \return LARGER if x(p1) > x(p2); SMALLER if x(p1) < x(p2); or else EQUAL
    *
    * \todo replace indirect use compare_x() with compare_x_2()
    */
@@ -144,12 +144,12 @@ public:
 
   /*! curve_compare_at_x() compares the y-coordinate of two given curves at
    * the x-coordinate of a given point.
-   * Preconditions: The point q is in the x range of the two curves.
    * \param cv1 the first curve
    * \param cv2 the second curve
    * \param q the point
-   * \return LARGER if cv1(x(q)) > cv2(x(q)), SMALLER if cv1(x(q)) < cv2(x(q),
-   *  or else EQUAL.
+   * \return LARGER if cv1(x(q)) > cv2(x(q)); SMALLER if cv1(x(q)) < cv2(x(q));
+   * or else EQUAL.
+   * \pre The point q is in the x range of the two curves.
    *
    * \todo replace indirect use curve_compare_at_x() with compare_y_at_x_2()
    */
