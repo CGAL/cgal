@@ -104,60 +104,20 @@ class Segment_Voronoi_diagram_2
 {
   friend class Segment_Voronoi_diagram_hierarchy_2<Gt,Tag_true,PC,DS,LTag>;
   friend class Segment_Voronoi_diagram_hierarchy_2<Gt,Tag_false,PC,DS,LTag>;
-
-private:
-  // types and access methods needed for visualization
-  //--------------------------------------------------
-
-  typedef typename Gt::Method_tag  Method_tag;
-
-  // types
-  typedef CGAL::Construct_svd_circle_2<Gt,Method_tag>
-  Construct_svd_circle_2;
-
-  typedef CGAL::Construct_svd_bisector_2<Gt,Method_tag>
-  Construct_svd_bisector_2;
-
-  typedef CGAL::Construct_svd_bisector_ray_2<Gt,Method_tag>
-  Construct_svd_bisector_ray_2;
-
-  typedef CGAL::Construct_svd_bisector_segment_2<Gt,Method_tag>
-  Construct_svd_bisector_segment_2;
-
-  // access
-  Construct_svd_circle_2
-  construct_svd_circle_2_object() const{
-    return Construct_svd_circle_2();
-  }
-
-  Construct_svd_bisector_2
-  construct_svd_bisector_2_object() const {
-    return Construct_svd_bisector_2();
-  }
-
-  Construct_svd_bisector_ray_2
-  construct_svd_bisector_ray_2_object() const {
-    return Construct_svd_bisector_ray_2();
-  }
-
-  Construct_svd_bisector_segment_2
-  construct_svd_bisector_segment_2_object() const { 
-    return Construct_svd_bisector_segment_2(); 
-  }
-
 protected:
-  // some local types
+  // LOCAL TYPES
+  //------------
   typedef Segment_Voronoi_diagram_traits_wrapper_2<Gt>  Modified_traits;
   typedef Triangulation_2<Modified_traits,DS>           DG;
-  typedef DG                         Delaunay_graph;
-  typedef typename DG::Vertex        Vertex;
-  typedef typename DG::Face          Face;
+  typedef DG                                            Delaunay_graph;
+  typedef typename DG::Vertex                           Vertex;
+  typedef typename DG::Face                             Face;
 
-  typedef LTag            Use_in_place_edge_list_tag;
+  typedef LTag                                          List_tag;
 
 public:
-  // TYPES
-  //------
+  // PUBLIC TYPES
+  //-------------
   typedef DS                                     Data_structure;
   typedef Gt                                     Geom_traits;
   typedef typename Gt::Site_2                    Site_2;
@@ -184,24 +144,31 @@ public:
   typedef typename DG::size_type                 size_type;
 
 protected:
-  // some more local types
-  typedef typename Gt::Intersections_tag       Intersections_tag;
+  // LOCAL VARIABLE(S)
+  //------------------
+  // the container of points
+  Point_container pc_;
 
-  typedef typename DS::Vertex_base             Vertex_base;
+protected:
+  // MORE LOCAL TYPES
+  //-----------------
+  typedef typename Gt::Intersections_tag        Intersections_tag;
 
-  typedef std::map<Face_handle,bool>           Face_map;
-  typedef std::vector<Edge>                    Edge_vector;
+  typedef typename Data_structure::Vertex_base  Vertex_base;
 
-  typedef std::list<Vertex_handle>         Vertex_list;
-  typedef typename Vertex_list::iterator   Vertex_list_iterator;
-  typedef Vertex_handle                    Vh_triple[3];
+  typedef std::map<Face_handle,bool>            Face_map;
+  typedef std::vector<Edge>                     Edge_vector;
 
-  typedef
-  typename Data_structure::Vertex_base::Storage_site_2  Storage_site_2;
+  typedef std::list<Vertex_handle>              Vertex_list;
+  typedef typename Vertex_list::iterator        Vertex_list_iterator;
+
+  typedef Triple<Vertex_handle,Vertex_handle,Vertex_handle>
+  Vertex_triple;
+
+  typedef typename Vertex_base::Storage_site_2  Storage_site_2;
 
   // the in place edge list
-  typedef typename
-  CGALi::SVD_which_list<Edge,Use_in_place_edge_list_tag>::List  List;
+  typedef typename CGALi::SVD_which_list<Edge,List_tag>::List  List;
 
 public:
   // CREATION
@@ -232,16 +199,14 @@ public:
 public:
   // ACCESS METHODS
   // --------------
-  const Geom_traits& geom_traits() const {
-    return DG::geom_traits();
-  }
+  const Geom_traits&  geom_traits() const { return DG::geom_traits(); }
+
+  const Data_structure&   ds() const { return this->_tds; }
+  const Point_container&  point_container() const { return pc_; }
 
   size_type number_of_vertices() const {
     return DG::number_of_vertices();
   }
-
-  size_type number_of_incident_segments(Vertex_handle v) const;
-
 
   Vertex_handle infinite_vertex() const {
     return DG::infinite_vertex();
@@ -254,6 +219,7 @@ public:
   Vertex_handle finite_vertex() const {
     return DG::finite_vertex();
   }
+
 protected:
   using Delaunay_graph::cw;
   using Delaunay_graph::ccw;
@@ -357,48 +323,37 @@ public:
   }
 
 public:
-  // INSERTION
-  //----------
+  // INSERTION METHODS
+  //------------------
   template<class Input_iterator>
   size_type insert(Input_iterator first, Input_iterator beyond) {
-    return insert_with_tag(first, beyond, Tag_false());
+    return insert(first, beyond, Tag_false());
   }
 
-protected:
   template<class Input_iterator>
-  size_type insert_with_tag(Input_iterator first,
-			    Input_iterator beyond,
-			    Tag_true)
+  size_type insert(Input_iterator first, Input_iterator beyond, Tag_true)
   {
-    // MK::ERROR: this changes the data I would have to copy them to
-    //            a vector first and then do the suffling thing...
     std::random_shuffle(first, beyond);
-    return insert_with_tag(first, beyond, Tag_false());
+    std::vector<Site_2> site_vec;
+    for (Input_iterator it = first; it != beyond; ++it) {
+      site_vec.push_back(Site_2(*it));
+    }
+    //    return insert_with_tag(first, beyond, Tag_false());
+    return insert_with_tag(site_vec.begin(), site_vec.end(), Tag_false());
   }
 
   template<class Input_iterator>
-  size_type insert_with_tag(Input_iterator first,
-			    Input_iterator beyond,
-			    Tag_false)
+  size_type insert(Input_iterator first, Input_iterator beyond,	Tag_false)
   {
     // do it the obvious way: insert them as they come;
     // one might think though that it might be better to first insert
     // all end points and then all segments, or a variation of that.
-
     size_type n_before = number_of_vertices();
     for (Input_iterator it = first; it != beyond; ++it) {
       insert(*it);
     }
     size_type n_after = number_of_vertices();
     return n_after - n_before;
-  }
-
-public:
-  template<class Input_iterator, class True_false_tag>
-  size_type insert(Input_iterator first, Input_iterator beyond,
-		   True_false_tag tag)
-  {
-    return insert_with_tag(first, beyond, tag);
   }
 
   // insert a point
@@ -412,24 +367,21 @@ public:
 
   // insert a segment
   Vertex_handle  insert(const Point_2& p1, const Point_2& p2) {
-    return
-    insert_segment(Site_2(p1, p2), Vertex_handle(), true);
+    return insert_segment(Site_2(p1, p2), Vertex_handle());
   }
 
   Vertex_handle  insert(const Point_2& p0, const Point_2& p1, 
 			Vertex_handle vnear) {
-    return
-    insert_segment(Site_2(p0, p1), vnear, true);
+    return insert_segment(Site_2(p0, p1), vnear);
   }
 
-  // MK::ERROR: I may not want to expose this...
-  // insert a site
   Vertex_handle  insert(const Site_2& t) {
+    // the intended use is to unify the calls to insert(...);
+    // thus the site must be an exact one; 
+    CGAL_precondition( t.is_exact() );
     if ( t.is_segment() ) {
-      return insert_segment(t, Vertex_handle(), true);
+      return insert_segment(t, Vertex_handle());
     } else if ( t.is_point() ) {
-      // MK::ERROR: the following does not work if the point is not
-      //            exact...
       return insert_point(t.point(), Vertex_handle());
     } else {
       CGAL_precondition ( t.is_defined() );
@@ -443,6 +395,47 @@ public:
     return insert(t, vnear, true);
   }
 #endif
+
+protected:
+  Vertex_handle  insert_first(const Point_2& p);
+  Vertex_handle  insert_second(const Point_2& p);
+  Vertex_handle  insert_third(const Point_2& p);
+  Vertex_handle  insert_third(const Site_2& t, const Storage_site_2& ss);
+  Vertex_handle  insert_third(Vertex_handle v0, Vertex_handle v1);
+
+  Vertex_handle insert_point(const Point_2& p, Vertex_handle vnear);
+  Vertex_handle insert_point(const Storage_site_2& ss,
+			     const Site_2& t, Vertex_handle vnear);
+
+  Triple<Vertex_handle,Vertex_handle,Vertex_handle>
+  insert_point_on_segment(const Storage_site_2& ss, const Site_2& t,
+			  Vertex_handle v, Tag_true);
+
+  Vertex_handle insert_segment(const Site_2& t, Vertex_handle vnear);
+
+  Vertex_handle insert_segment_interior(const Site_2& t,
+					const Storage_site_2& ss,
+					Vertex_handle vnear);
+
+  template<class ITag>
+  Vertex_handle  insert_intersecting_segment(const Storage_site_2& ss,
+					     const Site_2& t,
+					     Vertex_handle v,
+					     ITag tag)
+  {
+    return insert_intersecting_segment_with_tag(ss, t, v, tag);
+  }
+
+  Vertex_handle
+  insert_intersecting_segment_with_tag(const Storage_site_2& ss,
+				       const Site_2& t,
+				       Vertex_handle v, Tag_false);
+
+  Vertex_handle
+  insert_intersecting_segment_with_tag(const Storage_site_2& ss,
+				       const Site_2& t,
+				       Vertex_handle v, Tag_true);
+
 
 
 public:
@@ -462,59 +455,9 @@ protected:
 				  Vertex_handle vnear) const;
 
 
-#if 0
-  // MK: THE FOLLOWING ARE NOT IN THE SPEC
-  //======================================
 public:
-  // ACCESS TO THE DUAL
-  //-------------------
-  Point_2 dual(const Face_handle& f) const;
-  Object  dual(const Edge e) const;
-
-  Object  dual(const Edge_circulator& ec) const {
-    return dual(*ec);
-  }
-
-  Object  dual(const Finite_edges_iterator& ei) const {
-    return dual(*ei);
-  }
-#endif
-
-public:
-  // I/O
-  //----
-protected:
-  template < class Stream >
-  Stream& write_sites(Stream& str) const
-  {
-    str << number_of_vertices() << std::endl;
-
-    Finite_vertices_iterator vit = finite_vertices_begin();
-    for (; vit != finite_vertices_end(); ++vit) {
-      if ( vit->is_point() ) {
-	str << "p " << vit->storage_site().point() << std::endl;
-      } else {
-	str << "s " << vit->storage_site().segment() << std::endl;
-      }
-    }
-    return str;
-  }
-
-  template < class Stream >
-  Stream& draw_sites(Stream &str) const
-  {
-    Finite_vertices_iterator vit = finite_vertices_begin();
-    for (; vit != finite_vertices_end(); ++vit) {
-      if ( vit->is_point() ) {
-	str << vit->point();
-      } else {
-	str << vit->segment();
-      }
-    }
-    return str;
-  }
-
-public:
+  // I/O METHODS
+  //------------
   template< class Stream >
   Stream& draw_dual(Stream &str) const
   {
@@ -546,6 +489,26 @@ public:
     return str;
   }
 
+  // MK: this has to be rewritten. all the checking must be done in
+  // the geometric traits class.
+  template< class Stream >
+  Stream& draw_dual_edge(Edge e, Stream &str) const
+  {
+    typename Geom_traits::Line_2              l;
+    typename Geom_traits::Segment_2           s;
+    typename Geom_traits::Ray_2               r;
+    CGAL::Parabola_segment_2<Gt>              ps;
+
+    Object o = primal(e);
+
+    if (CGAL::assign(l, o))   str << l;
+    if (CGAL::assign(s, o))   str << s; 
+    if (CGAL::assign(r, o))   str << r;
+    if (CGAL::assign(ps, o))  str << ps;
+
+    return str;
+  }
+
 public:
   // VALIDITY CHECK
   //---------------
@@ -564,41 +527,174 @@ public:
     pc_.swap(svd.pc_);
   }
 
-  const Data_structure&  ds() const { return this->_tds; }
-  const Point_container& point_container() const { return pc_; }
+  //////////////////////////////////////////////////////////////////////
+  // THE METHODS BELOW ARE LOCAL
+  //////////////////////////////////////////////////////////////////////
 
+protected:
+  // HELPER METHODS FOR COMBINATORIAL OPERATIONS ON THE DATA STRUCTURE
+  //------------------------------------------------------------------
+
+  // getting the symmetric edge
+  Edge sym_edge(const Edge e) const {
+    return sym_edge(e.first, e.second);
+  }
+
+  Edge sym_edge(const Face_handle& f, int i) const {
+    Face_handle f_sym = f->neighbor(i);
+    return Edge(  f_sym, f_sym->index( f->mirror_vertex(i) )  );
+  }
+
+  Edge flip(Face_handle& f, int i);
+  Edge flip(Edge e);
+
+  bool          is_degree_2(const Vertex_handle& v) const;
+
+  Vertex_handle insert_degree_2(Edge e);
+  Vertex_handle insert_degree_2(Edge e, const Storage_site_2& ss);
+
+  void          remove_degree_2(Vertex_handle v);
+
+  Vertex_handle create_vertex(const Storage_site_2& ss) {
+    Vertex_handle v = this->_tds.create_vertex();
+    v->set_site(ss);
+    return v;
+  }
+
+  Vertex_handle create_vertex_dim_up(const Storage_site_2& ss) {
+    Vertex_handle v = this->_tds.insert_dim_up(infinite_vertex());
+    v->set_site(ss);
+    return v;
+  }
+
+protected:
+  // HELPER METHODS FOR CREATING STORAGE SITES
+  //------------------------------------------
+  Storage_site_2 create_storage_site(const Point_2& p);
+
+  Storage_site_2 create_storage_site(Vertex_handle v0,
+				     Vertex_handle v1);
+
+  Storage_site_2 create_storage_site(const Storage_site_2& ss0,
+				     const Storage_site_2& ss1);
+
+  Storage_site_2 create_storage_site(const Storage_site_2& ss0,
+				     const Storage_site_2& ss1,
+				     bool is_first_exact);
+
+  Storage_site_2 create_storage_site_type1(const Storage_site_2& ss0,
+					   const Storage_site_2& ss1,
+					   const Storage_site_2& ss2);
+
+  Storage_site_2 create_storage_site_type2(const Storage_site_2& ss0,
+					   const Storage_site_2& ss1,
+					   const Storage_site_2& ss2);
 
 protected:
   // MK: THE FOLLOWING ARE NOT IN THE SPEC
   //======================================
-  // but they are needed internally
-  // Primal
+  // METHODS FOR ACCESSING THE PRIMAL GRAPH
+  //---------------------------------------
+  // used primarily for visualization
   Point_2  primal(const Face_handle& f) const;
   Object   primal(const Edge e) const;
   Object   primal(const Edge_circulator& ec) const {
-    return primal(*ec);
+    return primal(*ec); 
   }
   Object   primal(const Finite_edges_iterator& ei) const {
     return primal(*ei);
   }
 
 protected:
-  // wrappers for the geometric predicates
 
-  bool are_same_points(const Site_2& p, const Site_2& q) const;
+  void print_error_message() const
+  {
+    std::cerr << "SVD::Insert aborted: intersecting segments found"
+	      << std::endl;
+  }
+
+  //protected:
+public:
+  // wrappers for constructions
+  Point_2 circumcenter(const Face_handle& f) const;
+  Point_2 circumcenter(const Site_2& t0, 
+		       const Site_2& t1, 
+		       const Site_2& t2) const;
+
+protected:
+  // HELPER METHODS FOR INSERTION
+  //-----------------------------
+  void initialize_conflict_region(const Face_handle& f, List& l);
+
+  void expand_conflict_region(const Face_handle& f, const Site_2& t,
+			      const Storage_site_2& ss,
+			      List& l, Face_map& fm,
+			      std::map<Face_handle,Sign>& sign_map,
+			      std::pair<bool, Vertex_handle>& vcross);
+
+  Vertex_handle add_bogus_vertex(Edge e, List& l);
+  Vertex_list   add_bogus_vertices(List& l);
+  void          remove_bogus_vertices(Vertex_list& vl);
+
+  void retriangulate_conflict_region(Vertex_handle v, List& l,
+				     Face_map& fm);
+
+
+protected:
+  // TYPES AND ACCESS METHODS FOR VISUALIZATION
+  //-------------------------------------------
+
+  // types
+  typedef CGAL::Construct_svd_circle_2<Gt,Ring_tag>
+  Construct_svd_circle_2;
+
+  typedef CGAL::Construct_svd_bisector_2<Gt,Ring_tag>
+  Construct_svd_bisector_2;
+
+  typedef CGAL::Construct_svd_bisector_ray_2<Gt,Ring_tag>
+  Construct_svd_bisector_ray_2;
+
+  typedef CGAL::Construct_svd_bisector_segment_2<Gt,Ring_tag>
+  Construct_svd_bisector_segment_2;
+
+  // access
+  Construct_svd_circle_2
+  construct_svd_circle_2_object() const{
+    return Construct_svd_circle_2();
+  }
+
+  Construct_svd_bisector_2
+  construct_svd_bisector_2_object() const {
+    return Construct_svd_bisector_2();
+  }
+
+  Construct_svd_bisector_ray_2
+  construct_svd_bisector_ray_2_object() const {
+    return Construct_svd_bisector_ray_2();
+  }
+
+  Construct_svd_bisector_segment_2
+  construct_svd_bisector_segment_2_object() const { 
+    return Construct_svd_bisector_segment_2(); 
+  }
+
+protected:
+  // WRAPPERS FOR GEOMETRIC PREDICATES
+  //----------------------------------
+  bool same_points(const Site_2& p, const Site_2& q) const;
   bool same_segments(const Site_2& t, Vertex_handle v) const;
   bool same_segments(const Site_2& p, const Site_2& q) const;
 
   bool is_endpoint_of_segment(const Site_2& p, const Site_2& s) const
   {
     CGAL_precondition( p.is_point() && s.is_segment() );
-    return ( are_same_points(p, s.source_site()) ||
-	     are_same_points(p, s.target_site()) );
+    return ( same_points(p, s.source_site()) ||
+	     same_points(p, s.target_site()) );
   }
 
   bool is_degenerate_segment(const Site_2& s) const {
     CGAL_precondition( s.is_segment() );
-    return are_same_points(s.source_site(), s.target_site());
+    return same_points(s.source_site(), s.target_site());
   }
 
   // returns:
@@ -641,23 +737,23 @@ protected:
 			    const Vertex_handle& v,
 			    Sign sgn) const;
 
-  bool finite_edge_interior_degenerated(const Site_2& t1, const Site_2& t2,
-					const Site_2& t3, const Site_2& q,
-					Sign sgn) const;
+  bool finite_edge_interior(const Site_2& t1, const Site_2& t2,
+			    const Site_2& t3, const Site_2& q,
+			    Sign sgn) const;
 
 
-  bool finite_edge_interior_degenerated(const Site_2& t1, const Site_2& t2,
-					const Site_2& q,  Sign sgn) const;
+  bool finite_edge_interior(const Site_2& t1, const Site_2& t2,
+			    const Site_2& q,  Sign sgn) const;
 
-  bool finite_edge_interior_degenerated(const Face_handle& f, int i,
-					const Site_2& p, Sign sgn) const;
+  bool finite_edge_interior(const Face_handle& f, int i,
+			    const Site_2& p, Sign sgn, int) const;
 
-  bool finite_edge_interior_degenerated(const Vertex_handle& v1,
-					const Vertex_handle& v2,
-					const Vertex_handle& v3,
-					const Vertex_handle& v4,
-					const Vertex_handle& v,
-					Sign Sign) const;
+  bool finite_edge_interior(const Vertex_handle& v1,
+			    const Vertex_handle& v2,
+			    const Vertex_handle& v3,
+			    const Vertex_handle& v4,
+			    const Vertex_handle& v,
+			    Sign Sign, int) const;
 
   bool infinite_edge_interior(const Site_2& t2, const Site_2& t3,
 			      const Site_2& t4, const Site_2& q,
@@ -691,207 +787,18 @@ protected:
 		     Sign sgn) const;
 
   bool do_intersect(const Site_2& t, Vertex_handle v) const;
-  bool do_intersect(const Site_2& p, const Site_2& q) const
-  {
-    std::pair<int,int> res =
-      geom_traits().do_intersect_2_object()(p, q);
+  bool do_intersect(const Site_2& p, const Site_2& q) const;
 
-#if 1
-    CGAL_assertion( res.first <= 4 && res.second <= 4 );
-
-    if ( res.first == 2 ) {
-      CGAL_assertion( res.second == 2 );
-    } else if ( res.second == 2 ) {
-      CGAL_assertion( res.first == 2 );
-    }
-
-    if ( res.first == 3 ) {
-      CGAL_assertion( res.second == 3 );
-    } else if ( res.second == 3 ) {
-      CGAL_assertion( res.first == 3 );
-    }
-#endif
-    if ( res.first < 2 && res.second < 2 ) { return false; }
-
-    return (res.first != 3);
-  }
-
-  bool are_parallel(const Site_2& p, const Site_2& q) const
-  {
+  bool are_parallel(const Site_2& p, const Site_2& q) const {
     return geom_traits().are_parallel_2_object()(p, q);
   }
 
   Oriented_side
   oriented_side(const Site_2& s1, const Site_2& s2, const Site_2& s3,
-		const Site_2& supp, const Site_2& p) const
-  {
+		const Site_2& supp, const Site_2& p) const {
     CGAL_precondition( supp.is_segment() && p.is_point() );
     return geom_traits().oriented_side_2_object()(s1, s2, s3, supp, p);
   }
-
-  void print_error_message() const
-  {
-    std::cerr << "SVD::Insert aborted: intersecting segments found"
-	      << std::endl;
-  }
-
-  //protected:
-public:
-  // wrappers for constructions
-  Point_2 circumcenter(const Face_handle& f) const;
-  Point_2 circumcenter(const Site_2& t0, 
-		       const Site_2& t1, 
-		       const Site_2& t2) const;
-
-protected:
-  // wrappers for combinatorial operations on the data structure
-
-  // getting the symmetric edge
-  Edge sym_edge(const Edge e) const {
-    return sym_edge(e.first, e.second);
-  }
-
-  Edge sym_edge(const Face_handle& f, int i) const {
-    Face_handle f_sym = f->neighbor(i);
-    return Edge(  f_sym, f_sym->index( f->mirror_vertex(i) )  );
-  }
-
-  Edge flip(Face_handle& f, int i);
-  Edge flip(Edge e);
-
-  //  Vertex_handle insert_in_face(Face_handle& f, const Weighted_point& p);
-
-  bool          is_degree_2(const Vertex_handle& v) const;
-
-  Vertex_handle insert_degree_2(Edge e);
-  Vertex_handle insert_degree_2(Edge e, const Storage_site_2& ss);
-
-  void          remove_degree_2(Vertex_handle v);
-
-  // this was defined because the hierarchy needs it
-  Vertex_handle create_vertex(const Storage_site_2& ss) {
-    Vertex_handle v = this->_tds.create_vertex();
-    v->set_site(ss);
-    return v;
-  }
-
-  Vertex_handle create_vertex_dim_up(const Storage_site_2& ss) {
-    Vertex_handle v = this->_tds.insert_dim_up(infinite_vertex());
-    v->set_site(ss);
-    return v;
-  }
-
-
-protected:
-  // insertion of the first three sites
-
-  // the first two objects can only be points, since we always
-  // add the endpoints first and then the segment.
-  Storage_site_2 create_storage_site(const Point_2& p)
-  {
-    Point_handle ph = pc_.insert(p);
-    return Storage_site_2(ph);
-  }
-
-  Storage_site_2 create_storage_site(Vertex_handle v0,
-				     Vertex_handle v1)
-  {
-    //    typedef typename Storage_site_2::Handle_pair   Point_handle_pair;
-
-    //    Point_handle_pair ph_pair(v0->storage_site().point_handle(),
-    //			      v1->storage_site().point_handle());
-    //    return Storage_site_2( ph_pair );
-    return Storage_site_2( v0->storage_site().point_handle(0),
-			   v1->storage_site().point_handle(0) );
-  }
-
-  Vertex_handle  insert_first(const Point_2& p);
-  Vertex_handle  insert_second(const Point_2& p);
-  Vertex_handle  insert_third(const Point_2& p);
-  Vertex_handle  insert_third(const Site_2& t, const Storage_site_2& ss);
-  //  Vertex_handle  insert_third(const Point_2& p0, const Point_2& p1);
-  Vertex_handle  insert_third(Vertex_handle v0, Vertex_handle v1);
-
-  Vertex_handle insert_point(const Point_2& p, Vertex_handle vnear);
-  Vertex_handle insert_point(const Storage_site_2& ss,
-			     const Site_2& t, Vertex_handle vnear);
-
-  Vertex_handle insert_segment(const Site_2& t, Vertex_handle vnear,
-			       bool insert_endpoints);
-
-  Vertex_handle insert_segment_interior(const Site_2& t,
-					const Storage_site_2& ss,
-					Vertex_handle vnear,
-					bool insert_endpoints);
-
-  template<class ITag>
-  Vertex_handle  insert_intersecting_segment(const Storage_site_2& ss,
-					     const Site_2& t,
-					     Vertex_handle v,
-					     ITag tag)
-  {
-    return insert_intersecting_segment_with_tag(ss, t, v, tag);
-  }
-
-  Vertex_handle
-  insert_intersecting_segment_with_tag(const Storage_site_2& ss,
-				       const Site_2& t,
-				       Vertex_handle v, Tag_false);
-
-  Vertex_handle
-  insert_intersecting_segment_with_tag(const Storage_site_2& ss,
-				       const Site_2& t,
-				       Vertex_handle v, Tag_true);
-
-
-
-  // methods for insertion
-  void initialize_conflict_region(const Face_handle& f, List& l);
-
-  void expand_conflict_region(const Face_handle& f, const Site_2& t,
-			      const Storage_site_2& ss,
-			      List& l, Face_map& fm,
-			      std::map<Face_handle,Sign>& sign_map,
-			      std::pair<bool, Vertex_handle>& vcross,
-			      std::vector<Vh_triple*>* fe);
-
-  Vertex_handle add_bogus_vertex(Edge e, List& l);
-  Vertex_list   add_bogus_vertices(List& l);
-  void          remove_bogus_vertices(Vertex_list& vl);
-
-  // MK: this is not currently used
-  std::vector<Face*> get_faces_for_recycling(Face_map& fm,
-					     unsigned int n_wanted);
-
-  void retriangulate_conflict_region(Vertex_handle v, List& l,
-				     Face_map& fm);
-
-protected:
-  // methods for I/O
-
-  // MK: this has to be rewritten. all the checking must be done in
-  // the geometric traits class.
-
-  template< class Stream >
-  Stream& draw_dual_edge(Edge e, Stream &str) const
-  {
-    typename Geom_traits::Line_2              l;
-    typename Geom_traits::Segment_2           s;
-    typename Geom_traits::Ray_2               r;
-    CGAL::Parabola_segment_2<Gt>              ps;
-
-    Object o = primal(e);
-
-    if (CGAL::assign(l, o))   str << l;
-    if (CGAL::assign(s, o))   str << s; 
-    if (CGAL::assign(r, o))   str << r;
-    if (CGAL::assign(ps, o))  str << ps;
-
-    return str;
-  }
-
-private:
-  Point_container pc_;
 
 }; // Segment_Voronoi_diagram_2
 

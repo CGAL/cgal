@@ -634,7 +634,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
   // REGION AND EXPANDS THE CONFLICT REGION.
   hierarchy[0]->initialize_conflict_region(start_f, l);
   hierarchy[0]->expand_conflict_region(start_f, t, ss, l, fm,
-				       sign_map, vcross, NULL);
+				       sign_map, vcross);
 
   // the following condition becomes true only if intersecting
   // segments are found
@@ -765,7 +765,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
   // REGION AND EXPANDS THE CONFLICT REGION.
   hierarchy[0]->initialize_conflict_region(start_f, l);
   hierarchy[0]->expand_conflict_region(start_f, t, ss, l, fm,
-				       sign_map, vcross, NULL);
+				       sign_map, vcross);
 
   // the following condition becomes true only if intersecting
   // segments are found
