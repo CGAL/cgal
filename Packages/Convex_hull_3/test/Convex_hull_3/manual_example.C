@@ -11,9 +11,8 @@
 // release_date  : 
 //
 // file          : 
-// source        : chull_traits.lw
-// revision      : 2.3  
-// revision_date : 01 Feb 2000
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Stefan Schirra <Stefan.Schirra@mpi-sb.mpg.de>
 //
 // coordinator   : MPI, Saarbruecken
