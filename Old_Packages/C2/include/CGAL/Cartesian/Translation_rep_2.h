@@ -1,9 +1,26 @@
+// ======================================================================
+//
+// Copyright (c) 2000 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       :
+// release_date  :
+//
+// file          : include/CGAL/Cartesian/Translation_rep_2.h
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Andreas Fabri, Herve Bronnimann
+// coordinator   : INRIA Sophia-Antipolis (Mariette.Yvinec@sophia.inria.fr)
+//
+// ======================================================================
 
-#ifndef CGAL_CARTESIAN_TRANSLATIONR_EP_2_H
-#define CGAL_CARTESIAN_TRANSLATIONR_EP_2_H
+#ifndef CGAL_CARTESIAN_TRANSLATION_REP_2_H
+#define CGAL_CARTESIAN_TRANSLATION_REP_2_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -119,4 +136,4 @@ private:
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_CARTESIAN_TRANSLATIONR_EP_2_H
+#endif // CGAL_CARTESIAN_TRANSLATION_REP_2_H
