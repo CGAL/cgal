@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<bench name_length="64" header="false" type_mask="0x3" strategy_mask="0x6">
+  <clo name="format" string="-If="/>
+  <clo name="samples" string="-s"/> 
+  <clo name="header" string="-bh="/> 
+  <clo name="name_length" string="-bnl="/> 
+  <clo name="type_mask" string="-btm="/> 
+  <clo name="strategy_mask" string="-bsm="/> 
+
+  <file name="eurcut.dat" format="rat" curves="3099"
+    vertices="3078" halfedges="6198" faces="39"></file>
+
+  <file name="fork0505_mc.seg.rand.dat" format="rat" curves="12834"
+    vertices="6561" halfedges="25668" faces="6275"></file>
+
+  <file name="polygon_100.dat" format="float" curves="100"
+    vertices="100" halfedges="200" faces="2"></file>
+
+  <file name="world.seg.cut.rand.dat" format="rat" curves="24559"
+    vertices="24280" halfedges="49118" faces="405"></file>
+
+  <file name="onebig_100.dat" format="rat" curves="2704"
+    vertices="1504" halfedges="5408" faces="1202"></file>
+
+  <file name="random_segments_100.dat" format="rat" curves="1958"
+    vertices="1129" halfedges="3916" faces="831"></file>
+
+  <file name="random_segments_500.dat" format="int" curves="500"
+    vertices="33589" halfedges="131356" faces="32091"></file>
+
+  <bench samples="1" enable="true">
+    <benchPmwxAggInsert file="onebig_100.dat" header="true"></benchPmwxAggInsert>
+    <benchPmwxAggInsert_fast file="onebig_100.dat"></benchPmwxAggInsert_fast>
+  </bench>
+  <bench samples="1" enable="true">
+    <benchPmwxAggInsert file="eurcut.dat"></benchPmwxAggInsert>
+    <benchPmwxAggInsert_fast file="eurcut.dat"></benchPmwxAggInsert_fast>
+  </bench>
+
+<!--
+  <bench samples="1" enable="true">
+    <benchPmwxAggInsert file="random_segments_100.dat"></benchPmwxAggInsert>
+    <benchPmwxAggInsert_fast file="random_segments_100.dat"></benchPmwxAggInsert_fast>
+  </bench>
+  <bench samples="1" enable="true">
+    <benchPmwxAggInsert file="random_segments_500.dat"></benchPmwxAggInsert>
+    <benchPmwxAggInsert_fast file="random_segments_500.dat"></benchPmwxAggInsert_fast>
+  </bench>
+  <bench samples="1" enable="true">
+    <benchPmwxAggInsert file="fork0505_mc.seg.rand.dat"></benchPmwxAggInsert>
+    <benchPmwxAggInsert_fast file="fork0505_mc.seg.rand.dat"></benchPmwxAggInsert_fast>
+  </bench>
+  <bench samples="10" enable="true">
+    <benchPmwxAggInsert file="polygon_100.dat"></benchPmwxAggInsert>
+    <benchPmwxAggInsert_fast file="polygon_100.dat"></benchPmwxAggInsert_fast>
+  </bench>
+  <bench samples="1" enable="true">
+    <benchPmwxAggInsert file="world.seg.cut.rand.dat"></benchPmwxAggInsert>
+    <benchPmwxAggInsert_fast file="world.seg.cut.rand.dat"></benchPmwxAggInsert_fast>
+  </bench>
+-->
+</bench>
