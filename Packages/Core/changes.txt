@@ -1,3 +1,6 @@
+Version 0.19 (17 October 2003) [af]
+- Added Workaround for VC7.1
+
 Version 0.18 (9 October 2003) [af]
 - added CORE_INLINE to some declarations, because they are at definition
 - helped Sgi to match sqrt function
