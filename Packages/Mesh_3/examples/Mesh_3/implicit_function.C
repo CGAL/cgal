@@ -43,7 +43,7 @@ const double size_bound =  3.;
 
 const int aspect_ratio_bound = 0; // 30
 
-const double tets_size_bound = 0.2;
+const double tets_size_bound = 0.05;
 
 ///////////////// Code for functions of famous surfaces /////////////////
 

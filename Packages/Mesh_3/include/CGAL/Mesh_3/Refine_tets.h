@@ -23,8 +23,11 @@
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Mesh_3/Triangulation_mesher_level_traits_3.h>
 
-#include <CGAL/Mesh_3/Refine_edges.h>
-#include <CGAL/Mesh_3/Refine_facets.h>
+//#include <CGAL/Mesh_3/Refine_edges.h>
+//#include <CGAL/Mesh_3/Refine_facets.h>
+
+template <typename Tr> class Refine_facets;
+
 #include <CGAL/Mesh_3/Double_map_container.h>
 
 #include <list>
@@ -40,9 +43,7 @@ template <class Tr,
 class Refine_tets_base :
     public Container,
     public Triangulation_mesher_level_traits_3<Tr>,
-    public No_test_point_conflict,
-    public No_before_insertion,
-    public No_after_insertion
+    public No_test_point_conflict
 {
 protected:
   typedef typename Tr::Point Point;
@@ -126,15 +127,16 @@ public:
     return circumcenter(p, q, r, s);
   }
 
-  void before_conflicts_impl(const Cell_handle&, const Point& 
 #if CGAL_MESH_3_DEBUG_BEFORE_CONFLICTS
-			   p)
+  void before_conflicts_impl(const Cell_handle&, const Point& p)
   {
     std::cerr << "Refine_tets: before conflicts of " << p;
-#else
-    ) {
-#endif
   }
+#else
+  void before_conflicts_impl(const Cell_handle&, const Point&)
+  {
+  }
+#endif  
 
   void after_no_insertion_impl(const Cell_handle&, const Point&,
 			       const Zone& )
@@ -167,6 +169,8 @@ public:
   typedef typename Base::Cell_handle Cell_handle;
   typedef typename Base::Point Point;
   typedef typename Base::Zone Zone;
+
+  using Base::triangulation_ref_impl;
   
   
 
@@ -177,8 +181,8 @@ public:
 
 public:
   /* \name Overriden functions of this level */
-  void do_before_insertion(const Cell_handle& c, const Point&,
-                           Zone& zone)
+  void before_insertion_impl(const Cell_handle& c, const Point&,
+			     Zone& zone)
   {
     remove_star_from_bad_cells(c, zone); // FIXME: name
   }
@@ -192,12 +196,13 @@ public:
         this->remove_element(*cit);
   }
 
-  void do_after_insertion(const Vertex_handle& v)
+  void after_insertion_impl(const Vertex_handle& v)
   {
-    std::cerr << ".";
+    std::cout << "*";
 #if CGAL_MESH_3_DEBUG_AFTER_INSERTION
     std::cerr << "  INSERTED." << std::endl;
 #endif
+    v->info()=false; // BEURK
     scan_star(v);
   }
 

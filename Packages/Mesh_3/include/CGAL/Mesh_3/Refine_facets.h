@@ -24,7 +24,7 @@
 #include <CGAL/Mesh_3/Triangulation_mesher_level_traits_3.h>
 #include <CGAL/Complex_2_in_triangulation_3.h>
 
-#include <CGAL/Mesh_3/Refine_edges.h>
+//#include <CGAL/Mesh_3/Refine_edges.h>
 #include <CGAL/Mesh_3/Simple_set_container.h>
 
 #include <list>
@@ -322,7 +322,7 @@ public:
   
 template <typename Tr,
           typename Base = Refine_facets_base<Tr>,
-          typename Edges_level = Refine_edges<Tr>
+          typename Edges_level //= Refine_edges<Tr>
  >
 class Refine_facets : 
   public Base, 
