@@ -66,11 +66,11 @@ delaunay_dd-runtime$(EXE_EXT): delaunay_dd-runtime$(OBJ_EXT)
 
 
 clean:  \
-	chull_3d-windows-demo.clean 
-	chull_3d-geomview-demo.clean 
-	chull_dd-geomview-demo.clean 
-	chull_dd-runtime.clean 
-	delaunay_3d-windows-demo.clean 
+	chull_3d-windows-demo.clean \
+	chull_3d-geomview-demo.clean \
+	chull_dd-geomview-demo.clean \
+	chull_dd-runtime.clean \
+	delaunay_3d-windows-demo.clean \
 	delaunay_dd-runtime.clean 
 
 #---------------------------------------------------------------------#
