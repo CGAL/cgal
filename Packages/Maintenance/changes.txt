@@ -1,3 +1,6 @@
+17 September 2004 Sylvain Pion
+- Store test-results success messages in a log file instead of sdterr.
+
 16 September 2004 Sylvain Pion
 - Replace CLN by CORE in the test-suite page.
 

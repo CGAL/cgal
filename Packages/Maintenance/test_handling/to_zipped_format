@@ -1,14 +1,19 @@
-#!/usr/local/bin/perl -w -W
+#!/usr/bin/perl -w -W
 
 use Cwd;
 use strict;
 
 my $TMPDIR;
 my $version = "";
+my $final_version;
+
+my $original_arguments=join(" ", @ARGV);
 
 sub usage {
     print STDERR "$0: usage\n";
     print STDERR "$0 [-v version] result1.tar[.gz] ...\n";
+    print STDERR "$0: you called it with the arguments:\n";
+    print STDERR "$0 $original_arguments\n";
 }
 
 sub make_tempdir()
@@ -82,6 +87,7 @@ EOF
     close(PLATFORM_INFO);
     close(PLATFORM_RESULTS);
     close(PLATFORM_NEW_RESULTS);
+    $final_version="CGAL-$CGAL_VERSION";
     if ($version
         && $version ne "CGAL-$CGAL_VERSION"
         && ($version !~ /^CGAL-${CGAL_VERSION}-I-[\d]+$/)) {
@@ -127,9 +133,14 @@ sub all_archives() {
     my $archive;
     foreach $archive (@ARGV) {
 	if (one_archive($archive)) {
-	    print STDERR "$archive succesfully reformatted.\n";
+            open (TESTRESULTSLOG, ">>../test_results.log")
+                  or die "Could not open test_results.log\n";
+            my $date=`date`;
+            chop $date;
+	    print TESTRESULTSLOG "$final_version : $archive succesfully reformatted. [ $date ]\n";
+            close (TESTRESULTSLOG);
 	} else {
-	    print STDERR "Could not reformat $archive\n";
+	    print STDERR "$final_version : Could not reformat $archive\n";
 	}
     }
 }
