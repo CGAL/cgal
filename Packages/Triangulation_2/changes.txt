@@ -1,6 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.59 (17 August 00)
+fixes in Triangulation_hierarchy_2.h
+fixes in the doc
+
 Ver 4.58 ( 11 August 00)
 Changed typedef to Base in Triangulation_hierarchy_2.h
 Minor fixes in the doc 

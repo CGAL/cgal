@@ -1,3 +1,4 @@
+
 # Makefile for Triangulation Package
 
 PACKAGE=Triangulation
@@ -16,11 +17,11 @@ package:
 	@echo "----------------------------------"
 	@echo "---- cvs update; -----------------"
 	@echo "---- make Test ; ------------ ----"
-	@echo "---- make VERSION=4.58 Doc -------"
+	@echo "---- make VERSION=4.59 Doc -------"
 	@echo "---- editer changes.txt       ----"
-	@echo "---- make VERSION=4.58 Version ---"
+	@echo "---- make VERSION=4.59 Version ---"
 	@echo "---- cvs commit ------------------"
-	@echo "---- make VERSION=4.58 Tag -------"
+	@echo "---- make VERSION=4.59 Tag -------"
 	@echo "---- make Submit -----------------"
 	@echo "----------------------------------"
 
