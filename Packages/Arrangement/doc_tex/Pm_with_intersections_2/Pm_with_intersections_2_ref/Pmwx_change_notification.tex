@@ -24,14 +24,17 @@
    each such modification.
 
 \ccTypes
-\ccNestedType{Planar_map}{the planar map in which the object is being used.}
+\ccNestedType{Planar_map}{the planar map with intersections 
+                          in which the object is being used.}
 \ccNestedType{Traits}{the traits class of \ccc{Planar_map}.}
+
+\ccOperations
 
 \ccCreationVariable{pmwx_cn}
 
-\ccMethod{virtual void add_edge(
-            const typename Traits::X_curve& cv,
-            typename Planar_map::Halfedge_handle e,
+\ccMethod{ void add_edge(
+            const  Traits::X_curve& cv,
+             Planar_map::Halfedge_handle e,
             bool original_direction, bool overlap);}
   {called each time a pair of twin halfedges is added to the planar map.
   \ccc{cv} is the curve of the added halfedges.
@@ -39,11 +42,11 @@
   \ccc{original_direction} is true iff \ccc{cv} is directed the same as the curve that we insert to the map.
   \ccc{overlap} is true iff the added halfedges overlap previously inserted halfedges in the map.}
 
-\ccMethod{virtual void split_edge(
-              typename Planar_map::Halfedge_handle orig_edge,
-              typename Planar_map::Halfedge_handle new_edge,
-              const typename Traits::X_curve& c1,
-              const typename Traits::X_curve& c2);}
+\ccMethod{ void split_edge(
+               Planar_map::Halfedge_handle orig_edge,
+               Planar_map::Halfedge_handle new_edge,
+              const  Traits::X_curve& c1,
+              const  Traits::X_curve& c2);}
   {called each time a pair of twin halfedges is split into two
   pairs. The split operation creates a new pair of twin halfedges
   (\ccc{new_edge} and its twin) and modifies the original
@@ -51,28 +54,28 @@
   \ccc{c1} and \ccc{c2} are the curves after the split.
   }
 
-\ccMethod{virtual void split_face(
-              typename Planar_map::Face_handle orig_face,
-              typename Planar_map::Face_handle new_face);}
+\ccMethod{ void split_face(
+               Planar_map::Face_handle orig_face,
+               Planar_map::Face_handle new_face);}
   {called each time a face of the planar map is being split by
   the inserted curve into two faces: \ccc{orig_face} is the
   original face and \ccc{new_face} is the new face.
   }
 
-\ccMethod{virtual void add_hole(
-            typename Planar_map::Face_handle in_face,
-            typename Planar_map::Halfedge_handle new_hole);}
+\ccMethod{ void add_hole(
+             Planar_map::Face_handle in_face,
+             Planar_map::Halfedge_handle new_hole);}
   {called each time a hole is added to a face \ccc{in_face}.
   \ccc{new_hole} is a halfedge on the new hole.
   }
 
-\ccMethod{virtual bool have_support_curve();}
+\ccMethod{ bool have_support_curve();}
   {returns true if \ccc{edge_support_curve} function can return the
   supporting curve (used by the arrangement class).
   }
 
-\ccMethod{virtual const typename Traits::X_curve&
-  edge_support_curve(typename Planar_map::Halfedge_handle edge);}
+\ccMethod{ const  Traits::X_curve&
+  edge_support_curve( Planar_map::Halfedge_handle edge);}
   {returns the supporting curve of a \ccc{edge}, if it exists
   (used by the arrangement class).
   }

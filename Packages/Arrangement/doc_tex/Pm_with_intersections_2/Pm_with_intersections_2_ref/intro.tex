@@ -25,17 +25,14 @@
 \ccRefLabel{pmwx_ref_intro}
 
   The \ccc{Planar Map with Intersections} package extends the
-  functionality of the \ccc{Planar Map} package. Morover, the class
+  functionality of the \ccc{Planar Map} package. Moreover, the class
   \ccc{Planar_map_with_intersections_2} extends the class
   \ccc{Planar_map_2}. The \ccc{Planar Map with Intersections} package
-  supports insertion functions that handle non $x$-monotone curves and
-  intersections and overlappings among the curves of the planar
-  map. The basic types of the \ccc{Planar Map} package (vertex,
-  halfedge, face, Dcel, etc.) are
-  kept. \ccc{Planar_map_with_intersections_2} is templated with the
-  planar map class it derives from.
+  supports insertion functions that handle non-$x$-monotone,
+  intersecting and overlappings curves among the curves of
+  the planar map.
 
-\subsection*{Planar Map with Intersections Traits Class}
+%\subsection*{Planar Map with Intersections Traits Class}
 %-----------------------------------------------
   Since the planar map with intersections has an additional
   functionality of handling non $x$-monotone and intersecting curves
@@ -49,33 +46,36 @@
   %Chapter~\ref{I1_ChapterArrangement}).
 
 \subsection*{Sweep line:}
-The construction of a \ccc{Planar map} can be done using a sweep
-line technique rather than iteratively inserting one curve after another.
-The sweep line algorithm perfomrs better, but is done statically and therefore
-requires the list of curves in advance.
-Due to the sweep line technique, inserting curves which are interior intersect, 
-overlap or non $x$-monotone is supported.
-The interface is given in chapter  ~\ref{I1_ChapterPlanarMap}.
+  The construction of a planar map can be done using a sweep line
+  technique rather than iteratively, inserting one curve after another.
+  The sweep line algorithm perfomrs better, but is done statically and
+  therefore requires the list of curves in advance.  Due to the sweep
+  line technique, inserting curves which are interior intersect,
+  overlap or non $x$-monotone is supported. The interface is given in
+  chapter ~\ref{I1_ChapterPlanarMap}.
 
 
 \begin{ccAdvanced}
 \subsection*{Change Notification}
 %-----------------------------------------------
-An insertion of an intersecting curve to a planar map may add
-several halfedges and modify several features of the map (i.e.,
-split halfedges, split faces). The relevant function of the change
-notification instance, that is passed to the modification methods
-of a planar map with intersections, is called after each such
-modification. The change notification class is useful in many
-cases. For example, one may add a color (or other extra data) to
-any halfedge of a planar map. An insertion of a new curve can
-split halfedges that were previously in the map. After such split
-the color of the newly created halfedges should be updated
-according to the original color of the split halfedge. One can do
-this by implementing the \ccc{split_edge} function of the change
-notification class. This function will be called after each split
-of an halfedge in the map.
+  An insertion of an intersecting curve into a planar map may add
+  several halfedges and modify several features of the map (i.e.,
+  split halfedges, split faces). The so-called \ccc{Change
+  Notification} provides this flexibility. The modification methods
+  accept an additional parameter, a class which is a model of the
+  \ccc{PlanarMapWithIntersectionsChangeNotification_2} concept. The
+  change notification includes an associative function for each
+  modification method.  This function is called after each such
+  modification.
 
+  The change notification class is useful in many cases. For example,
+  one may add a color (or other extra data) to any halfedge of a
+  planar map. An insertion of a new curve can split halfedges that
+  were previously in the map. After such a split the color of the
+  newly created halfedges should be updated according to the original
+  color of the split halfedge. One can do this by implementing the
+  \ccc{split_edge} function of the change notification class. This
+  function will be called after each split of an halfedge in the map.
 
 \subsubsection{Example of Change Notification}
 \label{ssecn:example2}

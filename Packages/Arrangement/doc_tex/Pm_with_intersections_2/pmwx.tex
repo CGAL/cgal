@@ -55,7 +55,7 @@
 %\tableofcontents
 %
 %\maketitle
-\chapter{2D Planar Maps with Intersections} \label{I1_ChapterPmwx}
+\chapter{2D Planar Maps of Intersecting Curves} \label{I1_ChapterPmwx}
 
 \section{Introduction}
 
@@ -75,7 +75,7 @@
   functionality of the \ccc{Planar Map} package by enabling simple
   insertion of intersecting not necessarily $x$-monotone curves. The
   \ccc{Planar_map_with_intersections_2} class has different insertion
-  functions but it uses the same data structures of the planar
+  functions but it uses the same data structures as the planar
   map. Therefore, almost any functionality of the planar map is also
   supported here (e.g., traversal of planar map features, point
   location queries and I/O operations are suppoerted but infinite
@@ -120,7 +120,6 @@
 
 %******************************************************************************
 
-\section{Example Programs}
 %---------------------------------------------------
 \subsection{Simple Example of a Segment Planar Map with Intersections}
 \label{ssec:example1}
@@ -152,7 +151,7 @@ Edges of the planar map:
   --- $(0,0)-(1,1)$ , $(0,1)-(1,0)$ , $(0,0)-(1,0)$ and $(0,1)-(1,1)$
   (an hourglass shape), two of them are intersecting in their
   interior.  The resulting planar map will contain all the disjoint
-  interior sub segments obtained by the calculation of the sweep
+  interior sub-segments obtained by the calculation of the sweep
   line algorithm. For clarity, we printed all the halfedges of the
   resulting planar map to the standard output using the I/O functions
   for the \ccc{Planar map} package.

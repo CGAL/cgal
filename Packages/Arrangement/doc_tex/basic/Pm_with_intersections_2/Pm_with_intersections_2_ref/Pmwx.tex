@@ -28,10 +28,15 @@
     \ccInclude{CGAL/Pm_with_intersections.h}
 
 \ccInheritsFrom
-    \ccStyle{Planar_map_2<Dcel,Traits>}
+    \ccStyle{CGAL::Planar_map_2<Dcel,Traits>}
 
-    The modifying functions \ccStyle{insert}
-    override the inherited functions
+    The fact that the modifying insert functions override the
+    inherited functions (the expected behaviour) should be noted. The
+    insert functions of \ccRefName\ are designed to handle possibly
+    intersecting, non-$x$-monotone or overlapping curves and are
+    slower.  For non-intersecting, $x$-monotone curves are intserted
+    one can use the set of insertion functions that begin with the
+    prefix \ccc{non_intersecting}.
 %\comment{iddo: need to be virtual in planar map}.
 
 \ccTypes
@@ -60,7 +65,6 @@
        \ccPrecond{\ccc{cv} is not equivalent to a point. }
        }
 
-
     \ccMethod{Halfedge_handle insert_from_vertex(const X_curve& cv, Vertex_handle src,
       Pmwx_change_notification *en = NULL);}
       {inserts  the $x$-monotone curve \ccStyle{cv}, for
@@ -80,27 +84,22 @@
 
 \begin{ccAdvanced}
 
+  \ccMethod{Halfedge_handle non_intersecting_insert(const X_curve&
+  cv);}
+  {invokes the planar map implementation of \ccc{insert}
+  function. Since this function does not check for intersections it is
+  more efficient than \ccc{insert}.
+  \ccPrecond{\ccc{cv} has no proper
+  intersection with any curve of the map. } }
+
   \ccMethod{Halfedge_handle non_intersecting_insert_from_vertex(const X_curve& cv, Vertex_handle src, bool
   source);}
   {invokes the planar map implementation of
   \ccc{insert_from_vertex} function. Since this function does not
-  check for intersections it is more efficient than \ccc{insert_from_vertex} but
-  it should not be called when \ccc{cv} could have intersections with other
-  curves of the planar map.
+  check for intersections it is more efficient than \ccc{insert_from_vertex}.
        \ccPrecond{\ccc{cv} has no intersection in the interior with any curve of the map. }
-       \ccPrecond{\ccc{src} holds a point which is the same as \ccc{cv}'s source.}
+       \ccPrecond{\ccc{src} holds a point thatmn                      is the same as \ccc{cv}'s source.}
        }
-
-  \ccMethod{Halfedge_handle non_intersecting_insert(const X_curve&
-  cv);}
-  {invokes the planar map implementation of
-  \ccc{insert} function. Since this function does not
-  check for intersections it is more efficient than \ccc{insert} but
-  it should not be called when \ccc{cv} could have intersections with other
-  curves of the planar map.
-       \ccPrecond{\ccc{cv} has no intersection in the interior with any curve of the map. }
-  }
-
 
 \end{ccAdvanced}
 
