@@ -1,3 +1,6 @@
+16 September 2004 Sylvain Pion
+- Replace CLN by CORE in the test-suite page.
+
 10 September 2004 Sylvain Pion
 - Remove Persistent_homology_d from internal releases.
 
