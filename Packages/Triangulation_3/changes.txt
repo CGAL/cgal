@@ -1,11 +1,14 @@
-2 avril 2004 Mariette Yvinec
+8 April 2004 Andreas Fabri
+- Turned Triangulation_utils_3::vertex_triple_index from a variable in a function
+
+2 April 2004 Mariette Yvinec
 - added is_Gabriel in Delaunay_triangulation_3.h + test
 - slightly changed is_Gabriel in Regular_triangulation_3 to make
   the whoe more homogeneous
 - is_Gabriel is still to be documented (waiting for new wrapper
   and tools of the doc)
 
-2 avril 2004 Mariette Yvinec
+2 April 2004 Mariette Yvinec
 - fixes in Regular_triangulation_euclidean_traits_3.h
 - added Side_of_bounded_orthogonal_sphere_3
 

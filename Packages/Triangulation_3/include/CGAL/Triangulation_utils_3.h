@@ -44,7 +44,7 @@ const char Triangulation_utils_base_3<T>::tab_next_around_edge[4][4] = {
       {2, 0, 1, 5} };
 
 template < class T >
-const int Triangulation_utils_base_3<T>::vertex_triple_index[4][3] = {
+const int Triangulation_utils_base_3<T>::tab_vertex_triple_index[4][3] = {
   {1, 3, 2}, 
   {0, 2, 3},
   {0, 3, 1}, 
@@ -68,6 +68,17 @@ struct Triangulation_utils_3
 		                     ( i != j ) );
     return tab_next_around_edge[i][j];
   }
+
+
+  static int vertex_triple_index(const int i, const int j)
+  {
+    // index of the next cell when turning around the
+    // oriented edge vertex(i) vertex(j) in 3d
+    CGAL_triangulation_precondition( ( i >= 0 && i < 4 ) &&
+		                     ( j >= 0 && j < 3 ) );
+    return tab_vertex_triple_index[i][j];
+  }
+
 };
 
 CGAL_END_NAMESPACE
