@@ -28,49 +28,49 @@
    %The requirements of the latter
    %are requirements for the former.
    %The additional requirements are the following types and methods.
-   %The \ccStyle{Point} can be implemented for non-linear curves as the
+   %The \ccStyle{Point_2} can be implemented for non-linear curves as the
    %intersection of 2 curves.
 
 \ccTypes
-  \ccNestedType{Point}{same as \ccc{PlanarMapTraits_2::Point}.}
-  \ccNestedType{X_curve}{same as \ccc{PlanarMapTraits_2::X_curve}.}
-  \ccNestedType{Curve}{
+  \ccNestedType{Point_2}{same as \ccc{PlanarMapTraits_2::Point_2}.}
+  \ccNestedType{X_curve_2}{same as \ccc{PlanarMapTraits_2::X_curve_2}.}
+  \ccNestedType{Curve_2}{
    curve type, this type should be {\it syntactically} identical to
-   the \ccc{X_curve} type (i.e., it should {\em be} the same type).
-   However, {\it semantically} it differs from the \ccc{X_curve} in
+   the \ccc{X_curve_2} type (i.e., it should {\em be} the same type).
+   However, {\it semantically} it differs from the \ccc{X_curve_2} in
    that it is not necessarily $x$-monotone. In the following methods
-   when we require an \ccc{X_curve} as a parameter, we assume that the
+   when we require an \ccc{X_curve_2} as a parameter, we assume that the
    curve is $x$-monotone.}
 
 \ccOperations
 
 \ccCreationVariable{pmwx_traits}
 
-\ccMethod{bool is_x_monotone(const Curve& c);}{returns true if $c$ is
+\ccMethod{bool is_x_monotone(const Curve_2& c);}{returns true if $c$ is
 an $x$-monotone curve.}
 
-\ccMethod{void make_x_monotone(const Curve& cv, list<X_curve>& l);}{
+\ccMethod{void make_x_monotone(const Curve_2& cv, list<X_curve_2>& l);}{
    cuts \ccc{cv} into $x$-monotone subcurves and stores them in $l$.
    The order in which they are inserted into $l$ defines their order
    in the hierarchy tree.}
 
-\ccMethod{Point point_reflect_in_x_and_y(const Point& pt);}{returns the
-\ccc{Point}
+\ccMethod{Point_2 point_reflect_in_x_and_y(const Point_2& pt);}{returns the
+\ccc{Point_2}
 that is the reflection of \ccc{pt} about the origin (both the $x$ and $y$ 
 axes). E.g., the point $(2,2)$ will be reflected as $(-2,-2)$. }
 
-\ccMethod{X_curve curve_reflect_in_x_and_y(const X_curve& cv);}{returns the \ccc{X_curve}
+\ccMethod{X_curve_2 curve_reflect_in_x_and_y(const X_curve_2& cv);}{returns the \ccc{X_curve_2}
 that is the reflection of \ccc{cv} about the origin 
 (both the $x$ and $y$ axes). E.g., the line segment $((2,2),(3,3))$ will be reflected as $((-2,-2),(-3,-3))$. }
 
-\ccMethod{void curve_split(const X_curve& cv, X_curve& c1, X_curve& c2,
-                   const Point& split_pt);}{splits $cv$ at \ccc{split_pt}
+\ccMethod{void curve_split(const X_curve_2& cv, X_curve_2& c1, X_curve_2& c2,
+                   const Point_2& split_pt);}{splits $cv$ at \ccc{split_pt}
 and assigns the resulting two curves to \ccc{c1} and \ccc{c2}.
 \ccPrecond{\ccc{split_pt} is on \ccc{cv} but is not an endpoint.}
 }
 
-\ccMethod{bool do_intersect_to_right(const X_curve& c1, const X_curve& c2,
-                             const Point& pt);}{returns $true$ if \ccc{c1}
+\ccMethod{bool do_intersect_to_right(const X_curve_2& c1, const X_curve_2& c2,
+                             const Point_2& pt);}{returns $true$ if \ccc{c1}
 and \ccc{c2} intersect at a point that is lexicographically larger than 
 \ccc{pt}
 % to the right of the point \ccc{pt}.
@@ -79,15 +79,15 @@ and \ccc{c2} intersect at a point that is lexicographically larger than
 (i.e., an intersection above or to the right of
 \ccc{pt} but {\em not} on \ccc{pt}).}
 
-\ccMethod{bool nearest_intersection_to_right(const X_curve& c1,
-                                      const X_curve& c2,
-                                      const Point& pt,
-                                      Point& p1, Point& p2);}
+\ccMethod{bool nearest_intersection_to_right(const X_curve_2& c1,
+                                      const X_curve_2& c2,
+                                      const Point_2& pt,
+                                      Point_2& p1, Point_2& p2);}
 {finds the
 nearest intersection point to the right of \ccc{pt}. Nearest is defined as the
 one lexicographically closest to \ccc{pt} not including \ccc{pt} itself.
 If the intersection of \ccc{c1} and \ccc{c2} to the
-right of \ccc{pt} is an \ccc{X_curve} (i.e., there is an overlapping subcurve
+right of \ccc{pt} is an \ccc{X_curve_2} (i.e., there is an overlapping subcurve
 to the right of \ccc{pt}),
 then \ccc{p1} will hold the source point of the intersection and
 \ccc{p2} will hold its target point. Otherwise \ccc{p1} and \ccc{p2} are
@@ -103,7 +103,7 @@ the function returns \ccc{false}, otherwise it returns true.
 %The intersection function is defined in such a way to enable dealing with
 %degenerate cases when two curves inserted into the arrangement overlap.
 
-\ccMethod{bool curves_overlap(const X_curve& cv1, const X_curve& cv2);}
+\ccMethod{bool curves_overlap(const X_curve_2& cv1, const X_curve_2& cv2);}
 {returns \ccc{true} if \ccc{cv1} and \ccc{cv2} overlap
 in a one-dimensional subcurve (i.e., not in a finite number
 of points), otherwise returns

@@ -25,8 +25,8 @@
     to work robustly an exact number type such as \ccc{leda_real} should
     be used.
 
-    The \ccc{Point} type is \ccc{Point_2<Cartesian<NT> >}. The  
-    \ccc{Curve} and \ccc{X_curve}
+    The \ccc{Point_2} type is \ccc{Point_2<Cartesian<NT> >}. The  
+    \ccc{Curve_2} and \ccc{X_curve_2}
     representation is a \ccc{Circle_2<Cartesian<NT> >}
     with two additional points corresponding to the source and target points.
     The copy and default constructor as well as the
@@ -51,14 +51,14 @@
     \ccCreation
     \ccCreationVariable{cv}
 
-\ccConstructor{Curve(const Circle_2<Cartesian<NT> >& c);}{constructs
+\ccConstructor{Curve_2(const Circle_2<Cartesian<NT> >& c);}{constructs
    a curve with a CGAL circle (source and target are identical and
    initialized to the leftmost point on the circle).}
-\ccConstructor{Curve(const NT& x, const NT& y, const NT& r2);}{constructs a
+\ccConstructor{Curve_2(const NT& x, const NT& y, const NT& r2);}{constructs a
    curve corresponding to a full circle, oriented counterclockwise, with
    its center at \ccc{Point(x,y)} and \ccc{r2} as its squared radius.}
-\ccConstructor{Curve(const NT& x, const NT& y, const NT& r2, const Point& src,
-   const Point& trgt);}{constructs a
+\ccConstructor{Curve_2(const NT& x, const NT& y, const NT& r2, const Point_2& src,
+   const Point_2& trgt);}{constructs a
    curve corresponding to an arc segment of the circle that has
    its center at \ccc{Point(x,y)} and has \ccc{r2} as its squared radius.
    The arc is oriented counterclockwise and
@@ -68,8 +68,8 @@
 \ccOperations
 
 \ccMethod{const Circle_2<Cartesian<NT> >& circle() const;}{returns the circle the arc is on.} 
-\ccMethod{const Point& source() const;}{returns the source point of the arc.}
-\ccMethod{const Point& target() const;}{returns the target point of the arc.}
+\ccMethod{const Point_2& source() const;}{returns the source point of the arc.}
+\ccMethod{const Point_2& target() const;}{returns the target point of the arc.}
 \ccMethod{bool is_x_monotone() const;}{returns \ccc{true} if the arc is
    $x$-monotone, \ccc{false} otherwise.}
 

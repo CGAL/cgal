@@ -58,14 +58,14 @@
 \ccOperations
 
 
-    \ccMethod{Halfedge_handle insert(const X_curve& cv, Pmwx_change_notification *en = NULL);}
+    \ccMethod{Halfedge_handle insert(const X_curve_2& cv, Pmwx_change_notification *en = NULL);}
       {inserts the $x$-monotone curve \ccStyle{cv} into the planar map.
       Returns the last inserted halfedge whose target points to the
       target point of \ccStyle{cv}.
        \ccPrecond{\ccc{cv} is not equivalent to a point. }
        }
 
-    \ccMethod{Halfedge_handle insert_from_vertex(const X_curve& cv, Vertex_handle src,
+    \ccMethod{Halfedge_handle insert_from_vertex(const X_curve_2& cv, Vertex_handle src,
       Pmwx_change_notification *en = NULL);}
       {inserts  the $x$-monotone curve \ccStyle{cv}, for
        which the source vertex, \ccStyle{src}, is already in the
@@ -84,7 +84,7 @@
 
 \begin{ccAdvanced}
 
-  \ccMethod{Halfedge_handle non_intersecting_insert(const X_curve&
+  \ccMethod{Halfedge_handle non_intersecting_insert(const X_curve_2&
   cv);}
   {invokes the planar map implementation of \ccc{insert}
   function. Since this function does not check for intersections it is
@@ -92,7 +92,7 @@
   \ccPrecond{\ccc{cv} has no proper
   intersection with any curve of the map. } }
 
-  \ccMethod{Halfedge_handle non_intersecting_insert_from_vertex(const X_curve& cv, Vertex_handle src, bool
+  \ccMethod{Halfedge_handle non_intersecting_insert_from_vertex(const X_curve_2& cv, Vertex_handle src, bool
   source);}
   {invokes the planar map implementation of
   \ccc{insert_from_vertex} function. Since this function does not
@@ -117,8 +117,8 @@
 %    \ccMethod{Face_iterator faces_end();}{}
 %    \ccMethod{Size number_of_faces();}{}
 %
-%    \ccMethod{Halfedge_handle split_edge(Halfedge_handle e, const X_curve& c1,
-%   const X_curve& c2);}{}
+%    \ccMethod{Halfedge_handle split_edge(Halfedge_handle e, const X_curve_2& c1,
+%   const X_curve_2& c2);}{}
 %    \ccMethod{Halfedge_handle locate(const Point& p, Locate_type& lt);}{}
 %    \ccMethod{Halfedge_handle vertical_ray_shoot(const Point& p, Locate_type& lt, bool up);}{}
 %
