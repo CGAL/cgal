@@ -169,7 +169,7 @@ public slots:
     double value;
     double roughness = 0.5;
     int frequency    = 70;
-    int gridSize = 40;
+    int gridSize = 20;
     double landscape[100][100];
     bool initFractals = true;
 
@@ -230,27 +230,20 @@ public slots:
   }
 
   void load_terrain(){
-    QFileDialog qfd(this, "Load Terrain", true);
-    qfd.setViewMode(QFileDialog::Detail);    
-    qfd.addFilter("CGAL files (*.cgal) (*.off)");
-    qfd.setMode(QFileDialog::AnyFile);
-
-    QString fileName;
-    if ( qfd.exec() == QDialog::Accepted )
-      fileName = qfd.selectedFile();
-
-    if ( !fileName.isNull() ) {
-      // got a file name
-      std::ifstream in(fileName);
-      //CGAL::set_ascii_mode(out);
-      dt.clear();
-      in >> dt;
-      terrain->compute_normals_for_faces();
-      terrain->compute_normals_for_vertices();    
-      terrain->touch();
-      viewer->viewAll();
-      widget->redraw();
-    }
+    QString s( QFileDialog::getOpenFileName( QString::null,
+			    "CGAL files (*.cgal)", this ) );
+    if ( s.isEmpty() )
+        return;
+      
+    std::ifstream in(s);
+    //CGAL::set_ascii_mode(out);
+    dt.clear();
+    in >> dt;
+    terrain->compute_normals_for_faces();
+    terrain->compute_normals_for_vertices();    
+    terrain->touch();
+    viewer->viewAll();
+    widget->redraw();
   }
   void save_terrain(){
     QFileDialog qfd(this, "Save Terrain", true);
