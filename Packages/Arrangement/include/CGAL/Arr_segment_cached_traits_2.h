@@ -114,7 +114,7 @@ public:
     /*!
      *
      */
-    CGAL::Bbox_2 bbox()
+    Bbox_2 bbox()
     {
       Segment_2 seg(ps, pt);
       return seg.bbox();
@@ -364,7 +364,7 @@ public:
     typename Kernel::Segment_2   cv1 (first.ps, first.pt);
     typename Kernel::Segment_2   cv2 (second.ps, second.pt);
 
-    return counterclockwise_in_between_2_object()(point, cvx, cv1, cv2);
+    return counterclockwise_in_between_2_object()(point, cvx, cv2, cv1);
     // Notice the change in order of first and second
     //return counterclockwise_in_between_2_object()(point, cv, second, first);
   }
@@ -680,8 +680,8 @@ private:
       is_overlap = false;
 
       // Simple case of intersection at a single point.
-      if (curve_get_point_status(cv1, ip) == ON_CURVE &&
-	  curve_get_point_status(cv2, ip) == ON_CURVE)
+      if ((cv1.is_orig || curve_get_point_status(cv1, ip) == ON_CURVE) &&
+	  (cv2.is_orig || curve_get_point_status(cv2, ip) == ON_CURVE))
       {
 	p1 = ip;
 	return (true);
