@@ -46,13 +46,13 @@ Qt_widget_toolbar$(OBJ_EXT): Qt_widget_toolbar.C Qt_widget_toolbar.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar.C
 
 Qt_widget_toolbar.moc: Qt_widget_toolbar.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Widget.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Widget_Zoom.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Widget_Zoomrect.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Widget_MovePoint.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Widget_Get_line.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Widget_Get_point.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Widget_Handtool.h
+                      $(CGAL_INCL)/CGAL/IO/Qt_widget.h \
+                      $(CGAL_INCL)/CGAL/IO/Qt_widget_zoom.h \
+                      $(CGAL_INCL)/CGAL/IO/Qt_widget_zoomrect.h \
+                      $(CGAL_INCL)/CGAL/IO/Qt_widget_move_point.h \
+                      $(CGAL_INCL)/CGAL/IO/Qt_widget_get_line.h \
+                      $(CGAL_INCL)/CGAL/IO/Qt_widget_get_point.h \
+                      $(CGAL_INCL)/CGAL/IO/Qt_widget_handtool.h
 	$(QT_MOC) -o Qt_widget_toolbar.moc $<
 
 Qt_widget_toolbar_views$(OBJ_EXT): Qt_widget_toolbar_views.C \
@@ -60,12 +60,12 @@ Qt_widget_toolbar_views$(OBJ_EXT): Qt_widget_toolbar_views.C \
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar_views.C
 
 Qt_widget_toolbar_views.moc: Qt_widget_toolbar_views.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Widget.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Widget_Show_voronoi.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Widget_Show_triangulation.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Widget_Nearest_vertex.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Widget_Show_points.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Widget_Mouse_coordinates.h
+                      $(CGAL_INCL)/CGAL/IO/Qt_widget.h \
+                      $(CGAL_INCL)/CGAL/IO/Qt_view_show_voronoi.h \
+                      $(CGAL_INCL)/CGAL/IO/Qt_view_show_triangulation.h \
+                      $(CGAL_INCL)/CGAL/IO/Qt_view_nearest_vertex.h \
+                      $(CGAL_INCL)/CGAL/IO/Qt_view_show_points.h \
+                      $(CGAL_INCL)/CGAL/IO/Qt_view_mouse_coordinates.h
 	$(QT_MOC) -o Qt_widget_toolbar_views.moc $<
 
 triangulationdemo.moc: triangulationdemo.C $(CGAL_INCL)/CGAL/IO/Qt_Widget.h \
