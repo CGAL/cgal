@@ -314,7 +314,7 @@ operator<<(VRML_2_ostream& os,
              "                    geometry\n"
              "                        Sphere { "
              "radius ";
-  os <<      sqrt(CGAL::to_double(s.squared_radius())) <<" }\n";
+  os <<      ::sqrt(CGAL::to_double(s.squared_radius())) <<" }\n";
   os <<      "                } #children Shape\n"
              "              } # Transform\n"
              "            ] #children\n"

@@ -1,3 +1,7 @@
+25 February 2004 Radu Ursu
+- added new line at the end of file VRML_2_ostream.h
+- using sqrt from outside of the CGAL scope 
+
 20 02 2004 Radu Ursu
 - added operator << for Alpha_shape_3 in VRML_2_ostream
 - added operator << for Sphere_3 in VRML_2_ostream
