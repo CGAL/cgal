@@ -1,3 +1,6 @@
+10 February 2004 Radu Ursu
+-Updated headers in examples
+
 5.162 (28 Nov 2003) [rursu]
 - _Polyhedron_iterator -> I_HalfedgeDS_iterator
 - I_Polyhedron_iterator -> I_HalfedgeDS_iterator

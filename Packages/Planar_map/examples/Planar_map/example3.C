@@ -1,3 +1,9 @@
+// Copyright (c) 1997  Tel-Aviv University (Israel).
+// All rights reserved.
+//
+// This file is part of an example program for CGAL.  This example
+// program may be used, distributed and modified without limitation.
+
 /*! \file
  * A Construction of a Planar_map and some point location queries.
  * A Construction of a Planar_map in the shape of the David star, some

@@ -1,3 +1,9 @@
+// Copyright (c) 1997  Tel-Aviv University (Israel).
+// All rights reserved.
+//
+// This file is part of an example program for CGAL.  This example
+// program may be used, distributed and modified without limitation.
+
 #include "short_names.h"
 
 #include <CGAL/Cartesian.h>

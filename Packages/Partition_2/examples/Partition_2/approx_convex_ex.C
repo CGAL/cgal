@@ -1,6 +1,10 @@
+// Copyright (c) 2000  Max-Planck-Institute Saarbruecken (Germany).
+// All rights reserved.
+//
+// This file is part of an example program for CGAL.  This example
+// program may be used, distributed and modified without limitation.
 //
 //  file: examples/Partition_2/approx_convex_ex.C
-//
 
 #include <CGAL/basic.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
