@@ -1,3 +1,7 @@
+2,49 (14 October 2003) [af]
+- Simplified examples
+- Moved examples from \section to \subsection level
+
 2.48 (19 September 2003) [af]
 - New license headers
 
