@@ -31,18 +31,34 @@
 
 CGAL_BEGIN_NAMESPACE
 
-// This one is easy : it's just 3 Orientation_2.
-// Note that it will mix the profiler stats.
+// XXX :
+// Is this really useful to optimize this predicate ?
+// I de-prioritize it for now.
 
-template <class Point, class Orientation_2>
+
+// This one is easy : it's just 3 Orientation_2.
+
+template < typename P3 >
+struct Point_23_xy {
+    const P3 &p;
+
+    Point_23_xy(const P3& pp) : p(pp) {}
+
+    const FT& x() const { return p.x(); }
+    const FT& y() const { return p.y(); }
+};
+
+template < typename Kernel >
 class SF_Coplanar_orientation_3
+  : public Kernel::Coplanar_orientation_3
 {
-  Orientation_2 oxy, oyz, oxz;
+  typedef typename Kernel::Point_3                  Point_3;
+  typedef typename Kernel::Coplanar_orientation_3   Base;
 
 public:
   typedef Orientation result_type;
 
-  Orientation operator()(const Point &p, const Point &q, const Point &r) const
+  Orientation operator()(const Point_3 &p, const Point_3 &q, const Point_3 &r) const
   {
       return opti_coplanar_orientationC3(
 	    to_double(p.x()), to_double(p.y()), to_double(p.z()),
@@ -50,8 +66,8 @@ public:
 	    to_double(r.x()), to_double(r.y()), to_double(r.z()));
   }
 
-  Orientation operator()(const Point &p, const Point &q,
-                         const Point &r, const Point &s) const
+  Orientation operator()(const Point_3 &p, const Point_3 &q,
+                         const Point_3 &r, const Point_3 &s) const
   {
       return opti_coplanar_orientationC3(
 	    to_double(p.x()), to_double(p.y()), to_double(p.z()),
@@ -68,19 +84,20 @@ private:
   {
       CGAL_PROFILER("Coplanar_orientation_3 #1 calls");
 
-      Orientation oxy_pqr = oxy.opti_orientationC2(px,py,qx,qy,rx,ry);
+      std::pair<bool, Orientation> oxy_pqr = orient_2d(px,py,qx,qy,rx,ry);
       if (oxy_pqr != COLLINEAR)
           return oxy_pqr;
 
       CGAL_PROFILER("Coplanar_orientation_3 #1 step2");
 
-      Orientation oyz_pqr = oyz.opti_orientationC2(py,pz,qy,qz,ry,rz);
+      Orientation oyz_pqr = orient_2d(py,pz,qy,qz,ry,rz);
       if (oyz_pqr != COLLINEAR)
           return oyz_pqr;
 
       CGAL_PROFILER("Coplanar_orientation_3 #1 step3");
 
-      return oxz.opti_orientationC2(px,pz,qx,qz,rx,rz);
+      return orient_2d(px,pz,qx,qz,rx,rz);
+
   }
 
   Orientation
@@ -91,24 +108,65 @@ private:
   {
       CGAL_PROFILER("Coplanar_orientation_3 #2 calls");
 
-      Orientation oxy_pqr = oxy.opti_orientationC2(px,py,qx,qy,rx,ry);
+      Orientation oxy_pqr = orient_2d(px,py,qx,qy,rx,ry);
       if (oxy_pqr != COLLINEAR)
           return Orientation( oxy_pqr *
-		              oxy.opti_orientationC2(px,py,qx,qy,sx,sy));
+		              orient_2d(px,py,qx,qy,sx,sy));
 
       CGAL_PROFILER("Coplanar_orientation_3 #2 step2");
 
-      Orientation oyz_pqr = oyz.opti_orientationC2(py,pz,qy,qz,ry,rz);
+      Orientation oyz_pqr = orient_2d(py,pz,qy,qz,ry,rz);
       if (oyz_pqr != COLLINEAR)
           return Orientation( oyz_pqr *
-		              oyz.opti_orientationC2(py,pz,qy,qz,sy,sz));
+		              orient_2d(py,pz,qy,qz,sy,sz));
 
       CGAL_PROFILER("Coplanar_orientation_3 #2 step3");
 
-      Orientation oxz_pqr = oxz.opti_orientationC2(px,pz,qx,qz,rx,rz);
+      Orientation oxz_pqr = orient_2d(px,pz,qx,qz,rx,rz);
       CGAL_kernel_assertion(oxz_pqr != COLLINEAR);
-      return Orientation( oxz_pqr * oxz.opti_orientationC2(px,pz,qx,qz,sx,sz));
+      return Orientation( oxz_pqr * orient_2d(px,pz,qx,qz,sx,sz));
   }
+
+  // FIXME : Some code duplicated from Orientation_2...
+  std::pair<bool, Orientation>
+  orient_2d(double px, double py, double qx, double qy, double rx, double ry) const
+  {
+    /*
+    double px = p.x();
+    double py = p.y();
+    double qx = q.x();
+    double qy = q.y();
+    double rx = r.x();
+    double ry = r.y();
+    */
+
+    CGAL_PROFILER("orient2d calls");
+
+    double pqx = qx-px;
+    double pqy = qy-py;
+    double prx = rx-px;
+    double pry = ry-py;
+
+    double det = det2x2_by_formula(pqx, pqy,
+                                   prx, pry);
+
+    // Then semi-static filter.
+    double maxx = fabs(px);
+    if (maxx < fabs(qx)) maxx = fabs(qx);
+    if (maxx < fabs(rx)) maxx = fabs(rx);
+    double maxy = fabs(py);
+    if (maxy < fabs(qy)) maxy = fabs(qy);
+    if (maxy < fabs(ry)) maxy = fabs(ry);
+    double eps = 3.55271e-15 * maxx * maxy;
+
+    if (det > eps)  return std::make_pair(true, POSITIVE);
+    if (det < -eps) return std::make_pair(true, NEGATIVE);
+
+    CGAL_PROFILER("orient2d semi-static failures");
+
+    return std::make_pair(false, ZERO);
+  }
+
 };
 
 CGAL_END_NAMESPACE

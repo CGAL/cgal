@@ -1,4 +1,7 @@
 20 June 2004 Sylvain Pion
+- Rewrite of Static_filters and its test-suite in preparation for the merge.
+
+20 June 2004 Sylvain Pion
 - Put diff_was_exact() in a separate file.
 
 20 June 2004 Sylvain Pion

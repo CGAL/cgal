@@ -24,17 +24,16 @@
 #ifndef CGAL_STATIC_FILTERS_ORIENTATION_3_H
 #define CGAL_STATIC_FILTERS_ORIENTATION_3_H
 
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Filtered_exact.h>
-#include <CGAL/MP_Float.h>
 #include <CGAL/Profile_counter.h>
 // #include <CGAL/Static_filter_error.h> // Only used to precompute constants
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Point>
+template < typename K_base >
 class SF_Orientation_3
+  : public K_base::Orientation_3
 {
+#if 0
   // Computes the epsilon for Orientation_3.
   static double ori_3()
   {
@@ -47,83 +46,82 @@ class SF_Orientation_3
     std::cerr << "*** epsilon for Orientation_3 = " << err << std::endl;
     return err;
   }
-
-public:
-  typedef Orientation result_type;
-
-  Orientation operator()(const Point &p, const Point &q,
-                         const Point &r, const Point &s) const
-  {
-    return opti_orientationC3(
-	    to_double(p.x()), to_double(p.y()), to_double(p.z()),
-	    to_double(q.x()), to_double(q.y()), to_double(q.z()),
-	    to_double(r.x()), to_double(r.y()), to_double(r.z()),
-	    to_double(s.x()), to_double(s.y()), to_double(s.z()));
-  }
-
-private:
-
-  Orientation
-  opti_orientationC3(double px, double py, double pz,
-                     double qx, double qy, double qz,
-		     double rx, double ry, double rz,
-		     double sx, double sy, double sz) const
-  {
-    CGAL_PROFILER("Orientation_3 calls");
-
-    double pqx = qx-px;
-    double pqy = qy-py;
-    double pqz = qz-pz;
-    double prx = rx-px;
-    double pry = ry-py;
-    double prz = rz-pz;
-    double psx = sx-px;
-    double psy = sy-py;
-    double psz = sz-pz;
-
-    double det = det3x3_by_formula(pqx, pqy, pqz,
-                                   prx, pry, prz,
-                                   psx, psy, psz);
-
-#if 1
-    // Then semi-static filter.
-    double maxx = fabs(px);
-    if (maxx < fabs(qx)) maxx = fabs(qx);
-    if (maxx < fabs(rx)) maxx = fabs(rx);
-    if (maxx < fabs(sx)) maxx = fabs(sx);
-    double maxy = fabs(py);
-    if (maxy < fabs(qy)) maxy = fabs(qy);
-    if (maxy < fabs(ry)) maxy = fabs(ry);
-    if (maxy < fabs(sy)) maxy = fabs(sy);
-    double maxz = fabs(pz);
-    if (maxz < fabs(qz)) maxz = fabs(qz);
-    if (maxz < fabs(rz)) maxz = fabs(rz);
-    if (maxz < fabs(sz)) maxz = fabs(sz);
-    double eps = 3.90799e-14 * maxx * maxy * maxz;
-
-    if (det > eps)  return POSITIVE;
-    if (det < -eps) return NEGATIVE;
-
-    CGAL_PROFILER("Orientation_3 semi-static failures");
 #endif
 
-    // Experiments showed that there's practically no benefit for testing when
-    // the initial substractions were done exactly.  In most cases where the
-    // first filter fails, the determinant is null.  Most of those cases are
-    // caught by the IA filter, but not by a second stage semi-static filter,
-    // because in most cases one of the coefficient is null, and IA takes
-    // advantage of this, though it's going through an inexact temporary
-    // computation (which is zeroed later).
+  typedef typename K_base::Point_3          Point_3;
+  typedef typename K_base::Orientation_3    Base;
 
-    typedef Simple_cartesian<Filtered_exact<double, MP_Float> > K;
-    typedef K::Point_3 P;
+public:
 
-    Orientation oooo = orientation(P(px,py,pz), P(qx,qy,qz),
-	                           P(rx,ry,rz), P(sx,sy,sz));
-    if (oooo == ZERO) {
-        CGAL_PROFILER("Orientation_3 det_is_null");
-    }
-    return oooo;
+  Orientation operator()(const Point_3 &p, const Point_3 &q,
+                         const Point_3 &r, const Point_3 &s) const
+  {
+      if (fit_in_double(p.x()) && fit_in_double(p.y()) && fit_in_double(p.z()) &&
+          fit_in_double(q.x()) && fit_in_double(q.y()) && fit_in_double(q.z()) &&
+          fit_in_double(r.x()) && fit_in_double(r.y()) && fit_in_double(r.z()) &&
+          fit_in_double(s.x()) && fit_in_double(s.y()) && fit_in_double(s.z()))
+      {
+          double px = p.x();
+          double py = p.y();
+          double pz = p.z();
+          double qx = q.x();
+          double qy = q.y();
+          double qz = q.z();
+          double rx = r.x();
+          double ry = r.y();
+          double rz = r.z();
+          double sx = s.x();
+          double sy = s.y();
+          double sz = s.z();
+
+          CGAL_PROFILER("Orientation_3 calls");
+
+          double pqx = qx-px;
+          double pqy = qy-py;
+          double pqz = qz-pz;
+          double prx = rx-px;
+          double pry = ry-py;
+          double prz = rz-pz;
+          double psx = sx-px;
+          double psy = sy-py;
+          double psz = sz-pz;
+
+          double det = det3x3_by_formula(pqx, pqy, pqz,
+                                         prx, pry, prz,
+                                         psx, psy, psz);
+
+#if 1
+          // Then semi-static filter.
+          double maxx = fabs(px);
+          if (maxx < fabs(qx)) maxx = fabs(qx);
+          if (maxx < fabs(rx)) maxx = fabs(rx);
+          if (maxx < fabs(sx)) maxx = fabs(sx);
+          double maxy = fabs(py);
+          if (maxy < fabs(qy)) maxy = fabs(qy);
+          if (maxy < fabs(ry)) maxy = fabs(ry);
+          if (maxy < fabs(sy)) maxy = fabs(sy);
+          double maxz = fabs(pz);
+          if (maxz < fabs(qz)) maxz = fabs(qz);
+          if (maxz < fabs(rz)) maxz = fabs(rz);
+          if (maxz < fabs(sz)) maxz = fabs(sz);
+          double eps = 3.90799e-14 * maxx * maxy * maxz;
+
+          if (det > eps)  return POSITIVE;
+          if (det < -eps) return NEGATIVE;
+
+          CGAL_PROFILER("Orientation_3 semi-static failures");
+#endif
+
+          // Experiments showed that there's practically no benefit for testing when
+          // the initial substractions were done exactly.  In most cases where the
+          // first filter fails, the determinant is null.  Most of those cases are
+          // caught by the IA filter, but not by a second stage semi-static filter,
+          // because in most cases one of the coefficient is null, and IA takes
+          // advantage of this, though it's going through an inexact temporary
+          // computation (which is zeroed later).
+      }
+
+      return Base::operator()(p, q, r, s);
   }
 
 };

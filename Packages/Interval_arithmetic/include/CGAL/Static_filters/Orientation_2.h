@@ -1,4 +1,4 @@
-// Copyright (c) 2001  Utrecht University (The Netherlands),
+// Copyright (c) 2001,2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -25,16 +25,16 @@
 #define CGAL_STATIC_FILTERS_ORIENTATION_2_H
 
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Filtered_exact.h>
-#include <CGAL/MP_Float.h>
 #include <CGAL/Profile_counter.h>
 // #include <CGAL/Static_filter_error.h> // Only used to precompute constants
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Point>
+template < typename K_base >
 class SF_Orientation_2
+  : public K_base::Orientation_2
 {
+#if 0
   // Computes the epsilon for Orientation_2.
   static double ori_2()
   {
@@ -46,56 +46,52 @@ class SF_Orientation_2
     std::cerr << "*** epsilon for Orientation_2 = " << err << std::endl;
     return err;
   }
+#endif
+
+  typedef typename K_base::Point_2          Point_2;
+  typedef typename K_base::Orientation_2    Base;
 
 public:
-  typedef Orientation result_type;
 
-  Orientation operator()(const Point &p, const Point &q, const Point &r) const
+  Orientation operator()(const Point_2 &p, const Point_2 &q, const Point_2 &r) const
   {
-    return opti_orientationC2(to_double(p.x()), to_double(p.y()),
-	                      to_double(q.x()), to_double(q.y()),
-	                      to_double(r.x()), to_double(r.y()));
-  }
+      if (fit_in_double(p.x()) && fit_in_double(p.y()) &&
+          fit_in_double(q.x()) && fit_in_double(q.y()) &&
+          fit_in_double(r.x()) && fit_in_double(r.y()))
+      {
+          double px = p.x();
+          double py = p.y();
+          double qx = q.x();
+          double qy = q.y();
+          double rx = r.x();
+          double ry = r.y();
 
-//private:
-public: // public because used by Coplanar_orientation_3.
+          CGAL_PROFILER("Orientation_2 calls");
 
-  typedef Simple_cartesian<Filtered_exact<double, MP_Float> >::Point_2 P;
+          double pqx = qx-px;
+          double pqy = qy-py;
+          double prx = rx-px;
+          double pry = ry-py;
 
-  Orientation
-  opti_orientationC2(double px, double py,
-                     double qx, double qy,
-		     double rx, double ry) const
-  {
-    CGAL_PROFILER("Orientation_2 calls");
+          double det = det2x2_by_formula(pqx, pqy,
+                                         prx, pry);
 
-    double pqx = qx-px;
-    double pqy = qy-py;
-    double prx = rx-px;
-    double pry = ry-py;
+          // Then semi-static filter.
+          double maxx = fabs(px);
+          if (maxx < fabs(qx)) maxx = fabs(qx);
+          if (maxx < fabs(rx)) maxx = fabs(rx);
+          double maxy = fabs(py);
+          if (maxy < fabs(qy)) maxy = fabs(qy);
+          if (maxy < fabs(ry)) maxy = fabs(ry);
+          double eps = 3.55271e-15 * maxx * maxy;
 
-    double det = det2x2_by_formula(pqx, pqy,
-                                   prx, pry);
+          if (det > eps)  return POSITIVE;
+          if (det < -eps) return NEGATIVE;
 
-    // Then semi-static filter.
-    double maxx = fabs(px);
-    if (maxx < fabs(qx)) maxx = fabs(qx);
-    if (maxx < fabs(rx)) maxx = fabs(rx);
-    double maxy = fabs(py);
-    if (maxy < fabs(qy)) maxy = fabs(qy);
-    if (maxy < fabs(ry)) maxy = fabs(ry);
-    double eps = 3.55271e-15 * maxx * maxy;
+          CGAL_PROFILER("Orientation_2 semi-static failures");
+      }
 
-    if (det > eps)  return POSITIVE;
-    if (det < -eps) return NEGATIVE;
-
-    CGAL_PROFILER("Orientation_2 semi-static failures");
-
-    Orientation oooo = orientation(P(px,py), P(qx,qy), P(rx,ry));
-    if (oooo == ZERO) {
-	CGAL_PROFILER("Orientation_2 det_is_null");
-    }
-    return oooo;
+      return Base::operator()(p, q, r);
   }
 
 };

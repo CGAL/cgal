@@ -30,10 +30,10 @@
 #include <CGAL/Static_filters/Orientation_3.h>
 #include <CGAL/Static_filters/Side_of_oriented_circle_2.h>
 #include <CGAL/Static_filters/Side_of_oriented_sphere_3.h>
-#include <CGAL/Static_filters/Coplanar_orientation_3.h>
-#include <CGAL/Static_filters/Coplanar_side_of_bounded_circle_3.h>
+// #include <CGAL/Static_filters/Coplanar_orientation_3.h>
+// #include <CGAL/Static_filters/Coplanar_side_of_bounded_circle_3.h>
 
-// This traits class gathers optimized predicates written by hand, using
+// This kernel wrapper gathers optimized predicates written by hand, using
 // a few steps of filtering.  It should work if the initial traits has
 // cartesian coordinates which fit exactly in doubles.
 //
@@ -41,26 +41,21 @@
 // logic and is not plug'n play (requires users providing bounds).
 // If it should be provided again, it should probably be separate.
 
-// TODO : write an extensive test-suite.
-
 CGAL_BEGIN_NAMESPACE
 
 template < class K_base >
-class Static_filters : public K_base
+struct Static_filters : public K_base
 {
-public :
+  typedef SF_Orientation_2<K_base>                  Orientation_2;
+  typedef SF_Orientation_3<K_base>                  Orientation_3;
+  typedef SF_Side_of_oriented_circle_2<K_base>      Side_of_oriented_circle_2;
+  typedef SF_Side_of_oriented_sphere_3<K_base>      Side_of_oriented_sphere_3;
 
-  typedef typename K_base::Point_2 Point_2;
-  typedef typename K_base::Point_3 Point_3;
-
-  typedef SF_Orientation_2<Point_2>                 Orientation_2;
-  typedef SF_Orientation_3<Point_3>                 Orientation_3;
-  typedef SF_Side_of_oriented_circle_2<Point_2>     Side_of_oriented_circle_2;
-  typedef SF_Side_of_oriented_sphere_3<Point_3>     Side_of_oriented_sphere_3;
-  typedef SF_Coplanar_orientation_3<Point_3, Orientation_2>
-                                                    Coplanar_orientation_3;
-  typedef SF_Side_of_bounded_circle_3<Point_3>
-                                            Coplanar_side_of_bounded_circle_3;
+  // The two following are for degenerate cases, so I'll update them later.
+  // typedef SF_Coplanar_orientation_3<Point_3, Orientation_2>
+  //                                                   Coplanar_orientation_3;
+  // typedef SF_Side_of_bounded_circle_3<Point_3>
+  //                                          Coplanar_side_of_bounded_circle_3;
 
   Orientation_2
   orientation_2_object() const
@@ -78,13 +73,13 @@ public :
   side_of_oriented_sphere_3_object() const
   { return Side_of_oriented_sphere_3(); }
 
-  Coplanar_orientation_3
-  coplanar_orientation_3_object() const
-  { return Coplanar_orientation_3(); }
+  // Coplanar_orientation_3
+  // coplanar_orientation_3_object() const
+  // { return Coplanar_orientation_3(); }
 
-  Coplanar_side_of_bounded_circle_3
-  coplanar_side_of_bounded_circle_3_object() const
-  { return Coplanar_side_of_bounded_circle_3(); }
+  // Coplanar_side_of_bounded_circle_3
+  // coplanar_side_of_bounded_circle_3_object() const
+  // { return Coplanar_side_of_bounded_circle_3(); }
 };
 
 CGAL_END_NAMESPACE
