@@ -1,6 +1,7 @@
 Version 1.84 (?? August 01)
 - Use std::swap instead of temporary variables in swap().
 - Commonize code between operator=() and copy_triangulation().
+- Test iterators/circulators for Delaunay too.
 
 Version 1.83 (3 August 01)
 - Susan added missing .gif and .eps files in the doc_tex/*_ref directories

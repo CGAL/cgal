@@ -27,7 +27,6 @@ template < class Triangulation >
 int
 _test_vertex_iterator( const Triangulation &T )
 {
-    
     typedef typename Triangulation::Vertex_iterator Vertex_iterator;
     int n = 0;
     Vertex_iterator vit;
@@ -39,7 +38,6 @@ _test_vertex_iterator( const Triangulation &T )
       n++;
     assert( n == T.number_of_vertices() );
     return n;
-
 }
 
 template < class Triangulation >
