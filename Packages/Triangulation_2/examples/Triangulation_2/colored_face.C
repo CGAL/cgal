@@ -5,32 +5,31 @@
 #include <CGAL/Triangulation_default_data_structure_2.h>
 #include <CGAL/Triangulation_2.h>
 
-using namespace CGAL;
 
 /* A facet with a color member variable. */
 template < class Gt >
-class My_face_base : public Triangulation_face_base_2<Gt>
+class My_face_base : public CGAL::Triangulation_face_base_2<Gt>
 {
 public:
-  Color color;
+  CGAL::Color color;
   My_face_base() :
-    Triangulation_face_base_2<Gt>() {}
+    CGAL::Triangulation_face_base_2<Gt>() {}
   My_face_base(void* v0, void* v1, void* v2) : 
-    Triangulation_face_base_2<Gt>(v0,v1,v2) {}
+    CGAL::Triangulation_face_base_2<Gt>(v0,v1,v2) {}
   My_face_base(void* v0, void* v1, void* v2, void* n0, void* n1, void* n2) : 
-    Triangulation_face_base_2<Gt>(v0,v1,v2,n0,n1,n2) {}
+    CGAL::Triangulation_face_base_2<Gt>(v0,v1,v2,n0,n1,n2) {}
 };
 
-typedef Cartesian<double> Rp;
-typedef Triangulation_euclidean_traits_2<Rp> Gt;
-typedef Triangulation_vertex_base_2<Gt> Vb;
+typedef  CGAL::Cartesian<double> Rp;
+typedef  CGAL::Triangulation_euclidean_traits_2<Rp> Gt;
+typedef  CGAL::Triangulation_vertex_base_2<Gt> Vb;
 typedef My_face_base<Gt> Fb;
-typedef Triangulation_default_data_structure_2<Gt,Vb,Fb > Tds;
-typedef Triangulation_2<Gt,Tds> Triangulation;
+typedef  CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb > Tds;
+typedef  CGAL::Triangulation_2<Gt,Tds> Triangulation;
 typedef Triangulation::Face_handle Face_handle;
 typedef Triangulation::Face_iterator Face_iterator;
 typedef Triangulation::Vertex_handle Vertex_handle;
-typedef Point_2<Rp>  Point;
+typedef  CGAL::Point_2<Rp>  Point;
 
 int main() {
     Triangulation t;
@@ -41,7 +40,7 @@ int main() {
     }
     Face_iterator fc = t.faces_begin();
     while (fc != t.faces_end()) {
-	fc->color = BLUE;
+	fc->color = CGAL::BLUE;
 	++fc;
     }
     return 0;
