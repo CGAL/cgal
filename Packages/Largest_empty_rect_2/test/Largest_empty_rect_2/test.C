@@ -21,8 +21,10 @@ typedef CGAL::Largest_empty_iso_rectangle_2<K> Largest_empty_rect;
 
 int main(int argc,char *argv[])
 {
-  //CGAL::Window_stream W(600, 600);
   ifstream *is_ptr;
+  double x,y;
+  std::list<Point> points_list;
+  Iso_rectangle_2 ler;
 
   if(argc == 2) {
     // initialize input file
@@ -59,11 +61,7 @@ int main(int argc,char *argv[])
   }
 
   Iso_rectangle_2 b(Point(x1, y1), Point(x2, y2));
-
-  Largest_empty_rect empty_rectangle(b);
-  
-  double x,y;
-  Number_Type x_type,y_type;
+  Largest_empty_rect empty_rectangle1(b);
 
   // get points from an input file 
   int number_of_points;
@@ -71,21 +69,111 @@ int main(int argc,char *argv[])
   for(int i = 0;i < number_of_points;++i) {
     (*is_ptr) >> x;
     (*is_ptr) >> y;
-    x_type = x;
-    y_type = y;
-    if(x_type >= x1 && x_type <= x2 && y_type >= y1 && y_type <= y2) {
-      Point tmp2(x_type,y_type);
-      empty_rectangle.insert(tmp2);
-    }
+    Point tmp2(x,y);
+    empty_rectangle1.insert(tmp2);
+    points_list.push_back(tmp2);
   }
 
-  // get largest empty rectangle
-  Iso_rectangle_2 ler = empty_rectangle.get_largest_empty_iso_rectangle();
+  // output
+  ler = empty_rectangle1.get_largest_empty_iso_rectangle();
 
-  std::cout << "(" << ler.min().x()
+  std::cout << "first set      (" << ler.min().x()
 	    << "," << ler.min().y() 
             << "),(" << ler.max().x() 
             << "," << ler.max().y() << ")\n";
+
+  // test another ctor
+  Largest_empty_rect empty_rectangle2(Point(x1, y1), Point(x2, y2));
+
+  // test operator =
+  empty_rectangle2 = empty_rectangle1;
+
+  // output
+  ler = empty_rectangle2.get_largest_empty_iso_rectangle();
+
+  std::cout << "test operator = (" << ler.min().x()
+	    << "," << ler.min().y() 
+            << "),(" << ler.max().x() 
+            << "," << ler.max().y() << ")\n";
+
+  // test cctor
+  Largest_empty_rect empty_rectangle3(empty_rectangle1);
+
+  // output
+  ler = empty_rectangle3.get_largest_empty_iso_rectangle();
+
+  std::cout << "test cctor      (" << ler.min().x()
+	    << "," << ler.min().y() 
+            << "),(" << ler.max().x() 
+            << "," << ler.max().y() << ")\n";
+
+  // test list insertion
+  Largest_empty_rect empty_rectangle4(Point(x1, y1), Point(x2, y2));
+  empty_rectangle4.insert(points_list.begin(), points_list.end());
+
+  // output
+  ler = empty_rectangle4.get_largest_empty_iso_rectangle();
+
+  std::cout << "test list insertion (" << ler.min().x()
+	    << "," << ler.min().y() 
+            << "),(" << ler.max().x() 
+            << "," << ler.max().y() << ")\n";
+
+  // test default bbox
+  Largest_empty_rect empty_rectangle5;
+  Point p1(0.5,0.5),p2(2,2);
+  empty_rectangle5.insert(p1);
+  empty_rectangle5.insert(p2);
+
+  // output
+  ler = empty_rectangle5.get_largest_empty_iso_rectangle();
+
+  std::cout << "test default ctor    (" << ler.min().x()
+	    << "," << ler.min().y() 
+            << "),(" << ler.max().x() 
+            << "," << ler.max().y() << ")\n";
+
+  // test removals
+  Point p(x,y);
+  empty_rectangle1.remove(p);
+
+  // output
+  ler = empty_rectangle1.get_largest_empty_iso_rectangle();
+
+  std::cout << "test after removal   (" << ler.min().x()
+	    << "," << ler.min().y() 
+            << "),(" << ler.max().x() 
+            << "," << ler.max().y() << ")\n";
+
+
+  // test clear
+  empty_rectangle1.clear();
+  empty_rectangle1.insert(p);
+
+  // output
+  ler = empty_rectangle1.get_largest_empty_iso_rectangle();
+
+  std::cout << "after clear (" << ler.min().x()
+	    << "," << ler.min().y() 
+            << "),(" << ler.max().x() 
+            << "," << ler.max().y() << ")\n";
+
+  // test bbox
+  Iso_rectangle_2 bb = empty_rectangle1.get_bounding_box();
+
+  std::cout << "bounding box is (" << bb.min().x()
+	    << "," << bb.min().y() 
+            << "),(" << bb.max().x() 
+            << "," << bb.max().y() << ")\n";
+
+  // test quadruple
+  /* quadruple<Largest_empty_iso_rectangle_2<T>::Point,
+          Largest_empty_iso_rectangle_2<T>::Point,
+          Largest_empty_iso_rectangle_2<T>::Point,
+          Largest_empty_iso_rectangle_2<T>::Point> > q = 
+    empty_rectangle1.get_left_bottom_right_top();
+  cerr << q.first() ...*/
+  // complete
 
   return(0);
 }
