@@ -77,10 +77,11 @@ class QPE_pricing_strategy {
     
     // construction & destruction
     QPE_pricing_strategy( const std::string& strategy_name);
+public:
     virtual ~QPE_pricing_strategy( ) { }
-
+protected:
     QPE_pricing_strategy( );            // detects error in virtual inheritance
-    
+        
     // initialization (of derived classes)
     virtual  void  set ( ) { }
     virtual  void  init( ) { }
