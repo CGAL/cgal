@@ -137,6 +137,8 @@ template <typename ET> class Lazy_exact_nt;
  * Note that GCC-2.96 does NULL constant propagation... :)
  */
 
+// unsigned int total_num_objs=0;
+
 // Main base class.
 template <typename ET>
 class Lazy_exact_nt_dyn_rep
@@ -146,13 +148,22 @@ public:
   mutable unsigned int count;
   typedef Lazy_exact_nt_dyn_rep<ET> Self;
 public:
-  Lazy_exact_nt_dyn_rep () : count(1) {};
+  Lazy_exact_nt_dyn_rep () : count(1)
+  {
+      // total_num_objs++;
+      // std::cout << "NEW total num objects = " << total_num_objs << std::endl;
+  }
   virtual Interval_nt interval() const = 0;
   virtual ET exact() const = 0;
+  virtual ~Lazy_exact_nt_dyn_rep () {};
   static void dec_count(const Self * rep)
   {
     if (rep && --rep->count == 0)
+    {
+	// total_num_objs--;
+	// std::cout << "DELETE total num objects = " << total_num_objs << std::endl;
         delete rep;
+    }
   }
   static void inc_count(const Self * rep)
   {
@@ -163,7 +174,7 @@ public:
   // virtual ostream operator<<() const = 0; // ou string, comme Core ?
 };
 
-// double constant. (do the same for float and int)
+// double constant.
 template <typename ET>
 class Lazy_exact_nt_dyn_cst : public Lazy_exact_nt_dyn_rep<ET>
 {
@@ -175,6 +186,28 @@ public:
   Interval_nt interval() const { return d; }
   // void update_interval() const {};
   ET exact() const { return ET(d); }
+  ~Lazy_exact_nt_dyn_cst()
+  {
+      CGAL_assertion(count == 0);
+  }
+};
+
+// float constant.
+template <typename ET>
+class Lazy_exact_nt_dyn_float_cst : public Lazy_exact_nt_dyn_rep<ET>
+{
+public:
+  friend Lazy_exact_nt<ET>;
+  float d;
+  Lazy_exact_nt_dyn_float_cst (const float a)
+      : Lazy_exact_nt_dyn_rep<ET>(), d(a) {}
+  Interval_nt interval() const { return d; }
+  // void update_interval() const {};
+  ET exact() const { return ET(d); }
+  ~Lazy_exact_nt_dyn_float_cst()
+  {
+      CGAL_assertion(count == 0);
+  }
 };
 
 // Unary operations: (probably some factorization of code is welcome...)
@@ -190,12 +223,16 @@ public:
   mutable Interval_nt in;
   const Lazy_exact_nt_dyn_rep<ET> *op1;
   Lazy_exact_nt_dyn_unary (const Lazy_exact_nt_dyn_rep<ET> *a)
-      : et(NULL), in(1,0), op1(a) { inc_count(a); }
+      : Lazy_exact_nt_dyn_rep<ET>(), et(NULL), in(1,0), op1(a)
+  {
+      inc_count(a);
+  }
   // Interval_nt interval() const {};
   // virtual ET exact() const = 0;
-  virtual ~Lazy_exact_nt_dyn_unary() // needs to be virtual ???
+  ~Lazy_exact_nt_dyn_unary()
   {
-      if (et != NULL)
+      CGAL_assertion(count == 0);
+      if (et != NULL) // Useless, but faster.
 	  delete et;
       dec_count(op1);
   }
@@ -283,11 +320,16 @@ protected:
   const Lazy_exact_nt_dyn_rep<ET> *op1, *op2;
   Lazy_exact_nt_dyn_binary (const Lazy_exact_nt_dyn_rep<ET> *a,
 	                    const Lazy_exact_nt_dyn_rep<ET> *b)
-      : in(1,0), et(NULL), op1(a), op2(b) { inc_count(a); inc_count(b); }
-  // virtual ET exact() const = 0;
-  virtual ~Lazy_exact_nt_dyn_binary()
+      : Lazy_exact_nt_dyn_rep<ET>(), in(1,0), et(NULL), op1(a), op2(b)
   {
-      if (et != NULL)
+      inc_count(a);
+      inc_count(b);
+  }
+  // virtual ET exact() const = 0;
+  ~Lazy_exact_nt_dyn_binary()
+  {
+      CGAL_assertion(count == 0);
+      if (et != NULL) // Useless, but faster.
 	  delete et;
       dec_count(op1);
       dec_count(op2);
@@ -457,21 +499,16 @@ public:
 
   Lazy_exact_nt (const Self & s)
   {
-      // if (rep != s.rep) // One of these makes the program crash.
-      {
-	  rep = s.rep;
-	  Self_rep::inc_count(rep);
-      }
+      rep = s.rep;
+      Self_rep::inc_count(rep);
   }
 
-  Self & operator= (const Self s)
+  Self & operator= (const Self & s)
   {
       // if (rep != s.rep) // One of these makes the program crash.
-      {
-	  Self_rep::dec_count(rep);
-	  rep = s.rep;
-	  Self_rep::inc_count(rep);
-      }
+      Self_rep::inc_count(s.rep);
+      Self_rep::dec_count(rep);
+      rep = s.rep;
       return *this;
   }
 
@@ -480,22 +517,26 @@ public:
     : rep (new Lazy_exact_nt_dyn_cst<ET>(d)) {}
   Lazy_exact_nt (const int i)
     : rep (new Lazy_exact_nt_dyn_cst<ET>(double(i))) {}
+  Lazy_exact_nt (const float i)
+    : rep (new Lazy_exact_nt_dyn_float_cst<ET>(i)) {}
 
-  Self operator+ (const Self a) const
+  Self operator+ (const Self & a) const
   { return new Lazy_exact_nt_dyn_add<ET>(rep, a.rep); }
 
-  Self operator- (const Self a) const
+  Self operator- (const Self & a) const
   { return new Lazy_exact_nt_dyn_sub<ET>(rep, a.rep); }
 
-  Self operator* (const Self a) const
+  Self operator* (const Self & a) const
   { return new Lazy_exact_nt_dyn_mul<ET>(rep, a.rep); }
 
-  Self operator/ (const Self a) const
+  Self operator/ (const Self & a) const
   { return new Lazy_exact_nt_dyn_div<ET>(rep, a.rep); }
 
   // Dtor:
   ~Lazy_exact_nt ()
-  { Self_rep::dec_count(rep); }
+  {
+      Self_rep::dec_count(rep);
+  }
 
   bool operator< (const Self s) const
   {
@@ -551,7 +592,7 @@ max(const Lazy_exact_nt<ET> & a, const Lazy_exact_nt<ET> & b)
 template <typename ET>
 std::ostream &
 operator<< (std::ostream & os, const Lazy_exact_nt<ET> & I)
-{ return os << (I.rep->interval()); }
+{ return os << I.rep->interval(); }
 
 
 CGAL_END_NAMESPACE
