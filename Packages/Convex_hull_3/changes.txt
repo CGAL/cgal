@@ -1,3 +1,8 @@
+2.10    (1 June 2001)
+- fixed number type conversion in centroid predicate
+- added some missing typenames
+- fixed doc. problems
+
 2.9     (24 May 2001)
 - added test programs for new quickhull 3D
 
