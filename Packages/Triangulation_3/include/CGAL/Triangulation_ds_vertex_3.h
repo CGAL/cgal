@@ -71,12 +71,17 @@ public:
 private:
   void set_order_of_creation()
   {
-    static int nb=-1; 
     _order_of_creation = ++nb;
   }
 
   int _order_of_creation;
+
+  static int nb;
 };
+
+template <class Tds>
+int Triangulation_ds_vertex_3<Tds>::nb;
+
 
 template < class VH>
 class Vertex_tds_compare_order_of_creation {
