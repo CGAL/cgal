@@ -60,6 +60,8 @@ public:
     : base(rep(Point_2(left.x(), bottom.y()),
                Point_2(right.x(), top.y())))
   {
+    typename R::Less_x_2 less_x;
+    typename R::Less_y_2 less_y;
     CGAL_kernel_precondition(!less_x(right, left));
     CGAL_kernel_precondition(!less_y(top, bottom));
   }

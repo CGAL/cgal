@@ -172,7 +172,9 @@ typename LineC2<R>::Line_2
 LineC2<R>::
 perpendicular(const typename LineC2<R>::Point_2 &p) const
 {
-  return perpendicular_through_point(*this, p);
+  typename R::FT fta, ftb, ftc;
+  perpendicular_through_pointC2(a(), b(), p.x(), p.y(), fta, ftb, ftc);
+  return Line_2(fta, ftb, ftc);
 }
 
 template < class R >
@@ -188,7 +190,9 @@ CGAL_KERNEL_INLINE
 typename LineC2<R>::Point_2
 LineC2<R>::point(int i) const
 {
-  return line_get_point(*this, i);
+  typename R::FT x, y;
+  line_get_pointC2(a(), b(), c(), i, x, y);
+  return Point_2(x,y);
 }
 
 template < class R >
@@ -196,7 +200,9 @@ CGAL_KERNEL_INLINE
 typename LineC2<R>::Point_2
 LineC2<R>::point() const
 {
-  return line_get_point(*this, 0);
+  typename R::FT x, y;
+  line_get_pointC2(a(), b(), c(), 0, x, y);
+  return Point_2(x,y);
 }
 
 template < class R >
@@ -205,7 +211,9 @@ typename LineC2<R>::Point_2
 LineC2<R>::
 projection(const typename LineC2<R>::Point_2 &p) const
 {
-  return line_project_point(*this, p);
+  typename R::FT x, y;
+  line_project_pointC2(a(), b(), c(), p.x(), p.y(), x, y);
+  return Point_2(x, y);
 }
 
 template < class R >
@@ -230,7 +238,7 @@ Oriented_side
 LineC2<R>::
 oriented_side(const typename LineC2<R>::Point_2 &p) const
 {
-  return side_of_oriented_line(*this, p);
+  return side_of_oriented_lineC2(a(), b(), c(), p.x(), p.y());
 }
 
 template < class R >

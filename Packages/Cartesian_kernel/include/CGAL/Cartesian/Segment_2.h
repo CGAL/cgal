@@ -131,7 +131,8 @@ CGAL_KERNEL_INLINE
 const typename SegmentC2<R>::Point_2 &
 SegmentC2<R>::min() const
 {
-  return lexicographically_xy_smaller(source(),target()) ? source() : target();
+  typename R::Less_xy_2 less_xy; 
+  return less_xy(source(),target()) ? source() : target();
 }
 
 template < class R >
@@ -139,7 +140,8 @@ CGAL_KERNEL_INLINE
 const typename SegmentC2<R>::Point_2 &
 SegmentC2<R>::max() const
 {
-  return lexicographically_xy_smaller(source(),target()) ? target() : source();
+  typename R::Less_xy_2 less_xy; 
+  return less_xy(source(),target()) ? target() : source();
 }
 
 template < class R >
@@ -171,6 +173,7 @@ CGAL_KERNEL_INLINE
 typename SegmentC2<R>::FT
 SegmentC2<R>::squared_length() const
 {
+  std::cout << "squared_distance(source(), target());" << std::endl;
   return squared_distance(source(), target());
 }
 
@@ -179,7 +182,8 @@ CGAL_KERNEL_INLINE
 typename SegmentC2<R>::Direction_2
 SegmentC2<R>::direction() const
 {
-  return Direction_2( target() - source() );
+  typename R::Construct_vector_2 construct_vector;
+  return Direction_2( construct_vector( source(), target()));
 }
 
 template < class R >
@@ -187,7 +191,8 @@ CGAL_KERNEL_INLINE
 typename SegmentC2<R>::Vector_2
 SegmentC2<R>::to_vector() const
 {
-  return target() - source();
+  typename R::Construct_vector_2 construct_vector;
+  return construct_vector( source(), target());
 }
 
 template < class R >
@@ -195,7 +200,9 @@ inline
 typename SegmentC2<R>::Line_2
 SegmentC2<R>::supporting_line() const
 {
-  return Line_2(*this);
+  typename R::Construct_line_2 construct_line;
+
+  return construct_line(*this);
 }
 
 template < class R >
@@ -219,7 +226,7 @@ inline
 bool
 SegmentC2<R>::is_degenerate() const
 {
-  return source() == target();
+  return R().equal_y_2_object()(source(), target());
 }
 
 template < class R >
@@ -227,7 +234,7 @@ CGAL_KERNEL_INLINE
 bool
 SegmentC2<R>::is_horizontal() const
 {
-  return y_equal(source(), target());
+  return R().equal_y_2_object()(source(), target());
 }
 
 template < class R >
@@ -235,7 +242,7 @@ CGAL_KERNEL_INLINE
 bool
 SegmentC2<R>::is_vertical() const
 {
-  return x_equal(source(), target());
+  return R().equal_x_2_object()(source(), target());
 }
 
 template < class R >
@@ -244,7 +251,7 @@ bool
 SegmentC2<R>::
 has_on(const typename SegmentC2<R>::Point_2 &p) const
 {
-  return are_ordered_along_line(source(), p, target());
+  return R().collinear_are_ordered_along_line_2_object()(source(), p, target());
 }
 
 template < class R >

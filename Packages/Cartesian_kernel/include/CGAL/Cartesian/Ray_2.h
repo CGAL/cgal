@@ -44,20 +44,20 @@ CGAL_VC7_BUG_PROTECTED
 
 public:
   typedef R_                                     R;
-
+  typename R::Construct_translated_point_2 Construct_translated_point;
   RayC2() {}
 
   RayC2(const Point_2 &sp, const Point_2 &secondp)
     : base(rep(sp, secondp)) {}
 
   RayC2(const Point_2 &sp, const Direction_2 &d)
-    : base(rep(sp, sp + d.to_vector())){}
+    : base(rep(sp, Construct_translated_point( sp, d.to_vector()))){}
 
   RayC2(const Point_2 &sp, const Vector_2 &v)
-    : base(rep(sp, sp + v)){}
+    : base(rep(sp, Construct_translated_point(sp,  v))){}
 
   RayC2(const Point_2 &sp, const Line_2 &l)
-    : base(rep(sp, sp + l.to_vector())){}
+    : base(rep(sp, Construct_translated_point(sp, l.to_vector()))){}
 
   bool        operator==(const RayC2 &r) const;
   bool        operator!=(const RayC2 &r) const;
@@ -122,9 +122,14 @@ typename RayC2<R>::Point_2
 RayC2<R>::point(int i) const
 {
   CGAL_kernel_precondition( i >= 0 );
+
+  typename R::Construct_vector_2 construct_vector;
+  typename R::Construct_translated_point_2 construct_translated_point;
   if (i == 0) return source();
   if (i == 1) return second_point();
-  return source() + (second_point() - source()) * FT(i);
+  return construct_translated_point(source(),
+				    construct_vector(source(), 
+						     second_point())* FT(i));
 }
 
 template < class R >
@@ -132,7 +137,8 @@ inline
 typename RayC2<R>::Vector_2
 RayC2<R>::to_vector() const
 {
-  return second_point() - source();
+  typename R::Construct_vector_2 construct_vector;
+  return construct_vector(source(), second_point());
 }
 
 template < class R >
@@ -140,7 +146,8 @@ inline
 typename RayC2<R>::Direction_2
 RayC2<R>::direction() const
 {
-  return Direction_2( second_point() - source() );
+  typename R::Construct_vector_2 construct_vector;
+  return Direction_2( construct_vector(source(), second_point()) );
 }
 
 template < class R >
@@ -163,14 +170,14 @@ template < class R >
 CGAL_KERNEL_INLINE
 bool RayC2<R>::is_horizontal() const
 {
-  return y_equal(source(), second_point());
+  return R().equal_y_2_object()(source(), second_point());
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
 bool RayC2<R>::is_vertical() const
 {
-  return x_equal(source(), second_point());
+  return R().equal_x_2_object()(source(), second_point());
 }
 
 template < class R >
@@ -185,9 +192,10 @@ CGAL_KERNEL_INLINE
 bool
 RayC2<R>::has_on(const typename RayC2<R>::Point_2 &p) const
 {
+  typename R::Construct_vector_2  construct_vector;
   return p == source()
-      || collinear(source(), p, second_point())
-      && Direction_2(p - source()) == direction();
+      || R().collinear_2_object()(source(), p, second_point())
+      && Direction_2(construct_vector( source(), p)) == direction();
 }
 
 template < class R >

@@ -27,6 +27,7 @@
 #include <CGAL/constructions/kernel_ftC2.h>
 #include <CGAL/constructions/kernel_ftC3.h>
 
+
 CGAL_BEGIN_NAMESPACE
 
 namespace CartesianKernelFunctors {
@@ -1576,13 +1577,18 @@ namespace CartesianKernelFunctors {
     operator()(const Point_2& a, const Point_2& b,
                const Point_2& c, const Point_2& d) const
     {
-      Comparison_result res = compare_signed_distance_to_line(a, b, c, d);
+      typename K::Less_xy_2 less_xy;
+      Comparison_result res = cmp_signed_dist_to_lineC2(a.x(), a.y(), 
+							b.x(), b.y(),
+							c.x(), c.y(),
+							d.x(), d.y());
+
       if ( res == LARGER )
 	return false;
       else if ( res == SMALLER )
 	return true;
       else
-	return lexicographically_xy_smaller( c, d );
+	return less_xy( c, d );
     }
   };
 

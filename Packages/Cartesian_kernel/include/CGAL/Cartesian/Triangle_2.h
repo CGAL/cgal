@@ -131,8 +131,9 @@ CGAL_KERNEL_MEDIUM_INLINE
 typename TriangleC2<R>::FT
 TriangleC2<R>::area() const
 {
-  typename R::Vector_2 v1 = vertex(1)-vertex(0);
-  typename R::Vector_2 v2 = vertex(2)-vertex(0);
+  typename R::Construct_vector_2 construct_vector;
+  typename R::Vector_2 v1 = construct_vector(vertex(0), vertex(1));
+  typename R::Vector_2 v2 = construct_vector(vertex(0), vertex(2));
   return det2x2_by_formula(v1.x(), v1.y(), v2.x(), v2.y())/FT(2);
 }
 
@@ -141,7 +142,8 @@ inline
 Orientation
 TriangleC2<R>::orientation() const
 {
-  return CGAL::orientation(vertex(0), vertex(1), vertex(2));
+  typename R::Orientation_2 orientation;
+  return orientation(vertex(0), vertex(1), vertex(2));
 }
 
 template < class R >
@@ -150,9 +152,11 @@ Bounded_side
 TriangleC2<R>::
 bounded_side(const typename TriangleC2<R>::Point_2 &p) const
 {
-  Orientation o1 = CGAL::orientation(vertex(0), vertex(1), p),
-              o2 = CGAL::orientation(vertex(1), vertex(2), p),
-              o3 = CGAL::orientation(vertex(2), vertex(3), p);
+  typename R::Collinear_are_ordered_along_line_2 collinear_are_ordered_along_line;
+  typename R::Orientation_2 orientation;
+  Orientation o1 = orientation(vertex(0), vertex(1), p),
+              o2 = orientation(vertex(1), vertex(2), p),
+              o3 = orientation(vertex(2), vertex(3), p);
 
   if (o2 == o1 && o3 == o1)
     return ON_BOUNDED_SIDE;
@@ -173,11 +177,13 @@ Oriented_side
 TriangleC2<R>::
 oriented_side(const typename TriangleC2<R>::Point_2 &p) const
 {
+  typename R::Collinear_are_ordered_along_line_2 collinear_are_ordered_along_line;
+  typename R::Orientation_2 orientation;
   // depends on the orientation of the vertices
-  Orientation o1 = CGAL::orientation(vertex(0), vertex(1), p),
-              o2 = CGAL::orientation(vertex(1), vertex(2), p),
-              o3 = CGAL::orientation(vertex(2), vertex(3), p),
-              ot = CGAL::orientation(vertex(0), vertex(1), vertex(2));
+  Orientation o1 = orientation(vertex(0), vertex(1), p),
+              o2 = orientation(vertex(1), vertex(2), p),
+              o3 = orientation(vertex(2), vertex(3), p),
+              ot = orientation(vertex(0), vertex(1), vertex(2));
 
   if (o1 == ot && o2 == ot && o3 == ot) // ot cannot be COLLINEAR
     return Oriented_side(ot);
@@ -242,6 +248,7 @@ inline
 bool
 TriangleC2<R>::is_degenerate() const
 {
+  typename R::Collinear_2 collinear;
   return collinear(vertex(0), vertex(1), vertex(2));
 }
 

@@ -69,6 +69,8 @@ public:
   { // FIXME : construction
     CGAL_kernel_precondition( orient != COLLINEAR);
 
+    typename R::Compute_squared_distance_2 squared_distance;
+    typename R::Construct_midpoint_2 midpoint;
     if (p != q) {
       Point_2 center = midpoint(p, q);
       initialize_with(rep(center, squared_distance(p, center), orient));
@@ -78,7 +80,10 @@ public:
 
   CircleC2(const Point_2 &p, const Point_2 &q, const Point_2 &r)
   { // FIXME : construction
-    Orientation orient = CGAL::orientation(p, q, r);
+    typename R::Orientation_2 orientation;
+    typename R::Compute_squared_distance_2 squared_distance;
+    typename R::Construct_circumcenter_2 circumcenter;
+    Orientation orient = orientation(p, q, r);
     CGAL_kernel_precondition( orient != COLLINEAR);
 
     Point_2 center = circumcenter(p, q, r);
@@ -157,6 +162,7 @@ Bounded_side
 CircleC2<R>::
 bounded_side(const typename CircleC2<R>::Point_2 &p) const
 {
+  typename R::Compute_squared_distance_2 squared_distance;
   return Bounded_side(CGAL_NTS compare(squared_radius(),
                                        squared_distance(center(),p)));
 }

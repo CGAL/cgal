@@ -43,6 +43,7 @@ public:
   typedef typename Aff_t_base::Direction_2       Direction_2;
   typedef typename Aff_t_base::Aff_transformation_2 Aff_transformation_2;
 
+
   Translation_repC2() {}
 
   Translation_repC2(const Vector_2 &tv)
@@ -50,7 +51,11 @@ public:
   {}
 
   Point_2     transform(const Point_2 &p) const
-                            { return p + translationvector_; }
+  { 
+    typename R::Construct_translated_point_2 translated_point;
+    return translated_point(p, translationvector_); 
+  }
+
   Vector_2    transform(const Vector_2 &v) const { return v; }
   Direction_2 transform(const Direction_2 &d) const { return d; }
 
