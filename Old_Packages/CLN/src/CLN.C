@@ -59,7 +59,7 @@ static workaround_4_CLN workaroung_4_CLN_object;
 // - Parse the thing by hand...  (current solution)
 // - Read it as cl_RA, and convert to Quotient<cl_I>, but this is currently
 //   not possible since the access functions to numerator and denominator
-//   are not public (it should be fixed in the next (>1.0.1) release of CLN).
+//   are not public (it's fixed in the 1.0.2 release of CLN).
 
 std::istream&
 operator>> (std::istream& in, Quotient<cl_I>& z)
@@ -106,9 +106,9 @@ operator>> (std::istream& in, Quotient<cl_I>& z)
 
   z = Quotient<cl_I>(num, den);
 #else
-  cl_RA rat;
-  in >> rat;
-  z = Quotient<cl_I> (rat.numerator(), rat.denominator());
+  cl_RA q;
+  in >> q;
+  z = Quotient<cl_I> (numerator(q), denominator(q));
 #endif
   return in;
 }
