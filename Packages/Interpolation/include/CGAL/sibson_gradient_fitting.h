@@ -23,11 +23,12 @@
 #include <CGAL/double.h>
 
 #include <CGAL/natural_neighbor_coordinates_2.h>
+#include <CGAL/regular_neighbor_coordinates_2.h>
 
 CGAL_BEGIN_NAMESPACE 
 
 template < class ForwardIterator, class Functor, class Traits>
-typename Traits::Vector
+typename Traits::Vector_d
 sibson_gradient_fitting(ForwardIterator first, ForwardIterator beyond,
 			const typename
 			std::iterator_traits<ForwardIterator>::
@@ -38,35 +39,35 @@ sibson_gradient_fitting(ForwardIterator first, ForwardIterator beyond,
 			const Traits& traits)
 {  
   CGAL_precondition( first!=beyond && norm!=0);
-  typedef typename Traits::Aff_transformation Aff_transformation;
-  typedef typename Traits::FT                 Coord_type;
+  typedef typename Traits::Aff_transformation_d Aff_transformation;
+  typedef typename Traits::FT                   Coord_type;
   
   typename Functor::result_type fn =  function_value(p);
   CGAL_assertion(fn.second); //function value of p is valid
   
-  typename Traits::Vector pn = 
-    traits.construct_vector_object()(NULL_VECTOR);
+  typename Traits::Vector_d pn = 
+    traits.construct_vector_d_object()(NULL_VECTOR);
   Aff_transformation scaling, m,
-    Hn(traits.construct_null_matrix_object()());
+    Hn(traits.construct_null_matrix_d_object()());
   
   for(;first!=beyond; ++first){
-    Coord_type square_dist = traits.compute_squared_distance_object()
+    Coord_type square_dist = traits.compute_squared_distance_d_object()
       (first->first, p);
     Coord_type  scale(first->second/(norm*square_dist));
-    typename Traits::Vector d= 
-      traits.construct_vector_object()(p, first->first);
+    typename Traits::Vector_d d= 
+      traits.construct_vector_d_object()(p, first->first);
  
     //compute the vector pn:
     typename Functor::result_type f = function_value(first->first);
     CGAL_assertion(f.second);//function value of first->first is valid
-    pn = pn + traits.construct_scaled_vector_object()
+    pn = pn + traits.construct_scaled_vector_d_object()
       (d,scale * (f.first - fn.first));  
     
     //compute the matrix Hn:
-    m = traits.construct_outer_product_object()(d);
-    scaling = traits.construct_scaling_matrix_object()(scale);
+    m = traits.construct_outer_product_d_object()(d);
+    scaling = traits.construct_scaling_matrix_d_object()(scale);
  
-    Hn =  traits.construct_sum_matrix_object()(Hn, scaling * m);   
+    Hn =  traits.construct_sum_matrix_d_object()(Hn, scaling * m);   
   }
 
   return Hn.inverse().transform(pn);
@@ -82,8 +83,8 @@ sibson_gradient_fitting(const Triangul& tr,
 			CoordFunctor compute_coordinates,
 			const Traits& traits)
 {
-  typedef typename Traits::Point                        Point;
-  typedef typename Traits::FT                           Coord_type;
+  typedef typename Traits::Point_d                        Point;
+  typedef typename Traits::FT                             Coord_type;
   
   std::vector< std::pair< Point, Coord_type > > coords;
   Coord_type norm;
@@ -124,7 +125,7 @@ sibson_gradient_fitting_nn_2(const Dt& dt,
 
   
   typedef typename std::back_insert_iterator< std::vector< std::pair<
-    typename Traits::Point,typename  Traits::FT > > >   CoordInserter;
+    typename Traits::Point_d,typename  Traits::FT > > >   CoordInserter;
 
   return sibson_gradient_fitting
     (dt, out, function_value, 
@@ -135,22 +136,20 @@ sibson_gradient_fitting_nn_2(const Dt& dt,
 template < class Rt, class OutputIterator,  class Functor, class Traits>
 OutputIterator
 sibson_gradient_fitting_rn_2(const Rt& rt, 
-				   OutputIterator out,
-				   Functor function_value,
-				   const Traits& traits)
+			     OutputIterator out,
+			     Functor function_value,
+			     const Traits& traits)
 {
-
+  
   
   typedef typename std::back_insert_iterator< std::vector< std::pair<
-    typename Traits::Point,typename  Traits::FT > > >   CoordInserter;
-
+    typename Traits::Point_d,typename  Traits::FT > > >   CoordInserter;
+  
   return sibson_gradient_fitting
     (rt, out, function_value, 
      regular_neighbor_coordinates_2_object< Rt, CoordInserter >(),
      traits); 
 }
-
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_SIBSON_GRADIENT_FITTING_H

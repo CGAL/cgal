@@ -92,54 +92,54 @@ public:
   typedef R                                          Rep;
 
   typedef typename Rep::FT                           FT;
-  typedef typename Rep::Point_2                      Point;
-  typedef typename Rep::Vector_2                     Vector;
+  typedef typename Rep::Point_2                      Point_d;
+  typedef typename Rep::Vector_2                     Vector_d;
 
-  typedef typename Rep::Construct_vector_2           Construct_vector;
-  typedef typename Rep::Construct_scaled_vector_2    Construct_scaled_vector;
+  typedef typename Rep::Construct_vector_2           Construct_vector_d;
+  typedef typename Rep::Construct_scaled_vector_2    Construct_scaled_vector_d;
   //only one not needed by gradient fitting:
-  typedef typename Rep::Compute_squared_distance_2   Compute_squared_distance;
+  typedef typename Rep::Compute_squared_distance_2   Compute_squared_distance_d;
   
   
   //additional types for gradient computation:
-  typedef typename Rep::Aff_transformation_2         Aff_transformation;
+  typedef typename Rep::Aff_transformation_2         Aff_transformation_d;
 
-  typedef Construct_null_matrix_2<Aff_transformation>   
-                                                     Construct_null_matrix;
-  typedef Construct_scaling_matrix_2<Aff_transformation> 
-                                                     Construct_scaling_matrix;
-  typedef Construct_sum_matrix_2<Aff_transformation> Construct_sum_matrix;
-  typedef Construct_outer_product_2<Rep>             Construct_outer_product;
+  typedef Construct_null_matrix_2<Aff_transformation_d>   
+                                                     Construct_null_matrix_d;
+  typedef Construct_scaling_matrix_2<Aff_transformation_d> 
+                                                     Construct_scaling_matrix_d;
+  typedef Construct_sum_matrix_2<Aff_transformation_d> Construct_sum_matrix_d;
+  typedef Construct_outer_product_2<Rep>             Construct_outer_product_d;
   
   
-  Construct_outer_product
-  construct_outer_product_object() const
-    {return Construct_outer_product();}
+  Construct_outer_product_d
+  construct_outer_product_d_object() const
+    {return Construct_outer_product_d();}
   
-  Construct_sum_matrix
-  construct_sum_matrix_object() const
-    {return Construct_sum_matrix();}
+  Construct_sum_matrix_d
+  construct_sum_matrix_d_object() const
+    {return Construct_sum_matrix_d();}
   
-  Construct_scaling_matrix
-  construct_scaling_matrix_object() const
-    {return Construct_scaling_matrix();}
+  Construct_scaling_matrix_d
+  construct_scaling_matrix_d_object() const
+    {return Construct_scaling_matrix_d();}
 
-  Construct_null_matrix
-  construct_null_matrix_object() const
-    {return Construct_null_matrix();}
+  Construct_null_matrix_d
+  construct_null_matrix_d_object() const
+    {return Construct_null_matrix_d();}
 
   //also in the traits without gradient computation:
-  Construct_scaled_vector
-  construct_scaled_vector_object()const
-    {return Construct_scaled_vector();}
+  Construct_scaled_vector_d
+  construct_scaled_vector_d_object()const
+    {return Construct_scaled_vector_d();}
   
-  Construct_vector
-  construct_vector_object()const
-    {return Construct_vector();}
+  Construct_vector_d
+  construct_vector_d_object()const
+    {return Construct_vector_d();}
   
-  Compute_squared_distance
-  compute_squared_distance_object()const
-    {return Compute_squared_distance();}
+  Compute_squared_distance_d
+  compute_squared_distance_d_object()const
+    {return Compute_squared_distance_d();}
 
 };
 CGAL_END_NAMESPACE
