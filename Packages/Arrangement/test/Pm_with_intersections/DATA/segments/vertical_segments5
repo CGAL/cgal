@@ -1,0 +1,32 @@
+# Pmwx Test Data File
+# Segment traits
+# Vertical Segment
+#
+# No. of segments
+7
+# Segments
+350 451 350 615
+350 451 350 615
+350 451 391 451
+350 451 432 574
+432 574 350 615
+391 451 555 615
+555 615 350 615
+ 
+
+
+# No. of test points:
+3
+# Test points (coordinates followed by expected type):
+#             (1 VERTEX, 2 EDGE, 3 FACE, 4 UNBOUNDED_FACE)
+351 500  3
+433 574 3
+1000 1000 6
+# No. of expected points :
+5
+# No. of expected edges:
+6
+# No. of expected faces    :
+3
+# No. of expected overlaps :
+1
