@@ -140,7 +140,9 @@ protected:
 
   typedef Nef_polyhedron_S2_rep<Kernel,Items,Mark,Sphere_map>  Nef_rep;
   typedef typename Nef_rep::Decorator                     Decorator;
+public:
   typedef typename Nef_rep::Const_decorator               Const_decorator;
+protected:
   typedef typename Nef_rep::Overlayer                     Overlayer;
   typedef typename Nef_rep::Locator                       Locator;
 

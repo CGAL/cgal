@@ -632,7 +632,6 @@ SHalfedge_handle new_shalfedge_pair_at_source
       set_adjacency_at_source_between(cap(ef),e1,ef);
       set_first_out_edge(v,e1);
     } else {
-      //      set_adjacency_at_source_between(ef,e1,cas(ef));
       set_adjacency_at_source_between(cap(ef),e1,ef);
     }
   } else
@@ -647,13 +646,15 @@ void delete_edge_pair_at_source(SHalfedge_handle e) const
   delete_edge_pair_only(e);
 }
 
-void link_as_target_and_append(SVertex_handle v, SHalfedge_handle e)
+void link_as_target_and_append(SVertex_handle v, SHalfedge_handle e, int pos = AFTER)
 /*{\Mop makes |v| the target of |e| appends |twin(e)| to the adjacency list
    of |v|.}*/
-{ if (!is_isolated(v)) 
-    set_adjacency_at_source_between(cap(first_out_edge(v)),twin(e),
-      first_out_edge(v));
-  else
+{ if (!is_isolated(v)) {
+    SHalfedge_handle ef = first_out_edge(v);
+    set_adjacency_at_source_between(cap(ef), twin(e), ef);
+    if(pos<0)
+      set_first_out_edge(v,twin(e));
+  } else
     close_tip_at_target(e,v);
 }
 

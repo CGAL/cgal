@@ -1062,11 +1062,9 @@ subdivide(const Map* M0, const Map* M1)
     create_face_objects(e, this->shalfedges_end(), v, this->svertices_end(), O,
 			NH_geometry(cs));
 
-  SHalfedge_iterator u;
-  CGAL_forall_shalfedges(u,*this) {
-    Sphere_segment s(point(source(u)),point(target(u)));
-    circle(u) = s.sphere_circle(); 
-    circle(twin(u)) = s.sphere_circle().opposite();
+  CGAL_forall_sedges(e,*this) {
+    e->circle() = Sphere_circle(e->source()->point(), e->twin()->source()->point()); 
+    e->twin()->circle() = e->circle().opposite();
     CGAL_NEF_TRACEN(PH(u) << " with circle " << circle(u));
   }
 

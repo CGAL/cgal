@@ -396,7 +396,7 @@ public:
 			  const Sphere_circle& c,
 			  Sphere_point& ip,
 			  bool start_inclusive = false) const { 
-    std::cerr << "ray shoot" << std::endl;
+    CGAL_NEF_TRACEN("ray shoot");
     //    Sphere_circle c(d.circle());
     CGAL_assertion(c.has_on(p));
     Sphere_segment s;
@@ -420,9 +420,32 @@ public:
     SHalfedge_iterator ei;
     CGAL_forall_sedges(ei,*this) {
       Sphere_segment se = segment(ei);
+      CGAL_NEF_TRACEN("ray_shoot " << s_init);
+      if(s_init)
+	CGAL_NEF_TRACEN("  " << s.source() << "->" << s.target() << " | " << s.sphere_circle());
+      CGAL_NEF_TRACEN("  " << se.source() << "->" << se.target() << " | " << se.sphere_circle() << " is long " << se.is_long());
+
       Sphere_point p_res;
-      if ((s_init && !do_intersect_internally(se,s,p_res)) ||
-	  (!s_init && !do_intersect_internally(c,se,p_res))) continue;
+      if(se.source() == se.target()) {
+	Sphere_segment first_half(ei->source()->point(), 
+				  ei->source()->point().antipode(), 
+				  ei->circle());
+	Sphere_segment second_half(ei->source()->point().antipode(), 
+				   ei->source()->point(), 
+				   ei->circle());
+	if(s_init) {
+	  if(!do_intersect_internally(s, first_half, p_res) &&
+	     !do_intersect_internally(s, second_half, p_res)) continue;
+	} else {
+	  if(!do_intersect_internally(c, first_half, p_res)) {
+	    bool b = do_intersect_internally(c, second_half, p_res);
+	    CGAL_assertion(b);
+	  }
+	}
+      } else {
+	if ((s_init && !do_intersect_internally(se,s,p_res)) ||
+	    (!s_init && !do_intersect_internally(c,se,p_res))) continue;
+      }
       CGAL_NEF_TRACEN("candidate "<<se); 
       if (start_inclusive || p != p_res) {
 	h = Object_handle(ei); 
@@ -437,10 +460,12 @@ public:
       if(!s_init)
 	s = Sphere_segment(p,p.antipode(),c);
       Sphere_point p_res;
+      CGAL_NEF_TRACEN("do intersect " << cl << ", " << s);
       if(!do_intersect_internally(cl,s,p_res))
 	return h;
       if(p_res == p.antipode())
 	p_res = p;
+      CGAL_NEF_TRACEN("found intersection point " << p_res);
       if (start_inclusive || p != p_res) {
 	ip = p_res;
 	return Object_handle(this->shalfloop());

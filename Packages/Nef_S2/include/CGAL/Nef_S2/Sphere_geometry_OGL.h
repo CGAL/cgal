@@ -709,6 +709,7 @@ template <typename Nef_polyhedron>
 class NefS2_to_UnitSphere
 {
   typedef typename Nef_polyhedron::Sphere_map          Sphere_map;
+  typedef typename Nef_polyhedron::Const_decorator     SM_const_decorator;
   typedef CGAL::OGL::SM_BooleColor<Sphere_map>           Color_;
   typedef typename Sphere_map::Sphere_kernel        Sphere_kernel;
   typedef SM_decorator<Sphere_map>                  Decorator;
@@ -730,7 +731,7 @@ class NefS2_to_UnitSphere
   typedef Color_                                  Color_objects;  
 
  public:
-  static CGAL::OGL::Unit_sphere convert(const Nef_polyhedron& E_,
+  static CGAL::OGL::Unit_sphere convert(const SM_const_decorator& E_,
 					const Color_objects& CO_ = Color_objects()) {
     Sphere_map MT_(true);
     Base T_(&MT_, &E_);

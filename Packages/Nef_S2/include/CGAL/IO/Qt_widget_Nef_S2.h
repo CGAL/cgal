@@ -29,7 +29,7 @@ template <typename Nef_polyhedron>
 class Qt_widget_Nef_S2 : public Qt_widget_OpenGL {
 
  public:
-  Qt_widget_Nef_S2(const Nef_polyhedron& N) : 
+  Qt_widget_Nef_S2(const typename Nef_polyhedron::Const_decorator& N) : 
     Qt_widget_OpenGL(300,300,1.5) {
     
     object_ = new CGAL::OGL::Unit_sphere(CGAL::OGL::NefS2_to_UnitSphere<Nef_polyhedron>::convert(N));
