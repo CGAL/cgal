@@ -1,3 +1,6 @@
+version 11.15: [af]
+- Added some missing std:: before endl
+
 version 11.14:
 - Resubmit under unix.
 
