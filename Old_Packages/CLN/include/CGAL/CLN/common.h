@@ -24,25 +24,22 @@
 #ifndef CGAL_CLN_COMMON_H
 #define CGAL_CLN_COMMON_H
 
-// This file is included from all CLN/cl_.h files and gathers the common code.
+// This file is included by all CLN/cl_*.h files and gathers the common code
+// and includes.
 
 #include <CGAL/number_utils.h>
 #include <CGAL/number_type_tags.h>
 #include <CGAL/IO/io_tags.h>
 
 #define WANT_OBFUSCATING_OPERATORS
+#include <cl_number.h>
 
 CGAL_BEGIN_NAMESPACE
 
-// Requirements.
-
-inline bool	is_valid	(const cl_number & ) { return true; } 
-inline bool	is_finite	(const cl_number & ) { return true; } 
-
-// Tags.
-
-inline io_Operator io_tag         (const cl_number&) { return io_Operator(); }
-inline Number_tag number_type_tag (const cl_number&) { return Number_tag(); }
+inline bool        is_valid        (const cl_number&) { return true; } 
+inline bool        is_finite       (const cl_number&) { return true; } 
+inline io_Operator io_tag          (const cl_number&) { return io_Operator(); }
+inline Number_tag  number_type_tag (const cl_number&) { return Number_tag(); }
 
 CGAL_END_NAMESPACE
 
