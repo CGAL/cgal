@@ -3188,7 +3188,7 @@ web file.
     @<file name>(@1)
     @<file description>(
         "Geometric Optimisation",
-        "Min_circle_2","Optimisation/Min_circle_2",
+        "Min_circle_2","Min_circle_2",
         "$Revision$","$Date$",
         "Sven Schönherr, Bernd Gärtner",
         "Sven Schönherr <sven@@inf.ethz.ch>",
