@@ -11,6 +11,13 @@ kernel model \ccStyle{Homogeneous<T>}, \ccStyle{Kernel::RT} is equal
 to \ccStyle{T}, and \ccStyle{Kernel::FT} is equal to
 \ccStyle{Quotient<T>}.
 
+\ccTypes
+\ccThree{Cartesian_const_iterator}{Facet }{}
+\ccThreeToTwo
+
+\ccNestedType{Cartesian_const_iterator}{An iterator for enumerating the
+      \ccHtmlNoLinksFrom{Cartesian} coordinates of a point.}
+
 \ccCreation
 \ccCreationVariable{p}
 
@@ -78,9 +85,18 @@ with higher dimensional points. Again they come in a
        {returns the i'th \ccHtmlNoLinksFrom{Cartesian} coordinate of \ccVar, starting with 0.
         \ccPrecond $0\leq i \leq 1$.}
 
+
 \ccMethod{Kernel::FT operator[](int i) const;}
        {returns \ccStyle{cartesian(i)}.
         \ccPrecond $0\leq i \leq 1$.}
+
+\ccMethod{Cartesian_const_iterator cartesian_begin() const;}
+       {returns an iterator to the \ccHtmlNoLinksFrom{Cartesian} coordinates 
+        of \ccVar, starting with the 0th coordinate.}
+
+\ccMethod{Cartesian_const_iterator cartesian_end() const;}
+       {returns an off the end iterator to the \ccHtmlNoLinksFrom{Cartesian} 
+        coordinates of \ccVar.}
 
 \ccMethod{int dimension() const;}
        {returns the dimension (the constant 2).}

@@ -26,6 +26,7 @@
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Fourtuple.h>
+#include <CGAL/Kernel/Cartesian_coordinate_iterator_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -37,6 +38,7 @@ CGAL_VC7_BUG_PROTECTED
    typedef typename R_::RT                   RT;
    typedef typename R_::FT                   FT;
    typedef typename R_::Vector_3             Vector_3;
+   typedef typename R_::Point_3             Point_3;
    typedef typename R_::Direction_3          Direction_3;
    typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
@@ -44,6 +46,7 @@ CGAL_VC7_BUG_PROTECTED
     typedef typename R_::template Handle<rep>::type  base;
 
 public:
+  typedef Cartesian_coordinate_iterator_3<R_> Cartesian_const_iterator;
    typedef R_                 R;
 
   PointH3()
@@ -76,6 +79,17 @@ public:
   const RT & homogeneous(int i) const;
   FT    cartesian(int i) const;
   FT    operator[](int i) const;
+
+
+  Cartesian_const_iterator cartesian_begin() const 
+  {
+    return Cartesian_const_iterator(static_cast<const Point_3* const>(this), 0);
+  }
+
+  Cartesian_const_iterator cartesian_end() const 
+  {
+    return Cartesian_const_iterator(static_cast<const Point_3* const>(this), 3);
+  }
 
   int   dimension() const;
 

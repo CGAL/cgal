@@ -37,6 +37,8 @@ _test_cls_point_2(const R& )
  typedef typename  R::FT    FT;
 
  typename R::Point_2       ip;
+ typedef typename R::Point_2::Cartesian_const_iterator CCI;
+
  CGAL::Point_2<R>  p1;
  CGAL::Point_2<R>  p2(ip);
  CGAL::Point_2<R>  p0(CGAL::ORIGIN);
@@ -91,6 +93,68 @@ _test_cls_point_2(const R& )
 
  assert( p0.dimension() == 2 );
  assert( p4.homogeneous( p4.dimension() ) == p4.hw() );
+
+
+ // now we test the Coordinate iterator
+  const CGAL::Point_2<R> p(1, 2);
+
+  CCI it = p.cartesian_begin();
+
+  // Default constructor
+  CCI itt;
+
+  // Copy constructor
+  CCI itc(it);
+
+  assert(itc == it);
+
+  // Assignment
+  itt = it;
+
+  // Equality
+  assert(itt == it);
+
+  assert(itt - it == 0);
+
+  // Increment
+  itt++;
+
+  // Inequality
+  assert(itt != it);
+
+  assert(it < itt);
+  assert(itt - it == 1);
+
+  // dereference
+  assert(*it == FT(1));
+
+  it++;
+  assert(*it == FT(2));
+  it++;
+
+  CCI it2 = p.cartesian_end();
+
+  assert(it == it2);
+  it--;
+  it--;
+  assert(*it == FT(1));
+  it += 1;
+  assert(*it == FT(2));
+  it -= 1;
+  assert(*it == FT(1));
+
+  it2 = it + 1;
+  it2--;
+  assert(it == it2);
+  it++;
+  it2 = it - 1;
+  it2++;
+  assert(it == it2);
+
+  // Assignment that allows to interpret the point like an array of coordinates
+  it = &p;
+  it2 = p.cartesian_begin();
+  assert(it == it2);
 
  std::cout << "done" << std::endl;
  return true;
