@@ -240,15 +240,15 @@ do_intersect(const Segment_2<R> &seg1, const Segment_2<R> &seg2)
     }
     if (lexicographically_xy_smaller(A1,A2)) {
         if (lexicographically_xy_smaller(B1,B2)) {
-            switch(compare_lexicographically_xy(A1,B1)) {
+            switch(compare_xy(A1,B1)) {
             case SMALLER:
-                switch(compare_lexicographically_xy(A2,B1)) {
+                switch(compare_xy(A2,B1)) {
                 case SMALLER:
                     return false;
                 case EQUAL:
                     return true;
                 case LARGER:
-                    switch(compare_lexicographically_xy(A2,B2)) {
+                    switch(compare_xy(A2,B2)) {
                     case SMALLER:
                         return seg_seg_do_intersect_crossing(A1,A2,B1,B2);
                     case EQUAL:
@@ -260,13 +260,13 @@ do_intersect(const Segment_2<R> &seg1, const Segment_2<R> &seg2)
             case EQUAL:
                 return true;
             case LARGER:
-                switch(compare_lexicographically_xy(B2,A1)) {
+                switch(compare_xy(B2,A1)) {
                 case SMALLER:
                     return false;
                 case EQUAL:
                     return true;
                 case LARGER:
-                    switch(compare_lexicographically_xy(B2,A2)) {
+                    switch(compare_xy(B2,A2)) {
                     case SMALLER:
                         return seg_seg_do_intersect_crossing(B1,B2,A1,A2);
                     case EQUAL:
@@ -277,15 +277,15 @@ do_intersect(const Segment_2<R> &seg1, const Segment_2<R> &seg2)
                 }
             }
         } else {
-            switch(compare_lexicographically_xy(A1,B2)) {
+            switch(compare_xy(A1,B2)) {
             case SMALLER:
-                switch(compare_lexicographically_xy(A2,B2)) {
+                switch(compare_xy(A2,B2)) {
                 case SMALLER:
                     return false;
                 case EQUAL:
                     return true;
                 case LARGER:
-                    switch(compare_lexicographically_xy(A2,B1)) {
+                    switch(compare_xy(A2,B1)) {
                     case SMALLER:
                         return seg_seg_do_intersect_crossing(A1,A2,B2,B1);
                     case EQUAL:
@@ -297,13 +297,13 @@ do_intersect(const Segment_2<R> &seg1, const Segment_2<R> &seg2)
             case EQUAL:
                 return true;
             case LARGER:
-                switch(compare_lexicographically_xy(B1,A1)) {
+                switch(compare_xy(B1,A1)) {
                 case SMALLER:
                     return false;
                 case EQUAL:
                     return true;
                 case LARGER:
-                    switch(compare_lexicographically_xy(B1,A2)) {
+                    switch(compare_xy(B1,A2)) {
                     case SMALLER:
                         return seg_seg_do_intersect_crossing(B2,B1,A1,A2);
                     case EQUAL:
@@ -316,15 +316,15 @@ do_intersect(const Segment_2<R> &seg1, const Segment_2<R> &seg2)
         }
     } else {
         if (lexicographically_xy_smaller(B1,B2)) {
-            switch(compare_lexicographically_xy(A2,B1)) {
+            switch(compare_xy(A2,B1)) {
             case SMALLER:
-                switch(compare_lexicographically_xy(A1,B1)) {
+                switch(compare_xy(A1,B1)) {
                 case SMALLER:
                     return false;
                 case EQUAL:
                     return true;
                 case LARGER:
-                    switch(compare_lexicographically_xy(A1,B2)) {
+                    switch(compare_xy(A1,B2)) {
                     case SMALLER:
                         return seg_seg_do_intersect_crossing(A2,A1,B1,B2);
                     case EQUAL:
@@ -336,13 +336,13 @@ do_intersect(const Segment_2<R> &seg1, const Segment_2<R> &seg2)
             case EQUAL:
                 return true;
             case LARGER:
-                switch(compare_lexicographically_xy(B2,A2)) {
+                switch(compare_xy(B2,A2)) {
                 case SMALLER:
                     return false;
                 case EQUAL:
                     return true;
                 case LARGER:
-                    switch(compare_lexicographically_xy(B2,A1)) {
+                    switch(compare_xy(B2,A1)) {
                     case SMALLER:
                         return seg_seg_do_intersect_crossing(B1,B2,A2,A1);
                     case EQUAL:
@@ -353,15 +353,15 @@ do_intersect(const Segment_2<R> &seg1, const Segment_2<R> &seg2)
                 }
             }
         } else {
-            switch(compare_lexicographically_xy(A2,B2)) {
+            switch(compare_xy(A2,B2)) {
             case SMALLER:
-                switch(compare_lexicographically_xy(A1,B2)) {
+                switch(compare_xy(A1,B2)) {
                 case SMALLER:
                     return false;
                 case EQUAL:
                     return true;
                 case LARGER:
-                    switch(compare_lexicographically_xy(A1,B1)) {
+                    switch(compare_xy(A1,B1)) {
                     case SMALLER:
                         return seg_seg_do_intersect_crossing(A2,A1,B2,B1);
                     case EQUAL:
@@ -373,13 +373,13 @@ do_intersect(const Segment_2<R> &seg1, const Segment_2<R> &seg2)
             case EQUAL:
                 return true;
             case LARGER:
-                switch(compare_lexicographically_xy(B1,A2)) {
+                switch(compare_xy(B1,A2)) {
                 case SMALLER:
                     return false;
                 case EQUAL:
                     return true;
                 case LARGER:
-                    switch(compare_lexicographically_xy(B1,A1)) {
+                    switch(compare_xy(B1,A1)) {
                     case SMALLER:
                         return seg_seg_do_intersect_crossing(B2,B1,A2,A1);
                     case EQUAL:

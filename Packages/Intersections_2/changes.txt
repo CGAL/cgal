@@ -1,3 +1,6 @@
+2.16 (2 June 2003)
+- Replace deprecated compare_lexicographically_xy() by compare_xy().
+
 2.15 (27/May 2003)
 - fixed order of CGALi namespace in Triangle_2_Triangle_2_do_intersect.h
 
