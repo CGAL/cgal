@@ -500,14 +500,20 @@ int main(int argc, char* argv[])
 {
   
   Arr_polyline_traits_test test;
-  bool                     reverse_order;
+  bool                     reverse_order = false;
 
   if (argc < 2 || argc > 3) {
     std::cout << "usage: test data_file [reverse]" << std::endl;
     exit(1);
   }
 
-  reverse_order = (argc == 3 && 0 == strcmp(argv[2], "reverse"));
+  //reverse_order = (argc == 3 && 0 == strcmp(argv[2], "reverse"));
+  if (argc == 3) {
+    std::string second_par(argv[2]);
+    if (second_par.compare("reverse") == 0) {
+      reverse_order = true;
+    }
+  }
 
   test.start(argv[1], reverse_order);
   return 0;
